@@ -1,0 +1,17 @@
+../dist/lib/zcommon.jar
+../dist/lib/zcommons-el.jar
+../dist/lib/zhtml.jar
+../dist/lib/zk.jar
+../dist/lib/zkplus.jar
+../dist/lib/zml.jar
+../dist/lib/zul.jar
+../dist/lib/zweb.jar
+../dist/lib/zkex.jar
+../dist/lib/zkmax.jar
+../dist/lib/gmapsz.jar
+../dist/lib/zss.jar
+../dist/lib/zssex.jar
+../dist/lib/zpoi.jar
+../dist/lib/ext/opencsv.jar
+../dist/lib/ext/commons-math.jar
+../dist/lib/ext/bsh.jar

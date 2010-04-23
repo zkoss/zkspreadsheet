@@ -1,0 +1,14 @@
+<window id="tabRenameWin" title="Rename to" border="normal">
+	<hbox>
+		Sheet name:
+		<textbox id="trw_sheetName" />
+	</hbox>
+	<hbox>
+		<button label="OK" forward="//p1/mainWin.onTab(renameOK)"></button>
+		<button label="Cancel">
+			<attribute name="onClick"> 			
+			self.getSpaceOwner().detach();			
+		</attribute>
+		</button>
+	</hbox>
+</window>

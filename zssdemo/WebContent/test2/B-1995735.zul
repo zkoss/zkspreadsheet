@@ -1,0 +1,28 @@
+<zk>
+	<groupbox mold="3d" open="false"><caption>Test Steps</caption>
+	<html><![CDATA[
+	1995735  	  IE:text doesn't overflow if column width small then 4<br/>
+1.click set column width, the text should not disappear.<br/>
+2.drag any column's size<br/>
+3.the text should not disappear.
+
+	]]></html>
+	</groupbox>
+	<window title="Bug"
+		border="normal" height="90%" width="90%">
+		<button label="invalidate" onClick="ss1.invalidate()"/>
+		<button label="col 0 to 5px" onClick='ss1.selectedSheet.setColumnWidth(0,5);'/>
+		<button label="col 0 to 6px" onClick='ss1.selectedSheet.setColumnWidth(0,6);'/>
+		<button label="col 1 to 5px" onClick='ss1.selectedSheet.setColumnWidth(1,4);'/>
+		<button label="col 1 to 6px" onClick='ss1.selectedSheet.setColumnWidth(1,6);'/>
+		<label id="lab"/>
+		<spreadsheet id="ss1" src="/WEB-INF/xls/test/empty.xls" maxrows="500" maxcolumns="80" width="90%" height="300px"/>
+		<zscript>
+			import org.zkoss.zss.ui.impl.*;
+			Utils.setCellText(ss1.selectedSheet,0,0,"ABCDEFGH");
+			Utils.setCellText(ss1.selectedSheet,1,0,"ABCDEFGH");
+			//ss1.selectedSheet.setColumnWidth(0,5);
+			//ss1.selectedSheet.setColumnWidth(1,120);
+		</zscript>
+	</window>
+</zk>

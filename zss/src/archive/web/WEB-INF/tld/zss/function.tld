@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+Purpose:
+	Defines functions for ZK Spread Sheet formula.
+Description:
+	
+Histroy:
+	Fri Sep 09 17:14:27     2007, Created by henrichen
+
+Copyright (C) 2007 Potix Corporation. All Rights Reserved.
+-->
+
+<taglib>
+	<uri>http://www.zkoss.org/zss/function</uri>
+	<description>
+	Functions for ZK Spread Sheet formula.
+	</description>
+
+	<!--         -->
+	<!-- Imports -->
+	<!--         -->
+<!-- 	
+	<import>
+		<import-name>UtilFns</import-name>
+		<import-class>org.zkoss.zss.formula.fn.UtilFns</import-class>
+	</import>
+	<import>
+		<import-name>MathFns</import-name>
+		<import-class>org.zkoss.zss.formula.fn.MathFns</import-class>
+	</import>
+	<import>
+		<import-name>LogicalFns</import-name>
+		<import-class>org.zkoss.zss.formula.fn.LogicalFns</import-class>
+	</import>
+	<import>
+		<import-name>DateTimeFns</import-name>
+		<import-class>org.zkoss.zss.formula.fn.DateTimeFns</import-class>
+	</import>
+	<import>
+		<import-name>StatFns</import-name>
+		<import-class>org.zkoss.zss.formula.fn.StatFns</import-class>
+	</import>
+	<import>
+		<import-name>TextDataFns</import-name>
+		<import-class>org.zkoss.zss.formula.fn.TextDataFns</import-class>
+	</import>
+ -->
+ 	<import>
+		<import-name>FinancialFns</import-name>
+		<import-class>org.zkoss.zss.formula.fn.FinancialFns</import-class>
+	</import>
+<!-- 	
+	<import>
+		<import-name>EngineeringFns</import-name>
+		<import-class>org.zkoss.zss.formula.fn.EngineeringFns</import-class>
+	</import>
+-->	
+	<!--                     -->
+	<!-- Financial Functions -->
+	<!--                     -->
+	<function>
+		<name>DB</name>
+		<function-class>org.zkoss.zss.formula.fn.FinancialFns</function-class>
+		<function-signature>
+	org.apache.poi.hssf.record.formula.eval.ValueEval db(org.apache.poi.hssf.record.formula.eval.ValueEval[] args, int srcRowIndex, int srcColumnIndex);
+		</function-signature>
+		<description>
+	Returns the depreciation of an asset for a specified period by using the fixed-declining balance method
+		</description>
+	</function>
+	
+	<function>
+		<name>DDB</name>
+		<function-class>org.zkoss.zss.formula.fn.FinancialFns</function-class>
+		<function-signature>
+	org.apache.poi.hssf.record.formula.eval.ValueEval ddb(org.apache.poi.hssf.record.formula.eval.ValueEval[] args, int srcRowIndex, int srcColumnIndex);
+		</function-signature>
+		<description>
+	Returns the depreciation of an asset for a specified period by using the double-declining balance method or some other method that you specify
+		</description>
+	</function>
+	
+	<function>
+		<name>IPMT</name>
+		<function-class>org.zkoss.zss.formula.fn.FinancialFns</function-class>
+		<function-signature>
+	org.apache.poi.hssf.record.formula.eval.ValueEval ipmt(org.apache.poi.hssf.record.formula.eval.ValueEval[] args, int srcRowIndex, int srcColumnIndex);
+		</function-signature>
+		<description>
+	Returns the interest payment for an investment for a given period
+		</description>
+	</function>
+	
+    <function>
+		<name>PPMT</name>
+		<function-class>org.zkoss.zss.formula.fn.FinancialFns</function-class>
+		<function-signature>
+	org.apache.poi.hssf.record.formula.eval.ValueEval ppmt(org.apache.poi.hssf.record.formula.eval.ValueEval[] args, int srcRowIndex, int srcColumnIndex);
+		</function-signature>
+		<description>
+	Returns the payment on the principal for an investment for a given period 
+		</description>
+	</function>
+	
+	<function>
+		<name>SLN</name>
+		<function-class>org.zkoss.zss.formula.fn.FinancialFns</function-class>
+		<function-signature>
+	org.apache.poi.hssf.record.formula.eval.ValueEval sln(org.apache.poi.hssf.record.formula.eval.ValueEval[] args, int srcRowIndex, int srcColumnIndex);
+		</function-signature>
+		<description>
+	Returns the straight-line depreciation of an asset for one period 
+		</description>
+	</function>
+	
+    <function>
+		<name>SYD</name>
+		<function-class>org.zkoss.zss.formula.fn.FinancialFns</function-class>
+		<function-signature>
+	org.apache.poi.hssf.record.formula.eval.ValueEval syd(org.apache.poi.hssf.record.formula.eval.ValueEval[] args, int srcRowIndex, int srcColumnIndex);
+		</function-signature>
+		<description>
+	Returns the sum-of-years' digits depreciation of an asset for a specified period 
+		</description>
+	</function>
+	
+</taglib>

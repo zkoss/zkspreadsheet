@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!--
+Purpose:
+	Defines util class for render spread sheet
+Description:
+	
+Histroy:
+	
+
+Copyright (C) 2007 Potix Corporation. All Rights Reserved.
+-->
+
+<taglib>
+	<uri>http://www.zkoss.org/zss/ui</uri>
+	<description>
+	Functions for ZK Spread Sheet UI Renderer
+	</description>
+	
+	<!--                   -->
+	<!-- General Functions -->
+	<!--                   -->
+	<function>
+		<name>getColumntitle</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.String getColumntitle(org.zkoss.zss.ui.Spreadsheet ss, int index)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	<function>
+		<name>getRowtitle</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.String getRowtitle(org.zkoss.zss.ui.Spreadsheet ss, int index)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	<function>
+		<name>getCelltext</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.String getCelltext(org.zkoss.zss.ui.Spreadsheet ss, int row, int column)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	<function>
+		<name>getRowBegin</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.Integer getRowBegin(org.zkoss.zss.ui.Spreadsheet ss)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	<function>
+		<name>getRowEnd</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.Integer getRowEnd(org.zkoss.zss.ui.Spreadsheet ss)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	<function>
+		<name>getColBegin</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.Integer getColBegin(org.zkoss.zss.ui.Spreadsheet ss)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	<function>
+		<name>getColEnd</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.Integer getColEnd(org.zkoss.zss.ui.Spreadsheet ss)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	<!-- 
+	<function>
+		<name>getDataPanelWidth</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.Integer getDataPanelWidth(org.zkoss.zss.ui.Spreadsheet ss)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	<function>
+		<name>getDataPanelHeight</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.Integer getDataPanelHeight(org.zkoss.zss.ui.Spreadsheet ss)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	 -->
+	 <function>
+		<name>getRowOuterAttrs</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.String getRowOuterAttrs(org.zkoss.zss.ui.Spreadsheet ss,int row)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	<function>
+		<name>getCellInnerAttrs</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.String getCellInnerAttrs(org.zkoss.zss.ui.Spreadsheet ss,int row,int col)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	<function>
+		<name>getCellOuterAttrs</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.String getCellOuterAttrs(org.zkoss.zss.ui.Spreadsheet ss,int row,int col)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	<function>
+		<name>getTopHeaderOuterAttrs</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.String getTopHeaderOuterAttrs(org.zkoss.zss.ui.Spreadsheet ss,int col)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	<function>
+		<name>getTopHeaderInnerAttrs</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.String getTopHeaderInnerAttrs(org.zkoss.zss.ui.Spreadsheet ss,int col)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	<function>
+		<name>getLeftHeaderOuterAttrs</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.String getLeftHeaderOuterAttrs(org.zkoss.zss.ui.Spreadsheet ss,int row)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	<function>
+		<name>getLeftHeaderInnerAttrs</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.String getLeftHeaderInnerAttrs(org.zkoss.zss.ui.Spreadsheet ss,int row)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+	<function>
+		<name>getWidgetContent</name>
+		<function-class>org.zkoss.zss.ui.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.String getWidgetContent(org.zkoss.zss.ui.Spreadsheet ss)
+		</function-signature>
+		<description>
+		</description>
+	</function>
+</taglib>

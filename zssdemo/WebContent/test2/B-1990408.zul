@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zk>
+	<html><![CDATA[
+		[ 1990408 ] Set row hight small than 5 will be broken in IE <br/>
+		click below button and all should not broken ui 
+	]]></html>
+	<window title="BUG" border="normal">
+		<button label="invalidate" onClick="ss1.invalidate()"/>
+		<button label="set height 6">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().setRowHeight(1,6);
+			</attribute>
+		</button>
+		<button label="set height 5">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().setRowHeight(1,5);
+			</attribute>
+		</button>
+		<button label="set height 1">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().setRowHeight(1,1);
+			</attribute>
+		</button>
+		<button label="set height 0">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().setRowHeight(1,0);
+			</attribute>
+		</button>
+		<spreadsheet id="ss1" src="/test2/xls/empty.xls" width="700px"
+			height="500px" maxrows="200"/>
+	</window>
+</zk>

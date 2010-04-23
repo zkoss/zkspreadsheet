@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/zss/function" prefix="ss" ?>
+<zk>
+	<window title="Test Row Insert and Delete" border="normal">
+		<label>
+			Click "Set Values" first,
+			then click "insert ** delete **" buttons below to check result.
+		</label>
+		<vbox>
+			<button label="Set Values">
+				<attribute name="onClick">
+					sheet = ss1.getSelectedSheet();
+					for( i = 0 ; i != 20 ; i++ )
+					{
+						sheet.setCellValue( i , 0 , i+1 );
+						sheet.setCellValue( i , 1 , i+1 );
+						sheet.setCellValue( i , 2 , i+1 );
+					}
+				</attribute>
+			</button>
+		<hbox>
+			<button label="insert 2-4 delete 0-1">
+				<attribute name="onClick">
+					ss1.getSelectedSheet().insertRows(2,4);
+					ss1.getSelectedSheet().deleteRows(0,1);
+				</attribute>
+			</button>
+			<label value="should see rows [],[],[],3,4,5.." />
+		</hbox>
+		<hbox>
+			<button label="insert 2-4 delete 0-2">
+				<attribute name="onClick">
+					ss1.getSelectedSheet().insertRows(2,4);
+					ss1.getSelectedSheet().deleteRows(0,2);
+				</attribute>
+			</button>
+			<label value="should see rows [],[],3,4,5.." />
+		</hbox>
+		<hbox>
+		<button label="insert 2-4 delete 0-3">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().insertRows(2,4);
+				ss1.getSelectedSheet().deleteRows(0,3);
+			</attribute>
+		</button>
+		<label value="should see rows [],3,4,5.." />
+		</hbox>
+		<hbox>
+		<button label="insert 2-4 delete 0-4">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().insertRows(2,4);
+				ss1.getSelectedSheet().deleteRows(0,4);
+			</attribute>
+		</button>
+		<label value="should see rows 3,4,5.." />
+		</hbox>
+		<hbox>
+		<button label="insert 2-4 delete 0-6">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().insertRows(2,4);
+				ss1.getSelectedSheet().deleteRows(0,6);
+			</attribute>
+		</button>
+		<label value="should see rows 5,6,7.." />
+		</hbox>
+		<hbox>
+		<button label="insert 2-4 delete 2-2">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().insertRows(2,4);
+				ss1.getSelectedSheet().deleteRows(2,2);
+			</attribute>
+		</button>
+		<label value="should see rows 1,2,[],[],3,4.." />
+		</hbox>
+		<hbox>
+		<button label="insert 2-4 delete 2-3">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().insertRows(2,4);
+				ss1.getSelectedSheet().deleteRows(2,3);
+			</attribute>
+		</button>
+		<label value="should see rows 1,2,[],3,4.." />
+		</hbox>
+		<hbox>
+		<button label="insert 2-4 delete 2-4">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().insertRows(2,4);
+				ss1.getSelectedSheet().deleteRows(2,4);
+			</attribute>
+		</button>
+		<label value="should see rows 1,2,3,4.." />
+		</hbox>
+		<hbox>
+		<button label="insert 2-4 delete 2-6">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().insertRows(2,4);
+				ss1.getSelectedSheet().deleteRows(2,6);
+			</attribute>
+		</button>
+		<label value="should see rows 1,2,5,6,7.." />
+		</hbox>
+		<hbox>
+		<button label="insert 2-4 delete 3-3">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().insertRows(2,4);
+				ss1.getSelectedSheet().deleteRows(3,3);
+			</attribute>
+		</button>
+		<label value="should see rows 1,2,[],[],3,4.." />
+		</hbox>
+		<hbox>
+		<button label="insert 2-4 delete 3-4">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().insertRows(2,4);
+				ss1.getSelectedSheet().deleteRows(3,4);
+			</attribute>
+		</button>
+		<label value="should see rows 1,2,[],3,4.." />
+		</hbox>
+		<hbox>
+		<button label="insert 2-4 delete 3-6">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().insertRows(2,4);
+				ss1.getSelectedSheet().deleteRows(3,6);
+			</attribute>
+		</button>
+		<label value="should see rows 1,2,[],5,6.." />
+		</hbox>
+		<hbox>
+		<button label="insert 2-4 delete 4-4">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().insertRows(2,4);
+				ss1.getSelectedSheet().deleteRows(4,4);
+			</attribute>
+		</button>
+		<label value="should see rows 1,2,[],[],3,4.." />
+		</hbox>
+		<hbox>
+		<button label="insert 2-4 delete 4-6">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().insertRows(2,4);
+				ss1.getSelectedSheet().deleteRows(4,6);
+			</attribute>
+		</button>
+		<label value="should see rows 1,2,[],[],5,6.." />
+		</hbox>
+		<hbox>
+		<button label="insert 2-4 delete 5-6">
+			<attribute name="onClick">
+				ss1.getSelectedSheet().insertRows(2,4);
+				ss1.getSelectedSheet().deleteRows(5,6);
+			</attribute>
+		</button>
+		<label value="should see rows 1,2,[],[],[],5,6.." />
+		</hbox>
+		</vbox>
+	<spreadsheet id="ss1" src="/test2/xls/empty.xls" width="700px" height="500px" />
+	</window>
+</zk>

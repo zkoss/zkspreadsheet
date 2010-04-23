@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language-addon>
+	<addon-name>zssapp</addon-name>
+	<language-name>xul/html</language-name>
+	
+	<component>
+		<component-name>colorbutton</component-name>
+		<component-class>org.zkoss.zss.app.Colorbutton</component-class>
+		<widget-class>zssapp.Colorbutton</widget-class>
+		<mold>
+			<mold-name>default</mold-name>
+			<mold-uri>mold/colorbutton.js</mold-uri>
+			<css-uri>css/colorbutton.css.dsp</css-uri>
+		</mold>
+	</component>
+	
+</language-addon>

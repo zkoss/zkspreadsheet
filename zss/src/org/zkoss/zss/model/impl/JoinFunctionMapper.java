@@ -1,0 +1,81 @@
+/* JoinFunctionMapper.java
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		Apr 7, 2010 12:54:13 PM, Created by henrichen
+
+Copyright (C) 2010 Potix Corporation. All Rights Reserved.
+
+*/
+
+package org.zkoss.zss.model.impl;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+
+import org.zkoss.util.resource.ClassLocator;
+import org.zkoss.xel.Function;
+import org.zkoss.xel.FunctionMapper;
+import org.zkoss.xel.XelException;
+import org.zkoss.xel.taglib.Taglib;
+import org.zkoss.xel.taglib.Taglibs;
+
+/**
+ * Aggregate FunctionMapper that join serveral {@link FunctionMapper} together. The first
+ * added get called first.
+ * @author henrichen
+ *
+ */
+public class JoinFunctionMapper implements FunctionMapper {
+	private static Taglib SSTAGLIB = new Taglib("", "web/WEB-INF/tld/zss/function.tld"); 
+	private LinkedHashSet<FunctionMapper> _mappers;
+	
+	public JoinFunctionMapper() {
+		_mappers = new LinkedHashSet<FunctionMapper>(4);
+		
+		//prepare the default spreadsheet function mapper.
+		final List<Taglib> taglibs = new ArrayList<Taglib>(1);
+		taglibs.add(SSTAGLIB);
+		FunctionMapper mapper = Taglibs.getFunctionMapper(taglibs, new ClassLocator());
+		addFunctionMapper(mapper);
+	}
+	
+	/* Add a new Function Mapper.
+	 * @see org.zkoss.zss.model.Book#addFunctionMapper(java.lang.String, org.zkoss.zss.model.FunctionMapper)
+	 */
+	/*package*/ void addFunctionMapper(FunctionMapper mapper) {
+		_mappers.add(mapper);
+	}
+
+	/* Remove a specified Function Mapper.
+	 * @see org.zkoss.zss.model.Book#removeFunctionMapper(java.lang.String, org.zkoss.zss.model.FunctionMapper)
+	 */
+	/*package*/ void removeFunctionMapper(FunctionMapper mapper) {
+		_mappers.remove(mapper);
+	}
+	
+	//--FunctionMapper--//
+	@Override
+	public Collection<String> getClassNames() {
+		return new ArrayList<String>(0);
+	}
+
+	@Override
+	public Class<?> resolveClass(String arg0) throws XelException {
+		return null;
+	}
+
+	@Override
+	public Function resolveFunction(String arg0, String arg1) throws XelException {
+		for (FunctionMapper mapper : _mappers) {
+			final Function fun = mapper.resolveFunction(arg0, arg1);
+			if (fun != null) return fun;
+		}
+		return null;
+	}
+}

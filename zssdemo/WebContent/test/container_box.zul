@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/zss/function" prefix="ss" ?>
+<zk xmlns:h="http://www.w3.org/1999/xhtml">
+	<window title="Travel Expense Calculator" 
+		border="normal" style="heigth:300px;width:900px">
+		<spreadsheet src="/WEB-INF/xls/test/container.xls" height="200px" width="500px" 
+		maxrows="300" maxcolumns="20" />
+	</window>
+	<vbox style="heigth:300px;width:900px">
+		<spreadsheet src="/WEB-INF/xls/test/container.xls" height="200px" width="500px" 
+			maxrows="300" maxcolumns="20" />
+	</vbox>
+	<hbox style="heigth:300px;width:900px">
+		<spreadsheet src="/WEB-INF/xls/test/container.xls" height="200px" width="500px" 
+			maxrows="300" maxcolumns="20" />
+	</hbox>
+			
+</zk>

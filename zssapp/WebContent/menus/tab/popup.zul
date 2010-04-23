@@ -1,0 +1,7 @@
+<menupopup id="${arg.id}">
+	<menuitem label="${c:l('shiftLeft')}" forward="//p1/mainWin.onTab(shiftLeft)"/>
+	<menuitem label="${c:l('shiftRight')}" forward="//p1/mainWin.onTab(shiftRight)"/>	
+	<menuitem label="${c:l('delete')}" forward="//p1/mainWin.onDeleteSheet"/>
+	<menuitem label="${c:l('rename')}" forward="//p1/mainWin.onTab(rename)"/>
+	<menuitem label="${c:l('edit.copy')}" forward="//p1/mainWin.onInsSheetCopy"/>
+</menupopup>

@@ -1,0 +1,244 @@
+	------------
+ZK Spreadsheet 2.0.0 beta (Work with ZK 5 and after)
+
+* Features:
+  1 Support ZK 5
+  2 Support importing Excel 2007 xlsx file
+  3 Showing rich text
+  4 Efficient formula dependency tracking
+  5 Consistent column width on the browser and Excel application
+	
+* Upgrade Notes:
+  + Ported to work with ZK 5
+  + The backend data model and formula evaluation engine is completly _REWRITTEN_
+    to be based on Apache POI library(Java API To Access Microsoft Excel Format 
+	Files) such that we can support more features. The consequence are most classes 
+	and APIs that were in org.zkoss.zss.model of version 1.x are no longer existed.
+  + Spreadsheet remove deprecated method setUrl and getUrl. Use setSrc and getSrc 
+    instead
+  + Spreadsheet remove deprecated method setMaxrow and getMaxrow. Use getMaxrows and
+    setMaxrows instead
+  + Spreadsheet remove deprecated method setMaxcolumn and getMaxcolumn. Use 
+    getMaxcolumns and setMaxcolumns instead
+  
+	------------
+ZK Spreadsheet 1.0.0 RC1 (Work with ZK 3 and before)
+
+Feature:
+  1984354 Support fire size change event after set column/row size
+  1984356 UI Support handle column/row size change event.
+  1989663 Support showing a highlight area 
+  1990401 Change setColumnnames to setColumntitles
+  1990704 Support tab key to control move right and left
+  1991532 Supports client can start editing by press on keys
+  1990542 UI support format change event
+  1995825 Modify css(.zk) to compete future version of ZK
+  2001369 Provide auto adapting FunctionMap of Page to Book
+  2001613 A way to enlarge the editing box
+  
+Bug:
+  1986288 Head override scroll bar in some firefox/IE
+  1989337 Merged cell error after insert/remove a row
+  1989815 Selection out of sync if move cell focus by key
+  1989384 insertColumns(-1,-1) bug
+  1989379 insertColumns doesn't update UI correctly
+  1990632 Border doesn't accrod with background color
+  1989384 insertColumns(-1,-1) bug
+  1991614 ExcelImporter fail to import Text Format
+  1985247 Cell with date format cause exception
+  1988691 Number format won't be imported correctly
+  1990408 Set row height small than 5 will be broken in IE
+  1992587 Style doens't be copied after insert
+  1992704 setRowHeight out of boundary add extra space
+  1992843 zsw,zsh information doesn't load correctly on header
+  1992679 Insert rows in freeze panes doesn't work
+  1991498 setFontColor() in Format doesn't work
+  1994864 Drag on highlihgt area border cause selection moving
+  1994997 onCellSelection has wrong value when click on a merge cell
+  1995031 focusTo() doesn't work if doesn't invoke in AU
+  1995734 To many custom row height
+  1997415 Accounting format has wrong display when value is empty
+  1997417 Too large update range in SSData content change event
+  1995691 Highlight doesn't showup after invalidate
+  2000569 Selection change should fire after mouse up
+  2000567 Right click on selected header should not change selection
+  2000537 onCellClick should not be fired when mouseup on another cell
+  1995689 selection rectangle error when listen onCellClick
+  1995735 IE:text doesn't overflow if column width small then 4
+  1989680 setColumnWidth Bug
+  1991731 SUM(A3:A1) won't be calculated
+  2002276 Wrong image widget size
+  
+* Upgrade Notes
+  + setColumnnames/setRownames/getColumnnames/getRownames of UI Spreadsheet were removed, use  
+    setColumntitles/setRowtitles/getColumntitles/getRowtitles instead.  
+  
+  --------
+ZK Spreadsheet 1.0.0 beta3
+
+Feature:
+  1960727 Support selection of row and column
+  1960733 Support selection when mouse dragging on cells
+  1963549 Support move and modify the selection range
+  1964452 Support selection by key
+  1965003 Select all when mouse down on left-top corner
+  1970131 Sheet support delete rows, columns, range
+  1970128 Sheet support insert rows, columns, range
+  1977477 setMaxrow/column support smartUpdate
+  1981665 Change setMaxrow to setMaxrows, also at columm
+  1981776 Model:Support MERGE events when call merge/unmerge cell
+  1977531 UI Support Row/Column Insert/Delete Event of Model    
+  1977528 UI Support Merge Event of Model
+  1984094 Provide API to get last focus and selection of spreadsheet
+  1985245 Change setUrl to setSrc of Spreadsheet
+  1985320 Get custom column widths/custom row heights
+  
+Bug:
+  1964249 Move/modify selection doesn't work in freeze row/col mode
+  1964255 Reselection in selected range doesn't work in freeze mode
+  1965001 The method copyCell only copy values without its format
+  1970238 Always show freeze panel when import a empty xls
+  1974069 onCellClick Event doesn't be fired.
+  1977301 Exception when invoke insertColumn
+  1973837 MODEL:Col/Row size doen't be shifted after inserts
+  1978676 Model exception when remove/insert a column/row
+  1978860 When delete a column/row,no need to send CONTENTS_CHANGE
+  1979032 zss css not applied in zssdemo, IE only
+  1978933 Exception when delete a row which contains a merge cell 
+  1981657 Load extra 1 cell to client side
+  1981771 Call unmergeCells twice throws exception
+  1982844 Wrong MERGE_CHANGE data when inert column
+  1982915 Wrong cell style when CONTENTS_CHANGE event
+  1983346 IE : Cell doesn't align after unmerge a long text cell
+  1983343 minus number in formula cause exception
+  1984095 Selection changed when focus back.
+  1984108 focus and selection lost after invalidate()
+  1984106 Formula should change when ref cell moved
+  1984262 Refer to an empty cell should return 0 not "empty"
+  1984347 Destination reference should be delete and cause #REF!
+  1985264 Column/row size back to default after invalidate
+  1986025 Custom width is not correctly imported
+  
+* Upgrade Notes
+  + setMaxrow/getMaxrow/setMaxcolumn/getMaxcolumn of UI Spreadsheet were deprecated, use  
+    setMaxrows/getMaxrows/setMaxcolumns/getMaxcolumns instead.
+  +	setUrl/getUrl of UI Spreadsheet were deprecated, use setSrc/getSrc instead.
+  
+  --------
+ZK Spreadsheet 1.0.0 beta2
+
+Feature:
+  1941769 Support notify cell update via variable names
+  1941909 Support cell editing control event
+  1941790 Support Key Event on Spreadsheet
+  1950246 Support another way to stop editing event.
+  1950247 Support a way to intercept default startEditing value
+  1953243 Support initial mask
+  1950481 Support displaying Image in Spreadsheet
+  1953297 Support retrieve spreadsheet focus
+  
+Bug:
+  1939913 var name loss when import an unknown variable in formula
+  1939916 importer throws Unrecognized Function if use unknown func
+  1942569 The last 'n' character disapper in formula
+  1943565 Bug in notifyChange(String[])
+  1943547 The external functions can't be imported
+  1950469 Add 2 widgets cause client side error
+  1950483 Worng attr value if I set attr after add image widget
+  1951423 IE : row is broken when scroll down
+  1953236 Cell doesn't be loaded after scrolling
+  1953126 command should be delay when spreadsheet is invalidate
+  1953830 Unnecessary command was sent and break the processing
+  1954061 setWidth setHeight doesn't work
+  
+  --------
+ZK Spreadsheet 1.0.0 beta
+
+Feature:
+  1892469 Supports multi-line inline editing
+  1871760 Provdes cell style in UI, such as font and border
+  1912497 Load Header by demand in UI.
+  1907728 Support ErrorCell
+  1917924 Support Named Ranges
+  1917937 Support Range Operator
+  1917938 Support Range Union Operator
+  1917941 Support Range Intersect operation
+  1906207 Require row index and column index of input array
+  1919284 Support constant array formula
+  1871755 Provides horizontal cell merging in UI
+  1931942 Support resolve a.b.c varible expression
+  1930766 Supports Hide Row and Column Header
+  1871756 Provides Forzen Panel in UI
+  
+Bug:
+  1891619 Cann't use character ">","<","""
+  1906208 Empty String should be deemed as 0d
+  1906711 Border didn't show up correctly in Browser
+  1902921 Merged cell - validateCorner
+  1883293 SSDataEvent not fired when using simple formula
+  1906763 Wrong focus mark when change default cell width and height
+  1906197 Number of params is not consistent with excel function
+  1908659 Cell with format & refer to other cell throws exeception
+  1907786 NullPointerException when getTextColor() is invoked
+  1908634 Negative Percentage Bug
+  1908699 Rounding Bug
+  1909323 Space character is skiped in client side
+  1909371 Rounding Error
+  1907709 Cross reference Refers to Wrong Sheet at Init
+  1913313 Reference to an inexisting sheet should return #REF!
+  1916449 Cell fill in an error e.g. #DIV/0! should be an Error object
+  1916490 A way allows spreadsheet functions to handle "#REF!"
+  1917727 Can not view empty sheet
+  1932034 Named Range Dependency Issue
+  1933107 Cell refer to a Range show Range.toString()
+  1919118 Cell display time format at first time editing.
+  1933186 Range.getCellsArray() throws IndexOutOfBoundException
+  
+  --------
+ZK Spreadsheet 0.7.0
+(ZK Spreadsheet project move to https://sourceforge.net/projects/zss/ after 0.6.0)
+
+Feature:
+  1869091 Model support Image
+  1871754 Provide text overflow when text is too long in cells
+  1871758 Provides Text wrapping in UI
+  1871759 Load Cell by demand in UI.
+  1883400 The size of column and row can set to zero in UI
+  1883403 Supports highlight column and row header of selection range.
+  
+Bug:
+  1882263 Cell.getText() throw exception when has formula.
+  1885998 Error when moving focus to a cell which column width is 0
+  1886002 Top Head will disappear when scrolling to right most in Opera
+  1886003 Cell doesn't be load when I small a column or row
+
+  --------
+ZK Spreadsheet 0.6.0
+
+Feature:
+  1858877 Sheet support mergeCells and unmergeCells
+  1855751 Provide customization of column and row's header name
+  1859510 Sheet support getMergeRangs
+  1859511 Sheet support defaultColumnWidth, defalutRowHeight
+  1859512 Sheet support columnWidth and rowHeight
+  1861271 Sheet support columnFreeze and rowFreeze
+  
+Bug:
+  1855748 EmptyStackException when type "=" in cell
+  1855750 FormulaListener not work if change the formula value
+  1861948 [ZSS] NullPointerException - getMergeRanges()
+  
+  --------
+ZK Spreadsheet 0.2.0
+* Support Spread Sheet UI (1st draft)
+* Support in-place-edit, top header, left header, scroll in view, selector mark, focus
+
+  --------
+ZK Spreadsheet 0.1.0
+* Support Spread Sheet model (1st draft)
+* Support SUM function
+* Support Spread Sheet engine (1st draft)
+* Formula parser
+* Formula evaluator
+* Excel Importer (without format)
+  

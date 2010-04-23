@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/zss/function" prefix="ss" ?>
+<zk>
+	<window title="Basic Types" border="normal" >
+		User should see basic types show correctly
+		<spreadsheet id="ss1" src="/test2/xls/BasicTypes.xls" 
+			width  = "800px"
+			height = "300px"
+			maxcolumns = "10"
+			maxrows    = "10"
+		/>
+	</window>
+</zk>

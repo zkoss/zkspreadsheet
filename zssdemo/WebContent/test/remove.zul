@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/zss/function" prefix="ss" ?>
+<zk>
+	<window title="Remove"
+		border="normal" height="90%" width="90%">
+		<button label="invalidate" onClick="ss1.invalidate()"/>
+		<button label="frozenRow" onClick="ss1.rowfreeze=3" />
+		<button label="frozenCol" onClick="ss1.columnfreeze=3" />
+		<button label="last block size" onClick="lab.value = ss1.extraCtrl.loadedRect.toString()"/>
+		<label id="lab"/>
+		<intbox id="count" value="3"/>
+		<spreadsheet id="ss1" src="/WEB-INF/xls/test/insert.xls" maxrows="300" maxcolumns="100" height="400px" width="800px" style="border:1px solid #8AA3C1" >
+		<attribute name="onHeaderRightClick">
+			hminfo.label = "Info:"+(event.type==0?"Column":"Row")+","+(event.index+1);
+			hminfo.setAttribute("index",event.index);
+			hminfo.setAttribute("type",event.type);
+			headermenu.open(event.clientx,event.clienty);
+		</attribute>
+		<attribute name="onHeaderClick">
+			hminfo.label = "Info:"+(event.type==0?"Column":"Row")+","+(event.index+1);
+			hminfo.setAttribute("index",event.index);
+			hminfo.setAttribute("type",event.type);
+			headermenu.open(event.clientx,event.clienty);
+		</attribute>
+		</spreadsheet>
+		
+		<menupopup id="headermenu">
+			<menuitem label="Info" id="hminfo"/>
+			<menuitem label="Remove 1">
+				<attribute name="onClick"><![CDATA[
+					var sheet = ss1.getSelectedSheet();
+					var index = hminfo.getAttribute("index").intValue();
+					var type =  hminfo.getAttribute("type");
+					if(type.equals(0)){
+						sheet.deleteColumns(index,index);
+					}else{
+						sheet.deleteRows(index,index);
+					}
+					ss1.focus();
+				]]></attribute>
+			</menuitem>
+			<menuitem label="Remove count">
+				<attribute name="onClick"><![CDATA[
+					var sheet = ss1.getSelectedSheet();
+					var index = hminfo.getAttribute("index").intValue();
+					var type =  hminfo.getAttribute("type");
+					if(type.equals(0)){
+						sheet.deleteColumns(index,index+count.value-1);
+					}else{
+						sheet.deleteRows(index,index+count.value-1);
+					}
+					ss1.focus();
+				]]></attribute>
+			</menuitem>
+			<menuitem label="Remove After 1">
+				<attribute name="onClick"><![CDATA[
+					var sheet = ss1.getSelectedSheet();
+					var index = hminfo.getAttribute("index").intValue();
+					var type =  hminfo.getAttribute("type");
+					if(type.equals(0)){
+						sheet.deleteColumns(index+1,index+1);
+					}else{
+						sheet.deleteRows(index+1,index+1);
+					}
+					ss1.focus();
+				]]></attribute>
+			</menuitem>
+			<menuseparator/>
+			<menuitem label="Clear" onClick="alert(self.label)"/>
+		</menupopup>
+	</window>
+</zk>

@@ -1,0 +1,171 @@
+<window id="${arg.id}" title="Number Format" width="360px" height="260px" border="normal" visible="false">
+	<div style="margin:7px">
+	<hbox spacing="0px">
+		<vbox>
+			<listbox id="mfn_category" width="100px">
+				<listhead sizable="true">
+					<listheader label="Category:" sort="auto" />
+				</listhead>
+				<listitem label="General" onClick="openOnlyMyList(&quot;mfn_general&quot;)"
+					onCreate="openOnlyMyList(&quot;mfn_general&quot;)" />
+				<listitem label="Number" onClick="openOnlyMyList(&quot;mfn_number&quot;)" />
+				<listitem label="Currency" onClick="openOnlyMyList(&quot;mfn_currency&quot;)" />
+				<listitem label="Accounting"
+					onClick="openOnlyMyList(&quot;mfn_accounting&quot;)" />
+				<listitem label="Date" onClick="openOnlyMyList(&quot;mfn_date&quot;)" />
+				<listitem label="Time" onClick="openOnlyMyList(&quot;mfn_time&quot;)" />
+				<listitem label="Percentage"
+					onClick="openOnlyMyList(&quot;mfn_percentage&quot;)" />
+				<listitem label="Fraction" onClick="openOnlyMyList(&quot;mfn_fraction&quot;)" />
+				<listitem label="Scientific"
+					onClick="openOnlyMyList(&quot;mfn_scientific&quot;)" />
+				<listitem label="Text" onClick="openOnlyMyList(&quot;mfn_text&quot;)" />
+				<listitem label="Special" onClick="openOnlyMyList(&quot;mfn_special&quot;)" />
+			</listbox>
+		</vbox>
+		<vbox>
+			<listbox id="mfn_general" rows="11" width="230px">
+			<listhead sizable="true">
+					<listheader label="Sample:" />
+			</listhead>
+<!--				<listitem label="general" value="General" />-->
+				<listitem label="No specific number format" value="" />
+			</listbox>
+			<listbox id="mfn_number" rows="11" width="230px">
+			<listhead sizable="true">
+					<listheader label="Sample:" />
+			</listhead>
+				<listitem label="-1234.10" value="0.00" />
+				<listitem label="1234.10" value="0.00;[Red]0.00" style="color: red;" />
+				<listitem label="(1234.10)" value="0.00_);(0.00)" />
+				<listitem label="(1234.10) red" value="0.00_);[Red](0.00)"
+					style="color: red;" />
+			</listbox>
+			<listbox id="mfn_currency" rows="11" width="230px">
+			<listhead sizable="true">
+					<listheader label="Sample:" />
+			</listhead>
+				<listitem label="-$1,234.10" value="$#,##0.00" />
+				<listitem label="$1,234.10" value="$#,##0.00;[Red]$#,##0.0"
+					style="color: red;" />
+				<listitem label="($1,234.10)" value="$#,##0.00_);($#,##0.00)" />
+				<listitem label="($1,234.10) red" value="#,##0.00_);[Red](#,##0.00)"
+					style="color: red;" />
+			</listbox>
+			<listbox id="mfn_accounting" rows="11" width="230px">
+			<listhead sizable="true">
+					<listheader label="Sample:" />
+			</listhead>
+				<listitem label="$1,234"
+					value="_($* #,##0.00_);_($*
+					(#,##0.00);_($* &quot;-&quot;??_);_(@_)" />
+			</listbox>
+			<listbox id="mfn_date" rows="11" width="230px">
+			<listhead sizable="true">
+					<listheader label="Sample:" />
+			</listhead>
+				<listitem label="*3/14/2001" value="m/d/yyyy" />
+				<listitem label="3/14/01" value="m/d/yy;@" />
+				<listitem label="03/14/01" value="mm/dd/yy;@" />
+				<!--  <listitem label="March 14, 2001" value="[$-409]mmmm d, yyyy;@" />-->
+				<listitem label="14-Mar-2001" value="[$-409]d-mmm-yyyy;@" />
+				<listitem label="4-Mar-01" value="[$-409]d-mmm-yy;@" />
+				<listitem label="04-Mar-01" value="[$-409]dd-mmm-yy;@" />
+				<listitem label="3/14" value="m/d;@" />
+				<listitem label="14-Mar" value="[$-409]d-mmm;@" />
+				<listitem label="Mar-01" value="[$-409]mmm-yy;@" />
+				<listitem label="March-01" value="[$-409]mmmm-yy;@" />
+				<!-- <listitem label="M-01" value="[$-409]mmmmm-yy;@" />-->
+				<listitem label="Mar" value="[$-409]mmmmm;@" />
+				<listitem label="3/14/01 13:30" value="[$-409]m/d/yy h:mm;@" />
+				<listitem label="3/14/01 1:30 PM" value="[$-409]m/d/yy h:mm AM/PM;@" />
+				<!-- 
+				<listitem label="*Wednesday, March 14, 2001" value="[$-F800]dddd, mmmm dd, yyyy" />
+				<listitem label="3/14/2001" value="m/d/yyyy;@" />  
+				-->
+			</listbox>
+			<listbox id="mfn_time" rows="11" width="230px">
+			<listhead sizable="true">
+					<listheader label="Sample:" />
+			</listhead>
+				<listitem label="*1:30:55 PM" value="[$-F400]h:mm:ss AM/PM" />
+				<listitem label="13:30" value="h:mm;@" />
+				<listitem label="1:30 PM" value="[$-409]h:mm AM/PM;@" />
+				<listitem label="13:30:55" value="h:mm:ss;@" />
+				<listitem label="1:30:55 PM" value="[$-409]h:mm:ss AM/PM;@" />
+				<listitem label="30:55.2" value="mm:ss.0;@" />
+				<listitem label="37:30:55" value="[h]:mm:ss;@" />
+				<listitem label="*3/14/01 1:30 PM" value="[$-409]m/d/yy h:mm AM/PM;@" />
+				<listitem label="*3/14/01 13:30" value="m/d/yy h:mm;@" />
+			</listbox>
+			<listbox id="mfn_percentage" rows="11" width="230px">
+			<listhead sizable="true">
+					<listheader label="Sample:" />
+			</listhead>
+				<listitem label="percentage" value="0.00%" />
+			</listbox>
+			<listbox id="mfn_fraction" rows="11" width="230px">
+			<listhead sizable="true">
+					<listheader label="Sample:" />
+			</listhead>
+				<listitem label="Up to one digit(1/4)" value="# ?/?" />
+				<listitem label="Up to two digits(21/25)" value="# ??/??" />
+				<listitem label="Up to three digits(312/943)" value="# ???/???" />
+				<listitem label="As halves(1/2)" value="# ?/2" />
+				<listitem label="As quarters(2/4)" value="# ?/4" />
+				<listitem label="As eighths(4/8)" value="# ?/8" />
+				<listitem label="As sixteens(8/16)" value="# ??/16" />
+				<listitem label="As tenths(3/10)" value="# ?/10" />
+				<listitem label="As hundredths(30/100)" value="# ??/100" />
+			</listbox>
+			<listbox id="mfn_scientific" rows="11" width="230px">
+			<listhead sizable="true">
+					<listheader label="Sample:" />
+			</listhead>
+				<listitem label="scientific" value="0.00E+00" />
+			</listbox>
+			<listbox id="mfn_text" rows="11" width="230px">
+			<listhead sizable="true">
+					<listheader label="Sample:" />
+			</listhead>
+				<listitem label="text" value="@" />
+			</listbox>
+			<listbox id="mfn_special" rows="11" width="230px">
+			<listhead sizable="true">
+					<listheader label="Sample:" />
+			</listhead>
+				<listitem label="Zip Code" value="00000" />
+				<listitem label="Zip Code + 4" value="00000-0000" />
+				<listitem label="Phone Number" value="[&lt;=9999999]###-####;(###)###-####" />
+				<listitem label="Social Security Number" value="000-00-0000" />
+			</listbox>
+		</vbox>
+	</hbox>
+	<hbox style="margin-top:3px;float:right">
+		<button label="OK" forward="//p1/mainWin.onFormatOK(number)" />
+		<button label="Cancel">
+			<attribute name="onClick"> 
+			Path.getComponent("//p1/mainWin/spreadsheet").highlight=null;
+			formatNumberWin.setVisible(false);			
+		</attribute>
+		</button>
+	</hbox>
+	<zscript><![CDATA[
+		void openOnlyMyList(String listId){
+			String[] myList = {"mfn_general","mfn_number","mfn_currency","mfn_accounting","mfn_date","mfn_time","mfn_percentage","mfn_fraction","mfn_scientific","mfn_text","mfn_special"};
+			for(int i = 0; i< myList.length; i++){
+				Listbox lb = self.getFellow(myList[i]);
+				if(lb != null){
+					//System.out.println(myList[i] + " ok");
+					if(listId.equals(myList[i])){
+						lb.setVisible(true);
+						lb.setSelectedIndex(0);
+					}else{
+						lb.setVisible(false);
+					}
+				}				
+			}
+		}
+	]]></zscript>
+	</div>
+</window>

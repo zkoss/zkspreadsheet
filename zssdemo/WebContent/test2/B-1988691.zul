@@ -1,0 +1,10 @@
+<zk>
+	<html><![CDATA[
+		[ 1988691 ] Number format won't be imported correctly<br/>
+		1.Text at B2 should be '2008' not '2,008'
+	]]></html>
+	<window title="" border="normal">
+		<spreadsheet id="ss1" src="/test2/xls/B-1988691.xls" width="700px"
+			height="500px" />
+	</window>
+</zk>

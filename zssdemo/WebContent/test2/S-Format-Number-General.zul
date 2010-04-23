@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/zss/function" prefix="ss" ?>
+<zk>
+	<window title="Test General Number Format" border="normal" >
+		User should see numbers rounding in different width
+		<spreadsheet id="ss1" src="/test2/xls/GeneralNumberFormat.xls" 
+			width  = "800px"
+			height = "250px"
+			maxcolumns = "10"
+			maxrows    = "10"
+		/>
+	</window>
+</zk>

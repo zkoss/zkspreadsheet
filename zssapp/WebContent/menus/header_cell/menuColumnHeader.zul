@@ -1,0 +1,23 @@
+<!--<window id="mchWin">-->
+<!--<menupopup id="mchWin_menupopup">-->
+<menupopup id="${arg.id}">
+<!-- 
+can I change onColumnHeaderMenu to ${arg.eventHandler} ?
+see forward.
+However, you can not use EL expressions to specify the event names
+ -->
+	<menuitem label="${c:l('edit.cut')}" forward="onEditCut" />
+	<menuitem label="${c:l('edit.copy')}" forward="onEditCopy" />
+	<menuitem label="${c:l('edit.paste')}" forward="onEditPaste" />
+	<menuseparator/>
+	<menuitem label="${c:l('edit.clearContent')}" forward="onClearContent" />
+	<menuitem label="${c:l('edit.clearStyle')}" forward="onClearStyle" />
+	<menuseparator/>
+	<menuitem label="${c:l('insert.columns')}" forward="onInsertColumns" />
+	<menuitem label="${c:l('edit.deleteCols')}" forward="onDeleteColumns" />
+	<menuseparator/>
+	<menuitem label="${c:l('setColumnWidth')}" forward="onColumnHeaderMenu(Width)" />
+	<menuitem label="${c:l('format.numberFormat')}" forward="onColumnHeaderMenu(Format)" />
+</menupopup>
+
+<!--</window>-->

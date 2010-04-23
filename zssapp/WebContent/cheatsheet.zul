@@ -1,0 +1,46 @@
+<!-- my cheat sheet-->
+<window id="${arg.id}" visible="false" width="250px" border="normal">
+	<grid>
+		<rows>
+			<row>
+			<label value="Copy"/> Ctrl+C
+			</row>
+			<row>
+			<label value="Cut"/> Ctrl+X
+			</row>
+			<row>
+			<label value="Paste"/> Ctrl+P
+			</row>
+			<row>
+			<label value="Save"/> Ctrl+S
+			</row>
+			<row>
+			<label value="Open"/> Ctrl+O
+			</row>
+			<row>
+			<label value="Undo"/> Ctrl+Z
+			</row>
+			<row>
+			<label value="Redo"/> Ctrl+Y
+			</row>
+			<!--<row>
+			<label value="Find/Replace"/> Ctrl+F
+			</row>-->
+			<row>
+			<label value="Font Bold"/> Ctrl+B
+			</row>
+			<row>
+			<label value="Font Italic"/> Ctrl+I
+			</row>
+			<row>
+			<label value="Font Underline"/> Ctrl+U
+			</row>
+			<row>
+			<label value="Clear Content"/> Delete
+			</row>
+			<row>
+			<label value="Clear Style"/> Ctrl+Delete
+			</row>
+		</rows>
+	</grid>
+</window>

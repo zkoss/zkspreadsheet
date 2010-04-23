@@ -1,0 +1,51 @@
+<zk>
+	<groupbox mold="3d" open="false"><caption>Test Steps</caption>
+	<html><![CDATA[
+1.press alt+c  at a cell, the label should change to :markcopy at:row,col <br/>
+2.press ctrl+c at a cell, the label should change to :markcopy at:row,col <br/>
+3.press ctrl+v at a cell, the label should change to :86,true,false <br/>
+4.press F4 at a cell, the label should change to 115,false,false <br/>
+5.press ctrl+F3 at a cell, that label should change to :114,true,false <br/>
+6.press freeze, repeat 1-5
+	]]></html>
+	</groupbox>
+<window title="Event" border="normal" style="heigth:400px">		
+	<zscript>
+		int copyrow;
+		int copycol;
+		boolean copy = false;
+	
+	</zscript>
+	<button label="invalidate" onClick="ss1.invalidate()"/>
+	<button label="freeze" onClick="if(ss1.rowfreeze>=0){ss1.rowfreeze=-1;ss1.columnfreeze=-1;}else{ss1.rowfreeze=2;ss1.columnfreeze=0;}"/>
+	<hbox>keyEvent[alt+c,ctrl+c,ctrl+v,f4,ctrl+f3]:<label id="lab2"/></hbox>
+	<spreadsheet id="ss1" src="/WEB-INF/xls/test/style.xls" maxrows="500" maxcolumns="50" height="300px" width="90%" style="border:1px solid #8AA3C1" >
+		<attribute name="ctrlKeys">@c^c^v#f4^#f3</attribute>
+		<attribute name="onCtrlKey">
+			lab2.value = event.keyCode+","+event.ctrlKey+","+event.altKey;
+
+			if(event.keyCode==67){//mark copy 
+				copy=true;
+				var range = ss1.extraCtrl.focusRect;
+				copyrow = range.top;
+				copycol = range.left;
+				lab2.value = "markcopy at:"+copyrow+","+copycol;
+				ss1.highlight = ss1.selection;
+				
+			}
+			if(event.keyCode==86){//do paste
+				var range = ss1.extraCtrl.focusRect;
+				int row = range.top;
+				int col = range.left;
+				var sheet = ss1.getSelectedSheet();
+				var cell = sheet.getCell(copyrow,copycol);
+				if(cell!=null){
+					sheet.copyCell(cell,row,col);
+				} 
+				ss1.highlight = null;
+			}	
+			
+		</attribute>	
+	</spreadsheet>
+</window>
+</zk>

@@ -1,0 +1,10 @@
+<zk>
+	<html><![CDATA[
+		[ 1985287 ] Reference SUM(E1:E3:E2:E4) cause exceptions
+		1.The text of A1 should be 10<br/>
+	]]></html>
+	<window title="" border="normal">
+		<spreadsheet id="ss1" src="/test2/xls/B-1985287.xls" width="700px"
+			height="500px" />
+	</window>
+</zk>

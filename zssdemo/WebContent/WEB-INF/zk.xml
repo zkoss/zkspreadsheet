@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- zk.xml
+	Purpose:
+	
+	Description:
+	
+	History:
+	Mon 10/29 2007, Created by Dennis.Chen
+	
+	Copyright (C) 2006 Potix Corporation. All Rights Reserved.
+-->
+
+<zk>
+	<!--client-config>
+		<debug-js>true</debug-js>
+	</client-config>
+	<log>
+		<log-base>org.zkoss</log-base>
+	</log-->
+</zk>

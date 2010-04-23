@@ -1,0 +1,51 @@
+<window title="Image Wgt" border="normal" style="heigth:400px">
+	<zscript>
+		import org.zkoss.zss.demo.*;
+		import org.zkoss.zssex.ui.widget.*;
+		
+		var zindex = 100;
+		
+		ImageWidget image1;
+		ImageWidget image2;
+		
+		Object addImage(ImageWidget image, int row,int col,boolean vis){
+			image = new ImageWidget();
+			image.src = "/image/sun.jpg";
+			image.row = row;
+			image.column = col;
+			image.visible = vis;
+			image.zindex = zindex--;
+			image.handler = ss1.extraCtrl.widgetHandler;
+			return image;
+		}
+		void movetorow(ImageWidget image){
+			image.row = (image.row+1);
+			image.top = image.top==5?0:5;
+			image.visible = !image.visible;
+		}
+		void movetocol(ImageWidget image){
+			image.column = (image.column+1);
+			image.left = image.left==5?0:5;
+			image.visible = !image.visible;
+		}
+		
+	</zscript>
+	<button label="move image 1">
+		<attribute name="onClick">
+			movetorow(image1);
+		</attribute>
+	</button>
+	<button label="move image 2">
+		<attribute name="onClick">
+			movetocol(image2);
+		</attribute>
+	</button>
+	<button label="print" onClick='ComponentPrinter.print(ss1)'/>
+	<button label="ss1.invalidate" onClick="ss1.invalidate()"/>
+	<spreadsheet id="ss1" url="/WEB-INF/xls/test/common.xls" maxrow="500" maxcolumn="50" height="300px" width="90%" style="border:1px solid #8AA3C1;" >
+	</spreadsheet>
+	<zscript>
+		image1 = addImage(image1,2,0,true);
+		image2 = addImage(image2,2,10,false);	
+	</zscript>
+</window>

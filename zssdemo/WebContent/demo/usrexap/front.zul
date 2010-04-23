@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+front.zul
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		Thu June  5 11:34:28     2008, Created by ivancheng
+}}IS_NOTE
+
+Copyright (C) 2008 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+-->
+<window xmlns:h="http://www.w3.org/1999/xhtml">
+	<zscript><![CDATA[
+		void doSelect(String s) {
+			Tree tree = Path.getComponent("//zssUserGuide/zssToc");
+			Treeitem treeitem = tree.getSpaceOwner().getFellow(s);
+			tree.selectItem(treeitem);
+			java.util.Set items = new HashSet();
+			items.add(treeitem);
+			Events.postEvent(new SelectEvent("onSelect", tree, items));
+		}
+	]]></zscript>
+	<html><![CDATA[
+		<h3>Good Pratice</h3>
+	]]></html>
+	<h:ul>
+		<h:li><toolbarbutton label="Balance Sheet" onClick="doSelect(&quot;u1&quot;)"/></h:li>
+		<h:li><toolbarbutton label="Creating Report" onClick="doSelect(&quot;u2&quot;)"/></h:li>
+	</h:ul>
+</window>

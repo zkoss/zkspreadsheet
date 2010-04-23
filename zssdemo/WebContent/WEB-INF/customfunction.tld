@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<taglib>
+    <uri>http://www.zkoss.org/zss/demo/customfunction</uri>
+    <description>Custom Function of ZSSDemo
+    </description>
+    <function>
+        <name>ECHO</name>
+        <function-class>org.zkoss.zss.demo.CustomFunction</function-class>
+        <function-signature>
+    java.lang.Object echo(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+        </function-signature>
+        <description>
+        </description>
+    </function>
+</taglib>

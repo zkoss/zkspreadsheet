@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/zss/function" prefix="ss" ?>
+<zk>
+	<zscript>import org.zkoss.zk.ui.event.*</zscript>
+	<window title="Large Sheet" id="w1"
+		border="normal" height="90%" width="90%">
+		<button label="new Sheet" >
+			<attribute name="onClick">
+				Spreadsheet ss1 = new Spreadsheet();
+				ss1.src = "/WEB-INF/xls/test/common.xls";
+				ss1.maxrows = 500;
+				ss1.maxcolumns=120;
+				ss1.height="200px";
+				ss1.width="600px";
+				ss1.style="border:1px solid #8AA3C1";
+				ss1.setParent(w1);
+				ss1.addEventListener("onStartEditing",new EventListener(){
+					public void onEvent(Event event){
+						if(event.row==1){
+							event.stopPropagation();
+							lab.value="cannot edit on row 2,"+event.column;
+						}
+					}
+				});
+				ss1.addEventListener("onStopEditing",new EventListener(){
+					public void onEvent(Event event){
+						if(event.row==2){
+							if(event.editingValue.startsWith("=")){
+								event.stopPropagation();
+								lab.value="cannot use function(=) on row 3,"+event.column;
+							}
+						}
+					}
+				});
+			</attribute>
+		</button>
+		<label id="lab"/>
+	</window>
+</zk>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?page id="zssUserGuide" title="ZK Spreadsheet Demo"?>
+<!--
+index.zul
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		Mon May  12 11:31:13     2008, Created by charlesPao
+}}IS_NOTE
+
+Copyright (C) 2005 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+-->
+<zk xmlns:a="http://www.zkoss.org/2005/zk/annotation">
+<borderlayout>
+	<west border="none" size="250px" splittable="true" collapsible="true" autoscroll="true">
+		<!-- <window id="tocTable"> -->
+			<!-- <include src="./toc/tree.zul" /> -->
+			<tree id="zssToc" use="org.zkoss.zss.demo.zssTocTree" pageSize="-1" vflex="true">
+				<treecols>
+				<treecol id="version" />
+					<zscript>
+						version.label = "ZK Spreadsheet " + org.zkoss.zss.ui.Version.RELEASE + " Live Demo";
+					</zscript>
+				</treecols>
+				<treechildren>
+					<treeitem id="demo1">
+						<attribute name="label">View Spreadsheet online</attribute>
+						<attribute name="value">/demo/UI/front.zul</attribute>
+						<treechildren>
+							<treeitem id="ui1">
+								<attribute name="label">Simplest Example</attribute>
+								<attribute name="value">/demo/UI/hello.zul</attribute>
+							</treeitem>
+							<treeitem id="ui2">
+								<attribute name="label">Row/Column Freeze</attribute>
+								<attribute name="value">/demo/UI/freeze.zul</attribute>
+							</treeitem>
+							<treeitem id="ui3">
+								<attribute name="label">Customized Title</attribute>
+								<attribute name="value">/demo/UI/rowcolumn.zul</attribute>
+							</treeitem>
+							
+						</treechildren>
+					</treeitem>
+					<treeitem id="demo2">
+						<attribute name="label">Events</attribute>
+						<attribute name="value">/demo/event/front.zul</attribute>
+						<treechildren>
+							<treeitem id="e1">
+								<attribute name="label">Editing Event</attribute>
+								<attribute name="value">/demo/event/editevent.zul</attribute>
+							</treeitem>
+							<treeitem id="e2">
+								<attribute name="label">Mouse Event</attribute>
+								<attribute name="value">/demo/event/mouseevent.zul</attribute>
+							</treeitem>
+							<treeitem id="e3">
+								<attribute name="label">Key Event</attribute>
+								<attribute name="value">/demo/event/keyevent.zul</attribute>
+							</treeitem>
+						</treechildren>
+					</treeitem>
+					<treeitem id="demo3">
+						<attribute name="label">Good Practice</attribute>
+						<attribute name="value">/demo/usrexap/front.zul</attribute>
+						<treechildren>
+							<treeitem id="u1">
+								<attribute name="label">Balance Sheet</attribute>
+								<attribute name="value">/demo/usrexap/balance.zul</attribute>
+							</treeitem>
+							<treeitem id="u2">
+								<attribute name="label">Creating Report</attribute>
+								<attribute name="value">/demo/usrexap/report.zul</attribute>
+							</treeitem>
+						</treechildren>
+					</treeitem>
+					<treeitem id="demo4">
+						<attribute name="label">Integration</attribute>
+						<attribute name="value">/demo/servside/front.zul</attribute>
+						<treechildren>
+							<treeitem id="s1">
+								<attribute name="label">Formula</attribute>
+								<attribute name="value">/demo/servside/formula.zul</attribute>
+							</treeitem>
+							<treeitem id="s2">
+								<attribute name="label">JavaBean</attribute>
+								<attribute name="value">/demo/servside/javabean.zul</attribute>
+							</treeitem>
+							
+						</treechildren>
+					</treeitem>
+					<treeitem id="demo5">
+						<attribute name="label">Tutorial</attribute>
+						<attribute name="value">/demo/others/front.zul</attribute>
+						<treechildren>
+						</treechildren>
+					</treeitem>
+				</treechildren>
+			</tree>
+	</west>
+	<center autoscroll="true">
+		<!--the primary content window-->
+		<window border="none" id="showRoom">
+			<include id="contentArea" src="${requestScope.contentSrc}" />
+		</window>
+	</center>
+</borderlayout>
+</zk>

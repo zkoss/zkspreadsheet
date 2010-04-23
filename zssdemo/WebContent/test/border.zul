@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/zss/function" prefix="ss" ?>
+<zk>
+	<groupbox mold="3d" open="false"><caption>Test Steps</caption>
+	<button label="check" onClick="op.doOverlapped()"/>
+	<window id="op" visible="false" title="overlapped" width="400px" border="normal">
+		<image src="image/border-result1.png"/>
+	</window>
+	
+	</groupbox>
+	<window title="Border Format" 
+		border="normal" style="heigth:400px;width:900px">
+		<spreadsheet id="ss1" src="/WEB-INF/xls/test/border.xls" maxrows="100" maxcolumns="40" 
+			height="400px" width="100%" style="border:1px solid #8AA3C1" />
+	</window>
+</zk>

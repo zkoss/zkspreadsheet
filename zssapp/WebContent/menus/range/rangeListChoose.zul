@@ -1,0 +1,30 @@
+<window id="rangeChooseWin" title="Choose Range" border="normal">
+	<zk>
+		<zscript> <![CDATA[	
+			import org.zkoss.zss.app.SimpleListModelIgnoreCase; 
+			import org.zkoss.zss.app.RangeHelper;			
+			RangeHelper rh = new RangeHelper(Path.getComponent("//p1/mainWin/ss1"));
+			String[] rangeNames = rh.getRangeList();			
+			ListModel strset = new SimpleListModelIgnoreCase(rangeNames);
+			]]>
+		</zscript>
+	</zk>
+	<vbox>	
+	Existed Ranges:
+	<listbox id="rcw_rangeList" model="${strset}"  forward="onSelect=//p1/mainWin.onRange(selectChangeChoose)">
+	</listbox>	
+	<hbox>
+	<button label="OK" forward="//p1/mainWin.onRange(choose)">
+	</button>
+	<button label="Cancel">
+		<attribute name="onClick"> 			
+			self.getSpaceOwner().detach();			
+		</attribute>
+	</button>
+	</hbox>
+	</vbox>
+	<attribute name="onCreate"> 
+		rcw_rangeList.selectedIndex=0;
+	</attribute>		
+</window>
+

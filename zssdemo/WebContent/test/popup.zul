@@ -1,0 +1,57 @@
+<window title="Event" border="normal" style="heigth:400px">
+	<zscript>
+		var copyrow;
+		var copycol;
+		boolean copy = false;
+	
+	</zscript>		
+	<button label="freeze" onClick="if(ss1.rowfreeze>=0){ss1.rowfreeze=-1;ss1.columnfreeze=-1;}else{ss1.rowfreeze=2;ss1.columnfreeze=0;}"/>
+	<hbox>Info:<label id="lab1"/></hbox>
+	<spreadsheet id="ss1" src="/WEB-INF/xls/test/mouseevent.xls" maxrows="500" maxcolumns="50" height="300px" width="90%" style="border:1px solid #8AA3C1;" >
+		<attribute name="onCellRightClick">
+			cminfo.label = "Info:"+event.row+","+event.column;
+			cminfo.setAttribute("cprow",event.row);
+			cminfo.setAttribute("cpcol",event.column);
+			cellmenu.open(event.clientx,event.clienty);
+		</attribute>	
+		<attribute name="onHeaderRightClick">
+			hminfo.label = "Info:"+(event.type==0?"Column":"Row")+","+(event.index+1);
+			headermenu.open(event.clientx,event.clienty);
+		</attribute>	
+	</spreadsheet>
+	<menupopup id="cellmenu">
+		<menuitem label="Info" id="cminfo"/>
+		<menuitem label="Cut" onClick="alert(self.label);ss1.focus();"/>
+		<menuitem label="Copy" >
+			<attribute name="onClick">
+				copy=true;
+				copyrow = cminfo.getAttribute("cprow");
+				copycol = cminfo.getAttribute("cpcol");
+				lab1.value = "markcopy at:"+copyrow+","+copycol;
+				ss1.focus();
+			</attribute>
+		</menuitem>
+		<menuitem label="Paste" >
+			<attribute name="onClick"><![CDATA[
+				var sheet = ss1.getSelectedSheet();
+				var row = cminfo.getAttribute("cprow");
+				var col = cminfo.getAttribute("cpcol");
+				var cell = sheet.getCell(copyrow,copycol);
+				if(copy && cell!=null){
+					sheet.copyCell(cell,row,col);
+					copy = false;
+				}
+				ss1.focus();
+			]]></attribute>
+		</menuitem>
+		<menuseparator/>
+		<menuitem label="Format Cell" onClick="alert(self.label);ss1.focus();"/>
+	</menupopup>
+	<menupopup id="headermenu">
+		<menuitem label="Info" id="hminfo"/>
+		<menuitem label="Insert" onClick="alert(self.label)"/>
+		<menuitem label="Delete" onClick="alert(self.label)"/>
+		<menuseparator/>
+		<menuitem label="Clear" onClick="alert(self.label)"/>
+	</menupopup>
+</window>

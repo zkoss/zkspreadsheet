@@ -1,0 +1,47 @@
+<zk>
+	<groupbox mold="3d" open="false"><caption>Test Steps</caption>
+	<html><![CDATA[
+1.click, double click, right on a cell, check is the data correct or not.<br/>
+2.click, double click, right on a row head, check is the data correct or not.<br/>
+3.click, double click, right on a column head, check is the data correct or not.<br/>
+4.click freeze, repeat 1 , and targe on freeze panel.
+	]]></html>
+	</groupbox>
+<window title="Event" border="normal" style="heigth:400px">		
+	<button label="freeze" onClick="if(ss1.rowfreeze>=0){ss1.rowfreeze=-1;ss1.columnfreeze=-1;}else{ss1.rowfreeze=2;ss1.columnfreeze=0;}"/>
+	<hbox>CellClick:<label id="lab1"/></hbox>
+	<hbox>CellRightClick:<label id="lab2"/></hbox>
+	<hbox>CellDoubleClick:<label id="lab3"/></hbox>
+	<hbox>HeaderClick:<label id="lab4"/></hbox>
+	<hbox>HeaderRightClick:<label id="lab5"/></hbox>
+	<hbox>HeaderDoubleClick:<label id="lab6"/></hbox>
+	<hbox>Selection Event:<label id="lab7"/></hbox>
+	<hbox>Cell Focus Event:<label id="lab8"/></hbox>
+	<spreadsheet id="ss1" src="/WEB-INF/xls/test/mouseevent.xls" maxrows="500" maxcolumns="50" height="300px" width="90%" style="border:1px solid #8AA3C1;" >
+		<attribute name="onCellClick">
+			lab1.value = event.toString()+",selection:"+ss1.selection;
+		</attribute>
+		<attribute name="onCellRightClick">
+			lab2.value = event.toString()+",selection:"+ss1.selection;
+		</attribute>	
+		<attribute name="onCellDoubleClick">
+			lab3.value = event.toString();
+		</attribute>
+		<attribute name="onHeaderClick">
+			lab4.value = event.toString();
+		</attribute>
+		<attribute name="onHeaderRightClick">
+			lab5.value = event.toString();
+		</attribute>	
+		<attribute name="onHeaderDoubleClick">
+			lab6.value = event.toString();
+		</attribute>
+		<attribute name="onCellSelection">
+				lab7.value = event.action+","+event.left+","+event.top+","+event.right+","+event.bottom;
+		</attribute>
+		<attribute name="onCellFocused">
+				lab8.value = event.row+","+event.column;
+		</attribute>
+	</spreadsheet>
+</window>
+</zk>

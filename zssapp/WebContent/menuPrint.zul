@@ -1,0 +1,38 @@
+<window id="menuPrintWin" title="Print Menu" visible="false" width="200px" height="100px" border="normal">
+		<hbox style="padding:5px">
+			Target:
+			<combobox width="100px" id="printTargetCombobox">
+				<attribute name="onSelect">
+					String target="";
+					if(printTargetCombobox.getSelectedIndex()==0)
+						target="sheet";
+					else
+						target="selected";
+						
+					printBtn.setHref(printBtn.getTooltip()+"&amp;target="+target);
+				</attribute>
+			<comboitem label="Whole Sheet" />
+			<comboitem label="Selected Area" />
+			</combobox>
+		</hbox>
+		<hbox style="float:center;padding:5px">
+			<button label="OK" id="printBtn" target="_blank" action="onMouseUp:zkau.send({uuid: '${printBtn.uuid}', 
+																							 cmd: 'onClick',
+																							 data:[],
+																							 ctl:false});">
+				<attribute name="onClick">
+					//System.out.println("onClick");
+					menuPrintWin.setVisible(false);
+				</attribute>
+			</button>
+			<button label="Cancel">
+				<attribute name="onClick">
+					menuPrintWin.setVisible(false);
+				</attribute>
+			</button>
+		</hbox>
+		<attribute name="onCreate">
+			printTargetCombobox.selectedIndex=0;
+			
+		</attribute>
+</window>

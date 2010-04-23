@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zk>
+	<window border="normal">
+		<hbox>
+		<label value="begin row"/>
+			<radiogroup id="begin_row" >
+				<radio label="1" selected="true" />
+				<radio label="2"  />
+				<radio label="3" />
+				<radio label="4" />
+				<radio label="5" />
+				<radio label="6" />
+			</radiogroup>
+		</hbox>
+		<hbox>
+		<label value="end row"/>
+			<radiogroup id="end_row" >
+				<radio label="1" selected="true" />
+				<radio label="2"  />
+				<radio label="3" />
+				<radio label="4" />
+				<radio label="5" />
+				<radio label="6" />
+			</radiogroup>
+		</hbox>
+		<button label="insertRows">
+			<attribute name="onClick"><![CDATA[
+				begin_label = begin_row.selectedItem.label;
+				  end_label =   end_row.selectedItem.label;
+				begin_index = Integer.parseInt( begin_label ) - 1;
+				  end_index = Integer.parseInt(   end_label ) - 1;
+				
+				if( begin_index <= end_index )
+				{
+					ss1.getSelectedSheet().insertRows( begin_index , end_index );
+					Messagebox.show
+					(
+						"Insert rows from row " + begin_label + " to row " + end_label,
+						"", Messagebox.OK, Messagebox.INFORMATION
+					);
+					
+					totalRowsNumber = 30 + end_index - begin_index + 1;
+					
+					Messagebox.show
+					(
+						"Total rows number should be " + totalRowsNumber,
+						"", Messagebox.OK, Messagebox.INFORMATION
+					);
+				}
+				else
+				{
+					Messagebox.show
+					(
+						"Can't insert rows, begin index > end index",
+						"", Messagebox.OK, Messagebox.EXCLAMATION
+					);
+				}
+				
+			]]></attribute>				
+		</button>
+		<spreadsheet id="ss1" src="/test2/xls/temp.xls" width="400px" height="400px" maxrows="30" />
+		<zscript>
+			sheet = ss1.getSelectedSheet(); 
+			for( r = 0 ; r != 30 ; r++ )
+			{
+				for( c = 0 ; c != 3 ; c++ )
+				{
+					sheet.setCellValue( r , c , r+1 );
+				}
+			}
+		</zscript>
+	</window>
+</zk>

@@ -1,0 +1,4 @@
+
+<package name="zssapp" language="xul/html" depends="zkex.inp">
+	<widget name="Colorbutton"/>
+</package>

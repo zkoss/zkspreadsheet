@@ -1,0 +1,23 @@
+<?taglib uri="/WEB-INF/customfunction.tld" prefix=""?>
+<zk>
+		<spreadsheet id="ss1" url="/WEB-INF/xls/test/empty.xls" maxrows="500" maxcolumns="80" width="90%" height="300px"/>
+		
+		<zscript>
+			import org.zkoss.zss.ui.impl.*;
+			import java.util.*;
+			import org.zkoss.xel.*;
+			import org.zkoss.xel.taglib.*;
+			import org.zkoss.util.resource.ClassLocator;
+			
+			
+			Utils.setCellText(ss1.selectedSheet,0,0,"1");
+			Utils.setCellText(ss1.selectedSheet,1,0,"2");
+			Utils.setCellText(ss1.selectedSheet,3,0,"=SUM(A1,A2)");
+			
+			Utils.setCellText(ss1.selectedSheet,0,1,"ABCD");
+			Utils.setCellText(ss1.selectedSheet,1,1,"EFGH");
+			Utils.setCellText(ss1.selectedSheet,3,1,"=ECHO(B1,B2)");
+			Utils.setCellText(ss1.selectedSheet,4,1,"=ECHO(A1:B2)");
+		</zscript>
+		
+</zk>

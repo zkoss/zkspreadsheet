@@ -1,0 +1,34 @@
+<window id="rangeAddWin" title="Add Range" border="normal">
+	<zk>
+		<zscript> <![CDATA[	
+			import org.zkoss.zss.app.SimpleListModelIgnoreCase; 
+			import org.zkoss.zss.app.RangeHelper;			
+			RangeHelper rh = new RangeHelper(Path.getComponent("//p1/mainWin/ss1"));
+			String[] rangeNames = rh.getRangeList();			
+			ListModel strset = new SimpleListModelIgnoreCase(rangeNames);
+			]]>
+		</zscript>
+	</zk>
+	<vbox>	
+	Existed Ranges:
+	<listbox id="raw_rangeList" model="${strset}" forward="onSelect=//p1/mainWin.onRange(selectChangeAdd)">
+	</listbox>
+	<hbox>
+	Range name:
+	<textbox id="raw_rangename"/>
+	</hbox>	
+	<hbox>
+	<button label="OK" forward="//p1/mainWin.onRange(add)">
+	</button>
+	<button label="Cancel">
+		<attribute name="onClick"> 			
+			self.getSpaceOwner().detach();			
+		</attribute>
+	</button>
+	</hbox>
+	</vbox>
+<!--	<attribute name="onCreate"> -->
+<!--		raw_rangenames.selectedIndex=0;-->
+<!--	</attribute>		-->
+</window>
+

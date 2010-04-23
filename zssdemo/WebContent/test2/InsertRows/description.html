@@ -1,0 +1,7 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"><title></title></head>
+<body>
+<h1>Summary:</h1>Test Insert Rows API Behavior<br><h1>Description:</h1>InsertRows( start index , end index ) <br>Test start and end po<br><ul><li>0 (begining)</li><li>between</li><li>view start - 1</li><li>view start</li><li>between</li><li>view end</li><li>view end + 1</li><li>between</li><li>end</li><li>end + 1</li></ul><h1>Expected:<br></h1>After insertion:<br><ul><li>every inserted rows should be empty.</li><li>Original rows &lt; start index will not moved</li><li>Original rows &gt;= start index will after end index</li><li>Totol rows number = original rows number + end index - start index + 1
+</li></ul>
+</body></html>

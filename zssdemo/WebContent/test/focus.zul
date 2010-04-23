@@ -1,0 +1,24 @@
+<zk>
+	<groupbox mold="3d" open="false"><caption>Test Steps</caption>
+	<html><![CDATA[
+1.after loading the page, the focus and scroll change to C101
+<br/>2.select a range from C92-F93, then click focus button, the selection will disappear then comback
+<br/>3.change textbox data to row:10 column:3, click move, the focus and view scroll to D11, press key right, the focus change to E11
+<br/>4.change textbox data to row:90 column:0 , then click move, the focus change to A91 
+<br/>5.click freeze, repeat 2-4.
+<br/>6.change textbox data to row:1 column:1 , then click move, the focus change to B2 whihc on freeze panel and view doesn't scroll.
+	]]></html>
+	</groupbox>
+<window title="Event" border="normal" style="heigth:400px">
+	<button label="freeze" onClick="if(ss1.rowfreeze>=0){ss1.rowfreeze=-1;ss1.columnfreeze=-1;}else{ss1.rowfreeze=2;ss1.columnfreeze=0;}; ss1.focus()"/>
+	<button label="invalidate and focus" onClick="ss1.invalidate();ss1.focus()"/>
+	<button label="invalidate and moveto" onClick="ss1.invalidate();ss1.focusTo(ss1.cellFocus.row,ss1.cellFocus.column)"/>
+	<hbox><textbox/><button label="focus" onClick="ss1.focus()"/></hbox>
+	<hbox>Row:<intbox id="row" value="10"/>,Column<intbox id="col" value="3"/><button label="move" onClick="ss1.focusTo(row.value,col.value)"/></hbox>
+	<spreadsheet id="ss1" src="/WEB-INF/xls/test/common.xls" maxrows="500" maxcolumns="50" height="300px" width="90%" style="border:1px solid #8AA3C1;" >
+	</spreadsheet>
+	<zscript>
+		ss1.focusTo(100,2);
+	</zscript>
+</window>
+</zk>

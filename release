@@ -1,0 +1,483 @@
+#!/bin/bash
+# release
+#
+#{{IS_NOTE
+#	Purpose:
+#		
+#	Description:
+#		
+#	History:
+#		Mon Nov 14 14:29:09     2005, Created by tomyeh
+#}}IS_NOTE
+#
+#Copyright (C) 2005 Potix Corporation. All Rights Reserved.
+#
+#{{IS_RIGHT
+#}}IS_RIGHT
+#
+stamp=$(date +%Y-%m-%d)
+
+target=$1
+
+setting=build.setting.local
+if [ ! -f $setting ] ; then
+	setting=build.setting
+	if [ ! -f $setting ] ; then
+		echo $setting must be specified
+		exit 1
+	fi
+fi
+javadocdir=$(grep '^javadoc' $setting)
+javadocdir=${javadocdir#javadoc=}
+if [ "$javadocdir" = "" ] ; then
+	echo javadoc must be specified in $setting
+	exit 1
+fi
+javadocdir=${javadocdir/\~/$HOME}
+if [ ! -d "$javadocdir" ] ; then
+	echo $javadocdir is not found
+	exit 1
+fi
+javadocdir=${javadocdir/\~/$HOME}
+if [ ! -d "$javadocdir/jsdoc" ] ; then
+	echo $javadocdir/jsdoc is not found
+	exit 1
+fi
+
+if [ "$target" == "official" ] ; then
+	htmldocdir=$(grep '^htmldoc' $setting)
+	htmldocdir=${htmldocdir#htmldoc=}
+	if [ "$htmldocdir" = "" ] ; then
+		echo htmldoc must be specified in $setting
+		exit 1
+	fi
+	htmldocdir=${htmldocdir/\~/$HOME}
+	if [ ! -d "$htmldocdir/devguide" ] ; then
+		echo $htmldocdir/devguide is not found
+		exit 1
+	fi
+fi
+
+ver=$(grep '^version=' $setting)
+ver=${ver#version=}
+
+#jar
+if [ "$target" == "official" ] ; then
+	binnm=zssee-bin-$ver
+	stdnm=zss-bin-$ver
+#	profnm=zsspe-bin-$ver
+	
+	binnmevl=zssee-bin-eval-$ver
+#	profnmevl=zsspe-bin-eval-$ver
+	
+	demonm=zss-demo-$ver
+	javadocnm=zss-javadoc-$ver
+	jsdocnm=zss-jsdoc-$ver
+	srcnm=zss-src-$ver
+#	profsrcnm=zsspe-src-$ver
+	entsrcnm=zssee-src-$ver
+	echo "Release $binnm..."
+elif [ "$target" == "" ] || [ "$target" == "daily" ] ; then
+	target=daily
+
+	binnm=zssee-bin-$ver-$stamp
+	stdnm=zss-bin-$ver-$stamp
+#	profnm=zsspe-bin-$ver-$stamp
+	
+	binnmevl=zssee-bin-eval-$ver-$stamp
+#	profnmevl=zsspe-bin-eval-$ver-$stamp
+	
+	demonm=zss-demo-$ver-$stamp
+	javadocnm=zss-javadoc-$ver-$stamp
+	jsdocnm=zss-jsdoc-$ver-$stamp
+	srcnm=zss-src-$ver-$stamp
+	docnm=zss-doc-$ver-$stamp
+	echo "Release $binnm..."
+else
+	echo "Usage: release [ official | daily ]"
+	echo Default: daily
+	exit 1
+fi
+
+rm -rf /tmp/zss
+rm -rf /tmp/maven
+maindir="$(pwd)"
+echo "Working directory $maindir"
+
+#build *-all.war *-all.ear
+if [ "$target" == "official" ] ; then
+	rm -rf dist/lib/zssdemo*.war dist/lib/zssdemos*.ear
+	cp -f zssdemo/war.libs.all zssdemo/war.libs
+	./build clean zssdemo zssdemos
+	./build zssdemo zssdemos
+
+	mv dist/lib/zssdemo.war dist/lib/zssdemo-all.war
+	mv dist/lib/zssdemos.ear dist/lib/zssdemos-all.ear
+
+	cp -f zssdemo/war.libs.minimal zssdemo/war.libs
+	./build clean zssdemo zssdemos
+	./build zssdemo zssdemos
+fi
+if [ "$target" == "daily" ] ; then
+	rm -rf dist/lib/zssdemo*.war
+	cp -f zssdemo/war.libs.all zssdemo/war.libs
+	./build clean zssdemo
+	./build zssdemo
+
+	mv dist/lib/zssdemo.war dist/lib/zssdemo-all.war
+
+	cp -f zssdemo/war.libs.minimal zssdemo/war.libs
+	./build clean zssdemo
+	./build zssdemo
+fi
+
+#build zssapp
+rm -rf dist/lib/zssapp*.war
+cp -f zssapp/war.libs.all zssapp/war.libs
+./build clean zssapp
+./build zssapp
+
+mv dist/lib/zssapp.war dist/lib/zssapp-all.war
+
+cp -f zssapp/war.libs.minimal zssapp/war.libs
+./build clean zssapp
+./build zssapp
+
+#Prepare the source codes
+if [ "$target" == "official" ] || [ "$target" == "daily" ] ; then
+	#mkdir -p /tmp/zss/$srcnm/dist/lib/ext
+	mkdir -p /tmp/zss/$srcnm/bin
+	mkdir -p /tmp/zss/$srcnm/dist/src
+	mkdir -p /tmp/zss/$srcnm/doc
+	chmod -R 755 $maindir
+	echo Prepare ${srcnm}.zip
+	
+	if [ "$target" == "official" ] ; then
+		echo Prepare ${profsrcnm}.zip ${entsrcnm}.zip
+		mkdir -p /tmp/zss/$profsrcnm/dist/src
+		mkdir -p /tmp/zss/$profsrcnm/doc
+		mkdir -p /tmp/zss/$entsrcnm/dist/src
+		mkdir -p /tmp/zss/$entsrcnm/doc
+	fi
+	
+	cd $maindir
+	cp bin/* /tmp/zss/$srcnm/bin
+	cp build* /tmp/zss/$srcnm
+	cp -rp bin /tmp/zss/$srcnm
+	cp -rp zss /tmp/zss/$srcnm
+	
+	if [ "$target" == "official" ] ; then
+		cp -rp zssmax /tmp/zss/$entsrcnm
+		cp -rp /tmp/zss/$srcnm/* /tmp/zss/$entsrcnm 
+	fi
+	
+	cp zkdoc/COPYING zkdoc/release-note /tmp/zss/$srcnm/doc
+		
+	if [ "$target" == "official" ] ; then
+		# License
+		cp $maindir/cmldoc/CML_LICENSE /tmp/zss
+		mv /tmp/zss/CML_LICENSE /tmp/zss/LICENSE
+		chmod 644 /tmp/zss/LICENSE
+		
+		cp /tmp/zss/LICENSE zkdoc/release-note /tmp/zss/$entsrcnm/doc
+		rm /tmp/zss/LICENSE
+	fi
+	
+	cd /tmp/zss/$srcnm
+#	rm -rf zpoi/debug
+	rm -rf zss/debug
+	find -name .svn | xargs rm -rf
+	
+	if [ "$target" == "official" ] ; then
+		cd /tmp/zss/$entsrcnm
+		rm -rf zssex/debug
+		find -name .svn | xargs rm -rf
+	fi
+	
+	cd /tmp/zss
+	
+	#prepare *-sources.jar
+	echo Prepare '*-sources.jar'
+	mkdir -p src/zss
+	if [ "$target" == "official" ] ; then
+		mkdir -p src/zssex
+		cd $entsrcnm
+	else
+		cd $srcnm
+	fi
+	
+	
+	cp -rp zss/codegen/* zss/src/* ../src/zss
+	
+	if [ "$target" == "official" ] ; then
+		cp -rp zssex/codegen/* zssex/src/* ../src/zssex
+	fi
+	
+	cd ..
+	
+	rm -rf src/*/archive
+	
+	echo Output '*-sources.jar'
+	cd src
+
+	find -name 'package.html' | xargs rm -rf
+	jar cfM zss-sources.jar -C zss .
+	
+	if [ "$target" == "official" ] ; then
+		jar cfM zssex-sources.jar -C zssex .
+	fi
+	
+	chmod 644 *.jar
+	mv *-sources.jar ..
+	cd ..
+	rm -rf src
+
+
+	cd $maindir
+	
+	if [ "$target" == "official" ] ; then
+		mv -f /tmp/zss/*-sources.jar /tmp/zss/$entsrcnm/dist/src
+		
+		cd /tmp/zss/$entsrcnm/dist/src
+		find ! -name "zssex-sources.jar"  |xargs  -i  cp {} /tmp/zss/$srcnm/dist/src
+		
+		cd /tmp/zss
+		echo Output ${srcnm}.zip ${entsrcnm}.zip
+		zip -qr9 ${srcnm}.zip $srcnm
+		zip -qr9 ${entsrcnm}.zip $entsrcnm
+	else
+		mv -f /tmp/zss/*-sources.jar /tmp/zss/$srcnm/dist/src
+		
+		cd /tmp/zss
+		echo Output ${srcnm}.zip
+		zip -qr9 ${srcnm}.zip $srcnm
+	fi
+	
+	#Prepare the binary release
+	mkdir -p /tmp/zss/$binnm/dist/lib/ext
+	mkdir -p /tmp/zss/$binnm/dist/WEB-INF/tld/
+	mkdir -p /tmp/zss/$binnm/doc
+
+	cd $maindir
+	cp dist/lib/ext/commons-math.jar dist/lib/ext/opencsv.jar /tmp/zss/$binnm/dist/lib/ext
+		#Math and CSV
+	cp dist/lib/ext/ooxml-schemas-1.0.jar /tmp/zss/$binnm/dist/libext
+		#OOXML
+	cp dist/lib/zss.jar /tmp/zss/$binnm/dist/lib/
+	cp dist/lib/zssex.jar /tmp/zss/$binnm/dist/lib/
+	chmod 644 /tmp/zss/$binnm/dist/lib/*.jar
+	chmod 644 /tmp/zss/$binnm/dist/lib/*/*.jar
+
+	cp -rp zss/src/archive/web/WEB-INF/tld/zss /tmp/zss/$binnm/dist/WEB-INF/tld
+
+	cp zkdoc/release-note /tmp/zss/$binnm/doc
+		
+	chmod 644 /tmp/zss/$binnm/doc/release-note
+
+	# License
+	cp $maindir/cmldoc/LICENSE /tmp/zss/$binnm/doc
+	chmod 644  /tmp/zss/$binnm/doc/LICENSE
+
+	cd $maindir/zkdoc
+#	for f in */zss-quickstart*.pdf ; do  
+#		fn=${f%.pdf}
+#		cp $f /tmp/zss/$binnm/doc/${fn#**/}-$ver.pdf
+#	done
+
+	cd /tmp/zss/$binnm/doc
+	find -name .svn | xargs rm -rf
+		
+	cd /tmp/zss/$binnm/dist/WEB-INF/tld
+	find -name .svn | xargs rm -rf
+
+	cd /tmp/zss
+
+	if [ "$target" == "official" ] ; then
+		#Prepare maven repository
+		function mvnrepo {
+			local vertamp=`echo $ver | sed 's/-/./'`
+			mkdir -p $1
+			if [ $2 ] ; then
+				cp /tmp/zss/$entsrcnm/dist/src/$1-sources.jar $1/$1-$vertamp-sources.jar
+			fi
+			
+			sed -e "s/{version}/$vertamp/" $maindir/$1/pom.xml > $1/pom.xml
+			cp $maindir/dist/lib/$1.jar $1/$1-$vertamp.jar
+			jar cfM $1-$vertamp-bundle.jar -C $1 .
+		}
+		mkdir -p maven
+		mkdir -p /tmp/maven
+		cd maven
+		mvnrepo zpoi true
+		mvnrepo zss true
+		mvnrepo zssex
+		mv *-bundle.jar /tmp/maven
+		cd ..
+		rm -rf maven
+	else
+		#Prepare maven repository
+		function mvnrepo {
+			local vertamp=`echo $ver | sed 's/-/./'`.$(date +%Y%m%d)
+			mkdir -p $1
+			if [ $2 ] ; then
+				cp /tmp/zss/$srcnm/dist/src/$1-sources.jar $1/$1-$vertamp-sources.jar
+			fi
+			
+			sed -e "s/{version}/$vertamp/" $maindir/$1/pom.xml > $1/pom.xml
+			cp $maindir/dist/lib/$1.jar $1/$1-$vertamp.jar
+			jar cfM $1-$vertamp-bundle.jar -C $1 .
+		}
+		mkdir -p maven
+		mkdir -p /tmp/maven
+		cd maven
+		mvnrepo zpoi true
+		mvnrepo zss true
+		mvnrepo zssex
+		mv *-bundle.jar /tmp/maven
+		cd ..
+		rm -rf maven
+	fi
+
+	mkdir $binnmevl
+	mkdir -p /tmp/zss/$binnm/dist/src
+	
+	cp /tmp/zss/$srcnm/dist/src/* /tmp/zss/$binnm/dist/src/
+	
+	cp -rp $binnm/* $binnmevl
+	
+	mkdir -p metainfo/zss
+	
+	# EE version
+	cp $maindir/cmldoc/ee metainfo/zss/
+
+	jar ufM $binnm/dist/lib/zssex.jar -C metainfo/ zss/ee
+	
+	#Ouput ${binnm}
+	if [ "$target" == "official" ] ; then
+		# License
+		cp $maindir/cmldoc/CML_LICENSE /tmp/zss
+		mv CML_LICENSE /tmp/zss/$binnm/doc/LICENSE
+		chmod 644  /tmp/zss/$binnm/doc/LICENSE
+		
+		cd /tmp/zss/$entsrcnm/dist/src
+		cp zssex-sources.jar /tmp/zss/$binnm/dist/src/
+		
+		cd /tmp/zss
+		echo Output ${binnm}.zip
+		zip -qr9 ${binnm}.zip $binnm
+		
+		echo Output ${binnm}.tar.gz
+		tar zcf ${binnm}.tar.gz $binnm
+		
+		cp $maindir/cmldoc/LICENSE /tmp/zss/$binnm/doc
+		chmod 644  /tmp/zss/$binnm/doc/LICENSE
+		
+		cd /tmp/zss/$binnm/dist/src/
+		rm -rf zssex-sources.jar
+		cd /tmp/zss
+	fi
+		
+	echo Output ${binnmevl}.zip
+	zip -qr9 ${binnmevl}.zip $binnmevl
+
+	#Ouput ${stdnm}
+	cd $binnm/dist/lib
+	rm zssex.jar
+
+	cd /tmp/zss
+	
+	rm $binnm/doc/LICENSE
+	
+	mv $binnm $stdnm
+	
+	cp $maindir/zkdoc/COPYING /tmp/zss/$stdnm/doc
+	
+	
+	if [ "$target" == "official" ] ; then
+		echo Output ${stdnm}.tar.gz
+		tar zcf ${stdnm}.tar.gz $stdnm
+	fi
+	
+	echo Output ${stdnm}.zip
+	zip -qr9 ${stdnm}.zip $stdnm
+	
+	rm -rf $stdnm
+	rm -rf metainfo
+	rm -rf $binnmevl
+	rm -rf $srcnm
+
+	if [ "$target" == "official" ] ; then
+		rm -rf $entsrcnm
+		
+		mkdir proprietary
+		mv ${entsrcnm}.zip ${binnm}.zip ${binnm}.tar.gz proprietary
+		
+		#Prepare the doc
+		cd $maindir
+		$maindir/bin/javadoc "$javadocdir/zss"
+		$maindir/bin/javadoc "$javadocdir/jsdoc"
+	fi
+
+	rm -rf $binnm
+	
+	#Prepare the java doc
+	cd $javadocdir
+
+	echo Output ${javadocnm}.zip
+	zip -qr9 ${javadocnm}.zip zss
+	mv ${javadocnm}.zip /tmp/zss
+	
+	#Prepare the JS doc
+	echo Output ${jsdocnm}.zip
+	zip -qr9 ${jsdocnm}.zip jsdoc
+	mv ${jsdocnm}.zip /tmp/zss
+
+	mkdir -p /tmp/zss/$demonm/zssdemo/WebContent
+	mkdir -p /tmp/zss/$demonm/zssdemo/src/org
+	
+	mkdir -p /tmp/zss/$demonm/zssapp/WebContent
+	mkdir -p /tmp/zss/$demonm/zssapp/src/org
+	
+	mkdir -p /tmp/zss/$demonm/doc
+
+	cd $maindir
+
+	cp -rp zssdemo/src/archive/* /tmp/zss/$demonm/zssdemo/WebContent
+	cp -rp zssdemo/WebContent/* /tmp/zss/$demonm/zssdemo/WebContent
+	cp -rp zssdemo/src/org/* /tmp/zss/$demonm/zssdemo/src/org
+	
+	cp -rp zssapp/src/archive/* /tmp/zss/$demonm/zssapp/src
+	cp -rp zssapp/WebContent/* /tmp/zss/$demonm/zssapp/WebContent
+	cp -rp zssapp/src/org/* /tmp/zss/$demonm/zssapp/src/org
+	
+	cp cmldoc/LICENSE zkdoc/release-note /tmp/zss/$demonm/doc
+
+	cp dist/lib/zssdemo.war /tmp/zss/$demonm/zssdemo-min.war
+	cp dist/lib/zssapp.war /tmp/zss/$demonm/zssapp-min.war
+
+	cd zkdoc
+#	for f in */zss-quickstart*.pdf ; do  
+#		fn=${f%.pdf}
+#		cp $f /tmp/zss/$demonm/doc/${fn#**/}-$ver.pdf
+#	done
+
+	cd /tmp/zss/$demonm/doc
+	find -name .svn | xargs rm -rf
+	
+	cd $maindir
+	
+	if [ "$target" == "official" ] ; then
+		mv dist/lib/zssdemos.ear /tmp/zss/$demonm/zssdemos-min.ear
+		mv dist/lib/zssdemos-all.ear /tmp/zss/$demonm/zssdemos.ear
+	fi
+
+	mv dist/lib/zssdemo-all.war /tmp/zss/$demonm/zssdemo.war
+	mv dist/lib/zssapp-all.war /tmp/zss/$demonm/zssapp.war
+		
+	cd /tmp/zss
+	find -name .svn | xargs rm -rf
+
+	echo Output ${demonm}.zip
+	zip -qr9 ${demonm}.zip $demonm
+	rm -rf $demonm
+fi

@@ -1,0 +1,27 @@
+<window id="revisionWin" sclass="revisionWin" title="Revision History" visible="false"
+	width="600px" border="normal" position="center">
+	<style>
+		.revisionWin .z-window-embedded-cnt { 
+			padding:7px; 
+		}
+	</style>
+	<radiogroup>
+	<grid style="margin-bottom:5px">
+		<columns sizable="true">
+			<column label="Go to" />
+			<column label="Time" />
+			<column label="By Who" />
+			<column label="Comment" />
+		</columns>
+		<rows id="revisionRows">
+		
+		</rows>
+	</grid>
+	</radiogroup>
+	<button label="OK" forward="onClick=//p1/mainWin.onRevisionOK()"/>
+	<button label="Cancel">
+		<attribute name="onClick">
+			revisionWin.setVisible(false);
+		</attribute>
+	</button>
+</window>

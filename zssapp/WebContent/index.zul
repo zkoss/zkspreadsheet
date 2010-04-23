@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?page id="p1" title="ZSS app"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+
+<?component name="columnHeaderMenu" inline="true" macroURI="/menus/header_cell/menuColumnHeader.zul"?>
+<?component name="rowHeaderMenu" inline="true" macroURI="/menus/header_cell/menuRowHeader.zul"?>
+<?component name="cellMenu" inline="true" macroURI="/menus/header_cell/menuCell.zul"?>
+<?component name="tabPopup" inline="true" macroURI="/menus/tab/popup.zul"?>
+<?component name="fileopenwin" inline="true" macroURI="/menus/file/fileListOpen.zul"?>
+<?component name="fileexportwin" inline="true" macroURI="/menus/file/fileListExport.zul"?>
+<?component name="filedeletewin" inline="true" macroURI="/menus/file/fileListDelete.zul"?>
+<?component name="filesaveaswin" inline="true" macroURI="/menus/file/fileListSaveAs.zul"?>
+<?component name="borderSelector" inline="true" macroURI="/borderSelector.zul"?>
+<?component name="fasticoncontextmenu" inline="true" macroURI="/fastIconContextmenu.zul"?>
+<?component name="formulacategory" inline="true" macroURI="/menus/formula/formulaCategory.zul"?>
+<?component name="formatnumberwin" inline="true" macroURI="/menus/format/menuFormatNumber.zul"?>
+<?component name="cheatsheet" inline="true" macroURI="/cheatsheet.zul"?>
+<?component name="menuPrintWin" inline="true" macroURI="/menuPrint.zul"?>
+<?component name="revisionmenu" inline="true" macroURI="/revisionMenu.zul"?>
+
+<zk>
+<window id="mainWin" apply="org.zkoss.zss.app.MainWindowCtrl" height="100%" width="100%" style="margin:0px;padding:0px">
+	<style>
+		body{
+			padding:0px;
+		}
+		.z-tabs-scroll .z-tabs-cnt{
+			padding-left:0px;
+		}
+		.z-menubar-hor, .z-menubar-ver {
+			background:#ADF none repeat scroll 0 0;
+			border-color:rgb(153,191,251);
+			padding:0 0 0 4px;
+		}
+		.formulaBar input{
+			border-width:0px;
+			border-right-width:1px;
+		}
+		.lbposCombobox img{
+			border:0px;
+			height:24px!important;
+		}
+		.z-toolbar , .formulaBtn {
+			background:#CEF none repeat scroll 0 0;
+			border-color:rgb(153,191,251);
+			border-bottom-color:rgb(126,170,198);
+		}
+		.z-toolbar a, .z-toolbar a:visited, .z-toolbar a:hover {
+			background-color:transparent;
+		}
+		.formulaBar,.sheetTBBar{
+			#margin-top:-1px;
+		}
+		.formulaBtn{
+			background-position: 0 center;
+			text-align:center;
+			padding:2px 0px;
+			border:1px solid rgb(127,157,185);
+			border-top-width:0px;
+			border-left-color:#CEF;
+			#border-bottom-width:0px;
+			#margin-top:1px;
+		}
+		div.z-tabpanel { 
+			border-bottom:none; 
+			border-left:none;
+			border-right:none; 
+			padding:0; 
+		}
+		.z-toolbar-panel .z-toolbar-panel-start .z-toolbar-panel-cnt, .z-toolbar-start{
+			padding:2px;
+		}
+		.toolIcon img{
+			border:1px solid transparent;
+			margin-top:-1px;
+			#margin:0px;
+			_border:0 none;
+			
+		}
+		.toolIcon img:hover{
+			border:1px solid rgb(156,204,255);
+			background-color:rgb(227,249,255);
+			#margin:0px;
+		}
+		.z-toolbar a.toolIcon,.z-toolbar a.toolIcon:hover{
+			border-width:0px;
+			_border:1px solid orange;
+		}
+		.z-toolbar a.toolIcon{
+			_border:1px solid rgb(204,238,255);
+		}
+		.z-toolbar a.clicked{
+			_border:1px solid red;
+		}
+		.toolbarCombobox{
+			#margin-right:3px;
+		}
+		.toolbarSeparator img{
+			margin-top:-2px;
+		}
+		.z-toolbar .clicked img, .z-vbox .clicked img{
+   		   border-color:rgb(100,100,255);
+   		   background:rgb(180,224,255) none;
+		}
+
+		.arialFont .z-menu-item-cnt, .arialFont .z-combo-item-text{
+			font-size:14px;
+			font-family:arial;
+		}
+		.calibriFont .z-menu-item-cnt, .calibriFont .z-combo-item-text{
+			font-size:14px;
+			font-family:calibri;
+		}
+		.timeFont .z-menu-item-cnt,.timeFont .z-combo-item-text{
+			font-size:14px;
+			font-family:time new roman;
+		}
+		.courierFont .z-menu-item-cnt,.courierFont .z-combo-item-text{
+			font-size:14px;
+			font-family:courier new;
+		}
+		.comicFont .z-menu-item-cnt,.comicFont .z-combo-item-text{
+			font-size:14px;
+			font-family:comic Sans MS;
+		}
+		.centuryFont .z-menu-item-cnt,.centuryFont .z-combo-item-text{
+			font-size:14px;
+			font-family:century gothic;
+		}
+		.georgiaFont .z-menu-item-cnt,.georgiaFont .z-combo-item-text{
+			font-size:14px;
+			font-family:georgia;
+		}
+		.impactFont .z-menu-item-cnt,.impactFont .z-combo-item-text{
+			font-size:14px;
+			font-family:impact;
+		}
+		.zssheet{
+			border-width:0px;
+			#margin-top:-20px;
+		}
+		.z-tabs-scroll{
+			border-bottom-width:0px;
+		}
+		.z-tab .z-tab-text{
+			padding: 6px 0 0 0;
+		}
+		.z-tab-seld .z-tab-text{
+			padding: 6px 0 1px 0;
+		}
+		.z-tabs-scroll .z-tabs-cnt {
+			margin-top:-5px;
+		}
+		.formulaBar .z-combobox .z-combobox-img {
+			background-position:0 -1px;
+		}
+		.z-center-body .z-toolbar{
+			_height:25px!important;
+		}
+		
+	</style>
+		<div width="100%" style="background-color:rgb(83,175,227);display:none">	
+			<hbox>
+			Filename:	<label id="openingFilename" value="Untitled"/>
+			</hbox>
+		</div>
+	<borderlayout id="topToolbars" height="76px" >
+				<!-- SECTION **********Navigator bar************************************************* -->
+				<north id="mainNavigator" sclass="mainNavigator" maxsize="800" size="22px" flex="true"
+					border="0" style="border-top:1px solid rgb(153,191,251);">
+					<menubar id="menubar">
+						<menu label="${c:l('file')}">
+							<menupopup>
+								<menuitem label="${c:l('file.new')}" 
+									forward="onFileNew" />
+								<menuitem label="${c:l('file.open')}"
+									forward="onFileSelect(open)" />
+								<menuitem label="${c:l('file.save')}"
+									forward="onFileSelect(save)" disabled="true"/>
+								<menuitem label="${c:l('file.saveas')}"
+									forward="onFileSelect(saveAs)" disabled="true"/>
+								<menuitem label="${c:l('file.saveClose')}"
+									forward="onFileSaveClose" disabled="true"/>
+								<menuseparator />
+								<menuitem label="${c:l('file.delete')}"
+									forward="onFileSelect(delete)" disabled="true"/>
+								<menuitem
+									label="${c:l('file.import')}"
+									forward="onImportFile" disabled="true"/>
+								<menuitem label="${c:l('file.export')}"
+									forward="onFileSelect(export)" />
+								<menuseparator />
+								<menuitem label="${c:l('file.reversion')}" 
+									forward="onRevision" disabled="true"/>
+								<!-- <menuitem label="${c:l('file.setting')}" src="/img/hi.gif"
+									forward="onNotImplement()" />-->
+								<menuitem label="${c:l('file.print')}" 
+									forward="onPrint" />
+							</menupopup>
+						</menu>
+						<menu label="${c:l('edit')}">
+							<menupopup>
+								<menuitem label="${c:l('edit.undo')}" forward="onEditUndo" />
+								<menuitem label="${c:l('edit.redo')}" forward="onEditRedo" />
+								<menuseparator />
+								<menuitem label="${c:l('edit.cut')}" forward="onEditCut" />
+								<menuitem label="${c:l('edit.copy')}" forward="onEditCopy" />
+								<menuitem label="${c:l('edit.paste')}" forward="onEditPaste" />
+								<menuseparator />
+								<menuitem label="${c:l('edit.clearContent')}" forward="onClearContent" />
+								<menuitem label="${c:l('edit.clearStyle')}" forward="onClearStyle" />
+								<menuitem label="${c:l('edit.clearAll')}" forward="onClearBoth" />
+								<menuseparator />
+								<menuitem label="${c:l('edit.deleteRows')}" forward="onDeleteRows" />
+								<menuitem label="${c:l('edit.deleteCols')}" forward="onDeleteColumns" />
+								<!-- <menuitem label="${c:l('edit.findReplace')}" forward="onNotImplement()" src="/img/nono.gif" />-->
+							</menupopup>
+						</menu>
+						<menu label="${c:l('view')}">
+							<menupopup>
+								<menuitem label="${c:l('view.formulaBar')}" forward="onViewFormulaBar" />
+								<menu label="${c:l('view.freezeRows')}">
+									<menupopup>
+										<menuitem label="${c:l('view.unfreezeRows')}"  forward="onViewUnfreezeRows" />
+										<menuseparator />
+										<menuitem label="${c:l('view.freezeRows')} 1"  forward="onViewFreezeRows(1)" />
+										<menuitem label="${c:l('view.freezeRows')} 2"  forward="onViewFreezeRows(2)" />
+										<menuitem label="${c:l('view.freezeRows')} 3"  forward="onViewFreezeRows(3)" />
+										<menuitem label="${c:l('view.freezeRows')} 4"  forward="onViewFreezeRows(4)" />
+										<menuitem label="${c:l('view.freezeRows')} 5"  forward="onViewFreezeRows(5)" />
+										<menuitem label="${c:l('view.freezeRows')} 6"  forward="onViewFreezeRows(6)" />
+										<menuitem label="${c:l('view.freezeRows')} 7"  forward="onViewFreezeRows(7)" />
+										<menuitem label="${c:l('view.freezeRows')} 8"  forward="onViewFreezeRows(8)" />
+										<menuitem label="${c:l('view.freezeRows')} 9"  forward="onViewFreezeRows(9)" />
+										<menuitem label="${c:l('view.freezeRows')} 10"  forward="onViewFreezeRows(10)" />
+									</menupopup>
+								</menu>
+								<menu  label="${c:l('view.freezeCols')}">
+									<menupopup>
+										<menuitem label="${c:l('view.unfreezeCols')}"  forward="onViewUnfreezeCols" />
+										<menuseparator />
+										<menuitem label="${c:l('view.freezeCols')} A"  forward="onViewFreezeCols(1)" />
+										<menuitem label="${c:l('view.freezeCols')} B"  forward="onViewFreezeCols(2)" />
+										<menuitem label="${c:l('view.freezeCols')} C"  forward="onViewFreezeCols(3)" />
+										<menuitem label="${c:l('view.freezeCols')} D"  forward="onViewFreezeCols(4)" />
+										<menuitem label="${c:l('view.freezeCols')} E"  forward="onViewFreezeCols(5)" />
+										<menuitem label="${c:l('view.freezeCols')} F"  forward="onViewFreezeCols(6)" />
+										<menuitem label="${c:l('view.freezeCols')} G"  forward="onViewFreezeCols(7)" />
+										<menuitem label="${c:l('view.freezeCols')} H"  forward="onViewFreezeCols(8)" />
+										<menuitem label="${c:l('view.freezeCols')} I"  forward="onViewFreezeCols(9)" />
+										<menuitem label="${c:l('view.freezeCols')} J"  forward="onViewFreezeCols(10)" />									
+									</menupopup>
+								</menu>
+							</menupopup>
+						</menu>
+						<menu label="${c:l('format')}">
+							<menupopup>
+								<menu label="${c:l('format.font')}" >
+									<menupopup>
+										<menuitem label="Calibri"  			sclass="calibriFont" forward="onFontFamilySelect(Calibri)"  />
+										<menuitem label="Courier New"  		sclass="courierFont" forward="onFontFamilySelect(Courier New)"  />
+										<menuitem label="Comic Sans MS"  	sclass="comicFont" forward="onFontFamilySelect(Comic Sans MS)"  />
+										<menuitem label="Times New Roman"  	sclass="timeFont" forward="onFontFamilySelect(Times New Roman)"  />
+										<menuitem label="Century Gothic"  	sclass="centuryFont" forward="onFontFamilySelect(Centry Gothic)"  />
+										<menuitem label="Georgia"  			sclass="georgiaFont" forward="onFontFamilySelect(Georgia)"  />
+										<menuitem label="Impact"  			sclass="impactFont" forward="onFontFamilySelect(Impact)"  />
+									</menupopup>
+								</menu>
+								<menu id="backgroundColorMenu" label="${c:l('format.color')}" content="#color=#FFFFFF">
+								</menu>
+								<menu label="${c:l('format.align')}" forward="onFormatAlign">
+									<menupopup>
+										<menuitem label="Left"  forward="onAlignHorizontalClick(left)"  />
+										<menuitem label="Center"  forward="onAlignHorizontalClick(center)"  />
+										<menuitem label="Right"  forward="onAlignHorizontalClick(right)"  />
+									</menupopup>
+								</menu>
+								<menuitem label="${c:l('format.numberFormat')}" forward="onFormatNumber" />
+							</menupopup>
+						</menu>
+						<menu label="${c:l('insert')}">
+									<menupopup>
+										<menuitem label="${c:l('insert.formula')}" forward="onInsertFormula" />
+										<menu label="${c:l('insert.chart')}" >
+											<menupopup>
+												<menuitem id="insertPieChart" label="${c:l('insert.piechart')}" />
+											</menupopup>
+										</menu>
+										<menuitem id="insertImageMenu" label="${c:l('insert.image')}" upload="true"></menuitem>
+										<menuitem label="${c:l('insert.rows')}" forward="onInsertRows" />
+										<menuitem label="${c:l('insert.columns')}" forward="onInsertColumns" />
+										<menuitem label="${c:l('insert.sheet')}" forward="onInsertSheet" />
+									</menupopup>
+						</menu>
+                       <!--   <menu label="${c:l('share')}">
+                           <menupopup>
+								<menuitem label="${c:l('share.private')}" forward="onNotImplement()" src="/img/bear.gif"/>
+								<menuitem label="${c:l('share.invite')}" forward="onNotImplement()" src="/img/bear.gif"/>
+								<menuitem label="${c:l('share.publicRead')}" forward="onNotImplement()" src="/img/bear.gif"/>
+								<menuitem label="${c:l('share.publicReadWrite')}" forward="onNotImplement()" src="/img/bear.gif"/>
+							</menupopup>
+                        </menu>-->
+                        <menu label="${c:l('help')}">
+							<menupopup>
+								<!-- <menuitem label="${c:l('help.center')}" forward="onNotImplement()" src="/img/music.gif"/>-->
+								<menuitem label="${c:l('help.cheatsheet')}" forward="onHelpCheatsheet" />
+								<menuitem label="${c:l('help.forum')}" forward="onHelpForum" href="http://www.zkoss.org/forum/" target="_blank"/>
+								<menuitem label="${c:l('help.smalltalk')}" href="http://docs.zkoss.org/wiki/A_Preview_Of_ZK_Spreadsheet_1.0" target="_blank"/>
+								<!-- <menuitem label="${c:l('help.about')}" forward="onNotImplement()" src="/img/music.gif"/>-->
+							</menupopup>
+                        </menu>
+					</menubar>
+				</north>
+				
+				<!-- SECTION **********FastIconToolbar*********************************************** -->
+				<center id="fastIconBtn" flex="true" border="0" style="_border-bottom:1px solid rgb(126,170,198)">
+					<toolbar>
+						<toolbarbutton id="print" sclass="toolIcon" src="/img/print.gif" forward="onClick=onPrint"/>
+							<!--  target="_blank" href="print.zul"/>-->
+						<toolbarbutton id="undo" sclass="toolIcon" src="/img/undo.gif"
+							forward="onClick=onEditUndo" />
+						<toolbarbutton id="redo" sclass="toolIcon" src="/img/redo.gif"
+							forward="onClick=onEditRedo" />
+						
+						<!-- font*********************************************************************** -->	
+						<toolbarbutton sclass="toolbarSeparator" src="/img/separator.bmp"/>	
+						<combobox id="fontFamilyCombobox" sclass="toolbarCombobox" width="125px" height="17px" forward="onSelect=onFontFamilySelect">
+							<comboitem label="Calibri"  			sclass="calibriFont" forward="onFontFamilySelect(Calibri)"  />
+							<comboitem label="Courier New"  		sclass="courierFont" forward="onFontFamilySelect(Courier New)"  />
+							<comboitem label="Comic Sans MS"  	sclass="comicFont" forward="onFontFamilySelect(Comic Sans MS)"  />
+							<comboitem label="Times New Roman"  	sclass="timeFont" forward="onFontFamilySelect(Times New Roman)"  />
+							<comboitem label="Century Gothic"  	sclass="centuryFont" forward="onFontFamilySelect(Centry Gothic)"  />
+							<comboitem label="Georgia"  			sclass="georgiaFont" forward="onFontFamilySelect(Georgia)"  />
+							<comboitem label="Impact"  			sclass="impactFont" forward="onFontFamilySelect(Impact)"  />
+						</combobox>
+						<combobox id="fontSizeCombobox" sclass="toolbarCombobox" width="42px" height="17px" forward="onSelect=onFontSizeSelect">
+							<comboitem label="8" />
+							<comboitem label="9" />
+							<comboitem label="10" />
+							<comboitem label="11" />
+							<comboitem label="12" />
+							<comboitem label="14" />
+							<comboitem label="16" />
+							<comboitem label="18" />
+							<comboitem label="20" />
+							<comboitem label="22" />
+							<comboitem label="24" />
+							<comboitem label="26" />
+							<comboitem label="28" />
+							<comboitem label="36" />
+							<comboitem label="48" />
+							<comboitem label="72" />
+						</combobox>
+						<toolbarbutton id="boldBtn" sclass="toolIcon" src="/img/bold.gif"
+							forward="onClick=onFontBoldClick" />
+						<toolbarbutton id="italicBtn" sclass="toolIcon" src="/img/italic.gif"
+							forward="onClick=onFontItalicClick" />
+						<toolbarbutton id="underlineBtn" sclass="toolIcon" src="/img/underline.gif"
+							forward="onClick=onFontUnderlineClick" />
+						<toolbarbutton id="strikethroughBtn" sclass="toolIcon" src="/img/strikethrough.gif"
+							forward="onClick=onFontStrikethroughClick" />
+							            
+						
+						<!-- align horizontal************************************************************************ -->
+						<toolbarbutton sclass="toolbarSeparator" src="/img/separator.bmp"/>	
+						<toolbarbutton id="alignLeftBtn" sclass="toolIcon" src="/img/alignLeft.gif"
+							forward="onClick=onAlignHorizontalClick(left)" />
+						<toolbarbutton id="alignCenterBtn" sclass="toolIcon" src="/img/alignCenter.gif"
+							forward="onClick=onAlignHorizontalClick(center)" />
+						<toolbarbutton id="alignRightBtn" sclass="toolIcon" src="/img/alignRight.gif"
+							forward="onClick=onAlignHorizontalClick(right)" />
+						
+						<!-- align vertical************************************************************************ 
+						<toolbarbutton sclass="toolbarSeparator" src="/img/separator.bmp"/>
+						<toolbarbutton id="alignTopBtn" sclass="toolIcon" src="/img/alignTop.bmp"
+							forward="onClick=onAlignVerticalClick(top)" />
+						<toolbarbutton id="alignVerticalCenterBtn" sclass="toolIcon" src="/img/alignVerticalCenter.bmp"
+							forward="onClick=onAlignVerticalClick(center)" />
+						<toolbarbutton id="alignBottomBtn" sclass="toolIcon" src="/img/alignBottom.bmp"
+							forward="onClick=onAlignVerticalClick(bottom)" />
+						-->	
+							
+						<toolbarbutton sclass="toolbarSeparator" src="/img/separator.bmp"/>
+						<!-- color & background-color************************************************************************ -->
+						<colorbutton id="fontColorBtn" width="20px" height="12px" color="#000000" image="/img/fontColor.gif">
+						</colorbutton>
+						<colorbutton id="backgroundColorBtn" width="20px" height="12px" color="#FFFFFF" image="/img/backgroundColor.gif">
+						</colorbutton>
+						
+						<!-- border merge******************************************************************* -->
+						<toolbarbutton sclass="toolbarSeparator" src="/img/separator.bmp"/>
+						<toolbarbutton id="borderBtn" sclass="toolIcon" src="/img/outline.gif"
+							forward="onClick=onBorderClick(toolbar)" />
+						<toolbarbutton id="mergeCellBtn" sclass="toolIcon" src="/img/mergeCell.gif"
+							forward="onClick=onMergeCellClick" />
+						<toolbarbutton id="wrapTextBtn" sclass="toolIcon" src="/img/wrapText.gif"
+							forward="onClick=onWrapTextClick" />		
+						<toolbarbutton id="insertChartBtn" sclass="toolIcon" src="/img/pieChart.gif"
+							forward="onClick=onInsertChart(pie)" />
+					</toolbar>
+				</center>
+				
+				<!-- SECTION **********Formula bar*********************************************** -->
+				<south id="formulaBar" size="23px" flex="true" border="0px" >
+						<borderlayout sclass="formulaBar">
+							<west size="245px" border="none" flex="true">
+								<hbox spacing="0px" width="245px">
+									<!-- spreadsheet focus position, rename lbposCombobox to focusPosition-->
+									<combobox id="focusPosition"
+										sclass="lbposCombobox" 
+										height="21px"
+										width="185px"  
+										style="font-size:16px;text-align:center;margin-right:-2px;#margin:0px;border:0px">
+										<comboitem id="lbpos" label="A1" />
+									</combobox>
+									<div width="40px" height="19px"	sclass="formulaBtn">
+										<toolbarbutton sclass="fBtn"
+											style="width:40px;text-decoration:none;color:black;font-size:16px;font-style:italic;text-align:center;border-width:1px 0px"
+											label="f(x)" forward="onFormulaBarBtn" />
+									</div>
+								</hbox>
+							</west>
+							<center border="none" flex="true">
+								<!-- tbxval2 rename to formulaEditbox -->
+								<textbox height="19px" id="formulaEditbox"
+									style="font-size:16px;border:0px;padding:3px"
+									action="onkeyup:zkau.send({uuid: 'tbxval2', 
+			           										   cmd:  'onChanging', 
+			           										   data: [this.value]},
+			           										   25)" />
+							</center>
+						</borderlayout>
+				</south>
+	</borderlayout>
+	<vbox width="100%" sclass="sheetTBBar">
+		<tabbox id="sheetTB">
+			<tabs id="sheetTabs"></tabs>
+		</tabbox>
+	</vbox>
+
+	<!-- rename ss1 to spreadsheet  -->
+	<spreadsheet id="spreadsheet" src="/xls/demo_sample.xls" maxrows="200"
+			maxcolumns="40" vflex="1" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
+			forward="onCtrlKey=mainWin.onSSCtrlKeys">
+	</spreadsheet>
+	<columnHeaderMenu id="columnHeaderMenu" />
+	<rowHeaderMenu id="rowHeaderMenu"/>
+	<cellMenu id="cellMenu"/>
+	<tabPopup id="tabPopup" />
+	<borderSelector id="borderSelector" />
+	<fasticoncontextmenu id="fastIconContextmenu"/>
+	<formulacategory id="formulaCategory" />
+	<cheatsheet id="cheatsheet" />
+	<formatnumberwin id="formatNumberWin" />
+	<fileopenwin />
+	<fileexportwin />
+	<filedeletewin />
+	<filesaveaswin />
+	<menuPrintWin />
+	<!-- If you have any suggestions or need some help, please feel free to tell us at <toolbarbutton label="forum" href="http://www.zkoss.org/forum/" target="_blank"/>.
+	<separator />
+	Or <toolbarbutton label="bug tracker at sourceforge" href="http://sourceforge.net/tracker/?group_id=213617&amp;atid=1026430" target="_blank"/>.
+	Format Type:<label id="formatTypeLabel" value=""/>
+	<separator />
+	Format Code:<label id="formatCodeLabel" value=""/>
+	<separator />
+	EditText:<label id="editTextLabel" value=""/>
+	<separator />
+	Result:<label id="resultLabel" value=""/>
+	<separator />
+	Value:<label id="valueLabel" value=""/>
+	<separator />
+	Text:<label id="textLabel" value=""/>
+	<separator />
+	<separator />
+	Border top:<label id="top1Label" value=""/> <label id="top2Label" value=""/>
+	<separator />
+	Border right:<label id="right1Label" value=""/> <label id="right2Label" value=""/>
+	<separator />
+	Border bottom:<label id="bottom1Label" value=""/> <label id="bottom2Label" value=""/>
+	<separator />
+	Border left:<label id="left1Label" value=""/> <label id="left2Label" value=""/>
+	 -->
+	<revisionmenu />
+	<attribute name="onCreate"> 
+		fontFamilyCombobox.selectedIndex=0;
+		fontSizeCombobox.selectedIndex=0;
+		_fontFamilyCombobox.selectedIndex=0;
+		_fontSizeCombobox.selectedIndex=0;
+	</attribute>
+</window>
+</zk>

@@ -1,0 +1,2631 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!--
+Purpose:
+	Defines functions for ZK Spread Sheet formula.
+Description:
+	
+Histroy:
+	Fri Sep 09 17:14:27     2007, Created by henrichen
+
+Copyright (C) 2007 Potix Corporation. All Rights Reserved.
+-->
+
+<taglib>
+	<uri>http://www.zkoss.org/zss/function</uri>
+	<description>
+	Functions for ZK Spread Sheet formula.
+	</description>
+
+	<!--         -->
+	<!-- Imports -->
+	<!--         -->
+	<import>
+		<import-name>UtilFns</import-name>
+		<import-class>org.zkoss.zss.engine.fn.UtilFns</import-class>
+	</import>
+	<import>
+		<import-name>MathFns</import-name>
+		<import-class>org.zkoss.zss.engine.fn.MathFns</import-class>
+	</import>
+	<import>
+		<import-name>LogicalFns</import-name>
+		<import-class>org.zkoss.zss.engine.fn.LogicalFns</import-class>
+	</import>
+	<import>
+		<import-name>DateTimeFns</import-name>
+		<import-class>org.zkoss.zss.engine.fn.DateTimeFns</import-class>
+	</import>
+	<import>
+		<import-name>StatFns</import-name>
+		<import-class>org.zkoss.zss.engine.fn.StatFns</import-class>
+	</import>
+	<import>
+		<import-name>TextDataFns</import-name>
+		<import-class>org.zkoss.zss.engine.fn.TextDataFns</import-class>
+	</import>
+	<import>
+		<import-name>FinancialFns</import-name>
+		<import-class>org.zkoss.zss.engine.fn.FinancialFns</import-class>
+	</import>
+	<import>
+		<import-name>EngineeringFns</import-name>
+		<import-class>org.zkoss.zss.engine.fn.EngineeringFns</import-class>
+	</import>
+	
+	<!--                   -->
+	<!-- General Functions -->
+	<!--                   -->
+	<function>
+		<name>formula</name>
+		<function-class>org.zkoss.zss.engine.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.Object result(org.zkoss.zss.model.Book book, java.lang.String formula)
+		</function-signature>
+		<description>
+	Returns the evaluated result of the given formula
+		</description>
+	</function>
+	<function>
+		<name>ARRAY</name>
+		<function-class>org.zkoss.zss.engine.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.Object utilArray(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the 2d arrays
+		</description>
+	</function>
+	<function>
+		<name>ARRAYROW</name>
+		<function-class>org.zkoss.zss.engine.fn.UtilFns</function-class>
+		<function-signature>
+	java.lang.Object utilArrayrow(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the 1d arrays or a row
+		</description>
+	</function>
+
+	<!--                -->
+	<!-- Math Functions -->
+	<!--                -->
+	<function>
+		<name>ABS</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathAbs(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the absolute value of a number
+		</description>
+	</function>
+	<function>
+		<name>ACOS</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathAcos(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the arccosine of a number
+		</description>
+	</function>
+	<function>
+		<name>ACOSH</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathAcosh(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the inverse hyperbolic cosine  of a number
+		</description>
+	</function>
+	<function>
+		<name>ASIN</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathAsin(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the arcsine  of a number
+		</description>
+	</function>
+	<function>
+		<name>ASINH</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathAsinh(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the inverse hyperbolic sine  of a number
+		</description>
+	</function>
+	<function>
+		<name>ATAN</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathAtan(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the arctangent of a number
+		</description>
+	</function>
+	<function>
+		<name>ATAN2</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathAtan2(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the arctangent from x- and y- coordinates
+		</description>
+	</function>
+		<function>
+		<name>ATANH</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathAtanh(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the inverse hyperbolic tangent of a number
+		</description>
+	</function>
+	<function>
+		<name>CEILING</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathCeiling(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns a number to the nearest integer or to the nearest multiple of significance
+		</description>
+	</function>
+	<function>
+		<name>COMBIN</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathCombin(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the number of combinations for a given number of items.
+		</description>
+	</function>
+	<function>
+		<name>COS</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathCos(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the cosine of the given angle.
+		</description>
+	</function>
+	<function>
+		<name>COSH</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathCosh(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the hyperbolic cosine of the given angle.
+		</description>
+	</function>
+	<function>
+		<name>DEGREES</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathDegrees(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts radians to degrees.
+		</description>
+	</function>
+	<function>
+		<name>EVEN</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathEven(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Rounds a number up to the nearest even integer.
+		</description>
+	</function>
+	<function>
+		<name>EXP</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathExp(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns e raised to the power of a given number
+		</description>
+	</function>
+	<function>
+		<name>FACT</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathFact(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the factorial of a number. The factorial of a number is equal to 1*2*3*...* number.
+		</description>
+	</function>
+	<function>
+		<name>FACTDOUBLE</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathFactdouble(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: Analysis ToolPak add-in Returns the double factorial of a number.
+		</description>
+	</function>
+	<function>
+		<name>FLOOR</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathFloor(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: Rounds a number down, toward zero.
+		</description>
+	</function>
+	<function>
+		<name>GCD</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathGcd(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: Analysis ToolPak add-in Returns the greatest common divisor of two or more integers. The greatest common divisor is the largest integer that divides both number1 and number2 without a remainder.
+		</description>
+	</function>
+	<function>
+		<name>INT</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathInt(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Rounds a number down to the nearest integer.
+		</description>
+	</function>
+	<function>
+		<name>LCM</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathLcm(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: Analysis ToolPak add-in Returns the less common multiple of two or more integers. The greatest common divisor is the largest integer that divides both number1 and number2 without a remainder.
+		</description>
+	</function>
+	<function>
+		<name>LN</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathLn(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the natural logarithm of a number. Natural logarithms are based on the constant e (2.71828182845904).
+		</description>
+	</function>
+	<function>
+		<name>LOG</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathLog(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Rounds the logarith of a number to a specified base.
+		</description>
+	</function>
+	<function>
+		<name>LOG10</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathLog10(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Rounds the base-10 logarith of a number.
+		</description>
+	</function>
+	<function>
+		<name>MDETERM</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathMdeterm(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: Returns the matrix determinant of an array
+		</description>
+	</function>
+	<function>
+		<name>MINVERSE</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathMinverse(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: Returns the matrix inverse of an array
+		</description>
+	</function>
+	<function>
+		<name>MMULT</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathMmult(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: Returns the matrix product of two arrays
+		</description>
+	</function>
+	<function>
+		<name>MOD</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathMod(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the remainder from divsion
+		</description>
+	</function>
+	<function>
+		<name>MROUND</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathMround(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: Analysis ToolPak Returns a number rounded to the desired multiple
+		</description>
+	</function>
+	<function>
+		<name>MULTINOMIAL</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathMultinomial(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: Analysis ToolPak Returns the multinomial of a set of numbers
+		</description>
+	</function>
+	<function>
+		<name>ODD</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathOdd(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Rounds a number up to the nearest odd integer
+		</description>
+	</function>
+	<function>
+		<name>PI</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathPi(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the number 3.14159265358979, the mathematical constant pi, accurate to 15 digits.
+		</description>
+	</function>
+	<function>
+		<name>POWER</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathPower(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the result of a number raised to a power.
+		</description>
+	</function>
+	<function>
+		<name>PRODUCT</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathProduct(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Multiplies all the numbers given as arguments and returns the product.
+		</description>
+	</function>
+	<function>
+		<name>QUOTIENT</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathQuotient(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the integer portion of a division.
+		</description>
+	</function>
+	<function>
+		<name>RADIANS</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathRadians(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts degrees to radians.
+		</description>
+	</function>
+	<function>
+		<name>RAND</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathRand(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns an evenly distributed random real number greater than or equal to 0 and less than 1. A new random real number is returned every time the worksheet is calculated.
+		</description>
+	</function>
+	<function>
+		<name>RANDBETWEEN</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathRandbetween(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: Returns a random integer number between the numbers you specify. A new random integer number is returned every time the worksheet is calculated.
+		</description>
+	</function>
+	<function>
+		<name>ROMAN</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathRoman(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: Converts an arabic numeral to roman, as text.
+		</description>
+	</function>
+	<function>
+		<name>ROUND</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathRound(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: spcified number is negative
+	Rounds a number to a specified number of digits.
+		</description>
+	</function>
+	<function>
+		<name>ROUNDDOWN</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathRounddown(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: spcified number is negative
+	Rounds a number down, toward zero.
+		</description>
+	</function>
+	<function>
+		<name>ROUNDUP</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathRoundup(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: spcified number is negative
+	Rounds a number up,away from zero.
+		</description>
+	</function>
+	<function>
+		<name>SERIESSUM</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathSerissum(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: Returns the sum of a power series based on the formula.
+		</description>
+	</function>
+	<function>
+		<name>SIGN</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathSign(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Determines the sign of a number. Returns 1 if the number is positive, zero (0) if the number is 0, and -1 if the number is negative.
+		</description>
+	</function>
+	<function>
+		<name>SIN</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathSin(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the sine of the given angle.
+		</description>
+	</function>
+	<function>
+		<name>SINH</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathSinh(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the hyperbolic sine of a number.
+		</description>
+	</function>
+	<function>
+		<name>SQRT</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathSqrt(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns a positive square root
+		</description>
+	</function>
+	<function>
+		<name>SQRTPI</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathSqrtpi(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: Analytic Toolpak Returns the square root of (number*pi)
+		</description>
+	</function>
+	<function>
+		<name>SUBTOTAL</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathSubtotal(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: Returns a subtotal in a list or database
+		</description>
+	</function>
+	<function>
+		<name>SUM</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathSum(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the summation of given arguments.
+		</description>
+	</function>
+	<function>
+		<name>SUMIF</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathSumif(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	TODO: Adds the cells specified by a given criteria
+		</description>
+	</function>
+	<function>
+		<name>SUMPRODUCT</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathSumproduct(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the summation of the products of corresponding array components.
+		</description>
+	</function>
+	<function>
+		<name>SUMSQ</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathSumsq(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the sum of the squares of the arguments.
+		</description>
+	</function>
+	<function>
+		<name>SUMX2MY2</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathSumx2my2(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the sum of the difference of squares of corresponding values in two arrays.
+		</description>
+	</function>
+	<function>
+		<name>SUMX2PY2</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathSumx2py2(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the sum of the sum of squares of corresponding values in two arrays.
+		</description>
+	</function>
+	<function>
+		<name>SUMXMY2</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathSumxmy2(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the sum of the squares of differences of corresponding values in two arrays.
+		</description>
+	</function>
+	<function>
+		<name>TAN</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathTan(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the tangent of the given angle.
+		</description>
+	</function>
+	<function>
+		<name>TANH</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathTanh(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the hyperbolic tangent of a number.
+		</description>
+	</function>
+	<function>
+		<name>TRUNC</name>
+		<function-class>org.zkoss.zss.engine.fn.MathFns</function-class>
+		<function-signature>
+	java.lang.Object mathTrunc(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Truncates a number to an integer by removing the fractional part of the number.
+		</description>
+	</function>
+	
+	
+	<!--                   -->
+	<!-- Logical Functions -->
+	<!--                   -->
+	<function>
+		<name>AND</name>
+		<function-class>org.zkoss.zss.engine.fn.LogicalFns</function-class>
+		<function-signature>
+	java.lang.Object logicalAnd(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns TRUE if all of its arguments are TRUE.
+		</description>
+	</function>
+
+	<function>
+		<name>FALSE</name>
+		<function-class>org.zkoss.zss.engine.fn.LogicalFns</function-class>
+		<function-signature>
+	java.lang.Object logicalFalse(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns FALSE.
+		</description>
+	</function>
+
+	<function>
+		<name>IF</name>
+		<function-class>org.zkoss.zss.engine.fn.LogicalFns</function-class>
+		<function-signature>
+	java.lang.Object logicalIf(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Specifies a logical test to perform.
+		</description>
+	</function>
+
+	<function>
+		<name>NOT</name>
+		<function-class>org.zkoss.zss.engine.fn.LogicalFns</function-class>
+		<function-signature>
+	java.lang.Object logicalNot(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Reverses the logic of its argument.
+		</description>
+	</function>
+
+	<function>
+		<name>OR</name>
+		<function-class>org.zkoss.zss.engine.fn.LogicalFns</function-class>
+		<function-signature>
+	java.lang.Object logicalOr(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns TRUE if any argument is TRUE.
+		</description>
+	</function>
+
+	<function>
+		<name>TRUE</name>
+		<function-class>org.zkoss.zss.engine.fn.LogicalFns</function-class>
+		<function-signature>
+	java.lang.Object logicalTrue(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns TRUE.
+		</description>
+	</function>
+	
+	
+	<!--                       -->
+	<!-- Statistical Functions -->
+	<!--                       -->
+	<function>
+		<name>AVEDEV</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statAvedev(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	returns the average of the absolute deviations of data points from their mean
+		</description>
+	</function>
+	<function>
+		<name>AVERAGE</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statAverage(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the average of its arguments
+		</description>
+	</function>
+	<function>
+		<name>AVERAGEA</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statAveragea(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the average of its arguments
+		</description>
+	</function>
+	<function>
+		<name>BINOMDIST</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statBinomdist(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the individual term binomial distribution probability
+		</description>
+	</function>
+	<function>
+		<name>CHIDIST</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statChidist(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the one-tailed probability of the chi-squared distribution
+		</description>
+	</function>
+	<function>
+		<name>CHIINV</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statChiinv(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the inverse of the on-tailed probability of the chi-squared distribution
+		</description>
+	</function>
+	<function>
+		<name>COUNT</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statCount(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Counts how many numbers are in hte list of arguements
+		</description>
+	</function>
+	<function>
+		<name>COUNTA</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statCounta(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	
+		</description>
+	</function>
+	<function>
+		<name>EXPONDIST</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statExpondist(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the exponential distribution
+		</description>
+	</function>
+	<function>
+		<name>FDIST</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statFdist(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the F probility distribution
+		</description>
+	</function>
+	<function>
+		<name>FINV</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statFinv(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the inverse of the F probility distribution
+		</description>
+	</function>
+	<function>
+		<name>GAMMADIST</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statGammadist(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the gamma distribution
+		</description>
+	</function>
+	<function>
+		<name>GAMMAINV</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statGammainv(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the inverse of the gamma cumulative function
+		</description>
+	</function>
+	<function>
+		<name>GAMMALN</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statGammaln(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the natural logarithm of the gamma function
+		</description>
+	</function>
+	<function>
+		<name>GEOMEAN</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statGeomean(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the geometric mean
+		</description>
+	</function>
+	<function>
+		<name>HYPGEOMDIST</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statHypgeomdist(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the hypergeometric distribution
+		</description>
+	</function>
+	<function>
+		<name>INTERCEPT</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statIntercept(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the intercept of the linear regression
+		</description>
+	</function>
+	<function>
+		<name>KURT</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statKurt(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the kurtosis of a data set
+		</description>
+	</function>
+	<function>
+	<name>MAX</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statMax(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the maximum vlaue in a list of arguments
+		</description>
+	</function>
+	<function>
+	<name>MIN</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statMin(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the minimum value in a list of arguments
+		</description>
+	</function>
+	<function>
+	<name>NORMDIST</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statNormdist(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the normal cumulative distribution
+		</description>
+	</function>
+	<function>
+		<name>POISSON</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statPoisson(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the the Poisson distribution
+		</description>
+	</function>
+	<function>
+		<name>SKEW</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statSkew(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the skewness of a distribution
+		</description>
+	</function>
+	<function>
+		<name>SLOPE</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statSlope(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the slope of the linear regression line
+		</description>
+	</function>
+	<function>
+		<name>STDEV</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statStdev(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Estimate standard deviation based on a sample
+		</description>
+	</function>
+	<function>
+		<name>STDEVP</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statStdevP(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Calculates standard deviation based on the entire population given as arguments.
+		</description>
+	</function>
+	<function>
+		<name>TDIST</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statTdist(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the Student's t-distribution
+		</description>
+	</function>
+	<function>
+		<name>TINV</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statTinv(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the inverse of the Student's t-distribution
+		</description>
+	</function>
+	<function>
+		<name>VAR</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statVar(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Estimates variance based on a sample
+		</description>
+	</function>
+	<function>
+		<name>VARP</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statVarP(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Calculates variance based on the entire population.
+		</description>
+	</function>
+	<function>
+		<name>WEIBULL</name>
+		<function-class>org.zkoss.zss.engine.fn.StatFns</function-class>
+		<function-signature>
+	java.lang.Object statWeibull(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the Weibull distribution
+		</description>
+	</function>
+	
+	
+	<!--                         -->
+	<!-- Date and Time Functions -->
+	<!--                         -->
+	<function>
+		<name>DATE</name>
+		<function-class>org.zkoss.zss.engine.fn.DateTimeFns</function-class>
+		<function-signature>
+	java.lang.Object dateTimeDate(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the serial number of a particular date.
+		</description>
+	</function>
+	<function>
+		<name>DATEVALUE</name>
+		<function-class>org.zkoss.zss.engine.fn.DateTimeFns</function-class>
+		<function-signature>
+	java.lang.Object dateTimeDatevalue(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts a date in the form of text to a serial number
+		</description>
+	</function>
+	<function>
+		<name>DAY</name>
+		<function-class>org.zkoss.zss.engine.fn.DateTimeFns</function-class>
+		<function-signature>
+	java.lang.Object dateTimeDay(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts a serial number to a day  of the month
+		</description>
+	</function>
+	<function>
+		<name>DAYS360</name>
+		<function-class>org.zkoss.zss.engine.fn.DateTimeFns</function-class>
+		<function-signature>
+	java.lang.Object dateTimeDays360(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Calculates the number of days between two dates based on a 360-day year
+		</description>
+	</function>
+	<function>
+		<name>HOUR</name>
+		<function-class>org.zkoss.zss.engine.fn.DateTimeFns</function-class>
+		<function-signature>
+	java.lang.Object dateTimeHour(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts a serial number to an hour
+		</description>
+	</function>
+	<function>
+		<name>MINUTE</name>
+		<function-class>org.zkoss.zss.engine.fn.DateTimeFns</function-class>
+		<function-signature>
+	java.lang.Object dateTimeMinute(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts a serial number to a minute
+		</description>
+	</function>
+	<function>
+		<name>MONTH</name>
+		<function-class>org.zkoss.zss.engine.fn.DateTimeFns</function-class>
+		<function-signature>
+	java.lang.Object dateTimeMonth(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts a serial number to a month
+		</description>
+	</function>
+	<function>
+		<name>NOW</name>
+		<function-class>org.zkoss.zss.engine.fn.DateTimeFns</function-class>
+		<function-signature>
+	java.lang.Object dateTimeNow(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the serial number of the current date and time
+		</description>
+	</function>
+	<function>
+		<name>SECOND</name>
+		<function-class>org.zkoss.zss.engine.fn.DateTimeFns</function-class>
+		<function-signature>
+	java.lang.Object dateTimeSecond(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts a serial number to a second
+		</description>
+	</function>
+	<function>
+		<name>TIME</name>
+		<function-class>org.zkoss.zss.engine.fn.DateTimeFns</function-class>
+		<function-signature>
+	java.lang.Object dateTimeTime(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the serial number of a particular time
+		</description>
+	</function>
+	<function>
+		<name>TODAY</name>
+		<function-class>org.zkoss.zss.engine.fn.DateTimeFns</function-class>
+		<function-signature>
+	java.lang.Object dateTimeToday(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the serial number of today's date.
+		</description>
+	</function>
+	<function>
+		<name>WEEKDAY</name>
+		<function-class>org.zkoss.zss.engine.fn.DateTimeFns</function-class>
+		<function-signature>
+	java.lang.Object dateTimeWeekday(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts a serial number to a day of the week
+		</description>
+	</function>
+	<function>
+		<name>YEAR</name>
+		<function-class>org.zkoss.zss.engine.fn.DateTimeFns</function-class>
+		<function-signature>
+	java.lang.Object dateTimeYear(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts a serial number to a year
+		</description>
+	</function>
+	<!--                       -->
+	<!-- Information Functions -->
+	<!--                       -->
+	<function>
+		<name>ISBLANK</name>
+		<function-class>org.zkoss.zss.engine.fn.InfoFns</function-class>
+		<function-signature>
+	java.lang.Object isBlank(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Checks whether the number of reference cell is blank
+		</description>
+	</function>
+	<function>
+		<name>ISLOGICAL</name>
+		<function-class>org.zkoss.zss.engine.fn.InfoFns</function-class>
+		<function-signature>
+	java.lang.Object isLogical(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Checks whether ther number fo reference cell is logical
+		</description>
+	</function>
+	<function>
+		<name>ISEVEN</name>
+		<function-class>org.zkoss.zss.engine.fn.InfoFns</function-class>
+		<function-signature>
+	java.lang.Object isEven(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Checks whether the number is event or  not
+		</description>
+	</function>
+	<function>
+		<name>ISODD</name>
+		<function-class>org.zkoss.zss.engine.fn.InfoFns</function-class>
+		<function-signature>
+	java.lang.Object isOdd(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Checks whether the number is odd or  not
+		</description>
+	</function>
+	<function>
+		<name>N</name>
+		<function-class>org.zkoss.zss.engine.fn.InfoFns</function-class>
+		<function-signature>
+	java.lang.Object N(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts a value into a number
+		</description>
+	</function>
+	<function>
+		<name>NA</name>
+		<function-class>org.zkoss.zss.engine.fn.InfoFns</function-class>
+		<function-signature>
+	java.lang.Object NA(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the error value #N/A
+		</description>
+	</function>
+	<function>
+		<name>ISNUMBER</name>
+		<function-class>org.zkoss.zss.engine.fn.InfoFns</function-class>
+		<function-signature>
+	java.lang.Object isNumber(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Checks whether the value refers to a number
+		</description>
+	</function>
+	<function>
+		<name>ISTEXT</name>
+		<function-class>org.zkoss.zss.engine.fn.InfoFns</function-class>
+		<function-signature>
+	java.lang.Object isText(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Checks whether the value refers to a text
+		</description>
+	</function>
+	<function>
+		<name>ISNONTEXT</name>
+		<function-class>org.zkoss.zss.engine.fn.InfoFns</function-class>
+		<function-signature>
+	java.lang.Object isNonText(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Checks whether the value refers to a text
+		</description>
+	</function>
+	<function>
+		<name>ISERR</name>
+		<function-class>org.zkoss.zss.engine.fn.InfoFns</function-class>
+		<function-signature>
+	java.lang.Object isErr(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Checks whether the value is any error value exception #N/A
+		</description>
+	</function>
+	<function>
+		<name>ISERROR</name>
+		<function-class>org.zkoss.zss.engine.fn.InfoFns</function-class>
+		<function-signature>
+	java.lang.Object isError(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Checks whether the value is any error value
+		</description>
+	</function>
+	<function>
+		<name>ISNA</name>
+		<function-class>org.zkoss.zss.engine.fn.InfoFns</function-class>
+		<function-signature>
+	java.lang.Object isNA(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Checks whether the value is teh #N/A error value
+		</description>
+	</function>
+	<function>
+		<name>TYPE</name>
+		<function-class>org.zkoss.zss.engine.fn.InfoFns</function-class>
+		<function-signature>
+	java.lang.Object type(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Return the type of the value.
+		</description>
+	</function>
+	<function>
+		<name>ERROR.TYPE</name>
+		<function-class>org.zkoss.zss.engine.fn.InfoFns</function-class>
+		<function-signature>
+	java.lang.Object errorType(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns a number corresponding to an error type; others return #N/A.
+		</description>
+	</function>
+	
+	<!--                         -->
+	<!-- Text and Data Functions -->
+	<!--                         -->
+	<function>
+		<name>ASC</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textAsc(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Changes full-width (double-byte) English letters or katakana within a character string to half-width (single-byte) characters
+		</description>
+	</function>
+	<function>
+		<name>BAHTTEXT</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textBahtText(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts a number to Thai text and adds a suffix of "Baht."
+		</description>
+	</function>
+	<function>
+		<name>CHAR</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textChar(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the character specified by a number.
+		</description>
+	</function>
+	<function>
+		<name>CLEAN</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textClean(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Removes all nonprintable characters from text.
+		</description>
+	</function>
+	<function>
+		<name>CODE</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textCode(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns a numeric code for the first character in a text string.
+		</description>
+	</function>
+	<function>
+		<name>CONCATENATE</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textConcatenate(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Joins several text items into one text item
+		</description>
+	</function>
+	<function>
+		<name>DOLLAR</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textDollar(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	This function converts a number to text using currency format, with the decimals rounded to the specified place.
+		</description>
+	</function>
+	<function>
+		<name>EXACT</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textExact(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Compares two text strings and returns TRUE if they are exactly the same, FALSE otherwise.
+		</description>
+	</function>
+	<function>
+		<name>FIND</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textFind(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	FIND locates one text string within a second text string, and return the number of the starting position of the first text string from the first character of the second text string
+		</description>
+	</function>
+	<function>
+		<name>FINDB</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textFindB(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	FINDB locates one text string within a second text string, and return the number of the starting position of the first text string from the first character of the second text string
+		</description>
+	</function>
+	<function>
+		<name>FIXED</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textFixed(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Rounds a number to the specified number of decimals, formats the number in decimal format using a period and commas, and returns the result as text
+		</description>
+	</function>
+	<function>
+		<name>JIS</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textJis(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	The function described in this Help topic converts half-width (single-byte) letters within a character string to full-width (double-byte) characters. The name of the function (and the characters that it converts) depends upon your language settings
+		</description>
+	</function>
+	<function>
+		<name>LEFT</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textLeft(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	LEFT returns the first character or characters in a text string, based on the number of characters you specify
+		</description>
+	</function>
+	<function>
+		<name>LEFTB</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textLeftB(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	LEFTB returns the first character or characters in a text string, based on the number of bytes you specify
+		</description>
+	</function>
+	<function>
+		<name>LEN</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textLen(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	LEN returns the number of characters in a text string
+		</description>
+	</function>
+	<function>
+		<name>LENB</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textLenB(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	LENB returns the number of bytes used to represent the characters in a text string
+		</description>
+	</function>
+	<function>
+		<name>LOWER</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textLower(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts all uppercase letters in a text string to lowercase
+		</description>
+	</function>
+	<function>
+		<name>MID</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textMid(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	MID returns a specific number of characters from a text string, starting at the position you specify, based on the number of characters you specify
+		</description>
+	</function>
+	<function>
+		<name>MIDB</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textMidB(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	MIDB returns a specific number of characters from a text string, starting at the position you specify, based on the number of bytes you specify
+		</description>
+	</function>
+	<function>
+		<name>PHONETIC</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textPhonetic(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Extracts the phonetic (furigana) characters from a text string
+		</description>
+	</function>
+	<function>
+		<name>PROPER</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textProper(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Capitalizes the first letter in a text string and any other letters in text that follow any character other than a letter. Converts all other letters to lowercase letters
+		</description>
+	</function>
+	<function>
+		<name>REPLACE</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textReplace(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	REPLACE replaces part of a text string, based on the number of characters you specify, with a different text string
+		</description>
+	</function>
+	<function>
+		<name>REPLACEB</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textReplaceB(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	REPLACEB replaces part of a text string, based on the number of bytes you specify, with a different text string
+		</description>
+	</function>
+	<function>
+		<name>REPT</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textRept(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Repeats text a given number of times. Use REPT to fill a cell with a number of instances of a text string
+		</description>
+	</function>
+	<function>
+		<name>RIGHT</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textRight(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	RIGHT returns the last character or characters in a text string, based on the number of characters you specify
+		</description>
+	</function>
+	<function>
+		<name>RIGHTB</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textRightB(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	RIGHTB returns the last character or characters in a text string, based on the number of bytes you specify
+		</description>
+	</function>
+	<function>
+		<name>SEARCH</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textSearch(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	SEARCH locates one text string within a second text string, and return the number of the starting position of the first text string from the first character of the second text string
+		</description>
+	</function>
+	<function>
+		<name>SEARCHB</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textSearchB(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	SEARCHB locates one text string within a second text string, and return the number of the starting position of the first text string from the first character of the second text string
+		</description>
+	</function>
+	<function>
+		<name>SUBSTITUTE</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textSubstitute(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Substitutes new_text for old_text in a text string. Use SUBSTITUTE when you want to replace specific text in a text string; use REPLACE when you want to replace any text that occurs in a specific location in a text string
+		</description>
+	</function>
+	<function>
+		<name>T</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textT(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the text referred to by value
+		</description>
+	</function>
+	<function>
+		<name>TEXT</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textText(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts a value to text in a specific number format
+		</description>
+	</function>
+	<function>
+		<name>TRIM</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textTrim(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Removes all spaces from text except for single spaces between words. Use TRIM on text that you have received from another application that may have irregular spacing
+		</description>
+	</function>
+	<function>
+		<name>UPPER</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textUpper(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts text to uppercase
+		</description>
+	</function>
+	<function>
+		<name>VALUE</name>
+		<function-class>org.zkoss.zss.engine.fn.TextDataFns</function-class>
+		<function-signature>
+	java.lang.Object textValue(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts a text string that represents a number to a number
+		</description>
+	</function>
+
+	<!--                     -->
+	<!-- Financial Functions -->
+	<!--                     -->
+	<function>
+		<name>ACCRINT</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialAccrint(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the accrued interest for a security that pays periodic interest
+		</description>
+	</function>
+	<function>
+		<name>ACCRINTM</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialAccrintm(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the accrued interest for a security that pays interest at maturity
+		</description>
+	</function>
+	<function>
+		<name>AMORDEGRC</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialAmordegrc(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the depreciation for each accounting period by using a depreciation coefficient
+		</description>
+	</function>
+	<function>
+		<name>AMORLINC</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialAmorlinc(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the depreciation for each accounting period
+		</description>
+	</function>
+	<function>
+		<name>COUPDAYBS</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialCoupdaybs(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the number of days from the beginning of the coupon period to the settlement date
+		</description>
+	</function>
+	<function>
+		<name>COUPDAYS</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialCoupdays(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the number of days in the coupon period that contains the settlement date
+		</description>
+	</function>
+	<function>
+		<name>COUPDAYSNC</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialCoupdaysnc(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the number of days from the settlement date to the next coupon date
+		</description>
+	</function>
+	<function>
+		<name>COUPNCD</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialCoupncd(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the next coupon date after the settlement date
+		</description>
+	</function>
+	<function>
+		<name>COUPNUM</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialCoupnum(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the number of coupons payable between the settlement date and maturity date
+		</description>
+	</function>
+	<function>
+		<name>COUPPCD</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialCouppcd(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the previous coupon date before the settlement date
+		</description>
+	</function>
+	<function>
+		<name>CUMIPMT</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialCumipmt(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the cumulative interest paid between two periods
+		</description>
+	</function>
+	<function>
+		<name>CUMPRINC</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialCumprinc(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the cumulative principal paid on a loan between two periods
+		</description>
+	</function>
+	<function>
+		<name>DB</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialDb(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the depreciation of an asset for a specified period by using the fixed-declining balance method
+		</description>
+	</function>
+	<function>
+		<name>DDB</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialDdb(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the depreciation of an asset for a specified period by using the double-declining balance method or some other method that you specify
+		</description>
+	</function>
+	<function>
+		<name>DISC</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialDisc(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the discount rate for a security
+		</description>
+	</function>
+	<function>
+		<name>DOLLARDE</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialDollarde(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts a dollar price, expressed as a fraction, into a dollar price, expressed as a decimal number
+		</description>
+	</function>
+	<function>
+		<name>DOLLARFR</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialDollarfr(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Converts a dollar price, expressed as a decimal number, into a dollar price, expressed as a fraction
+		</description>
+	</function>
+	<function>
+		<name>DURATION</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialDuration(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the annual duration of a security with periodic interest payments
+		</description>
+	</function>
+	<function>
+		<name>EFFECT</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialEffect(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the effective annual interest rate
+		</description>
+	</function>
+	<function>
+		<name>FV</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialFv(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the future value of an investment
+		</description>
+	</function>
+	<function>
+		<name>FVSCHEDULE</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialFvschedule(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the future value of an initial principal after applying a series of compound interest rates
+		</description>
+	</function>
+	<function>
+		<name>INTRATE</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialIntrate(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the interest rate for a fully invested security
+		</description>
+	</function>
+	<function>
+		<name>IPMT</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialIpmt(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the interest payment for an investment for a given period
+		</description>
+	</function>
+	<function>
+		<name>IRR</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialIrr(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the internal rate of return for a series of cash flows 
+		</description>
+	</function>
+ 	<function>
+		<name>ISPMT</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialIspmt(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Calculates the interest paid during a specific period of an investment 
+		</description>
+	</function>
+ 	<function>
+		<name>LOGEST</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialLogest(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	In regression analysis, calculates an exponential curve that fits your data and returns an array of values that describes the curve. 
+		</description>
+	</function>
+    <function>
+		<name>MDURATION</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialMduration(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the Macauley modified duration for a security with an assumed par value of $100 
+		</description>
+	</function>
+ 	<function>
+		<name>MIRR</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialMirr(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the internal rate of return where positive and negative cash flows are financed at different rates 
+		</description>
+	</function>
+	<function>
+		<name>NOMINAL</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialNominal(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the annual nominal interest rate 
+		</description>
+	</function>
+ 	<function>
+		<name>NPER</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialNper(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the number of periods for an investment 
+		</description>
+	</function>
+  	<function>
+		<name>NPV</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialNpv(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the net present value of an investment based on a series of periodic cash flows and a discount rate 
+		</description>
+	</function>
+   	<function>
+		<name>ODDFPRICE</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialOddfprice(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the price per $100 face value of a security with an odd first period 
+		</description>
+	</function>
+    <function>
+		<name>ODDFYIELD</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialOddfyield(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the yield of a security with an odd first period 
+		</description>
+	</function>
+    <function>
+		<name>ODDLPRICE</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialOddlprice(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the price per $100 face value of a security with an odd last period 
+		</description>
+	</function>
+    <function>
+		<name>ODDLYIELD</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialOddlyield(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the yield of a security with an odd last period 
+		</description>
+	</function>
+    <function>
+		<name>PMT</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialPmt(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the periodic payment for an annuity 
+		</description>
+	</function>
+    <function>
+		<name>PPMT</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialPpmt(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the payment on the principal for an investment for a given period 
+		</description>
+	</function>
+    <function>
+		<name>PRICE</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialPrice(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the price per $100 face value of a security that pays periodic interest 
+		</description>
+	</function>
+    <function>
+		<name>PRICEDISC</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialPricedisc(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the price per $100 face value of a discounted security 
+		</description>
+	</function>
+    <function>
+		<name>PRICEMAT</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialPricemat(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the price per $100 face value of a security that pays interest at maturity 
+		</description>
+	</function>
+    <function>
+		<name>PV</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialPv(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the present value of an investment 
+		</description>
+	</function>
+    <function>
+		<name>RATE</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialRate(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the interest rate per period of an annuity 
+		</description>
+	</function>
+    <function>
+		<name>RECEIVED</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialReceived(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the amount received at maturity for a fully invested security 
+		</description>
+	</function>
+    <function>
+		<name>SLN</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialSln(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the straight-line depreciation of an asset for one period 
+		</description>
+	</function>
+    <function>
+		<name>SYD</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialSyd(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the sum-of-years' digits depreciation of an asset for a specified period 
+		</description>
+	</function>
+    <function>
+		<name>TBILLEQ</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialTbilleq(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the bond-equivalent yield for a Treasury bill 
+		</description>
+	</function>
+    <function>
+		<name>TBILLPRICE</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialTbillprice(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the price per $100 face value for a Treasury bill 
+		</description>
+	</function>
+    <function>
+		<name>TBILLYIELD</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialTbillyield(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the yield for a Treasury bill 
+		</description>
+	</function>
+    <function>
+		<name>VDB</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialVdb(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the depreciation of an asset for a specified or partial period by using a declining balance method 
+		</description>
+	</function>
+    <function>
+		<name>XIRR</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialXirr(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the internal rate of return for a schedule of cash flows that is not necessarily periodic 
+		</description>
+	</function>
+    <function>
+		<name>XNPV</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialXnpv(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the net present value for a schedule of cash flows that is not necessarily periodic 
+		</description>
+	</function>
+    <function>
+		<name>YIELD</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialYield(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the yield on a security that pays periodic interest 
+		</description>
+	</function>
+    <function>
+		<name>YIELDDISC</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialYielddisc(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the annual yield for a discounted security; for example, a Treasury bill 
+		</description>
+	</function>
+    <function>
+		<name>YIELDMAT</name>
+		<function-class>org.zkoss.zss.engine.fn.FinancialFns</function-class>
+		<function-signature>
+	java.lang.Object financialYieldmat(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the annual yield of a security that pays interest at maturity 
+		</description>
+	</function>
+
+	<!--                       -->
+	<!-- Engineering Functions -->
+	<!--                       -->
+	<function>
+		<name>BESSELI</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerBesseli(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+	Returns the modified Bessel function In(x)
+		</description>
+	</function>
+	<function>
+		<name>BESSELJ</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerBesselj(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the Bessel function Jn(x)
+		</description>
+	</function>
+	<function>
+		<name>BESSELK</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerBesselk(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the modified Bessel function Kn(x)
+		</description>
+	</function>
+	<function>
+		<name>BESSELY</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerBessely(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the Bessel function Yn(x)
+		</description>
+	</function>
+	<function>
+		<name>BIN2DEC</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerBin2dec(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Converts a binary number to decimal
+		</description>
+	</function>
+	<function>
+		<name>BIN2HEX</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerBin2hex(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Converts a binary number to hexadecimal
+		</description>
+	</function>
+	<function>
+		<name>BIN2OCT</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerBin2oct(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Converts a binary number to octal
+		</description>
+	</function>
+	<function>
+		<name>COMPLEX</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerComplex(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Converts real and imaginary coefficients into a complex number
+		</description>
+	</function>
+	<function>
+		<name>CONVERT</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerConvert(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Converts a number from one measurement system to another
+		</description>
+	</function>
+	<function>
+		<name>DEC2BIN</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerDec2bin(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Converts a decimal number to binary
+		</description>
+	</function>
+	<function>
+		<name>DEC2HEX</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerDec2hex(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Converts a decimal number to hexadecimal
+		</description>
+	</function>
+	<function>
+		<name>DEC2OCT</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerDec2oct(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Converts a decimal number to octal
+		</description>
+	</function>
+	<function>
+		<name>DELTA</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerDelta(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Tests whether two values are equal
+		</description>
+	</function>
+	<function>
+		<name>ERF</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerErf(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the error function
+		</description>
+	</function>
+	<function>
+		<name>ERFC</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerErfc(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the complementary error function
+		</description>
+	</function>
+	<function>
+		<name>GESTEP</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerGestep(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Tests whether a number is greater than a threshold value
+		</description>
+	</function>
+	<function>
+		<name>HEX2BIN</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerHex2bin(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Converts a hexadecimal number to binary
+		</description>
+	</function>
+	<function>
+		<name>HEX2DEC</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerHex2dec(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Converts a hexadecimal number to decimal
+		</description>
+	</function>
+	<function>
+		<name>HEX2OCT</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerHex2oct(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Converts a hexadecimal number to octal
+		</description>
+	</function>
+	<function>
+		<name>IMABS</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImabs(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the absolute value (modulus) of a complex number
+		</description>
+	</function>
+	<function>
+		<name>IMAGINARY</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImaginary(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the imaginary coefficient of a complex number
+		</description>
+	</function>
+	<function>
+		<name>IMARGUMENT</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImargument(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the argument theta, an angle expressed in radians
+		</description>
+	</function>
+	<function>
+		<name>IMCONJUGATE</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImconjugate(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the complex conjugate of a complex number
+		</description>
+	</function>
+	<function>
+		<name>IMCOS</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImcos(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the cosine of a complex number
+		</description>
+	</function>
+	<function>
+		<name>IMDIV</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImdiv(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the quotient of two complex numbers
+		</description>
+	</function>
+	<function>
+		<name>IMEXP</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImexp(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the exponential of a complex number
+		</description>
+	</function>
+	<function>
+		<name>IMLN</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImln(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the natural logarithm of a complex number
+		</description>
+	</function>
+	<function>
+		<name>IMLOG10</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImlog10(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the base-10 logarithm of a complex number
+		</description>
+	</function>
+	<function>
+		<name>IMLOG2</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImlog2(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the base-2 logarithm of a complex number
+		</description>
+	</function>
+	<function>
+		<name>IMPOWER</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImpower(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns a complex number raised to an integer power
+		</description>
+	</function>
+	<function>
+		<name>IMPRODUCT</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImproduct(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the product of from 2 to 29 complex numbers
+		</description>
+	</function>
+	<function>
+		<name>IMREAL</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImreal(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the real coefficient of a complex number
+		</description>
+	</function>
+	<function>
+		<name>IMSIN</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImsin(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the sine of a complex number
+		</description>
+	</function>
+	<function>
+		<name>IMSQRT</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImsqrt(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the square root of a complex number
+		</description>
+	</function>
+	<function>
+		<name>IMSUB</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImsub(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the difference between two complex numbers
+		</description>
+	</function>
+	<function>
+		<name>IMSUM</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerImsum(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Returns the sum of complex numbers
+		</description>
+	</function>
+	<function>
+		<name>OCT2BIN</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerOct2bin(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Converts an octal number to binary
+		</description>
+	</function>
+	<function>
+		<name>OCT2DEC</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerOct2dec(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Converts an octal number to decimal
+		</description>
+	</function>
+	<function>
+		<name>OCT2HEX</name>
+		<function-class>org.zkoss.zss.engine.fn.EngineeringFns</function-class>
+		<function-signature>
+	java.lang.Object engineerOct2hex(java.lang.Object[] args, org.zkoss.xel.XelContext ctx)
+		</function-signature>
+		<description>
+ 	Converts an octal number to hexadecimal
+		</description>
+	</function>
+</taglib>

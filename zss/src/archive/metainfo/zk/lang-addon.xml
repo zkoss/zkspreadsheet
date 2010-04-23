@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- lang-addon.xml
+	Purpose:
+		ZK Spreadsheet components
+	Description:
+		
+	Note:
+		
+	History:
+		June 13, 2007, Created by Tom Yeh
+
+Copyright (C) 2007 Potix Corporation. All Rights Reserved.
+-->
+<language-addon>
+	<!-- The name of this addon. It must be unique -->
+	<addon-name>ZK Spreadsheet</addon-name>
+	<!-- Specifies what other addon this depends
+	<depends></depends>
+	-->
+
+	<!-- Which language this addon will be added to -->
+	<language-name>xul/html</language-name>
+	
+	<!--TODO remove this before when release -->
+	<!-- javascript src="~./js/zss/debug.js" charset="UTF-8"/-->
+
+	<stylesheet href="~./zss/css/ss*.css.dsp*" type="text/css"/>
+
+	<version>
+		<version-class>org.zkoss.zss.ui.Version</version-class>
+		<version-uid>2.0.0</version-uid>
+		<zk-version>5.0.0</zk-version><!-- or later -->
+	</version>
+
+	<zscript language="Java">
+	import org.zkoss.zss.ui.*;
+	import org.zkoss.zss.model.*;
+	</zscript>
+	<zscript language="JavaScript">
+	importPackage(Packages.org.zkoss.zss.ui);
+	importPackage(Packages.org.zkoss.zss.model);
+	</zscript>
+	<zscript language="Groovy" each-time="true">
+	import org.zkoss.zss.ui.*
+	import org.zkoss.zss.model.*
+	</zscript>
+	<zscript language="Ruby">
+	module Java
+		include_package 'org.zkoss.zss.ui'
+		include_package 'org.zkoss.zss.model'
+	end
+	</zscript>
+
+	<component>
+		<component-name>spreadsheet</component-name>
+		<component-class>org.zkoss.zss.ui.Spreadsheet</component-class>
+		<widget-class>zss.Spreadsheet</widget-class>
+		<mold>
+			<mold-name>default</mold-name>
+			<mold-uri>mold/spreadsheet.js</mold-uri>
+		</mold>
+		<!--custom-attribute>
+			<attribute-name>zss_titlemode</attribute-name>
+			<attribute-value>index</attribute-value>
+		</custom-attribute-->
+	</component>
+</language-addon>

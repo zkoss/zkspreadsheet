@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zk>
+	<window border="normal">
+		<button label="click" onClick="ss1.selectedSheet.setRowHeight(25,100);" />
+		<spreadsheet id="ss1" src="/test2/xls/empty.xls" width="400px" height="400px" />
+	</window>
+</zk>
