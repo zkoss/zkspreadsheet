@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.zkoss.zss</groupId>
+  <artifactId>zsstest</artifactId>
+  <version>{version}</version>
+  <packaging>jar</packaging>
+  <name>ZK Spreadsheet Unit Test</name>
+  <url>http://www.zkoss.org/zss</url>
+  <description>ZK Spreadsheet Unit Test</description>
+  <licenses>
+    <license>
+      <name>GNU General Public License, Version 3.0</name>
+      <url>http://www.gnu.org/licenses/gpl.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <url>https://zkspreadsheet.googlecode.com/releases/{version}/zss</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>org.zkoss.zss</groupId>
+      <artifactId>zpoi</artifactId>
+      <version>{version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.zkoss.zss</groupId>
+      <artifactId>zss</artifactId>
+      <version>{version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.zkoss.common</groupId>
+      <artifactId>zcommon</artifactId>
+      <version>5.0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-math</artifactId>
+      <version>2.1</version>
+    </dependency>
+    <dependency>
+	  <groupId>junit</groupId>
+	  <artifactId>junit</artifactId>
+	  <version>4.8.1</version>
+	</dependency>
+  </dependencies>
+</project> 

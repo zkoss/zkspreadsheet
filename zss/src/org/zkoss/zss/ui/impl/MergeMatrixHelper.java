@@ -47,7 +47,7 @@ public class MergeMatrixHelper {
 	private int _frozenCol;//don't care this for now.
 	private SequenceId _mergeId = new SequenceId(0,1);
 	/**
-	 * @param mergeRange List which get from {@link Sheet#getMergeRanges()}
+	 * @param mergeRange List of merge range
 	 * @param frozenRow
 	 * @param frozenCol
 	 */

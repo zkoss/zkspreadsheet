@@ -102,7 +102,7 @@ public class Events {
 	public static final String ON_SELECTION_CHANGE = "onSelectionChange";
 	
 	/**
-	 * The onEditboxEditing event (used with {@link EditboxEditing}).
+	 * The onEditboxEditing event (used with {@link EditboxEditingEvent}).
 	 * Sent when user start to typing in the ZSSEditbox
 	 */
 	public static final String ON_EDITBOX_EDITING = "onEditboxEditing";

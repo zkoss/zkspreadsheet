@@ -20,42 +20,11 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	<!--         -->
 	<!-- Imports -->
 	<!--         -->
-<!-- 	
-	<import>
-		<import-name>UtilFns</import-name>
-		<import-class>org.zkoss.zss.formula.fn.UtilFns</import-class>
-	</import>
-	<import>
-		<import-name>MathFns</import-name>
-		<import-class>org.zkoss.zss.formula.fn.MathFns</import-class>
-	</import>
-	<import>
-		<import-name>LogicalFns</import-name>
-		<import-class>org.zkoss.zss.formula.fn.LogicalFns</import-class>
-	</import>
-	<import>
-		<import-name>DateTimeFns</import-name>
-		<import-class>org.zkoss.zss.formula.fn.DateTimeFns</import-class>
-	</import>
-	<import>
-		<import-name>StatFns</import-name>
-		<import-class>org.zkoss.zss.formula.fn.StatFns</import-class>
-	</import>
-	<import>
-		<import-name>TextDataFns</import-name>
-		<import-class>org.zkoss.zss.formula.fn.TextDataFns</import-class>
-	</import>
- -->
  	<import>
 		<import-name>FinancialFns</import-name>
 		<import-class>org.zkoss.zss.formula.fn.FinancialFns</import-class>
 	</import>
-<!-- 	
-	<import>
-		<import-name>EngineeringFns</import-name>
-		<import-class>org.zkoss.zss.formula.fn.EngineeringFns</import-class>
-	</import>
--->	
+	
 	<!--                     -->
 	<!-- Financial Functions -->
 	<!--                     -->

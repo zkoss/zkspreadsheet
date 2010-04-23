@@ -28,7 +28,7 @@ import org.zkoss.zss.model.Importer;
 import org.zkoss.zss.model.ModelException;
 
 /**
- * Imports an Excel file into as a {@Book}.
+ * Imports an Excel file into as a {@link Book}.
  * @author henrichen
  *
  */

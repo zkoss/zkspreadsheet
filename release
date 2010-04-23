@@ -44,19 +44,19 @@ if [ ! -d "$javadocdir/jsdoc" ] ; then
 	exit 1
 fi
 
-if [ "$target" == "official" ] ; then
-	htmldocdir=$(grep '^htmldoc' $setting)
-	htmldocdir=${htmldocdir#htmldoc=}
-	if [ "$htmldocdir" = "" ] ; then
-		echo htmldoc must be specified in $setting
-		exit 1
-	fi
-	htmldocdir=${htmldocdir/\~/$HOME}
-	if [ ! -d "$htmldocdir/devguide" ] ; then
-		echo $htmldocdir/devguide is not found
-		exit 1
-	fi
-fi
+#if [ "$target" == "official" ] ; then
+#	htmldocdir=$(grep '^htmldoc' $setting)
+#	htmldocdir=${htmldocdir#htmldoc=}
+#	if [ "$htmldocdir" = "" ] ; then
+#		echo htmldoc must be specified in $setting
+#		exit 1
+#	fi
+#	htmldocdir=${htmldocdir/\~/$HOME}
+#	if [ ! -d "$htmldocdir/devguide" ] ; then
+#		echo $htmldocdir/devguide is not found
+#		exit 1
+#	fi
+#fi
 
 ver=$(grep '^version=' $setting)
 ver=${ver#version=}
@@ -65,16 +65,13 @@ ver=${ver#version=}
 if [ "$target" == "official" ] ; then
 	binnm=zssee-bin-$ver
 	stdnm=zss-bin-$ver
-#	profnm=zsspe-bin-$ver
 	
 	binnmevl=zssee-bin-eval-$ver
-#	profnmevl=zsspe-bin-eval-$ver
 	
 	demonm=zss-demo-$ver
 	javadocnm=zss-javadoc-$ver
 	jsdocnm=zss-jsdoc-$ver
 	srcnm=zss-src-$ver
-#	profsrcnm=zsspe-src-$ver
 	entsrcnm=zssee-src-$ver
 	echo "Release $binnm..."
 elif [ "$target" == "" ] || [ "$target" == "daily" ] ; then
@@ -82,10 +79,8 @@ elif [ "$target" == "" ] || [ "$target" == "daily" ] ; then
 
 	binnm=zssee-bin-$ver-$stamp
 	stdnm=zss-bin-$ver-$stamp
-#	profnm=zsspe-bin-$ver-$stamp
 	
 	binnmevl=zssee-bin-eval-$ver-$stamp
-#	profnmevl=zsspe-bin-eval-$ver-$stamp
 	
 	demonm=zss-demo-$ver-$stamp
 	javadocnm=zss-javadoc-$ver-$stamp
@@ -153,9 +148,7 @@ if [ "$target" == "official" ] || [ "$target" == "daily" ] ; then
 	echo Prepare ${srcnm}.zip
 	
 	if [ "$target" == "official" ] ; then
-		echo Prepare ${profsrcnm}.zip ${entsrcnm}.zip
-		mkdir -p /tmp/zss/$profsrcnm/dist/src
-		mkdir -p /tmp/zss/$profsrcnm/doc
+		echo Prepare ${entsrcnm}.zip
 		mkdir -p /tmp/zss/$entsrcnm/dist/src
 		mkdir -p /tmp/zss/$entsrcnm/doc
 	fi
@@ -164,14 +157,16 @@ if [ "$target" == "official" ] || [ "$target" == "daily" ] ; then
 	cp bin/* /tmp/zss/$srcnm/bin
 	cp build* /tmp/zss/$srcnm
 	cp -rp bin /tmp/zss/$srcnm
+	cp -rp zpoi /tmp/zss/$srcnm
 	cp -rp zss /tmp/zss/$srcnm
+	cp -rp zsstest /tmp/zss/$srcnm
 	
 	if [ "$target" == "official" ] ; then
-		cp -rp zssmax /tmp/zss/$entsrcnm
+		cp -rp zssex /tmp/zss/$entsrcnm
 		cp -rp /tmp/zss/$srcnm/* /tmp/zss/$entsrcnm 
 	fi
 	
-	cp zkdoc/COPYING zkdoc/release-note /tmp/zss/$srcnm/doc
+	cp zkdoc/COPYING zkdoc/release-note zkdoc/ZPOI_* zkdoc/how-to-build-zss /tmp/zss/$srcnm/doc
 		
 	if [ "$target" == "official" ] ; then
 		# License
@@ -179,19 +174,26 @@ if [ "$target" == "official" ] || [ "$target" == "daily" ] ; then
 		mv /tmp/zss/CML_LICENSE /tmp/zss/LICENSE
 		chmod 644 /tmp/zss/LICENSE
 		
-		cp /tmp/zss/LICENSE zkdoc/release-note /tmp/zss/$entsrcnm/doc
+		cp /tmp/zss/LICENSE zkdoc/release-note zkdoc/ZPOI_* zkdoc/how-to-build-zss /tmp/zss/$entsrcnm/doc
 		rm /tmp/zss/LICENSE
 	fi
 	
 	cd /tmp/zss/$srcnm
-#	rm -rf zpoi/debug
+	rm -rf zpoi/debug
 	rm -rf zss/debug
+	rm -rf zsstest/debug
 	find -name .svn | xargs rm -rf
+	find -name .project | xargs rm -rf
+	find -name .classpath | xargs rm -rf
+	find -name .settings | xargs rm -rf
 	
 	if [ "$target" == "official" ] ; then
 		cd /tmp/zss/$entsrcnm
 		rm -rf zssex/debug
 		find -name .svn | xargs rm -rf
+		find -name .project | xargs rm -rf
+		find -name .classpath | xargs rm -rf
+		find -name .settings | xargs rm -rf
 	fi
 	
 	cd /tmp/zss
@@ -206,8 +208,9 @@ if [ "$target" == "official" ] || [ "$target" == "daily" ] ; then
 		cd $srcnm
 	fi
 	
-	
+	cp -rp zpoi/codegen/* zss/src/* ../src/zss
 	cp -rp zss/codegen/* zss/src/* ../src/zss
+	cp -rp zsstest/codegen/* zss/src/* ../src/zss
 	
 	if [ "$target" == "official" ] ; then
 		cp -rp zssex/codegen/* zssex/src/* ../src/zssex
@@ -221,7 +224,9 @@ if [ "$target" == "official" ] || [ "$target" == "daily" ] ; then
 	cd src
 
 	find -name 'package.html' | xargs rm -rf
+	jar cfM zpoi-sources.jar -C zss .
 	jar cfM zss-sources.jar -C zss .
+	jar cfM zsstest-sources.jar -C zss .
 	
 	if [ "$target" == "official" ] ; then
 		jar cfM zssex-sources.jar -C zssex .
@@ -259,20 +264,33 @@ if [ "$target" == "official" ] || [ "$target" == "daily" ] ; then
 	mkdir -p /tmp/zss/$binnm/doc
 
 	cd $maindir
+	cp dist/lib/ext/commons-logging.jar /tmp/zss/$binnm/dist/lib/ext
+	cp dist/lib/ext/log4j-1.2.13.jar /tmp/zss/$binnm/dist/lib/ext
+	cp dist/lib/ext/dom4j-1.6.1.jar /tmp/zss/$binnm/dist/lib/ext
+	cp dist/lib/ext/xmlbeans-2.3.0.jar /tmp/zss/$binnm/dist/lib/ext
+	cp dist/lib/ext/geronimo-stax-api_1.0_spec-1.0.jar /tmp/zss/$binnm/dist/lib/ext
+	cp dist/lib/ext/junit-4.8.1.jar /tmp/zss/$binnm/dist/lib/ext
+	cp dist/lib/ext/ooxml-schemas-1.0.jar /tmp/zss/$binnm/dist/lib/ext
+		#POI
 	cp dist/lib/ext/commons-math.jar dist/lib/ext/opencsv.jar /tmp/zss/$binnm/dist/lib/ext
 		#Math and CSV
-	cp dist/lib/ext/ooxml-schemas-1.0.jar /tmp/zss/$binnm/dist/libext
-		#OOXML
+	cp dist/lib/zcommon.jar /tmp/zss/$binnm/dist/lib/
+	cp dist/lib/zweb.jar /tmp/zss/$binnm/dist/lib/
+	cp dist/lib/zk.jar /tmp/zss/$binnm/dist/lib/
+	cp dist/lib/zul.jar /tmp/zss/$binnm/dist/lib/
+	cp dist/lib/zpoi.jar /tmp/zss/$binnm/dist/lib/
 	cp dist/lib/zss.jar /tmp/zss/$binnm/dist/lib/
+	cp dist/lib/zsstest.jar /tmp/zss/$binnm/dist/lib/
 	cp dist/lib/zssex.jar /tmp/zss/$binnm/dist/lib/
 	chmod 644 /tmp/zss/$binnm/dist/lib/*.jar
 	chmod 644 /tmp/zss/$binnm/dist/lib/*/*.jar
 
 	cp -rp zss/src/archive/web/WEB-INF/tld/zss /tmp/zss/$binnm/dist/WEB-INF/tld
+	cp -rp zsstest/src/archive/web/WEB-INF/tld/zss /tmp/zss/$binnm/dist/WEB-INF/tld
 
-	cp zkdoc/release-note /tmp/zss/$binnm/doc
+	cp zkdoc/release-note zkdoc/ZPOI_* /tmp/zss/$binnm/doc
 		
-	chmod 644 /tmp/zss/$binnm/doc/release-note
+	chmod 644 /tmp/zss/$binnm/doc/release-note /tmp/zss/$binnm/doc/ZPOI_*
 
 	# License
 	cp $maindir/cmldoc/LICENSE /tmp/zss/$binnm/doc
@@ -368,7 +386,7 @@ if [ "$target" == "official" ] || [ "$target" == "daily" ] ; then
 		
 		echo Output ${binnm}.tar.gz
 		tar zcf ${binnm}.tar.gz $binnm
-		
+
 		cp $maindir/cmldoc/LICENSE /tmp/zss/$binnm/doc
 		chmod 644  /tmp/zss/$binnm/doc/LICENSE
 		
@@ -391,7 +409,6 @@ if [ "$target" == "official" ] || [ "$target" == "daily" ] ; then
 	mv $binnm $stdnm
 	
 	cp $maindir/zkdoc/COPYING /tmp/zss/$stdnm/doc
-	
 	
 	if [ "$target" == "official" ] ; then
 		echo Output ${stdnm}.tar.gz
@@ -450,7 +467,7 @@ if [ "$target" == "official" ] || [ "$target" == "daily" ] ; then
 	cp -rp zssapp/WebContent/* /tmp/zss/$demonm/zssapp/WebContent
 	cp -rp zssapp/src/org/* /tmp/zss/$demonm/zssapp/src/org
 	
-	cp cmldoc/LICENSE zkdoc/release-note /tmp/zss/$demonm/doc
+	cp cmldoc/LICENSE zkdoc/release-note zkdoc/ZPOI_* /tmp/zss/$demonm/doc
 
 	cp dist/lib/zssdemo.war /tmp/zss/$demonm/zssdemo-min.war
 	cp dist/lib/zssapp.war /tmp/zss/$demonm/zssapp-min.war
@@ -476,6 +493,9 @@ if [ "$target" == "official" ] || [ "$target" == "daily" ] ; then
 		
 	cd /tmp/zss
 	find -name .svn | xargs rm -rf
+	find -name .project | xargs rm -rf
+	find -name .classpath | xargs rm -rf
+	find -name .settings | xargs rm -rf
 
 	echo Output ${demonm}.zip
 	zip -qr9 ${demonm}.zip $demonm

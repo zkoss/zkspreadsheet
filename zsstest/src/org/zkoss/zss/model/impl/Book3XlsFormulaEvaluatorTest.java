@@ -20,7 +20,7 @@ import java.io.InputStream;
 
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFEvaluationTestHelper;
+//import org.apache.poi.hssf.usermodel.HSSFEvaluationTestHelper;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.EvaluationCell;

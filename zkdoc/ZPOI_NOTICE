@@ -1,8 +1,8 @@
 ZK POI (zpoi.jar)
 Partial Copyright 2010 (C) Potix Corporation
 
-This procuct is based on a part of the Apache POI libarary and is adapted to 
-to be used in ZK Spreadsheet(http://http://www.zkoss.org/product/zkspreadsheet.dsp)
+This procuct is based on a part of the Apache POI spreadsheet library and is adapted to 
+to be used with ZK Spreadsheet(http://http://www.zkoss.org/product/zkspreadsheet.dsp)
 
 Apache POI (http://poi.apache.org)
 Copyright 2009 The Apache Software Foundation

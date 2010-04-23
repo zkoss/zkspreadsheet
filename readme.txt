@@ -26,8 +26,8 @@ jsdoc
 	
 ---
 zpoi
-	A library based on a part of the Apache POI libarary(http://poi.apache.org/spreadsheet/index.html)
-	and is adapted to be used in ZK Spreadsheet component
+	A library based on a part of the Apache POI spreadsheet library(http://poi.apache.org/spreadsheet/index.html)
+	and is adapted to be used with ZK Spreadsheet component
 
 ---
 zsstest

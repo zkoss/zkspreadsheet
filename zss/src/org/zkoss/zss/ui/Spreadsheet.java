@@ -543,8 +543,7 @@ public class Spreadsheet extends XulElement {
 	 * Returns the maximum number of rows of this spread sheet. you can assign
 	 * new number by calling {@link #setMaxrows(int)}.<br/>
 	 * If you do some operation on model, it might increase/decrease the maximum number
-	 * of rows automatically(such as {@link Sheet#insertRows(int, int)} or
-	 * {@link Sheet#deleteRows(int, int)})<br/>
+	 * of rows automatically such as insert/delete rows into/from the sheet.
 	 * 
 	 * @return the maximum number of rows.
 	 */
@@ -583,11 +582,10 @@ public class Spreadsheet extends XulElement {
 	}
 	
 	/**
-	 * Returns the maximum number of columns of this spread sheet. you can assign
+	 * Returns the maximum number of columns of this spreadsheet. you can assign
 	 * new numbers by calling {@link #setMaxcolumns(int)}.<br/>
 	 * If you do some operation on model will increase/decrease maxcolumn
-	 * automatically, such as {@link Sheet#insertColumns(int, int)} or
-	 * {@link Sheet#deleteColumns(int, int)}<br/>
+	 * automatically, such as insert/delete columns into/from the sheet.
 	 * 
 	 * @return the maximum column number
 	 */

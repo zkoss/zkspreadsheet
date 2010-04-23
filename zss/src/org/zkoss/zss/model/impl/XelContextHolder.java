@@ -18,7 +18,7 @@ import org.zkoss.xel.XelContext;
 /**
  * Helper class to pass XelContext for formula evaluation. 
  * @author henrichen
- * @see RangeImpl#evaluate
+ * @see BookHelper#evaluate
  */
 public class XelContextHolder {
 	private static ThreadLocal<XelContext> _ctx = new ThreadLocal<XelContext>();

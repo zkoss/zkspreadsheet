@@ -1,6 +1,7 @@
 D.ON=true
 javadoc=~/prj/javadoc
-htmldoc=~/prj/zkweb/ptroot/WebContent/doc
+combinejavadoc=true
+#htmldoc=~/prj/zkweb/ptroot/WebContent/doc
 unzip=true
 debug=true
 optimize=true

@@ -74,9 +74,7 @@ public interface RefSheet {
 	 * Create source cell reference to precedent reference area dependency.
 	 * @param srcRow source cell reference row
 	 * @param srcCol Source cell reference column
-	 * @param bookname precedent reference area book name; null means use owner book of this sheet.
-	 * @param int sheetBegin precedent reference area begin sheet index; -1 means use this sheet.
-	 * @param int sheetEnd precedent reference area end sheet index; -1 means ignore this parameter. 
+	 * @param sheet precedent reference sheet
 	 * @param tRow precedent reference area top row
 	 * @param lCol precedent reference area left column
 	 * @param bRow precedent reference area bottom row
@@ -88,9 +86,7 @@ public interface RefSheet {
 	 * Remove source cell reference to precedent reference area dependency.
 	 * @param srcRow source cell reference row
 	 * @param srcCol Source cell reference column
-	 * @param bookname precedent reference area book name
-	 * @param int sheetStart precedent reference area start sheet index 
-	 * @param int sheetEnd precedent reference area end sheet index 
+	 * @param sheet precedent reference sheet
 	 * @param tRow precedent reference area top row
 	 * @param lCol precedent reference area left column
 	 * @param bRow precedent reference area bottom row

@@ -40,7 +40,7 @@ public interface Range {
 	public RichTextString getRichEditText();
 	
 	/**
-	 * Set {@RichTextString} as input by the end user.
+	 * Set {@link RichTextString} as input by the end user.
 	 * @param txt the RichTextString object
 	 */
 	public void setRichEditText(RichTextString txt);

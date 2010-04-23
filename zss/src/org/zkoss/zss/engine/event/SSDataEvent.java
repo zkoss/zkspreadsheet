@@ -62,8 +62,8 @@ public class SSDataEvent extends Event {
 	
 	/**
 	 * Constructor of the SSDataEvent.
-	 * @param rng a range of cells.
-	 * @param type the type of the data event.
+	 * @param name event name
+	 * @param rng a reference to a range of cells.
 	 * @param direction direction of the data event(meaningless when type is CONTENTS_CHANGED).
 	 */
 	public SSDataEvent(String name, Ref rng, int direction) {
@@ -72,8 +72,9 @@ public class SSDataEvent extends Event {
 	
 	/**
 	 * Constructor of the SSDataEvent.
-	 * @param rng a range of cells.
-	 * @param type the type of the data event.
+	 * @param name event name
+	 * @param rng a reference to a range of cells.
+	 * @param org the original range (used in move/copy/merge, etc.)
 	 * @param direction direction of the data event(meaningless when type is CONTENTS_CHANGED).
 	 */
 	public SSDataEvent(String name, Ref rng, Ref org, int direction) {

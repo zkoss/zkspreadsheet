@@ -228,9 +228,11 @@ public class Utils {
 	 * bottom row index, and right column index.
 	 * @param firstSheet the sheet to get the {@link Range} from. 
 	 * @param lastSheet the sheet to get the {@link Range} from. 
-	 * @param row the row index of the cell
-	 * @param col the column index of the cell
-	 * @return a cell {@link Range} per the given sheet, top row index, left column index, 
+	 * @param tRow the top row index of the area
+	 * @param lCol the left column index of the area
+	 * @param bRow the bottom row index of the area
+	 * @param rCol the right column index of the area
+	 * @return a 3D area {@link Range} per the given sheet, top row index, left column index, 
 	 * bottom row index, and right column index.
 	 */
 	public static Range getRange(Sheet firstSheet, Sheet lastSheet, int tRow, int lCol, int bRow, int rCol) {

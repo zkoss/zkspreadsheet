@@ -237,6 +237,12 @@ fi
 
 #-- prepare javadocdir ...
 if [ "$cmd" = "javadoc" ] ; then
+	combinejavadoc=$(grep '^combinejavadoc' $setting)
+	combinejavadoc=${combinejavadoc#combinejavadoc=}
+	if [ "$combinejavadoc" = "true" ] ; then
+		javadocAll=true
+	fi
+	
 	javadocdir=$(grep '^javadoc' $setting)
 	javadocdir=${javadocdir#javadoc=}
 	if [ "$javadocdir" = "" ] ; then
@@ -396,12 +402,12 @@ function invoke_ant
 	srcver=$(grep '^source=' version)
 	srcver=${srcver#source=}
 	if [ "$srcver" = "" ] ; then
-		srcver=1.6
+		srcver=1.5
 	fi
 	tgtver=$(grep '^target=' version)
 	tgtver=${tgtver#target=}
 	if [ "$tgtver" = "" ] ; then
-		tgtver=1.6
+		tgtver=1.5
 	fi
 	deprecation=$(grep '^deprecation=' version)
 	deprecation=${deprecation#deprecation=}
@@ -485,7 +491,7 @@ if [ "$javadocAll" = "true" ] ; then
 	touch javadoctmp/tmp
 	for target in $targetList ; do
 		echo "copy $target"
-		if [ "$target" != "zkdemo" ] ; then
+		if [ "$target" != "zssdemo" ] && [ "$target" != "zssapp" ] ; then
 			if [ -d $target/src/org ] ; then
 				cp -rp $target/src/org* javadoctmp/src
 			fi
@@ -499,8 +505,8 @@ if [ "$javadocAll" = "true" ] ; then
 	done
 	sort javadoctmp/tmp | uniq >> javadoctmp/classpath
 	rm javadoctmp/tmp
-	cp zk/version zk/format javadoctmp
-	invoke_ant javadoc javadoctmp ZK
+	cp zss/version zss/format javadoctmp
+	invoke_ant javadoc javadoctmp ZSS
 	rm -rf javadoctmp
 	exit 1
 else
