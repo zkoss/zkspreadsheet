@@ -163,6 +163,7 @@ if="deploy.jboss.required">
 	
 	<jar jarfile="${out.dir}/${jar.name}" manifest="${manifest.mf}">
 		<fileset dir="${out.dir}" excludes="${exclude.list}"/>
+		<fileset dir="srcresources" includes="**" excludes=".svn/**" erroronmissingdir="false"/>
 		<fileset dir="${src.archive.dir}" includes="**"
 		 excludes="META-INF/MANIFEST.MF, ${zipjs}/**, ${zipcss}/**"/>
 		<fileset dir="${codegen.archive.dir}" includes="**"
