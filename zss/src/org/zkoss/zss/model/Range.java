@@ -14,7 +14,6 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model;
 
 import java.util.List;
-import java.util.Set;
 
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -27,6 +26,17 @@ import org.zkoss.zss.engine.Ref;
  * @author henrichen
  */
 public interface Range {
+	//shift of #insert
+	public final static int SHIFT_DEFAULT = 0;
+	public final static int SHIFT_RIGHT = 1;
+	public final static int SHIFT_DOWN = 2;
+	public final static int SHIFT_LEFT = 1;
+	public final static int SHIFT_UP = 2;
+	
+	//copyOrigin of #insert
+	public final static int FORMAT_LEFTABOVE = 0;
+	public final static int FORMAT_RIGHTBELOW = 1;
+	
 	/**
 	 * Returns formated text of this Range.
 	 * @return formated text of this Range.
@@ -62,6 +72,19 @@ public interface Range {
 	 * @param dstRange the destination range.
 	 */
 	public void copy(Range dstRange);
+	
+	/**
+	 * Insert this Range. 
+	 * @param shift shiftDown or shiftToRight
+	 * @param copyOrigin from where to copy the format to the insert area
+	 */
+	public void insert(int shift, int copyOrigin);
+	
+	/**
+	 * Delete this Range. 
+	 * @param shift shiftUp or shiftToLeft
+	 */
+	public void delete(int shift);
 	
 	/**
 	 * Get 1st sheet of this range.

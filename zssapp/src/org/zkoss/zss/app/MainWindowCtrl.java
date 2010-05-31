@@ -280,14 +280,17 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		int left = spreadsheet.getSelection().getLeft();
 		int top = spreadsheet.getSelection().getTop();
 		Sheet sheet = spreadsheet.getSelectedSheet();
-		Cell cell = Utils.getCell(sheet, top, left);
+		
+		Utils.setEditText(sheet, top, left, input);
+		System.out.println("*** setEditText ***:"+input);
+/*		Cell cell = Utils.getCell(sheet, top, left);
 		
 		String f = cell.getCellFormula();
 		if (input.startsWith("=") || f != null) {
 			cell.setCellFormula(input.substring(1));
 			System.out.println("*** setFormula***:"+input);
 		}
-	}
+*/	}
 
 	public void ssInit() {
 		spreadsheet.setSrcName("Untitled");
@@ -1265,9 +1268,6 @@ throw new UiException("export file not implmented yet");
 	}
 	
 	public void onDeleteRows(ForwardEvent event){
-//TODO remove me, comment
-throw new UiException("delete rows is not implmeneted yet");
-/*
 		try {
 			Sheet sheet=spreadsheet.getSelectedSheet();
 			Rect rect = spreadsheet.getSelection();
@@ -1285,18 +1285,14 @@ throw new UiException("delete rows is not implmeneted yet");
 			}
 //TODO undo/redo			
 //			spreadsheet.pushDeleteRowColState(-1, top, -1, bottom);
-//TODO delete rows			
-//			sheet.deleteRows(top, bottom);
+			Utils.deleteRows(sheet, top, bottom);
 			spreadsheet.setSelection(rect);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-*/	}
+	}
 	
 	public void onDeleteColumns(ForwardEvent event){
-//TODO remove me, comment
-throw new UiException("delete columns is not implmented yet");
-/*
 		try {
 			Sheet sheet=spreadsheet.getSelectedSheet();
 			Rect rect = spreadsheet.getSelection();
@@ -1313,14 +1309,13 @@ throw new UiException("delete columns is not implmented yet");
 			}
 //TODO undo/redo			
 //			spreadsheet.pushDeleteRowColState(left, -1, right, -1);
-//TODO delete columns 
-//			spreadsheet.getSelectedSheet().deleteColumns(left, right);
+			Utils.deleteColumns(sheet, left, right);
 			spreadsheet.setSelection(rect);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-*/	}
+	}
 	
 	//SECTION VIEW MENU
 	public void onViewFormulaBar(ForwardEvent event) {
@@ -1387,17 +1382,14 @@ throw new UiException("delete columns is not implmented yet");
 	}
 
 	public void onInsertRows(ForwardEvent event){
-//TODO remove me, comment
-throw new UiException("insert rows is not implmented yet");
-/*		try {
-			Rect rect = spreadsheet.getSelection();
-			int top=rect.getTop();
-			int bottom = rect.getBottom();
+		try {
+			final Rect rect = spreadsheet.getSelection();
+			final int top=rect.getTop();
+			final int bottom = rect.getBottom();
 //TODO undo/redo			
 //			spreadsheet.pushInsertRowColState(-1, top, -1, bottom);
-//TODO insert rows			
-//			spreadsheet.getSelectedSheet().insertRows(top, bottom);
-			rect.setTop(top+bottom-top+1);
+			Utils.insertRows(spreadsheet.getSelectedSheet(), top, bottom);
+			rect.setTop(bottom+1);
 			rect.setBottom(bottom+bottom-top+1);
 			spreadsheet.setCellFocus(new Position(rect.getTop(),rect.getLeft()));
 			spreadsheet.setSelection(rect);
@@ -1405,12 +1397,9 @@ throw new UiException("insert rows is not implmented yet");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
-*/	}
+	}
 
 	public void onInsertColumns(ForwardEvent event){
-//TODO remove me, comment
-throw new UiException("insert columns is not implemented yet");
-/*
 		try {
 			Rect rect = spreadsheet.getSelection();
 			int left = rect.getLeft();
@@ -1418,16 +1407,14 @@ throw new UiException("insert columns is not implemented yet");
 
 //TODO undo/redo
 //			spreadsheet.pushInsertRowColState(left, -1, right, -1);
-//TODO insert columns			
-//			spreadsheet.getSelectedSheet().insertColumns(left, right);
-			rect.setLeft(left+right-left+1);
+			Utils.insertColumns(spreadsheet.getSelectedSheet(), left, right);
+			rect.setLeft(right+1);
 			rect.setRight(right+right-left+1);
 			spreadsheet.setCellFocus(new Position(rect.getTop(),rect.getLeft()));
 			spreadsheet.setSelection(rect);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-*/
 	}
 	public void onInsertSheet() {
 		onInsertSheet(true);
@@ -1484,12 +1471,10 @@ throw new UiException("insert columns is not implemented yet");
 	public void onEditingFormulaInput(Event event){
 		if (currentEditcell == null)
 			return;
-		if (currentEditcell.getCellFormula() != null)
+		if (currentEditcell.getCellType() == Cell.CELL_TYPE_FORMULA && currentEditcell.getCellFormula() != null)
 			return;
 		
-		if (currentEditcell != null) {
-			Utils.setEditText(currentEditcell, ((InputEvent) event).getValue());
-		}
+		Utils.setEditText(currentEditcell, ((InputEvent) event).getValue());
 	}
 
 	private void changeFont(Sheet sheet, int top, int left, int bottom, int right) {

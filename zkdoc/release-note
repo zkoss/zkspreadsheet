@@ -1,4 +1,16 @@
 	------------
+ZK Spreadsheet 2.0.0 RC
+
+*Features:
+  6 Support insert rows
+  7 Support delete rows
+  9 Support insert columns
+  10 Support delete columns
+
+*Bug
+  11 NPE when click on an empty cell
+
+	------------
 ZK Spreadsheet 2.0.0 beta (Work with ZK 5 and after)
 
 * Features:

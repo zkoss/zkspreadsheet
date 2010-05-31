@@ -18,6 +18,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
@@ -30,6 +31,7 @@ import org.apache.poi.hssf.record.formula.AreaPtgBase;
 import org.apache.poi.hssf.record.formula.ArrayPtg;
 import org.apache.poi.hssf.record.formula.AttrPtg;
 import org.apache.poi.hssf.record.formula.ExpPtg;
+import org.apache.poi.hssf.record.formula.FormulaShifter;
 import org.apache.poi.hssf.record.formula.OperandPtg;
 import org.apache.poi.hssf.record.formula.OperationPtg;
 import org.apache.poi.hssf.record.formula.ParenthesisPtg;
@@ -48,6 +50,7 @@ import org.apache.poi.hssf.usermodel.HSSFShape;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
@@ -62,6 +65,7 @@ import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -81,6 +85,10 @@ import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.RefSheet;
 import org.zkoss.zss.engine.event.SSDataEvent;
+import org.zkoss.zss.engine.impl.AreaRefImpl;
+import org.zkoss.zss.engine.impl.ChangeInfo;
+import org.zkoss.zss.engine.impl.DependencyTrackerHelper;
+import org.zkoss.zss.engine.impl.MergeChange;
 import org.zkoss.zss.engine.impl.RefSheetImpl;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Books;
@@ -172,7 +180,9 @@ public final class BookHelper {
 			//locate the model book and sheet of the refSheet
 			final Book bookTarget = BookHelper.getBook(book, refSheet);
 			final Cell cell = getCell(book, ref.getTopRow(), ref.getLeftCol(), refSheet);
-			evaluate(bookTarget, cell);
+			if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+				evaluate(bookTarget, cell);
+			}
 		}
 	}
 	
@@ -204,7 +214,7 @@ public final class BookHelper {
 			ctx.setAttribute("zkoss.zss.CellType", Object.class);
 			XelContextHolder.setXelContext(ctx);
 			final CellValue cv = book.getFormulaEvaluator().evaluate(cell);
-			//set back into Cell formula record(update value and cachedFormulaResultType) 
+			//set back into Cell formula record(update value and cachedFormulaResultType)
 			setCellValue(cell, cv);
 			return cv;
 		} finally {
@@ -578,7 +588,8 @@ public final class BookHelper {
 		case Cell.CELL_TYPE_NUMERIC:
 			return new Double(cell.getNumericCellValue());
 		case Cell.CELL_TYPE_STRING:
-			return cell.getStringCellValue(); 
+			final RichTextString rtstr = cell.getRichStringCellValue();
+			return rtstr == null ? "" : rtstr.getString(); 
 		default:
 			throw new UiException("Unknown cell type:"+cellType);
 		}
@@ -874,7 +885,7 @@ public final class BookHelper {
 //		if (sameTypeAndValue(dstCell, Cell.CELL_TYPE_FORMULA, value))
 //			return null;
 		
-		//remove formula cell and crete a blank one
+		//remove formula cell and create a blank one
 		removeFormula(dstCell);
 		
 		//set value into cell model
@@ -907,7 +918,7 @@ public final class BookHelper {
 		throw new UiException("Unknown cell class:"+cell);
 	}
 	
-	private static Ptg[] getCellPtgs(Cell cell) {
+	public static Ptg[] getCellPtgs(Cell cell) {
 		if (cell instanceof HSSFCell) {
 			return getHSSFPtgs((HSSFCell)cell);
 		} else if (cell instanceof XSSFCell) {
@@ -940,20 +951,24 @@ public final class BookHelper {
 		
 		final int offRow = dstRow - srcRow;
 		final int offCol = dstCol - srcCol;
-		
+
+		return offsetPtgs(srcCell, srcSheet, dstSheet, -1, offRow, -1, offCol);
+	}
+	
+	private static Ptg[] offsetPtgs(Cell srcCell, Sheet srcSheet, Sheet dstSheet, int startRow, int offRow, int startCol, int offCol) {
 		final Ptg[] srcPtgs = getCellPtgs(srcCell);
 		final int ptglen = srcPtgs.length;
 		final Ptg[] dstPtgs = new Ptg[ptglen];
 		
 		for(int j = 0; j < ptglen; ++j) {
 			final Ptg srcPtg = srcPtgs[j];
-			final Ptg dstPtg = offsetPtg(srcSheet, srcPtg, dstSheet, offRow, offCol);
+			final Ptg dstPtg = offsetPtg(srcSheet, srcPtg, dstSheet, startRow, offRow, startCol, offCol);
 			dstPtgs[j] = dstPtg;
 		}
 		return dstPtgs;
 	}
 	
-	private static Ptg offsetPtg(Sheet srcSheet, Ptg srcPtg, Sheet dstSheet, int offRow, int offCol) {
+	private static Ptg offsetPtg(Sheet srcSheet, Ptg srcPtg, Sheet dstSheet, int startRow, int offRow, int startCol, int offCol) {
 		//TODO shall handle different sheet, different book case
 		
 		//ScalarConstantPtg
@@ -963,21 +978,58 @@ public final class BookHelper {
 		
 		//OperandPtg
 		if (srcPtg instanceof OperandPtg) {
+			//TODO if column or row over the maximum limit, shall return #Ref! error ptg
 			final Ptg dstPtg = ((OperandPtg)srcPtg).copy(); 
 			if (srcPtg instanceof RefPtgBase) {
 				final RefPtgBase srcb = (RefPtgBase) srcPtg;
 				final RefPtgBase dstb = (RefPtgBase) dstPtg;
-				dstb.setRow(srcb.getRow()+offRow);
-				dstb.setColumn(srcb.getColumn()+offCol);
+				if (offRow > 0) {
+					if (startRow <= srcb.getRow()) {
+						dstb.setRow(srcb.getRow()+offRow);
+					}
+				} else if (offRow < 0) {
+					throw new UiException("offRow < 0 not implemented yet");
+				}
+				if (offCol > 0) {
+					if (startCol <= srcb.getColumn()) {
+						dstb.setColumn(srcb.getColumn()+offCol);
+					}
+				} else if (offCol < 0) {
+					throw new UiException("offCol < 0 not implemented yet");
+				}
 				dstb.setRowRelative(srcb.isRowRelative());
 				dstb.setColRelative(srcb.isColRelative());
 			} else if (srcPtg instanceof AreaPtgBase) {
 				final AreaPtgBase srcb = (AreaPtgBase) srcPtg;
 				final AreaPtgBase dstb = (AreaPtgBase) dstPtg;
-				dstb.setFirstRow(srcb.getFirstRow()+offRow);
-				dstb.setLastRow(srcb.getLastRow()+offRow);
-				dstb.setFirstColumn(srcb.getFirstColumn()+offCol);
-				dstb.setLastColumn(srcb.getLastColumn()+offCol);
+				if (offRow > 0) {
+					if (startRow <= srcb.getFirstRow()) {
+						dstb.setFirstRow(srcb.getFirstRow()+offRow);
+					}
+				} else if (offRow < 0) {
+					throw new UiException("offRow < 0 not implemented yet");
+				}
+				if (offRow > 0) {
+					if (startRow <= srcb.getLastRow()) {
+						dstb.setLastRow(srcb.getLastRow()+offRow);
+					}
+				} else if (offRow < 0) {
+					throw new UiException("offRow < 0 not implemented yet");
+				}
+				if (offCol > 0) {
+					if (startCol <= srcb.getFirstColumn()) {
+						dstb.setFirstColumn(srcb.getFirstColumn()+offCol);
+					}
+				} else if (offCol < 0) {
+					throw new UiException("offCol < 0 not implemented yet");
+				}
+				if (offCol > 0) {
+					if (startCol <= srcb.getLastColumn()) {
+						dstb.setLastColumn(srcb.getLastColumn()+offCol);
+					}
+				} else if (offCol < 0) {
+					throw new UiException("offCol < 0 not implemented yet");
+				}
 				dstb.setFirstRowRelative(srcb.isFirstRowRelative());
 				dstb.setLastRowRelative(srcb.isFirstRowRelative());
 				dstb.setFirstColRelative(srcb.isFirstColRelative());
@@ -1076,5 +1128,122 @@ public final class BookHelper {
 			return style; //found it!
 		}
 		return null;
+	}
+	
+	public static ChangeInfo insertRows(Sheet sheet, int startRow, int num) {
+		final Book book = (Book) sheet.getWorkbook();
+		final RefSheet refSheet = getRefSheet(book, sheet);
+		final Set<Ref>[] refs = refSheet.insertRows(startRow, num);
+		final int lastRowNum = sheet.getLastRowNum();
+		if (startRow > lastRowNum) {
+			return null;
+		}
+		final List<CellRangeAddress> shiftedRanges = ((HSSFSheet)sheet).shiftRowsOnly(startRow, lastRowNum, num, true, false, true, false);
+		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges, num, true);
+		final Set<Ref> last = refs[0];
+		final Set<Ref> all = refs[1];
+		shiftFormulas(all, sheet, startRow, refSheet.getOwnerBook().getMaxrow(), num, true);
+		
+		return new ChangeInfo(last, all, changeMerges);
+	}
+	
+	public static ChangeInfo deleteRows(Sheet sheet, int startRow, int num) {
+		final Book book = (Book) sheet.getWorkbook();
+		final RefSheet refSheet = getRefSheet(book, sheet);
+		final Set<Ref>[] refs = refSheet.deleteRows(startRow, num);
+		final int lastRowNum = sheet.getLastRowNum();
+		final int startRow0 = startRow + num;
+		if (startRow > lastRowNum) {
+			return null;
+		}
+		final List<CellRangeAddress> shiftedRanges = ((HSSFSheet)sheet).shiftRowsOnly(startRow0, lastRowNum, -num, true, false, true, true);
+		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges, -num, true);
+		final Set<Ref> last = refs[0];
+		final Set<Ref> all = refs[1];
+		shiftFormulas(all, sheet, startRow0, refSheet.getOwnerBook().getMaxrow(), -num, true);
+		
+		return new ChangeInfo(last, all, changeMerges);
+	}
+
+	public static ChangeInfo insertColumns(Sheet sheet, int startCol, int num) {
+		final Book book = (Book) sheet.getWorkbook();
+		final RefSheet refSheet = getRefSheet(book, sheet);
+		final Set<Ref>[] refs = refSheet.insertColumns(startCol, num);
+		final List<CellRangeAddress> shiftedRanges = ((HSSFSheet)sheet).shiftColumnsOnly(startCol, -1, num, true, false, true, false);
+		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges, num, false);
+		final Set<Ref> last = refs[0];
+		final Set<Ref> all = refs[1];
+		shiftFormulas(all, sheet, startCol, refSheet.getOwnerBook().getMaxcol(), num, false);
+		
+		return new ChangeInfo(last, all, changeMerges);
+	}
+	
+	public static ChangeInfo deleteColumns(Sheet sheet, int startCol, int num) {
+		final Book book = (Book) sheet.getWorkbook();
+		final RefSheet refSheet = getRefSheet(book, sheet);
+		final Set<Ref>[] refs = refSheet.deleteColumns(startCol, num);
+		final int startCol0 = startCol + num;
+		final List<CellRangeAddress> shiftedRanges = ((HSSFSheet)sheet).shiftColumnsOnly(startCol0, -1, -num, true, false, true, true);
+		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges, -num, false);
+		final Set<Ref> last = refs[0];
+		final Set<Ref> all = refs[1];
+		shiftFormulas(all, sheet, startCol0, refSheet.getOwnerBook().getMaxcol(), -num, false);
+		
+		return new ChangeInfo(last, all, changeMerges);
+	}
+	
+	private static List<MergeChange> prepareChangeMerges(RefSheet sheet, List<CellRangeAddress> shiftedRanges, int num, boolean isRow) {
+		final List<MergeChange> changeMerges = new ArrayList<MergeChange>();
+		for(CellRangeAddress rng : shiftedRanges) {
+			int tRow = rng.getFirstRow();
+			int lCol = rng.getFirstColumn();
+			int bRow = rng.getLastRow();
+			int rCol = rng.getLastColumn();
+			final Ref ref = new AreaRefImpl(tRow, lCol, bRow, rCol, sheet);
+			if (isRow) {
+				tRow -= num;
+				bRow -= num;
+			} else {
+				lCol -= num;
+				rCol -= num;
+			}
+			final Ref orgRef = new AreaRefImpl(tRow, lCol, bRow, rCol, sheet);
+			changeMerges.add(new MergeChange(orgRef, ref));
+		}
+		return changeMerges;
+	}
+	
+	private static void shiftFormulas(Set<Ref> all, Sheet sheet, int startRow, int endRow, int n, boolean isRow) {
+		final int moveSheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
+        final FormulaShifter shifter = isRow ? 
+        		FormulaShifter.createForRowShift(moveSheetIndex, startRow, endRow, n):
+				FormulaShifter.createForColumnShift(moveSheetIndex, startRow, endRow, n);
+		for (Ref ref : all) {
+			final int tRow = ref.getTopRow();
+			final int lCol = ref.getLeftCol();
+			final Sheet srcSheet = getSheet(sheet, ref.getOwnerSheet());
+			final Book srcBook = (Book) srcSheet.getWorkbook();
+			final Cell srcCell = getCell(srcSheet, tRow, lCol);
+			if (srcCell != null && srcCell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+				final int sheetIndex = srcBook.getSheetIndex(srcSheet);
+				if (srcCell instanceof HSSFCell) {
+					HSSFShiftFormulas(shifter, sheetIndex, srcCell);
+				} else {
+					throw new UiException("ShiftFormula of Excel 2007(.xlsx) file in not implemented yet");
+				}
+			}
+		}
+	}
+	
+	private static void HSSFShiftFormulas(FormulaShifter shifter, int sheetIndex, Cell cell) {
+		CellValueRecordInterface vr = new DummyHSSFCell((HSSFCell)cell).getRecord();
+		if (!(vr instanceof FormulaRecordAggregate)) {
+			throw new IllegalArgumentException("Not a formula cell");
+		}
+		FormulaRecordAggregate fra = (FormulaRecordAggregate) vr;
+		Ptg[] ptgs = fra.getFormulaRecord().getParsedExpression();
+		if (shifter.adjustFormula(ptgs, sheetIndex)) {
+			fra.setParsedExpression(ptgs);
+		}
 	}
 }

@@ -1452,7 +1452,7 @@ public class Spreadsheet extends XulElement {
 
 		}
 		private void onMergeDelete(SSDataEvent event) {
-			final Ref orng = event.getOriginalRef();
+			final Ref orng = event.getRef();
 			final Sheet sheet = getSheet(orng);
 			if (!getSelectedSheet().equals(sheet))
 				return;
@@ -2276,6 +2276,8 @@ public class Spreadsheet extends XulElement {
 		}
 
 		private void removeAffectedMergeRange(Sheet sheet, int type, int index) {
+//handled by onMergeChange... 			
+/*			
 			MergeMatrixHelper mmhelper = this.getMergeMatrixHelper(sheet);
 			List toremove = new ArrayList();
 			if (type == 0) {// column
@@ -2289,7 +2291,7 @@ public class Spreadsheet extends XulElement {
 				MergedRect block = (MergedRect) iter.next();
 				updateMergeCell0(sheet, block, "remove");
 			}
-		}
+*/		}
 
 		public void updateMergeCell(Sheet sheet, int left, int top, int right,
 				int bottom, int oleft, int otop, int oright, int obottom) {

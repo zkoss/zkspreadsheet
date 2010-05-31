@@ -24,7 +24,7 @@ public class DummyHSSFCell extends HSSFCell {
 	private final HSSFCell _cell;
 	
 	public DummyHSSFCell(HSSFCell cell) {
-		super((HSSFWorkbook) cell.getSheet().getWorkbook(), (HSSFSheet) cell.getSheet(), cell.getRowIndex(), (short) cell.getColumnIndex());
+		super((HSSFWorkbook) cell.getSheet().getWorkbook(), (HSSFSheet) cell.getSheet(), cell.getRowIndex(), (short) cell.getColumnIndex(), cell.getCellType());
 		_cell = cell;
 	}
 	

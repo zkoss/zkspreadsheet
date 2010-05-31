@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.ExcelImporter;
 import org.zkoss.zss.model.impl.HSSFBookImpl;
 
@@ -160,12 +161,9 @@ public class XlsFormulaEvaluatorTest {
 	}
 	
 	private void testToFormulaString(Cell cell, String expect) {
-	/*
-		EvaluationCell srcCell = HSSFEvaluationTestHelper.wrapCell((HSSFCell)cell);
 		HSSFEvaluationWorkbook evalbook = HSSFEvaluationWorkbook.create((HSSFWorkbook)_workbook);
-		Ptg[] ptgs = evalbook.getFormulaTokens(srcCell);
+		Ptg[] ptgs = BookHelper.getCellPtgs(cell);
 		final String formula = FormulaRenderer.toFormulaString(evalbook, ptgs);
 		assertEquals(expect, formula);
-	*/
 	}
 }

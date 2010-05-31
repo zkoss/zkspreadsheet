@@ -38,18 +38,42 @@ public class VarRefImpl extends AbstractRefImpl implements Ref {
 	public int getLeftCol() {
 		return -1;
 	}
+	
 	@Override
 	public int getRightCol() {
 		return -1;
 	}
+	
 	@Override
 	public int getTopRow() {
 		return -1;
 	}
+	
+	@Override
+	public void setBottomRow(int row) {
+		//do nothing
+	}
+	
+	@Override
+	public void setLeftCol(int col) {
+		//do nothing
+	}
+	
+	@Override
+	public void setRightCol(int col) {
+		//do nothing
+	}
+	
+	@Override
+	public void setTopRow(int row) {
+		//do nothing
+	}
+	
 	@Override
 	public boolean isWholeColumn() {
 		return false;
 	}
+	
 	@Override
 	public boolean isWholeRow() {
 		return false;
@@ -76,6 +100,7 @@ public class VarRefImpl extends AbstractRefImpl implements Ref {
 	public int hashCode() {
 		return _name.hashCode();
 	}
+	
 	@Override
 	public boolean equals(Object o) {
 		if (o == this) return true;

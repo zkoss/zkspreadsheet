@@ -23,10 +23,15 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.engine.Ref;
+import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.RefSheet;
+import org.zkoss.zss.engine.event.SSDataEvent;
 import org.zkoss.zss.engine.impl.AreaRefImpl;
 import org.zkoss.zss.engine.impl.CellRefImpl;
+import org.zkoss.zss.engine.impl.ChangeInfo;
+import org.zkoss.zss.engine.impl.MergeChange;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
 
@@ -407,6 +412,117 @@ public class RangeImpl implements Range {
 		return ref;
 	}
 
+	@Override
+	public void delete(int shift) {
+		if (_refs != null && !_refs.isEmpty()) {
+			final Ref ref = _refs.iterator().next();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final RefBook refBook = refSheet.getOwnerBook();
+			switch(shift) {
+			default:
+			case SHIFT_DEFAULT:
+				if (ref.isWholeRow()) {
+					final ChangeInfo info = BookHelper.deleteRows(_sheet, ref.getTopRow(), ref.getRowCount());
+					final Set<Ref> last = info.getToEval();
+					final Set<Ref> all = info.getAffected();
+					refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_DELETE, ref, SSDataEvent.MOVE_V));
+					//must delete and add in batch, or merge ranges can interfer to each other
+					for(MergeChange change : info.getMergeChanges()) {
+						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_DELETE, change.getOrgMerge(), SSDataEvent.MOVE_V));
+					}
+					for(MergeChange change : info.getMergeChanges()) {
+						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_ADD, change.getMerge(), SSDataEvent.MOVE_V));
+					}
+					BookHelper.reevaluateAndNotify((Book) _sheet.getWorkbook(), last, all);
+				} else if (ref.isWholeColumn()) {
+					final ChangeInfo info = BookHelper.deleteColumns(_sheet, ref.getLeftCol(), ref.getColumnCount());
+					final Set<Ref> last = info.getToEval();
+					final Set<Ref> all = info.getAffected();
+					refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_DELETE, ref, SSDataEvent.MOVE_H));
+					//must delete and add in batch, or merge ranges can interfer to each other
+					for(MergeChange change : info.getMergeChanges()) {
+						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_DELETE, change.getOrgMerge(), SSDataEvent.MOVE_H));
+					}
+					for(MergeChange change : info.getMergeChanges()) {
+						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_ADD, change.getMerge(), SSDataEvent.MOVE_H));
+					}
+					BookHelper.reevaluateAndNotify((Book) _sheet.getWorkbook(), last, all);
+				}
+				break;
+			case SHIFT_LEFT:
+//TODO insert()					
+throw new UiException("removeColumns() not implmented yet!");
+/*				BookHelper.remove(_sheet, ref.getLeftCol(), ref.getRowCount(), ref.getColumnCount());
+				refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_INSERT, ref, SSDataEvent.MOVE_H));
+				break;
+*/				
+			case SHIFT_UP:
+//TODO insert()					
+throw new UiException("removeRows() not implmented yet!");
+/*				BookHelper.remove(_sheet, ref.getLeftCol(), ref.getRowCount(), ref.getColumnCount());
+				refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_INSERT, ref, SSDataEvent.MOVE_V));
+				break;
+*/				
+			}
+		}
+	}
+	
+	@Override
+	public void insert(int shift, int copyOrigin) {
+//TODO copyOrigin		
+		if (_refs != null && !_refs.isEmpty()) {
+			final Ref ref = _refs.iterator().next();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final RefBook refBook = refSheet.getOwnerBook();
+			switch(shift) {
+			default:
+			case SHIFT_DEFAULT:
+				if (ref.isWholeRow()) {
+					final ChangeInfo info = BookHelper.insertRows(_sheet, ref.getTopRow(), ref.getRowCount());
+					final Set<Ref> last = info.getToEval();
+					final Set<Ref> all = info.getAffected();
+					refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_INSERT, ref, SSDataEvent.MOVE_V));
+					//must delete and add in batch, or merge ranges can interfer to each other
+					for(MergeChange change : info.getMergeChanges()) {
+						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_DELETE, change.getOrgMerge(), SSDataEvent.MOVE_V));
+					}
+					for(MergeChange change : info.getMergeChanges()) {
+						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_ADD, change.getMerge(), SSDataEvent.MOVE_V));
+					}
+					BookHelper.reevaluateAndNotify((Book) _sheet.getWorkbook(), last, all);
+				} else if (ref.isWholeColumn()) {
+					final ChangeInfo info = BookHelper.insertColumns(_sheet, ref.getLeftCol(), ref.getColumnCount());
+					final Set<Ref> last = info.getToEval();
+					final Set<Ref> all = info.getAffected();
+					refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_INSERT, ref, SSDataEvent.MOVE_H));
+					//must delete and add in batch, or merge ranges can interfer to each other
+					for(MergeChange change : info.getMergeChanges()) {
+						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_DELETE, change.getOrgMerge(), SSDataEvent.MOVE_H));
+					}
+					for(MergeChange change : info.getMergeChanges()) {
+						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_ADD, change.getMerge(), SSDataEvent.MOVE_H));
+					}
+					BookHelper.reevaluateAndNotify((Book) _sheet.getWorkbook(), last, all);
+				}
+				break;
+			case SHIFT_RIGHT:
+//TODO insert()					
+throw new UiException("insertColumns() not implmented yet!");
+/*				BookHelper.insert(_sheet, ref.getLeftCol(), ref.getRowCount(), ref.getColumnCount());
+				refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_INSERT, ref, SSDataEvent.MOVE_H));
+				break;
+*/				
+			case SHIFT_DOWN:
+//TODO insert()					
+throw new UiException("insertColumns() not implmented yet!");
+/*				BookHelper.insert(_sheet, ref.getLeftCol(), ref.getRowCount(), ref.getColumnCount());
+				refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_INSERT, ref, SSDataEvent.MOVE_V));
+				break;
+*/				
+			}
+		}
+	}
+	
 	@Override
 	public void copy(Range dstRange) {
 		if (_refs != null && !dstRange.getRefs().isEmpty()) {

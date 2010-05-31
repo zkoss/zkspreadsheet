@@ -149,4 +149,37 @@ public interface RefSheet {
 	 * 	[1] the "all" dependent cell references to be reloaded the associated cell value.
 	 */
 	public Set<Ref>[] getBothDependents(int row, int col);
+	
+	/**
+	 * Insert number of rows from the specified row index. 
+	 * @param row the insertion point of row 
+	 * @param num the number of rows to insert
+	 * @return the last affected references(for re-evaluation, at [0]) and all affected references(for re-render, at [1]) 
+	 */
+	public Set<Ref>[] insertRows(int row, int num);
+	
+	/**
+	 * Delete number of rows from the specified row index. 
+	 * @param row the removing point of row 
+	 * @param num the number of rows to remove
+	 * @return the last affected references(for re-evaluation, at [0]) and all affected references(for re-render, at [1]) 
+	 */
+	public Set<Ref>[] deleteRows(int row, int num);
+	
+	/**
+	 * Insert number of columns from the specified column index. 
+	 * @param col the insertion point of column
+	 * @param num the number of columns to insert
+	 * @return the last affected references(for re-evaluation, at [0]) and all affected references(for re-render, at [1]) 
+	 */
+	public Set<Ref>[] insertColumns(int col, int num);
+
+	/**
+	 * Delete number of columns from the specified row index. 
+	 * @param col the removing point of column 
+	 * @param num the number of rows to remove
+	 * @return the last affected references(for re-evaluation, at [0]) and all affected references(for re-render, at [1]) 
+	 */
+	public Set<Ref>[] deleteColumns(int col, int num);
+	
 }

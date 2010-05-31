@@ -21,9 +21,9 @@ import org.zkoss.zss.engine.RefSheet;
  * @author henrichen
  *
  */
-public class CellRefImpl extends AbstractRefImpl implements Ref, Indexable {
-	private final int _tRow;
-	private final int _lCol;
+public class CellRefImpl extends AbstractRefImpl implements Ref {
+	private int _tRow;
+	private int _lCol;
 	
 	public CellRefImpl(int row, int col, RefSheet ownerSheet) {
 		super(ownerSheet);
@@ -50,6 +50,26 @@ public class CellRefImpl extends AbstractRefImpl implements Ref, Indexable {
 	public int getBottomRow() {
 		return _tRow;
 	}
+	
+	@Override
+	public void setTopRow(int row) {
+		_tRow = row;
+	}
+	
+	@Override
+	public void setLeftCol(int col) {
+		_lCol = col;
+	}
+
+	@Override
+	public void setBottomRow(int row) {
+		_tRow = row;
+	}
+
+	@Override
+	public void setRightCol(int col) {
+		_lCol = col;
+	}
 
 	@Override
 	public boolean isWholeColumn() {
@@ -75,31 +95,5 @@ public class CellRefImpl extends AbstractRefImpl implements Ref, Indexable {
 	@Override
 	protected void removeSelf() {
 		getOwnerSheet().removeRef(_tRow, _lCol, _tRow, _lCol);
-	}
-
-	//--Indexable--//
-	@Override
-	public int getIndex() {
-		return getRightCol();
-	}
-
-	@Override
-	public int compareTo(Indexable o) {
-		return o.getIndex() - this.getIndex();
-	}
-	
-	//--Object--//
-	public int hashCode() {
-		return (_tRow << 14 + _lCol) ^ (getOwnerSheet() == null ? 0 : getOwnerSheet().hashCode());
-	}
-	
-	public boolean equals(Object o) {
-		if (o == this) return true;
-		if (!(o instanceof CellRefImpl)) return false;
-		final CellRefImpl ref = (CellRefImpl) o;
-		return ref._tRow == _tRow  
-			&& ref._lCol == _lCol
-			&& (getOwnerSheet() == null ? 
-					getOwnerSheet() == ref.getOwnerSheet() : getOwnerSheet().equals(ref.getOwnerSheet()));
 	}
 }

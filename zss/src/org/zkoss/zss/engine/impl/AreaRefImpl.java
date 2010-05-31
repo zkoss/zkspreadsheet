@@ -42,6 +42,16 @@ public class AreaRefImpl extends CellRefImpl {
 	}
 	
 	@Override
+	public void setBottomRow(int row) {
+		_bRow = row;
+	}
+
+	@Override
+	public void setRightCol(int col) {
+		_rCol = col;
+	}
+
+	@Override
 	public boolean isWholeColumn() {
 		final RefBook book = getOwnerSheet().getOwnerBook(); 
 		return getTopRow() <= 0 && _bRow >= book.getMaxrow();
@@ -61,25 +71,5 @@ public class AreaRefImpl extends CellRefImpl {
 	@Override
 	public int getRowCount() {
 		return _bRow - getTopRow() + 1;
-	}
-	
-	//--Object--//
-	@Override
-	public int hashCode() {
-		return ((_bRow << 14 + _rCol) + (getTopRow() << 14 + getLeftCol())) 
-				^ (getOwnerSheet() == null ? 0 : getOwnerSheet().hashCode());
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if (o == this) return true;
-		if (!(o instanceof Indexable)) return false;
-		final AreaRefImpl ref = (AreaRefImpl) o;
-		return ref.getTopRow() == getTopRow()  
-			&& ref.getLeftCol() == getLeftCol()
-			&& ref._bRow == _bRow  
-			&& ref._rCol == _rCol
-			&& (getOwnerSheet() == null ?
-				getOwnerSheet() == ref.getOwnerSheet() : getOwnerSheet().equals(ref.getOwnerSheet()));  
 	}
 }

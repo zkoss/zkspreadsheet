@@ -40,6 +40,7 @@ import org.zkoss.image.AImage;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.RefSheet;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
@@ -162,6 +163,30 @@ public class Utils {
 	
 	public static void copyCell(Cell cell, Sheet dstSheet, int dstRow, int dstCol) {
 		copyCell(cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex(), dstSheet, dstRow, dstCol);
+	}
+	
+	public static void insertRows(Sheet sheet, int startRow, int endRow) {
+		final RefBook refBook = BookHelper.getRefBook((Book)sheet.getWorkbook());
+		final Range rng = getRange(sheet, startRow, 0, endRow, refBook.getMaxcol());
+		rng.insert(Range.SHIFT_DEFAULT, 0);
+	}
+
+	public static void deleteRows(Sheet sheet, int startRow, int endRow) {
+		final RefBook refBook = BookHelper.getRefBook((Book)sheet.getWorkbook());
+		final Range rng = getRange(sheet, startRow, 0, endRow, refBook.getMaxcol());
+		rng.delete(Range.SHIFT_DEFAULT);
+	}
+
+	public static void insertColumns(Sheet sheet, int startCol, int endCol) {
+		final RefBook refBook = BookHelper.getRefBook((Book)sheet.getWorkbook());
+		final Range rng = getRange(sheet, 0, startCol, refBook.getMaxrow(), endCol);
+		rng.insert(Range.SHIFT_DEFAULT, 0);
+	}
+
+	public static void deleteColumns(Sheet sheet, int startCol, int endCol) {
+		final RefBook refBook = BookHelper.getRefBook((Book)sheet.getWorkbook());
+		final Range rng = getRange(sheet, 0, startCol, refBook.getMaxrow(), endCol);
+		rng.delete(Range.SHIFT_DEFAULT);
 	}
 
 	public static void setCellValue(Sheet sheet, int rowIndex, int colIndex, String value) {
@@ -301,7 +326,7 @@ public class Utils {
 	 * @return the text for editing on the specified cell.
 	 */
 	public static String getEditText(Cell cell) {
-		final RichTextString rstr = getRichEditText(cell);
+		final RichTextString rstr = cell == null ? null : getRichEditText(cell);
 		return rstr != null ? rstr.getString() : "";
 	}
 	
@@ -518,6 +543,7 @@ public class Utils {
 			roundTo100th((w - 5) / charWidth);
 	}
 
+	/** Convert default columns character width to pixel */ 
 	public static int defaultColumnWidthToPx(int columnWidth, int charWidth) {
 		final int w = columnWidth * charWidth + 5;
 		final int diff = w % 8;

@@ -38,8 +38,12 @@ public class DependencyTrackerHelper {
 	
 	public static Set<Ref> getDirectDependents(RefSheet sheet, int row, int col) {
 		final Set<Ref> refs = sheet.getHitRefs(row, col);
+		return getDirectDependents(refs);
+	}
+	
+	public static Set<Ref> getDirectDependents(Set<Ref> precedents) {
 		final Set<Ref> dependents = new HashSet<Ref>();
-		for(Ref ref: refs) {
+		for(Ref ref: precedents) {
 			dependents.addAll(ref.getDependents());
 		}
 		return dependents;

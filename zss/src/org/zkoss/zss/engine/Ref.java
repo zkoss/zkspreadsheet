@@ -33,20 +33,40 @@ public interface Ref {
 	 */
 	public int getTopRow();
 	/**
+	 * Sets the row index of the left top corner.
+	 * @param row the row index of the left top corner.
+	 */
+	public void setTopRow(int row);
+	/**
 	 * Return the column index of the left top corner.
 	 * @return the column index of the left top corner.
 	 */
 	public int getLeftCol();
+	/**
+	 * Sets the column index of the left top corner.
+	 * @param col the column index of the left top corner.
+	 */
+	public void setLeftCol(int col);
 	/**
 	 * Return the row index of the right bottom corner.
 	 * @return the row index of the right bottom corner.
 	 */
 	public int getBottomRow();
 	/**
+	 * Sets the row index of the right bottom corner.
+	 * @param row the row index of the right bottom corner.
+	 */
+	public void setBottomRow(int row);
+	/**
 	 * Return the column index of the right bottom corner.
 	 * @return the column index of the right bottom corner.
 	 */
 	public int getRightCol();
+	/**
+	 * Sets the column index of the right bottom corner.
+	 * @param col the column index of the right bottom corner.
+	 */
+	public void setRightCol(int col);
 	/**
 	 * Return dependent {@link Ref}s of this Ref. 
 	 * @return dependent {@link Ref}s of this Ref.
