@@ -33,7 +33,7 @@ import org.zkoss.zss.model.impl.HSSFBookImpl;
  * Insert a column and check if the formula still work
  * @author henrichen
  */
-public class XlsInsertColumnsTest {
+public class Book6XlsInsertColumnsTest {
 	private Workbook _workbook;
 	private FormulaEvaluator _evaluator;
 

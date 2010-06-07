@@ -103,6 +103,11 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	
 	//--Book--//
 	@Override
+	public SpreadsheetVersion getSpreadsheetVersion() {
+		return SpreadsheetVersion.EXCEL2007;
+	}
+	
+	@Override
 	public String getBookName() {
 		return _bookname;
 	}

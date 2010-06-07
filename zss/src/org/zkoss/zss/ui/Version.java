@@ -32,5 +32,5 @@ public class Version {
 	/**
 	 * Return the release info.
 	 */
-	public static final String RELEASE = "2.0.0-Beta";
+	public static final String RELEASE = "2.0.0-RC";
 }

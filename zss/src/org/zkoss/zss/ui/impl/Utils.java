@@ -166,26 +166,26 @@ public class Utils {
 	}
 	
 	public static void insertRows(Sheet sheet, int startRow, int endRow) {
-		final RefBook refBook = BookHelper.getRefBook((Book)sheet.getWorkbook());
-		final Range rng = getRange(sheet, startRow, 0, endRow, refBook.getMaxcol());
+		final Book book = (Book)sheet.getWorkbook();
+		final Range rng = getRange(sheet, startRow, 0, endRow, book.getSpreadsheetVersion().getLastColumnIndex());
 		rng.insert(Range.SHIFT_DEFAULT, 0);
 	}
 
 	public static void deleteRows(Sheet sheet, int startRow, int endRow) {
-		final RefBook refBook = BookHelper.getRefBook((Book)sheet.getWorkbook());
-		final Range rng = getRange(sheet, startRow, 0, endRow, refBook.getMaxcol());
+		final Book book = (Book)sheet.getWorkbook();
+		final Range rng = getRange(sheet, startRow, 0, endRow, book.getSpreadsheetVersion().getLastColumnIndex());
 		rng.delete(Range.SHIFT_DEFAULT);
 	}
 
 	public static void insertColumns(Sheet sheet, int startCol, int endCol) {
-		final RefBook refBook = BookHelper.getRefBook((Book)sheet.getWorkbook());
-		final Range rng = getRange(sheet, 0, startCol, refBook.getMaxrow(), endCol);
+		final Book book = (Book)sheet.getWorkbook();
+		final Range rng = getRange(sheet, 0, startCol, book.getSpreadsheetVersion().getLastRowIndex(), endCol);
 		rng.insert(Range.SHIFT_DEFAULT, 0);
 	}
 
 	public static void deleteColumns(Sheet sheet, int startCol, int endCol) {
-		final RefBook refBook = BookHelper.getRefBook((Book)sheet.getWorkbook());
-		final Range rng = getRange(sheet, 0, startCol, refBook.getMaxrow(), endCol);
+		final Book book = (Book)sheet.getWorkbook();
+		final Range rng = getRange(sheet, 0, startCol, book.getSpreadsheetVersion().getLastRowIndex(), endCol);
 		rng.delete(Range.SHIFT_DEFAULT);
 	}
 
@@ -373,15 +373,12 @@ public class Utils {
 		range.setRichEditText(value);
 	}
 	
-	public static AImage getAImage(Sheet sheet, List<? extends PictureData> datas, Picture picture) {
-		final PictureData pdata = BookHelper.getData(datas, picture);
-		if (pdata != null) {
-			final String name = ((Book)sheet.getWorkbook()).getBookName()+"_picture"+BookHelper.getPictureKey(picture)+"."+pdata.suggestFileExtension();
-			try {
-				return new AImage(name, pdata.getData());
-			} catch (IOException e) {
-				// ignore
-			}
+	public static AImage getAImage(Sheet sheet, PictureData picdata, int pictureIndex) {
+		final String name = ((Book)sheet.getWorkbook()).getBookName()+"_pic_"+pictureIndex;
+		try {
+			return new AImage(name, picdata.getData());
+		} catch (IOException e) {
+			// ignore
 		}
 		return null;
 	}

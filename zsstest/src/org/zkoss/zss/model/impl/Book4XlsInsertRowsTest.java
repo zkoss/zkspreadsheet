@@ -33,7 +33,7 @@ import org.zkoss.zss.model.impl.HSSFBookImpl;
  * Insert a row and check if the formula still work
  * @author henrichen
  */
-public class XlsInsertRowsTest {
+public class Book4XlsInsertRowsTest {
 	private Workbook _workbook;
 	private FormulaEvaluator _evaluator;
 

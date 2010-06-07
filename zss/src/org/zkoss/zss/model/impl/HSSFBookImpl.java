@@ -104,6 +104,11 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
 	
 	//--Book--//
 	@Override
+	public SpreadsheetVersion getSpreadsheetVersion() {
+		return SpreadsheetVersion.EXCEL97;
+	}
+	
+	@Override
 	public String getBookName() {
 		return _bookname;
 	}

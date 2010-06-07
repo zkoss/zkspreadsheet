@@ -37,7 +37,7 @@ import org.zkoss.zss.model.impl.XSSFBookImpl;
  * @author henrichen
  *
  */
-public class XlsExternalBookReferenceTest {
+public class Book1XlsExternalBookReferenceTest {
 	private Workbook _workbook1;
 	private Workbook _workbook2;
 	private BooksImpl _books;

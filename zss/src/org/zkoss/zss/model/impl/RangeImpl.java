@@ -14,6 +14,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -522,7 +523,35 @@ throw new UiException("insertColumns() not implmented yet!");
 			}
 		}
 	}
-	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void sort(Range rng1, boolean desc1, Range rng2, int type, boolean desc2, Range rng3, boolean desc3, int header, int orderCustom,
+			boolean matchCase, boolean sortByRows, int sortMethod, int dataOption1, int dataOption2, int dataOption3) {
+		final Ref key1 = rng1 != null ? rng1.getRefs().get(0) : null;
+		final Ref key2 = rng2 != null ? rng2.getRefs().get(0) : null;
+		final Ref key3 = rng3 != null ? rng3.getRefs().get(0) : null;
+		if (_refs != null && !_refs.isEmpty()) {
+			final Ref ref = _refs.get(0);
+			final int tRow = ref.getTopRow();
+			final int lCol = ref.getLeftCol();
+			final int bRow = ref.getBottomRow();
+			final int rCol = ref.getRightCol();
+			final Sheet sheet = BookHelper.getSheet(_sheet, ref.getOwnerSheet());
+			Set<Ref>[] refs = BookHelper.sort(sheet, tRow, lCol, bRow, rCol, 
+								key1, desc1, key2, type, desc2, key3, desc3, header, 
+								orderCustom, matchCase, sortByRows, sortMethod, dataOption1, dataOption2, dataOption3);
+			if(refs != null) {
+				refs[1].add(ref);
+			} else {
+				final Set<Ref> all = new HashSet<Ref>();
+				all.add(ref);
+				refs = new Set[2];
+				refs[0] = Collections.emptySet();
+				refs[1] = all;
+			}
+			reevaluateAndNotify(refs);
+		}
+	}
 	@Override
 	public void copy(Range dstRange) {
 		if (_refs != null && !dstRange.getRefs().isEmpty()) {
@@ -536,6 +565,11 @@ throw new UiException("insertColumns() not implmented yet!");
 			final Book book = (Book) _sheet.getWorkbook();
 			BookHelper.reevaluateAndNotify(book, last, all);
 		}
+	}
+	
+	@Override
+	public Range getCells(int row, int col) {
+		return new RangeImpl(row, col, _sheet, _sheet);
 	}
 			
 	private void copy(Ref srcRef, int colCount, int rowCount, Range dstRange, Set<Ref> last, Set<Ref> all) {

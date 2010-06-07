@@ -6,6 +6,8 @@ ZK Spreadsheet 2.0.0 RC
   7 Support delete rows
   9 Support insert columns
   10 Support delete columns
+  12 Support sortByColumns
+  13 Support sortByRows
 
 *Bug
   11 NPE when click on an empty cell

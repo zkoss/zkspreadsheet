@@ -13,6 +13,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -27,6 +28,11 @@ import org.zkoss.zss.engine.EventDispatcher;
  *
  */
 public interface Book extends Workbook {
+	/**
+	 * Returns the spreadsheet version of this book (EXCEL97 or EXCEL2007).
+	 * @return the spreadsheet version of this book.
+	 */
+	public SpreadsheetVersion getSpreadsheetVersion();
 	/**
 	 * Returns the associated book name of this spreadsheet book (important when used with @{link Books}).
 	 * @return the associated book name of this spreadsheet book.

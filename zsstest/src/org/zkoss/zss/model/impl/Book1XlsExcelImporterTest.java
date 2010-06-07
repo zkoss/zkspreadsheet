@@ -31,7 +31,7 @@ import org.zkoss.zss.model.Book;
  * @author henrichen
  *
  */
-public class ExcelImporterTest {
+public class Book1XlsExcelImporterTest {
 
 	/**
 	 * @throws java.lang.Exception

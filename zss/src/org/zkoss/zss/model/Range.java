@@ -85,7 +85,28 @@ public interface Range {
 	 * @param shift shiftUp or shiftToLeft
 	 */
 	public void delete(int shift);
-	
+
+	/**
+	 * Sort this Range per the specified parameters
+	 * @param rng1 key1 for sorting
+	 * @param desc1 true to do descending sort; false to do asceding sort for key1. 
+	 * @param rng2 key2 for sorting
+	 * @param type PivotTable sorting type(byLabel or byValue); not implemented yet
+	 * @param desc2 true to do descending sort; false to do asceding sort for key2.
+	 * @param rng3 key3 for sorting
+	 * @param desc3 true to do descending sort; false to do asceding sort for key3.
+	 * @param header whether sort range includes header
+	 * @param orderCustom index of custom order list; not implmented yet 
+	 * @param matchCase true to match the string cases; false to ingore string cases
+	 * @param sortByRows true to sort by rows(change columns orders); false to sort by columns(change row orders). 
+	 * @param sortMethod special sorting method
+	 * @param dataOption1 see numeric String as number or not for key1.
+	 * @param dataOption2 see numeric String as number or not for key2.
+	 * @param dataOption3 see numeric String as number or not for key3.
+	 */
+	public void sort(Range rng1, boolean desc1, Range rng2, int type, boolean desc2, Range rng3, boolean desc3, int header, int orderCustom,
+			boolean matchCase, boolean sortByRows, int sortMethod, int dataOption1, int dataOption2, int dataOption3);
+
 	/**
 	 * Get 1st sheet of this range.
 	 * @return 1st sheet of this range.
@@ -103,4 +124,12 @@ public interface Range {
 	 * @return collection of individual references area of this Range.
 	 */
 	public List<Ref> getRefs();
+	
+	/**
+	 * Return the range that contains the cell specified in row, col (relative to this Range).
+	 * @param row row index relative to this Range
+	 * @param col column index relative to this Range
+	 * @return the range that contains the cell specified in row, col (relative to this Range).
+	 */
+	public Range getCells(int row, int col);
 }
