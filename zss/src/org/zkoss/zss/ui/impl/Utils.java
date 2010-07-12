@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -43,6 +44,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.RefSheet;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.RangeImpl;
@@ -57,6 +59,20 @@ public class Utils {
 	private static final Log log = Log.lookup(Utils.class);
 	
 	/**
+	 * Format and escape a {@link Hyperlink} to HTML &lt;a> string.
+	 * @param sheet the sheet with the RichTextString 
+	 * @param hlink the Hyperlink
+	 * @return the HTML &lt;a> format string
+	 */
+	public static String formatHyperlink(Sheet sheet, Hyperlink hlink, boolean wrap) {
+		if (hlink == null) {
+			return "";
+		}
+		final List<int[]> indexes = new ArrayList<int[]>(2);
+		String text = BookHelper.formatHyperlink((Book)sheet.getWorkbook(), hlink, indexes);
+		return Utils.escapeCellText(text, wrap, wrap, indexes);
+	}
+	/**
 	 * Format and escape a {@link RichTextString} to HTML &lt;span> string.
 	 * @param sheet the sheet with the RichTextString 
 	 * @param rstr the RichTextString
@@ -68,19 +84,46 @@ public class Utils {
 		String text = BookHelper.formatRichText((Book)sheet.getWorkbook(), rstr, indexes);
 		return Utils.escapeCellText(text, wrap, wrap, indexes);
 	}
+
+	/**
+	 * Escape character that has special meaning in HTML such as &lt;, &amp;, etc..
+	 * @param text the text
+	 * @param wrap whether to allow wrap
+	 * @param multiline whether to show multiple line
+	 * @return the HTML 
+	 */
+	public static String escapeCellText(String text, boolean wrap, boolean multiline) {
+		final StringBuffer out = new StringBuffer();
+		for (int j = 0, tl = text.length(); j < tl; ++j) {
+			char cc = text.charAt(j);
+			switch (cc) {
+			case '&': out.append("&amp;"); break;
+			case '<': out.append("&lt;"); break;
+			case '>': out.append("&gt;"); break;
+			case ' ': out.append(wrap?" ":"&nbsp;"); break;
+			case '\n':
+				if (multiline) {
+					out.append("<br/>");
+					break;
+				}
+			default:
+				out.append(cc);
+			}
+		}
+		return out.toString();
+	}
 	
 	//escape character that has special meaning in HTML such as &lt;, &amp;, etc..
+	//runs is a index pair to the text string that needs to be escaped
 	private static String escapeCellText(String text,boolean wrap,boolean multiline, List<int[]> runs){
 		
 		StringBuffer out = new StringBuffer();
 		if (text!=null){
 			int j = 0;
 			for (int[] run : runs) {
-				if (j > 0) {
-					for (int tl = run[0]; j < tl; ++j) {
-						char cc = text.charAt(j);
-						out.append(cc);
-					}
+				for (int tl = run[0]; j < tl; ++j) {
+					char cc = text.charAt(j);
+					out.append(cc);
 				}
 				for (int tl = run[1]; j < tl; ++j) {
 					char cc = text.charAt(j);
@@ -98,6 +141,10 @@ public class Utils {
 						out.append(cc);
 					}
 				}
+			}
+			for (int tl = text.length(); j < tl; ++j) {
+				char cc = text.charAt(j);
+				out.append(cc);
 			}
 		}
 		return out.toString();
@@ -311,6 +358,15 @@ public class Utils {
 	}
 
 	/**
+	 * Returns the {@link Hyperlink} to be shown on the specified cell.
+	 * @param cell the cell
+	 * @return the {@link Hyperlink} to be shown on the specified cell.
+	 */
+	public static Hyperlink getHyperlink(Cell cell) {
+		Range range = getRange(cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
+		return range.getHyperlink();
+	}
+	/**
 	 * Returns the {@link RichTextString} to be shown on the specified cell. 
 	 * @param cell the cell
 	 * @return the {@link RichTextString} to be shown on the specified cell.
@@ -318,6 +374,11 @@ public class Utils {
 	public static RichTextString getText(Cell cell) {
 		Range range = getRange(cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
 		return range.getText();
+	}
+	
+	public static FormatText getFormatText(Cell cell) {
+		Range range = getRange(cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
+		return range.getFormatText();
 	}
 	
 	/**
@@ -373,14 +434,23 @@ public class Utils {
 		range.setRichEditText(value);
 	}
 	
-	public static AImage getAImage(Sheet sheet, PictureData picdata, int pictureIndex) {
-		final String name = ((Book)sheet.getWorkbook()).getBookName()+"_pic_"+pictureIndex;
+	public static AImage getAImage(Sheet sheet, PictureData picdata, int pictureIndex, String name) {
 		try {
 			return new AImage(name, picdata.getData());
 		} catch (IOException e) {
 			// ignore
 		}
 		return null;
+	}
+	
+	public static void mergeCells(Sheet sheet, int tRow, int lCol, int bRow, int rCol, boolean across) {
+		Range rng = getRange(sheet, tRow, lCol, bRow, rCol);
+		rng.merge(across);
+	}
+	
+	public static void unmergeCells(Sheet sheet, int tRow, int lCol, int bRow, int rCol) {
+		Range rng = getRange(sheet, tRow, lCol, bRow, rCol);
+		rng.unMerge();
 	}
 	
 	public static int getWidthInPx(Sheet zkSheet, ClientAnchor anchor, int charWidth) {
@@ -494,20 +564,31 @@ public class Utils {
         if (font.isItalic()) str.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, startIdx, endIdx);
     }
 
+	/** convert pixel to point */
+	public static int pxToPoint(int px) {
+		return px * 72 / 96; //assume 96dpi
+	}
+	
 	/** convert pixel to twip (1/20 point) */
 	public static int pxToTwip(int px) {
-		return px * 72 * 20 / 96;
+		return px * 72 * 20 / 96; //assume 96dpi
 	}
 
 	/** convert twip (1/20 point) to pixel */
 	public static int twipToPx(int twip) {
-		return twip * 96 / 72 / 20;
+		return twip * 96 / 72 / 20; //assume 96dpi
 	}
 
 	/** convert file 1/256 character width to pixel */
 	public static int fileChar256ToPx(int char256, int charWidth) {
 		final double w = (double) char256;
 		return (int) Math.floor(w * charWidth / 256 + 0.5);
+	}
+	
+	/** convert pixel to file 1/256 character width */
+	public static int pxToFileChar256(int px, int charWidth) {
+		final double w = (double) px;
+		return (int) Math.floor(px * 256 / charWidth + 0.5);
 	}
 	
 	/** convert 1/256 character width to pixel */
@@ -558,5 +639,45 @@ public class Utils {
 	public static String getRowTitle(Sheet sheet, int row) {
 		return ""+(row+1);
 	}
+
+	/**
+	 * Sets column Width in pixel.
+	 * @param sheet
+	 * @param col
+	 * @param px column width in pixel
+	 */
+	public static void setColumnWidth(Sheet sheet, int col, int px) {
+		final int char256 = Utils.pxToFileChar256(px, ((Book)sheet.getWorkbook()).getDefaultCharWidth());
+		final Range rng = Utils.getRange(sheet, -1 , col);
+		rng.setColumnWidth(char256);
+	}
 	
+	/**
+	 * Sets Row Height in pixel. 
+	 * @param sheet
+	 * @param row
+	 * @param px row height in pixel 
+	 */
+	public static void setRowHeight(Sheet sheet, int row, int px) {
+		final int points = Utils.pxToPoint(px);
+		final Range rng = Utils.getRange(sheet, row, -1);
+		rng.setRowHeight(points);
+	}
+	
+	public static void moveRows(Sheet sheet, int tRow, int bRow, int nRow) {
+		final int maxcol = ((Book)sheet.getWorkbook()).getSpreadsheetVersion().getLastColumnIndex();
+		final Range rng = Utils.getRange(sheet, tRow, 0, bRow, maxcol);
+		rng.move(nRow, 0);
+	}
+
+	public static void moveColumns(Sheet sheet, int lCol, int rCol, int nCol) {
+		final int maxrow = ((Book)sheet.getWorkbook()).getSpreadsheetVersion().getLastRowIndex();
+		final Range rng = Utils.getRange(sheet, 0, lCol, maxrow, rCol);
+		rng.move(0, nCol);
+	}
+	
+	public static void moveCells(Sheet sheet, int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
+		final Range rng = Utils.getRange(sheet, tRow, lCol, bRow, rCol);
+		rng.move(nRow, nCol);
+	}
 }

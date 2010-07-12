@@ -83,7 +83,19 @@ public interface Book extends Workbook {
 	 * Returns the default font used in this book.
 	 * @return the default font used in this book.
 	 */
-	public Font getDefaultFont();
+	public Font getDefaultFont(); 	//http://support.microsoft.com/kb/214123
+
+	/**
+	 * Sets the default font used in this book.
+	 * @param font the font to be used as the default font in this book.
+	 */
+	public void setDefaultFont(Font font);
+	
+	/**
+	 * default character width in pixel (related to current Font. Check {@link getDeflautFont}.
+	 * @return
+	 */
+	public int getDefaultCharWidth();
 	
 	/**
 	 * Notify this book the value of the specified variable has changed. 

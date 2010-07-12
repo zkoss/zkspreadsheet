@@ -30,9 +30,9 @@ import org.zkoss.zk.ui.event.Events;
 //import org.zkoss.zss.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.SelectionChangeEvent;
+import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
-
 import org.apache.poi.ss.usermodel.Sheet;
 /**
  * A Command (client to server) for handling cell selection
@@ -66,13 +66,31 @@ public class SelectionChangeCommand implements Command {
 		int orgiright = (Integer) data.get("orgiright");
 		int orgibottom = (Integer) data.get("orgibottom");
 		
+		final SelectionChangeEvent evt = new SelectionChangeEvent(
+				org.zkoss.zss.ui.event.Events.ON_SELECTION_CHANGE, comp, sheet,
+				action, left, top, right, bottom, orgileft, orgitop, orgiright,
+				orgibottom);
+		
+		if (evt.getAction() == SelectionChangeEvent.MOVE) {
+			final int nRow = top - orgitop;
+			final int nCol = left - orgileft;
+			
+			switch(evt.getSelectionType()) {
+			case CellSelectionEvent.SELECT_ROW:
+				Utils.moveRows(sheet, orgitop, orgibottom, nRow);
+				break;
+			case CellSelectionEvent.SELECT_COLUMN:
+				Utils.moveColumns(sheet, orgileft, orgiright, nCol);
+				break;
+			case CellSelectionEvent.SELECT_CELLS:
+				Utils.moveCells(sheet, orgitop, orgileft, orgibottom, orgiright, nRow, nCol);
+				break;
+			}
+		}
 		SpreadsheetInCtrl ctrl = ((SpreadsheetInCtrl)((Spreadsheet)comp).getExtraCtrl());
 		ctrl.setSelectionRect(left, top, right, bottom);	
 		
-		Events.postEvent(new SelectionChangeEvent(
-				org.zkoss.zss.ui.event.Events.ON_SELECTION_CHANGE, comp, sheet,
-				action, left, top, right, bottom, orgileft, orgitop, orgiright,
-				orgibottom));
+		Events.postEvent(evt);
 	}
 
 	public String getCommand() {

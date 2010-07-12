@@ -27,12 +27,14 @@ import org.zkoss.zk.ui.UiException;
 //import org.zkoss.zss.model.Cell;
 //import org.zkoss.zss.model.Format;
 //import org.zkoss.zss.model.Sheet;
+import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Cell;
@@ -70,10 +72,22 @@ public class UtilFns {
 		}*/
 		Sheet sheet = ss.getSelectedSheet();
 		final Cell cell = Utils.getCell(sheet, row, column);
-		final RichTextString rstr = cell== null ? null : Utils.getText(cell);
-		if (rstr == null) return "";
-		boolean wrap = cell.getCellStyle().getWrapText();
-		return Utils.formatRichTextString(sheet, rstr, wrap);
+		final Hyperlink hlink = cell == null ? null : Utils.getHyperlink(cell);
+		if (hlink != null) {
+			boolean wrap = cell.getCellStyle().getWrapText();
+			return Utils.formatHyperlink(sheet, hlink, wrap);
+		}
+		final FormatText ft = cell == null ? null : Utils.getFormatText(cell);
+		if (ft != null) {
+			boolean wrap = cell.getCellStyle().getWrapText();
+			if (ft.isRichTextString()) {
+				final RichTextString rstr = ft.getRichTextString();
+				return rstr == null ? "" : Utils.formatRichTextString(sheet, rstr, wrap);
+			} else if (ft.isCellFormatResult()) {
+				return Utils.escapeCellText(ft.getCellFormatResult().text, wrap, wrap);
+			}
+		}
+		return "";
 	}
 	
 	static public Integer getRowBegin(Spreadsheet ss){

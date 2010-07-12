@@ -75,6 +75,7 @@ import org.zkoss.zss.engine.event.SSDataEvent;
 import org.zkoss.zss.model.Book;
 //import org.zkoss.zss.model.Cell;
 //import org.zkoss.zss.model.Format;
+import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.Importer;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Size;
@@ -131,6 +132,7 @@ import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -261,16 +263,8 @@ public class Spreadsheet extends XulElement {
 	private SequenceId _custColId = new SequenceId(-1, 2);
 	private SequenceId _custRowId = new SequenceId(-1, 2);
 	private SequenceId _updateCellId = new SequenceId(0, 1);// to handle batch
-
-	/**
-	 * Theme font used in showing the spreadsheet data (relative to column width)
-	 * TODO css .zscelltxt font-family, font-size shall follow this!
-	 */
-	private java.awt.Font _themeFont;
-	private int _defaultCharWidth = 7; //pixel = char-width * col-width + 5
 	
 	public Spreadsheet() {
-		setThemeFont(null); //init theme font to "Calibri 11", cannot calculate to same width as the excel
 		this.addEventListener("onStartEditingImpl", new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				Object[] data = (Object[]) event.getData();
@@ -897,20 +891,8 @@ public class Spreadsheet extends XulElement {
 		}
 	}
 	
-	public int getDefaultCharWidth() {
-		return _defaultCharWidth;
-	}
-	
-	//http://support.microsoft.com/kb/214123
-	public void setThemeFont(java.awt.Font font) {
-		_themeFont = font != null ? font : new java.awt.Font("Calibri", java.awt.Font.PLAIN, 11);
-		//TODO don't know how to get the default character width per the Font. 
-		_defaultCharWidth = Utils.calcDefaultCharWidth(_themeFont);
-	}
-	
-	//http://support.microsoft.com/kb/214123
-	public java.awt.Font getThemeFont() {
-		return _themeFont;
+	private int getDefaultCharWidth() {
+		return _book.getDefaultCharWidth();
 	}
 
 	/**
@@ -1173,7 +1155,7 @@ public class Spreadsheet extends XulElement {
 	}
 
 	/**
-	 * Sets the selection rectangle. In general, If you set a selection, you
+	 * Sets the selection rectangle. In general, if you set a selection, you must
 	 * also set the focus by {@link #setCellFocus(Position)};. And, if you want
 	 * to get the focus back to spreadsheet, call {@link #focus()} after set
 	 * selection.
@@ -1464,11 +1446,11 @@ public class Spreadsheet extends XulElement {
 			final Sheet sheet = getSheet(rng);
 			if (!getSelectedSheet().equals(sheet))
 				return;
-			Size size = event.getSize();
 			if (rng.isWholeColumn()) {
-				int width = size.getWidth();
-				HeaderPositionHelper posHelper = getColumnPositionHelper(sheet);
 				final int left = rng.getLeftCol();
+				final int char256 = sheet.getColumnWidth(left);
+				final int width = Utils.fileChar256ToPx(char256, getDefaultCharWidth());
+				HeaderPositionHelper posHelper = getColumnPositionHelper(sheet);
 				int[] meta = posHelper.getMeta(left);
 				if (meta == null || meta[1] != width) {
 					int id = meta == null ? _custColId.next() : meta[2];
@@ -1476,9 +1458,10 @@ public class Spreadsheet extends XulElement {
 					((ExtraCtrl) getExtraCtrl()).setColumnWidth(sheet, left, width, id);
 				}
 			} else if (rng.isWholeRow()) {
-				int height = size.getHeight();
-				HeaderPositionHelper posHelper = getRowPositionHelper(sheet);
 				final int top = rng.getTopRow();
+				final int twips = BookHelper.getRowHeight(sheet, top);
+				int height = Utils.twipToPx(twips);
+				HeaderPositionHelper posHelper = getRowPositionHelper(sheet);
 				int[] meta = posHelper.getMeta(top);
 				if (meta == null || meta[1] != height) {
 					int id = meta == null ? _custRowId.next() : meta[2];
@@ -1510,7 +1493,6 @@ public class Spreadsheet extends XulElement {
 		}
 		return mmhelper;
 	}
-
 	
 	private HeaderPositionHelper getRowPositionHelper(Sheet sheet) {
 		return getPositionHelpers(sheet)[0];
@@ -1597,7 +1579,6 @@ public class Spreadsheet extends XulElement {
 
 				final Cell cell = Utils.getCell(sheet, row, col);
 				// if(cell==null) continue;
-				RichTextString rstr = (cell == null) ? null : Utils.getText(cell); 
 
 				JSONObj result = new JSONObj();
 				result.setData("r", row);
@@ -1633,7 +1614,16 @@ public class Spreadsheet extends XulElement {
 					result.setData("hal", "r");
 					break;
 				}
-				String text = rstr != null ? Utils.formatRichTextString(sheet, rstr, wrap) : "";
+				Hyperlink hlink = cell == null ? null : Utils.getHyperlink(cell);
+				String text = "";
+				if (hlink == null) {
+					final FormatText ft = (cell == null) ? null : Utils.getFormatText(cell);
+					
+					RichTextString rstr = ft != null && ft.isRichTextString() ? ft.getRichTextString() : null; 
+					text = rstr != null ? Utils.formatRichTextString(sheet, rstr, wrap) : ft != null ? Utils.escapeCellText(ft.getCellFormatResult().text, wrap, wrap) : "";
+				} else {
+					text = Utils.formatHyperlink(sheet, hlink, wrap);
+				}
 				result.setData("val", text);
 				// responseUpdateCell(row + "_" + col + "_" + _updateCellId.last(), "", sheetId, result.toString());
 				response(row + "_" + col + "_" + _updateCellId.last(), new AuDataUpdate(this, "", sheetId, result.toString()));
@@ -2359,6 +2349,7 @@ public class Spreadsheet extends XulElement {
 
 		}
 
+		//in pixel
 		public void setColumnWidth(Sheet sheet, int col, int width, int id) {
 			JSONObj result = new JSONObj();
 			result.setData("type", "column");
@@ -2371,6 +2362,7 @@ public class Spreadsheet extends XulElement {
 			smartUpdate("columnSize", new Object[] { "", Utils.getSheetId(sheet), result.toString() });
 		}
 
+		//in pixels
 		public void setRowHeight(Sheet sheet, int row, int height, int id) {
 			JSONObj result = new JSONObj();
 			result.setData("type", "row");

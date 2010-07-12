@@ -29,14 +29,9 @@ import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
-/*import org.zkoss.zss.model.Cell;
-import org.zkoss.zss.model.Format;
-import org.zkoss.zss.model.Sheet;
-import org.zkoss.zss.model.TextHAlign;
-*/
+import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.au.out.AuDataBlock;
 import org.zkoss.zss.ui.impl.CellFormatHelper;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.JSONObj;
@@ -47,6 +42,7 @@ import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Cell;
@@ -887,9 +883,14 @@ public class CellFetchCommandHelper{
 				jcell.setData("rbo", true);// right border, when processing text overflow, must take care this.
 			}
 
-			RichTextString rstr = cell != null ? Utils.getText(cell) : null;
-
-			jcell.setData("txt", rstr == null ? "" : Utils.formatRichTextString(sheet, rstr, wrap));
+			Hyperlink hlink = cell != null ? Utils.getHyperlink(cell) : null;
+			if (hlink == null) {
+				final FormatText ft = cell != null ? Utils.getFormatText(cell) : null;
+				RichTextString rstr = ft != null && ft.isRichTextString()? ft.getRichTextString() : null;
+				jcell.setData("txt", rstr == null ? ft != null ? Utils.escapeCellText(ft.getCellFormatResult().text, wrap, wrap) : "" : Utils.formatRichTextString(sheet, rstr, wrap));
+			} else {
+				jcell.setData("txt", Utils.formatHyperlink(sheet, hlink, wrap));
+			}
 
 			int textHAlign = BookHelper.getRealAlignment(cell);
 			switch(textHAlign) {

@@ -55,7 +55,7 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	private final VariableResolver _variableResolver;
 	private RefBook _refBook;
 	private Books _books;
-	private int _defaultCharWidth;
+	private int _defaultCharWidth = 7; //TODO: don't know how to calculate this yet per the default font.
 
 	public XSSFBookImpl(String bookname, InputStream is) throws IOException {
 		super(is);
@@ -150,6 +150,27 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	@Override
 	public Font getDefaultFont() {
 		return getFontAt((short)0);
+	}
+	
+	@Override
+	public void setDefaultFont(Font font) {
+		final Font defFont = getDefaultFont();
+		defFont.setBoldweight(font.getBoldweight());
+		defFont.setCharSet(font.getCharSet());
+		defFont.setColor(font.getColor());
+		defFont.setFontHeight(font.getFontHeight());
+		defFont.setFontName(font.getFontName());
+		defFont.setItalic(font.getItalic());
+		defFont.setStrikeout(font.getStrikeout());
+		defFont.setTypeOffset(font.getTypeOffset());
+		defFont.setUnderline(font.getUnderline());
+		
+		//TODO: recalic _defaultCharWidth
+	}
+	
+	@Override
+	public int getDefaultCharWidth() {
+		return _defaultCharWidth;
 	}
 	
 	@Override 

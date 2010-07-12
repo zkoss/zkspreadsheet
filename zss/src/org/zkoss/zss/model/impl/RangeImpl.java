@@ -20,7 +20,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -34,6 +36,7 @@ import org.zkoss.zss.engine.impl.CellRefImpl;
 import org.zkoss.zss.engine.impl.ChangeInfo;
 import org.zkoss.zss.engine.impl.MergeChange;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.Range;
 
 /**
@@ -107,6 +110,19 @@ public class RangeImpl implements Range {
 	}
 
 	@Override
+	public Hyperlink getHyperlink() {
+		Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
+		if (ref != null) {
+			final int tRow = ref.getTopRow();
+			final int lCol = ref.getLeftCol();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final Cell cell = getCell(tRow, lCol, refSheet);
+			if (cell != null)
+				return BookHelper.getHyperlink(cell);
+		}
+		return null;
+	}
+	@Override
 	public RichTextString getText() {
 		Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
 		if (ref != null) {
@@ -116,6 +132,19 @@ public class RangeImpl implements Range {
 			final Cell cell = getCell(tRow, lCol, refSheet);
 			if (cell != null)
 				return BookHelper.getText(cell);
+		}
+		return null;
+	}
+	@Override
+	public FormatText getFormatText() {
+		Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
+		if (ref != null) {
+			final int tRow = ref.getTopRow();
+			final int lCol = ref.getLeftCol();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final Cell cell = getCell(tRow, lCol, refSheet);
+			if (cell != null)
+				return BookHelper.getFormatText(cell);
 		}
 		return null;
 	}
@@ -424,46 +453,28 @@ public class RangeImpl implements Range {
 			case SHIFT_DEFAULT:
 				if (ref.isWholeRow()) {
 					final ChangeInfo info = BookHelper.deleteRows(_sheet, ref.getTopRow(), ref.getRowCount());
-					final Set<Ref> last = info.getToEval();
-					final Set<Ref> all = info.getAffected();
-					refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_DELETE, ref, SSDataEvent.MOVE_V));
-					//must delete and add in batch, or merge ranges can interfer to each other
-					for(MergeChange change : info.getMergeChanges()) {
-						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_DELETE, change.getOrgMerge(), SSDataEvent.MOVE_V));
-					}
-					for(MergeChange change : info.getMergeChanges()) {
-						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_ADD, change.getMerge(), SSDataEvent.MOVE_V));
-					}
-					BookHelper.reevaluateAndNotify((Book) _sheet.getWorkbook(), last, all);
+					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_DELETE, SSDataEvent.MOVE_V);
 				} else if (ref.isWholeColumn()) {
 					final ChangeInfo info = BookHelper.deleteColumns(_sheet, ref.getLeftCol(), ref.getColumnCount());
-					final Set<Ref> last = info.getToEval();
-					final Set<Ref> all = info.getAffected();
-					refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_DELETE, ref, SSDataEvent.MOVE_H));
-					//must delete and add in batch, or merge ranges can interfer to each other
-					for(MergeChange change : info.getMergeChanges()) {
-						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_DELETE, change.getOrgMerge(), SSDataEvent.MOVE_H));
-					}
-					for(MergeChange change : info.getMergeChanges()) {
-						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_ADD, change.getMerge(), SSDataEvent.MOVE_H));
-					}
-					BookHelper.reevaluateAndNotify((Book) _sheet.getWorkbook(), last, all);
+					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_DELETE, SSDataEvent.MOVE_H);
 				}
 				break;
 			case SHIFT_LEFT:
-//TODO insert()					
-throw new UiException("removeColumns() not implmented yet!");
-/*				BookHelper.remove(_sheet, ref.getLeftCol(), ref.getRowCount(), ref.getColumnCount());
-				refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_INSERT, ref, SSDataEvent.MOVE_H));
+				if (ref.isWholeRow() || ref.isWholeColumn()) {
+					delete(SHIFT_DEFAULT);
+				} else {
+					final ChangeInfo info = BookHelper.deleteRange(_sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), true);
+					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_DELETE, SSDataEvent.MOVE_H);
+				}
 				break;
-*/				
 			case SHIFT_UP:
-//TODO insert()					
-throw new UiException("removeRows() not implmented yet!");
-/*				BookHelper.remove(_sheet, ref.getLeftCol(), ref.getRowCount(), ref.getColumnCount());
-				refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_INSERT, ref, SSDataEvent.MOVE_V));
+				if (ref.isWholeRow() || ref.isWholeColumn()) {
+					delete(SHIFT_DEFAULT);
+				} else {
+					final ChangeInfo info = BookHelper.deleteRange(_sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), false);
+					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_DELETE, SSDataEvent.MOVE_V);
+				}
 				break;
-*/				
 			}
 		}
 	}
@@ -480,49 +491,60 @@ throw new UiException("removeRows() not implmented yet!");
 			case SHIFT_DEFAULT:
 				if (ref.isWholeRow()) {
 					final ChangeInfo info = BookHelper.insertRows(_sheet, ref.getTopRow(), ref.getRowCount());
-					final Set<Ref> last = info.getToEval();
-					final Set<Ref> all = info.getAffected();
-					refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_INSERT, ref, SSDataEvent.MOVE_V));
-					//must delete and add in batch, or merge ranges can interfer to each other
-					for(MergeChange change : info.getMergeChanges()) {
-						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_DELETE, change.getOrgMerge(), SSDataEvent.MOVE_V));
-					}
-					for(MergeChange change : info.getMergeChanges()) {
-						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_ADD, change.getMerge(), SSDataEvent.MOVE_V));
-					}
-					BookHelper.reevaluateAndNotify((Book) _sheet.getWorkbook(), last, all);
+					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_INSERT, SSDataEvent.MOVE_V);
 				} else if (ref.isWholeColumn()) {
 					final ChangeInfo info = BookHelper.insertColumns(_sheet, ref.getLeftCol(), ref.getColumnCount());
-					final Set<Ref> last = info.getToEval();
-					final Set<Ref> all = info.getAffected();
-					refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_INSERT, ref, SSDataEvent.MOVE_H));
-					//must delete and add in batch, or merge ranges can interfer to each other
-					for(MergeChange change : info.getMergeChanges()) {
-						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_DELETE, change.getOrgMerge(), SSDataEvent.MOVE_H));
-					}
-					for(MergeChange change : info.getMergeChanges()) {
-						refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_ADD, change.getMerge(), SSDataEvent.MOVE_H));
-					}
-					BookHelper.reevaluateAndNotify((Book) _sheet.getWorkbook(), last, all);
+					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_INSERT, SSDataEvent.MOVE_H);
 				}
 				break;
 			case SHIFT_RIGHT:
-//TODO insert()					
-throw new UiException("insertColumns() not implmented yet!");
-/*				BookHelper.insert(_sheet, ref.getLeftCol(), ref.getRowCount(), ref.getColumnCount());
-				refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_INSERT, ref, SSDataEvent.MOVE_H));
+				if (ref.isWholeRow() || ref.isWholeColumn()) {
+					insert(SHIFT_DEFAULT, copyOrigin);
+				} else {
+					final ChangeInfo info = BookHelper.insertRange(_sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), false);
+					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_INSERT, SSDataEvent.MOVE_H);
+				}
 				break;
-*/				
 			case SHIFT_DOWN:
-//TODO insert()					
-throw new UiException("insertColumns() not implmented yet!");
-/*				BookHelper.insert(_sheet, ref.getLeftCol(), ref.getRowCount(), ref.getColumnCount());
-				refBook.publish(new SSDataEvent(SSDataEvent.ON_RANGE_INSERT, ref, SSDataEvent.MOVE_V));
+				if (ref.isWholeRow() || ref.isWholeColumn()) {
+					insert(SHIFT_DEFAULT, copyOrigin);
+				} else {
+					final ChangeInfo info = BookHelper.insertRange(_sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), false);
+					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_INSERT, SSDataEvent.MOVE_V);
+				}
 				break;
-*/				
 			}
 		}
 	}
+	
+	private void notifyMergeChange(RefBook refBook, ChangeInfo info, Ref ref, String event, int orient) {
+		if (info == null) {
+			return;
+		}
+		final Set<Ref> last = info.getToEval();
+		final Set<Ref> all = info.getAffected();
+		refBook.publish(new SSDataEvent(event, ref, orient));
+		//must delete and add in batch, or merge ranges can interfere to each other
+		for(MergeChange change : info.getMergeChanges()) {
+			final Ref orgMerge = change.getOrgMerge();
+			if (orgMerge != null) {
+				refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_DELETE, orgMerge, orient));
+			}
+		}
+		for(MergeChange change : info.getMergeChanges()) {
+			final Ref merge = change.getMerge();
+			if (merge != null) {
+				refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_ADD, merge, orient));
+			}
+		}
+		BookHelper.reevaluateAndNotify((Book) _sheet.getWorkbook(), last, all);
+	}
+
+	@Override
+	public void pasteSpecial(int pasteType, int operation, boolean SkipBlanks, boolean transpose) {
+		//TODO
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void sort(Range rng1, boolean desc1, Range rng2, int type, boolean desc2, Range rng3, boolean desc3, int header, int orderCustom,
@@ -564,6 +586,43 @@ throw new UiException("insertColumns() not implmented yet!");
 			}
 			final Book book = (Book) _sheet.getWorkbook();
 			BookHelper.reevaluateAndNotify(book, last, all);
+		}
+	}
+
+	@Override
+	public void borderAround(BorderStyle lineStyle, String color) {
+		setBorders(BookHelper.BORDER_OUTLINE, lineStyle, color);
+	}
+	
+	@Override
+	public void merge(boolean across) {
+		if (_refs != null && !_refs.isEmpty()) {
+			final Ref ref = _refs.iterator().next();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final RefBook refBook = refSheet.getOwnerBook();
+			final int tRow = ref.getTopRow();
+			final int lCol = ref.getLeftCol();
+			final int bRow = ref.getBottomRow();
+			final int rCol = ref.getRightCol();
+			final Sheet sheet = BookHelper.getSheet(_sheet, refSheet);
+			final ChangeInfo info = BookHelper.merge(sheet, tRow, lCol, bRow, rCol, across);
+			notifyMergeChange(refBook, info, ref, SSDataEvent.ON_CONTENTS_CHANGE, SSDataEvent.MOVE_NO);
+		}
+	}
+	
+	@Override
+	public void unMerge() {
+		if (_refs != null && !_refs.isEmpty()) {
+			final Ref ref = _refs.iterator().next();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final RefBook refBook = refSheet.getOwnerBook();
+			final int tRow = ref.getTopRow();
+			final int lCol = ref.getLeftCol();
+			final int bRow = ref.getBottomRow();
+			final int rCol = ref.getRightCol();
+			final Sheet sheet = BookHelper.getSheet(_sheet, refSheet);
+			final ChangeInfo info = BookHelper.unMerge(sheet, tRow, lCol, bRow, rCol);
+			notifyMergeChange(refBook, info, ref, SSDataEvent.ON_CONTENTS_CHANGE, SSDataEvent.MOVE_NO);
 		}
 	}
 	
@@ -621,5 +680,71 @@ throw new UiException("insertColumns() not implmented yet!");
 			}
 		}
 		all.add(dstRef);
+	}
+	
+	@Override
+	public void setBorders(short borderIndex, BorderStyle lineStyle, String color) {
+		if (_refs != null && !_refs.isEmpty()) {
+			final Ref ref = _refs.iterator().next();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final int tRow = ref.getTopRow();
+			final int lCol = ref.getLeftCol();
+			final int bRow = ref.getBottomRow();
+			final int rCol = ref.getRightCol();
+			final Sheet sheet = BookHelper.getSheet(_sheet, refSheet);
+			final Set<Ref> all = BookHelper.setBorders(sheet, tRow, lCol, bRow, rCol, borderIndex, lineStyle, color);
+			if (all != null) {
+				final Book book = (Book) _sheet.getWorkbook();
+				BookHelper.notifyCellChanges(book, all);
+			}
+		}
+	}
+	
+	@Override
+	public void setColumnWidth(int char256) {
+		if (_refs != null && !_refs.isEmpty()) {
+			final Ref ref = _refs.iterator().next();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final int lCol = ref.getLeftCol();
+			final int rCol = ref.getRightCol();
+			final Sheet sheet = BookHelper.getSheet(_sheet, refSheet);
+			final Set<Ref> all = BookHelper.setColumnWidth(sheet, lCol, rCol, char256);
+			if (all != null) {
+				final Book book = (Book) _sheet.getWorkbook();
+				BookHelper.notifySizeChanges(book, all);
+			}
+		}
+	}
+	
+	@Override
+	public void setRowHeight(int points) {
+		if (_refs != null && !_refs.isEmpty()) {
+			final Ref ref = _refs.iterator().next();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final int tRow = ref.getTopRow();
+			final int bRow = ref.getBottomRow();
+			final Sheet sheet = BookHelper.getSheet(_sheet, refSheet);
+			final Set<Ref> all = BookHelper.setRowHeight(sheet, tRow, bRow, (short) (points * 20)); //in twips
+			if (all != null) {
+				final Book book = (Book) _sheet.getWorkbook();
+				BookHelper.notifySizeChanges(book, all);
+			}
+		}
+	}
+	
+	@Override
+	public void move(int nRow, int nCol) {
+		if (_refs != null && !_refs.isEmpty()) {
+			final Ref ref = _refs.iterator().next();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final RefBook refBook = refSheet.getOwnerBook();
+			final int tRow = ref.getTopRow();
+			final int lCol = ref.getLeftCol();
+			final int bRow = ref.getBottomRow();
+			final int rCol = ref.getRightCol();
+			final Sheet sheet = BookHelper.getSheet(_sheet, refSheet);
+			final ChangeInfo info = BookHelper.moveRange(sheet, tRow, lCol, bRow, rCol, nRow, nCol);
+			notifyMergeChange(refBook, info, ref, SSDataEvent.ON_CONTENTS_CHANGE, SSDataEvent.MOVE_NO);
+		}
 	}
 }

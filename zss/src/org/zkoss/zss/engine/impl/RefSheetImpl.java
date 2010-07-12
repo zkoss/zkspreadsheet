@@ -248,7 +248,7 @@ public class RefSheetImpl implements RefSheet {
 		if (tRowRefIndex != null) {
 			tRowRefIndex.getRefs().remove(ref);
 			if (tRowRefIndex.getRefs().isEmpty()) {
-				_tRowIndex.removeIndexable(tRowRefIndex.getIndex());
+				_tRowIndex.removeIndexable(tRow);
 			}
 		}
 		
@@ -256,7 +256,7 @@ public class RefSheetImpl implements RefSheet {
 		if (bRowRefIndex != null) {
 			bRowRefIndex.getRefs().remove(ref);
 			if (bRowRefIndex.getRefs().isEmpty()) {
-				_bRowIndex.removeIndexable(bRowRefIndex.getIndex());
+				_bRowIndex.removeIndexable(bRow);
 			}
 		}
 		
@@ -264,7 +264,7 @@ public class RefSheetImpl implements RefSheet {
 		if (lColRefIndex != null) {
 			lColRefIndex.getRefs().remove(ref);
 			if (lColRefIndex.getRefs().isEmpty()) {
-				_lColIndex.removeIndexable(lColRefIndex.getIndex());
+				_lColIndex.removeIndexable(lCol);
 			}
 		}
 		
@@ -272,7 +272,7 @@ public class RefSheetImpl implements RefSheet {
 		if (rColRefIndex != null) {
 			rColRefIndex.getRefs().remove(ref);
 			if (rColRefIndex.getRefs().isEmpty()) {
-				_rColIndex.removeIndexable(rColRefIndex.getIndex());
+				_rColIndex.removeIndexable(rCol);
 			}
 		}
 	}
@@ -361,31 +361,17 @@ public class RefSheetImpl implements RefSheet {
 			throw new UiException("Cannot insert a negative number of rows: "+num);
 		}
 		final Set<Ref> hits = new HashSet<Ref>();
-		final Set<Ref> tHits = new HashSet<Ref>();
-		final Set<Ref> bHits = new HashSet<Ref>();
 		
 		//bRow hits
 		for(int j=_bRowIndex.size() - 1; j >= 0; --j) {
 			final RefIndex bRowRefIndex = (RefIndex) _bRowIndex.get(j);  
 			final int bRow = bRowRefIndex.getIndex();
 			if (bRow < startRow) break; //no more
-			bHits.addAll(bRowRefIndex.getRefs());
+			hits.addAll(bRowRefIndex.getRefs());
 		}
-		hits.addAll(bHits);
 		
-		//tRow hits
-		for(int j=_tRowIndex.size() - 1; j >= 0; --j) {
-			final RefIndex tRowRefIndex = (RefIndex) _tRowIndex.get(j);  
-			final int tRow = tRowRefIndex.getIndex();
-			if (tRow < startRow) break; //no more
-			tHits.addAll(tRowRefIndex.getRefs());
-		}
-		hits.addAll(tHits);
-
 		//remove hits from the ltrbIndex(before adjust row
-		for (Ref ref : hits) {
-			_ltrbIndex.remove(new RefAddr(ref));
-		}
+		removeFromLtrbIndex(hits);
 
 		final int maxrow = _ownerBook.getMaxrow();
 		//adjust Ref bRow index
@@ -417,8 +403,6 @@ public class RefSheetImpl implements RefSheet {
 			if (tRow > maxrow) {//out of maximum bound, #REF! case
 				_bRowIndex.remove(j); //remove the RefIndex of this top row
 				removeHits.addAll(tRowRefs);
-				bHits.removeAll(tRowRefs);
-				tHits.removeAll(tRowRefs);
 			} else {
 				tRowRefIndex.setIndex(tRow); //assign a new index
 				for(Ref ref : tRowRefs) {
@@ -428,9 +412,7 @@ public class RefSheetImpl implements RefSheet {
 		}
 
 		//add/merge back the adjusted Refs to ltrb index
-		final Set<Ref> affectRefs = new HashSet<Ref>(tHits);
-		affectRefs.addAll(bHits);
-		addOrMergeBackLtrbIndex(affectRefs);
+		addOrMergeBackLtrbIndex(hits);
 
 		//clear precedents link
 		clearRemoveRefs(removeHits, hits);
@@ -466,8 +448,6 @@ public class RefSheetImpl implements RefSheet {
 			throw new UiException("Cannot remove a negative number of rows: "+num);
 		}
 		final Set<Ref> hits = new HashSet<Ref>();
-		final Set<Ref> bHits = new HashSet<Ref>();
-		final Set<Ref> tHits = new HashSet<Ref>();
 		
 		//bRow hits
 		int jb = _bRowIndex.size() - 1;
@@ -475,24 +455,11 @@ public class RefSheetImpl implements RefSheet {
 			final RefIndex bRowRefIndex = (RefIndex) _bRowIndex.get(jb);  
 			final int bRow = bRowRefIndex.getIndex();
 			if (bRow < startRow) break; //no more
-			bHits.addAll(bRowRefIndex.getRefs());
+			hits.addAll(bRowRefIndex.getRefs());
 		}
-		hits.addAll(bHits);
-		
-		//tRow hits
-		int jt = _tRowIndex.size() - 1;
-		for(; jt >= 0; --jt) {
-			final RefIndex tRowRefIndex = (RefIndex) _tRowIndex.get(jt);  
-			final int tRow = tRowRefIndex.getIndex();
-			if (tRow < startRow) break; //no more
-			tHits.addAll(tRowRefIndex.getRefs());
-		}
-		hits.addAll(tHits);
 
 		//remove hits from the ltrbIndex(before adjust row)
-		for (Ref ref : hits) {
-			_ltrbIndex.remove(new RefAddr(ref));
-		}
+		removeFromLtrbIndex(hits);
 		
 		//adjust Ref bRow index
 		for(int j = jb+1, len = _bRowIndex.size(); j < len; ++j) {
@@ -524,7 +491,7 @@ public class RefSheetImpl implements RefSheet {
 		
 		final Set<Ref> removeHits = new HashSet<Ref>();
 		//adjust Ref tRow index
-		for(int j = jt+1, len = _tRowIndex.size(); j < len; ++j) {
+		for(int j = _tRowIndex.getListIndex(startRow), len = _tRowIndex.size(); j < len; ++j) {
 			final RefIndex tRowRefIndex = (RefIndex) _tRowIndex.get(j);
 			int tRow = tRowRefIndex.getIndex();
 			int min = tRow - startRow;
@@ -547,8 +514,6 @@ public class RefSheetImpl implements RefSheet {
 				for(Ref ref : tRowRefs) {
 					if (ref.getBottomRow() < tRow) { //shall be removed since bRow < tRow
 						removeHits.add(ref);
-						bHits.remove(ref);
-						tHits.remove(ref);
 					} else {
 						ref.setTopRow(tRow);
 						newRefs.add(ref);
@@ -558,8 +523,6 @@ public class RefSheetImpl implements RefSheet {
 				for(Ref ref : tRowRefs) {
 					if (ref.getBottomRow() < tRow) { //shall be removed since bRow < tRow
 						removeHits.add(ref);
-						bHits.remove(ref);
-						tHits.remove(ref);
 					} else if (min != 0) {
 						ref.setTopRow(tRow);
 					}
@@ -568,12 +531,7 @@ public class RefSheetImpl implements RefSheet {
 		}
 		
 		//add back the adjusted Refs to ltrb index
-		final Set<Ref> affectHits = new HashSet<Ref>(tHits);
-		affectHits.addAll(bHits);
-		
-		for (Ref ref : affectHits) {
-			_ltrbIndex.put(new RefAddr(ref), ref);
-		}
+		addOrMergeBackLtrbIndex(hits);
 
 		//clear removed refs (Keep the dependents link)
 		clearRemoveRefs(removeHits, hits);
@@ -581,6 +539,12 @@ public class RefSheetImpl implements RefSheet {
 		return getBothDependents(removeHits, hits);
 	}
 
+	/**
+	 * 
+	 * @param removeHits Refs to be removed
+	 * @param precedents Refs whose contents is changed 
+	 * @return [0]: toEval, [1]: affected
+	 */
 	@SuppressWarnings("unchecked")
 	private Set<Ref>[] getBothDependents(Set<Ref> removeHits, Set<Ref> precedents) {
 		final Set<Ref> all = new HashSet<Ref>();
@@ -598,31 +562,17 @@ public class RefSheetImpl implements RefSheet {
 			throw new UiException("Cannot insert a negative number of columns: "+num);
 		}
 		final Set<Ref> hits = new HashSet<Ref>();
-		final Set<Ref> lHits = new HashSet<Ref>();
-		final Set<Ref> rHits = new HashSet<Ref>();
 		
 		//rCol hits
 		for(int j=_rColIndex.size() - 1; j >= 0; --j) {
 			final RefIndex rColRefIndex = (RefIndex) _rColIndex.get(j);  
 			final int rCol = rColRefIndex.getIndex();
 			if (rCol < startCol) break; //no more
-			rHits.addAll(rColRefIndex.getRefs());
+			hits.addAll(rColRefIndex.getRefs());
 		}
-		hits.addAll(rHits);
 		
-		//lCol hits
-		for(int j=_lColIndex.size() - 1; j >= 0; --j) {
-			final RefIndex lColRefIndex = (RefIndex) _lColIndex.get(j);  
-			final int lCol = lColRefIndex.getIndex();
-			if (lCol < startCol) break; //no more
-			lHits.addAll(lColRefIndex.getRefs());
-		}
-		hits.addAll(lHits);
-
 		//remove hits from the ltrbIndex(before adjust column)
-		for (Ref ref : hits) {
-			_ltrbIndex.remove(new RefAddr(ref));
-		}
+		removeFromLtrbIndex(hits);
 
 		final int maxcol = _ownerBook.getMaxcol();
 		//adjust Ref rCol index
@@ -654,8 +604,6 @@ public class RefSheetImpl implements RefSheet {
 			if (lCol > maxcol) {//out of maximum bound, #REF! case
 				_rColIndex.remove(j); //remove the RefIndex of this left column
 				removeHits.addAll(lColRefs);
-				rHits.removeAll(lColRefs);
-				lHits.removeAll(lColRefs);
 			} else {
 				lColRefIndex.setIndex(lCol); //assign a new index
 				for(Ref ref : lColRefs) {
@@ -665,9 +613,7 @@ public class RefSheetImpl implements RefSheet {
 		}
 
 		//add/merge back the adjusted Refs to ltrb index
-		final Set<Ref> affectRefs = new HashSet<Ref>(lHits);
-		affectRefs.addAll(rHits);
-		addOrMergeBackLtrbIndex(affectRefs);
+		addOrMergeBackLtrbIndex(hits);
 
 		//clear precedents link
 		clearRemoveRefs(removeHits, hits);
@@ -681,8 +627,6 @@ public class RefSheetImpl implements RefSheet {
 			throw new UiException("Cannot remove a negative number of columns: "+num);
 		}
 		final Set<Ref> hits = new HashSet<Ref>();
-		final Set<Ref> rHits = new HashSet<Ref>();
-		final Set<Ref> lHits = new HashSet<Ref>();
 		
 		//rCol hits
 		int jb = _rColIndex.size() - 1;
@@ -690,24 +634,11 @@ public class RefSheetImpl implements RefSheet {
 			final RefIndex rColRefIndex = (RefIndex) _rColIndex.get(jb);  
 			final int rCol = rColRefIndex.getIndex();
 			if (rCol < startCol) break; //no more
-			rHits.addAll(rColRefIndex.getRefs());
+			hits.addAll(rColRefIndex.getRefs());
 		}
-		hits.addAll(rHits);
 		
-		//lCol hits
-		int jt = _lColIndex.size() - 1;
-		for(; jt >= 0; --jt) {
-			final RefIndex lColRefIndex = (RefIndex) _lColIndex.get(jt);  
-			final int lCol = lColRefIndex.getIndex();
-			if (lCol < startCol) break; //no more
-			lHits.addAll(lColRefIndex.getRefs());
-		}
-		hits.addAll(lHits);
-
 		//remove hits from the ltrbIndex(before adjust col)
-		for (Ref ref : hits) {
-			_ltrbIndex.remove(new RefAddr(ref));
-		}
+		removeFromLtrbIndex(hits);
 		
 		//adjust Ref rCol index
 		for(int j = jb+1, len = _rColIndex.size(); j < len; ++j) {
@@ -739,7 +670,7 @@ public class RefSheetImpl implements RefSheet {
 		
 		final Set<Ref> removeHits = new HashSet<Ref>();
 		//adjust Ref lCol index
-		for(int j = jt+1, len = _lColIndex.size(); j < len; ++j) {
+		for(int j = _lColIndex.getListIndex(startCol), len = _lColIndex.size(); j < len; ++j) {
 			final RefIndex lColRefIndex = (RefIndex) _lColIndex.get(j);
 			int lCol = lColRefIndex.getIndex();
 			int min = lCol - startCol;
@@ -762,8 +693,6 @@ public class RefSheetImpl implements RefSheet {
 				for(Ref ref : lColRefs) {
 					if (ref.getRightCol() < lCol) { //shall be removed since rCol < lCol
 						removeHits.add(ref);
-						rHits.remove(ref);
-						lHits.remove(ref);
 					} else {
 						ref.setLeftCol(lCol);
 						newRefs.add(ref);
@@ -773,8 +702,6 @@ public class RefSheetImpl implements RefSheet {
 				for(Ref ref : lColRefs) {
 					if (ref.getRightCol() < lCol) { //shall be removed since rCol < lCol
 						removeHits.add(ref);
-						rHits.remove(ref);
-						lHits.remove(ref);
 					} else if (min != 0) {
 						ref.setLeftCol(lCol);
 					}
@@ -783,12 +710,7 @@ public class RefSheetImpl implements RefSheet {
 		}
 		
 		//add back the adjusted Refs to ltrb index
-		final Set<Ref> affectHits = new HashSet<Ref>(lHits);
-		affectHits.addAll(rHits);
-		
-		for (Ref ref : affectHits) {
-			_ltrbIndex.put(new RefAddr(ref), ref);
-		}
+		addOrMergeBackLtrbIndex(hits);
 
 		//clear removed refs (Keep the dependents link)
 		clearRemoveRefs(removeHits, hits);
@@ -798,32 +720,267 @@ public class RefSheetImpl implements RefSheet {
 
 	private void addOrMergeBackLtrbIndex(Set<Ref> affectRefs) {
 		for (Ref ref : affectRefs) {
-			final RefAddr refAddr = new RefAddr(ref);
-			final Ref refX = _ltrbIndex.get(refAddr);
-			if (refX == null)
-				_ltrbIndex.put(refAddr, ref);
-			else {
-				final Set<Ref> dependents = ref.getDependents(); 
-				refX.getDependents().addAll(dependents);
-				for (Ref dependent : dependents) {
-					final Set<Ref> depprecendents = dependent.getPrecedents(); 
-					depprecendents.remove(ref);
-					depprecendents.add(refX);
-				}
-				final Set<Ref> precedents = ref.getPrecedents();
-				refX.getPrecedents().addAll(precedents);
-				for (Ref precedent : precedents) {
-					final Set<Ref> predependents = precedent.getDependents(); 
-					predependents.remove(ref);
-					predependents.add(refX);
-				}
-				dependents.clear();
-				precedents.clear();
-				remove4Indexes(ref);
-			}
+			addOrMergeBackLtrbIndex(ref);
 		}
 	}
+	
+	private void addOrMergeBackLtrbIndex(Ref ref) {
+		final RefAddr refAddr = new RefAddr(ref);
+		final Ref refX = _ltrbIndex.get(refAddr);
+		if (refX == null)
+			_ltrbIndex.put(refAddr, ref);
+		else {
+			final Set<Ref> dependents = ref.getDependents(); 
+			refX.getDependents().addAll(dependents);
+			for (Ref dependent : dependents) {
+				final Set<Ref> depprecendents = dependent.getPrecedents(); 
+				depprecendents.remove(ref);
+				depprecendents.add(refX);
+			}
+			final Set<Ref> precedents = ref.getPrecedents();
+			refX.getPrecedents().addAll(precedents);
+			for (Ref precedent : precedents) {
+				final Set<Ref> predependents = precedent.getDependents(); 
+				predependents.remove(ref);
+				predependents.add(refX);
+			}
+			dependents.clear();
+			precedents.clear();
+			remove4Indexes(ref);
+		}
+	}
+	
+	private void removeFromLtrbIndex(Set<Ref> refs) {
+		for (Ref ref : refs) {
+			_ltrbIndex.remove(new RefAddr(ref));
+		}
+	}
+	
+	//Return all Refs that intersect with the given area
+	private Set<Ref> getIntersectRefs(int startRow, int startCol, int endRow, int endCol) {
+		final Set<Ref> hits = new HashSet<Ref>(); //intersect refs
+		
+		//lCol hits
+		for(int jl = 0, len = _lColIndex.size(); jl < len; ++jl) {
+			final RefIndex lColRefIndex = (RefIndex) _lColIndex.get(jl);  
+			final int lCol = lColRefIndex.getIndex();
+			if (lCol > endCol) break; //no more
+			hits.addAll(lColRefIndex.getRefs());
+		}
 
+		//rCol hits
+		Set<Ref> tmpHits = new HashSet<Ref>();
+		for(int jr = _rColIndex.size() - 1; jr >= 0; --jr) {
+			final RefIndex rColRefIndex = (RefIndex) _rColIndex.get(jr);  
+			final int rCol = rColRefIndex.getIndex();
+			if (rCol < startCol) break; //no more
+			tmpHits.addAll(rColRefIndex.getRefs());
+		}
+		hits.retainAll(tmpHits);
+		
+		//bRow hits
+		tmpHits = new HashSet<Ref>();
+		for(int jb = _bRowIndex.size() - 1; jb >= 0; --jb) {
+			final RefIndex bRowRefIndex = (RefIndex) _bRowIndex.get(jb);  
+			final int bRow = bRowRefIndex.getIndex();
+			if (bRow < startRow) break; //no more
+			tmpHits.addAll(bRowRefIndex.getRefs());
+		}
+		hits.retainAll(tmpHits);
+		
+		//tRow hits
+		tmpHits = new HashSet<Ref>();
+		for(int jt = 0, len = _tRowIndex.size(); jt < len; ++jt) {
+			final RefIndex tRowRefIndex = (RefIndex) _tRowIndex.get(jt);  
+			final int tRow = tRowRefIndex.getIndex();
+			if (tRow > endRow) break; //no more
+			tmpHits.addAll(tRowRefIndex.getRefs());
+		}
+		hits.retainAll(tmpHits);
+		
+		return hits;
+		
+	}
+	
+	private Set<Ref> adjustRemoveRefs(Set<Ref> hits, int startRow, int startCol, int endRow, int endCol) {
+		//adjust those Ref in removed range
+		final Set<Ref> removeHits = new HashSet<Ref>(); //totally removed
+		for(Ref ref : hits) { //Refs that intersect with the removing range
+			final int lCol = ref.getLeftCol();
+			final int rCol = ref.getRightCol();
+			final int tRow = ref.getTopRow();
+			final int bRow = ref.getBottomRow();
+			//final RefAddr refAddr = new RefAddr(tRow, lCol, bRow, rCol);
+			if (lCol >= startCol && rCol <= endCol) { //total remove a row of the Ref
+				if (tRow < startRow) {
+					if (bRow < endRow) { //remove bottom side
+						final int newRow = startRow - 1;
+						changeRefIndex(_bRowIndex, bRow, newRow, ref);
+						ref.setBottomRow(newRow);
+					}
+				} else {
+					if (bRow > endRow) { //remove top side
+						if (tRow > startRow) {
+							final int newRow = endRow + 1;
+							changeRefIndex(_tRowIndex, tRow, newRow, ref);
+							ref.setTopRow(newRow);
+						}
+					} else {
+						removeHits.add(ref);
+					}
+				}
+			} else if (tRow >= startRow && bRow <= endRow) { //total remove a column of the Ref
+				if (lCol < startCol) {
+					if (rCol < endCol) { //remove right side
+						final int newCol = startCol - 1;
+						changeRefIndex(_rColIndex, rCol, newCol, ref);
+						ref.setRightCol(newCol);
+					}
+				} else {
+					if (rCol > endCol) { //remove left side
+						if (lCol > startCol) {
+							final int newCol = endCol + 1;
+							changeRefIndex(_lColIndex, lCol, newCol, ref);
+							ref.setLeftCol(newCol);
+						}
+					}
+				}
+			}
+		}
+		return removeHits;
+	}
+	
+	@Override
+	public Set<Ref>[] deleteRange(int startRow, int startCol, int endRow, int endCol, boolean horizontal) {
+		final Set<Ref> hits = getIntersectRefs(startRow, startCol, endRow, endCol);
+		//remove hits from the ltrbIndex(before adjust col and row)
+		removeFromLtrbIndex(hits);
+		final Set<Ref> removeHits = adjustRemoveRefs(hits, startRow, startCol, endRow, endCol);
+		Set<Ref> moveHits = new HashSet<Ref>();
+		//adjust those moved because of the remove
+		if (horizontal) { //move left
+			final int num = endCol - startCol + 1; //how many columns to move
+			final int startCol0 = endCol + 1;
+			//rCol hits
+			for(int jr = _rColIndex.size() - 1; jr >= 0; --jr) {
+				final RefIndex rColRefIndex = (RefIndex) _rColIndex.get(jr);  
+				final int rCol = rColRefIndex.getIndex();
+				if (rCol < startCol0) break; //no more
+				moveHits.addAll(rColRefIndex.getRefs());
+			}
+			
+			//bRow hits
+			Set<Ref> tmpHits = new HashSet<Ref>();
+			for(int jb = _bRowIndex.size() - 1; jb >= 0; --jb) {
+				final RefIndex bRowRefIndex = (RefIndex) _bRowIndex.get(jb);  
+				final int bRow = bRowRefIndex.getIndex();
+				if (bRow < startRow) break; //no more
+				tmpHits.addAll(bRowRefIndex.getRefs());
+			}
+			moveHits.retainAll(tmpHits);
+			
+			//tRow hits
+			for(int jt = 0, len = _tRowIndex.size(); jt < len; ++jt) {
+				final RefIndex tRowRefIndex = (RefIndex) _tRowIndex.get(jt);  
+				final int tRow = tRowRefIndex.getIndex();
+				if (tRow > endRow) break; //no more
+				tmpHits.addAll(tRowRefIndex.getRefs());
+			}
+			moveHits.retainAll(tmpHits);
+			
+			removeFromLtrbIndex(moveHits);
+			hits.addAll(moveHits); //Refs that has changed/removed
+			
+			for(Ref ref : moveHits) {
+				final int lCol = ref.getLeftCol();
+				final int rCol = ref.getRightCol();
+				final int tRow = ref.getTopRow();
+				final int bRow = ref.getBottomRow();
+				if (tRow >= startRow && bRow <= endRow) { //total cover
+					if (lCol > endCol) {
+						final int newCol = lCol - num;
+						changeRefIndex(_lColIndex, lCol, newCol, ref);
+						ref.setLeftCol(newCol);
+					}
+					final int newCol = rCol - num;
+					changeRefIndex(_rColIndex, rCol, newCol, ref);
+					ref.setRightCol(newCol);
+				}
+			}
+		} else { //move up!
+			final int num = endRow - startRow + 1; //how many columns to move
+			final int startRow0 = endRow + 1;
+			//bRow hits
+			for(int jb = _bRowIndex.size() - 1; jb >= 0; --jb) {
+				final RefIndex bRowRefIndex = (RefIndex) _bRowIndex.get(jb);  
+				final int bRow = bRowRefIndex.getIndex();
+				if (bRow < startRow0) break; //no more
+				moveHits.addAll(bRowRefIndex.getRefs());
+			}
+			
+			//rCol hits
+			Set<Ref> tmpHits = new HashSet<Ref>();
+			for(int jr = _rColIndex.size() - 1; jr >= 0; --jr) {
+				final RefIndex rColRefIndex = (RefIndex) _rColIndex.get(jr);  
+				final int rCol = rColRefIndex.getIndex();
+				if (rCol < startCol) break; //no more
+				tmpHits.addAll(rColRefIndex.getRefs());
+			}
+			moveHits.retainAll(tmpHits);
+			
+			//lCol hits
+			tmpHits = new HashSet<Ref>();
+			for(int jl = 0, len = _lColIndex.size(); jl < len; ++jl) {
+				final RefIndex lColRefIndex = (RefIndex) _lColIndex.get(jl);  
+				final int lCol = lColRefIndex.getIndex();
+				if (lCol > endCol) break; //no more
+				tmpHits.addAll(lColRefIndex.getRefs());
+			}
+			moveHits.retainAll(tmpHits);
+			
+			removeFromLtrbIndex(moveHits);
+
+			hits.addAll(moveHits); //Refs that has changed/removed
+			
+			for(Ref ref : moveHits) {
+				final int lCol = ref.getLeftCol();
+				final int rCol = ref.getRightCol();
+				final int tRow = ref.getTopRow();
+				final int bRow = ref.getBottomRow();
+				if (lCol >= startCol && rCol <= endCol) { //total cover
+					if (tRow > endRow) {
+						final int newRow = tRow - num; 
+						changeRefIndex(_tRowIndex, tRow, newRow, ref);
+						ref.setTopRow(newRow);
+					}
+					final int newRow = bRow - num;
+					changeRefIndex(_bRowIndex, bRow, newRow, ref);
+					ref.setBottomRow(newRow);
+				}
+			}
+		}
+		
+		//add back the adjusted Refs to ltrb index
+		final Set<Ref> affectHits = new HashSet<Ref>(hits);
+		affectHits.removeAll(removeHits);
+		addOrMergeBackLtrbIndex(affectHits);
+
+		//clear removed refs (Keep the dependents link)
+		clearRemoveRefs(removeHits, hits);
+		
+		return getBothDependents(removeHits, hits);
+	}
+
+	private void changeRefIndex(IndexArrayList indexes, int orgIndex, int newIndex, Ref ref) {
+		final RefIndex orgRColRefIndex = (RefIndex) indexes.getIndexable(orgIndex);
+		orgRColRefIndex.getRefs().remove(ref);
+		if (orgRColRefIndex.getRefs().isEmpty()) {
+			indexes.removeIndexable(orgIndex);
+		}
+		final RefIndex newRColRefIndex = (RefIndex) indexes.getOrAddIndexable(new RefIndex(newIndex));
+		newRColRefIndex.addRef(ref);
+	}
+	
 	/**
 	 * Index array used to manage object with indexes (such as formula references).
 	 * @author henrichen
@@ -845,7 +1002,17 @@ public class RefSheetImpl implements RefSheet {
 			} else  //found, use the one in list
 				return get(j); 
 		}
-
+		
+		/**
+		 * Returns the associated list index at or next to(if not exist the indexable) the specified indexable index.
+		 * @param index the indexable index.
+		 * @return the associated list index at or next to(if not exist the indexable) the specified indexable index.
+		 */
+		public int getListIndex(int index) {
+			final int j = Collections.binarySearch(this, new DummyIndexable(index));
+			return j < 0 ? -1 - j : j;
+		}
+		
 		/**
 		 * Returns the indexable in the specified index.  
 		 * @param index the indexable index.
@@ -965,5 +1132,255 @@ public class RefSheetImpl implements RefSheet {
 			final RefAddr o = (RefAddr) other;
 			return _lCol == o._lCol && _rCol == o._rCol && _tRow == o._tRow && _bRow == o._bRow;
 		}
+	}
+	
+	@Override
+	public Set<Ref>[] insertRange(int startRow, int startCol, int endRow, int endCol, boolean horizontal) {
+		final Set<Ref> removeHits = new HashSet<Ref>(); //totally removed
+		Set<Ref> hits = new HashSet<Ref>();
+		//adjust those moved because of the insert
+		if (horizontal) { //move right
+			final int num = endCol - startCol + 1; //how many columns to move
+			
+			//rCol hits
+			for(int jr = _rColIndex.size() - 1; jr >= 0; --jr) {
+				final RefIndex rColRefIndex = (RefIndex) _rColIndex.get(jr);  
+				final int rCol = rColRefIndex.getIndex();
+				if (rCol < startCol) break; //no more
+				hits.addAll(rColRefIndex.getRefs());
+			}
+			
+			//bRow hits
+			Set<Ref> tmpHits = new HashSet<Ref>();
+			for(int jb = _bRowIndex.size() - 1; jb >= 0; --jb) {
+				final RefIndex bRowRefIndex = (RefIndex) _bRowIndex.get(jb);  
+				final int bRow = bRowRefIndex.getIndex();
+				if (bRow < startRow) break; //no more
+				tmpHits.addAll(bRowRefIndex.getRefs());
+			}
+			hits.retainAll(tmpHits);
+			
+			//tRow hits
+			tmpHits = new HashSet<Ref>();
+			for(int jt = 0, len = _tRowIndex.size(); jt < len; ++jt) {
+				final RefIndex tRowRefIndex = (RefIndex) _tRowIndex.get(jt);  
+				final int tRow = tRowRefIndex.getIndex();
+				if (tRow > endRow) break; //no more
+				tmpHits.addAll(tRowRefIndex.getRefs());
+			}
+			hits.retainAll(tmpHits);
+			
+			removeFromLtrbIndex(hits);
+			
+			final int maxcol = _ownerBook.getMaxcol();
+			for(Ref ref : hits) {
+				final int lCol = ref.getLeftCol();
+				final int rCol = ref.getRightCol();
+				final int tRow = ref.getTopRow();
+				final int bRow = ref.getBottomRow();
+				if (tRow >= startRow && bRow <= endRow) { //total cover
+					if (lCol >= startCol) {
+						final int newCol = lCol + num;
+						changeRefIndex(_lColIndex, lCol, newCol, ref);
+						ref.setLeftCol(newCol);
+					}
+					final int newrCol = Math.min(rCol + num, maxcol);
+					if (ref.getLeftCol() > newrCol) { //push out of bound
+						removeHits.add(ref);
+					} else {
+						changeRefIndex(_rColIndex, rCol, newrCol, ref);
+						ref.setRightCol(newrCol);
+					}
+				}
+			}
+		} else { //move down!
+			final int num = endRow - startRow + 1; //how many columns to move
+			
+			//bRow hits
+			for(int jb = _bRowIndex.size() - 1; jb >= 0; --jb) {
+				final RefIndex bRowRefIndex = (RefIndex) _bRowIndex.get(jb);  
+				final int bRow = bRowRefIndex.getIndex();
+				if (bRow < startRow) break; //no more
+				hits.addAll(bRowRefIndex.getRefs());
+			}
+			
+			//rCol hits
+			Set<Ref> tmpHits = new HashSet<Ref>();
+			for(int jr = _rColIndex.size() - 1; jr >= 0; --jr) {
+				final RefIndex rColRefIndex = (RefIndex) _rColIndex.get(jr);  
+				final int rCol = rColRefIndex.getIndex();
+				if (rCol < startCol) break; //no more
+				tmpHits.addAll(rColRefIndex.getRefs());
+			}
+			hits.retainAll(tmpHits);
+			
+			//lCol hits
+			tmpHits = new HashSet<Ref>();
+			for(int jl = 0, len = _lColIndex.size(); jl < len; ++jl) {
+				final RefIndex lColRefIndex = (RefIndex) _lColIndex.get(jl);  
+				final int lCol = lColRefIndex.getIndex();
+				if (lCol > endCol) break; //no more
+				tmpHits.addAll(lColRefIndex.getRefs());
+			}
+			hits.retainAll(tmpHits);
+			
+			removeFromLtrbIndex(hits);
+
+			final int maxrow = _ownerBook.getMaxrow();
+			for(Ref ref : hits) {
+				final int lCol = ref.getLeftCol();
+				final int rCol = ref.getRightCol();
+				final int tRow = ref.getTopRow();
+				final int bRow = ref.getBottomRow();
+				if (lCol >= startCol && rCol <= endCol) { //total cover
+					if (tRow >= startRow) {
+						final int newRow = tRow + num;
+						changeRefIndex(_tRowIndex, tRow, newRow, ref);
+						ref.setTopRow(newRow);
+					}
+					final int newbRow = Math.min(bRow + num, maxrow);
+					if (ref.getTopRow() > newbRow) { //push out of bound
+						removeHits.add(ref);
+					} else {
+						changeRefIndex(_bRowIndex, bRow, newbRow, ref);
+						ref.setBottomRow(newbRow);
+					}
+				}
+			}
+		}
+		
+		//add back the adjusted Refs to ltrb index
+		final Set<Ref> affectHits = new HashSet<Ref>(hits);
+		affectHits.removeAll(removeHits);
+		addOrMergeBackLtrbIndex(affectHits);
+
+		//clear removed refs (Keep the dependents link)
+		clearRemoveRefs(removeHits, hits);
+		
+		return getBothDependents(removeHits, hits);
+	}
+	
+	@Override
+	public Set<Ref>[] moveRange(int startRow, int startCol, int endRow, int endCol, int nRow, int nCol) {
+		//TODO destination area overlap with source area, special treatment
+		final int maxcol = _ownerBook.getMaxcol();
+		final int maxrow = _ownerBook.getMaxrow();
+		final int dstStartRow = startRow + nRow;
+		final int dstEndRow = endRow + nRow;
+		final int dstStartCol = startCol + nCol;
+		final int dstEndCol = endCol + nCol;
+		
+		if (dstStartRow < 0 || dstEndRow > maxrow || dstStartCol < 0 || dstEndCol > maxcol) {
+			throw new UiException("Move out of bound");
+		}
+		
+		final Set<Ref> srcHits = getIntersectRefs(startRow, startCol, endRow, endCol);
+		
+		//remove hits from the ltrbIndex(before adjust col and row)
+		removeFromLtrbIndex(srcHits);
+		
+		//destination area (to be removed)
+		final Set<Ref> dstHits = getIntersectRefs(dstStartRow, dstStartCol, dstEndRow, dstEndCol);
+		dstHits.removeAll(srcHits); //excludes those to be processed in source area
+		//remove hits from the ltrbIndex(before adjust col and row)
+		removeFromLtrbIndex(dstHits);
+		final Set<Ref> removeHits = adjustRemoveRefs(dstHits, dstStartRow, dstStartCol, dstEndRow, dstEndCol);
+		
+		//adjust those Ref in source range
+		for(Ref ref : srcHits) { //Refs that intersect with the removing range
+			final int lCol = ref.getLeftCol();
+			final int rCol = ref.getRightCol();
+			final int tRow = ref.getTopRow();
+			final int bRow = ref.getBottomRow();
+			//final RefAddr refAddr = new RefAddr(tRow, lCol, bRow, rCol);
+			if (lCol >= startCol && rCol <= endCol) { //total cover a row of the Ref
+				if (tRow < startRow) {
+					if (bRow <= endRow) { //move bottom side
+						if (nCol == 0) {
+							if (dstEndRow >= tRow) {
+								final int newbRow = Math.max(bRow + nRow, startRow - 1);
+								changeRefIndex(_bRowIndex, bRow, newbRow, ref);
+								ref.setBottomRow(newbRow);
+								if (dstStartRow < tRow) {
+									changeRefIndex(_tRowIndex, tRow, dstStartRow, ref);
+									ref.setTopRow(dstStartRow);
+								}
+							}
+						}
+					}
+				} else {
+					if (bRow > endRow) { //move top side
+						if (nCol == 0) {
+							if (dstStartRow <= bRow) {
+								final int newtRow = Math.min(tRow + nRow, endRow + 1);
+								changeRefIndex(_tRowIndex, tRow, newtRow, ref);
+								ref.setTopRow(newtRow);
+								if (dstEndRow > bRow) {
+									changeRefIndex(_bRowIndex, bRow, dstEndRow, ref);
+									ref.setBottomRow(dstEndRow);
+								}
+							}
+						}
+					} else { //totally cover
+						final int newtRow = tRow + nRow;
+						changeRefIndex(_tRowIndex, tRow, newtRow, ref);
+						ref.setTopRow(newtRow);
+						
+						final int newbRow = endRow + nRow;
+						changeRefIndex(_bRowIndex, bRow, newbRow, ref);
+						ref.setBottomRow(newbRow);
+						
+						final int newlCol = lCol + nCol;
+						changeRefIndex(_lColIndex, lCol, newlCol, ref);
+						ref.setLeftCol(newlCol);
+						
+						final int newrCol = rCol + nCol;
+						changeRefIndex(_rColIndex, rCol, newrCol, ref);
+						ref.setRightCol(newrCol);
+					}
+				}
+			} else if (tRow >= startRow && bRow <= endRow) { //total cover a column of the Ref
+				if (lCol < startCol) {
+					if (rCol <= endCol) { //move right side
+						if (nRow == 0) {
+							if (dstEndCol >= lCol) {
+								final int newrCol = Math.max(rCol + nCol, startCol - 1);
+								changeRefIndex(_rColIndex, rCol, newrCol, ref);
+								ref.setRightCol(newrCol);
+								if (dstStartCol < lCol) {
+									changeRefIndex(_lColIndex, lCol, dstStartCol, ref);
+									ref.setLeftCol(dstStartCol);
+								}
+							}
+						}
+					}
+				} else {
+					if (rCol > endCol) { //move left side
+						if (nRow  == 0) {
+							if (dstStartCol <= rCol) {
+								final int newlCol = Math.min(lCol + nCol, endCol + 1);
+								changeRefIndex(_lColIndex, lCol, newlCol, ref);
+								ref.setLeftCol(newlCol);
+								if (dstEndCol > rCol) {
+									changeRefIndex(_rColIndex, rCol, dstEndCol, ref);
+									ref.setRightCol(dstEndCol);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		//add back the adjusted Refs to ltrb index
+		srcHits.addAll(dstHits);
+		final Set<Ref> affectHits = new HashSet<Ref>(srcHits);
+		affectHits.removeAll(removeHits);
+		addOrMergeBackLtrbIndex(affectHits);
+
+		//clear removed refs (Keep the dependents link)
+		clearRemoveRefs(removeHits, srcHits);
+		
+		return getBothDependents(removeHits, srcHits);
 	}
 }

@@ -28,8 +28,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 public class SelectionChangeEvent extends CellSelectionEvent{
 	
 	
-	public static final int MODIFY = 11;
-	public static final int MOVE = 12;
+	public static final int MOVE = 0x10;
+	public static final int MODIFY = 0x20;
 	
 	private int _origleft;
 	private int _origtop;
@@ -52,6 +52,17 @@ public class SelectionChangeEvent extends CellSelectionEvent{
 		this(name,target,sheet,action,left,top,right,bottom,origleft,origtop,origright,origbottom,null);
 	}
 
+	/**
+	 * Returns the action of this event. It can be either {@link #MODIFY} (change by dragging the 'dot') or {@link #MOVE} (change by dragging the border)
+	 */
+	public int getAction() {
+		return super.getSelectionType() & 0xF0;
+	}
+	
+	public int getSelectionType() {
+		return super.getSelectionType() & 0x0F;
+	}
+	
 	public int getOrigleft() {
 		return _origleft;
 	}

@@ -15,6 +15,8 @@ package org.zkoss.zss.model;
 
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.zkoss.zss.engine.Ref;
@@ -38,10 +40,22 @@ public interface Range {
 	public final static int FORMAT_RIGHTBELOW = 1;
 	
 	/**
-	 * Returns formated text of this Range.
-	 * @return formated text of this Range.
+	 * Returns rich text string of this Range.
+	 * @return rich text string of this Range.
 	 */
 	public RichTextString getText();
+	
+	/**
+	 * Returns formatted text + text color of this Range.
+	 * @return formatted text + text color of this Range.
+	 */
+	public FormatText getFormatText();
+	
+	/**
+	 * Returns the hyperlink of this Range.
+	 * @return hyperlink of this Range
+	 */
+	public Hyperlink getHyperlink();
 	
 	/**
 	 * Return the rich edit text of this Range.
@@ -72,6 +86,15 @@ public interface Range {
 	 * @param dstRange the destination range.
 	 */
 	public void copy(Range dstRange);
+	
+	/**
+	 * Pastes a Range from the Clipboard into this range.
+	 * @param pasteType the part of the range to be pasted.
+	 * @param operation the paste operation
+	 * @param SkipBlanks true to not have blank cells in the ranage on the Clipboard pasted into this range; default false.
+	 * @param transpose true to transpose rows and columns when pasting to this range; default false.
+	 */
+	public void pasteSpecial(int pasteType, int operation, boolean SkipBlanks, boolean transpose);
 	
 	/**
 	 * Insert this Range. 
@@ -106,6 +129,47 @@ public interface Range {
 	 */
 	public void sort(Range rng1, boolean desc1, Range rng2, int type, boolean desc2, Range rng3, boolean desc3, int header, int orderCustom,
 			boolean matchCase, boolean sortByRows, int sortMethod, int dataOption1, int dataOption2, int dataOption3);
+
+	/**
+	 * Merge this range into a merged cell.
+	 * @param across true to merge cells in each row; default to false.
+	 */
+	public void merge(boolean across);
+
+	/**
+	 * Un-merge merged cell in this range area to separated cells.
+	 */
+	public void unMerge();
+	
+	/**
+	 * Adds/Remove border around this range.
+	 */
+	public void borderAround(BorderStyle lineStyle, String color);
+
+	/**
+	 * Adds/Remove border of all cell within this range per the specified border index.
+	 */
+	public void setBorders(short borderIndex, BorderStyle lineStyle, String color);
+
+	/**
+	 * Move this range to a new place as specified by nRow(negative value to move up; 
+	 * positive value to move down) and nCol(negative value to move left; positive value to move right)
+	 * @param nRow how many rows to move this range
+	 * @param nCol how many columns to move this range
+	 */
+	public void move(int nRow, int nCol);
+	
+	/**
+	 * Sets column width in unit of 1/256 character width of the default font.
+	 * @param char256 new column width in unit of 1/256 character width of the default font.
+	 */
+	public void setColumnWidth(int char256);
+	
+	/**
+	 * Sets row height in points.
+	 * @param points new row height in points.
+	 */
+	public void setRowHeight(int points);
 
 	/**
 	 * Get 1st sheet of this range.

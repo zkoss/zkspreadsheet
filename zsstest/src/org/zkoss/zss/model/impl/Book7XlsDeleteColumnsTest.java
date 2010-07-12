@@ -69,7 +69,7 @@ public class Book7XlsDeleteColumnsTest {
 	}
 	
 	@Test
-	public void testDeleteOneRow() {
+	public void testDeleteColumnD_F() {
 		Sheet sheet1 = _workbook.getSheet("Sheet1");
 		Row row2 = sheet1.getRow(1);
 		Row row3 = sheet1.getRow(2);
@@ -122,9 +122,79 @@ public class Book7XlsDeleteColumnsTest {
 		
 		//A3: =SUM(E2:G2)
 		valueA3 = _evaluator.evaluate(cellA3);
-		assertEquals(27, valueA3.getNumberValue(), 0.0000000000000001);
 		assertEquals(Cell.CELL_TYPE_NUMERIC, valueA3.getCellType());
 		testToFormulaString(cellA3, "SUM(E2:G2)");
+		assertEquals(27, valueA3.getNumberValue(), 0.0000000000000001);
+		
+		//A2: =SUM(D2:G2)
+		valueA2 = _evaluator.evaluate(cellA2);
+		assertEquals(32, valueA2.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueA2.getCellType());
+		testToFormulaString(cellA2, "SUM(D2:G2)");
+		
+		//A1: =SUM(#REF!)
+		valueA1 = _evaluator.evaluate(cellA1);
+		assertEquals(Cell.CELL_TYPE_ERROR, valueA1.getCellType());
+		testToFormulaString(cellA1, "SUM(#REF!)");
+	}
+	
+	@Test
+	public void testDeleteRangeD1_F3() {
+		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Row row2 = sheet1.getRow(1);
+		Row row3 = sheet1.getRow(2);
+		assertEquals(1, row2.getCell(4).getNumericCellValue(), 0.0000000000000001);
+		assertEquals(2, row3.getCell(4).getNumericCellValue(), 0.0000000000000001);
+		assertEquals(3, row2.getCell(5).getNumericCellValue(), 0.0000000000000001);
+		assertEquals(5, row2.getCell(6).getNumericCellValue(), 0.0000000000000001);
+		assertEquals(7, row2.getCell(7).getNumericCellValue(), 0.0000000000000001);
+		assertEquals(9, row2.getCell(8).getNumericCellValue(), 0.0000000000000001);
+		assertEquals(11, row2.getCell(9).getNumericCellValue(), 0.0000000000000001);
+
+		//A1: =SUM(E2:E3)
+		Row row1 = sheet1.getRow(0);
+		Cell cellA1 = row1.getCell(0);
+		CellValue valueA1 = _evaluator.evaluate(cellA1);
+		assertEquals(3, valueA1.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueA1.getCellType());
+		testToFormulaString(cellA1, "SUM(E2:E3)");
+
+		//A2: =SUM(E2:J2)
+		Cell cellA2 = row2.getCell(0);
+		CellValue valueA2 = _evaluator.evaluate(cellA2);
+		assertEquals(36, valueA2.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueA2.getCellType());
+		testToFormulaString(cellA2, "SUM(E2:J2)");
+		
+		//A3: =SUM(H2:J2)
+		Cell cellA3 = row3.getCell(0);
+		CellValue valueA3 = _evaluator.evaluate(cellA3);
+		assertEquals(27, valueA3.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueA3.getCellType());
+		testToFormulaString(cellA3, "SUM(H2:J2)");
+	
+		//remove column D ~ F
+		BookHelper.deleteRange(sheet1, 0, 3, 2, 5, true);
+		_evaluator.notifySetFormula(cellA1);
+		_evaluator.notifySetFormula(cellA2);
+		_evaluator.notifySetFormula(cellA3);
+		
+		//D2: 5, E2:7, E3: empty, F2: 9, G2: 11, H ~ J empty
+		assertNull(row3.getCell(4)); //E3 not exist
+		assertNull(row2.getCell(7));
+		assertNull(row2.getCell(8));
+		assertNull(row2.getCell(9));
+		
+		assertEquals(5, row2.getCell(3).getNumericCellValue(), 0.0000000000000001);
+		assertEquals(7, row2.getCell(4).getNumericCellValue(), 0.0000000000000001);
+		assertEquals(9, row2.getCell(5).getNumericCellValue(), 0.0000000000000001);
+		assertEquals(11, row2.getCell(6).getNumericCellValue(), 0.0000000000000001);
+		
+		//A3: =SUM(E2:G2)
+		valueA3 = _evaluator.evaluate(cellA3);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueA3.getCellType());
+		testToFormulaString(cellA3, "SUM(E2:G2)");
+		assertEquals(27, valueA3.getNumberValue(), 0.0000000000000001);
 		
 		//A2: =SUM(D2:G2)
 		valueA2 = _evaluator.evaluate(cellA2);

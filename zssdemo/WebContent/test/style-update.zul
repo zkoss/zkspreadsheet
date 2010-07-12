@@ -1,29 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?taglib uri="http://www.zkoss.org/zss/function" prefix="ss" ?>
 <zk>
+	<zscript>
+	<![CDATA[
+		import org.apache.poi.ss.usermodel.Sheet;
+		import org.apache.poi.ss.usermodel.Cell;
+		import org.zkoss.zss.model.impl.BookHelper;
+		import org.zkoss.zss.ui.impl.Utils;
+		import org.zkoss.zss.ui.Rect;
+	]]>
+	</zscript>
 	<window title="Test Set Cell Value with dirrenert format" border="normal">
 		<html><![CDATA[
 <pre>
 Click the button below,
-Cells in Column B should have same format in column A. 
+Cells in Column C should have same format in column B. 
 </pre> 
 		]]></html>
 		<button label="set format">
 			<attribute name="onClick">
+			<![CDATA[
 				sheet = ss1.getSelectedSheet();
- 				for( i = 0 ; i &lt;20 ; i++ )
+ 				for( i = 0 ; i < 20; i++ )
  				{
-					sheet.getCell(i,3).setFormat(sheet.getCell(i,1).getFormat());
+					sheet.getCell(i,2).setFormat(sheet.getCell(i,1).getFormat());
 				}
+			]]>
 			</attribute>
 		</button>
 		<button label="clear">
 			<attribute name="onClick">
+			<![CDATA[
 				sheet = ss1.getSelectedSheet();
- 				for( i = 0 ; i &lt;20 ; i++ )
+ 				for( i = 0 ; i < 20; i++ )
  				{
 					sheet.getCell(i,3).setFormat(null);
 				}
+ 			]]>
 			</attribute>
 		</button>
 		<button label="invalidate" onClick="ss1.invalidate()"/>

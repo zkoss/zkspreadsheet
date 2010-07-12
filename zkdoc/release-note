@@ -8,9 +8,20 @@ ZK Spreadsheet 2.0.0 RC
   10 Support delete columns
   12 Support sortByColumns
   13 Support sortByRows
+  15 Support insertRange
+  16 Support deleteRange
+  17 Support moveRange
+  18 Support merge
+  19 Support showing bullet list in cell
+  20 Support unMerge
+  21 Support setBorders
+  22 Support setColumnWidth
+  23 Support setRowHeight
 
 *Bug
   11 NPE when click on an empty cell
+  14 Picture is not correctly shown(ZK Spreadsheet EE)
+  24 Drag selecting an area shall snap to the boundary of merged cells
 
 	------------
 ZK Spreadsheet 2.0.0 beta (Work with ZK 5 and after)

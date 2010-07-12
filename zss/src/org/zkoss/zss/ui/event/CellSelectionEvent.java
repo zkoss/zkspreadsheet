@@ -30,10 +30,10 @@ import org.apache.poi.ss.usermodel.*;
 public class CellSelectionEvent extends Event{
 	
 	
-	public static final int SELECT_CELLS = 1;
-	public static final int SELECT_ROW = 2;
-	public static final int SELECT_COLUMN = 3;
-	public static final int SELECT_ALL = 4;
+	public static final int SELECT_CELLS = 0x01;
+	public static final int SELECT_ROW = 0x02;
+	public static final int SELECT_COLUMN = 0x03;
+	public static final int SELECT_ALL = 0x04;
 	
 	private Sheet _sheet;
 	private int _action;
@@ -64,8 +64,12 @@ public class CellSelectionEvent extends Event{
 		return _sheet;
 	}
 
-	
-	public int getAction(){
+	/**
+	 * Returns the selection type; it can be either {@link #SELECT_ALL}(Select the whole sheet), 
+	 * {@link #SELECT_COLUMN}(select the whole column), {@link #SELECT_ROW}(select the whole row), {@link #SELECT_CELLS}(select a rectangle area).
+	 * @return the selection type.
+	 */
+	public int getSelectionType(){
 		return _action;
 	}
 	

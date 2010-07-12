@@ -69,7 +69,7 @@ public class Book4XlsInsertRowsTest {
 	}
 	
 	@Test
-	public void testInsertOneRow() {
+	public void testInsertRow5() {
 		Sheet sheet1 = _workbook.getSheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row8 = sheet1.getRow(7);
@@ -116,6 +116,100 @@ public class Book4XlsInsertRowsTest {
 		
 		//Insert row 5
 		BookHelper.insertRows(sheet1, 4, 1);
+		_evaluator.notifySetFormula(cellC1);
+		
+		Row row9 = sheet1.getRow(8);
+		assertEquals(1, row9.getCell(0).getNumericCellValue(), 0.0000000000000001); //A9: 1
+		assertEquals(2, row9.getCell(1).getNumericCellValue(), 0.0000000000000001); //B9: 2
+		assertEquals(3, row9.getCell(2).getNumericCellValue(), 0.0000000000000001); //C9: 3
+		assertEquals(7, row1.getCell(3).getNumericCellValue(), 0.0000000000000001); //D1: 7
+
+		//A1: =SUM(A9:C9)
+		cellA1 = row1.getCell(0);
+		valueA1 = _evaluator.evaluate(cellA1);
+		assertEquals(6, valueA1.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueA1.getCellType());
+		testToFormulaString(cellA1, "SUM(A9:C9)");
+		
+		//B1: =SUM(B6:B65536)
+		cellB1 = row1.getCell(1);
+		valueB1 = _evaluator.evaluate(cellB1);
+		assertEquals(2, valueB1.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueB1.getCellType());
+		testToFormulaString(cellB1, "SUM(B6:B65536)");
+
+		//C1: =SUM(B65536:B65536)
+		cellC1 = row1.getCell(2);
+		valueC1 = _evaluator.evaluate(cellC1);
+		assertEquals(0, valueC1.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueC1.getCellType());
+		testToFormulaString(cellC1, "SUM(B65536:B65536)");
+		
+		//A11: =SUM(A9:C9)
+		Row row11 = sheet1.getRow(10);
+		Cell cellA11 = row11.getCell(0); 
+		CellValue valueA11 = _evaluator.evaluate(cellA11);
+		assertEquals(6, valueA11.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueA11.getCellType());
+		testToFormulaString(cellA11, "SUM(A9:C9)");
+
+		//D11: =D1
+		Cell cellD11 = row11.getCell(3); //D11: =D1
+		CellValue valueD11 = _evaluator.evaluate(cellD11);
+		assertEquals(7, valueD11.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueD11.getCellType());
+		testToFormulaString(cellD11, "D1");
+
+	}
+	
+	@Test
+	public void testInsertA5_D5() {
+		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Row row1 = sheet1.getRow(0);
+		Row row8 = sheet1.getRow(7);
+		assertEquals(1, row8.getCell(0).getNumericCellValue(), 0.0000000000000001); //A8: 1
+		assertEquals(2, row8.getCell(1).getNumericCellValue(), 0.0000000000000001);	//B8: 2
+		assertEquals(3, row8.getCell(2).getNumericCellValue(), 0.0000000000000001); //C8: 3
+		assertEquals(7, row1.getCell(3).getNumericCellValue(), 0.0000000000000001); //D1: 7
+		
+		//A1: =SUM(A8:C8)
+		Cell cellA1 = row1.getCell(0); //A1: =SUM(A8:C8)
+		CellValue valueA1 = _evaluator.evaluate(cellA1);
+		assertEquals(6, valueA1.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueA1.getCellType());
+		testToFormulaString(cellA1, "SUM(A8:C8)");
+		
+		//B1: =SUM(B5:B65536)
+		Cell cellB1 = row1.getCell(1); //B1: =SUM(B5:B65536)
+		CellValue valueB1 = _evaluator.evaluate(cellB1);
+		assertEquals(2, valueB1.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueB1.getCellType());
+		testToFormulaString(cellB1, "SUM(B5:B65536)");
+
+		//C1: =SUM(B65535:B65536)
+		Cell cellC1 = row1.getCell(2); //C1: =SUM(B65535:B65536)
+		CellValue valueC1 = _evaluator.evaluate(cellC1);
+		assertEquals(0, valueC1.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueC1.getCellType());
+		testToFormulaString(cellC1, "SUM(B65535:B65536)");
+		
+		//A10: =SUM(A8:C8)
+		Row row10 = sheet1.getRow(9);
+		Cell cellA10 = row10.getCell(0); 
+		CellValue valueA10 = _evaluator.evaluate(cellA10);
+		assertEquals(6, valueA10.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueA10.getCellType());
+		testToFormulaString(cellA10, "SUM(A8:C8)");
+
+		//D10: =D1
+		Cell cellD10 = row10.getCell(3); 
+		CellValue valueD10 = _evaluator.evaluate(cellD10);
+		assertEquals(7, valueD10.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueD10.getCellType());
+		testToFormulaString(cellD10, "D1");
+		
+		//Insert A5:D5
+		BookHelper.insertRange(sheet1, 4, 0, 4, 3, false);
 		_evaluator.notifySetFormula(cellC1);
 		
 		Row row9 = sheet1.getRow(8);

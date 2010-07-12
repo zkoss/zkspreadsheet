@@ -18,6 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ui.impl;
 
+import java.awt.Color;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,6 +40,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.ui.Rect;
 
@@ -79,8 +81,10 @@ public class CellFormatHelper {
 
 		StringBuffer sb = new StringBuffer();
 		if (_cell != null) {
-			final RichTextString rstr = Utils.getText(_cell);
-			final String txt = rstr != null ? rstr.getString() : null;
+			final FormatText ft = Utils.getFormatText(_cell);
+			final boolean isRichText = ft.isRichTextString();
+			final RichTextString rstr = isRichText ? ft.getRichTextString() : null;
+			final String txt = rstr != null ? rstr.getString() : ft.getCellFormatResult().text;
 			final CellStyle style = _cell.getCellStyle();
 			
 			if (style == null)
@@ -92,6 +96,11 @@ public class CellFormatHelper {
 			}
 			if (bgColor != null) {
 				sb.append("background-color:").append(bgColor).append(";");
+			}
+			if (!isRichText && ft.getCellFormatResult().textColor != null) {
+				final Color textColor = ft.getCellFormatResult().textColor;
+				final String htmlColor = toHTMLColor(textColor);
+				sb.append("color:").append(htmlColor).append(";");
 			}
 
 			if (bgColor != null && (txt == null || txt.trim().equals(""))) {
@@ -108,6 +117,13 @@ public class CellFormatHelper {
 		return sb.toString();
 	}
 
+	private String toHTMLColor(Color color) {
+		final int r = color.getRed();
+		final int g = color.getGreen();
+		final int b = color.getBlue();
+		return "#"+BookHelper.toHex(r)+BookHelper.toHex(g)+BookHelper.toHex(b);
+	}
+	
 	private boolean processBottomBorder(StringBuffer sb) {
 
 		boolean hitBottom = false;
@@ -251,9 +267,10 @@ public class CellFormatHelper {
 		sb.append("border-").append(locate).append(":");
 		switch(bs) {
 		case CellStyle.BORDER_DASHED:
+		case CellStyle.BORDER_DOTTED:
 			sb.append("dashed");
 			break;
-		case CellStyle.BORDER_DOTTED:
+		case CellStyle.BORDER_HAIR:
 			sb.append("dotted");
 			break;
 		default:

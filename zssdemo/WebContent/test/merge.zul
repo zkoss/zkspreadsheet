@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zk>
 <button label="invalidate">
+	<zscript><![CDATA[
+		import org.zkoss.zss.ui.impl.Utils;
+	]]>
+	</zscript>
 	<attribute name="onClick">
 		ss1.invalidate();
 	</attribute>
@@ -8,45 +12,40 @@
 <button label="freeze" onClick="if(ss1.rowfreeze>=0){ss1.rowfreeze=-1;ss1.columnfreeze=-1;}else{ss1.rowfreeze=2;ss1.columnfreeze=1;}"/>
 <button label="unmerge A2-C2">
 	<attribute name="onClick">
-		//ss1.extraCtrl.deleteMergeCell(ss1.selectedSheet,0,1,3,1);
-		ss1.selectedSheet.unmergeCells(0,1,2,1);
+		Utils.unmergeCells(ss1.selectedSheet,1,0,1,2);
 	</attribute>
 </button>
 <button label="merge B9-D9">
 	<attribute name="onClick">
-		//ss1.extraCtrl.addMergeCell(ss1.selectedSheet,1,8,3,8);
-		ss1.selectedSheet.mergeCells(1,8,3,8);
+		Utils.mergeCells(ss1.selectedSheet, 8,1,8,3,true);
 	</attribute>
 </button>
 <button label="unmerge B9-D9">
 	<attribute name="onClick">
-		//ss1.extraCtrl.deleteMergeCell(ss1.selectedSheet,1,8,3,8);
-		ss1.selectedSheet.unmergeCells(1,8,3,8);
+		Utils.unmergeCells(ss1.selectedSheet, 8,1,8,3);
 	</attribute>
 </button>
 <button label="merge B9-D10">
 	<attribute name="onClick">
-		//ss1.extraCtrl.addMergeCell(ss1.selectedSheet,1,8,3,9);
-		ss1.selectedSheet.mergeCells(1,8,3,9);
+		Utils.mergeCells(ss1.selectedSheet, 8,1,9,3,true);
 	</attribute>
 </button>
 <button label="unmerge B9-D10">
 	<attribute name="onClick">
-		//ss1.extraCtrl.deleteMergeCell(ss1.selectedSheet,1,8,3,9);
-		ss1.selectedSheet.unmergeCells(1,8,3,9);
+		Utils.unmergeCells(ss1.selectedSheet, 8,1,9,3);
 	</attribute>
 </button>
 <button label="merge selection ">
 	<attribute name="onClick">
 		Rect sel = ss1.selection;
-		ss1.selectedSheet.mergeCells(sel.left,sel.top,sel.right,sel.bottom);
+		Utils.mergeCells(ss1.selectedSheet, sel.top,sel.left,sel.bottom,sel.right,true);
 		ss1.focus();
 	</attribute>
 </button>
 <button label="unmerge selection ">
 	<attribute name="onClick">
 		Rect sel = ss1.selection;
-		ss1.selectedSheet.unmergeCells(sel.left,sel.top,sel.right,sel.bottom);
+		Utils.unmergeCells(ss1.selectedSheet, sel.top,sel.left,sel.bottom,sel.right);
 		ss1.focus();
 	</attribute>
 </button>

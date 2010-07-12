@@ -182,4 +182,36 @@ public interface RefSheet {
 	 */
 	public Set<Ref>[] deleteColumns(int col, int num);
 	
+	/**
+	 * Insert a range of cells.
+	 * @param tRow top row index of the range
+	 * @param lCol left column index of the range
+	 * @param bRow bottom row index of the range
+	 * @param rCol right column index of the range
+	 * @param horizontal neighbor cells shall move to right(true)/bottom(false)
+	 * @return the last affected references(for re-evaluation, at [0]) and all affected references(for re-render, at [1]) 
+	 */
+	public Set<Ref>[] insertRange(int tRow, int lCol, int bRow, int rCol, boolean horizontal);
+	
+	/**
+	 * Delete a range of cells.
+	 * @param tRow top row index of the range
+	 * @param lCol left column index of the range
+	 * @param bRow bottom row index of the range
+	 * @param rCol right column index of the range
+	 * @param horizontal neighbor cells shall move to left(true)/top(false)
+	 * @return the last affected references(for re-evaluation, at [0]) and all affected references(for re-render, at [1]) 
+	 */
+	public Set<Ref>[] deleteRange(int tRow, int lCol, int bRow, int rCol, boolean horizontal);
+	
+	/**
+	 * Move a range of cells to a new position as specified by offCol(positive to move right, negative to move left) 
+	 * and offRow(positive to move down, negative to move up) 
+	 * @param col the insertion point of column
+	 * @param num the number of columns to insert
+	 * @param nRow move how many rows(positive to move down, negative to move up)
+	 * @param nCol move how many columns(positive to move right, negative to move left)
+	 * @return the last affected references(for re-evaluation, at [0]) and all affected references(for re-render, at [1]) 
+	 */
+	public Set<Ref>[] moveRange(int tRow, int lCol, int bRow, int rCol, int nRow, int nCol);
 }

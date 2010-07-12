@@ -62,6 +62,7 @@ import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.impl.BookHelper;
+import org.zkoss.zss.model.impl.RangeImpl;
 //import org.zkoss.zss.model.BorderLineStyle;
 //import org.zkoss.zss.model.BorderStyle;
 //import org.zkoss.zss.model.Cell;
@@ -90,6 +91,7 @@ import org.zkoss.zss.ui.event.HeaderMouseEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
+import org.zkoss.zss.ui.impl.Styles;
 //import org.zkoss.zss.ui.impl.Styles;
 import org.zkoss.zss.ui.impl.Utils;
 //import org.zkoss.zss.ui.state.CellState;
@@ -121,6 +123,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -1818,10 +1821,6 @@ throw new UiException("wrap text is implmented yet");
 	}
 
 	public void onMergeCellClick(ForwardEvent event){
-//TODO remove me, comment
-throw new UiException("merge cell not implemented yet");
-//TODO merge cell
-/*
 		try{
 			mainWin.getFellow("fastIconContextmenu").setVisible(false);
 
@@ -1835,25 +1834,26 @@ throw new UiException("merge cell not implemented yet");
 			}
 
 			if(isMergeCell){
-				spreadsheet.pushCellState();
+//TODO: undo/redo				
+//				spreadsheet.pushCellState();
 				Rect sel = spreadsheet.getSelection();
 				if(sel.getLeft()-sel.getRight()==0){
 					mergeCellBtn.setClass("toolIcon");
 				}else{
-					for(int row=sel.getTop();row<=sel.getBottom();row++)
-						spreadsheet.getSelectedSheet().mergeCells(sel.getLeft(),row, sel.getRight(), row);
+					//TODO: true mean merge horizontal only.(UI cannot handle merge vertically yet)
+					Utils.mergeCells(spreadsheet.getSelectedSheet(), sel.getTop(), sel.getLeft(), sel.getBottom(), sel.getRight(), true);
 				}
 				spreadsheet.focus();
 			}else{
-				spreadsheet.pushCellState();
+//TODO: undo/redo				
+//				spreadsheet.pushCellState();
 				Rect sel = spreadsheet.getSelection();
-				spreadsheet.getSelectedSheet().unmergeCells(sel.getLeft(),sel.getTop(), sel.getRight(), sel.getBottom());
+				Utils.unmergeCells(spreadsheet.getSelectedSheet(), sel.getTop(), sel.getLeft(), sel.getBottom(), sel.getRight());
 				spreadsheet.focus();
 			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-*/			
 	}
 
 	public void onBorderClick(ForwardEvent event){
@@ -1876,131 +1876,47 @@ throw new UiException("merge cell not implemented yet");
 	}
 
 	public void onBorderSelector(ForwardEvent event){
-//TODO remove me, set border
-throw new UiException("set border is not implmented yet");
-/*
-		spreadsheet.pushCellState();
-		try{
-			String presetStyle=(String)event.getData();
-			//p(presetStyle);
-			//not permit to changing color and style
-			BorderStyle bs = new BorderStyleImpl("#000000", BorderLineStyle.MEDIUM);
+//TODO: undo/redo
+//spreadsheet.pushCellState();
+		String presetStyle=(String)event.getData();
+		//p(presetStyle);
+		//not permit to changing color and style
+		final BorderStyle lineStyle = BorderStyle.MEDIUM;
+		final String color = "#000000";
 
-			Window win = (Window) mainWin.getFellow("borderSelector");
-			win.setVisible(false);
-			int left =    spreadsheet.getSelection().getLeft();
-			int right =   spreadsheet.getSelection().getRight();
-			int top =     spreadsheet.getSelection().getTop();
-			int bottom =  spreadsheet.getSelection().getBottom();
-			Sheet sheet = spreadsheet.getSelectedSheet();
-
-			MergeMatrixHelper mmHelper=spreadsheet.getMergeMatrixHelper(sheet);
-			
-			final int lb = 0x08;// leftBorder
-			final int tb = 0x04;// topBorder
-			final int rb = 0x02;// rightBorder
-			final int bb = 0x01;// bottomBorder
-			
-			
-			//check the is merge cell this time for right border
-			if (presetStyle.equals("None")) {
-				clearBorder(sheet, left, top, right, bottom);
-			} else if (presetStyle.equals("Outline")) {
-				//clearBorder(sheet, left, top, right, bottom);
-				for (int row = top; row <= bottom; row++) {
-					for (int col = left; col <= right; col++) {
-						if (row == top) {
-							Styles.setBorder(sheet, row, col, bs, tb);
-						}
-						if (row == bottom) {
-							Styles.setBorder(sheet, row, col, bs, bb);
-						}
-						if (col == left) {
-							Styles.setBorder(sheet, row, col, bs, lb);
-						}
-						if (col == right) {
-							MergedRect rect=mmHelper.getMergeRange(row, col);
-							int tarCol=rect!=null?rect.getLeft():col;
-							Styles.setBorder(sheet, row, tarCol, bs, rb);
-						}
-					}
-				}
-			} else if (presetStyle.equals("Inside")) {
-				//clearBorder(sheet, left, top, right, bottom);
-				for (int row = top; row <= bottom; row++) {
-					for (int col = left; col <= right; col++) {
-						int at = lb + tb + rb + bb;
-						if (row == top) {
-							at -= tb;
-						}
-						if(row==bottom){
-							at-=bb;
-						}
-						if(col==left){
-							at-=lb;
-						}
-						if (col == right) {
-							at-=rb;
-							Styles.setBorder(sheet, row, col, bs, at);		
-						}else{
-							Styles.setBorder(sheet, row, col, bs, at-rb);
-							
-							MergedRect rect=mmHelper.getMergeRange(row, col);
-							if(rect==null)
-								Styles.setBorder(sheet, row, col, bs, rb);
-							else if(rect.getRight()!=right){
-								Styles.setBorder(sheet, row, rect.getLeft(), bs, rb);
-							}
-						}
-							
-					}
-				}
-			} else if (presetStyle.equals("Full")) {
-				for (int row = top; row <= bottom; row++) {
-					for (int col = left; col <= right; col++) {
-						Styles.setBorder(sheet, row, col, bs, lb + rb + tb+ bb);
-					}
-				}
-			} else if (presetStyle.equals("Top")) {
-				//clearBorder(sheet, left, top, right, bottom);
-				int row = top;
-				for (int col = left; col <= right; col++) {
-					Styles.setBorder(sheet, row, col, bs, tb);
-				}
-
-			} else if (presetStyle.equals("Bottom")) {
-				//clearBorder(sheet, left, top, right, bottom);
-				int row = bottom;
-				for (int col = left; col <= right; col++) {
-					Styles.setBorder(sheet, row, col, bs, bb);
-				}
-
-			} else if (presetStyle.equals("Left")) {
-				//clearBorder(sheet, left, top, right, bottom);
-				int col = left;
-				for (int row = top; row <= bottom; row++) {
-					Styles.setBorder(sheet, row, col, bs, lb);
-				}
-			} else if (presetStyle.equals("Right")) {
-				//clearBorder(sheet, left, top, right, bottom);
-				for (int row = top; row <= bottom; row++)
-					for (int col = left; col <= right; col++){
-					if (col == right){
-						MergedRect rect=mmHelper.getMergeRange(row, col);
-						int tarCol=rect!=null?rect.getLeft():col;
-						Styles.setBorder(sheet, row, tarCol, bs, rb);
-					}
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-*/
+		Window win = (Window) mainWin.getFellow("borderSelector");
+		win.setVisible(false);
+		int lCol = spreadsheet.getSelection().getLeft();
+		int rCol = spreadsheet.getSelection().getRight();
+		int tRow = spreadsheet.getSelection().getTop();
+		int bRow = spreadsheet.getSelection().getBottom();
+		Sheet sheet = spreadsheet.getSelectedSheet();
+		Range rng = Utils.getRange(sheet, tRow, lCol, bRow, rCol);
+		
+		//check the is merge cell this time for right border
+		if (presetStyle.equals("None")) {
+			rng.setBorders(BookHelper.BORDER_FULL, BorderStyle.NONE, color);
+		} else if (presetStyle.equals("Outline")) {
+			rng.setBorders(BookHelper.BORDER_OUTLINE, lineStyle, color);
+		} else if (presetStyle.equals("Inside")) {
+			rng.setBorders(BookHelper.BORDER_INSIDE, lineStyle, color);
+		} else if (presetStyle.equals("Full")) {
+			rng.setBorders(BookHelper.BORDER_FULL, lineStyle, color);
+		} else if (presetStyle.equals("Top")) {
+			final Range tRowRng = Utils.getRange(sheet, tRow, lCol, tRow, rCol);
+			tRowRng.setBorders(BookHelper.BORDER_EDGE_TOP, lineStyle, color);
+		} else if (presetStyle.equals("Bottom")) {
+			final Range bRowRng = Utils.getRange(sheet, bRow, lCol, bRow, rCol);
+			bRowRng.setBorders(BookHelper.BORDER_EDGE_BOTTOM, lineStyle, color);
+		} else if (presetStyle.equals("Left")) {
+			final Range lColRng = Utils.getRange(sheet, tRow, lCol, bRow, lCol);
+			lColRng.setBorders(BookHelper.BORDER_EDGE_LEFT, lineStyle, color);
+		} else if (presetStyle.equals("Right")) {
+			final Range rColRng = Utils.getRange(sheet, tRow, rCol, bRow, rCol);
+			rColRng.setBorders(BookHelper.BORDER_EDGE_RIGHT, lineStyle, color);
+		}
 	}
-	
 
-	
 	public void onFormatOK(ForwardEvent event) {
 		//p("formatOk"+(String)event.getData());
 		fnh.onOK();
@@ -2032,41 +1948,6 @@ throw new UiException("set border is not implmented yet");
 		//System.out.println(spreadsheet.getEditorName()+": "+s);
 	}
 
-//TODO clear border
-/*	
-	public void clearBorder(Sheet sheet, int left, int top, int right, int bottom) {
-		BorderStyle bs = new BorderStyleImpl("#FFFFFF", BorderLineStyle.NONE);
-		MergeMatrixHelper mmHelper=spreadsheet.getMergeMatrixHelper(sheet);
-		//the clear from inner
-		for (int row = top; row <= bottom; row++) {
-			for (int col = left; col <= right; col++) {
-				Styles.setBorder(sheet, row, col, bs, 0x0F);
-			}
-		}
-
-		//the clear from outer left&right
-		for (int row = top; row <= bottom; row++) {
-			if(left-1>=0){
-				MergedRect rect=mmHelper.getMergeRange(row, left-1);
-				int tarCol=rect!=null?rect.getLeft():left-1;
-				Styles.setBorder(sheet, row, tarCol, bs, 0x02);
-			}
-			if(right+1<=spreadsheet.getMaxcolumns());
-			Styles.setBorder(sheet, row, right+1, bs, 0x08);
-		}
-
-		//the clear from outer top & bottom
-		for (int col = left; col <= right; col++) {
-			if(top-1>=0){
-				MergedRect rect=mmHelper.getMergeRange(top-1, col);
-				int tarCol=rect!=null?rect.getLeft():col;
-				Styles.setBorder(sheet, top-1, tarCol, bs, 0x01);
-			}
-			if(bottom+1<=spreadsheet.getMaxrows());
-			Styles.setBorder(sheet, bottom+1, col, bs, 0x04);
-		}
-	}
-*/
 	public void onFormulaPopup() {
 		try {
 			Window win = (Window) mainWin.getFellow("formulaCategory");

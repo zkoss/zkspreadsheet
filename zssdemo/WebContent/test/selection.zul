@@ -56,11 +56,11 @@
 		</hbox>
 		<spreadsheet id="ss1" src="/WEB-INF/xls/test/selection.xls" maxrows="500" maxcolumns="120" height="400px" width="700px" style="border:1px solid #8AA3C1" >
 			<attribute name="onCellSelection">
-				lab1.value = event.action+","+event.left+","+event.top+","+event.right+","+event.bottom;
+				lab1.value = event.selectionType+","+event.left+","+event.top+","+event.right+","+event.bottom;
 				lab3.value = ss1.selection.toString();
 			</attribute>
 			<attribute name="onSelectionChange">
-				lab2.value = event.action+",New:"+event.left+","+event.top+","+event.right+","+event.bottom + 
+				lab2.value = event.selectionType+",action:"+event.action+", New:"+event.left+","+event.top+","+event.right+","+event.bottom + 
 					" : Orignal:"+event.origleft+","+event.origtop+","+event.origright+","+event.origbottom;
 				lab3.value = ss1.selection.toString();
 			</attribute>
