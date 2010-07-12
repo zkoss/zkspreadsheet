@@ -606,15 +606,25 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			top = result.top,
 			right = result.right,
 			bottom = result.bottom;
-		if (type == "move")
-			this.moveCellSelection(left, top, right, bottom);
+		if (type == "move") {
+			this.moveCellSelection(left, top, right, bottom, true);
+			var ls = this.getLastSelection();//cause of merge, selection might be change, get form last
+			if (ls.left != left || ls.right != right || ls.top != top || ls.bottom != bottom) {
+				this.selType = zss.SelDrag.SELCELLS;
+				this._sendOnCellSelection(this.selType, ls.left, ls.top, ls.right, ls.bottom);
+			}
+		}
 	},
 	_cmdCellFocus: function (result) {
 		var type = result.type,
 			row = result.row,
 			column = result.column;
-		if (type == "move")
+		if (type == "move") {
 			this.moveCellFocus(row, column);
+			var pos = this.getLastFocus();
+			if (pos.row != row || pos.column != column) //update server to new focus position
+				this._sendOnCellFocused(pos.row, pos.column);
+		}
 	},
 	_cmdRetriveFocus: function (result) {
 		var type = result.type,
@@ -683,12 +693,15 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			this._lastmdstr = "c";
 
 			var ls = this.getLastSelection();//cause of merge, focus might be change, get form last
-			this.setDragging(new zss.SelDrag(sheet, zss.SelDrag.SELCELLS, ls.top, ls.left,
+			this.selType = zss.SelDrag.SELCELLS;
+			this.setDragging(new zss.SelDrag(sheet, this.selType, ls.top, ls.left,
 					_isLeftMouseEvt(evt) ? "l" : "r", ls.right));
 		} else if ((cmp = zkS.parentByZSType(elm, "SSelDot", 1)) != null) {
 			//modify selection
-			if(_isLeftMouseEvt(evt))//TODO support right mouse down
-				this.setDragging(new zss.SelChgDrag(sheet, zss.SelChgDrag.MODIFY));
+			if(_isLeftMouseEvt(evt)) {//TODO support right mouse down
+				var action = (this.selType ? this.selType : 0) | zss.SelChgDrag.MODIFY;
+				this.setDragging(new zss.SelChgDrag(sheet, action));
+			}
 		} else if ((cmp = zkS.parentByZSType(elm, ["SSelInner", "SFocus", "SHighlight"], 1)) != null) {
 			//Mouse down on Selection / Focus Block
 			mx = evt.pageX;
@@ -702,7 +715,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			if (_isLeftMouseEvt(evt) || jq(cmp).attr('zs.t') == "SHighlight") {
 				sheet.dp.moveFocus(row, col, false, true, false, true);
 				var ls = this.getLastSelection();//cause of merge, focus might be change, get form last
-				this.setDragging(new zss.SelDrag(sheet, zss.SelDrag.SELCELLS, ls.top, ls.left,
+				this.selType = zss.SelDrag.SELCELLS;
+				this.setDragging(new zss.SelDrag(sheet, this.selType, ls.top, ls.left,
 						_isLeftMouseEvt(evt) ? "l" : "r", ls.right));
 			}
 		} else if ((cmp = zkS.parentByZSType(elm, ["SSelect"], 1)) != null) {
@@ -727,7 +741,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				else if(col < range.left)
 					col = range.left;
 			
-				this.setDragging(new zss.SelChgDrag(sheet, zss.SelChgDrag.MOVE, row, col));
+				var action = (this.selType ? this.selType : 0) | zss.SelChgDrag.MOVE; 
+				this.setDragging(new zss.SelChgDrag(sheet, action, row, col));
 			}
 		} else if ((cmp = zkS.parentByZSType(elm, "SLheader")) != null 
 			|| (cmp = zkS.parentByZSType(elm, "STheader")) != null) {
@@ -762,7 +777,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 					//sheet.dp.selectCell(row, (fzc > -1 ? 0 : range.left),true);//force move to first visible cell
 					sheet.moveRowSelection(row);
 					seltype = zss.SelDrag.SELROW;
-				}	
+				}
+				sheet.selType = seltype;
 				this.setDragging(new zss.SelDrag(sheet, seltype, row, col, _isLeftMouseEvt(evt) ? "l" : "r"));
 			}
 		} else if ((cmp = zkS.parentByZSType(elm, "SCorner", 1)) != null) {
@@ -774,7 +790,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			
 			if (left != ls.left || top != ls.top || right != ls.right || bottom != ls.bottom) {
 				this.moveCellSelection(left, top, right, bottom);
-				this.setDragging(new zss.SelDrag(sheet, zss.SelDrag.SELALL, 0, 0, _isLeftMouseEvt(evt) ? "l" : "r"));
+				this.selType = zss.SelDrag.SELALL;
+				this.setDragging(new zss.SelDrag(sheet, this.selType, 0, 0, _isLeftMouseEvt(evt) ? "l" : "r"));
 			}
 		}
 		this._lastmdstr = this._lastmdstr + "_" + row + "_" + col;
@@ -1387,18 +1404,46 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	 * @param int top row start index
 	 * @param int right column end index
 	 * @param int bottom row end index
+	 * @param boolean snap whether snap to merge cell border
 	 */
-	moveCellSelection: function (left, top, right, bottom) {
+	moveCellSelection: function (left, top, right, bottom, snap) {
 		var lastRange = this.selArea.lastRange;
 		if (lastRange)
 			this._updateHeaderSelectionCss(lastRange, true);
 
-		var show = !(this.state == zss.SSheetCtrl.NOFOCUS),
-			cell = this.getCell(top, left);
-
-		//only show merged selection when selecing on same row
-		if (top == bottom && cell && cell.merr > right)
-			right = cell.merr;
+		var show = !(this.state == zss.SSheetCtrl.NOFOCUS);
+		if (snap) {
+			var maxr = right,
+				minl = left;
+	
+			//Selection shall snap to merge area
+			for (var r = bottom; r >= top; --r) {
+				var cellR = this.getCell(r, maxr);
+				if (cellR && cellR.merr > maxr) maxr = cellR.merr;
+				var cellL = this.getCell(r, minl);
+				if (cellL && cellL.merl < minl) minl = cellL.merl;
+			}
+			right = maxr;
+			left = minl;
+			//TODO when UI support vertical merge, need to handle maxb(bottom) and mint(top)
+			/*
+			var maxb = bottom,
+				mint = top;
+			for (var c = right; c >= left; --c) {
+				var cellB = this.getCell(maxb, c);
+				if (cellB && cellB.merb > maxb) maxb = cellB.merb;
+				var cellT = this.getCell(mint, c);
+				if (cellT && cellT.mert < mint) mint = cellT.mert;
+			}
+			bottom = maxb;
+			top = mint;
+			*/
+		} else {
+			var cell = this.getCell(top, left);
+			//only show merged selection when selecing on same row
+			if (top == bottom && cell && cell.merr > right)
+				right = cell.merr;
+		}
 		
 		var selRange = new zss.Range(left, top, right, bottom);
 		this.selArea.relocate(selRange);
@@ -1485,7 +1530,10 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	 * @param int col column index
 	 */
 	moveCellFocus: function (row, col) {
-		var show = !(this.state == zss.SSheetCtrl.NOFOCUS);
+		var show = !(this.state == zss.SSheetCtrl.NOFOCUS),
+			cell = this.getCell(row, col);
+		if (cell && cell.merl < col) //check if a merged cell
+			col = cell.merl;
 		this.focusMark.relocate(row, col);
 		if (show)
 			this.focusMark.showMark();
@@ -1529,7 +1577,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			top = ls.top,
 			right = ls.right,
 			bottom = ls.bottom,
-			update = false;
+			update = false,
+			seltype = this.selType ? this.selType : zss.SelDrag.SELCELLS;
 		
 		switch (key) {
 		case 'up':
@@ -1559,10 +1608,20 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		case 'home':
 			right = col;
 			left = 0;
+			if (seltype == zss.SelDrag.SELALL)
+				seltype = zss.SelDrag.SELCOL;
+			else if (seltype == zss.SelDrag.SELROW)
+				seltype = zss.SelDrag.SELCELLS;
 			break;
 		case 'end':
 			left = col;
 			right = this.maxCols - 1;
+			if (left == 0) {
+				if (seltype == zss.SelDrag.SELCOL)
+					seltype = zss.SelDrag.SELALL;
+				else if (seltype == zss.SelDrag.SELCELLS)
+					seltype = zss.SelDrag.SELROW;
+			}
 			break;
 		case 'pgup':
 			if (row < bottom) {
@@ -1601,8 +1660,9 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		
 		if (left != ls.left || top != ls.top || right != ls.right || bottom != ls.bottom){
 			this.moveCellSelection(left, top, right, bottom);
-			var ls = this.getLastSelection(); 
-			this._sendOnCellSelection(zss.SelDrag.SELCELLS, ls.left, ls.top, ls.right, ls.bottom);
+			var ls = this.getLastSelection();
+			this.selType = seltype;
+			this._sendOnCellSelection(seltype, ls.left, ls.top, ls.right, ls.bottom);
 		}
 	},
 	/**

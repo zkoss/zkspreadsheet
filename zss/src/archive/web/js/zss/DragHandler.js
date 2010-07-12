@@ -102,7 +102,7 @@ zss.SelDrag = zk.$extends(zss.DragHandler, {
 			outside;
 		
 		if ( (cmp = zkS.parentByZSType(elm, "SCell", 1)) != null) {//move on cell
-			cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
+			var cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
 			row = cellpos[0];
 			col = cellpos[1];
 		} else if (this.type == zss.SelDrag.SELROW && (cmp = zkS.parentByZSType(elm, "SLheader", 1)) != null) {//move on left header
@@ -110,7 +110,7 @@ zss.SelDrag = zk.$extends(zss.DragHandler, {
 		} else if (this.type == zss.SelDrag.SELCOL && (cmp = zkS.parentByZSType(elm, "STheader", 1)) != null) {//move on top header
 			col = cmp.ctrl.index;
 		} else if ((cmp = zkS.parentByZSType(elm, ["SSelect", "SHighlight"], 1)) != null) {//move on select
-			cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
+			var cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
 			row = cellpos[0];
 			col = cellpos[1];
 		} else if ((cmp = zkS.parentByZSType(elm, ["SScrollpanel", "SCorner", "SLheader", "STheader"], 2)) != null
@@ -192,18 +192,16 @@ zss.SelDrag = zk.$extends(zss.DragHandler, {
 					bottom = (this.row < row)? row : this.row,
 					left = (this.col > col) ? col : this.col,
 					right = (this.col < col) ? col : this.col;
-				if (this.merr && right < this.merr)//if there is a merright, the merright is min
-					right = this.merr;
-
-				sheet.moveCellSelection(left, top, right, bottom);
+		
+				sheet.moveCellSelection(left, top, right, bottom, true);
 			}
 		}
 	}
 }, {
-	SELCELLS: 1,
-	SELROW: 2,
-	SELCOL: 3,
-	SELALL: 4
+	SELCELLS: 0x01,
+	SELROW: 0x02,
+	SELCOL: 0x03,
+	SELALL: 0x04
 });
 
 /**
@@ -226,7 +224,7 @@ zss.SelChgDrag = zk.$extends(zss.DragHandler, {
 		this.frow = pos.row;
 		this.fcol = pos.column;
 		
-		if (action == zss.SelChgDrag.MOVE) {
+		if ((action & 0xF0) == zss.SelChgDrag.MOVE) {
 			this.row = row;//start on which row
 			this.col = col;//on which col
 		}
@@ -245,7 +243,7 @@ zss.SelChgDrag = zk.$extends(zss.DragHandler, {
 		var row = this.frow,
 			col = this.fcol;
 			
-		if (this.action == zss.SelChgDrag.MOVE) {
+		if ((this.action & 0xF0) == zss.SelChgDrag.MOVE) {
 			var voff = range.top - this.top,//offset to orginal selection
 				hoff = range.left - this.left; 
 			//move foucs depends on offset	
@@ -329,9 +327,9 @@ zss.SelChgDrag = zk.$extends(zss.DragHandler, {
 		}
 		this.stopAutoScroll();
 
-		if (this.action == zss.SelChgDrag.MOVE)
+		if ((this.action & 0xF0) == zss.SelChgDrag.MOVE)
 			this._move(row, col);
-		else if (this.action == zss.SelChgDrag.MODIFY)
+		else if ((this.action &0xF0) == zss.SelChgDrag.MODIFY)
 			this._modify(row, col);
 	},
 	_modify: function (row, col) {
@@ -412,6 +410,6 @@ zss.SelChgDrag = zk.$extends(zss.DragHandler, {
 		}
 	}
 }, {
-	MOVE: 11,
-	MODIFY: 12
+	MOVE: 0x10,
+	MODIFY: 0x20
 });

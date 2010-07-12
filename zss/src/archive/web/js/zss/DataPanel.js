@@ -218,8 +218,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	},
 	/* move focus to a cell, this method will do - 
 	* 1. stop editing, 
-	* 2. check is the cell loaded already or not
-	* 3. if not loaded, the cause a asynchronized loading. after loading then do 4.
+	* 2. check if the cell loaded already or not
+	* 3. if not loaded, it will cause a asynchronized loading. after loading then do 4.
 	* 4. if loaded, then invoke _moveFocus to move to loaded cell
 	* 
 	* @param {int} row
