@@ -10,10 +10,10 @@
 		<button label="invalidate" onClick="ss1.invalidate()"/>
 		<button label="frozenRow" onClick="ss1.rowfreeze=6" />
 		<button label="frozenCol" onClick="ss1.columnfreeze=6" />
-		<button label="insert at column 20" onClick="Utils.insertColumns(ss1.selectedSheet,20,22)"/>
-		<button label="insert at column 4" onClick="Utils.insertColumns(ss1.selectedSheet,4,4)"/>
-		<button label="insert at row 100" onClick="Utils.insertRows(ss1.selectedSheet,100,102)"/>
-		<button label="insert at row 4" onClick="Utils.insertRows(ss1.selectedSheet,4,4)"/>
+		<button label="insert at column21" onClick="Utils.insertColumns(ss1.selectedSheet,20,22)"/>
+		<button label="insert at column5" onClick="Utils.insertColumns(ss1.selectedSheet,4,4)"/>
+		<button label="insert at row101" onClick="Utils.insertRows(ss1.selectedSheet,100,102)"/>
+		<button label="insert 2 rows at row5" onClick="Utils.insertRows(ss1.selectedSheet,4,5)"/>
 		<label id="lab"/>
 		<spreadsheet id="ss1" src="/WEB-INF/xls/test/large.xls" 
 			maxrows="300" maxcolumns="100" height="80%" width="80%" 

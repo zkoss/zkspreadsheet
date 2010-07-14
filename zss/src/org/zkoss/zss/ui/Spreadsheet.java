@@ -1448,30 +1448,38 @@ public class Spreadsheet extends XulElement {
 				return;
 			if (rng.isWholeColumn()) {
 				final int left = rng.getLeftCol();
-				final int char256 = sheet.getColumnWidth(left);
-				final int width = Utils.fileChar256ToPx(char256, getDefaultCharWidth());
-				HeaderPositionHelper posHelper = getColumnPositionHelper(sheet);
-				int[] meta = posHelper.getMeta(left);
-				if (meta == null || meta[1] != width) {
-					int id = meta == null ? _custColId.next() : meta[2];
-					posHelper.setCustomizedSize(left, width, id);
-					((ExtraCtrl) getExtraCtrl()).setColumnWidth(sheet, left, width, id);
-				}
+				updateColWidth(sheet, left);
 			} else if (rng.isWholeRow()) {
 				final int top = rng.getTopRow();
-				final int twips = BookHelper.getRowHeight(sheet, top);
-				int height = Utils.twipToPx(twips);
-				HeaderPositionHelper posHelper = getRowPositionHelper(sheet);
-				int[] meta = posHelper.getMeta(top);
-				if (meta == null || meta[1] != height) {
-					int id = meta == null ? _custRowId.next() : meta[2];
-					posHelper.setCustomizedSize(top, height, id);
-					((ExtraCtrl) getExtraCtrl()).setRowHeight(sheet, top, height, id);
-				}
+				updateRowHeight(sheet, top);
 			}
 		}
 	}
+	
+	private void updateColWidth(Sheet sheet, int col) {
+		final int char256 = sheet.getColumnWidth(col);
+		final int width = Utils.fileChar256ToPx(char256, getDefaultCharWidth());
+		HeaderPositionHelper posHelper = getColumnPositionHelper(sheet);
+		int[] meta = posHelper.getMeta(col);
+		if ((meta == null && width != posHelper.getDefaultSize()) || (meta != null && meta[1] != width)) {
+			int id = meta == null ? _custColId.next() : meta[2];
+			posHelper.setCustomizedSize(col, width, id);
+			((ExtraCtrl) getExtraCtrl()).setColumnWidth(sheet, col, width, id);
+		}
+	}
 
+	private void updateRowHeight(Sheet sheet, int row) {
+		final int twips = BookHelper.getRowHeight(sheet, row);
+		int height = Utils.twipToPx(twips);
+		HeaderPositionHelper posHelper = getRowPositionHelper(sheet);
+		int[] meta = posHelper.getMeta(row);
+		if ((meta == null && height != posHelper.getDefaultSize()) || (meta != null && meta[1] != height)) {
+			int id = meta == null ? _custRowId.next() : meta[2];
+			posHelper.setCustomizedSize(row, height, id);
+			((ExtraCtrl) getExtraCtrl()).setRowHeight(sheet, row, height, id);
+		}
+	}
+	
 	public MergeMatrixHelper getMergeMatrixHelper(Sheet sheet) {
 		if (sheet != getSelectedSheet())
 			throw new UiException("not current selected sheet ");
@@ -1693,8 +1701,7 @@ public class Spreadsheet extends XulElement {
 			HeaderPositionHelper helper = Spreadsheet.this.getColumnPositionHelper(sheet);
 			helper.setCustomizedSize(column, newsize, id);
 
-			sheet.setColumnWidth(column, newsize);
-
+			sheet.setColumnWidth(column, Utils.pxToFileChar256(newsize, ((Book)sheet.getWorkbook()).getDefaultCharWidth()));
 		}
 
 		public void setRowSize(String sheetId, int rownum, int newsize, int id) {
@@ -2076,8 +2083,22 @@ public class Spreadsheet extends XulElement {
 			int bottom = _loadedRect.getBottom();
 			log.debug("update cells when insert column " + col + ",size:" + size + ":" + left + "," + top + "," + right + "," + bottom);
 			updateCell(sheet, left, top, right, bottom);
+			
+			//update inserted column widths
+			updateColWidths(sheet, col, size); 
 		}
 
+		private void updateRowHeights(Sheet sheet, int row, int n) {
+			for(int r = 0; r < n; ++r) {
+				updateRowHeight(sheet, r+row);
+			}
+		}
+		
+		private void updateColWidths(Sheet sheet, int col, int n) {
+			for(int r = 0; r < n; ++r) {
+				updateColWidth(sheet, r+col);
+			}
+		}
 		public void insertRows(Sheet sheet, int row, int size) {
 			if (size <= 0) {
 				throw new UiException("size must > 0 : " + size);
@@ -2129,6 +2150,9 @@ public class Spreadsheet extends XulElement {
 			bottom = bottom + size - 1;
 			bottom = bottom >= _maxRows - 1 ? _maxRows - 1 : bottom;
 			updateCell(sheet, _loadedRect.getLeft(), top, _loadedRect.getRight(), bottom);
+			
+			// update the inserted row height
+			updateRowHeights(sheet, row, size); //update row height
 		}
 
 		public void removeColumns(Sheet sheet, int col, int size) {
@@ -2359,7 +2383,7 @@ public class Spreadsheet extends XulElement {
 			/**
 			 * rename size_col -> columnSize
 			 */
-			smartUpdate("columnSize", new Object[] { "", Utils.getSheetId(sheet), result.toString() });
+			smartUpdate("columnSize", (Object) new Object[] { "", Utils.getSheetId(sheet), result.toString() }, true);
 		}
 
 		//in pixels
@@ -2372,7 +2396,7 @@ public class Spreadsheet extends XulElement {
 			/**
 			 * rename size_row -> rowSize
 			 */
-			smartUpdate("rowSize", new Object[] { "", Utils.getSheetId(sheet), result.toString() });
+			smartUpdate("rowSize", (Object) new Object[] { "", Utils.getSheetId(sheet), result.toString() }, true);
 		}
 	}
 
@@ -3310,6 +3334,10 @@ public class Spreadsheet extends XulElement {
 	
 	public void smartUpdate(String attr, Object value) {
 		super.smartUpdate(attr, value);
+	}
+	
+	public void smartUpdate(String attr, Object value, boolean append) {
+		super.smartUpdate(attr, value, append);
 	}
 	
 	public void response(String key, AuResponse response) {

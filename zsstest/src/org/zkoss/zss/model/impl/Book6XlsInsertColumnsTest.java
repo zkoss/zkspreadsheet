@@ -8,11 +8,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.Color;
 import java.io.InputStream;
 
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -25,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.ExcelImporter;
 import org.zkoss.zss.model.impl.HSSFBookImpl;
@@ -134,12 +137,18 @@ public class Book6XlsInsertColumnsTest {
 		testToFormulaString(cellH4, "A4");
 		
 		//Insert before column C
-		BookHelper.insertColumns(sheet1, 2, 1);
+		BookHelper.insertColumns(sheet1, 2, 1, Range.FORMAT_LEFTABOVE);
 		_evaluator.notifySetFormula(cellA1);
 		_evaluator.notifySetFormula(cellA2);
 		_evaluator.notifySetFormula(cellA3);
 		_evaluator.notifySetFormula(cellA5);
 		_evaluator.notifySetFormula(cellA6);
+		
+		assertEquals(sheet1.getColumnWidth(1), sheet1.getColumnWidth(2)); //column c width == column b width
+		assertEquals(HSSFColor.RED.index, row1.getCell(1).getCellStyle().getFillForegroundColor());
+		assertEquals(HSSFColor.YELLOW.index, row1.getCell(1).getCellStyle().getFillBackgroundColor());
+		assertEquals(HSSFColor.RED.index, row1.getCell(2).getCellStyle().getFillForegroundColor());
+		assertEquals(HSSFColor.YELLOW.index, row1.getCell(2).getCellStyle().getFillBackgroundColor());
 		
 		assertEquals(1, row1.getCell(6).getNumericCellValue(), 0.0000000000000001); //G1: 1
 		assertEquals(2, row2.getCell(6).getNumericCellValue(), 0.0000000000000001);	//G2: 2
@@ -261,7 +270,7 @@ public class Book6XlsInsertColumnsTest {
 		testToFormulaString(cellH4, "A4");
 		
 		//Insert C1:C4
-		BookHelper.insertRange(sheet1, 0, 2, 3, 2, true);
+		BookHelper.insertRange(sheet1, 0, 2, 3, 2, true, Range.FORMAT_LEFTABOVE);
 		_evaluator.notifySetFormula(cellA1);
 		_evaluator.notifySetFormula(cellA2);
 		_evaluator.notifySetFormula(cellA3);

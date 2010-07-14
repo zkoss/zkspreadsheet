@@ -215,7 +215,7 @@ public class Utils {
 	public static void insertRows(Sheet sheet, int startRow, int endRow) {
 		final Book book = (Book)sheet.getWorkbook();
 		final Range rng = getRange(sheet, startRow, 0, endRow, book.getSpreadsheetVersion().getLastColumnIndex());
-		rng.insert(Range.SHIFT_DEFAULT, 0);
+		rng.insert(Range.SHIFT_DEFAULT, Range.FORMAT_LEFTABOVE);
 	}
 
 	public static void deleteRows(Sheet sheet, int startRow, int endRow) {
@@ -227,7 +227,7 @@ public class Utils {
 	public static void insertColumns(Sheet sheet, int startCol, int endCol) {
 		final Book book = (Book)sheet.getWorkbook();
 		final Range rng = getRange(sheet, 0, startCol, book.getSpreadsheetVersion().getLastRowIndex(), endCol);
-		rng.insert(Range.SHIFT_DEFAULT, 0);
+		rng.insert(Range.SHIFT_DEFAULT, Range.FORMAT_LEFTABOVE);
 	}
 
 	public static void deleteColumns(Sheet sheet, int startCol, int endCol) {

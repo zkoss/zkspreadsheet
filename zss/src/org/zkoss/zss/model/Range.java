@@ -15,6 +15,7 @@ package org.zkoss.zss.model;
 
 import java.util.List;
 
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -36,8 +37,8 @@ public interface Range {
 	public final static int SHIFT_UP = 2;
 	
 	//copyOrigin of #insert
-	public final static int FORMAT_LEFTABOVE = 0;
-	public final static int FORMAT_RIGHTBELOW = 1;
+	public final static int FORMAT_LEFTABOVE = HSSFSheet.FORMAT_LEFTABOVE;
+	public final static int FORMAT_RIGHTBELOW = HSSFSheet.FORMAT_RIGHTBELOW;
 	
 	/**
 	 * Returns rich text string of this Range.
@@ -99,7 +100,7 @@ public interface Range {
 	/**
 	 * Insert this Range. 
 	 * @param shift shiftDown or shiftToRight
-	 * @param copyOrigin from where to copy the format to the insert area
+	 * @param copyOrigin from where to copy the format to the insert area(FORMAT_LEFTABOVE/FORMAT_RIGHTBELOW)
 	 */
 	public void insert(int shift, int copyOrigin);
 	

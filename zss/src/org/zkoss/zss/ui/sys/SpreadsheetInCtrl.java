@@ -58,7 +58,7 @@ public interface SpreadsheetInCtrl {
 	public void setFocusRect(int left,int top,int right,int bottom);
 	
 	/**
-	 * Indicae user do some scroll, and change loaded rectangle.
+	 * Indicate user do some scroll, and change loaded rectangle.
 	 */
 	public void setLoadedRect(int left,int top,int right,int bottom);
 }

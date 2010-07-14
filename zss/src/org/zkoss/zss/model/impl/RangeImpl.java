@@ -481,7 +481,6 @@ public class RangeImpl implements Range {
 	
 	@Override
 	public void insert(int shift, int copyOrigin) {
-//TODO copyOrigin		
 		if (_refs != null && !_refs.isEmpty()) {
 			final Ref ref = _refs.iterator().next();
 			final RefSheet refSheet = ref.getOwnerSheet();
@@ -490,10 +489,10 @@ public class RangeImpl implements Range {
 			default:
 			case SHIFT_DEFAULT:
 				if (ref.isWholeRow()) {
-					final ChangeInfo info = BookHelper.insertRows(_sheet, ref.getTopRow(), ref.getRowCount());
+					final ChangeInfo info = BookHelper.insertRows(_sheet, ref.getTopRow(), ref.getRowCount(), copyOrigin);
 					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_INSERT, SSDataEvent.MOVE_V);
 				} else if (ref.isWholeColumn()) {
-					final ChangeInfo info = BookHelper.insertColumns(_sheet, ref.getLeftCol(), ref.getColumnCount());
+					final ChangeInfo info = BookHelper.insertColumns(_sheet, ref.getLeftCol(), ref.getColumnCount(), copyOrigin);
 					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_INSERT, SSDataEvent.MOVE_H);
 				}
 				break;
@@ -501,7 +500,7 @@ public class RangeImpl implements Range {
 				if (ref.isWholeRow() || ref.isWholeColumn()) {
 					insert(SHIFT_DEFAULT, copyOrigin);
 				} else {
-					final ChangeInfo info = BookHelper.insertRange(_sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), false);
+					final ChangeInfo info = BookHelper.insertRange(_sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), false, copyOrigin);
 					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_INSERT, SSDataEvent.MOVE_H);
 				}
 				break;
@@ -509,7 +508,7 @@ public class RangeImpl implements Range {
 				if (ref.isWholeRow() || ref.isWholeColumn()) {
 					insert(SHIFT_DEFAULT, copyOrigin);
 				} else {
-					final ChangeInfo info = BookHelper.insertRange(_sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), false);
+					final ChangeInfo info = BookHelper.insertRange(_sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), false, copyOrigin);
 					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_INSERT, SSDataEvent.MOVE_V);
 				}
 				break;

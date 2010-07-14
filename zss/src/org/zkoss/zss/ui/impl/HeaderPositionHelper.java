@@ -31,11 +31,15 @@ import java.util.List;
 public class HeaderPositionHelper {
 
 	int _defaultSize;
-	int[][] _customizedSize;
+	int[][] _customizedSize; //[0]: column/row index, [1]: width/height, [2]: column/row id
 
 	public HeaderPositionHelper(int defaultSize, int[][] customizedSize) {
 		this._defaultSize = defaultSize;
 		this._customizedSize = customizedSize;
+	}
+	
+	public int getDefaultSize() {
+		return _defaultSize;
 	}
 
 	public int[][] getCostomizedSize() {

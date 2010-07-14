@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.ExcelImporter;
 import org.zkoss.zss.model.impl.HSSFBookImpl;
@@ -115,8 +116,13 @@ public class Book4XlsInsertRowsTest {
 		testToFormulaString(cellD10, "D1");
 		
 		//Insert row 5
-		BookHelper.insertRows(sheet1, 4, 1);
+		BookHelper.insertRows(sheet1, 4, 1, Range.FORMAT_LEFTABOVE);
 		_evaluator.notifySetFormula(cellC1);
+		
+		//height shall be the same
+		Row row4 = sheet1.getRow(3);
+		Row row5 = sheet1.getRow(4);
+		assertEquals(row4.getHeight(), row5.getHeight());
 		
 		Row row9 = sheet1.getRow(8);
 		assertEquals(1, row9.getCell(0).getNumericCellValue(), 0.0000000000000001); //A9: 1
@@ -209,7 +215,7 @@ public class Book4XlsInsertRowsTest {
 		testToFormulaString(cellD10, "D1");
 		
 		//Insert A5:D5
-		BookHelper.insertRange(sheet1, 4, 0, 4, 3, false);
+		BookHelper.insertRange(sheet1, 4, 0, 4, 3, false, Range.FORMAT_LEFTABOVE);
 		_evaluator.notifySetFormula(cellC1);
 		
 		Row row9 = sheet1.getRow(8);

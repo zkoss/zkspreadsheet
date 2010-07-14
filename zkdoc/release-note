@@ -22,6 +22,8 @@ ZK Spreadsheet 2.0.0 RC
   11 NPE when click on an empty cell
   14 Picture is not correctly shown(ZK Spreadsheet EE)
   24 Drag selecting an area shall snap to the boundary of merged cells
+  32 Wrong height when insert rows
+  33 Wrong width when insert columns 
 
 	------------
 ZK Spreadsheet 2.0.0 beta (Work with ZK 5 and after)
