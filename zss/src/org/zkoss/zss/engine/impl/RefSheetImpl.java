@@ -1326,7 +1326,7 @@ public class RefSheetImpl implements RefSheet {
 						changeRefIndex(_tRowIndex, tRow, newtRow, ref);
 						ref.setTopRow(newtRow);
 						
-						final int newbRow = endRow + nRow;
+						final int newbRow = bRow + nRow;
 						changeRefIndex(_bRowIndex, bRow, newbRow, ref);
 						ref.setBottomRow(newbRow);
 						
