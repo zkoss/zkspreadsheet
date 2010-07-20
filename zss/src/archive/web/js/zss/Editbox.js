@@ -254,8 +254,8 @@ zss.Editbox = zk.$extends(zk.Object, {
 			if (sh > ch + 3 || forceadj) {
 				var custColWidth = local.sheet.custColWidth,
 					custRowHeight = local.sheet.custRowHeight;
-				local.sw = custColWidth.getCellIndex(custColWidth.getStartPixel(local.col) + sw) - local.col;
-				local.sh = custRowHeight.getCellIndex(custRowHeight.getStartPixel(local.row) + sh) - local.row;
+				local.sw = custColWidth.getCellIndex(custColWidth.getStartPixel(local.col) + sw)[0] - local.col;
+				local.sh = custRowHeight.getCellIndex(custRowHeight.getStartPixel(local.row) + sh)[0] - local.row;
 			}			
 		}, 0);
 	}

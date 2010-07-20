@@ -1,5 +1,5 @@
 	------------
-ZK Spreadsheet 2.0.0 RC
+ZK Spreadsheet 2.0.0 beta2
 
 *Features:
   6 Support insert rows
@@ -17,6 +17,7 @@ ZK Spreadsheet 2.0.0 RC
   21 Support setBorders
   22 Support setColumnWidth
   23 Support setRowHeight
+  27 Support Hyperlink follow up.
 
 *Bug
   11 NPE when click on an empty cell

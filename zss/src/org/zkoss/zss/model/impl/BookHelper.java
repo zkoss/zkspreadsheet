@@ -300,6 +300,13 @@ public final class BookHelper {
 			cell.setCellValue(cv.getStringValue());
 			break;
 		}
+		Hyperlink hyperlink = cv.getHyperlink();
+		if (hyperlink != null) {
+			if (cell instanceof HSSFCell)
+				((HSSFCell)cell).setEvalHyperlink(hyperlink);
+			else
+				((XSSFCell)cell).setEvalHyperlink(hyperlink);
+		}
 	}
 	
 	private static Cell getCell(Book book, int rowIndex, int colIndex, RefSheet refSheet) {
@@ -334,14 +341,13 @@ public final class BookHelper {
 	}
 	
 	public static String formatHyperlink(Book book, Hyperlink hlink, List<int[]> indexes) {
-		//TODO hlink.getType == LINK_DOCUMENT(same book) and LINK_FILE(different book) is not handled
 		final String address = hlink.getAddress();
 		String label = hlink.getLabel();
 		if (label == null) {
 			label = address;
 		}
 		final StringBuffer sb  = new StringBuffer(address.length() + label.length() + 128);
-		sb.append("<a target=\"_blank\" href=\"");
+		sb.append("<a z.t=\"").append(hlink.getType()).append("\" href=\"");
 		int sbb = sb.length();
 		sb.append(address);
 		int sbe = sb.length();
@@ -556,8 +562,20 @@ public final class BookHelper {
 	}
 
 	public static Hyperlink getHyperlink(Cell cell) {
-		//TODO, handle the formula =HYPERLINK() case.
-		return cell.getHyperlink();
+		final Hyperlink hyperlink = cell.getHyperlink();
+		if (hyperlink != null) {
+			return hyperlink; 
+		}
+		if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+			final int type = cell.getCachedFormulaResultType();
+			if (type != Cell.CELL_TYPE_ERROR) {
+				if (cell instanceof HSSFCell)
+					return ((HSSFCell)cell).getEvalHyperlink();
+				else
+					return ((XSSFCell)cell).getEvalHyperlink();
+			}
+		}
+		return null;
 	}
 	
 	public static RichTextString getText(Cell cell) {
@@ -572,7 +590,6 @@ public final class BookHelper {
 	    final String result = new DataFormatter().formatCellValue(cell, cellType);
 		return cell instanceof HSSFCell ? new HSSFRichTextString(result) : new XSSFRichTextString(result);
 	}
-	
 	public static FormatTextImpl getFormatText(Cell cell) {
 		int cellType = cell.getCellType();
         final String formatStr = cell.getCellStyle().getDataFormatString();
@@ -580,6 +597,10 @@ public final class BookHelper {
 			final Book book = (Book)cell.getSheet().getWorkbook();
 			final CellValue cv = BookHelper.evaluate(book, cell);
 			cellType = cv.getCellType();
+//			final Hyperlink hyperlink = cv.getEvalHyperlink();
+//			if (hyperlink != null) { //might be HYPERLINK function
+//				//do some special format?
+//			}
 		} 
 		if (cellType == Cell.CELL_TYPE_STRING) {
 			if ("General".equalsIgnoreCase(formatStr) || "@".equals(formatStr)) {

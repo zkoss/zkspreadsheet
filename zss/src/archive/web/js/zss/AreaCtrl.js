@@ -38,6 +38,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		if (zk.ie8 && redrawOpacity)
 			_redrawOpacity(obj);
 	}
+
 /**
  * Locate selection area.
  */
@@ -121,8 +122,124 @@ zss.AreaCtrl = zk.$extends(zk.Object, {
  */
 zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 	//override
+	$init: function (sheet, cmp, range, mode) {
+		this.$supers('$init', arguments);
+		var wgt = this.sheet._wgt,
+			n = this.comp;
+		wgt.domListen_(n, 'onMouseMove', '_doSelAreaMouseMove');
+		wgt.domListen_(n, 'onMouseOut', '_doSelAreaMouseOut');
+	},
+	cleanup: function () {
+		var wgt = this.sheet._wgt,
+			n = this.comp;
+		wgt.domUnlisten_(n, 'onMouseMove', '_doSelAreaMouseMove');
+		wgt.domUnlisten_(n, 'onMouseOut', '_doSelAreaMouseOut');
+		this.$supers('cleanup', arguments);
+	},
 	showArea: function () {
 		_showSelectionArea(this, true);
+	},
+	_doMouseMove: function (evt) {
+		if (this._isStartHyperlink()) return; //the hyperlink followup is already started, so don't worry about the cursor
+		var sheet = this.sheet,
+			mx = evt.pageX,
+			my = evt.pageY,
+			cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false),
+			row = cellpos[0],
+			col = cellpos[1],
+			cell = sheet.getCell(row, col);
+		if (cell) {
+			var cx = cellpos[4], //x relative to cell
+				cy = cellpos[5], //y relative to cell
+				jqa = jq(cell.comp).find('a');
+			if (jqa) {
+				var aelm = jqa[0];
+				if (aelm) {
+					var top = aelm.offsetTop,
+						left = aelm.offsetLeft,
+						apar = aelm.parentNode,
+						aparleft = apar.offsetLeft,
+						apartop = apar.offsetTop,
+						asameoffp = aelm.offsetParent == apar.offsetParent,
+						celm = cell.comp,
+						csameoffp = celm.offsetParent == apar.offsetParent,
+						xmin = (asameoffp ? left - aparleft : left) + (csameoffp ? aparleft - celm.offsetLeft : aparleft); //relative to cell
+						xmax = xmin + aelm.offsetWidth,
+						ymin = (asameoffp ? top - apartop : top) + (csameoffp ? apartop - celm.offsetTop : apartop); //relative to cell
+						ymax = ymin + aelm.offsetHeight;
+					if (xmin < cx && cx < xmax && ymin < cy && cy < ymax) {
+						jq(this.icomp).css('cursor', 'pointer');
+						this._setHyperlinkElment(aelm);
+						return;
+					}
+				}
+			}
+			this._resetHyperlink();
+		}
+	},
+	_doMouseOut: function (evt) {
+		this._resetHyperlink();
+	},
+	_setHyperlinkElment: function (elm) {
+		this._hyperlinkElm = elm;
+	},
+	_startHyperlink: function(aelm) { //when mouse down
+		this._stopHyperlink(); //just in case event is not properly fired ...
+		//stupid ie8 will call _doMouseOut, and _doMouseMove between _startHyperlink and _tryAndEndHyperlink.
+		//and #_hyperlinkElm will lost in #_resetHyperlink
+		if(zk.ie8) this._start = true;
+		var t = 1000;
+		this._mdtimeout = (new Date()).getTime() + t;
+		if((aelm && aelm.tagName.toLowerCase() == 'a') || this._hyperlinkElm) {
+			var selArea = this, //delay 1 second
+				anchor = aelm;
+			setTimeout(function() {selArea._resetHyperlinkCursor(anchor)}, t);
+		}
+	},
+	_tryAndEndHyperlink: function (row, col, evt) { //when mouse click
+		var elm = this._hyperlinkElm;
+		if (elm && elm.tagName.toLowerCase() == 'a') {
+			if (!this._isHyperlinkTimeout(new Date().getTime())) {//not time out yet
+				var href = elm.href,
+					type = jq(elm).attr('z.t');
+				this.sheet._wgt.linkTo(href, type, evt);
+				this.sheet._sendOnHyperlink(row, col, href, type, evt);
+			}
+		}
+		//end of a hyperlink followup
+		this._stopHyperlink();
+	},
+	_stopHyperlink: function () {
+		//stupid ie8 will call _doMouseOut, and _doMouseMove between _startHyperlink and _tryAndEndHyperlink.
+		//and #_hyperlinkElm will lost in #_resetHyperlink
+		if(zk.ie8) delete this._start;
+		delete this._mdtimeout;
+		if (this._aelm) {
+			jq(this._aelm).css('cursor', '');
+			delete this._aelm;
+		}
+	},
+	_isStartHyperlink: function() {
+		return this._mdtimeout;
+	},
+	_isHyperlinkTimeout: function(t) {
+		return t >= this._mdtimeout;
+	},
+	_resetHyperlinkCursor: function (aelm) {
+		if (!aelm) {
+			jq(this.icomp).css('cursor', 'default');
+		} else {
+			this._aelm = aelm;
+			jq(aelm).css('cursor', 'default');
+		}
+	},
+	_resetHyperlink: function () {
+		//stupid ie8 will call _doMouseOut, and _doMouseMove between _startHyperlink and _tryAndEndHyperlink.
+		//and #_hyperlinkElm will lost in #_resetHyperlink. Must work around it
+		if (!zk.ie8 || !this._start) {
+			delete this._hyperlinkElm;
+			this._resetHyperlinkCursor();
+		}
 	}
 });
 

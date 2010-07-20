@@ -54,20 +54,25 @@ zss.PositionHelper = zk.$extends(zk.Object, {
 			v1 = customizedSize[i][1];
 			sum2 = sum2 + (v0 -index ) * defaultSize;
 			if (sum2 > px) {
-				inc = px - sum; 
-				index = index + Math.floor(inc / defaultSize);
-				return index;
+				inc = px - sum;
+				var incx = Math.floor(inc / defaultSize),
+					cpx = inc - incx * defaultSize;
+				index = index + incx;
+				return [index, cpx];
 			}
 			sum2 = sum2 + v1;
 			if (sum2 > px) {
-				return v0;
+				var cpx = px - sum2 + v1;
+				return [v0, cpx];
 			}
 			sum = sum2;
 			index = v0+1;
 		}
 		inc = px - sum; 
-		index = index + Math.floor(inc / defaultSize);
-		return index;
+		var incx = Math.floor(inc / defaultSize),
+			cpx = inc - incx * defaultSize;
+		index = index + incx;
+		return [index, cpx];
 	},
 	/**
 	 * Returns start pixel(left or top) of a cell, 

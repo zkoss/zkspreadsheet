@@ -696,10 +696,17 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			this.selType = zss.SelDrag.SELCELLS;
 			this.setDragging(new zss.SelDrag(sheet, this.selType, ls.top, ls.left,
 					_isLeftMouseEvt(evt) ? "l" : "r", ls.right));
+			
+			//start hyperlink follow up
+			if(_isLeftMouseEvt(evt) && this.selArea)
+				this.selArea._startHyperlink(elm);
+			
 		} else if ((cmp = zkS.parentByZSType(elm, "SSelDot", 1)) != null) {
 			//modify selection
 			if(_isLeftMouseEvt(evt)) {//TODO support right mouse down
-				var action = (this.selType ? this.selType : 0) | zss.SelChgDrag.MODIFY;
+				if (!this.selType)
+					this.selType = zss.SelDrag.SELCELLS;
+				var action = this.selType | zss.SelChgDrag.MODIFY;
 				this.setDragging(new zss.SelChgDrag(sheet, action));
 			}
 		} else if ((cmp = zkS.parentByZSType(elm, ["SSelInner", "SFocus", "SHighlight"], 1)) != null) {
@@ -718,6 +725,10 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				this.selType = zss.SelDrag.SELCELLS;
 				this.setDragging(new zss.SelDrag(sheet, this.selType, ls.top, ls.left,
 						_isLeftMouseEvt(evt) ? "l" : "r", ls.right));
+				
+				//start hyperlink follow up
+				if (this.selArea)
+					this.selArea._startHyperlink();
 			}
 		} else if ((cmp = zkS.parentByZSType(elm, ["SSelect"], 1)) != null) {
 			mx = evt.pageX;
@@ -741,8 +752,14 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				else if(col < range.left)
 					col = range.left;
 			
-				var action = (this.selType ? this.selType : 0) | zss.SelChgDrag.MOVE; 
+				if (!this.selType)
+					this.selType = zss.SelDrag.SELCELLS;
+				var action = this.selType | zss.SelChgDrag.MOVE; 
 				this.setDragging(new zss.SelChgDrag(sheet, action, row, col));
+				
+				//start hyperlink follow up
+				if (this.selArea)
+					this.selArea._startHyperlink();
 			}
 		} else if ((cmp = zkS.parentByZSType(elm, "SLheader")) != null 
 			|| (cmp = zkS.parentByZSType(elm, "STheader")) != null) {
@@ -801,7 +818,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			return;
 
 		//bug#1974069, leftkey & has last mouse down element,
-		if (_isLeftMouseEvt(evt) && this._lastmdelm && zkS.parentByZSType(this._lastmdelm, ["SCell", "SHighlight"], 1) != null) {
+		if (_isLeftMouseEvt(evt) && this._lastmdelm && zkS.parentByZSType(this._lastmdelm, zk.ie8 ? ["SCell", "SHighlight", "SSelInner"] : ["SCell", "SHighlight"], 1) != null) {
 			this._doMouseclick(evt, "lc", this._lastmdelm);
 		}
 		this._lastmdelm = null;
@@ -830,7 +847,11 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	 * @param string type "lc" for left click, "rc" for right click, "dbc" for double click
 	 */
 	_doMouseclick: function (evt, type, element) {
-		if (this._nfdown) return; // don't care click if it was fired when nofocus mouse down
+		if (this._nfdown) {
+			if (this.selArea) 
+				this.selArea._stopHyperlink();
+			return; // don't care click if it was fired when nofocus mouse down
+		}
 		var sheet = this,
 			wgt = sheet._wgt,
 			elm = (element) ? element : evt.domTarget,
@@ -866,9 +887,13 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			if (this._lastmdstr == mdstr)
 				fireCellEvt = wgt._isFireCellEvt(type);
 
+			if (type == 'lc' && this.selArea) {
+				this.selArea._setHyperlinkElment(elm);
+				this.selArea._tryAndEndHyperlink(row, col, evt);
+			}
 		} else if((cmp = zkS.parentByZSType(elm, "SSelDot", 1)) != null) {
 		//TODO
-		} else if((cmp = zkS.parentByZSType(elm, ["SSelect", "SFocus", "SHighlight"], 1)) != null ) {
+		} else if((cmp = zkS.parentByZSType(elm, [zk.ie8 ? "SSelInner" : "SSelect", "SFocus", "SHighlight"], 1)) != null ) {
 			//Mouse click on Selection / Focus Block
 			var sheetofs = zk(sheet.comp).revisedOffset();
 			mx = evt.pageX;
@@ -876,9 +901,16 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			shx = Math.round(mx - sheetofs[0]);
 			shy = Math.round(my - sheetofs[1]);
 			
-			var cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
+			var cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false),
+				cx = cellpos[4]; //x relative to cell 
 			row = cellpos[0];
 			col = cellpos[1];
+			
+			//try hyperlink
+			if (this.selArea) {
+				this.selArea._tryAndEndHyperlink(row, col, evt);
+			}
+			
 			mdstr = "c_" + row + "_" + col;
 			if (this._lastmdstr == mdstr) {
 				fireCellEvt = wgt._isFireCellEvt(type);
@@ -945,6 +977,11 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	_sendOnSelectionChange: function (action, left, top, right, bottom, orgleft, orgtop, orgright, orgbottom) {
 		this._wgt.fire('onSelectionChange',
 				{sheetId: this.serverSheetId, action: action, left: left,top: top, right: right, bottom: bottom, orgileft: orgleft, orgitop: orgtop, orgiright: orgright, orgibottom: orgbottom});
+	},
+	_sendOnHyperlink: function (row, col, href, type, evt) {
+		var wgt = this._wgt,
+			data = zk.copy(evt.data, {sheetId: this.serverSheetId, row: row, col: col, href: href, type: type});
+		wgt.fire('onHyperlink', data, wgt.isListen('onHyperlink') ? {toServer: true} : null);
 	},
 	_doKeypress: function (evt) {
 		if (this.isAsync() || this._skipress)//wait async event, skip
@@ -1646,6 +1683,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			break;
 			
 		default:
+			this.selType = seltype;
 			return;
 		}
 		
@@ -1984,10 +2022,10 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			custRowHeight = sheet.custRowHeight,
 			viewWidth = spcmp.clientWidth -  sheet.leftWidth,
 			viewHeight = spcmp.clientHeight - sheet.topHeight,	
-			left = custColWidth.getCellIndex(scrollLeft),
-			top = custRowHeight.getCellIndex(scrollTop),
-			right = custColWidth.getCellIndex(scrollLeft + viewWidth),
-			bottom = custRowHeight.getCellIndex(scrollTop + viewHeight);
+			left = custColWidth.getCellIndex(scrollLeft)[0],
+			top = custRowHeight.getCellIndex(scrollTop)[0],
+			right = custColWidth.getCellIndex(scrollLeft + viewWidth)[0],
+			bottom = custRowHeight.getCellIndex(scrollTop + viewHeight)[0];
 		
 		if (right > sheet.maxCols - 1) right = sheet.maxCols - 1;
 		if (bottom > sheet.maxRows - 1) bottom = sheet.maxRows - 1; 
@@ -2034,9 +2072,9 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			ry = y - dpofs[1] - sheet.topHeight;
 		}
 		
-		col = custColWidth.getCellIndex(rx);
-		row = custRowHeight.getCellIndex(ry);
-		return [row, col, rx, ry];
+		var xcol = custColWidth.getCellIndex(rx),
+			xrow = custRowHeight.getCellIndex(ry);
+		return [xrow[0], xcol[0], rx, ry, xcol[1], xrow[1]];
 	},
 	/* static, get current sheet obj */
 	_curr: function (obj) {

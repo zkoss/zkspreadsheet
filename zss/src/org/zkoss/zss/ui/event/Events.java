@@ -106,4 +106,10 @@ public class Events {
 	 * Sent when user start to typing in the ZSSEditbox
 	 */
 	public static final String ON_EDITBOX_EDITING = "onEditboxEditing";
+	
+	/**
+	 * The onHyperlink event (used with {@link HyperlinkEvent}).
+	 * Sent when user click on the hyperlink of a cell.
+	 */
+	public static final String ON_HYPERLINK = "onHyperlink";
 }

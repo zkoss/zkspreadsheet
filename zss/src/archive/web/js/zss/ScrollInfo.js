@@ -49,7 +49,7 @@ zss.ScrollInfo = zk.$extends(zss.Info, {
 			if (sheet.frozenCol > -1)
 				col += custColWidth.getStartPixel(sheet.frozenCol + 1);
 			
-			col = custColWidth.getCellIndex(col) + 1;
+			col = custColWidth.getCellIndex(col)[0] + 1;
 			this.setInfoText("Column : " + col);
 			jq(this.comp).css('text-align', 'left');
 		} else {
@@ -57,7 +57,7 @@ zss.ScrollInfo = zk.$extends(zss.Info, {
 			if (sheet.frozenRow > -1)
 				row += custRowHeight.getStartPixel(sheet.frozenRow + 1);
 
-			row = custRowHeight.getCellIndex(row) + 1;
+			row = custRowHeight.getCellIndex(row)[0] + 1;
 			this.setInfoText("Row : " + row);
 			jq(this.comp).css('text-align', 'right');
 		}

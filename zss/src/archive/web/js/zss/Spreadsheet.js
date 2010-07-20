@@ -762,6 +762,16 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		if (tp)
 			tp._doMouseout(evt);
 	},
+	_doSelAreaMouseMove: function (evt) {
+		var sel = this.sheetCtrl.selArea;
+		if (sel)
+			sel._doMouseMove(evt);
+	},
+	_doSelAreaMouseOut: function (evt) {
+		var sel = this.sheetCtrl.selArea;
+		if (sel)
+			sel._doMouseOut(evt);
+	},
 	doClick_: function (evt) {
 		this.sheetCtrl._doMouseleftclick(evt);
 		this.$supers('doClick_', arguments);
@@ -815,6 +825,22 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		e.type = "text/css";
 		e.href = uri;
 		document.getElementsByTagName("HEAD")[0].appendChild(e);
+	},
+	linkTo: function (href, type, evt) {
+		//1: LINK_URL
+		//2: LINK_DOCUMENT
+		//3: LINK_EMAIL
+		//4: LINK_FILE
+		if (type == 1 && !evt.ctrlKey) //LINK_URL, no CTRL
+			location.href = href;
+		else if (type == 1 && evt.ctrlKey)//LINK_URL, with CTRL
+			window.open(href);
+		else if (type == 3) //LINK_EMAIL
+			location.href = href;
+//		else if (type == 4) //LINK_FILE
+			//TODO LINK_FILE
+//		else if (type == 2) //LINK_DOCUMENT
+			//TODO LINK_DOCUMENT
 	}
 }, {
 	initLaterAfterCssReady: function (sheet) {
