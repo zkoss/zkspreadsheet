@@ -367,24 +367,16 @@ public final class BookHelper {
 		return cell;
 	}
 	
-	public static String formatHyperlink(Book book, Hyperlink hlink, List<int[]> indexes) {
-		final String address = hlink.getAddress();
-		String label = hlink.getLabel();
+	public static String formatHyperlink(Book book, int type, String address, String label) {
 		if (label == null) {
 			label = address;
 		}
 		final StringBuffer sb  = new StringBuffer(address.length() + label.length() + 128);
-		sb.append("<a z.t=\"").append(hlink.getType()).append("\" href=\"");
-		int sbb = sb.length();
-		sb.append(address);
-		int sbe = sb.length();
-		indexes.add(new int[] {sbb, sbe});
-		sb.append("\">");
-		sbb = sb.length();
-		sb.append(label);
-		sbe = sb.length();
-		indexes.add(new int[] {sbb, sbe});
-		sb.append("</a>");
+		sb.append("<a z.t=\"").append(type).append("\" href=\"")
+			.append(address)
+			.append("\">")
+			.append(label)
+			.append("</a>");
 		return sb.toString();
 	}
 	

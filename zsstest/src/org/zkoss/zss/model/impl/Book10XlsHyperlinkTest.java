@@ -95,12 +95,12 @@ public class Book10XlsHyperlinkTest {
 		Hyperlink hlinkA5 = Utils.getHyperlink(row5.getCell(0));
 		Hyperlink hlinkA6 = Utils.getHyperlink(row6.getCell(0));
 		
-		String stringA1 = Utils.formatHyperlink(sheet1, hlinkA1, true);
-		String stringA2 = Utils.formatHyperlink(sheet1, hlinkA2, true);
-		String stringA3 = Utils.formatHyperlink(sheet1, hlinkA3, true);
-		String stringA4 = Utils.formatHyperlink(sheet1, hlinkA4, true);
-		String stringA5 = Utils.formatHyperlink(sheet1, hlinkA5, true);
-		String stringA6 = Utils.formatHyperlink(sheet1, hlinkA6, true);
+		String stringA1 = Utils.formatHyperlink(sheet1, hlinkA1, "", true);
+		String stringA2 = Utils.formatHyperlink(sheet1, hlinkA2, "", true);
+		String stringA3 = Utils.formatHyperlink(sheet1, hlinkA3, "", true);
+		String stringA4 = Utils.formatHyperlink(sheet1, hlinkA4, "", true);
+		String stringA5 = Utils.formatHyperlink(sheet1, hlinkA5, "", true);
+		String stringA6 = Utils.formatHyperlink(sheet1, hlinkA6, "", true);
 		
 		String head = "<a z.t=\"";
 		String href = "\" href=\"";

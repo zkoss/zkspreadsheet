@@ -1625,14 +1625,12 @@ public class Spreadsheet extends XulElement {
 					break;
 				}
 				Hyperlink hlink = cell == null ? null : Utils.getHyperlink(cell);
-				String text = "";
-				if (hlink == null) {
-					final FormatText ft = (cell == null) ? null : Utils.getFormatText(cell);
-					
-					RichTextString rstr = ft != null && ft.isRichTextString() ? ft.getRichTextString() : null; 
-					text = rstr != null ? Utils.formatRichTextString(sheet, rstr, wrap) : ft != null ? Utils.escapeCellText(ft.getCellFormatResult().text, wrap, wrap) : "";
-				} else {
-					text = Utils.formatHyperlink(sheet, hlink, wrap);
+				final FormatText ft = (cell == null) ? null : Utils.getFormatText(cell);
+				
+				final RichTextString rstr = ft != null && ft.isRichTextString() ? ft.getRichTextString() : null; 
+				String text = rstr != null ? Utils.formatRichTextString(sheet, rstr, wrap) : ft != null ? Utils.escapeCellText(ft.getCellFormatResult().text, wrap, wrap) : "";
+				if (hlink != null) {
+					text = Utils.formatHyperlink(sheet, hlink, text, wrap);
 				}
 				result.setData("val", text);
 				// responseUpdateCell(row + "_" + col + "_" + _updateCellId.last(), "", sheetId, result.toString());

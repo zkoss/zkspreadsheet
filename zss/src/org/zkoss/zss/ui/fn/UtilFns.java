@@ -72,22 +72,24 @@ public class UtilFns {
 		}*/
 		Sheet sheet = ss.getSelectedSheet();
 		final Cell cell = Utils.getCell(sheet, row, column);
-		final Hyperlink hlink = cell == null ? null : Utils.getHyperlink(cell);
-		if (hlink != null) {
+		String text = "";
+		if (cell != null) {
 			boolean wrap = cell.getCellStyle().getWrapText();
-			return Utils.formatHyperlink(sheet, hlink, wrap);
-		}
-		final FormatText ft = cell == null ? null : Utils.getFormatText(cell);
-		if (ft != null) {
-			boolean wrap = cell.getCellStyle().getWrapText();
-			if (ft.isRichTextString()) {
-				final RichTextString rstr = ft.getRichTextString();
-				return rstr == null ? "" : Utils.formatRichTextString(sheet, rstr, wrap);
-			} else if (ft.isCellFormatResult()) {
-				return Utils.escapeCellText(ft.getCellFormatResult().text, wrap, wrap);
+			final FormatText ft = Utils.getFormatText(cell);
+			if (ft != null) {
+				if (ft.isRichTextString()) {
+					final RichTextString rstr = ft.getRichTextString();
+					text = rstr == null ? "" : Utils.formatRichTextString(sheet, rstr, wrap);
+				} else if (ft.isCellFormatResult()) {
+					text = Utils.escapeCellText(ft.getCellFormatResult().text, wrap, wrap);
+				}
+			}
+			final Hyperlink hlink = Utils.getHyperlink(cell);
+			if (hlink != null) {
+				text = Utils.formatHyperlink(sheet, hlink, text, wrap);
 			}
 		}
-		return "";
+		return text;
 	}
 	
 	static public Integer getRowBegin(Spreadsheet ss){

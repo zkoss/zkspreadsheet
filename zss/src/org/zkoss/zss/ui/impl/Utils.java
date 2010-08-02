@@ -64,13 +64,13 @@ public class Utils {
 	 * @param hlink the Hyperlink
 	 * @return the HTML &lt;a> format string
 	 */
-	public static String formatHyperlink(Sheet sheet, Hyperlink hlink, boolean wrap) {
+	public static String formatHyperlink(Sheet sheet, Hyperlink hlink, String cellText, boolean wrap) {
 		if (hlink == null) {
-			return "";
+			return cellText;
 		}
-		final List<int[]> indexes = new ArrayList<int[]>(2);
-		String text = BookHelper.formatHyperlink((Book)sheet.getWorkbook(), hlink, indexes);
-		return Utils.escapeCellText(text, wrap, wrap, indexes);
+		final String address = Utils.escapeCellText(hlink.getAddress(), true, false);
+		final String label = !"".equals(cellText) ? cellText : hlink.getLabel() == null ? Utils.escapeCellText(hlink.getAddress(), wrap, wrap) : Utils.escapeCellText(hlink.getLabel(), wrap, wrap);
+		return BookHelper.formatHyperlink((Book)sheet.getWorkbook(), hlink.getType(), address, label);
 	}
 	/**
 	 * Format and escape a {@link RichTextString} to HTML &lt;span> string.

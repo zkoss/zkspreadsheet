@@ -883,14 +883,14 @@ public class CellFetchCommandHelper{
 				jcell.setData("rbo", true);// right border, when processing text overflow, must take care this.
 			}
 
+			final FormatText ft = cell != null ? Utils.getFormatText(cell) : null;
+			RichTextString rstr = ft != null && ft.isRichTextString()? ft.getRichTextString() : null;
+			String text = rstr == null ? ft != null ? Utils.escapeCellText(ft.getCellFormatResult().text, wrap, wrap) : "" : Utils.formatRichTextString(sheet, rstr, wrap);
 			Hyperlink hlink = cell != null ? Utils.getHyperlink(cell) : null;
-			if (hlink == null) {
-				final FormatText ft = cell != null ? Utils.getFormatText(cell) : null;
-				RichTextString rstr = ft != null && ft.isRichTextString()? ft.getRichTextString() : null;
-				jcell.setData("txt", rstr == null ? ft != null ? Utils.escapeCellText(ft.getCellFormatResult().text, wrap, wrap) : "" : Utils.formatRichTextString(sheet, rstr, wrap));
-			} else {
-				jcell.setData("txt", Utils.formatHyperlink(sheet, hlink, wrap));
+			if (hlink != null) {
+				text = Utils.formatHyperlink(sheet, hlink, text, wrap);
 			}
+			jcell.setData("txt", text);
 
 			int textHAlign = BookHelper.getRealAlignment(cell);
 			switch(textHAlign) {
