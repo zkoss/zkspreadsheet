@@ -17,8 +17,9 @@ ZK Spreadsheet 2.0.0 beta2
   21 Support setBorders
   22 Support setColumnWidth
   23 Support setRowHeight
+  25 Support pasteSpecial
   27 Support Hyperlink follow up.
-
+  
 *Bug
   11 NPE when click on an empty cell
   14 Picture is not correctly shown(ZK Spreadsheet EE)

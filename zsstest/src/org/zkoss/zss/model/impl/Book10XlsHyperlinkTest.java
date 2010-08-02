@@ -102,16 +102,17 @@ public class Book10XlsHyperlinkTest {
 		String stringA5 = Utils.formatHyperlink(sheet1, hlinkA5, true);
 		String stringA6 = Utils.formatHyperlink(sheet1, hlinkA6, true);
 		
-		String head = "<a target=\"_blank\" href=\"";
+		String head = "<a z.t=\"";
+		String href = "\" href=\"";
 		String mid = "\">";
 		String tail = "</a>";
 		
-		assertEquals(head+hlinkA1.getAddress()+mid+hlinkA1.getLabel()+tail, stringA1);
-//		assertEquals(head+hlinkA2.getAddress()+mid+hlinkA2.getLabel()+tail, stringA2);
-		assertEquals(head+hlinkA3.getAddress()+mid+hlinkA3.getLabel()+tail, stringA3);
-		assertEquals(head+hlinkA4.getAddress()+mid+hlinkA4.getLabel()+tail, stringA4);
-		assertEquals(head+hlinkA5.getAddress()+mid+hlinkA5.getLabel()+tail, stringA5);
-		assertEquals(head+hlinkA6.getAddress()+mid+hlinkA6.getLabel()+tail, stringA6);
+		assertEquals(head+hlinkA1.getType()+href+hlinkA1.getAddress()+mid+hlinkA1.getLabel()+tail, stringA1);
+		assertEquals(head+hlinkA2.getType()+href+hlinkA2.getAddress()+mid+hlinkA2.getLabel()+tail, stringA2);
+		assertEquals(head+hlinkA3.getType()+href+hlinkA3.getAddress()+mid+hlinkA3.getLabel()+tail, stringA3);
+		assertEquals(head+hlinkA4.getType()+href+hlinkA4.getAddress()+mid+hlinkA4.getLabel()+tail, stringA4);
+		assertEquals(head+hlinkA5.getType()+href+hlinkA5.getAddress()+mid+hlinkA5.getLabel()+tail, stringA5);
+		assertEquals(head+hlinkA6.getType()+href+hlinkA6.getAddress()+mid+hlinkA6.getLabel()+tail, stringA6);
 	}
 	
 	private void testToFormulaString(Cell cell, String expect) {

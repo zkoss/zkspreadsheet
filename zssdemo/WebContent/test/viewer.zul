@@ -1,0 +1,21 @@
+<zk>
+<zscript>
+<![CDATA[
+		import org.zkoss.zss.model.*;
+		import org.zkoss.zss.model.impl.*;
+]]>
+</zscript>
+<button label="Upload" upload="true">
+	<attribute name="onUpload">
+	<![CDATA[{
+		org.zkoss.util.media.Media media = ((UploadEvent)event).getMedia();
+		String name = media.getName();
+		bookname.setValue(name);
+		java.io.InputStream is = media.getStreamData();
+		Book book1 = new ExcelImporter().imports(is, name);
+		ss1.setBook(book1);
+	}]]></attribute>
+</button>
+<label id="bookname" />
+<spreadsheet id="ss1" src="/WEB-INF/xls/test/empty.xls" maxrows="100" maxcolumns="40" vflex="true" height="300px" width="100%" style="border:1px solid #8AA3C1"/>
+</zk>

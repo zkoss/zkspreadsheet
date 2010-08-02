@@ -13,6 +13,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -21,6 +22,7 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.zkoss.zss.engine.Ref;
+import org.zkoss.zss.model.impl.BookHelper;
 
 /**
  * Range that represents a cell, a row, a column, or selection of cells containing one or 
@@ -39,6 +41,25 @@ public interface Range {
 	//copyOrigin of #insert
 	public final static int FORMAT_LEFTABOVE = HSSFSheet.FORMAT_LEFTABOVE;
 	public final static int FORMAT_RIGHTBELOW = HSSFSheet.FORMAT_RIGHTBELOW;
+	
+	//pasteType of #paste
+	public final static int PASTE_ALL = BookHelper.INNERPASTE_FORMATS + BookHelper.INNERPASTE_VALUES_AND_FORMULAS + BookHelper.INNERPASTE_COMMENTS + BookHelper.INNERPASTE_VALIDATION; 
+	public final static int PASTE_ALL_EXCEPT_BORDERS = PASTE_ALL - BookHelper.INNERPASTE_BORDERS;
+	public final static int PASTE_COLUMN_WIDTHS = BookHelper.INNERPASTE_COLUMN_WIDTHS;
+	public final static int PASTE_COMMENTS = BookHelper.INNERPASTE_COMMENTS;
+	public final static int PASTE_FORMATS = BookHelper.INNERPASTE_FORMATS; //all formats
+	public final static int PASTE_FORMULAS = BookHelper.INNERPASTE_VALUES_AND_FORMULAS; //include values and formulas
+	public final static int PASTE_FORMULAS_AND_NUMBER_FORMATS = PASTE_FORMULAS + BookHelper.INNERPASTE_NUMBER_FORMATS;
+	public final static int PASTE_VALIDATAION = BookHelper.INNERPASTE_VALIDATION;
+	public final static int PASTE_VALUES = BookHelper.INNERPASTE_VALUES;
+	public final static int PASTE_VALUES_AND_NUMBER_FORMATS = PASTE_VALUES + BookHelper.INNERPASTE_NUMBER_FORMATS;
+	
+	//pasteOp of #paste
+	public final static int PASTEOP_ADD = 1;
+	public final static int PASTEOP_SUB = 2;
+	public final static int PASTEOP_MUL = 3;
+	public final static int PASTEOP_DIV = 4;
+	public final static int PASTEOP_NONE = 0;
 	
 	/**
 	 * Returns rich text string of this Range.
@@ -188,7 +209,7 @@ public interface Range {
 	 * Return collection of individual references area of this Range.
 	 * @return collection of individual references area of this Range.
 	 */
-	public List<Ref> getRefs();
+	public Collection<Ref> getRefs();
 	
 	/**
 	 * Return the range that contains the cell specified in row, col (relative to this Range).

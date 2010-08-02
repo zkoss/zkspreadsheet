@@ -102,7 +102,9 @@ public class ExcelImporter implements Importer {
 	private Book importsFromStream(InputStream is, String bookname) 
 	throws IOException {
 		final int j = bookname.lastIndexOf("/");
-		bookname = bookname.substring(j+1);
+		if (j >=0) {
+			bookname = bookname.substring(j+1);
+		}
 		
 		// If inputstream doesn't do mark/reset, wrap up
 		if(!is.markSupported()) {

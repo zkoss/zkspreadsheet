@@ -36,6 +36,7 @@ import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.AreaErrPtg;
@@ -50,6 +51,8 @@ import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.RefPtgBase;
 import org.apache.poi.hssf.usermodel.DummyHSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFDataValidation;
+import org.apache.poi.hssf.usermodel.HSSFDataValidationHelper;
 import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
@@ -75,7 +78,14 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.ErrorConstants;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Hyperlink;
@@ -84,11 +94,15 @@ import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.NumberToTextConverter;
+import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -112,6 +126,7 @@ import org.zkoss.zss.engine.impl.MergeChange;
 import org.zkoss.zss.engine.impl.RefSheetImpl;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Books;
+import org.zkoss.zss.model.Range;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.Styles;
 
@@ -142,6 +157,18 @@ public final class BookHelper {
 	public static final int SORT_TEXT_AS_NUMBERS = 1;
 	public static final int SORT_HEADER_NO  = 0;
 	public static final int SORT_HEADER_YES = 1;	
+	
+	//inner pasteType for #paste
+	public final static int INNERPASTE_NUMBER_FORMATS = 0x01;
+	public final static int INNERPASTE_BORDERS = 0x02;
+	public final static int INNERPASTE_OTHER_FORMATS = 0x04;
+	public final static int INNERPASTE_VALUES = 0x08;
+	public final static int INNERPASTE_FORMULAS = 0x10;
+	public final static int INNERPASTE_VALUES_AND_FORMULAS = INNERPASTE_FORMULAS + INNERPASTE_VALUES;
+	public final static int INNERPASTE_COMMENTS = 0x20;
+	public final static int INNERPASTE_VALIDATION = 0x40;
+	public final static int INNERPASTE_COLUMN_WIDTHS = 0x80;
+	public final static int INNERPASTE_FORMATS = INNERPASTE_NUMBER_FORMATS + INNERPASTE_BORDERS + INNERPASTE_OTHER_FORMATS;
 	
 	public static RefBook getRefBook(Book book) {
 		return book instanceof HSSFBookImpl ? 
@@ -518,7 +545,25 @@ public final class BookHelper {
 	
 	@SuppressWarnings("unchecked")
 	public static String indexToRGB(Book book, int index) {
-		HSSFPalette palette = ((HSSFWorkbook)book).getCustomPalette();
+		if (book instanceof HSSFWorkbook) {
+			return indexToHSSFRGB((HSSFWorkbook)book, index);
+		} else {
+			return indexToXSSFRGB((XSSFWorkbook)book, index);
+		}
+	}
+	
+	private static String indexToXSSFRGB(XSSFWorkbook book, int index) {
+	    ThemesTable theme = book.getTheme();
+	    XSSFColor color = null;
+	    if (theme != null) {
+	    	color = theme.getThemeColor(index);
+	    }
+	    final String argb = color.getARGBHex();
+	    return argb == null ? AUTO_COLOR : "#"+argb.substring(2);
+ 	}
+	
+	private static String indexToHSSFRGB(HSSFWorkbook book, int index) {
+		HSSFPalette palette = book.getCustomPalette();
 		HSSFColor color = null;
 		if (palette != null) {
 			color = palette.getColor(index);
@@ -898,27 +943,217 @@ public final class BookHelper {
 		}
 		return row;
 	}
+	
+	private static CellStyle prepareCellStyle(CellStyle srcStyle, Cell dstCell, int pasteType) {
+		//TODO now assume same workbook in copying CellStyle.
+		if ((pasteType & Range.PASTE_FORMATS) == BookHelper.INNERPASTE_NUMBER_FORMATS) { //number format only
+			final CellStyle style = dstCell.getSheet().getWorkbook().createCellStyle();
+			final CellStyle dstStyle = dstCell.getCellStyle();
+			style.cloneStyleFrom(dstStyle);
+			final short fmt = srcStyle.getDataFormat();
+			style.setDataFormat(fmt);
+			return style;
+		}
+		if ((pasteType & BookHelper.INNERPASTE_BORDERS) == 0) { //no border
+			final CellStyle style = dstCell.getSheet().getWorkbook().createCellStyle();
+			final short borderLeft = style.getBorderLeft();
+			final short borderTop = style.getBorderTop();
+			final short borderRight = style.getBorderRight();
+			final short borderBottom = style.getBorderBottom();
+			final short borderLeftColor = style.getLeftBorderColor();
+			final short borderTopColor = style.getTopBorderColor();
+			final short borderRightColor = style.getRightBorderColor();
+			final short borderBottomColor = style.getBottomBorderColor();
+			style.cloneStyleFrom(srcStyle);
+			style.setBorderLeft(borderLeft );
+			style.setBorderTop(borderTop);
+			style.setBorderRight(borderRight);
+			style.setBorderBottom(borderBottom);
+			style.setLeftBorderColor(borderLeftColor);
+			style.setTopBorderColor(borderTopColor);
+			style.setRightBorderColor(borderRightColor);
+			style.setBottomBorderColor(borderBottomColor);
+			return style;
+		}
+		return srcStyle;
+	}
+	
+	private static void copyComment(Cell srcCell, Cell dstCell) {
+		final Comment srcComment = srcCell.getCellComment();
+		Comment dstComment = dstCell.getCellComment();
+		if (srcComment != null) {
+			if (dstComment == null) {
+				final Sheet dstSheet = dstCell.getSheet();
+				final Workbook dstBook = dstSheet.getWorkbook();
+				final CreationHelper dstFactory = dstBook.getCreationHelper();
+				final Drawing drawing = dstSheet.createDrawingPatriarch();
+				final ClientAnchor anchor = dstFactory.createClientAnchor();
+				dstComment = drawing.createCellComment(anchor);
+			}
+			dstComment.setString(srcComment.getString());
+			dstComment.setAuthor(srcComment.getAuthor());
+			dstComment.setVisible(srcComment.isVisible());
+			dstCell.setCellComment(dstComment);
+		} else { //srcComment is null
+			if (dstComment != null) {
+				dstCell.removeCellComment();
+			}
+		}
+	}
+	
+	private static void copyValidation(Cell srcCell, Cell dstCell) {
+		//TODO now assume same workbook in copying CellStyle.
+		final Sheet srcSheet = srcCell.getSheet();
+		final Sheet dstSheet = dstCell.getSheet();
+		
+		final int srcRow = srcCell.getRowIndex();
+		final int srcCol = srcCell.getColumnIndex();
+		final int dstRow = dstCell.getRowIndex();
+		final int dstCol = dstCell.getColumnIndex();
+		
+		final List<? extends DataValidation> dataValidations= BookHelper.getDataValidations(srcSheet);
+		if (dstSheet.equals(srcSheet)) {
+			for(DataValidation dataValidation : dataValidations) {
+				CellRangeAddressList addrList = dataValidation.getRegions();
+				boolean srcInRange = false;
+				boolean dstInRange = false;
+				for(int j = addrList.countRanges(); --j >= 0;) {
+					final CellRangeAddress addr = addrList.getCellRangeAddress(j);
+					if (!srcInRange) {
+						srcInRange = addr.isInRange(srcRow, srcCol);
+					}
+					if (!dstInRange) {
+						dstInRange = addr.isInRange(dstRow, dstCol);
+					}
+					if (srcInRange && dstInRange) { //no need to copy
+						break;
+					}
+				}
+				if (!srcInRange) { //this validation is not associated to source cell 
+					continue;
+				}
+				if (!dstInRange) { //so we shall copy this data validation to dst cell
+					dataValidation.getRegions().addCellRangeAddress(dstRow, dstCol, dstRow, dstCol);
+				}
+			}
+		} else {
+			final DataValidationHelper helper = dstSheet.getDataValidationHelper();
+			for(DataValidation dataValidation : dataValidations) {
+				CellRangeAddressList addrList = dataValidation.getRegions();
+				boolean srcInRange = false;
+				for(int j = addrList.countRanges(); --j >= 0;) {
+					final CellRangeAddress addr = addrList.getCellRangeAddress(j);
+					if (!srcInRange) {
+						srcInRange = addr.isInRange(srcRow, srcCol);
+					}
+					if (srcInRange) {
+						break;
+					}
+				}
+				if (!srcInRange) { //this validation is not associated to source cell 
+					continue;
+				}
+				//so we shall copy this data validation to dst cell
+				final DataValidationConstraint constraint = BookHelper.getConstraint(dataValidation);
+				DataValidation dstDataValidation = BookHelper.getDataValidationByConstraint(constraint, getDataValidations(dstSheet));
+				if (dstDataValidation == null) {
+					final CellRangeAddressList dstAddrList = new CellRangeAddressList(dstRow, dstCol, dstRow, dstCol);
+					dstDataValidation = helper.createValidation(constraint, dstAddrList);
+					dstSheet.addValidationData(dstDataValidation);
+				} else {
+					CellRangeAddressList dstAddrList = dstDataValidation.getRegions();
+					dstAddrList.addCellRangeAddress(dstRow, dstCol, dstRow, dstCol);
+				}
+			}
+		}
+	}
+	private static List<? extends DataValidation> getDataValidations(Sheet sheet) {
+		if (sheet instanceof HSSFSheet) {
+			return ((HSSFSheet)sheet).getDataValidations();
+		} else {
+			return ((XSSFSheet)sheet).getDataValidations();
+		}
+	}
+	private static DataValidation getDataValidationByConstraint(DataValidationConstraint constraint, List<? extends DataValidation> dataValidations) {
+		for (DataValidation dataValidation : dataValidations) {
+			if (constraint.equals(getConstraint(dataValidation)))
+				return dataValidation;
+		}
+		return null;
+	}
+	private static DataValidationConstraint getConstraint(DataValidation dataValidation) {
+		if (dataValidation instanceof HSSFDataValidation) {
+			return ((HSSFDataValidation) dataValidation).getConstraint();
+		} else {
+			return ((XSSFDataValidation) dataValidation).getValidationConstraint();
+		}
+	}
+	
 	//[0]:last, [1]:all
-	public static Set<Ref>[] copyCell(Cell cell, Sheet sheet, int rowIndex, int colIndex) {
-		//TODO now assume same workbook in copying CellStyle. if different workbook (xls to xls, use CellStyle.cloneStyleFrom())
+	public static Set<Ref>[] copyCell(Cell srcCell, Sheet sheet, int rowIndex, int colIndex, int pasteType, int pasteOp) {
+		//TODO not handle pastType == pasteValidation and pasteOp(assume none)
 		final Cell dstCell = getOrCreateCell(sheet, rowIndex, colIndex);
-		dstCell.setCellStyle(cell.getCellStyle());
-		final int cellType = cell.getCellType(); 
+		
+		//paste cell formats
+		if ((pasteType & BookHelper.INNERPASTE_FORMATS) != 0) {
+			dstCell.setCellStyle(prepareCellStyle(srcCell.getCellStyle(), dstCell, pasteType));
+		}
+		
+		//paste comment
+		if ((pasteType & BookHelper.INNERPASTE_COMMENTS) != 0) {
+			copyComment(srcCell, dstCell);
+		}
+		
+		//paste validation
+		if ((pasteType & BookHelper.INNERPASTE_VALIDATION) != 0) {
+			copyValidation(srcCell, dstCell);
+		}
+		
+		//paste value and formula
+		if ((pasteType & BookHelper.INNERPASTE_VALUES_AND_FORMULAS) != 0) {
+			final int cellType = srcCell.getCellType(); 
+			switch(cellType) {
+			case Cell.CELL_TYPE_BOOLEAN:
+				return setCellValue(dstCell, srcCell.getBooleanCellValue());
+			case Cell.CELL_TYPE_ERROR:
+				return setCellErrorValue(dstCell, srcCell.getErrorCellValue());
+	        case Cell.CELL_TYPE_NUMERIC:
+	        	return setCellValue(dstCell, srcCell.getNumericCellValue());
+	        case Cell.CELL_TYPE_STRING:
+	        	return setCellValue(dstCell, srcCell.getRichStringCellValue());
+	        case Cell.CELL_TYPE_BLANK:
+	        	return setCellValue(dstCell, (RichTextString) null);
+	        case Cell.CELL_TYPE_FORMULA:
+	        	if ((pasteType & BookHelper.INNERPASTE_FORMULAS) != 0) { //copy formula
+	        		return copyCellFormula(dstCell, srcCell);
+	        	} else { //copy evaluated value only
+	        		final Book book = (Book) srcCell.getSheet().getWorkbook();
+	        		final CellValue cv = evaluate(book, srcCell);
+	        		return setCellValueByCellValue(dstCell, cv, pasteType, pasteOp);
+	        	}
+			default:
+				throw new UiException("Unknown cell type:"+cellType);
+			}
+		}
+		
+		return null;
+	}
+	
+	private static Set<Ref>[] setCellValueByCellValue(Cell dstCell, CellValue cv, int pasteType, int pasteOp) {
+		final int cellType = cv.getCellType();
 		switch(cellType) {
 		case Cell.CELL_TYPE_BOOLEAN:
-			return setCellValue(dstCell, cell.getBooleanCellValue());
+			return setCellValue(dstCell, cv.getBooleanValue());
 		case Cell.CELL_TYPE_ERROR:
-			return setCellErrorValue(dstCell, cell.getErrorCellValue());
+			return setCellErrorValue(dstCell, cv.getErrorValue());
         case Cell.CELL_TYPE_NUMERIC:
-        	return setCellValue(dstCell, cell.getNumericCellValue());
+        	return setCellValue(dstCell, cv.getNumberValue());
         case Cell.CELL_TYPE_STRING:
-        	return setCellValue(dstCell, cell.getRichStringCellValue());
+        	return setCellValue(dstCell, cv.getStringValue());
         case Cell.CELL_TYPE_BLANK:
         	return setCellValue(dstCell, (RichTextString) null);
-        case Cell.CELL_TYPE_FORMULA:
-        	return copyCellFormula(dstCell, cell);
 		default:
-			throw new UiException("Unknown cell type:"+cellType);
+			throw new UiException("Unknown cell type in CellValue:"+cellType);
 		}
 	}
 	
@@ -1068,7 +1303,6 @@ public final class BookHelper {
 			return xptg;
 		}
 	}
-
 	
 	public CellStyle findCellStyle(Book book, 
 		short dataFormat, short fontIndex, boolean hidden, boolean locked, 
@@ -1207,9 +1441,11 @@ public final class BookHelper {
 		final Set<Ref> all = refs[1];
 		if (horizontal) {
 			final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
+			all.add(new AreaRefImpl(tRow, lCol, bRow, maxcol, refSheet));
 			shiftFormulas(all, sheet, tRow, bRow, 0, lCol, maxcol, num);
 		} else {
 			final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
+			all.add(new AreaRefImpl(tRow, lCol, maxrow, rCol, refSheet));
 			shiftFormulas(all, sheet, tRow, maxrow, num, lCol, rCol, 0);
 		}
 		
@@ -1230,9 +1466,11 @@ public final class BookHelper {
 		
 		if (horizontal) {
 			final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
+			all.add(new AreaRefImpl(tRow, lCol, bRow, maxcol, refSheet));
 			shiftFormulas(all, sheet, tRow, bRow, 0, rCol + 1, maxcol, -num);
 		} else {
 			final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
+			all.add(new AreaRefImpl(tRow, lCol, maxrow, rCol, refSheet));
 			shiftFormulas(all, sheet, bRow + 1, maxrow, -num, lCol, rCol, 0);
 		}
 		
@@ -1599,7 +1837,7 @@ public final class BookHelper {
 			final List<Cell> cells = entry.getValue();
 			for(Cell cell : cells) {
 				final int rowNum = cell.getRowIndex();
-				final Set<Ref>[] refs = BookHelper.copyCell(cell, sheet, rowNum, colNum);
+				final Set<Ref>[] refs = BookHelper.copyCell(cell, sheet, rowNum, colNum, Range.PASTE_ALL, Range.PASTEOP_NONE);
 				last.addAll(refs[0]);
 				all.addAll(refs[1]);
 			}
@@ -1647,7 +1885,7 @@ public final class BookHelper {
 			final List<Cell> cells = entry.getValue();
 			for(Cell cell : cells) {
 				final int colNum = cell.getColumnIndex();
-				final Set<Ref>[] refs = BookHelper.copyCell(cell, sheet, rowNum, colNum);
+				final Set<Ref>[] refs = BookHelper.copyCell(cell, sheet, rowNum, colNum, Range.PASTE_ALL, Range.PASTEOP_NONE);
 				last.addAll(refs[0]);
 				all.addAll(refs[1]);
 			}

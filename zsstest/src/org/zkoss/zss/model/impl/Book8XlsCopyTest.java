@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.ExcelImporter;
 import org.zkoss.zss.model.impl.HSSFBookImpl;
@@ -89,7 +90,7 @@ public class Book8XlsCopyTest {
 		testToFormulaString(cellC3, "A1+7");
 		
 		//Copy cell (C3 -> D4)
-		BookHelper.copyCell(cellC3, sheet1, 3, 3);
+		BookHelper.copyCell(cellC3, sheet1, 3, 3, Range.PASTE_ALL, Range.PASTEOP_NONE);
 		_evaluator.notifySetFormula(cellC3);
 
 		//A1,A2,A2,B2 stay as is
@@ -132,7 +133,7 @@ public class Book8XlsCopyTest {
 		testToFormulaString(cellC3, "A1+7");
 		
 		//Copy cell (C3 -> C2)
-		BookHelper.copyCell(cellC3, sheet1, 1, 2);
+		BookHelper.copyCell(cellC3, sheet1, 1, 2, Range.PASTE_ALL, Range.PASTEOP_NONE);
 		_evaluator.notifySetFormula(cellC3);
 
 		//A1,A2,A2,B2 stay as is
@@ -176,7 +177,7 @@ public class Book8XlsCopyTest {
 		testToFormulaString(cellD3, "SUM(E1:F1)");
 		
 		//Copy cell (D3 -> IV3)
-		BookHelper.copyCell(cellD3, sheet1, 2, 255);
+		BookHelper.copyCell(cellD3, sheet1, 2, 255, Range.PASTE_ALL, Range.PASTEOP_NONE);
 		_evaluator.notifySetFormula(cellD3);
 
 		//A1,A2,A2,B2,E1,F1 stay as is

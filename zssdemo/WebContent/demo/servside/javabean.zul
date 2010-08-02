@@ -65,7 +65,7 @@ Quarter:
 	quarterBean = new ReportProvider().queryQuarterBean(0, quarterBean);
 
 </zscript>
- <spreadsheet id="ss1" src="/WEB-INF/xls/demo/balancesheet2.xls" maxrows="20" maxcolumns="10" height="350px" width="98%"/>
+ <spreadsheet id="ss1" src="/WEB-INF/xls/demo/javabean.xls" maxrows="20" maxcolumns="10" height="350px" width="98%"/>
 </window>
 				]]></attribute>
 			</textbox>
