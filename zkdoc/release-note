@@ -3,7 +3,14 @@ ZK Spreadsheet 2.0.0 RC
 
 *Features:
   36 Support Range.setStyle
+  37 Support Range.autoFill
   38 Support Range.clearContent
+  40 Support Range.fillUp
+  41 Support Range.fillDown
+  42 Support Range.fillRight
+  43 Support Range.fillLeft
+  
+*Bug
   
 	------------
 ZK Spreadsheet 2.0.0 beta2
