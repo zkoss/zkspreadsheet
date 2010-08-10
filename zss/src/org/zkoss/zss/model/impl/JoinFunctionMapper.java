@@ -32,17 +32,13 @@ import org.zkoss.xel.taglib.Taglibs;
  *
  */
 public class JoinFunctionMapper implements FunctionMapper {
-	private static Taglib SSTAGLIB = new Taglib("", "web/WEB-INF/tld/zss/function.tld"); 
 	private LinkedHashSet<FunctionMapper> _mappers;
 	
-	public JoinFunctionMapper() {
+	public JoinFunctionMapper(FunctionMapper mapper) {
 		_mappers = new LinkedHashSet<FunctionMapper>(4);
-		
-		//prepare the default spreadsheet function mapper.
-		final List<Taglib> taglibs = new ArrayList<Taglib>(1);
-		taglibs.add(SSTAGLIB);
-		FunctionMapper mapper = Taglibs.getFunctionMapper(taglibs, new ClassLocator());
-		addFunctionMapper(mapper);
+		if (mapper != null) {
+			addFunctionMapper(mapper);
+		}
 	}
 	
 	/* Add a new Function Mapper.

@@ -1,4 +1,11 @@
 	------------
+ZK Spreadsheet 2.0.0 RC
+
+*Features:
+  36 Support Range.setStyle
+  38 Support Range.clearContent
+  
+	------------
 ZK Spreadsheet 2.0.0 beta2
 
 *Features:

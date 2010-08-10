@@ -182,8 +182,8 @@ public class Spreadsheet extends XulElement {
 	private static final String ROW_SIZE_HELPER_KEY = "_rowCellSize";
 	private static final String COLUMN_SIZE_HELPER_KEY = "_colCellSize";
 	private static final String MERGE_MATRIX_KEY = "_mergeRange";
-	private static final String WIDGET_HANDLER_KEY = "zswidget_handler";
-	private static final String WIDGET_LOADERS_KEY = "zswidget_loaders";
+	private static final String WIDGET_HANDLER_KEY = "org.zkoss.zss.ui.sys.WidgetHandler";
+	private static final String WIDGET_LOADERS_KEY = "org.zkoss.zss.ui.sys.WidgetLoader";
 
 	transient private Book _book; // the spreadsheet book
 

@@ -14,13 +14,12 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model;
 
 import java.util.Collection;
-import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.model.impl.BookHelper;
 
@@ -39,8 +38,8 @@ public interface Range {
 	public final static int SHIFT_UP = 2;
 	
 	//copyOrigin of #insert
-	public final static int FORMAT_LEFTABOVE = HSSFSheet.FORMAT_LEFTABOVE;
-	public final static int FORMAT_RIGHTBELOW = HSSFSheet.FORMAT_RIGHTBELOW;
+	public final static int FORMAT_LEFTABOVE = Sheet.FORMAT_LEFTABOVE;
+	public final static int FORMAT_RIGHTBELOW = Sheet.FORMAT_RIGHTBELOW;
 	
 	//pasteType of #paste
 	public final static int PASTE_ALL = BookHelper.INNERPASTE_FORMATS + BookHelper.INNERPASTE_VALUES_AND_FORMULAS + BookHelper.INNERPASTE_COMMENTS + BookHelper.INNERPASTE_VALIDATION; 
@@ -55,12 +54,25 @@ public interface Range {
 	public final static int PASTE_VALUES_AND_NUMBER_FORMATS = PASTE_VALUES + BookHelper.INNERPASTE_NUMBER_FORMATS;
 	
 	//pasteOp of #paste
-	public final static int PASTEOP_ADD = 1;
-	public final static int PASTEOP_SUB = 2;
-	public final static int PASTEOP_MUL = 3;
-	public final static int PASTEOP_DIV = 4;
-	public final static int PASTEOP_NONE = 0;
+	public final static int PASTEOP_ADD = BookHelper.PASTEOP_ADD;
+	public final static int PASTEOP_SUB = BookHelper.PASTEOP_SUB;
+	public final static int PASTEOP_MUL = BookHelper.PASTEOP_MUL;
+	public final static int PASTEOP_DIV = BookHelper.PASTEOP_DIV;
+	public final static int PASTEOP_NONE = BookHelper.PASTEOP_NONE;
 	
+	//fillType of #autoFill
+	public final static int FILL_COPY = BookHelper.FILL_COPY;
+	public final static int FILL_DAYS = BookHelper.FILL_DAYS;
+	public final static int FILL_DEFAULT = BookHelper.FILL_DEFAULT;
+	public final static int FILL_FORMATS = BookHelper.FILL_FORMATS;
+	public final static int FILL_MONTHS = BookHelper.FILL_MONTHS;
+	public final static int FILL_SERIES = BookHelper.FILL_SERIES;
+	public final static int FILL_VALUES = BookHelper.FILL_VALUES;
+	public final static int FILL_WEEKDAYS = BookHelper.FILL_WEEKDAYS;
+	public final static int FILL_YEARS = BookHelper.FILL_YEARS;
+	public final static int FILL_GROWTH_TREND = BookHelper.FILL_GROWTH_TREND;
+	public final static int FILL_LINER_TREND = BookHelper.FILL_LINER_TREND;
+		
 	/**
 	 * Returns rich text string of this Range.
 	 * @return rich text string of this Range.
@@ -117,6 +129,16 @@ public interface Range {
 	 * @param transpose true to transpose rows and columns when pasting to this range; default false.
 	 */
 	public void pasteSpecial(int pasteType, int operation, boolean SkipBlanks, boolean transpose);
+	
+	/**
+	 * Pastes to a destination Range from this range.
+	 * @param dstRange the destination range to be pasted into.
+	 * @param pasteType the part of the range to be pasted.
+	 * @param operation the paste operation
+	 * @param SkipBlanks true to not have blank cells in the ranage on the Clipboard pasted into this range; default false.
+	 * @param transpose true to transpose rows and columns when pasting to this range; default false.
+	 */
+	public void pasteSpecial(Range dstRange, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose);
 	
 	/**
 	 * Insert this Range. 
@@ -218,4 +240,43 @@ public interface Range {
 	 * @return the range that contains the cell specified in row, col (relative to this Range).
 	 */
 	public Range getCells(int row, int col);
+	
+	/**
+	 * Sets a Style object to this Range.
+	 * @param style the style object
+	 */
+	public void setStyle(CellStyle style);
+	
+	/**
+	 * Perform an auto fill on the specified destination Range. Note the given destination Range
+	 * must include this source Range.
+	 * @param dstRange destination range to do the auto fill. Note the given destination Range must include this source Range
+	 * @param fillType the fillType
+	 */
+	public void autoFill(Range dstRange, int fillType);
+	
+	/**
+	 * Clears the data from this Range.
+	 */
+	public void clearContents();
+	
+	/**
+	 * Fills down from the top cells of this Range to the rest of this Range.
+	 */
+	public void fillDown();
+	
+	/**
+	 * Fills left from the rightmost cells of this Range to the rest of this Range.
+	 */
+	public void fillLeft();
+	
+	/**
+	 * Fills right from the leftmost cells of this Range to the rest of this Range.
+	 */
+	public void fillRight();
+
+	/**
+	 * Fills up from the bottom cells of this Range to the rest of this Range.
+	 */
+	public void fillUp();
 }

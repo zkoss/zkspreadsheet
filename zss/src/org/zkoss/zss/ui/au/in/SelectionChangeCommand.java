@@ -71,7 +71,8 @@ public class SelectionChangeCommand implements Command {
 				action, left, top, right, bottom, orgileft, orgitop, orgiright,
 				orgibottom);
 		
-		if (evt.getAction() == SelectionChangeEvent.MOVE) {
+		final int xaction = evt.getAction();
+		if (xaction == SelectionChangeEvent.MOVE) {
 			final int nRow = top - orgitop;
 			final int nCol = left - orgileft;
 			
@@ -84,6 +85,18 @@ public class SelectionChangeCommand implements Command {
 				break;
 			case CellSelectionEvent.SELECT_CELLS:
 				Utils.moveCells(sheet, orgitop, orgileft, orgibottom, orgiright, nRow, nCol);
+				break;
+			}
+		} else if (xaction == SelectionChangeEvent.MODIFY) {
+			switch(evt.getSelectionType()) {
+			case CellSelectionEvent.SELECT_ROW:
+				Utils.fillRows(sheet, orgitop, orgibottom, top, bottom);
+				break;
+			case CellSelectionEvent.SELECT_COLUMN:
+				Utils.fillColumns(sheet, orgileft, orgiright, left, right);
+				break;
+			case CellSelectionEvent.SELECT_CELLS:
+				Utils.fillCells(sheet, orgitop, orgileft, orgibottom, orgiright, top, left, bottom, right);
 				break;
 			}
 		}

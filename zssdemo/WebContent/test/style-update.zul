@@ -3,9 +3,13 @@
 <zk>
 	<zscript>
 	<![CDATA[
+	 	import org.apache.poi.ss.usermodel.Workbook;
 		import org.apache.poi.ss.usermodel.Sheet;
 		import org.apache.poi.ss.usermodel.Cell;
+		import org.apache.poi.ss.usermodel.CellStyle;
 		import org.zkoss.zss.model.impl.BookHelper;
+		import org.zkoss.zss.model.impl.RangeImpl;
+		import org.zkoss.zss.model.Range;
 		import org.zkoss.zss.ui.impl.Utils;
 		import org.zkoss.zss.ui.Rect;
 	]]>
@@ -19,24 +23,23 @@ Cells in Column C should have same format in column B.
 		]]></html>
 		<button label="set format">
 			<attribute name="onClick">
-			<![CDATA[
-				sheet = ss1.getSelectedSheet();
- 				for( i = 0 ; i < 20; i++ )
- 				{
-					sheet.getCell(i,2).setFormat(sheet.getCell(i,1).getFormat());
-				}
-			]]>
+			<![CDATA[{
+				Sheet sheet = ss1.getSelectedSheet();
+				RangeImpl srcRange = Utils.getRange(sheet, 0, 1, 19, 1);
+				Range dstRange = Utils.getRange(sheet, 0, 3, 19, 3);
+				srcRange.pasteSpecial(dstRange, Range.PASTE_FORMATS, Range.PASTEOP_NONE, false, false);
+			}]]>
 			</attribute>
 		</button>
 		<button label="clear">
 			<attribute name="onClick">
-			<![CDATA[
-				sheet = ss1.getSelectedSheet();
- 				for( i = 0 ; i < 20; i++ )
- 				{
-					sheet.getCell(i,3).setFormat(null);
-				}
- 			]]>
+			<![CDATA[{
+				Sheet sheet = ss1.getSelectedSheet();
+			    Workbook book = sheet.getWorkbook();
+				CellStyle style = book.getCellStyleAt((short) 0);
+				RangeImpl rng = Utils.getRange(sheet, 0, 3, 19, 3);
+				rng.setStyle(style);
+ 			}]]>
 			</attribute>
 		</button>
 		<button label="invalidate" onClick="ss1.invalidate()"/>

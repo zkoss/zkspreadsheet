@@ -60,9 +60,5 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			<mold-name>default</mold-name>
 			<mold-uri>mold/spreadsheet.js</mold-uri>
 		</mold>
-		<!--custom-attribute>
-			<attribute-name>zss_titlemode</attribute-name>
-			<attribute-value>index</attribute-value>
-		</custom-attribute-->
 	</component>
 </language-addon>

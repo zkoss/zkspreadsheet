@@ -13,9 +13,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
-import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
-import java.awt.font.TextLayout;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.AttributedString;
@@ -25,6 +23,7 @@ import java.util.Set;
 import org.apache.poi.hssf.record.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.hssf.record.formula.udf.UDFFinder;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.RefBookDependencyTracker;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.Font;
@@ -37,8 +36,8 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.impl.RefBookImpl;
+import org.zkoss.zss.formula.FunctionResolver;
 import org.zkoss.zss.formula.NoCacheClassifier;
-import org.zkoss.zss.formula.ZKUDFFinder;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Books;
 
@@ -56,15 +55,17 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	private RefBook _refBook;
 	private Books _books;
 	private int _defaultCharWidth = 7; //TODO: don't know how to calculate this yet per the default font.
+	private final String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver";
 
 	public XSSFBookImpl(String bookname, InputStream is) throws IOException {
 		super(is);
 		_bookname = bookname;
-		_evaluator = XSSFFormulaEvaluator.create(this, new NoCacheClassifier(), 
-				new AggregatingUDFFinder(UDFFinder.DEFAULT, ZKUDFFinder.instance));
+		final FunctionResolver resolver = (FunctionResolver) BookHelper.getLibraryInstance(FUN_RESOLVER);
+		_evaluator = XSSFFormulaEvaluator.create(this, NoCacheClassifier.instance, 
+				resolver == null ? null : new AggregatingUDFFinder(UDFFinder.DEFAULT, resolver.getUDFFinder()));
 		_bookEvaluator = _evaluator.getWorkbookEvaluator(); 
 		_bookEvaluator.setDependencyTracker(new RefBookDependencyTracker(this));
-		_functionMapper =  new JoinFunctionMapper();
+		_functionMapper = new JoinFunctionMapper(resolver == null ? null : resolver.getFunctionMapper());
 		_variableResolver = new JoinVariableResolver();
 	}
 	

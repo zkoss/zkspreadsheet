@@ -680,4 +680,44 @@ public class Utils {
 		final Range rng = Utils.getRange(sheet, tRow, lCol, bRow, rCol);
 		rng.move(nRow, nCol);
 	}
+	
+	public static void fillRows(Sheet sheet, int srctRow, int srcbRow, int dsttRow, int dstbRow) {
+		final int maxcol = ((Book)sheet.getWorkbook()).getSpreadsheetVersion().getLastColumnIndex();
+		fillRows(sheet, srctRow, 0, srcbRow, maxcol, dsttRow, dstbRow);
+	}
+	
+	private static void fillRows(Sheet sheet, int srctRow, int srclCol, int srcbRow, int srcrCol, int dsttRow, int dstbRow) {
+		if (srctRow == dsttRow && srcbRow > dstbRow) { //if remove bottom
+			final Range rng = Utils.getRange(sheet, dstbRow+1, srclCol, srcbRow, srcrCol);
+			rng.clearContents();
+		} else { //fill
+			final Range srcRange = Utils.getRange(sheet, srctRow, srclCol, srcbRow, srcrCol);
+			final Range dstRange = Utils.getRange(sheet, dsttRow, srclCol, dstbRow, srcrCol); 
+			srcRange.autoFill(dstRange, Range.FILL_DEFAULT);
+		}
+	}
+	
+	public static void fillColumns(Sheet sheet, int srclCol, int srcrCol, int dstlCol, int dstrCol) {
+		final int maxrow = ((Book)sheet.getWorkbook()).getSpreadsheetVersion().getLastRowIndex();
+		fillColumns(sheet, 0, srclCol, maxrow, srcrCol, dstlCol, dstrCol);
+	}
+	
+	private static void fillColumns(Sheet sheet, int srctRow, int srclCol, int srcbRow, int srcrCol, int dstlCol, int dstrCol) {
+		if (srclCol == dstlCol && srcrCol > dstrCol) { //if remove right
+			final Range rng = Utils.getRange(sheet, srctRow, dstrCol+1, srcbRow, srcrCol);
+			rng.clearContents();
+		} else { //fill
+			final Range srcRange = Utils.getRange(sheet, srctRow, srclCol, srcbRow, srcrCol);
+			final Range dstRange = Utils.getRange(sheet, srctRow, dstlCol, srcbRow, dstrCol); 
+			srcRange.autoFill(dstRange, Range.FILL_DEFAULT);
+		}
+	}
+	
+	public static void fillCells(Sheet sheet, int srctRow, int srclCol, int srcbRow, int srcrCol, int dsttRow, int dstlCol, int dstbRow, int dstrCol) {
+		if (srctRow == dsttRow && srcbRow == dstbRow) { //fillColumns
+			fillColumns(sheet, srctRow, srclCol, srcbRow, srcrCol, dstlCol, dstrCol);
+		} else if (srclCol == dstlCol && srcrCol == dstrCol) { //fillRows
+			fillRows(sheet, srctRow, srclCol, srcbRow, srcrCol, dsttRow, dstbRow);
+		}
+	}
 }

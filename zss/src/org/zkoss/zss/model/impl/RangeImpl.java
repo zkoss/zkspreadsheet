@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
@@ -578,6 +579,12 @@ public class RangeImpl implements Range {
 	@Override
 	public void pasteSpecial(int pasteType, int operation, boolean SkipBlanks, boolean transpose) {
 		//TODO
+		//clipboardRange.pasteSpecial(this, pasteType, pasteOp, skipBlanks, transpose);
+	}
+	
+	@Override
+	public void pasteSpecial(Range dstRange, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
+		paste0(dstRange, pasteType, pasteOp, skipBlanks, transpose);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -964,6 +971,116 @@ public class RangeImpl implements Range {
 			final Sheet sheet = BookHelper.getSheet(_sheet, refSheet);
 			final ChangeInfo info = BookHelper.moveRange(sheet, tRow, lCol, bRow, rCol, nRow, nCol);
 			notifyMergeChange(refBook, info, ref, SSDataEvent.ON_CONTENTS_CHANGE, SSDataEvent.MOVE_NO);
+		}
+	}
+	
+	@Override
+	public void setStyle(CellStyle style) {
+		if (_refs != null && !_refs.isEmpty()) {
+			final Set<Ref> all = new HashSet<Ref>();
+			for (Ref ref : _refs) {
+				final RefSheet refSheet = ref.getOwnerSheet();
+				final int tRow = ref.getTopRow();
+				final int lCol = ref.getLeftCol();
+				final int bRow = ref.getBottomRow();
+				final int rCol = ref.getRightCol();
+				final Sheet sheet = BookHelper.getSheet(_sheet, refSheet);
+				final Set<Ref> refs = BookHelper.setCellStyle(sheet, tRow, lCol, bRow, rCol, style);
+				all.addAll(refs);
+			}
+			if (!all.isEmpty()) {
+				final Book book = (Book) _sheet.getWorkbook();
+				BookHelper.notifyCellChanges(book, all);
+			}
+		}
+	}
+	
+	@Override
+	public void autoFill(Range dstRange, int fillType) {
+		if (_refs != null && !_refs.isEmpty() && !dstRange.getRefs().isEmpty()) {
+			//destination range allow only one contiguous reference
+			if (dstRange.getRefs().size() > 1) {
+				throw new UiException("Command cannot be used on multiple selections");
+			}
+			final Ref srcRef = _refs.iterator().next();
+			final Ref dstRef = dstRange.getRefs().iterator().next();
+			fillRef(srcRef, dstRef, fillType);
+		}
+	}
+	
+	@Override
+	public void clearContents() {
+		//TODO not implemented yet
+		if (_refs != null && !_refs.isEmpty()) {
+			final Ref ref = _refs.iterator().next();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final int tRow = ref.getTopRow();
+			final int lCol = ref.getLeftCol();
+			final int bRow = ref.getBottomRow();
+			final int rCol = ref.getRightCol();
+			final Sheet sheet = BookHelper.getSheet(_sheet, refSheet);
+			clearContents(sheet, tRow, lCol, bRow, rCol);
+		}
+	}
+	
+	private void clearContents(Sheet sheet, int tRow, int lCol, int bRow, int rCol) {
+		final Set<Ref> last = new HashSet<Ref>();
+		final Set<Ref> all = new HashSet<Ref>();
+		for(int r = tRow; r <= bRow; ++r) {
+			for(int c = lCol; c <= rCol; ++c) {
+				final Set<Ref>[] refs = BookHelper.clearCell(sheet, r, c);
+				if (refs != null) {
+					last.addAll(refs[0]);
+					all.addAll(refs[1]);
+				}
+			}
+		}
+		final Book book = (Book) sheet.getWorkbook();
+		all.add(new AreaRefImpl(tRow, lCol, bRow, rCol, BookHelper.getRefSheet(book, sheet)));
+		BookHelper.reevaluateAndNotify(book, last, all);
+	}
+	
+	private void fillRef(Ref srcRef, Ref dstRef, int fillType) {
+		final Set<Ref>[] refs = BookHelper.fill(_sheet, srcRef, dstRef, fillType);
+		if (refs != null) {
+			final Book book = (Book) _sheet.getWorkbook();
+			BookHelper.reevaluateAndNotify(book, refs[0], refs[1]);
+		}
+	}
+
+	@Override
+	public void fillDown() {
+		if (_refs != null && !_refs.isEmpty()) {
+			final Ref srcRef = _refs.iterator().next();
+			final Ref dstRef = new AreaRefImpl(srcRef.getTopRow(), srcRef.getLeftCol(), srcRef.getTopRow(), srcRef.getRightCol(), srcRef.getOwnerSheet());
+			fillRef(srcRef, dstRef, Range.FILL_COPY);
+		}
+	}
+	
+	@Override
+	public void fillLeft() {
+		if (_refs != null && !_refs.isEmpty()) {
+			final Ref srcRef = _refs.iterator().next();
+			final Ref dstRef = new AreaRefImpl(srcRef.getTopRow(), srcRef.getRightCol(), srcRef.getBottomRow(), srcRef.getRightCol(), srcRef.getOwnerSheet());
+			fillRef(srcRef, dstRef, Range.FILL_COPY);
+		}
+	}
+
+	@Override
+	public void fillRight() {
+		if (_refs != null && !_refs.isEmpty()) {
+			final Ref srcRef = _refs.iterator().next();
+			final Ref dstRef = new AreaRefImpl(srcRef.getTopRow(), srcRef.getLeftCol(), srcRef.getBottomRow(), srcRef.getLeftCol(), srcRef.getOwnerSheet());
+			fillRef(srcRef, dstRef, Range.FILL_COPY);
+		}
+	}
+
+	@Override
+	public void fillUp() {
+		if (_refs != null && !_refs.isEmpty()) {
+			final Ref srcRef = _refs.iterator().next();
+			final Ref dstRef = new AreaRefImpl(srcRef.getBottomRow(), srcRef.getLeftCol(), srcRef.getBottomRow(), srcRef.getRightCol(), srcRef.getOwnerSheet());
+			fillRef(srcRef, dstRef, Range.FILL_COPY);
 		}
 	}
 }

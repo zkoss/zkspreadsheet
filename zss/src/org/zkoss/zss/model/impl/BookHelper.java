@@ -14,6 +14,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl;
 
 import java.awt.Color;
+import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,6 +50,7 @@ import org.apache.poi.hssf.record.formula.Ref3DPtg;
 import org.apache.poi.hssf.record.formula.RefErrorPtg;
 import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.RefPtgBase;
+import org.apache.poi.hssf.record.formula.udf.UDFFinder;
 import org.apache.poi.hssf.usermodel.DummyHSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDataValidation;
@@ -73,6 +75,7 @@ import org.apache.poi.ss.format.CellFormatType;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.PtgShifter;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -110,6 +113,8 @@ import org.apache.poi.xssf.usermodel.XSSFPicture;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.zkoss.lang.Classes;
+import org.zkoss.lang.Library;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelContext;
@@ -158,7 +163,7 @@ public final class BookHelper {
 	public static final int SORT_HEADER_NO  = 0;
 	public static final int SORT_HEADER_YES = 1;	
 	
-	//inner pasteType for #paste
+	//inner pasteType for #paste & #fill
 	public final static int INNERPASTE_NUMBER_FORMATS = 0x01;
 	public final static int INNERPASTE_BORDERS = 0x02;
 	public final static int INNERPASTE_OTHER_FORMATS = 0x04;
@@ -169,6 +174,30 @@ public final class BookHelper {
 	public final static int INNERPASTE_VALIDATION = 0x40;
 	public final static int INNERPASTE_COLUMN_WIDTHS = 0x80;
 	public final static int INNERPASTE_FORMATS = INNERPASTE_NUMBER_FORMATS + INNERPASTE_BORDERS + INNERPASTE_OTHER_FORMATS;
+	
+	private final static int INNERPASTE_FILL_COPY = INNERPASTE_FORMATS + INNERPASTE_VALUES_AND_FORMULAS + INNERPASTE_VALIDATION;   
+	private final static int INNERPASTE_FILL_VALUE = INNERPASTE_VALUES_AND_FORMULAS + INNERPASTE_VALIDATION;   
+	private final static int INNERPASTE_FILL_FORMATS = INNERPASTE_FORMATS;   
+
+	//inner pasteOp for #paste & #fill
+	public final static int PASTEOP_ADD = 1;
+	public final static int PASTEOP_SUB = 2;
+	public final static int PASTEOP_MUL = 3;
+	public final static int PASTEOP_DIV = 4;
+	public final static int PASTEOP_NONE = 0;
+
+	//inner fillType for #fill
+	public final static int FILL_DEFAULT = 0x01; //system determine
+	public final static int FILL_FORMATS = 0x02; //formats only
+	public final static int FILL_VALUES = 0x04; //value+formula+validation+hyperlink (no comment)
+	public final static int FILL_COPY = 0x06; //value+formula+validation+hyperlink, formats
+	public final static int FILL_DAYS = 0x10;
+	public final static int FILL_WEEKDAYS = 0x20;
+	public final static int FILL_MONTHS = 0x30;
+	public final static int FILL_YEARS = 0x40;
+	public final static int FILL_GROWTH_TREND = 0x100; //multiplicative relation
+	public final static int FILL_LINER_TREND = 0x200; //additive relation
+	public final static int FILL_SERIES = FILL_LINER_TREND;
 	
 	public static RefBook getRefBook(Book book) {
 		return book instanceof HSSFBookImpl ? 
@@ -718,6 +747,27 @@ public final class BookHelper {
 	public static Set<Ref>[] removeCell(Sheet sheet, int rowIndex, int colIndex) {
 		final Cell cell = getCell(sheet, rowIndex, colIndex);
 		return removeCell(cell, true);
+	}
+	
+	public static Set<Ref>[] clearCell(Sheet sheet, int rowIndex, int colIndex) {
+		final Cell cell = getCell(sheet, rowIndex, colIndex);
+		return clearCell(cell);
+	}
+	
+	private static Set<Ref>[] clearCell(Cell cell) {
+		if (cell != null) {
+			//remove formula cell and create a blank one
+			removeFormula(cell, true);
+			//return the affected dependents [0]: last, [1]: all
+			final Set<Ref>[] refs = getBothDependents(cell);
+			//clear the cell
+			//TODO has to clear hyperlink, too
+			if (cell != null) {
+				cell.setCellValue((String)null);
+			}
+			return refs;
+		}
+		return null;
 	}
 	
 	private static Set<Ref>[] removeCell(Cell cell, boolean clearPtgs) {
@@ -2252,5 +2302,277 @@ public final class BookHelper {
 	public static short getRowHeight(Sheet sheet, int row) {
 		final Row rowx = sheet.getRow(row);
 		return rowx != null ? rowx.getHeight() : sheet.getDefaultRowHeight();
+	}
+	
+	public static Set<Ref> setCellStyle(Sheet sheet, int tRow, int lCol, int bRow, int rCol, CellStyle style) {
+		for(int r = tRow; r <= bRow; ++r) {
+			for (int c = lCol; c <= rCol; ++c) {
+				final Cell cell = BookHelper.getOrCreateCell(sheet, r, c);
+				cell.setCellStyle(style);
+			}
+		}
+		final Set<Ref> all = new HashSet<Ref>(1);
+		final RefSheet refSheet = BookHelper.getRefSheet((Book)sheet.getWorkbook(), sheet);
+		all.add(new AreaRefImpl(tRow, lCol, bRow, rCol, refSheet));
+		
+		return all; 
+	}
+	
+	//inner fill direction for #fill
+	private static final int FILL_INVALID = 0;
+	private static final int FILL_NONE = 1; //no way to fill
+	private static final int FILL_UP = 2;
+	private static final int FILL_DOWN = 3;
+	private static final int FILL_RIGHT = 4;
+	private static final int FILL_LEFT = 5;
+	
+	//[0]:last [1]:all
+	public static Set<Ref>[] fill(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+//TODO, FILL_DEFAULT shall check the contents of the source cell, now we default to FILL_COPY
+if (fillType == FILL_DEFAULT) {
+	fillType = FILL_COPY;
+}
+		final int fillDir = BookHelper.getFillDirection(sheet, srcRef, dstRef);
+		if (fillDir == BookHelper.FILL_NONE) { //nothing to fill up, just return
+			return null;
+		}
+		switch(fillDir) {
+		case FILL_UP:
+			return fillUp(sheet, srcRef, dstRef, fillType);
+		case FILL_DOWN:
+			return fillDown(sheet, srcRef, dstRef, fillType);
+		case FILL_RIGHT:
+			return fillRight(sheet, srcRef, dstRef, fillType);
+		case FILL_LEFT:
+			return fillLeft(sheet, srcRef, dstRef, fillType);
+		}
+		//FILL_INVALID
+		throw new UiException("Destination range must include source range and can be fill in one direction only"); 
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Set<Ref>[] fillDown(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
+		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
+		switch(fillType) {
+		case FILL_COPY:
+			pasteType = BookHelper.INNERPASTE_FILL_COPY;
+			break;
+		case FILL_FORMATS:
+			pasteType = BookHelper.INNERPASTE_FILL_FORMATS;
+			break;
+		case FILL_VALUES:
+			pasteType = BookHelper.INNERPASTE_FILL_VALUE;
+			break;
+		default:
+			return null;
+		}
+		final Set<Ref> last = new HashSet<Ref>();
+		final Set<Ref> all = new HashSet<Ref>();
+		final int rowCount = srcRef.getRowCount();
+		final int srctRow = srcRef.getTopRow();
+		final int srcbRow = srcRef.getBottomRow();
+		final int srclCol = srcRef.getLeftCol();
+		final int srcrCol = srcRef.getRightCol();
+		
+		final int dstbRow = dstRef.getBottomRow();
+		for(int srcIndex = 0, r = srcbRow + 1; r <= dstbRow; ++r, ++srcIndex) {
+			for(int c = srclCol; c <= srcrCol; ++c) {
+				final int srcrow = srctRow + srcIndex % rowCount;
+				final Cell srcCell = BookHelper.getCell(sheet, srcrow, c);
+				final Set<Ref>[] refs = srcCell == null ? 
+						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE); 
+				if (refs != null) {
+					last.addAll(refs[0]);
+					all.addAll(refs[1]);
+				}
+			}
+		}
+		final RefSheet refSheet = BookHelper.getRefSheet((Book)sheet.getWorkbook(), sheet);
+		all.add(new AreaRefImpl(srcbRow + 1, srclCol, dstbRow, srcrCol, refSheet));
+		return (Set<Ref>[]) new Set[] {last, all};
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Set<Ref>[] fillUp(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
+		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
+		switch(fillType) {
+		case FILL_COPY:
+			pasteType = BookHelper.INNERPASTE_FILL_COPY;
+			break;
+		case FILL_FORMATS:
+			pasteType = BookHelper.INNERPASTE_FILL_FORMATS;
+			break;
+		case FILL_VALUES:
+			pasteType = BookHelper.INNERPASTE_FILL_VALUE;
+			break;
+		default:
+			return null;
+		}
+		final Set<Ref> last = new HashSet<Ref>();
+		final Set<Ref> all = new HashSet<Ref>();
+		final int rowCount = srcRef.getRowCount();
+		final int srctRow = srcRef.getTopRow();
+		final int srcbRow = srcRef.getBottomRow();
+		final int srclCol = srcRef.getLeftCol();
+		final int srcrCol = srcRef.getRightCol();
+		
+		final int dsttRow = dstRef.getTopRow();
+		for(int srcIndex = 0, r = srctRow - 1; r >= dsttRow; --r, ++srcIndex) {
+			for(int c = srclCol; c <= srcrCol; ++c) {
+				final int srcrow = srcbRow - srcIndex % rowCount;
+				final Cell srcCell = BookHelper.getCell(sheet, srcrow, c);
+				final Set<Ref>[] refs = srcCell == null ? 
+						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE); 
+				if (refs != null) {
+					last.addAll(refs[0]);
+					all.addAll(refs[1]);
+				}
+			}
+		}
+		final RefSheet refSheet = BookHelper.getRefSheet((Book)sheet.getWorkbook(), sheet);
+		all.add(new AreaRefImpl(dsttRow, srclCol, srctRow - 1, srcrCol, refSheet));
+		return (Set<Ref>[]) new Set[] {last, all};
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Set<Ref>[] fillRight(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
+		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
+		switch(fillType) {
+		case FILL_COPY:
+			pasteType = BookHelper.INNERPASTE_FILL_COPY;
+			break;
+		case FILL_FORMATS:
+			pasteType = BookHelper.INNERPASTE_FILL_FORMATS;
+			break;
+		case FILL_VALUES:
+			pasteType = BookHelper.INNERPASTE_FILL_VALUE;
+			break;
+		default:
+			return null;
+		}
+		final Set<Ref> last = new HashSet<Ref>();
+		final Set<Ref> all = new HashSet<Ref>();
+		final int colCount = srcRef.getColumnCount();
+		final int srclCol = srcRef.getLeftCol();
+		final int srcrCol = srcRef.getRightCol();
+		final int srctRow = srcRef.getTopRow();
+		final int srcbRow = srcRef.getBottomRow();
+		
+		final int dstrCol = dstRef.getRightCol();
+		for(int r = srctRow; r <= srcbRow; ++r) {
+			for(int srcIndex = 0, c = srcrCol + 1; c <= dstrCol; ++c, ++srcIndex) {
+				final int srccol = srclCol + srcIndex % colCount;
+				final Cell srcCell = BookHelper.getCell(sheet, r, srccol);
+				final Set<Ref>[] refs = srcCell == null ? 
+						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE); 
+				if (refs != null) {
+					last.addAll(refs[0]);
+					all.addAll(refs[1]);
+				}
+			}
+		}
+		final RefSheet refSheet = BookHelper.getRefSheet((Book)sheet.getWorkbook(), sheet);
+		all.add(new AreaRefImpl(srctRow, srcrCol + 1, srcbRow, dstrCol, refSheet));
+		return (Set<Ref>[]) new Set[] {last, all};
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Set<Ref>[] fillLeft(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
+		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
+		switch(fillType) {
+		case FILL_COPY:
+			pasteType = BookHelper.INNERPASTE_FILL_COPY;
+			break;
+		case FILL_FORMATS:
+			pasteType = BookHelper.INNERPASTE_FILL_FORMATS;
+			break;
+		case FILL_VALUES:
+			pasteType = BookHelper.INNERPASTE_FILL_VALUE;
+			break;
+		default:
+			return null;
+		}
+		final Set<Ref> last = new HashSet<Ref>();
+		final Set<Ref> all = new HashSet<Ref>();
+		final int colCount = srcRef.getColumnCount();
+		final int srclCol = srcRef.getLeftCol();
+		final int srcrCol = srcRef.getRightCol();
+		final int srctRow = srcRef.getTopRow();
+		final int srcbRow = srcRef.getBottomRow();
+		
+		final int dstlCol = dstRef.getLeftCol();
+		for(int r = srctRow; r <= srcbRow; ++r) {
+			for(int srcIndex = 0, c = srclCol - 1; c >= dstlCol; --c, ++srcIndex) {
+				final int srccol = srcrCol - srcIndex % colCount;
+				final Cell srcCell = BookHelper.getCell(sheet, r, srccol);
+				final Set<Ref>[] refs = srcCell == null ? 
+						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE); 
+				if (refs != null) {
+					last.addAll(refs[0]);
+					all.addAll(refs[1]);
+				}
+			}
+		}
+		final RefSheet refSheet = BookHelper.getRefSheet((Book)sheet.getWorkbook(), sheet);
+		all.add(new AreaRefImpl(srctRow, dstlCol, srcbRow, srclCol - 1, refSheet));
+		return (Set<Ref>[]) new Set[] {last, all};
+	}
+	
+	private static int getFillDirection(Sheet sheet, Ref srcRef, Ref dstRef) {
+		final Sheet dstSheet = BookHelper.getSheet(sheet, dstRef.getOwnerSheet());
+		if (dstSheet.equals(sheet)) {
+			final int dsttRow = dstRef.getTopRow();
+			final int dstbRow = dstRef.getBottomRow();
+			final int dstlCol = dstRef.getLeftCol();
+			final int dstrCol = dstRef.getRightCol();
+			
+			final int srctRow = srcRef.getTopRow();
+			final int srcbRow = srcRef.getBottomRow();
+			final int srclCol = srcRef.getLeftCol();
+			final int srcrCol = srcRef.getRightCol();
+			
+			//check fill direction
+			if (srclCol == dstlCol && srcrCol == dstrCol) {
+				if (dsttRow == srctRow) {
+					if (dstbRow > srcbRow) { //fill down
+						return FILL_DOWN;
+					} else if (dstbRow == srcbRow) { //nothing to fill
+						return FILL_NONE;
+					}
+				}
+				if (dstbRow == srcbRow && dsttRow < srctRow) { //fill up
+					return FILL_UP;
+				}
+			} else if (srctRow == dsttRow && srcbRow == dstbRow) {
+				if (dstlCol == srclCol && dstrCol > srcrCol) { //fill right
+					return FILL_RIGHT;
+				}
+				if (dstrCol == srcrCol && dstlCol < srclCol) { //fill left
+					return FILL_LEFT;
+				}
+			}
+		}
+		return FILL_INVALID;
+	}
+	
+	/*package*/ static Object getLibraryInstance(String key) {
+		final String clsStr = Library.getProperty(key);
+		if (clsStr != null) {
+			try {
+				final Class<?> cls = Classes.forNameByThread(clsStr);
+				return cls.newInstance();
+			} catch (ClassNotFoundException e) {
+				//ignore
+			} catch (IllegalAccessException e) {
+				//ignore
+			} catch (InstantiationException e) {
+				//ignore
+			}
+		}
+		return null;
 	}
 }
