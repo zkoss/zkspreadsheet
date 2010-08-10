@@ -34,9 +34,9 @@ import org.zkoss.zss.model.impl.XelContextHolder;
  * @author henrichen
  *
  */
-public class RefBookDependencyTracker implements DependencyTracker {
+public class DefaultDependencyTracker implements DependencyTracker {
 	private final Book _book;
-	public RefBookDependencyTracker(Book book) {
+	public DefaultDependencyTracker(Book book) {
 		_book = book;
 	}
 	
@@ -69,24 +69,12 @@ public class RefBookDependencyTracker implements DependencyTracker {
 				myAddDependency(srcRef, refBookName, refSheetName, refLastSheetName, tRow, lCol, tRow, lCol, eval);
 			}
 		} else if (opResult instanceof NameEval) {
-			final CellRefImpl srcRef = prepareSrcRef(ec);
-			final String name = ((NameEval)opResult).getFunctionName();
-			if (srcRef != null) {
-				final int j = name.indexOf('.');
-				DependencyTrackerHelper.addDependency((CellRefImpl)srcRef, j < 0 ? name : name.substring(0, j));
-			}
-
-			try {
-				opResult = UserDefinedFunction.instance.evaluate(
-					new ValueEval[] {new NameEval("ELEvaluate"), new StringEval("${"+name+"}")}, ec);
-			} catch(NotImplementedException ex) {
-				opResult = ErrorEval.NAME_INVALID; 
-			}
+			opResult = ErrorEval.NAME_INVALID; 
 		}
 		return opResult;
 	}
 	
-	private CellRefImpl prepareSrcRef(OperationEvaluationContext ec) {
+	protected CellRefImpl prepareSrcRef(OperationEvaluationContext ec) {
 		final XelContext ctx = XelContextHolder.getXelContext();
 		CellRefImpl srcRef = null;
 		boolean isOld = false;

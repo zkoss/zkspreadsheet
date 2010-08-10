@@ -14,7 +14,9 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.formula;
 
 import org.apache.poi.hssf.record.formula.udf.UDFFinder;
+import org.apache.poi.ss.formula.DependencyTracker;
 import org.zkoss.xel.FunctionMapper;
+import org.zkoss.zss.model.Book;
 
 /**
  * Interface to glue POI function mechanism to zkoss xel function mechanism.
@@ -33,4 +35,11 @@ public interface FunctionResolver {
 	 * @return the associated {@link FunctionMapper}.
 	 */
 	public FunctionMapper getFunctionMapper();
+	
+	/**
+	 * Return the associated {@link DependencyTracker}.
+	 * @param book the associated book for the dependency tracker.
+	 * @return the associated {@link DependencyTracker}.
+	 */
+	public DependencyTracker getDependencyTracker(Book book);
 }

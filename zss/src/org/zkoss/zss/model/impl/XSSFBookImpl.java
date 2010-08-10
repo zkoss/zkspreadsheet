@@ -22,9 +22,10 @@ import java.util.Set;
 
 import org.apache.poi.hssf.record.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.hssf.record.formula.udf.UDFFinder;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.IStabilityClassifier;
-import org.apache.poi.ss.formula.RefBookDependencyTracker;
+import org.apache.poi.ss.formula.DefaultDependencyTracker;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
@@ -36,6 +37,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.impl.RefBookImpl;
+import org.zkoss.zss.formula.DefaultFunctionResolver;
 import org.zkoss.zss.formula.FunctionResolver;
 import org.zkoss.zss.formula.NoCacheClassifier;
 import org.zkoss.zss.model.Book;
@@ -60,12 +62,12 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	public XSSFBookImpl(String bookname, InputStream is) throws IOException {
 		super(is);
 		_bookname = bookname;
-		final FunctionResolver resolver = (FunctionResolver) BookHelper.getLibraryInstance(FUN_RESOLVER);
-		_evaluator = XSSFFormulaEvaluator.create(this, NoCacheClassifier.instance, 
-				resolver == null ? null : new AggregatingUDFFinder(UDFFinder.DEFAULT, resolver.getUDFFinder()));
+		FunctionResolver resolver = (FunctionResolver) BookHelper.getLibraryInstance(FUN_RESOLVER);
+		if (resolver == null) resolver = new DefaultFunctionResolver();
+		_evaluator = XSSFFormulaEvaluator.create(this, NoCacheClassifier.instance, resolver.getUDFFinder()); 
 		_bookEvaluator = _evaluator.getWorkbookEvaluator(); 
-		_bookEvaluator.setDependencyTracker(new RefBookDependencyTracker(this));
-		_functionMapper = new JoinFunctionMapper(resolver == null ? null : resolver.getFunctionMapper());
+		_bookEvaluator.setDependencyTracker(resolver.getDependencyTracker(this));
+		_functionMapper = new JoinFunctionMapper(resolver.getFunctionMapper());
 		_variableResolver = new JoinVariableResolver();
 	}
 	
