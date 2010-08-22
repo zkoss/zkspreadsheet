@@ -76,13 +76,16 @@ To compete zk 3.0.6, in IE, i must add 'div.' before rule, if there is font-size
 	*display: inline;
 }
 .zshbouni{
-	position: absolute; /* DIFF */
-}
-.zsvbouni{
-	position: absolute;/* DIFF */
-	font-size: 0; /* DIFF */
+	display: inline-block; /* DIFF */
 }
 
+.zshbounw{
+	display: inline-block; /* DIFF */
+}
+
+.zsvbouni{
+	font-size: 0; /* DIFF */
+}
 
 .zsscroll {
 	background-color:#CAD7E6;

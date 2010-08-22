@@ -19,6 +19,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -31,258 +34,155 @@ import java.util.List;
 public class HeaderPositionHelper {
 
 	int _defaultSize;
-	int[][] _customizedSize; //[0]: column/row index, [1]: width/height, [2]: column/row id
+	private List<HeaderPositionInfo> _infos;
+	//int[][] _customizedSize; //[0]: column/row index, [1]: width/height, [2]: column/row id
 
-	public HeaderPositionHelper(int defaultSize, int[][] customizedSize) {
+	public HeaderPositionHelper(int defaultSize, List<HeaderPositionInfo> infos) {
 		this._defaultSize = defaultSize;
-		this._customizedSize = customizedSize;
+		this._infos = infos;
 	}
 	
 	public int getDefaultSize() {
 		return _defaultSize;
 	}
 
-	public int[][] getCostomizedSize() {
-		int[][] clone = new int[_customizedSize.length][2];
-		System.arraycopy(_customizedSize, 0, clone, 0, _customizedSize.length);
-		return clone;
+	public List<HeaderPositionInfo> getInfos() {
+		return new ArrayList<HeaderPositionInfo>(_infos);
 	}
 
+	public boolean isHidden(int cellIndex) {
+		final int j = Collections.binarySearch(_infos, new Integer(cellIndex), new HeaderPositionInfoComparator());
+		return j < 0 ? false : _infos.get(j).hidden;
+	}
+	
 	public int getSize(int cellIndex) {
-		// TODO binary search to speed up
-		for (int i = 0; i < _customizedSize.length; i++) {
-			if (cellIndex == _customizedSize[i][0])
-				return _customizedSize[i][1];
-			if (cellIndex < _customizedSize[i][0])
-				return _defaultSize;
-			continue;
-		}
-		return _defaultSize;
+		final int j = Collections.binarySearch(_infos, new Integer(cellIndex), new HeaderPositionInfoComparator());
+		return j < 0 ? _defaultSize : _infos.get(j).size;
 	}
 
-	public void shiftMeta(int index, int size) {
-		for (int i = 0; i < _customizedSize.length; i++) {
-			if (index <= _customizedSize[i][0]) {
-				_customizedSize[i][0] += size;
-			}
-		}
+	//given target cell index, return list index. 
+	private int getListIndex(int cellIndex) {
+		final int j = Collections.binarySearch(_infos, new Integer(cellIndex), new HeaderPositionInfoComparator());
+		return j < 0 ? -j - 1 : j;
 	}
-
-	public void unshiftMeta(int index, int size) {
-		List remove = new ArrayList();
-		int end = index + size;
-		for (int i = 0; i < _customizedSize.length; i++) {
-			if (_customizedSize[i][0] >= index && _customizedSize[i][0] < end) {
-				remove.add(Integer.valueOf(i));
-			} else if (_customizedSize[i][0] >= end) {
-				_customizedSize[i][0] -= size;
-			}
-		}
-		end = remove.size();
-		for (int i = end - 1; i >= 0; i--) {
-			remove(((Integer) remove.get(i)).intValue());
+	
+	public void shiftMeta(int cellIndex, int offset) {
+		final int index = getListIndex(cellIndex);
+		for (int j = _infos.size() - 1; j >= index; --j) {
+			final HeaderPositionInfo info = _infos.get(j);
+			info.index += offset;
 		}
 	}
 
-	public int[] getMeta(int cellIndex) {
-		for (int i = 0; i < _customizedSize.length; i++) {
-			if (cellIndex == _customizedSize[i][0])
-				return _customizedSize[i];
-			if (cellIndex < _customizedSize[i][0])
-				return null;
-			continue;
+	public void unshiftMeta(int cellIndex, int offset) {
+		final int bindex = getListIndex(cellIndex);
+		final int eindex = getListIndex(cellIndex + offset);
+		for (int j = eindex - 1; j >= bindex; --j) {
+			_infos.remove(j);
 		}
-		return null;
-	}
-
-	public void setCustomizedSize(int cellIndex, int size, int id) {
-		/*
-		 * if(size==_defaultSize) { // don't remove, because there is a id
-		 * attached. removeCustomizedSize(cellIndex); return; }
-		 */
-		int s = 0;
-		int e = _customizedSize.length;
-		if (e == 0) {
-			insert(0, cellIndex, size, id);
-			return;
-		}
-		int i;
-		while (s < e) {// binary search
-			i = s + (e - s) / 2;
-			if (_customizedSize[i][0] == cellIndex) {
-				_customizedSize[i][1] = size;
-				_customizedSize[i][2] = id;
-				return;
-			} else if (_customizedSize[i][0] > cellIndex) {
-				e = i - 1;
-			} else {
-				s = i + 1;
-			}
-			if (e == s) {
-				if (e >= _customizedSize.length
-						|| _customizedSize[e][0] > cellIndex) {
-					insert(e, cellIndex, size, id);
-				} else if (_customizedSize[e][0] == cellIndex) {
-					_customizedSize[e][1] = size;
-					_customizedSize[e][2] = id;
-				} else {
-					insert(e + 1, cellIndex, size, id);
-				}
-				break;
-			} else if (e < s) {
-				insert(s, cellIndex, size, id);
-			}
+		for (int j = _infos.size() - 1; j >= bindex; --j) {
+			final HeaderPositionInfo info = _infos.get(j);
+			info.index -= offset;
 		}
 	}
 
-	public void removeCustomizedSize(int cellIndex) {
-		int s = 0;
-		int e = _customizedSize.length;
-		if (e == 0) {
-			return;
-		}
-		int i;
-		while (s < e) {// binary search
-			i = s + (e - s) / 2;
-			if (_customizedSize[i][0] == cellIndex) {
-				remove(i);
-				return;
-			} else if (_customizedSize[i][0] > cellIndex) {
-				e = i - 1;
-			} else {
-				s = i + 1;
-			}
-			if (e == s) {
-				if (e < _customizedSize.length
-						&& _customizedSize[e][0] == cellIndex) {
-					remove(e);
-				}
-				break;
-			} else if (e < s) {
-				break;
-			}
-		}
+	public HeaderPositionInfo getInfo(int cellIndex) {
+		final int j = Collections.binarySearch(_infos, new Integer(cellIndex), new HeaderPositionInfoComparator());
+		return j < 0 ? null : _infos.get(j);
 	}
 
-	private void insert(int index, int cellIndex, int size, int id) {
-		int[][] result = new int[_customizedSize.length + 1][3];
-		if (_customizedSize.length == 0) {
-			_customizedSize = new int[][] { { cellIndex, size, id } };
-			return;
-		}
-		if (index == 0) {
-			result[0][0] = cellIndex;
-			result[0][1] = size;
-			result[0][2] = id;
-			System.arraycopy(_customizedSize, 0, result, 1,
-					_customizedSize.length);
-		} else if (index > _customizedSize.length) {
-			System.arraycopy(_customizedSize, 0, result, 0,
-					_customizedSize.length);
-			result[_customizedSize.length][0] = cellIndex;
-			result[_customizedSize.length][1] = size;
-			result[_customizedSize.length][2] = id;
+	//set new info values at the specified cellIndex; if not exist, create a new one and add into this Helper.
+	public void setInfoValues(int cellIndex, int size, int id, boolean hidden) {
+		final int j = Collections.binarySearch(_infos, new Integer(cellIndex), new HeaderPositionInfoComparator());
+		final int index = j < 0 ? (-j - 1) : j;
+		if (j < 0) {
+			_infos.add(index, new HeaderPositionInfo(cellIndex, size, id, hidden));
 		} else {
-			System.arraycopy(_customizedSize, 0, result, 0, index);
-			result[index][0] = cellIndex;
-			result[index][1] = size;
-			result[index][2] = id;
-			System.arraycopy(_customizedSize, index, result, index + 1,
-					_customizedSize.length - index);
+			final HeaderPositionInfo info = _infos.get(index);
+			info.size = size;
+			info.id = id;
+			info.hidden = hidden;
 		}
-		_customizedSize = result;
 	}
 
-	private void remove(int index) {
-		if (_customizedSize.length == 1) {
-			_customizedSize = new int[0][];
-			return;
+	public void removeInfo(int cellIndex) {
+		final int j = Collections.binarySearch(_infos, new Integer(cellIndex), new HeaderPositionInfoComparator());
+		final int index = j < 0 ? (-j - 1) : j;
+		if (j >= 0) {
+			_infos.remove(index);
 		}
-		int[][] result = new int[_customizedSize.length - 1][2];
-		if (index == 0) {
-			System.arraycopy(_customizedSize, 1, result, 0,
-					_customizedSize.length - 1);
-		} else if (index >= _customizedSize.length - 1) {
-			System.arraycopy(_customizedSize, 0, result, 0,
-					_customizedSize.length - 1);
-		} else {
-			System.arraycopy(_customizedSize, 0, result, 0, index);
-			System.arraycopy(_customizedSize, index + 1, result, index,
-					_customizedSize.length - index - 1);
-		}
-		_customizedSize = result;
 	}
-
+	
+	//given size in pixels, return the related cellIndex
 	public int getCellIndex(int px) {
-		int sum = 0;
-		int sum2 = 0;
-		int index = 0;
-		int inc = 0;
-		if (px < 0)
+		if (px < 0) {
 			return 0;
-		for (int i = 0; i < _customizedSize.length; i++) {
-			sum2 = sum2 + (_customizedSize[i][0] - index) * _defaultSize;
-			if (sum2 > px) {
-				inc = px - sum;
-				index = index + (inc / _defaultSize);// + (( inc % _defaultSize
-														// == 0)?1:0);
-				return index;
-			}
-
-			sum2 = sum2 + _customizedSize[i][1];
-			if (sum2 > px) {
-				return _customizedSize[i][0];
-			}
-			sum = sum2;
-			index = _customizedSize[i][0] + 1;
 		}
-
-		inc = px - sum;
-		index = index + (inc / _defaultSize);// + (( inc % _defaultSize ==
-												// 0)?1:0);
-		return index;
+		int begPx = 0;
+		int begIndex = 0;
+		for(HeaderPositionInfo info : _infos) {
+			final int cellIndex = info.index;
+			final int endPx = begPx + (cellIndex - begIndex) * _defaultSize; //big jump 
+			if (endPx > px) { //jump beyond the target pixel
+				final int step = px - begPx;
+				return begIndex + (step / _defaultSize);
+			}
+			//still behind, forward custom size of this info
+			begPx = endPx + (info.hidden ? 0 : info.size);
+			if (begPx > px) { //exactly locate at this info
+				return info.index;
+			}
+			begIndex = info.index + 1; //step over to new begin index
+		}
+		
+		//never reach px
+		final int step = px - begPx;
+		return begIndex + (step / _defaultSize);
 	}
 
+	//given cellIndex, return the associated start pixel
 	public int getStartPixel(int cellIndex) {
-		int count = 0;
-		int sum = 0;
-		if (cellIndex < 0)
+		if (cellIndex < 0) {
 			return 0;
-		for (int i = 0; i < _customizedSize.length; i++) {
-			if (cellIndex <= _customizedSize[i][0]) {
+		}
+		int px = 0;
+		int begIndex = 0;
+		for(HeaderPositionInfo info : _infos) {
+			final int infoIndex = info.index;
+			if (cellIndex > infoIndex) { //not reach the target
+				px += (infoIndex - begIndex) * _defaultSize;
+				px += info.hidden ? 0 : info.size;
+				begIndex = infoIndex + 1; //next begin index
+			} else if (cellIndex == infoIndex) { //extactly locate at the info
+				px += (infoIndex - begIndex) * _defaultSize;
+				return px;
+			} else { //cellIndex < infoIndex; jump over the target
 				break;
 			}
-			count++;
-			sum += _customizedSize[i][1];
 		}
-		sum = sum + (cellIndex - count) * _defaultSize;
-		return sum;
+		
+		//jumper over the target or never reach the target index
+		px += (cellIndex - begIndex) * _defaultSize;
+		return px;
 	}
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("[");
-		for (int i = 0; i < _customizedSize.length; i++) {
-			if (i != 0) {
-				sb.append(",");
-			}
+		for (HeaderPositionInfo info : _infos) {
 			sb.append("[");
-			sb.append(_customizedSize[i][0]).append(", ");
-			sb.append(_customizedSize[i][1]).append(", ");
-			sb.append(_customizedSize[i][2]);
-			sb.append("]");
+			sb.append(info.index).append(", ");
+			sb.append(info.size).append(", ");
+			sb.append(info.id).append(", ");
+			sb.append(info.hidden).append(", ");
+			sb.append("],");
 
 		}
 		sb.append("]");
 		return sb.toString();
 	}
 
-	public static void main(String args[]) {
-
-		testGetCellIndex();
-	}
-
-	static public void testSetCustomizedSize() {
+/*	static public void testSetCustomizedSize() {
 		int[][] customeizedSize = new int[0][];
 		int defaultSize = 40;
 		HeaderPositionHelper helper = new HeaderPositionHelper(defaultSize,
@@ -343,23 +243,6 @@ public class HeaderPositionHelper {
 		System.out.println("===>");
 	}
 
-	static public void testGetStartPixel() {
-		int[][] customeizedSize = new int[][] { { 3, 30 }, { 9, 20 },
-				{ 10, 60 } };
-		int defaultSize = 40;
-		HeaderPositionHelper helper = new HeaderPositionHelper(defaultSize,
-				customeizedSize);
-		System.out.println(">>>>" + helper.getStartPixel(0));// 0
-		System.out.println(">>>>" + helper.getStartPixel(1));// 40
-		System.out.println(">>>>" + helper.getStartPixel(3));// 120
-		System.out.println(">>>>" + helper.getStartPixel(4));// 150
-		System.out.println(">>>>" + helper.getStartPixel(5));// 190
-		System.out.println(">>>>" + helper.getStartPixel(8));// 310
-		System.out.println(">>>>" + helper.getStartPixel(9));// 350
-		System.out.println(">>>>" + helper.getStartPixel(10));// 370
-		System.out.println(">>>>" + helper.getStartPixel(11));// 430
-	}
-
 	static public void testGetCellIndex() {
 		int[][] customeizedSize = new int[][] { { 3, 30 }, { 9, 20 },
 				{ 10, 60 } };
@@ -381,5 +264,28 @@ public class HeaderPositionHelper {
 		System.out.println(">>>>" + helper.getCellIndex(430));// 11
 		System.out.println(">>>>" + helper.getCellIndex(480));// 12
 	}
-
+*/
+	public static class HeaderPositionInfo {
+		//[0]: column/row index, [1]: width/height, [2]: column/row id
+		public int index; //column/row idnex
+		public int size; //width/height in pixel
+		public int id; //column/row uuid
+		public boolean hidden; //whether the column/row is hidden
+		
+		public HeaderPositionInfo(int index, int size, int id, boolean hidden) {
+			this.index = index;
+			this.size = size;
+			this.id = id;
+			this.hidden = hidden;
+		}
+	}
+	
+	private static class HeaderPositionInfoComparator implements Comparator {
+		@Override
+		public int compare(Object o1, Object o2) {
+			final int i1 = o1 instanceof HeaderPositionInfo ? ((HeaderPositionInfo)o1).index : ((Integer)o1).intValue();
+			final int i2 = o2 instanceof HeaderPositionInfo ? ((HeaderPositionInfo)o2).index : ((Integer)o2).intValue();
+			return i1 - i2;
+		} 
+	}
 }

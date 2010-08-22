@@ -98,7 +98,7 @@ zss.AreaCtrl = zk.$extends(zk.Object, {
 			h = h - 2;
 		}
 
-		jq(this.comp).css({'width': jq.px(w), 'height': jq.px(h), 'left': jq.px(l), 'top': jq.px(t)});
+		jq(this.comp).css({'width': jq.px0(w), 'height': jq.px0(h), 'left': jq.px(l), 'top': jq.px(t)});
 	},
 	/**
 	 * Display selection area
@@ -292,7 +292,7 @@ zss.AreaCtrlLeft = zk.$extends(zss.AreaCtrl, {
 			h = h - 2;
 		}
 
-		jq(this.comp).css({'width': jq.px(w), 'height': jq.px(h), 'left': jq.px(l),'top' : jq.px(t)});
+		jq(this.comp).css({'width': jq.px0(w), 'height': jq.px0(h), 'left': jq.px(l),'top' : jq.px(t)});
 	}
 });
 
@@ -331,7 +331,7 @@ zss.AreaCtrlTop = zk.$extends(zss.AreaCtrl, {
 			h = h - 2;
 		}
 
-		jq(this.comp).css({'width': jq.px(w), 'height': jq.px(h), 'left': jq.px(l), 'top': jq.px(t)});
+		jq(this.comp).css({'width': jq.px0(w), 'height': jq.px0(h), 'left': jq.px(l), 'top': jq.px(t)});
 	}
 });
 

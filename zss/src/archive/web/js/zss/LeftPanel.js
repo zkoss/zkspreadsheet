@@ -130,12 +130,16 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 	_doMouseover: function (evt) {
 		var n = evt.domTarget;
 		if (jq(n).attr('zs.t') == "SBoun")
-			n.parentNode.ctrlref._processDrag(true);
+			n.parentNode.ctrlref._processDrag(true, false);
+		if (jq(n).attr('zs.t') == "SBoun2")
+			n.parentNode.ctrlref._processDrag(true, true);
 	},
 	_doMouseout: function (evt) {
 		var n = evt.domTarget;
 		if (jq(n).attr('zs.t') == "SBoun")
-			n.parentNode.ctrlref._processDrag(false);
+			n.parentNode.ctrlref._processDrag(false, false);
+		if (jq(n).attr('zs.t') == "SBoun2")
+			n.parentNode.ctrlref._processDrag(false, true);
 	},
 	_clearAllHeader: function () {
 		jq(this.hcomp).text('');
@@ -275,7 +279,7 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 	},
 	_updateHeight: function (height) {
 		if (this.height == height) return;
-		jq(this.comp).css('height', jq.px(height));
+		jq(this.comp).css('height', jq.px0(height));
 		this.height = height;
 		this._updateBlockHeight();
 	},	
@@ -287,7 +291,7 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 	},
 	_updateTopPadding: function (toppad) {
 		if (this.toppad == toppad) return;
-		jq(this.padcomp).css('height', jq.px(toppad));
+		jq(this.padcomp).css('height', jq.px0(toppad));
 		this.toppad = toppad;	
 		
 		if (this.selArea)
@@ -309,7 +313,7 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 			toppad = this.toppad;
 		height = height - (toppos ? toppos : 0) - (toppad ? toppad : 0);
 		if (height < 0) height = 0;
-		jq(this.block.comp).css('height', jq.px(height));
+		jq(this.block.comp).css('height', jq.px0(height));
 	},
 	/**
 	 * Sets the selection range of the header

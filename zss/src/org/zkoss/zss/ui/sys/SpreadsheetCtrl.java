@@ -81,4 +81,7 @@ public interface SpreadsheetCtrl {
 	 */
 	public boolean removeWidget(Widget widget);
 
+	public Boolean getTopHeaderHiddens(int col);
+	
+	public Boolean getLeftHeaderHiddens(int row);
 }

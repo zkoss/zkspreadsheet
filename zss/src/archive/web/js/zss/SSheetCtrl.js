@@ -148,8 +148,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		if (csc && csc != "") {
 			csc = csc.split(",");
 			var size  = csc.length;
-			for (var i = 0; i < size; i = i + 3)
-				array.push([zk.parseInt(csc[i]), zk.parseInt(csc[i + 1]), zk.parseInt(csc[i + 2])]);
+			for (var i = 0; i < size; i = i + 4)
+				array.push([zk.parseInt(csc[i]), zk.parseInt(csc[i + 1]), zk.parseInt(csc[i + 2]), csc[i+3]]);
 		}
 		this.custColWidth = new zss.PositionHelper(this.colWidth, array);
 		this.custColWidth.ids = new zss.Id(0, 2);
@@ -160,8 +160,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		if (csr && csr != "") {
 			csr = csr.split(",");
 			var size  = csr.length;
-			for (var i = 0; i < size; i = i + 3)
-				array.push([zk.parseInt(csr[i]), zk.parseInt(csr[i + 1]), zk.parseInt(csr[i + 2])]);
+			for (var i = 0; i < size; i = i + 4)
+				array.push([zk.parseInt(csr[i]), zk.parseInt(csr[i + 1]), zk.parseInt(csr[i + 2]), csc[i+3]]);
 		}
 		this.custRowHeight = new zss.PositionHelper(this.rowHeight, array);
 		this.custRowHeight.ids = new zss.Id(0, 2);
@@ -1191,12 +1191,25 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	setColumnWidth: function (col, width) {
 		this._setColumnWidth(col, width, true, true);
 	},
+	setUnhideColumn: function (col) {
+		var custColWidth = this.custColWidth,
+			oldw = custColWidth.getSize(col);
+		this.setColumnWidth(col, oldw);
+	},
 	_setColumnWidth: function (col, width, fireevent, loadvis, metaid) {
 		var sheetid = this.sheetid,
 			custColWidth = this.custColWidth,
 			oldw = custColWidth.getSize(col);
 		width = width <= 0 ? 0 : width;
 
+		//update customized width
+		var meta = custColWidth.getMeta(col),
+			zsw,
+			hidden = (width == 0);
+		
+		if (hidden)
+			width = oldw;
+		
 		//adjust cell width, check also:_updateCustomDefaultStyle
 		var cp = this.cellPad,
 			cellwidth,
@@ -1215,21 +1228,17 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		if(zk.opera) //opera bug, it cannot insert rul to special position
 			createbefor = true;
 
-		//update customized width
-		var meta = custColWidth.getMeta(col),
-			zsw;
-		
 		if (!meta) {
 			//append style class to column header and cell
 			zsw = zkS.t(metaid) ? metaid : custColWidth.ids.next();
-			custColWidth.setCustomizedSize(col, width, zsw);
+			custColWidth.setCustomizedSize(col, width, zsw, hidden);
 			this._appendZSW(col, zsw);
 		} else {
 			zsw = zkS.t(metaid) ? metaid : meta[2];
-			custColWidth.setCustomizedSize(col, width, zsw);
+			custColWidth.setCustomizedSize(col, width, zsw, hidden);
 		}
 
-		if (width <= 0)
+		if (width <= 0 || hidden)
 			zcss.setRule(name + " .zsw" + zsw, "display", "none", createbefor, sheetid + "-sheet");
 		else {
 			zcss.setRule(name + " .zsw" + zsw, ["display", "width"], ["", cellwidth + "px"], createbefor, sheetid + "-sheet");
@@ -1252,19 +1261,30 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			var w = custColWidth.getStartPixel(range.right + 1);
 			w -= custColWidth.getStartPixel(range.left);
 
-			cellwidth;
 			celltextwidth = w - 2 * cp - 1;// 1 is border width//zk.revisedSize(colcmp,width);//
-			
+			fixpadding = false;
+			if (celltextwidth < 0) {
+				fixpadding = true;
+				celltextwidth = w - 1;
+			}
 			cellwidth = zk.ie || zk.safari || zk.opera ? celltextwidth : w;
 
-			zcss.setRule(name+" .zsmerge"+range.id,"width",cellwidth+"px",true,cssid);
-			zcss.setRule(name+" .zsmerge"+range.id+" .zscelltxt","width",celltextwidth+"px",true,cssid);
+			if (w < 0)
+				zcss.setRule(name+" .zsmerge"+range.id,"display","none",true,cssid);
+			else {
+				zcss.setRule(name+" .zsmerge"+range.id,"width",cellwidth+"px",true,cssid);
+				zcss.setRule(name+" .zsmerge"+range.id+" .zscelltxt","width",celltextwidth+"px",true,cssid);
+				if (fixpadding)
+					zcss.setRule(name+" .zsmerge"+range.id,"padding", "0px",true,cssid);
+				else
+					zcss.setRule(name+" .zsmerge"+range.id,"padding", "", true,cssid);
+			}
 		}
 		
 		if (col < this.maxCols) {
 			//adjust datapanel size;
 			var dp = this.dp;
-			dp.updateWidth(width - oldw);
+			dp.updateWidth((hidden ? 0 : width) - oldw);
 		
 			//process text overflow when resize column
 			var block = this.activeBlock;
@@ -1301,7 +1321,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		
 		if (fireevent) {
 			this._wgt.fire('onZSSHeaderModif', 
-					{sheetId: this.serverSheetId, type: "top", event: "size", index: col, newsize: width, id: zsw},
+					{sheetId: this.serverSheetId, type: "top", event: "size", index: col, newsize: width, id: zsw, hidden: hidden},
 					{toServer: true}, 25);
 		}
 	},
@@ -1325,12 +1345,25 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	setRowHeight: function(row, height) {
 		this._setRowHeight(row, height, true, true);
 	},
+	setUnhideRow: function(row) {
+		var custRowHeight = this.custRowHeight,
+			oldh = custRowHeight.getSize(row);
+		this.setRowHeight(row, oldh);
+	},
 	_setRowHeight: function(row, height, fireevent, loadvis, metaid) {
 		var sheetid = this.sheetid,
 			custRowHeight = this.custRowHeight,
 			oldh = custRowHeight.getSize(row);
 		height = height <= 0 ? 0 : height;
 
+		var name = "#" + sheetid,
+			meta = custRowHeight.getMeta(row),
+			zsh,
+			hidden = (height == 0);
+		
+		if (hidden)
+			height = oldh;
+			
 		var cellheight;// = zk.revisedSize(colcmp,height,true);
 		
 		if(zk.ie || zk.safari || zk.opera)
@@ -1339,25 +1372,21 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		else
 			cellheight = height;
 
-		var name = "#" + sheetid,
-			meta = custRowHeight.getMeta(row),
-			zsh;
-		
 		if (!meta) {
 			//append style class to column header and cell
 			zsh = zkS.t(metaid) ? metaid : custRowHeight.ids.next();
-			custRowHeight.setCustomizedSize(row, height, zsh);
+			custRowHeight.setCustomizedSize(row, height, zsh, hidden);
 			this._appendZSH(row, zsh);
 		} else {
 			zsh = zkS.t(metaid) ? metaid : meta[2];
-			custRowHeight.setCustomizedSize(row, height, zsh);
+			custRowHeight.setCustomizedSize(row, height, zsh, hidden);
 		}
 		
 		var createbefor = ".zs_header";
 		if (zk.opera)//opera bug, it cannot insert rul to special position
 			createbefor = true;
 
-		if (height <= 0) {
+		if (height <= 0 || hidden) {
 			zcss.setRule(name + " .zslh" + zsh, "display", "none", createbefor, this.sheetid + "-sheet");
 			zcss.setRule(name + " .zsh" + zsh, "display", "none", createbefor, this.sheetid + "-sheet");
 		} else {
@@ -1371,7 +1400,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		if (row < this.maxRows) {
 			//adjust datapanel size;
 			var dp = this.dp;
-			dp.updateHeight(height - oldh);
+			dp.updateHeight((hidden ? 0 : height) - oldh);
 		
 			var fzr = this.frozenRow;
 			if (fzr >= row) {
@@ -1392,7 +1421,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		}
 		if (fireevent) {
 			this._wgt.fire('onZSSHeaderModif', 
-					{sheetId: this.serverSheetId, type: "left", event: "size", index: row, newsize: height, id: zsh},
+					{sheetId: this.serverSheetId, type: "left", event: "size", index: row, newsize: height, id: zsh, hidden: hidden},
 					{toServer: true}, 25);
 		}
 

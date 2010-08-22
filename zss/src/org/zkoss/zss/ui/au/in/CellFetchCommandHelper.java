@@ -38,6 +38,7 @@ import org.zkoss.zss.ui.impl.JSONObj;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.HeaderPositionHelper.HeaderPositionInfo;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
@@ -832,9 +833,12 @@ public class CellFetchCommandHelper{
 		jheader.setData("ix", col);
 		String name = (String) _spreadsheet.getColumntitle(col);
 		jheader.setData("nm", name);
-		int[] meta = _colHelper.getMeta(col);
-		if (meta != null) {
-			jheader.setData("zsw", meta[2]);
+		final HeaderPositionInfo info = _colHelper.getInfo(col);
+		if (info != null) {
+			jheader.setData("zsw", info.id);
+			if (info.hidden) {
+				jheader.setData("hn", true);
+			}
 		}
 	}
 	
@@ -842,17 +846,20 @@ public class CellFetchCommandHelper{
 		jheader.setData("ix", row);
 		String name = (String) _spreadsheet.getRowtitle(row);
 		jheader.setData("nm", name);
-		int[] meta = _rowHelper.getMeta(row);
-		if (meta != null) {
-			jheader.setData("zsh", meta[2]);
+		final HeaderPositionInfo info = _rowHelper.getInfo(row);
+		if (info != null) {
+			jheader.setData("zsh", info.id);
+			if (info.hidden) {
+				jheader.setData("hn", true);
+			}
 		}
 	}
 	
 	private void prepareRowData(JSONObj jrow, Sheet sheet,int row) {
 		jrow.setData("ix", row);
-		int[] meta = _rowHelper.getMeta(row);
-		if (meta != null)
-			jrow.setData("zsh", meta[2]);
+		HeaderPositionInfo info = _rowHelper.getInfo(row);
+		if (info != null)
+			jrow.setData("zsh", info.id);
 	}
 	
 	private void prepareCellData(JSONObj jcell, Sheet sheet,int row,int col) {
@@ -924,9 +931,9 @@ public class CellFetchCommandHelper{
 			jcell.setData("merl", rect.getLeft());// left
 		}
 
-		int[] meta = _colHelper.getMeta(col);
-		if (meta != null) {
-			jcell.setData("zsw", meta[2]);
+		HeaderPositionInfo info = _colHelper.getInfo(col);
+		if (info != null) {
+			jcell.setData("zsw", info.id);
 		}
 		
 	}

@@ -18,7 +18,9 @@ function (out) {
 		rowtitle = this._rowtitle,
 		rowfreeze = zk.parseInt(this.getRowFreeze()),
 		columnfreeze = zk.parseInt(this.getColumnFreeze()),
-		dataPanel = this._dataPanel;
+		dataPanel = this._dataPanel,
+		topHeaderHiddens = this._topHeaderHiddens,
+		leftHeaderHiddens = this._leftHeaderHiddens;
 
 	out.push('<div', this.domAttrs_(), '><input type="textbox" id="', uuid, '-fo" maxlength="0" class="zsfocus"/><div id="', uuid, '-mask" class="zssmask" zs.t="SMask"></div><div id="', uuid, '-busy" class="zssbusy"></div>', 
 			'<div id="', uuid, '-sp" class="zsscroll" zs.t="SScrollpanel">',
@@ -48,7 +50,10 @@ function (out) {
 	if (!hidecolhead) {
 		for (var i = colBegin; i <= colEnd; i++) {
 			out.push('<div zs.t="STheader" ', topHeaderOuter[i], '><div ', topHeaderInner[i], '>', columntitle[i],
-					'</div></div><div class="zshboun"><div class="zshbouni" zs.t="SBoun"></div></div>');
+					'</div></div><div class="zshboun"><div class="zshbouni" zs.t="SBoun"></div>');
+			if (topHeaderHiddens[i])
+				out.push('<div class="zshbounw" zs.t="SBoun2"></div>');
+			out.push('</div>');
 		}
 	}
 
@@ -77,7 +82,11 @@ function (out) {
 
 	if (!hiderowhead) {
 		for (var r = rowBegin; r <= rowEnd; r++) {
-			out.push('<div zs.t="SLheader" ', leftHeaderOuter[r], '><div ', leftHeaderInner[r], '>', rowtitle[r], '</div></div><div class="zsvboun"><div class="zsvbouni" zs.t="SBoun" ></div></div>');
+			out.push('<div zs.t="SLheader" ', leftHeaderOuter[r], '><div ', leftHeaderInner[r], '>', rowtitle[r], 
+					'</div></div><div class="zsvboun"><div class="zsvbouni" zs.t="SBoun" ></div>');
+			if (leftHeaderHiddens[r])
+				out.push('<div class="zsvbounw" zs.t="SBoun2" ></div>');
+			out.push('</div>');
 		}
 	}
 	out.push('</div>');

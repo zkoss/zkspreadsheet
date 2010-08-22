@@ -145,7 +145,7 @@ zss.Editbox = zk.$extends(zk.Object, {
 		this.editingWidth = w;
 		this.editingHeight = h;
 
-		jq(editorcmp).css({'width': jq.px(w), 'height': jq.px(h), 'left': jq.px(l), 'top': jq.px(t), 'display': 'block', 'line-height': jq.px(sheet.lineHeight)});
+		jq(editorcmp).css({'width': jq.px0(w), 'height': jq.px0(h), 'left': jq.px(l), 'top': jq.px(t), 'display': 'block', 'line-height': jq.px0(sheet.lineHeight)});
 
 		zcss.copyStyle(txtcmp, editorcmp, ["font-family","font-size","font-weight","font-style","color","text-decoration","text-align"],true);
 		zcss.copyStyle(cellcmp, editorcmp, ["background-color"], true);
@@ -227,11 +227,11 @@ zss.Editbox = zk.$extends(zk.Object, {
 				w = custColWidth.getStartPixel(this.col + this.sw + 1) - custColWidth.getStartPixel(this.col);
 			if (zk.ie || zk.safari || zk.opera)
 				w -= 2;
-			jq(editorcmp).css('width', jq.px(w));
+			jq(editorcmp).css('width', jq.px0(w));
 		} else if (type=="h") {
 			var custRowHeight = this.sheet.custRowHeight,
 				h = custRowHeight.getStartPixel(this.row + this.sh + 1) - custRowHeight.getStartPixel(this.row);
-			jq(editorcmp).css('height', jq.px(h));
+			jq(editorcmp).css('height', jq.px0(h));
 		}
 	},
 	autoAdjust: function (forceadj) {
@@ -247,9 +247,9 @@ zss.Editbox = zk.$extends(zk.Object, {
 			
 			if (sh > ch + 3) {//3 is border
 				if (hsb && !vsb)
-					jq(editorcmp).css('height', jq.px(sh + zss.Spreadsheet.scrollWidth));// extend height
+					jq(editorcmp).css('height', jq.px0(sh + zss.Spreadsheet.scrollWidth));// extend height
 				else
-					jq(editorcmp).css('height', jq.px(sh));
+					jq(editorcmp).css('height', jq.px0(sh));
 			}
 			if (sh > ch + 3 || forceadj) {
 				var custColWidth = local.sheet.custColWidth,

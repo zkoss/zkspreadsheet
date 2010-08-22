@@ -72,10 +72,11 @@ public class HeaderCommand implements Command {
 		if("size".equals(event)){
 			int newsize = (Integer) data.get("newsize");
 			int id = (Integer) data.get("id");
-			((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setColumnSize(sheetId, index, newsize,id);
+			boolean hidden = (Boolean) data.get("hidden");
+			((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setColumnSize(sheetId, index, newsize,id, hidden);
 			
 			if (Events.isListened(spreadsheet, org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, true)){
-				HeaderEvent he = new HeaderEvent(org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, spreadsheet, sheet, HeaderEvent.TOP_HEADER,index, new Integer(newsize));
+				HeaderEvent he = new HeaderEvent(org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, spreadsheet, sheet, HeaderEvent.TOP_HEADER,index, new Integer(newsize), hidden);
 				Events.postEvent(he);
 			}
 		}else{
@@ -95,9 +96,10 @@ public class HeaderCommand implements Command {
 		if("size".equals(event)){
 			int newsize = (Integer) data.get("newsize");
 			int id = (Integer) data.get("id");
-			((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setRowSize(sheetId, index, newsize,id);
+			boolean hidden = (Boolean) data.get("hidden");
+			((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setRowSize(sheetId, index, newsize,id, hidden);
 			if (Events.isListened(spreadsheet,org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, true)){
-				HeaderEvent he = new HeaderEvent(org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, spreadsheet, sheet, HeaderEvent.LEFT_HEADER,index, new Integer(newsize));
+				HeaderEvent he = new HeaderEvent(org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, spreadsheet, sheet, HeaderEvent.LEFT_HEADER,index, new Integer(newsize), hidden);
 				Events.postEvent(he);
 			}
 		} else {

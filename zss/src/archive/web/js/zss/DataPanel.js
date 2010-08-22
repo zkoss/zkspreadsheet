@@ -45,7 +45,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		this.paddingl = this.paddingt = 0;
 		var pdl = this.paddingl + sheet.leftWidth,
 			pdt = sheet.topHeight;//this.paddingt + sheet.topHeight;
-		jq(dataPanel).css({'padding-left': jq.px(pdl), 'padding-top': jq.px(pdt), 'width': jq.px(this.width), 'height': jq.px(this.height)});
+		jq(dataPanel).css({'padding-left': jq.px0(pdl), 'padding-top': jq.px0(pdt), 'width': jq.px0(this.width), 'height': jq.px0(this.height)});
 	},
 	cleanup: function() {
 		var focus = this.focustag,
@@ -65,7 +65,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 */
 	updateHeight: function (diff) {
 		this.height += diff;
-		jq(this.comp).css('height', jq.px(this.height));
+		jq(this.comp).css('height', jq.px0(this.height));
 	},
 	/**
 	 * Sets the width
@@ -73,7 +73,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 */
 	updateWidth: function (diff) {
 		this.width += diff;
-		jq(this.comp).css('width', jq.px(this.width));
+		jq(this.comp).css('width', jq.px0(this.width));
 	},
 	_fixSize: function (block) {
 		var sheet = this.sheet,
@@ -87,8 +87,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			height = this.height,
 			pdl = this.paddingl + sheet.leftWidth;
 		
-		jq(this.comp).css({'padding-left': jq.px(pdl), 'padding-top': jq.px(sheet.topHeight), 'width': jq.px(width)});
-		jq(this.padcomp).css('height', jq.px(this.paddingt));
+		jq(this.comp).css({'padding-left': jq.px0(pdl), 'padding-top': jq.px0(sheet.topHeight), 'width': jq.px0(width)});
+		jq(this.padcomp).css('height', jq.px0(this.paddingt));
 		sheet.tp._updateLeftPadding(pdl);
 		sheet.lp._updateTopPadding(this.paddingt);
 	},

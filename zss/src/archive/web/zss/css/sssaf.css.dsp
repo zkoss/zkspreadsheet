@@ -20,7 +20,13 @@
 	display: inline-block; /* DIFF */
 }
 
+.zshbouni{
+	display: inline-block; /* DIFF */
+}
 
+.zshbounw{
+	display: inline-block; /* DIFF */
+}
 
 
 .zsscroll {

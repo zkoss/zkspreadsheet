@@ -334,7 +334,7 @@ zss.Cell = zk.$extends(zk.Object, {
 			}
 			w =  w - sheet.cellPad;
 			if (w < 0) w = 0;// bug, when some column or row is invisible, the w might be samlle then zero
-			jq(txtcmp).css('width', jq.px(w));
+			jq(txtcmp).css('width', jq.px0(w));
 		} else {
 			if (ctrl.overhead)
 				block._overflowcell.$remove(ctrl);	

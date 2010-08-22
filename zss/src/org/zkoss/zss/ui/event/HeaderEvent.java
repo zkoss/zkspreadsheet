@@ -35,16 +35,18 @@ public class HeaderEvent extends Event{
 	private Sheet _sheet;
 	private int _type;
 	private int _index;
+	private boolean _hidden;
 
-	public HeaderEvent(String name, Component target,Sheet sheet, int type ,int index,Object data) {
+	public HeaderEvent(String name, Component target,Sheet sheet, int type ,int index,Object data, boolean hidden) {
 		super(name, target, data);
 		_sheet = sheet;
 		this._type = type;
 		this._index = index;
+		this._hidden = hidden;
 	}
 	
-	public HeaderEvent(String name, Component target,Sheet sheet, int type ,int index) {
-		this(name,target,sheet,type,index,null);
+	public HeaderEvent(String name, Component target,Sheet sheet, int type ,int index, boolean hidden) {
+		this(name,target,sheet,type,index,null,hidden);
 	}
 	
 	/**
@@ -72,10 +74,18 @@ public class HeaderEvent extends Event{
 		return _type;
 	}
 	
+	/**
+	 * Returns whether request hidden(true)/unhidden(false) of this column/row.
+	 * @return whether request hidden(true)/unhidden(false) of this column/row.
+	 */
+	public boolean isHidden() {
+		return _hidden;
+	}
+	
 	public String toString(){
 		StringBuffer sb = new StringBuffer();
 		sb.append(super.toString());
-		sb.append("[").append("type:").append(_type).append(",index:").append(_index).append(",data:").append(getData()).append("]");
+		sb.append("[").append("type:").append(_type).append(",index:").append(_index).append(",data:").append(getData()).append(",hidden:").append(isHidden()).append("]");
 		return sb.toString();
 	}
 

@@ -165,7 +165,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			maxHeight = scroll.clientHeight;
 		
 		if (currentWidth > maxWidth) {
-			var max = jq.px(maxWidth),
+			var max = jq.px0(maxWidth),
 				left = sheet.lp.comp;
 			jq(corner).css('width', max);
 			jq(left).css('width', max);
@@ -173,7 +173,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		}
 
 		if (currentHeight > maxHeight) {
-			var height = jq.px(maxHeight),
+			var height = jq.px0(maxHeight),
 				top = sheet.tp.comp;
 			jq(corner).css('height', height);
 			jq(top).css('height', height);
@@ -300,6 +300,8 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		topHeaderInner: null,
 		leftHeaderOuter: null,
 		leftHeaderInner: null,
+		topHeaderHiddens: null,
+		leftHeaderHiddens: null,
 		dataPanel: null,
 		/**
 		 * Sets the customized titles of column header.

@@ -22,42 +22,88 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	function _ignoresizing (dg, pt, evt) {
 		var ctrl = dg.control;
 		ctrl.draging = true;
+		
 		zss.SSheetCtrl._curr(ctrl).dp.stopEditing("refocus");
+		var pt0 = pt[0] - (dg._unhide && ctrl.type == zss.Header.HOR ? 6 : 0),
+			pt1 = pt[1] - (dg._unhide && ctrl.type != zss.Header.HOR ? 6 : 0);
 		
-		ctrl.drag.start = [pt[0], pt[1]];
+		dg.start = [pt0, pt1];
 		
-		return ctrl.drag._fixstart = false;
+		return dg._fixstart = false;
 	}
 	
 	function _startDrag (dg, evt) {
 		dg.control.sheet.headerdrag = true;
 	}
 
+	function _setColumnHeader(ctrl, width, unhide) {
+		var sheet = ctrl.sheet,
+			cmp = ctrl.comp,
+			icmp = ctrl.icomp,
+			index = ctrl.index;
+		
+		jq(cmp).css('width', '');
+		jq(icmp).css('width', '');
+		
+		sheet._setColumnWidth(index, width, true, true); //will hide the column if width == 0
+
+		//width == 0 so need the extra boundary to "unhide" the column 
+		if (width == 0) {
+			if (!ctrl.ibcomp2) //insert the SBoun2
+				ctrl.ibcomp2 = jq(ctrl.ibcomp).after('<div class="zshbounw" zs.t="SBoun2"></div>').next()[0];
+			//hide the sizing boundary to avoid affect sizing bounary of left side header
+			jq(ctrl.ibcomp).css('visibility', 'hidden');
+		} else if (unhide && ctrl.ibcomp2) {//if not zero, must remove extra "unhide" boudnary if exist
+			jq(ctrl.ibcomp2).remove();
+			jq(ctrl.ibcomp).css('visibility', '');
+			delete ctrl.ibcomp2;
+		}
+	}
+	
+	function _setRowHeader(ctrl, height, unhide) {
+		var sheet = ctrl.sheet,
+		cmp = ctrl.comp,
+		icmp = ctrl.icomp,
+		index = ctrl.index;
+		
+		jq(cmp).css({'height': '', 'line-height': ''});
+		jq(icmp).css({'height': '', 'line-height': ''});
+
+		sheet._setRowHeight(index, height, true, true); //will hide the row if height == 0
+		
+		//height == 0 so need the extra boundary to "unhide" the row 
+		if (height == 0) {
+			if (!ctrl.ibcomp2) //insert the SBoun2
+				ctrl.ibcomp2 = jq(ctrl.ibcomp).after('<div class="zsvbounw" zs.t="SBoun2"></div>').next()[0];
+			//hide the sizing boundary so will not disturb bottom headers
+			jq(ctrl.ibcomp).css('visibility', 'hidden');
+		} else if (unhide && ctrl.ibcomp2) {//if not zero, must remove extra "unhide" boudnary if exist
+			jq(ctrl.ibcomp2).remove();
+			jq(ctrl.ibcomp).css('visibility', '');
+			delete ctrl.ibcomp2;
+		}
+	}
+	
 	function _endDrag (dg, evt) {
 		var ctrl = dg.control,
-			sheet = ctrl.sheet,
-			cmp = ctrl.comp;
+			sheet = ctrl.sheet;
+		
 		ctrl.draging = sheet.headerdrag = false;
 		
 		if (ctrl.type == zss.Header.HOR) {
 			var fw,
-				offset = ctrl.drag.last[0] - ctrl.drag.start[0];
+				offset = dg.last[0] - dg.start[0];
 			fw = ctrl.orgsize + offset;
 			if (fw < ctrl.minHWidth) fw = ctrl.minHWidth;
 			
-			jq(ctrl.comp).css('width', '');
-			jq(ctrl.icomp).css('width', '');
-			sheet._setColumnWidth(ctrl.index, fw, true, true);
+			_setColumnHeader(ctrl, fw, dg._unhide);			
 		} else {
 			var fh,
-				offset = ctrl.drag.last[1] - ctrl.drag.start[1];
+				offset = dg.last[1] - dg.start[1];
 			fh = ctrl.orgsize + offset;
 			if (fh < ctrl.minVHeight) fh = ctrl.minVHeight;
 
-			jq(ctrl.comp).css({'height': '', 'line-height': ''});
-			jq(ctrl.icomp).css({'height': '', 'line-height': ''});
-
-			sheet._setRowHeight(ctrl.index, fh, true, true);
+			_setRowHeader(ctrl, fh, dg._unhide);
 		}
 
 		//gain focus and reallocate mark , then show it, 
@@ -75,77 +121,76 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	
 	function _snap (dg, pt) {
 		var ctrl = dg.control,
-			drag = ctrl.drag,
 			last = [pt[0], pt[1]],
-			cmp = ctrl.comp;
-
-		if (!drag._fixstart) {
-			drag.start[0] -= drag.offset[0];
-			drag.start[1] -= drag.offset[1];
-			drag._fixstart = true;
+			cmp = ctrl.comp,
+			icmp = ctrl.icomp;
+		if (!dg._fixstart) {
+			dg.start[0] -= dg.offset[0];
+			dg.start[1] -= dg.offset[1];
+			dg._fixstart = true;
 
 			//when column size is 0, the head will set to display none, so, we remove the style here
 			//see also zkSSheetCtrl#setColumnWidth
 			//var name = "#"+this.sheetid;
 			//zcss.setRule(name+" div.zscw"+this.index,"display","",true,this.sheetid+"-sheet");
-			ctrl._processDrag(false);
+			ctrl._processDrag(false, dg._unhide);
 		}
 
 		if (ctrl.type == zss.Header.HOR) {
 			if (ctrl.orgsize == null) 
 				ctrl.orgsize = zk(cmp).offsetWidth();
 			
-			var off = ctrl.drag.start[0] - pt[0],
+			var off = dg.start[0] - pt[0],
 				maxoff = ctrl.orgsize - ctrl.minHWidth;
 				
 			if (maxoff < 0) maxoff = 0;
 			
-			last = off >= maxoff ? [ctrl.drag.start[0] - maxoff, 0] : [pt[0], 0];
-			ctrl.drag.last = [last[0], last[1]];
+			last = off >= maxoff ? [dg.start[0] - maxoff, 0] : [pt[0], 0];
+			dg.last = [last[0], last[1]];
 				
 			if (zk.opera) {//In opera , i must add head position to get correct left position
-				var bcmp = cmp.ctrl.bcomp;
+				var bcmp = ctrl.bcomp;
 				last[0] += (bcmp.offsetLeft+bcmp.offsetWidth);
 			}
 			
 			//set size of column right now, but it will fail in opera
 			if (!zk.opera) {
 				var w, wi,
-					offset = last[0] - ctrl.drag.start[0];
+					offset = last[0] - dg.start[0];
 				wi = w = ctrl.orgsize + offset;
 				if(w < ctrl.minHWidth) w = ctrl.minHWidth;
 				
-				//for firfox -mox-boz-size, offsetWidth is the width
+				//for firfox -moz-box-size, offsetWidth is the width
 				if (zk.gecko)
 					wi = zk(cmp).revisedWidth(w); 
 				else 
 					w = wi = zk(cmp).revisedWidth(w);
 					
-				jq(cmp).css('width', jq.px(w));
-				jq(ctrl.icomp).css('width', jq.px(wi));
+				jq(cmp).css('width', jq.px0(w));
+				jq(icmp).css('width', jq.px0(wi));
 			}
 		} else {
 			if (ctrl.orgsize == null)
 				ctrl.orgsize = zk(cmp).offsetHeight();
 
-			var off = ctrl.drag.start[1] - pt[1],
+			var off = dg.start[1] - pt[1],
 				maxoff = ctrl.orgsize - ctrl.minVHeight;
 
 			if (maxoff < 0) maxoff =0;
-			last = off >= maxoff ? [0, ctrl.drag.start[1] - maxoff] : last = [0, pt[1]];
+			last = off >= maxoff ? [0, dg.start[1] - maxoff] : last = [0, pt[1]];
 
-			ctrl.drag.last = [last[0], last[1]];
+			dg.last = [last[0], last[1]];
 			//set size of row right now, but it will fail in opera
 			if (!zk.opera) {
 				var h,
-					offset = last[1] - ctrl.drag.start[1];
+					offset = last[1] - dg.start[1];
 				h = ctrl.orgsize + offset;
 				if (h < ctrl.minVHeight) h= ctrl.minVHeight;
 				if (h == 0)//prevent minus value.
 					h = 1;
 
-				jq(cmp).css({'height': jq.px(h - 1), 'line-height': jq.px(h - 1)});
-				jq(ctrl.icomp).css({'height': jq.px(h - 1), 'line-height': jq.px(h - 1)});
+				jq(cmp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
+				jq(icmp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
 			}
 		}
 		return last;
@@ -155,15 +200,15 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	 * Create a dom element to be drag instead of drag the element itself
 	 */
 	function _ghosting (dg, ofs, evt) {
-		var drag = dg.control,
-			bcmp = drag.ibcomp,
+		var ctrl = dg.control,
+			bcmp = ctrl.ibcomp,
 			height = bcmp.offsetHeight/2 + 1,//3;
 			width = bcmp.offsetWidth/2 + 1,//3;
 			top = ofs[1],
 			left = ofs[0],
-			spcomp = zss.SSheetCtrl._curr(drag).sp.comp;
+			spcomp = zss.SSheetCtrl._curr(ctrl).sp.comp;
 
-		if (drag.type == zss.Header.HOR) {
+		if (ctrl.type == zss.Header.HOR) {
 			var w = zk(spcomp).offsetWidth(),
 				barHeight = (spcomp.scrollWidth - w <= 0) ? 0 : zss.Spreadsheet.scrollWidth,
 			height = zk(spcomp).offsetHeight() - barHeight;
@@ -172,12 +217,15 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				barWidth = (spcomp.scrollHeight - h <= 0) ? 0 : zss.Spreadsheet.scrollWidth;
 			width = zk(spcomp).offsetWidth() - barWidth;
 		}
+		
+		if (jq('#zk_sghost')) //if exists, remove it first
+			jq('#zk_sghost').remove();
 
 		var html = ['<div id="zk_sghost" style="background:#AAA;position:absolute;top:', top, 'px;left:',
 		            left, 'px;width:', width, 'px;height:', height, 'px;"></div>'].join('');
 		jq(document.body).append(html);
 		
-		return drag.element = jq('#zk_sghost')[0];
+		return ctrl.element = jq('#zk_sghost')[0];
 	}
 /**
  * Header represent row/column header of the spreadsheet.
@@ -210,6 +258,9 @@ zss.Header = zk.$extends(zk.Object, {
 		boundary.ctrlref = this;
 		this.bcomp = boundary;
 		this.ibcomp = jq(boundary).children("DIV:first")[0];
+		this.ibcomp2 = jq(boundary).children("DIV:last")[0];
+		if (this.ibcomp2 == this.ibcomp) 
+			delete this.ibcomp2;
 		this.icomp = jq(header).children("DIV:first")[0];
 	},
 	/**
@@ -228,6 +279,8 @@ zss.Header = zk.$extends(zk.Object, {
 		}
 		this.cells = this.comp = this.bcomp.ctrlref = this.bcomp = 
 			this.ibcomp = this.icomp = this.sheet = null;
+		if (this.ibcomp2)
+			delete this.ibcomp2;
 	},
 	/**
 	 * Sets the width position index
@@ -264,14 +317,22 @@ zss.Header = zk.$extends(zk.Object, {
 			jq(this.icomp).text(newnm);
 		}
 	},
-	_processDrag: function (show) {
-		if (this.sheet.isDragging()) return;//don't care if dragging
-		var ibcmp = this.ibcomp;
-		if (this.type == zss.Header.HOR)	
-			jq(ibcmp)[show && !zss.Header.draging ? 'addClass' : 'removeClass']("zshbouni-over");
-		else
-			jq(ibcmp)[show && !zss.Header.draging ? 'addClass' : 'removeClass']("zsvbouni-over");
+	_processDrag: function (show, unhide) { //sizing column
+		if (this.sheet.isDragging())
+			return;//don't care if dragging
 		
+		if (show && this.drag && this.drag._unhide != unhide) {
+			if (this.draging) { //drag direct from unhide thumb to size thumb, shall ignore such case 
+				return;
+			}
+			delete this.drag;
+		}
+		
+		var ibcmp = unhide ? this.ibcomp2 : this.ibcomp,
+			ibcmpcls = this.type == zss.Header.HOR ? 
+				(unhide ? "zshbounw-over" : "zshbouni-over") : (unhide ? "zsvbounw-over" : "zsvbouni-over");
+		jq(ibcmp)[show && !zss.Header.draging ? 'addClass' : 'removeClass'](ibcmpcls);
+		 
 		if (!this.drag) {
 			var local = this;
 			this.drag = new zk.Draggable(this, ibcmp, {
@@ -283,6 +344,7 @@ zss.Header = zk.$extends(zk.Object, {
 				starteffect: _startDrag,
 				endeffect: _endDrag
 			});
+			this.drag._unhide = unhide; //indicate that this dragging is for unhide
 		}
 	}
 }, {
@@ -296,14 +358,18 @@ zss.Header = zk.$extends(zk.Object, {
 			index = parm.ix,
 			name = parm.nm,
 			zsw = parm.zsw,
-			zsh = parm.zsh;
+			zsh = parm.zsh,
+			hidden = parm.hn;
 		if (type == zss.Header.HOR) {
 			//create column
 			var uuid = sheet._wgt.uuid,
 				html = ['<div z.c="', index,'" zs.t="STheader" class="zstopcell', zsw ? ' zsw' + zsw : '', '" ',
 					zkS.t(zsw) ? 'z.zsw="' + zsw + '"' : '' ,'><div class="', 'zstopcelltxt ', zsw ? ' zswi' + zsw : '', '"',
-					'>', name, '</div></div><div  class="zshboun"><div class="zshbouni" zs.t="SBoun"></div></div>'].join('');
-				$n = jq(html),
+					'>', name, '</div></div><div  class="zshboun"><div class="zshbouni" zs.t="SBoun"></div>'];
+			if (hidden)
+				html.push('<div class="zshbounw" zs.t="SBoun2"></div>');
+			html.push('</div>');
+			var $n = jq(html.join('')),
 				cmp = $n[0],
 				bcmp = $n[1];
 			return new zss.Header(sheet, cmp, bcmp, index, type);
@@ -312,8 +378,11 @@ zss.Header = zk.$extends(zk.Object, {
 			//create row
 			var html = ['<div z.r="', index, '" zs.t="SLheader" class="zsleftcell zsrow',
 			            (zsh ? " zslh" + zsh : ''), '"', zkS.t(zsh) ? ' z.zsh="' + zsh + '"' : '', '><div class="zsleftcelltxt', 
-			            (zsh ? " zslh" + zsh : ''), '">', name,'</div></div><div class="zsvboun"><div class="zsvbouni" zs.t="SBoun"></div></div>'].join(''),
-			    $n = jq(html),
+			            (zsh ? " zslh" + zsh : ''), '">', name,'</div></div><div class="zsvboun"><div class="zsvbouni" zs.t="SBoun"></div>'];
+			if (hidden)
+				html.push('<div class="zsvbounw" zs.t="SBoun2"></div>');
+			html.push('</div>');
+			var $n = jq(html.join('')),
 			    cmp = $n[0],
 			    bcmp = $n[1];
 

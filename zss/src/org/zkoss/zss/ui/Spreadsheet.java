@@ -123,6 +123,7 @@ import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.SequenceId;
 import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.HeaderPositionHelper.HeaderPositionInfo;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
@@ -293,7 +294,7 @@ public class Spreadsheet extends XulElement {
 	}
 
 	/**
-	 * Returns the book model of this spread sheet. If you call this method at
+	 * Returns the book model of this Spreadsheet. If you call this method at
 	 * first time and the book has not assigned by {@link #setBook(Book)}, this
 	 * will create a new model depends on url;
 	 * 
@@ -377,7 +378,7 @@ public class Spreadsheet extends XulElement {
 		if (_book != null) {
 			_book.subscribe(_dataListener);
 			_book.addVariableResolver(_variableResolver);
-			_book.removeFunctionMapper(_functionMapper);
+			_book.addFunctionMapper(_functionMapper);
 		}
 		if (_selectedSheet != null) {
 			doSheetClean(_selectedSheet);
@@ -1069,27 +1070,33 @@ public class Spreadsheet extends XulElement {
 			ArrayList<String> topHeaderOuter = new ArrayList<String>();
 			ArrayList<String> topHeaderInner = new ArrayList<String>();
 			ArrayList<String> columntitle = new ArrayList<String>();
+			ArrayList<Boolean> topHeaderHiddens = new ArrayList<Boolean>();
 			for (int i = colBegin; i <= colEnd; i++) {
 				topHeaderOuter.add(getTopHeaderOuterAttrs(this, i));
 				topHeaderInner.add(getTopHeaderInnerAttrs(this, i));
 				columntitle.add(UtilFns.getColumntitle(this, i));
+				topHeaderHiddens.add(UtilFns.getTopHeaderHiddens(this, i));
 			}
 			renderer.render("topHeaderOuter", topHeaderOuter.toArray());
 			renderer.render("topHeaderInner", topHeaderInner.toArray());
 			renderer.render("columntitle", columntitle.toArray());
+			renderer.render("topHeaderHiddens", topHeaderHiddens.toArray());
 		}
 		if (!_hideRowhead) {
 			ArrayList<String> leftHeaderOuter = new ArrayList<String>();
 			ArrayList<String> leftHeaderInner = new ArrayList<String>();
 			ArrayList<String> rowtitle = new ArrayList<String>();
+			ArrayList<Boolean> leftHeaderHiddens = new ArrayList<Boolean>();
 			for (int i = rowBegin; i <= rowEnd; i++) {
 				leftHeaderOuter.add(UtilFns.getLeftHeaderOuterAttrs(this, i));
 				leftHeaderInner.add(UtilFns.getLeftHeaderInnerAttrs(this, i));
 				rowtitle.add(UtilFns.getRowtitle(this, i));
+				leftHeaderHiddens.add(UtilFns.getLeftHeaderHiddens(this, i));
 			}
 			renderer.render("leftHeaderOuter", leftHeaderOuter.toArray());
 			renderer.render("leftHeaderInner", leftHeaderInner.toArray());
 			renderer.render("rowtitle", rowtitle.toArray());
+			renderer.render("leftHeaderHiddens", leftHeaderHiddens.toArray());
 		}
 		renderer.render("dataPanel", ((SpreadsheetCtrl) this.getExtraCtrl()).getDataPanelAttrs());
 	}
@@ -1461,24 +1468,29 @@ public class Spreadsheet extends XulElement {
 	private void updateColWidth(Sheet sheet, int col) {
 		final int char256 = sheet.getColumnWidth(col);
 		final int width = Utils.fileChar256ToPx(char256, getDefaultCharWidth());
+		final boolean newHidden = sheet.isColumnHidden(col);
 		HeaderPositionHelper posHelper = getColumnPositionHelper(sheet);
-		int[] meta = posHelper.getMeta(col);
-		if ((meta == null && width != posHelper.getDefaultSize()) || (meta != null && meta[1] != width)) {
-			int id = meta == null ? _custColId.next() : meta[2];
-			posHelper.setCustomizedSize(col, width, id);
-			((ExtraCtrl) getExtraCtrl()).setColumnWidth(sheet, col, width, id);
+		HeaderPositionInfo info = posHelper.getInfo(col);
+		if ((info == null && (width != posHelper.getDefaultSize() || newHidden)) || (info != null && (info.size != width || info.hidden != newHidden))) {
+			int id = info == null ? _custColId.next() : info.id;
+			boolean hidden = info == null ? newHidden : info.hidden;
+			posHelper.setInfoValues(col, width, id, hidden);
+			((ExtraCtrl) getExtraCtrl()).setColumnWidth(sheet, col, width, id, hidden);
 		}
 	}
 
 	private void updateRowHeight(Sheet sheet, int row) {
 		final int twips = BookHelper.getRowHeight(sheet, row);
-		int height = Utils.twipToPx(twips);
+		final int height = Utils.twipToPx(twips);
+		final Row rowobj = sheet.getRow(row);
+		final boolean newHidden = rowobj == null ? false : rowobj.getZeroHeight();
 		HeaderPositionHelper posHelper = getRowPositionHelper(sheet);
-		int[] meta = posHelper.getMeta(row);
-		if ((meta == null && height != posHelper.getDefaultSize()) || (meta != null && meta[1] != height)) {
-			int id = meta == null ? _custRowId.next() : meta[2];
-			posHelper.setCustomizedSize(row, height, id);
-			((ExtraCtrl) getExtraCtrl()).setRowHeight(sheet, row, height, id);
+		HeaderPositionInfo info = posHelper.getInfo(row);
+		if ((info == null && (height != posHelper.getDefaultSize() || newHidden)) || (info != null && (info.size != height || info.hidden != newHidden))) {
+			int id = info == null ? _custRowId.next() : info.id;
+			boolean hidden = info == null ? newHidden : info.hidden;
+			posHelper.setInfoValues(row, height, id, hidden);
+			((ExtraCtrl) getExtraCtrl()).setRowHeight(sheet, row, height, id, hidden);
 		}
 	}
 	
@@ -1522,11 +1534,13 @@ public class Spreadsheet extends XulElement {
 		if (helper == null) {
 			int defaultSize = this.getRowheight();
 			
-			ArrayList<int[]> heights = new ArrayList<int[]>();
+			List<HeaderPositionInfo> infos = new ArrayList<HeaderPositionInfo>();
+			
 			for(Row row: sheet) {
+				final boolean hidden = row.getZeroHeight();
 				final int height = Utils.twipToPx(row.getHeight());
-				if (height != defaultSize) { //special height
-					heights.add(new int[] {row.getRowNum(), height});
+				if (height != defaultSize || hidden) { //special height or hidden
+					infos.add(new HeaderPositionInfo(row.getRowNum(), height, _custRowId.next(), hidden));
 				}
 				final int colnum = row.getLastCellNum();
 				if (colnum > maxcol) {
@@ -1534,16 +1548,7 @@ public class Spreadsheet extends XulElement {
 				}
 			}
 			
-			int size = heights.size();
-			int[][] cheights = new int[size][3];
-			for (int i = 0; i < size; i++) {
-				int[] r = (int[]) heights.get(i);
-				cheights[i][0] = r[0];
-				cheights[i][1] = r[1];
-				cheights[i][2] = _custRowId.next();
-			}
-
-			helper = new HeaderPositionHelper(defaultSize, cheights);
+			helper = new HeaderPositionHelper(defaultSize, infos);
 
 			setAttribute(ROW_SIZE_HELPER_KEY, helper);
 		}
@@ -1648,35 +1653,34 @@ public class Spreadsheet extends XulElement {
 			final int defaultColSize = sheet.getDefaultColumnWidth();
 			final int defaultColSize256 = defaultColSize * 256; 
 			final int charWidth = getDefaultCharWidth();
-			ArrayList<int[]> widths = new ArrayList<int[]>();
+			final int defaultColSizeInPx = Utils.defaultColumnWidthToPx(defaultColSize, charWidth);
+			List<HeaderPositionInfo> infos = new ArrayList<HeaderPositionInfo>();
 			for(int j=0; j < maxcol; ++j) {
+				final boolean hidden = sheet.isColumnHidden(j); //whether this column is hidden
 				final int fileColumnWidth = sheet.getColumnWidth(j); //file column width
-				if (fileColumnWidth != defaultColSize256) {
-					final int colwidth = Utils.fileChar256ToPx(fileColumnWidth, charWidth);
-					widths.add(new int[] {j, colwidth});
+				if (fileColumnWidth != defaultColSize256 || hidden) {
+					final int colwidth = fileColumnWidth != defaultColSize256 ? 
+							Utils.fileChar256ToPx(fileColumnWidth, charWidth) : defaultColSizeInPx; 
+					infos.add(new HeaderPositionInfo(j, colwidth, _custColId.next(), hidden));
 				}
 			}
-			
-			int size = widths.size();
-			int[][] cwidths = new int[size][3];
-			for (int i = 0; i < size; i++) {
-				int[] r = (int[]) widths.get(i);
-				cwidths[i][0] = r[0];
-				cwidths[i][1] = r[1];
-				cwidths[i][2] = _custColId.next();
-			}
-			final int defaultColSizeInPx = Utils.defaultColumnWidthToPx(defaultColSize, charWidth);
-			helper = new HeaderPositionHelper(defaultColSizeInPx, cwidths);
-
+			helper = new HeaderPositionHelper(defaultColSizeInPx, infos);
 			setAttribute(COLUMN_SIZE_HELPER_KEY, helper);
 		}
 		return helper;
+	}
+	
+	
+	@Override
+	public Object getExtraCtrl() {
+		return newExtraCtrl();
 	}
 
 	/**
 	 * Return a extra controller. only spreadsheet developer need to call this
 	 * method.
 	 */
+	@Override
 	protected Object newExtraCtrl() {
 		return new ExtraCtrl();
 	}
@@ -1689,8 +1693,7 @@ public class Spreadsheet extends XulElement {
 					getSheetDefaultRules());
 		}
 
-		public void setColumnSize(String sheetId, int column, int newsize,
-				int id) {
+		public void setColumnSize(String sheetId, int column, int newsize, int id, boolean hidden) {
 			Sheet sheet;
 			if (getSelectedSheetId().equals(sheetId)) {
 				sheet = getSelectedSheet();
@@ -1699,12 +1702,12 @@ public class Spreadsheet extends XulElement {
 			}
 			// update helper size first before sheet.setColumnWidth, or it will fire a SSDataEvent
 			HeaderPositionHelper helper = Spreadsheet.this.getColumnPositionHelper(sheet);
-			helper.setCustomizedSize(column, newsize, id);
+			helper.setInfoValues(column, newsize, id, hidden);
 
 			sheet.setColumnWidth(column, Utils.pxToFileChar256(newsize, ((Book)sheet.getWorkbook()).getDefaultCharWidth()));
 		}
 
-		public void setRowSize(String sheetId, int rownum, int newsize, int id) {
+		public void setRowSize(String sheetId, int rownum, int newsize, int id, boolean hidden) {
 			Sheet sheet;
 			if (getSelectedSheetId().equals(sheetId)) {
 				sheet = getSelectedSheet();
@@ -1717,7 +1720,7 @@ public class Spreadsheet extends XulElement {
 			}
 			row.setHeight((short)Utils.pxToTwip(newsize));
 			HeaderPositionHelper helper = Spreadsheet.this.getRowPositionHelper(sheet);
-			helper.setCustomizedSize(rownum, newsize, id);
+			helper.setInfoValues(rownum, newsize, id, hidden);
 		}
 
 		public HeaderPositionHelper getColumnPositionHelper(String sheetId) {
@@ -1790,10 +1793,10 @@ public class Spreadsheet extends XulElement {
 			HeaderPositionHelper helper = Spreadsheet.this.getRowPositionHelper(sheet);
 			StringBuffer sb = new StringBuffer();
 			sb.append("class=\"zsrow");
-			int[] meta = helper.getMeta(row);
+			HeaderPositionInfo info = helper.getInfo(row);
 			int zsh = -1;
-			if (meta != null) {
-				zsh = meta[2];
+			if (info != null) {
+				zsh = info.id;
 				sb.append(" zsh").append(zsh);
 			}
 			sb.append("\"");
@@ -1840,14 +1843,14 @@ public class Spreadsheet extends XulElement {
 			sb.append("class=\"zscell");
 			int zsh = -1;
 			int zsw = -1;
-			int[] meta = colHelper.getMeta(col);
-			if (meta != null) {
-				zsw = meta[2];
+			HeaderPositionInfo info = colHelper.getInfo(col);
+			if (info != null) {
+				zsw = info.id;
 				sb.append(" zsw").append(zsw);
 			}
-			meta = rowHelper.getMeta(row);
-			if (meta != null) {
-				zsh = meta[2];
+			info = rowHelper.getInfo(row);
+			if (info != null) {
+				zsh = info.id;
 				sb.append(" zshi").append(zsh);
 			}
 			appendMergeSClass(sb, row, col);
@@ -1910,13 +1913,13 @@ public class Spreadsheet extends XulElement {
 
 			// class="zscelltxt zscwi${cstatus.index} zsrhi${rstatus.index}"
 			sb.append("class=\"zscelltxt");
-			int[] meta = colHelper.getMeta(col);
-			if (meta != null) {
-				sb.append(" zswi").append(meta[2]);
+			HeaderPositionInfo info = colHelper.getInfo(col);
+			if (info != null) {
+				sb.append(" zswi").append(info.id);
 			}
-			meta = rowHelper.getMeta(row);
-			if (meta != null) {
-				sb.append(" zshi").append(meta[2]);
+			info = rowHelper.getInfo(row);
+			if (info != null) {
+				sb.append(" zshi").append(info.id);
 			}
 			sb.append("\" ");
 
@@ -1939,9 +1942,9 @@ public class Spreadsheet extends XulElement {
 			// class="zstopcell zscw${status.index}" z.c="${status.index}"
 			sb.append("class=\"zstopcell");
 			int zsw = -1;
-			int[] meta = colHelper.getMeta(col);
-			if (meta != null) {
-				zsw = meta[2];
+			HeaderPositionInfo info = colHelper.getInfo(col);
+			if (info != null) {
+				zsw = info.id;
 				sb.append(" zsw").append(zsw);
 			}
 			sb.append("\" ");
@@ -1962,9 +1965,9 @@ public class Spreadsheet extends XulElement {
 
 			// class="zstopcelltxt zscw${status.index}"
 			sb.append("class=\"zstopcelltxt");
-			int[] meta = colHelper.getMeta(col);
-			if (meta != null) {
-				sb.append(" zswi").append(meta[2]);
+			HeaderPositionInfo info = colHelper.getInfo(col);
+			if (info != null) {
+				sb.append(" zswi").append(info.id);
 			}
 			sb.append("\" ");
 
@@ -1981,9 +1984,9 @@ public class Spreadsheet extends XulElement {
 			// z.r="${status.index}"
 			sb.append("class=\"zsleftcell zsrow");
 			int zsh = -1;
-			int[] meta = rowHelper.getMeta(row);
-			if (meta != null) {
-				zsh = meta[2];
+			HeaderPositionInfo info = rowHelper.getInfo(row);
+			if (info != null) {
+				zsh = info.id;
 				sb.append(" zslh").append(zsh);
 			}
 			sb.append("\" ");
@@ -2003,9 +2006,9 @@ public class Spreadsheet extends XulElement {
 			StringBuffer sb = new StringBuffer();
 
 			sb.append("class=\"zsleftcelltxt ");
-			int[] meta = rowHelper.getMeta(row);
-			if (meta != null) {
-				sb.append(" zslh").append(meta[2]);
+			HeaderPositionInfo info = rowHelper.getInfo(row);
+			if (info != null) {
+				sb.append(" zslh").append(info.id);
 			}
 			sb.append("\" ");
 
@@ -2374,12 +2377,13 @@ public class Spreadsheet extends XulElement {
 		}
 
 		//in pixel
-		public void setColumnWidth(Sheet sheet, int col, int width, int id) {
+		public void setColumnWidth(Sheet sheet, int col, int width, int id, boolean hidden) {
 			JSONObj result = new JSONObj();
 			result.setData("type", "column");
 			result.setData("column", col);
 			result.setData("width", width);
 			result.setData("id", id);
+			result.setData("hidden", hidden);
 			/**
 			 * rename size_col -> columnSize
 			 */
@@ -2387,16 +2391,39 @@ public class Spreadsheet extends XulElement {
 		}
 
 		//in pixels
-		public void setRowHeight(Sheet sheet, int row, int height, int id) {
+		public void setRowHeight(Sheet sheet, int row, int height, int id, boolean hidden) {
 			JSONObj result = new JSONObj();
 			result.setData("type", "row");
 			result.setData("row", row);
 			result.setData("height", height);
 			result.setData("id", id);
+			result.setData("hidden", hidden);
 			/**
 			 * rename size_row -> rowSize
 			 */
 			smartUpdate("rowSize", (Object) new Object[] { "", Utils.getSheetId(sheet), result.toString() }, true);
+		}
+
+		@Override
+		public Boolean getLeftHeaderHiddens(int row) {
+			Sheet sheet = getSelectedSheet();
+			HeaderPositionHelper rowHelper = Spreadsheet.this
+					.getRowPositionHelper(sheet);
+			List<Boolean> hiddens = new ArrayList<Boolean>();
+			StringBuffer sb = new StringBuffer();
+			HeaderPositionInfo info = rowHelper.getInfo(row);
+			return info == null ? Boolean.FALSE : Boolean.valueOf(info.hidden);
+		}
+
+		@Override
+		public Boolean getTopHeaderHiddens(int col) {
+			Sheet sheet = getSelectedSheet();
+			HeaderPositionHelper colHelper = Spreadsheet.this
+					.getColumnPositionHelper(sheet);
+			List<Boolean> hiddens = new ArrayList<Boolean>();
+			StringBuffer sb = new StringBuffer();
+			HeaderPositionInfo info = colHelper.getInfo(col);
+			return info == null ? Boolean.FALSE : Boolean.valueOf(info.hidden);
 		}
 	}
 
@@ -2638,10 +2665,10 @@ public class Spreadsheet extends XulElement {
 		sb.append("}\n");
 
 		// zcss.setRule(name+" .zshboun","height",th+"px",true,sid);
-		sb.append(name).append(" .zshboun{\n");
+/*		sb.append(name).append(" .zshboun{\n");
 		sb.append("height:").append(th).append("px;\n");
 		sb.append("}\n");
-
+*/
 		// zcss.setRule(name+" .zshbouni","height",th+"px",true,sid);
 		sb.append(name).append(" .zshbouni{\n");
 		sb.append("height:").append(th).append("px;\n");
@@ -2684,11 +2711,12 @@ public class Spreadsheet extends XulElement {
 			sb.append("}\n");
 		}
 
-		int cs[][] = colHelper.getCostomizedSize();
-		for (int i = 0; i < cs.length; i++) {
-			int index = cs[i][0];
-			int width = cs[i][1];
-			int cid = cs[i][2];
+		List<HeaderPositionInfo> infos = colHelper.getInfos();
+		for (HeaderPositionInfo info : infos) {
+			boolean hidden = info.hidden;
+			int index = info.index;
+			int width = hidden ? 0 : info.size;
+			int cid = info.id;
 
 			celltextwidth = width - 2 * cp - 1;// 1 is border width
 
@@ -2718,11 +2746,12 @@ public class Spreadsheet extends XulElement {
 			}
 		}
 
-		cs = rowHelper.getCostomizedSize();
-		for (int i = 0; i < cs.length; i++) {
-			int index = cs[i][0];
-			int height = cs[i][1];
-			int cid = cs[i][2];
+		infos = rowHelper.getInfos();
+		for (HeaderPositionInfo info : infos) {
+			boolean hidden = info.hidden;
+			int index = info.index;
+			int height = hidden ? 0 : info.size;
+			int cid = info.id;
 			cellheight = height;
 			if (!isGecko) {
 				cellheight = height - 1;// 1 is border width
@@ -2768,26 +2797,38 @@ public class Spreadsheet extends XulElement {
 			int right = block.getRight();
 			int width = 0;
 			for (int i = left; i <= right; i++) {
-				final int colSize = colHelper.getSize(i);
+				final HeaderPositionInfo info = colHelper.getInfo(i);
+				final boolean hidden = info.hidden;
+				final int colSize = hidden ? 0 : info.size;
 				width += colSize;
 			}
 
-			celltextwidth = width - 2 * cp - 1;// 1 is border width
+			if (width <= 0) { //total hidden
+				sb.append(name).append(" .zsmerge").append(block.getId()).append("{\n");
+				sb.append("display:none;");
+				sb.append("}\n");
 
-			if (!isGecko) {
-				cellwidth = celltextwidth;
+				sb.append(name).append(" .zsmerge").append(block.getId());
+				sb.append(" .zscelltxt").append("{\n");
+				sb.append("display:none;");
+				sb.append("}\n");
 			} else {
-				cellwidth = width;
+				celltextwidth = width - 2 * cp - 1;// 1 is border width
+	
+				if (!isGecko) {
+					cellwidth = celltextwidth;
+				} else {
+					cellwidth = width;
+				}
+				sb.append(name).append(" .zsmerge").append(block.getId()).append("{\n");
+				sb.append("width:").append(cellwidth).append("px;");
+				sb.append("}\n");
+	
+				sb.append(name).append(" .zsmerge").append(block.getId());
+				sb.append(" .zscelltxt").append("{\n");
+				sb.append("width:").append(celltextwidth).append("px;");
+				sb.append("}\n");
 			}
-			sb.append(name).append(" .zsmerge").append(block.getId()).append(
-					"{\n");
-			sb.append("width:").append(cellwidth).append("px;");
-			sb.append("}\n");
-
-			sb.append(name).append(" .zsmerge").append(block.getId());
-			sb.append(" .zscelltxt").append("{\n");
-			sb.append("width:").append(celltextwidth).append("px;");
-			sb.append("}\n");
 		}
 
 		sb.append(".zs_indicator{}\n");// for indicating the css is load ready
@@ -2866,13 +2907,15 @@ public class Spreadsheet extends XulElement {
 	}
 
 	private static String getSizeHelperStr(HeaderPositionHelper helper) {
-		int cs[][] = helper.getCostomizedSize();
+		List<HeaderPositionInfo> infos = helper.getInfos();
 		StringBuffer csc = new StringBuffer();
-		for (int i = 0; i < cs.length; i++) {
-			if (i != 0)
+		for(HeaderPositionInfo info : infos) {
+			if (csc.length() > 0)
 				csc.append(",");
-			csc.append(cs[i][0]).append(",").append(cs[i][1]).append(",")
-					.append(cs[i][2]);
+			csc.append(info.index).append(",")
+				.append(info.size).append(",")
+				.append(info.id).append(",")
+				.append(info.hidden);
 		}
 		return csc.toString();
 	}

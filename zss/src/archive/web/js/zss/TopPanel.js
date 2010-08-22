@@ -155,13 +155,17 @@ zss.TopPanel = zk.$extends(zk.Object, {
 		if (this.sheet.headerdrag) return;
 		var n = evt.domTarget;
 		if (jq(n).attr('zs.t') == "SBoun")
-			n.parentNode.ctrlref._processDrag(true);
+			n.parentNode.ctrlref._processDrag(true, false);
+		if (jq(n).attr('zs.t') == "SBoun2")
+			n.parentNode.ctrlref._processDrag(true, true);
 	},
 	_doMouseout: function (evt){
 		if (this.sheet.headerdrag) return;
 		var n = evt.domTarget;
 		if (jq(n).attr('zs.t') == "SBoun")
-			n.parentNode.ctrlref._processDrag(false);
+			n.parentNode.ctrlref._processDrag(false, false);
+		if (jq(n).attr('zs.t') == "SBoun2")
+			n.parentNode.ctrlref._processDrag(false, true);
 	},
 	_createEastHeader: function (headerdata, width) {
 		if (this.hidehead) return;
@@ -293,7 +297,7 @@ zss.TopPanel = zk.$extends(zk.Object, {
 		}
 	},
 	_updateWidth: function (width) {
-		jq(this.comp).css('width', jq.px(width));
+		jq(this.comp).css('width', jq.px0(width));
 		this.width = width;	
 		this._updateBlockWidth();
 	},
@@ -304,7 +308,7 @@ zss.TopPanel = zk.$extends(zk.Object, {
 	},
 	_updateLeftPadding: function (leftpad) {
 		leftpad = leftpad - this.sheet.leftWidth;
-		jq(this.icomp).css('padding-left', jq.px(leftpad));
+		jq(this.icomp).css('padding-left', jq.px0(leftpad));
 		this.leftpad = leftpad;
 		this._updateBlockWidth();
 	},
@@ -315,7 +319,7 @@ zss.TopPanel = zk.$extends(zk.Object, {
 			leftpad = this.leftpad;
 		width = width - (leftpos ? leftpos : 0) - (leftpad ? leftpad : 0);
 		if (width < 0) width = 0;
-		jq(this.block.comp).css('width', jq.px(width));
+		jq(this.block.comp).css('width', jq.px0(width));
 	},
 	/**
 	 * Sets the selection range of the header

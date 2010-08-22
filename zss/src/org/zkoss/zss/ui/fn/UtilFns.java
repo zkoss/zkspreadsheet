@@ -30,6 +30,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
@@ -157,5 +158,13 @@ public class UtilFns {
 	
 	static public String getLeftHeaderInnerAttrs(Spreadsheet ss,int row){
 		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getLeftHeaderInnerAttrs(row);
+	}
+	
+	static public Boolean getTopHeaderHiddens(Spreadsheet ss, int col) {
+		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getTopHeaderHiddens(col);
+	}
+	
+	static public Boolean getLeftHeaderHiddens(Spreadsheet ss,int row){
+		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getLeftHeaderHiddens(row);
 	}
 }

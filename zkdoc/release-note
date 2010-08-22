@@ -9,7 +9,13 @@ ZK Spreadsheet 2.0.0 RC
   41 Support Range.fillDown
   42 Support Range.fillRight
   43 Support Range.fillLeft
-  
+  48 Honer hidden columns	 
+  49 Honer hidden rows	 
+  50 Support drag to hide column	 
+  51 Support drag to hide row	 
+  52 Support drag to sizing so un-hide a hidden column	 
+  53 Support drag to sizing so un-hide a hidden row	 
+   
 *Bug
   
 	------------

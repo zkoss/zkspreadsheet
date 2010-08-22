@@ -442,7 +442,24 @@ lineHeight=20
 	background: #A9C4E9;
 	cursor: n-resize;
 }
-
+.zshbounw{
+	position: relative;
+	height:100%;
+	width:3px;
+}
+.zshbounw-over{
+	background: #A9C4E9;
+	cursor: url(${c:encodeURL('~./zss/img/h_resize.cur')}), e-resize;
+}
+.zsvbounw{
+	position: relative;
+	height:3px;
+	width:100%;
+}
+.zsvbounw-over{
+	background: #A9C4E9;
+	cursor: url(${c:encodeURL('~./zss/img/v_resize.cur')}), n-resize;
+}
 .zsfztop{
 	border-bottom : 1px #5F5FFF;
 	border-bottom-style:none;
