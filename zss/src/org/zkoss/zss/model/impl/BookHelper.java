@@ -199,6 +199,14 @@ public final class BookHelper {
 	public final static int FILL_LINER_TREND = 0x200; //additive relation
 	public final static int FILL_SERIES = FILL_LINER_TREND;
 	
+	//inner filterOp for #filter
+	public final static int FILTEROP_AND = 0x01;
+	public final static int FILTEROP_BOTTOM10 = 0x02;
+	public final static int FILTEROP_BOTOOM10PERCENT = 0x03;
+	public final static int FILTEROP_OR = 0x04;
+	public final static int FILTEROP_TOP10 = 0x05;
+	public final static int FILTEROP_TOP10PERCENT = 0x06;
+	
 	public static RefBook getRefBook(Book book) {
 		return book instanceof HSSFBookImpl ? 
 			((HSSFBookImpl)book).getOrCreateRefBook():
@@ -1783,7 +1791,7 @@ public final class BookHelper {
 				final Row row = sheet.getRow(rowNum);
 				if (row != null) {
 					begCol = Math.min(begCol, row.getFirstCellNum());
-					endCol = Math.max(begCol, row.getLastCellNum());
+					endCol = Math.max(begCol, row.getLastCellNum() - 1);
 				}
 			}
 			begCol = Math.max(lCol, begCol);
@@ -1906,7 +1914,7 @@ public final class BookHelper {
 			//remove cells from the old row of the Range
 			final List<Cell> cells = new ArrayList<Cell>(cellCount);
 			final int begCol = Math.max(lCol, row.getFirstCellNum());
-			final int endCol = Math.min(rCol, row.getLastCellNum());
+			final int endCol = Math.min(rCol, row.getLastCellNum() - 1);
 			for(int k = begCol; k <= endCol; ++k) {
 				final Cell cell = row.getCell(k);
 				if (cell != null) {
@@ -2301,7 +2309,12 @@ public final class BookHelper {
 	
 	public static short getRowHeight(Sheet sheet, int row) {
 		final Row rowx = sheet.getRow(row);
-		return rowx != null ? rowx.getHeight() : sheet.getDefaultRowHeight();
+		return rowx != null ? getRowHeight(rowx) : sheet.getDefaultRowHeight();
+	}
+	
+	private static short getRowHeight(Row row) {
+		final short h = row.getHeight();
+		return h == 0xFF ? row.getSheet().getDefaultRowHeight() : h;
 	}
 	
 	public static Set<Ref> setCellStyle(Sheet sheet, int tRow, int lCol, int bRow, int rCol, CellStyle style) {
@@ -2574,5 +2587,39 @@ if (fillType == FILL_DEFAULT) {
 			}
 		}
 		return null;
+	}
+	
+	public static Set<Ref> setRowsHidden(Sheet sheet, int tRow, int bRow, boolean hidden) {
+		if (hidden) {
+			for(int r = tRow; r <= bRow; ++r) {
+				final Row row = BookHelper.getOrCreateRow(sheet, r);
+				row.setZeroHeight(true);
+			}
+		} else {
+			for(int r = tRow; r <= bRow; ++r) {
+				final Row row = sheet.getRow(r);
+				if (row != null) {
+					row.setZeroHeight(false);
+				}
+			}
+		}
+		final Book book = (Book) sheet.getWorkbook();
+		final RefSheet refSheet = BookHelper.getRefSheet(book, sheet);
+		final Ref ref = new AreaRefImpl(tRow, 0, bRow, book.getSpreadsheetVersion().getLastColumnIndex(), refSheet);
+		final Set<Ref> all = new HashSet<Ref>();
+		all.add(ref);
+		return all; 
+	}
+
+	public static Set<Ref> setColumnsHidden(Sheet sheet, int lCol, int rCol, boolean hidden) {
+		for(int c = lCol; c <= rCol; ++c) {
+			sheet.setColumnHidden(c, hidden);
+		}
+		final Book book = (Book) sheet.getWorkbook();
+		final RefSheet refSheet = BookHelper.getRefSheet(book, sheet);
+		final Ref ref = new AreaRefImpl(0, lCol, book.getSpreadsheetVersion().getLastRowIndex(), rCol, refSheet);
+		final Set<Ref> all = new HashSet<Ref>();
+		all.add(ref);
+		return all; 
 	}
 }

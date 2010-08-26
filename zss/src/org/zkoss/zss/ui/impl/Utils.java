@@ -524,6 +524,28 @@ public class Utils {
 	    return lfrc >= 1024 ? lw : (lw * lfrc / 1024);  
 	}
 	
+	public static int getColumnWidthInPx(Sheet sheet, int col) {
+		return getWidthAny(sheet, col, ((Book)sheet.getWorkbook()).getDefaultCharWidth());
+	}
+	
+	public static int getRowHeightInPx(Sheet sheet, int row) {
+		return getHeightAny(sheet, row);
+	}
+	
+	public static int getRowHeightInPx(Row row) {
+		int h = row.getHeight();
+		if(h==0xFF) h = row.getSheet().getDefaultRowHeight();
+		return twipToPx(h);
+	}
+	
+	public static int getDefaultColumnWidthInPx(Sheet sheet) {
+		int columnWidth = sheet.getDefaultColumnWidth();
+		return columnWidth <= 0 ? 64 : Utils.defaultColumnWidthToPx(columnWidth, getDefaultCharWidth(sheet));
+	}
+	
+	public static int getDefaultCharWidth(Sheet sheet) {
+		return ((Book)sheet.getWorkbook()).getDefaultCharWidth();
+	}
 	private static int getWidthAny(Sheet zkSheet,int col, int charWidth){
 		int w = zkSheet.getColumnWidth(col);
 		if (w == zkSheet.getDefaultColumnWidth() * 256) { //default column width
@@ -533,9 +555,7 @@ public class Utils {
 	}
 	
 	private static int getHeightAny(Sheet zkSheet,int row){
-		int h = zkSheet.getRow(row).getHeight();
-		if(h==-1) h = zkSheet.getDefaultRowHeight();
-		return twipToPx(h);
+		return getRowHeightInPx(zkSheet.getRow(row));
 	}
 	
 	//calculate the default char width in pixel per the given Font

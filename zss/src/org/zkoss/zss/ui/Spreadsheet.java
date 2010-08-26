@@ -221,7 +221,7 @@ public class Spreadsheet extends XulElement {
 	/**
 	 * default row height when a sheet is empty
 	 */
-	private int _defaultRowHeight = 16;
+	private int _defaultRowHeight = 20;
 
 	/**
 	 * default column width when a sheet is empty
@@ -872,8 +872,7 @@ public class Spreadsheet extends XulElement {
 	 */
 	public int getColumnwidth() {
 		final Sheet sheet = getSelectedSheet();
-		int columnWidth = sheet.getDefaultColumnWidth();
-		return (columnWidth <= 0) ? _defaultColumnWidth : Utils.defaultColumnWidthToPx(columnWidth, getDefaultCharWidth());
+		return Utils.getDefaultColumnWidthInPx(sheet);
 	}
 
 	/**
@@ -895,7 +894,8 @@ public class Spreadsheet extends XulElement {
 	}
 	
 	private int getDefaultCharWidth() {
-		return _book.getDefaultCharWidth();
+		final Sheet sheet = getSelectedSheet();
+		return Utils.getDefaultCharWidth(sheet);
 	}
 
 	/**
@@ -1451,46 +1451,49 @@ public class Spreadsheet extends XulElement {
 					orng.getTopRow(), orng.getRightCol(), orng.getBottomRow());
 		}
 		private void onSizeChange(SSDataEvent event) {
+			//TODO shall pass the range over to the client side and let client side do it; rather than iterate each column and send multiple command
 			final Ref rng = event.getRef();
 			final Sheet sheet = getSheet(rng);
 			if (!getSelectedSheet().equals(sheet))
 				return;
 			if (rng.isWholeColumn()) {
 				final int left = rng.getLeftCol();
-				updateColWidth(sheet, left);
+				final int right = rng.getRightCol();
+				for (int c = left; c <= right; ++c) {
+					updateColWidth(sheet, c);
+				}
 			} else if (rng.isWholeRow()) {
 				final int top = rng.getTopRow();
-				updateRowHeight(sheet, top);
+				final int bottom = rng.getBottomRow();
+				for (int r = top; r <= bottom; ++r) {
+					updateRowHeight(sheet, r);
+				}
 			}
 		}
 	}
 	
 	private void updateColWidth(Sheet sheet, int col) {
-		final int char256 = sheet.getColumnWidth(col);
-		final int width = Utils.fileChar256ToPx(char256, getDefaultCharWidth());
+		final int width = Utils.getColumnWidthInPx(sheet, col);
 		final boolean newHidden = sheet.isColumnHidden(col);
 		HeaderPositionHelper posHelper = getColumnPositionHelper(sheet);
 		HeaderPositionInfo info = posHelper.getInfo(col);
 		if ((info == null && (width != posHelper.getDefaultSize() || newHidden)) || (info != null && (info.size != width || info.hidden != newHidden))) {
 			int id = info == null ? _custColId.next() : info.id;
-			boolean hidden = info == null ? newHidden : info.hidden;
-			posHelper.setInfoValues(col, width, id, hidden);
-			((ExtraCtrl) getExtraCtrl()).setColumnWidth(sheet, col, width, id, hidden);
+			posHelper.setInfoValues(col, width, id, newHidden);
+			((ExtraCtrl) getExtraCtrl()).setColumnWidth(sheet, col, width, id, newHidden);
 		}
 	}
 
 	private void updateRowHeight(Sheet sheet, int row) {
-		final int twips = BookHelper.getRowHeight(sheet, row);
-		final int height = Utils.twipToPx(twips);
+		final int height = Utils.getRowHeightInPx(sheet, row);
 		final Row rowobj = sheet.getRow(row);
 		final boolean newHidden = rowobj == null ? false : rowobj.getZeroHeight();
 		HeaderPositionHelper posHelper = getRowPositionHelper(sheet);
 		HeaderPositionInfo info = posHelper.getInfo(row);
 		if ((info == null && (height != posHelper.getDefaultSize() || newHidden)) || (info != null && (info.size != height || info.hidden != newHidden))) {
 			int id = info == null ? _custRowId.next() : info.id;
-			boolean hidden = info == null ? newHidden : info.hidden;
-			posHelper.setInfoValues(row, height, id, hidden);
-			((ExtraCtrl) getExtraCtrl()).setRowHeight(sheet, row, height, id, hidden);
+			posHelper.setInfoValues(row, height, id, newHidden);
+			((ExtraCtrl) getExtraCtrl()).setRowHeight(sheet, row, height, id, newHidden);
 		}
 	}
 	
@@ -1538,11 +1541,11 @@ public class Spreadsheet extends XulElement {
 			
 			for(Row row: sheet) {
 				final boolean hidden = row.getZeroHeight();
-				final int height = Utils.twipToPx(row.getHeight());
+				final int height = Utils.getRowHeightInPx(row);
 				if (height != defaultSize || hidden) { //special height or hidden
 					infos.add(new HeaderPositionInfo(row.getRowNum(), height, _custRowId.next(), hidden));
 				}
-				final int colnum = row.getLastCellNum();
+				final int colnum = row.getLastCellNum() - 1;
 				if (colnum > maxcol) {
 					maxcol = colnum;
 				}
@@ -1655,7 +1658,7 @@ public class Spreadsheet extends XulElement {
 			final int charWidth = getDefaultCharWidth();
 			final int defaultColSizeInPx = Utils.defaultColumnWidthToPx(defaultColSize, charWidth);
 			List<HeaderPositionInfo> infos = new ArrayList<HeaderPositionInfo>();
-			for(int j=0; j < maxcol; ++j) {
+			for(int j=0; j <= maxcol; ++j) {
 				final boolean hidden = sheet.isColumnHidden(j); //whether this column is hidden
 				final int fileColumnWidth = sheet.getColumnWidth(j); //file column width
 				if (fileColumnWidth != defaultColSize256 || hidden) {

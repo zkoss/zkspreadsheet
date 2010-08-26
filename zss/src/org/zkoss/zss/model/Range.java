@@ -72,6 +72,14 @@ public interface Range {
 	public final static int FILL_YEARS = BookHelper.FILL_YEARS;
 	public final static int FILL_GROWTH_TREND = BookHelper.FILL_GROWTH_TREND;
 	public final static int FILL_LINER_TREND = BookHelper.FILL_LINER_TREND;
+	
+	//filterOp of #autoFilter
+	public final static int FILTEROP_AND = BookHelper.FILTEROP_AND;
+	public final static int FILTEROP_BOTTOM10 = BookHelper.FILTEROP_BOTTOM10;
+	public final static int FILTEROP_BOTOOM10PERCENT = BookHelper.FILTEROP_BOTOOM10PERCENT;
+	public final static int FILTEROP_OR = BookHelper.FILTEROP_OR;
+	public final static int FILTEROP_TOP10 = BookHelper.FILTEROP_TOP10;
+	public final static int FILTEROP_TOP10PERCENT = BookHelper.FILTEROP_TOP10PERCENT;
 		
 	/**
 	 * Returns rich text string of this Range.
@@ -279,4 +287,22 @@ public interface Range {
 	 * Fills up from the bottom cells of this Range to the rest of this Range.
 	 */
 	public void fillUp();
+	
+	/**
+	 * Filters a list specified by this Range.
+	 * @param field offset of the field on which you want to base the filter on (1-based; i.e. leftmost column in this range is field 1).
+	 * @param criteria1 "=" to find blank fields, "<>" to find non-blank fields. If null, means ALL. If filterOp == Range#FILTEROP_TOP10, 
+	 * then this shall specifies the number of items (e.g. "10"). 
+	 * @param filterOp see Range#FILTEROP_xxx. Use FILTEROP_AND and FILTEROP_OR with criteria1 and criterial2 to construct compound criteria.
+	 * @param criteria2 2nd criteria; used with criteria1 and filterOP to construct compound criteria.
+	 * @param visibleDropDown true to show the autoFilter drop-down arrow for the filtered field; false to hide the autoFilter drop-down arrow.
+	 */
+//TODO UNTIL POI support reading/writing the autoFilter record	
+//	public void autoFilter(int field, String criteria1, int filterOp, String criteria2, boolean visibleDropDown);
+	
+	/**
+	 * Sets whether this rows or columns are hidden(useful only if this Range cover entire column or entire row)
+	 * @param hidden true to hide this rows or columns
+	 */
+	public void setHidden(boolean hidden);
 }

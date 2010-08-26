@@ -36,54 +36,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		dg.control.sheet.headerdrag = true;
 	}
 
-	function _setColumnHeader(ctrl, width, unhide) {
-		var sheet = ctrl.sheet,
-			cmp = ctrl.comp,
-			icmp = ctrl.icomp,
-			index = ctrl.index;
-		
-		jq(cmp).css('width', '');
-		jq(icmp).css('width', '');
-		
-		sheet._setColumnWidth(index, width, true, true); //will hide the column if width == 0
-
-		//width == 0 so need the extra boundary to "unhide" the column 
-		if (width == 0) {
-			if (!ctrl.ibcomp2) //insert the SBoun2
-				ctrl.ibcomp2 = jq(ctrl.ibcomp).after('<div class="zshbounw" zs.t="SBoun2"></div>').next()[0];
-			//hide the sizing boundary to avoid affect sizing bounary of left side header
-			jq(ctrl.ibcomp).css('visibility', 'hidden');
-		} else if (unhide && ctrl.ibcomp2) {//if not zero, must remove extra "unhide" boudnary if exist
-			jq(ctrl.ibcomp2).remove();
-			jq(ctrl.ibcomp).css('visibility', '');
-			delete ctrl.ibcomp2;
-		}
-	}
-	
-	function _setRowHeader(ctrl, height, unhide) {
-		var sheet = ctrl.sheet,
-		cmp = ctrl.comp,
-		icmp = ctrl.icomp,
-		index = ctrl.index;
-		
-		jq(cmp).css({'height': '', 'line-height': ''});
-		jq(icmp).css({'height': '', 'line-height': ''});
-
-		sheet._setRowHeight(index, height, true, true); //will hide the row if height == 0
-		
-		//height == 0 so need the extra boundary to "unhide" the row 
-		if (height == 0) {
-			if (!ctrl.ibcomp2) //insert the SBoun2
-				ctrl.ibcomp2 = jq(ctrl.ibcomp).after('<div class="zsvbounw" zs.t="SBoun2"></div>').next()[0];
-			//hide the sizing boundary so will not disturb bottom headers
-			jq(ctrl.ibcomp).css('visibility', 'hidden');
-		} else if (unhide && ctrl.ibcomp2) {//if not zero, must remove extra "unhide" boudnary if exist
-			jq(ctrl.ibcomp2).remove();
-			jq(ctrl.ibcomp).css('visibility', '');
-			delete ctrl.ibcomp2;
-		}
-	}
-	
 	function _endDrag (dg, evt) {
 		var ctrl = dg.control,
 			sheet = ctrl.sheet;
@@ -95,15 +47,14 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				offset = dg.last[0] - dg.start[0];
 			fw = ctrl.orgsize + offset;
 			if (fw < ctrl.minHWidth) fw = ctrl.minHWidth;
-			
-			_setColumnHeader(ctrl, fw, dg._unhide);			
+			sheet._setColumnWidth(ctrl.index, fw, true, true, dg._unhide? false : undefined); //undefined means depends on fw
 		} else {
 			var fh,
 				offset = dg.last[1] - dg.start[1];
 			fh = ctrl.orgsize + offset;
 			if (fh < ctrl.minVHeight) fh = ctrl.minVHeight;
 
-			_setRowHeader(ctrl, fh, dg._unhide);
+			sheet._setRowHeight(ctrl.index, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
 		}
 
 		//gain focus and reallocate mark , then show it, 
@@ -282,6 +233,54 @@ zss.Header = zk.$extends(zk.Object, {
 		if (this.ibcomp2)
 			delete this.ibcomp2;
 	},
+	/**
+	 * Setup column header per the new width or whether unhide the column header
+	 */
+	setColumnHeader: function (hidden) {
+		var sheet = this.sheet,
+			cmp = this.comp,
+			icmp = this.icomp;
+		
+		jq(cmp).css('width', '');
+		jq(icmp).css('width', '');
+
+		//hidden so need the extra boundary to "unhide" the column 
+		if (hidden) {
+			if (!this.ibcomp2) //insert the SBoun2
+				this.ibcomp2 = jq(this.ibcomp).after('<div class="zshbounw" zs.t="SBoun2"></div>').next()[0];
+			//hide the sizing boundary to avoid affect sizing bounary of left side header
+			jq(this.ibcomp).css('visibility', 'hidden');
+		} else if (this.ibcomp2) {//if not hidden, must remove extra "unhide" boudnary if exist
+			jq(this.ibcomp2).remove();
+			jq(this.ibcomp).css('visibility', '');
+			delete this.ibcomp2;
+		}
+	},
+	
+	/**
+	 * Setup row header per the new height or whether unhide the row header
+	 */
+	setRowHeader: function (hidden) {
+		var sheet = this.sheet,
+		cmp = this.comp,
+		icmp = this.icomp;
+		
+		jq(cmp).css({'height': '', 'line-height': ''});
+		jq(icmp).css({'height': '', 'line-height': ''});
+
+		//hidden so need the extra boundary to "unhide" the row
+		if (hidden) {
+			if (!this.ibcomp2) //insert the SBoun2
+				this.ibcomp2 = jq(this.ibcomp).after('<div class="zsvbounw" zs.t="SBoun2"></div>').next()[0];
+			//hide the sizing boundary so will not disturb bottom headers
+			jq(this.ibcomp).css('visibility', 'hidden');
+		} else if (this.ibcomp2) {//if not hidden, must remove extra "unhide" boudnary if exist
+			jq(this.ibcomp2).remove();
+			jq(this.ibcomp).css('visibility', '');
+			delete this.ibcomp2;
+		}
+	},
+	
 	/**
 	 * Sets the width position index
 	 * @param int the width position index

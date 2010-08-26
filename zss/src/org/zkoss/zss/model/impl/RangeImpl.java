@@ -1083,4 +1083,32 @@ public class RangeImpl implements Range {
 			fillRef(srcRef, dstRef, Range.FILL_COPY);
 		}
 	}
+	
+	@Override
+	public void setHidden(boolean hidden) {
+		if (_refs != null && !_refs.isEmpty()) {
+			final Set<Ref> all = new HashSet<Ref>();
+			for (Ref ref : _refs) {
+				if (ref.isWholeRow()) {
+					final RefSheet refSheet = ref.getOwnerSheet();
+					final Sheet sheet = BookHelper.getSheet(_sheet, refSheet);
+					final int tRow = ref.getTopRow();
+					final int bRow = ref.getBottomRow();
+					final Set<Ref> refs = BookHelper.setRowsHidden(sheet, tRow, bRow, hidden);
+					all.addAll(refs);
+				} else if (ref.isWholeColumn()) {
+					final RefSheet refSheet = ref.getOwnerSheet();
+					final Sheet sheet = BookHelper.getSheet(_sheet, refSheet);
+					final int lCol = ref.getLeftCol();
+					final int rCol = ref.getRightCol();
+					final Set<Ref> refs = BookHelper.setColumnsHidden(sheet, lCol, rCol, hidden);
+					all.addAll(refs);
+				}
+			}
+			if (!all.isEmpty()) {
+				final Book book = (Book) _sheet.getWorkbook();
+				BookHelper.notifySizeChanges(book, all);
+			}
+		}
+	}
 }

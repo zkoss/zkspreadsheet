@@ -28,6 +28,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
 //import org.zkoss.zss.model.Sheet;
+import org.zkoss.zss.model.Book;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.impl.Utils;
@@ -58,11 +59,15 @@ public class CellSelectionCommand implements Command {
 		if(!Utils.getSheetId(sheet).equals(sheetId))
 			return;
 		
+		//TODO request shall send back maxcol/maxrow (do it in client side)
+		final Book book = (Book) sheet.getWorkbook();
+		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
+		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
 		int action = (Integer) data.get("action");
 		int left = (Integer) data.get("left");
 		int top = (Integer) data.get("top");
-		int right = (Integer) data.get("right");
-		int bottom = (Integer) data.get("bottom");
+		int right = action == CellSelectionEvent.SELECT_ROW ? maxcol : (Integer) data.get("right");
+		int bottom = action == CellSelectionEvent.SELECT_COLUMN ? maxrow : (Integer) data.get("bottom");
 		
 		SpreadsheetInCtrl ctrl = ((SpreadsheetInCtrl)((Spreadsheet)comp).getExtraCtrl());
 		ctrl.setSelectionRect(left, top, right, bottom);	

@@ -15,7 +15,12 @@ ZK Spreadsheet 2.0.0 RC
   51 Support drag to hide row	 
   52 Support drag to sizing so un-hide a hidden column	 
   53 Support drag to sizing so un-hide a hidden row	 
-   
+  28 Support hideRows
+  29 Support unhideRows
+  30 Support hideColumns
+  31 Support unhideColumns
+  55 Support Range.setHidden
+  
 *Bug
   
 	------------

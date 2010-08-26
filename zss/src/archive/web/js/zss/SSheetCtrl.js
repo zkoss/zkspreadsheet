@@ -65,6 +65,11 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	function _isRightMouseEvt (evt) {
 		return (evt.which) && (evt.which == 3);
 	}
+	function _findHeader(headers, index) {
+		for(var j = 0, len = headers.length; j < len; ++j)
+			if (headers[j].index == index)
+				return headers[j];
+	}
 	
 /**
  *  SSheetCtrl controls spreadsheet
@@ -640,9 +645,9 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	_cmdSize: function (result) {
 		var type = result.type;
 		if (type == "column")
-			this._setColumnWidth(result.column, result.width, false, true, result.id);
+			this._setColumnWidth(result.column, result.width, false, true, result.hidden, result.id);
 		else if(type=="row")
-			this._setRowHeight(result.row, result.height, false, true, result.id);
+			this._setRowHeight(result.row, result.height, false, true, result.hidden, result.id);
 	},
 	_cmdHighlight: function (result) {
 		var type = result.type;
@@ -1191,22 +1196,19 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	setColumnWidth: function (col, width) {
 		this._setColumnWidth(col, width, true, true);
 	},
-	setUnhideColumn: function (col) {
-		var custColWidth = this.custColWidth,
-			oldw = custColWidth.getSize(col);
-		this.setColumnWidth(col, oldw);
-	},
-	_setColumnWidth: function (col, width, fireevent, loadvis, metaid) {
+	_setColumnWidth: function (col, width, fireevent, loadvis, hidden, metaid) {
 		var sheetid = this.sheetid,
 			custColWidth = this.custColWidth,
 			oldw = custColWidth.getSize(col);
-		width = width <= 0 ? 0 : width;
+		if (width < 0)
+			width = 0;
 
 		//update customized width
 		var meta = custColWidth.getMeta(col),
-			zsw,
+			zsw;
+		if (hidden === undefined) {
 			hidden = (width == 0);
-		
+		}
 		if (hidden)
 			width = oldw;
 		
@@ -1281,6 +1283,13 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			}
 		}
 		
+		//adjust header
+		var tp = this.tp, 
+			headers = tp ? tp.headers : null,
+			header = headers ? _findHeader(headers, col) : null;
+		if (header)
+			header.setColumnHeader(hidden);
+		
 		if (col < this.maxCols) {
 			//adjust datapanel size;
 			var dp = this.dp;
@@ -1345,12 +1354,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	setRowHeight: function(row, height) {
 		this._setRowHeight(row, height, true, true);
 	},
-	setUnhideRow: function(row) {
-		var custRowHeight = this.custRowHeight,
-			oldh = custRowHeight.getSize(row);
-		this.setRowHeight(row, oldh);
-	},
-	_setRowHeight: function(row, height, fireevent, loadvis, metaid) {
+	_setRowHeight: function(row, height, fireevent, loadvis, hidden, metaid) {
 		var sheetid = this.sheetid,
 			custRowHeight = this.custRowHeight,
 			oldh = custRowHeight.getSize(row);
@@ -1358,9 +1362,10 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 
 		var name = "#" + sheetid,
 			meta = custRowHeight.getMeta(row),
-			zsh,
+			zsh;
+		if (hidden === undefined) {
 			hidden = (height == 0);
-		
+		} 
 		if (hidden)
 			height = oldh;
 			
@@ -1396,6 +1401,12 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			zcss.setRule(name + " .zslh" + zsh, ["display", "height", "line-height"], ["", h2 + "px", h2 + "px"], createbefor, this.sheetid + "-sheet");
 		}
 
+		//adjust header
+		var lp = this.lp,
+			headers = lp ? lp.headers : null,
+			header = headers ? _findHeader(headers, row) : null;
+		if (header)
+			header.setRowHeader(hidden);
 		
 		if (row < this.maxRows) {
 			//adjust datapanel size;
