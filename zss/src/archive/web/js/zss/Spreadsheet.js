@@ -629,8 +629,11 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			evtName = 'onHeaderDoubleClick';
 			break;
 		}
-		if (evtName)
-			this.fire(evtName, prop, {toServer: false});
+		if (evtName) {
+			var e = new zk.Event(this, evtName, prop);
+			e.auStopped = true;
+			this.fireX(e);
+		}
 	},
 	/**
 	 * Fires Cell Event
@@ -660,8 +663,11 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			evtName = 'onCellDoubleClick';
 			break;
 		}
-		if (evtName)
-			this.fire(evtName, prop, {toServer: false});
+		if (evtName) {
+			var e = new zk.Event(this, evtName, prop);
+			e.auStopped = true;
+			this.fireX(e);
+		}
 	},
 	_getTopHeaderFontSize: function () {
 		var head = this.$n('tophead'),
