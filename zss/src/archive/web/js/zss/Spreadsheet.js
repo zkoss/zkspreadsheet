@@ -543,6 +543,23 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		sheet._cmdCellFocus(jq.evalJSON(v));
 	},
 	/**
+	 * Retrieve client side spreadsheet focus.The cell focus and selection will
+	 * keep at last status. It is useful if you want get focus back to
+	 * spreadsheet after do some outside processing, for example after user
+	 * click a outside button or menu item.
+	 * 
+	 * @param boolean trigger, true will fire a focus event, false won't.
+	 */
+	focus: function (trigger) {
+		if (zk.ie) {
+			var self = this;
+			setTimeout(function () {
+				self.sheetCtrl.dp.gainFocus(trigger);
+			}, 0);
+		} else
+			this.sheetCtrl.dp.gainFocus(trigger);
+	},
+	/**
 	 * Sets the highlight rectangle or sets a null value to hide it.
 	 */
 	setSelectionHighlight: function (v) {
@@ -560,15 +577,91 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		
 		sheet._cmdSelection(jq.evalJSON(v));
 	},
+	/**
+	 * Returns whether if the server has registers Cell click event or not
+	 * @return boolean
+	 */
 	_isFireCellEvt: function (type) {
-		if (type == "lc" || type == "rc" || type == "dbc")
-			return this.isListen('onCellClick') | this.isListen('onCellRightClick') | this.isListen('onCellDoubleClick');
+		if (type == "lc" || type == "rc" || type == "dbc") {
+			var opt = {asapOnly: true};
+			return this.isListen('onCellClick', opt) || this.isListen('onCellRightClick', opt) || this.isListen('onCellDoubleClick', opt);
+		}
 		return false;
 	},
+	/**
+	 * Returns whether if the server has registers Header click event or not
+	 * @return boolean
+	 */
 	_isFireHeaderEvt: function (type) {
-		if (type == "lc" || type == "rc" || type == "dbc")
-			return this.isListen('onHeaderClick') | this.isListen('onHeaderRightClick') | this.isListen('onHeaderDoubleClick');
+		if (type == "lc" || type == "rc" || type == "dbc") {
+			var opt = {asapOnly: true};
+			return this.isListen('onHeaderClick', opt) || this.isListen('onHeaderRightClick', opt) || this.isListen('onHeaderDoubleClick', opt);
+		}
 		return false;
+	},
+	/**
+	 * Fire Header click event
+	 * <p> Fires header event to server only if the server registers Header click event
+	 * <p> Fires header event at client side
+	 * @param string type, the type of the header event, "lc" for left click, "rc" for right click, "dbc" for double click
+	 * 
+	 */
+	fireHeaderEvt: function (type, shx, shy, mousemeta, row, col, mx, my) {
+		var sheetId = this.getSheetId(),
+			prop = {type: type, shx: shx, shy: shy, key: mousemeta, sheetId: sheetId, row: row, col: col, mx: mx, my: my};
+		if (this._isFireHeaderEvt(type)) {
+			//1995689 selection rectangle error when listen onCellClick, 
+			//use timeout to delay mouse click after mouse up(selection)
+			var self = this;
+			setTimeout(function() {
+				self.fire('onZSSHeaderMouse', prop, {toServer: true});
+			}, 0);
+		}
+		var evtName;
+		switch (type) {
+		case 'lc': 
+			evtName = 'onHeaderClick';
+			break;
+		case 'rc':
+			evtName = 'onHeaderRightClick';
+			break;
+		case 'dbc':
+			evtName = 'onHeaderDoubleClick';
+			break;
+		}
+		if (evtName)
+			this.fire(evtName, prop, {toServer: false});
+	},
+	/**
+	 * Fires Cell Event
+	 * <p> 
+	 * @param string type
+	 */
+	fireCellEvt: function (type, shx, shy, mousemeta, row, col, mx, my) {
+		var sheetId = this.getSheetId(),
+			prop = {type: type, shx: shx, shy: shy, key: mousemeta, sheetId: sheetId, row: row, col: col, mx: mx, my: my};
+		if (this._isFireCellEvt(type)) {
+			//1995689 selection rectangle error when listen onCellClick, 
+			//use timeout to delay mouse click after mouse up(selection)
+			var self = this;
+			setTimeout(function() {
+				self.fire('onZSSCellMouse',	prop, {toServer: true}, 25);
+			}, 0);
+		}
+		var evtName;
+		switch (type) {
+		case 'lc':
+			evtName = 'onCellClick';
+			break;
+		case 'rc':
+			evtName = 'onCellRightClick';
+			break;
+		case 'dbc':
+			evtName = 'onCellDoubleClick';
+			break;
+		}
+		if (evtName)
+			this.fire(evtName, prop, {toServer: false});
 	},
 	_getTopHeaderFontSize: function () {
 		var head = this.$n('tophead'),

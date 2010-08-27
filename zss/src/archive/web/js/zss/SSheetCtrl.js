@@ -768,7 +768,6 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			}
 		} else if ((cmp = zkS.parentByZSType(elm, "SLheader")) != null 
 			|| (cmp = zkS.parentByZSType(elm, "STheader")) != null) {
-
 			var type = (jq(cmp).attr('zs.t') == "SLheader") ? zss.Header.VER : zss.Header.HOR,
 				row, col, onsel,	//process select row or column
 				ls = this.selArea.lastRange;
@@ -867,10 +866,6 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			cmp,
 			mx = my = 0,//mouse offset, against body 
 			shx = shy = 0,//mouse offset against sheet
-			/**
-			 * rename firecellme -> fireCellEvt, fireheaderme -> fireHeaderEvt
-			 */
-			fireCellEvt = fireHeaderEvt = false,
 			row, 
 			col,
 			md1 = zkS._getMouseData(evt, this.comp),
@@ -893,10 +888,9 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			col = cellpos[1];
 			mdstr = "c_" + row + "_" + col;
 
-			if (this._lastmdstr == mdstr) {
-				//fireCellEvt = wgt._isFireCellEvt(type);
+			if (this._lastmdstr == mdstr)
 				wgt.fireCellEvt(type, shx, shy, md1[2], row, col, mx, my);
-			}
+
 			if (type == 'lc' && this.selArea) {
 				this.selArea._setHyperlinkElment(elm);
 				this.selArea._tryAndEndHyperlink(row, col, evt);
@@ -923,7 +917,6 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			
 			mdstr = "c_" + row + "_" + col;
 			if (this._lastmdstr == mdstr) {
-				//fireCellEvt = wgt._isFireCellEvt(type);
 				wgt.fireCellEvt(type, shx, shy, md1[2], row, col, mx, my);
 				if (type == "dbc")
 					sheet.dp.startEditing();
@@ -951,34 +944,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				wgt.fireHeaderEvt(type, shx, shy, md1[2], row, col, mx, my);
 			}
 		}
-		//if (fireCellEvt) {
-			//1995689 selection rectangle error when listen onCellClick, 
-			//use timeout to delay mouse click after mouse up(selection)
-//			setTimeout(function() {
-//				sheet._sendOnZSSCellMouse(type, shx, shy, md1[2], row, col, mx, my);
-//			}, 0);
-		//}
-
-		//don't clear _lastmdstr, it might be a double click later
-		//this._lastmdstr = null;
 	},
-	/**
-	 * 2008/08/10
-	 * replace by fireCellEvt
-	 */
-//	_sendOnZSSCellMouse: function (type, shx, shy, mousemeta, row, col, mx, my) {
-//		this._wgt.fire('onZSSCellMouse',
-//				{type: type, shx: shx, shy: shy, key: mousemeta, sheetId: this.serverSheetId, row: row, col: col, mx: mx, my: my},
-//				{toServer: true}, 25);
-//	},
-	/**
-	 *  2008/08/10
-	 *  replaced by fireHeaderEvent
-	 */
-//	_sendOnZSSHeaderMouse: function (type, shx, shy, mousemeta, row, col, mx, my) {
-//		this._wgt.fire('onZSSHeaderMouse',
-//				{type: type, shx: shx, shy: shy, key: mousemeta, sheetId: this.serverSheetId, row: row, col: col, mx: mx, my: my});
-//	},
 	_sendOnCellFocused: function (row, col) {
 		var wgt = this._wgt;
 		wgt.fire('onZSSCellFocused', {sheetId: this.serverSheetId, row: row, col : col}, wgt.isListen('onCellFocused') ? {toServer: true} : null);

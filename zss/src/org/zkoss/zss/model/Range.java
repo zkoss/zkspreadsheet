@@ -164,15 +164,15 @@ public interface Range {
 	/**
 	 * Sort this Range per the specified parameters
 	 * @param rng1 key1 for sorting
-	 * @param desc1 true to do descending sort; false to do asceding sort for key1. 
+	 * @param desc1 true to do descending sort; false to do ascending sort for key1. 
 	 * @param rng2 key2 for sorting
 	 * @param type PivotTable sorting type(byLabel or byValue); not implemented yet
-	 * @param desc2 true to do descending sort; false to do asceding sort for key2.
+	 * @param desc2 true to do descending sort; false to do ascending sort for key2.
 	 * @param rng3 key3 for sorting
-	 * @param desc3 true to do descending sort; false to do asceding sort for key3.
+	 * @param desc3 true to do descending sort; false to do ascending sort for key3.
 	 * @param header whether sort range includes header
 	 * @param orderCustom index of custom order list; not implmented yet 
-	 * @param matchCase true to match the string cases; false to ingore string cases
+	 * @param matchCase true to match the string cases; false to ignore string cases
 	 * @param sortByRows true to sort by rows(change columns orders); false to sort by columns(change row orders). 
 	 * @param sortMethod special sorting method
 	 * @param dataOption1 see numeric String as number or not for key1.

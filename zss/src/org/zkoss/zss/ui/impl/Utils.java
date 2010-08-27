@@ -48,6 +48,7 @@ import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.RangeImpl;
+import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
@@ -58,6 +59,86 @@ import org.zkoss.zss.ui.Spreadsheet;
 public class Utils {
 	private static final Log log = Log.lookup(Utils.class);
 	
+	/**
+	 * Sort in selection range
+	 * @param sheet the sheet to sort 
+	 * @param selection sort range
+	 * @param index keys for sorting
+	 * <p> default use the first index in selection
+	 * @param order order for sorting, true to do descending sort; false to do ascending sort
+	 * <p> default ascending sort
+	 * @param header whether sort range includes header
+	 * @param matchCase true to match the string cases; false to ignore string cases
+	 * @param sortByRows false indicate sort by column (sort from top to bottom); true indicate sort by row (sort from left to right) 
+	 */
+	public static void sort(Sheet sheet, Rect selection, int[] index, boolean[] order, int[] dataOption, boolean header, boolean matchCase, boolean sortByRows) {
+		int left = selection.getLeft();
+		int right = selection.getRight();
+		int top = selection.getTop();
+		int btm = selection.getBottom();
+		
+		Range rng = Utils.getRange(sheet, top, left, btm, right);
+		Range rng1 = null;
+		Range rng2 = null;
+		Range rng3 = null;
+		boolean desc1 = false;
+		boolean desc2 = false;
+		boolean desc3 = false;
+		int dataOption1 = 0;
+		int dataOption2 = 0;
+		int dataOption3 = 0;
+		if (index == null || index.length == 0) {
+			rng1 = Utils.getRange(sheet, 
+									top, 
+									left, 
+									sortByRows ? top : btm, 
+									sortByRows ? right : left);
+			
+		} else if (index.length > 0) {
+			switch (index.length) {
+			case 3:
+				if (sortByRows)
+					rng3 = Utils.getRange(sheet, index[2], left, index[2], right);
+				else
+					rng3 = Utils.getRange(sheet, top, index[2], btm, index[2]);
+				desc3 = order[2];
+			case 2:
+				if (sortByRows)
+					rng2 = Utils.getRange(sheet, index[1], left, index[1], right);
+				else
+					rng2 = Utils.getRange(sheet, top, index[1], btm, index[1]);
+				desc2 = order[1];
+			case 1:
+				if (sortByRows) 
+					rng1 = Utils.getRange(sheet, index[0], left, index[0], right); //sort by rows, sort from left to right
+				else
+					rng1 = Utils.getRange(sheet, top, index[0], btm, index[0]); // sort by columns, sort from top to bottom
+				desc1 = order[0];
+			}
+		}
+		if (order != null && order.length > 0) {
+			switch (order.length) {
+			case 3:
+				desc3 = order[2];
+			case 2:
+				desc2 = order[1];
+			case 1:
+				desc1 = order[0];
+			}
+		}
+		if (dataOption != null && dataOption.length > 0) {
+			switch (dataOption.length) {
+			case 3:
+				dataOption3 = dataOption[2];
+			case 2:
+				dataOption2 = dataOption[1];
+			case 1:
+				dataOption1 = dataOption[0];
+			}
+		}
+		rng.sort(rng1, desc1, rng2, 0, desc2, rng3, desc3, !header ? BookHelper.SORT_HEADER_NO : BookHelper.SORT_HEADER_YES, 0, matchCase, sortByRows, 0, dataOption1, dataOption2, dataOption3);
+	}
+
 	/**
 	 * Format and escape a {@link Hyperlink} to HTML &lt;a> string.
 	 * @param sheet the sheet with the RichTextString 

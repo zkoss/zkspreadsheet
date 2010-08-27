@@ -1,0 +1,33 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window id="sortWin" title="Custom Sort" border="normal" mode="modal" closable="true" position="center" width="620px" height="400px" apply="org.zkoss.zss.app.CustomSortWindowCtrl">
+<hbox align="center" >
+	<button id="addBtn" image="/img/plus.png"></button>
+	<button id="delBtn" image="/img/minus.png"></button>
+	<button id="upBtn" image="/img/arrow-090.png"></button>
+	<button id="downBtn" image="/img/arrow-270.png"></button>
+	<checkbox id="caseSensitive" label="Case sensitive"></checkbox>
+	<checkbox id="hasHeader" label="My data has headers"></checkbox>
+	<listbox id="sortOrientationLB" mold="select" >
+		<listitem>
+			<listcell label="Sort top to bottom" />
+		</listitem>
+		<listitem>
+			<listcell label="Sort left to right" />
+		</listitem>
+	</listbox>
+</hbox>
+<div height="10px"></div>
+<listbox id="sortLevel" >
+	<listhead>
+		<listheader label="" width="50px"></listheader>
+		<listheader label=""></listheader>
+		<listheader label="Order"></listheader>
+	</listhead>
+</listbox>
+<div style="margin: 10px;">
+<button id="okBtn" style="float:right" image="/img/tick.png">
+</button>
+</div>
+</window>
+</zk>
