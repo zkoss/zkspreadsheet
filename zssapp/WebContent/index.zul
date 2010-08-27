@@ -18,7 +18,7 @@
 <?component name="menuPrintWin" inline="true" macroURI="/menuPrint.zul"?>
 <?component name="revisionmenu" inline="true" macroURI="/revisionMenu.zul"?>
 
-<zk>
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 <window id="mainWin" apply="org.zkoss.zss.app.MainWindowCtrl" height="100%" width="100%" style="margin:0px;padding:0px">
 	<style>
 		body{
@@ -397,6 +397,10 @@
 							forward="onClick=onWrapTextClick" />		
 						<toolbarbutton id="insertChartBtn" sclass="toolIcon" src="/img/pieChart.gif"
 							forward="onClick=onInsertChart(pie)" />
+						<toolbarbutton id="sortAscending" sclass="toolIcon" src="/img/asc.png"
+							forward="onClick=onSort" />
+						<toolbarbutton id="sortDescending" sclass="toolIcon" src="/img/des.png"
+							forward="onClick=onSort" />
 					</toolbar>
 				</center>
 				

@@ -20,10 +20,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.D
 package org.zkoss.zss.app;
 
 
-import java.awt.Color;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -39,10 +36,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellReference;
 import org.zkoss.image.Image;
 import org.zkoss.io.Files;
 import org.zkoss.util.media.Media;
-import org.zkoss.zhtml.Filedownload;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Execution;
@@ -58,26 +60,9 @@ import org.zkoss.zk.ui.event.KeyEvent;
 import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-//import org.zkoss.zss.engine.xel.Indexes;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.impl.BookHelper;
-import org.zkoss.zss.model.impl.RangeImpl;
-//import org.zkoss.zss.model.BorderLineStyle;
-//import org.zkoss.zss.model.BorderStyle;
-//import org.zkoss.zss.model.Cell;
-//import org.zkoss.zss.model.FontStyle;
-//import org.zkoss.zss.model.FontUnderline;
-//import org.zkoss.zss.model.Format;
-//import org.zkoss.zss.model.Formula;
-//import org.zkoss.zss.model.Sheet;
-//import org.zkoss.zss.model.TextHAlign;
-//import org.zkoss.zss.model.impl.AbstractRange;
-//import org.zkoss.zss.model.impl.BookImpl;
-//import org.zkoss.zss.model.impl.BorderStyleImpl;
-//import org.zkoss.zss.model.impl.ExcelExporter;
-//import org.zkoss.zss.model.impl.FormatImpl;
-//import org.zkoss.zss.model.impl.RangeSimple;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -91,27 +76,21 @@ import org.zkoss.zss.ui.event.HeaderMouseEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
-import org.zkoss.zss.ui.impl.Styles;
-//import org.zkoss.zss.ui.impl.Styles;
 import org.zkoss.zss.ui.impl.Utils;
-//import org.zkoss.zss.ui.state.CellState;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
-//import org.zkoss.zssex.ui.widget.ChartWidget;
 import org.zkoss.zssex.ui.widget.ImageWidget;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.CategoryModel;
 import org.zkoss.zul.Chart;
-import org.zkoss.zul.ChartModel;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Menu;
+import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.PieModel;
 import org.zkoss.zul.Popup;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Rows;
@@ -122,13 +101,6 @@ import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
-
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.util.CellReference;
 /**
  * @author Peter Kuo
  * @modify kinda lu
@@ -181,7 +153,9 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	Menu backgroundColorMenu;
 	Menu insertImageMenu;
 	Menu insertPieChart;
-	
+	Menuitem sortAscendingMenu;
+	Menuitem sortDescendingMenu;
+	Menuitem customSort;
 	
 	Textbox formulaEditbox;
 	Spreadsheet spreadsheet;
@@ -204,6 +178,8 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	Toolbarbutton mergeCellBtn;
 	Toolbarbutton wrapTextBtn;
 	Toolbarbutton insertChartBtn;
+	Toolbarbutton sortAscending;
+	Toolbarbutton sortDescending;
 	South formulaBar;
 	Borderlayout topToolbars; 
 	
@@ -390,7 +366,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		event_x = event.getClientx();
 		event_y = event.getClienty();
 		Menupopup cellMenu = (Menupopup) mainWin.getFellow("cellMenu");
-		cellMenu.open(event.getClientx(), event.getClienty());
+		cellMenu.open(event_x + 5, event.getClienty());
 
 		//read cell value to fill fastIcon in contextmenu
 		Window win = (Window) mainWin.getFellow("fastIconContextmenu");
@@ -473,8 +449,8 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			}
 		}
 		win.setPosition("parent");
-		win.setLeft(Integer.toString(event_x - 3) + "px");
-		win.setTop(Integer.toString(event_y - 160) + "px");
+		win.setLeft(Integer.toString(event_x + 5) + "px");
+		win.setTop(Integer.toString(event_y - 100) + "px");
 		win.doPopup();
 		
 	}
@@ -1854,6 +1830,36 @@ throw new UiException("wrap text is implmented yet");
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+
+	private void sortAscending() {
+		Utils.sort(spreadsheet.getSelectedSheet(), spreadsheet.getSelection(), null, null, null, false, false, false);
+	}
+
+	private void sortDescending() {
+		Utils.sort(spreadsheet.getSelectedSheet(), spreadsheet.getSelection(), null, new boolean[]{true}, null, false, false, false);
+	}
+
+	public void onClick$sortAscending() {
+		sortAscending();
+	}
+
+	public void onClick$sortDescending() {
+		sortDescending();
+	}
+
+	public void onClick$sortAscendingMenu() {
+		sortAscending();
+	}
+
+	public void onClick$sortDescendingMenu() {
+		sortDescending();
+	}
+
+	public void onClick$customSort() {
+		HashMap arg = new HashMap();
+		arg.put("spreadsheet", spreadsheet);
+		Executions.createComponents("/menus/sort/customSort.zul", mainWin, arg);
 	}
 
 	public void onBorderClick(ForwardEvent event){

@@ -1,5 +1,8 @@
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 <window id="${arg.id}" sclass="fastIconWin" visible="false" width="196px" height="52px" apply="org.zkoss.zss.app.FastIconMenuCtrl">
+<attribute w:name="onShow">
+	this.$f('spreadsheet', true).focus(false);
+</attribute>
 <style>
 		.fastIconWin .z-window-popup-cnt-noborder{
 			background:rgb(204,230,251) none;

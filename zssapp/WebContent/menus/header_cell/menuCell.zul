@@ -1,4 +1,7 @@
-<menupopup id="${arg.id}">
+<menupopup id="${arg.id}" xmlns:w="http://www.zkoss.org/2005/zk/client">
+	<attribute w:name="onShow">
+		this.$f('spreadsheet').focus(false);
+	</attribute>
 	<menuitem label="${c:l('edit.cut')}" forward="onEditCut" />
 	<menuitem label="${c:l('edit.copy')}" forward="onEditCopy" />
 	<menuitem label="${c:l('edit.paste')}" forward="onEditPaste" />
@@ -11,11 +14,23 @@
 			<menuitem label="${c:l('insert.rows')}" forward="onInsertRows" />
 			<menuitem label="${c:l('insert.columns')}" forward="onInsertColumns" />
 			<menuitem label="${c:l('insert.formula')}"  forward="onFormulaPopup" />
-			<!-- Sam why not here ? -->
 			<!-- <menuitem label="${c:l('insert.image')}" forward="onCellMenu(InsertPic)" />-->
 			<menuitem label="${c:l('insert.chart')}" forward="onInsertChart(pie)" />
 		</menupopup>
 	</menu>
+	<menuseparator />
+	<!-- To do: use i18n-->
+	<menu label="Sort">
+		<menupopup>
+			<menuitem id="sortAscendingMenu" label="Sort A to Z" image="/img/asc.png">
+			</menuitem>
+			<menuitem id="sortDescendingMenu" label="Sort Z to A" image="/img/des.png">
+			</menuitem>
+			<menuitem id="customSort" label="Custom Sort...">
+			</menuitem>
+		</menupopup>
+	</menu>
+	<menuseparator />
 	<!-- put it in delete button 
 	<menuitem label="Remove Pic" forward="onCellMenu(RemovePic)" />-->
 	<menu label="${c:l('range')}">
