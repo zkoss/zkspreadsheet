@@ -154,7 +154,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			csc = csc.split(",");
 			var size  = csc.length;
 			for (var i = 0; i < size; i = i + 4)
-				array.push([zk.parseInt(csc[i]), zk.parseInt(csc[i + 1]), zk.parseInt(csc[i + 2]), csc[i+3]]);
+				array.push([zk.parseInt(csc[i]), zk.parseInt(csc[i + 1]), zk.parseInt(csc[i + 2]), 'true' == csc[i+3]]);
 		}
 		this.custColWidth = new zss.PositionHelper(this.colWidth, array);
 		this.custColWidth.ids = new zss.Id(0, 2);
@@ -166,7 +166,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			csr = csr.split(",");
 			var size  = csr.length;
 			for (var i = 0; i < size; i = i + 4)
-				array.push([zk.parseInt(csr[i]), zk.parseInt(csr[i + 1]), zk.parseInt(csr[i + 2]), csc[i+3]]);
+				array.push([zk.parseInt(csr[i]), zk.parseInt(csr[i + 1]), zk.parseInt(csr[i + 2]), 'true' == csc[i+3]]);
 		}
 		this.custRowHeight = new zss.PositionHelper(this.rowHeight, array);
 		this.custRowHeight.ids = new zss.Id(0, 2);
@@ -768,7 +768,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			}
 		} else if ((cmp = zkS.parentByZSType(elm, "SLheader")) != null 
 			|| (cmp = zkS.parentByZSType(elm, "STheader")) != null) {
-			
+
 			var type = (jq(cmp).attr('zs.t') == "SLheader") ? zss.Header.VER : zss.Header.HOR,
 				row, col, onsel,	//process select row or column
 				ls = this.selArea.lastRange;
@@ -777,11 +777,15 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			if (type == zss.Header.HOR) {
 				row = -1;
 				col = cmp.ctrl.index;
-				if(col >= ls.left && col <= ls.right) onsel = true;
+				if(col >= ls.left && col <= ls.right) {
+					onsel = true;
+				}
 			} else {
 				row = cmp.ctrl.index;
 				col = -1;
-				if(row >= ls.top && col <= ls.bottom) onsel = true;
+				if(row >= ls.top && row <= ls.bottom) {
+					onsel = true;
+				}
 			}
 
 			if (_isLeftMouseEvt(evt) || !onsel) {
@@ -889,9 +893,10 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			col = cellpos[1];
 			mdstr = "c_" + row + "_" + col;
 
-			if (this._lastmdstr == mdstr)
-				fireCellEvt = wgt._isFireCellEvt(type);
-
+			if (this._lastmdstr == mdstr) {
+				//fireCellEvt = wgt._isFireCellEvt(type);
+				wgt.fireCellEvt(type, shx, shy, md1[2], row, col, mx, my);
+			}
 			if (type == 'lc' && this.selArea) {
 				this.selArea._setHyperlinkElment(elm);
 				this.selArea._tryAndEndHyperlink(row, col, evt);
@@ -918,8 +923,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			
 			mdstr = "c_" + row + "_" + col;
 			if (this._lastmdstr == mdstr) {
-				fireCellEvt = wgt._isFireCellEvt(type);
-				
+				//fireCellEvt = wgt._isFireCellEvt(type);
+				wgt.fireCellEvt(type, shx, shy, md1[2], row, col, mx, my);
 				if (type == "dbc")
 					sheet.dp.startEditing();
 			}
@@ -942,35 +947,38 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				col = -1;
 			}
 			mdstr = "h_" + row + "_" + col;
-			if (this._lastmdstr == mdstr)
-				fireHeaderEvt = wgt._isFireHeaderEvt(type);
+			if (this._lastmdstr == mdstr) {
+				wgt.fireHeaderEvt(type, shx, shy, md1[2], row, col, mx, my);
+			}
 		}
-		if (fireCellEvt) {
+		//if (fireCellEvt) {
 			//1995689 selection rectangle error when listen onCellClick, 
 			//use timeout to delay mouse click after mouse up(selection)
-			setTimeout(function() {
-				sheet._sendOnZSSCellMouse(type, shx, shy, md1[2], row, col, mx, my);
-			}, 0);
-		}
-		if (fireHeaderEvt) {
-			//1995689
-			setTimeout(function() {
-				sheet._sendOnZSSHeaderMouse(type, shx, shy, md1[2], row, col, mx, my);
-			}, 0);
-		}
+//			setTimeout(function() {
+//				sheet._sendOnZSSCellMouse(type, shx, shy, md1[2], row, col, mx, my);
+//			}, 0);
+		//}
+
 		//don't clear _lastmdstr, it might be a double click later
 		//this._lastmdstr = null;
 	},
-	_sendOnZSSCellMouse: function (type, shx, shy, mousemeta, row, col, mx, my) {
-		this._wgt.fire('onZSSCellMouse',
-				{type: type, shx: shx, shy: shy, key: mousemeta, sheetId: this.serverSheetId, row: row, col: col, mx: mx, my: my},
-				{toServer: true}, 25);
-	},
-	_sendOnZSSHeaderMouse: function (type, shx, shy, mousemeta, row, col, mx, my) {
-		this._wgt.fire('onZSSHeaderMouse',
-				{type: type, shx: shx, shy: shy, key: mousemeta, sheetId: this.serverSheetId, row: row, col: col, mx: mx, my: my},
-				{toServer: true}, 25);
-	},
+	/**
+	 * 2008/08/10
+	 * replace by fireCellEvt
+	 */
+//	_sendOnZSSCellMouse: function (type, shx, shy, mousemeta, row, col, mx, my) {
+//		this._wgt.fire('onZSSCellMouse',
+//				{type: type, shx: shx, shy: shy, key: mousemeta, sheetId: this.serverSheetId, row: row, col: col, mx: mx, my: my},
+//				{toServer: true}, 25);
+//	},
+	/**
+	 *  2008/08/10
+	 *  replaced by fireHeaderEvent
+	 */
+//	_sendOnZSSHeaderMouse: function (type, shx, shy, mousemeta, row, col, mx, my) {
+//		this._wgt.fire('onZSSHeaderMouse',
+//				{type: type, shx: shx, shy: shy, key: mousemeta, sheetId: this.serverSheetId, row: row, col: col, mx: mx, my: my});
+//	},
 	_sendOnCellFocused: function (row, col) {
 		var wgt = this._wgt;
 		wgt.fire('onZSSCellFocused', {sheetId: this.serverSheetId, row: row, col : col}, wgt.isListen('onCellFocused') ? {toServer: true} : null);
@@ -2066,7 +2074,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			top = custRowHeight.getCellIndex(scrollTop)[0],
 			right = custColWidth.getCellIndex(scrollLeft + viewWidth)[0],
 			bottom = custRowHeight.getCellIndex(scrollTop + viewHeight)[0];
-		
+
 		if (right > sheet.maxCols - 1) right = sheet.maxCols - 1;
 		if (bottom > sheet.maxRows - 1) bottom = sheet.maxRows - 1; 
 
