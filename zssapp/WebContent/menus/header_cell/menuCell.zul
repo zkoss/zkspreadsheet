@@ -19,14 +19,13 @@
 		</menupopup>
 	</menu>
 	<menuseparator />
-	<!-- To do: use i18n-->
-	<menu label="Sort">
+	<menu label="${c:l('sort')}">
 		<menupopup>
-			<menuitem id="sortAscendingMenu" label="Sort A to Z" image="/img/asc.png">
+			<menuitem id="sortAscendingMenu" label="${c:l('sort.ascending')}" image="/img/asc.png">
 			</menuitem>
-			<menuitem id="sortDescendingMenu" label="Sort Z to A" image="/img/des.png">
+			<menuitem id="sortDescendingMenu" label="${c:l('sort.descending')}" image="/img/des.png">
 			</menuitem>
-			<menuitem id="customSort" label="Custom Sort...">
+			<menuitem id="customSort" label="${c:l('sort.custom')}">
 			</menuitem>
 		</menupopup>
 	</menu>

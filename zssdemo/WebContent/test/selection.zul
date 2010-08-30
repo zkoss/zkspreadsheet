@@ -60,8 +60,8 @@
 				lab3.value = ss1.selection.toString();
 			</attribute>
 			<attribute name="onSelectionChange">
-				lab2.value = event.selectionType+",action:"+event.action+", New:"+event.left+","+event.top+","+event.right+","+event.bottom + 
-					" : Orignal:"+event.origleft+","+event.origtop+","+event.origright+","+event.origbottom;
+				//lab2.value = event.selectionType+",action:"+event.selectionType+", New:"+event.left+","+event.top+","+event.right+","+event.bottom + 
+				//	" : Orignal:"+event.origleft+","+event.origtop+","+event.origright+","+event.origbottom;
 				lab3.value = ss1.selection.toString();
 			</attribute>
 			<attribute name="onCellFocused">

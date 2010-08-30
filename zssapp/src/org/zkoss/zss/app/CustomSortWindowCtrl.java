@@ -28,6 +28,7 @@ import jxl.CellType;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.zkoss.lang.Objects;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
@@ -66,9 +67,9 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	 */
 	private final static boolean SORT_LEFT_TO_RIGHT = true;
 	
-	private final static String SORT_BY_COLUMN = "Sort top to bottom";
-	private final static String SORT_BY_ROW = "Sort left to right";
-	
+
+	private final static String ORIENTATION_COLUMN_KEY = "sort.orientation.column";// orientation
+
 	/**
 	 * Indicate the sort orientation
 	 * <p> Default: false, sort from top to bottom, means sort by column
@@ -89,7 +90,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	private ListModelList sortLevelModel;
 	
 	/**
-	 * Depends on sortDirection
+	 * Depends on sortOrientation
 	 * If sort by rows, available sort target include top row to bottom row
 	 * If sort by columns, available sort target include left column to right column
 	 * 
@@ -122,7 +123,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		
 		initSortLevelListbox();
 	}
-	
+
 	private void initSortLevelListbox () {
 		List<SortLevel> ary = new ArrayList<SortLevel>();
 		ary.add(new SortLevel());
@@ -141,9 +142,6 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	private void setAvailableSortTarget (List<String> list) {
 		list.clear();
 		list.add(new String(""));
-		/**
-		 * To do: use i-18n string to replace hard code "Column", "Row"
-		 */
 		Rect rect = ss.getSelection();
 		if (sortOrientation == SORT_TOP_TO_BOTTOM) {
 			for (int i = rect.getLeft(); i <= rect.getRight(); i++)
@@ -199,7 +197,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	public void onClick$okBtn () {
 		if (hasEmptyArgs(sortLevelModel.getInnerList())) {
 			try {
-				Messagebox.show("All sort criteria must have a column or row spcified. Check the selected sort criteria and try again");
+				Messagebox.show(getLabel("sort.err.hasEmptyField"));
 			} catch (InterruptedException e) {
 			}
 			return;
@@ -208,7 +206,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		String dupTarget = checkDuplicateSortIndex(sortLevelModel.getInnerList());
 		if (dupTarget != null) {
 			try {
-				Messagebox.show(dupTarget + " is being sorted more than once. Delete the duplicate sort criteria and try again");
+				Messagebox.show(dupTarget + " " + getLabel("sort.err.duplicateField"));
 			} catch (InterruptedException e) {
 			}
 			return;
@@ -276,7 +274,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	public void onSelect$sortOrientationLB () {
 		boolean orientation;
 		Listitem seld = sortOrientationLB.getSelectedItem();
-		orientation = SORT_BY_COLUMN.equals(seld) ? 
+		orientation = getLabel(ORIENTATION_COLUMN_KEY).equals(seld) ? 
 				SORT_TOP_TO_BOTTOM : SORT_LEFT_TO_RIGHT;
 		if (sortOrientation != orientation) {
 			sortOrientation = orientation;
@@ -295,7 +293,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 			SortLevel sort = (SortLevel)obj;
 			SortLevel first = (SortLevel)sortLevelModel.get(0);
 			cell.appendChild(sort.equals(first) ? 
-					(Component)new Label("Sort by") : (Component)new Label("Then by"));
+					(Component)new Label(getLabel("sort.sortBy")) : (Component)new Label(getLabel("sort.thenBy")));
 			item.appendChild(cell);
 			
 			cell = new Listcell();
@@ -353,13 +351,11 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		/**
 		 * Default display the String 
 		 */
-		private final static String STR_ASCENDING = "A to Z";
-		private final static String STR_DESCENDING = "Z to A";
-		
-		private final static String NUM_ASCENDING = "Smallest to Largest";
-		private final static String NUM_DESCENDING = "Largest to Smallest";
-		
-		
+		private final static String STR_ASCENDING_KEY = "sort.str.ascending";
+		private final static String STR_DESCENDING_KEY = "sort.str.descending";
+		private final static String NUM_ASCENDING_KEY = "sort.num.ascending";
+		private final static String NUM_DESCENDING_KEY = "sort.num.descending";
+
 		/**
 		 * Sort index has number
 		 * <p> default false means sort target is string
@@ -385,17 +381,17 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		private void appendComboitemsBySortIndex(int index) {
 			if (index < 0) { //default sort target is string
 				sortNumber = false;
-				appendChild(new Comboitem(STR_ASCENDING));
-				appendChild(new Comboitem(STR_DESCENDING));
+				appendChild(new Comboitem(getLabel(STR_ASCENDING_KEY)));
+				appendChild(new Comboitem(getLabel(STR_DESCENDING_KEY)));
 			} else {
 				if (isAllCellNumberType(index)) {
 					sortNumber = true;
-					appendChild(new Comboitem(NUM_ASCENDING));
-					appendChild(new Comboitem(NUM_DESCENDING));
+					appendChild(new Comboitem(getLabel(NUM_ASCENDING_KEY)));
+					appendChild(new Comboitem(getLabel(NUM_DESCENDING_KEY)));
 				} else {
 					sortNumber = false;
-					appendChild(new Comboitem(STR_ASCENDING));
-					appendChild(new Comboitem(STR_DESCENDING));
+					appendChild(new Comboitem(getLabel(STR_ASCENDING_KEY)));
+					appendChild(new Comboitem(getLabel(STR_DESCENDING_KEY)));
 				}
 			}
 		}
@@ -431,16 +427,25 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 			if (iter.hasNext()) {
 				Comboitem item = iter.next();
 				if (!sortNumber) { //sort string
-					sort.order = STR_ASCENDING.equals(item.getLabel()) ?
+					sort.order = getLabel(STR_ASCENDING_KEY).equals(item.getLabel()) ?
 							SortLevel.ASCENDING : SortLevel.DESCENDING;
 				} else { //sort number
-					sort.order = NUM_ASCENDING.equals(item.getLabel()) ?
+					sort.order = getLabel(NUM_ASCENDING_KEY).equals(item.getLabel()) ?
 							SortLevel.ASCENDING : SortLevel.DESCENDING;
 				}
 			}
 		}
 	}
 	
+	/**
+	 * Returns the string from i-18n, if not found, return empty string
+	 * @return 
+	 */
+	private static String getLabel(String key) {
+		String val = Labels.getLabel(key);
+		return val != null ? val : "";
+	}
+
 	private static int getSpreadsheetIndexOffset (Spreadsheet spreadsheet, int index, boolean sortAlgorithm) {
 		Rect rect = spreadsheet.getSelection();
 		int baseIdx = sortAlgorithm == SORT_TOP_TO_BOTTOM ? rect.getLeft() : rect.getTop();
