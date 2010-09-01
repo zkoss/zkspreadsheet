@@ -53,6 +53,7 @@ ZK Spreadsheet 2.0.0 beta2
   33 Wrong width when insert columns 
   34 moveRange fail to shift formula correctly
   35 Hyperlink should show the formated text
+  47 zss2 beta 2 IE support
   
 	------------
 ZK Spreadsheet 2.0.0 beta (Work with ZK 5 and after)
