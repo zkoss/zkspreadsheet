@@ -3063,14 +3063,15 @@ public class Spreadsheet extends XulElement {
 	private void processStartEditing(String token, StartEditingEvent event) {
 		if (!event.isCancel()) {
 			Object val;
-			if (event.isEditingSet() || event.getClientValue() == null) {
+			final boolean useEditValue = event.isEditingSet() || event.getClientValue() == null; 
+			if (useEditValue) {
 				val = event.getEditingValue();
 			} else {
 				val = event.getClientValue();
 			}
 
 			processStartEditing0(token, event.getSheet(), event.getRow(), event
-					.getColumn(), val);
+					.getColumn(), val, useEditValue);
 		} else {
 			processCancelEditing0(token, event.getSheet(), event.getRow(),
 					event.getColumn());
@@ -3103,13 +3104,16 @@ public class Spreadsheet extends XulElement {
 		}
 	}
 
-	private void processStartEditing0(String token, Sheet sheet, int row, int col, Object value) {
+	private void processStartEditing0(String token, Sheet sheet, int row, int col, Object value, boolean useEditValue) {
 		try {
 			JSONObj result = new JSONObj();
 			result.setData("r", row);
 			result.setData("c", col);
 			result.setData("type", "startedit");
 			result.setData("val", value == null ? "" : value.toString());
+			if (useEditValue) { //shall use edit value from server
+				result.setData("server", true); 
+			}
 
 			// responseUpdateCell("start", token, Utils.getId(sheet), result.toString());
 			smartUpdate("dataUpdateStart", new String[] { token, Utils.getSheetId(sheet), result.toString() });

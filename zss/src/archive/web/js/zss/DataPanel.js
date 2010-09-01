@@ -132,7 +132,9 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		sheet._wgt.fire('onZSSStartEditing',
 				{token: "", sheetId: sheet.serverSheetId, row: row, col: col, clienttxt: val}, {toServer: true}, 25);
 	},
-	_startEditing: function (value) {
+	//@param value to start editing
+	//@param server boolean whether the value come from server 
+	_startEditing: function (value, server) {
 		
 		var sheet = this.sheet,
 			cell = sheet.getFocusedCell(),
@@ -140,7 +142,9 @@ zss.DataPanel = zk.$extends(zk.Object, {
 
 		if (cell != null && sheet.state == zss.SSheetCtrl.START_EDIT) {
 			sheet.state = zss.SSheetCtrl.EDITING;
-			
+			if (!server)
+				value = sheet._clienttxt;
+			sheet._clienttxt = '';
 			var editor = sheet.editor,
 				pos = sheet.getLastFocus();
 			editor.edit(cellcmp, pos.row, pos.column, value);
