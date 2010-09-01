@@ -397,10 +397,16 @@
 							forward="onClick=onWrapTextClick" />		
 						<toolbarbutton id="insertChartBtn" sclass="toolIcon" src="/img/pieChart.gif"
 							forward="onClick=onInsertChart(pie)" />
-						<toolbarbutton id="sortAscending" sclass="toolIcon" src="/img/asc.png"
-							forward="onClick=onSort" />
-						<toolbarbutton id="sortDescending" sclass="toolIcon" src="/img/des.png"
-							forward="onClick=onSort" />
+						<toolbarbutton id="sortAscending" sclass="toolIcon" src="/img/asc.png">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+						</toolbarbutton>
+						<toolbarbutton id="sortDescending" sclass="toolIcon" src="/img/des.png">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+						</toolbarbutton>
 					</toolbar>
 				</center>
 				

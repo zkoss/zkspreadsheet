@@ -340,10 +340,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			tab.setParent(sheetTabs);
 		}
 
-		int sheetSize = spreadsheet.getBook().getNumberOfSheets();
-		spreadsheet.setSelectedSheet(((Sheet) spreadsheet.getBook().getSheetAt(sheetSize - 1)).getSheetName());
-		sheetTB.setSelectedIndex(sheetSize - 1);
-		
 		sheetTB.addEventListener(org.zkoss.zk.ui.event.Events.ON_SELECT, new EventListener() {
 			
 			public void onEvent(Event event) throws Exception {
