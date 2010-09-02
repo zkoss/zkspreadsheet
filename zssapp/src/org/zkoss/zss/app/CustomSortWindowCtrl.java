@@ -73,13 +73,6 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	 */
 	private boolean sortOrientation;
 	
-	
-	/**
-	 * Indicate sorting use case sensitive or not when comparing string 
-	 * <p> Default: false
-	 */
-	private boolean caseSenstive;
-	
 	/**
 	 * Selected sort level target by user
 	 */
