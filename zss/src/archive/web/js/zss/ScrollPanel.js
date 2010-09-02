@@ -111,23 +111,26 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 		}
 	},
 	_trackScrolling: function (vertical) {
-		if (vertical && this.lastMove == "H")
-			this._doScroll(false);//fire scroll horizontal
-		else if (!vertical && this.lastMove == "V")
-			this._doScroll(true);//fire scroll vertical
-
-		this.lastMove = vertical ? "V" : "H";
-		var local = this;
-		local.timerCount++;
-		setTimeout(function() {
-			local.timerCount--;
-			if (local.timerCount <= 0) {
-				local._doScroll(local.lastMove == "V" ? true : false);
-				local.lastMove = "";
-				local.timerCount = 0;
-			}
-		}, zkS.scrollTrackingTimeout);
-		
+		if (vertical)
+			this._fireOnVScroll();//fire scroll vertical
+		else
+			this._fireOnHScroll();//fire scroll horizontal
+	},
+	_vscrollTimeoutId: null,
+	_hscrollTimeoutId: null,
+	_fireOnVScroll: function (time) {
+		clearTimeout(this._vscrollTimeoutId);
+		this._vscrollTimeoutId = setTimeout(this.proxy(this._doVScroll), time >= 0 ? time : zk.gecko ? 200 : 60);
+	},
+	_fireOnHScroll: function (time) {
+		clearTimeout(this._hscrollTimeoutId);
+		this._hscrollTimeoutId = setTimeout(this.proxy(this._doHScroll), time >= 0 ? time : zk.gecko ? 200 : 60);
+	},
+	_doVScroll: function () {
+		this._doScroll(true);
+	},
+	_doHScroll: function () {
+		this._doScroll(false);
 	},
 	_doScroll: function (vertical) {
 		this.sheet.activeBlock.doScroll(vertical);
