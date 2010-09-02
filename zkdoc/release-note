@@ -20,6 +20,7 @@ ZK Spreadsheet 2.0.0 RC
   30 Support hideColumns
   31 Support unhideColumns
   55 Support Range.setHidden
+  57 ZK Spreadsheet Live support sort/custom sort menu and toolbarbutton
   
 *Bug
   56 zss error in log   
