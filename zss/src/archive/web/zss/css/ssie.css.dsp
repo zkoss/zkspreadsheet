@@ -77,13 +77,21 @@ To compete zk 3.0.6, in IE, i must add 'div.' before rule, if there is font-size
 }
 .zshbouni{
 	display: inline-block; /* DIFF */
+	zoom: 1;
+	*display: inline;
 }
 
 .zshbounw{
 	display: inline-block; /* DIFF */
+	zoom: 1;
+	*display: inline;
 }
 
 .zsvbouni{
+	font-size: 0; /* DIFF */
+}
+
+.zsvbounw{
 	font-size: 0; /* DIFF */
 }
 
