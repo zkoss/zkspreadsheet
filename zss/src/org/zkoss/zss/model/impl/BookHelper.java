@@ -2053,7 +2053,26 @@ public final class BookHelper {
 			return desc ? -ret : ret;
 		}
 		private int compareString(String s1, String s2) {
-			return _matchCase ? s1.compareTo(s2) : s1.compareToIgnoreCase(s2);
+			return _matchCase ? compareString0(s1, s2) : s1.compareToIgnoreCase(s2);
+		}
+		private int compareString0(String s1, String s2) {
+			final int len1 = s1.length();
+			final int len2 = s2.length();
+			final int len = len1 > len2 ? len2 : len1;
+			for (int j = 0; j < len; ++j) {
+				final int ret = compareChar(s1.charAt(j), s2.charAt(j));
+				if ( ret != 0) {
+					return ret;
+				}
+			}
+			return len1 - len2;
+		}
+		private int compareChar(char ch1, char ch2) {
+			final char uch1 = Character.toUpperCase(ch1);
+			final char uch2 = Character.toUpperCase(ch2);
+			return uch1 == uch2 ? 
+					(ch2 - ch1) : //yes, a < A
+					(uch1 - uch2); //yes, a < b, a < B, A < b, and A < B
 		}
 	}
 	 

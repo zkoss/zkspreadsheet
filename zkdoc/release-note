@@ -26,6 +26,7 @@ ZK Spreadsheet 2.0.0 RC
   47 zss2 beta 2 IE support
   54 data input errors - lost characters when switching to edit mode
   60 Sort function when select multiple columns cause Nullpointer exception
+  59 Sort with case sensitive is not in normal ascii order
 
 	------------
 ZK Spreadsheet 2.0.0 beta2
