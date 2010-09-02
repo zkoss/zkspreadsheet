@@ -907,7 +907,11 @@ public final class BookHelper {
 			final Book book = (Book) sheet.getWorkbook();
 			final RefSheet refSheet = getRefSheet(book, sheet);
 			final Ref ref = refSheet.getRef(rowIndex, colIndex, rowIndex, colIndex);
-			ref.removeAllPrecedents();
+			//bug 60: Sort function when seelct multiple columns cause NullPointer Exception
+			//ref could be null if never evaluated or cleared if an orphan reference during operation
+			if (ref != null) { 
+				ref.removeAllPrecedents();
+			}
 			
 			//remove formula from the cell
 			if (clearFormula) {
