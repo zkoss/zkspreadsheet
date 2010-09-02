@@ -2055,6 +2055,7 @@ public final class BookHelper {
 		private int compareString(String s1, String s2) {
 			return _matchCase ? compareString0(s1, s2) : s1.compareToIgnoreCase(s2);
 		}
+		//bug 59 Sort with case sensitive should be in special spreadsheet order
 		private int compareString0(String s1, String s2) {
 			final int len1 = s1.length();
 			final int len2 = s2.length();
