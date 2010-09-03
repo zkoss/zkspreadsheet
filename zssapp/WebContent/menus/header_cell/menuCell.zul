@@ -5,6 +5,7 @@
 	<menuitem label="${c:l('edit.cut')}" forward="onEditCut" />
 	<menuitem label="${c:l('edit.copy')}" forward="onEditCopy" />
 	<menuitem label="${c:l('edit.paste')}" forward="onEditPaste" />
+	<menuitem id="pasteSpecial" label="${c:l('pasteSpecial')}" forward="onPasteSpecial" />
 	<menuseparator />
 	<menuitem label="${c:l('edit.clearContent')}" forward="onClearContent" />
 	<menuitem label="${c:l('edit.clearStyle')}" forward="onClearStyle" />

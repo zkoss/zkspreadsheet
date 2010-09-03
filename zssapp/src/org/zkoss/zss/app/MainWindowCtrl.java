@@ -156,6 +156,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	Menuitem sortAscendingMenu;
 	Menuitem sortDescendingMenu;
 	Menuitem customSort;
+	Menuitem pasteSpecial;
 	
 	Textbox formulaEditbox;
 	Spreadsheet spreadsheet;
@@ -1856,6 +1857,21 @@ throw new UiException("wrap text is implmented yet");
 		HashMap arg = new HashMap();
 		arg.put("spreadsheet", spreadsheet);
 		Executions.createComponents("/menus/sort/customSort.zul", mainWin, arg);
+	}
+	
+	public void onClick$pasteSpecial() {
+		HashMap arg = new HashMap();
+		arg.put("spreadsheet", spreadsheet);
+		if (spreadsheet.getHighlight() != null)
+			Executions.createComponents("/menus/paste/pasteSpecial.zul", mainWin, arg);
+		else {
+			//To do: paste from Clipboard Dialog (pasteSpecialFromClipboard.zul)
+			try {
+				Messagebox.show("Please select copy area");
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void onBorderClick(ForwardEvent event){

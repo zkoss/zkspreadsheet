@@ -140,6 +140,25 @@ public class Utils {
 	}
 
 	/**
+	 * Pastes to a destination from source {@link Rect}
+	 * @param sheet the sheet to sort 
+	 * @param srcRect paste source range
+	 * @param rowIndex row index
+	 * @param colIndex column index
+	 * @param pasteType the part of the range to be pasted
+	 * @param pasteOp the paste operation
+	 * @param skipBlanks true to not have blank cells in the ranage on the Clipboard pasted into this range; default false
+	 * @param transpose true to transpose rows and columns when pasting to this range; default false
+	 */
+	public static void pasteSpecial(Sheet sheet, Rect srcRect, int rowIndex, int colIndex, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
+		Range rng = Utils.getRange(sheet, srcRect.getTop(), srcRect.getLeft(), srcRect.getBottom(), srcRect.getRight());
+		int srcColCount = srcRect.getRight() - srcRect.getLeft();
+		int srcRowCount = srcRect.getBottom() - srcRect.getTop();
+		Range dstRange = Utils.getRange(sheet, rowIndex, colIndex, rowIndex + srcRowCount, colIndex + srcColCount);
+		rng.pasteSpecial(dstRange, pasteType, pasteOp, skipBlanks, transpose);
+	}
+
+	/**
 	 * Format and escape a {@link Hyperlink} to HTML &lt;a> string.
 	 * @param sheet the sheet with the RichTextString 
 	 * @param hlink the Hyperlink
