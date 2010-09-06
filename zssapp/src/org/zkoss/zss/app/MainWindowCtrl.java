@@ -181,6 +181,9 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	Toolbarbutton insertChartBtn;
 	Toolbarbutton sortAscending;
 	Toolbarbutton sortDescending;
+	Toolbarbutton copySelection;
+	Toolbarbutton pasteSelection;
+
 	South formulaBar;
 	Borderlayout topToolbars; 
 	
@@ -1859,6 +1862,27 @@ throw new UiException("wrap text is implmented yet");
 		Executions.createComponents("/menus/sort/customSort.zul", mainWin, arg);
 	}
 	
+	public void onClick$copySelection() {
+		Rect sel = spreadsheet.getSelection();
+		if (sel.getBottom() >= spreadsheet.getMaxrows())
+			sel.setBottom(spreadsheet.getMaxrows() - 1);
+		if (sel.getRight() >= spreadsheet.getMaxcolumns())
+			sel.setRight(spreadsheet.getMaxcolumns() - 1);
+		spreadsheet.setHighlight(sel);
+	}
+	
+	public void onClick$pasteSelection() {
+		if (spreadsheet.getHighlight() == null)
+			return;
+
+		Utils.pasteSpecial(spreadsheet.getSelectedSheet(), 
+				spreadsheet.getHighlight(), 
+				spreadsheet.getSelection().getTop(), spreadsheet.getSelection().getLeft(), 
+				Range.PASTE_ALL, Range.PASTEOP_NONE, 
+				false, false);
+		spreadsheet.setHighlight(null);
+	}
+
 	public void onClick$pasteSpecial() {
 		HashMap arg = new HashMap();
 		arg.put("spreadsheet", spreadsheet);

@@ -407,6 +407,16 @@
 								this.$f('spreadsheet').focus(false);
 							</attribute>
 						</toolbarbutton>
+						<toolbarbutton id="copySelection" sclass="toolIcon" src="/img/document-copy.png">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+						</toolbarbutton>
+						<toolbarbutton id="pasteSelection" sclass="toolIcon" src="/img/clipboard-paste.png">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+						</toolbarbutton>
 					</toolbar>
 				</center>
 				
