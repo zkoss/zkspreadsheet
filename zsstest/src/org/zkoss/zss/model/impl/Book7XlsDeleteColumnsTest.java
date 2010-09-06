@@ -103,11 +103,19 @@ public class Book7XlsDeleteColumnsTest {
 		assertEquals(Cell.CELL_TYPE_NUMERIC, valueA3.getCellType());
 		testToFormulaString(cellA3, "SUM(H2:J2)");
 	
+		//G3: =G2
+		Cell cellG3 = row3.getCell(6);
+		CellValue valueG3 = _evaluator.evaluate(cellG3);
+		assertEquals(5, valueG3.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueG3.getCellType());
+		testToFormulaString(cellG3, "G2");
+		
 		//remove column D ~ F
 		BookHelper.deleteColumns(sheet1, 3, 3);
 		_evaluator.notifySetFormula(cellA1);
 		_evaluator.notifySetFormula(cellA2);
 		_evaluator.notifySetFormula(cellA3);
+		_evaluator.notifySetFormula(cellG3);
 		
 		//D2: 5, E2:7, E3: empty, F2: 9, G2: 11, H ~ J empty
 		assertNull(row3.getCell(4)); //E3 not exist
@@ -136,6 +144,15 @@ public class Book7XlsDeleteColumnsTest {
 		valueA1 = _evaluator.evaluate(cellA1);
 		assertEquals(Cell.CELL_TYPE_ERROR, valueA1.getCellType());
 		testToFormulaString(cellA1, "SUM(#REF!)");
+
+		//G3 -> D3: =G2 -> =D2
+		assertNull(row3.getCell(6)); //G3 not exist
+		
+		Cell cellD3 = row3.getCell(3);
+		CellValue valueD3 = _evaluator.evaluate(cellD3);
+		assertEquals(5, valueD3.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueD3.getCellType());
+		testToFormulaString(cellD3, "D2");
 	}
 	
 	@Test
@@ -173,11 +190,18 @@ public class Book7XlsDeleteColumnsTest {
 		assertEquals(Cell.CELL_TYPE_NUMERIC, valueA3.getCellType());
 		testToFormulaString(cellA3, "SUM(H2:J2)");
 	
+		Cell cellG3 = row3.getCell(6);
+		CellValue valueG3 = _evaluator.evaluate(cellG3);
+		assertEquals(5, valueG3.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueG3.getCellType());
+		testToFormulaString(cellG3, "G2");
+		
 		//remove column D ~ F
 		BookHelper.deleteRange(sheet1, 0, 3, 2, 5, true);
 		_evaluator.notifySetFormula(cellA1);
 		_evaluator.notifySetFormula(cellA2);
 		_evaluator.notifySetFormula(cellA3);
+		_evaluator.notifySetFormula(cellG3);
 		
 		//D2: 5, E2:7, E3: empty, F2: 9, G2: 11, H ~ J empty
 		assertNull(row3.getCell(4)); //E3 not exist
@@ -206,6 +230,15 @@ public class Book7XlsDeleteColumnsTest {
 		valueA1 = _evaluator.evaluate(cellA1);
 		assertEquals(Cell.CELL_TYPE_ERROR, valueA1.getCellType());
 		testToFormulaString(cellA1, "SUM(#REF!)");
+
+		//G3 -> D3: =G2 -> =D2
+		assertNull(row3.getCell(6)); //G3 not exist
+		
+		Cell cellD3 = row3.getCell(3);
+		CellValue valueD3 = _evaluator.evaluate(cellD3);
+		assertEquals(5, valueD3.getNumberValue(), 0.0000000000000001);
+		assertEquals(Cell.CELL_TYPE_NUMERIC, valueD3.getCellType());
+		testToFormulaString(cellD3, "D2");
 	}
 	
 	private void testToFormulaString(Cell cell, String expect) {

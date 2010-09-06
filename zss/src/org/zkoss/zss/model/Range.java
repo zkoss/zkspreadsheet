@@ -38,8 +38,9 @@ public interface Range {
 	public final static int SHIFT_UP = 2;
 	
 	//copyOrigin of #insert
-	public final static int FORMAT_LEFTABOVE = Sheet.FORMAT_LEFTABOVE;
-	public final static int FORMAT_RIGHTBELOW = Sheet.FORMAT_RIGHTBELOW;
+	public final static int FORMAT_LEFTABOVE = 0;
+	public final static int FORMAT_RIGHTBELOW = 1;
+	public final static int FORMAT_NONE = -1;
 	
 	//pasteType of #paste
 	public final static int PASTE_ALL = BookHelper.INNERPASTE_FORMATS + BookHelper.INNERPASTE_VALUES_AND_FORMULAS + BookHelper.INNERPASTE_COMMENTS + BookHelper.INNERPASTE_VALIDATION; 

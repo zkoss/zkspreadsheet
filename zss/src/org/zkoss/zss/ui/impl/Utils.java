@@ -46,6 +46,7 @@ import org.zkoss.zss.engine.RefSheet;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.RangeImpl;
 import org.zkoss.zss.ui.Rect;
@@ -365,7 +366,7 @@ public class Utils {
 	 * @return a cell {@link Range} per the given sheet, row index, and column index.
 	 */
 	public static Range getRange(Sheet sheet, int row, int col) {
-		return new RangeImpl(row, col, sheet, sheet);
+		return Ranges.range(sheet, row, col);
 	}
 
 	/**
@@ -380,7 +381,7 @@ public class Utils {
 	 * bottom row index, and right column index.
 	 */
 	public static Range getRange(Sheet sheet, int tRow, int lCol, int bRow, int rCol) {
-		return new RangeImpl(tRow, lCol, bRow, rCol, sheet, sheet);
+		return Ranges.range(sheet, tRow, lCol, bRow, rCol);
 	}
 	
 	/**
@@ -392,7 +393,7 @@ public class Utils {
 	 * @return a cell {@link Range} per the given sheet, row index, and column index.
 	 */
 	public static Range getRange(Sheet firstSheet, Sheet lastSheet, int row, int col) {
-		return new RangeImpl(row, col, firstSheet, lastSheet);
+		return Ranges.range(firstSheet, lastSheet, row, col);
 	}
 	
 	/**
@@ -408,7 +409,7 @@ public class Utils {
 	 * bottom row index, and right column index.
 	 */
 	public static Range getRange(Sheet firstSheet, Sheet lastSheet, int tRow, int lCol, int bRow, int rCol) {
-		return new RangeImpl(tRow, lCol, bRow, rCol, firstSheet, lastSheet);
+		return Ranges.range(firstSheet, lastSheet, tRow, lCol, bRow, rCol);
 	} 
 	
 	/**

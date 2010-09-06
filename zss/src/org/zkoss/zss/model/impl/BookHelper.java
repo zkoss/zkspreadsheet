@@ -13,8 +13,6 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
-import java.awt.Color;
-import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,50 +30,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherBlipRecord;
-import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.AreaErrPtg;
-import org.apache.poi.hssf.record.formula.AreaPtg;
 import org.apache.poi.hssf.record.formula.AreaPtgBase;
-import org.apache.poi.hssf.record.formula.DeletedArea3DPtg;
-import org.apache.poi.hssf.record.formula.DeletedRef3DPtg;
 import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.Ref3DPtg;
-import org.apache.poi.hssf.record.formula.RefErrorPtg;
-import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.record.formula.RefPtgBase;
-import org.apache.poi.hssf.record.formula.udf.UDFFinder;
-import org.apache.poi.hssf.usermodel.DummyHSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellHelper;
 import org.apache.poi.hssf.usermodel.HSSFDataValidation;
-import org.apache.poi.hssf.usermodel.HSSFDataValidationHelper;
-import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
-import org.apache.poi.hssf.usermodel.HSSFPatriarch;
-import org.apache.poi.hssf.usermodel.HSSFPicture;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFRowHelper;
-import org.apache.poi.hssf.usermodel.HSSFShape;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFSheetHelper;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFWorkbookHelper;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.format.CellFormat;
-import org.apache.poi.ss.format.CellFormatResult;
-import org.apache.poi.ss.format.CellFormatType;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.PtgShifter;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -92,13 +65,10 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.ErrorConstants;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.NumberToTextConverter;
@@ -106,10 +76,8 @@ import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
-import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFPicture;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -125,14 +93,12 @@ import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.RefSheet;
 import org.zkoss.zss.engine.event.SSDataEvent;
 import org.zkoss.zss.engine.impl.AreaRefImpl;
-import org.zkoss.zss.engine.impl.CellRefImpl;
 import org.zkoss.zss.engine.impl.ChangeInfo;
 import org.zkoss.zss.engine.impl.MergeChange;
 import org.zkoss.zss.engine.impl.RefSheetImpl;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Books;
 import org.zkoss.zss.model.Range;
-import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.Styles;
 
 /**
@@ -1123,7 +1089,7 @@ public final class BookHelper {
 	}
 	private static List<? extends DataValidation> getDataValidations(Sheet sheet) {
 		if (sheet instanceof HSSFSheet) {
-			return ((HSSFSheet)sheet).getDataValidations();
+			return ((HSSFSheetImpl)sheet).getDataValidations();
 		} else {
 			return ((XSSFSheet)sheet).getDataValidations();
 		}
@@ -1227,11 +1193,10 @@ public final class BookHelper {
 	
 	private static void setCellPtgs(Cell cell, Ptg[] ptgs) {
         if (cell instanceof HSSFCell) {
-        	DummyHSSFCell dummyCell = new DummyHSSFCell((HSSFCell)cell);
         	//tricky! must be after the dummyCell construction or the under aggregate record will not 
         	//be consistent in sheet and cell
             cell.setCellType(Cell.CELL_TYPE_FORMULA); 
-        	FormulaRecordAggregate agg = (FormulaRecordAggregate) dummyCell.getRecord();
+        	FormulaRecordAggregate agg = (FormulaRecordAggregate) new HSSFCellHelper((HSSFCell)cell).getCellValueRecord();
         	FormulaRecord frec = agg.getFormulaRecord();
         	frec.setOptions((short) 2);
         	frec.setValue(0);
@@ -1260,12 +1225,12 @@ public final class BookHelper {
 	}
 	
 	private static Ptg[] getHSSFPtgs(HSSFCell cell) {
-		CellValueRecordInterface vr = new DummyHSSFCell(cell).getRecord();
+		CellValueRecordInterface vr = new HSSFCellHelper(cell).getCellValueRecord();
 		if (!(vr instanceof FormulaRecordAggregate)) {
 			throw new IllegalArgumentException("Not a formula cell");
 		}
 		FormulaRecordAggregate fra = (FormulaRecordAggregate) vr;
-		return fra.getFormulaRecord().getParsedExpression();
+		return fra.getFormulaTokens();
 	}
 	
 	private static Ptg[] offsetPtgs(Cell dstCell, Cell srcCell) {
@@ -1420,7 +1385,7 @@ public final class BookHelper {
 		if (startRow > lastRowNum) {
 			return null;
 		}
-		final List<CellRangeAddress[]> shiftedRanges = ((HSSFSheet)sheet).shiftRowsOnly(startRow, lastRowNum, num, true, false, true, false, copyOrigin);
+		final List<CellRangeAddress[]> shiftedRanges = ((HSSFSheetImpl)sheet).shiftRowsOnly(startRow, lastRowNum, num, true, false, true, false, copyOrigin);
 		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
 		final Set<Ref> last = refs[0];
 		final Set<Ref> all = refs[1];
@@ -1440,7 +1405,7 @@ public final class BookHelper {
 		if (startRow > lastRowNum) {
 			return null;
 		}
-		final List<CellRangeAddress[]> shiftedRanges = ((HSSFSheet)sheet).shiftRowsOnly(startRow0, lastRowNum, -num, true, false, true, true, HSSFSheet.FORMAT_NONE);
+		final List<CellRangeAddress[]> shiftedRanges = ((HSSFSheetImpl)sheet).shiftRowsOnly(startRow0, lastRowNum, -num, true, false, true, true, Range.FORMAT_NONE);
 		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
 		final Set<Ref> last = refs[0];
 		final Set<Ref> all = refs[1];
@@ -1455,7 +1420,7 @@ public final class BookHelper {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.insertColumns(startCol, num);
-		final List<CellRangeAddress[]> shiftedRanges = ((HSSFSheet)sheet).shiftColumnsOnly(startCol, -1, num, true, false, true, false, copyOrigin);
+		final List<CellRangeAddress[]> shiftedRanges = ((HSSFSheetImpl)sheet).shiftColumnsOnly(startCol, -1, num, true, false, true, false, copyOrigin);
 		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
 		final Set<Ref> last = refs[0];
 		final Set<Ref> all = refs[1];
@@ -1471,7 +1436,7 @@ public final class BookHelper {
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.deleteColumns(startCol, num);
 		final int startCol0 = startCol + num;
-		final List<CellRangeAddress[]> shiftedRanges = ((HSSFSheet)sheet).shiftColumnsOnly(startCol0, -1, -num, true, false, true, true, HSSFSheet.FORMAT_NONE);
+		final List<CellRangeAddress[]> shiftedRanges = ((HSSFSheetImpl)sheet).shiftColumnsOnly(startCol0, -1, -num, true, false, true, true, Range.FORMAT_NONE);
 		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
 		final Set<Ref> last = refs[0];
 		final Set<Ref> all = refs[1];
@@ -1488,8 +1453,8 @@ public final class BookHelper {
 		final Set<Ref>[] refs = refSheet.insertRange(tRow, lCol, bRow, rCol, horizontal);
 		final int num = horizontal ? rCol - lCol + 1 : bRow - tRow + 1;
 		final List<CellRangeAddress[]> shiftedRanges = horizontal ? 
-			((HSSFSheet)sheet).shiftColumnsRange(lCol, -1, num, tRow, bRow, true, false, true, false, copyRightBelow):
-			((HSSFSheet)sheet).shiftRowsRange(tRow, -1, num, lCol, rCol, true, false, true, false, copyRightBelow);
+			((HSSFSheetImpl)sheet).shiftColumnsRange(lCol, -1, num, tRow, bRow, true, false, true, false, copyRightBelow):
+			((HSSFSheetImpl)sheet).shiftRowsRange(tRow, -1, num, lCol, rCol, true, false, true, false, copyRightBelow);
 		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
 		final Set<Ref> last = refs[0];
 		final Set<Ref> all = refs[1];
@@ -1512,8 +1477,8 @@ public final class BookHelper {
 		final Set<Ref>[] refs = refSheet.deleteRange(tRow, lCol, bRow, rCol, horizontal);
 		final int num = horizontal ? rCol - lCol + 1 : bRow - tRow + 1;
 		final List<CellRangeAddress[]> shiftedRanges = horizontal ? 
-			((HSSFSheet)sheet).shiftColumnsRange(rCol + 1, -1, -num, tRow, bRow, true, false, true, true, HSSFSheet.FORMAT_NONE):
-			((HSSFSheet)sheet).shiftRowsRange(bRow + 1, -1, -num, lCol, rCol, true, false, true, true, HSSFSheet.FORMAT_NONE);
+			((HSSFSheetImpl)sheet).shiftColumnsRange(rCol + 1, -1, -num, tRow, bRow, true, false, true, true, Range.FORMAT_NONE):
+			((HSSFSheetImpl)sheet).shiftRowsRange(bRow + 1, -1, -num, lCol, rCol, true, false, true, true, Range.FORMAT_NONE);
 		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
 		final Set<Ref> last = refs[0];
 		final Set<Ref> all = refs[1];
@@ -1539,10 +1504,10 @@ public final class BookHelper {
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.moveRange(tRow, lCol, bRow, rCol, nRow, nCol);
 		final List<CellRangeAddress[]> shiftedRanges = nCol != 0 && nRow == 0 ? 
-			((HSSFSheet)sheet).shiftColumnsRange(lCol, rCol, nCol, tRow, bRow, true, false, true, false, HSSFSheet.FORMAT_NONE):
+			((HSSFSheetImpl)sheet).shiftColumnsRange(lCol, rCol, nCol, tRow, bRow, true, false, true, false, Range.FORMAT_NONE):
 			nCol == 0 && nRow != 0 ?
-			((HSSFSheet)sheet).shiftRowsRange(tRow, bRow, nRow, lCol, rCol, true, false, true, false, HSSFSheet.FORMAT_NONE):
-			((HSSFSheet)sheet).shiftBothRange(tRow, bRow, nRow, lCol, rCol, nCol, true); //nCol != 0 && nRow != 0
+			((HSSFSheetImpl)sheet).shiftRowsRange(tRow, bRow, nRow, lCol, rCol, true, false, true, false, Range.FORMAT_NONE):
+			((HSSFSheetImpl)sheet).shiftBothRange(tRow, bRow, nRow, lCol, rCol, nCol, true); //nCol != 0 && nRow != 0
 		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
 		final Set<Ref> last = refs[0];
 		final Set<Ref> all = refs[1];
@@ -1606,12 +1571,12 @@ public final class BookHelper {
 	}
 	
 	private static void shiftHSSFFormulas(PtgShifter shifter, int sheetIndex, Cell cell) {
-		CellValueRecordInterface vr = new DummyHSSFCell((HSSFCell)cell).getRecord();
+		CellValueRecordInterface vr = new HSSFCellHelper((HSSFCell)cell).getCellValueRecord();
 		if (!(vr instanceof FormulaRecordAggregate)) {
 			throw new IllegalArgumentException("Not a formula cell");
 		}
 		FormulaRecordAggregate fra = (FormulaRecordAggregate) vr;
-		Ptg[] ptgs = fra.getFormulaRecord().getParsedExpression();
+		Ptg[] ptgs = fra.getFormulaTokens();//getFormulaRecord().getParsedExpression();
 		if (shifter.adjustFormula(ptgs, sheetIndex)) {
 			fra.setParsedExpression(ptgs);
 		}

@@ -22,16 +22,6 @@ import java.awt.Color;
 import java.util.Iterator;
 import java.util.List;
 
-/*import org.zkoss.zss.model.BorderLineStyle;
-import org.zkoss.zss.model.BorderStyle;
-import org.zkoss.zss.model.Cell;
-import org.zkoss.zss.model.FontStyle;
-import org.zkoss.zss.model.FontUnderline;
-import org.zkoss.zss.model.Format;
-import org.zkoss.zss.model.Sheet;
-import org.zkoss.zss.model.TextHAlign;
-import org.zkoss.zss.model.impl.BorderStyleImpl;
-*/
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;

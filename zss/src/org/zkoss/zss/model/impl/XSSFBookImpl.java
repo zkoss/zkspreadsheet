@@ -13,24 +13,20 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
-import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.AttributedString;
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.poi.hssf.record.formula.udf.AggregatingUDFFinder;
-import org.apache.poi.hssf.record.formula.udf.UDFFinder;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.formula.IStabilityClassifier;
-import org.apache.poi.ss.formula.DefaultDependencyTracker;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.zkoss.lang.Classes;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.zk.ui.event.EventListener;
@@ -58,6 +54,25 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	private Books _books;
 	private int _defaultCharWidth = 7; //TODO: don't know how to calculate this yet per the default font.
 	private final String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver";
+	
+	//override the XSSFSheet Relation
+	static {
+		Field fd = null;
+		try {
+			fd = Classes.getAnyField(XSSFRelation.class, "_cls");
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+		final boolean old = fd.isAccessible();
+		try {
+			fd.setAccessible(true);
+			fd.set(XSSFRelation.WORKSHEET, XSSFSheetImpl.class); //Use the new XSSFSheet implementation 
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		} finally {
+			fd.setAccessible(old);
+		}
+	}
 
 	public XSSFBookImpl(String bookname, InputStream is) throws IOException {
 		super(is);
@@ -190,14 +205,6 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 		}
 		BookHelper.reevaluateAndNotify(this, last, all);
 	}
-
-    private void copyAttributes(Font font, AttributedString str, int startIdx, int endIdx) {
-        str.addAttribute(TextAttribute.FAMILY, font.getFontName(), startIdx, endIdx);
-        str.addAttribute(TextAttribute.SIZE, new Float(font.getFontHeightInPoints()));
-        if (font.getBoldweight() == Font.BOLDWEIGHT_BOLD) str.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, startIdx, endIdx);
-        if (font.getItalic() ) str.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, startIdx, endIdx);
-        if (font.getUnderline() == Font.U_SINGLE ) str.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, startIdx, endIdx);
-    }
 	
 	//--Workbook--//
 	@Override

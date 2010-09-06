@@ -20,10 +20,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zss.engine.EventDispatcher;
 
 /**
- * Spreadsheet book.
+ * ZK Spreadsheet book.
  * @author henrichen
  *
  */

@@ -23,14 +23,17 @@ import java.text.AttributedString;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.record.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.hssf.record.formula.udf.UDFFinder;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.DefaultDependencyTracker;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.IStabilityClassifier;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.lang.Classes;
@@ -212,4 +215,13 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
 		super.setSheetName(index, name);
 	}
 	
+    @Override
+    protected HSSFSheet createHSSFSheet(HSSFWorkbook workbook, InternalSheet sheet) {
+    	return new HSSFSheetImpl((HSSFBookImpl)workbook, sheet);
+    }
+    
+    @Override
+    protected HSSFSheet createHSSFSheet(HSSFWorkbook workbook) {
+    	return new HSSFSheetImpl((HSSFBookImpl)workbook);
+    }
 }

@@ -13,13 +13,11 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -463,22 +461,6 @@ public class RangeImpl implements Range {
 		return ref;
 	}
 	
-	private int getLeft() {
-		return _left;
-	}
-	
-	private int getTop() {
-		return _top;
-	}
-	
-	private int getRight() {
-		return _right;
-	}
-	
-	private int getBottom() {
-		return _bottom;
-	}
-
 	@Override
 	public void delete(int shift) {
 		if (_refs != null && !_refs.isEmpty()) {

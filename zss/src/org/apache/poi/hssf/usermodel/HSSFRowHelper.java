@@ -31,4 +31,7 @@ public class HSSFRowHelper {
     public HSSFCell createCellFromRecord(CellValueRecordInterface cellRecord) {
     	return _row.createCellFromRecord(cellRecord);
     }
+    public void removeAllCells() {
+    	_row.removeAllCells();
+    }
 }

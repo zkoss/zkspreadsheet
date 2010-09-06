@@ -25,17 +25,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.impl.BookHelper;
-/*import org.zkoss.zss.model.BorderLineStyle;
-import org.zkoss.zss.model.BorderStyle;
-import org.zkoss.zss.model.Cell;
-import org.zkoss.zss.model.FontStyle;
-import org.zkoss.zss.model.FontUnderline;
-import org.zkoss.zss.model.Format;
-import org.zkoss.zss.model.Sheet;
-import org.zkoss.zss.model.TextHAlign;
-import org.zkoss.zss.model.impl.BorderStyleImpl;
-import org.zkoss.zss.model.impl.FormatImpl;
-*/
 /**
  * A utility class to help spreadsheet set style of a cell
  * @author Dennis.Chen
