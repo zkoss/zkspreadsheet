@@ -1310,7 +1310,18 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 
 			this._wgt.syncWidgetPos(-1, col);
 		}
-		
+
+		//sync focus and selection area
+		var focPos = this.getLastFocus(),
+			fCol = focPos.column,
+			ls = this.getLastSelection(),
+			selL = ls.left,
+			selR = ls.right;
+		if (col == fCol)
+			this.moveCellFocus(focPos.row, fCol);
+		if (col >= selL && col <= selR)
+			this.moveCellSelection(selL, ls.top, selR, ls.bottom);
+
 		if (fireevent) {
 			this._wgt.fire('onZSSHeaderModif', 
 					{sheetId: this.serverSheetId, type: "top", event: "size", index: col, newsize: width, id: zsw, hidden: hidden},
