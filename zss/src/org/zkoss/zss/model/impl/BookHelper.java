@@ -33,6 +33,7 @@ import java.util.Map.Entry;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.AreaPtgBase;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefPtgBase;
@@ -2610,5 +2611,40 @@ if (fillType == FILL_DEFAULT) {
 		final Set<Ref> all = new HashSet<Ref>();
 		all.add(ref);
 		return all; 
+	}
+	
+	/*package*/ static CellRangeAddress getRepeatRowsAndColumns(Ptg[] ptgs) {
+		Area3DPtg area1 = null;
+		Area3DPtg area2 = null;
+		for(int j = 0; j < ptgs.length; ++j) {
+			Ptg ptg = ptgs[j];
+			if (ptg instanceof Area3DPtg) {
+				if (area1 == null) {
+					area1 = (Area3DPtg) ptg;
+				} else if (area2 == null) {
+					area2 = (Area3DPtg) ptg;
+					break;
+				}
+			}
+		}
+		if (area1 == null) {
+			return new CellRangeAddress(-1, -1, -1, -1);
+		} else {
+			CellRangeAddress rng1 = new CellRangeAddress(area1.getFirstRow(), area1.getLastRow(), area1.getFirstColumn(), area1.getLastColumn());
+			if (area2 == null) { //only area1
+				if (rng1.isFullColumnRange()) { //repeat column
+					return new CellRangeAddress(-1, -1, area1.getFirstColumn(), area1.getLastColumn());  
+				} else if (rng1.isFullRowRange()) { //repeat row
+					return new CellRangeAddress(area1.getFirstRow(), area1.getLastRow(), -1, -1);  
+				}
+			} else { //area1 + area2
+				if (rng1.isFullColumnRange()) { //repeat column
+					return new CellRangeAddress(area2.getFirstRow(), area2.getLastRow(), area1.getFirstColumn(), area1.getLastColumn());  
+				} else if (rng1.isFullRowRange()) { //repeat row
+					return new CellRangeAddress(area1.getFirstRow(), area1.getLastRow(), area2.getFirstColumn(), area2.getLastColumn());  
+				}
+			}
+			return new CellRangeAddress(-1, -1, -1, -1);
+		}
 	}
 }

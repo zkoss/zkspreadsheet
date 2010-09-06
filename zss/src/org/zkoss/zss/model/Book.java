@@ -17,6 +17,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.zk.ui.event.EventListener;
@@ -101,4 +102,11 @@ public interface Book extends Workbook {
 	 * @param variables the variable names
 	 */
 	public void notifyChange(String[] variables);
+	
+	/**
+	 * Returns the repeat rows and columns in a CellRangeAddress per the specified sheet; -1 mean no repeat rows or columns
+	 * @param sheetIndex the sheet index
+	 * @return the repeat rows and columns in a CellRangeAddress; 
+	 */
+	public CellRangeAddress getRepeatingRowsAndColumns(int sheetIndex);
 }

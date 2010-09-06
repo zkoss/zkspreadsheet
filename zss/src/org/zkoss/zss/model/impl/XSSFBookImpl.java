@@ -19,11 +19,18 @@ import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
+import org.apache.poi.xssf.usermodel.XSSFName;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.lang.Classes;
@@ -220,4 +227,27 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 		_refBook.setSheetName(oldsheetname, name);
 		super.setSheetName(index, name);
 	}
+
+	@Override
+	public CellRangeAddress getRepeatingRowsAndColumns(int sheetNumber) {
+		final XSSFName name = getBuiltInName(XSSFName.BUILTIN_PRINT_TITLE, sheetNumber);
+		if (name == null) {
+			return new CellRangeAddress(-1, -1, -1, -1);
+		} else {
+			final String formula = name.getRefersToFormula();
+			final Ptg[] ptgs = FormulaParser.parse(formula, XSSFEvaluationWorkbook.create(this), FormulaType.NAMEDRANGE, name.getSheetIndex());
+			return BookHelper.getRepeatRowsAndColumns(ptgs);
+		}
+	}
+    private XSSFName getBuiltInName(String builtInCode, int sheetNumber) {
+    	final int sz  = getNumberOfNames();
+    	for (int j = 0; j < sz; ++j) {
+    		XSSFName name = getNameAt(j);
+            if (name.getNameName().equalsIgnoreCase(builtInCode) && name.getSheetIndex() == sheetNumber) {
+                return name;
+            }
+        }
+        return null;
+    }
+
 }

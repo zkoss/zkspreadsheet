@@ -24,11 +24,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.poi.hssf.model.InternalSheet;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.formula.Area3DPtg;
+import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.hssf.record.formula.udf.UDFFinder;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbookHelper;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.DefaultDependencyTracker;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
@@ -36,6 +40,7 @@ import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library; 
 import org.zkoss.xel.FunctionMapper;
@@ -66,6 +71,7 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
 	private Books _books;
 	private int _defaultCharWidth = 7; //TODO: don't know how to calculate this yet per the default font.
 	private final String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver";
+	private final HSSFWorkbookHelper _helper;
 
 	public HSSFBookImpl(String bookname, InputStream is) throws IOException {
 		super(is);
@@ -78,6 +84,7 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
 		_bookEvaluator.setDependencyTracker(resolver.getDependencyTracker(this));
 		_functionMapper = new JoinFunctionMapper(resolver.getFunctionMapper());
 		_variableResolver = new JoinVariableResolver();
+		_helper = new HSSFWorkbookHelper(this);
 	}
 	
 	/*package*/ WorkbookEvaluator getWorkbookEvaluator() {
@@ -199,7 +206,37 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
 		}
 		BookHelper.reevaluateAndNotify(this, last, all);
 	}
-	
+
+	@Override
+	public CellRangeAddress getRepeatingRowsAndColumns(int sheetIndex) {
+		final int nameIndex  = findExistingBuiltinNameRecordIdx(sheetIndex, NameRecord.BUILTIN_PRINT_TITLE);
+		if (nameIndex == -1) {
+			return new CellRangeAddress(-1, -1, -1, -1);
+		}
+		final NameRecord r = getNameRecord(nameIndex);
+		Ptg[] ptgs = r.getNameDefinition();
+		return BookHelper.getRepeatRowsAndColumns(ptgs);
+	}
+
+	//a direct copy from HSSFWorkbook#findExistingBuiltinNameRecordIdx
+    private int findExistingBuiltinNameRecordIdx(int sheetIndex, byte builtinCode) {
+    	final int sz = getNumberOfNames();
+        for(int defNameIndex =0; defNameIndex<sz; defNameIndex++) {
+            NameRecord r = _helper.getInternalWorkbook().getNameRecord(defNameIndex);
+            if (r == null) {
+                throw new RuntimeException("Unable to find all defined names to iterate over");
+            }
+            if (!r.isBuiltInName() || r.getBuiltInName() != builtinCode) {
+                continue;
+            }
+            if (r.getSheetNumber() -1 == sheetIndex) {
+                return defNameIndex;
+            }
+        }
+        return -1;
+    }
+
+
 	//--Workbook--//
 	@Override
 	public void removeSheetAt(int index) {
