@@ -397,22 +397,22 @@
 							forward="onClick=onWrapTextClick" />		
 						<toolbarbutton id="insertChartBtn" sclass="toolIcon" src="/img/pieChart.gif"
 							forward="onClick=onInsertChart(pie)" />
-						<toolbarbutton id="sortAscending" sclass="toolIcon" src="/img/asc.png">
+						<toolbarbutton id="sortAscending" sclass="toolIcon" src="/img/asc.png" tooltiptext="${c:l('sort.ascending')}">
 							<attribute w:name="onClick">
 								this.$f('spreadsheet').focus(false);
 							</attribute>
 						</toolbarbutton>
-						<toolbarbutton id="sortDescending" sclass="toolIcon" src="/img/des.png">
+						<toolbarbutton id="sortDescending" sclass="toolIcon" src="/img/des.png" tooltiptext="${c:l('sort.descending')}">
 							<attribute w:name="onClick">
 								this.$f('spreadsheet').focus(false);
 							</attribute>
 						</toolbarbutton>
-						<toolbarbutton id="copySelection" sclass="toolIcon" src="/img/document-copy.png">
+						<toolbarbutton id="copySelection" sclass="toolIcon" src="/img/document-copy.png" tooltiptext="${c:l('edit.copy')}">
 							<attribute w:name="onClick">
 								this.$f('spreadsheet').focus(false);
 							</attribute>
 						</toolbarbutton>
-						<toolbarbutton id="pasteSelection" sclass="toolIcon" src="/img/clipboard-paste.png">
+						<toolbarbutton id="pasteSelection" sclass="toolIcon" src="/img/clipboard-paste.png" tooltiptext="${c:l('paste')}">
 							<attribute w:name="onClick">
 								this.$f('spreadsheet').focus(false);
 							</attribute>
