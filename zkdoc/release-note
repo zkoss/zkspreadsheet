@@ -21,6 +21,7 @@ ZK Spreadsheet 2.0.0 RC
   31 Support unhideColumns
   55 Support Range.setHidden
   57 ZK Spreadsheet Live support sort/custom sort menu and toolbarbutton
+  62 Support getRepeatingRowsAndColumns
   
 *Bug
   56 zss error in log   
