@@ -18,7 +18,7 @@ jasperreports.jar
 commons-collections.jar
 commons-logging.jar
 commons-digester.jar
-itext.jar
+iText-5.0.3.jar
 jxl.jar
 zpoi.jar
 zss.jar
