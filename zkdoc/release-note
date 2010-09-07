@@ -22,6 +22,7 @@ ZK Spreadsheet 2.0.0 RC
   55 Support Range.setHidden
   57 ZK Spreadsheet Live support sort/custom sort menu and toolbarbutton
   62 Support getRepeatingRowsAndColumns
+  58 Support printing ZK Spreadsheet to PDF file
   63 ZK Spreadsheet Live support copy/paste/pastSpecial menu and toolbarbutton
 
 *Bug
