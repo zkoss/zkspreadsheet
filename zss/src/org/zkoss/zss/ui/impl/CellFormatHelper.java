@@ -153,7 +153,7 @@ public class CellFormatHelper {
 		if(!hitBottom && next !=null){
 			CellStyle style = next.getCellStyle();
 			if (style != null){
-				String bgColor = BookHelper.indexToRGB(_book, style.getFillBackgroundColor());
+				String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 				if (BookHelper.AUTO_COLOR.equals(bgColor)) {
 					bgColor = null;
 				}
@@ -168,7 +168,7 @@ public class CellFormatHelper {
 			CellStyle style = _cell.getCellStyle();
 			
 			if (style != null){
-				String bgColor = BookHelper.indexToRGB(_book, style.getFillBackgroundColor());
+				String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 				if (BookHelper.AUTO_COLOR.equals(bgColor)) {
 					bgColor = null;
 				}
@@ -223,7 +223,7 @@ public class CellFormatHelper {
 		if(!hitRight && next !=null){
 			CellStyle style = next.getCellStyle();
 			if (style != null){
-				String bgColor = BookHelper.indexToRGB(_book, style.getFillBackgroundColor());
+				String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 				if (BookHelper.AUTO_COLOR.equals(bgColor)) {
 					bgColor = null;
 				}
@@ -237,7 +237,7 @@ public class CellFormatHelper {
 		if(!hitRight && _cell !=null){
 			CellStyle style = _cell.getCellStyle();
 			if (style != null){
-				String bgColor = BookHelper.indexToRGB(_book, style.getFillBackgroundColor());
+				String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 				if (BookHelper.AUTO_COLOR.equals(bgColor)) {
 					bgColor = null;
 				}
