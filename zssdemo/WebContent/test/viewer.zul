@@ -14,8 +14,17 @@
 		java.io.InputStream is = media.getStreamData();
 		Book book1 = new ExcelImporter().imports(is, name);
 		ss1.setBook(book1);
+		ckbox.setChecked(ss1.getSelectedSheet().isDisplayGridlines());
 	}]]></attribute>
 </button>
-<label id="bookname" />
+<label id="bookname" ></label>
+<checkbox id="ckbox" label="Show Gridline" checked="true">
+	<attribute name="onCheck">
+	<![CDATA[{
+		org.apache.poi.ss.usermodel.Sheet sheet = ss1.getSelectedSheet();
+		Ranges.range(sheet).setDisplayGridlines(ckbox.isChecked());
+	}]]>
+	</attribute>
+</checkbox>
 <spreadsheet id="ss1" src="/WEB-INF/xls/test/empty.xls" maxrows="100" maxcolumns="40" vflex="true" height="300px" width="100%" style="border:1px solid #8AA3C1"/>
 </zk>

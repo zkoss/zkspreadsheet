@@ -569,6 +569,25 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		sheet._cmdHighlight(jq.evalJSON(v));
 	},
 	/**
+	 * Sets whether display gridlines.
+	 * @param boolean show true to show the gridlines; default is true.
+	 */
+	setDisplayGridlines: function (show) {
+		var sheet = this.sheetCtrl;
+		if (!sheet || show == !this._hideGridlines) 
+			return;
+
+		sheet._cmdGridlines(show);
+		this._hideGridlines = !show;
+	},
+	/**
+	 * Returns whether display gridlines.
+	 * @return boolean
+	 */
+	isDisplayGridlines: function () {
+		return !this._hideGridlines;
+	},
+	/**
 	 * Sets the selection rectangle of the spreadsheet
 	 */
 	setSelection: function (v) {

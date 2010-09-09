@@ -306,4 +306,10 @@ public interface Range {
 	 * @param hidden true to hide this rows or columns
 	 */
 	public void setHidden(boolean hidden);
+	
+	/**
+	 * Sets whether show the gridlines of the sheets in this Range.
+	 * @param show true to show the gridlines; false to not show the gridlines. 
+	 */
+	public void setDisplayGridlines(boolean show);
 }

@@ -202,6 +202,8 @@ public class Spreadsheet extends XulElement {
 	private boolean _colFreezeset = false;
 	private boolean _hideRowhead; // hide row head
 	private boolean _hideColhead; // hide column head*/
+	
+	private boolean _hideGridlines; //hide gridlines
 	/**
 	 * Sam add for zss app
 	 */
@@ -956,6 +958,10 @@ public class Spreadsheet extends XulElement {
 		renderer.render("columnWidth", getColumnwidth());
 
 		int th = isHidecolumnhead() ? 1 : this.getTopheadheight();
+		
+		if (_hideGridlines) {
+			renderer.render("displayGridlines", !_hideGridlines);
+		}
 		/**
 		 * toph -> topPanelHeight
 		 */
@@ -1240,6 +1246,17 @@ public class Spreadsheet extends XulElement {
 			response("selectionHighlight", new AuHighlight(this, result.toString()));
 		}
 	}
+	
+	/**
+	 * Sets whether display the gridlines.
+	 * @param show true to show the gridlines.
+	 */
+	private void setDisplayGridlines(boolean show) {
+		if (_hideGridlines == show) {
+			_hideGridlines = !show;
+			smartUpdate("displayGridlines", show);
+		}
+	}
 
 	/**
 	 * Return current cell(row,column) focus position. you can get the row by
@@ -1379,6 +1396,12 @@ public class Spreadsheet extends XulElement {
 					onMergeDelete((SSDataEvent)event);
 				}
 			});
+			addEventListener(SSDataEvent.ON_DISPLAY_GRIDLINES, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onDisplayGridlines((SSDataEvent)event);
+				}
+			});
 		}
 		private Sheet getSheet(Ref rng) {
 			return Utils.getSheetByRefSheet(_book, rng.getOwnerSheet()); 
@@ -1469,6 +1492,13 @@ public class Spreadsheet extends XulElement {
 					updateRowHeight(sheet, r);
 				}
 			}
+		}
+		private void onDisplayGridlines(SSDataEvent event) {
+			final Ref rng = event.getRef();
+			final Sheet sheet = getSheet(rng);
+			if (!getSelectedSheet().equals(sheet))
+				return;
+			setDisplayGridlines(event.isShow());
 		}
 	}
 	
@@ -2491,6 +2521,7 @@ public class Spreadsheet extends XulElement {
 
 		boolean hiderow = isHiderowhead();
 		boolean hidecol = isHidecolumnhead();
+		boolean showgrid = sheet.isDisplayGridlines();
 
 		int th = hidecol ? 1 : this.getTopheadheight();
 		int lw = hiderow ? 1 : this.getLeftheadwidth();
@@ -2542,6 +2573,10 @@ public class Spreadsheet extends XulElement {
 		sb.append("padding:").append("0px " + cp + "px 0px " + cp + "px;\n");
 		sb.append("height:").append(cellheight).append("px;\n");
 		sb.append("width:").append(cellwidth).append("px;\n");
+		if (!showgrid) {
+			sb.append("border-bottom:1px solid #FFFFFF;\n")
+			  .append("border-right:1px solid #FFFFFF;\n");
+		}
 		// sb.append("line-height:").append(lh).append("px;\n");
 		sb.append("}\n");
 

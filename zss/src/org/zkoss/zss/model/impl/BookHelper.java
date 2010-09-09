@@ -284,6 +284,16 @@ public final class BookHelper {
 		}
 	}
 	
+	/*package*/ static void notifyGridlines(Book book, Set<Ref> all, boolean show) {
+		if (all != null) {
+			for(Ref ref : all) {
+				final RefSheet refSheet = ref.getOwnerSheet();
+				final RefBook refBook = refSheet.getOwnerBook();
+				refBook.publish(new SSDataEvent(SSDataEvent.ON_DISPLAY_GRIDLINES, ref, show));
+			}
+		}
+	}
+	
 	public static void reevaluateAndNotify(Book book, Set<Ref> last, Set<Ref> all) {
 		//clear cached formula value
 		clearFormulaCache(book, all);

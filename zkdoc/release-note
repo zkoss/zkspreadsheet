@@ -2,6 +2,15 @@
 ZK Spreadsheet 2.0.0 RC
 
 *Features:
+  65 Honer displayGridlines parameter   	 
+  
+*Bug
+  66 Unexpected gridlines shown 
+
+	------------
+ZK Spreadsheet 2.0.0 beta3
+
+*Features:
   36 Support Range.setStyle
   37 Support Range.autoFill
   38 Support Range.clearContent

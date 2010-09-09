@@ -13,11 +13,13 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -31,6 +33,7 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
@@ -1091,6 +1094,26 @@ public class RangeImpl implements Range {
 				final Book book = (Book) _sheet.getWorkbook();
 				BookHelper.notifySizeChanges(book, all);
 			}
+		}
+	}
+	
+	@Override
+	public void setDisplayGridlines(boolean show) {
+		final Book book = (Book)_sheet.getWorkbook();
+		final int index1= book.getSheetIndex(_sheet);
+		final int index2 = book.getSheetIndex(_lastSheet);
+		final Set<Ref> all = new HashSet<Ref>(); 
+		for(int j = index1; j <= index2; ++j) {
+			final Sheet sheet = book.getSheetAt(j);
+			final boolean old = sheet.isDisplayGridlines();
+			if (old != show) {
+				sheet.setDisplayGridlines(show);
+				//sheet is important, row, column is not in this event
+				all.add(new CellRefImpl(0, 0, BookHelper.getRefSheet(book, sheet))); 
+			}
+		}
+		if (!all.isEmpty()) {
+			BookHelper.notifyGridlines(book, all, show);
 		}
 	}
 }

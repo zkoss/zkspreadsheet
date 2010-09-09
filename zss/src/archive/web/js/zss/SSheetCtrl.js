@@ -661,6 +661,9 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			this.moveHighlight(result.left, result.top, result.right, result.bottom);
 		}
 	},
+	_cmdGridlines: function (show) {
+		this.setDisplayGridlines(show);
+	},
 	_doMousedown: function (evt) {
 		this.innerClicking++;
 		var sheet = this;
@@ -1467,6 +1470,15 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			this.cp.tp.updateSelectionCSS(left, right, remove);	
 		if (this.cp.lp)
 			this.cp.lp.updateSelectionCSS(top, bottom, remove);
+	},
+	/**
+	 * Sets whether display the gridlines for this sheet.
+	 */
+	setDisplayGridlines: function (show) {
+		var sheetid = this.sheetid,
+			name = '#' + sheetid,
+			bc = show ? '':'#FFFFFF';
+		zcss.setRule(name + ' .zscell', ['border-bottom-color', 'border-right-color'],[bc, bc], true, sheetid+'-sheet');
 	},
 	/**
 	 * Sets the cell's selection area and display it

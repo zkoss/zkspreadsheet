@@ -12,17 +12,29 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.AreaReference;
 import org.zkoss.lang.Objects;
 import org.zkoss.zss.model.impl.RangeImpl;
 
 /**
- * Utilities for start using a new Range.
+ * Utilities regarding Range operation.
  * @author henrichen
  *
  */
 public class Ranges {
+	/** Returns the associated {@link Range} of the whole specified {@link Sheet}. 
+	 *  
+	 * @param sheet the {@link Sheet} the Range will refer to.
+	 * @return the associated {@link Range} of the whole specified {@link Sheet}. 
+	 */
+	public static Range range(Sheet sheet) {
+		final Book book = (Book) sheet.getWorkbook();
+		final SpreadsheetVersion ver = book.getSpreadsheetVersion();
+		return newRange(sheet, sheet, 0, 0, ver.getLastRowIndex(), ver.getLastColumnIndex());
+	}
+	
 	/** Returns the associated {@link Range} of the specified {@link Sheet} and area reference string (e.g. "A1:D4"). 
 	 *  
 	 * @param sheet the {@link Sheet} the Range will refer to.

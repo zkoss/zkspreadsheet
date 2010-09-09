@@ -48,6 +48,9 @@ public class SSDataEvent extends Event {
     /** Identifies the removal of a merged range. */   
 	public static final String ON_MERGE_DELETE = "onMergeDelete";
 	
+	/** Indentifes the gridline status change. */
+	public static final String ON_DISPLAY_GRIDLINES = "onDisplayGridlines";
+	
 	/** Identifies no move direction when add or remove a range. */
 	public static final int MOVE_NO = 1000;
 	/** Identifies move direction as vertical(down or up) when add or remove a range. */
@@ -91,6 +94,12 @@ public class SSDataEvent extends Event {
 		_direction = MOVE_NO;
 	}
 	
+	public SSDataEvent(String name, Ref rng, boolean show) {
+		super(name);
+		_rng = rng;
+		_direction = show ? 1 : 0;
+	}
+	
 	public Ref getRef() {
 		return _rng;
 	}
@@ -107,6 +116,10 @@ public class SSDataEvent extends Event {
 		return _size;
 	}
 
+	public boolean isShow() {
+		return _direction != 0;
+	}
+	
 	public String toString() {
 		return "["+getName()+" -> "+_rng+","+_org+"]";
 	}
