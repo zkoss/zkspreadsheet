@@ -1322,21 +1322,28 @@ public class HSSFSheetImpl extends HSSFSheet {
     	return min <= val && val <= max;
     }
     
-    //20100727, Henri Chen: handle DataValidation
+    //20100727, henrichen@zkoss.org: handle DataValidation
+	private List<DataValidation> _dataValidations;
     public List<DataValidation> getDataValidations() {
-    	final DataValidityTable tb = _helper.getInternalSheet().getOrCreateDataValidityTable();
-    	final List<DataValidation> dataValidations = new ArrayList<DataValidation>(); 
-    	final RecordVisitor rv = new DVRecordVisitor(dataValidations); 
-    	tb.visitContainedRecords(rv); //populate the dataValidations list
-    	return dataValidations;
+    	if (_dataValidations == null) {
+    		//populate the _dataValidations list
+	    	final DataValidityTable tb = _helper.getInternalSheet().getOrCreateDataValidityTable();
+	    	_dataValidations = new ArrayList<DataValidation>(); 
+	    	final RecordVisitor rv = new DVRecordVisitor(); 
+	    	tb.visitContainedRecords(rv); 
+    	}
+    	return _dataValidations;
+    }
+    
+    //20100910, henrichen@zkoss.org: nullify the cached data validation list 
+    public void nullifyDataValidations() {
+    	_dataValidations = null;
     }
     
     private class DVRecordVisitor implements RecordVisitor {
-    	private List<DataValidation> _dataValidations;
     	private DataValidationHelper _helper;
     	
-    	private DVRecordVisitor(List<DataValidation> dataValidations) {
-    		_dataValidations = dataValidations;
+    	private DVRecordVisitor() {
     		_helper = getDataValidationHelper();
     	}
     	
@@ -1345,31 +1352,33 @@ public class HSSFSheetImpl extends HSSFSheet {
 			if (r instanceof DVRecord) {
 				final DVRecord dvRecord = (DVRecord) r;
 				final CellRangeAddressList regions = dvRecord.getCellRangeAddress();
-				final DataValidationConstraint constraint = createContraint(dvRecord); 
-				HSSFDataValidation dataValidation = new HSSFDataValidation(regions, constraint);
-				final boolean allowed = dvRecord.getEmptyCellAllowed();
-				final int errStyle = dvRecord.getErrorStyle();
-				final boolean showErr = dvRecord.getShowErrorOnInvalidValue();
-				final boolean showPrompt = dvRecord.getShowPromptOnCellSelected();
-				final boolean suppress = dvRecord.getSuppressDropdownArrow();
-				
-				final String promptTitle = dvRecord.getPromptTitle();
-				final String promptText = dvRecord.getPromptText();
-				final String errorTitle = dvRecord.getErrorTitle();
-				final String errorText = dvRecord.getErrorText();
-				if (showPrompt) {
-					dataValidation.createPromptBox(promptTitle, promptText);
+				final DataValidationConstraint constraint = createContraint(dvRecord);
+				if (constraint != null) {
+					HSSFDataValidation dataValidation = new HSSFDataValidation(regions, constraint);
+					final boolean allowed = dvRecord.getEmptyCellAllowed();
+					final int errStyle = dvRecord.getErrorStyle();
+					final boolean showErr = dvRecord.getShowErrorOnInvalidValue();
+					final boolean showPrompt = dvRecord.getShowPromptOnCellSelected();
+					final boolean suppress = dvRecord.getSuppressDropdownArrow();
+					
+					final String promptTitle = dvRecord.getPromptTitle();
+					final String promptText = dvRecord.getPromptText();
+					final String errorTitle = dvRecord.getErrorTitle();
+					final String errorText = dvRecord.getErrorText();
+					if (showPrompt) {
+						dataValidation.createPromptBox(promptTitle, promptText);
+					}
+					if (showErr) {
+						dataValidation.createErrorBox(errorTitle, errorText);
+					}
+					dataValidation.setEmptyCellAllowed(allowed);
+					dataValidation.setErrorStyle(errStyle);
+					dataValidation.setShowErrorBox(showErr);
+					dataValidation.setShowPromptBox(showPrompt);
+					dataValidation.setSuppressDropDownArrow(suppress);
+					
+					_dataValidations.add(dataValidation);
 				}
-				if (showErr) {
-					dataValidation.createErrorBox(errorTitle, errorText);
-				}
-				dataValidation.setEmptyCellAllowed(allowed);
-				dataValidation.setErrorStyle(errStyle);
-				dataValidation.setShowErrorBox(showErr);
-				dataValidation.setShowPromptBox(showPrompt);
-				dataValidation.setSuppressDropDownArrow(suppress);
-				
-				_dataValidations.add(dataValidation);
 			}
 		}
 		
@@ -1380,7 +1389,8 @@ public class HSSFSheetImpl extends HSSFSheet {
 			final Ptg[] formulaPtgs1 = dvRecord.getFormula1();
 			final Ptg[] formulaPtgs2 = dvRecord.getFormula2();
 			String formula1 = HSSFFormulaParser.toFormulaString(_workbook, formulaPtgs1);
-			String formula2 = formulaPtgs2 != null ? HSSFFormulaParser.toFormulaString(_workbook, formulaPtgs2) : null; 
+			//bug #64: pasteSpecial copy Validation cause Null pointer exception (Ptgs must not be null)   	
+			String formula2 = formulaPtgs2 != null && formulaPtgs2.length > 0 ? HSSFFormulaParser.toFormulaString(_workbook, formulaPtgs2) : null; 
 			switch(validationType) {
 				case ValidationType.ANY:
 					return _helper.createNumericConstraint(validationType, operatorType, formula1, formula2);
