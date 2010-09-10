@@ -1121,10 +1121,16 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		var barHeight = zkS._hasScrollBar(spcmp) ? zss.Spreadsheet.scrollWidth : 0,
 			barWidth = zkS._hasScrollBar(spcmp, true) ? zss.Spreadsheet.scrollWidth : 0,
 			tw = w - this.leftWidth- barWidth,
-			lh = h - this.topHeight - barHeight;
+			lh = h - this.topHeight - barHeight,
+			dpcomp = this.dp.comp,
+			zkdp = zk(dpcomp), //bug #61: Fronzen row/column does not comply with Spreadsheet's maxrows/maxcolumn
+			dpw = zkdp.offsetWidth() - this.leftWidth,
+			dph = zkdp.offsetHeight() - this.topHeight,
+			rw = Math.min(dpw, tw),
+			rh = Math.min(dph, lh);
 		
-		this.tp._updateWidth(tw);
-		this.lp._updateHeight(lh);
+		this.tp._updateWidth(rw);
+		this.lp._updateHeight(rh);
 		this.sp._doScrolling();
 	},
 	/**

@@ -7,7 +7,8 @@ ZK Spreadsheet 2.0.0 RC
 *Bug
   66 Unexpected gridlines shown 
   64 pasteSpecial copy Validation cause Null pointer exception (Ptgs must not be null) 
-
+  61 Fronzen row/column does not comply with Spreadsheet's maxrows/maxcolumn
+  
 	------------
 ZK Spreadsheet 2.0.0 beta3
 
