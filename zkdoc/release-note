@@ -8,6 +8,9 @@ ZK Spreadsheet 2.0.0 RC
   66 Unexpected gridlines shown 
   64 pasteSpecial copy Validation cause Null pointer exception (Ptgs must not be null) 
   61 Fronzen row/column does not comply with Spreadsheet's maxrows/maxcolumn
+  67 Exception when enter value 0.3308589607635 into cell with text format "# ???/???"
+  68 Exception when set text format to ?/2, ?/4, ?/8, ?/16, ??/100
+  69 Incorrect text output when enter value 0 into cell with text format "???/???"
   
 	------------
 ZK Spreadsheet 2.0.0 beta3
