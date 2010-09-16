@@ -71,10 +71,6 @@ public class CellFormatHelper {
 
 		StringBuffer sb = new StringBuffer();
 		if (_cell != null) {
-			final FormatText ft = Utils.getFormatText(_cell);
-			final boolean isRichText = ft.isRichTextString();
-			final RichTextString rstr = isRichText ? ft.getRichTextString() : null;
-			final String txt = rstr != null ? rstr.getString() : ft.getCellFormatResult().text;
 			final CellStyle style = _cell.getCellStyle();
 			
 			if (style == null)
@@ -87,6 +83,10 @@ public class CellFormatHelper {
 			if (bgColor != null) {
 				sb.append("background-color:").append(bgColor).append(";");
 			}
+			final FormatText ft = Utils.getFormatText(_cell);
+			final boolean isRichText = ft.isRichTextString();
+			final RichTextString rstr = isRichText ? ft.getRichTextString() : null;
+			final String txt = rstr != null ? rstr.getString() : ft.getCellFormatResult().text;
 			if (!isRichText && ft.getCellFormatResult().textColor != null) {
 				final Color textColor = ft.getCellFormatResult().textColor;
 				final String htmlColor = toHTMLColor(textColor);

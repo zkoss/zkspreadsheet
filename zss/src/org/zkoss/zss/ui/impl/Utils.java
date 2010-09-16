@@ -478,6 +478,7 @@ public class Utils {
 	}
 	
 	public static FormatText getFormatText(Cell cell) {
+		//TODO, shall cache the FormatText inside cell. value/style/evaluate then invalidate the cache 
 		Range range = getRange(cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
 		return range.getFormatText();
 	}

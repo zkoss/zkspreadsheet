@@ -3,6 +3,8 @@ ZK Spreadsheet 2.0.0 RC
 
 *Features:
   65 Honer displayGridlines parameter   	 
+  70 Support insert rows(Excel 2007, xlsx)
+  71 Support delete rows(Excel 2007, xlsx) 
   
 *Bug
   66 Unexpected gridlines shown 
@@ -51,14 +53,14 @@ ZK Spreadsheet 2.0.0 beta3
 ZK Spreadsheet 2.0.0 beta2
 
 *Features:
-  6 Support insert rows
-  7 Support delete rows
-  9 Support insert columns
-  10 Support delete columns
+  6 Support insert rows(Excel 97-2003, xls)
+  7 Support delete rows(Excel 97-2003, xls)
+  9 Support insert columns(Excel 97-2003, xls)
+  10 Support delete columns(Excel 97-2003, xls)
   12 Support sortByColumns
   13 Support sortByRows
-  15 Support insertRange
-  16 Support deleteRange
+  15 Support insertRange(Excel 97-2003, xls)
+  16 Support deleteRange(Excel 97-2003, xls)
   17 Support moveRange
   18 Support merge
   19 Support showing bullet list in cell

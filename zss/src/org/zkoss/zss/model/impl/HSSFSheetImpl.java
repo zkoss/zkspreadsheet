@@ -86,140 +86,6 @@ public class HSSFSheetImpl extends HSSFSheet {
      * @param n
      * @param horizontal
      */
-    //20100525, henrichen@zkoss.org: add shift columns
-    protected List<CellRangeAddress[]> shiftMergedRegion(int tRow, int lCol, int bRow, int rCol, int n, boolean horizontal) {
-        List<CellRangeAddress[]> shiftedRegions = new ArrayList<CellRangeAddress[]>();
-        if (!horizontal) {
-        	int start = tRow;
-        	int end = bRow;
-        	int dstStart = start + n;
-	        //move merged regions completely if they fall within the new region boundaries when they are shifted
-	        for (int i = 0; i < getNumMergedRegions(); i++) {
-	        	CellRangeAddress merged = getMergedRegion(i);
-	        	
-	        	int firstCol = merged.getFirstColumn();
-	        	int lastCol = merged.getLastColumn();
-	        	if (firstCol < lCol || lastCol > rCol) { //not total cover, skip
-	        		continue;
-	        	}
-	        	int firstRow = merged.getFirstRow();
-	        	int lastRow = merged.getLastRow();
-	        	
-	            CellRangeAddress[] rngs = new CellRangeAddress[2]; //[0] old, [1] new
-	            boolean inStart= (firstRow >= start || lastRow >= start);
-	            boolean inEnd  = (firstRow <= end   || lastRow <= end);
-	            
-	            //not in moving area
-	            if (!inStart || !inEnd) {
-	            	if (n < 0 && !inStart) { //merge area in deleted area
-	            		if (lastRow >= dstStart) {
-	            			merged.setLastRow(dstStart - 1);
-	            			if (firstRow <= merged.getLastRow()) {
-	            				if (firstRow != merged.getLastRow() || lastCol != firstCol) {
-	            					rngs[1] = merged;
-	            				}
-	            			}
-	            			rngs[0] = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
-            				shiftedRegions.add(rngs);
-	            			removeMergedRegion(i);
-	            			i = i - 1; //back up now since we removed one
-	            		}
-	            	}
-	                continue;
-	            }
-
-	            //moving area
-	            if (firstRow >= start) {
-	            	merged.setFirstRow(firstRow + n);
-	            } else if (firstRow >= dstStart) {
-	            	merged.setFirstRow(dstStart);
-	            }
-	            merged.setLastRow(lastRow + n);
-	            if (merged.getFirstRow() != merged.getLastRow() || lastCol != firstCol) {
-	            	rngs[1] = merged;
-	            }
-    			rngs[0] = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
-	            //have to remove/add it back
-				shiftedRegions.add(rngs);
-	            removeMergedRegion(i);
-	            i = i -1; // we have to back up now since we removed one
-	        }
-        } else { //20100525, henrichen@zkoss.org: add shift columns
-        	int start = lCol;
-        	int end = rCol;
-        	int dstStart = start + n;
-	        //move merged regions completely if they fall within the new region boundaries when they are shifted
-	        for (int i = 0; i < getNumMergedRegions(); i++) {
-	            CellRangeAddress merged = getMergedRegion(i);
-	
-				int firstRow = merged.getFirstRow();
-				int lastRow = merged.getLastRow();
-	        	if (firstRow < tRow || lastRow > bRow) { //not total cover, skip
-	        		continue;
-	        	}
-				int firstCol = merged.getFirstColumn();
-				int lastCol = merged.getLastColumn();
-				
-	            CellRangeAddress[] rngs = new CellRangeAddress[2]; //[0] old, [1] new
-	            boolean inStart= (merged.getFirstColumn() >= start || merged.getLastColumn() >= start);
-	            boolean inEnd  = (merged.getFirstColumn() <= end   || merged.getLastColumn() <= end);
-	
-	             //don't check if it's not within the shifted area
-	            if (!inStart || !inEnd) {
-	            	if (n < 0 && !inStart) { //merge area in deleted area
-	            		if (lastCol >= dstStart) {
-	            			merged.setLastColumn(dstStart - 1);
-	            			if (firstCol <= merged.getLastColumn()) {
-	            				if (firstCol != merged.getLastColumn() || lastRow != firstRow) {
-	            					rngs[1] = merged;
-	            				}
-	            			}
-	            			rngs[0] = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
-            				shiftedRegions.add(rngs);
-	            			removeMergedRegion(i);
-	            			i = i - 1; //back up now since we removed one
-	            		}
-	            	}
-	                continue;
-	            }
-	
-	            //moving area
-	            if (firstCol >= start) {
-	            	merged.setFirstColumn(firstCol + n);
-	            } else if (firstCol >= dstStart) {
-	            	merged.setFirstColumn(dstStart);
-	            }
-	            merged.setLastColumn(lastCol + n);
-	            if (merged.getLastColumn() != merged.getFirstColumn() || firstRow != lastRow) {
-	            	rngs[1] = merged;
-	            }
-    			rngs[0] = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
-	            //have to remove/add it back
-				shiftedRegions.add(rngs);
-	            removeMergedRegion(i);
-	            i = i -1; // we have to back up now since we removed one
-	        }
-        }
-    	
-        //read so it doesn't get shifted again
-        Iterator<CellRangeAddress[]> iterator = shiftedRegions.iterator();
-        while (iterator.hasNext()) {
-            CellRangeAddress region = iterator.next()[1];
-            if (region != null) {
-            	this.addMergedRegion(region);
-            }
-        }
-        
-        return shiftedRegions;
-    }
-    /**
-     * Shifts the merged regions left or right depending on mode
-     * <p>
-     * @param start
-     * @param end
-     * @param n
-     * @param horizontal
-     */
     //20100705, henrichen@zkoss.org: add shift columns
     protected List<CellRangeAddress[]> shiftBothMergedRegion(int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
         List<CellRangeAddress[]> shiftedRegions = new ArrayList<CellRangeAddress[]>();
@@ -276,33 +142,6 @@ public class HSSFSheetImpl extends HSSFSheet {
         
         return shiftedRegions;
     }
-    //20100713, henrichen@zkoss.org: copy style except border
-    private CellStyle copyFromStyleExceptBorder(CellStyle srcStyle) {
-    	if (srcStyle.getIndex() == 0) { //default one
-    		return srcStyle;
-    	}
-    	CellStyle dstStyle = _workbook.createCellStyle();
-		final short bb = dstStyle.getBorderBottom();
-		final short tb = dstStyle.getBorderTop();
-		final short lb = dstStyle.getBorderLeft();
-		final short rb = dstStyle.getBorderRight();
-		final short bc = dstStyle.getBottomBorderColor();
-		final short tc = dstStyle.getTopBorderColor();
-		final short lc = dstStyle.getLeftBorderColor();
-		final short rc = dstStyle.getRightBorderColor();
-		dstStyle.cloneStyleFrom(srcStyle);
-		dstStyle.setBorderBottom(bb);
-		dstStyle.setBorderTop(tb);
-		dstStyle.setBorderLeft(lb);
-		dstStyle.setBorderRight(rb);
-		dstStyle.setBottomBorderColor(bc);
-		dstStyle.setTopBorderColor(tc);
-		dstStyle.setLeftBorderColor(lc);
-		dstStyle.setRightBorderColor(rc);
-		
-		return dstStyle;
-    }
-    
     //20100520, henrichen@zkoss.org: Shift rows only, don't handle formula
     /**
      * Shifts rows between startRow and endRow n number of rows.
@@ -329,7 +168,7 @@ public class HSSFSheetImpl extends HSSFSheet {
     	//prepare source format row
     	final int srcRownum = n <= 0 ? -1 : copyOrigin == Range.FORMAT_RIGHTBELOW ? startRow : copyOrigin == Range.FORMAT_LEFTABOVE ? startRow - 1 : -1;
     	final HSSFRow srcRow = srcRownum >= 0 ? getRow(srcRownum) : null;
-    	final Map<Integer, Cell> srcCells = srcRow != null ? copyRowCells(srcRow, srcRow.getFirstCellNum(), srcRow.getLastCellNum()) : null;
+    	final Map<Integer, Cell> srcCells = srcRow != null ? BookHelper.copyRowCells(srcRow, srcRow.getFirstCellNum(), srcRow.getLastCellNum()) : null;
     	final short srcHeight = srcRow != null ? srcRow.getHeight() : -1;
     	final HSSFCellStyle srcStyle = srcRow != null ? srcRow.getRowStyle() : null;
     	
@@ -350,7 +189,7 @@ public class HSSFSheetImpl extends HSSFSheet {
 
         final int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
         final int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
-        final List<CellRangeAddress[]> shiftedRanges = shiftMergedRegion(startRow, 0, endRow, maxcol, n, false);
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, startRow, 0, endRow, maxcol, n, false);
         _helper.getInternalSheet().getPageSettings().shiftRowBreaks(startRow, endRow, n);
         
         for ( int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum <= maxrow; rowNum += inc ) {
@@ -442,7 +281,7 @@ public class HSSFSheetImpl extends HSSFSheet {
         		}
         		row.setHeight(srcHeight); //height
         		if (srcStyle != null) {
-        			row.setRowStyle((HSSFCellStyle)copyFromStyleExceptBorder(srcStyle));//style
+        			row.setRowStyle((HSSFCellStyle)BookHelper.copyFromStyleExceptBorder(getBook(), srcStyle));//style
         		}
         		if (srcCells != null) {
 	        		for (Entry<Integer, Cell> cellEntry : srcCells.entrySet()) {
@@ -453,7 +292,7 @@ public class HSSFSheetImpl extends HSSFSheet {
 	        			if (cell == null) {
 	        				cell = row.createCell(c);
 	        			}
-	        			cell.setCellStyle(copyFromStyleExceptBorder(cellStyle));
+	        			cell.setCellStyle(BookHelper.copyFromStyleExceptBorder(getBook(), cellStyle));
 	        		}
         		}
         	}
@@ -583,7 +422,7 @@ public class HSSFSheetImpl extends HSSFSheet {
 
         final int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
         final int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
-        final List<CellRangeAddress[]> shiftedRanges = shiftMergedRegion(0, startCol, maxrow, endCol, n, true);
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, 0, startCol, maxrow, endCol, n, true);
         _helper.getInternalSheet().getPageSettings().shiftColumnBreaks((short)startCol, (short)endCol, (short)n);
 
         // Fix up column width and comment if required
@@ -622,7 +461,7 @@ public class HSSFSheetImpl extends HSSFSheet {
         		//copy the column width
         		setColumnWidth(col, colWidth);
         		if (colStyle != null) {
-        			setDefaultColumnStyle(col, copyFromStyleExceptBorder(colStyle));
+        			setDefaultColumnStyle(col, BookHelper.copyFromStyleExceptBorder(getBook(), colStyle));
         		}
         	}
         	if (cells != null) {
@@ -635,7 +474,7 @@ public class HSSFSheetImpl extends HSSFSheet {
 		        		if (dstCell == null) {
 		        			dstCell = row.createCell(col);
 		        		}
-		        		dstCell.setCellStyle(copyFromStyleExceptBorder(srcStyle));
+		        		dstCell.setCellStyle(BookHelper.copyFromStyleExceptBorder(getBook(), srcStyle));
 		        	}
 		        }
         	}
@@ -754,7 +593,7 @@ public class HSSFSheetImpl extends HSSFSheet {
 
         final int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
         final int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
-        final List<CellRangeAddress[]> shiftedRanges = shiftMergedRegion(tRow, startCol, bRow, endCol, n, true);
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, tRow, startCol, bRow, endCol, n, true);
         final boolean wholeColumn = tRow == 0 && bRow == maxrow; 
         if (wholeColumn) { 
         	_helper.getInternalSheet().getPageSettings().shiftColumnBreaks((short)startCol, (short)endCol, (short)n);
@@ -798,7 +637,7 @@ public class HSSFSheetImpl extends HSSFSheet {
 	        	for (int col = startCol; col <= col2 ; ++col) {
 	        		//copy the column width
 	        		setColumnWidth(col, colWidth);
-	        		setDefaultColumnStyle(col, copyFromStyleExceptBorder(colStyle));
+	        		setDefaultColumnStyle(col, BookHelper.copyFromStyleExceptBorder(getBook(), colStyle));
 	        	}
 	        }
 	        if (cells != null) {
@@ -811,7 +650,7 @@ public class HSSFSheetImpl extends HSSFSheet {
 		        		if (dstCell == null) {
 		        			dstCell = row.createCell(col);
 		        		}
-		        		dstCell.setCellStyle(copyFromStyleExceptBorder(srcStyle));
+		        		dstCell.setCellStyle(BookHelper.copyFromStyleExceptBorder(getBook(), srcStyle));
 		        	}
 		        }
 	        }
@@ -845,18 +684,6 @@ public class HSSFSheetImpl extends HSSFSheet {
         return shiftedRanges;
     }
 
-    //columnIndex -> Cell of this row
-    private Map<Integer, Cell> copyRowCells(Row row, int lCol, int rCol) {
-    	final Map<Integer, Cell> cells = new HashMap<Integer, Cell>();
-    	for(int c = lCol; c <= rCol; ++c) {
-    		final Cell cell = row.getCell(c);
-    		if (cell != null) {
-    			cells.put(new Integer(c), cell);
-    		}
-    	}
-    	return cells;
-    }
-    
     //20100520, henrichen@zkoss.org: Shift rows of a range
     /**
      * Shifts rows of a range between startRow and endRow n number of rows in the boundary of left column(lCol) and right column(rCol).
@@ -885,7 +712,7 @@ public class HSSFSheetImpl extends HSSFSheet {
     	//prepare source format row
     	final int srcRownum = n <= 0 ? -1 : copyOrigin == Range.FORMAT_RIGHTBELOW ? startRow : copyOrigin == Range.FORMAT_LEFTABOVE ? startRow - 1 : -1;
     	final HSSFRow srcRow = srcRownum >= 0 ? getRow(srcRownum) : null;
-    	final Map<Integer, Cell> srcCells = srcRow != null ? copyRowCells(srcRow, lCol, rCol) : null;
+    	final Map<Integer, Cell> srcCells = srcRow != null ? BookHelper.copyRowCells(srcRow, lCol, rCol) : null;
     	final short srcHeight = srcRow != null ? srcRow.getHeight() : -1;
     	final HSSFCellStyle srcStyle = srcRow != null ? srcRow.getRowStyle() : null;
     	
@@ -919,7 +746,7 @@ public class HSSFSheetImpl extends HSSFSheet {
         }
 
         final int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
-        final List<CellRangeAddress[]> shiftedRanges = shiftMergedRegion(startRow, lCol, endRow, rCol, n, false);
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, startRow, lCol, endRow, rCol, n, false);
         final boolean wholeRow = lCol == 0 && rCol == maxcol; 
         if (wholeRow) { 
         	_helper.getInternalSheet().getPageSettings().shiftRowBreaks(startRow, endRow, n);
@@ -1045,7 +872,7 @@ public class HSSFSheetImpl extends HSSFSheet {
         		}
         		if (wholeRow) {
         			row.setHeight(srcHeight);
-        			row.setRowStyle((HSSFCellStyle)copyFromStyleExceptBorder(srcStyle));
+        			row.setRowStyle((HSSFCellStyle)BookHelper.copyFromStyleExceptBorder(getBook(), srcStyle));
         		}
                 if (srcCells != null) {
 	        		for(Entry<Integer, Cell> cellEntry : srcCells.entrySet()) {
@@ -1056,7 +883,7 @@ public class HSSFSheetImpl extends HSSFSheet {
 	        			if (dstCell == null) {
 	        				dstCell = row.createCell(colnum);
 	        			}
-	        			dstCell.setCellStyle(copyFromStyleExceptBorder(cellStyle));
+	        			dstCell.setCellStyle(BookHelper.copyFromStyleExceptBorder(getBook(), cellStyle));
 	        		}
                 }
         	}
