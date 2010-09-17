@@ -5,6 +5,7 @@ ZK Spreadsheet 2.0.0 RC
   65 Honer displayGridlines parameter   	 
   70 Support insert rows(Excel 2007, xlsx)
   71 Support delete rows(Excel 2007, xlsx) 
+  74 Support insert columns(Excel 2007, xlsx)
   
 *Bug
   66 Unexpected gridlines shown 

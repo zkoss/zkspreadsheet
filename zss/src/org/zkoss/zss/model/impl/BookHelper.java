@@ -74,9 +74,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
+import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellHelper;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
@@ -1178,41 +1181,6 @@ public final class BookHelper {
 		return null;
 	}
 	
-	public static void assignCell(Cell srcCell, Cell dstCell) {
-		//assign cell formats
-		dstCell.setCellStyle(srcCell.getCellStyle());
-		
-		//assign comment
-		dstCell.setCellComment(srcCell.getCellComment());
-		
-		//assign validation
-		// TODO assign validation, refer copyValidation(srcCell, dstCell);
-		
-		final int cellType = srcCell.getCellType(); 
-		switch(cellType) {
-		case Cell.CELL_TYPE_BOOLEAN:
-			dstCell.setCellValue(srcCell.getBooleanCellValue());
-			break;
-		case Cell.CELL_TYPE_ERROR:
-			dstCell.setCellErrorValue(srcCell.getErrorCellValue());
-			break;
-        case Cell.CELL_TYPE_NUMERIC:
-        	dstCell.setCellValue(srcCell.getNumericCellValue());
-        	break;
-        case Cell.CELL_TYPE_STRING:
-        	dstCell.setCellValue(srcCell.getRichStringCellValue());
-        	break;
-        case Cell.CELL_TYPE_BLANK:
-        	dstCell.setCellValue((RichTextString) null);
-        	break;
-        case Cell.CELL_TYPE_FORMULA:
-        	dstCell.setCellFormula(srcCell.getCellFormula());
-        	break;
-		default:
-			throw new UiException("Unknown cell type:"+cellType);
-		}
-	}
-
 	
 	private static Set<Ref>[] setCellValueByCellValue(Cell dstCell, CellValue cv, int pasteType, int pasteOp) {
 		final int cellType = cv.getCellType();
@@ -1442,6 +1410,7 @@ public final class BookHelper {
 		return null;
 	}
 	
+	//TODO interface for SheetCtrl?
 	public static ChangeInfo insertRows(Sheet sheet, int startRow, int num, int copyOrigin) {
 		if (sheet instanceof HSSFSheet) {
 			return insertHSSFRows(sheet, startRow, num, copyOrigin);
@@ -1487,6 +1456,7 @@ public final class BookHelper {
 		
 		return new ChangeInfo(last, all, changeMerges);
 	}
+	//TODO interface for SheetCtrl?
 	public static ChangeInfo deleteRows(Sheet sheet, int startRow, int num) {
 		if (sheet instanceof HSSFSheet) {
 			return deleteHSSFRows(sheet, startRow, num);
@@ -1533,11 +1503,35 @@ public final class BookHelper {
 		return new ChangeInfo(last, all, changeMerges);
 	}
 
+	//TODO interface for SheetCtrl?
 	public static ChangeInfo insertColumns(Sheet sheet, int startCol, int num, int copyOrigin) {
+		if (sheet instanceof HSSFSheet) {
+			return insertHSSFColumns(sheet, startCol, num, copyOrigin);
+		} else {
+			return insertXSSFColumns(sheet, startCol, num, copyOrigin);
+		}
+	}
+			
+	private static ChangeInfo insertHSSFColumns(Sheet sheet, int startCol, int num, int copyOrigin) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.insertColumns(startCol, num);
 		final List<CellRangeAddress[]> shiftedRanges = ((HSSFSheetImpl)sheet).shiftColumnsOnly(startCol, -1, num, true, false, true, false, copyOrigin);
+		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
+		final Set<Ref> last = refs[0];
+		final Set<Ref> all = refs[1];
+		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
+		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
+		shiftFormulas(all, sheet, 0, maxrow, 0, startCol, maxcol, num);
+		
+		return new ChangeInfo(last, all, changeMerges);
+	}
+	
+	private static ChangeInfo insertXSSFColumns(Sheet sheet, int startCol, int num, int copyOrigin) {
+		final Book book = (Book) sheet.getWorkbook();
+		final RefSheet refSheet = getRefSheet(book, sheet);
+		final Set<Ref>[] refs = refSheet.insertColumns(startCol, num);
+		final List<CellRangeAddress[]> shiftedRanges = ((XSSFSheetImpl)sheet).shiftColumnsOnly(startCol, -1, num, true, false, true, false, copyOrigin);
 		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
 		final Set<Ref> last = refs[0];
 		final Set<Ref> all = refs[1];
@@ -1602,7 +1596,7 @@ public final class BookHelper {
 		final Set<Ref>[] refs = refSheet.insertRange(tRow, lCol, bRow, rCol, horizontal);
 		final int num = horizontal ? rCol - lCol + 1 : bRow - tRow + 1;
 		final List<CellRangeAddress[]> shiftedRanges = horizontal ? 
-			null: //FIXME ((XSSFSheetImpl)sheet).shiftColumnsRange(lCol, -1, num, tRow, bRow, true, false, true, false, copyRightBelow):
+			((XSSFSheetImpl)sheet).shiftColumnsRange(lCol, -1, num, tRow, bRow, true, false, true, false, copyRightBelow):
 			((XSSFSheetImpl)sheet).shiftRowsRange(tRow, -1, num, lCol, rCol, true, false, true, false, copyRightBelow);
 		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
 		final Set<Ref> last = refs[0];
@@ -3034,4 +3028,40 @@ if (fillType == FILL_DEFAULT) {
         
         return shiftedRegions;
     }
+
+    //20100916, henrichen@zkoss.org: assign a destination cell per the given source cell except the row and column address
+	public static void assignCell(XSSFCell srcCell, XSSFCell dstCell) {
+		//assign cell formats
+		dstCell.setCellStyle(srcCell.getCellStyle());
+		
+		//assign comment
+		dstCell.setCellComment(srcCell.getCellComment());
+		
+		//assign validation
+		// TODO assign validation, refer copyValidation(srcCell, dstCell);
+		
+		final int cellType = srcCell.getCellType(); 
+		switch(cellType) {
+		case Cell.CELL_TYPE_BOOLEAN:
+			dstCell.setCellValue(srcCell.getBooleanCellValue());
+			break;
+		case Cell.CELL_TYPE_ERROR:
+			dstCell.setCellErrorValue(srcCell.getErrorCellValue());
+			break;
+        case Cell.CELL_TYPE_NUMERIC:
+        	dstCell.setCellValue(srcCell.getNumericCellValue());
+        	break;
+        case Cell.CELL_TYPE_STRING:
+        	dstCell.setCellValue(srcCell.getRichStringCellValue());
+        	break;
+        case Cell.CELL_TYPE_BLANK:
+        	dstCell.setCellValue((RichTextString) null);
+        	break;
+        case Cell.CELL_TYPE_FORMULA:
+        	dstCell.setCellFormula(srcCell.getCellFormula());
+        	break;
+		default:
+			throw new RuntimeException("Unknown cell type:"+cellType);
+		}
+	}
 }

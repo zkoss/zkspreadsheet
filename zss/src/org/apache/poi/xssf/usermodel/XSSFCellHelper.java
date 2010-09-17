@@ -20,6 +20,16 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
  *
  */
 public class XSSFCellHelper {
+	private final XSSFCell _cell;
+	
+	public XSSFCellHelper(XSSFCell cell) {
+		_cell = cell;
+	}
+	
+	public void notifyArrayFormulaChanging(String msg){
+		_cell.notifyArrayFormulaChanging(msg);
+	}
+	
 	public static XSSFCell createCell(XSSFRow row, CTCell cell) {
 		return new XSSFCell(row, cell);
 	}

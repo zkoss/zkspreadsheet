@@ -15,19 +15,24 @@ package org.zkoss.zss.model.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
+import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.formula.FormulaShifter;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFComment;
 import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFWorkbookHelper;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -37,11 +42,14 @@ import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.PtgShifter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellHelper;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFName;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -49,6 +57,7 @@ import org.apache.poi.xssf.usermodel.XSSFRowHelper;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 import org.zkoss.zss.model.Book;
@@ -236,7 +245,6 @@ public class XSSFSheetImpl extends XSSFSheet {
         }
     }
 
-
     private boolean canRemoveRow(int startRow, int endRow, int n, int rownum) {
         if (rownum >= (startRow + n) && rownum <= (endRow + n)) {
             if (n > 0 && rownum > endRow) {
@@ -357,7 +365,7 @@ public class XSSFSheetImpl extends XSSFSheet {
         }
 
         //sparse row between expectRownum(inclusive) to endRow+1(exclusive), to be removed
-    	addRemovePair(removePairs, expectRownum + n, endRow+1+n);
+    	addRemovePair(removePairs, expectRownum + n, endRow + 1 + n);
     	
         //really remove rows
         if (wholeRow) {
@@ -494,4 +502,447 @@ public class XSSFSheetImpl extends XSSFSheet {
     		}
     	}
     }
-}
+    /**
+     * Shifts columns between startCol and endCol n number of columns.
+     * If you use a negative number, it will shift columns left.
+     * Code ensures that columns don't wrap around
+     *
+     * <p>
+     * Additionally shifts merged regions that are completely defined in these
+     * columns (ie. merged 2 cells on a column to be shifted).
+     * <p>
+     * @param startCol the column to start shifting
+     * @param endCol the column to end shifting; -1 means using the last available column number 
+     * @param n the number of rows to shift
+     * @param copyColWidth whether to copy the column width during the shift
+     * @param resetOriginalColWidth whether to set the original column's height to the default
+     * @param moveComments whether to move comments at the same time as the cells they are attached to
+     * @param clearRest whether clear cells after the shifted endCol (meaningful only when n < 0)
+     * @param copyOrigin copy format from the left/right column for the inserted column(meaningful only when n > 0)
+     * @return List of shifted merge ranges
+     */
+    public List<CellRangeAddress[]> shiftColumnsOnly(int startCol, int endCol, int n,
+            boolean copyColWidth, boolean resetOriginalColWidth, boolean moveComments, boolean clearRest, int copyOrigin) {
+    	//prepared inserting column format
+    	final int srcCol = n <= 0 ? -1 : copyOrigin == Range.FORMAT_RIGHTBELOW ? startCol : copyOrigin == Range.FORMAT_LEFTABOVE ? startCol - 1 : -1; 
+    	final CellStyle colStyle = srcCol >= 0 ? getColumnStyle(srcCol) : null;
+    	final int colWidth = srcCol >= 0 ? getColumnWidth(srcCol) : -1; 
+    	final Map<Integer, Cell> cells = srcCol >= 0 ? new HashMap<Integer, Cell>() : null;
+    	
+    	int maxColNum = -1;
+        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
+            XSSFRow row = (XSSFRow)it.next();
+            int rowNum = row.getRowNum();
+            
+            if (endCol < 0) {
+	            final int colNum = row.getLastCellNum() - 1;
+	            if (colNum > maxColNum)
+	            	maxColNum = colNum;
+            }
+            
+            if (cells != null) {
+           		final Cell cell = row.getCell(srcCol);
+           		if (cell != null) {
+           			cells.put(new Integer(rowNum), cell);
+           		}
+            }
+            
+            shiftCells(row, startCol, endCol, n, clearRest);
+        }
+        
+        if (endCol < 0) {
+        	endCol = maxColNum;
+        }
+        if (n > 0) {
+	        if (startCol > endCol) { //nothing to do
+	        	return Collections.emptyList();
+	        }
+        } else {
+        	if ((startCol + n) > endCol) { //nothing to do
+	        	return Collections.emptyList();
+        	}
+        }
+        
+        final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
+        final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, 0, startCol, maxrow, endCol, n, true);
+        
+        //TODO handle the page breaks
+        //?
+
+        // Move comments from the source column to the
+        //  destination column. Note that comments can
+        //  exist for cells which are null
+        if (moveComments) {
+            final CommentsTable sheetComments = getCommentsTable(false);
+            if(sheetComments != null){
+                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
+                CTCommentList lst = sheetComments.getCTComments().getCommentList();
+                for (final Iterator<CTComment> it = lst.getCommentList().iterator(); it.hasNext();) {
+                	CTComment comment = it.next();
+                    CellReference ref = new CellReference(comment.getRef());
+                    final int colnum = ref.getCol();
+                    if(startCol <= colnum && colnum <= endCol){
+                    	int newColNum = colnum + n;
+                    	if (newColNum < 0 || newColNum > maxcol) { //out of bound, shall remove it
+                    		it.remove(); 
+                    	} else {
+	                        ref = new CellReference(ref.getRow(), newColNum);
+	                        comment.setRef(ref.formatAsString());
+                    	}
+                    }
+                }
+            }
+        }
+        
+        // Fix up column width if required
+        int s, inc;
+        if (n < 0) {
+            s = startCol;
+            inc = 1;
+        } else {
+            s = endCol;
+            inc = -1;
+        } 
+
+        if (copyColWidth || resetOriginalColWidth) {
+        	final int defaultColumnWidth = getDefaultColumnWidth();
+	        for ( int colNum = s; colNum >= startCol && colNum <= endCol && colNum >= 0 && colNum <= maxcol; colNum += inc ) {
+	        	final int newColNum = colNum + n;
+		        if (copyColWidth) {
+		            setColumnWidth(newColNum, getColumnWidth(colNum));
+		        }
+		        if (resetOriginalColWidth) {
+		            setColumnWidth(colNum, defaultColumnWidth);
+		        }
+	        }
+        }
+
+        //handle inserted columns
+        if (srcCol >= 0) {
+        	final int col2 = Math.min(startCol + n - 1, maxcol);
+        	for (int col = startCol; col <= col2 ; ++col) {
+        		//copy the column width
+        		setColumnWidth(col, colWidth);
+        		if (colStyle != null) {
+        			setDefaultColumnStyle(col, BookHelper.copyFromStyleExceptBorder(getBook(), colStyle));
+        		}
+        	}
+        	if (cells != null) {
+		        for (Entry<Integer, Cell> cellEntry : cells.entrySet()) {
+		            final XSSFRow row = getRow(cellEntry.getKey().intValue());
+		            final Cell srcCell = cellEntry.getValue();
+		            final CellStyle srcStyle = srcCell.getCellStyle();
+		        	for (int col = startCol; col <= col2; ++col) {
+		        		Cell dstCell = row.getCell(col);
+		        		if (dstCell == null) {
+		        			dstCell = row.createCell(col);
+		        		}
+		        		dstCell.setCellStyle(BookHelper.copyFromStyleExceptBorder(getBook(), srcStyle));
+		        	}
+		        }
+        	}
+        }
+        
+        // Shift Hyperlinks which have been moved
+        shiftHyperlinks(0, maxrow, 0, startCol, endCol, n);
+        
+        //special case1: endCol < startCol
+        //special case2: (endCol - startCol + 1) < ABS(n)
+        if (n < 0) {
+        	if (endCol < startCol) { //special case1
+	    		final int replacedStartCol = startCol + n;
+	    		removeHyperlinks(0, maxrow, replacedStartCol, endCol);
+            } else if (clearRest) { //special case 2
+            	final int replacedStartCol = endCol + n + 1;
+            	if (replacedStartCol <= startCol) {
+    	    		removeHyperlinks(0, maxrow, replacedStartCol, startCol);
+            	}
+        	}
+        }
+        
+        // Update any formulas on this sheet that point to
+        // columns which have been moved
+        XSSFWorkbook book = getWorkbook();
+        int sheetIndex = book.getSheetIndex(this);
+        PtgShifter shifter = new PtgShifter(sheetIndex, 0, maxrow, 0, startCol, endCol, n, SpreadsheetVersion.EXCEL2007);
+        updateNamedRanges(book, shifter);
+        
+        return shiftedRanges;
+    }
+    
+    //20100916, henrichen@zkoss.org
+    /**
+     * Shifts cells between startColumn and endColumn n number of columns.
+     * If you use a negative number, it will shift columns left.
+     * Code ensures that columns don't wrap around
+     *
+     * @param startCol the column to start shifting
+     * @param endCol the column to end shifting
+     * @param n the number of columns to shift
+     * @param clearRest whether clear the rest cells after the shifted endCol
+     */
+    public void shiftCells(XSSFRow row, int startCol, int endCol, int n, boolean clearRest) {
+        final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+    	if (endCol < 0) {
+    		endCol = maxcol;
+    	}
+        final List<int[]> removePairs = new ArrayList<int[]>(); //column spans to be removed 
+        final Set<XSSFCell> rowCells = new HashSet<XSSFCell>();
+        int expectColnum = startCol; //handle sparse columns which might override destination column
+    	for (Iterator<XSSFCell> it = row.getCells().subMap(startCol, endCol).values().iterator(); it.hasNext(); ) {
+    		XSSFCell cell = it.next();
+    		int colnum = cell.getColumnIndex();
+    		
+    		final int newColnum = colnum + n;
+    		if (colnum > expectColnum) { //sparse column between expectColnum(inclusive) and current column(exclusive), to be removed
+    			addRemovePair(removePairs, expectColnum + n, newColnum);
+    		}
+    		expectColnum = colnum + 1;
+    		
+			it.remove(); //remove cell from this row
+    		final boolean inbound = 0 <= newColnum && newColnum <= maxcol;
+    		if (!inbound) {
+    			notifyCellShifting(cell);
+    			continue;
+    		}
+    		rowCells.add(cell);
+    	}
+    	
+    	addRemovePair(removePairs, expectColnum + n, endCol + 1 + n);
+    	
+    	//remove those not existing cells
+    	for(int[] pair : removePairs) {
+    		final int start = Math.max(0, pair[0]);
+    		final int end = Math.min(maxcol + 1, pair[1]);
+    		for(int j=start; j < end; ++j) {
+    			Cell cell = row.getCell(j);
+    			if (cell != null) {
+    				row.removeCell(cell);
+    			}
+    		}
+    	}
+    	
+    	//update the cells
+    	for(XSSFCell srcCell: rowCells) {
+    		BookHelper.assignCell(srcCell, row.createCell(srcCell.getColumnIndex()+n));
+    	}
+    	
+        //special case1: endCol < startCol
+        //special case2: (endCol - startCol + 1) < ABS(n)
+        if (n < 0) {
+        	if (endCol < startCol) { //special case1
+	    		final int replacedStartCol = startCol + n;
+	            for ( int colNum = replacedStartCol; colNum >= replacedStartCol && colNum <= endCol && colNum >= 0 && colNum <= maxcol; ++colNum) {
+	            	final XSSFCell cell = row.getCell(colNum, Row.RETURN_NULL_AND_BLANK);
+	            	if (cell != null) {
+	            		row.removeCell(cell);
+	            	}
+	            }
+            } else if (clearRest) { //special case 2
+            	final int replacedStartCol = endCol + n + 1;
+            	if (replacedStartCol <= startCol) {
+    	            for ( int colNum = replacedStartCol; colNum >= replacedStartCol && colNum <= startCol && colNum >= 0 && colNum <= maxcol; ++colNum) {
+    	            	final XSSFCell cell = row.getCell(colNum, Row.RETURN_NULL_AND_BLANK);
+    	            	if (cell != null) {
+    	            		row.removeCell(cell);
+    	            	}
+    	            }
+            	}
+        	}
+        }
+    }
+    
+    private void addRemovePair(XSSFRow row, List<int[]> removePairs, int start, int end) {
+    	if (start < 0) {
+    		start = 0;
+    	}
+    	if (end > (row.getLastCellNum() + 1)) {
+    		end = row.getLastCellNum() + 1;
+    	}
+    	if (start < end) {
+    		removePairs.add(new int[] {start, end});
+    	}
+    }
+
+    //20100916, henrichen@zkoss.org
+    private void notifyCellShifting(XSSFCell cell){
+        String msg = "Cell[rownum="+cell.getRowIndex()+", columnnum="+cell.getColumnIndex()+"] included in a multi-cell array formula. " +
+                "You cannot change part of an array.";
+        if(cell.isPartOfArrayFormulaGroup()){
+            new XSSFCellHelper(cell).notifyArrayFormulaChanging(msg);
+        }
+    }
+    
+    //20100701, henrichen@zkoss.org: Shift columns of a range
+    /**
+     * Shifts columns of a range between startCol and endCol n number of columns in the boundary of top row(tRow) and bottom row(bRow).
+     * If you use a negative number, it will shift columns left.
+     * Code ensures that columns don't wrap around
+     *
+     * <p>
+     * Additionally shifts merged regions that are completely defined in these
+     * columns (ie. merged 2 cells on a column to be shifted) within the specified boundary rows.
+     * <p>
+     * @param startCol the column to start shifting
+     * @param endCol the column to end shifting; -1 means using the last available column number 
+     * @param n the number of rows to shift
+     * @param tRow top boundary row index
+     * @param bRow bottom boundary row index
+     * @param copyColWidth whether to copy the column width during the shift
+     * @param resetOriginalColWidth whether to set the original column's height to the default
+     * @param moveComments whether to move comments at the same time as the cells they are attached to
+     * @param clearRest whether clear cells after the shifted endCol (meaningful only when n < 0)
+     * @param copyOrigin copy format from the left/right column for the inserted column(meaningful only when n > 0)
+     * @return List of shifted merge ranges
+     */
+    public List<CellRangeAddress[]> shiftColumnsRange(int startCol, int endCol, int n, int tRow, int bRow,
+            boolean copyColWidth, boolean resetOriginalColWidth, boolean moveComments, boolean clearRest, int copyOrigin) {
+    	//prepared inserting column format
+    	final int srcCol = n <= 0 ? -1 : copyOrigin == Range.FORMAT_RIGHTBELOW ? startCol : copyOrigin == Range.FORMAT_LEFTABOVE ? startCol - 1 : -1; 
+    	final CellStyle colStyle = srcCol >= 0 ? getColumnStyle(srcCol) : null;
+    	final int colWidth = srcCol >= 0 ? getColumnWidth(srcCol) : -1; 
+    	final Map<Integer, Cell> cells = srcCol >= 0 ? new HashMap<Integer, Cell>() : null;
+    	
+    	int maxColNum = -1;
+        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
+            XSSFRow row = (XSSFRow)it.next();
+            int rowNum = row.getRowNum();
+            
+            if (endCol < 0) {
+	            final int colNum = row.getLastCellNum() - 1;
+	            if (colNum > maxColNum)
+	            	maxColNum = colNum;
+            }
+            
+            if (cells != null) {
+           		final Cell cell = row.getCell(srcCol);
+           		if (cell != null) {
+           			cells.put(new Integer(rowNum), cell);
+           		}
+            }
+            
+            shiftCells(row, startCol, endCol, n, clearRest);
+        }
+        
+        if (endCol < 0) {
+        	endCol = maxColNum;
+        }
+        if (n > 0) {
+	        if (startCol > endCol) { //nothing to do
+	        	return Collections.emptyList();
+	        }
+        } else {
+        	if ((startCol + n) > endCol) { //nothing to do
+	        	return Collections.emptyList();
+        	}
+        }
+        
+        final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
+        final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, 0, startCol, maxrow, endCol, n, true);
+        
+        //TODO handle the page breaks
+        //?
+
+        // Move comments from the source column to the
+        //  destination column. Note that comments can
+        //  exist for cells which are null
+        if (moveComments) {
+            final CommentsTable sheetComments = getCommentsTable(false);
+            if(sheetComments != null){
+                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
+                CTCommentList lst = sheetComments.getCTComments().getCommentList();
+                for (final Iterator<CTComment> it = lst.getCommentList().iterator(); it.hasNext();) {
+                	CTComment comment = it.next();
+                    CellReference ref = new CellReference(comment.getRef());
+                    final int colnum = ref.getCol();
+                    if(startCol <= colnum && colnum <= endCol){
+                    	int newColNum = colnum + n;
+                    	if (newColNum < 0 || newColNum > maxcol) { //out of bound, shall remove it
+                    		it.remove(); 
+                    	} else {
+	                        ref = new CellReference(ref.getRow(), newColNum);
+	                        comment.setRef(ref.formatAsString());
+                    	}
+                    }
+                }
+            }
+        }
+        
+        // Fix up column width if required
+        int s, inc;
+        if (n < 0) {
+            s = startCol;
+            inc = 1;
+        } else {
+            s = endCol;
+            inc = -1;
+        } 
+
+        if (copyColWidth || resetOriginalColWidth) {
+        	final int defaultColumnWidth = getDefaultColumnWidth();
+	        for ( int colNum = s; colNum >= startCol && colNum <= endCol && colNum >= 0 && colNum <= maxcol; colNum += inc ) {
+	        	final int newColNum = colNum + n;
+		        if (copyColWidth) {
+		            setColumnWidth(newColNum, getColumnWidth(colNum));
+		        }
+		        if (resetOriginalColWidth) {
+		            setColumnWidth(colNum, defaultColumnWidth);
+		        }
+	        }
+        }
+
+        //handle inserted columns
+        if (srcCol >= 0) {
+        	final int col2 = Math.min(startCol + n - 1, maxcol);
+        	for (int col = startCol; col <= col2 ; ++col) {
+        		//copy the column width
+        		setColumnWidth(col, colWidth);
+        		if (colStyle != null) {
+        			setDefaultColumnStyle(col, BookHelper.copyFromStyleExceptBorder(getBook(), colStyle));
+        		}
+        	}
+        	if (cells != null) {
+		        for (Entry<Integer, Cell> cellEntry : cells.entrySet()) {
+		            final XSSFRow row = getRow(cellEntry.getKey().intValue());
+		            final Cell srcCell = cellEntry.getValue();
+		            final CellStyle srcStyle = srcCell.getCellStyle();
+		        	for (int col = startCol; col <= col2; ++col) {
+		        		Cell dstCell = row.getCell(col);
+		        		if (dstCell == null) {
+		        			dstCell = row.createCell(col);
+		        		}
+		        		dstCell.setCellStyle(BookHelper.copyFromStyleExceptBorder(getBook(), srcStyle));
+		        	}
+		        }
+        	}
+        }
+        
+        // Shift Hyperlinks which have been moved
+        shiftHyperlinks(0, maxrow, 0, startCol, endCol, n);
+        
+        //special case1: endCol < startCol
+        //special case2: (endCol - startCol + 1) < ABS(n)
+        if (n < 0) {
+        	if (endCol < startCol) { //special case1
+	    		final int replacedStartCol = startCol + n;
+	    		removeHyperlinks(0, maxrow, replacedStartCol, endCol);
+            } else if (clearRest) { //special case 2
+            	final int replacedStartCol = endCol + n + 1;
+            	if (replacedStartCol <= startCol) {
+    	    		removeHyperlinks(0, maxrow, replacedStartCol, startCol);
+            	}
+        	}
+        }
+        
+        // Update any formulas on this sheet that point to
+        // columns which have been moved
+        XSSFWorkbook book = getWorkbook();
+        int sheetIndex = book.getSheetIndex(this);
+        PtgShifter shifter = new PtgShifter(sheetIndex, 0, maxrow, 0, startCol, endCol, n, SpreadsheetVersion.EXCEL2007);
+        updateNamedRanges(book, shifter);
+        
+        return shiftedRanges;
+    }
+}	
