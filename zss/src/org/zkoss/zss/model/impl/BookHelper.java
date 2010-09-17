@@ -1558,12 +1558,37 @@ public final class BookHelper {
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	
+	//TODO SheetCtrl interface?
 	public static ChangeInfo deleteColumns(Sheet sheet, int startCol, int num) {
+		if (sheet instanceof HSSFSheet) {
+			return deleteHSSFColumns(sheet, startCol, num);
+		} else {
+			return deleteXSSFColumns(sheet, startCol, num);
+		}
+	}
+	
+	public static ChangeInfo deleteHSSFColumns(Sheet sheet, int startCol, int num) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.deleteColumns(startCol, num);
 		final int startCol0 = startCol + num;
 		final List<CellRangeAddress[]> shiftedRanges = ((HSSFSheetImpl)sheet).shiftColumnsOnly(startCol0, -1, -num, true, false, true, true, Range.FORMAT_NONE);
+		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
+		final Set<Ref> last = refs[0];
+		final Set<Ref> all = refs[1];
+		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
+		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
+		shiftFormulas(all, sheet, 0, maxrow, 0, startCol0, maxcol, -num);
+		
+		return new ChangeInfo(last, all, changeMerges);
+	}
+	
+	public static ChangeInfo deleteXSSFColumns(Sheet sheet, int startCol, int num) {
+		final Book book = (Book) sheet.getWorkbook();
+		final RefSheet refSheet = getRefSheet(book, sheet);
+		final Set<Ref>[] refs = refSheet.deleteColumns(startCol, num);
+		final int startCol0 = startCol + num;
+		final List<CellRangeAddress[]> shiftedRanges = ((XSSFSheetImpl)sheet).shiftColumnsOnly(startCol0, -1, -num, true, false, true, true, Range.FORMAT_NONE);
 		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
 		final Set<Ref> last = refs[0];
 		final Set<Ref> all = refs[1];
@@ -1669,7 +1694,7 @@ public final class BookHelper {
 		final Set<Ref>[] refs = refSheet.deleteRange(tRow, lCol, bRow, rCol, horizontal);
 		final int num = horizontal ? rCol - lCol + 1 : bRow - tRow + 1;
 		final List<CellRangeAddress[]> shiftedRanges = horizontal ? 
-			null : //FIXME ((XSSFSheetImpl)sheet).shiftColumnsRange(rCol + 1, -1, -num, tRow, bRow, true, false, true, true, Range.FORMAT_NONE):
+			((XSSFSheetImpl)sheet).shiftColumnsRange(rCol + 1, -1, -num, tRow, bRow, true, false, true, true, Range.FORMAT_NONE):
 			((XSSFSheetImpl)sheet).shiftRowsRange(bRow + 1, -1, -num, lCol, rCol, true, false, true, true, Range.FORMAT_NONE);
 		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
 		final Set<Ref> last = refs[0];

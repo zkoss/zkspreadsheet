@@ -6,6 +6,9 @@ ZK Spreadsheet 2.0.0 RC
   70 Support insert rows(Excel 2007, xlsx)
   71 Support delete rows(Excel 2007, xlsx) 
   74 Support insert columns(Excel 2007, xlsx)
+  75 Support delete columns(Excel 2007, xlsx)
+  85 Support insertRange(Excel 2007, xlsx)   	 
+  86 Support deleteRange(Excel 2007, xlsx)
   
 *Bug
   66 Unexpected gridlines shown 

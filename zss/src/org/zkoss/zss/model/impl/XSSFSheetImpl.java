@@ -685,18 +685,27 @@ public class XSSFSheetImpl extends XSSFSheet {
     public void shiftCells(XSSFRow row, int startCol, int endCol, int n, boolean clearRest) {
         final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
     	if (endCol < 0) {
-    		endCol = maxcol;
+    		endCol = row.getLastCellNum() - 1;
+    	}
+    	if (n > 0) {
+    		if (endCol < startCol) { //nothing to do
+    			return;
+    		}
+    	} else {
+    		if (endCol < (startCol + n)) { //nothing to do
+    			return;
+    		}
     	}
         final List<int[]> removePairs = new ArrayList<int[]>(); //column spans to be removed 
         final Set<XSSFCell> rowCells = new HashSet<XSSFCell>();
         int expectColnum = startCol; //handle sparse columns which might override destination column
-    	for (Iterator<XSSFCell> it = row.getCells().subMap(startCol, endCol).values().iterator(); it.hasNext(); ) {
+    	for (Iterator<XSSFCell> it = row.getCells().subMap(startCol, endCol+1).values().iterator(); it.hasNext(); ) {
     		XSSFCell cell = it.next();
     		int colnum = cell.getColumnIndex();
     		
     		final int newColnum = colnum + n;
     		if (colnum > expectColnum) { //sparse column between expectColnum(inclusive) and current column(exclusive), to be removed
-    			addRemovePair(removePairs, expectColnum + n, newColnum);
+    			addRemovePair(removePairs, row, expectColnum + n, newColnum);
     		}
     		expectColnum = colnum + 1;
     		
@@ -709,7 +718,7 @@ public class XSSFSheetImpl extends XSSFSheet {
     		rowCells.add(cell);
     	}
     	
-    	addRemovePair(removePairs, expectColnum + n, endCol + 1 + n);
+    	addRemovePair(removePairs, row, expectColnum + n, endCol + 1 + n);
     	
     	//remove those not existing cells
     	for(int[] pair : removePairs) {
@@ -753,12 +762,12 @@ public class XSSFSheetImpl extends XSSFSheet {
         }
     }
     
-    private void addRemovePair(XSSFRow row, List<int[]> removePairs, int start, int end) {
+    private void addRemovePair(List<int[]> removePairs, XSSFRow row, int start, int end) {
     	if (start < 0) {
     		start = 0;
     	}
-    	if (end > (row.getLastCellNum() + 1)) {
-    		end = row.getLastCellNum() + 1;
+    	if (end > row.getLastCellNum()) {
+    		end = row.getLastCellNum(); //index returned already plus 1
     	}
     	if (start < end) {
     		removePairs.add(new int[] {start, end});
@@ -804,26 +813,30 @@ public class XSSFSheetImpl extends XSSFSheet {
     	final int colWidth = srcCol >= 0 ? getColumnWidth(srcCol) : -1; 
     	final Map<Integer, Cell> cells = srcCol >= 0 ? new HashMap<Integer, Cell>() : null;
     	
+    	int startRow = Math.max(tRow, getFirstRowNum());
+    	int endRow = Math.min(bRow, getLastRowNum());
     	int maxColNum = -1;
-        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
-            XSSFRow row = (XSSFRow)it.next();
-            int rowNum = row.getRowNum();
-            
-            if (endCol < 0) {
-	            final int colNum = row.getLastCellNum() - 1;
-	            if (colNum > maxColNum)
-	            	maxColNum = colNum;
-            }
-            
-            if (cells != null) {
-           		final Cell cell = row.getCell(srcCol);
-           		if (cell != null) {
-           			cells.put(new Integer(rowNum), cell);
-           		}
-            }
-            
-            shiftCells(row, startCol, endCol, n, clearRest);
-        }
+    	if (startRow <= endRow) {
+	        for (Iterator<XSSFRow> it = getRows().subMap(startRow, endRow+1).values().iterator(); it.hasNext() ; ) {
+	            XSSFRow row = it.next();
+	            int rowNum = row.getRowNum();
+	            
+	            if (endCol < 0) {
+		            final int colNum = row.getLastCellNum() - 1;
+		            if (colNum > maxColNum)
+		            	maxColNum = colNum;
+	            }
+	            
+	            if (cells != null) {
+	           		final Cell cell = row.getCell(srcCol);
+	           		if (cell != null) {
+	           			cells.put(new Integer(rowNum), cell);
+	           		}
+	            }
+	            
+	            shiftCells(row, startCol, endCol, n, clearRest);
+	        }
+    	}
         
         if (endCol < 0) {
         	endCol = maxColNum;
@@ -841,9 +854,11 @@ public class XSSFSheetImpl extends XSSFSheet {
         final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
         final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
         final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, 0, startCol, maxrow, endCol, n, true);
-        
-        //TODO handle the page breaks
-        //?
+        final boolean wholeColumn = tRow == 0 && bRow == maxrow; 
+        if (wholeColumn) {
+	        //TODO handle the page breaks
+	        //?
+        }
 
         // Move comments from the source column to the
         //  destination column. Note that comments can
@@ -857,7 +872,8 @@ public class XSSFSheetImpl extends XSSFSheet {
                 	CTComment comment = it.next();
                     CellReference ref = new CellReference(comment.getRef());
                     final int colnum = ref.getCol();
-                    if(startCol <= colnum && colnum <= endCol){
+                    final int rownum = ref.getRow();
+                    if(startCol <= colnum && colnum <= endCol && tRow <= rownum && rownum <= bRow){
                     	int newColNum = colnum + n;
                     	if (newColNum < 0 || newColNum > maxcol) { //out of bound, shall remove it
                     		it.remove(); 
@@ -880,7 +896,7 @@ public class XSSFSheetImpl extends XSSFSheet {
             inc = -1;
         } 
 
-        if (copyColWidth || resetOriginalColWidth) {
+        if (wholeColumn && (copyColWidth || resetOriginalColWidth)) {
         	final int defaultColumnWidth = getDefaultColumnWidth();
 	        for ( int colNum = s; colNum >= startCol && colNum <= endCol && colNum >= 0 && colNum <= maxcol; colNum += inc ) {
 	        	final int newColNum = colNum + n;
@@ -896,12 +912,14 @@ public class XSSFSheetImpl extends XSSFSheet {
         //handle inserted columns
         if (srcCol >= 0) {
         	final int col2 = Math.min(startCol + n - 1, maxcol);
-        	for (int col = startCol; col <= col2 ; ++col) {
-        		//copy the column width
-        		setColumnWidth(col, colWidth);
-        		if (colStyle != null) {
-        			setDefaultColumnStyle(col, BookHelper.copyFromStyleExceptBorder(getBook(), colStyle));
-        		}
+        	if (wholeColumn) {
+	        	for (int col = startCol; col <= col2 ; ++col) {
+	        		//copy the column width
+	        		setColumnWidth(col, colWidth);
+	        		if (colStyle != null) {
+	        			setDefaultColumnStyle(col, BookHelper.copyFromStyleExceptBorder(getBook(), colStyle));
+	        		}
+	        	}
         	}
         	if (cells != null) {
 		        for (Entry<Integer, Cell> cellEntry : cells.entrySet()) {
