@@ -33,7 +33,7 @@ import org.zkoss.zss.model.impl.HSSFBookImpl;
  * Insert a row and check if the formula still work
  * @author henrichen
  */
-public class Book7XlsDeleteColumnsTest {
+public class Book07XlsDeleteColumnsTest {
 	private Workbook _workbook;
 	private FormulaEvaluator _evaluator;
 

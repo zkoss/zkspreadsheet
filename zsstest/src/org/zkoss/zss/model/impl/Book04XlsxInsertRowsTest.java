@@ -32,7 +32,7 @@ import org.zkoss.zss.model.Range;
  * Insert a row and check if the formula still work
  * @author henrichen
  */
-public class Book4XlsxInsertRowsTest {
+public class Book04XlsxInsertRowsTest {
 	private Workbook _workbook;
 	private FormulaEvaluator _evaluator;
 

@@ -459,7 +459,7 @@ public class RangeImpl implements Range {
 		_left = Math.min(ref.getLeftCol(), _left);
 		_top = Math.min(ref.getTopRow(), _top);
 		_right = Math.max(ref.getRightCol(), _right);
-		_bottom = Math.min(ref.getBottomRow(), _bottom);
+		_bottom = Math.max(ref.getBottomRow(), _bottom);
 		refs.add(ref);
 		return ref;
 	}

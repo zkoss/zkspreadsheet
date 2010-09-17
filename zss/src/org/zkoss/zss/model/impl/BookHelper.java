@@ -642,6 +642,7 @@ public final class BookHelper {
 			return hyperlink; 
 		}
 		if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+			BookHelper.evaluate((Book)cell.getSheet().getWorkbook(), cell);
 			final int type = cell.getCachedFormulaResultType();
 			if (type != Cell.CELL_TYPE_ERROR) {
 				if (cell instanceof HSSFCell)
@@ -684,6 +685,19 @@ public final class BookHelper {
 		}
 		final CellFormat format = CellFormat.getInstance(formatStr == null ? "" : formatStr);
 		return new FormatTextImpl(format.apply(cell));
+	}
+
+	//Return simple String form of the cell 
+	public static String getCellText(Cell cell) {
+		final FormatTextImpl ft = getFormatText(cell);
+		if (ft != null) {
+			if (ft.isRichTextString()) {
+				final RichTextString rstr = ft.getRichTextString();
+				return rstr == null ? "" : rstr.getString();
+			} else if (ft.isCellFormatResult()) {
+				return ft.getCellFormatResult().text;			}
+		}
+		return "";
 	}
 	
 	private static Object getValueByCellValue(CellValue cellValue) {

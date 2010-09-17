@@ -24,6 +24,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +42,7 @@ import org.zkoss.zss.ui.impl.Utils;
  * Insert a row and check if the formula still work
  * @author henrichen
  */
-public class Book9XlsSortTest {
+public class Book09XlsxSortTest {
 	private Workbook _workbook;
 	private FormulaEvaluator _evaluator;
 
@@ -49,12 +51,12 @@ public class Book9XlsSortTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		final String filename = "Book9.xls";
+		final String filename = "Book9.xlsx";
 		final InputStream is = new ClassLocator().getResourceAsStream(filename);
 		_workbook = new ExcelImporter().imports(is, filename);
 		assertTrue(_workbook instanceof Book);
-		assertTrue(_workbook instanceof HSSFBookImpl);
-		assertTrue(_workbook instanceof HSSFWorkbook);
+		assertTrue(_workbook instanceof XSSFBookImpl);
+		assertTrue(_workbook instanceof XSSFWorkbook);
 		assertEquals(filename, ((Book)_workbook).getBookName());
 		assertEquals("Sheet1", _workbook.getSheetName(0));
 		assertEquals("Sheet2", _workbook.getSheetName(1));
@@ -282,7 +284,7 @@ public class Book9XlsSortTest {
 	}
 	
 	private void testToFormulaString(Cell cell, String expect) {
-		HSSFEvaluationWorkbook evalbook = HSSFEvaluationWorkbook.create((HSSFWorkbook)_workbook);
+		XSSFEvaluationWorkbook evalbook = XSSFEvaluationWorkbook.create((XSSFWorkbook)_workbook);
 		Ptg[] ptgs = BookHelper.getCellPtgs(cell);
 		final String formula = FormulaRenderer.toFormulaString(evalbook, ptgs);
 		assertEquals(expect, formula);

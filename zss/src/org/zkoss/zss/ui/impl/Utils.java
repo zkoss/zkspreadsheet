@@ -507,7 +507,9 @@ public class Utils {
 			return cellText;
 		}
 		final String address = Utils.escapeCellText(hlink.getAddress(), true, false);
-		final String label = !"".equals(cellText) ? cellText : hlink.getLabel() == null ? Utils.escapeCellText(hlink.getAddress(), wrap, wrap) : Utils.escapeCellText(hlink.getLabel(), wrap, wrap);
+		final String linkLabel = hlink.getLabel();
+		final String label = !"".equals(cellText) ? cellText :  
+				Utils.escapeCellText(linkLabel == null ? hlink.getAddress() : linkLabel, wrap, wrap);
 		return BookHelper.formatHyperlink((Book)sheet.getWorkbook(), hlink.getType(), address, label);
 	}
 	/**

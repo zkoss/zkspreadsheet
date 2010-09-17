@@ -34,7 +34,7 @@ import org.zkoss.zss.model.Range;
  * Insert a column and check if the formula still work
  * @author henrichen
  */
-public class Book6XlsxInsertColumnsTest {
+public class Book06XlsxInsertColumnsTest {
 	private Workbook _workbook;
 	private FormulaEvaluator _evaluator;
 

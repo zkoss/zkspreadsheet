@@ -37,7 +37,7 @@ import org.zkoss.zss.model.Book;
  * @author henrichen
  *
  */
-public class Book3XlsxFormulaEvaluatorTest {
+public class Book03XlsxFormulaEvaluatorTest {
 	private Book _workbook;
 	private FormulaEvaluator _evaluator;
 

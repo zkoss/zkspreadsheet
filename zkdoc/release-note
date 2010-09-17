@@ -27,6 +27,7 @@ ZK Spreadsheet 2.0.0 RC
   68 Exception when set text format to ?/2, ?/4, ?/8, ?/16, ??/100
   69 Incorrect text output when enter value 0 into cell with text format "???/???"
   44 Locale is not respected
+  87 =HYPERLINK() function in Excel 2007xlsx not show as a hyperlink
   
 	------------
 ZK Spreadsheet 2.0.0 beta3
