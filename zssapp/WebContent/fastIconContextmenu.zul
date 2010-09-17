@@ -1,86 +1,83 @@
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
-<window id="${arg.id}" sclass="fastIconWin" visible="false" width="196px" height="52px" apply="org.zkoss.zss.app.FastIconMenuCtrl">
-<attribute w:name="onShow">
-	this.$f('spreadsheet', true).focus(false);
-</attribute>
+<?component name="borderSelector" inline="true" macroURI="/menus/border/borderSelector.zul"?>
+<window id="${arg.id}" sclass="fastIconWin" visible="false" vflex="min" width="210px" apply="org.zkoss.zss.app.FastIconMenuCtrl">
+	<attribute w:name="onShow">
+		this.$f('spreadsheet', true).focus(false);
+	</attribute>
 <style>
 		.fastIconWin .z-window-popup-cnt-noborder{
-			background:rgb(204,230,251) none;
-
-			border:1px solid rgb(153,191,251)
-		}
-		.toolIcon2 img{
-			border:1px solid rgb(130,145,175);
-			
-			#margin:1px 0px 0px 0px;
-		}
-		.toolIcon2 img:hover{
-			border:1px solid orange;
+			background: #f6f5f5 none;
+			border:1px solid #C5C5C5;
 		}
 </style>
 <div style="padding:2px;">
-<vbox spacing="2px">
-	<hbox spacing="1px" height="17px">
-		<combobox id="_fontFamilyCombobox" sclass="toolbarCombobox" style="border:0px;margin:0px;"
-			width="86px" height="17px" forward="onSelect=//p1/mainWin.onFontFamilySelect">
-			<comboitem label="Calibri"  			sclass="calibriFont" forward="//p1/mainWin.onFontFamilySelect(Calibri)"  />
-			<comboitem label="Courier New"  		sclass="courierFont" forward="//p1/mainWin.onFontFamilySelect(Courier New)"  />
-			<comboitem label="Comic Sans MS"  	sclass="comicFont" forward="//p1/mainWin.onFontFamilySelect(Comic Sans MS)"  />
-			<comboitem label="Times New Roman"  	sclass="timeFont" forward="//p1/mainWin.onFontFamilySelect(Times New Roman)"  />
-			<comboitem label="Century Gothic"  	sclass="centuryFont" forward="//p1/mainWin.onFontFamilySelect(Centry Gothic)"  />
-			<comboitem label="Georgia"  			sclass="georgiaFont" forward="//p1/mainWin.onFontFamilySelect(Georgia)"  />
-			<comboitem label="Impact"  			sclass="impactFont" forward="//p1/mainWin.onFontFamilySelect(Impact)"  />
+<vlayout spacing="2px">
+	<hlayout vflex="min" spacing="3px">
+		<combobox mold="rounded" id="_fontFamilyCombobox" style="border:0px;margin:0px;"
+			width="86px" >
+			<comboitem label="Calibri"  			sclass="calibriFont" />
+			<comboitem label="Courier New"  		sclass="courierFont" />
+			<comboitem label="Comic Sans MS"  	sclass="comicFont" />
+			<comboitem label="Times New Roman"  	sclass="timeFont" />
+			<comboitem label="Century Gothic"  	sclass="centuryFont" />
+			<comboitem label="Georgia"  			sclass="georgiaFont"/>
+			<comboitem label="Impact"  			sclass="impactFont"/>
 		</combobox>
-		<combobox id="_fontSizeCombobox" sclass="toolbarCombobox" style="border:0px;margin:0px;"
-			width="48px" height="17px" forward="onSelect=//p1/mainWin.onFontSizeSelect">
-			<comboitem label="8" forward="//p1/mainWin.onFontSizeSelect(8)"/>
-			<comboitem label="9" forward="//p1/mainWin.onFontSizeSelect(9)" />
-			<comboitem label="10" forward="//p1/mainWin.onFontSizeSelect(10)" />
-			<comboitem label="11" forward="//p1/mainWin.onFontSizeSelect(11)"/>
-			<comboitem label="12" forward="//p1/mainWin.onFontSizeSelect(12)"/>
-			<comboitem label="14" forward="//p1/mainWin.onFontSizeSelect(14)"/>
-			<comboitem label="16" forward="//p1/mainWin.onFontSizeSelect(16)"/>
-			<comboitem label="18" forward="//p1/mainWin.onFontSizeSelect(18)"/>
-			<comboitem label="20" forward="//p1/mainWin.onFontSizeSelect(20)"/>
-			<comboitem label="22" forward="//p1/mainWin.onFontSizeSelect(22)"/>
-			<comboitem label="24" forward="//p1/mainWin.onFontSizeSelect(24)"/>
-			<comboitem label="26" forward="//p1/mainWin.onFontSizeSelect(26)"/>
-			<comboitem label="28" forward="//p1/mainWin.onFontSizeSelect(28)"/>
-			<comboitem label="36" forward="//p1/mainWin.onFontSizeSelect(36)"/>
-			<comboitem label="48" forward="//p1/mainWin.onFontSizeSelect(48)"/>
-			<comboitem label="72" forward="//p1/mainWin.onFontSizeSelect(72)"/>
+		<combobox mold="rounded" id="_fontSizeCombobox"  style="border:0px;margin:0px;"
+			width="48px"  >
+			<comboitem label="8" />
+			<comboitem label="9" />
+			<comboitem label="10" />
+			<comboitem label="11" />
+			<comboitem label="12" />
+			<comboitem label="14" />
+			<comboitem label="16" />
+			<comboitem label="18" />
+			<comboitem label="20" />
+			<comboitem label="22" />
+			<comboitem label="24" />
+			<comboitem label="26" />
+			<comboitem label="28" />
+			<comboitem label="36" />
+			<comboitem label="48" />
+			<comboitem label="72" />
 		</combobox>
-		<toolbarbutton id="_boldBtn" sclass="toolIcon"  src="/img/bold.gif" height="17px"
+		<toolbarbutton id="_boldBtn" src="/img/edit-bold.png" 
 			forward="onClick=//p1/mainWin.onFontBoldClick" />
-		<toolbarbutton id="_italicBtn" sclass="toolIcon" height="17px"
-			src="/img/italic.gif" forward="onClick=//p1/mainWin.onFontItalicClick"/>
-	</hbox>
-	<hbox>	
+		<toolbarbutton id="_italicBtn" 
+			src="/img/edit-italic.png" forward="onClick=//p1/mainWin.onFontItalicClick"/>
+	</hlayout>
+	<hlayout height="24px" >	
 		<!-- align horizontal************************************************************************ -->
-		<toolbarbutton id="_alignLeftBtn" sclass="toolIcon"
-			src="/img/alignLeft.gif"
+		<toolbarbutton id="_alignLeftBtn" src="/img/edit-alignment.png"
 			forward="onClick=//p1/mainWin.onAlignHorizontalClick(left)" />
-		<toolbarbutton id="_alignCenterBtn" sclass="toolIcon"
-			src="/img/alignCenter.gif"
+		<toolbarbutton id="_alignCenterBtn" src="/img/edit-alignment-center.png"
 			forward="onClick=//p1/mainWin.onAlignHorizontalClick(center)" />
-		<toolbarbutton id="_alignRightBtn" sclass="toolIcon"
-			src="/img/alignRight.gif"
+		<toolbarbutton id="_alignRightBtn" 
+			src="/img/edit-alignment-right.png"
 			forward="onClick=//p1/mainWin.onAlignHorizontalClick(right)" />
 	
-		<!-- color & background-color***********************************************RC************************* -->
-		<colorbutton id="_fontColorBtn" width="15px" height="14px" image="/img/fontColor.gif" color="#000000" style="margin: 2px 1px 2px 0;">
+		<!-- color & background-color************************************************************************ -->
+		<colorbutton id="_fontColorBtn" width="20px" height="12px" image="/img/edit-color.png" color="#000000" style="margin: 2px 1px 2px 0;">
 		</colorbutton>
 	
-		<colorbutton id="_backgroundColorBtn" width="15px" height="14px" color="#FFFFFF" image="/img/backgroundColor.gif" style="margin: 2px 1px 2px 0;">
+		<colorbutton id="_backgroundColorBtn" width="20px" height="12px" color="#FFFFFF" image="/img/paint-can-color.png" style="margin: 2px 1px 2px 0;">
 		</colorbutton>
 	
 		<!-- border merge******************************************************************* -->
-		<toolbarbutton id="_borderBtn" sclass="toolIcon"
-			src="/img/outline.gif" forward="onClick=//p1/mainWin.onBorderClick()" />
+		<dropdownbutton src="/img/border-bottom.png" forward="onBorderSelector(${c:l('border.bottom')})" tooltiptext="${c:l('border.bottom')}">
+			<attribute w:name="onClick">
+				this.$f('spreadsheet').focus(false);
+			</attribute>
+			<attribute w:name="onDropdown">
+				this.$f('spreadsheet').focus(false);
+			</attribute>
+			<borderSelector></borderSelector>
+		</dropdownbutton>
 		<toolbarbutton id="_mergeCellBtn" sclass="toolIcon"
-			src="/img/mergeCell.gif" forward="onClick=//p1/mainWin.onMergeCellClick" />
-	</hbox>
-</vbox>
+			src="/img/table-join.png" forward="onClick=//p1/mainWin.onMergeCellClick" />
+	</hlayout>
+</vlayout>
 </div>
 </window>
 </zk>

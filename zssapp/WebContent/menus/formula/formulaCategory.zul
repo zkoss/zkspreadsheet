@@ -1,7 +1,7 @@
-<window title="Formula" id="${arg.id}" border="normal" width="418px" height="260px" visible="false" position="center">
+<window title="Formula" id="${arg.id}" border="normal" width="440px" height="460px" visible="false" position="center" closable="true">
 <div style="margin:7px">
-	<hbox spacing="0px" >
-		<vbox>
+	<hlayout spacing="0px" >
+		<vlayout>
 			<listbox id="fc_category" width="200px">
 				<listhead sizable="true">
 					<listheader label="Category:" sort="auto" />
@@ -22,8 +22,8 @@
 				<listitem label="Engineering"
 					onClick="openOnlyMyList(&quot;fc_engineering&quot;)" />
 			</listbox>
-		</vbox>
-		<vbox width="200px">
+		</vlayout>
+		<vlayout width="205px">
 			<listbox rows="9" id="fc_general">
 				<listhead sizable="true">
 					<listheader label="Functions:" />
@@ -322,14 +322,11 @@
 				<listitem label="OCT2DEC" />
 				<listitem label="OCT2HEX" />
 			</listbox>
-		</vbox>
-	</hbox>
-	<button label="OK" forward="//p1/mainWin.onFormulaCategoryOK()" />
-	<button label="Cancel">
-		<attribute name="onClick"> 
-			self.getSpaceOwner().setVisible(false);		
-		</attribute>
-	</button>
+		</vlayout>
+	</hlayout>
+	<div style="float:right;margin: 10px 0 10px 10px;">
+		<button image="/img/tick.png" forward="//p1/mainWin.onFormulaCategoryOK()" mold="trendy" />
+	</div>
 	<zscript><![CDATA[
 		void openOnlyMyList(String listId){
 			String[] myList = {"fc_general","fc_math","fc_logical","fc_statistical","fc_dateAndTime","fc_information","fc_textAndData","fc_financial","fc_engineering"};

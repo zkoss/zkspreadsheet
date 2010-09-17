@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?page id="p1" title="ZSS app"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
-
+<?script type="text/javascript" src="/macros/zssapp.js.dsp?v=${desktop.webApp.build}"?>
 <?component name="columnHeaderMenu" inline="true" macroURI="/menus/header_cell/menuColumnHeader.zul"?>
 <?component name="rowHeaderMenu" inline="true" macroURI="/menus/header_cell/menuRowHeader.zul"?>
 <?component name="cellMenu" inline="true" macroURI="/menus/header_cell/menuCell.zul"?>
@@ -10,56 +10,31 @@
 <?component name="fileexportwin" inline="true" macroURI="/menus/file/fileListExport.zul"?>
 <?component name="filedeletewin" inline="true" macroURI="/menus/file/fileListDelete.zul"?>
 <?component name="filesaveaswin" inline="true" macroURI="/menus/file/fileListSaveAs.zul"?>
-<?component name="borderSelector" inline="true" macroURI="/borderSelector.zul"?>
+<?component name="borderSelector" inline="true" macroURI="/menus/border/borderSelector.zul"?>
 <?component name="fasticoncontextmenu" inline="true" macroURI="/fastIconContextmenu.zul"?>
 <?component name="formulacategory" inline="true" macroURI="/menus/formula/formulaCategory.zul"?>
 <?component name="formatnumberwin" inline="true" macroURI="/menus/format/menuFormatNumber.zul"?>
 <?component name="cheatsheet" inline="true" macroURI="/cheatsheet.zul"?>
 <?component name="menuPrintWin" inline="true" macroURI="/menuPrint.zul"?>
 <?component name="revisionmenu" inline="true" macroURI="/revisionMenu.zul"?>
+<?component name="pasteSelector" inline="true" macroURI="/menus/paste/pasteSelector.zul"?>
 
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 <window id="mainWin" apply="org.zkoss.zss.app.MainWindowCtrl" height="100%" width="100%" style="margin:0px;padding:0px">
 	<style>
-		body{
-			padding:0px;
-		}
-		.z-tabs-scroll .z-tabs-cnt{
-			padding-left:0px;
-		}
-		.z-menubar-hor, .z-menubar-ver {
-			background:#ADF none repeat scroll 0 0;
-			border-color:rgb(153,191,251);
-			padding:0 0 0 4px;
-		}
-		.formulaBar input{
-			border-width:0px;
-			border-right-width:1px;
-		}
-		.lbposCombobox img{
+		.focusPosCombobox .z-combobox-rounded-btn {
 			border:0px;
-			height:24px!important;
+			background: url('./img/combo-white.png');
 		}
-		.z-toolbar , .formulaBtn {
-			background:#CEF none repeat scroll 0 0;
-			border-color:rgb(153,191,251);
-			border-bottom-color:rgb(126,170,198);
-		}
-		.z-toolbar a, .z-toolbar a:visited, .z-toolbar a:hover {
-			background-color:transparent;
-		}
-		.formulaBar,.sheetTBBar{
-			#margin-top:-1px;
+		.focusPosCombobox .z-combobox-rounded-inp {
+			background-image: none;
+			font-size: 14px;
 		}
 		.formulaBtn{
 			background-position: 0 center;
 			text-align:center;
-			padding:2px 0px;
-			border:1px solid rgb(127,157,185);
-			border-top-width:0px;
-			border-left-color:#CEF;
-			#border-bottom-width:0px;
-			#margin-top:1px;
+			border:1px solid #D8D8D8;
+			border-top: 0;
 		}
 		div.z-tabpanel { 
 			border-bottom:none; 
@@ -67,40 +42,11 @@
 			border-right:none; 
 			padding:0; 
 		}
-		.z-toolbar-panel .z-toolbar-panel-start .z-toolbar-panel-cnt, .z-toolbar-start{
-			padding:2px;
-		}
-		.toolIcon img{
-			border:1px solid transparent;
-			margin-top:-1px;
-			#margin:0px;
-			_border:0 none;
-			
-		}
-		.toolIcon img:hover{
-			border:1px solid rgb(156,204,255);
-			background-color:rgb(227,249,255);
-			#margin:0px;
-		}
-		.z-toolbar a.toolIcon,.z-toolbar a.toolIcon:hover{
-			border-width:0px;
-			_border:1px solid orange;
-		}
-		.z-toolbar a.toolIcon{
-			_border:1px solid rgb(204,238,255);
-		}
-		.z-toolbar a.clicked{
-			_border:1px solid red;
-		}
-		.toolbarCombobox{
-			#margin-right:3px;
-		}
-		.toolbarSeparator img{
-			margin-top:-2px;
-		}
-		.z-toolbar .clicked img, .z-vbox .clicked img{
-   		   border-color:rgb(100,100,255);
-   		   background:rgb(180,224,255) none;
+
+		.toolbarSeparator {
+			height: 30px; 
+			width: 3px;
+			background: url('./img/sep.gif') repeat-y scroll 0 0 transparent;
 		}
 
 		.arialFont .z-menu-item-cnt, .arialFont .z-combo-item-text{
@@ -135,39 +81,16 @@
 			font-size:14px;
 			font-family:impact;
 		}
-		.zssheet{
-			border-width:0px;
-			#margin-top:-20px;
-		}
-		.z-tabs-scroll{
-			border-bottom-width:0px;
-		}
-		.z-tab .z-tab-text{
-			padding: 6px 0 0 0;
-		}
-		.z-tab-seld .z-tab-text{
-			padding: 6px 0 1px 0;
-		}
-		.z-tabs-scroll .z-tabs-cnt {
-			margin-top:-5px;
-		}
-		.formulaBar .z-combobox .z-combobox-img {
-			background-position:0 -1px;
-		}
-		.z-center-body .z-toolbar{
-			_height:25px!important;
-		}
-		
 	</style>
 		<div width="100%" style="background-color:rgb(83,175,227);display:none">	
-			<hbox>
+			<hlayout>
 			Filename:	<label id="openingFilename" value="Untitled"/>
-			</hbox>
+			</hlayout>
 		</div>
-	<borderlayout id="topToolbars" height="76px" >
+	<borderlayout id="topToolbars" height="85px" style="border-left:1px solid #E1E1E1;border-right:1px solid #E1E1E1;">
 				<!-- SECTION **********Navigator bar************************************************* -->
-				<north id="mainNavigator" sclass="mainNavigator" maxsize="800" size="22px" flex="true"
-					border="0" style="border-top:1px solid rgb(153,191,251);">
+				<north id="mainNavigator" maxsize="800" vflex="min" flex="true"
+					border="0">
 					<menubar id="menubar">
 						<menu label="${c:l('file')}">
 							<menupopup>
@@ -218,7 +141,7 @@
 						</menu>
 						<menu label="${c:l('view')}">
 							<menupopup>
-								<menuitem label="${c:l('view.formulaBar')}" forward="onViewFormulaBar" />
+								<menuitem label="${c:l('view.formulaBar')}" forward="onViewFormulaBar" autocheck="true" checked="true"/>
 								<menu label="${c:l('view.freezeRows')}">
 									<menupopup>
 										<menuitem label="${c:l('view.unfreezeRows')}"  forward="onViewUnfreezeRows" />
@@ -313,19 +236,43 @@
 				</north>
 				
 				<!-- SECTION **********FastIconToolbar*********************************************** -->
-				<center id="fastIconBtn" flex="true" border="0" style="_border-bottom:1px solid rgb(126,170,198)">
-					<toolbar>
-						<toolbarbutton id="print" sclass="toolIcon" src="/img/print.gif" forward="onClick=onPrint"/>
-							<!--  target="_blank" href="print.zul"/>-->
-						<toolbarbutton id="undo" sclass="toolIcon" src="/img/undo.gif"
-							forward="onClick=onEditUndo" />
-						<toolbarbutton id="redo" sclass="toolIcon" src="/img/redo.gif"
-							forward="onClick=onEditRedo" />
-						
+				<center id="fastIconBtn" flex="true" border="0" style="background: #F5F5F5; border-bottom: 1px solid #D8D8D8;">
+					<hlayout spacing="0.4em" height="30px">
+						<toolbarbutton id="print"  src="/img/printer.png" forward="onClick=onPrint" tooltiptext="${c:l('file.print')}"/>
+						<toolbarbutton id="undo"  src="/img/arrow-curve-180-left.png" 	forward="onClick=onEditUndo" tooltiptext="${c:l('edit.undo')}"/>
+						<toolbarbutton id="redo"  src="/img/arrow-curve.png"	forward="onClick=onEditRedo" tooltiptext="${c:l('edit.redo')}"/>
+						<!-- copy and paste -->
+						<div sclass="toolbarSeparator"></div>
+						<dropdownbutton src="/img/clipboard-paste.png" tooltiptext="${c:l('paste')}" forward="onPasteSelector(${c:l('paste')})">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+							<attribute w:name="onDropdown">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+							<pasteSelector>
+							</pasteSelector>
+						</dropdownbutton>
+						<toolbarbutton src="/img/scissors-blue.png" forward="onEditCut" tooltiptext="${c:l('edit.cut')}">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+						</toolbarbutton>
+						<toolbarbutton src="/img/document-copy.png" forward="onEditCopy" tooltiptext="${c:l('edit.copy')}">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+						</toolbarbutton>
 						<!-- font*********************************************************************** -->	
-						<toolbarbutton sclass="toolbarSeparator" src="/img/separator.bmp"/>	
-						<combobox id="fontFamilyCombobox" sclass="toolbarCombobox" width="125px" height="17px" forward="onSelect=onFontFamilySelect">
-							<comboitem label="Calibri"  			sclass="calibriFont" forward="onFontFamilySelect(Calibri)"  />
+						<div sclass="toolbarSeparator"></div>
+						<combobox id="fontFamilyCombobox"  mold="rounded" width="125px" forward="onSelect=onFontFamilySelect">
+							<attribute w:name="onOpen">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+							<attribute w:name="onSelect">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+							<comboitem label="Calibri"  			sclass="calibriFont" forward="onFontFamilySelect(Calibri)" />
 							<comboitem label="Courier New"  		sclass="courierFont" forward="onFontFamilySelect(Courier New)"  />
 							<comboitem label="Comic Sans MS"  	sclass="comicFont" forward="onFontFamilySelect(Comic Sans MS)"  />
 							<comboitem label="Times New Roman"  	sclass="timeFont" forward="onFontFamilySelect(Times New Roman)"  />
@@ -333,7 +280,13 @@
 							<comboitem label="Georgia"  			sclass="georgiaFont" forward="onFontFamilySelect(Georgia)"  />
 							<comboitem label="Impact"  			sclass="impactFont" forward="onFontFamilySelect(Impact)"  />
 						</combobox>
-						<combobox id="fontSizeCombobox" sclass="toolbarCombobox" width="42px" height="17px" forward="onSelect=onFontSizeSelect">
+						<combobox id="fontSizeCombobox"  mold="rounded" width="50px" forward="onSelect=onFontSizeSelect">
+							<attribute w:name="onOpen">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+							<attribute w:name="onSelect">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
 							<comboitem label="8" />
 							<comboitem label="9" />
 							<comboitem label="10" />
@@ -351,27 +304,75 @@
 							<comboitem label="48" />
 							<comboitem label="72" />
 						</combobox>
-						<toolbarbutton id="boldBtn" sclass="toolIcon" src="/img/bold.gif"
-							forward="onClick=onFontBoldClick" />
-						<toolbarbutton id="italicBtn" sclass="toolIcon" src="/img/italic.gif"
-							forward="onClick=onFontItalicClick" />
-						<toolbarbutton id="underlineBtn" sclass="toolIcon" src="/img/underline.gif"
-							forward="onClick=onFontUnderlineClick" />
-						<toolbarbutton id="strikethroughBtn" sclass="toolIcon" src="/img/strikethrough.gif"
-							forward="onClick=onFontStrikethroughClick" />
-							            
-						
+						<toolbarbutton id="boldBtn" src="/img/edit-bold.png" tooltiptext="${c:l('font.bold')}"
+							forward="onClick=onFontBoldClick">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+						</toolbarbutton>
+						<toolbarbutton id="italicBtn" src="/img/edit-italic.png" tooltiptext="${c:l('font.italic')}"
+							forward="onClick=onFontItalicClick">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>	
+						</toolbarbutton>
+						<toolbarbutton id="underlineBtn" src="/img/edit-underline.png" tooltiptext="${c:l('font.underline')}"
+							forward="onClick=onFontUnderlineClick">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>	
+						</toolbarbutton>
+						<toolbarbutton id="strikethroughBtn" src="/img/edit-strike.png" tooltiptext="${c:l('font.strike')}"
+							forward="onClick=onFontStrikethroughClick" >
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>	
+						</toolbarbutton>
+						<div sclass="toolbarSeparator"></div>
+						<dropdownbutton src="/img/border-bottom.png" forward="onBorderSelector(${c:l('border.bottom')})" tooltiptext="${c:l('border.bottom')}">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+							<attribute w:name="onDropdown">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+							<borderSelector></borderSelector>
+						</dropdownbutton>
+						<!-- color*********************************************************************** -->		            
+						<div sclass="toolbarSeparator"></div>
+						<colorbutton id="fontColorBtn" width="20px" height="12px" color="#000000" image="/img/edit-color.png" tooltiptext="${c:l('font.color')}">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+						</colorbutton>
+						<colorbutton id="backgroundColorBtn" width="20px" height="12px" color="#FFFFFF" image="/img/paint-can-color.png" tooltiptext="${c:l('font.fill')}">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+						</colorbutton>
 						<!-- align horizontal************************************************************************ -->
-						<toolbarbutton sclass="toolbarSeparator" src="/img/separator.bmp"/>	
-						<toolbarbutton id="alignLeftBtn" sclass="toolIcon" src="/img/alignLeft.gif"
-							forward="onClick=onAlignHorizontalClick(left)" />
-						<toolbarbutton id="alignCenterBtn" sclass="toolIcon" src="/img/alignCenter.gif"
-							forward="onClick=onAlignHorizontalClick(center)" />
-						<toolbarbutton id="alignRightBtn" sclass="toolIcon" src="/img/alignRight.gif"
-							forward="onClick=onAlignHorizontalClick(right)" />
+						<div sclass="toolbarSeparator"></div>
+						<toolbarbutton id="alignLeftBtn" src="/img/edit-alignment.png" tooltiptext="${c:l('align.left')}"
+							forward="onClick=onAlignHorizontalClick(left)">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>	
+						</toolbarbutton>
+						<toolbarbutton id="alignCenterBtn" src="/img/edit-alignment-center.png" tooltiptext="${c:l('align.center')}"
+							forward="onClick=onAlignHorizontalClick(center)">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>		
+						</toolbarbutton>
+						<toolbarbutton id="alignRightBtn" src="/img/edit-alignment-right.png" tooltiptext="${c:l('align.right')}"
+							forward="onClick=onAlignHorizontalClick(right)" >
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>	
+						</toolbarbutton>
 						
 						<!-- align vertical************************************************************************ 
-						<toolbarbutton sclass="toolbarSeparator" src="/img/separator.bmp"/>
+						<toolbarbutton src="/img/separator.bmp"/>
 						<toolbarbutton id="alignTopBtn" sclass="toolIcon" src="/img/alignTop.bmp"
 							forward="onClick=onAlignVerticalClick(top)" />
 						<toolbarbutton id="alignVerticalCenterBtn" sclass="toolIcon" src="/img/alignVerticalCenter.bmp"
@@ -379,84 +380,82 @@
 						<toolbarbutton id="alignBottomBtn" sclass="toolIcon" src="/img/alignBottom.bmp"
 							forward="onClick=onAlignVerticalClick(bottom)" />
 						-->	
-							
-						<toolbarbutton sclass="toolbarSeparator" src="/img/separator.bmp"/>
-						<!-- color & background-color************************************************************************ -->
-						<colorbutton id="fontColorBtn" width="20px" height="12px" color="#000000" image="/img/fontColor.gif">
-						</colorbutton>
-						<colorbutton id="backgroundColorBtn" width="20px" height="12px" color="#FFFFFF" image="/img/backgroundColor.gif">
-						</colorbutton>
+
 						
 						<!-- border merge******************************************************************* -->
-						<toolbarbutton sclass="toolbarSeparator" src="/img/separator.bmp"/>
-						<toolbarbutton id="borderBtn" sclass="toolIcon" src="/img/outline.gif"
-							forward="onClick=onBorderClick(toolbar)" />
-						<toolbarbutton id="mergeCellBtn" sclass="toolIcon" src="/img/mergeCell.gif"
+						<div sclass="toolbarSeparator"></div>
+						<!-- MODIFY: change to use dropdownbutton toolbarbutton id="borderBtn"  src="/img/border-outside.png" 
+							forward="onClick=onBorderClick(toolbar)" /  -->
+
+						<toolbarbutton id="mergeCellBtn" src="/img/table-join.png" tooltiptext="${c:l('cell.merge')}"
 							forward="onClick=onMergeCellClick" />
-						<toolbarbutton id="wrapTextBtn" sclass="toolIcon" src="/img/wrapText.gif"
+						<toolbarbutton id="wrapTextBtn" src="/img/wrapText.gif" tooltiptext="Wrap Text"
 							forward="onClick=onWrapTextClick" />		
-						<toolbarbutton id="insertChartBtn" sclass="toolIcon" src="/img/pieChart.gif"
+						<toolbarbutton id="insertChartBtn" src="/img/chart-pie.png" tooltiptext="${c:l('insert.chart')}"
 							forward="onClick=onInsertChart(pie)" />
-						<toolbarbutton id="sortAscending" sclass="toolIcon" src="/img/asc.png" tooltiptext="${c:l('sort.ascending')}">
+						<div sclass="toolbarSeparator"></div>
+						<dropdownbutton src="/img/sort-filter.png" tooltiptext="${c:l('sortAndFilter')}">
 							<attribute w:name="onClick">
 								this.$f('spreadsheet').focus(false);
-							</attribute>
-						</toolbarbutton>
-						<toolbarbutton id="sortDescending" sclass="toolIcon" src="/img/des.png" tooltiptext="${c:l('sort.descending')}">
-							<attribute w:name="onClick">
+							</attribute>	
+							<attribute w:name="onDropdown">
 								this.$f('spreadsheet').focus(false);
-							</attribute>
-						</toolbarbutton>
-						<toolbarbutton id="copySelection" sclass="toolIcon" src="/img/document-copy.png" tooltiptext="${c:l('edit.copy')}">
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>
-						</toolbarbutton>
-						<toolbarbutton id="pasteSelection" sclass="toolIcon" src="/img/clipboard-paste.png" tooltiptext="${c:l('paste')}">
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>
-						</toolbarbutton>
-					</toolbar>
+							</attribute>	
+							<menupopup>
+								<menuitem label="${c:l('sort.ascending')}" src="/img/asc.png"
+									forward="onSortSelector(${c:l('sort.ascending')})">
+									<attribute w:name="onClick">
+										this.$f('spreadsheet').focus(false);
+									</attribute>
+								</menuitem>
+								<menuitem label="${c:l('sort.descending')}" src="/img/des.png"
+									forward="onSortSelector(${c:l('sort.descending')})" >
+									<attribute w:name="onClick">
+										this.$f('spreadsheet').focus(false);
+									</attribute>								
+								</menuitem>
+								<menuitem label="${c:l('sort.custom')}"
+									forward="onSortSelector(${c:l('sort.custom')})" >
+									<attribute w:name="onClick">
+										this.$f('spreadsheet').focus(false);
+									</attribute>
+								</menuitem>
+								<menuseparator />
+								<!-- Filter:not support yet -->
+								<menuitem label="${c:l('filter')}" src="/img/funnel--pencil.png"
+									forward="onFilterSelector(${c:l('filter')})" disabled="true"/>
+								<menuitem label="${c:l('filter.clear')}" src="/img/funnel--minus.png"
+									forward="onFilterSelector(${c:l('filter.clear')})" disabled="true"/>
+								<menuitem label="${c:l('filter.reapply')}" src="/img/funnel--arrow.png"
+									forward="onFilterSelector(${c:l('filter.reapply')})" disabled="true"/>
+							</menupopup>
+						</dropdownbutton>	
+					</hlayout>
 				</center>
 				
 				<!-- SECTION **********Formula bar*********************************************** -->
-				<south id="formulaBar" size="23px" flex="true" border="0px" >
-						<borderlayout sclass="formulaBar">
-							<west size="245px" border="none" flex="true">
-								<hbox spacing="0px" width="245px">
-									<!-- spreadsheet focus position, rename lbposCombobox to focusPosition-->
-									<combobox id="focusPosition"
-										sclass="lbposCombobox" 
-										height="21px"
-										width="185px"  
-										style="font-size:16px;text-align:center;margin-right:-2px;#margin:0px;border:0px">
-										<comboitem id="lbpos" label="A1" />
-									</combobox>
-									<div width="40px" height="19px"	sclass="formulaBtn">
-										<toolbarbutton sclass="fBtn"
-											style="width:40px;text-decoration:none;color:black;font-size:16px;font-style:italic;text-align:center;border-width:1px 0px"
+				<south id="formulaBar" size="26px" flex="true" border="0px" style="border-bottom: 1px solid #D8D8D8;">
+					<hlayout spacing="0px" hflex="min">
+						<combobox id="focusPosition" sclass="focusPosCombobox" 
+									height="21px" width="185px" mold="rounded"
+									style="text-align:center;">
+							<comboitem id="lbpos" label="A1" /></combobox>
+						<div hflex="min" sclass="formulaBtn">
+							<toolbarbutton style="text-decoration:none;color:black;font-size:16px;font-style:italic;text-align:center;"
 											label="f(x)" forward="onFormulaBarBtn" />
-									</div>
-								</hbox>
-							</west>
-							<center border="none" flex="true">
-								<!-- tbxval2 rename to formulaEditbox -->
-								<textbox height="19px" id="formulaEditbox"
+						</div>
+						<textbox height="19px" id="formulaEditbox"
 									style="font-size:16px;border:0px;padding:3px"
 									action="onkeyup:zkau.send({uuid: 'tbxval2', 
 			           										   cmd:  'onChanging', 
 			           										   data: [this.value]},
 			           										   25)" />
-							</center>
-						</borderlayout>
+					</hlayout>
 				</south>
 	</borderlayout>
-	<vbox width="100%" sclass="sheetTBBar">
-		<tabbox id="sheetTB">
-			<tabs id="sheetTabs"></tabs>
-		</tabbox>
-	</vbox>
+	<tabbox id="sheetTB" width="100%">
+		<tabs id="sheetTabs"></tabs>
+	</tabbox>
 
 	<!-- rename ss1 to spreadsheet  -->
 	<spreadsheet id="spreadsheet" src="/xls/demo_sample.xls" maxrows="200"
@@ -477,30 +476,6 @@
 	<filedeletewin />
 	<filesaveaswin />
 	<menuPrintWin />
-	<!-- If you have any suggestions or need some help, please feel free to tell us at <toolbarbutton label="forum" href="http://www.zkoss.org/forum/" target="_blank"/>.
-	<separator />
-	Or <toolbarbutton label="bug tracker at sourceforge" href="http://sourceforge.net/tracker/?group_id=213617&amp;atid=1026430" target="_blank"/>.
-	Format Type:<label id="formatTypeLabel" value=""/>
-	<separator />
-	Format Code:<label id="formatCodeLabel" value=""/>
-	<separator />
-	EditText:<label id="editTextLabel" value=""/>
-	<separator />
-	Result:<label id="resultLabel" value=""/>
-	<separator />
-	Value:<label id="valueLabel" value=""/>
-	<separator />
-	Text:<label id="textLabel" value=""/>
-	<separator />
-	<separator />
-	Border top:<label id="top1Label" value=""/> <label id="top2Label" value=""/>
-	<separator />
-	Border right:<label id="right1Label" value=""/> <label id="right2Label" value=""/>
-	<separator />
-	Border bottom:<label id="bottom1Label" value=""/> <label id="bottom2Label" value=""/>
-	<separator />
-	Border left:<label id="left1Label" value=""/> <label id="left2Label" value=""/>
-	 -->
 	<revisionmenu />
 	<attribute name="onCreate"> 
 		fontFamilyCombobox.selectedIndex=0;

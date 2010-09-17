@@ -1,17 +1,16 @@
 <%@ taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" %>
 <%-- Colorbox --%>
 .z-colorbtn, .z-colorbtn-currcolor {
-	width: 22px;
-	height: 22px;
+	width: 16px;
 }
 .z-colorbtn {
+	border: 1px solid transparent;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	margin:0 2px;
 	overflow: hidden;
 	display: inline-block;
 	vertical-align: middle;
-	border: 1px solid #86A4BE;
 	padding: 3px;
 	position: relative;
 	<c:if test="${c:isExplorer()}">
@@ -19,6 +18,10 @@
 		*display: inline;
 	</c:if>
 }
+.z-colorbtn-over {
+	background: #E3F9FF;
+	border: 1px solid #7EAAC6;
+} 
 .z-colorbtn-btn, .z-colorbtn-currcolor {
 	overflow: hidden;
 	cursor: pointer;
@@ -26,10 +29,11 @@
 }
 .z-colorbtn-btn {
 	bottom: 1px;
+	padding-bottom: 1px;
 }
 .z-colorbtn-currcolor {
 	bottom: 1px;
-	left: 1px;
+	left: 4px;
 	height: 3px;
 	z-index: 8;
 }
@@ -200,11 +204,13 @@
 	height: 20px;
 	border: 1px solid #86A4BE;
 	margin: 4px 2px;
+	position: relative;
+	left: 120px;
 }
 .z-colorpalette-hex-inp, .z-colorpalette-btn {
 	position: absolute;
-	top: 4px;
-	left: 60px;
+	top: 5px;
+	left: 180px;
 }
 .z-colorpalette-btn {
 	left: 200px;
@@ -222,4 +228,33 @@
 }
 .z-colorpalette-colorbox-over {
 	border: 1px solid #000000;
+}
+.z-colorbtn-palette-btn,
+.z-colorbtn-picker-btn {
+	z-index: 10;
+	width: 22px;
+	height: 22px;
+	cursor: pointer;
+	position: absolute;
+	background: url(${c:encodeURL('~./zkex/img/breeze/colorbox/cb-buttons.gif')});
+}
+.z-colorbtn-palette-btn {
+	left: 6px;
+	top: 5px;
+	background-position:  0 0;
+}
+.z-colorbtn-picker-btn {
+	left: 31px;
+	top: 5px;
+	background-position:  0 -44px;
+}
+.z-palette-btn .z-colorbtn-palette-btn {
+	left: 6px;
+	background-position:  0 -22px;
+}
+.z-palette-btn .z-colorbtn-picker-btn {
+	left: 31px;
+}
+.z-picker-btn .z-colorbtn-picker-btn {
+	background-position:  0 -66px;
 }

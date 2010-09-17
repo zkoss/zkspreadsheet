@@ -41,7 +41,7 @@ public class RangeHelper {
 
 	// dummy
 	public String[] getRangeList() {
-		Book book = spreadsheet.getBook();
+		Book book = MainWindowCtrl.getInstance().getSpreadsheet().getBook();
 		int len = book.getNumberOfNames();
 		String[] names = new String[len];
 		for(int j=0; j < len; ++j) {

@@ -18,7 +18,7 @@ lineHeight=20
 	/*font-family: Tahoma, Arial, Helvetica, sans-serif;*/
 	background:#FFFFFF;
 	overflow:hidden;
-	border:1px solid #8AA3C1;
+	border:1px solid #D8D8D8;
 }
 
 .zsscroll {

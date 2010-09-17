@@ -1,0 +1,8 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<vlayout>
+	<label value="${c:l('hyperlink.typeCellReference')}"></label>
+	<textbox id="cellRef" />
+	<label label="${c:l('hyperlink.selectInDocument')}" />
+	<tree id="refSheet">
+	</tree>
+</vlayout>

@@ -28,8 +28,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.PictureData;
@@ -142,8 +145,9 @@ public class Utils {
 
 	/**
 	 * Pastes to a destination from source {@link Rect}
-	 * @param sheet the sheet to sort 
+	 * @param srcSheet the source sheet 
 	 * @param srcRect paste source range
+	 * @param dstSheet paste to the sheet
 	 * @param rowIndex row index
 	 * @param colIndex column index
 	 * @param pasteType the part of the range to be pasted
@@ -151,14 +155,347 @@ public class Utils {
 	 * @param skipBlanks true to not have blank cells in the ranage on the Clipboard pasted into this range; default false
 	 * @param transpose true to transpose rows and columns when pasting to this range; default false
 	 */
-	public static void pasteSpecial(Sheet sheet, Rect srcRect, int rowIndex, int colIndex, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
-		Range rng = Utils.getRange(sheet, srcRect.getTop(), srcRect.getLeft(), srcRect.getBottom(), srcRect.getRight());
+	public static void pasteSpecial(Sheet srcSheet, Rect srcRect, Sheet dstSheet, int rowIndex, int colIndex, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
+		Range rng = Utils.getRange(srcSheet, srcRect.getTop(), srcRect.getLeft(), srcRect.getBottom(), srcRect.getRight());
 		int srcColCount = srcRect.getRight() - srcRect.getLeft();
 		int srcRowCount = srcRect.getBottom() - srcRect.getTop();
-		Range dstRange = Utils.getRange(sheet, rowIndex, colIndex, rowIndex + srcRowCount, colIndex + srcColCount);
+		Range dstRange = Utils.getRange(dstSheet, rowIndex, colIndex, rowIndex + srcRowCount, colIndex + srcColCount);
 		rng.pasteSpecial(dstRange, pasteType, pasteOp, skipBlanks, transpose);
 	}
 
+	/**
+	 * Set font in selection range. 
+	 * <p> Copy original cell style, and set new font.
+	 * @param sheet
+	 * @param rect selection range
+	 * @param boldWeight 
+	 * @param color color to use
+	 * @param fontHeight the font height in unit's of 1/20th of a point
+	 * @param fontName the name for the font
+	 * @param italic use italics or not
+	 * @param strikeout strikeout or not
+	 * @param typeOffset offset type to use
+	 * @param underline underline type
+	 */
+	public static void setFont(Sheet sheet, Rect rect, short boldWeight, short color, short fontHeight, String fontName, 
+			boolean italic, boolean strikeout, short typeOffset, byte underline) {
+
+		final Book book  = (Book) sheet.getWorkbook();
+		Font font = BookHelper.getOrCreateFont(book, boldWeight, color,
+				fontHeight, fontName, italic, strikeout, typeOffset, underline);
+		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
+			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
+				Cell cell = Utils.getOrCreateCell(sheet, row, col);
+				CellStyle cs = cell.getCellStyle();
+				final Font srcFont = book.getFontAt(cs.getFontIndex());
+				if (srcFont.equals(font))// same font, no need to change it
+					continue;
+
+				// create a new CellStyle and use the new font
+				CellStyle newCellStyle = book.createCellStyle();
+				newCellStyle.cloneStyleFrom(cs);
+				newCellStyle.setFont(font);
+
+				Range rng = Utils.getRange(sheet, row, col);
+				rng.setStyle(newCellStyle);
+			}
+	}
+	
+	/**
+	 * Set font family in selection range
+	 * <p> Copy the original cell style, font style, and set new font family
+	 * @param sheet 
+	 * @param rect selection range
+	 * @param fontName font name
+	 */
+	public static void setFontFamily(Sheet sheet, Rect rect, String fontName) {
+		final Book book  = (Book) sheet.getWorkbook();
+		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
+			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
+				Cell cell = Utils.getOrCreateCell(sheet, row, col);
+				CellStyle cs = cell.getCellStyle();
+
+				int fontidx  = cs.getFontIndex();
+				Font srcFont = book.getFontAt((short)fontidx);
+				String srcFontName = srcFont.getFontName();
+				if (srcFontName == fontName) //same font, no need to change it
+					continue;
+
+				Font newFont = BookHelper.getOrCreateFont(book, 
+						srcFont.getBoldweight(), srcFont.getColor(), srcFont.getFontHeight(), fontName, 
+						srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
+				CellStyle newCellStyle = book.createCellStyle();
+				newCellStyle.cloneStyleFrom(cs);
+				newCellStyle.setFont(newFont);
+
+				Range rng = Utils.getRange(sheet, row, col);
+				rng.setStyle(newCellStyle);
+			}
+	}
+	
+	/**
+	 * Set the font height in unit's of 1/20th of a point
+	 * <p> Copy the original cell style, font style, and set new font family
+	 * @param sheet 
+	 * @param rect selection range
+	 * @param fontHeight font height in 1/20ths of a point
+	 */
+	public static void setFontHeight(Sheet sheet, Rect rect, short fontHeight) {
+		final Book book  = (Book) sheet.getWorkbook();
+		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
+			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
+				Cell cell = Utils.getOrCreateCell(sheet, row, col);
+				CellStyle cs = cell.getCellStyle();
+
+				int fontidx  = cs.getFontIndex();
+				Font srcFont = book.getFontAt((short)fontidx);
+				short srcFontHeight = srcFont.getFontHeight();
+				if (srcFontHeight == fontHeight) //same font, no need to change it
+					continue;
+
+				Font newFont = BookHelper.getOrCreateFont(book, 
+						srcFont.getBoldweight(), srcFont.getColor(), fontHeight, srcFont.getFontName(), 
+						srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
+				CellStyle newCellStyle = book.createCellStyle();
+				newCellStyle.cloneStyleFrom(cs);
+				newCellStyle.setFont(newFont);
+
+				Range rng = Utils.getRange(sheet, row, col);
+				rng.setStyle(newCellStyle);
+			}
+	}
+	
+	/**
+	 * Set the font bold.
+	 * <p> Copy the original cell style, font style, and set bold.
+	 * @param sheet
+	 * @param rect
+	 * @param isBold
+	 */
+	public static void setFontBold(Sheet sheet, Rect rect, boolean isBold) {
+		final Book book  = (Book) sheet.getWorkbook();
+		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
+			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
+				Cell cell = Utils.getOrCreateCell(sheet, row, col);
+				CellStyle cs = cell.getCellStyle();
+
+				int fontidx  = cs.getFontIndex();
+				Font srcFont = book.getFontAt((short)fontidx);
+				boolean srcIsBold = srcFont.getBoldweight() == Font.BOLDWEIGHT_BOLD;
+				if (srcIsBold == isBold)
+					continue;
+
+				Font newFont = BookHelper.getOrCreateFont(book, 
+						isBold ? Font.BOLDWEIGHT_BOLD : Font.BOLDWEIGHT_NORMAL, srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
+						srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
+				CellStyle newCellStyle = book.createCellStyle();
+				newCellStyle.cloneStyleFrom(cs);
+				newCellStyle.setFont(newFont);
+
+				Range rng = Utils.getRange(sheet, row, col);
+				rng.setStyle(newCellStyle);
+			}
+	}
+	
+	/**
+	 * Set the font Italic.
+	 * <p> Copy the original cell style, font style, and set italic.
+	 * @param sheet
+	 * @param rect
+	 * @param isItalic
+	 */
+	public static void setFontItalic(Sheet sheet, Rect rect,boolean isItalic) {
+		final Book book  = (Book) sheet.getWorkbook();
+		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
+			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
+				Cell cell = Utils.getOrCreateCell(sheet, row, col);
+				CellStyle cs = cell.getCellStyle();
+
+				int fontidx  = cs.getFontIndex();
+				Font srcFont = book.getFontAt((short)fontidx);
+				boolean srcIsItalic = srcFont.getItalic();
+				if (srcIsItalic == isItalic)
+					continue;
+
+				Font newFont = BookHelper.getOrCreateFont(book, 
+						srcFont.getBoldweight(), srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
+						isItalic, srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
+				CellStyle newCellStyle = book.createCellStyle();
+				newCellStyle.cloneStyleFrom(cs);
+				newCellStyle.setFont(newFont);
+
+				Range rng = Utils.getRange(sheet, row, col);
+				rng.setStyle(newCellStyle);
+			}
+	}
+	
+	/**
+	 * Set the font underline.
+	 * <p> Copy the original cell style, font style, and set underline.
+	 * @param sheet
+	 * @param rect
+	 * @param isItalic
+	 */
+	public static void setFontUnderline(Sheet sheet, Rect rect, byte underline) {
+		final Book book  = (Book) sheet.getWorkbook();
+		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
+			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
+				Cell cell = Utils.getOrCreateCell(sheet, row, col);
+				CellStyle cs = cell.getCellStyle();
+
+				int fontidx  = cs.getFontIndex();
+				Font srcFont = book.getFontAt((short)fontidx);
+				byte srcUnderline = srcFont.getUnderline();
+				if (srcUnderline == underline)
+					continue;
+
+				Font newFont = BookHelper.getOrCreateFont(book, 
+						srcFont.getBoldweight(), srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
+						srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), underline);
+				CellStyle newCellStyle = book.createCellStyle();
+				newCellStyle.cloneStyleFrom(cs);
+				newCellStyle.setFont(newFont);
+
+				Range rng = Utils.getRange(sheet, row, col);
+				rng.setStyle(newCellStyle);
+			}
+	}
+	
+	/**
+	 * Set the font strikeout.
+	 * <p> Copy the original cell style, font style, and set strikeout.
+	 * @param sheet
+	 * @param rect
+	 * @param isStrikeout
+	 */
+	public static void setFontStrikeout(Sheet sheet, Rect rect,boolean isStrikeout) {
+		final Book book  = (Book) sheet.getWorkbook();
+		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
+			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
+				Cell cell = Utils.getOrCreateCell(sheet, row, col);
+				CellStyle cs = cell.getCellStyle();
+
+				int fontidx  = cs.getFontIndex();
+				Font srcFont = book.getFontAt((short)fontidx);
+				boolean srcStrikeout = srcFont.getStrikeout();
+				if (srcStrikeout == isStrikeout)
+					continue;
+
+				Font newFont = BookHelper.getOrCreateFont(book, 
+						srcFont.getBoldweight(), srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
+						srcFont.getItalic(), isStrikeout, srcFont.getTypeOffset(), srcFont.getUnderline());
+				CellStyle newCellStyle = book.createCellStyle();
+				newCellStyle.cloneStyleFrom(cs);
+				newCellStyle.setFont(newFont);
+
+				Range rng = Utils.getRange(sheet, row, col);
+				rng.setStyle(newCellStyle);
+			}
+	}
+	
+	/**
+	 * Set alignment in selection range
+	 * @param sheet
+	 * @param rect
+	 * @param alignment
+	 */
+	public static void setAlignment(Sheet sheet, Rect rect, short alignment) {
+
+		final Book book  = (Book) sheet.getWorkbook();
+		for (int row = rect.getTop(); row <= rect.getBottom(); row++) {
+			for (int col = rect.getLeft(); col <= rect.getRight(); col++)  {
+				Cell cell = Utils.getOrCreateCell(sheet, row, col);
+				CellStyle cs = cell.getCellStyle();
+				final short srcAlign = cs.getAlignment();
+				if (srcAlign == alignment)
+					continue;
+
+				CellStyle newCellStyle = book.createCellStyle();
+				newCellStyle.cloneStyleFrom(cs);
+				newCellStyle.setAlignment(alignment);
+				
+				Range rng = Utils.getRange(sheet, row, col);
+				rng.setStyle(newCellStyle);
+			}
+		}
+	}
+
+	/**
+	 * Visit each cell in the {@link #Rect}
+	 * @param sheet
+	 * @param rect
+	 * @param vistor
+	 */
+	public static void visitCells(Sheet sheet, Rect rect, CellVisitor vistor) {
+		for (int row = rect.getTop(); row <= rect.getBottom(); row++) {
+			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
+				CellVisitorContext context = new CellVisitorContext(sheet, row, col);
+				vistor.doVisit(context);
+			}
+		}
+	}
+	
+	/**
+	 * Set background color in selection range. 
+	 * <p> Copy original cell style, and set new background color
+	 * @param sheet sheet to set background color
+	 * @param rect selection range
+	 * @param color color to use
+	 */
+	public static void setBackgroundColor(Sheet sheet, Rect rect, String color) {
+
+		final Book book  = (Book) sheet.getWorkbook();
+		short colorIndex = BookHelper.rgbToIndex(book, color);
+		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
+			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
+				Cell cell = Utils.getOrCreateCell(sheet, row, col);
+				CellStyle cs = cell.getCellStyle();
+				final short srcColor = cs.getFillForegroundColor();
+				if (srcColor == colorIndex) //same color, no need to change it
+					continue;
+				CellStyle newCellStyle = book.createCellStyle();
+				newCellStyle.cloneStyleFrom(cs);
+				newCellStyle.setFillForegroundColor(colorIndex);
+
+				Range rng = Utils.getRange(sheet, row, col);
+				rng.setStyle(newCellStyle);
+			}
+	}
+	
+	/**
+	 * Sets the border in selection range
+	 * @param sheet sheet to set border
+	 * @param rect selection range
+	 * @param borderType border type
+	 * @param lineStyle border line style
+	 * @param color border color
+	 */
+	public static void setBorder(Sheet sheet, Rect rect, short borderType, BorderStyle lineStyle, String color) {
+		int lCol = rect.getLeft();
+		int rCol = rect.getRight();
+		int tRow = rect.getTop();
+		int bRow = rect.getBottom();
+
+		Range rng = null;
+		switch (borderType) {
+		case BookHelper.BORDER_EDGE_BOTTOM:
+			rng = Utils.getRange(sheet, bRow, lCol, bRow, rCol);
+			break;
+		case BookHelper.BORDER_EDGE_RIGHT:
+			rng = Utils.getRange(sheet, tRow, rCol, bRow, rCol);
+			break;
+		case BookHelper.BORDER_EDGE_TOP:
+			rng = Utils.getRange(sheet, tRow, lCol, tRow, rCol);
+			break;
+		case BookHelper.BORDER_EDGE_LEFT:
+			rng = Utils.getRange(sheet, tRow, lCol, bRow, lCol);
+			break;
+		default:
+			rng = Utils.getRange(sheet, tRow, lCol, bRow, rCol);
+		}
+		rng.setBorders(borderType, lineStyle, color);
+	}
+	
 	/**
 	 * Format and escape a {@link Hyperlink} to HTML &lt;a> string.
 	 * @param sheet the sheet with the RichTextString 
@@ -501,7 +838,6 @@ public class Utils {
 	 * @param value the user input text
 	 */
 	public static void setEditText(Sheet sheet, int row, int col, String value) {
-		//System.out.println("setEditText val: " + value);
 		final Cell cell = getOrCreateCell(sheet, row, col);
 		setEditText(cell, value);
 	}

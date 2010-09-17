@@ -5,7 +5,8 @@
 		border="normal" mode="modal" closable="true" position="center"
 		vflex="min" width="580px"
 		apply="org.zkoss.zss.app.PasteSpecialWindowCtrl">
-		<div style="margin: 5px 5px 5px 0;">${c:l('paste')}</div>
+		<div style="padding: 5px">
+		<div style="margin-bottom: 5px;">${c:l('paste')}</div>
 		<radiogroup id="pasteSelector">
 			<grid>
 				<rows>
@@ -77,9 +78,10 @@
 		<!-- To do
 			<button label="Paste Link"></button>
 		-->
-		<div height="35px" style="margin: 15px 5px 5px 0;">
-			<button id="okBtn" image="/img/tick.png" style="float:right;">
+		<div height="25px" style="margin: 10px 0 10px 10px;">
+			<button id="okBtn" image="/img/tick.png" style="float:right;" mold="trendy">
 			</button>
+		</div>
 		</div>
 	</window>
 </zk>

@@ -5,7 +5,7 @@
 	<menuitem label="${c:l('edit.cut')}" forward="onEditCut" />
 	<menuitem label="${c:l('edit.copy')}" forward="onEditCopy" />
 	<menuitem label="${c:l('edit.paste')}" forward="onEditPaste" />
-	<menuitem id="pasteSpecial" label="${c:l('pasteSpecial')}" forward="onPasteSpecial" />
+	<menuitem label="${c:l('pasteSpecial')}" forward="onPasteSelector(${c:l('pasteSpecial')})" />
 	<menuseparator />
 	<menuitem label="${c:l('edit.clearContent')}" forward="onClearContent" />
 	<menuitem label="${c:l('edit.clearStyle')}" forward="onClearStyle" />
@@ -22,11 +22,11 @@
 	<menuseparator />
 	<menu label="${c:l('sort')}">
 		<menupopup>
-			<menuitem id="sortAscendingMenu" label="${c:l('sort.ascending')}" image="/img/asc.png">
+			<menuitem label="${c:l('sort.ascending')}" image="/img/asc.png" forward="onSortSelector(${c:l('sort.ascending')})">
 			</menuitem>
-			<menuitem id="sortDescendingMenu" label="${c:l('sort.descending')}" image="/img/des.png">
+			<menuitem label="${c:l('sort.descending')}" image="/img/des.png" forward="onSortSelector(${c:l('sort.descending')})">
 			</menuitem>
-			<menuitem id="customSort" label="${c:l('sort.custom')}">
+			<menuitem label="${c:l('sort.custom')}" forward="onSortSelector(${c:l('sort.custom')})">
 			</menuitem>
 		</menupopup>
 	</menu>

@@ -597,10 +597,14 @@ public final class BookHelper {
 	
 	public static short rgbToIndex(Book book, String color) {
 		HSSFPalette palette = ((HSSFWorkbook)book).getCustomPalette();
-		byte red = Byte.parseByte(color.substring(1,3), 16); //red
-		byte green = Byte.parseByte(color.substring(3,5), 16); //green
-		byte blue = Byte.parseByte(color.substring(5), 16); //blue
-		HSSFColor pcolor = palette.findColor(red, green, blue);
+		short red = Short.parseShort(color.substring(1,3), 16); //red
+		short green = Short.parseShort(color.substring(3,5), 16); //green
+		short blue = Short.parseShort(color.substring(5), 16); //blue
+		byte r = (byte)Math.abs((byte)red);
+		byte g = (byte)Math.abs((byte)green);
+		byte b = (byte)Math.abs((byte)blue);
+		
+		HSSFColor pcolor = palette.findColor(r, g, b);
 		if (pcolor != null) { //find default palette
 			return pcolor.getIndex();
 		} else {
@@ -609,8 +613,20 @@ public final class BookHelper {
 			if (tcolor != null)
 				return tcolor.getIndex();
 			else {
-				HSSFColor ncolor = palette.addColor(red, green, blue);
-				return ncolor.getIndex();
+				try {
+					HSSFColor ncolor = palette.addColor(r, g, b);
+					return ncolor.getIndex();
+				} catch (RuntimeException ex) {
+					//return similar color if can't add new color to palette
+					/**
+					 * TODO: find a better solution for fix this issue
+					 * 
+					 * While there is no space for adding a color into palette
+					 * return similar color cause return inexact color
+					 */
+					return palette.findSimilarColor(red, green, blue).getIndex();
+				}
+				
 			}
 		}
 	}

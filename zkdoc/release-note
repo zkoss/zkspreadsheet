@@ -42,6 +42,15 @@ ZK Spreadsheet 2.0.0 beta3
   62 Support getRepeatingRowsAndColumns
   58 Support printing ZK Spreadsheet to PDF file
   63 ZK Spreadsheet Live support copy/paste/pastSpecial menu and toolbarbutton
+  76 ZK Spreadsheet Live support set font by toolbarbutton and menu
+  77 ZK Spreadsheet Live support set font size menu and toolbarbutton
+  78 ZK Spreadsheet Live support set color to cell and font by menu and toolbarbutton
+  79 ZK Spreadsheet Live support set font bold by menu and toolbarbutton
+  80 ZK Spreadsheet Live support set font italic by menu and toolbarbutton
+  81 ZK Spreadsheet Live support set font underline by menu and toolbarbutton
+  82 ZK Spreadsheet Live support set font strike by menu and toolbarbutton
+  83 ZK Spreadsheet Live support set cell alignment by menu and toolbarbutton
+  84 ZK Spreadsheet Live support clear cell style by menu
 
 *Bug
   56 zss error in log   

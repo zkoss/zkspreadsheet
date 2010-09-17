@@ -13,5 +13,14 @@
 			<css-uri>css/colorbutton.css.dsp</css-uri>
 		</mold>
 	</component>
-	
+	<component>
+		<component-name>dropdownbutton</component-name>
+		<component-class>org.zkoss.zss.app.Dropdownbutton</component-class>
+		<widget-class>zssapp.Dropdownbutton</widget-class>
+		<mold>
+			<mold-name>default</mold-name>
+			<mold-uri>mold/dropdownbutton.js</mold-uri>
+			<css-uri>css/dropdownbutton.css.dsp</css-uri>
+		</mold>
+	</component>
 </language-addon>

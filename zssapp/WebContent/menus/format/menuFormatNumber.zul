@@ -1,7 +1,7 @@
-<window id="${arg.id}" title="Number Format" width="360px" height="260px" border="normal" visible="false">
+<window id="${arg.id}" title="Number Format" width="360px" height="520px" border="normal" visible="false" closable="true" position="center">
 	<div style="margin:7px">
-	<hbox spacing="0px">
-		<vbox>
+	<hlayout spacing="0px">
+		<vlayout>
 			<listbox id="mfn_category" width="100px">
 				<listhead sizable="true">
 					<listheader label="Category:" sort="auto" />
@@ -22,16 +22,16 @@
 				<listitem label="Text" onClick="openOnlyMyList(&quot;mfn_text&quot;)" />
 				<listitem label="Special" onClick="openOnlyMyList(&quot;mfn_special&quot;)" />
 			</listbox>
-		</vbox>
-		<vbox>
-			<listbox id="mfn_general" rows="11" width="230px">
+		</vlayout>
+		<vlayout >
+			<listbox id="mfn_general" rows="11" width="220px">
 			<listhead sizable="true">
 					<listheader label="Sample:" />
 			</listhead>
 <!--				<listitem label="general" value="General" />-->
 				<listitem label="No specific number format" value="" />
 			</listbox>
-			<listbox id="mfn_number" rows="11" width="230px">
+			<listbox id="mfn_number" rows="11" width="210px">
 			<listhead sizable="true">
 					<listheader label="Sample:" />
 			</listhead>
@@ -41,7 +41,7 @@
 				<listitem label="(1234.10) red" value="0.00_);[Red](0.00)"
 					style="color: red;" />
 			</listbox>
-			<listbox id="mfn_currency" rows="11" width="230px">
+			<listbox id="mfn_currency" rows="11" width="220px">
 			<listhead sizable="true">
 					<listheader label="Sample:" />
 			</listhead>
@@ -52,7 +52,7 @@
 				<listitem label="($1,234.10) red" value="#,##0.00_);[Red](#,##0.00)"
 					style="color: red;" />
 			</listbox>
-			<listbox id="mfn_accounting" rows="11" width="230px">
+			<listbox id="mfn_accounting" rows="11" width="210px">
 			<listhead sizable="true">
 					<listheader label="Sample:" />
 			</listhead>
@@ -60,7 +60,7 @@
 					value="_($* #,##0.00_);_($*
 					(#,##0.00);_($* &quot;-&quot;??_);_(@_)" />
 			</listbox>
-			<listbox id="mfn_date" rows="11" width="230px">
+			<listbox id="mfn_date" rows="11" width="220px">
 			<listhead sizable="true">
 					<listheader label="Sample:" />
 			</listhead>
@@ -84,7 +84,7 @@
 				<listitem label="3/14/2001" value="m/d/yyyy;@" />  
 				-->
 			</listbox>
-			<listbox id="mfn_time" rows="11" width="230px">
+			<listbox id="mfn_time" rows="11" width="220px">
 			<listhead sizable="true">
 					<listheader label="Sample:" />
 			</listhead>
@@ -98,13 +98,13 @@
 				<listitem label="*3/14/01 1:30 PM" value="[$-409]m/d/yy h:mm AM/PM;@" />
 				<listitem label="*3/14/01 13:30" value="m/d/yy h:mm;@" />
 			</listbox>
-			<listbox id="mfn_percentage" rows="11" width="230px">
+			<listbox id="mfn_percentage" rows="11" width="210px">
 			<listhead sizable="true">
 					<listheader label="Sample:" />
 			</listhead>
 				<listitem label="percentage" value="0.00%" />
 			</listbox>
-			<listbox id="mfn_fraction" rows="11" width="230px">
+			<listbox id="mfn_fraction" rows="11" width="220px">
 			<listhead sizable="true">
 					<listheader label="Sample:" />
 			</listhead>
@@ -118,19 +118,19 @@
 				<listitem label="As tenths(3/10)" value="# ?/10" />
 				<listitem label="As hundredths(30/100)" value="# ??/100" />
 			</listbox>
-			<listbox id="mfn_scientific" rows="11" width="230px">
+			<listbox id="mfn_scientific" rows="11" width="220px">
 			<listhead sizable="true">
 					<listheader label="Sample:" />
 			</listhead>
 				<listitem label="scientific" value="0.00E+00" />
 			</listbox>
-			<listbox id="mfn_text" rows="11" width="230px">
+			<listbox id="mfn_text" rows="11" width="210px">
 			<listhead sizable="true">
 					<listheader label="Sample:" />
 			</listhead>
 				<listitem label="text" value="@" />
 			</listbox>
-			<listbox id="mfn_special" rows="11" width="230px">
+			<listbox id="mfn_special" rows="11" width="220px">
 			<listhead sizable="true">
 					<listheader label="Sample:" />
 			</listhead>
@@ -139,17 +139,17 @@
 				<listitem label="Phone Number" value="[&lt;=9999999]###-####;(###)###-####" />
 				<listitem label="Social Security Number" value="000-00-0000" />
 			</listbox>
-		</vbox>
-	</hbox>
-	<hbox style="margin-top:3px;float:right">
-		<button label="OK" forward="//p1/mainWin.onFormatOK(number)" />
-		<button label="Cancel">
+		</vlayout>
+	</hlayout>
+	<hlayout style="margin-top:3px;float:right">
+		<button label="OK" forward="//p1/mainWin.onFormatOK(number)" mold="trendy"/>
+		<button label="Cancel" mold="trendy">
 			<attribute name="onClick"> 
 			Path.getComponent("//p1/mainWin/spreadsheet").highlight=null;
 			formatNumberWin.setVisible(false);			
 		</attribute>
 		</button>
-	</hbox>
+	</hlayout>
 	<zscript><![CDATA[
 		void openOnlyMyList(String listId){
 			String[] myList = {"mfn_general","mfn_number","mfn_currency","mfn_accounting","mfn_date","mfn_time","mfn_percentage","mfn_fraction","mfn_scientific","mfn_text","mfn_special"};

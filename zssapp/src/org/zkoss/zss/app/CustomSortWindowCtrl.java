@@ -92,7 +92,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	private Spreadsheet ss;
 	private Checkbox caseSensitive;
 	private Checkbox hasHeader;
-	private Listbox sortOrientationLB;
+	private Combobox sortOrientationCombo;
 	private Window sortWin;
 	private Button addBtn;
 	private Button delBtn;
@@ -110,6 +110,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
+		sortOrientationCombo.setSelectedIndex(0);
 		initSortLevelListbox();
 	}
 
@@ -260,10 +261,10 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		model.set(sourceIdx, dstSort);
 	}
 	
-	public void onSelect$sortOrientationLB () {
+	public void onSelect$sortOrientationCombo () {
 		boolean orientation;
-		Listitem seld = sortOrientationLB.getSelectedItem();
-		orientation = getLabel(ORIENTATION_COLUMN_KEY).equals(seld) ? 
+		Comboitem seld = sortOrientationCombo.getSelectedItem();
+		orientation = getLabel(ORIENTATION_COLUMN_KEY).equals(seld.getLabel()) ? 
 				SORT_TOP_TO_BOTTOM : SORT_LEFT_TO_RIGHT;
 		if (sortOrientation != orientation) {
 			sortOrientation = orientation;
@@ -306,6 +307,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		public SortIndexSelector (SortLevel sort) {
 			setWidth("100%");
 			setReadonly(true);
+			setMold("rounded");
 			this.sort = sort;
 			setModel(sortIndexModel);
 		} 
@@ -355,6 +357,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 			this.sort = sort;
 			setWidth("100%");
 			setReadonly(true);
+			setMold("rounded");
 			appendComboitemsBySortIndex(sort.sortIndex);
 			setSelectedIndex(sort.order == SortLevel.ASCENDING ? 0 : 1);
 		}

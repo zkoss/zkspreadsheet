@@ -1,30 +1,23 @@
-<window id="rangeDeleteWin" title="Delete Range" border="normal">
-	<zk>
-		<zscript> <![CDATA[	
-			import org.zkoss.zss.app.SimpleListModelIgnoreCase; 
-			import org.zkoss.zss.app.RangeHelper;			
-			RangeHelper rh = new RangeHelper(Path.getComponent("//p1/mainWin/ss1"));
-			String[] rangeNames = rh.getRangeList();			
-			ListModel strset = new SimpleListModelIgnoreCase(rangeNames);
-			]]>
-		</zscript>
-	</zk>
-	<vbox>	
-	Existed Ranges:
-	<listbox id="rdw_rangeList" model="${strset}" forward="onSelect=//p1/mainWin.onRange(selectChangeDelete)">
-	</listbox>
-	<hbox>
-	<button label="OK" forward="//p1/mainWin.onRange(delete)">
-	</button>
-	<button label="Cancel">
-		<attribute name="onClick"> 			
-			self.getSpaceOwner().detach();			
-		</attribute>
-	</button>
-	</hbox>
-	</vbox>
-	<attribute name="onCreate"> 
-		rdw_range.selectedIndex=0;
-	</attribute>		
+<window id="rangeDeleteWin" title="Delete Range" border="normal" position="center" closable="true" width="480px">
+	<zscript> <![CDATA[
+	import org.zkoss.zss.app.SimpleListModelIgnoreCase;
+	import org.zkoss.zss.app.RangeHelper;
+	RangeHelper rh = new RangeHelper(Path.getComponent("//p1/mainWin/ss1"));
+	String[] rangeNames = rh.getRangeList();
+	ListModel strset = new SimpleListModelIgnoreCase(rangeNames);
+	]]></zscript>
+	<vlayout style="padding: 5px;">
+		<div style="padding-bottom:5px;">Existed Ranges:</div>
+		<listbox id="rdw_rangeList" model="${strset}"
+			forward="onSelect=//p1/mainWin.onRange(selectChangeDelete)">
+		</listbox>
+		<div style="padding: 5px 0 5px 0;">
+			<button image="/img/tick.png" forward="//p1/mainWin.onRange(delete)" mold="trendy">
+			</button>
+		</div>
+	</vlayout>
+	<attribute name="onCreate">
+	rdw_range.selectedIndex = 0;
+</attribute>
 </window>
 

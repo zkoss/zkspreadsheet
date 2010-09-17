@@ -1,0 +1,15 @@
+<!-- my border selector need id ?? maybe doesn't need All-->
+<menupopup id="${arg.id}">
+	<menuitem src="/img/clipboard-paste.png" label="${c:l('paste')}"
+		forward="onPasteSelector(${c:l('paste')})"/>
+	<menuitem label="${c:l('paste.formula')}" 
+		forward="onPasteSelector(${c:l('paste.formula')})"/>
+	<menuitem label="${c:l('paste.value')}"
+		forward="onPasteSelector(${c:l('paste.value')})"/>
+	<menuitem label="${c:l('paste.allExcpetBorder')}"
+		forward="onPasteSelector(${c:l('paste.allExcpetBorder')})"/>
+	<menuitem label="${c:l('paste.transpose')}"  
+		forward="onPasteSelector(${c:l('paste.transpose')})"/>
+	<menuitem label="${c:l('pasteSpecial')}" 
+		forward="onPasteSelector(${c:l('pasteSpecial')})"/>
+</menupopup>

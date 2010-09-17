@@ -22,8 +22,11 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Toolbarbutton;
+import org.zkoss.zul.Window;
 
 /**
  * @author Sam
@@ -43,16 +46,35 @@ public class FastIconMenuCtrl extends GenericForwardComposer{
 	
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		
 	}
 	
 	public void onChange$_fontColorBtn(Event event) {
 		MainWindowCtrl.getInstance().setFontColor(_fontColorBtn.getColor());
+		getCurrentWindow().setVisible(false);
 	}
 
 	public void onChange$_backgroundColorBtn(Event event) {
 		MainWindowCtrl.getInstance().setBackgroundColor(_backgroundColorBtn.getColor());
+		getCurrentWindow().setVisible(false);
 	}
 	
+	public void onSelect$_fontFamilyCombobox(Event event) {
+		getCurrentWindow().setVisible(false);
+		String seldFont = _fontFamilyCombobox.getSelectedItem().getLabel();
+		MainWindowCtrl.getInstance().setFontFamily(seldFont);
+	}
 	
+	public void onSelect$_fontSizeCombobox(Event event) {
+		getCurrentWindow().setVisible(false);
+		MainWindowCtrl.getInstance().setFontSize(_fontSizeCombobox.getSelectedItem().getLabel());
+	}
+	
+	public void onBorderSelector(ForwardEvent evt) {
+		MainWindowCtrl.getInstance().onBorderSelector(evt);
+		getCurrentWindow().setVisible(false);
+	}
+	
+	private Window getCurrentWindow() {
+		return (Window)spaceOwner;
+	}
 }

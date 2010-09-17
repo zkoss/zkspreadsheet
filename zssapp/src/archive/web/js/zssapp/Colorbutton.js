@@ -1,4 +1,6 @@
 
+(function () {
+	
 zssapp.Colorbutton = zk.$extends(zkex.inp.Colorbox, {
 	$define: {
 		/** Sets the image URI.
@@ -14,10 +16,21 @@ zssapp.Colorbutton = zk.$extends(zkex.inp.Colorbox, {
 		}
 	},
 	doMouseOver_: function () {
-		this.$n().style.backgroundColor = '#E3F9FF';
+		jq(this.$n()).addClass(this.getZclass() + '-over');
 	},
 	doMouseOut_: function () {
-		this.$n().style.backgroundColor = '';
+		jq(this.$n()).removeClass(this.getZclass() + '-over');
+	},
+	bind_: function () {
+		this.$supers('bind_', arguments);
+		var img = this.getImageNode();
+		if (img)
+			img.src = this.getImage();
+	},
+	//
+	_doBtnClick: function (evt) {
+		this.$supers('_doBtnClick', arguments);
+		this.fire("onClick");
 	},
 	/**
 	 * Returns the image DOM element
@@ -28,12 +41,9 @@ zssapp.Colorbutton = zk.$extends(zkex.inp.Colorbox, {
 	//override
 	onSize: _cb = function () {
 		var n = this.$n(),
-			colorNode = this.$n('currcolor');
-		if (colorNode) {
-			var color = this._currColor;
-			colorNode.style.backgroundColor = color.getHex();
-			//jq(n).css('backgroundColor', '');
-		}
+			c = this.$n('currcolor');
+		if (c)
+			c.style.backgroundColor = this._currColor.getHex();
 	},
 	//override
 	onShow: _cb,
@@ -42,3 +52,4 @@ zssapp.Colorbutton = zk.$extends(zkex.inp.Colorbox, {
 		return zcs != null ? zcs: "z-colorbtn";
     }
 });
+})();
