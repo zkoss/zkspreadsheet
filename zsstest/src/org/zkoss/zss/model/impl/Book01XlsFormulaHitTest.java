@@ -47,7 +47,7 @@ import org.zkoss.zss.model.impl.HSSFBookImpl;
  * @author henrichen
  *
  */
-public class Book1XlsFormulaHitTest {
+public class Book01XlsFormulaHitTest {
 	private Book _book;
 	private FormulaEvaluator _evaluator;
 
