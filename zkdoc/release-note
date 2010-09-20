@@ -18,6 +18,8 @@ ZK Spreadsheet 2.0.0 RC
   84 ZK Spreadsheet Live support clear cell style by menu
   85 Support insertRange(Excel 2007, xlsx)   	 
   86 Support deleteRange(Excel 2007, xlsx)
+  88 Support moveRange(Excel 2007, xlsx)   	 
+  89 Support merge(Excel 2007, xlsx) 
   
 *Bug
   66 Unexpected gridlines shown 
@@ -27,7 +29,7 @@ ZK Spreadsheet 2.0.0 RC
   68 Exception when set text format to ?/2, ?/4, ?/8, ?/16, ??/100
   69 Incorrect text output when enter value 0 into cell with text format "???/???"
   44 Locale is not respected
-  87 =HYPERLINK() function in Excel 2007xlsx not show as a hyperlink
+  87 =HYPERLINK() function in Excel 2007xlsx not follow as a hyperlink
   
 	------------
 ZK Spreadsheet 2.0.0 beta3

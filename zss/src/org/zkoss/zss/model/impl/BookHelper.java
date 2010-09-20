@@ -1727,7 +1727,16 @@ public final class BookHelper {
 		return new ChangeInfo(last, all, changeMerges);
 	}
 
+	//TODO as SheetCtrl interface
 	public static ChangeInfo moveRange(Sheet sheet, int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
+		if (sheet instanceof HSSFSheet) {
+			return moveHSSFRange(sheet, tRow, lCol, bRow, rCol, nRow, nCol);
+		} else {
+			return moveXSSFRange(sheet, tRow, lCol, bRow, rCol, nRow, nCol);
+		}
+	}
+		
+	private static ChangeInfo moveHSSFRange(Sheet sheet, int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
 		if (nRow == 0 && nCol == 0) { //nothing to do!
 			return null;
 		}
@@ -1755,6 +1764,36 @@ public final class BookHelper {
 		
 		return new ChangeInfo(last, all, changeMerges);
 	}
+	
+	private static ChangeInfo moveXSSFRange(Sheet sheet, int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
+		if (nRow == 0 && nCol == 0) { //nothing to do!
+			return null;
+		}
+		final Book book = (Book) sheet.getWorkbook();
+		final RefSheet refSheet = getRefSheet(book, sheet);
+		final Set<Ref>[] refs = refSheet.moveRange(tRow, lCol, bRow, rCol, nRow, nCol);
+		final List<CellRangeAddress[]> shiftedRanges = nCol != 0 && nRow == 0 ? 
+			((XSSFSheetImpl)sheet).shiftColumnsRange(lCol, rCol, nCol, tRow, bRow, true, false, true, false, Range.FORMAT_NONE):
+			nCol == 0 && nRow != 0 ?
+			((XSSFSheetImpl)sheet).shiftRowsRange(tRow, bRow, nRow, lCol, rCol, true, false, true, false, Range.FORMAT_NONE):
+			((XSSFSheetImpl)sheet).shiftBothRange(tRow, bRow, nRow, lCol, rCol, nCol, true); //nCol != 0 && nRow != 0
+		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
+		final Set<Ref> last = refs[0];
+		final Set<Ref> all = refs[1];
+		shiftFormulas(all, sheet, tRow, bRow, nRow, lCol, rCol, nCol);
+		all.add(new AreaRefImpl(tRow, lCol, bRow, rCol, refSheet)); //original selection
+		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
+		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
+		int ntRow = Math.max(0, tRow + nRow);
+		int nlCol = Math.max(0, lCol + nCol);
+		int nbRow = Math.min(maxrow, bRow + nRow);
+		int nrCol = Math.min(maxcol, rCol + nCol);
+		if (ntRow <= nbRow && nlCol <= nrCol)
+		all.add(new AreaRefImpl(ntRow, nlCol, nbRow, nrCol, refSheet));
+		
+		return new ChangeInfo(last, all, changeMerges);
+	}
+	
 	
 	private static List<MergeChange> prepareChangeMerges(RefSheet sheet, List<CellRangeAddress[]> shiftedRanges) {
 		final List<MergeChange> changeMerges = new ArrayList<MergeChange>();
@@ -3084,6 +3123,70 @@ if (fillType == FILL_DEFAULT) {
         return shiftedRegions;
     }
 
+    /**
+     * Shifts the merged regions left or right depending on mode
+     * <p>
+     * @param start
+     * @param end
+     * @param n
+     * @param horizontal
+     */
+    public static List<CellRangeAddress[]> shiftBothMergedRegion(Sheet sheet, int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
+        List<CellRangeAddress[]> shiftedRegions = new ArrayList<CellRangeAddress[]>();
+        //move merged regions completely if they fall within the new region boundaries when they are shifted
+        final int dsttRow = tRow + nRow;
+        final int dstbRow = bRow + nRow;
+        final int dstlCol = lCol + nCol;
+        final int dstrCol = rCol + nCol;
+        
+        for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+        	CellRangeAddress merged = sheet.getMergedRegion(i);
+        	
+        	int firstRow = merged.getFirstRow();
+        	int lastRow = merged.getLastRow();
+        	int firstCol = merged.getFirstColumn();
+        	int lastCol = merged.getLastColumn();
+        	if (firstCol >= lCol && lastCol <= rCol && firstRow >= tRow && lastRow <= bRow) { //source total cover
+                CellRangeAddress[] rngs = new CellRangeAddress[2]; //[0] old, [1] new
+       			merged.setFirstColumn(firstCol  + nCol);
+       			merged.setLastColumn(lastCol + nCol);
+       			merged.setFirstRow(firstRow + nRow);
+       			merged.setLastRow(lastRow + nRow);
+    			rngs[1] = merged;
+       			rngs[0] = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+    			shiftedRegions.add(rngs);
+       			sheet.removeMergedRegion(i);
+       			i = i - 1; //back up now since we removed one
+        		continue;
+        	}
+        	
+        	if (firstCol >= dstlCol && lastCol <= dstrCol && firstRow >= dsttRow && lastRow <= dstbRow) { //destination total cover
+                CellRangeAddress[] rngs = new CellRangeAddress[2]; //[0] old, [1] null
+       			rngs[0] = merged;
+    			shiftedRegions.add(rngs);
+       			sheet.removeMergedRegion(i);
+       			i = i - 1; //back up now since we removed one
+        		continue;
+        	}
+        	
+        	//destination partial cover (not allowed) 
+        	if (firstRow <= dstbRow && lastRow >= dsttRow && firstCol <= dstrCol && lastCol >= dstlCol) {
+        		throw new RuntimeException("Cannot change part of a merged cell.");
+        	}
+        }
+    	
+        //read so it doesn't get shifted again
+        Iterator<CellRangeAddress[]> iterator = shiftedRegions.iterator();
+        while (iterator.hasNext()) {
+            CellRangeAddress region = iterator.next()[1];
+            if (region != null) {
+            	sheet.addMergedRegion(region);
+            }
+        }
+        
+        return shiftedRegions;
+    }
+    
     //20100916, henrichen@zkoss.org: assign a destination cell per the given source cell except the row and column address
 	public static void assignCell(XSSFCell srcCell, XSSFCell dstCell) {
 		//assign cell formats

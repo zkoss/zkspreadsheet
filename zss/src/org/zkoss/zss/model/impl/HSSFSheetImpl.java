@@ -78,70 +78,6 @@ public class HSSFSheetImpl extends HSSFSheet {
 		_helper = new HSSFSheetHelper(this);
     }
     
-    /**
-     * Shifts the merged regions left or right depending on mode
-     * <p>
-     * @param start
-     * @param end
-     * @param n
-     * @param horizontal
-     */
-    //20100705, henrichen@zkoss.org: add shift columns
-    protected List<CellRangeAddress[]> shiftBothMergedRegion(int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
-        List<CellRangeAddress[]> shiftedRegions = new ArrayList<CellRangeAddress[]>();
-        //move merged regions completely if they fall within the new region boundaries when they are shifted
-        final int dsttRow = tRow + nRow;
-        final int dstbRow = bRow + nRow;
-        final int dstlCol = lCol + nCol;
-        final int dstrCol = rCol + nCol;
-        
-        for (int i = 0; i < getNumMergedRegions(); i++) {
-        	CellRangeAddress merged = getMergedRegion(i);
-        	
-        	int firstRow = merged.getFirstRow();
-        	int lastRow = merged.getLastRow();
-        	int firstCol = merged.getFirstColumn();
-        	int lastCol = merged.getLastColumn();
-        	if (firstCol >= lCol && lastCol <= rCol && firstRow >= tRow && lastRow <= bRow) { //source total cover
-                CellRangeAddress[] rngs = new CellRangeAddress[2]; //[0] old, [1] new
-       			merged.setFirstColumn(firstCol  + nCol);
-       			merged.setLastColumn(lastCol + nCol);
-       			merged.setFirstRow(firstRow + nRow);
-       			merged.setLastRow(lastRow + nRow);
-    			rngs[1] = merged;
-       			rngs[0] = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
-    			shiftedRegions.add(rngs);
-       			removeMergedRegion(i);
-       			i = i - 1; //back up now since we removed one
-        		continue;
-        	}
-        	
-        	if (firstCol >= dstlCol && lastCol <= dstrCol && firstRow >= dsttRow && lastRow <= dstbRow) { //destination total cover
-                CellRangeAddress[] rngs = new CellRangeAddress[2]; //[0] old, [1] null
-       			rngs[0] = merged;
-    			shiftedRegions.add(rngs);
-       			removeMergedRegion(i);
-       			i = i - 1; //back up now since we removed one
-        		continue;
-        	}
-        	
-        	//destination partial cover (not allowed) 
-        	if (firstRow <= dstbRow && lastRow >= dsttRow && firstCol <= dstrCol && lastCol >= dstlCol) {
-        		throw new RuntimeException("Cannot change part of a merged cell.");
-        	}
-        }
-    	
-        //read so it doesn't get shifted again
-        Iterator<CellRangeAddress[]> iterator = shiftedRegions.iterator();
-        while (iterator.hasNext()) {
-            CellRangeAddress region = iterator.next()[1];
-            if (region != null) {
-            	this.addMergedRegion(region);
-            }
-        }
-        
-        return shiftedRegions;
-    }
     //20100520, henrichen@zkoss.org: Shift rows only, don't handle formula
     /**
      * Shifts rows between startRow and endRow n number of rows.
@@ -981,7 +917,7 @@ public class HSSFSheetImpl extends HSSFSheet {
 
         final int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
         final int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
-        final List<CellRangeAddress[]> shiftedRanges = shiftBothMergedRegion(tRow, lCol, bRow, rCol, nRow, nCol);
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftBothMergedRegion(this, tRow, lCol, bRow, rCol, nRow, nCol);
         for ( int rowNum = s; rowNum >= tRow && rowNum <= bRow && rowNum >= 0 && rowNum <= maxrow; rowNum += inc ) {
             HSSFRow row = getRow( rowNum );
             // notify all cells in this row that we are going to shift them,

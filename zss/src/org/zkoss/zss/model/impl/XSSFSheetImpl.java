@@ -25,13 +25,17 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.formula.FormulaShifter;
 import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellHelper;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFComment;
 import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFRowHelper;
 import org.apache.poi.hssf.usermodel.HSSFWorkbookHelper;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -44,6 +48,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.CalculationChain;
@@ -344,6 +349,9 @@ public class XSSFSheetImpl extends XSSFSheet {
             	if (!oldCells.isEmpty()) {
             		TreeMap<Integer, XSSFCell> cells = new TreeMap<Integer, XSSFCell>(oldCells);
             		rowCells.put(newRownum, cells);
+            		for (Cell cell : cells.values()) {
+            			row.removeCell(cell);
+            		}
             	}
             }
             
@@ -959,6 +967,133 @@ public class XSSFSheetImpl extends XSSFSheet {
         XSSFWorkbook book = getWorkbook();
         int sheetIndex = book.getSheetIndex(this);
         PtgShifter shifter = new PtgShifter(sheetIndex, 0, maxrow, 0, startCol, endCol, n, SpreadsheetVersion.EXCEL2007);
+        updateNamedRanges(book, shifter);
+        
+        return shiftedRanges;
+    }
+    
+    public List<CellRangeAddress[]> shiftBothRange(int tRow, int bRow, int nRow, int lCol, int rCol, int nCol, boolean moveComments) {
+    	int startRow = Math.max(tRow, getFirstRowNum());
+    	int endRow = Math.min(bRow, getLastRowNum());
+        if (nRow > 0) {
+	        if (tRow > endRow ) { //nothing to do
+	        	return Collections.emptyList();
+	        }
+        } else {
+        	if ((tRow + nRow) > endRow) { //nothing to do
+	        	return Collections.emptyList();
+        	}
+        }
+        
+        final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
+        final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftBothMergedRegion(this, tRow, lCol, bRow, rCol, nRow, nCol);
+        
+        final List<int[]> removePairs = new ArrayList<int[]>(); //row spans to be removed 
+        final TreeMap<Integer, TreeMap<Integer, XSSFCell>> rowCells = new TreeMap<Integer, TreeMap<Integer, XSSFCell>>();
+        int expectRownum = tRow; //handle sparse rows which might override destination row
+    	int maxColNum = -1;
+    	if (startRow <= endRow) {
+	        for (Iterator<XSSFRow> it = getRows().subMap(startRow, endRow+1).values().iterator(); it.hasNext() ; ) {
+	            XSSFRow row = it.next();
+	            int rownum = row.getRowNum();
+
+	            final int newRownum = rownum + nRow;
+	            if (newRownum > maxrow) { //nothing to do
+	            	break;
+	            }
+	            if (rownum > expectRownum) { //sparse row between expectRownum(inclusive) and current row(exclusive), to be removed
+	            	addRemovePair(removePairs, expectRownum + nRow, newRownum);
+	            }
+	            expectRownum = rownum + 1;
+	            
+            	SortedMap<Integer, XSSFCell> oldCells = row.getCells().subMap(new Integer(lCol), new Integer(rCol+1));
+            	if (!oldCells.isEmpty()) {
+            		TreeMap<Integer, XSSFCell> cells = new TreeMap<Integer, XSSFCell>(oldCells);
+            		rowCells.put(newRownum, cells);
+            		for(Cell cell : cells.values()) { //remove reference from row to the cell
+            			row.removeCell(cell);
+            		}
+            	}
+	        }
+    	}
+    	
+    	//spare row between expectedRownum(inclusive) to endRow+1(exclusive), to be remove
+    	addRemovePair(removePairs, expectRownum + nRow, endRow + 1 + nRow);
+    	
+    	//really remove rows of the target
+    	final int tgtlCol = Math.max(0, lCol + nCol);
+    	final int tgtrCol = Math.min(maxcol, rCol + nCol);
+    	for(int[] pair : removePairs) {
+    		final int start = Math.max(0, pair[0]);
+    		final int end = pair[1];
+    		for(int j=start; j < end; ++j) {
+    			Row row = getRow(j);
+    			if (row != null) {
+    				removeCells(row, tgtlCol, tgtrCol);
+    			}
+    		}
+    	}
+
+        //really update the row's cells
+        for (Entry<Integer, TreeMap<Integer, XSSFCell>> entry : rowCells.entrySet()) {
+        	final int rownum = entry.getKey().intValue();
+        	final TreeMap<Integer, XSSFCell> cells = entry.getValue();
+        	XSSFRow row = getRow(rownum);
+        	if (row == null) {
+        		row = createRow(rownum);
+        	} else {
+        		removeCells(row, tgtlCol, tgtrCol);
+        	}
+        	for(Entry<Integer, XSSFCell> cellentry : cells.entrySet()) {
+        		final int colnum = cellentry.getKey().intValue() + nCol;
+        		if (colnum < 0) { //out of bound
+        			continue;
+        		}
+        		if (colnum > maxcol) {
+        			break;
+        		}
+        		final XSSFCell srcCell = cellentry.getValue();
+        		BookHelper.assignCell(srcCell, row.createCell(colnum));
+        	}
+        }
+    	
+        // Move comments from the source column to the
+        //  destination column. Note that comments can
+        //  exist for cells which are null
+        if (moveComments) {
+            final CommentsTable sheetComments = getCommentsTable(false);
+            if(sheetComments != null){
+                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
+                CTCommentList lst = sheetComments.getCTComments().getCommentList();
+                for (final Iterator<CTComment> it = lst.getCommentList().iterator(); it.hasNext();) {
+                	CTComment comment = it.next();
+                    CellReference ref = new CellReference(comment.getRef());
+                    final int colnum = ref.getCol();
+                    final int rownum = ref.getRow();
+                    if(lCol <= colnum && colnum <= rCol && tRow <= rownum && rownum <= bRow){
+                    	int newColNum = colnum + nCol;
+                    	int newRowNum = rownum + nRow;
+                    	if (newColNum < 0 || newColNum > maxcol 
+                    		|| newRowNum < 0 || newRowNum > maxrow) { //out of bound, shall remove it 
+                    		it.remove(); 
+                    	} else {
+	                        ref = new CellReference(newRowNum, newColNum);
+	                        comment.setRef(ref.formatAsString());
+                    	}
+                    }
+                }
+            }
+        }
+        
+        // Shift Hyperlinks which have been moved
+        shiftHyperlinks(tRow, bRow, nRow, lCol, rCol, nCol);
+        
+        // Update any formulas on this sheet that point to
+        // columns which have been moved
+        XSSFWorkbook book = getWorkbook();
+        int sheetIndex = book.getSheetIndex(this);
+        PtgShifter shifter = new PtgShifter(sheetIndex, tRow, bRow, nRow, lCol, rCol, nCol, SpreadsheetVersion.EXCEL2007);
         updateNamedRanges(book, shifter);
         
         return shiftedRanges;
