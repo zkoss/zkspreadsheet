@@ -76,6 +76,7 @@ To compete zk 3.0.6, in IE, i must add 'div.' before rule, if there is font-size
 	*display: inline;
 }
 .zshbouni{
+	*position: absolute; /* DIFF */
 	display: inline-block; /* DIFF */
 	zoom: 1;
 	*display: inline;
@@ -85,14 +86,19 @@ To compete zk 3.0.6, in IE, i must add 'div.' before rule, if there is font-size
 	display: inline-block; /* DIFF */
 	zoom: 1;
 	*display: inline;
+	*position: absolute; /* DIFF */
+	*left:7px;
 }
 
 .zsvbouni{
+	*position: absolute;/* DIFF */
 	font-size: 0; /* DIFF */
 }
 
 .zsvbounw{
 	font-size: 0; /* DIFF */
+	*position: absolute; /* DIFF */
+	*top:7px;
 }
 
 .zsscroll {

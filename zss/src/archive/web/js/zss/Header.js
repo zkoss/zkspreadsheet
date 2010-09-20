@@ -172,7 +172,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		if (jq('#zk_sghost')) //if exists, remove it first
 			jq('#zk_sghost').remove();
 
-		var html = ['<div id="zk_sghost" style="background:#AAA;position:absolute;top:', top, 'px;left:',
+		var html = ['<div id="zk_sghost" style="font-size:0;line-height:0px;background:#AAA;position:absolute;top:', top, 'px;left:',
 		            left, 'px;width:', width, 'px;height:', height, 'px;"></div>'].join('');
 		jq(document.body).append(html);
 		
