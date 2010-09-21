@@ -27,6 +27,6 @@ public interface CellVisitor {
 	/**
 	 * @param context
 	 */
-	void doVisit(CellVisitorContext context);
+	void handle(CellVisitorContext context);
 
 }

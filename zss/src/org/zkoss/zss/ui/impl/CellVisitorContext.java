@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.impl.BookHelper;
 
 /**
  * @author Sam
@@ -76,6 +77,45 @@ public class CellVisitorContext {
 		return newCellStyle;
 	}
 	
+	public Font getOrCreateFont(short boldWeight, short color, short fontHeight, java.lang.String name, 
+			boolean italic, boolean strikeout, short typeOffset, byte underline) {
+		return BookHelper.getOrCreateFont(book, 
+				boldWeight, color, fontHeight, name, 
+				italic, strikeout, typeOffset, underline);
+	}
+
+	/**
+	 * Returns whether font is italic or not.
+	 * @return
+	 */
+	public boolean isItalic() {
+		return getFont().getItalic();
+	}
+	
+	/**
+	 * Returns whether font is bold or not.
+	 * @return
+	 */
+	public boolean isBold() {
+		return getFont().getBoldweight() == Font.BOLDWEIGHT_BOLD;
+	}
+
+	/**
+	 * Returns font height
+	 * @return
+	 */
+	public short getFontHeight() {
+		return getFont().getFontHeight();
+	}
+	
+	/**
+	 * Returns font family
+	 * @return
+	 */
+	public String getFontFamily() {
+		return getFont().getFontName();
+	}
+	
 	/**
 	 * Returns the cell's alignment
 	 * @return
@@ -84,7 +124,18 @@ public class CellVisitorContext {
 		return cell.getCellStyle().getAlignment();
 	}
 	
+	/**
+	 * Returns the range
+	 * @return
+	 */
 	public Range getRange() {
 		return Utils.getRange(sheet, row, col);
+	}
+
+	/**
+	 * @return
+	 */
+	public Cell getCell() {
+		return cell;
 	}
 }

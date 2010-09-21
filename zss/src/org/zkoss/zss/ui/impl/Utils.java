@@ -177,28 +177,22 @@ public class Utils {
 	 * @param typeOffset offset type to use
 	 * @param underline underline type
 	 */
-	public static void setFont(Sheet sheet, Rect rect, short boldWeight, short color, short fontHeight, String fontName, 
-			boolean italic, boolean strikeout, short typeOffset, byte underline) {
+	public static void setFont(Sheet sheet, Rect rect, final short boldWeight, final short color, final short fontHeight, final String fontName, 
+			final boolean italic, final boolean strikeout, final short typeOffset, final byte underline) {
 
-		final Book book  = (Book) sheet.getWorkbook();
-		Font font = BookHelper.getOrCreateFont(book, boldWeight, color,
-				fontHeight, fontName, italic, strikeout, typeOffset, underline);
-		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
-			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
-				Cell cell = Utils.getOrCreateCell(sheet, row, col);
-				CellStyle cs = cell.getCellStyle();
-				final Font srcFont = book.getFontAt(cs.getFontIndex());
-				if (srcFont.equals(font))// same font, no need to change it
-					continue;
+		visitCells(sheet, rect, new CellVisitor(){
 
-				// create a new CellStyle and use the new font
-				CellStyle newCellStyle = book.createCellStyle();
-				newCellStyle.cloneStyleFrom(cs);
-				newCellStyle.setFont(font);
-
-				Range rng = Utils.getRange(sheet, row, col);
-				rng.setStyle(newCellStyle);
-			}
+			@Override
+			public void handle(CellVisitorContext context) {
+				Font srcFont = context.getFont();
+				Font font = context.getOrCreateFont(boldWeight, color,
+						fontHeight, fontName, italic, strikeout, typeOffset, underline);
+				if (!srcFont.equals(font)) {
+					CellStyle newStyle = context.cloneCellStyle();
+					newStyle.setFont(font);
+					context.getRange().setStyle(newStyle);
+				}
+			}});
 	}
 	
 	/**
@@ -208,29 +202,24 @@ public class Utils {
 	 * @param rect selection range
 	 * @param fontName font name
 	 */
-	public static void setFontFamily(Sheet sheet, Rect rect, String fontName) {
-		final Book book  = (Book) sheet.getWorkbook();
-		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
-			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
-				Cell cell = Utils.getOrCreateCell(sheet, row, col);
-				CellStyle cs = cell.getCellStyle();
+	public static void setFontFamily(Sheet sheet, Rect rect, final String fontName) {
 
-				int fontidx  = cs.getFontIndex();
-				Font srcFont = book.getFontAt((short)fontidx);
-				String srcFontName = srcFont.getFontName();
-				if (srcFontName == fontName) //same font, no need to change it
-					continue;
+		visitCells(sheet, rect, new CellVisitor(){
 
-				Font newFont = BookHelper.getOrCreateFont(book, 
-						srcFont.getBoldweight(), srcFont.getColor(), srcFont.getFontHeight(), fontName, 
-						srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
-				CellStyle newCellStyle = book.createCellStyle();
-				newCellStyle.cloneStyleFrom(cs);
-				newCellStyle.setFont(newFont);
+			@Override
+			public void handle(CellVisitorContext context) {
+				String srcFontName = context.getFontFamily();
 
-				Range rng = Utils.getRange(sheet, row, col);
-				rng.setStyle(newCellStyle);
+				if (srcFontName != fontName) {
+					Font srcFont = context.getFont();
+					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), srcFont.getColor(), srcFont.getFontHeight(), fontName, 
+							srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
+					CellStyle newStyle = context.cloneCellStyle();
+					newStyle.setFont(newFont);
+					context.getRange().setStyle(newStyle);
+				}
 			}
+		});
 	}
 	
 	/**
@@ -240,29 +229,22 @@ public class Utils {
 	 * @param rect selection range
 	 * @param fontHeight font height in 1/20ths of a point
 	 */
-	public static void setFontHeight(Sheet sheet, Rect rect, short fontHeight) {
-		final Book book  = (Book) sheet.getWorkbook();
-		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
-			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
-				Cell cell = Utils.getOrCreateCell(sheet, row, col);
-				CellStyle cs = cell.getCellStyle();
+	public static void setFontHeight(Sheet sheet, Rect rect, final short fontHeight) {
 
-				int fontidx  = cs.getFontIndex();
-				Font srcFont = book.getFontAt((short)fontidx);
-				short srcFontHeight = srcFont.getFontHeight();
-				if (srcFontHeight == fontHeight) //same font, no need to change it
-					continue;
+		visitCells(sheet, rect, new CellVisitor(){
 
-				Font newFont = BookHelper.getOrCreateFont(book, 
-						srcFont.getBoldweight(), srcFont.getColor(), fontHeight, srcFont.getFontName(), 
+			@Override
+			public void handle(CellVisitorContext context) {
+				short srcFontHgh = context.getFontHeight();
+				if (srcFontHgh != fontHeight) {
+					Font srcFont = context.getFont();
+					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), srcFont.getColor(), fontHeight, srcFont.getFontName(), 
 						srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
-				CellStyle newCellStyle = book.createCellStyle();
-				newCellStyle.cloneStyleFrom(cs);
-				newCellStyle.setFont(newFont);
-
-				Range rng = Utils.getRange(sheet, row, col);
-				rng.setStyle(newCellStyle);
-			}
+					CellStyle newStyle = context.cloneCellStyle();
+					newStyle.setFont(newFont);
+					context.getRange().setStyle(newStyle);
+				}
+			}});
 	}
 	
 	/**
@@ -272,29 +254,22 @@ public class Utils {
 	 * @param rect
 	 * @param isBold
 	 */
-	public static void setFontBold(Sheet sheet, Rect rect, boolean isBold) {
-		final Book book  = (Book) sheet.getWorkbook();
-		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
-			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
-				Cell cell = Utils.getOrCreateCell(sheet, row, col);
-				CellStyle cs = cell.getCellStyle();
+	public static void setFontBold(Sheet sheet, Rect rect, final boolean isBold) {
 
-				int fontidx  = cs.getFontIndex();
-				Font srcFont = book.getFontAt((short)fontidx);
-				boolean srcIsBold = srcFont.getBoldweight() == Font.BOLDWEIGHT_BOLD;
-				if (srcIsBold == isBold)
-					continue;
+		visitCells(sheet, rect, new CellVisitor(){
 
-				Font newFont = BookHelper.getOrCreateFont(book, 
-						isBold ? Font.BOLDWEIGHT_BOLD : Font.BOLDWEIGHT_NORMAL, srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
-						srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
-				CellStyle newCellStyle = book.createCellStyle();
-				newCellStyle.cloneStyleFrom(cs);
-				newCellStyle.setFont(newFont);
-
-				Range rng = Utils.getRange(sheet, row, col);
-				rng.setStyle(newCellStyle);
-			}
+			@Override
+			public void handle(CellVisitorContext context) {
+				boolean srcBold = context.isBold(); 
+				if (srcBold != isBold) {
+					Font srcFont = context.getFont();
+					Font newFont = context.getOrCreateFont(isBold ? Font.BOLDWEIGHT_BOLD : Font.BOLDWEIGHT_NORMAL, srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
+							srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
+					CellStyle newStyle = context.cloneCellStyle();
+					newStyle.setFont(newFont);
+					context.getRange().setStyle(newStyle);
+				}
+			}});
 	}
 	
 	/**
@@ -304,29 +279,23 @@ public class Utils {
 	 * @param rect
 	 * @param isItalic
 	 */
-	public static void setFontItalic(Sheet sheet, Rect rect,boolean isItalic) {
-		final Book book  = (Book) sheet.getWorkbook();
-		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
-			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
-				Cell cell = Utils.getOrCreateCell(sheet, row, col);
-				CellStyle cs = cell.getCellStyle();
+	public static void setFontItalic(Sheet sheet, Rect rect, final boolean isItalic) {
 
-				int fontidx  = cs.getFontIndex();
-				Font srcFont = book.getFontAt((short)fontidx);
-				boolean srcIsItalic = srcFont.getItalic();
-				if (srcIsItalic == isItalic)
-					continue;
+		visitCells(sheet, rect, new CellVisitor(){
 
-				Font newFont = BookHelper.getOrCreateFont(book, 
-						srcFont.getBoldweight(), srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
-						isItalic, srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
-				CellStyle newCellStyle = book.createCellStyle();
-				newCellStyle.cloneStyleFrom(cs);
-				newCellStyle.setFont(newFont);
+			@Override
+			public void handle(CellVisitorContext context) {
+				Font srcFont = context.getFont();
+				boolean srcItalic = context.isItalic();
 
-				Range rng = Utils.getRange(sheet, row, col);
-				rng.setStyle(newCellStyle);
-			}
+				if (srcItalic != isItalic) {
+					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
+							isItalic, srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
+					CellStyle newStyle = context.cloneCellStyle();
+					newStyle.setFont(newFont);
+					context.getRange().setStyle(newStyle);
+				}
+			}});
 	}
 	
 	/**
@@ -336,29 +305,23 @@ public class Utils {
 	 * @param rect
 	 * @param isItalic
 	 */
-	public static void setFontUnderline(Sheet sheet, Rect rect, byte underline) {
-		final Book book  = (Book) sheet.getWorkbook();
-		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
-			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
-				Cell cell = Utils.getOrCreateCell(sheet, row, col);
-				CellStyle cs = cell.getCellStyle();
+	public static void setFontUnderline(Sheet sheet, Rect rect, final byte underline) {
+		
+		visitCells(sheet, rect, new CellVisitor(){
 
-				int fontidx  = cs.getFontIndex();
-				Font srcFont = book.getFontAt((short)fontidx);
+			public void handle(CellVisitorContext context) {
+				Font srcFont = context.getFont();
 				byte srcUnderline = srcFont.getUnderline();
-				if (srcUnderline == underline)
-					continue;
 
-				Font newFont = BookHelper.getOrCreateFont(book, 
-						srcFont.getBoldweight(), srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
+				if (srcUnderline != underline) {
+					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
 						srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), underline);
-				CellStyle newCellStyle = book.createCellStyle();
-				newCellStyle.cloneStyleFrom(cs);
-				newCellStyle.setFont(newFont);
-
-				Range rng = Utils.getRange(sheet, row, col);
-				rng.setStyle(newCellStyle);
-			}
+					CellStyle newStyle = context.cloneCellStyle();
+					newStyle.setFont(newFont);
+					context.getRange().setStyle(newStyle);
+				}
+			}	
+		});
 	}
 	
 	/**
@@ -368,29 +331,22 @@ public class Utils {
 	 * @param rect
 	 * @param isStrikeout
 	 */
-	public static void setFontStrikeout(Sheet sheet, Rect rect,boolean isStrikeout) {
-		final Book book  = (Book) sheet.getWorkbook();
-		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
-			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
-				Cell cell = Utils.getOrCreateCell(sheet, row, col);
-				CellStyle cs = cell.getCellStyle();
+	public static void setFontStrikeout(Sheet sheet, Rect rect, final boolean isStrikeout) {
+		visitCells(sheet, rect, new CellVisitor(){
 
-				int fontidx  = cs.getFontIndex();
-				Font srcFont = book.getFontAt((short)fontidx);
+			public void handle(CellVisitorContext context) {
+				Font srcFont = context.getFont();
 				boolean srcStrikeout = srcFont.getStrikeout();
-				if (srcStrikeout == isStrikeout)
-					continue;
-
-				Font newFont = BookHelper.getOrCreateFont(book, 
-						srcFont.getBoldweight(), srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
-						srcFont.getItalic(), isStrikeout, srcFont.getTypeOffset(), srcFont.getUnderline());
-				CellStyle newCellStyle = book.createCellStyle();
-				newCellStyle.cloneStyleFrom(cs);
-				newCellStyle.setFont(newFont);
-
-				Range rng = Utils.getRange(sheet, row, col);
-				rng.setStyle(newCellStyle);
-			}
+				
+				if (srcStrikeout != isStrikeout) {
+					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), 
+							srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
+							srcFont.getItalic(), isStrikeout, srcFont.getTypeOffset(), srcFont.getUnderline());
+					CellStyle cellStyle = context.cloneCellStyle();
+					cellStyle.setFont(newFont);
+					context.getRange().setStyle(cellStyle);
+				}
+			}});
 	}
 	
 	/**
@@ -399,27 +355,20 @@ public class Utils {
 	 * @param rect
 	 * @param alignment
 	 */
-	public static void setAlignment(Sheet sheet, Rect rect, short alignment) {
+	public static void setAlignment(Sheet sheet, Rect rect, final short alignment) {
+		visitCells(sheet, rect, new CellVisitor(){
+			@Override
+			public void handle(CellVisitorContext context) {
+				final short srcAlign = context.getAlignment();
 
-		final Book book  = (Book) sheet.getWorkbook();
-		for (int row = rect.getTop(); row <= rect.getBottom(); row++) {
-			for (int col = rect.getLeft(); col <= rect.getRight(); col++)  {
-				Cell cell = Utils.getOrCreateCell(sheet, row, col);
-				CellStyle cs = cell.getCellStyle();
-				final short srcAlign = cs.getAlignment();
-				if (srcAlign == alignment)
-					continue;
-
-				CellStyle newCellStyle = book.createCellStyle();
-				newCellStyle.cloneStyleFrom(cs);
-				newCellStyle.setAlignment(alignment);
-				
-				Range rng = Utils.getRange(sheet, row, col);
-				rng.setStyle(newCellStyle);
-			}
-		}
+				if (srcAlign != alignment) {
+					CellStyle newStyle = context.cloneCellStyle();
+					newStyle.setAlignment(alignment);
+					context.getRange().setStyle(newStyle);
+				}
+			}});
 	}
-
+	
 	/**
 	 * Visit each cell in the {@link #Rect}
 	 * @param sheet
@@ -427,13 +376,25 @@ public class Utils {
 	 * @param vistor
 	 */
 	public static void visitCells(Sheet sheet, Rect rect, CellVisitor vistor) {
-		for (int row = rect.getTop(); row <= rect.getBottom(); row++) {
-			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
-				CellVisitorContext context = new CellVisitorContext(sheet, row, col);
-				vistor.doVisit(context);
-			}
-		}
+		new CellSelector().doVisit(sheet, rect, vistor);
 	}
+	
+	/**
+	 * 
+	 * @param sheet
+	 * @param rect
+	 * @param vistor
+	 * @param filters
+	 */
+	public static void visitCells(Sheet sheet, Rect rect, CellVisitor vistor, CellFilter... filters) {
+		CellSelector selector = new CellSelector();
+		for(CellFilter cellFilter : filters){
+			selector.addFilter(cellFilter);
+		}
+		selector.doVisit(sheet, rect, vistor);
+	}
+	
+	
 	
 	/**
 	 * Set background color in selection range. 
