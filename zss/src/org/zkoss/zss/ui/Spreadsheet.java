@@ -2828,6 +2828,7 @@ public class Spreadsheet extends XulElement {
 		// merge size;
 		List ranges = mmhelper.getRanges();
 		Iterator iter = ranges.iterator();
+		final int defaultSize = colHelper.getDefaultSize();
 
 		while (iter.hasNext()) {
 			MergedRect block = (MergedRect) iter.next();
@@ -2836,9 +2837,13 @@ public class Spreadsheet extends XulElement {
 			int width = 0;
 			for (int i = left; i <= right; i++) {
 				final HeaderPositionInfo info = colHelper.getInfo(i);
-				final boolean hidden = info.hidden;
-				final int colSize = hidden ? 0 : info.size;
-				width += colSize;
+				if (info != null) {
+					final boolean hidden = info.hidden;
+					final int colSize = hidden ? 0 : info.size;
+					width += colSize;
+				} else {
+					width += defaultSize ;
+				}
 			}
 
 			if (width <= 0) { //total hidden

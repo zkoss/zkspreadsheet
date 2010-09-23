@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zk>
+<button label="invalidate">
+	<zscript><![CDATA[
+		import org.zkoss.zss.ui.impl.Utils;
+	]]>
+	</zscript>
+	<attribute name="onClick">
+		ss1.invalidate();
+	</attribute>
+</button>
+<button label="freeze" onClick="if(ss1.rowfreeze>=0){ss1.rowfreeze=-1;ss1.columnfreeze=-1;}else{ss1.rowfreeze=2;ss1.columnfreeze=1;}"/>
+<button label="unmerge A2-C2">
+	<attribute name="onClick">
+		Utils.unmergeCells(ss1.selectedSheet,1,0,1,2);
+	</attribute>
+</button>
+<button label="merge B9-D9">
+	<attribute name="onClick">
+		Utils.mergeCells(ss1.selectedSheet, 8,1,8,3,true);
+	</attribute>
+</button>
+<button label="unmerge B9-D9">
+	<attribute name="onClick">
+		Utils.unmergeCells(ss1.selectedSheet, 8,1,8,3);
+	</attribute>
+</button>
+<button label="merge B9-D10">
+	<attribute name="onClick">
+		Utils.mergeCells(ss1.selectedSheet, 8,1,9,3,true);
+	</attribute>
+</button>
+<button label="unmerge B9-D10">
+	<attribute name="onClick">
+		Utils.unmergeCells(ss1.selectedSheet, 8,1,9,3);
+	</attribute>
+</button>
+<button label="merge selection ">
+	<attribute name="onClick">
+		Rect sel = ss1.selection;
+		Utils.mergeCells(ss1.selectedSheet, sel.top,sel.left,sel.bottom,sel.right,true);
+		ss1.focus();
+	</attribute>
+</button>
+<button label="unmerge selection ">
+	<attribute name="onClick">
+		Rect sel = ss1.selection;
+		Utils.unmergeCells(ss1.selectedSheet, sel.top,sel.left,sel.bottom,sel.right);
+		ss1.focus();
+	</attribute>
+</button>
+<spreadsheet id="ss1" src="/WEB-INF/xls/test/merge.xlsx" maxrows="500" maxcolumns="50" height="500px" width="1000px" style="border:1px solid #8AA3C1" >
+</spreadsheet>
+
+</zk>
