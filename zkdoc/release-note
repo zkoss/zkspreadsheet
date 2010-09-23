@@ -31,7 +31,9 @@ ZK Spreadsheet 2.0.0 RC
   44 Locale is not respected
   87 =HYPERLINK() function in Excel 2007xlsx not follow as a hyperlink
   72 IE6 rendering issue - fixed column & row sizes/positions 
-  
+  91 NPE when load cell with color style(Excel 2007, xlsx)
+  93 NPE when load sheet with merge cell
+
 	------------
 ZK Spreadsheet 2.0.0 beta3
 

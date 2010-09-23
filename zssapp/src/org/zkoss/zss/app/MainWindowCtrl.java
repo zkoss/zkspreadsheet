@@ -433,8 +433,9 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				}
 
 				// bg color
-				final int fillColorIdx = cs.getFillForegroundColor();
-				String fcolor = BookHelper.indexToRGB(book, fillColorIdx);
+				//final int fillColorIdx = cs.getFillForegroundColor();
+				//String fcolor = BookHelper.indexToRGB(book, fillColorIdx);
+				String fcolor = BookHelper.colorToHTML(book, cs.getFillForegroundColorColor());
 				if (fcolor != null && !fcolor.equals(BookHelper.AUTO_COLOR)) {
 					backgroundColorBtn.setColor(fcolor);
 				}
@@ -576,8 +577,9 @@ public class MainWindowCtrl extends GenericForwardComposer {
 					}
 
 					// bg color
-					final int fillColorIdx = cs.getFillForegroundColor();
-					String fcolor = BookHelper.indexToRGB(book, fillColorIdx);
+//					final int fillColorIdx = cs.getFillForegroundColor();
+//					String fcolor = BookHelper.indexToRGB(book, fillColorIdx);
+					String fcolor = BookHelper.colorToHTML(book, cs.getFillForegroundColorColor());
 					if (fcolor != null && !fcolor.equals(BookHelper.AUTO_COLOR)) {
 						backgroundColorBtn.setColor(fcolor);
 						backgroundColorMenu.setContent("#color=" + fcolor);

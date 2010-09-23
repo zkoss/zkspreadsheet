@@ -58,6 +58,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -68,6 +69,7 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.ErrorConstants;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -90,6 +92,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
 import org.zkoss.xel.FunctionMapper;
@@ -549,15 +552,16 @@ public final class BookHelper {
 		if (font instanceof XSSFFont) {
 			final XSSFFont f = (XSSFFont) font;
 			final XSSFColor color = f.getXSSFColor();
-			final byte[] triplet = color.getRgb();
+			return BookHelper.colorToHTML(book, color);
+/*			final byte[] triplet = color.getRgb();
 			return triplet == null ? null : color.isAuto() ? AUTO_COLOR : 
 				"#"+ toHex(triplet[1])+ toHex(triplet[2])+ toHex(triplet[3]);
-		} else {
-			return indexToRGB(book, font.getColor());
+*/		} else {
+			return indexToHSSFRGB((HSSFWorkbook)book, font.getColor());
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
+/*	@SuppressWarnings("unchecked")
 	public static String indexToRGB(Book book, int index) {
 		if (book instanceof HSSFWorkbook) {
 			return indexToHSSFRGB((HSSFWorkbook)book, index);
@@ -565,8 +569,57 @@ public final class BookHelper {
 			return indexToXSSFRGB((XSSFWorkbook)book, index);
 		}
 	}
+*/	
+	/**
+	 * Returns the associated #rrggbb HTML color per the given POI Color.
+	 * @return the associated #rrggbb HTML color per the given POI Color.
+	 */
+	public static String colorToHTML(Workbook book, Color color) {
+		if (book instanceof HSSFWorkbook) {
+			return HSSFColorToHTML((HSSFWorkbook) book, (HSSFColor) color);
+		} else {
+			return XSSFColorToHTML((XSSFWorkbook) book, (XSSFColor) color);
+		}
+	}
+	
+	private static String XSSFColorToHTML(XSSFWorkbook book, XSSFColor color) {
+		if (color != null) {
+			final CTColor ctcolor = color.getCTColor();
+			if (ctcolor.isSetIndexed()) {
+				byte[] rgb = IndexedRGB.getRGB(color.getIndexed());
+				if (rgb != null) {
+					return "#"+ toHex(rgb[0])+ toHex(rgb[1])+ toHex(rgb[2]);
+				}
+			}
+			if (ctcolor.isSetRgb()) {
+				byte[] argb = ctcolor.isSetTint() ?
+					color.getRgbWithTint() : color.getRgb();
+				return argb.length > 3 ? 
+					"#"+ toHex(argb[1])+ toHex(argb[2])+ toHex(argb[3])://ignore alpha
+					"#"+ toHex(argb[0])+ toHex(argb[1])+ toHex(argb[2]); 
+			}
+			if (ctcolor.isSetTheme()) {
+			    ThemesTable theme = book.getTheme();
+			    if (theme != null) {
+			    	XSSFColor themecolor = theme.getThemeColor(color.getTheme());
+			    	if (themecolor != null) {
+			    		return XSSFColorToHTML(book, themecolor);
+			    	}
+			    }
+			}
+		}
+	    return AUTO_COLOR;
+ 	}
+	
+	private static String HSSFColorToHTML(HSSFWorkbook book, HSSFColor color) {
+		return color == null ? AUTO_COLOR : indexToHSSFRGB(book, color.getIndex());
+	}
 	
 	private static String indexToXSSFRGB(XSSFWorkbook book, int index) {
+		byte[] rgb = IndexedRGB.getRGB(index);
+		if (rgb != null) {
+			return "#"+ toHex(rgb[0])+ toHex(rgb[1])+ toHex(rgb[2]);
+		}
 	    ThemesTable theme = book.getTheme();
 	    XSSFColor color = null;
 	    if (theme != null) {
@@ -632,6 +685,7 @@ public final class BookHelper {
 	}
 	
 	public static String toHex(int num) {
+		num = num & 0xff;
 		final String hex = Integer.toHexString(num);
 		return hex.length() == 1 ? "0"+hex : hex; 
 	}
