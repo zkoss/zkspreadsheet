@@ -21,7 +21,6 @@ package org.zkoss.zss.ui.impl;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.text.AttributedString;
 import java.util.ArrayList;
@@ -32,26 +31,25 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.zkoss.image.AImage;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.RefSheet;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.impl.BookHelper;
-import org.zkoss.zss.model.impl.RangeImpl;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 
@@ -177,7 +175,7 @@ public class Utils {
 	 * @param typeOffset offset type to use
 	 * @param underline underline type
 	 */
-	public static void setFont(Sheet sheet, Rect rect, final short boldWeight, final short color, final short fontHeight, final String fontName, 
+	public static void setFont(Sheet sheet, Rect rect, final short boldWeight, final Color color, final short fontHeight, final String fontName, 
 			final boolean italic, final boolean strikeout, final short typeOffset, final byte underline) {
 
 		visitCells(sheet, rect, new CellVisitor(){
@@ -202,7 +200,7 @@ public class Utils {
 	 * @param rect selection range
 	 * @param fontName font name
 	 */
-	public static void setFontFamily(Sheet sheet, Rect rect, final String fontName) {
+	public static void setFontFamily(final Sheet sheet, Rect rect, final String fontName) {
 
 		visitCells(sheet, rect, new CellVisitor(){
 
@@ -211,8 +209,9 @@ public class Utils {
 				String srcFontName = context.getFontFamily();
 
 				if (srcFontName != fontName) {
+					final Workbook book = sheet.getWorkbook();
 					Font srcFont = context.getFont();
-					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), srcFont.getColor(), srcFont.getFontHeight(), fontName, 
+					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), BookHelper.getFontColor(book, srcFont), srcFont.getFontHeight(), fontName, 
 							srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
 					CellStyle newStyle = context.cloneCellStyle();
 					newStyle.setFont(newFont);
@@ -229,7 +228,7 @@ public class Utils {
 	 * @param rect selection range
 	 * @param fontHeight font height in 1/20ths of a point
 	 */
-	public static void setFontHeight(Sheet sheet, Rect rect, final short fontHeight) {
+	public static void setFontHeight(final Sheet sheet, Rect rect, final short fontHeight) {
 
 		visitCells(sheet, rect, new CellVisitor(){
 
@@ -237,8 +236,9 @@ public class Utils {
 			public void handle(CellVisitorContext context) {
 				short srcFontHgh = context.getFontHeight();
 				if (srcFontHgh != fontHeight) {
+					final Workbook book = sheet.getWorkbook();
 					Font srcFont = context.getFont();
-					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), srcFont.getColor(), fontHeight, srcFont.getFontName(), 
+					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), BookHelper.getFontColor(book, srcFont), fontHeight, srcFont.getFontName(), 
 						srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
 					CellStyle newStyle = context.cloneCellStyle();
 					newStyle.setFont(newFont);
@@ -254,7 +254,7 @@ public class Utils {
 	 * @param rect
 	 * @param isBold
 	 */
-	public static void setFontBold(Sheet sheet, Rect rect, final boolean isBold) {
+	public static void setFontBold(final Sheet sheet, Rect rect, final boolean isBold) {
 
 		visitCells(sheet, rect, new CellVisitor(){
 
@@ -262,8 +262,9 @@ public class Utils {
 			public void handle(CellVisitorContext context) {
 				boolean srcBold = context.isBold(); 
 				if (srcBold != isBold) {
+					final Workbook book = sheet.getWorkbook();
 					Font srcFont = context.getFont();
-					Font newFont = context.getOrCreateFont(isBold ? Font.BOLDWEIGHT_BOLD : Font.BOLDWEIGHT_NORMAL, srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
+					Font newFont = context.getOrCreateFont(isBold ? Font.BOLDWEIGHT_BOLD : Font.BOLDWEIGHT_NORMAL, BookHelper.getFontColor(book, srcFont), srcFont.getFontHeight(), srcFont.getFontName(), 
 							srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
 					CellStyle newStyle = context.cloneCellStyle();
 					newStyle.setFont(newFont);
@@ -279,7 +280,7 @@ public class Utils {
 	 * @param rect
 	 * @param isItalic
 	 */
-	public static void setFontItalic(Sheet sheet, Rect rect, final boolean isItalic) {
+	public static void setFontItalic(final Sheet sheet, Rect rect, final boolean isItalic) {
 
 		visitCells(sheet, rect, new CellVisitor(){
 
@@ -289,7 +290,8 @@ public class Utils {
 				boolean srcItalic = context.isItalic();
 
 				if (srcItalic != isItalic) {
-					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
+					final Workbook book = sheet.getWorkbook();
+					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), BookHelper.getFontColor(book, srcFont), srcFont.getFontHeight(), srcFont.getFontName(), 
 							isItalic, srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
 					CellStyle newStyle = context.cloneCellStyle();
 					newStyle.setFont(newFont);
@@ -305,7 +307,7 @@ public class Utils {
 	 * @param rect
 	 * @param isItalic
 	 */
-	public static void setFontUnderline(Sheet sheet, Rect rect, final byte underline) {
+	public static void setFontUnderline(final Sheet sheet, Rect rect, final byte underline) {
 		
 		visitCells(sheet, rect, new CellVisitor(){
 
@@ -314,7 +316,9 @@ public class Utils {
 				byte srcUnderline = srcFont.getUnderline();
 
 				if (srcUnderline != underline) {
-					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
+					final Workbook book = sheet.getWorkbook();
+					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), BookHelper.getFontColor(book, srcFont), 
+						srcFont.getFontHeight(), srcFont.getFontName(), 
 						srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), underline);
 					CellStyle newStyle = context.cloneCellStyle();
 					newStyle.setFont(newFont);
@@ -331,7 +335,7 @@ public class Utils {
 	 * @param rect
 	 * @param isStrikeout
 	 */
-	public static void setFontStrikeout(Sheet sheet, Rect rect, final boolean isStrikeout) {
+	public static void setFontStrikeout(final Sheet sheet, Rect rect, final boolean isStrikeout) {
 		visitCells(sheet, rect, new CellVisitor(){
 
 			public void handle(CellVisitorContext context) {
@@ -339,8 +343,9 @@ public class Utils {
 				boolean srcStrikeout = srcFont.getStrikeout();
 				
 				if (srcStrikeout != isStrikeout) {
+					final Workbook book = sheet.getWorkbook();
 					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), 
-							srcFont.getColor(), srcFont.getFontHeight(), srcFont.getFontName(), 
+							BookHelper.getFontColor(book, srcFont), srcFont.getFontHeight(), srcFont.getFontName(), 
 							srcFont.getItalic(), isStrikeout, srcFont.getTypeOffset(), srcFont.getUnderline());
 					CellStyle cellStyle = context.cloneCellStyle();
 					cellStyle.setFont(newFont);
@@ -1009,7 +1014,7 @@ public class Utils {
 	/** convert pixel to file 1/256 character width */
 	public static int pxToFileChar256(int px, int charWidth) {
 		final double w = (double) px;
-		return (int) Math.floor(px * 256 / charWidth + 0.5);
+		return (int) Math.floor(w * 256 / charWidth + 0.5);
 	}
 	
 	/** convert 1/256 character width to pixel */

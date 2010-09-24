@@ -20,6 +20,7 @@ package org.zkoss.zss.ui.impl;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.zkoss.util.logging.Log;
@@ -44,9 +45,9 @@ public class Styles {
 		final Book book = (Book) sheet.getWorkbook();
 		final short fontIdx = cell.getCellStyle().getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
-		final short orgColorIdx  = font.getColor();
-		final short colorIdx = BookHelper.rgbToIndex(book, color);
-		if (colorIdx == orgColorIdx) { //no change, skip
+		final Color orgColor = BookHelper.getFontColor(book, font);
+		final Color newColor = BookHelper.HTMLToColor(book, color);
+		if (orgColor == newColor || orgColor != null && orgColor.equals(newColor)) {
 			return;
 		}
 		final short boldWeight = font.getBoldweight();
@@ -56,7 +57,7 @@ public class Styles {
 		final boolean strikeout = font.getStrikeout();
 		final short typeOffset = font.getTypeOffset();
 		final byte underline = font.getUnderline();
-		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, colorIdx, fontHeight, name, italic, strikeout, typeOffset, underline);
+		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, newColor, fontHeight, name, italic, strikeout, typeOffset, underline);
 		final CellStyle style = cloneCellStyle(cell);
 		style.setFont(newFont);
 		cell.setCellStyle(style);
@@ -65,13 +66,13 @@ public class Styles {
 	public static void setFillColor(Sheet sheet, int row, int col, String color){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
 		final Book book = (Book) sheet.getWorkbook();
-		final short orgColorIdx = cell.getCellStyle().getFillForegroundColor();
-		final short colorIdx = BookHelper.rgbToIndex(book, color);
-		if (colorIdx == orgColorIdx) { //no change, skip
+		final Color orgColor = cell.getCellStyle().getFillForegroundColorColor();
+		final Color newColor = BookHelper.HTMLToColor(book, color);
+		if (orgColor == newColor || orgColor != null  && orgColor.equals(newColor)) { //no change, skip
 			return;
 		}
 		final CellStyle style = cloneCellStyle(cell);
-		style.setFillForegroundColor(colorIdx);
+		BookHelper.setFillForegroundColor(style, newColor);
 		cell.setCellStyle(style);
 	}
 	
@@ -96,13 +97,13 @@ public class Styles {
 			return;
 		}
 		final short boldWeight = font.getBoldweight();
-		final short colorIdx = font.getColor();
+		final Color color = BookHelper.getFontColor(book, font);
 		final String name = font.getFontName();
 		final boolean italic = font.getItalic();
 		final boolean strikeout = font.getStrikeout();
 		final short typeOffset = font.getTypeOffset();
 		final byte underline = font.getUnderline();
-		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, colorIdx, (short)fontHeight, name, italic, strikeout, typeOffset, underline);
+		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, color, (short)fontHeight, name, italic, strikeout, typeOffset, underline);
 		final CellStyle style = cloneCellStyle(cell);
 		style.setFont(newFont);
 		cell.setCellStyle(style);
@@ -118,13 +119,13 @@ public class Styles {
 			return;
 		}
 		final short boldWeight = font.getBoldweight();
-		final short colorIdx = font.getColor();
+		final Color color = BookHelper.getFontColor(book, font);
 		final short fontHeight = font.getFontHeight();
 		final String name = font.getFontName();
 		final boolean italic = font.getItalic();
 		final short typeOffset = font.getTypeOffset();
 		final byte underline = font.getUnderline();
-		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, colorIdx, fontHeight, name, italic, strikeout, typeOffset, underline);
+		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
 		final CellStyle style = cloneCellStyle(cell);
 		style.setFont(newFont);
 		cell.setCellStyle(style);
@@ -140,38 +141,37 @@ public class Styles {
 			return;
 		}
 		final short boldWeight = font.getBoldweight();
-		final short colorIdx = font.getColor();
+		final Color color = BookHelper.getFontColor(book, font);
 		final short fontHeight = font.getFontHeight();
 		final boolean italic = font.getItalic();
 		final boolean strikeout = font.getStrikeout();
 		final short typeOffset = font.getTypeOffset();
 		final byte underline = font.getUnderline();
-		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, colorIdx, fontHeight, name, italic, strikeout, typeOffset, underline);
+		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
 		final CellStyle style = cloneCellStyle(cell);
 		style.setFont(newFont);
 		cell.setCellStyle(style);
 	}
 	
 	public static void setBorder(Sheet sheet,int row,int col, String color, short linestyle){
-		setBorder(sheet,row,col, BookHelper.rgbToIndex((Book)sheet.getWorkbook(), color), linestyle, 0xF);
+		setBorder(sheet,row,col, BookHelper.HTMLToColor(sheet.getWorkbook(), color), linestyle, 0xF);
 	}
 	public static void setBorderTop(Sheet sheet,int row,int col,String color, short linestyle){
-		setBorder(sheet,row,col, BookHelper.rgbToIndex((Book)sheet.getWorkbook(), color), linestyle, 0x4);
+		setBorder(sheet,row,col, BookHelper.HTMLToColor(sheet.getWorkbook(), color), linestyle, 0x4);
 	}
 	public static void setBorderLeft(Sheet sheet,int row,int col,String color, short linestyle){
-		setBorder(sheet,row,col, BookHelper.rgbToIndex((Book)sheet.getWorkbook(), color), linestyle, 0x8);
+		setBorder(sheet,row,col, BookHelper.HTMLToColor(sheet.getWorkbook(), color), linestyle, 0x8);
 	}
 	public static void setBorderBottom(Sheet sheet,int row,int col,String color, short linestyle){
-		setBorder(sheet,row,col, BookHelper.rgbToIndex((Book)sheet.getWorkbook(), color), linestyle, 0x1);
+		setBorder(sheet,row,col, BookHelper.HTMLToColor(sheet.getWorkbook(), color), linestyle, 0x1);
 	}
 	public static void setBorderRight(Sheet sheet,int row,int col,String color, short linestyle){
-		setBorder(sheet,row,col, BookHelper.rgbToIndex((Book)sheet.getWorkbook(), color), linestyle, 0x2);
+		setBorder(sheet,row,col, BookHelper.HTMLToColor(sheet.getWorkbook(), color), linestyle, 0x2);
 	}
 	public static void setBorder(Sheet sheet,int row,int col, short color, short lineStyle, int at){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
 		final CellStyle style = cloneCellStyle(cell);
 		if((at & BookHelper.BORDER_EDGE_LEFT)!=0) {
-			style.setLeftBorderColor(color);
 			style.setBorderLeft(lineStyle);
 		}
 		if((at & BookHelper.BORDER_EDGE_TOP)!=0){
@@ -189,6 +189,28 @@ public class Styles {
 		cell.setCellStyle(style);
 	}
 	
+	public static void setBorder(Sheet sheet,int row,int col, Color color, short lineStyle, int at){
+		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
+		final CellStyle style = cloneCellStyle(cell);
+		if((at & BookHelper.BORDER_EDGE_LEFT)!=0) {
+			BookHelper.setLeftBorderColor(style, color);
+			style.setBorderLeft(lineStyle);
+		}
+		if((at & BookHelper.BORDER_EDGE_TOP)!=0){
+			BookHelper.setTopBorderColor(style, color);
+			style.setBorderTop(lineStyle);
+		}
+		if((at & BookHelper.BORDER_EDGE_RIGHT)!=0){
+			BookHelper.setRightBorderColor(style, color);
+			style.setBorderRight(lineStyle);
+		}
+		if((at & BookHelper.BORDER_EDGE_BOTTOM)!=0){
+			BookHelper.setBottomBorderColor(style, color);
+			style.setBorderBottom(lineStyle);
+		}
+		cell.setCellStyle(style);
+	}
+	
 	public static void setFontBoldWeight(Sheet sheet,int row,int col,short boldWeight){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
 		final Book book = (Book) sheet.getWorkbook();
@@ -198,14 +220,14 @@ public class Styles {
 		if (orgBoldWeight == boldWeight) { //no change, skip
 			return;
 		}
-		final short colorIdx = font.getColor();
+		final Color color = BookHelper.getFontColor(book, font);
 		final short fontHeight = font.getFontHeight();
 		final String name = font.getFontName();
 		final boolean italic = font.getItalic();
 		final boolean strikeout = font.getStrikeout();
 		final short typeOffset = font.getTypeOffset();
 		final byte underline = font.getUnderline();
-		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, colorIdx, fontHeight, name, italic, strikeout, typeOffset, underline);
+		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
 		final CellStyle style = cloneCellStyle(cell);
 		style.setFont(newFont);
 		cell.setCellStyle(style);
@@ -221,13 +243,13 @@ public class Styles {
 			return;
 		}
 		final short boldWeight = font.getBoldweight();
-		final short colorIdx = font.getColor();
+		final Color color = BookHelper.getFontColor(book, font);
 		final short fontHeight = font.getFontHeight();
 		final String name = font.getFontName();
 		final boolean strikeout = font.getStrikeout();
 		final short typeOffset = font.getTypeOffset();
 		final byte underline = font.getUnderline();
-		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, colorIdx, fontHeight, name, italic, strikeout, typeOffset, underline);
+		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
 		final CellStyle style = cloneCellStyle(cell);
 		style.setFont(newFont);
 		cell.setCellStyle(style);
@@ -243,13 +265,13 @@ public class Styles {
 			return;
 		}
 		final short boldWeight = font.getBoldweight();
-		final short colorIdx = font.getColor();
+		final Color color = BookHelper.getFontColor(book, font);
 		final short fontHeight = font.getFontHeight();
 		final String name = font.getFontName();
 		final boolean italic = font.getItalic();
 		final boolean strikeout = font.getStrikeout();
 		final short typeOffset = font.getTypeOffset();
-		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, colorIdx, fontHeight, name, italic, strikeout, typeOffset, underline);
+		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
 		final CellStyle style = cloneCellStyle(cell);
 		style.setFont(newFont);
 		cell.setCellStyle(style);

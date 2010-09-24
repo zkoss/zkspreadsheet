@@ -25,10 +25,13 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFName;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -250,4 +253,24 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
         return null;
     }
 
+	/**
+	 * Finds a font that matches the one with the supplied attributes
+	 */
+	public XSSFFont findFont(short boldWeight, Color color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
+		for (XSSFFont font : getStylesSource().getFonts()) {
+			final XSSFColor fontColor = font.getXSSFColor();
+			if (	(font.getBoldweight() == boldWeight)
+					&& (color == fontColor || color != null && color.equals(fontColor))
+					&& font.getFontHeight() == fontHeight
+					&& font.getFontName().equals(name)
+					&& font.getItalic() == italic
+					&& font.getStrikeout() == strikeout
+					&& font.getTypeOffset() == typeOffset
+					&& font.getUnderline() == underline)
+			{
+				return font;
+			}
+		}
+		return null;
+	}
 }

@@ -38,6 +38,7 @@ import java.util.Stack;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
@@ -427,7 +428,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				}
 
 				// font color
-				String color = BookHelper.getFontColor(book, font);
+				String color = BookHelper.getFontHTMLColor(book, font);
 				if (color != null && !color.equals(BookHelper.AUTO_COLOR)) {
 					fontColorBtn.setColor(color);
 				}
@@ -571,7 +572,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 					}
 
 					// font color
-					String color = BookHelper.getFontColor(book, font);
+					String color = BookHelper.getFontHTMLColor(book, font);
 					if (color != null && !color.equals(BookHelper.AUTO_COLOR)) {
 						fontColorBtn.setColor(color);
 					}
@@ -1262,7 +1263,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		short boldWeight = isBold ? Font.BOLDWEIGHT_BOLD
 				: Font.BOLDWEIGHT_NORMAL;
 		byte underline = isUnderline ? Font.U_SINGLE : Font.U_NONE;
-		short color = BookHelper.rgbToIndex(book, fontColorBtn.getColor());
+		Color color = BookHelper.HTMLToColor(book, fontColorBtn.getColor());
 		Utils.setFont(sheet, rect, boldWeight, color, getFontHeightInPoints(),
 				fontName, isItalic, isStrikethrough, Font.SS_NONE, underline);
 	}

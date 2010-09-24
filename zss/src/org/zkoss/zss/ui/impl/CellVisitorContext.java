@@ -20,6 +20,7 @@ package org.zkoss.zss.ui.impl;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.zkoss.zss.model.Book;
@@ -77,7 +78,7 @@ public class CellVisitorContext {
 		return newCellStyle;
 	}
 	
-	public Font getOrCreateFont(short boldWeight, short color, short fontHeight, java.lang.String name, 
+	public Font getOrCreateFont(short boldWeight, Color color, short fontHeight, java.lang.String name, 
 			boolean italic, boolean strikeout, short typeOffset, byte underline) {
 		return BookHelper.getOrCreateFont(book, 
 				boldWeight, color, fontHeight, name, 

@@ -40,7 +40,9 @@ import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefPtgBase;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellHelper;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataValidation;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -82,6 +84,7 @@ import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellHelper;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
@@ -510,7 +513,7 @@ public final class BookHelper {
 			sb.append("font-family:").append(fontName).append(";");
 		}
 		
-		String textColor = BookHelper.getFontColor(book, font);
+		String textColor = BookHelper.getFontHTMLColor(book, font);
 		if (BookHelper.AUTO_COLOR.equals(textColor)) {
 			textColor = "#000000";
 		}
@@ -548,28 +551,16 @@ public final class BookHelper {
 		
 	}
 	
-	public static String getFontColor(Book book, Font font) {
+	public static String getFontHTMLColor(Book book, Font font) {
 		if (font instanceof XSSFFont) {
 			final XSSFFont f = (XSSFFont) font;
 			final XSSFColor color = f.getXSSFColor();
 			return BookHelper.colorToHTML(book, color);
-/*			final byte[] triplet = color.getRgb();
-			return triplet == null ? null : color.isAuto() ? AUTO_COLOR : 
-				"#"+ toHex(triplet[1])+ toHex(triplet[2])+ toHex(triplet[3]);
-*/		} else {
+		} else {
 			return indexToHSSFRGB((HSSFWorkbook)book, font.getColor());
 		}
 	}
 	
-/*	@SuppressWarnings("unchecked")
-	public static String indexToRGB(Book book, int index) {
-		if (book instanceof HSSFWorkbook) {
-			return indexToHSSFRGB((HSSFWorkbook)book, index);
-		} else {
-			return indexToXSSFRGB((XSSFWorkbook)book, index);
-		}
-	}
-*/	
 	/**
 	 * Returns the associated #rrggbb HTML color per the given POI Color.
 	 * @return the associated #rrggbb HTML color per the given POI Color.
@@ -614,20 +605,6 @@ public final class BookHelper {
 	private static String HSSFColorToHTML(HSSFWorkbook book, HSSFColor color) {
 		return color == null ? AUTO_COLOR : indexToHSSFRGB(book, color.getIndex());
 	}
-	
-	private static String indexToXSSFRGB(XSSFWorkbook book, int index) {
-		byte[] rgb = IndexedRGB.getRGB(index);
-		if (rgb != null) {
-			return "#"+ toHex(rgb[0])+ toHex(rgb[1])+ toHex(rgb[2]);
-		}
-	    ThemesTable theme = book.getTheme();
-	    XSSFColor color = null;
-	    if (theme != null) {
-	    	color = theme.getThemeColor(index);
-	    }
-	    final String argb = color.getARGBHex();
-	    return argb == null ? AUTO_COLOR : "#"+argb.substring(2);
- 	}
 	
 	private static String indexToHSSFRGB(HSSFWorkbook book, int index) {
 		HSSFPalette palette = book.getCustomPalette();
@@ -2395,13 +2372,13 @@ public final class BookHelper {
 		}
 	}
 	 
-	public static Font getOrCreateFont(Book book, short boldWeight, short color, short fontHeight, java.lang.String name, 
+	public static Font getOrCreateFont(Book book, short boldWeight, Color color, short fontHeight, java.lang.String name, 
 			boolean italic, boolean strikeout, short typeOffset, byte underline) {
 		Font font = book.findFont(boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
 		if (font == null) {
 			font = book.createFont();
 			font.setBoldweight(boldWeight);
-			font.setColor(color);
+			BookHelper.setFontColor(font, color);
 			font.setFontHeight(fontHeight);
 			font.setFontName(name);
 			font.setItalic(italic);
@@ -2464,7 +2441,7 @@ public final class BookHelper {
 		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
 		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
 		final RefSheet refSheet = BookHelper.getRefSheet(book, sheet);
-		final short bsColor = BookHelper.rgbToIndex(book, color);
+		final Color bsColor = BookHelper.HTMLToColor(book, color);
 		final short bsLineStyle = getBorderStyleIndex(lineStyle);
 		Set<Ref> all = new HashSet<Ref>();
 		
@@ -2539,7 +2516,7 @@ public final class BookHelper {
 	private static Set<Ref> setBordersInside(Sheet sheet, int tRow, int lCol, int bRow, int rCol, short borderIndex, BorderStyle lineStyle, String color) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = BookHelper.getRefSheet(book, sheet);
-		final short bsColor = BookHelper.rgbToIndex(book, color);
+		final Color bsColor = BookHelper.HTMLToColor(book, color);
 		final short bsLineStyle = getBorderStyleIndex(lineStyle);
 		Set<Ref> all = new HashSet<Ref>();
 		
@@ -2585,7 +2562,7 @@ public final class BookHelper {
 	private static Set<Ref> setBordersDiagonal(Sheet sheet, int tRow, int lCol, int bRow, int rCol, short borderIndex, BorderStyle lineStyle, String color) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = BookHelper.getRefSheet(book, sheet);
-		final short bsColor = BookHelper.rgbToIndex(book, color);
+		final Color bsColor = BookHelper.HTMLToColor(book, color);
 		final short bsLineStyle = getBorderStyleIndex(lineStyle);
 		Set<Ref> all = new HashSet<Ref>();
 		
@@ -3274,6 +3251,131 @@ if (fillType == FILL_DEFAULT) {
         	break;
 		default:
 			throw new RuntimeException("Unknown cell type:"+cellType);
+		}
+	}
+	
+	public static void setFillForegroundColor(CellStyle newCellStyle, Color xlsColor) {
+		if (newCellStyle instanceof HSSFCellStyle) {
+			((HSSFCellStyle)newCellStyle).setFillForegroundColor((HSSFColor)xlsColor);
+		} else {
+			((XSSFCellStyle)newCellStyle).setFillForegroundColor((XSSFColor)xlsColor);
+		}
+	}
+	
+	public static Color HTMLToColor(Workbook book, String color) {
+		if (book instanceof HSSFWorkbook) {
+			return HTMLToHSSFColor((HSSFWorkbook) book, color);
+		} else {
+			return HTMLToXSSFColor((XSSFWorkbook) book, color);
+		}
+	}
+	
+	private static byte[] HTMLToTriplet(String color) {
+		short red = Short.parseShort(color.substring(1,3), 16); //red
+		short green = Short.parseShort(color.substring(3,5), 16); //green
+		short blue = Short.parseShort(color.substring(5), 16); //blue
+		byte r = (byte)Math.abs((byte)red);
+		byte g = (byte)Math.abs((byte)green);
+		byte b = (byte)Math.abs((byte)blue);
+		return new byte[] {r, g, b};
+	}
+	
+	private static Color HTMLToXSSFColor(XSSFWorkbook book, String color) {
+		byte[] triplet = HTMLToTriplet(color);
+		byte a = (byte) 0xff;
+		byte r = triplet[0];
+		byte g = triplet[1];
+		byte b = triplet[2];
+		return  new XSSFColor(new byte[] {a, r, g, b});
+	}
+	
+	private static Color HTMLToHSSFColor(HSSFWorkbook book, String color) {
+		byte[] triplet = HTMLToTriplet(color);
+		byte r = triplet[0];
+		byte g = triplet[1];
+		byte b = triplet[2];
+		short red = (short) (r & 0xff);
+		short green = (short) (g & 0xff);
+		short blue = (short) (b & 0xff);
+		HSSFPalette palette = book.getCustomPalette();
+		HSSFColor pcolor = palette != null ? palette.findColor(r, g, b) : null;
+		if (pcolor != null) { //find default palette
+			return pcolor;
+		} else {
+			final Hashtable<short[], HSSFColor> colors = HSSFColor.getTripletHash();
+			HSSFColor tcolor = colors.get(new short[] {red, green, blue});
+			if (tcolor != null)
+				return tcolor;
+			else {
+				try {
+					HSSFColor ncolor = palette.addColor(r, g, b);
+					return ncolor;
+				} catch (RuntimeException ex) {
+					//return similar color if can't add new color to palette
+					/**
+					 * TODO: find a better solution for fix this issue
+					 * 
+					 * While there is no space for adding a color into palette
+					 * return similar color cause return inexact color
+					 */
+					return palette.findSimilarColor(red, green, blue);
+				}
+				
+			}
+		}
+	}
+	
+	public static void setLeftBorderColor(CellStyle style, Color color) {
+		if (style instanceof HSSFCellStyle) {
+			style.setLeftBorderColor(((HSSFColor)color).getIndex());
+		} else {
+			((XSSFCellStyle)style).setLeftBorderColor((XSSFColor)color);
+		}
+	}
+	public static void setRightBorderColor(CellStyle style, Color color) {
+		if (style instanceof HSSFCellStyle) {
+			style.setRightBorderColor(((HSSFColor)color).getIndex());
+		} else {
+			((XSSFCellStyle)style).setRightBorderColor((XSSFColor)color);
+		}
+	}
+	public static void setTopBorderColor(CellStyle style, Color color) {
+		if (style instanceof HSSFCellStyle) {
+			style.setTopBorderColor(((HSSFColor)color).getIndex());
+		} else {
+			((XSSFCellStyle)style).setTopBorderColor((XSSFColor)color);
+		}
+	}
+	public static void setBottomBorderColor(CellStyle style, Color color) {
+		if (style instanceof HSSFCellStyle) {
+			style.setBottomBorderColor(((HSSFColor)color).getIndex());
+		} else {
+			((XSSFCellStyle)style).setBottomBorderColor((XSSFColor)color);
+		}
+	}
+	public static Color getFontColor(Workbook book, Font font) {
+		if (book instanceof XSSFWorkbook) {
+			return ((XSSFFont) font).getXSSFColor();
+		} else {
+			return getHSSFFontColor((HSSFWorkbook) book, (HSSFFont) font);
+		}
+	}
+	
+	private static Color getHSSFFontColor(HSSFWorkbook book, HSSFFont font) {
+		final short index = font.getColor();
+		HSSFPalette palette = book.getCustomPalette();
+		if (palette != null) {
+			return palette.getColor(index);
+		}
+		Map<Integer, HSSFColor> indexHash = (Map<Integer, HSSFColor>) HSSFColor.getIndexHash();
+		return indexHash.get(new Integer(index));
+	}
+	
+	private static void setFontColor(Font font, Color color) {
+		if (font instanceof HSSFFont) {
+			((HSSFFont)font).setColor(((HSSFColor)color).getIndex());
+		} else {
+			((XSSFFont)font).setColor((XSSFColor)color);
 		}
 	}
 }

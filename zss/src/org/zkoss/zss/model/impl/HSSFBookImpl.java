@@ -33,14 +33,18 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbookHelper;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.DefaultDependencyTracker;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.IStabilityClassifier;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library; 
 import org.zkoss.xel.FunctionMapper;
@@ -261,4 +265,11 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
     protected HSSFSheet createHSSFSheet(HSSFWorkbook workbook) {
     	return new HSSFSheetImpl((HSSFBookImpl)workbook);
     }
+    
+	/**
+	 * Finds a font that matches the one with the supplied attributes
+	 */
+	public Font findFont(short boldWeight, Color color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
+		return findFont(boldWeight, ((HSSFColor)color).getIndex(), fontHeight, name, italic, strikeout, typeOffset, underline); 
+	}
 }

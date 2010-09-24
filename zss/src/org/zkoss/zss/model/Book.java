@@ -14,6 +14,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model;
 
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -109,4 +110,11 @@ public interface Book extends Workbook {
 	 * @return the repeat rows and columns in a CellRangeAddress; 
 	 */
 	public CellRangeAddress getRepeatingRowsAndColumns(int sheetIndex);
+	
+    /**
+     * Finds a font that matches the one with the supplied attributes
+     *
+     * @return the font with the matched attributes or <code>null</code>
+     */
+	Font findFont(short boldWeight, Color color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline);
 }
