@@ -65,6 +65,11 @@ import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
 
@@ -1097,5 +1102,18 @@ public class XSSFSheetImpl extends XSSFSheet {
         updateNamedRanges(book, shifter);
         
         return shiftedRanges;
+    }
+    
+    public boolean isFreezePanes() {
+        final CTWorksheet ctsheet = getCTWorksheet();
+        final CTSheetViews views = ctsheet != null ? ctsheet.getSheetViews() : null;
+        final List<CTSheetView> viewList = views != null ? views.getSheetViewList() : null; 
+        final CTSheetView view = viewList != null && !viewList.isEmpty() ? viewList.get(0) : null;
+    	final CTPane pane = view != null ? view.getPane() : null;
+    	if (pane == null) {
+    		return false;
+    	} else {
+    		return pane.getState() == STPaneState.FROZEN; 
+    	}
     }
 }	

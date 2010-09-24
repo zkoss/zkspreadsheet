@@ -33,7 +33,10 @@ ZK Spreadsheet 2.0.0 RC
   72 IE6 rendering issue - fixed column & row sizes/positions 
   91 NPE when load cell with color style(Excel 2007, xlsx)
   93 NPE when load sheet with merge cell
-
+  99 freeze column and freeze row is not reset.
+  98 Freeze area is not rendered if it is on the second sheet
+  103 Freeze row/column is not correctly interpreted
+  
 	------------
 ZK Spreadsheet 2.0.0 beta3
 

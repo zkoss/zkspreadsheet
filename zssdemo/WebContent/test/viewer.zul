@@ -3,6 +3,7 @@
 <![CDATA[
 		import org.zkoss.zss.model.*;
 		import org.zkoss.zss.model.impl.*;
+		Book book1;
 ]]>
 </zscript>
 <button label="Upload" upload="true">
@@ -12,12 +13,29 @@
 		String name = media.getName();
 		bookname.setValue(name);
 		java.io.InputStream is = media.getStreamData();
-		Book book1 = new ExcelImporter().imports(is, name);
+		book1 = new ExcelImporter().imports(is, name);
 		ss1.setBook(book1);
 		ckbox.setChecked(ss1.getSelectedSheet().isDisplayGridlines());
+		int count = book1.getNumberOfSheets();
+		List countList = new ArrayList(count);
+		for (int j = 0; j < count; ++j) {
+			countList.add(book1.getSheetName(j));
+		}
+		ListModel model = new ListModelList(countList);
+		sheets.setModel(model);
 	}]]></attribute>
 </button>
 <label id="bookname" ></label>
+<listbox id="sheets" mold="select">
+	<attribute name="onSelect"><![CDATA[
+		int index = self.getSelectedIndex();
+		if (index >= 0) {
+			String sheetname = book1.getSheetName(index);
+			ss1.setSelectedSheet(sheetname);
+		}
+	]]>
+	</attribute>
+</listbox>
 <checkbox id="ckbox" label="Show Gridline" checked="true">
 	<attribute name="onCheck">
 	<![CDATA[{

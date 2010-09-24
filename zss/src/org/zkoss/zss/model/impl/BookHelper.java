@@ -48,6 +48,7 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.format.CellFormat;
 import org.apache.poi.ss.formula.FormulaParser;
@@ -3377,5 +3378,19 @@ if (fillType == FILL_DEFAULT) {
 		} else {
 			((XSSFFont)font).setColor((XSSFColor)color);
 		}
+	}
+	
+	public static boolean isFreezePane(Sheet sheet) {
+		return (sheet instanceof HSSFSheetImpl) ?
+			((HSSFSheetImpl)sheet).isFreezePanes() : ((XSSFSheetImpl)sheet).isFreezePanes();
+	}
+	
+	public static int getRowFreeze(Sheet sheet) {
+		final PaneInformation pi = sheet.getPaneInformation();
+		return pi != null ? pi.getHorizontalSplitPosition() : 0;
+	}
+	public static int getColumnFreeze(Sheet sheet) {
+		final PaneInformation pi = sheet.getPaneInformation();
+		return pi != null ? pi.getVerticalSplitPosition() : 0;
 	}
 }

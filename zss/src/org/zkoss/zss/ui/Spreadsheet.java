@@ -576,7 +576,8 @@ public class Spreadsheet extends XulElement {
 	private String getMaxrowInJSON() {
 		JSONObj result = new JSONObj();
 		result.setData("maxrow", _maxRows);
-		result.setData("rowfreeze", _rowFreeze);
+		//issue #98: Freeze area is not rendered if it is on the second sheet
+		result.setData("rowfreeze", getRowfreeze());
 		return result.toString();
 	}
 	
@@ -617,7 +618,8 @@ public class Spreadsheet extends XulElement {
 	private String getMaxcolumnsInJSON() {
 		JSONObj result = new JSONObj();
 		result.setData("maxcol", _maxColumns);
-		result.setData("colfreeze", _colFreeze);
+		//issue #98: Freeze area is not rendered if it is on the second sheet
+		result.setData("colfreeze", getColumnfreeze());
 		return result.toString();
 	}
 
@@ -634,10 +636,11 @@ public class Spreadsheet extends XulElement {
 	public int getRowfreeze() {
 		if (_rowFreezeset)
 			return _rowFreeze;
-		Sheet sheet = getSelectedSheet();
+		final Sheet sheet = getSelectedSheet();
 		if (sheet != null) {
-			PaneInformation pi = sheet.getPaneInformation();
-			_rowFreeze = pi != null ? pi.getHorizontalSplitTopRow() - 1 : -1;
+			 if (BookHelper.isFreezePane(sheet)) { //issue #103: Freeze row/column is not correctly interpreted
+				 _rowFreeze = BookHelper.getRowFreeze(sheet) - 1;
+			 }
 			_rowFreezeset = true;
 		}
 		return _rowFreeze;
@@ -671,12 +674,13 @@ public class Spreadsheet extends XulElement {
 	 * @return the column freeze of this spreadsheet or selected sheet.
 	 */
 	public int getColumnfreeze() {
-		if (_colFreeze > -1)
+		if (_colFreezeset)
 			return _colFreeze;
 		Sheet sheet = getSelectedSheet();
 		if (sheet != null) {
-			PaneInformation pi = sheet.getPaneInformation();
-			_colFreeze = pi != null ? pi.getVerticalSplitLeftColumn() - 1 : -1;
+			 if (BookHelper.isFreezePane(sheet)) {//issue #103: Freeze row/column is not correctly interpreted
+				 _colFreeze = BookHelper.getColumnFreeze(sheet) - 1;
+			 }
 			_colFreezeset = true;
 		}
 		return _colFreeze;
@@ -2932,6 +2936,12 @@ public class Spreadsheet extends XulElement {
 		_loadedRect.set(-1, -1, -1, -1);
 		_selectionRect.set(0, 0, 0, 0);
 		_focusRect.set(0, 0, 0, 0);
+		
+		//issue #99: freeze column and freeze row is not reset. 
+		_colFreeze = -1;
+		_colFreezeset = false;
+		_rowFreeze = -1;
+		_rowFreezeset = false;
 	}
 
 	private void doSheetSelected(Sheet sheet) {

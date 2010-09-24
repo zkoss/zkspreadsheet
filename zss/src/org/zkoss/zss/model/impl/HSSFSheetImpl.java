@@ -1188,7 +1188,13 @@ public class HSSFSheetImpl extends HSSFSheet {
 		}
     }
     
+    public boolean isFreezePanes() {
+    	return _helper.getInternalSheet().getWindowTwo().getFreezePanes();
+    }
+    
     public Book getBook() {
     	return (Book) getWorkbook();
     }
+    
+    
 }
