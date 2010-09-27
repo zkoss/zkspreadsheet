@@ -20,6 +20,7 @@ ZK Spreadsheet 2.0.0 RC
   86 Support deleteRange(Excel 2007, xlsx)
   88 Support moveRange(Excel 2007, xlsx)   	 
   89 Support merge(Excel 2007, xlsx) 
+  107 ZK Spreadsheet Live support export PDF
   
 *Bug
   66 Unexpected gridlines shown 

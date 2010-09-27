@@ -110,8 +110,12 @@
 								<menuitem
 									label="${c:l('file.import')}"
 									forward="onImportFile" disabled="true"/>
-								<menuitem label="${c:l('file.export')}"
-									forward="onFileSelect(export)" />
+								<menu label="${c:l('file.export')}"
+									forward="onFileSelect(export)">
+									<menupopup>
+										<menuitem label="${c:l('export.pdf')}" forward="onExport(${c:l('export.pdf')})"/>
+									</menupopup>
+								</menu>
 								<menuseparator />
 								<menuitem label="${c:l('file.reversion')}" 
 									forward="onRevision" disabled="true"/>
@@ -238,7 +242,8 @@
 				<!-- SECTION **********FastIconToolbar*********************************************** -->
 				<center id="fastIconBtn" flex="true" border="0" style="background: #F5F5F5; border-bottom: 1px solid #D8D8D8;">
 					<hlayout spacing="0.4em" height="30px">
-						<toolbarbutton id="print"  src="/img/printer.png" forward="onClick=onPrint" tooltiptext="${c:l('file.print')}"/>
+						<toolbarbutton id="print"  src="/img/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>
+						<toolbarbutton src="/img/document-pdf.png" forward="onExport(${c:l('export.pdf')})" tooltiptext="${c:l('export.pdf')}"/>
 						<toolbarbutton id="undo"  src="/img/arrow-curve-180-left.png" 	forward="onClick=onEditUndo" tooltiptext="${c:l('edit.undo')}"/>
 						<toolbarbutton id="redo"  src="/img/arrow-curve.png"	forward="onClick=onEditRedo" tooltiptext="${c:l('edit.redo')}"/>
 						<!-- copy and paste -->

@@ -1,0 +1,22 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+<window title="${c:l('export.pdf')}" border="normal" width="320px" height="160px" 
+mode="modal" closable="true" position="center" apply="org.zkoss.zss.app.export.ExportToPdfWindowCtrl">
+	<div style="padding: 10px;">
+	<radiogroup id="range"> </radiogroup>
+	<div style="padding: 5px 0 10px 3px;">
+		<label value="Option">
+		</label>
+	</div>
+   	<hlayout spacing="0.6em">
+   		<checkbox id="noHeader" label="${c:l('export.noHeader')}" />
+        <checkbox id="noGridlines" label="${c:l('export.noGridlines')}" />
+   	</hlayout>
+    <div height="20px" style="padding:10px 0 10px 10px;">
+	    <button id="export" label="${c:l('file.export')}" mold="trendy" style="float:right;">
+	    </button>
+    </div>
+    </div>
+</window>
+</zk>

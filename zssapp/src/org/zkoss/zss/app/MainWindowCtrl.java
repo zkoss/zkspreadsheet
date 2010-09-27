@@ -63,6 +63,7 @@ import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.event.CellStyleHelper;
 import org.zkoss.zss.app.event.EditHelper;
+import org.zkoss.zss.app.event.ExportHelper;
 import org.zkoss.zss.app.sort.SortSelector;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
@@ -120,7 +121,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	Book book;
 	Sheet sheet;
-	// Sheet remSheet;
 
 	int lastRow = 0;
 	int lastCol = 0;
@@ -140,9 +140,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	Cell currentEditcell;
 
 	int chartKey = 0;
-
-	// Sheet remSheet;
-	// String focusSheetName;
 
 	ColumnMenuHelper colmh;
 	RowMenuHelper rowmh;
@@ -750,13 +747,13 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 				break;
 			case 'B':
-				onFontBoldClick();
+				setFontBold();
 				break;
 			case 'I':
-				onFontItalicClick();
+				setFontItalic();
 				break;
 			case 'U':
-				onFontUnderlineClick();
+				setFontUnderline();
 				break;
 			default:
 				p("ctrl ...?");
@@ -769,8 +766,11 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	// SECTION FILE MENU
-	public void onFileSelect(ForwardEvent event) {
-		fileh.selectDispatcher((String) event.getData());
+//	public void onFileSelect(ForwardEvent event) {
+//		fileh.selectDispatcher((String) event.getData());
+//	}
+	public void onExport(ForwardEvent event) {
+		ExportHelper.onExport(event);
 	}
 
 	public void onCellMenu(ForwardEvent event) {
@@ -1089,7 +1089,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		}
 	}
 
-	//TODO: Do not har code
+	//TODO: Do not use hard code
 	public void onViewFormulaBar(ForwardEvent event) {
 		if (formulaBar.getHeight() != "0px") {
 			formulaBar.setSize("0px");
@@ -1101,13 +1101,11 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void onViewFreezeRows(ForwardEvent event) {
-		spreadsheet
-				.setRowfreeze(Integer.parseInt((String) event.getData()) - 1);
+		spreadsheet.setRowfreeze(Integer.parseInt((String) event.getData()) - 1);
 	}
 
 	public void onViewFreezeCols(ForwardEvent event) {
-		spreadsheet
-				.setColumnfreeze(Integer.parseInt((String) event.getData()) - 1);
+		spreadsheet.setColumnfreeze(Integer.parseInt((String) event.getData()) - 1);
 	}
 
 	public void onViewUnfreezeRows(ForwardEvent event) {
@@ -1125,14 +1123,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		win.setLeft("170px");
 		win.setTop("24px");
 		win.doPopup();// Modal();
-	}
-
-	public void onTestMenuAlignment() {
-		try {
-			Messagebox.show("called FormatAlignment onOK");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	// SECTION INSERT MENU
@@ -1171,8 +1161,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			Utils.insertColumns(spreadsheet.getSelectedSheet(), left, right);
 			rect.setLeft(right + 1);
 			rect.setRight(right + right - left + 1);
-			spreadsheet
-					.setCellFocus(new Position(rect.getTop(), rect.getLeft()));
+			spreadsheet.setCellFocus(new Position(rect.getTop(), rect.getLeft()));
 			spreadsheet.setSelection(rect);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1242,7 +1231,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	/**
 	 * Returns the font size in point from the font size combobox
-	 * 
 	 * @return short, font size height
 	 */
 	private short getFontHeightInPoints() {
@@ -1258,10 +1246,9 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	 */
 	private void changeFont(Sheet sheet, Rect rect) {
 		// font
-		String fontName = (String) this.fontFamilyCombobox.getSelectedItem()
-				.getLabel();
-		short boldWeight = isBold ? Font.BOLDWEIGHT_BOLD
-				: Font.BOLDWEIGHT_NORMAL;
+		String fontName = (String) this.fontFamilyCombobox.getSelectedItem().getLabel();
+		short boldWeight = isBold ? 
+				Font.BOLDWEIGHT_BOLD : Font.BOLDWEIGHT_NORMAL;
 		byte underline = isUnderline ? Font.U_SINGLE : Font.U_NONE;
 		Color color = BookHelper.HTMLToColor(book, fontColorBtn.getColor());
 		Utils.setFont(sheet, rect, boldWeight, color, getFontHeightInPoints(),
@@ -1280,8 +1267,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			}
 		}
 		if (findFont)
-			Utils.setFontFamily(spreadsheet.getSelectedSheet(), spreadsheet
-					.getSelection(), fontName);
+			Utils.setFontFamily(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), fontName);
 	}
 
 	// SECTION FastIcon Toolbar
@@ -1300,10 +1286,8 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			font = fontFamily.getSelectedItem().getLabel();
 		else
 			font = (String) event.getData();
-		this.fontFamilyCombobox
-				.setSelectedIndex((fontFamily.getSelectedIndex()));
-		Utils.setFontFamily(spreadsheet.getSelectedSheet(), spreadsheet
-				.getSelection(), font);
+		this.fontFamilyCombobox.setSelectedIndex((fontFamily.getSelectedIndex()));
+		Utils.setFontFamily(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), font);
 	}
 
 	public void setFontSize(String fontSize) {
@@ -1318,8 +1302,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			}
 		}
 		if (findSize)
-			Utils.setFontHeight(spreadsheet.getSelectedSheet(), spreadsheet
-					.getSelection(), getFontHeightInPoints());
+			Utils.setFontHeight(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), getFontHeightInPoints());
 	}
 
 	public void onFontSizeSelect(ForwardEvent event) {
@@ -1341,77 +1324,60 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			size = (String) event.getData();
 
 		fontSizeCombobox.setSelectedIndex((fontSize.getSelectedIndex()));
-		Utils.setFontHeight(spreadsheet.getSelectedSheet(), spreadsheet
-				.getSelection(), getFontHeightInPoints());
+		Utils.setFontHeight(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), getFontHeightInPoints());
 	}
 
 	public void onFontBoldClick(ForwardEvent event) {
-		onFontBoldClick();
+		setFontBold();
 	}
 
-	public void onFontBoldClick() {
+	public void setFontBold() {
 		// TODO undo/redo
 		// spreadsheet.pushCellState();
-		mainWin.getFellow("fastIconContextmenu").setVisible(false);
-		isBold = !isBold;
-		if (isBold) {
-			boldBtn.setClass("toolIcon clicked");
-		} else {
-			boldBtn.setClass("toolIcon");
-		}
 
-		Utils.setFontBold(spreadsheet.getSelectedSheet(), spreadsheet
-				.getSelection(), isBold);
+		//switch font bold and set sclass
+		boldBtn.setClass((isBold = !isBold) ? "toolIcon clicked" : "toolIcon");
+		Utils.setFontBold(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), isBold);
 	}
 
 	public void onFontItalicClick(ForwardEvent event) {
-		onFontItalicClick();
+		setFontItalic();
 	}
 
-	public void onFontItalicClick() {
+	public void setFontItalic() {
 		// TODO undo/redo
 		// spreadsheet.pushCellState();
-		mainWin.getFellow("fastIconContextmenu").setVisible(false);
-		isItalic = !isItalic;
-		if (isItalic) {
-			italicBtn.setClass("toolIcon clicked");
-		} else {
-			italicBtn.setClass("toolIcon");
-		}
-
-		Utils.setFontItalic(spreadsheet.getSelectedSheet(), spreadsheet
-				.getSelection(), isItalic);
+		
+		//switch italic and set sclass
+		italicBtn.setClass((isItalic = !isItalic) ? "toolIcon clicked" : "toolIcon");
+		Utils.setFontItalic(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), isItalic);
 	}
 
 	public void onFontUnderlineClick(ForwardEvent event) {
-		onFontUnderlineClick();
+		setFontUnderline();
 	}
-
-	public void onFontUnderlineClick() {
+	
+	
+	public void setFontUnderline() {
 		// TODO undo/redo
 		// spreadsheet.pushCellState();
-		isUnderline = !isUnderline;
-		if (isUnderline) {
-			underlineBtn.setClass("toolIcon clicked");
-		} else {
-			underlineBtn.setClass("toolIcon");
-		}
-
-		Utils.setFontUnderline(spreadsheet.getSelectedSheet(), spreadsheet
-				.getSelection(), isUnderline ? Font.U_SINGLE : Font.U_NONE);
+		
+		//switch underline and set sclass
+		underlineBtn.setClass((isUnderline = !isUnderline) ? "toolIcon clicked" : "toolIcon");
+		Utils.setFontUnderline(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), isUnderline ? Font.U_SINGLE : Font.U_NONE);
 	}
 
 	public void onFontStrikethroughClick(ForwardEvent event) {
+		setFontStrikethrough();
+	}
+	
+	public void setFontStrikethrough() {
 		// TODO undo/redo
 		// spreadsheet.pushCellState();
-		isStrikethrough = !isStrikethrough;
-		if (isStrikethrough) {
-			strikethroughBtn.setClass("toolIcon clicked");
-		} else {
-			strikethroughBtn.setClass("toolIcon");
-		}
-		Utils.setFontStrikeout(spreadsheet.getSelectedSheet(), spreadsheet
-				.getSelection(), isStrikethrough);
+		
+		//switch strike and set sclass
+		strikethroughBtn.setClass((isStrikethrough = !isStrikethrough) ? "toolIcon clicked" : "toolIcon");
+		Utils.setFontStrikeout(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), isStrikethrough);
 	}
 
 	public void onAlignHorizontalClick(ForwardEvent event) {
@@ -1441,8 +1407,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		} else
 			alignRightBtn.setClass("toolIcon");
 
-		Utils.setAlignment(spreadsheet.getSelectedSheet(), spreadsheet
-				.getSelection(), align);
+		Utils.setAlignment(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), align);
 	}
 
 	public void onChange$fontColorBtn() {
@@ -1462,7 +1427,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			return;
 
 		fontColorBtn.setColor(color);
-		changeFont(spreadsheet.getSelectedSheet(), spreadsheet.getSelection());
+		changeFont(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection());
 	}
 
 	public void setBackgroundColor(String color) {
@@ -1470,8 +1435,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			return;
 
 		backgroundColorBtn.setColor(color);
-		Utils.setBackgroundColor(spreadsheet.getSelectedSheet(), spreadsheet
-				.getSelection(), backgroundColorBtn.getColor());
+		Utils.setBackgroundColor(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), backgroundColorBtn.getColor());
 	}
 
 	/**
@@ -1540,12 +1504,12 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	private void sortAscending() {
-		Utils.sort(spreadsheet.getSelectedSheet(), spreadsheet.getSelection(),
+		Utils.sort(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(),
 				null, null, null, false, false, false);
 	}
 
 	private void sortDescending() {
-		Utils.sort(spreadsheet.getSelectedSheet(), spreadsheet.getSelection(),
+		Utils.sort(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(),
 				null, new boolean[] { true }, null, false, false, false);
 	}
 
@@ -1575,18 +1539,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				sortDescending();
 		}
 	}
-
-	/**
-	 * To do: merge code with onEditCopy
-	 */
-	// public void onClick$copySelection() {
-	// Rect sel = spreadsheet.getSelection();
-	// if (sel.getBottom() >= spreadsheet.getMaxrows())
-	// sel.setBottom(spreadsheet.getMaxrows() - 1);
-	// if (sel.getRight() >= spreadsheet.getMaxcolumns())
-	// sel.setRight(spreadsheet.getMaxcolumns() - 1);
-	// spreadsheet.setHighlight(sel);
-	// }
 
 	public void onPasteSelector(ForwardEvent event) {
 		EditHelper.onPasteEventHandler(event);
@@ -1988,5 +1940,14 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			tab.setContext(popup);
 			tab.setParent(sheetTB.getFellow("sheetTabs"));
 		}
+	}
+	
+	private Rect getSpreadsheetMaxSelection() {
+		Rect selection = spreadsheet.getSelection();
+		if (selection.getBottom() >= spreadsheet.getMaxrows())
+			selection.setBottom(spreadsheet.getMaxrows() - 1);
+		if (selection.getRight() >= spreadsheet.getMaxcolumns())
+			selection.setRight(spreadsheet.getMaxcolumns() - 1);
+		return selection;
 	}
 }

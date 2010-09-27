@@ -1,4 +1,19 @@
+/* Colorbutton.js
 
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		Sep 21, 2010 6:27:01 PM , Created by Sam
+}}IS_NOTE
+
+Copyright (C) 2009 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 (function () {
 	
 zssapp.Colorbutton = zk.$extends(zkex.inp.Colorbox, {
