@@ -26,6 +26,8 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.zkoss.io.Files;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zhtml.Filedownload;
@@ -39,6 +41,7 @@ import org.zkoss.zss.model.impl.PdfExporter;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
 
 /**
@@ -48,10 +51,22 @@ import org.zkoss.zul.Radiogroup;
 public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	
 	/**
+	 * TODO
 	 * The range to export. All sheets, current sheet or selection range
 	 * <p> Default: Export all sheets
 	 */
-	Radiogroup range;
+	//Radiogroup range;
+	
+	/**
+	 * The document's orientation. Landscape or Portrait
+	 */
+	Radiogroup orientation;
+	/**
+	 * Original orientation setting
+	 */
+	boolean orgOrientation;
+	Radio landscape;
+	Radio portrait;
 	
 	/**
 	 * Indicate whether include header or not
@@ -65,6 +80,7 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	 */
 	Checkbox noGridlines;
 	
+	
 	Button export;
 	
 	Spreadsheet ss;
@@ -76,6 +92,45 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 		ss = (Spreadsheet)getParam("spreadsheet");
 		if (ss == null)
 			throw new UiException("Spreadsheet object is null");
+
+		loadPrintSetting();
+	}
+	
+	private void loadPrintSetting() {
+		loadOrientationSetting();
+	}
+	
+	private void loadOrientationSetting() {
+		orgOrientation = ss.getSelectedSheet().getPrintSetup().getLandscape();
+		if (ss.getSelectedSheet().getPrintSetup().getLandscape())
+			orientation.setSelectedItem(landscape);
+		else
+			orientation.setSelectedItem(portrait);
+	}
+	
+	/**
+	 * Apply the print setting to each page
+	 */
+	private void applyPrintSetting() {
+		ss.getSelectedSheet().getPrintSetup().setLandscape(orientation.getSelectedItem() == landscape);
+		
+		boolean isLandscape = orientation.getSelectedItem() == landscape;
+		
+		int numSheet = ss.getBook().getNumberOfSheets();
+		for (int i = 0; i < numSheet; i++) {
+			Sheet sheet = ss.getSheet(i);
+			PrintSetup setup = sheet.getPrintSetup();
+			setup.setLandscape(isLandscape);
+		}
+	}
+	
+	private void revertPrintSetting() {
+		int numSheet = ss.getBook().getNumberOfSheets();
+		for (int i = 0; i < numSheet; i++) {
+			Sheet sheet = ss.getSheet(i);
+			PrintSetup setup = sheet.getPrintSetup();
+			setup.setLandscape(orgOrientation);
+		}
 	}
 	
 	private static Object getParam (String key) {
@@ -84,6 +139,8 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 
 	public void onClick$export() 
 		throws InvalidFormatException, IOException, InterruptedException{
+		
+		applyPrintSetting();
 		
 		Exporter c = new PdfExporter();
 		((PdfExporter)c).enableHeadings(includeHeadings());
@@ -106,6 +163,8 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 
 		Filedownload.save(amedia);
 		
+		revertPrintSetting();
+
 		//remove temp dir containing pdf output 
 		recursiveDelete(tempDir);
 
