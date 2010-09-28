@@ -39,6 +39,7 @@ ZK Spreadsheet 2.0.0 RC
   97 StringIndexOutOfBoundsException if cell text format is _(*"_"??_) 
   103 Freeze row/column is not correctly interpreted
   106 NPE when load Excel 2007 file with rich text string
+  110 merge area is not reset
   
 	------------
 ZK Spreadsheet 2.0.0 beta3

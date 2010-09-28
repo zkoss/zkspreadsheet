@@ -1535,7 +1535,7 @@ public class Spreadsheet extends XulElement {
 		if (sheet != getSelectedSheet())
 			throw new UiException("not current selected sheet ");
 		String sheetName = sheet.getSheetName();
-		MergeMatrixHelper mmhelper = (MergeMatrixHelper) getAttribute(sheetName+MERGE_MATRIX_KEY);
+		MergeMatrixHelper mmhelper = (MergeMatrixHelper) getAttribute(MERGE_MATRIX_KEY);
 		int fzr = getRowfreeze();
 		int fzc = getColumnfreeze();
 		if (mmhelper == null) {
@@ -1546,7 +1546,7 @@ public class Spreadsheet extends XulElement {
 				mergeRanges.add(new int[] {addr.getFirstColumn(), addr.getFirstRow(), addr.getLastColumn(), addr.getLastRow()});
 			}
 			mmhelper = new MergeMatrixHelper(mergeRanges, fzr, fzc);
-			setAttribute(sheetName+MERGE_MATRIX_KEY, mmhelper);
+			setAttribute(MERGE_MATRIX_KEY, mmhelper);
 		} else {
 			mmhelper.update(fzr, fzc);
 		}
