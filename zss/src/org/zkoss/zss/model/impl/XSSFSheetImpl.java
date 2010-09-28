@@ -24,6 +24,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.NameRecord;
@@ -51,12 +52,16 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellHelper;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFFactory;
 import org.apache.poi.xssf.usermodel.XSSFName;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFRowHelper;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -65,6 +70,7 @@ import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
@@ -1115,5 +1121,26 @@ public class XSSFSheetImpl extends XSSFSheet {
     	} else {
     		return pane.getState() == STPaneState.FROZEN; 
     	}
+    }
+
+    public XSSFDrawing getDrawingPatriarch() {
+        XSSFDrawing drawing = null;
+        CTDrawing ctDrawing = worksheet.getDrawing();
+        if(ctDrawing != null) {
+        	final String drawingId = ctDrawing.getId();
+            //search the referenced drawing in the list of the sheet's relations
+            for(POIXMLDocumentPart p : getRelations()){
+                if(p instanceof XSSFDrawing) {
+                    XSSFDrawing dr = (XSSFDrawing)p;
+                    String drId = dr.getPackageRelationship().getId();
+                    if(drId.equals(drawingId)){
+                        drawing = dr;
+                        break;
+                    }
+                    break;
+                }
+            }
+        }
+        return drawing;
     }
 }	

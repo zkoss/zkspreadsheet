@@ -842,8 +842,11 @@ public class Utils {
 	
 	public static AImage getAImage(Sheet sheet, PictureData picdata, int pictureIndex, String name) {
 		try {
+			name = name + '.' + picdata.suggestFileExtension();
 			return new AImage(name, picdata.getData());
 		} catch (IOException e) {
+			log.warning(e);			
+			
 			// ignore
 		}
 		return null;
@@ -952,7 +955,7 @@ public class Utils {
 	public static int getDefaultCharWidth(Sheet sheet) {
 		return ((Book)sheet.getWorkbook()).getDefaultCharWidth();
 	}
-	private static int getWidthAny(Sheet zkSheet,int col, int charWidth){
+	public static int getWidthAny(Sheet zkSheet,int col, int charWidth){
 		int w = zkSheet.getColumnWidth(col);
 		if (w == zkSheet.getDefaultColumnWidth() * 256) { //default column width
 			return Utils.defaultColumnWidthToPx(w / 256, charWidth);
@@ -960,7 +963,7 @@ public class Utils {
 		return fileChar256ToPx(w, charWidth);
 	}
 	
-	private static int getHeightAny(Sheet zkSheet,int row){
+	public static int getHeightAny(Sheet zkSheet, int row){
 		return getRowHeightInPx(zkSheet.getRow(row));
 	}
 	
@@ -1057,7 +1060,7 @@ public class Utils {
 	private static double roundTo100th(double w) {
 		return Math.floor(w * 100 + 0.5) / 100;
 	}
-	
+
 	public static String getColumnTitle(Sheet sheet, int col) {
 		return CellReference.convertNumToColString(col);
 	}

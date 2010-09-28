@@ -21,6 +21,7 @@ ZK Spreadsheet 2.0.0 RC
   88 Support moveRange(Excel 2007, xlsx)   	 
   89 Support merge(Excel 2007, xlsx) 
   107 ZK Spreadsheet Live support export PDF
+  108 Support showing pictures(Excel 2007, xlsx)
   
 *Bug
   66 Unexpected gridlines shown 
