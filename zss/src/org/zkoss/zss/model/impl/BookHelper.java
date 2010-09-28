@@ -416,6 +416,7 @@ public final class BookHelper {
 			final int len = rstr.length();
 			StringBuffer sb = new StringBuffer(len + runs*96);
 			int e = 0;
+			boolean prespan = false;
 			for(int b = 0, j = 0; j < runs; ++j) {
 				final int sbb = sb.length();
 				e = rstr.getIndexOfFormattingRun(j);
@@ -425,15 +426,19 @@ public final class BookHelper {
 						final int sbe = sb.length();
 						indexes.add(new int[] {sbb, sbe});
 					}
-					if (j > 0) {
+					if (prespan) {
 						sb.append("</span>");
+						prespan = false;
 					}
 				}
 				b = e;
 				final Font font = getFont(book, rstr, j);
-				sb.append("<span style=\"")
-					.append(getFontCSSStyle(book, font))
-					.append("\">");
+				if (font != null) {
+					sb.append("<span style=\"")
+						.append(getFontCSSStyle(book, font))
+						.append("\">");
+					prespan = true;
+				}
 			}
 			if (e < len) {
 				final int sbb = sb.length();
@@ -442,7 +447,10 @@ public final class BookHelper {
 					final int sbe = sb.length();
 					indexes.add(new int[] {sbb, sbe});
 				}
-				sb.append("</span>");
+				if (prespan) {
+					sb.append("</span>");
+					prespan = false;
+				}
 			}
 			return sb.toString();
 		} else {

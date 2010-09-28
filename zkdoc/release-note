@@ -36,8 +36,9 @@ ZK Spreadsheet 2.0.0 RC
   93 NPE when load sheet with merge cell
   99 freeze column and freeze row is not reset.
   98 Freeze area is not rendered if it is on the second sheet
-  103 Freeze row/column is not correctly interpreted
   97 StringIndexOutOfBoundsException if cell text format is _(*"_"??_) 
+  103 Freeze row/column is not correctly interpreted
+  106 NPE when load Excel 2007 file with rich text string
   
 	------------
 ZK Spreadsheet 2.0.0 beta3
