@@ -22,6 +22,8 @@ ZK Spreadsheet 2.0.0 RC
   89 Support merge(Excel 2007, xlsx) 
   107 ZK Spreadsheet Live support export PDF
   108 Support showing pictures(Excel 2007, xlsx)
+  111 Support exporting selected sheet to pdf
+  112 Support exporting selected area to pdf
   
 *Bug
   66 Unexpected gridlines shown 
