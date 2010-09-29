@@ -2901,7 +2901,7 @@ public class Spreadsheet extends XulElement {
 				sb.append(name.replace('\\', '/'));
 				bExtRequired = name.lastIndexOf('.') < 0;
 			} else {
-				sb.append(comp.getId());
+				sb.append(comp.getUuid());
 			}
 			if (bExtRequired && format != null)
 				sb.append('.').append(format);
