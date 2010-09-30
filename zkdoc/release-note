@@ -20,10 +20,21 @@ ZK Spreadsheet 2.0.0 RC
   86 Support deleteRange(Excel 2007, xlsx)
   88 Support moveRange(Excel 2007, xlsx)   	 
   89 Support merge(Excel 2007, xlsx) 
+  95 Support for ACCRINT financial funcion
+  96 Support for ACCRINTM financial funcion
+  100 Support COUPON financial functions
+  101 Support DISC financial function
+  102 Support DOLLAR conversion financial function
+  102 Support DURATION financial function
   107 ZK Spreadsheet Live support export PDF
   108 Support showing pictures(Excel 2007, xlsx)
   111 Support exporting selected sheet to pdf
   112 Support exporting selected area to pdf
+  113 Support annual interest rate financial functions EFFECT and NOMINAL
+  114 Support security related financial function
+  115 Support yield related financial function
+  116 Support Treasury Bill related financial functions
+
   
 *Bug
   66 Unexpected gridlines shown 
