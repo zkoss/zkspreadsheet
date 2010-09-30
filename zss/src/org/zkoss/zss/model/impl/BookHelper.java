@@ -35,7 +35,6 @@ import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.formula.Area3DPtg;
 import org.apache.poi.hssf.record.formula.AreaPtgBase;
-import org.apache.poi.hssf.record.formula.FormulaShifter;
 import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.record.formula.RefPtgBase;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -72,26 +71,21 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.ErrorConstants;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
-import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellHelper;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
@@ -906,6 +900,33 @@ public final class BookHelper {
 		return getBothDependents(cell); 
 	}
 	
+	public static Set<Ref>[] setCellHyperlink(Cell cell, int linkTarget, String address, String display) {
+		Hyperlink hlink = cell.getHyperlink();
+		if (hlink == null) {
+			Workbook wb = cell.getSheet().getWorkbook();
+			CreationHelper createHelper = wb.getCreationHelper();
+			Hyperlink link = createHelper.createHyperlink(linkTarget);
+			link.setAddress(address);
+			
+			cell.setHyperlink(link);
+			cell.setCellValue(display);
+		} else {
+			
+			if (sameHyperlink(cell, hlink, linkTarget, address))
+				return null;
+
+			hlink.setAddress(address);
+			cell.setCellValue(display);
+		}
+		//notify to update cache
+		return getBothDependents(cell); 
+	}
+	
+	private static boolean sameHyperlink(Cell cell, Hyperlink hlink,
+			int linkType, String address) {		
+		return hlink.getType() == linkType && hlink.getAddress() == address;
+	}
+
 	public static Set<Ref>[] setCellValue(Cell cell, String value) {
 		return setCellValue(cell, value == null ? null : cell.getSheet().getWorkbook().getCreationHelper().createRichTextString(value));
 	}

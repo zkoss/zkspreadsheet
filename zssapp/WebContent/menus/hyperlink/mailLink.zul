@@ -1,7 +1,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
-<vlayout>
+<vlayout spacing="0.6em">
 	<label value="${c:l('hyperlink.mail')}" />
-	<textbox id="mailAddr"/>
+	<textbox id="mailAddr" cols="75"/>
 	<label value="${c:l('hyperlink.subject')}"  />
-	<textbox id="mailSubject"/>
+	<textbox id="mailSubject"  cols="75"/>
 </vlayout>

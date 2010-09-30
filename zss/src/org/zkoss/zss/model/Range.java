@@ -16,10 +16,10 @@ package org.zkoss.zss.model;
 import java.util.Collection;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.model.impl.BookHelper;
 
@@ -312,4 +312,13 @@ public interface Range {
 	 * @param show true to show the gridlines; false to not show the gridlines. 
 	 */
 	public void setDisplayGridlines(boolean show);
+	
+	/**
+	 * Sets the hyperlink of this Range
+	 * @param linkType the type of target to link. One of the {@link #Hyperlink.LINK_URL}, 
+	 * {@link #Hyperlink.LINK_DOCUMENT}, {@link #Hyperlink.LINK_EMAIL}, {@link #LINK_FILE}
+	 * @param address the address
+	 * @param display the text to display link
+	 */
+	public void setHyperlink(int linkType, String address, String display);
 }

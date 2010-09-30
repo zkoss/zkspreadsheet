@@ -162,6 +162,18 @@ public class Utils {
 	}
 
 	/**
+	 * Set hyperlink in cell
+	 * @param sheet
+	 * @param rowIndex
+	 * @param colIndex
+	 * @param linkType
+	 * @param address
+	 * @param display
+	 */
+	public static void setHyperlink(Sheet sheet, int rowIndex, int colIndex, int linkType, String address, String display) {
+		Utils.getRange(sheet, rowIndex, colIndex).setHyperlink(linkType, address, display);
+	}
+	/**
 	 * Set font in selection range. 
 	 * <p> Copy original cell style, and set new font.
 	 * @param sheet
@@ -382,6 +394,15 @@ public class Utils {
 	 */
 	public static void visitCells(Sheet sheet, Rect rect, CellVisitor vistor) {
 		new CellSelector().doVisit(sheet, rect, vistor);
+	}
+	
+	/**
+	 * Visit each sheet in the {@link #Book}
+	 * @param book
+	 * @param visitor
+	 */
+	public static void visitSheets(Book book, SheetVisitor visitor) {
+		new SheetSelector().doVisit(book, visitor);
 	}
 	
 	/**

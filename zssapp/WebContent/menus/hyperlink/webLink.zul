@@ -1,7 +1,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
-<vlayout>
-	<label value="${c:l('hyperlink.mail')}" />
-	<textbox id="mailAddr" />
-	<label value="${c:l('hyperlink.subject')}" />
-	<textbox id="mailSubject" />
+<vlayout spacing="0.6em">
+	<label value="${c:l('hyperlink.address')}" />
+	<combobox id="addrCombobox" cols="75">
+		<comboitem label="http://www.zkoss.org/"></comboitem>
+	</combobox>
 </vlayout>

@@ -395,9 +395,16 @@
 						<toolbarbutton id="mergeCellBtn" src="/img/table-join.png" tooltiptext="${c:l('cell.merge')}"
 							forward="onClick=onMergeCellClick" />
 						<toolbarbutton id="wrapTextBtn" src="/img/wrapText.gif" tooltiptext="Wrap Text"
-							forward="onClick=onWrapTextClick" />		
+							forward="onClick=onWrapTextClick" />
+						<div sclass="toolbarSeparator"></div>		
 						<toolbarbutton id="insertChartBtn" src="/img/chart-pie.png" tooltiptext="${c:l('insert.chart')}"
 							forward="onClick=onInsertChart(pie)" />
+						<toolbarbutton id="insertHyperlinkBtn" src="/img/hyperlink.png" tooltiptext="${c:l('hyperlink')}"
+							forward="onHyperlink(${c:l('hyperlink')})" >
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>	
+						</toolbarbutton>
 						<div sclass="toolbarSeparator"></div>
 						<dropdownbutton src="/img/sort-filter.png" tooltiptext="${c:l('sortAndFilter')}">
 							<attribute w:name="onClick">

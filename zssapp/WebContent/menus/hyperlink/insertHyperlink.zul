@@ -1,0 +1,45 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?component name="linkmacro" macroURI="/menus/hyperlink/webLink.zul"?>
+<zk>
+	<window title="${c:l('hyperlink.insert')}" border="normal"
+		mode="modal" closable="true" position="center" height="300px"
+		width="580px" apply="org.zkoss.zss.app.link.InsertHyperlinkWindowCtrl">
+		<borderlayout height="100%" width="100%">
+			<west width="130px" border="none">
+				<vlayout style="text-align: center;" spacing="0.4em">
+					<div style="text-align: center;margin: 15px 0px 3px 0px;">
+						<label value="${c:l('hyperlink.linkTo')}" />
+					</div>
+					<button id="webBtn" label="${c:l('hyperlink.web')}" width="110px" mold="trendy"
+						height="60px" image="/img/document-globe.png" orient="vertical">
+					</button>
+					<button id="docBtn" label="${c:l('hyperlink.document')}" width="110px" mold="trendy"
+						 height="60px" image="/img/blue-document-table.png"
+						orient="vertical">
+					</button>
+					<button id="mailBtn" label="${c:l('hyperlink.mail')}" width="110px" mold="trendy"
+						height="60px" image="/img/mail.png" orient="vertical">
+					</button>
+				</vlayout>
+			</west>
+			<center border="none">
+				<borderlayout height="100%" width="100%">
+					<north height="40px" border="none">
+						<hbox align="center" width="100%" height="100%" spacing="0.5em">
+							<label value="${c:l('hyperlink.display')}"></label>
+							<textbox id="displayHyperlink" width="300px"></textbox>
+						</hbox>	
+					</north>
+					<center style="border-width: 1px 0 0 0;">
+						<include id="content" style="padding-top: 10px;"></include>
+					</center>
+					<south height="25px" border="none" style="padding: 10px;">
+						<button id="okBtn" style="float:right;" image="/img/check.png" mold="trendy">
+						</button>
+					</south>
+				</borderlayout>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

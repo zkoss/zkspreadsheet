@@ -34,7 +34,7 @@ ZK Spreadsheet 2.0.0 RC
   114 Support security related financial function
   115 Support yield related financial function
   116 Support Treasury Bill related financial functions
-
+  120 ZK Spreadsheet Live support set hyperlink menu and toolbarbutton
   
 *Bug
   66 Unexpected gridlines shown 

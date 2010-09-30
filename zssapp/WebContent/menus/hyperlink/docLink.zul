@@ -1,8 +1,10 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
-<vlayout>
-	<label value="${c:l('hyperlink.typeCellReference')}"></label>
-	<textbox id="cellRef" />
-	<label label="${c:l('hyperlink.selectInDocument')}" />
-	<tree id="refSheet">
+<vlayout spacing="0.6em">
+	<div>
+		<label value="${c:l('hyperlink.typeCellReference')}"></label>
+		<textbox id="cellRef" value="A1"/>
+	</div>
+	<label value="${c:l('hyperlink.selectInDocument')}" />
+	<tree id="refSheet" rows="5">
 	</tree>
 </vlayout>

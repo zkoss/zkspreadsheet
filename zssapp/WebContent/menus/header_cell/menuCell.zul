@@ -41,4 +41,7 @@
 		</menupopup>
 	</menu>
 	<menuitem label="${c:l('format.numberFormat')}" forward="onFormatPopup" />
+	<menuseparator />
+	<menuitem  label="${c:l('hyperlink')}" forward="onHyperlink(${c:l('hyperlink')})" image="/img/hyperlink.png"></menuitem>
+	<menuitem id="removeHyperlink" label="${c:l('hyperlink.remove')}" forward="onHyperlink(${c:l('hyperlink.remove')})" visible="false"></menuitem>
 </menupopup>

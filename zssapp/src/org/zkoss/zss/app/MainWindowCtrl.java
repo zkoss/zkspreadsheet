@@ -35,11 +35,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
 import org.zkoss.image.Image;
@@ -64,6 +64,7 @@ import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.event.CellStyleHelper;
 import org.zkoss.zss.app.event.EditHelper;
 import org.zkoss.zss.app.event.ExportHelper;
+import org.zkoss.zss.app.event.HyperlinkHelper;
 import org.zkoss.zss.app.sort.SortSelector;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
@@ -93,6 +94,7 @@ import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Menu;
+import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Popup;
@@ -154,6 +156,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	Menu backgroundColorMenu;
 	Menu insertImageMenu;
 	Menu insertPieChart;
+	Menuitem removeHyperlink;
 
 	Textbox formulaEditbox;
 	Spreadsheet spreadsheet;
@@ -360,21 +363,15 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		Cell cell = Utils.getCell(sheet, lastRow, lastCol);
 
 		// default settings
-		Combobox fontFamilyCombobox = (Combobox) win
-				.getFellow("_fontFamilyCombobox");
-		Combobox fontSizeCombobox = (Combobox) win
-				.getFellow("_fontSizeCombobox");
+		Combobox fontFamilyCombobox = (Combobox) win.getFellow("_fontFamilyCombobox");
+		Combobox fontSizeCombobox = (Combobox) win.getFellow("_fontSizeCombobox");
 		Toolbarbutton boldBtn = (Toolbarbutton) win.getFellow("_boldBtn");
 		Toolbarbutton italicBtn = (Toolbarbutton) win.getFellow("_italicBtn");
-		Toolbarbutton alignLeftBtn = (Toolbarbutton) win
-				.getFellow("_alignLeftBtn");
-		Toolbarbutton alignCenterBtn = (Toolbarbutton) win
-				.getFellow("_alignCenterBtn");
-		Toolbarbutton alignRightBtn = (Toolbarbutton) win
-				.getFellow("_alignRightBtn");
+		Toolbarbutton alignLeftBtn = (Toolbarbutton) win.getFellow("_alignLeftBtn");
+		Toolbarbutton alignCenterBtn = (Toolbarbutton) win.getFellow("_alignCenterBtn");
+		Toolbarbutton alignRightBtn = (Toolbarbutton) win.getFellow("_alignRightBtn");
 		Colorbutton fontColorBtn = (Colorbutton) win.getFellow("_fontColorBtn");
-		Colorbutton backgroundColorBtn = (Colorbutton) win
-				.getFellow("_backgroundColorBtn");
+		Colorbutton backgroundColorBtn = (Colorbutton) win.getFellow("_backgroundColorBtn");
 
 		// load default setting
 		fontFamilyCombobox.setText("Calibri");
@@ -388,6 +385,10 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		backgroundColorBtn.setColor("#FFFFFF");
 
 		if (cell != null) {
+			
+			//TODO: remove hyperlink
+			//removeHyperlink.setVisible(cell.getHyperlink() != null);
+			
 			CellStyle cs = cell.getCellStyle();
 
 			if (cs != null) {
@@ -437,7 +438,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				if (fcolor != null && !fcolor.equals(BookHelper.AUTO_COLOR)) {
 					backgroundColorBtn.setColor(fcolor);
 				}
-
 			}
 		}
 		win.setPosition("parent");
@@ -1562,6 +1562,14 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Execute hyperlink event
+	 * @param event
+	 */
+	public void onHyperlink(ForwardEvent event) {
+		HyperlinkHelper.onHyperlink(event);
 	}
 
 	public void onBorderSelector(ForwardEvent event) {

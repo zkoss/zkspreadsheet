@@ -126,7 +126,7 @@ public class RangeImpl implements Range {
 	public Sheet getLastSheet() {
 		return _lastSheet;
 	}
-
+	
 	@Override
 	public Hyperlink getHyperlink() {
 		Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
@@ -139,6 +139,47 @@ public class RangeImpl implements Range {
 				return BookHelper.getHyperlink(cell);
 		}
 		return null;
+	}
+	public void setHyperlink(int linkType, String address, String display) {
+		Set<Ref>[] refs = null;
+		
+		refs = new HyperlinkSetter().setValue(new HyperlinkContext(linkType, address, display));
+			
+		reevaluateAndNotify(refs);
+	}
+
+	private class HyperlinkSetter extends ValueSetter {
+		
+		protected Set<Ref>[] setCellValue(int row, int col, RefSheet refSheet, Object value) {
+			HyperlinkContext context = (HyperlinkContext)value;
+			Cell cell = BookHelper.getOrCreateCell(_sheet, row, col);
+			return BookHelper.setCellHyperlink(cell, context.getLinktype(), context.getAddress(), context.getDisplay());
+		}
+		
+	}
+	
+	private class HyperlinkContext {
+		private int _linkType;
+		private String _address;
+		private String _display;
+		
+		HyperlinkContext(int linkType, String address, String display) {
+			_linkType = linkType;
+			_address = address;
+			_display = display;
+		}
+		
+		public int getLinktype() {
+			return _linkType;
+		}
+		
+		public String getAddress() {
+			return _address;
+		}
+		
+		public String getDisplay() {
+			return _display;
+		}
 	}
 	@Override
 	public RichTextString getText() {
