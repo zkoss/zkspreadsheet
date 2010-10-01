@@ -900,7 +900,7 @@ public final class BookHelper {
 		return getBothDependents(cell); 
 	}
 	
-	public static Set<Ref>[] setCellHyperlink(Cell cell, int linkTarget, String address, String display) {
+	public static Set<Ref>[] setCellHyperlink(Cell cell, int linkTarget, String address) {
 		Hyperlink hlink = cell.getHyperlink();
 		if (hlink == null) {
 			Workbook wb = cell.getSheet().getWorkbook();
@@ -909,14 +909,12 @@ public final class BookHelper {
 			link.setAddress(address);
 			
 			cell.setHyperlink(link);
-			cell.setCellValue(display);
 		} else {
 			
 			if (sameHyperlink(cell, hlink, linkTarget, address))
 				return null;
 
 			hlink.setAddress(address);
-			cell.setCellValue(display);
 		}
 		//notify to update cache
 		return getBothDependents(cell); 

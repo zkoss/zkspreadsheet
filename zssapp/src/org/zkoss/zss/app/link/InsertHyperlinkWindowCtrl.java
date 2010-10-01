@@ -39,7 +39,6 @@ import org.zkoss.zss.ui.impl.SheetVisitor;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Include;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.SimpleTreeModel;
@@ -53,7 +52,7 @@ import org.zkoss.zul.Treeitem;
  *
  */
 public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
-	
+
 	private Button webBtn;
 	private Button docBtn;
 	private Button mailBtn;
@@ -115,11 +114,12 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	public void onClick$mailBtn() {
 		setLinkType(mailBtn);
 	}
-	
+
 	public void onClick$okBtn() {
 		String addr = getAddress();
 		if ("".equals(addr)) {
 			try {
+				//TODO use i18n instead
 				Messagebox.show("Please input address");
 			} catch (InterruptedException e) {
 			}
@@ -203,8 +203,16 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 					displayHyperlink.setValue(preAppend + mailAddr.getValue() + "?subject=" + ((InputEvent)evt).getValue());
 			}
 		});
+		mailAddr.addEventListener(Events.ON_OK, onOkEventListener);
+		mailSubject.addEventListener(Events.ON_OK, onOkEventListener);
 	}
-
+	
+	private EventListener onOkEventListener = new EventListener(){
+		@Override
+		public void onEvent(Event evt) throws Exception {
+			onClick$okBtn();
+		}};
+	
 	private void initAddr() {
 		if (isCellHasDisplayString)
 			return;
@@ -224,6 +232,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 				displayHyperlink.setValue(addr.getSelectedItem().getLabel());
 			}
 		});
+		addr.addEventListener(Events.ON_OK, onOkEventListener);
 	}
 
 	/**
@@ -232,9 +241,8 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	 */
 	private String getWebAddress() {
 		Combobox address = (Combobox)content.getFellow("addrCombobox");
-		Comboitem item = address.getSelectedItem();
-		//TODO input in combobox
-		return item != null ? item.getLabel() : "";
+		String val = address.getValue();
+		return val == null ? "" : val;
 	}
 	
 	private String getDocAddress() {

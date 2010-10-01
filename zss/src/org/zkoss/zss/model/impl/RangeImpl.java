@@ -153,7 +153,8 @@ public class RangeImpl implements Range {
 		protected Set<Ref>[] setCellValue(int row, int col, RefSheet refSheet, Object value) {
 			HyperlinkContext context = (HyperlinkContext)value;
 			Cell cell = BookHelper.getOrCreateCell(_sheet, row, col);
-			return BookHelper.setCellHyperlink(cell, context.getLinktype(), context.getAddress(), context.getDisplay());
+			setEditText(context.getDisplay());
+			return BookHelper.setCellHyperlink(cell, context.getLinktype(), context.getAddress());
 		}
 		
 	}
