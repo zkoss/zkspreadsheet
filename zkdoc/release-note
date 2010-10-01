@@ -35,7 +35,12 @@ ZK Spreadsheet 2.0.0 RC
   115 Support yield related financial function
   116 Support Treasury Bill related financial functions
   120 ZK Spreadsheet Live support set hyperlink menu and toolbarbutton
-  
+  121 Support Binary number conversion engineering functions
+  124 Support octal number conversion engineering functions
+  126 Support Bessel engineering functions
+  127 Support DELTA ERF ERFC and GESTEP engineering functions
+  128 Support complex number engineering functions
+
 *Bug
   66 Unexpected gridlines shown 
   64 pasteSpecial copy Validation cause Null pointer exception (Ptgs must not be null) 
