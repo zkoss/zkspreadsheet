@@ -140,14 +140,22 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			cell = sheet.getFocusedCell(),
 			cellcmp = cell.comp;
 
-		if (cell != null && sheet.state == zss.SSheetCtrl.START_EDIT) {
-			sheet.state = zss.SSheetCtrl.EDITING;
-			if (!server)
+		//bug #117 Barcode Scanner data incomplete
+		if (cell != null) {
+			if( sheet.state == zss.SSheetCtrl.START_EDIT) {
+				if (!server)
+					value = sheet._clienttxt;
+				sheet._clienttxt = '';
+				var editor = sheet.editor,
+					pos = sheet.getLastFocus();
+				editor.edit(cellcmp, pos.row, pos.column, value);
+				sheet.state = zss.SSheetCtrl.EDITING;
+			} else if (sheet.state == zss.SSheetCtrl.FOCUSED) {
 				value = sheet._clienttxt;
-			sheet._clienttxt = '';
-			var editor = sheet.editor,
+				var editor = sheet.editor,
 				pos = sheet.getLastFocus();
-			editor.edit(cellcmp, pos.row, pos.column, value);
+				editor.edit(cellcmp, pos.row, pos.column, value);
+			}
 		}
 	},
 	/**

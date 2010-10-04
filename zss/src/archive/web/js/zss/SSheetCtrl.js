@@ -974,15 +974,15 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		var charcode = evt.which,
 			c = asciiChar(charcode);
 
-		//ascii, not eiditng, not special key
+		//ascii, not editing, not special key
 		if (c != null && !(evt.altKey || evt.ctrlKey) && this.state != zss.SSheetCtrl.EDITING) {
 			if (this.state == zss.SSheetCtrl.START_EDIT) //startEditing but not get response from server yet
 				this._clienttxt += c; //this._clienttxt is cleared in DataPanel#_startEditing()
 			else if (this.state == zss.SSheetCtrl.FOCUSED) {
 				this._clienttxt = c;
+				//bug #117: Barcode Scanner data incomplete
+				this.dp._startEditing(c); //calling client side to catch the input
 				this.dp.startEditing(evt, c); //fire to server so user can override the result
-				if (!zk.ie) //ie cannot call _startEditing directly; or the focus will gone(NOT know the reason yet) 
-					this.dp._startEditing(c); //calling client side to catch the input
 			}
 			evt.stop();
 		}
