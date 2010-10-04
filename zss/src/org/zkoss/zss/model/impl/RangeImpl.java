@@ -265,6 +265,9 @@ public class RangeImpl implements Range {
 				refs = val instanceof Number ?
 					setValue((Number)val): //number
 					setValue((Date)val); //date
+				if (values.length > 2 && values[2] != null) {
+					setDateFormat((String) values[2]);
+				}
 				break;
 			case Cell.CELL_TYPE_ERROR:
 				refs = setValue((Byte)values[1]);
@@ -275,6 +278,34 @@ public class RangeImpl implements Range {
 		}
 		
 		reevaluateAndNotify(refs);
+	}
+	
+	private void setDateFormat(String formatString) {
+		for(Ref ref : _refs) {
+			final int tRow = ref.getTopRow();
+			final int lCol = ref.getLeftCol();
+			final int bRow = ref.getBottomRow();
+			final int rCol = ref.getRightCol();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final Sheet sheet = BookHelper.getSheet(_sheet, refSheet);
+			final Workbook book = sheet.getWorkbook();
+			
+			for(int row = tRow; row <= bRow; ++row) {
+				for (int col = lCol; col <= rCol; ++col) {
+					final Cell cell = BookHelper.getCell(sheet, row, col);
+					final CellStyle style = cell != null ? cell.getCellStyle() : null;
+					final String oldFormat = style != null ? style.getDataFormatString() : null;
+					if (oldFormat == null || "General".equals(oldFormat)) {
+						CellStyle newCellStyle = book.createCellStyle();
+						if (style != null) {
+							newCellStyle.cloneStyleFrom(style);
+						}
+						BookHelper.setDataFormat(book, newCellStyle, formatString); //prepare a DataFormat with the specified formatString
+						BookHelper.setCellStyle(sheet, row, col, row, col, newCellStyle);
+					}
+				}
+			}
+		}
 	}
 	
 	/*package*/ void reevaluateAndNotify(Set<Ref>[] refs) { //[0]: last, [1]: all

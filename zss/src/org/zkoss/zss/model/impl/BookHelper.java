@@ -40,6 +40,7 @@ import org.apache.poi.hssf.record.formula.RefPtgBase;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellHelper;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFDataValidation;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
@@ -82,6 +83,7 @@ import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFDataFormat;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -1017,10 +1019,12 @@ public final class BookHelper {
 					final Double val = Double.parseDouble(txt);
 					return new Object[] {new Integer(Cell.CELL_TYPE_NUMERIC), val}; //double
 				} catch (NumberFormatException ex) {
-					final Date val = parseToDate(txt);
-					return val != null ? 
-						new Object[] {new Integer(Cell.CELL_TYPE_NUMERIC), val}: //date
-						new Object[] {new Integer(Cell.CELL_TYPE_STRING), txt}; //string
+					final Object[] results = parseToDate(txt); 
+					if (results[0] instanceof String) { 
+						return new Object[] {new Integer(Cell.CELL_TYPE_STRING), results[0]}; //string
+					} else { //if (result[0] instanceof Date)
+						return new Object[] {new Integer(Cell.CELL_TYPE_NUMERIC), results[0], results[1]}; //date with format
+					}
 				}
 			}
 		}
@@ -1045,25 +1049,12 @@ public final class BookHelper {
 		return -1;
 	}
 
-	private static String[] DATE_TIME_PATTERN  = new String[] {
-		"M/d/yy", "M-d-yy", "M/d", "M-d", "yyyy/M/d", "yyyy-M-d", "d-MMM-yy",
-		"MMMM-yy", "MMM-yy", "MMMM d, yyyy", "M/d/yy h:mm a", "M/d/yy H:mm", "MMMM",
-		"h:m:s a", "H:m:s", "h:m a", "H:m",
-	};
-	
-	//TODO, support locale other than US
-	//TODO, shall use pattern match rather than try and error
-	private static Date parseToDate(String txt) {
-		for(int j = 0; j < DATE_TIME_PATTERN.length; ++j) {
-			try {
-				final DateFormat df = new SimpleDateFormat(DATE_TIME_PATTERN[j], Locale.US);
-				return df.parse(txt);
-			} catch (ParseException ex) {
-				//ignore, try next pattern
-			}
-		}
-		return null;
+	//0: value 1: format
+	private static Object[] parseToDate(String txt) {
+		//TODO when BookHelper refactor to singleton, DateInputMask can be a private variable 
+		return new DateInputMask().parseDateInput(txt);
 	}
+	
 	public static Row getOrCreateRow(Sheet sheet, int rowIndex) {
 		Row row = sheet.getRow(rowIndex);
 		if (row == null) {
@@ -3419,5 +3410,17 @@ if (fillType == FILL_DEFAULT) {
 	public static int getColumnFreeze(Sheet sheet) {
 		final PaneInformation pi = sheet.getPaneInformation();
 		return pi != null ? pi.getVerticalSplitPosition() : 0;
+	}
+	
+	/*package*/ static void setDataFormat(Workbook book, CellStyle style, String formatString) {
+		if (book instanceof HSSFWorkbook) {
+			HSSFDataFormat df = ((HSSFWorkbook)book).createDataFormat();
+			final short fmt = df.getFormat(formatString);
+			style.setDataFormat(fmt);
+		} else {
+			XSSFDataFormat df = ((XSSFWorkbook)book).createDataFormat();
+			final short fmt = df.getFormat(formatString);
+			style.setDataFormat(fmt);
+		}
 	}
 }

@@ -25,7 +25,7 @@ ZK Spreadsheet 2.0.0 RC
   100 Support COUPON financial functions
   101 Support DISC financial function
   102 Support DOLLAR conversion financial function
-  102 Support DURATION financial function
+  105 Support DURATION financial function
   107 ZK Spreadsheet Live support export PDF
   108 Support showing pictures(Excel 2007, xlsx)
   111 Support exporting selected sheet to pdf
@@ -36,31 +36,35 @@ ZK Spreadsheet 2.0.0 RC
   116 Support Treasury Bill related financial functions
   120 ZK Spreadsheet Live support set hyperlink menu and toolbarbutton
   121 Support Binary number conversion engineering functions
+  122 Support Decimal number conversion engineering functions
+  123 Support Hexadecimal number conversion engineering functions
   124 Support octal number conversion engineering functions
   126 Support Bessel engineering functions
   127 Support DELTA ERF ERFC and GESTEP engineering functions
   128 Support complex number engineering functions
+  129 Support input mask for entering Date or Time into cell.
 
 *Bug
-  66 Unexpected gridlines shown 
-  64 pasteSpecial copy Validation cause Null pointer exception (Ptgs must not be null) 
+  44 Locale is not respected
   61 Fronzen row/column does not comply with Spreadsheet's maxrows/maxcolumn
+  64 pasteSpecial copy Validation cause Null pointer exception (Ptgs must not be null) 
+  66 Unexpected gridlines shown 
   67 Exception when enter value 0.3308589607635 into cell with text format "# ???/???"
   68 Exception when set text format to ?/2, ?/4, ?/8, ?/16, ??/100
   69 Incorrect text output when enter value 0 into cell with text format "???/???"
-  44 Locale is not respected
-  87 =HYPERLINK() function in Excel 2007xlsx not follow as a hyperlink
   72 IE6 rendering issue - fixed column & row sizes/positions 
+  73 Edit on the shorter last visible row cause the grid moving up
+  87 =HYPERLINK() function in Excel 2007xlsx not follow as a hyperlink
   91 NPE when load cell with color style(Excel 2007, xlsx)
   93 NPE when load sheet with merge cell
-  99 freeze column and freeze row is not reset.
-  98 Freeze area is not rendered if it is on the second sheet
   97 StringIndexOutOfBoundsException if cell text format is _(*"_"??_) 
+  98 Freeze area is not rendered if it is on the second sheet
+  99 freeze column and freeze row is not reset.
   103 Freeze row/column is not correctly interpreted
   106 NPE when load Excel 2007 file with rich text string
   109 2nd picuture is not shown.
   110 merge area is not reset
-  73 Edit on the shorter last visible row cause the grid moving up
+  119 Typing in 234-6 or 344/2 into cell cause junk number value
   
 	------------
 ZK Spreadsheet 2.0.0 beta3
