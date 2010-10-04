@@ -962,9 +962,12 @@ public class Utils {
 		return getHeightAny(sheet, row);
 	}
 	
-	public static int getRowHeightInPx(Row row) {
-		int h = row.getHeight();
-		if(h==0xFF) h = row.getSheet().getDefaultRowHeight();
+	public static int getRowHeightInPx(Sheet sheet, Row row) {
+		final int defaultHeight = sheet.getDefaultRowHeight();
+		int h = row == null ? defaultHeight : row.getHeight();
+		if (h == 0xFF) {
+			h = defaultHeight;
+		}
 		return twipToPx(h);
 	}
 	
@@ -984,8 +987,8 @@ public class Utils {
 		return fileChar256ToPx(w, charWidth);
 	}
 	
-	public static int getHeightAny(Sheet zkSheet, int row){
-		return getRowHeightInPx(zkSheet.getRow(row));
+	public static int getHeightAny(Sheet sheet, int row){
+		return getRowHeightInPx(sheet, sheet.getRow(row));
 	}
 	
 	//calculate the default char width in pixel per the given Font

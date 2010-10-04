@@ -1575,7 +1575,7 @@ public class Spreadsheet extends XulElement {
 			
 			for(Row row: sheet) {
 				final boolean hidden = row.getZeroHeight();
-				final int height = Utils.getRowHeightInPx(row);
+				final int height = Utils.getRowHeightInPx(sheet, row);
 				if (height != defaultSize || hidden) { //special height or hidden
 					infos.add(new HeaderPositionInfo(row.getRowNum(), height, _custRowId.next(), hidden));
 				}
