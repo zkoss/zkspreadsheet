@@ -65,6 +65,7 @@ ZK Spreadsheet 2.0.0 RC
   106 NPE when load Excel 2007 file with rich text string
   109 2nd picuture is not shown.
   110 merge area is not reset
+  117 Barcode Scanner data incomplete
   119 Typing in 234-6 or 344/2 into cell cause junk number value
   
 	------------
