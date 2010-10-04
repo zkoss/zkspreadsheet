@@ -13,9 +13,6 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,7 +22,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -3381,7 +3377,7 @@ if (fillType == FILL_DEFAULT) {
 	}
 	
 	private static Color getHSSFFontColor(HSSFWorkbook book, HSSFFont font) {
-		final short index = font.getColor();
+		final short index = font.getColor() == Font.COLOR_NORMAL ? HSSFColor.AUTOMATIC.index : font.getColor();
 		HSSFPalette palette = book.getCustomPalette();
 		if (palette != null) {
 			return palette.getColor(index);

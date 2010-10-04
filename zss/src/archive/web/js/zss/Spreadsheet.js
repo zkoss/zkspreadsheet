@@ -330,7 +330,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		 * @return default value depends on selected sheet
 		 */
 		/**
-		 * Sam. not implement yet
+		 * TODO avoid use invalidate
 		 */
 		rowHeight: null,
 		/**
@@ -342,11 +342,11 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		 * @return default value depends on selected sheet
 		 */
 		/**
-		 * Sam. not implement yet
+		 * TODO avoid use invalidate
 		 */
 		columnWidth: null,
 		/**
-		 * Sam. there is no lineh ???????
+		 * TODO there is no lineh ?
 		 */
 		lineh: null,
 		/**
@@ -359,7 +359,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		 * @return int
 		 */
 		/**
-		 * Sam. not implement yet
+		 * TODO avoid use invalidate
 		 */
 		topPanelHeight: null,
 		/**
@@ -371,7 +371,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		 * @return default value is 28
 		 */
 		/**
-		 * Sam. not implement yet
+		 * TODO avoid use invalidate
 		 */
 		leftPanelWidth: null,
 		/**
@@ -385,9 +385,6 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		sheetId: null,
 		focusRect: null,
 		selectionRect: null,
-		/**
-		 * Sam. to do, change to use setter ???
-		 */
 		highLightRect: null,
 		mergeRange: null,
 		csc: null,
@@ -413,7 +410,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		 * @return boolean
 		 */
 		/**
-		 * Sam. in this version, it use invalidate
+		 * TODO avoid use invalidate
 		 */
 		rowHeadHidden: null,
 		/**
@@ -425,7 +422,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		 * @return boolean
 		 */
 		/**
-		 * Sam. in this version, it use invalidate
+		 * TODO avoid use invalidate
 		 */
 		columnHeadHidden: null
 	},
@@ -574,7 +571,11 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	 */
 	setDisplayGridlines: function (show) {
 		var sheet = this.sheetCtrl;
-		if (!sheet || show == !this._hideGridlines) 
+		if (!sheet) {
+			this._dpGridlines = show; //reserver value for init
+			return;
+		}
+		if (show == !this._hideGridlines) 
 			return;
 
 		sheet._cmdGridlines(show);
@@ -715,6 +716,10 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		this._initMaxColumn();
 		this._initMaxRow();
 		this._initFrozenArea();
+
+		var show = this._dpGridlines;
+		if (typeof show != 'undefined')
+			this.setDisplayGridlines(show);
 	},
 	bind_: function () {
 		this.$supers('bind_', arguments);

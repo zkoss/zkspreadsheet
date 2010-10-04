@@ -28,6 +28,7 @@ import java.util.UUID;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.AreaReference;
 import org.zkoss.io.Files;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zhtml.Filedownload;
@@ -38,6 +39,7 @@ import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Exporter;
 import org.zkoss.zss.model.impl.PdfExporter;
+import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
@@ -53,9 +55,12 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	/**
 	 * TODO
 	 * The range to export. All sheets, current sheet or selection range
-	 * <p> Default: Export all sheets
+	 * <p> Default: Selected sheet
 	 */
-	//Radiogroup range;
+	Radiogroup range;
+	Radio currSelection; //TODO selection range
+	Radio currSheet;
+	Radio allSheet;
 	
 	/**
 	 * The document's orientation. Landscape or Portrait
@@ -97,6 +102,8 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void loadPrintSetting() {
+		range.setSelectedItem(currSheet);
+		
 		loadOrientationSetting();
 	}
 	
@@ -155,7 +162,7 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	    	+ System.currentTimeMillis() + ".pdf";
 		
 		os = new java.io.FileOutputStream(outputFilePath);
-		c.export(wb, os);
+		export(c, os);
 		Files.close(os);
 		
 		final InputStream mediais = new FileInputStream(new File(outputFilePath));
@@ -169,6 +176,19 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 		recursiveDelete(tempDir);
 
 		((Component)self.getSpaceOwner()).detach();
+	}
+	
+	private void export(Exporter exporter, OutputStream outputStream) {
+		Radio seld = range.getSelectedItem();
+		if (seld == allSheet) {
+			exporter.export(ss.getBook(), outputStream);	
+		} else if (seld == currSelection){
+			Rect rect = ss.getSelection();
+			String area = ss.getColumntitle(rect.getLeft()) + ss.getRowtitle(rect.getTop()) + ":" + 
+				ss.getColumntitle(rect.getRight()) + ss.getRowtitle(rect.getBottom());
+			exporter.exportSelection(ss.getSelectedSheet(), new AreaReference(area), outputStream);
+		} else
+			exporter.export(ss.getSelectedSheet(), outputStream);
 	}
 	
 	private boolean includeHeadings () {

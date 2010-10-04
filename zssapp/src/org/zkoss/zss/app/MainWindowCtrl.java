@@ -39,7 +39,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
 import org.zkoss.image.Image;
@@ -88,6 +87,7 @@ import org.zkoss.zssex.ui.widget.ImageWidget;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Chart;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Fileupload;
@@ -126,7 +126,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	int lastRow = 0;
 	int lastCol = 0;
-	// boolean isCut = false;
 	boolean isFreezeRow = false;
 	boolean isFreezeColumn = false;
 
@@ -179,6 +178,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	Toolbarbutton mergeCellBtn;
 	Toolbarbutton wrapTextBtn;
 	Toolbarbutton insertChartBtn;
+	Checkbox gridlinesCheckbox;
 
 	South formulaBar;
 	Borderlayout topToolbars;
@@ -258,6 +258,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 						spreadsheet.focusTo(row, col);
 					}
 				});
+		gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
 	}
 
 	private void evalFormula(String input) {
@@ -347,6 +348,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	// SECTION Sheet Tabbox Event Handler
 	void onTabboxSelectEvent(SelectEvent event) {
 		spreadsheet.setSelectedSheet(sheetTB.getSelectedTab().getLabel());
+		gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
 	}
 
 	// SECTION Spreadsheet Event Handler
@@ -1240,7 +1242,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	/**
 	 * Set font style
-	 * 
 	 * @param sheet
 	 * @param rect
 	 */
@@ -1758,14 +1759,12 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				}
 				filename = bReader.readLine();
 				if (filename == null) {
-					System.out
-							.println("Warning: filename cannot read from metaFile");
+					System.out.println("Warning: filename cannot read from metaFile");
 					break;
 				}
 				hashFilename = bReader.readLine();
 				if (hashFilename == null) {
-					System.out
-							.println("Warning: hashFilename cannot read from metaFile");
+					System.out.println("Warning: hashFilename cannot read from metaFile");
 					break;
 				}
 				if (spreadsheet.getSrc().equals(filename)) {
@@ -1957,5 +1956,16 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		if (selection.getRight() >= spreadsheet.getMaxcolumns())
 			selection.setRight(spreadsheet.getMaxcolumns() - 1);
 		return selection;
+	}
+	
+	/**
+	 * Switch gridlines setting of spreadsheet
+	 * @param event
+	 */
+	public void onGridlines(ForwardEvent event) {
+		Sheet sheet = spreadsheet.getSelectedSheet();
+		Utils.getRange(sheet, 0, 0).setDisplayGridlines(!sheet.isDisplayGridlines());
+		//TODO avoid use invalidate
+		//spreadsheet.invalidate();
 	}
 }

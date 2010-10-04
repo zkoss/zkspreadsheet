@@ -43,6 +43,7 @@ ZK Spreadsheet 2.0.0 RC
   127 Support DELTA ERF ERFC and GESTEP engineering functions
   128 Support complex number engineering functions
   129 Support input mask for entering Date or Time into cell.
+  130 Support display, hide gridlines
 
 *Bug
   44 Locale is not respected

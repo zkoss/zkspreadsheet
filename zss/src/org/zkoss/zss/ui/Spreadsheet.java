@@ -204,10 +204,8 @@ public class Spreadsheet extends XulElement {
 	private boolean _hideColhead; // hide column head*/
 	
 	private boolean _hideGridlines; //hide gridlines
-	/**
-	 * Sam add for zss app
-	 */
-//	StateManager stateManager = new StateManager(this);
+	//TODO undo/redo
+	//StateManager stateManager = new StateManager(this);
 	private Collection _focuses = new LinkedList();
 
 	private Rect _focusRect = new Rect(0, 0, 0, 0);
@@ -390,7 +388,7 @@ public class Spreadsheet extends XulElement {
 	}
 	
 	/**
-	 * Sam added for zss app
+	 * 
 	 * @param is
 	 * @param src
 	 */
@@ -478,7 +476,7 @@ public class Spreadsheet extends XulElement {
 	 */
 	public void setSrcName(String src) {
 		/**
-		 * Sam. wait for model integration
+		 * TODO model integration
 		 */
 		/*
 		BookImpl book = (BookImpl) this.getBook();
@@ -2316,8 +2314,8 @@ public class Spreadsheet extends XulElement {
 			result.setData("maxrow", _maxRows);
 			result.setData("rowfreeze", _rowFreeze);
 			/**
-			 * removerc_ -> removeColumn Sam, need test, need
-			 * Utils.nextUpdateId()???
+			 * removerc_ -> removeColumn
+			 * TODO need Utils.nextUpdateId() ?
 			 */
 			// smartUpdateValues("removerc_"+Utils.nextUpdateId(),new Object[]{"",Utils.getId(sheet),result.toString()});
 			response("removeRowColumn" + Utils.nextUpdateId(), new AuRemoveRowColumn(Spreadsheet.this, "", Utils.getSheetId(sheet), result.toString()));
@@ -2945,11 +2943,14 @@ public class Spreadsheet extends XulElement {
 	}
 
 	private void doSheetSelected(Sheet sheet) {
+		//load widgets
 		List list = loadWidgetLoaders();
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
 			((WidgetLoader) list.get(i)).onSheetSelected(sheet);
 		}
+		//setup gridline
+		setDisplayGridlines(_selectedSheet.isDisplayGridlines());
 	}
 
 	private void clearHeaderSizeHelper(boolean row, boolean col) {
@@ -3322,11 +3323,7 @@ public class Spreadsheet extends XulElement {
 		}
 		_focuses.remove(targetFocus);
 	}
-	
-	
-	/**
-	 * Sam. added for zss app, *******Add focus function*************
-	 */
+
 	/**
 	 * update/invalidate all focus/selection/hightlight to align with cell border
 	 */
@@ -3371,7 +3368,6 @@ public class Spreadsheet extends XulElement {
 	}
 	
 	/**
-	 * Sam added for zss app
 	 * @param sheet
 	 */
 	//it will be call when delete sheet 
