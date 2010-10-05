@@ -11,6 +11,7 @@
 ../dist/lib/gmapsz.jar
 ../dist/lib/zss.jar
 ../dist/lib/zssex.jar
+../dist/lib/zsspdf.jar
 ../dist/lib/zpoi.jar
 ../dist/lib/ext/opencsv.jar
 ../dist/lib/ext/commons-math.jar

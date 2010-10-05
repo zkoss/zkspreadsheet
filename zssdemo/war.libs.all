@@ -19,9 +19,9 @@ commons-collections.jar
 commons-logging.jar
 commons-digester.jar
 iText-5.0.3.jar
-jxl.jar
 zpoi.jar
 zss.jar
 zssex.jar
+zsspdf.jar
 opencsv.jar
 commons-math.jar

@@ -9,7 +9,6 @@ zkex.jar
 zkmax.jar
 zkplus.jar
 zuljsp.jar
-fckez.jar
 ckez.jar
 gmapsz.jar
 timelinez.jar
@@ -25,8 +24,7 @@ jasperreports.jar
 commons-collections.jar
 commons-logging.jar
 commons-digester.jar
-itext.jar
-jxl.jar
+iText-5.0.3.jar
 groovy.jar
 jruby.jar
 js.jar
@@ -34,5 +32,6 @@ jython.jar
 zpoi.jar
 zss.jar
 zssex.jar
+zsspdf.jar
 opencsv.jar
 commons-math.jar

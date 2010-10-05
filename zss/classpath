@@ -5,3 +5,4 @@
 ../dist/lib/zpoi.jar
 ../dist/lib/ext/commons-math.jar
 ../dist/lib/ext/ooxml-schemas-1.1.jar
+../dist/lib/ext/xmlbeans-2.3.0.jar
