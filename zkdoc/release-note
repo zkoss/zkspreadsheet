@@ -43,8 +43,9 @@ ZK Spreadsheet 2.0.0 RC
   127 Support DELTA ERF ERFC and GESTEP engineering functions
   128 Support complex number engineering functions
   129 Support input mask for entering Date or Time into cell.
-  130 Support display, hide gridlines
-
+  130 ZK Spreadsheet Live Support display, hide gridlines
+  131 Support wrapping ZK Spreadsheet as a JSF Ajax Component
+  
 *Bug
   44 Locale is not respected
   61 Fronzen row/column does not comply with Spreadsheet's maxrows/maxcolumn
