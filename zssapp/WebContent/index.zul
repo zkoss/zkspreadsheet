@@ -243,7 +243,11 @@
 				<center id="fastIconBtn" flex="true" border="0" style="background: #F5F5F5; border-bottom: 1px solid #D8D8D8;">
 					<hlayout spacing="0.4em" height="30px">
 						<toolbarbutton id="print"  src="/img/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>
-						<toolbarbutton src="/img/document-pdf.png" forward="onExport(${c:l('export.pdf')})" tooltiptext="${c:l('export.pdf')}"/>
+						<toolbarbutton src="/img/document-pdf.png" forward="onExport(${c:l('export.pdf')})" tooltiptext="${c:l('export.pdf')}">
+							<attribute w:name="onClick">
+								this.$f('spreadsheet').focus(false);
+							</attribute>
+						</toolbarbutton>
 						<toolbarbutton id="undo"  src="/img/arrow-curve-180-left.png" 	forward="onClick=onEditUndo" tooltiptext="${c:l('edit.undo')}"/>
 						<toolbarbutton id="redo"  src="/img/arrow-curve.png"	forward="onClick=onEditRedo" tooltiptext="${c:l('edit.redo')}"/>
 						<!-- copy and paste -->
@@ -441,7 +445,15 @@
 								<menuitem label="${c:l('filter.reapply')}" src="/img/funnel--arrow.png"
 									forward="onFilterSelector(${c:l('filter.reapply')})" disabled="true"/>
 							</menupopup>
-						</dropdownbutton>	
+						</dropdownbutton>
+						<div sclass="toolbarSeparator"></div>
+						<checkbox id="gridlinesCheckbox" tooltiptext="${c:l('gridlines')}" forward="onGridlines" image="/img/grid.png">
+							<attribute w:name="onBind">
+								var img = jq(this.$n()).find('img');
+								if (img)
+									img.removeAttr('align');
+							</attribute>
+						</checkbox>
 					</hlayout>
 				</center>
 				
@@ -470,13 +482,7 @@
 	</tabbox>
 
 	<!-- rename ss1 to spreadsheet  -->
-<!-- 	
 	<spreadsheet id="spreadsheet" src="/xls/demo_sample.xls" maxrows="200"
-			maxcolumns="40" vflex="1" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
-			forward="onCtrlKey=mainWin.onSSCtrlKeys">
-	</spreadsheet>
- -->	
-	<spreadsheet id="spreadsheet" src="/xls/Efficiency.xls" maxrows="200"
 			maxcolumns="40" vflex="1" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
 			forward="onCtrlKey=mainWin.onSSCtrlKeys">
 	</spreadsheet>

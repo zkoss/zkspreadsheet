@@ -1,3 +1,4 @@
+*Bug 132: view ZK Spreadsheet Live index.zul cause NullPointerException
 	------------
 ZK Spreadsheet 2.0.0 RC
 
