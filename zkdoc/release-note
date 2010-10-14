@@ -47,6 +47,8 @@ ZK Spreadsheet 2.0.0 RC
   129 Support input mask for entering Date or Time into cell.
   130 ZK Spreadsheet Live Support display, hide gridlines
   131 Support wrapping ZK Spreadsheet as a JSF Ajax Component
+  134 Support Math formula functions for Matrix operations
+  135 Support Math formula functions
   
 *Bug
   44 Locale is not respected
