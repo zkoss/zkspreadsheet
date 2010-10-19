@@ -4,7 +4,10 @@ ZK Spreadsheet 2.0.0
 *Features:
   134 Support Math formula functions for Matrix operations
   135 Support Math formula functions
-  
+  136 Support Statistical formula function for calculating distribution
+  137 Support Statistical formula functions for calculating mean
+  138 Support Text formula functions
+
 *Bug 
   132 view ZK Spreadsheet Live index.zul cause NullPointerException
   
@@ -55,7 +58,7 @@ ZK Spreadsheet 2.0.0 RC
   129 Support input mask for entering Date or Time into cell.
   130 ZK Spreadsheet Live Support display, hide gridlines
   131 Support wrapping ZK Spreadsheet as a JSF Ajax Component
-  
+
 *Bug
   44 Locale is not respected
   61 Fronzen row/column does not comply with Spreadsheet's maxrows/maxcolumn
