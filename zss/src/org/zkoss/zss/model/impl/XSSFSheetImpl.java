@@ -76,6 +76,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
+import org.zkoss.lang.Objects;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
 
@@ -1123,24 +1124,16 @@ public class XSSFSheetImpl extends XSSFSheet {
     	}
     }
 
+    private XSSFDrawing _patriarch = null;
     public XSSFDrawing getDrawingPatriarch() {
-        XSSFDrawing drawing = null;
-        CTDrawing ctDrawing = worksheet.getDrawing();
-        if(ctDrawing != null) {
-        	final String drawingId = ctDrawing.getId();
-            //search the referenced drawing in the list of the sheet's relations
-            for(POIXMLDocumentPart p : getRelations()){
-                if(p instanceof XSSFDrawing) {
-                    XSSFDrawing dr = (XSSFDrawing)p;
-                    String drId = dr.getPackageRelationship().getId();
-                    if(drId.equals(drawingId)){
-                        drawing = dr;
-                        break;
-                    }
-                    break;
-                }
-            }
-        }
-        return drawing;
+    	if (_patriarch == null) {
+	        for(POIXMLDocumentPart dr : getRelations()){
+	            if(dr instanceof XSSFDrawing){
+	            	_patriarch = (XSSFDrawing) dr;
+	            	break;
+	            }
+	        }
+    	}
+    	return _patriarch;
     }
 }	

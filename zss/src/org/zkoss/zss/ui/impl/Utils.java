@@ -861,18 +861,6 @@ public class Utils {
 		range.setRichEditText(value);
 	}
 	
-	public static AImage getAImage(Sheet sheet, PictureData picdata, int pictureIndex, String name) {
-		try {
-			name = name + '.' + picdata.suggestFileExtension();
-			return new AImage(name, picdata.getData());
-		} catch (IOException e) {
-			log.warning(e);			
-			
-			// ignore
-		}
-		return null;
-	}
-	
 	public static void mergeCells(Sheet sheet, int tRow, int lCol, int bRow, int rCol, boolean across) {
 		Range rng = getRange(sheet, tRow, lCol, bRow, rCol);
 		rng.merge(across);

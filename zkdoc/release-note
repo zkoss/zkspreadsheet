@@ -2,6 +2,7 @@
 ZK Spreadsheet 2.0.0
 
 *Features:
+  46  Support showing chart(Excel 97-2003, xls)
   134 Support Math formula functions for Matrix operations
   135 Support Math formula functions
   136 Support Statistical formula function for calculating distribution

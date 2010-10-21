@@ -74,7 +74,7 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
 	private RefBook _refBook;
 	private Books _books;
 	private int _defaultCharWidth = 7; //TODO: don't know how to calculate this yet per the default font.
-	private final String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver";
+	private final String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver.class";
 	private final HSSFWorkbookHelper _helper;
 
 	public HSSFBookImpl(String bookname, InputStream is) throws IOException {

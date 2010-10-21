@@ -2,11 +2,8 @@ zcommon.jar
 zweb.jar
 zk.jar
 zul.jar
-zml.jar
 zkex.jar
-zkmax.jar
 zkplus.jar
-gmapsz.jar
 zcommons-el.jar
 bsh.jar
 commons-fileupload.jar

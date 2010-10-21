@@ -76,4 +76,15 @@ public interface WidgetHandler{
 	 * this method will be invoked when spreadsheet invalidate only.
 	 */
 	public void invaliate();
+
+	/**
+	 * Redraw widget from a handler per the contents changs.
+	 * notice : WidgetHandler and Widget are implementation-sensitive.
+	 * @param sheet the sheet that contents has changed
+	 * @param left left column of the range 
+	 * @param top top row of the range 
+	 * @param right right column of the range 
+	 * @param bottom bottom row of the range
+	 */
+	public void updateWidgets(Sheet sheet, int left, int top, int right, int bottom);
 }

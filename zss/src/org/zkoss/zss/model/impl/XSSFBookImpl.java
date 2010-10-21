@@ -63,7 +63,7 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	private RefBook _refBook;
 	private Books _books;
 	private int _defaultCharWidth = 7; //TODO: don't know how to calculate this yet per the default font.
-	private final String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver";
+	private final String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver.class";
 	
 	//override the XSSFSheet Relation
 	static {

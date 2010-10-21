@@ -4,15 +4,10 @@ zweb.jar
 zk.jar
 zul.jar
 zhtml.jar
-zml.jar
 zkex.jar
-zkmax.jar
 zkplus.jar
-zuljsp.jar
 ckez.jar
 gmapsz.jar
-timelinez.jar
-timeplotz.jar
 zcommons-el.jar
 bsh.jar
 commons-fileupload.jar
@@ -25,10 +20,6 @@ commons-collections.jar
 commons-logging.jar
 commons-digester.jar
 iText-5.0.3.jar
-groovy.jar
-jruby.jar
-js.jar
-jython.jar
 zpoi.jar
 zss.jar
 zssex.jar

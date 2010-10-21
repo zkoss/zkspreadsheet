@@ -80,7 +80,7 @@ public interface SpreadsheetCtrl {
 	 * @return true if success to remove a widget
 	 */
 	public boolean removeWidget(Widget widget);
-
+	
 	public Boolean getTopHeaderHiddens(int col);
 	
 	public Boolean getLeftHeaderHiddens(int row);

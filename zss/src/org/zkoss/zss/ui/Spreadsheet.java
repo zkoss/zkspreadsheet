@@ -215,7 +215,7 @@ public class Spreadsheet extends XulElement {
 
 	private WidgetHandler _widgetHandler;
 
-	private List _widgetLoaders;
+	private List<WidgetLoader> _widgetLoaders;
 
 
 	/**
@@ -1411,9 +1411,12 @@ public class Spreadsheet extends XulElement {
 		private void onContentChange(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final Sheet sheet = getSheet(rng);
-			if (!getSelectedSheet().equals(sheet))
-				return;
-			updateCell(sheet, rng.getLeftCol(), rng.getTopRow(), rng.getRightCol(), rng.getBottomRow());
+			final int left = rng.getLeftCol();
+			final int top = rng.getTopRow();
+			final int right = rng.getRightCol();
+			final int bottom = rng.getBottomRow();
+			updateWidget(sheet, left, top, right, bottom);
+			updateCell(sheet, left, top, right, bottom);
 		}
 		private void onRangeInsert(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -1603,17 +1606,24 @@ public class Spreadsheet extends XulElement {
 		updateCell(getSelectedSheet(), left, top, right, bottom);
 	}
 
+	private void updateWidget(Sheet sheet, int left, int top, int right, int bottom) {
+		if (this.isInvalidated())
+			return;// since it is invalidate, we don't need to do anymore
+		//update widgets per the content change of the range.
+		getWidgetHandler().updateWidgets(sheet, left, top, right, bottom);
+	}
+	
 	private void updateCell(Sheet sheet, int left, int top, int right, int bottom) {
 		if (this.isInvalidated())
 			return;// since it is invalidate, we don't need to do anymore
 
-		int row, col;
 		String sheetId = Utils.getSheetId(sheet);
 		if (!sheetId.equals(this.getSelectedSheetId()))
 			return;
 		left = left > 0 ? left - 1 : 0;// for border, when update a range, we
 		// should also update the left,top +1 part
 		top = top > 0 ? top - 1 : 0;
+		int row, col;
 		for (int i = left; i <= right; i++) {
 			for (int j = top; j <= bottom; j++) {
 				row = j;
@@ -1818,7 +1828,7 @@ public class Spreadsheet extends XulElement {
 		public boolean removeWidget(Widget widget) {
 			return Spreadsheet.this.removeWidget(widget);
 		}
-
+		
 		public WidgetHandler getWidgetHandler() {
 			return Spreadsheet.this.getWidgetHandler();
 		}
@@ -3009,10 +3019,10 @@ public class Spreadsheet extends XulElement {
 	/**
 	 * load widget loader
 	 */
-	/* package */List loadWidgetLoaders() {
+	/* package */List<WidgetLoader> loadWidgetLoaders() {
 		if (_widgetLoaders != null)
 			return _widgetLoaders;
-		_widgetLoaders = new ArrayList();
+		_widgetLoaders = new ArrayList<WidgetLoader>();
 		String loaderclzs = (String) getAttribute(WIDGET_LOADERS_KEY);
 		if (loaderclzs != null) {
 			try {
@@ -3083,7 +3093,7 @@ public class Spreadsheet extends XulElement {
 	private boolean removeWidget(Widget widget) {
 		return getWidgetHandler().removeWidget(widget);
 	}
-
+	
 	/**
 	 * Default widget implementation, don't provide any function.
 	 */
@@ -3108,6 +3118,9 @@ public class Spreadsheet extends XulElement {
 		}
 
 		public void init(Spreadsheet spreadsheet) {
+		}
+		
+		public void updateWidgets(Sheet sheet, int left, int top, int right, int bottom) {
 		}
 	}
 
