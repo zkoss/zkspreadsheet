@@ -69,7 +69,8 @@ public class DefaultDependencyTracker implements DependencyTracker {
 				myAddDependency(srcRef, refBookName, refSheetName, refLastSheetName, tRow, lCol, tRow, lCol, eval);
 			}
 		} else if (opResult instanceof NameEval) {
-			opResult = ErrorEval.NAME_INVALID; 
+			final String fname = ((NameEval)opResult).getFunctionName(); 
+			opResult = fname != null && fname.startsWith("_xlfn.") ? opResult : ErrorEval.NAME_INVALID; 
 		}
 		return opResult;
 	}

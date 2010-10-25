@@ -1046,7 +1046,7 @@ public final class BookHelper {
 	}
 
 	//0: value 1: format
-	private static Object[] parseToDate(String txt) {
+	public static Object[] parseToDate(String txt) {
 		//TODO when BookHelper refactor to singleton, DateInputMask can be a private variable 
 		return new DateInputMask().parseDateInput(txt);
 	}
