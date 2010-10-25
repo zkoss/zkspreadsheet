@@ -8,6 +8,7 @@ ZK Spreadsheet 2.0.0
   136 Support Statistical formula function for calculating distribution
   137 Support Statistical formula functions for calculating mean
   138 Support Text formula functions
+   140 Support Information formula functions
 
 *Bug 
   132 view ZK Spreadsheet Live index.zul cause NullPointerException
