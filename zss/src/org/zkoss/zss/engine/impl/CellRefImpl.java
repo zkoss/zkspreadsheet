@@ -82,6 +82,11 @@ public class CellRefImpl extends AbstractRefImpl implements Ref {
 	}
 	
 	@Override
+	public boolean isWholeSheet() {
+		return false; //A cell impossible to occupy the whole sheet
+	}
+	
+	@Override
 	public int getColumnCount() {
 		return 1;
 	}

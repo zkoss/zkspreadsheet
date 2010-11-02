@@ -14,6 +14,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -225,27 +226,15 @@ public interface Range {
 	public void setRowHeight(int points);
 
 	/**
-	 * Get 1st sheet of this range.
-	 * @return 1st sheet of this range.
+	 * Returns associate sheet of this range.
+	 * @return associate sheet of this range.
 	 */
-	public Sheet getFirstSheet();
-	
-	/**
-	 * Get last sheet of this range.
-	 * @return last sheet of this range.
-	 */
-	public Sheet getLastSheet();
-	
-	/**
-	 * Return collection of individual references area of this Range.
-	 * @return collection of individual references area of this Range.
-	 */
-	public Collection<Ref> getRefs();
+	public Sheet getSheet();
 	
 	/**
 	 * Return the range that contains the cell specified in row, col (relative to this Range).
-	 * @param row row index relative to this Range
-	 * @param col column index relative to this Range
+	 * @param row row index relative to this Range(note that it is 1-based)
+	 * @param col column index relative to this Range(note that it is 1-based)
 	 * @return the range that contains the cell specified in row, col (relative to this Range).
 	 */
 	public Range getCells(int row, int col);
@@ -321,4 +310,75 @@ public interface Range {
 	 * @param display the text to display link
 	 */
 	public void setHyperlink(int linkType, String address, String display);
+	
+	/**
+	 * Returns an {@link Areas} which is a collection of each single selected area(also Range) of this multiple-selected Range. 
+	 * If this Range is a single selected Range, this method return the Areas which contains only this Range itself.
+	 * @return
+	 */
+	public Areas getAreas();
+	
+	/**
+	 * Returns a {@link Range} that represent all columns of the 1st selected area of this Range. Note that only the 1st selected area is considered if this Range is a multiple-selected Range. 
+	 * @return a {@link Range} that represent all columns of this Range.
+	 */
+	public Range getColumns();
+	
+	/**
+	 * Returns a {@link Range} that represent all rows of the 1st selected area of this Range. Note that only the 1st selected area is considered if this Range is a multiple-selected Range. 
+	 * @return a {@link Range} that represent all rows of this Range.
+	 */
+	public Range getRows();
+
+	/**
+	 * Returns a {@link Range} that represent all dependents of the left-top cell of the 1st selected area of this Range. 
+	 * Note that only the left-top cell of the 1st selected area is considered if this Range is a multiple-selected Range.
+	 * This could be multiple-selected Range if there are more than one dependent. 
+	 * @return a {@link Range} that represent all dependents of the left-top cell of the 1st selected area of this Range.
+	 */
+	public Range getDependents();
+	
+	/**
+	 * Returns a {@link Range} that represent all direct dependents of the left-top cell of the 1st selected area of this Range. 
+	 * Note that only the left-top cell of the 1st selected area is considered if this Range is a multiple-selected Range. 
+	 * This method could return multiple-selected Range if there are more than one dependent. 
+	 * @return a {@link Range} that represent all direct dependents of the left-top cell of the 1st selected area of this Range.
+	 */
+	public Range getDirectDependents();
+	
+	/** 
+	 * Returns a {@link Range} that represent all precedents of the left-top cell of the 1st selected area of this Range. 
+	 * Note that only the left-top cell of the 1st selected area is considered if this Range is a multiple-selected Range.
+	 * This method could return multiple-selected Range if there are more than one precedent. 
+	 * @return a {@link Range} that represent all precedents of the left-top cell of the 1st selected area of this Range.
+	 */
+	public Range getPrecedents();
+	
+	/**
+	 * Returns a {@link Range} that represent all direct precedents of the left-top cell of the 1st selected area of this Range. 
+	 * Note that only the left-top cell of the 1st selected area is considered if this Range is a multiple-selected Range. 
+	 * This method could return multiple-selected Range if there are more than one precedent. 
+	 * @return a {@link Range} that represent all direct precedents of the left-top cell of the 1st selected area of this Range.
+	 */
+	public Range getDirectPrecedents();
+	
+	/**
+	 * Returns the number of the 1st row of the 1st area in this Range(1-based; i.e. row1 return 1)
+	 * @return the number of the 1st row of the 1st area in this Range(1-based; i.e. row1 return 1)
+	 */
+	public int getRow();
+	
+	/**
+	 * Returns the number of the 1st column of the 1st area in this Range(1-based; i.e. Column A return 1)
+	 * @return the number of the 1st column of the 1st area in this Range(1-based; i.e. Column A return 1)
+	 */
+	public int getColumn();
+	
+	
+	/**
+	 * Returns the number of contained objects in this Range.
+	 * @return the number of contained objects in this Range.
+	 */
+	public long getCount();
+	
 }

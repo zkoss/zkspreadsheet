@@ -80,6 +80,11 @@ public class VarRefImpl extends AbstractRefImpl implements Ref {
 	}
 	
 	@Override
+	public boolean isWholeSheet() {
+		return false;
+	}
+	
+	@Override
 	public int getColumnCount() {
 		return 0;
 	}

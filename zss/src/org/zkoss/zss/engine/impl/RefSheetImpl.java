@@ -327,6 +327,39 @@ public class RefSheetImpl implements RefSheet {
 	}
 	
 	@Override
+	public Set<Ref> getDirectPrecedents(int row, int col) {
+		final CellRefImpl srcRef = (CellRefImpl) getRef(row, col, row, col);
+		return srcRef != null ? srcRef.getPrecedents() : null;
+	}
+	
+	@Override
+	public Set<Ref> getAllPrecedents(int row, int col) {
+		final Set<Ref> all = new HashSet<Ref>();
+		getAllPrecedents0(row, col, all);
+		return all;
+	}
+	
+	private void getAllPrecedents0(int row, int col, Set<Ref> all) {
+		final CellRefImpl srcRef = (CellRefImpl) getRef(row, col, row, col);
+		if (srcRef != null && !all.contains(srcRef)) {
+			final Set<Ref> precedents = srcRef.getPrecedents();
+			all.addAll(precedents);
+			for (Ref ref : precedents) {
+				final int row1 = ref.getTopRow();
+				final int row2 = ref.getBottomRow();
+				final int col1 = ref.getLeftCol();
+				final int col2 = ref.getRightCol();
+				final RefSheetImpl refSheet = (RefSheetImpl)ref.getOwnerSheet();
+				for (int r = row1; r <= row2; ++r) {
+					for (int c = col1; c <= col2; ++c) {
+						refSheet.getAllPrecedents0(r, c, all); //recursive
+					}
+				}
+			}
+		}
+	}
+	
+	@Override
 	public Set<Ref> getDirectDependents(int row, int col) {
 		return DependencyTrackerHelper.getDirectDependents(this, row, col);
 	}

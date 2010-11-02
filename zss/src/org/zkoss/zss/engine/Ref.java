@@ -91,6 +91,12 @@ public interface Ref {
 	public boolean isWholeColumn();
 
 	/**
+	 * Returns whether this reference cover the whole sheet.
+	 * @return whether this reference cover the whole sheet.
+	 */
+	public boolean isWholeSheet();
+	
+	/**
 	 * Returns the number of columns in this reference.
 	 * @return the number of columns in this reference.
 	 */

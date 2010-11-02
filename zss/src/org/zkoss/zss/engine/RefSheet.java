@@ -15,6 +15,8 @@ package org.zkoss.zss.engine;
 
 import java.util.Set;
 
+import org.zkoss.zss.engine.impl.CellRefImpl;
+
 /**
  * Reference areas(see {@link Ref}) in a sheet for hit test. When user change value of a cell,
  * the engine shall find which {@link Ref}s includes this cell(a hit).
@@ -115,8 +117,8 @@ public interface RefSheet {
 	 * at the specified row and column.
 	 * @param row row index
 	 * @param col column index
-	 * @return the direct dependent cell references affected by the value change
-	 * of the cell at the specified row and column.  
+	 * @return the direct dependent cell references that is affected by the cell 
+	 * at the specified row and column.  
 	 */
 	public Set<Ref> getDirectDependents(int row, int col);
 
@@ -125,8 +127,8 @@ public interface RefSheet {
 	 * specified row and column.
 	 * @param row row index
 	 * @param col column index
-	 * @return the direct and indirect dependent cell references affected by the value 
-	 * change of the cell at the specified row and column.  
+	 * @return the direct and indirect dependent cell references that is affected by  
+	 * the cell at the specified row and column.  
 	 */
 	public Set<Ref> getAllDependents(int row, int col);
 	
@@ -135,8 +137,8 @@ public interface RefSheet {
 	 * the specified row and column.
 	 * @param row row index
 	 * @param col column index
-	 * @return the last direct and indirect dependent cell references affected by the value 
-	 * change of the cell at the specified row and column.  
+	 * @return the last dependent cell references that is affected by the cell 
+	 * at the specified row and column.  
 	 */
 	public Set<Ref> getLastDependents(int row, int col);
 	
@@ -149,6 +151,23 @@ public interface RefSheet {
 	 * 	[1] the "all" dependent cell references to be reloaded the associated cell value.
 	 */
 	public Set<Ref>[] getBothDependents(int row, int col);
+	
+	/** 
+	 * Returns all direct precedent cell references that affects the cell at the specified row and column.
+	 * @param row row index
+	 * @param col column index
+	 * @return the direct precedent cell references affects the cell at the specified row and column.  
+	 */
+	public Set<Ref> getDirectPrecedents(int row, int col);
+	
+	/** 
+	 * Returns all precedent cell references that affects the cell at the 
+	 * specified row and column.
+	 * @param row row index
+	 * @param col column index
+	 * @return the direct and indirect precedent cell references affects the cell at the specified row and column.  
+	 */
+	public Set<Ref> getAllPrecedents(int row, int col);
 	
 	/**
 	 * Insert number of rows from the specified row index. 

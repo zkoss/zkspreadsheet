@@ -64,6 +64,11 @@ public class AreaRefImpl extends CellRefImpl {
 	}
 	
 	@Override
+	public boolean isWholeSheet() {
+		return isWholeColumn() && isWholeRow(); 
+	}
+	
+	@Override
 	public int getColumnCount() {
 		return _rCol - getLeftCol() + 1;
 	}

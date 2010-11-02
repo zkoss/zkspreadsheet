@@ -43,9 +43,12 @@ import org.zkoss.zss.engine.impl.AreaRefImpl;
 import org.zkoss.zss.engine.impl.CellRefImpl;
 import org.zkoss.zss.engine.impl.ChangeInfo;
 import org.zkoss.zss.engine.impl.MergeChange;
+import org.zkoss.zss.engine.impl.RefSheetImpl;
+import org.zkoss.zss.model.Areas;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.Ranges;
 
 /**
  * Implementation of {@link Range} which plays a facade to operate on the spreadsheet data models
@@ -55,16 +58,14 @@ import org.zkoss.zss.model.Range;
  */
 public class RangeImpl implements Range {
 	private final Sheet _sheet;
-	private final Sheet _lastSheet;
 	private int _left = Integer.MAX_VALUE;
 	private int _top = Integer.MAX_VALUE;
 	private int _right = Integer.MIN_VALUE;
 	private int _bottom = Integer.MIN_VALUE;
 	private Set<Ref> _refs;
-	
+
 	public RangeImpl(int row, int col, Sheet sheet, Sheet lastSheet) {
 		_sheet = sheet;
-		_lastSheet = lastSheet;
 		initCellRef(row, col, sheet, lastSheet);
 	}
 	
@@ -83,7 +84,6 @@ public class RangeImpl implements Range {
 	
 	public RangeImpl(int tRow, int lCol, int bRow, int rCol, Sheet sheet, Sheet lastSheet) {
 		_sheet = sheet;
-		_lastSheet = lastSheet;
 		if (tRow == bRow && lCol == rCol) 
 			initCellRef(tRow, lCol, sheet, lastSheet);
 		else
@@ -91,9 +91,15 @@ public class RangeImpl implements Range {
 	}
 	
 	/*package*/ RangeImpl(Ref ref, Sheet sheet) {
-		_sheet = sheet;
-		_lastSheet = sheet;
+		_sheet = BookHelper.getSheet(sheet, ref.getOwnerSheet());
 		addRef(ref);
+	}
+	
+	private RangeImpl(Set<Ref> refs, Sheet sheet) {
+		_sheet = sheet;
+		for(Ref ref : refs) {
+			addRef(ref);
+		}
 	}
 	
 	private void initAreaRef(int tRow, int lCol, int bRow, int rCol, Sheet sheet, Sheet lastSheet) {
@@ -109,7 +115,6 @@ public class RangeImpl implements Range {
 		}
 	}
 	
-	@Override
 	public Collection<Ref> getRefs() {
 		if (_refs == null) {
 			_refs = new HashSet<Ref>(3);
@@ -118,15 +123,10 @@ public class RangeImpl implements Range {
 	}
 	
 	@Override
-	public Sheet getFirstSheet() {
+	public Sheet getSheet() {
 		return _sheet;
 	}
 
-	@Override
-	public Sheet getLastSheet() {
-		return _lastSheet;
-	}
-	
 	@Override
 	public Hyperlink getHyperlink() {
 		Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
@@ -649,9 +649,9 @@ public class RangeImpl implements Range {
 	@Override
 	public void sort(Range rng1, boolean desc1, Range rng2, int type, boolean desc2, Range rng3, boolean desc3, int header, int orderCustom,
 			boolean matchCase, boolean sortByRows, int sortMethod, int dataOption1, int dataOption2, int dataOption3) {
-		final Ref key1 = rng1 != null ? rng1.getRefs().iterator().next() : null;
-		final Ref key2 = rng2 != null ? rng2.getRefs().iterator().next() : null;
-		final Ref key3 = rng3 != null ? rng3.getRefs().iterator().next() : null;
+		final Ref key1 = rng1 != null ? ((RangeImpl)rng1).getRefs().iterator().next() : null;
+		final Ref key2 = rng2 != null ? ((RangeImpl)rng2).getRefs().iterator().next() : null;
+		final Ref key3 = rng3 != null ? ((RangeImpl)rng3).getRefs().iterator().next() : null;
 		if (_refs != null && !_refs.isEmpty()) {
 			final Ref ref = _refs.iterator().next();
 			final int tRow = ref.getTopRow();
@@ -679,10 +679,10 @@ public class RangeImpl implements Range {
 		paste0(dstRange, Range.PASTE_ALL, Range.PASTEOP_NONE, false, false);
 	}
 	private void paste0(Range dstRange, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
-		if (_refs != null && !_refs.isEmpty() && !dstRange.getRefs().isEmpty()) {
+		if (_refs != null && !_refs.isEmpty() && !((RangeImpl)dstRange).getRefs().isEmpty()) {
 			//check if follow the copy rule
 			//destination range allow only one contiguous reference
-			if (dstRange.getRefs().size() > 1) {
+			if (((RangeImpl)dstRange).getRefs().size() > 1) {
 				throw new UiException("Command cannot be used on multiple selections");
 			}
 			//source range can handle only same rows/columns multiple references
@@ -690,7 +690,7 @@ public class RangeImpl implements Range {
 			Ref ref1 = it.next();
 			int srcRowCount = ref1.getRowCount();
 			int srcColCount = ref1.getColumnCount();
-			final Ref dstRef = dstRange.getRefs().iterator().next();
+			final Ref dstRef = ((RangeImpl)dstRange).getRefs().iterator().next();
 			final Set<Ref> last = new HashSet<Ref>();
 			final Set<Ref> all = new HashSet<Ref>();
 			if (_refs.size() > 1) { //multiple src references
@@ -776,7 +776,10 @@ public class RangeImpl implements Range {
 	
 	@Override
 	public Range getCells(int row, int col) {
-		return new RangeImpl(row, col, _sheet, _sheet);
+		final Ref ref = getRefs().iterator().next();
+		final int col1 = ref.getLeftCol() + col - 1;
+		final int row1 = ref.getTopRow() + row - 1;
+		return new RangeImpl(row1, col1, _sheet, _sheet);
 	}
 			
 	private void copyMulti(boolean sameRow, SortedMap<Integer, Ref> srcRefs, int srcColCount, int srcRowCount, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, Set<Ref> last, Set<Ref> all) {
@@ -1055,20 +1058,19 @@ public class RangeImpl implements Range {
 	
 	@Override
 	public void autoFill(Range dstRange, int fillType) {
-		if (_refs != null && !_refs.isEmpty() && !dstRange.getRefs().isEmpty()) {
+		if (_refs != null && !_refs.isEmpty() && !((RangeImpl)dstRange).getRefs().isEmpty()) {
 			//destination range allow only one contiguous reference
-			if (dstRange.getRefs().size() > 1) {
+			if (((RangeImpl)dstRange).getRefs().size() > 1) {
 				throw new UiException("Command cannot be used on multiple selections");
 			}
 			final Ref srcRef = _refs.iterator().next();
-			final Ref dstRef = dstRange.getRefs().iterator().next();
+			final Ref dstRef = ((RangeImpl)dstRange).getRefs().iterator().next();
 			fillRef(srcRef, dstRef, fillType);
 		}
 	}
 	
 	@Override
 	public void clearContents() {
-		//TODO not implemented yet
 		if (_refs != null && !_refs.isEmpty()) {
 			final Ref ref = _refs.iterator().next();
 			final RefSheet refSheet = ref.getOwnerSheet();
@@ -1172,21 +1174,137 @@ public class RangeImpl implements Range {
 	
 	@Override
 	public void setDisplayGridlines(boolean show) {
-		final Book book = (Book)_sheet.getWorkbook();
-		final int index1= book.getSheetIndex(_sheet);
-		final int index2 = book.getSheetIndex(_lastSheet);
+		final Ref ref = getRefs().iterator().next();
+		final Sheet sheet = BookHelper.getSheet(_sheet, ref.getOwnerSheet());
 		final Set<Ref> all = new HashSet<Ref>(); 
-		for(int j = index1; j <= index2; ++j) {
-			final Sheet sheet = book.getSheetAt(j);
-			final boolean old = sheet.isDisplayGridlines();
-			if (old != show) {
-				sheet.setDisplayGridlines(show);
-				//sheet is important, row, column is not in this event
-				all.add(new CellRefImpl(0, 0, BookHelper.getRefSheet(book, sheet))); 
-			}
+		final boolean old = sheet.isDisplayGridlines();
+		if (old != show) {
+			sheet.setDisplayGridlines(show);
+			//sheet is important, row, column is not in this event
+			all.add(ref); 
 		}
 		if (!all.isEmpty()) {
+			final Book book = (Book) sheet.getWorkbook();
 			BookHelper.notifyGridlines(book, all, show);
 		}
 	}
+	
+	@Override
+	public Areas getAreas() {
+		final AreasImpl areas = new AreasImpl();
+		if (getRefs().size() == 1) {
+			areas.addArea(this);
+		} else {
+			for(Ref ref : getRefs()) {
+				final Range rng = refToRange(ref);
+				areas.addArea(rng);
+			}
+		}
+		return areas;
+	}
+	
+	private Range refToRange(Ref ref) {
+		return new RangeImpl(ref, _sheet);
+	}
+
+	@Override
+	public long getCount() {
+		final Ref ref = getRefs().iterator().next();
+		final int col1 = ref.getLeftCol();
+		final int col2 = ref.getRightCol();
+		final int row1 = ref.getTopRow();
+		final int row2 = ref.getBottomRow();
+		if (ref.isWholeColumn()) {
+			return (long) (col2 - col1 + 1);
+		} else if (ref.isWholeRow()) {
+			return (long) (row2 - row1 + 1);
+		} else if (ref.isWholeSheet()) {
+			return 1L;
+		}
+		final int ccount = col2 - col1 + 1;
+		final long rcount = (long) (col2 - col1 + 1);
+		return rcount * ccount;
+	}
+	
+	@Override
+	public Range getColumns() {
+		final Ref ref = getRefs().iterator().next();
+		final Sheet sheet = BookHelper.getSheet(_sheet, ref.getOwnerSheet());
+		final int col1 = ref.getLeftCol();
+		final int col2 = ref.getRightCol();
+		final Book book = (Book) sheet.getWorkbook();
+		return new RangeImpl(0, col1, book.getSpreadsheetVersion().getLastRowIndex(), col2, sheet, sheet);
+	}
+	
+	@Override
+	public Range getRows() {
+		final Ref ref = getRefs().iterator().next();
+		final Sheet sheet = BookHelper.getSheet(_sheet, ref.getOwnerSheet());
+		final int row1 = ref.getTopRow();
+		final int row2 = ref.getBottomRow();
+		final Book book = (Book) sheet.getWorkbook();
+		return new RangeImpl(row1, 0, row2, book.getSpreadsheetVersion().getLastColumnIndex(), sheet, sheet);
+	}
+	
+	@Override
+	public Range getDependents() {
+		final Ref ref = getRefs().iterator().next();
+		final Sheet sheet = BookHelper.getSheet(_sheet, ref.getOwnerSheet());
+		final int row = ref.getTopRow();
+		final int col = ref.getLeftCol();
+		final RefSheet refSheet = ref.getOwnerSheet();
+		Set<Ref> refs = ((RefSheetImpl)refSheet).getAllDependents(row, col);
+		return refs != null && !refs.isEmpty() ?
+				new RangeImpl(refs, sheet) : Ranges.EMPTY_RANGE;
+	}
+	
+	@Override
+	public Range getDirectDependents() {
+		final Ref ref = getRefs().iterator().next();
+		final Sheet sheet = BookHelper.getSheet(_sheet, ref.getOwnerSheet());
+		final int row = ref.getTopRow();
+		final int col = ref.getLeftCol();
+		final RefSheet refSheet = ref.getOwnerSheet();
+		Set<Ref> refs = ((RefSheetImpl)refSheet).getDirectDependents(row, col);
+		return refs != null && !refs.isEmpty() ?
+				new RangeImpl(refs, sheet) : Ranges.EMPTY_RANGE;
+	}
+	
+	@Override
+	public Range getPrecedents() {
+		final Ref ref = getRefs().iterator().next();
+		final Sheet sheet = BookHelper.getSheet(_sheet, ref.getOwnerSheet());
+		final int row = ref.getTopRow();
+		final int col = ref.getLeftCol();
+		final RefSheet refSheet = ref.getOwnerSheet();
+		Set<Ref> refs = refSheet.getAllPrecedents(row, col);
+		return refs != null && !refs.isEmpty() ?
+				new RangeImpl(refs, sheet) : Ranges.EMPTY_RANGE;
+		
+	}
+	
+	@Override
+	public Range getDirectPrecedents() {
+		final Ref ref = getRefs().iterator().next();
+		final Sheet sheet = BookHelper.getSheet(_sheet, ref.getOwnerSheet());
+		final int row = ref.getTopRow();
+		final int col = ref.getLeftCol();
+		final RefSheet refSheet = ref.getOwnerSheet();
+		Set<Ref> refs = refSheet.getDirectPrecedents(row, col);
+		return refs != null && !refs.isEmpty() ?
+				new RangeImpl(refs, sheet) : Ranges.EMPTY_RANGE;
+	}
+	
+	@Override
+	public int getRow() {
+		final Ref ref = getRefs().iterator().next();
+		return ref.getTopRow() + 1;
+	}
+	
+	@Override
+	public int getColumn() {
+		final Ref ref = getRefs().iterator().next();
+		return ref.getLeftCol() + 1;
+	}
+	
 }

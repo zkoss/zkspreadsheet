@@ -135,7 +135,7 @@ public class Book09XlsxSortTest {
 		testToFormulaString(cellC13, "B12");
 		
 		//Sort A1:C12
-		Set<Ref>[] refs = BookHelper.sort(sheet1, 0, 0, 11, 2, Utils.getRange(sheet1, 0, 0).getRefs().iterator().next(), false, 
+		Set<Ref>[] refs = BookHelper.sort(sheet1, 0, 0, 11, 2, ((RangeImpl)Utils.getRange(sheet1, 0, 0)).getRefs().iterator().next(), false, 
 				null, 0, false, null, false, BookHelper.SORT_HEADER_NO, 0, false, false, 0, 
 				BookHelper.SORT_NORMAL_DEFAULT, BookHelper.SORT_NORMAL_DEFAULT, BookHelper.SORT_NORMAL_DEFAULT);
 		Set<Ref> last = refs[0];
@@ -235,7 +235,7 @@ public class Book09XlsxSortTest {
 				boolean matchCase, boolean sortByRows, int sortMethod, int dataOption1, int dataOption2, int dataOption3) */
 
 		//Sort A15:L17
-		Set<Ref>[] refs = BookHelper.sort(sheet1, 14, 0, 16, 11, Utils.getRange(sheet1, 14, 0).getRefs().iterator().next(), false, 
+		Set<Ref>[] refs = BookHelper.sort(sheet1, 14, 0, 16, 11, ((RangeImpl)Utils.getRange(sheet1, 14, 0)).getRefs().iterator().next(), false, 
 				null, 0, false, null, false, BookHelper.SORT_HEADER_NO, 0, false, true, 0, 
 				BookHelper.SORT_NORMAL_DEFAULT, BookHelper.SORT_NORMAL_DEFAULT, BookHelper.SORT_NORMAL_DEFAULT);
 		Set<Ref> last = refs[0];
