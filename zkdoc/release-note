@@ -10,6 +10,8 @@ ZK Spreadsheet 2.0.0
   138 Support Text formula functions
   140 Support Information formula functions
   141 Support showing chart(Bar, Bar3D, Line, Line3D, Pie, Pie3D, Donut, Excel 2007, xlsx)
+  142 Support for Date & Time functions
+  143 Support for Logical formula functions
 
 *Bug 
   132 view ZK Spreadsheet Live index.zul cause NullPointerException
