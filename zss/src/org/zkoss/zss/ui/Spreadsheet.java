@@ -22,6 +22,7 @@ package org.zkoss.zss.ui;
 import static org.zkoss.zss.ui.fn.UtilFns.getCellInnerAttrs;
 import static org.zkoss.zss.ui.fn.UtilFns.getCellOuterAttrs;
 import static org.zkoss.zss.ui.fn.UtilFns.getCelltext;
+import static org.zkoss.zss.ui.fn.UtilFns.getEdittext;
 import static org.zkoss.zss.ui.fn.UtilFns.getColBegin;
 import static org.zkoss.zss.ui.fn.UtilFns.getColEnd;
 import static org.zkoss.zss.ui.fn.UtilFns.getRowBegin;
@@ -1044,6 +1045,7 @@ public class Spreadsheet extends XulElement {
 		List<List> cellOuter = new ArrayList<List>();
 		List<List> cellInner = new ArrayList<List>();
 		List<List> celltext = new ArrayList<List>();
+		List<List> edittext = new ArrayList<List>();
 		for (int r = rowBegin; r <= rowEnd; r++) {
 			List<String> outter = new ArrayList<String>();
 			cellOuter.add(outter);
@@ -1054,16 +1056,21 @@ public class Spreadsheet extends XulElement {
 			List<String> text = new ArrayList<String>();
 			celltext.add(text);
 
+			List<String> edit = new ArrayList<String>();
+			edittext.add(edit);
+			
 			for (int c = colBegin; c <= colEnd; c++) {
 				outter.add(getCellOuterAttrs(this, r, c));
 				inner.add(getCellInnerAttrs(this, r, c));
 				text.add(getCelltext(this, r, c));
+				edit.add(getEdittext(this, r, c));
 			}
 		}
 
 		renderer.render("cellOuter", cellOuter);
 		renderer.render("cellInner", cellInner);
 		renderer.render("celltext", celltext);
+		renderer.render("edittext", edittext);
 
 		/**
 		 * rename hidecolhead -> columnHeadHidden
@@ -1683,6 +1690,9 @@ public class Spreadsheet extends XulElement {
 					text = Utils.formatHyperlink(sheet, hlink, text, wrap);
 				}
 				result.setData("val", text);
+				if (cell != null) {
+					result.setData("edit", Utils.getEditText(cell));
+				}
 				// responseUpdateCell(row + "_" + col + "_" + _updateCellId.last(), "", sheetId, result.toString());
 				response(row + "_" + col + "_" + _updateCellId.last(), new AuDataUpdate(this, "", sheetId, result.toString()));
 			}
@@ -3403,9 +3413,9 @@ public class Spreadsheet extends XulElement {
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_CTRL_KEY, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_BLUR,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		
-		addClientEvent(Spreadsheet.class, "onZSSStartEditing", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, "onZSSEditboxEditing", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, "onZSSStopEditing", CE_IMPORTANT | CE_NON_DEFERRABLE | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, "onZSSStartEditing", CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, "onZSSEditboxEditing", CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, "onZSSStopEditing", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, "onZSSCellFocused", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, "onZSSCellFetch", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, "onZSSSyncBlock", CE_IMPORTANT | CE_DUPLICATE_IGNORE);

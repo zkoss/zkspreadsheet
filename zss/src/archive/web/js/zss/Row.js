@@ -285,7 +285,8 @@ zss.Row = zk.$extends(zk.Object, {
 
 		for (var i = 0; i < size; i++) {
 			parm.col = cells[i].c;
-			parm.zsw = (cells[i].zsw) ? cells[i].zsw : null; 
+			parm.zsw = (cells[i].zsw) ? cells[i].zsw : null;
+			parm.edit = cells[i].edit;
 			ctrl = zss.Cell.createComp(rowctrl.sheet, rowctrl.block, parm);
 			rowctrl.pushCellE(ctrl);
 		}

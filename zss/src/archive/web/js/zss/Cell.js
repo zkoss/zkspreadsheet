@@ -18,7 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 
 zss.Cell = zk.$extends(zk.Object, {
-	$init: function (sheet, block, cmp) {
+	$init: function (sheet, block, cmp, edit) {
 		this.$supers('$init', arguments);
 		this.id = cmp.id;
 		this.sheetid = sheet.sheetid;
@@ -27,11 +27,12 @@ zss.Cell = zk.$extends(zk.Object, {
 		this.comp = cmp;
 		this.overby = null;
 		this.overhead = false;//overhead, this cell is a overflow's left cell
+		this.edit = edit;
 		
 		var local = this;
 		this.r = zk.parseInt(jq(cmp).attr('z.r'));
 		this.c = zk.parseInt(jq(cmp).attr('z.c'));
-		
+			
 		this.zsw = jq(cmp).attr('z.zsw');
 
 		if (this.zsw)
@@ -162,6 +163,7 @@ zss.Cell = zk.$extends(zk.Object, {
 		var row = parm.row,
 			col = parm.col,
 			txt = parm.txt,
+			edit = parm.edit,
 			st = parm.st,//style
 			ist = parm.ist,//style of inner div
 			wrap = parm.wrap,
@@ -209,7 +211,7 @@ zss.Cell = zk.$extends(zk.Object, {
 		sclazz = "zscelltxt" + (zsw ? " zswi" + zsw : "") + (zsh ? " zshi" + zsh : "");
 		jq(txtcmp).addClass(sclazz);
 
-		return new zss.Cell(sheet, block, cmp);
+		return new zss.Cell(sheet, block, cmp, edit);
 	},
 	/**
 	 * Update cell's text and style
@@ -246,6 +248,7 @@ zss.Cell = zk.$extends(zk.Object, {
 		ctrl.rborder = (rbo == true);
 
 		ctrl.setText(txt);
+		ctrl.edit = parm.edit;
 	},
 	_clearOverbyRelation: function (ctrl) {
 		var cmp = ctrl.comp,

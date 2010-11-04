@@ -923,8 +923,10 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			mdstr = "c_" + row + "_" + col;
 			if (this._lastmdstr == mdstr) {
 				wgt.fireCellEvt(type, shx, shy, md1[2], row, col, mx, my);
-				if (type == "dbc")
+				if (type == "dbc") {
 					sheet.dp.startEditing();
+					sheet.dp._openEditbox();
+				}
 			}
 		} else if ((cmp = zkS.parentByZSType(elm, "STheader",1)) != null ||
 			(cmp = zkS.parentByZSType(elm, "SLheader",1)) != null) {
@@ -967,6 +969,14 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			data = zk.copy(evt.data, {sheetId: this.serverSheetId, row: row, col: col, href: href, type: type});
 		wgt.fire('onHyperlink', data, wgt.isListen('onHyperlink') ? {toServer: true} : null);
 	},
+	_timeoutId: null,
+	_fireOnOpenAndEdit: function (time) { //open Editbox and start editing
+		clearTimeout(this._timeoutId);
+		this._timeoutId = setTimeout(this.proxy(this._onOpenAndEdit), time >= 0 ? time : 100);
+	},
+	_onOpenAndEdit: function () {
+		this.dp._startEditing(); //open client side edit box to catch the user input
+	},
 	_doKeypress: function (evt) {
 		if (this._skipress)//wait async event, skip
 			return;
@@ -979,11 +989,11 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			if (this.state == zss.SSheetCtrl.START_EDIT) //startEditing but not get response from server yet
 				this._clienttxt += c; //this._clienttxt is cleared in DataPanel#_startEditing()
 			else if (this.state == zss.SSheetCtrl.FOCUSED) {
-				this._clienttxt = c;
-				//bug #117: Barcode Scanner data incomplete
-				this.dp._startEditing(c); //calling client side to catch the input
-				this.dp.startEditing(evt, c); //fire to server so user can override the result
+				if (this.dp.startEditing(evt, c)) //fire to server so user can override the result
+					this._clienttxt = c;
 			}
+			//bug #117: Barcode Scanner data incomplete
+			this._fireOnOpenAndEdit(); 				
 			evt.stop();
 		}
 	},
@@ -1053,8 +1063,9 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			evt.stop();
 			break;
 		case 113: //F2
-			if(this.state == zss.SSheetCtrl.FOCUSED){
+			if(this.state == zss.SSheetCtrl.FOCUSED) {
 				this.dp.startEditing(evt);
+				this.dp._openEditbox();
 			}
 			evt.stop();
 			break;
@@ -1444,7 +1455,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		var row = result.r,
 			col = result.c,
 			cell = this.activeBlock.getCell(row, col),
-			parm = {"txt": result.val};
+			parm = {"txt": result.val,"edit":result.edit};
 		zkS.copyParm(result, parm, ["st", "ist", "wrap", "hal", "rbo", "merr", "merl"]);
 		
 		if (cell)//update when cell exist

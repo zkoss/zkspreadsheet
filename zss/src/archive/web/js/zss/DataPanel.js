@@ -109,7 +109,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 */
 	startEditing: function (evt, val) {
 		var sheet = this.sheet;
-		if (sheet.config.readonly) return;
+		if (sheet.config.readonly) 
+			return false;
 
 		var pos = sheet.getLastFocus(),
 			row = pos.row,
@@ -117,10 +118,9 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		
 		if (this.isFocusOnFrozen()) {
 			sheet.showInfo("Can not edit on a frozen cell.", true);
-			return;	
+			return false;	
 		}
 		if (!val) val = null;
-
 		
 		//bug, if I use loadCell and didn't add a call back function to scroll to loaded block
 		//when after loadCell, it always invoke loadForVisible , then UI will invoke a loadForVisible 
@@ -130,15 +130,15 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		
 		sheet.state = zss.SSheetCtrl.START_EDIT;
 		sheet._wgt.fire('onZSSStartEditing',
-				{token: "", sheetId: sheet.serverSheetId, row: row, col: col, clienttxt: val}, {toServer: true}, 25);
+				{token: "", sheetId: sheet.serverSheetId, row: row, col: col, clienttxt: val}, null, 25);
+		return true;
 	},
 	//@param value to start editing
 	//@param server boolean whether the value come from server 
 	_startEditing: function (value, server) {
 		
 		var sheet = this.sheet,
-			cell = sheet.getFocusedCell(),
-			cellcmp = cell.comp;
+			cell = sheet.getFocusedCell();
 
 		//bug #117 Barcode Scanner data incomplete
 		if (cell != null) {
@@ -148,16 +148,36 @@ zss.DataPanel = zk.$extends(zk.Object, {
 				sheet._clienttxt = '';
 				var editor = sheet.editor,
 					pos = sheet.getLastFocus();
-				editor.edit(cellcmp, pos.row, pos.column, value);
+				editor.edit(cell.comp, pos.row, pos.column, value);
 				sheet.state = zss.SSheetCtrl.EDITING;
 			} else if (sheet.state == zss.SSheetCtrl.FOCUSED) {
 				value = sheet._clienttxt;
 				var editor = sheet.editor,
 				pos = sheet.getLastFocus();
-				editor.edit(cellcmp, pos.row, pos.column, value);
+				editor.edit(cell.comp, pos.row, pos.column, value);
+			} else if (server && sheet.state == zss.SSheetCtrl.EDITING) {
+				var editor = sheet.editor,
+					pos = sheet.getLastFocus();
+				editor.edit(cell.comp, pos.row, pos.column, value);
 			}
 		}
 	},
+	//optimize F2
+	_openEditbox: function () {
+		var sheet = this.sheet,
+			cell = sheet.getFocusedCell();
+			
+		if (cell != null) {
+			if( sheet.state == zss.SSheetCtrl.START_EDIT) {
+				var editor = sheet.editor,
+					pos = sheet.getLastFocus(),
+					value = cell.edit;
+				editor.edit(cell.comp, pos.row, pos.column, value ? value : '');
+				sheet.state = zss.SSheetCtrl.EDITING;
+			}
+		}
+	},
+		
 	/**
 	 * Cancel editing on cell
 	 */
@@ -184,43 +204,69 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			editor.disable(true);
 			var row = editor.row,
 				col = editor.col,
-				value = editor.currentValue();
-
-			var token = "";
-			if (type == "movedown") {//move down after aysnchronized call back
-				token = zkS.addCallback(function(){
+				value = editor.currentValue(),
+				cell = sheet.getCell(row, col),
+				edit = cell ? cell.edit : null;
+			
+			if (edit != value) { //has to send back to server
+				var token = "";
+				if (type == "movedown") {//move down after aysnchronized call back
+					token = zkS.addCallback(function(){
+						if (sheet.invalid) return;
+						sheet.state = zss.SSheetCtrl.FOCUSED;
+						sheet.dp.moveDown();
+					});
+				} else if (type == "moveright") {//move right after aysnchronized call back
+					token = zkS.addCallback(function(){
+						if (sheet.invalid) return;
+						sheet.state = zss.SSheetCtrl.FOCUSED;
+						sheet.dp.moveRight();
+					});
+				} else if (type == "moveleft") {//move right after aysnchronized call back
+					token = zkS.addCallback (function(){
+						if (sheet.invalid) return;
+						sheet.state = zss.SSheetCtrl.FOCUSED;
+						sheet.dp.moveLeft();
+					});
+				} else if (type == "refocus") {//refocuse after aysnchronized call back
+					token = zkS.addCallback(function(){
+						if (sheet.invalid) return;
+						sheet.state = zss.SSheetCtrl.FOCUSED;
+						sheet.dp.reFocus(true);
+					});
+				} else if (type == "lostfocus") {//lost focus after aysnchronized call back
+					token = zkS.addCallback(function(){
+						if (sheet.invalid) return;
+						sheet.dp._doFocusLost();
+					});
+				}
+	
+				//zkau.send({uuid: this.sheetid, cmd: "onZSSStopEditing", data: [token,sheet.serverSheetId,row,col,value]},25/*zkau.asapTimeout(cmp, "onOpen")*/);
+				sheet._wgt.fire('onZSSStopEditing', 
+						{token: token, sheetId: sheet.serverSheetId, row: row, col: col, value: value}, {toServer: true}, 25);
+			} else {
+				this._stopEditing();
+				if (type == "movedown") {//move down
 					if (sheet.invalid) return;
 					sheet.state = zss.SSheetCtrl.FOCUSED;
-					sheet.dp.moveDown();
-				});
-			} else if (type == "moveright") {//move right after aysnchronized call back
-				token = zkS.addCallback(function(){
+					this.moveDown();
+				} else if (type == "moveright") {//move right
 					if (sheet.invalid) return;
 					sheet.state = zss.SSheetCtrl.FOCUSED;
-					sheet.dp.moveRight();
-				});
-			} else if (type == "moveleft") {//move right after aysnchronized call back
-				token = zkS.addCallback (function(){
+					this.moveRight();
+				} else if (type == "moveleft") {//move right
 					if (sheet.invalid) return;
 					sheet.state = zss.SSheetCtrl.FOCUSED;
-					sheet.dp.moveLeft();
-				});
-			} else if (type == "refocus") {//refocuse after aysnchronized call back
-				token = zkS.addCallback(function(){
+					this.moveLeft();
+				} else if (type == "refocus") {//refocuse
 					if (sheet.invalid) return;
 					sheet.state = zss.SSheetCtrl.FOCUSED;
-					sheet.dp.reFocus(true);
-				});
-			} else if (type == "lostfocus") {//lost focus after aysnchronized call back
-				token = zkS.addCallback(function(){
+					this.reFocus(true);
+				} else if (type == "lostfocus") {//lost focus
 					if (sheet.invalid) return;
-					sheet.dp._doFocusLost();
-				});
+					this._doFocusLost();
+				}
 			}
-
-			//zkau.send({uuid: this.sheetid, cmd: "onZSSStopEditing", data: [token,sheet.serverSheetId,row,col,value]},25/*zkau.asapTimeout(cmp, "onOpen")*/);
-			sheet._wgt.fire('onZSSStopEditing', 
-					{token: token, sheetId: sheet.serverSheetId, row: row, col: col, value: value}); //, {toServer: true}, 25
 		}
 	},
 	_stopEditing: function () {

@@ -158,7 +158,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 			for (var j = 0; j < width; j++) {
 				var cell = cells[j],
 					parm ={row: rowindex, col: cell.ix, zsh: blockdata[i].zsh};
-				zkS.copyParm(cell, parm, ["txt", "st", "ist", "wrap", "hal", "rbo", "merr", "merid", "merl", "zsw"]);
+				zkS.copyParm(cell, parm, ["txt", "st", "ist", "wrap", "hal", "rbo", "merr", "merid", "merl", "zsw", "edit"]);
 				
 				var cellctrl = zss.Cell.createComp(this.sheet, this, parm);
 				rowcmp.ctrl.pushCellE(cellctrl);
@@ -178,7 +178,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 			for (var j = 0; j < width; j++) {
 				var cell = cells[j],
 					parm ={row: rowindex, col: cell.ix, zsh: blockdata[i].zsh};
-				zkS.copyParm(cell, parm, ["txt", "st", "ist", "wrap", "hal", "rbo", "merr", "merid", "merl", "zsw"]);
+				zkS.copyParm(cell, parm, ["txt", "st", "ist", "wrap", "hal", "rbo", "merr", "merid", "merl", "zsw", "edit"]);
 				
 				var cellctrl = zss.Cell.createComp(this.sheet, this, parm);
 				rowcmp.ctrl.pushCellS(cellctrl);
@@ -202,7 +202,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 			for (var j = 0; j < width; j++) {
 				var cell = cells[j];
 				parm = {row: rowindex, col: cell.ix, zsh: blockdata[i].zsh};
-				zkS.copyParm(cell, parm, ["txt", "st", "ist", "wrap", "hal", "rbo", "merr", "merid", "merl", "zsw"]);
+				zkS.copyParm(cell, parm, ["txt", "st", "ist", "wrap", "hal", "rbo", "merr", "merid", "merl", "zsw", "edit"]);
 
 				var cellctrl = zss.Cell.createComp(this.sheet, this,parm);
 				rowcmp.ctrl.pushCellE(cellctrl);	
@@ -229,7 +229,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 			for (var j = 0; j < width; j++) {
 				var cell = cells[j],
 					parm = {row: rowindex, col: cell.ix, zsh: blockdata[i].zsh};
-				zkS.copyParm(cell, parm, ["txt", "st", "ist", "wrap", "hal", "rbo", "merr", "merid", "merl", "zsw"]);
+				zkS.copyParm(cell, parm, ["txt", "st", "ist", "wrap", "hal", "rbo", "merr", "merid", "merl", "zsw", "edit"]);
 				
 				var cellctrl = zss.Cell.createComp(this.sheet, this, parm);
 				rowcmp.ctrl.pushCellE(cellctrl);	
@@ -257,7 +257,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 			for (var j = 0; j < width; j++) {
 				var cell = cells[j];
 					parm = {row: rowindex, col: cell.ix, zsh:blockdata[i].zsh};
-				zkS.copyParm(cell, parm, ["txt", "st", "ist", "wrap", "hal", "rbo", "merr", "merid", "merl", "zsw"]);
+				zkS.copyParm(cell, parm, ["txt", "st", "ist", "wrap", "hal", "rbo", "merr", "merid", "merl", "zsw", "edit"]);
 				
 				var cellctrl = zss.Cell.createComp(this.sheet, this, parm);
 				rowcmp.ctrl.pushCellE(cellctrl);	
@@ -435,14 +435,15 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 				var ctrl = new zss.Row(this.sheet, this, next);
 				this.rows.push(ctrl);
 				var r = zk.parseInt(jq(next).attr("z.r")),
-					nextcell = jq(next).children('DIV:first')[0];
+					nextcell = jq(next).children('DIV:first')[0],
+					editrow = this.sheet._wgt._edittext[r];
 				while (nextcell) {
 					var c = zk.parseInt(jq(nextcell).attr("z.c"));
 					if (minx > c)
 						minx = c;
 					if (maxx < c)
 						maxx = c;
-					var cell = new zss.Cell(this.sheet, this, nextcell);
+					var cell = new zss.Cell(this.sheet, this, nextcell, editrow[c]);
 					ctrl.pushCell(cell);
 					nextcell = jq(nextcell).next('DIV')[0];
 				}

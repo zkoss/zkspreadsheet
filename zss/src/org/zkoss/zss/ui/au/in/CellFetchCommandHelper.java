@@ -898,6 +898,9 @@ public class CellFetchCommandHelper{
 				text = Utils.formatHyperlink(sheet, hlink, text, wrap);
 			}
 			jcell.setData("txt", text);
+			if (cell != null) {
+				jcell.setData("edit", Utils.getEditText(cell));
+			}
 
 			int textHAlign = BookHelper.getRealAlignment(cell);
 			switch(textHAlign) {

@@ -296,6 +296,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		cellOuter: null,
 		cellInner: null,
 		celltext: null,
+		edittext: null,
 		topHeaderOuter: null,
 		topHeaderInner: null,
 		leftHeaderOuter: null,

@@ -93,6 +93,13 @@ public class UtilFns {
 		return text;
 	}
 	
+	//Gets Cell edit text by given row and column
+	static public String getEdittext(Spreadsheet ss,int row,int column){
+		Sheet sheet = ss.getSelectedSheet();
+		final Cell cell = Utils.getCell(sheet, row, column);
+		return cell != null ? Utils.getEditText(cell) : "";
+	}
+	
 	static public Integer getRowBegin(Spreadsheet ss){
 		return Integer.valueOf(0);
 	}
