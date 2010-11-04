@@ -19,6 +19,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -46,7 +47,7 @@ public class Ranges {
 		return newRange(sheet, sheet, 0, 0, ver.getLastRowIndex(), ver.getLastColumnIndex());
 	}
 	
-	/** Returns the associated {@link Range} of the specified {@link Sheet} and area reference string (e.g. "A1:D4" or "Sheet2!A1:D4");
+	/** Returns the associated {@link Range} of the specified {@link Sheet} and area reference string (e.g. "A1:D4" or "Sheet2!A1:D4") or name of a NamedRange (e.g. "MyRange");
 	 * note that if reference string contains sheet name, the returned range will refer to the named sheet. 
 	 *  
 	 * @param sheet the {@link Sheet} the Range will refer to.
@@ -54,8 +55,99 @@ public class Ranges {
 	 * @return the associated {@link Range} of the specified {@link Sheet} and area reference string (e.g. "A1:D4"). 
 	 */
 	public static Range range(Sheet sheet, String reference) {
-		AreaReference ref = new AreaReference(reference);
+		AreaReference ref = getAreaReference(sheet, reference);
+		if (ref == null) {
+			//try NamedRange
+			final Workbook wb = sheet.getWorkbook();
+		    final Name range = wb.getName(reference);
+		    if (range != null) {
+		    	ref = getAreaReference(sheet, range.getRefersToFormula());
+		    } else {
+		    	throw new IllegalArgumentException("Cannot find the named range '" + reference + "'");
+		    }
+		}
+		if (ref == null)
+			throw new IllegalArgumentException("Bad area reference '" + reference + "'");
 		return range(sheet, ref);
+	}
+	
+	private static AreaReference getAreaReference(Sheet sheet, String reference) {
+		String[] parts = separateReference(reference);
+		final String sheet1 = parts[0];
+		final String sheet2 = parts[1];
+		final String lt = parts[2];
+		final String rb = parts[3];
+		final String c1str = (sheet1 != null ? sheet1 : "") + (sheet2 != null ? (":" + sheet2) : "") + (sheet1 != null ? "!" : "") + lt;
+		final SpreadsheetVersion ver = ((Book)sheet.getWorkbook()).getSpreadsheetVersion();  
+		final int maxcol = ver.getLastColumnIndex();
+		final int maxrow = ver.getLastRowIndex();
+
+		AreaReference ref = null;
+		try {
+			final CellReference c1 = new CellReference(c1str);
+			if (c1.getCol() <= maxcol && c1.getRow() <= maxrow) {
+				final CellReference c2 = rb != null ? new CellReference(rb) : c1;
+				if (rb != null) {
+					if (c2.getCol() <= maxcol && c2.getRow() <= maxrow) {
+						ref = new AreaReference(c1, c2);
+					} 
+				} else {
+					ref = new AreaReference(c1, c2);
+				}
+			}
+		} catch(Exception ex) {
+			//ignore, return null ref and let upper case do it!
+		}
+		return ref;
+	}
+	
+	//4 parts: sheet1, sheet2, left-top, right-bottom
+	//null: not a legal reference string
+	private static String[] separateReference(String reference) {
+		StringBuffer sb = newSB();
+		String sheet1 = null;
+		String sheet2 = null;
+		String lt = null;
+		String rb = null;
+		boolean quote = false;
+		for(int j = 0, len = reference.length(); j < len; ++j) {
+			final char ch = reference.charAt(j);
+			switch(ch) {
+			case '!': //Sheet delimiter
+				if (!quote) { //end of sheet parts
+					if (lt != null) {
+						sheet1 = lt;
+						lt = null;
+						sheet2 = sb.toString();
+					} else {
+						sheet1 = sb.toString();
+					}
+					sb = newSB();
+				} else {
+					sb.append(ch); //in quote, so simple copy
+				}
+				break;
+			case ':': //lt, rb delimiter; or sheet1, sheet2 delimiter
+				lt = sb.toString();
+				sb = newSB();
+				break;
+			case '\'': //single quote for sheet name
+				quote = !quote;
+				//fall under
+			default:
+				sb.append(ch);
+			}
+		}
+		if (lt != null) {
+			rb = sb.toString();
+		} else {
+			lt = sb.toString();
+		}
+		return new String[] {sheet1, sheet2, lt, rb};
+	}
+	
+	private static StringBuffer newSB() {
+		return new StringBuffer(32);
 	}
 	
 	/** Returns the associated {@link Range} of the specified {@link Sheet} and AreaReference. note that if AreaReference 

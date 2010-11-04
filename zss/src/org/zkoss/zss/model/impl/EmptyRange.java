@@ -217,4 +217,14 @@ public class EmptyRange implements Range {
 	public Range getPrecedents() {
 		return this;
 	}
+
+	@Override
+	public int getLastColumn() {
+		return 0;
+	}
+
+	@Override
+	public int getLastRow() {
+		return 0;
+	}
 }

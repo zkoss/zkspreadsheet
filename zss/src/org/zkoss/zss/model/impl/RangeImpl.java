@@ -1306,5 +1306,16 @@ public class RangeImpl implements Range {
 		final Ref ref = getRefs().iterator().next();
 		return ref.getLeftCol() + 1;
 	}
-	
+
+	@Override
+	public int getLastColumn() {
+		final Ref ref = getRefs().iterator().next();
+		return ref.getRightCol() + 1;
+	}
+
+	@Override
+	public int getLastRow() {
+		final Ref ref = getRefs().iterator().next();
+		return ref.getBottomRow() + 1;
+	}
 }
