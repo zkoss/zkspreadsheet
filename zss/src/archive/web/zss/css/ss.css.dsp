@@ -518,3 +518,6 @@ lineHeight=20
 	visibility:hidden;/* hidden when loading, javascript will show it after init*/
 }
 
+.chartborder img {
+	border: 1px solid #868686;
+}
