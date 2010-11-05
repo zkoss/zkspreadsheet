@@ -13,6 +13,8 @@ ZK Spreadsheet 2.0.0
   142 Support for Date & Time functions
   143 Support for Logical formula functions
   152 Support Ranges.range(sheet, namedRange)
+  158 ZK Spreadsheet Live support colorbutton without depending zkex
+  160 ZK Spreadsheet Live support import, open file
 
 *Bug 
   132 view ZK Spreadsheet Live index.zul cause NullPointerException
