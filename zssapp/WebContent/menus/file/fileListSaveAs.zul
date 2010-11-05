@@ -7,7 +7,7 @@
 	</button>
 	<button label="Cancel">
 		<attribute name="onClick"> 			
-			self.getSpaceOwner().setVisible(false);			
+			((Component)self.getSpaceOwner()).detach();			
 		</attribute>
 	</button>
 	</hbox>

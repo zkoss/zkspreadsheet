@@ -2,7 +2,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <zk>
 <window title="${c:l('export.pdf')}" border="normal" width="480px" height="360px" 
-mode="modal" closable="true" position="center" apply="org.zkoss.zss.app.export.ExportToPdfWindowCtrl">
+mode="modal" closable="true" position="center" apply="org.zkoss.zss.app.file.ExportToPdfWindowCtrl">
 	<div style="padding: 10px;">
 	<radiogroup id="range"> </radiogroup>
 	<radiogroup id="orientation"> </radiogroup>

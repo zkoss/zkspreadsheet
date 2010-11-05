@@ -6,7 +6,6 @@
 <?component name="rowHeaderMenu" inline="true" macroURI="/menus/header_cell/menuRowHeader.zul"?>
 <?component name="cellMenu" inline="true" macroURI="/menus/header_cell/menuCell.zul"?>
 <?component name="tabPopup" inline="true" macroURI="/menus/tab/popup.zul"?>
-<?component name="fileopenwin" inline="true" macroURI="/menus/file/fileListOpen.zul"?>
 <?component name="fileexportwin" inline="true" macroURI="/menus/file/fileListExport.zul"?>
 <?component name="filedeletewin" inline="true" macroURI="/menus/file/fileListDelete.zul"?>
 <?component name="filesaveaswin" inline="true" macroURI="/menus/file/fileListSaveAs.zul"?>
@@ -22,6 +21,21 @@
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 <window id="mainWin" apply="org.zkoss.zss.app.MainWindowCtrl" height="100%" width="100%" style="margin:0px;padding:0px">
 	<style>
+		.clicked .z-toolbarbutton-cnt {
+			background-image: url('./img/toolbarbtn-ctr-clkd.gif');
+			background-position: 0 -500px;
+		}
+		.clicked {
+			border-bottom: 1px solid #7F9DB9;
+			border-top: 1px solid #7F9DB9;
+			padding: 0;
+		}
+		.clicked .z-toolbarbutton-body {
+			border-left: 1px solid #7F9DB9;
+			border-right: 1px solid #7F9DB9;
+			padding: 0;
+		}
+		
 		.focusPosCombobox .z-combobox-rounded-btn {
 			border:0px;
 			background: url('./img/combo-white.png');
@@ -97,21 +111,19 @@
 								<menuitem label="${c:l('file.new')}" 
 									forward="onFileNew" />
 								<menuitem label="${c:l('file.open')}"
-									forward="onFileSelect(open)" />
+									forward="onFileOpen" />
 								<menuitem label="${c:l('file.save')}"
-									forward="onFileSelect(save)" disabled="true"/>
+									forward="onFileSave" disabled="true"/>
 								<menuitem label="${c:l('file.saveas')}"
-									forward="onFileSelect(saveAs)" disabled="true"/>
+									forward="onFileSaveAs" disabled="true"/>
 								<menuitem label="${c:l('file.saveClose')}"
 									forward="onFileSaveClose" disabled="true"/>
 								<menuseparator />
 								<menuitem label="${c:l('file.delete')}"
-									forward="onFileSelect(delete)" disabled="true"/>
-								<menuitem
-									label="${c:l('file.import')}"
-									forward="onImportFile" disabled="true"/>
-								<menu label="${c:l('file.export')}"
-									forward="onFileSelect(export)">
+									forward="onFileDelete" disabled="true"/>
+								<menuitem id="importFile"
+									label="${c:l('file.import')}" disabled="true"/>
+								<menu label="${c:l('file.export')}">
 									<menupopup>
 										<menuitem label="${c:l('export.pdf')}" forward="onExport(${c:l('export.pdf')})"/>
 									</menupopup>
@@ -481,7 +493,6 @@
 		<tabs id="sheetTabs"></tabs>
 	</tabbox>
 
-	<!-- rename ss1 to spreadsheet  -->
 	<spreadsheet id="spreadsheet" src="/xls/demo_sample.xls" maxrows="200"
 			maxcolumns="40" vflex="1" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
 			forward="onCtrlKey=mainWin.onSSCtrlKeys">
@@ -495,7 +506,6 @@
 	<formulacategory id="formulaCategory" />
 	<cheatsheet id="cheatsheet" />
 	<formatnumberwin id="formatNumberWin" />
-	<fileopenwin />
 	<fileexportwin />
 	<filedeletewin />
 	<filesaveaswin />

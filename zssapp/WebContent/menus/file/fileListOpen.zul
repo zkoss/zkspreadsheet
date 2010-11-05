@@ -1,42 +1,20 @@
-<window id="fileOpenWin" sclass="fileOpenWin" title="Open File" border="normal" width="420px" height="300px" visible="false" position="center">
-	<style>
-		.fileOpenWin .z-window-embedded-cnt { 
-			padding:7px; 
-		}
-		.fileOpenWin .z-list-cell-cnt{
-			padding:5px 5px 5px 2px;
-		}
-		.fileOpenWin .hintLabel{
-			margin:5px;
-			font-size:16px;
-			font-family:Calibri;
-		}
-	</style>
-
-	<label sclass="hintLabel" value="Choose a Spreadsheet to open:"/>
-	<vbox style="margin:5px">	
-<!--	//TODO:strange behavior for mold="paging" pageSize="3"-->
-	<listbox id="flo_files" width="400px" height="180px">
-		<listhead>
-			<listheader label="Name" sort="auto"/>
-			<listheader label="author" sort="auto"/>
-			<listheader label="Date Modified" sort="auto"/>
-		</listhead>
-	</listbox>
-	
-	<hbox>
-	<button label="OK" forward="//p1/mainWin.onOpenFile">
-	</button>
-	<button label="Cancel">
-		<attribute name="onClick"> 			
-			self.getSpaceOwner().setVisible(false);			
-		</attribute>
-	</button>
-	</hbox>
-	<hbox>
-	Or: <toolbarbutton label=" Upload file and Open."	forward="//p1/mainWin.onImportAndOpenFile" disabled="true"/>
-	</hbox>
-	</vbox>
-		
+<window id="fileOpenWin" closable="true"
+		mode="modal" title="Open File" border="normal" width="420px" height="300px"
+		position="center" apply="org.zkoss.zss.app.file.OpenFileWindowCtrl">
+	<vlayout style="margin:5px">	
+		<label value="Note. Double Click to open file" style="color:#555555;"></label>
+		<div height="3px"></div>
+		<listbox id="filesListbox" height="190px">
+		</listbox>
+		<div height="10px"></div>
+		<hlayout hflex="1">
+			<button id="uploadAndOpenBtn" label=" Upload file and Open."
+				upload="true"/>
+			<div width="10px"></div>
+		</hlayout>
+	</vlayout>
+	<menupopup id="fileMenu">
+		<menuitem id="openFileMenuitem" label="Open file" />
+	</menupopup>
 </window>
 
