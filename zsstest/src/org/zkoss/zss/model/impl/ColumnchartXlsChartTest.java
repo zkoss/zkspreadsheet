@@ -46,7 +46,7 @@ public class ColumnchartXlsChartTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		final String filename = "piechart.xls";
+		final String filename = "columnchart.xls";
 		final InputStream is = new ClassLocator().getResourceAsStream(filename);
 		_book = (Book) new ExcelImporter().imports(is, filename);
 		assertTrue(_book instanceof Book);
@@ -68,22 +68,27 @@ public class ColumnchartXlsChartTest {
 	@Test
 	public void testColumnchart() {
 		HSSFSheet sheet1 = (HSSFSheet) _book.getSheet("Sheet1");
-		List<Chart> chartInfos = new DrawingManager(sheet1).getCharts();
-		HSSFChart[] charts = HSSFChart.getSheetCharts(sheet1);
-		assertEquals(2, charts.length);
-		HSSFChart chart = charts[0];
-		System.out.println("getChartHeight():"+chart.getChartHeight());
-		System.out.println("getChartTitle():"+chart.getChartTitle());
-		System.out.println("getgetChartWidth():"+chart.getChartWidth());
-		System.out.println("getChartX():"+chart.getChartX());
-		System.out.println("getChartY():"+chart.getChartY());
+		List<Chart> chartXes = new DrawingManager(sheet1).getCharts();
+		assertEquals(1, chartXes.size());
+		HSSFChart chart = (HSSFChart) chartXes.get(0).getChartInfo();
+		assertEquals("2003-2006 Income Summary", chart.getChartTitle());
 		HSSFSeries[] series = chart.getSeries();
 		assertEquals(3, series.length);
+		
+		HSSFSeries ser = series[0];
+		assertEquals(4, ser.getNumValues());
+		assertEquals("Total Revenues", ser.getSeriesTitle());
+
+		ser = series[1];
+		assertEquals(4, ser.getNumValues());
+		assertEquals("Total Expenses", ser.getSeriesTitle());
+		
+		ser = series[2];
+		assertEquals(4, ser.getNumValues());
+		assertEquals("Profit/Loss", ser.getSeriesTitle());
+		
 		for(int j = 0; j < series.length; ++j) {
-			HSSFSeries ser = series[j];
 			System.out.println("--------"+j);
-			System.out.println("ser.getNumValues():"+ser.getNumValues());
-			System.out.println("ser.getSeriesTitle():"+ser.getSeriesTitle());
 			System.out.println("ser.getValueType():"+ser.getValueType());
 			System.out.println("ser.getDataCategoryLabels():"+ser.getDataCategoryLabels());
 			System.out.println("ser.getDataName():"+ser.getDataName());
@@ -91,7 +96,6 @@ public class ColumnchartXlsChartTest {
 			System.out.println("ser.getDataValues():"+ser.getDataValues());
 			System.out.println("ser.getSeries():"+ser.getSeries());
 		}
-
 	}
 	
 	private void testToFormulaString(Cell cell, String expect) {

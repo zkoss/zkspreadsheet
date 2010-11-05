@@ -15,6 +15,7 @@ package org.zkoss.zss.model.impl;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
@@ -24,10 +25,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.poi.hssf.usermodel.HSSFChart;
+import org.zkoss.poi.hssf.usermodel.HSSFChartX;
 import org.zkoss.poi.hssf.usermodel.HSSFSheet;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
 import org.zkoss.poi.hssf.usermodel.HSSFChart.HSSFSeries;
-import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.model.Book;
@@ -68,23 +69,19 @@ public class PiechartXlsChartTest {
 	@Test
 	public void testColumnchart() {
 		HSSFSheet sheet1 = (HSSFSheet) _book.getSheet("Sheet1");
-		List<Chart> chartInfos = new DrawingManager(sheet1).getCharts();
-		HSSFChart[] charts = HSSFChart.getSheetCharts(sheet1);
-		assertEquals(2, charts.length);
-		HSSFChart chart = charts[0];
-		System.out.println("getChartHeight():"+chart.getChartHeight());
-		System.out.println("getChartTitle():"+chart.getChartTitle());
+		List<Chart> chartXes = new DrawingManager(sheet1).getCharts();
+		assertEquals(1, chartXes.size());
+		HSSFChartX chartX = (HSSFChartX) chartXes.get(0); 
+		HSSFChart chart = (HSSFChart) chartX.getChartInfo();
+		assertNull(chart.getChartTitle());
 		System.out.println("getgetChartWidth():"+chart.getChartWidth());
-		System.out.println("getChartX():"+chart.getChartX());
-		System.out.println("getChartY():"+chart.getChartY());
 		HSSFSeries[] series = chart.getSeries();
-		assertEquals(3, series.length);
+		assertEquals(1, series.length);
 		for(int j = 0; j < series.length; ++j) {
 			HSSFSeries ser = series[j];
-			System.out.println("--------"+j);
-			System.out.println("ser.getNumValues():"+ser.getNumValues());
-			System.out.println("ser.getSeriesTitle():"+ser.getSeriesTitle());
-			System.out.println("ser.getValueType():"+ser.getValueType());
+			assertEquals(3, ser.getNumValues());
+			assertEquals("2003", ser.getSeriesTitle());
+			assertEquals(1, ser.getValueType());
 			System.out.println("ser.getDataCategoryLabels():"+ser.getDataCategoryLabels());
 			System.out.println("ser.getDataName():"+ser.getDataName());
 			System.out.println("ser.getDataSecondaryCategoryLabels():"+ser.getDataSecondaryCategoryLabels());
@@ -93,12 +90,4 @@ public class PiechartXlsChartTest {
 		}
 
 	}
-	
-	private void testToFormulaString(Cell cell, String expect) {
-/*		EvaluationCell srcCell = HSSFEvaluationTestHelper.wrapCell((HSSFCell)cell);
-		HSSFEvaluationWorkbook evalbook = HSSFEvaluationWorkbook.create((HSSFWorkbook)_book);
-		Ptg[] ptgs = evalbook.getFormulaTokens(srcCell);
-		final String formula = FormulaRenderer.toFormulaString(evalbook, ptgs);
-		assertEquals(expect, formula);
-*/	}
 }
