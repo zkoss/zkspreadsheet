@@ -20,6 +20,7 @@ ZK Spreadsheet 2.0.0
   132 view ZK Spreadsheet Live index.zul cause NullPointerException
   139 "Unexpected ptg class" RuntimeException when loading Excel file with special formula
   156 spring DelegatingVariableResolver in Spreadsheet doesn't work
+  168 Exception while set background color
   
 	------------
 ZK Spreadsheet 2.0.0 RC

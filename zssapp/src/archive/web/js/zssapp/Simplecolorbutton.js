@@ -88,7 +88,7 @@ zssapp.Simplecolorbutton = zk.$extends(zul.Widget, {
 		var t = evt.domTarget,
 			$t = jq(evt.domTarget),
 			zcls = this.getZclass();
-		if ($t.attr('class').indexOf(zcls + '-cell') >= 0) {
+		if ($t.attr('class').indexOf(zcls + '-cell-cnt') >= 0) {
 			var hex = $t.children('i').text();
 			this.fire("onChange", {color: hex}, {toServer: true});
 
