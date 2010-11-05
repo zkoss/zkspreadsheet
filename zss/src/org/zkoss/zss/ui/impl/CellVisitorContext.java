@@ -139,4 +139,8 @@ public class CellVisitorContext {
 	public Cell getCell() {
 		return cell;
 	}
+	
+	public Book getBook() {
+		return book;
+	}
 }

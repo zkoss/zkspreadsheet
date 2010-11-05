@@ -406,6 +406,7 @@ public class Spreadsheet extends XulElement {
 		_src=src;
 		final Book book = ((ExcelImporter)_importer).imports(is, src);
 		initBook(book);
+		invalidate();
 	}
 
 	/**
