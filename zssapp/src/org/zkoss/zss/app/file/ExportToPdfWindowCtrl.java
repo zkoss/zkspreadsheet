@@ -31,7 +31,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.AreaReference;
 import org.zkoss.io.Files;
 import org.zkoss.util.media.AMedia;
-import org.zkoss.zhtml.Filedownload;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
@@ -42,6 +41,7 @@ import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
 
