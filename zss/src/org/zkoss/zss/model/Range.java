@@ -13,15 +13,11 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model;
 
-import java.util.Collection;
-import java.util.Set;
-
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.model.impl.BookHelper;
 
 /**

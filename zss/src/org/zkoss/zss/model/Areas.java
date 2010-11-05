@@ -12,7 +12,6 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model;
 
-import org.apache.poi.ss.usermodel.Cell;
 
 /**
  * A collection of single area {@link Range}s in a selection; an area is a contiguous block of cells.

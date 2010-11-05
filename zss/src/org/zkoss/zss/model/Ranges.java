@@ -12,21 +12,12 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model;
 
-import java.util.Collection;
-
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
-import org.zkoss.lang.Objects;
-import org.zkoss.zss.engine.Ref;
-import org.zkoss.zss.model.impl.BookHelper;
+import org.apache.poi.ss.util.CellReference;
 import org.zkoss.zss.model.impl.EmptyRange;
 import org.zkoss.zss.model.impl.RangeImpl;
 
