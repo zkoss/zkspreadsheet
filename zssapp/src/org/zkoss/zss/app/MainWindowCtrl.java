@@ -19,21 +19,12 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.D
  */
 package org.zkoss.zss.app;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -42,15 +33,12 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
 import org.zkoss.image.Image;
-import org.zkoss.io.Files;
-import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
-import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
@@ -64,9 +52,10 @@ import org.zkoss.zss.app.event.CellStyleHelper;
 import org.zkoss.zss.app.event.EditHelper;
 import org.zkoss.zss.app.event.ExportHelper;
 import org.zkoss.zss.app.event.HyperlinkHelper;
+import org.zkoss.zss.app.file.FileHelper;
 import org.zkoss.zss.app.sort.SortSelector;
+import org.zkoss.zss.app.zul.api.Colorbutton;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
@@ -79,27 +68,24 @@ import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HeaderEvent;
 import org.zkoss.zss.ui.event.HeaderMouseEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
+import org.zkoss.zss.ui.impl.CellVisitor;
+import org.zkoss.zss.ui.impl.CellVisitorContext;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
+import org.zkoss.zss.ui.impl.SheetVisitor;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zssex.ui.widget.ImageWidget;
 import org.zkoss.zul.Borderlayout;
-import org.zkoss.zul.Button;
 import org.zkoss.zul.Chart;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
-import org.zkoss.zul.Fileupload;
-import org.zkoss.zul.Label;
-import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Popup;
-import org.zkoss.zul.Radio;
-import org.zkoss.zul.Rows;
 import org.zkoss.zul.South;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
@@ -121,7 +107,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	private Desktop desktop;
 	String hashFilename = null;
 
-	Book book;
 	Sheet sheet;
 
 	int lastRow = 0;
@@ -147,7 +132,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	CellMenuHelper cellmh;
 	FormatNumberHelper fnh;
 	FormulaCategoryHelper fch;
-	FileHelper fileh;
 	RangeHelper rangeh;
 	TabHelper tabh;
 
@@ -156,9 +140,11 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	Menu insertImageMenu;
 	Menu insertPieChart;
 	Menuitem removeHyperlink;
+	Menuitem importFile;
 
 	Textbox formulaEditbox;
 	Spreadsheet spreadsheet;
+	//TODO: extend tabbox to a component, re-use
 	Tabbox sheetTB;
 	Tabs sheetTabs;
 	Combobox focusPosition;
@@ -199,7 +185,10 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-
+		fontColorBtn = (Colorbutton)comp.getFellow("fontColorBtn");
+		backgroundColorBtn = (Colorbutton)comp.getFellow("backgroundColorBtn");
+		importFile.setDisabled(!FileHelper.hasImportPermission());
+		
 		desktop.setAttribute(MainWindowCtrl.class.getCanonicalName(), this);
 
 		ssInit();
@@ -210,7 +199,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		cellmh = new CellMenuHelper(spreadsheet);
 		fnh = new FormatNumberHelper(spreadsheet);
 		fch = new FormulaCategoryHelper(spreadsheet);
-		fileh = new FileHelper(spreadsheet);
 		rangeh = new RangeHelper(spreadsheet);
 		tabh = new TabHelper(spreadsheet);
 
@@ -272,7 +260,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	public void ssInit() {
 		spreadsheet.setSrcName("Untitled");
-		book = spreadsheet.getBook();
+		//book = spreadsheet.getBook();
 
 		// ADD Event Listener
 		spreadsheet.addEventListener(Events.ON_CELL_FOUCSED,
@@ -325,15 +313,15 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void sheetTBInit() {
-		int sheetCount;
-		sheetCount = book.getNumberOfSheets();
-		for (int i = 0; i < sheetCount; i++) {
-			sheet = (Sheet) book.getSheetAt(i);
-			Tab tab = new Tab(sheet.getSheetName());
-			Popup popup = (Popup) mainWin.getFellow("tabPopup");
-			tab.setContext(popup);
-			tab.setParent(sheetTabs);
-		}
+		Utils.visitSheets(spreadsheet.getBook(), new SheetVisitor(){
+
+			@Override
+			public void handle(Sheet sheet) {
+				Tab tab = new Tab(sheet.getSheetName());
+				Popup popup = (Popup) mainWin.getFellow("tabPopup");
+				tab.setContext(popup);
+				tab.setParent(sheetTabs);
+			}});
 
 		sheetTB.addEventListener(org.zkoss.zk.ui.event.Events.ON_SELECT,
 				new EventListener() {
@@ -377,12 +365,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 		// load default setting
 		fontFamilyCombobox.setText("Calibri");
-		fontSizeCombobox.setText("12");
-		boldBtn.setClass("toolIcon");
-		italicBtn.setClass("toolIcon");
-		alignLeftBtn.setClass("toolIcon");
-		alignCenterBtn.setClass("toolIcon");
-		alignRightBtn.setClass("toolIcon");
 		fontColorBtn.setColor("#000000");
 		backgroundColorBtn.setColor("#FFFFFF");
 
@@ -394,6 +376,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			CellStyle cs = cell.getCellStyle();
 
 			if (cs != null) {
+				Book book = spreadsheet.getBook();
 				int fontidx = cs.getFontIndex();
 				Font font = book.getFontAt((short) fontidx);
 
@@ -401,29 +384,28 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				fontFamilyCombobox.setText(font.getFontName());
 
 				// font size
-				fontSizeCombobox.setText(Integer.toString(font
-						.getFontHeightInPoints()));
+				fontSizeCombobox.setText(Integer.toString(font.getFontHeightInPoints()));
 
 				// font bold & italic
 				isBold = font.getBoldweight() == Font.BOLDWEIGHT_BOLD;
 				isItalic = font.getItalic();
 				if (isBold)
-					boldBtn.setClass("toolIcon clicked");
+					boldBtn.setClass("clicked");
 				if (isItalic)
-					italicBtn.setClass("toolIcon clicked");
+					italicBtn.setClass("clicked");
 
 				// align
 				int align = cs.getAlignment();
 				switch (align) {
 				case CellStyle.ALIGN_LEFT:
-					alignLeftBtn.setClass("toolIcon clicked");
+					alignLeftBtn.setClass("clicked");
 					break;
 				case CellStyle.ALIGN_CENTER:
 				case CellStyle.ALIGN_CENTER_SELECTION:
-					alignCenterBtn.setClass("toolIcon clicked");
+					alignCenterBtn.setClass("clicked");
 					break;
 				case CellStyle.ALIGN_RIGHT:
-					alignRightBtn.setClass("toolIcon clicked");
+					alignRightBtn.setClass("clicked");
 					break;
 				}
 
@@ -523,6 +505,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			if (cell != null) {
 				CellStyle cs = cell.getCellStyle();
 				if (cs != null) {
+					Book book = spreadsheet.getBook();
 					int fontidx = cs.getFontIndex();
 					Font font = book.getFontAt((short) fontidx);
 					fontFamilyCombobox.setText(font.getFontName());
@@ -533,15 +516,15 @@ public class MainWindowCtrl extends GenericForwardComposer {
 					isBold = font.getBoldweight() == Font.BOLDWEIGHT_BOLD;
 					isItalic = font.getItalic();
 					if (isBold)
-						boldBtn.setClass("toolIcon clicked");
+						boldBtn.setClass("clicked");
 
 					if (isItalic)
-						italicBtn.setClass("toolIcon clicked");
+						italicBtn.setClass("clicked");
 
 					// font underline
 					if (font.getUnderline() != Font.U_NONE) {
 						isUnderline = true;
-						underlineBtn.setClass("toolIcon clicked");
+						underlineBtn.setClass("clicked");
 					} else {
 						isUnderline = false;
 					}
@@ -549,7 +532,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 					// font stikethrough
 					if (font.getStrikeout()) {
 						isStrikethrough = true;
-						strikethroughBtn.setClass("toolIcon clicked");
+						strikethroughBtn.setClass("clicked");
 					} else {
 						isStrikethrough = false;
 
@@ -559,14 +542,14 @@ public class MainWindowCtrl extends GenericForwardComposer {
 					int align = cs.getAlignment();
 					switch (align) {
 					case CellStyle.ALIGN_LEFT:
-						alignLeftBtn.setClass("toolIcon clicked");
+						alignLeftBtn.setClass("clicked");
 						break;
 					case CellStyle.ALIGN_CENTER:
 					case CellStyle.ALIGN_CENTER_SELECTION:
-						alignCenterBtn.setClass("toolIcon clicked");
+						alignCenterBtn.setClass("clicked");
 						break;
 					case CellStyle.ALIGN_RIGHT:
-						alignRightBtn.setClass("toolIcon clicked");
+						alignRightBtn.setClass("clicked");
 						break;
 					}
 
@@ -591,14 +574,14 @@ public class MainWindowCtrl extends GenericForwardComposer {
 					 * Toolbarbutton mergeCellBtn =
 					 * (Toolbarbutton)getFellow("mergeCellBtn");
 					 * isMergeCell=format. if(isWrapText){
-					 * wrapTextBtn.setClass("toolIcon clicked"); }else{
+					 * wrapTextBtn.setClass("clicked"); }else{
 					 * wrapTextBtn.setClass("toolIcon"); }
 					 */
 
 					// wrap text
 					isWrapText = cs.getWrapText();
 					if (isWrapText) {
-						wrapTextBtn.setClass("toolIcon clicked");
+						wrapTextBtn.setClass("clicked");
 					}
 
 					// FontStyle preFontStyle=format.getFontStyle();
@@ -672,14 +655,10 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 		Window win = (Window) mainWin.getFellow("fastIconContextmenu");
 		// win.doPopup();
-		Toolbarbutton mergeCellBtn2 = (Toolbarbutton) win
-				.getFellow("_mergeCellBtn");
+		Toolbarbutton mergeCellBtn2 = (Toolbarbutton) win.getFellow("_mergeCellBtn");
 		if (isMergeCell) {
-			mergeCellBtn.setClass("toolIcon clicked");
-			mergeCellBtn2.setClass("toolIcon clicked");
-		} else {
-			mergeCellBtn.setClass("toolIcon");
-			mergeCellBtn2.setClass("toolIcon");
+			mergeCellBtn.setClass("clicked");
+			mergeCellBtn2.setClass("clicked");
 		}
 	}
 
@@ -698,7 +677,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	public void _onSSCtrlKeys(KeyEvent event) {
 		char c = (char) event.getKeyCode();
-		// p(""+event.getKeyCode()+c+" "+event.isCtrlKey());
 		try {
 			if (46 == event.getKeyCode()) {// delete
 				if (event.isCtrlKey())
@@ -733,7 +711,8 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				spreadsheet.setSelection(new Rect(2, 2, 4, 4));
 				break;
 			case 'S':
-				fileh.dispatcher("save");
+				//TODO: not implement yet
+				FileHelper.saveSpreadsheet(spreadsheet);
 				break;
 			// TODO undo
 			/*
@@ -742,11 +721,12 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			// TODO redo
 			/*
 			 * case 'Y': spreadsheet.redo(); break;
-			 */case 'O':
-				fileh.selectDispatcher("open");
+			 */
+			case 'O':
+				Executions.createComponents("/munus/file/fileListOpen.zul", mainWin, null);
 				break;
 			case 'F':
-
+				//TODO: 
 				break;
 			case 'B':
 				setFontBold();
@@ -758,19 +738,18 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				setFontUnderline();
 				break;
 			default:
-				p("ctrl ...?");
 				return;
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 
-	// SECTION FILE MENU
-//	public void onFileSelect(ForwardEvent event) {
-//		fileh.selectDispatcher((String) event.getData());
-//	}
+	public void onFileOpen(ForwardEvent event) {
+		Executions.createComponents("menus/file/fileListOpen.zul", mainWin, null);
+	}
+	
 	public void onExport(ForwardEvent event) {
 		ExportHelper.onExport(event);
 	}
@@ -779,135 +758,107 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		cellmh.dispatcher((String) event.getData());
 	}
 
-	public void onFileOK(ForwardEvent event) {
-		fileh.dispatcher((String) event.getData());
-	}
+	//not implement yet
+//	public void onFileOK(ForwardEvent event) {
+//		fileh.dispatcher((String) event.getData());
+//	}
 
 	public void onFileNew(ForwardEvent event) {
-		openNewFileInFS();
+		FileHelper.openNewSpreadsheet(spreadsheet);
+		initSheetNameTab();
 	}
 
+	public void onFileSave(ForwardEvent event) {
+		throw new UiException("save as not implement yet");
+		//org.zkoss.zss.app.file.FileHelper.saveSpreadsheet(spreadsheet);
+	}
+	
+	public void onFileSaveAs(ForwardEvent event) {
+		throw new UiException("save as not implement yet");
+	}
+	
 	public void onFileSaveClose(ForwardEvent event) {
-		fileh.selectDispatcher("save");
-		openNewFileInFS();
+		FileHelper.saveSpreadsheet(spreadsheet);
+		FileHelper.openNewSpreadsheet(spreadsheet);
 	}
 
-	public void onOpenFile(ForwardEvent event) {
-		Listbox flo_files = (Listbox) Path
-				.getComponent("//p1/mainWin/fileOpenWin/flo_files");
-		String filename = null;
-		if (flo_files.getSelectedItem() != null) {
-			filename = flo_files.getSelectedItem().getLabel();
-			p(filename);
-			openFileInFS(filename);
-		}
-
-		Window fileOpenWin = (Window) Path
-				.getComponent("//p1/mainWin/fileOpenWin");
-		fileOpenWin.setVisible(false);
-		// spreadsheet.conCurrentEditing(this);
-		spreadsheet.invalidate();
-	}
-
-	public void onDeleteFile(ForwardEvent event) {
-		Listbox fld_files = (Listbox) Path
-				.getComponent("//p1/mainWin/fileDeleteWin/fld_files");
-
-		String filename = fld_files.getSelectedItem().getLabel();
-		fileh.deleteFile(filename);
-
-		Window fileDeleteWin = (Window) Path
-				.getComponent("//p1/mainWin/fileDeleteWin");
-		fileDeleteWin.setVisible(false);
-
-		if (filename.equals(spreadsheet.getSrc()))
-			onFileNew(null);
+	public void onFileDelete(ForwardEvent event) {
+		FileHelper.deleteSpreadsheet(spreadsheet);
+		onFileNew(null);
 	}
 
 	public void onExportFile(ForwardEvent event) {
-		Listbox fle_files = (Listbox) Path
-				.getComponent("//p1/mainWin/fileExportWin/fle_files");
-
-		String filename = fle_files.getSelectedItem().getLabel();
-		exportFile(filename);
-
-		Window fileExportWin = (Window) Path
-				.getComponent("//p1/mainWin/fileExportWin");
-		fileExportWin.setVisible(false);
+		throw new UiException("export file not implement yet");
+//		Listbox fle_files = (Listbox) Path
+//				.getComponent("//p1/mainWin/fileExportWin/fle_files");
+//
+//		String filename = fle_files.getSelectedItem().getLabel();
+//		exportFile(filename);
+//
+//		Window fileExportWin = (Window) Path
+//				.getComponent("//p1/mainWin/fileExportWin");
+//		fileExportWin.setVisible(false);
 	}
 
-	public void openFileInFS(String filename) {
-		HashMap hm = fileh.readMetafile();
-		File file;
-		if (filename != null && hm.get(filename) != null) {
-			hashFilename = (String) ((Object[]) hm.get(filename))[1];
-		} else {
-			hashFilename = filename;
-			filename = spreadsheet.getSrc();
-		}
-		p(fileh.xlsDir + hashFilename);
-		file = new File(fileh.xlsDir + hashFilename);
-		Label label = (Label) Path.getComponent("//p1/mainWin/openingFilename");
-		label.setValue(filename);
-		if (file == null)
-			System.out.println("cannot found file: " + file.getName());
-		try {
-			openSpreadsheetFromStream(new FileInputStream(file), filename);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void initSheetNameTab() {
+		//TODO: does sheetTBClean() and sheetTBInit() need to be public ?
+		sheetTBClean();
+		sheetTBInit();
+		spreadsheet.setSelectedSheet(((Tab) sheetTB.getTabs().getFirstChild()).getLabel());
 	}
 
-	public void onImportAndOpenFile(ForwardEvent event) {
-		openFileInFS(onImportFile(null));
+	public void onClick$importFile() {
+		HashMap arg = new HashMap();
+		arg.put("spreadsheet", spreadsheet);
+		Executions.createComponents("/menus/file/importFile.zul", mainWin, arg);
 	}
+	
+//	public void onImportFile(ForwardEvent event) {
+//		String metaStr = null;
+//		String filename = null;
+//		try {
+//			Object ss = Fileupload.get();
+//			if (ss != null) {
+//				InputStream iStream = ((Media) ss).getStreamData();
+//				filename = ((Media) ss).getName();
+//				long millis = System.currentTimeMillis();
+//				String hashFilename = millis + ".xls";
+//
+//				Files.copy(new File(fileh.xlsDir + hashFilename), iStream);
+//
+//				FileOutputStream metaStream = new FileOutputStream(fileh.xlsDir
+//						+ "metaFile", true);
+//
+//				metaStr = new String(millis + "\n" + filename + "\n"
+//						+ hashFilename + "\n");
+//				// System.out.println(fileh.xlsDir);
+//				metaStream.write(metaStr.getBytes());
+//				iStream.close();
+//				metaStream.close();
+//			}
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return filename;
+		//org.zkoss.zss.app.event.FileHelper.onUploadEventHandler(event);
+//	}
 
-	public String onImportFile(ForwardEvent event) {
-		String metaStr = null;
-		String filename = null;
-		try {
-			Object ss = Fileupload.get();
-			if (ss != null) {
-				InputStream iStream = ((Media) ss).getStreamData();
-				filename = ((Media) ss).getName();
-				long millis = System.currentTimeMillis();
-				String hashFilename = millis + ".xls";
-
-				Files.copy(new File(fileh.xlsDir + hashFilename), iStream);
-
-				FileOutputStream metaStream = new FileOutputStream(fileh.xlsDir
-						+ "metaFile", true);
-
-				metaStr = new String(millis + "\n" + filename + "\n"
-						+ hashFilename + "\n");
-				// System.out.println(fileh.xlsDir);
-				metaStream.write(metaStr.getBytes());
-				iStream.close();
-				metaStream.close();
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return filename;
-	}
-
-	public void openNewFileInFS() {
-
-		File file = new File(fileh.xlsDir + "Untitled");
-
-		try {
-			openSpreadsheetFromStream(new FileInputStream(file), "Untitled");
-			Label label = (Label) Path
-					.getComponent("//p1/mainWin/openingFilename");
-			label.setValue("Untitled");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
+//	public void openNewFileInFS() {
+//
+//		File file = new File(fileh.xlsDir + "Untitled");
+//
+//		try {
+//			openSpreadsheetFromStream(new FileInputStream(file), "Untitled");
+//			Label label = (Label) Path
+//					.getComponent("//p1/mainWin/openingFilename");
+//			label.setValue("Untitled");
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//	}
 
 	public void exportFile(String filename) {// current or other
 												// files(stack_level=0)
@@ -933,20 +884,20 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		 */}
 
 	public void onPrint(ForwardEvent event) {
-
-		String printKey = "" + System.currentTimeMillis();
-		Session session = Executions.getCurrent().getDesktop().getSession();
-		session.setAttribute("zssFromHi" + printKey, spreadsheet);
-
-		Window win = (Window) mainWin.getFellow("menuPrintWin");
-		Button printBtn = (Button) win.getFellow("printBtn");
-		printBtn.setHref("print.zul?printKey=" + printKey);
-		printBtn.setTooltip("print.zul?printKey=" + printKey);
-
-		win.setPosition("parent");
-		win.setTop("100px");
-		win.setLeft("100px");
-		win.doPopup();
+		throw new UiException("print not implement yet");
+//		String printKey = "" + System.currentTimeMillis();
+//		Session session = Executions.getCurrent().getDesktop().getSession();
+//		session.setAttribute("zssFromHi" + printKey, spreadsheet);
+//
+//		Window win = (Window) mainWin.getFellow("menuPrintWin");
+//		Button printBtn = (Button) win.getFellow("printBtn");
+//		printBtn.setHref("print.zul?printKey=" + printKey);
+//		printBtn.setTooltip("print.zul?printKey=" + printKey);
+//
+//		win.setPosition("parent");
+//		win.setTop("100px");
+//		win.setLeft("100px");
+//		win.doPopup();
 	}
 
 	public void onRevision(ForwardEvent event) {
@@ -1016,22 +967,30 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void onClearStyle() {
-		int left = spreadsheet.getSelection().getLeft();
-		int right = spreadsheet.getSelection().getRight();
-		int top = spreadsheet.getSelection().getTop();
-		int bottom = spreadsheet.getSelection().getBottom();
-		Sheet sheet = spreadsheet.getSelectedSheet();
-		Cell cell = null;
-		for (int row = top; row <= bottom; row++) {
-			for (int col = left; col <= right; col++) {
-				cell = Utils.getCell(sheet, row, col);
-				if (cell != null) {
-					CellStyle newCellStyle = book.createCellStyle();
-					Range rng = Utils.getRange(sheet, row, col);
-					rng.setStyle(newCellStyle);
-				}
+//		int left = spreadsheet.getSelection().getLeft();
+//		int right = spreadsheet.getSelection().getRight();
+//		int top = spreadsheet.getSelection().getTop();
+//		int bottom = spreadsheet.getSelection().getBottom();
+//		Sheet sheet = spreadsheet.getSelectedSheet();
+//		Cell cell = null;
+//		for (int row = top; row <= bottom; row++) {
+//			for (int col = left; col <= right; col++) {
+//				cell = Utils.getCell(sheet, row, col);
+//				if (cell != null) {
+//					CellStyle newCellStyle = book.createCellStyle();
+//					Range rng = Utils.getRange(sheet, row, col);
+//					rng.setStyle(newCellStyle);
+//				}
+//			}
+//		}
+		
+		Utils.visitCells(spreadsheet.getSelectedSheet(), spreadsheet.getSelection(), new CellVisitor() {
+			
+			@Override
+			public void handle(CellVisitorContext context) {
+				context.getRange().setStyle(context.getBook().createCellStyle());
 			}
-		}
+		});
 	}
 
 	public void onClearBoth(ForwardEvent event) {
@@ -1175,8 +1134,8 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void onInsertSheet(boolean isNotifyAll) {
-		int sheetCount = book.getNumberOfSheets();
-		Sheet addedSheet = book.createSheet("sheet " + (sheetCount + 1));
+		int sheetCount = spreadsheet.getBook().getNumberOfSheets();
+		Sheet addedSheet = spreadsheet.getBook().createSheet("sheet " + (sheetCount + 1));
 
 		Tab tab = new Tab(addedSheet.getSheetName());
 		Popup popup = (Popup) Path.getComponent("//p1/mainWin/tabPopup");
@@ -1251,7 +1210,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		short boldWeight = isBold ? 
 				Font.BOLDWEIGHT_BOLD : Font.BOLDWEIGHT_NORMAL;
 		byte underline = isUnderline ? Font.U_SINGLE : Font.U_NONE;
-		Color color = BookHelper.HTMLToColor(book, fontColorBtn.getColor());
+		Color color = BookHelper.HTMLToColor(spreadsheet.getBook(), fontColorBtn.getColor());
 		Utils.setFont(sheet, rect, boldWeight, color, getFontHeightInPoints(),
 				fontName, isItalic, isStrikethrough, Font.SS_NONE, underline);
 	}
@@ -1337,7 +1296,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		// spreadsheet.pushCellState();
 
 		//switch font bold and set sclass
-		boldBtn.setClass((isBold = !isBold) ? "toolIcon clicked" : "toolIcon");
+		boldBtn.setClass((isBold = !isBold) ? "clicked" : "");
 		Utils.setFontBold(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), isBold);
 	}
 
@@ -1350,7 +1309,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		// spreadsheet.pushCellState();
 		
 		//switch italic and set sclass
-		italicBtn.setClass((isItalic = !isItalic) ? "toolIcon clicked" : "toolIcon");
+		italicBtn.setClass((isItalic = !isItalic) ? "clicked" : "");
 		Utils.setFontItalic(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), isItalic);
 	}
 
@@ -1364,7 +1323,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		// spreadsheet.pushCellState();
 		
 		//switch underline and set sclass
-		underlineBtn.setClass((isUnderline = !isUnderline) ? "toolIcon clicked" : "toolIcon");
+		underlineBtn.setClass((isUnderline = !isUnderline) ? "clicked" : "");
 		Utils.setFontUnderline(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), isUnderline ? Font.U_SINGLE : Font.U_NONE);
 	}
 
@@ -1377,7 +1336,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		// spreadsheet.pushCellState();
 		
 		//switch strike and set sclass
-		strikethroughBtn.setClass((isStrikethrough = !isStrikethrough) ? "toolIcon clicked" : "toolIcon");
+		strikethroughBtn.setClass((isStrikethrough = !isStrikethrough) ? "clicked" : "");
 		Utils.setFontStrikeout(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), isStrikethrough);
 	}
 
@@ -1391,19 +1350,19 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		short align = CellStyle.ALIGN_GENERAL;
 
 		if (alignStr.equals("left")) {
-			alignLeftBtn.setClass("toolIcon clicked");
+			alignLeftBtn.setClass("clicked");
 			align = CellStyle.ALIGN_LEFT;
 		} else
 			alignLeftBtn.setClass("toolIcon");
 
 		if (alignStr.equals("center")) {
-			alignCenterBtn.setClass("toolIcon clicked");
+			alignCenterBtn.setClass("clicked");
 			align = CellStyle.ALIGN_CENTER;
 		} else
 			alignCenterBtn.setClass("toolIcon");
 
 		if (alignStr.equals("right")) {
-			alignRightBtn.setClass("toolIcon clicked");
+			alignRightBtn.setClass("clicked");
 			align = CellStyle.ALIGN_RIGHT;
 		} else
 			alignRightBtn.setClass("toolIcon");
@@ -1448,7 +1407,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		throw new UiException("wrap text is implmented yet");
 		/*
 		 * spreadsheet.pushCellState(); try{ isWrapText=!isWrapText;
-		 * if(isWrapText){ wrapTextBtn.setClass("toolIcon clicked"); }else{
+		 * if(isWrapText){ wrapTextBtn.setClass("clicked"); }else{
 		 * wrapTextBtn.setClass("toolIcon"); }
 		 * 
 		 * int left = spreadsheet.getSelection().getLeft(); int right =
@@ -1471,9 +1430,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			// all
 			isMergeCell = !isMergeCell;
 			if (isMergeCell) {
-				mergeCellBtn.setClass("toolIcon clicked");
-			} else {
-				mergeCellBtn.setClass("toolIcon");
+				mergeCellBtn.setClass("clicked");
 			}
 
 			if (isMergeCell) {
@@ -1529,6 +1486,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		if (param == null)
 			return;
 		if (param.equals(Labels.getLabel("sort.custom"))) {
+			//TODO: remove arg
 			HashMap arg = new HashMap();
 			arg.put("spreadsheet", spreadsheet);
 			Executions.createComponents("/menus/sort/customSort.zul", mainWin,
@@ -1742,123 +1700,103 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void reloadRevisionMenu() {
-
-		try {
-			// read the metafile
-			BufferedReader bReader;
-			bReader = new BufferedReader(new FileReader(fileh.xlsDir
-					+ "metaFile"));
-			String line = null;
-			Stack stack = new Stack();
-
-			String timeStr, filename, hashFilename;
-			while (true) {
-				timeStr = bReader.readLine();
-				if (timeStr == null) {
-					break;
-				}
-				filename = bReader.readLine();
-				if (filename == null) {
-					System.out.println("Warning: filename cannot read from metaFile");
-					break;
-				}
-				hashFilename = bReader.readLine();
-				if (hashFilename == null) {
-					System.out.println("Warning: hashFilename cannot read from metaFile");
-					break;
-				}
-				if (spreadsheet.getSrc().equals(filename)) {
-					stack.add(timeStr);
-					stack.add(filename);
-					stack.add(hashFilename);
-				}
-			}
-			bReader.close();
-
-			// put read data to Menu
-			org.zkoss.zul.Row newRow;
-			Rows revisionRows = (Rows) mainWin.getFellow("revisionWin")
-					.getFellow("revisionRows");
-			List rowsChildList = revisionRows.getChildren();
-			while (!rowsChildList.isEmpty())
-				revisionRows.removeChild((Component) rowsChildList.get(0));
-			while (!stack.isEmpty()) {
-
-				hashFilename = (String) stack.pop();
-				filename = (String) stack.pop();
-				timeStr = (String) stack.pop();
-				String dateStr = new Date(Long.parseLong(timeStr)).toString();
-
-				newRow = new org.zkoss.zul.Row();
-				Radio radio = new Radio();
-				radio.setAttribute("value", hashFilename);
-
-				if (hashFilename.equals(this.hashFilename)) {
-					newRow.appendChild(new Label("current"));
-					newRow.setStyle("background:rgb(250,230,180) none");
-				} else {
-					newRow.appendChild(radio);
-					// p("set hashFilename: "+hashFilename);
-				}
-				newRow.appendChild(new Label(dateStr));
-				newRow.appendChild(new Label("test name"));
-				newRow.appendChild(new Label("no comment"));
-
-				revisionRows.appendChild(newRow);
-				// p(""+radio.getAttribute("value"));
-			}
-			// close the jdbc connection
-
-		} catch (Exception ex) {
-			p("exception: " + ex.getMessage());
-
-		}
+		throw new UiException("reloadRevision not implement yet");
+//		try {
+//			// read the metafile
+//			BufferedReader bReader;
+//			bReader = new BufferedReader(new FileReader(fileh.xlsDir
+//					+ "metaFile"));
+//			String line = null;
+//			Stack stack = new Stack();
+//
+//			String timeStr, filename, hashFilename;
+//			while (true) {
+//				timeStr = bReader.readLine();
+//				if (timeStr == null) {
+//					break;
+//				}
+//				filename = bReader.readLine();
+//				if (filename == null) {
+//					System.out.println("Warning: filename cannot read from metaFile");
+//					break;
+//				}
+//				hashFilename = bReader.readLine();
+//				if (hashFilename == null) {
+//					System.out.println("Warning: hashFilename cannot read from metaFile");
+//					break;
+//				}
+//				if (spreadsheet.getSrc().equals(filename)) {
+//					stack.add(timeStr);
+//					stack.add(filename);
+//					stack.add(hashFilename);
+//				}
+//			}
+//			bReader.close();
+//
+//			// put read data to Menu
+//			org.zkoss.zul.Row newRow;
+//			Rows revisionRows = (Rows) mainWin.getFellow("revisionWin")
+//					.getFellow("revisionRows");
+//			List rowsChildList = revisionRows.getChildren();
+//			while (!rowsChildList.isEmpty())
+//				revisionRows.removeChild((Component) rowsChildList.get(0));
+//			while (!stack.isEmpty()) {
+//
+//				hashFilename = (String) stack.pop();
+//				filename = (String) stack.pop();
+//				timeStr = (String) stack.pop();
+//				String dateStr = new Date(Long.parseLong(timeStr)).toString();
+//
+//				newRow = new org.zkoss.zul.Row();
+//				Radio radio = new Radio();
+//				radio.setAttribute("value", hashFilename);
+//
+//				if (hashFilename.equals(this.hashFilename)) {
+//					newRow.appendChild(new Label("current"));
+//					newRow.setStyle("background:rgb(250,230,180) none");
+//				} else {
+//					newRow.appendChild(radio);
+//					// p("set hashFilename: "+hashFilename);
+//				}
+//				newRow.appendChild(new Label(dateStr));
+//				newRow.appendChild(new Label("test name"));
+//				newRow.appendChild(new Label("no comment"));
+//
+//				revisionRows.appendChild(newRow);
+//				// p(""+radio.getAttribute("value"));
+//			}
+//			// close the jdbc connection
+//
+//		} catch (Exception ex) {
+//			throw new RuntimeException(ex);
+//		}
 	}
 
-	public void onRevisionOK(ForwardEvent event) {
-		String filename = null;
-
-		Rows revisionRows = (Rows) mainWin.getFellow("revisionWin").getFellow(
-				"revisionRows");
-		List rowList = revisionRows.getChildren();
-		for (int i = 0; i < rowList.size(); i++) {
-			Component tmpComponent = ((Component) rowList.get(i))
-					.getFirstChild();
-			if (tmpComponent instanceof Radio
-					&& ((Radio) tmpComponent).isChecked()) {
-				filename = (String) ((Radio) tmpComponent)
-						.getAttribute("value");
-				// p("onRevision: "+filename);
-			}
-		}
-
-		openFileInFS(filename);
-
-		Window revisionWin = (Window) Path
-				.getComponent("//p1/mainWin/revisionWin");
-		revisionWin.setVisible(false);
-		spreadsheet.invalidate();
-		// spreadsheet.notifyRevision();
-	}
-
-	public void openSpreadsheetFromStream(InputStream iStream, String src) {
-
-		spreadsheet.setBookFromStream(iStream, src);
-
-		book = spreadsheet.getBook();
-		sheetTBClean();
-		sheetTBInit();
-		sheetTB.addEventListener(org.zkoss.zk.ui.event.Events.ON_SELECT,
-				new EventListener() {
-					public void onEvent(Event event) throws Exception {
-						onTabboxSelectEvent((SelectEvent) event);
-					}
-				});
-
-		spreadsheet.setSelectedSheet(((Tab) sheetTB.getTabs().getFirstChild())
-				.getLabel());
-		spreadsheet.invalidate();
-	}
+//	public void onRevisionOK(ForwardEvent event) {
+//		String filename = null;
+//
+//		Rows revisionRows = (Rows) mainWin.getFellow("revisionWin").getFellow(
+//				"revisionRows");
+//		List rowList = revisionRows.getChildren();
+//		for (int i = 0; i < rowList.size(); i++) {
+//			Component tmpComponent = ((Component) rowList.get(i))
+//					.getFirstChild();
+//			if (tmpComponent instanceof Radio
+//					&& ((Radio) tmpComponent).isChecked()) {
+//				filename = (String) ((Radio) tmpComponent)
+//						.getAttribute("value");
+//				// p("onRevision: "+filename);
+//			}
+//		}
+//
+//		openFileInFS(filename);
+//
+//		Window revisionWin = (Window) Path
+//				.getComponent("//p1/mainWin/revisionWin");
+//		revisionWin.setVisible(false);
+//		spreadsheet.invalidate();
+//		// spreadsheet.notifyRevision();
+//	}
 
 	private Connection getDBConnection() {
 		try {
@@ -1905,7 +1843,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			e.printStackTrace();
 		}
 		if (result == Messagebox.YES) {
-			int index = book.getSheetIndex(spreadsheet.getSelectedSheet());
+			int index = spreadsheet.getBook().getSheetIndex(spreadsheet.getSelectedSheet());
 			onDeleteSheet(index);
 		}
 
@@ -1933,7 +1871,8 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			// content?
 		}
 	}
-
+	
+	//TODO: rename as syncSheetNameTab
 	public void redrawTab() {
 		Sheet sheet;
 		Tabbox sheetTB = (Tabbox) Path.getComponent("//p1/mainWin/sheetTB");

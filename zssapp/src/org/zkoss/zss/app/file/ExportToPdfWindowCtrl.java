@@ -16,7 +16,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 	it will be useful, but WITHOUT ANY WARRANTY.
 }}IS_RIGHT
 */
-package org.zkoss.zss.app.export;
+package org.zkoss.zss.app.file;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +36,6 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Exporter;
 import org.zkoss.zss.model.impl.PdfExporter;
 import org.zkoss.zss.ui.Rect;
@@ -53,12 +52,11 @@ import org.zkoss.zul.Radiogroup;
 public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	
 	/**
-	 * TODO
 	 * The range to export. All sheets, current sheet or selection range
 	 * <p> Default: Selected sheet
 	 */
 	Radiogroup range;
-	Radio currSelection; //TODO selection range
+	Radio currSelection;
 	Radio currSheet;
 	Radio allSheet;
 	
@@ -156,9 +154,8 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 		File tempDir = createTempDir();
 		OutputStream os = null;
 		
-		Book wb = ss.getBook();
 		String outputFilePath = tempDir.getAbsolutePath() 
-	    	+ System.getProperty("file.separator") 
+	    	+ File.separator
 	    	+ System.currentTimeMillis() + ".pdf";
 		
 		os = new java.io.FileOutputStream(outputFilePath);

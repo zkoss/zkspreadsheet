@@ -36,7 +36,7 @@ import org.zkoss.zul.Messagebox;
 public class ExportHelper {
 	private ExportHelper(){}
 	
-	private final static String PDF_KEY = ExportHelper.class.getSimpleName() + "_ZSSPDF";
+	private final static String KEY_PDF = ExportHelper.class.getSimpleName() + "_ZSSPDF";
 	
 	public static void onExport(ForwardEvent event) {
 		if (!hasZssPdf()) {
@@ -55,6 +55,7 @@ public class ExportHelper {
 		}
 		
 		if (param.equals(Labels.getLabel("export.pdf"))) {
+			//TODO: remove arg, use main
 			HashMap arg = new HashMap();
 			arg.put("spreadsheet", ss);
 			Executions.createComponents("/menus/export/exportToPDF.zul", ctrl.getMainWindow(), arg);
@@ -62,13 +63,13 @@ public class ExportHelper {
 	}
 	
 	public static boolean hasZssPdf() {
-		String val = Library.getProperty(PDF_KEY);
+		String val = Library.getProperty(KEY_PDF);
 		if (val == null) {
 			boolean hasZssPdf = verifyZssPdf();
-			Library.setProperty(PDF_KEY, String.valueOf(hasZssPdf));
+			Library.setProperty(KEY_PDF, String.valueOf(hasZssPdf));
 			return hasZssPdf;
 		} else {
-			return Boolean.valueOf(Library.getProperty(PDF_KEY));
+			return Boolean.valueOf(Library.getProperty(KEY_PDF));
 		}
 	}
 

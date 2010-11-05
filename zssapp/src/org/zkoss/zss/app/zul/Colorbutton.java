@@ -33,8 +33,6 @@ import org.zkoss.zul.impl.Utils;
  *
  */
 public class Colorbutton extends Colorbox implements org.zkoss.zss.app.zul.api.Colorbutton {
-//	private String _color = "#000000";
-//	private int _rgb = 0x000000;
 	private String _src;
 	private Image _image;
 	/** Count the version of {@link #_image}. */
@@ -72,7 +70,6 @@ public class Colorbutton extends Colorbox implements org.zkoss.zss.app.zul.api.C
 		super.renderProperties(renderer);
 
 		render(renderer, "image", getEncodedImageURL());
-		//render(renderer, "color", _color);
 	}
 
 	/** Returns the encoded URL for the image ({@link #getImage}
