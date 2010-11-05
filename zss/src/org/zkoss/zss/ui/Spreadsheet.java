@@ -1323,6 +1323,9 @@ public class Spreadsheet extends XulElement {
 			if (result == null) {
 				result = Spreadsheet.this.getAttribute(name, true);
 			}
+			if (result == null && page != null) {
+				result = page.getXelVariable(null, null, name, true);
+			}
 
 			return result;
 		}
