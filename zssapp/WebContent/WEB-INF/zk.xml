@@ -5,6 +5,10 @@
 		Reserved.
 	-->
 <zk>
+	<library-property>
+		<name>org.zkoss.zss.app.file.fileHelper.importPermission</name>
+		<value>true</value>
+	</library-property>
 	<client-config>
 		<debug-js>true</debug-js>
 	</client-config>
