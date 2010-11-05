@@ -22,6 +22,10 @@ ZK Spreadsheet 2.0.0
   156 spring DelegatingVariableResolver in Spreadsheet doesn't work
   168 Exception while set background color
   
+* Upgrade Notes
+  + Package name of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 
+    name conflict with of those in poi.jar, so it is now OK to put both zpoi.jar and poi.jar in class path.
+  
 	------------
 ZK Spreadsheet 2.0.0 RC
 

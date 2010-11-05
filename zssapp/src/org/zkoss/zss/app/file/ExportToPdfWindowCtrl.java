@@ -25,10 +25,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.PrintSetup;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.AreaReference;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.ss.usermodel.PrintSetup;
+import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.io.Files;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
