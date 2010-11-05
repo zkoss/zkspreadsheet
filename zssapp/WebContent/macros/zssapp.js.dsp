@@ -13,6 +13,5 @@ ${z:setCWRCacheControl()}
 <c:include page="~./js/zul.sel.wpd"/>
 <c:include page="~./js/zul.menu.wpd"/>
 <c:include page="~./js/zul.grid.wpd"/>
-<c:include page="~./js/zkex.inp.wpd"/>
 <c:include page="~./js/zss.wpd"/>
 <c:include page="~./js/zssapp.wpd"/>
