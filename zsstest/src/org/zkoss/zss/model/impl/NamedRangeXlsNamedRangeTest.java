@@ -19,11 +19,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;

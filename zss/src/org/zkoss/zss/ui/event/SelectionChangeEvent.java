@@ -18,9 +18,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.event;
 
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.Component;
 //import org.zkoss.zss.model.Sheet;
-import org.apache.poi.ss.usermodel.Sheet;
 /**
  * Event class about selection of cell
  * @author Dennis.Chen

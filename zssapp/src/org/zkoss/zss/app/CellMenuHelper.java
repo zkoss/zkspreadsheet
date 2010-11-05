@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.zkoss.image.Image;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 //import org.zkoss.zss.model.Sheet;
@@ -18,7 +19,6 @@ import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
-import org.apache.poi.ss.usermodel.Sheet;
 
 public class CellMenuHelper {
 	Spreadsheet spreadsheet;

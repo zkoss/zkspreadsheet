@@ -1,12 +1,12 @@
 package org.zkoss.zss.app;
 
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.UiException;
 //import org.zkoss.zss.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Window;
-import org.apache.poi.ss.usermodel.Sheet;
 
 public class ColumnMenuHelper {
 	Spreadsheet spreadsheet;

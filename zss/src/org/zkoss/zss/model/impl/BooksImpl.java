@@ -16,8 +16,8 @@ package org.zkoss.zss.model.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment;
-import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
+import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Books;
 

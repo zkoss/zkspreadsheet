@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.Widget;
 

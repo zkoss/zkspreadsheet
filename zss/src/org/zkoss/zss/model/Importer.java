@@ -22,7 +22,7 @@ package org.zkoss.zss.model;
 import java.io.File;
 import java.io.InputStream;
 
-import org.apache.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.usermodel.Workbook;
 /**
  * Importer class that used to import a input stream into a ZK Spreadsheet {@link Book}.
  * @author henrichen

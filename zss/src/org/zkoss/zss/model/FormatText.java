@@ -13,8 +13,8 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model;
 
-import org.apache.poi.ss.format.CellFormatResult;
-import org.apache.poi.ss.usermodel.RichTextString;
+import org.zkoss.poi.ss.format.CellFormatResult;
+import org.zkoss.poi.ss.usermodel.RichTextString;
 
 /**
  * Holding class for possible cell formatted text results

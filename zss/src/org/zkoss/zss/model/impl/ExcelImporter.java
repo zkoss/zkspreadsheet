@@ -20,9 +20,9 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.net.URL;
 
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.POIXMLDocument;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Importer;
 import org.zkoss.zss.model.ModelException;

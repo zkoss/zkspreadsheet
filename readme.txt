@@ -17,6 +17,7 @@ zss
 
 ---
 zssapp
+	The ZK Spreadsheet Live.
 	A Web based Excel(R) like application implemented with ZK Spreadsheet component
 	and ZK Ajax framework(http://www.zkoss.org).
 

@@ -19,8 +19,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.sys;
 
 //import org.zkoss.zss.model.Sheet;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.apache.poi.ss.usermodel.Sheet;
 
 /**
  * 

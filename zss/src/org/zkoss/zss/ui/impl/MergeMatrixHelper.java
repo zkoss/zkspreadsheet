@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.Map;
 
 //import org.zkoss.zss.model.Sheet;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zss.ui.Rect;
 
-import org.apache.poi.ss.usermodel.Sheet;
 
 /**
  * Because current implementation of spreadsheet only support horizontal merged cell,

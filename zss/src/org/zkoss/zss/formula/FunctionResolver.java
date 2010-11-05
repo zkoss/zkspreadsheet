@@ -13,8 +13,8 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.formula;
 
-import org.apache.poi.hssf.record.formula.udf.UDFFinder;
-import org.apache.poi.ss.formula.DependencyTracker;
+import org.zkoss.poi.hssf.record.formula.udf.UDFFinder;
+import org.zkoss.poi.ss.formula.DependencyTracker;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.zss.model.Book;
 

@@ -20,7 +20,7 @@ package org.zkoss.zss.app.event;
 
 import java.util.HashMap;
 
-import org.apache.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.ForwardEvent;

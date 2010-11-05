@@ -20,12 +20,12 @@ package org.zkoss.zss.ui.sys;
 
 
 //import org.zkoss.zss.model.Sheet;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Widget;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 
-import org.apache.poi.ss.usermodel.Sheet;
 
 /**
  * Special controller interface .

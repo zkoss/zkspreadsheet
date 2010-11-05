@@ -12,11 +12,11 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.BorderStyle;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.Hyperlink;
+import org.zkoss.poi.ss.usermodel.RichTextString;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zss.model.Areas;
 import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.Range;

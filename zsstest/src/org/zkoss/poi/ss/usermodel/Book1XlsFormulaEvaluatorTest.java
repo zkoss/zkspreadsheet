@@ -11,28 +11,34 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 */
 
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.InputStream;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+//import org.apache.poi.hssf.usermodel.HSSFEvaluationTestHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zkoss.poi.hssf.record.formula.Ptg;
+import org.zkoss.poi.hssf.usermodel.HSSFCell;
+import org.zkoss.poi.hssf.usermodel.HSSFEvaluationWorkbook;
+import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
+import org.zkoss.poi.ss.formula.EvaluationCell;
+import org.zkoss.poi.ss.formula.FormulaRenderer;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.ExcelImporter;
-import org.zkoss.zss.model.impl.XSSFBookImpl;
+import org.zkoss.zss.model.impl.HSSFBookImpl;
 
 /**
  * @author henrichen
  *
  */
-public class Book1XlsxFormulaEvaluatorTest {
+public class Book1XlsFormulaEvaluatorTest {
 	private Workbook _workbook;
 	private FormulaEvaluator _evaluator;
 
@@ -41,12 +47,12 @@ public class Book1XlsxFormulaEvaluatorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		final String filename = "Book1.xlsx";
+		final String filename = "Book1.xls";
 		final InputStream is = new ClassLocator().getResourceAsStream(filename);
 		_workbook = new ExcelImporter().imports(is, filename);
 		assertTrue(_workbook instanceof Book);
-		assertTrue(_workbook instanceof XSSFBookImpl);
-		assertTrue(_workbook instanceof XSSFWorkbook);
+		assertTrue(_workbook instanceof HSSFBookImpl);
+		assertTrue(_workbook instanceof HSSFWorkbook);
 		assertEquals(filename, ((Book)_workbook).getBookName());
 		assertEquals("Sheet 1", _workbook.getSheetName(0));
 		assertEquals("Sheet2", _workbook.getSheetName(1));
@@ -54,7 +60,7 @@ public class Book1XlsxFormulaEvaluatorTest {
 		assertEquals(0, _workbook.getSheetIndex("Sheet 1"));
 		assertEquals(1, _workbook.getSheetIndex("Sheet2"));
 		assertEquals(2, _workbook.getSheetIndex("Sheet3"));
-		
+
 		_evaluator = ((Book)_workbook).getFormulaEvaluator();
 	}
 
@@ -71,15 +77,15 @@ public class Book1XlsxFormulaEvaluatorTest {
 	public void testEvaluateArea() {
 		Sheet sheet1 = _workbook.getSheet("Sheet 1");
 		Row row = sheet1.getRow(0);
-		assertEquals(1, row.getCell(0).getNumericCellValue(), 0.0000000000000001);
+		assertNull(row.getCell(0));
 		assertEquals(2, row.getCell(1).getNumericCellValue(), 0.0000000000000001);
 		assertEquals(3, row.getCell(2).getNumericCellValue(), 0.0000000000000001);
 		
 		Cell cell = row.getCell(3); //D1: =SUM(A1:C1)
-		_evaluator.evaluate(cell);
 		CellValue value = _evaluator.evaluate(cell);
-		assertEquals(6, value.getNumberValue(), 0.0000000000000001);
+		assertEquals(5, value.getNumberValue(), 0.0000000000000001);
 		assertEquals(Cell.CELL_TYPE_NUMERIC, value.getCellType());
+		testToFormulaString(cell, "SUM(A1:C1)");
 	}
 	@Test
 	public void testEvaluateExternArea() {
@@ -94,6 +100,7 @@ public class Book1XlsxFormulaEvaluatorTest {
 		CellValue value = _evaluator.evaluate(cell);
 		assertEquals(6, value.getNumberValue(), 0.0000000000000001);
 		assertEquals(Cell.CELL_TYPE_NUMERIC, value.getCellType());
+		testToFormulaString(cell, "SUM(Sheet2!A2:C2)");
 	}
 	@Test
 	public void testEvaluateArea3D() {
@@ -109,6 +116,7 @@ public class Book1XlsxFormulaEvaluatorTest {
 		CellValue value = _evaluator.evaluate(cell);
 		assertEquals(6, value.getNumberValue(), 0.0000000000000001);
 		assertEquals(Cell.CELL_TYPE_NUMERIC, value.getCellType());
+		testToFormulaString(cell, "SUM('Sheet 1:Sheet3'!A3:C3)");
 	}
 	@Test
 	public void testEvaluateExternRef() {
@@ -123,6 +131,8 @@ public class Book1XlsxFormulaEvaluatorTest {
 		CellValue value = _evaluator.evaluate(cell);
 		assertEquals(1, value.getNumberValue(), 0.0000000000000001);
 		assertEquals(Cell.CELL_TYPE_NUMERIC, value.getCellType());
+		
+		testToFormulaString(cell, "SUM(Sheet2!A4)");
 	}
 	@Test
 	public void testEvaluateRef3D() {
@@ -138,6 +148,8 @@ public class Book1XlsxFormulaEvaluatorTest {
 		CellValue value = _evaluator.evaluate(cell);
 		assertEquals(6, value.getNumberValue(), 0.0000000000000001);
 		assertEquals(Cell.CELL_TYPE_NUMERIC, value.getCellType());
+		
+		testToFormulaString(cell, "SUM('Sheet 1:Sheet3'!A5)");
 	}
 	@Test
 	public void testEvaluateAll() {
@@ -146,5 +158,12 @@ public class Book1XlsxFormulaEvaluatorTest {
 		testEvaluateArea3D();
 		testEvaluateExternRef();
 		testEvaluateRef3D();
+	}
+	
+	private void testToFormulaString(Cell cell, String expect) {
+		HSSFEvaluationWorkbook evalbook = HSSFEvaluationWorkbook.create((HSSFWorkbook)_workbook);
+		Ptg[] ptgs = BookHelper.getCellPtgs(cell);
+		final String formula = FormulaRenderer.toFormulaString(evalbook, ptgs);
+		assertEquals(expect, formula);
 	}
 }

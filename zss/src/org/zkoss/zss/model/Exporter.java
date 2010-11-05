@@ -13,8 +13,8 @@ package org.zkoss.zss.model;
 
 import java.io.OutputStream;
 
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.zss.model.Book;
 
 /**

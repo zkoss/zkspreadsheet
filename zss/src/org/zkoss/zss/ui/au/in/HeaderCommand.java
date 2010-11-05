@@ -21,6 +21,7 @@ package org.zkoss.zss.ui.au.in;
 
 import java.util.Map;
 
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
@@ -32,7 +33,6 @@ import org.zkoss.zss.ui.event.HeaderEvent;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
-import org.apache.poi.ss.usermodel.Sheet;
 
 /**
  * A Command (client to server) for handling event about a header(top header or left header) 

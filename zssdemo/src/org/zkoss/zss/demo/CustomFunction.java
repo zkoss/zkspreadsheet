@@ -23,7 +23,7 @@ import java.util.Iterator;
 /*import org.zkoss.zss.model.Cell;
 import org.zkoss.zss.model.impl.RangeRef;
 */
-import org.apache.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.Cell;
 
 /**
  * @author Dennis.Chen
