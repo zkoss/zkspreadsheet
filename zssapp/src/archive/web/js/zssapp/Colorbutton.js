@@ -15,7 +15,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 }}IS_RIGHT
 */
 (function () {
-	
+
 zssapp.Colorbutton = zk.$extends(zkex.inp.Colorbox, {
 	$define: {
 		/** Sets the image URI.

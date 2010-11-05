@@ -1,5 +1,8 @@
 
-<package name="zssapp" language="xul/html" depends="zkex.inp">
+<package name="zssapp" language="xul/html" depends="zul.wgt">
+	<widget name="Simplecolorbutton"/>
+	<script>if (zk.feature.pe){zk.load('zkex.inp', null, function () {</script>
 	<widget name="Colorbutton"/>
+	<script>});}</script>
 	<widget name="Dropdownbutton"/>
 </package>

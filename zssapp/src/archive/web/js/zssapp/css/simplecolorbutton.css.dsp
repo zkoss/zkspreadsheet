@@ -264,6 +264,7 @@
 	position: absolute;
 	width: 180px;
 	height: 120px;
+	background: #FFF;
 }
 .z-colorbtn-pp .z-colorbtn-cell {
 	display: inline;

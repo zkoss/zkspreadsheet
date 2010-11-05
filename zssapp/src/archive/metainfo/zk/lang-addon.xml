@@ -2,17 +2,18 @@
 <language-addon>
 	<addon-name>zssapp</addon-name>
 	<language-name>xul/html</language-name>
-	
+
 	<component>
 		<component-name>colorbutton</component-name>
-		<component-class>org.zkoss.zss.app.Colorbutton</component-class>
-		<widget-class>zssapp.Colorbutton</widget-class>
+		<component-class>org.zkoss.zss.app.zul.Simplecolorbutton</component-class>
+		<widget-class>zssapp.Simplecolorbutton</widget-class>
 		<mold>
 			<mold-name>default</mold-name>
-			<mold-uri>mold/colorbutton.js</mold-uri>
-			<css-uri>css/colorbutton.css.dsp</css-uri>
+			<mold-uri>mold/simplecolorbutton.js</mold-uri>
+			<css-uri>css/simplecolorbutton.css.dsp</css-uri>
 		</mold>
 	</component>
+
 	<component>
 		<component-name>dropdownbutton</component-name>
 		<component-class>org.zkoss.zss.app.Dropdownbutton</component-class>
