@@ -42,7 +42,6 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.event.KeyEvent;
-import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.event.CellStyleHelper;
@@ -51,6 +50,7 @@ import org.zkoss.zss.app.event.ExportHelper;
 import org.zkoss.zss.app.event.HyperlinkHelper;
 import org.zkoss.zss.app.file.FileHelper;
 import org.zkoss.zss.app.sort.SortSelector;
+import org.zkoss.zss.app.zul.SheetTabbox;
 import org.zkoss.zss.app.zul.api.Colorbutton;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.impl.BookHelper;
@@ -69,7 +69,6 @@ import org.zkoss.zss.ui.impl.CellVisitor;
 import org.zkoss.zss.ui.impl.CellVisitorContext;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
-import org.zkoss.zss.ui.impl.SheetVisitor;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zssex.ui.widget.ImageWidget;
@@ -82,11 +81,7 @@ import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Popup;
 import org.zkoss.zul.South;
-import org.zkoss.zul.Tab;
-import org.zkoss.zul.Tabbox;
-import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
@@ -125,7 +120,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	FormatNumberHelper fnh;
 	FormulaCategoryHelper fch;
 	RangeHelper rangeh;
-	TabHelper tabh;
 
 	Window mainWin;
 	Menu backgroundColorMenu;
@@ -136,9 +130,8 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	Textbox formulaEditbox;
 	Spreadsheet spreadsheet;
-	//TODO: extend tabbox to a component, re-use
-	Tabbox sheetTB;
-	Tabs sheetTabs;
+	SheetTabbox sheetTabbox;
+
 	Combobox focusPosition;
 	Combobox fontFamilyCombobox;
 	Combobox fontSizeCombobox;
@@ -177,14 +170,17 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
+		desktop.setAttribute(MainWindowCtrl.class.getCanonicalName(), this);
+		
 		fontColorBtn = (Colorbutton)comp.getFellow("fontColorBtn");
 		backgroundColorBtn = (Colorbutton)comp.getFellow("backgroundColorBtn");
 		importFile.setDisabled(!FileHelper.hasImportPermission());
 		
-		desktop.setAttribute(MainWindowCtrl.class.getCanonicalName(), this);
+		sheetTabbox.doAfterCompose(sheetTabbox);
+		
 
 		ssInit();
-		sheetTBInit();
+		//sheetTBInit();
 
 		colmh = new ColumnMenuHelper(spreadsheet);
 		rowmh = new RowMenuHelper(spreadsheet);
@@ -192,7 +188,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		fnh = new FormatNumberHelper(spreadsheet);
 		fch = new FormulaCategoryHelper(spreadsheet);
 		rangeh = new RangeHelper(spreadsheet);
-		tabh = new TabHelper(spreadsheet);
 
 		formulaEditbox.addEventListener(
 				org.zkoss.zk.ui.event.Events.ON_CHANGING, new EventListener() {
@@ -299,35 +294,75 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				});
 	}
 
-	public void sheetTBClean() {
-		while (sheetTabs.getFirstChild() != null)
-			sheetTabs.removeChild(sheetTabs.getFirstChild());
+	public boolean shiftSheetLeft() {
+		//TODO: it should shift all, not just itself
+		Book book = spreadsheet.getBook();
+		String name = spreadsheet.getSelectedSheet().getSheetName();
+		Sheet sheet = spreadsheet.getSelectedSheet();
+		int index = book.getSheetIndex(sheet);
+		if (index > 0) {
+			book.setSheetOrder(name, index - 1);
+			sheetTabbox.redraw();
+			sheetTabbox.setCurrentSheet(index - 1);
+			return true;
+		}
+		return false;
 	}
-
-	public void sheetTBInit() {
-		Utils.visitSheets(spreadsheet.getBook(), new SheetVisitor(){
-
-			@Override
-			public void handle(Sheet sheet) {
-				Tab tab = new Tab(sheet.getSheetName());
-				Popup popup = (Popup) mainWin.getFellow("tabPopup");
-				tab.setContext(popup);
-				tab.setParent(sheetTabs);
-			}});
-
-		sheetTB.addEventListener(org.zkoss.zk.ui.event.Events.ON_SELECT,
-				new EventListener() {
-
-					public void onEvent(Event event) throws Exception {
-						onTabboxSelectEvent((SelectEvent) event);
-					}
-				});
-		sheetTB.invalidate();
+	
+	public boolean shiftSheetRight() {
+		//TODO: it should shift all, not just itself
+		Book book = spreadsheet.getBook();
+		String name = spreadsheet.getSelectedSheet().getSheetName();
+		Sheet sheet = spreadsheet.getSelectedSheet();
+		int index = book.getSheetIndex(sheet);
+		if (index < book.getNumberOfSheets() - 1) {
+			book.setSheetOrder(name, index + 1);
+			sheetTabbox.redraw();
+			sheetTabbox.setCurrentSheet(index + 1);
+			return true;
+		}
+		return false;
 	}
+	
+	public void deleteSheet() {
+		//TODO: it should shift all, not just itself
+		Book book = spreadsheet.getBook();
+		int index = book.getSheetIndex(spreadsheet.getSelectedSheet());
+		book.removeSheetAt(index);
+		int sheetCount = book.getNumberOfSheets();
 
-	// SECTION Sheet Tabbox Event Handler
-	void onTabboxSelectEvent(SelectEvent event) {
-		spreadsheet.setSelectedSheet(sheetTB.getSelectedTab().getLabel());
+		sheetTabbox.redraw();
+		
+		//TODO: can remove all sheets ?
+		if (sheetCount > 0) {
+			sheetTabbox.setCurrentSheet(0);
+		} else {
+			spreadsheet.invalidate();
+			// TODO: after remove all sheets, why is there still sheet1's
+			// content?
+		}
+	}
+	
+	public void renameSheet(String newName) {
+		Book book = spreadsheet.getBook();
+		final Sheet selsheet  = spreadsheet.getSelectedSheet();
+		Sheet sheet = book.getSheet(newName);
+		if(sheet!=null){
+			try {
+				Messagebox.show("cannot set sheet name the same as other sheets");
+				return;
+			} catch (InterruptedException e) {
+			}
+			return;
+		}
+		final int index = book.getSheetIndex(selsheet);
+		book.setSheetName(index, newName);
+		sheetTabbox.redraw();
+		sheetTabbox.setCurrentSheet(index);
+	}
+	
+	public void setSelectedSheet(String name) {
+		spreadsheet.setSelectedSheet(name);
 		gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
 	}
 
@@ -741,14 +776,12 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		cellmh.dispatcher((String) event.getData());
 	}
 
-	//not implement yet
-//	public void onFileOK(ForwardEvent event) {
-//		fileh.dispatcher((String) event.getData());
-//	}
-
 	public void onFileNew(ForwardEvent event) {
 		FileHelper.openNewSpreadsheet(spreadsheet);
-		initSheetNameTab();
+
+		sheetTabbox.clear();
+		sheetTabbox.redraw();
+		spreadsheet.setSelectedSheet(sheetTabbox.getCurrenSheet());
 	}
 
 	public void onFileSave(ForwardEvent event) {
@@ -783,15 +816,8 @@ public class MainWindowCtrl extends GenericForwardComposer {
 //		fileExportWin.setVisible(false);
 	}
 
-	public void initSheetNameTab() {
-		//TODO: does sheetTBClean() and sheetTBInit() need to be public ?
-		sheetTBClean();
-		sheetTBInit();
-		spreadsheet.setSelectedSheet(((Tab) sheetTB.getTabs().getFirstChild()).getLabel());
-	}
-
 	public void onClick$importFile() {
-		Executions.createComponents("/menus/file/importFile.zul", mainWin, null);
+		Executions.createComponents("/menus/file/importFile.zul", null, null);
 	}
 
 	public void exportFile(String filename) {// current or other
@@ -835,12 +861,13 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void onRevision(ForwardEvent event) {
-		reloadRevisionMenu();
-		Window win = (Window) mainWin.getFellow("revisionWin");
-		win.setPosition("parent");
-		win.setLeft("250px");
-		win.setTop("250px");
-		win.doPopup();
+		throw new UiException("revision not implement yet");
+//		reloadRevisionMenu();
+//		Window win = (Window) mainWin.getFellow("revisionWin");
+//		win.setPosition("parent");
+//		win.setLeft("250px");
+//		win.setTop("250px");
+//		win.doPopup();
 	}
 
 	// SECTION EDIT MENU
@@ -898,24 +925,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		onClearStyle();
 	}
 
-	public void onClearStyle() {
-//		int left = spreadsheet.getSelection().getLeft();
-//		int right = spreadsheet.getSelection().getRight();
-//		int top = spreadsheet.getSelection().getTop();
-//		int bottom = spreadsheet.getSelection().getBottom();
-//		Sheet sheet = spreadsheet.getSelectedSheet();
-//		Cell cell = null;
-//		for (int row = top; row <= bottom; row++) {
-//			for (int col = left; col <= right; col++) {
-//				cell = Utils.getCell(sheet, row, col);
-//				if (cell != null) {
-//					CellStyle newCellStyle = book.createCellStyle();
-//					Range rng = Utils.getRange(sheet, row, col);
-//					rng.setStyle(newCellStyle);
-//				}
-//			}
-//		}
-		
+	public void onClearStyle() {		
 		Utils.visitCells(spreadsheet.getSelectedSheet(), spreadsheet.getSelection(), new CellVisitor() {
 			
 			@Override
@@ -944,8 +954,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 					Messagebox.show("cannot delete all Rows");
 					return;
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 			// TODO undo/redo
@@ -1062,17 +1070,9 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void onInsertSheet() {
-		onInsertSheet(true);
-	}
-
-	public void onInsertSheet(boolean isNotifyAll) {
 		int sheetCount = spreadsheet.getBook().getNumberOfSheets();
 		Sheet addedSheet = spreadsheet.getBook().createSheet("sheet " + (sheetCount + 1));
-
-		Tab tab = new Tab(addedSheet.getSheetName());
-		Popup popup = (Popup) Path.getComponent("//p1/mainWin/tabPopup");
-		tab.setContext(popup);
-		tab.setParent(sheetTB.getFellow("sheetTabs"));
+		sheetTabbox.addSheet(addedSheet.getSheetName());
 	}
 
 	// SECTION HELP MENU
@@ -1092,8 +1092,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void onFormulaListOK() {
-		Combobox formulaList = (Combobox) Path
-				.getComponent("//p1/mainWin/formulaList");
+		Combobox formulaList = (Combobox) Path.getComponent("//p1/mainWin/formulaList");
 
 		int left = spreadsheet.getSelection().getLeft();
 		int top = spreadsheet.getSelection().getTop();
@@ -1469,10 +1468,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		rangeh.dispatcher((String) event.getData());
 	}
 
-	public void onTab(ForwardEvent event) {
-		tabh.dispatcher((String) event.getData());
-	}
-
 	public void onFormulaPopup() {
 		Window win = (Window) mainWin.getFellow("formulaCategory");
 		win.doHighlighted();
@@ -1724,75 +1719,30 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void onDeleteSheet() {
-		// TODO Check if there is the last sheet
 		if (spreadsheet.getBook().getNumberOfSheets() == 1) {
 			try {
-				Messagebox
-						.show("cannot remove last sheet, but you could insert a new sheet, then remove current sheet  ");
+				Messagebox.show("cannot remove last sheet, but you could insert a new sheet, then remove current sheet  ");
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			return;
 		}
 
-		// TODO show the hint "Are you sure?"
-		String name = spreadsheet.getSelectedSheet().getSheetName();
-		int buttons = Messagebox.YES + Messagebox.NO;
-		int result = -1;
 		try {
-			result = Messagebox.show(
-					"Do you really want to delete selected sheet \"" + name
-							+ "\", those data will be deleted permanently", "",
-					buttons, "");
+			Messagebox.show(
+				"Do you really want to delete selected sheet \"" + spreadsheet.getSelectedSheet().getSheetName()
+				+ "\", those data will be deleted permanently", "",
+					Messagebox.YES | Messagebox.NO, "", new EventListener(){
+
+						@Override
+						public void onEvent(Event event) throws Exception {
+							System.out.println("evt name: " + event.getName());
+							if ("onOk" == event.getName()) {
+								deleteSheet();
+							}			
+						}});
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if (result == Messagebox.YES) {
-			int index = spreadsheet.getBook().getSheetIndex(spreadsheet.getSelectedSheet());
-			onDeleteSheet(index);
 		}
 
-	}
-
-	public void onDeleteSheet(int index) {
-		// clean the related state in the undo/redo stack
-		// TODO undo/redo
-		// spreadsheet.cleanRelatedState(spreadsheet.getSheet(index));
-
-		Book book = spreadsheet.getBook();
-		book.removeSheetAt(index);
-
-		int sheetCount = book.getNumberOfSheets();
-		Tabbox sheetTB = (Tabbox) Path.getComponent("//p1/mainWin/sheetTB");
-
-		redrawTab();
-
-		if (sheetCount > 0) {
-			sheetTB.setSelectedIndex(0);
-			spreadsheet.setSelectedSheet(sheetTB.getSelectedTab().getLabel());
-		} else {
-			spreadsheet.invalidate();
-			// TODO: after remove all sheets, why is there still sheet1's
-			// content?
-		}
-	}
-	
-	//TODO: rename as syncSheetNameTab
-	public void redrawTab() {
-		Sheet sheet;
-		Tabbox sheetTB = (Tabbox) Path.getComponent("//p1/mainWin/sheetTB");
-		sheetTB.getFellow("sheetTabs").getChildren().clear();
-		Book book = spreadsheet.getBook();
-		int sheetCount = book.getNumberOfSheets();
-		for (int i = 0; i < sheetCount; i++) {
-			sheet = (Sheet) book.getSheetAt(i);
-			Tab tab = new Tab(sheet.getSheetName());
-			Popup popup = (Popup) Path.getComponent("//p1/mainWin/tabPopup");
-			tab.setContext(popup);
-			tab.setParent(sheetTB.getFellow("sheetTabs"));
-		}
 	}
 	
 	private Rect getSpreadsheetMaxSelection() {

@@ -1,14 +1,10 @@
-<window id="tabRenameWin" title="Rename to" border="normal">
-	<hbox>
+<window id="tabRenameWin" title="Rename to" border="normal"
+mode="modal" closable="true" position="center" apply="org.zkoss.zss.app.ctrl.RenameSheetCtrl">
+	<hlayout>
 		Sheet name:
-		<textbox id="trw_sheetName" />
-	</hbox>
-	<hbox>
-		<button label="OK" forward="//p1/mainWin.onTab(renameOK)"></button>
-		<button label="Cancel">
-			<attribute name="onClick"> 			
-			self.getSpaceOwner().detach();			
-		</attribute>
-		</button>
-	</hbox>
+		<textbox id="sheetNameTB" />
+	</hlayout>
+	<hlayout>
+		<button id="confirmRenameBtn" label="OK" mold="trendy"></button>
+	</hlayout>
 </window>

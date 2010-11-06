@@ -5,7 +5,7 @@
 <?component name="columnHeaderMenu" inline="true" macroURI="/menus/header_cell/menuColumnHeader.zul"?>
 <?component name="rowHeaderMenu" inline="true" macroURI="/menus/header_cell/menuRowHeader.zul"?>
 <?component name="cellMenu" inline="true" macroURI="/menus/header_cell/menuCell.zul"?>
-<?component name="tabPopup" inline="true" macroURI="/menus/tab/popup.zul"?>
+<?component name="sheettabbox" class="org.zkoss.zss.app.zul.SheetTabbox"?>
 <?component name="fileexportwin" inline="true" macroURI="/menus/file/fileListExport.zul"?>
 <?component name="filedeletewin" inline="true" macroURI="/menus/file/fileListDelete.zul"?>
 <?component name="filesaveaswin" inline="true" macroURI="/menus/file/fileListSaveAs.zul"?>
@@ -515,9 +515,7 @@
 					</hlayout>
 				</south>
 	</borderlayout>
-	<tabbox id="sheetTB" width="100%">
-		<tabs id="sheetTabs"></tabs>
-	</tabbox>
+	<sheettabbox id="sheetTabbox"></sheettabbox>
 
 	<spreadsheet id="spreadsheet" src="/xls/demo_sample.xls" maxrows="200"
 			maxcolumns="40" vflex="1" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
@@ -526,7 +524,6 @@
 	<columnHeaderMenu id="columnHeaderMenu" />
 	<rowHeaderMenu id="rowHeaderMenu"/>
 	<cellMenu id="cellMenu"/>
-	<tabPopup id="tabPopup" />
 	<borderSelector id="borderSelector" />
 	<fasticoncontextmenu id="fastIconContextmenu"/>
 	<formulacategory id="formulaCategory" />

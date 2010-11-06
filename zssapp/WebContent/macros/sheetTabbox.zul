@@ -1,0 +1,13 @@
+<zk>
+	<tabbox id="tabbox">
+		<tabs id="tabs">
+		</tabs>
+	</tabbox>
+	<menupopup id="sheetContextMenu">
+		<menuitem id="shiftSheetLeft" label="${c:l('shiftLeft')}" />
+		<menuitem id="shiftSheetRight" label="${c:l('shiftRight')}" />
+		<menuitem id="deleteSheet" label="${c:l('delete')}"/>
+		<menuitem id="renameSheet" label="${c:l('rename')}"/>
+		<menuitem id="copySheet" label="${c:l('edit.copy')}"/>
+	</menupopup>
+</zk>
