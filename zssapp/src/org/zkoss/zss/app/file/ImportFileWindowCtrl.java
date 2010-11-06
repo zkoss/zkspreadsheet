@@ -75,8 +75,7 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		//TODO: remove this, use MainCtrl to get spreadsheet
-		ss = (Spreadsheet)Executions.getCurrent().getArg().get("spreadsheet");
+		ss = MainWindowCtrl.getInstance().getSpreadsheet();
 		initSupportFormat();
 		initImportOption();
 		initFileListbox();

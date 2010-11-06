@@ -29,8 +29,6 @@ import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Components;
-import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.ui.Rect;
@@ -100,16 +98,9 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	private Button downBtn;
 	private Button okBtn;
 	
-	
-	public CustomSortWindowCtrl () {
-		ss = (Spreadsheet)getParam("spreadsheet");
-		if (ss == null)
-			throw new UiException("Spreadsheet object is empty");
-	} 
-	
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		
+		ss = MainWindowCtrl.getInstance().getSpreadsheet();
 		sortOrientationCombo.setSelectedIndex(0);
 		initSortLevelListbox();
 	}
@@ -270,10 +261,6 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 			sortOrientation = orientation;
 			setAvailableSortTarget(availableSortIndex);
 		}
-	}
-	
-	private static Object getParam (String key) {
-		return Executions.getCurrent().getArg().get(key);
 	}
 	
 	private ListitemRenderer sortLevelRenderer = new ListitemRenderer() {

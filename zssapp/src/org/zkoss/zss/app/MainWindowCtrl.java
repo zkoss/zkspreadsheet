@@ -22,22 +22,17 @@ package org.zkoss.zss.app;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import org.zkoss.image.Image;
-import org.zkoss.io.Files;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.util.CellReference;
-import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
@@ -105,11 +100,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	private static final long serialVersionUID = 1;
 	static int event_x = 200;
 	static int event_y = 200;
-
-	private Desktop desktop;
-	String hashFilename = null;
-
-	Sheet sheet;
 
 	int lastRow = 0;
 	int lastCol = 0;
@@ -444,8 +434,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				image.setRow(row);
 				image.setColumn(col);
 
-				SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet
-						.getExtraCtrl();
+				SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
 				ctrl.addWidget(image);
 			} else if (media != null) {
 				Messagebox.show("Not an image: " + media, "Error",
@@ -672,8 +661,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		}
 		if (orig instanceof KeyEvent) {
 			_onSSCtrlKeys((KeyEvent) orig);
-		} else {
-			p("damn not ForwardEvent");
 		}
 	}
 
@@ -688,12 +675,8 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				return;
 			}
 
-			if (false == event.isCtrlKey()) {
-				p("no ctrl");
+			if (false == event.isCtrlKey())
 				return;
-			}
-
-			p("Ctrl+" + c);
 
 			switch (c) {
 			case 'X':
@@ -772,7 +755,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	public void onFileSave(ForwardEvent event) {
 		throw new UiException("save as not implement yet");
-		//org.zkoss.zss.app.file.FileHelper.saveSpreadsheet(spreadsheet);
+		//FileHelper.saveSpreadsheet(spreadsheet);
 	}
 	
 	public void onFileSaveAs(ForwardEvent event) {
@@ -810,57 +793,8 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void onClick$importFile() {
-		HashMap arg = new HashMap();
-		arg.put("spreadsheet", spreadsheet);
-		Executions.createComponents("/menus/file/importFile.zul", mainWin, arg);
+		Executions.createComponents("/menus/file/importFile.zul", mainWin, null);
 	}
-	
-//	public void onImportFile(ForwardEvent event) {
-//		String metaStr = null;
-//		String filename = null;
-//		try {
-//			Object ss = Fileupload.get();
-//			if (ss != null) {
-//				InputStream iStream = ((Media) ss).getStreamData();
-//				filename = ((Media) ss).getName();
-//				long millis = System.currentTimeMillis();
-//				String hashFilename = millis + ".xls";
-//
-//				Files.copy(new File(fileh.xlsDir + hashFilename), iStream);
-//
-//				FileOutputStream metaStream = new FileOutputStream(fileh.xlsDir
-//						+ "metaFile", true);
-//
-//				metaStr = new String(millis + "\n" + filename + "\n"
-//						+ hashFilename + "\n");
-//				// System.out.println(fileh.xlsDir);
-//				metaStream.write(metaStr.getBytes());
-//				iStream.close();
-//				metaStream.close();
-//			}
-//
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return filename;
-		//org.zkoss.zss.app.event.FileHelper.onUploadEventHandler(event);
-//	}
-
-//	public void openNewFileInFS() {
-//
-//		File file = new File(fileh.xlsDir + "Untitled");
-//
-//		try {
-//			openSpreadsheetFromStream(new FileInputStream(file), "Untitled");
-//			Label label = (Label) Path
-//					.getComponent("//p1/mainWin/openingFilename");
-//			label.setValue("Untitled");
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//	}
 
 	public void exportFile(String filename) {// current or other
 												// files(stack_level=0)
@@ -913,13 +847,11 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	// SECTION EDIT MENU
 	public void onEditUndo(ForwardEvent event) {
-		// TODO undo
 		throw new UiException("Undo not implmented yet");
 		// spreadsheet.undo();
 	}
 
 	public void onEditRedo(ForwardEvent event) {
-		// TODO redo
 		throw new UiException("Redo not implemented yet");
 		// spreadsheet.redo();
 	}
@@ -1201,22 +1133,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		return (short) (Integer.parseInt(fontSizeStr) * 20);
 	}
 
-	/**
-	 * Set font style
-	 * @param sheet
-	 * @param rect
-	 */
-	private void changeFont(Sheet sheet, Rect rect) {
-		// font
-		String fontName = (String) this.fontFamilyCombobox.getSelectedItem().getLabel();
-		short boldWeight = isBold ? 
-				Font.BOLDWEIGHT_BOLD : Font.BOLDWEIGHT_NORMAL;
-		byte underline = isUnderline ? Font.U_SINGLE : Font.U_NONE;
-		Color color = BookHelper.HTMLToColor(spreadsheet.getBook(), fontColorBtn.getColor());
-		Utils.setFont(sheet, rect, boldWeight, color, getFontHeightInPoints(),
-				fontName, isItalic, isStrikethrough, Font.SS_NONE, underline);
-	}
-
 	public void setFontFamily(String fontName) {
 		List items = fontFamilyCombobox.getItems();
 		boolean findFont = false;
@@ -1389,7 +1305,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			return;
 
 		fontColorBtn.setColor(color);
-		changeFont(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection());
+		Utils.setFontColor(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), color);
 	}
 
 	public void setBackgroundColor(String color) {
@@ -1488,11 +1404,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		if (param == null)
 			return;
 		if (param.equals(Labels.getLabel("sort.custom"))) {
-			//TODO: remove arg
-			HashMap arg = new HashMap();
-			arg.put("spreadsheet", spreadsheet);
-			Executions.createComponents("/menus/sort/customSort.zul", mainWin,
-					arg);
+			Executions.createComponents("/menus/sort/customSort.zul", mainWin, null);
 		} else {
 			if (SortSelector.getSortOrder(param))
 				sortAscending();
@@ -1561,11 +1473,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	public void onTab(ForwardEvent event) {
 		tabh.dispatcher((String) event.getData());
-	}
-
-	// SECTION Utility Functions
-	public void p(String s) {
-		// System.out.println(spreadsheet.getEditorName()+": "+s);
 	}
 
 	public void onFormulaPopup() {

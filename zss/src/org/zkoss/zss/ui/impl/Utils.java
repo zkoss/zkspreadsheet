@@ -21,13 +21,11 @@ package org.zkoss.zss.ui.impl;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
-import java.io.IOException;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.zkoss.image.AImage;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
@@ -35,7 +33,6 @@ import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
-import org.zkoss.poi.ss.usermodel.PictureData;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Sheet;
@@ -200,6 +197,31 @@ public class Utils {
 				if (!srcFont.equals(font)) {
 					CellStyle newStyle = context.cloneCellStyle();
 					newStyle.setFont(font);
+					context.getRange().setStyle(newStyle);
+				}
+			}});
+	}
+	
+	/**
+	 * Sets font color in selection range
+	 * @param sheet
+	 * @param rect
+	 * @param color color (in string as #RRGGBB)
+	 */
+	public static void setFontColor(final Sheet sheet, Rect rect, final String color) {
+		visitCells(sheet, rect, new CellVisitor() {
+
+			@Override
+			public void handle(CellVisitorContext context) {
+				String srcColor = context.getFontColor();
+				if (!srcColor.equalsIgnoreCase(color)) {
+					final Workbook book = sheet.getWorkbook();
+					Font srcFont = context.getFont();
+
+					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), BookHelper.HTMLToColor(book, color), srcFont.getFontHeight(), srcFont.getFontName(), 
+							srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
+					CellStyle newStyle = context.cloneCellStyle();
+					newStyle.setFont(newFont);
 					context.getRange().setStyle(newStyle);
 				}
 			}});
@@ -394,6 +416,11 @@ public class Utils {
 	 */
 	public static void visitCells(Sheet sheet, Rect rect, CellVisitor vistor) {
 		new CellSelector().doVisit(sheet, rect, vistor);
+	}
+	
+	//TODO: test use thread 
+	public static void visitIndependingCell(Sheet sheet, Rect rect, IndependingCellVisitor visitor) {
+		
 	}
 	
 	/**

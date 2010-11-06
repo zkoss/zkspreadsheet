@@ -117,6 +117,11 @@ public class CellVisitorContext {
 		return getFont().getFontName();
 	}
 	
+	public String getFontColor() {
+		String color = BookHelper.getFontHTMLColor(book, getFont());		
+		return color == null || BookHelper.AUTO_COLOR.equals(color) ? "#000000" : color;
+	}
+
 	/**
 	 * Returns the cell's alignment
 	 * @return
