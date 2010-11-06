@@ -909,9 +909,9 @@ public class RangeImpl implements Range {
 	}
 	
 	private void copyRef(Ref srcRef, int colRepeat, int rowRepeat, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, Set<Ref> last, Set<Ref> all) {
+		final int srcRowCount = srcRef.getRowCount();
+		final int srcColCount = srcRef.getColumnCount();
 		if (pasteType == Range.PASTE_COLUMN_WIDTHS) {
-			final int srcRowCount = srcRef.getRowCount();
-			final int srcColCount = srcRef.getColumnCount();
 			final int srclCol = srcRef.getLeftCol();
 			final Sheet srcSheet = BookHelper.getSheet(_sheet, srcRef.getOwnerSheet());
 			copyColumnWidths(srcSheet, srcColCount, srclCol, dstRef.getOwnerSheet(), dstRef.getTopRow(), dstRef.getLeftCol(), 
@@ -928,7 +928,7 @@ public class RangeImpl implements Range {
 		final Sheet dstSheet = BookHelper.getSheet(_sheet, dstRefsheet);
 		
 		if (!transpose) {
-			int dstRow = dstRef.getTopRow(); 
+			int dstRow = dstRef.getTopRow();
 			for(int rr = rowRepeat; rr > 0; --rr) {
 				for(int srcRow = tRow; srcRow <= bRow; ++srcRow, ++dstRow) {
 					int dstCol= dstRef.getLeftCol();
@@ -966,7 +966,11 @@ public class RangeImpl implements Range {
 				}
 			}
 		}
-		all.add(dstRef);
+		final int dstTRow = dstRef.getTopRow();
+		final int dstBRow = dstTRow + (transpose ? colRepeat * srcColCount : rowRepeat * srcRowCount) - 1;
+		final int dstLCol = dstRef.getLeftCol();
+		final int dstRCol = dstLCol + (transpose ? rowRepeat * srcRowCount : colRepeat * srcColCount) - 1;
+		all.add(new AreaRefImpl(dstTRow, dstLCol, dstBRow, dstRCol, dstRefsheet));
 	}
 	
 	@Override

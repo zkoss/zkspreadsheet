@@ -143,18 +143,18 @@ public class Utils {
 	 * @param srcSheet the source sheet 
 	 * @param srcRect paste source range
 	 * @param dstSheet paste to the sheet
-	 * @param rowIndex row index
-	 * @param colIndex column index
+	 * @param tRow destination top row index
+	 * @param lCol destination left column index
+	 * @param bRow destination bottom row index
+	 * @param rCol destination right column index
 	 * @param pasteType the part of the range to be pasted
 	 * @param pasteOp the paste operation
 	 * @param skipBlanks true to not have blank cells in the ranage on the Clipboard pasted into this range; default false
 	 * @param transpose true to transpose rows and columns when pasting to this range; default false
 	 */
-	public static void pasteSpecial(Sheet srcSheet, Rect srcRect, Sheet dstSheet, int rowIndex, int colIndex, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
+	public static void pasteSpecial(Sheet srcSheet, Rect srcRect, Sheet dstSheet, int tRow, int lCol, int bRow, int rCol, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
 		Range rng = Utils.getRange(srcSheet, srcRect.getTop(), srcRect.getLeft(), srcRect.getBottom(), srcRect.getRight());
-		int srcColCount = srcRect.getRight() - srcRect.getLeft();
-		int srcRowCount = srcRect.getBottom() - srcRect.getTop();
-		Range dstRange = Utils.getRange(dstSheet, rowIndex, colIndex, rowIndex + srcRowCount, colIndex + srcColCount);
+		Range dstRange = Utils.getRange(dstSheet, tRow, lCol, bRow, rCol);
 		rng.pasteSpecial(dstRange, pasteType, pasteOp, skipBlanks, transpose);
 	}
 
@@ -419,10 +419,10 @@ public class Utils {
 	}
 	
 	//TODO: test use thread 
-	public static void visitIndependingCell(Sheet sheet, Rect rect, IndependingCellVisitor visitor) {
+/*	public static void visitIndependingCell(Sheet sheet, Rect rect, IndependingCellVisitor visitor) {
 		
 	}
-	
+*/	
 	/**
 	 * Visit each sheet in the {@link #Book}
 	 * @param book

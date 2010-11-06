@@ -138,6 +138,8 @@ public final class EditHelper {
 					ss.getSelectedSheet(), 
 					dstRange.getTop(),
 					dstRange.getLeft(),
+					dstRange.getBottom(),
+					dstRange.getRight(),
 					getDefaultPasteType(), 
 					getDefaultPasteOperation(), 
 					false, false);
@@ -182,11 +184,14 @@ public final class EditHelper {
 	public static void onPasteSpecial(Spreadsheet ss, int pasteType, int pasteOperation, boolean skipBlanks, boolean transpose){
 		Sheet srcSheet = getSourceSheet(ss);
 		if (srcSheet != null) {
+			final Rect dst = ss.getSelection();
 			Utils.pasteSpecial(srcSheet, 
 					getSourceRange(ss), 
 					ss.getSelectedSheet(), 
-					ss.getSelection().getTop(),
-					ss.getSelection().getLeft(),
+					dst.getTop(),
+					dst.getLeft(),
+					dst.getBottom(),
+					dst.getRight(),
 					pasteType, 
 					pasteOperation, 
 					skipBlanks, transpose);
