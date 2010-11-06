@@ -23,6 +23,7 @@ ZK Spreadsheet 2.0.0
   156 spring DelegatingVariableResolver in Spreadsheet doesn't work
   168 Exception while set background color
   170 Set font color of a region with different font size, will resize the font size.
+  171 Once clicked, merge button remain pressed state
   
 * Upgrade Notes
   + Package name of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

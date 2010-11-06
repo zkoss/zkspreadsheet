@@ -560,14 +560,15 @@ public class MainWindowCtrl extends GenericForwardComposer {
 					}
 
 					// merge cell
-					// cannot find a way to know the cell is merged or not
-					/*
-					 * Toolbarbutton mergeCellBtn =
-					 * (Toolbarbutton)getFellow("mergeCellBtn");
-					 * isMergeCell=format. if(isWrapText){
-					 * wrapTextBtn.setClass("clicked"); }else{
-					 * wrapTextBtn.setClass("toolIcon"); }
-					 */
+					isMergeCell = isMergedCell(event.getRow(), event.getColumn(), event.getRow(), event.getColumn());
+					mergeCellBtn.setSclass(isMergeCell ? "clicked" : null);
+
+					 //TODO: not implement yet
+					 if (isWrapText) {
+					   wrapTextBtn.setClass("clicked"); }
+					 else{
+					   wrapTextBtn.setClass(null); 
+					 }
 
 					// wrap text
 					isWrapText = cs.getWrapText();
@@ -582,6 +583,22 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private boolean isMergedCell(int tRow, int lCol, int bRow, int rCol) {
+		MergeMatrixHelper mmhelper = spreadsheet.getMergeMatrixHelper(spreadsheet.getSelectedSheet());
+		for (final Iterator iter = mmhelper.getRanges().iterator(); iter
+				.hasNext();) {
+			MergedRect block = (MergedRect) iter.next();
+			int bt = block.getTop();
+			int bl = block.getLeft();
+			int bb = block.getBottom();
+			int br = block.getRight();
+			if (lCol <= bl && tRow <= bt && rCol >= br && bRow >= bb) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// this is auto pushCellState in spreadsheet itself
@@ -622,35 +639,16 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void SelectionEvent(CellSelectionEvent event) {
-		// gonna try to print the current cell is merged or not
-		int left = spreadsheet.getSelection().getLeft();
-		int right = spreadsheet.getSelection().getRight();
-		int top = spreadsheet.getSelection().getTop();
-		int bottom = spreadsheet.getSelection().getBottom();
-
-		isMergeCell = false;
-		Sheet sheet = spreadsheet.getSelectedSheet();
-		MergeMatrixHelper mmhelper = spreadsheet.getMergeMatrixHelper(sheet);
-		for (final Iterator iter = mmhelper.getRanges().iterator(); iter
-				.hasNext();) {
-			MergedRect block = (MergedRect) iter.next();
-			int bt = block.getTop();
-			int bl = block.getLeft();
-			int bb = block.getBottom();
-			int br = block.getRight();
-			if (left <= bl && top <= bt && right >= br && bottom >= bb) {
-				isMergeCell = true;
-				break;
-			}
-		}
+		isMergeCell = isMergedCell(
+				spreadsheet.getSelection().getTop(), 
+				spreadsheet.getSelection().getLeft(), 
+				spreadsheet.getSelection().getBottom(),
+				spreadsheet.getSelection().getRight());
 
 		Window win = (Window) mainWin.getFellow("fastIconContextmenu");
-		// win.doPopup();
 		Toolbarbutton mergeCellBtn2 = (Toolbarbutton) win.getFellow("_mergeCellBtn");
-		if (isMergeCell) {
-			mergeCellBtn.setClass("clicked");
-			mergeCellBtn2.setClass("clicked");
-		}
+		mergeCellBtn.setSclass(isMergeCell ? "clicked" : null);
+		mergeCellBtn2.setSclass(isMergeCell ? "clicked" : null);
 	}
 
 	// SECTION CtrlKeys
