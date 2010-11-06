@@ -91,13 +91,15 @@ zssapp.Simplecolorbutton = zk.$extends(zul.Widget, {
 		if ($t.attr('class').indexOf(zcls + '-cell-cnt') >= 0) {
 			var hex = $t.children('i').text();
 			this.fire("onChange", {color: hex}, {toServer: true});
-
+			
 			this.setColor(hex);
+			$t.parent().removeClass(zcls + '-cell-over');
 			this.closePopup();
 		}
 	},
 	_doBtnClick: function (evt) {
 		this._open ? this.closePopup() : this.openPopup();
+		this.fire("onClick");
 	},
 	openPopup: function () {
 		this._open = true;
