@@ -19,6 +19,7 @@ ZK Spreadsheet 2.0.0
 *Bug 
   132 view ZK Spreadsheet Live index.zul cause NullPointerException
   139 "Unexpected ptg class" RuntimeException when loading Excel file with special formula
+  146 selected range should stay emphasised when click menubutton
   156 spring DelegatingVariableResolver in Spreadsheet doesn't work
   168 Exception while set background color
   170 Set font color of a region with different font size, will resize the font size.

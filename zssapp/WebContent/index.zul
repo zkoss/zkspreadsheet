@@ -108,6 +108,9 @@
 					<menubar id="menubar">
 						<menu label="${c:l('file')}">
 							<menupopup>
+								<attribute w:name="onOpen">
+									this.$f('spreadsheet').focus(false);
+								</attribute>
 								<menuitem label="${c:l('file.new')}" 
 									forward="onFileNew" />
 								<menuitem label="${c:l('file.open')}"
@@ -139,6 +142,9 @@
 						</menu>
 						<menu label="${c:l('edit')}">
 							<menupopup>
+								<attribute w:name="onOpen">
+									this.$f('spreadsheet').focus(false);
+								</attribute>
 								<menuitem label="${c:l('edit.undo')}" forward="onEditUndo" />
 								<menuitem label="${c:l('edit.redo')}" forward="onEditRedo" />
 								<menuseparator />
@@ -157,6 +163,9 @@
 						</menu>
 						<menu label="${c:l('view')}">
 							<menupopup>
+								<attribute w:name="onOpen">
+									this.$f('spreadsheet').focus(false);
+								</attribute>
 								<menuitem label="${c:l('view.formulaBar')}" forward="onViewFormulaBar" autocheck="true" checked="true"/>
 								<menu label="${c:l('view.freezeRows')}">
 									<menupopup>
@@ -194,6 +203,9 @@
 						</menu>
 						<menu label="${c:l('format')}">
 							<menupopup>
+								<attribute w:name="onOpen">
+									this.$f('spreadsheet').focus(false);
+								</attribute>
 								<menu label="${c:l('format.font')}" >
 									<menupopup>
 										<menuitem label="Calibri"  			sclass="calibriFont" forward="onFontFamilySelect(Calibri)"  />
@@ -218,18 +230,29 @@
 							</menupopup>
 						</menu>
 						<menu label="${c:l('insert')}">
-									<menupopup>
-										<menuitem label="${c:l('insert.formula')}" forward="onInsertFormula" />
-										<menu label="${c:l('insert.chart')}" >
-											<menupopup>
-												<menuitem id="insertPieChart" label="${c:l('insert.piechart')}" />
-											</menupopup>
-										</menu>
-										<menuitem id="insertImageMenu" label="${c:l('insert.image')}" upload="true"></menuitem>
-										<menuitem label="${c:l('insert.rows')}" forward="onInsertRows" />
-										<menuitem label="${c:l('insert.columns')}" forward="onInsertColumns" />
-										<menuitem label="${c:l('insert.sheet')}" forward="onInsertSheet" />
-									</menupopup>
+								<menupopup>
+									<attribute w:name="onOpen">
+										this.$f('spreadsheet').focus(false);
+									</attribute>
+									<menuitem
+										label="${c:l('insert.formula')}" forward="onInsertFormula" />
+									<menu
+										label="${c:l('insert.chart')}">
+										<menupopup>
+											<menuitem
+												id="insertPieChart" label="${c:l('insert.piechart')}" />
+										</menupopup>
+									</menu>
+									<menuitem id="insertImageMenu"
+										label="${c:l('insert.image')}" upload="true">
+									</menuitem>
+									<menuitem
+										label="${c:l('insert.rows')}" forward="onInsertRows" />
+									<menuitem
+										label="${c:l('insert.columns')}" forward="onInsertColumns" />
+									<menuitem
+										label="${c:l('insert.sheet')}" forward="onInsertSheet" />
+								</menupopup>
 						</menu>
                        <!--   <menu label="${c:l('share')}">
                            <menupopup>
@@ -241,6 +264,9 @@
                         </menu>-->
                         <menu label="${c:l('help')}">
 							<menupopup>
+								<attribute w:name="onOpen">
+									this.$f('spreadsheet').focus(false);
+								</attribute>
 								<!-- <menuitem label="${c:l('help.center')}" forward="onNotImplement()" src="/img/music.gif"/>-->
 								<menuitem label="${c:l('help.cheatsheet')}" forward="onHelpCheatsheet" />
 								<menuitem label="${c:l('help.forum')}" forward="onHelpForum" href="http://www.zkoss.org/forum/" target="_blank"/>
