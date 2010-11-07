@@ -6,11 +6,12 @@
 <?component name="rowHeaderMenu" inline="true" macroURI="/menus/header_cell/menuRowHeader.zul"?>
 <?component name="cellMenu" inline="true" macroURI="/menus/header_cell/menuCell.zul"?>
 <?component name="sheettabbox" class="org.zkoss.zss.app.zul.SheetTabbox"?>
+<?component name="fontfamily" class="org.zkoss.zss.app.zul.FontFamily" uri="/macros/fontFamily.zul"?>
 <?component name="fileexportwin" inline="true" macroURI="/menus/file/fileListExport.zul"?>
 <?component name="filedeletewin" inline="true" macroURI="/menus/file/fileListDelete.zul"?>
 <?component name="filesaveaswin" inline="true" macroURI="/menus/file/fileListSaveAs.zul"?>
 <?component name="borderSelector" inline="true" macroURI="/menus/border/borderSelector.zul"?>
-<?component name="fasticoncontextmenu" inline="true" macroURI="/fastIconContextmenu.zul"?>
+<?component name="cellcontext" class="org.zkoss.zss.app.zul.CellContext" uri="/macros/cellContext.zul"?>
 <?component name="formulacategory" inline="true" macroURI="/menus/formula/formulaCategory.zul"?>
 <?component name="formatnumberwin" inline="true" macroURI="/menus/format/menuFormatNumber.zul"?>
 <?component name="cheatsheet" inline="true" macroURI="/cheatsheet.zul"?>
@@ -312,21 +313,7 @@
 						</toolbarbutton>
 						<!-- font*********************************************************************** -->	
 						<div sclass="toolbarSeparator"></div>
-						<combobox id="fontFamilyCombobox"  mold="rounded" width="125px" forward="onSelect=onFontFamilySelect">
-							<attribute w:name="onOpen">
-								this.$f('spreadsheet').focus(false);
-							</attribute>
-							<attribute w:name="onSelect">
-								this.$f('spreadsheet').focus(false);
-							</attribute>
-							<comboitem label="Calibri"  			sclass="calibriFont" forward="onFontFamilySelect(Calibri)" />
-							<comboitem label="Courier New"  		sclass="courierFont" forward="onFontFamilySelect(Courier New)"  />
-							<comboitem label="Comic Sans MS"  	sclass="comicFont" forward="onFontFamilySelect(Comic Sans MS)"  />
-							<comboitem label="Times New Roman"  	sclass="timeFont" forward="onFontFamilySelect(Times New Roman)"  />
-							<comboitem label="Century Gothic"  	sclass="centuryFont" forward="onFontFamilySelect(Centry Gothic)"  />
-							<comboitem label="Georgia"  			sclass="georgiaFont" forward="onFontFamilySelect(Georgia)"  />
-							<comboitem label="Impact"  			sclass="impactFont" forward="onFontFamilySelect(Impact)"  />
-						</combobox>
+						<fontfamily id="fontFamily"></fontfamily>
 						<combobox id="fontSizeCombobox"  mold="rounded" width="50px" forward="onSelect=onFontSizeSelect">
 							<attribute w:name="onOpen">
 								this.$f('spreadsheet').focus(false);
@@ -525,7 +512,7 @@
 	<rowHeaderMenu id="rowHeaderMenu"/>
 	<cellMenu id="cellMenu"/>
 	<borderSelector id="borderSelector" />
-	<fasticoncontextmenu id="fastIconContextmenu"/>
+	<cellcontext id="cellContext"></cellcontext>
 	<formulacategory id="formulaCategory" />
 	<cheatsheet id="cheatsheet" />
 	<formatnumberwin id="formatNumberWin" />

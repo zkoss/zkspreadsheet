@@ -50,6 +50,8 @@ import org.zkoss.zss.app.event.ExportHelper;
 import org.zkoss.zss.app.event.HyperlinkHelper;
 import org.zkoss.zss.app.file.FileHelper;
 import org.zkoss.zss.app.sort.SortSelector;
+import org.zkoss.zss.app.zul.CellContext;
+import org.zkoss.zss.app.zul.FontFamily;
 import org.zkoss.zss.app.zul.SheetTabbox;
 import org.zkoss.zss.app.zul.api.Colorbutton;
 import org.zkoss.zss.model.Book;
@@ -122,6 +124,8 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	RangeHelper rangeh;
 
 	Window mainWin;
+	
+	CellContext cellContext;
 	Menu backgroundColorMenu;
 	Menu insertImageMenu;
 	Menu insertPieChart;
@@ -133,7 +137,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	SheetTabbox sheetTabbox;
 
 	Combobox focusPosition;
-	Combobox fontFamilyCombobox;
+	FontFamily fontFamily;
 	Combobox fontSizeCombobox;
 	Comboitem lbpos;
 	Toolbarbutton boldBtn;
@@ -373,88 +377,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 		Menupopup cellMenu = (Menupopup) mainWin.getFellow("cellMenu");
 		cellMenu.open(event_x + 5, event.getClienty());
-
-		// read cell value to fill fastIcon in contextmenu
-		Window win = (Window) mainWin.getFellow("fastIconContextmenu");
-		Sheet sheet = event.getSheet();
-		Cell cell = Utils.getCell(sheet, lastRow, lastCol);
-
-		// default settings
-		Combobox fontFamilyCombobox = (Combobox) win.getFellow("_fontFamilyCombobox");
-		Combobox fontSizeCombobox = (Combobox) win.getFellow("_fontSizeCombobox");
-		Toolbarbutton boldBtn = (Toolbarbutton) win.getFellow("_boldBtn");
-		Toolbarbutton italicBtn = (Toolbarbutton) win.getFellow("_italicBtn");
-		Toolbarbutton alignLeftBtn = (Toolbarbutton) win.getFellow("_alignLeftBtn");
-		Toolbarbutton alignCenterBtn = (Toolbarbutton) win.getFellow("_alignCenterBtn");
-		Toolbarbutton alignRightBtn = (Toolbarbutton) win.getFellow("_alignRightBtn");
-		Colorbutton fontColorBtn = (Colorbutton) win.getFellow("_fontColorBtn");
-		Colorbutton backgroundColorBtn = (Colorbutton) win.getFellow("_backgroundColorBtn");
-
-		// load default setting
-		fontFamilyCombobox.setText("Calibri");
-		fontColorBtn.setColor("#000000");
-		backgroundColorBtn.setColor("#FFFFFF");
-
-		if (cell != null) {
-			
-			//TODO: remove hyperlink
-			//removeHyperlink.setVisible(cell.getHyperlink() != null);
-			
-			CellStyle cs = cell.getCellStyle();
-
-			if (cs != null) {
-				Book book = spreadsheet.getBook();
-				int fontidx = cs.getFontIndex();
-				Font font = book.getFontAt((short) fontidx);
-
-				// font family
-				fontFamilyCombobox.setText(font.getFontName());
-
-				// font size
-				fontSizeCombobox.setText(Integer.toString(font.getFontHeightInPoints()));
-
-				// font bold & italic
-				isBold = font.getBoldweight() == Font.BOLDWEIGHT_BOLD;
-				isItalic = font.getItalic();
-				if (isBold)
-					boldBtn.setClass("clicked");
-				if (isItalic)
-					italicBtn.setClass("clicked");
-
-				// align
-				int align = cs.getAlignment();
-				switch (align) {
-				case CellStyle.ALIGN_LEFT:
-					alignLeftBtn.setClass("clicked");
-					break;
-				case CellStyle.ALIGN_CENTER:
-				case CellStyle.ALIGN_CENTER_SELECTION:
-					alignCenterBtn.setClass("clicked");
-					break;
-				case CellStyle.ALIGN_RIGHT:
-					alignRightBtn.setClass("clicked");
-					break;
-				}
-
-				// font color
-				String color = BookHelper.getFontHTMLColor(book, font);
-				if (color != null && !color.equals(BookHelper.AUTO_COLOR)) {
-					fontColorBtn.setColor(color);
-				}
-
-				// bg color
-				//final int fillColorIdx = cs.getFillForegroundColor();
-				//String fcolor = BookHelper.indexToRGB(book, fillColorIdx);
-				String fcolor = BookHelper.colorToHTML(book, cs.getFillForegroundColorColor());
-				if (fcolor != null && !fcolor.equals(BookHelper.AUTO_COLOR)) {
-					backgroundColorBtn.setColor(fcolor);
-				}
-			}
-		}
-		win.setPosition("parent");
-		win.setLeft(Integer.toString(event_x + 5) + "px");
-		win.setTop(Integer.toString(event_y - 100) + "px");
-		win.doPopup();
 	}
 
 	public void onUpload$insertImageMenu(UploadEvent event) {
@@ -512,8 +434,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			formulaEditbox.setValue(cell == null ? "" : (editText == null ? ""
 					: editText));
 
-			// set to default setting
-			fontFamilyCombobox.setText("Calibri");
 			fontSizeCombobox.setText("12");
 			boldBtn.setClass("toolIcon");
 			italicBtn.setClass("toolIcon");
@@ -534,9 +454,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 					Book book = spreadsheet.getBook();
 					int fontidx = cs.getFontIndex();
 					Font font = book.getFontAt((short) fontidx);
-					fontFamilyCombobox.setText(font.getFontName());
-					fontSizeCombobox.setText(Integer.toString(font
-							.getFontHeightInPoints()));
+					fontSizeCombobox.setText(Integer.toString(font.getFontHeightInPoints()));
 
 					// font bold & italic
 					isBold = font.getBoldweight() == Font.BOLDWEIGHT_BOLD;
@@ -680,10 +598,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				spreadsheet.getSelection().getBottom(),
 				spreadsheet.getSelection().getRight());
 
-		Window win = (Window) mainWin.getFellow("fastIconContextmenu");
-		Toolbarbutton mergeCellBtn2 = (Toolbarbutton) win.getFellow("_mergeCellBtn");
 		mergeCellBtn.setSclass(isMergeCell ? "clicked" : null);
-		mergeCellBtn2.setSclass(isMergeCell ? "clicked" : null);
 	}
 
 	// SECTION CtrlKeys
@@ -1129,40 +1044,14 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		String fontSizeStr = this.fontSizeCombobox.getSelectedItem().getLabel();
 		return (short) (Integer.parseInt(fontSizeStr) * 20);
 	}
-
-	public void setFontFamily(String fontName) {
-		List items = fontFamilyCombobox.getItems();
-		boolean findFont = false;
-		for (int i = 0; i < items.size(); i++) {
-			Comboitem item = (Comboitem) items.get(i);
-			if (item.getLabel().equals(fontName)) {
-				fontFamilyCombobox.setSelectedItem(item);
-				findFont = true;
-				break;
-			}
-		}
-		if (findFont)
-			Utils.setFontFamily(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), fontName);
+	
+	public void setFontFamily(String font) {
+		Utils.setFontFamily(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), font);
+		fontFamily.setText(font);
 	}
 
-	// SECTION FastIcon Toolbar
 	public void onFontFamilySelect(ForwardEvent event) {
-		// TODO undo/redo
-		// spreadsheet.pushCellState();
-		Combobox fontFamily = null;
-		String font;
-		Window win = (Window) mainWin.getFellow("fastIconContextmenu");
-		if (win.isVisible()) {
-			win.setVisible(false);
-			fontFamily = (Combobox) win.getFellow("_fontFamilyCombobox");
-		} else
-			fontFamily = this.fontFamilyCombobox;
-		if (event.getData() == null)
-			font = fontFamily.getSelectedItem().getLabel();
-		else
-			font = (String) event.getData();
-		this.fontFamilyCombobox.setSelectedIndex((fontFamily.getSelectedIndex()));
-		Utils.setFontFamily(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), font);
+		setFontFamily((String)event.getData());
 	}
 
 	public void setFontSize(String fontSize) {

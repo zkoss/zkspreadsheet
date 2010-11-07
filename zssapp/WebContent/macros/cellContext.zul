@@ -1,9 +1,10 @@
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 <?component name="borderSelector" inline="true" macroURI="/menus/border/borderSelector.zul"?>
-<window id="${arg.id}" sclass="fastIconWin" visible="false" vflex="min" width="210px" apply="org.zkoss.zss.app.FastIconMenuCtrl">
-	<attribute w:name="onShow">
-		this.$f('spreadsheet', true).focus(false);
-	</attribute>
+<?component name="fontfamily" class="org.zkoss.zss.app.zul.FontFamily" uri="/macros/fontFamily.zul"?>
+<!--<window id="fastIconWin" visible="false" sclass="fastIconWin" vflex="min" width="210px">-->
+<!--	<attribute w:name="onShow">-->
+<!--		this.$f('spreadsheet', true).focus(false);-->
+<!--	</attribute>-->
 <style>
 		.fastIconWin .z-window-popup-cnt-noborder{
 			background: #f6f5f5 none;
@@ -13,16 +14,7 @@
 <div style="padding:2px;">
 <vlayout spacing="2px">
 	<hlayout vflex="min" spacing="3px">
-		<combobox mold="rounded" id="_fontFamilyCombobox" style="border:0px;margin:0px;"
-			width="86px" >
-			<comboitem label="Calibri"  			sclass="calibriFont" />
-			<comboitem label="Courier New"  		sclass="courierFont" />
-			<comboitem label="Comic Sans MS"  	sclass="comicFont" />
-			<comboitem label="Times New Roman"  	sclass="timeFont" />
-			<comboitem label="Century Gothic"  	sclass="centuryFont" />
-			<comboitem label="Georgia"  			sclass="georgiaFont"/>
-			<comboitem label="Impact"  			sclass="impactFont"/>
-		</combobox>
+		<fontfamily id="fontfamily" width="86px"></fontfamily>
 		<combobox mold="rounded" id="_fontSizeCombobox"  style="border:0px;margin:0px;"
 			width="48px"  >
 			<comboitem label="8" />
@@ -67,10 +59,10 @@
 		<!-- border merge******************************************************************* -->
 		<dropdownbutton src="/img/border-bottom.png" forward="onBorderSelector(${c:l('border.bottom')})" tooltiptext="${c:l('border.bottom')}">
 			<attribute w:name="onClick">
-				this.$f('spreadsheet').focus(false);
+				this.$f('spreadsheet', true).focus(false);
 			</attribute>
 			<attribute w:name="onDropdown">
-				this.$f('spreadsheet').focus(false);
+				this.$f('spreadsheet', true).focus(false);
 			</attribute>
 			<borderSelector></borderSelector>
 		</dropdownbutton>
@@ -79,5 +71,5 @@
 	</hlayout>
 </vlayout>
 </div>
-</window>
+<!--</window>-->
 </zk>
