@@ -418,7 +418,7 @@ public class Utils {
 		new CellSelector().doVisit(sheet, rect, vistor);
 	}
 	
-	//TODO: test use thread 
+	//TODO: experiment: using thread
 /*	public static void visitIndependingCell(Sheet sheet, Rect rect, IndependingCellVisitor visitor) {
 		
 	}
