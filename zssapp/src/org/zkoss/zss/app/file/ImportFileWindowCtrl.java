@@ -21,7 +21,6 @@ package org.zkoss.zss.app.file;
 import java.util.Map;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
@@ -126,7 +125,7 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 					@Override
 					public void onEvent(Event evt) throws Exception {
 						FileHelper.openSpreadsheet(ss, info);
-						MainWindowCtrl.getInstance().initSheetNameTab();
+						MainWindowCtrl.getInstance().redrawSheetTabbox();
 						((Component)spaceOwner).detach();
 					}
 				});
@@ -145,7 +144,7 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 	public void onClick$openFileMenuitem() {
 		FileHelper.openSpreadsheet(ss, 
 				(SpreadSheetMetaInfo)allFilesListbox.getSelectedItem().getValue());
-		MainWindowCtrl.getInstance().initSheetNameTab();
+		MainWindowCtrl.getInstance().redrawSheetTabbox();
 		((Component)spaceOwner).detach();
 	}
 	

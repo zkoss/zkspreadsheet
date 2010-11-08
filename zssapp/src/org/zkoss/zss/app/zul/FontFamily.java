@@ -1,3 +1,21 @@
+/* FontFamily.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		Nov 7, 2010 10:31:11 AM , Created by Sam
+}}IS_NOTE
+
+Copyright (C) 2009 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+	This program is distributed under GPL Version 3.0 in the hope that
+	it will be useful, but WITHOUT ANY WARRANTY.
+}}IS_RIGHT
+*/
 package org.zkoss.zss.app.zul;
 
 import org.zkoss.poi.ss.usermodel.Cell;
@@ -15,6 +33,10 @@ import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
 
+/**
+ * @author Sam
+ *
+ */
 public class FontFamily extends Div {
 	
 	private Combobox fontfamilyCombobox;

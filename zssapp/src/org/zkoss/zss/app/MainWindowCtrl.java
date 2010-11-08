@@ -298,6 +298,10 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				});
 	}
 
+	public void redrawSheetTabbox() {
+		sheetTabbox.redraw();
+	}
+	
 	public boolean shiftSheetLeft() {
 		//TODO: it should shift all, not just itself
 		Book book = spreadsheet.getBook();

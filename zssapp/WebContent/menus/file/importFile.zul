@@ -1,6 +1,6 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk>
-<window title="${c:l('file.import')}" border="normal" mode="modal"  width="480px" height="360px" 
+<window title="${c:l('file.import')}" border="normal" mode="modal"  width="580px" height="480px" 
 	closable="true" position="center" apply="org.zkoss.zss.app.file.ImportFileWindowCtrl">
 
 <div height="10px"></div>

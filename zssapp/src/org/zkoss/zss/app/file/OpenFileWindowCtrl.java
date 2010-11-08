@@ -29,7 +29,6 @@ import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.MainWindowCtrl;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zul.Button;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -100,7 +99,7 @@ public class OpenFileWindowCtrl extends GenericForwardComposer {
 					@Override
 					public void onEvent(Event evt) throws Exception {
 						FileHelper.openSpreadsheet(ss, info);
-						MainWindowCtrl.getInstance().initSheetNameTab();
+						MainWindowCtrl.getInstance().redrawSheetTabbox();
 						((Component)spaceOwner).detach();
 					}
 				});
@@ -113,12 +112,11 @@ public class OpenFileWindowCtrl extends GenericForwardComposer {
 		try {
 			Media media = event.getMedia();
 			FileHelper.store(media);
-			
-			//TODO: move these dup login to MainWindowCtrl, method: doUploadAndOpenSpreadsheet
+
 			SpreadSheetMetaInfo info = (SpreadSheetMetaInfo)SpreadSheetMetaInfo.getMetaInfos().get(media.getName());
 			if (info != null)
 				FileHelper.openSpreadsheet(ss, info);
-			MainWindowCtrl.getInstance().redrawTab();
+			MainWindowCtrl.getInstance().redrawSheetTabbox();
 			//else
 			//TODO: throw Io exception message
 			((Component)spaceOwner).detach();
@@ -134,6 +132,7 @@ public class OpenFileWindowCtrl extends GenericForwardComposer {
 	public void onClick$openFileMenuitem() {
 		FileHelper.openSpreadsheet(ss, 
 				(SpreadSheetMetaInfo)filesListbox.getSelectedItem().getValue());
+		MainWindowCtrl.getInstance().redrawSheetTabbox();
 		((Component)spaceOwner).detach();
 	}
 }

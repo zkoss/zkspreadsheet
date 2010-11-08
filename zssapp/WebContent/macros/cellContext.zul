@@ -1,10 +1,6 @@
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 <?component name="borderSelector" inline="true" macroURI="/menus/border/borderSelector.zul"?>
 <?component name="fontfamily" class="org.zkoss.zss.app.zul.FontFamily" uri="/macros/fontFamily.zul"?>
-<!--<window id="fastIconWin" visible="false" sclass="fastIconWin" vflex="min" width="210px">-->
-<!--	<attribute w:name="onShow">-->
-<!--		this.$f('spreadsheet', true).focus(false);-->
-<!--	</attribute>-->
 <style>
 		.fastIconWin .z-window-popup-cnt-noborder{
 			background: #f6f5f5 none;
@@ -71,5 +67,4 @@
 	</hlayout>
 </vlayout>
 </div>
-<!--</window>-->
 </zk>

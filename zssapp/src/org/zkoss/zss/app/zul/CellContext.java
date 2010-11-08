@@ -1,3 +1,21 @@
+/* CellContext.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		Nov 7, 2010 10:31:11 AM , Created by Sam
+}}IS_NOTE
+
+Copyright (C) 2009 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+	This program is distributed under GPL Version 3.0 in the hope that
+	it will be useful, but WITHOUT ANY WARRANTY.
+}}IS_RIGHT
+*/
 package org.zkoss.zss.app.zul;
 
 import org.zkoss.poi.ss.usermodel.Cell;
@@ -18,6 +36,10 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
 
+/**
+ * @author Sam
+ *
+ */
 public class CellContext extends Window {
 	
 	FontFamily fontfamily;
@@ -40,6 +62,7 @@ public class CellContext extends Window {
 		setSclass("fastIconWin");
 		setVflex("min");
 		setWidth("210px");
+		setWidgetListener("onShow", "this.$f('spreadsheet', true).focus(false);");
 	}
 	
 	public void setUri(String uri) {

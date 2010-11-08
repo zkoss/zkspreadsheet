@@ -7,7 +7,6 @@
 
 	<label sclass="hintLabel" value="Choose a Spreadsheet to open:"/>
 	<vbox style="margin:5px">	
-<!--	//TODO:strange behavior for mold="paging" pageSize="3"-->
 	<listbox id="flo_files" width="300px" >
 		<listhead>
 			<listheader label="Name" sort="auto"/>
