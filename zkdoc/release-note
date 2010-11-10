@@ -27,10 +27,11 @@ ZK Spreadsheet 2.0.0
   170 Set font color of a region with different font size, will resize the font size.
   171 Once clicked, merge button remain pressed state
   172 paste transpose error
+  182 Exception when right cllick row header and insert a row
   
 * Upgrade Notes
-  + Package name of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 
-    name conflict with of those in poi.jar, so it is now OK to put both zpoi.jar and poi.jar in class path.
+  + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 
+    name conflicts with of those in poi.jar, so it is now OK to put both zpoi.jar and poi.jar in class path.
   
 	------------
 ZK Spreadsheet 2.0.0 RC

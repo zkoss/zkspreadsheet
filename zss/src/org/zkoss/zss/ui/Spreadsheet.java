@@ -48,6 +48,7 @@ import org.zkoss.lang.Classes;
 import org.zkoss.lang.Objects;
 import org.zkoss.lang.Strings;
 import org.zkoss.poi.hssf.util.PaneInformation;
+import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
@@ -1189,9 +1190,10 @@ public class Spreadsheet extends XulElement {
 	 */
 	public void setSelection(Rect sel) {
 		if (!Objects.equals(_selectionRect, sel)) {
+			final SpreadsheetVersion ver = _book.getSpreadsheetVersion();
 			if (sel.getLeft() < 0 || sel.getTop() < 0
-					|| sel.getRight() >= this.getMaxcolumns()
-					|| sel.getBottom() >= this.getMaxrows()
+					|| sel.getRight() > ver.getLastColumnIndex()
+					|| sel.getBottom() > ver.getLastRowIndex()
 					|| sel.getLeft() > sel.getRight()
 					|| sel.getTop() > sel.getBottom()) {
 				throw new UiException("illegal selection : " + sel.toString());
