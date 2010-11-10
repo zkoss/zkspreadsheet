@@ -558,6 +558,24 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			this.sheetCtrl.dp.gainFocus(trigger);
 	},
 	/**
+	 * Add editor focus
+	 */
+	addEditorFocus: function (name, color, row, col) {
+		this.sheetCtrl.addEditorFocus(name, color);
+	},
+	/**
+	 * Move the editor focus 
+	 */
+	moveEditorFocus: function (name, color, row, col) {
+		this.sheetCtrl.moveEditorFocus(name, color, zk.parseInt(row), zk.parseInt(col));
+	},
+	/**
+	 * Remove the editor focus
+	 */
+	removeEditorFocus: function (name, color, row, col) {
+		this.sheetCtrl.removeEditorFocus(name);
+	},
+	/**
 	 * Sets the highlight rectangle or sets a null value to hide it.
 	 */
 	setSelectionHighlight: function (v) {

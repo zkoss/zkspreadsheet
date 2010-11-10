@@ -3318,20 +3318,17 @@ public class Spreadsheet extends XulElement {
 	}
 */	
 	/**
-	 * remove editor's focus on specified name
+	 * Remove editor's focus on specified name
 	 */
 	public void removeEditorFocus(String name){
-		//smartUpdateValues("removeEditorFocus",new Object[]{name});
 		response("removeEditorFocus", new AuInvoke((Component)this,"removeEditorFocus", name));
 		removeFocus(name);
 	}
 	
 	/**
-	 *  add and move other editor's focus
+	 *  Add and move other editor's focus
 	 */
 	public void moveEditorFocus(String name, String color, int row ,int col){
-		//smartUpdateValues("moveEditorFocus",new Object[]{name ,color, ""+row ,""+col});
-		//System.out.println("editor "+this.editor.getSender()+" recv: "+name+ " moveFocused");
 		response("moveEditorFocus", new AuInvoke((Component)this,"moveEditorFocus", new String[]{name, color,""+row,""+col}));
 		removeFocus(name);
 		_focuses.add(new Focus(name, color, row, col));

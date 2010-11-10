@@ -208,6 +208,31 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			delete local.initparm;
 		});
 	},
+	addEditorFocus : function(name, color){
+		var x = this.focusmarkcmp,
+			div = x.cloneNode(true);
+		div.style.borderColor = color;
+		div.style.borderWidth = "3px";
+		x.parentNode.appendChild(div);
+		if(!this.editorFocusMark)
+			this.editorFocusMark = new Object();
+		this.editorFocusMark[name] = new zss.FocusMarkCtrl(this, div, new zss.Pos(0, 0));
+	},
+	removeEditorFocus : function(name){
+		var ctrl = this.editorFocusMark[name];
+		if (ctrl) {
+			ctrl.comp.parentNode.removeChild(ctrl.comp);
+			ctrl.cleanup();
+		}
+		this.editorFocusMark[name] = null;
+	},
+	moveEditorFocus : function(name, color, row, col){
+		if(!this.editorFocusMark || !this.editorFocusMark[name]){
+			this.addEditorFocus(name, color);
+		}
+		this.editorFocusMark[name].relocate(row, col);
+		this.editorFocusMark[name].showMark();
+	},
 	_resize: function () {
 		if (this.invalid) return;
 		this._fixSize();
