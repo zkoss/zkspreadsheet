@@ -48,11 +48,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				type = sheet.selType;
 			fw = ctrl.orgsize + offset;
 			if (fw < ctrl.minHWidth) fw = ctrl.minHWidth;
-			if (type == zss.SelDrag.SELCOL) {
+			if (type == zss.SelDrag.SELCOL || type == zss.SelDrag.SELALL) {
 				var sel = sheet.getLastSelection();
 				sheet._setColumnsWidth(sel, fw, true, true, dg._unhide? false : undefined); //undefined means depends on fw
-			} else if (type == zss.SelDrag.SELALL) {
-				//TODO whole sheet, need to handle it efficiently
 			} else
 				sheet._setColumnWidth(ctrl.index, fw, true, true, dg._unhide? false : undefined); //undefined means depends on fw
 		} else {
@@ -61,11 +59,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				type = sheet.selType;
 			fh = ctrl.orgsize + offset;
 			if (fh < ctrl.minVHeight) fh = ctrl.minVHeight;
-			if (type == zss.SelDrag.SELROW) {
+			if (type == zss.SelDrag.SELROW || type == zss.SelDrag.SELALL) {
 				var sel = sheet.getLastSelection();
 				sheet._setRowsHeight(sel, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
-			} else if (type == zss.SelDrag.SELALL) {
-				//TODO whole sheet, need to handle it efficiently
 			} else
 				sheet._setRowHeight(ctrl.index, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
 		}
