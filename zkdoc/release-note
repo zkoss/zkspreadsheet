@@ -21,6 +21,8 @@ ZK Spreadsheet 2.0.0
   139 "Unexpected ptg class" RuntimeException when loading Excel file with special formula
   144 copy from a cell to a range
   146 selected range should stay emphasised when click menubutton
+  149 change size of multi-column
+  150 change size of multi-row
   156 spring DelegatingVariableResolver in Spreadsheet doesn't work
   167 set background color seems like multiple selection in color choosing
   168 Exception while set background color

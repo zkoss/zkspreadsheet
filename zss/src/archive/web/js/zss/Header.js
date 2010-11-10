@@ -44,17 +44,30 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		
 		if (ctrl.type == zss.Header.HOR) {
 			var fw,
-				offset = dg.last[0] - dg.start[0];
+				offset = dg.last[0] - dg.start[0],
+				type = sheet.selType;
 			fw = ctrl.orgsize + offset;
 			if (fw < ctrl.minHWidth) fw = ctrl.minHWidth;
-			sheet._setColumnWidth(ctrl.index, fw, true, true, dg._unhide? false : undefined); //undefined means depends on fw
+			if (type == zss.SelDrag.SELCOL) {
+				var sel = sheet.getLastSelection();
+				sheet._setColumnsWidth(sel, fw, true, true, dg._unhide? false : undefined); //undefined means depends on fw
+			} else if (type == zss.SelDrag.SELALL) {
+				//TODO whole sheet, need to handle it efficiently
+			} else
+				sheet._setColumnWidth(ctrl.index, fw, true, true, dg._unhide? false : undefined); //undefined means depends on fw
 		} else {
 			var fh,
-				offset = dg.last[1] - dg.start[1];
+				offset = dg.last[1] - dg.start[1],
+				type = sheet.selType;
 			fh = ctrl.orgsize + offset;
 			if (fh < ctrl.minVHeight) fh = ctrl.minVHeight;
-
-			sheet._setRowHeight(ctrl.index, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
+			if (type == zss.SelDrag.SELROW) {
+				var sel = sheet.getLastSelection();
+				sheet._setRowsHeight(sel, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
+			} else if (type == zss.SelDrag.SELALL) {
+				//TODO whole sheet, need to handle it efficiently
+			} else
+				sheet._setRowHeight(ctrl.index, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
 		}
 
 		//gain focus and reallocate mark , then show it, 

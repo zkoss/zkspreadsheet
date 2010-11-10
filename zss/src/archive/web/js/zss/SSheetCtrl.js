@@ -1199,6 +1199,12 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	setColumnWidth: function (col, width) {
 		this._setColumnWidth(col, width, true, true);
 	},
+	_setColumnsWidth: function (rng, width, fireevent, loadvis, hidden, metaid) {
+		var left = rng.left,
+			right = rng.right;
+		for(var col=left; col<=right; ++col)
+			this._setColumnWidth(col, width, fireevent, loadvis, hidden, metaid);
+	},
 	_setColumnWidth: function (col, width, fireevent, loadvis, hidden, metaid) {
 		var sheetid = this.sheetid,
 			custColWidth = this.custColWidth,
@@ -1367,6 +1373,12 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	 */
 	setRowHeight: function(row, height) {
 		this._setRowHeight(row, height, true, true);
+	},
+	_setRowsHeight: function(rng, height, fireevent, loadvis, hidden, metaid) {
+		var top = rng.top,
+			bottom = rng.bottom;
+		for(var row=top; row<=bottom; ++row)
+			this._setRowHeight(row, height, fireevent, loadvis, hidden, metaid);
 	},
 	_setRowHeight: function(row, height, fireevent, loadvis, hidden, metaid) {
 		var sheetid = this.sheetid,
