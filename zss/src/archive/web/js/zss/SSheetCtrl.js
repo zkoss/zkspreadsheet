@@ -517,6 +517,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				lfv = false;
 			} else
 				block._processTextOverflow(col);
+			
+			this._syncColFocusAndSelection(col, col + size - 1);
 		} else if (result.type == "row") {//jump to another bolck, not a neighbor
 			var row = result.row,
 				size = result.size;
@@ -544,6 +546,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				block.reloadBlock("south");
 				lfv = false;
 			}
+			this._syncRowFocusAndSelection(row, row + size - 1);
 		}
 
 		dp._fixSize(this.activeBlock);
@@ -1363,21 +1366,35 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		}
 
 		//sync focus and selection area
-		var focPos = this.getLastFocus(),
-			fCol = focPos.column,
-			ls = this.getLastSelection(),
-			selL = ls.left,
-			selR = ls.right;
-		if (col == fCol)
-			this.moveCellFocus(focPos.row, fCol);
-		if (col >= selL && col <= selR)
-			this.moveCellSelection(selL, ls.top, selR, ls.bottom);
+		this._syncColFocusAndSelection(col, col);
 
 		if (fireevent) {
 			this._wgt.fire('onZSSHeaderModif', 
 					{sheetId: this.serverSheetId, type: "top", event: "size", index: col, newsize: width, id: zsw, hidden: hidden},
 					{toServer: true}, 25);
 		}
+	},
+	_syncColFocusAndSelection: function(left, right) {
+		var focPos = this.getLastFocus(),
+			fCol = focPos.column,
+			ls = this.getLastSelection(),
+			selL = ls.left,
+			selR = ls.right;
+		if (left <= fCol && fCol <= right)
+			this.moveCellFocus(focPos.row, fCol);
+		if (right >= selL && left <= selR)
+			this.moveCellSelection(selL, ls.top, selR, ls.bottom);
+	},
+	_syncRowFocusAndSelection: function(top, bottom) {
+		var focPos = this.getLastFocus(),
+			fRow = focPos.row,
+			ls = this.getLastSelection(),
+			selT = ls.top,
+			selB = ls.bottom;
+		if (top <= fRow && fRow <= bottom)
+			this.moveCellFocus(fRow, focPos.column);
+		if (bottom >= selT && top <= selB)
+			this.moveCellSelection(ls.left, selT, ls.right, selB);
 	},
 	_appendZSW: function(col, zsw) {
 		this.activeBlock.appendZSW(col, zsw);
@@ -1481,6 +1498,9 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 
 			this._wgt.syncWidgetPos(row, -1);
 		}
+		//sync focus and selection area
+		this._syncRowFocusAndSelection(row, row);
+
 		if (fireevent) {
 			this._wgt.fire('onZSSHeaderModif', 
 					{sheetId: this.serverSheetId, type: "left", event: "size", index: row, newsize: height, id: zsh, hidden: hidden},

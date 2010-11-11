@@ -29,7 +29,8 @@ ZK Spreadsheet 2.0.0
   170 Set font color of a region with different font size, will resize the font size.
   171 Once clicked, merge button remain pressed state
   172 paste transpose error
-  182 Exception when right cllick row header and insert a row
+  182 Exception when right click row header and insert a row
+  187 Select and focus shall not move when insert/delete columns/rows/cells
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

@@ -878,7 +878,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			// TODO undo/redo
 			// spreadsheet.pushDeleteRowColState(-1, top, -1, bottom);
 			Utils.deleteRows(sheet, top, bottom);
-			spreadsheet.setSelection(rect);
+			spreadsheet.focus();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -902,7 +902,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			// TODO undo/redo
 			// spreadsheet.pushDeleteRowColState(left, -1, right, -1);
 			Utils.deleteColumns(sheet, left, right);
-			spreadsheet.setSelection(rect);
+			spreadsheet.focus();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -959,12 +959,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			// TODO undo/redo
 			// spreadsheet.pushInsertRowColState(-1, top, -1, bottom);
 			Utils.insertRows(spreadsheet.getSelectedSheet(), top, bottom);
-			rect.setTop(bottom + 1);
-			rect.setBottom(bottom + bottom - top + 1);
-			spreadsheet
-					.setCellFocus(new Position(rect.getTop(), rect.getLeft()));
-			spreadsheet.setSelection(rect);
-
+			spreadsheet.focus();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -979,10 +974,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			// TODO undo/redo
 			// spreadsheet.pushInsertRowColState(left, -1, right, -1);
 			Utils.insertColumns(spreadsheet.getSelectedSheet(), left, right);
-			rect.setLeft(right + 1);
-			rect.setRight(right + right - left + 1);
-			spreadsheet.setCellFocus(new Position(rect.getTop(), rect.getLeft()));
-			spreadsheet.setSelection(rect);
+			spreadsheet.focus();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

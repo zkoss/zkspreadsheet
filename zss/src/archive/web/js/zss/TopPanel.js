@@ -380,6 +380,17 @@ zss.TopPanel = zk.$extends(zk.Object, {
 			nm,
 			parm = {type: zss.Header.HOR},
 			fontSize = zk.ie ? this._getCornerHeaderFontSize() : null;
+			
+		//insert columns intersect with selection range, must remove selection CSS before insert cells
+		var sheet = this.sheet,
+			selRange = sheet.selArea.lastRange;
+		if (sheet.state != zss.SSheetCtrl.NOFOCUS && selRange) {
+			var left = selRange.left,
+				right = selRange.right;
+			if (col <= right && (col+size-1) >= left)
+				this.updateSelectionCSS(left, right, true);
+		}
+			
 		for (var i = 0; i < size; i++) {
 			parm.ix = col + i;
 			parm.nm = extnm[i]

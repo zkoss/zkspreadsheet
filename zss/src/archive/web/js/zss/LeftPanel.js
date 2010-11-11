@@ -391,6 +391,16 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 			nm,
 			parm = {type: zss.Header.VER};
 		
+		//insert row intersect with selection range, must remove selection CSS before insert cells
+		var sheet = this.sheet,
+			selRange = sheet.selArea.lastRange;
+		if (sheet.state != zss.SSheetCtrl.NOFOCUS && selRange) {
+			var top = selRange.top,
+				bottom = selRange.bottom;
+			if (row <= bottom && (row+size-1) >= top)
+				this.updateSelectionCSS(top, bottom, true);
+		}
+			
 		for (var i = 0; i < size; i++) {
 			parm.ix = row + i;
 			parm.nm = extnm[i];
