@@ -543,14 +543,18 @@ public class RangeImpl implements Range {
 			final Ref ref = _refs.iterator().next();
 			final RefSheet refSheet = ref.getOwnerSheet();
 			final RefBook refBook = refSheet.getOwnerBook();
+			final Sheet sheet = BookHelper.getSheet(_sheet, refSheet);
+			if (!((SheetCtrl)sheet).isEvalAll()) {
+				((SheetCtrl)sheet).evalAll();
+			}
 			switch(shift) {
 			default:
 			case SHIFT_DEFAULT:
 				if (ref.isWholeRow()) {
-					final ChangeInfo info = BookHelper.deleteRows(_sheet, ref.getTopRow(), ref.getRowCount());
+					final ChangeInfo info = BookHelper.deleteRows(sheet, ref.getTopRow(), ref.getRowCount());
 					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_DELETE, SSDataEvent.MOVE_V);
 				} else if (ref.isWholeColumn()) {
-					final ChangeInfo info = BookHelper.deleteColumns(_sheet, ref.getLeftCol(), ref.getColumnCount());
+					final ChangeInfo info = BookHelper.deleteColumns(sheet, ref.getLeftCol(), ref.getColumnCount());
 					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_DELETE, SSDataEvent.MOVE_H);
 				}
 				break;
@@ -558,7 +562,7 @@ public class RangeImpl implements Range {
 				if (ref.isWholeRow() || ref.isWholeColumn()) {
 					delete(SHIFT_DEFAULT);
 				} else {
-					final ChangeInfo info = BookHelper.deleteRange(_sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), true);
+					final ChangeInfo info = BookHelper.deleteRange(sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), true);
 					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_DELETE, SSDataEvent.MOVE_H);
 				}
 				break;
@@ -566,7 +570,7 @@ public class RangeImpl implements Range {
 				if (ref.isWholeRow() || ref.isWholeColumn()) {
 					delete(SHIFT_DEFAULT);
 				} else {
-					final ChangeInfo info = BookHelper.deleteRange(_sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), false);
+					final ChangeInfo info = BookHelper.deleteRange(sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), false);
 					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_DELETE, SSDataEvent.MOVE_V);
 				}
 				break;
@@ -580,14 +584,18 @@ public class RangeImpl implements Range {
 			final Ref ref = _refs.iterator().next();
 			final RefSheet refSheet = ref.getOwnerSheet();
 			final RefBook refBook = refSheet.getOwnerBook();
+			final Sheet sheet = BookHelper.getSheet(_sheet, refSheet);
+			if (!((SheetCtrl)sheet).isEvalAll()) {
+				((SheetCtrl)sheet).evalAll();
+			}
 			switch(shift) {
 			default:
 			case SHIFT_DEFAULT:
 				if (ref.isWholeRow()) {
-					final ChangeInfo info = BookHelper.insertRows(_sheet, ref.getTopRow(), ref.getRowCount(), copyOrigin);
+					final ChangeInfo info = BookHelper.insertRows(sheet, ref.getTopRow(), ref.getRowCount(), copyOrigin);
 					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_INSERT, SSDataEvent.MOVE_V);
 				} else if (ref.isWholeColumn()) {
-					final ChangeInfo info = BookHelper.insertColumns(_sheet, ref.getLeftCol(), ref.getColumnCount(), copyOrigin);
+					final ChangeInfo info = BookHelper.insertColumns(sheet, ref.getLeftCol(), ref.getColumnCount(), copyOrigin);
 					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_INSERT, SSDataEvent.MOVE_H);
 				}
 				break;
@@ -595,7 +603,7 @@ public class RangeImpl implements Range {
 				if (ref.isWholeRow() || ref.isWholeColumn()) {
 					insert(SHIFT_DEFAULT, copyOrigin);
 				} else {
-					final ChangeInfo info = BookHelper.insertRange(_sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), true, copyOrigin);
+					final ChangeInfo info = BookHelper.insertRange(sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), true, copyOrigin);
 					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_INSERT, SSDataEvent.MOVE_H);
 				}
 				break;
@@ -603,7 +611,7 @@ public class RangeImpl implements Range {
 				if (ref.isWholeRow() || ref.isWholeColumn()) {
 					insert(SHIFT_DEFAULT, copyOrigin);
 				} else {
-					final ChangeInfo info = BookHelper.insertRange(_sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), false, copyOrigin);
+					final ChangeInfo info = BookHelper.insertRange(sheet, ref.getTopRow(), ref.getLeftCol(), ref.getBottomRow(), ref.getRightCol(), false, copyOrigin);
 					notifyMergeChange(refBook, info, ref, SSDataEvent.ON_RANGE_INSERT, SSDataEvent.MOVE_V);
 				}
 				break;

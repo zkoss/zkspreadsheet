@@ -85,7 +85,9 @@ import org.zkoss.zss.model.Range;
  * @author henrichen
  *
  */
-public class XSSFSheetImpl extends XSSFSheet {
+public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl {
+	private boolean _evalAll;
+	
 	//--XSSFSheet--//
     public XSSFSheetImpl() {
         super();
@@ -231,11 +233,13 @@ public class XSSFSheetImpl extends XSSFSheet {
         }
 
         //update named ranges
-        final XSSFWorkbook wb = getWorkbook();
-        int sheetIndex = wb.getSheetIndex(this);
-        final PtgShifter shifter = new PtgShifter(sheetIndex, startRow, endRow, n, 0, maxcol, 0, SpreadsheetVersion.EXCEL2007);
-        updateNamedRanges(wb, shifter);
-
+        if (startRow <= endRow) {
+        	final XSSFWorkbook wb = getWorkbook();
+        	int sheetIndex = wb.getSheetIndex(this);
+        	final PtgShifter shifter = new PtgShifter(sheetIndex, startRow, endRow, n, 0, maxcol, 0, SpreadsheetVersion.EXCEL2007);
+        	updateNamedRanges(wb, shifter);
+        }
+        
         //rebuild the _rows map
         TreeMap<Integer, XSSFRow> map = new TreeMap<Integer, XSSFRow>();
         TreeMap<Integer, XSSFRow> rows = getRows();
@@ -486,10 +490,12 @@ public class XSSFSheetImpl extends XSSFSheet {
         }
         
         //update named ranges
-        final XSSFWorkbook wb = getWorkbook();
-        int sheetIndex = wb.getSheetIndex(this);
-        final PtgShifter shifter = new PtgShifter(sheetIndex, startRow, endRow, n, 0, maxcol, 0, SpreadsheetVersion.EXCEL2007);
-        updateNamedRanges(wb, shifter);
+        if (startRow <= endRow) {
+        	final XSSFWorkbook wb = getWorkbook();
+	        int sheetIndex = wb.getSheetIndex(this);
+	        final PtgShifter shifter = new PtgShifter(sheetIndex, startRow, endRow, n, 0, maxcol, 0, SpreadsheetVersion.EXCEL2007);
+	        updateNamedRanges(wb, shifter);
+        }
 
         //rebuild the _rows map
         if (wholeRow) {
@@ -683,10 +689,12 @@ public class XSSFSheetImpl extends XSSFSheet {
         
         // Update any formulas on this sheet that point to
         // columns which have been moved
-        XSSFWorkbook book = getWorkbook();
-        int sheetIndex = book.getSheetIndex(this);
-        PtgShifter shifter = new PtgShifter(sheetIndex, 0, maxrow, 0, startCol, endCol, n, SpreadsheetVersion.EXCEL2007);
-        updateNamedRanges(book, shifter);
+        if (startCol <= endCol) {
+        	XSSFWorkbook book = getWorkbook();
+        	int sheetIndex = book.getSheetIndex(this);
+        	PtgShifter shifter = new PtgShifter(sheetIndex, 0, maxrow, 0, startCol, endCol, n, SpreadsheetVersion.EXCEL2007);
+        	updateNamedRanges(book, shifter);
+        }
         
         return shiftedRanges;
     }
@@ -976,10 +984,12 @@ public class XSSFSheetImpl extends XSSFSheet {
         
         // Update any formulas on this sheet that point to
         // columns which have been moved
-        XSSFWorkbook book = getWorkbook();
-        int sheetIndex = book.getSheetIndex(this);
-        PtgShifter shifter = new PtgShifter(sheetIndex, 0, maxrow, 0, startCol, endCol, n, SpreadsheetVersion.EXCEL2007);
-        updateNamedRanges(book, shifter);
+        if (startCol <= endCol) {
+        	XSSFWorkbook book = getWorkbook();
+	        int sheetIndex = book.getSheetIndex(this);
+	        PtgShifter shifter = new PtgShifter(sheetIndex, 0, maxrow, 0, startCol, endCol, n, SpreadsheetVersion.EXCEL2007);
+	        updateNamedRanges(book, shifter);
+        }
         
         return shiftedRanges;
     }
@@ -1103,10 +1113,12 @@ public class XSSFSheetImpl extends XSSFSheet {
         
         // Update any formulas on this sheet that point to
         // columns which have been moved
-        XSSFWorkbook book = getWorkbook();
-        int sheetIndex = book.getSheetIndex(this);
-        PtgShifter shifter = new PtgShifter(sheetIndex, tRow, bRow, nRow, lCol, rCol, nCol, SpreadsheetVersion.EXCEL2007);
-        updateNamedRanges(book, shifter);
+        if (tRow <= bRow && lCol <= rCol) {
+        	XSSFWorkbook book = getWorkbook();
+	        int sheetIndex = book.getSheetIndex(this);
+	        PtgShifter shifter = new PtgShifter(sheetIndex, tRow, bRow, nRow, lCol, rCol, nCol, SpreadsheetVersion.EXCEL2007);
+	        updateNamedRanges(book, shifter);
+        }
         
         return shiftedRanges;
     }
@@ -1136,4 +1148,26 @@ public class XSSFSheetImpl extends XSSFSheet {
     	}
     	return _patriarch;
     }
+    
+    //--SheetCtrl--//
+	@Override
+	public void evalAll() {
+		// TODO Auto-generated method stub
+		for(Row row : this) {
+			if (row != null) {
+				for(Cell cell : row) {
+					if (cell != null && cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+						BookHelper.evaluate(this.getBook(), cell);
+					}
+				}
+			}
+		}
+		_evalAll = true;
+	}
+
+	@Override
+	public boolean isEvalAll() {
+		// TODO Auto-generated method stub
+		return _evalAll;
+	}
 }	

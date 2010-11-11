@@ -48,6 +48,7 @@ import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.PtgShifter;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.DataValidationConstraint;
 import org.zkoss.poi.ss.usermodel.DataValidationHelper;
@@ -63,9 +64,9 @@ import org.zkoss.zss.model.Range;
  * @author henrichen
  *
  */
-public class HSSFSheetImpl extends HSSFSheet {
+public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl {
 	private final HSSFSheetHelper _helper; //helper to lift the package protection
-	
+	private boolean _evalAll;
 
 	//--HSSFSheet--//
 	protected HSSFSheetImpl(HSSFBookImpl workbook) {
@@ -269,10 +270,12 @@ public class HSSFSheetImpl extends HSSFSheet {
 
         // Update any formulas on this sheet that point to
         //  rows which have been moved
-        int sheetIndex = _workbook.getSheetIndex(this);
-        short externSheetIndex = _book.checkExternSheet(sheetIndex, sheetIndex);
-        PtgShifter shifter = new PtgShifter(externSheetIndex, startRow, endRow, n, 0, maxcol, 0, SpreadsheetVersion.EXCEL97);
-        updateNamesAfterCellShift(shifter);
+        if (startRow <= endRow) {
+        	int sheetIndex = _workbook.getSheetIndex(this);
+	        short externSheetIndex = _book.checkExternSheet(sheetIndex, sheetIndex);
+	        PtgShifter shifter = new PtgShifter(externSheetIndex, startRow, endRow, n, 0, maxcol, 0, SpreadsheetVersion.EXCEL97);
+	        updateNamesAfterCellShift(shifter);
+        }
         
         return shiftedRanges;
     }
@@ -435,10 +438,12 @@ public class HSSFSheetImpl extends HSSFSheet {
         
         // Update any formulas on this sheet that point to
         // columns which have been moved
-        int sheetIndex = _workbook.getSheetIndex(this);
-        short externSheetIndex = _book.checkExternSheet(sheetIndex, sheetIndex);
-        PtgShifter shifter = new PtgShifter(externSheetIndex, 0, SpreadsheetVersion.EXCEL97.getLastRowIndex(), 0, startCol, endCol, n, SpreadsheetVersion.EXCEL97);
-        updateNamesAfterCellShift(shifter);
+        if (startCol <= endCol) {
+        	int sheetIndex = _workbook.getSheetIndex(this);
+        	short externSheetIndex = _book.checkExternSheet(sheetIndex, sheetIndex);
+        	PtgShifter shifter = new PtgShifter(externSheetIndex, 0, SpreadsheetVersion.EXCEL97.getLastRowIndex(), 0, startCol, endCol, n, SpreadsheetVersion.EXCEL97);
+        	updateNamesAfterCellShift(shifter);
+        }
         
         return shiftedRanges;
     }
@@ -612,10 +617,12 @@ public class HSSFSheetImpl extends HSSFSheet {
         
         // Update any formulas on this sheet that point to
         // columns which have been moved
-        int sheetIndex = _workbook.getSheetIndex(this);
-        short externSheetIndex = _book.checkExternSheet(sheetIndex, sheetIndex);
-        PtgShifter shifter = new PtgShifter(externSheetIndex, tRow, bRow, 0, startCol, endCol, n, SpreadsheetVersion.EXCEL97);
-        updateNamesAfterCellShift(shifter);
+        if (startCol <= endCol) {
+        	int sheetIndex = _workbook.getSheetIndex(this);
+        	short externSheetIndex = _book.checkExternSheet(sheetIndex, sheetIndex);
+        	PtgShifter shifter = new PtgShifter(externSheetIndex, tRow, bRow, 0, startCol, endCol, n, SpreadsheetVersion.EXCEL97);
+        	updateNamesAfterCellShift(shifter);
+        }
         
         return shiftedRanges;
     }
@@ -868,10 +875,12 @@ public class HSSFSheetImpl extends HSSFSheet {
 
         // Update any formulas on this sheet that point to
         //  rows which have been moved
-        int sheetIndex = _workbook.getSheetIndex(this);
-        short externSheetIndex = _book.checkExternSheet(sheetIndex, sheetIndex);
-        PtgShifter shifter = new PtgShifter(externSheetIndex, startRow, endRow, n, lCol, rCol, 0, SpreadsheetVersion.EXCEL97);
-        updateNamesAfterCellShift(shifter);
+        if (startRow <= endRow) {
+        	int sheetIndex = _workbook.getSheetIndex(this);
+        	short externSheetIndex = _book.checkExternSheet(sheetIndex, sheetIndex);
+        	PtgShifter shifter = new PtgShifter(externSheetIndex, startRow, endRow, n, lCol, rCol, 0, SpreadsheetVersion.EXCEL97);
+        	updateNamesAfterCellShift(shifter);
+        }
         
         return shiftedRanges;
     }
@@ -1015,10 +1024,12 @@ public class HSSFSheetImpl extends HSSFSheet {
         
         // Update any formulas on this sheet that point to
         //  rows which have been moved
-        int sheetIndex = _workbook.getSheetIndex(this);
-        short externSheetIndex = _book.checkExternSheet(sheetIndex, sheetIndex);
-        PtgShifter shifter = new PtgShifter(externSheetIndex, tRow, bRow, nRow, lCol, rCol, nCol, SpreadsheetVersion.EXCEL97);
-        updateNamesAfterCellShift(shifter);
+        if (tRow <= bRow && lCol <= rCol) {
+        	int sheetIndex = _workbook.getSheetIndex(this);
+        	short externSheetIndex = _book.checkExternSheet(sheetIndex, sheetIndex);
+        	PtgShifter shifter = new PtgShifter(externSheetIndex, tRow, bRow, nRow, lCol, rCol, nCol, SpreadsheetVersion.EXCEL97);
+        	updateNamesAfterCellShift(shifter);
+        }
         
         return shiftedRanges;
     }
@@ -1195,6 +1206,26 @@ public class HSSFSheetImpl extends HSSFSheet {
     public Book getBook() {
     	return (Book) getWorkbook();
     }
-    
-    
+
+    //--SheetCtrl--//
+	@Override
+	public void evalAll() {
+		// TODO Auto-generated method stub
+		for(Row row : this) {
+			if (row != null) {
+				for(Cell cell : row) {
+					if (cell != null && cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+						BookHelper.evaluate(this.getBook(), cell);
+					}
+				}
+			}
+		}
+		_evalAll = true;
+	}
+
+	@Override
+	public boolean isEvalAll() {
+		// TODO Auto-generated method stub
+		return _evalAll;
+	}
 }
