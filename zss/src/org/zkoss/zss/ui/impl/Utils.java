@@ -151,11 +151,12 @@ public class Utils {
 	 * @param pasteOp the paste operation
 	 * @param skipBlanks true to not have blank cells in the ranage on the Clipboard pasted into this range; default false
 	 * @param transpose true to transpose rows and columns when pasting to this range; default false
+	 * @return the real pasted range
 	 */
-	public static void pasteSpecial(Sheet srcSheet, Rect srcRect, Sheet dstSheet, int tRow, int lCol, int bRow, int rCol, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
+	public static Range pasteSpecial(Sheet srcSheet, Rect srcRect, Sheet dstSheet, int tRow, int lCol, int bRow, int rCol, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
 		Range rng = Utils.getRange(srcSheet, srcRect.getTop(), srcRect.getLeft(), srcRect.getBottom(), srcRect.getRight());
 		Range dstRange = Utils.getRange(dstSheet, tRow, lCol, bRow, rCol);
-		rng.pasteSpecial(dstRange, pasteType, pasteOp, skipBlanks, transpose);
+		return rng.pasteSpecial(dstRange, pasteType, pasteOp, skipBlanks, transpose);
 	}
 
 	/**

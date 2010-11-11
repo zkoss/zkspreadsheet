@@ -643,14 +643,16 @@ public class RangeImpl implements Range {
 	}
 
 	@Override
-	public void pasteSpecial(int pasteType, int operation, boolean SkipBlanks, boolean transpose) {
+	public Range pasteSpecial(int pasteType, int operation, boolean SkipBlanks, boolean transpose) {
 		//TODO
 		//clipboardRange.pasteSpecial(this, pasteType, pasteOp, skipBlanks, transpose);
+		return null;
 	}
 	
 	@Override
-	public void pasteSpecial(Range dstRange, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
-		paste0(dstRange, pasteType, pasteOp, skipBlanks, transpose);
+	public Range pasteSpecial(Range dstRange, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
+		final Ref ref = paste0(dstRange, pasteType, pasteOp, skipBlanks, transpose);
+		return ref == null ? null : new RangeImpl(ref, BookHelper.getSheet(_sheet, ref.getOwnerSheet()));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -683,10 +685,11 @@ public class RangeImpl implements Range {
 		}
 	}
 	@Override
-	public void copy(Range dstRange) {
-		paste0(dstRange, Range.PASTE_ALL, Range.PASTEOP_NONE, false, false);
+	public Range copy(Range dstRange) {
+		final Ref ref = paste0(dstRange, Range.PASTE_ALL, Range.PASTEOP_NONE, false, false);
+		return ref == null ? null : new RangeImpl(ref, BookHelper.getSheet(_sheet, ref.getOwnerSheet()));
 	}
-	private void paste0(Range dstRange, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
+	private Ref paste0(Range dstRange, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
 		if (_refs != null && !_refs.isEmpty() && !((RangeImpl)dstRange).getRefs().isEmpty()) {
 			//check if follow the copy rule
 			//destination range allow only one contiguous reference
@@ -701,6 +704,7 @@ public class RangeImpl implements Range {
 			final Ref dstRef = ((RangeImpl)dstRange).getRefs().iterator().next();
 			final Set<Ref> last = new HashSet<Ref>();
 			final Set<Ref> all = new HashSet<Ref>();
+			Ref pasteRef = null;
 			if (_refs.size() > 1) { //multiple src references
 				final SortedMap<Integer, Ref> srcRefs = new TreeMap<Integer, Ref>();
 				boolean sameRow = false;
@@ -736,13 +740,15 @@ public class RangeImpl implements Range {
 					}
 				}
 				pasteType = pasteType + Range.PASTE_VALUES; //no formula 
-				copyMulti(sameRow, srcRefs, srcColCount, srcRowCount, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
+				pasteRef = copyMulti(sameRow, srcRefs, srcColCount, srcRowCount, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
 			} else {
-				copy(ref1, srcColCount, srcRowCount, dstRange, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
+				pasteRef = copy(ref1, srcColCount, srcRowCount, dstRange, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
 			}
 			final Book book = (Book) _sheet.getWorkbook();
 			BookHelper.reevaluateAndNotify(book, last, all);
+			return pasteRef;
 		}
+		return null;
 	}
 
 	@Override
@@ -790,18 +796,18 @@ public class RangeImpl implements Range {
 		return new RangeImpl(row1, col1, _sheet, _sheet);
 	}
 			
-	private void copyMulti(boolean sameRow, SortedMap<Integer, Ref> srcRefs, int srcColCount, int srcRowCount, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, Set<Ref> last, Set<Ref> all) {
+	private Ref copyMulti(boolean sameRow, SortedMap<Integer, Ref> srcRefs, int srcColCount, int srcRowCount, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, Set<Ref> last, Set<Ref> all) {
 		final int dstColCount = transpose ? dstRef.getRowCount() : dstRef.getColumnCount();
 		final int dstRowCount = transpose ? dstRef.getColumnCount() : dstRef.getRowCount();
 		
 		if ((dstRowCount % srcRowCount) == 0 && (dstColCount % srcColCount) == 0) {
-			copyRefs(sameRow, srcRefs, srcColCount, srcRowCount, dstColCount/srcColCount, dstRowCount/srcRowCount, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
+			return copyRefs(sameRow, srcRefs, srcColCount, srcRowCount, dstColCount/srcColCount, dstRowCount/srcRowCount, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
 		} else if (dstColCount == 1 && (dstRowCount % srcRowCount) == 0) {
-			copyRefs(sameRow, srcRefs, srcColCount, srcRowCount, 1, dstRowCount/srcRowCount, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
+			return copyRefs(sameRow, srcRefs, srcColCount, srcRowCount, 1, dstRowCount/srcRowCount, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
 		} else if (dstRowCount == 1 && (dstColCount % srcColCount) == 0) {
-			copyRefs(sameRow, srcRefs, srcColCount, srcRowCount, dstColCount/srcColCount, 1, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
+			return copyRefs(sameRow, srcRefs, srcColCount, srcRowCount, dstColCount/srcColCount, 1, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
 		} else {
-			copyRefs(sameRow, srcRefs, srcColCount, srcRowCount, 1, 1, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
+			return copyRefs(sameRow, srcRefs, srcColCount, srcRowCount, 1, 1, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
 		}
 	}
 
@@ -842,17 +848,26 @@ public class RangeImpl implements Range {
 			dstrCol += srcColCount;
 		}
 	}
-	
-	private void copyRefs(boolean sameRow, SortedMap<Integer, Ref> srcRefs, int srcColCount, int srcRowCount, int colRepeat, int rowRepeat, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, Set<Ref> last, Set<Ref> all) {
+	private Ref getPasteRef(int srcRowCount, int srcColCount, int rowRepeat, int colRepeat, Ref dstRef, boolean transpose) {
+		final RefSheet dstRefSheet = dstRef.getOwnerSheet();
+		final int dstT = dstRef.getTopRow();
+		final int dstL = dstRef.getLeftCol();
+		final int dstRowCount = transpose ? srcColCount * colRepeat : srcRowCount * rowRepeat;
+		final int dstColCount = transpose ? srcRowCount * rowRepeat : srcColCount * colRepeat; 
+		final int dstB = dstT + dstRowCount - 1;
+		final int dstR = dstL + dstColCount - 1;
+		return new AreaRefImpl(dstT, dstL, dstB, dstR, dstRefSheet);
+	}
+	private Ref copyRefs(boolean sameRow, SortedMap<Integer, Ref> srcRefs, int srcColCount, int srcRowCount, int colRepeat, int rowRepeat, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, Set<Ref> last, Set<Ref> all) {
+		final Ref pasteRef = getPasteRef(srcRowCount, srcColCount, rowRepeat, colRepeat, dstRef, transpose);
 		if (pasteType == Range.PASTE_COLUMN_WIDTHS) {
 			final Integer lastKey = srcRefs.lastKey();
 			final Ref srcRef = srcRefs.get(lastKey);
 			final int srclCol = srcRef.getLeftCol();
 			final Sheet srcSheet = BookHelper.getSheet(_sheet, srcRef.getOwnerSheet());
 			final int widthRepeatCount = srcRef.getColumnCount();
-			copyColumnWidths(srcSheet, widthRepeatCount, srclCol, dstRef.getOwnerSheet(), dstRef.getTopRow(), dstRef.getLeftCol(), 
-					(transpose ? srcColCount : srcRowCount) * rowRepeat, (transpose ? srcRowCount : srcColCount) * colRepeat);
-			return;
+			copyColumnWidths(srcSheet, widthRepeatCount, srclCol, pasteRef);
+			return pasteRef;
 		}
 		
 		final RefSheet dstSheet = dstRef.getOwnerSheet();
@@ -875,9 +890,10 @@ public class RangeImpl implements Range {
 				rowCopyRefs(srcRefs, srcRowCount, srcColCount, colRepeat, rowRepeat, dstSheet, tRow, bRow, lCol, pasteType, pasteOp, skipBlanks, transpose, last, all);
 			}
 		}
+		return pasteRef;
 	}
 	
-	private void copy(Ref srcRef, int srcColCount, int srcRowCount, Range dstRange, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, Set<Ref> last, Set<Ref> all) {
+	private Ref copy(Ref srcRef, int srcColCount, int srcRowCount, Range dstRange, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, Set<Ref> last, Set<Ref> all) {
 		if (pasteType == Range.PASTE_COLUMN_WIDTHS) { //ignore transpose in such case when only one srcRef
 			final int lCol = srcRef.getLeftCol();
 			final int rCol = srcRef.getRightCol();
@@ -890,19 +906,20 @@ public class RangeImpl implements Range {
 		final int dstRowCount = transpose ? dstRef.getColumnCount() : dstRef.getRowCount();
 		
 		if ((dstRowCount % srcRowCount) == 0 && (dstColCount % srcColCount) == 0) {
-			copyRef(srcRef, dstColCount/srcColCount, dstRowCount/srcRowCount, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
+			return copyRef(srcRef, dstColCount/srcColCount, dstRowCount/srcRowCount, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
 		} else if (dstColCount == 1 && (dstRowCount % srcRowCount) == 0) {
-			copyRef(srcRef, 1, dstRowCount/srcRowCount, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
+			return copyRef(srcRef, 1, dstRowCount/srcRowCount, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
 		} else if (dstRowCount == 1 && (dstColCount % srcColCount) == 0) {
-			copyRef(srcRef, dstColCount/srcColCount, 1, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
+			return copyRef(srcRef, dstColCount/srcColCount, 1, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
 		} else {
-			copyRef(srcRef, 1, 1, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
+			return copyRef(srcRef, 1, 1, dstRef, pasteType, pasteOp, skipBlanks, transpose, last, all);
 		}
 	}
 
-	private void copyColumnWidths(Sheet srcSheet, int widthRepeatCount, int srclCol, RefSheet dstRefSheet, int dsttRow, int dstlCol, int dstRowCount, int dstColCount) {
-		final int dstbRow = dsttRow + dstRowCount - 1;
-		final int dstrCol = dstlCol + dstColCount - 1;
+	private void copyColumnWidths(Sheet srcSheet, int widthRepeatCount, int srclCol, Ref dstRef) {
+		final int dstlCol = dstRef.getLeftCol();
+		final int dstColCount = dstRef.getColumnCount();
+		final RefSheet dstRefSheet = dstRef.getOwnerSheet();
 		final Sheet dstSheet = BookHelper.getSheet(_sheet, dstRefSheet);
 		for (int count = 0; count < dstColCount; ++count) {
 			final int dstCol = dstlCol + count;
@@ -912,21 +929,20 @@ public class RangeImpl implements Range {
 		}
 		final Book book = (Book) dstSheet.getWorkbook();
 		final Set<Ref> affected = new HashSet<Ref>();
-		affected.add(new AreaRefImpl(dsttRow, dstlCol, dstbRow, dstrCol, dstRefSheet));
+		affected.add(dstRef);
 		BookHelper.notifySizeChanges(book, affected);
 	}
 	
-	private void copyRef(Ref srcRef, int colRepeat, int rowRepeat, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, Set<Ref> last, Set<Ref> all) {
+	private Ref copyRef(Ref srcRef, int colRepeat, int rowRepeat, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, Set<Ref> last, Set<Ref> all) {
 		final int srcRowCount = srcRef.getRowCount();
 		final int srcColCount = srcRef.getColumnCount();
+		final Ref pasteRef = getPasteRef(srcRowCount, srcColCount, rowRepeat, colRepeat, dstRef, transpose);
 		if (pasteType == Range.PASTE_COLUMN_WIDTHS) {
 			final int srclCol = srcRef.getLeftCol();
 			final Sheet srcSheet = BookHelper.getSheet(_sheet, srcRef.getOwnerSheet());
-			copyColumnWidths(srcSheet, srcColCount, srclCol, dstRef.getOwnerSheet(), dstRef.getTopRow(), dstRef.getLeftCol(), 
-					(transpose ? srcColCount : srcRowCount) * rowRepeat, (transpose ? srcRowCount : srcColCount) * colRepeat);
-			return;
+			copyColumnWidths(srcSheet, srcColCount, srclCol, pasteRef);
+			return pasteRef;
 		}
-
 		final int tRow = srcRef.getTopRow();
 		final int lCol = srcRef.getLeftCol();
 		final int bRow = srcRef.getBottomRow();
@@ -974,11 +990,8 @@ public class RangeImpl implements Range {
 				}
 			}
 		}
-		final int dstTRow = dstRef.getTopRow();
-		final int dstBRow = dstTRow + (transpose ? colRepeat * srcColCount : rowRepeat * srcRowCount) - 1;
-		final int dstLCol = dstRef.getLeftCol();
-		final int dstRCol = dstLCol + (transpose ? rowRepeat * srcRowCount : colRepeat * srcColCount) - 1;
-		all.add(new AreaRefImpl(dstTRow, dstLCol, dstBRow, dstRCol, dstRefsheet));
+		all.add(pasteRef);
+		return pasteRef;
 	}
 	
 	@Override

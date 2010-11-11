@@ -124,8 +124,9 @@ public interface Range {
 	/**
 	 * Copy data from this range to the specified destination range.
 	 * @param dstRange the destination range.
+	 * @return the real destination range.
 	 */
-	public void copy(Range dstRange);
+	public Range copy(Range dstRange);
 	
 	/**
 	 * Pastes a Range from the Clipboard into this range.
@@ -133,8 +134,9 @@ public interface Range {
 	 * @param operation the paste operation
 	 * @param SkipBlanks true to not have blank cells in the ranage on the Clipboard pasted into this range; default false.
 	 * @param transpose true to transpose rows and columns when pasting to this range; default false.
+	 * @return real destination range that was pasted into.
 	 */
-	public void pasteSpecial(int pasteType, int operation, boolean SkipBlanks, boolean transpose);
+	public Range pasteSpecial(int pasteType, int operation, boolean SkipBlanks, boolean transpose);
 	
 	/**
 	 * Pastes to a destination Range from this range.
@@ -143,8 +145,9 @@ public interface Range {
 	 * @param operation the paste operation
 	 * @param SkipBlanks true to not have blank cells in the ranage on the Clipboard pasted into this range; default false.
 	 * @param transpose true to transpose rows and columns when pasting to this range; default false.
+	 * @return real destination range that was pasted into.
 	 */
-	public void pasteSpecial(Range dstRange, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose);
+	public Range pasteSpecial(Range dstRange, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose);
 	
 	/**
 	 * Insert this Range. 

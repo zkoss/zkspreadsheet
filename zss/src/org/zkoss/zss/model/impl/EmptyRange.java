@@ -40,7 +40,8 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public void copy(Range dstRange) {
+	public Range copy(Range dstRange) {
+		return null;
 	}
 
 	@Override
@@ -151,13 +152,15 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public void pasteSpecial(int pasteType, int operation, boolean SkipBlanks,
+	public Range pasteSpecial(int pasteType, int operation, boolean SkipBlanks,
 			boolean transpose) {
+		return null;
 	}
 
 	@Override
-	public void pasteSpecial(Range dstRange, int pasteType, int pasteOp,
+	public Range pasteSpecial(Range dstRange, int pasteType, int pasteOp,
 			boolean skipBlanks, boolean transpose) {
+		return null;
 	}
 
 	@Override

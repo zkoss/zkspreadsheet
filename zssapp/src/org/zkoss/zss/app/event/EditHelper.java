@@ -26,6 +26,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zss.app.MainWindowCtrl;
 import org.zkoss.zss.model.Range;
+import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
@@ -133,7 +134,7 @@ public final class EditHelper {
 //				e.printStackTrace();
 //			}
 //		}
-			Utils.pasteSpecial(getSourceSheet(ss), 
+			final Range rng = Utils.pasteSpecial(getSourceSheet(ss), 
 					getSourceRange(ss), 
 					ss.getSelectedSheet(), 
 					dstRange.getTop(),
@@ -145,6 +146,8 @@ public final class EditHelper {
 					false, false);
 			clearHighlightIfNeed(ss);
 			clearCutRangeIfNeed(ss);
+			ss.setSelection(new Rect(rng.getColumn() - 1, rng.getRow() - 1, rng.getLastColumn() - 1, rng.getLastRow() - 1));
+			ss.focus();
 		}
 		//TODO : test if needed
 		//remSheet.unmergeCells(srcLeft, srcTop, srcRight, srcBottom);
@@ -185,7 +188,7 @@ public final class EditHelper {
 		Sheet srcSheet = getSourceSheet(ss);
 		if (srcSheet != null) {
 			final Rect dst = ss.getSelection();
-			Utils.pasteSpecial(srcSheet, 
+			final Range rng = Utils.pasteSpecial(srcSheet, 
 					getSourceRange(ss), 
 					ss.getSelectedSheet(), 
 					dst.getTop(),
@@ -197,6 +200,8 @@ public final class EditHelper {
 					skipBlanks, transpose);
 			clearHighlightIfNeed(ss);
 			clearCutRangeIfNeed(ss);
+			ss.setSelection(new Rect(rng.getColumn() - 1, rng.getRow() - 1, rng.getLastColumn() - 1, rng.getLastRow() - 1));
+			ss.focus();
 		}
 	}
 	
