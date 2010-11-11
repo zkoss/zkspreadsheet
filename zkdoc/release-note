@@ -31,6 +31,7 @@ ZK Spreadsheet 2.0.0
   172 paste transpose error
   182 Exception when right click row header and insert a row
   187 Select and focus shall not move when insert/delete columns/rows/cells
+  188 NullPointerException when delete columns
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

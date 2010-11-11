@@ -198,12 +198,14 @@ public class CellFormatHelper {
 				hitMerge = true;
 				right = Utils.getCell(_sheet, _row, rect.getRight());
 			}
-			CellStyle style = right.getCellStyle();
-			if (style != null){
-				int bb = style.getBorderRight();
-				//String color = BookHelper.indexToRGB(_book, style.getRightBorderColor());
-				String color = BookHelper.colorToHTML(_book, style.getRightBorderColorColor());
-				hitRight = appendBorderStyle(sb, "right", bb, color);
+			if (right != null) {
+				CellStyle style = right.getCellStyle();
+				if (style != null){
+					int bb = style.getBorderRight();
+					//String color = BookHelper.indexToRGB(_book, style.getRightBorderColor());
+					String color = BookHelper.colorToHTML(_book, style.getRightBorderColorColor());
+					hitRight = appendBorderStyle(sb, "right", bb, color);
+				}
 			}
 		}
 
