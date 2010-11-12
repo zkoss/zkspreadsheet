@@ -16,6 +16,7 @@ ZK Spreadsheet 2.0.0
   158 ZK Spreadsheet Live support colorbutton without depending zkex
   160 ZK Spreadsheet Live support import, open file
   165 Support 2007 Excel file format export to PDF
+  192 Support exporting Excel Chart to PDF
 
 *Bug 
   132 view ZK Spreadsheet Live index.zul cause NullPointerException
@@ -36,7 +37,7 @@ ZK Spreadsheet 2.0.0
   188 NullPointerException when delete columns
   189 Cell formula is not properly shifted when delete rows
   190 Selection is not correctly placed after paste.
-  192 Support exporting Excel Chart to PDF
+  193 Throw exception when open a sheet with random named function
 
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 
