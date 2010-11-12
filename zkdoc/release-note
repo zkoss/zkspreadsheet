@@ -15,6 +15,7 @@ ZK Spreadsheet 2.0.0
   152 Support Ranges.range(sheet, namedRange)
   158 ZK Spreadsheet Live support colorbutton without depending zkex
   160 ZK Spreadsheet Live support import, open file
+  165 Support 2007 Excel file format export to PDF
 
 *Bug 
   132 view ZK Spreadsheet Live index.zul cause NullPointerException
@@ -24,6 +25,7 @@ ZK Spreadsheet 2.0.0
   149 change size of multi-column
   150 change size of multi-row
   156 spring DelegatingVariableResolver in Spreadsheet doesn't work
+  164 no grid line while export to pdf
   167 set background color seems like multiple selection in color choosing
   168 Exception while set background color
   170 Set font color of a region with different font size, will resize the font size.
@@ -34,7 +36,8 @@ ZK Spreadsheet 2.0.0
   188 NullPointerException when delete columns
   189 Cell formula is not properly shifted when delete rows
   190 Selection is not correctly placed after paste.
-  
+  192 Support exporting Excel Chart to PDF
+
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 
     name conflicts with of those in poi.jar, so it is now OK to put both zpoi.jar and poi.jar in class path.

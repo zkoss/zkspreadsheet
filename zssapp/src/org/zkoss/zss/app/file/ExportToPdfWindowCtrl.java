@@ -18,6 +18,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.file;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -118,7 +119,7 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	 */
 	private void applyPrintSetting() {
 		ss.getSelectedSheet().getPrintSetup().setLandscape(orientation.getSelectedItem() == landscape);
-		
+		ss.getSelectedSheet().setPrintGridlines(includeGridlines());
 		boolean isLandscape = orientation.getSelectedItem() == landscape;
 		
 		int numSheet = ss.getBook().getNumberOfSheets();
@@ -143,34 +144,21 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void onClick$export() 
-		throws InvalidFormatException, IOException, InterruptedException{
+		throws InvalidFormatException, IOException, InterruptedException {
 		
 		applyPrintSetting();
 		
 		Exporter c = new PdfExporter();
 		((PdfExporter)c).enableHeadings(includeHeadings());
-		((PdfExporter)c).enableGridLines(includeGridlines());
 		
-		File tempDir = createTempDir();
-		OutputStream os = null;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		export(c, baos);
 		
-		String outputFilePath = tempDir.getAbsolutePath() 
-	    	+ File.separator
-	    	+ System.currentTimeMillis() + ".pdf";
-		
-		os = new java.io.FileOutputStream(outputFilePath);
-		export(c, os);
-		Files.close(os);
-		
-		final InputStream mediais = new FileInputStream(new File(outputFilePath));
-		final AMedia amedia = new AMedia("generatedReport.pdf", "pdf", "application/pdf", mediais);
+		final AMedia amedia = new AMedia("generatedReport.pdf", "pdf", "application/pdf", baos.toByteArray());
 
 		Filedownload.save(amedia);
 		
 		revertPrintSetting();
-
-		//remove temp dir containing pdf output 
-		recursiveDelete(tempDir);
 
 		((Component)self.getSpaceOwner()).detach();
 	}
@@ -194,56 +182,5 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	
 	private boolean includeGridlines(){
 		return !noGridlines.isChecked();
-	}
-	
-	/**
-	 * Create a new temporary directory. Use something like
-	 * {@link #recursiveDelete(File)} to clean this directory up since it isn't
-	 * deleted automatically
-	 * @return  the new directory
-	 * @throws IOException if there is an error creating the temporary directory
-	 */
-	public File createTempDir() throws IOException {
-		final File sysTempDir = new File(System.getProperty("java.io.tmpdir"));
-		File newTempDir;
-		final int maxAttempts = 9;
-		int attemptCount = 0;
-		do {
-			attemptCount++;
-			if (attemptCount > maxAttempts) {
-				throw new IOException(
-						"The highly improbable has occurred! Failed to "
-								+ "create a unique temporary directory after "
-								+ maxAttempts + " attempts.");
-			}
-			String dirName = UUID.randomUUID().toString();
-			newTempDir = new File(sysTempDir, dirName);
-		} while (newTempDir.exists());
-
-		if (newTempDir.mkdirs()) {
-			return newTempDir;
-		} else {
-			throw new IOException("Failed to create temp dir named "
-					+ newTempDir.getAbsolutePath());
-		}
-	}
-	
-	/**
-	 * Recursively delete file or directory
-	 * @param fileOrDir
-	 *          the file or dir to delete
-	 * @return
-	 *          true iff all files are successfully deleted
-	 */
-	public boolean recursiveDelete(File fileOrDir) {
-		if (fileOrDir.isDirectory()) {
-			// recursively delete contents
-			for (File innerFile : fileOrDir.listFiles()) {
-				if (!recursiveDelete(innerFile)) {
-					return false;
-				}
-			}
-		}
-		return fileOrDir.delete();
 	}
 }
