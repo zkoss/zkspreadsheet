@@ -20,7 +20,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 (function () {
 	_skey = [32,106,107,109,110,111,186,187,188,189,190,191,192,220,221,222,219];
 	function asciiChar (charcode) {
-		if (charcode < 32 || charcode > 127) return null;
+		if ((charcode != 13 && charcode < 32) || charcode > 127) return null;
 		return String.fromCharCode(charcode);
 	}
 	function isAsciiCharkey (keycode) {

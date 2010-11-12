@@ -3404,7 +3404,7 @@ public class Spreadsheet extends XulElement {
 
 	static {
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_FOUCSED, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_CELL_SELECTION,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_CELL_SELECTION,	CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_SELECTION_CHANGE, CE_IMPORTANT | CE_DUPLICATE_IGNORE | CE_NON_DEFERRABLE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_RIGHT_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
@@ -3418,7 +3418,7 @@ public class Spreadsheet extends XulElement {
 		
 		addClientEvent(Spreadsheet.class, "onZSSStartEditing", CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, "onZSSEditboxEditing", CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, "onZSSStopEditing", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, "onZSSStopEditing", CE_IMPORTANT);
 		addClientEvent(Spreadsheet.class, "onZSSCellFocused", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, "onZSSCellFetch", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, "onZSSSyncBlock", CE_IMPORTANT | CE_DUPLICATE_IGNORE);

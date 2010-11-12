@@ -181,3 +181,5 @@ zkS._hasScrollBar = function (cmp, vert) {
 	}
 	return (off - client) > 3 ? true : false;
 };
+
+zkS._enterChar = String.fromCharCode(13);

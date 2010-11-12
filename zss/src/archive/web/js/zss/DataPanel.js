@@ -133,6 +133,45 @@ zss.DataPanel = zk.$extends(zk.Object, {
 				{token: "", sheetId: sheet.serverSheetId, row: row, col: col, clienttxt: val}, null, 25);
 		return true;
 	},
+	//bug #117 Barcode Scanner data incomplete
+	_insertAndNext: function (row, col, value) {
+		var sheet = this.sheet;
+		sheet.state = zss.SSheetCtrl.FOCUSED;
+		sheet.dp.moveDown();
+		sheet._wgt.fire('onZSSStopEditing', 
+				{token: null, sheetId: sheet.serverSheetId, row: row, col: col, value: value}, {toServer: true}, 25);
+	},
+	/* move focus to a cell and start editing the value. This method will do - 
+	* 1. check if the cell loaded already or not
+	* 2. if not loaded, it will cause a asynchronized loading. after loading then do 3.
+	* 3. if loaded, then invoke _moveFocus to move to loaded cell; then call sheet.editor.edit() to start editing
+	*/
+	//bug #117 Barcode Scanner data incomplete
+	_moveFocusAndEdit: function(row, col, value, focus) {
+		var sheet = this.sheet,
+			fzr = sheet.frozenRow,
+			fzc = sheet.frozenCol,
+			local = this,
+			fn = function () {
+				if (focus)
+					local._moveFocus(row, col, true, true);
+				if (sheet.state != zss.SSheetCtrl.START_EDIT)
+					local.startEditing();
+				cell = sheet.getFocusedCell();
+				if (cell != null) {
+					sheet.editor.edit(cell.comp, row, col, value);
+					sheet.state = zss.SSheetCtrl.EDITING;
+				}
+			},
+			block = sheet.activeBlock,
+		//if target cell is on frozon row and col
+		//then modify the load target to a loaded cell
+			lr = (row <= fzr ? block.range.top : row),
+			lc = (col <= fzc ? block.range.left : col),
+			r = block.loadCell(lr, lc, 5, fn);
+		if(r)
+			fn();
+	},
 	//@param value to start editing
 	//@param server boolean whether the value come from server 
 	_startEditing: function (value, server) {
@@ -147,14 +186,30 @@ zss.DataPanel = zk.$extends(zk.Object, {
 					value = sheet._clienttxt;
 				sheet._clienttxt = '';
 				var editor = sheet.editor,
-					pos = sheet.getLastFocus();
-				editor.edit(cell.comp, pos.row, pos.column, value);
-				sheet.state = zss.SSheetCtrl.EDITING;
-			} else if (sheet.state == zss.SSheetCtrl.FOCUSED) {
-				value = sheet._clienttxt;
-				var editor = sheet.editor,
-				pos = sheet.getLastFocus();
-				editor.edit(cell.comp, pos.row, pos.column, value);
+					pos = sheet.getLastFocus(),
+					row = pos.row,
+					col = pos.column,
+					j = value.indexOf(zkS._enterChar),
+					val;
+				//handle speed input with Enter(0x0D) key
+				while (j >= 0) {
+					val = value.substring(0, j);
+					if (sheet.state != zss.SSheetCtrl.START_EDIT) {
+						sheet.state = zss.SSheetCtrl.START_EDIT;
+						sheet._wgt.fire('onZSSStartEditing',
+								{token: "", sheetId: sheet.serverSheetId, row: row, col: col, clienttxt: val}, null, 25);
+					}
+					sheet.state = zss.SSheetCtrl.FOCUSED;
+					sheet._wgt.fire('onZSSStopEditing', 
+							{token: "", sheetId: sheet.serverSheetId, row: row, col: col, value: val}, {toServer: true}, 25);
+					++row; //move down to next cell
+					value = value.substring(j+1);
+					j = value.indexOf(zkS._enterChar);
+				}
+				if (value.length > 0)
+					this._moveFocusAndEdit(row, col, value, pos.row != row); //set focus and enter editing mode
+				else if (pos.row != row)
+					this.moveFocus(row, col, true, true);
 			} else if (server && sheet.state == zss.SSheetCtrl.EDITING) {
 				var editor = sheet.editor,
 					pos = sheet.getLastFocus();
@@ -293,17 +348,17 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		var sheet = this.sheet,
 			fzr = sheet.frozenRow,
 			fzc = sheet.frozenCol,
-			local = this;
-		var fn = function () {
-			//TODO, cell not initial, what sholud i do?
-			local._moveFocus(row, col, scroll, selection, noevt, noslevt);
-		}
-		var block = sheet.activeBlock,
+			local = this,
+			fn = function () {
+				//TODO, cell not initial, what sholud i do?
+				local._moveFocus(row, col, scroll, selection, noevt, noslevt);
+			},
+			block = sheet.activeBlock,
 		//if target cell is on frozon row and col
 		//then modify the load target to a loaded cell
 			lr = (row <= fzr ? block.range.top : row),
 			lc = (col <= fzc ? block.range.left : col),
-			r = sheet.activeBlock.loadCell(lr, lc, 5, fn);
+			r = block.loadCell(lr, lc, 5, fn);
 		if(r)
 			fn();
 	},
