@@ -63,7 +63,7 @@
 	</system-config>
 	Optional -->
 	<session-config>
-		<timeout-uri>/timeout.zul</timeout-uri>
+		<timeout-uri></timeout-uri>
 		<!--
 			An empty URL can cause the browser to reload the same URL
 			<timeout-uri></timeout-uri>

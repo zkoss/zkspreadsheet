@@ -257,14 +257,14 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		spreadsheet.addEventListener(Events.ON_CELL_FOUCSED,
 				new EventListener() {
 					public void onEvent(Event event) throws Exception {
-						FocusedEvent((CellEvent) event);
+						doFocusedEvent((CellEvent) event);
 					}
 				});
 
 		spreadsheet.addEventListener(Events.ON_STOP_EDITING,
 				new EventListener() {
 					public void onEvent(Event event) throws Exception {
-						onStopEditingEvent((StopEditingEvent) event);
+						doStopEditingEvent((StopEditingEvent) event);
 					}
 
 				});
@@ -272,28 +272,28 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		spreadsheet.addEventListener(Events.ON_EDITBOX_EDITING,
 				new EventListener() {
 					public void onEvent(Event event) throws Exception {
-						onEditboxEditingEvent((EditboxEditingEvent) event);
+						doEditboxEditingEvent((EditboxEditingEvent) event);
 					}
 				});
 
 		spreadsheet.addEventListener(Events.ON_CELL_RIGHT_CLICK,
 				new EventListener() {
 					public void onEvent(Event event) throws Exception {
-						MouseEvent((CellMouseEvent) event);
+						doMouseEvent((CellMouseEvent) event);
 					}
 				});
 
 		spreadsheet.addEventListener(Events.ON_HEADER_RIGHT_CLICK,
 				new EventListener() {
 					public void onEvent(Event event) throws Exception {
-						onHeaderMouseEvent((HeaderMouseEvent) event);
+						doHeaderMouseEvent((HeaderMouseEvent) event);
 					}
 				});
 
 		spreadsheet.addEventListener(Events.ON_CELL_SELECTION,
 				new EventListener() {
 					public void onEvent(Event event) throws Exception {
-						SelectionEvent((CellSelectionEvent) event);
+						doSelectionEvent((CellSelectionEvent) event);
 					}
 				});
 	}
@@ -375,7 +375,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	// SECTION Spreadsheet Event Handler
-	void MouseEvent(CellMouseEvent event) {
+	void doMouseEvent(CellMouseEvent event) {
 		event_x = event.getClientx();
 		event_y = event.getClienty();
 
@@ -406,7 +406,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		}
 	}
 
-	void onHeaderMouseEvent(HeaderMouseEvent event) {
+	void doHeaderMouseEvent(HeaderMouseEvent event) {
 		Menupopup headerMenu;
 		if (HeaderEvent.TOP_HEADER == event.getType()) {
 			headerMenu = (Menupopup) mainWin.getFellow("columnHeaderMenu");
@@ -419,7 +419,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		headerMenu.open(event.getClientx(), event.getClienty());
 	}
 
-	void FocusedEvent(CellEvent event) {
+	void doFocusedEvent(CellEvent event) {
 		// SECTION WORK1 FocusedEvent
 		try {
 			Sheet sheet = event.getSheet();
@@ -559,7 +559,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	// this is auto pushCellState in spreadsheet itself
-	void onStopEditingEvent(StopEditingEvent evt) {
+	void doStopEditingEvent(StopEditingEvent evt) {
 		try {
 			// the formula bar input
 			formulaEditbox.setValue((String) evt.getEditingValue());
@@ -587,7 +587,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		}
 	}
 
-	void onEditboxEditingEvent(EditboxEditingEvent evt) {
+	void doEditboxEditingEvent(EditboxEditingEvent evt) {
 		try {
 			formulaEditbox.setValue((String) evt.getEditingValue());
 		} catch (Exception e) {
@@ -595,7 +595,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		}
 	}
 
-	public void SelectionEvent(CellSelectionEvent event) {
+	public void doSelectionEvent(CellSelectionEvent event) {
 		isMergeCell = isMergedCell(
 				spreadsheet.getSelection().getTop(), 
 				spreadsheet.getSelection().getLeft(), 

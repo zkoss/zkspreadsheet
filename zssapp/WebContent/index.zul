@@ -484,7 +484,7 @@
 				
 				<!-- SECTION **********Formula bar*********************************************** -->
 				<south id="formulaBar" size="26px" flex="true" border="0px" style="border-bottom: 1px solid #D8D8D8;">
-					<hlayout spacing="0px" hflex="min">
+					<hlayout spacing="0px" hflex="true">
 						<combobox id="focusPosition" sclass="focusPosCombobox" 
 									height="21px" width="185px" mold="rounded"
 									style="text-align:center;">
@@ -493,7 +493,7 @@
 							<toolbarbutton style="text-decoration:none;color:black;font-size:16px;font-style:italic;text-align:center;"
 											label="f(x)" forward="onFormulaBarBtn" />
 						</div>
-						<textbox height="19px" id="formulaEditbox"
+						<textbox height="19px" id="formulaEditbox" hflex="true"
 									style="font-size:16px;border:0px;padding:3px"
 									action="onkeyup:zkau.send({uuid: 'tbxval2', 
 			           										   cmd:  'onChanging', 
