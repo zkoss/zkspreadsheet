@@ -37,6 +37,7 @@ ZK Spreadsheet 2.0.0
   188 NullPointerException when delete columns
   189 Cell formula is not properly shifted when delete rows
   190 Selection is not correctly placed after paste.
+  191 Shall return #NAME? when entering a random named function
   193 Throw exception when open a sheet with random named function
 
 * Upgrade Notes
