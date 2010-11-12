@@ -18,9 +18,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app;
 
-import static org.zkoss.zss.app.event.EditHelper.getPasteOperation;
-import static org.zkoss.zss.app.event.EditHelper.getPasteType;
-import static org.zkoss.zss.app.event.EditHelper.onPasteSpecial;
+import static org.zkoss.zss.app.cell.EditHelper.*;
 
 import java.util.HashMap;
 import org.zkoss.zk.ui.Component;

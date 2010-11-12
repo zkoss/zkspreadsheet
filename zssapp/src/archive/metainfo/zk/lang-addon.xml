@@ -24,4 +24,28 @@
 			<css-uri>css/dropdownbutton.css.dsp</css-uri>
 		</mold>
 	</component>
+	
+	<component>
+		<component-name>cellmenupopup</component-name>
+		<extends>menupopup</extends>
+		<component-class>org.zkoss.zss.app.zul.CellMenupopup</component-class>
+	</component>
+	
+	<component>
+		<component-name>sheets</component-name>
+		<extends>div</extends>
+		<component-class>org.zkoss.zss.app.zul.Sheets</component-class>
+	</component>
+	
+	<component>
+		<component-name>cellcontext</component-name>
+		<extends>window</extends>
+		<component-class>org.zkoss.zss.app.zul.CellContext</component-class>
+	</component>
+	
+	<component>
+		<component-name>fontfamily</component-name>
+		<extends>div</extends>
+		<component-class>org.zkoss.zss.app.zul.FontFamily</component-class>
+	</component>
 </language-addon>

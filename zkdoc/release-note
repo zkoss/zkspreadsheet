@@ -17,6 +17,7 @@ ZK Spreadsheet 2.0.0
   160 ZK Spreadsheet Live support import, open file
   165 Support 2007 Excel file format export to PDF
   192 Support exporting Excel Chart to PDF
+  194 ZK Spreadsheet Live support shift cell, entire row or column
 
 *Bug 
   132 view ZK Spreadsheet Live index.zul cause NullPointerException

@@ -19,6 +19,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.D
  */
 package org.zkoss.zss.app;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -44,15 +46,18 @@ import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.event.KeyEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.cell.EditHelper;
 import org.zkoss.zss.app.event.CellStyleHelper;
-import org.zkoss.zss.app.event.EditHelper;
 import org.zkoss.zss.app.event.ExportHelper;
 import org.zkoss.zss.app.event.HyperlinkHelper;
 import org.zkoss.zss.app.file.FileHelper;
+import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.app.sort.SortSelector;
 import org.zkoss.zss.app.zul.CellContext;
+import org.zkoss.zss.app.zul.CellMenupopup;
 import org.zkoss.zss.app.zul.FontFamily;
-import org.zkoss.zss.app.zul.SheetTabbox;
+import org.zkoss.zss.app.zul.Sheets;
+import org.zkoss.zss.app.zul.ZssappComponent;
 import org.zkoss.zss.app.zul.api.Colorbutton;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.impl.BookHelper;
@@ -118,7 +123,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	ColumnMenuHelper colmh;
 	RowMenuHelper rowmh;
-	CellMenuHelper cellmh;
 	FormatNumberHelper fnh;
 	FormulaCategoryHelper fch;
 	RangeHelper rangeh;
@@ -134,7 +138,8 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	Textbox formulaEditbox;
 	Spreadsheet spreadsheet;
-	SheetTabbox sheetTabbox;
+
+	Sheets sheets;
 
 	Combobox focusPosition;
 	FontFamily fontFamily;
@@ -154,6 +159,8 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	Toolbarbutton wrapTextBtn;
 	Toolbarbutton insertChartBtn;
 	Checkbox gridlinesCheckbox;
+	
+	CellMenupopup cellMenupopup;
 
 	South formulaBar;
 	Borderlayout topToolbars;
@@ -176,19 +183,17 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		super.doAfterCompose(comp);
 		desktop.setAttribute(MainWindowCtrl.class.getCanonicalName(), this);
 		
+		ininZssappComponent();
+				
 		fontColorBtn = (Colorbutton)comp.getFellow("fontColorBtn");
 		backgroundColorBtn = (Colorbutton)comp.getFellow("backgroundColorBtn");
 		importFile.setDisabled(!FileHelper.hasImportPermission());
-		
-		sheetTabbox.doAfterCompose(sheetTabbox);
-		
 
 		ssInit();
 		//sheetTBInit();
 
 		colmh = new ColumnMenuHelper(spreadsheet);
 		rowmh = new RowMenuHelper(spreadsheet);
-		cellmh = new CellMenuHelper(spreadsheet);
 		fnh = new FormatNumberHelper(spreadsheet);
 		fch = new FormulaCategoryHelper(spreadsheet);
 		rangeh = new RangeHelper(spreadsheet);
@@ -238,6 +243,22 @@ public class MainWindowCtrl extends GenericForwardComposer {
 					}
 				});
 		gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
+	}
+	
+	private void ininZssappComponent() {
+		Field[] flds = this.getClass().getDeclaredFields();
+		for (Field f : flds) {
+			try {
+				Object obj = f.get(this);
+				if (obj instanceof ZssappComponent) {
+					Method m = f.getType().getMethod("setSpreadsheet", Spreadsheet.class);
+					m.invoke(obj, spreadsheet);
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		sheets.redraw();
 	}
 
 	private void evalFormula(String input) {
@@ -299,74 +320,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void redrawSheetTabbox() {
-		sheetTabbox.redraw();
-	}
-	
-	public boolean shiftSheetLeft() {
-		//TODO: it should shift all, not just itself
-		Book book = spreadsheet.getBook();
-		String name = spreadsheet.getSelectedSheet().getSheetName();
-		Sheet sheet = spreadsheet.getSelectedSheet();
-		int index = book.getSheetIndex(sheet);
-		if (index > 0) {
-			book.setSheetOrder(name, index - 1);
-			sheetTabbox.redraw();
-			sheetTabbox.setCurrentSheet(index - 1);
-			return true;
-		}
-		return false;
-	}
-	
-	public boolean shiftSheetRight() {
-		//TODO: it should shift all, not just itself
-		Book book = spreadsheet.getBook();
-		String name = spreadsheet.getSelectedSheet().getSheetName();
-		Sheet sheet = spreadsheet.getSelectedSheet();
-		int index = book.getSheetIndex(sheet);
-		if (index < book.getNumberOfSheets() - 1) {
-			book.setSheetOrder(name, index + 1);
-			sheetTabbox.redraw();
-			sheetTabbox.setCurrentSheet(index + 1);
-			return true;
-		}
-		return false;
-	}
-	
-	public void deleteSheet() {
-		//TODO: it should shift all, not just itself
-		Book book = spreadsheet.getBook();
-		int index = book.getSheetIndex(spreadsheet.getSelectedSheet());
-		book.removeSheetAt(index);
-		int sheetCount = book.getNumberOfSheets();
-
-		sheetTabbox.redraw();
-		
-		//TODO: can remove all sheets ?
-		if (sheetCount > 0) {
-			sheetTabbox.setCurrentSheet(0);
-		} else {
-			spreadsheet.invalidate();
-			// TODO: after remove all sheets, why is there still sheet1's
-			// content?
-		}
-	}
-	
-	public void renameSheet(String newName) {
-		Book book = spreadsheet.getBook();
-		final Sheet selsheet  = spreadsheet.getSelectedSheet();
-		Sheet sheet = book.getSheet(newName);
-		if(sheet!=null){
-			try {
-				Messagebox.show("cannot set sheet name the same as other sheets");
-				return;
-			} catch (InterruptedException e) {
-			}
-			return;
-		}
-		final int index = book.getSheetIndex(selsheet);
-		book.setSheetName(index, newName);
-		sheetTabbox.redraw();
-		sheetTabbox.setCurrentSheet(index);
+		sheets.redraw();
 	}
 	
 	public void setSelectedSheet(String name) {
@@ -379,8 +333,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		event_x = event.getClientx();
 		event_y = event.getClienty();
 
-		Menupopup cellMenu = (Menupopup) mainWin.getFellow("cellMenu");
-		cellMenu.open(event_x + 5, event.getClienty());
+		cellMenupopup.open(event_x + 5, event.getClienty());
 	}
 
 	public void onUpload$insertImageMenu(UploadEvent event) {
@@ -632,13 +585,13 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 			switch (c) {
 			case 'X':
-				EditHelper.onCut(spreadsheet);
+				EditHelper.doCut(spreadsheet);
 				break;
 			case 'C':
-				EditHelper.onCopy(spreadsheet);
+				EditHelper.doCopy(spreadsheet);
 				break;
 			case 'V':
-				EditHelper.onPaste(spreadsheet);
+				EditHelper.doPaste(spreadsheet);
 				break;
 			case 'D':
 				onClearContent((ForwardEvent) null);
@@ -691,16 +644,12 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		ExportHelper.onExport(event);
 	}
 
-	public void onCellMenu(ForwardEvent event) {
-		cellmh.dispatcher((String) event.getData());
-	}
-
 	public void onFileNew(ForwardEvent event) {
 		FileHelper.openNewSpreadsheet(spreadsheet);
 
-		sheetTabbox.clear();
-		sheetTabbox.redraw();
-		spreadsheet.setSelectedSheet(sheetTabbox.getCurrenSheet());
+		sheets.clear();
+		sheets.redraw();
+		spreadsheet.setSelectedSheet(sheets.getCurrenSheet());
 	}
 
 	public void onFileSave(ForwardEvent event) {
@@ -800,16 +749,17 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		// spreadsheet.redo();
 	}
 
+	//TODO: move these method to compositive component
 	public void onEditCut(ForwardEvent event) {
-		EditHelper.onCut(spreadsheet);
+		EditHelper.doCut(spreadsheet);
 	}
 
 	public void onEditCopy(ForwardEvent event) {
-		EditHelper.onCopy(spreadsheet);
+		EditHelper.doCopy(spreadsheet);
 	}
 
 	public void onEditPaste(ForwardEvent event) {
-		EditHelper.onPaste(spreadsheet);
+		EditHelper.doPaste(spreadsheet);
 	}
 
 	public void onClearContent(ForwardEvent event) {
@@ -983,7 +933,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	public void onInsertSheet() {
 		int sheetCount = spreadsheet.getBook().getNumberOfSheets();
 		Sheet addedSheet = spreadsheet.getBook().createSheet("sheet " + (sheetCount + 1));
-		sheetTabbox.addSheet(addedSheet.getSheetName());
+		sheets.addSheet(addedSheet.getSheetName());
 	}
 
 	// SECTION HELP MENU
@@ -1345,10 +1295,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		rowmh.dispatcher((String) event.getData());
 	}
 
-	public void Menu(ForwardEvent event) {
-		cellmh.dispatcher((String) event.getData());
-	}
-
 	public void onRange(ForwardEvent event) {
 		rangeh.dispatcher((String) event.getData());
 	}
@@ -1622,7 +1568,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 						public void onEvent(Event event) throws Exception {
 							System.out.println("evt name: " + event.getName());
 							if ("onOk" == event.getName()) {
-								deleteSheet();
+								SheetHelper.deleteSheet(spreadsheet);
 							}			
 						}});
 		} catch (InterruptedException e) {

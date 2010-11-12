@@ -1,0 +1,17 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<div style="padding: 10px;">
+		<radiogroup id="deleteOption">
+			<vlayout spacing="0.3em">
+				<label value="Delete" />
+				<radio id="shiftCellLeft" label="Shift cells left" />
+				<radio id="shiftCellUp" label="Shift cells up" />
+				<radio id="entireRow" label="Entire row" />
+				<radio id="entireColumn" label="Entire column" />
+			</vlayout>
+		</radiogroup>
+		<div height="35px" style="float:right; padding-top: 5px;">
+			<button id="okBtn" label="OK" mold="trendy"></button>
+		</div>
+	</div>
+</zk>

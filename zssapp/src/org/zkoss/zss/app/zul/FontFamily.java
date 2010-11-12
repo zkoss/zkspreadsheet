@@ -12,17 +12,18 @@
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 
 {{IS_RIGHT
-	This program is distributed under GPL Version 3.0 in the hope that
-	it will be useful, but WITHOUT ANY WARRANTY.
 }}IS_RIGHT
 */
 package org.zkoss.zss.app.zul;
+
+import static org.zkoss.zss.app.base.Preconditions.checkNotNull;
 
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
@@ -37,20 +38,23 @@ import org.zkoss.zul.Div;
  * @author Sam
  *
  */
-public class FontFamily extends Div {
+public class FontFamily extends Div implements ZssappComponent, IdSpace{
+	
+	private final static String URI = "~./zssapp/html/fontFamily.zul";
 	
 	private Combobox fontfamilyCombobox;
 	
 	private Spreadsheet ss;
 	
-	public void setUri(String uri) {
-		Executions.createComponents(uri, this, null);
-		Components.wireVariables(this, (Object)this);
-		Components.addForwards(this, (Object)this, '$');
+	
+	public FontFamily() {
+		Executions.createComponents(URI, this, null);
+		
+		Components.wireVariables(this, this, '$', true, true);
+		Components.addForwards(this, this, '$');
 	}
 	
 	public void onSelect$fontfamilyCombobox(Event event) {
-
 		String font = fontfamilyCombobox.getSelectedItem().getLabel();
 		Events.postEvent(Events.ON_SELECT, this, event.getData());
 		MainWindowCtrl.getInstance().setFontFamily(font);
@@ -63,10 +67,23 @@ public class FontFamily extends Div {
 	public void setText(String fontFamily) {
 		fontfamilyCombobox.setText(fontFamily);
 	}
-	
-	public void onCreate() {
-		ss = MainWindowCtrl.getInstance().getSpreadsheet();
-		
+
+	public void setWidth(String width) {
+		fontfamilyCombobox.setWidth(width);
+	}
+
+	@Override
+	public Spreadsheet getSpreadsheet() {
+		return ss;
+	}
+
+	@Override
+	public void setSpreadsheet(Spreadsheet spreadsheet) {
+		ss = checkNotNull(spreadsheet, "Spreadsheet is null");
+		initFontFamily();
+	}
+
+	private void initFontFamily() {
 		ss.addEventListener(org.zkoss.zss.ui.event.Events.ON_CELL_FOUCSED, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				CellEvent evt = (CellEvent)event;
@@ -85,9 +102,5 @@ public class FontFamily extends Div {
 				}
 			}
 		});
-	}
-
-	public void setWidth(String width) {
-		fontfamilyCombobox.setWidth(width);
 	}
 }

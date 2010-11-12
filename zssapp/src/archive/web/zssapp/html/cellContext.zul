@@ -1,6 +1,5 @@
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 <?component name="borderSelector" inline="true" macroURI="/menus/border/borderSelector.zul"?>
-<?component name="fontfamily" class="org.zkoss.zss.app.zul.FontFamily" uri="/macros/fontFamily.zul"?>
 <style>
 		.fastIconWin .z-window-popup-cnt-noborder{
 			background: #f6f5f5 none;

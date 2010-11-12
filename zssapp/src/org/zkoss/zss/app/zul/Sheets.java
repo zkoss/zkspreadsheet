@@ -1,15 +1,17 @@
 package org.zkoss.zss.app.zul;
 
+import static org.zkoss.zss.app.base.Preconditions.checkNotNull;
+
 import java.util.HashMap;
 
 import org.zkoss.poi.ss.usermodel.Sheet;
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zk.ui.util.Composer;
 import org.zkoss.zss.app.MainWindowCtrl;
 import org.zkoss.zss.app.ctrl.RenameSheetCtrl;
+import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.SheetVisitor;
 import org.zkoss.zss.ui.impl.Utils;
@@ -21,13 +23,13 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabs;
 
 /**
- * SheetTabbox is responsible for switch sheets
+ * SheetsName is responsible for switch sheets
  * @author sam
  *
  */
-public class SheetTabbox extends Div implements Composer {
+public class Sheets extends Div implements ZssappComponent, IdSpace {
 	
-	private final static String URI = "/macros/sheetTabbox.zul";
+	private final static String URI = "~./zssapp/html/sheets.zul";
 	
 	private Tabbox tabbox;
 	
@@ -36,31 +38,22 @@ public class SheetTabbox extends Div implements Composer {
 	private Menupopup sheetContextMenu;
 	
 	private Menuitem shiftSheetLeft;
-	
 	private Menuitem shiftSheetRight;
-	
 	private Menuitem deleteSheet;
-	
 	private Menuitem renameSheet;
-	
 	private Menuitem copySheet;
 	
 	private Spreadsheet ss;
 	
-	public SheetTabbox() {
+	public Sheets() {
 		Executions.createComponents(URI, this, null);
-	}
-
-	@Override
-	public void doAfterCompose(Component comp) throws Exception {
-		Components.wireVariables(comp, (Object)this);
-		Components.addForwards(comp, (Object)this, '$');
-
-		ss = MainWindowCtrl.getInstance().getSpreadsheet();
-		redraw();
+		
+		Components.wireVariables(this, this, '$', true, true);
+		Components.addForwards(this, this, '$');
 	}
 	
 	public void onSelect$tabbox() {
+		//TODO: use MainWindowCtrl as 
 		MainWindowCtrl.getInstance().setSelectedSheet(tabbox.getSelectedTab().getLabel());
 	}
 	
@@ -116,27 +109,55 @@ public class SheetTabbox extends Div implements Composer {
 	}
 	
 	public void onClick$shiftSheetLeft() {
-		//TODO: show message if fail to shift
-		MainWindowCtrl.getInstance().shiftSheetLeft();
+		int newIdx = SheetHelper.shiftSheetLeft(checkNotNull(ss, "Spreadsheet is null"));
+		if (newIdx >= 0) {
+			redraw();
+			setCurrentSheet(newIdx);
+		} else {
+			//TODO: show error message
+		}
 	}
 	
 	public void onClick$shiftSheetRight() {
-		//TODO: show message if fail to shift
-		MainWindowCtrl.getInstance().shiftSheetRight();
+		int newIdx = SheetHelper.shiftSheetRight(checkNotNull(ss, "Spreadsheet is null"));
+		if (newIdx >= 0) {
+			redraw();
+			setCurrentSheet(newIdx);
+		} else {
+			//TODO: show error message
+		}
 	}
 	
 	public void onClick$deleteSheet() {
 		//TODO: show message if fail to shift
-		MainWindowCtrl.getInstance().deleteSheet();
+		int newIdx = SheetHelper.deleteSheet(checkNotNull(ss, "Spreadsheet is null"));
+		if (newIdx >= 0) {
+			redraw();
+			setCurrentSheet(newIdx);
+		} else {
+			//TODO: add a new sheet ?
+		}
 	}
 	
 	public void onClick$renameSheet() {
-		HashMap<String, String> arg = new HashMap<String, String>();
+		HashMap arg = ZssappComponents.newSpreadsheetArg(ss);
 		arg.put(RenameSheetCtrl.KEY_ARG_SHEET_NAME, getCurrenSheet());
-		Executions.createComponents("/menus/tab/rename.zul", null, arg);
+		//TODO: replace with simple inline editing, don't need to use window component
+		Executions.createComponents("~./zssapp/html/renameDlg.zul", null, arg);
 	}
 	
 	public void onClick$copySheet() {
 		throw new UiException("cop sheet not implement yet");
+	}
+
+
+	@Override
+	public Spreadsheet getSpreadsheet() {
+		return ss;
+	}
+
+	@Override
+	public void setSpreadsheet(Spreadsheet spreadsheet) {
+		ss = spreadsheet;
 	}
 }

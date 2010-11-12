@@ -4,14 +4,10 @@
 <?script type="text/javascript" src="/macros/zssapp.js.dsp?v=${desktop.webApp.build}"?>
 <?component name="columnHeaderMenu" inline="true" macroURI="/menus/header_cell/menuColumnHeader.zul"?>
 <?component name="rowHeaderMenu" inline="true" macroURI="/menus/header_cell/menuRowHeader.zul"?>
-<?component name="cellMenu" inline="true" macroURI="/menus/header_cell/menuCell.zul"?>
-<?component name="sheettabbox" class="org.zkoss.zss.app.zul.SheetTabbox"?>
-<?component name="fontfamily" class="org.zkoss.zss.app.zul.FontFamily" uri="/macros/fontFamily.zul"?>
 <?component name="fileexportwin" inline="true" macroURI="/menus/file/fileListExport.zul"?>
 <?component name="filedeletewin" inline="true" macroURI="/menus/file/fileListDelete.zul"?>
 <?component name="filesaveaswin" inline="true" macroURI="/menus/file/fileListSaveAs.zul"?>
 <?component name="borderSelector" inline="true" macroURI="/menus/border/borderSelector.zul"?>
-<?component name="cellcontext" class="org.zkoss.zss.app.zul.CellContext" uri="/macros/cellContext.zul"?>
 <?component name="formulacategory" inline="true" macroURI="/menus/formula/formulaCategory.zul"?>
 <?component name="formatnumberwin" inline="true" macroURI="/menus/format/menuFormatNumber.zul"?>
 <?component name="cheatsheet" inline="true" macroURI="/cheatsheet.zul"?>
@@ -484,7 +480,7 @@
 				
 				<!-- SECTION **********Formula bar*********************************************** -->
 				<south id="formulaBar" size="26px" flex="true" border="0px" style="border-bottom: 1px solid #D8D8D8;">
-					<hlayout spacing="0px" hflex="true">
+					<hlayout spacing="0px" hflex="min">
 						<combobox id="focusPosition" sclass="focusPosCombobox" 
 									height="21px" width="185px" mold="rounded"
 									style="text-align:center;">
@@ -493,7 +489,7 @@
 							<toolbarbutton style="text-decoration:none;color:black;font-size:16px;font-style:italic;text-align:center;"
 											label="f(x)" forward="onFormulaBarBtn" />
 						</div>
-						<textbox height="19px" id="formulaEditbox" hflex="true"
+						<textbox height="19px" id="formulaEditbox"
 									style="font-size:16px;border:0px;padding:3px"
 									action="onkeyup:zkau.send({uuid: 'tbxval2', 
 			           										   cmd:  'onChanging', 
@@ -502,15 +498,14 @@
 					</hlayout>
 				</south>
 	</borderlayout>
-	<sheettabbox id="sheetTabbox"></sheettabbox>
-
+	<sheets id="sheets"></sheets>
 	<spreadsheet id="spreadsheet" src="/xls/demo_sample.xls" maxrows="200"
 			maxcolumns="40" vflex="1" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
 			forward="onCtrlKey=mainWin.onSSCtrlKeys">
 	</spreadsheet>
 	<columnHeaderMenu id="columnHeaderMenu" />
 	<rowHeaderMenu id="rowHeaderMenu"/>
-	<cellMenu id="cellMenu"/>
+	<cellmenupopup id="cellMenupopup"></cellmenupopup>
 	<borderSelector id="borderSelector" />
 	<cellcontext id="cellContext"></cellcontext>
 	<formulacategory id="formulaCategory" />

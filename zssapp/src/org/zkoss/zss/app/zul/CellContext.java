@@ -18,10 +18,13 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul;
 
+import static org.zkoss.zss.app.base.Preconditions.checkNotNull;
+
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -40,7 +43,9 @@ import org.zkoss.zul.Window;
  * @author Sam
  *
  */
-public class CellContext extends Window {
+public class CellContext extends Window implements ZssappComponent, IdSpace {
+	
+	private final static String URI = "~./zssapp/html/cellContext.zul";
 	
 	FontFamily fontfamily;
 	Combobox _fontSizeCombobox;
@@ -53,49 +58,19 @@ public class CellContext extends Window {
 	Colorbutton _backgroundColorBtn;
 	Toolbarbutton _borderBtn;
 	Toolbarbutton _mergeCellBtn;
-
 	
 	private Spreadsheet ss;
 	
 	public CellContext() {
+		Executions.createComponents(URI, this, null);
+		
+		Components.wireVariables(this, this, '$', true, true);
+		Components.addForwards(this, this, '$');
+		
 		setVisible(false);
 		setSclass("fastIconWin");
 		setVflex("min");
 		setWidth("210px");
-		setWidgetListener("onShow", "this.$f('spreadsheet', true).focus(false);");
-	}
-	
-	public void setUri(String uri) {
-		Executions.createComponents(uri, this, null);
-		Components.wireVariables(this, (Object)this);
-		Components.addForwards(this, (Object)this, '$');
-	}
-	
-	public void onCreate() {
-		ss = MainWindowCtrl.getInstance().getSpreadsheet();
-
-		_fontColorBtn = (Colorbutton)this.getFellow("_fontColorBtn");
-		_backgroundColorBtn = (Colorbutton)this.getFellow("_backgroundColorBtn");
-		
-		
-		ss.addEventListener(Events.ON_CELL_RIGHT_CLICK, 
-			new EventListener() {
-				public void onEvent(Event event) throws Exception {
-					CellMouseEvent evt = (CellMouseEvent)event;
-					int clientX = evt.getClientx();
-					int clientY = evt.getClienty();
-
-					setIconsAttributes(
-						Utils.getCell(
-							ss.getSelectedSheet(), 
-							ss.getSelection().getTop(), 
-							ss.getSelection().getLeft()));
-					
-					CellContext.this.setLeft(Integer.toString(clientX + 5) + "px");
-					CellContext.this.setTop(Integer.toString(clientY - 100) + "px");
-					CellContext.this.doPopup();					
-				}
-		});
 	}
 	
 	private void setIconsAttributes(Cell cell) {
@@ -140,5 +115,44 @@ public class CellContext extends Window {
 	public void onBorderSelector(ForwardEvent evt) {
 		MainWindowCtrl.getInstance().onBorderSelector(evt);
 		setVisible(false);
+	}
+
+	@Override
+	public Spreadsheet getSpreadsheet() {
+		return ss;
+	}
+
+	@Override
+	public void setSpreadsheet(Spreadsheet spreadsheet) {
+		ss = checkNotNull(spreadsheet, "Spreadsheet is null");
+		initCellContext();
+	}
+	
+	private void initCellContext() {
+		//TODO: use id is better ? or id is enough ?
+		setWidgetListener("onShow", "this.$f('" + ss.getId() + "', true).focus(false);");
+
+		/*Note. the colorbutton here is interface, need to use getFellow to bind field*/
+		_fontColorBtn = (Colorbutton)this.getFellow("_fontColorBtn");
+		_backgroundColorBtn = (Colorbutton)this.getFellow("_backgroundColorBtn");
+
+		ss.addEventListener(Events.ON_CELL_RIGHT_CLICK, 
+			new EventListener() {
+				public void onEvent(Event event) throws Exception {					
+					CellMouseEvent evt = (CellMouseEvent)event;
+					int clientX = evt.getClientx();
+					int clientY = evt.getClienty();
+
+					setIconsAttributes(
+						Utils.getCell(
+							ss.getSelectedSheet(), 
+							ss.getSelection().getTop(), 
+							ss.getSelection().getLeft()));
+					
+					CellContext.this.setLeft(Integer.toString(clientX + 5) + "px");
+					CellContext.this.setTop(Integer.toString(clientY - 100) + "px");
+					CellContext.this.doPopup();
+				}
+		});
 	}
 }

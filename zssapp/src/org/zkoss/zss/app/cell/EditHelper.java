@@ -16,7 +16,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 	it will be useful, but WITHOUT ANY WARRANTY.
 }}IS_RIGHT
 */
-package org.zkoss.zss.app.event;
+package org.zkoss.zss.app.cell;
 
 import java.util.HashMap;
 
@@ -26,11 +26,9 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zss.app.MainWindowCtrl;
 import org.zkoss.zss.model.Range;
-import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
-import org.zkoss.zul.Messagebox;
 
 /**
  * A spreadsheet editor helper for onCopy, onPaste, onCut event.
@@ -40,17 +38,17 @@ import org.zkoss.zul.Messagebox;
 public final class EditHelper {
 	private EditHelper(){}
 	
-	private final static String IS_CUT = EditHelper.class.getSimpleName() + "_ON_CUT";
-	private final static String SRC_SHEET = EditHelper.class.getSimpleName() + "_SRC_SHEET";
-	private final static String SRC_RANGE = EditHelper.class.getSimpleName() + "_SRC_RANGE";
+	private final static String KEY_IS_CUT = "org.zkoss.zss.app.cell.editHelper.isCut";
+	private final static String KEY_SRC_SHEET = "org.zkoss.zss.app.cell.editHelper.sourceSheet";
+	private final static String KEY_SRC_RANGE = "org.zkoss.zss.app.cell.editHelper.SourceRange";
 
-	public static void onCut(Spreadsheet ss) {
-		ss.setAttribute(IS_CUT, Boolean.valueOf(true));
+	public static void doCut(Spreadsheet ss) {
+		ss.setAttribute(KEY_IS_CUT, Boolean.valueOf(true));
 		setSource(ss);
 	}
 	
-	public static void onCopy(Spreadsheet ss) {
-		ss.setAttribute(IS_CUT, Boolean.valueOf(false));
+	public static void doCopy(Spreadsheet ss) {
+		ss.setAttribute(KEY_IS_CUT, Boolean.valueOf(false));
 		setSource(ss);
 	}	
 	/**
@@ -59,7 +57,7 @@ public final class EditHelper {
 	 * @return
 	 */
 	private static boolean isCut(Spreadsheet ss) {
-		return Boolean.valueOf( (Boolean)ss.getAttribute(IS_CUT) ); //if attr is null return false
+		return Boolean.valueOf( (Boolean)ss.getAttribute(KEY_IS_CUT) ); //if attr is null return false
 	}
 	
 	/**
@@ -67,8 +65,8 @@ public final class EditHelper {
 	 * @param ss
 	 */
 	private static void setSource(Spreadsheet ss) {
-		ss.setAttribute(SRC_SHEET, ss.getSelectedSheet());
-		ss.setAttribute(SRC_RANGE, ss.getSelection());
+		ss.setAttribute(KEY_SRC_SHEET, ss.getSelectedSheet());
+		ss.setAttribute(KEY_SRC_RANGE, ss.getSelection());
 		
 		Rect sel = ss.getSelection();
 		if (sel.getBottom() >= ss.getMaxrows())
@@ -84,7 +82,7 @@ public final class EditHelper {
 	 * @return sheet
 	 */
 	public static Sheet getSourceSheet(Spreadsheet ss) {
-		return (Sheet)ss.getAttribute(SRC_SHEET);
+		return (Sheet)ss.getAttribute(KEY_SRC_SHEET);
 	}
 	
 	/**
@@ -92,7 +90,7 @@ public final class EditHelper {
 	 * @return rect
 	 */
 	public static Rect getSourceRange(Spreadsheet ss) {
-		return (Rect)ss.getAttribute(SRC_RANGE);
+		return (Rect)ss.getAttribute(KEY_SRC_RANGE);
 	}
 	
 	
@@ -120,7 +118,7 @@ public final class EditHelper {
 	 * @param skipBlanks
 	 * @param transpose
 	 */
-	public static void onPaste(Spreadsheet ss) {
+	public static void doPaste(Spreadsheet ss) {
 		Sheet srcSheet = getSourceSheet(ss);
 		Rect dstRange = ss.getSelection();
 		if (srcSheet != null) {
@@ -134,7 +132,7 @@ public final class EditHelper {
 //				e.printStackTrace();
 //			}
 //		}
-			final Range rng = Utils.pasteSpecial(getSourceSheet(ss), 
+			final Range rng = Utils.pasteSpecial(getSourceSheet(ss),
 					getSourceRange(ss), 
 					ss.getSelectedSheet(), 
 					dstRange.getTop(),
