@@ -29,7 +29,8 @@ public class RowMenuHelper {
 		} else if (type.equalsIgnoreCase("Height")) {
 			onRowHeaderMenuHeight();
 		} else if (type.equalsIgnoreCase("Format")) {
-			onRowHeaderMenuFormat();
+			//onRowHeaderMenuFormat();
+			throw new UiException("Not implement yet");
 			// }else if(type.equalsIgnoreCase("Hide")){
 			// onRowHeaderMenuHide();
 			// }else if(type.equalsIgnoreCase("Unhide")){
@@ -146,7 +147,7 @@ throw new UiException("clear rows not implmented yet");
 		}
 	}
 
-	public void onRowHeaderMenuFormat() {
-		MainWindowCtrl.getInstance().onFormatPopup();
-	}
+//	public void onRowHeaderMenuFormat() {
+//		MainWindowCtrl.getInstance().onFormatPopup();
+//	}
 }

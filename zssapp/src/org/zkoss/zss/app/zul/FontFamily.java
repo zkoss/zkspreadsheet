@@ -27,7 +27,7 @@ import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zss.app.MainWindowCtrl;
+import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.impl.Utils;
@@ -42,6 +42,8 @@ public class FontFamily extends Div implements ZssappComponent, IdSpace{
 	
 	private final static String URI = "~./zssapp/html/fontFamily.zul";
 	
+	//TODO: override combobox, provide onSelection event, 
+	// change font size when onSelection, this shall be configanle
 	private Combobox fontfamilyCombobox;
 	
 	private Spreadsheet ss;
@@ -56,8 +58,11 @@ public class FontFamily extends Div implements ZssappComponent, IdSpace{
 	
 	public void onSelect$fontfamilyCombobox(Event event) {
 		String font = fontfamilyCombobox.getSelectedItem().getLabel();
+		Utils.setFontFamily(ss.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(ss), font);
+		//post event out for container
 		Events.postEvent(Events.ON_SELECT, this, event.getData());
-		MainWindowCtrl.getInstance().setFontFamily(font);
+		//publish event queue for desktop
+		ZssappComponents.publishFontFamilyChanged(ss, font);
 	}
 	
 	public String getText() {
@@ -70,6 +75,10 @@ public class FontFamily extends Div implements ZssappComponent, IdSpace{
 
 	public void setWidth(String width) {
 		fontfamilyCombobox.setWidth(width);
+	}
+	
+	public void setStyle(String style) {
+		fontfamilyCombobox.setStyle(style);
 	}
 
 	@Override
@@ -84,12 +93,24 @@ public class FontFamily extends Div implements ZssappComponent, IdSpace{
 	}
 
 	private void initFontFamily() {
+		//TODO: add event queue
+		fontfamilyCombobox.setWidgetListener(Events.ON_OPEN, "this.$f('" + ss.getId() + "', true).focus(false);");
+		fontfamilyCombobox.setWidgetListener(Events.ON_SELECT, "this.$f('" + ss.getId() + "', true).focus(false);");
+		
+		ZssappComponents.subscribeFontFamilyChanged(ss, new EventListener() {
+			
+			@Override
+			public void onEvent(Event event) throws Exception {
+				if (fontfamilyCombobox.isVisible())
+					fontfamilyCombobox.setText((String)event.getData());
+			}
+		});
+		
 		ss.addEventListener(org.zkoss.zss.ui.event.Events.ON_CELL_FOUCSED, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				CellEvent evt = (CellEvent)event;
 				int row = evt.getRow();
 				int col = evt.getColumn();
-
 				Cell cell = Utils.getCell(ss.getSelectedSheet(), row, col);
 				
 				//set to default font family

@@ -19,7 +19,6 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app;
 
 import org.zkoss.zk.au.AuRequest;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.impl.LabelImageElement;
 
 /**
@@ -37,12 +36,5 @@ public class Dropdownbutton extends LabelImageElement {
 	@Override
 	public void service(AuRequest req, boolean arg1) {
 		super.service(req, arg1);
-		
-		/**
-		 * 1. Click event
-		 * 2. onPopup event
-		 */
 	}
-	
-	
 }

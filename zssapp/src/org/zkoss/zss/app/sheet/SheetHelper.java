@@ -18,6 +18,7 @@ package org.zkoss.zss.app.sheet;
 
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Messagebox;
 
@@ -99,5 +100,14 @@ public final class SheetHelper {
 		final int index = book.getSheetIndex(selsheet);
 		book.setSheetName(index, name);
 		return index;
+	}
+	
+	public static Rect getSpreadsheetMaxSelection(Spreadsheet spreadsheet) {
+		Rect selection = spreadsheet.getSelection();
+		if (selection.getBottom() >= spreadsheet.getMaxrows())
+			selection.setBottom(spreadsheet.getMaxrows() - 1);
+		if (selection.getRight() >= spreadsheet.getMaxcolumns())
+			selection.setRight(spreadsheet.getMaxcolumns() - 1);
+		return selection;
 	}
 }

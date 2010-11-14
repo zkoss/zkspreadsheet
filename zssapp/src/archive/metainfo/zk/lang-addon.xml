@@ -48,4 +48,28 @@
 		<extends>div</extends>
 		<component-class>org.zkoss.zss.app.zul.FontFamily</component-class>
 	</component>
+	
+	<component>
+		<component-name>fontsize</component-name>
+		<extends>div</extends>
+		<component-class>org.zkoss.zss.app.zul.FontSize</component-class>
+	</component>
+	
+	<component>
+		<component-name>fontboldbutton</component-name>
+		<extends>toolbarbutton</extends>
+		<component-class>org.zkoss.zss.app.zul.FontBoldButton</component-class>
+	</component>
+	
+	<component>
+		<component-name>borderbutton</component-name>
+		<extends>dropdownbutton</extends>
+		<component-class>org.zkoss.zss.app.zul.Borderbutton</component-class>
+	</component>
+
+	<component>
+		<component-name>zssapp</component-name>
+		<extends>div</extends>
+		<component-class>org.zkoss.zss.app.zul.Zssapp</component-class>
+	</component>
 </language-addon>

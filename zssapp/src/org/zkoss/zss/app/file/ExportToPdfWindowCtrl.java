@@ -18,24 +18,21 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.file;
 
+import static org.zkoss.zss.app.base.Preconditions.checkNotNull;
+
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.UUID;
 
 import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
 import org.zkoss.poi.ss.usermodel.PrintSetup;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.util.AreaReference;
-import org.zkoss.io.Files;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.ZssappComponents;
 import org.zkoss.zss.model.Exporter;
 import org.zkoss.zss.model.impl.PdfExporter;
 import org.zkoss.zss.ui.Rect;
@@ -93,10 +90,7 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		ss = (Spreadsheet)getParam("spreadsheet");
-		if (ss == null)
-			throw new UiException("Spreadsheet object is null");
-
+		ss = checkNotNull(ZssappComponents.getSpreadsheetFromArg(), "Spreadsheet is null");
 		loadPrintSetting();
 	}
 	

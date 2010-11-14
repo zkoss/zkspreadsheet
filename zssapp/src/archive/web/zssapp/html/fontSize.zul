@@ -1,13 +1,6 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<combobox  mold="rounded" width="50px"
-		forward="onSelect=onFontSizeSelect">
-		<attribute w:name="onOpen">
-			this.$f('spreadsheet').focus(false);
-		</attribute>
-		<attribute w:name="onSelect">
-			this.$f('spreadsheet').focus(false);
-		</attribute>
+	<combobox  id="fontSizeCombobox" mold="rounded" width="50px">
 		<comboitem label="8" />
 		<comboitem label="9" />
 		<comboitem label="10" />

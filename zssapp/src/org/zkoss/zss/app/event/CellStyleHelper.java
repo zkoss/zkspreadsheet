@@ -38,24 +38,24 @@ public final class CellStyleHelper {
 	 * Execute border base on event's parameter
 	 * @param event
 	 */
-	public static void onBorderEventHandler(ForwardEvent event) {
-		String param=(String)event.getData();
-		if (param == null)
-			return;
-		
-		MainWindowCtrl ctrl = MainWindowCtrl.getInstance();
-		Spreadsheet ss = ctrl.getSpreadsheet();
-		
-		//not permit to changing color and style
-		final BorderStyle lineStyle = BorderStyle.MEDIUM;
-		final String color = "#000000";
-
-		if (param.equals(Labels.getLabel("border.no")))
-			Utils.setBorder(ss.getSelectedSheet(), ss.getSelection(), BookHelper.BORDER_FULL, BorderStyle.NONE, color);
-		else {
-			Utils.setBorder(ss.getSelectedSheet(), ss.getSelection(), getBorderType(param), BorderStyle.MEDIUM, color);
-		}
-	}
+//	public static void onBorderEventHandler(ForwardEvent event) {
+//		String param=(String)event.getData();
+//		if (param == null)
+//			return;
+//		
+//		MainWindowCtrl ctrl = MainWindowCtrl.getInstance();
+//		Spreadsheet ss = ctrl.getSpreadsheet();
+//		
+//		//not permit to changing color and style
+//		final BorderStyle lineStyle = BorderStyle.MEDIUM;
+//		final String color = "#000000";
+//
+//		if (param.equals(Labels.getLabel("border.no")))
+//			Utils.setBorder(ss.getSelectedSheet(), ss.getSelection(), BookHelper.BORDER_FULL, BorderStyle.NONE, color);
+//		else {
+//			Utils.setBorder(ss.getSelectedSheet(), ss.getSelection(), getBorderType(param), BorderStyle.MEDIUM, color);
+//		}
+//	}
 	
 	/**
 	 * Returns the border type base on i3-label

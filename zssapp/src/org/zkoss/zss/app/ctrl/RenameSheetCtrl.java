@@ -5,6 +5,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.MainWindowCtrl;
 import org.zkoss.zss.app.sheet.SheetHelper;
+import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Messagebox;
@@ -43,7 +44,7 @@ public class RenameSheetCtrl extends GenericForwardComposer {
 		}
 		int idx = SheetHelper.renameSheet(ss, sheetName);
 		if (idx >= 0) {
-			MainWindowCtrl.getInstance().redrawSheetTabbox();
+			Zssapp.redrawSheets(ss);
 			((Component)spaceOwner).detach();
 		} else {
 			//TODO: show error message

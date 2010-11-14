@@ -35,6 +35,9 @@ public class CellMenupopup extends Menupopup implements ZssappComponent, IdSpace
 	
 	private final static String URI = "~./zssapp/html/cellMenu.zul";
 	
+	private final static String KEY_INSERT_WINDOW_DIALOG = "org.zkoss.zss.app.zul.cellMenupopup.insertWindowDialog";
+	private final static String KEY_DELETE_WINDOW_DIALOG = "org.zkoss.zss.app.zul.cellMenupopup.deleteWindowDialog";
+	
 	/* Setting */
 	//private boolean _insertVisible; 
 	//private boolean _insertDisable;
@@ -122,8 +125,11 @@ public class CellMenupopup extends Menupopup implements ZssappComponent, IdSpace
 	public void onClick$insert(ForwardEvent event) {
 		MouseEvent evt = (MouseEvent)event.getOrigin();
 		
-		InsertWindowDialog dialog = new InsertWindowDialog();
-		dialog.setSpreadsheet(ss);
+		InsertWindowDialog dialog = (InsertWindowDialog)ss.getAttribute(KEY_INSERT_WINDOW_DIALOG);
+		if (dialog == null) {
+			dialog = new InsertWindowDialog();
+			dialog.setSpreadsheet(ss);
+		}
 		//TODO: calculate proper dialog position
 		dialog.setLeft(evt.getX() + "px");
 		dialog.setTop(evt.getY() + "px");
@@ -133,8 +139,11 @@ public class CellMenupopup extends Menupopup implements ZssappComponent, IdSpace
 	public void onClick$delete(ForwardEvent event) {
 		MouseEvent evt = (MouseEvent)event.getOrigin();
 		
-		DeleteWindowDialog dialog = new DeleteWindowDialog();
-		dialog.setSpreadsheet(ss);
+		DeleteWindowDialog dialog = (DeleteWindowDialog)ss.getAttribute(KEY_DELETE_WINDOW_DIALOG);
+		if (dialog == null) {
+			dialog = new DeleteWindowDialog();
+			dialog.setSpreadsheet(ss);
+		}
 		//TODO: calculate proper dialog position
 		dialog.setLeft(evt.getX() + "px");
 		dialog.setTop(evt.getY() + "px");

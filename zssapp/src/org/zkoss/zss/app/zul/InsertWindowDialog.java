@@ -20,18 +20,14 @@ package org.zkoss.zss.app.zul;
 
 import static org.zkoss.zss.app.base.Preconditions.checkNotNull;
 
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.OpenEvent;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
@@ -66,12 +62,6 @@ public class InsertWindowDialog extends Window implements ZssappComponent{
 		setClosable(true);
 		//TODO: use I18n
 		setTitle("Insert");
-	}
-	
-	public void onOpen(OpenEvent evt) {
-		if (!evt.isOpen()) {
-			this.detach();
-		}
 	}
 	
 	public void onEcho() {

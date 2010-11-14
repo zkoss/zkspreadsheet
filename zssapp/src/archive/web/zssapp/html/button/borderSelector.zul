@@ -1,0 +1,29 @@
+<!-- my border selector-->
+<menupopup id="${arg.id}">
+	<menuitem label="${c:l('border.bottom')}" src="/img/border-bottom.png"
+		forward="onBorderSelector(${c:l('border.bottom')})" />
+	<menuitem label="${c:l('border.top')}" src="/img/border-top.png"
+		forward="onBorderSelector(${c:l('border.top')})" />
+	<menuitem label="${c:l('border.left')}" src="/img/border-left.png"
+		forward="onBorderSelector(${c:l('border.left')})" />
+	<menuitem label="${c:l('border.right')}" src="/img/border-right.png"
+		forward="onBorderSelector(${c:l('border.right')})" />
+	<menuseparator />			
+	<menuitem label="${c:l('border.no')}" src="/img/border.png"
+		forward="onBorderSelector(${c:l('border.no')})" />
+	<menuitem label="${c:l('border.full')}" src="/img/border-all.png"
+		forward="onBorderSelector(${c:l('border.full')})" />
+	<menuitem label="${c:l('border.outside')}"	src="/img/border-outside.png"
+		forward="onBorderSelector(${c:l('border.outside')})" />
+	<menuitem label="${c:l('border.inside')}" src="/img/border-inside.png"
+		forward="onBorderSelector(${c:l('border.inside')})" />
+	<menuseparator />
+	<menuitem label="${c:l('border.insideHorizontal')}" src="/img/border-horizontal.png"
+		forward="onBorderSelector(${c:l('border.insideHorizontal')})" />
+	<menuitem label="${c:l('border.insideVertical')}" src="/img/border-vertical.png"
+		forward="onBorderSelector(${c:l('border.insideVertical')})" />
+	<!-- NOT IMPLEMENT menuitem label="${c:l('border.diagonalDown')}" src="/img/border-down.png"
+		forward="onBorderSelector(${c:l('border.diagonalDown')})" />
+	<menuitem label="${c:l('border.diagonalUp')}" src="/img/border-up.png"
+		forward="onBorderSelector(${c:l('border.diagonalUp')})" /-->
+</menupopup>

@@ -27,15 +27,12 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.ForwardEvent;
-import org.zkoss.zss.app.MainWindowCtrl;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.zul.api.Colorbutton;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellMouseEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.impl.Utils;
-import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
 
@@ -48,15 +45,16 @@ public class CellContext extends Window implements ZssappComponent, IdSpace {
 	private final static String URI = "~./zssapp/html/cellContext.zul";
 	
 	FontFamily fontfamily;
-	Combobox _fontSizeCombobox;
-	Toolbarbutton _boldBtn;
+	FontSize fontSize;
+	//Toolbarbutton _boldBtn;
+	FontBoldButton boldBtn;
 	Toolbarbutton _italicBtn;
 	Toolbarbutton _alignLeftBtn;
 	Toolbarbutton _alignCenterBtn;
 	Toolbarbutton _alignRightBtn;
 	Colorbutton _fontColorBtn;
 	Colorbutton _backgroundColorBtn;
-	Toolbarbutton _borderBtn;
+	Borderbutton borderBtn;
 	Toolbarbutton _mergeCellBtn;
 	
 	private Spreadsheet ss;
@@ -66,7 +64,6 @@ public class CellContext extends Window implements ZssappComponent, IdSpace {
 		
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
-		
 		setVisible(false);
 		setSclass("fastIconWin");
 		setVflex("min");
@@ -83,9 +80,9 @@ public class CellContext extends Window implements ZssappComponent, IdSpace {
 		
 		Font font = CellHelper.getFont(cell);
 		fontfamily.setText(font.getFontName());
-		_fontSizeCombobox.setText(Integer.toString(font.getFontHeightInPoints()));
-		_boldBtn.setSclass(CellHelper.isBold(font) ? "clicked" : "");
-		_boldBtn.setClass(font.getItalic() ? "clicked" : "");
+		fontSize.setText(Integer.toString(font.getFontHeightInPoints()));
+		//_boldBtn.setSclass(CellHelper.isBold(font) ? "clicked" : "");
+		//_boldBtn.setClass(font.getItalic() ? "clicked" : "");
 		_alignLeftBtn.setSclass(CellHelper.isAlignLeft(cell) ? "clicked" : "");
 		_alignCenterBtn.setSclass(CellHelper.isAlignCenter(cell) ? "clicked" : "");
 		_alignRightBtn.setSclass(CellHelper.isAlignRight(cell) ? "clicked" : "");
@@ -98,22 +95,26 @@ public class CellContext extends Window implements ZssappComponent, IdSpace {
 	}
 	
 	public void onChange$_fontColorBtn(Event event) {
-		MainWindowCtrl.getInstance().setFontColor(_fontColorBtn.getColor());
+		//TODO color button shall do event, should not call controller
+		Zssapp.setFontColor(ss, _fontColorBtn.getColor());
 		setVisible(false);
 	}
 
 	public void onChange$_backgroundColorBtn(Event event) {
-		MainWindowCtrl.getInstance().setBackgroundColor(_backgroundColorBtn.getColor());
+		//TODO color button shall do event, should not call controller
+		Zssapp.setBackgroundColor(ss, _backgroundColorBtn.getColor());
 		setVisible(false);
 	}
 
-	public void onSelect$_fontSizeCombobox(Event event) {
+	public void onSelect$fontSize() {
 		setVisible(false);
-		MainWindowCtrl.getInstance().setFontSize(_fontSizeCombobox.getSelectedItem().getLabel());
 	}
 
-	public void onBorderSelector(ForwardEvent evt) {
-		MainWindowCtrl.getInstance().onBorderSelector(evt);
+	public void onClick$borderBtn() {
+		setVisible(false);
+	}
+	
+	public void onClick$boldBtn() {
 		setVisible(false);
 	}
 
@@ -129,7 +130,12 @@ public class CellContext extends Window implements ZssappComponent, IdSpace {
 	}
 	
 	private void initCellContext() {
-		//TODO: use id is better ? or id is enough ?
+		//move this to util
+		fontSize.setSpreadsheet(ss);
+		fontfamily.setSpreadsheet(ss);
+		borderBtn.setSpreadsheet(ss);
+		boldBtn.setSpreadsheet(ss);
+		
 		setWidgetListener("onShow", "this.$f('" + ss.getId() + "', true).focus(false);");
 
 		/*Note. the colorbutton here is interface, need to use getFellow to bind field*/

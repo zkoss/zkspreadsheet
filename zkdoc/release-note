@@ -28,6 +28,7 @@ ZK Spreadsheet 2.0.0
   150 change size of multi-row
   156 spring DelegatingVariableResolver in Spreadsheet doesn't work
   164 no grid line while export to pdf
+  166 ZK Spreadsheet Live, Modify the font size, cell height won't automatically adjust
   167 set background color seems like multiple selection in color choosing
   168 Exception while set background color
   170 Set font color of a region with different font size, will resize the font size.

@@ -35,12 +35,6 @@
 		}
 	</style>
 	<combobox id="fontfamilyCombobox" mold="rounded" width="125px">
-		<attribute w:name="onOpen">
-			this.$f('spreadsheet', true).focus(false);
-		</attribute>
-		<attribute w:name="onSelect">
-			this.$f('spreadsheet', true).focus(false);
-		</attribute>
 		<comboitem label="Calibri" sclass="calibriFont" />
 		<comboitem label="Courier New" sclass="courierFont" />
 		<comboitem label="Comic Sans MS" sclass="comicFont"/>

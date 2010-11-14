@@ -53,8 +53,8 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	}
 	
 	public void onSelect$tabbox() {
-		//TODO: use MainWindowCtrl as 
-		MainWindowCtrl.getInstance().setSelectedSheet(tabbox.getSelectedTab().getLabel());
+		//TODO: remove call controller, shall do event directly
+		Zssapp.setSelectedSheet(ss, tabbox.getSelectedTab().getLabel());
 	}
 	
 	/**
@@ -63,7 +63,8 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	 */
 	public void setCurrentSheet(int index) {
 		tabbox.setSelectedIndex(index);
-		MainWindowCtrl.getInstance().setSelectedSheet(tabbox.getSelectedTab().getLabel());
+		//TODO: remove call controller, shall do event directly
+		Zssapp.setSelectedSheet(ss, tabbox.getSelectedTab().getLabel());
 	}
 	
 	/**
@@ -142,6 +143,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	public void onClick$renameSheet() {
 		HashMap arg = ZssappComponents.newSpreadsheetArg(ss);
 		arg.put(RenameSheetCtrl.KEY_ARG_SHEET_NAME, getCurrenSheet());
+		
 		//TODO: replace with simple inline editing, don't need to use window component
 		Executions.createComponents("~./zssapp/html/renameDlg.zul", null, arg);
 	}

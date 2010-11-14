@@ -28,6 +28,8 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.MainWindowCtrl;
+import org.zkoss.zss.app.zul.Zssapp;
+import org.zkoss.zss.app.zul.ZssappComponents;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
@@ -74,7 +76,7 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		ss = MainWindowCtrl.getInstance().getSpreadsheet();
+		ss = ZssappComponents.getSpreadsheetFromArg();
 		initSupportFormat();
 		initImportOption();
 		initFileListbox();
@@ -125,7 +127,7 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 					@Override
 					public void onEvent(Event evt) throws Exception {
 						FileHelper.openSpreadsheet(ss, info);
-						MainWindowCtrl.getInstance().redrawSheetTabbox();
+						Zssapp.redrawSheets(ss);
 						((Component)spaceOwner).detach();
 					}
 				});
@@ -144,7 +146,7 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 	public void onClick$openFileMenuitem() {
 		FileHelper.openSpreadsheet(ss, 
 				(SpreadSheetMetaInfo)allFilesListbox.getSelectedItem().getValue());
-		MainWindowCtrl.getInstance().redrawSheetTabbox();
+		Zssapp.redrawSheets(ss);
 		((Component)spaceOwner).detach();
 	}
 	

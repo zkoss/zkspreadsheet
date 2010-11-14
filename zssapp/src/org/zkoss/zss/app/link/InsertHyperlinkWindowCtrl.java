@@ -18,6 +18,8 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.link;
 
+import static org.zkoss.zss.app.base.Preconditions.checkNotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -27,13 +29,12 @@ import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.ZssappComponents;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.SheetVisitor;
 import org.zkoss.zss.ui.impl.Utils;
@@ -78,9 +79,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
-		ss = (Spreadsheet)getParam("spreadsheet");
-		if (ss == null)
-			throw new UiException("Spreadsheet object is null");
+		ss = checkNotNull(ZssappComponents.getSpreadsheetFromArg(), "Spreadsheet is null");
 		
 		String display = Utils.getRange(ss.getSelectedSheet(), ss.getSelection().getTop(), ss.getSelection().getLeft()).getEditText();
 		isCellHasDisplayString = !"".equals(display);
@@ -88,10 +87,6 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 			displayHyperlink.setValue(display);
 		
 		initPageContent();
-	}
-	
-	private static Object getParam (String key) {
-		return Executions.getCurrent().getArg().get(key);
 	}
 	
 	/**

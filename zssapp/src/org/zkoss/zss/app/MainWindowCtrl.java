@@ -25,7 +25,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.List;
 
 import org.zkoss.image.Image;
 import org.zkoss.poi.ss.usermodel.Cell;
@@ -35,7 +34,6 @@ import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.UiException;
@@ -47,17 +45,19 @@ import org.zkoss.zk.ui.event.KeyEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.cell.EditHelper;
-import org.zkoss.zss.app.event.CellStyleHelper;
 import org.zkoss.zss.app.event.ExportHelper;
-import org.zkoss.zss.app.event.HyperlinkHelper;
 import org.zkoss.zss.app.file.FileHelper;
 import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.app.sort.SortSelector;
+import org.zkoss.zss.app.zul.Borderbutton;
 import org.zkoss.zss.app.zul.CellContext;
 import org.zkoss.zss.app.zul.CellMenupopup;
+import org.zkoss.zss.app.zul.FontBoldButton;
 import org.zkoss.zss.app.zul.FontFamily;
+import org.zkoss.zss.app.zul.FontSize;
 import org.zkoss.zss.app.zul.Sheets;
 import org.zkoss.zss.app.zul.ZssappComponent;
+import org.zkoss.zss.app.zul.ZssappComponents;
 import org.zkoss.zss.app.zul.api.Colorbutton;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.impl.BookHelper;
@@ -109,7 +109,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	boolean isFreezeColumn = false;
 
 	// For fast Icon
-	boolean isBold = false;
+	//boolean isBold = false;
 	boolean isItalic = false;
 	boolean isUnderline = false;
 	boolean isStrikethrough = false;
@@ -143,9 +143,11 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	Combobox focusPosition;
 	FontFamily fontFamily;
-	Combobox fontSizeCombobox;
+	FontSize fontSize;
+	
 	Comboitem lbpos;
-	Toolbarbutton boldBtn;
+	//Toolbarbutton boldBtn;
+	FontBoldButton boldBtn;
 	Toolbarbutton italicBtn;
 	Toolbarbutton underlineBtn;
 	Toolbarbutton strikethroughBtn;
@@ -154,22 +156,15 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	Toolbarbutton alignRightBtn;
 	Colorbutton fontColorBtn;
 	Colorbutton backgroundColorBtn;
-	Toolbarbutton borderBtn;
 	Toolbarbutton mergeCellBtn;
 	Toolbarbutton wrapTextBtn;
 	Toolbarbutton insertChartBtn;
 	Checkbox gridlinesCheckbox;
-	
+	Borderbutton borderBtn;
 	CellMenupopup cellMenupopup;
 
 	South formulaBar;
 	Borderlayout topToolbars;
-
-	public static MainWindowCtrl getInstance() {
-		Execution exe = Executions.getCurrent();
-		return (MainWindowCtrl) exe.getDesktop().getAttribute(
-				MainWindowCtrl.class.getCanonicalName());
-	}
 
 	public Window getMainWindow() {
 		return mainWin;
@@ -184,13 +179,11 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		desktop.setAttribute(MainWindowCtrl.class.getCanonicalName(), this);
 		
 		ininZssappComponent();
-				
 		fontColorBtn = (Colorbutton)comp.getFellow("fontColorBtn");
 		backgroundColorBtn = (Colorbutton)comp.getFellow("backgroundColorBtn");
 		importFile.setDisabled(!FileHelper.hasImportPermission());
 
 		ssInit();
-		//sheetTBInit();
 
 		colmh = new ColumnMenuHelper(spreadsheet);
 		rowmh = new RowMenuHelper(spreadsheet);
@@ -272,7 +265,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	public void ssInit() {
 		spreadsheet.setSrcName("Untitled");
-		//book = spreadsheet.getBook();
 
 		// ADD Event Listener
 		spreadsheet.addEventListener(Events.ON_CELL_FOUCSED,
@@ -391,8 +383,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			formulaEditbox.setValue(cell == null ? "" : (editText == null ? ""
 					: editText));
 
-			fontSizeCombobox.setText("12");
-			boldBtn.setClass("toolIcon");
+			//boldBtn.setClass("toolIcon");
 			italicBtn.setClass("toolIcon");
 			underlineBtn.setClass("toolIcon");
 			strikethroughBtn.setClass("toolIcon");
@@ -411,13 +402,13 @@ public class MainWindowCtrl extends GenericForwardComposer {
 					Book book = spreadsheet.getBook();
 					int fontidx = cs.getFontIndex();
 					Font font = book.getFontAt((short) fontidx);
-					fontSizeCombobox.setText(Integer.toString(font.getFontHeightInPoints()));
+					//fontSizeCombobox.setText(Integer.toString(font.getFontHeightInPoints()));
 
 					// font bold & italic
-					isBold = font.getBoldweight() == Font.BOLDWEIGHT_BOLD;
+					//isBold = font.getBoldweight() == Font.BOLDWEIGHT_BOLD;
 					isItalic = font.getItalic();
-					if (isBold)
-						boldBtn.setClass("clicked");
+//					if (isBold)
+//						boldBtn.setClass("clicked");
 
 					if (isItalic)
 						italicBtn.setClass("clicked");
@@ -619,7 +610,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				//TODO: 
 				break;
 			case 'B':
-				setFontBold();
+				boldBtn.setBold(true);
 				break;
 			case 'I':
 				setFontItalic();
@@ -641,10 +632,14 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 	
 	public void onExport(ForwardEvent event) {
-		ExportHelper.onExport(event);
+		ExportHelper.onExport(spreadsheet, (String)event.getData());
 	}
 
 	public void onFileNew(ForwardEvent event) {
+		newFile();
+	}
+	
+	public void newFile() {
 		FileHelper.openNewSpreadsheet(spreadsheet);
 
 		sheets.clear();
@@ -981,74 +976,30 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 		Utils.setEditText(currentEditcell, ((InputEvent) event).getValue());
 	}
-
-	/**
-	 * Returns the font size in point from the font size combobox
-	 * @return short, font size height
-	 */
-	private short getFontHeightInPoints() {
-		String fontSizeStr = this.fontSizeCombobox.getSelectedItem().getLabel();
-		return (short) (Integer.parseInt(fontSizeStr) * 20);
-	}
 	
+	//TODO remove this
 	public void setFontFamily(String font) {
-		Utils.setFontFamily(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), font);
+		Utils.setFontFamily(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), font);
 		fontFamily.setText(font);
 	}
-
+	//TODO remove this
 	public void onFontFamilySelect(ForwardEvent event) {
 		setFontFamily((String)event.getData());
 	}
 
-	public void setFontSize(String fontSize) {
-		List items = fontSizeCombobox.getItems();
-		boolean findSize = false;
-		for (int i = 0; i < items.size(); i++) {
-			Comboitem item = (Comboitem) items.get(i);
-			if (item.getLabel().equals(fontSize)) {
-				fontSizeCombobox.setSelectedItem(item);
-				findSize = true;
-				break;
-			}
-		}
-		if (findSize)
-			Utils.setFontHeight(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), getFontHeightInPoints());
-	}
+	//TODO remove
+//	public void onFontBoldClick(ForwardEvent event) {
+//		setFontBold();
+//	}
 
-	public void onFontSizeSelect(ForwardEvent event) {
-		// TODO undo/redo
-		// spreadsheet.pushCellState();
-		Combobox fontSize;
-		String size;
-
-		Window win = (Window) mainWin.getFellow("fastIconContextmenu");
-		if (win.isVisible()) {
-			win.setVisible(false);
-			fontSize = (Combobox) win.getFellow("_fontSizeCombobox");
-		} else {
-			fontSize = fontSizeCombobox;
-		}
-		if (event.getData() == null)
-			size = fontSize.getSelectedItem().getLabel();
-		else
-			size = (String) event.getData();
-
-		fontSizeCombobox.setSelectedIndex((fontSize.getSelectedIndex()));
-		Utils.setFontHeight(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), getFontHeightInPoints());
-	}
-
-	public void onFontBoldClick(ForwardEvent event) {
-		setFontBold();
-	}
-
-	public void setFontBold() {
-		// TODO undo/redo
-		// spreadsheet.pushCellState();
-
-		//switch font bold and set sclass
-		boldBtn.setClass((isBold = !isBold) ? "clicked" : "");
-		Utils.setFontBold(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), isBold);
-	}
+//	public void setFontBold() {
+//		// TODO undo/redo
+//		// spreadsheet.pushCellState();
+//
+//		//switch font bold and set sclass
+////		boldBtn.setClass((isBold = !isBold) ? "clicked" : "");
+////		Utils.setFontBold(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), isBold);
+//	}
 
 	public void onFontItalicClick(ForwardEvent event) {
 		setFontItalic();
@@ -1060,7 +1011,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		
 		//switch italic and set sclass
 		italicBtn.setClass((isItalic = !isItalic) ? "clicked" : "");
-		Utils.setFontItalic(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), isItalic);
+		Utils.setFontItalic(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), isItalic);
 	}
 
 	public void onFontUnderlineClick(ForwardEvent event) {
@@ -1074,7 +1025,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		
 		//switch underline and set sclass
 		underlineBtn.setClass((isUnderline = !isUnderline) ? "clicked" : "");
-		Utils.setFontUnderline(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), isUnderline ? Font.U_SINGLE : Font.U_NONE);
+		Utils.setFontUnderline(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), isUnderline ? Font.U_SINGLE : Font.U_NONE);
 	}
 
 	public void onFontStrikethroughClick(ForwardEvent event) {
@@ -1087,7 +1038,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		
 		//switch strike and set sclass
 		strikethroughBtn.setClass((isStrikethrough = !isStrikethrough) ? "clicked" : "");
-		Utils.setFontStrikeout(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), isStrikethrough);
+		Utils.setFontStrikeout(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), isStrikethrough);
 	}
 
 	public void onAlignHorizontalClick(ForwardEvent event) {
@@ -1117,7 +1068,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		} else
 			alignRightBtn.setClass("toolIcon");
 
-		Utils.setAlignment(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), align);
+		Utils.setAlignment(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), align);
 	}
 
 	public void onChange$fontColorBtn() {
@@ -1137,7 +1088,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			return;
 
 		fontColorBtn.setColor(color);
-		Utils.setFontColor(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), color);
+		Utils.setFontColor(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), color);
 	}
 
 	public void setBackgroundColor(String color) {
@@ -1145,7 +1096,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			return;
 
 		backgroundColorBtn.setColor(color);
-		Utils.setBackgroundColor(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(), backgroundColorBtn.getColor());
+		Utils.setBackgroundColor(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), backgroundColorBtn.getColor());
 	}
 
 	/**
@@ -1212,12 +1163,12 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	private void sortAscending() {
-		Utils.sort(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(),
+		Utils.sort(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
 				null, null, null, false, false, false);
 	}
 
 	private void sortDescending() {
-		Utils.sort(spreadsheet.getSelectedSheet(), getSpreadsheetMaxSelection(),
+		Utils.sort(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
 				null, new boolean[] { true }, null, false, false, false);
 	}
 
@@ -1246,7 +1197,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void onPasteSelector(ForwardEvent event) {
-		EditHelper.onPasteEventHandler(event);
+		EditHelper.onPasteEventHandler(spreadsheet, (String)event.getData());
 	}
 
 	public void onBorderClick(ForwardEvent event) {
@@ -1274,16 +1225,15 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	 * @param event
 	 */
 	public void onHyperlink(ForwardEvent event) {
-		HyperlinkHelper.onHyperlink(event);
-	}
 
-	public void onBorderSelector(ForwardEvent event) {
-		// TODO: undo/redo
-		CellStyleHelper.onBorderEventHandler(event);
+		if (param.equals(Labels.getLabel("hyperlink"))) {
+			Executions.createComponents("/menus/hyperlink/insertHyperlink.zul", null, ZssappComponents.newSpreadsheetArg(spreadsheet));
+		} else if (param.equals(Labels.getLabel("hyperlink.remove"))){
+			//TODO remove hyperlink, not implement yet
+		}
 	}
 
 	public void onFormatOK(ForwardEvent event) {
-		// p("formatOk"+(String)event.getData());
 		fnh.onOK();
 	}
 
@@ -1575,15 +1525,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		}
 
 	}
-	
-	private Rect getSpreadsheetMaxSelection() {
-		Rect selection = spreadsheet.getSelection();
-		if (selection.getBottom() >= spreadsheet.getMaxrows())
-			selection.setBottom(spreadsheet.getMaxrows() - 1);
-		if (selection.getRight() >= spreadsheet.getMaxcolumns())
-			selection.setRight(spreadsheet.getMaxcolumns() - 1);
-		return selection;
-	}
+
 	
 	/**
 	 * Switch gridlines setting of spreadsheet

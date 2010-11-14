@@ -9,7 +9,6 @@ import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.impl.BookHelper;
-import org.zkoss.zss.ui.impl.Utils;
 
 public final class CellHelper {
 	private CellHelper(){};
@@ -128,6 +127,21 @@ public final class CellHelper {
 			rng.delete(Range.SHIFT_UP);
 		}
 	}
+	
+	public static int shiftEntireRowUp(Sheet sheet, int rowIndex, int colIndex, int maxShiftColumn) {
+		Row row = sheet.getRow(rowIndex);
+		//int lCol = row.getFirstCellNum();
+		int rCol  = row.getLastCellNum();
+		
+		int shiftColumns = Math.min(colIndex + maxShiftColumn, rCol);
+		for(int colIdx = colIndex; colIdx < shiftColumns; colIdx++) {
+			System.out.println("shift column: " + colIdx);
+			final Range rng = Ranges.range(sheet, rowIndex,	colIdx);
+			rng.delete(Range.SHIFT_UP);
+		}
+		
+		return shiftColumns < rCol - 1 ? shiftColumns : -1;
+	}
 
 	public static void shiftEntireColumnRight(Sheet sheet, int rowIndex, int colIndex) {
 		
@@ -139,6 +153,17 @@ public final class CellHelper {
 		}		
 	}
 	
+	public static int shiftEntireColumnLeft(Sheet sheet, int rowIndex, int colIndex, int maxShiftRow) {
+		int bRow = sheet.getPhysicalNumberOfRows();
+		
+		int shiftRows = Math.min(rowIndex + maxShiftRow, bRow);
+		for (int rowIdx = rowIndex; rowIdx < shiftRows; rowIdx++) {
+			final Range rng = Ranges.range(sheet, rowIdx, colIndex);
+			rng.delete(Range.SHIFT_LEFT);
+		}	
+		return shiftRows < bRow - 1 ? shiftRows : -1;
+	}
+	
 	public static void shiftEntireColumnLeft(Sheet sheet, int rowIndex, int colIndex) {
 		
 		int tRow = sheet.getFirstRowNum();
@@ -148,4 +173,5 @@ public final class CellHelper {
 			rng.delete(Range.SHIFT_LEFT);
 		}	
 	}
+
 }

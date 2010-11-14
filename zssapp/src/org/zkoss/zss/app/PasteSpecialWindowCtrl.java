@@ -18,13 +18,17 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app;
 
-import static org.zkoss.zss.app.cell.EditHelper.*;
+import static org.zkoss.zss.app.base.Preconditions.checkNotNull;
+import static org.zkoss.zss.app.cell.EditHelper.getPasteOperation;
+import static org.zkoss.zss.app.cell.EditHelper.getPasteType;
+import static org.zkoss.zss.app.cell.EditHelper.onPasteSpecial;
 
 import java.util.HashMap;
+
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.ZssappComponents;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
@@ -66,9 +70,7 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 	private Checkbox transpose;
 
 	public PasteSpecialWindowCtrl () {
-		ss = (Spreadsheet)getParam("spreadsheet");
-		if (ss == null)
-			throw new UiException("Spreadsheet object is empty");
+		ss = checkNotNull(ZssappComponents.getSpreadsheetFromArg(), "Spreadsheet is null");
 		if (ss.getHighlight() == null)
 			throw new UiException("Spreadsheet must has highlight area as paste source, please set spreadsheet's highlight area");
 	}
@@ -78,10 +80,6 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 		
 		pasteSelector.setSelectedItem(all);
 		operationSelector.setSelectedItem(opNone);
-	}
-	
-	private static Object getParam (String key) {
-		return Executions.getCurrent().getArg().get(key);
 	}
 
 	public void onClick$okBtn() {

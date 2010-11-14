@@ -40,15 +40,15 @@ public class RangeHelper {
 	}
 
 	// dummy
-	public String[] getRangeList() {
-		Book book = MainWindowCtrl.getInstance().getSpreadsheet().getBook();
-		int len = book.getNumberOfNames();
-		String[] names = new String[len];
-		for(int j=0; j < len; ++j) {
-			names[j] = book.getNameAt(j).getNameName();
-		}
-		return names;
-	}
+//	public String[] getRangeList() {
+//		Book book = MainWindowCtrl.getInstance().getSpreadsheet().getBook();
+//		int len = book.getNumberOfNames();
+//		String[] names = new String[len];
+//		for(int j=0; j < len; ++j) {
+//			names[j] = book.getNameAt(j).getNameName();
+//		}
+//		return names;
+//	}
 
 	// dummy
 	public void onRangeAdd() {

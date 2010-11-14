@@ -1,0 +1,87 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+	<window id="pasteSpecialDlg" title="${c:l('pasteSpecial')}"
+		border="normal" mode="modal" closable="true" position="center"
+		vflex="min" width="580px"
+		apply="org.zkoss.zss.app.PasteSpecialWindowCtrl">
+		<div style="padding: 5px">
+		<div style="margin-bottom: 5px;">${c:l('paste')}</div>
+		<radiogroup id="pasteSelector">
+			<grid>
+				<rows>
+					<row>
+						<radio id="all" label="${c:l('paste.all')}" />
+						<radio id="allExcpetBorder"
+							label="${c:l('paste.allExcpetBorder')}" />
+					</row>
+					<row>
+						<radio id="colWidth"
+							label="${c:l('paste.columnWidth')}" />
+						<radio id="comment"
+							label="${c:l('paste.comment')}" />
+
+					</row>
+					<row>
+						<radio id="formula"
+							label="${c:l('paste.formula')}" />
+						<radio id="formulaWithNum"
+							label="${c:l('paste.formulaWithNumFmt')}" />
+					</row>
+					<row>
+						<radio id="value" label="${c:l('paste.value')}" />
+						<radio id="valueWithNumFmt"
+							label="${c:l('paste.valueWithNumFmt')}" />
+					</row>
+					<row>
+						<radio id="fmt" label="${c:l('paste.format')}" />
+						<radio id="validation"
+							label="${c:l('paste.validation')}" />
+					</row>
+				</rows>
+			</grid>
+		</radiogroup>
+		<!-- To do: not handle paste operation, assume none -->
+		<div style="display: none;margin: 5px 5px 5px 0;">${c:l('paste.operation')}</div>
+		<radiogroup id="operationSelector" style="display: none;">
+			<grid>
+				<rows>
+					<row>
+						<radio id="opNone"
+							label="${c:l('pasteop.none')}" />
+						<radio id="opMul" label="${c:l('pasteop.mul')}" />
+					</row>
+					<row>
+						<radio id="opAdd" label="${c:l('pasteop.add')}" />
+						<radio id="opDiv"
+							label="${c:l('pasteop.divide')}" />
+					</row>
+					<row>
+						<radio id="opSub" label="${c:l('pasteop.sub')}" />
+					</row>
+				</rows>
+			</grid>
+		</radiogroup>
+		<div height="15px" style="margin: 5px 5px 5px 0;"></div>
+		<radiogroup>
+			<grid>
+				<rows>
+					<row>
+						<checkbox id="skipBlanks"
+							label="${c:l('paste.skipBlank')}" />
+						<checkbox id="transpose"
+							label="${c:l('paste.transpose')}" />
+					</row>
+				</rows>
+			</grid>
+		</radiogroup>
+		<!-- To do
+			<button label="Paste Link"></button>
+		-->
+		<div height="25px" style="margin: 10px 0 10px 10px;">
+			<button id="okBtn" image="/img/tick.png" style="float:right;" mold="trendy">
+			</button>
+		</div>
+		</div>
+	</window>
+</zk>

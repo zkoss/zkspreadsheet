@@ -25,6 +25,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zss.app.MainWindowCtrl;
+import org.zkoss.zss.app.zul.ZssappComponents;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Messagebox;
 
@@ -38,7 +39,7 @@ public class ExportHelper {
 	
 	private final static String KEY_PDF = ExportHelper.class.getSimpleName() + "_ZSSPDF";
 	
-	public static void onExport(ForwardEvent event) {
+	public static void onExport(Spreadsheet spreadsheet, String operation) {
 		if (!hasZssPdf()) {
 			try {
 				Messagebox.show("Please download Zss Pdf from ZK");
@@ -47,18 +48,12 @@ public class ExportHelper {
 			return;
 		}
 		
-		String param = (String)event.getData();
-		MainWindowCtrl ctrl = MainWindowCtrl.getInstance();
-		Spreadsheet ss = ctrl.getSpreadsheet();
-		if (param == null || ss == null) {
+		if (operation == null || spreadsheet == null) {
 			return;
 		}
 		
-		if (param.equals(Labels.getLabel("export.pdf"))) {
-			//TODO: remove arg, use main
-			HashMap arg = new HashMap();
-			arg.put("spreadsheet", ss);
-			Executions.createComponents("/menus/export/exportToPDF.zul", ctrl.getMainWindow(), arg);
+		if (operation.equals(Labels.getLabel("export.pdf"))) {
+			Executions.createComponents("/menus/export/exportToPDF.zul", null, ZssappComponents.newSpreadsheetArg(spreadsheet));
 		}
 	}
 	

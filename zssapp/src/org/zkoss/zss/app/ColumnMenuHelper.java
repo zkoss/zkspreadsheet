@@ -26,7 +26,8 @@ public class ColumnMenuHelper {
 		}if(type.equalsIgnoreCase("Width")){
 			onColumnHeaderMenuWidth();
 		}else if(type.equalsIgnoreCase("Format")){
-			onColumnHeaderMenuFormat();
+			//onColumnHeaderMenuFormat();
+			throw new UiException("Not implement yet");
 		}else{
 			System.out.println("wh not supported " + type);
 		}			
@@ -141,9 +142,9 @@ throw new UiException("insert columns is not implemented yet");
 			e.printStackTrace();
 		}
 	}
-	public void onColumnHeaderMenuFormat(){
-		MainWindowCtrl.getInstance().onFormatPopup();
-	}
+//	public void onColumnHeaderMenuFormat(){
+//		MainWindowCtrl.getInstance().onFormatPopup();
+//	}
 	
 	
 }

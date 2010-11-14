@@ -1,5 +1,4 @@
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
-<?component name="borderSelector" inline="true" macroURI="/menus/border/borderSelector.zul"?>
 <style>
 		.fastIconWin .z-window-popup-cnt-noborder{
 			background: #f6f5f5 none;
@@ -10,27 +9,9 @@
 <vlayout spacing="2px">
 	<hlayout vflex="min" spacing="3px">
 		<fontfamily id="fontfamily" width="86px"></fontfamily>
-		<combobox mold="rounded" id="_fontSizeCombobox"  style="border:0px;margin:0px;"
-			width="48px"  >
-			<comboitem label="8" />
-			<comboitem label="9" />
-			<comboitem label="10" />
-			<comboitem label="11" />
-			<comboitem label="12" />
-			<comboitem label="14" />
-			<comboitem label="16" />
-			<comboitem label="18" />
-			<comboitem label="20" />
-			<comboitem label="22" />
-			<comboitem label="24" />
-			<comboitem label="26" />
-			<comboitem label="28" />
-			<comboitem label="36" />
-			<comboitem label="48" />
-			<comboitem label="72" />
-		</combobox>
-		<toolbarbutton id="_boldBtn" src="/img/edit-bold.png" 
-			forward="onClick=//p1/mainWin.onFontBoldClick" />
+		<fontsize id="fontSize" width="48px" style="border:0px;margin:0px;"></fontsize>
+<!--		<toolbarbutton id="_boldBtn" src="~./zssapp/image/edit-bold.png" forward="onClick=//p1/mainWin.onFontBoldClick" />-->
+		<fontboldbutton id="boldBtn"/>
 		<toolbarbutton id="_italicBtn" 
 			src="/img/edit-italic.png" forward="onClick=//p1/mainWin.onFontItalicClick"/>
 	</hlayout>
@@ -50,17 +31,7 @@
 	
 		<colorbutton id="_backgroundColorBtn" width="20px" height="12px" color="#FFFFFF" image="/img/paint-can-color.png" style="margin: 2px 1px 2px 0;">
 		</colorbutton>
-	
-		<!-- border merge******************************************************************* -->
-		<dropdownbutton src="/img/border-bottom.png" forward="onBorderSelector(${c:l('border.bottom')})" tooltiptext="${c:l('border.bottom')}">
-			<attribute w:name="onClick">
-				this.$f('spreadsheet', true).focus(false);
-			</attribute>
-			<attribute w:name="onDropdown">
-				this.$f('spreadsheet', true).focus(false);
-			</attribute>
-			<borderSelector></borderSelector>
-		</dropdownbutton>
+		<borderbutton id="borderBtn"/>
 		<toolbarbutton id="_mergeCellBtn" sclass="toolIcon"
 			src="/img/table-join.png" forward="onClick=//p1/mainWin.onMergeCellClick" />
 	</hlayout>

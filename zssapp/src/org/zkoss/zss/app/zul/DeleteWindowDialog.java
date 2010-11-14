@@ -20,17 +20,15 @@ package org.zkoss.zss.app.zul;
 
 import static org.zkoss.zss.app.base.Preconditions.checkNotNull;
 
-import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.OpenEvent;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
@@ -40,7 +38,7 @@ import org.zkoss.zul.Window;
  *
  */
 public class DeleteWindowDialog extends Window implements ZssappComponent {
-	
+		
 	private final static String URI = "~./zssapp/html/deleteDialog.zul";
 	
 	private Radiogroup deleteOption;
@@ -66,12 +64,20 @@ public class DeleteWindowDialog extends Window implements ZssappComponent {
 		setTitle("Delete");
 	}
 
-	public void onEcho() {
+	public void onEcho(Event evt) {
 		Radio seld = deleteOption.getSelectedItem();
 		Sheet sheet = ss.getSelectedSheet();
 		Rect rect = ss.getSelection();
 		int tRow = rect.getTop();
 		int lCol = rect.getLeft();
+		
+		/**
+		 * For entire row up and entire column left
+		 * Note. if there are too many column to up, need to process separately 
+		 * to avoid client side freeze java script.
+		 * 
+		 * TODO: fine-tune javascript to process more efficiently, avoid browser freeze
+		 */
 		if (seld == shiftCellLeft) {
 			CellHelper.shiftCellLeft(sheet, tRow, lCol);
 		} else if (seld == shiftCellUp) {
@@ -79,7 +85,15 @@ public class DeleteWindowDialog extends Window implements ZssappComponent {
 		} else if (seld == entireRow) {
 			CellHelper.shiftEntireRowUp(sheet, tRow, lCol);
 		} else if (seld == entireColumn) {
-			CellHelper.shiftEntireColumnLeft(sheet, tRow, lCol);
+			Integer rowStart = (Integer)evt.getData();
+			int rowIdx = CellHelper.shiftEntireColumnLeft(sheet, 
+					rowStart != null ? rowStart : tRow, 
+					lCol,
+					15); //shift 15 columns at once. experiment with FF36, IE8
+			if (rowIdx >= 0) {
+				Events.echoEvent("onEcho", this, Integer.valueOf(rowIdx));
+				return;
+			}
 		}
 		Clients.clearBusy();
 		detach();
@@ -90,12 +104,6 @@ public class DeleteWindowDialog extends Window implements ZssappComponent {
 		//TODO: use I18n
 		Clients.showBusy("Execute... ");
 		Events.echoEvent("onEcho", this, null);
-	}
-	
-	public void onOpen(OpenEvent evt) {
-		if (!evt.isOpen()) {
-			this.detach();
-		}
 	}
 
 	@Override

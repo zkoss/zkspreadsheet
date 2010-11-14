@@ -8,8 +8,12 @@
 	<menuitem id="insert" label="${c:l('insert')}">
 	</menuitem>
 	<menuitem id="delete" label="${c:l('delete')}"></menuitem>
-	<menuitem id="clearContent" label="${c:l('edit.clearContent')}" />
-	<menuitem id="clearStyle" label="${c:l('edit.clearStyle')}" />
+	<menu label="Clear">
+		<menupopup>
+			<menuitem id="clearContent" label="${c:l('edit.clearContent')}" />
+			<menuitem id="clearStyle" label="${c:l('edit.clearStyle')}" />
+		</menupopup>
+	</menu>
 	<menuseparator />
 	<menu label="${c:l('sort')}">
 		<menupopup>

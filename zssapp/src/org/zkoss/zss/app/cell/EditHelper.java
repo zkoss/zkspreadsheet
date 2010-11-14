@@ -25,6 +25,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zss.app.MainWindowCtrl;
+import org.zkoss.zss.app.zul.ZssappComponents;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -210,11 +211,8 @@ public final class EditHelper {
 	 * <p> If parameter can't find a match, will use default value. 
 	 * @param event
 	 */
-	public static void onPasteEventHandler(ForwardEvent event) {
-		String param = (String)event.getData();
-		MainWindowCtrl ctrl = MainWindowCtrl.getInstance();
-		Spreadsheet ss = ctrl.getSpreadsheet();
-		if (ss == null || getSourceRange(ss) == null || param == null) {
+	public static void onPasteEventHandler(Spreadsheet Spreadsheet, String operation) {
+		if (Spreadsheet == null || getSourceRange(Spreadsheet) == null || operation == null) {
 //			try {
 //				Messagebox.show("Please select a range");
 //			} catch (InterruptedException e) {
@@ -222,12 +220,11 @@ public final class EditHelper {
 			return;
 		}
 
-		if ( param.equals(Labels.getLabel("pasteSpecial")) ) {
-			HashMap arg = new HashMap();
-			arg.put("spreadsheet", ss);
-			Executions.createComponents("/menus/paste/pasteSpecial.zul", ctrl.getMainWindow(), arg);
+		if (operation.equals(Labels.getLabel("pasteSpecial")) ) {
+			
+			Executions.createComponents("/menus/paste/pasteSpecial.zul", null, ZssappComponents.newSpreadsheetArg(Spreadsheet));
 		} else {
-			onPasteSpecial(ss, getPasteType(param), getPasteOperation(param), false, isTranspose(param));
+			onPasteSpecial(Spreadsheet, getPasteType(operation), getPasteOperation(operation), false, isTranspose(operation));
 		}
 	}
 	
