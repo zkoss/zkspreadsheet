@@ -64,6 +64,11 @@ public class Events {
 	 */
 	public static final String ON_CELL_DOUBLE_CLICK = "onCellDoubleClick";
 	
+	/** The onCellChange event (used with {@link CellEvent}).
+	 * Sent when cell contents changed.
+	 */
+	public static final String ON_CELL_CHANGE = "onCellChange";
+	
 	
 	/**
 	 * The onHeaderClick event (used with {@link HeaderMouseEvent}).

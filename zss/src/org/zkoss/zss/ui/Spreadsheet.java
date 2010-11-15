@@ -123,6 +123,7 @@ import org.zkoss.zss.ui.au.out.AuMergeCell;
 import org.zkoss.zss.ui.au.out.AuRemoveRowColumn;
 import org.zkoss.zss.ui.au.out.AuRetrieveFocus;
 import org.zkoss.zss.ui.au.out.AuSelection;
+import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.CellMouseEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HyperlinkEvent;
@@ -1324,7 +1325,7 @@ public class Spreadsheet extends XulElement {
 				result = page.getZScriptVariable(Spreadsheet.this, name);
 			}
 			if (result == null) {
-				result = Spreadsheet.this.getAttribute(name, true);
+				result = Spreadsheet.this.getAttributeOrFellow(name, true);
 			}
 			if (result == null && page != null) {
 				result = page.getXelVariable(null, null, name, true);
@@ -1338,26 +1339,35 @@ public class Spreadsheet extends XulElement {
 		private static final long serialVersionUID = 1L;
 
 		public Collection getClassNames() {
-			Page page = getPage();
+			final Page page = getPage();
 			if (page != null) {
-				return page.getFunctionMapper().getClassNames();
+				final FunctionMapper mapper = page.getFunctionMapper();
+				if (mapper != null) {
+					return mapper.getClassNames();
+				}
 			}
 			return null;
 		}
 
 		public Class resolveClass(String name) throws XelException {
-			Page page = getPage();
+			final Page page = getPage();
 			if (page != null) {
-				return page.getFunctionMapper().resolveClass(name);
+				final FunctionMapper mapper = page.getFunctionMapper();
+				if (mapper != null) {
+					return mapper.resolveClass(name);
+				}
 			}
 			return null;
 		}
 
 		public Function resolveFunction(String prefix, String name)
 				throws XelException {
-			Page page = getPage();
+			final Page page = getPage();
 			if (page != null) {
-				return page.getFunctionMapper().resolveFunction(prefix, name);
+				final FunctionMapper mapper = page.getFunctionMapper();
+				if (mapper != null) {
+					return mapper.resolveFunction(prefix, name);
+				}
 			}
 			return null;
 		}
@@ -1430,6 +1440,11 @@ public class Spreadsheet extends XulElement {
 			final int bottom = rng.getBottomRow();
 			updateWidget(sheet, left, top, right, bottom);
 			updateCell(sheet, left, top, right, bottom);
+			for (int r = top; r <= bottom; ++r) {
+				for(int c = left; c <= right; ++c) {
+					org.zkoss.zk.ui.event.Events.postEvent(new CellEvent(Events.ON_CELL_CHANGE, Spreadsheet.this, sheet, r, c));
+				}
+			}
 		}
 		private void onRangeInsert(SSDataEvent event) {
 			final Ref rng = event.getRef();

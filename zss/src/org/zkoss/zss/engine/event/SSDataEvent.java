@@ -48,7 +48,7 @@ public class SSDataEvent extends Event {
     /** Identifies the removal of a merged range. */   
 	public static final String ON_MERGE_DELETE = "onMergeDelete";
 	
-	/** Indentifes the gridline status change. */
+	/** Identifies the grid-line status change. */
 	public static final String ON_DISPLAY_GRIDLINES = "onDisplayGridlines";
 	
 	/** Identifies no move direction when add or remove a range. */

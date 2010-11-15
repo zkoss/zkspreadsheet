@@ -68,6 +68,8 @@ public class DefaultDependencyTracker implements DependencyTracker {
 	
 				myAddDependency(srcRef, refBookName, refSheetName, refLastSheetName, tRow, lCol, tRow, lCol, eval);
 			}
+		} else if (eval && opResult instanceof NameEval) {
+			return ErrorEval.NAME_INVALID;
 		}
 		return opResult;
 	}
