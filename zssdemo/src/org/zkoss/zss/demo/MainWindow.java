@@ -56,12 +56,12 @@ public class MainWindow extends Window implements AfterCompose{
 		
 		spreadsheet.addEventListener(Events.ON_CELL_FOUCSED,new EventListener(){
 			public void onEvent(Event event) throws Exception {
-				onCellEvent((CellEvent)event);
+				doCellEvent((CellEvent)event);
 			}
 		});
 		spreadsheet.addEventListener(Events.ON_START_EDITING,new EventListener(){
 			public void onEvent(Event event) throws Exception {
-				onCellEvent((CellEvent)event);
+				doCellEvent((CellEvent)event);
 			}
 		});
 		
@@ -72,7 +72,7 @@ public class MainWindow extends Window implements AfterCompose{
 			}
 		});
 	}
-	void onCellEvent(CellEvent event){
+	void doCellEvent(CellEvent event){
 		Sheet sheet = event.getSheet();
 		lastRow = event.getRow();
 		lastCol = event.getColumn();
@@ -88,9 +88,11 @@ public class MainWindow extends Window implements AfterCompose{
 		if(lastRow == -1){
 			return;
 		}
-		Sheet sheet = (Sheet)book.getSheetAt(0);
-		Cell cell = Utils.getOrCreateCell(sheet, lastRow, lastCol);
-		Utils.setEditText(cell, value);
+		if (book != null) {
+			Sheet sheet = (Sheet)book.getSheetAt(0);
+			Cell cell = Utils.getOrCreateCell(sheet, lastRow, lastCol);
+			Utils.setEditText(cell, value);
+		}
 	}
 
 }

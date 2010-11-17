@@ -28,6 +28,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.app.sheet.SheetHelper;
+import org.zkoss.zss.model.Book;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.impl.Utils;
@@ -108,6 +109,10 @@ public class FontFamily extends Div implements ZssappComponent, IdSpace{
 		
 		ss.addEventListener(org.zkoss.zss.ui.event.Events.ON_CELL_FOUCSED, new EventListener() {
 			public void onEvent(Event event) throws Exception {
+				final Book book = ss.getBook();
+				if (book == null) {
+					return;
+				}
 				CellEvent evt = (CellEvent)event;
 				int row = evt.getRow();
 				int col = evt.getColumn();
@@ -118,7 +123,7 @@ public class FontFamily extends Div implements ZssappComponent, IdSpace{
 				
 				if (cell != null) {
 					CellStyle cellStyle = cell.getCellStyle();
-					Font font = ss.getBook().getFontAt(cellStyle.getFontIndex());
+					Font font = book.getFontAt(cellStyle.getFontIndex());
 					fontfamilyCombobox.setText(font.getFontName());
 				}
 			}

@@ -65,11 +65,14 @@ public class ViewWindow extends Window implements AfterCompose {
 		fileOpenWin.setVisible(false);
 		
 		book=spreadsheet.getBook();
+		if (book == null) {
+			return;
+		}
 		spreadsheet.setMaxrows(200);
 		spreadsheet.setMaxcolumns(30);
 		Sheet sheet =(Sheet) book.getSheetAt(0);
 		spreadsheet.setSelectedSheet(sheet.getSheetName());
-		onPrint();
+		doPrint();
 	}
 	
 	public void openFileInSS(String filename) {
@@ -101,7 +104,9 @@ public class ViewWindow extends Window implements AfterCompose {
 	}
 	
 	public void onPrint(){
-
+		doPrint();
+	}
+	private void doPrint() {
 		String printKey=""+System.currentTimeMillis();
 		Session session=this.getDesktop().getSession();
 		session.setAttribute("zssFromHi"+printKey,spreadsheet);

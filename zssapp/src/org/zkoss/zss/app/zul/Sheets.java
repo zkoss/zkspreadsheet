@@ -12,6 +12,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.app.MainWindowCtrl;
 import org.zkoss.zss.app.ctrl.RenameSheetCtrl;
 import org.zkoss.zss.app.sheet.SheetHelper;
+import org.zkoss.zss.model.Book;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.SheetVisitor;
 import org.zkoss.zss.ui.impl.Utils;
@@ -89,8 +90,12 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	 * Redraw sheet names of spreadsheet
 	 */
 	public void redraw() {
+		final Book book = ss.getBook();
+		if (book == null) {
+			return;
+		}
 		tabs.getChildren().clear();
-		Utils.visitSheets(ss.getBook(), new SheetVisitor(){
+		Utils.visitSheets(book, new SheetVisitor(){
 
 			@Override
 			public void handle(Sheet sheet) {

@@ -365,6 +365,10 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	void doFocusedEvent(CellEvent event) {
+		final Book book = spreadsheet.getBook();
+		if (book == null) {
+			return;
+		}
 		// SECTION WORK1 FocusedEvent
 		try {
 			Sheet sheet = event.getSheet();
@@ -399,7 +403,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			if (cell != null) {
 				CellStyle cs = cell.getCellStyle();
 				if (cs != null) {
-					Book book = spreadsheet.getBook();
 					int fontidx = cs.getFontIndex();
 					Font font = book.getFontAt((short) fontidx);
 					//fontSizeCombobox.setText(Integer.toString(font.getFontHeightInPoints()));
@@ -926,7 +929,11 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void onInsertSheet() {
-		int sheetCount = spreadsheet.getBook().getNumberOfSheets();
+		final Book book = spreadsheet.getBook();
+		if (book == null) {
+			return;
+		}
+		int sheetCount = book.getNumberOfSheets();
 		Sheet addedSheet = spreadsheet.getBook().createSheet("sheet " + (sheetCount + 1));
 		sheets.addSheet(addedSheet.getSheetName());
 	}
@@ -1500,7 +1507,11 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	public void onDeleteSheet() {
-		if (spreadsheet.getBook().getNumberOfSheets() == 1) {
+		final Book book = spreadsheet.getBook();
+		if (book == null) {
+			return;
+		}
+		if (book.getNumberOfSheets() == 1) {
 			try {
 				Messagebox.show("cannot remove last sheet, but you could insert a new sheet, then remove current sheet  ");
 			} catch (InterruptedException e) {

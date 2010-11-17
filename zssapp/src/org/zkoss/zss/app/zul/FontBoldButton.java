@@ -7,6 +7,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.app.sheet.SheetHelper;
+import org.zkoss.zss.model.Book;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.impl.Utils;
@@ -65,6 +66,10 @@ public class FontBoldButton extends Toolbarbutton implements ZssappComponent {
 			
 			@Override
 			public void onEvent(Event event) throws Exception {
+				final Book book = ss.getBook();
+				if (book == null) {
+					return;
+				}
 				CellEvent evt = (CellEvent)event;
 				int row = evt.getRow();
 				int col = evt.getColumn();
@@ -75,7 +80,7 @@ public class FontBoldButton extends Toolbarbutton implements ZssappComponent {
 				
 				if (cell != null) {
 					CellStyle cellStyle = cell.getCellStyle();
-					Font font = ss.getBook().getFontAt(cellStyle.getFontIndex());
+					Font font = book.getFontAt(cellStyle.getFontIndex());
 					_isBold = font.getBoldweight() == Font.BOLDWEIGHT_BOLD;
 					if (_isBold)
 						setSclass("clicked");

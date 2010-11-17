@@ -36,14 +36,16 @@ public final class SheetHelper {
 	 */
 	public static int shiftSheetLeft(Spreadsheet spreadsheet) {
 		//TODO: it should shift all, not just itself
-		Book book = spreadsheet.getBook();
-		String name = spreadsheet.getSelectedSheet().getSheetName();
-		Sheet sheet = spreadsheet.getSelectedSheet();
-		int index = book.getSheetIndex(sheet);
-		if (index > 0) {
-			int newIdx = index - 1;
-			book.setSheetOrder(name, index - 1);
-			return newIdx;
+		final Book book = spreadsheet.getBook();
+		if (book != null) {
+			String name = spreadsheet.getSelectedSheet().getSheetName();
+			Sheet sheet = spreadsheet.getSelectedSheet();
+			int index = book.getSheetIndex(sheet);
+			if (index > 0) {
+				int newIdx = index - 1;
+				book.setSheetOrder(name, index - 1);
+				return newIdx;
+			}
 		}
 		return -1;
 	}
@@ -55,14 +57,16 @@ public final class SheetHelper {
 	 */
 	public static int shiftSheetRight(Spreadsheet spreadsheet) {
 		//TODO: it should shift all, not just itself
-		Book book = spreadsheet.getBook();
-		String name = spreadsheet.getSelectedSheet().getSheetName();
-		Sheet sheet = spreadsheet.getSelectedSheet();
-		int index = book.getSheetIndex(sheet);
-		if (index < book.getNumberOfSheets() - 1) {
-			int newIdx = index + 1;
-			book.setSheetOrder(name, newIdx);
-			return newIdx;
+		final Book book = spreadsheet.getBook();
+		if (book != null) {
+			String name = spreadsheet.getSelectedSheet().getSheetName();
+			Sheet sheet = spreadsheet.getSelectedSheet();
+			int index = book.getSheetIndex(sheet);
+			if (index < book.getNumberOfSheets() - 1) {
+				int newIdx = index + 1;
+				book.setSheetOrder(name, newIdx);
+				return newIdx;
+			}
 		}
 		return -1;
 	}
@@ -74,14 +78,16 @@ public final class SheetHelper {
 	 */
 	public static int deleteSheet(Spreadsheet spreadsheet) {
 		//TODO: it should shift all, not just itself
-		Book book = spreadsheet.getBook();
-		int index = book.getSheetIndex(spreadsheet.getSelectedSheet());
-		book.removeSheetAt(index);
-		int sheetCount = book.getNumberOfSheets();
-		
-		//TODO: can remove all sheets ?
-		if (index < sheetCount)
-			return index;
+		final Book book = spreadsheet.getBook();
+		if (book != null) {
+			int index = book.getSheetIndex(spreadsheet.getSelectedSheet());
+			book.removeSheetAt(index);
+			int sheetCount = book.getNumberOfSheets();
+			
+			//TODO: can remove all sheets ?
+			if (index < sheetCount)
+				return index;
+		}
 		return -1;
 	}
 	
@@ -92,14 +98,17 @@ public final class SheetHelper {
 	 * @return
 	 */
 	public static int renameSheet(Spreadsheet spreadsheet, String name) {
-		Book book = spreadsheet.getBook();
-		final Sheet selsheet  = spreadsheet.getSelectedSheet();
-		Sheet sheet = book.getSheet(name);
-		if(sheet != null)
-			return -1;
-		final int index = book.getSheetIndex(selsheet);
-		book.setSheetName(index, name);
-		return index;
+		final Book book = spreadsheet.getBook();
+		if (book != null) {
+			final Sheet selsheet  = spreadsheet.getSelectedSheet();
+			Sheet sheet = book.getSheet(name);
+			if(sheet != null)
+				return -1;
+			final int index = book.getSheetIndex(selsheet);
+			book.setSheetName(index, name);
+			return index;
+		}
+		return -1;
 	}
 	
 	public static Rect getSpreadsheetMaxSelection(Spreadsheet spreadsheet) {

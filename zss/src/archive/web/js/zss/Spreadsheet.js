@@ -552,28 +552,32 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		if (zk.ie) {
 			var self = this;
 			setTimeout(function () {
-				self.sheetCtrl.dp.gainFocus(trigger);
+				if (self.sheetCtrl)
+					self.sheetCtrl.dp.gainFocus(trigger);
 			}, 0);
-		} else
+		} else if (this.sheetCtrl)
 			this.sheetCtrl.dp.gainFocus(trigger);
 	},
 	/**
 	 * Add editor focus
 	 */
 	addEditorFocus: function (name, color, row, col) {
-		this.sheetCtrl.addEditorFocus(name, color);
+		if (this.sheetCtrl)
+			this.sheetCtrl.addEditorFocus(name, color);
 	},
 	/**
 	 * Move the editor focus 
 	 */
 	moveEditorFocus: function (name, color, row, col) {
-		this.sheetCtrl.moveEditorFocus(name, color, zk.parseInt(row), zk.parseInt(col));
+		if (this.sheetCtrl)
+			this.sheetCtrl.moveEditorFocus(name, color, zk.parseInt(row), zk.parseInt(col));
 	},
 	/**
 	 * Remove the editor focus
 	 */
 	removeEditorFocus: function (name, color, row, col) {
-		this.sheetCtrl.removeEditorFocus(name);
+		if (this.sheetCtrl)
+			this.sheetCtrl.removeEditorFocus(name);
 	},
 	/**
 	 * Sets the highlight rectangle or sets a null value to hide it.
@@ -729,6 +733,8 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		}	
 	},
 	_initControl: function () {
+		if (this.getSheetId() == null) //no sheet at all
+			return;
 		var sheet = this.sheetCtrl = new zss.SSheetCtrl(this.$n(), this);
 		this._loadCSSDirect(this._scss, this.uuid + "-sheet");
 		
@@ -917,7 +923,8 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			sel._doMouseOut(evt);
 	},
 	doClick_: function (evt) {
-		this.sheetCtrl._doMouseleftclick(evt);
+		if (this.sheetCtrl)
+			this.sheetCtrl._doMouseleftclick(evt);
 		this.$supers('doClick_', arguments);
 	},
 	/**
@@ -929,19 +936,23 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	 * Case 2: spreadsheet has focus, depends on the target, execute the relative mouse down behavior		
 	 */
 	doMouseDown_: function (evt) {
-		this.sheetCtrl._doMousedown(evt);
+		if (this.sheetCtrl)
+			this.sheetCtrl._doMousedown(evt);
 		this.$supers('doMouseDown_', arguments);
 	},
 	doMouseUp_: function (evt) {
-		this.sheetCtrl._doMouseup(evt);
+		if (this.sheetCtrl)
+			this.sheetCtrl._doMouseup(evt);
 		this.$supers('doMouseUp_', arguments);
 	},
 	doRightClick_: function (evt) {
-		this.sheetCtrl._doMouserightclick(evt);
+		if (this.sheetCtrl)
+			this.sheetCtrl._doMouserightclick(evt);
 		this.$supers('doRightClick_', arguments);
 	},
 	doDoubleClick_: function (evt) {
-		this.sheetCtrl._doMousedblclick(evt);
+		if (this.sheetCtrl)
+			this.sheetCtrl._doMousedblclick(evt);
 		this.$supers('doDoubleClick_', arguments);
 	},
 	_doDragMouseUp: function (evt) {
@@ -955,11 +966,13 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			dragHandler.doMousemove(evt);
 	},
 	doKeyDown_: function (evt) {
-		this.sheetCtrl._doKeydown(evt);
+		if (this.sheetCtrl)
+			this.sheetCtrl._doKeydown(evt);
 		this.$supers('doKeyDown_', arguments);
 	},
 	doKeyPress_: function (evt) {
-		this.sheetCtrl._doKeypress(evt);
+		if (this.sheetCtrl)
+			this.sheetCtrl._doKeypress(evt);
 		this.$supers('doKeyPress_', arguments);
 	},
 	_loadCSSDirect: function (uri, id) {

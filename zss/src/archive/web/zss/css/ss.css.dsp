@@ -16,7 +16,7 @@ lineHeight=20
 	width: 100px;
 	height: 100px;
 	/*font-family: Tahoma, Arial, Helvetica, sans-serif;*/
-	background:#FFFFFF;
+	background:#A4C3EB;
 	overflow:hidden;
 	border:1px solid #D8D8D8;
 }

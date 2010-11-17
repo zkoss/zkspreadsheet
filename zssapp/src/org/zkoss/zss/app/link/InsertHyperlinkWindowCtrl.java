@@ -34,6 +34,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.model.Book;
 import org.zkoss.zss.app.zul.ZssappComponents;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.SheetVisitor;
@@ -285,8 +286,12 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	}
 	private void buildDocumentTree(final Tree tree, final Textbox cellRef) {
 		if (tree != null) {
+			final Book book = ss.getBook();
+			if (book == null) {
+				return;
+			}
 			final ArrayList<SimpleTreeNode> nodes = new ArrayList<SimpleTreeNode>();
-			Utils.visitSheets(ss.getBook(), new SheetVisitor(){
+			Utils.visitSheets(book, new SheetVisitor(){
 				@Override
 				public void handle(Sheet sheet) {
 					nodes.add(new SimpleTreeNode(sheet.getSheetName(), Collections.EMPTY_LIST));

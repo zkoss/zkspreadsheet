@@ -299,14 +299,14 @@ public class Spreadsheet extends XulElement {
 	/**
 	 * Returns the book model of this Spreadsheet. If you call this method at
 	 * first time and the book has not assigned by {@link #setBook(Book)}, this
-	 * will create a new model depends on url;
+	 * will create a new model depends on src;
 	 * 
 	 * @return the book model of this spread sheet.
 	 */
 	public Book getBook() {
 		if (_book == null) {
 			if (_src == null) {
-				throw new UiException("Must specify the src of the spreadsheet to create a new book");
+				return null;
 			}
 			try {
 				Importer importer = _importer;
@@ -416,11 +416,15 @@ public class Spreadsheet extends XulElement {
 	 * @return #{@link Sheet}
 	 */
 	public Sheet getSelectedSheet() {
+		final Book book = getBook();
+		if (book == null) {
+			return null;
+		}
 		if (_selectedSheet == null) {
 			if (_selectedSheetId == null) {
-				if (getBook().getNumberOfSheets() == 0)
+				if (book.getNumberOfSheets() == 0)
 					throw new UiException("sheet size of given book is zero");
-				_selectedSheet = (Sheet) getBook().getSheetAt(0);
+				_selectedSheet = (Sheet) book.getSheetAt(0);
 				_selectedSheetId = Utils.getSheetId(_selectedSheet);
 			} else {
 				_selectedSheet = Utils.getSheetById(_book, _selectedSheetId);
@@ -434,11 +438,13 @@ public class Spreadsheet extends XulElement {
 	}
 
 	public Sheet getSheet(int index){
-		return (Sheet)getBook().getSheetAt(index);
+		final Book book = getBook();
+		return book != null ? (Sheet)book.getSheetAt(index) : null;
 	}
 	
 	public int indexOfSheet(Sheet sheet){
-		return getBook().getSheetIndex(sheet);
+		final Book book = getBook();
+		return book != null ? book.getSheetIndex(sheet) : -1;
 	}
 	
 	private String getSelectedSheetId() {
@@ -488,7 +494,7 @@ public class Spreadsheet extends XulElement {
 			book.setName(src);
 		_src = src;
 		*/
-		Book book = (Book) this.getBook();
+		final Book book = (Book) this.getBook();
 		if (book != null)
 			_src = src;
 	}
@@ -523,8 +529,12 @@ public class Spreadsheet extends XulElement {
 	 * @param name	the name of spreadsheet to be selected.
 	 */
 	public void setSelectedSheet(String name) {
+		final Book book = getBook();
+		if (book == null) {
+			return;
+		}
 		if (_selectedSheet == null || !_selectedSheet.getSheetName().equals(name)) {
-			Sheet sheet = getBook().getSheet(name);
+			Sheet sheet = book.getSheet(name);
 			if (sheet == null) {
 				throw new UiException("No such sheet : " + name);
 			}
@@ -849,7 +859,7 @@ public class Spreadsheet extends XulElement {
 	 */
 	public int getRowheight() {
 		Sheet sheet = getSelectedSheet();
-		int rowHeight = sheet.getDefaultRowHeight();
+		int rowHeight = sheet != null ? sheet.getDefaultRowHeight() : -1;
 
 		return (rowHeight <= 0) ? _defaultRowHeight : Utils.twipToPx(rowHeight);
 	}
@@ -959,7 +969,9 @@ public class Spreadsheet extends XulElement {
 	protected void renderProperties(ContentRenderer renderer) throws IOException {
 		super.renderProperties(renderer);
 		Sheet sheet = this.getSelectedSheet();
-
+		if (sheet == null) {
+			return;
+		}
 		renderer.render("rowHeight", getRowheight());
 		renderer.render("columnWidth", getColumnwidth());
 
@@ -1583,15 +1595,20 @@ public class Spreadsheet extends XulElement {
 	}
 	
 	private HeaderPositionHelper getRowPositionHelper(Sheet sheet) {
-		return getPositionHelpers(sheet)[0];
+		final HeaderPositionHelper[] helper = getPositionHelpers(sheet);
+		return helper != null ? helper[0] : null;
 	}
 	
 	private HeaderPositionHelper getColumnPositionHelper(Sheet sheet) {
-		return getPositionHelpers(sheet)[1];
+		final HeaderPositionHelper[] helper = getPositionHelpers(sheet); 
+		return helper != null ? helper[1] : null;
 	}
 	
 	//[0] row position, [1] column position
 	private HeaderPositionHelper[] getPositionHelpers(Sheet sheet) {
+		if (sheet == null) {
+			return null;
+		}
 		if (sheet != getSelectedSheet())
 			throw new UiException("not current selected sheet ");
 		HeaderPositionHelper helper = (HeaderPositionHelper) getAttribute(ROW_SIZE_HELPER_KEY);

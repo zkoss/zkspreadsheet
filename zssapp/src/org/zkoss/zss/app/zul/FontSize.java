@@ -13,6 +13,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.app.sheet.SheetHelper;
+import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.ui.Rect;
@@ -115,6 +116,10 @@ public class FontSize extends Div implements ZssappComponent, IdSpace {
 
 			@Override
 			public void onEvent(Event event) throws Exception {
+				final Book book = ss.getBook();
+				if (book == null) {
+					return;
+				}
 				CellEvent evt = (CellEvent)event;
 				int row = evt.getRow();
 				int col = evt.getColumn();
@@ -126,7 +131,7 @@ public class FontSize extends Div implements ZssappComponent, IdSpace {
 				if (cell != null) {
 					CellStyle cellStyle = cell.getCellStyle();
 					int fontidx = cellStyle.getFontIndex();
-					Font font = ss.getBook().getFontAt((short) fontidx);
+					Font font = book.getFontAt((short) fontidx);
 					fontSizeCombobox.setText(Integer.toString(font.getFontHeightInPoints()));
 				}
 			}

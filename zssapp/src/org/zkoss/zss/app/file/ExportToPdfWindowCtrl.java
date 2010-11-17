@@ -32,6 +32,7 @@ import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.model.Book;
 import org.zkoss.zss.app.zul.ZssappComponents;
 import org.zkoss.zss.model.Exporter;
 import org.zkoss.zss.model.impl.PdfExporter;
@@ -115,8 +116,11 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 		ss.getSelectedSheet().getPrintSetup().setLandscape(orientation.getSelectedItem() == landscape);
 		ss.getSelectedSheet().setPrintGridlines(includeGridlines());
 		boolean isLandscape = orientation.getSelectedItem() == landscape;
-		
-		int numSheet = ss.getBook().getNumberOfSheets();
+		final Book book = ss.getBook(); 
+		if (book == null) {
+			return;
+		}
+		int numSheet = book.getNumberOfSheets();
 		for (int i = 0; i < numSheet; i++) {
 			Sheet sheet = ss.getSheet(i);
 			PrintSetup setup = sheet.getPrintSetup();
@@ -125,7 +129,11 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void revertPrintSetting() {
-		int numSheet = ss.getBook().getNumberOfSheets();
+		final Book book = ss.getBook();
+		if (book == null) {
+			return;
+		}
+		int numSheet = book.getNumberOfSheets();
 		for (int i = 0; i < numSheet; i++) {
 			Sheet sheet = ss.getSheet(i);
 			PrintSetup setup = sheet.getPrintSetup();
@@ -158,9 +166,13 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void export(Exporter exporter, OutputStream outputStream) {
+		final Book book = ss.getBook();
+		if (book == null) {
+			return;
+		}
 		Radio seld = range.getSelectedItem();
 		if (seld == allSheet) {
-			exporter.export(ss.getBook(), outputStream);	
+			exporter.export(book, outputStream);
 		} else if (seld == currSelection){
 			Rect rect = ss.getSelection();
 			String area = ss.getColumntitle(rect.getLeft()) + ss.getRowtitle(rect.getTop()) + ":" + 

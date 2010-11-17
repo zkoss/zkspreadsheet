@@ -52,7 +52,10 @@ public class RangeHelper {
 
 	// dummy
 	public void onRangeAdd() {
-		Book book = spreadsheet.getBook();
+		final Book book = spreadsheet.getBook();
+		if (book == null) {
+			return;
+		}
 		Sheet sheet = spreadsheet.getSelectedSheet();
 		int sheetindex = book.getSheetIndex(sheet);
 		int left = spreadsheet.getSelection().getLeft();
@@ -75,6 +78,10 @@ public class RangeHelper {
 
 	// dummy
 	public void onRangeDelete() {
+		final Book book = spreadsheet.getBook();
+		if (book == null) {
+			return;
+		}
 		try {
 			Listbox rdw_rangeList = (Listbox) Path
 					.getComponent("//p1/rangeDeleteWin/rdw_rangeList");
@@ -82,7 +89,7 @@ public class RangeHelper {
 			Listitem st = rdw_rangeList.getSelectedItem();
 			if (st != null) {
 				String rangeName = st.getLabel();
-				spreadsheet.getBook().removeName(rangeName);
+				book.removeName(rangeName);
 			}
 
 			Window rangeDeleteWin = (Window) Path
@@ -96,6 +103,10 @@ public class RangeHelper {
 
 	// dummy
 	public void onRangeChoose() {
+		final Book book = spreadsheet.getBook();
+		if (book == null) {
+			return;
+		}
 		try {
 			Listbox rcw_rangeList = (Listbox) Path
 					.getComponent("//p1/rangeChooseWin/rcw_rangeList");
@@ -105,7 +116,7 @@ public class RangeHelper {
 			Rect rect;
 			if (st != null) {
 				String rangeName = st.getLabel();
-				range = spreadsheet.getBook().getName(rangeName);
+				range = book.getName(rangeName);
 				CellRangeAddress cra = CellRangeAddress.valueOf(range.getRefersToFormula());
 				rect = new Rect(cra.getFirstColumn(), cra.getFirstRow(), 
 						cra.getLastColumn(), cra.getLastRow());
@@ -121,6 +132,10 @@ public class RangeHelper {
 	}
 
 	public void onRangeSelectChange(String type) {
+		final Book book = spreadsheet.getBook();
+		if (book == null) {
+			return;
+		}
 		try {
 			Listbox rangeList;
 
@@ -142,7 +157,7 @@ public class RangeHelper {
 			Rect rect;
 			if (st != null) {
 				String rangeName = st.getLabel();
-				range = spreadsheet.getBook().getName(rangeName);
+				range = book.getName(rangeName);
 				CellRangeAddress cra = CellRangeAddress.valueOf(range.getRefersToFormula());
 				rect = new Rect(cra.getFirstColumn(), cra.getFirstRow(), 
 						cra.getLastColumn(), cra.getLastRow());

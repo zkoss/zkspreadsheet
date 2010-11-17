@@ -1,4 +1,8 @@
 function (out) {
+	if (!this.getSheetId()) { //no sheet at all
+		out.push('<div', this.domAttrs_(), '></div>');
+		return;
+	}
 	var uuid = this.uuid,
 		rowBegin = this._rowBegin,
 		rowEnd = this._rowEnd,
@@ -16,8 +20,10 @@ function (out) {
 		leftHeaderOuter = this._leftHeaderOuter,
 		leftHeaderInner = this._leftHeaderInner,
 		rowtitle = this._rowtitle,
-		rowfreeze = zk.parseInt(this.getRowFreeze()),
-		columnfreeze = zk.parseInt(this.getColumnFreeze()),
+		rowfreezestr = this.getRowFreeze(),
+		rowfreeze = rowfreezestr == null ? -1 : zk.parseInt(rowfreezestr),
+		columnfreezestr = this.getColumnFreeze(),
+		columnfreeze = columnfreezestr == null ? -1 : zk.parseInt(columnfreezestr),
 		dataPanel = this._dataPanel,
 		topHeaderHiddens = this._topHeaderHiddens,
 		leftHeaderHiddens = this._leftHeaderHiddens;

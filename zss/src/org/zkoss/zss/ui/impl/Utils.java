@@ -988,7 +988,7 @@ public class Utils {
 	}
 	
 	public static int getDefaultColumnWidthInPx(Sheet sheet) {
-		int columnWidth = sheet.getDefaultColumnWidth();
+		int columnWidth = sheet != null ? sheet.getDefaultColumnWidth() : -1;
 		return columnWidth <= 0 ? 64 : Utils.defaultColumnWidthToPx(columnWidth, getDefaultCharWidth(sheet));
 	}
 	
