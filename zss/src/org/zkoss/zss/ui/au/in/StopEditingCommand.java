@@ -42,7 +42,7 @@ import org.zkoss.zss.ui.impl.Utils;
  *
  */
 public class StopEditingCommand implements Command {
-	final static String Command = "onZSSStopEditing";
+	final static String Command = org.zkoss.zss.ui.event.Events.ON_STOP_EDITING;
 	
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();

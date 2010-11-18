@@ -3448,9 +3448,10 @@ public class Spreadsheet extends XulElement {
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_CTRL_KEY, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_BLUR,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		
-		addClientEvent(Spreadsheet.class, "onZSSStartEditing", CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, "onZSSEditboxEditing", CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, "onZSSStopEditing", CE_IMPORTANT);
+		addClientEvent(Spreadsheet.class, Events.ON_START_EDITING, 0);
+		addClientEvent(Spreadsheet.class, Events.ON_EDITBOX_EDITING, 0);
+		addClientEvent(Spreadsheet.class, Events.ON_STOP_EDITING, 0);
+
 		addClientEvent(Spreadsheet.class, "onZSSCellFocused", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, "onZSSCellFetch", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, "onZSSSyncBlock", CE_IMPORTANT | CE_DUPLICATE_IGNORE);

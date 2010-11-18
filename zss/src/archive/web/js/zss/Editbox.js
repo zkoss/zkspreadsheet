@@ -102,7 +102,7 @@ zss.Editbox = zk.$extends(zk.Object, {
 			value = sheet.editor.currentValue(),
 			keycode = evt.keyCode;
 
-		sheet._wgt.fire('onZSSEditboxEditing', {token: '', sheetId: sheet.serverSheetId, clienttxt: value});
+		sheet._wgt.fire('onEditboxEditing', {token: '', sheetId: sheet.serverSheetId, clienttxt: value});
 	},
 	/**
 	 * Sets edit box disabled

@@ -84,7 +84,7 @@ public class CellSelector {
 		final List<Cell> cells = new LinkedList<Cell>();
 		doVisit(sheet, rect, new CellVisitor() {
 			public void handle(CellVisitorContext context) {
-				cells.add(context.getCell());
+				cells.add(context.getOrCreateCell());
 			}
 		});
 		return cells;

@@ -36,7 +36,6 @@ public class CellVisitorContext {
 	int row;
 	int col;
 	Sheet sheet;
-	Cell cell;
 	Book book;
 	/**
 	 * @param sheet
@@ -47,7 +46,6 @@ public class CellVisitorContext {
 		this.sheet = sheet;
 		this.row = row;
 		this.col = col;
-		cell = Utils.getOrCreateCell(sheet, row, col);
 		book  = (Book) sheet.getWorkbook();
 	}	
 	
@@ -56,7 +54,7 @@ public class CellVisitorContext {
 	 * @return
 	 */
 	public Font getFont() {
-		CellStyle cs = cell.getCellStyle();
+		CellStyle cs = getOrCreateCell().getCellStyle();
 		return book.getFontAt((short)cs.getFontIndex());
 	}
 	
@@ -65,7 +63,7 @@ public class CellVisitorContext {
 	 * @return
 	 */
 	public CellStyle getCellStyle() {
-		return cell.getCellStyle();
+		return getOrCreateCell().getCellStyle();
 	}
 	
 	/**
@@ -74,7 +72,7 @@ public class CellVisitorContext {
 	 */
 	public CellStyle cloneCellStyle() {
 		CellStyle newCellStyle = book.createCellStyle();
-		newCellStyle.cloneStyleFrom(cell.getCellStyle());
+		newCellStyle.cloneStyleFrom(getOrCreateCell().getCellStyle());
 		return newCellStyle;
 	}
 	
@@ -127,7 +125,7 @@ public class CellVisitorContext {
 	 * @return
 	 */
 	public short getAlignment() {
-		return cell.getCellStyle().getAlignment();
+		return getOrCreateCell().getCellStyle().getAlignment();
 	}
 	
 	/**
@@ -139,13 +137,34 @@ public class CellVisitorContext {
 	}
 
 	/**
+	 * Returns cell, if there's no cell, will create cell and return
+	 * @return
+	 */
+	public Cell getOrCreateCell() {
+		return Utils.getOrCreateCell(sheet, row, col);
+	}
+	
+	/**
+	 * Returns cell if there has cell
 	 * @return
 	 */
 	public Cell getCell() {
-		return cell;
+		return Utils.getCell(sheet, row, col);
+	}
+	
+	public Sheet getSheet() {
+		return sheet;
 	}
 	
 	public Book getBook() {
 		return book;
+	}
+	
+	public int getRowIndex() {
+		return row;
+	}
+	
+	public int getColumnIndex() {
+		return col;
 	}
 }

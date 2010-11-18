@@ -129,7 +129,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		sheet.dp.moveFocus(row, col, true, true);
 		
 		sheet.state = zss.SSheetCtrl.START_EDIT;
-		sheet._wgt.fire('onZSSStartEditing',
+		sheet._wgt.fire('onStartEditing',
 				{token: "", sheetId: sheet.serverSheetId, row: row, col: col, clienttxt: val}, null, 25);
 		return true;
 	},
@@ -138,7 +138,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		var sheet = this.sheet;
 		sheet.state = zss.SSheetCtrl.FOCUSED;
 		sheet.dp.moveDown();
-		sheet._wgt.fire('onZSSStopEditing', 
+		sheet._wgt.fire('onStopEditing', 
 				{token: null, sheetId: sheet.serverSheetId, row: row, col: col, value: value}, {toServer: true}, 25);
 	},
 	/* move focus to a cell and start editing the value. This method will do - 
@@ -196,11 +196,11 @@ zss.DataPanel = zk.$extends(zk.Object, {
 					val = value.substring(0, j);
 					if (sheet.state != zss.SSheetCtrl.START_EDIT) {
 						sheet.state = zss.SSheetCtrl.START_EDIT;
-						sheet._wgt.fire('onZSSStartEditing',
+						sheet._wgt.fire('onStartEditing',
 								{token: "", sheetId: sheet.serverSheetId, row: row, col: col, clienttxt: val}, null, 25);
 					}
 					sheet.state = zss.SSheetCtrl.FOCUSED;
-					sheet._wgt.fire('onZSSStopEditing', 
+					sheet._wgt.fire('onStopEditing', 
 							{token: "", sheetId: sheet.serverSheetId, row: row, col: col, value: val}, {toServer: true}, 25);
 					++row; //move down to next cell
 					value = value.substring(j+1);
@@ -297,7 +297,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 				}
 	
 				//zkau.send({uuid: this.sheetid, cmd: "onZSSStopEditing", data: [token,sheet.serverSheetId,row,col,value]},25/*zkau.asapTimeout(cmp, "onOpen")*/);
-				sheet._wgt.fire('onZSSStopEditing', 
+				sheet._wgt.fire('onStopEditing', 
 						{token: token, sheetId: sheet.serverSheetId, row: row, col: col, value: value}, {toServer: true}, 25);
 			} else {
 				this._stopEditing();
