@@ -1136,8 +1136,8 @@ public class RangeImpl implements Range {
 	@Override
 	public void fillDown() {
 		if (_refs != null && !_refs.isEmpty()) {
-			final Ref srcRef = _refs.iterator().next();
-			final Ref dstRef = new AreaRefImpl(srcRef.getTopRow(), srcRef.getLeftCol(), srcRef.getTopRow(), srcRef.getRightCol(), srcRef.getOwnerSheet());
+			final Ref dstRef = _refs.iterator().next();
+			final Ref srcRef = new AreaRefImpl(dstRef.getTopRow(), dstRef.getLeftCol(), dstRef.getTopRow(), dstRef.getRightCol(), dstRef.getOwnerSheet());
 			fillRef(srcRef, dstRef, Range.FILL_COPY);
 		}
 	}
@@ -1145,8 +1145,8 @@ public class RangeImpl implements Range {
 	@Override
 	public void fillLeft() {
 		if (_refs != null && !_refs.isEmpty()) {
-			final Ref srcRef = _refs.iterator().next();
-			final Ref dstRef = new AreaRefImpl(srcRef.getTopRow(), srcRef.getRightCol(), srcRef.getBottomRow(), srcRef.getRightCol(), srcRef.getOwnerSheet());
+			final Ref dstRef = _refs.iterator().next();
+			final Ref srcRef = new AreaRefImpl(dstRef.getTopRow(), dstRef.getRightCol(), dstRef.getBottomRow(), dstRef.getRightCol(), dstRef.getOwnerSheet());
 			fillRef(srcRef, dstRef, Range.FILL_COPY);
 		}
 	}
@@ -1154,8 +1154,8 @@ public class RangeImpl implements Range {
 	@Override
 	public void fillRight() {
 		if (_refs != null && !_refs.isEmpty()) {
-			final Ref srcRef = _refs.iterator().next();
-			final Ref dstRef = new AreaRefImpl(srcRef.getTopRow(), srcRef.getLeftCol(), srcRef.getBottomRow(), srcRef.getLeftCol(), srcRef.getOwnerSheet());
+			final Ref dstRef = _refs.iterator().next();
+			final Ref srcRef = new AreaRefImpl(dstRef.getTopRow(), dstRef.getLeftCol(), dstRef.getBottomRow(), dstRef.getLeftCol(), dstRef.getOwnerSheet());
 			fillRef(srcRef, dstRef, Range.FILL_COPY);
 		}
 	}
@@ -1163,8 +1163,8 @@ public class RangeImpl implements Range {
 	@Override
 	public void fillUp() {
 		if (_refs != null && !_refs.isEmpty()) {
-			final Ref srcRef = _refs.iterator().next();
-			final Ref dstRef = new AreaRefImpl(srcRef.getBottomRow(), srcRef.getLeftCol(), srcRef.getBottomRow(), srcRef.getRightCol(), srcRef.getOwnerSheet());
+			final Ref dstRef = _refs.iterator().next();
+			final Ref srcRef = new AreaRefImpl(dstRef.getBottomRow(), dstRef.getLeftCol(), dstRef.getBottomRow(), dstRef.getRightCol(), dstRef.getOwnerSheet());
 			fillRef(srcRef, dstRef, Range.FILL_COPY);
 		}
 	}
