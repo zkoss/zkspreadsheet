@@ -27,6 +27,7 @@ ZK Spreadsheet 2.0.0
   149 change size of multi-column
   150 change size of multi-row
   156 spring DelegatingVariableResolver in Spreadsheet doesn't work
+  163 Can't set backgrond color to excel 2007 file format
   164 no grid line while export to pdf
   166 ZK Spreadsheet Live, Modify the font size, cell height won't automatically adjust
   167 set background color seems like multiple selection in color choosing

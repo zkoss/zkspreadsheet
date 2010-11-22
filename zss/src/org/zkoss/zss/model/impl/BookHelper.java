@@ -3289,12 +3289,13 @@ if (fillType == FILL_DEFAULT) {
 	}
 	
 	private static byte[] HTMLToTriplet(String color) {
-		short red = Short.parseShort(color.substring(1,3), 16); //red
-		short green = Short.parseShort(color.substring(3,5), 16); //green
-		short blue = Short.parseShort(color.substring(5), 16); //blue
-		byte r = (byte)Math.abs((byte)red);
-		byte g = (byte)Math.abs((byte)green);
-		byte b = (byte)Math.abs((byte)blue);
+		final int offset = color.charAt(0) == '#' ? 1 : 0;
+		final short red = Short.parseShort(color.substring(offset+0,offset+2), 16); //red
+		final short green = Short.parseShort(color.substring(offset+2,offset+4), 16); //green
+		final short blue = Short.parseShort(color.substring(offset+4, offset+6), 16); //blue
+		final byte r = (byte)(red & 0xff);
+		final byte g = (byte)(green & 0xff);
+		final byte b = (byte)(blue & 0xff);
 		return new byte[] {r, g, b};
 	}
 	

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
@@ -458,20 +459,19 @@ public class Utils {
 	 * @param color color to use
 	 */
 	public static void setBackgroundColor(Sheet sheet, Rect rect, String color) {
-
 		final Book book  = (Book) sheet.getWorkbook();
-		short colorIndex = BookHelper.rgbToIndex(book, color);
+		final Color bsColor = BookHelper.HTMLToColor(book, color);
 		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
 			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
 				Cell cell = Utils.getOrCreateCell(sheet, row, col);
 				CellStyle cs = cell.getCellStyle();
-				final short srcColor = cs.getFillForegroundColor();
-				if (srcColor == colorIndex) //same color, no need to change it
+				final Color srcColor = cs.getFillForegroundColorColor();
+				if (Objects.equals(srcColor, bsColor)) {
 					continue;
+				}
 				CellStyle newCellStyle = book.createCellStyle();
 				newCellStyle.cloneStyleFrom(cs);
-				newCellStyle.setFillForegroundColor(colorIndex);
-
+				BookHelper.setFillForegroundColor(newCellStyle, bsColor);
 				Range rng = Utils.getRange(sheet, row, col);
 				rng.setStyle(newCellStyle);
 			}
