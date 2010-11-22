@@ -85,8 +85,7 @@ public class RefBookImpl implements RefBook {
 	
 	@Override
 	public void publish(Event event) {
-		if (Executions.getCurrent() != null)
-			getEventQueue().publish(event);
+		getEventQueue().publish(event);
 	}
 	
 	//@see http://en.wikipedia.org/wiki/Double-checked_locking

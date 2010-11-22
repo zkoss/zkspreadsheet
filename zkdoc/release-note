@@ -47,6 +47,9 @@ ZK Spreadsheet 2.0.0
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 
     name conflicts with of those in poi.jar, so it is now OK to put both zpoi.jar and poi.jar in class path.
+  + Spec. of Range#getColumn(), Range#getRow(), Range#getLastColumn(), Range#getLastRow(), Range#getCells() has 
+    changed from 1-based to 0-based so it consists with other APIs. That is, in new spec, Range#getColumn() 
+	return 0 for column A (1st column) and Range#getRow() return 0 for row 1 (1st row).
   
 	------------
 ZK Spreadsheet 2.0.0 RC

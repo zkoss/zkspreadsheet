@@ -732,7 +732,7 @@ public final class BookHelper {
 		return "";
 	}
 	
-	private static Object getValueByCellValue(CellValue cellValue) {
+	public static Object getValueByCellValue(CellValue cellValue) {
 		final int cellType = cellValue.getCellType();
 		switch(cellType) {
 		case Cell.CELL_TYPE_BLANK:
@@ -2257,6 +2257,9 @@ public final class BookHelper {
 		return (Set<Ref>[]) new Set[] {last, all};
 	}
 	private static Object getCellObject(Cell cell) {
+		if (cell == null) {
+			return "";
+		}
 		int cellType = cell.getCellType();
 		if (cellType == Cell.CELL_TYPE_FORMULA) {
 			final Book book = (Book)cell.getSheet().getWorkbook();

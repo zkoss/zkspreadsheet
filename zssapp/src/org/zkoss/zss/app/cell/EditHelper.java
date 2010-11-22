@@ -145,7 +145,7 @@ public final class EditHelper {
 					false, false);
 			clearHighlightIfNeed(ss);
 			clearCutRangeIfNeed(ss);
-			ss.setSelection(new Rect(rng.getColumn() - 1, rng.getRow() - 1, rng.getLastColumn() - 1, rng.getLastRow() - 1));
+			ss.setSelection(new Rect(rng.getColumn(), rng.getRow(), rng.getLastColumn(), rng.getLastRow()));
 			ss.focus();
 		}
 		//TODO : test if needed
@@ -199,7 +199,7 @@ public final class EditHelper {
 					skipBlanks, transpose);
 			clearHighlightIfNeed(ss);
 			clearCutRangeIfNeed(ss);
-			ss.setSelection(new Rect(rng.getColumn() - 1, rng.getRow() - 1, rng.getLastColumn() - 1, rng.getLastRow() - 1));
+			ss.setSelection(new Rect(rng.getColumn(), rng.getRow(), rng.getLastColumn(), rng.getLastRow()));
 			ss.focus();
 		}
 	}

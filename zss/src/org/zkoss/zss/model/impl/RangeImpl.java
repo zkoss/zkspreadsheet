@@ -17,8 +17,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,9 +28,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
+import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
@@ -49,7 +53,7 @@ import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
-
+import org.zkoss.zss.engine.impl.RefAddr;
 /**
  * Implementation of {@link Range} which plays a facade to operate on the spreadsheet data models
  * and maintain the reference dependency. 
@@ -117,7 +121,7 @@ public class RangeImpl implements Range {
 	
 	public Collection<Ref> getRefs() {
 		if (_refs == null) {
-			_refs = new HashSet<Ref>(3);
+			_refs = new LinkedHashSet<Ref>(3);
 		}
 		return _refs;
 	}
@@ -791,8 +795,8 @@ public class RangeImpl implements Range {
 	@Override
 	public Range getCells(int row, int col) {
 		final Ref ref = getRefs().iterator().next();
-		final int col1 = ref.getLeftCol() + col - 1;
-		final int row1 = ref.getTopRow() + row - 1;
+		final int col1 = ref.getLeftCol() + col;
+		final int row1 = ref.getTopRow() + row;
 		return new RangeImpl(row1, col1, _sheet, _sheet);
 	}
 			
@@ -1323,24 +1327,101 @@ public class RangeImpl implements Range {
 	@Override
 	public int getRow() {
 		final Ref ref = getRefs().iterator().next();
-		return ref.getTopRow() + 1;
+		return ref.getTopRow();
 	}
 	
 	@Override
 	public int getColumn() {
 		final Ref ref = getRefs().iterator().next();
-		return ref.getLeftCol() + 1;
+		return ref.getLeftCol();
 	}
 
 	@Override
 	public int getLastColumn() {
 		final Ref ref = getRefs().iterator().next();
-		return ref.getRightCol() + 1;
+		return ref.getRightCol();
 	}
 
 	@Override
 	public int getLastRow() {
 		final Ref ref = getRefs().iterator().next();
-		return ref.getBottomRow() + 1;
+		return ref.getBottomRow();
+	}
+
+	@Override
+	public Object getValue() {
+		Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
+		if (ref != null) {
+			final int tRow = ref.getTopRow();
+			final int lCol = ref.getLeftCol();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final Cell cell = getCell(tRow, lCol, refSheet);
+			if (cell != null) {
+				return getValue0(cell);
+			}
+		}
+		return null;
+	}
+
+	private Object getValue0(Cell cell) {
+		int cellType = cell.getCellType();
+		if (cellType == Cell.CELL_TYPE_FORMULA) {
+			final Book book = (Book)cell.getSheet().getWorkbook();
+			final CellValue cv = BookHelper.evaluate(book, cell);
+			return BookHelper.getValueByCellValue(cv);
+		} else {
+			return BookHelper.getCellValue(cell);
+		}
+	}
+
+	@Override
+	public void setValue(Object value) {
+		setEditText(value != null ? value.toString() : null);
+	}
+
+	@Override
+	public Range getOffset(int rowOffset, int colOffset) {
+		if (rowOffset == 0 && colOffset == 0) { //no offset, return this
+			return this;
+		}
+		if (_refs != null && !_refs.isEmpty()) {
+			final SpreadsheetVersion ver = ((Book)_sheet.getWorkbook()).getSpreadsheetVersion();
+			final int maxCol = ver.getLastColumnIndex();
+			final int maxRow = ver.getLastRowIndex();
+			final Set<Ref> nrefs = new LinkedHashSet<Ref>(_refs.size());
+			final Map<RefAddr, Ref> refMap = new HashMap<RefAddr, Ref>(_refs.size()); //index of Ref left/top/right/bottom 
+
+			for(Ref ref : _refs) {
+				final int left = ref.getLeftCol() + colOffset;
+				final int top = ref.getTopRow() + rowOffset;
+				final int right = ref.getRightCol() + colOffset;
+				final int bottom = ref.getBottomRow() + rowOffset;
+				
+				final RefSheet refSheet = ref.getOwnerSheet();
+				final int nleft = colOffset < 0 ? Math.max(0, left) : left;  
+				final int ntop = rowOffset < 0 ? Math.max(0, top) : top;
+				final int nright = colOffset > 0 ? Math.min(maxCol, right) : right;
+				final int nbottom = rowOffset > 0 ? Math.min(maxRow, bottom) : bottom;
+				
+				if (nleft > nright || ntop > nbottom) { //offset out of range
+					continue;
+				}
+				final RefAddr refAddr = new RefAddr(ntop, nleft, nbottom, nright);
+				if (refMap.containsKey(refAddr)) { //same area there, next
+					continue;
+				}
+				final Ref newRef = (nleft == nright && ntop == nbottom) ? 
+					new CellRefImpl(ntop, nleft, refSheet) :
+					new AreaRefImpl(ntop, nleft, nbottom, nright, refSheet);
+				nrefs.add(newRef);
+				refMap.put(refAddr, newRef);
+			}
+			if (nrefs.isEmpty()) {
+				return Ranges.EMPTY_RANGE;
+			} else{
+				return new RangeImpl(nrefs, _sheet);
+			}
+		}
+		return Ranges.EMPTY_RANGE;
 	}
 }

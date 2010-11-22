@@ -232,8 +232,8 @@ public interface Range {
 	
 	/**
 	 * Return the range that contains the cell specified in row, col (relative to this Range).
-	 * @param row row index relative to this Range(note that it is 1-based)
-	 * @param col column index relative to this Range(note that it is 1-based)
+	 * @param row row index relative to this Range(note that it is 0-based)
+	 * @param col column index relative to this Range(note that it is 0-based)
 	 * @return the range that contains the cell specified in row, col (relative to this Range).
 	 */
 	public Range getCells(int row, int col);
@@ -362,26 +362,26 @@ public interface Range {
 	public Range getDirectPrecedents();
 	
 	/**
-	 * Returns the number of the 1st row of the 1st area in this Range(1-based; i.e. row1 return 1)
-	 * @return the number of the 1st row of the 1st area in this Range(1-based; i.e. row1 return 1)
+	 * Returns the number of the 1st row of the 1st area in this Range(0-based; i.e. row1 return 0)
+	 * @return the number of the 1st row of the 1st area in this Range(0-based; i.e. row1 return 0)
 	 */
 	public int getRow();
 	
 	/**
-	 * Returns the number of the 1st column of the 1st area in this Range(1-based; i.e. Column A return 1)
-	 * @return the number of the 1st column of the 1st area in this Range(1-based; i.e. Column A return 1)
+	 * Returns the number of the 1st column of the 1st area in this Range(0-based; i.e. Column A return 0)
+	 * @return the number of the 1st column of the 1st area in this Range(0-based; i.e. Column A return 0)
 	 */
 	public int getColumn();
 	
 	/**
-	 * Returns the number of the last row of the 1st area in this Range(1-based; i.e. row1 return 1)
-	 * @return the number of the last row of the 1st area in this Range(1-based; i.e. row1 return 1)
+	 * Returns the number of the last row of the 1st area in this Range(0-based; i.e. row1 return 0)
+	 * @return the number of the last row of the 1st area in this Range(0-based; i.e. row1 return 0)
 	 */
 	public int getLastRow();
 	
 	/**
-	 * Returns the number of the last column of the 1st area in this Range(1-based; i.e. Column A return 1)
-	 * @return the number of the last column of the 1st area in this Range(1-based; i.e. Column A return 1)
+	 * Returns the number of the last column of the 1st area in this Range(0-based; i.e. Column A return 0)
+	 * @return the number of the last column of the 1st area in this Range(0-based; i.e. Column A return 0)
 	 */
 	public int getLastColumn();
 	
@@ -390,5 +390,23 @@ public interface Range {
 	 * @return the number of contained objects in this Range.
 	 */
 	public long getCount();
+
+	/**
+	 * Set value into the specified Range.
+	 */
+	public void setValue(Object value);
 	
+	/**
+	 * Returns value from the specified Range.
+	 * @return
+	 */
+	public Object getValue();
+	
+	/**
+	 * Returns a {@link Range} that represents a range that offset from this Range. 
+	 * @param rowOffset positive means downward; 0 means don't change row; negative means upward.
+	 * @param colOffset positive means rightward; 0 means don't change column; negative means leftward.
+	 * @return
+	 */
+	public Range getOffset(int rowOffset, int colOffset);
 }

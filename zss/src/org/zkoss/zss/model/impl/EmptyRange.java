@@ -76,7 +76,7 @@ public class EmptyRange implements Range {
 
 	@Override
 	public int getColumn() {
-		return 0;
+		return -1;
 	}
 
 	@Override
@@ -126,7 +126,7 @@ public class EmptyRange implements Range {
 
 	@Override
 	public int getRow() {
-		return 0;
+		return -1;
 	}
 
 	@Override
@@ -223,11 +223,25 @@ public class EmptyRange implements Range {
 
 	@Override
 	public int getLastColumn() {
-		return 0;
+		return -1;
 	}
 
 	@Override
 	public int getLastRow() {
-		return 0;
+		return -1;
+	}
+
+	@Override
+	public Object getValue() {
+		return null;
+	}
+
+	@Override
+	public void setValue(Object value) {
+	}
+
+	@Override
+	public Range getOffset(int rowOffset, int colOffset) {
+		return this;
 	}
 }

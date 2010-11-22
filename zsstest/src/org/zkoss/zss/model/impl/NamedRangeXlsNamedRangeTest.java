@@ -70,19 +70,19 @@ public class NamedRangeXlsNamedRangeTest {
 		
 		Range rngA1 = Ranges.range(sheet1, "RangeA1");
 		assertEquals("Sheet1", rngA1.getSheet().getSheetName());
-		assertEquals(1, rngA1.getColumn());
-		assertEquals(1, rngA1.getRow());
+		assertEquals(0, rngA1.getColumn());
+		assertEquals(0, rngA1.getRow());
 		
 		Range rngB1 = Ranges.range(sheet1, "RangeB1");
 		assertEquals("Sheet1", rngB1.getSheet().getSheetName());
-		assertEquals(2, rngB1.getColumn());
-		assertEquals(1, rngB1.getRow());
+		assertEquals(1, rngB1.getColumn());
+		assertEquals(0, rngB1.getRow());
 		
 		Range rngA2B3 = Ranges.range(sheet1, "RangeA2_B3");
 		assertEquals("Sheet1", rngA2B3.getSheet().getSheetName());
-		assertEquals(1, rngA2B3.getColumn());
-		assertEquals(2, rngA2B3.getRow());
-		assertEquals(2, rngA2B3.getLastColumn());
-		assertEquals(3, rngA2B3.getLastRow());
+		assertEquals(0, rngA2B3.getColumn());
+		assertEquals(1, rngA2B3.getRow());
+		assertEquals(1, rngA2B3.getLastColumn());
+		assertEquals(2, rngA2B3.getLastRow());
 	}
 }

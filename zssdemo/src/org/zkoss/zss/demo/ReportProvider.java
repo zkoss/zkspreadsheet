@@ -79,10 +79,10 @@ public class ReportProvider {
 		return dataBean;
 	}
 
-	public static List queryComputerBean() throws IOException {
+	public static List<ComputerBean> queryComputerBean() throws IOException {
 		File csv = new File(Executions.getCurrent().getDesktop().getWebApp().getRealPath("/WEB-INF/xls/demo/data.csv"));
 		CSVReader reader = new CSVReader(new FileReader(csv));
-		List data = new ArrayList();
+		List<ComputerBean> data = new ArrayList<ComputerBean>();
 		String[] nextLine;
 	    while ((nextLine = reader.readNext()) != null) {
 	    	ComputerBean computerBean = new ComputerBean();
