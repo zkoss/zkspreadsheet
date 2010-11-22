@@ -39,7 +39,7 @@
 <checkbox id="ckbox" label="Show Gridline" checked="true">
 	<attribute name="onCheck">
 	<![CDATA[{
-		org.apache.poi.ss.usermodel.Sheet sheet = ss1.getSelectedSheet();
+		org.zkoss.poi.ss.usermodel.Sheet sheet = ss1.getSelectedSheet();
 		Ranges.range(sheet).setDisplayGridlines(ckbox.isChecked());
 	}]]>
 	</attribute>
