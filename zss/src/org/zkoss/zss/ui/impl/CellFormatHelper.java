@@ -88,12 +88,7 @@ public class CellFormatHelper {
 			final boolean isRichText = ft.isRichTextString();
 			final RichTextString rstr = isRichText ? ft.getRichTextString() : null;
 			final String txt = rstr != null ? rstr.getString() : ft.getCellFormatResult().text;
-			if (!isRichText && ft.getCellFormatResult().textColor != null) {
-				final Color textColor = ft.getCellFormatResult().textColor;
-				final String htmlColor = toHTMLColor(textColor);
-				sb.append("color:").append(htmlColor).append(";");
-			}
-
+			
 			if (bgColor != null && (txt == null || txt.trim().equals(""))) {
 				// not text but has bg color, i must set the z-index to 0
 				// otherwise, it will cover the overflow text of previous cell
@@ -303,6 +298,16 @@ public class CellFormatHelper {
 			final Font font = _book.getFontAt(style.getFontIndex());
 			
 			sb.append(BookHelper.getFontCSSStyle(_book, font));
+
+			//condition color
+			final FormatText ft = Utils.getFormatText(_cell);
+			final boolean isRichText = ft.isRichTextString();
+			if (!isRichText && ft.getCellFormatResult().textColor != null) {
+				final Color textColor = ft.getCellFormatResult().textColor;
+				final String htmlColor = toHTMLColor(textColor);
+				sb.append("color:").append(htmlColor).append(";");
+			}
+
 			return sb.toString();
 		}
 		return "";
