@@ -411,6 +411,26 @@ public class Utils {
 	}
 	
 	/**
+	 * Set wrap text in selection range
+	 * @param sheet
+	 * @param rect
+	 * @param wrapped
+	 */
+	public static void setWrapText(Sheet sheet, Rect rect, final boolean wrapped) {
+		visitCells(sheet, rect, new CellVisitor(){
+			@Override
+			public void handle(CellVisitorContext context) {
+				final boolean srcWrapText = context.isWrapText();
+
+				if (srcWrapText != wrapped) {
+					CellStyle newStyle = context.cloneCellStyle();
+					newStyle.setWrapText(wrapped);
+					context.getRange().setStyle(newStyle);
+				}
+			}});
+	}
+	
+	/**
 	 * Visit each cell in the {@link #Rect}
 	 * @param sheet
 	 * @param rect
@@ -419,12 +439,7 @@ public class Utils {
 	public static void visitCells(Sheet sheet, Rect rect, CellVisitor vistor) {
 		new CellSelector().doVisit(sheet, rect, vistor);
 	}
-	
-	//TODO: experiment: using thread
-/*	public static void visitIndependingCell(Sheet sheet, Rect rect, IndependingCellVisitor visitor) {
-		
-	}
-*/	
+
 	/**
 	 * Visit each sheet in the {@link #Book}
 	 * @param book
