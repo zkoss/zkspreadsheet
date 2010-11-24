@@ -19,11 +19,10 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.engine.event;
 
+import org.hibernate.validator.Size;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Range;
-import org.zkoss.zss.model.Size;
 
 
 /**
