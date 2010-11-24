@@ -1,0 +1,15 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<menupopup id="insertMenupopup">
+		<menuitem id="insertFormula" label="${c:l('insert.formula')}"/>
+		<menu id="insertChart" label="${c:l('insert.chart')}">
+			<menupopup>
+				<menuitem id="insertPieChart"
+					label="${c:l('insert.piechart')}" />
+			</menupopup>
+		</menu>
+		<menuitem id="insertImage" label="${c:l('insert.image')}" upload="true">
+		</menuitem>
+		<menuitem id="insertSheet" label="${c:l('insert.sheet')}"/>
+	</menupopup>
+</zk>

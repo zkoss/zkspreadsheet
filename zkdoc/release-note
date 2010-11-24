@@ -18,6 +18,7 @@ ZK Spreadsheet 2.0.0
   165 Support 2007 Excel file format export to PDF
   192 Support exporting Excel Chart to PDF
   194 ZK Spreadsheet Live support shift cell, entire row or column
+  199 ZK Spreadsheet Live shall support wrap text.
 
 *Bug 
   132 view ZK Spreadsheet Live index.zul cause NullPointerException
@@ -35,6 +36,7 @@ ZK Spreadsheet 2.0.0
   170 Set font color of a region with different font size, will resize the font size.
   171 Once clicked, merge button remain pressed state
   172 paste transpose error
+  180 ZK Spreadsheet Live support hide column/row function
   182 Exception when right click row header and insert a row
   187 Select and focus shall not move when insert/delete columns/rows/cells
   188 NullPointerException when delete columns

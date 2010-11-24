@@ -1,3 +1,17 @@
+/* Zssapp.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		Nov 16, 2010 6:22:52 PM , Created by Sam
+}}IS_NOTE
+
+Copyright (C) 2009 Potix Corporation. All Rights Reserved.
+
+*/
 package org.zkoss.zss.app.zul;
 
 import org.zkoss.zk.ui.Components;
@@ -17,6 +31,7 @@ public class Zssapp extends Div implements IdSpace  {
 	
 	private final static String URI = "~./zssapp/html/zssapp.zul";
 	
+	private final static String KEY_ZSSAPP = "org.zkoss.zss.app.zul.zssApp";
 	/*Default spreadsheet*/
 	//TODO: in mainWin id space, move to here
 	private Spreadsheet spreadsheet;
@@ -33,7 +48,9 @@ public class Zssapp extends Div implements IdSpace  {
 		
 		spreadsheet = (Spreadsheet)mainWin.getFellow("spreadsheet");
 		mainWinCtrl = (MainWindowCtrl)mainWin.getAttribute(mainWin.getId() + "$composer");
-		bindAppController(spreadsheet);
+		bindAppController(spreadsheet, mainWinCtrl);
+		spreadsheet.setAttribute(KEY_ZSSAPP, this);
+		
 	}
 	
 	public void setSrc(String src) {
@@ -78,34 +95,15 @@ public class Zssapp extends Div implements IdSpace  {
 	 */
 	
 	private static String KEY_ZSSAPP_CONTROLLER = "org.zkoss.zss.app.zul.zssapp.appController";
-	private void bindAppController(Spreadsheet ss) {
-		ss.setAttribute(KEY_ZSSAPP_CONTROLLER, this);
+	private void bindAppController(Spreadsheet ss, Object ctrl) {
+		ss.setAttribute(KEY_ZSSAPP_CONTROLLER, ctrl);
 	}
 	
 	private static Object getAppController(Spreadsheet ss) {
 		return ss.getAttribute(KEY_ZSSAPP_CONTROLLER);
 	}
 	
-	/**
-	 * Redraw all sheet's name
-	 */
-	public static void redrawSheets(Spreadsheet spreadsheet) {
-		MainWindowCtrl ctrl = (MainWindowCtrl)getAppController(spreadsheet);
-		ctrl.redrawSheetTabbox();
+	public static Zssapp getInstance(Spreadsheet spreadsheet) {
+		return (Zssapp)spreadsheet.getAttribute(KEY_ZSSAPP);
 	}
-	
-	public static void setSelectedSheet(Spreadsheet spreadsheet, String name) {
-		MainWindowCtrl ctrl = (MainWindowCtrl)getAppController(spreadsheet);
-		ctrl.setSelectedSheet(name);
-	}
-	
-	public static void setBackgroundColor(Spreadsheet spreadsheet, String color) {
-		MainWindowCtrl ctrl = (MainWindowCtrl)getAppController(spreadsheet);
-		ctrl.setBackgroundColor(color);
-	}
-	
-	public static void setFontColor(Spreadsheet spreadsheet, String color) {
-		MainWindowCtrl ctrl = (MainWindowCtrl)getAppController(spreadsheet);
-		ctrl.setFontColor(color);
-	}	
 }

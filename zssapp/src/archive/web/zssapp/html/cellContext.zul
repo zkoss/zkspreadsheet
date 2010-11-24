@@ -8,30 +8,26 @@
 <div style="padding:2px;">
 <vlayout spacing="2px">
 	<hlayout vflex="min" spacing="3px">
-		<fontfamily id="fontfamily" width="86px"></fontfamily>
-		<fontsize id="fontSize" width="48px" style="border:0px;margin:0px;"></fontsize>
-<!--		<toolbarbutton id="_boldBtn" src="~./zssapp/image/edit-bold.png" forward="onClick=//p1/mainWin.onFontBoldClick" />-->
-		<fontboldbutton id="boldBtn"/>
-		<toolbarbutton id="_italicBtn" 
-			src="/img/edit-italic.png" forward="onClick=//p1/mainWin.onFontItalicClick"/>
+		<div id="fontCtrlPanel" use="org.zkoss.zss.app.zul.ctrl.CellStyleCtrlPanel"
+				fontfamilywidth="86px"
+				fontsizewidth="48px"
+				underlinevisible="false"
+				strikethroughvisible="false"
+				bordervisible="false"
+				fontcolorvisible="false"
+				cellcolorvisible="false"
+				alignmentvisible="false"
+				wraptextvisible="false"></div>
 	</hlayout>
-	<hlayout height="24px" >	
-		<!-- align horizontal************************************************************************ -->
-		<toolbarbutton id="_alignLeftBtn" src="/img/edit-alignment.png"
-			forward="onClick=//p1/mainWin.onAlignHorizontalClick(left)" />
-		<toolbarbutton id="_alignCenterBtn" src="/img/edit-alignment-center.png"
-			forward="onClick=//p1/mainWin.onAlignHorizontalClick(center)" />
-		<toolbarbutton id="_alignRightBtn" 
-			src="/img/edit-alignment-right.png"
-			forward="onClick=//p1/mainWin.onAlignHorizontalClick(right)" />
-	
-		<!-- color & background-color************************************************************************ -->
-		<colorbutton id="_fontColorBtn" width="20px" height="12px" image="/img/edit-color.png" color="#000000" style="margin: 2px 1px 2px 0;">
-		</colorbutton>
-	
-		<colorbutton id="_backgroundColorBtn" width="20px" height="12px" color="#FFFFFF" image="/img/paint-can-color.png" style="margin: 2px 1px 2px 0;">
-		</colorbutton>
-		<borderbutton id="borderBtn"/>
+	<hlayout height="24px" >
+		<div id="styleCtrlBottomPanel" use="org.zkoss.zss.app.zul.ctrl.CellStyleCtrlPanel"
+			fontfamilyvisible="false"
+			fontsizevisible="false"
+			boldvisible="false"
+			italicvisible="false"
+			underlinevisible="fasle"
+			strikethroughvisible="fasle"
+			wraptextvisible="false"/>
 		<toolbarbutton id="_mergeCellBtn" sclass="toolIcon"
 			src="/img/table-join.png" forward="onClick=//p1/mainWin.onMergeCellClick" />
 	</hlayout>

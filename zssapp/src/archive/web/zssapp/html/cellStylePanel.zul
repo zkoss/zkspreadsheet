@@ -1,0 +1,92 @@
+<zk>
+	<style>
+		.arialFont .z-menu-item-cnt, .arialFont .z-combo-item-text{
+		font-size:14px; font-family:arial; } .calibriFont
+		.z-menu-item-cnt, .calibriFont .z-combo-item-text{
+		font-size:14px; font-family:calibri; } .timeFont
+		.z-menu-item-cnt,.timeFont .z-combo-item-text{ font-size:14px;
+		font-family:time new roman; } .courierFont
+		.z-menu-item-cnt,.courierFont .z-combo-item-text{
+		font-size:14px; font-family:courier new; } .comicFont
+		.z-menu-item-cnt,.comicFont .z-combo-item-text{ font-size:14px;
+		font-family:comic Sans MS; } .centuryFont
+		.z-menu-item-cnt,.centuryFont .z-combo-item-text{
+		font-size:14px; font-family:century gothic; } .georgiaFont
+		.z-menu-item-cnt,.georgiaFont .z-combo-item-text{
+		font-size:14px; font-family:georgia; } .impactFont
+		.z-menu-item-cnt,.impactFont .z-combo-item-text{ font-size:14px;
+		font-family:impact; }
+	</style>
+	<hlayout id="container" height="100%" spacing="0">
+		<combobox id="fontFamily" mold="rounded" width="125px">
+			<comboitem label="Calibri" sclass="calibriFont" />
+			<comboitem label="Courier New" sclass="courierFont" />
+			<comboitem label="Comic Sans MS" sclass="comicFont" />
+			<comboitem label="Times New Roman" sclass="timeFont" />
+			<comboitem label="Century Gothic" sclass="centuryFont" />
+			<comboitem label="Georgia" sclass="georgiaFont" />
+			<comboitem label="Impact" sclass="impactFont" />
+		</combobox>
+		<combobox  id="fontSize" mold="rounded" width="50px">
+			<comboitem label="8" />
+			<comboitem label="9" />
+			<comboitem label="10" />
+			<comboitem label="11" />
+			<comboitem label="12" />
+			<comboitem label="14" />
+			<comboitem label="16" />
+			<comboitem label="18" />
+			<comboitem label="20" />
+			<comboitem label="22" />
+			<comboitem label="24" />
+			<comboitem label="26" />
+			<comboitem label="28" />
+			<comboitem label="36" />
+			<comboitem label="48" />
+			<comboitem label="72" />
+		</combobox>
+		<toolbarbutton id="boldBtn" src="~./zssapp/image/edit-bold.png" tooltiptext="${c:l('font.bold')}"></toolbarbutton>
+		<toolbarbutton id="italicBtn" src="~./zssapp/image/edit-italic.png" tooltiptext="${c:l('font.italic')}"></toolbarbutton>
+		<toolbarbutton id="underlineBtn" src="~./zssapp/image/edit-underline.png" tooltiptext="${c:l('font.underline')}"></toolbarbutton>
+		<toolbarbutton id="strikethroughBtn" src="~./zssapp/image/edit-strike.png" tooltiptext="${c:l('font.strike')}"></toolbarbutton>
+		<colorbutton id="fontColorBtn" width="20px" height="12px" color="#000000" image="/img/edit-color.png" tooltiptext="${c:l('font.color')}"></colorbutton>
+		<colorbutton id="cellColorBtn" width="20px" height="12px" color="#FFFFFF" image="/img/paint-can-color.png" tooltiptext="${c:l('font.fill')}"></colorbutton>
+		<dropdownbutton id="borderBtn" src="~./zssapp/image/border-bottom.png" forward="onBorderSelector(${c:l('border.bottom')})" tooltiptext="${c:l('border.bottom')}">
+			<menupopup >
+				<menuitem label="${c:l('border.bottom')}" src="~./zssapp/image/border-bottom.png"
+					forward="onBorderSelector(${c:l('border.bottom')})" />
+				<menuitem label="${c:l('border.top')}" src="~./zssapp/image/border-top.png"
+					forward="onBorderSelector(${c:l('border.top')})" />
+				<menuitem label="${c:l('border.left')}" src="~./zssapp/image/border-left.png"
+					forward="onBorderSelector(${c:l('border.left')})" />
+				<menuitem label="${c:l('border.right')}" src="~./zssapp/image/border-right.png"
+					forward="onBorderSelector(${c:l('border.right')})" />
+				<menuseparator />			
+				<menuitem label="${c:l('border.no')}" src="~./zssapp/image/border.png"
+					forward="onBorderSelector(${c:l('border.no')})" />
+				<menuitem label="${c:l('border.full')}" src="~./zssapp/image/border-all.png"
+					forward="onBorderSelector(${c:l('border.full')})" />
+				<menuitem label="${c:l('border.outside')}"	src="~./zssapp/image/border-outside.png"
+					forward="onBorderSelector(${c:l('border.outside')})" />
+				<menuitem label="${c:l('border.inside')}" src="~./zssapp/image/border-inside.png"
+					forward="onBorderSelector(${c:l('border.inside')})" />
+				<menuseparator />
+				<menuitem label="${c:l('border.insideHorizontal')}" src="~./zssapp/image/border-horizontal.png"
+					forward="onBorderSelector(${c:l('border.insideHorizontal')})" />
+				<menuitem label="${c:l('border.insideVertical')}" src="~./zssapp/image/border-vertical.png"
+					forward="onBorderSelector(${c:l('border.insideVertical')})" />
+<!--				 NOT IMPLEMENT menuitem label="${c:l('border.diagonalDown')}" src="~./zssapp/image/border-down.png"-->
+<!--					forward="onBorderSelector(${c:l('border.diagonalDown')})" />-->
+<!--				<menuitem label="${c:l('border.diagonalUp')}" src="~./zssapp/image/border-up.png"-->
+<!--					forward="onBorderSelector(${c:l('border.diagonalUp')})" /-->
+			</menupopup>
+		</dropdownbutton>
+		<toolbarbutton id="alignLeftBtn" src="/img/edit-alignment.png" tooltiptext="${c:l('align.left')}"
+							forward="onClick=onAlignHorizontalClick(left)">	</toolbarbutton>
+		<toolbarbutton id="alignCenterBtn" src="/img/edit-alignment-center.png" tooltiptext="${c:l('align.center')}"
+							forward="onClick=onAlignHorizontalClick(center)"></toolbarbutton>
+		<toolbarbutton id="alignRightBtn" src="/img/edit-alignment-right.png" tooltiptext="${c:l('align.right')}"
+							forward="onClick=onAlignHorizontalClick(right)" ></toolbarbutton>
+		<toolbarbutton id="wrapTextBtn" src="/img/wrapText.gif" tooltiptext="Wrap Text"></toolbarbutton>				
+	</hlayout>
+</zk>

@@ -1,0 +1,20 @@
+<window id="fileSaveAsWin" title="Save As" border="normal" width="190px" height="100px" visible="false" position="center">
+	<div style="margin:7px">
+	File name:
+	<textbox id="fsaw_filename"/>
+	<hbox>
+	<button label="OK" forward="//p1/mainWin.onFileOK(saveAs)">
+	</button>
+	<button label="Cancel">
+		<attribute name="onClick"> 			
+			((Component)self.getSpaceOwner()).detach();			
+		</attribute>
+	</button>
+	</hbox>
+	</div>
+<!--	<attribute name="onCreate"> -->
+<!--		fsaw_files.selectedIndex=0;-->
+<!--	</attribute>-->
+		
+</window>
+

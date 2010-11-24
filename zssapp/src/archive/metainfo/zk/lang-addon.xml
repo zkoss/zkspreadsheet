@@ -26,6 +26,18 @@
 	</component>
 	
 	<component>
+		<component-name>rowheadermenupopup</component-name>
+		<extends>menupopup</extends>
+		<component-class>org.zkoss.zss.app.zul.RowHeaderMenupopup</component-class>
+	</component>
+	
+	<component>
+		<component-name>columnheadermenupopup</component-name>
+		<extends>menupopup</extends>
+		<component-class>org.zkoss.zss.app.zul.ColumnHeaderMenupopup</component-class>
+	</component>
+	
+	<component>
 		<component-name>cellmenupopup</component-name>
 		<extends>menupopup</extends>
 		<component-class>org.zkoss.zss.app.zul.CellMenupopup</component-class>
@@ -42,29 +54,41 @@
 		<extends>window</extends>
 		<component-class>org.zkoss.zss.app.zul.CellContext</component-class>
 	</component>
-	
+
 	<component>
-		<component-name>fontfamily</component-name>
-		<extends>div</extends>
-		<component-class>org.zkoss.zss.app.zul.FontFamily</component-class>
+		<component-name>formulaeditor</component-name>
+		<extends>textbox</extends>
+		<component-class>org.zkoss.zss.app.zul.FormulaEditor</component-class>
+	</component>
+
+	<component>
+		<component-name>filemenu</component-name>
+		<extends>menu</extends>
+		<component-class>org.zkoss.zss.app.zul.FileMenu</component-class>
 	</component>
 	
 	<component>
-		<component-name>fontsize</component-name>
-		<extends>div</extends>
-		<component-class>org.zkoss.zss.app.zul.FontSize</component-class>
+		<component-name>editmenu</component-name>
+		<extends>menu</extends>
+		<component-class>org.zkoss.zss.app.zul.EditMenu</component-class>
 	</component>
 	
 	<component>
-		<component-name>fontboldbutton</component-name>
-		<extends>toolbarbutton</extends>
-		<component-class>org.zkoss.zss.app.zul.FontBoldButton</component-class>
+		<component-name>viewmenu</component-name>
+		<extends>menu</extends>
+		<component-class>org.zkoss.zss.app.zul.ViewMenu</component-class>
 	</component>
 	
 	<component>
-		<component-name>borderbutton</component-name>
-		<extends>dropdownbutton</extends>
-		<component-class>org.zkoss.zss.app.zul.Borderbutton</component-class>
+		<component-name>formatmenu</component-name>
+		<extends>menu</extends>
+		<component-class>org.zkoss.zss.app.zul.FormatMenu</component-class>
+	</component>
+	
+	<component>
+		<component-name>insertmenu</component-name>
+		<extends>menu</extends>
+		<component-class>org.zkoss.zss.app.zul.InsertMenu</component-class>
 	</component>
 
 	<component>

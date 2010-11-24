@@ -1,0 +1,59 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<menupopup id="viewMenupopup">
+		<menuitem id="viewFormulaBar" label="${c:l('view.formulaBar')}"
+			forward="onViewFormulaBar" autocheck="true" checked="true" />
+		<menu label="${c:l('view.freezeRows')}">
+			<menupopup id="freezeRowsMenupopup">
+				<menuitem id="unfreezeRows" label="${c:l('view.unfreezeRows')}"/>
+				<menuseparator />
+				<menuitem label="${c:l('view.freezeRows')} 1"
+					forward="onViewFreezeRows(1)" />
+				<menuitem id="" label="${c:l('view.freezeRows')} 2"
+					forward="onViewFreezeRows(2)" />
+				<menuitem label="${c:l('view.freezeRows')} 3"
+					forward="onViewFreezeRows(3)" />
+				<menuitem label="${c:l('view.freezeRows')} 4"
+					forward="onViewFreezeRows(4)" />
+				<menuitem label="${c:l('view.freezeRows')} 5"
+					forward="onViewFreezeRows(5)" />
+				<menuitem label="${c:l('view.freezeRows')} 6"
+					forward="onViewFreezeRows(6)" />
+				<menuitem label="${c:l('view.freezeRows')} 7"
+					forward="onViewFreezeRows(7)" />
+				<menuitem label="${c:l('view.freezeRows')} 8"
+					forward="onViewFreezeRows(8)" />
+				<menuitem label="${c:l('view.freezeRows')} 9"
+					forward="onViewFreezeRows(9)" />
+				<menuitem label="${c:l('view.freezeRows')} 10"
+					forward="onViewFreezeRows(10)" />
+			</menupopup>
+		</menu>
+		<menu label="${c:l('view.freezeCols')}">
+			<menupopup id="freezeColsMenupopup">
+				<menuitem id="unfreezeCols" label="${c:l('view.unfreezeCols')}"/>
+				<menuseparator />
+				<menuitem label="${c:l('view.freezeCols')} A"
+					forward="onViewFreezeCols(1)" />
+				<menuitem label="${c:l('view.freezeCols')} B"
+					forward="onViewFreezeCols(2)" />
+				<menuitem label="${c:l('view.freezeCols')} C"
+					forward="onViewFreezeCols(3)" />
+				<menuitem label="${c:l('view.freezeCols')} D"
+					forward="onViewFreezeCols(4)" />
+				<menuitem label="${c:l('view.freezeCols')} E"
+					forward="onViewFreezeCols(5)" />
+				<menuitem label="${c:l('view.freezeCols')} F"
+					forward="onViewFreezeCols(6)" />
+				<menuitem label="${c:l('view.freezeCols')} G"
+					forward="onViewFreezeCols(7)" />
+				<menuitem label="${c:l('view.freezeCols')} H"
+					forward="onViewFreezeCols(8)" />
+				<menuitem label="${c:l('view.freezeCols')} I"
+					forward="onViewFreezeCols(9)" />
+				<menuitem label="${c:l('view.freezeCols')} J"
+					forward="onViewFreezeCols(10)" />
+			</menupopup>
+		</menu>
+	</menupopup>
+</zk>

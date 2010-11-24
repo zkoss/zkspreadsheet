@@ -11,10 +11,6 @@
 
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 
-{{IS_RIGHT
-	This program is distributed under GPL Version 3.0 in the hope that
-	it will be useful, but WITHOUT ANY WARRANTY.
-}}IS_RIGHT
 */
 package org.zkoss.zss.app.file;
 
@@ -27,10 +23,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.app.MainWindowCtrl;
-import org.zkoss.zss.app.zul.Zssapp;
-import org.zkoss.zss.app.zul.ZssappComponents;
-import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.app.zul.ctrl.WorkspaceContext;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
@@ -70,13 +63,10 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 	private Menupopup fileMenu;
 	private Menuitem openFileMenuitem;
 	
-	private Spreadsheet ss;
-	
 	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		ss = ZssappComponents.getSpreadsheetFromArg();
 		initSupportFormat();
 		initImportOption();
 		initFileListbox();
@@ -126,8 +116,7 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 					
 					@Override
 					public void onEvent(Event evt) throws Exception {
-						FileHelper.openSpreadsheet(ss, info);
-						Zssapp.redrawSheets(ss);
+						WorkspaceContext.getInstance(desktop).setCurrent(info);
 						((Component)spaceOwner).detach();
 					}
 				});
@@ -144,16 +133,13 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 	}
 	
 	public void onClick$openFileMenuitem() {
-		FileHelper.openSpreadsheet(ss, 
-				(SpreadSheetMetaInfo)allFilesListbox.getSelectedItem().getValue());
-		Zssapp.redrawSheets(ss);
+		WorkspaceContext.getInstance(desktop).setCurrent((SpreadSheetMetaInfo)allFilesListbox.getSelectedItem().getValue());
 		((Component)spaceOwner).detach();
 	}
 	
 	public void onFileUpload(ForwardEvent event) {
 		try {
-			FileHelper.store(((UploadEvent) event.getOrigin()).getMedia());
-			
+			WorkspaceContext.getInstance(desktop).store(((UploadEvent) event.getOrigin()).getMedia());
 		} catch (UnsupportedSpreadSheetFileException e) {
 			try {
 				//TODO: use I18n to replace message string

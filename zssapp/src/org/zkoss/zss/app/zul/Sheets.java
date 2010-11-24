@@ -1,3 +1,19 @@
+/* Sheets.java
+
+{{IS_NOTE
+	Purpose:
+
+	Description:
+
+	History:
+		Apr 12, 2010 3:47:56 PM , Created by Sam
+}}IS_NOTE
+
+Copyright (C) 2009 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.app.zul;
 
 import static org.zkoss.zss.app.base.Preconditions.checkNotNull;
@@ -9,10 +25,9 @@ import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.app.MainWindowCtrl;
 import org.zkoss.zss.app.ctrl.RenameSheetCtrl;
 import org.zkoss.zss.app.sheet.SheetHelper;
-import org.zkoss.zss.model.Book;
+import org.zkoss.zss.app.zul.ctrl.DesktopSheetContext;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.SheetVisitor;
 import org.zkoss.zss.ui.impl.Utils;
@@ -24,7 +39,7 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabs;
 
 /**
- * SheetsName is responsible for switch sheets
+ * Sheets is responsible for switch sheets
  * @author sam
  *
  */
@@ -54,8 +69,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	}
 	
 	public void onSelect$tabbox() {
-		//TODO: remove call controller, shall do event directly
-		Zssapp.setSelectedSheet(ss, tabbox.getSelectedTab().getLabel());
+		DesktopSheetContext.getInstance(getDesktop()).fireSheetSelected(tabbox.getSelectedTab().getLabel());
 	}
 	
 	/**
@@ -64,8 +78,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	 */
 	public void setCurrentSheet(int index) {
 		tabbox.setSelectedIndex(index);
-		//TODO: remove call controller, shall do event directly
-		Zssapp.setSelectedSheet(ss, tabbox.getSelectedTab().getLabel());
+		DesktopSheetContext.getInstance(getDesktop()).fireSheetSelected(tabbox.getSelectedTab().getLabel());
 	}
 	
 	/**
@@ -90,12 +103,8 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	 * Redraw sheet names of spreadsheet
 	 */
 	public void redraw() {
-		final Book book = ss.getBook();
-		if (book == null) {
-			return;
-		}
 		tabs.getChildren().clear();
-		Utils.visitSheets(book, new SheetVisitor(){
+		Utils.visitSheets(ss.getBook(), new SheetVisitor(){
 
 			@Override
 			public void handle(Sheet sheet) {
@@ -146,7 +155,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	}
 	
 	public void onClick$renameSheet() {
-		HashMap arg = ZssappComponents.newSpreadsheetArg(ss);
+		HashMap arg = Zssapps.newSpreadsheetArg(ss);
 		arg.put(RenameSheetCtrl.KEY_ARG_SHEET_NAME, getCurrenSheet());
 		
 		//TODO: replace with simple inline editing, don't need to use window component
@@ -159,12 +168,12 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 
 
 	@Override
-	public Spreadsheet getSpreadsheet() {
-		return ss;
+	public void unbindSpreadsheet() {
+		//TODO: unbind event
 	}
 
 	@Override
-	public void setSpreadsheet(Spreadsheet spreadsheet) {
+	public void bindSpreadsheet(Spreadsheet spreadsheet) {
 		ss = spreadsheet;
 	}
 }

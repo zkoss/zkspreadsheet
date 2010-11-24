@@ -2,7 +2,7 @@
 
 {{IS_NOTE
 	Purpose:
-f
+
 	Description:
 
 	History:
@@ -10,17 +10,11 @@ f
 		Jan 1, 2009 modified by kinda lu
 }}IS_NOTE
 
-Copyright (C) 2007 Potix Corporation. All Rights Reserved.D
+Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
-{{IS_RIGHT
-	This program is distributed under GPL Version 2.0 in the hope that
-	it will be useful, but WITHOUT ANY WARRANTY.
-}}IS_RIGHT
  */
 package org.zkoss.zss.app;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -29,9 +23,9 @@ import java.util.Iterator;
 import org.zkoss.image.Image;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -40,56 +34,59 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
-import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.event.KeyEvent;
-import org.zkoss.zk.ui.event.UploadEvent;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.cell.EditHelper;
 import org.zkoss.zss.app.event.ExportHelper;
 import org.zkoss.zss.app.file.FileHelper;
+import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
 import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.app.sort.SortSelector;
-import org.zkoss.zss.app.zul.Borderbutton;
 import org.zkoss.zss.app.zul.CellContext;
 import org.zkoss.zss.app.zul.CellMenupopup;
-import org.zkoss.zss.app.zul.FontBoldButton;
-import org.zkoss.zss.app.zul.FontFamily;
-import org.zkoss.zss.app.zul.FontSize;
+import org.zkoss.zss.app.zul.ColumnHeaderMenupopup;
+import org.zkoss.zss.app.zul.EditMenu;
+import org.zkoss.zss.app.zul.FileMenu;
+import org.zkoss.zss.app.zul.FormatMenu;
+import org.zkoss.zss.app.zul.FormulaEditor;
+import org.zkoss.zss.app.zul.InsertMenu;
+import org.zkoss.zss.app.zul.RowHeaderMenupopup;
 import org.zkoss.zss.app.zul.Sheets;
-import org.zkoss.zss.app.zul.ZssappComponent;
-import org.zkoss.zss.app.zul.ZssappComponents;
-import org.zkoss.zss.app.zul.api.Colorbutton;
+import org.zkoss.zss.app.zul.ViewMenu;
+import org.zkoss.zss.app.zul.Zssapp;
+import org.zkoss.zss.app.zul.Zssapps;
+import org.zkoss.zss.app.zul.ctrl.CellStyleCtrlPanel;
+import org.zkoss.zss.app.zul.ctrl.DesktopCellStyleContext;
+import org.zkoss.zss.app.zul.ctrl.DesktopSheetContext;
+import org.zkoss.zss.app.zul.ctrl.SSRectCellStyle;
+import org.zkoss.zss.app.zul.ctrl.WorkspaceContext;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.impl.BookHelper;
+import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.CellMouseEvent;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
-import org.zkoss.zss.ui.event.EditboxEditingEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HeaderEvent;
 import org.zkoss.zss.ui.event.HeaderMouseEvent;
-import org.zkoss.zss.ui.event.StopEditingEvent;
-import org.zkoss.zss.ui.impl.CellVisitor;
-import org.zkoss.zss.ui.impl.CellVisitorContext;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zssex.ui.widget.ImageWidget;
 import org.zkoss.zul.Borderlayout;
-import org.zkoss.zul.Chart;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.Div;
 import org.zkoss.zul.Menu;
-import org.zkoss.zul.Menuitem;
-import org.zkoss.zul.Menupopup;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.South;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
 
@@ -108,11 +105,9 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	boolean isFreezeRow = false;
 	boolean isFreezeColumn = false;
 
+	Div toolbarMask;
+	
 	// For fast Icon
-	//boolean isBold = false;
-	boolean isItalic = false;
-	boolean isUnderline = false;
-	boolean isStrikethrough = false;
 	boolean isMergeCell = false;
 	boolean isWrapText = false;
 	String colorSelectorTarget = "";
@@ -120,51 +115,52 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	Cell currentEditcell;
 
 	int chartKey = 0;
-
-	ColumnMenuHelper colmh;
-	RowMenuHelper rowmh;
+	
 	FormatNumberHelper fnh;
-	FormulaCategoryHelper fch;
 	RangeHelper rangeh;
 
 	Window mainWin;
+	/*Menus*/
+	FileMenu fileMenu;
+	EditMenu editMenu;
+	ViewMenu viewMenu;
+	FormatMenu formatMenu;
+	InsertMenu insertMenu;
+	ColumnHeaderMenupopup columnHeaderMenupopup;
+	RowHeaderMenupopup rowHeaderMenupopup;
 	
 	CellContext cellContext;
-	Menu backgroundColorMenu;
 	Menu insertImageMenu;
 	Menu insertPieChart;
-	Menuitem removeHyperlink;
-	Menuitem importFile;
 
-	Textbox formulaEditbox;
+	FormulaEditor formulaEditor;
 	Spreadsheet spreadsheet;
-
 	Sheets sheets;
-
 	Combobox focusPosition;
-	FontFamily fontFamily;
-	FontSize fontSize;
 	
 	Comboitem lbpos;
-	//Toolbarbutton boldBtn;
-	FontBoldButton boldBtn;
-	Toolbarbutton italicBtn;
-	Toolbarbutton underlineBtn;
-	Toolbarbutton strikethroughBtn;
-	Toolbarbutton alignLeftBtn;
-	Toolbarbutton alignCenterBtn;
-	Toolbarbutton alignRightBtn;
-	Colorbutton fontColorBtn;
-	Colorbutton backgroundColorBtn;
+	
+	/* Toolbar buttons */
+	Dropdownbutton pasteDropdownBtn;
+	Dropdownbutton sortDropdownBtn;
+	Toolbarbutton closeBtn;
+	CellStyleCtrlPanel fontCtrlPanel;
+	Toolbarbutton exportToPDFBtn;
+	Toolbarbutton insertHyperlinkBtn;
 	Toolbarbutton mergeCellBtn;
-	Toolbarbutton wrapTextBtn;
 	Toolbarbutton insertChartBtn;
+	Toolbarbutton cutBtn;
+	Toolbarbutton copyBtn;
+	Toolbarbutton insertFormulaBtn;
 	Checkbox gridlinesCheckbox;
-	Borderbutton borderBtn;
 	CellMenupopup cellMenupopup;
-
+	
 	South formulaBar;
 	Borderlayout topToolbars;
+	
+	/*Dialog*/
+	Window insertFormulaDialog;
+	Window insertHyperlinkDialog;
 
 	public Window getMainWindow() {
 		return mainWin;
@@ -176,94 +172,249 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		desktop.setAttribute(MainWindowCtrl.class.getCanonicalName(), this);
 		
-		ininZssappComponent();
-		fontColorBtn = (Colorbutton)comp.getFellow("fontColorBtn");
-		backgroundColorBtn = (Colorbutton)comp.getFellow("backgroundColorBtn");
-		importFile.setDisabled(!FileHelper.hasImportPermission());
+		initZssappComponents();
+		
+		initListener();
 
-		ssInit();
-
-		colmh = new ColumnMenuHelper(spreadsheet);
-		rowmh = new RowMenuHelper(spreadsheet);
 		fnh = new FormatNumberHelper(spreadsheet);
-		fch = new FormulaCategoryHelper(spreadsheet);
 		rangeh = new RangeHelper(spreadsheet);
 
-		formulaEditbox.addEventListener(
-				org.zkoss.zk.ui.event.Events.ON_CHANGING, new EventListener() {
-					public void onEvent(Event event) throws Exception {
-						onEditingFormulaInput(event);
-					}
-				});
-
-		/**
-		 * Retrieve spreadsheet current edit position
-		 */
-		formulaEditbox.addEventListener(org.zkoss.zk.ui.event.Events.ON_FOCUS,
-				new EventListener() {
-
-					public void onEvent(Event event) throws Exception {
-						int left = spreadsheet.getSelection().getLeft();
-						int top = spreadsheet.getSelection().getTop();
-						Sheet sheet = spreadsheet.getSelectedSheet();
-						currentEditcell = Utils.getCell(sheet, top, left);
-					}
-				});
-
-		/**
-		 * Reset the spreadsheet edit position
-		 */
-		formulaEditbox.addEventListener(org.zkoss.zk.ui.event.Events.ON_BLUR,
-				new EventListener() {
-
-					public void onEvent(Event event) throws Exception {
-						currentEditcell = null;
-					}
-				});
-
-		formulaEditbox.addEventListener(org.zkoss.zk.ui.event.Events.ON_OK,
-				new EventListener() {
-					public void onEvent(Event event) throws Exception {
-
-						evalFormula(formulaEditbox.getValue());
-						Position pos = spreadsheet.getCellFocus();
-						int row = pos.getRow() + 1;
-						int col = pos.getColumn();
-
-						spreadsheet.focusTo(row, col);
-					}
-				});
-		gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
+		DesktopSheetContext.getInstance(desktop).doSheetOpen(spreadsheet.getSelectedSheet() != null);
 	}
 	
-	private void ininZssappComponent() {
-		Field[] flds = this.getClass().getDeclaredFields();
-		for (Field f : flds) {
-			try {
-				Object obj = f.get(this);
-				if (obj instanceof ZssappComponent) {
-					Method m = f.getType().getMethod("setSpreadsheet", Spreadsheet.class);
-					m.invoke(obj, spreadsheet);
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
+	private void initZssappComponents() {
+		Zssapps.bindSpreadsheet(spreadsheet, this);
 		sheets.redraw();
 	}
+	
+	public void initListener() {
+		final DesktopSheetContext sheetContext = DesktopSheetContext.getInstance(desktop);
+		sheetContext.addEventListener(Consts.ON_SHEET_REGAIN_FOCUS, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				Clients.evalJavaScript("zk.Widget.$('" + spreadsheet.getUuid() + "').focus(false);");
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_REFRESH, new EventListener(){
+			public void onEvent(Event event) throws Exception {
+				sheets.redraw();
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_OPEN, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				boolean isOpen = (Boolean)event.getData();
+				toolbarMask.setVisible(!isOpen);
+				closeBtn.setVisible(isOpen);
 
-	private void evalFormula(String input) {
-		if (input == null || input.length() == 0)
-			return;
+				if (isOpen) {
+					gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
+					sheets.redraw();
+				} else
+					sheets.clear();
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_RENAME, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				SheetHelper.renameSheet(spreadsheet, (String)event.getData());
+				sheets.redraw();
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_INSERT_FORMULZ_DIALOG, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				if (insertFormulaDialog == null) {
+					insertFormulaDialog = (Window)Executions.createComponents(Consts._InsertFormulaDialog_zul, mainWin, null);
+				}
+				insertFormulaDialog.setMode("modal");
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_INSERT, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				int sheetCount = spreadsheet.getBook().getNumberOfSheets();
+				Sheet addedSheet = spreadsheet.getBook().createSheet("sheet " + (sheetCount + 1));
+				sheets.redraw();
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_INSERT_IMAGE, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				Media media = (Media)event.getData();
+				try {
+					if (media instanceof org.zkoss.image.Image) {
+						ImageWidget image = new ImageWidget();
+						image.setContent((Image) media);
 
-		Utils.setEditText(spreadsheet.getSelectedSheet(), spreadsheet
-				.getSelection().getTop(), spreadsheet.getSelection().getLeft(),
-				input);
-	}
-
-	public void ssInit() {
+						int col = spreadsheet.getSelection().getLeft();
+						int row = spreadsheet.getSelection().getTop();
+						image.setRow(row);
+						image.setColumn(col);
+						SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
+						ctrl.addWidget(image);
+					} else if (media != null) {
+						Messagebox.show("Not an image: " + media, "Error",
+								Messagebox.OK, Messagebox.ERROR);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_CUT_SELECTION, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				EditHelper.doCut(spreadsheet);
+				DesktopSheetContext.getInstance(desktop).reGainFocus();
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_COPY_SELECTION, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				EditHelper.doCopy(spreadsheet);
+				DesktopSheetContext.getInstance(desktop).reGainFocus();
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_PASTE_SELECTION, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				EditHelper.doPaste(spreadsheet);
+				DesktopSheetContext.getInstance(desktop).reGainFocus();
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_PASTE_SPECIAL_DIALOG, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				Executions.createComponents(Consts._PasteSpecialDialog_zul, null, Zssapps.newSpreadsheetArg(spreadsheet));
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_CLEAR_SELECTION_CONTENT, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				CellHelper.clearContent(spreadsheet, SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_CLEAR_SELECTION_STYLE, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				CellHelper.clearStyle(spreadsheet, SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_INSERT_ROW, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				CellHelper.shiftEntireRowDown(spreadsheet.getSelectedSheet(), 
+						spreadsheet.getSelection().getTop(), 
+						spreadsheet.getSelection().getLeft());
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_DELETE_ROW, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				Rect rect = spreadsheet.getSelection();
+				CellHelper.shiftEntireRowUp(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getLeft());
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_INSERT_COLUMN, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				Rect rect = spreadsheet.getSelection();
+				CellHelper.shiftEntireColumnRight(spreadsheet.getSelectedSheet(), 
+						rect.getTop(), rect.getLeft());
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_DELETE_COLUMN, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				Rect rect = spreadsheet.getSelection();
+				CellHelper.shiftEntireColumnLeft(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getLeft());
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_SHIFT_CELL, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				Sheet sheet = spreadsheet.getSelectedSheet();
+				Rect rect = spreadsheet.getSelection();
+				
+				int direction = (Integer)event.getData();
+				switch (direction) {
+				case DesktopSheetContext.SHIFT_CELL_UP:
+					CellHelper.shiftCellUp(sheet, 
+							rect.getTop(), 
+							rect.getLeft());
+					break;
+				case DesktopSheetContext.SHIFT_CELL_RIGHT:
+					CellHelper.shiftCellRight(sheet, 
+							rect.getTop(), 
+							rect.getLeft());
+					break;
+				case DesktopSheetContext.SHIFT_CELL_DOWN:
+					CellHelper.shiftCellDown(sheet, 
+							rect.getTop(), 
+							rect.getLeft());
+					break;
+				case DesktopSheetContext.SHIFT_CELL_LEFT:
+					CellHelper.shiftCellLeft(sheet, 
+							rect.getTop(), 
+							rect.getLeft());
+					break;
+				}
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_MODIFY_ROW_HEIGHT_DIALOG, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				//TODO: not implement yet
+				throw new UiException("not implement yet");
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_HIDE, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				Rect rect = spreadsheet.getSelection();
+				Ranges.range(spreadsheet.getSelectedSheet(), 
+						rect.getTop(), rect.getLeft(), 
+						rect.getBottom(), rect.getRight()).setHidden((Boolean)event.getData());
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_SORT, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				boolean isSortDescending = (Boolean)event.getData();
+				if (isSortDescending)
+					CellHelper.sortDescending(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
+				else
+					CellHelper.sortAscending(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_CUSTOM_SORT_DIALOG, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				CellHelper.createCustomSortDialog(spreadsheet, Zssapp.getInstance(spreadsheet));
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_SELECT, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				spreadsheet.setSelectedSheet((String)event.getData());
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_MERGE_CELL, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				//TODO: move to here
+				onMergeCellClick(null);
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_HYPERLINK_DIALOG, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				Executions.createComponents(Consts._InsertHyperlinkDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+			}
+		});
+		sheetContext.addEventListener(Consts.ON_SHEET_INSERT_FORMULA, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				String formula = (String)event.getData();
+				Rect rect = spreadsheet.getSelection();
+				Range rng = Ranges.range(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getLeft());
+				rng.setEditText(formula);
+				formulaEditor.setText(rng.getEditText());
+			}
+		});
+		
+		WorkspaceContext workspaceContext = WorkspaceContext.getInstance(desktop);
+		workspaceContext.addEventListener(Consts.ON_RESOURCE_OPEN, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				FileHelper.openSpreadsheet(spreadsheet, 
+						(SpreadSheetMetaInfo) event.getData());
+				sheetContext.doSheetOpen(true);
+			}
+		});
+		workspaceContext.addEventListener(Consts.ON_RESOURCE_OPEN_NEW, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				FileHelper.openNewSpreadsheet(spreadsheet);
+				sheetContext.doSheetOpen(true);
+			}
+		});
+		
 		spreadsheet.setSrcName("Untitled");
 
 		// ADD Event Listener
@@ -271,21 +422,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				new EventListener() {
 					public void onEvent(Event event) throws Exception {
 						doFocusedEvent((CellEvent) event);
-					}
-				});
-
-		spreadsheet.addEventListener(Events.ON_STOP_EDITING,
-				new EventListener() {
-					public void onEvent(Event event) throws Exception {
-						doStopEditingEvent((StopEditingEvent) event);
-					}
-
-				});
-
-		spreadsheet.addEventListener(Events.ON_EDITBOX_EDITING,
-				new EventListener() {
-					public void onEvent(Event event) throws Exception {
-						doEditboxEditingEvent((EditboxEditingEvent) event);
 					}
 				});
 
@@ -309,8 +445,72 @@ public class MainWindowCtrl extends GenericForwardComposer {
 						doSelectionEvent((CellSelectionEvent) event);
 					}
 				});
+		spreadsheet.addEventListener(Events.ON_CELL_RIGHT_CLICK, new EventListener() {
+
+			public void onEvent(Event event) throws Exception {
+				CellMouseEvent evt = (CellMouseEvent)event;
+				int clientX = evt.getClientx();
+				int clientY = evt.getClienty();
+				cellContext.setLeft(Integer.toString(clientX + 5) + "px");
+				cellContext.setTop(Integer.toString(clientY - 100) + "px");
+				cellContext.doPopup();
+			}
+		});
+	}
+	public void onClick$exportToPDFBtn() {
+		ExportHelper.doExportToPDF(spreadsheet);
+		DesktopSheetContext.getInstance(desktop).reGainFocus();
+	}
+	
+	public void onClick$pasteDropdownBtn() {
+		DesktopSheetContext.getInstance(desktop).pasteSelection();
+	}
+	public void onDropdown$pasteDropdownBtn() {
+		DesktopSheetContext.getInstance(desktop).reGainFocus();
+	}
+	public void onPasteSelector(ForwardEvent event) {
+		EditHelper.onPasteEventHandler(spreadsheet, (String)event.getData());
+	}
+	public void onDropdown$sortDropdownBtn() {
+		DesktopSheetContext.getInstance(desktop).reGainFocus();
+	}
+	public void onClick$insertFormulaBtn() {
+		DesktopSheetContext.getInstance(desktop).openInsertFormulaDialog();
+		DesktopSheetContext.getInstance(desktop).reGainFocus();
+	}
+	public void onSortSelector(ForwardEvent event) {
+		//TODO: replace forward event
+		String param = (String) event.getData();
+		if (param == null)
+			return;
+		if (param.equals(Labels.getLabel("sort.custom"))) {
+			CellHelper.createCustomSortDialog(spreadsheet, mainWin);
+		} else {
+			if (SortSelector.getSortOrder(param))
+				CellHelper.sortAscending(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
+			else
+				CellHelper.sortDescending(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
+		}
+	}
+	
+	public void onClick$insertHyperlinkBtn() {
+		DesktopSheetContext.getInstance(desktop).openHyperlinkDialog();
+		DesktopSheetContext.getInstance(desktop).reGainFocus();
+	}
+	
+	public void onClick$cutBtn() {
+		DesktopSheetContext.getInstance(desktop).cutSelection();
+	}
+	
+	public void onClick$copyBtn() {
+		DesktopSheetContext.getInstance(desktop).copySelection();
 	}
 
+	public void onClick$closeBtn() {
+		spreadsheet.setSrc(null);
+		DesktopSheetContext.getInstance(desktop).doSheetOpen(false);
+	}
+	
 	public void redrawSheetTabbox() {
 		sheets.redraw();
 	}
@@ -328,43 +528,42 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		cellMenupopup.open(event_x + 5, event.getClienty());
 	}
 
-	public void onUpload$insertImageMenu(UploadEvent event) {
-		try {
-			org.zkoss.util.media.Media media = event.getMedia();
-			if (media instanceof org.zkoss.image.Image) {
-				ImageWidget image = new ImageWidget();
-				image.setContent((Image) media);
-
-				int col = spreadsheet.getSelection().getLeft();
-				int row = spreadsheet.getSelection().getTop();
-				image.setRow(row);
-				image.setColumn(col);
-
-				SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
-				ctrl.addWidget(image);
-			} else if (media != null) {
-				Messagebox.show("Not an image: " + media, "Error",
-						Messagebox.OK, Messagebox.ERROR);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public void onUpload$insertImageMenu(UploadEvent event) {
+//		try {
+//			org.zkoss.util.media.Media media = event.getMedia();
+//			if (media instanceof org.zkoss.image.Image) {
+//				ImageWidget image = new ImageWidget();
+//				image.setContent((Image) media);
+//
+//				int col = spreadsheet.getSelection().getLeft();
+//				int row = spreadsheet.getSelection().getTop();
+//				image.setRow(row);
+//				image.setColumn(col);
+//
+//				SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
+//				ctrl.addWidget(image);
+//			} else if (media != null) {
+//				Messagebox.show("Not an image: " + media, "Error",
+//						Messagebox.OK, Messagebox.ERROR);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	void doHeaderMouseEvent(HeaderMouseEvent event) {
-		Menupopup headerMenu;
 		if (HeaderEvent.TOP_HEADER == event.getType()) {
-			headerMenu = (Menupopup) mainWin.getFellow("columnHeaderMenu");
+			int col = event.getIndex();
+			columnHeaderMenupopup.open(event.getClientx(), event.getClienty());
 		} else if ((HeaderEvent.LEFT_HEADER == event.getType())) {
-			headerMenu = (Menupopup) mainWin.getFellow("rowHeaderMenu");
+			int row = event.getIndex();
+			rowHeaderMenupopup.open(event.getClientx(), event.getClienty());
 		} else {
 			return;
 		}
-
-		headerMenu.open(event.getClientx(), event.getClienty());
 	}
 
-	void doFocusedEvent(CellEvent event) {
+	void doFocusedEvent(final CellEvent event) {
 		final Book book = spreadsheet.getBook();
 		if (book == null) {
 			return;
@@ -383,103 +582,31 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			lbpos.setLabel(posStr);
 			focusPosition.setRawValue(posStr);
 			focusPosition.setSelectedItem(lbpos);
-			String editText = Utils.getEditText(cell);
-			formulaEditbox.setValue(cell == null ? "" : (editText == null ? ""
-					: editText));
-
-			//boldBtn.setClass("toolIcon");
-			italicBtn.setClass("toolIcon");
-			underlineBtn.setClass("toolIcon");
-			strikethroughBtn.setClass("toolIcon");
-			alignLeftBtn.setClass("toolIcon");
-			alignCenterBtn.setClass("toolIcon");
-			alignRightBtn.setClass("toolIcon");
-			fontColorBtn.setColor("#000000");
-			backgroundColorBtn.setColor("#FFFFFF");
-			backgroundColorMenu.setContent("#color=#FFFFFF");
-			wrapTextBtn.setClass("toolIcon");
 
 			// read format from cell and assign it to toolbar
 			if (cell != null) {
 				CellStyle cs = cell.getCellStyle();
 				if (cs != null) {
-					int fontidx = cs.getFontIndex();
-					Font font = book.getFontAt((short) fontidx);
-					//fontSizeCombobox.setText(Integer.toString(font.getFontHeightInPoints()));
-
-					// font bold & italic
-					//isBold = font.getBoldweight() == Font.BOLDWEIGHT_BOLD;
-					isItalic = font.getItalic();
-//					if (isBold)
-//						boldBtn.setClass("clicked");
-
-					if (isItalic)
-						italicBtn.setClass("clicked");
-
-					// font underline
-					if (font.getUnderline() != Font.U_NONE) {
-						isUnderline = true;
-						underlineBtn.setClass("clicked");
-					} else {
-						isUnderline = false;
-					}
-
-					// font stikethrough
-					if (font.getStrikeout()) {
-						isStrikethrough = true;
-						strikethroughBtn.setClass("clicked");
-					} else {
-						isStrikethrough = false;
-
-					}
-
-					// align
-					int align = cs.getAlignment();
-					switch (align) {
-					case CellStyle.ALIGN_LEFT:
-						alignLeftBtn.setClass("clicked");
-						break;
-					case CellStyle.ALIGN_CENTER:
-					case CellStyle.ALIGN_CENTER_SELECTION:
-						alignCenterBtn.setClass("clicked");
-						break;
-					case CellStyle.ALIGN_RIGHT:
-						alignRightBtn.setClass("clicked");
-						break;
-					}
-
-					// font color
-					String color = BookHelper.getFontHTMLColor(book, font);
-					if (color != null && !color.equals(BookHelper.AUTO_COLOR)) {
-						fontColorBtn.setColor(color);
-					}
-
-					// bg color
-//					final int fillColorIdx = cs.getFillForegroundColor();
-//					String fcolor = BookHelper.indexToRGB(book, fillColorIdx);
-					String fcolor = BookHelper.colorToHTML(book, cs.getFillForegroundColorColor());
-					if (fcolor != null && !fcolor.equals(BookHelper.AUTO_COLOR)) {
-						backgroundColorBtn.setColor(fcolor);
-						backgroundColorMenu.setContent("#color=" + fcolor);
-					}
-
 					// merge cell
 					isMergeCell = isMergedCell(event.getRow(), event.getColumn(), event.getRow(), event.getColumn());
 					mergeCellBtn.setSclass(isMergeCell ? "clicked" : null);
 
 					 //TODO: not implement yet
-					 if (isWrapText) {
-					   wrapTextBtn.setClass("clicked"); }
-					 else{
-					   wrapTextBtn.setClass(null); 
-					 }
-
-					// wrap text
-					isWrapText = cs.getWrapText();
-					if (isWrapText) {
-						wrapTextBtn.setClass("clicked");
-					}
-
+//					 if (isWrapText) {
+//					   wrapTextBtn.setClass("clicked"); }
+//					 else{
+//					   wrapTextBtn.setClass(null); 
+//					 }
+//
+//					// wrap text
+//					isWrapText = cs.getWrapText();
+//					if (isWrapText) {
+//						wrapTextBtn.setClass("clicked");
+//					}
+					
+					DesktopCellStyleContext.getInstance(desktop).doTargetChange(
+							new SSRectCellStyle(cell, 
+									spreadsheet) );
 					// FontStyle preFontStyle=format.getFontStyle();
 				}
 			}
@@ -503,43 +630,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			}
 		}
 		return false;
-	}
-
-	// this is auto pushCellState in spreadsheet itself
-	void doStopEditingEvent(StopEditingEvent evt) {
-		try {
-			// the formula bar input
-			formulaEditbox.setValue((String) evt.getEditingValue());
-
-			// to notify all widgets there is a cell changed
-			for (int i = 0; i < chartKey; i++) {
-				// p("chartKey="+chartKey+" chartWin"+i);
-				try {
-					Window win = (Window) mainWin.getFellow("chartWin" + i);
-					if (win != null) {
-						Chart myChart = (Chart) win.getFellow("myChart");
-						CellEvent event = new StopEditingEvent(
-								org.zkoss.zss.ui.event.Events.ON_STOP_EDITING,
-								myChart, evt.getSheet(), evt.getRow(), evt
-										.getColumn(), (String) evt.getData());
-						org.zkoss.zk.ui.event.Events.postEvent(event);
-					}
-				} catch (Exception e) {
-					// the chart may be deleted
-					// e.printStackTrace();
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	void doEditboxEditingEvent(EditboxEditingEvent evt) {
-		try {
-			formulaEditbox.setValue((String) evt.getEditingValue());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void doSelectionEvent(CellSelectionEvent event) {
@@ -568,9 +658,11 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		try {
 			if (46 == event.getKeyCode()) {// delete
 				if (event.isCtrlKey())
-					onClearStyle((ForwardEvent) null);
+					CellHelper.clearStyle(spreadsheet, 
+							SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
 				else
-					onClearContent((ForwardEvent) null);
+					CellHelper.clearContent(spreadsheet,
+							SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
 				return;
 			}
 
@@ -588,7 +680,8 @@ public class MainWindowCtrl extends GenericForwardComposer {
 				EditHelper.doPaste(spreadsheet);
 				break;
 			case 'D':
-				onClearContent((ForwardEvent) null);
+				CellHelper.clearContent(spreadsheet,
+						SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
 				break;
 			case 'E':// for testing
 				spreadsheet.setCellFocus(new Position(2, 2));
@@ -607,19 +700,20 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			 * case 'Y': spreadsheet.redo(); break;
 			 */
 			case 'O':
-				Executions.createComponents("/munus/file/fileListOpen.zul", mainWin, null);
+				Executions.createComponents("/munus/file/fileListOpen.zul", mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
 				break;
 			case 'F':
 				//TODO: 
 				break;
 			case 'B':
-				boldBtn.setBold(true);
+				
+//				boldBtn.onClick();
 				break;
 			case 'I':
-				setFontItalic();
+//				italicBtn.onClick();
 				break;
 			case 'U':
-				setFontUnderline();
+//				underlineBtn.onClick();
 				break;
 			default:
 				return;
@@ -628,45 +722,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public void onFileOpen(ForwardEvent event) {
-		Executions.createComponents("menus/file/fileListOpen.zul", mainWin, null);
-	}
-	
-	public void onExport(ForwardEvent event) {
-		ExportHelper.onExport(spreadsheet, (String)event.getData());
-	}
-
-	public void onFileNew(ForwardEvent event) {
-		newFile();
-	}
-	
-	public void newFile() {
-		FileHelper.openNewSpreadsheet(spreadsheet);
-
-		sheets.clear();
-		sheets.redraw();
-		spreadsheet.setSelectedSheet(sheets.getCurrenSheet());
-	}
-
-	public void onFileSave(ForwardEvent event) {
-		throw new UiException("save as not implement yet");
-		//FileHelper.saveSpreadsheet(spreadsheet);
-	}
-	
-	public void onFileSaveAs(ForwardEvent event) {
-		throw new UiException("save as not implement yet");
-	}
-	
-	public void onFileSaveClose(ForwardEvent event) {
-		FileHelper.saveSpreadsheet(spreadsheet);
-		FileHelper.openNewSpreadsheet(spreadsheet);
-	}
-
-	public void onFileDelete(ForwardEvent event) {
-		FileHelper.deleteSpreadsheet(spreadsheet);
-		onFileNew(null);
 	}
 
 	public void onExportFile(ForwardEvent event) {
@@ -681,10 +736,10 @@ public class MainWindowCtrl extends GenericForwardComposer {
 //				.getComponent("//p1/mainWin/fileExportWin");
 //		fileExportWin.setVisible(false);
 	}
-
-	public void onClick$importFile() {
-		Executions.createComponents("/menus/file/importFile.zul", null, null);
-	}
+//
+//	public void onClick$importFile() {
+//		Executions.createComponents("/menus/file/importFile.zul", null, null);
+//	}
 
 	public void exportFile(String filename) {// current or other
 												// files(stack_level=0)
@@ -760,55 +815,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		EditHelper.doPaste(spreadsheet);
 	}
 
-	public void onClearContent(ForwardEvent event) {
-		// TODO undo/redo
-		// spreadsheet.pushCellState();
-		onClearContent();
-	}
-
-	public void onClearContent() {
-		try {
-			int left = spreadsheet.getSelection().getLeft();
-			int right = spreadsheet.getSelection().getRight();
-			int top = spreadsheet.getSelection().getTop();
-			int bottom = spreadsheet.getSelection().getBottom();
-			Sheet sheet = spreadsheet.getSelectedSheet();
-			Cell cell = null;
-			for (int row = top; row <= bottom; row++)
-				for (int col = left; col <= right; col++) {
-					cell = Utils.getCell(sheet, row, col);
-					if (cell != null) {
-						Utils.setEditText(cell, null);
-					}
-				}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void onClearStyle(ForwardEvent event) {
-		// TODO undo/redo
-		// spreadsheet.pushCellState();
-		onClearStyle();
-	}
-
-	public void onClearStyle() {		
-		Utils.visitCells(spreadsheet.getSelectedSheet(), spreadsheet.getSelection(), new CellVisitor() {
-			
-			@Override
-			public void handle(CellVisitorContext context) {
-				context.getRange().setStyle(context.getBook().createCellStyle());
-			}
-		});
-	}
-
-	public void onClearBoth(ForwardEvent event) {
-		// TODO undo/redo
-		// spreadsheet.pushCellState();
-		onClearStyle();
-		onClearContent();
-	}
-
 	public void onDeleteRows(ForwardEvent event) {
 		try {
 			Sheet sheet = spreadsheet.getSelectedSheet();
@@ -866,22 +872,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			topToolbars.setHeight("85px");
 			formulaBar.setSize("23px");
 		}
-	}
-
-	public void onViewFreezeRows(ForwardEvent event) {
-		spreadsheet.setRowfreeze(Integer.parseInt((String) event.getData()) - 1);
-	}
-
-	public void onViewFreezeCols(ForwardEvent event) {
-		spreadsheet.setColumnfreeze(Integer.parseInt((String) event.getData()) - 1);
-	}
-
-	public void onViewUnfreezeRows(ForwardEvent event) {
-		spreadsheet.setRowfreeze(-1);
-	}
-
-	public void onViewUnfreezeCols(ForwardEvent event) {
-		spreadsheet.setColumnfreeze(-1);
 	}
 
 	// SECTION FORMAT MENU
@@ -948,11 +938,11 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	// SECTION Formula bar
-	public void onFormulaBarBtn(ForwardEvent event) {
-		event_x = 207;
-		event_y = 101;
-		onFormulaPopup();
-	}
+//	public void onFormulaBarBtn(ForwardEvent event) {
+//		event_x = 207;
+//		event_y = 101;
+//		onFormulaPopup();
+//	}
 
 	public void onFormulaListOK() {
 		Combobox formulaList = (Combobox) Path.getComponent("//p1/mainWin/formulaList");
@@ -968,171 +958,8 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		formulaList.setText("");
 	}
 
-	public void onFormulaCategoryOK() {
-		Window win = (Window) mainWin.getFellow("formulaCategory");
-		win.setVisible(false);
-		fch.onOK();
-	}
-
-	public void onEditingFormulaInput(Event event) {
-		if (currentEditcell == null)
-			return;
-		if (currentEditcell.getCellType() == Cell.CELL_TYPE_FORMULA
-				&& currentEditcell.getCellFormula() != null)
-			return;
-
-		Utils.setEditText(currentEditcell, ((InputEvent) event).getValue());
-	}
-	
-	//TODO remove this
-	public void setFontFamily(String font) {
-		Utils.setFontFamily(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), font);
-		fontFamily.setText(font);
-	}
-	//TODO remove this
-	public void onFontFamilySelect(ForwardEvent event) {
-		setFontFamily((String)event.getData());
-	}
-
-	//TODO remove
-//	public void onFontBoldClick(ForwardEvent event) {
-//		setFontBold();
-//	}
-
-//	public void setFontBold() {
-//		// TODO undo/redo
-//		// spreadsheet.pushCellState();
-//
-//		//switch font bold and set sclass
-////		boldBtn.setClass((isBold = !isBold) ? "clicked" : "");
-////		Utils.setFontBold(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), isBold);
-//	}
-
-	public void onFontItalicClick(ForwardEvent event) {
-		setFontItalic();
-	}
-
-	public void setFontItalic() {
-		// TODO undo/redo
-		// spreadsheet.pushCellState();
-		
-		//switch italic and set sclass
-		italicBtn.setClass((isItalic = !isItalic) ? "clicked" : "");
-		Utils.setFontItalic(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), isItalic);
-	}
-
-	public void onFontUnderlineClick(ForwardEvent event) {
-		setFontUnderline();
-	}
-	
-	
-	public void setFontUnderline() {
-		// TODO undo/redo
-		// spreadsheet.pushCellState();
-		
-		//switch underline and set sclass
-		underlineBtn.setClass((isUnderline = !isUnderline) ? "clicked" : "");
-		Utils.setFontUnderline(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), isUnderline ? Font.U_SINGLE : Font.U_NONE);
-	}
-
-	public void onFontStrikethroughClick(ForwardEvent event) {
-		setFontStrikethrough();
-	}
-	
-	public void setFontStrikethrough() {
-		// TODO undo/redo
-		// spreadsheet.pushCellState();
-		
-		//switch strike and set sclass
-		strikethroughBtn.setClass((isStrikethrough = !isStrikethrough) ? "clicked" : "");
-		Utils.setFontStrikeout(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), isStrikethrough);
-	}
-
-	public void onAlignHorizontalClick(ForwardEvent event) {
-		// TODO undo/redo
-		// spreadsheet.pushCellState();
-
-		mainWin.getFellow("fastIconContextmenu").setVisible(false);
-		String alignStr = (String) event.getData();
-
-		short align = CellStyle.ALIGN_GENERAL;
-
-		if (alignStr.equals("left")) {
-			alignLeftBtn.setClass("clicked");
-			align = CellStyle.ALIGN_LEFT;
-		} else
-			alignLeftBtn.setClass("toolIcon");
-
-		if (alignStr.equals("center")) {
-			alignCenterBtn.setClass("clicked");
-			align = CellStyle.ALIGN_CENTER;
-		} else
-			alignCenterBtn.setClass("toolIcon");
-
-		if (alignStr.equals("right")) {
-			alignRightBtn.setClass("clicked");
-			align = CellStyle.ALIGN_RIGHT;
-		} else
-			alignRightBtn.setClass("toolIcon");
-
-		Utils.setAlignment(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), align);
-	}
-
-	public void onChange$fontColorBtn() {
-		this.setFontColor(fontColorBtn.getColor());
-	}
-
-	public void onChange$backgroundColorBtn() {
-		this.setBackgroundColor(backgroundColorBtn.getColor());
-	}
-
-	public void onChange$backgroundColorMenu(InputEvent event) {
-		setBackgroundColor(event.getValue());
-	}
-
-	public void setFontColor(String color) {
-		if (color == null)
-			return;
-
-		fontColorBtn.setColor(color);
-		Utils.setFontColor(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), color);
-	}
-
-	public void setBackgroundColor(String color) {
-		if (color == null)
-			return;
-
-		backgroundColorBtn.setColor(color);
-		Utils.setBackgroundColor(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), backgroundColorBtn.getColor());
-	}
-
-	/**
-	 * 
-	 * @param event
-	 */
-	public void onWrapTextClick(ForwardEvent event) {
-		// TODO remove me, wrap text
-		throw new UiException("wrap text is implmented yet");
-		/*
-		 * spreadsheet.pushCellState(); try{ isWrapText=!isWrapText;
-		 * if(isWrapText){ wrapTextBtn.setClass("clicked"); }else{
-		 * wrapTextBtn.setClass("toolIcon"); }
-		 * 
-		 * int left = spreadsheet.getSelection().getLeft(); int right =
-		 * spreadsheet.getSelection().getRight(); int top =
-		 * spreadsheet.getSelection().getTop(); int bottom =
-		 * spreadsheet.getSelection().getBottom(); Sheet sheet =
-		 * spreadsheet.getSelectedSheet(); for (int row = top; row <= bottom;
-		 * row++) for (int col = left; col <= right; col++){
-		 * Styles.setTextWrap(sheet, row, col, isWrapText); } }catch(Exception
-		 * e){ e.printStackTrace(); }
-		 */
-	}
-
 	public void onMergeCellClick(ForwardEvent event) {
 		try {
-			mainWin.getFellow("fastIconContextmenu").setVisible(false);
-
 			// isMergeCell should read from the cell
 			// and search all over the cell if any one is merged then unmerge
 			// all
@@ -1169,110 +996,26 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		}
 	}
 
-	private void sortAscending() {
-		Utils.sort(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
-				null, null, null, false, false, false);
-	}
-
-	private void sortDescending() {
-		Utils.sort(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
-				null, new boolean[] { true }, null, false, false, false);
-	}
-
-	/**
-	 * Execute sort function base on event's parameter
-	 * <p>
-	 * Parameter can indicate on either ascending sort or descending sort or
-	 * custom sort
-	 * <p>
-	 * If parameter indicate custom sort, will open a custom sort window dialog
-	 * 
-	 * @param event
-	 */
-	public void onSortSelector(ForwardEvent event) {
-		String param = (String) event.getData();
-		if (param == null)
-			return;
-		if (param.equals(Labels.getLabel("sort.custom"))) {
-			Executions.createComponents("/menus/sort/customSort.zul", mainWin, null);
-		} else {
-			if (SortSelector.getSortOrder(param))
-				sortAscending();
-			else
-				sortDescending();
-		}
-	}
-
-	public void onPasteSelector(ForwardEvent event) {
-		EditHelper.onPasteEventHandler(spreadsheet, (String)event.getData());
-	}
-
-	public void onBorderClick(ForwardEvent event) {
-		try {
-			Window win = (Window) mainWin.getFellow("borderSelector");
-			win.setPosition("parent");
-			if (event.getData() != null
-					&& ((String) event.getData()).equals("toolbar")) {
-				win.setLeft("668px");
-				win.setTop("52px");
-			} else {
-				mainWin.getFellow("fastIconContextmenu").setVisible(false);
-				((Window) mainWin.getFellow("fastIconContextmenu")).doPopup();
-				win.setLeft(80 + event_x + "px");
-				win.setTop(-108 + event_y + "px");
-			}
-			win.doPopup();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * Execute hyperlink event
-	 * @param event
-	 */
-	public void onHyperlink(ForwardEvent event) {
-
-		if (param.equals(Labels.getLabel("hyperlink"))) {
-			Executions.createComponents("/menus/hyperlink/insertHyperlink.zul", null, ZssappComponents.newSpreadsheetArg(spreadsheet));
-		} else if (param.equals(Labels.getLabel("hyperlink.remove"))){
-			//TODO remove hyperlink, not implement yet
-		}
-	}
-
 	public void onFormatOK(ForwardEvent event) {
 		fnh.onOK();
-	}
-
-	public void onColumnHeaderMenu(ForwardEvent event) {
-		colmh.dispatcher((String) event.getData());
-	}
-
-	public void onRowHeaderMenu(ForwardEvent event) {
-		rowmh.dispatcher((String) event.getData());
 	}
 
 	public void onRange(ForwardEvent event) {
 		rangeh.dispatcher((String) event.getData());
 	}
 
-	public void onFormulaPopup() {
-		Window win = (Window) mainWin.getFellow("formulaCategory");
-		win.doHighlighted();
-	}
-
-	public void onFormatPopup() {
-		Window win = (Window) mainWin.getFellow("formatNumberWin");
-		try {
-			// the set position only work at the second time?
-			win.setPosition("parent");
-			win.setLeft(event_x + "px");
-			win.setTop(event_y + "px");
-			win.doPopup();// Modal();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public void onFormatPopup() {
+//		Window win = (Window) mainWin.getFellow("formatNumberWin");
+//		try {
+//			// the set position only work at the second time?
+//			win.setPosition("parent");
+//			win.setLeft(event_x + "px");
+//			win.setTop(event_y + "px");
+//			win.doPopup();// Modal();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public void onClick$insertPieChart(Event evt) {
 		// TODO remove me, insert PieChart

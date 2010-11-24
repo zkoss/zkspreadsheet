@@ -1,0 +1,32 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+<window id="sortWin" title="${c:l('sort.custom')}" border="normal" mode="modal" closable="true" position="center" width="630px" height="400px" apply="org.zkoss.zss.app.CustomSortWindowCtrl">
+<div style="padding: 5px">
+	<hlayout spacing="0.4em">
+		<button id="addBtn" image="/img/plus.png" mold="trendy"></button>
+		<button id="delBtn" image="/img/minus.png" mold="trendy"></button>
+		<button id="upBtn" image="/img/arrow-up.png" mold="trendy"></button>
+		<button id="downBtn" image="/img/arrow-down.png" mold="trendy"></button>
+		<checkbox id="caseSensitive" label="${c:l('sort.caseSensitive')}"></checkbox>
+		<checkbox id="hasHeader" label="${c:l('sort.hasHeader')}"></checkbox>
+		<combobox id="sortOrientationCombo" mold="rounded" readonly="true">
+			<comboitem label="${c:l('sort.orientation.column')}" />
+			<comboitem label="${c:l('sort.orientation.row')}" />
+		</combobox>
+	</hlayout>
+	<div height="10px" ></div>
+	<listbox id="sortLevel" mold="paging" pageSize="5">
+		<listhead>
+			<listheader width="70px"></listheader>
+			<listheader ></listheader>
+			<listheader ></listheader>
+		</listhead>
+	</listbox>
+	<div style="margin: 10px 0 10px 10px;">
+		<button id="okBtn" style="float:right" image="/img/check.png" mold="trendy">
+		</button>
+	</div>
+</div>
+</window>
+</zk>

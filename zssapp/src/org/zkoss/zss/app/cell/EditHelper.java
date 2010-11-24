@@ -11,21 +11,15 @@
 
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 
-{{IS_RIGHT
-	This program is distributed under GPL Version 3.0 in the hope that
-	it will be useful, but WITHOUT ANY WARRANTY.
-}}IS_RIGHT
 */
 package org.zkoss.zss.app.cell;
 
-import java.util.HashMap;
-
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.event.ForwardEvent;
-import org.zkoss.zss.app.MainWindowCtrl;
-import org.zkoss.zss.app.zul.ZssappComponents;
+import org.zkoss.zss.app.Consts;
+import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -211,8 +205,8 @@ public final class EditHelper {
 	 * <p> If parameter can't find a match, will use default value. 
 	 * @param event
 	 */
-	public static void onPasteEventHandler(Spreadsheet Spreadsheet, String operation) {
-		if (Spreadsheet == null || getSourceRange(Spreadsheet) == null || operation == null) {
+	public static void onPasteEventHandler(Spreadsheet spreadsheet, String operation) {
+		if (spreadsheet == null || getSourceRange(spreadsheet) == null || operation == null) {
 //			try {
 //				Messagebox.show("Please select a range");
 //			} catch (InterruptedException e) {
@@ -221,10 +215,9 @@ public final class EditHelper {
 		}
 
 		if (operation.equals(Labels.getLabel("pasteSpecial")) ) {
-			
-			Executions.createComponents("/menus/paste/pasteSpecial.zul", null, ZssappComponents.newSpreadsheetArg(Spreadsheet));
+			Executions.createComponents(Consts._PasteSpecialDialog_zul, null, Zssapps.newSpreadsheetArg(spreadsheet));
 		} else {
-			onPasteSpecial(Spreadsheet, getPasteType(operation), getPasteOperation(operation), false, isTranspose(operation));
+			onPasteSpecial(spreadsheet, getPasteType(operation), getPasteOperation(operation), false, isTranspose(operation));
 		}
 	}
 	
@@ -302,5 +295,12 @@ public final class EditHelper {
 		if (i3label == null || !i3label.equals(Labels.getLabel("paste.transpose")))
 			return false;
 		return true;
+	}
+	
+	public static void createpPasteSpecialDialog(Spreadsheet spreadsheet, Component parent) {
+		Executions.createComponents(
+				Consts._PasteSpecialDialog_zul, 
+				parent, 
+				Zssapps.newSpreadsheetArg(spreadsheet));
 	}
 }

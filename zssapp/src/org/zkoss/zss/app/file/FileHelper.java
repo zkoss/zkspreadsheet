@@ -11,10 +11,6 @@
 
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 
-{{IS_RIGHT
-	This program is distributed under GPL Version 3.0 in the hope that
-	it will be useful, but WITHOUT ANY WARRANTY.
-}}IS_RIGHT
 */
 package org.zkoss.zss.app.file;
 
@@ -27,8 +23,11 @@ import java.io.InputStream;
 import org.zkoss.io.Files;
 import org.zkoss.lang.Library;
 import org.zkoss.util.media.Media;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zss.app.Consts;
+import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Messagebox;
 
@@ -58,7 +57,7 @@ public class FileHelper {
 	 * Store spreadsheet
 	 * @param spreadSheetSource
 	 */
-	public static void store( Media media)
+	public static SpreadSheetMetaInfo store( Media media)
 		throws UnsupportedSpreadSheetFileException {
 				
 		if (!isSupportedSpreadSheetExtention(media.getName())) {
@@ -77,8 +76,8 @@ public class FileHelper {
 					inputStream);
 
 			SpreadSheetMetaInfo.add(info);
-			
 		} catch (IOException e) {
+			info = null;
 			throw new RuntimeException(e);
 		} finally {
 			if (inputStream != null) {
@@ -88,6 +87,7 @@ public class FileHelper {
 					throw new RuntimeException(e);
 				}
 			}
+			return info;
 		}
 	}
 	
@@ -137,7 +137,7 @@ public class FileHelper {
 	}
 	
 	public static void deleteSpreadsheet(Spreadsheet ss) {
-		throw new UiException("save file not implmented yet");
+		throw new UiException("delete file not implmented yet");
 //		Map<String, SpreadSheetMetaInfo> infos = SpreadSheetMetaInfo.getMetaInfos();
 //		if (infos.containsKey(ss.getSrc())) {
 //			
@@ -214,5 +214,13 @@ public class FileHelper {
 			storageFolderPath = Executions.getCurrent().getDesktop().getWebApp().getRealPath("xls") + File.separator;
 			
 		return storageFolderPath;
+	}
+	
+	public static void createOpenFileDialog(Component parent) {
+		Executions.createComponents(Consts._FileListOpen_zul, parent, null);
+	}
+	
+	public static void createImportFileDialog(Component parent) {
+		Executions.createComponents(Consts._ImportFile_zul,	parent, null);
 	}
 }

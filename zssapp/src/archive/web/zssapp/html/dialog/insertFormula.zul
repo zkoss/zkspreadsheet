@@ -1,0 +1,348 @@
+<window id="formulaWin" title="Formula" border="normal" width="440px" height="460px" 
+		visible="false" position="center" closable="true" apply="org.zkoss.zss.app.ctrl.InsertFormulaCtrl">
+<div style="margin:7px">
+	<hlayout spacing="0px" >
+		<vlayout>
+			<listbox id="fc_category" width="200px">
+				<listhead sizable="true">
+					<listheader label="Category:" sort="auto" />
+				</listhead>
+				<listitem label="General" onClick="openOnlyMyList(&quot;fc_general&quot;)"
+					onCreate="openOnlyMyList(&quot;fc_general&quot;)" />
+				<listitem label="Math" onClick="openOnlyMyList(&quot;fc_math&quot;)" />
+				<listitem label="Logical" onClick="openOnlyMyList(&quot;fc_logical&quot;)" />
+				<listitem label="Statistical"
+					onClick="openOnlyMyList(&quot;fc_statistical&quot;)" />
+				<listitem label="Date and Time"
+					onClick="openOnlyMyList(&quot;fc_dateAndTime&quot;)" />
+				<listitem label="Information"
+					onClick="openOnlyMyList(&quot;fc_information&quot;)" />
+				<listitem label="Text and Data"
+					onClick="openOnlyMyList(&quot;fc_textAndData&quot;)" />
+				<listitem label="Financial" onClick="openOnlyMyList(&quot;fc_financial&quot;)" />
+				<listitem label="Engineering"
+					onClick="openOnlyMyList(&quot;fc_engineering&quot;)" />
+			</listbox>
+		</vlayout>
+		<vlayout width="205px">
+			<listbox rows="9" id="fc_general">
+				<listhead sizable="true">
+					<listheader label="Functions:" />
+				</listhead>
+				<listitem label="formula" />
+				<listitem label="ARRAY" />
+				<listitem label="ARRAYROW" />
+			</listbox>
+			<listbox rows="9" id="fc_math" >
+				<listhead sizable="true">
+					<listheader label="Functions:" />
+				</listhead>
+				<listitem label="ABS" />
+				<listitem label="ACOS" />
+				<listitem label="ACOSH" />
+				<listitem label="ASIN" />
+				<listitem label="ASINH" />
+				<listitem label="ATAN" />
+				<listitem label="ATAN2" />
+				<listitem label="ATANH" />
+				<listitem label="CEILING" />
+				<listitem label="COMBIN" />
+				<listitem label="COS" />
+				<listitem label="COSH" />
+				<listitem label="DEGREES" />
+				<listitem label="EVEN" />
+				<listitem label="EXP" />
+				<listitem label="FACT" />
+				<listitem label="FACTDOUBLE" />
+				<listitem label="FLOOR" />
+				<listitem label="GCD" />
+				<listitem label="INT" />
+				<listitem label="LCM" />
+				<listitem label="LN" />
+				<listitem label="LOG" />
+				<listitem label="LOG10" />
+				<listitem label="MDETERM" />
+				<listitem label="MINVERSE" />
+				<listitem label="MMULT" />
+				<listitem label="MOD" />
+				<listitem label="MROUND" />
+				<listitem label="MULTINOMIAL" />
+				<listitem label="ODD" />
+				<listitem label="PI" />
+				<listitem label="POWER" />
+				<listitem label="PRODUCT" />
+				<listitem label="QUOTIENT" />
+				<listitem label="RADIANS" />
+				<listitem label="RAND" />
+				<listitem label="RANDBETWEEN" />
+				<listitem label="ROMAN" />
+				<listitem label="ROUND" />
+				<listitem label="ROUNDDOWN" />
+				<listitem label="ROUNDUP" />
+				<listitem label="SERIESSUM" />
+				<listitem label="SIGN" />
+				<listitem label="SIN" />
+				<listitem label="SINH" />
+				<listitem label="SQRT" />
+				<listitem label="SQRTPI" />
+				<listitem label="SUBTOTAL" />
+				<listitem label="SUM" />
+				<listitem label="SUMIF" />
+				<listitem label="SUMPRODUCT" />
+				<listitem label="SUMSQ" />
+				<listitem label="SUMX2MY2" />
+				<listitem label="SUMX2PY2" />
+				<listitem label="SUMXMY2" />
+				<listitem label="TAN" />
+				<listitem label="TANH" />
+				<listitem label="TRUNC" />
+			</listbox>
+			<listbox rows="9" id="fc_logical">
+				<listhead sizable="true">
+					<listheader label="Functions:" />
+				</listhead>
+				<listitem label="AND" />
+				<listitem label="FALSE" />
+				<listitem label="IF" />
+				<listitem label="NOT" />
+				<listitem label="OR" />
+				<listitem label="TRUE" />
+			</listbox>
+			<listbox rows="9" id="fc_statistical" >
+				<listhead sizable="true">
+					<listheader label="Functions:" />
+				</listhead>
+				<listitem label="AVEDEV" />
+				<listitem label="AVERAGE" />
+				<listitem label="AVERAGEA" />
+				<listitem label="BINOMDIST" />
+				<listitem label="CHIDIST" />
+				<listitem label="CHIINV" />
+				<listitem label="COUNT" />
+				<listitem label="COUNTA" />
+				<listitem label="EXPONDIST" />
+				<listitem label="FDIST" />
+				<listitem label="FINV" />
+				<listitem label="GAMMADIST" />
+				<listitem label="GAMMAINV" />
+				<listitem label="GAMMALN" />
+				<listitem label="GEOMEAN" />
+				<listitem label="HYPGEOMDIST" />
+				<listitem label="INTERCEPT" />
+				<listitem label="KURT" />
+				<listitem label="MAX" />
+				<listitem label="MIN" />
+				<listitem label="NORMDIST" />
+				<listitem label="POISSON" />
+				<listitem label="SKEW" />
+				<listitem label="SLOPE" />
+				<listitem label="STDEV" />
+				<listitem label="STDEVP" />
+				<listitem label="TDIST" />
+				<listitem label="TINV" />
+				<listitem label="VAR" />
+				<listitem label="VARP" />
+				<listitem label="WEIBULL" />
+			</listbox>
+			<listbox rows="9" id="fc_dateAndTime" >
+				<listhead sizable="true">
+					<listheader label="Functions:" />
+				</listhead>
+				<listitem label="DATE" />
+				<listitem label="DATEVALUE" />
+				<listitem label="DAY" />
+				<listitem label="DAYS360" />
+				<listitem label="HOUR" />
+				<listitem label="MINUTE" />
+				<listitem label="MONTH" />
+				<listitem label="NOW" />
+				<listitem label="SECOND" />
+				<listitem label="TIME" />
+				<listitem label="TODAY" />
+				<listitem label="WEEKDAY" />
+				<listitem label="YEAR" />
+			</listbox>
+			<listbox rows="9" id="fc_information" >
+				<listhead sizable="true">
+					<listheader label="Functions:" />
+				</listhead>
+				<listitem label="ISBLANK" />
+				<listitem label="ISLOGICAL" />
+				<listitem label="ISEVEN" />
+				<listitem label="ISODD" />
+				<listitem label="N" />
+				<listitem label="NA" />
+				<listitem label="ISNUMBER" />
+				<listitem label="ISTEXT" />
+				<listitem label="ISNONTEXT" />
+				<listitem label="ISERR" />
+				<listitem label="ISERROR" />
+				<listitem label="ISNA" />
+				<listitem label="TYPE" />
+				<listitem label="ERROR.TYPE" />
+			</listbox>
+			<listbox rows="9" id="fc_textAndData" >
+				<listhead sizable="true">
+					<listheader label="Functions:" />
+				</listhead>
+				<listitem label="ASC" />
+				<listitem label="BAHTTEXT" />
+				<listitem label="CHAR" />
+				<listitem label="CLEAN" />
+				<listitem label="CODE" />
+				<listitem label="CONCATENATE" />
+				<listitem label="DOLLAR" />
+				<listitem label="EXACT" />
+				<listitem label="FIND" />
+				<listitem label="FINDB" />
+				<listitem label="FIXED" />
+				<listitem label="JIS" />
+				<listitem label="LEFT" />
+				<listitem label="LEFTB" />
+				<listitem label="LEN" />
+				<listitem label="LENB" />
+				<listitem label="LOWER" />
+				<listitem label="MID" />
+				<listitem label="MIDB" />
+				<listitem label="PHONETIC" />
+				<listitem label="PROPER" />
+				<listitem label="REPLACE" />
+				<listitem label="REPLACEB" />
+				<listitem label="REPT" />
+				<listitem label="RIGHT" />
+				<listitem label="RIGHTB" />
+				<listitem label="SEARCH" />
+				<listitem label="SEARCHB" />
+				<listitem label="SUBSTITUTE" />
+				<listitem label="T" />
+				<listitem label="TEXT" />
+				<listitem label="TRIM" />
+				<listitem label="UPPER" />
+				<listitem label="VALUE" />
+			</listbox>
+			<listbox rows="9" id="fc_financial" >
+				<listhead sizable="true">
+					<listheader label="Functions:" />
+				</listhead>
+				<listitem label="ACCRINT" />
+				<listitem label="ACCRINTM" />
+				<listitem label="AMORDEGRC" />
+				<listitem label="AMORLINC" />
+				<listitem label="COUPDAYBS" />
+				<listitem label="COUPDAYS" />
+				<listitem label="COUPDAYSNC" />
+				<listitem label="COUPNCD" />
+				<listitem label="COUPNUM" />
+				<listitem label="COUPPCD" />
+				<listitem label="CUMIPMT" />
+				<listitem label="CUMPRINC" />
+				<listitem label="DB" />
+				<listitem label="DDB" />
+				<listitem label="DISC" />
+				<listitem label="DOLLARDE" />
+				<listitem label="DOLLARFR" />
+				<listitem label="DURATION" />
+				<listitem label="EFFECT" />
+				<listitem label="FV" />
+				<listitem label="FVSCHEDULE" />
+				<listitem label="INTRATE" />
+				<listitem label="IPMT" />
+				<listitem label="IRR" />
+				<listitem label="ISPMT" />
+				<listitem label="LOGEST" />
+				<listitem label="MDURATION" />
+				<listitem label="MIRR" />
+				<listitem label="NOMINAL" />
+				<listitem label="NPER" />
+				<listitem label="NPV" />
+				<listitem label="ODDFPRICE" />
+				<listitem label="ODDFYIELD" />
+				<listitem label="ODDLPRICE" />
+				<listitem label="ODDLYIELD" />
+				<listitem label="PMT" />
+				<listitem label="PPMT" />
+				<listitem label="PRICE" />
+				<listitem label="PRICEDISC" />
+				<listitem label="PRICEMAT" />
+				<listitem label="PV" />
+				<listitem label="RATE" />
+				<listitem label="RECEIVED" />
+				<listitem label="SLN" />
+				<listitem label="SYD" />
+				<listitem label="TBILLEQ" />
+				<listitem label="TBILLPRICE" />
+				<listitem label="TBILLYIELD" />
+				<listitem label="VDB" />
+				<listitem label="XIRR" />
+				<listitem label="XNPV" />
+				<listitem label="YIELD" />
+				<listitem label="YIELDDISC" />
+				<listitem label="YIELDMAT" />
+			</listbox>
+			<listbox rows="9" id="fc_engineering" >
+				<listhead sizable="true">
+					<listheader label="Functions:" />
+				</listhead>
+				<listitem label="BESSELI" />
+				<listitem label="BESSELJ" />
+				<listitem label="BESSELK" />
+				<listitem label="BESSELY" />
+				<listitem label="BIN2DEC" />
+				<listitem label="BIN2HEX" />
+				<listitem label="BIN2OCT" />
+				<listitem label="COMPLEX" />
+				<listitem label="CONVERT" />
+				<listitem label="DEC2BIN" />
+				<listitem label="DEC2HEX" />
+				<listitem label="DEC2OCT" />
+				<listitem label="DELTA" />
+				<listitem label="ERF" />
+				<listitem label="ERFC" />
+				<listitem label="GESTEP" />
+				<listitem label="HEX2BIN" />
+				<listitem label="HEX2DEC" />
+				<listitem label="HEX2OCT" />
+				<listitem label="IMABS" />
+				<listitem label="IMAGINARY" />
+				<listitem label="IMARGUMENT" />
+				<listitem label="IMCONJUGATE" />
+				<listitem label="IMCOS" />
+				<listitem label="IMDIV" />
+				<listitem label="IMEXP" />
+				<listitem label="IMLN" />
+				<listitem label="IMLOG10" />
+				<listitem label="IMLOG2" />
+				<listitem label="IMPOWER" />
+				<listitem label="IMPRODUCT" />
+				<listitem label="IMREAL" />
+				<listitem label="IMSIN" />
+				<listitem label="IMSQRT" />
+				<listitem label="IMSUB" />
+				<listitem label="IMSUM" />
+				<listitem label="OCT2BIN" />
+				<listitem label="OCT2DEC" />
+				<listitem label="OCT2HEX" />
+			</listbox>
+		</vlayout>
+	</hlayout>
+	<div style="float:right;margin: 10px 0 10px 10px;">
+		<button id="insertFormulaBtn" image="/img/tick.png" mold="trendy" />
+	</div>
+	<zscript><![CDATA[
+		void openOnlyMyList(String listId){
+			String[] myList = {"fc_general","fc_math","fc_logical","fc_statistical","fc_dateAndTime","fc_information","fc_textAndData","fc_financial","fc_engineering"};
+			for(int i = 0; i< myList.length; i++){
+				Listbox lb = self.getFellow(myList[i]);
+				if(lb != null){
+					//System.out.println(myList[i] + " ok");
+					if(listId.equals(myList[i])){
+						lb.setVisible(true);
+					}else{
+						lb.setVisible(false);
+					}
+				}				
+			}
+		}
+	]]></zscript>
+	</div>
+</window>

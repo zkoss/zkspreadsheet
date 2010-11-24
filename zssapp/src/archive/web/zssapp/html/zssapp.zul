@@ -4,16 +4,7 @@
 <?script type="text/javascript" src="/macros/zssapp.js.dsp?v=${desktop.webApp.build}"?>
 <?component name="columnHeaderMenu" inline="true" macroURI="/menus/header_cell/menuColumnHeader.zul"?>
 <?component name="rowHeaderMenu" inline="true" macroURI="/menus/header_cell/menuRowHeader.zul"?>
-<?component name="fileexportwin" inline="true" macroURI="/menus/file/fileListExport.zul"?>
-<?component name="filedeletewin" inline="true" macroURI="/menus/file/fileListDelete.zul"?>
-<?component name="filesaveaswin" inline="true" macroURI="/menus/file/fileListSaveAs.zul"?>
-<?component name="borderSelector" inline="true" macroURI="/menus/border/borderSelector.zul"?>
-<?component name="formulacategory" inline="true" macroURI="/menus/formula/formulaCategory.zul"?>
-<?component name="formatnumberwin" inline="true" macroURI="/menus/format/menuFormatNumber.zul"?>
 <?component name="cheatsheet" inline="true" macroURI="/cheatsheet.zul"?>
-<?component name="menuPrintWin" inline="true" macroURI="/menuPrint.zul"?>
-<?component name="revisionmenu" inline="true" macroURI="/revisionMenu.zul"?>
-<?component name="pasteSelector" inline="true" macroURI="/menus/paste/pasteSelector.zul"?>
 
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 <window id="mainWin" apply="org.zkoss.zss.app.MainWindowCtrl" height="100%" width="100%" style="margin:0px;padding:0px">
@@ -92,165 +83,28 @@
 			font-size:14px;
 			font-family:impact;
 		}
+		.toolbarMask{
+			position:absolute;
+			background:none repeat scroll 0 0 #E0E1E3;
+			z-index:100; opacity: 0.6;
+		}
 	</style>
 		<div width="100%" style="background-color:rgb(83,175,227);display:none">	
 			<hlayout>
 			Filename:	<label id="openingFilename" value="Untitled"/>
 			</hlayout>
 		</div>
+	<toolbarbutton id="closeBtn" image="~./zssapp/image/cross.png" style="float:right;position:absolute;right:10px;top:3px;z-index:100;background:"/>
 	<borderlayout id="topToolbars" height="85px" style="border-left:1px solid #E1E1E1;border-right:1px solid #E1E1E1;">
 				<!-- SECTION **********Navigator bar************************************************* -->
-				<north id="mainNavigator" maxsize="800" vflex="min" flex="true"
+				<north id="mainNavigator" maxsize="800" height="27px" flex="true"
 					border="0">
 					<menubar id="menubar">
-						<menu label="${c:l('file')}">
-							<menupopup>
-								<attribute w:name="onOpen">
-									this.$f('spreadsheet').focus(false);
-								</attribute>
-								<menuitem label="${c:l('file.new')}" 
-									forward="onFileNew" />
-								<menuitem label="${c:l('file.open')}"
-									forward="onFileOpen" />
-								<menuitem label="${c:l('file.save')}"
-									forward="onFileSave" disabled="true"/>
-								<menuitem label="${c:l('file.saveas')}"
-									forward="onFileSaveAs" disabled="true"/>
-								<menuitem label="${c:l('file.saveClose')}"
-									forward="onFileSaveClose" disabled="true"/>
-								<menuseparator />
-								<menuitem label="${c:l('file.delete')}"
-									forward="onFileDelete" disabled="true"/>
-								<menuitem id="importFile"
-									label="${c:l('file.import')}" disabled="true"/>
-								<menu label="${c:l('file.export')}">
-									<menupopup>
-										<menuitem label="${c:l('export.pdf')}" forward="onExport(${c:l('export.pdf')})"/>
-									</menupopup>
-								</menu>
-								<menuseparator />
-								<menuitem label="${c:l('file.reversion')}" 
-									forward="onRevision" disabled="true"/>
-								<!-- <menuitem label="${c:l('file.setting')}" src="/img/hi.gif"
-									forward="onNotImplement()" />-->
-								<menuitem label="${c:l('file.print')}" 
-									forward="onPrint" />
-							</menupopup>
-						</menu>
-						<menu label="${c:l('edit')}">
-							<menupopup>
-								<attribute w:name="onOpen">
-									this.$f('spreadsheet').focus(false);
-								</attribute>
-								<menuitem label="${c:l('edit.undo')}" forward="onEditUndo" />
-								<menuitem label="${c:l('edit.redo')}" forward="onEditRedo" />
-								<menuseparator />
-								<menuitem label="${c:l('edit.cut')}" forward="onEditCut" />
-								<menuitem label="${c:l('edit.copy')}" forward="onEditCopy" />
-								<menuitem label="${c:l('edit.paste')}" forward="onEditPaste" />
-								<menuseparator />
-								<menuitem label="${c:l('edit.clearContent')}" forward="onClearContent" />
-								<menuitem label="${c:l('edit.clearStyle')}" forward="onClearStyle" />
-								<menuitem label="${c:l('edit.clearAll')}" forward="onClearBoth" />
-								<menuseparator />
-								<menuitem label="${c:l('edit.deleteRows')}" forward="onDeleteRows" />
-								<menuitem label="${c:l('edit.deleteCols')}" forward="onDeleteColumns" />
-								<!-- <menuitem label="${c:l('edit.findReplace')}" forward="onNotImplement()" src="/img/nono.gif" />-->
-							</menupopup>
-						</menu>
-						<menu label="${c:l('view')}">
-							<menupopup>
-								<attribute w:name="onOpen">
-									this.$f('spreadsheet').focus(false);
-								</attribute>
-								<menuitem label="${c:l('view.formulaBar')}" forward="onViewFormulaBar" autocheck="true" checked="true"/>
-								<menu label="${c:l('view.freezeRows')}">
-									<menupopup>
-										<menuitem label="${c:l('view.unfreezeRows')}"  forward="onViewUnfreezeRows" />
-										<menuseparator />
-										<menuitem label="${c:l('view.freezeRows')} 1"  forward="onViewFreezeRows(1)" />
-										<menuitem label="${c:l('view.freezeRows')} 2"  forward="onViewFreezeRows(2)" />
-										<menuitem label="${c:l('view.freezeRows')} 3"  forward="onViewFreezeRows(3)" />
-										<menuitem label="${c:l('view.freezeRows')} 4"  forward="onViewFreezeRows(4)" />
-										<menuitem label="${c:l('view.freezeRows')} 5"  forward="onViewFreezeRows(5)" />
-										<menuitem label="${c:l('view.freezeRows')} 6"  forward="onViewFreezeRows(6)" />
-										<menuitem label="${c:l('view.freezeRows')} 7"  forward="onViewFreezeRows(7)" />
-										<menuitem label="${c:l('view.freezeRows')} 8"  forward="onViewFreezeRows(8)" />
-										<menuitem label="${c:l('view.freezeRows')} 9"  forward="onViewFreezeRows(9)" />
-										<menuitem label="${c:l('view.freezeRows')} 10"  forward="onViewFreezeRows(10)" />
-									</menupopup>
-								</menu>
-								<menu  label="${c:l('view.freezeCols')}">
-									<menupopup>
-										<menuitem label="${c:l('view.unfreezeCols')}"  forward="onViewUnfreezeCols" />
-										<menuseparator />
-										<menuitem label="${c:l('view.freezeCols')} A"  forward="onViewFreezeCols(1)" />
-										<menuitem label="${c:l('view.freezeCols')} B"  forward="onViewFreezeCols(2)" />
-										<menuitem label="${c:l('view.freezeCols')} C"  forward="onViewFreezeCols(3)" />
-										<menuitem label="${c:l('view.freezeCols')} D"  forward="onViewFreezeCols(4)" />
-										<menuitem label="${c:l('view.freezeCols')} E"  forward="onViewFreezeCols(5)" />
-										<menuitem label="${c:l('view.freezeCols')} F"  forward="onViewFreezeCols(6)" />
-										<menuitem label="${c:l('view.freezeCols')} G"  forward="onViewFreezeCols(7)" />
-										<menuitem label="${c:l('view.freezeCols')} H"  forward="onViewFreezeCols(8)" />
-										<menuitem label="${c:l('view.freezeCols')} I"  forward="onViewFreezeCols(9)" />
-										<menuitem label="${c:l('view.freezeCols')} J"  forward="onViewFreezeCols(10)" />									
-									</menupopup>
-								</menu>
-							</menupopup>
-						</menu>
-						<menu label="${c:l('format')}">
-							<menupopup>
-								<attribute w:name="onOpen">
-									this.$f('spreadsheet').focus(false);
-								</attribute>
-								<menu label="${c:l('format.font')}" >
-									<menupopup>
-										<menuitem label="Calibri"  			sclass="calibriFont" forward="onFontFamilySelect(Calibri)"  />
-										<menuitem label="Courier New"  		sclass="courierFont" forward="onFontFamilySelect(Courier New)"  />
-										<menuitem label="Comic Sans MS"  	sclass="comicFont" forward="onFontFamilySelect(Comic Sans MS)"  />
-										<menuitem label="Times New Roman"  	sclass="timeFont" forward="onFontFamilySelect(Times New Roman)"  />
-										<menuitem label="Century Gothic"  	sclass="centuryFont" forward="onFontFamilySelect(Centry Gothic)"  />
-										<menuitem label="Georgia"  			sclass="georgiaFont" forward="onFontFamilySelect(Georgia)"  />
-										<menuitem label="Impact"  			sclass="impactFont" forward="onFontFamilySelect(Impact)"  />
-									</menupopup>
-								</menu>
-								<menu id="backgroundColorMenu" label="${c:l('format.color')}" content="#color=#FFFFFF">
-								</menu>
-								<menu label="${c:l('format.align')}" forward="onFormatAlign">
-									<menupopup>
-										<menuitem label="Left"  forward="onAlignHorizontalClick(left)"  />
-										<menuitem label="Center"  forward="onAlignHorizontalClick(center)"  />
-										<menuitem label="Right"  forward="onAlignHorizontalClick(right)"  />
-									</menupopup>
-								</menu>
-								<menuitem label="${c:l('format.numberFormat')}" forward="onFormatNumber" />
-							</menupopup>
-						</menu>
-						<menu label="${c:l('insert')}">
-								<menupopup>
-									<attribute w:name="onOpen">
-										this.$f('spreadsheet').focus(false);
-									</attribute>
-									<menuitem
-										label="${c:l('insert.formula')}" forward="onInsertFormula" />
-									<menu
-										label="${c:l('insert.chart')}">
-										<menupopup>
-											<menuitem
-												id="insertPieChart" label="${c:l('insert.piechart')}" />
-										</menupopup>
-									</menu>
-									<menuitem id="insertImageMenu"
-										label="${c:l('insert.image')}" upload="true">
-									</menuitem>
-									<menuitem
-										label="${c:l('insert.rows')}" forward="onInsertRows" />
-									<menuitem
-										label="${c:l('insert.columns')}" forward="onInsertColumns" />
-									<menuitem
-										label="${c:l('insert.sheet')}" forward="onInsertSheet" />
-								</menupopup>
-						</menu>
+						<filemenu id="fileMenu" label="${c:l('file')}"></filemenu>
+						<editmenu id="editMenu" label="${c:l('edit')}"></editmenu>
+						<viewmenu id="viewMenu" label="${c:l('view')}"></viewmenu>
+						<formatmenu id="formatMenu" label="${c:l('format')}"/>
+						<insertmenu id="insertMenu" label="${c:l('insert')}"/>
                        <!--   <menu label="${c:l('share')}">
                            <menupopup>
 								<menuitem label="${c:l('share.private')}" forward="onNotImplement()" src="/img/bear.gif"/>
@@ -262,7 +116,7 @@
                         <menu label="${c:l('help')}">
 							<menupopup>
 								<attribute w:name="onOpen">
-									this.$f('spreadsheet').focus(false);
+									this.$f('spreadsheet', true).focus(false);
 								</attribute>
 								<!-- <menuitem label="${c:l('help.center')}" forward="onNotImplement()" src="/img/music.gif"/>-->
 								<menuitem label="${c:l('help.cheatsheet')}" forward="onHelpCheatsheet" />
@@ -278,93 +132,32 @@
 				<center id="fastIconBtn" flex="true" border="0" style="background: #F5F5F5; border-bottom: 1px solid #D8D8D8;">
 					<hlayout spacing="0.4em" height="30px">
 						<toolbarbutton id="print"  src="/img/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>
-						<toolbarbutton src="/img/document-pdf.png" forward="onExport(${c:l('export.pdf')})" tooltiptext="${c:l('export.pdf')}">
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>
-						</toolbarbutton>
+						<toolbarbutton id="exportToPDFBtn" src="~./zssapp/image/document-pdf.png"/>
 						<toolbarbutton id="undo"  src="/img/arrow-curve-180-left.png" 	forward="onClick=onEditUndo" tooltiptext="${c:l('edit.undo')}"/>
 						<toolbarbutton id="redo"  src="/img/arrow-curve.png"	forward="onClick=onEditRedo" tooltiptext="${c:l('edit.redo')}"/>
-						<!-- copy and paste -->
 						<div sclass="toolbarSeparator"></div>
-						<dropdownbutton src="/img/clipboard-paste.png" tooltiptext="${c:l('paste')}" forward="onPasteSelector(${c:l('paste')})">
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>
-							<attribute w:name="onDropdown">
-								this.$f('spreadsheet').focus(false);
-							</attribute>
-							<pasteSelector>
-							</pasteSelector>
-						</dropdownbutton>
-						<toolbarbutton src="/img/scissors-blue.png" forward="onEditCut" tooltiptext="${c:l('edit.cut')}">
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>
-						</toolbarbutton>
-						<toolbarbutton src="/img/document-copy.png" forward="onEditCopy" tooltiptext="${c:l('edit.copy')}">
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>
-						</toolbarbutton>
+							<dropdownbutton id="pasteDropdownBtn" image="~./zssapp/image/clipboard-paste.png" tooltiptext="${c:l('paste')}">
+								<menupopup>
+									<menuitem id="paste" src="~./zssapp/image/clipboard-paste.png" label="${c:l('paste')}"
+										forward="onPasteSelector(${c:l('paste')})"/>
+									<menuitem id="pasteFormula" label="${c:l('paste.formula')}" 
+										forward="onPasteSelector(${c:l('paste.formula')})"/>
+									<menuitem id="pasteValue" label="${c:l('paste.value')}"
+										forward="onPasteSelector(${c:l('paste.value')})"/>
+									<menuitem id="pasteAllExcpetBorder" label="${c:l('paste.allExcpetBorder')}"
+										forward="onPasteSelector(${c:l('paste.allExcpetBorder')})"/>
+									<menuitem id="pasteTranspose" label="${c:l('paste.transpose')}"  
+										forward="onPasteSelector(${c:l('paste.transpose')})"/>
+									<menuitem id="pasteSpecial" label="${c:l('pasteSpecial')}" 
+										forward="onPasteSelector(${c:l('pasteSpecial')})"/>
+								</menupopup>
+							</dropdownbutton>
+							<toolbarbutton id="cutBtn" image="~./zssapp/image/scissors-blue.png" tooltiptext="${c:l('edit.cut')}"></toolbarbutton>
+							<toolbarbutton id="copyBtn" image="~./zssapp/image/document-copy.png" tooltiptext="${c:l('edit.copy')}"></toolbarbutton>
 						<!-- font*********************************************************************** -->	
 						<div sclass="toolbarSeparator"></div>
-						<fontfamily id="fontFamily"></fontfamily>
-						<fontsize id="fontSize"></fontsize>
-						<fontboldbutton id="boldBtn"></fontboldbutton>
-						<toolbarbutton id="italicBtn" src="/img/edit-italic.png" tooltiptext="${c:l('font.italic')}"
-							forward="onClick=onFontItalicClick">
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>	
-						</toolbarbutton>
-						<toolbarbutton id="underlineBtn" src="/img/edit-underline.png" tooltiptext="${c:l('font.underline')}"
-							forward="onClick=onFontUnderlineClick">
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>	
-						</toolbarbutton>
-						<toolbarbutton id="strikethroughBtn" src="/img/edit-strike.png" tooltiptext="${c:l('font.strike')}"
-							forward="onClick=onFontStrikethroughClick" >
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>	
-						</toolbarbutton>
-						<div sclass="toolbarSeparator"></div>
-						<borderbutton id="borderBtn"></borderbutton>
-						<!-- color*********************************************************************** -->		            
-						<div sclass="toolbarSeparator"></div>
-						<colorbutton id="fontColorBtn" width="20px" height="12px" color="#000000" image="/img/edit-color.png" tooltiptext="${c:l('font.color')}">
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>
-						</colorbutton>
-						<colorbutton id="backgroundColorBtn" width="20px" height="12px" color="#FFFFFF" image="/img/paint-can-color.png" tooltiptext="${c:l('font.fill')}">
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>
-						</colorbutton>
-						<!-- align horizontal************************************************************************ -->
-						<div sclass="toolbarSeparator"></div>
-						<toolbarbutton id="alignLeftBtn" src="/img/edit-alignment.png" tooltiptext="${c:l('align.left')}"
-							forward="onClick=onAlignHorizontalClick(left)">
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>	
-						</toolbarbutton>
-						<toolbarbutton id="alignCenterBtn" src="/img/edit-alignment-center.png" tooltiptext="${c:l('align.center')}"
-							forward="onClick=onAlignHorizontalClick(center)">
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>		
-						</toolbarbutton>
-						<toolbarbutton id="alignRightBtn" src="/img/edit-alignment-right.png" tooltiptext="${c:l('align.right')}"
-							forward="onClick=onAlignHorizontalClick(right)" >
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>	
-						</toolbarbutton>
-						
+						<div id="fontCtrlPanel" use="org.zkoss.zss.app.zul.ctrl.CellStyleCtrlPanel" 
+							style="vertical-align:middle;" spacing="0.4em"/>
 						<!-- align vertical************************************************************************ 
 						<toolbarbutton src="/img/separator.bmp"/>
 						<toolbarbutton id="alignTopBtn" sclass="toolIcon" src="/img/alignTop.bmp"
@@ -381,54 +174,34 @@
 
 						<toolbarbutton id="mergeCellBtn" src="/img/table-join.png" tooltiptext="${c:l('cell.merge')}"
 							forward="onClick=onMergeCellClick" />
-						<toolbarbutton id="wrapTextBtn" src="/img/wrapText.gif" tooltiptext="Wrap Text"
-							forward="onClick=onWrapTextClick" />
 						<div sclass="toolbarSeparator"></div>		
 						<toolbarbutton id="insertChartBtn" src="/img/chart-pie.png" tooltiptext="${c:l('insert.chart')}"
 							forward="onClick=onInsertChart(pie)" />
-						<toolbarbutton id="insertHyperlinkBtn" src="/img/hyperlink.png" tooltiptext="${c:l('hyperlink')}"
-							forward="onHyperlink(${c:l('hyperlink')})" >
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>	
-						</toolbarbutton>
+						<toolbarbutton id="insertHyperlinkBtn" src="~./zssapp/image/hyperlink.png" tooltiptext="${c:l('hyperlink')}"/>
 						<div sclass="toolbarSeparator"></div>
-						<dropdownbutton src="/img/sort-filter.png" tooltiptext="${c:l('sortAndFilter')}">
-							<attribute w:name="onClick">
-								this.$f('spreadsheet').focus(false);
-							</attribute>	
-							<attribute w:name="onDropdown">
-								this.$f('spreadsheet').focus(false);
-							</attribute>	
-							<menupopup>
-								<menuitem label="${c:l('sort.ascending')}" src="/img/asc.png"
-									forward="onSortSelector(${c:l('sort.ascending')})">
-									<attribute w:name="onClick">
-										this.$f('spreadsheet').focus(false);
-									</attribute>
-								</menuitem>
-								<menuitem label="${c:l('sort.descending')}" src="/img/des.png"
-									forward="onSortSelector(${c:l('sort.descending')})" >
-									<attribute w:name="onClick">
-										this.$f('spreadsheet').focus(false);
-									</attribute>								
-								</menuitem>
-								<menuitem label="${c:l('sort.custom')}"
-									forward="onSortSelector(${c:l('sort.custom')})" >
-									<attribute w:name="onClick">
-										this.$f('spreadsheet').focus(false);
-									</attribute>
-								</menuitem>
-								<menuseparator />
-								<!-- Filter:not support yet -->
-								<menuitem label="${c:l('filter')}" src="/img/funnel--pencil.png"
-									forward="onFilterSelector(${c:l('filter')})" disabled="true"/>
-								<menuitem label="${c:l('filter.clear')}" src="/img/funnel--minus.png"
-									forward="onFilterSelector(${c:l('filter.clear')})" disabled="true"/>
-								<menuitem label="${c:l('filter.reapply')}" src="/img/funnel--arrow.png"
-									forward="onFilterSelector(${c:l('filter.reapply')})" disabled="true"/>
-							</menupopup>
-						</dropdownbutton>
+							<dropdownbutton id="sortDropdownBtn" image="~./zssapp/image/sort-filter.png" tooltiptext="${c:l('sortAndFilter')}">
+								<menupopup>
+									<menuitem id="sortAscending" label="${c:l('sort.ascending')}" src="~./zssapp/image/asc.png"
+										forward="onSortSelector(${c:l('sort.ascending')})">
+									</menuitem>
+									<menuitem id="sortDescending" label="${c:l('sort.descending')}" src="~./zssapp/image/des.png"
+										forward="onSortSelector(${c:l('sort.descending')})">
+									</menuitem>
+									<menuitem id="customSort" label="${c:l('sort.custom')}"
+										forward="onSortSelector(${c:l('sort.custom')})">
+									</menuitem>
+									<menuseparator />
+									<!-- Filter:not support yet -->
+									<menuitem id="filter" label="${c:l('filter')}" src="~./zssapp/image/funnel--pencil.png"
+										forward="onFilterSelector(${c:l('filter')})" disabled="true" />
+									<menuitem id="clearFilter" label="${c:l('filter.clear')}"
+										src="~./zssapp/image/funnel--minus.png"
+										forward="onFilterSelector(${c:l('filter.clear')})" disabled="true" />
+									<menuitem id="reapplyFilter" label="${c:l('filter.reapply')}"
+										src="~./zssapp/image/funnel--arrow.png"
+										forward="onFilterSelector(${c:l('filter.reapply')})" disabled="true" />
+								</menupopup>
+							</dropdownbutton>
 						<div sclass="toolbarSeparator"></div>
 						<checkbox id="gridlinesCheckbox" tooltiptext="${c:l('gridlines')}" forward="onGridlines" image="/img/grid.png">
 							<attribute w:name="onBind">
@@ -448,41 +221,36 @@
 									style="text-align:center;">
 							<comboitem id="lbpos" label="A1" /></combobox>
 						<div hflex="min" sclass="formulaBtn">
-							<toolbarbutton style="text-decoration:none;color:black;font-size:16px;font-style:italic;text-align:center;"
+							<toolbarbutton id="insertFormulaBtn" style="text-decoration:none;color:black;font-size:16px;font-style:italic;text-align:center;"
 											label="f(x)" forward="onFormulaBarBtn" />
 						</div>
-						<textbox height="19px" id="formulaEditbox"
-									style="font-size:16px;border:0px;padding:3px"
-									action="onkeyup:zkau.send({uuid: 'tbxval2', 
-			           										   cmd:  'onChanging', 
-			           										   data: [this.value]},
-			           										   25)" />
+						<formulaeditor id="formulaEditor" height="19px" style="font-size:16px;border:0px;padding:3px"/>
 					</hlayout>
 				</south>
 	</borderlayout>
+	<div id="toolbarMask" sclass="toolbarMask" >
+		<attribute w:name="onBind">
+			var $t = jq(this.$f('topToolbars')),
+				$m = jq(this.$f('mainNavigator')),
+				mnHgh = zk.parseInt($m.children('.z-north').css('height'));
+			//TODO: for width: I should use onSize event to sync width
+			jq(this.$n()).css({'width': '8000px', 
+				'height': (zk.parseInt($t.css('height')) - mnHgh) + 'px', 
+				'top': mnHgh + 'px', 
+				'left': $m.offset().left});
+		</attribute>
+	</div>
 	<sheets id="sheets"></sheets>
-	<spreadsheet id="spreadsheet" src="/xls/demo_sample.xls" maxrows="200"
+	<!-- src="/xls/demo_sample.xls" -->
+	<spreadsheet id="spreadsheet" maxrows="200" src="/xls/demo_sample.xls"
 			maxcolumns="40" vflex="1" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
 			forward="onCtrlKey=mainWin.onSSCtrlKeys">
 	</spreadsheet>
-	<columnHeaderMenu id="columnHeaderMenu" />
-	<rowHeaderMenu id="rowHeaderMenu"/>
+<!--	<columnHeaderMenu id="columnHeaderMenu" />-->
+	<columnheadermenupopup id="columnHeaderMenupopup"/>
+	<rowheadermenupopup id="rowHeaderMenupopup"></rowheadermenupopup>
 	<cellmenupopup id="cellMenupopup"></cellmenupopup>
-	<borderSelector id="borderSelector" />
 	<cellcontext id="cellContext"></cellcontext>
-	<formulacategory id="formulaCategory" />
 	<cheatsheet id="cheatsheet" />
-	<formatnumberwin id="formatNumberWin" />
-	<fileexportwin />
-	<filedeletewin />
-	<filesaveaswin />
-	<menuPrintWin />
-	<revisionmenu />
-	<attribute name="onCreate"> 
-		fontFamilyCombobox.selectedIndex=0;
-		fontSizeCombobox.selectedIndex=0;
-		_fontFamilyCombobox.selectedIndex=0;
-		_fontSizeCombobox.selectedIndex=0;
-	</attribute>
 </window>
 </zk>

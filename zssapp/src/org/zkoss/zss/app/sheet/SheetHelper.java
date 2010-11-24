@@ -11,8 +11,6 @@
 
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 
-{{IS_RIGHT
-}}IS_RIGHT
 */
 package org.zkoss.zss.app.sheet;
 
@@ -112,7 +110,7 @@ public final class SheetHelper {
 	}
 	
 	public static Rect getSpreadsheetMaxSelection(Spreadsheet spreadsheet) {
-		Rect selection = spreadsheet.getSelection();
+		Rect selection = spreadsheet.getSelection();// selection is cloned
 		if (selection.getBottom() >= spreadsheet.getMaxrows())
 			selection.setBottom(spreadsheet.getMaxrows() - 1);
 		if (selection.getRight() >= spreadsheet.getMaxcolumns())

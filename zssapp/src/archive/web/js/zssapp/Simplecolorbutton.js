@@ -11,8 +11,6 @@
 
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 
-{{IS_RIGHTRC
-}}IS_RIGHT
 */
 (function () {
 

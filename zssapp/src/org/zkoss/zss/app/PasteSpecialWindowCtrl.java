@@ -11,10 +11,6 @@
 
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 
-{{IS_RIGHT
-	This program is distributed under GPL Version 3.0 in the hope that
-	it will be useful, but WITHOUT ANY WARRANTY.
-}}IS_RIGHT
 */
 package org.zkoss.zss.app;
 
@@ -28,7 +24,7 @@ import java.util.HashMap;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.app.zul.ZssappComponents;
+import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
@@ -70,7 +66,7 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 	private Checkbox transpose;
 
 	public PasteSpecialWindowCtrl () {
-		ss = checkNotNull(ZssappComponents.getSpreadsheetFromArg(), "Spreadsheet is null");
+		ss = checkNotNull(Zssapps.getSpreadsheetFromArg(), "Spreadsheet is null");
 		if (ss.getHighlight() == null)
 			throw new UiException("Spreadsheet must has highlight area as paste source, please set spreadsheet's highlight area");
 	}

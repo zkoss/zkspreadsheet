@@ -11,10 +11,6 @@
 
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 
-{{IS_RIGHT
-	This program is distributed under GPL Version 3.0 in the hope that
-	it will be useful, but WITHOUT ANY WARRANTY.
-}}IS_RIGHT
 */
 package org.zkoss.zss.app.file;
 
@@ -30,10 +26,9 @@ import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.app.zul.ZssappComponents;
 import org.zkoss.zss.model.Exporter;
 import org.zkoss.zss.model.impl.PdfExporter;
 import org.zkoss.zss.ui.Rect;
@@ -91,7 +86,8 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		ss = checkNotNull(ZssappComponents.getSpreadsheetFromArg(), "Spreadsheet is null");
+		//TODO: use event, don't send arg
+		ss = checkNotNull(Zssapps.getSpreadsheetFromArg(), "Spreadsheet is null");
 		loadPrintSetting();
 	}
 	
@@ -102,6 +98,7 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void loadOrientationSetting() {
+		//TODO: move to sheet context
 		orgOrientation = ss.getSelectedSheet().getPrintSetup().getLandscape();
 		if (ss.getSelectedSheet().getPrintSetup().getLandscape())
 			orientation.setSelectedItem(landscape);
@@ -113,6 +110,7 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	 * Apply the print setting to each page
 	 */
 	private void applyPrintSetting() {
+		//TODO: move to sheet context
 		ss.getSelectedSheet().getPrintSetup().setLandscape(orientation.getSelectedItem() == landscape);
 		ss.getSelectedSheet().setPrintGridlines(includeGridlines());
 		boolean isLandscape = orientation.getSelectedItem() == landscape;
@@ -139,10 +137,6 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 			PrintSetup setup = sheet.getPrintSetup();
 			setup.setLandscape(orgOrientation);
 		}
-	}
-	
-	private static Object getParam (String key) {
-		return Executions.getCurrent().getArg().get(key);
 	}
 
 	public void onClick$export() 

@@ -11,10 +11,6 @@
 
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 
-{{IS_RIGHT
-	This program is distributed under GPL Version 3.0 in the hope that
-	it will be useful, but WITHOUT ANY WARRANTY.
-}}IS_RIGHT
 */
 package org.zkoss.zss.app.link;
 
@@ -34,8 +30,9 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.Consts;
+import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.app.zul.ZssappComponents;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.SheetVisitor;
 import org.zkoss.zss.ui.impl.Utils;
@@ -68,9 +65,9 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	
 	private Textbox displayHyperlink;
 	
-	private final static String WEBLINK_CONTENT_URI="/menus/hyperlink/webLink.zul";
-	private final static String DOCLINK_CONTENT_URI="/menus/hyperlink/docLink.zul";
-	private final static String MAILLINK_CONTENT_URI="/menus/hyperlink/mailLink.zul";
+	private final static String WEBLINK_CONTENT_URI = Consts._Weblink_zul;
+	private final static String DOCLINK_CONTENT_URI = Consts._Doclink_zul;
+	private final static String MAILLINK_CONTENT_URI = Consts._Maillink_zul;
 	private Include content;
 	
 	private Spreadsheet ss;
@@ -80,7 +77,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
-		ss = checkNotNull(ZssappComponents.getSpreadsheetFromArg(), "Spreadsheet is null");
+		ss = checkNotNull(Zssapps.getSpreadsheetFromArg(), "Spreadsheet is null");
 		
 		String display = Utils.getRange(ss.getSelectedSheet(), ss.getSelection().getTop(), ss.getSelection().getLeft()).getEditText();
 		isCellHasDisplayString = !"".equals(display);

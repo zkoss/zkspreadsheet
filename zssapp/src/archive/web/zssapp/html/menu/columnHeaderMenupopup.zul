@@ -1,0 +1,17 @@
+<zk>
+	<menuitem id="cut" label="${c:l('edit.cut')}" />
+	<menuitem id="copy" label="${c:l('edit.copy')}" />
+	<menuitem id="paste" label="${c:l('edit.paste')}" />
+	<menuseparator/>
+	<menuitem id="clearContent" label="${c:l('edit.clearContent')}" />
+	<menuitem id="clearStyle" label="${c:l('edit.clearStyle')}" />
+	<menuseparator/>
+	<menuitem id="insertColumn" label="${c:l('insert.columns')}" />
+	<menuitem id="deleteColumn" label="${c:l('edit.deleteCols')}" />
+	<menuseparator/>
+	<menuitem id="columnWidth" label="${c:l('setColumnWidth')}"/>
+	<menuitem id="numberFormat" label="${c:l('format.numberFormat')}" />
+	<menuseparator/>
+	<menuitem id="hide" label="Hide" />
+	<menuitem id="unhide" label="Unhide" />
+</zk>

@@ -1,4 +1,4 @@
-/* SpreadsheetCompositeComponent.java
+/* ZssappComponent.java
 
 {{IS_NOTE
 	Purpose:
@@ -11,8 +11,6 @@
 
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 
-{{IS_RIGHT
-}}IS_RIGHT
 */
 package org.zkoss.zss.app.zul;
 
@@ -24,7 +22,7 @@ import org.zkoss.zss.ui.Spreadsheet;
  */
 public interface ZssappComponent {
 	
-	public void setSpreadsheet(Spreadsheet spreadsheet);
+	public void bindSpreadsheet(Spreadsheet spreadsheet);
 	
-	public Spreadsheet getSpreadsheet();
+	public void unbindSpreadsheet();
 }

@@ -11,10 +11,6 @@
 
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 
-{{IS_RIGHT
-	This program is distributed under GPL Version 3.0 in the hope that
-	it will be useful, but WITHOUT ANY WARRANTY.
-}}IS_RIGHT
 */
 package org.zkoss.zss.app;
 
@@ -33,7 +29,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.app.zul.ZssappComponents;
+import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
@@ -103,7 +99,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		ss = checkNotNull(ZssappComponents.getSpreadsheetFromArg(), "Spreadsheet is null");
+		ss = checkNotNull(Zssapps.getSpreadsheetFromArg(), "Spreadsheet is null");
 		sortOrientationCombo.setSelectedIndex(0);
 		initSortLevelListbox();
 	}

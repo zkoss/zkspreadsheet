@@ -11,10 +11,6 @@
 
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 
-{{IS_RIGHT
-	This program is distributed under GPL Version 3.0 in the hope that
-	it will be useful, but WITHOUT ANY WARRANTY.
-}}IS_RIGHT
 */
 package org.zkoss.zss.app.zul;
 
@@ -92,12 +88,12 @@ public class InsertWindowDialog extends Window implements ZssappComponent{
 	}
 
 	@Override
-	public Spreadsheet getSpreadsheet() {
-		return ss;
+	public void unbindSpreadsheet() {
+		//TODO: unbind event
 	}
 
 	@Override
-	public void setSpreadsheet(Spreadsheet spreadsheet) {
+	public void bindSpreadsheet(Spreadsheet spreadsheet) {
 		ss = checkNotNull(spreadsheet, "Spreadsheet is null");
 	}
 }

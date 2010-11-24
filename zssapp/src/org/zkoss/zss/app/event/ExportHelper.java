@@ -11,10 +11,6 @@
 
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 
-{{IS_RIGHT
-	This program is distributed under GPL Version 3.0 in the hope that
-	it will be useful, but WITHOUT ANY WARRANTY.
-}}IS_RIGHT
 */
 package org.zkoss.zss.app.event;
 
@@ -25,7 +21,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zss.app.MainWindowCtrl;
-import org.zkoss.zss.app.zul.ZssappComponents;
+import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Messagebox;
 
@@ -38,8 +34,8 @@ public class ExportHelper {
 	private ExportHelper(){}
 	
 	private final static String KEY_PDF = ExportHelper.class.getSimpleName() + "_ZSSPDF";
-	
-	public static void onExport(Spreadsheet spreadsheet, String operation) {
+
+	public static void doExportToPDF(Spreadsheet spreadsheet) {
 		if (!hasZssPdf()) {
 			try {
 				Messagebox.show("Please download Zss Pdf from ZK");
@@ -47,14 +43,7 @@ public class ExportHelper {
 			}
 			return;
 		}
-		
-		if (operation == null || spreadsheet == null) {
-			return;
-		}
-		
-		if (operation.equals(Labels.getLabel("export.pdf"))) {
-			Executions.createComponents("/menus/export/exportToPDF.zul", null, ZssappComponents.newSpreadsheetArg(spreadsheet));
-		}
+		Executions.createComponents("~./zssapp/html/dialog/exportToPDF.zul", null, Zssapps.newSpreadsheetArg(spreadsheet));
 	}
 	
 	public static boolean hasZssPdf() {

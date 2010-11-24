@@ -1,0 +1,30 @@
+<window id="fileOpenViewWin" sclass="fileOpenViewWin" title="Open File" border="normal" visible="false" position="center">
+	<style>
+		.fileOpenViewWin .hintLabel{
+			font-family:Calibri;
+		}
+	</style>
+
+	<label sclass="hintLabel" value="Choose a Spreadsheet to open:"/>
+	<vbox style="margin:5px">	
+	<listbox id="flo_files" width="300px" >
+		<listhead>
+			<listheader label="Name" sort="auto"/>
+			<listheader label="Author" sort="auto"/>
+			<listheader label="Date" sort="auto"/>
+		</listhead>
+	</listbox>
+	
+	<hbox>
+	<button label="OK" forward="//p2/mainWin.onOpenFile">
+	</button>
+	<button label="Cancel">
+		<attribute name="onClick"> 			
+			self.getSpaceOwner().setVisible(false);			
+		</attribute>
+	</button>
+	</hbox>
+	</vbox>
+		
+</window>
+

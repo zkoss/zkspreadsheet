@@ -1,3 +1,17 @@
+/* CellHelper.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		Sep 15, 2010 7:09:49 PM , Created by Sam
+}}IS_NOTE
+
+Copyright (C) 2009 Potix Corporation. All Rights Reserved.
+
+*/
 package org.zkoss.zss.app.cell;
 
 import org.zkoss.poi.ss.usermodel.Cell;
@@ -5,10 +19,18 @@ import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
+import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.impl.BookHelper;
+import org.zkoss.zss.ui.Rect;
+import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.impl.CellVisitor;
+import org.zkoss.zss.ui.impl.CellVisitorContext;
+import org.zkoss.zss.ui.impl.Utils;
 
 public final class CellHelper {
 	private CellHelper(){};
@@ -63,6 +85,29 @@ public final class CellHelper {
 		return color;
 	}
 
+	public static void clearContent(Spreadsheet spreadsheet, Rect rect) {
+		Utils.visitCells(spreadsheet.getSelectedSheet(), 
+				rect, 
+				new CellVisitor() {
+					@Override
+					public void handle(CellVisitorContext context) {
+						Cell cell = context.getCell();
+						if (cell != null) {
+							context.getRange().setEditText(null);
+						}
+					}
+		});
+	}
+	
+	public static void clearStyle(Spreadsheet spreadsheet, Rect rect) {
+		Utils.visitCells(spreadsheet.getSelectedSheet(), spreadsheet.getSelection(), new CellVisitor() {
+			
+			@Override
+			public void handle(CellVisitorContext context) {
+				context.getRange().setStyle(context.getBook().createCellStyle());
+			}
+		});
+	}
 	
 	/**
 	 * Delete current cell and shift cells up
@@ -111,10 +156,7 @@ public final class CellHelper {
 		Row row = sheet.getRow(rowIndex);
 		int lCol = row.getFirstCellNum();
 		int rCol  = row.getLastCellNum();
-		for(int colIdx = lCol; colIdx < rCol; colIdx++) {
-			final Range rng = Ranges.range(sheet, rowIndex,	colIdx);
-			rng.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
-		}
+		Ranges.range(sheet, rowIndex, lCol, rowIndex, rCol).insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
 	}
 	
 	public static void shiftEntireRowUp(Sheet sheet, int rowIndex, int colIndex) {
@@ -122,56 +164,36 @@ public final class CellHelper {
 		Row row = sheet.getRow(rowIndex);
 		int lCol = row.getFirstCellNum();
 		int rCol  = row.getLastCellNum();
-		for(int colIdx = lCol; colIdx < rCol; colIdx++) {
-			final Range rng = Ranges.range(sheet, rowIndex,	colIdx);
-			rng.delete(Range.SHIFT_UP);
-		}
-	}
-	
-	public static int shiftEntireRowUp(Sheet sheet, int rowIndex, int colIndex, int maxShiftColumn) {
-		Row row = sheet.getRow(rowIndex);
-		//int lCol = row.getFirstCellNum();
-		int rCol  = row.getLastCellNum();
-		
-		int shiftColumns = Math.min(colIndex + maxShiftColumn, rCol);
-		for(int colIdx = colIndex; colIdx < shiftColumns; colIdx++) {
-			System.out.println("shift column: " + colIdx);
-			final Range rng = Ranges.range(sheet, rowIndex,	colIdx);
-			rng.delete(Range.SHIFT_UP);
-		}
-		
-		return shiftColumns < rCol - 1 ? shiftColumns : -1;
+		Range rng = Ranges.range(sheet, rowIndex, lCol, rowIndex, rCol);
+		rng.delete(Range.SHIFT_UP);
 	}
 
 	public static void shiftEntireColumnRight(Sheet sheet, int rowIndex, int colIndex) {
-		
 		int tRow = sheet.getFirstRowNum();
 		int bRow = sheet.getPhysicalNumberOfRows();
-		for (int rowIdx = tRow; rowIdx < bRow; rowIdx++) {
-			final Range rng = Ranges.range(sheet, rowIdx, colIndex);
-			rng.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
-		}		
-	}
-	
-	public static int shiftEntireColumnLeft(Sheet sheet, int rowIndex, int colIndex, int maxShiftRow) {
-		int bRow = sheet.getPhysicalNumberOfRows();
-		
-		int shiftRows = Math.min(rowIndex + maxShiftRow, bRow);
-		for (int rowIdx = rowIndex; rowIdx < shiftRows; rowIdx++) {
-			final Range rng = Ranges.range(sheet, rowIdx, colIndex);
-			rng.delete(Range.SHIFT_LEFT);
-		}	
-		return shiftRows < bRow - 1 ? shiftRows : -1;
+		Ranges.range(sheet, tRow, colIndex, bRow, colIndex).insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
 	}
 	
 	public static void shiftEntireColumnLeft(Sheet sheet, int rowIndex, int colIndex) {
-		
 		int tRow = sheet.getFirstRowNum();
 		int bRow = sheet.getPhysicalNumberOfRows();
-		for (int rowIdx = tRow; rowIdx < bRow; rowIdx++) {
-			final Range rng = Ranges.range(sheet, rowIdx, colIndex);
-			rng.delete(Range.SHIFT_LEFT);
-		}	
+		Ranges.range(sheet, tRow, colIndex, bRow, colIndex).delete(Range.SHIFT_LEFT);
 	}
-
+	
+	
+	public static void sortAscending(Sheet sheet, Rect rect) {
+		Utils.sort(sheet, rect,
+				null, null, null, false, false, false);
+	}
+	
+	public static void sortDescending(Sheet sheet, Rect rect) {
+		Utils.sort(sheet, rect,
+				null, new boolean[] { true }, null, false, false, false);
+	}
+	
+	public static void createCustomSortDialog(Spreadsheet spreadsheet, Component parent) {
+		Executions.createComponents("~./zssapp/html/dialog/customSort.zul", 
+				parent, 
+				Zssapps.newSpreadsheetArg(spreadsheet));
+	}
 }

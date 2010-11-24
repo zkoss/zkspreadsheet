@@ -11,52 +11,50 @@
 
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 
-{{IS_RIGHT
-}}IS_RIGHT
 */
 package org.zkoss.zss.app.zul;
-
-import static org.zkoss.zss.app.base.Preconditions.checkNotNull;
 
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
-import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.MouseEvent;
-import org.zkoss.zss.app.cell.EditHelper;
-import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.app.Consts;
+import org.zkoss.zss.app.zul.ctrl.DesktopSheetContext;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
 /**
  * @author Sam
  *
  */
-public class CellMenupopup extends Menupopup implements ZssappComponent, IdSpace {
-	
-	private final static String URI = "~./zssapp/html/cellMenu.zul";
-	
-	private final static String KEY_INSERT_WINDOW_DIALOG = "org.zkoss.zss.app.zul.cellMenupopup.insertWindowDialog";
-	private final static String KEY_DELETE_WINDOW_DIALOG = "org.zkoss.zss.app.zul.cellMenupopup.deleteWindowDialog";
-	
-	/* Setting */
-	//private boolean _insertVisible; 
-	//private boolean _insertDisable;
-	
+public class CellMenupopup extends Menupopup implements IdSpace {
+
 	/* Components */
 	private Menuitem cut;
 	private Menuitem copy;
 	private Menuitem paste;
 	private Menuitem pasteSpecial;
 	
-	private Menuitem insert;
-	private Menuitem delete;
+	//private Menuitem insert;
+	private Menuitem shiftCellRight;
+	private Menuitem shiftCellDown;
+	private Menuitem insertEntireRow;
+	private Menuitem insertEntireColumn;
+
+	//private Menuitem delete;
+	private Menuitem shiftCellLeft;
+	private Menuitem shiftCellUp;
+	private Menuitem deleteEntireRow;
+	private Menuitem deleteEntireColumn;
+	
 	private Menuitem clearContent;
 	private Menuitem clearStyle;
 	
 	//TODO: not implement yet
 	//private Menuitem filter
-	private Menuitem sort;
-	
+	private Menuitem sortAscending;
+	private Menuitem sortDescending;
+	private Menuitem customSort;
 	//TODO: not implement yet
 	//private Menuitem comment
 	
@@ -71,82 +69,98 @@ public class CellMenupopup extends Menupopup implements ZssappComponent, IdSpace
 	//private Menuitem removeHyperlink;
 	
 	
-	private Spreadsheet ss;
+//	private Spreadsheet ss;
 	
 	public CellMenupopup() {
-		Executions.createComponents(URI, this, null);
+		Executions.createComponents(Consts._CellMenupopup_zul, this, null);
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
 	}
-	
-	//TODO: CellMenupopup API
-//	public void setInsertVisible(boolean visible) {
-//	}
-//	
-//	public void isInsertVisible() {
-//	}
-//	
-//	public void setInsertDisable(boolean disable) {
-//		_insertDisable = disable;
-//		
-//	}
-//	
-//	public boolean isInsertDisable() {
-//		return _insertDisable;
-//	}
-	
-	
-	public void setSpreadsheet(Spreadsheet spreadsheet) {
-		ss = checkNotNull(spreadsheet, "Spreadsheet is null");
-		setWidgetListener("onOpen", "this.$f('" + ss.getId() + "', true).focus(false);");
-	}
-	
-	public Spreadsheet getSpreadsheet() {
-		return ss;
+
+	public void onOpen() {
+		DesktopSheetContext.getInstance(getDesktop()).reGainFocus();
 	}
 	
 	public void onClick$cut() {
-		EditHelper.doCut(ss);
+		DesktopSheetContext.getInstance(getDesktop()).cutSelection();
 	}
 	
 	public void onClick$copy() {
-		EditHelper.doCopy(ss);
+		DesktopSheetContext.getInstance(getDesktop()).copySelection();
 	}
 	
 	public void onClick$paste() {
-		EditHelper.doPaste(ss);
+		//EditHelper.doPaste(ss);
+		DesktopSheetContext.getInstance(getDesktop()).pasteSelection();
 	}
 	
 	public void onClick$pasteSpecial(MouseEvent event) {
-		Executions.createComponents(
-				"~./zssapp/html/pasteSpecialWindowDlg.zul", null, ZssappComponents.newSpreadsheetArg(ss));
+		DesktopSheetContext.getInstance(getDesktop()).openPasteSpecialDialog();
+	}
+
+	public void onClick$shiftCellRight() {
+		DesktopSheetContext.getInstance(getDesktop()).shiftCell(DesktopSheetContext.SHIFT_CELL_RIGHT);
 	}
 	
-	public void onClick$insert(ForwardEvent event) {
-		MouseEvent evt = (MouseEvent)event.getOrigin();
-		
-		InsertWindowDialog dialog = (InsertWindowDialog)ss.getAttribute(KEY_INSERT_WINDOW_DIALOG);
-		if (dialog == null) {
-			dialog = new InsertWindowDialog();
-			dialog.setSpreadsheet(ss);
-		}
-		//TODO: calculate proper dialog position
-		dialog.setLeft(evt.getX() + "px");
-		dialog.setTop(evt.getY() + "px");
-		dialog.doPopup();
+	public void onClick$shiftCellDown() {
+		DesktopSheetContext.getInstance(getDesktop()).shiftCell(DesktopSheetContext.SHIFT_CELL_DOWN);
 	}
 	
-	public void onClick$delete(ForwardEvent event) {
-		MouseEvent evt = (MouseEvent)event.getOrigin();
-		
-		DeleteWindowDialog dialog = (DeleteWindowDialog)ss.getAttribute(KEY_DELETE_WINDOW_DIALOG);
-		if (dialog == null) {
-			dialog = new DeleteWindowDialog();
-			dialog.setSpreadsheet(ss);
-		}
-		//TODO: calculate proper dialog position
-		dialog.setLeft(evt.getX() + "px");
-		dialog.setTop(evt.getY() + "px");
-		dialog.doPopup();
+	public void onClick$insertEntireRow() {
+		DesktopSheetContext.getInstance(getDesktop()).insertRow();	
+	}
+	
+	public void onClick$insertEntireColumn() {
+		DesktopSheetContext.getInstance(getDesktop()).insertColumn();
+	}
+	
+	public void onClick$shiftCellLeft() {
+		DesktopSheetContext.getInstance(getDesktop()).shiftCell(DesktopSheetContext.SHIFT_CELL_LEFT);
+	}
+	
+	public void onClick$shiftCellUp() {
+		DesktopSheetContext.getInstance(getDesktop()).shiftCell(DesktopSheetContext.SHIFT_CELL_UP);
+	}
+	
+	public void onClick$deleteEntireRow() {
+		DesktopSheetContext.getInstance(getDesktop()).deleteRow();
+	}
+
+	public void onClick$deleteEntireColumn() {
+		DesktopSheetContext.getInstance(getDesktop()).deleteColumn();
+	}
+	
+	public void onClick$clearContent() {
+		DesktopSheetContext.getInstance(getDesktop()).clearSelectionContent();
+	}
+	
+	public void onClick$clearStyle() {
+		DesktopSheetContext.getInstance(getDesktop()).clearSelectionStyle();
+	}
+
+	public void onClick$sortAscending() {
+		DesktopSheetContext.getInstance(getDesktop()).sort(false);
+	}
+	
+	public void onClick$sortDescending() {
+		DesktopSheetContext.getInstance(getDesktop()).sort(true);
+	}
+	
+	public void onClick$customSort() {
+		DesktopSheetContext.getInstance(getDesktop()).openCustomSortDialog();
+	}
+	
+	public void onClick$formula() {
+		//open formula
+		DesktopSheetContext.getInstance(getDesktop()).openInsertFormulaDialog();
+	}
+
+	public void onClick$format() {
+		throw new UiException("not implement yet");
+		//DesktopSheetContext.getInstance(getDesktop()).openFormatDialog();
+	}
+	
+	public void onClick$hyperlink() {
+		DesktopSheetContext.getInstance(getDesktop()).openHyperlinkDialog();
 	}
 }
