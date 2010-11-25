@@ -27,7 +27,7 @@ import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.app.ctrl.RenameSheetCtrl;
 import org.zkoss.zss.app.sheet.SheetHelper;
-import org.zkoss.zss.app.zul.ctrl.DesktopSheetContext;
+import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.SheetVisitor;
 import org.zkoss.zss.ui.impl.Utils;
@@ -69,7 +69,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	}
 	
 	public void onSelect$tabbox() {
-		DesktopSheetContext.getInstance(getDesktop()).fireSheetSelected(tabbox.getSelectedTab().getLabel());
+		getDesktopWorkbenchContext().getWorkbookCtrl().setSelectedSheet(tabbox.getSelectedTab().getLabel());
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	 */
 	public void setCurrentSheet(int index) {
 		tabbox.setSelectedIndex(index);
-		DesktopSheetContext.getInstance(getDesktop()).fireSheetSelected(tabbox.getSelectedTab().getLabel());
+		getDesktopWorkbenchContext().getWorkbookCtrl().setSelectedSheet(tabbox.getSelectedTab().getLabel());
 	}
 	
 	/**
@@ -175,5 +175,9 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	@Override
 	public void bindSpreadsheet(Spreadsheet spreadsheet) {
 		ss = spreadsheet;
+	}
+	
+	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
+		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
 	}
 }

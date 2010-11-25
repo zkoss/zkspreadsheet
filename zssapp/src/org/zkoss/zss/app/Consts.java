@@ -37,6 +37,11 @@ public class Consts {
 	public static String _ColumnHeaderMenu_zul = "~./zssapp/html/menu/columnHeaderMenupopup.zul";
 	public static String _CellMenupopup_zul = "~./zssapp/html/menu/cellMenupopup.zul";
 	public static String _CellContext_zul = "~./zssapp/html/cellContext.zul";
+	public static String _EditMenu_zul = "~./zssapp/html/menu/editMenu.zul";
+	public static String _FileMenu_zul = "~./zssapp/html/menu/fileMenu.zul";
+	public static String _ViewMenu_zul = "~./zssapp/html/menu/viewMenu.zul";
+	public static String _InsertMenu_zul = "~./zssapp/html/menu/insertMenu.zul";
+	
 	
 	/*Dialog zul*/
 	public static String _InsertFormulaDialog_zul = "~./zssapp/html/dialog/insertFormula.zul";
@@ -49,35 +54,14 @@ public class Consts {
 	public static final String ON_CELL_STYLE_CHANGED = "onCellStyleChanged";
 	
 	/*Sheet event*/
-	public static final String ON_SHEET_REGAIN_FOCUS = "onSheetRegainFocus";
 	public static final String ON_SHEET_REFRESH = "onSheetRefresh";
 	public static final String ON_SHEET_OPEN = "onSheetOpen";
-	public static final String ON_SHEET_RENAME = "onSheetRename";
-	public static final String ON_SHEET_SELECT = "onSheetSelect";
-	public static final String ON_SHEET_INSERT_FORMULZ_DIALOG = "onSheetInsertFormulzDialog";
-	public static final String ON_SHEET_EXPORT_PDF_DIALOG = "onSheetExportPDFDialog";
-	public static final String ON_SHEET_INSERT = "onSheetInsert";
-	public static final String ON_SHEET_INSERT_IMAGE = "onSheetInsertImage";
-	public static final String ON_SHEET_CUT_SELECTION = "onSheetCutSelection";
-	public static final String ON_SHEET_COPY_SELECTION = "onSheetCopySelection";
-	public static final String ON_SHEET_PASTE_SELECTION = "onSheetPasteSelection";
-	public static final String ON_SHEET_PASTE_SPECIAL_DIALOG = "onSheetPasteSpecialDialog";
-	public static final String ON_SHEET_CLEAR_SELECTION_CONTENT = "onSheetClearSelectionContent";
-	public static final String ON_SHEET_CLEAR_SELECTION_STYLE = "onSheetClearSelectionStyle";
-	public static final String ON_SHEET_INSERT_ROW = "onSheetInsertRow";
-	public static final String ON_SHEET_DELETE_ROW = "onSheetDeleteRow";
-	public static final String ON_SHEET_INSERT_COLUMN = "onSheetInsertColumn";
-	public static final String ON_SHEET_DELETE_COLUMN = "onSheetDeleteColumn";
-	public static final String ON_SHEET_MODIFY_ROW_HEIGHT_DIALOG = "onSheetModifyRowHeightDialog";
-	public static final String ON_SHEET_HIDE = "onSheetHide";
-	public static final String ON_SHEET_CUSTOM_SORT_DIALOG = "onSheetCustomSortDialog";
-	public static final String ON_SHEET_SORT = "onSheetSort";
-	public static final String ON_SHEET_SHIFT_CELL = "onSheetShiftCell";
 	public static final String ON_SHEET_MERGE_CELL = "onSheetMergeCell";
-	public static final String ON_SHEET_HYPERLINK_DIALOG = "onSheetHyperlinkDialog";
 	public static final String ON_SHEET_INSERT_FORMULA = "onSheetInsertFormula";
 	
 	/*Resource event*/
 	public static final String ON_RESOURCE_OPEN_NEW = "onResourceOpenNew";
 	public static final String ON_RESOURCE_OPEN = "onResourceOpen";
+
+	
 }

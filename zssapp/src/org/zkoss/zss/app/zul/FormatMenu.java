@@ -28,7 +28,7 @@ import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.ctrl.CellStyleContextEvent;
 import org.zkoss.zss.app.zul.ctrl.DesktopCellStyleContext;
-import org.zkoss.zss.app.zul.ctrl.DesktopSheetContext;
+import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.app.zul.ctrl.StyleModification;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menuitem;
@@ -52,10 +52,7 @@ public class FormatMenu extends Menu implements IdSpace  {
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
 		
-		DesktopSheetContext.getInstance(this.getDesktop()).
-		addEventListener(Consts.ON_SHEET_OPEN, new EventListener() {
-			
-			@Override
+		getDesktopWorkbenchContext().addEventListener(Consts.ON_SHEET_OPEN, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				setDisabled(!(Boolean)event.getData());
 			}
@@ -64,7 +61,7 @@ public class FormatMenu extends Menu implements IdSpace  {
 	
 	public void onFontFamilySelect(ForwardEvent event) {
 		final String fontFamily = (String)event.getData();
-		DesktopCellStyleContext.getInstance(getDesktop()).modifyStyle(new StyleModification() {
+		getDesktopCellStyleContext().modifyStyle(new StyleModification() {
 			public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style,
 					CellStyleContextEvent candidteEvt) {
 				style.setFontFamily(fontFamily);
@@ -89,13 +86,13 @@ public class FormatMenu extends Menu implements IdSpace  {
 	}
 	
 	public void onOpen$FormatMenu() {
-		DesktopSheetContext.getInstance(getDesktop()).reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	
 	public void onChange$backgroundColorMenu(ForwardEvent event) {
 		InputEvent evt = (InputEvent)event.getOrigin();
 		final String color = (String)evt.getValue();
-		DesktopCellStyleContext.getInstance(getDesktop()).modifyStyle(new StyleModification() {
+		getDesktopCellStyleContext().modifyStyle(new StyleModification() {
 			public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style,
 					CellStyleContextEvent candidteEvt) {
 				style.setCellColor(color);
@@ -106,9 +103,7 @@ public class FormatMenu extends Menu implements IdSpace  {
 	public void onAlignHorizontalClick(ForwardEvent event) {
 		final String alignStr = (String) event.getData();
 
-		DesktopCellStyleContext.getInstance(getDesktop()).modifyStyle(new StyleModification() {
-			
-			@Override
+		getDesktopCellStyleContext().modifyStyle(new StyleModification() {
 			public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style,
 					CellStyleContextEvent candidteEvt) {
 				short align = CellStyle.ALIGN_GENERAL;
@@ -130,5 +125,13 @@ public class FormatMenu extends Menu implements IdSpace  {
 	
 	public void onClick$formatNumber() {
 		throw new UiException("format is not implement yet");
+	}
+	
+	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
+		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
+	}
+	
+	protected DesktopCellStyleContext getDesktopCellStyleContext() {
+		return DesktopCellStyleContext.getInstance(Executions.getCurrent().getDesktop());
 	}
 }

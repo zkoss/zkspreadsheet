@@ -17,7 +17,8 @@ package org.zkoss.zss.app.ctrl;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.app.zul.ctrl.DesktopSheetContext;
+import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
+import org.zkoss.zss.app.zul.ctrl.WorkbookCtrl;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
@@ -50,7 +51,10 @@ public class RenameSheetCtrl extends GenericForwardComposer {
 			}
 			return;
 		}
-		DesktopSheetContext.getInstance(desktop).renameSelectedSheet(sheetName);
+		DesktopWorkbenchContext bookContent = DesktopWorkbenchContext.getInstance(desktop);
+		bookContent.getWorkbookCtrl().renameSelectedSheet(sheetName);
+		bookContent.fireRefresh();
+		
 		self.detach();
 	}
 }

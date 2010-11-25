@@ -14,17 +14,14 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul;
 
-import static org.zkoss.zss.app.base.Preconditions.checkNotNull;
-
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.app.event.ExportHelper;
+import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.file.FileHelper;
-import org.zkoss.zss.app.zul.ctrl.DesktopSheetContext;
+import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.app.zul.ctrl.WorkspaceContext;
-import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
@@ -34,9 +31,7 @@ import org.zkoss.zul.Menupopup;
  * @author sam
  *
  */
-public class FileMenu extends Menu implements ZssappComponent, IdSpace {
-
-	private final static String URI = "~./zssapp/html/menu/fileMenu.zul";
+public class FileMenu extends Menu implements IdSpace {
 	
 	private Menupopup fileMenupopup;
 	private Menuitem newFile;
@@ -53,12 +48,9 @@ public class FileMenu extends Menu implements ZssappComponent, IdSpace {
 	private Menuitem fileReversion;
 	private Menuitem print;
 
-	//TODO: remove spreadsheet binding
-	private Spreadsheet ss;
 	
 	public FileMenu() {
-		Executions.createComponents(URI, this, null);
-		
+		Executions.createComponents(Consts._FileMenu_zul, this, null);
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
 
@@ -95,7 +87,7 @@ public class FileMenu extends Menu implements ZssappComponent, IdSpace {
 	}
 	
 	public void onClick$exportToPdf() {
-		ExportHelper.doExportToPDF(ss);
+		getDesktopWorkbenchContext().getWorkbenchCtrl().openExportPdfDialog();
 	}
 	
 	public void onClick$fileReversion() {
@@ -107,16 +99,10 @@ public class FileMenu extends Menu implements ZssappComponent, IdSpace {
 	}
 	
 	public void onOpen$fileMenupopup() {
-		DesktopSheetContext.getInstance(getDesktop()).reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	
-	@Override
-	public void unbindSpreadsheet() {
-		//TODO: unbind event
-	}
-
-	@Override
-	public void bindSpreadsheet(Spreadsheet spreadsheet) {
-		ss = checkNotNull(spreadsheet, "Spreadsheet is null");
+	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
+		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
 	}
 }

@@ -20,12 +20,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Iterator;
 
-import org.zkoss.image.Image;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.util.CellReference;
-import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -35,7 +33,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.KeyEvent;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.cell.EditHelper;
@@ -59,8 +56,10 @@ import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.app.zul.ctrl.CellStyleCtrlPanel;
 import org.zkoss.zss.app.zul.ctrl.DesktopCellStyleContext;
-import org.zkoss.zss.app.zul.ctrl.DesktopSheetContext;
+import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.app.zul.ctrl.SSRectCellStyle;
+import org.zkoss.zss.app.zul.ctrl.SSWorkbookCtrl;
+import org.zkoss.zss.app.zul.ctrl.WorkbenchCtrl;
 import org.zkoss.zss.app.zul.ctrl.WorkspaceContext;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
@@ -77,8 +76,6 @@ import org.zkoss.zss.ui.event.HeaderMouseEvent;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.Utils;
-import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
-import org.zkoss.zssex.ui.widget.ImageWidget;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
@@ -94,7 +91,7 @@ import org.zkoss.zul.Window;
  * @author Peter Kuo
  * @modify kinda lu
  */
-public class MainWindowCtrl extends GenericForwardComposer {
+public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchCtrl {
 
 	private static final long serialVersionUID = 1;
 	static int event_x = 200;
@@ -175,12 +172,12 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		
 		initZssappComponents();
 		
-		initListener();
+		init();
 
 		fnh = new FormatNumberHelper(spreadsheet);
 		rangeh = new RangeHelper(spreadsheet);
 
-		DesktopSheetContext.getInstance(desktop).doSheetOpen(spreadsheet.getSelectedSheet() != null);
+		DesktopWorkbenchContext.getInstance(desktop).fireSheetOpen(spreadsheet.getSelectedSheet() != null);
 	}
 	
 	private void initZssappComponents() {
@@ -188,19 +185,17 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		sheets.redraw();
 	}
 	
-	public void initListener() {
-		final DesktopSheetContext sheetContext = DesktopSheetContext.getInstance(desktop);
-		sheetContext.addEventListener(Consts.ON_SHEET_REGAIN_FOCUS, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				Clients.evalJavaScript("zk.Widget.$('" + spreadsheet.getUuid() + "').focus(false);");
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_REFRESH, new EventListener(){
+	public void init() {
+		final DesktopWorkbenchContext workbenchContext = DesktopWorkbenchContext.getInstance(desktop);
+		workbenchContext.setWorkbenchCtrl(this);
+		workbenchContext.doTargetChange(new SSWorkbookCtrl(spreadsheet.getBook(), spreadsheet));
+
+		workbenchContext.addEventListener(Consts.ON_SHEET_REFRESH, new EventListener(){
 			public void onEvent(Event event) throws Exception {
 				sheets.redraw();
 			}
 		});
-		sheetContext.addEventListener(Consts.ON_SHEET_OPEN, new EventListener() {
+		workbenchContext.addEventListener(Consts.ON_SHEET_OPEN, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				boolean isOpen = (Boolean)event.getData();
 				toolbarMask.setVisible(!isOpen);
@@ -211,186 +206,16 @@ public class MainWindowCtrl extends GenericForwardComposer {
 					sheets.redraw();
 				} else
 					sheets.clear();
+				//TODO: remove selection
 			}
 		});
-		sheetContext.addEventListener(Consts.ON_SHEET_RENAME, new EventListener() {
+		//TODO: remove to WorkbookCtrl
+		workbenchContext.addEventListener(Consts.ON_SHEET_MERGE_CELL, new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				SheetHelper.renameSheet(spreadsheet, (String)event.getData());
-				sheets.redraw();
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_INSERT_FORMULZ_DIALOG, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				if (insertFormulaDialog == null) {
-					insertFormulaDialog = (Window)Executions.createComponents(Consts._InsertFormulaDialog_zul, mainWin, null);
-				}
-				insertFormulaDialog.setMode("modal");
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_INSERT, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				int sheetCount = spreadsheet.getBook().getNumberOfSheets();
-				Sheet addedSheet = spreadsheet.getBook().createSheet("sheet " + (sheetCount + 1));
-				sheets.redraw();
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_INSERT_IMAGE, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				Media media = (Media)event.getData();
-				try {
-					if (media instanceof org.zkoss.image.Image) {
-						ImageWidget image = new ImageWidget();
-						image.setContent((Image) media);
-
-						int col = spreadsheet.getSelection().getLeft();
-						int row = spreadsheet.getSelection().getTop();
-						image.setRow(row);
-						image.setColumn(col);
-						SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
-						ctrl.addWidget(image);
-					} else if (media != null) {
-						Messagebox.show("Not an image: " + media, "Error",
-								Messagebox.OK, Messagebox.ERROR);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_CUT_SELECTION, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				EditHelper.doCut(spreadsheet);
-				DesktopSheetContext.getInstance(desktop).reGainFocus();
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_COPY_SELECTION, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				EditHelper.doCopy(spreadsheet);
-				DesktopSheetContext.getInstance(desktop).reGainFocus();
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_PASTE_SELECTION, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				EditHelper.doPaste(spreadsheet);
-				DesktopSheetContext.getInstance(desktop).reGainFocus();
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_PASTE_SPECIAL_DIALOG, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				Executions.createComponents(Consts._PasteSpecialDialog_zul, null, Zssapps.newSpreadsheetArg(spreadsheet));
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_CLEAR_SELECTION_CONTENT, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				CellHelper.clearContent(spreadsheet, SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_CLEAR_SELECTION_STYLE, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				CellHelper.clearStyle(spreadsheet, SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_INSERT_ROW, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				CellHelper.shiftEntireRowDown(spreadsheet.getSelectedSheet(), 
-						spreadsheet.getSelection().getTop(), 
-						spreadsheet.getSelection().getLeft());
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_DELETE_ROW, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				Rect rect = spreadsheet.getSelection();
-				CellHelper.shiftEntireRowUp(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getLeft());
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_INSERT_COLUMN, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				Rect rect = spreadsheet.getSelection();
-				CellHelper.shiftEntireColumnRight(spreadsheet.getSelectedSheet(), 
-						rect.getTop(), rect.getLeft());
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_DELETE_COLUMN, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				Rect rect = spreadsheet.getSelection();
-				CellHelper.shiftEntireColumnLeft(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getLeft());
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_SHIFT_CELL, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				Sheet sheet = spreadsheet.getSelectedSheet();
-				Rect rect = spreadsheet.getSelection();
-				
-				int direction = (Integer)event.getData();
-				switch (direction) {
-				case DesktopSheetContext.SHIFT_CELL_UP:
-					CellHelper.shiftCellUp(sheet, 
-							rect.getTop(), 
-							rect.getLeft());
-					break;
-				case DesktopSheetContext.SHIFT_CELL_RIGHT:
-					CellHelper.shiftCellRight(sheet, 
-							rect.getTop(), 
-							rect.getLeft());
-					break;
-				case DesktopSheetContext.SHIFT_CELL_DOWN:
-					CellHelper.shiftCellDown(sheet, 
-							rect.getTop(), 
-							rect.getLeft());
-					break;
-				case DesktopSheetContext.SHIFT_CELL_LEFT:
-					CellHelper.shiftCellLeft(sheet, 
-							rect.getTop(), 
-							rect.getLeft());
-					break;
-				}
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_MODIFY_ROW_HEIGHT_DIALOG, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				//TODO: not implement yet
-				throw new UiException("not implement yet");
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_HIDE, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				Rect rect = spreadsheet.getSelection();
-				Ranges.range(spreadsheet.getSelectedSheet(), 
-						rect.getTop(), rect.getLeft(), 
-						rect.getBottom(), rect.getRight()).setHidden((Boolean)event.getData());
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_SORT, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				boolean isSortDescending = (Boolean)event.getData();
-				if (isSortDescending)
-					CellHelper.sortDescending(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
-				else
-					CellHelper.sortAscending(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_CUSTOM_SORT_DIALOG, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				CellHelper.createCustomSortDialog(spreadsheet, Zssapp.getInstance(spreadsheet));
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_SELECT, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				spreadsheet.setSelectedSheet((String)event.getData());
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_MERGE_CELL, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				//TODO: move to here
 				onMergeCellClick(null);
 			}
 		});
-		sheetContext.addEventListener(Consts.ON_SHEET_HYPERLINK_DIALOG, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				Executions.createComponents(Consts._InsertHyperlinkDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
-			}
-		});
-		sheetContext.addEventListener(Consts.ON_SHEET_INSERT_FORMULA, new EventListener() {
+		workbenchContext.addEventListener(Consts.ON_SHEET_INSERT_FORMULA, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				String formula = (String)event.getData();
 				Rect rect = spreadsheet.getSelection();
@@ -405,13 +230,13 @@ public class MainWindowCtrl extends GenericForwardComposer {
 			public void onEvent(Event event) throws Exception {
 				FileHelper.openSpreadsheet(spreadsheet, 
 						(SpreadSheetMetaInfo) event.getData());
-				sheetContext.doSheetOpen(true);
+				workbenchContext.fireSheetOpen(true);
 			}
 		});
 		workspaceContext.addEventListener(Consts.ON_RESOURCE_OPEN_NEW, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				FileHelper.openNewSpreadsheet(spreadsheet);
-				sheetContext.doSheetOpen(true);
+				workbenchContext.fireSheetOpen(true);
 			}
 		});
 		
@@ -459,24 +284,24 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 	public void onClick$exportToPDFBtn() {
 		ExportHelper.doExportToPDF(spreadsheet);
-		DesktopSheetContext.getInstance(desktop).reGainFocus();
+		getDesktopWorkbookContext().getWorkbookCtrl().reGainFocus();
 	}
 	
 	public void onClick$pasteDropdownBtn() {
-		DesktopSheetContext.getInstance(desktop).pasteSelection();
+		getDesktopWorkbookContext().getWorkbookCtrl().pasteSelection();
 	}
 	public void onDropdown$pasteDropdownBtn() {
-		DesktopSheetContext.getInstance(desktop).reGainFocus();
+		getDesktopWorkbookContext().getWorkbookCtrl().reGainFocus();
 	}
 	public void onPasteSelector(ForwardEvent event) {
 		EditHelper.onPasteEventHandler(spreadsheet, (String)event.getData());
 	}
 	public void onDropdown$sortDropdownBtn() {
-		DesktopSheetContext.getInstance(desktop).reGainFocus();
+		getDesktopWorkbookContext().getWorkbookCtrl().reGainFocus();
 	}
 	public void onClick$insertFormulaBtn() {
-		DesktopSheetContext.getInstance(desktop).openInsertFormulaDialog();
-		DesktopSheetContext.getInstance(desktop).reGainFocus();
+		openInsertFormulaDialog();
+		getDesktopWorkbookContext().getWorkbookCtrl().reGainFocus();
 	}
 	public void onSortSelector(ForwardEvent event) {
 		//TODO: replace forward event
@@ -494,21 +319,25 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 	
 	public void onClick$insertHyperlinkBtn() {
-		DesktopSheetContext.getInstance(desktop).openHyperlinkDialog();
-		DesktopSheetContext.getInstance(desktop).reGainFocus();
+		openHyperlinkDialog();
+		getDesktopWorkbookContext().getWorkbookCtrl().reGainFocus();
 	}
 	
 	public void onClick$cutBtn() {
-		DesktopSheetContext.getInstance(desktop).cutSelection();
+		DesktopWorkbenchContext.getInstance(desktop).getWorkbookCtrl().cutSelection();
 	}
 	
 	public void onClick$copyBtn() {
-		DesktopSheetContext.getInstance(desktop).copySelection();
+		DesktopWorkbenchContext.getInstance(desktop).getWorkbookCtrl().copySelection();
 	}
 
 	public void onClick$closeBtn() {
 		spreadsheet.setSrc(null);
-		DesktopSheetContext.getInstance(desktop).doSheetOpen(false);
+		getDesktopWorkbookContext().fireSheetOpen(false);
+	}
+	
+	protected DesktopWorkbenchContext getDesktopWorkbookContext() {
+		return DesktopWorkbenchContext.getInstance(desktop);
 	}
 	
 	public void redrawSheetTabbox() {
@@ -527,29 +356,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 
 		cellMenupopup.open(event_x + 5, event.getClienty());
 	}
-
-//	public void onUpload$insertImageMenu(UploadEvent event) {
-//		try {
-//			org.zkoss.util.media.Media media = event.getMedia();
-//			if (media instanceof org.zkoss.image.Image) {
-//				ImageWidget image = new ImageWidget();
-//				image.setContent((Image) media);
-//
-//				int col = spreadsheet.getSelection().getLeft();
-//				int row = spreadsheet.getSelection().getTop();
-//				image.setRow(row);
-//				image.setColumn(col);
-//
-//				SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
-//				ctrl.addWidget(image);
-//			} else if (media != null) {
-//				Messagebox.show("Not an image: " + media, "Error",
-//						Messagebox.OK, Messagebox.ERROR);
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
 
 	void doHeaderMouseEvent(HeaderMouseEvent event) {
 		if (HeaderEvent.TOP_HEADER == event.getType()) {
@@ -864,7 +670,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 	}
 
 	//TODO: Do not use hard code
-	public void onViewFormulaBar(ForwardEvent event) {
+	public void onViewFormulaBar() {
 		if (formulaBar.getHeight() != "0px") {
 			formulaBar.setSize("0px");
 			topToolbars.setHeight("58px");
@@ -937,13 +743,6 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		win.doPopup();
 	}
 
-	// SECTION Formula bar
-//	public void onFormulaBarBtn(ForwardEvent event) {
-//		event_x = 207;
-//		event_y = 101;
-//		onFormulaPopup();
-//	}
-
 	public void onFormulaListOK() {
 		Combobox formulaList = (Combobox) Path.getComponent("//p1/mainWin/formulaList");
 
@@ -1004,18 +803,7 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		rangeh.dispatcher((String) event.getData());
 	}
 
-//	public void onFormatPopup() {
-//		Window win = (Window) mainWin.getFellow("formatNumberWin");
-//		try {
-//			// the set position only work at the second time?
-//			win.setPosition("parent");
-//			win.setLeft(event_x + "px");
-//			win.setTop(event_y + "px");
-//			win.doPopup();// Modal();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
+
 
 	public void onClick$insertPieChart(Event evt) {
 		// TODO remove me, insert PieChart
@@ -1290,5 +1078,54 @@ public class MainWindowCtrl extends GenericForwardComposer {
 		Utils.getRange(sheet, 0, 0).setDisplayGridlines(!sheet.isDisplayGridlines());
 		//TODO avoid use invalidate
 		//spreadsheet.invalidate();
+	}
+
+	public void openCustomSortDialog() {
+		//TODO: use set visible, not detach window
+		CellHelper.createCustomSortDialog(spreadsheet, Zssapp.getInstance(spreadsheet));
+	}
+
+	public void openExportPdfDialog() {
+		//TODO: 
+		ExportHelper.doExportToPDF(spreadsheet);
+	}
+
+	public void openHyperlinkDialog() {
+		//TODO use set visible, not detach
+		Executions.createComponents(Consts._InsertHyperlinkDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+	}
+
+	public void openInsertFormulaDialog() {
+		try {
+			if (insertFormulaDialog == null) {
+				insertFormulaDialog = (Window)Executions.createComponents(Consts._InsertFormulaDialog_zul, mainWin, null);
+			}
+			insertFormulaDialog.setMode("modal");
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void openModifyRowHeightDialog() {
+		throw new UiException("not implement yet");
+	}
+
+	public void openPasteSpecialDialog() {
+		//TODO: use set visible, not detach
+		Executions.createComponents(Consts._PasteSpecialDialog_zul, null, Zssapps.newSpreadsheetArg(spreadsheet));
+	}
+
+	//TODO: don't use hard code here
+	public void toggleFormulaBar() {
+		Window win = (Window) mainWin.getFellow("formatNumberWin");
+		try {
+			// the set position only work at the second time?
+			win.setPosition("parent");
+			win.setLeft(event_x + "px");
+			win.setTop(event_y + "px");
+			win.doPopup();// Modal();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -21,7 +21,4 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 		<zk-version>5.0.2</zk-version><!-- or later -->
 	</version>
 
-	<listener>
-		<listener-class>org.zkoss.zss.app.init.WebAppInit</listener-class>
-	</listener>
 </config>

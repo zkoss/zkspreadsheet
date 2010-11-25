@@ -19,7 +19,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.app.Consts;
-import org.zkoss.zss.app.zul.ctrl.DesktopSheetContext;
+import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
 
@@ -46,7 +46,7 @@ public class RowHeaderMenupopup extends Menupopup implements IdSpace {
 	private Menuitem unhide;
 	
 	public void onOpen() {
-		DesktopSheetContext.getInstance(getDesktop()).reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	
 	public RowHeaderMenupopup() {
@@ -56,35 +56,35 @@ public class RowHeaderMenupopup extends Menupopup implements IdSpace {
 	}
 	
 	public void onClick$cut() {
-		DesktopSheetContext.getInstance(getDesktop()).cutSelection();
+		getDesktopWorkbenchContext().getWorkbookCtrl().cutSelection();
 	}
 	
 	public void onClick$copy() {
-		DesktopSheetContext.getInstance(getDesktop()).copySelection();
+		getDesktopWorkbenchContext().getWorkbookCtrl().copySelection();
 	}
 	
 	public void onClick$paste() {
-		DesktopSheetContext.getInstance(getDesktop()).pasteSelection();
+		getDesktopWorkbenchContext().getWorkbookCtrl().pasteSelection();
 	}
 	
 	public void onClick$clearContent() {
-		DesktopSheetContext.getInstance(getDesktop()).clearSelectionContent();
+		getDesktopWorkbenchContext().getWorkbookCtrl().clearSelectionContent();
 	}
 	
 	public void onClick$clearStyle() {
-		DesktopSheetContext.getInstance(getDesktop()).clearSelectionStyle();
+		getDesktopWorkbenchContext().getWorkbookCtrl().clearSelectionStyle();
 	}
 	
 	public void onClick$insertRow() {
-		DesktopSheetContext.getInstance(getDesktop()).insertRow();
+		getDesktopWorkbenchContext().getWorkbookCtrl().insertRowAbove();
 	}
 	
 	public void onClick$deleteRow() {
-		DesktopSheetContext.getInstance(getDesktop()).deleteRow();
+		getDesktopWorkbenchContext().getWorkbookCtrl().deleteRow();
 	}
 	
 	public void onClick$rowHeight() {
-		DesktopSheetContext.getInstance(getDesktop()).openModifyRowHeightDialog();
+		getDesktopWorkbenchContext().getWorkbenchCtrl().openModifyRowHeightDialog();
 	}
 	
 	public void onClick$numberFormat() {
@@ -92,10 +92,14 @@ public class RowHeaderMenupopup extends Menupopup implements IdSpace {
 	}
 	
 	public void onClick$hide() {
-		DesktopSheetContext.getInstance(getDesktop()).hide(true);
+		getDesktopWorkbenchContext().getWorkbookCtrl().hide(true);
 	}
 	
 	public void onClick$unhide() {
-		DesktopSheetContext.getInstance(getDesktop()).hide(false);
+		getDesktopWorkbenchContext().getWorkbookCtrl().hide(false);
+	}
+	
+	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
+		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
 	}
 }

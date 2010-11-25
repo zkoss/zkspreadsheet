@@ -24,9 +24,9 @@
 	<listbox id="allFilesListbox" vflex="1" hflex="1">
 	</listbox>
 </hlayout>
-<div height="45px" >
-<button id="uploadBtn" label="Upload" upload="true" forward="onUpload=onFileUpload" mold="trendy" style="float:left;padding: 10px;"></button>
-</div>
+<div height="10px"></div>
+<button id="uploadBtn" label="Upload" upload="true" forward="onUpload=onFileUpload" mold="trendy" style="padding-left: 10px;"></button>
+<div height="10px"></div>
 <menupopup id="fileMenu">
 	<menuitem id="openFileMenuitem" label="Open file" />
 </menupopup>

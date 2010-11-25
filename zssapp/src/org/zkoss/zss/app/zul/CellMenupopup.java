@@ -20,7 +20,7 @@ import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.MouseEvent;
 import org.zkoss.zss.app.Consts;
-import org.zkoss.zss.app.zul.ctrl.DesktopSheetContext;
+import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
 /**
@@ -68,9 +68,6 @@ public class CellMenupopup extends Menupopup implements IdSpace {
 	//TODO: not implement yet
 	//private Menuitem removeHyperlink;
 	
-	
-//	private Spreadsheet ss;
-	
 	public CellMenupopup() {
 		Executions.createComponents(Consts._CellMenupopup_zul, this, null);
 		Components.wireVariables(this, this, '$', true, true);
@@ -78,81 +75,80 @@ public class CellMenupopup extends Menupopup implements IdSpace {
 	}
 
 	public void onOpen() {
-		DesktopSheetContext.getInstance(getDesktop()).reGainFocus();
+		getDesktopWorkbookContext().getWorkbookCtrl().reGainFocus();
 	}
 	
 	public void onClick$cut() {
-		DesktopSheetContext.getInstance(getDesktop()).cutSelection();
+		getDesktopWorkbookContext().getWorkbookCtrl().cutSelection();
 	}
 	
 	public void onClick$copy() {
-		DesktopSheetContext.getInstance(getDesktop()).copySelection();
+		getDesktopWorkbookContext().getWorkbookCtrl().copySelection();
 	}
 	
 	public void onClick$paste() {
-		//EditHelper.doPaste(ss);
-		DesktopSheetContext.getInstance(getDesktop()).pasteSelection();
+		getDesktopWorkbookContext().getWorkbookCtrl().pasteSelection();
 	}
 	
 	public void onClick$pasteSpecial(MouseEvent event) {
-		DesktopSheetContext.getInstance(getDesktop()).openPasteSpecialDialog();
+		getDesktopWorkbookContext().getWorkbenchCtrl().openPasteSpecialDialog();
 	}
 
 	public void onClick$shiftCellRight() {
-		DesktopSheetContext.getInstance(getDesktop()).shiftCell(DesktopSheetContext.SHIFT_CELL_RIGHT);
+		getDesktopWorkbookContext().getWorkbookCtrl().shiftCell(DesktopWorkbenchContext.SHIFT_CELL_RIGHT);
 	}
 	
 	public void onClick$shiftCellDown() {
-		DesktopSheetContext.getInstance(getDesktop()).shiftCell(DesktopSheetContext.SHIFT_CELL_DOWN);
+		getDesktopWorkbookContext().getWorkbookCtrl().shiftCell(DesktopWorkbenchContext.SHIFT_CELL_DOWN);
 	}
 	
 	public void onClick$insertEntireRow() {
-		DesktopSheetContext.getInstance(getDesktop()).insertRow();	
+		getDesktopWorkbookContext().getWorkbookCtrl().insertRowAbove();	
 	}
 	
 	public void onClick$insertEntireColumn() {
-		DesktopSheetContext.getInstance(getDesktop()).insertColumn();
+		getDesktopWorkbookContext().getWorkbookCtrl().insertColumnLeft();
 	}
 	
 	public void onClick$shiftCellLeft() {
-		DesktopSheetContext.getInstance(getDesktop()).shiftCell(DesktopSheetContext.SHIFT_CELL_LEFT);
+		getDesktopWorkbookContext().getWorkbookCtrl().shiftCell(DesktopWorkbenchContext.SHIFT_CELL_LEFT);
 	}
 	
 	public void onClick$shiftCellUp() {
-		DesktopSheetContext.getInstance(getDesktop()).shiftCell(DesktopSheetContext.SHIFT_CELL_UP);
+		getDesktopWorkbookContext().getWorkbookCtrl().shiftCell(DesktopWorkbenchContext.SHIFT_CELL_UP);
 	}
 	
 	public void onClick$deleteEntireRow() {
-		DesktopSheetContext.getInstance(getDesktop()).deleteRow();
+		getDesktopWorkbookContext().getWorkbookCtrl().deleteRow();
 	}
 
 	public void onClick$deleteEntireColumn() {
-		DesktopSheetContext.getInstance(getDesktop()).deleteColumn();
+		getDesktopWorkbookContext().getWorkbookCtrl().deleteColumn();
 	}
 	
 	public void onClick$clearContent() {
-		DesktopSheetContext.getInstance(getDesktop()).clearSelectionContent();
+		getDesktopWorkbookContext().getWorkbookCtrl().clearSelectionContent();
 	}
 	
 	public void onClick$clearStyle() {
-		DesktopSheetContext.getInstance(getDesktop()).clearSelectionStyle();
+		getDesktopWorkbookContext().getWorkbookCtrl().clearSelectionStyle();
 	}
 
 	public void onClick$sortAscending() {
-		DesktopSheetContext.getInstance(getDesktop()).sort(false);
+		getDesktopWorkbookContext().getWorkbookCtrl().sort(false);
 	}
 	
 	public void onClick$sortDescending() {
-		DesktopSheetContext.getInstance(getDesktop()).sort(true);
+		getDesktopWorkbookContext().getWorkbookCtrl().sort(true);
 	}
 	
 	public void onClick$customSort() {
-		DesktopSheetContext.getInstance(getDesktop()).openCustomSortDialog();
+		getDesktopWorkbookContext().getWorkbenchCtrl().openCustomSortDialog();
 	}
 	
 	public void onClick$formula() {
 		//open formula
-		DesktopSheetContext.getInstance(getDesktop()).openInsertFormulaDialog();
+		getDesktopWorkbookContext().getWorkbenchCtrl().openInsertFormulaDialog();
 	}
 
 	public void onClick$format() {
@@ -161,6 +157,10 @@ public class CellMenupopup extends Menupopup implements IdSpace {
 	}
 	
 	public void onClick$hyperlink() {
-		DesktopSheetContext.getInstance(getDesktop()).openHyperlinkDialog();
+		getDesktopWorkbookContext().getWorkbenchCtrl().openHyperlinkDialog();
+	}
+	
+	protected DesktopWorkbenchContext getDesktopWorkbookContext() {
+		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
 	}
 }

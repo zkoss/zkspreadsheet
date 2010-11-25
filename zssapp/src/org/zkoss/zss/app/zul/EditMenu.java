@@ -14,20 +14,14 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul;
 
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.app.Consts;
-import org.zkoss.zss.app.cell.CellHelper;
-import org.zkoss.zss.app.cell.EditHelper;
-import org.zkoss.zss.app.sheet.SheetHelper;
-import org.zkoss.zss.app.zul.ctrl.DesktopSheetContext;
-import org.zkoss.zss.ui.Rect;
+import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menuitem;
@@ -37,9 +31,7 @@ import org.zkoss.zul.Menupopup;
  * @author Sam
  *
  */
-public class EditMenu extends Menu implements ZssappComponent, IdSpace {
-
-	private final static String URI = "~./zssapp/html/menu/editMenu.zul";
+public class EditMenu extends Menu implements IdSpace {
 	
 	private Menupopup editMenupopup;
 	
@@ -68,14 +60,11 @@ public class EditMenu extends Menu implements ZssappComponent, IdSpace {
 	private Spreadsheet ss;
 	
 	public EditMenu() {
-		Executions.createComponents(URI, this, null);
+		Executions.createComponents(Consts._EditMenu_zul, this, null);
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
-		
-		DesktopSheetContext.getInstance(this.getDesktop()).
-		addEventListener(Consts.ON_SHEET_OPEN, new EventListener() {
-			
-			@Override
+
+		getDesktopWorkbenchContext().addEventListener(Consts.ON_SHEET_OPEN, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				setDisabled(!(Boolean)event.getData());
 			}
@@ -91,64 +80,52 @@ public class EditMenu extends Menu implements ZssappComponent, IdSpace {
 	}
 	
 	public void onClick$cut() {
-		EditHelper.doCut(ss);
+		getDesktopWorkbenchContext().getWorkbookCtrl().cutSelection();
 	}
 	
 	public void onClick$copy() {
-		EditHelper.doCopy(ss);
+		getDesktopWorkbenchContext().getWorkbookCtrl().copySelection();
 	}
 	
 	public void onClick$paste() {
-		EditHelper.doPaste(ss);
+		getDesktopWorkbenchContext().getWorkbookCtrl().pasteSelection();
 	}
 	
 	public void onClick$clearContent() {
-		CellHelper.clearContent(ss, SheetHelper.getSpreadsheetMaxSelection(ss));
+		getDesktopWorkbenchContext().getWorkbookCtrl().clearSelectionContent();
 	}
 	
 	public void onClick$clearStyle() {
-		CellHelper.clearStyle(ss, SheetHelper.getSpreadsheetMaxSelection(ss));
+		getDesktopWorkbenchContext().getWorkbookCtrl().clearSelectionStyle();
 	}
 	
 	public void onClick$clearAll() {
-		CellHelper.clearContent(ss, SheetHelper.getSpreadsheetMaxSelection(ss));
-		CellHelper.clearStyle(ss, SheetHelper.getSpreadsheetMaxSelection(ss));
+		getDesktopWorkbenchContext().getWorkbookCtrl().clearSelectionContent();
+		getDesktopWorkbenchContext().getWorkbookCtrl().clearSelectionStyle();
 	}
 	
 	public void onClick$shiftCellRight() {
-		CellHelper.shiftCellRight(ss.getSelectedSheet(), 
-				ss.getSelection().getTop(), 
-				ss.getSelection().getLeft());
+		getDesktopWorkbenchContext().getWorkbookCtrl().shiftCell(DesktopWorkbenchContext.SHIFT_CELL_RIGHT);
 	}
 	
 	public void onClick$shiftCellDown() {
-		CellHelper.shiftCellDown(ss.getSelectedSheet(), 
-				ss.getSelection().getTop(), 
-				ss.getSelection().getLeft());
+		getDesktopWorkbenchContext().getWorkbookCtrl().shiftCell(DesktopWorkbenchContext.SHIFT_CELL_DOWN);
 	}
 	
 	public void onClick$insertEntireRow() {
-		CellHelper.shiftEntireRowDown(ss.getSelectedSheet(), 
-				ss.getSelection().getTop(), 
-				ss.getSelection().getLeft());
+		getDesktopWorkbenchContext().getWorkbookCtrl().insertRowAbove();
 	}
 	
 	public void onClick$insertEntireColumn() {
-		CellHelper.shiftEntireColumnRight(ss.getSelectedSheet(), 
-				ss.getSelection().getTop(), 
-				ss.getSelection().getLeft());
+		getDesktopWorkbenchContext().getWorkbookCtrl().insertColumnLeft();
 	}
 	
 	public void onClick$shiftCellLeft() {
-		CellHelper.shiftCellLeft(ss.getSelectedSheet(), 
-				ss.getSelection().getTop(), 
-				ss.getSelection().getLeft());
+		getDesktopWorkbenchContext().getWorkbookCtrl().shiftCell(DesktopWorkbenchContext.SHIFT_CELL_LEFT);
 	}
 	
 	public void onClick$shiftCellUp() {
-		CellHelper.shiftCellUp(ss.getSelectedSheet(), 
-				ss.getSelection().getTop(), 
-				ss.getSelection().getLeft());
+		getDesktopWorkbenchContext().getWorkbookCtrl().shiftCell(DesktopWorkbenchContext.SHIFT_CELL_UP);
 	}
 	
 	public void setDisabled(boolean disabled) {
@@ -175,30 +152,18 @@ public class EditMenu extends Menu implements ZssappComponent, IdSpace {
 	}
 	
 	public void onClick$deleteEntireRow() {
-		Sheet sheet = ss.getSelectedSheet();
-		Rect rect = ss.getSelection();
-		int tRow = rect.getTop();
-		int lCol = rect.getLeft();
-		CellHelper.shiftEntireRowUp(ss.getSelectedSheet(), tRow, lCol);
+		getDesktopWorkbenchContext().getWorkbookCtrl().deleteRow();
 	}
 	
 	public void onClick$deleteEntireColumn() {
-		Rect rect = ss.getSelection();
-		int tRow = rect.getTop();
-		int lCol = rect.getLeft();
-		CellHelper.shiftEntireColumnLeft(ss.getSelectedSheet(), tRow, lCol);
+		getDesktopWorkbenchContext().getWorkbookCtrl().deleteColumn();
 	}
 	
-	@Override
-	public void bindSpreadsheet(Spreadsheet spreadsheet) {
-		ss = spreadsheet;
-		editMenupopup.setWidgetListener(Events.ON_OPEN, "this.$f('" + ss.getId() + "', true).focus(false);");
+	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
+		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
 	}
-
-	@Override
-	public void unbindSpreadsheet() {
-		// TODO Auto-generated method stub
-		
+	
+	public void onOpen$editMenupopup() {
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
-
 }

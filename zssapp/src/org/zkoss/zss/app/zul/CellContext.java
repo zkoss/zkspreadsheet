@@ -19,7 +19,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.ctrl.CellStyleCtrlPanel;
-import org.zkoss.zss.app.zul.ctrl.DesktopSheetContext;
+import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
 
@@ -53,6 +53,6 @@ public class CellContext extends Window implements IdSpace {
 	}
 	
 	public void onClick$_mergeCellBtn() {
-		DesktopSheetContext.getInstance(getDesktop()).mergeCell();
+		DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop()).mergeCell();
 	}
 }

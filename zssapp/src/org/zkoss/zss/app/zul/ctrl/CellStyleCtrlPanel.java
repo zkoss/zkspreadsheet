@@ -74,7 +74,8 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 		Executions.createComponents(Consts._CellStylePanel_zul, this, null);
 		Components.wireVariables(this, this);
 		Components.addForwards(this, this);
-		CellStyleContext context = DesktopCellStyleContext.getInstance(getDesktop());
+		
+		CellStyleContext context = getCellStyleContext();
 		
 		DisposedEventListener listener = new DisposedEventListener() {
 			public boolean isDisposed() {
@@ -89,7 +90,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 		context.addEventListener(Consts.ON_STYLING_TARGET_CHANGED,listener);
 		context.addEventListener(Consts.ON_CELL_STYLE_CHANGED,listener);
 		
-		DesktopSheetContext.getInstance(getDesktop()).
+		getDesktopWorkbenchContext().
 			addEventListener(Consts.ON_SHEET_OPEN, new EventListener() {
 				public void onEvent(Event event) throws Exception {
 					//clear all UI attribute when sheet open or close
@@ -217,10 +218,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 		isWrapText = fontStyle.isWrapText();
 		wrapTextBtn.setSclass(isWrapText ? "clicked" : "");
 	}
-	
-	protected CellStyleContext getCellStyleContext(){
-		return DesktopCellStyleContext.getInstance(this.getDesktop());
-	}
+
 	
 	/**
 	 * 
@@ -238,16 +236,16 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 	
 	//TODO: move this to spreadsheet onblur event (not implement yet)
 	public void onOpen$fontFamily() {
-		DesktopSheetContext.getInstance(this.getDesktop()).reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	//TODO: move this to spreadsheet onblur event (not implement yet)
 	public void onOpen$fontSize() {
-		DesktopSheetContext.getInstance(this.getDesktop()).reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	
 	public void onClick$boldBtn() {
 		//TODO: move this to spreadsheet onblur event (not implement yet)
-		DesktopSheetContext.getInstance(this.getDesktop()).reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 		
 		_isBold = !_isBold;
 		getCellStyleContext().modifyStyle(new StyleModification(){
@@ -262,7 +260,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 	
 	public void onClick$italicBtn() {
 		//TODO: move this to spreadsheet onblur event (not implement yet)
-		DesktopSheetContext.getInstance(this.getDesktop()).reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 		
 		_isItalic = !_isItalic;
 		getCellStyleContext().modifyStyle(new StyleModification(){
@@ -277,7 +275,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 	
 	public void onClick$underlineBtn() {
 		//TODO: move this to spreadsheet onblur event (not implement yet)
-		DesktopSheetContext.getInstance(this.getDesktop()).reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 		
 		_isUnderline = !_isUnderline;
 		getCellStyleContext().modifyStyle(new StyleModification(){
@@ -292,7 +290,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 	
 	public void onClick$strikethroughBtn() {
 		//TODO: move this to spreadsheet onblur event (not implement yet)
-		DesktopSheetContext.getInstance(this.getDesktop()).reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 		
 		_isStrikethrough = !_isStrikethrough;
 		getCellStyleContext().modifyStyle(new StyleModification(){
@@ -318,7 +316,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 	
 	//TODO: move this to spreadsheet onblur event (not implement yet)
 	public void onClick$fontColorBtn() {
-		DesktopSheetContext.getInstance(this.getDesktop()).reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	public void onChange$fontColorBtn() {
 		getCellStyleContext().modifyStyle(new StyleModification(){
@@ -331,7 +329,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 	}
 	//TODO: move this to spreadsheet onblur event (not implement yet)
 	public void onClick$cellColorBtn() {
-		DesktopSheetContext.getInstance(this.getDesktop()).reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	public void onChange$cellColorBtn() {
 		getCellStyleContext().modifyStyle(new StyleModification(){
@@ -394,7 +392,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 	
 	public void onAlignHorizontalClick(ForwardEvent evt) {
 		//TODO: move this to spreadsheet onblur event (not implement yet)
-		DesktopSheetContext.getInstance(this.getDesktop()).reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 
 		final String align = (String)evt.getData();
 		getCellStyleContext().modifyStyle(new StyleModification(){
@@ -425,7 +423,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 	
 	public void onClick$wrapTextBtn() {
 		//TODO: move this to spreadsheet onblur event (not implement yet)
-		DesktopSheetContext.getInstance(this.getDesktop()).reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 		
 		isWrapText = !isWrapText;
 		getCellStyleContext().modifyStyle(new StyleModification(){
@@ -435,5 +433,13 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 				wrapTextBtn.setSclass(isWrapText ? "clicked" : "");
 			}
 		});
+	}
+	
+	protected CellStyleContext getCellStyleContext(){
+		return DesktopCellStyleContext.getInstance(Executions.getCurrent().getDesktop());
+	}
+	
+	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
+		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
 	}
 }

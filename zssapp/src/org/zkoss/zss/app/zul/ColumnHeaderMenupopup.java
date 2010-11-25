@@ -19,7 +19,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.app.Consts;
-import org.zkoss.zss.app.zul.ctrl.DesktopSheetContext;
+import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
 
@@ -45,7 +45,7 @@ public class ColumnHeaderMenupopup  extends Menupopup implements IdSpace {
 	private Menuitem unhide;
 	
 	public void onOpen() {
-		DesktopSheetContext.getInstance(getDesktop()).reGainFocus();
+		getDesktopWorkbookContext().getWorkbookCtrl().reGainFocus();
 	}
 	
 	public ColumnHeaderMenupopup() {
@@ -55,31 +55,31 @@ public class ColumnHeaderMenupopup  extends Menupopup implements IdSpace {
 	}
 	
 	public void onClick$cut() {
-		DesktopSheetContext.getInstance(getDesktop()).cutSelection();
+		getDesktopWorkbookContext().getWorkbookCtrl().cutSelection();
 	}
 	
 	public void onClick$copy() {
-		DesktopSheetContext.getInstance(getDesktop()).copySelection();
+		getDesktopWorkbookContext().getWorkbookCtrl().copySelection();
 	}
 	
 	public void onClick$paste() {
-		DesktopSheetContext.getInstance(getDesktop()).pasteSelection();
+		getDesktopWorkbookContext().getWorkbookCtrl().pasteSelection();
 	}
 	
 	public void onClick$clearContent() {
-		DesktopSheetContext.getInstance(getDesktop()).clearSelectionContent();
+		getDesktopWorkbookContext().getWorkbookCtrl().clearSelectionContent();
 	}
 	
 	public void onClick$clearStyle() {
-		DesktopSheetContext.getInstance(getDesktop()).clearSelectionStyle();
+		getDesktopWorkbookContext().getWorkbookCtrl().clearSelectionStyle();
 	}
 	
 	public void onClick$insertColumn() {
-		DesktopSheetContext.getInstance(getDesktop()).insertColumn();
+		getDesktopWorkbookContext().getWorkbookCtrl().insertColumnLeft();
 	}
 	
 	public void onClick$deleteColumn() {
-		DesktopSheetContext.getInstance(getDesktop()).deleteColumn();
+		getDesktopWorkbookContext().getWorkbookCtrl().deleteColumn();
 	}
 	
 	public void onClick$columnWidth() {
@@ -93,10 +93,14 @@ public class ColumnHeaderMenupopup  extends Menupopup implements IdSpace {
 	}
 	
 	public void onClick$hide() {
-		DesktopSheetContext.getInstance(getDesktop()).hide(true);
+		getDesktopWorkbookContext().getWorkbookCtrl().hide(true);
 	}
 	
 	public void onClick$unhide() {
-		DesktopSheetContext.getInstance(getDesktop()).hide(false);
+		getDesktopWorkbookContext().getWorkbookCtrl().hide(false);
+	}
+	
+	protected DesktopWorkbenchContext getDesktopWorkbookContext() {
+		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
 	}
 }
