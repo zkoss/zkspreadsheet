@@ -48,7 +48,6 @@ import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.PtgShifter;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.DataValidationConstraint;
 import org.zkoss.poi.ss.usermodel.DataValidationHelper;
@@ -57,6 +56,7 @@ import org.zkoss.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.Sheet;
 import org.zkoss.zss.model.Range;
 
 /**
@@ -64,7 +64,7 @@ import org.zkoss.zss.model.Range;
  * @author henrichen
  *
  */
-public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl {
+public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, org.zkoss.zss.model.Sheet {
 	private final HSSFSheetHelper _helper; //helper to lift the package protection
 	private boolean _evalAll;
 
@@ -1203,6 +1203,7 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl {
     	return _helper.getInternalSheet().getWindowTwo().getFreezePanes();
     }
     
+    //--Sheet--//
     public Book getBook() {
     	return (Book) getWorkbook();
     }

@@ -116,5 +116,5 @@ public interface Book extends Workbook {
      *
      * @return the font with the matched attributes or <code>null</code>
      */
-	Font findFont(short boldWeight, Color color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline);
+	public Font findFont(short boldWeight, Color color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline);
 }

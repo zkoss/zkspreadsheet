@@ -24,30 +24,15 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
-import org.zkoss.lang.Objects;
 import org.zkoss.poi.POIXMLDocumentPart;
-import org.zkoss.poi.hssf.model.InternalWorkbook;
-import org.zkoss.poi.hssf.record.CellValueRecordInterface;
-import org.zkoss.poi.hssf.record.NameRecord;
-import org.zkoss.poi.hssf.record.NoteRecord;
-import org.zkoss.poi.hssf.record.formula.FormulaShifter;
 import org.zkoss.poi.hssf.record.formula.Ptg;
-import org.zkoss.poi.hssf.usermodel.HSSFCell;
-import org.zkoss.poi.hssf.usermodel.HSSFCellHelper;
-import org.zkoss.poi.hssf.usermodel.HSSFCellStyle;
-import org.zkoss.poi.hssf.usermodel.HSSFComment;
-import org.zkoss.poi.hssf.usermodel.HSSFRow;
-import org.zkoss.poi.hssf.usermodel.HSSFRowHelper;
-import org.zkoss.poi.hssf.usermodel.HSSFWorkbookHelper;
 import org.zkoss.poi.openxml4j.opc.PackagePart;
 import org.zkoss.poi.openxml4j.opc.PackageRelationship;
 import org.zkoss.poi.ss.SpreadsheetVersion;
@@ -57,27 +42,21 @@ import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.PtgShifter;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellReference;
-import org.zkoss.poi.util.POILogger;
-import org.zkoss.poi.xssf.model.CalculationChain;
 import org.zkoss.poi.xssf.model.CommentsTable;
 import org.zkoss.poi.xssf.usermodel.XSSFCell;
 import org.zkoss.poi.xssf.usermodel.XSSFCellHelper;
 import org.zkoss.poi.xssf.usermodel.XSSFDrawing;
 import org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook;
-import org.zkoss.poi.xssf.usermodel.XSSFFactory;
 import org.zkoss.poi.xssf.usermodel.XSSFName;
-import org.zkoss.poi.xssf.usermodel.XSSFRelation;
 import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFRowHelper;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
-import org.zkoss.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.Sheet;
 import org.zkoss.zss.model.Range;
 
 /**
@@ -85,7 +64,7 @@ import org.zkoss.zss.model.Range;
  * @author henrichen
  *
  */
-public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl {
+public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, org.zkoss.zss.model.Sheet {
 	private boolean _evalAll;
 	
 	//--XSSFSheet--//
@@ -104,6 +83,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl {
         super(part, rel);
     }
 
+    //--Sheet--//
 	public Book getBook() {
 		return (Book) getWorkbook();
 	}

@@ -19,7 +19,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.engine.event;
 
-import org.hibernate.validator.Size;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.model.Book;
@@ -31,6 +30,7 @@ import org.zkoss.zss.model.Book;
  * @author henrichen
  */
 public class SSDataEvent extends Event {
+	private static final long serialVersionUID = 201011250913L;
 	/** Identifies one or more changes in the lists contents. */
 	public static final String ON_CONTENTS_CHANGE = "onContentsChange";
     /** Identifies the addition of one or more contiguous items to the list. */    
@@ -60,7 +60,6 @@ public class SSDataEvent extends Event {
 	private int _direction; //MOVE_NO, MOVE_V, MOVE_H
 	private Ref _rng; //the applied range
 	private Ref _org; //the original range
-	private Size _size; //the 
 	
 	/**
 	 * Constructor of the SSDataEvent.
@@ -86,13 +85,6 @@ public class SSDataEvent extends Event {
 		_direction = direction;
 	}
 	
-	public SSDataEvent(String name, Ref rng, Size size) {
-		super(name);
-		_rng = rng;
-		_size = size;
-		_direction = MOVE_NO;
-	}
-	
 	public SSDataEvent(String name, Ref rng, boolean show) {
 		super(name);
 		_rng = rng;
@@ -111,10 +103,6 @@ public class SSDataEvent extends Event {
 		return _direction;
 	}
 	
-	public Size getSize() {
-		return _size;
-	}
-
 	public boolean isShow() {
 		return _direction != 0;
 	}
