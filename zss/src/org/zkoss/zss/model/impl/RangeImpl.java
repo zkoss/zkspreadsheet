@@ -145,20 +145,55 @@ public class RangeImpl implements Range {
 		return null;
 	}
 	public void setHyperlink(int linkType, String address, String display) {
-		Set<Ref>[] refs = null;
-		
-		refs = new HyperlinkSetter().setValue(new HyperlinkContext(linkType, address, display));
-			
-		reevaluateAndNotify(refs);
+		if (display == null) {
+			display = address;
+		}
+		new HyperlinkSetter().setValue(new HyperlinkContext(linkType, address, display));
+		final boolean old = isDirectHyperlink();
+		try {
+			setDirectHyperlink(true); //avoid setEditText() recursive to HyperlinkStringSetter#setCellValue()
+			setEditText(display);
+		} finally {
+			setDirectHyperlink(old);
+		}
 	}
 
+	private int getHyperlinkType(String addr) {
+		if (addr != null && !isDirectHyperlink()) {
+			if (addr.toUpperCase().startsWith("HTTP://")) {
+				return Hyperlink.LINK_URL;
+			}
+		}
+		return -1;
+	}
+	
+	private boolean _directHyperlink;
+	
+	private boolean isDirectHyperlink() {
+		return _directHyperlink;
+	}
+	
+	private void setDirectHyperlink(boolean b) {
+		_directHyperlink = b;
+	}
+	
 	private class HyperlinkSetter extends ValueSetter {
+		protected Set<Ref>[] setCellValue(int row, int col, RefSheet refSheet, Object value) {
+			final HyperlinkContext context = (HyperlinkContext)value;
+			final Cell cell = BookHelper.getOrCreateCell(_sheet, row, col);
+			BookHelper.setCellHyperlink(cell, context.getLinktype(), context.getAddress());
+			return null; //not need to return Set<Ref>, setHyperlink will call setEditText() and it will do the update
+		}
+	}
+	
+	private class HyperlinkStringSetter extends ValueSetter {
 		
 		protected Set<Ref>[] setCellValue(int row, int col, RefSheet refSheet, Object value) {
-			HyperlinkContext context = (HyperlinkContext)value;
-			Cell cell = BookHelper.getOrCreateCell(_sheet, row, col);
-			setEditText(context.getDisplay());
-			return BookHelper.setCellHyperlink(cell, context.getLinktype(), context.getAddress());
+			final HyperlinkContext context = (HyperlinkContext)value;
+			final Cell cell = BookHelper.getOrCreateCell(_sheet, row, col);
+			final Set<Ref>[] refs = BookHelper.setCellValue(cell, context.getDisplay());
+			BookHelper.setCellHyperlink(cell, context.getLinktype(), context.getAddress());
+			return refs;
 		}
 		
 	}
@@ -320,7 +355,8 @@ public class RangeImpl implements Range {
 	}
 	
 	/*package*/ Set<Ref>[] setValue(String value) {
-		return new StringValueSetter().setValue(value);
+		final int linkType = getHyperlinkType(value);
+		return linkType > 0 ? new HyperlinkStringSetter().setValue(new HyperlinkContext(linkType, value, value)) : new StringValueSetter().setValue(value);
 	}
 	
 	/*package*/ Set<Ref>[] setValue(Number value) {

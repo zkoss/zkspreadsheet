@@ -47,7 +47,8 @@ ZK Spreadsheet 2.0.0
   195 Exception when not specified src or book to <spreadsheet>
   196 Range fill down, fill left, fill right, fill up doesn't work
   197 Text color does not respect condition format
-
+  198 Shall be interpret as hyperlink if user enter "http://" into cell
+  
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 
     name conflicts with of those in poi.jar, so it is now OK to put both zpoi.jar and poi.jar in class path.
