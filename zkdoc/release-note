@@ -27,6 +27,7 @@ ZK Spreadsheet 2.0.0
   146 selected range should stay emphasised when click menubutton
   149 change size of multi-column
   150 change size of multi-row
+  155 source region of copy get highlighted in different sheet
   156 spring DelegatingVariableResolver in Spreadsheet doesn't work
   163 Can't set backgrond color to excel 2007 file format
   164 no grid line while export to pdf

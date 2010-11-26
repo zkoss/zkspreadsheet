@@ -90,6 +90,16 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void setSelectedSheet(String name) {
 		spreadsheet.setSelectedSheet(name);
+		
+		//handle the copy/cut highlight
+		final Sheet sheet = EditHelper.getSourceSheet(spreadsheet);
+		if (sheet != null) {
+			if (sheet.equals(spreadsheet.getSelectedSheet())) {
+				spreadsheet.setHighlight(EditHelper.getSourceRange(spreadsheet));
+			} else {
+				spreadsheet.setHighlight(null);
+			}
+		}
 	}
 
 	public void hide(boolean hide) {
