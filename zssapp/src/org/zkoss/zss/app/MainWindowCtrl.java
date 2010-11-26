@@ -354,6 +354,10 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
 	}
 
+	public void updateGridlinesCheckbox() {
+		gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
+	}
+	
 	// SECTION Spreadsheet Event Handler
 	void doMouseEvent(CellMouseEvent event) {
 		event_x = event.getClientx();

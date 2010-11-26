@@ -70,6 +70,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	
 	public void onSelect$tabbox() {
 		getDesktopWorkbenchContext().getWorkbookCtrl().setSelectedSheet(tabbox.getSelectedTab().getLabel());
+		getDesktopWorkbenchContext().getWorkbenchCtrl().updateGridlinesCheckbox();
 	}
 	
 	/**

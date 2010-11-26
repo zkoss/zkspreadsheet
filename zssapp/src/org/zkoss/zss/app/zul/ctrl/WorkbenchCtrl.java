@@ -37,4 +37,7 @@ public interface WorkbenchCtrl {
 	public void toggleFormulaBar();
 	
 	public void openComposeFormulaDialog(FormulaMetaInfo metainfo);
+	
+	public void updateGridlinesCheckbox();
+
 }
