@@ -22,7 +22,8 @@ import org.zkoss.zss.ui.Spreadsheet;
  */
 public interface ZssappComponent {
 	
+	//TODO: remove this mechanism
 	public void bindSpreadsheet(Spreadsheet spreadsheet);
-	
+	//TODO: remove this mechanism
 	public void unbindSpreadsheet();
 }

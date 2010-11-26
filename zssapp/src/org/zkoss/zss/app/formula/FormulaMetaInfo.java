@@ -14,7 +14,6 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.formula;
 
-import java.util.HashMap;
 
 /**
  * @author Sam
@@ -24,24 +23,26 @@ public class FormulaMetaInfo {
 
 	private String category;
 	private String function;
-	private String display;
+	private String expression;
 	private String description;
 	private int requiredParameter;
+	private boolean hasMultipleParameter;
 
 	/**
 	 * @param category
 	 * @param function
-	 * @param display
+	 * @param expression
 	 * @param description
 	 * @param requiredParameter
 	 */
-	public FormulaMetaInfo(String category, String function, String display,
-			String description, int requiredParameter) {
+	public FormulaMetaInfo(String category, String function, String expression,
+			String description, int requiredParameter, boolean hasMultipleParameter) {
 		this.category = category;
 		this.function = function;
-		this.display = display;
+		this.expression = expression;
 		this.description = description;
 		this.requiredParameter = requiredParameter;
+		this.hasMultipleParameter = hasMultipleParameter;
 	}
 	public String getCategory() {
 		return category;
@@ -55,11 +56,11 @@ public class FormulaMetaInfo {
 	public void setFunction(String function) {
 		this.function = function;
 	}
-	public String getDisplay() {
-		return display;
+	public String getExpression() {
+		return expression;
 	}
-	public void setDisplay(String display) {
-		this.display = display;
+	public void setExpression(String expression) {
+		this.expression = expression;
 	}
 	public String getDescription() {
 		return description;

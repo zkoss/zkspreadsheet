@@ -18,6 +18,7 @@ package org.zkoss.zss.app;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.zkoss.poi.ss.usermodel.Cell;
@@ -39,6 +40,7 @@ import org.zkoss.zss.app.cell.EditHelper;
 import org.zkoss.zss.app.event.ExportHelper;
 import org.zkoss.zss.app.file.FileHelper;
 import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
+import org.zkoss.zss.app.formula.FormulaMetaInfo;
 import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.app.sort.SortSelector;
 import org.zkoss.zss.app.zul.CellContext;
@@ -206,7 +208,10 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 					sheets.redraw();
 				} else
 					sheets.clear();
-				//TODO: remove selection
+				
+				//TODO: provide clip board interface, to allow save cut, copy, high light info
+				//use set setHighlight null can cancel selection, but need to re-store selection when select same sheet again
+				spreadsheet.setHighlight(null);
 			}
 		});
 		//TODO: remove to WorkbookCtrl
@@ -284,24 +289,24 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 	public void onClick$exportToPDFBtn() {
 		ExportHelper.doExportToPDF(spreadsheet);
-		getDesktopWorkbookContext().getWorkbookCtrl().reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	
 	public void onClick$pasteDropdownBtn() {
-		getDesktopWorkbookContext().getWorkbookCtrl().pasteSelection();
+		getDesktopWorkbenchContext().getWorkbookCtrl().pasteSelection();
 	}
 	public void onDropdown$pasteDropdownBtn() {
-		getDesktopWorkbookContext().getWorkbookCtrl().reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	public void onPasteSelector(ForwardEvent event) {
 		EditHelper.onPasteEventHandler(spreadsheet, (String)event.getData());
 	}
 	public void onDropdown$sortDropdownBtn() {
-		getDesktopWorkbookContext().getWorkbookCtrl().reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	public void onClick$insertFormulaBtn() {
 		openInsertFormulaDialog();
-		getDesktopWorkbookContext().getWorkbookCtrl().reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	public void onSortSelector(ForwardEvent event) {
 		//TODO: replace forward event
@@ -320,23 +325,23 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	
 	public void onClick$insertHyperlinkBtn() {
 		openHyperlinkDialog();
-		getDesktopWorkbookContext().getWorkbookCtrl().reGainFocus();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	
 	public void onClick$cutBtn() {
-		DesktopWorkbenchContext.getInstance(desktop).getWorkbookCtrl().cutSelection();
+		getDesktopWorkbenchContext().getWorkbookCtrl().cutSelection();
 	}
 	
 	public void onClick$copyBtn() {
-		DesktopWorkbenchContext.getInstance(desktop).getWorkbookCtrl().copySelection();
+		getDesktopWorkbenchContext().getWorkbookCtrl().copySelection();
 	}
 
 	public void onClick$closeBtn() {
 		spreadsheet.setSrc(null);
-		getDesktopWorkbookContext().fireSheetOpen(false);
+		getDesktopWorkbenchContext().fireSheetOpen(false);
 	}
 	
-	protected DesktopWorkbenchContext getDesktopWorkbookContext() {
+	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
 		return DesktopWorkbenchContext.getInstance(desktop);
 	}
 	
@@ -1086,24 +1091,18 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 
 	public void openExportPdfDialog() {
-		//TODO: 
 		ExportHelper.doExportToPDF(spreadsheet);
 	}
 
 	public void openHyperlinkDialog() {
-		//TODO use set visible, not detach
 		Executions.createComponents(Consts._InsertHyperlinkDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
 	}
 
 	public void openInsertFormulaDialog() {
-		try {
-			if (insertFormulaDialog == null) {
-				insertFormulaDialog = (Window)Executions.createComponents(Consts._InsertFormulaDialog_zul, mainWin, null);
-			}
-			insertFormulaDialog.setMode("modal");
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		Executions.createComponents(Consts._InsertFormulaDialog_zul, mainWin, null);
+		
+		//TODO: modify insert formula dialog
+		//Executions.createComponents(Consts._InsertFormulaDialog2_zul, mainWin, null);
 	}
 
 	public void openModifyRowHeightDialog() {
@@ -1111,8 +1110,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 
 	public void openPasteSpecialDialog() {
-		//TODO: use set visible, not detach
-		Executions.createComponents(Consts._PasteSpecialDialog_zul, null, Zssapps.newSpreadsheetArg(spreadsheet));
+		//Executions.createComponents(Consts._PasteSpecialDialog_zul, null, Zssapps.newSpreadsheetArg(spreadsheet));
+		//Executions.createComponents(Consts._PasteSpecialDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
 	}
 
 	//TODO: don't use hard code here
@@ -1127,5 +1126,11 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void openComposeFormulaDialog(FormulaMetaInfo metainfo) {
+		HashMap arg = new HashMap();
+		arg.put(Consts.KEY_ARG_FORMULA_METAINFO, metainfo);
+		Executions.createComponents(Consts._ComposeFormulaDialog_zul, mainWin, arg);
 	}
 }

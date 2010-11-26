@@ -88,20 +88,23 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 		super.doAfterCompose(comp);
 		//TODO: use event, don't send arg
 		ss = checkNotNull(Zssapps.getSpreadsheetFromArg(), "Spreadsheet is null");
+		
+		//set portrait as default 
+		//orientation.setSelectedItem(portrait);
 		loadPrintSetting();
 	}
 	
 	private void loadPrintSetting() {
 		range.setSelectedItem(currSheet);
-		
 		loadOrientationSetting();
 	}
 	
 	private void loadOrientationSetting() {
 		//TODO: move to sheet context
 		orgOrientation = ss.getSelectedSheet().getPrintSetup().getLandscape();
-		if (ss.getSelectedSheet().getPrintSetup().getLandscape())
+		if (ss.getSelectedSheet().getPrintSetup().getLandscape()) {
 			orientation.setSelectedItem(landscape);
+		}
 		else
 			orientation.setSelectedItem(portrait);
 	}

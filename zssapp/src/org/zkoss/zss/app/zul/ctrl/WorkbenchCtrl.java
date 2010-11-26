@@ -14,6 +14,8 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul.ctrl;
 
+import org.zkoss.zss.app.formula.FormulaMetaInfo;
+
 /**
  * @author Sam
  *
@@ -33,4 +35,6 @@ public interface WorkbenchCtrl {
 	public void openHyperlinkDialog();
 	
 	public void toggleFormulaBar();
+	
+	public void openComposeFormulaDialog(FormulaMetaInfo metainfo);
 }

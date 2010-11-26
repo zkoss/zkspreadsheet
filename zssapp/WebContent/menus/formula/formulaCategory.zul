@@ -111,37 +111,38 @@
 				<listhead sizable="true">
 					<listheader label="Functions:" />
 				</listhead>
-				<listitem label="AVEDEV" />
-				<listitem label="AVERAGE" />
-				<listitem label="AVERAGEA" />
-				<listitem label="BINOMDIST" />
-				<listitem label="CHIDIST" />
-				<listitem label="CHIINV" />
-				<listitem label="COUNT" />
-				<listitem label="COUNTA" />
-				<listitem label="EXPONDIST" />
-				<listitem label="FDIST" />
-				<listitem label="FINV" />
-				<listitem label="GAMMADIST" />
-				<listitem label="GAMMAINV" />
-				<listitem label="GAMMALN" />
-				<listitem label="GEOMEAN" />
-				<listitem label="HYPGEOMDIST" />
-				<listitem label="INTERCEPT" />
-				<listitem label="KURT" />
-				<listitem label="MAX" />
-				<listitem label="MIN" />
-				<listitem label="NORMDIST" />
-				<listitem label="POISSON" />
-				<listitem label="SKEW" />
-				<listitem label="SLOPE" />
-				<listitem label="STDEV" />
-				<listitem label="STDEVP" />
-				<listitem label="TDIST" />
-				<listitem label="TINV" />
-				<listitem label="VAR" />
-				<listitem label="VARP" />
-				<listitem label="WEIBULL" />
+<!--				<listitem label="AVEDEV" />-->
+<!--				<listitem label="AVERAGE" />-->
+<!--				<listitem label="AVERAGEA" />-->
+<!--				<listitem label="BINOMDIST" />-->
+<!--				<listitem label="CHIDIST" />-->
+<!--				<listitem label="CHIINV" />-->
+<!--				<listitem label="COUNT" />-->
+<!--				<listitem label="COUNTA" />-->
+<!--				<listitem label="EXPONDIST" />-->
+<!--				<listitem label="FDIST" />-->
+<!--				<listitem label="FINV" />-->
+<!--				<listitem label="GAMMADIST" />-->
+<!--				<listitem label="GAMMAINV" />-->
+<!--				<listitem label="GAMMALN" />-->
+<!--				<listitem label="GEOMEAN" />-->
+<!--				<listitem label="HYPGEOMDIST" />-->
+<!--				<listitem label="INTERCEPT" />-->
+<!--				LOGEST -->
+<!--				<listitem label="KURT" />-->
+<!--				<listitem label="MAX" />-->
+<!--				<listitem label="MIN" />-->
+<!--				<listitem label="NORMDIST" />-->
+<!--				<listitem label="POISSON" />-->
+<!--				<listitem label="SKEW" />-->
+<!--				<listitem label="SLOPE" />-->
+<!--				<listitem label="STDEV" />-->
+<!--				<listitem label="STDEVP" />-->
+<!--				<listitem label="TDIST" />-->
+<!--				<listitem label="TINV" />-->
+<!--				<listitem label="VAR" />-->
+<!--				<listitem label="VARP" />-->
+<!--				<listitem label="WEIBULL" />-->
 			</listbox>
 			<listbox rows="9" id="fc_dateAndTime" >
 				<listhead sizable="true">
@@ -248,11 +249,11 @@
 <!--				<listitem label="IPMT" />-->
 <!--				<listitem label="IRR" />-->
 <!--				<listitem label="ISPMT" />-->
-				<listitem label="LOGEST" />
-				<listitem label="MDURATION" />
-				<listitem label="MIRR" />
-				<listitem label="NOMINAL" />
-				<listitem label="NPER" />
+<!--				<listitem label="LOGEST" />-->
+<!--				<listitem label="MDURATION" />-->
+<!--				<listitem label="MIRR" />-->
+<!--				<listitem label="NOMINAL" />-->
+<!--				<listitem label="NPER" />-->
 <!--				<listitem label="NPV" />-->
 <!--				<listitem label="ODDFPRICE" />-->
 <!--				<listitem label="ODDFYIELD" />-->
@@ -344,4 +345,16 @@
 		}
 	]]></zscript>
 	</div>
+	<grid>
+		<columns>
+			<column label=""/>
+			<column label=""/>
+		</columns>
+		<rows>
+			<row>
+				<cell ></cell>	
+			</row>
+		</rows>
+	</grid>
+
 </window>

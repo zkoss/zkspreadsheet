@@ -2,8 +2,6 @@
 <?page id="p1" title="ZSS app"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?script type="text/javascript" src="/macros/zssapp.js.dsp?v=${desktop.webApp.build}"?>
-<?component name="columnHeaderMenu" inline="true" macroURI="/menus/header_cell/menuColumnHeader.zul"?>
-<?component name="rowHeaderMenu" inline="true" macroURI="/menus/header_cell/menuRowHeader.zul"?>
 <?component name="cheatsheet" inline="true" macroURI="/cheatsheet.zul"?>
 
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
@@ -246,7 +244,6 @@
 			maxcolumns="40" vflex="1" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
 			forward="onCtrlKey=mainWin.onSSCtrlKeys">
 	</spreadsheet>
-<!--	<columnHeaderMenu id="columnHeaderMenu" />-->
 	<columnheadermenupopup id="columnHeaderMenupopup"/>
 	<rowheadermenupopup id="rowHeaderMenupopup"></rowheadermenupopup>
 	<cellmenupopup id="cellMenupopup"></cellmenupopup>

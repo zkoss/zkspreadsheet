@@ -1,0 +1,10 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window title="Function Arguments" border="normal" 
+	width="480px" mode="overlapped" closable="true" position="center"
+	apply="org.zkoss.zss.app.ctrl.ComposeFormulaCtrl">
+		<textbox id="composeFormulaTextbox" />
+		<listbox id="argsListbox"></listbox>
+		<label id="description" />
+	</window>
+</zk>

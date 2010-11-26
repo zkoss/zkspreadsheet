@@ -1,0 +1,32 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window title="new page title" border="normal"
+	width="480px" mode="modal" closable="true" position="center"
+	apply="org.zkoss.zss.app.ctrl.InsertFormulaCtrl2">
+<div height="5px"></div>
+<hlayout>
+	<hlayout hflex="1">
+		<textbox id="searchTextbox" hflex="1"/>
+		<button id="searchBtn" image="~./zssapp/image/ui-search-field.png" mold="trendy"/>
+	</hlayout>
+	<div width="5px"></div>
+	<hlayout hflex="1">	
+		<label value="Category"/>
+		<combobox id="categoryCombobox"></combobox>
+	</hlayout>	
+</hlayout>
+<div height="5px"></div>
+<vlayout height="245px">
+	<label value="Select a function"/>
+	<listbox id="functionListbox" rows="6">
+	</listbox>
+	<div height="5px"></div>
+	<label id="expression" />
+	<label id="description" multiline="true" />
+</vlayout>
+	<div height="25px" style="margin: 0 0 10px 5px;">
+		<button id="okBtn" style="float:right" image="~./zssapp/image/check.png" mold="trendy">
+		</button>
+	</div>
+</window>
+</zk>
