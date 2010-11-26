@@ -1111,7 +1111,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 	public void openPasteSpecialDialog() {
 		//Executions.createComponents(Consts._PasteSpecialDialog_zul, null, Zssapps.newSpreadsheetArg(spreadsheet));
-		//Executions.createComponents(Consts._PasteSpecialDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+		Executions.createComponents(Consts._PasteSpecialDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
 	}
 
 	//TODO: don't use hard code here

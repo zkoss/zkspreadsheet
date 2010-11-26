@@ -48,6 +48,7 @@ ZK Spreadsheet 2.0.0
   196 Range fill down, fill left, fill right, fill up doesn't work
   197 Text color does not respect condition format
   198 Shall be interpret as hyperlink if user enter "http://" into cell
+  200 Exception in paste special from context menu
   201 Cell Background Color is not correctly shown in Excel 2007 xlsx
   
 * Upgrade Notes

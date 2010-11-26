@@ -90,7 +90,7 @@ public class CellMenupopup extends Menupopup implements IdSpace {
 		getDesktopWorkbookContext().getWorkbookCtrl().pasteSelection();
 	}
 	
-	public void onClick$pasteSpecial(MouseEvent event) {
+	public void onClick$pasteSpecial() {
 		getDesktopWorkbookContext().getWorkbenchCtrl().openPasteSpecialDialog();
 	}
 
