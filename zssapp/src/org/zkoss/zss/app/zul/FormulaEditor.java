@@ -19,6 +19,7 @@ import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.InputEvent;
+import org.zkoss.zss.app.cell.EditHelper;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellEvent;
@@ -58,6 +59,7 @@ public class FormulaEditor extends Textbox implements ZssappComponent{
 		int top = ss.getSelection().getTop();
 		Sheet sheet = ss.getSelectedSheet();
 		currentEditcell = Utils.getCell(sheet, top, left);
+		EditHelper.clearCutOrCopy(ss);
 	}
 	
 	public void onBlur() {
