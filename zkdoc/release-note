@@ -54,6 +54,7 @@ ZK Spreadsheet 2.0.0
   202 Enter key after copy/cut does not do "paste"
   203 ESC key after copy/cut does not cancel the copy/cut.
   204 ZK Spreadsheet Live gridline checkbox is not updated when change sheet
+  206 Cell editing after copy/cut does not cancel copy/cut.
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

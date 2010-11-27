@@ -275,17 +275,23 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 						doSelectionEvent((CellSelectionEvent) event);
 					}
 				});
-		spreadsheet.addEventListener(Events.ON_CELL_RIGHT_CLICK, new EventListener() {
-
-			public void onEvent(Event event) throws Exception {
-				CellMouseEvent evt = (CellMouseEvent)event;
-				int clientX = evt.getClientx();
-				int clientY = evt.getClienty();
-				cellContext.setLeft(Integer.toString(clientX + 5) + "px");
-				cellContext.setTop(Integer.toString(clientY - 100) + "px");
-				cellContext.doPopup();
-			}
-		});
+		spreadsheet.addEventListener(Events.ON_CELL_RIGHT_CLICK, 
+				new EventListener() {
+					public void onEvent(Event event) throws Exception {
+						CellMouseEvent evt = (CellMouseEvent)event;
+						int clientX = evt.getClientx();
+						int clientY = evt.getClienty();
+						cellContext.setLeft(Integer.toString(clientX + 5) + "px");
+						cellContext.setTop(Integer.toString(clientY - 100) + "px");
+						cellContext.doPopup();
+					}
+				});
+		spreadsheet.addEventListener(Events.ON_START_EDITING, 
+				new EventListener() {
+					public void onEvent(Event event) throws Exception {
+						EditHelper.clearCutOrCopy(spreadsheet);
+					}
+				});
 	}
 	public void onClick$exportToPDFBtn() {
 		ExportHelper.doExportToPDF(spreadsheet);
