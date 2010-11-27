@@ -425,7 +425,8 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		/**
 		 * TODO avoid use invalidate
 		 */
-		columnHeadHidden: null
+		columnHeadHidden: null,
+		copysrc: null //flag to show whether a copy source has set
 	},
 	/**
 	 * Synchronize widgets position to cell

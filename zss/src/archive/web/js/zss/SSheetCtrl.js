@@ -1107,8 +1107,10 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				this.dp.stopEditing("movedown");//invoke move down after stopEdit
 				evt.stop();
 			} else if (this.state == zss.SSheetCtrl.FOCUSED) {
-				this.dp.moveDown(evt);
-				evt.stop();
+				if (!this._wgt._copysrc) {
+					this.dp.moveDown(evt);
+					evt.stop();
+				}
 			}
 			break;
 		case 27://ESC

@@ -73,6 +73,7 @@ public final class EditHelper {
 		if (sel.getRight() >= ss.getMaxcolumns())
 			sel.setRight(ss.getMaxcolumns() - 1);
 		ss.setHighlight(sel);
+		ss.smartUpdate("copysrc", true);
 	}
 	
 	/**
@@ -83,6 +84,7 @@ public final class EditHelper {
 		ss.setAttribute(KEY_SRC_SHEET, null);
 		ss.setAttribute(KEY_SRC_RANGE, null);		
 		ss.setHighlight(null);
+		ss.smartUpdate("copysrc", false);
 	}
 	
 	/**
