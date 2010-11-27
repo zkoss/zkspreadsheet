@@ -457,6 +457,11 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		mergeCellBtn.setSclass(isMergeCell ? "clicked" : null);
 	}
 
+	// ESC key
+	public void onCancel() {
+		EditHelper.clearCutOrCopy(spreadsheet);
+	}
+
 	// SECTION CtrlKeys
 	public void onSSCtrlKeys(ForwardEvent event) {
 		Event orig = event.getOrigin();

@@ -51,6 +51,7 @@ ZK Spreadsheet 2.0.0
   198 Shall be interpret as hyperlink if user enter "http://" into cell
   200 Exception in paste special from context menu
   201 Cell Background Color is not correctly shown in Excel 2007 xlsx
+  203 ESC key after copy/cut does not cancel the copy/cut.
   204 ZK Spreadsheet Live gridline checkbox is not updated when change sheet
   
 * Upgrade Notes

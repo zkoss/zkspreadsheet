@@ -45,7 +45,11 @@ public final class EditHelper {
 	public static void doCopy(Spreadsheet ss) {
 		ss.setAttribute(KEY_IS_CUT, Boolean.valueOf(false));
 		setSource(ss);
-	}	
+	}
+	
+	public static void clearCutOrCopy(Spreadsheet ss) {
+		clearSource(ss);
+	}
 	/**
 	 * Returns whether to cut source range or not
 	 * <p> Default: false
@@ -69,6 +73,16 @@ public final class EditHelper {
 		if (sel.getRight() >= ss.getMaxcolumns())
 			sel.setRight(ss.getMaxcolumns() - 1);
 		ss.setHighlight(sel);
+	}
+	
+	/**
+	 * Clear source sheet, source range, highlight range
+	 * @param ss
+	 */
+	private static void clearSource(Spreadsheet ss) {
+		ss.setAttribute(KEY_SRC_SHEET, null);
+		ss.setAttribute(KEY_SRC_RANGE, null);		
+		ss.setHighlight(null);
 	}
 	
 	/**
