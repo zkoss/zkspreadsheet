@@ -3,8 +3,12 @@
 	<window title="Function Arguments" border="normal" 
 	width="480px" mode="overlapped" closable="true" position="center"
 	apply="org.zkoss.zss.app.ctrl.ComposeFormulaCtrl">
-		<textbox id="composeFormulaTextbox" />
-		<listbox id="argsListbox"></listbox>
+		<div height="5px"></div>
+		<textbox id="composeFormulaTextbox" cols="50"/>
+		<div height="5px"></div>
+		<listbox id="argsListbox" rows="5"></listbox>
 		<label id="description" />
+		<button id="okBtn" image="~./zssapp/image/check.png"></button>
+		<div height="5px"></div>
 	</window>
 </zk>
