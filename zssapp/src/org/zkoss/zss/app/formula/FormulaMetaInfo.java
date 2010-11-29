@@ -74,6 +74,13 @@ public class FormulaMetaInfo {
 	public void setRequiredParameter(int requiredParameter) {
 		this.requiredParameter = requiredParameter;
 	}
-	
-	
+	public String[] getParameterNames() {
+		String arg = expression.substring(expression.indexOf("(") + 1, 
+				expression.lastIndexOf(")"));
+		String[] args = arg.split(",");
+		for (int i = 0; i < args.length; i++) {
+			args[i] = args[i].trim();
+		}
+		return args;
+	}
 }
