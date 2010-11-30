@@ -12,6 +12,7 @@ ZK Spreadsheet 2.0.0
   141 Support showing chart(Bar, Bar3D, Line, Line3D, Pie, Pie3D, Donut, Excel 2007, xlsx)
   142 Support for Date & Time functions
   143 Support for Logical formula functions
+  145 Support select range by shift key
   152 Support Ranges.range(sheet, namedRange)
   158 ZK Spreadsheet Live support colorbutton without depending zkex
   160 ZK Spreadsheet Live support import, open file

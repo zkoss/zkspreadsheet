@@ -692,6 +692,24 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	_cmdGridlines: function (show) {
 		this.setDisplayGridlines(show);
 	},
+	_shiftMouseSelection: function(evt, row, col, selType) {
+		if (zkS.isEvtKey(evt, "s") && _isLeftMouseEvt(evt)) {
+			var fpos = this.getLastFocus(),
+				frow = fpos.row,
+				fcol = fpos.column,
+				left = col < fcol ? col : fcol,
+				right = col < fcol ? fcol : col,
+				top = row < frow ? row :  frow,
+				bottom = row < frow ? frow : row;
+			
+			this.moveCellSelection(left, top, right, bottom, true);
+			var ls = this.getLastSelection();
+			this.selType = selType;
+			this._sendOnCellSelection(seltype, ls.left, ls.top, ls.right, ls.bottom);
+			return true;
+		}
+		return false;
+	},
 	_doMousedown: function (evt) {
 		this.innerClicking++;
 		var sheet = this;
@@ -726,7 +744,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			
 			row = cellpos[0];
 			col = cellpos[1];
-
+			if (this._shiftMouseSelection(evt, row, col, zss.SelDrag.SELCELLS))
+				return;			
 			sheet.dp.moveFocus(row, col, false, true, false, true);
 			this._lastmdstr = "c";
 
@@ -755,6 +774,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			var cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
 			row = cellpos[0];
 			col = cellpos[1];
+			if (this._shiftMouseSelection(evt, row, col, zss.SelDrag.SELCELLS))
+				return;			
 			this._lastmdstr = "c";
 
 			if (_isLeftMouseEvt(evt) || jq(cmp).attr('zs.t') == "SHighlight") {
@@ -774,6 +795,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			var cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
 			row = cellpos[0];
 			col = cellpos[1];
+			if (this._shiftMouseSelection(evt, row, col, zss.SelDrag.SELCELLS))
+				return;			
 			this._lastmdstr = "c";
 			
 			if(_isLeftMouseEvt(evt)){//TODO support right mouse down
@@ -824,12 +847,30 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				var range = zss.SSheetCtrl._getVisibleRange(this),
 					seltype;
 				if (row == -1) {//column
+					if (zkS.isEvtKey(evt, "s") && _isLeftMouseEvt(evt)) {
+						var fpos = this.getLastFocus(),
+							fcol = fpos.column;
+						sheet.moveColumnSelection(col, fcol);
+						var ls = this.getLastSelection();
+						this.selType = zss.SelDrag.SELCOL;
+						this._sendOnCellSelection(this.selType, ls.left, ls.top, ls.right, ls.bottom);
+						return;
+					}
 					var fzr = sheet.frozenRow;
 					sheet.dp.moveFocus((fzr > -1 ? 0 : range.top), col, true, true, false, true);
 					//sheet.dp.selectCell((fzr > -1 ? 0 : range.top), col, true);//force move to first visible cell or 0 if frozenRow
 					sheet.moveColumnSelection(col);
 					seltype = zss.SelDrag.SELCOL;
 				} else {
+					if (zkS.isEvtKey(evt, "s") && _isLeftMouseEvt(evt)) {
+						var fpos = this.getLastFocus(),
+							frow = fpos.row;
+						sheet.moveRowSelection(row, frow);
+						var ls = this.getLastSelection();
+						this.selType = zss.SelDrag.SELROW;
+						this._sendOnCellSelection(this.selType, ls.left, ls.top, ls.right, ls.bottom);
+						return;
+					}
 					var fzc = sheet.frozenCol;
 					sheet.dp.moveFocus(row, (fzc > -1 ? 0 : range.left), true, true, false, true);
 					//sheet.dp.selectCell(row, (fzc > -1 ? 0 : range.left),true);//force move to first visible cell
