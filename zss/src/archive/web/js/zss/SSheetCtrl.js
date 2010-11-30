@@ -705,7 +705,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			this.moveCellSelection(left, top, right, bottom, true);
 			var ls = this.getLastSelection();
 			this.selType = selType;
-			this._sendOnCellSelection(seltype, ls.left, ls.top, ls.right, ls.bottom);
+			this._sendOnCellSelection(selType, ls.left, ls.top, ls.right, ls.bottom);
 			return true;
 		}
 		return false;
