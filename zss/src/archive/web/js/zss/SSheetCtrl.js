@@ -1764,6 +1764,22 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		if (this.cp.focusMark)
 			this.cp.focusMark.hideMark();
 	},
+	_realRight: function(top, bottom, right) {
+		var minl = right;
+		for (var r = bottom; r >= top; --r) {
+			var cellL = this.getCell(r, minl);
+			if (cellL && cellL.merl < minl) minl = cellL.merl;
+		}
+		return minl;
+	},
+	_realLeft: function(top, bottom, left) {
+		var maxr = left;
+		for (var r = bottom; r >= top; --r) {
+			var cellR = this.getCell(r, maxr);
+			if (cellR && cellR.merr > maxr) maxr = cellR.merr;
+		}
+		return maxr;
+	},
 	/**
 	 * Move selection position
 	 * @param int key  
@@ -1794,15 +1810,17 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				bottom++;
 			break;
 		case 'left':
-			if (col < right)
+			right = this._realRight(top, bottom, right);
+			if (col < right) {
 				right--;
-			else
+			} else
 				left--;
 			break;
 		case 'right':
-			if (col > left)
+			left = this._realLeft(top, bottom, left);
+			if (col > left) {
 				left++;
-			else
+			} else
 				right++;
 			break;
 		case 'home':

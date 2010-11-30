@@ -20,7 +20,8 @@ ZK Spreadsheet 2.0.0
   192 Support exporting Excel Chart to PDF
   194 ZK Spreadsheet Live support shift cell, entire row or column
   199 ZK Spreadsheet Live shall support wrap text.
-
+  212 Cannot shift select left on merge cell
+  
 *Bug 
   132 view ZK Spreadsheet Live index.zul cause NullPointerException
   139 "Unexpected ptg class" RuntimeException when loading Excel file with special formula
