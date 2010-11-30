@@ -1819,7 +1819,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		//TODO , auto scroll
 		
 		if (left != ls.left || top != ls.top || right != ls.right || bottom != ls.bottom){
-			this.moveCellSelection(left, top, right, bottom);
+			this.moveCellSelection(left, top, right, bottom, true);
 			var ls = this.getLastSelection();
 			this.selType = seltype;
 			this._sendOnCellSelection(seltype, ls.left, ls.top, ls.right, ls.bottom);
