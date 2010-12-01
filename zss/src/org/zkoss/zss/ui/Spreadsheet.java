@@ -517,6 +517,14 @@ public class Spreadsheet extends XulElement {
 		if (book == null) {
 			return;
 		}
+		
+		//Note. check whether if the sheet has remove or not
+		if (_selectedSheet != null && book.getSheetIndex(_selectedSheet) == -1) {
+			doSheetClean(_selectedSheet);
+			_selectedSheet = null;
+			_selectedSheetId = null;
+		}
+
 		if (_selectedSheet == null || !_selectedSheet.getSheetName().equals(name)) {
 			Sheet sheet = book.getSheet(name);
 			if (sheet == null) {

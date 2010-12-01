@@ -61,14 +61,19 @@ public class DesktopWorkbenchContext extends AbstractBaseContext{
 	public void fireRefresh() {
 		listenerStore.fire(new Event(Consts.ON_SHEET_REFRESH));
 	}
-	
-	//TODO: remove, change to use main controller to set sheet
-//	public void fireSheetSelected(String name) {
-//		listenerStore.fire(new Event(Consts.ON_SHEET_SELECT, null, name));
-//	}
 
+	/**
+	 * Fire sheet open event when spreadsheet set new book or set new source
+	 * @param open false if spreadsheet close book, means set source to null
+	 */
 	public void fireSheetOpen(boolean open) {
 		listenerStore.fire(new Event(Consts.ON_SHEET_OPEN, null, Boolean.valueOf(open)));
+	}
+	/**
+	 * Fire sheet changed event when spreadsheet set selected sheet
+	 */
+	public void fireSheetChanged() {
+		listenerStore.fire(new Event(Consts.ON_SHEET_CHANGED));
 	}
 	public void mergeCell() {
 		listenerStore.fire(new Event(Consts.ON_SHEET_MERGE_CELL));

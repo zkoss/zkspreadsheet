@@ -60,7 +60,14 @@ public class Consts {
 	
 	/*Sheet event*/
 	public static final String ON_SHEET_REFRESH = "onSheetRefresh";
+	/**
+	 * Fire when spreadsheet set new book or close book
+	 */
 	public static final String ON_SHEET_OPEN = "onSheetOpen";
+	/**
+	 * Fired when selected sheet changed
+	 */
+	public static final String ON_SHEET_CHANGED = "onSheetChanged";
 	public static final String ON_SHEET_MERGE_CELL = "onSheetMergeCell";
 	public static final String ON_SHEET_INSERT_FORMULA = "onSheetInsertFormula";
 	

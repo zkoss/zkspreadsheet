@@ -72,19 +72,28 @@ public final class SheetHelper {
 	/**
 	 * 
 	 * @param spreadsheet
-	 * @return new index, -1 if delete all sheet
+	 * @return new index, -1 if delete sheet fail
 	 */
 	public static int deleteSheet(Spreadsheet spreadsheet) {
 		//TODO: it should shift all, not just itself
 		final Book book = spreadsheet.getBook();
 		if (book != null) {
+			//Note. Sheet must contain at least one sheet
+			int sheetCount = book.getNumberOfSheets();
+			if (sheetCount == 1)
+				return -1;
+			
 			int index = book.getSheetIndex(spreadsheet.getSelectedSheet());
 			book.removeSheetAt(index);
-			int sheetCount = book.getNumberOfSheets();
+			sheetCount = book.getNumberOfSheets();
 			
-			//TODO: can remove all sheets ?
-			if (index < sheetCount)
+			if (index < sheetCount) {
+				//shift right
 				return index;
+			} else {
+				//shift left
+				return index - 1;
+			}
 		}
 		return -1;
 	}

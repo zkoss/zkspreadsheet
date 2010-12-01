@@ -25,6 +25,9 @@ import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.MouseEvent;
 import org.zkoss.zss.app.ctrl.RenameSheetCtrl;
 import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
@@ -34,6 +37,7 @@ import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabs;
@@ -48,11 +52,9 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	private final static String URI = "~./zssapp/html/sheets.zul";
 	
 	private Tabbox tabbox;
-	
 	private Tabs tabs;
 	
 	private Menupopup sheetContextMenu;
-	
 	private Menuitem shiftSheetLeft;
 	private Menuitem shiftSheetRight;
 	private Menuitem deleteSheet;
@@ -70,7 +72,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	
 	public void onSelect$tabbox() {
 		getDesktopWorkbenchContext().getWorkbookCtrl().setSelectedSheet(tabbox.getSelectedTab().getLabel());
-		getDesktopWorkbenchContext().getWorkbenchCtrl().updateGridlinesCheckbox();
+		getDesktopWorkbenchContext().fireSheetChanged();
 	}
 	
 	/**
@@ -105,16 +107,25 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	 */
 	public void redraw() {
 		tabs.getChildren().clear();
-		Utils.visitSheets(ss.getBook(), new SheetVisitor(){
 
+		Utils.visitSheets(ss.getBook(), new SheetVisitor(){
 			@Override
 			public void handle(Sheet sheet) {
-				Tab tab = new Tab(sheet.getSheetName());
-				tab.setContext(sheetContextMenu);
+				final Tab tab = new Tab(sheet.getSheetName());
+				tab.addEventListener(org.zkoss.zk.ui.event.Events.ON_RIGHT_CLICK, new EventListener() {
+					public void onEvent(Event event) throws Exception {						
+						
+						if (tabbox.getSelectedTab().getLabel() != tab.getLabel()) {
+							tabbox.setSelectedTab(tab);
+							getDesktopWorkbenchContext().getWorkbookCtrl().setSelectedSheet(tab.getLabel());
+							getDesktopWorkbenchContext().fireSheetChanged();
+						}
+						MouseEvent evt = (MouseEvent)event;
+						sheetContextMenu.open(evt.getPageX(), evt.getPageY());
+					}
+				});
 				tab.setParent(tabs);
 			}});
-		//TODO: need invaldate ?
-		tabbox.invalidate();
 	}
 	
 	/**
@@ -151,7 +162,10 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 			redraw();
 			setCurrentSheet(newIdx);
 		} else {
-			//TODO: add a new sheet ?
+			try {
+				Messagebox.show("A workbook must contain at least one visible worksheet");
+			} catch (InterruptedException e) {
+			}
 		}
 	}
 	
@@ -166,7 +180,6 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	public void onClick$copySheet() {
 		throw new UiException("cop sheet not implement yet");
 	}
-
 
 	@Override
 	public void unbindSpreadsheet() {

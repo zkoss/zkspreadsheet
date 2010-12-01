@@ -197,19 +197,24 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		});
 		workbenchContext.addEventListener(Consts.ON_SHEET_OPEN, new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				boolean isOpen = (Boolean)event.getData();
+				Boolean isOpen = (Boolean)event.getData();
 				toolbarMask.setVisible(!isOpen);
 				closeBtn.setVisible(isOpen);
 
 				if (isOpen) {
 					gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
 					sheets.redraw();
-				} else
+				} else if (!isOpen)
 					sheets.clear();
 				
 				//TODO: provide clip board interface, to allow save cut, copy, high light info
 				//use set setHighlight null can cancel selection, but need to re-store selection when select same sheet again
 				spreadsheet.setHighlight(null);
+			}
+		});
+		workbenchContext.addEventListener(Consts.ON_SHEET_CHANGED, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
 			}
 		});
 		//TODO: remove to WorkbookCtrl
