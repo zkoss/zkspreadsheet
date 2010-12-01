@@ -87,6 +87,10 @@ public class InsertFormulaCtrl2 extends GenericForwardComposer {
 		
 	}
 	
+	public void onSelect$categoryCombobox() {
+		initFunctionListbox();
+	}
+	
 	private void initFunctionListbox() {
 		String category = categoryCombobox.getText();
 		if (category == null)
@@ -117,8 +121,15 @@ public class InsertFormulaCtrl2 extends GenericForwardComposer {
 			} catch (InterruptedException e) {
 			}
 		}	
-		getDesktopWorkbenchContext().getWorkbenchCtrl().
-			openComposeFormulaDialog((FormulaMetaInfo)item.getValue());
+		
+		FormulaMetaInfo info = (FormulaMetaInfo) item.getValue();
+		if (info.getRequiredParameter() == 0) {
+			getDesktopWorkbenchContext().getWorkbookCtrl().insertFormula("=" + info.getFunction() + "()");
+		} else {
+			getDesktopWorkbenchContext().getWorkbenchCtrl().
+				openComposeFormulaDialog((FormulaMetaInfo)item.getValue());
+		}
+
 		self.detach();
 	}
 	

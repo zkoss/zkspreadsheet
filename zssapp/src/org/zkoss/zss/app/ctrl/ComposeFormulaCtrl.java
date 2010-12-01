@@ -17,16 +17,20 @@ package org.zkoss.zss.app.ctrl;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.formula.FormulaMetaInfo;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
+import org.zkoss.zss.model.Ranges;
+import org.zkoss.zss.ui.event.CellSelectionEvent;
+import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
@@ -35,6 +39,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.SimpleListModel;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.impl.api.InputElement;
 
 /**
  * @author Sam
@@ -49,6 +54,9 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 	
 	private FormulaMetaInfo info;
 	private List<ArgWrapper> args;
+	
+	private List<InputElement> inputs = new LinkedList<InputElement>();
+	private InputElement focusComponent;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -71,11 +79,18 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 				item.setValue(arg);
 				item.appendChild(new Listcell(arg.getName()));
 				final Textbox tb = new Textbox(arg.getValue());
+				inputs.add(tb);
+				
 				tb.addEventListener(Events.ON_CHANGE, new EventListener() {
 					public void onEvent(Event event) throws Exception {
-						InputEvent evt = (InputEvent) event;
-						arg.setValue(evt.getValue());
+						arg.setValue(tb.getValue());
 						composeFormula();
+						moveFocusToNext(tb);
+					}
+				});
+				tb.addEventListener(Events.ON_FOCUS, new EventListener() {
+					public void onEvent(Event event) throws Exception {
+						focusComponent = tb;
 					}
 				});
 				
@@ -84,17 +99,54 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 				item.appendChild(cell);
 			}
 		});
+		argsListbox.addEventListener("onAfterRender", new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				if (inputs.size() > 1) {
+					inputs.get(0).focus();
+					focusComponent = inputs.get(0);
+				}
+			}
+		});
+		
+		getDesktopWorkbenchContext().getWorkbookCtrl().addEventListener(org.zkoss.zss.ui.event.Events.ON_CELL_SELECTION, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				CellSelectionEvent evt = (CellSelectionEvent) event;
+				Cell cell = Utils.getCell(evt.getSheet(), evt.getTop(), evt.getLeft());
+				if (cell == null) {
+					//Utils.getOrCreateCell(evt.getSheet(), evt.getTop(), evt.getLeft()).setCellFormula("0");
+					Ranges.range(evt.getSheet(), evt.getTop(), evt.getLeft()).setEditText("0");
+				}
+				if (focusComponent != null) {
+					focusComponent.setText(getDesktopWorkbenchContext().getWorkbookCtrl().getCurrentCellPosition());
+					Events.postEvent(Events.ON_CHANGE, focusComponent, null);
+				}
+			}
+		});
+	}
+	
+	private void moveFocusToNext(HtmlBasedComponent current) {
+		for (int i = 0; i < inputs.size(); i++) {
+			InputElement c = inputs.get(i);
+			if (c == current && (i + 1) < inputs.size()) {
+				InputElement next = inputs.get(i + 1);
+				next.focus();
+				focusComponent = next;
+				break;
+			}
+		}
 	}
 	private void composeFormula() {
 		String result = "=" + info.getFunction() + "(";
 		boolean first = true;
-		for (ArgWrapper w : args) {
-			String arg = w.getValue();
+		for (ArgWrapper curArg : args) {
+			String arg = curArg.getValue();
+			if (first)
+				first = false;
+			else if (!first) {
+				result += ",";
+			}
+
 			if (!"".equals(arg)) {
-				if (first)
-					first = false;
-				else if (!first)
-					result += ",";
 				result += arg;
 			}				
 		}
@@ -121,8 +173,8 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 	}
 	
 	public void onClick$okBtn() {
-		//DesktopWorkbenchContext.getInstance(desktop).
-		//	getWorkbookCtrl().insertFormula();
+		getDesktopWorkbenchContext().getWorkbookCtrl().insertFormula(composeFormulaTextbox.getText());
+		self.detach();
 	}
 	
 	private List<ArgWrapper> createArgs(int numArg, String[] argNames) {
@@ -163,5 +215,9 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 		public void setValue(String value) {
 			this.value = value;
 		}
+	}
+	
+	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
+		return DesktopWorkbenchContext.getInstance(desktop);
 	}
 }

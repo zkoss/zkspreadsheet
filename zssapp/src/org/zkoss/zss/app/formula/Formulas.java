@@ -27,7 +27,7 @@ public class Formulas {
 	/* Category */
 	private final static String FINANCIAL = "Financial";
 	private final static String DATE_TIME = "Date & Time";
-	private final static String Math_TRIG = "Math & Trig";
+	private final static String MATH_TRIG = "Math & Trig";
 	private final static String STATISTICAL = "Statistical";
 	private final static String LOOKUP_REF = "Lookup & Reference";
 	private final static String DATABASE = "Database";
@@ -377,7 +377,7 @@ public class Formulas {
 					"AVEDEV(number1,number2,...)",
 					"Returns the average of the absolute deviations of data points from their mean. AVEDEV is a measure of the variability in a data set.",
 					2, true));
-	
+		//TODO: test this formula
 		statAry.add(new FormulaMetaInfo(STATISTICAL,
 					"AVERAGE",
 					"AVERAGE(number1, [number2],...)",
@@ -407,13 +407,13 @@ public class Formulas {
 					"CHIINV(probability, degrees_freedom)",
 					"Returns the inverse of the one-tailed probability of the chi-squared distribution",
 					2, false));
-	
+		//TODO: test this formula
 		statAry.add(new FormulaMetaInfo(STATISTICAL,
 					"COUNT",
 					"COUNT(value1, [value2],...)",
 					"Counts how many numbers are in the list of arguments",
 					1, true));
-
+		//TODO: test this formula
 		statAry.add(new FormulaMetaInfo(STATISTICAL,	
 					"COUNTA",
 					"COUNTA(value1, [value2], ...)",
@@ -562,7 +562,861 @@ public class Formulas {
 					"WEIBULL(x, alpha, beta, cumulative)",
 					"Returns the Weibull distribution",
 					4, false));
+		/* Math */
+		List<FormulaMetaInfo> mathAry = new LinkedList<FormulaMetaInfo>();
+		formulaInfos.put(MATH_TRIG, mathAry);
 		
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"ABS",
+					"ABS(number)",
+					"Returns the absolute value of a number",
+					4, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"ACOS",
+					"ACOS(number)",
+					"Returns the arccosine of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"ACOSH",
+					"ACOSH(number)",
+					"Returns the inverse hyperbolic cosine of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"ASIN",
+					"ASIN(number)",
+					"Returns the arcsine of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"ASINH",
+					"ASINH(number)",
+					"Returns the inverse hyperbolic sine of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"ATAN",
+					"ATAN(number)",
+					"Returns the arctangent of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"ATAN2",
+					"ATAN2(x_num, y_num)",
+					"Returns the arctangent from x- and y-coordinates",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"ATANH",
+					"ATANH(number)",
+					"Returns the inverse hyperbolic tangent of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"CEILING",
+					"CEILING(number, significance)",
+					"Rounds a number to the nearest integer or to the nearest multiple of significance",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"COMBIN",
+					"COMBIN(number, number_chosen)",
+					"Returns the number of combinations for a given number of objects",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"COS",
+					"COS(number)",
+					"Returns the cosine of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"COSH",
+					"COSH(number)",
+					"Returns the hyperbolic cosine of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"DEGREES",
+					"DEGREES(angle)",
+					"Converts radians to degrees",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"EVEN",
+					"EVEN(number)",
+					"Rounds a number up to the nearest even integer",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"EXP",
+					"EXP(number)",
+					"Returns e raised to the power of a given number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"FACT",
+					"FACT(number)",
+					"Returns the factorial of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"FACTDOUBLE",
+					"FACTDOUBLE(number)",
+					"Returns the double factorial of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"FLOOR",
+					"FLOOR(number, significance)",
+					"Rounds a number down, toward zero",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"GCD",
+					"GCD(number1, number2, ...)",
+					"Returns the greatest common divisor",
+					2, true));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"INT",
+					"INT(number)",
+					"Rounds a number down to the nearest integer",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"LCM",
+					"LCM(number1, number2, ...)",
+					"Returns the least common multiple",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"LN",
+					"LN(number)",
+					"Returns the natural logarithm of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"LOG",
+					"LOG(number, base)",
+					"Returns the logarithm of a number to a specified base",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"LOG10",
+					"LOG10(number)",
+					"Returns the base-10 logarithm of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"MDETERM",
+					"MDETERM(array)",
+					"Returns the matrix determinant of an array",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"MINVERSE",
+					"MINVERSE(array)",
+					"Returns the matrix inverse of an array",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"MMULT",
+					"MMULT(array1, array2)",
+					"Returns the matrix product of two arrays",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"MOD",
+					"MOD(number, divisor)",
+					"Returns the remainder from division",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"MROUND",
+					"MROUND(number, multiple)",
+					"Returns a number rounded to the desired multiple",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"MULTINOMIAL",
+					"MULTINOMIAL(number1, number2, ...)",
+					"Returns the multinomial of a set of numbers",
+					2, true));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"ODD",
+					"ODD(number)",
+					"Rounds a number up to the nearest odd integer",
+					1, false));
+		//TODO: if required arg is 0, do need to open compose formula
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"PI",
+					"PI( )",
+					"Returns the value of pi",
+					0, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"POWER",
+					"POWER(number, power)",
+					"Returns the result of a number raised to a power",
+					2, false));
+		//TODO: test this formula
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"PRODUCT",
+					"PRODUCT(number1, [number2], ...)",
+					"Multiplies its arguments",
+					1, true));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"QUOTIENT",
+					"QUOTIENT(numerator, denominator)",
+					"Returns the integer portion of a division",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"RADIANS",
+					"RADIANS(angle)",
+					"Converts degrees to radians",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"RAND",
+					"RAND( )",
+					"Returns a random number between 0 and 1",
+					0, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"RANDBETWEEN",
+					"RANDBETWEEN(bottom, top)",
+					"Returns a random number between the numbers you specify",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"ROMAN",
+					"ROMAN(number, form)",
+					"Converts an arabic numeral to roman, as text",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"ROUND",
+					"ROUND(number, num_digits)",
+					"Rounds a number to a specified number of digits",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"ROUNDDOWN",
+					"ROUNDDOWN(number, num_digits)",
+					"Rounds a number down, toward zero",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"ROUNDUP",
+					"ROUNDUP(number,num_digits)",
+					"Rounds a number up, away from zero",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,	
+					"SERIESSUM",
+					"SERIESSUM(x, n, m, coefficients)",
+					"Returns the sum of a power series based on the formula",
+					4, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,	
+					"SIGN",
+					"SIGN(number)",
+					"Returns the sign of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,	
+					"SIN",
+					"SIN(number)",
+					"Returns the sine of the given angle",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,	
+					"SINH",
+					"SINH(number)",
+					"Returns the hyperbolic sine of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,	
+					"SQRT",
+					"SQRT(number)",
+					"Returns a positive square root",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"SQRTPI",
+					"SQRTPI(number)",
+					"Returns the square root of (number * pi)",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"SUBTOTAL",
+					"SUBTOTAL(function_num, ref1, ref2, ...)",
+					"Returns a subtotal in a list or database",
+					3, true));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"SUM",
+					"SUM(number1, [number2], [number3], ...)",
+					"Adds its arguments",
+					1, true));
+		//TODO: test this formula
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"SUMIF",
+					"SUMIF(range, criteria, [sum_range])",
+					"Adds the cells specified by a given criteria",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"SUMPRODUCT",
+					"SUMPRODUCT(array1, array2, array3, ...)",
+					"Returns the sum of the products of corresponding array components",
+					3, true));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"SUMSQ",
+					"SUMSQ(number1, number2, ...)",
+					"Returns the sum of the squares of the arguments",
+					2, true));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"SUMX2MY2",
+					"SUMX2MY2(array_x, array_y)",
+					"Returns the sum of the difference of squares of corresponding values in two arrays",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"SUMX2PY2",
+					"SUMX2PY2(array_x, array_y)",
+					"Returns the sum of the sum of squares of corresponding values in two arrays",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"SUMXMY2",
+					"SUMXMY2(array_x, array_y)",
+					"Returns the sum of squares of differences of corresponding values in two arrays",
+					2, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"TAN",
+					"TAN(number)",
+					"Returns the tangent of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"TANH",
+					"TANH(number)",
+					"Returns the hyperbolic tangent of a number",
+					1, false));
+		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
+					"TRUNC",
+					"TRUNC(number, num_digits)",
+					"Truncates a number to an integer",
+					2, false));
+
+		/* Date and Time */
+		List<FormulaMetaInfo> dateAry = new LinkedList<FormulaMetaInfo>();
+		formulaInfos.put(DATE_TIME, dateAry);	
+		dateAry.add(new FormulaMetaInfo(DATE_TIME,
+					"DATE",
+					"DATE(year, month, day)",
+					"Returns the serial number of a particular date",
+					3, false));
+		dateAry.add(new FormulaMetaInfo(DATE_TIME,
+					"DATEVALUE",
+					"DATEVALUE(date_text)",
+					"Converts a date in the form of text to a serial number",
+					1, false));
+		dateAry.add(new FormulaMetaInfo(DATE_TIME,
+					"DAY",
+					"DAY(serial_number)",
+					"Converts a serial number to a day of the month",
+					1, false));
+		//TODO: test this formula
+		dateAry.add(new FormulaMetaInfo(DATE_TIME,
+					"DAYS360",
+					"DAYS360(start_date, end_date, [method])",
+					"Calculates the number of days between two dates based on a 360-day year",
+					2, false));
+		dateAry.add(new FormulaMetaInfo(DATE_TIME,
+					"HOUR",
+					"HOUR(serial_number)",
+					"Converts a serial number to an hour",
+					1, false));
+		dateAry.add(new FormulaMetaInfo(DATE_TIME,
+					"MINUTE",
+					"MINUTE(serial_number)",
+					"Converts a serial number to a minute",
+					1, false));
+		dateAry.add(new FormulaMetaInfo(DATE_TIME,
+					"MONTH",
+					"MONTH(serial_number)",
+					"Converts a serial number to a month",
+					1, false));
+		dateAry.add(new FormulaMetaInfo(DATE_TIME,
+					"NOW",
+					"NOW()",
+					"Returns the serial number of the current date and time",
+					0, false));
+		dateAry.add(new FormulaMetaInfo(DATE_TIME,
+					"SECOND",
+					"SECOND(serial_number)",
+					"Converts a serial number to a second",
+					1, false));
+		dateAry.add(new FormulaMetaInfo(DATE_TIME,
+					"TIME",
+					"TIME(hour, minute, second)",
+					"Returns the serial number of a particular time",
+					3, false));
+		dateAry.add(new FormulaMetaInfo(DATE_TIME,
+					"TODAY",
+					"TODAY( )",
+					"Returns the serial number of today's date",
+					0, false));
+		dateAry.add(new FormulaMetaInfo(DATE_TIME,
+					"WEEKDAY",
+					"WEEKDAY(serial_number, return_type)",
+					"Converts a serial number to a day of the week",
+					2, false));
+		dateAry.add(new FormulaMetaInfo(DATE_TIME,
+					"YEAR",
+					"YEAR(serial_number)",
+					"Converts a serial number to a year",
+					1, false));
+		
+		/* Text */
+		List<FormulaMetaInfo> textAry = new LinkedList<FormulaMetaInfo>();
+		formulaInfos.put(TEXT, textAry);	
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"ASC",
+					"ASC(text)",
+					"Changes full-width (double-byte) English letters or katakana within a character string to half-width (single-byte) characters",
+					1, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"BAHTTEXT",
+					"BAHTTEXT(number)",
+					"Converts a number to text, using the ß (baht) currency format",
+					1, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"CHAR",
+					"CHAR(number)",
+					"Returns the character specified by the code number",
+					1, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"CLEAN",
+					"CLEAN(text)",
+					"Removes all nonprintable characters from text",
+					1, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"CODE",
+					"CODE(text)",
+					"Returns a numeric code for the first character in a text string",
+					1, false));
+		//TODO: test this
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"CONCATENATE",
+					"CONCATENATE(text1, [text2], ...)",
+					"Joins several text items into one text item",
+					1, true));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"DOLLAR",
+					"DOLLAR(number, decimals)",
+					"Converts a number to text, using the $ (dollar) currency format",
+					2, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"EXACT",
+					"EXACT(text1, text2)",
+					"Checks to see if two text values are identical",
+					2, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"FIND",
+					"FIND(find_text, within_text, start_num)",
+					"Finds one text value within another (case-sensitive)",
+					3, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"FINDB",
+					"FINDB(find_text, within_text, start_num)",
+					"Finds one text value within another (case-sensitive)",
+					3, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"FIXED",
+					"FIXED(number, decimals, no_commas)",
+					"Formats a number as text with a fixed number of decimals",
+					3, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"JIS",
+					"JIS(text)",
+					"Changes half-width (single-byte) English letters or katakana within a character string to full-width (double-byte) characters",
+					1, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"LEFT",
+					"LEFT(text, num_chars)",
+					"Returns the leftmost characters from a text value",
+					2, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"LEFTB",
+					"LEFTB(text, num_bytes)",
+					"Returns the leftmost characters from a text value",
+					2, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"LEN",
+					"LEN(text)",
+					"Returns the number of characters in a text string",
+					1, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"LENB",
+					"LENB(text)",
+					"Returns the number of bytes used to represent the characters in a text string.",
+					1, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"LOWER",
+					"LOWER(text)",
+					"Converts text to lowercase",
+					1, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"MID",
+					"MID(text, start_num, num_chars)",
+					"Returns a specific number of characters from a text string starting at the position you specify",
+					3, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"MIDB",
+					"MIDB(text,start_num,num_bytes)",
+					"Returns a specific number of characters from a text string starting at the position you specify",
+					3, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"PHONETIC",
+					"PHONETIC(reference)",
+					"Extracts the phonetic (furigana) characters from a text string",
+					1, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"PROPER",
+					"PROPER(text)",
+					"Capitalizes the first letter in each word of a text value",
+					1, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"REPLACE",
+					"REPLACE(old_text, start_num, num_chars, new_text)",
+					"Replaces characters within text",
+					4, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"REPLACEB",
+					"REPLACEB(old_text,start_num,num_bytes,new_text)",
+					"Replaces characters within text",
+					4, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"REPT",
+					"REPT(text, number_times)",
+					"Repeats text a given number of times",
+					2, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"RIGHT",
+					"RIGHT(text, num_chars)",
+					"Returns the rightmost characters from a text value",
+					2, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"RIGHTB",
+					"RIGHTB(text,num_bytes)",
+					"Returns the rightmost characters from a text value",
+					2, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"SEARCH",
+					"SEARCH(find_text, within_text, [start_num])",
+					"Finds one text value within another (not case-sensitive)",
+					3, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"SEARCHB",
+					"SEARCHB(find_text, within_text, [start_num])",
+					"Finds one text value within another (not case-sensitive)",
+					3, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"SUBSTITUTE",
+					"SUBSTITUTE(text, old_text, new_text, instance_num)",
+					"Substitutes new text for old text in a text string",
+					4, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"T",
+					"T(value)",
+					"Converts its arguments to text",
+					1, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"TEXT",
+					"TEXT(value, format_text)",
+					"Formats a number and converts it to text",
+					2, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"TRIM",
+					"TRIM(text)",
+					"Removes spaces from text",
+					1, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"UPPER",
+					"UPPER(text)",
+					"Converts text to uppercase",
+					1, false));
+		textAry.add(new FormulaMetaInfo(TEXT,
+					"VALUE",
+					"VALUE(text)",
+					"Converts a text argument to a number",
+					1, false));
+		
+					
+		/* Logical */
+		List<FormulaMetaInfo> logAry = new LinkedList<FormulaMetaInfo>();
+		formulaInfos.put(LOGICAL, logAry);
+		logAry.add(new FormulaMetaInfo(LOGICAL,
+				"AND",
+				"AND(logical1, [logical2], ...)", 
+				"Returns TRUE if all of its arguments are TRUE", 
+				2, true));
+		logAry.add(new FormulaMetaInfo(LOGICAL,
+				"FALSE",
+				"FALSE( )",
+				"Returns the logical value FALSE",
+				0, false));
+		logAry.add(new FormulaMetaInfo(LOGICAL,
+				"IF",
+				"IF(logical_test, value_if_true, [value_if_false])",
+				"Specifies a logical test to perform",
+				3, false));
+		logAry.add(new FormulaMetaInfo(LOGICAL,
+				"NOT",
+				"NOT(logical)",
+				"Reverses the logic of its argument",
+				1, false));
+		logAry.add(new FormulaMetaInfo(LOGICAL,
+				"OR",
+				"OR(logical1,logical2,...)",
+				"Returns TRUE if any argument is TRUE",
+				2, true));
+		logAry.add(new FormulaMetaInfo(LOGICAL,
+				"TRUE",
+				"TRUE( )",
+				"Returns the logical value TRUE",
+				0, false));
+		
+		/* Infomation */
+		List<FormulaMetaInfo> infoAry = new LinkedList<FormulaMetaInfo>();
+		formulaInfos.put(INFOMATION, infoAry);
+		infoAry.add(new FormulaMetaInfo(INFOMATION,
+				"ISBLANK",
+				"ISBLANK(value)",
+				"Returns TRUE if the value is blank",
+				1, false));
+		infoAry.add(new FormulaMetaInfo(INFOMATION,
+				"ISLOGICAL",
+				"ISLOGICAL(value)",
+				"Returns TRUE if the value is a logical value",
+				1, false));
+		infoAry.add(new FormulaMetaInfo(INFOMATION,
+				"ISEVEN",
+				"ISEVEN(number)",
+				"Returns TRUE if the number is even",
+				1, false));
+		infoAry.add(new FormulaMetaInfo(INFOMATION,
+				"ISODD",
+				"ISODD(number)",
+				"Returns TRUE if the number is odd",
+				1, false));
+		infoAry.add(new FormulaMetaInfo(INFOMATION,
+				"N",
+				"N(value)",
+				"Returns a value converted to a number",
+				1, false));
+		infoAry.add(new FormulaMetaInfo(INFOMATION,
+				"NA",
+				"NA( )",
+				"Returns the error value #N/A",
+				0, false));
+		infoAry.add(new FormulaMetaInfo(INFOMATION,
+				"ISNUMBER",
+				"ISNUMBER(value)",
+				"Returns TRUE if the value is a number",
+				1, false));
+		infoAry.add(new FormulaMetaInfo(INFOMATION,
+				"ISTEXT",
+				"ISTEXT(value)",
+				"Returns TRUE if the value is text",
+				1, false));
+		infoAry.add(new FormulaMetaInfo(INFOMATION,		
+				"ISNONTEXT",
+				"ISNONTEXT(value)",
+				"Returns TRUE if the value is not text",
+				1, false));
+		infoAry.add(new FormulaMetaInfo(INFOMATION,	
+				"ISERR",
+				"ISERR(value)",
+				"Returns TRUE if the value is any error value except #N/A",
+				1, false));
+		infoAry.add(new FormulaMetaInfo(INFOMATION,	
+				"ISERROR",
+				"ISERROR(value)",
+				"Returns TRUE if the value is any error value",
+				1, false));
+		infoAry.add(new FormulaMetaInfo(INFOMATION,	
+				"ISNA",
+				"ISNA(value)",
+				"Returns TRUE if the value is the #N/A error value",
+				1, false));
+		infoAry.add(new FormulaMetaInfo(INFOMATION,	
+				"TYPE",
+				"TYPE(value)",
+				"Returns a number indicating the data type of a value",
+				1, false));
+		infoAry.add(new FormulaMetaInfo(INFOMATION,	
+				"ERROR.TYPE",
+				"ERROR.TYPE(error_val)",
+				"Returns a number corresponding to an error type",
+				1, false));
+		
+		/* Engineering */
+		List<FormulaMetaInfo> engAry = new LinkedList<FormulaMetaInfo>();
+		formulaInfos.put(ENGINEERING, engAry);
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"BESSELI",
+				"BESSELI(x, n)",
+				"Returns the modified Bessel function In(x)",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"BESSELJ",
+				"BESSELJ(x, n)",
+				"Returns the Bessel function Jn(x)",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"BESSELK",
+				"BESSELK(x, n)",
+				"Returns the modified Bessel function Kn(x)",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"BESSELY",
+				"BESSELY(x, n)",
+				"Returns the Bessel function Yn(x)",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"BIN2DEC",
+				"BIN2DEC(number)",
+				"Converts a binary number to decimal",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"BIN2HEX",
+				"BIN2HEX(number, places)",
+				"Converts a binary number to hexadecimal",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"BIN2OCT",
+				"BIN2OCT(number, places)",
+				"Converts a binary number to octal",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"COMPLEX",
+				"COMPLEX(real_num, i_num, suffix)",
+				"Converts real and imaginary coefficients into a complex number",
+				3, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"CONVERT",
+				"CONVERT(number, from_unit, to_unit)",
+				"Converts a number from one measurement system to another",
+				3, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"DEC2BIN",
+				"DEC2BIN(number, places)",
+				"Converts a decimal number to binary",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"DEC2HEX",
+				"DEC2HEX(number, places)",
+				"Converts a decimal number to hexadecimal",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"DEC2OCT",
+				"DEC2OCT(number, places)",
+				"Converts a decimal number to octal",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"DELTA",
+				"DELTA(number1, number2)",
+				"Tests whether two values are equal",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"ERF",
+				"ERF(lower_limit, upper_limit)",
+				"Returns the error function",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"ERFC",
+				"ERFC(x)",
+				"Returns the complementary error function",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"GESTEP",
+				"GESTEP(number, step)",
+				"Tests whether a number is greater than a threshold value",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"HEX2BIN",
+				"HEX2BIN(number, places)",
+				"Converts a hexadecimal number to binary",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"HEX2DEC",
+				"HEX2DEC(number)",
+				"Converts a hexadecimal number to decimal",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"HEX2OCT",
+				"HEX2OCT(number, places)",
+				"Converts a hexadecimal number to octal",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMABS",
+				"IMABS(inumber)",
+				"Returns the absolute value (modulus) of a complex number",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMAGINARY",
+				"IMAGINARY(inumber)",
+				"Returns the imaginary coefficient of a complex number",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMARGUMENT",
+				"IMARGUMENT(inumber)",
+				"Returns the argument theta, an angle expressed in radians",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMCONJUGATE",
+				"IMCONJUGATE(inumber)",
+				"Returns the complex conjugate of a complex number",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMCOS",
+				"IMCOS(inumber)",
+				"Returns the cosine of a complex number",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMDIV",
+				"IMDIV(inumber1, inumber2)",
+				"Returns the quotient of two complex numbers",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMEXP",
+				"IMEXP(inumber)",
+				"Returns the exponential of a complex number",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMLN",
+				"IMLN(inumber)",
+				"Returns the natural logarithm of a complex number",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMLOG10",
+				"IMLOG10(inumber)",
+				"Returns the base-10 logarithm of a complex number",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMLOG2",
+				"IMLOG2(inumber)",
+				"Returns the base-2 logarithm of a complex number",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMPOWER",
+				"IMPOWER(inumber, number)",
+				"Returns a complex number raised to an integer power",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMPRODUCT",
+				"IMPRODUCT(inumber1,inumber2,...)",
+				"Returns the product of complex numbers",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMREAL",
+				"IMREAL(inumber)",
+				"Returns the real coefficient of a complex number",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMSIN",
+				"IMSIN(inumber)",
+				"Returns the sine of a complex number",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMSQRT",
+				"IMSQRT(inumber)",
+				"Returns the square root of a complex number",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMSUB",
+				"IMSUB(inumber1, inumber2)",
+				"Returns the difference between two complex numbers",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"IMSUM",
+				"IMSUM(inumber1,inumber2,...)",
+				"Returns the sum of complex numbers",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"OCT2BIN",
+				"OCT2BIN(number, places)",
+				"Converts an octal number to binary",
+				2, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"OCT2DEC",
+				"OCT2DEC(number)",
+				"Converts an octal number to decimal",
+				1, false));
+		engAry.add(new FormulaMetaInfo(ENGINEERING,
+				"OCT2HEX",
+				"OCT2HEX(number, places)",
+				"Converts an octal number to hexadecimal",
+				2, false));
 	}
 	
 	public static LinkedHashMap<String, List<FormulaMetaInfo>> getFormulaInfos() {

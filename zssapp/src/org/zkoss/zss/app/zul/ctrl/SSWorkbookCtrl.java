@@ -17,12 +17,15 @@ package org.zkoss.zss.app.zul.ctrl;
 import org.zkoss.image.Image;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.util.media.Media;
+import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.cell.EditHelper;
 import org.zkoss.zss.app.event.ExportHelper;
 import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -194,4 +197,28 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		spreadsheet.setRowfreeze(rowfreeze);
 	}
 
+	public void insertFormula(String formula) {
+		Rect rect = spreadsheet.getSelection();
+		Range rng = Ranges.range(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getLeft());
+		try {
+			rng.setEditText(formula);
+		} catch (IllegalArgumentException ex) {
+			ex.printStackTrace();
+			//TODO: provide dialog to display message
+			throw new UiException("Argument is wrong, please modify argument");
+		}
+	}
+
+	public void addEventListener(String evtnm, EventListener listener) {
+		spreadsheet.addEventListener(evtnm, listener);
+	}
+	
+	public boolean removeEventListener(String evtnm, EventListener listener) {
+		return spreadsheet.removeEventListener(evtnm, listener);
+	}
+
+	public String getCurrentCellPosition() {
+		return (String)spreadsheet.getColumntitle(spreadsheet.getSelection().getLeft()) +
+			(String)spreadsheet.getRowtitle(spreadsheet.getSelection().getTop());
+	}
 }

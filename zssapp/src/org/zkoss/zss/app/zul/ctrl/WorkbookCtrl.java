@@ -15,6 +15,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.zul.ctrl;
 
 import org.zkoss.util.media.Media;
+import org.zkoss.zk.ui.event.EventListener;
 
 /**
  * @author Sam
@@ -31,6 +32,8 @@ public interface WorkbookCtrl {
 	public void insertSheet();
 	
 	public void insertImage(Media media);
+	
+	public void insertFormula(String formula);
 	
 	//TODO: use clip board interface, return  
 	public void cutSelection();
@@ -62,4 +65,10 @@ public interface WorkbookCtrl {
 	public void setRowFreeze(int rowfreeze);
 	
 	public void setColumnFreeze(int columnFreeze);
+	
+	public void addEventListener(String evtnm, EventListener listener);
+	
+	public boolean removeEventListener(String evtnm, EventListener listener);
+	
+	public String getCurrentCellPosition();
 }

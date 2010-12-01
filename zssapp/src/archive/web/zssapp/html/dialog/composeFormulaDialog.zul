@@ -4,11 +4,14 @@
 	width="480px" mode="overlapped" closable="true" position="center"
 	apply="org.zkoss.zss.app.ctrl.ComposeFormulaCtrl">
 		<div height="5px"></div>
-		<textbox id="composeFormulaTextbox" cols="50"/>
-		<div height="5px"></div>
-		<listbox id="argsListbox" rows="5"></listbox>
-		<label id="description" />
-		<button id="okBtn" image="~./zssapp/image/check.png"></button>
-		<div height="5px"></div>
+		<vlayout spacing="0.4em">
+			<textbox id="composeFormulaTextbox" cols="50"/>
+			<div height="5px"></div>
+			<listbox id="argsListbox" rows="5"></listbox>
+			<label id="description" />
+		</vlayout>
+		<div height="25px" style="margin: 0 0 5px 5px;">
+			<button id="okBtn" image="~./zssapp/image/check.png" mold="trendy" style="float:right"></button>
+		</div>
 	</window>
 </zk>

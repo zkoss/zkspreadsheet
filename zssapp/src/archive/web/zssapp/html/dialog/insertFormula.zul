@@ -1,4 +1,4 @@
-<window id="formulaWin" title="Formula" border="normal" width="440px" height="460px" 
+<window title="Formula" border="normal" width="440px" height="460px" 
 		visible="false" position="center" closable="true" apply="org.zkoss.zss.app.ctrl.InsertFormulaCtrl">
 <div style="margin:7px">
 	<hlayout spacing="0px" >

@@ -91,6 +91,10 @@ public class ViewMenu extends Menu implements IdSpace {
 			}
 		}
 	}
+	
+	public void onOpen$viewMenupopup() {
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
+	}
 
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
 		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());

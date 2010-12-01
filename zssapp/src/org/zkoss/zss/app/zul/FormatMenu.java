@@ -123,6 +123,10 @@ public class FormatMenu extends Menu implements IdSpace  {
 		});
 	}
 	
+	public void onOpen$formatMenupopup() {
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
+	}
+	
 	public void onClick$formatNumber() {
 		throw new UiException("format is not implement yet");
 	}

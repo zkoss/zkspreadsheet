@@ -6,8 +6,8 @@
 <div height="5px"></div>
 <hlayout>
 	<hlayout hflex="1">
-		<textbox id="searchTextbox" hflex="1"/>
-		<button id="searchBtn" image="~./zssapp/image/ui-search-field.png" mold="trendy"/>
+		<textbox id="searchTextbox" cols="30"/>
+		<button id="searchBtn" image="~./zssapp/image/ui-search-field.png" mold="trendy" tooltiptext="Search"/>
 	</hlayout>
 	<div width="5px"></div>
 	<hlayout hflex="1">	

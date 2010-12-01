@@ -63,6 +63,7 @@ import org.zkoss.zss.app.zul.ctrl.SSRectCellStyle;
 import org.zkoss.zss.app.zul.ctrl.SSWorkbookCtrl;
 import org.zkoss.zss.app.zul.ctrl.WorkbenchCtrl;
 import org.zkoss.zss.app.zul.ctrl.WorkspaceContext;
+import org.zkoss.zss.engine.event.SSDataEvent;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
@@ -292,6 +293,25 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 						EditHelper.clearCutOrCopy(spreadsheet);
 					}
 				});
+		
+		spreadsheet.getBook().subscribe(new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				if (event.getName() == SSDataEvent.ON_CONTENTS_CHANGE) {
+					Sheet seldSheet = spreadsheet.getSelectedSheet();
+					Rect seld =  spreadsheet.getSelection();
+					int row = seld.getTop();
+					int col = seld.getLeft();
+					Cell cell = Utils.getCell(seldSheet, row, col);
+					if (cell != null) {
+						DesktopCellStyleContext.getInstance(desktop).doTargetChange(
+							new SSRectCellStyle(cell, 
+									spreadsheet) );
+						
+						formulaEditor.setText(Ranges.range(seldSheet, row, col).getEditText());
+					}
+				}
+			}
+		});
 	}
 	public void onClick$exportToPDFBtn() {
 		ExportHelper.doExportToPDF(spreadsheet);
@@ -412,23 +432,9 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 					isMergeCell = isMergedCell(event.getRow(), event.getColumn(), event.getRow(), event.getColumn());
 					mergeCellBtn.setSclass(isMergeCell ? "clicked" : null);
 
-					 //TODO: not implement yet
-//					 if (isWrapText) {
-//					   wrapTextBtn.setClass("clicked"); }
-//					 else{
-//					   wrapTextBtn.setClass(null); 
-//					 }
-//
-//					// wrap text
-//					isWrapText = cs.getWrapText();
-//					if (isWrapText) {
-//						wrapTextBtn.setClass("clicked");
-//					}
-					
 					DesktopCellStyleContext.getInstance(desktop).doTargetChange(
 							new SSRectCellStyle(cell, 
 									spreadsheet) );
-					// FontStyle preFontStyle=format.getFontStyle();
 				}
 			}
 
@@ -568,10 +574,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 //				.getComponent("//p1/mainWin/fileExportWin");
 //		fileExportWin.setVisible(false);
 	}
-//
-//	public void onClick$importFile() {
-//		Executions.createComponents("/menus/file/importFile.zul", null, null);
-//	}
 
 	public void exportFile(String filename) {// current or other
 												// files(stack_level=0)
@@ -1107,7 +1109,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 
 	public void openCustomSortDialog() {
-		//TODO: use set visible, not detach window
 		CellHelper.createCustomSortDialog(spreadsheet, Zssapp.getInstance(spreadsheet));
 	}
 
@@ -1120,10 +1121,9 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 
 	public void openInsertFormulaDialog() {
-		Executions.createComponents(Consts._InsertFormulaDialog_zul, mainWin, null);
-		
-		//TODO: modify insert formula dialog
-		//Executions.createComponents(Consts._InsertFormulaDialog2_zul, mainWin, null);
+		//Executions.createComponents(Consts._InsertFormulaDialog_zul, mainWin, null);
+
+		Executions.createComponents(Consts._InsertFormulaDialog2_zul, mainWin, null);
 	}
 
 	public void openModifyRowHeightDialog() {
@@ -1131,22 +1131,11 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 
 	public void openPasteSpecialDialog() {
-		//Executions.createComponents(Consts._PasteSpecialDialog_zul, null, Zssapps.newSpreadsheetArg(spreadsheet));
 		Executions.createComponents(Consts._PasteSpecialDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
 	}
 
-	//TODO: don't use hard code here
 	public void toggleFormulaBar() {
-		Window win = (Window) mainWin.getFellow("formatNumberWin");
-		try {
-			// the set position only work at the second time?
-			win.setPosition("parent");
-			win.setLeft(event_x + "px");
-			win.setTop(event_y + "px");
-			win.doPopup();// Modal();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		onViewFormulaBar();
 	}
 
 	public void openComposeFormulaDialog(FormulaMetaInfo metainfo) {

@@ -40,7 +40,7 @@ public class FormulaEditor extends Textbox implements ZssappComponent{
 	private Cell currentEditcell;
 	
 	public FormulaEditor() {
-		
+		setCols(100);
 	}
 	
 	public void onChanging(InputEvent event) {
