@@ -128,7 +128,7 @@ public class FormatMenu extends Menu implements IdSpace  {
 	}
 	
 	public void onClick$formatNumber() {
-		throw new UiException("format is not implement yet");
+		DesktopWorkbenchContext.getInstance(getDesktop()).getWorkbenchCtrl().openFormatNumberDialog();
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {

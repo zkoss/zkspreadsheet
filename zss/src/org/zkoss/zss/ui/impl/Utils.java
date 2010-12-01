@@ -32,6 +32,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Color;
+import org.zkoss.poi.ss.usermodel.DataFormat;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
@@ -428,6 +429,31 @@ public class Utils {
 					context.getRange().setStyle(newStyle);
 				}
 			}});
+	}
+	
+	/**
+	 * Set format in selection range
+	 * @param sheet
+	 * @param rect
+	 * @param format
+	 */
+	public static void setDataFormat(Sheet sheet, Rect rect, final String format) {
+		visitCells(sheet, rect, new CellVisitor(){
+			@Override
+			public void handle(CellVisitorContext context) {
+				
+				short srcFormat = context.getFormatIndex();
+				
+				DataFormat dataFormat = context.getBook().createDataFormat();
+				short dstFormat = dataFormat.getFormat(format);
+				
+				if (srcFormat != dstFormat) {
+					CellStyle newStyle = context.cloneCellStyle();
+					newStyle.setDataFormat(dstFormat);
+					context.getRange().setStyle(newStyle);
+				}
+			}
+		});
 	}
 	
 	/**

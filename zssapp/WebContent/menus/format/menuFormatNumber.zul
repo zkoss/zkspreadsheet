@@ -1,4 +1,4 @@
-<window id="${arg.id}" title="Number Format" width="360px" height="520px" border="normal" visible="false" closable="true" position="center">
+<window title="Number Format" width="360px" height="520px" border="normal" visible="false" closable="true" position="center">
 	<div style="margin:7px">
 	<hlayout spacing="0px">
 		<vlayout>

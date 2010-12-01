@@ -21,6 +21,7 @@ ZK Spreadsheet 2.0.0
   194 ZK Spreadsheet Live support shift cell, entire row or column
   199 ZK Spreadsheet Live shall support wrap text.
   212 Cannot shift select left on merge cell
+  222 ZK Spreadsheet Live shall support number format
   
 *Bug 
   132 view ZK Spreadsheet Live index.zul cause NullPointerException
@@ -61,6 +62,7 @@ ZK Spreadsheet 2.0.0
   211 Shift + arrow key selection does not respect merge cell.
   213 ZK Spreadsheet Live compalins "Not unique in ID space <Window mainWin>: formulaWin"
   215 ZK Spreadsheet Live View->Formula Bar complains "Fellow component not found: formatNumberWin"
+  
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

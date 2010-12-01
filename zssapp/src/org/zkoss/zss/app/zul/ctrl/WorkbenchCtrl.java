@@ -38,6 +38,8 @@ public interface WorkbenchCtrl {
 	
 	public void openComposeFormulaDialog(FormulaMetaInfo metainfo);
 	
+	public void openFormatNumberDialog();
+	
 	public void updateGridlinesCheckbox();
 
 }

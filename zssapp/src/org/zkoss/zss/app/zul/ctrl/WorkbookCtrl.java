@@ -71,4 +71,6 @@ public interface WorkbookCtrl {
 	public boolean removeEventListener(String evtnm, EventListener listener);
 	
 	public String getCurrentCellPosition();
+	
+	public void setDataFormat(String format);
 }

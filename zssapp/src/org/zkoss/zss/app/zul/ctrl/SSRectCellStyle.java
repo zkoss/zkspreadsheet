@@ -70,15 +70,16 @@ public class SSRectCellStyle implements CellStyle {
 		return (short)(size * 20);
 	}
 	private void setProperRowHeightByFontSize(Sheet sheet, Rect rect, int size) {	
-		int seldFontHeight = getFontHeight(size);
 		int tRow = rect.getTop();
 		int bRow = rect.getBottom();
 		int col = rect.getLeft();
 		
 		for (int i = tRow; i <= bRow; i++) {
-			//Note. the book helper return measured in twips (1/20 of  a point)
-			if (seldFontHeight > BookHelper.getRowHeight(sheet, i)) {
-				Ranges.range(sheet, i, col).setRowHeight(size + 10);
+			//Note. add extra padding height: 4
+			//this implement doesn't suit for wrap text, don't know the height in client side,
+			//the better solution shall provide by client side, not server side
+			if ((size + 4) > (Utils.pxToPoint(Utils.twipToPx(BookHelper.getRowHeight(sheet, i))))) {
+				Ranges.range(sheet, i, col).setRowHeight(size + 4);
 			}
 		}
 	}

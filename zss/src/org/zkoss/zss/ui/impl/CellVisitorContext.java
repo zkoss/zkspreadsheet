@@ -171,4 +171,8 @@ public class CellVisitorContext {
 	public boolean isWrapText() {
 		return getCellStyle().getWrapText();
 	}
+	
+	public short getFormatIndex() {
+		return getCellStyle().getDataFormat();
+	}
 }

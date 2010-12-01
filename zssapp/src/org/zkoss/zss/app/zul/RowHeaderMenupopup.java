@@ -17,7 +17,6 @@ package org.zkoss.zss.app.zul;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
-import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zul.Menuitem;
@@ -88,7 +87,7 @@ public class RowHeaderMenupopup extends Menupopup implements IdSpace {
 	}
 	
 	public void onClick$numberFormat() {
-		throw new UiException("format not support yet");
+		getDesktopWorkbenchContext().getWorkbenchCtrl().openFormatNumberDialog();
 	}
 	
 	public void onClick$hide() {

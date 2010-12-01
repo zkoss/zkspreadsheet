@@ -88,8 +88,7 @@ public class ColumnHeaderMenupopup  extends Menupopup implements IdSpace {
 	}
 	
 	public void onClick$numberFormat() {
-		//TODO
-		throw new UiException("not implement yet");
+		getDesktopWorkbookContext().getWorkbenchCtrl().openFormatNumberDialog();
 	}
 	
 	public void onClick$hide() {

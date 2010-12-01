@@ -29,6 +29,7 @@ import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zssex.ui.widget.ImageWidget;
 import org.zkoss.zul.Messagebox;
@@ -220,5 +221,10 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	public String getCurrentCellPosition() {
 		return (String)spreadsheet.getColumntitle(spreadsheet.getSelection().getLeft()) +
 			(String)spreadsheet.getRowtitle(spreadsheet.getSelection().getTop());
+	}
+
+	public void setDataFormat(String format) {
+		Utils.setDataFormat(spreadsheet.getSelectedSheet(), 
+				spreadsheet.getSelection(), format);
 	}
 }

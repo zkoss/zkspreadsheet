@@ -120,7 +120,8 @@
 								</attribute>
 								<!-- <menuitem label="${c:l('help.center')}" forward="onNotImplement()" src="/img/music.gif"/>-->
 								<menuitem label="${c:l('help.cheatsheet')}" forward="onHelpCheatsheet" />
-								<menuitem label="${c:l('help.forum')}" forward="onHelpForum" href="http://www.zkoss.org/forum/" target="_blank"/>
+								<menuitem label="${c:l('help.forum')}" href="http://www.zkoss.org/forum/" target="_blank"/>
+								<menuitem label="Book" href="http://books.zkoss.org/wiki/ZK_Spreadsheet_Essentials" target="_blank"/>
 								<menuitem label="${c:l('help.smalltalk')}" href="http://books.zkoss.org/wiki/Small_Talks/2010/November/New_Features_of_ZK_Spreadsheet_2.0.0" target="_blank"/>
 								<!-- <menuitem label="${c:l('help.about')}" forward="onNotImplement()" src="/img/music.gif"/>-->
 							</menupopup>

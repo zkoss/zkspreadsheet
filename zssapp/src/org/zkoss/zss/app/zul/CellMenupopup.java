@@ -17,8 +17,6 @@ package org.zkoss.zss.app.zul;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
-import org.zkoss.zk.ui.UiException;
-import org.zkoss.zk.ui.event.MouseEvent;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zul.Menuitem;
@@ -147,13 +145,11 @@ public class CellMenupopup extends Menupopup implements IdSpace {
 	}
 	
 	public void onClick$formula() {
-		//open formula
 		getDesktopWorkbookContext().getWorkbenchCtrl().openInsertFormulaDialog();
 	}
 
 	public void onClick$format() {
-		throw new UiException("not implement yet");
-		//DesktopSheetContext.getInstance(getDesktop()).openFormatDialog();
+		getDesktopWorkbookContext().getWorkbenchCtrl().openFormatNumberDialog();
 	}
 	
 	public void onClick$hyperlink() {

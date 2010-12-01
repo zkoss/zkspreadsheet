@@ -115,8 +115,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	Cell currentEditcell;
 
 	int chartKey = 0;
-	
-	FormatNumberHelper fnh;
+
 	RangeHelper rangeh;
 
 	Window mainWin;
@@ -176,8 +175,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		initZssappComponents();
 		
 		init();
-
-		fnh = new FormatNumberHelper(spreadsheet);
 		rangeh = new RangeHelper(spreadsheet);
 
 		DesktopWorkbenchContext.getInstance(desktop).fireSheetOpen(spreadsheet.getSelectedSheet() != null);
@@ -823,9 +820,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		}
 	}
 
-	public void onFormatOK(ForwardEvent event) {
-		fnh.onOK();
-	}
+
 
 	public void onRange(ForwardEvent event) {
 		rangeh.dispatcher((String) event.getData());
@@ -1122,7 +1117,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 	public void openInsertFormulaDialog() {
 		//Executions.createComponents(Consts._InsertFormulaDialog_zul, mainWin, null);
-
 		Executions.createComponents(Consts._InsertFormulaDialog2_zul, mainWin, null);
 	}
 
@@ -1142,5 +1136,9 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		HashMap arg = new HashMap();
 		arg.put(Consts.KEY_ARG_FORMULA_METAINFO, metainfo);
 		Executions.createComponents(Consts._ComposeFormulaDialog_zul, mainWin, arg);
+	}
+
+	public void openFormatNumberDialog() {
+		Executions.createComponents(Consts._FormatNumberDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
 	}
 }
