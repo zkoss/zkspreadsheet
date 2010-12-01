@@ -121,7 +121,7 @@
 								<!-- <menuitem label="${c:l('help.center')}" forward="onNotImplement()" src="/img/music.gif"/>-->
 								<menuitem label="${c:l('help.cheatsheet')}" forward="onHelpCheatsheet" />
 								<menuitem label="${c:l('help.forum')}" forward="onHelpForum" href="http://www.zkoss.org/forum/" target="_blank"/>
-								<menuitem label="${c:l('help.smalltalk')}" href="http://docs.zkoss.org/wiki/A_Preview_Of_ZK_Spreadsheet_1.0" target="_blank"/>
+								<menuitem label="${c:l('help.smalltalk')}" href="http://books.zkoss.org/wiki/Small_Talks/2010/November/New_Features_of_ZK_Spreadsheet_2.0.0" target="_blank"/>
 								<!-- <menuitem label="${c:l('help.about')}" forward="onNotImplement()" src="/img/music.gif"/>-->
 							</menupopup>
                         </menu>
@@ -132,7 +132,7 @@
 				<center id="fastIconBtn" flex="true" border="0" style="background: #F5F5F5; border-bottom: 1px solid #D8D8D8;">
 					<hlayout spacing="0.4em" height="30px">
 						<toolbarbutton id="print"  src="/img/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>
-						<toolbarbutton id="exportToPDFBtn" src="~./zssapp/image/document-pdf.png"/>
+						<toolbarbutton id="exportToPDFBtn" src="~./zssapp/image/document-pdf.png" tooltiptext="${c:l('export.pdf')}"/>
 						<toolbarbutton id="undo"  src="/img/arrow-curve-180-left.png" 	forward="onClick=onEditUndo" tooltiptext="${c:l('edit.undo')}"/>
 						<toolbarbutton id="redo"  src="/img/arrow-curve.png"	forward="onClick=onEditRedo" tooltiptext="${c:l('edit.redo')}"/>
 						<div sclass="toolbarSeparator"></div>
