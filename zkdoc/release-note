@@ -64,6 +64,7 @@ ZK Spreadsheet 2.0.0
   213 ZK Spreadsheet Live compalins "Not unique in ID space <Window mainWin>: formulaWin"
   215 ZK Spreadsheet Live View->Formula Bar complains "Fellow component not found: formatNumberWin"
   217 ZK Spreadsheet Live delete sheet not working
+  219 ZK Spreadsheet Live rename Sheet, current tab move to 1st sheet tab
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

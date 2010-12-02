@@ -4,7 +4,7 @@ mode="modal" closable="true" position="center" apply="org.zkoss.zss.app.ctrl.Ren
 		Sheet name:
 		<textbox id="sheetNameTB" />
 	</hlayout>
-	<hlayout>
+	<div height="25px" style="float:right;">
 		<button id="confirmRenameBtn" label="OK" mold="trendy"></button>
-	</hlayout>
+	</div>
 </window>

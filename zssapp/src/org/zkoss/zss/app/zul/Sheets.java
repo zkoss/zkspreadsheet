@@ -106,6 +106,9 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	 * Redraw sheet names of spreadsheet
 	 */
 	public void redraw() {
+		 final int seldIndex = tabbox.getSelectedTab() != null ?
+				 tabbox.getSelectedTab().getIndex() : -1;
+		
 		tabs.getChildren().clear();
 
 		Utils.visitSheets(ss.getBook(), new SheetVisitor(){
@@ -115,17 +118,22 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 				tab.addEventListener(org.zkoss.zk.ui.event.Events.ON_RIGHT_CLICK, new EventListener() {
 					public void onEvent(Event event) throws Exception {						
 						
-						if (tabbox.getSelectedTab().getLabel() != tab.getLabel()) {
-							tabbox.setSelectedTab(tab);
-							getDesktopWorkbenchContext().getWorkbookCtrl().setSelectedSheet(tab.getLabel());
-							getDesktopWorkbenchContext().fireSheetChanged();
-						}
+						if (tabbox.getSelectedTab().getLabel() != tab.getLabel())
+							setSelectedTab(tab);
 						MouseEvent evt = (MouseEvent)event;
 						sheetContextMenu.open(evt.getPageX(), evt.getPageY());
 					}
 				});
 				tab.setParent(tabs);
+				if (seldIndex == tab.getIndex())
+					setSelectedTab(tab);
 			}});
+	}
+
+	private void setSelectedTab(Tab tab) {
+		tabbox.setSelectedTab(tab);
+		getDesktopWorkbenchContext().getWorkbookCtrl().setSelectedSheet(tab.getLabel());
+		getDesktopWorkbenchContext().fireSheetChanged();
 	}
 	
 	/**

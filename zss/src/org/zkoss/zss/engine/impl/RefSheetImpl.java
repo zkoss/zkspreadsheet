@@ -58,7 +58,7 @@ public class RefSheetImpl implements RefSheet {
 	private final IndexArrayList _lColIndex; //index of Ref left column
 	private final IndexArrayList _rColIndex; //index of Ref right column
 	private final RefBook _ownerBook;
-	private final String _sheetName;
+	private String _sheetName;
 	
 	public RefSheetImpl(RefBook ownerBook, String sheetName) {
 		_ownerBook = ownerBook;
@@ -68,6 +68,10 @@ public class RefSheetImpl implements RefSheet {
 		_bRowIndex = new IndexArrayList();
 		_lColIndex = new IndexArrayList();
 		_rColIndex = new IndexArrayList();
+	}
+	
+	/*package*/void setSheetName(String newsheetname) {
+		_sheetName = newsheetname;
 	}
 	
 	@Override

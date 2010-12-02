@@ -129,6 +129,7 @@ public class RefBookImpl implements RefBook {
 	public void setSheetName(String oldsheetname, String newsheetname) {
 		final RefSheet sheet = _sheets.remove(oldsheetname);
 		if (sheet != null) {
+			((RefSheetImpl)sheet).setSheetName(newsheetname);
 			_sheets.put(newsheetname, sheet);
 		}
 	}

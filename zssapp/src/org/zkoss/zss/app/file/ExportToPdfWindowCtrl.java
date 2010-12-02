@@ -73,7 +73,6 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	
 	/**
 	 * Indicate whether include gridlines or not.
-	 * <p> Default: Include gridlines.
 	 */
 	Checkbox noGridlines;
 	
@@ -89,12 +88,11 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 		//TODO: use event, don't send arg
 		ss = checkNotNull(Zssapps.getSpreadsheetFromArg(), "Spreadsheet is null");
 		
-		//set portrait as default 
-		//orientation.setSelectedItem(portrait);
 		loadPrintSetting();
 	}
 	
 	private void loadPrintSetting() {
+		noGridlines.setChecked(!ss.getSelectedSheet().isPrintGridlines());
 		range.setSelectedItem(currSheet);
 		loadOrientationSetting();
 	}

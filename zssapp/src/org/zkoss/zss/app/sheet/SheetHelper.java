@@ -16,6 +16,7 @@ package org.zkoss.zss.app.sheet;
 
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Messagebox;
@@ -113,6 +114,7 @@ public final class SheetHelper {
 				return -1;
 			final int index = book.getSheetIndex(selsheet);
 			book.setSheetName(index, name);
+			BookHelper.getOrCreateRefBook(book).setSheetName(selsheet.getSheetName(), name);
 			return index;
 		}
 		return -1;
