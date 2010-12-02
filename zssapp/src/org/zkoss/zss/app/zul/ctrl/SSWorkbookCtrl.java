@@ -71,23 +71,24 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	public void insertColumnLeft() {
 		Rect rect = spreadsheet.getSelection();
 		CellHelper.shiftEntireColumnRight(spreadsheet.getSelectedSheet(), 
-				rect.getTop(), rect.getLeft());
+				rect.getLeft(), rect.getRight());
 	}
 
 	public void deleteColumn() {
 		Rect rect = spreadsheet.getSelection();
-		CellHelper.shiftEntireColumnLeft(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getLeft());
+		CellHelper.shiftEntireColumnLeft(spreadsheet.getSelectedSheet(), 
+				rect.getLeft(), rect.getRight());
 	}
 
 	public void insertRowAbove() {
 		CellHelper.shiftEntireRowDown(spreadsheet.getSelectedSheet(), 
 				spreadsheet.getSelection().getTop(), 
-				spreadsheet.getSelection().getLeft());
+				spreadsheet.getSelection().getBottom());
 	}
 
 	public void deleteRow() {
 		Rect rect = spreadsheet.getSelection();
-		CellHelper.shiftEntireRowUp(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getLeft());
+		CellHelper.shiftEntireRowUp(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getBottom());
 	}
 
 
@@ -155,24 +156,16 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		
 		switch (direction) {
 		case DesktopWorkbenchContext.SHIFT_CELL_UP:
-			CellHelper.shiftCellUp(sheet, 
-					rect.getTop(), 
-					rect.getLeft());
+			CellHelper.shiftCellUp(sheet, rect); 
 			break;
 		case DesktopWorkbenchContext.SHIFT_CELL_RIGHT:
-			CellHelper.shiftCellRight(sheet, 
-					rect.getTop(), 
-					rect.getLeft());
+			CellHelper.shiftCellRight(sheet, rect);
 			break;
 		case DesktopWorkbenchContext.SHIFT_CELL_DOWN:
-			CellHelper.shiftCellDown(sheet, 
-					rect.getTop(), 
-					rect.getLeft());
+			CellHelper.shiftCellDown(sheet, rect); 
 			break;
 		case DesktopWorkbenchContext.SHIFT_CELL_LEFT:
-			CellHelper.shiftCellLeft(sheet, 
-					rect.getTop(), 
-					rect.getLeft());
+			CellHelper.shiftCellLeft(sheet, rect); 
 			break;
 		}
 	}

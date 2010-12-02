@@ -151,14 +151,14 @@ public interface Range {
 	
 	/**
 	 * Insert this Range. 
-	 * @param shift shiftDown or shiftToRight
-	 * @param copyOrigin from where to copy the format to the insert area(FORMAT_LEFTABOVE/FORMAT_RIGHTBELOW)
+	 * @param {@link SHIFT_DEFAULT}, {{@link #SHIFT_DOWN}, or {@link #SHIFT_RIGHT}.
+	 * @param copyOrigin from where to copy the format to the insert area({@link #FORMAT_LEFTABOVE} /{@link #FORMAT_RIGHTBELOW})
 	 */
 	public void insert(int shift, int copyOrigin);
 	
 	/**
 	 * Delete this Range. 
-	 * @param shift shiftUp or shiftToLeft
+	 * @param {@link SHIFT_DEFAULT}, {{@link #SHIFT_UP}, or {@link #SHIFT_LEFT}.
 	 */
 	public void delete(int shift);
 

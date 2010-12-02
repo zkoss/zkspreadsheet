@@ -23,7 +23,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 //import org.zkoss.zss.model.Sheet;
 /**
- * A class from handle event which about cell
+ * Event regarding a cell in a sheet.
  * @author Dennis.Chen
  */
 public class CellEvent extends Event{

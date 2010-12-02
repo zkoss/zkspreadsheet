@@ -109,6 +109,7 @@ import org.zkoss.zss.ui.au.out.AuRemoveRowColumn;
 import org.zkoss.zss.ui.au.out.AuRetrieveFocus;
 import org.zkoss.zss.ui.au.out.AuSelection;
 import org.zkoss.zss.ui.event.CellEvent;
+import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HyperlinkEvent;
 import org.zkoss.zss.ui.event.StartEditingEvent;
@@ -543,24 +544,22 @@ public class Spreadsheet extends XulElement {
 	}
 
 	/**
-	 * Returns the maximum number of rows of this spread sheet. you can assign
-	 * new number by calling {@link #setMaxrows(int)}.<br/>
-	 * If you do some operation on model, it might increase/decrease the maximum number
-	 * of rows automatically such as insert/delete rows into/from the sheet.
+	 * Returns the maximum visible number of rows of this spreadsheet. You can assign
+	 * new number by calling {@link #setMaxrows(int)}.
 	 * 
-	 * @return the maximum number of rows.
+	 * @return the maximum visible number of rows.
 	 */
 	public int getMaxrows() {
 		return _maxRows;
 	}
 
 	/**
-	 * Sets the maximum number of rows of this spread sheet. For example, if you set
-	 * to 40, which means it allow row 0 to 39. the minimal value of max number of rows
+	 * Sets the maximum visible number of rows of this spreadsheet. For example, if you set
+	 * this parameter to 40, it will allow showing only row 0 to 39. The minimal value of max number of rows
 	 * must large than 0; <br/>
 	 * Default : 40.
 	 * 
-	 * @param maxrows  the maximum number of rows
+	 * @param maxrows  the maximum visible number of rows
 	 */
 	public void setMaxrows(int maxrows) {
 		if (maxrows < 1) {
@@ -586,23 +585,21 @@ public class Spreadsheet extends XulElement {
 	}
 	
 	/**
-	 * Returns the maximum number of columns of this spreadsheet. you can assign
-	 * new numbers by calling {@link #setMaxcolumns(int)}.<br/>
-	 * If you do some operation on model will increase/decrease maxcolumn
-	 * automatically, such as insert/delete columns into/from the sheet.
+	 * Returns the maximum visible number of columns of this spreadsheet. You can assign
+	 * new numbers by calling {@link #setMaxcolumns(int)}.
 	 * 
-	 * @return the maximum column number
+	 * @return the maximum visible number of columns 
 	 */
 	public int getMaxcolumns() {
 		return _maxColumns;
 	}
 
 	/**
-	 * Sets the maximum number of columns of this spread sheet. for example, if you
-	 * set to 40, which means it allow column 0 to 39. the minimal value of
+	 * Sets the maximum visible number of columns of this spreadsheet. For example, if you
+	 * set this parameter to 40, it will allow showing only column 0 to column 39. the minimal value of
 	 * max number of columns must large than 0;
 	 * 
-	 * @param maxcols  the maximum column
+	 * @param maxcols  the maximum visible number of columns
 	 */
 	public void setMaxcolumns(int maxcols) {
 		if (maxcols < 1) {
@@ -1441,14 +1438,14 @@ public class Spreadsheet extends XulElement {
 			final int left = rng.getLeftCol();
 			final int top = rng.getTopRow();
 			final int right = rng.getRightCol();
-			final int bottom = rng.getBottomRow();
+			int bottom = rng.getBottomRow();
 			updateWidget(sheet, left, top, right, bottom);
 			updateCell(sheet, left, top, right, bottom);
-			for (int r = top; r <= bottom; ++r) {
-				for(int c = left; c <= right; ++c) {
-					org.zkoss.zk.ui.event.Events.postEvent(new CellEvent(Events.ON_CELL_CHANGE, Spreadsheet.this, sheet, r, c));
-				}
+			final int lastrow = sheet.getLastRowNum();
+			if (bottom > lastrow) {
+				bottom = lastrow;
 			}
+			org.zkoss.zk.ui.event.Events.postEvent(new CellSelectionEvent(Events.ON_CELL_CHANGE, Spreadsheet.this, sheet, CellSelectionEvent.SELECT_CELLS, left, top, right,  bottom));
 		}
 		private void onRangeInsert(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -1658,11 +1655,53 @@ public class Spreadsheet extends XulElement {
 		if (!sheetId.equals(this.getSelectedSheetId()))
 			return;
 		left = left > 0 ? left - 1 : 0;// for border, when update a range, we
-		// should also update the left,top +1 part
+		// should also update the left - 1, top - 1 part
 		top = top > 0 ? top - 1 : 0;
+		
+		final int loadLeft = _loadedRect.getLeft();
+		final int loadTop = _loadedRect.getTop();
+		final int loadRight = _loadedRect.getRight();
+		final int loadBottom = _loadedRect.getBottom();
+		
+		final int frRow = getRowfreeze();
+		final int frCol = getColumnfreeze();
+		
+		final int frTop = top <= frRow ? top : -1;
+		final int frBottom = frRow;
+		final int frLeft = left <= frCol ? left : -1;
+		final int frRight = frCol;
+		
+		if (loadLeft > left) {
+			left = loadLeft;
+		}
+		if (loadRight < right) {
+			right = loadRight;
+		}
+		if (loadTop > top) {
+			top = loadTop;
+		}
+		if (loadBottom < bottom) {
+			bottom = loadBottom; 
+		}
+		
+		//row freeze part
+		if (frTop >= 0 && frTop <= frBottom && left >= 0 && left <= right) { 
+			responseUpdateCell(sheet, sheetId, left, frTop, right, frBottom);
+		}
+		//column freeze part
+		if (frLeft >= 0 && frLeft <= frRight && top >= 0 && top <= bottom) {
+			responseUpdateCell(sheet, sheetId, frLeft, top, frRight, bottom);
+		}
+		//loaded rect
+		if (top >= 0 && top <= bottom && left >= 0 && left <= right) {
+			responseUpdateCell(sheet, sheetId, left, top, right, bottom);
+		}
+	}
+	
+	private void responseUpdateCell(Sheet sheet, String sheetId, int left, int top, int right, int bottom) {
 		int row, col;
-		for (int i = left; i <= right; i++) {
-			for (int j = top; j <= bottom; j++) {
+		for (int j = top; j <= bottom; j++) {
+			for (int i = left; i <= right; i++) {
 				row = j;
 				col = i;
 
@@ -2146,7 +2185,7 @@ public class Spreadsheet extends XulElement {
 					.getColumnPositionHelper(sheet);
 
 			colHelper.shiftMeta(col, size);
-			_maxColumns += size;
+			//_maxColumns += size;
 			int cf = getColumnfreeze();
 			if (cf >= col) {
 				_colFreeze += size;
@@ -2216,7 +2255,7 @@ public class Spreadsheet extends XulElement {
 
 			HeaderPositionHelper rowHelper = Spreadsheet.this.getRowPositionHelper(sheet);
 			rowHelper.shiftMeta(row, size);
-			_maxRows += size;
+			//_maxRows += size;
 			int rf = getRowfreeze();
 			if (rf >= row) {
 				_rowFreeze += size;
@@ -2285,7 +2324,7 @@ public class Spreadsheet extends XulElement {
 					.getColumnPositionHelper(sheet);
 			colHelper.unshiftMeta(col, size);
 
-			_maxColumns -= size;
+			//_maxColumns -= size;
 			int cf = getColumnfreeze();
 			if (cf > -1 && col <= cf) {
 				if (col + size > cf) {
@@ -2351,7 +2390,7 @@ public class Spreadsheet extends XulElement {
 			HeaderPositionHelper rowHelper = Spreadsheet.this.getRowPositionHelper(sheet);
 			rowHelper.unshiftMeta(row, size);
 
-			_maxRows -= size;
+//			_maxRows -= size;
 			int rf = getRowfreeze();
 			if (rf > -1 && row <= rf) {
 				if (row + size > rf) {
@@ -2410,7 +2449,8 @@ public class Spreadsheet extends XulElement {
 
 				updateMergeCell0(sheet, rect, "remove");
 			}
-			updateCell(sheet, left > 0 ? left - 1 : 0, top > 1 ? top - 1 : 0, right + 1, bottom + 1);
+			//updateCell(sheet, left > 0 ? left - 1 : 0, top > 1 ? top - 1 : 0, right + 1, bottom + 1);
+			updateCell(sheet, left, top, right, bottom);
 		}
 
 		private void updateMergeCell0(Sheet sheet, MergedRect block, String type) {
@@ -2457,8 +2497,8 @@ public class Spreadsheet extends XulElement {
 				log.debug("add merge:" + rect);
 				updateMergeCell0(sheet, rect, "add");
 			}
-			updateCell(sheet, left > 0 ? left - 1 : 0, top > 1 ? top - 1 : 0, right + 1, bottom + 1);
-
+//			updateCell(sheet, left > 0 ? left - 1 : 0, top > 1 ? top - 1 : 0, right + 1, bottom + 1);
+			updateCell(sheet, left, top, right, bottom);
 		}
 
 		//in pixel

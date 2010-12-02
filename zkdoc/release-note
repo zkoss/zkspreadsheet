@@ -28,6 +28,7 @@ ZK Spreadsheet 2.0.0
   139 "Unexpected ptg class" RuntimeException when loading Excel file with special formula
   144 copy from a cell to a range
   146 selected range should stay emphasised when click menubutton
+  148 Can't delete row in the bottom
   149 change size of multi-column
   150 change size of multi-row
   155 source region of copy get highlighted in different sheet
@@ -67,6 +68,8 @@ ZK Spreadsheet 2.0.0
   219 ZK Spreadsheet Live rename Sheet, current tab move to 1st sheet tab
   220 ZK Spreadsheet Live Formula function selection dialog title is not correct
   221 ZK Spreadsheet Live NPE if leave Insert Function Dialog without select an item
+  223 Insert/delete row/column to book shall NOT affect maxrows and maxcolumns of the Spreadsheet
+  224 Select a range to delete but only left-top cell removed
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

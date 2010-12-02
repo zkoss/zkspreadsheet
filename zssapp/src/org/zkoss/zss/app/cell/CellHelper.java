@@ -110,74 +110,59 @@ public final class CellHelper {
 	}
 	
 	/**
-	 * Delete current cell and shift cells up
-	 * @param cell
+	 * Delete current selection area and shift cells below the selection area up
+	 * @param Sheet the current sheet
+	 * @param rect the selection rectangle
 	 */
-	public static void shiftCellUp(Sheet sheet, int rowIndex, int colIndex) {
-		final Range rng = Ranges.range(sheet, 
-				rowIndex, 
-				colIndex);
+	public static void shiftCellUp(Sheet sheet, Rect rect) {
+		final Range rng = Ranges.range(sheet, rect.getTop(), rect.getLeft(), rect.getBottom(), rect.getRight());
 		rng.delete(Range.SHIFT_UP);
 	}
 	
 	/**
 	 * Insert a new cell and shift cells right
-	 * @param cell
+	 * @param Sheet the current sheet
+	 * @param rect the selection rectangle
 	 */
-	public static void shiftCellRight(Sheet sheet, int rowIndex, int colIndex) {
-		final Range rng = Ranges.range(sheet, 
-				rowIndex, 
-				colIndex);
+	public static void shiftCellRight(Sheet sheet, Rect rect) {
+		final Range rng = Ranges.range(sheet, rect.getTop(), rect.getLeft(), rect.getBottom(), rect.getRight());
 		rng.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
 	}
 	
 	/**
 	 * Insert a new cell and shift original cells down
+	 * @param Sheet the current sheet
+	 * @param rect the selection rectangle
 	 */
-	public static void shiftCellDown(Sheet sheet, int rowIndex, int colIndex) {
-		final Range rng = Ranges.range(sheet, 
-				rowIndex, 
-				colIndex);
+	public static void shiftCellDown(Sheet sheet, Rect rect) {
+		final Range rng = Ranges.range(sheet, rect.getTop(), rect.getLeft(), rect.getBottom(), rect.getRight());
 		rng.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
 	}
 	
 	/**
 	 * Delete current cell and shift cells up beside it.
-	 * @param cell
+	 * @param Sheet the current sheet
+	 * @param rect the selection rectangle
 	 */
-	public static void shiftCellLeft(Sheet sheet, int rowIndex, int colIndex) {
-		final Range rng = Ranges.range(sheet, 
-				rowIndex, 
-				colIndex);
+	public static void shiftCellLeft(Sheet sheet, Rect rect) {
+		final Range rng = Ranges.range(sheet, rect.getTop(), rect.getLeft(), rect.getBottom(), rect.getRight());
 		rng.delete(Range.SHIFT_LEFT);
 	}
 	
-	public static void shiftEntireRowDown(Sheet sheet, int rowIndex, int colIndex) {
-		Row row = sheet.getRow(rowIndex);
-		int lCol = row.getFirstCellNum();
-		int rCol  = row.getLastCellNum();
-		Ranges.range(sheet, rowIndex, lCol, rowIndex, rCol).insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
+	public static void shiftEntireRowDown(Sheet sheet, int top, int bottom) {
+		Ranges.range(sheet, top, 0, bottom, 0).getRows().insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
 	}
 	
-	public static void shiftEntireRowUp(Sheet sheet, int rowIndex, int colIndex) {
-		
-		Row row = sheet.getRow(rowIndex);
-		int lCol = row.getFirstCellNum();
-		int rCol  = row.getLastCellNum();
-		Range rng = Ranges.range(sheet, rowIndex, lCol, rowIndex, rCol);
-		rng.delete(Range.SHIFT_UP);
+	public static void shiftEntireRowUp(Sheet sheet, int top, int bottom) {
+		Ranges.range(sheet, top, 0, bottom, 0).getRows().delete(Range.SHIFT_UP);
 	}
 
-	public static void shiftEntireColumnRight(Sheet sheet, int rowIndex, int colIndex) {
-		int tRow = sheet.getFirstRowNum();
-		int bRow = sheet.getPhysicalNumberOfRows();
-		Ranges.range(sheet, tRow, colIndex, bRow, colIndex).insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
+	public static void shiftEntireColumnRight(Sheet sheet, int left, int right) {
+		Ranges.range(sheet, 0, left, 0, right).getColumns().insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
 	}
 	
-	public static void shiftEntireColumnLeft(Sheet sheet, int rowIndex, int colIndex) {
-		int tRow = sheet.getFirstRowNum();
-		int bRow = sheet.getPhysicalNumberOfRows();
-		Ranges.range(sheet, tRow, colIndex, bRow, colIndex).delete(Range.SHIFT_LEFT);
+	public static void shiftEntireColumnLeft(Sheet sheet, int left, int right) {
+		Ranges.range(sheet, 0, left, 0, right).getColumns().delete(Range.SHIFT_LEFT);
 	}
 	
 	
