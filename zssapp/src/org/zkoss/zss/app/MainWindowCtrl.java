@@ -217,6 +217,11 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
 			}
 		});
+		workbenchContext.addEventListener(Consts.ON_SHEET_CONTENTS_CHANGED,  new EventListener(){
+			public void onEvent(Event event) throws Exception {
+				onContentsChanged();
+			}}
+		);
 		//TODO: remove to WorkbookCtrl
 		workbenchContext.addEventListener(Consts.ON_SHEET_MERGE_CELL, new EventListener() {
 			public void onEvent(Event event) throws Exception {
@@ -299,21 +304,24 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		spreadsheet.getBook().subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				if (event.getName() == SSDataEvent.ON_CONTENTS_CHANGE) {
-					Sheet seldSheet = spreadsheet.getSelectedSheet();
-					Rect seld =  spreadsheet.getSelection();
-					int row = seld.getTop();
-					int col = seld.getLeft();
-					Cell cell = Utils.getCell(seldSheet, row, col);
-					if (cell != null) {
-						DesktopCellStyleContext.getInstance(desktop).doTargetChange(
-							new SSRectCellStyle(cell, 
-									spreadsheet) );
-						
-						formulaEditor.setText(Ranges.range(seldSheet, row, col).getEditText());
-					}
+					onContentsChanged();
 				}
 			}
 		});
+	}
+	private void onContentsChanged() {
+		Sheet seldSheet = spreadsheet.getSelectedSheet();
+		Rect seld =  spreadsheet.getSelection();
+		int row = seld.getTop();
+		int col = seld.getLeft();
+		Cell cell = Utils.getCell(seldSheet, row, col);
+		if (cell != null) {
+			DesktopCellStyleContext.getInstance(desktop).doTargetChange(
+				new SSRectCellStyle(cell, 
+						spreadsheet) );
+			
+			formulaEditor.setText(Ranges.range(seldSheet, row, col).getEditText());
+		}
 	}
 	public void onClick$exportToPDFBtn() {
 		ExportHelper.doExportToPDF(spreadsheet);

@@ -118,6 +118,7 @@ public class InsertFormulaCtrl2 extends GenericForwardComposer {
 		if (item == null) {
 			try {
 				Messagebox.show("Select a function");
+				return;
 			} catch (InterruptedException e) {
 			}
 		}	

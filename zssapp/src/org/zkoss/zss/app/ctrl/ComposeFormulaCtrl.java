@@ -174,6 +174,8 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 	
 	public void onClick$okBtn() {
 		getDesktopWorkbenchContext().getWorkbookCtrl().insertFormula(composeFormulaTextbox.getText());
+		//Note. insert formula may throw exception and won't fire book content changed event, need to fire own event to update UI
+		getDesktopWorkbenchContext().fireContentsChanged();
 		self.detach();
 	}
 	

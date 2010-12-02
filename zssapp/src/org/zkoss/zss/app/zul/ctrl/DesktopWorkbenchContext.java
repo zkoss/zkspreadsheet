@@ -22,7 +22,7 @@ import org.zkoss.zss.app.Consts;
  * @author Sam
  *
  */
-public class DesktopWorkbenchContext extends AbstractBaseContext{
+public class DesktopWorkbenchContext extends AbstractBaseContext {
 
 	public final static int SHIFT_CELL_UP = 0;
 	public final static int SHIFT_CELL_RIGHT = 1;
@@ -74,6 +74,9 @@ public class DesktopWorkbenchContext extends AbstractBaseContext{
 	 */
 	public void fireSheetChanged() {
 		listenerStore.fire(new Event(Consts.ON_SHEET_CHANGED));
+	}
+	public void fireContentsChanged() {
+		listenerStore.fire(new Event(Consts.ON_SHEET_CONTENTS_CHANGED));
 	}
 	public void mergeCell() {
 		listenerStore.fire(new Event(Consts.ON_SHEET_MERGE_CELL));

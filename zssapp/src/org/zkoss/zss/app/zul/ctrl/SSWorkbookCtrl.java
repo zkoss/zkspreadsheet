@@ -17,7 +17,6 @@ package org.zkoss.zss.app.zul.ctrl;
 import org.zkoss.image.Image;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.util.media.Media;
-import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zss.app.cell.CellHelper;
@@ -133,12 +132,9 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		}
 	}
 
-
-
-
 	public void insertSheet() {
 		int sheetCount = spreadsheet.getBook().getNumberOfSheets();
-		Sheet addedSheet = spreadsheet.getBook().createSheet("sheet " + (sheetCount + 1));
+		spreadsheet.getBook().createSheet("sheet " + (sheetCount + 1));
 	}
 
 	public void openExportPdfDialog() {
@@ -148,7 +144,6 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	public void reGainFocus() {
 		Clients.evalJavaScript("zk.Widget.$('" + spreadsheet.getUuid() + "').focus(false);");
 	}
-
 
 	public void renameSelectedSheet(String name) {
 		SheetHelper.renameSheet(spreadsheet, name);
@@ -200,13 +195,8 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	public void insertFormula(String formula) {
 		Rect rect = spreadsheet.getSelection();
 		Range rng = Ranges.range(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getLeft());
-		try {
-			rng.setEditText(formula);
-		} catch (IllegalArgumentException ex) {
-			ex.printStackTrace();
-			//TODO: provide dialog to display message
-			throw new UiException("Argument is wrong, please modify argument");
-		}
+		//Note. can not catch evaluate exception here
+		rng.setEditText(formula);
 	}
 
 	public void addEventListener(String evtnm, EventListener listener) {

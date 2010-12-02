@@ -1,6 +1,6 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk>
-<window title="new page title" border="normal"
+<window title="Insert Function" border="normal"
 	width="480px" mode="modal" closable="true" position="center"
 	apply="org.zkoss.zss.app.ctrl.InsertFormulaCtrl2">
 <div height="5px"></div>

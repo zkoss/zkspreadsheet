@@ -68,6 +68,7 @@ public class Consts {
 	 * Fired when selected sheet changed
 	 */
 	public static final String ON_SHEET_CHANGED = "onSheetChanged";
+	public static final String ON_SHEET_CONTENTS_CHANGED = "onSheetContentsChanged";
 	public static final String ON_SHEET_MERGE_CELL = "onSheetMergeCell";
 	public static final String ON_SHEET_INSERT_FORMULA = "onSheetInsertFormula";
 	

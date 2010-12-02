@@ -19,7 +19,6 @@ import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zul.Messagebox;
 
 /**
  * @author Sam
@@ -34,7 +33,6 @@ public final class SheetHelper {
 	 * @return -1 if fail to shift sheet
 	 */
 	public static int shiftSheetLeft(Spreadsheet spreadsheet) {
-		//TODO: it should shift all, not just itself
 		final Book book = spreadsheet.getBook();
 		if (book != null) {
 			String name = spreadsheet.getSelectedSheet().getSheetName();
@@ -55,7 +53,6 @@ public final class SheetHelper {
 	 * @return -1 if fail to shift sheet
 	 */
 	public static int shiftSheetRight(Spreadsheet spreadsheet) {
-		//TODO: it should shift all, not just itself
 		final Book book = spreadsheet.getBook();
 		if (book != null) {
 			String name = spreadsheet.getSelectedSheet().getSheetName();
@@ -76,7 +73,6 @@ public final class SheetHelper {
 	 * @return new index, -1 if delete sheet fail
 	 */
 	public static int deleteSheet(Spreadsheet spreadsheet) {
-		//TODO: it should shift all, not just itself
 		final Book book = spreadsheet.getBook();
 		if (book != null) {
 			//Note. Sheet must contain at least one sheet
