@@ -26,7 +26,7 @@ public class FormulaMetaInfo {
 	private String expression;
 	private String description;
 	private int requiredParameter;
-	private boolean hasMultipleParameter;
+	private String multipleParameter;
 
 	/**
 	 * @param category
@@ -36,13 +36,13 @@ public class FormulaMetaInfo {
 	 * @param requiredParameter
 	 */
 	public FormulaMetaInfo(String category, String function, String expression,
-			String description, int requiredParameter, boolean hasMultipleParameter) {
+			String description, int requiredParameter, String multipleParameterName) {
 		this.category = category;
 		this.function = function;
 		this.expression = expression;
 		this.description = description;
 		this.requiredParameter = requiredParameter;
-		this.hasMultipleParameter = hasMultipleParameter;
+		this.multipleParameter = multipleParameterName;
 	}
 	public String getCategory() {
 		return category;
@@ -73,6 +73,16 @@ public class FormulaMetaInfo {
 	}
 	public void setRequiredParameter(int requiredParameter) {
 		this.requiredParameter = requiredParameter;
+	}
+	
+	public boolean isMultipleParameter() {
+		return multipleParameter != null;
+	}
+	public void setMultipleParameter(String multipleParameterName) {
+		this.multipleParameter = multipleParameterName;
+	}
+	public String getMultipleParameter() {
+		return multipleParameter;
 	}
 	public String[] getParameterNames() {
 		String arg = expression.substring(expression.indexOf("(") + 1, 

@@ -53,6 +53,7 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 	private Button okBtn;
 	
 	private FormulaMetaInfo info;
+	private int focusToIndex = -1;
 	private List<ArgWrapper> args;
 	
 	private List<InputElement> inputs = new LinkedList<InputElement>();
@@ -72,7 +73,7 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 		description.setValue(info.getDescription());
 		
 		args = createArgs(info.getRequiredParameter(), info.getParameterNames());
-		argsListbox.setModel(new SimpleListModel(args));
+		argsListbox.setModel(newListModelInstance(args));
 		argsListbox.setItemRenderer(new ListitemRenderer() {
 			public void render(Listitem item, Object data) throws Exception {
 				final ArgWrapper arg = (ArgWrapper)data;
@@ -90,7 +91,20 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 				});
 				tb.addEventListener(Events.ON_FOCUS, new EventListener() {
 					public void onEvent(Event event) throws Exception {
-						focusComponent = tb;
+						ArgWrapper last = args.get(args.size() - 1);
+						if (last.equals(arg)) {
+							String argName = info.getMultipleParameter();
+							Integer num = null;
+							try {
+							 num = Integer.parseInt(last.getName().replace(argName, ""));
+							 num++;
+							} catch (NumberFormatException ex) {
+							}
+							focusToIndex = last.getIndex();
+							args.add(new ArgWrapper(args.size(), info.getMultipleParameter() + (num != null ? num : ""), ""));
+							argsListbox.setModel(newListModelInstance(args));
+						} else
+							focusComponent = tb;
 					}
 				});
 				
@@ -101,9 +115,18 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 		});
 		argsListbox.addEventListener("onAfterRender", new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				if (inputs.size() > 1) {
-					inputs.get(0).focus();
-					focusComponent = inputs.get(0);
+				int focusIdx = -1;
+				System.out.println("focus to: " + focusToIndex);
+				if (focusToIndex >= 0 && focusToIndex < inputs.size()) {
+					focusIdx = focusToIndex;
+				}
+				else if (inputs.size() > 1) {
+					focusIdx = 0;
+				}
+				System.out.println("set focu to " + focusIdx);
+				if (focusIdx >= 0) {
+					inputs.get(focusIdx).focus();
+					focusComponent = inputs.get(focusIdx);
 				}
 			}
 		});
@@ -113,7 +136,6 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 				CellSelectionEvent evt = (CellSelectionEvent) event;
 				Cell cell = Utils.getCell(evt.getSheet(), evt.getTop(), evt.getLeft());
 				if (cell == null) {
-					//Utils.getOrCreateCell(evt.getSheet(), evt.getTop(), evt.getLeft()).setCellFormula("0");
 					Ranges.range(evt.getSheet(), evt.getTop(), evt.getLeft()).setEditText("0");
 				}
 				if (focusComponent != null) {
@@ -122,6 +144,12 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 				}
 			}
 		});
+	}
+
+	private SimpleListModel newListModelInstance(List<ArgWrapper> ary) {
+		inputs.clear();
+		focusComponent = null;
+		return new SimpleListModel(ary);
 	}
 	
 	private void moveFocusToNext(HtmlBasedComponent current) {
@@ -135,23 +163,35 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 			}
 		}
 	}
+	
 	private void composeFormula() {
-		String result = "=" + info.getFunction() + "(";
+		StringBuilder strBuilder = new StringBuilder();
+		strBuilder.append("=" + info.getFunction() + "(");
 		boolean first = true;
-		for (ArgWrapper curArg : args) {
+		for (int i = 0; i < args.size(); i++) {
+			ArgWrapper curArg = args.get(i);
 			String arg = curArg.getValue();
 			if (first)
 				first = false;
 			else if (!first) {
-				result += ",";
+				if (!"".equals(arg))
+					strBuilder.append(",");
+				else {
+					for (int j = i + 1; j < args.size(); j++) {
+						String val = args.get(j).getValue();
+						if (!"".equals(val)) {
+							strBuilder.append(",");
+							break;
+						}
+					}
+				}
 			}
-
 			if (!"".equals(arg)) {
-				result += arg;
-			}				
+				strBuilder.append(arg);
+			}
 		}
-		result += ")";
-		composeFormulaTextbox.setText(result);
+		strBuilder.append(")");
+		composeFormulaTextbox.setText(strBuilder.toString());
 	}
 	
 	private void decomposeFormula() {
@@ -169,7 +209,7 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 			String val = arg[i].trim();
 			args.get(i).setValue(val);
 		}
-		argsListbox.setModel(new SimpleListModel(args));
+		argsListbox.setModel(newListModelInstance(args));
 	}
 	
 	public void onClick$okBtn() {
