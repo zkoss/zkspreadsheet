@@ -70,6 +70,7 @@ ZK Spreadsheet 2.0.0
   221 ZK Spreadsheet Live NPE if leave Insert Function Dialog without select an item
   223 Insert/delete row/column to book shall NOT affect maxrows and maxcolumns of the Spreadsheet
   224 Select a range to delete but only left-top cell removed
+  225 Exception when remove a row which is referenced by a cell
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 
