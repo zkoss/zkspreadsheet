@@ -64,19 +64,22 @@ import org.zkoss.zss.model.Range;
  * @author henrichen
  *
  */
-public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, org.zkoss.zss.model.Sheet {
+public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Sheet {
 	private final HSSFSheetHelper _helper; //helper to lift the package protection
 	private boolean _evalAll;
+	private String _uuid;
 
 	//--HSSFSheet--//
 	protected HSSFSheetImpl(HSSFBookImpl workbook) {
 		super(workbook);
 		_helper = new HSSFSheetHelper(this);
+		_uuid = workbook.nextSheetId();
 	}
 	
     protected HSSFSheetImpl(HSSFBookImpl workbook, InternalSheet sheet) {
     	super(workbook, sheet);
 		_helper = new HSSFSheetHelper(this);
+		_uuid = workbook.nextSheetId();
     }
     
     //20100520, henrichen@zkoss.org: Shift rows only, don't handle formula
@@ -1207,7 +1210,6 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, org.zkoss.zss
     public Book getBook() {
     	return (Book) getWorkbook();
     }
-
     //--SheetCtrl--//
 	@Override
 	public void evalAll() {
@@ -1229,4 +1231,9 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, org.zkoss.zss
 		// TODO Auto-generated method stub
 		return _evalAll;
 	}
+
+	@Override
+    public String getUuid() {
+    	return _uuid;
+    }
 }

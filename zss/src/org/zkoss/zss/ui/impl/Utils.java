@@ -49,6 +49,7 @@ import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.impl.BookHelper;
+import org.zkoss.zss.model.impl.SheetCtrl;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 
@@ -808,26 +809,26 @@ public class Utils {
 	} 
 	
 	/**
-	 * Returns the id of the spcified {@link Sheet}. 
+	 * Returns the uuid of the specified {@link Sheet}. 
 	 * to identify a {@link Sheet})
 	 * @param sheet the sheet
-	 * @return the id of the spcified {@link Sheet}.
+	 * @return the uuid of the specified {@link Sheet}.
 	 */
-	public static String getSheetId(Sheet sheet){
-		return ""+sheet.hashCode();
+	public static String getSheetUuid(Sheet sheet){
+		return ((SheetCtrl)sheet).getUuid();
 	}
 	
 	/**
-	 * Returns the {@link Sheet} of the specified id; null if id not exists.
+	 * Returns the {@link Sheet} of the specified uuid; null if id not exists.
 	 * @param book the book the contains the {@link Sheet}
-	 * @param id the sheet id
-	 * @return the {@link Sheet} of the specified id; null if id not exists.
+	 * @param uuid the sheet uuid
+	 * @return the {@link Sheet} of the specified uuid; null if id not exists.
 	 */
-	public static Sheet getSheetById(Book book, String id) {
+	public static Sheet getSheetByUuid(Book book, String uuid) {
 		int count = book.getNumberOfSheets();
 		for(int j = 0; j < count; ++j) {
 			Sheet sheet = book.getSheetAt(j);
-			if (id.equals(getSheetId(sheet))) {
+			if (uuid.equals(getSheetUuid(sheet))) {
 				return sheet;
 			}
 		}

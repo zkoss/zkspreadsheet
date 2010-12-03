@@ -62,7 +62,7 @@ public class StartEditingCommand implements Command {
 		String clienttxt = (String) data.get("clienttxt");
 
 		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
-		if (!Utils.getSheetId(sheet).equals(sheetId))
+		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
 		Cell cell = Utils.getCell(sheet, row, col);

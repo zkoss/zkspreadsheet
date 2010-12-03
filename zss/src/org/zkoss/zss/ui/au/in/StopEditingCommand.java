@@ -59,7 +59,7 @@ public class StopEditingCommand implements Command {
 		String value = (String) data.get("value");
 		
 		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
-		if (!Utils.getSheetId(sheet).equals(sheetId))
+		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
 		

@@ -55,7 +55,7 @@ public class CellFocusedCommand implements Command {
 		int col = (Integer) data.get("col");
 		
 		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
-		if (!Utils.getSheetId(sheet).equals(sheetId))
+		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return;
 
 		SpreadsheetInCtrl ctrl = ((SpreadsheetInCtrl) ((Spreadsheet) comp).getExtraCtrl());

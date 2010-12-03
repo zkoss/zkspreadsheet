@@ -61,7 +61,7 @@ public class HeaderMouseCommand implements Command {
 		int my = (Integer) data.get("my");
 		
 		Sheet sheet = ((Spreadsheet)comp).getSelectedSheet();
-		if(!Utils.getSheetId(sheet).equals(sheetId));
+		if(!Utils.getSheetUuid(sheet).equals(sheetId));
 		
 		if ("lc".equals(type)) {
 			type = org.zkoss.zss.ui.event.Events.ON_HEADER_CLICK;

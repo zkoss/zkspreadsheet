@@ -64,12 +64,14 @@ import org.zkoss.zss.model.Range;
  * @author henrichen
  *
  */
-public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, org.zkoss.zss.model.Sheet {
+public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Sheet {
 	private boolean _evalAll;
+	private String _uuid;
 	
 	//--XSSFSheet--//
     public XSSFSheetImpl() {
         super();
+        _uuid = ((XSSFBookImpl)getWorkbook()).nextSheetId();
     }
 
     /**
@@ -81,6 +83,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, org.zkoss.zss
      */
     public XSSFSheetImpl(PackagePart part, PackageRelationship rel) {
         super(part, rel);
+        _uuid = ((XSSFBookImpl)getWorkbook()).nextSheetId();
     }
 
     //--Sheet--//
@@ -1147,7 +1150,11 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, org.zkoss.zss
 
 	@Override
 	public boolean isEvalAll() {
-		// TODO Auto-generated method stub
 		return _evalAll;
+	}
+	
+	@Override
+	public String getUuid() {
+		return sheet.getId();
 	}
 }	

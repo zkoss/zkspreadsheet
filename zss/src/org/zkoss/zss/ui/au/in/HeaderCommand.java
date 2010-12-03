@@ -67,7 +67,7 @@ public class HeaderCommand implements Command {
 		
 		
 		Sheet sheet = spreadsheet.getSelectedSheet();
-		if(!Utils.getSheetId(sheet).equals(sheetId));
+		if(!Utils.getSheetUuid(sheet).equals(sheetId));
 		
 		if("size".equals(event)){
 			int newsize = (Integer) data.get("newsize");
@@ -90,7 +90,7 @@ public class HeaderCommand implements Command {
 		String event = (String) data.get("event");
 		
 		Sheet sheet = spreadsheet.getSelectedSheet();
-		if(!Utils.getSheetId(sheet).equals(sheetId));
+		if(!Utils.getSheetUuid(sheet).equals(sheetId));
 		
 		int index = (Integer) data.get("index");
 		if("size".equals(event)){

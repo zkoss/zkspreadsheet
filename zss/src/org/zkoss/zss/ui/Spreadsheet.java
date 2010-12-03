@@ -410,9 +410,9 @@ public class Spreadsheet extends XulElement {
 				if (book.getNumberOfSheets() == 0)
 					throw new UiException("sheet size of given book is zero");
 				_selectedSheet = (Sheet) book.getSheetAt(0);
-				_selectedSheetId = Utils.getSheetId(_selectedSheet);
+				_selectedSheetId = Utils.getSheetUuid(_selectedSheet);
 			} else {
-				_selectedSheet = Utils.getSheetById(_book, _selectedSheetId);
+				_selectedSheet = Utils.getSheetByUuid(_book, _selectedSheetId);
 				if (_selectedSheet == null) {
 					throw new UiException("can not find sheet by id : "	+ _selectedSheetId);
 				}
@@ -535,7 +535,7 @@ public class Spreadsheet extends XulElement {
 			if (_selectedSheet != null)
 				doSheetClean(_selectedSheet);
 			_selectedSheet = sheet;
-			_selectedSheetId = Utils.getSheetId(_selectedSheet);
+			_selectedSheetId = Utils.getSheetUuid(_selectedSheet);
 			invalidate();
 			// the call of onSheetSelected must after invalidate,
 			// because i must let invalidate clean lastcellblock first
@@ -1599,7 +1599,7 @@ public class Spreadsheet extends XulElement {
 			return null;
 		}
 		if (sheet != getSelectedSheet())
-			throw new UiException("not current selected sheet ");
+			throw new UiException("not current selected sheet: "+sheet.getSheetName());
 		HeaderPositionHelper helper = (HeaderPositionHelper) getAttribute(ROW_SIZE_HELPER_KEY);
 
 		int maxcol = 0;
@@ -1651,7 +1651,7 @@ public class Spreadsheet extends XulElement {
 		if (this.isInvalidated())
 			return;// since it is invalidate, we don't need to do anymore
 
-		String sheetId = Utils.getSheetId(sheet);
+		String sheetId = Utils.getSheetUuid(sheet);
 		if (!sheetId.equals(this.getSelectedSheetId()))
 			return;
 		left = left > 0 ? left - 1 : 0;// for border, when update a range, we
@@ -1822,7 +1822,7 @@ public class Spreadsheet extends XulElement {
 			if (getSelectedSheetId().equals(sheetId)) {
 				sheet = getSelectedSheet();
 			} else {
-				sheet = Utils.getSheetById(_book, sheetId);
+				sheet = Utils.getSheetByUuid(_book, sheetId);
 			}
 			// update helper size first before sheet.setColumnWidth, or it will fire a SSDataEvent
 			HeaderPositionHelper helper = Spreadsheet.this.getColumnPositionHelper(sheet);
@@ -1836,7 +1836,7 @@ public class Spreadsheet extends XulElement {
 			if (getSelectedSheetId().equals(sheetId)) {
 				sheet = getSelectedSheet();
 			} else {
-				sheet = Utils.getSheetById(_book, sheetId);
+				sheet = Utils.getSheetByUuid(_book, sheetId);
 			}
 			Row row = sheet.getRow(rownum);
 			if (row == null) {
@@ -1852,7 +1852,7 @@ public class Spreadsheet extends XulElement {
 			if (getSelectedSheetId().equals(sheetId)) {
 				sheet = getSelectedSheet();
 			} else {
-				sheet = Utils.getSheetById(_book, sheetId);
+				sheet = Utils.getSheetByUuid(_book, sheetId);
 			}
 			HeaderPositionHelper helper = Spreadsheet.this
 					.getColumnPositionHelper(sheet);
@@ -1864,7 +1864,7 @@ public class Spreadsheet extends XulElement {
 			if (getSelectedSheetId().equals(sheetId)) {
 				sheet = getSelectedSheet();
 			} else {
-				sheet = Utils.getSheetById(_book, sheetId);
+				sheet = Utils.getSheetByUuid(_book, sheetId);
 			}
 			HeaderPositionHelper helper = Spreadsheet.this
 					.getRowPositionHelper(sheet);
@@ -2198,7 +2198,7 @@ public class Spreadsheet extends XulElement {
 			 * insertrc_ -> insertRowColumn
 			 */
 			// smartUpdateValues("insertrc_"+Utils.nextUpdateId(),new Object[]{"",Utils.getId(sheet),result.toString()});
-			response("insertRowColumn" + Utils.nextUpdateId(), new AuInsertRowColumn(Spreadsheet.this, "", Utils.getSheetId(sheet), result.toString()));
+			response("insertRowColumn" + Utils.nextUpdateId(), new AuInsertRowColumn(Spreadsheet.this, "", Utils.getSheetUuid(sheet), result.toString()));
 
 			_loadedRect.setRight(right);
 
@@ -2268,7 +2268,7 @@ public class Spreadsheet extends XulElement {
 			 * insertrc_ -> insertRowColumn.
 			 */
 			// smartUpdateValues("insertrc_"+Utils.nextUpdateId(),new Object[]{"",Utils.getId(sheet),result.toString()});
-			response("insertRowColumn" + Utils.nextUpdateId(), new AuInsertRowColumn(Spreadsheet.this, "", Utils.getSheetId(sheet), result.toString()));
+			response("insertRowColumn" + Utils.nextUpdateId(), new AuInsertRowColumn(Spreadsheet.this, "", Utils.getSheetUuid(sheet), result.toString()));
 
 			_loadedRect.setBottom(bottom);
 
@@ -2341,7 +2341,7 @@ public class Spreadsheet extends XulElement {
 			 * removerc_ -> removeRowColumn.
 			 */
 			// smartUpdateValues("removerc_"+Utils.nextUpdateId(),new Object[]{"",Utils.getId(sheet),result.toString()});
-			response("removeRowColumn" + Utils.nextUpdateId(), new AuRemoveRowColumn(Spreadsheet.this, "", Utils.getSheetId(sheet), result.toString()));
+			response("removeRowColumn" + Utils.nextUpdateId(), new AuRemoveRowColumn(Spreadsheet.this, "", Utils.getSheetUuid(sheet), result.toString()));
 			_loadedRect.setRight(right);
 
 			// update surround cell
@@ -2407,7 +2407,7 @@ public class Spreadsheet extends XulElement {
 			 * TODO need Utils.nextUpdateId() ?
 			 */
 			// smartUpdateValues("removerc_"+Utils.nextUpdateId(),new Object[]{"",Utils.getId(sheet),result.toString()});
-			response("removeRowColumn" + Utils.nextUpdateId(), new AuRemoveRowColumn(Spreadsheet.this, "", Utils.getSheetId(sheet), result.toString()));
+			response("removeRowColumn" + Utils.nextUpdateId(), new AuRemoveRowColumn(Spreadsheet.this, "", Utils.getSheetUuid(sheet), result.toString()));
 			_loadedRect.setBottom(bottom);
 
 			// update surround cell
@@ -2478,7 +2478,7 @@ public class Spreadsheet extends XulElement {
 			/**
 			 * merge_ -> mergeCell
 			 */
-			response("mergeCell" + Utils.nextUpdateId(), new AuMergeCell(Spreadsheet.this, "", Utils.getSheetId(sheet), result.toString()));
+			response("mergeCell" + Utils.nextUpdateId(), new AuMergeCell(Spreadsheet.this, "", Utils.getSheetUuid(sheet), result.toString()));
 		}
 
 		public void addMergeCell(Sheet sheet, int left, int top, int right,	int bottom) {
@@ -2512,7 +2512,7 @@ public class Spreadsheet extends XulElement {
 			/**
 			 * rename size_col -> columnSize
 			 */
-			smartUpdate("columnSize", (Object) new Object[] { "", Utils.getSheetId(sheet), result.toString() }, true);
+			smartUpdate("columnSize", (Object) new Object[] { "", Utils.getSheetUuid(sheet), result.toString() }, true);
 		}
 
 		//in pixels
@@ -2526,7 +2526,7 @@ public class Spreadsheet extends XulElement {
 			/**
 			 * rename size_row -> rowSize
 			 */
-			smartUpdate("rowSize", (Object) new Object[] { "", Utils.getSheetId(sheet), result.toString() }, true);
+			smartUpdate("rowSize", (Object) new Object[] { "", Utils.getSheetUuid(sheet), result.toString() }, true);
 		}
 
 		@Override
@@ -3240,7 +3240,7 @@ public class Spreadsheet extends XulElement {
 			result.setData("val", "");
 
 			// responseUpdateCell("stop", token, Utils.getId(sheet), result.toString());
-			smartUpdate("dataUpdateStop", new String[] { token,	Utils.getSheetId(sheet), result.toString() });
+			smartUpdate("dataUpdateStop", new String[] { token,	Utils.getSheetUuid(sheet), result.toString() });
 
 		} catch (RuntimeException x) {
 			processCancelEditing0(token, sheet, row, col);
@@ -3260,7 +3260,7 @@ public class Spreadsheet extends XulElement {
 			}
 
 			// responseUpdateCell("start", token, Utils.getId(sheet), result.toString());
-			smartUpdate("dataUpdateStart", new String[] { token, Utils.getSheetId(sheet), result.toString() });
+			smartUpdate("dataUpdateStart", new String[] { token, Utils.getSheetUuid(sheet), result.toString() });
 		} catch (RuntimeException x) {
 			processCancelEditing0(token, sheet, row, col);
 			throw x;
@@ -3274,7 +3274,7 @@ public class Spreadsheet extends XulElement {
 		result.setData("type", "canceledit");
 		result.setData("val", "");
 		// responseUpdateCell("cancel", token, Utils.getId(sheet), result.toString());
-		smartUpdate("dataUpdateCancel", new String[] { token, Utils.getSheetId(sheet), result.toString() });
+		smartUpdate("dataUpdateCancel", new String[] { token, Utils.getSheetUuid(sheet), result.toString() });
 	}
 
 	public boolean insertBefore(Component newChild, Component refChild) {

@@ -36,6 +36,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.impl.BookHelper;
+import org.zkoss.zss.model.impl.SheetCtrl;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.CellFormatHelper;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
@@ -91,17 +92,22 @@ public class CellFetchCommandHelper{
 		
 		_spreadsheet = ((Spreadsheet)comp);
 		if(_spreadsheet.isInvalidated()) return;//since it is invalidate, i don't need to update
+		final Sheet selSheet = _spreadsheet.getSelectedSheet();
+		final String sheetId = (String) data.get("sheetId");
+		if (selSheet == null || !sheetId.equals(((SheetCtrl)selSheet).getUuid())) { //not current selected sheet, skip.
+			return;
+		}
+		
 		_ctrl = ((SpreadsheetCtrl)_spreadsheet.getExtraCtrl());
 		_hidecolhead = _spreadsheet.isHidecolumnhead();
 		_hiderowhead = _spreadsheet.isHiderowhead();
 		String token = (String) data.get("token");
-		String sheetId = (String) data.get("sheetId");
 		
 		_rowHelper = _ctrl.getRowPositionHelper(sheetId);
 		_colHelper = _ctrl.getColumnPositionHelper(sheetId);
 		
 		Sheet sheet = _spreadsheet.getSelectedSheet();
-		if(!Utils.getSheetId(sheet).equals(sheetId)) return;
+		if(!Utils.getSheetUuid(sheet).equals(sheetId)) return;
 		
 		_mergeMatrix = _ctrl.getMergeMatrixHelper(sheet);
 		

@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.zkoss.lang.Classes;
-import org.zkoss.poi.hssf.record.formula.Area3DPtg;
 import org.zkoss.poi.hssf.record.formula.Ptg;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.FormulaParser;
@@ -64,6 +63,7 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	private Books _books;
 	private int _defaultCharWidth = 7; //TODO: don't know how to calculate this yet per the default font.
 	private final String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver.class";
+	private int _shid;
 	
 	//override the XSSFSheet Relation
 	static {
@@ -127,6 +127,10 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	
 	/*package*/ FunctionMapper getFunctionMapper() {
 		return _functionMapper;
+	}
+	
+	/*package*/ String nextSheetId() {
+		return Integer.toString((_shid++ & 0x7FFFFFFF), 32);
 	}
 	
 	//--Book--//

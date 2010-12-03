@@ -13,43 +13,27 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextAttribute;
-import java.awt.font.TextLayout;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.text.AttributedString;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.zkoss.lang.Classes;
-import org.zkoss.lang.Library; 
 import org.zkoss.poi.hssf.model.InternalSheet;
 import org.zkoss.poi.hssf.record.NameRecord;
-import org.zkoss.poi.hssf.record.formula.Area3DPtg;
 import org.zkoss.poi.hssf.record.formula.Ptg;
-import org.zkoss.poi.hssf.record.formula.udf.AggregatingUDFFinder;
-import org.zkoss.poi.hssf.record.formula.udf.UDFFinder;
 import org.zkoss.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.zkoss.poi.hssf.usermodel.HSSFSheet;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbookHelper;
 import org.zkoss.poi.hssf.util.HSSFColor;
 import org.zkoss.poi.ss.SpreadsheetVersion;
-import org.zkoss.poi.ss.formula.DefaultDependencyTracker;
-import org.zkoss.poi.ss.formula.IStabilityClassifier;
 import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.util.CellRangeAddress;
-import org.zkoss.poi.xssf.usermodel.XSSFColor;
-import org.zkoss.poi.xssf.usermodel.XSSFFont;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
@@ -76,6 +60,7 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
 	private int _defaultCharWidth = 7; //TODO: don't know how to calculate this yet per the default font.
 	private final String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver.class";
 	private final HSSFWorkbookHelper _helper;
+	private int _shid; //sheet id
 
 	public HSSFBookImpl(String bookname, InputStream is) throws IOException {
 		super(is);
@@ -122,6 +107,10 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
 	
 	/*package*/ FunctionMapper getFunctionMapper() {
 		return _functionMapper;
+	}
+	
+	/*package*/ String nextSheetId() {
+		return Integer.toString((_shid++ & 0x7FFFFFFF), 32);
 	}
 	
 	//--Book--//

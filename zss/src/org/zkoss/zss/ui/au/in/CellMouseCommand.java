@@ -64,7 +64,7 @@ public class CellMouseCommand implements Command {
 		
 		
 		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
-		if (!Utils.getSheetId(sheet).equals(sheetId))
+		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
 		if ("lc".equals(type)) {

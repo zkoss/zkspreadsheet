@@ -41,7 +41,7 @@ public class HyperlinkEvent extends MouseEvent{
 		final Component comp = request.getComponent();
 		String sheetId = (String) data.get("sheetId");
 		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
-		if (!Utils.getSheetId(sheet).equals(sheetId))
+		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return null;
 		
 		final String name = request.getCommand();

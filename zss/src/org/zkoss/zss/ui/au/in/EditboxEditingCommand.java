@@ -53,7 +53,7 @@ public class EditboxEditingCommand implements Command {
 		String clienttxt = (String) data.get("clienttxt");
 
 		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
-		if (!Utils.getSheetId(sheet).equals(sheetId)) {
+		if (!Utils.getSheetUuid(sheet).equals(sheetId)) {
 			return;
 		}
 		EditboxEditingEvent event = new EditboxEditingEvent(org.zkoss.zss.ui.event.Events.ON_EDITBOX_EDITING, comp, sheet, clienttxt);

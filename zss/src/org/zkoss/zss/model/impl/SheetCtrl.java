@@ -28,4 +28,10 @@ public interface SheetCtrl {
 	 * @return whether the associated sheet has evaluated all formulas. 
 	 */
 	public boolean isEvalAll();
+    
+    /**
+     * Returns the universal unique id of the associated Sheet.
+     * @return the universal unique id of the associated Sheet.
+     */
+    public String getUuid();
 }
