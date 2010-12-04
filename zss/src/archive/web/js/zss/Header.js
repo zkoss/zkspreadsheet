@@ -38,32 +38,51 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 	function _endDrag (dg, evt) {
 		var ctrl = dg.control,
-			sheet = ctrl.sheet;
+			sheet = ctrl.sheet,
+			cp = sheet.cp,
+			rng = sheet.getLastSelection(),
+			cousin = ctrl.cousin,
+			idx = ctrl.index,
+			type = sheet.selType;
 		
 		ctrl.draging = sheet.headerdrag = false;
 		
 		if (ctrl.type == zss.Header.HOR) {
-			var fw,
-				offset = dg.last[0] - dg.start[0],
-				type = sheet.selType;
-			fw = ctrl.orgsize + offset;
+			var offset = dg.last[0] - dg.start[0],
+				fw = ctrl.orgsize + offset,
+				left = rng.left,
+				right = rng.right;
 			if (fw < ctrl.minHWidth) fw = ctrl.minHWidth;
-			if (type == zss.SelDrag.SELCOL || type == zss.SelDrag.SELALL) {
-				var sel = sheet.getLastSelection();
-				sheet._setColumnsWidth(sel, fw, true, true, dg._unhide? false : undefined); //undefined means depends on fw
+			if (type == zss.SelDrag.SELCOL && left <= idx && idx <= right) {
+				sheet._setColumnsWidth(left, right, fw, true, true, dg._unhide? false : undefined); //undefined means depends on fw
 			} else
-				sheet._setColumnWidth(ctrl.index, fw, true, true, dg._unhide? false : undefined); //undefined means depends on fw
+				sheet._setColumnWidth(idx, fw, true, true, dg._unhide? false : undefined); //undefined means depends on fw
+			//clear top header width style
+			jq(ctrl.comp).css('width', '');
+			jq(ctrl.icomp).css('width', '');
+			if (cousin) {
+				jq(cousin.comp).css('width', '');
+				jq(cousin.icomp).css('width', '');
+				jq(cp.comp).css('width', '');
+			}
 		} else {
-			var fh,
-				offset = dg.last[1] - dg.start[1],
-				type = sheet.selType;
-			fh = ctrl.orgsize + offset;
+			var offset = dg.last[1] - dg.start[1],
+				fh = ctrl.orgsize + offset
+				top = rng.top,
+				bottom = rng.bottom;
 			if (fh < ctrl.minVHeight) fh = ctrl.minVHeight;
-			if (type == zss.SelDrag.SELROW || type == zss.SelDrag.SELALL) {
-				var sel = sheet.getLastSelection();
-				sheet._setRowsHeight(sel, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
+			if (type == zss.SelDrag.SELROW && top <= idx && idx <= bottom) {
+				sheet._setRowsHeight(top, bottom, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
 			} else
-				sheet._setRowHeight(ctrl.index, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
+				sheet._setRowHeight(idx, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
+			//clear left header height style
+			jq(ctrl.comp).css({'height': '', 'line-height': ''});
+			jq(ctrl.icomp).css({'height': '', 'line-height': ''});
+			if (cousin) {
+				jq(cousin.comp).css({'height': '', 'line-height': ''});
+				jq(cousin.icomp).css({'height': '', 'line-height': ''});
+				jq(cp.comp).css('height', '');
+			}
 		}
 
 		//gain focus and reallocate mark , then show it, 
@@ -71,7 +90,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		sheet.dp._gainFocus(true);
 		
 		var pos = sheet.getLastFocus(),
-			ls = sheet.getLastSelection();
+			ls = sheet.getLastSelection(); //must re-fetch again
 
 		sheet.moveCellFocus(pos.row, pos.column);
 		sheet.moveCellSelection(ls.left, ls.top, ls.right, ls.bottom);
@@ -83,7 +102,11 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		var ctrl = dg.control,
 			last = [pt[0], pt[1]],
 			cmp = ctrl.comp,
-			icmp = ctrl.icomp;
+			icmp = ctrl.icomp,
+			sheet = ctrl.sheet,
+			cp = sheet.cp,
+			cousin = ctrl.cousin;
+		
 		if (!dg._fixstart) {
 			dg.start[0] -= dg.offset[0];
 			dg.start[1] -= dg.offset[1];
@@ -128,6 +151,12 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					
 				jq(cmp).css('width', jq.px0(w));
 				jq(icmp).css('width', jq.px0(wi));
+				
+				if (cousin) {
+					jq(cousin.comp).css('width', jq.px0(w));
+					jq(cousin.icomp).css('width', jq.px0(wi));
+					jq(cp.comp).css('width', jq.px0(cp._cornerWidth() + w - ctrl.orgsize));
+				}
 			}
 		} else {
 			if (ctrl.orgsize == null)
@@ -151,6 +180,12 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 				jq(cmp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
 				jq(icmp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
+				
+				if (cousin) {
+					jq(cousin.comp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
+					jq(cousin.icomp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
+					jq(cp.comp).css('height', jq.px0(cp._cornerHeight() + h - ctrl.orgsize));
+				}
 			}
 		}
 		return last;
@@ -182,7 +217,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			jq('#zk_sghost').remove();
 
 		var html = ['<div id="zk_sghost" style="font-size:0;line-height:0px;background:#AAA;position:absolute;top:', top, 'px;left:',
-		            left, 'px;width:', width, 'px;height:', height, 'px;"></div>'].join('');
+		            left, 'px;width:', width, 'px;height:', height, 'px;z-index:2"></div>'].join('');
 		jq(document.body).append(html);
 		
 		return ctrl.element = jq('#zk_sghost')[0];
@@ -192,11 +227,16 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  */
 zss.Header = zk.$extends(zk.Object, {
 	draging: false,
-	$init: function (sheet, header, boundary, index, type) {
+	$init: function (sheet, header, boundary, index, type, cousin) {
 		this.$supers('$init', arguments);
 		this.id = header.id;
 		this.sheetid = sheet.id;
 		this.sheet = sheet;
+		//cornerPanel Header link to sheet cousin Header if any
+		if (cousin) {
+			this.cousin = cousin;
+			cousin.cousin = this;
+		}
 		
 		header.ctrl = this;
 		this.comp = header;
@@ -237,7 +277,7 @@ zss.Header = zk.$extends(zk.Object, {
 			this.drag.destroy();
 			this.drag = null;
 		}
-		this.cells = this.comp = this.bcomp.ctrlref = this.bcomp = 
+		this.cousin = this.cells = this.comp = this.bcomp.ctrlref = this.bcomp = 
 			this.ibcomp = this.icomp = this.sheet = null;
 		if (this.ibcomp2)
 			delete this.ibcomp2;

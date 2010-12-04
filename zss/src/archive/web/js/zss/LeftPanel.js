@@ -41,7 +41,7 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 		this.sheet = sheet;
 		node.ctrl = this;
 		
-		this.headers = this._initHeader(sheet, head);
+		this.headers = this._initHeader(sheet, head, corner);
 		
 		//not a corner left panel
 		if (!corner) {
@@ -51,20 +51,21 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 		wgt.domListen_(node, 'onMouseOver', '_doLeftPanelMouseOver');
 		wgt.domListen_(node, 'onMouseOut', '_doLeftPanelMouseOut');
 	},
-	_initHeader: function (sheet, head) {
+	_initHeader: function (sheet, head, corner) {
 		var headers = [],
 			nodes = jq(head).children('div'),
 			size = nodes.length,
 			header,
 			idx,
-			boundary;
+			boundary,
+			lpheaders = corner ? sheet.lp.headers : null;
 
-		for (var i = 0; i < size; i++) {
+		for (var i = 0, j = 0; i < size; i++) {
 			header = nodes[i];
 			if (jq(header).attr('zs.t') == 'SLheader') {
 				idx = zk.parseInt(jq(header).attr('z.r'));
 				boundary = nodes[i + 1];
-				headers.push(new zss.Header(sheet, header, boundary, idx, zss.Header.VER));
+				headers.push(new zss.Header(sheet, header, boundary, idx, zss.Header.VER, lpheaders ? lpheaders[j++] : null));
 			}
 		}
 		return headers;

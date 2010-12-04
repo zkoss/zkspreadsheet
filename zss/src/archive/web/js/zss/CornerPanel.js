@@ -109,26 +109,26 @@ zss.CornerPanel = zk.$extends(zk.Object, {
 		this.comp = null;
 		this.sheet = null;
 	},
-	_fixSize: function () {
+	_cornerHeight: function () {
 		var sheet = this.sheet,
-			wgt = sheet._wgt,
+			th = sheet.topHeight,
+			fzr = sheet.frozenRow;
+		return (fzr > -1) ?
+			(th - 1 + sheet.custRowHeight.getStartPixel(fzr + 1)) :	th;
+	},
+	_cornerWidth: function () {
+		var sheet = this.sheet,
 			lw = sheet.leftWidth,
-			th = sheet.topHeight;
-			leftw = lw - 1,
-			toph = th - 1,
-			fzr = sheet.frozenRow,
 			fzc = sheet.frozenCol;
-			
-		if (fzr > -1)
-			toph = toph + sheet.custRowHeight.getStartPixel(fzr + 1);
-
-		if (fzc > -1)
-			leftw = leftw + sheet.custColWidth.getStartPixel(fzc + 1);
+		return (fzc > -1) ?
+			(lw - 1 + sheet.custColWidth.getStartPixel(fzc + 1)) : lw;
+	},
+	_fixSize: function () {
 		var name = "#" + this.sheetid,
 			sid = this.sheetid + "-sheet";
 		
 		zcss.setRule(name + " .zscorner", ["width", "height"],
-			[(fzc> -1 ? leftw : leftw + 1) + "px", (fzr >-1 ? toph : toph + 1) + "px"], true, sid);
+			[this._cornerWidth() + "px", this._cornerHeight() + "px"], true, sid);
 	},
 	/**
 	 * Sets the column's width position index

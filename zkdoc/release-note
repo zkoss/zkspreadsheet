@@ -31,6 +31,7 @@ ZK Spreadsheet 2.0.0
   148 Can't delete row in the bottom
   149 change size of multi-column
   150 change size of multi-row
+  153 column header is not aligned when resize a freezed column
   155 source region of copy get highlighted in different sheet
   156 spring DelegatingVariableResolver in Spreadsheet doesn't work
   157 fail to delete rows out of original xlsx

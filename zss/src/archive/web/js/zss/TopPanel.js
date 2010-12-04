@@ -44,7 +44,7 @@ zss.TopPanel = zk.$extends(zk.Object, {
 		node.ctrl = this;
 		
 		
-		this.headers = this._initHeader(sheet, head, fontSize);
+		this.headers = this._initHeader(sheet, head, fontSize, corner);
 	
 		zkS.trimFirst(inner, "DIV");
 		zkS.trimLast(inner, "DIV");
@@ -58,21 +58,22 @@ zss.TopPanel = zk.$extends(zk.Object, {
 		wgt.domListen_(node, 'onMouseOver', '_doTopPanelMouseOver');
 		wgt.domListen_(node, 'onMouseOut', '_doTopPanelMouseOut');
 	},
-	_initHeader: function (sheet, head, fontSize) {
+	_initHeader: function (sheet, head, fontSize, corner) {
 		var headers = [],
 			nodes = jq(head).children('div'),
 			size = nodes.length,
 			header,
 			idx,
-			boundary;
-		for (var i = 0; i < size; i++) {
+			boundary,
+			tpheaders = corner ? sheet.tp.headers : null;
+		for (var i = 0, j = 0; i < size; i++) {
 			header = nodes[i];
 			if (jq(header).attr('zs.t') == 'STheader') {
 				if (fontSize)
 					jq(header).css('font-size', fontSize);
 				idx = zk.parseInt(jq(header).attr('z.c'));
 				boundary = nodes[i + 1];
-				headers.push(new zss.Header(sheet, header, boundary, idx, zss.Header.HOR));
+				headers.push(new zss.Header(sheet, header, boundary, idx, zss.Header.HOR, tpheaders ? tpheaders[j++] : null));
 			}
 		}
 		return headers;
