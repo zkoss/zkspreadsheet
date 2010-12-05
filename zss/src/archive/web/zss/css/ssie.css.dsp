@@ -40,7 +40,7 @@ To compete zk 3.0.6, in IE, i must add 'div.' before rule, if there is font-size
 	*display: inline;
 }
 .zscorner {
-	font-size: 0; /* DIFF */
+	*font-size: 0; /* DIFF */
 }
 .zsfocmark {
 	font-size: 0; /* DIFF */

@@ -56,17 +56,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				sheet._setColumnsWidth(left, right, fw, true, true, dg._unhide? false : undefined); //undefined means depends on fw
 			} else
 				sheet._setColumnWidth(idx, fw, true, true, dg._unhide? false : undefined); //undefined means depends on fw
-			//clear top header width style
-			jq(ctrl.comp).css({'width':'','padding':'','border-right':''});
-			jq(ctrl.icomp).css({'width':'','padding':''});
-			if (cousin) {
-				jq(cousin.comp).css({'width':'','padding':'','border-right':''});
-				jq(cousin.icomp).css({'width':'','padding':''});
-				jq(cp.comp).css('width','');
-			}
 		} else {
 			var offset = dg.last[1] - dg.start[1],
-				fh = ctrl.orgsize + offset
+				fh = ctrl.orgsize + offset,
 				top = rng.top,
 				bottom = rng.bottom;
 			if (fh < ctrl.minVHeight) fh = ctrl.minVHeight;
@@ -74,14 +66,14 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				sheet._setRowsHeight(top, bottom, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
 			} else
 				sheet._setRowHeight(idx, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
-			//clear left header height style
-			jq(ctrl.comp).css({'height':'','line-height':'','padding':'','border-bottom':''});
-			jq(ctrl.icomp).css({'height':'','line-height':'','padding':''});
-			if (cousin) {
-				jq(cousin.comp).css({'height':'','line-height':'','padding':'','border-bottom':''});
-				jq(cousin.icomp).css({'height':'','line-height':'','padding':''});
-				jq(cp.comp).css('height','');
-			}
+		}
+		//clear header style
+		jq(ctrl.comp).removeAttr('style');
+		jq(ctrl.icomp).removeAttr('style');
+		if (cousin) {
+			jq(cousin.comp).removeAttr('style');
+			jq(cousin.icomp).removeAttr('style');
+			jq(cp.comp).removeAttr('style');
 		}
 
 		//gain focus and reallocate mark , then show it, 
@@ -135,12 +127,18 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			
 			//set size of column right now, but it will fail in opera
 			if (!zk.opera) {
-				var w, wi,
+				var w, wi, ow,
 					offset = last[0] - dg.start[0];
-				wi = w = ctrl.orgsize + offset;
+				ow = wi = w = ctrl.orgsize + offset;
 				if(w < ctrl.minHWidth) w = ctrl.minHWidth;
 				
 				//for firfox -moz-box-size, offsetWidth is the width
+				jq(cmp).removeAttr('style');
+				if (ow < 5) {
+					jq(cmp).css('padding', 0);
+					if (ow <= 0)
+						jq(cmp).css('border-right', 'none');
+				}
 				if (zk.gecko)
 					wi = zk(cmp).revisedWidth(w); 
 				else 
@@ -148,14 +146,16 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				
 				jq(cmp).css('width', jq.px0(w));
 				jq(icmp).css('width', jq.px0(wi));
-				jq(cmp).css('padding', w < 4 ? 0 : '');
-				jq(cmp).css('border-right', w<=0 ? 0 : '');
 				if (cousin) {
+					jq(cousin.comp).removeAttr('style');
+					if (ow < 5) {
+						jq(cousin.comp).css('padding', 0);
+						if (ow <= 0)
+							jq(cousin.comp).css('border-right', 'none');
+					}
 					jq(cousin.comp).css('width', jq.px0(w));
 					jq(cousin.icomp).css('width', jq.px0(wi));
-					jq(cp.comp).css('width', jq.px0(cp._cornerWidth() + w - ctrl.orgsize));
-					jq(cousin.comp).css('padding', w < 4 ? 0 : '');
-					jq(cousin.comp).css('border-right', w<=0 ? 0 : '');
+					jq(cp.comp).css('width', jq.px0(cp._cornerWidth() + w - ctrl.orgsize + (!zk.gecko ? ow >= 5 ? 5 : ow > 0 ? 1 : 0 : 0)));
 				}
 			}
 		} else {
@@ -171,23 +171,29 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			dg.last = [last[0], last[1]];
 			//set size of row right now, but it will fail in opera
 			if (!zk.opera) {
-				var h,
+				var h, oh,
 					offset = last[1] - dg.start[1];
-				h = ctrl.orgsize + offset;
+				oh = h = ctrl.orgsize + offset;
 				if (h < ctrl.minVHeight) h= ctrl.minVHeight;
-//				if (h == 0)//prevent minus value.
-//					h = 1;
 
+				jq(cmp).removeAttr('style');
+				if (oh < 5) {
+					jq(cmp).css('padding', 0);
+					if (oh <= 0)
+						jq(cmp).css('border-bottom', 'none');
+				}
 				jq(cmp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
 				jq(icmp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
-				jq(cmp).css('padding', h < 4 ? 0 : '');
-				jq(cmp).css('border-bottom', h<=0 ? 0 : '');
 				if (cousin) {
+					jq(cousin.comp).removeAttr('style');
+					if (oh < 5) {
+						jq(cousin.comp).css('padding', 0);
+						if (oh <= 0)
+							jq(cousin.comp).css('border-bottom', 'none');
+					}
 					jq(cousin.comp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
 					jq(cousin.icomp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
 					jq(cp.comp).css('height', jq.px0(cp._cornerHeight() + h - ctrl.orgsize));
-					jq(cousin.comp).css('padding', h < 4 ? 0 : '');
-					jq(cousin.comp).css('border-bottom', h<=0 ? 0 : '');
 				}
 			}
 		}
@@ -203,8 +209,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			bcmp = ctrl.ibcomp,
 			bcmpw = bcmp.offsetWidth,
 			bcmph = bcmp.offsetHeight,
-			height = 3, //bcmp.offsetHeight/2 + 1,//3;
-			width = 3, //bcmp.offsetWidth/2 + 1,//3;
+			height = zk.ie ? 2 : 3,
+			width = zk.ie ? 2 : 3,
 			top = ofs[1] + bcmph,
 			left = ofs[0] + bcmpw,
 			spcomp = zss.SSheetCtrl._curr(ctrl).sp.comp;
