@@ -28,7 +28,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			pt1 = pt[1] - (dg._unhide && ctrl.type != zss.Header.HOR ? 6 : 0);
 		
 		dg.start = [pt0, pt1];
-		
 		return dg._fixstart = false;
 	}
 	
@@ -58,12 +57,12 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			} else
 				sheet._setColumnWidth(idx, fw, true, true, dg._unhide? false : undefined); //undefined means depends on fw
 			//clear top header width style
-			jq(ctrl.comp).css('width', '');
-			jq(ctrl.icomp).css('width', '');
+			jq(ctrl.comp).css({'width':'','padding':'','border-right':''});
+			jq(ctrl.icomp).css({'width':'','padding':''});
 			if (cousin) {
-				jq(cousin.comp).css('width', '');
-				jq(cousin.icomp).css('width', '');
-				jq(cp.comp).css('width', '');
+				jq(cousin.comp).css({'width':'','padding':'','border-right':''});
+				jq(cousin.icomp).css({'width':'','padding':''});
+				jq(cp.comp).css('width','');
 			}
 		} else {
 			var offset = dg.last[1] - dg.start[1],
@@ -76,12 +75,12 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			} else
 				sheet._setRowHeight(idx, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
 			//clear left header height style
-			jq(ctrl.comp).css({'height': '', 'line-height': ''});
-			jq(ctrl.icomp).css({'height': '', 'line-height': ''});
+			jq(ctrl.comp).css({'height':'','line-height':'','padding':'','border-bottom':''});
+			jq(ctrl.icomp).css({'height':'','line-height':'','padding':''});
 			if (cousin) {
-				jq(cousin.comp).css({'height': '', 'line-height': ''});
-				jq(cousin.icomp).css({'height': '', 'line-height': ''});
-				jq(cp.comp).css('height', '');
+				jq(cousin.comp).css({'height':'','line-height':'','padding':'','border-bottom':''});
+				jq(cousin.icomp).css({'height':'','line-height':'','padding':''});
+				jq(cp.comp).css('height','');
 			}
 		}
 
@@ -106,7 +105,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			sheet = ctrl.sheet,
 			cp = sheet.cp,
 			cousin = ctrl.cousin;
-		
 		if (!dg._fixstart) {
 			dg.start[0] -= dg.offset[0];
 			dg.start[1] -= dg.offset[1];
@@ -125,7 +123,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			
 			var off = dg.start[0] - pt[0],
 				maxoff = ctrl.orgsize - ctrl.minHWidth;
-				
 			if (maxoff < 0) maxoff = 0;
 			
 			last = off >= maxoff ? [dg.start[0] - maxoff, 0] : [pt[0], 0];
@@ -148,14 +145,17 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					wi = zk(cmp).revisedWidth(w); 
 				else 
 					w = wi = zk(cmp).revisedWidth(w);
-					
+				
 				jq(cmp).css('width', jq.px0(w));
 				jq(icmp).css('width', jq.px0(wi));
-				
+				jq(cmp).css('padding', w < 4 ? 0 : '');
+				jq(cmp).css('border-right', w<=0 ? 0 : '');
 				if (cousin) {
 					jq(cousin.comp).css('width', jq.px0(w));
 					jq(cousin.icomp).css('width', jq.px0(wi));
 					jq(cp.comp).css('width', jq.px0(cp._cornerWidth() + w - ctrl.orgsize));
+					jq(cousin.comp).css('padding', w < 4 ? 0 : '');
+					jq(cousin.comp).css('border-right', w<=0 ? 0 : '');
 				}
 			}
 		} else {
@@ -175,16 +175,19 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					offset = last[1] - dg.start[1];
 				h = ctrl.orgsize + offset;
 				if (h < ctrl.minVHeight) h= ctrl.minVHeight;
-				if (h == 0)//prevent minus value.
-					h = 1;
+//				if (h == 0)//prevent minus value.
+//					h = 1;
 
 				jq(cmp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
 				jq(icmp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
-				
+				jq(cmp).css('padding', h < 4 ? 0 : '');
+				jq(cmp).css('border-bottom', h<=0 ? 0 : '');
 				if (cousin) {
 					jq(cousin.comp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
 					jq(cousin.icomp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
 					jq(cp.comp).css('height', jq.px0(cp._cornerHeight() + h - ctrl.orgsize));
+					jq(cousin.comp).css('padding', h < 4 ? 0 : '');
+					jq(cousin.comp).css('border-bottom', h<=0 ? 0 : '');
 				}
 			}
 		}
@@ -195,29 +198,34 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	 * Create a dom element to be drag instead of drag the element itself
 	 */
 	function _ghosting (dg, ofs, evt) {
-		var ctrl = dg.control,
+		var htmlborder,
+			ctrl = dg.control,
 			bcmp = ctrl.ibcomp,
-			height = bcmp.offsetHeight/2 + 1,//3;
-			width = bcmp.offsetWidth/2 + 1,//3;
-			top = ofs[1],
-			left = ofs[0],
+			bcmpw = bcmp.offsetWidth,
+			bcmph = bcmp.offsetHeight,
+			height = 3, //bcmp.offsetHeight/2 + 1,//3;
+			width = 3, //bcmp.offsetWidth/2 + 1,//3;
+			top = ofs[1] + bcmph,
+			left = ofs[0] + bcmpw,
 			spcomp = zss.SSheetCtrl._curr(ctrl).sp.comp;
 
 		if (ctrl.type == zss.Header.HOR) {
 			var w = zk(spcomp).offsetWidth(),
 				barHeight = (spcomp.scrollWidth - w <= 0) ? 0 : zss.Spreadsheet.scrollWidth,
-			height = zk(spcomp).offsetHeight() - barHeight;
+			height = zk(spcomp).offsetHeight() - barHeight - bcmph;
+			htmlborder = 'border-right:thin dotted #000;';
 		} else {
 			var h = zk(spcomp).offsetHeight(),
 				barWidth = (spcomp.scrollHeight - h <= 0) ? 0 : zss.Spreadsheet.scrollWidth;
-			width = zk(spcomp).offsetWidth() - barWidth;
+			width = zk(spcomp).offsetWidth() - barWidth - bcmpw;
+			htmlborder = 'border-bottom:thin dotted #000;';
 		}
 		
 		if (jq('#zk_sghost')) //if exists, remove it first
 			jq('#zk_sghost').remove();
 
-		var html = ['<div id="zk_sghost" style="font-size:0;line-height:0px;background:#AAA;position:absolute;top:', top, 'px;left:',
-		            left, 'px;width:', width, 'px;height:', height, 'px;z-index:2"></div>'].join('');
+		var html = ['<div id="zk_sghost" style="font-size:0;line-height:0px;', htmlborder, 'position:absolute;top:', top, 'px;left:',
+	            left, 'px;width:', width, 'px;height:', height, 'px;z-index:2"></div>'].join('');
 		jq(document.body).append(html);
 		
 		return ctrl.element = jq('#zk_sghost')[0];
