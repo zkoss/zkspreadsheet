@@ -147,7 +147,7 @@
 		</div>
 	</hlayout>
 	<div height="25px" style="float:right;padding: 5px;">
-		<button id="okBtn" mold="trendy" image="/img/check.png"/>
+		<button id="okBtn" mold="trendy" image="~./zssapp/image/check.png"/>
 	</div>
 	<zscript><![CDATA[
 		void openOnlyMyList(String listId){

@@ -326,7 +326,7 @@
 		</vlayout>
 	</hlayout>
 	<div style="float:right;margin: 10px 0 10px 10px;">
-		<button id="insertFormulaBtn" image="/img/tick.png" mold="trendy" />
+		<button id="insertFormulaBtn" image="~./zssapp/image/tick.png" mold="trendy" />
 	</div>
 	<zscript><![CDATA[
 		void openOnlyMyList(String listId){

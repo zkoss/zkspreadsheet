@@ -4,10 +4,10 @@
 <window id="sortWin" title="${c:l('sort.custom')}" border="normal" mode="modal" closable="true" position="center" width="630px" height="400px" apply="org.zkoss.zss.app.CustomSortWindowCtrl">
 <div style="padding: 5px">
 	<hlayout spacing="0.4em">
-		<button id="addBtn" image="/img/plus.png" mold="trendy"></button>
-		<button id="delBtn" image="/img/minus.png" mold="trendy"></button>
-		<button id="upBtn" image="/img/arrow-up.png" mold="trendy"></button>
-		<button id="downBtn" image="/img/arrow-down.png" mold="trendy"></button>
+		<button id="addBtn" image="~./zssapp/image/plus.png" mold="trendy"></button>
+		<button id="delBtn" image="~./zssapp/image/minus.png" mold="trendy"></button>
+		<button id="upBtn" image="~./zssapp/image/arrow-up.png" mold="trendy"></button>
+		<button id="downBtn" image="~./zssapp/image/arrow-down.png" mold="trendy"></button>
 		<checkbox id="caseSensitive" label="${c:l('sort.caseSensitive')}"></checkbox>
 		<checkbox id="hasHeader" label="${c:l('sort.hasHeader')}"></checkbox>
 		<combobox id="sortOrientationCombo" mold="rounded" readonly="true">
@@ -24,7 +24,7 @@
 		</listhead>
 	</listbox>
 	<div style="margin: 10px 0 10px 10px;">
-		<button id="okBtn" style="float:right" image="/img/check.png" mold="trendy">
+		<button id="okBtn" style="float:right" image="~./zssapp/image/check.png" mold="trendy">
 		</button>
 	</div>
 </div>

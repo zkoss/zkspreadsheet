@@ -79,7 +79,7 @@
 			<button label="Paste Link"></button>
 		-->
 		<div height="25px" style="margin: 10px 0 10px 10px;">
-			<button id="okBtn" image="/img/tick.png" style="float:right;" mold="trendy">
+			<button id="okBtn" image="~./zssapp/image/tick.png" style="float:right;" mold="trendy">
 			</button>
 		</div>
 		</div>

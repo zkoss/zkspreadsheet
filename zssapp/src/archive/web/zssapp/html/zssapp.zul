@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?page id="p1" title="ZSS app"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
-<?script type="text/javascript" src="/macros/zssapp.js.dsp?v=${desktop.webApp.build}"?>
-<?component name="cheatsheet" inline="true" macroURI="/cheatsheet.zul"?>
+<?script type="text/javascript" src="~./zssapp/html/zssapp.js.dsp?v=${desktop.webApp.build}"?>
+<?component name="cheatsheet" inline="true" macroURI="~./zssapp/html/cheatsheet.zul"?>
 
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 <window id="mainWin" apply="org.zkoss.zss.app.MainWindowCtrl" height="100%" width="100%" style="margin:0px;padding:0px">
@@ -130,10 +130,10 @@
 				<!-- SECTION **********FastIconToolbar*********************************************** -->
 				<center id="fastIconBtn" flex="true" border="0" style="background: #F5F5F5; border-bottom: 1px solid #D8D8D8;">
 					<hlayout spacing="0.4em" height="30px">
-						<toolbarbutton id="print"  src="/img/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>
+						<toolbarbutton id="print"  src="~./zssapp/image/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>
 						<toolbarbutton id="exportToPDFBtn" src="~./zssapp/image/document-pdf.png" tooltiptext="${c:l('export.pdf')}"/>
-						<toolbarbutton id="undo"  src="/img/arrow-curve-180-left.png" 	forward="onClick=onEditUndo" tooltiptext="${c:l('edit.undo')}"/>
-						<toolbarbutton id="redo"  src="/img/arrow-curve.png"	forward="onClick=onEditRedo" tooltiptext="${c:l('edit.redo')}"/>
+						<toolbarbutton id="undo"  src="~./zssapp/image/arrow-curve-180-left.png" 	forward="onClick=onEditUndo" tooltiptext="${c:l('edit.undo')}"/>
+						<toolbarbutton id="redo"  src="~./zssapp/image/arrow-curve.png"	forward="onClick=onEditRedo" tooltiptext="${c:l('edit.redo')}"/>
 						<div sclass="toolbarSeparator"></div>
 							<dropdownbutton id="pasteDropdownBtn" image="~./zssapp/image/clipboard-paste.png" tooltiptext="${c:l('paste')}">
 								<menupopup>
@@ -171,10 +171,10 @@
 						<!-- border merge******************************************************************* -->
 						<div sclass="toolbarSeparator"></div>
 
-						<toolbarbutton id="mergeCellBtn" src="/img/table-join.png" tooltiptext="${c:l('cell.merge')}"
+						<toolbarbutton id="mergeCellBtn" src="~./zssapp/image/table-join.png" tooltiptext="${c:l('cell.merge')}"
 							forward="onClick=onMergeCellClick" />
 						<div sclass="toolbarSeparator"></div>		
-						<toolbarbutton id="insertChartBtn" src="/img/chart-pie.png" tooltiptext="${c:l('insert.chart')}"
+						<toolbarbutton id="insertChartBtn" src="~./zssapp/image/chart-pie.png" tooltiptext="${c:l('insert.chart')}"
 							forward="onClick=onInsertChart(pie)" />
 						<toolbarbutton id="insertHyperlinkBtn" src="~./zssapp/image/hyperlink.png" tooltiptext="${c:l('hyperlink')}"/>
 						<div sclass="toolbarSeparator"></div>
@@ -202,7 +202,7 @@
 								</menupopup>
 							</dropdownbutton>
 						<div sclass="toolbarSeparator"></div>
-						<checkbox id="gridlinesCheckbox" tooltiptext="${c:l('gridlines')}" forward="onGridlines" image="/img/grid.png">
+						<checkbox id="gridlinesCheckbox" tooltiptext="${c:l('gridlines')}" forward="onGridlines" image="~./zssapp/image/grid.png">
 							<attribute w:name="onBind">
 								var img = jq(this.$n()).find('img');
 								if (img)
