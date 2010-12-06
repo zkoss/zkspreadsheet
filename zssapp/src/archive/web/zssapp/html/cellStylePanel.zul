@@ -51,7 +51,7 @@
 		<toolbarbutton id="strikethroughBtn" src="~./zssapp/image/edit-strike.png" tooltiptext="${c:l('font.strike')}"></toolbarbutton>
 		<colorbutton id="fontColorBtn" width="20px" height="12px" color="#000000" image="/img/edit-color.png" tooltiptext="${c:l('font.color')}"></colorbutton>
 		<colorbutton id="cellColorBtn" width="20px" height="12px" color="#FFFFFF" image="/img/paint-can-color.png" tooltiptext="${c:l('font.fill')}"></colorbutton>
-		<dropdownbutton id="borderBtn" src="~./zssapp/image/border-bottom.png" forward="onBorderSelector(${c:l('border.bottom')})" tooltiptext="${c:l('border.bottom')}">
+		<dropdownbutton id="borderBtn" src="~./zssapp/image/border-bottom.png" forward="onClick=onBorderSelector(${c:l('border.bottom')})" tooltiptext="${c:l('border.bottom')}">
 			<menupopup >
 				<menuitem label="${c:l('border.bottom')}" src="~./zssapp/image/border-bottom.png"
 					forward="onBorderSelector(${c:l('border.bottom')})" />
