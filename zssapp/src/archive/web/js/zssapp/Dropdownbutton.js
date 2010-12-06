@@ -21,7 +21,6 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 zssapp.Dropdownbutton = zk.$extends(zul.LabelImageWidget, {
 	bind_: function () {
 		this.$supers('bind_', arguments);
-		this._cacheDpWidth();
 		this._setClickable();
 		zWatch.listen({onFloatUp: this});
 	},
@@ -95,6 +94,9 @@ zssapp.Dropdownbutton = zk.$extends(zul.LabelImageWidget, {
 	doMouseOver_: function (evt) {
 		var zcls = this.getZclass(),
 			$n = jq(this.$n());
+		
+		if (!this._dpWidth)
+			this._cacheDpWidth();
 		
 		if (this.isListen('onClick', {asapOnly: true})) {
 			$n.addClass(zcls  + '-over');

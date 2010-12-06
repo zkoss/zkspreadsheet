@@ -11,7 +11,6 @@
 		<div id="fontCtrlPanel" use="org.zkoss.zss.app.zul.ctrl.CellStyleCtrlPanel"
 				fontfamilywidth="86px"
 				fontsizewidth="48px"
-				underlinevisible="false"
 				strikethroughvisible="false"
 				bordervisible="false"
 				fontcolorvisible="false"

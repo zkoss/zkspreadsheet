@@ -340,7 +340,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 		});
 		Events.postEvent(Events.ON_CLICK, this, null);
 	}
-	
+
 	public void onBorderSelector(ForwardEvent evt) {
 		final String color = "#000000";
 		final String param = (String)evt.getData();

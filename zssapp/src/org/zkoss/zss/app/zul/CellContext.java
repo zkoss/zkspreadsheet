@@ -41,7 +41,6 @@ public class CellContext extends Window implements IdSpace {
 		setVisible(false);
 		setSclass("fastIconWin");
 		setVflex("min");
-		setWidth("210px");
 	}
 	
 	public void onClick$fontCtrlPanel() {

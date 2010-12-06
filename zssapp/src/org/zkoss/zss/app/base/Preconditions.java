@@ -18,8 +18,6 @@ package org.zkoss.zss.app.base;
 
 import org.zkoss.zk.ui.UiException;
 
-import com.sun.istack.internal.Nullable;
-
 /**
  * @author Sam
  * 
@@ -36,7 +34,7 @@ public final class Preconditions {
 	 * @return the non-null reference that was validated
 	 * @throws UiException if {@code reference} is null
 	 */
-	public static <T> T checkNotNull(T reference, @Nullable Object errorMessage) {
+	public static <T> T checkNotNull(T reference, Object errorMessage) {
 		if (reference == null) {
 			throw new UiException(String.valueOf(errorMessage));
 		}

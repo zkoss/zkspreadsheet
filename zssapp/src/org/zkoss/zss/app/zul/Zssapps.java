@@ -42,7 +42,6 @@ public class Zssapps {
 	}
 	
 	//TODO: remove this mechanism
-	@Deprecated
 	public static void bindSpreadsheet(Spreadsheet spreadsheet, Object target) {
 		Field[] flds = target.getClass().getDeclaredFields();
 		for (Field f : flds) {
