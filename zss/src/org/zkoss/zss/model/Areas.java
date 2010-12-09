@@ -14,7 +14,7 @@ package org.zkoss.zss.model;
 
 
 /**
- * A collection of single area {@link Range}s in a selection; an area is a contiguous block of cells.
+ * A collection of single-area {@link Range}s in a selection; an area is a contiguous block of cells.
  * @author henrichen
  *
  */

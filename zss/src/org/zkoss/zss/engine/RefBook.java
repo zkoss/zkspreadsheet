@@ -114,4 +114,16 @@ public interface RefBook {
 	 * 	[1] the "all" dependent cell references to be reloaded the associated cell value.
 	 */
 	public Set<Ref>[] getBothDependents(String name);
+
+	/**
+	 * Sets share scope of this reference book.
+	 * @param scope
+	 */
+	public void setShareScope(String scope);
+	
+	/**
+	 * Returns share scope of this reference book.
+	 * @param scope
+	 */
+	public String getShareScope();
 }

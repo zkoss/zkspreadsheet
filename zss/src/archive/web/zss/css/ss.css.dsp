@@ -483,6 +483,16 @@ lineHeight=20
 	z-index:999;
 	background-color : #A9C4E9;
 	opacity:.75;
+	display:table;
+}
+.zssmask2{
+	display:table-cell;
+	vertical-align:middle;
+}
+.zssmasktxt{
+	font-size:20px;
+	font-style:bold;
+	color:white;
 }
 .zssbusy{
 	position: absolute;

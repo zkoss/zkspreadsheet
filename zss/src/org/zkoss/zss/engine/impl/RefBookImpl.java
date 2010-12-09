@@ -18,14 +18,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.zkoss.lang.Classes;
-import org.zkoss.lang.Library;
-import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.impl.DesktopEventQueue;
+import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.RefSheet;
@@ -41,6 +37,7 @@ public class RefBookImpl implements RefBook {
 	private final int _maxrow;
 	private final int _maxcol;
 	private final Map<String, Ref> _variableRefs;
+	private final EventQueue _queue;
 	
 	/**
 	 * Internal use only.
@@ -51,6 +48,7 @@ public class RefBookImpl implements RefBook {
 		_variableRefs = new HashMap<String, Ref>(4);
 		_maxrow = maxrow;
 		_maxcol = maxcol;
+		_queue = EventQueues.lookup(bookname);
 	}
 	
 	@Override
@@ -88,36 +86,8 @@ public class RefBookImpl implements RefBook {
 		getEventQueue().publish(event);
 	}
 	
-	//@see http://en.wikipedia.org/wiki/Double-checked_locking
-	private volatile EventQueue _queue; 
-	private EventQueue getEventQueue() {
-		EventQueue queue = _queue;
-		if (queue == null) {
-            synchronized(this) {
-            	queue = _queue; 
-    			if (queue == null) {
-					final String clsnm = Library.getProperty("org.zkoss.zss.engine.EventQueue.class");
-					if (clsnm != null) {
-						try {
-							final Object o = Classes.newInstanceByThread(clsnm);
-							//try zkex first
-							if (!(o instanceof EventQueue))
-								throw new UiException(o.getClass().getName()+" must implement "+EventQueue.class.getName());
-							queue = (EventQueue)o;
-						} catch (UiException ex) {
-							throw ex;
-						} catch (Throwable ex) {
-							throw UiException.Aide.wrap(ex, "Unable to load "+clsnm);
-						}
-						
-					}
-					if (queue == null)
-						queue = new DesktopEventQueue(); 
-    				_queue = queue;
-    			}
-            }
-		}
-		return queue;
+	protected EventQueue getEventQueue() {
+		return _queue;
 	}
 
 	@Override
@@ -177,4 +147,14 @@ public class RefBookImpl implements RefBook {
 		return null;
 	}
 
+	protected String _scope;
+	@Override
+	public void setShareScope(String scope) {
+		_scope = scope;
+	}
+	
+	@Override
+	public String getShareScope() {
+		return _scope;
+	}
 }

@@ -22,6 +22,7 @@ import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueues;
 
 /**
  * ZK Spreadsheet book.
@@ -117,4 +118,18 @@ public interface Book extends Workbook {
      * @return the font with the matched attributes or <code>null</code>
      */
 	public Font findFont(short boldWeight, Color color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline);
+	
+	/**
+	 * Sets share scope of this book; default scope is {@link EventQueues#DESKTOP}.
+	 * <p>Note: this feature requires ZK Spreadsheet EE.</p>
+	 * @param scope share scope of this book: can be {@link EventQueues#DESKTOP},{@link EventQueues#GROUP},{@link EventQueues#SESSION},{@link EventQueues#APPLICATION}. 
+	 */
+	public void setShareScope(String scope);
+	
+	/**
+	 * Returns share scope of this book.
+	 * <p>Note: this feature requires ZK Spreadsheet EE.</p>
+	 * @see #setShareScope(String)
+	 */
+	public String getShareScope();
 }

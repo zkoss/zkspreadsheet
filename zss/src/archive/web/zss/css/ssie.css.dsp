@@ -115,3 +115,11 @@ To compete zk 3.0.6, in IE, i must add 'div.' before rule, if there is font-size
 .zssmask{
 	filter:alpha(opacity=75);
 }
+.zssmask2{
+	#position:absolute;
+	#top:50%;
+}
+.zssmasktxt{
+	#position:relative;
+	#top:-50%"
+}

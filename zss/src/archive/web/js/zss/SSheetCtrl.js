@@ -1967,8 +1967,10 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	/**
 	 * Display mark
 	 */
-	showMask: function (show) {
+	showMask: function (show, txt) {
 		jq(this.maskcmp).css('visibility', show ? 'visible' : 'hidden');
+		if (txt)
+			jq(this._wgt.$n('masktxt')).text(txt);
 	},
 	/**
 	 * Returns focused cell

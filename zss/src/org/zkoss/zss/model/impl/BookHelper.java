@@ -105,7 +105,7 @@ import org.zkoss.zss.engine.impl.ChangeInfo;
 import org.zkoss.zss.engine.impl.MergeChange;
 import org.zkoss.zss.engine.impl.RefSheetImpl;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Books;
+import org.zkoss.zss.model.BookSeries;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.ui.impl.Styles;
 
@@ -198,21 +198,21 @@ public final class BookHelper {
 		return refBook.getOrCreateRefSheet(sheet.getSheetName());
 	}
 	
-	public static Books getBooks(Book book) {
+	public static BookSeries getBooks(Book book) {
 		return book instanceof HSSFBookImpl ? 
-				((HSSFBookImpl)book).getBooks():
-				((XSSFBookImpl)book).getBooks();
+				((HSSFBookImpl)book).getBookSeries():
+				((XSSFBookImpl)book).getBookSeries();
 	}
 	
-	public static void setBooks(Book book, Books books) {
+	public static void setBooks(Book book, BookSeries books) {
 		if (book instanceof HSSFBookImpl) 
-			((HSSFBookImpl)book).setBooks(books);
+			((HSSFBookImpl)book).setBookSeries(books);
 		else
-			((XSSFBookImpl)book).setBooks(books);
+			((XSSFBookImpl)book).setBookSeries(books);
 	}
 	
 	public static Book getBook(Book book, String bookname) {
-		final Books books = BookHelper.getBooks(book);
+		final BookSeries books = BookHelper.getBooks(book);
 		return bookname == null || book.getBookName().equals(bookname) ? book : books != null ? books.getBook(bookname) : null;
 	}
 	

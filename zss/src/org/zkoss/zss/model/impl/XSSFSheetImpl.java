@@ -71,7 +71,6 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Sheet {
 	//--XSSFSheet--//
     public XSSFSheetImpl() {
         super();
-        _uuid = ((XSSFBookImpl)getWorkbook()).nextSheetId();
     }
 
     /**
@@ -83,9 +82,13 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Sheet {
      */
     public XSSFSheetImpl(PackagePart part, PackageRelationship rel) {
         super(part, rel);
-        _uuid = ((XSSFBookImpl)getWorkbook()).nextSheetId();
     }
 
+    /*package*/ void initUuid() {
+    	if (_uuid == null) {
+    		_uuid = ((XSSFBookImpl)getWorkbook()).nextSheetId();
+    	}
+    }
     //--Sheet--//
 	public Book getBook() {
 		return (Book) getWorkbook();

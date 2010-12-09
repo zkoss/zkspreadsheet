@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.zkoss.lang.Classes;
+import org.zkoss.lang.Library;
 import org.zkoss.poi.hssf.record.formula.Ptg;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.FormulaParser;
@@ -35,9 +36,11 @@ import org.zkoss.poi.xssf.usermodel.XSSFFont;
 import org.zkoss.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.zkoss.poi.xssf.usermodel.XSSFName;
 import org.zkoss.poi.xssf.usermodel.XSSFRelation;
+import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
+import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
@@ -46,7 +49,7 @@ import org.zkoss.zss.formula.DefaultFunctionResolver;
 import org.zkoss.zss.formula.FunctionResolver;
 import org.zkoss.zss.formula.NoCacheClassifier;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Books;
+import org.zkoss.zss.model.BookSeries;
 
 /**
  * Implementation of {@link Book} based on XSSFWorkbook.
@@ -60,7 +63,7 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	private final FunctionMapper _functionMapper;
 	private final VariableResolver _variableResolver;
 	private RefBook _refBook;
-	private Books _books;
+	private BookSeries _bookSeries;
 	private int _defaultCharWidth = 7; //TODO: don't know how to calculate this yet per the default font.
 	private final String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver.class";
 	private int _shid;
@@ -86,6 +89,9 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 
 	public XSSFBookImpl(String bookname, InputStream is) throws IOException {
 		super(is);
+		for(XSSFSheet sheet : this) {
+			((XSSFSheetImpl)sheet).initUuid();
+		}
 		_bookname = bookname;
 		FunctionResolver resolver = (FunctionResolver) BookHelper.getLibraryInstance(FUN_RESOLVER);
 		if (resolver == null) resolver = new DefaultFunctionResolver();
@@ -100,25 +106,19 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 		return _bookEvaluator;
 	}
 	
-	/*package*/ RefBook getRefBook() {
-		return _refBook;
-	}
-	
 	/*package*/ RefBook getOrCreateRefBook() {
 		if (_refBook == null) {
-			_refBook = new RefBookImpl(_bookname,
-					SpreadsheetVersion.EXCEL2007.getLastRowIndex(), 
-					SpreadsheetVersion.EXCEL2007.getLastColumnIndex());
+			_refBook = getBookCtrl().newRefBook(this);
 		}
 		return _refBook;
 	}
 	
-	/*package*/ Books getBooks() {
-		return _books;
+	/*package*/ BookSeries getBookSeries() {
+		return _bookSeries;
 	}
 	
-	/*package*/ void setBooks(Books books) {
-		_books = books;
+	/*package*/ void setBookSeries(BookSeries books) {
+		_bookSeries = books;
 	}
 	
 	/*package*/ VariableResolver getVariableResolver() {
@@ -223,15 +223,19 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	//--Workbook--//
 	@Override
 	public void removeSheetAt(int index) {
-		final String sheetname = getSheetName(index);
-		_refBook.removeRefSheet(sheetname);
+		if (_refBook != null) {
+			final String sheetname = getSheetName(index);
+			_refBook.removeRefSheet(sheetname);
+		}
 		super.removeSheetAt(index);
 	}
 
 	@Override
 	public void setSheetName(int index, String name) {
-		final String oldsheetname = getSheetName(index);
-		_refBook.setSheetName(oldsheetname, name);
+		if (_refBook != null) {
+			final String oldsheetname = getSheetName(index);
+			_refBook.setSheetName(oldsheetname, name);
+		}
 		super.setSheetName(index, name);
 	}
 
@@ -276,5 +280,42 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 			}
 		}
 		return null;
+	}
+	
+	private BookCtrl _bookCtrl;
+	private BookCtrl getBookCtrl() {
+		if (_bookCtrl == null)
+			synchronized (this) {
+				if (_bookCtrl == null) {
+					BookCtrl bookCtrl = null;
+					String clsnm = Library.getProperty("org.zkoss.zss.model.BookCtrl.class");
+					if (clsnm != null)
+						try {
+							final Object o = Classes.newInstanceByThread(clsnm);
+							if (!(o instanceof BookCtrl))
+								throw new UiException(o.getClass().getName()+" must implement "+BookCtrl.class.getName());
+							bookCtrl = (BookCtrl)o;
+						} catch (UiException ex) {
+							throw ex;
+						} catch (Throwable ex) {
+							throw UiException.Aide.wrap(ex, "Unable to load "+clsnm);
+						}
+					if (bookCtrl == null)
+						bookCtrl = new BookCtrlImpl();
+					_bookCtrl = bookCtrl;
+				}
+			}
+		return _bookCtrl;
+	}
+
+
+	@Override
+	public String getShareScope() {
+		return getOrCreateRefBook().getShareScope();
+	}
+
+	@Override
+	public void setShareScope(String scope) {
+		getOrCreateRefBook().setShareScope(scope);
 	}
 }

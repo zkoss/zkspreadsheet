@@ -1,4 +1,4 @@
-/* Books.java
+/* BookSeries.java
 
 	Purpose:
 		
@@ -14,10 +14,12 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model;
 
 /**
- * Represent multiple correlated books that might refer to each other.
+ * Represent a series of correlated {@link Book}s that might refer to each other.
+ * <p>Note: this feature requires ZK Spreadsheet EE.</p>
+ * 
  * @author henrichen
  */
-public interface Books {
+public interface BookSeries {
 	/**
 	 * Return the {@link Book} with the specified book name.
 	 * @param bookName the book name

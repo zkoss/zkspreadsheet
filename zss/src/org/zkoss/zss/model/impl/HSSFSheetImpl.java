@@ -67,7 +67,7 @@ import org.zkoss.zss.model.Range;
 public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Sheet {
 	private final HSSFSheetHelper _helper; //helper to lift the package protection
 	private boolean _evalAll;
-	private String _uuid;
+	private final String _uuid;
 
 	//--HSSFSheet--//
 	protected HSSFSheetImpl(HSSFBookImpl workbook) {

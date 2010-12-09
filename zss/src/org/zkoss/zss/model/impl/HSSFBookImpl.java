@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.zkoss.lang.Classes;
+import org.zkoss.lang.Library;
 import org.zkoss.poi.hssf.model.InternalSheet;
 import org.zkoss.poi.hssf.record.NameRecord;
 import org.zkoss.poi.hssf.record.formula.Ptg;
@@ -34,15 +36,15 @@ import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
+import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
-import org.zkoss.zss.engine.impl.RefBookImpl;
 import org.zkoss.zss.formula.DefaultFunctionResolver;
 import org.zkoss.zss.formula.FunctionResolver;
 import org.zkoss.zss.formula.NoCacheClassifier;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Books;
+import org.zkoss.zss.model.BookSeries;
 
 /**
  * Implementation of {@link Book} based on HSSFWorkbook.
@@ -56,7 +58,7 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
 	private final FunctionMapper _functionMapper;
 	private final VariableResolver _variableResolver;
 	private RefBook _refBook;
-	private Books _books;
+	private BookSeries _bookSeries;
 	private int _defaultCharWidth = 7; //TODO: don't know how to calculate this yet per the default font.
 	private final String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver.class";
 	private final HSSFWorkbookHelper _helper;
@@ -80,25 +82,19 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
 		return _bookEvaluator;
 	}
 	
-	/*package*/ RefBook getRefBook() {
-		return _refBook;
-	}
-	
 	/*package*/ RefBook getOrCreateRefBook() {
 		if (_refBook == null) {
-			_refBook = new RefBookImpl(_bookname, 
-					SpreadsheetVersion.EXCEL97.getLastRowIndex(), 
-					SpreadsheetVersion.EXCEL97.getLastColumnIndex());
+			_refBook = getBookCtrl().newRefBook(this);
 		}
 		return _refBook;
 	}
 	
-	/*package*/ Books getBooks() {
-		return _books;
+	/*package*/ BookSeries getBookSeries() {
+		return _bookSeries;
 	}
 	
-	/*package*/ void setBooks(Books books) {
-		_books = books;
+	/*package*/ void setBookSeries(BookSeries bookSeries) {
+		_bookSeries = bookSeries;
 	}
 	
 	/*package*/ VariableResolver getVariableResolver() {
@@ -233,15 +229,19 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
 	//--Workbook--//
 	@Override
 	public void removeSheetAt(int index) {
-		final String sheetname = getSheetName(index);
-		_refBook.removeRefSheet(sheetname);
+		if (_refBook != null) {
+			final String sheetname = getSheetName(index);
+			_refBook.removeRefSheet(sheetname);
+		}
 		super.removeSheetAt(index);
 	}
 
 	@Override
 	public void setSheetName(int index, String name) {
-		final String oldsheetname = getSheetName(index);
-		_refBook.setSheetName(oldsheetname, name);
+		if (_refBook != null) {
+			final String oldsheetname = getSheetName(index);
+			_refBook.setSheetName(oldsheetname, name);
+		}
 		super.setSheetName(index, name);
 	}
 	
@@ -260,5 +260,41 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
 	 */
 	public Font findFont(short boldWeight, Color color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
 		return findFont(boldWeight, ((HSSFColor)color).getIndex(), fontHeight, name, italic, strikeout, typeOffset, underline); 
+	}
+	
+	private BookCtrl _bookCtrl;
+	private BookCtrl getBookCtrl() {
+		if (_bookCtrl == null)
+			synchronized (this) {
+				if (_bookCtrl == null) {
+					BookCtrl bookCtrl = null;
+					String clsnm = Library.getProperty("org.zkoss.zss.model.BookCtrl.class");
+					if (clsnm != null)
+						try {
+							final Object o = Classes.newInstanceByThread(clsnm);
+							if (!(o instanceof BookCtrl))
+								throw new UiException(o.getClass().getName()+" must implement "+BookCtrl.class.getName());
+							bookCtrl = (BookCtrl)o;
+						} catch (UiException ex) {
+							throw ex;
+						} catch (Throwable ex) {
+							throw UiException.Aide.wrap(ex, "Unable to load "+clsnm);
+						}
+					if (bookCtrl == null)
+						bookCtrl = new BookCtrlImpl();
+					_bookCtrl = bookCtrl;
+				}
+			}
+		return _bookCtrl;
+	}
+
+	@Override
+	public String getShareScope() {
+		return getOrCreateRefBook().getShareScope();
+	}
+
+	@Override
+	public void setShareScope(String scope) {
+		getOrCreateRefBook().setShareScope(scope);
 	}
 }
