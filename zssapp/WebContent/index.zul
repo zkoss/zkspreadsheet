@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?page id="p1" title="ZSS app"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
-<?script type="text/javascript" src="/macros/zssapp.js.dsp?v=${desktop.webApp.build}"?>
-<?component name="columnHeaderMenu" inline="true" macroURI="/menus/header_cell/menuColumnHeader.zul"?>
-<?component name="rowHeaderMenu" inline="true" macroURI="/menus/header_cell/menuRowHeader.zul"?>
-<?component name="cheatsheet" inline="true" macroURI="/cheatsheet.zul"?>
+<?script type="text/javascript" src="~./zssapp/html/zssapp.js.dsp?v=${desktop.webApp.build}"?>
+<?component name="cheatsheet" inline="true" macroURI="~./zssapp/html/cheatsheet.zul"?>
 
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
-<window id="mainWin" apply="org.zkoss.zss.app.MainWindowCtrl" height="100%" width="100%" style="margin:0px;padding:0px">
+<window id="mainWin" apply="org.zkoss.zss.app.MainWindowCtrl" height="100%" width="100%" style="margin:0px;padding:0px;position:relative;">
 	<style>
 		.clicked .z-toolbarbutton-cnt {
-			background-image: url('./img/toolbarbtn-ctr-clkd.gif');
+			background-image: url(${c:encodeURL('~./zssapp/image/toolbarbtn-ctr-clkd.gif')});
 			background-position: 0 -500px;
 		}
 		.clicked {
@@ -26,7 +24,7 @@
 		
 		.focusPosCombobox .z-combobox-rounded-btn {
 			border:0px;
-			background: url('./img/combo-white.png');
+			background: url(${c:encodeURL('~./zssapp/image/combo-white.png')});
 		}
 		.focusPosCombobox .z-combobox-rounded-inp {
 			background-image: none;
@@ -48,7 +46,7 @@
 		.toolbarSeparator {
 			height: 30px; 
 			width: 3px;
-			background: url('./img/sep.gif') repeat-y scroll 0 0 transparent;
+			background: url(${c:encodeURL('~./zssapp/image/sep.gif')}) repeat-y scroll 0 0 transparent;
 		}
 
 		.arialFont .z-menu-item-cnt, .arialFont .z-combo-item-text{
@@ -118,7 +116,7 @@
 								<attribute w:name="onOpen">
 									this.$f('spreadsheet', true).focus(false);
 								</attribute>
-								<!-- <menuitem label="${c:l('help.center')}" forward="onNotImplement()" src="/img/music.gif"/>-->
+								<!-- <menuitem label="${c:l('help.center')}"  src="/img/music.gif"/>-->
 								<menuitem label="${c:l('help.cheatsheet')}" forward="onHelpCheatsheet" />
 								<menuitem label="${c:l('help.forum')}" href="http://www.zkoss.org/forum/" target="_blank"/>
 								<menuitem label="Book" href="http://books.zkoss.org/wiki/ZK_Spreadsheet_Essentials" target="_blank"/>
@@ -132,10 +130,10 @@
 				<!-- SECTION **********FastIconToolbar*********************************************** -->
 				<center id="fastIconBtn" flex="true" border="0" style="background: #F5F5F5; border-bottom: 1px solid #D8D8D8;">
 					<hlayout spacing="0.4em" height="30px">
-						<toolbarbutton id="print"  src="/img/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>
+						<toolbarbutton id="print"  src="~./zssapp/image/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>
 						<toolbarbutton id="exportToPDFBtn" src="~./zssapp/image/document-pdf.png" tooltiptext="${c:l('export.pdf')}"/>
-						<toolbarbutton id="undo"  src="/img/arrow-curve-180-left.png" 	forward="onClick=onEditUndo" tooltiptext="${c:l('edit.undo')}"/>
-						<toolbarbutton id="redo"  src="/img/arrow-curve.png"	forward="onClick=onEditRedo" tooltiptext="${c:l('edit.redo')}"/>
+						<toolbarbutton id="undo"  src="~./zssapp/image/arrow-curve-180-left.png" 	forward="onClick=onEditUndo" tooltiptext="${c:l('edit.undo')}"/>
+						<toolbarbutton id="redo"  src="~./zssapp/image/arrow-curve.png"	forward="onClick=onEditRedo" tooltiptext="${c:l('edit.redo')}"/>
 						<div sclass="toolbarSeparator"></div>
 							<dropdownbutton id="pasteDropdownBtn" image="~./zssapp/image/clipboard-paste.png" tooltiptext="${c:l('paste')}">
 								<menupopup>
@@ -158,7 +156,7 @@
 						<!-- font*********************************************************************** -->	
 						<div sclass="toolbarSeparator"></div>
 						<div id="fontCtrlPanel" use="org.zkoss.zss.app.zul.ctrl.CellStyleCtrlPanel" 
-							style="vertical-align:middle;" spacing="0.4em"/>
+							style="vertical-align:middle;" spacing="0.4em" />
 						<!-- align vertical************************************************************************ 
 						<toolbarbutton src="/img/separator.bmp"/>
 						<toolbarbutton id="alignTopBtn" sclass="toolIcon" src="/img/alignTop.bmp"
@@ -173,10 +171,10 @@
 						<!-- border merge******************************************************************* -->
 						<div sclass="toolbarSeparator"></div>
 
-						<toolbarbutton id="mergeCellBtn" src="/img/table-join.png" tooltiptext="${c:l('cell.merge')}"
+						<toolbarbutton id="mergeCellBtn" image="~./zssapp/image/table-join.png" tooltiptext="${c:l('cell.merge')}"
 							forward="onClick=onMergeCellClick" />
 						<div sclass="toolbarSeparator"></div>		
-						<toolbarbutton id="insertChartBtn" src="/img/chart-pie.png" tooltiptext="${c:l('insert.chart')}"
+						<toolbarbutton id="insertChartBtn" src="~./zssapp/image/chart-pie.png" tooltiptext="${c:l('insert.chart')}"
 							forward="onClick=onInsertChart(pie)" />
 						<toolbarbutton id="insertHyperlinkBtn" src="~./zssapp/image/hyperlink.png" tooltiptext="${c:l('hyperlink')}"/>
 						<div sclass="toolbarSeparator"></div>
@@ -204,7 +202,7 @@
 								</menupopup>
 							</dropdownbutton>
 						<div sclass="toolbarSeparator"></div>
-						<checkbox id="gridlinesCheckbox" tooltiptext="${c:l('gridlines')}" forward="onGridlines" image="/img/grid.png">
+						<checkbox id="gridlinesCheckbox" tooltiptext="${c:l('gridlines')}" forward="onGridlines" image="~./zssapp/image/grid.png">
 							<attribute w:name="onBind">
 								var img = jq(this.$n()).find('img');
 								if (img)
@@ -221,7 +219,7 @@
 									height="21px" width="185px" mold="rounded"
 									style="text-align:center;">
 							<comboitem id="lbpos" label="A1" /></combobox>
-						<div hflex="min" sclass="formulaBtn">
+						<div hflex="min" sclass="formulaBtn" style="background:#F5F5F5;">
 							<toolbarbutton id="insertFormulaBtn" style="text-decoration:none;color:black;font-size:16px;font-style:italic;text-align:center;"
 											label="f(x)" forward="onFormulaBarBtn" />
 						</div>
@@ -247,7 +245,6 @@
 			maxcolumns="40" vflex="1" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
 			forward="onCtrlKey=mainWin.onSSCtrlKeys">
 	</spreadsheet>
-<!--	<columnHeaderMenu id="columnHeaderMenu" />-->
 	<columnheadermenupopup id="columnHeaderMenupopup"/>
 	<rowheadermenupopup id="rowHeaderMenupopup"></rowheadermenupopup>
 	<cellmenupopup id="cellMenupopup"></cellmenupopup>

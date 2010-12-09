@@ -12,14 +12,14 @@
 						<label value="${c:l('hyperlink.linkTo')}" />
 					</div>
 					<button id="webBtn" label="${c:l('hyperlink.web')}" width="110px" mold="trendy"
-						height="60px" image="/img/document-globe.png" orient="vertical">
+						height="60px" image="~./zssapp/image/document-globe.png" orient="vertical">
 					</button>
 					<button id="docBtn" label="${c:l('hyperlink.document')}" width="110px" mold="trendy"
-						 height="60px" image="/img/blue-document-table.png"
+						 height="60px" image="~./zssapp/image/blue-document-table.png"
 						orient="vertical">
 					</button>
 					<button id="mailBtn" label="${c:l('hyperlink.mail')}" width="110px" mold="trendy"
-						height="60px" image="/img/mail.png" orient="vertical">
+						height="60px" image="~./zssapp/image/mail.png" orient="vertical">
 					</button>
 				</vlayout>
 			</west>
@@ -35,7 +35,7 @@
 						<include id="content" style="padding-top: 10px;"></include>
 					</center>
 					<south height="25px" border="none" style="padding: 10px;">
-						<button id="okBtn" style="float:right;" image="/img/check.png" mold="trendy">
+						<button id="okBtn" style="float:right;" image="~./zssapp/image/check.png" mold="trendy">
 						</button>
 					</south>
 				</borderlayout>

@@ -3,8 +3,8 @@
 <window title="${c:l('file.import')}" border="normal" mode="modal"  width="580px" height="480px" 
 	closable="true" position="center" apply="org.zkoss.zss.app.file.ImportFileWindowCtrl">
 
-<div height="10px"></div>
-<hlayout width="94%" vflex="1" style="padding-left: 10px;">
+<div style="padding: 7px;">
+<hlayout width="98%" height="380px" spacing="0">
 	<!--  panel -->
 	<div hflex="1" vflex="1">
 		<vlayout width="100%" height="100%" spacing="0.4em">
@@ -24,6 +24,7 @@
 	<listbox id="allFilesListbox" vflex="1" hflex="1">
 	</listbox>
 </hlayout>
+</div>
 <div height="45px" >
 <button id="uploadBtn" label="Upload" upload="true" forward="onUpload=onFileUpload" mold="trendy" style="float:left;padding: 10px;"></button>
 </div>

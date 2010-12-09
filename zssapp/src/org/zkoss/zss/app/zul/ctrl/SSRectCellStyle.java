@@ -108,7 +108,8 @@ public class SSRectCellStyle implements CellStyle {
 	@Override
 	public boolean isBold() {
 		short bold = font.getBoldweight();
-		return  Font.BOLDWEIGHT_BOLD== bold;
+		resetFont();
+		return  Font.BOLDWEIGHT_BOLD == bold;
 	}
 	
 	@Override
@@ -151,6 +152,7 @@ public class SSRectCellStyle implements CellStyle {
 		Utils.setAlignment(spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
 				(short)alignment);
+		resetFont();
 	}
 
 	@Override
@@ -158,7 +160,7 @@ public class SSRectCellStyle implements CellStyle {
 		Utils.setBorder(spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
 				(short)borderPosition, borderStyle, color);
-		
+		resetFont();
 	}
 
 	@Override
@@ -167,6 +169,7 @@ public class SSRectCellStyle implements CellStyle {
 				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
 				color);
+		resetFont();
 	}
 
 	@Override
@@ -175,6 +178,7 @@ public class SSRectCellStyle implements CellStyle {
 				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
 				color);
+		resetFont();
 	}
 
 	@Override
@@ -183,6 +187,7 @@ public class SSRectCellStyle implements CellStyle {
 				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
 				italic);
+		resetFont();
 	}
 
 	@Override
@@ -191,6 +196,7 @@ public class SSRectCellStyle implements CellStyle {
 				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
 				strikethrough);
+		resetFont();
 	}
 
 	@Override
@@ -204,6 +210,7 @@ public class SSRectCellStyle implements CellStyle {
 				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
 				underline.getByteValue());
+		resetFont();
 	}
 	
 	public boolean isWrapText() {
@@ -213,6 +220,7 @@ public class SSRectCellStyle implements CellStyle {
 	public void setWrapText(boolean wrapped) {
 		Utils.setWrapText(spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), wrapped);
+		resetFont();
 	}
 	
 	public String toString(){

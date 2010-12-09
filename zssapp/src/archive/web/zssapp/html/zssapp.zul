@@ -5,10 +5,10 @@
 <?component name="cheatsheet" inline="true" macroURI="~./zssapp/html/cheatsheet.zul"?>
 
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
-<window id="mainWin" apply="org.zkoss.zss.app.MainWindowCtrl" height="100%" width="100%" style="margin:0px;padding:0px">
+<window id="mainWin" apply="org.zkoss.zss.app.MainWindowCtrl" height="100%" width="100%" style="margin:0px;padding:0px;position:relative;">
 	<style>
 		.clicked .z-toolbarbutton-cnt {
-			background-image: url('./img/toolbarbtn-ctr-clkd.gif');
+			background-image: url(${c:encodeURL('~./zssapp/image/toolbarbtn-ctr-clkd.gif')});
 			background-position: 0 -500px;
 		}
 		.clicked {
@@ -24,7 +24,7 @@
 		
 		.focusPosCombobox .z-combobox-rounded-btn {
 			border:0px;
-			background: url('./img/combo-white.png');
+			background: url(${c:encodeURL('~./zssapp/image/combo-white.png')});
 		}
 		.focusPosCombobox .z-combobox-rounded-inp {
 			background-image: none;
@@ -46,7 +46,7 @@
 		.toolbarSeparator {
 			height: 30px; 
 			width: 3px;
-			background: url('./img/sep.gif') repeat-y scroll 0 0 transparent;
+			background: url(${c:encodeURL('~./zssapp/image/sep.gif')}) repeat-y scroll 0 0 transparent;
 		}
 
 		.arialFont .z-menu-item-cnt, .arialFont .z-combo-item-text{
@@ -156,7 +156,7 @@
 						<!-- font*********************************************************************** -->	
 						<div sclass="toolbarSeparator"></div>
 						<div id="fontCtrlPanel" use="org.zkoss.zss.app.zul.ctrl.CellStyleCtrlPanel" 
-							style="vertical-align:middle;" spacing="0.4em"/>
+							style="vertical-align:middle;" spacing="0.4em" />
 						<!-- align vertical************************************************************************ 
 						<toolbarbutton src="/img/separator.bmp"/>
 						<toolbarbutton id="alignTopBtn" sclass="toolIcon" src="/img/alignTop.bmp"
@@ -171,7 +171,7 @@
 						<!-- border merge******************************************************************* -->
 						<div sclass="toolbarSeparator"></div>
 
-						<toolbarbutton id="mergeCellBtn" src="~./zssapp/image/table-join.png" tooltiptext="${c:l('cell.merge')}"
+						<toolbarbutton id="mergeCellBtn" image="~./zssapp/image/table-join.png" tooltiptext="${c:l('cell.merge')}"
 							forward="onClick=onMergeCellClick" />
 						<div sclass="toolbarSeparator"></div>		
 						<toolbarbutton id="insertChartBtn" src="~./zssapp/image/chart-pie.png" tooltiptext="${c:l('insert.chart')}"
@@ -219,7 +219,7 @@
 									height="21px" width="185px" mold="rounded"
 									style="text-align:center;">
 							<comboitem id="lbpos" label="A1" /></combobox>
-						<div hflex="min" sclass="formulaBtn">
+						<div hflex="min" sclass="formulaBtn" style="background:#F5F5F5;">
 							<toolbarbutton id="insertFormulaBtn" style="text-decoration:none;color:black;font-size:16px;font-style:italic;text-align:center;"
 											label="f(x)" forward="onFormulaBarBtn" />
 						</div>

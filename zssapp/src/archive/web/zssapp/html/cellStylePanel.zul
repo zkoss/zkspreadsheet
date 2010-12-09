@@ -17,7 +17,8 @@
 		.z-menu-item-cnt,.impactFont .z-combo-item-text{ font-size:14px;
 		font-family:impact; }
 	</style>
-	<hlayout id="container" height="100%" spacing="0">
+	<!-- Note. the hflex is for IE 6, div expand in IE6 -->
+	<hlayout id="container" height="100%" spacing="0" hflex="min">
 		<combobox id="fontFamily" mold="rounded" width="125px">
 			<comboitem label="Calibri" sclass="calibriFont" />
 			<comboitem label="Courier New" sclass="courierFont" />
@@ -27,7 +28,7 @@
 			<comboitem label="Georgia" sclass="georgiaFont" />
 			<comboitem label="Impact" sclass="impactFont" />
 		</combobox>
-		<combobox  id="fontSize" mold="rounded" width="50px">
+		<combobox id="fontSize" mold="rounded" width="50px">
 			<comboitem label="8" />
 			<comboitem label="9" />
 			<comboitem label="10" />

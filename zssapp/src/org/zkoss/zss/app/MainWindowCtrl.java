@@ -56,11 +56,13 @@ import org.zkoss.zss.app.zul.Sheets;
 import org.zkoss.zss.app.zul.ViewMenu;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.Zssapps;
+import org.zkoss.zss.app.zul.ctrl.CellStyleContextEvent;
 import org.zkoss.zss.app.zul.ctrl.CellStyleCtrlPanel;
 import org.zkoss.zss.app.zul.ctrl.DesktopCellStyleContext;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.app.zul.ctrl.SSRectCellStyle;
 import org.zkoss.zss.app.zul.ctrl.SSWorkbookCtrl;
+import org.zkoss.zss.app.zul.ctrl.StyleModification;
 import org.zkoss.zss.app.zul.ctrl.WorkbenchCtrl;
 import org.zkoss.zss.app.zul.ctrl.WorkspaceContext;
 import org.zkoss.zss.engine.event.SSDataEvent;
@@ -548,20 +550,36 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			 * case 'Y': spreadsheet.redo(); break;
 			 */
 			case 'O':
-				Executions.createComponents("/munus/file/fileListOpen.zul", mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+				Executions.createComponents(Consts._FileListOpen_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
 				break;
 			case 'F':
 				//TODO: 
 				break;
 			case 'B':
-				
-//				boldBtn.onClick();
+				getCellStyleContext().modifyStyle(new StyleModification(){
+					public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style, CellStyleContextEvent candidteEvt) {
+						candidteEvt.setExecutor(MainWindowCtrl.this);
+						style.setBold(!style.isBold());
+					}
+				});
 				break;
 			case 'I':
-//				italicBtn.onClick();
+				getCellStyleContext().modifyStyle(new StyleModification(){
+					public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style, CellStyleContextEvent candidteEvt) {
+						candidteEvt.setExecutor(MainWindowCtrl.this);
+						style.setItalic(!style.isItalic());
+					}
+				});
 				break;
 			case 'U':
-//				underlineBtn.onClick();
+				getCellStyleContext().modifyStyle(new StyleModification(){
+					public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style, CellStyleContextEvent candidteEvt) {
+						candidteEvt.setExecutor(MainWindowCtrl.this);
+						boolean isUnderline = style.getUnderline() ==  org.zkoss.zss.app.zul.ctrl.CellStyle.UNDERLINE_SINGLE;
+						style.setUnderline(isUnderline ? 
+								org.zkoss.zss.app.zul.ctrl.CellStyle.UNDERLINE_NONE : org.zkoss.zss.app.zul.ctrl.CellStyle.UNDERLINE_SINGLE);
+					}
+				});
 				break;
 			default:
 				return;
@@ -570,6 +588,13 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	private DesktopCellStyleContext getCellStyleContext() {
+		return DesktopCellStyleContext.getInstance(Executions.getCurrent().getDesktop());
 	}
 
 	public void onExportFile(ForwardEvent event) {

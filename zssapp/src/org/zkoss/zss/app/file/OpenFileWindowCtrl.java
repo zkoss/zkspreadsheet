@@ -45,6 +45,8 @@ public class OpenFileWindowCtrl extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		initFileListbox();
+		
+		uploadBtn.setDisabled(!FileHelper.hasImportPermission());
 	}
 
 	private void initFileListbox() {
