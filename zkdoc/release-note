@@ -76,6 +76,7 @@ ZK Spreadsheet 2.0.0
   224 Select a range to delete but only left-top cell removed
   225 Exception when remove a row which is referenced by a cell
   226 Exception when change sheet quickly
+  227 ZK Spreadsheet Live set display gridline doesn't work on IE
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

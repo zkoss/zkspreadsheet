@@ -601,9 +601,11 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		}
 		if (show == !this._hideGridlines) 
 			return;
-
-		sheet._cmdGridlines(show);
+		//Note. for IE, need to delay set gridline after css ready
+		if (sheet._initiated)
+			sheet._cmdGridlines(show);
 		this._hideGridlines = !show;
+
 	},
 	/**
 	 * Returns whether display gridlines.
@@ -1003,6 +1005,8 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 }, {
 	initLaterAfterCssReady: function (sheet) {
 		if (zcss.findRule(".zs_indicator", sheet.id + "-sheet") != null) {
+
+			sheet._cmdGridlines(sheet._wgt.isDisplayGridlines());
 			sheet._initiated = true;
 
 			_calScrollWidth(sheet.comp);
