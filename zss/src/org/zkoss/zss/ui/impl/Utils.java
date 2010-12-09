@@ -533,23 +533,7 @@ public class Utils {
 		int tRow = rect.getTop();
 		int bRow = rect.getBottom();
 
-		Range rng = null;
-		switch (borderType) {
-		case BookHelper.BORDER_EDGE_BOTTOM:
-			rng = Utils.getRange(sheet, bRow, lCol, bRow, rCol);
-			break;
-		case BookHelper.BORDER_EDGE_RIGHT:
-			rng = Utils.getRange(sheet, tRow, rCol, bRow, rCol);
-			break;
-		case BookHelper.BORDER_EDGE_TOP:
-			rng = Utils.getRange(sheet, tRow, lCol, tRow, rCol);
-			break;
-		case BookHelper.BORDER_EDGE_LEFT:
-			rng = Utils.getRange(sheet, tRow, lCol, bRow, lCol);
-			break;
-		default:
-			rng = Utils.getRange(sheet, tRow, lCol, bRow, rCol);
-		}
+		Range rng = Ranges.range(sheet, tRow, lCol, bRow, rCol);
 		rng.setBorders(borderType, lineStyle, color);
 	}
 	

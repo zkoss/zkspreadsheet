@@ -2549,12 +2549,12 @@ public final class BookHelper {
 		if ((borderIndex & vb) != 0) {
 			for (int row = tRow; row <= bRow; ++row) {
 				for (int col = lCol; col < rCol; ++col) {
-					Styles.setBorder(sheet, tRow, col, bsColor, bsLineStyle, rb);
+					Styles.setBorder(sheet, row, col, bsColor, bsLineStyle, rb);
 				}
 			}
 			for (int row = tRow; row <= bRow; ++row) {
 				for (int col = lCol+1; col <= rCol; ++col) {
-					Styles.setBorder(sheet, tRow, col, bsColor, bsLineStyle, lb);
+					Styles.setBorder(sheet, row, col, bsColor, bsLineStyle, lb);
 				}
 			}
 		}
@@ -2563,12 +2563,12 @@ public final class BookHelper {
 		if ((borderIndex & hb) != 0) {
 			for (int row = tRow; row < bRow; ++row) {
 				for (int col = lCol; col <= rCol; ++col) {
-					Styles.setBorder(sheet, tRow, col, bsColor, bsLineStyle, bb);
+					Styles.setBorder(sheet, row, col, bsColor, bsLineStyle, bb);
 				}
 			}
 			for (int row = tRow + 1; row <= bRow; ++row) {
-				for (int col = lCol; col < rCol; ++col) {
-					Styles.setBorder(sheet, tRow, col, bsColor, bsLineStyle, tb);
+				for (int col = lCol; col <= rCol; ++col) {
+					Styles.setBorder(sheet, row, col, bsColor, bsLineStyle, tb);
 				}
 			}
 		}
@@ -2591,7 +2591,7 @@ public final class BookHelper {
 		if ((borderIndex & db) != 0) {
 			for (int row = tRow; row <= bRow; ++row) {
 				for (int col = lCol; col <= rCol; ++col) {
-					Styles.setBorder(sheet, tRow, col, bsColor, bsLineStyle, db);
+					Styles.setBorder(sheet, row, col, bsColor, bsLineStyle, db);
 				}
 			}
 		}
@@ -2600,7 +2600,7 @@ public final class BookHelper {
 		if ((borderIndex & ub) != 0) {
 			for (int row = tRow; row <= bRow; ++row) {
 				for (int col = lCol; col <= rCol; ++col) {
-					Styles.setBorder(sheet, tRow, col, bsColor, bsLineStyle, ub);
+					Styles.setBorder(sheet, row, col, bsColor, bsLineStyle, ub);
 				}
 			}
 		}

@@ -78,6 +78,57 @@ public interface Range {
 	public final static int FILTEROP_OR = BookHelper.FILTEROP_OR;
 	public final static int FILTEROP_TOP10 = BookHelper.FILTEROP_TOP10;
 	public final static int FILTEROP_TOP10PERCENT = BookHelper.FILTEROP_TOP10PERCENT;
+	
+	//borderIndex of #setBorders
+	/**
+	 * Bottom border of a range. See borderIndex parameter of {@link #setBorders(short borderIndex, BorderStyle, String)}
+	 */
+	public static final short BORDER_EDGE_BOTTOM		= BookHelper.BORDER_EDGE_BOTTOM;
+	/**
+	 * Right border of a range. See borderIndex parameter of {@link #setBorders(short borderIndex, BorderStyle, String)}
+	 */
+	public static final short BORDER_EDGE_RIGHT			= BookHelper.BORDER_EDGE_RIGHT;
+	/**
+	 * Top border of a range. See borderIndex parameter of {@link #setBorders(short borderIndex, BorderStyle, String)}
+	 */
+	public static final short BORDER_EDGE_TOP			= BookHelper.BORDER_EDGE_TOP;
+	/**
+	 * Left border of a range. See borderIndex parameter of {@link #setBorders(short borderIndex, BorderStyle, String)}
+	 */
+	public static final short BORDER_EDGE_LEFT			= BookHelper.BORDER_EDGE_LEFT;
+	/**
+	 * Horizontal inside border of a range. See borderIndex parameter of {@link #setBorders(short borderIndex, BorderStyle, String)}
+	 */
+	public static final short BORDER_INSIDE_HORIZONTAL	= BookHelper.BORDER_INSIDE_HORIZONTAL;
+	/**
+	 * Vertical inside border of a range. See borderIndex parameter of {@link #setBorders(short borderIndex, BorderStyle, String)}
+	 */
+	public static final short BORDER_INSIDE_VERTICAL 	= BookHelper.BORDER_INSIDE_VERTICAL;
+	/**
+	 * Diagonal down border of a range. See borderIndex parameter of {@link #setBorders(short borderIndex, BorderStyle, String)}
+	 */
+	public static final short BORDER_DIAGONAL_DOWN		= BookHelper.BORDER_INSIDE_VERTICAL;
+	/**
+	 * Diagonal up border of a range. See borderIndex parameter of {@link #setBorders(short borderIndex, BorderStyle, String)}
+	 */
+	public static final short BORDER_DIAGONAL_UP		= BookHelper.BORDER_DIAGONAL_UP;
+	
+	/**
+	 * All borders of a range. See borderIndex parameter of {@link #setBorders(short borderIndex, BorderStyle, String)}
+	 */
+	public static final short BORDER_FULL		= BookHelper.BORDER_FULL;
+	/**
+	 * Out-most borders of a range. See borderIndex parameter of {@link #setBorders(short borderIndex, BorderStyle, String)}
+	 */
+	public static final short BORDER_OUTLINE	= BookHelper.BORDER_OUTLINE;
+	/**
+	 * Inside borders of a range.  See borderIndex parameter of {@link #setBorders(short borderIndex, BorderStyle, String)}
+	 */
+	public static final short BORDER_INSIDE		= BookHelper.BORDER_INSIDE;
+	/**
+	 * Diagno borders of a range.  See borderIndex parameter of {@link #setBorders(short borderIndex, BorderStyle, String)}
+	 */
+	public static final short BORDER_DIAGONAL	= BookHelper.BORDER_DIAGONAL;
 		
 	/**
 	 * Returns rich text string of this Range.
@@ -201,6 +252,11 @@ public interface Range {
 
 	/**
 	 * Adds/Remove border of all cell within this range per the specified border index.
+	 * @param borderIndex one of {@link #BORDER_EDGE_BOTTOM},{@link #BORDER_EDGE_RIGHT},{@link #BORDER_EDGE_TOP},
+	 * {@link #BORDER_EDGE_LEFT},{@link #BORDER_INSIDE_HORIZONTAL},{@link #BORDER_INSIDE_VERTICAL},{@link #BORDER_DIAGONAL_DOWN},
+	 * {@link #BORDER_DIAGONAL_UP},{@link #BORDER_FULL},{@link #BORDER_OUTLINE},{@link #BORDER_INSIDE},{@link #BORDER_DIAGONAL}
+ 	 * @param lineStyle border line style, one of {@link BorderStyle} 
+	 * @param color color in HTML format; i.e., #rrggbb.
 	 */
 	public void setBorders(short borderIndex, BorderStyle lineStyle, String color);
 

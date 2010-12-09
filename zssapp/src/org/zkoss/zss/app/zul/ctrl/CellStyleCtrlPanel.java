@@ -27,6 +27,7 @@ import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.Dropdownbutton;
 import org.zkoss.zss.app.zul.Colorbutton;
 import org.zkoss.zss.app.zul.DisposedEventListener;
+import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
@@ -354,44 +355,46 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
 				candidteEvt.setExecutor(CellStyleCtrlPanel.this);
 				BorderStyle borderStyle = BorderStyle.MEDIUM;
-				if (param.equals(Labels.getLabel("border.no")))
+				if ("no".equals(param))
 					borderStyle = BorderStyle.NONE;
 				style.setBorder(getBorderType(param), borderStyle, color);
 			}
 		});
 		Events.postEvent(Events.ON_CLICK, this, null);
 	}
-	private static int getBorderType(String i3label) {
-		if (i3label == null || i3label.equals(Labels.getLabel("border.bottom"))) {
-			return BookHelper.BORDER_EDGE_BOTTOM;
+	private static int getBorderType(String borderType) {
+		if (borderType == null) {
+			return Range.BORDER_EDGE_BOTTOM;
 		}
 
-		if (i3label.equals(Labels.getLabel("border.bottom")))
-			return BookHelper.BORDER_EDGE_BOTTOM;
-		else if (i3label.equals(Labels.getLabel("border.right")))
-			return BookHelper.BORDER_EDGE_RIGHT;
-		else if (i3label.equals(Labels.getLabel("border.top")))
-			return BookHelper.BORDER_EDGE_TOP;
-		else if (i3label.equals(Labels.getLabel("border.left")))
-			return BookHelper.BORDER_EDGE_LEFT;
-		else if (i3label.equals(Labels.getLabel("border.insideHorizontal")))
-			return BookHelper.BORDER_INSIDE_HORIZONTAL;
-		else if (i3label.equals(Labels.getLabel("border.insideVertical")))
-			return BookHelper.BORDER_INSIDE_VERTICAL;
-		else if (i3label.equals(Labels.getLabel("border.diagonalDown")))
-			return BookHelper.BORDER_DIAGONAL_DOWN;
-		else if (i3label.equals(Labels.getLabel("border.diagonalUp")))
-			return BookHelper.BORDER_DIAGONAL_UP;
-		else if (i3label.equals(Labels.getLabel("border.full")))
-			return BookHelper.BORDER_FULL;
-		else if (i3label.equals(Labels.getLabel("border.outside")))
-			return BookHelper.BORDER_OUTLINE;
-		else if (i3label.equals(Labels.getLabel("border.inside")))
-			return BookHelper.BORDER_INSIDE;
-		else if (i3label.equals(Labels.getLabel("border.diagonal")))
-			return BookHelper.BORDER_DIAGONAL;
+		if ("bottom".equals(borderType))
+			return Range.BORDER_EDGE_BOTTOM;
+		else if ("right".equals(borderType))
+			return Range.BORDER_EDGE_RIGHT;
+		else if ("top".equals(borderType))
+			return Range.BORDER_EDGE_TOP;
+		else if ("left".equals(borderType))
+			return Range.BORDER_EDGE_LEFT;
+		else if ("outside".equals(borderType))
+			return Range.BORDER_OUTLINE;
+		else if ("inside".equals(borderType))
+			return Range.BORDER_INSIDE;
+		else if ("insideHorizontal".equals(borderType))
+			return Range.BORDER_INSIDE_HORIZONTAL;
+		else if ("insideVertical".equals(borderType))
+			return Range.BORDER_INSIDE_VERTICAL;
+		else if ("no".equals(borderType))
+			return Range.BORDER_FULL;
+		else if ("full".equals(borderType))
+			return Range.BORDER_FULL;
+		else if ("diagonalDown".equals(borderType))
+			return Range.BORDER_DIAGONAL_DOWN;
+		else if ("diagonalUp".equals(borderType))
+			return Range.BORDER_DIAGONAL_UP;
+		else if ("diagonal".equals(borderType))
+			return Range.BORDER_DIAGONAL;
 
-		return BookHelper.BORDER_EDGE_BOTTOM;
+		return Range.BORDER_EDGE_BOTTOM;
 	}
 	
 	

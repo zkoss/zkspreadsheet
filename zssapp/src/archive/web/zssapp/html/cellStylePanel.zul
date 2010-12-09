@@ -52,34 +52,34 @@
 		<toolbarbutton id="strikethroughBtn" image="~./zssapp/image/edit-strike.png" tooltiptext="${c:l('font.strike')}"></toolbarbutton>
 		<colorbutton id="fontColorBtn" width="20px" height="12px" color="#000000" image="~./zssapp/image/edit-color.png" tooltiptext="${c:l('font.color')}"></colorbutton>
 		<colorbutton id="cellColorBtn" width="20px" height="12px" color="#FFFFFF" image="~./zssapp/image/paint-can-color.png" tooltiptext="${c:l('font.fill')}"></colorbutton>
-		<dropdownbutton id="borderBtn" image="~./zssapp/image/border-bottom.png" forward="onClick=onBorderSelector(${c:l('border.bottom')})" tooltiptext="${c:l('border.bottom')}">
+		<dropdownbutton id="borderBtn" image="~./zssapp/image/border-bottom.png" forward="onClick=onBorderSelector(bottom)" tooltiptext="${c:l('border.bottom')}">
 			<menupopup >
 				<menuitem label="${c:l('border.bottom')}" image="~./zssapp/image/border-bottom.png"
-					forward="onBorderSelector(${c:l('border.bottom')})" />
+					forward="onBorderSelector(bottom)" />
 				<menuitem label="${c:l('border.top')}" image="~./zssapp/image/border-top.png"
-					forward="onBorderSelector(${c:l('border.top')})" />
+					forward="onBorderSelector(top)" />
 				<menuitem label="${c:l('border.left')}" image="~./zssapp/image/border-left.png"
-					forward="onBorderSelector(${c:l('border.left')})" />
+					forward="onBorderSelector(left)" />
 				<menuitem label="${c:l('border.right')}" image="~./zssapp/image/border-right.png"
-					forward="onBorderSelector(${c:l('border.right')})" />
+					forward="onBorderSelector(right)" />
 				<menuseparator />			
 				<menuitem label="${c:l('border.no')}" image="~./zssapp/image/border.png"
-					forward="onBorderSelector(${c:l('border.no')})" />
+					forward="onBorderSelector(no)" />
 				<menuitem label="${c:l('border.full')}" image="~./zssapp/image/border-all.png"
-					forward="onBorderSelector(${c:l('border.full')})" />
+					forward="onBorderSelector(full)" />
 				<menuitem label="${c:l('border.outside')}"	image="~./zssapp/image/border-outside.png"
-					forward="onBorderSelector(${c:l('border.outside')})" />
+					forward="onBorderSelector(outside)" />
 				<menuitem label="${c:l('border.inside')}" image="~./zssapp/image/border-inside.png"
-					forward="onBorderSelector(${c:l('border.inside')})" />
+					forward="onBorderSelector(inside)" />
 				<menuseparator />
 				<menuitem label="${c:l('border.insideHorizontal')}" image="~./zssapp/image/border-horizontal.png"
-					forward="onBorderSelector(${c:l('border.insideHorizontal')})" />
+					forward="onBorderSelector(insideHorizontal)" />
 				<menuitem label="${c:l('border.insideVertical')}" image="~./zssapp/image/border-vertical.png"
-					forward="onBorderSelector(${c:l('border.insideVertical')})" />
+					forward="onBorderSelector(insideVertical)" />
 <!--				 NOT IMPLEMENT menuitem label="${c:l('border.diagonalDown')}" image="~./zssapp/image/border-down.png"-->
-<!--					forward="onBorderSelector(${c:l('border.diagonalDown')})" />-->
+<!--					forward="onBorderSelector(diagonalDown)" />-->
 <!--				<menuitem label="${c:l('border.diagonalUp')}" image="~./zssapp/image/border-up.png"-->
-<!--					forward="onBorderSelector(${c:l('border.diagonalUp')})" /-->
+<!--					forward="onBorderSelector(diagonalUp)" /-->
 			</menupopup>
 		</dropdownbutton>
 		<toolbarbutton id="alignLeftBtn" image="~./zssapp/image/edit-alignment.png" tooltiptext="${c:l('align.left')}"
