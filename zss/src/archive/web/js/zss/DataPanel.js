@@ -175,18 +175,17 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	//@param value to start editing
 	//@param server boolean whether the value come from server 
 	_startEditing: function (value, server) {
-		
 		var sheet = this.sheet,
 			cell = sheet.getFocusedCell();
 
 		//bug #117 Barcode Scanner data incomplete
 		if (cell != null) {
+			var editor = sheet.editor;
 			if( sheet.state == zss.SSheetCtrl.START_EDIT) {
 				if (!server)
 					value = sheet._clienttxt;
 				sheet._clienttxt = '';
-				var editor = sheet.editor,
-					pos = sheet.getLastFocus(),
+				var pos = sheet.getLastFocus(),
 					row = pos.row,
 					col = pos.column,
 					j = value.indexOf(zkS._enterChar),
@@ -210,9 +209,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 					this._moveFocusAndEdit(row, col, value, pos.row != row); //set focus and enter editing mode
 				else if (pos.row != row)
 					this.moveFocus(row, col, true, true);
-			} else if (server && sheet.state == zss.SSheetCtrl.EDITING) {
-				var editor = sheet.editor,
-					pos = sheet.getLastFocus();
+			} else if (server && sheet.state == zss.SSheetCtrl.EDITING && editor.comp.value != value) {
+				var pos = sheet.getLastFocus();
 				editor.edit(cell.comp, pos.row, pos.column, value);
 			}
 		}

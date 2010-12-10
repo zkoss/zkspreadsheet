@@ -166,11 +166,12 @@ zss.Editbox = zk.$extends(zk.Object, {
 			}
 		};
 
-		if (!zk.safari) fun();//safari must run after timeout
+		if (!zk.safari && !zk.ie) fun();//safari must run after timeout
 		setTimeout(function(){
-			if (zk.safari) fun();
 			//issue 228: ie focus event need after show
 			zk.ie ? $edit.show().focus() : editorcmp.focus();
+			//issue 230: IE cursor position is not at the text end when press F2
+			if (zk.safari || zk.ie) fun();
 		}, 25);
 		this.autoAdjust(true);
 	},
