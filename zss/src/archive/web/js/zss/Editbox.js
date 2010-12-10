@@ -145,7 +145,7 @@ zss.Editbox = zk.$extends(zk.Object, {
 		this.editingWidth = w;
 		this.editingHeight = h;
 
-		jq(editorcmp).css({'width': jq.px0(w), 'height': jq.px0(h), 'left': jq.px(l), 'top': jq.px(t), 'display': 'block', 'line-height': jq.px0(sheet.lineHeight)});
+		jq(editorcmp).css({'width': jq.px0(w), 'height': jq.px0(h), 'left': jq.px(l), 'top': jq.px(t), 'line-height': jq.px0(sheet.lineHeight)});
 
 		zcss.copyStyle(txtcmp, editorcmp, ["font-family","font-size","font-weight","font-style","color","text-decoration","text-align"],true);
 		zcss.copyStyle(cellcmp, editorcmp, ["background-color"], true);
@@ -165,7 +165,7 @@ zss.Editbox = zk.$extends(zk.Object, {
 		if (!zk.safari) fun();//safari must run after timeout
 		setTimeout(function(){
 			if(zk.safari) fun();
-			editorcmp.focus();
+			jq(editorcmp).show().focus();
 		}, 25);
 		this.autoAdjust(true);
 	},
