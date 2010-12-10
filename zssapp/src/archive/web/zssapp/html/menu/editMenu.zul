@@ -1,8 +1,8 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk>
 	<menupopup id="editMenupopup">
-		<menuitem id="undo" label="${c:l('edit.undo')}" />
-		<menuitem id="redo" label="${c:l('edit.redo')}" />
+		<menuitem disabled="true" id="undo" label="${c:l('edit.undo')}" />
+		<menuitem disabled="true" id="redo" label="${c:l('edit.redo')}" />
 		<menuseparator />
 		<menuitem id="cut" label="${c:l('edit.cut')}" />
 		<menuitem id="copy" label="${c:l('edit.copy')}" />

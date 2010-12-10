@@ -129,8 +129,9 @@ public class EditMenu extends Menu implements IdSpace {
 	}
 	
 	public void setDisabled(boolean disabled) {
-		undo.setDisabled(disabled);
-		redo.setDisabled(disabled);
+		//TODO: undo, redo is not implement yet
+		undo.setDisabled(true);
+		redo.setDisabled(true);
 		
 		cut.setDisabled(disabled);
 		copy.setDisabled(disabled);

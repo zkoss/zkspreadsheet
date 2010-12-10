@@ -153,10 +153,15 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	}
 	
 	public void onClick$delBtn () {
+		if (sortLevel.getSelectedIndex() < 0)
+			return;
 		sortLevelModel.remove(sortLevel.getSelectedIndex());
 	}
 	
 	public void onClick$upBtn () {
+		if (sortLevel.getSelectedIndex() < 0)
+			return;
+		
 		int idx = sortLevel.getSelectedIndex();
 		int forward = idx - 1;
 		if (forward >= 0) {
@@ -166,6 +171,9 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	}
 	
 	public void onClick$downBtn () {
+		if (sortLevel.getSelectedIndex() < 0)
+			return;
+		
 		int idx = sortLevel.getSelectedIndex();
 		int back = idx + 1;
 		if (back < sortLevelModel.getSize()) {
