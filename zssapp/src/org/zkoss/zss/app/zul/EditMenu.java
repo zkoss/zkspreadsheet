@@ -57,8 +57,6 @@ public class EditMenu extends Menu implements IdSpace {
 	private Menuitem deleteEntireRow;
 	private Menuitem deleteEntireColumn;
 	
-	private Spreadsheet ss;
-	
 	public EditMenu() {
 		Executions.createComponents(Consts._EditMenu_zul, this, null);
 		Components.wireVariables(this, this, '$', true, true);

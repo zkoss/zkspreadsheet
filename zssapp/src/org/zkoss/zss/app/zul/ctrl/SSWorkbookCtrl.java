@@ -14,6 +14,10 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul.ctrl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.zkoss.image.Image;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.util.media.Media;
@@ -28,6 +32,7 @@ import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.Widget;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zssex.ui.widget.ImageWidget;
@@ -42,16 +47,24 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	private Spreadsheet spreadsheet;
 	private Book book;
 	
+	private HashMap<String, List<Widget>> sheetWidgets = new HashMap<String, List<Widget>>(); 
+	
 	public SSWorkbookCtrl(Book book, Spreadsheet spreadsheet) {
 		this.book = book;
 		this.spreadsheet = spreadsheet;
 	}
 	
 	public void clearSelectionContent() {
+		if (spreadsheet.getSelection() == null)
+			return;
+		
 		CellHelper.clearContent(spreadsheet, SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
 	}
 
 	public void clearSelectionStyle() {
+		if (spreadsheet.getSelection() == null)
+			return;
+		
 		CellHelper.clearStyle(spreadsheet, SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
 	}
 
@@ -69,6 +82,9 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public void insertColumnLeft() {
+		if (spreadsheet.getSelection() == null)
+			return;
+		
 		Rect rect = spreadsheet.getSelection();
 		CellHelper.shiftEntireColumnRight(spreadsheet.getSelectedSheet(), 
 				rect.getLeft(), rect.getRight());
@@ -76,6 +92,9 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void deleteColumn() {
 		Rect rect = spreadsheet.getSelection();
+		if (rect == null)
+			return;
+		
 		CellHelper.shiftEntireColumnLeft(spreadsheet.getSelectedSheet(), 
 				rect.getLeft(), rect.getRight());
 	}
@@ -93,6 +112,15 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 
 	public void setSelectedSheet(String name) {
+		//TODO: remove last sheet widget shall not handle by AP
+		List<Widget> rmWgtList = sheetWidgets.get(spreadsheet.getSelectedSheet().getSheetName());
+		if (rmWgtList != null) {
+			SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
+			for (Widget w : rmWgtList) {
+				ctrl.removeWidget(w);
+			}
+		}
+		
 		spreadsheet.setSelectedSheet(name);
 		//handle the copy/cut highlight
 		final Sheet sheet = EditHelper.getSourceSheet(spreadsheet);
@@ -103,25 +131,42 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 				spreadsheet.setHighlight(null);
 			}
 		}
+		
+		//TODO: insert sheet widget shall not handle by AP
+		List<Widget> addWgtList = sheetWidgets.get(name);
+		if (addWgtList != null) {
+			SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
+			for (Widget w : addWgtList) {
+				ctrl.addWidget(w);
+			}
+		}
 	}
 
 	public void hide(boolean hide) {
 		Rect rect = spreadsheet.getSelection();
+		if (rect == null)
+			return;
+		
 		Ranges.range(spreadsheet.getSelectedSheet(), 
 				rect.getTop(), rect.getLeft(), 
 				rect.getBottom(), rect.getRight()).setHidden(hide);
 	}
 
 	public void insertImage(Media media) {
+		//TODO: insert image shall not handle by AP
 		try {
 			if (media instanceof org.zkoss.image.Image) {
 				ImageWidget image = new ImageWidget();
 				image.setContent((Image) media);
-
-				int col = spreadsheet.getSelection().getLeft();
-				int row = spreadsheet.getSelection().getTop();
-				image.setRow(row);
-				image.setColumn(col);
+				image.setRow(spreadsheet.getSelection().getTop());
+				image.setColumn(spreadsheet.getSelection().getLeft());
+				
+				Sheet seldSheet = spreadsheet.getSelectedSheet();
+				List wgtList = sheetWidgets.get(seldSheet.getSheetName());
+				if (wgtList == null)
+					sheetWidgets.put(seldSheet.getSheetName(), wgtList = new ArrayList<Widget>());
+				wgtList.add(image);
+				
 				SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
 				ctrl.addWidget(image);
 			} else if (media != null) {

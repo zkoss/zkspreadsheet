@@ -37,6 +37,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.SimpleListModel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.impl.api.InputElement;
@@ -47,6 +48,8 @@ import org.zkoss.zul.impl.api.InputElement;
  */
 public class ComposeFormulaCtrl extends GenericForwardComposer {
 
+	private Label formulaStart;
+	private Label formulaEnd;
 	private Textbox composeFormulaTextbox;
 	private Listbox argsListbox;
 	private Label description;
@@ -57,13 +60,16 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 	private List<ArgWrapper> args;
 	
 	private List<InputElement> inputs = new LinkedList<InputElement>();
+	
+	private boolean movedToNext = false;
 	private InputElement focusComponent;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
 		info  = (FormulaMetaInfo)Executions.getCurrent().getArg().get(Consts.KEY_ARG_FORMULA_METAINFO);
-		composeFormulaTextbox.setText("=" + info.getFunction() + "()");
+		formulaStart.setValue("=" + info.getFunction() + "(");
+		formulaEnd.setValue(")");
 		composeFormulaTextbox.addEventListener(Events.ON_CHANGE, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				decomposeFormula();
@@ -92,7 +98,7 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 				tb.addEventListener(Events.ON_FOCUS, new EventListener() {
 					public void onEvent(Event event) throws Exception {
 						ArgWrapper last = args.get(args.size() - 1);
-						if (last.equals(arg)) {
+						if (last.equals(arg) && info.isMultipleParameter()) {
 							String argName = info.getMultipleParameter();
 							Integer num = null;
 							try {
@@ -105,6 +111,10 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 							argsListbox.setModel(newListModelInstance(args));
 						} else
 							focusComponent = tb;
+						
+						if (movedToNext == true)
+							focusComponent.focus();
+						movedToNext = false;
 					}
 				});
 				
@@ -116,14 +126,12 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 		argsListbox.addEventListener("onAfterRender", new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				int focusIdx = -1;
-				System.out.println("focus to: " + focusToIndex);
 				if (focusToIndex >= 0 && focusToIndex < inputs.size()) {
 					focusIdx = focusToIndex;
 				}
 				else if (inputs.size() > 1) {
 					focusIdx = 0;
 				}
-				System.out.println("set focu to " + focusIdx);
 				if (focusIdx >= 0) {
 					inputs.get(focusIdx).focus();
 					focusComponent = inputs.get(focusIdx);
@@ -159,6 +167,7 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 				InputElement next = inputs.get(i + 1);
 				next.focus();
 				focusComponent = next;
+				movedToNext = true;
 				break;
 			}
 		}
@@ -166,7 +175,6 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 	
 	private void composeFormula() {
 		StringBuilder strBuilder = new StringBuilder();
-		strBuilder.append("=" + info.getFunction() + "(");
 		boolean first = true;
 		for (int i = 0; i < args.size(); i++) {
 			ArgWrapper curArg = args.get(i);
@@ -190,22 +198,18 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 				strBuilder.append(arg);
 			}
 		}
-		strBuilder.append(")");
 		composeFormulaTextbox.setText(strBuilder.toString());
 	}
 	
 	private void decomposeFormula() {
 		String input = composeFormulaTextbox.getText();
-		int startIdx = -1, endIdx = -1;
-		if (input == null || 
-			((startIdx = input.indexOf("(")) == -1) || 
-			((endIdx = input.lastIndexOf(")")) == -1)
-			)
-			return;
-		startIdx += 1;
-		input = input.substring(startIdx, endIdx);
 		String[] arg = input.split(",");
-		for (int i = 0; i < arg.length; i++) {
+		if (arg.length > args.size())
+			try {
+				Messagebox.show("You've entered too many arguments for this function");
+			} catch (InterruptedException e) {
+			}
+		for (int i = 0; i < args.size(); i++) {
 			String val = arg[i].trim();
 			args.get(i).setValue(val);
 		}
@@ -213,7 +217,7 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 	}
 	
 	public void onClick$okBtn() {
-		getDesktopWorkbenchContext().getWorkbookCtrl().insertFormula(composeFormulaTextbox.getText());
+		getDesktopWorkbenchContext().getWorkbookCtrl().insertFormula(formulaStart.getValue() + composeFormulaTextbox.getText() + formulaEnd.getValue());
 		//Note. insert formula may throw exception and won't fire book content changed event, need to fire own event to update UI
 		getDesktopWorkbenchContext().fireContentsChanged();
 		self.detach();

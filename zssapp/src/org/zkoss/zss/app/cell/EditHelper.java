@@ -39,11 +39,17 @@ public final class EditHelper {
 	private final static String KEY_SRC_RANGE = "org.zkoss.zss.app.cell.editHelper.SourceRange";
 
 	public static void doCut(Spreadsheet ss) {
+		if (ss.getSelection() == null)
+			return;
+		
 		ss.setAttribute(KEY_IS_CUT, Boolean.valueOf(true));
 		setSource(ss);
 	}
 	
 	public static void doCopy(Spreadsheet ss) {
+		if (ss.getSelection() == null)
+			return;
+		
 		ss.setAttribute(KEY_IS_CUT, Boolean.valueOf(false));
 		setSource(ss);
 	}

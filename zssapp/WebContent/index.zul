@@ -84,7 +84,10 @@
 		.toolbarMask{
 			position:absolute;
 			background:none repeat scroll 0 0 #E0E1E3;
-			z-index:100; opacity: 0.6;
+			z-index:100; 
+			opacity: 0.6;
+			-moz-opacity: .6;
+			filter: alpha(opacity=60);
 		}
 	</style>
 		<div width="100%" style="background-color:rgb(83,175,227);display:none">	
@@ -130,10 +133,10 @@
 				<!-- SECTION **********FastIconToolbar*********************************************** -->
 				<center id="fastIconBtn" flex="true" border="0" style="background: #F5F5F5; border-bottom: 1px solid #D8D8D8;">
 					<hlayout spacing="0.4em" height="30px">
-						<toolbarbutton id="print"  src="~./zssapp/image/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>
+						<toolbarbutton disabled="true" id="print"  src="~./zssapp/image/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>
 						<toolbarbutton id="exportToPDFBtn" src="~./zssapp/image/document-pdf.png" tooltiptext="${c:l('export.pdf')}"/>
-						<toolbarbutton id="undo"  src="~./zssapp/image/arrow-curve-180-left.png" 	forward="onClick=onEditUndo" tooltiptext="${c:l('edit.undo')}"/>
-						<toolbarbutton id="redo"  src="~./zssapp/image/arrow-curve.png"	forward="onClick=onEditRedo" tooltiptext="${c:l('edit.redo')}"/>
+						<toolbarbutton disabled="true" id="undo"  src="~./zssapp/image/arrow-curve-180-left.png" 	forward="onClick=onEditUndo" tooltiptext="${c:l('edit.undo')}"/>
+						<toolbarbutton disabled="true" id="redo"  src="~./zssapp/image/arrow-curve.png"	forward="onClick=onEditRedo" tooltiptext="${c:l('edit.redo')}"/>
 						<div sclass="toolbarSeparator"></div>
 							<dropdownbutton id="pasteDropdownBtn" image="~./zssapp/image/clipboard-paste.png" tooltiptext="${c:l('paste')}">
 								<menupopup>
@@ -174,7 +177,7 @@
 						<toolbarbutton id="mergeCellBtn" image="~./zssapp/image/table-join.png" tooltiptext="${c:l('cell.merge')}"
 							forward="onClick=onMergeCellClick" />
 						<div sclass="toolbarSeparator"></div>		
-						<toolbarbutton id="insertChartBtn" src="~./zssapp/image/chart-pie.png" tooltiptext="${c:l('insert.chart')}"
+						<toolbarbutton disabled="true" id="insertChartBtn" src="~./zssapp/image/chart-pie.png" tooltiptext="${c:l('insert.chart')}"
 							forward="onClick=onInsertChart(pie)" />
 						<toolbarbutton id="insertHyperlinkBtn" src="~./zssapp/image/hyperlink.png" tooltiptext="${c:l('hyperlink')}"/>
 						<div sclass="toolbarSeparator"></div>
@@ -232,8 +235,8 @@
 			var $t = jq(this.$f('topToolbars')),
 				$m = jq(this.$f('mainNavigator')),
 				mnHgh = zk.parseInt($m.children('.z-north').css('height'));
-			//TODO: for width: I should use onSize event to sync width
-			jq(this.$n()).css({'width': '8000px', 
+			//TODO: for width: I should use onSize event to sync width, In IE, can not set long size, opacity won't work
+			jq(this.$n()).css({'width': '2000px', 
 				'height': (zk.parseInt($t.css('height')) - mnHgh) + 'px', 
 				'top': mnHgh + 'px', 
 				'left': $m.offset().left});

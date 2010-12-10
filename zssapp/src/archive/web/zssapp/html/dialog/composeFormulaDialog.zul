@@ -5,7 +5,11 @@
 	apply="org.zkoss.zss.app.ctrl.ComposeFormulaCtrl">
 		<div height="5px"></div>
 		<vlayout spacing="0.4em">
-			<textbox id="composeFormulaTextbox" cols="50"/>
+			<hlayout spacing="0">
+				<label id="formulaStart"></label>
+				<textbox id="composeFormulaTextbox" cols="50"/>
+				<label id="formulaEnd"></label>
+			</hlayout>
 			<div height="5px"></div>
 			<listbox id="argsListbox" rows="5"></listbox>
 			<label id="description" />
