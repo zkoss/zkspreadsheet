@@ -123,7 +123,8 @@ zss.Editbox = zk.$extends(zk.Object, {
 		this.sh = 0;//height to show
 		var sheet = this.sheet,
 			txtcmp = cellcmp.lastChild,
-			editorcmp = this.comp;
+			editorcmp = this.comp,
+			$edit = jq(editorcmp);
 
 		editorcmp.value = value;
 		var w = cellcmp.ctrl.overhead ? (cellcmp.firstChild.offsetWidth + this.sheet.cellPad) : (cellcmp.offsetWidth),
@@ -145,7 +146,10 @@ zss.Editbox = zk.$extends(zk.Object, {
 		this.editingWidth = w;
 		this.editingHeight = h;
 
-		jq(editorcmp).css({'width': jq.px0(w), 'height': jq.px0(h), 'left': jq.px(l), 'top': jq.px(t), 'line-height': jq.px0(sheet.lineHeight)});
+		//issue 228: firefox need set display block, but IE can not set this.
+		$edit.css({'width': jq.px0(w), 'height': jq.px0(h), 'left': jq.px(l), 'top': jq.px(t), 'line-height': jq.px0(sheet.lineHeight)});
+		if (!zk.ie)
+			$edit.css('display', 'block');
 
 		zcss.copyStyle(txtcmp, editorcmp, ["font-family","font-size","font-weight","font-style","color","text-decoration","text-align"],true);
 		zcss.copyStyle(cellcmp, editorcmp, ["background-color"], true);
@@ -164,8 +168,9 @@ zss.Editbox = zk.$extends(zk.Object, {
 
 		if (!zk.safari) fun();//safari must run after timeout
 		setTimeout(function(){
-			if(zk.safari) fun();
-			jq(editorcmp).show().focus();
+			if (zk.safari) fun();
+			//issue 228: ie focus event need after show
+			zk.ie ? $edit.show().focus() : editorcmp.focus();
 		}, 25);
 		this.autoAdjust(true);
 	},
