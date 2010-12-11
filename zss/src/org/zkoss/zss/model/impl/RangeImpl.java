@@ -1406,7 +1406,9 @@ public class RangeImpl implements Range {
 			final CellValue cv = BookHelper.evaluate(book, cell);
 			return BookHelper.getValueByCellValue(cv);
 		} else {
-			return BookHelper.getCellValue(cell);
+			final Object obj = BookHelper.getCellValue(cell);
+			return obj instanceof RichTextString ?
+					((RichTextString)obj).getString() : obj;
 		}
 	}
 
