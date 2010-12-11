@@ -90,7 +90,7 @@ public class Book08XlsCopyTest {
 		testToFormulaString(cellC3, "A1+7");
 		
 		//Copy cell (C3 -> D4)
-		BookHelper.copyCell(cellC3, sheet1, 3, 3, Range.PASTE_ALL, Range.PASTEOP_NONE);
+		BookHelper.copyCell(cellC3, sheet1, 3, 3, Range.PASTE_ALL, Range.PASTEOP_NONE, false);
 		_evaluator.notifySetFormula(cellC3);
 
 		//A1,A2,A2,B2 stay as is
@@ -133,7 +133,7 @@ public class Book08XlsCopyTest {
 		testToFormulaString(cellC3, "A1+7");
 		
 		//Copy cell (C3 -> C2)
-		BookHelper.copyCell(cellC3, sheet1, 1, 2, Range.PASTE_ALL, Range.PASTEOP_NONE);
+		BookHelper.copyCell(cellC3, sheet1, 1, 2, Range.PASTE_ALL, Range.PASTEOP_NONE, false);
 		_evaluator.notifySetFormula(cellC3);
 
 		//A1,A2,A2,B2 stay as is
@@ -177,7 +177,7 @@ public class Book08XlsCopyTest {
 		testToFormulaString(cellD3, "SUM(E1:F1)");
 		
 		//Copy cell (D3 -> IV3)
-		BookHelper.copyCell(cellD3, sheet1, 2, 255, Range.PASTE_ALL, Range.PASTEOP_NONE);
+		BookHelper.copyCell(cellD3, sheet1, 2, 255, Range.PASTE_ALL, Range.PASTEOP_NONE, false);
 		_evaluator.notifySetFormula(cellD3);
 
 		//A1,A2,A2,B2,E1,F1 stay as is

@@ -1000,7 +1000,7 @@ public class RangeImpl implements Range {
 						for (int srcCol = lCol; srcCol <= rCol; ++srcCol, ++dstCol) {
 							final Cell cell = BookHelper.getCell(srcSheet, srcRow, srcCol);
 							final Set<Ref>[] refs = (cell != null) ? 
-								skipBlanks && cell.getCellType() == Cell.CELL_TYPE_BLANK ? null : BookHelper.copyCell(cell, dstSheet, dstRow, dstCol, pasteType, pasteOp):
+								skipBlanks && cell.getCellType() == Cell.CELL_TYPE_BLANK ? null : BookHelper.copyCell(cell, dstSheet, dstRow, dstCol, pasteType, pasteOp, transpose):
 								skipBlanks ? null : BookHelper.removeCell(dstSheet, dstRow, dstCol);
 							if (refs != null) {
 								last.addAll(refs[0]);
@@ -1019,7 +1019,7 @@ public class RangeImpl implements Range {
 						for (int srcCol = lCol; srcCol <= rCol; ++srcCol, ++dstRow) {
 							final Cell cell = BookHelper.getCell(srcSheet, srcRow, srcCol);
 							final Set<Ref>[] refs = (cell != null) ? 
-								skipBlanks && cell.getCellType() == Cell.CELL_TYPE_BLANK ? null : BookHelper.copyCell(cell, dstSheet, dstRow, dstCol, pasteType, pasteOp):
+								skipBlanks && cell.getCellType() == Cell.CELL_TYPE_BLANK ? null : BookHelper.copyCell(cell, dstSheet, dstRow, dstCol, pasteType, pasteOp, transpose):
 								skipBlanks ? null : BookHelper.removeCell(dstSheet, dstRow, dstCol);
 							if (refs != null) {
 								last.addAll(refs[0]);

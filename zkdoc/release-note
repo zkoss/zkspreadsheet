@@ -82,6 +82,7 @@ ZK Spreadsheet 2.0.0
   231 Absolute Cell Reference shall not move when copy, paste
   232 NPE when load the attached xlsx file
   233 Right click header selection doesn't work well
+  235 Transpose pasteSpecial shall reverse Row/Column formula reference
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

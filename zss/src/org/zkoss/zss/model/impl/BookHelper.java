@@ -1284,13 +1284,13 @@ public final class BookHelper {
 	}
 	
 	//[0]:last, [1]:all
-	public static Set<Ref>[] copyCell(Cell srcCell, Sheet sheet, int rowIndex, int colIndex, int pasteType, int pasteOp) {
+	public static Set<Ref>[] copyCell(Cell srcCell, Sheet sheet, int rowIndex, int colIndex, int pasteType, int pasteOp, boolean transpose) {
 		//TODO not handle pastType == pasteValidation and pasteOp(assume none)
 		final Cell dstCell = getOrCreateCell(sheet, rowIndex, colIndex);
-		return copyCell(srcCell, dstCell, pasteType, pasteOp);
+		return copyCell(srcCell, dstCell, pasteType, pasteOp, transpose);
 	}
 	
-	public static Set<Ref>[] copyCell(Cell srcCell, Cell dstCell, int pasteType, int pasteOp) {
+	public static Set<Ref>[] copyCell(Cell srcCell, Cell dstCell, int pasteType, int pasteOp, boolean transpose) {
 		//paste cell formats
 		if ((pasteType & BookHelper.INNERPASTE_FORMATS) != 0) {
 			dstCell.setCellStyle(prepareCellStyle(srcCell.getCellStyle(), dstCell, pasteType));
@@ -1322,7 +1322,7 @@ public final class BookHelper {
 	        	return setCellValue(dstCell, (RichTextString) null);
 	        case Cell.CELL_TYPE_FORMULA:
 	        	if ((pasteType & BookHelper.INNERPASTE_FORMULAS) != 0) { //copy formula
-	        		return copyCellFormula(dstCell, srcCell);
+	        		return copyCellFormula(dstCell, srcCell, transpose);
 	        	} else { //copy evaluated value only
 	        		final Book book = (Book) srcCell.getSheet().getWorkbook();
 	        		final CellValue cv = evaluate(book, srcCell);
@@ -1356,12 +1356,12 @@ public final class BookHelper {
 	}
 	
 	//[0]:last, [1]:all
-	private static Set<Ref>[] copyCellFormula(Cell dstCell, Cell srcCell) {
+	private static Set<Ref>[] copyCellFormula(Cell dstCell, Cell srcCell, boolean transpose) {
 		//remove formula cell and create a blank one
 		removeFormula(dstCell, true);
 		
 		//set value into cell model
-		final Ptg[] dstPtgs = offsetPtgs(dstCell, srcCell);
+		final Ptg[] dstPtgs = offsetPtgs(dstCell, srcCell, transpose);
 		setCellPtgs(dstCell, dstPtgs);
 		evaluate((Book)dstCell.getSheet().getWorkbook(), dstCell);
 		
@@ -1421,7 +1421,7 @@ public final class BookHelper {
 		return fra.getFormulaTokens();
 	}
 	
-	private static Ptg[] offsetPtgs(Cell dstCell, Cell srcCell) {
+	private static Ptg[] offsetPtgs(Cell dstCell, Cell srcCell, boolean transpose) {
 		final Sheet srcSheet = srcCell.getSheet();
 		final int srcRow = srcCell.getRowIndex();
 		final int srcCol = srcCell.getColumnIndex();
@@ -1433,10 +1433,10 @@ public final class BookHelper {
 		final int offRow = dstRow - srcRow;
 		final int offCol = dstCol - srcCol;
 
-		return offsetPtgs(srcCell, srcSheet, dstSheet, -1, offRow, -1, offCol);
+		return offsetPtgs(srcCell, srcSheet, transpose ? dstCell : null, dstSheet, offRow, offCol);
 	}
 	
-	private static Ptg[] offsetPtgs(Cell srcCell, Sheet srcSheet, Sheet dstSheet, int startRow, int offRow, int startCol, int offCol) {
+	private static Ptg[] offsetPtgs(Cell srcCell, Sheet srcSheet, Cell dstCell, Sheet dstSheet, int offRow, int offCol) {
 		final Ptg[] srcPtgs = getCellPtgs(srcCell);
 		final int ptglen = srcPtgs.length;
 		final Ptg[] dstPtgs = new Ptg[ptglen];
@@ -1444,7 +1444,7 @@ public final class BookHelper {
 		final SpreadsheetVersion ver = ((Book)dstSheet.getWorkbook()).getSpreadsheetVersion();
 		for(int j = 0; j < ptglen; ++j) {
 			final Ptg srcPtg = srcPtgs[j];
-			final Ptg dstPtg = offsetPtg(srcPtg, offRow, offCol, ver);
+			final Ptg dstPtg = offsetPtg(srcPtg, dstCell, offRow, offCol, ver);
 			dstPtgs[j] = dstPtg;
 		}
 		return dstPtgs;
@@ -1470,21 +1470,29 @@ public final class BookHelper {
 		return PtgShifter.createDeletedRef(ptg);
 	}
 
-	private static Ptg offsetPtg(Ptg ptg, int offRow, int offCol, SpreadsheetVersion ver) {
+	private static Ptg offsetPtg(Ptg ptg, Cell dstCell, int offRow, int offCol, SpreadsheetVersion ver) {
 		if(ptg instanceof RefPtgBase) {
 			final RefPtgBase rptg = (RefPtgBase)ptg;
-			return rptgSetRowCol(rptg, offRow, offCol, ver);
+			return rptgSetRowCol(rptg, dstCell, offRow, offCol, ver);
 		}
 		if(ptg instanceof AreaPtgBase) {
 			final AreaPtgBase aptg = (AreaPtgBase) ptg;
-			return aptgSetRowCol(aptg, offRow, offCol, ver);
+			return aptgSetRowCol(aptg, dstCell, offRow, offCol, ver);
 		}
 		return ptg;
 	}
 
-	private static Ptg rptgSetRowCol(RefPtgBase ptg, int nrow, int ncol, SpreadsheetVersion ver) {
-		final int row = ptg.getRow() + (ptg.isRowRelative() ? nrow : 0);
-		final int col = ptg.getColumn() + (ptg.isColRelative() ? ncol : 0);
+	private static Ptg rptgSetRowCol(RefPtgBase ptg, Cell dstCell, int nrow, int ncol, SpreadsheetVersion ver) {
+		int row = ptg.getRow() + (ptg.isRowRelative() ? nrow : 0);
+		int col = ptg.getColumn() + (ptg.isColRelative() ? ncol : 0);
+		if (dstCell != null && ptg.isRowRelative() && ptg.isColRelative()) { //transpose && relative
+			final int dstRow = dstCell.getRowIndex();
+			final int dstCol = dstCell.getColumnIndex();
+			final int offRow = row - dstRow;
+			final int offCol = col - dstCol;
+			row = dstRow + offCol;
+			col = dstCol + offRow;
+		}
 		final Ptg xptg = rptgValidate(ptg, row, col, ver);
 		if (xptg == null) {
 			ptg.setRow(row);
@@ -1494,11 +1502,27 @@ public final class BookHelper {
 			return xptg;
 	}
 	
-	private static Ptg aptgSetRowCol(AreaPtgBase ptg, int nrow, int ncol, SpreadsheetVersion ver) {
-		final int row1 = ptg.getFirstRow() + (ptg.isFirstRowRelative() ? nrow : 0);
-		final int col1 = ptg.getFirstColumn() + (ptg.isFirstColRelative() ? ncol : 0);
-		final int row2 = ptg.getLastRow() + (ptg.isLastRowRelative() ? nrow : 0);
-		final int col2 = ptg.getLastColumn() + (ptg.isLastColRelative()? ncol : 0);
+	private static Ptg aptgSetRowCol(AreaPtgBase ptg, Cell dstCell, int nrow, int ncol, SpreadsheetVersion ver) {
+		int row1 = ptg.getFirstRow() + (ptg.isFirstRowRelative() ? nrow : 0);
+		int col1 = ptg.getFirstColumn() + (ptg.isFirstColRelative() ? ncol : 0);
+		int row2 = ptg.getLastRow() + (ptg.isLastRowRelative() ? nrow : 0);
+		int col2 = ptg.getLastColumn() + (ptg.isLastColRelative()? ncol : 0);
+		if (dstCell != null) {  //transpose && relative
+			final int dstRow = dstCell.getRowIndex();
+			final int dstCol = dstCell.getColumnIndex();
+			if (ptg.isFirstRowRelative() && ptg.isFirstColRelative()) {
+				final int offRow1 = row1 - dstRow;
+				final int offCol1 = col1 - dstCol;
+				row1 = dstRow + offCol1;
+				col1 = dstCol + offRow1;
+			}
+			if (ptg.isLastRowRelative() && ptg.isLastColRelative()) {
+				final int offRow2 = row2 - dstRow;
+				final int offCol2 = col2 - dstCol;
+				row2 = dstRow + offCol2;
+				col2 = dstCol + offRow2;
+			}
+		}
 		final Ptg xptg = aptgValidate(ptg, row1, row2, col1, col2, ver);
 		if (xptg == null) {
 			ptg.setFirstRow(row1);
@@ -2280,7 +2304,7 @@ public final class BookHelper {
 			final List<Cell> cells = entry.getValue();
 			for(Cell cell : cells) {
 				final int rowNum = cell.getRowIndex();
-				final Set<Ref>[] refs = BookHelper.copyCell(cell, sheet, rowNum, colNum, Range.PASTE_ALL, Range.PASTEOP_NONE);
+				final Set<Ref>[] refs = BookHelper.copyCell(cell, sheet, rowNum, colNum, Range.PASTE_ALL, Range.PASTEOP_NONE, false);
 				last.addAll(refs[0]);
 				all.addAll(refs[1]);
 			}
@@ -2328,7 +2352,7 @@ public final class BookHelper {
 			final List<Cell> cells = entry.getValue();
 			for(Cell cell : cells) {
 				final int colNum = cell.getColumnIndex();
-				final Set<Ref>[] refs = BookHelper.copyCell(cell, sheet, rowNum, colNum, Range.PASTE_ALL, Range.PASTEOP_NONE);
+				final Set<Ref>[] refs = BookHelper.copyCell(cell, sheet, rowNum, colNum, Range.PASTE_ALL, Range.PASTEOP_NONE, false);
 				last.addAll(refs[0]);
 				all.addAll(refs[1]);
 			}
@@ -2810,7 +2834,7 @@ if (fillType == FILL_DEFAULT) {
 				final int srcrow = srctRow + srcIndex % rowCount;
 				final Cell srcCell = BookHelper.getCell(sheet, srcrow, c);
 				final Set<Ref>[] refs = srcCell == null ? 
-						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE); 
+						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false); 
 				if (refs != null) {
 					last.addAll(refs[0]);
 					all.addAll(refs[1]);
@@ -2853,7 +2877,7 @@ if (fillType == FILL_DEFAULT) {
 				final int srcrow = srcbRow - srcIndex % rowCount;
 				final Cell srcCell = BookHelper.getCell(sheet, srcrow, c);
 				final Set<Ref>[] refs = srcCell == null ? 
-						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE); 
+						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false); 
 				if (refs != null) {
 					last.addAll(refs[0]);
 					all.addAll(refs[1]);
@@ -2896,7 +2920,7 @@ if (fillType == FILL_DEFAULT) {
 				final int srccol = srclCol + srcIndex % colCount;
 				final Cell srcCell = BookHelper.getCell(sheet, r, srccol);
 				final Set<Ref>[] refs = srcCell == null ? 
-						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE); 
+						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false); 
 				if (refs != null) {
 					last.addAll(refs[0]);
 					all.addAll(refs[1]);
@@ -2939,7 +2963,7 @@ if (fillType == FILL_DEFAULT) {
 				final int srccol = srcrCol - srcIndex % colCount;
 				final Cell srcCell = BookHelper.getCell(sheet, r, srccol);
 				final Set<Ref>[] refs = srcCell == null ? 
-						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE); 
+						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false); 
 				if (refs != null) {
 					last.addAll(refs[0]);
 					all.addAll(refs[1]);
