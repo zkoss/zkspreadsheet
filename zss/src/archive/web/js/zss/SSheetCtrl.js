@@ -827,22 +827,22 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			var type = (jq(cmp).attr('zs.t') == "SLheader") ? zss.Header.VER : zss.Header.HOR,
 				row, col, onsel,	//process select row or column
 				ls = this.selArea.lastRange;
-
 			this._lastmdstr = "h";
 			if (type == zss.Header.HOR) {
 				row = -1;
 				col = cmp.ctrl.index;
-				if(col >= ls.left && col <= ls.right) {
+				if(col >= ls.left && col <= ls.right &&
+					ls.top == 0 && ls.bottom == this.maxRows - 1) {
 					onsel = true;
 				}
 			} else {
 				row = cmp.ctrl.index;
 				col = -1;
-				if(row >= ls.top && row <= ls.bottom) {
+				if(row >= ls.top && row <= ls.bottom &&
+					ls.left == 0 && ls.right == this.maxCols - 1) {
 					onsel = true;
 				}
 			}
-
 			if (_isLeftMouseEvt(evt) || !onsel) {
 				var range = zss.SSheetCtrl._getVisibleRange(this),
 					seltype;
@@ -1016,9 +1016,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				col = -1;
 			}
 			mdstr = "h_" + row + "_" + col;
-			if (this._lastmdstr == mdstr) {
+			if (this._lastmdstr == mdstr)
 				wgt.fireHeaderEvt(type, shx, shy, md1[2], row, col, mx, my);
-			}
 		}
 	},
 	_sendOnCellFocused: function (row, col) {

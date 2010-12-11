@@ -79,6 +79,7 @@ ZK Spreadsheet 2.0.0
   227 ZK Spreadsheet Live set display gridline doesn't work on IE
   228 In IE, press F2, won't focus on cell for input value
   230 IE cursor position is not at the text end when press F2
+  233 Right click header selection doesn't work well
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 
