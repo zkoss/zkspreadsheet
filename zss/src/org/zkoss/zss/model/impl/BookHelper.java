@@ -1483,8 +1483,8 @@ public final class BookHelper {
 	}
 
 	private static Ptg rptgSetRowCol(RefPtgBase ptg, int nrow, int ncol, SpreadsheetVersion ver) {
-		final int row = ptg.getRow() + nrow;
-		final int col = ptg.getColumn() + ncol;
+		final int row = ptg.getRow() + (ptg.isRowRelative() ? nrow : 0);
+		final int col = ptg.getColumn() + (ptg.isColRelative() ? ncol : 0);
 		final Ptg xptg = rptgValidate(ptg, row, col, ver);
 		if (xptg == null) {
 			ptg.setRow(row);
@@ -1495,10 +1495,10 @@ public final class BookHelper {
 	}
 	
 	private static Ptg aptgSetRowCol(AreaPtgBase ptg, int nrow, int ncol, SpreadsheetVersion ver) {
-		final int row1 = ptg.getFirstRow() + nrow;
-		final int col1 = ptg.getFirstColumn() + ncol;
-		final int row2 = ptg.getLastRow() + nrow;
-		final int col2 = ptg.getLastColumn() + ncol;
+		final int row1 = ptg.getFirstRow() + (ptg.isFirstRowRelative() ? nrow : 0);
+		final int col1 = ptg.getFirstColumn() + (ptg.isFirstColRelative() ? ncol : 0);
+		final int row2 = ptg.getLastRow() + (ptg.isLastRowRelative() ? nrow : 0);
+		final int col2 = ptg.getLastColumn() + (ptg.isLastColRelative()? ncol : 0);
 		final Ptg xptg = aptgValidate(ptg, row1, row2, col1, col2, ver);
 		if (xptg == null) {
 			ptg.setFirstRow(row1);
