@@ -47,6 +47,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	private Spreadsheet spreadsheet;
 	private Book book;
 	
+	private String lastSheetName = null;
 	private HashMap<String, List<Widget>> sheetWidgets = new HashMap<String, List<Widget>>(); 
 	
 	public SSWorkbookCtrl(Book book, Spreadsheet spreadsheet) {
@@ -113,15 +114,19 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void setSelectedSheet(String name) {
 		//TODO: remove last sheet widget shall not handle by AP
-		List<Widget> rmWgtList = sheetWidgets.get(spreadsheet.getSelectedSheet().getSheetName());
+		Sheet lastsheet = spreadsheet.getSelectedSheet();
+		List<Widget> rmWgtList = sheetWidgets.get(lastSheetName);
 		if (rmWgtList != null) {
 			SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
 			for (Widget w : rmWgtList) {
 				ctrl.removeWidget(w);
 			}
 		}
+		Integer lastIdx = Integer.valueOf(book.getSheetIndex(lastsheet));
+		if (lastIdx < 0) //sheet deleted
+			sheetWidgets.remove(lastSheetName);
 		
-		spreadsheet.setSelectedSheet(name);
+		spreadsheet.setSelectedSheet(name);		
 		//handle the copy/cut highlight
 		final Sheet sheet = EditHelper.getSourceSheet(spreadsheet);
 		if (sheet != null) {
@@ -133,7 +138,8 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		}
 		
 		//TODO: insert sheet widget shall not handle by AP
-		List<Widget> addWgtList = sheetWidgets.get(name);
+		lastSheetName = name;
+		List<Widget> addWgtList = sheetWidgets.get(lastSheetName);
 		if (addWgtList != null) {
 			SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
 			for (Widget w : addWgtList) {
@@ -162,9 +168,10 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 				image.setColumn(spreadsheet.getSelection().getLeft());
 				
 				Sheet seldSheet = spreadsheet.getSelectedSheet();
-				List wgtList = sheetWidgets.get(seldSheet.getSheetName());
+				String sheetName = seldSheet.getSheetName();
+				List<Widget> wgtList = sheetWidgets.get(sheetName);
 				if (wgtList == null)
-					sheetWidgets.put(seldSheet.getSheetName(), wgtList = new ArrayList<Widget>());
+					sheetWidgets.put(sheetName, wgtList = new ArrayList<Widget>());
 				wgtList.add(image);
 				
 				SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
