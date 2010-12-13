@@ -92,7 +92,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 		context.addEventListener(Consts.ON_CELL_STYLE_CHANGED,listener);
 		
 		getDesktopWorkbenchContext().
-			addEventListener(Consts.ON_SHEET_OPEN, new EventListener() {
+			addEventListener(Consts.ON_WORKBOOK_OPEN, new EventListener() {
 				public void onEvent(Event event) throws Exception {
 					//clear all UI attribute when sheet open or close
 					fontFamily.setValue(null);

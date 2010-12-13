@@ -26,7 +26,7 @@ public class Consts {
 	public static String _FileListOpen_zul = "~./zssapp/html/dialog/file/fileListOpen.zul";
 	public static String _ImportFile_zul = "~./zssapp/html/dialog/file/importFile.zul";
 	
-	/*Hyperlink zull*/
+	/*Hyperlink zul*/
 	public static String _Weblink_zul = "~./zssapp/html/dialog/hyperlink/webLink.zul";
 	public static String _Doclink_zul = "~./zssapp/html/dialog/hyperlink/docLink.zul";
 	public static String _Maillink_zul = "~./zssapp/html/dialog/hyperlink/mailLink.zul";
@@ -42,6 +42,8 @@ public class Consts {
 	public static String _ViewMenu_zul = "~./zssapp/html/menu/viewMenu.zul";
 	public static String _InsertMenu_zul = "~./zssapp/html/menu/insertMenu.zul";
 	
+	/*Spreadsheet zul*/
+	public static String _SheetPanel_zul = "~./zssapp/html/sheets.zul";
 	
 	/*Dialog zul*/
 	public static String _InsertFormulaDialog_zul = "~./zssapp/html/dialog/insertFormula.zul";
@@ -61,16 +63,14 @@ public class Consts {
 	/*Sheet event*/
 	public static final String ON_SHEET_REFRESH = "onSheetRefresh";
 	/**
-	 * Fire when spreadsheet set new book or close book
-	 */
-	public static final String ON_SHEET_OPEN = "onSheetOpen";
-	/**
 	 * Fired when selected sheet changed
 	 */
 	public static final String ON_SHEET_CHANGED = "onSheetChanged";
 	public static final String ON_SHEET_CONTENTS_CHANGED = "onSheetContentsChanged";
 	public static final String ON_SHEET_MERGE_CELL = "onSheetMergeCell";
 	public static final String ON_SHEET_INSERT_FORMULA = "onSheetInsertFormula";
+	/* Fire when spreadsheet set new book or close book */
+	public static final String ON_WORKBOOK_OPEN = "onWorkbookOpen";
 	
 	/*Resource event*/
 	public static final String ON_RESOURCE_OPEN_NEW = "onResourceOpenNew";

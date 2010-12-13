@@ -244,7 +244,7 @@
 	</div>
 	<sheets id="sheets"></sheets>
 	<!-- src="/xls/demo_sample.xls" -->
-	<spreadsheet id="spreadsheet" maxrows="200" src="/xls/demo_sample.xls"
+	<spreadsheet id="spreadsheet" maxrows="200" src="/xls/ZSS-demo_sample.xlsx"
 			maxcolumns="40" vflex="1" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
 			forward="onCtrlKey=mainWin.onSSCtrlKeys">
 	</spreadsheet>

@@ -73,4 +73,6 @@ public interface WorkbookCtrl {
 	public String getCurrentCellPosition();
 	
 	public void setDataFormat(String format);
+
+	public void save();
 }

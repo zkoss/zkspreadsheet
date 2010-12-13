@@ -63,11 +63,11 @@ public class DesktopWorkbenchContext extends AbstractBaseContext {
 	}
 
 	/**
-	 * Fire sheet open event when spreadsheet set new book or set new source
+	 * Fire workbook open event when spreadsheet set new book or set new source
 	 * @param open false if spreadsheet close book, means set source to null
 	 */
-	public void fireSheetOpen(boolean open) {
-		listenerStore.fire(new Event(Consts.ON_SHEET_OPEN, null, Boolean.valueOf(open)));
+	public void fireWorkbookOpen(boolean open) {
+		listenerStore.fire(new Event(Consts.ON_WORKBOOK_OPEN, null, Boolean.valueOf(open)));
 	}
 	/**
 	 * Fire sheet changed event when spreadsheet set selected sheet

@@ -28,6 +28,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.MouseEvent;
+import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.ctrl.RenameSheetCtrl;
 import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
@@ -48,9 +49,7 @@ import org.zkoss.zul.Tabs;
  *
  */
 public class Sheets extends Div implements ZssappComponent, IdSpace {
-	
-	private final static String URI = "~./zssapp/html/sheets.zul";
-	
+
 	private Tabbox tabbox;
 	private Tabs tabs;
 	
@@ -64,7 +63,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	private Spreadsheet ss;
 	
 	public Sheets() {
-		Executions.createComponents(URI, this, null);
+		Executions.createComponents(Consts._SheetPanel_zul, this, null);
 		
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
@@ -120,6 +119,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 						
 						if (tabbox.getSelectedTab().getLabel() != tab.getLabel())
 							setSelectedTab(tab);
+
 						MouseEvent evt = (MouseEvent)event;
 						sheetContextMenu.open(evt.getPageX(), evt.getPageY());
 					}

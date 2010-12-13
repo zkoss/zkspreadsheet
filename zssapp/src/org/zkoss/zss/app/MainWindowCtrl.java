@@ -178,16 +178,16 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		
 		init();
 		rangeh = new RangeHelper(spreadsheet);
-
-		DesktopWorkbenchContext.getInstance(desktop).fireSheetOpen(spreadsheet.getSelectedSheet() != null);
+		DesktopWorkbenchContext.getInstance(desktop).fireWorkbookOpen(spreadsheet.getSelectedSheet() != null);
 	}
 	
+	//TODO: remove this mechanism
 	private void initZssappComponents() {
 		Zssapps.bindSpreadsheet(spreadsheet, this);
-		sheets.redraw();
 	}
 	
 	public void init() {
+		spreadsheet.setSrcName("Untitled");
 		final DesktopWorkbenchContext workbenchContext = DesktopWorkbenchContext.getInstance(desktop);
 		workbenchContext.setWorkbenchCtrl(this);
 		workbenchContext.doTargetChange(new SSWorkbookCtrl(spreadsheet.getBook(), spreadsheet));
@@ -197,7 +197,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				sheets.redraw();
 			}
 		});
-		workbenchContext.addEventListener(Consts.ON_SHEET_OPEN, new EventListener() {
+		workbenchContext.addEventListener(Consts.ON_WORKBOOK_OPEN, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				Boolean isOpen = (Boolean)event.getData();
 				toolbarMask.setVisible(!isOpen);
@@ -245,17 +245,15 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			public void onEvent(Event event) throws Exception {
 				FileHelper.openSpreadsheet(spreadsheet, 
 						(SpreadSheetMetaInfo) event.getData());
-				workbenchContext.fireSheetOpen(true);
+				workbenchContext.fireWorkbookOpen(true);
 			}
 		});
 		workspaceContext.addEventListener(Consts.ON_RESOURCE_OPEN_NEW, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				FileHelper.openNewSpreadsheet(spreadsheet);
-				workbenchContext.fireSheetOpen(true);
+				workbenchContext.fireWorkbookOpen(true);
 			}
 		});
-		
-		spreadsheet.setSrcName("Untitled");
 
 		// ADD Event Listener
 		spreadsheet.addEventListener(Events.ON_CELL_FOUCSED,
@@ -305,7 +303,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		
 		spreadsheet.getBook().subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				if (event.getName() == SSDataEvent.ON_CONTENTS_CHANGE) {
+				String evtName = event.getName();
+				if (evtName == SSDataEvent.ON_CONTENTS_CHANGE) {
 					onContentsChanged();
 				}
 			}
@@ -376,7 +375,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 	public void onClick$closeBtn() {
 		spreadsheet.setSrc(null);
-		getDesktopWorkbenchContext().fireSheetOpen(false);
+		getDesktopWorkbenchContext().fireWorkbookOpen(false);
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
