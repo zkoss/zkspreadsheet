@@ -21,6 +21,7 @@ import java.util.List;
 import org.zkoss.image.Image;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.util.media.Media;
+import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zss.app.cell.CellHelper;
@@ -260,5 +261,9 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	public void setDataFormat(String format) {
 		Utils.setDataFormat(spreadsheet.getSelectedSheet(), 
 				spreadsheet.getSelection(), format);
+	}
+
+	public void save() {
+		throw new UiException("save not implement yet");
 	}
 }
