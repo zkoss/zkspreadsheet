@@ -28,10 +28,10 @@ import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.impl.BooksImpl;
 import org.zkoss.zss.model.impl.ExcelImporter;
 import org.zkoss.zss.model.impl.HSSFBookImpl;
 import org.zkoss.zss.model.impl.XSSFBookImpl;
+import org.zkoss.zssex.model.impl.BookSeriesImpl;
 
 /**
  * @author henrichen
@@ -40,7 +40,7 @@ import org.zkoss.zss.model.impl.XSSFBookImpl;
 public class Book1XlsExternalBookReferenceTest {
 	private Workbook _workbook1;
 	private Workbook _workbook2;
-	private BooksImpl _books;
+	private BookSeriesImpl _books;
 
 	/**
 	 * @throws java.lang.Exception
@@ -75,7 +75,7 @@ public class Book1XlsExternalBookReferenceTest {
 		assertEquals(1, _workbook2.getSheetIndex("Sheet2"));
 		assertEquals(2, _workbook2.getSheetIndex("Sheet3"));
 
-		_books = new BooksImpl(new Book[] {(Book)_workbook1, (Book)_workbook2});
+		_books = new BookSeriesImpl(new Book[] {(Book)_workbook1, (Book)_workbook2});
 	}
 
 	/**
