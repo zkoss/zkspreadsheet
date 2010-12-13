@@ -838,7 +838,7 @@ public final class BookHelper {
 		case Cell.CELL_TYPE_ERROR:
 			return ErrorConstants.getText(cell.getErrorCellValue());
 		case Cell.CELL_TYPE_FORMULA:
-			return "="+cell.getCellFormula();
+			return "="+(cell instanceof XSSFCell ? getFormulaString((XSSFCell)cell) : cell.getCellFormula());
 		case Cell.CELL_TYPE_NUMERIC:
 			return NumberToTextConverter.toText(cell.getNumericCellValue());
 		case Cell.CELL_TYPE_STRING:
@@ -847,7 +847,16 @@ public final class BookHelper {
 			throw new UiException("Unknown cell type:"+cellType);
 		}
 	}
-	
+	//check sheet reference; sheet could have been deleted
+    private static String getFormulaString(XSSFCell cell){
+    	String formula = cell.getCellFormula();
+        final XSSFSheet sheet = cell.getSheet();
+
+        int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(sheet.getWorkbook());
+        Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex);
+        return FormulaRenderer.toFormulaString(fpb, ptgs);
+    }
 	public static RichTextString getRichEditText(Cell cell) {
 		final int cellType = cell.getCellType();
 		if (cellType == Cell.CELL_TYPE_STRING) {

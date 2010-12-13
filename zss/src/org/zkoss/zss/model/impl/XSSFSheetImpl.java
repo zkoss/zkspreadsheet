@@ -1158,6 +1158,6 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Sheet {
 	
 	@Override
 	public String getUuid() {
-		return sheet.getId();
+		return _uuid;
 	}
 }	

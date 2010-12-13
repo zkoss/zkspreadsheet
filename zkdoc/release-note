@@ -22,6 +22,7 @@ ZK Spreadsheet 2.0.0
   199 ZK Spreadsheet Live shall support wrap text.
   212 Cannot shift select left on merge cell
   222 ZK Spreadsheet Live shall support number format
+  234 Support export to xls and xlsx
   
 *Bug 
   132 view ZK Spreadsheet Live index.zul cause NullPointerException
@@ -83,6 +84,7 @@ ZK Spreadsheet 2.0.0
   232 NPE when load the attached xlsx file
   233 Right click header selection doesn't work well
   235 Transpose pasteSpecial shall reverse Row/Column formula reference
+  236 Delete current sheet and set selected sheet cause exception when use xlsx as source
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

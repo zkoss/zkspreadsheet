@@ -109,6 +109,9 @@ public class DefaultDependencyTracker implements DependencyTracker {
 		
 	private void myAddDependency(CellRefImpl srcRef, String refBookname, 
 		String refSheetname, String refLastSheetName, int tRow, int lCol, int bRow, int rCol, boolean eval) {
+		if ("#REF".equals(refSheetname) || "#REF".equals(refLastSheetName)) { //handle refer to deleted sheet
+			return;
+		}
 		final Book targetBook = BookHelper.getBook(_book, refBookname);
 		if (targetBook == null) {
 			throw new UiException("cannot find the named book, have you add it in the Books:"+ refBookname);
