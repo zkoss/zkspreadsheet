@@ -1173,9 +1173,9 @@ public class Spreadsheet extends XulElement {
 	}
 
 	/**
-	 * Return current selection rectangle. the returned value is a clone copy of
-	 * current selection status. Default Value:(0,0,0,0)
-	 * 
+	 * Return current selection rectangle only if onCellSelection event listener is registered. 
+	 * The returned value is a clone copy of current selection status. 
+	 * Default Value:(0,0,0,0)
 	 * @return current selection
 	 */
 	public Rect getSelection() {

@@ -1,0 +1,84 @@
+/* Importers.java
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		Dec 13, 2010 11:06:01 PM, Created by ashish
+
+Copyright (C) 2010 Potix Corporation. All Rights Reserved.
+
+*/
+
+package org.zkoss.zss.model;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.zkoss.lang.Classes;
+import org.zkoss.lang.Library;
+
+/**
+ * <p>Provides utility method to get instance of specific {@link Importer} implementation
+ * such as "excel". Other implementations of {@link Importer} can be registered 
+ * via library property in zk.xml
+ * </p><p>
+ * For example
+ * <code>
+ * 	<library-property>
+ *		<name>org.zkoss.zss.model.Importer.class</name>
+ *		<value>csv|org.xyz.com.CSVImporter</value>
+ *	</library-property>
+ * </code>
+ * <p>
+ * Use same type name to override default Importer such as ExcelExporter. 
+ * Declare multiple type-name|class-name pairs in the library property value 
+ * separated by comma.
+ * </p> 
+ * @author ashish
+ *
+ */
+public class Importers {
+
+	private static String DEFAULT_IMPORTERS_KEY = "org.zkoss.zss.model.Importer.class_DEFAULT";
+	private static String USER_DEFINED_IMPORTERS_KEY = "org.zkoss.zss.model.Importer.class";
+	private static Map<String,String> typeClss;
+	
+	/**
+	 * Returns instance of specific {@link Importer} implementation 
+	 * as identified by type
+	 * @param type
+	 * @return Importer instance or null if not found
+	 */
+	public static Importer getImporter(String type) {
+		if(typeClss == null) {
+			typeClss = new HashMap<String,String>();
+			loadImporters(DEFAULT_IMPORTERS_KEY);
+			loadImporters(USER_DEFINED_IMPORTERS_KEY);
+		}
+		
+		String importerClnm = typeClss.get(type);
+		if(importerClnm != null && importerClnm.length() > 0) {
+			try {
+				Object o = Classes.newInstanceByThread(importerClnm);
+				if(o instanceof Importer) {
+					return (Importer) o;
+				}
+			} catch(Exception ex) {
+			}
+		}
+		return null;
+	}
+
+	private static void loadImporters(String key) {
+		String sTypeClss = Library.getProperty(key);
+		if(sTypeClss != null) {
+			String[] importers = sTypeClss.split(",");
+			for(int i=0;i<importers.length;i++) {
+				String[] importerClssPair = importers[i].split("\\|");
+				typeClss.put(importerClssPair[0].trim(), importerClssPair[1].trim());
+			}
+		}
+	}
+}

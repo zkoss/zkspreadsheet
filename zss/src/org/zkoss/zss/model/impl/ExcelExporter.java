@@ -9,7 +9,9 @@
 
 Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
-*/package org.zkoss.zss.model.impl;
+*/
+
+package org.zkoss.zss.model.impl;
 
 import java.io.IOException;
 import java.io.OutputStream;

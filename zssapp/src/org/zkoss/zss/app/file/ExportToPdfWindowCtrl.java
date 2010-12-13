@@ -30,6 +30,7 @@ import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Exporter;
+import org.zkoss.zss.model.Exporters;
 import org.zkoss.zss.model.impl.PdfExporter;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -145,7 +146,7 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 		
 		applyPrintSetting();
 		
-		Exporter c = new PdfExporter();
+		Exporter c = Exporters.getExporter("pdf");
 		((PdfExporter)c).enableHeadings(includeHeadings());
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
