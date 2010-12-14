@@ -40,7 +40,8 @@ import org.zkoss.lang.Library;
  *
  */
 public class Exporters {
-	private static String DEFAULT_EXPORTERS_KEY = "org.zkoss.zss.model.Exporter.class_DEFAULT";
+	private static String DEFAULT_ZSS_EXPORTERS_KEY = "org.zkoss.zss.model.default.Exporter.class";
+	private static String DEFAULT_ZSSEX_EXPORTERS_KEY = "org.zkoss.zssex.model.default.Exporter.class";
 	private static String USER_DEFINED_EXPORTERS_KEY = "org.zkoss.zss.model.Exporter.class";
 	private static Map<String,String> typeClss;
 	
@@ -52,7 +53,8 @@ public class Exporters {
 	public static Exporter getExporter(String type) {
 		if(typeClss == null) {
 			typeClss = new HashMap<String,String>();
-			loadExporters(DEFAULT_EXPORTERS_KEY);
+			loadExporters(DEFAULT_ZSS_EXPORTERS_KEY);
+			loadExporters(DEFAULT_ZSSEX_EXPORTERS_KEY);
 			loadExporters(USER_DEFINED_EXPORTERS_KEY);
 		}
 		

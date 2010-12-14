@@ -41,7 +41,8 @@ import org.zkoss.lang.Library;
  */
 public class Importers {
 
-	private static String DEFAULT_IMPORTERS_KEY = "org.zkoss.zss.model.Importer.class_DEFAULT";
+	private static String DEFAULT_ZSS_IMPORTERS_KEY = "org.zkoss.zss.model.default.Importer.class";
+	private static String DEFAULT_ZSSEX_IMPORTERS_KEY = "org.zkoss.zssex.model.default.Importer.class";
 	private static String USER_DEFINED_IMPORTERS_KEY = "org.zkoss.zss.model.Importer.class";
 	private static Map<String,String> typeClss;
 	
@@ -54,7 +55,8 @@ public class Importers {
 	public static Importer getImporter(String type) {
 		if(typeClss == null) {
 			typeClss = new HashMap<String,String>();
-			loadImporters(DEFAULT_IMPORTERS_KEY);
+			loadImporters(DEFAULT_ZSS_IMPORTERS_KEY);
+			loadImporters(DEFAULT_ZSSEX_IMPORTERS_KEY);
 			loadImporters(USER_DEFINED_IMPORTERS_KEY);
 		}
 		
