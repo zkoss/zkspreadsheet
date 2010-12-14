@@ -28,12 +28,12 @@ import org.zkoss.lang.Library;
  * <code>
  * 	<library-property>
  *		<name>org.zkoss.zss.model.Importer.class</name>
- *		<value>csv|org.xyz.com.CSVImporter</value>
+ *		<value>csv=org.xyz.com.CSVImporter</value>
  *	</library-property>
  * </code>
  * <p>
  * Use same type name to override default Importer such as ExcelExporter. 
- * Declare multiple type-name|class-name pairs in the library property value 
+ * Declare multiple type-name=class-name pairs in the library property value 
  * separated by comma.
  * </p> 
  * @author ashish
@@ -76,7 +76,7 @@ public class Importers {
 		if(sTypeClss != null) {
 			String[] importers = sTypeClss.split(",");
 			for(int i=0;i<importers.length;i++) {
-				String[] importerClssPair = importers[i].split("\\|");
+				String[] importerClssPair = importers[i].split("=");
 				typeClss.put(importerClssPair[0].trim(), importerClssPair[1].trim());
 			}
 		}
