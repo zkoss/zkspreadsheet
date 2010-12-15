@@ -23,7 +23,7 @@ import org.zkoss.ztl.ZKClientTestCase;
 
 import com.thoughtworks.selenium.Selenium;
 
-
+//right click to shift left sheet "Market"
 public class SS_096_Test extends SSAbstractTestCase {
 	
 	@Override

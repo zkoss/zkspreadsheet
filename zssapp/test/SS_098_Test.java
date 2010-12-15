@@ -23,33 +23,17 @@ import org.zkoss.ztl.ZKClientTestCase;
 
 import com.thoughtworks.selenium.Selenium;
 
+//right click to delete sheet "Market"
+public class SS_098_Test extends SSAbstractTestCase {
+	@Override
+	protected void executeTest() {
+		contextMenu(jq("@tab[label=\"Market\"] span.z-tab-text"));				
+		waitResponse();
+		click(jq("$deleteSheet a.z-menu-item-cnt"));
+		waitResponse();
 
-public class SS_098_Test extends ZKClientTestCase {
-	
-	public SS_098_Test() {
-		target = "http://zktest/zssdemos/index.zul";
-		browsers = getBrowsers("chrome");
-		_timeout = 60000;
-	}
-		
-	@Test(expected = AssertionError.class)
-	public void testClick() {
-		for (Selenium browser : browsers) {
-			try {
-				start(browser);
-				windowFocus();
-				windowMaximize();
-				
-				contextMenu(jq("@tab[label=\"Market\"] span.z-tab-text"));				
-				waitResponse();
-				click(jq("$deleteSheet a.z-menu-item-cnt"));
-				waitResponse();
-
-				//how to verify???
-			} finally {
-				stop();	
-			}
-		}
+		//how to verify???
+		sleep(5000);
 	}
 }
 

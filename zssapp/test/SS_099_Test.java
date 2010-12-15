@@ -23,37 +23,21 @@ import org.zkoss.ztl.ZKClientTestCase;
 
 import com.thoughtworks.selenium.Selenium;
 
-
-public class SS_099_Test extends ZKClientTestCase {
+//rename sheet "Market" to "newsheetname"
+public class SS_099_Test extends SSAbstractTestCase {
 	
-	public SS_099_Test() {
-		target = "http://zktest/zssdemos/index.zul";
-		browsers = getBrowsers("chrome");
-		_timeout = 60000;
-	}
-		
-	@Test(expected = AssertionError.class)
-	public void testClick() {
-		for (Selenium browser : browsers) {
-			try {
-				start(browser);
-				windowFocus();
-				windowMaximize();
-				
-				contextMenu(jq("@tab[label=\"Market\"] span.z-tab-text"));				
-				waitResponse();
-				click(jq("$renameSheet  a.z-menu-item-cnt"));
-				waitResponse();
-				type(jq("$sheetNameTB"), "newsheetname");
-				waitResponse();
-				click(jq("$confirmRenameBtn td.z-button-cm"));
-				waitResponse();
-				//how to verify???
-				sleep(5000);
-			} finally {
-				stop();	
-			}
-		}
+	@Override
+	protected void executeTest() {
+		contextMenu(jq("@tab[label=\"Market\"] span.z-tab-text"));				
+		waitResponse();
+		click(jq("$renameSheet  a.z-menu-item-cnt"));
+		waitResponse();
+		type(jq("$sheetNameTB"), "newsheetname");
+		waitResponse();
+		click(jq("$confirmRenameBtn td.z-button-cm"));
+		waitResponse();
+		//how to verify???
+		sleep(5000);
 	}
 }
 

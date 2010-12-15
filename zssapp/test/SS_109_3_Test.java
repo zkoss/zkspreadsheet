@@ -24,63 +24,22 @@ import org.zkoss.ztl.ZKClientTestCase;
 import com.thoughtworks.selenium.Selenium;
 
 
-public class SS_109_3_Test extends ZKClientTestCase {
-	
-	public SS_109_3_Test() {
-		target = "http://zktest/zssdemos/index.zul";
-		browsers = getBrowsers("chrome");
-		_timeout = 60000;
-	}
+public class SS_109_3_Test extends SSAbstractTestCase {
+	@Override
+	protected void executeTest() {
+		rightClickColumnHeader(5);		
+		click(jq("$hide a.z-menu-item-cnt"));
+		waitResponse();
+
+		selectColumns(4,6);
 		
-	@Test(expected = AssertionError.class)
-	public void testClick() {
-		for (Selenium browser : browsers) {
-			try {
-				start(browser);
-				windowFocus();
-				windowMaximize();
-			
-				mouseDown(jq("div.zstopcell[z\\\\.c=\"5\"] div"));				
-				waitResponse();
-				mouseUp(jq("div.zstopcell[z\\\\.c=\"5\"] div"));
-				waitResponse();
-				mouseDown(jq("div.zstopcell[z\\\\.c=\"5\"] div"));
-				waitResponse();
-				mouseUp(jq("div.zstopcell[z\\\\.c=\"5\"] div"));
-				waitResponse();
-				contextMenuAt(jq("div.zstopcell[z\\\\.c=\"5\"] div"),"2,2");
-				waitResponse();
-				click(jq("$hide a.z-menu-item-cnt"));
-				waitResponse();
+		contextMenuAt(getColumnHeader(6),"2,2");
+		waitResponse();
+		click(jq("$unhide a.z-menu-item-cnt"));
+		waitResponse();
 
-				mouseDown(jq("div.zstopcell[z\\\\.c=\"4\"] div"));
-				waitResponse();
-				mouseUp(jq("div.zstopcell[z\\\\.c=\"4\"] div"));
-				waitResponse();
-
-				keyDown(jq("div.zstopcell[z\\\\.c=\"4\"] div"),SHIFT);
-				waitResponse();
-
-				mouseDown(jq("div.zstopcell[z\\\\.c=\"6\"] div"));
-				waitResponse();
-				mouseUp(jq("div.zstopcell[z\\\\.c=\"6\"] div"));
-				waitResponse();
-
-				//fail to simulate "shift" pressed
-				keyUp(jq("div.zstopcell[z\\\\.c=\"6\"] div"),SHIFT);
-				waitResponse();
-
-				contextMenuAt(jq("div.zstopcell[z\\\\.c=\"6\"] div"),"2,2");
-				waitResponse();
-				click(jq("$unhide a.z-menu-item-cnt"));
-				waitResponse();
-
-				//how to verify
-				sleep(5000);
-			} finally {
-				stop();	
-			}
-		}
+		//how to verify
+		sleep(5000);		
 	}
 }
 

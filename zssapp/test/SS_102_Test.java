@@ -23,41 +23,16 @@ import org.zkoss.ztl.ZKClientTestCase;
 
 import com.thoughtworks.selenium.Selenium;
 
+//copy column F
+public class SS_102_Test extends SSAbstractTestCase {
 
-public class SS_102_Test extends ZKClientTestCase {
-	
-	public SS_102_Test() {
-		target = "http://zktest/zssdemos/index.zul";
-		browsers = getBrowsers("chrome");
-		_timeout = 60000;
-	}
-		
-	@Test(expected = AssertionError.class)
-	public void testClick() {
-		for (Selenium browser : browsers) {
-			try {
-				start(browser);
-				windowFocus();
-				windowMaximize();
-			
-				mouseDown(jq("div.zstopcell[z\\\\.c=\"5\"] div"));				
-				waitResponse();
-				mouseUp(jq("div.zstopcell[z\\\\.c=\"5\"] div"));
-				waitResponse();
-				mouseDown(jq("div.zstopcell[z\\\\.c=\"5\"] div"));
-				waitResponse();
-				mouseUp(jq("div.zstopcell[z\\\\.c=\"5\"] div"));
-				waitResponse();
-				contextMenuAt(jq("div.zstopcell[z\\\\.c=\"5\"] div"),"2,2");
-				waitResponse();
-				click(jq("$copy a.z-menu-item-cnt"));
-				waitResponse();
-				//how to verify
-				sleep(5000);
-			} finally {
-				stop();	
-			}
-		}
+	@Override
+	protected void executeTest() {
+		rightClickColumnHeader(5);
+		click(jq("$copy a.z-menu-item-cnt"));
+		waitResponse();
+		//how to verify
+		sleep(5000);
 	}
 }
 

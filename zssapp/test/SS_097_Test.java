@@ -23,39 +23,22 @@ import org.zkoss.ztl.ZKClientTestCase;
 
 import com.thoughtworks.selenium.Selenium;
 
+//right click to shift right sheet "Debt"
+public class SS_097_Test extends SSAbstractTestCase {
+			
+	@Override
+	protected void executeTest() {
+		contextMenu(jq("@tab[label=\"Debt\"] span.z-tab-text"));				
+		waitResponse();
+		click(jq("$shiftSheetRight a.z-menu-item-cnt"));
+		waitResponse();
 
-public class SS_097_Test extends ZKClientTestCase {
-	
-	public SS_097_Test() {
-		target = "http://zktest/zssdemos/index.zul";
-		browsers = getBrowsers("chrome");
-//		browsers = getBrowsers("firefox");
-		_timeout = 60000;
-	}
-		
-	@Test(expected = AssertionError.class)
-	public void testClick() {
-		for (Selenium browser : browsers) {
-			try {
-				start(browser);
-				windowFocus();
-				windowMaximize();
-				
-				contextMenu(jq("@tab[label=\"Debt\"] span.z-tab-text"));				
-				waitResponse();
-				click(jq("$shiftSheetRight a.z-menu-item-cnt"));
-				waitResponse();
-
-				Widget marketSibling = widget(jq("@tab[label=\"Market\"] span.z-tab-text")).nextSibling();
-				waitResponse();
-				Widget debt = widget(jq("@tab[label=\"Debt\"] span.z-tab-text"));
-				waitResponse();
-
-				//how to verify???
-			} finally {
-				stop();	
-			}
-		}
+		//how to verify???
+		sleep(5000);
+//		Widget marketSibling = widget(jq("@tab[label=\"Market\"] span.z-tab-text")).nextSibling();
+//		waitResponse();
+//		Widget debt = widget(jq("@tab[label=\"Debt\"] span.z-tab-text"));
+//		waitResponse();
 	}
 }
 
