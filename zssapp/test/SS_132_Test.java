@@ -13,7 +13,7 @@ This program is distributed under Apache License Version 2.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
 
-//delete => entire column : G12
+//delete => entire column : F12
 public class SS_132_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {

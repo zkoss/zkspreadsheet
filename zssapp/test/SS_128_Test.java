@@ -13,7 +13,7 @@ This program is distributed under Apache License Version 2.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
 
-//insert => entire column : G12
+//insert => entire column : F12
 public class SS_128_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
