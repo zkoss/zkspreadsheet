@@ -87,6 +87,7 @@ ZK Spreadsheet 2.0.0
   235 Transpose pasteSpecial shall reverse Row/Column formula reference
   236 Delete current sheet and set selected sheet cause exception when use xlsx as source
   240 Irrelevant merged regions faultly unmerged when delete a cell and shift left
+  241 Shall complains about an incorrect formula
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

@@ -48,6 +48,7 @@ import org.zkoss.lang.Classes;
 import org.zkoss.lang.Objects;
 import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
@@ -128,6 +129,7 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
 import org.zkoss.zss.ui.sys.WidgetHandler;
 import org.zkoss.zss.ui.sys.WidgetLoader;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.impl.XulElement;
 
 
@@ -3228,6 +3230,18 @@ public class Spreadsheet extends XulElement {
 		} else
 			processCancelEditing0(token, event.getSheet(), event.getRow(), event.getColumn());
 	}
+	
+	private void showFormulaError(FormulaParseException ex) {
+		try {
+			Messagebox.show(ex.getMessage(), "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION, new EventListener() {
+				public void onEvent(Event evt) {
+					Spreadsheet.this.focus();
+				}
+			});
+		} catch (InterruptedException e) {
+			// ignore
+		}
+	}
 
 	private void processStopEditing0(String token, Sheet sheet, int row, int col, Object value) {
 		try {
@@ -3241,10 +3255,13 @@ public class Spreadsheet extends XulElement {
 
 			// responseUpdateCell("stop", token, Utils.getId(sheet), result.toString());
 			smartUpdate("dataUpdateStop", new String[] { token,	Utils.getSheetUuid(sheet), result.toString() });
-
 		} catch (RuntimeException x) {
 			processCancelEditing0(token, sheet, row, col);
-			throw x;
+			if (x instanceof FormulaParseException) {
+				showFormulaError((FormulaParseException)x);
+			} else {
+				throw x;
+			}
 		}
 	}
 
