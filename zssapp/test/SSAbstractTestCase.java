@@ -70,11 +70,6 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
         waitResponse();
     }
     
-    public void rightClickCell(JQuery cellLocator) {
-        contextMenuAt(cellLocator, "2,2");
-        waitResponse();
-    }
-    
     /**
      *  
      * @param column - Base on 0
@@ -129,6 +124,61 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
 		waitResponse();
     }
     
+    /**
+     * 
+     * @param left: column number of left top cell, 0-based
+     * @param top: row number of left top cell, 0-based
+     * @param right: column number of right bottom cell, 0-based
+     * @param bottom: row number of right bottom cell, 0-based
+     */
+    public void rightClickCells(int left, int top, int right, int bottom){
+		mouseDownAt(getSpecifiedCell(left, top),"2,2");
+		waitResponse();
+		mouseUpAt(getSpecifiedCell(left, top),"2,2");
+		waitResponse();
+	
+		mouseDownAt(getSpecifiedCell(left, top),"2,2");
+		waitResponse();
+
+		mouseMoveAt(getSpecifiedCell(right, bottom),"2,2");
+		waitResponse();
+		mouseUpAt(getSpecifiedCell(right, bottom),"2,2");
+		waitResponse();
+
+		//why right click not work in this case?
+//		contextMenuAt(jq(".zsselect"), "2,2");
+//		waitResponse();
+
+//		contextMenuAt(jq("div.zsselect .zsselecti"), "2,2");
+//		waitResponse();
+
+		contextMenu(jq("div.zsselect .zsselecti"));
+		waitResponse();
+
+//		mouseDownRightAt(jq("div.zsselect .zsselecti"), "2,2");
+//		waitResponse();
+//		mouseUpRightAt(jq("div.zsselect .zsselecti"), "2,2");
+//		waitResponse();
+
+//		contextMenuAt(jq("div.zsselect"), "2,2");
+//		waitResponse();
+		
+//		contextMenuAt(getSpecifiedCell(right, bottom), "2,2");
+
+//		mouseDownRightAt(jq(".zsselect"), "2,2");
+//		waitResponse();
+//		mouseUpRightAt(jq(".zsselect"), "2,2");
+//		waitResponse();
+		
+//		mouseDownRightAt(getSpecifiedCell(left, top), "2,2");
+//		waitResponse();
+//		mouseUpRightAt(getSpecifiedCell(left, top), "2,2");
+//		waitResponse();
+
+//		mouseUpRightAt(jq(".zsselect"), "5,5");
+		
+    }
+
     /**
      * 
      * @param start: column number, 0-based
