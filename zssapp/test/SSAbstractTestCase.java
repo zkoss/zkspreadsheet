@@ -71,9 +71,7 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     }
     
     public void rightClickCell(JQuery cellLocator) {
-        mouseDownRightAt(cellLocator, "1,2");
-        waitResponse();
-        mouseUpRightAt(cellLocator, "1,2");
+        contextMenuAt(cellLocator, "2,2");
         waitResponse();
     }
     
