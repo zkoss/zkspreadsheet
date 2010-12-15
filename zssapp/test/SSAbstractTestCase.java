@@ -70,6 +70,13 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
         waitResponse();
     }
     
+    public void rightClickCell(JQuery cellLocator) {
+        mouseDownRightAt(cellLocator, "1,2");
+        waitResponse();
+        mouseUpRightAt(cellLocator, "1,2");
+        waitResponse();
+    }
+    
     /**
      *  
      * @param column - Base on 0
