@@ -13,14 +13,14 @@ This program is distributed under Apache License Version 2.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
 
-//insert => entire column : G12
-public class SS_128_Test extends SSAbstractTestCase {
+//delete => entire row : G12
+public class SS_131_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
 		rightClickCell(5,11);
-		mouseOver(jq("a.z-menu-cnt:eq(0)"));		
+		mouseOver(jq("a.z-menu-cnt:eq(1)"));		
 		waitResponse();
-		click(jq("$insertEntireColumn a.z-menu-item-cnt"));
+		click(jq("$deleteEntireRow a.z-menu-item-cnt"));
 		waitResponse();
 		
 		//how to verify
