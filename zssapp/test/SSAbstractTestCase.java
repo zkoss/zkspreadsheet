@@ -70,6 +70,10 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
         waitResponse();
     }
     
+    public void rightClickCell(JQuery cellLocator) {
+        contextMenuAt(cellLocator, "2,2");
+    }
+    
     /**
      *  
      * @param column - Base on 0
