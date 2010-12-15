@@ -111,6 +111,26 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     
     /**
      * 
+     * @param column: 0-based
+     * @param row: 0-based
+     */
+    public void rightClickCell(int column, int row){
+		mouseDownAt(getSpecifiedCell(column, row),"2,2");
+		waitResponse();
+		mouseUpAt(getSpecifiedCell(column, row),"2,2");
+		waitResponse();
+	
+		mouseDownAt(getSpecifiedCell(column, row),"2,2");
+		waitResponse();
+		mouseUpAt(getSpecifiedCell(column, row),"2,2");
+		waitResponse();
+
+		contextMenuAt(getSpecifiedCell(column, row), "2,2");
+		waitResponse();
+    }
+    
+    /**
+     * 
      * @param start: column number, 0-based
      * @param end: column number, 0-based
      */
