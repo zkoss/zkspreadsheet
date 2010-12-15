@@ -62,6 +62,7 @@ ZK Spreadsheet 2.0.0
   202 Enter key after copy/cut does not do "paste"
   203 ESC key after copy/cut does not cancel the copy/cut.
   204 ZK Spreadsheet Live gridline checkbox is not updated when change sheet
+  205 Copy and paste does not copy a merge cell
   206 Cell editing after copy/cut does not cancel copy/cut.
   207 ZK Spreadsheet Live focus on formula edit box after copy/cut does not cancel copy/cut
   208 Spreadsheet focus position is lost onBlur
@@ -85,6 +86,7 @@ ZK Spreadsheet 2.0.0
   233 Right click header selection doesn't work well
   235 Transpose pasteSpecial shall reverse Row/Column formula reference
   236 Delete current sheet and set selected sheet cause exception when use xlsx as source
+  240 Irrelevant merged regions faultly unmerged when delete a cell and shift left
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

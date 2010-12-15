@@ -12,6 +12,8 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
+import org.zkoss.poi.ss.util.CellRangeAddress;
+
 /**
  * Sheet controls (Internal Use only).
  * @author henrichen
@@ -34,4 +36,29 @@ public interface SheetCtrl {
      * @return the universal unique id of the associated Sheet.
      */
     public String getUuid();
+    
+    /**
+     * Initialize the merge cells.
+     */
+    public void initMerged();
+    
+    /*
+     * Returns merged region of the given row, column as the left top cell of the merged region; if not a merged cell, return null.
+     * @param row row index
+     * @param col column index
+     * @return merged region of the given row, column as the left top cell of the merged region; if not a merged cell, return null.
+     */
+    public CellRangeAddress getMerged(int row, int col);
+    
+    /**
+     * Add a new merged region.
+     * @param addr merged region
+     */
+	public void addMerged(CellRangeAddress addr);
+	
+    /**
+     * Delete a merged region.
+     * @param addr to be removed merged region
+     */
+	public void deleteMerged(CellRangeAddress addr);
 }

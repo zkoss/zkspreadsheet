@@ -1293,16 +1293,44 @@ public final class BookHelper {
 	}
 	
 	//[0]:last, [1]:all
-	public static Set<Ref>[] copyCell(Cell srcCell, Sheet sheet, int rowIndex, int colIndex, int pasteType, int pasteOp, boolean transpose) {
+	public static ChangeInfo copyCell(Cell srcCell, Sheet sheet, int rowIndex, int colIndex, int pasteType, int pasteOp, boolean transpose) {
 		//TODO not handle pastType == pasteValidation and pasteOp(assume none)
 		final Cell dstCell = getOrCreateCell(sheet, rowIndex, colIndex);
 		return copyCell(srcCell, dstCell, pasteType, pasteOp, transpose);
 	}
 	
-	public static Set<Ref>[] copyCell(Cell srcCell, Cell dstCell, int pasteType, int pasteOp, boolean transpose) {
+	public static ChangeInfo copyCell(Cell srcCell, Cell dstCell, int pasteType, int pasteOp, boolean transpose) {
+		final Set<Ref> toEval = new HashSet<Ref>();
+		final Set<Ref> affected = new HashSet<Ref>();
+		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
+		final ChangeInfo changeInfo = new ChangeInfo(toEval, affected, mergeChanges);
 		//paste cell formats
 		if ((pasteType & BookHelper.INNERPASTE_FORMATS) != 0) {
 			dstCell.setCellStyle(prepareCellStyle(srcCell.getCellStyle(), dstCell, pasteType));
+			//handle merge/unmerge cases
+			final int dstrow = dstCell.getRowIndex();
+			final int dstcol = dstCell.getColumnIndex();
+			final Sheet dstSheet = dstCell.getSheet();
+			final CellRangeAddress dstaddr = ((SheetCtrl)dstSheet).getMerged(dstrow, dstcol);
+			if (dstaddr != null) { //shall un-merge the destination merge range
+				final int dstrow2 = dstaddr.getLastRow();
+				final int dstcol2 = dstaddr.getLastColumn();
+				final ChangeInfo changeInfo0 = unMerge(dstSheet, dstrow, dstcol, dstrow2, dstcol2);
+				assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
+			} 
+			final int srcrow = srcCell.getRowIndex();
+			final int srccol = srcCell.getColumnIndex();
+			final CellRangeAddress srcaddr = ((SheetCtrl)srcCell.getSheet()).getMerged(srcrow, srccol);
+			if (srcaddr != null) { //src is a merge range, shall merge dest cell
+				final int srcrow2 = srcaddr.getLastRow();
+				final int srccol2 = srcaddr.getLastColumn();
+				final int tRow = dstrow;
+				final int lCol = dstcol;
+				final int bRow = tRow + srcrow2 - srcrow;
+				final int rCol = lCol + srccol2 - srccol;
+				final ChangeInfo changeInfo0 = merge(dstSheet, tRow, lCol, bRow, rCol, false);
+				assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
+			}
 		}
 		
 		//paste comment
@@ -1320,31 +1348,83 @@ public final class BookHelper {
 			final int cellType = srcCell.getCellType(); 
 			switch(cellType) {
 			case Cell.CELL_TYPE_BOOLEAN:
-				return setCellValue(dstCell, srcCell.getBooleanCellValue());
+			{
+				final Set<Ref>[] refs = setCellValue(dstCell, srcCell.getBooleanCellValue());
+				assignRefs(toEval, affected, refs);
+				break;
+			}
 			case Cell.CELL_TYPE_ERROR:
-				return setCellErrorValue(dstCell, srcCell.getErrorCellValue());
+			{
+				final Set<Ref>[] refs = setCellErrorValue(dstCell, srcCell.getErrorCellValue());
+				assignRefs(toEval, affected, refs);
+				break;
+			}
 	        case Cell.CELL_TYPE_NUMERIC:
-	        	return setCellValue(dstCell, srcCell.getNumericCellValue());
+	        {
+	        	final Set<Ref>[] refs = setCellValue(dstCell, srcCell.getNumericCellValue());
+				assignRefs(toEval, affected, refs);
+				break;
+	        }
 	        case Cell.CELL_TYPE_STRING:
-	        	return setCellValue(dstCell, srcCell.getRichStringCellValue());
+	        {
+	        	final Set<Ref>[] refs = setCellValue(dstCell, srcCell.getRichStringCellValue());
+				assignRefs(toEval, affected, refs);
+				break;
+	        }
 	        case Cell.CELL_TYPE_BLANK:
-	        	return setCellValue(dstCell, (RichTextString) null);
+	        {
+	        	final Set<Ref>[] refs = setCellValue(dstCell, (RichTextString) null);
+				assignRefs(toEval, affected, refs);
+				break;
+	        }
 	        case Cell.CELL_TYPE_FORMULA:
 	        	if ((pasteType & BookHelper.INNERPASTE_FORMULAS) != 0) { //copy formula
-	        		return copyCellFormula(dstCell, srcCell, transpose);
+	        		final Set<Ref>[] refs = copyCellFormula(dstCell, srcCell, transpose);
+					assignRefs(toEval, affected, refs);
 	        	} else { //copy evaluated value only
 	        		final Book book = (Book) srcCell.getSheet().getWorkbook();
 	        		final CellValue cv = evaluate(book, srcCell);
-	        		return setCellValueByCellValue(dstCell, cv, pasteType, pasteOp);
+	        		final Set<Ref>[] refs = setCellValueByCellValue(dstCell, cv, pasteType, pasteOp);
+					assignRefs(toEval, affected, refs);
 	        	}
+				break;
 			default:
 				throw new UiException("Unknown cell type:"+cellType);
 			}
 		}
 		
-		return null;
+		return changeInfo;
+	}
+
+	public static void assignRefs(Set<Ref> toEval, Set<Ref> affected, Set<Ref>[] refs) {
+		if (refs != null) {
+			final Set<Ref> toEval0 = refs[0];
+			if (toEval0 != null) {
+				toEval.addAll(toEval0);
+			}
+			final Set<Ref> affected0 = refs[1];
+			if (affected0 != null) {
+				affected.addAll(affected0);
+			}
+		}
 	}
 	
+	public static void assignChangeInfo(Set<Ref> toEval, Set<Ref> affected, List<MergeChange> mergeChanges, ChangeInfo changeInfo0) {
+		if (changeInfo0 != null) {
+			final Set<Ref> toEval0 = changeInfo0.getToEval();
+			if (toEval0 != null) {
+				toEval.addAll(toEval0);
+			}
+			final Set<Ref> affected0 = changeInfo0.getAffected();
+			if (affected0 != null) {
+				affected.addAll(affected0);
+			}
+			final List<MergeChange> mergeChanges0 = changeInfo0.getMergeChanges();
+			if (mergeChanges0 != null) {
+				mergeChanges.addAll(mergeChanges0);
+			}
+		}
+	}
 	
 	private static Set<Ref>[] setCellValueByCellValue(Cell dstCell, CellValue cv, int pasteType, int pasteOp) {
 		final int cellType = cv.getCellType();
@@ -2160,7 +2240,7 @@ public final class BookHelper {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Set<Ref>[] sort(Sheet sheet, int tRow, int lCol, int bRow, int rCol, 
+	public static ChangeInfo sort(Sheet sheet, int tRow, int lCol, int bRow, int rCol, 
 			Ref key1, boolean desc1, Ref key2, int type, boolean desc2, Ref key3, boolean desc3, int header, int orderCustom,
 			boolean matchCase, boolean sortByRows, int sortMethod, int dataOption1, int dataOption2, int dataOption3) {
 		//TODO type not yet imiplmented(Sort label/Sort value, for PivotTable)
@@ -2173,7 +2253,7 @@ public final class BookHelper {
 			}
 		}
 		if (tRow > bRow || lCol > rCol) { //nothing to sort!
-			return (Set<Ref>[]) new HashSet[0];
+			return null;
 		}
 		int keyCount = 0;
 		if (key1 != null) {
@@ -2277,11 +2357,13 @@ public final class BookHelper {
 		return val;
 	}
 	@SuppressWarnings("unchecked")
-	private static Set<Ref>[] assignColumns(Sheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
+	private static ChangeInfo  assignColumns(Sheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
 		final int cellCount = bRow - tRow + 1;
 		final Map<Integer, List<Cell>> newCols = new HashMap<Integer, List<Cell>>();  
-		final Set<Ref> last = new HashSet<Ref>();
-		final Set<Ref> all = new HashSet<Ref>();
+		final Set<Ref> toEval = new HashSet<Ref>();
+		final Set<Ref> affected = new HashSet<Ref>();
+		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
+		final ChangeInfo changeInfo = new ChangeInfo(toEval, affected, mergeChanges);
 		int j = 0;
 		for(final Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();++j) {
 			final SortKey sortKey = it.next();
@@ -2298,8 +2380,8 @@ public final class BookHelper {
 				if (cell != null) {
 					cells.add(cell);
 					final Set<Ref>[] refs = BookHelper.removeCell(cell, false);
-					last.addAll(refs[0]);
-					all.addAll(refs[1]);
+					toEval.addAll(refs[0]);
+					affected.addAll(refs[1]);
 				}
 			}
 			if (!cells.isEmpty()) {
@@ -2313,20 +2395,21 @@ public final class BookHelper {
 			final List<Cell> cells = entry.getValue();
 			for(Cell cell : cells) {
 				final int rowNum = cell.getRowIndex();
-				final Set<Ref>[] refs = BookHelper.copyCell(cell, sheet, rowNum, colNum, Range.PASTE_ALL, Range.PASTEOP_NONE, false);
-				last.addAll(refs[0]);
-				all.addAll(refs[1]);
+				final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, sheet, rowNum, colNum, Range.PASTE_ALL, Range.PASTEOP_NONE, false);
+				assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 			}
 		}
-		return (Set<Ref>[]) new Set[] {last, all};
+		return changeInfo;
 	}
 
 	@SuppressWarnings("unchecked")
-	private static Set<Ref>[] assignRows(Sheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
+	private static ChangeInfo assignRows(Sheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
 		final int cellCount = rCol - lCol + 1;
 		final Map<Integer, List<Cell>> newRows = new HashMap<Integer, List<Cell>>();  
-		final Set<Ref> last = new HashSet<Ref>();
-		final Set<Ref> all = new HashSet<Ref>();
+		final Set<Ref> toEval = new HashSet<Ref>();
+		final Set<Ref> affected = new HashSet<Ref>();
+		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
+		final ChangeInfo changeInfo = new ChangeInfo(toEval, affected, mergeChanges);
 		int j = 0;
 		for(final Iterator<SortKey> it = sortKeys.iterator(); it.hasNext();++j) {
 			final SortKey sortKey = it.next();
@@ -2346,8 +2429,7 @@ public final class BookHelper {
 				if (cell != null) {
 					cells.add(cell);
 					final Set<Ref>[] refs = BookHelper.removeCell(cell, false);
-					last.addAll(refs[0]);
-					all.addAll(refs[1]);
+					assignRefs(toEval, affected, refs);
 				}
 			}
 			if (!cells.isEmpty()) {
@@ -2361,12 +2443,11 @@ public final class BookHelper {
 			final List<Cell> cells = entry.getValue();
 			for(Cell cell : cells) {
 				final int colNum = cell.getColumnIndex();
-				final Set<Ref>[] refs = BookHelper.copyCell(cell, sheet, rowNum, colNum, Range.PASTE_ALL, Range.PASTEOP_NONE, false);
-				last.addAll(refs[0]);
-				all.addAll(refs[1]);
+				final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, sheet, rowNum, colNum, Range.PASTE_ALL, Range.PASTEOP_NONE, false);
+				assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 			}
 		}
-		return (Set<Ref>[]) new Set[] {last, all};
+		return changeInfo;
 	}
 	private static Object getCellObject(Cell cell) {
 		if (cell == null) {
@@ -2789,7 +2870,7 @@ public final class BookHelper {
 	private static final int FILL_LEFT = 5;
 	
 	//[0]:last [1]:all
-	public static Set<Ref>[] fill(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+	public static ChangeInfo fill(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
 //TODO, FILL_DEFAULT shall check the contents of the source cell, now we default to FILL_COPY
 if (fillType == FILL_DEFAULT) {
 	fillType = FILL_COPY;
@@ -2813,7 +2894,7 @@ if (fillType == FILL_DEFAULT) {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Set<Ref>[] fillDown(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+	public static ChangeInfo fillDown(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
 		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
@@ -2829,8 +2910,10 @@ if (fillType == FILL_DEFAULT) {
 		default:
 			return null;
 		}
-		final Set<Ref> last = new HashSet<Ref>();
-		final Set<Ref> all = new HashSet<Ref>();
+		final Set<Ref> toEval = new HashSet<Ref>();
+		final Set<Ref> affected = new HashSet<Ref>();
+		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
+		final ChangeInfo changeInfo = new ChangeInfo(toEval, affected, mergeChanges);
 		final int rowCount = srcRef.getRowCount();
 		final int srctRow = srcRef.getTopRow();
 		final int srcbRow = srcRef.getBottomRow();
@@ -2842,21 +2925,22 @@ if (fillType == FILL_DEFAULT) {
 			for(int c = srclCol; c <= srcrCol; ++c) {
 				final int srcrow = srctRow + srcIndex % rowCount;
 				final Cell srcCell = BookHelper.getCell(sheet, srcrow, c);
-				final Set<Ref>[] refs = srcCell == null ? 
-						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false); 
-				if (refs != null) {
-					last.addAll(refs[0]);
-					all.addAll(refs[1]);
+				if (srcCell == null) {
+					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
+					assignRefs(toEval, affected, refs);
+				} else {
+					final ChangeInfo changeInfo0 = BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
+					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 				}
 			}
 		}
 		final RefSheet refSheet = BookHelper.getRefSheet((Book)sheet.getWorkbook(), sheet);
-		all.add(new AreaRefImpl(srcbRow + 1, srclCol, dstbRow, srcrCol, refSheet));
-		return (Set<Ref>[]) new Set[] {last, all};
+		affected.add(new AreaRefImpl(srcbRow + 1, srclCol, dstbRow, srcrCol, refSheet));
+		return changeInfo;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Set<Ref>[] fillUp(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+	public static ChangeInfo fillUp(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
 		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
@@ -2872,8 +2956,10 @@ if (fillType == FILL_DEFAULT) {
 		default:
 			return null;
 		}
-		final Set<Ref> last = new HashSet<Ref>();
-		final Set<Ref> all = new HashSet<Ref>();
+		final Set<Ref> toEval = new HashSet<Ref>();
+		final Set<Ref> affected = new HashSet<Ref>();
+		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
+		final ChangeInfo changeInfo = new ChangeInfo(toEval, affected, mergeChanges);
 		final int rowCount = srcRef.getRowCount();
 		final int srctRow = srcRef.getTopRow();
 		final int srcbRow = srcRef.getBottomRow();
@@ -2885,21 +2971,22 @@ if (fillType == FILL_DEFAULT) {
 			for(int c = srclCol; c <= srcrCol; ++c) {
 				final int srcrow = srcbRow - srcIndex % rowCount;
 				final Cell srcCell = BookHelper.getCell(sheet, srcrow, c);
-				final Set<Ref>[] refs = srcCell == null ? 
-						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false); 
-				if (refs != null) {
-					last.addAll(refs[0]);
-					all.addAll(refs[1]);
+				if (srcCell == null) {
+					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
+					assignRefs(toEval, affected, refs);
+				} else {
+					final ChangeInfo changeInfo0 = BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
+					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 				}
 			}
 		}
 		final RefSheet refSheet = BookHelper.getRefSheet((Book)sheet.getWorkbook(), sheet);
-		all.add(new AreaRefImpl(dsttRow, srclCol, srctRow - 1, srcrCol, refSheet));
-		return (Set<Ref>[]) new Set[] {last, all};
+		affected.add(new AreaRefImpl(dsttRow, srclCol, srctRow - 1, srcrCol, refSheet));
+		return changeInfo;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Set<Ref>[] fillRight(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+	public static ChangeInfo fillRight(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
 		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
@@ -2915,8 +3002,10 @@ if (fillType == FILL_DEFAULT) {
 		default:
 			return null;
 		}
-		final Set<Ref> last = new HashSet<Ref>();
-		final Set<Ref> all = new HashSet<Ref>();
+		final Set<Ref> toEval = new HashSet<Ref>();
+		final Set<Ref> affected = new HashSet<Ref>();
+		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
+		final ChangeInfo changeInfo = new ChangeInfo(toEval, affected, mergeChanges);
 		final int colCount = srcRef.getColumnCount();
 		final int srclCol = srcRef.getLeftCol();
 		final int srcrCol = srcRef.getRightCol();
@@ -2928,21 +3017,22 @@ if (fillType == FILL_DEFAULT) {
 			for(int srcIndex = 0, c = srcrCol + 1; c <= dstrCol; ++c, ++srcIndex) {
 				final int srccol = srclCol + srcIndex % colCount;
 				final Cell srcCell = BookHelper.getCell(sheet, r, srccol);
-				final Set<Ref>[] refs = srcCell == null ? 
-						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false); 
-				if (refs != null) {
-					last.addAll(refs[0]);
-					all.addAll(refs[1]);
+				if (srcCell == null) {
+					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
+					assignRefs(toEval, affected, refs);
+				} else {
+					final ChangeInfo changeInfo0 = BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
+					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 				}
 			}
 		}
 		final RefSheet refSheet = BookHelper.getRefSheet((Book)sheet.getWorkbook(), sheet);
-		all.add(new AreaRefImpl(srctRow, srcrCol + 1, srcbRow, dstrCol, refSheet));
-		return (Set<Ref>[]) new Set[] {last, all};
+		affected.add(new AreaRefImpl(srctRow, srcrCol + 1, srcbRow, dstrCol, refSheet));
+		return changeInfo;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Set<Ref>[] fillLeft(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+	public static ChangeInfo fillLeft(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
 		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
@@ -2958,8 +3048,10 @@ if (fillType == FILL_DEFAULT) {
 		default:
 			return null;
 		}
-		final Set<Ref> last = new HashSet<Ref>();
-		final Set<Ref> all = new HashSet<Ref>();
+		final Set<Ref> toEval = new HashSet<Ref>();
+		final Set<Ref> affected = new HashSet<Ref>();
+		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
+		final ChangeInfo changeInfo = new ChangeInfo(toEval, affected, mergeChanges);
 		final int colCount = srcRef.getColumnCount();
 		final int srclCol = srcRef.getLeftCol();
 		final int srcrCol = srcRef.getRightCol();
@@ -2971,17 +3063,18 @@ if (fillType == FILL_DEFAULT) {
 			for(int srcIndex = 0, c = srclCol - 1; c >= dstlCol; --c, ++srcIndex) {
 				final int srccol = srcrCol - srcIndex % colCount;
 				final Cell srcCell = BookHelper.getCell(sheet, r, srccol);
-				final Set<Ref>[] refs = srcCell == null ? 
-						BookHelper.removeCell(sheet, r, c) : BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false); 
-				if (refs != null) {
-					last.addAll(refs[0]);
-					all.addAll(refs[1]);
+				if (srcCell == null) {
+					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
+					assignRefs(toEval, affected, refs);
+				} else {
+					final ChangeInfo changeInfo0 = BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
+					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 				}
 			}
 		}
 		final RefSheet refSheet = BookHelper.getRefSheet((Book)sheet.getWorkbook(), sheet);
-		all.add(new AreaRefImpl(srctRow, dstlCol, srcbRow, srclCol - 1, refSheet));
-		return (Set<Ref>[]) new Set[] {last, all};
+		affected.add(new AreaRefImpl(srctRow, dstlCol, srcbRow, srclCol - 1, refSheet));
+		return changeInfo;
 	}
 	
 	private static int getFillDirection(Sheet sheet, Ref srcRef, Ref dstRef) {

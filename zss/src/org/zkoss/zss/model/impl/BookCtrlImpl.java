@@ -22,8 +22,14 @@ import org.zkoss.zss.model.Book;
  *
  */
 public class BookCtrlImpl implements BookCtrl {
+	private int _shid;
+	
 	@Override
 	public RefBook newRefBook(Book book) {
 		return new RefBookImpl(book.getBookName(), book.getSpreadsheetVersion().getLastRowIndex(), book.getSpreadsheetVersion().getLastColumnIndex());
+	}
+	
+	public Object nextSheetId() {
+		return Integer.toString((_shid++ & 0x7FFFFFFF), 32);
 	}
 }

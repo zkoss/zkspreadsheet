@@ -26,4 +26,10 @@ public interface BookCtrl {
 	 * @param book the ZK Spreadsheet book
 	 */
 	public RefBook newRefBook(Book book);
+	
+	/**
+	 * Return next sheet id.
+	 * @return next sheet id.
+	 */
+	public Object nextSheetId();
 }

@@ -56,7 +56,7 @@ import org.zkoss.zss.model.BookSeries;
  * @author henrichen
  *
  */
-public class XSSFBookImpl extends XSSFWorkbook implements Book {
+public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 	private final String _bookname;
 	private final FormulaEvaluator _evaluator;
 	private final WorkbookEvaluator _bookEvaluator;
@@ -66,7 +66,6 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	private BookSeries _bookSeries;
 	private int _defaultCharWidth = 7; //TODO: don't know how to calculate this yet per the default font.
 	private final String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver.class";
-	private int _shid;
 	
 	//override the XSSFSheet Relation
 	static {
@@ -90,7 +89,7 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	public XSSFBookImpl(String bookname, InputStream is) throws IOException {
 		super(is);
 		for(XSSFSheet sheet : this) {
-			((XSSFSheetImpl)sheet).initUuid();
+			((SheetCtrl)sheet).initMerged();
 		}
 		_bookname = bookname;
 		FunctionResolver resolver = (FunctionResolver) BookHelper.getLibraryInstance(FUN_RESOLVER);
@@ -108,7 +107,7 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	
 	/*package*/ RefBook getOrCreateRefBook() {
 		if (_refBook == null) {
-			_refBook = getBookCtrl().newRefBook(this);
+			_refBook = newRefBook(this);
 		}
 		return _refBook;
 	}
@@ -127,10 +126,6 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	
 	/*package*/ FunctionMapper getFunctionMapper() {
 		return _functionMapper;
-	}
-	
-	/*package*/ String nextSheetId() {
-		return Integer.toString((_shid++ & 0x7FFFFFFF), 32);
 	}
 	
 	//--Book--//
@@ -308,7 +303,6 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 		return _bookCtrl;
 	}
 
-
 	@Override
 	public String getShareScope() {
 		return getOrCreateRefBook().getShareScope();
@@ -317,5 +311,16 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book {
 	@Override
 	public void setShareScope(String scope) {
 		getOrCreateRefBook().setShareScope(scope);
+	}
+	
+	//--BookCtrl--//
+	@Override
+	public RefBook newRefBook(Book book) {
+		return getBookCtrl().newRefBook(book);
+	}
+
+	@Override
+	public Object nextSheetId() {
+		return getBookCtrl().nextSheetId();
 	}
 }

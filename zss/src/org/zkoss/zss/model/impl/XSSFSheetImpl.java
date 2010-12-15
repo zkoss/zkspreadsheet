@@ -65,9 +65,6 @@ import org.zkoss.zss.model.Range;
  *
  */
 public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Sheet {
-	private boolean _evalAll;
-	private String _uuid;
-	
 	//--XSSFSheet--//
     public XSSFSheetImpl() {
         super();
@@ -84,11 +81,24 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Sheet {
         super(part, rel);
     }
 
-    /*package*/ void initUuid() {
-    	if (_uuid == null) {
-    		_uuid = ((XSSFBookImpl)getWorkbook()).nextSheetId();
+    @Override
+    public int addMergedRegion(CellRangeAddress region)
+    {
+    	if (region != null) {
+	    	addMerged(region);
     	}
+        return super.addMergedRegion(region);
     }
+
+    @Override
+    public void removeMergedRegion(int index) {
+    	final CellRangeAddress region = getMergedRegion(index);
+    	if (region != null) {
+        	deleteMerged(region);
+    	}
+    	super.removeMergedRegion(index);
+    }
+
     //--Sheet--//
 	public Book getBook() {
 		return (Book) getWorkbook();
@@ -867,7 +877,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Sheet {
         
         final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
         final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
-        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, 0, startCol, maxrow, endCol, n, true);
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, tRow, startCol, bRow, endCol, n, true);
         final boolean wholeColumn = tRow == 0 && bRow == maxrow; 
         if (wholeColumn) {
 	        //TODO handle the page breaks
@@ -1136,28 +1146,42 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Sheet {
     }
     
     //--SheetCtrl--//
+    private SheetCtrl _sheetCtrl;
+    private SheetCtrl getSheetCtrl() {
+    	if (_sheetCtrl == null) {
+    		_sheetCtrl = new SheetCtrlImpl(getBook(), this);
+    	}
+    	return _sheetCtrl;
+    }
 	@Override
 	public void evalAll() {
-		// TODO Auto-generated method stub
-		for(Row row : this) {
-			if (row != null) {
-				for(Cell cell : row) {
-					if (cell != null && cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
-						BookHelper.evaluate(this.getBook(), cell);
-					}
-				}
-			}
-		}
-		_evalAll = true;
+		getSheetCtrl().evalAll();
 	}
 
 	@Override
 	public boolean isEvalAll() {
-		return _evalAll;
+		return getSheetCtrl().isEvalAll();
 	}
-	
 	@Override
 	public String getUuid() {
-		return _uuid;
+		return getSheetCtrl().getUuid();
+	}
+
+	@Override
+	public void addMerged(CellRangeAddress addr) {
+		getSheetCtrl().addMerged(addr);
+	}
+
+	@Override
+	public void deleteMerged(CellRangeAddress addr) {
+		getSheetCtrl().deleteMerged(addr);
+	}
+	@Override
+	public CellRangeAddress getMerged(int row, int col) {
+		return getSheetCtrl().getMerged(row, col);
+	}
+	@Override
+	public void initMerged() {
+		getSheetCtrl().initMerged();
 	}
 }	

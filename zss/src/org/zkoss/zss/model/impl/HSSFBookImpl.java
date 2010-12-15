@@ -51,7 +51,7 @@ import org.zkoss.zss.model.BookSeries;
  * @author henrichen
  *
  */
-public class HSSFBookImpl extends HSSFWorkbook implements Book {
+public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 	private final String _bookname;
 	private final FormulaEvaluator _evaluator;
 	private final WorkbookEvaluator _bookEvaluator;
@@ -62,7 +62,6 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
 	private int _defaultCharWidth = 7; //TODO: don't know how to calculate this yet per the default font.
 	private final String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver.class";
 	private final HSSFWorkbookHelper _helper;
-	private int _shid; //sheet id
 
 	public HSSFBookImpl(String bookname, InputStream is) throws IOException {
 		super(is);
@@ -103,10 +102,6 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
 	
 	/*package*/ FunctionMapper getFunctionMapper() {
 		return _functionMapper;
-	}
-	
-	/*package*/ String nextSheetId() {
-		return Integer.toString((_shid++ & 0x7FFFFFFF), 32);
 	}
 	
 	//--Book--//
@@ -297,4 +292,16 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book {
 	public void setShareScope(String scope) {
 		getOrCreateRefBook().setShareScope(scope);
 	}
+
+	//--BookCtrl--//
+	@Override
+	public RefBook newRefBook(Book book) {
+		return getBookCtrl().newRefBook(book);
+	}
+	
+	@Override
+	public String nextSheetId() {
+		return (String) getBookCtrl().nextSheetId();
+	}
+	
 }

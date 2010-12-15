@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
 import org.zkoss.poi.hssf.model.HSSFFormulaParser;
 import org.zkoss.poi.hssf.model.InternalSheet;
 import org.zkoss.poi.hssf.model.InternalWorkbook;
@@ -56,8 +55,8 @@ import org.zkoss.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Sheet;
 import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.Sheet;
 
 /**
  * Implementation of {@link Sheet} based on HSSFSheet.
@@ -66,20 +65,22 @@ import org.zkoss.zss.model.Range;
  */
 public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Sheet {
 	private final HSSFSheetHelper _helper; //helper to lift the package protection
-	private boolean _evalAll;
-	private final String _uuid;
 
 	//--HSSFSheet--//
 	protected HSSFSheetImpl(HSSFBookImpl workbook) {
 		super(workbook);
 		_helper = new HSSFSheetHelper(this);
-		_uuid = workbook.nextSheetId();
+		init(workbook);
 	}
 	
     protected HSSFSheetImpl(HSSFBookImpl workbook, InternalSheet sheet) {
     	super(workbook, sheet);
 		_helper = new HSSFSheetHelper(this);
-		_uuid = workbook.nextSheetId();
+		init(workbook);
+    }
+    
+    private void init(HSSFBookImpl workbook) {
+    	initMerged();
     }
     
     //20100520, henrichen@zkoss.org: Shift rows only, don't handle formula
@@ -1205,35 +1206,66 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Sheet {
     public boolean isFreezePanes() {
     	return _helper.getInternalSheet().getWindowTwo().getFreezePanes();
     }
-    
+
+    @Override
+    public int addMergedRegion(CellRangeAddress region)
+    {
+    	if (region != null) {
+	    	addMerged(region);
+    	}
+        return super.addMergedRegion(region);
+    }
+
+    @Override
+    public void removeMergedRegion(int index) {
+    	final CellRangeAddress region = getMergedRegion(index);
+    	if (region != null) {
+        	deleteMerged(region);
+    	}
+    	super.removeMergedRegion(index);
+    }
+
     //--Sheet--//
     public Book getBook() {
     	return (Book) getWorkbook();
     }
     //--SheetCtrl--//
+    private SheetCtrl _sheetCtrl;
+    private SheetCtrl getSheetCtrl() {
+    	if (_sheetCtrl == null) {
+    		_sheetCtrl = new SheetCtrlImpl(getBook(), this);
+    	}
+    	return _sheetCtrl;
+    }
 	@Override
 	public void evalAll() {
-		// TODO Auto-generated method stub
-		for(Row row : this) {
-			if (row != null) {
-				for(Cell cell : row) {
-					if (cell != null && cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
-						BookHelper.evaluate(this.getBook(), cell);
-					}
-				}
-			}
-		}
-		_evalAll = true;
+		getSheetCtrl().evalAll();
 	}
 
 	@Override
 	public boolean isEvalAll() {
-		// TODO Auto-generated method stub
-		return _evalAll;
+		return getSheetCtrl().isEvalAll();
 	}
 
 	@Override
     public String getUuid() {
-    	return _uuid;
+    	return getSheetCtrl().getUuid();
     }
+	
+	@Override
+	public CellRangeAddress getMerged(int row, int col) {
+		return getSheetCtrl().getMerged(row, col);	
+	}
+	@Override
+	public void addMerged(CellRangeAddress addr) {
+		getSheetCtrl().addMerged(addr);
+	}
+	@Override
+	public void deleteMerged(CellRangeAddress addr) {
+		getSheetCtrl().deleteMerged(addr);
+	}
+	@Override
+	public void initMerged() {
+		getSheetCtrl().initMerged();
+	}
 }
