@@ -34,11 +34,9 @@ public class SS_097_Test extends SSAbstractTestCase {
 		waitResponse();
 
 		//how to verify???
-		sleep(5000);
-//		Widget marketSibling = widget(jq("@tab[label=\"Market\"] span.z-tab-text")).nextSibling();
-//		waitResponse();
-//		Widget debt = widget(jq("@tab[label=\"Debt\"] span.z-tab-text"));
-//		waitResponse();
+		Widget marketSibling = widget(jq("@tab[label=\"Market\"]")).nextSibling();
+		String content = jq(marketSibling).find("span").attr("textContent");		
+		verifyEquals(content, "Debt");		
 	}
 }
 
