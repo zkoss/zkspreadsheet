@@ -20,7 +20,9 @@ public class SS_107_Test extends SSAbstractTestCase {
 		rightClickColumnHeader(5);
 		click(jq("$deleteColumn a.z-menu-item-cnt"));
 		waitResponse();
-		//how to verify
-		sleep(5000);
+		
+		//verify
+		String f12value = getSpecifiedCell(5,11).text();
+		verifyEquals(f12value,"Q2");
 	}
 }
