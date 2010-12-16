@@ -31,8 +31,9 @@ public class SS_102_Test extends SSAbstractTestCase {
 		rightClickColumnHeader(5);
 		click(jq("$copy a.z-menu-item-cnt"));
 		waitResponse();
-		//how to verify
-		sleep(5000);
+
+		//verify
+		verifyTrue(jq("div.zshighlight") != null);
 	}
 }
 
