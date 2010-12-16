@@ -21,8 +21,10 @@ public class SS_146_Test extends SSAbstractTestCase {
 		click(jq(".z-toolbarbutton[title=\"Bold\"] img:eq(1)"));
 		waitResponse();
 		rightClickCell(1,13);
-		//how to verify
-		sleep(5000);
+
+		//verify
+		String style = getCellStyle(1, 12);
+		verifyTrue(style.contains("font-weight: 700;"));		
 	}
 }
 
