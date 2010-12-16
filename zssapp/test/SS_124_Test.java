@@ -17,15 +17,23 @@ it will be useful, but WITHOUT ANY WARRANTY.
 public class SS_124_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
+		//verify		
+		verifyTrue(jq("div.zshighlight").width() == 0);
+		
 		rightClickCell(5,11);
 		click(jq("$copy a.z-menu-item-cnt"));
 		waitResponse();
-
+		
+		//verify
+		verifyTrue(jq("div.zshighlight").width() != 0);
+		
 		rightClickCell(6,11);
 		click(jq("$pasteSpecial a.z-menu-item-cnt"));
 		waitResponse();
-		//how to verify
-		sleep(5000);
+
+		//verify
+		String titleOfPopup =  jq(".z-window-highlighted.z-window-highlighted-shadow .z-window-highlighted-header").attr("textContent");
+		verifyEquals(titleOfPopup,"Paste Special");		
 	}
 }
 
