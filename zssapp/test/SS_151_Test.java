@@ -21,8 +21,11 @@ public class SS_151_Test extends SSAbstractTestCase {
 		click(jq(".z-toolbarbutton[title=\"Align Text Left\"] img:eq(2)"));
 		waitResponse();
 		rightClickCell(1,13);
+		
 		//how to verify
-		sleep(5000);
+		String style = getCellStyle(5, 16);
+		verifyTrue(!style.contains("text-align: center;"));
+		verifyTrue(!style.contains("text-align: right;"));
 	}
 }
 
