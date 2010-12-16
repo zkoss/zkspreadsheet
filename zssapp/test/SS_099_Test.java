@@ -36,8 +36,11 @@ public class SS_099_Test extends SSAbstractTestCase {
 		waitResponse();
 		click(jq("$confirmRenameBtn td.z-button-cm"));
 		waitResponse();
-		//how to verify???
-		sleep(5000);
+		
+		//verify
+		Widget debtSibling = widget(jq("@tab[label=\"Debt\"]")).nextSibling();
+		String content = jq(debtSibling).find("span").attr("textContent");		
+		verifyEquals(content, "newsheetname");		
 	}
 }
 
