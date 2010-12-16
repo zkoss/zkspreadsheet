@@ -33,7 +33,7 @@ public class SS_097_Test extends SSAbstractTestCase {
 		click(jq("$shiftSheetRight a.z-menu-item-cnt"));
 		waitResponse();
 
-		//how to verify???
+		//verify
 		Widget marketSibling = widget(jq("@tab[label=\"Market\"]")).nextSibling();
 		String content = jq(marketSibling).find("span").attr("textContent");		
 		verifyEquals(content, "Debt");		

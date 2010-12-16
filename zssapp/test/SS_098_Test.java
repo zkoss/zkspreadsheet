@@ -23,17 +23,19 @@ import org.zkoss.ztl.ZKClientTestCase;
 
 import com.thoughtworks.selenium.Selenium;
 
-//right click to delete sheet "Market"
+//right click to delete sheet "Debt"
 public class SS_098_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
-		contextMenu(jq("@tab[label=\"Market\"] span.z-tab-text"));				
+		contextMenu(jq("@tab[label=\"Debt\"] span.z-tab-text"));				
 		waitResponse();
 		click(jq("$deleteSheet a.z-menu-item-cnt"));
 		waitResponse();
 
-		//how to verify???
-		sleep(5000);
+		//verify
+		Widget profitabilitySibling = widget(jq("@tab[label=\"Profitability\"]")).nextSibling();
+		String content = jq(profitabilitySibling).find("span").attr("textContent");		
+		verifyEquals(content, "Market");		
 	}
 }
 
