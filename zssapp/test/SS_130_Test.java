@@ -17,14 +17,20 @@ it will be useful, but WITHOUT ANY WARRANTY.
 public class SS_130_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
+		//verify
+		String oriF12value = getSpecifiedCell(5,11).text();
+		String oriF13value = getSpecifiedCell(5,12).text();		
+		verifyNotEquals(oriF12value, oriF13value);
+		
 		rightClickCell(5,11);
 		mouseOver(jq("a.z-menu-cnt:eq(1)"));		
 		waitResponse();
 		click(jq("$shiftCellUp a.z-menu-item-cnt"));
 		waitResponse();
 		
-		//how to verify
-		sleep(5000);
+		//verify
+		String f12value = getSpecifiedCell(5,11).text();
+		verifyEquals(f12value, oriF13value);
 	}
 }
 
