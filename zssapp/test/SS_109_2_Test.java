@@ -21,8 +21,10 @@ public class SS_109_2_Test extends SSAbstractTestCase {
 		rightClickColumnHeader(5);
 		click(jq("$hide a.z-menu-item-cnt"));
 		waitResponse();
-		//how to verify
-		sleep(5000);		
+
+		//verify
+		int width = jq("div.zstopcell[z\\\\.c=\"5\"] div").width();
+		verifyTrue(width==0);		
 	}
 }
 

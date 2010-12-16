@@ -31,6 +31,10 @@ public class SS_109_3_Test extends SSAbstractTestCase {
 		click(jq("$hide a.z-menu-item-cnt"));
 		waitResponse();
 
+		//verify
+		int width = jq("div.zstopcell[z\\\\.c=\"5\"] div").width();
+		verifyTrue(width==0);		
+
 		selectColumns(4,6);
 		
 		contextMenuAt(getColumnHeader(6),"2,2");
@@ -38,8 +42,9 @@ public class SS_109_3_Test extends SSAbstractTestCase {
 		click(jq("$unhide a.z-menu-item-cnt"));
 		waitResponse();
 
-		//how to verify
-		sleep(5000);		
+		//verify
+		width = jq("div.zstopcell[z\\\\.c=\"5\"] div").width();
+		verifyTrue(width!=0);		
 	}
 }
 

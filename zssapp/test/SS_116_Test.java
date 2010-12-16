@@ -19,11 +19,14 @@ public class SS_116_Test extends SSAbstractTestCase {
 
 	@Override
 	protected void executeTest() {
+		String f13value = getSpecifiedCell(5,12).text();
 		rightClickRowHeader(11);
 		click(jq("$deleteRow a.z-menu-item-cnt"));
 		waitResponse();
-		//how to verify
-		sleep(5000);
+
+		//verify
+		String f12value = getSpecifiedCell(5,11).text();
+		verifyEquals(f12value,f13value);
 	}
 }
 

@@ -19,11 +19,16 @@ public class SS_115_Test extends SSAbstractTestCase {
 
 	@Override
 	protected void executeTest() {
+		String oriF12value = getSpecifiedCell(5,11).text();
 		rightClickRowHeader(11);
 		click(jq("$insertRow a.z-menu-item-cnt"));
 		waitResponse();
-		//how to verify
-		sleep(5000);
+
+		//verify
+		String f12value = getSpecifiedCell(5,11).text();
+		String f13value = getSpecifiedCell(5,12).text();
+		verifyEquals(f12value,null);
+		verifyEquals(f13value,oriF12value);
 	}
 }
 
