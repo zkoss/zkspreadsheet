@@ -146,7 +146,27 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
 		contextMenuAt(getSpecifiedCell(column, row), "2,2");
 		waitResponse();
     }
-    
+
+    /**
+     * Selects group of cells
+     * @param left: column number of left top cell, 0-based
+     * @param top: row number of left top cell, 0-based
+     * @param right: column number of right bottom cell, 0-based
+     * @param bottom: row number of right bottom cell, 0-based
+     */
+    public void selectCells(int left, int top, int right, int bottom) {
+		mouseDownAt(getSpecifiedCell(left, top),"2,2");
+		waitResponse();
+		mouseUpAt(getSpecifiedCell(left, top),"2,2");
+		waitResponse();
+	
+		mouseDownAt(getSpecifiedCell(left, top),"2,2");
+		waitResponse();
+		mouseMoveAt(getSpecifiedCell(right, bottom),"2,2");
+		waitResponse();
+		mouseUpAt(getSpecifiedCell(right, bottom),"2,2");
+		waitResponse();
+    }
     /**
      * 
      * @param left: column number of left top cell, 0-based
@@ -155,19 +175,7 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @param bottom: row number of right bottom cell, 0-based
      */
     public void rightClickCells(int left, int top, int right, int bottom){
-		mouseDownAt(getSpecifiedCell(left, top),"2,2");
-		waitResponse();
-		mouseUpAt(getSpecifiedCell(left, top),"2,2");
-		waitResponse();
-	
-		mouseDownAt(getSpecifiedCell(left, top),"2,2");
-		waitResponse();
-
-		mouseMoveAt(getSpecifiedCell(right, bottom),"2,2");
-		waitResponse();
-		mouseUpAt(getSpecifiedCell(right, bottom),"2,2");
-		waitResponse();
-
+    	selectCells(left, top, right, bottom);
 		//why right click not work in this case?
 //		contextMenuAt(jq(".zsselect"), "2,2");
 //		waitResponse();
