@@ -19,11 +19,17 @@ public class SS_105_Test extends SSAbstractTestCase {
 	
 	@Override
 	protected void executeTest() {
+		String beforef12value = getSpecifiedCell(5,11).text();
 		rightClickColumnHeader(5);
 		click(jq("$clearStyle a.z-menu-item-cnt"));
 		waitResponse(20000);
-		//how to verify
-		sleep(5000);
+
+		//how to verify		
+		String afterf12value = getSpecifiedCell(5,11).text();
+		verifyEquals(beforef12value,afterf12value);
+
+		String styleAfterF12 = getCellStyle(5,11);
+		System.out.println(">>>style:"+styleAfterF12);
 	}
 }
 

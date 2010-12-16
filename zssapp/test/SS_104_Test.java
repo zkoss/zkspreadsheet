@@ -18,10 +18,15 @@ public class SS_104_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
 		rightClickColumnHeader(5);
+		String styleBeforeF12 = getCellStyle(5,11);
 		click(jq("$clearContent a.z-menu-item-cnt"));
 		waitResponse();
 		//how to verify
-		sleep(5000);
+		String f9value = getSpecifiedCell(5,8).text();
+		verifyEquals(f9value,null);
+		
+		String styleAfterF12 = getCellStyle(5,11);
+		verifyEquals(styleBeforeF12,styleAfterF12);
 	}
 }
 

@@ -22,8 +22,12 @@ public class SS_106_Test extends SSAbstractTestCase {
 		rightClickColumnHeader(5);
 		click(jq("$insertColumn a.z-menu-item-cnt"));
 		waitResponse();
-		//how to verify
-		sleep(5000);
+		
+		//verify
+		String f12value = getSpecifiedCell(5,11).text();
+		String g12value = getSpecifiedCell(6,11).text();
+		verifyEquals(f12value,null);
+		verifyEquals(g12value,"Q1");
 	}
 }
 
