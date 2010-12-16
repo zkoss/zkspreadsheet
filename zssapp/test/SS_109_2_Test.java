@@ -18,12 +18,16 @@ it will be useful, but WITHOUT ANY WARRANTY.
 public class SS_109_2_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
+		//verify
+		int width = getColumnHeader(5).width();
+		verifyTrue(width!=0);
+		
 		rightClickColumnHeader(5);
 		click(jq("$hide a.z-menu-item-cnt"));
 		waitResponse();
 
 		//verify
-		int width = jq("div.zstopcell[z\\\\.c=\"5\"] div").width();
+		width = getColumnHeader(5).width();
 		verifyTrue(width==0);		
 	}
 }

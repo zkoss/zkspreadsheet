@@ -19,11 +19,16 @@ public class SS_119_Test extends SSAbstractTestCase {
 	
 	@Override
 	protected void executeTest() {
+		//verify
+		int height = getRowHeader(11).height();
+		verifyTrue(height!=0);
+		
 		rightClickRowHeader(11);
 		click(jq("$hide a.z-menu-item-cnt"));
 		waitResponse();
-		//how to verify
-		sleep(5000);
+		//verify
+		height = getRowHeader(11).height();
+		verifyTrue(height==0);		
 	}
 }
 
