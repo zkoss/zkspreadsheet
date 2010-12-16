@@ -13,7 +13,7 @@
 			forward="onClearStyle" />
 		<menuitem id="clearAll" label="${c:l('edit.clearAll')}" />
 		<menuseparator />
-		<menu label="${c:l('insert')}">
+		<menu id="insert" label="${c:l('insert')}">
 			<menupopup>
 				<menuitem id="shiftCellRight" label="Shift cells right"></menuitem>
 				<menuitem id="shiftCellDown" label="Shift cells down"/>

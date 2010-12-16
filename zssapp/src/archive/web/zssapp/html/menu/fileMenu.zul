@@ -3,8 +3,7 @@
 	<menupopup id="fileMenupopup">
 		<menuitem id="newFile" label="${c:l('file.new')}" />
 		<menuitem id="openFile" label="${c:l('file.open')}" />
-		<menuitem id="saveFile" label="${c:l('file.save')}"
-			disabled="true" />
+		<menuitem id="saveFile" label="${c:l('file.save')}" />
 		<menuitem id="saveFileAs" label="${c:l('file.saveas')}"
 			disabled="true" />
 		<menuitem id="saveFileAndClose" label="${c:l('file.saveClose')}"
@@ -17,6 +16,7 @@
 		<menu label="${c:l('file.export')}">
 			<menupopup>
 				<menuitem id="exportToPdf" label="${c:l('export.pdf')}"/>
+				<menuitem id="exportToExcel" label="${c:l('export.excel')}"/>
 			</menupopup>
 		</menu>
 		<menuseparator />

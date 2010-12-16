@@ -1,34 +1,34 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk>
 	<menupopup id="formatMenupopup">
-		<menu label="${c:l('format.font')}">
+		<menu id="font" label="${c:l('format.font')}">
 			<menupopup id="fontMenuMenupopup">
-				<menuitem label="Calibri" sclass="calibriFont"
+				<menuitem id="calibriFont" label="Calibri" sclass="calibriFont"
 					forward="onFontFamilySelect(Calibri)" />
-				<menuitem label="Courier New" sclass="courierFont"
+				<menuitem id="courierFont" label="Courier New" sclass="courierFont"
 					forward="onFontFamilySelect(Courier New)" />
-				<menuitem label="Comic Sans MS" sclass="comicFont"
+				<menuitem id="comicFont" label="Comic Sans MS" sclass="comicFont"
 					forward="onFontFamilySelect(Comic Sans MS)" />
-				<menuitem label="Times New Roman" sclass="timeFont"
+				<menuitem id="timeFont" label="Times New Roman" sclass="timeFont"
 					forward="onFontFamilySelect(Times New Roman)" />
-				<menuitem label="Century Gothic" sclass="centuryFont"
+				<menuitem id="centuryFont" label="Century Gothic" sclass="centuryFont"
 					forward="onFontFamilySelect(Centry Gothic)" />
-				<menuitem label="Georgia" sclass="georgiaFont"
+				<menuitem id="georgiaFont" label="Georgia" sclass="georgiaFont"
 					forward="onFontFamilySelect(Georgia)" />
-				<menuitem label="Impact" sclass="impactFont"
+				<menuitem id="impactFont" label="Impact" sclass="impactFont"
 					forward="onFontFamilySelect(Impact)" />
 			</menupopup>
 		</menu>
 		<menu id="backgroundColorMenu" label="${c:l('format.color')}"
 			content="#color=#FFFFFF">
 		</menu>
-		<menu label="${c:l('format.align')}" forward="onFormatAlign">
+		<menu id="align" label="${c:l('format.align')}" forward="onFormatAlign">
 			<menupopup id="alignMenupopup">
-				<menuitem label="Left"
+				<menuitem id="alignHorizontal" label="Left"
 					forward="onAlignHorizontalClick(left)" />
-				<menuitem label="Center"
+				<menuitem id="alignCenter" label="Center"
 					forward="onAlignHorizontalClick(center)" />
-				<menuitem label="Right"
+				<menuitem id="alignRight" label="Right"
 					forward="onAlignHorizontalClick(right)" />
 			</menupopup>
 		</menu>
