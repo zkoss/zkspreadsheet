@@ -23,8 +23,9 @@ public class SS_145_Test extends SSAbstractTestCase {
 		click(jq("@comboitem[label=\"24\"] td.z-comboitem-text"));
 		waitResponse();		
 		
-		//how to verify
-		sleep(5000);
+		//verify
+		String style = getSpecifiedCell(5, 11).attr("style");
+		verifyTrue(style.contains("font-size: 24pt;"));		
 	}
 }
 

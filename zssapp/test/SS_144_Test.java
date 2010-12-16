@@ -23,8 +23,9 @@ public class SS_144_Test extends SSAbstractTestCase {
 		click(jq("@comboitem[label=\"Times New Roman\"] td.z-comboitem-text"));
 		waitResponse();		
 		
-		//how to verify
-		sleep(5000);
+		//verify
+		String style = getSpecifiedCell(5, 11).attr("style");
+		verifyTrue(style.contains("Times New Roman"));		
 	}
 }
 
