@@ -14,6 +14,15 @@ public class SS_060_Test extends SSAbstractTestCase {
         if (fontItem != null) {
             click(fontItem);
         }
+        
+        cell_B_8 = getSpecifiedCell(1, 7);
+        String style = cell_B_8.css("font-family");
+        
+        if (style != null) {
+            verifyTrue("Unexcepted result: " + style, "Times New Roman".equalsIgnoreCase(style));
+        } else {
+            verifyTrue("Cannot get style of specified cell!", false); 
+        }
     }
 
 }

@@ -11,7 +11,7 @@ public class SS_058_Test extends SSAbstractTestCase {
         click(jq("$cutBtn"));
         
         // Verify
-        verifyTrue(jq("div.zshighlight") != null);
+        verifyTrue(jq("div.zshighlight").width() != 0);
     }
 
 }

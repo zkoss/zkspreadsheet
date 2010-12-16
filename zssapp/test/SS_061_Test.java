@@ -14,8 +14,6 @@ public class SS_061_Test extends SSAbstractTestCase {
         if (fontSizeItem != null) {
             click(fontSizeItem);
         }
-        
-        sleep(10000);
     }
 
 }

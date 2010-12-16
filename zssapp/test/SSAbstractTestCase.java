@@ -23,7 +23,9 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
             try {
                 start(browser);
                 windowFocus();
+                waitResponse();
                 windowMaximize();
+                waitResponse();
                 executeTest();
             } finally {
                 stop();
