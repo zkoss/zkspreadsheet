@@ -21,11 +21,16 @@ public class SS_103_Test extends SSAbstractTestCase {
 		rightClickColumnHeader(5);
 		click(jq("$copy a.z-menu-item-cnt"));
 		waitResponse();
+		verifyTrue(jq("div.zshighlight") != null);
 		rightClickColumnHeader(6);
 		click(jq("$paste a.z-menu-item-cnt"));
 		waitResponse();
-		//how to verify
-		sleep(5000);
+		
+		//verify
+		//value in G9 must be the same as F9
+		String g9value = getSpecifiedCell(6,8).text();
+		String f9value = getSpecifiedCell(5,8).text();
+		verifyEquals(g9value, f9value);
 	}
 }
 
