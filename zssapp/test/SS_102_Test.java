@@ -13,27 +13,21 @@ This program is distributed under Apache License Version 2.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
 
-import org.junit.Test;
-import org.zkoss.ztl.Element;
-import org.zkoss.ztl.JQuery;
-import org.zkoss.ztl.Tags;
-import org.zkoss.ztl.Widget;
-import org.zkoss.ztl.ZK;
-import org.zkoss.ztl.ZKClientTestCase;
-
-import com.thoughtworks.selenium.Selenium;
 
 //copy column F
 public class SS_102_Test extends SSAbstractTestCase {
 
 	@Override
 	protected void executeTest() {
+		//verify
+		verifyTrue(jq("div.zshighlight").width() == 0);
+
 		rightClickColumnHeader(5);
 		click(jq("$copy a.z-menu-item-cnt"));
 		waitResponse();
 
 		//verify
-		verifyTrue(jq("div.zshighlight") != null);
+		verifyTrue(jq("div.zshighlight").width() != 0);
 	}
 }
 

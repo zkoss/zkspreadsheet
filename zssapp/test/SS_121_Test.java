@@ -17,12 +17,15 @@ it will be useful, but WITHOUT ANY WARRANTY.
 public class SS_121_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
+		//verify
+		verifyTrue(jq("div.zshighlight") == null);
+		
 		rightClickCell(5,11);
 		click(jq("$cut a.z-menu-item-cnt"));
 		waitResponse();
 
-		//how to verify
-		sleep(5000);
+		//verify
+		verifyTrue(jq("div.zshighlight") != null);
 	}
 }
 

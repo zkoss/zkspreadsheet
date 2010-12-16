@@ -19,11 +19,16 @@ public class SS_112_Test extends SSAbstractTestCase {
 
 	@Override
 	protected void executeTest() {
+		//verify
+		verifyTrue(jq("div.zshighlight").width() == 0);
+
 		rightClickRowHeader(11);
 		click(jq("$copy a.z-menu-item-cnt"));
 		waitResponse();
-		verifyTrue(jq("div.zshighlight") != null);
 		
+		//verify
+		verifyTrue(jq("div.zshighlight").width() != 0);
+
 		rightClickRowHeader(12);
 		click(jq("$paste a.z-menu-item-cnt"));
 		waitResponse();

@@ -18,10 +18,17 @@ public class SS_103_Test extends SSAbstractTestCase {
 
 	@Override
 	protected void executeTest() {
+		//verify
+		verifyTrue(jq("div.zshighlight").width() == 0);
+
 		rightClickColumnHeader(5);
 		click(jq("$copy a.z-menu-item-cnt"));
 		waitResponse();
-		verifyTrue(jq("div.zshighlight") != null);
+
+		//verify
+		verifyTrue(jq("div.zshighlight").width() != 0);
+
+		
 		rightClickColumnHeader(6);
 		click(jq("$paste a.z-menu-item-cnt"));
 		waitResponse();
