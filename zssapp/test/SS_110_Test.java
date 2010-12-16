@@ -21,8 +21,9 @@ public class SS_110_Test extends SSAbstractTestCase {
 		rightClickRowHeader(11);
 		click(jq("$cut a.z-menu-item-cnt"));
 		waitResponse();
-		//how to verify
-		sleep(5000);
+		
+		//verify
+		verifyTrue(jq("div.zshighlight") != null);
 	}
 }
 

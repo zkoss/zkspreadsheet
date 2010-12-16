@@ -22,13 +22,16 @@ public class SS_112_Test extends SSAbstractTestCase {
 		rightClickRowHeader(11);
 		click(jq("$copy a.z-menu-item-cnt"));
 		waitResponse();
+		verifyTrue(jq("div.zshighlight") != null);
 		
 		rightClickRowHeader(12);
 		click(jq("$paste a.z-menu-item-cnt"));
 		waitResponse();
-		//how to verify
-		sleep(5000);
-		
+
+		//verify
+		String f12value = getSpecifiedCell(5,11).text();
+		String f13value = getSpecifiedCell(5,12).text();
+		verifyEquals(f12value, f13value);
 	}
 }
 
