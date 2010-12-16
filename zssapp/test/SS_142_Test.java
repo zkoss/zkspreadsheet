@@ -21,8 +21,9 @@ public class SS_142_Test extends SSAbstractTestCase {
 		click(jq("$format a.z-menu-item-cnt"));
 		waitResponse();
 		
-		//how to verify
-		sleep(5000);
+		//verify
+		String titleOfPopup =  jq(".z-window-highlighted.z-window-highlighted-shadow .z-window-highlighted-header").attr("textContent");
+		verifyEquals(titleOfPopup,"Number Format");		
 	}
 }
 
