@@ -13,7 +13,7 @@ This program is distributed under Apache License Version 2.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
 
-//select F6:I9, and CTRL+C, and copy to K6
+//CTRL + O to open new file
 public class SS_162_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
