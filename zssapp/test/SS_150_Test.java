@@ -17,16 +17,19 @@ it will be useful, but WITHOUT ANY WARRANTY.
 public class SS_150_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
-		rightClickCell(1,12);
+		rightClickCells(1,10,5,12);
+
+		//fail to trigger???
+//		clickAt(jq(".z-dpbutton-arrow:eq(4)"),"5,5");
+//		waitResponse();
+
+//		click(jq(".z-dpbutton-arrow:eq(4)"));
+//		waitResponse();
 		
-		//not work, why?
-//		click(jq(".z-dpbutton-btn:eq(4) div"));
-		clickAt(jq(".z-dpbutton-btn:eq(3) div"),"2,2");
+		mouseDownAt(jq(".z-dpbutton-arrow:eq(4)"),"5,5");
 		waitResponse();
-//		mouseDownAt(jq(".z-dpbutton-arrow:eq(4)"),"2,2");
-//		waitResponse();
-//		mouseUpAt(jq(".z-dpbutton-arrow:eq(4)"),"2,2");
-//		waitResponse();
+		mouseUpAt(jq(".z-dpbutton-arrow:eq(4)"),"5,5");
+		waitResponse();
 		//how to verify
 		sleep(5000);
 	}

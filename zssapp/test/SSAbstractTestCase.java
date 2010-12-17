@@ -49,6 +49,20 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     
     /**
      * 
+     * Get some style related property of a cell. Including background-color, font-family, text-align
+     * @param col
+     * @param row
+     * @return
+     */
+    public String getCellCompositeStyle(int col, int row){
+    	String result ="";
+    	result += jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"]").css("background-color");
+    	result += ":"+jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").css("font-family");
+    	result += ":"+jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").css("text-align");
+    	return result;
+    }
+    /**
+     * 
      * @param col - Base on 0
      * @param row - Base on 0
      * @return A JQuery object of cell. (Inner div)
