@@ -16,10 +16,13 @@ package org.zkoss.zss.app.zul;
 
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zss.app.cell.EditHelper;
+import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
+import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellEvent;
@@ -37,6 +40,9 @@ public class FormulaEditor extends Textbox implements ZssappComponent{
 
 	private Spreadsheet ss;
 	
+	private String initVal;
+	
+	private boolean focusOut = false;
 	private Cell currentEditcell;
 	
 	public FormulaEditor() {
@@ -52,21 +58,53 @@ public class FormulaEditor extends Textbox implements ZssappComponent{
 
 		Utils.setEditText(currentEditcell, ((InputEvent) event).getValue());
 	}
+
+	public void onCancel() {
+		System.out.println("onCancel");
+		focusOut = true;
+		int row = ss.getSelection().getTop();
+		int col = ss.getSelection().getLeft();
+		if (initVal != null) {
+			Utils.setEditText(ss.getSelectedSheet(), row, col, initVal);
+			initVal = null;
+		}
+		ss.focusTo(row, col);
+		
+	}
 	
 	public void onFocus() {
-		
+		focusOut = false;
 		int left = ss.getSelection().getLeft();
 		int top = ss.getSelection().getTop();
 		Sheet sheet = ss.getSelectedSheet();
 		currentEditcell = Utils.getCell(sheet, top, left);
+		
+		if (currentEditcell != null)
+			initVal = Ranges.range(sheet, top, left).getEditText();
 		EditHelper.clearCutOrCopy(ss);
 	}
 	
 	public void onBlur() {
-		currentEditcell = null;
+		if (focusOut) {
+			focusOut = true;
+			return;
+		}
+		initVal = null;
+		
+		Utils.setEditText(ss.getSelectedSheet(), ss
+				.getSelection().getTop(), ss.getSelection().getLeft(),
+				getText());
+		Position pos = ss.getCellFocus();
+		int row = pos.getRow();
+		int col = pos.getColumn() + 1;
+
+		ss.focusTo(row, col);
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	
 	public void onOK() {
+		focusOut = true;
+		initVal = null;
 		Utils.setEditText(ss.getSelectedSheet(), ss
 				.getSelection().getTop(), ss.getSelection().getLeft(),
 				getText());
@@ -75,6 +113,7 @@ public class FormulaEditor extends Textbox implements ZssappComponent{
 		int col = pos.getColumn();
 
 		ss.focusTo(row, col);
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 
 	@Override
@@ -139,4 +178,7 @@ public class FormulaEditor extends Textbox implements ZssappComponent{
 		
 	}
 
+	private DesktopWorkbenchContext getDesktopWorkbenchContext() {
+		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
+	}
 }
