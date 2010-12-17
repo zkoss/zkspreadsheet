@@ -19,8 +19,8 @@ it will be useful, but WITHOUT ANY WARRANTY.
 public class SS_133_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
-		JQuery cellF12 = getSpecifiedCell(5,11);
-		String beforeStyle = cellF12.css("background-color");
+		//verify
+		String beforeF12Style = getCellCompositeStyle(5, 11);
 		
 		rightClickCell(5,11);
 		mouseOver(jq("a.z-menu-cnt:eq(2)"));		
@@ -29,13 +29,10 @@ public class SS_133_Test extends SSAbstractTestCase {
 		waitResponse();
 		
 		//verify
-		String content = getSpecifiedCell(5, 11).text();
-		verifyEquals(content, null);
-		
-		//how to verify the style?
-		String afterStyle = cellF12.css("background-color");
-		System.out.println("before:"+beforeStyle);
-		System.out.println("after:"+afterStyle);
+		String afterF12Style = getCellCompositeStyle(5, 11);
+		String f12value = getSpecifiedCell(5,11).text();
+		verifyEquals(f12value,null);
+		verifyEquals(beforeF12Style,afterF12Style);
 	}
 }
 

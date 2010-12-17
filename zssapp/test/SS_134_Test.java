@@ -17,14 +17,21 @@ it will be useful, but WITHOUT ANY WARRANTY.
 public class SS_134_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
+		//verify
+		String beforeF12Style = getCellCompositeStyle(5, 11);
+		String beforef12value = getSpecifiedCell(5,11).text();
+		
 		rightClickCell(5,11);
 		mouseOver(jq("a.z-menu-cnt:eq(2)"));		
 		waitResponse();
 		click(jq("$clearStyle a.z-menu-item-cnt"));
 		waitResponse();
 		
-		//how to verify
-		sleep(5000);
+		//verify
+		String afterF12Style = getCellCompositeStyle(5, 11);
+		String afterf12value = getSpecifiedCell(5,11).text();
+		verifyEquals(beforef12value,afterf12value);
+		verifyEquals(afterF12Style, CELL_WITHOUT_STYLE);
 	}
 }
 

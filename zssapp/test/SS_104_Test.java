@@ -27,11 +27,8 @@ public class SS_104_Test extends SSAbstractTestCase {
 		
 		//verify
 		String afterF12Style = getCellCompositeStyle(5, 11);
-		
-		//verify
 		String f9value = getSpecifiedCell(5,8).text();
 		verifyEquals(f9value,null);
-		
 		verifyEquals(beforeF12Style,afterF12Style);
 	}
 }
