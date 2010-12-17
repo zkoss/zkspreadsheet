@@ -51,12 +51,22 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * 
      * @param col - Base on 0
      * @param row - Base on 0
-     * @return A JQuery object of cell.
+     * @return A JQuery object of cell. (Inner div)
      */
     public JQuery getSpecifiedCell(int col, int row) {
         return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div");
     }
-    
+
+    /**
+     * 
+     * @param col - Base on 0
+     * @param row - Base on 0
+     * @return A JQuery object of cell Outer div.
+     */    
+    public JQuery getSpecifiedCellOuter(int col, int row) {
+        return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"]");
+    }
+
     /**
      * 
      * @param col - Base on 0
