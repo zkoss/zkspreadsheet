@@ -23,6 +23,7 @@ ZK Spreadsheet 2.0.0
   212 Cannot shift select left on merge cell
   222 ZK Spreadsheet Live shall support number format
   234 Support export to xls and xlsx
+  246 ZK Spreadsheet Live support save file
   
 *Bug 
   132 view ZK Spreadsheet Live index.zul cause NullPointerException
