@@ -973,6 +973,13 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			this.sheetCtrl._doKeydown(evt);
 		this.$supers('doKeyDown_', arguments);
 	},
+	//bug 242, Delete key not work when edit cell
+	afterKeyDown_: function (evt) {
+		if (this.sheetCtrl.state != zss.SSheetCtrl.EDITING) {
+			this.$supers('afterKeyDown_', arguments);
+		}
+		//avoid onCtrlKey to be eat in editing mode.
+	},
 	doKeyPress_: function (evt) {
 		if (this.sheetCtrl)
 			this.sheetCtrl._doKeypress(evt);
