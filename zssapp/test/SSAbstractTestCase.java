@@ -47,9 +47,12 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     	+jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").attr("style");
     }
     
+    public static final String CELL_WITHOUT_STYLE = "rgba(0, 0, 0, 0):Arial:left";
+    
     /**
      * 
      * Get some style related property of a cell. Including background-color, font-family, text-align
+     * "rgba(0, 0, 0, 0):Arial:left" is the value for cleared style
      * @param col
      * @param row
      * @return

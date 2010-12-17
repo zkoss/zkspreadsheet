@@ -19,17 +19,20 @@ public class SS_105_Test extends SSAbstractTestCase {
 	
 	@Override
 	protected void executeTest() {
+		//verify
+		String beforeF12Style = getCellCompositeStyle(5, 11);
 		String beforef12value = getSpecifiedCell(5,11).text();
+		
 		rightClickColumnHeader(5);
 		click(jq("$clearStyle a.z-menu-item-cnt"));
 		waitResponse(20000);
 
-		//how to verify		
+		//verify
+		String afterF12Style = getCellCompositeStyle(5, 11);
 		String afterf12value = getSpecifiedCell(5,11).text();
+		
 		verifyEquals(beforef12value,afterf12value);
-
-		String styleAfterF12 = getCellStyle(5,11);
-		System.out.println(">>>style:"+styleAfterF12);
+		verifyEquals(afterF12Style, CELL_WITHOUT_STYLE);
 	}
 }
 
