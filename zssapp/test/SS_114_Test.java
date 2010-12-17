@@ -19,10 +19,22 @@ public class SS_114_Test extends SSAbstractTestCase {
 
 	@Override
 	protected void executeTest() {
+		//verify
+		String beforeF12Style = getCellCompositeStyle(5, 11);
+		String beforef12value = getSpecifiedCell(5,11).text();
+		
+		
 		rightClickRowHeader(11);
 		click(jq("$clearStyle a.z-menu-item-cnt"));
 		waitResponse();
-		//how to verify
+
+		//verify
+		String afterF12Style = getCellCompositeStyle(5, 11);
+		String afterf12value = getSpecifiedCell(5,11).text();
+		
+		verifyEquals(beforef12value,afterf12value);
+		verifyEquals(afterF12Style, CELL_WITHOUT_STYLE);
+		
 		sleep(5000);		
 	}
 }
