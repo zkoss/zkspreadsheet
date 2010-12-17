@@ -35,7 +35,6 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     
     /**
      * 
-     * Not working. WHY!!!
      * get style may have different result.
      * 
      * Get the style of certain cell
@@ -44,8 +43,6 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @return
      */
     public String getCellStyle(int col, int row){
-//    	return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").attr("style");
-    	
     	return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"]").attr("style")
     	+jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").attr("style");
     }
@@ -176,38 +173,8 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      */
     public void rightClickCells(int left, int top, int right, int bottom){
     	selectCells(left, top, right, bottom);
-		//why right click not work in this case?
-//		contextMenuAt(jq(".zsselect"), "2,2");
-//		waitResponse();
-
-//		contextMenuAt(jq("div.zsselect .zsselecti"), "2,2");
-//		waitResponse();
-
 		contextMenu(jq("div.zsselect .zsselecti"));
 		waitResponse();
-
-//		mouseDownRightAt(jq("div.zsselect .zsselecti"), "2,2");
-//		waitResponse();
-//		mouseUpRightAt(jq("div.zsselect .zsselecti"), "2,2");
-//		waitResponse();
-
-//		contextMenuAt(jq("div.zsselect"), "2,2");
-//		waitResponse();
-		
-//		contextMenuAt(getSpecifiedCell(right, bottom), "2,2");
-
-//		mouseDownRightAt(jq(".zsselect"), "2,2");
-//		waitResponse();
-//		mouseUpRightAt(jq(".zsselect"), "2,2");
-//		waitResponse();
-		
-//		mouseDownRightAt(getSpecifiedCell(left, top), "2,2");
-//		waitResponse();
-//		mouseUpRightAt(getSpecifiedCell(left, top), "2,2");
-//		waitResponse();
-
-//		mouseUpRightAt(jq(".zsselect"), "5,5");
-		
     }
 
     /**

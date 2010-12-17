@@ -23,7 +23,7 @@ public class SS_066_Test extends SSAbstractTestCase {
         
         //Verify
         cell_B_8 = getSpecifiedCell(1, 7);
-        String style = ColorVerifingHelper.transform(cell_B_8.css("color"));
+        String style = cell_B_8.css("color");
         
         if (style != null) {
             verifyTrue("Unexcepted result: " + cell_B_8.css("color"), ColorVerifingHelper.isEqualColor(fontColorStr, style));
