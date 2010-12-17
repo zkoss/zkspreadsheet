@@ -86,13 +86,23 @@ public class SpreadSheetMetaInfo {
 	 */
 	public static SpreadSheetMetaInfo newInstance(String fileName){
 		SpreadSheetMetaInfo info = new SpreadSheetMetaInfo();
-		info.fileName = fileName;
+
+		info.fileName = removeFolderPath(fileName);
 		String extName = FileHelper.getMediaExtention(fileName);
 
 		info.timeInMillis = System.currentTimeMillis();	
-		info.hashFileName = fileName.substring(0, fileName.indexOf("."))
+		info.hashFileName = info.fileName.substring(0, fileName.indexOf("."))
 				+ "-" + info.timeInMillis + "." + extName;
 		return info;
+	}
+	
+	private static String removeFolderPath(String src) {
+		int idx = -1;
+		String fileName = src;
+		if ((idx = fileName.lastIndexOf("\\")) >= 0 || (idx = fileName.lastIndexOf("/")) >= 0) {
+			return fileName.substring(idx + 1);
+		}
+		return fileName;
 	}
 	
 	/**
@@ -107,6 +117,7 @@ public class SpreadSheetMetaInfo {
 		
 		BufferedReader reader = null;
 		BufferedWriter writer = null;
+		//TODO: replace Properties with json format, to provide version control 
 		Properties prop = new Properties();
 		try {
 			reader = new BufferedReader(new FileReader(FileHelper.getSpreadsheetStorageFolderPath() + "metaFile"));
@@ -135,6 +146,7 @@ public class SpreadSheetMetaInfo {
 	}
 	
 	public static boolean delete(SpreadSheetMetaInfo info) throws IOException {
+		//TODO: replace Properties with json format, to provide version control 
 		Properties prop = getMetaInfoProperties();
 		
 		if (prop.containsKey(info.getFileName())) {
@@ -201,6 +213,7 @@ public class SpreadSheetMetaInfo {
 		return map;
 	}
 	
+	//TODO: replace Properties with json format, to provide version control 
 	private static Properties getMetaInfoProperties() throws FileNotFoundException, IOException {
 		BufferedReader reader = null;
 		Properties prop = new Properties();

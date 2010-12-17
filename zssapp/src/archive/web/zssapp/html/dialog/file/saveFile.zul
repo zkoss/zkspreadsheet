@@ -1,0 +1,36 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<style>
+		.z-grid-body tr.btnRow td.z-row-inner {
+			background: none;
+		}
+	</style>
+	<window title="${c:l('file.saveas')}" border="normal" mode="modal"
+		closable="true" position="center" width="380px"
+		apply="org.zkoss.zss.app.file.SaveFileWindowCtrl">
+		<div style="padding: 5px;">
+			<grid>
+				<columns>
+					<column hflex="1" />
+					<column hflex="2" />
+				</columns>
+				<rows>
+					<row>
+						<label value="File name: "></label>
+						<textbox id="fileName" hflex="1" />
+					</row>
+					<row>
+						<label value="Save as type:"></label>
+						<combobox id="fileFormat" hflex="1"></combobox>
+					</row>
+					<row sclass="btnRow">
+						<div></div>
+						<div style="position: relative;">
+							<button id="okBtn" style="float:right" image="~./zssapp/image/check.png" mold="trendy"></button>
+						</div>
+					</row>
+				</rows>
+			</grid>
+		</div>
+	</window>
+</zk>

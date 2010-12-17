@@ -47,15 +47,15 @@
 	<!-- <menuitem label="${c:l('insert.image')}" />-->
 	<!--  menuitem label="${c:l('insert.chart')}" /-->
 	<menuseparator />
-	<!-- put it in delete button 
+	<!-- TODO: not implement yet
 	<menuitem label="Remove Pic" />-->
-	<menu id="range" label="${c:l('range')}">
-		<menupopup>
-			<menuitem label="${c:l('add')}"  />
-			<menuitem label="${c:l('delete')}" />
-			<menuitem label="${c:l('choose')}"  />
-		</menupopup>
-	</menu>
+<!--	<menu id="range" label="${c:l('range')}">-->
+<!--		<menupopup>-->
+<!--			<menuitem label="${c:l('add')}"  />-->
+<!--			<menuitem label="${c:l('delete')}" />-->
+<!--			<menuitem label="${c:l('choose')}"  />-->
+<!--		</menupopup>-->
+<!--	</menu>-->
 	<menuitem id="format" label="${c:l('format.numberFormat')}" />
 	<menuseparator />
 	<menuitem id="hyperlink" label="${c:l('hyperlink')}" image="~./zssapp/image/hyperlink.png"></menuitem>

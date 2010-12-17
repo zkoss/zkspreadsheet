@@ -20,7 +20,6 @@ import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
-import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -52,9 +51,12 @@ public class FormatMenu extends Menu implements IdSpace  {
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
 		
-		getDesktopWorkbenchContext().addEventListener(Consts.ON_WORKBOOK_OPEN, new EventListener() {
+		final DesktopWorkbenchContext workbenchCtrl = getDesktopWorkbenchContext();
+		workbenchCtrl.addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
+			
+			@Override
 			public void onEvent(Event event) throws Exception {
-				setDisabled(!(Boolean)event.getData());
+				setDisabled(!workbenchCtrl.getWorkbookCtrl().hasBook());
 			}
 		});
 	}

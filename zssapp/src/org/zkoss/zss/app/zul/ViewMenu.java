@@ -47,11 +47,12 @@ public class ViewMenu extends Menu implements IdSpace {
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
 
-		getDesktopWorkbenchContext().addEventListener(Consts.ON_WORKBOOK_OPEN, new EventListener() {
-				public void onEvent(Event event) throws Exception {
-					setDisabled(!(Boolean)event.getData());
-				}
-			});
+		final DesktopWorkbenchContext workbenchCtrl = getDesktopWorkbenchContext();
+		getDesktopWorkbenchContext().addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				setDisabled(!workbenchCtrl.getWorkbookCtrl().hasBook());
+			}
+		});
 	}
 	
 	public void onClick$viewFormulaBar() {

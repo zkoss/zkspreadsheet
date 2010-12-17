@@ -18,6 +18,7 @@ import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zss.app.MainWindowCtrl;
+import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Window;
@@ -54,8 +55,9 @@ public class Zssapp extends Div implements IdSpace  {
 	}
 	
 	public void setSrc(String src) {
-		spreadsheet.setSrc(src);
-		mainWinCtrl.redrawSheetTabbox();
+		DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
+		workbench.getWorkbookCtrl().setBookSrc(src);
+		workbench.fireWorkbookChanged();
 	}
 	
 	public void setMaxrows(int maxrows) {
@@ -105,5 +107,9 @@ public class Zssapp extends Div implements IdSpace  {
 	
 	public static Zssapp getInstance(Spreadsheet spreadsheet) {
 		return (Zssapp)spreadsheet.getAttribute(KEY_ZSSAPP);
+	}
+	
+	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
+		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
 	}
 }

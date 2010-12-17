@@ -62,9 +62,10 @@ public class EditMenu extends Menu implements IdSpace {
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
 
-		getDesktopWorkbenchContext().addEventListener(Consts.ON_WORKBOOK_OPEN, new EventListener() {
+		final DesktopWorkbenchContext workbenchCtrl = getDesktopWorkbenchContext();
+		getDesktopWorkbenchContext().addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				setDisabled(!(Boolean)event.getData());
+				setDisabled(!workbenchCtrl.getWorkbookCtrl().hasBook());
 			}
 		});
 	}

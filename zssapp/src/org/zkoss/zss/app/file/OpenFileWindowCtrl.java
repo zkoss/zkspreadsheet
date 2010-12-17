@@ -20,6 +20,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.app.zul.ctrl.WorkspaceContext;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.ListModelList;
@@ -74,7 +75,8 @@ public class OpenFileWindowCtrl extends GenericForwardComposer {
 				//TODO: use I18n
 				item.addEventListener(Events.ON_DOUBLE_CLICK, new EventListener() {
 					public void onEvent(Event evt) throws Exception {
-						WorkspaceContext.getInstance(desktop).setCurrent(info);
+						getDesktopWorkbenchContext().getWorkbookCtrl().openBook(info);
+						getDesktopWorkbenchContext().fireWorkbookChanged();
 						self.detach();
 					}
 				});
@@ -85,8 +87,9 @@ public class OpenFileWindowCtrl extends GenericForwardComposer {
 	public void onUpload$uploadBtn(UploadEvent event) {
 		//TODO: throw IO exception
 		try {
-			WorkspaceContext workspace = WorkspaceContext.getInstance(desktop);
-			workspace.setCurrent(workspace.store(event.getMedia()));
+			getDesktopWorkbenchContext().getWorkbookCtrl().
+				openBook(WorkspaceContext.getInstance(desktop).store(event.getMedia()));
+			getDesktopWorkbenchContext().fireWorkbookChanged();
 			self.detach();
 		} catch (UnsupportedSpreadSheetFileException e) {
 			try {
@@ -95,5 +98,9 @@ public class OpenFileWindowCtrl extends GenericForwardComposer {
 			} catch (InterruptedException e1) {
 			}
 		}
+	}
+	
+	private DesktopWorkbenchContext getDesktopWorkbenchContext() {
+		return DesktopWorkbenchContext.getInstance(desktop);
 	}
 }

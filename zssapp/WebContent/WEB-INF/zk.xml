@@ -9,9 +9,10 @@
 		<name>org.zkoss.zss.app.file.fileHelper.importPermission</name>
 		<value>true</value>
 	</library-property>
-	<client-config>
-		<debug-js>true</debug-js>
-	</client-config>
+	<library-property>
+		<name>org.zkoss.zss.app.file.fileHelper.savePermission</name>
+		<value>true</value>
+	</library-property>
 	<!--
 		<log> <description>[Optional] Monitor i3-log.conf and register a
 		handler for the specified log-base</description> <log-base></log-base>

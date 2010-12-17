@@ -83,6 +83,7 @@
 		}
 		.toolbarMask{
 			position:absolute;
+			left: 0;
 			background:none repeat scroll 0 0 #E0E1E3;
 			z-index:100; 
 			opacity: 0.6;
@@ -90,12 +91,9 @@
 			filter: alpha(opacity=60);
 		}
 	</style>
-		<div width="100%" style="background-color:rgb(83,175,227);display:none">	
-			<hlayout>
-			Filename:	<label id="openingFilename" value="Untitled"/>
-			</hlayout>
-		</div>
-	<toolbarbutton id="closeBtn" image="~./zssapp/image/cross.png" style="float:right;position:absolute;right:10px;top:3px;z-index:100;background:"/>
+	<div style="float:right;position:absolute;right:10px;top:3px;z-index:100;background:">
+		<toolbarbutton id="closeBtn" image="~./zssapp/image/cross.png"/>
+	</div>
 	<borderlayout id="topToolbars" height="85px" style="border-left:1px solid #E1E1E1;border-right:1px solid #E1E1E1;">
 				<!-- SECTION **********Navigator bar************************************************* -->
 				<north id="mainNavigator" maxsize="800" height="27px" flex="true"
@@ -133,7 +131,8 @@
 				<!-- SECTION **********FastIconToolbar*********************************************** -->
 				<center id="fastIconBtn" flex="true" border="0" style="background: #F5F5F5; border-bottom: 1px solid #D8D8D8;">
 					<hlayout spacing="0.4em" height="30px">
-						<toolbarbutton disabled="true" id="print"  src="~./zssapp/image/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>
+<!--						<toolbarbutton disabled="true" id="print"  src="~./zssapp/image/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>-->
+						<toolbarbutton id="saveBtn" image="~./zssapp/image/disk-black.png" disabled="true" tooltiptext="${c:l('file.saved')}"/>
 						<toolbarbutton id="exportToPDFBtn" src="~./zssapp/image/document-pdf.png" tooltiptext="${c:l('export.pdf')}"/>
 						<toolbarbutton disabled="true" id="undo"  src="~./zssapp/image/arrow-curve-180-left.png" 	forward="onClick=onEditUndo" tooltiptext="${c:l('edit.undo')}"/>
 						<toolbarbutton disabled="true" id="redo"  src="~./zssapp/image/arrow-curve.png"	forward="onClick=onEditRedo" tooltiptext="${c:l('edit.redo')}"/>
@@ -238,13 +237,12 @@
 			//TODO: for width: I should use onSize event to sync width, In IE, can not set long size, opacity won't work
 			jq(this.$n()).css({'width': '2000px', 
 				'height': (zk.parseInt($t.css('height')) - mnHgh) + 'px', 
-				'top': mnHgh + 'px', 
-				'left': $m.offset().left});
+				'top': mnHgh + 'px'});
 		</attribute>
 	</div>
 	<sheets id="sheets"></sheets>
 	<!-- src="/xls/demo_sample.xls" -->
-	<spreadsheet id="spreadsheet" maxrows="200" src="/xls/ZSS-demo_sample.xlsx"
+	<spreadsheet id="spreadsheet" maxrows="200" src="/xls/Untitled"
 			maxcolumns="40" vflex="1" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
 			forward="onCtrlKey=mainWin.onSSCtrlKeys">
 	</spreadsheet>

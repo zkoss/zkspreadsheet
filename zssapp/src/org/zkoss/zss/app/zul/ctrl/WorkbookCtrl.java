@@ -14,8 +14,11 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul.ctrl;
 
+import java.io.ByteArrayOutputStream;
+
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
 
 /**
  * @author Sam
@@ -73,6 +76,45 @@ public interface WorkbookCtrl {
 	public String getCurrentCellPosition();
 	
 	public void setDataFormat(String format);
-
+	
+	public void setBookSrc(String src);
+	
+	/**
+	 * Save book
+	 */
 	public void save();
+	
+	/**
+	 * Close book
+	 */
+	public void close();
+	
+	public String getSrc();
+	
+	public void setSrcName(String src);
+	
+	public void newBook();
+	
+	public void openBook(SpreadSheetMetaInfo info);
+	
+	public boolean hasBook();
+	
+	public boolean hasFileName();
+
+	public ByteArrayOutputStream exportToExcel();
+
+	public String getBookName();
+	
+	/**
+	 * Subscribe book event listener
+	 * @param listener
+	 */
+	public void subscribe(EventListener listener);
+	
+	/**
+	 * Unsubscribe book event listener
+	 * @param listener
+	 */
+	public void unsubscribe(EventListener listener);
+	
 }

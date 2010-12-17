@@ -23,6 +23,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.app.zul.ctrl.WorkspaceContext;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
@@ -116,7 +117,9 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 					
 					@Override
 					public void onEvent(Event evt) throws Exception {
-						WorkspaceContext.getInstance(desktop).setCurrent(info);
+						DesktopWorkbenchContext workbenchCtrl = DesktopWorkbenchContext.getInstance(desktop);
+						workbenchCtrl.getWorkbookCtrl().openBook(info);
+						workbenchCtrl.fireWorkbookChanged();
 						((Component)spaceOwner).detach();
 					}
 				});
@@ -133,7 +136,8 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 	}
 	
 	public void onClick$openFileMenuitem() {
-		WorkspaceContext.getInstance(desktop).setCurrent((SpreadSheetMetaInfo)allFilesListbox.getSelectedItem().getValue());
+		getDesktopWorkbenchContext().getWorkbookCtrl().openBook((SpreadSheetMetaInfo)allFilesListbox.getSelectedItem().getValue());
+		getDesktopWorkbenchContext().fireWorkbookChanged();
 		((Component)spaceOwner).detach();
 	}
 	
@@ -149,5 +153,9 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 			
 		}
 		allFilesListbox.setModel(new ListModelList(SpreadSheetMetaInfo.getMetaInfos().values()));	
+	}
+	
+	private DesktopWorkbenchContext getDesktopWorkbenchContext() {
+		return DesktopWorkbenchContext.getInstance(desktop);
 	}
 }

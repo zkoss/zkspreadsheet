@@ -15,7 +15,6 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.zul.ctrl;
 
 import org.zkoss.poi.ss.usermodel.BorderStyle;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
@@ -28,7 +27,6 @@ import org.zkoss.zss.app.Dropdownbutton;
 import org.zkoss.zss.app.zul.Colorbutton;
 import org.zkoss.zss.app.zul.DisposedEventListener;
 import org.zkoss.zss.model.Range;
-import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Hlayout;
@@ -90,36 +88,35 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 		};
 		context.addEventListener(Consts.ON_STYLING_TARGET_CHANGED,listener);
 		context.addEventListener(Consts.ON_CELL_STYLE_CHANGED,listener);
-		
-		getDesktopWorkbenchContext().
-			addEventListener(Consts.ON_WORKBOOK_OPEN, new EventListener() {
-				public void onEvent(Event event) throws Exception {
-					//clear all UI attribute when sheet open or close
-					fontFamily.setValue(null);
-					fontSize.setValue(null);
-					
-					_isBold = false;
-					boldBtn.setSclass("");
-					
-					_isItalic = false;
-					italicBtn.setSclass("");
-					
-					_isUnderline = false;
-					underlineBtn.setSclass("");
-					
-					_isStrikethrough = false;
-					strikethroughBtn.setSclass("");
-					fontColorBtn.setColor("#000000");
-					cellColorBtn.setColor("#FFFFFF");
-					
-					alignLeftBtn.setSclass("");
-					alignCenterBtn.setSclass("");
-					alignRightBtn.setSclass("");
-					
-					isWrapText = false;
-					wrapTextBtn.setSclass("");
-				}
-			});
+
+		getDesktopWorkbenchContext().addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				//clear all UI attribute when sheet open or close
+				fontFamily.setValue(null);
+				fontSize.setValue(null);
+				
+				_isBold = false;
+				boldBtn.setSclass("");
+				
+				_isItalic = false;
+				italicBtn.setSclass("");
+				
+				_isUnderline = false;
+				underlineBtn.setSclass("");
+				
+				_isStrikethrough = false;
+				strikethroughBtn.setSclass("");
+				fontColorBtn.setColor("#000000");
+				cellColorBtn.setColor("#FFFFFF");
+				
+				alignLeftBtn.setSclass("");
+				alignCenterBtn.setSclass("");
+				alignRightBtn.setSclass("");
+				
+				isWrapText = false;
+				wrapTextBtn.setSclass("");
+			}
+		});
 	}
 	
 	public void setSpacing(String spacing) {

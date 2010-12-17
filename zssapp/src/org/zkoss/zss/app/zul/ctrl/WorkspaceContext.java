@@ -20,8 +20,6 @@ import java.util.Map;
 
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Desktop;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.file.FileHelper;
 import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
 import org.zkoss.zss.app.file.UnsupportedSpreadSheetFileException;
@@ -47,17 +45,6 @@ public class WorkspaceContext extends AbstractBaseContext {
 		return new ArrayList<SpreadSheetMetaInfo>(metaInfos.values());
 	}
 	
-	public void openNew() {
-		//TODO: empty shall has SpreadSheetMetaInfo
-		info = null;
-		listenerStore.fire(new Event(Consts.ON_RESOURCE_OPEN_NEW));
-	}
-	
-	public void setCurrent(SpreadSheetMetaInfo info) {
-		this.info = info;
-		listenerStore.fire(new Event(Consts.ON_RESOURCE_OPEN, null, info));
-	}
-	
 	public SpreadSheetMetaInfo getCurrent() {
 		return info;
 	}
@@ -66,7 +53,7 @@ public class WorkspaceContext extends AbstractBaseContext {
 		return FileHelper.store(media);
 	}
 	
-	public void delete(SpreadSheetMetaInfo info) {
-		//TODO: not implement yet
+	public void delete(String src) {
+		FileHelper.deleteSpreadsheet(src);
 	}
 }

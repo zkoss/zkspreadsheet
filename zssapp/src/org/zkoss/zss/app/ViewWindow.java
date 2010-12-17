@@ -55,53 +55,53 @@ public class ViewWindow extends Window implements AfterCompose {
 		win.setVisible(false);
 	}
 	
-	public void onOpenFile(ForwardEvent event){
-		Listbox flo_files = (Listbox) Path.getComponent("//p2/mainWin/fileOpenViewWin/flo_files");
-		
-		String filename = flo_files.getSelectedItem().getLabel();
-		openFileInSS(filename);
-
-		Window fileOpenWin = (Window) Path.getComponent("//p2/mainWin/fileOpenViewWin");
-		fileOpenWin.setVisible(false);
-		
-		book=spreadsheet.getBook();
-		if (book == null) {
-			return;
-		}
-		spreadsheet.setMaxrows(200);
-		spreadsheet.setMaxcolumns(30);
-		Sheet sheet =(Sheet) book.getSheetAt(0);
-		spreadsheet.setSelectedSheet(sheet.getSheetName());
-		doPrint();
-	}
+//	public void onOpenFile(ForwardEvent event){
+//		Listbox flo_files = (Listbox) Path.getComponent("//p2/mainWin/fileOpenViewWin/flo_files");
+//		
+//		String filename = flo_files.getSelectedItem().getLabel();
+//		openFileInSS(filename);
+//
+//		Window fileOpenWin = (Window) Path.getComponent("//p2/mainWin/fileOpenViewWin");
+//		fileOpenWin.setVisible(false);
+//		
+//		book=spreadsheet.getBook();
+//		if (book == null) {
+//			return;
+//		}
+//		spreadsheet.setMaxrows(200);
+//		spreadsheet.setMaxcolumns(30);
+//		Sheet sheet =(Sheet) book.getSheetAt(0);
+//		spreadsheet.setSelectedSheet(sheet.getSheetName());
+//		doPrint();
+//	}
 	
-	public void openFileInSS(String filename) {
-        try
-        {
-        	Connection con;
-        	con=getDBConnection();
-        	Statement stmt = con.createStatement();
-        	String operation="SELECT spreadsheet FROM `revisionhistory` WHERE stack_level=0 AND filename='"+filename+"' LIMIT 0 , 30";
-
-        	ResultSet targetRs = stmt.executeQuery(operation);
-
-        	if(targetRs.next()){	
-        		InputStream iStream=targetRs.getBinaryStream("spreadsheet");
-
-        		openSpreadsheetFromStream(iStream, filename);
-
-        	}
-        	targetRs.close();
-        	stmt.close();
-
-        }
-        catch (SQLException ex)
-        {
-        	System.out.println("exception: "+ex.getMessage());
-        	System.out.println("SQLState: "+ex.getSQLState());
-        	System.out.println("errorCode: "+ex.getErrorCode());
-        } 
-	}
+//	public void openFileInSS(String filename) {
+//        try
+//        {
+//        	Connection con;
+//        	con=getDBConnection();
+//        	Statement stmt = con.createStatement();
+//        	String operation="SELECT spreadsheet FROM `revisionhistory` WHERE stack_level=0 AND filename='"+filename+"' LIMIT 0 , 30";
+//
+//        	ResultSet targetRs = stmt.executeQuery(operation);
+//
+//        	if(targetRs.next()){	
+//        		InputStream iStream=targetRs.getBinaryStream("spreadsheet");
+//
+//        		openSpreadsheetFromStream(iStream, filename);
+//
+//        	}
+//        	targetRs.close();
+//        	stmt.close();
+//
+//        }
+//        catch (SQLException ex)
+//        {
+//        	System.out.println("exception: "+ex.getMessage());
+//        	System.out.println("SQLState: "+ex.getSQLState());
+//        	System.out.println("errorCode: "+ex.getErrorCode());
+//        } 
+//	}
 	
 	public void onPrint(){
 		doPrint();

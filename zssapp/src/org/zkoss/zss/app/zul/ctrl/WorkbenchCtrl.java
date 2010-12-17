@@ -40,6 +40,8 @@ public interface WorkbenchCtrl {
 	
 	public void openFormatNumberDialog();
 	
+	public void openSaveFileDialog();
+	
 	public void updateGridlinesCheckbox();
 
 }

@@ -66,9 +66,9 @@ public class DesktopWorkbenchContext extends AbstractBaseContext {
 	 * Fire workbook open event when spreadsheet set new book or set new source
 	 * @param open false if spreadsheet close book, means set source to null
 	 */
-	public void fireWorkbookOpen(boolean open) {
-		listenerStore.fire(new Event(Consts.ON_WORKBOOK_OPEN, null, Boolean.valueOf(open)));
-	}
+//	public void fireWorkbookOpen(boolean open) {
+//		listenerStore.fire(new Event(Consts.ON_WORKBOOK_OPEN, null, Boolean.valueOf(open)));
+//	}
 	/**
 	 * Fire sheet changed event when spreadsheet set selected sheet
 	 */
@@ -77,6 +77,12 @@ public class DesktopWorkbenchContext extends AbstractBaseContext {
 	}
 	public void fireContentsChanged() {
 		listenerStore.fire(new Event(Consts.ON_SHEET_CONTENTS_CHANGED));
+	}
+	public void fireWorkbookSaved() {
+		listenerStore.fire(new Event(Consts.ON_WORKBOOK_SAVED));
+	}
+	public void fireWorkbookChanged() {
+		listenerStore.fire(new Event(Consts.ON_WORKBOOK_CHANGED));
 	}
 	public void mergeCell() {
 		listenerStore.fire(new Event(Consts.ON_SHEET_MERGE_CELL));

@@ -25,6 +25,7 @@ public class Consts {
 	/*File zul*/
 	public static String _FileListOpen_zul = "~./zssapp/html/dialog/file/fileListOpen.zul";
 	public static String _ImportFile_zul = "~./zssapp/html/dialog/file/importFile.zul";
+	public static String _SaveFile_zul = "~./zssapp/html/dialog/file/saveFile.zul";
 	
 	/*Hyperlink zul*/
 	public static String _Weblink_zul = "~./zssapp/html/dialog/hyperlink/webLink.zul";
@@ -69,12 +70,19 @@ public class Consts {
 	public static final String ON_SHEET_CONTENTS_CHANGED = "onSheetContentsChanged";
 	public static final String ON_SHEET_MERGE_CELL = "onSheetMergeCell";
 	public static final String ON_SHEET_INSERT_FORMULA = "onSheetInsertFormula";
+	
 	/* Fire when spreadsheet set new book or close book */
-	public static final String ON_WORKBOOK_OPEN = "onWorkbookOpen";
-	
-	/*Resource event*/
-	public static final String ON_RESOURCE_OPEN_NEW = "onResourceOpenNew";
-	public static final String ON_RESOURCE_OPEN = "onResourceOpen";
+//	public static final String ON_WORKBOOK_OPEN = "onWorkbookOpen";
 
+	/*Fire when spreadsheet saved book */
+	public static final String ON_WORKBOOK_SAVED = "onWorkbookSaved";
 	
+	/*Fire after spreadsheet changed book using*/
+	public static final String ON_WORKBOOK_CHANGED = "onWorkbookChanged";
+	
+//	/*Resource event*/
+//	public static final String ON_RESOURCE_OPEN_NEW = "onResourceOpenNew";
+//	
+//	//TODO: similar to onWorkbookChanged, remove one of them
+//	public static final String ON_RESOURCE_OPEN = "onResourceOpen";	
 }

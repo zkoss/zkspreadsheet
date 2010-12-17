@@ -39,7 +39,6 @@ import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.cell.EditHelper;
 import org.zkoss.zss.app.event.ExportHelper;
 import org.zkoss.zss.app.file.FileHelper;
-import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
 import org.zkoss.zss.app.formula.FormulaMetaInfo;
 import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.app.sort.SortSelector;
@@ -64,7 +63,6 @@ import org.zkoss.zss.app.zul.ctrl.SSRectCellStyle;
 import org.zkoss.zss.app.zul.ctrl.SSWorkbookCtrl;
 import org.zkoss.zss.app.zul.ctrl.StyleModification;
 import org.zkoss.zss.app.zul.ctrl.WorkbenchCtrl;
-import org.zkoss.zss.app.zul.ctrl.WorkspaceContext;
 import org.zkoss.zss.engine.event.SSDataEvent;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
@@ -114,6 +112,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	boolean isWrapText = false;
 	String colorSelectorTarget = "";
 
+	//Book book;
 	Cell currentEditcell;
 
 	int chartKey = 0;
@@ -144,6 +143,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	/* Toolbar buttons */
 	Dropdownbutton pasteDropdownBtn;
 	Dropdownbutton sortDropdownBtn;
+	Toolbarbutton saveBtn;
 	Toolbarbutton closeBtn;
 	CellStyleCtrlPanel fontCtrlPanel;
 	Toolbarbutton exportToPDFBtn;
@@ -174,11 +174,11 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
+		//TODO: replace this mechanism
 		initZssappComponents();
 		
 		init();
 		rangeh = new RangeHelper(spreadsheet);
-		DesktopWorkbenchContext.getInstance(desktop).fireWorkbookOpen(spreadsheet.getSelectedSheet() != null);
 	}
 	
 	//TODO: remove this mechanism
@@ -187,31 +187,49 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 	
 	public void init() {
-		spreadsheet.setSrcName("Untitled");
+		//Note. setSrcName will set spreadsheet's src name, but not the book name
+		// if setSrc will init a book, then setSrcName only change the src name, 
+		// if setSrc again with the first same book, the book will register two listener 
+		//spreadsheet.setSrcName("Untitled");
 		final DesktopWorkbenchContext workbenchContext = DesktopWorkbenchContext.getInstance(desktop);
+		workbenchContext.doTargetChange(new SSWorkbookCtrl(spreadsheet));
 		workbenchContext.setWorkbenchCtrl(this);
-		workbenchContext.doTargetChange(new SSWorkbookCtrl(spreadsheet.getBook(), spreadsheet));
-
 		workbenchContext.addEventListener(Consts.ON_SHEET_REFRESH, new EventListener(){
 			public void onEvent(Event event) throws Exception {
 				sheets.redraw();
 			}
 		});
-		workbenchContext.addEventListener(Consts.ON_WORKBOOK_OPEN, new EventListener() {
+		if (!FileHelper.hasSavePermission())
+			saveBtn.setVisible(false);
+		workbenchContext.addEventListener(Consts.ON_WORKBOOK_SAVED,	new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				Boolean isOpen = (Boolean)event.getData();
+				if (!FileHelper.hasSavePermission())
+					return;
+				setSaveButtonState(true);
+			}
+		});
+
+		workbenchContext.addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				formulaEditor.setValue(null);
+				boolean isOpen = spreadsheet.getBook() != null;
 				toolbarMask.setVisible(!isOpen);
 				closeBtn.setVisible(isOpen);
+				setSaveButtonState(isOpen ? true : null);
 
+				gridlinesCheckbox.setChecked(isOpen && spreadsheet.getSelectedSheet().isDisplayGridlines());
 				if (isOpen) {
-					gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
 					sheets.redraw();
-				} else if (!isOpen)
+					fileMenu.setExportDisabled(false);
+				} else if (!isOpen) {
+					fileMenu.setExportDisabled(true);
 					sheets.clear();
+				}
 				
 				//TODO: provide clip board interface, to allow save cut, copy, high light info
 				//use set setHighlight null can cancel selection, but need to re-store selection when select same sheet again
 				spreadsheet.setHighlight(null);
+				
 			}
 		});
 		workbenchContext.addEventListener(Consts.ON_SHEET_CHANGED, new EventListener() {
@@ -239,19 +257,12 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				formulaEditor.setText(rng.getEditText());
 			}
 		});
-		
-		WorkspaceContext workspaceContext = WorkspaceContext.getInstance(desktop);
-		workspaceContext.addEventListener(Consts.ON_RESOURCE_OPEN, new EventListener() {
+		workbenchContext.getWorkbookCtrl().subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				FileHelper.openSpreadsheet(spreadsheet, 
-						(SpreadSheetMetaInfo) event.getData());
-				workbenchContext.fireWorkbookOpen(true);
-			}
-		});
-		workspaceContext.addEventListener(Consts.ON_RESOURCE_OPEN_NEW, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				FileHelper.openNewSpreadsheet(spreadsheet);
-				workbenchContext.fireWorkbookOpen(true);
+				String evtName = event.getName();
+				if (evtName == SSDataEvent.ON_CONTENTS_CHANGE) {
+					onContentsChanged();
+				}
 			}
 		});
 
@@ -300,17 +311,22 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 						EditHelper.clearCutOrCopy(spreadsheet);
 					}
 				});
+		workbenchContext.fireWorkbookChanged();
+	}
+	private void setSaveButtonState(Boolean saved) {
+		if (saved == null) {
+			saveBtn.setVisible(false);
+			return;
+		}
 		
-		spreadsheet.getBook().subscribe(new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				String evtName = event.getName();
-				if (evtName == SSDataEvent.ON_CONTENTS_CHANGE) {
-					onContentsChanged();
-				}
-			}
-		});
+		saveBtn.setVisible(true);
+		if (FileHelper.hasSavePermission()) {
+			saveBtn.setDisabled(saved);
+			saveBtn.setTooltiptext(saved ? Labels.getLabel("file.saved") : Labels.getLabel("file.saveNow"));
+		}
 	}
 	private void onContentsChanged() {
+		setSaveButtonState(false);
 		Sheet seldSheet = spreadsheet.getSelectedSheet();
 		Rect seld =  spreadsheet.getSelection();
 		int row = seld.getTop();
@@ -318,17 +334,23 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		Cell cell = Utils.getCell(seldSheet, row, col);
 		if (cell != null) {
 			DesktopCellStyleContext.getInstance(desktop).doTargetChange(
-				new SSRectCellStyle(cell, 
-						spreadsheet) );
+				new SSRectCellStyle(cell, spreadsheet));
 			
 			formulaEditor.setText(Ranges.range(seldSheet, row, col).getEditText());
 		}
+	}
+	public void onClick$saveBtn() {
+		DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
+		if (workbench.getWorkbookCtrl().hasFileName()) {
+			workbench.getWorkbookCtrl().save();
+			workbench.fireWorkbookSaved();
+		} else
+			workbench.getWorkbenchCtrl().openSaveFileDialog();
 	}
 	public void onClick$exportToPDFBtn() {
 		ExportHelper.doExportToPDF(spreadsheet);
 		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
-	
 	public void onClick$pasteDropdownBtn() {
 		getDesktopWorkbenchContext().getWorkbookCtrl().pasteSelection();
 	}
@@ -374,8 +396,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 
 	public void onClick$closeBtn() {
-		spreadsheet.setSrc(null);
-		getDesktopWorkbenchContext().fireWorkbookOpen(false);
+		getDesktopWorkbenchContext().getWorkbookCtrl().close();
+		getDesktopWorkbenchContext().fireWorkbookChanged();
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
@@ -537,8 +559,16 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				spreadsheet.setSelection(new Rect(2, 2, 4, 4));
 				break;
 			case 'S':
-				//TODO: not implement yet
-				FileHelper.saveSpreadsheet(spreadsheet);
+				//TODO: check permission from WorkbookCtrl
+				if (FileHelper.hasSavePermission()) {
+					//TODO: refactor duplicate save logic
+					DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
+					if (workbench.getWorkbookCtrl().hasFileName()) {
+						workbench.getWorkbookCtrl().save();
+						workbench.fireWorkbookSaved();
+					} else
+						workbench.getWorkbenchCtrl().openSaveFileDialog();
+				}
 				break;
 			// TODO undo
 			/*
@@ -1177,5 +1207,9 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 	public void openFormatNumberDialog() {
 		Executions.createComponents(Consts._FormatNumberDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+	}
+
+	public void openSaveFileDialog() {
+		Executions.createComponents(Consts._SaveFile_zul, mainWin, null);
 	}
 }

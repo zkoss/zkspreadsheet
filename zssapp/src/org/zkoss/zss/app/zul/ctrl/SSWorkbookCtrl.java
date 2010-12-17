@@ -14,21 +14,27 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul.ctrl;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.zkoss.image.Image;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.util.media.Media;
-import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.cell.EditHelper;
 import org.zkoss.zss.app.event.ExportHelper;
+import org.zkoss.zss.app.file.FileHelper;
+import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
 import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.Exporter;
+import org.zkoss.zss.model.Exporters;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.ui.Rect;
@@ -46,13 +52,14 @@ import org.zkoss.zul.Messagebox;
 public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	private Spreadsheet spreadsheet;
-	private Book book;
 	
 	private String lastSheetName = null;
 	private HashMap<String, List<Widget>> sheetWidgets = new HashMap<String, List<Widget>>(); 
+
+	/*keep record of subscribed book*/
+	private HashMap<EventListener, Set<String>> bookListeners = new HashMap<EventListener, Set<String>>();
 	
-	public SSWorkbookCtrl(Book book, Spreadsheet spreadsheet) {
-		this.book = book;
+	public SSWorkbookCtrl(Spreadsheet spreadsheet) {
 		this.spreadsheet = spreadsheet;
 	}
 	
@@ -123,7 +130,8 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 				ctrl.removeWidget(w);
 			}
 		}
-		Integer lastIdx = Integer.valueOf(book.getSheetIndex(lastsheet));
+		
+		Integer lastIdx = Integer.valueOf(spreadsheet.getBook().getSheetIndex(lastsheet));
 		if (lastIdx < 0) //sheet deleted
 			sheetWidgets.remove(lastSheetName);
 		
@@ -264,6 +272,80 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public void save() {
-		throw new UiException("save not implement yet");
+		FileHelper.saveSpreadsheet(spreadsheet);
+	}
+
+	public ByteArrayOutputStream exportToExcel() {
+		Book wb = spreadsheet.getBook();
+	    Exporter c = Exporters.getExporter("excel");
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+	    c.export(wb, out);
+		return out;
+	}
+
+	public String getBookName() {
+		Book b = spreadsheet.getBook();
+		return b != null ? b.getBookName() : null;
+	}
+
+	public void close() {
+		spreadsheet.setSrc(null);
+	}
+
+	public void setBookSrc(String src) {
+		boolean set = FileHelper.openSrc(src, spreadsheet);
+		if (!set)
+			spreadsheet.setSrc(src);
+		resubscribeBookListenersIfNeeded();
+	}
+	
+	public void subscribe(EventListener listener) {
+		bookListeners.put(listener, new HashSet<String>());
+	}
+	
+	public void unsubscribe(EventListener listener) {
+		bookListeners.remove(listener);
+	}
+
+	private void resubscribeBookListenersIfNeeded() {
+		Book book = spreadsheet.getBook();
+		if (book == null)
+			return;
+		
+		String bookName = book.getBookName();
+		for (EventListener listener : bookListeners.keySet()) {
+			Set<String> subscribed = bookListeners.get(listener);
+			if (!subscribed.contains(bookName)) {
+				subscribed.add(bookName);
+				book.subscribe(listener);
+			}
+		}
+	}
+	
+	public void newBook() {
+		FileHelper.openNewSpreadsheet(spreadsheet);
+		resubscribeBookListenersIfNeeded();
+	}
+
+	public void openBook(SpreadSheetMetaInfo info) {
+		FileHelper.openSpreadsheet(spreadsheet, info);
+		resubscribeBookListenersIfNeeded();
+	}
+	
+	public boolean hasBook() {
+		return spreadsheet.getBook() != null;
+	}
+
+	public String getSrc() {
+		return spreadsheet.getSrc();
+	}
+
+	public void setSrcName(String src) {
+		spreadsheet.setSrcName(src);
+	}
+
+	public boolean hasFileName() {
+		String src = spreadsheet.getSrc();
+		return src != null && !"Untitled".equals(src);
 	}
 }
