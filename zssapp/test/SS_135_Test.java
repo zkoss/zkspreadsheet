@@ -21,10 +21,16 @@ public class SS_135_Test extends SSAbstractTestCase {
 	
 		mouseOver(jq("a.z-menu-cnt:eq(3)"));		
 		waitResponse();
-//		click(jq("$sortAscending a.z-menu-item-cnt"));
-//		waitResponse();
+		click(jq("$sortAscending a.z-menu-item-cnt"));
+		waitResponse();
 		
-		//how to verify
+		//verify
+		String b13text = getSpecifiedCell(1, 12).text();
+		verifyEquals(b13text, "Average total assets");
+		String b15text = getSpecifiedCell(1, 14).text();
+		verifyEquals(b15text, "Current assets");
+		String b17text = getSpecifiedCell(1, 16).text();
+		verifyEquals(b17text, "Total assets");
 		sleep(5000);
 	}
 }

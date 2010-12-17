@@ -173,7 +173,9 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      */
     public void rightClickCells(int left, int top, int right, int bottom){
     	selectCells(left, top, right, bottom);
-		contextMenu(jq("div.zsselect .zsselecti"));
+    	
+    	//offset "2,2" is too small, therefore, I tested with "10,10" and it works
+		contextMenuAt(jq("div.zsselect .zsselecti"), "10,10"); 
 		waitResponse();
     }
 

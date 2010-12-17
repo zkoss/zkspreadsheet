@@ -1,3 +1,5 @@
+import org.zkoss.ztl.JQuery;
+
 /* order_test_1Test.java
 
 	Purpose:
@@ -17,14 +19,23 @@ it will be useful, but WITHOUT ANY WARRANTY.
 public class SS_133_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
+		JQuery cellF12 = getSpecifiedCell(5,11);
+		String beforeStyle = cellF12.css("background-color");
+		
 		rightClickCell(5,11);
 		mouseOver(jq("a.z-menu-cnt:eq(2)"));		
 		waitResponse();
 		click(jq("$clearContent a.z-menu-item-cnt"));
 		waitResponse();
 		
-		//how to verify
-		sleep(5000);
+		//verify
+		String content = getSpecifiedCell(5, 11).text();
+		verifyEquals(content, null);
+		
+		//how to verify the style?
+		String afterStyle = cellF12.css("background-color");
+		System.out.println("before:"+beforeStyle);
+		System.out.println("after:"+afterStyle);
 	}
 }
 

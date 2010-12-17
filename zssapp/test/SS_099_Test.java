@@ -23,7 +23,7 @@ import org.zkoss.ztl.ZKClientTestCase;
 
 import com.thoughtworks.selenium.Selenium;
 
-//rename sheet "Market" to "newsheetname"
+//rename sheet "Market" to "my Sheet"
 public class SS_099_Test extends SSAbstractTestCase {
 	
 	@Override
@@ -32,7 +32,7 @@ public class SS_099_Test extends SSAbstractTestCase {
 		waitResponse();
 		click(jq("$renameSheet  a.z-menu-item-cnt"));
 		waitResponse();
-		type(jq("$sheetNameTB"), "newsheetname");
+		type(jq("$sheetNameTB"), "my Sheet");
 		waitResponse();
 		click(jq("$confirmRenameBtn td.z-button-cm"));
 		waitResponse();
@@ -40,7 +40,7 @@ public class SS_099_Test extends SSAbstractTestCase {
 		//verify
 		Widget debtSibling = widget(jq("@tab[label=\"Debt\"]")).nextSibling();
 		String content = jq(debtSibling).find("span").attr("textContent");		
-		verifyEquals(content, "newsheetname");		
+		verifyEquals(content, "my Sheet");		
 	}
 }
 
