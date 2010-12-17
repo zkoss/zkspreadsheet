@@ -237,6 +237,21 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     }
 
     /**
+     * Simulate keys like CTRL+C, CTRL+X
+     * @param keycode
+     */
+    public void pressCtrlWithChar(String keycode) {
+		keyDownNative(CTRL);
+		waitResponse();
+		keyDownNative(keycode);
+		waitResponse();
+		keyUpNative(keycode);
+		waitResponse();
+		keyUpNative(CTRL);
+		waitResponse();    	
+    }
+    
+    /**
      * Actually executing test.<br />
      * Note: You also have to implement your validation in this method.
      */

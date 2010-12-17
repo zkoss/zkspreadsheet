@@ -13,21 +13,18 @@ This program is distributed under Apache License Version 2.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
 
-//cut cell F12
-public class SS_121_Test extends SSAbstractTestCase {
+//select F6:I9, and CTRL+C
+public class SS_156_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
 		//verify
 		verifyTrue(jq("div.zshighlight").width() == 0);
-		
-		rightClickCell(5,11);
-		click(jq("$cut a.z-menu-item-cnt"));
-		waitResponse();
 
+		selectCells(5,5,8,8);		
+		pressCtrlWithChar(C);
+		
 		//verify
 		verifyTrue(jq("div.zshighlight").width() != 0);
 	}
 }
-
-
 
