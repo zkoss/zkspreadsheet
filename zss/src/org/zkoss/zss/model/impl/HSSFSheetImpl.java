@@ -327,7 +327,7 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Sheet {
             if (cells != null) {
            		final Cell cell = row.getCell(srcCol);
            		if (cell != null) {
-           			cells.put(new Integer(rowNum), cell);
+           			cells.put(Integer.valueOf(rowNum), cell);
            		}
             }
             
@@ -500,7 +500,7 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Sheet {
             if (n > 0 && cells != null) {
            		final Cell cell = row.getCell(srcCol);
            		if (cell != null) {
-           			cells.put(new Integer(rowNum), cell);
+           			cells.put(Integer.valueOf(rowNum), cell);
            		}
             }
             

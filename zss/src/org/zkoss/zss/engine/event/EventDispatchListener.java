@@ -58,6 +58,6 @@ public class EventDispatchListener implements EventListener, EventDispatcher {
 	@Override
 	public boolean removeEventListener(String name, EventListener listener) {
 		final List<EventListener> list = _listeners.get(name);
-		return list != null ? list.remove(listener) : null;
+		return list != null ? list.remove(listener) : true;
 	}
 }

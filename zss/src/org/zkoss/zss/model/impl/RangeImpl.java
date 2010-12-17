@@ -197,7 +197,7 @@ public class RangeImpl implements Range {
 		
 	}
 	
-	private class HyperlinkContext {
+	private static class HyperlinkContext {
 		private int _linkType;
 		private String _address;
 		private String _display;
@@ -769,9 +769,9 @@ public class RangeImpl implements Range {
 							throw new UiException("Command cannot be used on multiple selections");
 						}
 						if (srcRefs.isEmpty()) {
-							srcRefs.put(new Integer(lCol), ref1); //sorted on column
+							srcRefs.put(Integer.valueOf(lCol), ref1); //sorted on column
 						}
-						srcRefs.put(new Integer(ref.getLeftCol()), ref);
+						srcRefs.put(Integer.valueOf(ref.getLeftCol()), ref);
 						sameRow = true;
 						srcColCount += ref.getColumnCount();
 					} else { //not the same column or same row

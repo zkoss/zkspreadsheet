@@ -26,7 +26,7 @@ import org.zkoss.zss.ui.Rect;
  */
 public class MergedRect extends Rect{
 
-	int _id;
+	private int _id;
 	public MergedRect(){
 		this(-1,-1,-1,-1,-1);
 	}
@@ -42,12 +42,26 @@ public class MergedRect extends Rect{
 	public void setId(int id){
 		_id = id;
 	}
-	
-	public Object clone(){
+
+	@Override
+	public Object cloneSelf(){
 		return new MergedRect(_id,getLeft(),getTop(),getRight(),getBottom());
 	}
 	
+	@Override
 	public String toString(){
 		return "id:"+getId()+",left:"+getLeft()+",top:"+getTop()+",right:"+getRight()+",bottom:"+getBottom();
+	}
+	
+	@Override
+	public int hashCode() {
+		return _id ^ super.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		return this == other
+			|| (other instanceof MergedRect
+					&& _id == ((MergedRect)other)._id);
 	}
 }

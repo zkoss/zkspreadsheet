@@ -76,7 +76,7 @@ public class Rect {
 		this._bottom = bottom;
 	}
 	
-	public Object clone(){
+	public Object cloneSelf(){
 		return new Rect(_left,_top,_right,_bottom);
 	}
 	
@@ -84,13 +84,15 @@ public class Rect {
 		return "left:"+_left+",top:"+_top+",right:"+_right+",bottom:"+_bottom;
 	}
 
+	public int hashCode() {
+		return _top << 14 + _left + _bottom << 14 + _right;
+	}
 	
 	public boolean equals(Object obj){
-		if(obj instanceof Rect){
-			return ((Rect)obj)._left == _left && ((Rect)obj)._right == _right 
-				&& ((Rect)obj)._top == _top && ((Rect)obj)._bottom == _bottom;
-		}
-		return super.equals(obj);
+		return (this == obj)
+			|| (obj instanceof Rect 
+					&& ((Rect)obj)._left == _left && ((Rect)obj)._right == _right 
+					&& ((Rect)obj)._top == _top && ((Rect)obj)._bottom == _bottom);
 	}
 	
 }

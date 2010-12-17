@@ -30,6 +30,7 @@ import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.impl.CellRefImpl;
+import org.zkoss.zss.engine.impl.ChangeInfo;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.ExcelImporter;
@@ -133,11 +134,11 @@ public class Book09XlsSortTest {
 		testToFormulaString(cellC13, "B12");
 		
 		//Sort A1:C12
-		Set<Ref>[] refs = BookHelper.sort(sheet1, 0, 0, 11, 2, ((RangeImpl)Utils.getRange(sheet1, 0, 0)).getRefs().iterator().next(), false, 
+		ChangeInfo info = BookHelper.sort(sheet1, 0, 0, 11, 2, ((RangeImpl)Utils.getRange(sheet1, 0, 0)).getRefs().iterator().next(), false, 
 				null, 0, false, null, false, BookHelper.SORT_HEADER_NO, 0, false, false, 0, 
 				BookHelper.SORT_NORMAL_DEFAULT, BookHelper.SORT_NORMAL_DEFAULT, BookHelper.SORT_NORMAL_DEFAULT);
-		Set<Ref> last = refs[0];
-		Set<Ref> all = refs[1];
+		Set<Ref> last = info.getToEval();
+		Set<Ref> all = info.getAffected();
 		_evaluator.notifySetFormula(cellC13);
 
 		assertEquals(1, row1.getCell(0).getNumericCellValue(), 0.0000000000000001); //A1: 1
@@ -233,11 +234,11 @@ public class Book09XlsSortTest {
 				boolean matchCase, boolean sortByRows, int sortMethod, int dataOption1, int dataOption2, int dataOption3) */
 
 		//Sort A15:L17
-		Set<Ref>[] refs = BookHelper.sort(sheet1, 14, 0, 16, 11, ((RangeImpl)Utils.getRange(sheet1, 14, 0)).getRefs().iterator().next(), false, 
+		ChangeInfo info = BookHelper.sort(sheet1, 14, 0, 16, 11, ((RangeImpl)Utils.getRange(sheet1, 14, 0)).getRefs().iterator().next(), false, 
 				null, 0, false, null, false, BookHelper.SORT_HEADER_NO, 0, false, true, 0, 
 				BookHelper.SORT_NORMAL_DEFAULT, BookHelper.SORT_NORMAL_DEFAULT, BookHelper.SORT_NORMAL_DEFAULT);
-		Set<Ref> last = refs[0];
-		Set<Ref> all = refs[1];
+		Set<Ref> last = info.getToEval();
+		Set<Ref> all = info.getAffected();
 		_evaluator.notifySetFormula(cellM17);
 
 		assertEquals(1, row15.getCell(0).getNumericCellValue(), 0.0000000000000001); //A15: 1

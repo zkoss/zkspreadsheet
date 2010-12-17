@@ -65,11 +65,10 @@ public class CellSelector {
 		for (int row = rect.getTop(); row <= rect.getBottom(); row++) {
 			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
 				CellVisitorContext context = new CellVisitorContext(sheet, row, col);
-				if (decorator != null && decorator.doFilter(context)) {
-					vistor.handle(context);
-				} else {
-					vistor.handle(context);
+				if (decorator != null) {
+					decorator.doFilter(context);
 				}
+				vistor.handle(context);
 			}
 		}
 	}	

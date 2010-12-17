@@ -166,7 +166,7 @@ import org.zkoss.zul.impl.XulElement;
  * @author dennischen
  */
 
-public class Spreadsheet extends XulElement {
+public class Spreadsheet extends XulElement implements Serializable {
 	private static final Log log = Log.lookup(Spreadsheet.class);
 
 	private static final long serialVersionUID = 1L;
@@ -1181,7 +1181,7 @@ public class Spreadsheet extends XulElement {
 	 * @return current selection
 	 */
 	public Rect getSelection() {
-		return (Rect) _selectionRect.clone();
+		return (Rect) _selectionRect.cloneSelf();
 	}
 
 	/**
@@ -1230,7 +1230,7 @@ public class Spreadsheet extends XulElement {
 	public Rect getHighlight() {
 		if (_highlightRect == null)
 			return null;
-		return (Rect) _highlightRect.clone();
+		return (Rect) _highlightRect.cloneSelf();
 	}
 
 	/**
@@ -1252,7 +1252,7 @@ public class Spreadsheet extends XulElement {
 						|| highlight.getTop() > highlight.getBottom()) {
 					throw new UiException("illegal highlight : " + highlight.toString());
 				}
-				_highlightRect = (Rect) highlight.clone();
+				_highlightRect = (Rect) highlight.cloneSelf();
 				result.setData("type", "show");
 				result.setData("left", _highlightRect.getLeft());
 				result.setData("top", _highlightRect.getTop());
@@ -1878,11 +1878,11 @@ public class Spreadsheet extends XulElement {
 		}
 
 		public Rect getSelectionRect() {
-			return (Rect) _selectionRect.clone();
+			return (Rect) _selectionRect.cloneSelf();
 		}
 
 		public Rect getFocusRect() {
-			return (Rect) _focusRect.clone();
+			return (Rect) _focusRect.cloneSelf();
 		}
 
 		public void setSelectionRect(int left, int top, int right, int bottom) {
@@ -1894,7 +1894,7 @@ public class Spreadsheet extends XulElement {
 		}
 
 		public Rect getLoadedRect() {
-			return (Rect) _loadedRect.clone();
+			return (Rect) _loadedRect.cloneSelf();
 		}
 
 		public void setLoadedRect(int left, int top, int right, int bottom) {
@@ -2030,7 +2030,6 @@ public class Spreadsheet extends XulElement {
 
 		public String getCellInnerAttrs(int row, int col) {
 			Sheet sheet = getSelectedSheet();
-			Cell cell = Utils.getCell(sheet, row, col);
 			StringBuffer sb = new StringBuffer();
 			HeaderPositionHelper rowHelper = Spreadsheet.this
 					.getRowPositionHelper(sheet);
@@ -2053,9 +2052,6 @@ public class Spreadsheet extends XulElement {
 					getMergeMatrixHelper(sheet));
 			HTMLs.appendAttribute(sb, "style", cfh.getInnerHtmlStyle());
 
-			if (cell != null) {
-				// no thing to do now.
-			}
 			return sb.toString();
 		}
 
@@ -2536,8 +2532,6 @@ public class Spreadsheet extends XulElement {
 			Sheet sheet = getSelectedSheet();
 			HeaderPositionHelper rowHelper = Spreadsheet.this
 					.getRowPositionHelper(sheet);
-			List<Boolean> hiddens = new ArrayList<Boolean>();
-			StringBuffer sb = new StringBuffer();
 			HeaderPositionInfo info = rowHelper.getInfo(row);
 			return info == null ? Boolean.FALSE : Boolean.valueOf(info.hidden);
 		}
@@ -2547,8 +2541,6 @@ public class Spreadsheet extends XulElement {
 			Sheet sheet = getSelectedSheet();
 			HeaderPositionHelper colHelper = Spreadsheet.this
 					.getColumnPositionHelper(sheet);
-			List<Boolean> hiddens = new ArrayList<Boolean>();
-			StringBuffer sb = new StringBuffer();
 			HeaderPositionInfo info = colHelper.getInfo(col);
 			return info == null ? Boolean.FALSE : Boolean.valueOf(info.hidden);
 		}
@@ -3179,7 +3171,7 @@ public class Spreadsheet extends XulElement {
 	/**
 	 * Default widget implementation, don't provide any function.
 	 */
-	private class VoidWidgetHandler implements WidgetHandler {
+	private class VoidWidgetHandler implements WidgetHandler, Serializable {
 
 		public boolean addWidget(Widget widget) {
 			return false;

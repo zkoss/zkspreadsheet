@@ -13,6 +13,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,6 +32,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
+import org.zkoss.lang.Objects;
 import org.zkoss.poi.hssf.record.CellValueRecordInterface;
 import org.zkoss.poi.hssf.record.FormulaRecord;
 import org.zkoss.poi.hssf.record.aggregates.FormulaRecordAggregate;
@@ -697,7 +699,7 @@ public final class BookHelper {
 			triplet =  color.getTriplet();
 		else {
 			final Hashtable<Integer, HSSFColor> colors = HSSFColor.getIndexHash();
-			color = colors.get(new Integer(index));
+			color = colors.get(Integer.valueOf(index));
 			if (color != null)
 				triplet = color.getTriplet();
 		}
@@ -819,7 +821,7 @@ public final class BookHelper {
 		case Cell.CELL_TYPE_BOOLEAN:
 			return Boolean.valueOf(cellValue.getBooleanValue());
 		case Cell.CELL_TYPE_ERROR:
-			return new Byte(cellValue.getErrorValue());
+			return Byte.valueOf(cellValue.getErrorValue());
 		case Cell.CELL_TYPE_NUMERIC:
 			return new Double(cellValue.getNumberValue());
 		case Cell.CELL_TYPE_STRING:
@@ -874,7 +876,7 @@ public final class BookHelper {
 		case Cell.CELL_TYPE_BOOLEAN:
 			return Boolean.valueOf(cell.getBooleanCellValue());
 		case Cell.CELL_TYPE_ERROR:
-			return new Byte(cell.getErrorCellValue());
+			return Byte.valueOf(cell.getErrorCellValue());
 		case Cell.CELL_TYPE_FORMULA:
 			return cell.getCellFormula();
 		case Cell.CELL_TYPE_NUMERIC:
@@ -1008,7 +1010,7 @@ public final class BookHelper {
 	
 	private static boolean sameHyperlink(Cell cell, Hyperlink hlink,
 			int linkType, String address) {		
-		return hlink.getType() == linkType && hlink.getAddress() == address;
+		return hlink.getType() == linkType && Objects.equals(hlink.getAddress(), address);
 	}
 
 	public static Set<Ref>[] setCellValue(Cell cell, String value) {
@@ -1030,7 +1032,7 @@ public final class BookHelper {
 	private static boolean sameTypeAndValue(Cell cell, int type, Object value) {
 		if (cell.getCellType() != type) return false;
 		final Object cellValue = getCellValue(cell);
-		return cellValue == null ? cellValue == value : cellValue.equals(value);
+		return cellValue == value || (cellValue != null && cellValue.equals(value));
 	}
 	
 	//[0]:last, [1]:all
@@ -1096,8 +1098,8 @@ public final class BookHelper {
 			} else if (txt.startsWith("#")) { //might be an error
 				final byte err = getErrorCode(txt);
 				return err < 0 ? 
-					new Object[] {new Integer(Cell.CELL_TYPE_STRING), txt}: //string
-					new Object[] {new Integer(Cell.CELL_TYPE_ERROR), new Byte(err)}; //error
+					new Object[] {Integer.valueOf(Cell.CELL_TYPE_STRING), txt}: //string
+					new Object[] {Integer.valueOf(Cell.CELL_TYPE_ERROR), new Byte(err)}; //error
 			} else {
 				try {
 					final Double val = Double.parseDouble(txt);
@@ -1107,7 +1109,7 @@ public final class BookHelper {
 					if (results[0] instanceof String) { 
 						return new Object[] {new Integer(Cell.CELL_TYPE_STRING), results[0]}; //string
 					} else { //if (result[0] instanceof Date)
-						return new Object[] {new Integer(Cell.CELL_TYPE_NUMERIC), results[0], results[1]}; //date with format
+						return new Object[] {Integer.valueOf(Cell.CELL_TYPE_NUMERIC), results[0], results[1]}; //date with format
 					}
 				}
 			}
@@ -2385,7 +2387,7 @@ public final class BookHelper {
 				}
 			}
 			if (!cells.isEmpty()) {
-				newCols.put(new Integer(newColNum), cells);
+				newCols.put(Integer.valueOf(newColNum), cells);
 			}
 		}
 		
@@ -2433,7 +2435,7 @@ public final class BookHelper {
 				}
 			}
 			if (!cells.isEmpty()) {
-				newRows.put(new Integer(newRowNum), cells);
+				newRows.put(Integer.valueOf(newRowNum), cells);
 			}
 		}
 		
@@ -2498,7 +2500,7 @@ public final class BookHelper {
 		}
 	}
 	
-	private static class KeyComparator implements Comparator<SortKey> {
+	private static class KeyComparator implements Comparator<SortKey>, Serializable {
 		final private boolean[] _descs;
 		final private boolean _matchCase;
 		final private int _sortMethod; //TODO byNumberOfStorks, byPinyYin
@@ -3209,7 +3211,7 @@ if (fillType == FILL_DEFAULT) {
     	for(int c = lCol; c <= rCol; ++c) {
     		final Cell cell = row.getCell(c);
     		if (cell != null) {
-    			cells.put(new Integer(c), cell);
+    			cells.put(Integer.valueOf(c), cell);
     		}
     	}
     	return cells;
@@ -3592,7 +3594,7 @@ if (fillType == FILL_DEFAULT) {
 			return palette.getColor(index);
 		}
 		Map<Integer, HSSFColor> indexHash = (Map<Integer, HSSFColor>) HSSFColor.getIndexHash();
-		return indexHash.get(new Integer(index));
+		return indexHash.get(Integer.valueOf(index));
 	}
 	
 	private static void setFontColor(Font font, Color color) {

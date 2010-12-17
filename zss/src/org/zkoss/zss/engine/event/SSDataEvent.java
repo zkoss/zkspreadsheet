@@ -19,6 +19,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.engine.event;
 
+import java.io.Serializable;
+
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.model.Book;
@@ -29,7 +31,7 @@ import org.zkoss.zss.model.Book;
  *
  * @author henrichen
  */
-public class SSDataEvent extends Event {
+public class SSDataEvent extends Event implements Serializable {
 	private static final long serialVersionUID = 201011250913L;
 	/** Identifies one or more changes in the lists contents. */
 	public static final String ON_CONTENTS_CHANGE = "onContentsChange";

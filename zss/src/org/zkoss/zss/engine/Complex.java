@@ -1,5 +1,7 @@
 package org.zkoss.zss.engine;
 
+import org.zkoss.lang.Objects;
+
 public class Complex extends org.apache.commons.math.complex.Complex {
 	
 	protected String suffix;
@@ -13,15 +15,14 @@ public class Complex extends org.apache.commons.math.complex.Complex {
 		this(real, imaginary, "i");
 	}
 
+	public int hashCode() {
+		return (suffix == null ? 0 : suffix.hashCode()) ^ super.hashCode();
+	}
 	public boolean equals(Object arg0) {
-		boolean ret = super.equals(arg0);
-		if(ret) {
-			Complex rhs = (Complex)arg0;
-			if(!this.suffix.equals(rhs.getSuffix())) {
-				ret = false;
-			}			
-		}
-		return ret;
+		return (this == arg0)
+			|| (arg0 instanceof Complex 
+					&& super.equals(arg0) 
+					&& Objects.equals(this.suffix, ((Complex)arg0).getSuffix()));
 	}
 
 	public String getSuffix() {

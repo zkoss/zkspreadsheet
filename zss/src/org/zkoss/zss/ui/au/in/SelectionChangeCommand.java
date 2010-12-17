@@ -40,7 +40,7 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
  *
  */
 public class SelectionChangeCommand implements Command {
-	final String Command = org.zkoss.zss.ui.event.Events.ON_SELECTION_CHANGE;
+	final static String Command = org.zkoss.zss.ui.event.Events.ON_SELECTION_CHANGE;
 
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();

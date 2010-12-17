@@ -40,7 +40,7 @@ import static org.zkoss.zss.ui.au.in.Commands.parseKeys;
  *
  */
 public class HeaderMouseCommand implements Command {
-	final String Command = "onZSSHeaderMouse";
+	final static String Command = "onZSSHeaderMouse";
 	//-- super --//
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();
@@ -50,18 +50,20 @@ public class HeaderMouseCommand implements Command {
 		if (data == null || data.size() != 9)
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), this});
 
+		String sheetId = (String) data.get("sheetId");
+		Sheet sheet = ((Spreadsheet)comp).getSelectedSheet();
+		if(!Utils.getSheetUuid(sheet).equals(sheetId)) {
+			return;
+		}
 		String type = (String) data.get("type");//x offset against spreadsheet
 		int shx = (Integer) data.get("shx");//x offset against spreadsheet
 		int shy = (Integer) data.get("shy");
 		int key = parseKeys((String) data.get("key"));
-		String sheetId = (String) data.get("sheetId");
 		int row = (Integer) data.get("row");
 		int col = (Integer) data.get("col");
 		int mx = (Integer) data.get("mx");//x offset against body
 		int my = (Integer) data.get("my");
 		
-		Sheet sheet = ((Spreadsheet)comp).getSelectedSheet();
-		if(!Utils.getSheetUuid(sheet).equals(sheetId));
 		
 		if ("lc".equals(type)) {
 			type = org.zkoss.zss.ui.event.Events.ON_HEADER_CLICK;

@@ -18,6 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,18 +52,18 @@ public class HeaderPositionHelper {
 	}
 
 	public boolean isHidden(int cellIndex) {
-		final int j = Collections.binarySearch(_infos, new Integer(cellIndex), new HeaderPositionInfoComparator());
+		final int j = Collections.binarySearch(_infos, Integer.valueOf(cellIndex), new HeaderPositionInfoComparator());
 		return j < 0 ? false : _infos.get(j).hidden;
 	}
 	
 	public int getSize(int cellIndex) {
-		final int j = Collections.binarySearch(_infos, new Integer(cellIndex), new HeaderPositionInfoComparator());
+		final int j = Collections.binarySearch(_infos, Integer.valueOf(cellIndex), new HeaderPositionInfoComparator());
 		return j < 0 ? _defaultSize : _infos.get(j).size;
 	}
 
 	//given target cell index, return list index. 
 	private int getListIndex(int cellIndex) {
-		final int j = Collections.binarySearch(_infos, new Integer(cellIndex), new HeaderPositionInfoComparator());
+		final int j = Collections.binarySearch(_infos, Integer.valueOf(cellIndex), new HeaderPositionInfoComparator());
 		return j < 0 ? -j - 1 : j;
 	}
 	
@@ -87,13 +88,13 @@ public class HeaderPositionHelper {
 	}
 
 	public HeaderPositionInfo getInfo(int cellIndex) {
-		final int j = Collections.binarySearch(_infos, new Integer(cellIndex), new HeaderPositionInfoComparator());
+		final int j = Collections.binarySearch(_infos, Integer.valueOf(cellIndex), new HeaderPositionInfoComparator());
 		return j < 0 ? null : _infos.get(j);
 	}
 
 	//set new info values at the specified cellIndex; if not exist, create a new one and add into this Helper.
 	public void setInfoValues(int cellIndex, int size, int id, boolean hidden) {
-		final int j = Collections.binarySearch(_infos, new Integer(cellIndex), new HeaderPositionInfoComparator());
+		final int j = Collections.binarySearch(_infos, Integer.valueOf(cellIndex), new HeaderPositionInfoComparator());
 		final int index = j < 0 ? (-j - 1) : j;
 		if (j < 0) {
 			_infos.add(index, new HeaderPositionInfo(cellIndex, size, id, hidden));
@@ -106,7 +107,7 @@ public class HeaderPositionHelper {
 	}
 
 	public void removeInfo(int cellIndex) {
-		final int j = Collections.binarySearch(_infos, new Integer(cellIndex), new HeaderPositionInfoComparator());
+		final int j = Collections.binarySearch(_infos, Integer.valueOf(cellIndex), new HeaderPositionInfoComparator());
 		final int index = j < 0 ? (-j - 1) : j;
 		if (j >= 0) {
 			_infos.remove(index);
@@ -280,7 +281,7 @@ public class HeaderPositionHelper {
 		}
 	}
 	
-	private static class HeaderPositionInfoComparator implements Comparator {
+	private static class HeaderPositionInfoComparator implements Comparator, Serializable {
 		@Override
 		public int compare(Object o1, Object o2) {
 			final int i1 = o1 instanceof HeaderPositionInfo ? ((HeaderPositionInfo)o1).index : ((Integer)o1).intValue();

@@ -357,7 +357,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Sheet {
 	                new XSSFRowHelper(row).shift(n);
 	            }
             } else {
-            	SortedMap<Integer, XSSFCell> oldCells = row.getCells().subMap(new Integer(lCol), new Integer(rCol+1));
+            	SortedMap<Integer, XSSFCell> oldCells = row.getCells().subMap(Integer.valueOf(lCol), Integer.valueOf(rCol+1));
             	if (!oldCells.isEmpty()) {
             		TreeMap<Integer, XSSFCell> cells = new TreeMap<Integer, XSSFCell>(oldCells);
             		rowCells.put(newRownum, cells);
@@ -565,7 +565,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Sheet {
             if (cells != null) {
            		final Cell cell = row.getCell(srcCol);
            		if (cell != null) {
-           			cells.put(new Integer(rowNum), cell);
+           			cells.put(Integer.valueOf(rowNum), cell);
            		}
             }
             
@@ -854,7 +854,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Sheet {
 	            if (cells != null) {
 	           		final Cell cell = row.getCell(srcCol);
 	           		if (cell != null) {
-	           			cells.put(new Integer(rowNum), cell);
+	           			cells.put(Integer.valueOf(rowNum), cell);
 	           		}
 	            }
 	            
@@ -1025,7 +1025,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Sheet {
 	            }
 	            expectRownum = rownum + 1;
 	            
-            	SortedMap<Integer, XSSFCell> oldCells = row.getCells().subMap(new Integer(lCol), new Integer(rCol+1));
+            	SortedMap<Integer, XSSFCell> oldCells = row.getCells().subMap(Integer.valueOf(lCol), Integer.valueOf(rCol+1));
             	if (!oldCells.isEmpty()) {
             		TreeMap<Integer, XSSFCell> cells = new TreeMap<Integer, XSSFCell>(oldCells);
             		rowCells.put(newRownum, cells);

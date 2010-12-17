@@ -46,10 +46,10 @@ public class JSONObj {
 	}
 	
 	public void setData(String name,int number){
-		setDataMap(name,new Integer(number));
+		setDataMap(name,Integer.valueOf(number));
 	}
 	public void setData(String name,long number){
-		setDataMap(name,new Long(number));
+		setDataMap(name,Long.valueOf(number));
 	}
 	
 	public void setData(String name,float number){

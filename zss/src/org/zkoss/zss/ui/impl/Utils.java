@@ -638,9 +638,9 @@ public class Utils {
 		synchronized (ex) {
 			count = (Integer) ex.getAttribute("_zssmseq");
 			if (count == null) {
-				count = new Integer(0);
+				count = Integer.valueOf(0);
 			} else {
-				count = new Integer(count.intValue() + 1);
+				count = Integer.valueOf(count.intValue() + 1);
 			}
 			ex.setAttribute("_zssmseq", count);
 		}

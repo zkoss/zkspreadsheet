@@ -29,7 +29,7 @@ import java.util.Map;
 	private final byte _b;
 	private IndexedRGB(int index, int r, int g, int b) {
 		this(r, g, b);
-		final Integer idx = new Integer(index);
+		final Integer idx = Integer.valueOf(index);
 		IndexToRGB.put(idx, this);
 		if (!RGBToIndex.containsKey(this)) {
 			RGBToIndex.put(this, idx);
@@ -70,7 +70,7 @@ import java.util.Map;
 	 * @param index color index
 	 */
 	public static byte[] getRGB(int index) {
-		IndexedRGB rgb = IndexToRGB.get(new Integer(index));
+		IndexedRGB rgb = IndexToRGB.get(Integer.valueOf(index));
 		return rgb == null ? null : rgb.getRGB();
 	}
 	public static Integer getIndex(byte[] rgb) {

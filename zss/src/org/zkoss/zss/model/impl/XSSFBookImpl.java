@@ -65,7 +65,7 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 	private RefBook _refBook;
 	private BookSeries _bookSeries;
 	private int _defaultCharWidth = 7; //TODO: don't know how to calculate this yet per the default font.
-	private final String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver.class";
+	private final static String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver.class";
 	
 	//override the XSSFSheet Relation
 	static {
@@ -277,30 +277,31 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 		return null;
 	}
 	
-	private BookCtrl _bookCtrl;
+	private volatile BookCtrl _bookCtrl; //double-checking locking
 	private BookCtrl getBookCtrl() {
-		if (_bookCtrl == null)
+		BookCtrl ctrl = _bookCtrl;
+		if (ctrl == null)
 			synchronized (this) {
-				if (_bookCtrl == null) {
-					BookCtrl bookCtrl = null;
+				ctrl = _bookCtrl;
+				if (ctrl == null) {
 					String clsnm = Library.getProperty("org.zkoss.zss.model.BookCtrl.class");
 					if (clsnm != null)
 						try {
 							final Object o = Classes.newInstanceByThread(clsnm);
 							if (!(o instanceof BookCtrl))
 								throw new UiException(o.getClass().getName()+" must implement "+BookCtrl.class.getName());
-							bookCtrl = (BookCtrl)o;
+							ctrl = (BookCtrl)o;
 						} catch (UiException ex) {
 							throw ex;
 						} catch (Throwable ex) {
 							throw UiException.Aide.wrap(ex, "Unable to load "+clsnm);
 						}
-					if (bookCtrl == null)
-						bookCtrl = new BookCtrlImpl();
-					_bookCtrl = bookCtrl;
+					if (ctrl == null)
+						ctrl = new BookCtrlImpl();
+					_bookCtrl = ctrl;
 				}
 			}
-		return _bookCtrl;
+		return ctrl;
 	}
 
 	@Override

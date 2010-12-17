@@ -62,12 +62,12 @@ public class HeaderCommand implements Command {
 	
 	private void processTopHeader(Spreadsheet spreadsheet, Map data){
 		String sheetId = (String) data.get("sheetId");
+		Sheet sheet = spreadsheet.getSelectedSheet();
+		if(!Utils.getSheetUuid(sheet).equals(sheetId)) {
+			return;
+		}
 		String event = (String) data.get("event");
 		int index = (Integer) data.get("index");
-		
-		
-		Sheet sheet = spreadsheet.getSelectedSheet();
-		if(!Utils.getSheetUuid(sheet).equals(sheetId));
 		
 		if("size".equals(event)){
 			int newsize = (Integer) data.get("newsize");
@@ -76,7 +76,7 @@ public class HeaderCommand implements Command {
 			((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setColumnSize(sheetId, index, newsize,id, hidden);
 			
 			if (Events.isListened(spreadsheet, org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, true)){
-				HeaderEvent he = new HeaderEvent(org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, spreadsheet, sheet, HeaderEvent.TOP_HEADER,index, new Integer(newsize), hidden);
+				HeaderEvent he = new HeaderEvent(org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, spreadsheet, sheet, HeaderEvent.TOP_HEADER,index, Integer.valueOf(newsize), hidden);
 				Events.postEvent(he);
 			}
 		}else{
@@ -87,11 +87,11 @@ public class HeaderCommand implements Command {
 	
 	private void processLeftHeader(Spreadsheet spreadsheet, Map data){
 		String sheetId = (String) data.get("sheetId");
-		String event = (String) data.get("event");
-		
 		Sheet sheet = spreadsheet.getSelectedSheet();
-		if(!Utils.getSheetUuid(sheet).equals(sheetId));
-		
+		if(!Utils.getSheetUuid(sheet).equals(sheetId)) {
+			return;
+		}
+		String event = (String) data.get("event");
 		int index = (Integer) data.get("index");
 		if("size".equals(event)){
 			int newsize = (Integer) data.get("newsize");
@@ -99,7 +99,7 @@ public class HeaderCommand implements Command {
 			boolean hidden = (Boolean) data.get("hidden");
 			((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setRowSize(sheetId, index, newsize,id, hidden);
 			if (Events.isListened(spreadsheet,org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, true)){
-				HeaderEvent he = new HeaderEvent(org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, spreadsheet, sheet, HeaderEvent.LEFT_HEADER,index, new Integer(newsize), hidden);
+				HeaderEvent he = new HeaderEvent(org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, spreadsheet, sheet, HeaderEvent.LEFT_HEADER,index, Integer.valueOf(newsize), hidden);
 				Events.postEvent(he);
 			}
 		} else {

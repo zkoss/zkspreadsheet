@@ -1086,6 +1086,12 @@ public class RefSheetImpl implements RefSheet {
 		public int compareTo(Indexable o) {
 			return this.getIndex() - o.getIndex();
 		}
+		
+		@Override
+		public boolean equals(Object other) {
+			return this == other
+				|| (other instanceof Indexable && compareTo((Indexable) other) == 0);
+		}
 	}
 
 	private static class RefIndex implements Indexable {

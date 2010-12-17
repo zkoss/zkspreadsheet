@@ -52,15 +52,19 @@ public class Position {
 		_column = column;
 	}
 	
+	@Override
 	public String toString(){
 		return "row:"+_row+",column:"+_column;
 	}
 	
-	public boolean equals(Object obj){
-		if(obj instanceof Position){
-			return ((Position)obj)._row == _row && ((Position)obj)._column == _column;
-		}
-		return super.equals(obj);
+	@Override
+	public int hashCode() {
+		return _row << 14 + _column;
 	}
 	
+	@Override
+	public boolean equals(Object obj){
+		return (this == obj)
+			|| (obj instanceof Position && ((Position)obj)._row == _row && ((Position)obj)._column == _column);
+	}
 }
