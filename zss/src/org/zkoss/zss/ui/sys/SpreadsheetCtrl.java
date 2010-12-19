@@ -20,7 +20,7 @@ package org.zkoss.zss.ui.sys;
 
 
 //import org.zkoss.zss.model.Sheet;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Widget;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
@@ -41,7 +41,7 @@ public interface SpreadsheetCtrl {
 	
 	public HeaderPositionHelper getColumnPositionHelper(String sheetId);
 	
-	public MergeMatrixHelper getMergeMatrixHelper(Sheet sheet);
+	public MergeMatrixHelper getMergeMatrixHelper(Worksheet sheet);
 	
 	
 	public Rect getSelectionRect();

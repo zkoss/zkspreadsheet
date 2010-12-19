@@ -24,7 +24,7 @@ import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.xssf.usermodel.XSSFColor;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
@@ -42,7 +42,7 @@ import org.zkoss.zss.ui.impl.Utils;
  * @author henrichen
  */
 public class bgcolorXlsGetBgcolorTest {
-	private Workbook _workbook;
+	private Book _workbook;
 	private FormulaEvaluator _evaluator;
 
 	/**
@@ -78,14 +78,14 @@ public class bgcolorXlsGetBgcolorTest {
 	
 	@Test
 	public void testGetBgColor() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		assertEquals("FFFF0000", ((XSSFColor)row1.getCell(0).getCellStyle().getFillForegroundColorColor()).getARGBHex()); //A1: Red
 	}
 	
 	@Test
 	public void testSetBgColor() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Cell A1 = BookHelper.getOrCreateCell(sheet1, 0, 0);
 		CellStyle newCellStyle = _workbook.createCellStyle();

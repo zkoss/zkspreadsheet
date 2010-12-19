@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Components;
@@ -387,7 +387,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		 * @return
 		 */
 		private boolean isAllCellNumberType(int idx) {
-			Sheet sheet = ss.getSelectedSheet();
+			Worksheet sheet = ss.getSelectedSheet();
 			Rect rect = ss.getSelection();
 			int top = sortOrientation ? idx : rect.getTop();
 			int left = sortOrientation ? rect.getLeft() : idx;

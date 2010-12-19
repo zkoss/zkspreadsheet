@@ -19,16 +19,15 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.demo;
 
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.ext.AfterCompose;
 //import org.zkoss.zss.engine.xel.Indexes;
 import org.zkoss.zss.model.Book;
-/*import org.zkoss.zss.model.Cell;
-import org.zkoss.zss.model.Sheet;
-*/import org.zkoss.zss.ui.event.CellEvent;
+//import org.zkoss.zss.model.Cell;
+import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -73,7 +72,7 @@ public class MainWindow extends Window implements AfterCompose{
 		});
 	}
 	void doCellEvent(CellEvent event){
-		Sheet sheet = event.getSheet();
+		Worksheet sheet = event.getSheet();
 		lastRow = event.getRow();
 		lastCol = event.getColumn();
 		Label lbpos = (Label)getFellow("lbpos");
@@ -89,7 +88,7 @@ public class MainWindow extends Window implements AfterCompose{
 			return;
 		}
 		if (book != null) {
-			Sheet sheet = (Sheet)book.getSheetAt(0);
+			Worksheet sheet = (Worksheet)book.getSheetAt(0);
 			Cell cell = Utils.getOrCreateCell(sheet, lastRow, lastCol);
 			Utils.setEditText(cell, value);
 		}

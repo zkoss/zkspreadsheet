@@ -19,20 +19,15 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.impl;
 
 import java.awt.Color;
-import java.util.Iterator;
-import java.util.List;
 
-import org.zkoss.poi.hssf.util.HSSFColor;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.RichTextString;
-import org.zkoss.poi.ss.usermodel.Sheet;
-import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.FormatText;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.impl.BookHelper;
-import org.zkoss.zss.ui.Rect;
 
 /**
  * @author Dennis.Chen
@@ -45,7 +40,7 @@ public class CellFormatHelper {
 	 */
 	private Cell _cell;
 
-	private Sheet _sheet;
+	private Worksheet _sheet;
 	
 	private Book _book;
 
@@ -58,7 +53,7 @@ public class CellFormatHelper {
 	
 	private MergeMatrixHelper _mmHelper;
 
-	public CellFormatHelper(Sheet sheet, int row, int col, MergeMatrixHelper mmhelper) {
+	public CellFormatHelper(Worksheet sheet, int row, int col, MergeMatrixHelper mmhelper) {
 		_sheet = sheet;
 		_book = (Book) _sheet.getWorkbook(); 
 		_row = row;

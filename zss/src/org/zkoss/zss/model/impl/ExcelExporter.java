@@ -16,7 +16,7 @@ package org.zkoss.zss.model.impl;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Exporter;
@@ -41,11 +41,11 @@ public class ExcelExporter implements Exporter {
 		
 	}
 
-	public void export(Sheet worksheet, OutputStream outputStream) {
+	public void export(Worksheet worksheet, OutputStream outputStream) {
 		throw new UnsupportedOperationException();
 	}
 
-	public void exportSelection(Sheet worksheet, AreaReference area,
+	public void exportSelection(Worksheet worksheet, AreaReference area,
 			OutputStream outputStream) {
 		throw new UnsupportedOperationException();
 	}

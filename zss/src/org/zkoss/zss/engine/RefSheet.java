@@ -18,7 +18,7 @@ import java.util.Set;
 import org.zkoss.zss.engine.impl.CellRefImpl;
 
 /**
- * Reference areas(see {@link Ref}) in a sheet for hit test. When user change value of a cell,
+ * Internal User Only. Reference areas(see {@link Ref}) in a sheet for hit test. When user change value of a cell,
  * the engine shall find which {@link Ref}s includes this cell(a hit).
  * 
  * @author henrichen
@@ -224,13 +224,16 @@ public interface RefSheet {
 	public Set<Ref>[] deleteRange(int tRow, int lCol, int bRow, int rCol, boolean horizontal);
 	
 	/**
-	 * Move a range of cells to a new position as specified by offCol(positive to move right, negative to move left) 
-	 * and offRow(positive to move down, negative to move up) 
-	 * @param col the insertion point of column
-	 * @param num the number of columns to insert
-	 * @param nRow move how many rows(positive to move down, negative to move up)
-	 * @param nCol move how many columns(positive to move right, negative to move left)
-	 * @return the last affected references(for re-evaluation, at [0]) and all affected references(for re-render, at [1]) 
+	 * Move a range of cells to a new position as specified by nCol(positive to move right, negative to move left) 
+	 * and nRow(positive to move down, negative to move up)
+	 * 
+	 * @param tRow top row index of the range
+	 * @param lCol left column index of the range
+	 * @param bRow bottom row index of the range
+	 * @param rCol right column index of the range
+	 * @param nRow number of rows to move
+	 * @param nCol number of columns to move
+	 * @return the to be evaluated references(for re-evaluation, at [0]) and all affected references(for re-render, at [1])
 	 */
 	public Set<Ref>[] moveRange(int tRow, int lCol, int bRow, int rCol, int nRow, int nCol);
 }

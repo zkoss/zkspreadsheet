@@ -21,7 +21,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
@@ -36,7 +36,7 @@ import org.zkoss.zss.model.impl.HSSFBookImpl;
  * @author henrichen
  */
 public class Book12XlsxMoveRangeTest {
-	private Workbook _workbook;
+	private Book _workbook;
 	private FormulaEvaluator _evaluator;
 
 	/**
@@ -72,7 +72,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveE4F7_F4G7() { //right side move right 
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -140,7 +140,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveC4D7_B4C7() { //left side move left 
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -208,7 +208,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveE4G7_D4F7() { //right side move left
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -276,7 +276,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveB4D7_C4E7() { //left side move right 
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -344,7 +344,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveD4D7_F4F7() { //center side move right(within reference right edge) 
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -413,7 +413,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveF4G7_B4C7() { //right side move left and over original reference left column 
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -482,7 +482,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveC6F8_C7F9() { //bottom side move down 
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -556,7 +556,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveC3F5_C1F3() { //top side move up 
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -624,7 +624,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveC6F8_C2F4() { //bottom side move top and over original reference top row  
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -694,7 +694,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveC3F5_C4E7() { //top side move down 
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -762,7 +762,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveC6F6_C7F7() { //center side move down(within reference right edge) 
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -830,7 +830,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveC7F9_C5F7() { //bottom side move up 
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -898,7 +898,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveB2G8_C3H9() { //block move down-right 
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -976,7 +976,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveB2G8_B3F9() { //block move down-left 
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -1053,7 +1053,7 @@ public class Book12XlsxMoveRangeTest {
 	}
 	@Test
 	public void testMoveB3G8_C2H7() { //block move up-right 
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -1131,7 +1131,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveB3G8_A2F7() { //block move up-left 
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);
@@ -1209,7 +1209,7 @@ public class Book12XlsxMoveRangeTest {
 	
 	@Test
 	public void testMoveD6G8_E7H9() { //partial block move down-right 
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row4 = sheet1.getRow(3);
 		Row row5 = sheet1.getRow(4);

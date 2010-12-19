@@ -26,11 +26,10 @@ import java.util.List;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.UiException;
 //import org.zkoss.zss.model.Cell;
 //import org.zkoss.zss.model.Format;
-//import org.zkoss.zss.model.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -71,7 +70,7 @@ public class UtilFns {
 		if(list.size()<=ss.getSelectedIndex()){
 			throw new XelException("No such sheet :"+ss.getSelectedIndex());
 		}*/
-		Sheet sheet = ss.getSelectedSheet();
+		Worksheet sheet = ss.getSelectedSheet();
 		final Cell cell = Utils.getCell(sheet, row, column);
 		String text = "";
 		if (cell != null) {
@@ -95,7 +94,7 @@ public class UtilFns {
 	
 	//Gets Cell edit text by given row and column
 	static public String getEdittext(Spreadsheet ss,int row,int column){
-		Sheet sheet = ss.getSelectedSheet();
+		Worksheet sheet = ss.getSelectedSheet();
 		final Cell cell = Utils.getCell(sheet, row, column);
 		return cell != null ? Utils.getEditText(cell) : "";
 	}
@@ -119,7 +118,7 @@ public class UtilFns {
 		int row_top = getRowBegin(ss).intValue();
 		int row_bottom = getRowEnd(ss).intValue();
 		
-		Sheet sheet = ss.getSelectedSheet();
+		Worksheet sheet = ss.getSelectedSheet();
 		MergeMatrixHelper mmhelper = ((SpreadsheetCtrl)ss.getExtraCtrl()).getMergeMatrixHelper(sheet);
 		List blocks = mmhelper.getRangesByColumn(max);
 		Iterator iter = blocks.iterator();

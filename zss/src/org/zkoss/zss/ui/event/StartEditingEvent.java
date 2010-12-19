@@ -18,9 +18,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.event;
 
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.Component;
-//import org.zkoss.zss.model.Sheet;
+import org.zkoss.zss.model.Worksheet;
 
 /**
  * @author Dennis.Chen
@@ -36,7 +35,7 @@ public class StartEditingEvent extends CellEvent{
 	
 	Object _clientValue;
 	
-	public StartEditingEvent(String name, Component target,Sheet sheet, int row ,int col, Object editingValue,Object clientvalue) {
+	public StartEditingEvent(String name, Component target,Worksheet sheet, int row ,int col, Object editingValue,Object clientvalue) {
 		super(name,target,sheet,row,col);
 		this._editingValue = editingValue;
 		this._clientValue = clientvalue;

@@ -17,14 +17,13 @@ package org.zkoss.zss.app.cell;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
-import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -111,67 +110,67 @@ public final class CellHelper {
 	
 	/**
 	 * Delete current selection area and shift cells below the selection area up
-	 * @param Sheet the current sheet
+	 * @param Worksheet the current sheet
 	 * @param rect the selection rectangle
 	 */
-	public static void shiftCellUp(Sheet sheet, Rect rect) {
+	public static void shiftCellUp(Worksheet sheet, Rect rect) {
 		final Range rng = Ranges.range(sheet, rect.getTop(), rect.getLeft(), rect.getBottom(), rect.getRight());
 		rng.delete(Range.SHIFT_UP);
 	}
 	
 	/**
 	 * Insert a new cell and shift cells right
-	 * @param Sheet the current sheet
+	 * @param Worksheet the current sheet
 	 * @param rect the selection rectangle
 	 */
-	public static void shiftCellRight(Sheet sheet, Rect rect) {
+	public static void shiftCellRight(Worksheet sheet, Rect rect) {
 		final Range rng = Ranges.range(sheet, rect.getTop(), rect.getLeft(), rect.getBottom(), rect.getRight());
 		rng.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
 	}
 	
 	/**
 	 * Insert a new cell and shift original cells down
-	 * @param Sheet the current sheet
+	 * @param Worksheet the current sheet
 	 * @param rect the selection rectangle
 	 */
-	public static void shiftCellDown(Sheet sheet, Rect rect) {
+	public static void shiftCellDown(Worksheet sheet, Rect rect) {
 		final Range rng = Ranges.range(sheet, rect.getTop(), rect.getLeft(), rect.getBottom(), rect.getRight());
 		rng.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
 	}
 	
 	/**
 	 * Delete current cell and shift cells up beside it.
-	 * @param Sheet the current sheet
+	 * @param Worksheet the current sheet
 	 * @param rect the selection rectangle
 	 */
-	public static void shiftCellLeft(Sheet sheet, Rect rect) {
+	public static void shiftCellLeft(Worksheet sheet, Rect rect) {
 		final Range rng = Ranges.range(sheet, rect.getTop(), rect.getLeft(), rect.getBottom(), rect.getRight());
 		rng.delete(Range.SHIFT_LEFT);
 	}
 	
-	public static void shiftEntireRowDown(Sheet sheet, int top, int bottom) {
+	public static void shiftEntireRowDown(Worksheet sheet, int top, int bottom) {
 		Ranges.range(sheet, top, 0, bottom, 0).getRows().insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
 	}
 	
-	public static void shiftEntireRowUp(Sheet sheet, int top, int bottom) {
+	public static void shiftEntireRowUp(Worksheet sheet, int top, int bottom) {
 		Ranges.range(sheet, top, 0, bottom, 0).getRows().delete(Range.SHIFT_UP);
 	}
 
-	public static void shiftEntireColumnRight(Sheet sheet, int left, int right) {
+	public static void shiftEntireColumnRight(Worksheet sheet, int left, int right) {
 		Ranges.range(sheet, 0, left, 0, right).getColumns().insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
 	}
 	
-	public static void shiftEntireColumnLeft(Sheet sheet, int left, int right) {
+	public static void shiftEntireColumnLeft(Worksheet sheet, int left, int right) {
 		Ranges.range(sheet, 0, left, 0, right).getColumns().delete(Range.SHIFT_LEFT);
 	}
 	
 	
-	public static void sortAscending(Sheet sheet, Rect rect) {
+	public static void sortAscending(Worksheet sheet, Rect rect) {
 		Utils.sort(sheet, rect,
 				null, null, null, false, false, false);
 	}
 	
-	public static void sortDescending(Sheet sheet, Rect rect) {
+	public static void sortDescending(Worksheet sheet, Rect rect) {
 		Utils.sort(sheet, rect,
 				null, new boolean[] { true }, null, false, false, false);
 	}

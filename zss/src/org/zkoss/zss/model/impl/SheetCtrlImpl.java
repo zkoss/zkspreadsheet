@@ -21,7 +21,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Sheet;
+import org.zkoss.zss.model.Worksheet;
 
 /**
  * Common implementation of the {@link SheetCtrl} interface. 
@@ -30,11 +30,11 @@ import org.zkoss.zss.model.Sheet;
  */
 public class SheetCtrlImpl implements SheetCtrl {
 	private final Book _book;
-	private final Sheet _sheet;
+	private final Worksheet _sheet;
 	private boolean _evalAll;
 	private String _uuid;
 	
-	public SheetCtrlImpl(Book book, Sheet sheet) {
+	public SheetCtrlImpl(Book book, Worksheet sheet) {
 		_book = book;
 		_sheet = sheet;
 	}

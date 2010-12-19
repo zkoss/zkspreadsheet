@@ -56,14 +56,14 @@ import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
-import org.zkoss.zss.model.Sheet;
+import org.zkoss.zss.model.Worksheet;
 
 /**
- * Implementation of {@link Sheet} based on HSSFSheet.
+ * Implementation of {@link Worksheet} based on HSSFSheet.
  * @author henrichen
  *
  */
-public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Sheet {
+public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Worksheet {
 	private final HSSFSheetHelper _helper; //helper to lift the package protection
 
 	//--HSSFSheet--//

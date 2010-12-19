@@ -21,7 +21,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
@@ -33,7 +33,7 @@ import org.zkoss.zss.model.Book;
  * @author henrichen
  */
 public class Book07XlsxDeleteColumnsTest {
-	private Workbook _workbook;
+	private Book _workbook;
 	private FormulaEvaluator _evaluator;
 
 	/**
@@ -69,7 +69,7 @@ public class Book07XlsxDeleteColumnsTest {
 	
 	@Test
 	public void testDeleteColumnD_F() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row2 = sheet1.getRow(1);
 		Row row3 = sheet1.getRow(2);
 		assertEquals(1, row2.getCell(4).getNumericCellValue(), 0.0000000000000001);
@@ -156,7 +156,7 @@ public class Book07XlsxDeleteColumnsTest {
 	
 	@Test
 	public void testDeleteRangeD1_F3() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row2 = sheet1.getRow(1);
 		Row row3 = sheet1.getRow(2);
 		assertEquals(1, row2.getCell(4).getNumericCellValue(), 0.0000000000000001);

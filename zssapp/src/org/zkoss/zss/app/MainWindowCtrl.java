@@ -23,7 +23,6 @@ import java.util.Iterator;
 
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -65,6 +64,7 @@ import org.zkoss.zss.app.zul.ctrl.StyleModification;
 import org.zkoss.zss.app.zul.ctrl.WorkbenchCtrl;
 import org.zkoss.zss.engine.event.SSDataEvent;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.ui.Position;
@@ -327,7 +327,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 	private void onContentsChanged() {
 		setSaveButtonState(false);
-		Sheet seldSheet = spreadsheet.getSelectedSheet();
+		Worksheet seldSheet = spreadsheet.getSelectedSheet();
 		Rect seld =  spreadsheet.getSelection();
 		int row = seld.getTop();
 		int col = seld.getLeft();
@@ -444,7 +444,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		}
 		// SECTION WORK1 FocusedEvent
 		try {
-			Sheet sheet = event.getSheet();
+			Worksheet sheet = event.getSheet();
 			lastRow = event.getRow();
 			lastCol = event.getColumn();
 
@@ -715,7 +715,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 	public void onDeleteRows(ForwardEvent event) {
 		try {
-			Sheet sheet = spreadsheet.getSelectedSheet();
+			Worksheet sheet = spreadsheet.getSelectedSheet();
 			Rect rect = spreadsheet.getSelection();
 			int top = rect.getTop();
 			int left = rect.getLeft();
@@ -738,7 +738,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 	public void onDeleteColumns(ForwardEvent event) {
 		try {
-			Sheet sheet = spreadsheet.getSelectedSheet();
+			Worksheet sheet = spreadsheet.getSelectedSheet();
 			Rect rect = spreadsheet.getSelection();
 			int left = rect.getLeft();
 			int right = rect.getRight();
@@ -822,7 +822,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			return;
 		}
 		int sheetCount = book.getNumberOfSheets();
-		Sheet addedSheet = spreadsheet.getBook().createSheet("sheet " + (sheetCount + 1));
+		Worksheet addedSheet = (Worksheet)spreadsheet.getBook().createSheet("sheet " + (sheetCount + 1));
 		sheets.addSheet(addedSheet.getSheetName());
 	}
 
@@ -842,7 +842,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		int top = spreadsheet.getSelection().getTop();
 		String formula = formulaList.getSelectedItem().getLabel();
 		if (formula != null) {
-			final Sheet sheet = spreadsheet.getSelectedSheet();
+			final Worksheet sheet = spreadsheet.getSelectedSheet();
 			Cell cell = Utils.getOrCreateCell(sheet, top, left);
 			cell.setCellFormula(formula + "()");
 		}
@@ -1164,7 +1164,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	 * @param event
 	 */
 	public void onGridlines(ForwardEvent event) {
-		Sheet sheet = spreadsheet.getSelectedSheet();
+		Worksheet sheet = spreadsheet.getSelectedSheet();
 		Utils.getRange(sheet, 0, 0).setDisplayGridlines(!sheet.isDisplayGridlines());
 		//TODO avoid use invalidate
 		//spreadsheet.invalidate();

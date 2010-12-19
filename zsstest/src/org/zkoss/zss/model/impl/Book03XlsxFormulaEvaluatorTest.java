@@ -28,7 +28,7 @@ import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.model.Book;
@@ -74,7 +74,7 @@ public class Book03XlsxFormulaEvaluatorTest {
 
 	@Test
 	public void testEvaluateArea() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row = sheet1.getRow(0);
 		assertNull(row.getCell(0));
 		

@@ -14,7 +14,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.cell;
 
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -99,8 +99,8 @@ public final class EditHelper {
 	 * @param ss
 	 * @return sheet
 	 */
-	public static Sheet getSourceSheet(Spreadsheet ss) {
-		return (Sheet)ss.getAttribute(KEY_SRC_SHEET);
+	public static Worksheet getSourceSheet(Spreadsheet ss) {
+		return (Worksheet)ss.getAttribute(KEY_SRC_SHEET);
 	}
 	
 	/**
@@ -137,7 +137,7 @@ public final class EditHelper {
 	 * @param transpose
 	 */
 	public static void doPaste(Spreadsheet ss) {
-		Sheet srcSheet = getSourceSheet(ss);
+		Worksheet srcSheet = getSourceSheet(ss);
 		Rect dstRange = ss.getSelection();
 		if (srcSheet != null) {
 			//TODO: **test overlap merge cell behavior on excel**
@@ -178,8 +178,8 @@ public final class EditHelper {
 		if (!isCut(ss))
 			return;
 
-		Sheet srcSheet = getSourceSheet(ss);
-		Sheet dstSheet = ss.getSelectedSheet();
+		Worksheet srcSheet = getSourceSheet(ss);
+		Worksheet dstSheet = ss.getSelectedSheet();
 		Rect srcRange = getSourceRange(ss);
 		int srcLeft = srcRange.getLeft();
 		int srcRight = srcRange.getRight();
@@ -203,7 +203,7 @@ public final class EditHelper {
 	}
 	
 	public static void onPasteSpecial(Spreadsheet ss, int pasteType, int pasteOperation, boolean skipBlanks, boolean transpose){
-		Sheet srcSheet = getSourceSheet(ss);
+		Worksheet srcSheet = getSourceSheet(ss);
 		if (srcSheet != null) {
 			final Rect dst = ss.getSelection();
 			final Range rng = Utils.pasteSpecial(srcSheet, 

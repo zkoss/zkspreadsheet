@@ -24,7 +24,6 @@ import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.ErrorConstants;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook;
@@ -34,6 +33,7 @@ import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.impl.CellRefImpl;
 import org.zkoss.zss.engine.impl.ChangeInfo;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.ExcelImporter;
 import org.zkoss.zss.model.impl.HSSFBookImpl;
@@ -80,7 +80,7 @@ public class Book09XlsxSortTest {
 	
 	@Test
 	public void testSortByColumns() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = (Worksheet)_workbook.getSheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row2 = sheet1.getRow(1);
 		Row row3 = sheet1.getRow(2);
@@ -186,7 +186,7 @@ public class Book09XlsxSortTest {
 	
 	@Test
 	public void testSortByRows() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = (Worksheet)_workbook.getSheet("Sheet1");
 		Row row15 = sheet1.getRow(14);
 		Row row16 = sheet1.getRow(15);
 		Row row17 = sheet1.getRow(16);

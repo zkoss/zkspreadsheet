@@ -56,15 +56,15 @@ import org.zkoss.poi.xssf.usermodel.XSSFRowHelper;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.Range;
 
 /**
- * Implementation of {@link Sheet} based on XSSFSheet.
+ * Implementation of {@link Worksheet} based on XSSFSheet.
  * @author henrichen
  *
  */
-public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Sheet {
+public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
 	//--XSSFSheet--//
     public XSSFSheetImpl() {
         super();

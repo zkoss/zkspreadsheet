@@ -50,6 +50,7 @@ import org.zkoss.zss.formula.FunctionResolver;
 import org.zkoss.zss.formula.NoCacheClassifier;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.BookSeries;
+import org.zkoss.zss.model.Worksheet;
 
 /**
  * Implementation of {@link Book} based on XSSFWorkbook.
@@ -323,5 +324,15 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 	@Override
 	public Object nextSheetId() {
 		return getBookCtrl().nextSheetId();
+	}
+
+	@Override
+	public Worksheet getWorksheetAt(int index) {
+		return (Worksheet) getSheetAt(index);
+	}
+
+	@Override
+	public Worksheet getWorksheet(String name) {
+		return (Worksheet) getWorksheet(name);
 	}
 }

@@ -19,7 +19,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.sys;
 
 //import org.zkoss.zss.model.Sheet;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
@@ -47,13 +47,13 @@ public interface WidgetLoader {
 	 * indicate the selected sheet of a spreadsheet is changed.   
 	 * @param sheet
 	 */
-	public void onSheetSelected(Sheet sheet);
+	public void onSheetSelected(Worksheet sheet);
 	
 	/**
 	 * indicate the sheet is dis-selected
 	 * @param sheet
 	 */
-	public void onSheetClean(Sheet sheet);
+	public void onSheetClean(Worksheet sheet);
 	
 	/**
 	 * call when spreadsheet try to load a block of cell to client side. 

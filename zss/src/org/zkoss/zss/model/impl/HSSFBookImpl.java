@@ -45,6 +45,7 @@ import org.zkoss.zss.formula.FunctionResolver;
 import org.zkoss.zss.formula.NoCacheClassifier;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.BookSeries;
+import org.zkoss.zss.model.Worksheet;
 
 /**
  * Implementation of {@link Book} based on HSSFWorkbook.
@@ -303,6 +304,16 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 	@Override
 	public String nextSheetId() {
 		return (String) getBookCtrl().nextSheetId();
+	}
+
+	@Override
+	public Worksheet getWorksheetAt(int index) {
+		return (Worksheet) getSheetAt(index);
+	}
+
+	@Override
+	public Worksheet getWorksheet(String name) {
+		return (Worksheet) getWorksheet(name);
 	}
 	
 }

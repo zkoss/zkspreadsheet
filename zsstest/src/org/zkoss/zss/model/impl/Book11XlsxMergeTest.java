@@ -24,7 +24,7 @@ import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.ErrorConstants;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook;
@@ -43,7 +43,7 @@ import org.zkoss.zss.ui.impl.Utils;
  * @author henrichen
  */
 public class Book11XlsxMergeTest {
-	private Workbook _workbook;
+	private Book _workbook;
 	private FormulaEvaluator _evaluator;
 
 	/**
@@ -79,7 +79,7 @@ public class Book11XlsxMergeTest {
 	
 	@Test
 	public void testMergeCells() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row2 = sheet1.getRow(1);
 		

@@ -21,7 +21,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.model.Book;
@@ -35,7 +35,7 @@ import org.zkoss.zss.model.impl.HSSFBookImpl;
  * @author henrichen
  */
 public class Book04XlsInsertRowsTest {
-	private Workbook _workbook;
+	private Book _workbook;
 	private FormulaEvaluator _evaluator;
 
 	/**
@@ -71,7 +71,7 @@ public class Book04XlsInsertRowsTest {
 	
 	@Test
 	public void testInsertRow5() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row8 = sheet1.getRow(7);
 		assertEquals(1, row8.getCell(0).getNumericCellValue(), 0.0000000000000001); //A8: 1
@@ -170,7 +170,7 @@ public class Book04XlsInsertRowsTest {
 	
 	@Test
 	public void testInsertA5_D5() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row8 = sheet1.getRow(7);
 		assertEquals(1, row8.getCell(0).getNumericCellValue(), 0.0000000000000001); //A8: 1

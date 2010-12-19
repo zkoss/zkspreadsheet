@@ -15,7 +15,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.zul;
 
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
@@ -76,7 +76,7 @@ public class FormulaEditor extends Textbox implements ZssappComponent{
 		focusOut = false;
 		int left = ss.getSelection().getLeft();
 		int top = ss.getSelection().getTop();
-		Sheet sheet = ss.getSelectedSheet();
+		Worksheet sheet = ss.getSelectedSheet();
 		currentEditcell = Utils.getCell(sheet, top, left);
 		
 		if (currentEditcell != null)

@@ -28,12 +28,12 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.SheetCtrl;
@@ -92,7 +92,7 @@ public class CellFetchCommandHelper{
 		
 		_spreadsheet = ((Spreadsheet)comp);
 		if(_spreadsheet.isInvalidated()) return;//since it is invalidate, i don't need to update
-		final Sheet selSheet = _spreadsheet.getSelectedSheet();
+		final Worksheet selSheet = _spreadsheet.getSelectedSheet();
 		final String sheetId = (String) data.get("sheetId");
 		if (selSheet == null || !sheetId.equals(((SheetCtrl)selSheet).getUuid())) { //not current selected sheet, skip.
 			return;
@@ -106,7 +106,7 @@ public class CellFetchCommandHelper{
 		_rowHelper = _ctrl.getRowPositionHelper(sheetId);
 		_colHelper = _ctrl.getColumnPositionHelper(sheetId);
 		
-		Sheet sheet = _spreadsheet.getSelectedSheet();
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if(!Utils.getSheetUuid(sheet).equals(sheetId)) return;
 		
 		_mergeMatrix = _ctrl.getMergeMatrixHelper(sheet);
@@ -233,7 +233,7 @@ public class CellFetchCommandHelper{
 		((SpreadsheetInCtrl) _ctrl).setLoadedRect(_lastleft, _lasttop,	_lastright, _lastbottom);
 	}
 	
-	private void loadForVisible(Spreadsheet spreadsheet, String sheetId, Sheet sheet, String type, int dpWidth,
+	private void loadForVisible(Spreadsheet spreadsheet, String sheetId, Worksheet sheet, String type, int dpWidth,
 			int dpHeight, int viewWidth, int viewHeight, int blockLeft,int blockTop,int blockRight, int blockBottom,
 			int rangeLeft, int rangeTop, int rangeRight,int rangeBottom) {
 		
@@ -306,7 +306,7 @@ public class CellFetchCommandHelper{
 		return jresult.toString();
 	}
 
-	private String jumpResult(Sheet sheet, int left, int top, int right, int bottom) {
+	private String jumpResult(Worksheet sheet, int left, int top, int right, int bottom) {
 		
 		right = _mergeMatrix.getRightConnectedColumn(right,top,bottom);
 		left = _mergeMatrix.getLeftConnectedColumn(left,top,bottom);
@@ -443,7 +443,7 @@ public class CellFetchCommandHelper{
 		return jresult.toString();
 	}
 	
-	private String jump(String dir,Spreadsheet spreadsheet,String sheetId, Sheet sheet, String type,
+	private String jump(String dir,Spreadsheet spreadsheet,String sheetId, Worksheet sheet, String type,
 			int dpWidth, int dpHeight, int viewWidth, int viewHeight,
 			int blockLeft, int blockTop, int blockRight, int blockBottom,
 			int col, int row, 
@@ -500,7 +500,7 @@ public class CellFetchCommandHelper{
 		return jumpResult(sheet,left,top,right,bottom);
 	}
 	
-	private String loadEast(Sheet sheet,String type, 
+	private String loadEast(Worksheet sheet,String type, 
 			int blockLeft,int blockTop,int blockRight, int blockBottom,
 			int fetchWidth) {
 
@@ -592,7 +592,7 @@ public class CellFetchCommandHelper{
 		return jresult.toString();
 	}
 	
-	private String loadWest(Sheet sheet,String type,
+	private String loadWest(Worksheet sheet,String type,
 			int blockLeft,int blockTop,int blockRight, int blockBottom,
 			int fetchWidth) {
 		
@@ -674,7 +674,7 @@ public class CellFetchCommandHelper{
 		return jresult.toString();
 	}
 	
-	private String loadSouth(Sheet sheet,String type, 
+	private String loadSouth(Worksheet sheet,String type, 
 			int blockLeft,int blockTop,int blockRight, int blockBottom,
 			int fetchHeight) {
 		
@@ -754,7 +754,7 @@ public class CellFetchCommandHelper{
 
 		return jresult.toString();
 	}
-	private String loadNorth(Sheet sheet,String type, 
+	private String loadNorth(Worksheet sheet,String type, 
 			int blockLeft,int blockTop,int blockRight, int blockBottom,
 			int fetchHeight) {
 
@@ -861,14 +861,14 @@ public class CellFetchCommandHelper{
 		}
 	}
 	
-	private void prepareRowData(JSONObj jrow, Sheet sheet,int row) {
+	private void prepareRowData(JSONObj jrow, Worksheet sheet,int row) {
 		jrow.setData("ix", row);
 		HeaderPositionInfo info = _rowHelper.getInfo(row);
 		if (info != null)
 			jrow.setData("zsh", info.id);
 	}
 	
-	private void prepareCellData(JSONObj jcell, Sheet sheet,int row,int col) {
+	private void prepareCellData(JSONObj jcell, Worksheet sheet,int row,int col) {
 
 		jcell.setData("ix", col);// index
 		

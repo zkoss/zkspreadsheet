@@ -22,7 +22,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.impl.BookHelper;
@@ -35,14 +35,14 @@ public class CellVisitorContext {
 
 	int row;
 	int col;
-	Sheet sheet;
+	Worksheet sheet;
 	Book book;
 	/**
 	 * @param sheet
 	 * @param row
 	 * @param col
 	 */
-	public CellVisitorContext(Sheet sheet, int row, int col) {
+	public CellVisitorContext(Worksheet sheet, int row, int col) {
 		this.sheet = sheet;
 		this.row = row;
 		this.col = col;
@@ -152,7 +152,7 @@ public class CellVisitorContext {
 		return Utils.getCell(sheet, row, col);
 	}
 	
-	public Sheet getSheet() {
+	public Worksheet getSheet() {
 		return sheet;
 	}
 	

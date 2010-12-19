@@ -182,18 +182,18 @@ public interface Range {
 	/**
 	 * Pastes a Range from the Clipboard into this range.
 	 * @param pasteType the part of the range to be pasted.
-	 * @param operation the paste operation
+	 * @param pasteOp the paste operation
 	 * @param SkipBlanks true to not have blank cells in the ranage on the Clipboard pasted into this range; default false.
 	 * @param transpose true to transpose rows and columns when pasting to this range; default false.
 	 * @return real destination range that was pasted into.
 	 */
-	public Range pasteSpecial(int pasteType, int operation, boolean SkipBlanks, boolean transpose);
+	public Range pasteSpecial(int pasteType, int pasteOp, boolean SkipBlanks, boolean transpose);
 	
 	/**
 	 * Pastes to a destination Range from this range.
 	 * @param dstRange the destination range to be pasted into.
 	 * @param pasteType the part of the range to be pasted.
-	 * @param operation the paste operation
+	 * @param pasteOp the paste operation
 	 * @param SkipBlanks true to not have blank cells in the ranage on the Clipboard pasted into this range; default false.
 	 * @param transpose true to transpose rows and columns when pasting to this range; default false.
 	 * @return real destination range that was pasted into.
@@ -202,14 +202,14 @@ public interface Range {
 	
 	/**
 	 * Insert this Range. 
-	 * @param {@link SHIFT_DEFAULT}, {{@link #SHIFT_DOWN}, or {@link #SHIFT_RIGHT}.
+	 * @param shift can be {@link #SHIFT_DEFAULT}, {{@link #SHIFT_DOWN}, or {@link #SHIFT_RIGHT}.
 	 * @param copyOrigin from where to copy the format to the insert area({@link #FORMAT_LEFTABOVE} /{@link #FORMAT_RIGHTBELOW})
 	 */
 	public void insert(int shift, int copyOrigin);
 	
 	/**
 	 * Delete this Range. 
-	 * @param {@link SHIFT_DEFAULT}, {{@link #SHIFT_UP}, or {@link #SHIFT_LEFT}.
+	 * @param shift can be {@link #SHIFT_DEFAULT}, {{@link #SHIFT_UP}, or {@link #SHIFT_LEFT}.
 	 */
 	public void delete(int shift);
 
@@ -360,7 +360,7 @@ public interface Range {
 	/**
 	 * Sets the hyperlink of this Range
 	 * @param linkType the type of target to link. One of the {@link #Hyperlink.LINK_URL}, 
-	 * {@link #Hyperlink.LINK_DOCUMENT}, {@link #Hyperlink.LINK_EMAIL}, {@link #LINK_FILE}
+	 * {@link Hyperlink#LINK_DOCUMENT}, {@link Hyperlink#LINK_EMAIL}, {@link Hyperlink#LINK_FILE}
 	 * @param address the address
 	 * @param display the text to display link
 	 */
@@ -369,7 +369,7 @@ public interface Range {
 	/**
 	 * Returns an {@link Areas} which is a collection of each single selected area(also Range) of this multiple-selected Range. 
 	 * If this Range is a single selected Range, this method return the Areas which contains only this Range itself.
-	 * @return
+	 * @return an {@link Areas} which is a collection of each single selected area(also Range) of this multiple-selected Range.
 	 */
 	public Areas getAreas();
 	
@@ -448,13 +448,14 @@ public interface Range {
 	public long getCount();
 
 	/**
-	 * Set value into the specified Range.
+	 * Set value into this Range.
+	 * @param value the value
 	 */
 	public void setValue(Object value);
 	
 	/**
-	 * Returns value from the specified Range.
-	 * @return
+	 * Returns left top cell value of this Range.
+	 * @return left top cell value of this Range
 	 */
 	public Object getValue();
 	
@@ -462,7 +463,7 @@ public interface Range {
 	 * Returns a {@link Range} that represents a range that offset from this Range. 
 	 * @param rowOffset positive means downward; 0 means don't change row; negative means upward.
 	 * @param colOffset positive means rightward; 0 means don't change column; negative means leftward.
-	 * @return
+	 * @return a {@link Range} that represents a range that offset from this Range.
 	 */
 	public Range getOffset(int rowOffset, int colOffset);
 }

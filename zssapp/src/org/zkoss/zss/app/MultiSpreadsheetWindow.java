@@ -1,7 +1,7 @@
 package org.zkoss.zss.app;
 
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.ext.AfterCompose;
@@ -45,7 +45,7 @@ public class MultiSpreadsheetWindow extends Window implements AfterCompose{
 		int row=event.getRow();
 		int col=event.getColumn();
 		
-		Sheet targetSheet;
+		Worksheet targetSheet;
 		if(event.getTarget()==ss[0])
 			targetSheet=ss[1].getSelectedSheet();
 		else

@@ -24,7 +24,6 @@ import java.util.Map;
 import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.RichTextString;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
@@ -32,7 +31,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 //import org.zkoss.zss.model.Cell;
-//import org.zkoss.zss.model.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.StartEditingEvent;
@@ -61,7 +60,7 @@ public class StartEditingCommand implements Command {
 		int col = (Integer) data.get("col");
 		String clienttxt = (String) data.get("clienttxt");
 
-		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		Worksheet sheet = ((Spreadsheet) comp).getSelectedSheet();
 		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		

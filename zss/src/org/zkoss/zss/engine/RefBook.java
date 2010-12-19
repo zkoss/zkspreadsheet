@@ -19,7 +19,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 
 /**
- * Book that handle the {@link RefSheet}s.
+ * Internal Use Only. Book that handle the {@link RefSheet}s.
  * @author henrichen
  *
  */
@@ -124,6 +124,7 @@ public interface RefBook {
 	/**
 	 * Returns share scope of this reference book.
 	 * @param scope
+	 * @return share scope of this reference book.
 	 */
 	public String getShareScope();
 }

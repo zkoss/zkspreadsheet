@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.zkoss.image.Image;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.Clients;
@@ -33,6 +32,7 @@ import org.zkoss.zss.app.file.FileHelper;
 import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
 import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.Exporter;
 import org.zkoss.zss.model.Exporters;
 import org.zkoss.zss.model.Range;
@@ -122,7 +122,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void setSelectedSheet(String name) {
 		//TODO: remove last sheet widget shall not handle by AP
-		Sheet lastsheet = spreadsheet.getSelectedSheet();
+		Worksheet lastsheet = spreadsheet.getSelectedSheet();
 		List<Widget> rmWgtList = sheetWidgets.get(lastSheetName);
 		if (rmWgtList != null) {
 			SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
@@ -137,7 +137,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		
 		spreadsheet.setSelectedSheet(name);		
 		//handle the copy/cut highlight
-		final Sheet sheet = EditHelper.getSourceSheet(spreadsheet);
+		final Worksheet sheet = EditHelper.getSourceSheet(spreadsheet);
 		if (sheet != null) {
 			if (sheet.equals(spreadsheet.getSelectedSheet())) {
 				spreadsheet.setHighlight(EditHelper.getSourceRange(spreadsheet));
@@ -176,7 +176,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 				image.setRow(spreadsheet.getSelection().getTop());
 				image.setColumn(spreadsheet.getSelection().getLeft());
 				
-				Sheet seldSheet = spreadsheet.getSelectedSheet();
+				Worksheet seldSheet = spreadsheet.getSelectedSheet();
 				String sheetName = seldSheet.getSheetName();
 				List<Widget> wgtList = sheetWidgets.get(sheetName);
 				if (wgtList == null)
@@ -212,7 +212,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public void shiftCell(int direction) {
-		Sheet sheet = spreadsheet.getSelectedSheet();
+		Worksheet sheet = spreadsheet.getSelectedSheet();
 		Rect rect = spreadsheet.getSelection();
 		
 		switch (direction) {

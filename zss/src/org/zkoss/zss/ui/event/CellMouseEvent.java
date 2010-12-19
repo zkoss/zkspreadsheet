@@ -18,10 +18,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.event;
 
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.MouseEvent;
-//import org.zkoss.zss.model.Sheet;
+import org.zkoss.zss.model.Worksheet;
 
 /**
  * A class from handle event which about mouse event on a cell
@@ -29,14 +28,14 @@ import org.zkoss.zk.ui.event.MouseEvent;
  */
 public class CellMouseEvent extends MouseEvent{
 	
-	private Sheet _sheet;
+	private Worksheet _sheet;
 	private int _row;
 	private int _col;
 	
 	private int _clientx;
 	private int _clienty;
 
-	public CellMouseEvent(String name, Component target, int x,int y, int keys,Sheet sheet, int row ,int col,int clientx,int clienty) {
+	public CellMouseEvent(String name, Component target, int x,int y, int keys,Worksheet sheet, int row ,int col,int clientx,int clienty) {
 		super(name, target, x, y, clientx, clienty, keys);
 		_sheet = sheet;
 		this._row = row;
@@ -72,7 +71,7 @@ public class CellMouseEvent extends MouseEvent{
 	 * get Sheet
 	 * @return sheet the related sheet 
 	 */
-	public Sheet getSheet(){
+	public Worksheet getSheet(){
 		return _sheet;
 	}
 	

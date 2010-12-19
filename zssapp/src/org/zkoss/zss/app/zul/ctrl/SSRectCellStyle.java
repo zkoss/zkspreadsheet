@@ -18,7 +18,7 @@ import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.FontUnderline;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.model.Ranges;
@@ -57,7 +57,7 @@ public class SSRectCellStyle implements CellStyle {
 	@Override
 	public void setFontSize(int size) {
 		
-		Sheet sheet = spreadsheet.getSelectedSheet();
+		Worksheet sheet = spreadsheet.getSelectedSheet();
 		Rect rect = spreadsheet.getSelection();
 
 		Utils.setFontHeight(sheet, 
@@ -69,7 +69,7 @@ public class SSRectCellStyle implements CellStyle {
 	private short getFontHeight(int size) {
 		return (short)(size * 20);
 	}
-	private void setProperRowHeightByFontSize(Sheet sheet, Rect rect, int size) {	
+	private void setProperRowHeightByFontSize(Worksheet sheet, Rect rect, int size) {	
 		int tRow = rect.getTop();
 		int bRow = rect.getBottom();
 		int col = rect.getLeft();

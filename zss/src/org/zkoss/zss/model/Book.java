@@ -94,8 +94,8 @@ public interface Book extends Workbook {
 	public void setDefaultFont(Font font);
 	
 	/**
-	 * default character width in pixel (related to current Font. Check {@link getDeflautFont}.
-	 * @return
+	 * Returns default character width in pixel.
+	 * @return default character width in pixel.
 	 */
 	public int getDefaultCharWidth();
 	
@@ -132,4 +132,14 @@ public interface Book extends Workbook {
 	 * @see #setShareScope(String)
 	 */
 	public String getShareScope();
+	
+	/**
+	 * Returns ZK Spreadsheet {@link Worksheet} by name.
+	 */
+	public Worksheet getWorksheet(String name);
+	
+	/**
+	 * Returns ZK Spreadsheet {@link Worksheet} by index(0-based). 
+	 */
+	public Worksheet getWorksheetAt(int index);
 }

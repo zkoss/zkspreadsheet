@@ -23,7 +23,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
@@ -66,7 +66,7 @@ public class NamedRangeXlsNamedRangeTest {
 
 	@Test
 	public void testNamedRange() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		
 		Range rngA1 = Ranges.range(sheet1, "RangeA1");
 		assertEquals("Sheet1", rngA1.getSheet().getSheetName());

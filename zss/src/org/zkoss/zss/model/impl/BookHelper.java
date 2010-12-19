@@ -77,7 +77,7 @@ import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
@@ -195,7 +195,7 @@ public final class BookHelper {
 			((XSSFBookImpl)book).getOrCreateRefBook();
 	}
 	
-	public static RefSheet getRefSheet(Book book, Sheet sheet) {
+	public static RefSheet getRefSheet(Book book, Worksheet sheet) {
 		final RefBook refBook = getRefBook(book);
 		return refBook.getOrCreateRefSheet(sheet.getSheetName());
 	}
@@ -223,14 +223,14 @@ public final class BookHelper {
 		return BookHelper.getBook(book, bookName);
 	}
 	
-	public static Book getBook(Sheet sheet, RefSheet refSheet) {
+	public static Book getBook(Worksheet sheet, RefSheet refSheet) {
 		return BookHelper.getBook((Book)sheet.getWorkbook(), refSheet);
 	}
 	
-	public static Sheet getSheet(Sheet sheet, RefSheet refSheet) {
+	public static Worksheet getSheet(Worksheet sheet, RefSheet refSheet) {
 		final Book targetBook = BookHelper.getBook(sheet, refSheet);
 		final String sheetName = refSheet.getSheetName();
-		return targetBook.getSheet(sheetName);
+		return targetBook.getWorksheet(sheetName);
 	}
 	
 	public static VariableResolver getVariableResolver(Book book) {
@@ -363,14 +363,14 @@ public final class BookHelper {
 		//locate the model book and sheet of the refSheet
 		final Book bookTarget = BookHelper.getBook(book, refSheet);
 		if (bookTarget != null) {
-			final Sheet sheet0 = bookTarget.getSheet(refSheet.getSheetName());
+			final Worksheet sheet0 = bookTarget.getWorksheet(refSheet.getSheetName());
 			if (sheet0 != null)
 				return getCell(sheet0, rowIndex, colIndex);
 		}
 		return null;
 	}
 	
-	public static Cell getCell(Sheet sheet, int rowIndex, int colIndex) {
+	public static Cell getCell(Worksheet sheet, int rowIndex, int colIndex) {
 		final Row row = sheet.getRow(rowIndex);
 		if (row != null) {
 			return row.getCell(colIndex);
@@ -378,7 +378,7 @@ public final class BookHelper {
 		return null;
 	}
 	
-	public static Cell getOrCreateCell(Sheet sheet, int rowIndex, int colIndex) {
+	public static Cell getOrCreateCell(Worksheet sheet, int rowIndex, int colIndex) {
 		Row row = sheet.getRow(rowIndex);
 		if (row == null) {
 			row = sheet.createRow(rowIndex);
@@ -480,7 +480,7 @@ public final class BookHelper {
 		return sb.toString();
 	}
 
-	/** given alignment and cell type, return real alignment */
+	/* given alignment and cell type, return real alignment */
 	//Halignment determined by style alignment, text format and value type  
 	public static int getRealAlignment(Cell cell) {
 		CellStyle style = cell.getCellStyle();
@@ -564,7 +564,7 @@ public final class BookHelper {
 		}
 	}
 	
-	/**
+	/*
 	 * Returns the associated #rrggbb HTML color per the given POI Color.
 	 * @return the associated #rrggbb HTML color per the given POI Color.
 	 */
@@ -730,7 +730,7 @@ public final class BookHelper {
 					return ncolor.getIndex();
 				} catch (RuntimeException ex) {
 					//return similar color if can't add new color to palette
-					/**
+					/*
 					 * TODO: find a better solution for fix this issue
 					 * 
 					 * While there is no space for adding a color into palette
@@ -889,12 +889,12 @@ public final class BookHelper {
 		}
 	}
 	
-	public static Set<Ref>[] removeCell(Sheet sheet, int rowIndex, int colIndex) {
+	public static Set<Ref>[] removeCell(Worksheet sheet, int rowIndex, int colIndex) {
 		final Cell cell = getCell(sheet, rowIndex, colIndex);
 		return removeCell(cell, true);
 	}
 	
-	public static Set<Ref>[] clearCell(Sheet sheet, int rowIndex, int colIndex) {
+	public static Set<Ref>[] clearCell(Worksheet sheet, int rowIndex, int colIndex) {
 		final Cell cell = getCell(sheet, rowIndex, colIndex);
 		return clearCell(cell);
 	}
@@ -1037,7 +1037,7 @@ public final class BookHelper {
 	
 	//[0]:last, [1]:all
 	private static Set<Ref>[] getBothDependents(Cell cell) {
-		final Sheet sheet = cell.getSheet();
+		final Worksheet sheet = (Worksheet) cell.getSheet();
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		
@@ -1065,7 +1065,7 @@ public final class BookHelper {
 			//clear the formula reference dependency
 			final int rowIndex = cell.getRowIndex(); 
 			final int colIndex = cell.getColumnIndex();
-			final Sheet sheet = cell.getSheet();
+			final Worksheet sheet = (Worksheet)cell.getSheet();
 			final Book book = (Book) sheet.getWorkbook();
 			final RefSheet refSheet = getRefSheet(book, sheet);
 			final Ref ref = refSheet.getRef(rowIndex, colIndex, rowIndex, colIndex);
@@ -1141,7 +1141,7 @@ public final class BookHelper {
 		return new DateInputMask().parseDateInput(txt);
 	}
 	
-	public static Row getOrCreateRow(Sheet sheet, int rowIndex) {
+	public static Row getOrCreateRow(Worksheet sheet, int rowIndex) {
 		Row row = sheet.getRow(rowIndex);
 		if (row == null) {
 			row = sheet.createRow(rowIndex);
@@ -1188,7 +1188,7 @@ public final class BookHelper {
 		Comment dstComment = dstCell.getCellComment();
 		if (srcComment != null) {
 			if (dstComment == null) {
-				final Sheet dstSheet = dstCell.getSheet();
+				final Worksheet dstSheet = (Worksheet)dstCell.getSheet();
 				final Workbook dstBook = dstSheet.getWorkbook();
 				final CreationHelper dstFactory = dstBook.getCreationHelper();
 				final Drawing drawing = dstSheet.createDrawingPatriarch();
@@ -1208,8 +1208,8 @@ public final class BookHelper {
 	
 	private static void copyValidation(Cell srcCell, Cell dstCell) {
 		//TODO now assume same workbook in copying CellStyle.
-		final Sheet srcSheet = srcCell.getSheet();
-		final Sheet dstSheet = dstCell.getSheet();
+		final Worksheet srcSheet = (Worksheet)srcCell.getSheet();
+		final Worksheet dstSheet = (Worksheet)dstCell.getSheet();
 		
 		final int srcRow = srcCell.getRowIndex();
 		final int srcCol = srcCell.getColumnIndex();
@@ -1272,7 +1272,7 @@ public final class BookHelper {
 			}
 		}
 	}
-	private static List<? extends DataValidation> getDataValidations(Sheet sheet) {
+	private static List<? extends DataValidation> getDataValidations(Worksheet sheet) {
 		if (sheet instanceof HSSFSheet) {
 			return ((HSSFSheetImpl)sheet).getDataValidations();
 		} else {
@@ -1295,7 +1295,7 @@ public final class BookHelper {
 	}
 	
 	//[0]:last, [1]:all
-	public static ChangeInfo copyCell(Cell srcCell, Sheet sheet, int rowIndex, int colIndex, int pasteType, int pasteOp, boolean transpose) {
+	public static ChangeInfo copyCell(Cell srcCell, Worksheet sheet, int rowIndex, int colIndex, int pasteType, int pasteOp, boolean transpose) {
 		//TODO not handle pastType == pasteValidation and pasteOp(assume none)
 		final Cell dstCell = getOrCreateCell(sheet, rowIndex, colIndex);
 		return copyCell(srcCell, dstCell, pasteType, pasteOp, transpose);
@@ -1312,7 +1312,7 @@ public final class BookHelper {
 			//handle merge/unmerge cases
 			final int dstrow = dstCell.getRowIndex();
 			final int dstcol = dstCell.getColumnIndex();
-			final Sheet dstSheet = dstCell.getSheet();
+			final Worksheet dstSheet = (Worksheet)dstCell.getSheet();
 			final CellRangeAddress dstaddr = ((SheetCtrl)dstSheet).getMerged(dstrow, dstcol);
 			if (dstaddr != null) { //shall un-merge the destination merge range
 				final int dstrow2 = dstaddr.getLastRow();
@@ -1513,11 +1513,11 @@ public final class BookHelper {
 	}
 	
 	private static Ptg[] offsetPtgs(Cell dstCell, Cell srcCell, boolean transpose) {
-		final Sheet srcSheet = srcCell.getSheet();
+		final Worksheet srcSheet = (Worksheet)srcCell.getSheet();
 		final int srcRow = srcCell.getRowIndex();
 		final int srcCol = srcCell.getColumnIndex();
 		
-		final Sheet dstSheet = dstCell.getSheet();
+		final Worksheet dstSheet = (Worksheet)dstCell.getSheet();
 		final int dstRow = dstCell.getRowIndex();
 		final int dstCol = dstCell.getColumnIndex();
 		
@@ -1527,7 +1527,7 @@ public final class BookHelper {
 		return offsetPtgs(srcCell, srcSheet, transpose ? dstCell : null, dstSheet, offRow, offCol);
 	}
 	
-	private static Ptg[] offsetPtgs(Cell srcCell, Sheet srcSheet, Cell dstCell, Sheet dstSheet, int offRow, int offCol) {
+	private static Ptg[] offsetPtgs(Cell srcCell, Worksheet srcSheet, Cell dstCell, Worksheet dstSheet, int offRow, int offCol) {
 		final Ptg[] srcPtgs = getCellPtgs(srcCell);
 		final int ptglen = srcPtgs.length;
 		final Ptg[] dstPtgs = new Ptg[ptglen];
@@ -1681,7 +1681,7 @@ public final class BookHelper {
 	}
 	
 	//TODO interface for SheetCtrl?
-	public static ChangeInfo insertRows(Sheet sheet, int startRow, int num, int copyOrigin) {
+	public static ChangeInfo insertRows(Worksheet sheet, int startRow, int num, int copyOrigin) {
 		if (sheet instanceof HSSFSheet) {
 			return insertHSSFRows(sheet, startRow, num, copyOrigin);
 		} else {
@@ -1689,7 +1689,7 @@ public final class BookHelper {
 		}
 	}
 	
-	private static ChangeInfo insertXSSFRows(Sheet sheet, int startRow, int num, int copyOrigin) {
+	private static ChangeInfo insertXSSFRows(Worksheet sheet, int startRow, int num, int copyOrigin) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.insertRows(startRow, num);
@@ -1708,7 +1708,7 @@ public final class BookHelper {
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	
-	private static ChangeInfo insertHSSFRows(Sheet sheet, int startRow, int num, int copyOrigin) {
+	private static ChangeInfo insertHSSFRows(Worksheet sheet, int startRow, int num, int copyOrigin) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.insertRows(startRow, num);
@@ -1727,14 +1727,14 @@ public final class BookHelper {
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	//TODO interface for SheetCtrl?
-	public static ChangeInfo deleteRows(Sheet sheet, int startRow, int num) {
+	public static ChangeInfo deleteRows(Worksheet sheet, int startRow, int num) {
 		if (sheet instanceof HSSFSheet) {
 			return deleteHSSFRows(sheet, startRow, num);
 		} else {
 			return deleteXSSFRows(sheet, startRow, num);
 		}
 	}
-	private static ChangeInfo deleteHSSFRows(Sheet sheet, int startRow, int num) {
+	private static ChangeInfo deleteHSSFRows(Worksheet sheet, int startRow, int num) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.deleteRows(startRow, num);
@@ -1753,7 +1753,7 @@ public final class BookHelper {
 		
 		return new ChangeInfo(last, all, changeMerges);
 	}
-	private static ChangeInfo deleteXSSFRows(Sheet sheet, int startRow, int num) {
+	private static ChangeInfo deleteXSSFRows(Worksheet sheet, int startRow, int num) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.deleteRows(startRow, num);
@@ -1774,7 +1774,7 @@ public final class BookHelper {
 	}
 
 	//TODO interface for SheetCtrl?
-	public static ChangeInfo insertColumns(Sheet sheet, int startCol, int num, int copyOrigin) {
+	public static ChangeInfo insertColumns(Worksheet sheet, int startCol, int num, int copyOrigin) {
 		if (sheet instanceof HSSFSheet) {
 			return insertHSSFColumns(sheet, startCol, num, copyOrigin);
 		} else {
@@ -1782,7 +1782,7 @@ public final class BookHelper {
 		}
 	}
 			
-	private static ChangeInfo insertHSSFColumns(Sheet sheet, int startCol, int num, int copyOrigin) {
+	private static ChangeInfo insertHSSFColumns(Worksheet sheet, int startCol, int num, int copyOrigin) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.insertColumns(startCol, num);
@@ -1797,7 +1797,7 @@ public final class BookHelper {
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	
-	private static ChangeInfo insertXSSFColumns(Sheet sheet, int startCol, int num, int copyOrigin) {
+	private static ChangeInfo insertXSSFColumns(Worksheet sheet, int startCol, int num, int copyOrigin) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.insertColumns(startCol, num);
@@ -1813,7 +1813,7 @@ public final class BookHelper {
 	}
 	
 	//TODO SheetCtrl interface?
-	public static ChangeInfo deleteColumns(Sheet sheet, int startCol, int num) {
+	public static ChangeInfo deleteColumns(Worksheet sheet, int startCol, int num) {
 		if (sheet instanceof HSSFSheet) {
 			return deleteHSSFColumns(sheet, startCol, num);
 		} else {
@@ -1821,7 +1821,7 @@ public final class BookHelper {
 		}
 	}
 	
-	public static ChangeInfo deleteHSSFColumns(Sheet sheet, int startCol, int num) {
+	public static ChangeInfo deleteHSSFColumns(Worksheet sheet, int startCol, int num) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.deleteColumns(startCol, num);
@@ -1837,7 +1837,7 @@ public final class BookHelper {
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	
-	public static ChangeInfo deleteXSSFColumns(Sheet sheet, int startCol, int num) {
+	public static ChangeInfo deleteXSSFColumns(Worksheet sheet, int startCol, int num) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.deleteColumns(startCol, num);
@@ -1853,7 +1853,7 @@ public final class BookHelper {
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	
-	public static ChangeInfo insertRange(Sheet sheet, int tRow, int lCol, int bRow, int rCol, boolean horizontal, int copyRightBelow) {
+	public static ChangeInfo insertRange(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, boolean horizontal, int copyRightBelow) {
 		if (sheet instanceof HSSFSheet) {
 			return insertHSSFRange(sheet, tRow, lCol, bRow, rCol, horizontal, copyRightBelow);
 		} else {
@@ -1861,7 +1861,7 @@ public final class BookHelper {
 		}
 	}
 	
-	private static ChangeInfo insertHSSFRange(Sheet sheet, int tRow, int lCol, int bRow, int rCol, boolean horizontal, int copyRightBelow) {
+	private static ChangeInfo insertHSSFRange(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, boolean horizontal, int copyRightBelow) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.insertRange(tRow, lCol, bRow, rCol, horizontal);
@@ -1885,7 +1885,7 @@ public final class BookHelper {
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	
-	private static ChangeInfo insertXSSFRange(Sheet sheet, int tRow, int lCol, int bRow, int rCol, boolean horizontal, int copyRightBelow) {
+	private static ChangeInfo insertXSSFRange(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, boolean horizontal, int copyRightBelow) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.insertRange(tRow, lCol, bRow, rCol, horizontal);
@@ -1909,7 +1909,7 @@ public final class BookHelper {
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	
-	public static ChangeInfo deleteRange(Sheet sheet, int tRow, int lCol, int bRow, int rCol, boolean horizontal) {
+	public static ChangeInfo deleteRange(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, boolean horizontal) {
 		if (sheet instanceof HSSFSheet) {
 			return deleteHSSFRange(sheet, tRow, lCol, bRow, rCol, horizontal);
 		} else {
@@ -1917,7 +1917,7 @@ public final class BookHelper {
 		}
 	}
 	
-	private static ChangeInfo deleteHSSFRange(Sheet sheet, int tRow, int lCol, int bRow, int rCol, boolean horizontal) {
+	private static ChangeInfo deleteHSSFRange(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, boolean horizontal) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.deleteRange(tRow, lCol, bRow, rCol, horizontal);
@@ -1942,7 +1942,7 @@ public final class BookHelper {
 		return new ChangeInfo(last, all, changeMerges);
 	}
 
-	private static ChangeInfo deleteXSSFRange(Sheet sheet, int tRow, int lCol, int bRow, int rCol, boolean horizontal) {
+	private static ChangeInfo deleteXSSFRange(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, boolean horizontal) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.deleteRange(tRow, lCol, bRow, rCol, horizontal);
@@ -1968,7 +1968,7 @@ public final class BookHelper {
 	}
 
 	//TODO as SheetCtrl interface
-	public static ChangeInfo moveRange(Sheet sheet, int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
+	public static ChangeInfo moveRange(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
 		if (sheet instanceof HSSFSheet) {
 			return moveHSSFRange(sheet, tRow, lCol, bRow, rCol, nRow, nCol);
 		} else {
@@ -1976,7 +1976,7 @@ public final class BookHelper {
 		}
 	}
 		
-	private static ChangeInfo moveHSSFRange(Sheet sheet, int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
+	private static ChangeInfo moveHSSFRange(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
 		if (nRow == 0 && nCol == 0) { //nothing to do!
 			return null;
 		}
@@ -2005,7 +2005,7 @@ public final class BookHelper {
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	
-	private static ChangeInfo moveXSSFRange(Sheet sheet, int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
+	private static ChangeInfo moveXSSFRange(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
 		if (nRow == 0 && nCol == 0) { //nothing to do!
 			return null;
 		}
@@ -2058,14 +2058,14 @@ public final class BookHelper {
 		return changeMerges;
 	}
 	
-	private static void shiftFormulas(Set<Ref> all, Sheet sheet, int startRow, int endRow, int nRow, int startCol, int endCol, int nCol) {
+	private static void shiftFormulas(Set<Ref> all, Worksheet sheet, int startRow, int endRow, int nRow, int startCol, int endCol, int nCol) {
 		final int moveSheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
         final PtgShifter shifter97 = new PtgShifter(moveSheetIndex, startRow, endRow, nRow, startCol, endCol, nCol, SpreadsheetVersion.EXCEL97);
         final PtgShifter shifter2007 = new PtgShifter(moveSheetIndex, startRow, endRow, nRow, startCol, endCol, nCol, SpreadsheetVersion.EXCEL2007);
 		for (Ref ref : all) {
 			final int tRow = ref.getTopRow();
 			final int lCol = ref.getLeftCol();
-			final Sheet srcSheet = getSheet(sheet, ref.getOwnerSheet());
+			final Worksheet srcSheet = getSheet(sheet, ref.getOwnerSheet());
 			final Book srcBook = (Book) srcSheet.getWorkbook();
 			final Cell srcCell = getCell(srcSheet, tRow, lCol);
 			if (srcCell != null && srcCell.getCellType() == Cell.CELL_TYPE_FORMULA) {
@@ -2121,7 +2121,7 @@ public final class BookHelper {
         return shiftedFmla;
 	}
 	
-	public static ChangeInfo unMerge(Sheet sheet, int tRow, int lCol, int bRow, int rCol) {
+	public static ChangeInfo unMerge(Worksheet sheet, int tRow, int lCol, int bRow, int rCol) {
 		final RefSheet refSheet = BookHelper.getRefSheet((Book)sheet.getWorkbook(), sheet);
 		final List<MergeChange> changes = new ArrayList<MergeChange>(); 
 		for(int j = sheet.getNumMergedRegions() - 1; j >= 0; --j) {
@@ -2140,7 +2140,7 @@ public final class BookHelper {
 		return new ChangeInfo(null, null, changes);
 	}
 	
-	/**
+	/*
 	 * Merge the specified range per the given tRow, lCol, bRow, rCol.
 	 * 
 	 * @param sheet sheet
@@ -2152,7 +2152,7 @@ public final class BookHelper {
 	 * @return {@link Ref} array where the affected formula cell references in index 1 and to be evaluated formula cell references in index 0.
 	 */
 	@SuppressWarnings("unchecked")
-	public static ChangeInfo merge(Sheet sheet, int tRow, int lCol, int bRow, int rCol, boolean across) {
+	public static ChangeInfo merge(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, boolean across) {
 		if (across) {
 			final Set<Ref> toEval = new HashSet<Ref>();
 			final Set<Ref> affected = new HashSet<Ref>();
@@ -2169,7 +2169,7 @@ public final class BookHelper {
 		}
 	}
 	
-	private static ChangeInfo merge0(Sheet sheet, int tRow, int lCol, int bRow, int rCol) {
+	private static ChangeInfo merge0(Worksheet sheet, int tRow, int lCol, int bRow, int rCol) {
 		final List<MergeChange> changes = new ArrayList<MergeChange>();
 		final Set<Ref> all = new HashSet<Ref>();
 		final Set<Ref> last = new HashSet<Ref>();
@@ -2242,7 +2242,7 @@ public final class BookHelper {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static ChangeInfo sort(Sheet sheet, int tRow, int lCol, int bRow, int rCol, 
+	public static ChangeInfo sort(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, 
 			Ref key1, boolean desc1, Ref key2, int type, boolean desc2, Ref key3, boolean desc3, int header, int orderCustom,
 			boolean matchCase, boolean sortByRows, int sortMethod, int dataOption1, int dataOption2, int dataOption3) {
 		//TODO type not yet imiplmented(Sort label/Sort value, for PivotTable)
@@ -2359,7 +2359,7 @@ public final class BookHelper {
 		return val;
 	}
 	@SuppressWarnings("unchecked")
-	private static ChangeInfo  assignColumns(Sheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
+	private static ChangeInfo  assignColumns(Worksheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
 		final int cellCount = bRow - tRow + 1;
 		final Map<Integer, List<Cell>> newCols = new HashMap<Integer, List<Cell>>();  
 		final Set<Ref> toEval = new HashSet<Ref>();
@@ -2405,7 +2405,7 @@ public final class BookHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static ChangeInfo assignRows(Sheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
+	private static ChangeInfo assignRows(Worksheet sheet, List<SortKey> sortKeys, int tRow, int lCol, int bRow, int rCol) {
 		final int cellCount = rCol - lCol + 1;
 		final Map<Integer, List<Cell>> newRows = new HashMap<Integer, List<Cell>>();  
 		final Set<Ref> toEval = new HashSet<Ref>();
@@ -2629,7 +2629,7 @@ public final class BookHelper {
 		return _BORDER_STYLE_INDEX.get(lineStyle).shortValue();
 	}
 	
-	public static Set<Ref> setBorders(Sheet sheet, int tRow, int lCol, int bRow, int rCol, short borderIndex, BorderStyle lineStyle, String color) {
+	public static Set<Ref> setBorders(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, short borderIndex, BorderStyle lineStyle, String color) {
 		Set<Ref> all = null;
 		if ((borderIndex & BookHelper.BORDER_INSIDE) != 0) {
 			all = setBordersInside(sheet, tRow, lCol, bRow, rCol, borderIndex, lineStyle, color);
@@ -2649,7 +2649,7 @@ public final class BookHelper {
 		return all;
 	}
 	
-	private static Set<Ref> setBordersOutline(Sheet sheet, int tRow, int lCol, int bRow, int rCol, short borderIndex, BorderStyle lineStyle, String color) {
+	private static Set<Ref> setBordersOutline(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, short borderIndex, BorderStyle lineStyle, String color) {
 		final Book book = (Book) sheet.getWorkbook();
 		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
 		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
@@ -2726,7 +2726,7 @@ public final class BookHelper {
 		return all;
 	}
 	
-	private static Set<Ref> setBordersInside(Sheet sheet, int tRow, int lCol, int bRow, int rCol, short borderIndex, BorderStyle lineStyle, String color) {
+	private static Set<Ref> setBordersInside(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, short borderIndex, BorderStyle lineStyle, String color) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = BookHelper.getRefSheet(book, sheet);
 		final Color bsColor = BookHelper.HTMLToColor(book, color);
@@ -2772,7 +2772,7 @@ public final class BookHelper {
 		return all;
 	}
 
-	private static Set<Ref> setBordersDiagonal(Sheet sheet, int tRow, int lCol, int bRow, int rCol, short borderIndex, BorderStyle lineStyle, String color) {
+	private static Set<Ref> setBordersDiagonal(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, short borderIndex, BorderStyle lineStyle, String color) {
 		final Book book = (Book) sheet.getWorkbook();
 		final RefSheet refSheet = BookHelper.getRefSheet(book, sheet);
 		final Color bsColor = BookHelper.HTMLToColor(book, color);
@@ -2804,7 +2804,7 @@ public final class BookHelper {
 		return all;
 	}
 	
-	public static Set<Ref> setColumnWidth(Sheet sheet, int lCol, int rCol, int char256) {
+	public static Set<Ref> setColumnWidth(Worksheet sheet, int lCol, int rCol, int char256) {
 		final Book book = (Book) sheet.getWorkbook();
 		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
 		final RefSheet refSheet = BookHelper.getRefSheet(book, sheet);
@@ -2819,7 +2819,7 @@ public final class BookHelper {
 		return all;
 	}
 	
-	public static Set<Ref> setRowHeight(Sheet sheet, int tRow, int bRow, short twips) {
+	public static Set<Ref> setRowHeight(Worksheet sheet, int tRow, int bRow, short twips) {
 		final Book book = (Book) sheet.getWorkbook();
 		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
 		final RefSheet refSheet = BookHelper.getRefSheet(book, sheet);
@@ -2834,12 +2834,12 @@ public final class BookHelper {
 		return all;
 	}
 	
-	public static void setRowHeight(Sheet sheet, int row, short twips) {
+	public static void setRowHeight(Worksheet sheet, int row, short twips) {
 		final Row rowx = BookHelper.getOrCreateRow(sheet, row);
 		rowx.setHeight(twips);
 	}
 	
-	public static short getRowHeight(Sheet sheet, int row) {
+	public static short getRowHeight(Worksheet sheet, int row) {
 		final Row rowx = sheet.getRow(row);
 		return rowx != null ? getRowHeight(rowx) : sheet.getDefaultRowHeight();
 	}
@@ -2849,7 +2849,7 @@ public final class BookHelper {
 		return h == 0xFF ? row.getSheet().getDefaultRowHeight() : h;
 	}
 	
-	public static Set<Ref> setCellStyle(Sheet sheet, int tRow, int lCol, int bRow, int rCol, CellStyle style) {
+	public static Set<Ref> setCellStyle(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, CellStyle style) {
 		for(int r = tRow; r <= bRow; ++r) {
 			for (int c = lCol; c <= rCol; ++c) {
 				final Cell cell = BookHelper.getOrCreateCell(sheet, r, c);
@@ -2872,7 +2872,7 @@ public final class BookHelper {
 	private static final int FILL_LEFT = 5;
 	
 	//[0]:last [1]:all
-	public static ChangeInfo fill(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+	public static ChangeInfo fill(Worksheet sheet, Ref srcRef, Ref dstRef, int fillType) {
 //TODO, FILL_DEFAULT shall check the contents of the source cell, now we default to FILL_COPY
 if (fillType == FILL_DEFAULT) {
 	fillType = FILL_COPY;
@@ -2896,7 +2896,7 @@ if (fillType == FILL_DEFAULT) {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static ChangeInfo fillDown(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+	public static ChangeInfo fillDown(Worksheet sheet, Ref srcRef, Ref dstRef, int fillType) {
 		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
@@ -2942,7 +2942,7 @@ if (fillType == FILL_DEFAULT) {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static ChangeInfo fillUp(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+	public static ChangeInfo fillUp(Worksheet sheet, Ref srcRef, Ref dstRef, int fillType) {
 		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
@@ -2988,7 +2988,7 @@ if (fillType == FILL_DEFAULT) {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static ChangeInfo fillRight(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+	public static ChangeInfo fillRight(Worksheet sheet, Ref srcRef, Ref dstRef, int fillType) {
 		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
@@ -3034,7 +3034,7 @@ if (fillType == FILL_DEFAULT) {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static ChangeInfo fillLeft(Sheet sheet, Ref srcRef, Ref dstRef, int fillType) {
+	public static ChangeInfo fillLeft(Worksheet sheet, Ref srcRef, Ref dstRef, int fillType) {
 		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
@@ -3079,8 +3079,8 @@ if (fillType == FILL_DEFAULT) {
 		return changeInfo;
 	}
 	
-	private static int getFillDirection(Sheet sheet, Ref srcRef, Ref dstRef) {
-		final Sheet dstSheet = BookHelper.getSheet(sheet, dstRef.getOwnerSheet());
+	private static int getFillDirection(Worksheet sheet, Ref srcRef, Ref dstRef) {
+		final Worksheet dstSheet = BookHelper.getSheet(sheet, dstRef.getOwnerSheet());
 		if (dstSheet.equals(sheet)) {
 			final int dsttRow = dstRef.getTopRow();
 			final int dstbRow = dstRef.getBottomRow();
@@ -3133,7 +3133,7 @@ if (fillType == FILL_DEFAULT) {
 		return null;
 	}
 	
-	public static Set<Ref> setRowsHidden(Sheet sheet, int tRow, int bRow, boolean hidden) {
+	public static Set<Ref> setRowsHidden(Worksheet sheet, int tRow, int bRow, boolean hidden) {
 		if (hidden) {
 			for(int r = tRow; r <= bRow; ++r) {
 				final Row row = BookHelper.getOrCreateRow(sheet, r);
@@ -3155,7 +3155,7 @@ if (fillType == FILL_DEFAULT) {
 		return all; 
 	}
 
-	public static Set<Ref> setColumnsHidden(Sheet sheet, int lCol, int rCol, boolean hidden) {
+	public static Set<Ref> setColumnsHidden(Worksheet sheet, int lCol, int rCol, boolean hidden) {
 		for(int c = lCol; c <= rCol; ++c) {
 			sheet.setColumnHidden(c, hidden);
 		}
@@ -3245,15 +3245,19 @@ if (fillType == FILL_DEFAULT) {
 		return dstStyle;
     }
     
-    /**
-     * Shifts the merged regions left or right depending on mode
-     * <p>
-     * @param start
-     * @param end
-     * @param n
-     * @param horizontal
+    /*
+     * Shifts the merged regions in either horizontal or vertical direction.
+     * 
+     * @param sheet the sheet where merged region might be
+     * @param tRow top row index of moving range
+     * @param lCol left column index of moving range
+     * @param bRow bottom row index of moving range
+     * @param rCol right column index of moving range
+     * @param n number of rows/columns moved
+     * @param horizontal true to indicate a shift on horizontal direction; otherwise, vertical direction.
+     * @return the shifted merge region
      */
-    /*package*/ static List<CellRangeAddress[]> shiftMergedRegion(Sheet sheet, int tRow, int lCol, int bRow, int rCol, int n, boolean horizontal) {
+    /*package*/ static List<CellRangeAddress[]> shiftMergedRegion(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, int n, boolean horizontal) {
         List<CellRangeAddress[]> shiftedRegions = new ArrayList<CellRangeAddress[]>();
         if (!horizontal) {
         	int start = tRow;
@@ -3378,16 +3382,19 @@ if (fillType == FILL_DEFAULT) {
         
         return shiftedRegions;
     }
-
-    /**
-     * Shifts the merged regions left or right depending on mode
-     * <p>
-     * @param start
-     * @param end
-     * @param n
-     * @param horizontal
+    /*
+     * Shifts the merged regions in both horizontal and vertical direction.
+     * 
+     * @param sheet the sheet where merged region might be
+     * @param tRow top row index of moving range
+     * @param lCol left column index of moving range
+     * @param bRow bottom row index of moving range
+     * @param rCol right column index of moving range
+     * @param nRow number of rows moved
+     * @param nCol number of columns moved
+     * @return the shifted merge region
      */
-    public static List<CellRangeAddress[]> shiftBothMergedRegion(Sheet sheet, int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
+    public static List<CellRangeAddress[]> shiftBothMergedRegion(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
         List<CellRangeAddress[]> shiftedRegions = new ArrayList<CellRangeAddress[]>();
         //move merged regions completely if they fall within the new region boundaries when they are shifted
         final int dsttRow = tRow + nRow;
@@ -3538,7 +3545,7 @@ if (fillType == FILL_DEFAULT) {
 					return ncolor;
 				} catch (RuntimeException ex) {
 					//return similar color if can't add new color to palette
-					/**
+					/*
 					 * TODO: find a better solution for fix this issue
 					 * 
 					 * While there is no space for adding a color into palette
@@ -3605,16 +3612,16 @@ if (fillType == FILL_DEFAULT) {
 		}
 	}
 	
-	public static boolean isFreezePane(Sheet sheet) {
+	public static boolean isFreezePane(Worksheet sheet) {
 		return (sheet instanceof HSSFSheetImpl) ?
 			((HSSFSheetImpl)sheet).isFreezePanes() : ((XSSFSheetImpl)sheet).isFreezePanes();
 	}
 	
-	public static int getRowFreeze(Sheet sheet) {
+	public static int getRowFreeze(Worksheet sheet) {
 		final PaneInformation pi = sheet.getPaneInformation();
 		return pi != null ? pi.getHorizontalSplitPosition() : 0;
 	}
-	public static int getColumnFreeze(Sheet sheet) {
+	public static int getColumnFreeze(Worksheet sheet) {
 		final PaneInformation pi = sheet.getPaneInformation();
 		return pi != null ? pi.getVerticalSplitPosition() : 0;
 	}

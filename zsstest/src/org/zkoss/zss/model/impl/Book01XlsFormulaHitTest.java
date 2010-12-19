@@ -34,7 +34,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.impl.CellRefImpl;
@@ -85,7 +85,7 @@ public class Book01XlsFormulaHitTest {
 
 	@Test
 	public void testEvaluateArea() {
-		Sheet sheet1 = _book.getSheet("Sheet 1");
+		Worksheet sheet1 = _book.getWorksheet("Sheet 1");
 		Row row = sheet1.getRow(0);
 		assertEquals(null, row.getCell(0));
 		assertEquals(2, row.getCell(1).getNumericCellValue(), 0.0000000000000001);
@@ -111,8 +111,8 @@ public class Book01XlsFormulaHitTest {
 	}
 	@Test
 	public void testEvaluateExternArea() {
-		Sheet sheet1 = _book.getSheet("Sheet 1");
-		Sheet sheet2 = _book.getSheet("Sheet2");
+		Worksheet sheet1 = _book.getWorksheet("Sheet 1");
+		Worksheet sheet2 = _book.getWorksheet("Sheet2");
 		assertEquals(1, sheet2.getRow(1).getCell(0).getNumericCellValue(), 0.0000000000000001);
 		assertEquals(2, sheet2.getRow(1).getCell(1).getNumericCellValue(), 0.0000000000000001);
 		assertEquals(3, sheet2.getRow(1).getCell(2).getNumericCellValue(), 0.0000000000000001);
@@ -139,9 +139,9 @@ public class Book01XlsFormulaHitTest {
 	}
 	@Test
 	public void testEvaluateArea3D() {
-		Sheet sheet1 = _book.getSheet("Sheet 1");
-		Sheet sheet2 = _book.getSheet("Sheet2");
-		Sheet sheet3 = _book.getSheet("Sheet3");
+		Worksheet sheet1 = _book.getWorksheet("Sheet 1");
+		Worksheet sheet2 = _book.getWorksheet("Sheet2");
+		Worksheet sheet3 = _book.getWorksheet("Sheet3");
 		assertEquals(1, sheet1.getRow(2).getCell(2).getNumericCellValue(), 0.0000000000000001);
 		assertEquals(2, sheet2.getRow(2).getCell(2).getNumericCellValue(), 0.0000000000000001);
 		assertEquals(3, sheet3.getRow(2).getCell(2).getNumericCellValue(), 0.0000000000000001);
@@ -168,8 +168,8 @@ public class Book01XlsFormulaHitTest {
 	}
 	@Test
 	public void testEvaluateExternRef() {
-		Sheet sheet1 = _book.getSheet("Sheet 1");
-		Sheet sheet2 = _book.getSheet("Sheet2");
+		Worksheet sheet1 = _book.getWorksheet("Sheet 1");
+		Worksheet sheet2 = _book.getWorksheet("Sheet2");
 		assertEquals(1, sheet2.getRow(1).getCell(0).getNumericCellValue(), 0.0000000000000001);
 		assertEquals(2, sheet2.getRow(1).getCell(1).getNumericCellValue(), 0.0000000000000001);
 		assertEquals(3, sheet2.getRow(1).getCell(2).getNumericCellValue(), 0.0000000000000001);
@@ -196,9 +196,9 @@ public class Book01XlsFormulaHitTest {
 	}
 	@Test
 	public void testEvaluateRef3D() {
-		Sheet sheet1 = _book.getSheet("Sheet 1");
-		Sheet sheet2 = _book.getSheet("Sheet2");
-		Sheet sheet3 = _book.getSheet("Sheet3");
+		Worksheet sheet1 = _book.getWorksheet("Sheet 1");
+		Worksheet sheet2 = _book.getWorksheet("Sheet2");
+		Worksheet sheet3 = _book.getWorksheet("Sheet3");
 		assertEquals(1, sheet1.getRow(2).getCell(2).getNumericCellValue(), 0.0000000000000001);
 		assertEquals(2, sheet2.getRow(2).getCell(2).getNumericCellValue(), 0.0000000000000001);
 		assertEquals(3, sheet3.getRow(2).getCell(2).getNumericCellValue(), 0.0000000000000001);

@@ -26,7 +26,7 @@ import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook;
@@ -82,7 +82,7 @@ public class Book10XlsxHyperlinkTest {
 	
 	@Test
 	public void testLoadHyperlinks() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = (Worksheet)_workbook.getSheet("Sheet1");
 		Row row1 = sheet1.getRow(0);
 		Row row2 = sheet1.getRow(1);
 		Row row3 = sheet1.getRow(2);

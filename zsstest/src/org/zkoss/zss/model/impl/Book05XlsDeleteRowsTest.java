@@ -21,7 +21,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.util.resource.ClassLocator;
@@ -35,7 +35,7 @@ import org.zkoss.zss.model.impl.HSSFBookImpl;
  * @author henrichen
  */
 public class Book05XlsDeleteRowsTest {
-	private Workbook _workbook;
+	private Book _workbook;
 	private FormulaEvaluator _evaluator;
 
 	/**
@@ -71,7 +71,7 @@ public class Book05XlsDeleteRowsTest {
 	
 	@Test
 	public void testDelete4_6() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row5 = sheet1.getRow(4);
 		Row row6 = sheet1.getRow(5);
 		Row row7 = sheet1.getRow(6);
@@ -202,7 +202,7 @@ public class Book05XlsDeleteRowsTest {
 	
 	@Test
 	public void testDeleteA4_J6() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Worksheet sheet1 = _workbook.getWorksheet("Sheet1");
 		Row row5 = sheet1.getRow(4);
 		Row row6 = sheet1.getRow(5);
 		Row row7 = sheet1.getRow(6);

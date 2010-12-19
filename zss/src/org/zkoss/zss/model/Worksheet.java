@@ -18,7 +18,7 @@ package org.zkoss.zss.model;
  * @author henrichen
  *
  */
-public interface Sheet extends org.zkoss.poi.ss.usermodel.Sheet {
+public interface Worksheet extends org.zkoss.poi.ss.usermodel.Sheet {
 	/**
 	 * Returns the associated ZK Spreadsheet {@link Book} of this ZK Spreadsheet Sheet. 
 	 * @return the associated ZK Spreadsheet {@link Book} of this ZK Spreadsheet Sheet.

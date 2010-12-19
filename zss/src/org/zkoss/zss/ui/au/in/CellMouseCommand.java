@@ -22,14 +22,13 @@ package org.zkoss.zss.ui.au.in;
 import java.util.Map;
 
 import org.zkoss.lang.Objects;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.MouseEvent;
-//import org.zkoss.zss.model.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellMouseEvent;
 import org.zkoss.zss.ui.impl.Utils;
@@ -63,7 +62,7 @@ public class CellMouseCommand implements Command {
 		int my = (Integer) data.get("my");
 		
 		
-		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		Worksheet sheet = ((Spreadsheet) comp).getSelectedSheet();
 		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		

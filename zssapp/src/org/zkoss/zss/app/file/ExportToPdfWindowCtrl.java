@@ -31,7 +31,7 @@ import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Exporter;
 import org.zkoss.zss.model.Exporters;
-import org.zkoss.zss.model.impl.PdfExporter;
+import org.zkoss.zss.model.impl.pdf.PdfExporter;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
