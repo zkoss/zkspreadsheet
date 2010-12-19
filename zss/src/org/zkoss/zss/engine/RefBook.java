@@ -117,13 +117,12 @@ public interface RefBook {
 
 	/**
 	 * Sets share scope of this reference book.
-	 * @param scope
+	 * @param scope share scope of thie reference book.
 	 */
 	public void setShareScope(String scope);
 	
 	/**
 	 * Returns share scope of this reference book.
-	 * @param scope
 	 * @return share scope of this reference book.
 	 */
 	public String getShareScope();

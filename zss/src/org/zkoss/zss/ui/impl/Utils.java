@@ -54,7 +54,7 @@ import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
- * Utility class for {@link Spreadsheet}.
+ * Internal Use Only. Utility class for {@link Spreadsheet}.
  * @author Dennis.Chen
  *
  */
@@ -343,7 +343,7 @@ public class Utils {
 	 * <p> Copy the original cell style, font style, and set underline.
 	 * @param sheet
 	 * @param rect
-	 * @param isItalic
+	 * @param underline
 	 */
 	public static void setFontUnderline(final Worksheet sheet, Rect rect, final byte underline) {
 		
@@ -458,7 +458,7 @@ public class Utils {
 	}
 	
 	/**
-	 * Visit each cell in the {@link #Rect}
+	 * Visit each cell in the {@link Rect}
 	 * @param sheet
 	 * @param rect
 	 * @param vistor
@@ -468,7 +468,7 @@ public class Utils {
 	}
 
 	/**
-	 * Visit each sheet in the {@link #Book}
+	 * Visit each worksheet in the {@link Book}.
 	 * @param book
 	 * @param visitor
 	 */

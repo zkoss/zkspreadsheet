@@ -28,15 +28,16 @@ import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.impl.BookHelper;
 
 /**
+ * Internal Use Only.
  * @author Sam
  *
  */
 public class CellVisitorContext {
 
-	int row;
-	int col;
-	Worksheet sheet;
-	Book book;
+	private int row;
+	private int col;
+	private Worksheet sheet;
+	private Book book;
 	/**
 	 * @param sheet
 	 * @param row
@@ -50,8 +51,8 @@ public class CellVisitorContext {
 	}	
 	
 	/**
-	 * Returns the {#link Font} of the current cell
-	 * @return
+	 * Returns the {@link Font} of the current cell
+	 * @return  the {@link Font} of the current cell
 	 */
 	public Font getFont() {
 		CellStyle cs = getOrCreateCell().getCellStyle();
@@ -59,15 +60,15 @@ public class CellVisitorContext {
 	}
 	
 	/**
-	 * Returns the {#link CellStyle} of the current cell
-	 * @return
+	 * Returns the {@link CellStyle} of the current cell
+	 * @return the {@link CellStyle} of the current cell
 	 */
 	public CellStyle getCellStyle() {
 		return getOrCreateCell().getCellStyle();
 	}
 	
 	/**
-	 * Copy the current cell's style setting, returns a new {#link CellStyle}
+	 * Copy the current cell's style setting, returns a new {@link CellStyle}
 	 * @return CellStyle
 	 */
 	public CellStyle cloneCellStyle() {
@@ -85,7 +86,7 @@ public class CellVisitorContext {
 
 	/**
 	 * Returns whether font is italic or not.
-	 * @return
+	 * @return whether font is italic or not.
 	 */
 	public boolean isItalic() {
 		return getFont().getItalic();
@@ -93,7 +94,7 @@ public class CellVisitorContext {
 	
 	/**
 	 * Returns whether font is bold or not.
-	 * @return
+	 * @return whether font is bold or not.
 	 */
 	public boolean isBold() {
 		return getFont().getBoldweight() == Font.BOLDWEIGHT_BOLD;
@@ -101,7 +102,7 @@ public class CellVisitorContext {
 
 	/**
 	 * Returns font height
-	 * @return
+	 * @return font height
 	 */
 	public short getFontHeight() {
 		return getFont().getFontHeight();
@@ -109,7 +110,7 @@ public class CellVisitorContext {
 	
 	/**
 	 * Returns font family
-	 * @return
+	 * @return font family
 	 */
 	public String getFontFamily() {
 		return getFont().getFontName();
@@ -122,7 +123,7 @@ public class CellVisitorContext {
 
 	/**
 	 * Returns the cell's alignment
-	 * @return
+	 * @return the cell's alignment
 	 */
 	public short getAlignment() {
 		return getOrCreateCell().getCellStyle().getAlignment();
@@ -130,7 +131,7 @@ public class CellVisitorContext {
 	
 	/**
 	 * Returns the range
-	 * @return
+	 * @return the range
 	 */
 	public Range getRange() {
 		return Utils.getRange(sheet, row, col);
@@ -138,7 +139,7 @@ public class CellVisitorContext {
 
 	/**
 	 * Returns cell, if there's no cell, will create cell and return
-	 * @return
+	 * @return cell of this context
 	 */
 	public Cell getOrCreateCell() {
 		return Utils.getOrCreateCell(sheet, row, col);
@@ -146,7 +147,7 @@ public class CellVisitorContext {
 	
 	/**
 	 * Returns cell if there has cell
-	 * @return
+	 * @return cell if exists; otherwise null
 	 */
 	public Cell getCell() {
 		return Utils.getCell(sheet, row, col);

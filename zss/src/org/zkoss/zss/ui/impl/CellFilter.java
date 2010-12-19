@@ -19,14 +19,15 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.impl;
 
 /**
+ * Internal Use Only.
  * @author Sam, Ian Tsai
  *
  */
 public interface CellFilter {
 	/**
-	 * 
+	 * Returns whether filter this cell.
 	 * @param context
-	 * @return
+	 * @return whether filter this cell
 	 */
 	public boolean doFilter(CellVisitorContext context);
 }

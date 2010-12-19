@@ -27,6 +27,7 @@ import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Rect;
 
 /**
+ * Internal Use Only.
  * @author Sam, Ian Tsai
  *
  */
@@ -35,9 +36,9 @@ public class CellSelector {
 	private CellFilter decorator;
 	
 	/**
-	 * 
+	 * add a Filter into this cell selector.
 	 * @param cellFilter
-	 * @return
+	 * @return this
 	 */
 	public CellSelector addFilter(final CellFilter cellFilter) {
 		if (decorator == null) {
@@ -55,12 +56,6 @@ public class CellSelector {
 		return this;
 	}
 
-	/**
-	 * Visit cell in selection.
-	 * @param sheet
-	 * @param rect
-	 * @param vistor
-	 */
 	public void doVisit(Worksheet sheet, Rect rect, CellVisitor vistor){
 		for (int row = rect.getTop(); row <= rect.getBottom(); row++) {
 			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
@@ -73,12 +68,6 @@ public class CellSelector {
 		}
 	}	
 	
-	/**
-	 * 
-	 * @param sheet
-	 * @param rect
-	 * @return
-	 */
 	public List<Cell> execute(Worksheet sheet, Rect rect){
 		final List<Cell> cells = new LinkedList<Cell>();
 		doVisit(sheet, rect, new CellVisitor() {

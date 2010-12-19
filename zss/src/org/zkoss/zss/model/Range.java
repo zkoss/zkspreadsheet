@@ -194,7 +194,7 @@ public interface Range {
 	 * @param dstRange the destination range to be pasted into.
 	 * @param pasteType the part of the range to be pasted.
 	 * @param pasteOp the paste operation
-	 * @param SkipBlanks true to not have blank cells in the ranage on the Clipboard pasted into this range; default false.
+	 * @param skipBlanks true to not have blank cells in the ranage on the Clipboard pasted into this range; default false.
 	 * @param transpose true to transpose rows and columns when pasting to this range; default false.
 	 * @return real destination range that was pasted into.
 	 */
@@ -359,7 +359,7 @@ public interface Range {
 	
 	/**
 	 * Sets the hyperlink of this Range
-	 * @param linkType the type of target to link. One of the {@link #Hyperlink.LINK_URL}, 
+	 * @param linkType the type of target to link. One of the {@link Hyperlink#LINK_URL}, 
 	 * {@link Hyperlink#LINK_DOCUMENT}, {@link Hyperlink#LINK_EMAIL}, {@link Hyperlink#LINK_FILE}
 	 * @param address the address
 	 * @param display the text to display link
