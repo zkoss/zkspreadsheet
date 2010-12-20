@@ -23,13 +23,17 @@ public class SS_195_Test extends SSAbstractTestCase {
 		waitResponse();
 		click(jq("$customSort a.z-menu-item-cnt"));
 		waitResponse();
+		
+		//verify
+		verifyTrue(jq("$sortWin @combobox i.z-combobox-rounded-btn-readonly:eq(1)").exists());
+		
 		click(jq("$sortWin @listcell:eq(0)"));
 		waitResponse();
 		click(jq("$delBtn td.z-button-cm"));
 		waitResponse();
 		
-		//how to verify
-		sleep(5000);
+		//verify
+		verifyFalse(jq("$sortWin @combobox i.z-combobox-rounded-btn-readonly:eq(1)").exists());
 	}
 }
 
