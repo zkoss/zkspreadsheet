@@ -16,10 +16,12 @@ public class SS_033_Test extends SSAbstractTestCase {
     	waitResponse();
 
     	// Input color hex code, then press Enter.
-        JQuery colorTextbox = jq(".z-colorpalette-hex-inp:eq(1)");
+        JQuery colorTextbox = jq(".z-colorpalette-hex-inp:visible");
         String backgroundColorStr = "#990033";
         type(colorTextbox, backgroundColorStr);
         String code = colorTextbox.text();
+
+
         keyPressEnter(colorTextbox);
         //Verify
         cell_B_8 = getSpecifiedCell(1, 7);
