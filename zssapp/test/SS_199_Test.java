@@ -32,7 +32,7 @@ public class SS_199_Test extends SSAbstractTestCase {
 		click(jq("$okBtn td.z-button-cm"));
 		waitResponse();
 		
-		//how to verify
+		//verify
 		String b13value = getSpecifiedCell(1,12).text();
 		String b14value = getSpecifiedCell(1,13).text();
 		String b15value = getSpecifiedCell(1,14).text();

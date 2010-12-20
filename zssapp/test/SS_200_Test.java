@@ -30,7 +30,27 @@ public class SS_200_Test extends SSAbstractTestCase {
 		click(jq("$okBtn td.z-button-cm"));
 		waitResponse();
 		
-		//how to verify
+		//verify
+		String b13value = getSpecifiedCell(1,12).text();
+		String b14value = getSpecifiedCell(1,13).text();
+		String b15value = getSpecifiedCell(1,14).text();
+		String b16value = getSpecifiedCell(1,15).text();
+
+		String f13value = getSpecifiedCell(5,12).text();
+		String f14value = getSpecifiedCell(5,13).text();
+		String f15value = getSpecifiedCell(5,14).text();
+		String f16value = getSpecifiedCell(5,15).text();
+
+		verifyEquals(b13value,"Average total assets");
+		verifyEquals(b14value,"Current assets");
+		verifyEquals(b15value,"Fixed assets");
+		verifyEquals(b16value,"Total assets");
+		
+		verifyEquals(f13value,"120,000");
+		verifyEquals(f14value,"45,000");
+		verifyEquals(f15value,"80,000");
+		verifyEquals(f16value,"125,000");
+
 		sleep(5000);
 	}
 }
