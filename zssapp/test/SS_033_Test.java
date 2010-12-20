@@ -19,10 +19,9 @@ public class SS_033_Test extends SSAbstractTestCase {
         JQuery colorTextbox = jq(".z-colorpalette-hex-inp:visible");
         String backgroundColorStr = "#990033";
         type(colorTextbox, backgroundColorStr);
-        String code = colorTextbox.text();
-
-
         keyPressEnter(colorTextbox);
+    	waitResponse();
+
         //Verify
         cell_B_8 = getSpecifiedCell(1, 7);
         String style = ColorVerifingHelper.transform(cell_B_8.css("background-color"));
