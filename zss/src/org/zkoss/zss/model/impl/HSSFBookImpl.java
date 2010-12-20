@@ -313,7 +313,7 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 
 	@Override
 	public Worksheet getWorksheet(String name) {
-		return (Worksheet) getWorksheet(name);
+		return (Worksheet) getSheet(name);
 	}
 	
 }
