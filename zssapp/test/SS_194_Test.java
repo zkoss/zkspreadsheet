@@ -13,21 +13,23 @@ This program is distributed under Apache License Version 2.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
 
-//select B4:H10, and Delete to clear content
-public class SS_166_Test extends SSAbstractTestCase {
+//sort ==> custom sort B13~B17, add second condition
+public class SS_194_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
-		selectCells(1,12,6,17);
-
-		//not work, 
-		//Delete is confused with "."
-		keyPressNative(DELETE);
+		rightClickCells(1,12,1,16);
+	
+		mouseOver(jq("a.z-menu-cnt:eq(3)"));		
 		waitResponse();
-		keyUpNative(DELETE);
+		click(jq("$customSort a.z-menu-item-cnt"));
+		waitResponse();
+		click(jq("$addBtn td.z-button-bm"));
 		waitResponse();
 		
-		//verify
+		//how to verify
 		sleep(5000);
 	}
 }
+
+
 
