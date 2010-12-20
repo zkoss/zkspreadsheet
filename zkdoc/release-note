@@ -24,6 +24,7 @@ ZK Spreadsheet 2.0.0
   222 ZK Spreadsheet Live shall support number format
   234 Support export to xls and xlsx
   246 ZK Spreadsheet Live support save file
+  247 ZK Spreadsheet Live editor shall support tab and cancel key control
   
 *Bug 
   132 view ZK Spreadsheet Live index.zul cause NullPointerException
