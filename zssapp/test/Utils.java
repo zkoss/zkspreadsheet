@@ -7,7 +7,7 @@
 public class Utils {
 
     public static String getTarget() {
-        return "http://localhost:8080/zssdemos";
+        return "http://localhost:8080/zssdemos-xlsx";
     }
 
     public static String getBrowsers() {

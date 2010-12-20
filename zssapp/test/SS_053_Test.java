@@ -29,9 +29,11 @@ public class SS_053_Test extends SSAbstractTestCase {
         
         // Choose "Formulas" radio button
         click(jq("$formula input[id*=real]"));
+        waitResponse();
         
         // Click "OK"
         click(jq("$okBtn"));
+        waitResponse();
         
         // TODO - Verify
     }

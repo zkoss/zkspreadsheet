@@ -1,3 +1,6 @@
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 import org.zkoss.ztl.JQuery;
 import org.zkoss.ztl.ZKClientTestCase;
@@ -244,7 +247,24 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
 		keyUpNative(keycode);
 		waitResponse();
 		keyUpNative(CTRL);
-		waitResponse();    	
+		waitResponse();
+    }
+    
+    public Map<String, String> getCellStyleMap(JQuery cellLocator) {
+        Map<String, String> styleMap = new HashMap<String, String>();
+        String[] style1 = cellLocator.parent().attr("style").split(";");
+        fillMap(styleMap, style1);
+        style1 = cellLocator.attr("style").split(";");
+        fillMap(styleMap, style1);
+        
+        return styleMap;
+    }
+    
+    private void fillMap(Map<String, String> map, String[] style) {
+        for (String s : style) {
+            int separatorIndex = s.indexOf(":");
+            map.put(s.substring(0, separatorIndex).trim(), s.substring(separatorIndex + 1).trim());
+        }
     }
     
     /**
