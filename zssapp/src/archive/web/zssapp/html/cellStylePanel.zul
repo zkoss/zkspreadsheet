@@ -1,3 +1,4 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <zk>
 	<style>
 		.arialFont .z-menu-item-cnt, .arialFont .z-combo-item-text{
@@ -17,8 +18,16 @@
 		.z-menu-item-cnt,.impactFont .z-combo-item-text{ font-size:14px;
 		font-family:impact; }
 	</style>
-	<!-- Note. the hflex is for IE 6, div expand in IE6 -->
-	<hlayout id="container" height="100%" spacing="0" hflex="min">
+	<zscript><![CDATA[ 
+	import org.zkoss.web.fn.ServletFns;
+	]]></zscript>
+	<hlayout id="container" height="100%" spacing="0" >
+		<attribute name="onCreate"><![CDATA[
+	    //TODO: bug on IE6, cause div expand
+		if (ServletFns.isBrowser("ie6")) {
+			container.setHflex("min");
+		}
+		]]></attribute>
 		<combobox id="fontFamily" mold="rounded" width="125px">
 			<comboitem label="Calibri" sclass="calibriFont" />
 			<comboitem label="Courier New" sclass="courierFont" />

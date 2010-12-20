@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?page id="p1" title="ZSS app"?>
+<?page id="p1" title="ZK Spreadsheet Live"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?script type="text/javascript" src="~./zssapp/html/zssapp.js.dsp?v=${desktop.webApp.build}"?>
 <?component name="cheatsheet" inline="true" macroURI="~./zssapp/html/cheatsheet.zul"?>
@@ -158,7 +158,7 @@
 						<!-- font*********************************************************************** -->	
 						<div sclass="toolbarSeparator"></div>
 						<div id="fontCtrlPanel" use="org.zkoss.zss.app.zul.ctrl.CellStyleCtrlPanel" 
-							style="vertical-align:middle;" spacing="0.4em" />
+							style="vertical-align:middle;" spacing="0.4em"/>
 						<!-- align vertical************************************************************************ 
 						<toolbarbutton src="/img/separator.bmp"/>
 						<toolbarbutton id="alignTopBtn" sclass="toolIcon" src="/img/alignTop.bmp"
