@@ -40,7 +40,10 @@ public class SS_198_Test extends SSAbstractTestCase {
 		waitResponse();
 		
 		//how to verify
-		sleep(5000);
+		String i1value = getSpecifiedCell(8,0).text();
+		String i2value = getSpecifiedCell(8,1).text();
+		verifyEquals(i1value,"aaa");
+		verifyEquals(i2value,"AAA");	
 	}
 }
 
