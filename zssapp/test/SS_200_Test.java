@@ -51,7 +51,6 @@ public class SS_200_Test extends SSAbstractTestCase {
 		verifyEquals(f15value,"80,000");
 		verifyEquals(f16value,"125,000");
 
-		sleep(5000);
 	}
 }
 

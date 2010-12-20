@@ -35,8 +35,26 @@ public class SS_203_Test extends SSAbstractTestCase {
 		click(jq("$okBtn td.z-button-cm"));
 		waitResponse();
 		
-		//how to verify
-		sleep(5000);
+		//verify
+		String g13value = getSpecifiedCell(6,12).text();
+		String g14value = getSpecifiedCell(6,13).text();
+		String g15value = getSpecifiedCell(6,14).text();
+		String g16value = getSpecifiedCell(6,15).text();
+
+		String f13value = getSpecifiedCell(5,12).text();
+		String f14value = getSpecifiedCell(5,13).text();
+		String f15value = getSpecifiedCell(5,14).text();
+		String f16value = getSpecifiedCell(5,15).text();
+
+		verifyEquals(g13value,"#VALUE!");
+		verifyEquals(g14value,"80,000");
+		verifyEquals(g15value,"46,000");
+		verifyEquals(g16value,"83,000");
+				
+		verifyEquals(f13value,"#VALUE!");
+		verifyEquals(f14value,"80,000");
+		verifyEquals(f15value,"45,000");
+		verifyEquals(f16value,"82,500");
 	}
 }
 
