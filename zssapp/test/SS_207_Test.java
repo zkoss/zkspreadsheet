@@ -26,8 +26,9 @@ public class SS_207_Test extends SSAbstractTestCase {
 		click(jq("$okBtn img"));
 		waitResponse();
 		
-		//how to verify
-		sleep(5000);
+		//verify
+		String titleOfPopup =  jq(".z-window-overlapped .z-window-overlapped-header").attr("textContent");
+		verifyEquals(titleOfPopup,"Function Arguments");		
 	}
 }
 
