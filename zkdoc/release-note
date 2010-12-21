@@ -98,6 +98,8 @@ ZK Spreadsheet 2.0.0
   249 ZK Spreadsheet Live: Enter on formula editor if focus on the last visible row, shall not move focus down
   252 ZK Spreadsheet Live: Click on formula bar editor, the spreadsheet Cell did not change to formula accordingly
   253 ZK Spreadsheet Live: Cell wrongly set to incorrect value
+  254 Illegal highlight exception when copy and switch sheet
+  255 ZK Spreadsheet Live: change sheet lost the focus
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

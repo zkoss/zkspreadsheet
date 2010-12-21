@@ -1245,19 +1245,21 @@ public class Spreadsheet extends XulElement implements Serializable {
 				_highlightRect = null;
 				result.setData("type", "hide");
 			} else {
-				if (highlight.getLeft() < 0 || highlight.getTop() < 0
-						|| highlight.getRight() >= this.getMaxcolumns()
-						|| highlight.getBottom() >= this.getMaxrows()
-						|| highlight.getLeft() > highlight.getRight()
-						|| highlight.getTop() > highlight.getBottom()) {
-					throw new UiException("illegal highlight : " + highlight.toString());
+				final int left = Math.max(highlight.getLeft(), 0);
+				final int right = Math.min(highlight.getRight(), this.getMaxcolumns()-1);
+				final int top = Math.max(highlight.getTop(), 0);
+				final int bottom = Math.min(highlight.getBottom(), this.getMaxrows()-1);
+				if (left > right || top > bottom) {
+					_highlightRect = null;
+					result.setData("type", "hide");
+				} else {
+					_highlightRect = new Rect(left, top, right, bottom);
+					result.setData("type", "show");
+					result.setData("left", left);
+					result.setData("top", top);
+					result.setData("right", right);
+					result.setData("bottom", bottom);
 				}
-				_highlightRect = (Rect) highlight.cloneSelf();
-				result.setData("type", "show");
-				result.setData("left", _highlightRect.getLeft());
-				result.setData("top", _highlightRect.getTop());
-				result.setData("right", _highlightRect.getRight());
-				result.setData("bottom", _highlightRect.getBottom());
 			}
 			response("selectionHighlight", new AuHighlight(this, result.toString()));
 		}

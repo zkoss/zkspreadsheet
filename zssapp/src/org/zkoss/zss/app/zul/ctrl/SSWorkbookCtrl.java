@@ -155,6 +155,8 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 				ctrl.addWidget(w);
 			}
 		}
+		
+		spreadsheet.focus(); //move focus in to spreadsheet
 	}
 
 	public void hide(boolean hide) {
