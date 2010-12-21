@@ -37,10 +37,11 @@ public class SS_209_Test extends SSAbstractTestCase {
 		waitResponse();
 		keyUpNative(TAB);
 		waitResponse();
-		
-		
-		//how to verify
-		sleep(5000);
+			
+		//verify
+		String item2 = jq(".z-listitem:eq(1)").html();
+		String itemSelected = jq(".z-listitem-seld").html();		
+		verifyEquals(item2, itemSelected);
 	}
 }
 
