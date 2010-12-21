@@ -26,8 +26,13 @@ public class SS_204_Test extends SSAbstractTestCase {
 		click(jq("$searchBtn td.z-button-cm"));
 		waitResponse();
 
-		//how to verify
-		sleep(5000);
+		//verify
+		String func1 = jq(".z-listcell-cnt:eq(0)").text();
+		verifyEquals(func1, "BIN2DEC");
+		String func2 = jq(".z-listcell-cnt:eq(1)").text();
+		verifyEquals(func2, "BIN2HEX");
+		String func6 = jq(".z-listcell-cnt:eq(5)").text();
+		verifyEquals(func6, "DEC2BIN");
 	}
 }
 
