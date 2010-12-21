@@ -24,9 +24,10 @@ public class SS_206_Test extends SSAbstractTestCase {
 		click(jq("@listcell[label=\"ACCRINT\"]"));		
 		waitResponse();
 		
-
-		//how to verify
-		sleep(5000);
+		//verify
+		String funcDesc = jq(".z-vlayout-inner .z-label:eq(1)").text();
+		String expect = "ACCRINT(issue, first_interest, settlement, rate, par, frequency, basis, calc_method)";
+		verifyEquals(funcDesc, expect);
 	}
 }
 
