@@ -488,7 +488,11 @@ public class RangeImpl implements Range {
 		private Set<Ref>[] setCellFormula(int rowIndex, int colIndex, RefSheet refSheet, String value) {
 			//locate the cell of the refSheet
 			final Cell cell = getOrCreateCell(rowIndex, colIndex, refSheet, Cell.CELL_TYPE_FORMULA);
-			return BookHelper.setCellFormula(cell, value);
+			final Set<Ref>[] refs = BookHelper.setCellFormula(cell, value);
+			if (refs[0] == null || refs[0].isEmpty()) {
+				refs[0].add(refSheet.getOrCreateRef(rowIndex, colIndex, rowIndex, colIndex));
+			}
+			return refs; 
 		}
 	}
 	

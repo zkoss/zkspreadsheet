@@ -92,8 +92,11 @@ ZK Spreadsheet 2.0.0
   240 Irrelevant merged regions faultly unmerged when delete a cell and shift left
   241 Shall complains about an incorrect formula
   242 Delete key not working when edit cell
+  244 ZK Spreadsheet Live: formula bar cursor will unexpectedly move to the end of the text
   248 ZK Spreadsheet Live: Tab on formula editor if focus on the last visible column, shall not move focus right
   249 ZK Spreadsheet Live: Enter on formula editor if focus on the last visible row, shall not move focus down
+  252 ZK Spreadsheet Live: Click on formula bar editor, the spreadsheet Cell did not change to formula accordingly
+  253 ZK Spreadsheet Live: Cell wrongly set to incorrect value
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

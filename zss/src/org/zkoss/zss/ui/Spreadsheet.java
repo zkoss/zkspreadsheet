@@ -1700,6 +1700,33 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 	}
 	
+	/**
+	 * Internal Use Only
+	 */
+	public void updateText(Cell cell, String text) {
+		if (cell == null)
+			return;
+		final int row = cell.getRowIndex();
+		final int col = cell.getColumnIndex();
+		// update cell only in block or in freeze panels
+		if (row > _loadedRect.getBottom()
+				|| (row < _loadedRect.getTop() && row > getRowfreeze()))
+			return;
+		if (col > _loadedRect.getRight()
+				|| (col < _loadedRect.getLeft() && row > getColumnfreeze()))
+			return;
+
+		// if(cell==null) continue;
+
+		final JSONObj result = new JSONObj();
+		result.setData("r", row);
+		result.setData("c", col);
+		result.setData("type", "udtext");
+		result.setData("val", text);
+		final String sheetId = Utils.getSheetUuid((Worksheet) cell.getSheet());
+		response(row + "_" + col + "_" + _updateCellId.next(), new AuDataUpdate(this, "", sheetId, result.toString()));
+	}
+	
 	private void responseUpdateCell(Worksheet sheet, String sheetId, int left, int top, int right, int bottom) {
 		int row, col;
 		for (int j = top; j <= bottom; j++) {

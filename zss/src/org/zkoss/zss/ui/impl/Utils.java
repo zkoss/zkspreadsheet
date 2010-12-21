@@ -863,6 +863,19 @@ public class Utils {
 		return range.getFormatText();
 	}
 	
+	public static String getCellText(Worksheet sheet, Cell cell) {
+		CellStyle style = (cell == null) ? null : cell.getCellStyle();
+		boolean wrap = style != null && style.getWrapText();
+		Hyperlink hlink = cell == null ? null : Utils.getHyperlink(cell);
+		final FormatText ft = (cell == null) ? null : Utils.getFormatText(cell);
+		
+		final RichTextString rstr = ft != null && ft.isRichTextString() ? ft.getRichTextString() : null; 
+		String text = rstr != null ? Utils.formatRichTextString(sheet, rstr, wrap) : ft != null ? Utils.escapeCellText(ft.getCellFormatResult().text, wrap, wrap) : "";
+		if (hlink != null) {
+			text = Utils.formatHyperlink(sheet, hlink, text, wrap);
+		}
+		return text;
+	}
 	/**
 	 * Returns the text for editing on the specified cell. 
 	 * @param cell the cell

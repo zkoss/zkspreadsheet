@@ -109,6 +109,11 @@ zss.Cell = zk.$extends(zk.Object, {
 		if (this.sheet.config.textOverflow)
 			zss.Cell._processOverflow(this);
 	},
+	_setText: function (txt) {
+		if (!txt)
+			txt = "";
+		this.txtcomp.innerHTML = txt;
+	},
 	cleanup: function () {
 		this.invalid = true;
 		this._updateHasTxt(false);

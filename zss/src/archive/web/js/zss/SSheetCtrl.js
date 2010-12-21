@@ -357,6 +357,9 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			value = result.val,
 			server = result.server; //use editValue from server
 		switch(type){
+		case "udtext" :
+			this._updateText(result);
+			break;
 		case "udcell":
 			this._updateCell(result);
 			break;
@@ -1545,6 +1548,13 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 					{toServer: true}, 25);
 		}
 
+	},
+	_updateText: function (result) {
+		var row = result.r,
+			col = result.c,
+			cell = this.activeBlock.getCell(row, col);
+		if (cell)//update if cell exist
+			cell._setText(result.val);
 	},
 	_updateCell: function (result) {
 		var row = result.r,

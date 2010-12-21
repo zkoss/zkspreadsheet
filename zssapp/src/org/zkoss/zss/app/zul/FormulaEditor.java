@@ -14,6 +14,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul;
 
+import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.model.Worksheet;
@@ -42,8 +43,11 @@ public class FormulaEditor extends Textbox implements ZssappComponent{
 
 	private Spreadsheet ss;
 	
-	private String initVal;
+	private String oldEdit;
+	private String oldText;
+	private String newEdit;
 	
+	private boolean everFocusCell = false;
 	private boolean focusOut = false;
 	private Cell currentEditcell;
 	
@@ -52,69 +56,100 @@ public class FormulaEditor extends Textbox implements ZssappComponent{
 	}
 	
 	public void onChanging(InputEvent event) {
-		if (currentEditcell == null)
-			return;
-		if (currentEditcell.getCellType() == Cell.CELL_TYPE_FORMULA
-				&& currentEditcell.getCellFormula() != null)
-			return;
-
-		Utils.setEditText(currentEditcell, ((InputEvent) event).getValue());
+		if (currentEditcell == null) {
+			final int left = ss.getSelection().getLeft();
+			final int top = ss.getSelection().getTop();
+			final Worksheet sheet = ss.getSelectedSheet();
+			currentEditcell = Utils.getOrCreateCell(sheet, top, left);
+		}
+		ss.updateText(currentEditcell, ((InputEvent) event).getValue());
 	}
 
 	public void onCancel() {
-		System.out.println("onCancel");
 		focusOut = true;
+		recoverEditorText();
+		recoverCellText();
 		int row = ss.getSelection().getTop();
 		int col = ss.getSelection().getLeft();
-		if (initVal != null) {
-			Utils.setEditText(ss.getSelectedSheet(), row, col, initVal);
-			initVal = null;
-		}
 		ss.focusTo(row, col);
-		
 	}
 	
 	public void onFocus() {
+		newEdit = null;
+		everFocusCell = false;
 		focusOut = false;
 		int left = ss.getSelection().getLeft();
 		int top = ss.getSelection().getTop();
 		Worksheet sheet = ss.getSelectedSheet();
 		currentEditcell = Utils.getCell(sheet, top, left);
 		
-		if (currentEditcell != null)
-			initVal = Ranges.range(sheet, top, left).getEditText();
+		if (currentEditcell != null) {
+			oldEdit = Ranges.range(sheet, top, left).getEditText();
+			oldText = Utils.getCellText(sheet, currentEditcell); //escaped HTML to show cell value
+			ss.updateText(currentEditcell, oldEdit);
+		}
+		
 		EditHelper.clearCutOrCopy(ss);
 	}
 	
+	public void onChange(Event event) {
+		newEdit = ((InputEvent)event).getValue(); //remember the changed value
+	}
+	
+	private void handleCellText() {
+		if (newEdit == null) { //no change
+			recoverCellText(); //recover cell text
+		} else if (currentEditcell != null){
+			Utils.setEditText(ss.getSelectedSheet(), 
+					currentEditcell.getRowIndex(), currentEditcell.getColumnIndex(), newEdit);
+		}
+	}
+	
 	public void onBlur() {
-		if (focusOut) {
-			focusOut = true;
+		if (focusOut) { //onChange, onOK, or onCancel already done everything!
 			return;
 		}
-		initVal = null;
+		focusOut = true;
 		
-		Utils.setEditText(ss.getSelectedSheet(), ss
-				.getSelection().getTop(), ss.getSelection().getLeft(),
-				getText());
+		handleCellText();
+		
 		Position pos = ss.getCellFocus();
 		int row = pos.getRow();
 		int col = pos.getColumn();
-		final Worksheet sheet = ss.getSelectedSheet();
-		final CellRangeAddress merged = sheet != null ? ((SheetCtrl)sheet).getMerged(row, col) : null;
-		col = merged == null ? col + 1 : merged.getLastColumn() + 1;
-		if (ss.getMaxcolumns() <= col) {
-			col = ss.getMaxcolumns() - 1;
+		int oldrow = currentEditcell == null ? -1 : currentEditcell.getRowIndex();
+		int oldcol = currentEditcell == null ? -1 : currentEditcell.getColumnIndex();
+		final boolean focusChanged = (row != oldrow || col != oldcol); //user click directly to a different cell
+		if (!focusChanged) {
+			if (!everFocusCell) { //Tab key
+				final Worksheet sheet = ss.getSelectedSheet();
+				final CellRangeAddress merged = sheet != null ? ((SheetCtrl)sheet).getMerged(row, col) : null;
+				col = merged == null ? col + 1 : merged.getLastColumn() + 1;
+				if (ss.getMaxcolumns() <= col) {
+					col = ss.getMaxcolumns() - 1;
+				}
+				ss.focusTo(row, col);
+				org.zkoss.zk.ui.event.Events.sendEvent(new CellEvent(Events.ON_CELL_FOUCSED, ss, sheet, row, col));
+				getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
+			} else { //click on the same cell, shall enter edit mode, something like press F2
+				//TODO click on the same cell, shall enter edit mode, something like press F2
+			}
 		}
-		ss.focusTo(row, col);
-		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
-	
+
+	private void recoverEditorText() {
+		setText(oldEdit);
+	}
+	private void recoverCellText() {
+		if (oldText != null && currentEditcell != null) {
+			ss.updateText(currentEditcell, oldText);
+		}
+	}
 	public void onOK() {
 		focusOut = true;
-		initVal = null;
-		Utils.setEditText(ss.getSelectedSheet(), ss
-				.getSelection().getTop(), ss.getSelection().getLeft(),
-				getText());
+		
+		handleCellText();
+		
+		//move cell focus
 		Position pos = ss.getCellFocus();
 		int row = pos.getRow() + 1;
 		int col = pos.getColumn();
@@ -122,6 +157,8 @@ public class FormulaEditor extends Textbox implements ZssappComponent{
 			row = ss.getMaxrows() - 1;
 		}
 		ss.focusTo(row, col);
+		final Worksheet sheet = ss.getSelectedSheet();
+		org.zkoss.zk.ui.event.Events.sendEvent(new CellEvent(Events.ON_CELL_FOUCSED, ss, sheet, row, col));
 		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 
@@ -135,6 +172,7 @@ public class FormulaEditor extends Textbox implements ZssappComponent{
 
 			@Override
 			public void onEvent(Event event) throws Exception {
+				everFocusCell = true;
 				// TODO Auto-generated method stub
 				CellEvent evt = (CellEvent)event;
 				int row = evt.getRow();
