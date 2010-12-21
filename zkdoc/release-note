@@ -100,6 +100,7 @@ ZK Spreadsheet 2.0.0
   253 ZK Spreadsheet Live: Cell wrongly set to incorrect value
   254 Illegal highlight exception when copy and switch sheet
   255 ZK Spreadsheet Live: change sheet lost the focus
+  256 ZK Spreadsheet Live: A Currency number format does not match expected
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

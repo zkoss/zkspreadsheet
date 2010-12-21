@@ -54,7 +54,7 @@
 				<listitem label="$1,234.10" value="$#,##0.00;[Red]$#,##0.0"
 					style="color: red;"  sclass="redItem"/>
 				<listitem label="($1,234.10)" value="$#,##0.00_);($#,##0.00)" />
-				<listitem label="($1,234.10)" value="#,##0.00_);[Red](#,##0.00)"
+				<listitem label="($1,234.10)" value="$#,##0.00_);[Red]($#,##0.00)"
 					style="color: red;" sclass="redItem"/>
 			</listbox>
 			<listbox id="mfn_accounting" rows="11" width="210px">
