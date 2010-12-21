@@ -62,7 +62,7 @@ public class ExportHelper {
 	 */
 	private static boolean verifyZssPdf() {
 		try {
-			Class.forName("org.zkoss.zss.model.impl.PdfExporter");
+			Class.forName("org.zkoss.zss.model.impl.pdf.PdfExporter");
 		} catch (ClassNotFoundException ex) {
 			return false;
 		}
