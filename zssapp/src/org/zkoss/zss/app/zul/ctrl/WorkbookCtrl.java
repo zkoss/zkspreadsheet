@@ -26,6 +26,9 @@ import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
  */
 public interface WorkbookCtrl {
 	
+	public final static int HEADER_TYPE_ROW = 0;
+	public final static int HEADER_TYPE_COLUMN = 1;
+	
 	public void reGainFocus();
 	
 	public void renameSelectedSheet(String name);
@@ -116,5 +119,17 @@ public interface WorkbookCtrl {
 	 * @param listener
 	 */
 	public void unsubscribe(EventListener listener);
+
+	/**
+	 * @param width
+	 */
+	public void setColumnWidthInPx(int width);
+
+	/**
+	 * @param height
+	 */
+	public void setRowHeightInPx(int height);
+	
+	public int getDefaultCharWidth();
 	
 }

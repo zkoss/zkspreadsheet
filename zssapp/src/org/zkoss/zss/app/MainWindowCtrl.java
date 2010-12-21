@@ -20,6 +20,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
@@ -36,6 +37,7 @@ import org.zkoss.zk.ui.event.KeyEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.cell.EditHelper;
+import org.zkoss.zss.app.ctrl.HeaderSizeCtrl;
 import org.zkoss.zss.app.event.ExportHelper;
 import org.zkoss.zss.app.file.FileHelper;
 import org.zkoss.zss.app.formula.FormulaMetaInfo;
@@ -62,11 +64,12 @@ import org.zkoss.zss.app.zul.ctrl.SSRectCellStyle;
 import org.zkoss.zss.app.zul.ctrl.SSWorkbookCtrl;
 import org.zkoss.zss.app.zul.ctrl.StyleModification;
 import org.zkoss.zss.app.zul.ctrl.WorkbenchCtrl;
+import org.zkoss.zss.app.zul.ctrl.WorkbookCtrl;
 import org.zkoss.zss.engine.event.SSDataEvent;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -1187,10 +1190,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		Executions.createComponents(Consts._InsertFormulaDialog2_zul, mainWin, null);
 	}
 
-	public void openModifyRowHeightDialog() {
-		throw new UiException("not implement yet");
-	}
-
 	public void openPasteSpecialDialog() {
 		Executions.createComponents(Consts._PasteSpecialDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
 	}
@@ -1211,5 +1210,36 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 	public void openSaveFileDialog() {
 		Executions.createComponents(Consts._SaveFile_zul, mainWin, null);
+	}
+
+	public void openModifyHeaderSizeDialog(int headerType) {
+		Map arg = new HashMap();
+		arg.put(HeaderSizeCtrl.KEY_HEADER_TYPE, Integer.valueOf(headerType));
+		
+		Rect seld = spreadsheet.getSelection();
+		int prev = -1;
+		boolean sameVal = true;
+		if (headerType == WorkbookCtrl.HEADER_TYPE_ROW) {
+			for (int i = seld.getTop(); i <= seld.getBottom(); i++) {
+				if (prev < 0)
+					prev = Utils.getRowHeightInPx(spreadsheet.getSelectedSheet(), i);
+				else if (prev != Utils.getRowHeightInPx(spreadsheet.getSelectedSheet(), i)) {
+					sameVal = false;
+					break;
+				}
+			}
+		} else {
+			for (int i = seld.getLeft(); i <= seld.getRight(); i++) {
+				if (prev < 0)
+					prev = Utils.getColumnWidthInPx(spreadsheet.getSelectedSheet(), i);
+				else if (prev != Utils.getColumnWidthInPx(spreadsheet.getSelectedSheet(), i)) {
+					sameVal = false;
+					break;
+				}
+			}
+		}
+		if (sameVal)
+			arg.put(HeaderSizeCtrl.KEY_HEADER_SIZE, prev);
+		Executions.createComponents(Consts._HeaderSize_zul, mainWin, arg);
 	}
 }

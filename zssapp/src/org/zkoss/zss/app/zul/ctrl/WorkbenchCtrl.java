@@ -28,8 +28,6 @@ public interface WorkbenchCtrl {
 	
 	public void openPasteSpecialDialog();
 	
-	public void openModifyRowHeightDialog();
-	
 	public void openCustomSortDialog();
 	
 	public void openHyperlinkDialog();
@@ -44,4 +42,9 @@ public interface WorkbenchCtrl {
 	
 	public void updateGridlinesCheckbox();
 
+	/**
+	 * 
+	 * @param headerType header type {@link WorkbookCtrl}
+	 */
+	public void openModifyHeaderSizeDialog(int headerType);
 }

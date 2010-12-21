@@ -25,6 +25,7 @@ ZK Spreadsheet 2.0.0
   234 Support export to xls and xlsx
   246 ZK Spreadsheet Live support save file
   247 ZK Spreadsheet Live editor shall support tab and cancel key control
+  251 ZK Spreadsheet Live support set column width and row height
   
 *Bug 
   132 view ZK Spreadsheet Live index.zul cause NullPointerException

@@ -19,6 +19,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
+import org.zkoss.zss.app.zul.ctrl.WorkbookCtrl;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
 
@@ -83,7 +84,7 @@ public class RowHeaderMenupopup extends Menupopup implements IdSpace {
 	}
 	
 	public void onClick$rowHeight() {
-		getDesktopWorkbenchContext().getWorkbenchCtrl().openModifyRowHeightDialog();
+		getDesktopWorkbenchContext().getWorkbenchCtrl().openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_ROW);
 	}
 	
 	public void onClick$numberFormat() {

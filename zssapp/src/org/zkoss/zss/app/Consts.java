@@ -53,6 +53,7 @@ public class Consts {
 	public static String _PasteSpecialDialog_zul = "~./zssapp/html/dialog/pasteSpecialWindow.zul";
 	public static String _ComposeFormulaDialog_zul = "~./zssapp/html/dialog/composeFormulaDialog.zul";
 	public static String _FormatNumberDialog_zul = "~./zssapp/html/dialog/formatNumber.zul";
+	public static String _HeaderSize_zul = "~./zssapp/html/dialog/headerSize.zul";
 
 	/* Key */
 	public static String KEY_ARG_FORMULA_METAINFO = "KEY_ARG_FORMULA_METAINFO";

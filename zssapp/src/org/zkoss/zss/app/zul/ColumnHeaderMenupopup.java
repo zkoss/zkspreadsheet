@@ -17,9 +17,9 @@ package org.zkoss.zss.app.zul;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
-import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
+import org.zkoss.zss.app.zul.ctrl.WorkbookCtrl;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
 
@@ -83,8 +83,8 @@ public class ColumnHeaderMenupopup  extends Menupopup implements IdSpace {
 	}
 	
 	public void onClick$columnWidth() {
-		//TODO
-		throw new UiException("not implement yet");
+		DesktopWorkbenchContext.getInstance(
+			Executions.getCurrent().getDesktop()).getWorkbenchCtrl().openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_COLUMN);
 	}
 	
 	public void onClick$numberFormat() {

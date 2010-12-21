@@ -348,4 +348,20 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		String src = spreadsheet.getSrc();
 		return src != null && !"Untitled".equals(src);
 	}
+
+	public void setColumnWidthInPx(int width) {
+		Rect rect = spreadsheet.getSelection();
+		final int char256 = Utils.pxToFileChar256(width, ((Book)spreadsheet.getSelectedSheet().getWorkbook()).getDefaultCharWidth());
+		Ranges.range(spreadsheet.getSelectedSheet(), 0, rect.getLeft(), 0, rect.getRight()).getColumns().setColumnWidth(char256);
+	}
+
+	public void setRowHeightInPx(int height) {
+		Rect rect = spreadsheet.getSelection();
+		int point = Utils.pxToPoint(height);
+		Ranges.range(spreadsheet.getSelectedSheet(), rect.getTop(), 0, rect.getBottom(), 0).getRows().setRowHeight(point);
+	}
+
+	public int getDefaultCharWidth() {
+		return ((Book)spreadsheet.getSelectedSheet().getWorkbook()).getDefaultCharWidth();
+	}
 }
