@@ -33,14 +33,12 @@ public class SS_208_Test extends SSAbstractTestCase {
 		waitResponse();
 		type(jq("$composeFormulaTextbox"), "f7,f8,f9");
 		waitResponse();
-//		click(jq("$btn1"));
-//		waitResponse();
 		click(jq("$okBtn img"));
 		waitResponse();
-
 		
-		//how to verify
-		sleep(5000);
+		//verify
+		String k1value = getSpecifiedCell(10,0).text();
+		verifyEquals(k1value, "161500");
 	}
 }
 
