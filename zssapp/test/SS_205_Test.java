@@ -26,9 +26,13 @@ public class SS_205_Test extends SSAbstractTestCase {
 		click(jq("@comboitem[label=\"Text\"] td.z-comboitem-text"));
 		waitResponse();
 		
-
-		//how to verify
-		sleep(5000);
+		//verify
+		String func1 = jq(".z-listcell-cnt:eq(0)").text();
+		verifyEquals(func1, "ASC");
+		String func2 = jq(".z-listcell-cnt:eq(1)").text();
+		verifyEquals(func2, "BAHTTEXT");
+		String func6 = jq(".z-listcell-cnt:eq(5)").text();
+		verifyEquals(func6, "CONCATENATE");
 	}
 }
 
