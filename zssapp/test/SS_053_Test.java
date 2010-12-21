@@ -19,23 +19,19 @@ public class SS_053_Test extends SSAbstractTestCase {
         keyUpNative(CTRL);
         waitResponse();
         
-        // Right click target cell
+        // Click target cell - L17
         clickCell(getSpecifiedCell(11, 16));
-        rightClickCell(getSpecifiedCell(11, 16));
-        
-        // Click Menuitem
-        click(jq(".z-menu-item:eq(3)"));
+        mouseOver(jq("$pasteDropdownBtn"));
+        clickAt(jq("$pasteDropdownBtn"), "30,2");
         waitResponse();
         
-        // Choose "Formulas" radio button
-        click(jq("$formula input[id*=real]"));
+        // Click Formulas
+        click(jq("$pasteFormula"));
         waitResponse();
         
-        // Click "OK"
-        click(jq("$okBtn"));
-        waitResponse();
-        
-        // TODO - Verify
+        // Verify
+        String formulaBarValue = jq("$formulaEditor").val();
+        verifyEquals("Incorrect value: " + formulaBarValue, "=K17", formulaBarValue);
     }
 
 }

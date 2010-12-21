@@ -10,6 +10,7 @@ public class SS_185_Test extends SSAbstractTestCase {
         JQuery cell_J_13 = getSpecifiedCell(9, 12);
         clickCell(cell_J_13);
         clickCell(cell_J_13);
+        System.out.println(getCellStyleMap(getSpecifiedCell(14, 5)));
 
         // Ctrl + C
         keyDownNative(CTRL);

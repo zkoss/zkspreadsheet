@@ -252,10 +252,19 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     
     public Map<String, String> getCellStyleMap(JQuery cellLocator) {
         Map<String, String> styleMap = new HashMap<String, String>();
-        String[] style1 = cellLocator.parent().attr("style").split(";");
-        fillMap(styleMap, style1);
-        style1 = cellLocator.attr("style").split(";");
-        fillMap(styleMap, style1);
+        String[] style1 = null;
+        String cellParentStyle = cellLocator.parent().attr("style");
+        String cellStyle = cellLocator.attr("style");
+        
+        if (cellParentStyle.indexOf(";") > -1) {
+            style1 = cellParentStyle.split(";");
+            fillMap(styleMap, style1);
+        }
+        
+        if (cellStyle.indexOf(";") > -1) {
+            style1 = cellStyle.split(";");
+            fillMap(styleMap, style1);
+        }
         
         return styleMap;
     }

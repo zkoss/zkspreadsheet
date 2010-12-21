@@ -3,7 +3,7 @@ import java.util.Map;
 import org.zkoss.ztl.JQuery;
 
 
-public class SS_178_Test extends SSAbstractTestCase {
+public class SS_055_Test extends SSAbstractTestCase {
 
     @Override
     protected void executeTest() {
@@ -28,17 +28,14 @@ public class SS_178_Test extends SSAbstractTestCase {
         // Right click target cell
         JQuery cell_L_13 = loadTargetCell();
         clickCell(cell_L_13);
-        rightClickCell(cell_L_13);
+
+        // Click Paste icon
+        mouseOver(jq("$pasteDropdownBtn"));
+        clickAt(jq("$pasteDropdownBtn"), "30,2");
         waitResponse();
         
-        // Click Paste Special on the context menu
-        click(jq("$pasteSpecial"));
-        waitResponse();
-        
-        // Choose All except border
-        click(jq("$allExcpetBorder input[id*=real]"));
-        waitResponse();
-        click(jq("$okBtn"));
+        // Click Paste all except border
+        click(jq("$pasteAllExcpetBorder"));
         waitResponse();
         
         // Verify
