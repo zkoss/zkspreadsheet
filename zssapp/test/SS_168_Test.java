@@ -1,6 +1,6 @@
 
 
-public class SS_169_Test extends SSAbstractTestCase {
+public class SS_168_Test extends SSAbstractTestCase {
 
     @Override
     protected void executeTest() {
