@@ -89,6 +89,7 @@ ZK Spreadsheet 2.0.0
   233 Right click header selection doesn't work well
   235 Transpose pasteSpecial shall reverse Row/Column formula reference
   236 Delete current sheet and set selected sheet cause exception when use xlsx as source
+  239 Bad error code(-60)
   240 Irrelevant merged regions faultly unmerged when delete a cell and shift left
   241 Shall complains about an incorrect formula
   242 Delete key not working when edit cell
