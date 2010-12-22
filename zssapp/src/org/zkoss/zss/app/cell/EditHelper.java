@@ -162,7 +162,15 @@ public final class EditHelper {
 					false, false);
 			clearHighlightIfNeed(ss);
 			clearCutRangeIfNeed(ss);
-			ss.setSelection(new Rect(rng.getColumn(), rng.getRow(), rng.getLastColumn(), rng.getLastRow()));
+			
+			int maxColumn = ss.getMaxcolumns();
+			int lastColumn = rng.getLastColumn();
+			int maxRow = ss.getMaxrows();
+			int lastRow = rng.getLastRow();
+
+			ss.setSelection(new Rect(rng.getColumn(), rng.getRow(), 
+					lastColumn < maxColumn ? lastColumn : maxColumn - 1, 
+					lastRow < maxRow ? lastRow : maxRow - 1));
 			ss.focus();
 		}
 		//TODO : test if needed
