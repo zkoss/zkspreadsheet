@@ -19,16 +19,16 @@ public class SS_167_Test extends SSAbstractTestCase {
 	protected void executeTest() {
 		selectCells(1,3,7,9);
 
-		pressCtrlWithChar(DELETE);
+		pressCtrlWithChar(DELETE_NATIVE);
 		
 		//verify
+		String style = getCellCompositeStyle(1, 6);
+		verifyEquals(style,"rgba(0, 0, 0, 0):Arial:left");		
+		style = getCellCompositeStyle(1, 7);
+		verifyEquals(style,"rgba(0, 0, 0, 0):Arial:left");
+		style = getCellCompositeStyle(5, 6);
+		verifyEquals(style,"rgba(0, 0, 0, 0):Arial:right");
 		sleep(5000);
-//		String style = getCellStyle(1, 6);
-//		verifyTrue(style.contains("text-decoration: underline;"));		
-//		style = getCellStyle(1, 7);
-//		verifyTrue(style.contains("text-decoration: underline;"));
-//		style = getCellStyle(5, 6);
-//		verifyTrue(style.contains("text-decoration: underline;"));
 	}
 }
 
