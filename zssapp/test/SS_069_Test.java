@@ -24,7 +24,7 @@ public class SS_069_Test extends SSAbstractTestCase {
         
         // Verify
         cell_L_13 = loadTargetCell();
-        verifyTrue(ColorVerifingHelper.isEqualColor("#000000", cell_L_13.css("border-bottom-color")));
+        verifyTrue(ColorVerifingHelper.isEqualColor("#000000", cell_L_13.parent().css("border-bottom-color")));
     }
     
     private JQuery loadTargetCell() {
