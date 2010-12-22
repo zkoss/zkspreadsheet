@@ -18,6 +18,6 @@ public class SS_026_Test extends SSAbstractTestCase {
     	waitResponse();
     	click("jq('$viewFormulaBar a.z-menu-item-cnt-unck')");
     	waitResponse();
-    	verifyTrue(jq("$mainWin @hlayout:eq(3)").height() != 0);
+    	verifyTrue(jq("$formulaBar @hlayout").height() != 0);
     }
 }
