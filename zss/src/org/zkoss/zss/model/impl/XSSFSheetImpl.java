@@ -172,6 +172,14 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
             }
         }
         
+        //rebuild the _rows map ASAP or getRow(rownum) will be incorrect
+        TreeMap<Integer, XSSFRow> rows = getRows();
+        TreeMap<Integer, XSSFRow> map = new TreeMap<Integer, XSSFRow>();
+        for(XSSFRow r : rows.values()) {
+            map.put(r.getRowNum(), r);
+        }
+        setRows(map);
+        
         //handle inserted rows
         if (srcRow != null) {
         	final int row2 = Math.min(startRow + n - 1, SpreadsheetVersion.EXCEL2007.getLastRowIndex());
@@ -235,14 +243,6 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
         	final PtgShifter shifter = new PtgShifter(sheetIndex, startRow, endRow, n, 0, maxcol, 0, SpreadsheetVersion.EXCEL2007);
         	updateNamedRanges(wb, shifter);
         }
-        
-        //rebuild the _rows map
-        TreeMap<Integer, XSSFRow> map = new TreeMap<Integer, XSSFRow>();
-        TreeMap<Integer, XSSFRow> rows = getRows();
-        for(XSSFRow r : rows.values()) {
-            map.put(r.getRowNum(), r);
-        }
-        setRows(map);
         
         return shiftedRanges;
     }
@@ -384,6 +384,16 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
             }
         }
 
+        //rebuild rows ASAP or the getRow(rownum) will be incorrect
+        if (wholeRow) {
+	        TreeMap<Integer, XSSFRow> map = new TreeMap<Integer, XSSFRow>();
+	        TreeMap<Integer, XSSFRow> rows = getRows();
+	        for(XSSFRow r : rows.values()) {
+	            map.put(r.getRowNum(), r);
+	        }
+	        setRows(map);
+        }
+        
         //sparse row between expectRownum(inclusive) to endRow+1(exclusive), to be removed
     	addRemovePair(removePairs, expectRownum + n, endRow + 1 + n);
     	
@@ -493,16 +503,6 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
 	        updateNamedRanges(wb, shifter);
         }
 
-        //rebuild the _rows map
-        if (wholeRow) {
-	        TreeMap<Integer, XSSFRow> map = new TreeMap<Integer, XSSFRow>();
-	        TreeMap<Integer, XSSFRow> rows = getRows();
-	        for(XSSFRow r : rows.values()) {
-	            map.put(r.getRowNum(), r);
-	        }
-	        setRows(map);
-        }
-        
         return shiftedRanges;
 	}
     private void addRemovePair(List<int[]> removePairs, int start, int end) {

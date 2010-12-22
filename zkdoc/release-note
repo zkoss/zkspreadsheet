@@ -101,6 +101,7 @@ ZK Spreadsheet 2.0.0
   254 Illegal highlight exception when copy and switch sheet
   255 ZK Spreadsheet Live: change sheet lost the focus
   256 ZK Spreadsheet Live: A Currency number format does not match expected
+  257 Style is wrongly copied when insert a row
   258 ZK Spreadsheet Live insert whole row/column cause set selection out of range exception
   
 * Upgrade Notes
@@ -109,7 +110,10 @@ ZK Spreadsheet 2.0.0
   + Spec. of Range#getColumn(), Range#getRow(), Range#getLastColumn(), Range#getLastRow(), Range#getCells() has 
     changed from 1-based to 0-based so it consists with other APIs. That is, in new spec, Range#getColumn() 
 	return 0 for column A (1st column) and Range#getRow() return 0 for row 1 (1st row).
-  
+  + Spreadsheet#getSelectedSheet() return org.zkoss.zss.model.Worksheet
+  + Methods range(org.apache.poi.ss.usermodel.Sheet sheet, ...) in org.zkoss.zss.model.Ranges changed signature 
+    to range(org.zkoss.zss.model.Worksheet sheet, ...)
+	
 	------------
 ZK Spreadsheet 2.0.0 RC
 
