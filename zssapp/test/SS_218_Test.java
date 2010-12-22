@@ -34,8 +34,9 @@ public class SS_218_Test extends SSAbstractTestCase {
 		click(jq("$okBtn img"));
 		waitResponse();
 		
-		//how to verify
-		sleep(5000);
+		//verify
+		String h1value = getSpecifiedCell(7,0).text();
+		verifyEquals(h1value,"1.23E+04");
 	}
 }
 

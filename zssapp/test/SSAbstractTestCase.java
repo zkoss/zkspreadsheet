@@ -30,6 +30,8 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
                 windowMaximize();
                 waitResponse();
                 executeTest();
+            }catch(Exception e){
+            	e.printStackTrace();
             } finally {
                 stop();
             }

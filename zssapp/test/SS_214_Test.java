@@ -33,7 +33,8 @@ public class SS_214_Test extends SSAbstractTestCase {
 		waitResponse();
 		
 		//how to verify
-		sleep(5000);
+		String h1value = getSpecifiedCell(7,0).text();
+		verifyEquals(h1value,"10/18/33");
 	}
 }
 

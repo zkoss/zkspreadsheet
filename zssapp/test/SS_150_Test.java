@@ -1,3 +1,5 @@
+import org.zkoss.ztl.JQuery;
+
 /* order_test_1Test.java
 
 	Purpose:
@@ -13,25 +15,22 @@ This program is distributed under Apache License Version 2.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
 
-//right click "Border" to have popup menu: B13
+//right click "Border" to have popup menu: B11:F13
 public class SS_150_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
 		rightClickCells(1,10,5,12);
 
-		//fail to trigger???
-//		clickAt(jq(".z-dpbutton-arrow:eq(4)"),"5,5");
-//		waitResponse();
-
-//		click(jq(".z-dpbutton-arrow:eq(4)"));
-//		waitResponse();
+        // Click Border icon
+        JQuery borderIcon = jq("$borderBtn:eq(2)");
+        mouseOver(borderIcon);
+        waitResponse();
+        clickAt(borderIcon, "30,0");
+        waitResponse();
 		
-		mouseDownAt(jq(".z-dpbutton-arrow:eq(4)"),"5,5");
-		waitResponse();
-		mouseUpAt(jq(".z-dpbutton-arrow:eq(4)"),"5,5");
-		waitResponse();
-		//how to verify
-		sleep(5000);
+		//verify
+        String bottomBorder = jq(".z-menu-popup:last a:eq(1)").text();
+        verifyEquals(bottomBorder, "Bottom border");
 	}
 }
 
