@@ -99,13 +99,10 @@ public final class CellHelper {
 	}
 	
 	public static void clearStyle(Spreadsheet spreadsheet, Rect rect) {
-		Utils.visitCells(spreadsheet.getSelectedSheet(), spreadsheet.getSelection(), new CellVisitor() {
-			
-			@Override
-			public void handle(CellVisitorContext context) {
-				context.getRange().setStyle(context.getBook().createCellStyle());
-			}
-		});
+		Ranges.range(
+				spreadsheet.getSelectedSheet(), 
+				rect.getTop(), rect.getLeft(),rect.getBottom(), rect.getRight()).
+					setStyle(spreadsheet.getBook().createCellStyle());
 	}
 	
 	/**
