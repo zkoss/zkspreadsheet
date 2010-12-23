@@ -35,7 +35,7 @@ public class SS_054_Test extends SSAbstractTestCase {
         
         // Verify
         cell_L_13 = loadTargetCell();
-        verifyEquals("Incorrect result! J13=80000, L13=" + cell_L_13.text(), "80000", cell_L_13.text());
+        verifyEquals("Incorrect result! J13=56000, L13=" + cell_L_13.text(), "56000", cell_L_13.text());
     }
     
     private JQuery loadTargetCell() {
