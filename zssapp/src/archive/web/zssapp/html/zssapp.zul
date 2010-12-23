@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?page id="p1" title="ZK Spreadsheet Live"?>
+<?page id="p1" title="ZK Spreadsheet App"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?script type="text/javascript" src="~./zssapp/html/zssapp.js.dsp?v=${desktop.webApp.build}"?>
 <?component name="cheatsheet" inline="true" macroURI="~./zssapp/html/cheatsheet.zul"?>
