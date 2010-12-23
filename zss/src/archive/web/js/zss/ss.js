@@ -104,7 +104,7 @@ zkS.parentByZSType = function(el, type, pathlen) {
 	var size,
 		$parent = zss.Util.$parent;
 
-	for (; el; el = $parent(el)) {
+	for (; el && el != document; el = $parent(el)) {
 		size = type.length;
 		for (var j = 0; j < size; j++) {
 			if (jq(el).attr('zs.t') == type[j])
