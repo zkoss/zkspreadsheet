@@ -22,7 +22,7 @@ public class SS_067_Test extends SSAbstractTestCase {
         keyPressEnter(colorTextbox);
         
         //Verify
-        cell_B_8 = getSpecifiedCell(1, 7);
+        cell_B_8 = getSpecifiedCellOuter(1, 7);
         String style = cell_B_8.css("background-color");
         
         if (style != null) {
