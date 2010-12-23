@@ -24,6 +24,7 @@ import org.zkoss.zss.model.Book;
  *
  */
 public interface FunctionResolver {
+	public static final String CLASS = "org.zkoss.zss.formula.FunctionResolver.class";
 	/**
 	 * Return the associated {@link UDFFinder}.
 	 * @return the associated {@link UDFFinder}.

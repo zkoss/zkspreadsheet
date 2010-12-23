@@ -21,6 +21,7 @@ import org.zkoss.zss.model.Book;
  *
  */
 public interface BookCtrl {
+	public static final String CLASS = "org.zkoss.zss.model.BookCtrl.class";
 	/**
 	 * Create an associated reference book.
 	 * @param book the ZK Spreadsheet book

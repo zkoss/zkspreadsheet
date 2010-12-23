@@ -66,7 +66,6 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 	private RefBook _refBook;
 	private BookSeries _bookSeries;
 	private int _defaultCharWidth = 7; //TODO: don't know how to calculate this yet per the default font.
-	private final static String FUN_RESOLVER = "org.zkoss.zss.formula.FunctionResolver.class";
 	
 	//override the XSSFSheet Relation
 	static {
@@ -93,7 +92,7 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 			((SheetCtrl)sheet).initMerged();
 		}
 		_bookname = bookname;
-		FunctionResolver resolver = (FunctionResolver) BookHelper.getLibraryInstance(FUN_RESOLVER);
+		FunctionResolver resolver = (FunctionResolver) BookHelper.getLibraryInstance(FunctionResolver.CLASS);
 		if (resolver == null) resolver = new DefaultFunctionResolver();
 		_evaluator = XSSFFormulaEvaluator.create(this, NoCacheClassifier.instance, resolver.getUDFFinder()); 
 		_bookEvaluator = _evaluator.getWorkbookEvaluator(); 
@@ -285,7 +284,7 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 			synchronized (this) {
 				ctrl = _bookCtrl;
 				if (ctrl == null) {
-					String clsnm = Library.getProperty("org.zkoss.zss.model.BookCtrl.class");
+					String clsnm = Library.getProperty(BookCtrl.CLASS);
 					if (clsnm != null)
 						try {
 							final Object o = Classes.newInstanceByThread(clsnm);
