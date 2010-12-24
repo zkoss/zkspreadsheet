@@ -208,6 +208,9 @@ public final class EditHelper {
 				rng.setStyle(ss.getBook().createCellStyle());
 			}
 		}
+		
+		ss.setAttribute(KEY_SRC_SHEET, null);
+		ss.setAttribute(KEY_SRC_RANGE, null);
 	}
 	
 	public static void onPasteSpecial(Spreadsheet ss, int pasteType, int pasteOperation, boolean skipBlanks, boolean transpose){
