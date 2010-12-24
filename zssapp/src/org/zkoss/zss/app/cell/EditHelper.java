@@ -187,22 +187,25 @@ public final class EditHelper {
 		if (!isCut(ss))
 			return;
 
+		int maxCol = ss.getMaxcolumns();
+		int maxRow = ss.getMaxrows();
 		Worksheet srcSheet = getSourceSheet(ss);
 		Worksheet dstSheet = ss.getSelectedSheet();
 		Rect srcRange = getSourceRange(ss);
 		int srcLeft = srcRange.getLeft();
 		int srcRight = srcRange.getRight();
+		srcRight = srcRight < maxCol ? srcRight : maxCol;
+		
 		int srcTop = srcRange.getTop();
 		int srcBottom = srcRange.getBottom();
+		srcBottom = srcBottom < maxRow ? srcBottom : maxRow;
 		
 		int dstLeft = ss.getSelection().getLeft();
 		int dstTop = ss.getSelection().getTop();
 		int dstRight = dstLeft + (srcRight - srcLeft);
-		int maxCol = ss.getMaxcolumns();
 		dstRight = dstRight < maxCol ? dstRight : maxCol;
 		
 		int dstBottom = dstTop + (srcBottom - srcTop);
-		int maxRow = ss.getMaxrows();
 		dstBottom = dstBottom < maxRow ? dstBottom : maxRow;
 		boolean sameSheet = ss.indexOfSheet(srcSheet) == ss.indexOfSheet(dstSheet);
 		final CellStyle defaultStyle = ss.getBook().createCellStyle();
@@ -215,7 +218,6 @@ public final class EditHelper {
 				rng.setStyle(defaultStyle);
 			}
 		}
-		
 		
 		ss.setAttribute(KEY_SRC_SHEET, null);
 		ss.setAttribute(KEY_SRC_RANGE, null);
