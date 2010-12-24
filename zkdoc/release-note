@@ -103,6 +103,7 @@ ZK Spreadsheet 2.0.0
   256 ZK Spreadsheet Live: A Currency number format does not match expected
   257 Style is wrongly copied when insert a row
   258 ZK Spreadsheet Live insert whole row/column cause set selection out of range exception
+  261 ZK Spreadsheet App: click a cell and set border, cause NPE
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

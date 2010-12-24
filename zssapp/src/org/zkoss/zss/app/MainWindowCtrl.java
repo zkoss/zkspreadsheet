@@ -472,6 +472,13 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 							new SSRectCellStyle(cell, 
 									spreadsheet) );
 				}
+			} else {
+				cell = Utils.getOrCreateCell(sheet, lastRow, lastCol);
+				CellStyle cs = sheet.getWorkbook().createCellStyle();
+				Ranges.range(sheet, lastRow, lastCol).setStyle(cs);
+				DesktopCellStyleContext.getInstance(desktop).doTargetChange(
+						new SSRectCellStyle(cell, 
+								spreadsheet) );
 			}
 
 		} catch (Exception e) {
