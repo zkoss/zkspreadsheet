@@ -106,6 +106,7 @@ ZK Spreadsheet 2.0.0
   261 ZK Spreadsheet App: click a cell and set border, cause NPE
   262 ZK Spreadsheet App: unwanted error dialog when sort
   264 ZK Spreadsheet App: Cut should has no memory of area after once copied
+  266 ZK Spreadsheet App: Toolbar button Grid line easily unsync
   
 * Upgrade Notes
   + Package names of classes in zpoi.jar are renamed from org.apache.poi.* to org.zkoss.poi.* to avoid class 

@@ -204,7 +204,7 @@
 								</menupopup>
 							</dropdownbutton>
 						<div sclass="toolbarSeparator"></div>
-						<checkbox id="gridlinesCheckbox" tooltiptext="${c:l('gridlines')}" forward="onGridlines" image="~./zssapp/image/grid.png">
+						<checkbox id="gridlinesCheckbox" tooltiptext="${c:l('gridlines')}" image="~./zssapp/image/grid.png">
 							<attribute w:name="onBind">
 								var img = jq(this.$n()).find('img');
 								if (img)

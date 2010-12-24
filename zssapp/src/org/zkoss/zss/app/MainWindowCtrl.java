@@ -1167,17 +1167,10 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		}
 
 	}
-
 	
-	/**
-	 * Switch gridlines setting of spreadsheet
-	 * @param event
-	 */
-	public void onGridlines(ForwardEvent event) {
+	public void onCheck$gridlinesCheckbox() {
 		Worksheet sheet = spreadsheet.getSelectedSheet();
 		Utils.getRange(sheet, 0, 0).setDisplayGridlines(!sheet.isDisplayGridlines());
-		//TODO avoid use invalidate
-		//spreadsheet.invalidate();
 	}
 
 	public void openCustomSortDialog() {
