@@ -267,6 +267,14 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		if (sortOrientation != orientation) {
 			sortOrientation = orientation;
 			setAvailableSortTarget(availableSortIndex);
+			
+			//init sort level
+			int i = 0;
+			List<SortLevel> ary = sortLevelModel.getInnerList();
+			for (SortLevel l : ary) {
+				l.sortIndex = -1;
+				sortLevelModel.set(i++, l);
+			}
 		}
 	}
 	
