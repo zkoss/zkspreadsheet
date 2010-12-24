@@ -1,7 +1,8 @@
 import org.zkoss.ztl.JQuery;
+import org.zkoss.ztl.util.ColorVerifingHelper;
 
 
-public class SS_187_Test extends SSAbstractTestCase {
+public class SS_188_Test extends SSAbstractTestCase {
 
     @Override
     protected void executeTest() {
@@ -10,7 +11,7 @@ public class SS_187_Test extends SSAbstractTestCase {
         clickCell(cell_I_28);
         
         // Select multiple cells
-        selectCells(8, 27, 9, 29);
+        selectCells(8, 11, 9, 12);
         
         // Ctrl + C
         keyDownNative(CTRL);
@@ -30,12 +31,14 @@ public class SS_187_Test extends SSAbstractTestCase {
         waitResponse();
         
         // Check Skip blanks
-        click(jq("$skipBlanks input[id*=real]"));
+        click(jq("$transpose input[id*=real]"));
         waitResponse();
         click(jq("$okBtn"));
         
         // Verify
-        verifyEquals("solid", getSpecifiedCell(12, 26).parent().css("border-right-style"));
+        verifyTrue(ColorVerifingHelper.isEqualColor(
+                getSpecifiedCell(12, 25).parent().css("background-color"), 
+                getSpecifiedCell(12, 26).parent().css("background-color")));
     }
 
 }
