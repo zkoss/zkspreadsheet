@@ -23,7 +23,7 @@ public class SS_071_Test extends SSAbstractTestCase {
         waitResponse();
         
         // Verify
-        verifyTrue(ColorVerifingHelper.isEqualColor("#000000", getSpecifiedCell(10, 12).parent().css("border-right-color")));
+        verifyTrue(ColorVerifingHelper.isEqualColor("#000000", getSpecifiedCell(10, 12).parent().css("border-left-color")));
     }
 
 }
