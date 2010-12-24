@@ -14,21 +14,21 @@ ZK Spreadsheet 2.0.0
   143 Support for Logical formula functions
   145 Support select range by shift key
   152 Support Ranges.range(sheet, namedRange)
-  158 ZK Spreadsheet Live support colorbutton without depending zkex
-  160 ZK Spreadsheet Live support import, open file
+  158 ZK Spreadsheet App support colorbutton without depending zkex
+  160 ZK Spreadsheet App support import, open file
   165 Support 2007 Excel file format export to PDF
   192 Support exporting Excel Chart to PDF
-  194 ZK Spreadsheet Live support shift cell, entire row or column
-  199 ZK Spreadsheet Live shall support wrap text.
+  194 ZK Spreadsheet App support shift cell, entire row or column
+  199 ZK Spreadsheet App shall support wrap text.
   212 Cannot shift select left on merge cell
-  222 ZK Spreadsheet Live shall support number format
+  222 ZK Spreadsheet App shall support number format
   234 Support export to xls and xlsx
-  246 ZK Spreadsheet Live support save file
-  247 ZK Spreadsheet Live editor shall support tab and cancel key control
-  251 ZK Spreadsheet Live support set column width and row height
+  246 ZK Spreadsheet App support save file
+  247 ZK Spreadsheet App editor shall support tab and cancel key control
+  251 ZK Spreadsheet App support set column width and row height
   
 *Bug 
-  132 view ZK Spreadsheet Live index.zul cause NullPointerException
+  132 view ZK Spreadsheet App index.zul cause NullPointerException
   139 "Unexpected ptg class" RuntimeException when loading Excel file with special formula
   144 copy from a cell to a range
   146 selected range should stay emphasised when click menubutton
@@ -42,13 +42,13 @@ ZK Spreadsheet 2.0.0
   157 fail to delete rows out of original xlsx
   163 Can't set backgrond color to excel 2007 file format
   164 no grid line while export to pdf
-  166 ZK Spreadsheet Live, Modify the font size, cell height won't automatically adjust
+  166 ZK Spreadsheet App, Modify the font size, cell height won't automatically adjust
   167 set background color seems like multiple selection in color choosing
   168 Exception while set background color
   170 Set font color of a region with different font size, will resize the font size.
   171 Once clicked, merge button remain pressed state
   172 paste transpose error
-  180 ZK Spreadsheet Live support hide column/row function
+  180 ZK Spreadsheet App support hide column/row function
   182 Exception when right click row header and insert a row
   187 Select and focus shall not move when insert/delete columns/rows/cells
   188 NullPointerException when delete columns
@@ -64,24 +64,24 @@ ZK Spreadsheet 2.0.0
   201 Cell Background Color is not correctly shown in Excel 2007 xlsx
   202 Enter key after copy/cut does not do "paste"
   203 ESC key after copy/cut does not cancel the copy/cut.
-  204 ZK Spreadsheet Live gridline checkbox is not updated when change sheet
+  204 ZK Spreadsheet App gridline checkbox is not updated when change sheet
   205 Copy and paste does not copy a merge cell
   206 Cell editing after copy/cut does not cancel copy/cut.
-  207 ZK Spreadsheet Live focus on formula edit box after copy/cut does not cancel copy/cut
+  207 ZK Spreadsheet App focus on formula edit box after copy/cut does not cancel copy/cut
   208 Spreadsheet focus position is lost onBlur
   210 Bug in spreadsheet date-time display
   211 Shift + arrow key selection does not respect merge cell.
-  213 ZK Spreadsheet Live compalins "Not unique in ID space <Window mainWin>: formulaWin"
-  215 ZK Spreadsheet Live View->Formula Bar complains "Fellow component not found: formatNumberWin"
-  217 ZK Spreadsheet Live delete sheet not working
-  219 ZK Spreadsheet Live rename Sheet, current tab move to 1st sheet tab
-  220 ZK Spreadsheet Live Formula function selection dialog title is not correct
-  221 ZK Spreadsheet Live NPE if leave Insert Function Dialog without select an item
+  213 ZK Spreadsheet App compalins "Not unique in ID space <Window mainWin>: formulaWin"
+  215 ZK Spreadsheet App View->Formula Bar complains "Fellow component not found: formatNumberWin"
+  217 ZK Spreadsheet App delete sheet not working
+  219 ZK Spreadsheet App rename Sheet, current tab move to 1st sheet tab
+  220 ZK Spreadsheet App Formula function selection dialog title is not correct
+  221 ZK Spreadsheet App NPE if leave Insert Function Dialog without select an item
   223 Insert/delete row/column to book shall NOT affect maxrows and maxcolumns of the Spreadsheet
   224 Select a range to delete but only left-top cell removed
   225 Exception when remove a row which is referenced by a cell
   226 Exception when change sheet quickly
-  227 ZK Spreadsheet Live set display gridline doesn't work on IE
+  227 ZK Spreadsheet App set display gridline doesn't work on IE
   228 In IE, press F2, won't focus on cell for input value
   230 IE cursor position is not at the text end when press F2
   231 Absolute Cell Reference shall not move when copy, paste
@@ -93,16 +93,16 @@ ZK Spreadsheet 2.0.0
   240 Irrelevant merged regions faultly unmerged when delete a cell and shift left
   241 Shall complains about an incorrect formula
   242 Delete key not working when edit cell
-  244 ZK Spreadsheet Live: formula bar cursor will unexpectedly move to the end of the text
-  248 ZK Spreadsheet Live: Tab on formula editor if focus on the last visible column, shall not move focus right
-  249 ZK Spreadsheet Live: Enter on formula editor if focus on the last visible row, shall not move focus down
-  252 ZK Spreadsheet Live: Click on formula bar editor, the spreadsheet Cell did not change to formula accordingly
-  253 ZK Spreadsheet Live: Cell wrongly set to incorrect value
+  244 ZK Spreadsheet App: formula bar cursor will unexpectedly move to the end of the text
+  248 ZK Spreadsheet App: Tab on formula editor if focus on the last visible column, shall not move focus right
+  249 ZK Spreadsheet App: Enter on formula editor if focus on the last visible row, shall not move focus down
+  252 ZK Spreadsheet App: Click on formula bar editor, the spreadsheet Cell did not change to formula accordingly
+  253 ZK Spreadsheet App: Cell wrongly set to incorrect value
   254 Illegal highlight exception when copy and switch sheet
-  255 ZK Spreadsheet Live: change sheet lost the focus
-  256 ZK Spreadsheet Live: A Currency number format does not match expected
+  255 ZK Spreadsheet App: change sheet lost the focus
+  256 ZK Spreadsheet App: A Currency number format does not match expected
   257 Style is wrongly copied when insert a row
-  258 ZK Spreadsheet Live insert whole row/column cause set selection out of range exception
+  258 ZK Spreadsheet App insert whole row/column cause set selection out of range exception
   261 ZK Spreadsheet App: click a cell and set border, cause NPE
   
 * Upgrade Notes
@@ -124,15 +124,15 @@ ZK Spreadsheet 2.0.0 RC
   71 Support delete rows(Excel 2007, xlsx) 
   74 Support insert columns(Excel 2007, xlsx)
   75 Support delete columns(Excel 2007, xlsx)
-  76 ZK Spreadsheet Live support set font by toolbarbutton and menu
-  77 ZK Spreadsheet Live support set font size menu and toolbarbutton
-  78 ZK Spreadsheet Live support set color to cell and font by menu and toolbarbutton
-  79 ZK Spreadsheet Live support set font bold by menu and toolbarbutton
-  80 ZK Spreadsheet Live support set font italic by menu and toolbarbutton
-  81 ZK Spreadsheet Live support set font underline by menu and toolbarbutton
-  82 ZK Spreadsheet Live support set font strike by menu and toolbarbutton
-  83 ZK Spreadsheet Live support set cell alignment by menu and toolbarbutton
-  84 ZK Spreadsheet Live support clear cell style by menu
+  76 ZK Spreadsheet App support set font by toolbarbutton and menu
+  77 ZK Spreadsheet App support set font size menu and toolbarbutton
+  78 ZK Spreadsheet App support set color to cell and font by menu and toolbarbutton
+  79 ZK Spreadsheet App support set font bold by menu and toolbarbutton
+  80 ZK Spreadsheet App support set font italic by menu and toolbarbutton
+  81 ZK Spreadsheet App support set font underline by menu and toolbarbutton
+  82 ZK Spreadsheet App support set font strike by menu and toolbarbutton
+  83 ZK Spreadsheet App support set cell alignment by menu and toolbarbutton
+  84 ZK Spreadsheet App support clear cell style by menu
   85 Support insertRange(Excel 2007, xlsx)   	 
   86 Support deleteRange(Excel 2007, xlsx)
   88 Support moveRange(Excel 2007, xlsx)   	 
@@ -143,7 +143,7 @@ ZK Spreadsheet 2.0.0 RC
   101 Support DISC financial function
   102 Support DOLLAR conversion financial function
   105 Support DURATION financial function
-  107 ZK Spreadsheet Live support export PDF
+  107 ZK Spreadsheet App support export PDF
   108 Support showing pictures(Excel 2007, xlsx)
   111 Support exporting selected sheet to pdf
   112 Support exporting selected area to pdf
@@ -151,7 +151,7 @@ ZK Spreadsheet 2.0.0 RC
   114 Support security related financial function
   115 Support yield related financial function
   116 Support Treasury Bill related financial functions
-  120 ZK Spreadsheet Live support set hyperlink menu and toolbarbutton
+  120 ZK Spreadsheet App support set hyperlink menu and toolbarbutton
   121 Support Binary number conversion engineering functions
   122 Support Decimal number conversion engineering functions
   123 Support Hexadecimal number conversion engineering functions
@@ -160,7 +160,7 @@ ZK Spreadsheet 2.0.0 RC
   127 Support DELTA ERF ERFC and GESTEP engineering functions
   128 Support complex number engineering functions
   129 Support input mask for entering Date or Time into cell.
-  130 ZK Spreadsheet Live Support display, hide gridlines
+  130 ZK Spreadsheet App Support display, hide gridlines
   131 Support wrapping ZK Spreadsheet as a JSF Ajax Component
 
 *Bug
@@ -208,10 +208,10 @@ ZK Spreadsheet 2.0.0 beta3
   30 Support hideColumns
   31 Support unhideColumns
   55 Support Range.setHidden
-  57 ZK Spreadsheet Live support sort/custom sort menu and toolbarbutton
+  57 ZK Spreadsheet App support sort/custom sort menu and toolbarbutton
   62 Support getRepeatingRowsAndColumns
   58 Support printing ZK Spreadsheet to PDF file
-  63 ZK Spreadsheet Live support copy/paste/pastSpecial menu and toolbarbutton
+  63 ZK Spreadsheet App support copy/paste/pastSpecial menu and toolbarbutton
 
 *Bug
   56 zss error in log   
