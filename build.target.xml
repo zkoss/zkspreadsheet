@@ -39,9 +39,12 @@ Copyright (C) 2002-2006 Potix Corporation. All Rights Reserved.
 	<property name="srcooxml.dir" value=""/>
 	<available file="srcscratchpad" property="srcscratchpad.dir" value="srcscratchpad"/>
 	<property name="srcscratchpad.dir" value=""/>
-	<javac srcdir="${src.dir}:${codegen.dir}:${srcdpc.dir}:${srcpv.dir}:${srcjava.dir}:${srcooxml.dir}:${srcscratchpad.dir}" destdir="${out.dir}"
+	<javac srcdir="${src.dir}:${codegen.dir}:${srcdpc.dir}:${srcjava.dir}:${srcooxml.dir}:${srcscratchpad.dir}" destdir="${out.dir}"
 	 debug="${debug}" optimize="${optimize}" encoding="UTF-8"
 	 target="${target.version}" deprecation="${deprecation}" source="${source.version}"/>
+	<javac srcdir="${src.dir}:${srcpv.dir}" destdir="${out.dir}"
+	 debug="${debugpv}" optimize="${optimizepv}" encoding="UTF-8"
+	 target="${target.version}" deprecation="${deprecationpv}" source="${source.version}"/>
 </target>
 
 <!-- ====== -->
@@ -266,6 +269,7 @@ if="deploy.jboss.required">
 </target>
 
 <target name="clean" depends="clean.bin">
+	<delete quiet="true" dir="build"/>
 	<delete quiet="true" dir="${out.dir}"/>
 	<delete quiet="true" dir="${tmp.dir}"/>
 	<delete quiet="true" dir="${outv.dir}"/>

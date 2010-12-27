@@ -149,12 +149,41 @@ elif [ "$oflag" != "" ] ; then
 	exit 1
 fi
 
+#-- adjust javac debugpv and optimizepv flags
+dflagpv=$(grep '^debugpv=' $setting)
+dflagpv=${dflagpv#debugpv=}
+if [ "$dflagpv" = "true" ] ; then
+	dflagpv=on
+elif [ "$dflagpv" = "false" ] ; then
+	dflagpv=off
+elif [ "$dflagpv" != "" ] ; then
+	echo Illegal setting: debugpv=$dflagpv
+	exit 1
+fi
+
+oflagpv=$(grep '^optimizepv=' $setting)
+oflagpv=${oflagpv#optimizepv=}
+if [ "$oflagpv" = "true" ] ; then
+	oflagpv=on
+elif [ "$oflagpv" = "false" ] ; then
+	oflagpv=off
+elif [ "$oflagpv" != "" ] ; then
+	echo Illegal setting: optimizepv=$oflagpv
+	exit 1
+fi
+
 if [ "$outdir" = "release" ] ; then
 	if [ "$dflag" = "" ] ; then
 		dflag="off"
 	fi
 	if [ "$oflag" = "" ] ; then
 		oflag="on"
+	fi
+	if [ "$dflagpv" = "" ] ; then
+		dflagpv="off"
+	fi
+	if [ "$oflagpv" = "" ] ; then
+		oflagpv="on"
 	fi
 else
 	if [ "$dflag" = "" ] ; then
@@ -163,8 +192,14 @@ else
 	if [ "$oflag" = "" ] ; then
 		oflag="off"
 	fi
+	if [ "$dflagpv" = "" ] ; then
+		dflagpv="off"
+	fi
+	if [ "$oflagpv" = "" ] ; then
+		oflagpv="off"
+	fi
 fi
-echo "dflag=$dflag, oflag=$oflag"
+echo "dflag=$dflag, oflag=$oflag, dflagpv=$dflagpv, oflagpv=$oflagpv"
 
 #-- Prepare define list
 dfnList=
@@ -432,6 +467,24 @@ function invoke_ant
 		this_oflag=off
 	fi
 
+	this_dflagpv=$dflagpv
+	dflagpvtmp=$(grep '^debugpv=' version)
+	dflagpvtmp=${dflagpvtmp#debugpv=}
+	if [ "$dflagpvtmp" = "true" ] ; then
+		this_dflagpv=on
+	elif [ "$dflagpvtmp" = "false" ] ; then
+		this_dflagpv=off
+	fi
+	this_oflagpv=$oflagpv
+	oflagpvtmp=$(grep '^optimizepv=' version)
+	oflagpvtmp=${oflagpvtmp#optimizepv=}
+	if [ "$oflagpvtmp" = "true" ] ; then
+		this_oflagpv=on
+	elif [ "$oflagpvtmp" = "false" ] ; then
+		this_oflagpv=off
+	fi
+	
+	
 	prjtitle=$(grep '^project=' version)
 	prjtitle=${prjtitle#project=}
 	if [ "$prjtitle" = "" ] ; then
@@ -467,6 +520,7 @@ function invoke_ant
 		-Ddeprecation="$deprecation" \
 		-Dhaltonerror=$haltonerror -Dout.dir=$outdir \
 		-Ddebug=$this_dflag -Doptimize=$this_oflag ${nojc} \
+		-Ddebugpv=$this_dflagpv -Doptimizepv=$this_oflagpv \
 		-Dshare.javadoc.dir="$javadocdir" \
 		-Djavadoc.class.path="$DCP" -Dapp.name=$app $unziplist \
 		-Droot.context=$rootContext -Dgentime=$gentime \
