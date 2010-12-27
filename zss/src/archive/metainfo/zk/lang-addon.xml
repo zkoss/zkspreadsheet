@@ -30,7 +30,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	<version>
 		<version-class>org.zkoss.zss.ui.Version</version-class>
 		<version-uid>2.0.0</version-uid>
-		<zk-version>5.0.0</zk-version><!-- or later -->
+		<zk-version>5.0.5</zk-version><!-- or later -->
 	</version>
 
 	<zscript language="Java">
