@@ -898,7 +898,7 @@ public class CellFetchCommandHelper{
 
 			final FormatText ft = Utils.getFormatText(cell);
 			RichTextString rstr = ft != null && ft.isRichTextString()? ft.getRichTextString() : null;
-			String text = rstr == null ? ft != null ? Utils.escapeCellText(ft.getCellFormatResult().text, wrap, wrap) : "" : Utils.formatRichTextString(sheet, rstr, wrap);
+			String text = rstr == null ? ft != null ? Utils.escapeCellText(ft.getCellFormatResult().text, wrap, true) : "" : Utils.formatRichTextString(sheet, rstr, wrap);
 			Hyperlink hlink = Utils.getHyperlink(cell);
 			if (hlink != null) {
 				text = Utils.formatHyperlink(sheet, hlink, text, wrap);

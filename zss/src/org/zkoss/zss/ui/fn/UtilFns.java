@@ -81,7 +81,7 @@ public class UtilFns {
 					final RichTextString rstr = ft.getRichTextString();
 					text = rstr == null ? "" : Utils.formatRichTextString(sheet, rstr, wrap);
 				} else if (ft.isCellFormatResult()) {
-					text = Utils.escapeCellText(ft.getCellFormatResult().text, wrap, wrap);
+					text = Utils.escapeCellText(ft.getCellFormatResult().text, wrap, true);
 				}
 			}
 			final Hyperlink hlink = Utils.getHyperlink(cell);

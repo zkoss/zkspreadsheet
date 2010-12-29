@@ -550,7 +550,7 @@ public class Utils {
 		final String address = Utils.escapeCellText(hlink.getAddress(), true, false);
 		final String linkLabel = hlink.getLabel();
 		final String label = !"".equals(cellText) ? cellText :  
-				Utils.escapeCellText(linkLabel == null ? hlink.getAddress() : linkLabel, wrap, wrap);
+				Utils.escapeCellText(linkLabel == null ? hlink.getAddress() : linkLabel, wrap, false);
 		return BookHelper.formatHyperlink((Book)sheet.getWorkbook(), hlink.getType(), address, label);
 	}
 	/**
@@ -563,7 +563,7 @@ public class Utils {
 	public static String formatRichTextString(Worksheet sheet, RichTextString rstr, boolean wrap) {
 		final List<int[]> indexes = new ArrayList<int[]>(rstr.numFormattingRuns()+1);
 		String text = BookHelper.formatRichText((Book)sheet.getWorkbook(), rstr, indexes);
-		return Utils.escapeCellText(text, wrap, wrap, indexes);
+		return Utils.escapeCellText(text, wrap, true, indexes);
 	}
 
 	/**
@@ -870,7 +870,7 @@ public class Utils {
 		final FormatText ft = (cell == null) ? null : Utils.getFormatText(cell);
 		
 		final RichTextString rstr = ft != null && ft.isRichTextString() ? ft.getRichTextString() : null; 
-		String text = rstr != null ? Utils.formatRichTextString(sheet, rstr, wrap) : ft != null ? Utils.escapeCellText(ft.getCellFormatResult().text, wrap, wrap) : "";
+		String text = rstr != null ? Utils.formatRichTextString(sheet, rstr, wrap) : ft != null ? Utils.escapeCellText(ft.getCellFormatResult().text, wrap, true) : "";
 		if (hlink != null) {
 			text = Utils.formatHyperlink(sheet, hlink, text, wrap);
 		}

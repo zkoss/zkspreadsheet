@@ -1785,7 +1785,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 				final FormatText ft = (cell == null) ? null : Utils.getFormatText(cell);
 				
 				final RichTextString rstr = ft != null && ft.isRichTextString() ? ft.getRichTextString() : null; 
-				String text = rstr != null ? Utils.formatRichTextString(sheet, rstr, wrap) : ft != null ? Utils.escapeCellText(ft.getCellFormatResult().text, wrap, wrap) : "";
+				String text = rstr != null ? Utils.formatRichTextString(sheet, rstr, wrap) : ft != null ? Utils.escapeCellText(ft.getCellFormatResult().text, wrap, true) : "";
 				if (hlink != null) {
 					text = Utils.formatHyperlink(sheet, hlink, text, wrap);
 				}
