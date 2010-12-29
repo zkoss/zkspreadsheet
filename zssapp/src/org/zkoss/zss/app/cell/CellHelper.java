@@ -171,10 +171,4 @@ public final class CellHelper {
 		Utils.sort(sheet, rect,
 				null, new boolean[] { true }, null, false, false, false);
 	}
-	
-	public static void createCustomSortDialog(Spreadsheet spreadsheet, Component parent) {
-		Executions.createComponents("~./zssapp/html/dialog/customSort.zul", 
-				parent, 
-				Zssapps.newSpreadsheetArg(spreadsheet));
-	}
 }

@@ -37,7 +37,7 @@ import org.zkoss.zul.Menupopup;
  * @author Sam
  *
  */
-public class FormatMenu extends Menu implements IdSpace  {
+public class FormatMenu extends Menu implements IdSpace {
 	//TODO provide font color menu
 	private Menupopup formatMenupopup;
 	
@@ -50,15 +50,6 @@ public class FormatMenu extends Menu implements IdSpace  {
 		Executions.createComponents(Consts._FormatMenu_zul, this, null);
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
-		
-		final DesktopWorkbenchContext workbenchCtrl = getDesktopWorkbenchContext();
-		workbenchCtrl.addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
-			
-			@Override
-			public void onEvent(Event event) throws Exception {
-				setDisabled(!workbenchCtrl.getWorkbookCtrl().hasBook());
-			}
-		});
 	}
 	
 	public void onFontFamilySelect(ForwardEvent event) {
@@ -130,14 +121,23 @@ public class FormatMenu extends Menu implements IdSpace  {
 	}
 	
 	public void onClick$formatNumber() {
-		DesktopWorkbenchContext.getInstance(getDesktop()).getWorkbenchCtrl().openFormatNumberDialog();
+		getDesktopWorkbenchContext().getWorkbenchCtrl().openFormatNumberDialog();
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
-		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
+		return Zssapp.getDesktopWorkbenchContext(this);
 	}
 	
 	protected DesktopCellStyleContext getDesktopCellStyleContext() {
-		return DesktopCellStyleContext.getInstance(Executions.getCurrent().getDesktop());
+		return Zssapp.getDesktopCellStyleContext(this);
+	}
+
+	public void onCreate() {
+		final DesktopWorkbenchContext workbenchCtrl = getDesktopWorkbenchContext();
+		workbenchCtrl.addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				setDisabled(!workbenchCtrl.getWorkbookCtrl().hasBook());
+			}
+		});
 	}
 }

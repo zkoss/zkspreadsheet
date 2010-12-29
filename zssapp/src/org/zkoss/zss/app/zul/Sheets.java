@@ -18,8 +18,6 @@ package org.zkoss.zss.app.zul;
 
 import static org.zkoss.zss.app.base.Preconditions.checkNotNull;
 
-import java.util.HashMap;
-
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
@@ -29,7 +27,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.MouseEvent;
 import org.zkoss.zss.app.Consts;
-import org.zkoss.zss.app.ctrl.RenameSheetCtrl;
 import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -64,7 +61,6 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	
 	public Sheets() {
 		Executions.createComponents(Consts._SheetPanel_zul, this, null);
-		
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
 	}
@@ -146,6 +142,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	public void onClick$shiftSheetLeft() {
 		int newIdx = SheetHelper.shiftSheetLeft(checkNotNull(ss, "Spreadsheet is null"));
 		if (newIdx >= 0) {
+			tabbox.setSelectedIndex(newIdx);
 			redraw();
 			setCurrentSheet(newIdx);
 		} else {
@@ -156,6 +153,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	public void onClick$shiftSheetRight() {
 		int newIdx = SheetHelper.shiftSheetRight(checkNotNull(ss, "Spreadsheet is null"));
 		if (newIdx >= 0) {
+			tabbox.setSelectedIndex(newIdx);
 			redraw();
 			setCurrentSheet(newIdx);
 		} else {
@@ -168,6 +166,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 		int newIdx = SheetHelper.deleteSheet(checkNotNull(ss, "Spreadsheet is null"));
 		if (newIdx >= 0) {
 			redraw();
+			tabbox.setSelectedIndex(newIdx);
 			setCurrentSheet(newIdx);
 		} else {
 			try {
@@ -178,11 +177,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	}
 	
 	public void onClick$renameSheet() {
-		HashMap arg = Zssapps.newSpreadsheetArg(ss);
-		arg.put(RenameSheetCtrl.KEY_ARG_SHEET_NAME, getCurrenSheet());
-		
-		//TODO: replace with simple inline editing, don't need to use window component
-		Executions.createComponents("~./zssapp/html/renameDlg.zul", null, arg);
+		getDesktopWorkbenchContext().getWorkbenchCtrl().openRenameSheetDialog(getCurrenSheet());
 	}
 	
 	public void onClick$copySheet() {
@@ -200,6 +195,6 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
-		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
+		return Zssapp.getDesktopWorkbenchContext(this);
 	}
 }

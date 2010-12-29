@@ -27,16 +27,15 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.cell.EditHelper;
-import org.zkoss.zss.app.event.ExportHelper;
 import org.zkoss.zss.app.file.FileHelper;
 import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
 import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.Exporter;
 import org.zkoss.zss.model.Exporters;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.Widget;
@@ -199,10 +198,6 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	public void insertSheet() {
 		int sheetCount = spreadsheet.getBook().getNumberOfSheets();
 		spreadsheet.getBook().createSheet("sheet " + (sheetCount + 1));
-	}
-
-	public void openExportPdfDialog() {
-		ExportHelper.doExportToPDF(spreadsheet);
 	}
 
 	public void reGainFocus() {

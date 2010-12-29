@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.zkoss.lang.Library;
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -38,7 +38,7 @@ import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.cell.EditHelper;
 import org.zkoss.zss.app.ctrl.HeaderSizeCtrl;
-import org.zkoss.zss.app.event.ExportHelper;
+import org.zkoss.zss.app.ctrl.RenameSheetCtrl;
 import org.zkoss.zss.app.file.FileHelper;
 import org.zkoss.zss.app.formula.FormulaMetaInfo;
 import org.zkoss.zss.app.sheet.SheetHelper;
@@ -194,7 +194,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		// if setSrc will init a book, then setSrcName only change the src name, 
 		// if setSrc again with the first same book, the book will register two listener 
 		//spreadsheet.setSrcName("Untitled");
-		final DesktopWorkbenchContext workbenchContext = DesktopWorkbenchContext.getInstance(desktop);
+		final DesktopWorkbenchContext workbenchContext = getDesktopWorkbenchContext();
 		workbenchContext.doTargetChange(new SSWorkbookCtrl(spreadsheet));
 		workbenchContext.setWorkbenchCtrl(this);
 		workbenchContext.addEventListener(Consts.ON_SHEET_REFRESH, new EventListener(){
@@ -233,6 +233,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				//use set setHighlight null can cancel selection, but need to re-store selection when select same sheet again
 				spreadsheet.setHighlight(null);
 				
+				getCellStyleContext().doTargetChange(
+						new SSRectCellStyle(Utils.getOrCreateCell(spreadsheet.getSelectedSheet(), 0, 0), spreadsheet));
 			}
 		});
 		workbenchContext.addEventListener(Consts.ON_SHEET_CHANGED, new EventListener() {
@@ -336,9 +338,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		int col = seld.getLeft();
 		Cell cell = Utils.getCell(seldSheet, row, col);
 		if (cell != null) {
-			DesktopCellStyleContext.getInstance(desktop).doTargetChange(
-				new SSRectCellStyle(cell, spreadsheet));
-			
+			getCellStyleContext().doTargetChange(new SSRectCellStyle(cell, spreadsheet));
 			formulaEditor.setText(Ranges.range(seldSheet, row, col).getEditText());
 		}
 	}
@@ -351,7 +351,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			workbench.getWorkbenchCtrl().openSaveFileDialog();
 	}
 	public void onClick$exportToPDFBtn() {
-		ExportHelper.doExportToPDF(spreadsheet);
+		openExportPdfDialog();
 		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	public void onClick$pasteDropdownBtn() {
@@ -376,7 +376,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		if (param == null)
 			return;
 		if (param.equals(Labels.getLabel("sort.custom"))) {
-			CellHelper.createCustomSortDialog(spreadsheet, mainWin);
+			openCustomSortDialog();
 		} else {
 			if (SortSelector.getSortOrder(param))
 				CellHelper.sortAscending(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
@@ -404,7 +404,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
-		return DesktopWorkbenchContext.getInstance(desktop);
+		return Zssapp.getDesktopWorkbenchContext(self);
 	}
 	
 	public void redrawSheetTabbox() {
@@ -451,7 +451,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			lastRow = event.getRow();
 			lastCol = event.getColumn();
 
-			Cell cell = Utils.getCell(sheet, lastRow, lastCol);
+			Cell cell = Utils.getOrCreateCell(sheet, lastRow, lastCol);
 
 			// reading the text from cell to formula bar
 			CellReference cr = new CellReference(lastRow, lastCol, false, false);
@@ -461,25 +461,11 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			focusPosition.setSelectedItem(lbpos);
 
 			// read format from cell and assign it to toolbar
-			if (cell != null) {
-				CellStyle cs = cell.getCellStyle();
-				if (cs != null) {
-					// merge cell
-					isMergeCell = isMergedCell(event.getRow(), event.getColumn(), event.getRow(), event.getColumn());
-					mergeCellBtn.setSclass(isMergeCell ? "clicked" : null);
+			// merge cell
+			isMergeCell = isMergedCell(event.getRow(), event.getColumn(), event.getRow(), event.getColumn());
+			mergeCellBtn.setSclass(isMergeCell ? "clicked" : null);
 
-					DesktopCellStyleContext.getInstance(desktop).doTargetChange(
-							new SSRectCellStyle(cell, 
-									spreadsheet) );
-				}
-			} else {
-				cell = Utils.getOrCreateCell(sheet, lastRow, lastCol);
-				CellStyle cs = sheet.getWorkbook().createCellStyle();
-				Ranges.range(sheet, lastRow, lastCol).setStyle(cs);
-				DesktopCellStyleContext.getInstance(desktop).doTargetChange(
-						new SSRectCellStyle(cell, 
-								spreadsheet) );
-			}
+			getCellStyleContext().doTargetChange(new SSRectCellStyle(cell, spreadsheet));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -633,7 +619,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	 * @return
 	 */
 	private DesktopCellStyleContext getCellStyleContext() {
-		return DesktopCellStyleContext.getInstance(Executions.getCurrent().getDesktop());
+		return Zssapp.getDesktopCellStyleContext(self);
 	}
 
 	public void onExportFile(ForwardEvent event) {
@@ -1174,11 +1160,18 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 
 	public void openCustomSortDialog() {
-		CellHelper.createCustomSortDialog(spreadsheet, Zssapp.getInstance(spreadsheet));
+		Executions.createComponents(Consts._CustomSortDialog_zul, mainWin, CustomSortWindowCtrl.newArg(spreadsheet));
 	}
 
 	public void openExportPdfDialog() {
-		ExportHelper.doExportToPDF(spreadsheet);
+		if (!hasZssPdf()) {
+			try {
+				Messagebox.show("Please download Zss Pdf from ZK");
+			} catch (InterruptedException e) {
+			}
+			return;
+		}
+		Executions.createComponents(Consts._ExportToPDF_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
 	}
 
 	public void openHyperlinkDialog() {
@@ -1186,7 +1179,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 
 	public void openInsertFormulaDialog() {
-		//Executions.createComponents(Consts._InsertFormulaDialog_zul, mainWin, null);
 		Executions.createComponents(Consts._InsertFormulaDialog2_zul, mainWin, null);
 	}
 
@@ -1241,5 +1233,34 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		if (sameVal)
 			arg.put(HeaderSizeCtrl.KEY_HEADER_SIZE, prev);
 		Executions.createComponents(Consts._HeaderSize_zul, mainWin, arg);
+	}
+
+	public void openRenameSheetDialog(String originalSheetName) {
+		Executions.createComponents(Consts._RenameDialog_zul, mainWin, RenameSheetCtrl.newArg(originalSheetName));
+	}
+
+	private final static String KEY_PDF = "org.zkoss.zss.app.exportToPdf";
+	
+	private static boolean hasZssPdf() {
+		String val = Library.getProperty(KEY_PDF);
+		if (val == null) {
+			boolean hasZssPdf = verifyZssPdf();
+			Library.setProperty(KEY_PDF, String.valueOf(hasZssPdf));
+			return hasZssPdf;
+		} else {
+			return Boolean.valueOf(Library.getProperty(KEY_PDF));
+		}
+	}
+
+	/**
+	 * Verify whether has zss pdf export function or not
+	 */
+	private static boolean verifyZssPdf() {
+		try {
+			Class.forName("org.zkoss.zss.model.impl.pdf.PdfExporter");
+		} catch (ClassNotFoundException ex) {
+			return false;
+		}
+		return true;
 	}
 }

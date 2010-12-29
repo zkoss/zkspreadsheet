@@ -26,6 +26,7 @@ import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.Dropdownbutton;
 import org.zkoss.zss.app.zul.Colorbutton;
 import org.zkoss.zss.app.zul.DisposedEventListener;
+import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
@@ -36,7 +37,7 @@ import org.zkoss.zul.Toolbarbutton;
  * @author Ian Tsai / Sam
  * 
  */
-public class CellStyleCtrlPanel extends Div implements IdSpace{
+public class CellStyleCtrlPanel extends Div implements IdSpace {
 
 	private Hlayout container;
 	/**
@@ -73,50 +74,6 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 		Executions.createComponents(Consts._CellStylePanel_zul, this, null);
 		Components.wireVariables(this, this);
 		Components.addForwards(this, this);
-		
-		CellStyleContext context = getCellStyleContext();
-		
-		DisposedEventListener listener = new DisposedEventListener() {
-			public boolean isDisposed() {
-				return CellStyleCtrlPanel.this.getDesktop()==null;
-			}
-			public void onEvent(Event arg0) throws Exception {
-				CellStyleContextEvent event = (CellStyleContextEvent) arg0;
-				if(event.getExecutor() != CellStyleCtrlPanel.this)
-					initPanel(event.getCellStyle());
-			}
-		};
-		context.addEventListener(Consts.ON_STYLING_TARGET_CHANGED,listener);
-		context.addEventListener(Consts.ON_CELL_STYLE_CHANGED,listener);
-
-		getDesktopWorkbenchContext().addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				//clear all UI attribute when sheet open or close
-				fontFamily.setValue(null);
-				fontSize.setValue(null);
-				
-				_isBold = false;
-				boldBtn.setSclass("");
-				
-				_isItalic = false;
-				italicBtn.setSclass("");
-				
-				_isUnderline = false;
-				underlineBtn.setSclass("");
-				
-				_isStrikethrough = false;
-				strikethroughBtn.setSclass("");
-				fontColorBtn.setColor("#000000");
-				cellColorBtn.setColor("#FFFFFF");
-				
-				alignLeftBtn.setSclass("");
-				alignCenterBtn.setSclass("");
-				alignRightBtn.setSclass("");
-				
-				isWrapText = false;
-				wrapTextBtn.setSclass("");
-			}
-		});
 	}
 	
 	public void setSpacing(String spacing) {
@@ -441,10 +398,55 @@ public class CellStyleCtrlPanel extends Div implements IdSpace{
 	}
 	
 	protected CellStyleContext getCellStyleContext(){
-		return DesktopCellStyleContext.getInstance(Executions.getCurrent().getDesktop());
+		return Zssapp.getDesktopCellStyleContext(this);
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
-		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
+		return Zssapp.getDesktopWorkbenchContext(this);
+	}
+
+	public void onCreate() {
+		CellStyleContext context = getCellStyleContext();
+		DisposedEventListener listener = new DisposedEventListener() {
+			public boolean isDisposed() {
+				return CellStyleCtrlPanel.this.getDesktop() == null;
+			}
+			public void onEvent(Event arg0) throws Exception {
+				CellStyleContextEvent event = (CellStyleContextEvent) arg0;
+				if(event.getExecutor() != CellStyleCtrlPanel.this)
+					initPanel(event.getCellStyle());
+			}
+		};
+		context.addEventListener(Consts.ON_STYLING_TARGET_CHANGED,listener);
+		context.addEventListener(Consts.ON_CELL_STYLE_CHANGED,listener);
+
+		getDesktopWorkbenchContext().addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				//clear all UI attribute when sheet open or close
+				fontFamily.setValue(null);
+				fontSize.setValue(null);
+				
+				_isBold = false;
+				boldBtn.setSclass("");
+				
+				_isItalic = false;
+				italicBtn.setSclass("");
+				
+				_isUnderline = false;
+				underlineBtn.setSclass("");
+				
+				_isStrikethrough = false;
+				strikethroughBtn.setSclass("");
+				fontColorBtn.setColor("#000000");
+				cellColorBtn.setColor("#FFFFFF");
+				
+				alignLeftBtn.setSclass("");
+				alignCenterBtn.setSclass("");
+				alignRightBtn.setSclass("");
+				
+				isWrapText = false;
+				wrapTextBtn.setSclass("");
+			}
+		});
 	}
 }

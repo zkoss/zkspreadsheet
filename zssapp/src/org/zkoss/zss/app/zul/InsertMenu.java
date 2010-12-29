@@ -70,6 +70,6 @@ public class InsertMenu extends Menu implements IdSpace {
 	}
 	
 	public DesktopWorkbenchContext getDesktopWorkbenchContext() {
-		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
+		return Zssapp.getDesktopWorkbenchContext(this);
 	}
 }

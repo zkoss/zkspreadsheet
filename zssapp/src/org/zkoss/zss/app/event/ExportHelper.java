@@ -20,6 +20,7 @@ import org.zkoss.lang.Library;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.MainWindowCtrl;
 import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -34,17 +35,6 @@ public class ExportHelper {
 	private ExportHelper(){}
 	
 	private final static String KEY_PDF = ExportHelper.class.getSimpleName() + "_ZSSPDF";
-
-	public static void doExportToPDF(Spreadsheet spreadsheet) {
-		if (!hasZssPdf()) {
-			try {
-				Messagebox.show("Please download Zss Pdf from ZK");
-			} catch (InterruptedException e) {
-			}
-			return;
-		}
-		Executions.createComponents("~./zssapp/html/dialog/exportToPDF.zul", null, Zssapps.newSpreadsheetArg(spreadsheet));
-	}
 	
 	public static boolean hasZssPdf() {
 		String val = Library.getProperty(KEY_PDF);

@@ -20,6 +20,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.app.zul.ctrl.WorkspaceContext;
 import org.zkoss.zul.Button;
@@ -101,6 +102,6 @@ public class OpenFileWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private DesktopWorkbenchContext getDesktopWorkbenchContext() {
-		return DesktopWorkbenchContext.getInstance(desktop);
+		return Zssapp.getDesktopWorkbenchContext(self);
 	}
 }

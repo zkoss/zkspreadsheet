@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
+import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
@@ -75,7 +75,7 @@ public class InsertFormulaCtrl extends GenericForwardComposer {
 			return;
 		
 		String formula = "=" + seldName.getLabel().toString()	+ "()";
-		DesktopWorkbenchContext.getInstance(desktop).insertFormula(formula);
+		Zssapp.getDesktopWorkbenchContext(self).insertFormula(formula);
 		formulaWin.setVisible(false);
 	}
 }

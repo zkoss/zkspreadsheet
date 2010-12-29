@@ -14,10 +14,15 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul;
 
+import java.util.ArrayList;
+
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
+import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.MainWindowCtrl;
+import org.zkoss.zss.app.zul.ctrl.DesktopCellStyleContext;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Div;
@@ -30,8 +35,6 @@ import org.zkoss.zul.Window;
  */
 public class Zssapp extends Div implements IdSpace  {
 	
-	private final static String URI = "~./zssapp/html/zssapp.zul";
-	
 	private final static String KEY_ZSSAPP = "org.zkoss.zss.app.zul.zssApp";
 	/*Default spreadsheet*/
 	//TODO: in mainWin id space, move to here
@@ -41,21 +44,21 @@ public class Zssapp extends Div implements IdSpace  {
 	private Window mainWin;
 	MainWindowCtrl mainWinCtrl;
 	
+	DesktopWorkbenchContext workbenchContext = new DesktopWorkbenchContext();
+	DesktopCellStyleContext cellStyleContext = new DesktopCellStyleContext();
 	
 	public Zssapp() {
-		Executions.createComponents(URI, this, null);
+		
+		Executions.createComponents(Consts._Zssapp_zul, this, null);
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
 		
 		spreadsheet = (Spreadsheet)mainWin.getFellow("spreadsheet");
 		mainWinCtrl = (MainWindowCtrl)mainWin.getAttribute(mainWin.getId() + "$composer");
-		bindAppController(spreadsheet, mainWinCtrl);
-		spreadsheet.setAttribute(KEY_ZSSAPP, this);
-		
 	}
 	
 	public void setSrc(String src) {
-		DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
+		DesktopWorkbenchContext workbench = getDesktopWorkbenchContext(this);
 		workbench.getWorkbookCtrl().setBookSrc(src);
 		workbench.fireWorkbookChanged();
 	}
@@ -67,49 +70,51 @@ public class Zssapp extends Div implements IdSpace  {
 	public void setMaxcolumns(int maxcols) {
 		spreadsheet.setMaxcolumns(maxcols);
 	}
-
-	public void setWidth(String width) {
-		super.setWidth(width);
-		mainWin.setWidth(width);
-	}
-	
-	public void setHeight(String height) {
-		super.setHeight(height);
-		mainWin.setHeight(height);
-	}
-	
-	public void setHflex(String flex) {
-		super.setHflex(flex);
-		mainWin.setHflex(flex);
-	}
-	
-	public void setVflex(String flex) {
-		super.setVflex(flex);
-		mainWin.setVflex(flex);
-	}
 	
 	public Spreadsheet getSpreadsheet() {
 		return spreadsheet;
 	} 
 	
-	/**
-	 * TODO: replace MainWindowCtrl, use this object as controller
-	 */
-	
-	private static String KEY_ZSSAPP_CONTROLLER = "org.zkoss.zss.app.zul.zssapp.appController";
-	private void bindAppController(Spreadsheet ss, Object ctrl) {
-		ss.setAttribute(KEY_ZSSAPP_CONTROLLER, ctrl);
+	public static Zssapp getInstance(Component comp) {
+		Zssapp self = null;
+		Component n = null;
+		ArrayList<Component> setPropList = null;
+		for (n = comp; n != null; n = n.getParent()) {
+			self = (Zssapp) n.getAttribute(KEY_ZSSAPP);
+			if (self == null) {
+				if (setPropList == null)
+					setPropList = new ArrayList<Component>();
+				setPropList.add(n);
+			} else {
+				break;
+			}
+			
+			if (n instanceof Zssapp) {
+				self = (Zssapp) n;
+				break;
+			}
+		}
+		
+		if (self != null && setPropList != null && setPropList.size() > 0) {
+			for (Component c : setPropList) {
+				c.setAttribute(KEY_ZSSAPP, self);
+			}
+		}
+		return self;
+	}
+	public DesktopWorkbenchContext getDesktopWorkbenchContext() {
+		return workbenchContext;
 	}
 	
-	private static Object getAppController(Spreadsheet ss) {
-		return ss.getAttribute(KEY_ZSSAPP_CONTROLLER);
+	public static DesktopWorkbenchContext getDesktopWorkbenchContext(Component comp) {
+		return getInstance(comp).getDesktopWorkbenchContext();
 	}
 	
-	public static Zssapp getInstance(Spreadsheet spreadsheet) {
-		return (Zssapp)spreadsheet.getAttribute(KEY_ZSSAPP);
+	public DesktopCellStyleContext getDesktopCellStyleContext() {
+		return cellStyleContext;
 	}
-	
-	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
-		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
+
+	public static DesktopCellStyleContext getDesktopCellStyleContext(Component comp) {
+		return getInstance(comp).getDesktopCellStyleContext();
 	}
 }

@@ -35,7 +35,6 @@ public class WebLink extends HtmlMacroComponent {
 	
 	public String getUrl() {
 		Combobox addrCB = (Combobox)getFellow("addrCombobox");
-		System.out.println("getUrl: " + addrCB.getText());
 		return addrCB.getText();
 	}
 }

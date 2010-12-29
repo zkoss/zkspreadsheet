@@ -170,6 +170,6 @@ public class FileMenu extends Menu implements IdSpace {
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
-		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
+		return Zssapp.getDesktopWorkbenchContext(this);
 	}
 }

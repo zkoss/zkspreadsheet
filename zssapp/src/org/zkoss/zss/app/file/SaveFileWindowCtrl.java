@@ -15,10 +15,10 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.file;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
@@ -81,7 +81,6 @@ public class SaveFileWindowCtrl extends GenericForwardComposer {
 	}
 
 	private DesktopWorkbenchContext getDesktopWorkbenchContext() {
-		return DesktopWorkbenchContext.getInstance(Executions.getCurrent()
-				.getDesktop());
+		return Zssapp.getDesktopWorkbenchContext(self);
 	}
 }

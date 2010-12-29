@@ -22,16 +22,6 @@ import org.zkoss.zss.app.Consts;
  *
  */
 public class DesktopCellStyleContext extends AbstractBaseContext implements CellStyleContext {
-
-	public static DesktopCellStyleContext getInstance(Desktop desktop){
-		DesktopCellStyleContext ctrl = 
-			(DesktopCellStyleContext) desktop.getAttribute("DesktopFontContext");
-		if(ctrl==null){
-			desktop.setAttribute("DesktopFontContext", 
-					ctrl = new DesktopCellStyleContext());
-		}
-		return ctrl;
-	}
 	
 	CellStyle cellStyle;
 	

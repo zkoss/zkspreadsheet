@@ -24,6 +24,9 @@ public interface WorkbenchCtrl {
 
 	public void openInsertFormulaDialog();
 	
+	/**
+	 * Open export pdf dialog
+	 */
 	public void openExportPdfDialog();
 	
 	public void openPasteSpecialDialog();
@@ -47,4 +50,9 @@ public interface WorkbenchCtrl {
 	 * @param headerType header type {@link WorkbookCtrl}
 	 */
 	public void openModifyHeaderSizeDialog(int headerType);
+	
+	/**
+	 * Open rename sheet dialog
+	 */
+	public void openRenameSheetDialog(String originalSheetName);
 }

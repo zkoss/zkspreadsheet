@@ -14,11 +14,14 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.ctrl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
-import org.zkoss.zss.app.zul.ctrl.WorkbookCtrl;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
@@ -29,11 +32,21 @@ import org.zkoss.zul.Textbox;
  */
 public class RenameSheetCtrl extends GenericForwardComposer {
 	
-	public final static String KEY_ARG_SHEET_NAME = "org.zkoss.zss.app.ctrl.renameSheetCtrl.sheetName";
+	private final static String KEY_ARG_SHEET_NAME = "org.zkoss.zss.app.ctrl.renameSheetCtrl.sheetName";
 	
 	private Button confirmRenameBtn;
 	
 	private Textbox sheetNameTB;
+	
+	/**
+	 * @param originalSheetName
+	 * @return
+	 */
+	public static Map newArg(String originalSheetName) {
+		HashMap<String, Object> arg = new HashMap<String, Object>(1);
+		arg.put(KEY_ARG_SHEET_NAME, originalSheetName);
+		return arg;
+	}
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -51,7 +64,7 @@ public class RenameSheetCtrl extends GenericForwardComposer {
 			}
 			return;
 		}
-		DesktopWorkbenchContext bookContent = DesktopWorkbenchContext.getInstance(desktop);
+		DesktopWorkbenchContext bookContent = Zssapp.getDesktopWorkbenchContext(self);
 		bookContent.getWorkbookCtrl().renameSelectedSheet(sheetName);
 		bookContent.fireRefresh();
 		

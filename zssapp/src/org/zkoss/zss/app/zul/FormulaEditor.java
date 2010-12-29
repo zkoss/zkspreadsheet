@@ -14,17 +14,15 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul;
 
-import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.util.CellRangeAddress;
-import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zss.app.cell.EditHelper;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.model.Ranges;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.impl.SheetCtrl;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -39,7 +37,7 @@ import org.zkoss.zul.Textbox;
  * @author Sam
  *
  */
-public class FormulaEditor extends Textbox implements ZssappComponent{
+public class FormulaEditor extends Textbox implements ZssappComponent {
 
 	private Spreadsheet ss;
 	
@@ -226,6 +224,6 @@ public class FormulaEditor extends Textbox implements ZssappComponent{
 	}
 
 	private DesktopWorkbenchContext getDesktopWorkbenchContext() {
-		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
+		return Zssapp.getDesktopWorkbenchContext(this);
 	}
 }

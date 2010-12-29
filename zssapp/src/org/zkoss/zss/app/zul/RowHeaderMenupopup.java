@@ -100,6 +100,6 @@ public class RowHeaderMenupopup extends Menupopup implements IdSpace {
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
-		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
+		return Zssapp.getDesktopWorkbenchContext(this);
 	}
 }

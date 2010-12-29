@@ -46,13 +46,6 @@ public class ViewMenu extends Menu implements IdSpace {
 		Executions.createComponents(Consts._ViewMenu_zul, this, null);
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
-
-		final DesktopWorkbenchContext workbenchCtrl = getDesktopWorkbenchContext();
-		getDesktopWorkbenchContext().addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				setDisabled(!workbenchCtrl.getWorkbookCtrl().hasBook());
-			}
-		});
 	}
 	
 	public void onClick$viewFormulaBar() {
@@ -98,6 +91,15 @@ public class ViewMenu extends Menu implements IdSpace {
 	}
 
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
-		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
+		return Zssapp.getDesktopWorkbenchContext(this);
+	}
+
+	public void onCreate() {
+		final DesktopWorkbenchContext workbenchCtrl = getDesktopWorkbenchContext();
+		getDesktopWorkbenchContext().addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				setDisabled(!workbenchCtrl.getWorkbookCtrl().hasBook());
+			}
+		});
 	}
 }

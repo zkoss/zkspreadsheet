@@ -27,6 +27,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.formula.FormulaMetaInfo;
+import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
@@ -264,6 +265,6 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
-		return DesktopWorkbenchContext.getInstance(desktop);
+		return Zssapp.getDesktopWorkbenchContext(self);
 	}
 }

@@ -83,8 +83,7 @@ public class ColumnHeaderMenupopup  extends Menupopup implements IdSpace {
 	}
 	
 	public void onClick$columnWidth() {
-		DesktopWorkbenchContext.getInstance(
-			Executions.getCurrent().getDesktop()).getWorkbenchCtrl().openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_COLUMN);
+		getDesktopWorkbookContext().getWorkbenchCtrl().openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_COLUMN);
 	}
 	
 	public void onClick$numberFormat() {
@@ -100,6 +99,6 @@ public class ColumnHeaderMenupopup  extends Menupopup implements IdSpace {
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbookContext() {
-		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
+		return Zssapp.getDesktopWorkbenchContext(this);
 	}
 }

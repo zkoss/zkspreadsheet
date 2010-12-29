@@ -20,7 +20,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
+import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.WorkbookCtrl;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Intbox;
@@ -82,7 +82,7 @@ public class HeaderSizeCtrl extends GenericForwardComposer {
 	}
 	
 	private void setHeaderSize() {
-		WorkbookCtrl bookCtrl = DesktopWorkbenchContext.getInstance(desktop).getWorkbookCtrl();
+		WorkbookCtrl bookCtrl = Zssapp.getDesktopWorkbenchContext(self).getWorkbookCtrl();
 		if (headerType ==  WorkbookCtrl.HEADER_TYPE_ROW)
 			bookCtrl.setRowHeightInPx(headerSize.getValue()); 
 		else

@@ -19,6 +19,7 @@ import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 
 /**
  * @author Sam
@@ -61,6 +62,8 @@ public final class SheetHelper {
 			if (index < book.getNumberOfSheets() - 1) {
 				int newIdx = index + 1;
 				book.setSheetOrder(name, newIdx);
+				SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
+				ctrl.getWidgetHandler().invaliate();
 				return newIdx;
 			}
 		}

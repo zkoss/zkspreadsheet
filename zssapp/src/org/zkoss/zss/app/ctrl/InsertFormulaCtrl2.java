@@ -21,13 +21,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zkplus.databind.BindingListModelList;
 import org.zkoss.zss.app.formula.FormulaMetaInfo;
 import org.zkoss.zss.app.formula.Formulas;
+import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
@@ -167,6 +167,6 @@ public class InsertFormulaCtrl2 extends GenericForwardComposer {
 		functionListbox.setModel(new SimpleListModel(search(searchFor)));
 	}
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
-		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
+		return Zssapp.getDesktopWorkbenchContext(self);
 	}
 }

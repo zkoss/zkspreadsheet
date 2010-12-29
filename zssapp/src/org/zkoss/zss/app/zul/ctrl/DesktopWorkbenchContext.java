@@ -14,7 +14,6 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul.ctrl;
 
-import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zss.app.Consts;
 
@@ -29,46 +28,51 @@ public class DesktopWorkbenchContext extends AbstractBaseContext {
 	public final static int SHIFT_CELL_DOWN = 2;
 	public final static int SHIFT_CELL_LEFT = 3;
 	
-	public static DesktopWorkbenchContext getInstance(Desktop desktop) {
-		DesktopWorkbenchContext ctrl = 
-			(DesktopWorkbenchContext) desktop.getAttribute("DesktopSheetContext");
-		if(ctrl==null){
-			desktop.setAttribute("DesktopSheetContext", 
-					ctrl = new DesktopWorkbenchContext());
-		}
-		return ctrl;
-	}
-
+	/* operate on selected sheet */
 	WorkbookCtrl workbookCtrl;
+	
+	/**
+	 * 
+	 * @param workbookCtrl
+	 */
 	public void doTargetChange(WorkbookCtrl workbookCtrl) {
 		this.workbookCtrl = workbookCtrl;
 	}
 	
+	/**
+	 * Returns the {@link #WorkbookCtrl}
+	 * @return
+	 */
 	public WorkbookCtrl getWorkbookCtrl() {
 		return workbookCtrl;
 	}
 	
-	
+	/* UI controls */
 	WorkbenchCtrl workbenchCtrl;
+	
+	/**
+	 * Sets the {@link #workbenchCtrl}
+	 * @param workbenchCtrl
+	 */
 	public void setWorkbenchCtrl(WorkbenchCtrl workbenchCtrl) {
 		this.workbenchCtrl = workbenchCtrl;
 	}
 	
+	/**
+	 * Returns the {@link #workbenchCtrl}
+	 * @return
+	 */
 	public WorkbenchCtrl getWorkbenchCtrl() {
 		return workbenchCtrl;
 	}
 
+	/**
+	 * Fire sheet refresh event when sheet name changed
+	 */
 	public void fireRefresh() {
 		listenerStore.fire(new Event(Consts.ON_SHEET_REFRESH));
 	}
 
-	/**
-	 * Fire workbook open event when spreadsheet set new book or set new source
-	 * @param open false if spreadsheet close book, means set source to null
-	 */
-//	public void fireWorkbookOpen(boolean open) {
-//		listenerStore.fire(new Event(Consts.ON_WORKBOOK_OPEN, null, Boolean.valueOf(open)));
-//	}
 	/**
 	 * Fire sheet changed event when spreadsheet set selected sheet
 	 */

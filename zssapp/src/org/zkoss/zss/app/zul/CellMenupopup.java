@@ -157,6 +157,6 @@ public class CellMenupopup extends Menupopup implements IdSpace {
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbookContext() {
-		return DesktopWorkbenchContext.getInstance(Executions.getCurrent().getDesktop());
+		return Zssapp.getDesktopWorkbenchContext(this);
 	}
 }
