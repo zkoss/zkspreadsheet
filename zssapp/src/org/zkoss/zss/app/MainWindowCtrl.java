@@ -372,10 +372,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	public void onPasteSelector(ForwardEvent event) {
 		EditHelper.onPasteEventHandler(spreadsheet, (String)event.getData());
 	}
-	public void onClick$sortDropdownBtn() {
-		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
-	}
-
 	public void onClick$insertFormulaBtn() {
 		openInsertFormulaDialog();
 		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
@@ -769,13 +765,10 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		}
 	}
 
-	//TODO: Do not use hard code
 	public void onViewFormulaBar() {
 		if (formulaBar.getHeight() != "0px") {
 			formulaBar.setSize("0px");
-			topToolbars.setHeight("58px");
 		} else {
-			topToolbars.setHeight("85px");
 			formulaBar.setSize("23px");
 		}
 	}

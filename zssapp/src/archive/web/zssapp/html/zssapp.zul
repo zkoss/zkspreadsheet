@@ -93,44 +93,52 @@
 			-moz-opacity: .6;
 			filter: alpha(opacity=60);
 		}
+		.zssapp-menubar {
+			border-top : 1px solid #D8D8D8;
+			border-bottom : 1px solid #D8D8D8;
+			background-image: url(${c:encodeURL('~./zul/img/breeze/menu/menu-bg.png')});
+		}
+		.zssapp-menubar .z-menubar-hor {
+			border-top : 0;
+			border-bottom : 0;
+		}
 	</style>
 	<borderlayout id="topToolbars" height="56px" style="border-left:1px solid #E1E1E1;border-right:1px solid #E1E1E1;">
 				<!-- SECTION **********Navigator bar************************************************* -->
 				<north id="mainNavigator" size="27px" flex="true" border="0">
-					<hlayout hflex="true" sclass="z-menubar-hor" spacing="0">
-					<menubar id="menubar">
-						<filemenu id="fileMenu" label="${c:l('file')}"></filemenu>
-						<editmenu id="editMenu" label="${c:l('edit')}"></editmenu>
-						<viewmenu id="viewMenu" label="${c:l('view')}"></viewmenu>
-						<formatmenu id="formatMenu" label="${c:l('format')}"/>
-						<insertmenu id="insertMenu" label="${c:l('insert')}"/>
-                       <!--   <menu label="${c:l('share')}">
-                           <menupopup>
-								<menuitem label="${c:l('share.private')}" forward="onNotImplement()" src="/img/bear.gif"/>
-								<menuitem label="${c:l('share.invite')}" forward="onNotImplement()" src="/img/bear.gif"/>
-								<menuitem label="${c:l('share.publicRead')}" forward="onNotImplement()" src="/img/bear.gif"/>
-								<menuitem label="${c:l('share.publicReadWrite')}" forward="onNotImplement()" src="/img/bear.gif"/>
-							</menupopup>
-                        </menu>-->
-                        <menu label="${c:l('help')}">
-							<menupopup>
-								<attribute w:name="onOpen">
-									this.$f('spreadsheet', true).focus(false);
-								</attribute>
-								<!-- <menuitem label="${c:l('help.center')}"  src="/img/music.gif"/>-->
-								<menuitem id="openCheatsheet" label="${c:l('help.cheatsheet')}" forward="onHelpCheatsheet" />
-								<menuitem id="forum" label="${c:l('help.forum')}" href="http://www.zkoss.org/forum/" target="_blank"/>
-								<menuitem id="book" label="Book" href="http://books.zkoss.org/wiki/ZK_Spreadsheet_Essentials" target="_blank"/>
-								<menuitem id="smalltalk" label="${c:l('help.smalltalk')}" href="http://zssdemo.zkoss.org/" target="_blank"/>
-								<!-- <menuitem label="${c:l('help.about')}" forward="onNotImplement()" src="/img/music.gif"/>-->
-							</menupopup>
-                        </menu>
-					</menubar>
-					<div hflex="true"></div>
-	<div hflex="min">
-		<toolbarbutton id="closeBtn" width="23px" style="margin:0 5px 2px 0;" image="~./zssapp/image/cross.png"/>
-	</div>
-					
+					<hlayout hflex="true" sclass="zssapp-menubar" spacing="0">
+						<menubar id="menubar">
+							<filemenu id="fileMenu" label="${c:l('file')}"></filemenu>
+							<editmenu id="editMenu" label="${c:l('edit')}"></editmenu>
+							<viewmenu id="viewMenu" label="${c:l('view')}"></viewmenu>
+							<formatmenu id="formatMenu" label="${c:l('format')}"/>
+							<insertmenu id="insertMenu" label="${c:l('insert')}"/>
+	                       <!--   <menu label="${c:l('share')}">
+	                           <menupopup>
+									<menuitem label="${c:l('share.private')}" forward="onNotImplement()" src="/img/bear.gif"/>
+									<menuitem label="${c:l('share.invite')}" forward="onNotImplement()" src="/img/bear.gif"/>
+									<menuitem label="${c:l('share.publicRead')}" forward="onNotImplement()" src="/img/bear.gif"/>
+									<menuitem label="${c:l('share.publicReadWrite')}" forward="onNotImplement()" src="/img/bear.gif"/>
+								</menupopup>
+	                        </menu>-->
+	                        <menu label="${c:l('help')}">
+								<menupopup>
+									<attribute w:name="onOpen">
+										this.$f('spreadsheet', true).focus(false);
+									</attribute>
+									<!-- <menuitem label="${c:l('help.center')}"  src="/img/music.gif"/>-->
+									<menuitem id="openCheatsheet" label="${c:l('help.cheatsheet')}" forward="onHelpCheatsheet" />
+									<menuitem id="forum" label="${c:l('help.forum')}" href="http://www.zkoss.org/forum/" target="_blank"/>
+									<menuitem id="book" label="Book" href="http://books.zkoss.org/wiki/ZK_Spreadsheet_Essentials" target="_blank"/>
+									<menuitem id="smalltalk" label="${c:l('help.smalltalk')}" href="http://zssdemo.zkoss.org/" target="_blank"/>
+									<!-- <menuitem label="${c:l('help.about')}" forward="onNotImplement()" src="/img/music.gif"/>-->
+								</menupopup>
+	                        </menu>
+						</menubar>
+						<div hflex="true"></div>
+						<div hflex="min">
+							<toolbarbutton id="closeBtn" width="23px" style="margin:0 5px 2px 0;" image="~./zssapp/image/cross.png"/>
+						</div>
 					</hlayout>
 				</north>
 				
