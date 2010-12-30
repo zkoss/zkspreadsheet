@@ -364,6 +364,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 	public void onClick$pasteDropdownBtn() {
 		getDesktopWorkbenchContext().getWorkbookCtrl().pasteSelection();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	public void onDropdown$pasteDropdownBtn() {
 		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
@@ -371,9 +372,10 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	public void onPasteSelector(ForwardEvent event) {
 		EditHelper.onPasteEventHandler(spreadsheet, (String)event.getData());
 	}
-	public void onDropdown$sortDropdownBtn() {
+	public void onClick$sortDropdownBtn() {
 		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
+
 	public void onClick$insertFormulaBtn() {
 		openInsertFormulaDialog();
 		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
@@ -400,10 +402,12 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	
 	public void onClick$cutBtn() {
 		getDesktopWorkbenchContext().getWorkbookCtrl().cutSelection();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	
 	public void onClick$copyBtn() {
 		getDesktopWorkbenchContext().getWorkbookCtrl().copySelection();
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 
 	public void onClick$closeBtn() {
@@ -583,7 +587,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			 * case 'Y': spreadsheet.redo(); break;
 			 */
 			case 'O':
-				Executions.createComponents(Consts._FileListOpen_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+				openOpenFileDialog();
 				break;
 			case 'F':
 				//TODO: 
@@ -872,9 +876,11 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				} else {
 					// TODO: true mean merge horizontal only.(UI cannot handle
 					// merge vertically yet)
-					Utils.mergeCells(spreadsheet.getSelectedSheet(), sel
-							.getTop(), sel.getLeft(), sel.getBottom(), sel
-							.getRight(), true);
+					int top = sel.getTop();
+					int btm = sel.getBottom();
+					for (int i = top; i <= btm; i++) {
+						Utils.mergeCells(spreadsheet.getSelectedSheet(), i, sel.getLeft(), i, sel.getRight(), true);
+					}
 				}
 				spreadsheet.focus();
 			} else {
@@ -1165,6 +1171,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	public void onCheck$gridlinesCheckbox() {
 		Worksheet sheet = spreadsheet.getSelectedSheet();
 		Utils.getRange(sheet, 0, 0).setDisplayGridlines(!sheet.isDisplayGridlines());
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 
 	public void openCustomSortDialog() {
@@ -1270,5 +1277,13 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			return false;
 		}
 		return true;
+	}
+
+	public void openOpenFileDialog() {
+		Executions.createComponents(Consts._FileListOpen_zul, mainWin, null);
+	}
+
+	public void openImportFileDialog() {
+		Executions.createComponents(Consts._ImportFile_zul,	mainWin, null);
 	}
 }

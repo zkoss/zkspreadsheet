@@ -28,7 +28,7 @@
 			strikethroughvisible="fasle"
 			wraptextvisible="false"/>
 		<toolbarbutton id="_mergeCellBtn" sclass="toolIcon"
-			src="~./zssapp/image/table-join.png" forward="onClick=//p1/mainWin.onMergeCellClick" />
+			src="~./zssapp/image/table-join.png" tooltiptext="${c:l('cell.merge')}"/>
 	</hlayout>
 </vlayout>
 </div>

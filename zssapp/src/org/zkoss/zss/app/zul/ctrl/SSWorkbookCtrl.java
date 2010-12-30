@@ -206,6 +206,14 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void renameSelectedSheet(String name) {
 		SheetHelper.renameSheet(spreadsheet, name);
+		List<Widget> wgts = sheetWidgets.get(lastSheetName);
+		if (wgts != null) {
+			sheetWidgets.remove(lastSheetName);
+			sheetWidgets.put(name, wgts);
+			SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
+			for (Widget w : wgts)
+				ctrl.addWidget(w);
+		}
 	}
 
 	public void shiftCell(int direction) {

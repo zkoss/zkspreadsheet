@@ -165,8 +165,8 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 		//TODO: show message if fail to shift
 		int newIdx = SheetHelper.deleteSheet(checkNotNull(ss, "Spreadsheet is null"));
 		if (newIdx >= 0) {
-			redraw();
 			tabbox.setSelectedIndex(newIdx);
+			redraw();
 			setCurrentSheet(newIdx);
 		} else {
 			try {

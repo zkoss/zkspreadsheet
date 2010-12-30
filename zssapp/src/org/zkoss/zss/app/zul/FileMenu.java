@@ -93,7 +93,7 @@ public class FileMenu extends Menu implements IdSpace {
 	}
 	
 	public void onClick$openFile() {
-		FileHelper.createOpenFileDialog(null);
+		getDesktopWorkbenchContext().getWorkbenchCtrl().openOpenFileDialog();
 	}
 	
 	public void onClick$saveFile() {
@@ -136,7 +136,7 @@ public class FileMenu extends Menu implements IdSpace {
 	}
 	
 	public void onClick$importFile() {
-		FileHelper.createImportFileDialog(null);
+		getDesktopWorkbenchContext().getWorkbenchCtrl().openImportFileDialog();
 	}
 
 	public void setExportPdfDisabled(boolean disabled) {

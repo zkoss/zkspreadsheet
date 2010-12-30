@@ -29,6 +29,10 @@ public interface WorkbenchCtrl {
 	 */
 	public void openExportPdfDialog();
 	
+	public void openOpenFileDialog();
+	
+	public void openImportFileDialog();
+	
 	public void openPasteSpecialDialog();
 	
 	public void openCustomSortDialog();

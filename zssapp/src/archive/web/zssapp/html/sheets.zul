@@ -8,6 +8,6 @@
 		<menuitem id="shiftSheetRight" label="${c:l('shiftRight')}" />
 		<menuitem id="deleteSheet" label="${c:l('delete')}"/>
 		<menuitem id="renameSheet" label="${c:l('rename')}"/>
-		<menuitem id="copySheet" label="${c:l('edit.copy')}"/>
+		<menuitem id="copySheet" label="${c:l('edit.copy')}" disabled="true"/>
 	</menupopup>
 </zk>

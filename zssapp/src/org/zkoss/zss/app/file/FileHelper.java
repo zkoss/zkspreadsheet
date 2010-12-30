@@ -304,12 +304,4 @@ public class FileHelper {
 			
 		return storageFolderPath;
 	}
-	
-	public static void createOpenFileDialog(Component parent) {
-		Executions.createComponents(Consts._FileListOpen_zul, parent, null);
-	}
-	
-	public static void createImportFileDialog(Component parent) {
-		Executions.createComponents(Consts._ImportFile_zul,	parent, null);
-	}
 }
