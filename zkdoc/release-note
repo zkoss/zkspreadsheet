@@ -5,6 +5,7 @@ ZK Spreadsheet 2.1.0
 
 *Bug 
   268 Enter multiple line in cell but show as one single line only
+  271 NPE when focus on formulabar editor with a no book Spreadsheet
   
 	------------
 ZK Spreadsheet 2.0.0

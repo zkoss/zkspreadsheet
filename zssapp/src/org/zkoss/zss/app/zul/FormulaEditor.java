@@ -73,12 +73,15 @@ public class FormulaEditor extends Textbox implements ZssappComponent {
 	}
 	
 	public void onFocus() {
+		Worksheet sheet = ss.getSelectedSheet();
+		if (sheet == null) { //no sheet, no operation
+			return;
+		}
 		newEdit = null;
 		everFocusCell = false;
 		focusOut = false;
 		int left = ss.getSelection().getLeft();
 		int top = ss.getSelection().getTop();
-		Worksheet sheet = ss.getSelectedSheet();
 		currentEditcell = Utils.getCell(sheet, top, left);
 		
 		if (currentEditcell != null) {
