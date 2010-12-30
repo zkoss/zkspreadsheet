@@ -88,10 +88,6 @@ public class InsertMenu extends Menu implements IdSpace {
 	
 	public void setDisabled(boolean disabled) {
 		applyDisabled(insertMenupopup.getChildren(), disabled);
-		insertFormula.setDisabled(disabled);
-		insertChart.setDisabled(disabled);
-		insertImage.setDisabled(disabled);
-		insertSheet.setDisabled(disabled);
 	}
 	
 	private void applyDisabled(List children, boolean disabled) {
