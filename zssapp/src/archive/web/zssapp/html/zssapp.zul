@@ -7,6 +7,9 @@
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 <window id="mainWin" apply="org.zkoss.zss.app.MainWindowCtrl" height="100%" width="100%" style="margin:0px;padding:0px;position:relative;">
 	<style>
+		body {
+			padding: 0;
+		}
 		.clicked .z-toolbarbutton-cnt {
 			background-image: url(${c:encodeURL('~./zssapp/image/toolbarbtn-ctr-clkd.gif')});
 			background-position: 0 -500px;
@@ -91,13 +94,10 @@
 			filter: alpha(opacity=60);
 		}
 	</style>
-	<div style="float:right;position:absolute;right:10px;top:3px;z-index:100;background:">
-		<toolbarbutton id="closeBtn" image="~./zssapp/image/cross.png"/>
-	</div>
-	<borderlayout id="topToolbars" height="85px" style="border-left:1px solid #E1E1E1;border-right:1px solid #E1E1E1;">
+	<borderlayout id="topToolbars" height="56px" style="border-left:1px solid #E1E1E1;border-right:1px solid #E1E1E1;">
 				<!-- SECTION **********Navigator bar************************************************* -->
-				<north id="mainNavigator" maxsize="800" height="27px" flex="true"
-					border="0">
+				<north id="mainNavigator" size="27px" flex="true" border="0">
+					<hlayout hflex="true" sclass="z-menubar-hor" spacing="0">
 					<menubar id="menubar">
 						<filemenu id="fileMenu" label="${c:l('file')}"></filemenu>
 						<editmenu id="editMenu" label="${c:l('edit')}"></editmenu>
@@ -126,11 +126,17 @@
 							</menupopup>
                         </menu>
 					</menubar>
+					<div hflex="true"></div>
+	<div hflex="min">
+		<toolbarbutton id="closeBtn" width="23px" style="margin:0 5px 2px 0;" image="~./zssapp/image/cross.png"/>
+	</div>
+					
+					</hlayout>
 				</north>
 				
 				<!-- SECTION **********FastIconToolbar*********************************************** -->
-				<center id="fastIconBtn" flex="true" border="0" style="background: #F5F5F5; border-bottom: 1px solid #D8D8D8;">
-					<hlayout spacing="0.4em" height="30px">
+				<south id="fastIconBtn" size="30px" border="0" style="background: #F5F5F5; border-bottom: 1px solid #D8D8D8;">
+					<hlayout spacing="0.4em">
 <!--						<toolbarbutton disabled="true" id="print"  src="~./zssapp/image/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>-->
 						<toolbarbutton id="saveBtn" image="~./zssapp/image/disk-black.png" disabled="true" tooltiptext="${c:l('file.saved')}"/>
 						<toolbarbutton id="exportToPDFBtn" src="~./zssapp/image/document-pdf.png" tooltiptext="${c:l('export.pdf')}"/>
@@ -212,22 +218,27 @@
 							</attribute>
 						</checkbox>
 					</hlayout>
-				</center>
+				</south>
 				
 				<!-- SECTION **********Formula bar*********************************************** -->
-				<south id="formulaBar" size="26px" flex="true" border="0px" style="border-bottom: 1px solid #D8D8D8;">
-					<hlayout spacing="0px" hflex="min">
+<!-- 			<south id="formulaBar" size="26px" flex="true" border="0px" style="border-bottom: 1px solid #D8D8D8;">
+					<hlayout spacing="0px" hflex="true" sclass="z-valign-top">
 						<combobox id="focusPosition" sclass="focusPosCombobox" 
 									height="21px" width="185px" mold="rounded"
 									style="text-align:center;">
 							<comboitem id="lbpos" label="A1" /></combobox>
 						<div hflex="min" sclass="formulaBtn" style="background:#F5F5F5;">
 							<toolbarbutton id="insertFormulaBtn" style="text-decoration:none;color:black;font-size:16px;font-style:italic;text-align:center;"
-											label="f(x)" forward="onFormulaBarBtn" />
+											label="f(x)"/>
 						</div>
-						<formulaeditor id="formulaEditor" height="19px" style="font-size:16px;border:0px;padding:3px"/>
+						<formulaeditor id="formulaEditor" height="19px" style="font-size:16px;border:0px;padding:3px" hflex="true" vflex="true"/>
+						<div hflex="min" sclass="formulaBtn" style="background:#F5F5F5;">
+							<toolbarbutton id="extendEditorBtn" style="text-decoration:none;color:black;font-size:10px;text-align:center;"
+											label="v"/>
+						</div>
 					</hlayout>
 				</south>
+ -->				
 	</borderlayout>
 	<div id="toolbarMask" sclass="toolbarMask" >
 		<attribute w:name="onBind">
@@ -240,16 +251,40 @@
 				'top': mnHgh + 'px'});
 		</attribute>
 	</div>
+	<borderlayout vflex="true">
+				<north id="formulaBar" size="26px" flex="true" border="0px" style="border-bottom: 1px solid #D8D8D8;">
+					<hlayout spacing="0px" hflex="true" sclass="z-valign-top">
+						<combobox id="focusPosition" sclass="focusPosCombobox" 
+									height="21px" width="185px" mold="rounded"
+									style="text-align:center;">
+							<comboitem id="lbpos" label="A1" /></combobox>
+						<div hflex="min" sclass="formulaBtn" style="background:#F5F5F5;">
+							<toolbarbutton id="insertFormulaBtn" style="text-decoration:none;color:black;font-size:16px;font-style:italic;text-align:center;"
+											label="f(x)"/>
+						</div>
+						<formulaeditor id="formulaEditor" height="19px" style="font-size:16px;border:0px;padding:3px" hflex="true" vflex="true"/>
+						<div hflex="min" sclass="formulaBtn" style="background:#F5F5F5;">
+							<toolbarbutton id="extendEditorBtn" style="text-decoration:none;color:black;font-size:10px;text-align:center;"
+											label="v"/>
+						</div>
+					</hlayout>
+				</north>
+	<center flex="true">
+	<div>				
 	<sheets id="sheets"></sheets>
 	<!-- src="/xls/demo_sample.xls" -->
 	<spreadsheet id="spreadsheet" maxrows="200" src="/xls/Untitled"
 			maxcolumns="40" vflex="1" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
 			forward="onCtrlKey=mainWin.onSSCtrlKeys">
 	</spreadsheet>
+	</div>
+	</center>
+	</borderlayout>
 	<columnheadermenupopup id="columnHeaderMenupopup"/>
 	<rowheadermenupopup id="rowHeaderMenupopup"></rowheadermenupopup>
 	<cellmenupopup id="cellMenupopup"></cellmenupopup>
 	<cellcontext id="cellContext"></cellcontext>
 	<cheatsheet id="cheatsheet" />
+	
 </window>
 </zk>

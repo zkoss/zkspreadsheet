@@ -89,6 +89,7 @@ import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.North;
 import org.zkoss.zul.South;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
@@ -107,6 +108,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	int lastCol = 0;
 	boolean isFreezeRow = false;
 	boolean isFreezeColumn = false;
+	boolean _formulaBarOpen = false; //whether extends height of the formulaBar
 
 	Div toolbarMask;
 	
@@ -159,7 +161,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	Checkbox gridlinesCheckbox;
 	CellMenupopup cellMenupopup;
 	
-	South formulaBar;
+	//South formulaBar;
+	North formulaBar;
 	Borderlayout topToolbars;
 	
 	/*Dialog*/
@@ -216,6 +219,9 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			public void onEvent(Event event) throws Exception {
 				formulaEditor.setValue(null);
 				boolean isOpen = spreadsheet.getBook() != null;
+				formulaEditor.setDisabled(!isOpen);
+				focusPosition.setDisabled(!isOpen);
+				insertFormulaBtn.setDisabled(!isOpen);
 				toolbarMask.setVisible(!isOpen);
 				closeBtn.setVisible(isOpen);
 				setSaveButtonState(isOpen ? true : null);
@@ -233,8 +239,10 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				//use set setHighlight null can cancel selection, but need to re-store selection when select same sheet again
 				spreadsheet.setHighlight(null);
 				
-				getCellStyleContext().doTargetChange(
-						new SSRectCellStyle(Utils.getOrCreateCell(spreadsheet.getSelectedSheet(), 0, 0), spreadsheet));
+				if (isOpen) {
+					getCellStyleContext().doTargetChange(
+							new SSRectCellStyle(Utils.getOrCreateCell(spreadsheet.getSelectedSheet(), 0, 0), spreadsheet));
+				}
 			}
 		});
 		workbenchContext.addEventListener(Consts.ON_SHEET_CHANGED, new EventListener() {

@@ -14,10 +14,14 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul;
 
+import java.util.List;
+
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zss.app.Consts;
@@ -47,7 +51,10 @@ public class InsertMenu extends Menu implements IdSpace {
 	} 
 	
 	public void onClick$insertFormula() {
-		getDesktopWorkbenchContext().getWorkbenchCtrl().openInsertFormulaDialog();
+		final DesktopWorkbenchContext workbenchCtrl = getDesktopWorkbenchContext();
+		if (workbenchCtrl.getWorkbookCtrl().hasBook()) {
+			workbenchCtrl.getWorkbenchCtrl().openInsertFormulaDialog();
+		}
 	}
 	
 	public void onClick$insertChart() {
@@ -55,14 +62,20 @@ public class InsertMenu extends Menu implements IdSpace {
 	}
 	
 	public void onUpload$insertImage(ForwardEvent event) {
-		insertMenupopup.close();
-		UploadEvent evt = (UploadEvent)event.getOrigin();
-		getDesktopWorkbenchContext().getWorkbookCtrl().insertImage(evt.getMedia());
+		final DesktopWorkbenchContext workbenchCtrl = getDesktopWorkbenchContext();
+		if (workbenchCtrl.getWorkbookCtrl().hasBook()) {
+			insertMenupopup.close();
+			UploadEvent evt = (UploadEvent)event.getOrigin();
+			workbenchCtrl.getWorkbookCtrl().insertImage(evt.getMedia());
+		}
 	}
 	
 	public void onClick$insertSheet() {
-		getDesktopWorkbenchContext().getWorkbookCtrl().insertSheet();
-		getDesktopWorkbenchContext().fireRefresh();
+		final DesktopWorkbenchContext workbenchCtrl = getDesktopWorkbenchContext();
+		if (workbenchCtrl.getWorkbookCtrl().hasBook()) {
+			workbenchCtrl.getWorkbookCtrl().insertSheet();
+			workbenchCtrl.fireRefresh();
+		}
 	}
 	
 	public void onOpen$insertMenupopup() {
@@ -72,4 +85,31 @@ public class InsertMenu extends Menu implements IdSpace {
 	public DesktopWorkbenchContext getDesktopWorkbenchContext() {
 		return Zssapp.getDesktopWorkbenchContext(this);
 	}
+	
+	public void setDisabled(boolean disabled) {
+		applyDisabled(insertMenupopup.getChildren(), disabled);
+		insertFormula.setDisabled(disabled);
+		insertChart.setDisabled(disabled);
+		insertImage.setDisabled(disabled);
+		insertSheet.setDisabled(disabled);
+	}
+	
+	private void applyDisabled(List children, boolean disabled) {
+		for (Object obj : children) {
+			if (obj instanceof Menuitem) {
+				Menuitem menu = (Menuitem)obj;
+				menu.setDisabled(disabled);
+			}
+		}
+	}
+	
+	public void onCreate() {
+		final DesktopWorkbenchContext workbenchCtrl = getDesktopWorkbenchContext();
+		workbenchCtrl.addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				setDisabled(!workbenchCtrl.getWorkbookCtrl().hasBook());
+			}
+		});
+	}
+
 }
