@@ -184,6 +184,9 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @param bottom: row number of right bottom cell, 0-based
      */
     public void selectCells(int left, int top, int right, int bottom) {
+    	//It's necessary to duplicate mouseDownAt target cell,
+    	//because the first time may not really focused on target cell,
+    	//but focus on cell A1
 		mouseDownAt(getSpecifiedCell(left, top),"2,2");
 		waitResponse();
 		mouseUpAt(getSpecifiedCell(left, top),"2,2");
