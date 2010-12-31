@@ -597,7 +597,6 @@ public class Utils {
 	//escape character that has special meaning in HTML such as &lt;, &amp;, etc..
 	//runs is a index pair to the text string that needs to be escaped
 	private static String escapeCellText(String text,boolean wrap,boolean multiline, List<int[]> runs){
-		
 		StringBuffer out = new StringBuffer();
 		if (text!=null){
 			int j = 0;

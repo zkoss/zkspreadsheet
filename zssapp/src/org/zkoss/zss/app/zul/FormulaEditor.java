@@ -14,11 +14,19 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul;
 
+import java.util.Map;
+
+import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.zk.au.AuRequests;
+import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.event.ErrorEvent;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.InputEvent;
+import org.zkoss.zk.ui.event.KeyEvent;
+import org.zkoss.zk.ui.event.SelectionEvent;
 import org.zkoss.zss.app.cell.EditHelper;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.model.Ranges;
@@ -32,13 +40,17 @@ import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.StopEditingEvent;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.impl.InputElement;
+import org.zkoss.zul.impl.XulElement;
 
 /**
  * @author Sam
  *
  */
 public class FormulaEditor extends Textbox implements ZssappComponent {
-
+	static {
+		addClientEvent(FormulaEditor.class, "onTab", CE_REPEAT_IGNORE);
+	}
 	private Spreadsheet ss;
 	
 	private String oldEdit;
@@ -48,9 +60,10 @@ public class FormulaEditor extends Textbox implements ZssappComponent {
 	private boolean everFocusCell = false;
 	private boolean focusOut = false;
 	private Cell currentEditcell;
+	private Boolean everTab = null;
 	
 	public FormulaEditor() {
-		setCols(100);
+		setMultiline(true);
 	}
 	
 	public void onChanging(InputEvent event) {
@@ -60,7 +73,7 @@ public class FormulaEditor extends Textbox implements ZssappComponent {
 			final Worksheet sheet = ss.getSelectedSheet();
 			currentEditcell = Utils.getOrCreateCell(sheet, top, left);
 		}
-		ss.updateText(currentEditcell, ((InputEvent) event).getValue());
+		ss.escapeAndUpdateText(currentEditcell, ((InputEvent) event).getValue());
 	}
 
 	public void onCancel() {
@@ -79,6 +92,7 @@ public class FormulaEditor extends Textbox implements ZssappComponent {
 		}
 		newEdit = null;
 		everFocusCell = false;
+		everTab = null;
 		focusOut = false;
 		int left = ss.getSelection().getLeft();
 		int top = ss.getSelection().getTop();
@@ -87,10 +101,14 @@ public class FormulaEditor extends Textbox implements ZssappComponent {
 		if (currentEditcell != null) {
 			oldEdit = Ranges.range(sheet, top, left).getEditText();
 			oldText = Utils.getCellText(sheet, currentEditcell); //escaped HTML to show cell value
-			ss.updateText(currentEditcell, oldEdit);
+			ss.escapeAndUpdateText(currentEditcell, oldEdit);
 		}
 		
 		EditHelper.clearCutOrCopy(ss);
+	}
+	
+	public void onTab(Event event) {
+		everTab = Boolean.valueOf(((KeyEvent)event).isShiftKey());
 	}
 	
 	public void onChange(Event event) {
@@ -121,17 +139,33 @@ public class FormulaEditor extends Textbox implements ZssappComponent {
 		int oldcol = currentEditcell == null ? -1 : currentEditcell.getColumnIndex();
 		final boolean focusChanged = (row != oldrow || col != oldcol); //user click directly to a different cell
 		if (!focusChanged) {
-			if (!everFocusCell) { //Tab key
+			if (everTab != null) { //Tab key
 				final Worksheet sheet = ss.getSelectedSheet();
-				final CellRangeAddress merged = sheet != null ? ((SheetCtrl)sheet).getMerged(row, col) : null;
-				col = merged == null ? col + 1 : merged.getLastColumn() + 1;
-				if (ss.getMaxcolumns() <= col) {
-					col = ss.getMaxcolumns() - 1;
+				if (everTab.booleanValue()) { //shift + Tab
+					col = col - 1;
+					if (col < 0) {
+						col = 0;
+					} else {
+						final CellRangeAddress merged = sheet != null ? ((SheetCtrl)sheet).getMerged(row, col) : null;
+						if (merged != null) {
+							col = merged.getFirstColumn();
+						}
+					}
+				} else { //Tab
+					final CellRangeAddress merged = sheet != null ? ((SheetCtrl)sheet).getMerged(row, col) : null;
+					col = merged == null ? col + 1 : merged.getLastColumn() + 1;
+					if (ss.getMaxcolumns() <= col) {
+						col = ss.getMaxcolumns() - 1;
+						final CellRangeAddress newmerged = sheet != null ? ((SheetCtrl)sheet).getMerged(row, col) : null;
+						if (newmerged != null) {
+							col = newmerged.getFirstColumn();
+						}
+					}
 				}
 				ss.focusTo(row, col);
 				org.zkoss.zk.ui.event.Events.sendEvent(new CellEvent(Events.ON_CELL_FOUCSED, ss, sheet, row, col));
 				getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
-			} else { //click on the same cell, shall enter edit mode, something like press F2
+			} else if (everFocusCell) { //click on the same cell, shall enter edit mode, something like press F2
 				//TODO click on the same cell, shall enter edit mode, something like press F2
 			}
 		}
@@ -142,6 +176,7 @@ public class FormulaEditor extends Textbox implements ZssappComponent {
 	}
 	private void recoverCellText() {
 		if (oldText != null && currentEditcell != null) {
+			//already escape, simply update
 			ss.updateText(currentEditcell, oldText);
 		}
 	}
@@ -229,4 +264,19 @@ public class FormulaEditor extends Textbox implements ZssappComponent {
 	private DesktopWorkbenchContext getDesktopWorkbenchContext() {
 		return Zssapp.getDesktopWorkbenchContext(this);
 	}
+
+	/** Processes an AU request.
+	 *
+	 * <p>Default: in addition to what are handled by {@link XulElement#service},
+	 * it also handles onChange, onChanging and onError.
+	 * @since 5.0.0
+	 */
+	public void service(org.zkoss.zk.au.AuRequest request, boolean everError) {
+		final String cmd = request.getCommand();
+		if (cmd.equals("onTab")) {
+			org.zkoss.zk.ui.event.Events.postEvent(KeyEvent.getKeyEvent(request));
+		} else
+			super.service(request, everError);
+	}
+
 }

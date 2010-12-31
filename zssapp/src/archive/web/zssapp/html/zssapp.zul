@@ -36,8 +36,7 @@
 		.formulaBtn{
 			background-position: 0 center;
 			text-align:center;
-			border:1px solid #D8D8D8;
-			border-top: 0;
+			border-left:1px solid #D8D8D8;
 		}
 		div.z-tabpanel { 
 			border-bottom:none; 
@@ -102,151 +101,139 @@
 			border-top : 0;
 			border-bottom : 0;
 		}
+		.zssapp-splt .z-north-splt {
+			height: 3px;
+		}
+		.zssapp-empty {
+			border-top: 1px solid #D8D8D8;
+			background-image: url(${c:encodeURL('~./zul/img/breeze/menu/menu-bg.png')});
+		}
+			
 	</style>
 	<borderlayout id="topToolbars" height="56px" style="border-left:1px solid #E1E1E1;border-right:1px solid #E1E1E1;">
-				<!-- SECTION **********Navigator bar************************************************* -->
-				<north id="mainNavigator" size="27px" flex="true" border="0">
-					<hlayout hflex="true" sclass="zssapp-menubar" spacing="0">
-						<menubar id="menubar">
-							<filemenu id="fileMenu" label="${c:l('file')}"></filemenu>
-							<editmenu id="editMenu" label="${c:l('edit')}"></editmenu>
-							<viewmenu id="viewMenu" label="${c:l('view')}"></viewmenu>
-							<formatmenu id="formatMenu" label="${c:l('format')}"/>
-							<insertmenu id="insertMenu" label="${c:l('insert')}"/>
-	                       <!--   <menu label="${c:l('share')}">
-	                           <menupopup>
-									<menuitem label="${c:l('share.private')}" forward="onNotImplement()" src="/img/bear.gif"/>
-									<menuitem label="${c:l('share.invite')}" forward="onNotImplement()" src="/img/bear.gif"/>
-									<menuitem label="${c:l('share.publicRead')}" forward="onNotImplement()" src="/img/bear.gif"/>
-									<menuitem label="${c:l('share.publicReadWrite')}" forward="onNotImplement()" src="/img/bear.gif"/>
-								</menupopup>
-	                        </menu>-->
-	                        <menu label="${c:l('help')}">
-								<menupopup>
-									<attribute w:name="onOpen">
-										this.$f('spreadsheet', true).focus(false);
-									</attribute>
-									<!-- <menuitem label="${c:l('help.center')}"  src="/img/music.gif"/>-->
-									<menuitem id="openCheatsheet" label="${c:l('help.cheatsheet')}" forward="onHelpCheatsheet" />
-									<menuitem id="forum" label="${c:l('help.forum')}" href="http://www.zkoss.org/forum/" target="_blank"/>
-									<menuitem id="book" label="Book" href="http://books.zkoss.org/wiki/ZK_Spreadsheet_Essentials" target="_blank"/>
-									<menuitem id="smalltalk" label="${c:l('help.smalltalk')}" href="http://zssdemo.zkoss.org/" target="_blank"/>
-									<!-- <menuitem label="${c:l('help.about')}" forward="onNotImplement()" src="/img/music.gif"/>-->
-								</menupopup>
-	                        </menu>
-						</menubar>
-						<div hflex="true"></div>
-						<div hflex="min">
-							<toolbarbutton id="closeBtn" width="23px" style="margin:0 5px 2px 0;" image="~./zssapp/image/cross.png"/>
-						</div>
-					</hlayout>
-				</north>
-				
-				<!-- SECTION **********FastIconToolbar*********************************************** -->
-				<south id="fastIconBtn" size="30px" border="0" style="background: #F5F5F5; border-bottom: 1px solid #D8D8D8;">
-					<hlayout spacing="0.4em">
-<!--						<toolbarbutton disabled="true" id="print"  src="~./zssapp/image/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>-->
-						<toolbarbutton id="saveBtn" image="~./zssapp/image/disk-black.png" disabled="true" tooltiptext="${c:l('file.saved')}"/>
-						<toolbarbutton id="exportToPDFBtn" src="~./zssapp/image/document-pdf.png" tooltiptext="${c:l('export.pdf')}"/>
-						<toolbarbutton disabled="true" id="undo"  src="~./zssapp/image/arrow-curve-180-left.png" 	forward="onClick=onEditUndo" tooltiptext="${c:l('edit.undo')}"/>
-						<toolbarbutton disabled="true" id="redo"  src="~./zssapp/image/arrow-curve.png"	forward="onClick=onEditRedo" tooltiptext="${c:l('edit.redo')}"/>
-						<div sclass="toolbarSeparator"></div>
-							<dropdownbutton id="pasteDropdownBtn" image="~./zssapp/image/clipboard-paste.png" tooltiptext="${c:l('paste')}">
-								<menupopup>
-									<menuitem id="paste" src="~./zssapp/image/clipboard-paste.png" label="${c:l('paste')}"
-										forward="onPasteSelector(${c:l('paste')})"/>
-									<menuitem id="pasteFormula" label="${c:l('paste.formula')}" 
-										forward="onPasteSelector(${c:l('paste.formula')})"/>
-									<menuitem id="pasteValue" label="${c:l('paste.value')}"
-										forward="onPasteSelector(${c:l('paste.value')})"/>
-									<menuitem id="pasteAllExcpetBorder" label="${c:l('paste.allExcpetBorder')}"
-										forward="onPasteSelector(${c:l('paste.allExcpetBorder')})"/>
-									<menuitem id="pasteTranspose" label="${c:l('paste.transpose')}"  
-										forward="onPasteSelector(${c:l('paste.transpose')})"/>
-									<menuitem id="pasteSpecial" label="${c:l('pasteSpecial')}" 
-										forward="onPasteSelector(${c:l('pasteSpecial')})"/>
-								</menupopup>
-							</dropdownbutton>
-							<toolbarbutton id="cutBtn" image="~./zssapp/image/scissors-blue.png" tooltiptext="${c:l('edit.cut')}"></toolbarbutton>
-							<toolbarbutton id="copyBtn" image="~./zssapp/image/document-copy.png" tooltiptext="${c:l('edit.copy')}"></toolbarbutton>
-						<!-- font*********************************************************************** -->	
-						<div sclass="toolbarSeparator"></div>
-						<div id="fontCtrlPanel" use="org.zkoss.zss.app.zul.ctrl.CellStyleCtrlPanel" 
-							style="vertical-align:middle;" spacing="0.4em"/>
-						<!-- align vertical************************************************************************ 
-						<toolbarbutton src="/img/separator.bmp"/>
-						<toolbarbutton id="alignTopBtn" sclass="toolIcon" src="/img/alignTop.bmp"
-							forward="onClick=onAlignVerticalClick(top)" />
-						<toolbarbutton id="alignVerticalCenterBtn" sclass="toolIcon" src="/img/alignVerticalCenter.bmp"
-							forward="onClick=onAlignVerticalClick(center)" />
-						<toolbarbutton id="alignBottomBtn" sclass="toolIcon" src="/img/alignBottom.bmp"
-							forward="onClick=onAlignVerticalClick(bottom)" />
-						-->	
-
-						
-						<!-- border merge******************************************************************* -->
-						<div sclass="toolbarSeparator"></div>
-
-						<toolbarbutton id="mergeCellBtn" image="~./zssapp/image/table-join.png" tooltiptext="${c:l('cell.merge')}"
-							forward="onClick=onMergeCellClick" />
-						<div sclass="toolbarSeparator"></div>		
-						<toolbarbutton disabled="true" id="insertChartBtn" src="~./zssapp/image/chart-pie.png" tooltiptext="${c:l('insert.chart')}"
-							forward="onClick=onInsertChart(pie)" />
-						<toolbarbutton id="insertHyperlinkBtn" src="~./zssapp/image/hyperlink.png" tooltiptext="${c:l('hyperlink')}"/>
-						<div sclass="toolbarSeparator"></div>
-							<dropdownbutton id="sortDropdownBtn" image="~./zssapp/image/sort-filter.png" tooltiptext="${c:l('sortAndFilter')}">
-								<menupopup>
-									<menuitem id="sortAscending" label="${c:l('sort.ascending')}" src="~./zssapp/image/asc.png"
-										forward="onSortSelector(${c:l('sort.ascending')})">
-									</menuitem>
-									<menuitem id="sortDescending" label="${c:l('sort.descending')}" src="~./zssapp/image/des.png"
-										forward="onSortSelector(${c:l('sort.descending')})">
-									</menuitem>
-									<menuitem id="customSort" label="${c:l('sort.custom')}"
-										forward="onSortSelector(${c:l('sort.custom')})">
-									</menuitem>
-									<menuseparator />
-									<!-- Filter:not support yet -->
-									<menuitem id="filter" label="${c:l('filter')}" src="~./zssapp/image/funnel--pencil.png"
-										forward="onFilterSelector(${c:l('filter')})" disabled="true" />
-									<menuitem id="clearFilter" label="${c:l('filter.clear')}"
-										src="~./zssapp/image/funnel--minus.png"
-										forward="onFilterSelector(${c:l('filter.clear')})" disabled="true" />
-									<menuitem id="reapplyFilter" label="${c:l('filter.reapply')}"
-										src="~./zssapp/image/funnel--arrow.png"
-										forward="onFilterSelector(${c:l('filter.reapply')})" disabled="true" />
-								</menupopup>
-							</dropdownbutton>
-						<div sclass="toolbarSeparator"></div>
-						<checkbox id="gridlinesCheckbox" tooltiptext="${c:l('gridlines')}" image="~./zssapp/image/grid.png">
-							<attribute w:name="onBind">
-								var img = jq(this.$n()).find('img');
-								if (img)
-									img.removeAttr('align');
+		<!-- SECTION **********Navigator bar************************************************* -->
+		<north id="mainNavigator" size="27px" flex="true" border="0">
+			<hlayout hflex="true" sclass="zssapp-menubar" spacing="0">
+				<menubar id="menubar">
+					<filemenu id="fileMenu" label="${c:l('file')}"></filemenu>
+					<editmenu id="editMenu" label="${c:l('edit')}"></editmenu>
+					<viewmenu id="viewMenu" label="${c:l('view')}"></viewmenu>
+					<formatmenu id="formatMenu" label="${c:l('format')}"/>
+					<insertmenu id="insertMenu" label="${c:l('insert')}"/>
+                      <!--   <menu label="${c:l('share')}">
+                          <menupopup>
+							<menuitem label="${c:l('share.private')}" forward="onNotImplement()" src="/img/bear.gif"/>
+							<menuitem label="${c:l('share.invite')}" forward="onNotImplement()" src="/img/bear.gif"/>
+							<menuitem label="${c:l('share.publicRead')}" forward="onNotImplement()" src="/img/bear.gif"/>
+							<menuitem label="${c:l('share.publicReadWrite')}" forward="onNotImplement()" src="/img/bear.gif"/>
+						</menupopup>
+                       </menu>-->
+                       <menu label="${c:l('help')}">
+						<menupopup>
+							<attribute w:name="onOpen">
+								this.$f('spreadsheet', true).focus(false);
 							</attribute>
-						</checkbox>
-					</hlayout>
-				</south>
+							<!-- <menuitem label="${c:l('help.center')}"  src="/img/music.gif"/>-->
+							<menuitem id="openCheatsheet" label="${c:l('help.cheatsheet')}" forward="onHelpCheatsheet" />
+							<menuitem id="forum" label="${c:l('help.forum')}" href="http://www.zkoss.org/forum/" target="_blank"/>
+							<menuitem id="book" label="Book" href="http://books.zkoss.org/wiki/ZK_Spreadsheet_Essentials" target="_blank"/>
+							<menuitem id="smalltalk" label="${c:l('help.smalltalk')}" href="http://zssdemo.zkoss.org/" target="_blank"/>
+							<!-- <menuitem label="${c:l('help.about')}" forward="onNotImplement()" src="/img/music.gif"/>-->
+						</menupopup>
+                       </menu>
+				</menubar>
+				<div hflex="true"></div>
+				<div hflex="min">
+					<toolbarbutton id="closeBtn" width="23px" style="margin:0 5px 2px 0;" image="~./zssapp/image/cross.png"/>
+				</div>
+			</hlayout>
+		</north>
+		
+		<!-- SECTION **********FastIconToolbar*********************************************** -->
+		<south id="fastIconBtn" size="30px" border="0" style="background: #F5F5F5; border-bottom: 1px solid #D8D8D8;">
+			<hlayout spacing="0.4em">
+	<!--		<toolbarbutton disabled="true" id="print"  src="~./zssapp/image/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>-->
+				<toolbarbutton id="saveBtn" image="~./zssapp/image/disk-black.png" disabled="true" tooltiptext="${c:l('file.saved')}"/>
+				<toolbarbutton id="exportToPDFBtn" src="~./zssapp/image/document-pdf.png" tooltiptext="${c:l('export.pdf')}"/>
+				<toolbarbutton disabled="true" id="undo"  src="~./zssapp/image/arrow-curve-180-left.png" 	forward="onClick=onEditUndo" tooltiptext="${c:l('edit.undo')}"/>
+				<toolbarbutton disabled="true" id="redo"  src="~./zssapp/image/arrow-curve.png"	forward="onClick=onEditRedo" tooltiptext="${c:l('edit.redo')}"/>
+				<div sclass="toolbarSeparator"></div>
+				<dropdownbutton id="pasteDropdownBtn" image="~./zssapp/image/clipboard-paste.png" tooltiptext="${c:l('paste')}">
+					<menupopup>
+						<menuitem id="paste" src="~./zssapp/image/clipboard-paste.png" label="${c:l('paste')}"
+							forward="onPasteSelector(${c:l('paste')})"/>
+						<menuitem id="pasteFormula" label="${c:l('paste.formula')}" 
+							forward="onPasteSelector(${c:l('paste.formula')})"/>
+						<menuitem id="pasteValue" label="${c:l('paste.value')}"
+							forward="onPasteSelector(${c:l('paste.value')})"/>
+						<menuitem id="pasteAllExcpetBorder" label="${c:l('paste.allExcpetBorder')}"
+							forward="onPasteSelector(${c:l('paste.allExcpetBorder')})"/>
+						<menuitem id="pasteTranspose" label="${c:l('paste.transpose')}"  
+							forward="onPasteSelector(${c:l('paste.transpose')})"/>
+						<menuitem id="pasteSpecial" label="${c:l('pasteSpecial')}" 
+							forward="onPasteSelector(${c:l('pasteSpecial')})"/>
+					</menupopup>
+				</dropdownbutton>
+				<toolbarbutton id="cutBtn" image="~./zssapp/image/scissors-blue.png" tooltiptext="${c:l('edit.cut')}"></toolbarbutton>
+				<toolbarbutton id="copyBtn" image="~./zssapp/image/document-copy.png" tooltiptext="${c:l('edit.copy')}"></toolbarbutton>
+				<!-- font*********************************************************************** -->	
+				<div sclass="toolbarSeparator"></div>
+				<div id="fontCtrlPanel" use="org.zkoss.zss.app.zul.ctrl.CellStyleCtrlPanel" 
+					style="vertical-align:middle;" spacing="0.4em"/>
+				<!-- align vertical************************************************************************ 
+				<toolbarbutton src="/img/separator.bmp"/>
+				<toolbarbutton id="alignTopBtn" sclass="toolIcon" src="/img/alignTop.bmp"
+					forward="onClick=onAlignVerticalClick(top)" />
+				<toolbarbutton id="alignVerticalCenterBtn" sclass="toolIcon" src="/img/alignVerticalCenter.bmp"
+					forward="onClick=onAlignVerticalClick(center)" />
+				<toolbarbutton id="alignBottomBtn" sclass="toolIcon" src="/img/alignBottom.bmp"
+					forward="onClick=onAlignVerticalClick(bottom)" />
+				-->	
+	
 				
-				<!-- SECTION **********Formula bar*********************************************** -->
-<!-- 			<south id="formulaBar" size="26px" flex="true" border="0px" style="border-bottom: 1px solid #D8D8D8;">
-					<hlayout spacing="0px" hflex="true" sclass="z-valign-top">
-						<combobox id="focusPosition" sclass="focusPosCombobox" 
-									height="21px" width="185px" mold="rounded"
-									style="text-align:center;">
-							<comboitem id="lbpos" label="A1" /></combobox>
-						<div hflex="min" sclass="formulaBtn" style="background:#F5F5F5;">
-							<toolbarbutton id="insertFormulaBtn" style="text-decoration:none;color:black;font-size:16px;font-style:italic;text-align:center;"
-											label="f(x)"/>
-						</div>
-						<formulaeditor id="formulaEditor" height="19px" style="font-size:16px;border:0px;padding:3px" hflex="true" vflex="true"/>
-						<div hflex="min" sclass="formulaBtn" style="background:#F5F5F5;">
-							<toolbarbutton id="extendEditorBtn" style="text-decoration:none;color:black;font-size:10px;text-align:center;"
-											label="v"/>
-						</div>
-					</hlayout>
-				</south>
- -->				
+				<!-- border merge******************************************************************* -->
+				<div sclass="toolbarSeparator"></div>
+	
+				<toolbarbutton id="mergeCellBtn" image="~./zssapp/image/table-join.png" tooltiptext="${c:l('cell.merge')}"
+					forward="onClick=onMergeCellClick" />
+				<div sclass="toolbarSeparator"></div>		
+				<toolbarbutton disabled="true" id="insertChartBtn" src="~./zssapp/image/chart-pie.png" tooltiptext="${c:l('insert.chart')}"
+					forward="onClick=onInsertChart(pie)" />
+				<toolbarbutton id="insertHyperlinkBtn" src="~./zssapp/image/hyperlink.png" tooltiptext="${c:l('hyperlink')}"/>
+				<div sclass="toolbarSeparator"></div>
+					<dropdownbutton id="sortDropdownBtn" image="~./zssapp/image/sort-filter.png" tooltiptext="${c:l('sortAndFilter')}">
+						<menupopup>
+							<menuitem id="sortAscending" label="${c:l('sort.ascending')}" src="~./zssapp/image/asc.png"
+								forward="onSortSelector(${c:l('sort.ascending')})">
+							</menuitem>
+							<menuitem id="sortDescending" label="${c:l('sort.descending')}" src="~./zssapp/image/des.png"
+								forward="onSortSelector(${c:l('sort.descending')})">
+							</menuitem>
+							<menuitem id="customSort" label="${c:l('sort.custom')}"
+								forward="onSortSelector(${c:l('sort.custom')})">
+							</menuitem>
+							<menuseparator />
+							<!-- Filter:not support yet -->
+							<menuitem id="filter" label="${c:l('filter')}" src="~./zssapp/image/funnel--pencil.png"
+								forward="onFilterSelector(${c:l('filter')})" disabled="true" />
+							<menuitem id="clearFilter" label="${c:l('filter.clear')}"
+								src="~./zssapp/image/funnel--minus.png"
+								forward="onFilterSelector(${c:l('filter.clear')})" disabled="true" />
+							<menuitem id="reapplyFilter" label="${c:l('filter.reapply')}"
+								src="~./zssapp/image/funnel--arrow.png"
+								forward="onFilterSelector(${c:l('filter.reapply')})" disabled="true" />
+						</menupopup>
+					</dropdownbutton>
+				<div sclass="toolbarSeparator"></div>
+				<checkbox id="gridlinesCheckbox" tooltiptext="${c:l('gridlines')}" image="~./zssapp/image/grid.png">
+					<attribute w:name="onBind">
+						var img = jq(this.$n()).find('img');
+						if (img)
+							img.removeAttr('align');
+					</attribute>
+				</checkbox>
+			</hlayout>
+		</south>
 	</borderlayout>
 	<div id="toolbarMask" sclass="toolbarMask" >
 		<attribute w:name="onBind">
@@ -259,40 +246,46 @@
 				'top': mnHgh + 'px'});
 		</attribute>
 	</div>
-	<borderlayout vflex="true">
-				<north id="formulaBar" size="26px" flex="true" border="0px" style="border-bottom: 1px solid #D8D8D8;">
-					<hlayout spacing="0px" hflex="true" sclass="z-valign-top">
+	<borderlayout vflex="true" sclass="zssapp-splt">
+		<!-- SECTION **********Formula bar*********************************************** -->
+		<north id="formulaBar" size="26px" minsize="26" splittable="true" flex="true" border="0px" style="border-bottom: 1px solid #D8D8D8;">
+			<hlayout spacing="0px" hflex="true" sclass="z-valign-top">
+				<vlayout spacing="0px" vflex="true" hflex="min"  style="border-right: 1px solid #D8D8D8;">
+					<hlayout spacing="0px" hflex="min">
 						<combobox id="focusPosition" sclass="focusPosCombobox" 
 									height="21px" width="185px" mold="rounded"
 									style="text-align:center;">
-							<comboitem id="lbpos" label="A1" /></combobox>
+							<comboitem id="lbpos" label="A1" />
+						</combobox>
 						<div hflex="min" sclass="formulaBtn" style="background:#F5F5F5;">
 							<toolbarbutton id="insertFormulaBtn" style="text-decoration:none;color:black;font-size:16px;font-style:italic;text-align:center;"
 											label="f(x)"/>
 						</div>
-						<formulaeditor id="formulaEditor" height="19px" style="font-size:16px;border:0px;padding:3px" hflex="true" vflex="true"/>
-						<div hflex="min" sclass="formulaBtn" style="background:#F5F5F5;">
-							<toolbarbutton id="extendEditorBtn" style="text-decoration:none;color:black;font-size:10px;text-align:center;"
-											label="v"/>
-						</div>
 					</hlayout>
-				</north>
-	<center flex="true">
-	<div>				
-	<sheets id="sheets"></sheets>
-	<!-- src="/xls/demo_sample.xls" -->
-	<spreadsheet id="spreadsheet" maxrows="200" src="/xls/Untitled"
-			maxcolumns="40" vflex="1" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
-			forward="onCtrlKey=mainWin.onSSCtrlKeys">
-	</spreadsheet>
-	</div>
-	</center>
+					<div sclass="zssapp-empty" vflex="true"></div>
+				</vlayout>
+				<formulaeditor id="formulaEditor" height="19px" style="font-size:16px;border:0px;padding:3px" hflex="true" vflex="true"/>
+				<div hflex="min" sclass="formulaBtn" style="background:#F5F5F5;">
+					<toolbarbutton id="extendEditorBtn" style="text-decoration:none;color:black;font-size:10px;text-align:center;" label="v"/>
+				</div>
+			</hlayout>
+		</north>
+		<!--  SECTION ********Sheets & Spreadsheet*************************************** -->
+		<center flex="true">
+			<div>				
+				<sheets id="sheets"></sheets>
+				<!-- src="/xls/demo_sample.xls" -->
+				<spreadsheet id="spreadsheet" maxrows="200" src="/xls/Untitled"
+						maxcolumns="40" vflex="1" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
+						forward="onCtrlKey=mainWin.onSSCtrlKeys">
+				</spreadsheet>
+			</div>
+		</center>
 	</borderlayout>
 	<columnheadermenupopup id="columnHeaderMenupopup"/>
 	<rowheadermenupopup id="rowHeaderMenupopup"></rowheadermenupopup>
 	<cellmenupopup id="cellMenupopup"></cellmenupopup>
 	<cellcontext id="cellContext"></cellcontext>
 	<cheatsheet id="cheatsheet" />
-	
 </window>
 </zk>

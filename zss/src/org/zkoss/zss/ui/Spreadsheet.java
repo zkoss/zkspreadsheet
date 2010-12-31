@@ -1702,6 +1702,13 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 	}
 	
+	public void escapeAndUpdateText(Cell cell, String text) {
+		final CellStyle style = (cell == null) ? null : cell.getCellStyle();
+		final boolean wrap = style != null && style.getWrapText();
+		text = Utils.escapeCellText(text, wrap, true);
+		updateText(cell, text);
+	}
+	
 	/**
 	 * Internal Use Only
 	 */

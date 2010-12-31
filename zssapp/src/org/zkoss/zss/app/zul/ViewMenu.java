@@ -49,7 +49,8 @@ public class ViewMenu extends Menu implements IdSpace {
 	}
 	
 	public void onClick$viewFormulaBar() {
-		getDesktopWorkbenchContext().getWorkbenchCtrl().toggleFormulaBar();
+		final boolean visible = getDesktopWorkbenchContext().getWorkbenchCtrl().toggleFormulaBar();
+		viewFormulaBar.setChecked(visible);
 	}
 	
 	public void onViewFreezeRows(ForwardEvent event) {

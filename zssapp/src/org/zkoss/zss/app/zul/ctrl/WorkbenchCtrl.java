@@ -39,7 +39,7 @@ public interface WorkbenchCtrl {
 	
 	public void openHyperlinkDialog();
 	
-	public void toggleFormulaBar();
+	public boolean toggleFormulaBar();
 	
 	public void openComposeFormulaDialog(FormulaMetaInfo metainfo);
 	

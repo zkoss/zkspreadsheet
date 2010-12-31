@@ -34,6 +34,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.KeyEvent;
+import org.zkoss.zk.ui.event.SizeEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.cell.EditHelper;
@@ -375,6 +376,41 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	public void onClick$insertFormulaBtn() {
 		openInsertFormulaDialog();
 		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
+	}
+	private int _formulaBarSize = 26 + LINE_HEIGHT;
+	private int toIntsize(String sz) {
+		if (sz.endsWith("px")) {
+			return Integer.valueOf(sz.substring(0, sz.length() - 2)).intValue();
+		}
+		return 26; //default
+	}
+	public void  onClick$extendEditorBtn() {
+		_formulaBarOpen = !_formulaBarOpen;
+		if (!_formulaBarOpen) {
+			_formulaBarSize = toIntsize(formulaBar.getSize());
+		}
+		adjustFormulaBarHeight();
+	}
+	private static final int LINE_HEIGHT = 19;
+	private void adjustFormulaBarHeight() {
+		final int extra = _formulaBarSize - formulaBar.getMinsize();
+		if (extra <= 0) {
+			_formulaBarSize = formulaBar.getMinsize() + LINE_HEIGHT;
+		} else {
+			final int rest = extra % LINE_HEIGHT;
+			_formulaBarSize = formulaBar.getMinsize() + (rest > 0 ? extra + (LINE_HEIGHT - rest) : extra);
+		}
+		formulaBar.setSize((_formulaBarOpen ? _formulaBarSize : formulaBar.getMinsize()) + "px");
+	}
+	public void onSize$formulaBar(SizeEvent evt) {
+		int height = toIntsize(evt.getHeight());
+		if (height <= formulaBar.getMinsize()) {
+			_formulaBarOpen = false;
+		} else {
+			_formulaBarSize = height;
+			_formulaBarOpen = true;
+		}
+		adjustFormulaBarHeight();
 	}
 	public void onSortSelector(ForwardEvent event) {
 		//TODO: replace forward event
@@ -765,12 +801,9 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		}
 	}
 
-	public void onViewFormulaBar() {
-		if (formulaBar.getHeight() != "0px") {
-			formulaBar.setSize("0px");
-		} else {
-			formulaBar.setSize("23px");
-		}
+	private boolean onViewFormulaBar() {
+		formulaBar.setVisible(!formulaBar.isVisible());
+		return formulaBar.isVisible();
 	}
 
 	// SECTION FORMAT MENU
@@ -1194,8 +1227,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		Executions.createComponents(Consts._PasteSpecialDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
 	}
 
-	public void toggleFormulaBar() {
-		onViewFormulaBar();
+	public boolean toggleFormulaBar() {
+		return onViewFormulaBar();
 	}
 
 	public void openComposeFormulaDialog(FormulaMetaInfo metainfo) {

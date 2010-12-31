@@ -59,6 +59,7 @@
 		<component-name>formulaeditor</component-name>
 		<extends>textbox</extends>
 		<component-class>org.zkoss.zss.app.zul.FormulaEditor</component-class>
+		<widget-class>zssapp.Formulaeditor</widget-class>
 	</component>
 
 	<component>
