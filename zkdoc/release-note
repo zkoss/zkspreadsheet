@@ -3,6 +3,7 @@ ZK Spreadsheet 2.1.0
 
 *Features:
   277 ZK Spreadsheet App: Formula Editor shall support multiple line and extensible
+  281 Support wrapping of ZK Spreadsheet as a JSP tag
   
 *Bug 
   268 Enter multiple line in cell but show as one single line only
