@@ -1,5 +1,5 @@
 
-<package name="zssapp" language="xul/html" depends="zul.wgt, zkex.inp">
+<package name="zssapp" language="xul/html" depends="zul.wgt, zul.inp, zkex.inp">
 	<widget name="Colorbutton"/>
 	<widget name="Dropdownbutton"/>
 	<widget name="Formulaeditor"/>
