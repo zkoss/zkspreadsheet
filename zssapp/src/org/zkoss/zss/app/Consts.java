@@ -46,7 +46,6 @@ public class Consts {
 	public static String _InsertMenu_zul = "~./zssapp/html/menu/insertMenu.zul";
 	
 	/*Dialog zul*/
-	public static String _InsertFormulaDialog_zul = "~./zssapp/html/dialog/insertFormula.zul";
 	public static String _InsertFormulaDialog2_zul = "~./zssapp/html/dialog/insertFormulaDialog.zul";
 	public static String _InsertHyperlinkDialog_zul = "~./zssapp/html/dialog/hyperlink/insertHyperlink.zul";
 	public static String _PasteSpecialDialog_zul = "~./zssapp/html/dialog/pasteSpecialWindow.zul";

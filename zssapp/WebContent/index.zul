@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?page id="p1" title="ZK Spreadsheet App"?>
-<?script type="text/javascript" src="/macros/zssapp.js.dsp?v=${desktop.webApp.build}"?>
-
 <zk>
 	<zssapp width="100%" height="100%" src="/xls/ZSS-demo_sample.xlsx"></zssapp>
 </zk>

@@ -51,6 +51,7 @@ import org.zkoss.zss.app.zul.EditMenu;
 import org.zkoss.zss.app.zul.FileMenu;
 import org.zkoss.zss.app.zul.FormatMenu;
 import org.zkoss.zss.app.zul.FormulaEditor;
+import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.InsertMenu;
 import org.zkoss.zss.app.zul.RowHeaderMenupopup;
 import org.zkoss.zss.app.zul.Sheets;
@@ -91,7 +92,6 @@ import org.zkoss.zul.Div;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.North;
-import org.zkoss.zul.South;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
 
@@ -167,8 +167,10 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	Borderlayout topToolbars;
 	
 	/*Dialog*/
-	Window insertFormulaDialog;
-	Window insertHyperlinkDialog;
+	Dialog insertFormulaDialog;
+	Dialog insertHyperlinkDialog;
+	Dialog pasteSpecialDialog;
+	Dialog composeFormulaDialog;
 
 	public Window getMainWindow() {
 		return mainWin;
@@ -1214,17 +1216,23 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		}
 		Executions.createComponents(Consts._ExportToPDF_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
 	}
-
+	
 	public void openHyperlinkDialog() {
-		Executions.createComponents(Consts._InsertHyperlinkDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+		if (insertHyperlinkDialog == null || insertHyperlinkDialog.isInvalidated())
+			insertHyperlinkDialog = (Dialog)Executions.createComponents(Consts._InsertHyperlinkDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+		insertHyperlinkDialog.fireOnOpen(null);
 	}
 
 	public void openInsertFormulaDialog() {
-		Executions.createComponents(Consts._InsertFormulaDialog2_zul, mainWin, null);
+		if (insertFormulaDialog == null || insertFormulaDialog.isInvalidated())
+			insertFormulaDialog = (Dialog)Executions.createComponents(Consts._InsertFormulaDialog2_zul, mainWin, null);
+		insertFormulaDialog.fireOnOpen(null);
 	}
 
 	public void openPasteSpecialDialog() {
-		Executions.createComponents(Consts._PasteSpecialDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+		if (pasteSpecialDialog == null || insertHyperlinkDialog.isInvalidated())
+			pasteSpecialDialog = (Dialog)Executions.createComponents(Consts._PasteSpecialDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+		pasteSpecialDialog.fireOnOpen(null);
 	}
 
 	public boolean toggleFormulaBar() {
@@ -1232,9 +1240,9 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 
 	public void openComposeFormulaDialog(FormulaMetaInfo metainfo) {
-		HashMap arg = new HashMap();
-		arg.put(Consts.KEY_ARG_FORMULA_METAINFO, metainfo);
-		Executions.createComponents(Consts._ComposeFormulaDialog_zul, mainWin, arg);
+		if (composeFormulaDialog == null || composeFormulaDialog.isInvalidated())
+			composeFormulaDialog = (Dialog) Executions.createComponents(Consts._ComposeFormulaDialog_zul, mainWin, arg);
+		composeFormulaDialog.fireOnOpen(metainfo);
 	}
 
 	public void openFormatNumberDialog() {

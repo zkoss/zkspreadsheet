@@ -24,13 +24,13 @@ import java.util.HashMap;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.Window;
 /**
  * @author Sam
  *
@@ -38,7 +38,7 @@ import org.zkoss.zul.Window;
 public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 
 	private Spreadsheet ss;
-	private Window pasteSpecialDlg;
+	private Dialog pasteSpecialDialog;
 	
 	private Radiogroup pasteSelector;
 	private Radio all;
@@ -74,8 +74,16 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
+		init();
+	}
+	
+	private void init() {
 		pasteSelector.setSelectedItem(all);
 		operationSelector.setSelectedItem(opNone);
+	}
+	
+	public void onOpen$pasteSpecialDialog() {
+		init();
 	}
 
 	public void onClick$okBtn() {
@@ -85,6 +93,7 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 				getPasteOperation(operationSelector.getSelectedItem().getLabel()),
 				skipBlanks.isChecked(),
 				transpose.isChecked());
-		pasteSpecialDlg.detach();
+		
+		pasteSpecialDialog.close();
 	}
 }

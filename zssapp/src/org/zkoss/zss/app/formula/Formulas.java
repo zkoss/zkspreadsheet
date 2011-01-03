@@ -809,7 +809,7 @@ public class Formulas {
 					"SUM",
 					"SUM(number1, number2, number3, ...)",
 					"Adds its arguments",
-					1, "number"));
+					2, "number"));
 		mathAry.add(new FormulaMetaInfo(MATH_TRIG,
 					"SUMIF",
 					"SUMIF(range, criteria, sum_range)",

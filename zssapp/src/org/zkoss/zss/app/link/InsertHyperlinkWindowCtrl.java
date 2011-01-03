@@ -31,6 +31,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.Consts;
+import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -52,6 +53,7 @@ import org.zkoss.zul.Treeitem;
  */
 public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 
+	private Dialog dialog;
 	private Button webBtn;
 	private Button docBtn;
 	private Button mailBtn;
@@ -79,11 +81,21 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 		
 		ss = checkNotNull(Zssapps.getSpreadsheetFromArg(), "Spreadsheet is null");
 		
+		init();
+	}
+	
+	public void onOpen$dialog() {
+		init();
+	}
+	
+	private void init() {
 		String display = Utils.getRange(ss.getSelectedSheet(), ss.getSelection().getTop(), ss.getSelection().getLeft()).getEditText();
 		isCellHasDisplayString = !"".equals(display);
 		if (isCellHasDisplayString)
 			displayHyperlink.setValue(display);
 		
+		//reset content
+		content.setSrc(null);
 		initPageContent();
 	}
 	
@@ -122,7 +134,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 		Utils.setHyperlink(ss.getSelectedSheet(), ss.getSelection().getTop(), ss.getSelection().getLeft(), 
 				getLinkTarget(), addr, getDisplay());
 
-		((Component)spaceOwner).detach();
+		dialog.close();
 	}
 	
 	private int getLinkTarget() {
@@ -198,6 +210,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 		});
 		mailAddr.addEventListener(Events.ON_OK, onOkEventListener);
 		mailSubject.addEventListener(Events.ON_OK, onOkEventListener);
+		mailAddr.focus();
 	}
 	
 	private EventListener onOkEventListener = new EventListener(){
@@ -226,6 +239,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 			}
 		});
 		addr.addEventListener(Events.ON_OK, onOkEventListener);
+		addr.focus();
 	}
 
 	/**
@@ -280,6 +294,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 				displayHyperlink.setValue(tree.getSelectedItem().getLabel() + "!" + ((InputEvent)evt).getValue());
 			}
 		});
+		cellRef.focus();
 	}
 	private void buildDocumentTree(final Tree tree, final Textbox cellRef) {
 		if (tree != null) {
