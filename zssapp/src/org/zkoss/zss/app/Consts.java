@@ -25,7 +25,7 @@ public class Consts {
 	public static String _CellStylePanel_zul = "~./zssapp/html/cellStylePanel.zul";
 	
 	/*File zul*/
-	public static String _FileListOpen_zul = "~./zssapp/html/dialog/file/fileListOpen.zul";
+	public static String _OpenFile_zul = "~./zssapp/html/dialog/file/fileListOpen.zul";
 	public static String _ImportFile_zul = "~./zssapp/html/dialog/file/importFile.zul";
 	public static String _SaveFile_zul = "~./zssapp/html/dialog/file/saveFile.zul";
 	

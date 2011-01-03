@@ -161,17 +161,17 @@
 				<dropdownbutton id="pasteDropdownBtn" image="~./zssapp/image/clipboard-paste.png" tooltiptext="${c:l('paste')}">
 					<menupopup>
 						<menuitem id="paste" src="~./zssapp/image/clipboard-paste.png" label="${c:l('paste')}"
-							forward="onPasteSelector(${c:l('paste')})"/>
+							forward='onPasteSelector(paste)'/>
 						<menuitem id="pasteFormula" label="${c:l('paste.formula')}" 
-							forward="onPasteSelector(${c:l('paste.formula')})"/>
+							forward='onPasteSelector(formula)'/>
 						<menuitem id="pasteValue" label="${c:l('paste.value')}"
-							forward="onPasteSelector(${c:l('paste.value')})"/>
+							forward='onPasteSelector(value)'/>
 						<menuitem id="pasteAllExcpetBorder" label="${c:l('paste.allExcpetBorder')}"
-							forward="onPasteSelector(${c:l('paste.allExcpetBorder')})"/>
+							forward='onPasteSelector(allExcpetBorder)'/>
 						<menuitem id="pasteTranspose" label="${c:l('paste.transpose')}"  
-							forward="onPasteSelector(${c:l('paste.transpose')})"/>
+							forward='onPasteSelector(transpose)'/>
 						<menuitem id="pasteSpecial" label="${c:l('pasteSpecial')}" 
-							forward="onPasteSelector(${c:l('pasteSpecial')})"/>
+							forward='onPasteSelector(pasteSpecial)'/>
 					</menupopup>
 				</dropdownbutton>
 				<toolbarbutton id="cutBtn" image="~./zssapp/image/scissors-blue.png" tooltiptext="${c:l('edit.cut')}"></toolbarbutton>

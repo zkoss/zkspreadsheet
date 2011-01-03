@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
@@ -26,6 +27,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Window;
 
 /**
  * @author Sam
@@ -33,6 +35,7 @@ import org.zkoss.zul.Messagebox;
  */
 public class FormatNumberCtrl extends GenericForwardComposer {
 	
+	private Dialog _formatNumberDialog;
 	private Listbox mfn_category;
 	private Listbox mfn_general;
 	
@@ -61,6 +64,13 @@ public class FormatNumberCtrl extends GenericForwardComposer {
 		super.doAfterCompose(comp);
 		spreadsheet = Zssapps.getSpreadsheetFromArg();
 	}
+	
+	public void onOpen$_formatNumberDialog() {
+		try {
+			_formatNumberDialog.setMode(Window.MODAL);
+		} catch (InterruptedException e) {
+		}
+	}
 
 	public void onClick$okBtn() {
 		Listitem  seldItem = mfn_category.getSelectedItem();
@@ -83,6 +93,6 @@ public class FormatNumberCtrl extends GenericForwardComposer {
 			} catch (InterruptedException e) {
 			}
 		}
-		self.detach();	
+		_formatNumberDialog.fireOnClose(null);
 	}
 }

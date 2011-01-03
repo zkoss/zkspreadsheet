@@ -49,7 +49,7 @@ import org.zkoss.zul.impl.api.InputElement;
  */
 public class ComposeFormulaCtrl extends GenericForwardComposer {
 
-	private Dialog composeFormulaDialog;
+	private Dialog _composeFormulaDialog;
 	private Label formulaStart;
 	private Label formulaEnd;
 	private Textbox composeFormulaTextbox;
@@ -66,6 +66,19 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 	private boolean movedToNext = false;
 	private InputElement focusComponent;
 
+	private EventListener onCellSelected = new EventListener(){
+		public void onEvent(Event event) throws Exception {
+			CellSelectionEvent evt = (CellSelectionEvent) event;
+			Cell cell = Utils.getCell(evt.getSheet(), evt.getTop(), evt.getLeft());
+			if (cell == null) {
+				Ranges.range(evt.getSheet(), evt.getTop(), evt.getLeft()).setEditText("0");
+			}
+			if (focusComponent != null) {
+				focusComponent.setText(getDesktopWorkbenchContext().getWorkbookCtrl().getCurrentCellPosition());
+				Events.postEvent(Events.ON_CHANGE, focusComponent, null);
+			}
+		}};
+	
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
@@ -135,29 +148,21 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 				}
 			}
 		});
-		
-		getDesktopWorkbenchContext().getWorkbookCtrl().addEventListener(org.zkoss.zss.ui.event.Events.ON_CELL_SELECTION, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				CellSelectionEvent evt = (CellSelectionEvent) event;
-				Cell cell = Utils.getCell(evt.getSheet(), evt.getTop(), evt.getLeft());
-				if (cell == null) {
-					Ranges.range(evt.getSheet(), evt.getTop(), evt.getLeft()).setEditText("0");
-				}
-				if (focusComponent != null) {
-					focusComponent.setText(getDesktopWorkbenchContext().getWorkbookCtrl().getCurrentCellPosition());
-					Events.postEvent(Events.ON_CHANGE, focusComponent, null);
-				}
-			}
-		});
 	}
 	
-	public void onOpen$composeFormulaDialog(ForwardEvent evt) {
+	public void onOpen$_composeFormulaDialog(ForwardEvent evt) {
 		info = (FormulaMetaInfo) evt.getOrigin().getData();
 		formulaStart.setValue("=" + info.getFunction() + "(");
 		composeFormulaTextbox.setText(null);
 		args = createArgs(info.getRequiredParameter(), info.getParameterNames());
 		argsListbox.setModel(newListModelInstance(args));
 		composeFormulaTextbox.focus();
+		
+		getDesktopWorkbenchContext().getWorkbookCtrl().addEventListener(org.zkoss.zss.ui.event.Events.ON_CELL_SELECTION, onCellSelected);
+	}
+	
+	public void onClose$_composeFormulaDialog() {
+		getDesktopWorkbenchContext().getWorkbookCtrl().removeEventListener(org.zkoss.zss.ui.event.Events.ON_CELL_SELECTION, onCellSelected);
 	}
 	
 	private void init() {
@@ -234,7 +239,7 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 		getDesktopWorkbenchContext().getWorkbookCtrl().insertFormula(formulaStart.getValue() + composeFormulaTextbox.getText() + formulaEnd.getValue());
 		//Note. insert formula may throw exception and won't fire book content changed event, need to fire own event to update UI
 		getDesktopWorkbenchContext().fireContentsChanged();
-		composeFormulaDialog.close();
+		_composeFormulaDialog.fireOnClose(null);
 	}
 	
 	private List<ArgWrapper> createArgs(int numArg, String[] argNames) {

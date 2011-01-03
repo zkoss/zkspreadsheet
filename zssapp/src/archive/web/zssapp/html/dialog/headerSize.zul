@@ -1,6 +1,6 @@
 <zk>
-	<window id="headerSizeWin" border="normal" mode="modal" position="center"
-		closable="true" apply="org.zkoss.zss.app.ctrl.HeaderSizeCtrl">
+	<window id="_headerSizeDialog" border="normal" mode="modal" position="center"
+		closable="true" apply="org.zkoss.zss.app.ctrl.HeaderSizeCtrl" use="org.zkoss.zss.app.zul.Dialog">
 		<div style="padding:5px;">
 			<label id="title" value="Column width: "></label>
 			<intbox id="headerSize" />

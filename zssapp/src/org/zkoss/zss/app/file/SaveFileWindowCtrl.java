@@ -18,6 +18,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zul.Button;
@@ -27,12 +28,15 @@ import org.zkoss.zul.ComboitemRenderer;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Window;
 
 /**
  * @author Sam
  * 
  */
 public class SaveFileWindowCtrl extends GenericForwardComposer {
+
+	Dialog _saveFileDialog;
 	Combobox fileFormat;
 	Textbox fileName;
 	Button okBtn;
@@ -52,11 +56,18 @@ public class SaveFileWindowCtrl extends GenericForwardComposer {
 					fileFormat.setSelectedIndex(0);
 			}
 		});
+	}
+	
+	public void onOpen$_saveFileDialog() {
 		fileFormat.setModel(new ListModelList(FileHelper.getSupportedFormat()));
 
 		String src = getDesktopWorkbenchContext().getWorkbookCtrl().getSrc();
 		if (src == "Untitled")
 			fileName.setValue("Book1");
+		try {
+			_saveFileDialog.setMode(Window.MODAL);
+		} catch (InterruptedException e) {
+		}
 	}
 
 	public void onOK$fileName() {
@@ -72,7 +83,8 @@ public class SaveFileWindowCtrl extends GenericForwardComposer {
 			getDesktopWorkbenchContext().getWorkbookCtrl().setSrcName(
 					fileName.getText() + "." + fileFormat.getSelectedItem().getLabel());
 			getDesktopWorkbenchContext().getWorkbookCtrl().save();
-			self.detach();
+			getDesktopWorkbenchContext().fireWorkbookSaved();
+			_saveFileDialog.fireOnClose(null);
 		} else
 			try {
 				Messagebox.show("File name can not be empty");

@@ -1,4 +1,4 @@
-<window id="fileOpenWin" closable="true"
+<window id="_openFileDialog" closable="true" use="org.zkoss.zss.app.zul.Dialog"
 		mode="modal" title="Open File" border="normal" width="480px" 
 		position="center" apply="org.zkoss.zss.app.file.OpenFileWindowCtrl">
 	<vlayout style="margin:5px">	

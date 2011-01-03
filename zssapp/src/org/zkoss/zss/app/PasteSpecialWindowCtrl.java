@@ -21,7 +21,6 @@ import static org.zkoss.zss.app.cell.EditHelper.onPasteSpecial;
 
 import java.util.HashMap;
 
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.zul.Dialog;
@@ -31,6 +30,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
+import org.zkoss.zul.Window;
 /**
  * @author Sam
  *
@@ -38,7 +38,7 @@ import org.zkoss.zul.Radiogroup;
 public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 
 	private Spreadsheet ss;
-	private Dialog pasteSpecialDialog;
+	private Dialog _pasteSpecialDialog;
 	
 	private Radiogroup pasteSelector;
 	private Radio all;
@@ -71,29 +71,31 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 			throw new UiException("Spreadsheet must has highlight area as paste source, please set spreadsheet's highlight area");
 	}
 	
-	public void doAfterCompose(Component comp) throws Exception {
-		super.doAfterCompose(comp);
-		
-		init();
-	}
-	
 	private void init() {
 		pasteSelector.setSelectedItem(all);
 		operationSelector.setSelectedItem(opNone);
+		
+		skipBlanks.setChecked(false);
+		transpose.setChecked(false);
+		okBtn.setDisabled(false);
 	}
 	
-	public void onOpen$pasteSpecialDialog() {
+	public void onOpen$_pasteSpecialDialog() {
 		init();
+		try {
+			_pasteSpecialDialog.setMode(Window.MODAL);
+		} catch (InterruptedException e) {
+		}
 	}
 
 	public void onClick$okBtn() {
 		okBtn.setDisabled(true);
 		onPasteSpecial(ss, 
-				getPasteType(pasteSelector.getSelectedItem().getLabel()),
-				getPasteOperation(operationSelector.getSelectedItem().getLabel()),
+				getPasteType(pasteSelector.getSelectedItem().getValue()),
+				getPasteOperation(operationSelector.getSelectedItem().getValue()),
 				skipBlanks.isChecked(),
 				transpose.isChecked());
 		
-		pasteSpecialDialog.close();
+		_pasteSpecialDialog.fireOnClose(null);
 	}
 }

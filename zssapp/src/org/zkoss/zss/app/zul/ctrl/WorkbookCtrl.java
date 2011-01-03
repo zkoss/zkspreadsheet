@@ -131,5 +131,4 @@ public interface WorkbookCtrl {
 	public void setRowHeightInPx(int height);
 	
 	public int getDefaultCharWidth();
-	
 }

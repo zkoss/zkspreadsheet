@@ -41,7 +41,12 @@ public class Dialog extends Window {
 		Events.sendEvent("onOpen", this, obj);
 	}
 	
-	public void close() {
+	/**
+	 * close dialog and fire onClose event
+	 * @param obj
+	 */
+	public void fireOnClose(Object obj) {
 		setVisible(false);
+		Events.sendEvent("onClose", this, obj);
 	}
 }

@@ -20,6 +20,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.app.zul.ctrl.WorkspaceContext;
@@ -32,6 +33,7 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Window;
 
 /**
  * @author Sam
@@ -39,16 +41,25 @@ import org.zkoss.zul.Messagebox;
  */
 public class OpenFileWindowCtrl extends GenericForwardComposer {
 	
+	private Dialog _openFileDialog;
 	private Listbox filesListbox;
 	
 	private Button uploadBtn;
-	
+
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		initFileListbox();
-		
 		uploadBtn.setDisabled(!FileHelper.hasImportPermission());
+	}
+	
+	public void onOpen$_openFileDialog() {
+		try {
+			filesListbox.setModel(new ListModelList(
+					WorkspaceContext.getInstance(desktop).getMetainfos()));
+			_openFileDialog.setMode(Window.MODAL);
+		} catch (InterruptedException e) {
+		}
 	}
 
 	private void initFileListbox() {
@@ -63,8 +74,6 @@ public class OpenFileWindowCtrl extends GenericForwardComposer {
 		dateHeader.setParent(listhead);
 		filesListbox.appendChild(listhead);
 		
-		filesListbox.setModel(new ListModelList(
-				WorkspaceContext.getInstance(desktop).getMetainfos()));
 		filesListbox.setItemRenderer(new ListitemRenderer() {
 			
 			@Override
@@ -78,7 +87,7 @@ public class OpenFileWindowCtrl extends GenericForwardComposer {
 					public void onEvent(Event evt) throws Exception {
 						getDesktopWorkbenchContext().getWorkbookCtrl().openBook(info);
 						getDesktopWorkbenchContext().fireWorkbookChanged();
-						self.detach();
+						_openFileDialog.fireOnClose(null);
 					}
 				});
 			}
@@ -91,7 +100,7 @@ public class OpenFileWindowCtrl extends GenericForwardComposer {
 			getDesktopWorkbenchContext().getWorkbookCtrl().
 				openBook(WorkspaceContext.getInstance(desktop).store(event.getMedia()));
 			getDesktopWorkbenchContext().fireWorkbookChanged();
-			self.detach();
+			_openFileDialog.fireOnClose(null);
 		} catch (UnsupportedSpreadSheetFileException e) {
 			try {
 				//TODO: I18n

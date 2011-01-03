@@ -14,12 +14,13 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.ctrl;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.WorkbookCtrl;
 import org.zkoss.zul.Button;
@@ -33,16 +34,14 @@ import org.zkoss.zul.Window;
  */
 public class HeaderSizeCtrl extends GenericForwardComposer {
 	
+	Dialog _headerSizeDialog;
 	/* header type to set, specify column or row */
-	public final static String KEY_HEADER_TYPE = "org.zkoss.zss.app.ctrl.HeaderSizeCtrl.headerType";
+	private final static String KEY_HEADER_TYPE = "org.zkoss.zss.app.ctrl.HeaderSizeCtrl.headerType";
 	private Integer headerType;
 	
 	/* header original value */
-	public final static String KEY_HEADER_SIZE = "org.zkoss.zss.app.ctrl.HeaderSizeCtrl.headerSize";
+	private final static String KEY_HEADER_SIZE = "org.zkoss.zss.app.ctrl.HeaderSizeCtrl.headerSize";
 	private Integer size;
-	
-	/* dialog window */
-	private Window headerSizeWin;
 	
 	/* header title specify Column width or Row height */
 	private Label title;
@@ -52,14 +51,30 @@ public class HeaderSizeCtrl extends GenericForwardComposer {
 	
 	private Button okBtn;
 	
-	public void doAfterCompose(Component comp) throws Exception {
-		super.doAfterCompose(comp);
-		
-		Map arg = Executions.getCurrent().getArg();
+	/**
+	 * Construct arguments for {@link onOpen} event data
+	 * @param headrType
+	 * @param headerSize
+	 * @return
+	 */
+	public static Map newArg(Integer headrType, Integer headerSize) {
+		Map arg = new HashMap();
+		arg.put(HeaderSizeCtrl.KEY_HEADER_TYPE, headrType);
+		arg.put(HeaderSizeCtrl.KEY_HEADER_SIZE, headerSize);
+		return arg;
+	}
+	
+	public void onOpen$_headerSizeDialog(ForwardEvent event) {
+		Map arg = (Map) event.getOrigin().getData();
 		headerType = (Integer)arg.get(KEY_HEADER_TYPE);
 		initTitle(headerType);
 		size = (Integer)arg.get(KEY_HEADER_SIZE);
 		headerSize.setValue(size);
+		
+		try {
+			_headerSizeDialog.setMode(Window.MODAL);
+		} catch (InterruptedException e) {
+		}
 	}
 	
 	private void initTitle(int target) {
@@ -69,7 +84,7 @@ public class HeaderSizeCtrl extends GenericForwardComposer {
 		} else {
 			val = Labels.getLabel("header.columnWidth");
 		}
-		headerSizeWin.setTitle(val);
+		_headerSizeDialog.setTitle(val);
 		title.setValue(val + ": ");	
 	}
 
@@ -87,6 +102,6 @@ public class HeaderSizeCtrl extends GenericForwardComposer {
 			bookCtrl.setRowHeightInPx(headerSize.getValue()); 
 		else
 			bookCtrl.setColumnWidthInPx(headerSize.getValue());
-		self.detach();
+		_headerSizeDialog.fireOnClose(null);
 	}
 }

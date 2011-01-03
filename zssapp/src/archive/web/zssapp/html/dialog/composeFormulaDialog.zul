@@ -1,6 +1,6 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<window id="composeFormulaDialog" title="Function Arguments" border="normal" use="org.zkoss.zss.app.zul.Dialog"
+	<window id="_composeFormulaDialog" title="Function Arguments" border="normal" use="org.zkoss.zss.app.zul.Dialog"
 	width="480px" mode="overlapped" closable="true" position="center"
 	apply="org.zkoss.zss.app.ctrl.ComposeFormulaCtrl">
 		<div height="5px"></div>

@@ -1,13 +1,13 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<style>
-		.z-grid-body tr.btnRow td.z-row-inner {
-			background: none;
-		}
-	</style>
-	<window title="${c:l('file.saveas')}" border="normal" mode="modal"
-		closable="true" position="center" width="380px"
+	<window id="_saveFileDialog" title="${c:l('file.saveas')}" border="normal" mode="modal"
+		closable="true" position="center" width="380px" use="org.zkoss.zss.app.zul.Dialog"
 		apply="org.zkoss.zss.app.file.SaveFileWindowCtrl">
+		<style>
+			.z-grid-body tr.btnRow td.z-row-inner {
+				background: none;
+			}
+		</style>
 		<div style="padding: 5px;">
 			<grid>
 				<columns>

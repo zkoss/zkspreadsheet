@@ -18,9 +18,7 @@ package org.zkoss.zss.app;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.zkoss.lang.Library;
 import org.zkoss.poi.ss.usermodel.Cell;
@@ -47,11 +45,11 @@ import org.zkoss.zss.app.sort.SortSelector;
 import org.zkoss.zss.app.zul.CellContext;
 import org.zkoss.zss.app.zul.CellMenupopup;
 import org.zkoss.zss.app.zul.ColumnHeaderMenupopup;
+import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.EditMenu;
 import org.zkoss.zss.app.zul.FileMenu;
 import org.zkoss.zss.app.zul.FormatMenu;
 import org.zkoss.zss.app.zul.FormulaEditor;
-import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.InsertMenu;
 import org.zkoss.zss.app.zul.RowHeaderMenupopup;
 import org.zkoss.zss.app.zul.Sheets;
@@ -102,6 +100,9 @@ import org.zkoss.zul.Window;
 public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchCtrl {
 
 	private static final long serialVersionUID = 1;
+	
+	private final static String KEY_PDF = "org.zkoss.zss.app.exportToPdf";
+	
 	static int event_x = 200;
 	static int event_y = 200;
 
@@ -167,10 +168,18 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	Borderlayout topToolbars;
 	
 	/*Dialog*/
-	Dialog insertFormulaDialog;
-	Dialog insertHyperlinkDialog;
-	Dialog pasteSpecialDialog;
-	Dialog composeFormulaDialog;
+	Dialog _insertFormulaDialog;
+	Dialog _insertHyperlinkDialog;
+	Dialog _pasteSpecialDialog;
+	Dialog _composeFormulaDialog;
+	Dialog _formatNumberDialog;
+	Dialog _saveFileDialog;
+	Dialog _headerSizeDialog;
+	Dialog _renameSheetDialog;
+	Dialog _openFileDialog;
+	Dialog _importFileDialog;
+	Dialog _customSortDialog;
+	Dialog _exportToPdfDialog;
 
 	public Window getMainWindow() {
 		return mainWin;
@@ -372,8 +381,16 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	public void onDropdown$pasteDropdownBtn() {
 		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
+	public void onDropdown$sortDropdownBtn() {
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
+	}
 	public void onPasteSelector(ForwardEvent event) {
-		EditHelper.onPasteEventHandler(spreadsheet, (String)event.getData());
+		String val = (String) event.getData();
+		if ("pasteSpecial".equals(val))
+			openPasteSpecialDialog();
+		else
+			EditHelper.onPasteEventHandler(spreadsheet, val);
+			
 	}
 	public void onClick$insertFormulaBtn() {
 		openInsertFormulaDialog();
@@ -1203,36 +1220,27 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 
 	public void openCustomSortDialog() {
-		Executions.createComponents(Consts._CustomSortDialog_zul, mainWin, CustomSortWindowCtrl.newArg(spreadsheet));
-	}
-
-	public void openExportPdfDialog() {
-		if (!hasZssPdf()) {
-			try {
-				Messagebox.show("Please download Zss Pdf from ZK");
-			} catch (InterruptedException e) {
-			}
-			return;
-		}
-		Executions.createComponents(Consts._ExportToPDF_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+		if (_customSortDialog == null || _customSortDialog.isInvalidated())
+			_customSortDialog = (Dialog) Executions.createComponents(Consts._CustomSortDialog_zul, mainWin, CustomSortWindowCtrl.newArg(spreadsheet));
+		_customSortDialog.fireOnOpen(null);
 	}
 	
 	public void openHyperlinkDialog() {
-		if (insertHyperlinkDialog == null || insertHyperlinkDialog.isInvalidated())
-			insertHyperlinkDialog = (Dialog)Executions.createComponents(Consts._InsertHyperlinkDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
-		insertHyperlinkDialog.fireOnOpen(null);
+		if (_insertHyperlinkDialog == null || _insertHyperlinkDialog.isInvalidated())
+			_insertHyperlinkDialog = (Dialog)Executions.createComponents(Consts._InsertHyperlinkDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+		_insertHyperlinkDialog.fireOnOpen(null);
 	}
 
 	public void openInsertFormulaDialog() {
-		if (insertFormulaDialog == null || insertFormulaDialog.isInvalidated())
-			insertFormulaDialog = (Dialog)Executions.createComponents(Consts._InsertFormulaDialog2_zul, mainWin, null);
-		insertFormulaDialog.fireOnOpen(null);
+		if (_insertFormulaDialog == null || _insertFormulaDialog.isInvalidated())
+			_insertFormulaDialog = (Dialog)Executions.createComponents(Consts._InsertFormulaDialog2_zul, mainWin, null);
+		_insertFormulaDialog.fireOnOpen(null);
 	}
 
 	public void openPasteSpecialDialog() {
-		if (pasteSpecialDialog == null || insertHyperlinkDialog.isInvalidated())
-			pasteSpecialDialog = (Dialog)Executions.createComponents(Consts._PasteSpecialDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
-		pasteSpecialDialog.fireOnOpen(null);
+		if (_pasteSpecialDialog == null || _pasteSpecialDialog.isInvalidated())
+			_pasteSpecialDialog = (Dialog)Executions.createComponents(Consts._PasteSpecialDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+		_pasteSpecialDialog.fireOnOpen(null);
 	}
 
 	public boolean toggleFormulaBar() {
@@ -1240,23 +1248,24 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 
 	public void openComposeFormulaDialog(FormulaMetaInfo metainfo) {
-		if (composeFormulaDialog == null || composeFormulaDialog.isInvalidated())
-			composeFormulaDialog = (Dialog) Executions.createComponents(Consts._ComposeFormulaDialog_zul, mainWin, arg);
-		composeFormulaDialog.fireOnOpen(metainfo);
+		if (_composeFormulaDialog == null || _composeFormulaDialog.isInvalidated())
+			_composeFormulaDialog = (Dialog) Executions.createComponents(Consts._ComposeFormulaDialog_zul, mainWin, arg);
+		_composeFormulaDialog.fireOnOpen(metainfo);
 	}
 
 	public void openFormatNumberDialog() {
-		Executions.createComponents(Consts._FormatNumberDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+		if (_formatNumberDialog == null || _formatNumberDialog.isInvalidated())
+			_formatNumberDialog = (Dialog) Executions.createComponents(Consts._FormatNumberDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+		_formatNumberDialog.fireOnOpen(null);	
 	}
 
 	public void openSaveFileDialog() {
-		Executions.createComponents(Consts._SaveFile_zul, mainWin, null);
+		if (_saveFileDialog == null || _saveFileDialog.isInvalidated())
+			_saveFileDialog = (Dialog) Executions.createComponents(Consts._SaveFile_zul, mainWin, null);
+		_saveFileDialog.fireOnOpen(null);
 	}
 
 	public void openModifyHeaderSizeDialog(int headerType) {
-		Map arg = new HashMap();
-		arg.put(HeaderSizeCtrl.KEY_HEADER_TYPE, Integer.valueOf(headerType));
-		
 		Rect seld = spreadsheet.getSelection();
 		int prev = -1;
 		boolean sameVal = true;
@@ -1279,17 +1288,45 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				}
 			}
 		}
-		if (sameVal)
-			arg.put(HeaderSizeCtrl.KEY_HEADER_SIZE, prev);
-		Executions.createComponents(Consts._HeaderSize_zul, mainWin, arg);
+
+		if (_headerSizeDialog == null || _headerSizeDialog.isInvalidated())
+			_headerSizeDialog = (Dialog) Executions.createComponents(Consts._HeaderSize_zul, mainWin, null);
+		_headerSizeDialog.fireOnOpen(
+			HeaderSizeCtrl.newArg(
+				Integer.valueOf(headerType), sameVal ? prev : null));
 	}
 
 	public void openRenameSheetDialog(String originalSheetName) {
-		Executions.createComponents(Consts._RenameDialog_zul, mainWin, RenameSheetCtrl.newArg(originalSheetName));
+		if (_renameSheetDialog == null || _renameSheetDialog.isInvalidated())
+			_renameSheetDialog = (Dialog) Executions.createComponents(Consts._RenameDialog_zul, mainWin, null);
+		_renameSheetDialog.fireOnOpen(RenameSheetCtrl.newArg(originalSheetName));
 	}
 
-	private final static String KEY_PDF = "org.zkoss.zss.app.exportToPdf";
+	public void openOpenFileDialog() {
+		if (_openFileDialog == null || _openFileDialog.isInvalidated())
+			_openFileDialog = (Dialog) Executions.createComponents(Consts._OpenFile_zul, mainWin, null);
+		_openFileDialog.fireOnOpen(null);
+	}
+
+	public void openImportFileDialog() {
+		if (_importFileDialog == null || _importFileDialog.isInvalidated())
+			_importFileDialog = (Dialog) Executions.createComponents(Consts._ImportFile_zul, mainWin, null);
+		_importFileDialog.fireOnOpen(null);
+	}
 	
+	public void openExportPdfDialog() {
+		if (!hasZssPdf()) {
+			try {
+				Messagebox.show("Please download Zss Pdf from ZK");
+			} catch (InterruptedException e) {
+			}
+			return;
+		}
+		Executions _exportToPdfDialogExecutions;
+		if (_exportToPdfDialog == null || _exportToPdfDialog.isInvalidated())
+			_exportToPdfDialog = (Dialog) Executions.createComponents(Consts._ExportToPDF_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+		_exportToPdfDialog.fireOnOpen(null);
+	}
 	private static boolean hasZssPdf() {
 		String val = Library.getProperty(KEY_PDF);
 		if (val == null) {
@@ -1311,13 +1348,5 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			return false;
 		}
 		return true;
-	}
-
-	public void openOpenFileDialog() {
-		Executions.createComponents(Consts._FileListOpen_zul, mainWin, null);
-	}
-
-	public void openImportFileDialog() {
-		Executions.createComponents(Consts._ImportFile_zul,	mainWin, null);
 	}
 }

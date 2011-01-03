@@ -40,6 +40,7 @@ import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.SimpleListModel;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Window;
 
 /**
  * @author Sam
@@ -49,7 +50,7 @@ public class InsertFormulaCtrl2 extends GenericForwardComposer {
 	
 	private final static String ALL = "All";
 	
-	private Dialog insertDialog;
+	private Dialog _insertFormulaDialog;
 	private Textbox searchTextbox;
 	private Button searchBtn;
 	
@@ -94,7 +95,11 @@ public class InsertFormulaCtrl2 extends GenericForwardComposer {
 		});
 	}
 	
-	public void onOpen$insertDialog() {
+	public void onOpen$_insertFormulaDialog() {
+		try {
+			_insertFormulaDialog.setMode(Window.MODAL);
+		} catch (InterruptedException e) {
+		}
 		searchTextbox.setText(null);
 		initFunctionListbox();
 		searchTextbox.focus();
@@ -148,7 +153,7 @@ public class InsertFormulaCtrl2 extends GenericForwardComposer {
 				openComposeFormulaDialog((FormulaMetaInfo)item.getValue());
 		}
 
-		insertDialog.close();
+		_insertFormulaDialog.fireOnClose(null);
 	}
 	
 	//TODO: shall I use echo event to showbusy, need to test speed 

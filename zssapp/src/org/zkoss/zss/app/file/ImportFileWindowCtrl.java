@@ -23,6 +23,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.app.zul.ctrl.WorkspaceContext;
@@ -40,6 +41,7 @@ import org.zkoss.zul.Menupopup;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
+import org.zkoss.zul.Window;
 
 /**
  * @author Sam
@@ -47,6 +49,7 @@ import org.zkoss.zul.Radiogroup;
  */
 public class ImportFileWindowCtrl extends GenericForwardComposer  {
 	
+	private Dialog _importFileDialog;
 	private Label supportedFormat;
 	private Radiogroup importOption;
 	private Radio createNew;
@@ -73,6 +76,17 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 		initImportOption();
 		initFileListbox();
 	}
+	
+	public void onOpen$_importFileDialog() {
+		try {
+			_importFileDialog.setMode(Window.MODAL);
+		} catch (InterruptedException e) {
+		}
+		Map<String, SpreadSheetMetaInfo> metaInfos = SpreadSheetMetaInfo.getMetaInfos();
+		if (metaInfos == null || metaInfos.isEmpty())
+			return;
+		allFilesListbox.setModel(new ListModelList(metaInfos.values()));
+	}
 
 	private void initSupportFormat() {	
 		String val = "";
@@ -88,10 +102,7 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 	 * Initialize all spreadsheet file name as a list 
 	 */
 	private void initFileListbox() {
-		Map<String, SpreadSheetMetaInfo> metaInfos = SpreadSheetMetaInfo.getMetaInfos();
-		if (metaInfos == null || metaInfos.isEmpty())
-			return;
-		
+
 		//TODO: move this to become a component, re-use in here and fileListOpen.zul
 		Listhead listhead = new Listhead();
 		Listheader filenameHeader = new Listheader("File");
@@ -103,7 +114,6 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 		dateHeader.setParent(listhead);
 		allFilesListbox.appendChild(listhead);
 		
-		allFilesListbox.setModel(new ListModelList(metaInfos.values()));
 		allFilesListbox.setItemRenderer(new ListitemRenderer() {
 			
 			@Override
@@ -121,7 +131,7 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 						DesktopWorkbenchContext workbenchCtrl = getDesktopWorkbenchContext();
 						workbenchCtrl.getWorkbookCtrl().openBook(info);
 						workbenchCtrl.fireWorkbookChanged();
-						((Component)spaceOwner).detach();
+						_importFileDialog.fireOnClose(null);
 					}
 				});
 			}
@@ -139,7 +149,7 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 	public void onClick$openFileMenuitem() {
 		getDesktopWorkbenchContext().getWorkbookCtrl().openBook((SpreadSheetMetaInfo)allFilesListbox.getSelectedItem().getValue());
 		getDesktopWorkbenchContext().fireWorkbookChanged();
-		((Component)spaceOwner).detach();
+		_importFileDialog.fireOnClose(null);
 	}
 	
 	public void onFileUpload(ForwardEvent event) {

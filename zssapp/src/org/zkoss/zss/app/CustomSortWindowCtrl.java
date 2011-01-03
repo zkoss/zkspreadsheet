@@ -28,6 +28,7 @@ import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -50,6 +51,7 @@ import org.zkoss.zul.Window;
  *
  */
 public class CustomSortWindowCtrl extends GenericForwardComposer {
+	private Dialog _customSortDialog;
 	/**
 	 * Sort by column
 	 */
@@ -88,7 +90,6 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	private Checkbox caseSensitive;
 	private Checkbox hasHeader;
 	private Combobox sortOrientationCombo;
-	private Window sortWin;
 	private Button addBtn;
 	private Button delBtn;
 	private Button upBtn;
@@ -105,14 +106,22 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		return arg;
 	}
 	
+	public void onOpen$_customSortDialog() {
+		init();
+		try {
+			_customSortDialog.setMode(Window.MODAL);
+		} catch (InterruptedException e) {
+		}
+	}
+	
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		ss = (Spreadsheet)Executions.getCurrent().getArg().get(KEY_ARG_SPREADSGEET);
-		sortOrientationCombo.setSelectedIndex(0);
-		initSortLevelListbox();
 	}
 
-	private void initSortLevelListbox () {
+	private void init () {
+		sortOrientationCombo.setSelectedIndex(0);
+		
 		List<SortLevel> ary = new ArrayList<SortLevel>();
 		ary.add(new SortLevel());
 		setAvailableSortTarget(availableSortIndex);
@@ -222,7 +231,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		
 		//call utils
 		Utils.sort(ss.getSelectedSheet(), ss.getSelection(), index, algorithm, dataOption,  hasHeader.isChecked(), caseSensitive.isChecked(), sortOrientation);
-		sortWin.detach();
+		_customSortDialog.fireOnClose(null);
 	}
 	
 	/**

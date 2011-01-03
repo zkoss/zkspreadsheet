@@ -260,11 +260,7 @@ public final class EditHelper {
 			return;
 		}
 
-		if (operation.equals(Labels.getLabel("pasteSpecial")) ) {
-			Executions.createComponents(Consts._PasteSpecialDialog_zul, null, Zssapps.newSpreadsheetArg(spreadsheet));
-		} else {
-			onPasteSpecial(spreadsheet, getPasteType(operation), getPasteOperation(operation), false, isTranspose(operation));
-		}
+		onPasteSpecial(spreadsheet, getPasteType(operation), getPasteOperation(operation), false, isTranspose(operation));
 	}
 	
 	public static int getDefaultPasteType() {
@@ -276,29 +272,29 @@ public final class EditHelper {
 	 * <p> Default: returns {@link #Range.PASTE_ALL}, if no match
 	 * @return
 	 */
-	public static int getPasteType(String i3label) {
-		if (i3label == null 
-				|| i3label.equals(Labels.getLabel("paste"))
-				|| i3label.equals(Labels.getLabel("paste.all")) )
+	public static int getPasteType(String type) {
+		if (type == null 
+				|| "paste".equals(type)
+				|| "all".equals(type) )
 			return Range.PASTE_ALL;
 		
-		if ( i3label.equals(Labels.getLabel("paste.allExcpetBorder")) ) {
+		if ( "allExcpetBorder".equals(type) ) {
 			return Range.PASTE_ALL_EXCEPT_BORDERS;
-		} else if ( i3label.equals(Labels.getLabel("paste.columnWidth")) ) {
+		} else if ( "columnWidth".equals(type) ) {
 			return Range.PASTE_COLUMN_WIDTHS;
-		} else if ( i3label.equals(Labels.getLabel("paste.comment")) ) {
+		} else if ( "comment".equals(type) ) {
 			return Range.PASTE_COMMENTS;
-		} else if ( i3label.equals(Labels.getLabel("paste.formula")) ) {
+		} else if ( "formula".equals(type) ) {
 			return Range.PASTE_FORMULAS;
-		} else if ( i3label.equals(Labels.getLabel("paste.formulaWithNumFmt")) ) {
+		} else if ( "formulaWithNumFmt".equals(type) ) {
 			return Range.PASTE_FORMULAS_AND_NUMBER_FORMATS;
-		} else if ( i3label.equals(Labels.getLabel("paste.value")) ) {
+		} else if ( "value".equals(type) ) {
 			return Range.PASTE_VALUES;
-		} else if ( i3label.equals(Labels.getLabel("paste.valueWithNumFmt")) ) {
+		} else if ( "valueWithNumFmt".equals(type) ) {
 			return Range.PASTE_VALUES_AND_NUMBER_FORMATS;
-		} else if ( i3label.equals(Labels.getLabel("paste.format")) ) {
+		} else if ( "format".equals(type) ) {
 			return Range.PASTE_FORMATS;
-		} else if ( i3label.equals(Labels.getLabel("paste.validation")) ) {
+		} else if ( "validation".equals(type) ) {
 			return Range.PASTE_VALIDATAION;
 		}
 		
@@ -313,19 +309,19 @@ public final class EditHelper {
 	/**
 	 * Returns the paste operation base on i3-label, if no match
 	 * <p> Default: returns {@link #Range.PASTEOP_NONE}, if no match 
-	 * @param i3label
+	 * @param operation
 	 * @return
 	 */
-	public static int getPasteOperation(String i3label) {
-		if (i3label == null || i3label.equals(Labels.getLabel("pasteop.none")) )
+	public static int getPasteOperation(String operation) {
+		if (operation == null || "none".equals(operation) )
 			return Range.PASTEOP_NONE;
-		if ( i3label.equals(Labels.getLabel("pasteop.add")) ) {
+		if ( "add".equals(operation) ) {
 			return Range.PASTEOP_ADD;
-		} else if ( i3label.equals(Labels.getLabel("pasteop.sub")) ) {
+		} else if ( "sub".equals(operation) ) {
 			return Range.PASTEOP_SUB;
-		} else if ( i3label.equals(Labels.getLabel("pasteop.mul")) ) {
+		} else if ( "mul".equals(operation) ) {
 			return Range.PASTEOP_MUL;
-		} else if ( i3label.equals(Labels.getLabel("pasteop.divide")) ) {
+		} else if ( "divide".equals(operation) ) {
 			return Range.PASTEOP_DIV;
 		}
 		return Range.PASTEOP_NONE;
@@ -334,11 +330,11 @@ public final class EditHelper {
 	/**
 	 * Returns whether transpose or not
 	 * <p> Default: returns false
-	 * @param i3label
+	 * @param trans
 	 * @return 
 	 */
-	public static boolean isTranspose(String i3label) {
-		if (i3label == null || !i3label.equals(Labels.getLabel("paste.transpose")))
+	public static boolean isTranspose(String trans) {
+		if (trans == null || !"transpose".equals(trans))
 			return false;
 		return true;
 	}

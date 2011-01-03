@@ -46,6 +46,7 @@ import org.zkoss.zul.SimpleTreeNode;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Tree;
 import org.zkoss.zul.Treeitem;
+import org.zkoss.zul.Window;
 
 /**
  * @author Sam
@@ -53,7 +54,7 @@ import org.zkoss.zul.Treeitem;
  */
 public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 
-	private Dialog dialog;
+	private Dialog _insertHyperlinkDialog;
 	private Button webBtn;
 	private Button docBtn;
 	private Button mailBtn;
@@ -84,8 +85,12 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 		init();
 	}
 	
-	public void onOpen$dialog() {
+	public void onOpen$_insertHyperlinkDialog() {
 		init();
+		try {
+			_insertHyperlinkDialog.setMode(Window.MODAL);
+		} catch (InterruptedException e) {
+		}
 	}
 	
 	private void init() {
@@ -134,7 +139,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 		Utils.setHyperlink(ss.getSelectedSheet(), ss.getSelection().getTop(), ss.getSelection().getLeft(), 
 				getLinkTarget(), addr, getDisplay());
 
-		dialog.close();
+		_insertHyperlinkDialog.fireOnClose(null);
 	}
 	
 	private int getLinkTarget() {

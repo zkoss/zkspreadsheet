@@ -117,6 +117,7 @@ public class FileMenu extends Menu implements IdSpace {
 			workbench.getWorkbookCtrl().save();
 			workbench.getWorkbookCtrl().close();
 			workbench.fireWorkbookSaved();
+			workbench.fireWorkbookChanged();
 		} else
 			workbench.getWorkbenchCtrl().openSaveFileDialog();
 	}

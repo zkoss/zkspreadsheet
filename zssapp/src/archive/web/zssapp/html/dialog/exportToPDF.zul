@@ -1,8 +1,9 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <zk>
-<window title="${c:l('export.pdf')}" border="normal" width="480px" 
-mode="modal" closable="true" position="center" apply="org.zkoss.zss.app.file.ExportToPdfWindowCtrl">
+<window id="_exportToPdfDialog" title="${c:l('export.pdf')}" border="normal" width="480px" 
+mode="modal" closable="true" position="center" use="org.zkoss.zss.app.zul.Dialog"  
+apply="org.zkoss.zss.app.file.ExportToPdfWindowCtrl">
 	<div style="padding: 10px;">
 	<radiogroup id="range"> </radiogroup>
 	<radiogroup id="orientation"> </radiogroup>

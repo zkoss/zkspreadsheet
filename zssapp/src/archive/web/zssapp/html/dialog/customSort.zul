@@ -1,7 +1,9 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <zk>
-<window id="sortWin" title="${c:l('sort.custom')}" border="normal" mode="modal" closable="true" position="center" width="630px" height="400px" apply="org.zkoss.zss.app.CustomSortWindowCtrl">
+<window id="_customSortDialog" title="${c:l('sort.custom')}" border="normal" mode="modal" 
+closable="true" position="center" width="630px" height="400px" 
+apply="org.zkoss.zss.app.CustomSortWindowCtrl" use="org.zkoss.zss.app.zul.Dialog" >
 <div style="padding: 5px">
 	<hlayout spacing="0.4em">
 		<button id="addBtn" image="~./zssapp/image/plus.png" mold="trendy"></button>
