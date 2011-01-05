@@ -1,59 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.zkoss.zss</groupId>
-  <artifactId>zss</artifactId>
-  <version>{version}</version>
-  <packaging>jar</packaging>
-  <name>ZK Spreadsheet</name>
-  <url>http://www.zkoss.org/zss</url>
-  <description>ZK Spreadsheet</description>
-  <licenses>
-    <license>
-      <name>GNU General Public License, Version 3.0</name>
-      <url>http://www.gnu.org/licenses/gpl.html</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  <scm>
-    <url>https://zkspreadsheet.googlecode.com/releases/{version}/zss</url>
-  </scm>
-  <dependencies>
-    <dependency>
-      <groupId>org.zkoss.zss</groupId>
-      <artifactId>zpoi</artifactId>
-      <version>{version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.zkoss.common</groupId>
-      <artifactId>zcommon</artifactId>
-      <version>5.0.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.zkoss.common</groupId>
-      <artifactId>zweb</artifactId>
-      <version>5.0.2</version>
-    </dependency>
-    <dependency>
-	  <groupId>org.zkoss.zk</groupId>
-	  <artifactId>zk</artifactId>
-	  <version>5.0.2</version>
-	</dependency>
-    <dependency>
-	  <groupId>org.zkoss.zk</groupId>
-	  <artifactId>zul</artifactId>
-	  <version>5.0.2</version>
-	</dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-math</artifactId>
-      <version>2.1</version>
-    </dependency>
-    <dependency>
-	  <groupId>org.apache.poi</groupId>
-	  <artifactId>ooxml-schemas</artifactId>
-	  <version>1.0</version>
-	</dependency>
-  </dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.zkoss.zss</groupId>
+	<artifactId>zss</artifactId>
+	<properties>
+		<zss.version>2.0.1</zss.version>
+		<zk.version>5.0.6.FL.20101231</zk.version>
+		<commons-math.version>1.2</commons-math.version>
+	</properties>
+	<version>${zss.version}</version>
+	<packaging>jar</packaging>
+	<name>ZK Spreadsheet</name>
+	<url>http://www.zkoss.org/zss</url>
+	<description>ZK Spreadsheet</description>
+	<licenses>
+		<license>
+		  <name>GNU General Public License, Version 3.0</name>
+		  <url>http://www.gnu.org/licenses/gpl.html</url>
+		  <distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<url>https://zkspreadsheet.googlecode.com/releases/${zss.version}/zss</url>
+	</scm>
+	<repositories>
+		<repository>
+			<id>zk repository</id>
+			<url>http://mavensync.zkoss.org/maven2</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<id>snapshots</id>
+			<name>Maven Central Plugins Development Repository</name>
+			<url>http://snapshots.maven.codehaus.org/maven2</url>
+		</pluginRepository>
+		<pluginRepository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>Maven Plugin Repository</name>
+			<url>http://repo1.maven.org/maven2</url>
+		</pluginRepository>
+	</pluginRepositories>
+	<dependencies>
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zpoi</artifactId>
+			<version>${zss.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.common</groupId>
+			<artifactId>zcommon</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.common</groupId>
+			<artifactId>zweb</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zk</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zul</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-math</groupId>
+			<artifactId>commons-math</artifactId>
+			<version>${commons-math.version}</version>
+		</dependency>
+	</dependencies>
 </project> 

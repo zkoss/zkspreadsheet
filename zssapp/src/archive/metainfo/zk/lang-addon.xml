@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <language-addon>
 	<addon-name>zssapp</addon-name>
+	<depends>zssex</depends>
 	<language-name>xul/html</language-name>
 
+	<version>
+		<version-class>org.zkoss.zss.app.Version</version-class>
+		<version-uid>2.0.1</version-uid>
+		<zk-version>5.0.5</zk-version><!-- or later -->
+	</version>
+	
 	<component>
 		<component-name>colorbutton</component-name>
 		<component-class>org.zkoss.zss.app.zul.Colorbutton</component-class>

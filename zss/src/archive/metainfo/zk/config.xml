@@ -15,8 +15,8 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 	<config-name>zss</config-name><!-- used to resolve dependency -->
 	<version>
 		<version-class>org.zkoss.zss.ui.Version</version-class>
-		<version-uid>2.0.0</version-uid>
-		<zk-version>5.0.2</zk-version><!-- or later -->
+		<version-uid>2.0.1</version-uid>
+		<zk-version>5.0.5</zk-version><!-- or later -->
 	</version>
 	<library-property>
 		<name>org.zkoss.zss.model.default.Exporter.class</name>

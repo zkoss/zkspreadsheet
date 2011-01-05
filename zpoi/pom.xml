@@ -1,54 +1,101 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.zkoss.zss</groupId>
-  <artifactId>poi</artifactId>
-  <version>{version}</version>
-  <packaging>jar</packaging>
-  <name>ZK Spreadsheet POI</name>
-  <url>http://www.zkoss.org/zss</url>
-  <description>Adapted Apache POI Library for ZK Spreadsheet</description>
-  <licenses>
-    <license>
-      <name>GNU General Public License, Version 3.0</name>
-      <url>http://www.gnu.org/licenses/gpl.html</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  <scm>
-    <url>https://zkspreadsheet.googlecode.com/releases/{version}/zss</url>
-  </scm>
-  <dependencies>
-    <dependency>
-	  <groupId>commons-logging</groupId>
-	  <artifactId>commons-logging</artifactId>
-      <version>1.1</version>
-    </dependency>
-    <dependency>
-	  <groupId>log4j</groupId>
-	  <artifactId>log4j</artifactId>
-      <version>1.2.13</version>
-    </dependency>
-    <dependency>
-	  <groupId>dom4j</groupId>
-	  <artifactId>dom4j</artifactId>
-      <version>1.6.1</version>
-    </dependency>
-	<dependency>
-	  <groupId>org.apache.geronimo.specs</groupId>
-	  <artifactId>geronimo-stax-api_1.0_spec</artifactId>
-	  <version>1.0.1</version>
-	</dependency>
-	<dependency>
-	  <groupId>org.apache.xmlbeans</groupId>
-	  <artifactId>xmlbeans</artifactId>
-	  <version>2.3.0</version>
-	</dependency>
-	<dependency>
-	  <groupId>org.apache.poi</groupId>
-	  <artifactId>ooxml-schemas</artifactId>
-	  <version>1.0</version>
-	</dependency>
-  </dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.zkoss.zss</groupId>
+	<artifactId>zpoi</artifactId>
+	<properties>
+		<zss.version>2.0.1</zss.version>
+		<zk.version>5.0.6.FL.20101231</zk.version>
+		<commons-logging.version>1.1.1</commons-logging.version>
+		<log4j.version>1.2.13</log4j.version>
+		<dom4j.version>1.6.1</dom4j.version>
+		<geronimo-stax-api.version>1.0</geronimo-stax-api.version>
+		<xmlbeans.version>2.3.0</xmlbeans.version>
+		<ooxml-schemas.version>1.1</ooxml-schemas.version>
+		<junit.version>4.8.1</junit.version>
+	</properties>
+	<version>${zss.version}</version>
+	<packaging>jar</packaging>
+	<name>ZK Spreadsheet POI</name>
+	<url>http://www.zkoss.org/zss</url>
+	<description>Adapted Apache POI library for ZK Spreadsheet</description>
+	<licenses>
+		<license>
+		<name>GNU General Public License, Version 3.0</name>
+		<url>http://www.gnu.org/licenses/gpl.html</url>
+		<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<url>https://zkspreadsheet.googlecode.com/releases/${zss.version}/zpoi</url>
+	</scm>
+	<repositories>
+		<repository>
+			<id>zk repository</id>
+			<url>http://mavensync.zkoss.org/maven2</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<id>snapshots</id>
+			<name>Maven Central Plugins Development Repository</name>
+			<url>http://snapshots.maven.codehaus.org/maven2</url>
+		</pluginRepository>
+		<pluginRepository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>Maven Plugin Repository</name>
+			<url>http://repo1.maven.org/maven2</url>
+		</pluginRepository>
+	</pluginRepositories>
+	<dependencies>
+		<dependency>
+			<groupId>org.zkoss.common</groupId>
+			<artifactId>zcommon</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons-logging.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>${dom4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-stax-api_1.0_spec</artifactId>
+			<version>${geronimo-stax-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>${xmlbeans.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>ooxml-schemas</artifactId>
+			<version>${ooxml-schemas.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
 </project> 
