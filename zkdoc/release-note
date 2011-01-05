@@ -1,5 +1,5 @@
 	------------
-ZK Spreadsheet 2.1.0
+ZK Spreadsheet 2.0.1
 
 *Features:
   277 ZK Spreadsheet App: Formula Editor shall support multiple line and extensible
@@ -9,6 +9,7 @@ ZK Spreadsheet 2.1.0
 *Bug 
   268 Enter multiple line in cell but show as one single line only
   269 ZK Spreadsheet App: multiple line in cell but single line in formula bar
+  270 Set font style with a cell has white color cause NPL
   271 ZK Spreadsheet App: NPE when focus on formulabar editor with a no book Spreadsheet
   272 ZK Spreadsheet App: NPE when close the book
   273 ZK Spreadsheet App: Shall disable formula bar, insert menu items when there is no book
