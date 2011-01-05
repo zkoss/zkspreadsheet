@@ -269,7 +269,7 @@ public class FormulaEditor extends Textbox implements ZssappComponent {
 	 *
 	 * <p>Default: in addition to what are handled by {@link XulElement#service},
 	 * it also handles onChange, onChanging and onError.
-	 * @since 5.0.0
+	 * @since 2.0.0
 	 */
 	public void service(org.zkoss.zk.au.AuRequest request, boolean everError) {
 		final String cmd = request.getCommand();
