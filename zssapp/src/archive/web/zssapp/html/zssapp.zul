@@ -105,8 +105,12 @@
 			height: 3px;
 		}
 		.zssapp-empty {
-			border-top: 1px solid #D8D8D8;
-			background-image: url(${c:encodeURL('~./zul/img/breeze/menu/menu-bg.png')});
+		  border: 1px solid #D8D8D8;
+		  background-color: #FEFEFE;
+		  background-image: -moz-linear-gradient(top, #FEFEFE, #E4ECF7); /* FF3.6 */
+		  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #FEFEFE),color-stop(1, #E4ECF7)); /* Saf4+, Chrome */
+		            filter:  progid:DXImageTransform.Microsoft.gradient(startColorStr='#FEFEFE', EndColorStr='#E4ECF7'); /* IE6,IE7 */
+		        -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#FEFEFE', EndColorStr='#E4ECF7')"; /* IE8 */
 		}
 			
 	</style>
@@ -115,7 +119,7 @@
 		<north id="mainNavigator" size="27px" flex="true" border="0">
 			<hlayout hflex="true" sclass="zssapp-menubar" spacing="0">
 				<menubar id="menubar">
-					<filemenu id="fileMenu" label="${c:l('file')}"></filemenu>
+					<filemenu id="fileMenu" label="${c:l('file')}" ></filemenu>
 					<editmenu id="editMenu" label="${c:l('edit')}"></editmenu>
 					<viewmenu id="viewMenu" label="${c:l('view')}"></viewmenu>
 					<formatmenu id="formatMenu" label="${c:l('format')}"/>
@@ -264,9 +268,10 @@
 					</hlayout>
 					<div sclass="zssapp-empty" vflex="true"></div>
 				</vlayout>
-				<formulaeditor id="formulaEditor" height="19px" style="font-size:16px;border:0px;padding:3px" hflex="true" vflex="true"/>
-				<div hflex="min" sclass="formulaBtn" style="background:#F5F5F5;">
-					<toolbarbutton id="extendEditorBtn" style="text-decoration:none;color:black;font-size:10px;text-align:center;" label="v"/>
+				<formulaeditor id="formulaEditor" style="font-size:16px;border:0px;padding:3px" hflex="true" vflex="true"/>
+				<div id="extendEditorBar" sclass="formulaBtn" style="background:#F5F5F5;" width="23px" vflex="true">
+					<toolbarbutton id="extendEditorBtn" style="text-decoration:none;color:black;font-size:10px;text-align:center;" 
+						image="~./zssapp/image/arrow-270-small.png"/>
 				</div>
 			</hlayout>
 		</north>

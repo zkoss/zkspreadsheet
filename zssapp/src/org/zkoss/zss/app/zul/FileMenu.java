@@ -20,6 +20,8 @@ import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.file.FileHelper;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
@@ -41,7 +43,6 @@ public class FileMenu extends Menu implements IdSpace {
 	private Menuitem newFile;
 	private Menuitem openFile;
 
-	
 	private Menuitem saveFile;
 	//TODO: not implement yet
 	private Menuitem saveFileAs;
@@ -49,11 +50,14 @@ public class FileMenu extends Menu implements IdSpace {
 	//TODO: permission control
 	private Menuitem deleteFile;
 	private Menuitem importFile;
-	private Menuitem exportToPdf;
-	private Menuitem exportToExcel;
+	private Menuitem exportPdf;
+	private boolean _exportToPdfDisabled; /* default false */
+	
+	private Menuitem exportExcel;
+	private boolean _exportToExcelDisabled;
+	
 	private Menuitem fileReversion;
 	private Menuitem print;
-
 	
 	public FileMenu() {
 		Executions.createComponents(Consts._FileMenu_zul, this, null);
@@ -64,27 +68,10 @@ public class FileMenu extends Menu implements IdSpace {
 		
 		boolean saveDisabled = !FileHelper.hasSavePermission();
 		saveFile.setDisabled(saveDisabled);
+		saveFileAndClose.setDisabled(saveDisabled);
+		
 		//TODO: save as not implement yet
 		saveFileAs.setDisabled(true);
-		saveFileAndClose.setDisabled(saveDisabled);
-	}
-	
-	public void setExportDisabled(boolean disabled) {
-		
-		if (FileHelper.hasSavePermission()) {
-			saveFile.setDisabled(disabled);
-			//TODO: not implemented yet
-			saveFileAs.setDisabled(true);
-			saveFileAndClose.setDisabled(disabled);
-		}
-		
-		deleteFile.setDisabled(disabled);
-		exportToPdf.setDisabled(disabled);
-		exportToExcel.setDisabled(disabled);
-		
-		//TODO: not implemented yet
-		fileReversion.setDisabled(true);
-		print.setDisabled(true);
 	}
 	
 	public void onClick$newFile() {
@@ -99,7 +86,7 @@ public class FileMenu extends Menu implements IdSpace {
 	public void onClick$saveFile() {
 		//TODO: refactor duplicate save logic
 		DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
-		if (workbench.getWorkbookCtrl().hasFileName()) {
+		if (workbench.getWorkbookCtrl().hasFileExtentionName()) {
 			workbench.getWorkbookCtrl().save();
 			workbench.fireWorkbookSaved();
 		} else
@@ -113,7 +100,7 @@ public class FileMenu extends Menu implements IdSpace {
 	public void onClick$saveFileAndClose() {
 		//TODO: refactor duplicate save logic
 		DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
-		if (workbench.getWorkbookCtrl().hasFileName()) {
+		if (workbench.getWorkbookCtrl().hasFileExtentionName()) {
 			workbench.getWorkbookCtrl().save();
 			workbench.getWorkbookCtrl().close();
 			workbench.fireWorkbookSaved();
@@ -124,7 +111,7 @@ public class FileMenu extends Menu implements IdSpace {
 	
 	public void onClick$deleteFile() {
 		DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
-		if(!workbench.getWorkbookCtrl().hasFileName()) {
+		if(!workbench.getWorkbookCtrl().hasFileExtentionName()) {
 			workbench.getWorkbookCtrl().close();
 			workbench.fireWorkbookChanged();
 			return;
@@ -141,18 +128,20 @@ public class FileMenu extends Menu implements IdSpace {
 	}
 
 	public void setExportPdfDisabled(boolean disabled) {
-		exportToPdf.setDisabled(disabled);
+		_exportToPdfDisabled = disabled;
+		exportPdf.setDisabled(disabled);
 	}
 	
-	public void onClick$exportToPdf() {
+	public void onClick$exportPdf() {
 		getDesktopWorkbenchContext().getWorkbenchCtrl().openExportPdfDialog();
 	}
 
 	public void setExportExcelDisabled(boolean disabled) {
-		exportToExcel.setDisabled(disabled);
+		_exportToExcelDisabled = disabled;
+		exportExcel.setDisabled(disabled);
 	}
 	
-	public void onClick$exportToExcel() {
+	public void onClick$exportExcel() {
 		WorkbookCtrl bookCtrl = getDesktopWorkbenchContext().getWorkbookCtrl();
 		ByteArrayOutputStream out = bookCtrl.exportToExcel();
 		Filedownload.save(out.toByteArray(), "application/file", bookCtrl.getBookName());
@@ -172,5 +161,34 @@ public class FileMenu extends Menu implements IdSpace {
 	
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
 		return Zssapp.getDesktopWorkbenchContext(this);
+	}
+	
+	public void onCreate() {
+        final DesktopWorkbenchContext workbenchCtrl = getDesktopWorkbenchContext();
+        getDesktopWorkbenchContext().addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
+            public void onEvent(Event event) throws Exception {
+                boolean isOpen = workbenchCtrl.getWorkbookCtrl().hasBook();
+                boolean savePermission = FileHelper.hasSavePermission();
+                
+    			saveFile.setDisabled(!savePermission);
+    			//TODO: not implemented yet
+    			saveFileAs.setDisabled(true);
+    			saveFileAndClose.setDisabled(!savePermission);
+    			
+    			if (isOpen) {
+	    			deleteFile.setDisabled(false);
+	    			exportPdf.setDisabled(_exportToPdfDisabled | false);
+	    			exportExcel.setDisabled(_exportToExcelDisabled | false);
+    			} else {
+	    			deleteFile.setDisabled(true);
+	    			exportPdf.setDisabled(true);
+	    			exportExcel.setDisabled(true);
+    			}
+    			
+    			//TODO: not implemented yet
+    			fileReversion.setDisabled(true);
+    			print.setDisabled(true);
+            }
+        });
 	}
 }

@@ -17,12 +17,13 @@ package org.zkoss.zss.app.zul.ctrl;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.zkoss.image.Image;
 import org.zkoss.util.media.Media;
+import org.zkoss.zk.ui.Desktop;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zss.app.cell.CellHelper;
@@ -45,6 +46,7 @@ import org.zkoss.zssex.ui.widget.ImageWidget;
 import org.zkoss.zul.Messagebox;
 
 /**
+ * 
  * @author Sam
  *
  */
@@ -55,8 +57,11 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	private String lastSheetName = null;
 	private HashMap<String, List<Widget>> sheetWidgets = new HashMap<String, List<Widget>>(); 
 
-	/*keep record of subscribed book*/
-	private HashMap<EventListener, Set<String>> bookListeners = new HashMap<EventListener, Set<String>>();
+	/* book event listeners; Boolean value means the listener has subscribed on book or not */
+	private HashMap<EventListener, Boolean> bookListeners = new HashMap<EventListener, Boolean>();
+	
+	/* key to access all books in desktop */
+	private final static String KEY_DESKTOP_BOOKS = "org.zkoss.zss.app.zul.ctrl.desktopBooks";
 	
 	public SSWorkbookCtrl(Spreadsheet spreadsheet) {
 		this.spreadsheet = spreadsheet;
@@ -278,6 +283,8 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void save() {
 		FileHelper.saveSpreadsheet(spreadsheet);
+		//Note. if book come from newBook(), it doesn't store book inside desktop
+		storeBookInDesktop(spreadsheet);
 	}
 
 	public ByteArrayOutputStream exportToExcel() {
@@ -294,49 +301,175 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public void close() {
-		spreadsheet.setSrc(null);
+		unsubscribeBookListeners();
+		removeBookFromDesktopIfNeeded();
+		spreadsheet.setSrcName(null);
+		spreadsheet.setBook(null);
 	}
 
-	public void setBookSrc(String src) {
-		boolean set = FileHelper.openSrc(src, spreadsheet);
-		if (!set)
-			spreadsheet.setSrc(src);
-		resubscribeBookListenersIfNeeded();
+	public void addBookEventListener(EventListener listener) {
+		Book book = spreadsheet.getBook();
+		bookListeners.put(listener, book != null ? Boolean.TRUE : Boolean.FALSE);
+		if (book != null)
+			book.subscribe(listener);
 	}
 	
-	public void subscribe(EventListener listener) {
-		bookListeners.put(listener, new HashSet<String>());
-	}
-	
-	public void unsubscribe(EventListener listener) {
+	public void removeBookEventListener(EventListener listener) {
 		bookListeners.remove(listener);
+		Book book = spreadsheet.getBook();
+		if (book != null)
+			book.subscribe(listener);
 	}
 
-	private void resubscribeBookListenersIfNeeded() {
+	/**
+	 * Subscribe all book event listener when {@link Book} changed
+	 */
+	private void resubscribeBookListeners() {
 		Book book = spreadsheet.getBook();
 		if (book == null)
 			return;
-		
-		String bookName = book.getBookName();
 		for (EventListener listener : bookListeners.keySet()) {
-			Set<String> subscribed = bookListeners.get(listener);
-			if (!subscribed.contains(bookName)) {
-				subscribed.add(bookName);
+			if (!bookListeners.get(listener)) {
 				book.subscribe(listener);
+				bookListeners.put(listener, Boolean.TRUE);
 			}
 		}
 	}
 	
-	public void newBook() {
-		FileHelper.openNewSpreadsheet(spreadsheet);
-		resubscribeBookListenersIfNeeded();
-	}
-
-	public void openBook(SpreadSheetMetaInfo info) {
-		FileHelper.openSpreadsheet(spreadsheet, info);
-		resubscribeBookListenersIfNeeded();
+	/**
+	 * Unsubscribe all book event listener before {@link Book} change
+	 */
+	private void unsubscribeBookListeners() {
+		Book book = spreadsheet.getBook();
+		if (book == null)
+			return;
+		for (EventListener listener : bookListeners.keySet()) {
+			boolean subscribed = bookListeners.get(listener);
+			if (subscribed) {
+				book.unsubscribe(listener);
+				bookListeners.put(listener, Boolean.FALSE);
+			}
+		}
 	}
 	
+	/**
+	 * Open new spreadsheet
+	 */
+	public void newBook() {
+		unsubscribeBookListeners();
+		removeBookFromDesktopIfNeeded();
+		FileHelper.openNewSpreadsheet(spreadsheet);
+		//Note: new a empty book doesn't share content, no need to store inside desktop
+		resubscribeBookListeners();
+	}
+
+	public void setBookSrc(String src) {
+		unsubscribeBookListeners();
+		final Book targetBook = getBookFromDesktop(src);
+		removeBookFromDesktopIfNeeded();
+		if (targetBook != null) {
+			spreadsheet.setBook(targetBook);
+			spreadsheet.setSrcName(src);
+		}
+		else {
+			if (!FileHelper.openSrc(src, spreadsheet)) {
+				spreadsheet.setSrc(src);
+			}
+		}
+		storeBookInDesktop(spreadsheet);
+		resubscribeBookListeners();
+	}
+	
+	public void openBook(SpreadSheetMetaInfo info) {
+		unsubscribeBookListeners();
+		final Book targetBook = getBookFromDesktop(info.getSrc());
+		removeBookFromDesktopIfNeeded();
+		if (targetBook != null) {
+			spreadsheet.setBook(targetBook);
+			spreadsheet.setSrcName(info.getSrc());
+		} else {
+			FileHelper.openSpreadsheet(spreadsheet, info);
+		}
+		storeBookInDesktop(spreadsheet);
+		resubscribeBookListeners();
+	}
+	
+	/**
+	 * Returns {@link #Book} from desktop scope
+	 * <p> Search all books inside desktop by {@link Spreadsheet#getSrc}
+	 * @return
+	 */
+	private Book getBookFromDesktop(String src) {
+		if (src == null)
+			return null;
+		
+		HashMap<Book, LinkedHashSet<Spreadsheet>> books = getDesktopBooks();
+		final String srcBookName = FileHelper.removeFolderPath(src);
+		for (Book book : books.keySet()) {
+			if (srcBookName.equals(book.getBookName()))
+				return book;
+		}
+		return null;
+	}
+	
+	/**
+	 * Store {@link #Book} and relative {@link #Spreadsheet} inside desktop
+	 * @param spreadsheet
+	 */
+	private void storeBookInDesktop(Spreadsheet spreadsheet) {
+		Book book = spreadsheet.getBook();
+		HashMap<Book, LinkedHashSet<Spreadsheet>> books = getDesktopBooks();
+		LinkedHashSet<Spreadsheet> ss = books.get(book);
+		if (ss == null) {
+			books.put(book, ss = new LinkedHashSet<Spreadsheet>());
+		}
+		ss.add(spreadsheet);
+	}
+	
+	/**
+	 * Remove {@link #Book} from desktop when others spreadsheet doesn't reference to the book
+	 */
+	private void removeBookFromDesktopIfNeeded() {
+		Book book = spreadsheet.getBook();
+		if (book == null)
+			return;
+		
+		boolean hasSpreadsheetRef = false;
+		HashMap<Book, LinkedHashSet<Spreadsheet>> books = getDesktopBooks();
+		if (!books.containsKey(book))
+			return;
+
+		LinkedHashSet<Spreadsheet> ss = books.get(book);
+		for (Spreadsheet s : ss) {
+			Book b = s.getBook();
+			if (!s.equals(spreadsheet) && b != null && b.equals(book)) {
+				hasSpreadsheetRef = true;
+				break;
+			}
+		}
+		if (!hasSpreadsheetRef) {
+			books.remove(book);
+		}
+	}
+	
+	/**
+	 * Returns all books that store inside desktop
+	 * 
+	 * <p> each book can be set to multiple spreadsheet; 
+	 * if a book contains multiple spreadsheet, means the book 
+	 * share content cross multiple spreadsheet. for example, 
+	 * if book content changed, each spreadsheet will update content.
+	 * 
+	 * @return
+	 */
+	private static HashMap<Book, LinkedHashSet<Spreadsheet>> getDesktopBooks() {
+		Desktop desktop = Executions.getCurrent().getDesktop();
+		HashMap<Book, LinkedHashSet<Spreadsheet>> storer = (HashMap<Book, LinkedHashSet<Spreadsheet>>) desktop.getAttribute(KEY_DESKTOP_BOOKS);
+		if (storer == null)
+			desktop.setAttribute(KEY_DESKTOP_BOOKS, storer = new HashMap<Book, LinkedHashSet<Spreadsheet>>());
+		return storer;
+	}
+
 	public boolean hasBook() {
 		return spreadsheet.getBook() != null;
 	}
@@ -346,12 +479,13 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public void setSrcName(String src) {
+		unsubscribeBookListeners();
 		spreadsheet.setSrcName(src);
+		resubscribeBookListeners();
 	}
 
-	public boolean hasFileName() {
-		String src = spreadsheet.getSrc();
-		return src != null && !"Untitled".equals(src);
+	public boolean hasFileExtentionName() {
+		return FileHelper.isSupportedSpreadSheetExtention(spreadsheet.getSrc());
 	}
 
 	public void setColumnWidthInPx(int width) {

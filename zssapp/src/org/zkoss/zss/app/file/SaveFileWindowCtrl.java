@@ -62,8 +62,9 @@ public class SaveFileWindowCtrl extends GenericForwardComposer {
 		fileFormat.setModel(new ListModelList(FileHelper.getSupportedFormat()));
 
 		String src = getDesktopWorkbenchContext().getWorkbookCtrl().getSrc();
-		if (src == "Untitled")
+		if ("Untitled".lastIndexOf(src) >= 0) {
 			fileName.setValue("Book1");
+		}
 		try {
 			_saveFileDialog.setMode(Window.MODAL);
 		} catch (InterruptedException e) {

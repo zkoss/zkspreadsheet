@@ -110,17 +110,12 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	int lastCol = 0;
 	boolean isFreezeRow = false;
 	boolean isFreezeColumn = false;
-	boolean _formulaBarOpen = false; //whether extends height of the formulaBar
-
-	Div toolbarMask;
+	
+	Spreadsheet spreadsheet;
+	Sheets sheets;
 	
 	// For fast Icon
 	boolean isMergeCell = false;
-	boolean isWrapText = false;
-	String colorSelectorTarget = "";
-
-	//Book book;
-	Cell currentEditcell;
 
 	int chartKey = 0;
 
@@ -139,15 +134,10 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	CellContext cellContext;
 	Menu insertImageMenu;
 	Menu insertPieChart;
-
-	FormulaEditor formulaEditor;
-	Spreadsheet spreadsheet;
-	Sheets sheets;
-	Combobox focusPosition;
-	
-	Comboitem lbpos;
 	
 	/* Toolbar buttons */
+	Borderlayout topToolbars;
+	Div toolbarMask;
 	Dropdownbutton pasteDropdownBtn;
 	Dropdownbutton sortDropdownBtn;
 	Toolbarbutton saveBtn;
@@ -159,13 +149,20 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	Toolbarbutton insertChartBtn;
 	Toolbarbutton cutBtn;
 	Toolbarbutton copyBtn;
-	Toolbarbutton insertFormulaBtn;
 	Checkbox gridlinesCheckbox;
 	CellMenupopup cellMenupopup;
 	
-	//South formulaBar;
+	/* Formula bar */
 	North formulaBar;
-	Borderlayout topToolbars;
+	Combobox focusPosition;
+	Comboitem lbpos;
+	Toolbarbutton insertFormulaBtn;
+	FormulaEditor formulaEditor;
+	Div extendEditorBar;
+	Toolbarbutton extendEditorBtn;
+	boolean _formulaBarOpen = false; //whether extends height of the formulaBar
+	private final static String FORMULA_BAR_ARROW_DOWN_IMAGE_SRC = "~./zssapp/image/arrow-270-small.png";
+	private final static String FORMULA_BAR_ARROW_UP_IMAGE_SRC = "~./zssapp/image/arrow-090-small.png";
 	
 	/*Dialog*/
 	Dialog _insertFormulaDialog;
@@ -181,22 +178,20 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	Dialog _customSortDialog;
 	Dialog _exportToPdfDialog;
 
-	public Window getMainWindow() {
-		return mainWin;
-	}
-
 	public Spreadsheet getSpreadsheet() {
 		return spreadsheet;
 	}
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		
 		//TODO: replace this mechanism
 		initZssappComponents();
-		
 		init();
 		rangeh = new RangeHelper(spreadsheet);
+	}
+	
+	public void onCreate() {
+		getDesktopWorkbenchContext().fireWorkbookChanged();
 	}
 	
 	//TODO: remove this mechanism
@@ -241,9 +236,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				gridlinesCheckbox.setChecked(isOpen && spreadsheet.getSelectedSheet().isDisplayGridlines());
 				if (isOpen) {
 					sheets.redraw();
-					fileMenu.setExportDisabled(false);
 				} else if (!isOpen) {
-					fileMenu.setExportDisabled(true);
 					sheets.clear();
 				}
 				
@@ -264,7 +257,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		});
 		workbenchContext.addEventListener(Consts.ON_SHEET_CONTENTS_CHANGED,  new EventListener(){
 			public void onEvent(Event event) throws Exception {
-				onContentsChanged();
+				doContentChanged();
 			}}
 		);
 		//TODO: remove to WorkbookCtrl
@@ -282,11 +275,11 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				formulaEditor.setText(rng.getEditText());
 			}
 		});
-		workbenchContext.getWorkbookCtrl().subscribe(new EventListener() {
+		workbenchContext.getWorkbookCtrl().addBookEventListener(new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				String evtName = event.getName();
 				if (evtName == SSDataEvent.ON_CONTENTS_CHANGE) {
-					onContentsChanged();
+					doContentChanged();
 				}
 			}
 		});
@@ -336,7 +329,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 						EditHelper.clearCutOrCopy(spreadsheet);
 					}
 				});
-		workbenchContext.fireWorkbookChanged();
+		
 	}
 	private void setSaveButtonState(Boolean saved) {
 		if (saved == null) {
@@ -350,7 +343,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			saveBtn.setTooltiptext(saved ? Labels.getLabel("file.saved") : Labels.getLabel("file.saveNow"));
 		}
 	}
-	private void onContentsChanged() {
+
+	public void doContentChanged() {
 		setSaveButtonState(false);
 		Worksheet seldSheet = spreadsheet.getSelectedSheet();
 		Rect seld =  spreadsheet.getSelection();
@@ -364,7 +358,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 	public void onClick$saveBtn() {
 		DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
-		if (workbench.getWorkbookCtrl().hasFileName()) {
+		if (workbench.getWorkbookCtrl().hasFileExtentionName()) {
 			workbench.getWorkbookCtrl().save();
 			workbench.fireWorkbookSaved();
 		} else
@@ -408,6 +402,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		if (!_formulaBarOpen) {
 			_formulaBarSize = toIntsize(formulaBar.getSize());
 		}
+		extendEditorBtn.setImage(
+				_formulaBarOpen ? FORMULA_BAR_ARROW_UP_IMAGE_SRC : FORMULA_BAR_ARROW_DOWN_IMAGE_SRC);
 		adjustFormulaBarHeight();
 	}
 	private static final int LINE_HEIGHT = 19;
@@ -419,7 +415,9 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			final int rest = extra % LINE_HEIGHT;
 			_formulaBarSize = formulaBar.getMinsize() + (rest > 0 ? extra + (LINE_HEIGHT - rest) : extra);
 		}
-		formulaBar.setSize((_formulaBarOpen ? _formulaBarSize : formulaBar.getMinsize()) + "px");
+		String size = (_formulaBarOpen ? _formulaBarSize : formulaBar.getMinsize()) + "px";
+		formulaBar.setSize(size);
+		extendEditorBar.setHeight(size);
 	}
 	public void onSize$formulaBar(SizeEvent evt) {
 		int height = toIntsize(evt.getHeight());
@@ -429,6 +427,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			_formulaBarSize = height;
 			_formulaBarOpen = true;
 		}
+		extendEditorBtn.setImage(
+				_formulaBarOpen ? FORMULA_BAR_ARROW_UP_IMAGE_SRC : FORMULA_BAR_ARROW_DOWN_IMAGE_SRC);
 		adjustFormulaBarHeight();
 	}
 	public void onSortSelector(ForwardEvent event) {
@@ -622,7 +622,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				if (FileHelper.hasSavePermission()) {
 					//TODO: refactor duplicate save logic
 					DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
-					if (workbench.getWorkbookCtrl().hasFileName()) {
+					if (workbench.getWorkbookCtrl().hasFileExtentionName()) {
 						workbench.getWorkbookCtrl().save();
 						workbench.fireWorkbookSaved();
 					} else
@@ -1180,37 +1180,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void onDeleteSheet() {
-		final Book book = spreadsheet.getBook();
-		if (book == null) {
-			return;
-		}
-		if (book.getNumberOfSheets() == 1) {
-			try {
-				Messagebox.show("cannot remove last sheet, but you could insert a new sheet, then remove current sheet  ");
-			} catch (InterruptedException e) {
-			}
-			return;
-		}
-
-		try {
-			Messagebox.show(
-				"Do you really want to delete selected sheet \"" + spreadsheet.getSelectedSheet().getSheetName()
-				+ "\", those data will be deleted permanently", "",
-					Messagebox.YES | Messagebox.NO, "", new EventListener(){
-
-						@Override
-						public void onEvent(Event event) throws Exception {
-							System.out.println("evt name: " + event.getName());
-							if ("onOk" == event.getName()) {
-								SheetHelper.deleteSheet(spreadsheet);
-							}			
-						}});
-		} catch (InterruptedException e) {
-		}
-
 	}
 	
 	public void onCheck$gridlinesCheckbox() {

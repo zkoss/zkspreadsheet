@@ -28,9 +28,8 @@ public class DesktopWorkbenchContext extends AbstractBaseContext {
 	public final static int SHIFT_CELL_DOWN = 2;
 	public final static int SHIFT_CELL_LEFT = 3;
 	
-	/* operate on selected sheet */
 	WorkbookCtrl workbookCtrl;
-	
+
 	/**
 	 * 
 	 * @param workbookCtrl

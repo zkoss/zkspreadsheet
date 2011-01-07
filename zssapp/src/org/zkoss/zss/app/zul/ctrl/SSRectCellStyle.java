@@ -56,7 +56,6 @@ public class SSRectCellStyle implements CellStyle {
 	
 	@Override
 	public void setFontSize(int size) {
-		
 		Worksheet sheet = spreadsheet.getSelectedSheet();
 		Rect rect = spreadsheet.getSelection();
 
@@ -86,6 +85,7 @@ public class SSRectCellStyle implements CellStyle {
 	
 	@Override
 	public void setFontFamily(String family) {
+		//TODO: use Utils.setFontFamily will fire many SSDataEvent 
 		Utils.setFontFamily(spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
 				family);
@@ -94,6 +94,7 @@ public class SSRectCellStyle implements CellStyle {
 	
 	@Override
 	public void setBold(boolean bold) {
+		//TODO: use Utils.setFontBold will fire many SSDataEvent 
 		Utils.setFontBold(spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
 				bold);
@@ -149,6 +150,7 @@ public class SSRectCellStyle implements CellStyle {
 
 	@Override
 	public void setAlignment(int alignment) {
+		//TODO: Utils.setAlignment will fire many SSDataEvent 
 		Utils.setAlignment(spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
 				(short)alignment);
@@ -157,6 +159,7 @@ public class SSRectCellStyle implements CellStyle {
 
 	@Override
 	public void setBorder(int borderPosition, BorderStyle borderStyle, String color) {
+		//TODO: Utils.setBorder will fire many SSDataEvent
 		Utils.setBorder(spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
 				(short)borderPosition, borderStyle, color);
@@ -165,6 +168,7 @@ public class SSRectCellStyle implements CellStyle {
 
 	@Override
 	public void setCellColor(String color) {
+		//TODO: Utils.setBackgroundColor will fire many SSDataEvent
 		Utils.setBackgroundColor(
 				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
@@ -174,6 +178,7 @@ public class SSRectCellStyle implements CellStyle {
 
 	@Override
 	public void setFontColor(String color) {
+		//TODO: Utils.setFontColor will fire many SSDataEvent
 		Utils.setFontColor(
 				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
@@ -183,6 +188,7 @@ public class SSRectCellStyle implements CellStyle {
 
 	@Override
 	public void setItalic(boolean italic) {
+		//TODO: Utils.setFontItalic will fire many SSDataEvent
 		Utils.setFontItalic(
 				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
@@ -192,6 +198,7 @@ public class SSRectCellStyle implements CellStyle {
 
 	@Override
 	public void setStrikethrough(boolean strikethrough) {
+		//TODO: Utils.setFontStrikeout will fire many SSDataEvent
 		Utils.setFontStrikeout(
 				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
@@ -201,11 +208,10 @@ public class SSRectCellStyle implements CellStyle {
 
 	@Override
 	public void setUnderline(int underlineStyle) {
-		
 		FontUnderline underline = FontUnderline.NONE;
 		if (underlineStyle == UNDERLINE_SINGLE)
 			underline = FontUnderline.SINGLE;
-		
+		//TODO: Utils.setFontUnderline will fire many SSDataEvent
 		Utils.setFontUnderline(
 				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet),

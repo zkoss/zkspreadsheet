@@ -48,7 +48,7 @@ import org.zkoss.zul.impl.api.InputElement;
  *
  */
 public class ComposeFormulaCtrl extends GenericForwardComposer {
-
+	/* self dialog */
 	private Dialog _composeFormulaDialog;
 	private Label formulaStart;
 	private Label formulaEnd;
@@ -63,7 +63,10 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 	
 	private List<InputElement> inputs = new LinkedList<InputElement>();
 	
+	/* whether move focus to next input component or not */
 	private boolean movedToNext = false;
+	
+	/* current focus component */
 	private InputElement focusComponent;
 
 	private EventListener onCellSelected = new EventListener(){

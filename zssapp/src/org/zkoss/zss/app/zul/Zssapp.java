@@ -21,11 +21,11 @@ import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zss.app.Consts;
-import org.zkoss.zss.app.MainWindowCtrl;
 import org.zkoss.zss.app.zul.ctrl.DesktopCellStyleContext;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Menubar;
 import org.zkoss.zul.Window;
 
 /**
@@ -40,21 +40,22 @@ public class Zssapp extends Div implements IdSpace  {
 	//TODO: in mainWin id space, move to here
 	private Spreadsheet spreadsheet;
 	
-	//TODO: remove mainWin and mainWinCtrl, use Zssapp as controller
 	private Window mainWin;
-	MainWindowCtrl mainWinCtrl;
 	
+	Appmenubar _appmenubar;
+	
+	/* Context */
 	DesktopWorkbenchContext workbenchContext = new DesktopWorkbenchContext();
 	DesktopCellStyleContext cellStyleContext = new DesktopCellStyleContext();
 	
 	public Zssapp() {
-		
 		Executions.createComponents(Consts._Zssapp_zul, this, null);
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
 		
 		spreadsheet = (Spreadsheet)mainWin.getFellow("spreadsheet");
-		mainWinCtrl = (MainWindowCtrl)mainWin.getAttribute(mainWin.getId() + "$composer");
+		Menubar bar = (Menubar) mainWin.getFellow("menubar");
+		_appmenubar = new Appmenubar(bar);
 	}
 	
 	public void setSrc(String src) {
@@ -116,5 +117,43 @@ public class Zssapp extends Div implements IdSpace  {
 
 	public static DesktopCellStyleContext getDesktopCellStyleContext(Component comp) {
 		return getInstance(comp).getDesktopCellStyleContext();
+	}
+	public Appmenubar getAppmenubar() {
+		return _appmenubar;
+	}
+	
+	public class Appmenubar {
+		Menubar _menubar;
+		
+		FileMenu fileMenu;
+		EditMenu editMenu;
+		ViewMenu viewMenu;
+		FormatMenu formatMenu;
+		InsertMenu insertMenu;
+		
+		public Appmenubar(Menubar menubar) {
+			_menubar = menubar;
+			Components.wireVariables(menubar, this);
+		}
+
+		public FileMenu getFileMenu() {
+			return fileMenu;
+		}
+
+		public EditMenu getEditMenu() {
+			return editMenu;
+		}
+
+		public ViewMenu getViewMenu() {
+			return viewMenu;
+		}
+
+		public FormatMenu getFormatMenu() {
+			return formatMenu;
+		}
+
+		public InsertMenu getInsertMenu() {
+			return insertMenu;
+		}
 	}
 }

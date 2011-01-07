@@ -17,6 +17,7 @@ package org.zkoss.zss.app.zul.ctrl;
 import java.io.ByteArrayOutputStream;
 
 import org.zkoss.util.media.Media;
+import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
 
@@ -80,6 +81,10 @@ public interface WorkbookCtrl {
 	
 	public void setDataFormat(String format);
 	
+	/**
+	 * Sets {@link Spreadsheet} book src
+	 * @param src
+	 */
 	public void setBookSrc(String src);
 	
 	/**
@@ -96,36 +101,62 @@ public interface WorkbookCtrl {
 	
 	public void setSrcName(String src);
 	
+	/**
+	 * Open a new empty work sheet of current {@link Spreadsheet}
+	 */
 	public void newBook();
 	
-	public void openBook(SpreadSheetMetaInfo info);
+	/**
+	 * Open a work book of current {@link Spreadsheet}
+	 * @param spreadSheetMetaInfo
+	 */
+	public void openBook(SpreadSheetMetaInfo spreadSheetMetaInfo);
 	
+	/**
+	 * Returns whether {@link Spreadsheet} has book or not
+	 * @return
+	 */
 	public boolean hasBook();
 	
-	public boolean hasFileName();
+	/**
+	 * Returns whether {@link Spreadsheet} has file name or not
+	 * <p> if {@link Spreadsheet} open new empty work sheet will return false
+	 * @return boolean
+	 */
+	public boolean hasFileExtentionName();
 
+	/**
+	 * Exports spreadsheet to excel file
+	 * @return
+	 */
 	public ByteArrayOutputStream exportToExcel();
 
+	/**
+	 * Returns {@link Spreadsheet} book name
+	 * @return
+	 */
 	public String getBookName();
 	
 	/**
-	 * Subscribe book event listener
+	 * Add a {@link #EventListener} to this book
 	 * @param listener
 	 */
-	public void subscribe(EventListener listener);
+	public void addBookEventListener(EventListener listener);
 	
 	/**
-	 * Unsubscribe book event listener
+	 * Remove {@link #EventListener} the specified listener from listening to this book
 	 * @param listener
 	 */
-	public void unsubscribe(EventListener listener);
+	public void removeBookEventListener(EventListener listener);
 
 	/**
+	 * Sets column width of selected columns
 	 * @param width
 	 */
 	public void setColumnWidthInPx(int width);
 
 	/**
+	 * Sets row height of selected rows
 	 * @param height
 	 */
 	public void setRowHeightInPx(int height);

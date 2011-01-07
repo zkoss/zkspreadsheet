@@ -25,10 +25,8 @@ import java.util.Map;
 import org.zkoss.io.Files;
 import org.zkoss.lang.Library;
 import org.zkoss.util.media.Media;
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Exporter;
 import org.zkoss.zss.model.Exporters;
@@ -56,7 +54,7 @@ public class FileHelper {
 	/*has save permission or not, default is false*/
 	public final static String KEY_SAVE_PERMISSION = "org.zkoss.zss.app.file.fileHelper.savePermission";
 	
-	/*absolute file path that store all path*/
+	/*absolute file path that store all excel file*/
 	private static String storageFolderPath;
 	
 	private final static String EMPTY_FILE_NAME =  "Untitled";
@@ -107,7 +105,7 @@ public class FileHelper {
 		return false;
 	}
 	
-	private static String removeFolderPath(String src) {
+	public static String removeFolderPath(String src) {
 		int idx = -1;
 		String fileName = src;
 		if ((idx = fileName.lastIndexOf("\\")) >= 0 || (idx = fileName.lastIndexOf("/")) >= 0) {
@@ -198,8 +196,9 @@ public class FileHelper {
 	public static void deleteSpreadsheet(String src) {
 		Map<String, SpreadSheetMetaInfo> infos = SpreadSheetMetaInfo.getMetaInfos();
 		SpreadSheetMetaInfo info = null;
-		if (infos.containsKey(src)) {
-			info = infos.get(src);
+		String key = removeFolderPath(src);
+		if (infos.containsKey(key)) {
+			info = infos.get(key);
 			deleteSpreadSheet(info);
 		}
 	}
@@ -236,7 +235,7 @@ public class FileHelper {
 	 * @param string file name
 	 * @return
 	 */
-	private static boolean isSupportedSpreadSheetExtention(String fileName) {
+	public static boolean isSupportedSpreadSheetExtention(String fileName) {
 		//Note: <= 0, file name at least has one character
 		if (fileName == null || fileName.lastIndexOf(".") <= 0)
 			return false;
