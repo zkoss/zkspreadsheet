@@ -1,0 +1,133 @@
+<?page title="ZK Spreadsheet 2.0.0 Live Demo!" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+<style>
+	.headerTitle{
+		color:rgb(0,096,149);
+		text-align:center
+	}
+	.headerTitle span{
+		font-weight:bold;
+		font-size:20px;
+	}
+	.headerIcon{
+		width:160px;
+		height:80px;
+		margin:9px;
+		border:1px solid black;
+		cursor: pointer;
+	}
+	.headerIcon .z-toolbarbutton-cnt {
+		height: 80px;
+	}
+	.demo-seld div{
+		background-color:#ddd;
+		border:2px solid orange; 
+	}
+	body{
+		margin:0px;
+		padding:0px;
+	}
+	h4 {
+		margin:0;
+		padding:3px 0;
+		color:#346B93;
+		font-family:Tahoma,Arial,Helvetica,sans-serif;
+		font-weight:bold;
+	}
+	.app0{
+		background-image:url("img/app0_small_glow.gif");
+	}
+	.app1{
+		background-image:url("img/app1_small_glow.gif");
+	}
+	.app2{
+		background-image:url("img/app2_small_glow.gif");
+	}
+	.app0:hover{
+		background-image:url("img/app0_small_sharpen.gif");
+	}
+	.app1:hover{
+		background-image:url("img/app1_small_sharpen.gif");
+	}
+	.app2:hover{
+		background-image:url("img/app2_small_sharpen.gif");
+	}
+</style>
+<zscript><![CDATA[
+		final Execution exec = Executions.getCurrent();
+		final String sn = exec.getServerName();
+		final int sp = exec.getServerPort();
+
+		// To add more keys: http://www.google.com/apis/maps/signup.html
+
+		String gkey = "ABQIAAAAJOQKP6_Fg9PlONKFXfrA8BRCK5tQxQb6Q0MG_4w8_kU_Mikk9hQv0QnBfkRnS7ZQAp0oroApl-aemw";
+		if (sn.indexOf("www.potix.com") >= 0) { // http://www.potix.com/
+			gkey = "ABQIAAAAmGxmYR57XDAbAumS9tV5fxRYCo_4ZGj_-54kHesWSk0nMkbs4xTpq0zo9O75_ZqvsSLGY2YkC7jjNg";
+		} else if (sn.indexOf("www.zkoss.org") >= 0) { // http://www.zkoss.org/
+			gkey = "ABQIAAAAmGxmYR57XDAbAumS9tV5fxQXyylOlR69a1vFTcUcpV6DXdesOBSMEHfkewcSzwEwBT7UzVx8ep8vjA";
+		} else if (sn.indexOf("zkoss.org") >= 0) { // http://www.zkoss.org/
+			gkey = "ABQIAAAAakIm31AXAvNGFHV8i1Tx8RSF4KLGEmvBsS1z1zAsQZvbQceuNRQBsm65qGaXpTWjZsc2bl-hm2Vyfw";
+		} else if (sn.indexOf("zktest") >= 0) { //zktest		
+			gkey="ABQIAAAAWaNkzbzygbuWnmqS4YCEZhTOLZK1h7IfBeBWqZtjq6JJy913gBRHY1uafo5XzZVSyXXksjv_jHoUsA";
+		} else if (sn.indexOf("zktest2") >= 0) { //zktest2	
+			gkey="ABQIAAAAWaNkzbzygbuWnmqS4YCEZhTWO6y1eecluAZvbpmC7meqCt-saxSETUOirx46xfUyu-Z-mqLCi4vo9A";
+		} else if (sn.indexOf("localhost") >= 0) { // localhost
+			if (sp == 80) // http://localhost/
+				gkey = "ABQIAAAAmGxmYR57XDAbAumS9tV5fxT2yXp_ZAY8_ufC3CFXhHIE1NvwkxRUITTZ-rzsyEVih16Hn3ApyUpSkA";
+			else if (sp == 8080) // http://localhost:8080
+				gkey = "ABQIAAAAmGxmYR57XDAbAumS9tV5fxTwM0brOpm-All5BF6PoaKBxRWWERSynObNOWSyMNmLGAMZAO1WkDUubA";
+			else if (sp == 7799)
+				gkey = "ABQIAAAAmGxmYR57XDAbAumS9tV5fxTT6-Op-9nAQgn7qnDG0QjE8aldaBRU1BQK2ADNWCt1BR2yg4ghOM6YIA";
+		} else if (sn.indexOf("10.1.3.109") >= 0) { //testing machine
+			gkey = "ABQIAAAAmGxmYR57XDAbAumS9tV5fxRH_TqzcXpN9L4M_uyKWmd4zG1XhRQmwU2NxJsQBHJoz5uEVgu7ohapUQ";
+		}
+]]></zscript>
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=true&amp;key=${gkey}" type="text/javascript"></script>
+
+
+<window id="main" width="100%" height="100%" apply="org.zkoss.zss.demo.MainLayout" >
+<borderlayout width="100%">
+	<north border="none" size="100px" collapsible="true">
+		<div width="100%" height="100px">
+			<hbox style="padding:0 30px;width:100%;background:red url('img/category-bg.png') repeat-x;" >
+				<div sclass="headerIcon" style="position:relative;width:90px;border-width:0px;margin-right:100px">
+					<toolbarbutton src="/img/ZK-Logo.gif" href="http://www.zkoss.org/" />
+					<label value="Spreadsheet 2.0.0 Live Demo!" style="width:100px;position:absolute;left:100px;top:0;line-height:28px;font-size:16px;font-weight:bold;font-family:calibri,Verdana,Tahoma,Arial,Helvetica,sans-serif;color:#0F3B82"/>
+				</div>
+				<div id="app0" sclass="headerIcon app0" width="160px" height="80px" tooltiptext="ZK Spreadsheet App"></div>
+				<div width="300px" height="80px" style="margin:10px;">
+					<label value="This demo uses the ZK Spreadsheet component to provide a fully featured Excel-like spreadsheet application. This has support for multiple tabs providing many different worksheets containing financial reports." multiline="true"></label>
+				</div>
+<!--				<div id="app1" sclass="headerIcon app1" w:onClick="onSelect(this)" >-->
+<!--				</div>-->
+				<div id="app2" sclass="headerIcon app2" width="160px" height="80px" tooltiptext="ZK Spreadsheet H1N1 Demo">
+				</div>
+				<div width="240px">
+					<label  multiline="true">
+						<attribute name="value"><![CDATA[
+							This demo uses the spreadsheet, charts & Google maps components to track H1N1 cases. All three components are easily integrated providing an interactive experience for the user.
+							]]></attribute>
+					</label>
+				</div>
+			</hbox>
+		</div>
+	</north>
+	<center autoscroll="true" flex="true" >
+<!--		<include style="padding:3px;" id="xcontents" />-->
+		<div id="xcontents" style="padding:3px;"></div>
+	</center>
+</borderlayout>
+</window>
+<!-- Google  -->
+<!--<script type="text/javascript">-->
+<!--var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");-->
+<!--document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));-->
+<!--</script>-->
+<!--<script type="text/javascript">-->
+<!--var pageTracker = _gat._getTracker("UA-121377-3");-->
+<!--pageTracker._setDomainName("zkoss.org");-->
+<!--pageTracker._initData();-->
+<!--pageTracker._trackPageview();-->
+<!--</script>-->
+<!-- Google  -->
+</zk>

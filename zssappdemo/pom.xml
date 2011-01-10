@@ -8,10 +8,9 @@
 		<zss.version>2.0.1</zss.version>
 		<gmapsz.version>2.0.51</gmapsz.version>
   </properties>
-  <packaging>war</packaging>
   <version>${zss.version}</version>
-  <name>zssappdemo Maven Webapp</name>
-  <url>http://maven.apache.org</url>
+  <packaging>war</packaging>
+  <url>http://www.zkoss.org/zss</url>
   <dependencies>
     <dependency>
       <groupId>org.zkoss.zss</groupId>
@@ -81,10 +80,15 @@
   </dependencies>
   <build>
   	<sourceDirectory>${project.basedir}/src/</sourceDirectory>
-  	<resources>
-		<resource>
-			<directory>${project.basedir}/src/archive</directory>
-		</resource>
-	</resources>
+	<plugins>
+		<plugin>
+			<artifactId>maven-war-plugin</artifactId>
+			<configuration>
+				<warSourceDirectory>WebContent</warSourceDirectory>
+				<warName>zssappdemo</warName>
+				<webXml>WebContent/WEB-INF/web.xml</webXml>
+			</configuration>
+		</plugin>
+	</plugins>
   </build>
 </project>

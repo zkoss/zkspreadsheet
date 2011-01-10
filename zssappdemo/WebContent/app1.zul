@@ -1,0 +1,105 @@
+<window id="demo" apply="org.zkoss.zss.app.DemoWindowComposer" width="100%" height="100%">
+	<tabbox width="98%" height="100%" tabscroll="false">
+		<tabs>
+			<tab id="demoView" label="Demo"/>
+			<tab id="srcView" label="View Source"/>
+		</tabs>
+		<tabpanels width="99%">
+			<tabpanel width="100%">
+				<window id="view" height="100%">
+				</window>
+			</tabpanel>
+			
+			<tabpanel>
+				<panel>
+					<panelchildren>
+						<textbox id="codeView" class="code" rows="20" width="95%">
+			<attribute name="value"><![CDATA[
+			                                 
+	<zk>
+		<window id="win" width="100%">
+		<hbox spacing="10px" style="margin:20px" width="100%">
+			<spreadsheet id="ss0" src="/xls/entry.xls" width="90%" height="400px" maxcolumns="40"/>
+			<separator/>
+			<spreadsheet id="ss1" src="/xls/entry.xls" width="90%" height="400px" maxcolumns="40"/>
+		</hbox>
+		
+		<zscript>
+			import org.zkoss.zss.ui.event.StopEditingEvent;
+			import org.zkoss.zss.ui.event.CellEvent;
+			import org.zkoss.zss.model.*;
+			import org.zkoss.zss.model.impl.SheetImpl;
+			import org.zkoss.zss.ui.Rect;
+			import org.zkoss.zss.ui.Position;
+			
+			
+			
+			Spreadsheet[] ss=new Spreadsheet[2]; 
+			ss[0]=(Spreadsheet)win.getFellow("ss0");
+			ss[1]=(Spreadsheet)win.getFellow("ss1");
+			
+			
+			for(int i=0; i==0||i==1;i++){
+					ss[i].addEventListener(org.zkoss.zss.ui.event.Events.ON_STOP_EDITING, new EventListener() {
+						public void onEvent(Event event) throws Exception {
+							onStopEditingEvent((StopEditingEvent) event);
+						}
+					});
+					ss[i].addEventListener(org.zkoss.zss.ui.event.Events.ON_CELL_FOUCSED, new EventListener() {
+						public void onEvent(Event event) throws Exception {
+							onFocusedEvent((CellEvent) event);
+						}
+					});
+			}
+			ss[1].setSelection(new Rect(2,2,2,2));
+			ss[1].setCellFocus(new Position(2,2));
+			
+			public void onStopEditingEvent(StopEditingEvent event){
+				int row=event.getRow();
+				int col=event.getColumn();
+				
+				Sheet targetSheet;
+				if(event.getTarget()==ss[0])
+					targetSheet=ss[1].getSelectedSheet();
+				else
+					targetSheet=ss[0].getSelectedSheet();
+				
+				Cell tmpCell=targetSheet.getCell(row, col);
+				
+				if(tmpCell==null)//then new one
+					tmpCell=((SheetImpl)targetSheet).getMatrix().getCellIndex(row, col).getCell();
+				
+				tmpCell.setEditText((String)event.getEditingValue());
+			}
+			
+			public void onFocusedEvent(CellEvent event){
+				int row=event.getRow();
+				int col=event.getColumn();
+				
+				Spreadsheet targetSpreadsheet;
+				if(event.getTarget()==ss[0])
+					ss[1].moveEditorFocus("ss1", "red", row, col);
+				else
+					ss[0].moveEditorFocus("ss0", "green", row, col);
+					
+				
+				
+			}
+		</zscript>
+		
+		</window>
+		
+		
+	</zk>
+			]]></attribute>
+						</textbox>
+					</panelchildren>
+					<toolbar mold="panel">
+						<button id="tryBtn" label="Try me!"/>
+						<button id="reloadBtn" label="Reload" height="18px"/>
+					</toolbar>
+				</panel>
+			</tabpanel>
+		</tabpanels>
+	</tabbox>
+</window>
