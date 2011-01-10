@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.zkoss.zss</groupId>
-  <artifactId>zssdemos</artifactId>
+  <artifactId>zssappdemo</artifactId>
   <properties>
 		<zk.version>5.0.6.FL.20101130</zk.version>
 		<zss.version>2.0.1</zss.version>
@@ -10,7 +10,7 @@
   </properties>
   <packaging>war</packaging>
   <version>${zss.version}</version>
-  <name>zssdemos Maven Webapp</name>
+  <name>zssappdemo Maven Webapp</name>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
@@ -80,7 +80,7 @@
 	</dependency>
   </dependencies>
   <build>
-  	<sourceDirectory>${project.basedir}/src/main/java/srczssdemos</sourceDirectory>
+  	<sourceDirectory>${project.basedir}/src/</sourceDirectory>
   	<resources>
 		<resource>
 			<directory>${project.basedir}/src/archive</directory>
