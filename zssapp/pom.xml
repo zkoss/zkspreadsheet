@@ -3,7 +3,7 @@
   <groupId>org.zkoss.zss</groupId>
   <artifactId>zssapp</artifactId>
   <properties>
-		<zk.version>5.0.6.FL.20101130</zk.version>
+		<zk.version>5.0.6.FL.20101231</zk.version>
 		<zss.version>2.0.1</zss.version>
 		<commons-io.version>1.3.1</commons-io.version>
 		<commons-math.version>1.2</commons-math.version>
