@@ -12,12 +12,16 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.Chart;
+import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.model.Book;
@@ -30,7 +34,7 @@ import org.zkoss.zss.model.Worksheet;
  */
 public class SheetCtrlImpl implements SheetCtrl {
 	private final Book _book;
-	private final Worksheet _sheet;
+	protected final Worksheet _sheet;
 	private boolean _evalAll;
 	private String _uuid;
 	
@@ -108,5 +112,25 @@ public class SheetCtrlImpl implements SheetCtrl {
 	private String mergeId(int row, int col) {
 		return row+"_"+col;
 	}
+	
+	@Override
+	public void whenRenameSheet(String oldname, String newname) {
+		//do nothing.
+	}
+	
+	@Override
+	public DrawingManager getDrawingManager() {
+		// TODO Auto-generated method stub
+		return new DrawingManager() {
+			@Override
+			public List<Chart> getCharts() {
+				return Collections.emptyList();
+			}
 
+			@Override
+			public List<Picture> getPictures() {
+				return Collections.emptyList();
+			}
+		};
+	}
 }

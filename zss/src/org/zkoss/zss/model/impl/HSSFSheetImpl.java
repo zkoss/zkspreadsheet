@@ -12,6 +12,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.zkoss.lang.Classes;
+import org.zkoss.lang.Library;
 import org.zkoss.poi.hssf.model.HSSFFormulaParser;
 import org.zkoss.poi.hssf.model.InternalSheet;
 import org.zkoss.poi.hssf.model.InternalWorkbook;
@@ -1230,12 +1233,26 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Worksheet {
     	return (Book) getWorkbook();
     }
     //--SheetCtrl--//
-    private SheetCtrl _sheetCtrl;
+    private volatile SheetCtrl _sheetCtrl = null;
     private SheetCtrl getSheetCtrl() {
-    	if (_sheetCtrl == null) {
-    		_sheetCtrl = new SheetCtrlImpl(getBook(), this);
+    	SheetCtrl ctrl = _sheetCtrl;
+    	if (ctrl == null) {
+    		synchronized(this) {
+    			ctrl = _sheetCtrl;
+    			if (ctrl == null) {
+    				String clsnm = Library.getProperty("org.zkoss.zss.model.impl.SheetCtrl.class");
+    				if (clsnm == null) {
+    					clsnm = "org.zkoss.zss.model.impl.SheetCtrlImpl";
+    				}
+    				try {
+						ctrl = _sheetCtrl = (SheetCtrl) Classes.newInstanceByThread(clsnm, new Class[] {Book.class, Worksheet.class}, new Object[] {getBook(), this});
+					} catch (Exception e) {
+						ctrl = _sheetCtrl = new SheetCtrlImpl(getBook(), this); 
+					}
+    			}
+    		}
     	}
-    	return _sheetCtrl;
+    	return ctrl;
     }
 	@Override
 	public void evalAll() {
@@ -1267,5 +1284,13 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Worksheet {
 	@Override
 	public void initMerged() {
 		getSheetCtrl().initMerged();
+	}
+	@Override
+	public DrawingManager getDrawingManager() {
+		return getSheetCtrl().getDrawingManager();
+	}
+	@Override
+	public void whenRenameSheet(String oldname, String newname) {
+		getSheetCtrl().whenRenameSheet(oldname, newname);
 	}
 }

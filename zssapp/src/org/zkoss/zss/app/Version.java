@@ -20,7 +20,6 @@ package org.zkoss.zss.app;
  * Defines the version of ZK Spreadsheet App.
  * It must be the same as the version defined in metainfo/zk/lang-addon.xml
  * @author sam
- *
  */
 public class Version {
 	/** Returns the version UID.

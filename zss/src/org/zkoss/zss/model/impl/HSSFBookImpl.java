@@ -233,11 +233,11 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 
 	@Override
 	public void setSheetName(int index, String name) {
+		final String oldsheetname = getSheetName(index);
+		super.setSheetName(index, name);
 		if (_refBook != null) {
-			final String oldsheetname = getSheetName(index);
 			_refBook.setSheetName(oldsheetname, name);
 		}
-		super.setSheetName(index, name);
 	}
 	
     @Override

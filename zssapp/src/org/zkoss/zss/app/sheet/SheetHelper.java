@@ -112,8 +112,7 @@ public final class SheetHelper {
 			if(sheet != null)
 				return -1;
 			final int index = book.getSheetIndex(selsheet);
-			book.setSheetName(index, name);
-			BookHelper.getOrCreateRefBook(book).setSheetName(selsheet.getSheetName(), name);
+			book.setSheetName(index, name); //will handle refSheet inside 
 			return index;
 		}
 		return -1;

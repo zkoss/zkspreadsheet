@@ -13,10 +13,12 @@ ZK Spreadsheet 2.0.1
   271 ZK Spreadsheet App: NPE when focus on formulabar editor with a no book Spreadsheet
   272 ZK Spreadsheet App: NPE when close the book
   273 ZK Spreadsheet App: Shall disable formula bar, insert menu items when there is no book
+  275 Rename sheet with a chart and switch sheets cause NPE
   276 ZK Spreadsheet App: Selection shall move to left when shift-Tab on Formula bar editor
   279 ZK Spreadsheet App: a error dialog in compose formula dialog
   280 ZK Spreadsheet App: NPE in compose SUM formula dialog
   285 Spreadsheet component with Liferay, on Chrome and IE, Layout is wrong
+  286 NPE when load the attached xls file
   
 	------------
 ZK Spreadsheet 2.0.0

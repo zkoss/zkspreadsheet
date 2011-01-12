@@ -227,11 +227,14 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 
 	@Override
 	public void setSheetName(int index, String name) {
+		final String oldsheetname = getSheetName(index);
+		super.setSheetName(index, name);
 		if (_refBook != null) {
-			final String oldsheetname = getSheetName(index);
 			_refBook.setSheetName(oldsheetname, name);
 		}
-		super.setSheetName(index, name);
+		for (XSSFSheet sheet : this) { //scan all sheets to change the possible reference
+			((SheetCtrl)sheet).whenRenameSheet(oldsheetname, name);
+		}
 	}
 
 	@Override

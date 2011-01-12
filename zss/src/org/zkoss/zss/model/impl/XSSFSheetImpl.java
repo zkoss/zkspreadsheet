@@ -31,6 +31,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
+import org.zkoss.lang.Classes;
+import org.zkoss.lang.Library;
 import org.zkoss.poi.POIXMLDocumentPart;
 import org.zkoss.poi.hssf.record.formula.Ptg;
 import org.zkoss.poi.openxml4j.opc.PackagePart;
@@ -1146,12 +1148,26 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
     }
     
     //--SheetCtrl--//
-    private SheetCtrl _sheetCtrl;
+    private volatile SheetCtrl _sheetCtrl;
     private SheetCtrl getSheetCtrl() {
-    	if (_sheetCtrl == null) {
-    		_sheetCtrl = new SheetCtrlImpl(getBook(), this);
+    	SheetCtrl ctrl = _sheetCtrl;
+    	if (ctrl == null) {
+    		synchronized(this) {
+    			ctrl = _sheetCtrl;
+    			if (ctrl == null) {
+    				String clsnm = Library.getProperty("org.zkoss.zss.model.impl.SheetCtrl.class");
+    				if (clsnm == null) {
+    					clsnm = "org.zkoss.zss.model.impl.SheetCtrlImpl";
+    				}
+    				try {
+						ctrl = _sheetCtrl = (SheetCtrl) Classes.newInstanceByThread(clsnm, new Class[] {Book.class, Worksheet.class}, new Object[] {getBook(), this});
+					} catch (Exception e) {
+						ctrl = _sheetCtrl = new SheetCtrlImpl(getBook(), this); 
+					}
+    			}
+    		}
     	}
-    	return _sheetCtrl;
+    	return ctrl;
     }
 	@Override
 	public void evalAll() {
@@ -1183,5 +1199,24 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
 	@Override
 	public void initMerged() {
 		getSheetCtrl().initMerged();
+	}
+	@Override
+	public DrawingManager getDrawingManager() {
+		return getSheetCtrl().getDrawingManager();
+	}
+
+	@Override
+	public void whenRenameSheet(String oldname, String newname) {
+		getSheetCtrl().whenRenameSheet(oldname, newname);
+		//handle formula reference
+		for(Row row : this) {
+			if (row != null) {
+				for (Cell cell : row) {
+					if (cell != null) {
+						((XSSFCell) cell).whenRenameSheet(oldname, newname);
+					}
+				}
+			}
+		}
 	}
 }	
