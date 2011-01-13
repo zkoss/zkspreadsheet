@@ -88,7 +88,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 				comp = cell.comp;
 				jq(comp).addClass("zsmergee");
 			}
-			jq(comp).attr("z.merid", id).attr("z.merr", right).attr("z.merl", left);
+			jq(comp).attr({"z.merid": id, "z.merr": right, "z.merl": left});
 
 			cell.merid = id;
 			cell.merr = right;

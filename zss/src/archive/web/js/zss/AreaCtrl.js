@@ -19,9 +19,10 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 (function () {
 	/**
-	 * Clone the opacity dom element and replace.
+	 * Clone the opacity DOM element and replace.
 	 * This is for IE 8. when opacity area large than a limit, the mask of opacity will fail.
 	 * http://yuilibrary.com/projects/yui2/ticket/2528621
+	 * @param zss.AreaCtrl
 	 */
 	function _redrawOpacity (obj) {
 		var inner = obj.icomp,
@@ -30,6 +31,10 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		obj.icomp = cloneInner;
 	}
 
+	/**
+	 * @param zss.AreaCtrl
+	 * @param boolean
+	 */
 	function _showSelectionArea (obj, redrawOpacity) {
 		var range = obj.lastRange;
 		if (!range) return;
@@ -40,7 +45,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	}
 
 /**
- * Locate selection area.
+ * Area controller
+ * 
  */
 zss.AreaCtrl = zk.$extends(zk.Object, {
 	$init: function (sheet, cmp, range, mode) {
@@ -118,7 +124,10 @@ zss.AreaCtrl = zk.$extends(zk.Object, {
 });
 
 /**
- * Locate data panel selection area
+ * Selection area controller
+ * 
+ * <P> This controls the spreadsheet's selection area. When user focus on
+ * a cell or select multiple cells, shows the selection area.
  */
 zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 	//override
@@ -244,17 +253,22 @@ zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 });
 
 /**
- * Locate data panel selection area
+ * Selection changing area controller
+ * 
+ * <p> This controls the spreadsheet's selection change area. When user drag
+ * current selection area to change selection area size, shows selection changing 
+ * area. 
  */
 zss.SelChgCtrl = zk.$extends(zss.AreaCtrl, {});
 
 /**
- * Locate corner panel selection area
+ * Area controller at corner panel
+ * 
  */
 zss.AreaCtrlCorner = zk.$extends(zss.AreaCtrl, {});
 
 /**
- * Locate corner panel selection area
+ * Selection area controller at corner panel
  */
 zss.SelAreaCtrlCorner = zk.$extends(zss.AreaCtrlCorner, {
 	//override
@@ -264,12 +278,12 @@ zss.SelAreaCtrlCorner = zk.$extends(zss.AreaCtrlCorner, {
 });
 
 /**
- *  Locate corner panel selection change area
+ * Selection changing area controller at corner panel
  */
 zss.SelChgCtrlCorner = zk.$extends(zss.AreaCtrlCorner, {});
 
 /**
- * Locate left panel selection area
+ * Area controller at left panel
  */
 zss.AreaCtrlLeft = zk.$extends(zss.AreaCtrl, {
 	//override
@@ -297,7 +311,7 @@ zss.AreaCtrlLeft = zk.$extends(zss.AreaCtrl, {
 });
 
 /**
- * Locate left panel header selection area
+ * Selection area controller at left panel
  */
 zss.SelAreaCtrlLeft = zk.$extends(zss.AreaCtrlLeft, {
 	//override
@@ -307,12 +321,12 @@ zss.SelAreaCtrlLeft = zk.$extends(zss.AreaCtrlLeft, {
 });
 
 /**
- * Locate left panel header selection change area
+ * Selection changing controller at left panel
  */
 zss.SelChgCtrlLeft = zk.$extends(zss.AreaCtrlLeft, {});
 
 /**
- * Locate top panel selection area
+ * Area controller at top panel
  */
 zss.AreaCtrlTop = zk.$extends(zss.AreaCtrl, {
 	//override
@@ -336,7 +350,7 @@ zss.AreaCtrlTop = zk.$extends(zss.AreaCtrl, {
 });
 
 /**
- * Locate top panel header selection area
+ * Selection area controller at top panel
  */
 zss.SelAreaCtrlTop = zk.$extends(zss.AreaCtrlTop, {
 	//override
@@ -346,7 +360,7 @@ zss.SelAreaCtrlTop = zk.$extends(zss.AreaCtrlTop, {
 });
 
 /**
- *  Locate top panel header selection change area
+ * Selection changing area controller at top panel
  */
 zss.SelChgCtrlTop = zk.$extends(zss.AreaCtrlTop, {});
 })();

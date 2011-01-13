@@ -72,14 +72,12 @@ zss.CornerPanel = zk.$extends(zk.Object, {
 		
 		if (this.tp) {
 			this.tp.cleanup();
-			this.tp = null;
-			this.topcomp = null;
+			this.tp = this.topcomp = null;
 		}
 		
 		if (this.lp) {
 			this.lp.cleanup();
-			this.lp = null;
-			this.leftcomp = null;
+			this.lp = this.leftcomp = null;
 		}
 		
 		if (this.block) {
@@ -105,7 +103,7 @@ zss.CornerPanel = zk.$extends(zk.Object, {
 			this.hlArea = null;
 		}
 		
-		if(this.comp) this.comp.ctrl = null;
+		if (this.comp) this.comp.ctrl = null;
 		this.comp = null;
 		this.sheet = null;
 	},

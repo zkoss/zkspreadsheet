@@ -6,7 +6,7 @@
 	<artifactId>zss</artifactId>
 	<properties>
 		<zss.version>2.0.1</zss.version>
-		<zk.version>5.0.6.FL.20101231</zk.version>
+		<zk.version>5.0.6.FL.20110112</zk.version>
 		<commons-math.version>1.2</commons-math.version>
 	</properties>
 	<version>${zss.version}</version>

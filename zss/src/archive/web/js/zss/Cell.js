@@ -29,29 +29,29 @@ zss.Cell = zk.$extends(zk.Object, {
 		this.overhead = false;//overhead, this cell is a overflow's left cell
 		this.edit = edit;
 		
-		var local = this;
-		this.r = zk.parseInt(jq(cmp).attr('z.r'));
-		this.c = zk.parseInt(jq(cmp).attr('z.c'));
+		var $n = jq(cmp);
+		this.r = zk.parseInt($n.attr('z.r'));
+		this.c = zk.parseInt($n.attr('z.c'));
 			
-		this.zsw = jq(cmp).attr('z.zsw');
+		this.zsw = $n.attr('z.zsw');
 
 		if (this.zsw)
 			this.zsw = zk.parseInt(this.zsw);
 
-		this.zsh = jq(cmp).attr('z.zsh');
+		this.zsh = $n.attr('z.zsh');
 
 		if (this.zsh)
 			this.zsh = zk.parseInt(this.zsh);
 		
-		this.wrap = (jq(cmp).attr('z.wrap') == "t") ? true : false;
-		this.halign = jq(cmp).attr('z.hal');
+		this.wrap = $n.attr('z.wrap') == "t";
+		this.halign = $n.attr('z.hal');
 		if (!this.halign)
 			this.halign = "l";//default h align is left;
 		//is this cell has right border,
 		//i must do some special processing when textoverfow when with rborder.
-		this.rborder = (jq(cmp).attr('z.rbo') == "t") ? true : false;
+		this.rborder = $n.attr('z.rbo') == "t";
 
-		this.txtcomp = jq(cmp).children('DIV:first')[0];
+		this.txtcomp = $n.children('DIV:first')[0];
 			
 		var txt = this.txtcomp.textContent || this.txtcomp.innerText;
 		if (!txt) {
@@ -74,14 +74,11 @@ zss.Cell = zk.$extends(zk.Object, {
 		}
 		
 		//process merge.
-		var mr = jq(cmp).attr('z.merr'),
-			mid = jq(cmp).attr('z.merid'),
-			ml = jq(cmp).attr('z.merl');
-		
+		var mid = $n.attr('z.merid');
 		if (zkS.t(mid)) {
-			this.merr = zk.parseInt(mr); 
+			this.merr = zk.parseInt($n.attr('z.merr')); 
 			this.merid = zk.parseInt(mid);
-			this.merl = zk.parseInt(ml); 
+			this.merl = zk.parseInt($n.attr('z.merl')); 
 		}
 		cmp.ctrl = this;
 	},
@@ -103,7 +100,7 @@ zss.Cell = zk.$extends(zk.Object, {
 		if (!txt)
 			txt = "";
 
-		this._updateHasTxt(txt != "" ? true : false);
+		this._updateHasTxt(txt != "");
 
 		this.txtcomp.innerHTML = txt;
 		if (this.sheet.config.textOverflow)
@@ -148,16 +145,14 @@ zss.Cell = zk.$extends(zk.Object, {
 	 * @param int column index
 	 */
 	resetColumnIndex: function (newcol) {
-		this.c = newcol;
-		jq(this.comp).attr("z.c", newcol);
+		jq(this.comp).attr("z.c", (this.c = newcol));
 	},
 	/**
 	 * Sets the row index of the cell
 	 * @param int row index
 	 */
 	resetRowIndex: function (newrow) {
-		this.r = newrow;
-		jq(this.comp).attr("z.r", newrow);
+		jq(this.comp).attr("z.r", (this.r = newrow));
 	}
 }, {
 	/**
@@ -168,55 +163,44 @@ zss.Cell = zk.$extends(zk.Object, {
 		var row = parm.row,
 			col = parm.col,
 			txt = parm.txt,
-			edit = parm.edit,
 			st = parm.st,//style
 			ist = parm.ist,//style of inner div
-			wrap = parm.wrap,
 			hal = parm.hal,
-			rbo = parm.rbo,
 			merr = parm.merr,
 			merid = parm.merid,
 			merl = parm.merl,
 			zsw = parm.zsw,
 			zsh = parm.zsh,
-			cmp = document.createElement("div");
+			cmp = document.createElement("div"),
+			$n = jq(cmp);
 
-		jq(cmp).attr("zs.t", "SCell").attr("z.c", col).attr("z.r", row);
+		$n.attr({"zs.t": "SCell", "z.c": col, "z.r": row, "z.hal": (hal ? hal : "l")});
 		
-		if (zsw)
-			jq(cmp).attr("z.zsw", zsw);
-
-		if (zsh)
-			jq(cmp).attr("z.zsh", zsh);
+		if (zsw) $n.attr("z.zsw", zsw);
+		if (zsh) $n.attr("z.zsh", zsh);
+		if (parm.wrap) $n.attr("z.wrap", "t");
+		if (parm.rbo) $n.attr("z.rbo", "t");
 		
-		if (wrap) jq(cmp).attr("z.wrap", "t");
-		jq(cmp).attr("z.hal", (hal ? hal : "l"));
-		if (rbo) jq(cmp).attr("z.rbo", "t");
-		
-		if (zkS.t(merid)) {
-			jq(cmp).attr("z.merr", merr).attr("z.merid", merid).attr("z.merl", merl).addClass(merl == col ? "zsmerge" + merid : "zsmergee");
-		}
+		if (zkS.t(merid))
+			$n.attr({"z.merr": merr, "z.merid": merid, "z.merl": merl}).addClass(merl == col ? "zsmerge" + merid : "zsmergee");
 		
 		if (st)
 			cmp.style.cssText = st;
-	
-		if (!txt)
-			txt = "";
 		
 		var txtcmp = document.createElement("div");
 		if (ist)
 			txtcmp.style.cssText = ist;
 
-		txtcmp.innerHTML = txt;
+		txtcmp.innerHTML = txt ? txt : "";
 		cmp.appendChild(txtcmp);
 		
 		var sclazz = "zscell" + (zsw ? " zsw" + zsw : "") + (zsh ? " zshi" + zsh : "");
-		jq(cmp).addClass(sclazz);
+		$n.addClass(sclazz);
 		
 		sclazz = "zscelltxt" + (zsw ? " zswi" + zsw : "") + (zsh ? " zshi" + zsh : "");
 		jq(txtcmp).addClass(sclazz);
 
-		return new zss.Cell(sheet, block, cmp, edit);
+		return new zss.Cell(sheet, block, cmp, parm.edit);
 	},
 	/**
 	 * Update cell's text and style
@@ -229,9 +213,8 @@ zss.Cell = zk.$extends(zk.Object, {
 			ist = parm.ist,//style of inner div
 			wrap = parm.wrap,
 			hal = parm.hal,
-			rbo = parm.rbo;
-
-		var cmp = ctrl.comp;
+			rbo = parm.rbo,
+			cmp = ctrl.comp;
 		
 		if (!wrap)
 			wrap = false;

@@ -19,40 +19,23 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 
 (function () {
-	function _calScrollWidth (el) {
+	function _calScrollWidth () {
 		if(zkS.t(zss.Spreadsheet.scrollWidth)) return;
 	    // scroll scrolling div
-	    var scr = document.createElement('div');
-	    scr.style.position = 'absolute';
-	    scr.style.top = '0px';
-	    scr.style.left = '0px';
-	    scr.style.width = '50px';
-	    scr.style.height = '50px';
-	    scr.style.overflow = 'auto';
-
-	    // scrolli content div
-	    var inn = document.createElement('div');
-	    inn.style.width = '100px';
-	    inn.style.height = '100px';
-
+		var body = document.body,
+			scr = jq('<div style="position:absolute;top:0px;left:0px;width:50px;height:50px;overflow:auto;"></div>')[0],
+			inn = jq('<div style="width:100px;height:100px;"></div>')[0]; //scroll content div
 	    // Put the scrolli div in the scrolling div
 	    scr.appendChild(inn);
 
 	    // Append the scrolling div to the doc
-	    el.appendChild(scr);
-
-		var ow = scr.offsetWidth;
-		var cw = scr.clientWidth;
+	    body.appendChild(scr);
 
 	    //calcuate the scrollWidth;	
-		var ow = scr.offsetWidth,
-			cw = scr.clientWidth,
-			oh = scr.offsetHeight,
-			ch = scr.clientHeight;
-		el.removeChild(scr);
-		zss.Spreadsheet.scrollWidth = (ow - cw);
+		zss.Spreadsheet.scrollWidth = (scr.offsetWidth - scr.clientWidth);
 		if (zss.Spreadsheet.scrollWidth == 0)
-			zss.Spreadsheet.scrollWidth = oh - ch;
+			zss.Spreadsheet.scrollWidth = scr.offsetHeight - scr.clientHeight;
+		body.removeChild(scr);
 		return;
 	}
 	
@@ -102,24 +85,24 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	 */
 	function createSSheet (cssText, id) {
 	    var head = document.getElementsByTagName("head")[0],
-    		sheetele = document.createElement("style"),
+    		styleObj = document.createElement("style"),
     		sheetobj;
-	    jq(sheetele).attr("type", "text/css");
+	    jq(styleObj).attr("type", "text/css");
 		
 	    if (id)
-	       jq(sheetele).attr("id", id);
+	       jq(styleObj).attr("id", id);
 	    if (zk.ie) {
-	        head.appendChild(sheetele);
-	        sheetobj = sheetele.styleSheet;
+	        head.appendChild(styleObj);
+	        sheetobj = styleObj.styleSheet;
 	        sheetobj.cssText = cssText;
 	    } else {
 	        try {
-	            sheetele.appendChild(document.createTextNode(cssText));
+	        	styleObj.appendChild(document.createTextNode(cssText));
 	        } catch (e) {
-	            sheetele.cssText = cssText;
+	        	styleObj.cssText = cssText;
 	        }
-	        head.appendChild(sheetele);
-			sheetobj = _getElementSheet(sheetele);
+	        head.appendChild(styleObj);
+			sheetobj = _getElementSheet(styleObj);
 	    }
 	    return sheetobj;
 	}
@@ -139,7 +122,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		}
 	}
 	/**
-	 * get stylesheet object from a element
+	 * get stylesheet object from DOMElement
 	 */
 	function _getElementSheet () {
 		if (zk.ie) {
@@ -181,7 +164,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		}
 	}
 /**
- * zkSSheet -> zss.Spreadsheet
+ * Spreadsheet is a is a rich ZK Component to handle EXCEL like behavior
  */
 zss.Spreadsheet = zk.$extends(zul.Widget, {
 	$define: {
@@ -235,7 +218,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 				wgt.redrawWidgetTo(sheet);
 		},
 		/**
-		 * rename. insertrc_ -> insertRowColumn
+		 * Inserts new row or column
 		 */
 		insertRowColumn: function (v) {
 			var sheet = this.sheetCtrl;
@@ -250,7 +233,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 				sheet.addSSInitLater(_doInsertRCCmd, sheet, data, token);
 		},
 		/**
-		 * removerc_ -> removeRowColumn
+		 * Removes row or column
 		 */
 		removeRowColumn: function (v) {
 			var sheet = sheet = this.sheetCtrl;
@@ -750,15 +733,17 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			this.setDisplayGridlines(show);
 	},
 	bind_: function () {
+		_calScrollWidth();
+		
 		this.$supers('bind_', arguments);
 
 		this._initControl();
 		//zWatch.listen({onShow: this, onHide: this, onSize: this});
-		zWatch.listen({onSize: this});
+		zWatch.listen({onShow: this, onSize: this});
 	},
 	unbind_: function () {
 		//zWatch.unlisten({onShow: this, onHide: this, onSize: this});
-		zWatch.unlisten({onSize: this});
+		zWatch.unlisten({onShow: this, onSize: this});
 
 		this._maxColumnMap = this._maxRowMap = null;
 		
@@ -773,19 +758,17 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			window.CollectGarbage();
 		
 		this.$supers('unbind_', arguments);
-	},/*
-	onShow: function () {
-		//zssd("onVisi" + this.$n());
 	},
-	onHide: function () {
-		//zssd("onHide:" + this.$n());
-	},*/
-	onSize: function () {
+	onShow: _zkf = function () {
 		var sheet = this.sheetCtrl;
 		if (!sheet || !sheet._initiated) return;
 
 		sheet._resize();
-	},
+	},/*
+	onHide: function () {
+		//zssd("onHide:" + this.$n());
+	},*/
+	onSize: _zkf,
 	domClass_: function (no) {
 		return 'zssheet';
 	},
@@ -1015,8 +998,6 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 
 			sheet._cmdGridlines(sheet._wgt.isDisplayGridlines());
 			sheet._initiated = true;
-
-			_calScrollWidth(sheet.comp);
 			//since some initial depends on width or height,
 			//so first ss initial later must invoke after css ready,
 			
@@ -1025,7 +1006,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			sheet._doSSInitLater();
 			if (sheet._initmove) {//#1995031
 				sheet.showMask(false);
-			} else if(!sheet.activeBlock.loadForVisible()){
+			} else if(zk(sheet._wgt).isRealVisible() && !sheet.activeBlock.loadForVisible()){
 				//if no loadfor visible send after init, then we must sync the block size
 				sheet.sendSyncblock(true);
 				sheet.showMask(false);

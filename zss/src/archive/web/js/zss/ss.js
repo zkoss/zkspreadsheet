@@ -164,9 +164,9 @@ zkS.isEvtKey = function (evt, flag) {
 
 
 /**
- * check to see if cmp has scrollbal
+ * check to see if cmp has scroll bar
  * @param {Object} cmp component to check
- * @param {Object} vert false to check horizontal, ture for vertical
+ * @param {Object} vert false to check horizontal, true for vertical
  * @return true or false.
  */
 zkS._hasScrollBar = function (cmp, vert) {
@@ -174,7 +174,7 @@ zkS._hasScrollBar = function (cmp, vert) {
 		client;
 	if(vert){
 		off = cmp.offsetWidth;
-		client = cmp.clientWidth;  
+		client = cmp.clientWidth;
 	}else{
 		off = cmp.offsetHeight;
 		client = cmp.clientHeight;  

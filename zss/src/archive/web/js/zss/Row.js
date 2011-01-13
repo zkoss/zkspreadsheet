@@ -260,14 +260,12 @@ zss.Row = zk.$extends(zk.Object, {
 	 * @return zss.Row
 	 */
 	createComp: function (sheet, block, parm) {
-		var row = parm.row,
-			zsh = parm.zsh,
-			cmp = document.createElement("div");
-		jq(cmp).attr("zs.t", "SRow").attr("z.r", row);
+		var zsh = parm.zsh,
+			cmp = document.createElement("div"),
+			$n = jq(cmp);
+		$n.attr({"zs.t": "SRow", "z.r": parm.row}).addClass("zsrow" + (zsh ? " zsh" + zsh :""));
 		if (zsh)
-			jq(cmp).attr("z.zsh", zsh);
-		
-		jq(cmp).addClass("zsrow" + (zsh ? " zsh" + zsh :""));
+			$n.attr("z.zsh", zsh);
 
 		return new zss.Row(sheet, block, cmp);
 	},
