@@ -15,11 +15,12 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.zul.ctrl;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 import org.zkoss.util.media.Media;
-import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
+import org.zkoss.zss.ui.Spreadsheet;
 
 /**
  * @author Sam
@@ -80,6 +81,8 @@ public interface WorkbookCtrl {
 	public String getCurrentCellPosition();
 	
 	public void setDataFormat(String format);
+	
+	public List<String> getSheetNames();
 	
 	/**
 	 * Sets {@link Spreadsheet} book src
@@ -162,4 +165,25 @@ public interface WorkbookCtrl {
 	public void setRowHeightInPx(int height);
 	
 	public int getDefaultCharWidth();
+	
+	/**
+	 * Shifts current selected sheet left, returns shifted sheet index
+	 * <p> Returns -1 if fail to shift sheet
+	 * @return index
+	 */
+	public int shiftSheetLeft();
+	
+	/**
+	 * Shifts current selected sheet right, returns shifted sheet index
+	 * <p> Returns -1 if fail to shift sheet
+	 * @return index
+	 */
+	public int shiftSheetRight();
+	
+	/**
+	 * Deletes current selected sheet, returns next sheet index
+	 * <> Returns -1 if delete sheet fail
+	 * @return index
+	 */
+	public int deleteSheet();
 }

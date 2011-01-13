@@ -278,10 +278,9 @@
 		<!--  SECTION ********Sheets & Spreadsheet*************************************** -->
 		<center flex="true">
 			<div>				
-				<sheets id="sheets"></sheets>
-				<!-- src="/xls/demo_sample.xls" -->
+				<sheets id="sheets" vflex="min"></sheets>
 				<spreadsheet id="spreadsheet" maxrows="200" src="/xls/Untitled"
-						maxcolumns="40" vflex="1" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
+						maxcolumns="40" vflex="true" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
 						forward="onCtrlKey=mainWin.onSSCtrlKeys">
 				</spreadsheet>
 			</div>

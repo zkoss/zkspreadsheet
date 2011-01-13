@@ -16,9 +16,8 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul;
 
-import static org.zkoss.zss.app.base.Preconditions.checkNotNull;
+import java.util.List;
 
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
@@ -27,11 +26,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.MouseEvent;
 import org.zkoss.zss.app.Consts;
-import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
-import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.SheetVisitor;
-import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
@@ -45,7 +40,7 @@ import org.zkoss.zul.Tabs;
  * @author sam
  *
  */
-public class Sheets extends Div implements ZssappComponent, IdSpace {
+public class Sheets extends Div implements IdSpace {
 
 	private Tabbox tabbox;
 	private Tabs tabs;
@@ -56,8 +51,6 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	private Menuitem deleteSheet;
 	private Menuitem renameSheet;
 	private Menuitem copySheet;
-	
-	private Spreadsheet ss;
 	
 	public Sheets() {
 		Executions.createComponents(Consts._SheetPanel_zul, this, null);
@@ -106,30 +99,32 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 		
 		tabs.getChildren().clear();
 
-		Utils.visitSheets(ss.getBook(), new SheetVisitor(){
-			@Override
-			public void handle(Sheet sheet) {
-				final Tab tab = new Tab(sheet.getSheetName());
-				tab.addEventListener(org.zkoss.zk.ui.event.Events.ON_RIGHT_CLICK, new EventListener() {
-					public void onEvent(Event event) throws Exception {						
-						
-						if (tabbox.getSelectedTab().getLabel() != tab.getLabel())
-							setSelectedTab(tab);
-
-						MouseEvent evt = (MouseEvent)event;
-						sheetContextMenu.open(evt.getPageX(), evt.getPageY());
-					}
-				});
-				tab.setParent(tabs);
-				if (seldIndex == tab.getIndex())
+		List<String> names = getDesktopWorkbenchContext().getWorkbookCtrl().getSheetNames();
+		for (String name : names) {
+			final Tab tab = new Tab(name);
+			tab.addEventListener(org.zkoss.zk.ui.event.Events.ON_RIGHT_CLICK, new EventListener() {
+			public void onEvent(Event event) throws Exception {						
+				if (tabbox.getSelectedTab().getLabel() != tab.getLabel())
 					setSelectedTab(tab);
+	
+				MouseEvent evt = (MouseEvent)event;
+				sheetContextMenu.open(evt.getPageX(), evt.getPageY());
 			}});
+			tab.setParent(tabs);
+			if (seldIndex == tab.getIndex()) {
+				setSelectedTabDirectly(tab);
+			}
+		}
 	}
 
 	private void setSelectedTab(Tab tab) {
 		tabbox.setSelectedTab(tab);
 		getDesktopWorkbenchContext().getWorkbookCtrl().setSelectedSheet(tab.getLabel());
 		getDesktopWorkbenchContext().fireSheetChanged();
+	}
+	
+	private void setSelectedTabDirectly(Tab tab) {
+		tabbox.setSelectedTab(tab);
 	}
 	
 	/**
@@ -140,7 +135,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	}
 	
 	public void onClick$shiftSheetLeft() {
-		int newIdx = SheetHelper.shiftSheetLeft(checkNotNull(ss, "Spreadsheet is null"));
+		int newIdx = getDesktopWorkbenchContext().getWorkbookCtrl().shiftSheetLeft();
 		if (newIdx >= 0) {
 			tabbox.setSelectedIndex(newIdx);
 			redraw();
@@ -151,7 +146,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	}
 	
 	public void onClick$shiftSheetRight() {
-		int newIdx = SheetHelper.shiftSheetRight(checkNotNull(ss, "Spreadsheet is null"));
+		int newIdx = getDesktopWorkbenchContext().getWorkbookCtrl().shiftSheetRight();
 		if (newIdx >= 0) {
 			tabbox.setSelectedIndex(newIdx);
 			redraw();
@@ -162,8 +157,7 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	}
 	
 	public void onClick$deleteSheet() {
-		//TODO: show message if fail to shift
-		int newIdx = SheetHelper.deleteSheet(checkNotNull(ss, "Spreadsheet is null"));
+		int newIdx = getDesktopWorkbenchContext().getWorkbookCtrl().deleteSheet();
 		if (newIdx >= 0) {
 			tabbox.setSelectedIndex(newIdx);
 			redraw();
@@ -182,16 +176,6 @@ public class Sheets extends Div implements ZssappComponent, IdSpace {
 	
 	public void onClick$copySheet() {
 		throw new UiException("cop sheet not implement yet");
-	}
-
-	@Override
-	public void unbindSpreadsheet() {
-		//TODO: unbind event
-	}
-
-	@Override
-	public void bindSpreadsheet(Spreadsheet spreadsheet) {
-		ss = spreadsheet;
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {

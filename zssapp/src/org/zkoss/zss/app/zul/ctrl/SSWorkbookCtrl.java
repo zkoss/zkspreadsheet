@@ -16,6 +16,7 @@ package org.zkoss.zss.app.zul.ctrl;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -502,5 +503,26 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public int getDefaultCharWidth() {
 		return ((Book)spreadsheet.getSelectedSheet().getWorkbook()).getDefaultCharWidth();
+	}
+	
+	public List<String> getSheetNames() {
+		final Book book = spreadsheet.getBook();
+		List<String> names = new ArrayList<String>(book.getNumberOfSheets());
+		for (int i = 0; i < book.getNumberOfSheets(); i++) {
+			names.add(book.getSheetAt(i).getSheetName());
+		}
+		return Collections.unmodifiableList(names);
+	}
+
+	public int shiftSheetLeft() {
+		return SheetHelper.shiftSheetLeft(spreadsheet);
+	}
+
+	public int shiftSheetRight() {
+		return SheetHelper.shiftSheetRight(spreadsheet);
+	}
+
+	public int deleteSheet() {
+		return SheetHelper.deleteSheet(spreadsheet);
 	}
 }

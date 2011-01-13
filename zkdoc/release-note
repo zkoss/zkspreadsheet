@@ -18,6 +18,7 @@ ZK Spreadsheet 2.0.1
   279 ZK Spreadsheet App: a error dialog in compose formula dialog
   280 ZK Spreadsheet App: NPE in compose SUM formula dialog
   283 set spreadsheet visible="false" cause error dialog
+  284 ZK Spreadsheet App: after delete a sheet, the horizontal scrollbar will disappear
   285 Spreadsheet component with Liferay, on Chrome and IE, Layout is wrong
   286 NPE when load the attached xls file
   
