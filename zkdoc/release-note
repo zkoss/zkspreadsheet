@@ -21,6 +21,7 @@ ZK Spreadsheet 2.0.1
   284 ZK Spreadsheet App: after delete a sheet, the horizontal scrollbar will disappear
   285 Spreadsheet component with Liferay, on Chrome and IE, Layout is wrong
   286 NPE when load the attached xls file
+  288 ZK Spreadsheet App: number format dialog select "General" cause error dialog
   
 	------------
 ZK Spreadsheet 2.0.0

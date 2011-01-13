@@ -75,24 +75,30 @@ public class FormatNumberCtrl extends GenericForwardComposer {
 	public void onClick$okBtn() {
 		Listitem  seldItem = mfn_category.getSelectedItem();
 		if (seldItem == null) {
-			try {
-				Messagebox.show("Please select a category");
-			} catch (InterruptedException e) {
-			}
+			showSelectFormatDialog();
 			return;
 		}
 		Listbox selectedList = (Listbox)self.getFellow((String)mapLabelListbox.get(seldItem.getLabel()));
+		if (selectedList == mfn_general) {
+			showSelectFormatDialog();
+			return;
+		}
 		Listitem selectedItem = selectedList.getSelectedItem();
 
 		if (selectedItem != null) {
 			String formatCodes = selectedItem.getValue().toString();
 			Utils.setDataFormat(spreadsheet.getSelectedSheet(), spreadsheet.getSelection(), formatCodes);			
 		} else {
-			try {
-				Messagebox.show("Please select a format");
-			} catch (InterruptedException e) {
-			}
+			showSelectFormatDialog();
+			return;
 		}
 		_formatNumberDialog.fireOnClose(null);
+	}
+
+	private void showSelectFormatDialog() {
+		try {
+			Messagebox.show("Please select a category");
+		} catch (InterruptedException e) {
+		}
 	}
 }
