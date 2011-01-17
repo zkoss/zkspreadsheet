@@ -676,7 +676,10 @@ public final class BookHelper {
 			    if (theme != null) {
 			    	XSSFColor themecolor = theme.getThemeColor(color.getTheme());
 			    	if (themecolor != null) {
-			    		return XSSFColorToHTML(book, themecolor);
+			    		if (ctcolor.isSetTint()) {
+			    			themecolor.setTint(ctcolor.getTint());
+			    		}
+			    		return XSSFColorToHTML(book, themecolor); //recursive
 			    	}
 			    }
 			}
