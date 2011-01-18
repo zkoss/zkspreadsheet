@@ -122,11 +122,13 @@
 			<artifactId>zkex</artifactId>
 			<version>${zk.version}</version>
 		</dependency>
+<!-- 		
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkmax</artifactId>
 			<version>${zk.version}</version>
 		</dependency>
+ -->		
 		<dependency>
 			<groupId>org.zkoss.common</groupId>
 			<artifactId>zcommon</artifactId>
@@ -214,9 +216,16 @@
 			<artifactId>gmapsz</artifactId>
 			<version>${gmapsz.version}</version>
 		</dependency>
+ 		
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zsspdf</artifactId>
+			<version>${zss.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zss</artifactId>
 			<version>${zss.version}</version>
 		</dependency>
 	</dependencies>

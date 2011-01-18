@@ -69,7 +69,8 @@ public final class CellHelper {
 	
 	public static String getFontHTMLColor(Cell cell, Font font) {
 		Book book = (Book)cell.getSheet().getWorkbook();
-		String color = BookHelper.getFontHTMLColor(book, font);
+//		String color = BookHelper.getFontHTMLColor(book, font);
+		String color = BookHelper.getFontHTMLColor(cell, font);
 		if (color == null || BookHelper.AUTO_COLOR.equals(color))
 			return "#000000";
 		return  color;

@@ -292,7 +292,8 @@ public class CellFormatHelper {
 			
 			final Font font = _book.getFontAt(style.getFontIndex());
 			
-			sb.append(BookHelper.getFontCSSStyle(_book, font));
+			//sb.append(BookHelper.getFontCSSStyle(_book, font));
+			sb.append(BookHelper.getFontCSSStyle(_cell, font));
 
 			//condition color
 			final FormatText ft = Utils.getFormatText(_cell);

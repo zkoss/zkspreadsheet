@@ -508,6 +508,45 @@ public final class BookHelper {
 		return align;
 	}
 	
+	public static String getFontCSSStyle(Cell cell, Font font) {
+		final StringBuffer sb = new StringBuffer();
+		
+		String fontName = font.getFontName();
+		if (fontName != null) {
+			sb.append("font-family:").append(fontName).append(";");
+		}
+		
+		String textColor = BookHelper.getFontHTMLColor(cell, font);
+		
+		if (BookHelper.AUTO_COLOR.equals(textColor)) {
+			textColor = "#000000";
+		}
+		if (textColor != null) {
+			sb.append("color:").append(textColor).append(";");
+		}
+
+		final int fontUnderline = font.getUnderline(); 
+		final boolean strikeThrough = font.getStrikeout();
+		boolean isUnderline = fontUnderline == Font.U_SINGLE || fontUnderline == Font.U_SINGLE_ACCOUNTING;
+		if (strikeThrough || isUnderline) {
+			sb.append("text-decoration:");
+			if (strikeThrough)
+				sb.append(" line-through");
+			if (isUnderline)	
+				sb.append(" underline");
+			sb.append(";");
+		}
+
+		final short weight = font.getBoldweight();
+		final boolean italic = font.getItalic();
+		sb.append("font-weight:").append(weight).append(";");
+		if (italic)
+			sb.append("font-style:").append("italic;");
+
+		final int fontSize = font.getFontHeightInPoints();
+		sb.append("font-size:").append(fontSize).append("pt;");
+		return sb.toString();
+	}
 	public static String getFontCSSStyle(Book book, Font font) {
 		final StringBuffer sb = new StringBuffer();
 		
@@ -553,7 +592,8 @@ public final class BookHelper {
 				((XSSFRichTextString)rstr).getFontOfFormattingRun(run);
 		
 	}
-	
+
+	//TODO see if we can remove this function to use getFontHTMLColor(Cell, Font);
 	public static String getFontHTMLColor(Book book, Font font) {
 		if (font instanceof XSSFFont) {
 			final XSSFFont f = (XSSFFont) font;
@@ -562,6 +602,21 @@ public final class BookHelper {
 		} else {
 			return indexToHSSFRGB((HSSFWorkbook)book, font.getColor());
 		}
+	}
+
+	public static String getFontHTMLColor(Cell cell, Font font) {
+		if (font instanceof XSSFFont) {
+			final XSSFFont f = (XSSFFont) font;
+			final XSSFColor color = f.getXSSFColor();
+			return BookHelper.colorToHTML(cell.getSheet().getWorkbook(), color);
+		} else {
+			return getHSSFRGBString((HSSFCell)cell, font.getColor());
+		}
+	}
+	
+	private static String getHSSFRGBString(HSSFCell cell, short index) {
+		final HSSFColor color = ((HSSFCellStyle)cell.getCellStyle()).getFontColorColor(index);
+		return HSSFColorToHTML((HSSFWorkbook) cell.getSheet().getWorkbook(), color);
 	}
 	
 	/*
@@ -688,7 +743,8 @@ public final class BookHelper {
  	}
 	
 	private static String HSSFColorToHTML(HSSFWorkbook book, HSSFColor color) {
-		return color == null ? AUTO_COLOR : indexToHSSFRGB(book, color.getIndex());
+		return color == null || HSSFColor.AUTOMATIC.getInstance().equals(color) ? AUTO_COLOR : 
+			color.isIndex() ? indexToHSSFRGB(book, color.getIndex()) : tripletToHTML(color.getTriplet());
 	}
 	
 	private static String indexToHSSFRGB(HSSFWorkbook book, int index) {
@@ -706,10 +762,12 @@ public final class BookHelper {
 			if (color != null)
 				triplet = color.getTriplet();
 		}
-		return triplet == null ? null : color == HSSFColor.AUTOMATIC.getInstance() ? AUTO_COLOR : 
-			"#"+ toHex(triplet[0])+ toHex(triplet[1])+ toHex(triplet[2]);
+		return triplet == null ? null : 
+			HSSFColor.AUTOMATIC.getInstance().equals(color) ? AUTO_COLOR : tripletToHTML(triplet);
 	}
-	
+	private static String tripletToHTML(short[] triplet) {
+		return triplet == null ? null : "#"+ toHex(triplet[0])+ toHex(triplet[1])+ toHex(triplet[2]);
+	}
 	public static short rgbToIndex(Book book, String color) {
 		HSSFPalette palette = ((HSSFWorkbook)book).getCustomPalette();
 		short red = Short.parseShort(color.substring(1,3), 16); //red
