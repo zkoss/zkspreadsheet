@@ -25,8 +25,8 @@ public class SS_088_Test extends SSAbstractTestCase {
         // Verify
         verifyTrue(getSpecifiedCell(1, 18).text().startsWith("T"));
         verifyTrue(getSpecifiedCell(1, 19).text().startsWith("O"));
-        verifyTrue(getSpecifiedCell(1, 20).text().startsWith("N"));
-        verifyTrue(getSpecifiedCell(1, 21).text().startsWith("C"));
+        verifyTrue(getSpecifiedCell(1, 20).text().startsWith("C"));
+        verifyTrue(getSpecifiedCell(1, 21).text().startsWith("A"));
     }
 
 }

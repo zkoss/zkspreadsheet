@@ -6,7 +6,8 @@ public class SS_054_Test extends SSAbstractTestCase {
     @Override
     protected void executeTest() {
         // Select source cell
-        JQuery cell_J_13 = getSpecifiedCell(9, 12);
+        JQuery cell_J_13 = getSpecifiedCell(8, 12);
+        String origValue = numberOnly(getCellContent(cell_J_13));
         clickCell(cell_J_13);
         clickCell(cell_J_13);
         
@@ -35,11 +36,14 @@ public class SS_054_Test extends SSAbstractTestCase {
         
         // Verify
         cell_L_13 = loadTargetCell();
-        verifyEquals("Incorrect result! J13=56000, L13=" + cell_L_13.text(), "56000", cell_L_13.text());
+        verifyEquals("Incorrect result! L13=" + cell_L_13.text(), origValue, cell_L_13.text());
     }
     
     private JQuery loadTargetCell() {
         return getSpecifiedCell(11, 12);
     }
-
+    
+    private static String numberOnly(String s) {  
+    	   return s.replaceAll("[^0-9]","");  
+    }
 }

@@ -34,7 +34,7 @@ public class SS_057_Test extends SSAbstractTestCase {
         waitResponse();
         
         // Verify
-        verifyTrue(jq("$pasteSpecialDlg").isVisible());
+        verifyTrue(jq("$_pasteSpecialDialog").isVisible());
     }
     
     private JQuery loadTargetCell() {

@@ -13,7 +13,9 @@ public class SS_004_Test extends SSAbstractTestCase {
     	waitResponse();
     	click("jq('$openFile a.z-menu-item-cnt')");
     	waitResponse();
-    	click("jq('$uploadBtn input')");
+    	// TODO how to verify if open upload dialog
+    	// click("jq('$uploadBtn input')");
+    	
     	waitResponse();
     	sleep(5000);
     	// TODO verify if cell is still selected
