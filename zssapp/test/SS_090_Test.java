@@ -7,7 +7,7 @@ public class SS_090_Test extends SSAbstractTestCase {
     @Override
     protected void executeTest() {
         JQuery cell_O_6 = getSpecifiedCell(14, 5);
-        click(jq("$gridlinesCheckbox"));
+        click(jq("$gridlinesCheckbox input"));
         waitResponse();
         cell_O_6 = getSpecifiedCell(14, 5);
         verifyTrue(ColorVerifingHelper.isEqualColor("rgb(208, 215, 233)", 
