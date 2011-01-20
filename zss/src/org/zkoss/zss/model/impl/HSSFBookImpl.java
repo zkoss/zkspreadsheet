@@ -24,10 +24,12 @@ import org.zkoss.poi.hssf.model.InternalSheet;
 import org.zkoss.poi.hssf.record.NameRecord;
 import org.zkoss.poi.hssf.record.formula.Ptg;
 import org.zkoss.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.zkoss.poi.hssf.usermodel.HSSFPalette;
 import org.zkoss.poi.hssf.usermodel.HSSFSheet;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbookHelper;
 import org.zkoss.poi.hssf.util.HSSFColor;
+import org.zkoss.poi.hssf.util.HSSFColorExt;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.poi.ss.usermodel.Color;
@@ -254,6 +256,9 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 	 * Finds a font that matches the one with the supplied attributes
 	 */
 	public Font findFont(short boldWeight, Color color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
+		if (color instanceof HSSFColorExt) {
+			color = ((HSSFColorExt)color).getSimilarColor(getCustomPalette());
+		}
 		return findFont(boldWeight, ((HSSFColor)color).getIndex(), fontHeight, name, italic, strikeout, typeOffset, underline); 
 	}
 	

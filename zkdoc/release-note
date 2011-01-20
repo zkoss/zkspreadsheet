@@ -2,6 +2,7 @@
 ZK Spreadsheet 2.0.1
 
 *Features:
+  169 xls file support full rgb color
   277 ZK Spreadsheet App: Formula Editor shall support multiple line and extensible
   281 Support wrapping of ZK Spreadsheet as a JSP tag
   278 ZK Spreadsheet App: press ESC shall close(cancel) any wizards/dialogs
@@ -25,7 +26,7 @@ ZK Spreadsheet 2.0.1
   286 NPE when load the attached xls file
   287 click on specific cell and set font bold, cause NPE
   288 ZK Spreadsheet App: number format dialog select "General" cause error dialog
-  289 xls font color is not match to what was in Excel
+  289 xls font color does not match to what was in Excel
   
 	------------
 ZK Spreadsheet 2.0.0

@@ -222,10 +222,12 @@ public class Utils {
 					final Workbook book = sheet.getWorkbook();
 					Font srcFont = context.getFont();
 
-					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), BookHelper.HTMLToColor(book, color), srcFont.getFontHeight(), srcFont.getFontName(), 
+					Color fontColor = BookHelper.HTMLToColor(book, color);
+					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), fontColor, srcFont.getFontHeight(), srcFont.getFontName(), 
 							srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
 					CellStyle newStyle = context.cloneCellStyle();
 					newStyle.setFont(newFont);
+					newStyle.setFontColorColor(fontColor);
 					context.getRange().setStyle(newStyle);
 				}
 			}});

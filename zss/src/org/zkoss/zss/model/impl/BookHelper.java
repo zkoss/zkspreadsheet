@@ -35,6 +35,7 @@ import org.zkoss.lang.Library;
 import org.zkoss.lang.Objects;
 import org.zkoss.poi.hssf.record.CellValueRecordInterface;
 import org.zkoss.poi.hssf.record.FormulaRecord;
+import org.zkoss.poi.hssf.record.FullColorExt;
 import org.zkoss.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.zkoss.poi.hssf.record.formula.Area3DPtg;
 import org.zkoss.poi.hssf.record.formula.AreaPtgBase;
@@ -51,6 +52,7 @@ import org.zkoss.poi.hssf.usermodel.HSSFRichTextString;
 import org.zkoss.poi.hssf.usermodel.HSSFSheet;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
 import org.zkoss.poi.hssf.util.HSSFColor;
+import org.zkoss.poi.hssf.util.HSSFColorExt;
 import org.zkoss.poi.hssf.util.PaneInformation;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.format.CellFormat;
@@ -615,7 +617,7 @@ public final class BookHelper {
 	}
 	
 	private static String getHSSFRGBString(HSSFCell cell, short index) {
-		final HSSFColor color = ((HSSFCellStyle)cell.getCellStyle()).getFontColorColor(index);
+		final HSSFColor color = ((HSSFCellStyle)cell.getCellStyle()).getFontColorColor();
 		return HSSFColorToHTML((HSSFWorkbook) cell.getSheet().getWorkbook(), color);
 	}
 	
@@ -744,9 +746,19 @@ public final class BookHelper {
 	
 	private static String HSSFColorToHTML(HSSFWorkbook book, HSSFColor color) {
 		return color == null || HSSFColor.AUTOMATIC.getInstance().equals(color) ? AUTO_COLOR : 
-			color.isIndex() ? indexToHSSFRGB(book, color.getIndex()) : tripletToHTML(color.getTriplet());
+			color.isIndex() ? indexToHSSFRGB(book, color.getIndex()) : HSSFColorToHTML((HSSFColorExt)color); 
 	}
-	
+	private static String HSSFColorToHTML(HSSFColorExt color) {
+		short[] triplet = color.getTriplet();
+		byte[] argb = new byte[3];
+		for (int j = 0; j < 3; ++j) {
+			argb[j] = (byte) triplet[j];
+		}
+		if (color.isTint()) {
+			argb = getRgbWithTint(argb, color.getTint());
+		}
+		return 	"#"+ toHex(argb[0])+ toHex(argb[1])+ toHex(argb[2]); 
+	}
 	private static String indexToHSSFRGB(HSSFWorkbook book, int index) {
 		HSSFPalette palette = book.getCustomPalette();
 		HSSFColor color = null;
@@ -2652,7 +2664,7 @@ public final class BookHelper {
 		if (font == null) {
 			font = book.createFont();
 			font.setBoldweight(boldWeight);
-			BookHelper.setFontColor(font, color);
+			BookHelper.setFontColor(book, font, color);
 			font.setFontHeight(fontHeight);
 			font.setFontName(name);
 			font.setItalic(italic);
@@ -3605,14 +3617,9 @@ if (fillType == FILL_DEFAULT) {
 					HSSFColor ncolor = palette.addColor(r, g, b);
 					return ncolor;
 				} catch (RuntimeException ex) {
-					//return similar color if can't add new color to palette
-					/*
-					 * TODO: find a better solution for fix this issue
-					 * 
-					 * While there is no space for adding a color into palette
-					 * return similar color cause return inexact color
-					 */
-					return palette.findSimilarColor(red, green, blue);
+					//try to create a fullcolor if not a built in palette color
+					FullColorExt fullColor = new FullColorExt(red, green, blue);
+					return new HSSFColorExt(fullColor);
 				}
 				
 			}
@@ -3665,8 +3672,11 @@ if (fillType == FILL_DEFAULT) {
 		return indexHash.get(Integer.valueOf(index));
 	}
 	
-	private static void setFontColor(Font font, Color color) {
+	private static void setFontColor(Workbook book, Font font, Color color) {
 		if (font instanceof HSSFFont) {
+			if (color instanceof HSSFColorExt) { //not palette color
+				color = ((HSSFColorExt)color).getSimilarColor(((HSSFWorkbook)book).getCustomPalette());
+			}
 			((HSSFFont)font).setColor(((HSSFColor)color).getIndex());
 		} else {
 			((XSSFFont)font).setColor((XSSFColor)color);
