@@ -10,6 +10,6 @@ public class SS_169_Test extends SSAbstractTestCase {
     	waitResponse();
     	
     	// TODO verify if open file window is opened
-    	verifyTrue(widget(jq("$fileOpenWin div.z-window-highlighted-header")).exists());
+    	verifyTrue(widget(jq("$_openFileDialog div.z-window-highlighted-header")).exists());
     }
 }

@@ -53,11 +53,12 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     }
     
     public static final String CELL_WITHOUT_STYLE = "rgba(0, 0, 0, 0):Arial:left";
+    public static final String CELL_WITHOUT_STYLE2 = "transparent:Arial:left";
     
     /**
      * 
      * Get some style related property of a cell. Including background-color, font-family, text-align
-     * "rgba(0, 0, 0, 0):Arial:left" is the value for cleared style
+     * "rgba(0, 0, 0, 0):Arial:left" or "transparent:Arial:left" is the value for cleared style
      * @param col
      * @param row
      * @return
@@ -253,6 +254,15 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
 		waitResponse();
 		keyUpNative(CTRL);
 		waitResponse();
+    }
+    
+    /**
+     * Returns number string, remove all others
+     * @param val
+     * @return
+     */
+    public String numberOnly(String val) {
+    	return val.replaceAll("[^0-9]", "");
     }
     
     public Map<String, String> getCellStyleMap(JQuery cellLocator) {

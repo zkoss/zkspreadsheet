@@ -42,8 +42,4 @@ public class SS_054_Test extends SSAbstractTestCase {
     private JQuery loadTargetCell() {
         return getSpecifiedCell(11, 12);
     }
-    
-    private static String numberOnly(String s) {  
-    	   return s.replaceAll("[^0-9]","");  
-    }
 }

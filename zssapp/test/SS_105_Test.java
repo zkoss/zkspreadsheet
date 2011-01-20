@@ -31,8 +31,8 @@ public class SS_105_Test extends SSAbstractTestCase {
 		String afterF12Style = getCellCompositeStyle(5, 11);
 		String afterf12value = getSpecifiedCell(5,11).text();
 		
-		verifyEquals(beforef12value,afterf12value);
-		verifyEquals(afterF12Style, CELL_WITHOUT_STYLE);
+		verifyEquals(beforef12value, afterf12value);
+		verifyTrue(CELL_WITHOUT_STYLE.equals(afterF12Style) || CELL_WITHOUT_STYLE2.equals(afterF12Style));
 	}
 }
 

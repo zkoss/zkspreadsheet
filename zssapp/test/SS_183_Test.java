@@ -9,7 +9,7 @@ public class SS_183_Test extends SSAbstractTestCase {
         JQuery cell_J_13 = getSpecifiedCell(9, 12);
         clickCell(cell_J_13);
         clickCell(cell_J_13);
-        
+        String orgVal = numberOnly(getSpecifiedCell(9, 12).text());
         // Ctrl + C
         keyDownNative(CTRL);
         waitResponse();
@@ -38,11 +38,10 @@ public class SS_183_Test extends SSAbstractTestCase {
         
         // Verify
         cell_L_13 = loadTargetCell();
-        verifyEquals("Incorrect result! J13=80000, L13=" + cell_L_13.text(), "80000", cell_L_13.text());
+        verifyEquals("Incorrect result! L13=" + cell_L_13.text(), orgVal, cell_L_13.text());
     }
     
     private JQuery loadTargetCell() {
         return getSpecifiedCell(11, 12);
     }
-
 }

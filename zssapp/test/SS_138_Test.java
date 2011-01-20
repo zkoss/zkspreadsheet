@@ -23,7 +23,7 @@ public class SS_138_Test extends SSAbstractTestCase {
 		
 		//verify
 		String titleOfPopup =  jq(".z-window-highlighted.z-window-highlighted-shadow .z-window-highlighted-header").attr("textContent");
-		verifyEquals(titleOfPopup,"Insert Function");		
+		verifyEquals(titleOfPopup, "Insert Function");		
 	}
 }
 

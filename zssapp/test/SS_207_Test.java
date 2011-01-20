@@ -27,8 +27,7 @@ public class SS_207_Test extends SSAbstractTestCase {
 		waitResponse();
 		
 		//verify
-		String titleOfPopup =  jq(".z-window-overlapped .z-window-overlapped-header").attr("textContent");
-		verifyEquals(titleOfPopup,"Function Arguments");		
+		verifyTrue(jq("$_composeFormulaDialog").isVisible());		
 	}
 }
 

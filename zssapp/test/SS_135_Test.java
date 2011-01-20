@@ -1,4 +1,4 @@
-/* order_test_1Test.java
+ï»¿/* order_test_1Test.java
 
 	Purpose:
 		
@@ -26,11 +26,11 @@ public class SS_135_Test extends SSAbstractTestCase {
 		
 		//verify
 		String b13text = getSpecifiedCell(1, 12).text();
-		verifyEquals(b13text, "Average total assets");
+		verifyEquals(b13text, "AverageÂ totalÂ assets");
 		String b15text = getSpecifiedCell(1, 14).text();
-		verifyEquals(b15text, "Current assets");
+		verifyEquals(b15text, "CurrentÂ assets");
 		String b17text = getSpecifiedCell(1, 16).text();
-		verifyEquals(b17text, "Total assets");
+		verifyEquals(b17text, "TotalÂ assets");
 	}
 }
 

@@ -1,4 +1,4 @@
-/* order_test_1Test.java
+﻿/* order_test_1Test.java
 
 	Purpose:
 		
@@ -34,7 +34,7 @@ public class SS_215_Test extends SSAbstractTestCase {
 		
 		//verify
 		String h1value = getSpecifiedCell(7,0).text();
-		verifyEquals(h1value,"4:17�PM");
+		verifyEquals(h1value,"4:17 PM");
 	}
 }
 

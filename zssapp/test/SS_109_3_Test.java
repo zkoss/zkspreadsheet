@@ -37,7 +37,7 @@ public class SS_109_3_Test extends SSAbstractTestCase {
 
 		//verify
 		width = getColumnHeader(5).width();
-		verifyTrue(width==0);		
+		verifyFalse(getColumnHeader(5).isVisible());		
 
 		selectColumns(4,6);
 		
@@ -48,7 +48,7 @@ public class SS_109_3_Test extends SSAbstractTestCase {
 
 		//verify
 		width = getColumnHeader(5).width();
-		verifyTrue(width!=0);		
+		verifyTrue(getColumnHeader(5).isVisible());		
 	}
 }
 

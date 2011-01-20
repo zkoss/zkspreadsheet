@@ -33,7 +33,7 @@ public class SS_114_Test extends SSAbstractTestCase {
 		String afterf12value = getSpecifiedCell(5,11).text();
 		
 		verifyEquals(beforef12value,afterf12value);
-		verifyEquals(afterF12Style, CELL_WITHOUT_STYLE);
+		verifyTrue(CELL_WITHOUT_STYLE.equals(afterF12Style) || CELL_WITHOUT_STYLE2.equals(afterF12Style));
 		
 		sleep(5000);		
 	}

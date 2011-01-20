@@ -23,7 +23,7 @@ public class SS_142_Test extends SSAbstractTestCase {
 		
 		//verify
 		String titleOfPopup =  jq(".z-window-highlighted.z-window-highlighted-shadow .z-window-highlighted-header").attr("textContent");
-		verifyEquals(titleOfPopup,"Number Format");		
+		verifyEquals(titleOfPopup, "Number Format");		
 	}
 }
 

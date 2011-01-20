@@ -34,11 +34,9 @@ public class SS_148_Test extends SSAbstractTestCase {
         JQuery cell_B_13 = getSpecifiedCell(1, 12);
         String style = cell_B_13.css("color");
 
-        //input "#00ff00", but it actually get "009900"
-        //Is it acceptable in this spec?
         if (style != null) {
             verifyTrue("Unexcepted result: " + cell_B_13.css("color"), 
-            		ColorVerifingHelper.isEqualColor("#009900", style));
+            		ColorVerifingHelper.isEqualColor("#00ff00", style));
         } else {
             verifyTrue("Cannot get style of specified cell!", false);
         }		

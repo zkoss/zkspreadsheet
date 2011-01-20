@@ -26,7 +26,7 @@ public class SS_137_Test extends SSAbstractTestCase {
 		
 		//verify
 		String titleOfPopup =  jq(".z-window-highlighted.z-window-highlighted-shadow .z-window-highlighted-header").attr("textContent");
-		verifyEquals(titleOfPopup,"Custom Sort");		
+		verifyTrue("Custom Sort".equals(titleOfPopup) || "客製化排序".equals(titleOfPopup));		
 	}
 }
 
