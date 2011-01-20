@@ -34,7 +34,8 @@ public class SS_212_Test extends SSAbstractTestCase {
 		
 		//verify
 		String h1value = getSpecifiedCell(7,0).text();
-		verifyEquals("$12,345.68", h1value);
+		//Note. in Excel: after set this format, will add extra empty space
+		verifyEquals("$12,345.68 ", h1value);
 	}
 }
 
