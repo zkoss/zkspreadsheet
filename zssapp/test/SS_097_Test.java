@@ -35,8 +35,8 @@ public class SS_097_Test extends SSAbstractTestCase {
 
 		//verify
 		Widget marketSibling = widget(jq("@tab[label=\"Market\"]")).nextSibling();
-		String content = jq(marketSibling).find("span").attr("textContent");		
-		verifyEquals(content, "Debt");		
+		String content = jq(marketSibling).find("span").text();		
+		verifyEquals("Debt", content);		
 	}
 }
 

@@ -39,8 +39,8 @@ public class SS_099_Test extends SSAbstractTestCase {
 		
 		//verify
 		Widget debtSibling = widget(jq("@tab[label=\"Debt\"]")).nextSibling();
-		String content = jq(debtSibling).find("span").attr("textContent");		
-		verifyEquals(content, "my Sheet");		
+		String content = jq(debtSibling).find("span").text();		
+		verifyEquals("my Sheet", content);		
 	}
 }
 

@@ -24,11 +24,11 @@ public class SS_164_Test extends SSAbstractTestCase {
 		
 		//verify
 		String style = getCellStyle(1, 6);
-		verifyTrue(style.contains("font-style: italic;"));		
+		verifyTrue(containsIgnoreCase(style, "font-style: italic"));		
 		style = getCellStyle(1, 7);
-		verifyTrue(style.contains("font-style: italic;"));
+		verifyTrue(containsIgnoreCase(style, "font-style: italic"));
 		style = getCellStyle(5, 6);
-		verifyTrue(style.contains("font-style: italic;"));
+		verifyTrue(containsIgnoreCase(style, "font-style: italic"));
 	}
 }
 

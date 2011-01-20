@@ -265,6 +265,10 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     	return val.replaceAll("[^0-9]", "");
     }
     
+    public boolean containsIgnoreCase(String source, String target) {
+    	return source.toUpperCase().contains(target.toUpperCase());
+    }
+    
     public Map<String, String> getCellStyleMap(JQuery cellLocator) {
         Map<String, String> styleMap = new HashMap<String, String>();
         String[] style1 = null;

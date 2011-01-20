@@ -24,7 +24,7 @@ public class SS_146_Test extends SSAbstractTestCase {
 
 		//verify
 		String style = getCellStyle(1, 12);
-		verifyTrue(style.contains("font-weight: 700;"));		
+		verifyTrue(containsIgnoreCase(style, "font-weight: 700"));		
 	}
 }
 

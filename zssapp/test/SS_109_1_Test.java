@@ -18,13 +18,14 @@ public class SS_109_1_Test extends SSAbstractTestCase {
 	
 	@Override
 	protected void executeTest() {
+		verifyFalse(jq("$_formatNumberDialog").isVisible());
+		
 		rightClickColumnHeader(5);
 		click(jq("$numberFormat a.z-menu-item-cnt"));
 		waitResponse();
 
-		//verify
-		String titleOfPopup =  jq(".z-window-highlighted.z-window-highlighted-shadow .z-window-highlighted-header").attr("textContent");
-		verifyEquals(titleOfPopup,"Number Format");		
+		//verify	
+		verifyTrue(jq("$_formatNumberDialog").isVisible());
 	}
 }
 

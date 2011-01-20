@@ -34,7 +34,7 @@ public class SS_212_Test extends SSAbstractTestCase {
 		
 		//verify
 		String h1value = getSpecifiedCell(7,0).text();
-		verifyEquals(h1value,"$12,345.68");
+		verifyEquals("$12,345.68", h1value);
 	}
 }
 

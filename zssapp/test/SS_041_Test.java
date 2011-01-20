@@ -17,7 +17,7 @@ public class SS_041_Test extends SSAbstractTestCase {
     	
     	// TODO verify if uploaed image is displayed properly
     	Widget newTab = widget(marketTab).nextSibling();
-    	String content = jq(newTab).find("span").attr("textContent");
+    	String content = jq(newTab).find("span").text();
     	verifyEquals("sheet " + (origChildren + 1), content);
     	//"jq('@tab[label=\"sheet 7\"] span.z-tab-text')"
     }

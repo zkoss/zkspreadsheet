@@ -24,11 +24,11 @@ public class SS_165_Test extends SSAbstractTestCase {
 		
 		//verify
 		String style = getCellStyle(1, 6);
-		verifyTrue(style.contains("text-decoration: underline;"));		
+		verifyTrue(containsIgnoreCase(style, "text-decoration: underline"));		
 		style = getCellStyle(1, 7);
-		verifyTrue(style.contains("text-decoration: underline;"));
+		verifyTrue(containsIgnoreCase(style, "text-decoration: underline"));
 		style = getCellStyle(5, 6);
-		verifyTrue(style.contains("text-decoration: underline;"));
+		verifyTrue(containsIgnoreCase(style, "text-decoration: underline"));
 	}
 }
 

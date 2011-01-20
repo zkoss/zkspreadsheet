@@ -17,6 +17,8 @@ it will be useful, but WITHOUT ANY WARRANTY.
 public class SS_137_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
+		verifyFalse(jq("$_customSortDialog").isVisible());
+		
 		rightClickCells(1,12,1,16);
 	
 		mouseOver(jq("a.z-menu-cnt:eq(3)"));		
@@ -24,9 +26,8 @@ public class SS_137_Test extends SSAbstractTestCase {
 		click(jq("$customSort a.z-menu-item-cnt"));
 		waitResponse();
 		
-		//verify
-		String titleOfPopup =  jq(".z-window-highlighted.z-window-highlighted-shadow .z-window-highlighted-header").attr("textContent");
-		verifyTrue("Custom Sort".equals(titleOfPopup) || "客製化排序".equals(titleOfPopup));		
+		//verify	
+		verifyTrue(jq("$_customSortDialog").isVisible());
 	}
 }
 

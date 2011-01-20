@@ -43,7 +43,7 @@ public class SS_185_Test extends SSAbstractTestCase {
         Map<String, String> targetStyleMap = getCellStyleMap(cell_L_13);
 
         for (String key : sourceStyleMap.keySet()) {
-        	if (!"border-right".equals(key)) {
+        	if (!"border-right".equalsIgnoreCase(key)) {
         		verifyEquals(sourceStyleMap.get(key), targetStyleMap.get(key));
         	}
         }

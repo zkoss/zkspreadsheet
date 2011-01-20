@@ -17,13 +17,15 @@ it will be useful, but WITHOUT ANY WARRANTY.
 public class SS_143_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
+		verifyFalse(jq("$_insertHyperlinkDialog").isVisible());	
+		
 		rightClickCell(5,11);
 		click(jq("$hyperlink a.z-menu-item-cnt"));
 		waitResponse();
 		
 		//verify
-		String titleOfPopup =  jq(".z-window-highlighted.z-window-highlighted-shadow .z-window-highlighted-header").attr("textContent");
-		verifyEquals(titleOfPopup,"Insert Hyperlink");		
+		verifyTrue(jq("$_insertHyperlinkDialog").isVisible());		
+		
 	}
 }
 

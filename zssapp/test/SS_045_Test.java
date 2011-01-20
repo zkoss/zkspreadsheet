@@ -6,18 +6,22 @@ public class SS_045_Test extends SSAbstractTestCase {
     	//verify
     	verifyFalse(jq(".toolbarMask").exists());
     	
-    	click(jq(".z-toolbarbutton img:eq(1)"));
+    	click(jq("$closeBtn"));
     	waitResponse();
     	
     	//verify
-    	verifyTrue(jq(".toolbarMask").exists());
+    	verifyTrue(jq(".toolbarMask").isVisible());
+    	verifyFalse(jq("$closeBtn").isVisible());
     	
     	click("jq('$fileMenu button.z-menu-btn')");
     	waitResponse();
     	click("jq('$openFile a.z-menu-item-cnt')");
     	waitResponse();
     	
-    	// TODO verify if open file window is opened
-    	verifyTrue(widget(jq("$fileOpenWin div.z-window-highlighted-header")).exists());
+    	verifyTrue(jq("$_openFileDialog div.z-window-highlighted-header").isVisible());
+   
+    	//TODO: add another test to open a empty sheet verify sheet opened
+    	//verifyFalse(jq(".toolbarMask").isVisible());
+    	//verifyTrue(jq("$closeBtn").isVisible());
     }
 }

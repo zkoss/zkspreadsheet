@@ -24,7 +24,7 @@ public class SS_147_Test extends SSAbstractTestCase {
 		
 		//verify
 		String style = getCellStyle(1, 12);
-		verifyTrue(style.contains("font-style: italic;"));		
+		verifyTrue(containsIgnoreCase(style, "font-style: italic"));		
 	}
 }
 

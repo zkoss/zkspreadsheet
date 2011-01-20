@@ -19,6 +19,7 @@ public class SS_083_Test extends SSAbstractTestCase {
         
         cell_F_6 = loadCell();
         int currentWidth = cell_F_6.width();
+        //TODO: in IE, width will be the same
         verifyTrue("Unexcepted result: " + currentWidth, currentWidth < originalWidth);
         
         sleep(8000);

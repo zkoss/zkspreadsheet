@@ -17,13 +17,14 @@ it will be useful, but WITHOUT ANY WARRANTY.
 public class SS_138_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
+		verifyFalse(jq("$_insertFormulaDialog").isVisible());	
+		
 		rightClickCell(5,11);
 		click(jq("$formula a.z-menu-item-cnt"));
 		waitResponse();
 		
 		//verify
-		String titleOfPopup =  jq(".z-window-highlighted.z-window-highlighted-shadow .z-window-highlighted-header").attr("textContent");
-		verifyEquals(titleOfPopup, "Insert Function");		
+		verifyTrue(jq("$_insertFormulaDialog").isVisible());		
 	}
 }
 

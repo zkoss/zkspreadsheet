@@ -24,7 +24,7 @@ public class SS_152_Test extends SSAbstractTestCase {
 
 		//verify
 		String style = getCellStyle(1, 12);
-		verifyTrue(style.contains("text-align: center;"));		
+		verifyTrue(containsIgnoreCase(style, "text-align: center"));		
 	}
 }
 

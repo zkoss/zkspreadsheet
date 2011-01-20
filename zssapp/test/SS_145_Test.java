@@ -24,8 +24,8 @@ public class SS_145_Test extends SSAbstractTestCase {
 		waitResponse();		
 		
 		//verify
-		String style = getSpecifiedCell(5, 11).attr("style");
-		verifyTrue(style.contains("font-size: 24pt;"));		
+		String style = getSpecifiedCell(5, 11).attr("style").toUpperCase();
+		verifyTrue(containsIgnoreCase(style, "font-size: 24pt"));		
 	}
 }
 
