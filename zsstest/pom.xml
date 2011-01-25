@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zssex</artifactId>
-			<version>{zss.version}</version>
+			<version>${zss.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

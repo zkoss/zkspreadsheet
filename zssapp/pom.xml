@@ -28,8 +28,8 @@
 -->
 		<gmapsz.version>2.0.51</gmapsz.version>
 	</properties>
-	<version>${zk.version}</version>
-	<packaging>war</packaging>
+	<version>${zss.version}</version>
+	<packaging>jar</packaging>
 	<name>ZK Spreadsheet App</name>
 	<url>http://www.zkoss.org/zssapp</url>
 	<description>The Excel-like Web Application for ZK Spreadsheet</description>
@@ -216,16 +216,19 @@
 			<artifactId>gmapsz</artifactId>
 			<version>${gmapsz.version}</version>
 		</dependency>
- 		
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zsspdf</artifactId>
 			<version>${zss.version}</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zss</artifactId>
+			<version>${zss.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zssex</artifactId>
 			<version>${zss.version}</version>
 		</dependency>
 	</dependencies>
@@ -233,7 +236,7 @@
 		<sourceDirectory>${project.basedir}/src/</sourceDirectory>
 		<resources>
 			<resource>
-				<directory>${project.basedir}/src/archive</directory>
+				<directory>${project.basedir}/src/archive/</directory>
 			</resource>
 		</resources>
 		<plugins>
