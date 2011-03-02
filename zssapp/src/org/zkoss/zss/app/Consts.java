@@ -55,6 +55,7 @@ public class Consts {
 	public static String _RenameDialog_zul = "~./zssapp/html/renameDlg.zul";
 	public static String _CustomSortDialog_zul = "~./zssapp/html/dialog/customSort.zul";
 	public static String _ExportToPDF_zul = "~./zssapp/html/dialog/exportToPDF.zul";
+	public static String _ExportToHTML_zul = "~./zssapp/html/dialog/exportToHTML.zul";
 
 	/* Key */
 	public static String KEY_ARG_FORMULA_METAINFO = "KEY_ARG_FORMULA_METAINFO";

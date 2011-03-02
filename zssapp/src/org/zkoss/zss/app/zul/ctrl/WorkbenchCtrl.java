@@ -29,6 +29,8 @@ public interface WorkbenchCtrl {
 	 */
 	public void openExportPdfDialog();
 	
+	public void openExportHtmlDialog();
+	
 	public void openOpenFileDialog();
 	
 	public void openImportFileDialog();

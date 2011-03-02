@@ -51,7 +51,11 @@
 		<repository>
 			<id>ZSS EE Evaluation</id>
 			<url>http://mavensync.zkoss.org/zss/ee-eval</url>
-		</repository>		
+		</repository>
+		<repository>
+			<id>ZK EE Evaluation</id>
+			<url>http://mavensync.zkoss.org/zk/ee-eval</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -221,6 +225,11 @@
 			<artifactId>zsspdf</artifactId>
 			<version>${zss.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zsshtml</artifactId>
+			<version>${zss.version}</version>
+		</dependency>		
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zss</artifactId>

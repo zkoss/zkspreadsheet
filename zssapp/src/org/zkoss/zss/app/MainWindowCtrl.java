@@ -102,6 +102,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	private static final long serialVersionUID = 1;
 	
 	private final static String KEY_PDF = "org.zkoss.zss.app.exportToPdf";
+	private final static String KEY_HTML = "org.zkoss.zss.app.exportToHtml";
 	
 	static int event_x = 200;
 	static int event_y = 200;
@@ -177,6 +178,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	Dialog _importFileDialog;
 	Dialog _customSortDialog;
 	Dialog _exportToPdfDialog;
+	Dialog _exportToHtmlDialog;
 
 	public Spreadsheet getSpreadsheet() {
 		return spreadsheet;
@@ -1296,6 +1298,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			_exportToPdfDialog = (Dialog) Executions.createComponents(Consts._ExportToPDF_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
 		_exportToPdfDialog.fireOnOpen(null);
 	}
+		
 	private static boolean hasZssPdf() {
 		String val = Library.getProperty(KEY_PDF);
 		if (val == null) {
@@ -1313,6 +1316,43 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	private static boolean verifyZssPdf() {
 		try {
 			Class.forName("org.zkoss.zss.model.impl.pdf.PdfExporter");
+		} catch (ClassNotFoundException ex) {
+			return false;
+		}
+		return true;
+	}
+
+	//TODO: mimic openExportPdfDialog()
+	@Override
+	public void openExportHtmlDialog() {
+		if (!hasZssHtml()) {
+			try {
+				Messagebox.show("Please download Zss Html from ZK");
+			} catch (InterruptedException e) {
+			}
+			return;
+		}
+		Executions _exportToHtmlDialogExecutions;
+		if (_exportToHtmlDialog == null || _exportToHtmlDialog.isInvalidated())
+			_exportToHtmlDialog = (Dialog) Executions.createComponents(Consts._ExportToHTML_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
+		_exportToHtmlDialog.fireOnOpen(null);
+		
+	}
+
+	private static boolean hasZssHtml() {
+		String val = Library.getProperty(KEY_HTML);
+		if (val == null) {
+			boolean hasZssHtml = verifyZssHtml();
+			Library.setProperty(KEY_HTML, String.valueOf(hasZssHtml));
+			return hasZssHtml;
+		} else {
+			return Boolean.valueOf(Library.getProperty(KEY_HTML));
+		}
+	}
+
+	private static boolean verifyZssHtml() {
+		try {
+			Class.forName("org.zkoss.zss.model.impl.html.HtmlExporter");
 		} catch (ClassNotFoundException ex) {
 			return false;
 		}

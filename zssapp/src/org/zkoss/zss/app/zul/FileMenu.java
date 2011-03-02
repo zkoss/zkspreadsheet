@@ -52,7 +52,11 @@ public class FileMenu extends Menu implements IdSpace {
 	private Menuitem importFile;
 	private Menuitem exportPdf;
 	private boolean _exportToPdfDisabled; /* default false */
-	
+
+	//TODO:Peter, test export to html
+	private Menuitem exportHtml;
+	private boolean _exportToHtmlDisabled; /* default false */
+
 	private Menuitem exportExcel;
 	private boolean _exportToExcelDisabled;
 	
@@ -131,9 +135,18 @@ public class FileMenu extends Menu implements IdSpace {
 		_exportToPdfDisabled = disabled;
 		exportPdf.setDisabled(disabled);
 	}
-	
+
+	public void setExportHtmlDisabled(boolean disabled) {
+		_exportToHtmlDisabled = disabled;
+		exportHtml.setDisabled(disabled);
+	}
+
 	public void onClick$exportPdf() {
 		getDesktopWorkbenchContext().getWorkbenchCtrl().openExportPdfDialog();
+	}
+
+	public void onClick$exportHtml() {
+		getDesktopWorkbenchContext().getWorkbenchCtrl().openExportHtmlDialog();
 	}
 
 	public void setExportExcelDisabled(boolean disabled) {
@@ -178,10 +191,12 @@ public class FileMenu extends Menu implements IdSpace {
     			if (isOpen) {
 	    			deleteFile.setDisabled(false);
 	    			exportPdf.setDisabled(_exportToPdfDisabled | false);
+	    			exportHtml.setDisabled(_exportToHtmlDisabled | false);
 	    			exportExcel.setDisabled(_exportToExcelDisabled | false);
     			} else {
 	    			deleteFile.setDisabled(true);
 	    			exportPdf.setDisabled(true);
+	    			exportHtml.setDisabled(true);
 	    			exportExcel.setDisabled(true);
     			}
     			

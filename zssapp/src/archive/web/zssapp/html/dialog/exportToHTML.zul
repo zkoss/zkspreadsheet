@@ -1,0 +1,44 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<zk>
+<window id="_exportToHtmlDialog" title="${c:l('export.html')}" border="normal" width="480px" 
+mode="modal" closable="true" position="center" use="org.zkoss.zss.app.zul.Dialog"  
+apply="org.zkoss.zss.app.file.ExportToHtmlWindowCtrl">
+	<div style="padding: 10px;">
+	<radiogroup id="range"> </radiogroup>
+	<radiogroup id="orientation"> </radiogroup>
+	<grid>
+		<rows>
+			<row spans="3">
+				<label value="Publish"></label>
+			</row>
+			<row>
+				<radio id="currSelection" label="${c:l('export.Selection')}" radiogroup="range" />
+				<radio id="currSheet" label="${c:l('export.currentSheet')}" radiogroup="range"></radio>
+				<radio id="allSheet" label="${c:l('export.allSheet')}" radiogroup="range"></radio>
+			</row>
+			<row spans="3">
+				<label value="Option"></label>
+			</row>
+			<row>
+			   	<checkbox id="noHeader" label="${c:l('export.noHeader')}" />
+        		<checkbox id="noGridlines" label="${c:l('export.noGridlines')}" />	
+			</row>
+			<row spans="3">
+				<label value="${c:l('export.orientation')}">
+				</label>
+			</row>
+			<row>
+				<radio id="landscape" label="${c:l('export.orientation.landscape')}" radiogroup="orientation"/>
+				<radio id="portrait" label="${c:l('export.orientation.portrait')}" radiogroup="orientation"/>
+			</row>
+		</rows>
+	</grid>
+   	
+    <div height="20px" style="padding:10px 0 10px 10px;">
+	    <button id="export" label="${c:l('file.export')}" mold="trendy" style="float:right;">
+	    </button>
+    </div>
+    </div>
+</window>
+</zk>
