@@ -156,7 +156,7 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 		applyPrintSetting();
 		
 		Exporter c = Exporters.getExporter("html");
-//		((HtmlExporter)c).enableHeadings(includeHeadings());
+		((HtmlExporter)c).enableHeadings(includeHeadings());
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		export(c, baos);
@@ -183,8 +183,10 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 			String area = ss.getColumntitle(rect.getLeft()) + ss.getRowtitle(rect.getTop()) + ":" + 
 				ss.getColumntitle(rect.getRight()) + ss.getRowtitle(rect.getBottom());
 			exporter.exportSelection(ss.getSelectedSheet(), new AreaReference(area), outputStream);
-		} else
+		} else {
 			exporter.export(ss.getSelectedSheet(), outputStream);
+		}
+			
 	}
 	
 	private boolean includeHeadings () {
