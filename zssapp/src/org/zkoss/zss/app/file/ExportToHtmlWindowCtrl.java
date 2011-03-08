@@ -161,6 +161,9 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		export(c, baos);
 		
+		//test
+//		System.out.println(baos.toString());
+		
 		final AMedia amedia = new AMedia("generatedReport.html", "html", "text/html", baos.toByteArray());
 
 		Filedownload.save(amedia);
