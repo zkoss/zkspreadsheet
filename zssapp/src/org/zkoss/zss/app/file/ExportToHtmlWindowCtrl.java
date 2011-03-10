@@ -6,7 +6,7 @@
 	Description:
 		
 	History:
-		Sep 20, 2010 3:20:39 PM , Created by Sam
+		March 05, 2011 3:20:39 PM , Created by Peter
 }}IS_NOTE
 
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
@@ -44,7 +44,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Window;
 
 /**
- * @author Sam
+ * @author Peter
  *
  */
 public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
@@ -63,12 +63,6 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 	 * The document's orientation. Landscape or Portrait
 	 */
 	Radiogroup orientation;
-	/**
-	 * Original orientation setting
-	 */
-	boolean orgOrientation;
-	Radio landscape;
-	Radio portrait;
 	
 	/**
 	 * Indicate whether include header or not
@@ -82,6 +76,8 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 	Checkbox noGridlines;
 	
 	Button export;
+	
+//	Button test;
 	
 	Spreadsheet ss;
 	
@@ -104,27 +100,15 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 	private void loadPrintSetting() {
 		noGridlines.setChecked(!ss.getSelectedSheet().isPrintGridlines());
 		range.setSelectedItem(currSheet);
-		loadOrientationSetting();
 	}
 	
-	private void loadOrientationSetting() {
-		//TODO: move to sheet context
-		orgOrientation = ss.getSelectedSheet().getPrintSetup().getLandscape();
-		if (ss.getSelectedSheet().getPrintSetup().getLandscape()) {
-			orientation.setSelectedItem(landscape);
-		}
-		else
-			orientation.setSelectedItem(portrait);
-	}
 	
 	/**
 	 * Apply the print setting to each page
 	 */
 	private void applyPrintSetting() {
 		//TODO: move to sheet context
-		ss.getSelectedSheet().getPrintSetup().setLandscape(orientation.getSelectedItem() == landscape);
 		ss.getSelectedSheet().setPrintGridlines(includeGridlines());
-		boolean isLandscape = orientation.getSelectedItem() == landscape;
 		final Book book = ss.getBook(); 
 		if (book == null) {
 			return;
@@ -133,7 +117,6 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 		for (int i = 0; i < numSheet; i++) {
 			Sheet sheet = ss.getSheet(i);
 			PrintSetup setup = sheet.getPrintSetup();
-			setup.setLandscape(isLandscape);
 		}
 	}
 	
@@ -146,7 +129,6 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 		for (int i = 0; i < numSheet; i++) {
 			Sheet sheet = ss.getSheet(i);
 			PrintSetup setup = sheet.getPrintSetup();
-			setup.setLandscape(orgOrientation);
 		}
 	}
 
@@ -173,6 +155,13 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 		_exportToHtmlDialog.fireOnClose(null);
 	}
 	
+	//test only
+//	public void onClick$test(){
+//		Sheet sheet = ss.getBook().getSheetAt(0);
+//		String expr="=A1";
+//		Ranges.range((Worksheet) sheet,3,3).setValue(expr);
+//	}
+	
 	private void export(Exporter exporter, OutputStream outputStream) {
 		final Book book = ss.getBook();
 		if (book == null) {
@@ -189,7 +178,6 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 		} else {
 			exporter.export(ss.getSelectedSheet(), outputStream);
 		}
-			
 	}
 	
 	private boolean includeHeadings () {

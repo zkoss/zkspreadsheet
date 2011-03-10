@@ -24,6 +24,7 @@ apply="org.zkoss.zss.app.file.ExportToHtmlWindowCtrl">
 			   	<checkbox id="noHeader" label="${c:l('export.noHeader')}" />
         		<checkbox id="noGridlines" label="${c:l('export.noGridlines')}" />	
 			</row>
+			<!--
 			<row spans="3">
 				<label value="${c:l('export.orientation')}">
 				</label>
@@ -32,12 +33,16 @@ apply="org.zkoss.zss.app.file.ExportToHtmlWindowCtrl">
 				<radio id="landscape" label="${c:l('export.orientation.landscape')}" radiogroup="orientation"/>
 				<radio id="portrait" label="${c:l('export.orientation.portrait')}" radiogroup="orientation"/>
 			</row>
+			 -->
 		</rows>
 	</grid>
    	
     <div height="20px" style="padding:10px 0 10px 10px;">
-	    <button id="export" label="${c:l('file.export')}" mold="trendy" style="float:right;">
+	    <button id="export" label="${c:l('file.export')}" mold="trendy" style="float:right;">	    
 	    </button>
+	    <!-- 
+	    <button id="test" label="test"/>
+	     -->
     </div>
     </div>
 </window>
