@@ -238,7 +238,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		if (this.invalid) return;
 
 		this._fixSize();
-		this.activeBlock.loadForVisible();
+		if (!this.activeBlock.loadForVisible()) //bug#303:avoid hide to visible and the mask is still there
+			this.showMask(false);
 	},
 	cleanup: function () {
 		this.animateHighlight(false);
