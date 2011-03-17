@@ -35,7 +35,7 @@ import org.zkoss.poi.hssf.record.Record;
 import org.zkoss.poi.hssf.record.RecordBase;
 import org.zkoss.poi.hssf.record.aggregates.DataValidityTable;
 import org.zkoss.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
-import org.zkoss.poi.hssf.record.formula.Ptg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.hssf.usermodel.HSSFCell;
 import org.zkoss.poi.hssf.usermodel.HSSFCellHelper;
 import org.zkoss.poi.hssf.usermodel.HSSFCellStyle;

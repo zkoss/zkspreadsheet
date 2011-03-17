@@ -27,7 +27,7 @@ import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zssex.model.impl.DrawingManager;
+import org.zkoss.zssex.model.impl.DrawingManagerImpl;
 
 /**
  * Test chart anchor and type. 
@@ -68,7 +68,7 @@ public class ImageXlsxPictureTest {
 	@Test
 	public void testPictures() {
 		XSSFSheet sheet1 = (XSSFSheet)_book.getSheetAt(0);
-		new DrawingManager(sheet1).getPictures();
+		new DrawingManagerImpl(sheet1).getPictures();
 		_book.getAllPictures();
 	}
 	

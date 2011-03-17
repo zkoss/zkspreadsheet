@@ -34,7 +34,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
 import org.zkoss.poi.POIXMLDocumentPart;
-import org.zkoss.poi.hssf.record.formula.Ptg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.openxml4j.opc.PackagePart;
 import org.zkoss.poi.openxml4j.opc.PackageRelationship;
 import org.zkoss.poi.ss.SpreadsheetVersion;

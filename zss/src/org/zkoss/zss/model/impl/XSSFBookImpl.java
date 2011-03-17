@@ -27,8 +27,8 @@ import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTVect
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
 import org.zkoss.poi.POIXMLProperties;
-import org.zkoss.poi.hssf.record.formula.Ptg;
-import org.zkoss.poi.hssf.record.formula.SheetNameFormatter;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.SheetNameFormatter;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaType;

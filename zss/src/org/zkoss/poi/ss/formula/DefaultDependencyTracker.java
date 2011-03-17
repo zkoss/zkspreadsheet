@@ -13,10 +13,10 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.poi.ss.formula;
 
-import org.zkoss.poi.hssf.record.formula.eval.ErrorEval;
-import org.zkoss.poi.hssf.record.formula.eval.NameEval;
-import org.zkoss.poi.hssf.record.formula.eval.StringEval;
-import org.zkoss.poi.hssf.record.formula.eval.ValueEval;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.formula.eval.NameEval;
+import org.zkoss.poi.ss.formula.eval.StringEval;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.eval.NotImplementedException;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.xel.XelContext;

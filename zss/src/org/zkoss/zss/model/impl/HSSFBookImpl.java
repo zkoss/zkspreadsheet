@@ -22,7 +22,7 @@ import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
 import org.zkoss.poi.hssf.model.InternalSheet;
 import org.zkoss.poi.hssf.record.NameRecord;
-import org.zkoss.poi.hssf.record.formula.Ptg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.zkoss.poi.hssf.usermodel.HSSFPalette;
 import org.zkoss.poi.hssf.usermodel.HSSFSheet;

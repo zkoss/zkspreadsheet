@@ -31,7 +31,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zssex.model.impl.DrawingManager;
+import org.zkoss.zssex.model.impl.DrawingManagerImpl;
 
 /**
  * Test chart anchor and type. 
@@ -68,7 +68,7 @@ public class ColumnchartXlsChartTest {
 	@Test
 	public void testColumnchart() {
 		HSSFSheet sheet1 = (HSSFSheet) _book.getSheet("Sheet1");
-		List<Chart> chartXes = new DrawingManager(sheet1).getCharts();
+		List<Chart> chartXes = new DrawingManagerImpl(sheet1).getCharts();
 		assertEquals(1, chartXes.size());
 		HSSFChart chart = (HSSFChart) chartXes.get(0).getChartInfo();
 		assertEquals("2003-2006 Income Summary", chart.getChartTitle());

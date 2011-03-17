@@ -23,8 +23,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
-import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
-import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.model.Book;

@@ -37,10 +37,10 @@ import org.zkoss.poi.hssf.record.CellValueRecordInterface;
 import org.zkoss.poi.hssf.record.FormulaRecord;
 import org.zkoss.poi.hssf.record.FullColorExt;
 import org.zkoss.poi.hssf.record.aggregates.FormulaRecordAggregate;
-import org.zkoss.poi.hssf.record.formula.Area3DPtg;
-import org.zkoss.poi.hssf.record.formula.AreaPtgBase;
-import org.zkoss.poi.hssf.record.formula.Ptg;
-import org.zkoss.poi.hssf.record.formula.RefPtgBase;
+import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
+import org.zkoss.poi.ss.formula.ptg.AreaPtgBase;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.ptg.RefPtgBase;
 import org.zkoss.poi.hssf.usermodel.HSSFCell;
 import org.zkoss.poi.hssf.usermodel.HSSFCellHelper;
 import org.zkoss.poi.hssf.usermodel.HSSFCellStyle;
@@ -769,7 +769,7 @@ public final class BookHelper {
 		if (color != null)
 			triplet =  color.getTriplet();
 		else {
-			final Hashtable<Integer, HSSFColor> colors = HSSFColor.getIndexHash();
+			final Map<Integer, HSSFColor> colors = HSSFColor.getIndexHash();
 			color = colors.get(Integer.valueOf(index));
 			if (color != null)
 				triplet = color.getTriplet();
@@ -793,7 +793,7 @@ public final class BookHelper {
 		if (pcolor != null) { //find default palette
 			return pcolor.getIndex();
 		} else {
-			final Hashtable<short[], HSSFColor> colors = HSSFColor.getTripletHash();
+			final Hashtable<short[], HSSFColor> colors = HSSFColor.getRgbHash();
 			HSSFColor tcolor = colors.get(new short[] {red, green, blue});
 			if (tcolor != null)
 				return tcolor.getIndex();
@@ -3608,7 +3608,7 @@ if (fillType == FILL_DEFAULT) {
 		if (pcolor != null) { //find default palette
 			return pcolor;
 		} else {
-			final Hashtable<short[], HSSFColor> colors = HSSFColor.getTripletHash();
+			final Hashtable<short[], HSSFColor> colors = HSSFColor.getRgbHash();
 			HSSFColor tcolor = colors.get(new short[] {red, green, blue});
 			if (tcolor != null)
 				return tcolor;

@@ -32,7 +32,7 @@ import org.zkoss.poi.hssf.usermodel.HSSFChart.HSSFSeries;
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zssex.model.impl.DrawingManager;
+import org.zkoss.zssex.model.impl.DrawingManagerImpl;
 
 /**
  * Test chart anchor and type. 
@@ -69,7 +69,7 @@ public class PiechartXlsChartTest {
 	@Test
 	public void testColumnchart() {
 		HSSFSheet sheet1 = (HSSFSheet) _book.getSheet("Sheet1");
-		List<Chart> chartXes = new DrawingManager(sheet1).getCharts();
+		List<Chart> chartXes = new DrawingManagerImpl(sheet1).getCharts();
 		assertEquals(1, chartXes.size());
 		HSSFChartX chartX = (HSSFChartX) chartXes.get(0); 
 		HSSFChart chart = (HSSFChart) chartX.getChartInfo();
