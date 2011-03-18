@@ -1,4 +1,13 @@
 	------------
+ZK Spreadsheet 2.1.0
+
+*Features:
+
+*Bug 
+  300 Numbers in Text-cells are not treated as text (leading zero is removed)
+  303 Spreadsheet Mask not removed when set visible of the container
+
+	------------
 ZK Spreadsheet 2.0.1
 
 *Features:

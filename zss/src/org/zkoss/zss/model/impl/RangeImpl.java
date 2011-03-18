@@ -284,38 +284,46 @@ public class RangeImpl implements Range {
 	
 	@Override
 	public void setEditText(String txt) {
-		Set<Ref>[] refs = null;
-		final Object[] values = BookHelper.editTextToValue(txt);
-		
-		if (values != null) {
-			switch(((Integer)values[0]).intValue()) {
-			case Cell.CELL_TYPE_FORMULA:
-				refs = setFormula((String)values[1]); //Formula
-				break;
-			case Cell.CELL_TYPE_STRING:
-				refs = setValue((String)values[1]); //String
-				break;
-			case Cell.CELL_TYPE_BOOLEAN:
-				refs = setValue((Boolean)values[1]); //boolean
-				break;
-			case Cell.CELL_TYPE_NUMERIC:
-				final Object val = values[1];
-				refs = val instanceof Number ?
-					setValue((Number)val): //number
-					setValue((Date)val); //date
-				if (values.length > 2 && values[2] != null) {
-					setDateFormat((String) values[2]);
+		Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
+		if (ref != null) {
+			final int tRow = ref.getTopRow();
+			final int lCol = ref.getLeftCol();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final Cell cell = getCell(tRow, lCol, refSheet);
+
+			final Object[] values = BookHelper.editTextToValue(txt, cell);
+			
+			Set<Ref>[] refs = null;
+			if (values != null) {
+				switch(((Integer)values[0]).intValue()) {
+				case Cell.CELL_TYPE_FORMULA:
+					refs = setFormula((String)values[1]); //Formula
+					break;
+				case Cell.CELL_TYPE_STRING:
+					refs = setValue((String)values[1]); //String
+					break;
+				case Cell.CELL_TYPE_BOOLEAN:
+					refs = setValue((Boolean)values[1]); //boolean
+					break;
+				case Cell.CELL_TYPE_NUMERIC:
+					final Object val = values[1];
+					refs = val instanceof Number ?
+						setValue((Number)val): //number
+						setValue((Date)val); //date
+					if (values.length > 2 && values[2] != null) {
+						setDateFormat((String) values[2]);
+					}
+					break;
+				case Cell.CELL_TYPE_ERROR:
+					refs = setValue((Byte)values[1]);
+					break;
 				}
-				break;
-			case Cell.CELL_TYPE_ERROR:
-				refs = setValue((Byte)values[1]);
-				break;
+			} else {
+				refs = setValue((String) null); 
 			}
-		} else {
-			refs = setValue((String) null); 
+			
+			reevaluateAndNotify(refs);
 		}
-		
-		reevaluateAndNotify(refs);
 	}
 	
 	private void setDateFormat(String formatString) {

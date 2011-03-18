@@ -1158,8 +1158,18 @@ public final class BookHelper {
 		}
 	}
 	
-	public static Object[] editTextToValue(String txt) {
+	private static boolean isStringFormat(String formatStr) {
+		return "@".equals(formatStr); //TODO, shall prepare a reqular expression match check!
+	}
+	public static Object[] editTextToValue(String txt, Cell cell) {
 		if (txt != null) {
+			//bug #300:	Numbers in Text-cells are not treated as text (leading zero is removed)
+			if (cell != null) {
+		        final String formatStr = cell.getCellStyle().getDataFormatString();
+				if (isStringFormat(formatStr)) { 
+					return new Object[] {new Integer(Cell.CELL_TYPE_STRING), txt}; //string
+				}
+			}
 			if (txt.startsWith("=")) {
 				if (txt.trim().length() > 1) {
 					return new Object[] {new Integer(Cell.CELL_TYPE_FORMULA), txt.substring(1)}; //formula 
