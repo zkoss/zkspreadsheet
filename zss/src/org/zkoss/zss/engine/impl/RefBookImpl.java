@@ -48,8 +48,15 @@ public class RefBookImpl implements RefBook {
 		_variableRefs = new HashMap<String, Ref>(4);
 		_maxrow = maxrow;
 		_maxcol = maxcol;
-		_queue = EventQueues.lookup(bookname);
+		EventQueue tmp = null;
+		try {
+			tmp = EventQueues.lookup(bookname);
+		} catch(IllegalStateException ex) {
+			//ignore for zsstest case(No execution)
+		}
+		_queue = tmp;
 	}
+	
 	
 	@Override
 	public RefSheet getOrCreateRefSheet(String sheetname) {

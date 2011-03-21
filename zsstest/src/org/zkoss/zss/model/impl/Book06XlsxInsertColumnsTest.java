@@ -91,8 +91,8 @@ public class Book06XlsxInsertColumnsTest {
 		assertEquals(9, row1.getCell(2).getNumericCellValue(), 0.0000000000000001); //C1: 9
 		assertEquals(11, row1.getCell(3).getNumericCellValue(), 0.0000000000000001); //D1: 11
 		
-		byte[] REDColor = new byte[] {(byte)0xff, (byte)0xff, 0, 0};
-		byte[] YELLOWColor = new byte[] {(byte)0xff, (byte)0xff, (byte)0xff, 0};
+		byte[] REDColor = new byte[] {(byte)0xff, 0, 0};
+		byte[] YELLOWColor = new byte[] {(byte)0xff, (byte)0xff, 0};
 		byte[] ffg = ((XSSFColor)row1.getCell(1).getCellStyle().getFillForegroundColorColor()).getRgb();
 		assertColors(REDColor, ffg);
 		byte[] fbg = ((XSSFColor)row1.getCell(1).getCellStyle().getFillBackgroundColorColor()).getRgb();

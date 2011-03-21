@@ -13,16 +13,6 @@
 	<name>ZK Spreadsheet Unit Test</name>
 	<url>http://www.zkoss.org/zsstest</url>
 	<description>ZK Spreadsheet Unit Test</description>
-	<licenses>
-		<license>
-			<name>GNU General Public License, Version 3.0</name>
-			<url>http://www.gnu.org/licenses/gpl.html</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-	<scm>
-		<url>https://zkspreadsheet.googlecode.com/releases/${project.version}/zss</url>
-	</scm>
 	<repositories>
 		<repository>
 			<id>zk repository</id>
@@ -48,6 +38,11 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<dependencies>
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zss</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zssex</artifactId>
