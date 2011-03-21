@@ -41,7 +41,7 @@ import org.zkoss.zss.ui.impl.Utils;
  * Check if the Text format correctly.
  * @author henrichen
  */
-public class Book15XlsTextFormatTest {
+public class Book16XlsTextFormatTest {
 	private Workbook _workbook;
 
 	/**
@@ -49,7 +49,7 @@ public class Book15XlsTextFormatTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		final String filename = "Book15.xls";
+		final String filename = "Book16.xls";
 		final InputStream is = new ClassLocator().getResourceAsStream(filename);
 		_workbook = new ExcelImporter().imports(is, filename);
 		assertTrue(_workbook instanceof Book);
