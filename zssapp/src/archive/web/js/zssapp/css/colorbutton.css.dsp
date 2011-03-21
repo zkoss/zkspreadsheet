@@ -56,8 +56,8 @@
 }
 <%-- Colorpicker --%>
 .z-colorpicker {
-	width: 380px;
-	height: 310px;
+	width: 382px;
+	height: 330px;
 	overflow: hidden;
 	position: relative;
 	background-color:#FFFFFF;
@@ -69,7 +69,7 @@
 }
 .z-colorpicker-gradient {
 	left: 7px;
-	top: 9px;
+	top: 31px;
 	position: absolute;
 	cursor: crosshair;
 }
@@ -89,7 +89,7 @@
 <%-- Colorpicker hue--%>
 .z-colorpicker-hue {
 	position: absolute;
-	top: 9px;
+	top: 31px;
 	left: 272px;
 	width: 27px;
 	height: 256px;
@@ -114,7 +114,7 @@
 }
 <%-- Colorpicker colors --%>
 .z-colorpicker-color {
-	top: 12px;
+	top: 34px;
 	left: 315px;
 	border: double;
 	position: absolute;
@@ -138,22 +138,22 @@
 	left: 310px;
 }
 .z-colorpicker-r {
-	top: 100px;
+	top: 122px;
 }
 .z-colorpicker-g {
-	top: 125px;
+	top: 147px;
 }
 .z-colorpicker-b {
-	top: 150px;
+	top: 172px;
 }
 .z-colorpicker-h {
-	top: 190px;
+	top: 212px;
 }
 .z-colorpicker-s {
-	top: 215px;
+	top: 237px;
 }
 .z-colorpicker-v {
-	top: 240px;
+	top: 262px;
 }
 .z-colorpicker-r-text, .z-colorpicker-g-text, .z-colorpicker-b-text,
 .z-colorpicker-h-text, .z-colorpicker-s-text, .z-colorpicker-v-text,
@@ -172,7 +172,7 @@
 <%-- Colorpicker input : hex --%>
 .z-colorpicker-hex {
 	position: absolute;
-	top: 275px;
+	top: 300px;
 	left: 10px;
 }
 .z-colorpicker-hex-inp {
@@ -181,7 +181,7 @@
 <%-- Colorpicker btn --%>
 .z-colorpicker-ok-btn, .z-colorpicker-cancel-btn {
 	cursor: pointer;
-	top: 275px;
+	top: 300px;
 	position: absolute;
 }
 .z-colorpicker-ok-btn {
@@ -194,10 +194,11 @@
 }
 <%-- Color Palette --%>
 .z-colorpalette {
-	width: 256px;
+	width: 256px; 
 	height: 220px;
 	border: 1px solid #86A4BE;
 	background-color: #FFFFFF;
+	padding-left: 4px;
 }
 .z-colorpalette-newcolor {
 	width: 50px;
@@ -236,7 +237,7 @@
 	height: 22px;
 	cursor: pointer;
 	position: absolute;
-	background: url(${c:encodeURL('~./zkex/img/breeze/colorbox/cb-buttons.gif')});
+	background: url(${c:encodeURL('~./zkex/img/colorbox/cb-buttons.gif')});
 }
 .z-colorbtn-palette-btn {
 	left: 6px;
