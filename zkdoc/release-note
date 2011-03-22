@@ -5,6 +5,7 @@ ZK Spreadsheet 2.1.0
 
 *Bug 
   296 Can't insert formula "=A1" by java
+  297 cell color is not right in xls file
   298 input/output/format of number-cells doesn't respect current locale
   300 Numbers in Text-cells are not treated as text (leading zero is removed)
   303 Spreadsheet Mask not removed when set visible of the container
