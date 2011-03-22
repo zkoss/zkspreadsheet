@@ -90,7 +90,10 @@ public class RefBookImpl implements RefBook {
 	
 	@Override
 	public void publish(Event event) {
-		getEventQueue().publish(event);
+		final EventQueue que = getEventQueue();
+		if (que != null) {
+			que.publish(event);
+		}
 	}
 	
 	protected EventQueue getEventQueue() {
