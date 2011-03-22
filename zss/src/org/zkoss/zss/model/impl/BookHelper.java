@@ -56,6 +56,7 @@ import org.zkoss.poi.hssf.util.HSSFColorExt;
 import org.zkoss.poi.hssf.util.PaneInformation;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.format.CellFormat;
+import org.zkoss.poi.ss.format.Formatters;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaParsingWorkbook;
 import org.zkoss.poi.ss.formula.FormulaRenderer;
@@ -1184,8 +1185,19 @@ public final class BookHelper {
 					new Object[] {Integer.valueOf(Cell.CELL_TYPE_STRING), txt}: //string
 					new Object[] {Integer.valueOf(Cell.CELL_TYPE_ERROR), new Byte(err)}; //error
 			} else {
+				//20110321, respect the current locale
+	            final char dot = Formatters.getDecimalSeparator();
+	            final char comma = Formatters.getGroupingSeparator();
+	            String txt0 = txt;
+	            if (dot != '.' || comma != ',') {
+	            	final int dotPos = txt.lastIndexOf(dot);
+            		txt0 = txt.replace(comma, ',');
+	            	if (dotPos >= 0) {
+	            		txt0 = txt0.substring(0, dotPos)+'.'+txt0.substring(dotPos+1);
+	            	}
+	            }
 				try {
-					final Double val = Double.parseDouble(txt);
+					final Double val = Double.parseDouble(txt0);
 					return new Object[] {new Integer(Cell.CELL_TYPE_NUMERIC), val}; //double
 				} catch (NumberFormatException ex) {
 					final Object[] results = parseToDate(txt); 
