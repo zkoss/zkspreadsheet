@@ -494,10 +494,10 @@ public class RangeImpl implements Range {
 		}
 		
 		private Set<Ref>[] setCellFormula(int rowIndex, int colIndex, RefSheet refSheet, String value) {
-			//locate the cell of the refSheet
-			final Cell cell = getOrCreateCell(rowIndex, colIndex, refSheet, Cell.CELL_TYPE_FORMULA);
+			//locate the cell of the refSheet. bug#296: cannot insert =A1 into cell via API
+			final Cell cell = getOrCreateCell(rowIndex, colIndex, refSheet, Cell.CELL_TYPE_BLANK);
 			final Set<Ref>[] refs = BookHelper.setCellFormula(cell, value);
-			if (refs[0] == null || refs[0].isEmpty()) {
+			if (refs != null && (refs[0] == null || refs[0].isEmpty())) {
 				refs[0].add(refSheet.getOrCreateRef(rowIndex, colIndex, rowIndex, colIndex));
 			}
 			return refs; 
