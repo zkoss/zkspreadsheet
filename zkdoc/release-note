@@ -2,6 +2,7 @@
 ZK Spreadsheet 2.1.0
 
 *Features:
+  294 Support 2003, 2007 Excel file format export to HTML
 
 *Bug 
   296 Can't insert formula "=A1" by java
