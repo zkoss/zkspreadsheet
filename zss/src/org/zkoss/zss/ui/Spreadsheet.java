@@ -1748,7 +1748,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 						|| (row < _loadedRect.getTop() && row > getRowfreeze()))
 					continue;
 				if (col > _loadedRect.getRight()
-						|| (col < _loadedRect.getLeft() && row > getColumnfreeze()))
+						|| (col < _loadedRect.getLeft() && col > getColumnfreeze()))
 					continue;
 
 				final Cell cell = Utils.getCell(sheet, row, col);
