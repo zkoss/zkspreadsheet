@@ -42,6 +42,7 @@ ZK Spreadsheet 2.0.1
   287 click on specific cell and set font bold, cause NPE
   288 ZK Spreadsheet App: number format dialog select "General" cause error dialog
   289 xls font color does not match to what was in Excel
+  304 Resizing guilding line does not show
   
 	------------
 ZK Spreadsheet 2.0.0

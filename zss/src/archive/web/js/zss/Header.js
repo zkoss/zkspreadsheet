@@ -231,7 +231,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			jq('#zk_sghost').remove();
 
 		var html = ['<div id="zk_sghost" style="font-size:0;line-height:0px;', htmlborder, 'position:absolute;top:', top, 'px;left:',
-	            left, 'px;width:', width, 'px;height:', height, 'px;z-index:2"></div>'].join('');
+	            left, 'px;width:', width, 'px;height:', height, 'px;z-index:20"></div>'].join('');
 		jq(document.body).append(html);
 		
 		return ctrl.element = jq('#zk_sghost')[0];
