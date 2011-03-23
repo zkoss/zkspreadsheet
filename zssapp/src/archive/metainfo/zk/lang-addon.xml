@@ -17,7 +17,7 @@
 		<mold>
 			<mold-name>default</mold-name>
 			<mold-uri>mold/simplecolorbutton.js</mold-uri>
-			<css-uri>css/simplecolorbutton.css.dsp</css-uri>
+			<css-uri>css/colorbutton.css.dsp</css-uri>
 		</mold>
 	</component>
 

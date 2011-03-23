@@ -262,6 +262,7 @@
 <%-- Color cell --%>
 .z-colorbtn-pp {
 	border: 1px solid #86A4BE;
+	background: #FFF;
 	position: absolute;
 	width: 180px;
 	height: 120px;
