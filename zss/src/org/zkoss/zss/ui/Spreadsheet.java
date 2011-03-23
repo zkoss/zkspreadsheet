@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.zkoss.lang.Classes;
+import org.zkoss.lang.Library;
 import org.zkoss.lang.Objects;
 import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.SpreadsheetVersion;
@@ -109,7 +110,6 @@ import org.zkoss.zss.ui.au.out.AuMergeCell;
 import org.zkoss.zss.ui.au.out.AuRemoveRowColumn;
 import org.zkoss.zss.ui.au.out.AuRetrieveFocus;
 import org.zkoss.zss.ui.au.out.AuSelection;
-import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HyperlinkEvent;
@@ -173,8 +173,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 	private static final String ROW_SIZE_HELPER_KEY = "_rowCellSize";
 	private static final String COLUMN_SIZE_HELPER_KEY = "_colCellSize";
 	private static final String MERGE_MATRIX_KEY = "_mergeRange";
-	private static final String WIDGET_HANDLER_KEY = "org.zkoss.zss.ui.sys.WidgetHandler";
-	private static final String WIDGET_LOADERS_KEY = "org.zkoss.zss.ui.sys.WidgetLoader";
+	private static final String WIDGET_HANDLER = "org.zkoss.zss.ui.sys.WidgetHandler.class";
+	private static final String WIDGET_LOADERS = "org.zkoss.zss.ui.sys.WidgetLoader.class";
 
 	transient private Book _book; // the spreadsheet book
 
@@ -3133,7 +3133,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 		if (_widgetLoaders != null)
 			return _widgetLoaders;
 		_widgetLoaders = new ArrayList<WidgetLoader>();
-		String loaderclzs = (String) getAttribute(WIDGET_LOADERS_KEY);
+		final String loaderclzs = (String) Library.getProperty(WIDGET_LOADERS);
 		if (loaderclzs != null) {
 			try {
 				String[] clzs = loaderclzs.split(",");
@@ -3169,7 +3169,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	 * @return
 	 */
 	private WidgetHandler newWidgetHandler() {
-		String handlerclz = (String) getAttribute(WIDGET_HANDLER_KEY);
+		final String handlerclz = (String) Library.getProperty(WIDGET_HANDLER);
 		if (handlerclz != null) {
 			try {
 				_widgetHandler = (WidgetHandler) Classes.newInstance(handlerclz, null, null);
