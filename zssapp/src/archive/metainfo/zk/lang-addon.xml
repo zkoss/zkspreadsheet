@@ -12,12 +12,12 @@
 	
 	<component>
 		<component-name>colorbutton</component-name>
-		<component-class>org.zkoss.zss.app.zul.Colorbutton</component-class>
-		<widget-class>zssapp.Colorbutton</widget-class>
+		<component-class>org.zkoss.zss.app.zul.Simplecolorbutton</component-class>
+		<widget-class>zssapp.Simplecolorbutton</widget-class>
 		<mold>
 			<mold-name>default</mold-name>
-			<mold-uri>mold/colorbutton.js</mold-uri>
-			<css-uri>css/colorbutton.css.dsp</css-uri>
+			<mold-uri>mold/simplecolorbutton.js</mold-uri>
+			<css-uri>css/simplecolorbutton.css.dsp</css-uri>
 		</mold>
 	</component>
 

@@ -24,7 +24,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.Dropdownbutton;
-import org.zkoss.zss.app.zul.Colorbutton;
+import org.zkoss.zss.app.zul.api.Colorbutton;
 import org.zkoss.zss.app.zul.DisposedEventListener;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.model.Range;
@@ -70,7 +70,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 	private boolean isWrapText;
 	private Toolbarbutton wrapTextBtn;
 	
-	public CellStyleCtrlPanel() {
+	public CellStyleCtrlPanel() {		
 		Executions.createComponents(Consts._CellStylePanel_zul, this, null);
 		Components.wireVariables(this, this);
 		Components.addForwards(this, this);

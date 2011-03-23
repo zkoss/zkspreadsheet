@@ -14,11 +14,13 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul.api;
 
+import org.zkoss.zk.ui.Component;
+
 /**
  * @author Sam
  *
  */
-public interface Colorbutton {
+public interface Colorbutton extends Component {
 	/**
 	 * Sets the color.
 	 * @param color in #RRGGBB format (hexdecimal).

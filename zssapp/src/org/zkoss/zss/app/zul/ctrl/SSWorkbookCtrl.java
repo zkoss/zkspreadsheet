@@ -15,16 +15,17 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.zul.ctrl;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import org.zkoss.image.Image;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zss.app.cell.CellHelper;
@@ -43,7 +44,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.Widget;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
-import org.zkoss.zssex.ui.widget.ImageWidget;
+import org.zkoss.zul.Image;
 import org.zkoss.zul.Messagebox;
 
 /**
@@ -177,21 +178,28 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	public void insertImage(Media media) {
 		//TODO: insert image shall not handle by AP
 		try {
-			if (media instanceof org.zkoss.image.Image) {
-				ImageWidget image = new ImageWidget();
-				image.setContent((Image) media);
-				image.setRow(spreadsheet.getSelection().getTop());
-				image.setColumn(spreadsheet.getSelection().getLeft());
+			if (media instanceof org.zkoss.image.Image && WebApps.getFeature("pe")) {
+				Class imageWidget = null;
+				try {
+					imageWidget = Class.forName("org.zkoss.zssex.ui.widget.ImageWidget");
+				} catch (ClassNotFoundException ex) {
+					return;
+				}
+				Widget widget = (Widget)imageWidget.newInstance();
+				Method setImageMethod = imageWidget.getDeclaredMethod("setContent", org.zkoss.image.Image.class);
+				setImageMethod.invoke(widget, (Image)media);
+				widget.setRow(spreadsheet.getSelection().getTop());
+				widget.setColumn(spreadsheet.getSelection().getLeft());
 				
 				Worksheet seldSheet = spreadsheet.getSelectedSheet();
 				String sheetName = seldSheet.getSheetName();
 				List<Widget> wgtList = sheetWidgets.get(sheetName);
 				if (wgtList == null)
 					sheetWidgets.put(sheetName, wgtList = new ArrayList<Widget>());
-				wgtList.add(image);
+				wgtList.add(widget);
 				
 				SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
-				ctrl.addWidget(image);
+				ctrl.addWidget(widget);
 			} else if (media != null) {
 				Messagebox.show("Not an image: " + media, "Error",
 						Messagebox.OK, Messagebox.ERROR);
