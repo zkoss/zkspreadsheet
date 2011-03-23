@@ -12,7 +12,7 @@
 	
 	<component>
 		<component-name>colorbutton</component-name>
-		<component-class>org.zkoss.zss.app.zul.Simplecolorbutton</component-class>
+		<component-class>org.zkoss.zss.app.zul.Colorbutton</component-class>
 		<widget-class>zssapp.Simplecolorbutton</widget-class>
 		<mold>
 			<mold-name>default</mold-name>

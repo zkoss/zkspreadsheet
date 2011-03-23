@@ -31,13 +31,11 @@ public class ZssappWebInit implements WebAppInit {
 
 	public void init(WebApp wapp) throws Exception {
 		
-		//use ZK PE's implementation if available
+		//use ZK PE's widget implementation if available
 		LanguageDefinition langDef = LanguageDefinition.getByExtension("zul");
 		ComponentDefinition colorButtonDef = langDef.getComponentDefinitionIfAny("colorbutton");
 		if (colorButtonDef != null && WebApps.getFeature("pe")) {
 			colorButtonDef.setDefaultWidgetClass("zssappex.Colorbutton");
-			colorButtonDef.setImplementationClass("org.zkoss.zss.app.zul.Colorbutton");
-			colorButtonDef.addMold("default", "zssappex.Colorbutton");
 		}
 	}
 

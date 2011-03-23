@@ -16,19 +16,29 @@ package org.zkoss.zss.app.zul;
 
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.util.Map;
 
 import org.zkoss.image.Image;
 import org.zkoss.lang.Objects;
+import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.ui.Desktop;
+import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.WebApps;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.sys.ContentRenderer;
-import org.zkoss.zkex.zul.Colorbox;
 import org.zkoss.zul.impl.Utils;
+import org.zkoss.zul.impl.XulElement;
 
 /**
  * @author Sam
  *
  */
-public class Colorbutton extends Colorbox implements org.zkoss.zss.app.zul.api.Colorbutton {
+public class Colorbutton extends XulElement {
+	private String _color = "#000000";
+	private int _rgb = 0x000000;
+	private boolean _noSmartUpdate = false;
+	
 	private String _src;
 	private Image _image;
 	/** Count the version of {@link #_image}. */
@@ -67,6 +77,25 @@ public class Colorbutton extends Colorbox implements org.zkoss.zss.app.zul.api.C
 
 		render(renderer, "image", getEncodedImageURL());
 	}
+	
+	/** Processes an AU request. It is invoked internally.
+	 *
+	 * <p>Default: in addition to what are handled by {@link XulElement#service},
+	 * it also handles onChange.
+	 */
+	public void service(AuRequest request, boolean everError) {
+		final String cmd = request.getCommand();
+		if (Events.ON_CHANGE.equals(cmd)) {
+			final Map data = request.getData();
+
+			_noSmartUpdate = true;
+			setColor((String)data.get("color"));
+			_noSmartUpdate = false;
+			
+			Events.postEvent(Event.getEvent(request));
+		} else
+			super.service(request, everError);
+	}
 
 	/** Returns the encoded URL for the image ({@link #getImage}
 	 * or {@link #getImageContent}), or null if no image.
@@ -87,5 +116,41 @@ public class Colorbutton extends Colorbox implements org.zkoss.zss.app.zul.api.C
 		public Object getValue() {
 			return getEncodedImageURL();
 		}
+	}
+
+	/**
+	 * Sets the color.
+	 * @param color in #RRGGBB format (hexdecimal).
+	 */
+	public String getColor() {
+		return _color;
+	}
+	/**
+	 * Returns the color (in string as #RRGGBB).
+	 * <p>Default: #000000
+	 */
+	public void setColor(String color) {
+		if(!Objects.equals(color, _color)) {
+			_color = color;
+			_rgb = _color == null ? 0 : decode(_color);
+			if (!_noSmartUpdate)
+				smartUpdate("color", _color);
+		}
+	}
+	/**
+	 * Returns the color in int
+	 * <p>Default: 0x000000
+	 */
+	public int getRGB() {
+		return _rgb;
+	}
+	private static int decode(String color) {
+		if (color == null) {
+			return 0;
+		}
+		if (color.length() != 7 || !color.startsWith("#")) {
+			throw new UiException("Incorrect color format (#RRGGBB) : " + color);
+		}
+		return Integer.parseInt(color.substring(1), 16);
 	}
 }
