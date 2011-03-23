@@ -9,6 +9,7 @@ ZK Spreadsheet 2.1.0
   297 cell color is not right in xls file
   298 input/output/format of number-cells doesn't respect current locale
   300 Numbers in Text-cells are not treated as text (leading zero is removed)
+  304 Resizing guilding line does not show
   303 Spreadsheet Mask not removed when set visible of the container
   307 chart not shown when set visible of the container of the spreadsheet
   308 Set empty String to cell shall be deemed as blank cell
@@ -42,7 +43,6 @@ ZK Spreadsheet 2.0.1
   287 click on specific cell and set font bold, cause NPE
   288 ZK Spreadsheet App: number format dialog select "General" cause error dialog
   289 xls font color does not match to what was in Excel
-  304 Resizing guilding line does not show
   
 	------------
 ZK Spreadsheet 2.0.0
