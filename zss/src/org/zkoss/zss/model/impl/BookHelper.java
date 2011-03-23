@@ -1088,7 +1088,7 @@ public final class BookHelper {
 	}
 
 	public static Set<Ref>[] setCellValue(Cell cell, String value) {
-		return setCellValue(cell, value == null ? null : cell.getSheet().getWorkbook().getCreationHelper().createRichTextString(value));
+		return setCellValue(cell, value == null || value.length() == 0 ? null : cell.getSheet().getWorkbook().getCreationHelper().createRichTextString(value));
 	}
 	
 	public static Set<Ref>[] setCellValue(Cell cell, RichTextString value) {

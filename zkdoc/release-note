@@ -11,6 +11,7 @@ ZK Spreadsheet 2.1.0
   300 Numbers in Text-cells are not treated as text (leading zero is removed)
   303 Spreadsheet Mask not removed when set visible of the container
   307 chart not shown when set visible of the container of the spreadsheet
+  308 Set empty String to cell shall be deemed as blank cell
 
 	------------
 ZK Spreadsheet 2.0.1
