@@ -266,7 +266,7 @@
 											label="f(x)"/>
 						</div>
 					</hlayout>
-					<div sclass="zssapp-empty" vflex="true"></div>
+					<div sclass="zssapp-empty" vflex="true" hflex="min"></div>
 				</vlayout>
 				<formulaeditor id="formulaEditor" style="font-size:16px;border:0px;padding:3px" hflex="true" vflex="true"/>
 				<div id="extendEditorBar" sclass="formulaBtn" style="background:#F5F5F5;" width="23px" vflex="true">
