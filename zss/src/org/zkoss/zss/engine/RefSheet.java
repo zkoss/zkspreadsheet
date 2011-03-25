@@ -236,4 +236,12 @@ public interface RefSheet {
 	 * @return the to be evaluated references(for re-evaluation, at [0]) and all affected references(for re-render, at [1])
 	 */
 	public Set<Ref>[] moveRange(int tRow, int lCol, int bRow, int rCol, int nRow, int nCol);
+
+	/**
+	 * Sets whether the given reference contains indirect precedents.
+	 * @param tRow top row index of the range
+	 * @param lCol left column index of the range
+	 * @param withIndirectPrecedent whether the reference contains indirect precedents.
+	 */
+	public void setRefWithIndirectPrecedent(int row, int col, boolean withIndirectPrecedent);
 }

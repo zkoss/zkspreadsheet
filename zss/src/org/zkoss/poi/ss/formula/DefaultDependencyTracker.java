@@ -13,11 +13,19 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.poi.ss.formula;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.zkoss.poi.ss.formula.eval.ErrorEval;
 import org.zkoss.poi.ss.formula.eval.NameEval;
 import org.zkoss.poi.ss.formula.eval.StringEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.eval.NotImplementedException;
+import org.zkoss.poi.ss.formula.function.FunctionMetadataRegistry;
+import org.zkoss.poi.ss.formula.ptg.AreaPtgBase;
+import org.zkoss.poi.ss.formula.ptg.FuncPtg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.ptg.RefPtgBase;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.xel.XelContext;
 import org.zkoss.zk.ui.UiException;
@@ -41,34 +49,8 @@ public class DefaultDependencyTracker implements DependencyTracker {
 	}
 	
 	@Override
-	public ValueEval addDependency(OperationEvaluationContext ec, ValueEval opResult, boolean eval) {
-		if (opResult instanceof LazyAreaEval) {
-			final CellRefImpl srcRef = prepareSrcRef(ec);
-			if (srcRef != null) {
-				final LazyAreaEval ae = (LazyAreaEval) opResult;
-				final String refBookName = ae.getBookName();
-				final String refSheetName = ae.getSheetName();
-				final String refLastSheetName = ae.getLastSheetName();
-				final int tRow = ae.getFirstRow();
-				final int lCol = ae.getFirstColumn();
-				final int bRow = ae.getLastRow();
-				final int rCol = ae.getLastColumn();
-				
-				myAddDependency(srcRef, refBookName, refSheetName, refLastSheetName, tRow, lCol, bRow, rCol, eval);
-			}
-		} else if (opResult instanceof LazyRefEval) {
-			final CellRefImpl srcRef = prepareSrcRef(ec);
-			if (srcRef != null) {
-				final LazyRefEval ae = (LazyRefEval) opResult;
-				final String refBookName = ae.getBookName();
-				final String refSheetName = ae.getSheetName();
-				final String refLastSheetName = ae.getLastSheetName();
-				final int tRow = ae.getRow();
-				final int lCol = ae.getColumn();
-	
-				myAddDependency(srcRef, refBookName, refSheetName, refLastSheetName, tRow, lCol, tRow, lCol, eval);
-			}
-		} else if (eval && opResult instanceof NameEval) {
+	public ValueEval postProcessValueEval(OperationEvaluationContext ec, ValueEval opResult, boolean eval) {
+		if (eval && opResult instanceof NameEval) {
 			return ErrorEval.NAME_INVALID;
 		}
 		return opResult;
@@ -108,7 +90,7 @@ public class DefaultDependencyTracker implements DependencyTracker {
 	}
 		
 	private void myAddDependency(CellRefImpl srcRef, String refBookname, 
-		String refSheetname, String refLastSheetName, int tRow, int lCol, int bRow, int rCol, boolean eval) {
+		String refSheetname, String refLastSheetName, int tRow, int lCol, int bRow, int rCol) {
 		if ("#REF".equals(refSheetname) || "#REF".equals(refLastSheetName)) { //handle refer to deleted sheet
 			return;
 		}
@@ -126,6 +108,55 @@ public class DefaultDependencyTracker implements DependencyTracker {
 			final String sheetname = targetBook.getSheetName(j);
 			final RefSheet targetRefSheet = targetRefBook.getOrCreateRefSheet(sheetname);
 			DependencyTrackerHelper.addDependency(srcRef, targetRefSheet, tRow, lCol, bRow, rCol);
+		}
+	}
+
+	@Override
+	public void addDependency(OperationEvaluationContext ec, Ptg[] ptgs) {
+		boolean withIndirect = false;
+		final Set<Ptg> precedents = new HashSet<Ptg>(ptgs.length); 
+		for(int j = 0; j < ptgs.length; ++j) {
+			final Ptg ptg = ptgs[j];
+			if (ptg instanceof FuncPtg) {
+				if (((FuncPtg)ptg).getFunctionIndex() == FunctionMetadataRegistry.FUNCTION_INDEX_INDIRECT) {
+					withIndirect = true;
+					break;
+				}
+			} else if (ptg instanceof AreaPtgBase || ptg instanceof RefPtgBase) {
+				precedents.add(ptg);
+			}
+		}
+		final CellRefImpl srcRef = prepareSrcRef(ec);
+		if (srcRef != null) {
+			if (withIndirect) {
+				srcRef.setWithIndirectPrecedent(true); //src ref with indirect precedent will always be evaluated, no need to handle other reference
+				return;
+			}
+			for(Ptg ptg : precedents) {
+				final WorkbookEvaluator evaluator = ec.getWorkbookEvaluator();
+				final ValueEval opResult = evaluator.getEvalForPtg(ptg, ec);
+				if (opResult instanceof LazyAreaEval) {
+					final LazyAreaEval ae = (LazyAreaEval) opResult;
+					final String refBookName = ae.getBookName();
+					final String refSheetName = ae.getSheetName();
+					final String refLastSheetName = ae.getLastSheetName();
+					final int tRow = ae.getFirstRow();
+					final int lCol = ae.getFirstColumn();
+					final int bRow = ae.getLastRow();
+					final int rCol = ae.getLastColumn();
+					
+					myAddDependency(srcRef, refBookName, refSheetName, refLastSheetName, tRow, lCol, bRow, rCol);
+				} else if (opResult instanceof LazyRefEval) {
+					final LazyRefEval ae = (LazyRefEval) opResult;
+					final String refBookName = ae.getBookName();
+					final String refSheetName = ae.getSheetName();
+					final String refLastSheetName = ae.getLastSheetName();
+					final int tRow = ae.getRow();
+					final int lCol = ae.getColumn();
+		
+					myAddDependency(srcRef, refBookName, refSheetName, refLastSheetName, tRow, lCol, tRow, lCol);
+				}
+			}
 		}
 	}
 }

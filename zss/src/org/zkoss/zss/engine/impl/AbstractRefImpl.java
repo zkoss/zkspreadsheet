@@ -70,6 +70,16 @@ public abstract class AbstractRefImpl implements Ref {
 		clearIfOrphanRef(this);
 	}
 	
+	@Override
+	public boolean isWithIndirectPrecedent() {
+		return false;
+	}
+	
+	@Override
+	public void setWithIndirectPrecedent(boolean b) {
+		//ignore
+	}
+	
 	private boolean clearIfOrphanRef(Ref ref) {
 		final Set<Ref> dependents = ref.getDependents();
 		if (dependents != null && !dependents.isEmpty()) {

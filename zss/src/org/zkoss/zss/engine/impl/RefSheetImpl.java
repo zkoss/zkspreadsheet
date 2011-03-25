@@ -13,7 +13,6 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.engine.impl;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,6 +58,7 @@ public class RefSheetImpl implements RefSheet {
 	private final IndexArrayList _rColIndex; //index of Ref right column
 	private final RefBook _ownerBook;
 	private String _sheetName;
+	private final Set<Ref> _indirectDependentRefs; //formula reference contains indirect function(always hit)
 	
 	public RefSheetImpl(RefBook ownerBook, String sheetName) {
 		_ownerBook = ownerBook;
@@ -68,6 +68,7 @@ public class RefSheetImpl implements RefSheet {
 		_bRowIndex = new IndexArrayList();
 		_lColIndex = new IndexArrayList();
 		_rColIndex = new IndexArrayList();
+		_indirectDependentRefs = new HashSet<Ref>(16);
 	}
 	
 	/*package*/void setSheetName(String newsheetname) {
@@ -148,7 +149,7 @@ public class RefSheetImpl implements RefSheet {
 		
 		int size = tRowHits.size();
 		if (size == 0) //special case 
-			return Collections.emptySet();
+			return _indirectDependentRefs;
 		int min = size;
 		Set<Ref> hits = tRowHits;
 		
@@ -162,7 +163,7 @@ public class RefSheetImpl implements RefSheet {
 		
 		size = bRowHits.size();
 		if (size == 0) //special case 
-			return Collections.emptySet();
+			return _indirectDependentRefs;
 		if (min > size) {
 			min = size;
 			hits = bRowHits;
@@ -178,7 +179,7 @@ public class RefSheetImpl implements RefSheet {
 		
 		size = lColHits.size();
 		if (size == 0) //special case
-			return Collections.emptySet();
+			return _indirectDependentRefs;
 		if (min > size) {
 			min = size;
 			hits = lColHits;
@@ -193,7 +194,7 @@ public class RefSheetImpl implements RefSheet {
 		}
 		size = rColHits.size();
 		if (size == 0) //special case
-			return Collections.emptySet();
+			return _indirectDependentRefs;
 		if (min > size) {
 			min = size;
 			hits = rColHits;
@@ -206,8 +207,12 @@ public class RefSheetImpl implements RefSheet {
 				continue;
 			hits.retainAll(c);
 			if (hits.isEmpty()) //special case
-				return Collections.emptySet();
+				return _indirectDependentRefs;
 		}
+		
+		//add indirectDependentRefs
+		hits.addAll(_indirectDependentRefs);
+		
 		return hits;
 	}
 
@@ -239,6 +244,9 @@ public class RefSheetImpl implements RefSheet {
 		
 		//update 4 indexes
 		remove4Indexes(ref);
+		
+		//update _indirectDependentRefs
+		_indirectDependentRefs.remove(ref);
 	}
 		
 	private void remove4Indexes(Ref ref) {
@@ -1389,5 +1397,18 @@ public class RefSheetImpl implements RefSheet {
 		clearRemoveRefs(removeHits, srcHits);
 		
 		return getBothDependents(removeHits, srcHits);
+	}
+	
+	@Override
+	public void setRefWithIndirectPrecedent(int row, int col, boolean withIndirectPrecedent) {
+		final Ref ref0 = getRef(row, col, row, col);
+		if (ref0 != null) {
+			if (!withIndirectPrecedent) {
+				_indirectDependentRefs.remove(ref0);
+			} else {
+				_indirectDependentRefs.add(ref0);
+			}
+			ref0.setWithIndirectPrecedent(withIndirectPrecedent);
+		}
 	}
 }

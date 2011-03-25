@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
@@ -36,7 +38,7 @@ public class RefBookImpl implements RefBook {
 	private final Map<String, RefSheet> _sheets;
 	private final int _maxrow;
 	private final int _maxcol;
-	private final Map<String, Ref> _variableRefs;
+	private final ConcurrentMap<String, Ref> _variableRefs;
 	private final EventQueue _queue;
 	
 	/**
@@ -45,7 +47,7 @@ public class RefBookImpl implements RefBook {
 	public RefBookImpl(String bookname, int maxrow, int maxcol) {
 		_bookname = bookname;
 		_sheets = new HashMap<String, RefSheet>(3);
-		_variableRefs = new HashMap<String, Ref>(4);
+		_variableRefs = new ConcurrentHashMap<String, Ref>(4);
 		_maxrow = maxrow;
 		_maxcol = maxcol;
 		EventQueue tmp = null;
@@ -125,23 +127,13 @@ public class RefBookImpl implements RefBook {
 
 	@Override
 	public Ref getOrCreateVariableRef(String name, RefSheet dummy) {
-		Ref ref = _variableRefs.get(name);
-		if (ref == null) {
-			synchronized(this) {
-				if (ref == null) {
-					ref = new VarRefImpl(name, dummy);
-					_variableRefs.put(name, ref);
-				}
-			}
-		}
-		return ref;
+		final Ref ref = new VarRefImpl(name, dummy);
+		return _variableRefs.putIfAbsent(name, ref);
 	}
 
 	@Override
 	public Ref removeVariableRef(String name) {
-		synchronized(this) {
-			return _variableRefs.remove(name);
-		}
+		return _variableRefs.remove(name);
 	}
 	
 	@SuppressWarnings("unchecked")

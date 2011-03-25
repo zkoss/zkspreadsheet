@@ -24,6 +24,7 @@ import org.zkoss.zss.engine.RefSheet;
 public class CellRefImpl extends AbstractRefImpl implements Ref {
 	private int _tRow;
 	private int _lCol;
+	private boolean _withIndirectPrecedent;
 	
 	public CellRefImpl(int row, int col, RefSheet ownerSheet) {
 		super(ownerSheet);
@@ -94,6 +95,21 @@ public class CellRefImpl extends AbstractRefImpl implements Ref {
 	@Override
 	public int getRowCount() {
 		return 1;
+	}
+	
+	@Override
+	public boolean isWithIndirectPrecedent() {
+		return _withIndirectPrecedent;
+	}
+	
+	@Override
+	public void setWithIndirectPrecedent(boolean b) {
+		if (_withIndirectPrecedent != b) {
+			_withIndirectPrecedent = b;
+			final int tRow = this.getTopRow();
+			final int lCol = this.getLeftCol();
+			getOwnerSheet().setRefWithIndirectPrecedent(tRow, lCol, b);
+		}
 	}
 	
 	//--AbstractRefImpl--//

@@ -112,4 +112,16 @@ public interface Ref {
 	 * Remove all precedents of this reference. 
 	 */
 	public void removeAllPrecedents();
+	
+	/**
+	 * Returns whether this reference contains Indirect precedent.
+	 * @return whether this reference contains Indirect precedent.
+	 */
+	public boolean isWithIndirectPrecedent();
+	
+	/**
+	 * Sets whether this reference contains Indirect precedent. 
+	 * @param withIndirectPrecedent whether this reference contains Indirect precedent.
+	 */ 
+	public void setWithIndirectPrecedent(boolean withIndirectPrecedent);
 }
