@@ -15,6 +15,7 @@ ZK Spreadsheet 2.1.0
   305 ZK Spreadsheet App: Formula bar text box is not left aligned to just right of f(x) button
   307 chart not shown when set visible of the container of the spreadsheet
   308 Set empty String to cell shall be deemed as blank cell
+  311 =20.6+3.6 formula shows incorrect number
 
 	------------
 ZK Spreadsheet 2.0.1
