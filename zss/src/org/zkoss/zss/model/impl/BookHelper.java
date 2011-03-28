@@ -56,6 +56,7 @@ import org.zkoss.poi.hssf.util.HSSFColorExt;
 import org.zkoss.poi.hssf.util.PaneInformation;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.format.CellFormat;
+import org.zkoss.poi.ss.format.CellTextFormatter;
 import org.zkoss.poi.ss.format.Formatters;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaParsingWorkbook;
@@ -154,6 +155,7 @@ public final class BookHelper {
 	public final static int INNERPASTE_COLUMN_WIDTHS = 0x80;
 	public final static int INNERPASTE_FORMATS = INNERPASTE_NUMBER_FORMATS + INNERPASTE_BORDERS + INNERPASTE_OTHER_FORMATS;
 	
+	private final static int INNERPASTE_FILL_LINER_TREND = INNERPASTE_FORMATS + INNERPASTE_VALUES_AND_FORMULAS;
 	private final static int INNERPASTE_FILL_COPY = INNERPASTE_FORMATS + INNERPASTE_VALUES_AND_FORMULAS + INNERPASTE_VALIDATION;   
 	private final static int INNERPASTE_FILL_VALUE = INNERPASTE_VALUES_AND_FORMULAS + INNERPASTE_VALIDATION;   
 	private final static int INNERPASTE_FILL_FORMATS = INNERPASTE_FORMATS;   
@@ -870,6 +872,7 @@ public final class BookHelper {
 				return new FormatTextImpl(cell.getRichStringCellValue());
 			}
 		}
+	
 		final CellFormat format = CellFormat.getInstance(formatStr == null ? "" : formatStr);
 		return new FormatTextImpl(format.apply(cell));
 	}
@@ -946,7 +949,7 @@ public final class BookHelper {
 		final int cellType = cell.getCellType();
 		switch(cellType) {
 		case Cell.CELL_TYPE_BLANK:
-			return "";
+			return null;
 		case Cell.CELL_TYPE_BOOLEAN:
 			return Boolean.valueOf(cell.getBooleanCellValue());
 		case Cell.CELL_TYPE_ERROR:
@@ -957,7 +960,7 @@ public final class BookHelper {
 			return new Double(cell.getNumericCellValue());
 		case Cell.CELL_TYPE_STRING:
 			final RichTextString rtstr = cell.getRichStringCellValue();
-			return rtstr == null ? cell.getSheet().getWorkbook().getCreationHelper().createRichTextString("") : rtstr; 
+			return rtstr; 
 		default:
 			throw new UiException("Unknown cell type:"+cellType);
 		}
@@ -1393,10 +1396,18 @@ public final class BookHelper {
 	public static ChangeInfo copyCell(Cell srcCell, Worksheet sheet, int rowIndex, int colIndex, int pasteType, int pasteOp, boolean transpose) {
 		//TODO not handle pastType == pasteValidation and pasteOp(assume none)
 		final Cell dstCell = getOrCreateCell(sheet, rowIndex, colIndex);
-		return copyCell(srcCell, dstCell, pasteType, pasteOp, transpose);
+		final Object cellValue = getCellValue(srcCell);
+		return copyCell(cellValue, srcCell, dstCell, pasteType, pasteOp, transpose);
 	}
 	
-	public static ChangeInfo copyCell(Cell srcCell, Cell dstCell, int pasteType, int pasteOp, boolean transpose) {
+	//[0]:last, [1]:all
+	private static ChangeInfo copyCell(Object cellValue, Cell srcCell, Worksheet sheet, int rowIndex, int colIndex, int pasteType, int pasteOp, boolean transpose) {
+		//TODO not handle pastType == pasteValidation and pasteOp(assume none)
+		final Cell dstCell = getOrCreateCell(sheet, rowIndex, colIndex);
+		return copyCell(cellValue, srcCell, dstCell, pasteType, pasteOp, transpose);
+	}
+	
+	private static ChangeInfo copyCell(Object cellValue, Cell srcCell, Cell dstCell, int pasteType, int pasteOp, boolean transpose) {
 		final Set<Ref> toEval = new HashSet<Ref>();
 		final Set<Ref> affected = new HashSet<Ref>();
 		final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
@@ -1446,31 +1457,31 @@ public final class BookHelper {
 			switch(cellType) {
 			case Cell.CELL_TYPE_BOOLEAN:
 			{
-				final Set<Ref>[] refs = setCellValue(dstCell, srcCell.getBooleanCellValue());
+				final Set<Ref>[] refs = setCellValue(dstCell, cellValue instanceof Boolean ? (Boolean)cellValue : srcCell.getBooleanCellValue());
 				assignRefs(toEval, affected, refs);
 				break;
 			}
 			case Cell.CELL_TYPE_ERROR:
 			{
-				final Set<Ref>[] refs = setCellErrorValue(dstCell, srcCell.getErrorCellValue());
+				final Set<Ref>[] refs = setCellErrorValue(dstCell, cellValue instanceof Byte ? (Byte)cellValue : srcCell.getErrorCellValue());
 				assignRefs(toEval, affected, refs);
 				break;
 			}
 	        case Cell.CELL_TYPE_NUMERIC:
 	        {
-	        	final Set<Ref>[] refs = setCellValue(dstCell, srcCell.getNumericCellValue());
+	        	final Set<Ref>[] refs = setCellValue(dstCell, cellValue instanceof Number ? (Number)cellValue : srcCell.getNumericCellValue());
 				assignRefs(toEval, affected, refs);
 				break;
 	        }
 	        case Cell.CELL_TYPE_STRING:
 	        {
-	        	final Set<Ref>[] refs = setCellValue(dstCell, srcCell.getRichStringCellValue());
+	        	final Set<Ref>[] refs = setCellValue(dstCell, cellValue instanceof RichTextString ? (RichTextString)cellValue : srcCell.getRichStringCellValue());
 				assignRefs(toEval, affected, refs);
 				break;
 	        }
 	        case Cell.CELL_TYPE_BLANK:
 	        {
-	        	final Set<Ref>[] refs = setCellValue(dstCell, (RichTextString) null);
+	        	final Set<Ref>[] refs = setCellValue(dstCell, (RichTextString)cellValue);
 				assignRefs(toEval, affected, refs);
 				break;
 	        }
@@ -2968,33 +2979,151 @@ public final class BookHelper {
 	
 	//[0]:last [1]:all
 	public static ChangeInfo fill(Worksheet sheet, Ref srcRef, Ref dstRef, int fillType) {
-//TODO, FILL_DEFAULT shall check the contents of the source cell, now we default to FILL_COPY
-if (fillType == FILL_DEFAULT) {
-	fillType = FILL_COPY;
-}
 		final int fillDir = BookHelper.getFillDirection(sheet, srcRef, dstRef);
 		if (fillDir == BookHelper.FILL_NONE) { //nothing to fill up, just return
 			return null;
 		}
 		switch(fillDir) {
 		case FILL_UP:
+			if (fillType == FILL_DEFAULT) {
+				fillType = srcRef.getRowCount() > 1 ? FILL_LINER_TREND : FILL_COPY;
+			}
 			return fillUp(sheet, srcRef, dstRef, fillType);
 		case FILL_DOWN:
+			if (fillType == FILL_DEFAULT) {
+				fillType = srcRef.getRowCount() > 1 ? FILL_LINER_TREND : FILL_COPY;
+			}
 			return fillDown(sheet, srcRef, dstRef, fillType);
 		case FILL_RIGHT:
+			if (fillType == FILL_DEFAULT) {
+				fillType = srcRef.getColumnCount() > 1 ? FILL_LINER_TREND : FILL_COPY;
+			}
 			return fillRight(sheet, srcRef, dstRef, fillType);
 		case FILL_LEFT:
+			if (fillType == FILL_DEFAULT) {
+				fillType = srcRef.getColumnCount() > 1 ? FILL_LINER_TREND : FILL_COPY;
+			}
 			return fillLeft(sheet, srcRef, dstRef, fillType);
 		}
 		//FILL_INVALID
 		throw new UiException("Destination range must include source range and can be fill in one direction only"); 
 	}
+	private static class Step {
+		public Object next(Cell cell) {
+			return getCellValue(cell);
+		}
+	}
+	private static class LinearStep extends Step{
+		private double _current;
+		private double _step;
+		public LinearStep(double initial, double step) {
+			_current = initial;
+			_step = step;
+		}
+		public Object next(Cell cell) {
+			if (cell.getCellType() != Cell.CELL_TYPE_NUMERIC) {
+				return null;
+			}
+			final double current = _current;
+			_current += _step;
+			return current;
+		}
+	}
+	private static Step getRowStep(Worksheet sheet, int fillType, int col, int row1, int row2) {
+		switch(fillType) {
+		case FILL_LINER_TREND:
+			final int diff = row2 - row1;
+			final boolean pos = diff >= 0;
+			double[] values = new double[(pos ? diff : -diff) + 1];
+			int j = 0;
+			if (pos) {
+				for (int row = row1; row <= row2; ++row) {
+					final Cell srcCell = BookHelper.getCell(sheet, row, col);
+					if (srcCell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+						values[j++] = srcCell.getNumericCellValue();
+					}
+				}
+			} else {
+				for (int row = row1; row >= row2; --row) {
+					final Cell srcCell = BookHelper.getCell(sheet, row, col);
+					if (srcCell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+						values[j++] = srcCell.getNumericCellValue();
+					}
+				}
+			}
+			return getLinearStep(values, j, pos);
+		case FILL_COPY:
+		case FILL_FORMATS:
+		case FILL_VALUES:
+		default:
+			return new Step(); //pure copy
+		}
+	}
+	private static Step getColStep(Worksheet sheet, int fillType, int row, int col1, int col2) {
+		switch(fillType) {
+		case FILL_LINER_TREND:
+			final int diff = col2 - col1;
+			final boolean pos = diff >= 0;
+			double[] values = new double[(pos ? diff : -diff) + 1];
+			int j = 0;
+			if (pos) {
+				for (int col = col1; col <= col2; ++col) {
+					final Cell srcCell = BookHelper.getCell(sheet, row, col);
+					if (srcCell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+						values[j++] = srcCell.getNumericCellValue();
+					}
+				}
+			} else {
+				for (int col = col1; col >= col2; --col) {
+					final Cell srcCell = BookHelper.getCell(sheet, row, col);
+					if (srcCell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+						values[j++] = srcCell.getNumericCellValue();
+					}
+				}
+			}
+			return getLinearStep(values, j, pos);
+		case FILL_COPY:
+		case FILL_FORMATS:
+		case FILL_VALUES:
+		default:
+			return new Step(); //pure copy
+		}
+	}
+	private static Step getLinearStep(double[] values, int j, boolean positive) {
+		if (j == 0) { //no numeric
+			return new Step(); //pure copy
+		} else if (j == 1) {
+			final double step = positive ? 1 : -1;
+			return new LinearStep(values[j-1]+step, step);
+		} else if (j == 2) { //standard linear series
+			final double step = values[1] - values[0];
+			return new LinearStep(values[j-1]+step, step);
+		} else if (j == 3) { //3 source case (by experiment)
+			double step = values[2] - values[0];
+			double initStep	= (step + values[1] - values[0]) / 3;
+			step /= 2;
+			return new LinearStep(values[j-1]+initStep, step);
+		} else if (j == 4) { //4 source case (by experiment)
+			double initStep = (values[2] - values[0]) / 2;
+			double step = (values[3]-values[0]) * 0.3 + (values[2]-values[1]) * 0.1;
+			return new LinearStep(values[j-1]+initStep, step);
+		}
+		//TODO, for values equals to 5 or above 5, we apply the 5 values rule, though it is not the same to the Excel!
+		//else if (j >= 5) { //5 source case (by experiment) 
+			double initStep = -0.4 * values[0] - 0.1 * values[1] + 0.2 * values[2] + 0.5 * values[3] - 0.2 * values[4];
+			double step = -0.2 * values[0] - 0.1 * values[1] + 0.1 * values[3] + 0.2 * values[4];
+			return new LinearStep(values[j-1]+initStep, step);
+		//}
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static ChangeInfo fillDown(Worksheet sheet, Ref srcRef, Ref dstRef, int fillType) {
-		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
+		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
+		case FILL_LINER_TREND:
+			pasteType = BookHelper.INNERPASTE_FILL_LINER_TREND;
+			break;
 		case FILL_COPY:
 			pasteType = BookHelper.INNERPASTE_FILL_COPY;
 			break;
@@ -3018,15 +3147,16 @@ if (fillType == FILL_DEFAULT) {
 		final int srcrCol = srcRef.getRightCol();
 		
 		final int dstbRow = dstRef.getBottomRow();
-		for(int srcIndex = 0, r = srcbRow + 1; r <= dstbRow; ++r, ++srcIndex) {
-			for(int c = srclCol; c <= srcrCol; ++c) {
+		for(int c = srclCol; c <= srcrCol; ++c) {
+			final Step step = getRowStep(sheet, fillType, c, srctRow, srcbRow);
+			for(int srcIndex = 0, r = srcbRow + 1; r <= dstbRow; ++r, ++srcIndex) {
 				final int srcrow = srctRow + srcIndex % rowCount;
 				final Cell srcCell = BookHelper.getCell(sheet, srcrow, c);
 				if (srcCell == null) {
 					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
 					assignRefs(toEval, affected, refs);
 				} else {
-					final ChangeInfo changeInfo0 = BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
+					final ChangeInfo changeInfo0 = BookHelper.copyCell(step.next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
 					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 				}
 			}
@@ -3038,9 +3168,12 @@ if (fillType == FILL_DEFAULT) {
 	
 	@SuppressWarnings("unchecked")
 	public static ChangeInfo fillUp(Worksheet sheet, Ref srcRef, Ref dstRef, int fillType) {
-		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
+		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
+		case FILL_LINER_TREND:
+			pasteType = BookHelper.INNERPASTE_FILL_LINER_TREND;
+			break;
 		case FILL_COPY:
 			pasteType = BookHelper.INNERPASTE_FILL_COPY;
 			break;
@@ -3064,15 +3197,16 @@ if (fillType == FILL_DEFAULT) {
 		final int srcrCol = srcRef.getRightCol();
 		
 		final int dsttRow = dstRef.getTopRow();
-		for(int srcIndex = 0, r = srctRow - 1; r >= dsttRow; --r, ++srcIndex) {
-			for(int c = srclCol; c <= srcrCol; ++c) {
+		for(int c = srclCol; c <= srcrCol; ++c) {
+			final Step step = getRowStep(sheet, fillType, c, srcbRow, srctRow);
+			for(int srcIndex = 0, r = srctRow - 1; r >= dsttRow; --r, ++srcIndex) {
 				final int srcrow = srcbRow - srcIndex % rowCount;
 				final Cell srcCell = BookHelper.getCell(sheet, srcrow, c);
 				if (srcCell == null) {
 					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
 					assignRefs(toEval, affected, refs);
 				} else {
-					final ChangeInfo changeInfo0 = BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
+					final ChangeInfo changeInfo0 = BookHelper.copyCell(step.next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
 					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 				}
 			}
@@ -3084,9 +3218,12 @@ if (fillType == FILL_DEFAULT) {
 	
 	@SuppressWarnings("unchecked")
 	public static ChangeInfo fillRight(Worksheet sheet, Ref srcRef, Ref dstRef, int fillType) {
-		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
+		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
+		case FILL_LINER_TREND:
+			pasteType = BookHelper.INNERPASTE_FILL_LINER_TREND;
+			break;
 		case FILL_COPY:
 			pasteType = BookHelper.INNERPASTE_FILL_COPY;
 			break;
@@ -3111,6 +3248,7 @@ if (fillType == FILL_DEFAULT) {
 		
 		final int dstrCol = dstRef.getRightCol();
 		for(int r = srctRow; r <= srcbRow; ++r) {
+			final Step step = getColStep(sheet, fillType, r, srclCol, srcrCol);
 			for(int srcIndex = 0, c = srcrCol + 1; c <= dstrCol; ++c, ++srcIndex) {
 				final int srccol = srclCol + srcIndex % colCount;
 				final Cell srcCell = BookHelper.getCell(sheet, r, srccol);
@@ -3118,7 +3256,7 @@ if (fillType == FILL_DEFAULT) {
 					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
 					assignRefs(toEval, affected, refs);
 				} else {
-					final ChangeInfo changeInfo0 = BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
+					final ChangeInfo changeInfo0 = BookHelper.copyCell(step.next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
 					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 				}
 			}
@@ -3130,9 +3268,12 @@ if (fillType == FILL_DEFAULT) {
 	
 	@SuppressWarnings("unchecked")
 	public static ChangeInfo fillLeft(Worksheet sheet, Ref srcRef, Ref dstRef, int fillType) {
-		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND, FILL_LINER_TREND, FILL_SERIES
+		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
+		case FILL_LINER_TREND:
+			pasteType = BookHelper.INNERPASTE_FILL_LINER_TREND;
+			break;
 		case FILL_COPY:
 			pasteType = BookHelper.INNERPASTE_FILL_COPY;
 			break;
@@ -3157,6 +3298,7 @@ if (fillType == FILL_DEFAULT) {
 		
 		final int dstlCol = dstRef.getLeftCol();
 		for(int r = srctRow; r <= srcbRow; ++r) {
+			final Step step = getColStep(sheet, fillType, r, srcrCol, srclCol);
 			for(int srcIndex = 0, c = srclCol - 1; c >= dstlCol; --c, ++srcIndex) {
 				final int srccol = srcrCol - srcIndex % colCount;
 				final Cell srcCell = BookHelper.getCell(sheet, r, srccol);
@@ -3164,7 +3306,7 @@ if (fillType == FILL_DEFAULT) {
 					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
 					assignRefs(toEval, affected, refs);
 				} else {
-					final ChangeInfo changeInfo0 = BookHelper.copyCell(srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
+					final ChangeInfo changeInfo0 = BookHelper.copyCell(step.next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
 					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 				}
 			}
