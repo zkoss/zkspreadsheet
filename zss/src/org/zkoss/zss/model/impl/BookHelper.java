@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -97,6 +98,7 @@ import org.zkoss.poi.xssf.usermodel.XSSFFont;
 import org.zkoss.poi.xssf.usermodel.XSSFRichTextString;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
+import org.zkoss.util.Locales;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelContext;
@@ -842,7 +844,9 @@ public final class BookHelper {
 		}
 		return null;
 	}
-	
+	private static RichTextString newRichTextString(Cell cell, String str) {
+		return cell instanceof HSSFCell ? new HSSFRichTextString(str) : new XSSFRichTextString(str);
+	}
 	public static RichTextString getText(Cell cell) {
 		int cellType = cell.getCellType();
 		if (cellType == Cell.CELL_TYPE_FORMULA) {
@@ -853,7 +857,7 @@ public final class BookHelper {
 			return cell.getRichStringCellValue();
 		}
 	    final String result = new DataFormatter().formatCellValue(cell, cellType);
-		return cell instanceof HSSFCell ? new HSSFRichTextString(result) : new XSSFRichTextString(result);
+		return newRichTextString(cell, result);
 	}
 	public static FormatTextImpl getFormatText(Cell cell) {
 		int cellType = cell.getCellType();
@@ -1475,7 +1479,7 @@ public final class BookHelper {
 	        }
 	        case Cell.CELL_TYPE_STRING:
 	        {
-	        	final Set<Ref>[] refs = setCellValue(dstCell, cellValue instanceof RichTextString ? (RichTextString)cellValue : srcCell.getRichStringCellValue());
+	        	final Set<Ref>[] refs = setCellValue(dstCell, cellValue instanceof String? newRichTextString(dstCell, (String)cellValue) : cellValue instanceof RichTextString ? (RichTextString)cellValue : srcCell.getRichStringCellValue());
 				assignRefs(toEval, affected, refs);
 				break;
 	        }
@@ -2609,7 +2613,7 @@ public final class BookHelper {
 	private static class KeyComparator implements Comparator<SortKey>, Serializable {
 		final private boolean[] _descs;
 		final private boolean _matchCase;
-		final private int _sortMethod; //TODO byNumberOfStorks, byPinyYin
+		final private int _sortMethod; //TODO byNumberOfStroks, byPinyYin
 		final private int _type; //TODO PivotTable only: byLabel, byValue
 		
 		public KeyComparator(boolean[] descs, boolean matchCase, int sortMethod, int type) {
@@ -2985,145 +2989,432 @@ public final class BookHelper {
 		}
 		switch(fillDir) {
 		case FILL_UP:
-			if (fillType == FILL_DEFAULT) {
-				fillType = srcRef.getRowCount() > 1 ? FILL_LINER_TREND : FILL_COPY;
-			}
 			return fillUp(sheet, srcRef, dstRef, fillType);
 		case FILL_DOWN:
-			if (fillType == FILL_DEFAULT) {
-				fillType = srcRef.getRowCount() > 1 ? FILL_LINER_TREND : FILL_COPY;
-			}
 			return fillDown(sheet, srcRef, dstRef, fillType);
 		case FILL_RIGHT:
-			if (fillType == FILL_DEFAULT) {
-				fillType = srcRef.getColumnCount() > 1 ? FILL_LINER_TREND : FILL_COPY;
-			}
 			return fillRight(sheet, srcRef, dstRef, fillType);
 		case FILL_LEFT:
-			if (fillType == FILL_DEFAULT) {
-				fillType = srcRef.getColumnCount() > 1 ? FILL_LINER_TREND : FILL_COPY;
-			}
 			return fillLeft(sheet, srcRef, dstRef, fillType);
 		}
 		//FILL_INVALID
 		throw new UiException("Destination range must include source range and can be fill in one direction only"); 
 	}
-	private static class Step {
-		public Object next(Cell cell) {
-			return getCellValue(cell);
-		}
+	private static int getShortWeekIndex(String x) {
+		return new ShortWeekData(0).getIndex(x);
 	}
-	private static class LinearStep extends Step{
-		private double _current;
-		private double _step;
-		public LinearStep(double initial, double step) {
-			_current = initial;
-			_step = step;
+	private static int getFullWeekIndex(String x) {
+		return new FullWeekData(0).getIndex(x);
+	}
+	private static int getShortMonthIndex(String x) {
+		return new ShortMonthData(0).getIndex(x);
+	}
+	private static int getFullMonthIndex(String x) {
+		return new FullMonthData(0).getIndex(x);
+	}
+	private static int nextWeekIndex(int current, int step) {
+		return nextCircularIndex(current, step, 7);
+	}
+	private static int nextMonthIndex(int current, int step) {
+		return nextCircularIndex(current, step, 12);
+	}
+	private static int nextCircularIndex(int current, int step, int modulo) {
+		current += step;
+		if (current < 0) {
+			current += modulo;
 		}
-		public Object next(Cell cell) {
-			if (cell.getCellType() != Cell.CELL_TYPE_NUMERIC) {
-				return null;
+		return current % modulo;
+	}
+	private static class StepChunk {
+		private Step[] _steps;
+		protected StepChunk() {}
+		public StepChunk(Cell[] srcCells, boolean positive) {
+			_steps = new Step[srcCells.length];
+			int b = 0, e = 0;
+			int prevtype = -1;
+			int subType = 0; //0: normal, 1: short week, 2: short month, 3: full week, 4: full month, 5:date
+			for (int j = 0; j < srcCells.length; ++j) {
+				final Cell cell = srcCells[j];
+				final int type = cell == null ? Cell.CELL_TYPE_BLANK : cell.getCellType();
+				if (type != prevtype) {
+					if (prevtype >= 0) {
+						prepareSteps(srcCells, b, e, positive, subType); //per the chunk, get the proper Step
+					}
+					b = e = j;
+					prevtype = type;
+					if (type == Cell.CELL_TYPE_STRING) { //check if week/month
+						final String x = cell.getStringCellValue();
+						final int weekIndex = getShortWeekIndex(x);
+						if (weekIndex >= 0) {
+							subType = 1; //a short week
+							continue;
+						}
+						final int monthIndex = getShortMonthIndex(x);
+						if (monthIndex >= 0) {
+							subType = 2; //a  short month
+							continue;
+						}
+						final int fweekIndex = getFullWeekIndex(x);
+						if (fweekIndex >= 0) {
+							subType = 3; //a full week
+							continue;
+						}
+						final int fmonthIndex = getFullMonthIndex(x);
+						if (fmonthIndex >= 0) {
+							subType = 4; //a  full month
+						} else {
+							subType = 0; //a pure string
+						}
+					} else if (type == Cell.CELL_TYPE_NUMERIC) { //check date
+						
+					}
+					continue;
+				}
+				//type == prevtype
+				if (type == Cell.CELL_TYPE_STRING) { //check if week/month
+					final String x = cell.getStringCellValue();
+					switch(subType) {
+					case 0: //was pure string
+					{
+						final int weekIndex = getShortWeekIndex(x);
+						final int monthIndex = getShortMonthIndex(x);
+						final int fweekIndex = getFullWeekIndex(x);
+						final int fmonthIndex = getFullMonthIndex(x);
+						if (weekIndex < 0 && monthIndex < 0 && fweekIndex < 0 && fmonthIndex < 0) { //still pure string
+							e = j;
+							continue;
+						}
+					}
+					break;
+					case 1: //was short week
+					{
+						final int weekIndex = getShortWeekIndex(x);
+						if (weekIndex >= 0) { //still short week
+							e = j;
+							continue;
+						}
+					}
+					break;
+					case 2: //was short month
+					{
+						final int monthIndex = getShortMonthIndex(x);
+						if (monthIndex >= 0) { //still short month
+							e = j;
+							continue;
+						}
+					}
+					break;
+					case 3: //was full week
+					{
+						final int fweekIndex = getFullWeekIndex(x);
+						if (fweekIndex >= 0) { //still full week
+							e = j;
+							continue;
+						}
+					}
+					break;
+					case 4: //was full month
+					{
+						final int fmonthIndex = getFullMonthIndex(x);
+						if (fmonthIndex >= 0) { //still full month
+							e = j;
+							continue;
+						}
+					}
+					break;
+					}
+					
+					//subType changed
+					prepareSteps(srcCells, b, e, positive, subType); //prepare steps
+					b = e = j;
+					final int weekIndex = getShortWeekIndex(x);
+					if (weekIndex >= 0) {
+						subType = 1; //a short week
+						continue;
+					}
+					final int monthIndex = getShortMonthIndex(x);
+					if (monthIndex >= 0) {
+						subType = 2; //a short month
+						continue;
+					}
+					final int fweekIndex = getFullWeekIndex(x);
+					if (fweekIndex >= 0) {
+						subType = 3; //a full week
+						continue;
+					}
+					final int fmonthIndex = getFullMonthIndex(x);
+					if (fmonthIndex >= 0) {
+						subType = 4; //a full month
+					} else {
+						subType = 0; //a pure string
+					}
+				} else if (type == Cell.CELL_TYPE_NUMERIC) { //special case, date or number
+					//TODO date auto increase
+				}
+				e = j;
 			}
-			final double current = _current;
-			_current += _step;
-			return current;
+			//last one
+			prepareSteps(srcCells, b, e, positive, subType); //per the chunk, get the proper Step
 		}
-	}
-	private static Step getRowStep(Worksheet sheet, int fillType, int col, int row1, int row2) {
-		switch(fillType) {
-		case FILL_LINER_TREND:
-			final int diff = row2 - row1;
-			final boolean pos = diff >= 0;
-			double[] values = new double[(pos ? diff : -diff) + 1];
-			int j = 0;
-			if (pos) {
-				for (int row = row1; row <= row2; ++row) {
-					final Cell srcCell = BookHelper.getCell(sheet, row, col);
-					if (srcCell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-						values[j++] = srcCell.getNumericCellValue();
-					}
+		public Step getStep(int srcIndex) {
+			return _steps[srcIndex];
+		}
+		private void prepareSteps(Cell[] srcCells, int b, int e, boolean positive, int subType) {
+			final Cell srcCell = srcCells[b];
+			final int type = srcCell == null ? Cell.CELL_TYPE_BLANK : srcCell.getCellType();
+			Step step;
+			switch(type) {
+			default:
+			case Cell.CELL_TYPE_BLANK:
+			case Cell.CELL_TYPE_FORMULA:
+			case Cell.CELL_TYPE_BOOLEAN:
+			case Cell.CELL_TYPE_ERROR:
+				step = CopyStep.instance; //copy
+				break;
+			case Cell.CELL_TYPE_NUMERIC:
+				step = getLinearStep(srcCells, b, e, positive);
+				break;
+			case Cell.CELL_TYPE_STRING:
+				switch(subType) {
+				default:
+				case 0:
+					step = CopyStep.instance;
+					break;
+				case 1: //short week
+					step = getShortWeekStep(srcCells, b, e, positive);
+					break;
+				case 2: //short month
+					step = getShortMonthStep(srcCells, b, e, positive);
+					break;
+				case 3: //full week
+					step = getFullWeekStep(srcCells, b, e, positive);
+					break;
+				case 4: //full month
+					step = getFullMonthStep(srcCells, b, e, positive);
+					break;
 				}
-			} else {
-				for (int row = row1; row >= row2; --row) {
-					final Cell srcCell = BookHelper.getCell(sheet, row, col);
-					if (srcCell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-						values[j++] = srcCell.getNumericCellValue();
-					}
-				}
+ 				break;
 			}
-			return getLinearStep(values, j, pos);
-		case FILL_COPY:
-		case FILL_FORMATS:
-		case FILL_VALUES:
-		default:
-			return new Step(); //pure copy
-		}
-	}
-	private static Step getColStep(Worksheet sheet, int fillType, int row, int col1, int col2) {
-		switch(fillType) {
-		case FILL_LINER_TREND:
-			final int diff = col2 - col1;
-			final boolean pos = diff >= 0;
-			double[] values = new double[(pos ? diff : -diff) + 1];
-			int j = 0;
-			if (pos) {
-				for (int col = col1; col <= col2; ++col) {
-					final Cell srcCell = BookHelper.getCell(sheet, row, col);
-					if (srcCell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-						values[j++] = srcCell.getNumericCellValue();
-					}
-				}
-			} else {
-				for (int col = col1; col >= col2; --col) {
-					final Cell srcCell = BookHelper.getCell(sheet, row, col);
-					if (srcCell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-						values[j++] = srcCell.getNumericCellValue();
-					}
-				}
+			for(int k = b; k <= e; ++k) { //associate step to the cells chunk
+				_steps[k] = step; 
 			}
-			return getLinearStep(values, j, pos);
-		case FILL_COPY:
-		case FILL_FORMATS:
-		case FILL_VALUES:
-		default:
-			return new Step(); //pure copy
 		}
 	}
-	private static Step getLinearStep(double[] values, int j, boolean positive) {
-		if (j == 0) { //no numeric
-			return new Step(); //pure copy
-		} else if (j == 1) {
+	private static class CopyStepChunk extends StepChunk {
+		public static final StepChunk instance = new CopyStepChunk();
+		@Override
+		public Step getStep(int index) {
+			return CopyStep.instance;
+		}
+	}
+	private static Step getLinearStep(Cell[] srcCells, int b, int e, boolean positive) {
+		int count = e-b+1;
+		final double[] values = new double[count];
+		for (int j = 0, k = b; k <=e; ++k) {
+			final Cell srcCell = srcCells[k];
+			values[j++] = srcCell.getNumericCellValue();
+		}
+		if (count == 1) {
 			final double step = positive ? 1 : -1;
-			return new LinearStep(values[j-1]+step, step);
-		} else if (j == 2) { //standard linear series
+			return new LinearStep(values[count-1], step, step);
+		} else if (count == 2) { //standard linear series
 			final double step = values[1] - values[0];
-			return new LinearStep(values[j-1]+step, step);
-		} else if (j == 3) { //3 source case (by experiment)
+			return new LinearStep(values[count-1], step, step);
+		} else if (count == 3) { //3 source case (by experiment)
 			double step = values[2] - values[0];
 			double initStep	= (step + values[1] - values[0]) / 3;
 			step /= 2;
-			return new LinearStep(values[j-1]+initStep, step);
-		} else if (j == 4) { //4 source case (by experiment)
+			return new LinearStep(values[count-1], initStep, step);
+		} else if (count == 4) { //4 source case (by experiment)
 			double initStep = (values[2] - values[0]) / 2;
 			double step = (values[3]-values[0]) * 0.3 + (values[2]-values[1]) * 0.1;
-			return new LinearStep(values[j-1]+initStep, step);
+			return new LinearStep(values[count-1], initStep, step);
 		}
 		//TODO, for values equals to 5 or above 5, we apply the 5 values rule, though it is not the same to the Excel!
 		//else if (j >= 5) { //5 source case (by experiment) 
 			double initStep = -0.4 * values[0] - 0.1 * values[1] + 0.2 * values[2] + 0.5 * values[3] - 0.2 * values[4];
 			double step = -0.2 * values[0] - 0.1 * values[1] + 0.1 * values[3] + 0.2 * values[4];
-			return new LinearStep(values[j-1]+initStep, step);
+			return new LinearStep(values[count-1], initStep, step);
 		//}
 	}
+	private static int getType(String x) {
+		if (Character.isLowerCase(x.charAt(0))) {
+			return 1; //lowercase
+		} else if (Character.isUpperCase(x.charAt(1))) {
+			return 2; //uppercase
+		}
+		return 0; //normal case
+	}
+	private static Step getShortWeekStep(Cell[] srcCells, int b, int e, boolean positive) {
+		final int count = e-b+1;
+		String bWeek = null;
+		int preIndex = -1;
+		int step = 0;
+		for (int j = b; j <= e; ++j) {
+			final Cell srcCell = srcCells[j];
+			final String x = srcCell.getStringCellValue(); 	
+			final int weekIndex = getShortWeekIndex(x);
+			if (step == 0) {
+				if (preIndex >= 0) {
+					step = weekIndex - preIndex;
+					preIndex = weekIndex;
+				} else {
+					bWeek = x;
+					preIndex = weekIndex;
+					if (count == 1) { //no more, step default to 1
+						step = positive ? 1 : -1;
+					}
+				}
+			} else {
+				preIndex = nextWeekIndex(preIndex, step);
+				if (preIndex != weekIndex) { //not a week sequence
+					return CopyStep.instance; //a copy step
+				}
+			}
+		}
+		return new ShortWeekStep(preIndex, step, getType(bWeek));
+	}
+	private static Step getFullWeekStep(Cell[] srcCells, int b, int e, boolean positive) {
+		final int count = e-b+1;
+		String bWeek = null;
+		int preIndex = -1;
+		int step = 0;
+		for (int j = b; j <= e; ++j) {
+			final Cell srcCell = srcCells[j];
+			final String x = srcCell.getStringCellValue(); 	
+			final int weekIndex = getFullWeekIndex(x);
+			if (step == 0) {
+				if (preIndex >= 0) {
+					step = weekIndex - preIndex;
+					preIndex = weekIndex;
+				} else {
+					bWeek = x;
+					preIndex = weekIndex;
+					if (count == 1) { //no more, step default to 1
+						step = positive ? 1 : -1;
+					}
+				}
+			} else {
+				preIndex = nextWeekIndex(preIndex, step);
+				if (preIndex != weekIndex) { //not a week sequence
+					return CopyStep.instance; //a copy step
+				}
+			}
+		}
+		return new FullWeekStep(preIndex, step, getType(bWeek));
+	}
+	private static Step getShortMonthStep(Cell[] srcCells, int b, int e, boolean positive) {
+		final int count = e-b+1;
+		String bMonth = null;
+		int preIndex = -1;
+		int step = 0;
+		for (int j = b; j <= e; ++j) {
+			final Cell srcCell = srcCells[j];
+			final String x = srcCell.getStringCellValue(); 	
+			final int monthIndex = getShortMonthIndex(x);
+			if (step == 0) {
+				if (preIndex >= 0) {
+					step = monthIndex - preIndex;
+					preIndex = monthIndex;
+				} else {
+					bMonth = x;
+					preIndex = monthIndex;
+					if (count == 1) { //no more, step default to 1
+						step = positive ? 1 : -1;
+					}
+				}
+			} else {
+				preIndex = nextMonthIndex(preIndex, step);
+				if (preIndex != monthIndex) { //not a month sequence
+					return CopyStep.instance; //a copy step
+				}
+			}
+		}
+		return new ShortMonthStep(preIndex, step, getType(bMonth));
+	}
+	private static Step getFullMonthStep(Cell[] srcCells, int b, int e, boolean positive) {
+		final int count = e-b+1;
+		String bMonth = null;
+		int preIndex = -1;
+		int step = 0;
+		for (int j = b; j <= e; ++j) {
+			final Cell srcCell = srcCells[j];
+			final String x = srcCell.getStringCellValue(); 	
+			final int monthIndex = getFullMonthIndex(x);
+			if (step == 0) {
+				if (preIndex >= 0) {
+					step = monthIndex - preIndex;
+					preIndex = monthIndex;
+				} else {
+					bMonth = x;
+					preIndex = monthIndex;
+					if (count == 1) { //no more, step default to 1
+						step = positive ? 1 : -1;
+					}
+				}
+			} else {
+				preIndex = nextMonthIndex(preIndex, step);
+				if (preIndex != monthIndex) { //not a month sequence
+					return CopyStep.instance; //a copy step
+				}
+			}
+		}
+		return new FullMonthStep(preIndex, step, getType(bMonth));
+	}
 	
-	@SuppressWarnings("unchecked")
+	private static StepChunk getRowStepChunk(Worksheet sheet, int fillType, int col, int row1, int row2, boolean pos) {
+		switch(fillType) {
+		case FILL_DEFAULT:
+			final int diff = row2 - row1;
+			final Cell[] cells = new Cell[(pos ? diff : -diff) + 1];
+			if (pos) {
+				for (int row = row1, j = 0; row <= row2; ++row) {
+					final Cell srcCell = BookHelper.getCell(sheet, row, col);
+					cells[j++] = srcCell;
+				}
+			} else {
+				for (int row = row1, j = 0; row >= row2; --row) {
+					final Cell srcCell = BookHelper.getCell(sheet, row, col);
+					cells[j++] = srcCell;
+				}
+			}
+			return new StepChunk(cells, pos);
+		case FILL_COPY:
+		case FILL_FORMATS:
+		case FILL_VALUES:
+		default:
+			return CopyStepChunk.instance; //pure copy
+		}
+	}
+	private static StepChunk getColStepChunk(Worksheet sheet, int fillType, int row, int col1, int col2, boolean pos) {
+		switch(fillType) {
+		case FILL_DEFAULT:
+			final int diff = col2 - col1;
+			final Cell[] cells = new Cell[(pos ? diff : -diff) + 1];
+			if (pos) {
+				for (int col = col1, j = 0; col <= col2; ++col) {
+					final Cell srcCell = BookHelper.getCell(sheet, row, col);
+					cells[j++] = srcCell;
+				}
+			} else {
+				for (int col = col1, j = 0; col >= col2; --col) {
+					final Cell srcCell = BookHelper.getCell(sheet, row, col);
+					cells[j++] = srcCell;
+				}
+			}
+			return new StepChunk(cells, pos);
+		case FILL_COPY:
+		case FILL_FORMATS:
+		case FILL_VALUES:
+		default:
+			return CopyStepChunk.instance; //pure copy
+		}
+	}
 	public static ChangeInfo fillDown(Worksheet sheet, Ref srcRef, Ref dstRef, int fillType) {
 		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
-		case FILL_LINER_TREND:
-			pasteType = BookHelper.INNERPASTE_FILL_LINER_TREND;
-			break;
+		case FILL_DEFAULT:
 		case FILL_COPY:
 			pasteType = BookHelper.INNERPASTE_FILL_COPY;
 			break;
@@ -3148,15 +3439,16 @@ public final class BookHelper {
 		
 		final int dstbRow = dstRef.getBottomRow();
 		for(int c = srclCol; c <= srcrCol; ++c) {
-			final Step step = getRowStep(sheet, fillType, c, srctRow, srcbRow);
+			final StepChunk stepChunk = getRowStepChunk(sheet, fillType, c, srctRow, srcbRow, true);
 			for(int srcIndex = 0, r = srcbRow + 1; r <= dstbRow; ++r, ++srcIndex) {
-				final int srcrow = srctRow + srcIndex % rowCount;
+				final int index = srcIndex % rowCount;
+				final int srcrow = srctRow + index;
 				final Cell srcCell = BookHelper.getCell(sheet, srcrow, c);
 				if (srcCell == null) {
 					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
 					assignRefs(toEval, affected, refs);
 				} else {
-					final ChangeInfo changeInfo0 = BookHelper.copyCell(step.next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
+					final ChangeInfo changeInfo0 = BookHelper.copyCell(stepChunk.getStep(index).next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
 					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 				}
 			}
@@ -3166,14 +3458,11 @@ public final class BookHelper {
 		return changeInfo;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static ChangeInfo fillUp(Worksheet sheet, Ref srcRef, Ref dstRef, int fillType) {
 		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
-		case FILL_LINER_TREND:
-			pasteType = BookHelper.INNERPASTE_FILL_LINER_TREND;
-			break;
+		case FILL_DEFAULT:
 		case FILL_COPY:
 			pasteType = BookHelper.INNERPASTE_FILL_COPY;
 			break;
@@ -3198,15 +3487,16 @@ public final class BookHelper {
 		
 		final int dsttRow = dstRef.getTopRow();
 		for(int c = srclCol; c <= srcrCol; ++c) {
-			final Step step = getRowStep(sheet, fillType, c, srcbRow, srctRow);
+			final StepChunk stepChunk = getRowStepChunk(sheet, fillType, c, srcbRow, srctRow, false);
 			for(int srcIndex = 0, r = srctRow - 1; r >= dsttRow; --r, ++srcIndex) {
-				final int srcrow = srcbRow - srcIndex % rowCount;
+				final int index = srcIndex % rowCount;
+				final int srcrow = srcbRow - index;
 				final Cell srcCell = BookHelper.getCell(sheet, srcrow, c);
 				if (srcCell == null) {
 					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
 					assignRefs(toEval, affected, refs);
 				} else {
-					final ChangeInfo changeInfo0 = BookHelper.copyCell(step.next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
+					final ChangeInfo changeInfo0 = BookHelper.copyCell(stepChunk.getStep(index).next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
 					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 				}
 			}
@@ -3216,14 +3506,11 @@ public final class BookHelper {
 		return changeInfo;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static ChangeInfo fillRight(Worksheet sheet, Ref srcRef, Ref dstRef, int fillType) {
 		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
-		case FILL_LINER_TREND:
-			pasteType = BookHelper.INNERPASTE_FILL_LINER_TREND;
-			break;
+		case FILL_DEFAULT:
 		case FILL_COPY:
 			pasteType = BookHelper.INNERPASTE_FILL_COPY;
 			break;
@@ -3248,15 +3535,16 @@ public final class BookHelper {
 		
 		final int dstrCol = dstRef.getRightCol();
 		for(int r = srctRow; r <= srcbRow; ++r) {
-			final Step step = getColStep(sheet, fillType, r, srclCol, srcrCol);
+			final StepChunk stepChunk = getColStepChunk(sheet, fillType, r, srclCol, srcrCol, true);
 			for(int srcIndex = 0, c = srcrCol + 1; c <= dstrCol; ++c, ++srcIndex) {
-				final int srccol = srclCol + srcIndex % colCount;
+				final int index = srcIndex % colCount;
+				final int srccol = srclCol + index;
 				final Cell srcCell = BookHelper.getCell(sheet, r, srccol);
 				if (srcCell == null) {
 					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
 					assignRefs(toEval, affected, refs);
 				} else {
-					final ChangeInfo changeInfo0 = BookHelper.copyCell(step.next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
+					final ChangeInfo changeInfo0 = BookHelper.copyCell(stepChunk.getStep(index).next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
 					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 				}
 			}
@@ -3266,14 +3554,11 @@ public final class BookHelper {
 		return changeInfo;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static ChangeInfo fillLeft(Worksheet sheet, Ref srcRef, Ref dstRef, int fillType) {
 		//TODO FILL_DEFAULT, FILL_DAYS, FILL_WEEKDAYS, FILL_MONTHS, FILL_YEARS, FILL_GROWTH_TREND
 		int pasteType = BookHelper.INNERPASTE_FILL_COPY;
 		switch(fillType) {
-		case FILL_LINER_TREND:
-			pasteType = BookHelper.INNERPASTE_FILL_LINER_TREND;
-			break;
+		case FILL_DEFAULT:
 		case FILL_COPY:
 			pasteType = BookHelper.INNERPASTE_FILL_COPY;
 			break;
@@ -3298,15 +3583,16 @@ public final class BookHelper {
 		
 		final int dstlCol = dstRef.getLeftCol();
 		for(int r = srctRow; r <= srcbRow; ++r) {
-			final Step step = getColStep(sheet, fillType, r, srcrCol, srclCol);
+			final StepChunk step = getColStepChunk(sheet, fillType, r, srcrCol, srclCol, false);
 			for(int srcIndex = 0, c = srclCol - 1; c >= dstlCol; --c, ++srcIndex) {
-				final int srccol = srcrCol - srcIndex % colCount;
+				final int index = srcIndex % colCount;
+				final int srccol = srcrCol - index;
 				final Cell srcCell = BookHelper.getCell(sheet, r, srccol);
 				if (srcCell == null) {
 					final Set<Ref>[] refs = BookHelper.removeCell(sheet, r, c);
 					assignRefs(toEval, affected, refs);
 				} else {
-					final ChangeInfo changeInfo0 = BookHelper.copyCell(step.next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
+					final ChangeInfo changeInfo0 = BookHelper.copyCell(step.getStep(index).next(srcCell), srcCell, sheet, r, c, pasteType, BookHelper.PASTEOP_NONE, false);
 					assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 				}
 			}
