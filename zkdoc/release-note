@@ -18,6 +18,7 @@ ZK Spreadsheet 2.1.0
   307 chart not shown when set visible of the container of the spreadsheet
   308 Set empty String to cell shall be deemed as blank cell
   311 =20.6+3.6 formula shows incorrect number
+  313 Typemismatch exception when Copy formula onto a Text cell
 
 	------------
 ZK Spreadsheet 2.0.1
