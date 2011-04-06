@@ -15,10 +15,7 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
-import java.util.Locale;
-
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.util.Locales;
 
 
 /**
@@ -49,4 +46,9 @@ import org.zkoss.util.Locales;
 		current %= _count;
 		return current;
 	}
+	@Override
+	public int getDataType() { //dummy
+		return -1;
+	}
+
 }

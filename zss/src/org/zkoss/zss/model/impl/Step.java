@@ -23,5 +23,23 @@ import org.zkoss.poi.ss.usermodel.Cell;
  * @since 2.1.0
  */
 public interface Step {
-	public Object next(Cell cell); //return next value of the incremental sequence
+	public static final int STRING = 0;
+	public static final int SHORT_WEEK = 1;
+	public static final int SHORT_MONTH = 2;
+	public static final int FULL_WEEK = 3;
+	public static final int FULL_MONTH = 4;
+	public static final int NUMBER = 5;
+	public static final int DATE = 6;
+	public static final int TIME = 7;
+	/** Return next value of this step sequence per the source cell.
+	 * 
+	 * @param srcCell the source cell for filling
+	 * @return next value of this step per the source cell
+	 */
+	public Object next(Cell srcCell); //return next value of the incremental sequence
+	/**
+	 * Returns the data type of this Step.
+	 * @return the data type of this Step.
+	 */
+	public int getDataType();
 }

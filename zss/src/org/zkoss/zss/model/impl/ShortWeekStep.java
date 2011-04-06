@@ -15,10 +15,7 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
-import java.util.Locale;
-
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.util.Locales;
 
 /**
  * Full week Step.
@@ -26,9 +23,15 @@ import org.zkoss.util.Locales;
  *
  */
 /*package*/ class ShortWeekStep implements Step {
-	private CircularStep _innerStep;
-	public ShortWeekStep(int initial, int step, int type) {
+	private final CircularStep _innerStep;
+	private final int _type;
+	public ShortWeekStep(int initial, int step, int type, int datatype) {
 		_innerStep = new CircularStep(initial, step, new ShortWeekData(type));
+		_type = datatype;
+	}
+	@Override
+	public int getDataType() {
+		return _type;
 	}
 	@Override
 	public Object next(Cell srcCell) {

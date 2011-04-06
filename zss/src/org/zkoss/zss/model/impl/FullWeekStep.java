@@ -23,9 +23,15 @@ import org.zkoss.poi.ss.usermodel.Cell;
  *
  */
 /*package*/ class FullWeekStep implements Step {
-	private CircularStep _innerStep;
-	public FullWeekStep(int initial, int step, int type) {
+	private final CircularStep _innerStep;
+	private final int _type;
+	public FullWeekStep(int initial, int step, int type, int datatype) {
 		_innerStep = new CircularStep(initial, step, new FullWeekData(type));
+		_type = datatype;
+	}
+	@Override
+	public int getDataType() {
+		return _type;
 	}
 	@Override
 	public Object next(Cell srcCell) {

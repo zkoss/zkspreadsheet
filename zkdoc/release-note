@@ -5,6 +5,8 @@ ZK Spreadsheet 2.1.0
   294 Support 2003, 2007 Excel file format export to HTML
   310 Autofill support number auto linear increase
   312 Autofill support month/week auto increase
+  314 Autofill support date auto increase
+  316 Autofill support number auto growth(multiply increase)
 
 *Bug 
   290 Formula cells not always updated

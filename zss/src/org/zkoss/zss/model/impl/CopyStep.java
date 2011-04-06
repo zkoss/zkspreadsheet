@@ -28,4 +28,8 @@ public class CopyStep implements Step {
 	public Object next(Cell cell) {
 		return BookHelper.getCellValue(cell);
 	}
+	@Override
+	public int getDataType() {
+		return -1;
+	}
 }
