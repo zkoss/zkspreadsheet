@@ -39,6 +39,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
 import org.zkoss.lang.Objects;
+import org.zkoss.lang.Strings;
 import org.zkoss.poi.hssf.record.CellValueRecordInterface;
 import org.zkoss.poi.hssf.record.FormulaRecord;
 import org.zkoss.poi.hssf.record.FullColorExt;
@@ -3060,6 +3061,8 @@ public final class BookHelper {
 		}
 		if (isFullMonth(x)) {
 			return Step.FULL_MONTH; //a  full month
+		} else if (Strings.isBlank(x)){
+			return Step.BLANK; //a blank string
 		} else {
 			return Step.STRING; //a pure string
 		}
@@ -3101,10 +3104,10 @@ public final class BookHelper {
 					}
 					b = e = j;
 					prevtype = type;
-					if (type == Cell.CELL_TYPE_STRING) { ////0: normal, 1: short week, 2: short month, 3: full week, 4: full month
+					if (type == Cell.CELL_TYPE_STRING) { //could be Blank, String, short week/month, full week/month
 						final String x = cell.getStringCellValue();
 						subType = getWeekMonthSubType(x);
-					} else if (type == Cell.CELL_TYPE_NUMERIC) { //0: normal, 1: date, 2: time
+					} else if (type == Cell.CELL_TYPE_NUMERIC) { //could be number/date/time
 						subType = getDateTimeSubType(cell);
 					}
 					continue;
@@ -3149,11 +3152,13 @@ public final class BookHelper {
 			Step step;
 			switch(type) {
 			default:
-			case Cell.CELL_TYPE_BLANK:
 			case Cell.CELL_TYPE_FORMULA:
 			case Cell.CELL_TYPE_BOOLEAN:
 			case Cell.CELL_TYPE_ERROR:
 				step = CopyStep.instance; //copy
+				break;
+			case Cell.CELL_TYPE_BLANK:
+				step = BlankStep.instance; //blank
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
 				switch(subType) {
@@ -3175,6 +3180,9 @@ public final class BookHelper {
 			case Cell.CELL_TYPE_STRING:
 				switch(subType) {
 				default:
+				case Step.BLANK:
+					step = BlankStep.instance;
+					break;
 				case Step.STRING:
 					step = CopyStep.instance;
 					break;
@@ -3594,20 +3602,27 @@ public final class BookHelper {
 	private static void handleSpecialCopyStep(StepChunk[] stepChunks, int srcCount, int siblingCount) {
 		//handle special copy only case (two consecutive same type of row)
 		for(int index = 0; index < srcCount; ++index) {
-			int b = 0, preType = -1, j = 0;
+			int b = 0, preType = -1, j = 0, count = 0;
 			for(; j < siblingCount; ++j) {
 				final StepChunk stepChunk = stepChunks[j];
 				final Step step = stepChunk.getStep(index);
 				final int stepType = step.getDataType();
 				if (preType != stepType) { //something different
-					if (preType >= 0 && b < (j-1)) {
-						replaceWithCopyStep(stepChunks, index, b, j);
+					if (stepType != Step.BLANK) {
+						if (preType >= 0 && count > 0) {
+							replaceWithCopyStep(stepChunks, index, b, j);
+						}
+						count = 0;
+						b = j;
+						preType = stepType;
 					}
-					b = j;
-					preType = stepType;
+				} else {
+					if (stepType != Step.BLANK) { //count of equal type
+						++count;
+					}
 				}
 			}
-			if (preType >= 0 && b < (j-1)) { //last segment
+			if (preType >= 0 && count > 0) { //last segment
 				replaceWithCopyStep(stepChunks, index, b, j);
 			}
 		}

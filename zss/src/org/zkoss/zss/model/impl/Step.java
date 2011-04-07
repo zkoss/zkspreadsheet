@@ -31,6 +31,7 @@ public interface Step {
 	public static final int NUMBER = 5;
 	public static final int DATE = 6;
 	public static final int TIME = 7;
+	public static final int BLANK = 8;
 	/** Return next value of this step sequence per the source cell.
 	 * 
 	 * @param srcCell the source cell for filling
