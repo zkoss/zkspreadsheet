@@ -388,8 +388,9 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 		_selectedSheet=null;
 		_selectedSheetId=null;
-		setRowfreeze(-1);
-		setColumnfreeze(-1);
+		//bug#315: freezed pane rows/columns don't work when setting Spreadsheet from Composer.
+		//setRowfreeze(-1);
+		//setColumnfreeze(-1);
 		//setBook(null);
 		_importer = new ExcelImporter();
 		_src=src;
