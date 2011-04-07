@@ -23,6 +23,7 @@ ZK Spreadsheet 2.1.0
   313 Typemismatch exception when Copy formula onto a Text cell
   315 freezed pane rows/columns don t work when setting Spreadsheet from Composer.  
   317 Number 0 shall be date 1900/1/0 0:00 (Java Date 1899/12/31 0:00)
+  318 xlsx only. IllegalArgumentException when formula cause a circular reference
   
 	------------
 ZK Spreadsheet 2.0.1
