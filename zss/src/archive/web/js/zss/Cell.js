@@ -176,7 +176,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				cls = 'zscell-inner-';
 			n.innerHTML = t;
 			cls += this._vtal[valign] + '-' + this._htal[halign];
-			jq(this.$n()).attr('class', '').addClass(cls);
+			jq(n.parentNode).attr('class', '').addClass(cls);
 			this.onSize();
 		},
 		getText: function () {
