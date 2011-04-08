@@ -16,22 +16,25 @@ package org.zkoss.zss.app.zul.ctrl;
 
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.FontUnderline;
-import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.model.Ranges;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.impl.CellVisitor;
+import org.zkoss.zss.ui.impl.CellVisitorContext;
 import org.zkoss.zss.ui.impl.Utils;
 
 /**
  * @author Ian Tsai / Sam
  *
  */
-public class SSRectCellStyle implements CellStyle {
+public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 
 	Spreadsheet spreadsheet;
 	private Font font;
@@ -54,7 +57,6 @@ public class SSRectCellStyle implements CellStyle {
 		font = spreadsheet.getBook().getFontAt(idx);
 	}
 	
-	@Override
 	public void setFontSize(int size) {
 		Worksheet sheet = spreadsheet.getSelectedSheet();
 		Rect rect = spreadsheet.getSelection();
@@ -83,7 +85,6 @@ public class SSRectCellStyle implements CellStyle {
 		}
 	}
 	
-	@Override
 	public void setFontFamily(String family) {
 		//TODO: use Utils.setFontFamily will fire many SSDataEvent 
 		Utils.setFontFamily(spreadsheet.getSelectedSheet(), 
@@ -92,7 +93,6 @@ public class SSRectCellStyle implements CellStyle {
 		resetFont();
 	}
 	
-	@Override
 	public void setBold(boolean bold) {
 		//TODO: use Utils.setFontBold will fire many SSDataEvent 
 		Utils.setFontBold(spreadsheet.getSelectedSheet(), 
@@ -101,54 +101,44 @@ public class SSRectCellStyle implements CellStyle {
 		resetFont();
 	}
 	
-	@Override
 	public String getFontFamily() {
 		return font.getFontName();
 	}
 	
-	@Override
 	public boolean isBold() {
 		short bold = font.getBoldweight();
 		resetFont();
 		return  Font.BOLDWEIGHT_BOLD == bold;
 	}
 	
-	@Override
 	public int getFontSize() {
 		return font.getFontHeight() / 20;
 	}
 
-	@Override
 	public int getAlignment() {
-		return cell.getCellStyle().getAlignment();
+		return (int)cell.getCellStyle().getAlignment();
 	}
 
-	@Override
 	public String getCellColor() {
 		return CellHelper.getBackgroundHTMLColor(cell);
 	}
 
-	@Override
 	public String getFontColor() {
 		return CellHelper.getFontHTMLColor(cell, font);
 	}
 
-	@Override
 	public boolean isItalic() {
 		return font.getItalic();
 	}
 
-	@Override
 	public boolean isStrikethrough() {
 		return font.getStrikeout();
 	}
 
-	@Override
 	public int getUnderline() {
 		return (int)font.getUnderline();
 	}
 
-	@Override
 	public void setAlignment(int alignment) {
 		//TODO: Utils.setAlignment will fire many SSDataEvent 
 		Utils.setAlignment(spreadsheet.getSelectedSheet(), 
@@ -156,8 +146,27 @@ public class SSRectCellStyle implements CellStyle {
 				(short)alignment);
 		resetFont();
 	}
+	
 
-	@Override
+	public void setVerticalAlignment(final int alignment) {
+		Utils.visitCells(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), new CellVisitor(){
+			@Override
+			public void handle(CellVisitorContext context) {
+				final short srcAlign = context.getVerticalAlignment();
+
+				if (srcAlign != alignment) {
+					CellStyle newStyle = context.cloneCellStyle();
+					newStyle.setVerticalAlignment((short)alignment);
+					context.getRange().setStyle(newStyle);
+				}
+			}});
+		resetFont();
+	}
+
+	public int getVerticalAlignment() {
+		return cell.getCellStyle().getVerticalAlignment();
+	}
+
 	public void setBorder(int borderPosition, BorderStyle borderStyle, String color) {
 		//TODO: Utils.setBorder will fire many SSDataEvent
 		Utils.setBorder(spreadsheet.getSelectedSheet(), 
@@ -166,7 +175,6 @@ public class SSRectCellStyle implements CellStyle {
 		resetFont();
 	}
 
-	@Override
 	public void setCellColor(String color) {
 		//TODO: Utils.setBackgroundColor will fire many SSDataEvent
 		Utils.setBackgroundColor(
@@ -176,7 +184,6 @@ public class SSRectCellStyle implements CellStyle {
 		resetFont();
 	}
 
-	@Override
 	public void setFontColor(String color) {
 		//TODO: Utils.setFontColor will fire many SSDataEvent
 		Utils.setFontColor(
@@ -186,7 +193,6 @@ public class SSRectCellStyle implements CellStyle {
 		resetFont();
 	}
 
-	@Override
 	public void setItalic(boolean italic) {
 		//TODO: Utils.setFontItalic will fire many SSDataEvent
 		Utils.setFontItalic(
@@ -196,7 +202,6 @@ public class SSRectCellStyle implements CellStyle {
 		resetFont();
 	}
 
-	@Override
 	public void setStrikethrough(boolean strikethrough) {
 		//TODO: Utils.setFontStrikeout will fire many SSDataEvent
 		Utils.setFontStrikeout(
@@ -206,7 +211,6 @@ public class SSRectCellStyle implements CellStyle {
 		resetFont();
 	}
 
-	@Override
 	public void setUnderline(int underlineStyle) {
 		FontUnderline underline = FontUnderline.NONE;
 		if (underlineStyle == UNDERLINE_SINGLE)

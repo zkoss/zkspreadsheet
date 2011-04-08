@@ -13,18 +13,29 @@
 		.clicked .z-toolbarbutton-cnt {
 			background-image: url(${c:encodeURL('~./zssapp/image/toolbarbtn-ctr-clkd.gif')});
 			background-position: 0 -500px;
+			border: 1px solid #7F9DB9;
+			padding: 1px;
 		}
-		.clicked {
+		.dpbtn-seld .z-dpbutton-cnt {
 			border-bottom: 1px solid #7F9DB9;
 			border-top: 1px solid #7F9DB9;
-			padding: 0;
-		}
-		.clicked .z-toolbarbutton-body {
 			border-left: 1px solid #7F9DB9;
 			border-right: 1px solid #7F9DB9;
-			padding: 0;
+			background-color: #FCDE9A;
+			padding: 1px 2px 1px 1px;
 		}
-		
+		.z-dpbutton-dpover .z-dpbutton-cnt {
+			border: 0;
+			padding: 2px 3px 2px 2px;
+		}
+		.dpbtn-seld	div.z-dpbutton-cnt {
+			background-image: none;
+			background-color: #FCDE9A;
+		}
+		.dpbtn-seld .z-dpbutton-body {
+			cursor: default;
+		}
+		.z-dpbutton-dpover 
 		.focusPosCombobox .z-combobox-rounded-btn {
 			border:0px;
 			background: url(${c:encodeURL('~./zssapp/image/combo-white.png')});

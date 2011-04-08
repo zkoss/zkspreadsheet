@@ -91,12 +91,26 @@
 <!--					forward="onBorderSelector(diagonalUp)" /-->
 			</menupopup>
 		</dropdownbutton>
-		<toolbarbutton id="alignLeftBtn" image="~./zssapp/image/edit-alignment.png" tooltiptext="${c:l('align.left')}"
-							forward="onClick=onAlignHorizontalClick(left)">	</toolbarbutton>
-		<toolbarbutton id="alignCenterBtn" image="~./zssapp/image/edit-alignment-center.png" tooltiptext="${c:l('align.center')}"
-							forward="onClick=onAlignHorizontalClick(center)"></toolbarbutton>
-		<toolbarbutton id="alignRightBtn" image="~./zssapp/image/edit-alignment-right.png" tooltiptext="${c:l('align.right')}"
-							forward="onClick=onAlignHorizontalClick(right)" ></toolbarbutton>
-		<toolbarbutton id="wrapTextBtn" image="~./zssapp/image/wrapText.gif" tooltiptext="Wrap Text"></toolbarbutton>				
+		<dropdownbutton id="valignBtn" image="~./zssapp/image/edit-vertical-alignment-top.png">
+			<menupopup>
+				<menuitem label="${c:l('align.top')}" image="~./zssapp/image/edit-vertical-alignment-top.png"
+					forward="onVerticalAlignSelector(top)"></menuitem>
+				<menuitem label="${c:l('align.middle')}" image="~./zssapp/image/edit-vertical-alignment-middle.png"
+					forward="onVerticalAlignSelector(middle)"></menuitem>
+				<menuitem label="${c:l('align.bottom')}" image="~./zssapp/image/edit-vertical-alignment.png"
+					forward="onVerticalAlignSelector(bottom)"></menuitem>
+			</menupopup>
+		</dropdownbutton>
+		<dropdownbutton id="halignBtn" image="~./zssapp/image/edit-alignment.png">
+			<menupopup>
+				<menuitem label="${c:l('align.left')}" image="~./zssapp/image/edit-alignment.png"
+					forward="onAlignSelector(left)" />
+				<menuitem label="${c:l('align.center')}" image="~./zssapp/image/edit-alignment-center.png" 
+					forward="onAlignSelector(center)"></menuitem>
+				<menuitem label="${c:l('align.right')}" image="~./zssapp/image/edit-alignment-right.png"
+					forward="onAlignSelector(right)"></menuitem>
+			</menupopup>
+		</dropdownbutton>
+		<toolbarbutton id="wrapTextBtn" image="~./zssapp/image/wrapText.gif" tooltiptext="Wrap Text"></toolbarbutton>
 	</hlayout>
 </zk>

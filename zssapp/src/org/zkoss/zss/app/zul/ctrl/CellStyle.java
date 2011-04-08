@@ -31,6 +31,9 @@ public interface CellStyle {
 	public static int ALIGN_LEFT = org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_LEFT;
 	public static int ALIGN_CENTER = org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_CENTER;
 	public static int ALIGN_RIGHT = org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_RIGHT;
+	public static int ALIGN_TOP = org.zkoss.poi.ss.usermodel.CellStyle.VERTICAL_TOP;
+	public static int ALIGN_MIDDLE = org.zkoss.poi.ss.usermodel.CellStyle.VERTICAL_CENTER;
+	public static int ALIGN_BOTTOM = org.zkoss.poi.ss.usermodel.CellStyle.VERTICAL_BOTTOM;
 	
 	/**
 	 * Border position
@@ -111,6 +114,9 @@ public interface CellStyle {
 	
 	public int getAlignment();
 
+	public void setVerticalAlignment(int alignment);
+	
+	public int getVerticalAlignment();
 	
 	public void setStrikethrough(boolean strikethrough);
 	/**

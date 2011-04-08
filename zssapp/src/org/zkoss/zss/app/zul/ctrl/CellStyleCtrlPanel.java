@@ -63,12 +63,18 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 	private Colorbutton fontColorBtn;
 	private Colorbutton cellColorBtn;
 	
-	private Toolbarbutton alignLeftBtn;
-	private Toolbarbutton alignCenterBtn;
-	private Toolbarbutton alignRightBtn;
-	
+	private Dropdownbutton valignBtn;
+	private Dropdownbutton halignBtn;
+
 	private boolean isWrapText;
 	private Toolbarbutton wrapTextBtn;
+	
+	private final static String ALIGN_TOP_SRC_IMAGE = "~./zssapp/image/edit-vertical-alignment-top.png";
+	private final static String ALIGN_MIDDLE_SRC_IMAGE = "~./zssapp/image/edit-vertical-alignment-middle.png";
+	private final static String ALIGN_BOTTOM_SRC_IMAGE = "~./zssapp/image/edit-vertical-alignment.png";
+	private final static String ALIGN_LEFT_SRC_IMAGE = "~./zssapp/image/edit-alignment.png";
+	private final static String ALIGN_CENTER_SRC_IMAGE = "~./zssapp/image/edit-alignment-center.png";
+	private final static String ALIGN_RIGHT_SRC_IMAGE = "~./zssapp/image/edit-alignment-right.png";
 	
 	public CellStyleCtrlPanel() {		
 		Executions.createComponents(Consts._CellStylePanel_zul, this, null);
@@ -124,10 +130,10 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 		cellColorBtn.setVisible(visible);
 	}
 	
+	
 	public void setAlignmentvisible(boolean visible) {
-		alignLeftBtn.setVisible(visible);
-		alignCenterBtn.setVisible(visible);
-		alignRightBtn.setVisible(visible);
+		valignBtn.setVisible(visible);
+		halignBtn.setVisible(visible);
 	}
 	
 	public void setWraptextvisible(boolean visible) {
@@ -136,44 +142,65 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 	
 	/**
 	 * Set control panel attributes when FontTargetChangeEvent fired
-	 * @param fontStyle
+	 * @param cellStyle
 	 */
-	protected void initPanel(CellStyle fontStyle) {
-		fontFamily.setValue(fontStyle.getFontFamily());
-		fontSize.setValue("" + fontStyle.getFontSize());
+	protected void initPanel(CellStyle cellStyle) {
+		fontFamily.setValue(cellStyle.getFontFamily());
+		fontSize.setValue("" + cellStyle.getFontSize());
 		
-		_isBold = fontStyle.isBold();
+		_isBold = cellStyle.isBold();
 		boldBtn.setSclass(_isBold ? "clicked" : "");
 		
-		_isItalic = fontStyle.isItalic();
+		_isItalic = cellStyle.isItalic();
 		italicBtn.setSclass(_isItalic ? "clicked" : "");
 		
-		_isUnderline = fontStyle.getUnderline() == CellStyle.UNDERLINE_SINGLE;
+		_isUnderline = cellStyle.getUnderline() == CellStyle.UNDERLINE_SINGLE;
 		underlineBtn.setSclass(_isUnderline ? "clicked" : "");
 		
-		_isStrikethrough = fontStyle.isStrikethrough();
+		_isStrikethrough = cellStyle.isStrikethrough();
 		strikethroughBtn.setSclass(_isStrikethrough ? "clicked" : "");
-		fontColorBtn.setColor(fontStyle.getFontColor());
-		cellColorBtn.setColor(fontStyle.getCellColor());
+		fontColorBtn.setColor(cellStyle.getFontColor());
+		cellColorBtn.setColor(cellStyle.getCellColor());
 		
-		alignLeftBtn.setSclass("");
-		alignCenterBtn.setSclass("");
-		alignRightBtn.setSclass("");
-		switch(fontStyle.getAlignment()) {
-		case CellStyle.ALIGN_LEFT:
-			alignLeftBtn.setSclass("clicked");
-			break;
-		case CellStyle.ALIGN_CENTER:
-			alignCenterBtn.setSclass("clicked");
-			break;
-		case CellStyle.ALIGN_RIGHT:
-			alignRightBtn.setSclass("clicked");
-			break;
+		String halignImageSrc = getAlignImageSrc(cellStyle.getAlignment());
+		if (halignImageSrc != null) {
+			halignBtn.setImage(halignImageSrc);
+			halignBtn.setSclass("dpbtn-seld");
 		}
-		isWrapText = fontStyle.isWrapText();
+		String valignImageSrc = getVerticalAlignImageSrc(cellStyle.getVerticalAlignment());
+		if (valignImageSrc != null) {
+			valignBtn.setImage(valignImageSrc);
+			valignBtn.setSclass("dpbtn-seld");	
+		}
+		
+		isWrapText = cellStyle.isWrapText();
 		wrapTextBtn.setSclass(isWrapText ? "clicked" : "");
 	}
 
+	private static String getAlignImageSrc(int align) {
+		switch (align) {
+		case CellStyle.ALIGN_LEFT:
+			return ALIGN_LEFT_SRC_IMAGE;
+		case CellStyle.ALIGN_CENTER:
+			return ALIGN_CENTER_SRC_IMAGE;
+		case CellStyle.ALIGN_RIGHT:
+			return ALIGN_RIGHT_SRC_IMAGE;
+		}
+		return null;
+	}
+	
+	private static String getVerticalAlignImageSrc(int align) {
+		switch (align) {
+		case CellStyle.ALIGN_TOP:
+			return ALIGN_TOP_SRC_IMAGE;
+		case CellStyle.ALIGN_MIDDLE:
+			return ALIGN_MIDDLE_SRC_IMAGE;
+		case CellStyle.ALIGN_BOTTOM:
+			return ALIGN_BOTTOM_SRC_IMAGE;
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * 
@@ -351,33 +378,54 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 		return Range.BORDER_EDGE_BOTTOM;
 	}
 	
+	public void onDropdown$valignBtn() {
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
+	}
 	
-	public void onAlignHorizontalClick(ForwardEvent evt) {
+	public void onDropdown$halignBtn() {
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
+	}
+	
+	public void onAlignSelector(ForwardEvent evt) {
 		//TODO: move this to spreadsheet onblur event (not implement yet)
 		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
-
+		
 		final String align = (String)evt.getData();
 		getCellStyleContext().modifyStyle(new StyleModification(){
 			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
 				candidteEvt.setExecutor(CellStyleCtrlPanel.this);
-				int alignment = CellStyle.ALIGN_RIGHT;
-				alignLeftBtn.setSclass("");
-				alignCenterBtn.setSclass("");
-				alignRightBtn.setSclass("");
+				int alignment = CellStyle.ALIGN_LEFT;
 				
-				if("left".equals(align)) {
+				if ("left".equals(align)) {
 					alignment = CellStyle.ALIGN_LEFT;
-					alignLeftBtn.setSclass("clicked");
-				}
-				else if ("center".equals(align)) {
+				} else if ("center".equals(align)) {
 					alignment = CellStyle.ALIGN_CENTER;
-					alignCenterBtn.setSclass("clicked");
 				} else if ("right".equals(align)) {
 					alignment = CellStyle.ALIGN_RIGHT;
-					alignRightBtn.setSclass("clicked");
 				}
-				
+				halignBtn.setImage(getAlignImageSrc(alignment));
 				style.setAlignment(alignment);
+			}
+		});
+		Events.postEvent(Events.ON_CLICK, this, null);
+	}
+	
+	public void onVerticalAlignSelector(ForwardEvent evt) {
+		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
+		final String align = (String)evt.getData();
+		getCellStyleContext().modifyStyle(new StyleModification(){
+			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
+				candidteEvt.setExecutor(CellStyleCtrlPanel.this);
+				int alignment = CellStyle.ALIGN_TOP;
+				if ("top".equals(align)) {
+					alignment = CellStyle.ALIGN_TOP;
+				} else if ("middle".equals(align)) {
+					alignment = CellStyle.ALIGN_MIDDLE;
+				} else if ("bottom".equals(align)) {
+					alignment = CellStyle.ALIGN_BOTTOM;
+				}	
+				valignBtn.setImage(getVerticalAlignImageSrc(alignment));
+				style.setVerticalAlignment(alignment);
 			}
 		});
 		Events.postEvent(Events.ON_CLICK, this, null);
@@ -417,8 +465,8 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 					initPanel(event.getCellStyle());
 			}
 		};
-		context.addEventListener(Consts.ON_STYLING_TARGET_CHANGED,listener);
-		context.addEventListener(Consts.ON_CELL_STYLE_CHANGED,listener);
+		context.addEventListener(Consts.ON_STYLING_TARGET_CHANGED, listener);
+		context.addEventListener(Consts.ON_CELL_STYLE_CHANGED, listener);
 
 		getDesktopWorkbenchContext().addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
 			public void onEvent(Event event) throws Exception {
@@ -439,10 +487,11 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 				strikethroughBtn.setSclass("");
 				fontColorBtn.setColor("#000000");
 				cellColorBtn.setColor("#FFFFFF");
-				
-				alignLeftBtn.setSclass("");
-				alignCenterBtn.setSclass("");
-				alignRightBtn.setSclass("");
+
+				valignBtn.setSclass("");
+				valignBtn.setImage(ALIGN_TOP_SRC_IMAGE);
+				halignBtn.setSclass("");
+				halignBtn.setImage(ALIGN_LEFT_SRC_IMAGE);
 				
 				isWrapText = false;
 				wrapTextBtn.setSclass("");
