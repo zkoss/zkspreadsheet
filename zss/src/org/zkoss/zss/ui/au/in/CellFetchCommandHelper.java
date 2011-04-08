@@ -916,6 +916,19 @@ public class CellFetchCommandHelper{
 				jcell.setData("hal", "r");
 				break;
 			}
+			jcell.setData("drh", 
+					isDefaultRowHeight(sheet.getDefaultRowHeight(), cell.getRow().getHeight(), 40) ? "1" : "0");
+			int verAlign = style.getVerticalAlignment();
+			switch (verAlign) {
+			//top is client side's default, ignore it
+			//case CellStyle.VERTICAL_TOP:
+			case CellStyle.VERTICAL_CENTER:
+				jcell.setData("vtal", "c");
+				break;
+			case CellStyle.VERTICAL_BOTTOM:
+				jcell.setData("vtal", "b");
+				break;
+			}
 		} else {
 			jcell.setData("txt", "");
 			CellFormatHelper cfh = new CellFormatHelper(sheet, row, col, _ctrl.getMergeMatrixHelper(sheet));
@@ -943,5 +956,15 @@ public class CellFetchCommandHelper{
 			jcell.setData("zsw", info.id);
 		}
 		
+	}
+	
+	//TODO: remove to util
+	/**
+	 * Returns whether if 
+	 * @param rowIdx
+	 * @return
+	 */
+	private static boolean isDefaultRowHeight(int defaultRowHeight, int rowHeight, int toleranceRange) {
+		return Math.abs(defaultRowHeight - rowHeight) <= toleranceRange;
 	}
 }

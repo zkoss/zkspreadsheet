@@ -84,9 +84,9 @@ import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.event.EventDispatchListener;
 import org.zkoss.zss.engine.event.SSDataEvent;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.Importer;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.ExcelImporter;
 import org.zkoss.zss.ui.au.in.BlockSyncCommand;
@@ -118,12 +118,12 @@ import org.zkoss.zss.ui.event.StopEditingEvent;
 import org.zkoss.zss.ui.fn.UtilFns;
 import org.zkoss.zss.ui.impl.CellFormatHelper;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
+import org.zkoss.zss.ui.impl.HeaderPositionHelper.HeaderPositionInfo;
 import org.zkoss.zss.ui.impl.JSONObj;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.SequenceId;
 import org.zkoss.zss.ui.impl.Utils;
-import org.zkoss.zss.ui.impl.HeaderPositionHelper.HeaderPositionInfo;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
@@ -1778,7 +1778,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 				}
 				if (cfh.hasRightBorder())
 					result.setData("rbo", true);
-
+				
 				int textHAlign = (cell == null) ? -1 : BookHelper.getRealAlignment(cell);
 				switch(textHAlign) {
 				case CellStyle.ALIGN_CENTER:
@@ -1787,6 +1787,20 @@ public class Spreadsheet extends XulElement implements Serializable {
 					break;
 				case CellStyle.ALIGN_RIGHT:
 					result.setData("hal", "r");
+					break;
+				}
+				result.setData("drh", 
+						isDefaultRowHeight(sheet.getDefaultRowHeight(), cell.getRow().getHeight(), 40) ? "1" : "0");
+				int verAlign = style != null /*&& !isDefaultRowHeight(sheet.getDefaultRowHeight(), cell.getRow().getHeight(), 40)*/ ? 
+						style.getVerticalAlignment() : -1;
+				switch (verAlign) {
+				//top is client side's default, ignore it
+				//case CellStyle.VERTICAL_TOP:
+				case CellStyle.VERTICAL_CENTER:
+					result.setData("vtal", "c");
+					break;
+				case CellStyle.VERTICAL_BOTTOM:
+					result.setData("vtal", "b");
 					break;
 				}
 				Hyperlink hlink = cell == null ? null : Utils.getHyperlink(cell);
@@ -1805,6 +1819,15 @@ public class Spreadsheet extends XulElement implements Serializable {
 				response(row + "_" + col + "_" + _updateCellId.last(), new AuDataUpdate(this, "", sheetId, result.toString()));
 			}
 		}
+	}
+	
+	/**
+	 *
+	 * @param rowIdx
+	 * @return
+	 */
+	private static boolean isDefaultRowHeight(int defaultRowHeight, int rowHeight, int toleranceRange) {
+		return Math.abs(defaultRowHeight - rowHeight) <= toleranceRange;
 	}
 	
 	private HeaderPositionHelper myGetColumnPositionHelper(Worksheet sheet, int maxcol) {
@@ -2047,6 +2070,22 @@ public class Spreadsheet extends XulElement implements Serializable {
 					break;
 				case CellStyle.ALIGN_RIGHT:
 					HTMLs.appendAttribute(sb, "z.hal", "r");
+					break;
+				}
+				/*indicate browser can delay flex*/
+				HTMLs.appendAttribute(sb, "z.drh", 
+						isDefaultRowHeight(sheet.getDefaultRowHeight(), cell.getRow().getHeight(), 40) ? "1" : "0");
+				//default height doesn't need to align
+				int verAlign = style != null /*&& !isDefaultRowHeight(sheet.getDefaultRowHeight(), cell.getRow().getHeight(), 40)*/ ? 
+						style.getVerticalAlignment() : -1;
+				switch (verAlign) {
+				//top is client side's default, ignore it
+				//case CellStyle.VERTICAL_TOP:
+				case CellStyle.VERTICAL_CENTER:
+					HTMLs.appendAttribute(sb, "z.vtal", "c");
+					break;
+				case CellStyle.VERTICAL_BOTTOM:
+					HTMLs.appendAttribute(sb, "z.vtal", "b");
 					break;
 				}
 
@@ -3272,20 +3311,20 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 	}
 
-	private void processStopEditing0(String token, Worksheet sheet, int row, int col, Object value) {
+	private void processStopEditing0(String token, Worksheet sheet, int rowIdx, int colIdx, Object value) {
 		try {
-			Utils.setEditText(sheet, row, col, value == null ? "" : value.toString());
+			Utils.setEditText(sheet, rowIdx, colIdx, value == null ? "" : value.toString());
 
 			JSONObj result = new JSONObj();
-			result.setData("r", row);
-			result.setData("c", col);
+			result.setData("r", rowIdx);
+			result.setData("c", colIdx);
 			result.setData("type", "stopedit");
 			result.setData("val", "");
 
 			// responseUpdateCell("stop", token, Utils.getId(sheet), result.toString());
 			smartUpdate("dataUpdateStop", new String[] { token,	Utils.getSheetUuid(sheet), result.toString() });
 		} catch (RuntimeException x) {
-			processCancelEditing0(token, sheet, row, col);
+			processCancelEditing0(token, sheet, rowIdx, colIdx);
 			if (x instanceof FormulaParseException) {
 				showFormulaError((FormulaParseException)x);
 			} else {

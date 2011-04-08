@@ -105,6 +105,48 @@ lineHeight=20
 	position: relative;
 }
 
+.zscell-inner-mid-left {
+	display: box;
+	box-orient: horizontal;
+	box-pack: start;
+	box-align: center;
+}
+
+.zscell-inner-mid-center {
+	display: box;
+	box-orient: horizontal;
+	box-pack: center;
+	box-align: center;
+}
+
+.zscell-inner-mid-right {
+	display: box;
+	box-orient: horizontal;
+	box-pack: end;
+	box-align: center;
+}
+
+.zscell-inner-btm-left {
+	display: box;
+	box-orient: horizontal;
+	box-pack: start;
+	box-align: end;
+}
+
+.zscell-inner-btm-center {
+	display: box;
+	box-orient: horizontal;
+	box-pack: center;
+	box-align: end;
+}
+
+.zscell-inner-btm-right {
+	display: box;
+	box-orient: horizontal;
+	box-pack: end;
+	box-align: end;
+}
+
 .zscelltxt {
 	font-family: Calibri;
 	font-size: 11px;

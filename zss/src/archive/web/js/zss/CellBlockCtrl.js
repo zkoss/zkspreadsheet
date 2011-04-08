@@ -17,7 +17,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 }}IS_RIGHT
 */
 
-
+(function () {
+	var CELL_PARAMS = ["txt", "st", "ist", "wrap", "hal", "vtal", "drh", "rbo", "merr", "merid", "merl", "zsw", "edit"];
 /**
  * CellBlockCtrl is used for controlling cells, include load cell, creating cell, merge cell and cell position index
  */
@@ -64,6 +65,14 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 			return null;
 		
 		return this.rows[row - range.top].getCellAt(col - range.left);
+	},
+	onRowHeightChanged: function (row) {
+		var range = this.range;
+		if (row < range.top || row > range.bottom)
+			return;
+		
+		var row = this.rows[row - range.top];
+		row.onHeightChanged();
 	},
 	/**
 	 * Sets the merge range of the cell
@@ -154,16 +163,16 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 				cells = blockdata[i].cells,
 				rowcmp = this.rows[i].comp;
 			
-			jq(rowcmp).css('display', 'none');//for speed up
+			//jq(rowcmp).css('display', 'none');//for speed up
 			for (var j = 0; j < width; j++) {
 				var cell = cells[j],
 					parm ={row: rowindex, col: cell.ix, zsh: blockdata[i].zsh};
-				zkS.copyParm(cell, parm, ["txt", "st", "ist", "wrap", "hal", "rbo", "merr", "merid", "merl", "zsw", "edit"]);
+				zkS.copyParm(cell, parm, CELL_PARAMS);
 				
 				var cellctrl = zss.Cell.createComp(this.sheet, this, parm);
 				rowcmp.ctrl.pushCellE(cellctrl);
 			}
-			jq(rowcmp).css('display', '');
+			//jq(rowcmp).css('display', '');
 		}
 		this.range.extendRight(width);
 	},
@@ -174,16 +183,16 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 				cells = blockdata[i].cells;
 			
 			var rowcmp = this.rows[i].comp;
-			jq(rowcmp).css('display', 'none');//for speed up
+			//jq(rowcmp).css('display', 'none');//for speed up
 			for (var j = 0; j < width; j++) {
 				var cell = cells[j],
 					parm ={row: rowindex, col: cell.ix, zsh: blockdata[i].zsh};
-				zkS.copyParm(cell, parm, ["txt", "st", "ist", "wrap", "hal", "rbo", "merr", "merid", "merl", "zsw", "edit"]);
+				zkS.copyParm(cell, parm, CELL_PARAMS);
 				
 				var cellctrl = zss.Cell.createComp(this.sheet, this, parm);
 				rowcmp.ctrl.pushCellS(cellctrl);
 			}
-			jq(rowcmp).css('display', '');
+			//jq(rowcmp).css('display', '');
 		}
 		this.range.extendLeft(width);
 	},
@@ -202,7 +211,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 			for (var j = 0; j < width; j++) {
 				var cell = cells[j];
 				parm = {row: rowindex, col: cell.ix, zsh: blockdata[i].zsh};
-				zkS.copyParm(cell, parm, ["txt", "st", "ist", "wrap", "hal", "rbo", "merr", "merid", "merl", "zsw", "edit"]);
+				zkS.copyParm(cell, parm, CELL_PARAMS);
 
 				var cellctrl = zss.Cell.createComp(this.sheet, this,parm);
 				rowcmp.ctrl.pushCellE(cellctrl);	
@@ -229,7 +238,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 			for (var j = 0; j < width; j++) {
 				var cell = cells[j],
 					parm = {row: rowindex, col: cell.ix, zsh: blockdata[i].zsh};
-				zkS.copyParm(cell, parm, ["txt", "st", "ist", "wrap", "hal", "rbo", "merr", "merid", "merl", "zsw", "edit"]);
+				zkS.copyParm(cell, parm, CELL_PARAMS);
 				
 				var cellctrl = zss.Cell.createComp(this.sheet, this, parm);
 				rowcmp.ctrl.pushCellE(cellctrl);	
@@ -257,7 +266,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 			for (var j = 0; j < width; j++) {
 				var cell = cells[j];
 					parm = {row: rowindex, col: cell.ix, zsh:blockdata[i].zsh};
-				zkS.copyParm(cell, parm, ["txt", "st", "ist", "wrap", "hal", "rbo", "merr", "merid", "merl", "zsw", "edit"]);
+				zkS.copyParm(cell, parm, CELL_PARAMS);
 				
 				var cellctrl = zss.Cell.createComp(this.sheet, this, parm);
 				rowcmp.ctrl.pushCellE(cellctrl);	
@@ -530,3 +539,4 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 		return new zss.CellBlockCtrl(sheet, cmp, left, top);
 	}
 });
+})();

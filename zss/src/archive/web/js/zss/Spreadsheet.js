@@ -19,6 +19,67 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 
 (function () {
+	/**
+	 * Includes flexbox support function
+	 * 
+	 * Modernizr v1.7
+	 * http://www.modernizr.com
+	 *
+	 * Developed by: 
+	 * - Faruk Ates  http://farukat.es/
+	 * - Paul Irish  http://paulirish.com/
+	 *
+	 * Copyright (c) 2009-2011
+	 * Dual-licensed under the BSD or MIT licenses.
+	 * http://www.modernizr.com/license/
+	 * 
+	 */
+	function _flexSupport() {
+		var docElement = document.documentElement,
+			prefixes = ' -webkit- -moz- -o- -ms- -khtml- '.split(' ');
+        /**
+         * set_prefixed_value_css sets the property of a specified element
+         * adding vendor prefixes to the VALUE of the property.
+         * @param {Element} element
+         * @param {string} property The property name. This will not be prefixed.
+         * @param {string} value The value of the property. This WILL be prefixed.
+         * @param {string=} extra Additional CSS to append unmodified to the end of
+         * the CSS string.
+         */
+        function set_prefixed_value_css(element, property, value, extra) {
+            property += ':';
+            element.style.cssText = (property + prefixes.join(value + ';' + property)).slice(0, -property.length) + (extra || '');
+        }
+
+        /**
+         * set_prefixed_property_css sets the property of a specified element
+         * adding vendor prefixes to the NAME of the property.
+         * @param {Element} element
+         * @param {string} property The property name. This WILL be prefixed.
+         * @param {string} value The value of the property. This will not be prefixed.
+         * @param {string=} extra Additional CSS to append unmodified to the end of
+         * the CSS string.
+         */
+        function set_prefixed_property_css(element, property, value, extra) {
+            element.style.cssText = prefixes.join(property + ':' + value + ';') + (extra || '');
+        }
+        
+        var c = document.createElement('div'),
+	        elem = document.createElement('div');
+	
+	    set_prefixed_value_css(c, 'display', 'box', 'width:42px;padding:0;');
+	    set_prefixed_property_css(elem, 'box-flex', '1', 'width:10px;');
+	
+	    c.appendChild(elem);
+	    docElement.appendChild(c);
+	
+	    var ret = elem.offsetWidth === 42;
+	
+	    c.removeChild(elem);
+	    docElement.removeChild(c);
+	
+	    return ret;
+	}
 	function _calScrollWidth () {
 		if(zkS.t(zss.Spreadsheet.scrollWidth)) return;
 	    // scroll scrolling div
@@ -167,6 +228,10 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  * Spreadsheet is a is a rich ZK Component to handle EXCEL like behavior
  */
 zss.Spreadsheet = zk.$extends(zul.Widget, {
+	$init: function () {
+		this.$supers('$init', arguments);
+		this._cssFlex = _flexSupport();
+	},
 	$define: {
 		/**
 		 * synchronized update data

@@ -8,7 +8,47 @@
 	border-right: 0px;/* DIFF */
 	margin-right: 1px;/* DIFF */
 }
+.zscell-inner-mid-left {
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+	-webkit-box-pack: start;
+	-webkit-box-align: center;
+}
 
+.zscell-inner-mid-center {
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+}
+
+.zscell-inner-mid-right {
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+	-webkit-box-pack: end;
+	-webkit-box-align: center;
+}
+
+.zscell-inner-btm-left {
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+	-webkit-box-pack: start;
+	-webkit-box-align: end;
+}
+
+.zscell-inner-btm-center {
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+	-webkit-box-pack: center;
+	-webkit-box-align: end;
+}
+
+.zscell-inner-btm-right {
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+	-webkit-box-pack: end;
+	-webkit-box-align: end;
+}
 .zstopblock {
 	top: 1px;
 }

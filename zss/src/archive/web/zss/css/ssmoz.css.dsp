@@ -1,6 +1,46 @@
 <%@ page contentType="text/css;charset=UTF-8" %>
 <%@ taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" %>
 <c:include page="~./zss/css/ss.css.dsp"/>
+.zscell-inner-mid-left {
+	display: -moz-box;
+	-moz-box-orient: horizontal;
+	-moz-box-pack: start;
+	-moz-box-align: center;
+}
+.zscell-inner-mid-center {
+	display: -moz-box;
+	-moz-box-orient: horizontal;
+	-moz-box-pack: center;
+	-moz-box-align: center;
+}
+
+.zscell-inner-mid-right {
+	display: -moz-box;
+	-moz-box-orient: horizontal;
+	-moz-box-pack: end;
+	-moz-box-align: center;
+}
+
+.zscell-inner-btm-left {
+	display: -moz-box;
+	-moz-box-orient: horizontal;
+	-moz-box-pack: start;
+	-moz-box-align: end;
+}
+
+.zscell-inner-btm-center {
+	display: -moz-box;
+	-moz-box-orient: horizontal;
+	-moz-box-pack: center;
+	-moz-box-align: end;
+}
+
+.zscell-inner-btm-right {
+	display: -moz-box;
+	-moz-box-orient: horizontal;
+	-moz-box-pack: end;
+	-moz-box-align: end;
+}
 .zsscroll {
 	background-color:#CAD7E6;
 }
@@ -31,6 +71,13 @@
 	top: -1px;
 }
 </c:if>
+
+.zscell-inner-mid-left {
+	display: -moz-box;
+	-moz-box-orient: horizontal;
+	-moz-box-pack: start;
+	-moz-box-align: center;
+}
 <c:if test="${c:isExplorer7()}">
 .zstopblock {
 	top: 1px;

@@ -131,6 +131,14 @@ public class CellVisitorContext {
 	}
 	
 	/**
+	 * Returns the cell's vertical alignment
+	 * @return the cell's alignment
+	 */
+	public short getVerticalAlignment() {
+		return getOrCreateCell().getCellStyle().getVerticalAlignment();
+	}
+	
+	/**
 	 * Returns the range
 	 * @return the range
 	 */

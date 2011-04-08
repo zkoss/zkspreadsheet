@@ -253,6 +253,18 @@ zss.Row = zk.$extends(zk.Object, {
 		}
 			
 		this.shiftCellInfo(index, col);
+	},
+	onHeightChanged: function () {
+		//iter row's cells
+		var cs = this.cells,
+			i = cs.length;
+		while (i--) {
+			var c = cs[i];
+			if (c.onSize) {
+				c.onSize();
+			}
+		}
+		
 	}
 }, {
 	/**

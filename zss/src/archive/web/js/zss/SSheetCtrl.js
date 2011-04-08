@@ -951,7 +951,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			md1 = zkS._getMouseData(evt, this.comp),
 			mdstr = "";
 		//Click on Cell
-		if ((cmp = zkS.parentByZSType(elm, "SCell", 1)) != null) {
+		if ((cmp = zkS.parentByZSType(elm, "SCell", 0)) != null) {
 			var cellcmp = cmp,
 				sheetofs = zk(sheet.comp).revisedOffset(),
 			//TODO there is a bug in opera, when a cell is overflow, zk.revisedOffset can get correct component offset 
@@ -1538,7 +1538,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		}
 		//sync focus and selection area
 		this._syncRowFocusAndSelection(row, row);
-
+		this.activeBlock.onRowHeightChanged(row);
 		if (fireevent) {
 			this._wgt.fire('onZSSHeaderModif', 
 					{sheetId: this.serverSheetId, type: "left", event: "size", index: row, newsize: height, id: zsh, hidden: hidden},
@@ -1558,7 +1558,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			col = result.c,
 			cell = this.activeBlock.getCell(row, col),
 			parm = {"txt": result.val,"edit":result.edit};
-		zkS.copyParm(result, parm, ["st", "ist", "wrap", "hal", "rbo", "merr", "merl"]);
+		zkS.copyParm(result, parm, ["st", "ist", "wrap", "hal", "vtal", "drh", "rbo", "merr", "merl"]);
 		
 		if (cell)//update when cell exist
 			zss.Cell.updateCell(cell, parm);
