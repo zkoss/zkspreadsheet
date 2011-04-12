@@ -1789,8 +1789,9 @@ public class Spreadsheet extends XulElement implements Serializable {
 					result.setData("hal", "r");
 					break;
 				}
-				result.setData("drh", 
-						isDefaultRowHeight(sheet.getDefaultRowHeight(), cell.getRow().getHeight(), 40) ? "1" : "0");
+				final Row rowobj = sheet.getRow(row);
+				result.setData("drh", //bug#320 NullPointerException
+						rowobj == null || isDefaultRowHeight(sheet.getDefaultRowHeight(), rowobj.getHeight(), 40) ? "1" : "0");
 				int verAlign = style != null /*&& !isDefaultRowHeight(sheet.getDefaultRowHeight(), cell.getRow().getHeight(), 40)*/ ? 
 						style.getVerticalAlignment() : -1;
 				switch (verAlign) {
