@@ -172,4 +172,9 @@ public final class CellHelper {
 		Utils.sort(sheet, rect,
 				null, new boolean[] { true }, null, false, false, false);
 	}
+
+	public static void autoFilter(Worksheet sheet,
+			Rect rect) {
+		Utils.autoFilter(sheet,rect);
+	}
 }

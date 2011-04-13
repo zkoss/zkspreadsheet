@@ -230,7 +230,7 @@
 							<menuseparator />
 							<!-- Filter:not support yet -->
 							<menuitem id="filter" label="${c:l('filter')}" src="~./zssapp/image/funnel--pencil.png"
-								forward="onFilterSelector(${c:l('filter')})" disabled="true" />
+								forward="onFilterSelector(${c:l('filter')})" />
 							<menuitem id="clearFilter" label="${c:l('filter.clear')}"
 								src="~./zssapp/image/funnel--minus.png"
 								forward="onFilterSelector(${c:l('filter.clear')})" disabled="true" />

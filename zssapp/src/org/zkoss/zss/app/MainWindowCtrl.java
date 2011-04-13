@@ -447,6 +447,16 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				CellHelper.sortDescending(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
 		}
 	}
+
+	//TODO:
+	public void onFilterSelector(ForwardEvent event) {
+		String param = (String) event.getData();
+		if (param == null)
+			return;
+		if (param.equals(Labels.getLabel("filter"))) {
+			CellHelper.autoFilter(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
+		} 
+	}
 	
 	public void onClick$insertHyperlinkBtn() {
 		openHyperlinkDialog();
