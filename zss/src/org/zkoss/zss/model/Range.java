@@ -466,4 +466,6 @@ public interface Range {
 	 * @return a {@link Range} that represents a range that offset from this Range.
 	 */
 	public Range getOffset(int rowOffset, int colOffset);
+
+	public void autoFilter();
 }

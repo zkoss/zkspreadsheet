@@ -304,7 +304,7 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 			return BookHelper.getRepeatRowsAndColumns(ptgs);
 		}
 	}
-    private XSSFName getBuiltInName(String builtInCode, int sheetNumber) {
+    public XSSFName getBuiltInName(String builtInCode, int sheetNumber) {
     	final int sz  = getNumberOfNames();
     	for (int j = 0; j < sz; ++j) {
     		XSSFName name = getNameAt(j);

@@ -244,4 +244,8 @@ public class EmptyRange implements Range {
 	public Range getOffset(int rowOffset, int colOffset) {
 		return this;
 	}
+
+	@Override
+	public void autoFilter() {
+	}
 }

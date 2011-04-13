@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Chart;
+import org.zkoss.poi.ss.usermodel.Combo;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
@@ -129,6 +130,11 @@ public class SheetCtrlImpl implements SheetCtrl {
 
 			@Override
 			public List<Picture> getPictures() {
+				return Collections.emptyList();
+			}
+
+			@Override
+			public List<Combo> getCombos() {
 				return Collections.emptyList();
 			}
 		};

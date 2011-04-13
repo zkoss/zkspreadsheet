@@ -37,6 +37,7 @@ import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
@@ -1474,5 +1475,10 @@ public class RangeImpl implements Range {
 			}
 		}
 		return Ranges.EMPTY_RANGE;
+	}
+
+	@Override
+	public void autoFilter() {
+		_sheet.setAutoFilter(new CellRangeAddress(getRow(), getLastRow(), getColumn(), getLastColumn()));
 	}
 }

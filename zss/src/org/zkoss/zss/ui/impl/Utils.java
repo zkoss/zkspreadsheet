@@ -60,6 +60,18 @@ import org.zkoss.zss.ui.Spreadsheet;
  */
 public class Utils {
 	private static final Log log = Log.lookup(Utils.class);
+
+	// TODO Auto-generated method stub
+	public static void autoFilter(Worksheet sheet, Rect selection) {
+		int left = selection.getLeft();
+		int right = selection.getRight();
+		int top = selection.getTop();
+		int btm = selection.getBottom();
+		
+		Range rng = Utils.getRange(sheet, top, left, btm, right);
+		rng.autoFilter();
+		
+	}
 	
 	/**
 	 * Sort in selection range
@@ -1229,4 +1241,6 @@ public class Utils {
 			fillRows(sheet, srctRow, srclCol, srcbRow, srcrCol, dsttRow, dstbRow);
 		}
 	}
+
+
 }
