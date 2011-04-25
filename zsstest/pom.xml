@@ -8,7 +8,7 @@
 		<zk.version>5.0.7.FL.20110304</zk.version>
 		<junit.version>4.8.1</junit.version>
 	</properties>
-	<version>2.0.1</version>
+	<version>2.1.0</version>
 	<packaging>jar</packaging>
 	<name>ZK Spreadsheet Unit Test</name>
 	<url>http://www.zkoss.org/zsstest</url>
