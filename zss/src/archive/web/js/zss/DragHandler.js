@@ -41,6 +41,12 @@ zss.DragHandler = zk.$extends(zk.Object, {
 		this.stopAutoScroll();
 		zk(document.body).enableSelection();
 		this.sheet.stopDragging();
+		//feature #26: Support copy/paste value to local Excel
+		var focustag = this.sheet.dp.focustag;		
+		setTimeout(function () {
+			focustag.focus();
+			jq(focustag).select();
+		}, 0);
 	},
 	stopAutoScroll : function (){
 		if (this.scrollctrl) {

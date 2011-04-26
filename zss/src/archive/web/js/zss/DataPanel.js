@@ -405,7 +405,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	/* gain focus to the focus cell*/
 	_gainFocus: function (trigger, noevt, noslloc) {
 		var sheet = this.sheet,
-			local = this,
+			focustag = this.focustag,
 			pos = sheet.getLastFocus(),
 			row = pos.row,
 			col = pos.column;
@@ -428,7 +428,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 
 		if (trigger && sheet.state == zss.SSheetCtrl.FOCUSED){ 
 			setTimeout(function () {
-				local.focustag.focus();
+				focustag.focus();
+				jq(focustag).select();
 			}, 0);
 		}
 	},

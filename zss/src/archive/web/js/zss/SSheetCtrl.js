@@ -1575,6 +1575,10 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			cell = this.lp.block.getCell(row, col);
 			if (cell) zss.Cell.updateCell(cell, parm);
 		}
+		//feature #26: Support copy/paste value to local Excel
+		var ls = this.getLastSelection();
+		if (row >= ls.top && row <= ls.bottom && col >= ls.left && col <= ls.right)
+			this._prepareCopy();
 	},
 	_updateHeaderSelectionCss: function (range, remove) {
 		var top = range.top,
@@ -1667,6 +1671,31 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			this.cp.selArea.relocate(selRange);
 			if(show) this.cp.selArea.showArea();
 		}
+		this._prepareCopy(); //feature #26: Support copy/paste value to local Excel
+	},
+	//feature #26: Support copy/paste value to local Excel
+	_prepareCopy: function () {
+		var ls = this.getLastSelection(),
+			result='';
+		for(var r = ls.top; r <= ls.bottom; ++r) {
+			for(var c = ls.left; c <= ls.right; ++c) {
+				var cell = this.getCell(r, c);
+				var val = cell.getPureText();
+				if (val != null)
+					result+=val;
+				if (c < ls.right)
+					result+='\t';
+			}
+			if (r < ls.bottom) {
+				result+='\n';
+			}
+		}
+		var focustag = this.dp.focustag;
+		focustag.value = result;
+		setTimeout(function () {
+			focustag.focus();
+			jq(focustag).select();
+		}, 0);
 	},
 	/**
 	 * Hides cell's selection area 

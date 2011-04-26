@@ -118,16 +118,31 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			}
 		},
 		getText: function () {
-			var $t = this.firstChild,
-				$c = $t.nextSibling,
-				$b = this.lastChild;
+			var $t = this.firstChild;
 			switch (this.valign) {
 			case 't':
 				return $t.$n().innerHTML;
 			case 'c':
+				var $c = $t.nextSibling;
 				return $c.$n().innerHTML;
 			case 'b':
+				var $b = this.lastChild; 
 				return $b.$n().innerHTML;
+			}
+			return null;
+		},
+		getPureText: function () { //feature #26:Support copy/paste value to local Excel
+			var $t = this.firstChild;
+			switch (this.valign) {
+			case 't':
+				var tn = $t.$n();
+				return tn.textContent || tn.innerText;
+			case 'c':
+				var $c = $t.nextSibling, cn = $c.$n();
+				return cn.textContent || cn.innerText;
+			case 'b':
+				var $b = this.lastChild, bn = $b.$n();
+				return bn.textContent || bn.innerText;
 			}
 			return null;
 		},
@@ -180,7 +195,11 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			this.onSize();
 		},
 		getText: function () {
-			return this.firstChild.innerHTML;
+			return this.firstChild.$n().innerHTML;
+		},
+		getPureText: function () { //feature #26: Support copy/paste value to local Excel
+			var tn = this.firstChild.$n(); 
+			return tn.textContent || tn.innerText;
 		},
 		onSize: zk.gecko ? function () {
 			var $n = jq(this.$n());
@@ -316,6 +335,11 @@ zss.Cell = zk.$extends(zk.Object, {
 		if (this._inner)
 			return this._inner.getText();
 		return this.txtcomp.innerHTML;
+	},
+	getPureText: function () { //feature #26: Support copy/paste value to local Excel
+		if (this._inner)
+			return this._inner.getPureText();
+		return this.txtcomp.textContent || this.txtcomp.innerText;
 	},
 	_setText: function (txt) {
 		if (!txt)

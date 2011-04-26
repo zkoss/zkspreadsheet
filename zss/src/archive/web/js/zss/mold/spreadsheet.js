@@ -28,7 +28,7 @@ function (out) {
 		topHeaderHiddens = this._topHeaderHiddens,
 		leftHeaderHiddens = this._leftHeaderHiddens;
 
-	out.push('<div', this.domAttrs_(), '><input type="textbox" id="', uuid, '-fo" maxlength="0" class="zsfocus"/>',
+	out.push('<div', this.domAttrs_(), '><textarea type="textbox" id="', uuid, '-fo" maxlength="0" class="zsfocus"></textarea>',
 			'<div id="', uuid, '-mask" class="zssmask" zs.t="SMask"><div class="zssmask2"><div id="', uuid, '-masktxt" class="zssmasktxt" align="center"></div></div></div><div id="', uuid, '-busy" class="zssbusy"></div>', 
 			'<div id="', uuid, '-sp" class="zsscroll" zs.t="SScrollpanel">',
 			'<div id="', uuid, '-dp" class="zsdata" zs.t="SDatapanel" ', dataPanel,' z.skipdsc="true">',

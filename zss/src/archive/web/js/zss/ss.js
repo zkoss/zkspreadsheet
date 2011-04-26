@@ -97,21 +97,24 @@ zkS.doCallback = function (token) {
 
 
 zkS.parentByZSType = function(el, type, pathlen) {
-	var i = 0;
-	if (!(type instanceof Array))
-		type = [type];
-
-	var size,
-		$parent = zss.Util.$parent;
-
-	for (; el && el != document; el = $parent(el)) {
-		size = type.length;
-		for (var j = 0; j < size; j++) {
-			if (jq(el).attr('zs.t') == type[j])
-				return el;
+	if (el) {
+		if (!(type instanceof Array))
+			type = [type];
+		var i = 0,
+			size = type.length, 
+			ancestors = jq(el).parents();
+		ancestors.splice(0,0,el);
+		for(var k = 0, len = ancestors.length; k < len; ++k) {
+			var el = ancestors[k];
+			if (!el.attributes) 
+				continue;
+			for (var j = 0; j < size; j++) {
+				if (jq(el).attr('zs.t') == type[j])
+					return el;
+			}
+			if (pathlen && i++ > pathlen)
+				break;
 		}
-		if (pathlen && i++ > pathlen)
-			break;
 	}
 	return null;
 };
