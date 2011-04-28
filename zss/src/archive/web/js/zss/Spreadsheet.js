@@ -1023,15 +1023,20 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	},
 	//bug 242, Delete key not work when edit cell
 	afterKeyDown_: function (evt) {
-		if (this.sheetCtrl.state != zss.SSheetCtrl.EDITING) {
+		if (this.sheetCtrl.state != zss.SSheetCtrl.EDITING)
 			this.$supers('afterKeyDown_', arguments);
-		}
 		//avoid onCtrlKey to be eat in editing mode.
 	},
 	doKeyPress_: function (evt) {
 		if (this.sheetCtrl)
 			this.sheetCtrl._doKeypress(evt);
 		this.$supers('doKeyPress_', arguments);
+	},
+	//feature#161: Support copy&paste from clipboard to a cell
+	doKeyUp_: function (evt) {
+		this.$supers('doKeyUp_', arguments);
+		if (this.sheetCtrl && this.sheetCtrl.state == zss.SSheetCtrl.FOCUSED)
+			this.sheetCtrl._doKeyup(evt);
 	},
 	_loadCSSDirect: function (uri, id) {
 		var e = document.createElement("LINK");

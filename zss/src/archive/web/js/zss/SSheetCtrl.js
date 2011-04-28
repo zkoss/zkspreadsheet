@@ -20,7 +20,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 (function () {
 	_skey = [32,106,107,109,110,111,186,187,188,189,190,191,192,220,221,222,219];
 	function asciiChar (charcode) {
-		if ((charcode != 13 && charcode < 32) || charcode > 127) return null;
+		if ((charcode != 13 && charcode != 9 && charcode < 32) || charcode > 127) return null;
 		return String.fromCharCode(charcode);
 	}
 	function isAsciiCharkey (keycode) {
@@ -88,6 +88,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		this.pageKeySize = 100;
 		this._initiated = false;
 		var initparm = this.initparm = {};//initial time parameter
+		this._clienttxt = '';
 		
 		this.afterInit(function () {
 			zss.Spreadsheet.initLaterAfterCssReady(local);
@@ -647,13 +648,15 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			top = result.top,
 			right = result.right,
 			bottom = result.bottom;
-		if (type == "move") {
-			this.moveCellSelection(left, top, right, bottom, true);
-			var ls = this.getLastSelection();//cause of merge, selection might be change, get form last
-			if (ls.left != left || ls.right != right || ls.top != top || ls.bottom != bottom) {
-				this.selType = zss.SelDrag.SELCELLS;
-				this._sendOnCellSelection(this.selType, ls.left, ls.top, ls.right, ls.bottom);
-			}
+		if (type == "move")
+			this._doCellSelection(left, top, right, bottom);
+	},
+	_doCellSelection: function(left, top, right, bottom) {
+		this.moveCellSelection(left, top, right, bottom, true);
+		var ls = this.getLastSelection();//cause of merge, selection might be change, get form last
+		if (ls.left != left || ls.right != right || ls.top != top || ls.bottom != bottom) {
+			this.selType = zss.SelDrag.SELCELLS;
+			this._sendOnCellSelection(this.selType, ls.left, ls.top, ls.right, ls.bottom);
 		}
 	},
 	_cmdCellFocus: function (result) {
@@ -1052,12 +1055,11 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		this.dp._startEditing(); //open client side edit box to catch the user input
 	},
 	_doKeypress: function (evt) {
-		if (this._skipress)//wait async event, skip
+		if (this._skipress) //wait async event, skip
 			return;
 		
-		var charcode = evt.which,
-			c = asciiChar(charcode);
-
+		var charcode = evt.which;
+		var	c = asciiChar(charcode == 0 && evt.keyCode == 9 ? keyCode : charcode);
 		//ascii, not editing, not special key
 		if (c != null && !(evt.altKey || evt.ctrlKey) && this.state != zss.SSheetCtrl.EDITING) {
 			if (this.state == zss.SSheetCtrl.START_EDIT) //startEditing but not get response from server yet
@@ -1173,8 +1175,15 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		if (!isAsciiCharkey(keycode))
 			this._skipress = true;
 	},
-	_doKeyup: function(evt) {
-		if(this._skipress) delete this._skipress;
+	_doKeyup: function(evt) { //feature #161: Support copy&paste from clipboard to a cell
+		//if(this._skipress) delete this._skipress;
+		//check CTRL-V and do the copy on the sheet!
+		if (evt.ctrlKey && evt.keyCode == 86) {
+			var focustag = this.dp.focustag,
+				value = jq(focustag).val(),
+				pos = this.dp._speedCopy(value);
+			this._doCellSelection(pos.left, pos.top, pos.right, pos.bottom);
+		}
 	},
 	/**
 	 * resize Sheet
@@ -1686,9 +1695,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				if (c < ls.right)
 					result+='\t';
 			}
-			if (r < ls.bottom) {
-				result+='\n';
-			}
+			result+='\n';
 		}
 		var focustag = this.dp.focustag;
 		focustag.value = result;
