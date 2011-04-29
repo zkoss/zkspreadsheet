@@ -51,11 +51,23 @@ public class Sheets extends Div implements IdSpace {
 	private Menuitem deleteSheet;
 	private Menuitem renameSheet;
 	private Menuitem copySheet;
+	private Menuitem protectSheet;
 	
 	public Sheets() {
 		Executions.createComponents(Consts._SheetPanel_zul, this, null);
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
+	}
+	
+	public void onCreate() {
+		final DesktopWorkbenchContext workbenchContext= getDesktopWorkbenchContext();
+		workbenchContext.addEventListener(Consts.ON_SHEET_CHANGED, new EventListener() {
+			
+			@Override
+			public void onEvent(Event event) throws Exception {
+				protectSheet.setChecked(workbenchContext.getWorkbookCtrl().isSheetProtect());
+			}
+		});		
 	}
 	
 	public void onSelect$tabbox() {
@@ -107,6 +119,7 @@ public class Sheets extends Div implements IdSpace {
 				if (tabbox.getSelectedTab().getLabel() != tab.getLabel())
 					setSelectedTab(tab);
 	
+				protectSheet.setChecked(getDesktopWorkbenchContext().getWorkbookCtrl().isSheetProtect());
 				MouseEvent evt = (MouseEvent)event;
 				sheetContextMenu.open(evt.getPageX(), evt.getPageY());
 			}});
@@ -176,6 +189,11 @@ public class Sheets extends Div implements IdSpace {
 	
 	public void onClick$copySheet() {
 		throw new UiException("cop sheet not implement yet");
+	}
+	
+	public void onCheck$protectSheet() {
+		getDesktopWorkbenchContext().getWorkbookCtrl().protectSheet(
+			protectSheet.isChecked() ? "" : null);
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {

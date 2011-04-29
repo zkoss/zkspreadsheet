@@ -135,4 +135,8 @@ public interface CellStyle {
 	public void setWrapText(boolean isWrapText);
 	
 	public boolean isWrapText();
+	
+	public void setLocked(boolean locked);
+	
+	public boolean getLocked();
 }

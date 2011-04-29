@@ -29,6 +29,7 @@ import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.util.logging.Log;
+import org.zkoss.xml.HTMLs;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
@@ -891,6 +892,10 @@ public class CellFetchCommandHelper{
 			if (style != null && style.getWrapText()) {
 				wrap = true;
 				jcell.setData("wrap", true);// warp
+			}
+			//default locked is true, send to client if locked is false
+			if (style != null && !style.getLocked()) {
+				jcell.setData("lock", false);
 			}
 			if (cfh.hasRightBorder()) {
 				jcell.setData("rbo", true);// right border, when processing text overflow, must take care this.

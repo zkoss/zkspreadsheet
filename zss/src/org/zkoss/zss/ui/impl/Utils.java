@@ -447,6 +447,26 @@ public class Utils {
 	}
 	
 	/**
+	 * Sets cell locked
+	 * @param sheet
+	 * @param rect
+	 * @param locked
+	 */
+	public static void setLocked(Worksheet sheet, Rect rect, final boolean locked) {
+		visitCells(sheet, rect, new CellVisitor(){
+			@Override
+			public void handle(CellVisitorContext context) {
+				final boolean srcLocked = context.getLocked();
+
+				if (srcLocked != locked) {
+					CellStyle newStyle = context.cloneCellStyle();
+					newStyle.setLocked(locked);
+					context.getRange().setStyle(newStyle);
+				}
+			}});
+	}
+	
+	/**
 	 * Set format in selection range
 	 * @param sheet
 	 * @param rect

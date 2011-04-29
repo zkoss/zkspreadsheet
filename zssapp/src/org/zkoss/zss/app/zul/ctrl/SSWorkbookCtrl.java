@@ -533,4 +533,12 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	public int deleteSheet() {
 		return SheetHelper.deleteSheet(spreadsheet);
 	}
+
+	public boolean isSheetProtect() {
+		return spreadsheet.getSelectedSheet().getProtect();
+	}
+	
+	public void protectSheet(String password) {
+		Ranges.range(spreadsheet.getSelectedSheet()).protectSheet(password);
+	}
 }

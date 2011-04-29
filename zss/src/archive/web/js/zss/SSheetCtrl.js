@@ -1567,7 +1567,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			col = result.c,
 			cell = this.activeBlock.getCell(row, col),
 			parm = {"txt": result.val,"edit":result.edit};
-		zkS.copyParm(result, parm, ["st", "ist", "wrap", "hal", "vtal", "drh", "rbo", "merr", "merl"]);
+		zkS.copyParm(result, parm, ["st", "ist", "wrap", "hal", "vtal", "drh", "lock", "rbo", "merr", "merl"]);
 		
 		if (cell)//update when cell exist
 			zss.Cell.updateCell(cell, parm);
@@ -1620,8 +1620,9 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	 * @param int right column end index
 	 * @param int bottom row end index
 	 * @param boolean snap whether snap to merge cell border
+	 * @param boolean not trigger focus
 	 */
-	moveCellSelection: function (left, top, right, bottom, snap) {
+	moveCellSelection: function (left, top, right, bottom, snap, noTrigger) {
 		var lastRange = this.selArea.lastRange;
 		if (lastRange)
 			this._updateHeaderSelectionCss(lastRange, true);
@@ -1680,7 +1681,9 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			this.cp.selArea.relocate(selRange);
 			if(show) this.cp.selArea.showArea();
 		}
-		this._prepareCopy(); //feature #26: Support copy/paste value to local Excel
+
+		if (!noTrigger)
+			this._prepareCopy(); //feature #26: Support copy/paste value to local Excel
 	},
 	//feature #26: Support copy/paste value to local Excel
 	_prepareCopy: function () {
@@ -1688,8 +1691,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			result='';
 		for(var r = ls.top; r <= ls.bottom; ++r) {
 			for(var c = ls.left; c <= ls.right; ++c) {
-				var cell = this.getCell(r, c);
-				var val = cell.getPureText();
+				var cell = this.getCell(r, c),
+					val = !cell ? null : cell.getPureText();
 				if (val != null)
 					result+=val;
 				if (c < ls.right)
@@ -1697,6 +1700,9 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			}
 			result+='\n';
 		}
+		
+		if (this.state != zss.SSheetCtrl.FOCUSED)
+			return;
 		var focustag = this.dp.focustag;
 		focustag.value = result;
 		setTimeout(function () {

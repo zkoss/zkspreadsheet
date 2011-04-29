@@ -10,6 +10,7 @@ ZK Spreadsheet 2.1.0
   314 Autofill support date auto increase
   316 Autofill support number auto growth(multiply increase)
   319 Support cell vertical alignment
+  323 Protecting cells/cell ranges
 
 *Bug 
   290 Formula cells not always updated

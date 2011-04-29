@@ -35,7 +35,7 @@
 		.dpbtn-seld .z-dpbutton-body {
 			cursor: default;
 		}
-		.z-dpbutton-dpover 
+		.z-dpbutton-dpover, 
 		.focusPosCombobox .z-combobox-rounded-btn {
 			border:0px;
 			background: url(${c:encodeURL('~./zssapp/image/combo-white.png')});
@@ -241,6 +241,13 @@
 					</dropdownbutton>
 				<div sclass="toolbarSeparator"></div>
 				<checkbox id="gridlinesCheckbox" tooltiptext="${c:l('gridlines')}" image="~./zssapp/image/grid.png">
+					<attribute w:name="onBind">
+						var img = jq(this.$n()).find('img');
+						if (img)
+							img.removeAttr('align');
+					</attribute>
+				</checkbox>
+				<checkbox id="protectSheet" tooltiptext="${c:l('sheet.protect')}" image="~./zssapp/image/lock.png">
 					<attribute w:name="onBind">
 						var img = jq(this.$n()).find('img');
 						if (img)

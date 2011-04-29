@@ -335,6 +335,18 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			else 
 				sheet.addSSInitLater(_doSizeCmd, sheet, data);
 		},
+		/**
+		 * Sets sheet protection
+		 * <p>
+		 * 	Default is false
+		 * </p>
+		 * @param boolean
+		 */
+		/**
+		 * Returns whether protection is enabled or disabled
+		 * @return boolean
+		 */
+		protect: null,
 		rowSize: _size,
 		rowBegin: null,
 		rowEnd: null,
@@ -1021,10 +1033,22 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			this.sheetCtrl._doKeydown(evt);
 		this.$supers('doKeyDown_', arguments);
 	},
-	//bug 242, Delete key not work when edit cell
 	afterKeyDown_: function (evt) {
-		if (this.sheetCtrl.state != zss.SSheetCtrl.EDITING)
+		if (this.sheetCtrl.state != zss.SSheetCtrl.EDITING) {
 			this.$supers('afterKeyDown_', arguments);
+			//feature #26: Support copy/paste value to local Excel
+			var keyCode = evt.keyCode;
+			if (this.isListen('onCtrlKey', {any:true}) && 
+				(keyCode == 67 || keyCode == 86)) {
+				var parsed = this._parsedCtlKeys,
+					ctrlKey = evt.ctrlKey ? 1: evt.altKey ? 2: evt.shiftKey ? 3: 0;
+				if (parsed && 
+					parsed[ctrlKey][keyCode]) {
+					//Widget.js will stop event, if onCtrlKey reg ctrl + c and ctrl + v. restart the event
+					evt.domStopped = false;
+				}
+			}
+		}
 		//avoid onCtrlKey to be eat in editing mode.
 	},
 	doKeyPress_: function (evt) {

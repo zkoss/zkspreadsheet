@@ -185,4 +185,8 @@ public class CellVisitorContext {
 	public short getFormatIndex() {
 		return getCellStyle().getDataFormat();
 	}
+	
+	public boolean getLocked() {
+		return getCellStyle().getLocked();
+	}
 }

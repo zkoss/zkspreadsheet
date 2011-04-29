@@ -18,7 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 
 (function () {
-	var CELL_PARAMS = ["txt", "st", "ist", "wrap", "hal", "vtal", "drh", "rbo", "merr", "merid", "merl", "zsw", "edit"];
+	var CELL_PARAMS = ["txt", "st", "ist", "wrap", "hal", "vtal", "drh", "rbo", "merr", "merid", "merl", "zsw", "edit", "lock"];
 /**
  * CellBlockCtrl is used for controlling cells, include load cell, creating cell, merge cell and cell position index
  */
@@ -163,7 +163,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 				cells = blockdata[i].cells,
 				rowcmp = this.rows[i].comp;
 			
-			//jq(rowcmp).css('display', 'none');//for speed up
+			jq(rowcmp).css('display', 'none');//for speed up
 			for (var j = 0; j < width; j++) {
 				var cell = cells[j],
 					parm ={row: rowindex, col: cell.ix, zsh: blockdata[i].zsh};
@@ -172,7 +172,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 				var cellctrl = zss.Cell.createComp(this.sheet, this, parm);
 				rowcmp.ctrl.pushCellE(cellctrl);
 			}
-			//jq(rowcmp).css('display', '');
+			jq(rowcmp).css('display', '');
 		}
 		this.range.extendRight(width);
 	},

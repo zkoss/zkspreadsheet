@@ -357,6 +357,12 @@ public interface Range {
 	 */
 	public void setDisplayGridlines(boolean show);
 	
+    /**
+     * Sets the protection enabled as well as the password
+     * @param password to set for protection. Pass <code>null</code> to remove protection
+     */
+    public void protectSheet(String password);
+	
 	/**
 	 * Sets the hyperlink of this Range
 	 * @param linkType the type of target to link. One of the {@link Hyperlink#LINK_URL}, 

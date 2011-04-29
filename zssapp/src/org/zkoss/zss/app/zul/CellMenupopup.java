@@ -17,8 +17,13 @@ package org.zkoss.zss.app.zul;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zss.app.Consts;
+import org.zkoss.zss.app.zul.ctrl.CellStyle;
+import org.zkoss.zss.app.zul.ctrl.CellStyleContext;
+import org.zkoss.zss.app.zul.ctrl.CellStyleContextEvent;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
+import org.zkoss.zss.app.zul.ctrl.StyleModification;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
 /**
@@ -62,6 +67,7 @@ public class CellMenupopup extends Menupopup implements IdSpace {
 	//private Menuitem chart;
 	//private Menuitem pic;
 	private Menuitem format;
+	private Menuitem locked;
 	private Menuitem hyperlink;
 	//TODO: not implement yet
 	//private Menuitem removeHyperlink;
@@ -152,11 +158,51 @@ public class CellMenupopup extends Menupopup implements IdSpace {
 		getDesktopWorkbookContext().getWorkbenchCtrl().openFormatNumberDialog();
 	}
 	
+	public void onCheck$locked() {
+		
+		getCellStyleContext().modifyStyle(new StyleModification(){
+			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
+				candidteEvt.setExecutor(CellMenupopup.this);
+				style.setLocked(locked.isChecked());
+			}
+		});
+	}
+	
 	public void onClick$hyperlink() {
 		getDesktopWorkbookContext().getWorkbenchCtrl().openHyperlinkDialog();
 	}
 	
+	private void init(CellStyle cellStyle) {
+		locked.setDisabled(getDesktopWorkbenchContext().getWorkbookCtrl().isSheetProtect());
+		locked.setChecked(cellStyle.getLocked());
+	}
+	
+	public void onCreate() {
+		CellStyleContext context = getCellStyleContext();
+		DisposedEventListener listener = new DisposedEventListener() {
+			public boolean isDisposed() {
+				return CellMenupopup.this.getDesktop() == null;
+			}
+			public void onEvent(Event arg0) throws Exception {
+				CellStyleContextEvent event = (CellStyleContextEvent) arg0;
+				if(event.getExecutor() != CellMenupopup.this) {
+					init(event.getCellStyle());
+				}
+			}
+		};
+		context.addEventListener(Consts.ON_STYLING_TARGET_CHANGED, listener);
+		context.addEventListener(Consts.ON_CELL_STYLE_CHANGED, listener);
+	}
+	
+	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
+		return Zssapp.getDesktopWorkbenchContext(this);
+	}
+	
 	protected DesktopWorkbenchContext getDesktopWorkbookContext() {
 		return Zssapp.getDesktopWorkbenchContext(this);
+	}
+	
+	protected CellStyleContext getCellStyleContext(){
+		return Zssapp.getDesktopCellStyleContext(this);
 	}
 }

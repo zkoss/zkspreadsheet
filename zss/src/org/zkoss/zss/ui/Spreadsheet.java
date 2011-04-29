@@ -194,6 +194,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	private boolean _hideColhead; // hide column head*/
 	
 	private boolean _hideGridlines; //hide gridlines
+	private boolean _protectSheet;
 	//TODO undo/redo
 	//StateManager stateManager = new StateManager(this);
 	private Collection _focuses = new LinkedList();
@@ -972,6 +973,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 		if (_hideGridlines) {
 			renderer.render("displayGridlines", !_hideGridlines);
 		}
+		if (_protectSheet)
+			renderer.render("protect", _protectSheet);
 		/**
 		 * toph -> topPanelHeight
 		 */
@@ -1276,6 +1279,17 @@ public class Spreadsheet extends XulElement implements Serializable {
 			smartUpdate("displayGridlines", show);
 		}
 	}
+	
+    /**
+     * Sets the sheet protection
+     * @param boolean protect
+     */
+	private void setProtectSheet(boolean protect) {
+		if (_protectSheet != protect) {
+			_protectSheet = protect;
+			smartUpdate("protect", protect);
+		}
+	}
 
 	/**
 	 * Return current cell(row,column) focus position. you can get the row by
@@ -1433,6 +1447,12 @@ public class Spreadsheet extends XulElement implements Serializable {
 					onDisplayGridlines((SSDataEvent)event);
 				}
 			});
+			addEventListener(SSDataEvent.ON_PROTECT_SHEET, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onProtectSheet((SSDataEvent)event);
+				}
+			});
 		}
 		private Worksheet getSheet(Ref rng) {
 			return Utils.getSheetByRefSheet(_book, rng.getOwnerSheet()); 
@@ -1538,6 +1558,13 @@ public class Spreadsheet extends XulElement implements Serializable {
 			if (!getSelectedSheet().equals(sheet))
 				return;
 			setDisplayGridlines(event.isShow());
+		}
+		private void onProtectSheet(SSDataEvent event) {
+			final Ref rng = event.getRef();
+			final Worksheet sheet = getSheet(rng);
+			if (!getSelectedSheet().equals(sheet))
+				return;
+			setProtectSheet(event.getProtect());
 		}
 	}
 	
@@ -1761,6 +1788,9 @@ public class Spreadsheet extends XulElement implements Serializable {
 				result.setData("type", "udcell");
 
 				CellStyle style = (cell == null) ? null : cell.getCellStyle();
+				if (style != null)
+					result.setData("lock", style.getLocked());
+				
 				boolean wrap = false;
 
 				CellFormatHelper cfh = new CellFormatHelper(sheet, row, col, getMergeMatrixHelper(sheet));
@@ -1792,8 +1822,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 				final Row rowobj = sheet.getRow(row);
 				result.setData("drh", //bug#320 NullPointerException
 						rowobj == null || isDefaultRowHeight(sheet.getDefaultRowHeight(), rowobj.getHeight(), 40) ? "1" : "0");
-				int verAlign = style != null /*&& !isDefaultRowHeight(sheet.getDefaultRowHeight(), cell.getRow().getHeight(), 40)*/ ? 
-						style.getVerticalAlignment() : -1;
+				int verAlign = style != null ? style.getVerticalAlignment() : -1;
 				switch (verAlign) {
 				//top is client side's default, ignore it
 				//case CellStyle.VERTICAL_TOP:
@@ -2058,6 +2087,9 @@ public class Spreadsheet extends XulElement implements Serializable {
 
 			if (cell != null) {
 				CellStyle style = cell.getCellStyle();
+				if (style != null && !style.getLocked()) {
+					HTMLs.appendAttribute(sb, "z.lock", "f"); //default cell lock is true
+				}
 				
 				if (style != null && style.getWrapText()) {
 					HTMLs.appendAttribute(sb, "z.wrap", "t");
@@ -2077,8 +2109,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 				HTMLs.appendAttribute(sb, "z.drh", 
 						isDefaultRowHeight(sheet.getDefaultRowHeight(), cell.getRow().getHeight(), 40) ? "1" : "0");
 				//default height doesn't need to align
-				int verAlign = style != null /*&& !isDefaultRowHeight(sheet.getDefaultRowHeight(), cell.getRow().getHeight(), 40)*/ ? 
-						style.getVerticalAlignment() : -1;
+				int verAlign = style != null ? style.getVerticalAlignment() : -1;
 				switch (verAlign) {
 				//top is client side's default, ignore it
 				//case CellStyle.VERTICAL_TOP:
@@ -3112,6 +3143,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 		//setup gridline
 		setDisplayGridlines(_selectedSheet.isDisplayGridlines());
+		setProtectSheet(_selectedSheet.getProtect());
 	}
 
 	private void clearHeaderSizeHelper(boolean row, boolean col) {

@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.Iterator;
 
 import org.zkoss.lang.Library;
+import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.resource.Labels;
@@ -56,6 +57,7 @@ import org.zkoss.zss.app.zul.Sheets;
 import org.zkoss.zss.app.zul.ViewMenu;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.Zssapps;
+import org.zkoss.zss.app.zul.ctrl.CellStyle;
 import org.zkoss.zss.app.zul.ctrl.CellStyleContextEvent;
 import org.zkoss.zss.app.zul.ctrl.CellStyleCtrlPanel;
 import org.zkoss.zss.app.zul.ctrl.DesktopCellStyleContext;
@@ -151,6 +153,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	Toolbarbutton cutBtn;
 	Toolbarbutton copyBtn;
 	Checkbox gridlinesCheckbox;
+	Checkbox protectSheet;
 	CellMenupopup cellMenupopup;
 	
 	/* Formula bar */
@@ -236,6 +239,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				setSaveButtonState(isOpen ? true : null);
 
 				gridlinesCheckbox.setChecked(isOpen && spreadsheet.getSelectedSheet().isDisplayGridlines());
+				protectSheet.setChecked(isOpen && spreadsheet.getSelectedSheet().getProtect());
+				protectSheet.setDisabled(!isOpen);
 				if (isOpen) {
 					sheets.redraw();
 				} else if (!isOpen) {
@@ -255,6 +260,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		workbenchContext.addEventListener(Consts.ON_SHEET_CHANGED, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
+				protectSheet.setChecked(spreadsheet.getSelectedSheet().getProtect());
 			}
 		});
 		workbenchContext.addEventListener(Consts.ON_SHEET_CONTENTS_CHANGED,  new EventListener(){
@@ -282,6 +288,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				String evtName = event.getName();
 				if (evtName == SSDataEvent.ON_CONTENTS_CHANGE) {
 					doContentChanged();
+				} else if (evtName == SSDataEvent.ON_PROTECT_SHEET) {
+					protectSheet.setChecked(spreadsheet.getSelectedSheet().getProtect());
 				}
 			}
 		});
@@ -1198,6 +1206,10 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		Worksheet sheet = spreadsheet.getSelectedSheet();
 		Utils.getRange(sheet, 0, 0).setDisplayGridlines(!sheet.isDisplayGridlines());
 		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
+	}
+	
+	public void onCheck$protectSheet() {
+		getDesktopWorkbenchContext().getWorkbookCtrl().protectSheet(protectSheet.isChecked() ? "" : null);
 	}
 
 	public void openCustomSortDialog() {

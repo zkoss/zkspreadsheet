@@ -91,6 +91,18 @@ public interface WorkbookCtrl {
 	public void setBookSrc(String src);
 	
 	/**
+	 * Returns whether current sheet is protected or not
+	 * @return
+	 */
+	public boolean isSheetProtect();
+	
+    /**
+     * Sets the protection enabled as well as the password
+     * @param password to set for protection. Pass <code>null</code> to remove protection
+     */
+	public void protectSheet(String password);
+	
+	/**
 	 * Save book
 	 */
 	public void save();

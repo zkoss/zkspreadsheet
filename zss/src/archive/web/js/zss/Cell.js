@@ -208,6 +208,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	});
 
 zss.Cell = zk.$extends(zk.Object, {
+	lock: true,
 	$init: function (sheet, block, cmp, edit) {
 		this.$supers('$init', arguments);
 		this.id = cmp.id;
@@ -233,7 +234,9 @@ zss.Cell = zk.$extends(zk.Object, {
 
 		if (this.zsh)
 			this.zsh = zk.parseInt(this.zsh);
-		
+		var lock = $n.attr('z.lock');
+		if (lock != undefined)
+			this.lock = !(lock == "f");
 		this.wrap = $n.attr('z.wrap') == "t";
 		this.halign = $n.attr('z.hal');
 		if (!this.halign)
@@ -289,6 +292,13 @@ zss.Cell = zk.$extends(zk.Object, {
 			this.merl = zk.parseInt($n.attr('z.merl')); 
 		}
 		cmp.ctrl = this;
+	},
+	/**
+	 * Returns whether cell locked or not
+	 * @return boolean
+	 */
+	isLocked: function () {
+		return this.lock;
 	},
 	_updateHasTxt: function (bool) {
 		var block = this.block;
@@ -419,11 +429,13 @@ zss.Cell = zk.$extends(zk.Object, {
 			zsh = parm.zsh,
 			cmp = document.createElement("div"),
 			drh = parm.drh,
+			lock = parm.lock,
 			$n = jq(cmp);
 
 		$n.attr({"zs.t": "SCell", "z.c": col, "z.r": row, 
 			"z.hal": (hal ? hal : "l"), "z.vtal": (vtal ? vtal : "t"), 'z.drh': !drh ? '0' : drh});
 		
+		if (lock != undefined && !lock) $n.attr("z.lock", "f");
 		if (zsw) $n.attr("z.zsw", zsw);
 		if (zsh) $n.attr("z.zsh", zsh);
 		if (parm.wrap) $n.attr("z.wrap", "t");
@@ -461,9 +473,11 @@ zss.Cell = zk.$extends(zk.Object, {
 			wrap = parm.wrap,
 			hal = parm.hal,
 			vtal = parm.vtal,
+			lock = parm.lock,
 			rbo = parm.rbo,
 			cmp = ctrl.comp;
-		
+		if (lock != undefined)
+			ctrl.lock = lock;
 		if (!wrap)
 			wrap = false;
 		jq(cmp).attr("z.wrap", wrap);	

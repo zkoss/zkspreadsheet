@@ -237,4 +237,16 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 		return spreadsheet.getColumntitle(cell.getColumnIndex())+ 
 		cell.getRowIndex();
 	}
+
+	@Override
+	public void setLocked(boolean locked) {
+		Utils.setLocked(
+				spreadsheet.getSelectedSheet(), 
+				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), locked);
+	}
+
+	@Override
+	public boolean getLocked() {
+		return cell.getCellStyle().getLocked();
+	}
 }

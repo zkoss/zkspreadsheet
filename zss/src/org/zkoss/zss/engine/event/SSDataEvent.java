@@ -52,6 +52,9 @@ public class SSDataEvent extends Event implements Serializable {
 	/** Identifies the grid-line status change. */
 	public static final String ON_DISPLAY_GRIDLINES = "onDisplayGridlines";
 	
+	/** Identifies the protect sheet status change. **/
+	public static final String ON_PROTECT_SHEET = "onProtectSheet";
+	
 	/** Identifies no move direction when add or remove a range. */
 	public static final int MOVE_NO = 1000;
 	/** Identifies move direction as vertical(down or up) when add or remove a range. */
@@ -60,6 +63,7 @@ public class SSDataEvent extends Event implements Serializable {
 	public static final int MOVE_H = 1002;
 
 	private int _direction; //MOVE_NO, MOVE_V, MOVE_H
+	private String _password;
 	private Ref _rng; //the applied range
 	private Ref _org; //the original range
 	
@@ -93,6 +97,12 @@ public class SSDataEvent extends Event implements Serializable {
 		_direction = show ? 1 : 0;
 	}
 	
+	public SSDataEvent(String name, Ref rng, String password) {
+		super(name);
+		_rng = rng;
+		_password = password;
+	}
+	
 	public Ref getRef() {
 		return _rng;
 	}
@@ -107,6 +117,14 @@ public class SSDataEvent extends Event implements Serializable {
 	
 	public boolean isShow() {
 		return _direction != 0;
+	}
+	
+	public boolean getProtect() {
+		return _password != null;
+	}
+	
+	public String getPassword() {
+		return _password;
 	}
 	
 	public String toString() {

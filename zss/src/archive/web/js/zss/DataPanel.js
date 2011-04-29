@@ -25,7 +25,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	cacheMap: {}, //handle element cache, not implement yet
 	$init: function (sheet) {
 		this.$supers('$init', arguments);
-		var wgt = sheet._wgt,
+		var wgt = this._wgt = sheet._wgt,
 			dataPanel = wgt.$n('dp'),
 			focus  = this.focustag = wgt.$n('fo');
 
@@ -57,7 +57,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		this.cacheMap = this.focustag = null;
 
 		if (this.comp) this.comp.ctrl = null;
-		this.comp = this.padcomp = this.sheet = null;
+		this._wgt = this.comp = this.padcomp = this.sheet = null;
 	},
 	/**
 	 * Sets the height
@@ -114,7 +114,12 @@ zss.DataPanel = zk.$extends(zk.Object, {
 
 		var pos = sheet.getLastFocus(),
 			row = pos.row,
-			col = pos.column;
+			col = pos.column,
+			cell = sheet.getCell(row, col);
+		if (this._wgt.isProtect() && cell && cell.isLocked()) {
+			sheet.showInfo("Can not edit on a protected cell.", true);
+			return false;
+		}
 		
 		if (this.isFocusOnFrozen()) {
 			sheet.showInfo("Can not edit on a frozen cell.", true);
@@ -446,7 +451,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		if (!noslloc) {
 			sheet.moveCellFocus(row, col);
 			var ls = sheet.selArea.lastRange;
-			sheet.moveCellSelection(ls.left, ls.top, ls.right, ls.bottom);
+			sheet.moveCellSelection(ls.left, ls.top, ls.right, ls.bottom, null, !trigger);
 		}
 		
 		var lhl = sheet.hlArea.lastRange;

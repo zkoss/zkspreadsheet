@@ -1269,6 +1269,25 @@ public class RangeImpl implements Range {
 	}
 	
 	@Override
+	public void protectSheet(String password) {
+		final Ref ref = getRefs().iterator().next();
+		final Worksheet sheet = BookHelper.getSheet(_sheet, ref.getOwnerSheet());
+		final Set<Ref> all = new HashSet<Ref>(); 
+		final boolean oldProtected = sheet.getProtect();
+		if (oldProtected && password == null) {
+			sheet.protectSheet(null);
+			all.add(ref);
+		} else if (oldProtected == false && password != null) {
+			sheet.protectSheet(password);
+			all.add(ref);
+		}
+		if (!all.isEmpty()) {
+			final Book book = (Book) sheet.getWorkbook();
+			BookHelper.notifyProtectSheet(book, all, password);
+		}
+	}
+
+	@Override
 	public Areas getAreas() {
 		final AreasImpl areas = new AreasImpl();
 		if (getRefs().size() == 1) {

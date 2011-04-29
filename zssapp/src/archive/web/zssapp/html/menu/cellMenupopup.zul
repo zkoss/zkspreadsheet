@@ -58,6 +58,7 @@
 <!--	</menu>-->
 	<menuitem id="format" label="${c:l('format.numberFormat')}" />
 	<menuseparator />
-	<menuitem id="hyperlink" label="${c:l('hyperlink')}" image="~./zssapp/image/hyperlink.png"></menuitem>
+	<menuitem id="locked" label="${c:l('locked')}" checkmark="true" autocheck="true"></menuitem>
+	<menuitem id="hyperlink" label="${c:l('hyperlink')}" image="~./zssapp/image/hyperlink.png" ></menuitem>
 	<menuitem id="removeHyperlink" label="${c:l('hyperlink.remove')}" visible="false"></menuitem>
 </zk>

@@ -14,7 +14,6 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.impl;
 
 import java.io.Serializable;
-import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,10 +25,9 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,10 +42,6 @@ import org.zkoss.poi.hssf.record.CellValueRecordInterface;
 import org.zkoss.poi.hssf.record.FormulaRecord;
 import org.zkoss.poi.hssf.record.FullColorExt;
 import org.zkoss.poi.hssf.record.aggregates.FormulaRecordAggregate;
-import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
-import org.zkoss.poi.ss.formula.ptg.AreaPtgBase;
-import org.zkoss.poi.ss.formula.ptg.Ptg;
-import org.zkoss.poi.ss.formula.ptg.RefPtgBase;
 import org.zkoss.poi.hssf.usermodel.HSSFCell;
 import org.zkoss.poi.hssf.usermodel.HSSFCellHelper;
 import org.zkoss.poi.hssf.usermodel.HSSFCellStyle;
@@ -63,13 +57,16 @@ import org.zkoss.poi.hssf.util.HSSFColorExt;
 import org.zkoss.poi.hssf.util.PaneInformation;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.format.CellFormat;
-import org.zkoss.poi.ss.format.CellTextFormatter;
 import org.zkoss.poi.ss.format.Formatters;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaParsingWorkbook;
 import org.zkoss.poi.ss.formula.FormulaRenderer;
 import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.PtgShifter;
+import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
+import org.zkoss.poi.ss.formula.ptg.AreaPtgBase;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.ptg.RefPtgBase;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
@@ -85,12 +82,10 @@ import org.zkoss.poi.ss.usermodel.DataValidationHelper;
 import org.zkoss.poi.ss.usermodel.DateUtil;
 import org.zkoss.poi.ss.usermodel.Drawing;
 import org.zkoss.poi.ss.usermodel.ErrorConstants;
-import org.zkoss.poi.ss.usermodel.ExcelStyleDateFormatter;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.zss.model.Worksheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
@@ -106,7 +101,6 @@ import org.zkoss.poi.xssf.usermodel.XSSFFont;
 import org.zkoss.poi.xssf.usermodel.XSSFRichTextString;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
-import org.zkoss.util.Locales;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelContext;
@@ -123,6 +117,7 @@ import org.zkoss.zss.engine.impl.RefSheetImpl;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.BookSeries;
 import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.impl.Styles;
 
 /**
@@ -314,6 +309,16 @@ public final class BookHelper {
 				final RefSheet refSheet = ref.getOwnerSheet();
 				final RefBook refBook = refSheet.getOwnerBook();
 				refBook.publish(new SSDataEvent(SSDataEvent.ON_DISPLAY_GRIDLINES, ref, show));
+			}
+		}
+	}
+	
+	/*package*/ static void notifyProtectSheet(Book book, Set<Ref> all,	String password) {
+		if (all != null) {
+			for(Ref ref : all) {
+				final RefSheet refSheet = ref.getOwnerSheet();
+				final RefBook refBook = refSheet.getOwnerBook();
+				refBook.publish(new SSDataEvent(SSDataEvent.ON_PROTECT_SHEET, ref, password));
 			}
 		}
 	}
