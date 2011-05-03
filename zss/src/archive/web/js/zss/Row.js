@@ -85,6 +85,7 @@ zss.Row = zk.$extends(zk.Object, {
 	pushCellE: function (cell) {
 		this.cells.push(cell);
 		this.comp.appendChild(cell.comp);
+		cell.afterAppend();
 	},
 	/**
 	 * Push cell to the start, append component
@@ -93,6 +94,7 @@ zss.Row = zk.$extends(zk.Object, {
 	pushCellS: function (cell) {
 		this.cells.unshift(cell);
 		this.comp.insertBefore(cell.comp, this.comp.firstChild);
+		cell.afterAppend();
 	},
 	/**
 	 * Insert cell, TODO cellctrls for better performance
@@ -114,7 +116,8 @@ zss.Row = zk.$extends(zk.Object, {
 			cells.length = index;
 			cells.push(cellctrl);
 			cells.push.apply(cells, tail);
-			this.comp.insertBefore(cellctrl.comp, tail[0].comp);	
+			this.comp.insertBefore(cellctrl.comp, tail[0].comp);
+			cellctrl.afterAppend();
 		}
 	},
 	/**

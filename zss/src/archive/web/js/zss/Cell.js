@@ -48,23 +48,10 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		}
 	});
 
-	var firedOnSize = false;
 	/**
 	 * Cell inner container base on ZK flex for vertical alignment.
 	 */
 	zss.FlexInner = zk.$extends(zss.BaseInner, {
-		_flexInited: false,
-		_initFlex: {'t': function (){
-			this._flexInited = true;
-			this._initShowAndFlex([this.firstChild]);
-		}, 'c': function (){
-			this._flexInited = true;
-			this._initShowAndFlex([this.firstChild, this.lastChild], true);
-		}, 'b': function (){
-			this._flexInited = true;
-			this.lastChild.setVflex(-65500);
-			this._initShowAndFlex([this.firstChild], true);
-		}},
 		$init: function () {
 			this.$supers('$init', arguments);
 			this.appendChild(new Div());
@@ -77,45 +64,89 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		 * Sets the text
 		 * @param string indicate vertical alignment
 		 * @param string indicate horizontal alignment
+		 * @param boolean wrap text or not
 		 * @param boolean whether the height of the cell is default row height or not
 		 */
-		setText: function (t, valign, halign, defaultRowHgh) {
-			var self = this,
-				$t = this.firstChild,
+		setText: function (t, valign, halign, wrap, defaultRowHgh) {
+			var $t = this.firstChild,
 				$c = $t.nextSibling,
-				$b = this.lastChild,
-				a = valign ? valign : this.valign,
-				difAlign = valign && this.valign != valign;
-			if (difAlign)
-				this.valign = valign;
-			switch (a) {
+				$b = this.lastChild;
+			this.valign = valign;
+			switch (valign) {
 			// set top div visible; hide other div
 			case 't':
 				$t.$n().innerHTML = t;
+				if (!wrap)
+					$t.$n().innerHTML = $t.$n().textContent || $t.$n().innerText;
 				$c.setVisible(false);
 				$b.setVisible(false);
+				if (!defaultRowHgh)
+					this._initShowAndFlex([$t]);
+				if (zk.ie6_)
+					this._restoreFontSize($t.$n());
 				break;
 			//set top div flex=true, center div flex=min, bottom div flex=true
 			case 'c':
-				//TODO: on ie6, some excel file align center height is not accurate 
 				$c.$n().innerHTML = t;
+				if (!wrap)
+					$c.$n().innerHTML = $c.$n().textContent || $c.$n().innerText;
 				$c.setVisible(true);
+				if (!defaultRowHgh)
+					this._initShowAndFlex([$t, $b], true);
+				if (zk.ie6_)
+					this._restoreFontSize($c.$n());
 				break;
 			//set top flex=true; center div invisible, bottom div flex=min
 			case 'b':
 				$c.setVisible(false);
 				$b.$n().innerHTML = t;
+				if (!wrap)
+					$b.$n().innerHTML = $b.$n().textContent || $b.$n().innerText;
 				$b.setVisible(true);
+				$b.setVflex(-65500);
+				if (!defaultRowHgh)
+					this._initShowAndFlex([$t], true);
+				if (zk.ie6_)
+					this._restoreFontSize($b.$n());
 			}
-			if (!defaultRowHgh && difAlign) {
-				this._initFlex[a].call(self);
-				if (!firedOnSize && zk.ie)
-					firedOnSize = setTimeout(function () {
-					zWatch.fire('beforeSize'); //notify all
-					zWatch.fire('onSize'); //notify all
-					firedOnSize = false;
-				}, 50);
+			this.fixFlexHeight();
+		},
+		/**
+		 * Fix flexed height
+		 */
+		fixFlexHeight: zk.ie6_ ? function () {
+			var n = this.$n();
+			if (!n)
+				this._node = n = jq(this.uuid, zk)[0];
+			if (n) {
+				var cellHgh = n.parentNode.offsetHeight,
+					curHgh = n.offsetHeight,
+					$t = this.firstChild,
+					$c = $t.nextSibling,
+					$b = this.lastChild;
+				if (curHgh > cellHgh) {
+					var differHgh = curHgh - cellHgh;
+					switch (this.valign) {
+					case 'c':
+						var tn = $t.$n(),
+							bn = $b.$n(),
+							setHgh = Math.round(((tn.offsetHeight + bn.offsetHeight) - differHgh) / 2),
+							cssProp = {'height': setHgh + 'px', 'font-size': '0'};
+						jq(tn).css(cssProp);
+						jq(bn).css(cssProp);
+						break;
+					case 'b':
+						var tn = $t.$n(),
+							tnHgh = tn.offsetHeight,
+							tnOffsetTop = tn.offsetTop,
+							setHgh = tnHgh - differHgh;
+						jq(tn).css({'height': setHgh + 'px', 'font-size': '0'});
+					}
+				}
 			}
+		} : zk.$void,
+		_restoreFontSize: function (n) {
+			jq(n).css('font-size', jq(this.$n()).css('font-size'));
 		},
 		getText: function () {
 			var $t = this.firstChild;
@@ -147,11 +178,21 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			return null;
 		},
 		onSize: function () {
-			var flex = this._flexInited;
-			if (!flex) {
-				var self = this;
-				this._initFlex[this.valign].call(self);
+			var $t = this.firstChild,
+				$c = $t.nextSibling,
+				$b = this.lastChild;
+			switch (this.valign) {
+			case 't':
+				this._initShowAndFlex([$t], false);
+				break;
+			case 'c':
+				this._initShowAndFlex([$t, $b], false);
+				break;
+			case 'b':
+				this._initShowAndFlex([$t], false);
+				break;
 			}
+			this.fixFlexHeight();
 		},
 		/**
 		 * Clean widget's text, set visible and flex it.
@@ -160,10 +201,12 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		 */
 		_initShowAndFlex: function (visWgts, clear) {
 			var $t = this.firstChild,
-				wgts = [$t, $t.nextSibling, this.lastChild]; 
+				wgts = [$t, $t.nextSibling, this.lastChild],
+				flex = false; 
 			for (var i = 0; i < wgts.length; i++) {
 				var w = wgts[i];
 				if (visWgts.$contains(w)) {
+					flex = true;
 					if (clear)
 						w.$n().innerHTML = '';
 					w.$n().style.height = '';
@@ -171,8 +214,11 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					w.setVflex(true);
 				}	
 			}
+			if (flex)
+				zWatch.fireDown('onSize', this);
 		}
 	});
+
 
 	/**
 	 * Cell inner container base on CSS flexbox for vertical alignment.
@@ -186,10 +232,12 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			this.setWidth('100%');
 			this.setHeight('100%');
 		},
-		setText: function (t, valign, halign) {
+		setText: function (t, valign, halign, wrap) {
 			var n = this.firstChild.$n(),
 				cls = 'zscell-inner-';
 			n.innerHTML = t;
+			if (!wrap)
+				n.innerHTML = n.textContent || n.innerText;;
 			cls += this._vtal[valign] + '-' + this._htal[halign];
 			jq(n.parentNode).attr('class', '').addClass(cls);
 			this.onSize();
@@ -237,7 +285,7 @@ zss.Cell = zk.$extends(zk.Object, {
 		var lock = $n.attr('z.lock');
 		if (lock != undefined)
 			this.lock = !(lock == "f");
-		this.wrap = $n.attr('z.wrap') == "t";
+		var wrap = this.wrap = $n.attr('z.wrap') == "t";
 		this.halign = $n.attr('z.hal');
 		if (!this.halign)
 			this.halign = "l";//default h align is left;
@@ -247,7 +295,7 @@ zss.Cell = zk.$extends(zk.Object, {
 		
 		var inner = null,
 			txtCmp = this.txtcomp = $n.children('DIV:first')[0],
-			txt = this.txtcomp.textContent || this.txtcomp.innerText,
+			txt = wrap ? this.txtcomp.innerHTML : this.txtcomp.textContent || this.txtcomp.innerText,
 			vflex = this._vflex = sheet._wgt._cssFlex; /*support CSS flexbox or not*/
 		if (this.valign != "t" && txt) {
 			inner = this._appendInner();
@@ -267,7 +315,7 @@ zss.Cell = zk.$extends(zk.Object, {
 			}*/
 		}
 
-		if (txt == '')
+		if (!txt)
 			this._updateHasTxt(false);
 		else {
 			this._updateHasTxt(true);
@@ -275,13 +323,11 @@ zss.Cell = zk.$extends(zk.Object, {
 				//set text directly when DOM is ready
 				if (inner.$n() && this.defaultRowHgh)
 					inner.setText(txt, vtal, this.halign, true);
-				else
+				else /*TODO: avoid use addSSInitLater */
 					sheet.addSSInitLater(zss.Cell._processInnerText, this, inner, txt);
 			}
 			if (sheet.config.textOverflow && !this.wrap) {
 				sheet.addSSInitLater(zss.Cell._processOverflow, this);
-			} else {
-				//jq(txtCmp).text(txt);
 			}
 		}
 		//process merge.
@@ -356,16 +402,24 @@ zss.Cell = zk.$extends(zk.Object, {
 			txt = "";
 
 		var vtal = this.valign,
-			hal =  this.halign;
+			hal =  this.halign,
+			wrap = this.wrap;
 		if (this._inner)
-			this._inner.setText(txt, vtal, hal);
+			this._inner.setText(txt, vtal, hal, wrap);
 		else if (vtal == 't')
 			this.txtcomp.innerHTML = txt;
 		else if (txt) {
 			this._appendInner();
-			this._inner.setText(txt, vtal, hal);
+			this._inner.setText(txt, vtal, hal, wrap);
 		}
 	},
+	/**
+	 * Invoke after append this cell to DOM tree
+	 */
+	afterAppend: zk.ie6_ ? function () {
+		if (this._inner)
+			this._inner.fixFlexHeight();
+	} : zk.$void,
 	cleanup: function () {
 		this.invalid = true;
 		this._updateHasTxt(false);
@@ -374,8 +428,14 @@ zss.Cell = zk.$extends(zk.Object, {
 			zss.Cell._clearOverbyRelation(this);
 			this.block._overflowcell.$remove(this);	
 		}
+		var inner = this._inner;
+		if (inner) {
+			inner.unbind();
+			this._inner = null;
+		}
 		if (this.comp) this.comp.ctrl = null;
-		this.comp = this.txtcomp = this.sheet = this.overby = this.block = this._inner = this._vflex = this.defaultRowHgh = null;
+		this.comp = this.txtcomp = this.sheet = this.overby = 
+			this.block = this._inner = this._vflex = this.lock = this.defaultRowHgh = null;
 	},
 	/**
 	 * Sets the width position index
@@ -501,8 +561,7 @@ zss.Cell = zk.$extends(zk.Object, {
 		}
 		
 		ctrl.rborder = (rbo == true);
-
-		ctrl.setText(txt, edit);
+		ctrl.setText(txt);
 		ctrl.edit = parm.edit;
 	},
 	_clearOverbyRelation: function (ctrl) {
@@ -529,7 +588,7 @@ zss.Cell = zk.$extends(zk.Object, {
 		if (ctrl.invalid)
 			return;
 		
-		cellInnerWgt.setText(txt, ctrl.valign, ctrl.halign, ctrl.defaultRowHgh);
+		cellInnerWgt.setText(txt, ctrl.valign, ctrl.halign, ctrl.wrap, ctrl.defaultRowHgh);
 	},
 	_processOverflow: function (ctrl) {
 		var sheet = ctrl.sheet;
