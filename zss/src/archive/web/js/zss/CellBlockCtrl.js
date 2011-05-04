@@ -18,7 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 
 (function () {
-	var CELL_PARAMS = ["txt", "st", "ist", "wrap", "hal", "vtal", "drh", "rbo", "merr", "merid", "merl", "zsw", "edit", "lock"];
+	var CELL_PARAMS = ["txt", "st", "ist", "wrap", "hal", "vtal", "drh", "rbo", "merr", "merid", "merl", "mert", "merb", "zsw", "edit", "lock"];
 /**
  * CellBlockCtrl is used for controlling cells, include load cell, creating cell, merge cell and cell position index
  */
@@ -87,21 +87,25 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 		var cell = cell1 = this.getCell(top, left);
 		if (!cell) return;
 		var comp;
-		for (var i = left; i <= right; i++) {
-			if (i == left) {
-				comp = cell.comp;
-				jq(comp).addClass("zsmerge" + id);
-			} else {
-				cell = this.getCell(top, i);
-				if (!cell) break;//in top / left /corner , they might not have such cell
-				comp = cell.comp;
-				jq(comp).addClass("zsmergee");
+		for (var r = top; r <= bottom; ++r) {
+			for (var i = left; i <= right; i++) {
+				if (i == left && r == top) {
+					comp = cell.comp;
+					jq(comp).addClass("zsmerge" + id);
+				} else {
+					cell = this.getCell(r, i);
+					if (!cell) break;//in top / left /corner , they might not have such cell
+					comp = cell.comp;
+					jq(comp).addClass(r == top ? "zsmergee" : "zsmergeeu");
+				}
+				jq(comp).attr({"z.merid": id, "z.merr": right, "z.merl": left, "z.mert": top, "z.merb": bottom});
+	
+				cell.merid = id;
+				cell.merr = right;
+				cell.merl = left;
+				cell.mert = top;
+				cell.merb = bottom;
 			}
-			jq(comp).attr({"z.merid": id, "z.merr": right, "z.merl": left});
-
-			cell.merid = id;
-			cell.merr = right;
-			cell.merl = left;
 		}
 		zss.Cell._processOverflow(cell1);
 	},
@@ -119,6 +123,8 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 		if (!cell) return;
 		var merl = cell.merl,
 			merr = cell.merr,
+			mert = cell.mert,
+			merb = cell.merb,
 			merid = cell.merid;
 		
 		if (id != merid)
@@ -126,18 +132,20 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 
 		var ud,
 			comp;
-		for (var i = merl; i <= merr; i++) {
-			if (i == merl) {
-				comp = cell.comp;
-				jq(comp).removeClass("zsmerge" + id);
-			} else {
-				cell = this.getCell(top, i);
-				if (!cell) break;//in top / left /corner , they might not have such cell
-				comp = cell.comp;
-				jq(comp).removeClass("zsmergee");
+		for (var r = mert; r <= merb; ++r) {
+			for (var i = merl; i <= merr; i++) {
+				if (i == merl && r == mert) {
+					comp = cell.comp;
+					jq(comp).removeClass("zsmerge" + id);
+				} else {
+					cell = this.getCell(r, i);
+					if (!cell) break;//in top / left /corner , they might not have such cell
+					comp = cell.comp;
+					jq(comp).removeClass(r == mert ? "zsmergee" : "zsmergeeu");
+				}
+				jq(comp).removeAttr("z.merid").removeAttr("z.merr").removeAttr("z.merl").removeAttr("z.mert").removeAttr("z.merb");
+				cell.merid = cell.merr = cell.merl = cell.mert = cell.merb = ud;
 			}
-			jq(comp).removeAttr("z.merid").removeAttr("z.merr").removeAttr("z.merl");
-			cell.merid = cell.merr = cell.merl = ud;
 		}
 		zss.Cell._processOverflow(cell1);
 	},

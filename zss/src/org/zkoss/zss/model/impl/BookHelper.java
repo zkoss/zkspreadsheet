@@ -1442,7 +1442,7 @@ public final class BookHelper {
 				final int dstcol2 = dstaddr.getLastColumn();
 				final ChangeInfo changeInfo0 = unMerge(dstSheet, dstrow, dstcol, dstrow2, dstcol2);
 				assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
-			} 
+			}
 			final int srcrow = srcCell.getRowIndex();
 			final int srccol = srcCell.getColumnIndex();
 			final CellRangeAddress srcaddr = ((SheetCtrl)srcCell.getSheet()).getMerged(srcrow, srccol);
@@ -2285,7 +2285,7 @@ public final class BookHelper {
 			final Set<Ref> affected = new HashSet<Ref>();
 			final List<MergeChange> changes = new ArrayList<MergeChange>();
 			for(int r = tRow; r <= bRow; ++r) {
-				final ChangeInfo info = merge0(sheet, tRow, lCol, bRow, rCol);
+				final ChangeInfo info = merge0(sheet, r, lCol, r, rCol);
 				changes.addAll(info.getMergeChanges());
 				toEval.addAll(info.getToEval());
 				affected.addAll(info.getAffected());

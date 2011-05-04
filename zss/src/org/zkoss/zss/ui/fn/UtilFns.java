@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
@@ -120,7 +121,7 @@ public class UtilFns {
 		
 		Worksheet sheet = ss.getSelectedSheet();
 		MergeMatrixHelper mmhelper = ((SpreadsheetCtrl)ss.getExtraCtrl()).getMergeMatrixHelper(sheet);
-		List blocks = mmhelper.getRangesByColumn(max);
+		Set blocks = mmhelper.getRangesByColumn(max);
 		Iterator iter = blocks.iterator();
 		while(iter.hasNext()){
 			Rect rect = (Rect)iter.next();

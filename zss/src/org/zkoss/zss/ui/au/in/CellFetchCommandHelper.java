@@ -954,6 +954,8 @@ public class CellFetchCommandHelper{
 			jcell.setData("merr", rect.getRight());// right
 			jcell.setData("merid", rect.getId());// right
 			jcell.setData("merl", rect.getLeft());// left
+			jcell.setData("mert", rect.getTop());// top
+			jcell.setData("merb", rect.getBottom());// bottom
 		}
 
 		HeaderPositionInfo info = _colHelper.getInfo(col);

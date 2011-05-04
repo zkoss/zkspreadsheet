@@ -653,7 +653,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	},
 	_doCellSelection: function(left, top, right, bottom) {
 		this.moveCellSelection(left, top, right, bottom, true);
-		var ls = this.getLastSelection();//cause of merge, selection might be change, get form last
+		var ls = this.getLastSelection();//because of merge, selection might be change, get from last
 		if (ls.left != left || ls.right != right || ls.top != top || ls.bottom != bottom) {
 			this.selType = zss.SelDrag.SELCELLS;
 			this._sendOnCellSelection(this.selType, ls.left, ls.top, ls.right, ls.bottom);
@@ -766,7 +766,35 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			//start hyperlink follow up
 			if(_isLeftMouseEvt(evt) && this.selArea)
 				this.selArea._startHyperlink(elm);
+		} else if ((cmp = zkS.parentByZSType(elm, "SRow"))) { //click down on vertical merged cell
+			var cmpofs = zk(cmp).revisedOffset();
+			mx = evt.pageX;
+			my = evt.pageY;
 			
+			var cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);//calculate if over the width
+			
+			row = cellpos[0];
+			col = cellpos[1];
+			var cell = this.getCell(row, col);
+			if (cell && cell.merr) {
+				row = cell.mert;
+				col = cell.merl;
+				elm = cell.comp;
+				this._lastmdelm = elm;
+			}
+			if (this._shiftMouseSelection(evt, row, col, zss.SelDrag.SELCELLS))
+				return;			
+			sheet.dp.moveFocus(row, col, false, true, false, true);
+			this._lastmdstr = "c";
+
+			var ls = this.getLastSelection();//cause of merge, focus might be change, get from last
+			this.selType = zss.SelDrag.SELCELLS;
+			this.setDragging(new zss.SelDrag(sheet, this.selType, ls.top, ls.left,
+					_isLeftMouseEvt(evt) ? "l" : "r", ls.right));
+			
+			//start hyperlink follow up
+			if(_isLeftMouseEvt(evt) && this.selArea)
+				this.selArea._startHyperlink(elm);
 		} else if ((cmp = zkS.parentByZSType(elm, "SSelDot", 1)) != null) {
 			//modify selection
 			if(_isLeftMouseEvt(evt)) {//TODO support right mouse down
@@ -969,6 +997,36 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
 			row = cellpos[0];
 			col = cellpos[1];
+			mdstr = "c_" + row + "_" + col;
+
+			if (this._lastmdstr == mdstr)
+				wgt.fireCellEvt(type, shx, shy, md1[2], row, col, mx, my);
+
+			if (type == 'lc' && this.selArea) {
+				this.selArea._setHyperlinkElment(elm);
+				this.selArea._tryAndEndHyperlink(row, col, evt);
+			}
+		} else if ((cmp = zkS.parentByZSType(elm, "SRow", 0)) != null) { //when click on vertical merged cell
+			var cellcmp = cmp, //row
+				sheetofs = zk(sheet.comp).revisedOffset(),
+			//TODO there is a bug in opera, when a cell is overflow, zk.revisedOffset can get correct component offset 
+				cmpofs = zk(cellcmp).revisedOffset();
+			
+			mx = evt.pageX;
+			my = evt.pageY;
+			shx = Math.round(mx - sheetofs[0]);
+			shy = Math.round(my - sheetofs[1]);
+			
+			var x = mx - cmpofs[0],
+				cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
+			row = cellpos[0];
+			col = cellpos[1];
+			var cell = this.getCell(row, col);
+			if (cell != null && cell.merr) {
+				row = cell.mert;
+				col = cell.merl;
+				elm = cell.comp;
+			}
 			mdstr = "c_" + row + "_" + col;
 
 			if (this._lastmdstr == mdstr)
@@ -1567,7 +1625,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			col = result.c,
 			cell = this.activeBlock.getCell(row, col),
 			parm = {"txt": result.val,"edit":result.edit};
-		zkS.copyParm(result, parm, ["st", "ist", "wrap", "hal", "vtal", "drh", "lock", "rbo", "merr", "merl"]);
+		zkS.copyParm(result, parm, ["st", "ist", "wrap", "hal", "vtal", "drh", "lock", "rbo", "merr", "merl", "mert", "merb"]);
 		
 		if (cell)//update when cell exist
 			zss.Cell.updateCell(cell, parm);
@@ -1641,11 +1699,10 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			}
 			right = maxr;
 			left = minl;
-			//TODO when UI support vertical merge, need to handle maxb(bottom) and mint(top)
-			/*
+			
 			var maxb = bottom,
 				mint = top;
-			for (var c = right; c >= left; --c) {
+			for (var c = maxr; c >= minl; --c) {
 				var cellB = this.getCell(maxb, c);
 				if (cellB && cellB.merb > maxb) maxb = cellB.merb;
 				var cellT = this.getCell(mint, c);
@@ -1653,12 +1710,15 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			}
 			bottom = maxb;
 			top = mint;
-			*/
 		} else {
 			var cell = this.getCell(top, left);
 			//only show merged selection when selecing on same row
-			if (top == bottom && cell && cell.merr > right)
-				right = cell.merr;
+			if (top == bottom && cell) {
+				if (cell.merr > right)
+					right = cell.merr;
+				if (cell.merb > bottom)
+					bottom = cell.merb;
+			}
 		}
 		
 		var selRange = new zss.Range(left, top, right, bottom);
@@ -1776,8 +1836,10 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	moveCellFocus: function (row, col) {
 		var show = !(this.state == zss.SSheetCtrl.NOFOCUS),
 			cell = this.getCell(row, col);
-		if (cell && cell.merl < col) //check if a merged cell
+		if (cell && cell.merl < col) {//check if a merged cell
 			col = cell.merl;
+			row = cell.mert;
+		}
 		this.focusMark.relocate(row, col);
 		if (show)
 			this.focusMark.showMark();
@@ -1816,6 +1878,14 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		}
 		return minl;
 	},
+	_realBottom: function(left, right, bottom) {
+		var mint = bottom;
+		for (var c = right; r >= left; --c) {
+			var cellT = this.getCell(mint, c);
+			if (cellT && cellT.mert < mint) mint = cellT.mert;
+		}
+		return mint;
+	},
 	_realLeft: function(top, bottom, left) {
 		var maxr = left;
 		for (var r = bottom; r >= top; --r) {
@@ -1823,6 +1893,14 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			if (cellR && cellR.merr > maxr) maxr = cellR.merr;
 		}
 		return maxr;
+	},
+	_realTop: function(left, right, top) {
+		var maxb = top;
+		for (var c = right; c >= left; --c) {
+			var cellB = this.getCell(maxb, c);
+			if (cellB && cellB.merb > maxb) maxb = cellB.merb;
+		}
+		return maxb;
 	},
 	/**
 	 * Move selection position
@@ -1842,12 +1920,14 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		
 		switch (key) {
 		case 'up':
+			bottom = this._realBottom(left, right, bottom);
 			if (row < bottom)
 				bottom--;
 			else
 				top--;
 			break;
 		case 'down':
+			top = this._realTop(left, right, top);
 			if (row > top)
 				top++;
 			else
@@ -2143,15 +2223,20 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			top = result.top,
 			right = result.right,
 			bottom = result.bottom,
-			width = result.width;
+			width = result.width,
+			height = result.height;
 
 		var cssid = this.sheetid + "-sheet" + ((zk.opera) ? "-opera" : ""),//opera bug, it cannot insert rul to special position
 			cp = this.cellPad,
 			celltextwidth = width - 2 * cp - 1,
 			cellwidth = zk.ie || zk.safari || zk.opera ? celltextwidth : width,
+			celltextheight = height - 1,
+			cellheight = zk.ie || zk.safari || zk.opera ? celltextheight : height,
 			name = "#" + this.sheetid;
 		zcss.setRule(name + " .zsmerge" + id, "width", cellwidth + "px", true, cssid);
 		zcss.setRule(name + " .zsmerge" + id + " .zscelltxt", "width", celltextwidth + "px", true, cssid);
+		zcss.setRule(name + " .zsmerge" + id, "height", cellheight + "px", true, cssid);
+		zcss.setRule(name + " .zsmerge" + id + " .zscelltxt", "height", celltextheight + "px", true, cssid);
 		
 		this.mergeMatrix.addMergeRange(id, left, top, right, bottom);		
 		this.activeBlock.addMergeRange(id, left, top, right, bottom);
@@ -2162,6 +2247,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			this.tp.block.addMergeRange(id, left, top, right, bottom);
 		if(this.lp.block)
 			this.lp.block.addMergeRange(id, left, top, right, bottom);
+		
+		this.moveCellFocus(top, left);		
 	}
 }, {
 	NOFOCUS: 0,

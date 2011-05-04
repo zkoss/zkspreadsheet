@@ -51,12 +51,13 @@ zss.FocusMarkCtrl = zk.$extends(zk.Object, {
 		this.column = col;
 		var cell = sheet.getCell(row, col),
 			mr = cell && cell.merr ? cell.merr : col,
+			mb = cell && cell.merb ? cell.merb : row,
 			custColWidth = sheet.custColWidth,
 			custRowHeight = sheet.custRowHeight,
 			l = custColWidth.getStartPixel(col),
 			t = custRowHeight.getStartPixel(row),
 			w = custColWidth.getStartPixel(mr + 1) - l,
-			h = custRowHeight.getSize(row);
+			h = custRowHeight.getStartPixel(mb + 1) - t;
 		
 		this.relocate_(l, t, w, h);
 	},

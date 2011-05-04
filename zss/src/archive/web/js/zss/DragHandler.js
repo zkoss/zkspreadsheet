@@ -107,7 +107,7 @@ zss.SelDrag = zk.$extends(zss.DragHandler, {
 			cmp,
 			outside;
 		
-		if ( (cmp = zkS.parentByZSType(elm, "SCell", 1)) != null) {//move on cell
+		if ( (cmp = zkS.parentByZSType(elm, ["SCell","SRow"], 1)) != null) {//move on cell or vertical merged cell
 			var cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
 			row = cellpos[0];
 			col = cellpos[1];

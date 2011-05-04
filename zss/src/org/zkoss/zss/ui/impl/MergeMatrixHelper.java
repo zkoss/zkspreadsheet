@@ -20,10 +20,12 @@ package org.zkoss.zss.ui.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 //import org.zkoss.zss.model.Sheet;
 import org.zkoss.poi.ss.usermodel.Sheet;
@@ -54,16 +56,14 @@ public class MergeMatrixHelper {
 	public MergeMatrixHelper(List mergeRange,int frozenRow,int frozenCol){
 		Iterator iter = mergeRange.iterator();
 		while(iter.hasNext()){
-			int[] r = (int[])iter.next();
-			int left = r[0];
-			int top = r[1];
-			int right = r[2];
-			int bottom = r[3];
+			final int[] r = (int[])iter.next();
+			final int left = r[0];
+			final int top = r[1];
+			final int right = r[2];
+			final int bottom = r[3];
 			//System.out.println("Merge:"+(count++)+" l:"+left+",t:"+top+",r:"+right+",b:"+bottom);
-			for(int i=top;i<=bottom;i++){
-				MergedRect block = new MergedRect(_mergeId.next(),left,i,right,i);
-				_mergeRanges.add(block);
-			}
+			final MergedRect block = new MergedRect(_mergeId.next(),left,top,right,bottom);
+			_mergeRanges.add(block);
 		}
 		
 		this._frozenRow = frozenRow;
@@ -78,13 +78,16 @@ public class MergeMatrixHelper {
 		
 		Iterator iter = _mergeRanges.iterator();
 		while(iter.hasNext()){
-			MergedRect block= (MergedRect)iter.next();
-			int left = block.getLeft();
-			int top = block.getTop();
-			int right = block.getRight();
+			final MergedRect block= (MergedRect)iter.next();
+			final int left = block.getLeft();
+			final int top = block.getTop();
+			final int right = block.getRight();
+			final int bottom = block.getBottom();
 			_leftTopIndex.put(top+"_"+left,block);
-			for(int j=left;j<=right;j++){
-				_mergeByIndex.put(top+"_"+j, block);
+			for(int r = top; r <= bottom; ++r) {
+				for(int c = left; c <= right; ++c) {
+					_mergeByIndex.put(r+"_"+c, block);
+				}
 			}
 		}
 	}
@@ -123,9 +126,9 @@ public class MergeMatrixHelper {
 	 * @param col column index
 	 * @return a list which contains merged range
 	 */
-	public List getRangesByColumn(int col){
+	public Set getRangesByColumn(int col){
 		Iterator iter = _mergeRanges.iterator();
-		List result = new ArrayList();
+		Set result = new HashSet();
 		while(iter.hasNext()){
 			Rect rect = (Rect)iter.next();
 			int left = rect.getLeft();
@@ -196,7 +199,7 @@ public class MergeMatrixHelper {
 	}
 
 	public void updateMergeRange(int oleft, int otop, int oright, int obottom, int left, int top, int right,
-			int bottom, List toadd, List torem) {
+			int bottom, Set toadd, Set torem) {
 		for(int i=otop;i<=obottom;i++){
 			MergedRect mblock = getMergeRange(i,oleft);
 			if(mblock!=null){
@@ -204,42 +207,38 @@ public class MergeMatrixHelper {
 				_mergeRanges.remove(mblock);
 			}
 		}
-		for(int i=top;i<=bottom;i++){
-			MergedRect mblock = new MergedRect(_mergeId.next(),left,i,right,i);
-			toadd.add(mblock);
-			_mergeRanges.add(mblock);
+		
+		final MergedRect mblock = new MergedRect(_mergeId.next(),left,top,right,bottom);
+		toadd.add(mblock);
+		_mergeRanges.add(mblock);
+
+		rebuildIndex();
+	}
+
+	public void deleteMergeRange(int left, int top, int right, int bottom, Set torem) {
+		final MergedRect mblock = getMergeRange(top, left);
+		if(mblock!=null){
+			torem.add(mblock);
+			_mergeRanges.remove(mblock);
 		}
 		rebuildIndex();
 	}
 
-	public void deleteMergeRange(int left, int top, int right, int bottom, List torem) {
-		for(int i=top;i<=bottom;i++){
-			MergedRect mblock = getMergeRange(i,left);
-			if(mblock!=null){
-				torem.add(mblock);
-				_mergeRanges.remove(mblock);
-			}
+	public void addMergeRange(int left, int top, int right, int bottom, Set toadd, Set torem) {
+		MergedRect mblock = getMergeRange(top, left);
+		if(mblock!=null){
+			torem.add(mblock);
+			_mergeRanges.remove(mblock);
 		}
+		
+		mblock = new MergedRect(_mergeId.next(),left,top,right,bottom);
+		toadd.add(mblock);
+		_mergeRanges.add(mblock);
+		
 		rebuildIndex();
 	}
 
-	public void addMergeRange(int left, int top, int right, int bottom, List toadd,List torem) {
-		for(int i=top;i<=bottom;i++){
-			MergedRect mblock = getMergeRange(i,left);
-			if(mblock!=null){
-				torem.add(mblock);
-				_mergeRanges.remove(mblock);
-			}
-		}
-		for(int i=top;i<=bottom;i++){
-			MergedRect mblock = new MergedRect(_mergeId.next(),left,i,right,i);
-			toadd.add(mblock);
-			_mergeRanges.add(mblock);
-		}
-		rebuildIndex();
-	}
-
-	public void deleteAffectedMergeRangeByColumn(int col,List removed) {
+	public void deleteAffectedMergeRangeByColumn(int col,Set removed) {
 		for(Iterator iter = _mergeRanges.iterator();iter.hasNext();){
 			MergedRect block = (MergedRect)iter.next();
 			int right = block.getRight();
@@ -253,7 +252,7 @@ public class MergeMatrixHelper {
 		rebuildIndex();
 	}
 
-	public void deleteAffectedMergeRangeByRow(int row,List removed) {
+	public void deleteAffectedMergeRangeByRow(int row,Set removed) {
 		for(Iterator iter = _mergeRanges.iterator();iter.hasNext();){
 			MergedRect block = (MergedRect)iter.next();
 			int bottom = block.getBottom();

@@ -552,6 +552,10 @@ lineHeight=20
 	display:none!important;
 }
 
+.zsmergeeu{
+	visibility:hidden!important;
+}
+
 .zswidgetpanel{
 	position:absolute;
 	width:0px;

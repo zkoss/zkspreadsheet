@@ -19,6 +19,13 @@ To compete zk 3.0.6, in IE, i must add 'div.' before rule, if there is font-size
 	font-size:0;/* bug 1990408 */
 }
 
+<c:if test="${c:isExplorer() && !c:isExplorer7()}">
+.zsrow {
+	position: static;
+	overflow-y: hidden;
+}
+</c:if>
+
 .zsleftcelltxt {
 	font-size: 10px;/*  bug 1990408,to correct zsrow font-size 0*/
 }

@@ -39,10 +39,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
@@ -2038,7 +2040,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 				block = mmhelper.getMergeRange(row, col);
 				sb.append(" zsmerge").append(block.getId());
 			} else if ((block = mmhelper.getMergeRange(row, col)) != null) {
-				sb.append(" zsmergee");
+				sb.append(block.getTop() == row ? " zsmergee" : " zsmergeeu");
 			} else {
 				// System.out.println("3>>>>>"+row+","+col);
 			}
@@ -2131,6 +2133,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 				HTMLs.appendAttribute(sb, "z.merr", block.getRight());
 				HTMLs.appendAttribute(sb, "z.merid", block.getId());
 				HTMLs.appendAttribute(sb, "z.merl", block.getLeft());
+				HTMLs.appendAttribute(sb, "z.mert", block.getTop());
+				HTMLs.appendAttribute(sb, "z.merb", block.getBottom());
 			}
 
 			return sb.toString();
@@ -2548,7 +2552,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 
 		public void deleteMergeCell(Worksheet sheet, int left, int top, int right, int bottom) {
 			MergeMatrixHelper mmhelper = this.getMergeMatrixHelper(sheet);
-			List torem = new ArrayList();
+			Set torem = new HashSet();
 			mmhelper.deleteMergeRange(left, top, right, bottom, torem);
 			for (Iterator iter = torem.iterator(); iter.hasNext();) {
 				MergedRect rect = (MergedRect) iter.next();
@@ -2578,8 +2582,13 @@ public class Spreadsheet extends XulElement implements Serializable {
 
 			HeaderPositionHelper helper = Spreadsheet.this
 					.getColumnPositionHelper(sheet);
-			int w = helper.getStartPixel(block.getRight() + 1) - helper.getStartPixel(block.getLeft());
+			final int w = helper.getStartPixel(block.getRight() + 1) - helper.getStartPixel(block.getLeft());
 			result.setData("width", w);
+
+			HeaderPositionHelper rhelper = Spreadsheet.this
+					.getRowPositionHelper(sheet);
+			final int h = rhelper.getStartPixel(block.getBottom() + 1) - rhelper.getStartPixel(block.getTop());
+			result.setData("height", h);
 
 			/**
 			 * merge_ -> mergeCell
@@ -2590,8 +2599,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 		public void addMergeCell(Worksheet sheet, int left, int top, int right,	int bottom) {
 			MergeMatrixHelper mmhelper = this.getMergeMatrixHelper(sheet);
 
-			List toadd = new ArrayList();
-			List torem = new ArrayList();
+			Set toadd = new HashSet();
+			Set torem = new HashSet();
 			mmhelper.addMergeRange(left, top, right, bottom, toadd, torem);
 			for (Iterator iter = torem.iterator(); iter.hasNext();) {
 				MergedRect rect = (MergedRect) iter.next();
@@ -3023,6 +3032,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 		List ranges = mmhelper.getRanges();
 		Iterator iter = ranges.iterator();
 		final int defaultSize = colHelper.getDefaultSize();
+		final int defaultRowSize = rowHelper.getDefaultSize();
 
 		while (iter.hasNext()) {
 			MergedRect block = (MergedRect) iter.next();
@@ -3039,8 +3049,21 @@ public class Spreadsheet extends XulElement implements Serializable {
 					width += defaultSize ;
 				}
 			}
+			int top = block.getTop();
+			int bottom = block.getBottom();
+			int height = 0;
+			for (int i = top; i <= bottom; i++) {
+				final HeaderPositionInfo info = rowHelper.getInfo(i);
+				if (info != null) {
+					final boolean hidden = info.hidden;
+					final int rowSize = hidden ? 0 : info.size;
+					height += rowSize;
+				} else {
+					height += defaultRowSize ;
+				}
+			}
 
-			if (width <= 0) { //total hidden
+			if (width <= 0 || height <= 0) { //total hidden
 				sb.append(name).append(" .zsmerge").append(block.getId()).append("{\n");
 				sb.append("display:none;");
 				sb.append("}\n");
@@ -3051,19 +3074,25 @@ public class Spreadsheet extends XulElement implements Serializable {
 				sb.append("}\n");
 			} else {
 				celltextwidth = width - 2 * cp - 1;// 1 is border width
+				int celltextheight = height - 1; //1 is border height
 	
 				if (!isGecko) {
 					cellwidth = celltextwidth;
+					cellheight = celltextheight;
 				} else {
 					cellwidth = width;
+					cellheight = height;
 				}
+				
 				sb.append(name).append(" .zsmerge").append(block.getId()).append("{\n");
 				sb.append("width:").append(cellwidth).append("px;");
+				sb.append("height:").append(cellheight).append("px;");
 				sb.append("}\n");
 	
 				sb.append(name).append(" .zsmerge").append(block.getId());
 				sb.append(" .zscelltxt").append("{\n");
 				sb.append("width:").append(celltextwidth).append("px;");
+				sb.append("height:").append(celltextheight).append("px;");
 				sb.append("}\n");
 			}
 		}

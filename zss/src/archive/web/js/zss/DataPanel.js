@@ -400,9 +400,10 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		if (!cell)
 			return false;	
 		var cellcmp = cell.comp,
-			ml = cell.merl;//this cell is merged by a left cell. cellcmp.ctrl.merl;
-		if (zkS.t(ml) && ml != col)
-			return this._moveFocus(row, ml, scroll, selection, noevt, noslevt);
+			ml = cell.merl,
+			mt = cell.mert;//this cell is merged by a left cell. cellcmp.ctrl.merl;
+		if (zkS.t(ml) && (ml != col || mt != row))
+			return this._moveFocus(mt, ml, scroll, selection, noevt, noslevt);
 				
 		sheet.moveCellFocus(row, col);
 		if (!noevt) sheet._sendOnCellFocused(row, col); 
@@ -602,7 +603,14 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			row = pos.row,
 			col = pos.column;
 		if (row <0 || col < 0) return;
-		var sheet = this.sheet;
+		
+		var sheet = this.sheet,
+			cell = sheet.getCell(row, col);
+		if (cell) {
+			var mb = cell.merb;
+			if (zkS.t(mb))
+				row = mb;
+		}
 		if (row < sheet.maxRows - 1)
 			++row;
 

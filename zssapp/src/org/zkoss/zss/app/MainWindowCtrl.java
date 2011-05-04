@@ -936,16 +936,10 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				// TODO: undo/redo
 				// spreadsheet.pushCellState();
 				Rect sel = spreadsheet.getSelection();
-				if (sel.getLeft() - sel.getRight() == 0) {
+				if (sel.getLeft() == sel.getRight() && sel.getTop() == sel.getBottom()) {
 					mergeCellBtn.setClass("toolIcon");
 				} else {
-					// TODO: true mean merge horizontal only.(UI cannot handle
-					// merge vertically yet)
-					int top = sel.getTop();
-					int btm = sel.getBottom();
-					for (int i = top; i <= btm; i++) {
-						Utils.mergeCells(spreadsheet.getSelectedSheet(), i, sel.getLeft(), i, sel.getRight(), true);
-					}
+					Utils.mergeCells(spreadsheet.getSelectedSheet(), sel.getTop(), sel.getLeft(), sel.getBottom(), sel.getRight(), false);
 				}
 				spreadsheet.focus();
 			} else {

@@ -85,9 +85,7 @@ public class SheetCtrlImpl implements SheetCtrl {
     		final CellRangeAddress addr = _sheet.getMergedRegion(j);
     		final int col = addr.getFirstColumn();
     		final int row = addr.getFirstRow();
-    		final int rcol = addr.getLastColumn();
     		_mergedRegions.put(mergeId(row, col), addr);
-    		_mergedRegions.put(mergeId(row, rcol), addr);
     	}
 	}
 	@Override
@@ -98,17 +96,13 @@ public class SheetCtrlImpl implements SheetCtrl {
 	public void addMerged(CellRangeAddress addr) {
 		final int tRow = addr.getFirstRow();
 		final int lCol = addr.getFirstColumn();
-		final int rCol = addr.getLastColumn();
 		_mergedRegions.put(mergeId(tRow, lCol), addr);
-		_mergedRegions.put(mergeId(tRow, rCol), addr);
 	}
 	@Override
 	public void deleteMerged(CellRangeAddress addr) {
 		final int tRow = addr.getFirstRow();
 		final int lCol = addr.getFirstColumn();
-		final int rCol = addr.getLastColumn();
 		_mergedRegions.remove(mergeId(tRow, lCol));
-		_mergedRegions.remove(mergeId(tRow, rCol));
 	}
 	private String mergeId(int row, int col) {
 		return row+"_"+col;

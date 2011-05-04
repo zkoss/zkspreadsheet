@@ -328,6 +328,8 @@ zss.Cell = zk.$extends(zk.Object, {
 			this.merr = zk.parseInt($n.attr('z.merr')); 
 			this.merid = zk.parseInt(mid);
 			this.merl = zk.parseInt($n.attr('z.merl')); 
+			this.mert = zk.parseInt($n.attr('z.mert')); 
+			this.merb = zk.parseInt($n.attr('z.merb')); 
 		}
 		cmp.ctrl = this;
 	},
@@ -477,6 +479,8 @@ zss.Cell = zk.$extends(zk.Object, {
 			merr = parm.merr,
 			merid = parm.merid,
 			merl = parm.merl,
+			mert = parm.mert,
+			merb = parm.merb,
 			zsw = parm.zsw,
 			zsh = parm.zsh,
 			cmp = document.createElement("div"),
@@ -494,7 +498,7 @@ zss.Cell = zk.$extends(zk.Object, {
 		if (parm.rbo) $n.attr("z.rbo", "t");
 		
 		if (zkS.t(merid))
-			$n.attr({"z.merr": merr, "z.merid": merid, "z.merl": merl}).addClass(merl == col ? "zsmerge" + merid : "zsmergee");
+			$n.attr({"z.merr": merr, "z.merid": merid, "z.merl": merl, "z.mert": mert, "z.merb": merb}).addClass(merl == col && mert == row? "zsmerge" + merid : mert == row ? "zsmergee" : "zsmergeeu");
 		
 		if (st)
 			cmp.style.cssText = st;

@@ -133,7 +133,8 @@ zss.Editbox = zk.$extends(zk.Object, {
 			t = cellcmp.parentNode.offsetTop;
 			blockcmp = cellcmp.ctrl.block.comp;//add block offset
 
-		l += blockcmp.offsetLeft;//block
+		//IE6 only: .zsrow css position changed from "relative" -> "static" for cell vertical merge which cause cellcmp.offsetLeft change
+		l += zk.ie6_ ? 0 : blockcmp.offsetLeft;//block 
 		t += blockcmp.offsetTop;//block
 		t -= 1;//position adjust
 		w -= 1;
