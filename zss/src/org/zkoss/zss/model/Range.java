@@ -473,5 +473,24 @@ public interface Range {
 	 */
 	public Range getOffset(int rowOffset, int colOffset);
 
+	/**
+	 * 
+	 */
 	public void autoFilter();
+	
+	/**
+	 * 
+	 * Filter a range using the AutoFilter
+	 * 
+	 * @param field Optional. The integer offset of the field on which you want to base the filter.( the leftmost field is field one)
+	 * @param cirteria1 Optional. The criteria (a string; for example, "101"). Use "=" to find blank fields, or use "<>" to find nonblank fields. If this argument is omitted, the criteria is All. If Operator is xlTop10Items, Criteria1 specifies the number of items (for example, "10").
+	 * @param operator Optional. Can be one of the following XlAutoFilterOperator constants: xlAnd default, xlBottom10Items, xlBottom10Percent, xlOr, xlTop10Items, xlTop10Percent
+	 * 		Use xlAnd and xlOr with Criteria1 and Criteria2 to construct compound criteria.
+	 * @param criteria2 Optional. Used with criteria 1 and operator to construct compound criteria
+	 * @param visibleDropDown Optional. Display AutoFilter drop-down arrow for the filtered field or not. Default True.
+	 * @return
+	 */
+	public Object AutoFilter(Object field, Object cirteria1, Object operator, Object criteria2, Object visibleDropDown);
+	
+	
 }

@@ -1500,4 +1500,12 @@ public class RangeImpl implements Range {
 	public void autoFilter() {
 		_sheet.setAutoFilter(new CellRangeAddress(getRow(), getLastRow(), getColumn(), getLastColumn()));
 	}
+
+	
+	@Override
+	public Object AutoFilter(Object field, Object cirteria1, Object operator,
+			Object criteria2, Object visibleDropDown) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

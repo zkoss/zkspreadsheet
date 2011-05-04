@@ -175,10 +175,10 @@ public class EmptyRange implements Range {
 	@Override
 	public void setDisplayGridlines(boolean show) {
 	}
-	
-	@Override
-	public void protectSheet(String password) {
-	}
+
+
+
+
 
 	@Override
 	public void setEditText(String txt) {
@@ -252,4 +252,11 @@ public class EmptyRange implements Range {
 	@Override
 	public void autoFilter() {
 	}
+
+	@Override
+	public Object AutoFilter(Object field, Object cirteria1, Object operator,
+			Object criteria2, Object visibleDropDown) {
+		return null;
+	}
+}
 }
