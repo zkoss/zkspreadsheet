@@ -617,7 +617,7 @@ public class Utils {
 			case '>': out.append("&gt;"); break;
 			case ' ': out.append(wrap?" ":"&nbsp;"); break;
 			case '\n':
-				if (multiline) {
+				if (wrap && multiline) {
 					out.append("<br/>");
 					break;
 				}
@@ -647,7 +647,7 @@ public class Utils {
 					case '>': out.append("&gt;"); break;
 					case ' ': out.append(wrap?" ":"&nbsp;"); break;
 					case '\n':
-						if (multiline) {
+						if (wrap && multiline) {
 							out.append("<br/>");
 							break;
 						}

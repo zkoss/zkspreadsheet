@@ -1806,8 +1806,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 
 				if (style != null && style.getWrapText()) {
 					wrap = true;
-					result.setData("wrap", true);
 				}
+				result.setData("wrap", wrap);
 				if (cfh.hasRightBorder())
 					result.setData("rbo", true);
 				

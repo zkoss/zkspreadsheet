@@ -32,6 +32,7 @@ ZK Spreadsheet 2.1.0
   320 NullPointerException when move cell focus
   322 CellStyle.getLocked() always return false in 2007(xlsx) file format.
   324 Spreadsheet wrap text doesn't work
+  325 Spreadsheet unwrap text doesn't work
   
 	------------
 ZK Spreadsheet 2.0.1
