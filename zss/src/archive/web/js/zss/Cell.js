@@ -67,7 +67,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		 * @param boolean wrap text or not
 		 * @param boolean whether the height of the cell is default row height or not
 		 */
-		setText: function (t, valign, halign, wrap, defaultRowHgh) {
+		setText: function (t, valign, halign, defaultRowHgh) {
 			var $t = this.firstChild,
 				$c = $t.nextSibling,
 				$b = this.lastChild;
@@ -76,8 +76,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			// set top div visible; hide other div
 			case 't':
 				$t.$n().innerHTML = t;
-				if (!wrap)
-					$t.$n().innerHTML = $t.$n().textContent || $t.$n().innerText;
 				$c.setVisible(false);
 				$b.setVisible(false);
 				if (!defaultRowHgh)
@@ -88,8 +86,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			//set top div flex=true, center div flex=min, bottom div flex=true
 			case 'c':
 				$c.$n().innerHTML = t;
-				if (!wrap)
-					$c.$n().innerHTML = $c.$n().textContent || $c.$n().innerText;
 				$c.setVisible(true);
 				if (!defaultRowHgh)
 					this._initShowAndFlex([$t, $b], true);
@@ -100,8 +96,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			case 'b':
 				$c.setVisible(false);
 				$b.$n().innerHTML = t;
-				if (!wrap)
-					$b.$n().innerHTML = $b.$n().textContent || $b.$n().innerText;
 				$b.setVisible(true);
 				$b.setVflex(-65500);
 				if (!defaultRowHgh)
@@ -232,12 +226,10 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			this.setWidth('100%');
 			this.setHeight('100%');
 		},
-		setText: function (t, valign, halign, wrap) {
+		setText: function (t, valign, halign) {
 			var n = this.firstChild.$n(),
 				cls = 'zscell-inner-';
 			n.innerHTML = t;
-			if (!wrap)
-				n.innerHTML = n.textContent || n.innerText;;
 			cls += this._vtal[valign] + '-' + this._htal[halign];
 			jq(n.parentNode).attr('class', '').addClass(cls);
 			this.onSize();
@@ -295,7 +287,7 @@ zss.Cell = zk.$extends(zk.Object, {
 		
 		var inner = null,
 			txtCmp = this.txtcomp = $n.children('DIV:first')[0],
-			txt = wrap ? this.txtcomp.innerHTML : this.txtcomp.textContent || this.txtcomp.innerText,
+			txt = this.txtcomp.innerHTML,
 			vflex = this._vflex = sheet._wgt._cssFlex; /*support CSS flexbox or not*/
 		if (this.valign != "t" && txt) {
 			inner = this._appendInner();
@@ -405,12 +397,12 @@ zss.Cell = zk.$extends(zk.Object, {
 			hal =  this.halign,
 			wrap = this.wrap;
 		if (this._inner)
-			this._inner.setText(txt, vtal, hal, wrap);
+			this._inner.setText(txt, vtal, hal);
 		else if (vtal == 't')
 			this.txtcomp.innerHTML = txt;
 		else if (txt) {
 			this._appendInner();
-			this._inner.setText(txt, vtal, hal, wrap);
+			this._inner.setText(txt, vtal, hal);
 		}
 	},
 	/**
