@@ -580,7 +580,7 @@ zss.Cell = zk.$extends(zk.Object, {
 		if (ctrl.invalid)
 			return;
 		
-		cellInnerWgt.setText(txt, ctrl.valign, ctrl.halign, ctrl.wrap, ctrl.defaultRowHgh);
+		cellInnerWgt.setText(txt, ctrl.valign, ctrl.halign, ctrl.defaultRowHgh);
 	},
 	_processOverflow: function (ctrl) {
 		var sheet = ctrl.sheet;
