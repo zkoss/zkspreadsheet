@@ -490,7 +490,7 @@ public interface Range {
 	 * @param visibleDropDown Optional. Display AutoFilter drop-down arrow for the filtered field or not. Default True.
 	 * @return
 	 */
-	public Object AutoFilter(Object field, Object cirteria1, Object operator, Object criteria2, Object visibleDropDown);
+	public Object autoFilter(Object field, Object cirteria1, Object operator, Object criteria2, Object visibleDropDown);
 	
 	
 }
