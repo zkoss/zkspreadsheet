@@ -457,6 +457,8 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			}
 		} else if (type == "north") {
 			var t = range.top - reserve;
+			t = sheet.mergeMatrix.getTopConnectedRow(t, this.range.left, this.range.right);
+			
 			if(t <= 0 || t < this.range.top) return;
 			var size = t - this.range.top;
 			if (size > 0) {
@@ -469,6 +471,8 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			}
 		} else if (type == "south") {
 			var b = range.bottom + reserve;
+			b = sheet.mergeMatrix.getBottomConnectedRow(b,this.range.left,this.range.right);
+			
 			if (b > this.range.bottom) return;
 			var size = this.range.bottom - b;
 			if (size > 0) {

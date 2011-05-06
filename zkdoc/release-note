@@ -33,6 +33,7 @@ ZK Spreadsheet 2.1.0
   322 CellStyle.getLocked() always return false in 2007(xlsx) file format.
   324 Spreadsheet wrap text doesn't work
   325 Spreadsheet unwrap text doesn't work
+  326 Sizing row height the associated Merged area should sizing accordingly
   
 	------------
 ZK Spreadsheet 2.0.1

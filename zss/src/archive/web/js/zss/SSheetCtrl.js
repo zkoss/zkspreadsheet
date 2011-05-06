@@ -1573,7 +1573,29 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			var h2 = (height > 0) ? height - 1 : 0;
 			zcss.setRule(name + " .zslh" + zsh, ["display", "height", "line-height"], ["", h2 + "px", h2 + "px"], createbefor, this.sheetid + "-sheet");
 		}
+		
+		//set merged cell height;
+		var ranges = this.mergeMatrix.getRangesByRow(row),
+			size = ranges.length,
+			range,
+			cssid = sheetid + "-sheet" +((zk.opera) ? "-opera" : "");//opera bug, it cannot insert rul to special position
+		
+		for (var i = 0; i < size; i++) {
+			range = ranges[i];
+			var h = custRowHeight.getStartPixel(range.bottom + 1);
+			h -= custRowHeight.getStartPixel(range.top);
 
+			celltextheight = h - 1;// 1 is border width//zk.revisedSize(colcmp,height);//
+			cellheight = zk.ie || zk.safari || zk.opera ? celltextheight : h;
+
+			if (h < 0)
+				zcss.setRule(name+" .zsmerge"+range.id,"display","none",true,cssid);
+			else {
+				zcss.setRule(name+" .zsmerge"+range.id,"height",cellheight+"px",true,cssid);
+				zcss.setRule(name+" .zsmerge"+range.id+" .zscelltxt","height",celltextheight+"px",true,cssid);
+			}
+		}
+		
 		//adjust header
 		var lp = this.lp,
 			headers = lp ? lp.headers : null,
