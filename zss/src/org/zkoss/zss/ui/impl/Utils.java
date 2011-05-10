@@ -61,7 +61,6 @@ import org.zkoss.zss.ui.Spreadsheet;
 public class Utils {
 	private static final Log log = Log.lookup(Utils.class);
 
-	// TODO Auto-generated method stub
 	public static void autoFilter(Worksheet sheet, Rect selection) {
 		int left = selection.getLeft();
 		int right = selection.getRight();
@@ -69,8 +68,8 @@ public class Utils {
 		int btm = selection.getBottom();
 		
 		Range rng = Utils.getRange(sheet, top, left, btm, right);
+				
 		rng.autoFilter();
-		
 	}
 	
 	/**

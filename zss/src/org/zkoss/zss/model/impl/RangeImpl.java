@@ -1496,9 +1496,40 @@ public class RangeImpl implements Range {
 		return Ranges.EMPTY_RANGE;
 	}
 
+	//TODO:
 	@Override
 	public void autoFilter() {
-		_sheet.setAutoFilter(new CellRangeAddress(getRow(), getLastRow(), getColumn(), getLastColumn()));
+		CellRangeAddress affectedArea;
+		if(_sheet.isAutoFilterMode()){
+			affectedArea = _sheet.removeAutoFilter();
+			Range unhideArea = Ranges.range(_sheet,
+					affectedArea.getFirstRow(),affectedArea.getFirstColumn(),
+					affectedArea.getLastRow(),affectedArea.getLastColumn());
+			unhideArea.getRows().setHidden(false);
+		}
+		else{
+			//TODO:
+			//should use the logic as excel to decide the actual affected range
+			//to implement autofilter.
+			//it's not just the selected range.
+			//If it's a multi cell range, it's the range as selected.
+			//else If it's a single cell range, it has to be extend to a continuous range
+			//by looking up the near area of the single cell.
+			affectedArea = new CellRangeAddress(getRow(), getLastRow(), getColumn(), getLastColumn());
+
+			_sheet.setAutoFilter(affectedArea);
+		}
+		 
+		//I have to know the top row area to show/remove the combo button
+		//changed by this autofilter action, it's not the same area 
+		//and then send ON_CONTENTS_CHANGE event
+		RangeImpl buttonChange = (RangeImpl) Ranges.range(_sheet, 
+				affectedArea.getFirstRow(),affectedArea.getFirstColumn(),
+				affectedArea.getFirstRow(),affectedArea.getLastColumn());
+		
+		Ref ref = buttonChange.getRefs().iterator().next();
+		final RefBook refBook = ref.getOwnerSheet().getOwnerBook();
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_CONTENTS_CHANGE, ref, 0));
 	}
 
 	
