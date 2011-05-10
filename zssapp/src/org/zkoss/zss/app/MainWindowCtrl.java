@@ -456,7 +456,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		}
 	}
 
-	//TODO:
 	public void onFilterSelector(ForwardEvent event) {
 		String param = (String) event.getData();
 		if (param == null)
