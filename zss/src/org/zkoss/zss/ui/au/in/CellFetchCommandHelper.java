@@ -165,13 +165,26 @@ public class CellFetchCommandHelper{
 					int right = blockRight + fetchWidth ;//blockRight+ 1 + fetchWidth - 1;
 					right = _mergeMatrix.getRightConnectedColumn(right,	blockTop, blockBottom);
 					
+					//check top for new loaded east block
+					int bottom = _mergeMatrix.getBottomConnectedRow(blockBottom, blockLeft, right);
+					int top = _mergeMatrix.getTopConnectedRow(blockTop, blockLeft, right);
+					
+					if (bottom > blockBottom) {
+						String result = loadSouth(sheet, type, blockLeft, blockTop, blockRight, blockBottom, bottom - blockBottom);
+						responseDataBlock("South", "", sheetId, result);
+					}
+					if (top < blockTop) {
+						String result = loadNorth(sheet, type, blockLeft, blockTop, blockRight, bottom, blockTop - top);
+						responseDataBlock("North", "", sheetId, result);
+					}
 					int size = right - blockRight;//right - (blockRight +1) +1
 
-					String result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, size);
+					String result = loadEast(sheet, type, blockLeft, top, blockRight, bottom, size);
 					responseDataBlock("East", token, sheetId, result);
 				} else if ("south".equals(direction)) {
 					
 					int bottom = blockBottom + fetchHeight;
+					bottom = _mergeMatrix.getBottomConnectedRow(bottom, blockLeft, blockRight);
 					
 					//check right for new load south block
 					int right = _mergeMatrix.getRightConnectedColumn(blockRight, blockTop, bottom);
@@ -186,12 +199,26 @@ public class CellFetchCommandHelper{
 						responseDataBlock("West", "", sheetId, result);
 					}
 
-					String result = loadSouth(sheet, type, left, blockTop, right, blockBottom, fetchHeight);
+					int size = bottom - blockBottom;
+					
+					String result = loadSouth(sheet, type, left, blockTop, right, blockBottom, size);
 					responseDataBlock("South", token, sheetId, result);
 				} else if ("west".equals(direction)) {
 					
 					int left = blockLeft - fetchWidth ;//blockLeft - 1 - fetchWidth + 1;
 					left = _mergeMatrix.getLeftConnectedColumn(left,blockTop,blockBottom);
+					//check top-bottom for new load west block
+					int bottom = _mergeMatrix.getBottomConnectedRow(blockBottom, left, blockRight);
+					int top = _mergeMatrix.getTopConnectedRow(blockTop, left, blockRight);
+					
+					if (bottom > blockBottom) {
+						String result = loadSouth(sheet, type, blockLeft, blockTop, blockRight, blockBottom, bottom - blockBottom);
+						responseDataBlock("South", "", sheetId, result);
+					}
+					if (top < blockTop) {
+						String result = loadNorth(sheet, type, blockLeft, blockTop, blockRight, bottom, blockTop - top);
+						responseDataBlock("North", "", sheetId, result);
+					}
 					int size = blockLeft - left ;//blockLeft -1 - left + 1;
 					
 					String result = loadWest(sheet, type, blockLeft, blockTop,	blockRight, blockBottom, size);
@@ -200,7 +227,7 @@ public class CellFetchCommandHelper{
 					
 					
 					int top = blockTop - fetchHeight;
-					
+					top = _mergeMatrix.getTopConnectedRow(top, blockLeft, blockRight);
 					//check right-left for new load north block
 					int right = _mergeMatrix.getRightConnectedColumn(blockRight, top, blockBottom);
 					int left = _mergeMatrix.getLeftConnectedColumn(blockLeft,top, blockBottom);
@@ -213,8 +240,8 @@ public class CellFetchCommandHelper{
 						String result = loadWest(sheet,type,blockLeft,blockTop,right,blockBottom,blockLeft - left);
 						responseDataBlock("West", "", sheetId,result);
 					}
-					
-					String result = loadNorth(sheet, type, left, blockTop, right, blockBottom, fetchHeight);
+					int size = blockTop - top;
+					String result = loadNorth(sheet, type, left, blockTop, right, blockBottom, size);
 					responseDataBlock("North", token, sheetId, result);
 				}
 			} else if("visible".equals(type)) {
@@ -271,6 +298,9 @@ public class CellFetchCommandHelper{
 		}
 
 		if (bottom > blockBottom) {
+			
+			bottom = _mergeMatrix.getBottomConnectedRow(bottom, left, right);
+			
 			int size = bottom - blockBottom;
 			String result = loadSouth(sheet, type, left, blockTop, right, blockBottom, size);
 			responseDataBlock("South", "", sheetId, result);
@@ -278,6 +308,9 @@ public class CellFetchCommandHelper{
 		}
 
 		if (top < blockTop) {
+			
+			top = _mergeMatrix.getTopConnectedRow(top, left, right);
+			
 			int size = blockTop - top;
 			String result = loadNorth(sheet, type, left, blockTop, right, bottom, size);
 			responseDataBlock("North", "", sheetId, result);
@@ -308,7 +341,8 @@ public class CellFetchCommandHelper{
 	}
 
 	private String jumpResult(Worksheet sheet, int left, int top, int right, int bottom) {
-		
+		top = _mergeMatrix.getTopConnectedRow(top, left, right);
+		bottom = _mergeMatrix.getBottomConnectedRow(bottom, left, right);
 		right = _mergeMatrix.getRightConnectedColumn(right,top,bottom);
 		left = _mergeMatrix.getLeftConnectedColumn(left,top,bottom);
 

@@ -198,6 +198,64 @@ public class MergeMatrixHelper {
 		return col;
 	}
 
+	public int getBottomConnectedRow(int row, int left, int right) {
+		int size = _mergeRanges.size();
+		List result = new ArrayList();
+		Rect rect;
+		for(int i=0;i<size;i++){
+			rect = (MergedRect)_mergeRanges.get(i);
+			if(rect.getLeft()>_frozenCol && (rect.getLeft()<left || rect.getRight()>right)){
+				continue;
+			}
+			result.add(rect);
+		}
+		
+		boolean conti = true;
+		while(conti){
+			conti = false;
+			size = result.size();
+			for(int i=0;i<size;i++){
+				rect = (MergedRect)result.get(i);
+				if(rect.getBottom()>row && rect.getTop()<=row){
+					row = rect.getBottom();
+					conti = true;
+					result.remove(i);
+					break;
+				}
+			}
+		}
+		return row;
+	}
+
+	public int getTopConnectedRow(int row, int left, int right) {
+		int size = _mergeRanges.size();
+		List result = new ArrayList();
+		Rect rect;
+		for(int i=0;i<size;i++){
+			rect = (MergedRect)_mergeRanges.get(i);
+			if(rect.getLeft()>_frozenCol && (rect.getLeft()<left || rect.getRight()>right)){
+				continue;
+			}
+			result.add(rect);
+		}
+		
+		boolean conti = true;
+		while(conti){
+			conti = false;
+			size = result.size();
+			for(int i=0;i<size;i++){
+				rect = (MergedRect)result.get(i);
+				if(rect.getTop()<row && rect.getBottom()>=row){
+					row = rect.getTop();
+					conti = true;
+					result.remove(i);
+					break;
+				}
+			}
+		}
+		return row;
+	}
+
 	public void updateMergeRange(int oleft, int otop, int oright, int obottom, int left, int top, int right,
 			int bottom, Set toadd, Set torem) {
 		for(int i=otop;i<=obottom;i++){
