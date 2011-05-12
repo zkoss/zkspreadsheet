@@ -5,6 +5,7 @@ ZK Spreadsheet 2.1.0
    26 Support copy/paste value to local Excel
   161 Support copy&paste from clipboard to a cell
   294 Support 2003, 2007 Excel file format export to HTML
+  306 Support formula value input via mouse click
   309 Support vertical merge
   310 Autofill support number auto linear increase
   312 Autofill support month/week auto increase
