@@ -87,8 +87,10 @@ import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
+import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.poi.ss.util.NumberToTextConverter;
 import org.zkoss.poi.xssf.model.ThemesTable;
 import org.zkoss.poi.xssf.usermodel.XSSFCell;
@@ -96,6 +98,7 @@ import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
 import org.zkoss.poi.xssf.usermodel.XSSFColor;
 import org.zkoss.poi.xssf.usermodel.XSSFDataFormat;
 import org.zkoss.poi.xssf.usermodel.XSSFDataValidation;
+import org.zkoss.poi.xssf.usermodel.XSSFDataValidationConstraint;
 import org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.zkoss.poi.xssf.usermodel.XSSFFont;
 import org.zkoss.poi.xssf.usermodel.XSSFRichTextString;
@@ -118,6 +121,7 @@ import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.BookSeries;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.impl.Styles;
 
 /**
@@ -4410,5 +4414,97 @@ public final class BookHelper {
 			final short fmt = df.getFormat(formatString);
 			style.setDataFormat(fmt);
 		}
+	}
+	
+	//20110511, peterkuo@potix.com
+	public static DataValidation getDataValidationByCell(Cell cell) {
+		final Worksheet srcSheet = (Worksheet)cell.getSheet();
+		
+		final int row = cell.getRowIndex();
+		final int col = cell.getColumnIndex();
+		
+		final List<? extends DataValidation> dataValidations= BookHelper.getDataValidations(srcSheet);
+		for(DataValidation dataValidation : dataValidations) {
+			CellRangeAddressList addrList = dataValidation.getRegions();
+			for(int j = addrList.countRanges(); --j >= 0;) {
+				final CellRangeAddress addr = addrList.getCellRangeAddress(j);
+				boolean inRange = addr.isInRange(row, col);
+				if (inRange) { 
+					return dataValidation;
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	//20110511, peterkuo@potix.com
+	public static void setDataValidationToRange(Range range, String[] list) {
+		if (range.getSheet() instanceof HSSFSheet) {
+			//TODO: not yet implemented for 2003
+		}else{
+			final DataValidationHelper helper = range.getSheet().getDataValidationHelper();
+			DataValidationConstraint constraint = new XSSFDataValidationConstraint(list);
+			CellRangeAddressList dstAddrList = new CellRangeAddressList(range.getRow(),range.getLastRow(), range.getColumn(), range.getLastColumn());		
+			DataValidation dstDataValidation = helper.createValidation(constraint, dstAddrList);
+			range.getSheet().addValidationData(dstDataValidation);			
+		}
+	}
+	
+	//20110511, peterkuo@potix.com
+	public static void setDataValidationToRange(Range range, Range ref){
+		if (range.getSheet() instanceof HSSFSheet) {
+			//TODO: not yet implemented for 2003
+		}else{
+			final DataValidationHelper helper = range.getSheet().getDataValidationHelper();
+			CellRangeAddress refCRA = new CellRangeAddress(ref.getRow(),ref.getLastRow(),ref.getColumn(),ref.getLastColumn());
+			DataValidationConstraint constraint = new XSSFDataValidationConstraint(ValidationType.LIST,convertToAbsoluteString(refCRA));
+			CellRangeAddressList dstAddrList = new CellRangeAddressList(range.getRow(),range.getLastRow(), range.getColumn(), range.getLastColumn());		
+			DataValidation dstDataValidation = helper.createValidation(constraint, dstAddrList);
+			range.getSheet().addValidationData(dstDataValidation);						
+		}	
+	}
+	
+	//20110511, peterkuo@potix.com
+	//modified from formatAsString() in CellRangeAddress.java
+	private static String convertToAbsoluteString(CellRangeAddress cra){
+        StringBuffer sb = new StringBuffer();
+        CellReference cellRefFrom = new CellReference(cra.getFirstRow(), cra.getFirstColumn(),true,true);
+        CellReference cellRefTo = new CellReference(cra.getLastRow(), cra.getLastColumn(),true,true);
+        sb.append(cellRefFrom.formatAsString());
+        //for a single-cell reference return A1 instead of A1:A1
+        if(!cellRefFrom.equals(cellRefTo)){
+            sb.append(':');
+            sb.append(cellRefTo.formatAsString());
+        }
+        return sb.toString();
+	}
+
+	//20110512, peterkuo@potix.com
+	public static void removeDataValidtionOfRange(Range range){
+		if (range.getSheet() instanceof HSSFSheet) {
+			//TODO: not yet implemented for 2003
+		}else{
+			final Worksheet srcSheet = (Worksheet)range.getSheet();
+			
+			final int rngRow = range.getRow();
+			final int rngCol = range.getColumn();
+			final int rngLastRow = range.getLastRow();
+			final int rngLastCol = range.getLastColumn();
+			
+			final List<? extends DataValidation> dataValidations = BookHelper.getDataValidations(srcSheet);
+				for(DataValidation dataValidation : dataValidations) {
+					CellRangeAddressList addrList = dataValidation.getRegions();
+					for(int j = addrList.countRanges(); --j >= 0;) {
+						final CellRangeAddress addr = addrList.getCellRangeAddress(j);
+						if (addr.isInRange(rngRow, rngCol, rngLastRow, rngLastCol)) {
+							//TODO: not fully mimic the scenario as excel
+							//have to remove the whole data validation first
+							range.getSheet().removeValidationData(dataValidation);
+							return;
+						}
+					}
+				}
+			}					
 	}
 }
