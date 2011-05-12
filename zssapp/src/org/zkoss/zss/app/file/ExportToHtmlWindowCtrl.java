@@ -33,7 +33,7 @@ import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Exporter;
 import org.zkoss.zss.model.Exporters;
-import org.zkoss.zss.model.impl.html.HtmlExporter;
+import org.zkoss.zss.model.impl.Headings;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
@@ -138,7 +138,9 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 		applyPrintSetting();
 		
 		Exporter c = Exporters.getExporter("html");
-		((HtmlExporter)c).enableHeadings(includeHeadings());
+		if (c instanceof Headings) {
+			((Headings)c).enableHeadings(includeHeadings());
+		}
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		export(c, baos);
