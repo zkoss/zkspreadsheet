@@ -5,7 +5,7 @@
 	<groupId>org.zkoss.zss</groupId>
 	<artifactId>zsstest</artifactId>
 	<properties>
-		<zk.version>5.0.7.FL.20110304</zk.version>
+		<zk.version>5.0.7</zk.version>
 		<junit.version>4.8.1</junit.version>
 	</properties>
 	<version>2.1.0</version>

@@ -4,7 +4,7 @@
 	<groupId>org.zkoss.zss</groupId>
 	<artifactId>zssapp</artifactId>
 	<properties>
-		<zk.version>5.0.7.FL.20110304</zk.version>
+		<zk.version>5.0.7</zk.version>
 		<zkel.version>1.1.0</zkel.version>
 		<commons-lang.version>2.4</commons-lang.version>
 		<bsh.version>2.0b4</bsh.version>
@@ -25,7 +25,7 @@
 		<timelinez.version>2.3.1_50</timelinez.version>
 		<timeplotz.version>1.1_50</timeplotz.version>
 -->
-		<gmapsz.version>2.0.51</gmapsz.version>
+		<gmapsz.version>2.0.52.FL.20110504</gmapsz.version>
 	</properties>
 	<version>2.1.0</version>
 	<packaging>jar</packaging>
@@ -221,6 +221,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zss</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+<!-- 		
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zsspdf</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -231,14 +237,10 @@
 		</dependency>		
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
-			<artifactId>zss</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zssex</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+ -->
 	</dependencies>
   <build>
 		<sourceDirectory>${project.basedir}/src/</sourceDirectory>
