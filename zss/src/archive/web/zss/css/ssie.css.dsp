@@ -19,7 +19,7 @@ To compete zk 3.0.6, in IE, i must add 'div.' before rule, if there is font-size
 	font-size:0;/* bug 1990408 */
 }
 
-<c:if test="${c:isExplorer() && !c:isExplorer7()}">
+<c:if test="${c:isExplorer() && !c:isExplorer7()}"> /* ie6, vertical merge */
 .zsrow {
 	position: static;
 	overflow-y: hidden;
@@ -128,5 +128,5 @@ To compete zk 3.0.6, in IE, i must add 'div.' before rule, if there is font-size
 }
 .zssmasktxt{
 	#position:relative;
-	#top:-50%"
+	#top:-50%";
 }

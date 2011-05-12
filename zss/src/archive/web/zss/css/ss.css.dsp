@@ -577,3 +577,21 @@ lineHeight=20
 .chartborder img {
 	border: 1px solid #868686;
 }
+
+.zsbtn {
+	height:17px;
+	width:17px;
+	position: absolute;
+	bottom: 2px;
+	z-index: 10;
+	background-repeat:no-repeat;
+	background-size: 100%;
+}
+
+.zsdropdown {
+	background-image: url(${c:encodeURL('~./zss/img/dropdown.gif')});
+}
+
+.zsfilter {
+	background-image: url(${c:encodeURL('~./zss/img/filter.gif')});
+}

@@ -64,6 +64,12 @@ public class Events {
 	 */
 	public static final String ON_CELL_DOUBLE_CLICK = "onCellDoubleClick";
 	
+	/**
+	 * The onFilter event (used with {@link CellMouseEvent}).
+	 * Sent whenuser click on the filter button.
+	 */
+	public static final String ON_FILTER = "onFilter";
+	
 	/** The onCellChange event (used with {@link CellEvent}).
 	 * Sent when cell contents changed.
 	 */

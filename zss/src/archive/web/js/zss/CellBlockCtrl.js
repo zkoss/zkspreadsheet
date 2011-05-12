@@ -441,8 +441,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 		}
 	},
 	/** load existed for element, this method is called when initial.**/
-	loadByComp: function (cmp) {
-		
+	loadByComp: function (cmp, row) {
 		this.comp = cmp;
 		cmp.ctrl = this;
 		var next = jq(cmp).children("DIV:first")[0],
@@ -472,7 +471,8 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 
 				zkS.trimFirst(next, "DIV");
 				zkS.trimLast(next, "DIV");
-				
+				if (r == row && ctrl.prepareFilterBtns_)
+					ctrl.prepareFilterBtns_();
 				next = jq(next).next('DIV')[0];
 				continue;	
 			}

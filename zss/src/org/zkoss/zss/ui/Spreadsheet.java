@@ -59,6 +59,8 @@ import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.ss.usermodel.AutoFilter;
+import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
@@ -967,6 +969,36 @@ public class Spreadsheet extends XulElement implements Serializable {
 		if (sheet == null) {
 			return;
 		}
+		//handle AutoFilter
+		AutoFilter af = sheet.getAutoFilter();
+		if (af != null) {
+			CellRangeAddress addr = af.getRangeAddress();
+			Map addrmap = new HashMap();
+			final int left = addr.getFirstColumn();
+			final int right = addr.getLastColumn();
+			addrmap.put("left", left);
+			addrmap.put("top", addr.getFirstRow());
+			addrmap.put("right", right);
+			addrmap.put("bottom", addr.getLastRow());
+			
+			List<FilterColumn> fcs = af.getFilterColumns();
+			List<Map> fcsary = new ArrayList<Map>(fcs.size());
+			for(int col = left; col <= right; ++col) {
+				final FilterColumn fc = af.getFilterColumn(col);
+				final List<String> filters = fc != null ? fc.getFilters() : null;
+				Map fcmap = new HashMap();
+				fcmap.put("col", Integer.valueOf(col));
+				fcmap.put("filter", filters);
+				fcsary.add(fcmap);
+			}
+			
+			Map afmap = new HashMap();
+			afmap.put("range", addrmap);
+			afmap.put("filterColumns", fcsary);
+			renderer.render("_autoFilter", afmap);
+		} else {
+			renderer.render("_autoFilter", (String) null);
+		}
 		renderer.render("rowHeight", getRowheight());
 		renderer.render("columnWidth", getColumnwidth());
 
@@ -1598,7 +1630,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 	public MergeMatrixHelper getMergeMatrixHelper(Worksheet sheet) {
 		if (sheet != getSelectedSheet())
 			throw new UiException("not current selected sheet ");
-		String sheetName = sheet.getSheetName();
 		MergeMatrixHelper mmhelper = (MergeMatrixHelper) getAttribute(MERGE_MATRIX_KEY);
 		int fzr = getRowfreeze();
 		int fzc = getColumnfreeze();
@@ -3624,6 +3655,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 		addClientEvent(Spreadsheet.class, Events.ON_HEADER_RIGHT_CLICK,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_HEADER_DOUBLE_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_HYPERLINK, 0);
+		addClientEvent(Spreadsheet.class, Events.ON_FILTER, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_CTRL_KEY, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_BLUR,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		

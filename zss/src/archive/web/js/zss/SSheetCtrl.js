@@ -77,7 +77,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  */
 zss.SSheetCtrl = zk.$extends(zk.Object, {
 	$init: function (cmp, wgt) {
-		this.$supers('$init', arguments);
+		this.$supers(zss.SSheetCtrl, '$init', arguments);
 		this._wgt = wgt;
 		this.id = cmp.id;
 		this.sheetid = cmp.id;//must keep this for search current
@@ -197,7 +197,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		this.mergeMatrix = new zss.MergeMatrix(array, this);
 		
 		//init inner components
-		zss.SSheetCtrl._initInnerComp(this);
+		zss.SSheetCtrl._initInnerComp(this, this._wgt._autoFilter ? this._wgt._autoFilter.range.top : null);
 		
 		this.innerClicking = 0;// mouse down counter to check that is focus rellay lost.
 
@@ -815,7 +815,21 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				return;			
 			this._lastmdstr = "c";
 
-			if (_isLeftMouseEvt(evt) || jq(cmp).attr('zs.t') == "SHighlight") {
+			//Check whether click on AutoFilter button if a left mouse down
+			var firebtndown = false;
+			if (_isLeftMouseEvt(evt) && this.getBtn) {
+				var btn = this.getBtn(row, col);
+				if (btn) { 
+					var rx = cellpos[2], 
+						ry = cellpos[3],
+						right = btn.imgleft + btn.imgwidth,
+						bottom = btn.imgtop + btn.imgheight;
+					firebtndown = (rx >= btn.imgleft && rx < right && ry >= btn.imgtop && ry < bottom); //click on AutoFilter button
+				}
+			}
+			if (firebtndown)
+				this._doBtndown(evt, 'af', btn.$n());
+			else if (_isLeftMouseEvt(evt) || jq(cmp).attr('zs.t') == "SHighlight") {
 				sheet.dp.moveFocus(row, col, false, true, false, true);
 				var ls = this.getLastSelection();//cause of merge, focus might be change, get form last
 				this.selType = zss.SelDrag.SELCELLS;
@@ -963,7 +977,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	},
 	/**
 	 * @param zk.Event, mouse event
-	 * @param string type "lc" for left click, "rc" for right click, "dbc" for double click
+	 * @param string type "lc" for left click, "rc" for right click, "dbc" for double click, "af" for autofilter
 	 */
 	_doMouseclick: function (evt, type, element) {
 		if (this._nfdown) {
@@ -1006,7 +1020,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				this.selArea._setHyperlinkElment(elm);
 				this.selArea._tryAndEndHyperlink(row, col, evt);
 			}
-		} else if ((cmp = zkS.parentByZSType(elm, "SRow", 0)) != null) { //when click on vertical merged cell
+		} else if ((cmp = zkS.parentByZSType(elm, "SRow", 0)) != null) { //when click on vertical merged cell 
 			var cellcmp = cmp, //row
 				sheetofs = zk(sheet.comp).revisedOffset(),
 			//TODO there is a bug in opera, when a cell is overflow, zk.revisedOffset can get correct component offset 
@@ -2278,7 +2292,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	START_EDIT: 5, //2*2 + 1; //async state is odd
 	EDITING: 6, //3*2 ,
 	STOP_EDIT: 9, //4*2 + 1;//async state is odd
-	_initInnerComp: function (sheet) {
+	_initInnerComp: function (sheet, row) {
 		var wgt = sheet._wgt;
 		sheet.maskcmp = wgt.$n('mask');
 		sheet.busycmp = wgt.$n('busy');
@@ -2302,7 +2316,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			blockcmp = wgt.$n('block');
 	
 		sheet.activeBlock = new zss.MainBlockCtrl(sheet, blockcmp, 0, 0);
-		sheet.activeBlock.loadByComp(blockcmp);
+		sheet.activeBlock.loadByComp(blockcmp, row);
 		
 		var next = wgt.$n('select');
 		if (jq(next).attr('zs.t') == "SSelect") {
@@ -2317,7 +2331,6 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			sheet.selChgArea = new zss.SelChgCtrl(sheet, sheet.selchgcmp);
 			sheet.hlArea = new zss.Highlight(sheet, sheet.hlcmp,sheet.initparm.hlrange.clone(), "inner");
 			sheet.editor = new zss.Editbox(sheet);
-			
 		} else {
 			//error
 			//zk.log('error to parse component');

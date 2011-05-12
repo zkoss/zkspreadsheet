@@ -72,6 +72,8 @@ public class CellMouseCommand implements Command {
 			type = org.zkoss.zss.ui.event.Events.ON_CELL_RIGHT_CLICK;
 		} else if ("dbc".equals(type)) {
 			type = org.zkoss.zss.ui.event.Events.ON_CELL_DOUBLE_CLICK;
+		} else if ("af".equals(type)) {
+			type = org.zkoss.zss.ui.event.Events.ON_FILTER;
 		} else {
 			throw new UiException("unknow type : " + type);
 		}
