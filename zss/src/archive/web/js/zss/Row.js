@@ -65,7 +65,7 @@ zss.Row = zk.$extends(zk.Object, {
 	},
 	/**
 	 * Returns the {@link zss.Cell}
-	 * @param int column index
+	 * @param int index column index
 	 * @return zss.Cell
 	 */
 	getCellAt: function (index) {

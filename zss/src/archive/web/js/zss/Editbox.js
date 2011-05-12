@@ -27,8 +27,6 @@ zss.Editbox = zk.$extends(zk.Object, {
 		this.$supers('$init', arguments);
 		var wgt = sheet._wgt;
 			editbox = wgt.$n('eb');
-		
-		this.$supers('$init', arguments);
 		this.id = editbox.id;
 		this.sheetid = sheet.sheetid;
 		this.sheet = sheet;

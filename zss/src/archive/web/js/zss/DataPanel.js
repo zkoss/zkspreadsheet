@@ -602,7 +602,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		var pos = this.sheet.getLastFocus(),
 			row = pos.row,
 			col = pos.column;
-		if (row <0 || col < 0) return;
+		if (row < 0 || col < 0) return;
 		
 		var sheet = this.sheet,
 			cell = sheet.getCell(row, col);

@@ -448,6 +448,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		selectionRect: null,
 		highLightRect: null,
 		mergeRange: null,
+		autoFilter: null,
 		csc: null,
 		csr: null,
 		//override
@@ -688,22 +689,16 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	 * @return boolean
 	 */
 	_isFireCellEvt: function (type) {
-		if (type == "lc" || type == "rc" || type == "dbc") {
-			var opt = {asapOnly: true};
-			return this.isListen('onCellClick', opt) || this.isListen('onCellRightClick', opt) || this.isListen('onCellDoubleClick', opt);
-		}
-		return false;
+		var evtnm = zss.Spreadsheet.CELL_MOUSE_EVENT_NAME[type];
+		return evtnm && this.isListen(evtnm, {asapOnly: true});
 	},
 	/**
 	 * Returns whether if the server has registers Header click event or not
 	 * @return boolean
 	 */
 	_isFireHeaderEvt: function (type) {
-		if (type == "lc" || type == "rc" || type == "dbc") {
-			var opt = {asapOnly: true};
-			return this.isListen('onHeaderClick', opt) || this.isListen('onHeaderRightClick', opt) || this.isListen('onHeaderDoubleClick', opt);
-		}
-		return false;
+		var evtnm = zss.Spreadsheet.HEADER_MOUSE_EVENT_NAME[type];
+		return evtnm && this.isListen(evtnm, {asapOnly: true});
 	},
 	/**
 	 * Fire Header click event
@@ -723,18 +718,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 				self.fire('onZSSHeaderMouse', prop, {toServer: true});
 			}, 0);
 		}
-		var evtName;
-		switch (type) {
-		case 'lc': 
-			evtName = 'onHeaderClick';
-			break;
-		case 'rc':
-			evtName = 'onHeaderRightClick';
-			break;
-		case 'dbc':
-			evtName = 'onHeaderDoubleClick';
-			break;
-		}
+		var evtName = zss.Spreadsheet.HEADER_MOUSE_EVENT_NAME[type];
 		if (evtName) {
 			var e = new zk.Event(this, evtName, prop);
 			e.auStopped = true;
@@ -757,18 +741,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 				self.fire('onZSSCellMouse',	prop, {toServer: true}, 25);
 			}, 0);
 		}
-		var evtName;
-		switch (type) {
-		case 'lc':
-			evtName = 'onCellClick';
-			break;
-		case 'rc':
-			evtName = 'onCellRightClick';
-			break;
-		case 'dbc':
-			evtName = 'onCellDoubleClick';
-			break;
-		}
+		var evtName = zss.Spreadsheet.CELL_MOUSE_EVENT_NAME[type];
 		if (evtName) {
 			var e = new zk.Event(this, evtName, prop);
 			e.auStopped = true;
@@ -1087,6 +1060,8 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			//TODO LINK_DOCUMENT
 	}
 }, {
+	CELL_MOUSE_EVENT_NAME: {lc:'onCellClick', rc:'onCellRightClick', dbc:'onCellDoubleClick', af:'onFilter'},
+	HEADER_MOUSE_EVENT_NAME: {lc:'onHeaderClick', rc:'onHeaderRightClick', dbc:'onHeaderDoubleClick'},
 	initLaterAfterCssReady: function (sheet) {
 		if (zcss.findRule(".zs_indicator", sheet.id + "-sheet") != null) {
 

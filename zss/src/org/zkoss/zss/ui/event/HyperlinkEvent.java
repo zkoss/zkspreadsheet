@@ -29,11 +29,8 @@ import org.zkoss.zss.ui.impl.Utils;
  * Event when end user click on the hyperlink of a cell (used with onHyperlink event).
  * @author henrichen
  */
-public class HyperlinkEvent extends MouseEvent{
-	private Worksheet _sheet;
+public class HyperlinkEvent extends CellMouseEvent{
 	private String _href;
-	private int _row;
-	private int _col;
 	private int _type;
 
 	public static HyperlinkEvent getHyperlinkEvent(AuRequest request) {
@@ -58,16 +55,9 @@ public class HyperlinkEvent extends MouseEvent{
 	}
 	public HyperlinkEvent(String name, Component target, Worksheet sheet, int row ,int col, String href, int type, int x, int y,
 			int pageX, int pageY, int keys) {
-		super(name, target, x, y, pageX, pageY, keys);
-		this._sheet = sheet;
-		this._row = row;
-		this._col = col;
+		super(name, target, x, y, keys, sheet, row, col, pageX, pageY);
 		this._href = href;
 		this._type = type;
-	}
-
-	public Worksheet getSheet() {
-		return _sheet;
 	}
 
 	/**
@@ -76,22 +66,6 @@ public class HyperlinkEvent extends MouseEvent{
 	 */
 	public String getHref() {
 		return _href;
-	}
-
-	/**
-	 * Cell row index of the hyperlink locate.
-	 * @return Cell row index of the hyperlink locate.
-	 */
-	public int getRow() {
-		return _row;
-	}
-
-	/**
-	 * Cell column index of the hyperlink locate.
-	 * @return Cell column index of the hyperlink locate.
-	 */
-	public int getCol() {
-		return _col;
 	}
 
 	/**
