@@ -221,6 +221,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		this.editorFocusMark[name] = new zss.FocusMarkCtrl(this, div, new zss.Pos(0, 0));
 	},
 	removeEditorFocus : function(name){
+		if (!this.editorFocusMark)
+			return;
 		var ctrl = this.editorFocusMark[name];
 		if (ctrl) {
 			ctrl.comp.parentNode.removeChild(ctrl.comp);

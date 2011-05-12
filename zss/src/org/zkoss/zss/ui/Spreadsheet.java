@@ -261,6 +261,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	private SequenceId _custColId = new SequenceId(-1, 2);
 	private SequenceId _custRowId = new SequenceId(-1, 2);
 	private SequenceId _updateCellId = new SequenceId(0, 1);// to handle batch
+	private SequenceId _focusId = new SequenceId(0, 1);
 	
 	public Spreadsheet() {
 		this.addEventListener("onStartEditingImpl", new EventListener() {
@@ -3563,7 +3564,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	 * Remove editor's focus on specified name
 	 */
 	public void removeEditorFocus(String name){
-		response("removeEditorFocus", new AuInvoke((Component)this,"removeEditorFocus", name));
+		response("removeEditorFocus" + _updateCellId.next(), new AuInvoke((Component)this, "removeEditorFocus", name));
 		removeFocus(name);
 	}
 	
@@ -3571,7 +3572,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	 *  Add and move other editor's focus
 	 */
 	public void moveEditorFocus(String name, String color, int row ,int col){
-		response("moveEditorFocus", new AuInvoke((Component)this,"moveEditorFocus", new String[]{name, color,""+row,""+col}));
+		response("moveEditorFocus" + _updateCellId.next(), new AuInvoke((Component)this, "moveEditorFocus", new String[]{name, color,""+row,""+col}));
 		removeFocus(name);
 		_focuses.add(new Focus(name, color, row, col));
 	

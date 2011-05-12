@@ -17,9 +17,13 @@ package org.zkoss.zss.app.zul.ctrl;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
+import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.ui.Position;
+import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
@@ -32,8 +36,64 @@ public interface WorkbookCtrl {
 	public final static int HEADER_TYPE_COLUMN = 1;
 	
 	public void reGainFocus();
+	/**
+	 * Retrieve client side spreadsheet focus. 
+	 * 
+	 * @param row
+	 * @param column
+	 */
+	public void focusTo(int row, int column, boolean fireFocusEvent);
+	
+	/**
+	 * Return current cell(row,column) focus position
+	 */
+	public Position getCellFocus();
+	
+	/**
+	 * Add and move other editor's focus
+	 * 
+	 * @param name
+	 * @param color
+	 * @param row
+	 * @param col
+	 */
+	public void moveEditorFocus(String name, String color, int row ,int col);
+	
+	/**
+	 * Remove editor's focus on specified name
+	 * 
+	 * @param name
+	 */
+	public void removeEditorFocus(String name);
+	
+	/**
+	 * Return current selection rectangle only if onCellSelection event listener is registered.
+	 * @return
+	 */
+	public Rect getSelection();
+	
+	/**
+	 * Returns the maximum visible number of columns of this spreadsheet
+	 * 
+	 * @return
+	 */
+	public int getMaxcolumns();
+	
+	/**
+	 * Returns the maximum visible number of rows of this spreadsheet
+	 * 
+	 * @return
+	 */
+	public int getMaxrows();
+	
+	/**
+	 * Clear copy source or cut source of workbook
+	 */
+	public void clearClipbook();
 	
 	public void renameSelectedSheet(String name);
+	
+	public Worksheet getSelectedSheet();
 	
 	public void setSelectedSheet(String name);
 	
@@ -74,12 +134,38 @@ public interface WorkbookCtrl {
 	
 	public void setColumnFreeze(int columnFreeze);
 	
+	/**
+	 * Add an event listener.
+	 * @param evtnm
+	 * @param listener
+	 */
 	public void addEventListener(String evtnm, EventListener listener);
 	
+	/**
+	 * Removes an event listener.
+	 * @param evtnm
+	 * @param listener
+	 * @return
+	 */
 	public boolean removeEventListener(String evtnm, EventListener listener);
 	
 	public String getCurrentCellPosition();
 	
+	/**
+	 * Returns the reference 
+	 * @return
+	 */
+	public String getReference (int row, int column);
+	
+	/**
+	 * 
+	 * @param cell
+	 * @param text
+	 */
+	public void escapeAndUpdateText(Cell cell, String text);
+	
+	public void updateText(Cell cell, String text);
+
 	public void setDataFormat(String format);
 	
 	public List<String> getSheetNames();

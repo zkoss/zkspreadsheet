@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Executions;
@@ -39,9 +40,12 @@ import org.zkoss.zss.model.Exporters;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.Widget;
+import org.zkoss.zss.ui.event.CellEvent;
+import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zul.Image;
@@ -124,7 +128,6 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		Rect rect = spreadsheet.getSelection();
 		CellHelper.shiftEntireRowUp(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getBottom());
 	}
-
 
 	public void setSelectedSheet(String name) {
 		//TODO: remove last sheet widget shall not handle by AP
@@ -540,5 +543,57 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	
 	public void protectSheet(String password) {
 		Ranges.range(spreadsheet.getSelectedSheet()).protectSheet(password);
+	}
+
+	public Worksheet getSelectedSheet() {
+		return spreadsheet.getSelectedSheet();
+	}
+
+	public String getReference(int row, int column) {
+		return (String)spreadsheet.getColumntitle(column) + spreadsheet.getRowtitle(row);
+	}
+
+	public void escapeAndUpdateText(org.zkoss.poi.ss.usermodel.Cell cell, String text) {
+		spreadsheet.escapeAndUpdateText(cell, text);
+	}
+
+	public void focusTo(int row, int column, boolean fireFocusEvent) {
+		spreadsheet.focusTo(row, column);
+		if (fireFocusEvent) {
+			org.zkoss.zk.ui.event.Events.sendEvent(
+					new CellEvent(Events.ON_CELL_FOUCSED, spreadsheet, spreadsheet.getSelectedSheet(), row, column));
+		}
+	}
+
+	public void moveEditorFocus(String name, String color, int row, int col) {
+		spreadsheet.moveEditorFocus(name, color, row, col);
+	}
+
+	public void removeEditorFocus(String name) {
+		spreadsheet.removeEditorFocus(name);
+	}
+
+	public Rect getSelection() {
+		return spreadsheet.getSelection();
+	}
+
+	public Position getCellFocus() {
+		return spreadsheet.getCellFocus();
+	}
+
+	public int getMaxcolumns() {
+		return spreadsheet.getMaxcolumns();
+	}
+
+	public int getMaxrows() {
+		return spreadsheet.getMaxrows();
+	}
+
+	public void clearClipbook() {
+		EditHelper.clearCutOrCopy(spreadsheet);
+	}
+
+	public void updateText(Cell cell, String text) {
+		spreadsheet.updateText(cell, text);
 	}
 }
