@@ -55,6 +55,16 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 		this.rows = this._overflowcell = this._textedcell = null;
 	},
 	/**
+	 * Returns the row of the spreadsheet
+	 * @param int row 
+	 */
+	getRow: function (row) {
+		var range = this.range;
+		if(row < range.top || row > range.bottom)
+			return null;
+		return this.rows[row - range.top];
+	},
+	/**
 	 * Returns the cell of the spreadsheet
 	 * @param int row
 	 * @param int col

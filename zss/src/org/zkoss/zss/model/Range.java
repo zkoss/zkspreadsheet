@@ -13,6 +13,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model;
 
+import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
@@ -334,17 +335,23 @@ public interface Range {
 	public void fillUp();
 	
 	/**
-	 * Filters a list specified by this Range.
+	 * Filters a list specified by this Range and returns an AutoFilter object.
 	 * @param field offset of the field on which you want to base the filter on (1-based; i.e. leftmost column in this range is field 1).
 	 * @param criteria1 "=" to find blank fields, "<>" to find non-blank fields. If null, means ALL. If filterOp == Range#FILTEROP_TOP10, 
 	 * then this shall specifies the number of items (e.g. "10"). 
 	 * @param filterOp see Range#FILTEROP_xxx. Use FILTEROP_AND and FILTEROP_OR with criteria1 and criterial2 to construct compound criteria.
 	 * @param criteria2 2nd criteria; used with criteria1 and filterOP to construct compound criteria.
 	 * @param visibleDropDown true to show the autoFilter drop-down arrow for the filtered field; false to hide the autoFilter drop-down arrow.
+	 * @return the applied AutoFiltering
 	 */
-//TODO UNTIL POI support reading/writing the autoFilter record	
-//	public void autoFilter(int field, String criteria1, int filterOp, String criteria2, boolean visibleDropDown);
+	public AutoFilter autoFilter(int field, String criteria1, int filterOp, String criteria2, boolean visibleDropDown);
 	
+	/**
+	 * Toggle the visibility of the AutoFilter dropdown buttons of this Range. Toggle off will remove current AutoFilter object. 
+	 * @return the applied AutoFiltering if toggle on; null if toggle off. 
+	 */
+	public AutoFilter autoFilter();
+
 	/**
 	 * Sets whether this rows or columns are hidden(useful only if this Range cover entire column or entire row)
 	 * @param hidden true to hide this rows or columns
@@ -472,25 +479,4 @@ public interface Range {
 	 * @return a {@link Range} that represents a range that offset from this Range.
 	 */
 	public Range getOffset(int rowOffset, int colOffset);
-
-	/**
-	 * 
-	 */
-	public void autoFilter();
-	
-	/**
-	 * 
-	 * Filter a range using the AutoFilter
-	 * 
-	 * @param field Optional. The integer offset of the field on which you want to base the filter.( the leftmost field is field one)
-	 * @param cirteria1 Optional. The criteria (a string; for example, "101"). Use "=" to find blank fields, or use "<>" to find nonblank fields. If this argument is omitted, the criteria is All. If Operator is xlTop10Items, Criteria1 specifies the number of items (for example, "10").
-	 * @param operator Optional. Can be one of the following XlAutoFilterOperator constants: xlAnd default, xlBottom10Items, xlBottom10Percent, xlOr, xlTop10Items, xlTop10Percent
-	 * 		Use xlAnd and xlOr with Criteria1 and Criteria2 to construct compound criteria.
-	 * @param criteria2 Optional. Used with criteria 1 and operator to construct compound criteria
-	 * @param visibleDropDown Optional. Display AutoFilter drop-down arrow for the filtered field or not. Default True.
-	 * @return
-	 */
-	public Object autoFilter(Object field, Object cirteria1, Object operator, Object criteria2, Object visibleDropDown);
-	
-	
 }

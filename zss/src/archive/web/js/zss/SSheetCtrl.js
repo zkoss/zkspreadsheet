@@ -2158,14 +2158,36 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			cell = null;
 		
 		if (row <= fzr && col <= fzc)
-			cell = this.cp.block.getCell(row, col);
+			cell = this.cp.block.getCell(row, col); //corner
 		else if(row <= fzr) 
-			cell = this.tp.block.getCell(row, col);
+			cell = this.tp.block.getCell(row, col); //top panel
 		else if(col <= fzc) 
-			cell = this.lp.block.getCell(row, col);
+			cell = this.lp.block.getCell(row, col); //left panel.
 		else 
-			cell = this.activeBlock.getCell(row, col);
+			cell = this.activeBlock.getCell(row, col); //data panel
 		return cell;
+	},
+	/**
+	 * Returns rows of the specified row index (could be collections of rows in corner panel and top panel; or in left panel and data panel)
+	 * @param int row row index
+	 * @param int col column index (affect whether get row in left freeze panel)
+	 * @return zss.Row[]
+	 */
+	getRow: function (row, col) {
+		var fzr = this.frozenRow,
+			fzc = this.frozenCol,
+			rowobj = [];
+		
+		if (row <= fzr) {
+			if (col <= fzc)
+				rowobj.push(this.cp.block.getRow(row)); //corner
+			rowobj.push(this.tp.block.getRow(row)); //top panel
+		} else {
+			if(col <= fzc) 
+				rowobj.push(this.lp.block.getRow(row)); //left panel
+			rowobj.push(this.activeBlock.getRow(row)); //data panel
+		}
+		return rowobj;
 	},
 	/**
 	 * Sets block sync event to server

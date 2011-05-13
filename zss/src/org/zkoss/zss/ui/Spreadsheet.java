@@ -964,17 +964,13 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 	}
 	
-	protected void renderProperties(ContentRenderer renderer) throws IOException {
-		super.renderProperties(renderer);
-		Worksheet sheet = this.getSelectedSheet();
-		if (sheet == null) {
-			return;
-		}
-		//handle AutoFilter
-		AutoFilter af = sheet.getAutoFilter();
+	private Map convertAutoFilterToJSON(AutoFilter af) {
 		if (af != null) {
-			CellRangeAddress addr = af.getRangeAddress();
-			Map addrmap = new HashMap();
+			final CellRangeAddress addr = af.getRangeAddress();
+			if (addr == null) {
+				return null;
+			}
+			final Map addrmap = new HashMap();
 			final int left = addr.getFirstColumn();
 			final int right = addr.getLastColumn();
 			addrmap.put("left", left);
@@ -982,20 +978,36 @@ public class Spreadsheet extends XulElement implements Serializable {
 			addrmap.put("right", right);
 			addrmap.put("bottom", addr.getLastRow());
 			
-			List<FilterColumn> fcs = af.getFilterColumns();
-			List<Map> fcsary = new ArrayList<Map>(fcs.size());
-			for(int col = left; col <= right; ++col) {
-				final FilterColumn fc = af.getFilterColumn(col);
-				final List<String> filters = fc != null ? fc.getFilters() : null;
-				Map fcmap = new HashMap();
-				fcmap.put("col", Integer.valueOf(col));
-				fcmap.put("filter", filters);
-				fcsary.add(fcmap);
+			final List<FilterColumn> fcs = af.getFilterColumns();
+			final List<Map> fcsary = fcs != null ? new ArrayList<Map>(fcs.size()) : null;
+			if (fcsary != null) {
+				for(int col = left; col <= right; ++col) {
+					final FilterColumn fc = af.getFilterColumn(col);
+					final List<String> filters = fc != null ? fc.getFilters() : null;
+					Map fcmap = new HashMap();
+					fcmap.put("col", Integer.valueOf(col));
+					fcmap.put("filter", filters);
+					fcsary.add(fcmap);
+				}
 			}
 			
-			Map afmap = new HashMap();
+			final Map afmap = new HashMap();
 			afmap.put("range", addrmap);
 			afmap.put("filterColumns", fcsary);
+			return afmap;
+		}
+		return null;
+	}
+	
+	protected void renderProperties(ContentRenderer renderer) throws IOException {
+		super.renderProperties(renderer);
+		Worksheet sheet = this.getSelectedSheet();
+		if (sheet == null) {
+			return;
+		}
+		//handle AutoFilter
+		Map afmap = convertAutoFilterToJSON(sheet.getAutoFilter());
+		if (afmap != null) {
 			renderer.render("_autoFilter", afmap);
 		} else {
 			renderer.render("_autoFilter", (String) null);
@@ -1315,6 +1327,14 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 	}
 	
+	/**
+	 * Update autofilter buttons.
+	 * @param af the current AutoFilter.
+	 */
+	private void updateAutoFilter(AutoFilter af) {
+		smartUpdate("autoFilter", convertAutoFilterToJSON(af));
+	}
+	
     /**
      * Sets the sheet protection
      * @param boolean protect
@@ -1452,6 +1472,12 @@ public class Spreadsheet extends XulElement implements Serializable {
 					onSizeChange((SSDataEvent)event);
 				}
 			});
+			addEventListener(SSDataEvent.ON_BTN_CHANGE, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onBtnChange((SSDataEvent)event);
+				}
+			});
 			addEventListener(SSDataEvent.ON_RANGE_DELETE, new EventListener() {
 				@Override
 				public void onEvent(Event event) throws Exception {
@@ -1586,6 +1612,13 @@ public class Spreadsheet extends XulElement implements Serializable {
 					updateRowHeight(sheet, r);
 				}
 			}
+		}
+		private void onBtnChange(SSDataEvent event) {
+			final Ref rng = event.getRef();
+			final Worksheet sheet = getSheet(rng);
+			if (!getSelectedSheet().equals(sheet))
+				return;
+			updateAutoFilter(sheet.getAutoFilter());
 		}
 		private void onDisplayGridlines(SSDataEvent event) {
 			final Ref rng = event.getRef();

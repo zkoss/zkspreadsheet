@@ -307,6 +307,15 @@ public final class BookHelper {
 		}
 	}
 	
+	public static void notifyBtnChanges(Set<Ref> all) {
+		if (all != null) {
+			for(Ref ref : all) {
+				final RefSheet refSheet = ref.getOwnerSheet();
+				final RefBook refBook = refSheet.getOwnerBook();
+				refBook.publish(new SSDataEvent(SSDataEvent.ON_BTN_CHANGE, ref, SSDataEvent.MOVE_NO));
+			}
+		}
+	}
 	/*package*/ static void notifyGridlines(Book book, Set<Ref> all, boolean show) {
 		if (all != null) {
 			for(Ref ref : all) {

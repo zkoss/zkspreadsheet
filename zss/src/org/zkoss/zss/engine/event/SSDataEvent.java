@@ -41,6 +41,8 @@ public class SSDataEvent extends Event implements Serializable {
 	public static final String ON_RANGE_DELETE = "onRangeDelete";
 	/** Identifies the size change of a Cell. */
 	public static final String ON_SIZE_CHANGE = "onSizeChange";
+	/** Identifyes the associated button change of a Cell. */
+	public static final String ON_BTN_CHANGE = "onBtnChange";
 	
 	/** Identifies the change of a merged range (move or change size). */
 	public static final String ON_MERGE_CHANGE = "onMergeChange";

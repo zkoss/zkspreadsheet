@@ -12,6 +12,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
+import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
@@ -250,12 +251,12 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public void autoFilter() {
+	public AutoFilter autoFilter() {
+		return null;
 	}
 
 	@Override
-	public Object autoFilter(Object field, Object cirteria1, Object operator,
-			Object criteria2, Object visibleDropDown) {
+	public AutoFilter autoFilter(int field, String criteria1, int filterOp, String criteria2, boolean visibleDropDown) {
 		return null;
 	}
 }

@@ -224,7 +224,7 @@
 			<artifactId>zss</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-<!-- 		
+ 		
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zsspdf</artifactId>
@@ -240,8 +240,7 @@
 			<artifactId>zssex</artifactId>
 			<version>${project.version}</version>
 		</dependency>
- -->
-	</dependencies>
+ 	</dependencies>
   <build>
 		<sourceDirectory>${project.basedir}/src/</sourceDirectory>
 		<resources>

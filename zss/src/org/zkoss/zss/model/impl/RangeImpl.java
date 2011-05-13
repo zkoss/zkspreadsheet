@@ -28,6 +28,7 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
@@ -1498,7 +1499,7 @@ public class RangeImpl implements Range {
 
 	//TODO:
 	@Override
-	public void autoFilter() {
+	public AutoFilter autoFilter() {
 		CellRangeAddress affectedArea;
 		if(_sheet.isAutoFilterMode()){
 			affectedArea = _sheet.removeAutoFilter();
@@ -1506,8 +1507,7 @@ public class RangeImpl implements Range {
 					affectedArea.getFirstRow(),affectedArea.getFirstColumn(),
 					affectedArea.getLastRow(),affectedArea.getLastColumn());
 			unhideArea.getRows().setHidden(false);
-		}
-		else{
+		} else {
 			//TODO:
 			//should use the logic as excel to decide the actual affected range
 			//to implement autofilter.
@@ -1527,15 +1527,13 @@ public class RangeImpl implements Range {
 				affectedArea.getFirstRow(),affectedArea.getFirstColumn(),
 				affectedArea.getFirstRow(),affectedArea.getLastColumn());
 		
-		Ref ref = buttonChange.getRefs().iterator().next();
-		final RefBook refBook = ref.getOwnerSheet().getOwnerBook();
-		refBook.publish(new SSDataEvent(SSDataEvent.ON_CONTENTS_CHANGE, ref, 0));
+		BookHelper.notifyBtnChanges(new HashSet<Ref>(buttonChange.getRefs()));
+		
+		return _sheet.getAutoFilter();
 	}
-
 	
 	@Override
-	public Object autoFilter(Object field, Object cirteria1, Object operator,
-			Object criteria2, Object visibleDropDown) {
+	public AutoFilter autoFilter(int field, String criteria1, int filterOp, String criteria2, boolean visibleDropDown) {
 		// TODO Auto-generated method stub
 		return null;
 	}
