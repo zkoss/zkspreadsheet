@@ -33,6 +33,7 @@ import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.CellValue;
+import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
@@ -1497,7 +1498,181 @@ public class RangeImpl implements Range {
 		return Ranges.EMPTY_RANGE;
 	}
 
+	//returns the largest square range of this sheet that contains non-blank cells
+	private CellRangeAddress getLargestRange(Worksheet sheet) {
+		int t = sheet.getFirstRowNum();
+		int b = sheet.getLastRowNum();
+		//top row
+		int minr = -1;
+		for(int r = t; r <= b && minr < 0; ++r) {
+			final Row rowobj = sheet.getRow(r);
+			if (rowobj != null) {
+				int ll = rowobj.getFirstCellNum();
+				if (ll < 0) { //empty row
+					continue;
+				}
+				int rr = rowobj.getLastCellNum() - 1;
+				for(int c = ll; c <= rr; ++c) {
+					final Cell cell = rowobj.getCell(c);
+					if (!BookHelper.isBlankCell(cell)) { //first no blank row
+						minr = r;
+						break;
+					}
+				}
+			}
+		}
+		//bottom row
+		int maxr = -1;
+		for(int r = b; r >= minr && maxr < 0; --r) {
+			final Row rowobj = sheet.getRow(r);
+			if (rowobj != null) {
+				int ll = rowobj.getFirstCellNum();
+				if (ll < 0) { //empty row
+					continue;
+				}
+				int rr = rowobj.getLastCellNum() - 1;
+				for(int c = ll; c <= rr; ++c) {
+					final Cell cell = rowobj.getCell(c);
+					if (!BookHelper.isBlankCell(cell)) { //first no blank row
+						maxr = r;
+						break;
+					}
+				}
+			}
+		}
+		//left col
+		int minc = Integer.MAX_VALUE;
+		for(int r = minr; r <= maxr; ++r) {
+			final Row rowobj = sheet.getRow(r);
+			if (rowobj != null) {
+				int ll = rowobj.getFirstCellNum();
+				if (ll < 0) { //empty row
+					continue;
+				}
+				int rr = rowobj.getLastCellNum() - 1;
+				for(int c = ll; c < minc && c <= rr; ++c) {
+					final Cell cell = rowobj.getCell(c);
+					if (!BookHelper.isBlankCell(cell)) { //first no blank row
+						minc = c;
+						break;
+					}
+				}
+			}
+		}
+		//right col
+		int maxc = -1;
+		for(int r = minr; r <= maxr; ++r) {
+			final Row rowobj = sheet.getRow(r);
+			if (rowobj != null) {
+				int ll = rowobj.getFirstCellNum();
+				if (ll < 0) { //empty row
+					continue;
+				}
+				int rr = rowobj.getLastCellNum() - 1;
+				for(int c = rr; c > maxc && c >= ll; --c) {
+					final Cell cell = rowobj.getCell(c);
+					if (!BookHelper.isBlankCell(cell)) { //first no blank row
+						maxc = c;
+						break;
+					}
+				}
+			}
+		}
+		
+		if (minr < 0 || maxc < 0) { //all blanks!
+			return null;
+		}
+		return new CellRangeAddress(minr, maxr, minc, maxc);
+	}
+	
+	@Override
+	public Range getCurrentRegion() {
+		final Ref ref = getRefs().iterator().next();
+		final int row = ref.getTopRow();
+		final int col = ref.getLeftCol();
+		CellRangeAddress cra = getCurrentRegion(_sheet, row, col);
+		return cra == null ? 
+				new RangeImpl(row, col, _sheet, _sheet) :
+				new RangeImpl(cra.getFirstRow(), cra.getFirstColumn(), cra.getLastRow(), cra.getLastColumn(), _sheet, _sheet);
+	}
+	
+	//given a cell return the maximum range
+	private CellRangeAddress getCurrentRegion(Worksheet sheet, int row, int col) {
+		int minc = col;
+		int maxc = col;
+		int minr = -1;
+		int maxr = -1;
+		
+		int blankr = -1;
+		//for each row up
+		for(int r = row; r >= 0; --r) {
+			boolean allblank = true;
+			final Row rowobj = sheet.getRow(r);
+			if (rowobj != null) { //no cell at all!
+				final int left = minc > 0 ? minc - 1 : 0;
+				final int right = maxc + 1;
+				for(int c = left; c < right; ++c) {
+					final Cell cell = rowobj.getCell(c);
+					if (!BookHelper.isBlankCell(cell)) {
+						if (minc > c) minc = c;
+						if (maxc < c) maxc = c;
+						allblank = false;
+						blankr = -1;
+						minr = r;
+					}
+				}
+			}
+			if (allblank) {
+				if (blankr < 0) { 
+					blankr = r;
+				} else { //contiguous two blank rows
+					break;
+				}
+			}
+		}
+		
+		//for each row down
+		blankr = -1;
+		for(int r = row; r <= sheet.getLastRowNum(); ++r) {
+			boolean allblank = true;
+			final Row rowobj = sheet.getRow(r);
+			if (rowobj != null) { //no cell at all!
+				final int left = minc > 0 ? minc - 1 : 0;
+				final int right = maxc + 1;
+				for(int c = left; c < right; ++c) {
+					final Cell cell = rowobj.getCell(c);
+					if (!BookHelper.isBlankCell(cell)) {
+						if (minc > c) minc = c;
+						if (maxc < c) maxc = c;
+						allblank = false;
+						blankr = -1;
+						maxr = r;
+					}
+				}
+			}
+			if (allblank) {
+				if (blankr < 0) { 
+					blankr = r;
+				} else { //contiguous two blank rows
+					break;
+				}
+			}
+		}
+		
+		if (minr < 0 && maxr < 0) { //all blanks in 9 cells!
+			return null;
+		}
+		if (minr < 0) {
+			minr = maxr;
+		}
+		if (maxr < 0) {
+			maxr = minr;
+		}
+		return new CellRangeAddress(minr, maxr, minc, maxc);
+	}
+
 	//TODO:
+	private static final String ALL_BLANK_MSG = "Cannot find the range. Please select a cell within the range and try again!";
 	@Override
 	public AutoFilter autoFilter() {
 		CellRangeAddress affectedArea;
@@ -1508,20 +1683,47 @@ public class RangeImpl implements Range {
 					affectedArea.getLastRow(),affectedArea.getLastColumn());
 			unhideArea.getRows().setHidden(false);
 		} else {
-			//TODO:
-			//should use the logic as excel to decide the actual affected range
-			//to implement autofilter.
-			//it's not just the selected range.
-			//If it's a multi cell range, it's the range as selected.
-			//else If it's a single cell range, it has to be extend to a continuous range
-			//by looking up the near area of the single cell.
+			//The logic to decide the actual affected range to implement autofilter:
+			//If it's a multi cell range, it's the range intersect with largest range of the sheet.
+			//If it's a single cell range, it has to be extend to a continuous range by looking up the near 8 cells of the single cell.
 			affectedArea = new CellRangeAddress(getRow(), getLastRow(), getColumn(), getLastColumn());
-
+			if (affectedArea.getNumberOfCells() == 1) { //only one cell selected, try to look the max range surround by blank cells 
+				CellRangeAddress maxRange = getCurrentRegion(_sheet, getRow(), getColumn());
+				if (maxRange == null) {
+					throw new RuntimeException(ALL_BLANK_MSG);
+				}
+				affectedArea = maxRange;
+			} else {
+				CellRangeAddress largeRange = getLargestRange(_sheet); //get the largest range that contains non-blank cells
+				if (largeRange == null) {
+					throw new RuntimeException(ALL_BLANK_MSG);
+				}
+				int left = largeRange.getFirstColumn();
+				int top = largeRange.getFirstRow();
+				int right = largeRange.getLastColumn();
+				int bottom = largeRange.getLastRow();
+				if (left < getColumn()) {
+					left = getColumn();
+				}
+				if (right > getLastColumn()) {
+					right = getLastColumn();
+				}
+				if (top < getRow()) {
+					top = getRow();
+				}
+				if (bottom < getLastRow()) {
+					bottom = getLastRow();
+				}
+				if (top > bottom || left > right) {
+					throw new RuntimeException(ALL_BLANK_MSG);
+				}
+				affectedArea = new CellRangeAddress(top, bottom, left, right);
+			}
 			_sheet.setAutoFilter(affectedArea);
 		}
 		 
 		//I have to know the top row area to show/remove the combo button
-		//changed by this autofilter action, it's not the same area 
+		//changed by this autofilter action, it's not the same area
 		//and then send ON_CONTENTS_CHANGE event
 		RangeImpl buttonChange = (RangeImpl) Ranges.range(_sheet, 
 				affectedArea.getFirstRow(),affectedArea.getFirstColumn(),
@@ -1532,9 +1734,70 @@ public class RangeImpl implements Range {
 		return _sheet.getAutoFilter();
 	}
 	
+	private boolean canUnhide(AutoFilter af, FilterColumn fc, int row, int col) {
+		final Set<Ref> all = new HashSet<Ref>();
+		final List<FilterColumn> fltcs = af.getFilterColumns();
+		for(FilterColumn fltc: fltcs) {
+			if (fc.equals(fltc)) continue;
+			if (shallHide(fltc, row, col + fc.getColId())) { //any FilterColumn that shall hide the row
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private boolean shallHide(FilterColumn fc, int row, int col) {
+		final Cell cell = BookHelper.getCell(_sheet, row, col);
+		final boolean blank = BookHelper.isBlankCell(cell); 
+		final String val =  blank ? "=" : BookHelper.getCellText(cell); //"=" means blank!
+		final Set critera1 = fc.getCriteria1();
+		return !critera1.contains(val);
+	}
+	
 	@Override
-	public AutoFilter autoFilter(int field, String criteria1, int filterOp, String criteria2, boolean visibleDropDown) {
-		// TODO Auto-generated method stub
-		return null;
+	public AutoFilter autoFilter(int field, Object criteria1, int filterOp, Object criteria2, boolean visibleDropDown) {
+		AutoFilter af = _sheet.getAutoFilter();
+		if (af == null) {
+			af = autoFilter();
+		}
+		final FilterColumn fc = BookHelper.getOrCreateFilterColumn(af, field-1);
+		BookHelper.setProperties(fc, criteria1, filterOp, criteria2, visibleDropDown);
+		
+		//update rows
+		final CellRangeAddress affectedArea = af.getRangeAddress();
+		final int row1 = affectedArea.getFirstRow();
+		final int col1 = affectedArea.getFirstColumn(); 
+		final int col =  col1 + field - 1;
+		final int row = row1 + 1;
+		final int row2 = affectedArea.getLastRow();
+		final int col2 = affectedArea.getLastColumn();
+		final Set cr1 = fc.getCriteria1();
+
+		final Set<Ref> all = new HashSet<Ref>();
+		for (int r = row1; r <= row2; ++r) {
+			final Cell cell = BookHelper.getCell(_sheet, r, col); 
+			final String val = BookHelper.isBlankCell(cell) ? "=" : BookHelper.getCellText(cell); //"=" means blank!
+			if (!cr1.contains(val)) { //to be hidden
+				final Row rowobj = _sheet.getRow(r);
+				if (rowobj == null || !rowobj.getZeroHeight()) { //a non-hidden row
+					new RangeImpl(r, col, _sheet, _sheet).getRows().setHidden(true);
+				}
+			} else { //candidate to be shown (other FieldColumn might still hide this row!
+				final Row rowobj = _sheet.getRow(r);
+				if (rowobj != null && rowobj.getZeroHeight() && canUnhide(af, fc, r, col1)) { //a hidden row and no other hidden filtering
+					final RangeImpl rng = (RangeImpl) new RangeImpl(r, col1, r, col2, _sheet, _sheet).getRows(); 
+					all.addAll(rng.getRefs());
+					rng.getRows().setHidden(false); //unhide
+				}
+			}
+		}
+		
+		BookHelper.notifyCellChanges(_sheet.getBook(), all); //unhidden row must reevaluate
+		
+		//update button
+		final RangeImpl buttonChange = (RangeImpl) Ranges.range(_sheet, row1, col, row1, col);
+		BookHelper.notifyBtnChanges(new HashSet<Ref>(buttonChange.getRefs()));
+		
+		return af;
 	}
 }

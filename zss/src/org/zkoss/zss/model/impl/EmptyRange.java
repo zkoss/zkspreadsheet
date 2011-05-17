@@ -256,7 +256,12 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public AutoFilter autoFilter(int field, String criteria1, int filterOp, String criteria2, boolean visibleDropDown) {
+	public AutoFilter autoFilter(int field, Object criteria1, int filterOp, Object criteria2, boolean visibleDropDown) {
 		return null;
+	}
+
+	@Override
+	public Range getCurrentRegion() {
+		return this;
 	}
 }

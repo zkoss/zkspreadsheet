@@ -42,6 +42,7 @@ import org.zkoss.poi.hssf.record.CellValueRecordInterface;
 import org.zkoss.poi.hssf.record.FormulaRecord;
 import org.zkoss.poi.hssf.record.FullColorExt;
 import org.zkoss.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.zkoss.poi.hssf.usermodel.HSSFAutoFilter;
 import org.zkoss.poi.hssf.usermodel.HSSFCell;
 import org.zkoss.poi.hssf.usermodel.HSSFCellHelper;
 import org.zkoss.poi.hssf.usermodel.HSSFCellStyle;
@@ -67,6 +68,7 @@ import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaPtgBase;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.ptg.RefPtgBase;
+import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
@@ -82,6 +84,7 @@ import org.zkoss.poi.ss.usermodel.DataValidationHelper;
 import org.zkoss.poi.ss.usermodel.DateUtil;
 import org.zkoss.poi.ss.usermodel.Drawing;
 import org.zkoss.poi.ss.usermodel.ErrorConstants;
+import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
@@ -93,6 +96,7 @@ import org.zkoss.poi.ss.util.CellRangeAddressList;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.poi.ss.util.NumberToTextConverter;
 import org.zkoss.poi.xssf.model.ThemesTable;
+import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter;
 import org.zkoss.poi.xssf.usermodel.XSSFCell;
 import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
 import org.zkoss.poi.xssf.usermodel.XSSFColor;
@@ -188,14 +192,6 @@ public final class BookHelper {
 	public final static int FILL_GROWTH_TREND = 0x100; //multiplicative relation
 	public final static int FILL_LINER_TREND = 0x200; //additive relation
 	public final static int FILL_SERIES = FILL_LINER_TREND;
-	
-	//inner filterOp for #filter
-	public final static int FILTEROP_AND = 0x01;
-	public final static int FILTEROP_BOTTOM10 = 0x02;
-	public final static int FILTEROP_BOTOOM10PERCENT = 0x03;
-	public final static int FILTEROP_OR = 0x04;
-	public final static int FILTEROP_TOP10 = 0x05;
-	public final static int FILTEROP_TOP10PERCENT = 0x06;
 	
 	public static RefBook getRefBook(Book book) {
 		return book instanceof HSSFBookImpl ? 
@@ -4516,4 +4512,27 @@ public final class BookHelper {
 				}
 			}					
 	}
+	
+	//Whether a blank cell
+	public static boolean isBlankCell(Cell cell) {
+		return cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK;
+	}
+	
+	public static FilterColumn getOrCreateFilterColumn(AutoFilter af, int colId) {
+		if (af instanceof XSSFAutoFilter) {
+			return ((XSSFAutoFilter)af).getOrCreateFilterColumn(colId);
+		} else {
+			return ((HSSFAutoFilter)af).getOrCreateFilterColumn(colId);
+		}
+	}
+		
+	public static void setProperties(FilterColumn fc, Object criteria1, int filterOp, Object criteria2, boolean visibleDropDown) {
+		if (fc instanceof XSSFAutoFilter.XSSFFilterColumn) {
+			((XSSFAutoFilter.XSSFFilterColumn)fc).setProperties(criteria1, filterOp, criteria2, visibleDropDown);
+		} else {
+			((HSSFAutoFilter.HSSFFilterColumn)fc).setProperties(criteria1, filterOp, criteria2, visibleDropDown);
+		}
+	}
+
+	
 }
