@@ -512,12 +512,17 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		AutoFilter autoFilter = sheet.getAutoFilter();
 		CellRangeAddress cellRangeAddr = autoFilter.getRangeAddress();
 		int left = cellRangeAddr.getFirstColumn();
+		int top = cellRangeAddr.getFirstRow();
 		int right = cellRangeAddr.getLastColumn();
 		Range range = 
 			Ranges.range(spreadsheet.getSelectedSheet(), cellRangeAddr.getFirstRow(), left, cellRangeAddr.getLastRow(), right);
 		int fieldIdx = 0 ;
 		for (int i = left; i <= right; i++) {
 			fieldIdx += 1;
+			Rect rect = getMergedRect(Utils.getCell(sheet, top, i));
+			if (rect != null && rect.getRight() != -1) {
+				i = rect.getRight();
+			}
 			if (i == event.getColumn()) {
 				break;
 			}
@@ -563,7 +568,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		Range rng = getCurrentAutoFilterRange();
 		Worksheet sheet = spreadsheet.getSelectedSheet();
 		if (rng == null) {
-			Cell center = Utils.getCell(sheet, row, col);
 			for (int i = row - 1; i <= row + 1; i++) {
 				for (int j = col - 1; j <= col + 1 ; j++) {
 					Cell c = i != row && j != col ? Utils.getCell(sheet, i, j) : null;

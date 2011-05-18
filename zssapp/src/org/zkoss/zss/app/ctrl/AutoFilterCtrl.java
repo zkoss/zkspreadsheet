@@ -69,10 +69,11 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 		for (int i = range.getRow() + 1; i <= range.getLastRow(); i++) {
 			Cell c = Utils.getCell(worksheet, i, columnIndex);
 			if (c != null) {
-				if (c.getCellType() == Cell.CELL_TYPE_BLANK) {
+				int type = c.getCellType();
+				if (type == Cell.CELL_TYPE_BLANK) {
 					hasBlank = true;
 				} else {
-					String val = Ranges.range(worksheet, i, columnIndex).getEditText();
+					String val = Ranges.range(worksheet, i, columnIndex).getFormatText().getCellFormatResult().text;
 					rowInfos.add(new RowInfo(i, columnIndex, val, val));
 				}
 			} else {
