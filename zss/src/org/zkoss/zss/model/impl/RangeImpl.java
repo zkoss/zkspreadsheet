@@ -1774,7 +1774,7 @@ public class RangeImpl implements Range {
 		final Set cr1 = fc.getCriteria1();
 
 		final Set<Ref> all = new HashSet<Ref>();
-		for (int r = row1; r <= row2; ++r) {
+		for (int r = row; r <= row2; ++r) {
 			final Cell cell = BookHelper.getCell(_sheet, r, col); 
 			final String val = BookHelper.isBlankCell(cell) ? "=" : BookHelper.getCellText(cell); //"=" means blank!
 			if (!cr1.contains(val)) { //to be hidden
