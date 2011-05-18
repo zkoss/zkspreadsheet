@@ -56,6 +56,7 @@ public class Consts {
 	public static String _CustomSortDialog_zul = "~./zssapp/html/dialog/customSort.zul";
 	public static String _ExportToPDF_zul = "~./zssapp/html/dialog/exportToPDF.zul";
 	public static String _ExportToHTML_zul = "~./zssapp/html/dialog/exportToHTML.zul";
+	public static String _AutoFilter_zul = "~./zssapp/html/dialog/autoFilter.zul";
 
 	/* Key */
 	public static String KEY_ARG_FORMULA_METAINFO = "KEY_ARG_FORMULA_METAINFO";

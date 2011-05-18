@@ -228,15 +228,11 @@
 								forward="onSortSelector(${c:l('sort.custom')})">
 							</menuitem>
 							<menuseparator />
-							<!-- Filter:not support yet -->
-							<menuitem id="filter" label="${c:l('filter')}" src="~./zssapp/image/funnel--pencil.png"
-								forward="onFilterSelector(${c:l('filter')})" />
+							<menuitem id="filter" label="${c:l('filter')}" src="~./zssapp/image/funnel--pencil.png"/>
 							<menuitem id="clearFilter" label="${c:l('filter.clear')}"
-								src="~./zssapp/image/funnel--minus.png"
-								forward="onFilterSelector(${c:l('filter.clear')})" disabled="true" />
+								src="~./zssapp/image/funnel--minus.png" />
 							<menuitem id="reapplyFilter" label="${c:l('filter.reapply')}"
-								src="~./zssapp/image/funnel--arrow.png"
-								forward="onFilterSelector(${c:l('filter.reapply')})" disabled="true" />
+								src="~./zssapp/image/funnel--arrow.png" />
 						</menupopup>
 					</dropdownbutton>
 				<div sclass="toolbarSeparator"></div>

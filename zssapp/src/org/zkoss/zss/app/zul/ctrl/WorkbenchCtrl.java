@@ -15,6 +15,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.zul.ctrl;
 
 import org.zkoss.zss.app.formula.FormulaMetaInfo;
+import org.zkoss.zss.model.Range;
 
 /**
  * @author Sam
@@ -61,4 +62,6 @@ public interface WorkbenchCtrl {
 	 * Open rename sheet dialog
 	 */
 	public void openRenameSheetDialog(String originalSheetName);
+	
+	public void openAutoFilterDialog(Object data);
 }
