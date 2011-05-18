@@ -4,6 +4,7 @@ ZK Spreadsheet 2.1.0
 *Features:
    26 Support copy/paste value to local Excel
   161 Support copy&paste from clipboard to a cell
+  293 Support AutoFilter in 2007 file format(.xlsx)
   294 Support 2003, 2007 Excel file format export to HTML
   306 Support formula value input via mouse click
   309 Support vertical merge
@@ -13,6 +14,8 @@ ZK Spreadsheet 2.1.0
   316 Autofill support number auto growth(multiply increase)
   319 Support cell vertical alignment
   323 Protecting cells/cell ranges
+  330 Support Range#applyFilter for 2007 file format(.xlsx)
+  331 Support Range#showAllData for 2007 file format(.xlsx)
 
 *Bug 
   290 Formula cells not always updated

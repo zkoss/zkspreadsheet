@@ -477,4 +477,14 @@ public interface Range {
 	 * @return a {@link Range} that bounds current Left-top cell of this Range with a combination of blank Rows and Columns.
 	 */
 	public Range getCurrentRegion();
+	
+	/**
+	 * Reapply current {@link AutoFilter}.
+	 */
+	public void applyFilter();
+	
+	/**
+	 * Clear all application of the current {@link AutoFilter}. 
+	 */
+	public void showAllData();
 }

@@ -1753,7 +1753,87 @@ public class RangeImpl implements Range {
 		final Set critera1 = fc.getCriteria1();
 		return !critera1.contains(val);
 	}
+
+	@Override
+	public void showAllData() {
+		AutoFilter af = _sheet.getAutoFilter();
+		if (af == null) { //no AutoFilter to apply 
+			return;
+		}
+		final CellRangeAddress afrng = af.getRangeAddress();
+		for(FilterColumn fc : af.getFilterColumns()) {
+			BookHelper.setProperties(fc, null, AutoFilter.FILTEROP_VALUES, null, true); //clear all filter
+		}
+		final int row1 = afrng.getFirstRow();
+		final int row = row1 + 1;
+		final int row2 = afrng.getLastRow();
+		final int col1 = afrng.getFirstColumn();
+		final int col2 = afrng.getLastColumn();
+		final Set<Ref> all = new HashSet<Ref>();
+		for (int r = row; r <= row2; ++r) {
+			final Row rowobj = _sheet.getRow(r);
+			if (rowobj != null && rowobj.getZeroHeight()) { //a hidden row
+				final int left = rowobj.getFirstCellNum();
+				final int right = rowobj.getLastCellNum() - 1;
+				final RangeImpl rng = (RangeImpl) new RangeImpl(r, left, r, right, _sheet, _sheet); 
+				all.addAll(rng.getRefs());
+				rng.getRows().setHidden(false); //unhide
+			}
+		}
+
+		BookHelper.notifyCellChanges(_sheet.getBook(), all); //unhidden row must reevaluate
+		
+		//update button
+		final RangeImpl buttonChange = (RangeImpl) Ranges.range(_sheet, row1, col1, row1, col2);
+		BookHelper.notifyBtnChanges(new HashSet<Ref>(buttonChange.getRefs()));
+	}
 	
+	@Override
+	public void applyFilter() {
+		AutoFilter af = _sheet.getAutoFilter();
+		if (af == null) { //no AutoFilter to apply 
+			return;
+		}
+		final CellRangeAddress affectedArea = af.getRangeAddress();
+		final int row1 = affectedArea.getFirstRow();
+		final int col1 = affectedArea.getFirstColumn(); 
+		final int row = row1 + 1;
+		final int row2 = affectedArea.getLastRow();
+		final int col2 = affectedArea.getLastColumn();
+		final int colsz = col2 - col1 + 1;
+		
+		final Set<Ref> all = new HashSet<Ref>();
+		for (int r = row; r <= row2; ++r) {
+			boolean hidden = false;
+			for(FilterColumn fc : af.getFilterColumns()) {
+				if (shallHide(fc, r, fc.getColId() + col1)) {
+					hidden = true;
+					break;
+				}
+			}
+			if (hidden) { //to be hidden
+				final Row rowobj = _sheet.getRow(r);
+				if (rowobj == null || !rowobj.getZeroHeight()) { //a non-hidden row
+					new RangeImpl(r, col1, _sheet, _sheet).getRows().setHidden(true);
+				}
+			} else { //to be shown
+				final Row rowobj = _sheet.getRow(r);
+				if (rowobj != null && rowobj.getZeroHeight()) { //a hidden row
+					final int left = rowobj.getFirstCellNum();
+					final int right = rowobj.getLastCellNum() - 1;
+					final RangeImpl rng = (RangeImpl) new RangeImpl(r, left, r, right, _sheet, _sheet); 
+					all.addAll(rng.getRefs());
+					rng.getRows().setHidden(false); //unhide
+				}
+			}
+		}
+		BookHelper.notifyCellChanges(_sheet.getBook(), all); //unhidden row must reevaluate
+		
+		//update button
+		final RangeImpl buttonChange = (RangeImpl) Ranges.range(_sheet, row1, col1, row1, col2);
+		BookHelper.notifyBtnChanges(new HashSet<Ref>(buttonChange.getRefs()));
+	}
+
 	@Override
 	public AutoFilter autoFilter(int field, Object criteria1, int filterOp, Object criteria2, boolean visibleDropDown) {
 		AutoFilter af = _sheet.getAutoFilter();
@@ -1785,7 +1865,9 @@ public class RangeImpl implements Range {
 			} else { //candidate to be shown (other FieldColumn might still hide this row!
 				final Row rowobj = _sheet.getRow(r);
 				if (rowobj != null && rowobj.getZeroHeight() && canUnhide(af, fc, r, col1)) { //a hidden row and no other hidden filtering
-					final RangeImpl rng = (RangeImpl) new RangeImpl(r, col1, r, col2, _sheet, _sheet).getRows(); 
+					final int left = rowobj.getFirstCellNum();
+					final int right = rowobj.getLastCellNum() - 1;
+					final RangeImpl rng = (RangeImpl) new RangeImpl(r, left, r, right, _sheet, _sheet); 
 					all.addAll(rng.getRefs());
 					rng.getRows().setHidden(false); //unhide
 				}

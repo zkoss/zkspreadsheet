@@ -264,4 +264,12 @@ public class EmptyRange implements Range {
 	public Range getCurrentRegion() {
 		return this;
 	}
+
+	@Override
+	public void applyFilter() {
+	}
+
+	@Override
+	public void showAllData() {
+	}
 }
