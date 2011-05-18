@@ -168,7 +168,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			csr = csr.split(",");
 			var size  = csr.length;
 			for (var i = 0; i < size; i = i + 4)
-				array.push([zk.parseInt(csr[i]), zk.parseInt(csr[i + 1]), zk.parseInt(csr[i + 2]), 'true' == csc[i+3]]);
+				array.push([zk.parseInt(csr[i]), zk.parseInt(csr[i + 1]), zk.parseInt(csr[i + 2]), 'true' == csr[i+3]]);
 		}
 		this.custRowHeight = new zss.PositionHelper(this.rowHeight, array);
 		this.custRowHeight.ids = new zss.Id(0, 2);
@@ -1918,7 +1918,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	},
 	_realBottom: function(left, right, bottom) {
 		var mint = bottom;
-		for (var c = right; r >= left; --c) {
+		for (var c = right; c >= left; --c) {
 			var cellT = this.getCell(mint, c);
 			if (cellT && cellT.mert < mint) mint = cellT.mert;
 		}
@@ -1954,40 +1954,62 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			right = ls.right,
 			bottom = ls.bottom,
 			update = false,
+			custRowHeight = this.custRowHeight,
+			custColWidth = this.custColWidth, 
 			seltype = this.selType ? this.selType : zss.SelDrag.SELCELLS;
 		
 		switch (key) {
 		case 'up':
 			bottom = this._realBottom(left, right, bottom);
-			if (row < bottom)
-				bottom--;
-			else
-				top--;
+			if (row < bottom) {
+				var newbottom = custRowHeight.getDecUnhidden(bottom - 1, 0);
+				if (newbottom >= 0)
+					bottom = newbottom;
+			} else {
+				var newtop = custRowHeight.getDecUnhidden(top - 1, 0);
+				if (newtop >= 0)
+					top = newtop;
+			}
 			break;
 		case 'down':
 			top = this._realTop(left, right, top);
-			if (row > top)
-				top++;
-			else
-				bottom++;
+			if (row > top) {
+				var newtop = custRowHeight.getIncUnhidden(top + 1, this.maxRows - 1);
+				if (newtop >= 0)
+					top = newtop;
+			} else {
+				var newbottom = custRowHeight.getIncUnhidden(bottom + 1, this.maxRows - 1);
+				if (newbottom >= 0)
+					bottom = newbottom;
+			}
 			break;
 		case 'left':
 			right = this._realRight(top, bottom, right);
 			if (col < right) {
-				right--;
-			} else
-				left--;
+				var newright = custColWidth.getDecUnhidden(right - 1, 0);
+				if (newright >= 0)
+					right = newright;
+			} else {
+				var newleft = custColWidth.getDecUnhidden(left - 1, 0);
+				if (newleft >= 0)
+					left = newleft;
+			}
 			break;
 		case 'right':
 			left = this._realLeft(top, bottom, left);
 			if (col > left) {
-				left++;
-			} else
-				right++;
+				var newleft = custColWidth.getIncUnhidden(left + 1, this.maxCols - 1);
+				if (newleft >= 0)
+					left = newleft;
+			} else {
+				var newright = custColWidth.getIncUnhidden(right + 1, this.maxCols - 1);
+				if (newright >= 0)
+					right = newright;
+			}
 			break;
 		case 'home':
 			right = col;
-			left = 0;
+			left = custColWidth.getIncUnhidden(0, right);
 			if (seltype == zss.SelDrag.SELALL)
 				seltype = zss.SelDrag.SELCOL;
 			else if (seltype == zss.SelDrag.SELROW)
@@ -1995,7 +2017,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			break;
 		case 'end':
 			left = col;
-			right = this.maxCols - 1;
+			right = custColWidth.getDecUnhidden(this.maxCols - 1, left);
 			if (left == 0) {
 				if (seltype == zss.SelDrag.SELCOL)
 					seltype = zss.SelDrag.SELALL;
@@ -2005,24 +2027,61 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			break;
 		case 'pgup':
 			if (row < bottom) {
-				bottom = bottom - this.pageKeySize;
+				var newbottom = bottom - this.pageKeySize;
+				if (newbottom < 0)
+					newbottom = 0;
+				var xbottom = newbottom > 0 ? 
+						custRowHeight.getDecUnhidden(newbottom, 0) : //search backward
+						custRowHeight.getIncUnhidden(newbottom, bottom); //search forward
+				if (xbottom < 0) //fail on search backward
+					xbottom = custRowHeight.getIncUnhidden(newbottom, bottom); //search forward
+
+				bottom = xbottom;
 				if (bottom < row) {
 					top = bottom;
 					bottom = row;
 				}
 			} else {
-				top -= this.pageKeySize;
+				var newtop = top - this.pageKeySize;
+				if (newtop < 0)
+					newtop = 0;
+				var xtop = newtop > 0 ? 
+						custRowHeight.getDecUnhidden(newtop, 0) : //search backward
+						custRowHeight.getIncUnhidden(newtop, top); //search forward
+				if (xtop < 0) //fail on search backward
+					xtop = custRowHeight.getIncUnhidden(newtop, top); //search forward
+
+				top = xtop;
 			}
 			break;
 		case 'pgdn':
 			if (row > top) {
-				top = top + this.pageKeySize;
+				var newtop = top + this.pageKeySize;
+				if (newtop > this.maxRows - 1)
+					newtop = this.maxRows - 1;
+				var xtop = newtop < this.maxRows - 1 ? 
+						custRowHeight.getIncUnhidden(newtop, this.maxRows - 1): //search downward
+						custRowHeight.getDecUnhidden(newtop, top); //search upward
+				if (xtop < 0) //fail on search downward
+					xtop = custRowHeight.getDecUnhidden(newtop, top); //search upward
+
+				top = xtop;
 				if (top > row) {
 					bottom = top;
 					top = row;
 				}
-			} else
-				bottom += this.pageKeySize; 
+			} else {
+				var newbottom = bottom + this.pageKeySize;
+				if (newbottom > this.maxRows - 1)
+					newbottom = this.maxRows - 1;
+				var xbottom = newbottom < this.maxRows - 1 ? 
+						custRowHeight.getIncUnhidden(newbottom, this.maxRows - 1): //search downward
+						custRowHeight.getDecUnhidden(newbottom, bottom); //search upward
+				if (xbottom < 0) //fail on search downward
+					xbottom = custRowHeight.getDecUnhidden(newbottom, bottom); //search upward
+
+				bottom = xbottom;
+			}
 			break;
 			
 		default:

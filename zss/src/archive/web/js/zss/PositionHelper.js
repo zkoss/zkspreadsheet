@@ -33,12 +33,52 @@ zss.PositionHelper = zk.$extends(zk.Object, {
 	updateDefaultSize: function (defaultSize) {
 		this.size = defaultSize;
 	},
+	getIncUnhidden: function (idx, limit) {
+		var customizedSize = this.custom,
+			size = customizedSize.length,
+			v0,
+			v1;
+		for(var j = 0; j < size && idx <= limit; ++j) {
+			v0 = customizedSize[j][0];
+			if (idx == v0) {
+				v1 = customizedSize[j][3]; //hidden: true
+				if (!v1) {//special size but not hidden, return
+					break;
+				} else {
+					++idx; //a hidden one, try next unhidden
+				}
+			} else if (idx < v0) { //normal case, return
+				break; 
+			}
+		}
+		return idx > limit ? -1 : idx;
+	},
+	getDecUnhidden: function (idx, limit) {
+		var customizedSize = this.custom,
+			size = customizedSize.length,
+			v0,
+			v1;
+		for(var j = size - 1; j >= 0 && idx >= limit; --j) {
+			v0 = customizedSize[j][0];
+			if (idx == v0) {
+				v1 = customizedSize[j][3]; //hidden: true
+				if (!v1) {//special size but not hidden, return
+					break;
+				} else {
+					--idx; //a hidden one, try next unhidden
+				}
+			} else if (idx > v0) { //normal case, return
+				break; 
+			}
+		}
+		return idx < limit ? -1 : idx;
+	},
 	/**
 	 * get cell index from a pixel
 	 * @param int px
 	 */
 	getCellIndex: function (px) {
-		if (px < 0) return 0;
+		if (px < 0) px = 0; //col1/row1 can be hidden...
 		var sum = 0,
 			sum2 = 0,
 			index = 0,

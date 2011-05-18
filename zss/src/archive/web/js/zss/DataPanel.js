@@ -499,20 +499,27 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 * Move page up
 	 */
 	movePageup: function (evt) {
+		var sheet = this.sheet;
 		if (zkS.isEvtKey(evt, "s")) {
-			this.sheet.shiftSelection("pgup");
+			sheet.shiftSelection("pgup");
 			return;
 		}
-		var pos = this.sheet.getLastFocus(),
+		var pos = sheet.getLastFocus(),
 			row = pos.row,
 			col = pos.column;
 		if (row < 0 || col < 0) return;
-		var sheet = this.sheet;
 		if (row > 0) {
 			//TODO: calculate the first row in previous page
 			var prevrow = row - sheet.pageKeySize;
-			row = prevrow;
-			row = row < 0 ? 0 : row;
+			if (prevrow < 0)
+				prevrow = 0;
+			var custRowHeight = sheet.custRowHeight,
+				newrow = prevrow > 0 ? 
+						custRowHeight.getDecUnhidden(prevrow, 0) : //search upward
+						custRowHeight.getIncUnhidden(prevrow, row); //search downward
+			if (newrow < 0 && prevrow > 0) //search upward and still fail
+				newrow = custRowHeight.getIncUnhidden(prevrow, row); //search downward
+			row = newrow;
 		}
 		this.moveFocus(row, col, true, true);
 	},
@@ -520,22 +527,28 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 * Move page down
 	 */
 	movePagedown: function (evt) {
+		var sheet = this.sheet;
 		if (zkS.isEvtKey(evt,"s")){
-			this.sheet.shiftSelection("pgdn");
+			sheet.shiftSelection("pgdn");
 			return;
 		}
-		var pos = this.sheet.getLastFocus(),
+		var	pos = sheet.getLastFocus(),
 			row = pos.row,
 			col = pos.column;
 		if(row <0 || col < 0) return;
-		var sheet = this.sheet;
+		
 		if (row < sheet.maxRows - 1) {
 			//TODO: calculate the first row of next page
 			var nextrow = row + sheet.pageKeySize;
-			row = nextrow;
-			if (row > sheet.maxRows - 1) {
-				row = sheet.maxRows - 1;
-			}
+			if (nextrow > (sheet.maxRows - 1))
+				nextrow = sheet.maxRows - 1;
+			var custRowHeight = sheet.custRowHeight,
+				newrow = nextrow < (sheet.maxRows - 1) ? 
+					custRowHeight.getIncUnhidden(nextrow, sheet.maxRows - 1): //search downward
+					custRowHeight.getDecUnhidden(nextrow, row); //search upward
+			if (newrow < 0 && nextrow < (sheet.maxRows -1)) //search downward and still fail
+				newrow = custRowHeight.getDecUnhidden(nextrow, row); //search upward
+			row = newrow;
 		}
 		this.moveFocus(row, col, true, true);
 	},
@@ -543,76 +556,96 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 * Move to the end column
 	 */
 	moveEnd: function (evt) {
+		var sheet = this.sheet;
 		if (zkS.isEvtKey(evt, "s")) {
-			this.sheet.shiftSelection("end");
+			sheet.shiftSelection("end");
 			return;
 		}
-		var pos = this.sheet.getLastFocus(),
+		var	pos = sheet.getLastFocus(),
 			row = pos.row,
 			col = pos.column;
 		if (row < 0 || col < 0) return;
 
-		var sheet = this.sheet;
-		if (col < sheet.maxCols -1)
-			col = sheet.maxCols -1;
+		var nextcol = sheet.maxCols - 1,
+			custColWidth = sheet.custColWidth,
+			newcol = custColWidth.getDecUnhidden(nextcol, nextcol > col ? col : 0); //search backward
 
-		this.moveFocus(row, col, true, true);
+		this.moveFocus(row, newcol, true, true);
 	},
 	/**
 	 * Move to the first column 
 	 */
 	moveHome: function (evt) {
+		var sheet = this.sheet;
 		if (zkS.isEvtKey(evt, "s")) {
-			this.sheet.shiftSelection("home");
+			sheet.shiftSelection("home");
 			return;
 		}
-		var pos = this.sheet.getLastFocus(),
+		var pos = sheet.getLastFocus(),
 			row = pos.row,
 			col = pos.column;
 		if (row < 0 || col < 0) return;
-		if (col > 0)
-			col = 0;
+		
+		var prevcol = 0,
+			custColWidth = sheet.custColWidth,
+			newcol = custColWidth.getIncUnhidden(prevcol, col < (sheet.maxCols - 1) ? col : (sheet.maxCols - 1)); //search forward
 
-		this.moveFocus(row, col, true, true);
+		this.moveFocus(row, newcol, true, true);
 	},
 	/**
 	 * Move up
 	 */
 	moveUp: function (evt) {
+		var sheet = this.sheet;
 		if (zkS.isEvtKey(evt,"s")) {
-			this.sheet.shiftSelection("up");
+			sheet.shiftSelection("up");
 			return;
 		}
-		var pos = this.sheet.getLastFocus(),
+		var pos = sheet.getLastFocus(),
 			row = pos.row,
 			col = pos.column;
 		if (row < 0 || col < 0) return;
-		if (row > 0)
-			--row;
+		if (row > 0) {
+			var prevrow = row - 1,
+				custRowHeight = sheet.custRowHeight,
+				newrow = prevrow > 0 ? 
+						custRowHeight.getDecUnhidden(prevrow, 0) : //search upward
+						custRowHeight.getIncUnhidden(prevrow, row); //search downward
+			if (newrow >= 0)
+				row = newrow;
+		}
+		
 		this.moveFocus(row, col, true, true);
 	},
 	/**
 	 * Move down
 	 */
 	moveDown: function(evt) {
+		var sheet = this.sheet;
 		if (zkS.isEvtKey(evt, "s")) {
-			this.sheet.shiftSelection("down");
+			sheet.shiftSelection("down");
 			return;
 		}
-		var pos = this.sheet.getLastFocus(),
+		var pos = sheet.getLastFocus(),
 			row = pos.row,
 			col = pos.column;
 		if (row < 0 || col < 0) return;
 		
-		var sheet = this.sheet,
-			cell = sheet.getCell(row, col);
+		var cell = sheet.getCell(row, col);
 		if (cell) {
 			var mb = cell.merb;
 			if (zkS.t(mb))
 				row = mb;
 		}
-		if (row < sheet.maxRows - 1)
-			++row;
+		if (row < sheet.maxRows - 1) {
+			var nextrow = row + 1,
+				custRowHeight = sheet.custRowHeight,
+				newrow = nextrow < (sheet.maxRows - 1) ? 
+					custRowHeight.getIncUnhidden(nextrow, sheet.maxRows - 1): //search downward
+					custRowHeight.getDecUnhidden(nextrow, row); //search upward
+			if (newrow >= 0)
+				row = newrow;
+		}
 
 		this.moveFocus(row, col, true, true);
 	},
@@ -620,41 +653,55 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	 * Move to the left column
 	 */
 	moveLeft: function(evt) {
+		var sheet = this.sheet;
 		if (zkS.isEvtKey(evt,"s")) {
-			this.sheet.shiftSelection("left");
+			sheet.shiftSelection("left");
 			return;
 		}
-		var pos = this.sheet.getLastFocus(),
+		var pos = sheet.getLastFocus(),
 			row = pos.row,
 			col = pos.column;
 		if (row < 0 || col < 0) return;
-		if (col > 0)
-			--col;
+		if (col > 0) {
+			var prevcol = col - 1,
+			custColWidth = sheet.custColWidth,
+			newcol = prevcol > 0 ? 
+					custColWidth.getDecUnhidden(prevcol, 0) : //search backward
+					custColWidth.getIncUnhidden(prevcol, col); //search foreward
+			if (newcol >= 0)
+				col = newcol;
+		}
 		this.moveFocus(row, col, true, true);
 	},
 	/**
 	 * Move to the right column 
 	 */
 	moveRight: function(evt) {
+		var sheet = this.sheet;
 		if (zkS.isEvtKey(evt, "s")) {
-			this.sheet.shiftSelection("right");
+			sheet.shiftSelection("right");
 			return;
 		}
-		var pos = this.sheet.getLastFocus(),
+		var pos = sheet.getLastFocus(),
 			row = pos.row,
 			col = pos.column;
 		if(row < 0 || col < 0) return;
 		
-		var sheet = this.sheet,
-			cell = sheet.getCell(row, col);
+		var cell = sheet.getCell(row, col);
 		if (cell) {
 			var mr = cell.merr;
 			if(zkS.t(mr))
 				col = mr;
 		}
-		if (col < sheet.maxCols - 1)
-			col++;
-		
+		if (col < sheet.maxCols - 1) {
+			var nextcol = col + 1,
+				custColWidth = sheet.custColWidth,
+				newcol = nextcol < (sheet.maxCols - 1) ? 
+					custColWidth.getIncUnhidden(nextcol, sheet.maxCols - 1): //search foreward
+					custColWidth.getDecUnhidden(nextcol, col); //search backward
+			if (newcol >= 0)
+				col = newcol;
+		}
 		this.moveFocus(row, col, true, true);
 	}
 });
