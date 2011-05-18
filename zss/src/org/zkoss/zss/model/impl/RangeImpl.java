@@ -1751,7 +1751,7 @@ public class RangeImpl implements Range {
 		final boolean blank = BookHelper.isBlankCell(cell); 
 		final String val =  blank ? "=" : BookHelper.getCellText(cell); //"=" means blank!
 		final Set critera1 = fc.getCriteria1();
-		return !critera1.contains(val);
+		return critera1 != null && !critera1.contains(val);
 	}
 
 	@Override
@@ -1761,7 +1761,10 @@ public class RangeImpl implements Range {
 			return;
 		}
 		final CellRangeAddress afrng = af.getRangeAddress();
-		for(FilterColumn fc : af.getFilterColumns()) {
+		final List<FilterColumn> fcs = af.getFilterColumns();
+		if (fcs == null)
+			return;
+		for(FilterColumn fc : fcs) {
 			BookHelper.setProperties(fc, null, AutoFilter.FILTEROP_VALUES, null, true); //clear all filter
 		}
 		final int row1 = afrng.getFirstRow();
@@ -1805,7 +1808,10 @@ public class RangeImpl implements Range {
 		final Set<Ref> all = new HashSet<Ref>();
 		for (int r = row; r <= row2; ++r) {
 			boolean hidden = false;
-			for(FilterColumn fc : af.getFilterColumns()) {
+			final List<FilterColumn> fcs = af.getFilterColumns();
+			if (fcs == null)
+				return;
+			for(FilterColumn fc : fcs) {
 				if (shallHide(fc, r, fc.getColId() + col1)) {
 					hidden = true;
 					break;
