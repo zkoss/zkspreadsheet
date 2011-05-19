@@ -54,6 +54,7 @@ zss.MergeMatrix =  zk.$extends(zk.Object, {
 		var size = this.mergeMatrix.length,
 			result = [],
 			range,
+			topRow = row,
 			fzc = this.sheet.frozenCol;
 		for (var i = 0; i < size; i++) {
 			range = this.mergeMatrix[i];
@@ -69,14 +70,14 @@ zss.MergeMatrix =  zk.$extends(zk.Object, {
 			for(var i = 0; i < size; i++) {
 				range = result[i];
 				if (range.top < row && range.bottom >= row) {
-					row = range.top;
+					topRow = range.top;
 					conti = true;
 					//TODO a fast way to remove range form result array
 					break;
 				}
 			}
 		}
-		return row;
+		return topRow;
 	},
 	/**
 	 * Returns the bottom connected row
@@ -89,6 +90,7 @@ zss.MergeMatrix =  zk.$extends(zk.Object, {
 		var size = this.mergeMatrix.length,
 			result = [],
 			range,
+			btmRow = row,
 			fzc = this.sheet.frozenCol;
 		for (var i = 0; i < size; i++) {
 			range = this.mergeMatrix[i];
@@ -104,14 +106,14 @@ zss.MergeMatrix =  zk.$extends(zk.Object, {
 			for (var i = 0; i < size; i++) {
 				range = result[i];
 				if (range.bottom > row && range.top <= row) {
-					col = range.bottom;
+					btmRow = range.bottom;
 					conti = true;
 					//TODO a fast way to remove range form result array
 					break;
 				}
 			}
 		}
-		return col;
+		return btmRow;
 	},
 	/**
 	 * Returns column's merge range
