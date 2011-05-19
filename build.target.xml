@@ -39,7 +39,9 @@ Copyright (C) 2002-2006 Potix Corporation. All Rights Reserved.
 	<property name="srcooxml.dir" value=""/>
 	<available file="srcscratchpad" property="srcscratchpad.dir" value="srcscratchpad"/>
 	<property name="srcscratchpad.dir" value=""/>
-	<javac srcdir="${src.dir}:${codegen.dir}:${srcdpc.dir}:${srcjava.dir}:${srcooxml.dir}:${srcscratchpad.dir}" destdir="${out.dir}"
+	<available file="srcresources" property="srcresources.dir" value="srcresources"/>
+	<property name="srcresources.dir" value=""/>
+	<javac srcdir="${src.dir}:${codegen.dir}:${srcdpc.dir}:${srcjava.dir}:${srcooxml.dir}:${srcscratchpad.dir}:${srcresources.dir}" destdir="${out.dir}"
 	 debug="${debug}" optimize="${optimize}" encoding="UTF-8"
 	 target="${target.version}" deprecation="${deprecation}" source="${source.version}"/>
 	<javac srcdir="${src.dir}:${srcpv.dir}" destdir="${out.dir}"
@@ -165,7 +167,7 @@ if="deploy.jboss.required">
 	</exec>
 	
 	<copy todir="${codegen.archive.dir}" preservelastmodified="yes" failonerror="false">
-		<fileset dir="srcjava" includes="**/functionMetadata*.txt"/>
+		<fileset dir="srcresources" includes="**/functionMetadata*.txt"/>
 	</copy>
 	
 	<jar jarfile="${out.dir}/${jar.name}" manifest="${manifest.mf}">
