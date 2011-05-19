@@ -185,7 +185,7 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 			if (item.isSelected())
 				criteria.add(info.text);
 		}
-		range.autoFilter(fieldIndex, criteria.toArray(new String[criteria.size()]), AutoFilter.FILTEROP_VALUES, null, true);
+		range.autoFilter(fieldIndex, criteria.toArray(new String[criteria.size()]), AutoFilter.FILTEROP_VALUES, null, null);
 		_autoFilterDialog.fireOnClose(null);
 	}
 }

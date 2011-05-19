@@ -333,10 +333,11 @@ public interface Range {
 	 * then this shall specifies the number of items (e.g. "10"). 
 	 * @param filterOp see Range#FILTEROP_xxx. Use FILTEROP_AND and FILTEROP_OR with criteria1 and criterial2 to construct compound criteria.
 	 * @param criteria2 2nd criteria; used with criteria1 and filterOP to construct compound criteria.
-	 * @param visibleDropDown true to show the autoFilter drop-down arrow for the filtered field; false to hide the autoFilter drop-down arrow.
+	 * @param visibleDropDown true to show the autoFilter drop-down arrow for the filtered field; false to hide the autoFilter drop-down arrow; null
+	 * to keep as is.
 	 * @return the applied AutoFiltering
 	 */
-	public AutoFilter autoFilter(int field, Object criteria1, int filterOp, Object criteria2, boolean visibleDropDown);
+	public AutoFilter autoFilter(int field, Object criteria1, int filterOp, Object criteria2, Boolean visibleDropDown);
 	
 	/**
 	 * Toggle the visibility of the AutoFilter dropdown buttons of this Range. Toggle off will remove current AutoFilter object. 

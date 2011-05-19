@@ -4526,7 +4526,7 @@ public final class BookHelper {
 		}
 	}
 		
-	public static void setProperties(FilterColumn fc, Object criteria1, int filterOp, Object criteria2, boolean visibleDropDown) {
+	public static void setProperties(FilterColumn fc, Object criteria1, int filterOp, Object criteria2, Boolean visibleDropDown) {
 		if (fc instanceof XSSFAutoFilter.XSSFFilterColumn) {
 			((XSSFAutoFilter.XSSFFilterColumn)fc).setProperties(criteria1, filterOp, criteria2, visibleDropDown);
 		} else {
@@ -4534,5 +4534,42 @@ public final class BookHelper {
 		}
 	}
 
+	//TODO enhance performance for locating mergearea
+	public static CellRangeAddress getMergeRegion(Worksheet sheet, int row, int col) {
+		for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+			final CellRangeAddress ref = sheet.getMergedRegion(i);
+			final int top = ref.getFirstRow();
+	        final int bottom = ref.getLastRow();
+	        final int left = ref.getFirstColumn();
+	        final int right = ref.getLastColumn();
+	        
+	        if (row >= top && row <= bottom && col >= left && col <= right) {
+	        	return ref;
+	        }
+		}
+		return new CellRangeAddress(row, row, col, col);
+	}
 	
+	public static boolean isOneCell(Worksheet sheet, CellRangeAddress rng) {
+		if (rng.getNumberOfCells() == 1) {
+			return true;
+		}
+		final int l = rng.getFirstColumn();
+		final int t = rng.getFirstRow();
+		final int r = rng.getLastColumn();
+		final int b = rng.getLastRow();
+		
+		for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+			final CellRangeAddress ref = sheet.getMergedRegion(i);
+			final int top = ref.getFirstRow();
+	        final int bottom = ref.getLastRow();
+	        final int left = ref.getFirstColumn();
+	        final int right = ref.getLastColumn();
+	    
+	        if (l == left && t == top && r == right && b == bottom) {
+	        	return true;
+	        }
+		}
+		return false;
+	}
 }

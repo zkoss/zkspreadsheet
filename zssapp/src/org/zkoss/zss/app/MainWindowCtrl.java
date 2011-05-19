@@ -18,15 +18,11 @@ package org.zkoss.zss.app;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayDeque;
 import java.util.Iterator;
-import java.util.List;
 
-import org.omg.Messaging.SyncScopeHelper;
 import org.zkoss.lang.Library;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellReference;
@@ -494,11 +490,9 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	
 	public void onClick$filter() {
 		Rect rect = spreadsheet.getSelection();
-		searchInfo.clear();
-		Range range = searchAutoFilterRange(Integer.valueOf(rect.getTop()), Integer.valueOf(rect.getLeft()));
-		if (range != null) {
-			range.autoFilter();
-		}
+		final Worksheet sheet = spreadsheet.getSelectedSheet();
+		Range range = Ranges.range(sheet, rect.getTop(), rect.getLeft(), rect.getBottom(), rect.getRight());
+		range.autoFilter();
 	}
 	
 	public void onClick$clearFilter() {
@@ -532,16 +526,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		openAutoFilterDialog(new Object[]{fieldIdx, event.getColumn(), range});
 	}
 	
-	/**
-	 * Returns whether cell is inside range or not
-	 */
-	private boolean insideRange(Range src, Cell cell) {		
-		int row = cell.getRowIndex();
-		int col = cell.getColumnIndex();
-		return row >= src.getRow() && row <= src.getLastRow() && 
-			col >= src.getColumn() && col <= src.getLastColumn();
-	}
-	
 	private Rect getMergedRect(Cell cell) {
 		if (cell == null)
 			return null;
@@ -560,66 +544,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	        	return new Rect(left, top, right, btm);
 		}
 		return null;
-	}
-	
-	ArrayDeque<Range> searchInfo = new ArrayDeque<Range>();
-	private Range getCurrentAutoFilterRange() {
-		return searchInfo.size() > 0 ? searchInfo.getFirst() : null;
-	}
-	private Range searchAutoFilterRange(Integer row, Integer col) {
-		Range rng = getCurrentAutoFilterRange();
-		Worksheet sheet = spreadsheet.getSelectedSheet();
-		if (rng == null) {
-			for (int i = row - 1; i <= row + 1; i++) {
-				for (int j = col - 1; j <= col + 1 ; j++) {
-					Cell c = i != row && j != col ? Utils.getCell(sheet, i, j) : null;
-					getMergedRect(c);
-					if (c != null && c.getCellType() != Cell.CELL_TYPE_BLANK) {
-						boolean verticalOrient = i > row; /* false means top; true means bottom */
-						boolean horizontalOrient = j > col; /* fasle means left; true means right */
-						rng = Ranges.range(sheet, verticalOrient ? row : i, horizontalOrient ? col : j, 
-								verticalOrient ? i : row, horizontalOrient ? j : col);
-						searchInfo.push(rng);
-						searchAutoFilterRange(null, null);
-					}
-				}
-			}
-		} else {
-			int top = rng.getRow();
-			int btm = rng.getLastRow();
-			int left = rng.getColumn();
-			int right = rng.getLastColumn();
-			
-			for (int i = top - 1; i <= btm + 1; i++) {
-				for (int j = left - 1; j <= right + 1 ; j++) {
-					if (i < 0 || j < 0)
-						continue;
-					Cell c = Utils.getCell(sheet, i, j);
-					if (c != null && !insideRange(getCurrentAutoFilterRange(), c)) {
-						int cellType = c.getCellType();
-						Rect mergeRect = null;
-						if (cellType == Cell.CELL_TYPE_BLANK) {
-							mergeRect = getMergedRect(c);
-							if (mergeRect == null)
-								continue;
-						}
-						if (mergeRect != null) {
-							int t = Math.min(Math.min(i, top), mergeRect.getTop());
-							int l = Math.min(Math.min(j, left), mergeRect.getLeft());
-							int b = Math.max(Math.max(i, btm), mergeRect.getBottom());
-							int r = Math.max(Math.max(j, right), mergeRect.getRight());
-							rng = Ranges.range(sheet, t, l, b, r);
-						} else 
-							rng = Ranges.range(sheet, 
-								Math.min(i, top), Math.min(j, left), Math.max(i, btm), Math.max(j, right));
-						searchInfo.pop();
-						searchInfo.push(rng);
-						searchAutoFilterRange(null, null);
-					}
-				}
-			}
-		}
-		return searchInfo.size() > 0 ? searchInfo.getFirst() : null;
 	}
 	
 	public void onClick$insertHyperlinkBtn() {
@@ -669,10 +593,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 	void doHeaderMouseEvent(HeaderMouseEvent event) {
 		if (HeaderEvent.TOP_HEADER == event.getType()) {
-			int col = event.getIndex();
 			columnHeaderMenupopup.open(event.getClientx(), event.getClienty());
 		} else if ((HeaderEvent.LEFT_HEADER == event.getType())) {
-			int row = event.getIndex();
 			rowHeaderMenupopup.open(event.getClientx(), event.getClienty());
 		} else {
 			return;
@@ -953,7 +875,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			Worksheet sheet = spreadsheet.getSelectedSheet();
 			Rect rect = spreadsheet.getSelection();
 			int top = rect.getTop();
-			int left = rect.getLeft();
 			int bottom = rect.getBottom();
 			if (top == 0 && bottom == spreadsheet.getMaxrows() - 1) {
 				try {
@@ -1334,15 +1255,15 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 //		// spreadsheet.notifyRevision();
 //	}
 
-	private Connection getDBConnection() {
-		try {
-			return DriverManager.getConnection(
-					"jdbc:mysql://localhost:3306/zss", "root", "rootzk");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+//	private Connection getDBConnection() {
+//		try {
+//			return DriverManager.getConnection(
+//					"jdbc:mysql://localhost:3306/zss", "root", "rootzk");
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
 
 	public void onNotImplement(ForwardEvent event) {
 		try {
@@ -1465,7 +1386,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			}
 			return;
 		}
-		Executions _exportToPdfDialogExecutions;
 		if (_exportToPdfDialog == null || _exportToPdfDialog.isInvalidated())
 			_exportToPdfDialog = (Dialog) Executions.createComponents(Consts._ExportToPDF_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
 		_exportToPdfDialog.fireOnOpen(null);
@@ -1511,7 +1431,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			}
 			return;
 		}
-		Executions _exportToHtmlDialogExecutions;
 		if (_exportToHtmlDialog == null || _exportToHtmlDialog.isInvalidated())
 			_exportToHtmlDialog = (Dialog) Executions.createComponents(Consts._ExportToHTML_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
 		_exportToHtmlDialog.fireOnOpen(null);

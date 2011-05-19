@@ -1596,77 +1596,159 @@ public class RangeImpl implements Range {
 				new RangeImpl(cra.getFirstRow(), cra.getFirstColumn(), cra.getLastRow(), cra.getLastColumn(), _sheet, _sheet);
 	}
 	
+	private int[] getCellMinMax(Worksheet sheet, int row, int col) {
+		final CellRangeAddress rng = BookHelper.getMergeRegion(sheet, row, col);
+		final int t = rng.getFirstRow();
+		final int l = rng.getFirstColumn();
+		final int b = rng.getLastRow();
+		final int r = rng.getLastColumn();
+		final Cell cell = BookHelper.getCell(sheet, t, l);
+		return (!BookHelper.isBlankCell(cell)) ?
+			new int[] {l, t, r, b} : null;
+	}
+	
+	//[0]: left, [1]: top, [2]: right, [3]: bottom; null mean blank row
+	private int[] getRowMinMax(Worksheet sheet, Row rowobj, int minc, int maxc) {
+		if (rowobj == null) { //check if no cell at all!
+			return null;
+		}
+		final int row = rowobj.getRowNum();
+		int minr = row;
+		int maxr = row;
+		boolean allblank = true;
+
+		//initial minc
+		final int[] minrng = getCellMinMax(sheet, row, minc);
+		if (minrng != null) {
+			final int l = minrng[0];
+			final int t = minrng[1];
+			final int b = minrng[3];
+			if (minr > t) minr = t;
+			if (maxr < b) maxr = b;
+			minc = l;
+			allblank = false;
+		}
+		
+		//initial maxc
+		if (maxc > (minrng != null ? minrng[2] : minc)) {
+			final int[] maxrng = getCellMinMax(sheet, row, maxc);
+			if (maxrng != null) {
+				final int t = maxrng[1];
+				final int r = maxrng[2];
+				final int b = maxrng[3];
+				if (minr > t) minr = t;
+				if (maxr < b) maxr = b;
+				maxc = r;
+				allblank = false;
+			}
+		} else if (minrng != null) {
+			maxc = minrng[2];
+		}
+		
+		final int lc = rowobj.getFirstCellNum();
+		final int rc = rowobj.getLastCellNum() - 1;
+		final int left = minc > 0 ? minc - 1 : 0;
+		final int right = maxc + 1;
+
+		//locate new minc to its left
+		for(int c = left; c >= lc; --c) {
+			final int[] rng = getCellMinMax(sheet, row, c);
+			if (rng != null) {
+				final int l = rng[0];
+				final int t = rng[1];
+				final int b = rng[3];
+				minc = c = l;
+				if (minr > t) minr = t;
+				if (maxr < b) maxr = b;
+				allblank = false;
+			} else {
+				break;
+			}
+		}
+		//locate new maxc to its right
+		for(int c = right; c <= rc; ++c) {
+			final int[] rng = getCellMinMax(sheet, row, c);
+			if (rng != null) {
+				final int t = rng[1];
+				final int r = rng[2];
+				final int b = rng[3];
+				maxc = c = r;
+				if (minr > t) minr = t;
+				if (maxr < b) maxr = b;
+				allblank = false;
+			} else {
+				break;
+			}
+		}
+		return allblank ? null : new int[] {minc, minr, maxc, maxr};
+	}
+	
 	//given a cell return the maximum range
 	private CellRangeAddress getCurrentRegion(Worksheet sheet, int row, int col) {
 		int minc = col;
 		int maxc = col;
-		int minr = -1;
+		int minr = Integer.MAX_VALUE;
 		int maxr = -1;
-		
-		int blankr = -1;
-		//for each row up
-		for(int r = row; r >= 0; --r) {
-			boolean allblank = true;
-			final Row rowobj = sheet.getRow(r);
-			if (rowobj != null) { //no cell at all!
-				final int left = minc > 0 ? minc - 1 : 0;
-				final int right = maxc + 1;
-				for(int c = left; c < right; ++c) {
-					final Cell cell = rowobj.getCell(c);
-					if (!BookHelper.isBlankCell(cell)) {
-						if (minc > c) minc = c;
-						if (maxc < c) maxc = c;
-						allblank = false;
-						blankr = -1;
-						minr = r;
-					}
-				}
-			}
-			if (allblank) {
-				if (blankr < 0) { 
-					blankr = r;
-				} else { //contiguous two blank rows
-					break;
-				}
-			}
+		final Row roworg = sheet.getRow(row);
+		final int[] ltrb = getRowMinMax(sheet, roworg, minc, maxc);
+		if (ltrb != null) {
+			minc = ltrb[0];
+			minr = ltrb[1];
+			maxc = ltrb[2];
+			maxr = ltrb[3];
 		}
 		
-		//for each row down
-		blankr = -1;
-		for(int r = row; r <= sheet.getLastRowNum(); ++r) {
-			boolean allblank = true;
-			final Row rowobj = sheet.getRow(r);
-			if (rowobj != null) { //no cell at all!
-				final int left = minc > 0 ? minc - 1 : 0;
-				final int right = maxc + 1;
-				for(int c = left; c < right; ++c) {
-					final Cell cell = rowobj.getCell(c);
-					if (!BookHelper.isBlankCell(cell)) {
-						if (minc > c) minc = c;
-						if (maxc < c) maxc = c;
-						allblank = false;
-						blankr = -1;
-						maxr = r;
-					}
-				}
-			}
-			if (allblank) {
-				if (blankr < 0) { 
-					blankr = r;
-				} else { //contiguous two blank rows
-					break;
-				}
-			}
-		}
+		int ru = row > 0 ? row - 1 : row;
+		int rd = row + 1;
 		
-		if (minr < 0 && maxr < 0) { //all blanks in 9 cells!
+		boolean stopu = ru == row;
+		boolean stopd = false;
+		do {
+			//for row above
+			if (!stopu) {
+				final Row rowu = sheet.getRow(ru);
+				final int[] ltrbu = getRowMinMax(sheet, rowu, minc, maxc);
+				if (ltrbu != null) {
+					if (minc != ltrbu[0] || maxc != ltrbu[2]) {  //minc or maxc changed!
+						stopd = false;
+						minc = ltrbu[0];
+						maxc = ltrbu[2];
+					}
+					if (minr > ltrbu[1]) {
+						minr = ltrbu[1];
+					}
+					if (ru > 0) {
+						--ru;
+					} else {
+						stopu = true; //no more row above!
+					}
+				} else { //blank row
+					stopu = true;
+				}
+			}
+
+			//for row below
+			if (!stopd) {
+				final Row rowd = sheet.getRow(rd);
+				final int[] ltrbd = getRowMinMax(sheet, rowd, minc, maxc);
+				if (ltrbd != null) {
+					if (minc != ltrbd[0] || maxc != ltrbd[2]) { //minc and maxc changed
+						stopu = false;
+						minc = ltrbd[0];
+						maxc = ltrbd[2];
+					}
+					if (maxr < ltrbd[3]) {
+						maxr = ltrbd[3];
+					}
+					++rd;
+				} else { //blank row
+					stopd = true;
+				}
+			}
+		} while(!stopu || !stopd);
+		
+		if (minr == Integer.MAX_VALUE && maxr < 0) { //all blanks in 9 cells!
 			return null;
-		}
-		if (minr < 0) {
-			minr = maxr;
-		}
-		if (maxr < 0) {
-			maxr = minr;
 		}
 		return new CellRangeAddress(minr, maxr, minc, maxc);
 	}
@@ -1687,7 +1769,7 @@ public class RangeImpl implements Range {
 			//If it's a multi cell range, it's the range intersect with largest range of the sheet.
 			//If it's a single cell range, it has to be extend to a continuous range by looking up the near 8 cells of the single cell.
 			affectedArea = new CellRangeAddress(getRow(), getLastRow(), getColumn(), getLastColumn());
-			if (affectedArea.getNumberOfCells() == 1) { //only one cell selected, try to look the max range surround by blank cells 
+			if (BookHelper.isOneCell(_sheet, affectedArea)) { //only one cell selected(include merged one), try to look the max range surround by blank cells 
 				CellRangeAddress maxRange = getCurrentRegion(_sheet, getRow(), getColumn());
 				if (maxRange == null) {
 					throw new RuntimeException(ALL_BLANK_MSG);
@@ -1711,7 +1793,7 @@ public class RangeImpl implements Range {
 				if (top < getRow()) {
 					top = getRow();
 				}
-				if (bottom < getLastRow()) {
+				if (bottom > getLastRow()) {
 					bottom = getLastRow();
 				}
 				if (top > bottom || left > right) {
@@ -1765,7 +1847,7 @@ public class RangeImpl implements Range {
 		if (fcs == null)
 			return;
 		for(FilterColumn fc : fcs) {
-			BookHelper.setProperties(fc, null, AutoFilter.FILTEROP_VALUES, null, true); //clear all filter
+			BookHelper.setProperties(fc, null, AutoFilter.FILTEROP_VALUES, null, null); //clear all filter
 		}
 		final int row1 = afrng.getFirstRow();
 		final int row = row1 + 1;
@@ -1803,7 +1885,6 @@ public class RangeImpl implements Range {
 		final int row = row1 + 1;
 		final int row2 = affectedArea.getLastRow();
 		final int col2 = affectedArea.getLastColumn();
-		final int colsz = col2 - col1 + 1;
 		
 		final Set<Ref> all = new HashSet<Ref>();
 		for (int r = row; r <= row2; ++r) {
@@ -1841,7 +1922,7 @@ public class RangeImpl implements Range {
 	}
 
 	@Override
-	public AutoFilter autoFilter(int field, Object criteria1, int filterOp, Object criteria2, boolean visibleDropDown) {
+	public AutoFilter autoFilter(int field, Object criteria1, int filterOp, Object criteria2, Boolean visibleDropDown) {
 		AutoFilter af = _sheet.getAutoFilter();
 		if (af == null) {
 			af = autoFilter();
@@ -1856,7 +1937,6 @@ public class RangeImpl implements Range {
 		final int col =  col1 + field - 1;
 		final int row = row1 + 1;
 		final int row2 = affectedArea.getLastRow();
-		final int col2 = affectedArea.getLastColumn();
 		final Set cr1 = fc.getCriteria1();
 
 		final Set<Ref> all = new HashSet<Ref>();

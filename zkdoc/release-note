@@ -41,6 +41,7 @@ ZK Spreadsheet 2.1.0
   326 Sizing row height the associated Merged area should sizing accordingly
   329 Move Focus on hidden row/column, the row/column header highlight is not correct
   332 Scroll sheet down and up cause javascript error
+  333 Merged cell with auto filter has more one filter button
   
 	------------
 ZK Spreadsheet 2.0.1

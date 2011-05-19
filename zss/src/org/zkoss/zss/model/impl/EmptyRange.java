@@ -256,7 +256,7 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public AutoFilter autoFilter(int field, Object criteria1, int filterOp, Object criteria2, boolean visibleDropDown) {
+	public AutoFilter autoFilter(int field, Object criteria1, int filterOp, Object criteria2, Boolean visibleDropDown) {
 		return null;
 	}
 

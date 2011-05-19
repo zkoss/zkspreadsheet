@@ -982,11 +982,13 @@ public class Spreadsheet extends XulElement implements Serializable {
 			final List<Map> fcsary = fcs != null ? new ArrayList<Map>(fcs.size()) : null;
 			if (fcsary != null) {
 				for(int col = left; col <= right; ++col) {
-					final FilterColumn fc = af.getFilterColumn(col);
+					final FilterColumn fc = af.getFilterColumn(col - left);
 					final List<String> filters = fc != null ? fc.getFilters() : null;
+					final boolean on = fc != null ? fc.isOn() : true;
 					Map fcmap = new HashMap();
 					fcmap.put("col", Integer.valueOf(col));
 					fcmap.put("filter", filters);
+					fcmap.put("on", on);
 					fcsary.add(fcmap);
 				}
 			}
