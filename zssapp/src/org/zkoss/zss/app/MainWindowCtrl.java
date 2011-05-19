@@ -22,6 +22,7 @@ import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.List;
 
+import org.omg.Messaging.SyncScopeHelper;
 import org.zkoss.lang.Library;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
@@ -271,6 +272,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			public void onEvent(Event event) throws Exception {
 				gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
 				protectSheet.setChecked(spreadsheet.getSelectedSheet().getProtect());
+				syncAutoFilterStatus();
 			}
 		});
 		workbenchContext.addEventListener(Consts.ON_SHEET_CONTENTS_CHANGED,  new EventListener(){

@@ -35,7 +35,6 @@
 		.dpbtn-seld .z-dpbutton-body {
 			cursor: default;
 		}
-		.z-dpbutton-dpover, 
 		.focusPosCombobox .z-combobox-rounded-btn {
 			border:0px;
 			background: url(${c:encodeURL('~./zssapp/image/combo-white.png')});

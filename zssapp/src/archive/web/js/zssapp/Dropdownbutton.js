@@ -52,7 +52,7 @@ zssapp.Dropdownbutton = zk.$extends(zul.LabelImageWidget, {
 	},
 	onFloatUp: function (ctl) {
 		var wgt = ctl.origin;
-		if (!zUtl.isAncestor(this.parent, ctl.origin))
+		if (!zUtl.isAncestor(this, ctl.origin))
 			this._rmActive();
 	},
 	/**
