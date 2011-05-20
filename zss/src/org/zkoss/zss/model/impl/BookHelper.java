@@ -911,7 +911,8 @@ public final class BookHelper {
 				final RichTextString rstr = ft.getRichTextString();
 				return rstr == null ? "" : rstr.getString();
 			} else if (ft.isCellFormatResult()) {
-				return ft.getCellFormatResult().text;			}
+				return ft.getCellFormatResult().text;			
+			}
 		}
 		return "";
 	}

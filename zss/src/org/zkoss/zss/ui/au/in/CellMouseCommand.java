@@ -31,6 +31,7 @@ import org.zkoss.zk.ui.event.MouseEvent;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellMouseEvent;
+import org.zkoss.zss.ui.event.FilterMouseEvent;
 import org.zkoss.zss.ui.impl.Utils;
 import static org.zkoss.zss.ui.au.in.Commands.parseKeys;
 
@@ -47,11 +48,12 @@ public class CellMouseCommand implements Command {
 		if (comp == null)
 			throw new UiException(MZk.ILLEGAL_REQUEST_COMPONENT_REQUIRED, this);
 		//final String[] data = request.getData();
+		//TODO a little patch, "af" might shall be fired by a separate command?
 		final Map data = (Map) request.getData();
-		if (data == null || data.size() != 9)
+		String type = (String) data.get("type");//command type
+		if (data == null || (!"af".equals(type) && data.size() != 9) || ("af".equals(type) && data.size() != 10))
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), this});
 		
-		String type = (String) data.get("type");//x offset against spreadsheet
 		int shx = (Integer) data.get("shx");//x offset against spreadsheet
 		int shy = (Integer) data.get("shy");
 		int key = parseKeys((String) data.get("key"));
@@ -60,7 +62,6 @@ public class CellMouseCommand implements Command {
 		int col = (Integer) data.get("col");
 		int mx = (Integer) data.get("mx");//x offset against body
 		int my = (Integer) data.get("my");
-		
 		
 		Worksheet sheet = ((Spreadsheet) comp).getSelectedSheet();
 		if (!Utils.getSheetUuid(sheet).equals(sheetId))
@@ -78,7 +79,12 @@ public class CellMouseCommand implements Command {
 			throw new UiException("unknow type : " + type);
 		}
 
-		Events.postEvent(new CellMouseEvent(type, comp, shx, shy, key, sheet, row, col, mx, my));
+		if (org.zkoss.zss.ui.event.Events.ON_FILTER.equals(type)) {
+			int field = (Integer) data.get("field");
+			Events.postEvent(new FilterMouseEvent(type, comp, shx, shy, key, sheet, row, col, mx, my, field));
+		} else {
+			Events.postEvent(new CellMouseEvent(type, comp, shx, shy, key, sheet, row, col, mx, my));
+		}
 	}
 	
 	public String getCommand() {

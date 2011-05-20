@@ -730,9 +730,11 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	 * <p> 
 	 * @param string type
 	 */
-	fireCellEvt: function (type, shx, shy, mousemeta, row, col, mx, my) {
+	fireCellEvt: function (type, shx, shy, mousemeta, row, col, mx, my, field) {
 		var sheetId = this.getSheetId(),
 			prop = {type: type, shx: shx, shy: shy, key: mousemeta, sheetId: sheetId, row: row, col: col, mx: mx, my: my};
+		if (field)
+			prop.field = field;
 		if (this._isFireCellEvt(type)) {
 			//1995689 selection rectangle error when listen onCellClick, 
 			//use timeout to delay mouse click after mouse up(selection)

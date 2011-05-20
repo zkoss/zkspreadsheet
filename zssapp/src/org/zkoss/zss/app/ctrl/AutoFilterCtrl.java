@@ -29,6 +29,7 @@ import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.ListModelList;
@@ -66,16 +67,14 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 		TreeSet<RowInfo> rowInfos = new TreeSet<RowInfo>();
 
 		worksheet = (Worksheet) range.getSheet();
-		for (int i = range.getRow() + 1; i <= range.getLastRow(); i++) {
-			Cell c = Utils.getCell(worksheet, i, columnIndex);
-			if (c != null) {
-				int type = c.getCellType();
-				if (type == Cell.CELL_TYPE_BLANK) {
-					hasBlank = true;
-				} else {
-					String val = Ranges.range(worksheet, i, columnIndex).getFormatText().getCellFormatResult().text;
-					rowInfos.add(new RowInfo(i, columnIndex, val, val));
-				}
+		final int top = range.getRow() + 1;
+		final int bottom = range.getLastRow();
+		for (int i = top; i <= bottom; i++) {
+			final Cell c = Utils.getCell(worksheet, i, columnIndex);
+			final boolean blankcell = BookHelper.isBlankCell(c);
+			if (!blankcell) {
+				String val = BookHelper.getCellText(c);
+				rowInfos.add(new RowInfo(i, columnIndex, val, val));
 			} else {
 				hasBlank = true;
 			}

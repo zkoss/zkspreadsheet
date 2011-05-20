@@ -973,11 +973,14 @@ public class Spreadsheet extends XulElement implements Serializable {
 			final Map addrmap = new HashMap();
 			final int left = addr.getFirstColumn();
 			final int right = addr.getLastColumn();
+			final int top = addr.getFirstRow();
+			final Worksheet sheet = this.getSelectedSheet();
 			addrmap.put("left", left);
-			addrmap.put("top", addr.getFirstRow());
+			addrmap.put("top", top);
 			addrmap.put("right", right);
 			addrmap.put("bottom", addr.getLastRow());
 			
+			int offcol = -1;
 			final List<FilterColumn> fcs = af.getFilterColumns();
 			final List<Map> fcsary = fcs != null ? new ArrayList<Map>(fcs.size()) : null;
 			if (fcsary != null) {
@@ -989,6 +992,18 @@ public class Spreadsheet extends XulElement implements Serializable {
 					fcmap.put("col", Integer.valueOf(col));
 					fcmap.put("filter", filters);
 					fcmap.put("on", on);
+					int field = col - left + 1;
+					if (offcol >= 0 && on) { //pre button not shown and I am shown, the field number might be different!
+						field = offcol - left + 1;
+					}
+					fcmap.put("field", field);
+					if (!on) {
+						if (offcol < 0) { //first button off column
+							offcol = col;
+						}
+					} else {
+						offcol = -1;
+					}
 					fcsary.add(fcmap);
 				}
 			}

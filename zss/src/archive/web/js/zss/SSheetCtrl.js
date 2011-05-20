@@ -818,19 +818,17 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			this._lastmdstr = "c";
 
 			//Check whether click on AutoFilter button if a left mouse down
-			var firebtndown = false;
-			if (_isLeftMouseEvt(evt) && this.getBtn) {
-				var btn = this.getBtn(row, col);
-				if (btn) { 
-					var rx = cellpos[2], 
-						ry = cellpos[3],
-						right = btn.imgleft + btn.imgwidth,
-						bottom = btn.imgtop + btn.imgheight;
-					firebtndown = (rx >= btn.imgleft && rx < right && ry >= btn.imgtop && ry < bottom); //click on AutoFilter button
-				}
+			var firebtndown = false,
+				btn = this.getBtn ? this.getBtn(row, col) : null;
+			if (_isLeftMouseEvt(evt) && btn) {
+				var rx = cellpos[2], 
+					ry = cellpos[3],
+					right = btn.imgleft + btn.imgwidth,
+					bottom = btn.imgtop + btn.imgheight;
+				firebtndown = (rx >= btn.imgleft && rx < right && ry >= btn.imgtop && ry < bottom); //click on AutoFilter button
 			}
 			if (firebtndown)
-				this._doBtndown(evt, 'af', btn.$n());
+				this._doBtndown(evt, 'af', btn.$n(), btn);
 			else if (_isLeftMouseEvt(evt) || jq(cmp).attr('zs.t') == "SHighlight") {
 				sheet.dp.moveFocus(row, col, false, true, false, true);
 				var ls = this.getLastSelection();//cause of merge, focus might be change, get form last

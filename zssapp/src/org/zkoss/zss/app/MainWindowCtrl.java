@@ -80,6 +80,7 @@ import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.CellMouseEvent;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.Events;
+import org.zkoss.zss.ui.event.FilterMouseEvent;
 import org.zkoss.zss.ui.event.HeaderEvent;
 import org.zkoss.zss.ui.event.HeaderMouseEvent;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
@@ -503,47 +504,18 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		Ranges.range(spreadsheet.getSelectedSheet()).applyFilter();
 	}
 
-	public void onFilter$spreadsheet(CellMouseEvent event) {
-		Worksheet sheet = spreadsheet.getSelectedSheet();
-		AutoFilter autoFilter = sheet.getAutoFilter();
-		CellRangeAddress cellRangeAddr = autoFilter.getRangeAddress();
-		int left = cellRangeAddr.getFirstColumn();
-		int top = cellRangeAddr.getFirstRow();
-		int right = cellRangeAddr.getLastColumn();
-		Range range = 
-			Ranges.range(spreadsheet.getSelectedSheet(), cellRangeAddr.getFirstRow(), left, cellRangeAddr.getLastRow(), right);
-		int fieldIdx = 0 ;
-		for (int i = left; i <= right; i++) {
-			fieldIdx += 1;
-			Rect rect = getMergedRect(Utils.getCell(sheet, top, i));
-			if (rect != null && rect.getRight() != -1) {
-				i = rect.getRight();
-			}
-			if (i == event.getColumn()) {
-				break;
-			}
-		}
-		openAutoFilterDialog(new Object[]{fieldIdx, event.getColumn(), range});
-	}
-	
-	private Rect getMergedRect(Cell cell) {
-		if (cell == null)
-			return null;
-		org.zkoss.poi.ss.usermodel.Sheet sheet = cell.getSheet();
-		int row = cell.getRowIndex();
-		int col = cell.getColumnIndex();
-		for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
-			org.zkoss.poi.ss.util.CellRangeAddress ref = sheet.getMergedRegion(i);
-			int top = ref.getFirstRow();
-	        int btm = ref.getLastRow();
-	        int left = ref.getFirstColumn();
-	        int right = ref.getLastColumn();
-	        
-	        if (row >= ref.getFirstRow() && row <= ref.getLastRow() &&
-	        	col >= ref.getFirstColumn() && col <= ref.getLastColumn())
-	        	return new Rect(left, top, right, btm);
-		}
-		return null;
+	public void onFilter$spreadsheet(FilterMouseEvent event) {
+		final Worksheet sheet = spreadsheet.getSelectedSheet();
+		final AutoFilter autoFilter = sheet.getAutoFilter();
+		final CellRangeAddress cellRangeAddr = autoFilter.getRangeAddress();
+		final int left = cellRangeAddr.getFirstColumn();
+		final int top = cellRangeAddr.getFirstRow();
+		final int right = cellRangeAddr.getLastColumn();
+		final int bottom = cellRangeAddr.getLastRow();
+		final Range range = 
+			Ranges.range(spreadsheet.getSelectedSheet(), top, left, bottom, right);
+		final int fieldIdx = event.getField();
+		openAutoFilterDialog(new Object[]{fieldIdx, left + fieldIdx - 1, range});
 	}
 	
 	public void onClick$insertHyperlinkBtn() {

@@ -42,6 +42,8 @@ ZK Spreadsheet 2.1.0
   329 Move Focus on hidden row/column, the row/column header highlight is not correct
   332 Scroll sheet down and up cause javascript error
   333 Merged cell with auto filter has more one filter button
+  334 AutoFilter cause exception
+  336 Showing incorrect contents when press filter drop button in merge cell 
   
 	------------
 ZK Spreadsheet 2.0.1
