@@ -972,6 +972,10 @@ public final class BookHelper {
 		}
 	}
 
+	public static Object getEvalCellValue(Cell cell) {
+		return getCellObject(cell);
+	}
+	
 	public static Object getCellValue(Cell cell) {
 		final int cellType = cell.getCellType();
 		switch(cellType) {

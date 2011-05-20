@@ -17,6 +17,7 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.ctrl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +26,7 @@ import java.util.TreeSet;
 import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
@@ -52,17 +54,17 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 	private Button okBtn;
 	
 	private final static String KEY_ROW_INFO = "rowInfo";
-	private final static String BLANK_DISPLAY = "Blanks";
+	private final static String BLANK_DISPLAY = "(Blanks)";
 	private final static Comparable BLANK_VALUE = new Comparable() {
 		@Override
 		public int compareTo(Object o) {
 			return BLANK_VALUE.equals(o) ? 0 : 1; //unless same otherwise BLANK_VALUE is always the biggest!
 		}
 	}; 
-	private final RowInfo BLANK_ROW_INFO = new RowInfo(0, 0, BLANK_VALUE, BLANK_DISPLAY);
+	private final RowInfo BLANK_ROW_INFO = new RowInfo(BLANK_VALUE, BLANK_DISPLAY);
 
-	int fieldIndex = 0;
-	int columnIndex = 0;
+	private int fieldIndex = 0;
+	private int columnIndex = 0;
 	private Worksheet worksheet;
 	private Range range;
 	
@@ -71,40 +73,64 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 		return r != null && r.getZeroHeight();
 	}
 	
-	public void onOpen$_autoFilterDialog(ForwardEvent evt) {
-		Object[] info = (Object[]) evt.getOrigin().getData();
-		fieldIndex = (Integer) info[0];
-		columnIndex = (Integer) info[1];
-		range = (Range) info[2];
-
+	private void fetchRowInfos(FilterColumn fc, Range range, Set<RowInfo> all, Set<RowInfo> selected) {
+		final Set criteria1 = fc == null ? null : fc.getCriteria1();
+		final boolean nofilter = criteria1 == null || criteria1.isEmpty(); 
 		boolean hasBlank = false;
-		TreeSet<RowInfo> rowInfos = new TreeSet<RowInfo>();
-
-		worksheet = (Worksheet) range.getSheet();
+		boolean selectedBlank = false;
 		final int top = range.getRow() + 1;
 		final int bottom = range.getLastRow();
 		for (int i = top; i <= bottom; i++) {
+			if (nofilter && isHiddenRow(worksheet, i)) {
+				continue;
+			}
 			final Cell c = Utils.getCell(worksheet, i, columnIndex);
 			final boolean blankcell = BookHelper.isBlankCell(c);
 			if (!blankcell) {
 				String displaytxt = BookHelper.getCellText(c);
-				Object val = BookHelper.getCellValue(c); 
-				rowInfos.add(new RowInfo(i, columnIndex, val, displaytxt));
+				Object val = BookHelper.getEvalCellValue(c);
+				RowInfo rowInfo = new RowInfo(val, displaytxt); 
+				all.add(rowInfo);
+				if (criteria1 == null || criteria1.isEmpty() || criteria1.contains(displaytxt)) { //selected
+					selected.add(rowInfo);
+				}
 			} else {
 				hasBlank = true;
+				if (!selectedBlank && (nofilter || criteria1.contains("="))) { //selected
+					selectedBlank = true;
+				}
 			}
 		}
-		if (hasBlank)
-			rowInfos.add(BLANK_ROW_INFO);
-
+		if (hasBlank) {
+			all.add(BLANK_ROW_INFO);
+		}
+		if (selectedBlank) {
+			selected.add(BLANK_ROW_INFO);
+		}
+	}
+	
+	public void onOpen$_autoFilterDialog(ForwardEvent evt) {
+		Object[] info = (Object[]) evt.getOrigin().getData();
+		range = (Range) info[2];
+		worksheet = (Worksheet) range.getSheet();
+		final AutoFilter af = worksheet.getAutoFilter();
+		if (af == null) {
+			return;
+		}
+		fieldIndex = (Integer) info[0];
+		columnIndex = (Integer) info[1];
+		
+		final FilterColumn fc = af.getFilterColumn(fieldIndex - 1);
+		final TreeSet<RowInfo> rowInfos = new TreeSet<RowInfo>();
+		final Set<RowInfo> selected = new HashSet<RowInfo>();
+		fetchRowInfos(fc, range, rowInfos, selected);
+		
 		_filterListbox.setModel(new ListModelList(rowInfos));
 		
 		//handle selection
 		ListModelList model = (ListModelList) _filterListbox.getListModel();
-		for(final Iterator it = model.iterator(); it.hasNext();) {
-			final RowInfo rowInfo = (RowInfo) it.next();
-			if (!isHiddenRow(worksheet, rowInfo.row))
-				model.addSelection(rowInfo);
+		for(RowInfo rowInfo : selected) {
+			model.addSelection(rowInfo);
 		}
 		
 		_filterListbox.setItemRenderer(new ListitemRenderer() {
@@ -117,14 +143,10 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 	}
 	
 	private static class RowInfo implements Comparable {
-		int row;
-		int col;
-		Object value;
-		String display;
+		private Object value;
+		private String display;
 		
-		RowInfo(int rowIdx, int colIdx, Object val, String displayVal) {
-			row = rowIdx;
-			col = colIdx;
+		RowInfo(Object val, String displayVal) {
 			value = val;
 			display = displayVal;
 		}
