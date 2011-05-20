@@ -47,6 +47,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Tree;
 import org.zkoss.zul.Treeitem;
 import org.zkoss.zul.Window;
+import org.zkoss.zul.api.Comboitem;
 
 /**
  * @author Sam
@@ -81,8 +82,11 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 		super.doAfterCompose(comp);
 		
 		ss = checkNotNull(Zssapps.getSpreadsheetFromArg(), "Spreadsheet is null");
+		linkTypeBtns.put(webBtn, WEBLINK_CONTENT_URI);
+		linkTypeBtns.put(docBtn, DOCLINK_CONTENT_URI);
+		linkTypeBtns.put(mailBtn, MAILLINK_CONTENT_URI);
 		
-		init();
+		setLinkType(webBtn);
 	}
 	
 	public void onOpen$_insertHyperlinkDialog() {
@@ -98,20 +102,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 		isCellHasDisplayString = !"".equals(display);
 		if (isCellHasDisplayString)
 			displayHyperlink.setValue(display);
-		
-		//reset content
-		content.setSrc(null);
-		initPageContent();
-	}
-	
-	/**
-	 * Setup default page to web link
-	 */
-	private void initPageContent() {
-		linkTypeBtns.put(webBtn, WEBLINK_CONTENT_URI);
-		linkTypeBtns.put(docBtn, DOCLINK_CONTENT_URI);
-		linkTypeBtns.put(mailBtn, MAILLINK_CONTENT_URI);
-		
+
 		setLinkType(webBtn);
 	}
 
@@ -129,7 +120,6 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 		String addr = getAddress();
 		if ("".equals(addr)) {
 			try {
-				//TODO use i18n instead
 				Messagebox.show("Please input address");
 			} catch (InterruptedException e) {
 			}
@@ -240,7 +230,9 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 			
 			@Override
 			public void onEvent(Event evt) throws Exception {
-				displayHyperlink.setValue(addr.getSelectedItem().getLabel());
+				Comboitem seld = addr.getSelectedItem();
+				if (seld != null)
+					displayHyperlink.setValue(seld.getLabel());
 			}
 		});
 		addr.addEventListener(Events.ON_OK, onOkEventListener);

@@ -39,6 +39,7 @@ ZK Spreadsheet 2.1.0
   324 Spreadsheet wrap text doesn't work
   325 Spreadsheet unwrap text doesn't work
   326 Sizing row height the associated Merged area should sizing accordingly
+  328 ZK Spreadsheet App throw ComponentNotFoundException when press "hyperlink" button
   329 Move Focus on hidden row/column, the row/column header highlight is not correct
   332 Scroll sheet down and up cause javascript error
   333 Merged cell with auto filter has more one filter button

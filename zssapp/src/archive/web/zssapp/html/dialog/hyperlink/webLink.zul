@@ -1,7 +1,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <vlayout spacing="0.6em">
 	<label value="${c:l('hyperlink.address')}" />
-	<combobox id="addrCombobox" cols="75">
+	<combobox id="addrCombobox" hflex="true">
 		<comboitem label="http://www.zkoss.org/"></comboitem>
 	</combobox>
 </vlayout>
