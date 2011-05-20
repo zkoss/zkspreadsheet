@@ -1821,7 +1821,7 @@ public class RangeImpl implements Range {
 		final List<FilterColumn> fltcs = af.getFilterColumns();
 		for(FilterColumn fltc: fltcs) {
 			if (fc.equals(fltc)) continue;
-			if (shallHide(fltc, row, col + fc.getColId())) { //any FilterColumn that shall hide the row
+			if (shallHide(fltc, row, col)) { //any FilterColumn that shall hide the row
 				return false;
 			}
 		}
@@ -1829,11 +1829,11 @@ public class RangeImpl implements Range {
 	}
 	
 	private boolean shallHide(FilterColumn fc, int row, int col) {
-		final Cell cell = BookHelper.getCell(_sheet, row, col);
+		final Cell cell = BookHelper.getCell(_sheet, row, col + fc.getColId());
 		final boolean blank = BookHelper.isBlankCell(cell); 
 		final String val =  blank ? "=" : BookHelper.getCellText(cell); //"=" means blank!
 		final Set critera1 = fc.getCriteria1();
-		return critera1 != null && !critera1.contains(val);
+		return critera1 != null && !critera1.isEmpty() && !critera1.contains(val);
 	}
 
 	@Override
@@ -1893,7 +1893,7 @@ public class RangeImpl implements Range {
 			if (fcs == null)
 				return;
 			for(FilterColumn fc : fcs) {
-				if (shallHide(fc, r, fc.getColId() + col1)) {
+				if (shallHide(fc, r, col1)) {
 					hidden = true;
 					break;
 				}
@@ -1943,7 +1943,7 @@ public class RangeImpl implements Range {
 		for (int r = row; r <= row2; ++r) {
 			final Cell cell = BookHelper.getCell(_sheet, r, col); 
 			final String val = BookHelper.isBlankCell(cell) ? "=" : BookHelper.getCellText(cell); //"=" means blank!
-			if (!cr1.contains(val)) { //to be hidden
+			if (cr1 != null && !cr1.isEmpty() && !cr1.contains(val)) { //to be hidden
 				final Row rowobj = _sheet.getRow(r);
 				if (rowobj == null || !rowobj.getZeroHeight()) { //a non-hidden row
 					new RangeImpl(r, col, _sheet, _sheet).getRows().setHidden(true);

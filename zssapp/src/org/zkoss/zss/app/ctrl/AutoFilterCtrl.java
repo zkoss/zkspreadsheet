@@ -17,9 +17,12 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.ctrl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
+import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Row;
@@ -50,12 +53,23 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 	
 	private final static String KEY_ROW_INFO = "rowInfo";
 	private final static String BLANK_DISPLAY = "Blanks";
-	private final RowInfo BLANK_ROW_INFO = new RowInfo(0, 0, "=", BLANK_DISPLAY);
+	private final static Comparable BLANK_VALUE = new Comparable() {
+		@Override
+		public int compareTo(Object o) {
+			return BLANK_VALUE.equals(o) ? 0 : 1; //unless same otherwise BLANK_VALUE is always the biggest!
+		}
+	}; 
+	private final RowInfo BLANK_ROW_INFO = new RowInfo(0, 0, BLANK_VALUE, BLANK_DISPLAY);
 
 	int fieldIndex = 0;
 	int columnIndex = 0;
 	private Worksheet worksheet;
 	private Range range;
+	
+	private boolean isHiddenRow(Worksheet sheet, int rowIdx) {
+		final Row r = sheet.getRow(rowIdx);
+		return r != null && r.getZeroHeight();
+	}
 	
 	public void onOpen$_autoFilterDialog(ForwardEvent evt) {
 		Object[] info = (Object[]) evt.getOrigin().getData();
@@ -73,8 +87,9 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 			final Cell c = Utils.getCell(worksheet, i, columnIndex);
 			final boolean blankcell = BookHelper.isBlankCell(c);
 			if (!blankcell) {
-				String val = BookHelper.getCellText(c);
-				rowInfos.add(new RowInfo(i, columnIndex, val, val));
+				String displaytxt = BookHelper.getCellText(c);
+				Object val = BookHelper.getCellValue(c); 
+				rowInfos.add(new RowInfo(i, columnIndex, val, displaytxt));
 			} else {
 				hasBlank = true;
 			}
@@ -83,108 +98,74 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 			rowInfos.add(BLANK_ROW_INFO);
 
 		_filterListbox.setModel(new ListModelList(rowInfos));
+		
+		//handle selection
+		ListModelList model = (ListModelList) _filterListbox.getListModel();
+		for(final Iterator it = model.iterator(); it.hasNext();) {
+			final RowInfo rowInfo = (RowInfo) it.next();
+			if (!isHiddenRow(worksheet, rowInfo.row))
+				model.addSelection(rowInfo);
+		}
+		
 		_filterListbox.setItemRenderer(new ListitemRenderer() {
 			@Override
 			public void render(Listitem item, Object data) throws Exception {
 				RowInfo info = (RowInfo)data;
-				if (info.display != null)
-					item.setLabel(info.display);
-				item.setAttribute(KEY_ROW_INFO, info);
-				
-				if (info == BLANK_ROW_INFO) {
-					setBlankRowSelection(item);
-				} else {
-					Row r = worksheet.getRow(info.row);
-					if (r != null) {
-						item.setSelected(!r.getZeroHeight());
-					}	
-				}
-			}
-			private boolean isRowHidden(Worksheet sheet, int rowIdx, int colIdx) {
-				Row r = sheet.getRow(rowIdx);
-				if (r == null)
-					r = Utils.getOrCreateRow(sheet, rowIdx);
-				return r.getZeroHeight();
-			}
-			private void setBlankRowSelection(Listitem item) {
-				boolean isHidden = true;
-				for (int i = range.getRow(); i <= range.getLastRow(); i++) {
-					Cell c = Utils.getCell(worksheet, i, columnIndex);
-					if (c != null && c.getCellType() != Cell.CELL_TYPE_BLANK)
-						continue;
-					if ( !(isHidden = isRowHidden(worksheet, i, columnIndex)) ) {
-						break;
-					}
-				}
-				item.setSelected(!isHidden);
+				item.setLabel(info.display);
 			}
 		});
 	}
 	
-	class RowInfo implements Comparable {
+	private static class RowInfo implements Comparable {
 		int row;
 		int col;
-		String text;
+		Object value;
 		String display;
 		
-		RowInfo(int rowIdx, int colIdx, String val, String displayVal) {
+		RowInfo(int rowIdx, int colIdx, Object val, String displayVal) {
 			row = rowIdx;
 			col = colIdx;
-			text = val;
+			value = val;
 			display = displayVal;
 		}
 
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result
-					+ ((display == null) ? 0 : display.hashCode());
-			return result;
+			return value == null ? 0 : value.hashCode();
 		}
 
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
 				return true;
-			if (obj == null)
+			if (!(obj instanceof RowInfo))
 				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			RowInfo other = (RowInfo) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
-			if (display == null) {
-				if (other.display != null)
-					return false;
-			} else if (!display.equals(other.display))
-				return false;
-			return true;
-		}
-
-		private AutoFilterCtrl getOuterType() {
-			return AutoFilterCtrl.this;
+			final RowInfo other = (RowInfo) obj;
+			return Objects.equals(other.value, this.value);
 		}
 
 		@Override
 		public int compareTo(Object o) {
-			if (display == BLANK_DISPLAY)
-				return Integer.MAX_VALUE;
-			RowInfo target = (RowInfo) o;
-			return display.compareTo(target.display);
+			final RowInfo other = (RowInfo) o;
+			return ((Comparable)this.value).compareTo(other.value);
 		}
 	}
 
 	public void onClick$okBtn() {
-		List items = _filterListbox.getItems();
-		ArrayList<String> criteria = new ArrayList<String>();
-		for (int i = 0; i < items.size(); i++) {
-			Listitem item = (Listitem) items.get(i);
-			RowInfo info = (RowInfo) item.getAttribute(KEY_ROW_INFO);
-			if (item.isSelected())
-				criteria.add(info.text);
+		final ListModelList model = (ListModelList) _filterListbox.getListModel();
+		final int itemcount = model.size();
+		final Set selected = model.getSelection();
+		final int selcount = selected.size();
+		if (selcount < itemcount) { //partial selection
+			final String[] criteria = new String[selcount];
+			int j = 0;
+			for (final Iterator it = new TreeSet(selected).iterator(); it.hasNext(); ) {
+				RowInfo info = (RowInfo) it.next();
+				criteria[j++] = BLANK_ROW_INFO.equals(info) ? "=" : info.display;
+			}
+			range.autoFilter(fieldIndex, criteria, AutoFilter.FILTEROP_VALUES, null, null);
+		} else { //select all!
+			range.autoFilter(fieldIndex, null, AutoFilter.FILTEROP_VALUES, null, null);
 		}
-		range.autoFilter(fieldIndex, criteria.toArray(new String[criteria.size()]), AutoFilter.FILTEROP_VALUES, null, null);
 		_autoFilterDialog.fireOnClose(null);
 	}
 }
