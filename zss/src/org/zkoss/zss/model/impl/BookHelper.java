@@ -4520,7 +4520,17 @@ public final class BookHelper {
 	
 	//Whether a blank cell
 	public static boolean isBlankCell(Cell cell) {
-		return cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK;
+		if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK) {
+			return true;
+		}
+		Object val = BookHelper.getEvalCellValue(cell);
+		if (val instanceof RichTextString) {
+			val = ((RichTextString)val).getString();
+		}
+		if (val instanceof String) {
+			return Strings.isEmpty((String)val);
+		}
+		return val == null;
 	}
 	
 	public static FilterColumn getOrCreateFilterColumn(AutoFilter af, int colId) {

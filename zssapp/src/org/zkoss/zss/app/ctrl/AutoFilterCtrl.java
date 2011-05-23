@@ -27,6 +27,7 @@ import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
+import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
@@ -89,6 +90,9 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 			if (!blankcell) {
 				String displaytxt = BookHelper.getCellText(c);
 				Object val = BookHelper.getEvalCellValue(c);
+				if (val instanceof RichTextString) {
+					val = ((RichTextString)val).getString();
+				}
 				RowInfo rowInfo = new RowInfo(val, displaytxt); 
 				all.add(rowInfo);
 				if (criteria1 == null || criteria1.isEmpty() || criteria1.contains(displaytxt)) { //selected
