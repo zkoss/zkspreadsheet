@@ -262,6 +262,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				if (isOpen) {
 					getCellStyleContext().doTargetChange(
 							new SSRectCellStyle(Utils.getOrCreateCell(spreadsheet.getSelectedSheet(), 0, 0), spreadsheet));
+					syncAutoFilterStatus();
 				}
 			}
 		});
@@ -350,7 +351,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 						EditHelper.clearCutOrCopy(spreadsheet);
 					}
 				});
-		syncAutoFilterStatus();
 		
 	}
 	private void setSaveButtonState(Boolean saved) {
