@@ -17,6 +17,9 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.ctrl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -24,8 +27,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.zkoss.lang.Objects;
+import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.DateUtil;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
@@ -92,6 +97,8 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 				Object val = BookHelper.getEvalCellValue(c);
 				if (val instanceof RichTextString) {
 					val = ((RichTextString)val).getString();
+				} else if (c.getCellType() == Cell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(c)) {
+					val = c.getDateCellValue();
 				}
 				RowInfo rowInfo = new RowInfo(val, displaytxt); 
 				all.add(rowInfo);
@@ -113,6 +120,114 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 		}
 	}
 	
+	private static class MyComparator implements Comparator<RowInfo> {		
+		@Override
+		public int compare(RowInfo o1, RowInfo o2) {
+			final Object val1 = o1.value;
+			final Object val2 = o2.value;
+			final int type1 = getType(val1);
+			final int type2 = getType(val2);
+			final int typediff = type1 - type2;
+			if (typediff != 0) {
+				return typediff;
+			}
+			switch(type1) {
+			case 1: //Date
+				return compareDates((Date)val1, (Date)val2);
+			case 2: //Number
+				return ((Double)val1).compareTo((Double)val2);
+			case 3: //String
+				return ((String)val1).compareTo((String)val2);
+			case 4: //Boolean
+				final boolean b1 = ((Boolean)val1).booleanValue();
+				final boolean b2 = ((Boolean)val2).booleanValue();
+				return !b1 && b2 ? -1 : b1 && !b2 ? 1 : 0;
+			case 5: //Error(Byte)
+				return ((Byte)val1).compareTo((Byte)val2);
+			default:
+			case 6: //(Blanks)
+				return 0;
+			}
+		}
+		private int compareDates(Date val1, Date val2) {
+			final Calendar cal1 = Calendar.getInstance();
+			final Calendar cal2 = Calendar.getInstance();
+			cal1.setTime((Date)val1);
+			cal2.setTime((Date)val2);
+			
+			//year
+			final int y1 = cal1.get(Calendar.YEAR);
+			final int y2 = cal2.get(Calendar.YEAR);
+			final int ydiff = y2 - y1; //bigger year is less in sorting
+			if (ydiff != 0) {
+				return ydiff;
+			}
+			
+			//month
+			final int m1 = cal1.get(Calendar.MONTH);
+			final int m2 = cal2.get(Calendar.MONTH);
+			final int mdiff = m1 - m2; 
+			if (mdiff != 0) {
+				return mdiff;
+			}
+			
+			//day
+			final int d1 = cal1.get(Calendar.DAY_OF_MONTH);
+			final int d2 = cal2.get(Calendar.DAY_OF_MONTH);
+			final int ddiff = d1 - d2; //smaller month is bigger in sorting 
+			if (ddiff != 0) {
+				return ddiff;
+			}
+			
+			//hour
+			final int h1 = cal1.get(Calendar.HOUR_OF_DAY);
+			final int h2 = cal2.get(Calendar.HOUR_OF_DAY);
+			final int hdiff = h1 - h2;
+			if (hdiff != 0) {
+				return hdiff;
+			}
+			
+			//minutes
+			final int mm1 = cal1.get(Calendar.MINUTE);
+			final int mm2 = cal2.get(Calendar.MINUTE);
+			final int mmdiff = mm1 - mm2;
+			if (mmdiff != 0) {
+				return mmdiff;
+			}
+			
+			//seconds
+			final int s1 = cal1.get(Calendar.SECOND);
+			final int s2 = cal2.get(Calendar.SECOND);
+			final int sdiff = s1 - s2;
+			if (sdiff != 0) {
+				return sdiff;
+			}
+			
+			//millseconds
+			final int ms1 = cal1.get(Calendar.MILLISECOND);
+			final int ms2 = cal2.get(Calendar.MILLISECOND);
+			return ms1 - ms2;
+		}
+		//Date < Number < String < Boolean(FALSE < TRUE) < Error(byte) < (Blanks)
+		private int getType(Object val) {
+			if (val instanceof Date) {
+				return 1;
+			}
+			if (val instanceof Byte) { //error
+				return 5;
+			}
+			if (val instanceof Number) {
+				return 2;
+			}
+			if (val instanceof String) {
+				return Strings.isEmpty((String)val) ? 6 : 3;
+			}
+			if (val instanceof Boolean) {
+				return 4;
+			}
+			return 6;
+		}
+	}
 	public void onOpen$_autoFilterDialog(ForwardEvent evt) {
 		Object[] info = (Object[]) evt.getOrigin().getData();
 		range = (Range) info[2];
@@ -125,7 +240,7 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 		columnIndex = (Integer) info[1];
 		
 		final FilterColumn fc = af.getFilterColumn(fieldIndex - 1);
-		final TreeSet<RowInfo> rowInfos = new TreeSet<RowInfo>();
+		final TreeSet<RowInfo> rowInfos = new TreeSet<RowInfo>(new MyComparator());
 		final Set<RowInfo> selected = new HashSet<RowInfo>();
 		fetchRowInfos(fc, range, rowInfos, selected);
 		
@@ -146,7 +261,7 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 		});
 	}
 	
-	private static class RowInfo implements Comparable {
+	private static class RowInfo {
 		private Object value;
 		private String display;
 		
@@ -168,14 +283,6 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 			final RowInfo other = (RowInfo) obj;
 			return Objects.equals(other.value, this.value);
 		}
-
-		@Override
-		public int compareTo(Object o) {
-			final RowInfo other = (RowInfo) o;
-			if (BLANK_VALUE.equals(other.value))
-				return BLANK_VALUE.equals(this.value) ? 0 : -1;
-			return ((Comparable)this.value).compareTo(other.value);
-		}
 	}
 
 	public void onClick$okBtn() {
@@ -186,7 +293,9 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 		if (selcount < itemcount) { //partial selection
 			final String[] criteria = new String[selcount];
 			int j = 0;
-			for (final Iterator it = new TreeSet(selected).iterator(); it.hasNext(); ) {
+			final TreeSet<RowInfo> selset = new TreeSet<RowInfo>(new MyComparator());
+			selset.addAll(selected);
+			for (final Iterator<RowInfo> it = selset.iterator(); it.hasNext(); ) {
 				RowInfo info = (RowInfo) it.next();
 				criteria[j++] = BLANK_ROW_INFO.equals(info) ? "=" : info.display;
 			}
