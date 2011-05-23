@@ -62,7 +62,7 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 			return BLANK_VALUE.equals(o) ? 0 : 1; //unless same otherwise BLANK_VALUE is always the biggest!
 		}
 	}; 
-	private final RowInfo BLANK_ROW_INFO = new RowInfo(BLANK_VALUE, BLANK_DISPLAY);
+	private final static RowInfo BLANK_ROW_INFO = new RowInfo(BLANK_VALUE, BLANK_DISPLAY);
 
 	private int fieldIndex = 0;
 	private int columnIndex = 0;
@@ -172,6 +172,8 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 		@Override
 		public int compareTo(Object o) {
 			final RowInfo other = (RowInfo) o;
+			if (BLANK_VALUE.equals(other.value))
+				return BLANK_VALUE.equals(this.value) ? 0 : -1;
 			return ((Comparable)this.value).compareTo(other.value);
 		}
 	}
