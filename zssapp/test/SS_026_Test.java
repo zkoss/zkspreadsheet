@@ -18,11 +18,11 @@ public class SS_026_Test extends SSAbstractTestCase {
     	waitResponse();
     	click("jq('$viewFormulaBar a.z-menu-item-cnt-ck')");
     	waitResponse();
-    	verifyTrue(jq("$formulaBar").height() == 0);
+    	verifyFalse(isWidgetVisible("$formulaBar"));
     	click("jq('$viewMenu button.z-menu-btn')");
     	waitResponse();
     	click("jq('$viewFormulaBar a.z-menu-item-cnt-unck')");
     	waitResponse();
-    	verifyTrue(jq("$formulaBar").height() != 0);
+    	verifyTrue(isWidgetVisible("$formulaBar"));
     }
 }
