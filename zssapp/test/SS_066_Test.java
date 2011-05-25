@@ -16,7 +16,7 @@ public class SS_066_Test extends SSAbstractTestCase {
         waitResponse();
         
         // Input color hex code, then press Enter.
-        JQuery colorTextbox = jq(".z-colorpalette-hex-inp:eq(1)");
+        JQuery colorTextbox = jq(".z-colorpalette-hex-inp:visible");
         String fontColorStr = "#990033";
         type(colorTextbox, fontColorStr);
         keyPressEnter(colorTextbox);
