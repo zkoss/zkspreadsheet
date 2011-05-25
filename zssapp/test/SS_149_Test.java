@@ -25,7 +25,7 @@ public class SS_149_Test extends SSAbstractTestCase {
 		waitResponse();
 
 	    // Input color hex code, then press Enter.
-        JQuery colorTextbox = jq(".z-colorpalette-hex-inp:eq(5)");
+        JQuery colorTextbox = jq(".z-colorbtn-pp:visible .z-colorpalette-hex-inp");
         String bgColorStr = "#00ff00";
         type(colorTextbox, bgColorStr);
         keyPressEnter(colorTextbox);
@@ -38,11 +38,10 @@ public class SS_149_Test extends SSAbstractTestCase {
         //Is it acceptable in this spec?
         if (style != null) {
             verifyTrue("Unexcepted result: " + cell_B_13_Outer.css("background-color"), 
-            		ColorVerifingHelper.isEqualColor("#009900", style));
+            		ColorVerifingHelper.isEqualColor("#00ff00", style));
         } else {
             verifyTrue("Cannot get style of specified cell!", false);
         }
-        sleep(5000);
 	}
 }
 
