@@ -28,9 +28,7 @@ public class SS_117_Test extends SSAbstractTestCase {
 		click(jq("$okBtn td.z-button-cm"));
 		waitResponse();
 
-		//verify, set height to 40, but expect 39 as result
-		int height = getSpecifiedCell(5,11).height();
-		verifyTrue(height == 39);
+		verifyTrue(getSpecifiedCell(5,11).height() == 40);
 	}
 }
 
