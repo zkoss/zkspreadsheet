@@ -19,7 +19,7 @@ public class SS_069_Test extends SSAbstractTestCase {
         waitResponse();
         
         // Click bottom border
-        click(jq(".z-menu-item:eq(0)"));
+        click(jq(".z-menu-popup:visible .z-menu-item:eq(0)"));
         waitResponse();
         
         // Verify

@@ -12,14 +12,14 @@ public class SS_072_Test extends SSAbstractTestCase {
         clickCell(cell_L_13);
         
         // Click Border icon
-        JQuery borderIcon = jq("$borderBtn");
+        JQuery borderIcon = jq("$fastIconBtn $borderBtn:visible");
         mouseOver(borderIcon);
         waitResponse();
         clickAt(borderIcon, "30,0");
         waitResponse();
         
         // Click right border
-        click(jq(".z-menu-item:eq(3)"));
+        click(jq(".z-menu-popup:visible .z-menu-item:eq(3)"));
         waitResponse();
         
         // Verify
