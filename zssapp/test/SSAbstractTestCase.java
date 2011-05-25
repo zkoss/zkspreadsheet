@@ -77,7 +77,7 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @return A JQuery object of cell. (Inner div)
      */
     public JQuery getSpecifiedCell(int col, int row) {
-        return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div");
+        return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").first();
     }
 
     /**
@@ -300,4 +300,13 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * Note: You also have to implement your validation in this method.
      */
     protected abstract void executeTest();
+    
+    /**
+     * Returns whether widget is exist and visible 
+     * @param selector
+     * @return
+     */
+    public boolean isWidgetVisible(String selector) {
+    	return widget(jq(selector)).exists() && jq(selector).isVisible();
+    }
 }
