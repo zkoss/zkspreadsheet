@@ -13,6 +13,8 @@ public class SS_169_Test extends SSAbstractTestCase {
     	
     	verifyTrue(isWidgetVisible("$_openFileDialog"));
     	
-    	//TODO: need to open a excel file and verify
+    	doubleClick(jq("$_openFileDialog $filesListbox .z-listcell").first());
+    	String text = getSpecifiedCell(0, 3).text();
+    	verifyEquals(text, "Collaboration");
     }
 }
