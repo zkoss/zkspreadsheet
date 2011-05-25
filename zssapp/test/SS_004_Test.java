@@ -17,7 +17,6 @@ public class SS_004_Test extends SSAbstractTestCase {
     	// click("jq('$uploadBtn input')");
     	
     	waitResponse();
-    	sleep(5000);
     	// TODO verify if cell is still selected
     }
 }

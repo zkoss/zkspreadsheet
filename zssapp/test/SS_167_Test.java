@@ -28,7 +28,6 @@ public class SS_167_Test extends SSAbstractTestCase {
 		verifyTrue("rgba(0, 0, 0, 0):Arial:left".equals(style) || "transparent:Arial:left".equals(style));
 		style = getCellCompositeStyle(5, 6);
 		verifyTrue("rgba(0, 0, 0, 0):Arial:right".equals(style) || "transparent:Arial:right".equals(style));
-		sleep(5000);
 	}
 }
 

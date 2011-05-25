@@ -33,7 +33,6 @@ public class SS_222_Test extends SSAbstractTestCase {
 		waitResponse();
 		
 		//how to verify
-		sleep(5000);
 	}
 }
 

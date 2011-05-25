@@ -18,8 +18,6 @@ public class SS_064_Test extends SSAbstractTestCase {
         } else {
             verifyTrue("Cannot get style of specified cell!", false);
         }
-        
-        sleep(4000);
     }
 
 }

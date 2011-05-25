@@ -26,7 +26,6 @@ public class SS_094_Test extends SSAbstractTestCase {
         cell_L_13 = getCell_L13();
         clickCell(cell_L_13);
         verifyEquals(formulaBar.val(), cell_L_13.text());
-        sleep(12000);
     }
 
     private JQuery getCell_L13() {

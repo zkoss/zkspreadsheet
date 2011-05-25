@@ -25,7 +25,6 @@ public class SS_221_Test extends SSAbstractTestCase {
 		shiftKeyUp();
 		
 		//how to verify
-		sleep(5000);
 	}
 }
 
