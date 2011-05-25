@@ -9,7 +9,7 @@ public class SS_007_Test extends SSAbstractTestCase {
     	waitResponse();
     	click("jq('@menu[label=\"Export\"] a.z-menu-cnt-img')");
     	waitResponse();
-    	click("jq('$exportToPdf a.z-menu-item-cnt')");
+    	click("jq('$exportPdf a.z-menu-item-cnt')");
     	waitResponse();
     	click("jq('$export td.z-button-cm')");
     	waitResponse();

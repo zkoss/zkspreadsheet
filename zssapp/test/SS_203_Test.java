@@ -23,12 +23,12 @@ public class SS_203_Test extends SSAbstractTestCase {
 		click(jq("$customSort a.z-menu-item-cnt"));
 		waitResponse();
 		
-		click(jq("$sortWin @combobox i.z-combobox-rounded-btn-readonly:eq(2)"));
+		click(jq(" @div @combobox i.z-combobox-rounded-btn-readonly:eq(2)"));
 		waitResponse();
 		click(jq("@comboitem[label=\"From Z to A\"] td.z-comboitem-text"));
 		waitResponse();
 		
-		click(jq("$sortWin @combobox i.z-combobox-rounded-btn-readonly:eq(1)"));
+		click(jq("@div @combobox i.z-combobox-rounded-btn-readonly:eq(1)"));
 		waitResponse();
 		click(jq("@comboitem[label=\"Column B\"] td.z-comboitem-text"));
 		waitResponse();

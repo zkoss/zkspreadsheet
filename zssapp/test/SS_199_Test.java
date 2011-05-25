@@ -23,12 +23,16 @@ public class SS_199_Test extends SSAbstractTestCase {
 		click(jq("$customSort a.z-menu-item-cnt"));
 		waitResponse();
 		
-		click(jq("input[type=\"checkbox\"]:eq(2)"));
+		//check "has header"
+		click(jq("@window[title=\"Custom Sort\"] input[type=\"checkbox\"]:eq(1)"));
 		waitResponse();
-		click(jq("$sortWin @combobox i.z-combobox-rounded-btn-readonly:eq(1)"));
+		
+		//choose sort by "Column B"
+		click(jq(" @div @combobox i.z-combobox-rounded-btn-readonly:eq(1)"));
 		waitResponse();
 		click(jq("@comboitem[label=\"Column B\"] td.z-comboitem-text"));
 		waitResponse();
+		
 		click(jq("$okBtn td.z-button-cm"));
 		waitResponse();
 		
@@ -43,10 +47,10 @@ public class SS_199_Test extends SSAbstractTestCase {
 		String f15value = getSpecifiedCell(5,14).text();
 		String f16value = getSpecifiedCell(5,15).text();
 
-		verifyEquals(b13value,"Average total assets");
-		verifyEquals(b14value,"Current assets");
-		verifyEquals(b15value,"Fixed assets");
-		verifyEquals(b16value,"Total assets");
+		verifyEquals(b13value,"Average\u00A0total\u00A0assets");
+		verifyEquals(b14value,"Current\u00A0assets");
+		verifyEquals(b15value,"Fixed\u00A0assets");
+		verifyEquals(b16value,"Total\u00A0assets");
 		
 		verifyEquals(f13value,"120,000");
 		verifyEquals(f14value,"45,000");

@@ -11,7 +11,7 @@ public class SS_086_1_Test extends SSAbstractTestCase {
         click(jq("$insertHyperlinkBtn"));
         waitResponse();
         String urlValue = "http://ja.wikipedia.org/wiki";
-        type(jq(".z-window-highlighted .z-combobox-inp"), urlValue);
+        type(jq("$addrCombobox input.z-combobox-inp"), urlValue);
         waitResponse();
         
         keyDownNative(SHIFT);

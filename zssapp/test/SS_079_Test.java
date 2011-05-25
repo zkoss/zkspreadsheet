@@ -8,8 +8,11 @@ public class SS_079_Test extends SSAbstractTestCase {
         JQuery cell_J_22 = getSpecifiedCell(9, 21);
         clickCell(cell_J_22);
         clickCell(cell_J_22);
-        click(jq("$alignLeftBtn"));
-        waitResponse();
+        
+		click(jq("@dropdownbutton$halignBtn div.z-dpbutton-arrow:eq(0)"));
+		waitResponse();
+		click(jq("@menuitem[label=\"Align Text Left\"]").first());
+		waitResponse();
         
         cell_J_22 = getSpecifiedCell(9, 21);
         String textAlign = cell_J_22.css("text-align");

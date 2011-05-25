@@ -30,12 +30,17 @@ public class SS_198_Test extends SSAbstractTestCase {
 		click(jq("$customSort a.z-menu-item-cnt"));
 		waitResponse();
 		
-		click(jq("input[type=\"checkbox\"]:eq(1)"));
+		//check "Case sensitive"
+		click(jq("@window[title=\"Custom Sort\"] input[type=\"checkbox\"]:eq(0)"));
 		waitResponse();
-		click(jq("$sortWin @combobox i.z-combobox-rounded-btn-readonly:eq(1)"));
+		
+		//choose sort by "Column I"
+		click(jq(" @div @combobox i.z-combobox-rounded-btn-readonly:eq(1)"));
 		waitResponse();
 		click(jq("@comboitem[label=\"Column I\"] td.z-comboitem-text"));
 		waitResponse();
+		
+		//click OK button
 		click(jq("$okBtn td.z-button-cm"));
 		waitResponse();
 		

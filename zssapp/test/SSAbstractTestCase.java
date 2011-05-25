@@ -77,6 +77,7 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @return A JQuery object of cell. (Inner div)
      */
     public JQuery getSpecifiedCell(int col, int row) {
+    	//for not IE
         return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").first();
     }
 

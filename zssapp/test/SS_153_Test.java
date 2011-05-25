@@ -18,7 +18,9 @@ public class SS_153_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
 		rightClickCell(1,12);
-		click(jq(".z-toolbarbutton[title=\"Align Text Right\"] img:eq(2)"));
+		click(jq("$styleCtrlBottomPanel @dropdownbutton$halignBtn div.z-dpbutton-arrow"));
+		waitResponse();
+		click(jq(" @menupopup @menuitem[label=\"Align Text Right\"] a.z-menu-item-cnt:eq(2)"));
 		waitResponse();
 		rightClickCell(1,13);
 

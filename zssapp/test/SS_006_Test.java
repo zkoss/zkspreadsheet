@@ -13,6 +13,6 @@ public class SS_006_Test extends SSAbstractTestCase {
     	waitResponse();
     	
     	// TODO verify if open file window is opened
-    	verifyTrue(widget(jq("@window[mode=\"highlighted\"][title=\"Export to PDF\"] div.z-window-highlighted-header")).exists());
+    	verifyTrue(widget(jq("@window[title=\"Export to PDF\"]")).exists());
     }
 }

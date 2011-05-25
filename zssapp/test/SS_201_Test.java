@@ -27,7 +27,7 @@ public class SS_201_Test extends SSAbstractTestCase {
 		waitResponse();
 		click(jq("@comboitem[label=\"Sort left to right\"] td.z-comboitem-text"));
 		waitResponse();
-		click(jq("$sortWin @combobox i.z-combobox-rounded-btn-readonly:eq(1)"));
+		click(jq("@div @combobox i.z-combobox-rounded-btn-readonly:eq(1)"));
 		waitResponse();
 		click(jq("@comboitem[label=\"Row 13\"] td.z-comboitem-text"));
 		waitResponse();
@@ -45,15 +45,15 @@ public class SS_201_Test extends SSAbstractTestCase {
 		String i15value = getSpecifiedCell(8,14).text();
 		String i16value = getSpecifiedCell(8,15).text();
 
-		verifyEquals(f13value,"43,000");
+		verifyEquals(f13value,"45,000");
 		verifyEquals(f14value,"80,000");
-		verifyEquals(f15value,"123,000");
-		verifyEquals(f16value,"121,500");
+		verifyEquals(f15value,"125,000");
+		verifyEquals(f16value,"122,500");
 
-		verifyEquals(i13value,"46,500");
+		verifyEquals(i13value,"56,000");
 		verifyEquals(i14value,"80,000");
-		verifyEquals(i15value,"126,500");
-		verifyEquals(i16value,"123,250");
+		verifyEquals(i15value,"136,000");
+		verifyEquals(i16value,"128,000");
 	}
 }
 

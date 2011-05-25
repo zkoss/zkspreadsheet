@@ -10,11 +10,11 @@ public class SS_171_Test extends SSAbstractTestCase {
     	waitResponse();
     	click("jq('@menu[label=\"Export\"] a.z-menu-cnt-img')");
     	waitResponse();
-    	click("jq('$exportToPdf a.z-menu-item-cnt')");
+    	click("jq('$exportPdf a.z-menu-item-cnt')");
     	waitResponse();
     	
     	// TODO verify if open file window is opened
-    	verifyTrue(widget(jq("@window[mode=\"highlighted\"][title=\"Export to PDF\"] div.z-window-highlighted-header")).exists());
+    	verifyTrue(widget(jq("@window[title=\"Export to PDF\"]")).exists());
     	click("jq('$export td.z-button-cm')");
     	waitResponse();
     }

@@ -24,7 +24,9 @@ public class SS_033_Test extends SSAbstractTestCase {
 
         //Verify
         cell_B_8 = getSpecifiedCell(1, 7);
-        String style = ColorVerifingHelper.transform(cell_B_8.css("background-color"));
+        String bgB8 = cell_B_8.parent().css("background-color");
+        System.out.println(">>>>bgB8 = "+bgB8);
+        String style = ColorVerifingHelper.transform(bgB8);
         
         if (style != null) {
             verifyTrue("Unexcepted result: " + cell_B_8.css("background-color"), ColorVerifingHelper.isEqualColor(backgroundColorStr, style));

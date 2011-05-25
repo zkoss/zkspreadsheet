@@ -27,7 +27,7 @@ public class SS_212_Test extends SSAbstractTestCase {
 		waitResponse();
 		click(jq("@listcell[label=\"Currency\"] div.z-overflow-hidden"));
 		waitResponse();
-		click(jq("@window[mode=\"highlighted\"][title=\"Number Format\"] @listcell[label=\"($1,234.10)\"] div.z-overflow-hidden:eq(0)"));
+		click(jq("@window[title=\"Number Format\"] @listcell[label=\"($1,234.10)\"] div.z-overflow-hidden:eq(0)"));
 		waitResponse();		
 		click(jq("$okBtn img"));
 		waitResponse();
@@ -35,7 +35,7 @@ public class SS_212_Test extends SSAbstractTestCase {
 		//verify
 		String h1value = getSpecifiedCell(7,0).text();
 		//Note. in Excel: after set this format, will add extra empty space
-		verifyEquals("$12,345.68 ", h1value);
+		verifyEquals("$12,345.68\u00A0", h1value);
 	}
 }
 
