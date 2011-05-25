@@ -193,11 +193,13 @@ public class FileMenu extends Menu implements IdSpace {
 	    			exportPdf.setDisabled(_exportToPdfDisabled | false);
 	    			exportHtml.setDisabled(_exportToHtmlDisabled | false);
 	    			exportExcel.setDisabled(_exportToExcelDisabled | false);
+	    			saveFileAndClose.setDisabled(false);
     			} else {
 	    			deleteFile.setDisabled(true);
 	    			exportPdf.setDisabled(true);
 	    			exportHtml.setDisabled(true);
 	    			exportExcel.setDisabled(true);
+	    			saveFileAndClose.setDisabled(true);
     			}
     			
     			//TODO: not implemented yet

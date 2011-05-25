@@ -111,15 +111,7 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 					public void onEvent(Event event) throws Exception {
 						ArgWrapper last = args.get(args.size() - 1);
 						if (last.equals(arg) && info.isMultipleParameter()) {
-							String argName = info.getMultipleParameter();
-							Integer num = null;
-							try {
-							 num = Integer.parseInt(last.getName().replace(argName, ""));
-							 num++;
-							} catch (NumberFormatException ex) {
-							}
-							focusToIndex = last.getIndex();
-							args.add(new ArgWrapper(args.size(), info.getMultipleParameter() + (num != null ? num : ""), ""));
+							args.add(createNextArg());
 							argsListbox.setModel(newListModelInstance(args));
 						} else {
 							focusComponent = tb;
@@ -222,14 +214,34 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 		}
 		composeFormulaTextbox.setText(strBuilder.toString());
 	}
+
+	private ArgWrapper createNextArg() {
+		Integer num = null;
+		String argName = info.getMultipleParameter();
+		ArgWrapper last = args.get(args.size() - 1);
+		try {
+			num = Integer.parseInt(last.getName().replace(argName, ""));
+			num++;
+		} catch (NumberFormatException ex) {
+		}
+		return new ArgWrapper(args.size(), info.getMultipleParameter() + (num != null ? num : ""), "");
+	}
 	
 	private void decomposeFormula() {
 		String input = composeFormulaTextbox.getText();
 		String[] arg = input.split(",");
 		if (arg.length > args.size())
-			try {
-				Messagebox.show("You've entered too many arguments for this function");
-			} catch (InterruptedException e) {
+			if (info.isMultipleParameter()) {
+				int diff = arg.length - args.size();
+				for (int i = 0; i < diff; i++) {
+					args.add(createNextArg());
+				}
+			} else {
+				try {
+					Messagebox.show("You've entered too many arguments for this function");
+				} catch (InterruptedException e) {
+				}
+				return;
 			}
 		for (int i = 0; i < args.size() && i < arg.length; i++) {
 			String val = arg[i].trim();
