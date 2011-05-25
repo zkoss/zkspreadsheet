@@ -8,19 +8,19 @@ public class SS_083_Test extends SSAbstractTestCase {
         JQuery cell_F_6 = loadCell();
         clickCell(cell_F_6);
         clickCell(cell_F_6);
-        click(jq("$wrapTextBtn"));
+        int originalWidth = cell_F_6.find("div").last().width();
+        click(jq("$fastIconBtn $wrapTextBtn:visible"));
         waitResponse();
-        
-        int originalWidth = cell_F_6.width();
+
+        int currentWidth = cell_F_6.find("div").last().width();
         clickCell(cell_F_6);
         clickCell(cell_F_6);
-        click(jq("$wrapTextBtn"));
+        click(jq("$fastIconBtn $wrapTextBtn:visible"));
         waitResponse();
         
         cell_F_6 = loadCell();
-        int currentWidth = cell_F_6.width();
         //TODO: in IE, width will be the same
-        verifyTrue("Unexcepted result: " + currentWidth, currentWidth < originalWidth);
+        verifyTrue("Unexcepted result: " + currentWidth, currentWidth > originalWidth);
     }
 
     private JQuery loadCell() {

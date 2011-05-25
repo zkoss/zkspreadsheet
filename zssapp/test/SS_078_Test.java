@@ -12,17 +12,18 @@ public class SS_078_Test extends SSAbstractTestCase {
         mouseDownAt(loadCellL13(), "1,2");
         waitResponse();
         mouseMoveAt(loadCellM14(), "1,2");
+        mouseUp(loadCellM14());
         waitResponse();
         
         // Click Border icon
-        JQuery borderIcon = jq("$borderBtn");
+        JQuery borderIcon = jq("$fastIconBtn $borderBtn:visible");
         mouseOver(borderIcon);
         waitResponse();
         clickAt(borderIcon, "30,0");
         waitResponse();
         
         // Click inside vertical border
-        click(jq(".z-menu-item:eq(9)"));
+        click(jq(".z-menu-popup:visible .z-menu-item:eq(9)"));
         waitResponse();
         
         // Verify
