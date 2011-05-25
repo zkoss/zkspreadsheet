@@ -4,7 +4,7 @@ public class SS_045_Test extends SSAbstractTestCase {
     @Override
     protected void executeTest() {
     	//verify
-    	verifyFalse(jq(".toolbarMask").exists());
+    	verifyFalse(jq(".toolbarMask").isVisible());
     	
     	click(jq("$closeBtn"));
     	waitResponse();
@@ -18,7 +18,7 @@ public class SS_045_Test extends SSAbstractTestCase {
     	click("jq('$openFile a.z-menu-item-cnt')");
     	waitResponse();
     	
-    	verifyTrue(jq("$_openFileDialog div.z-window-highlighted-header").isVisible());
+    	verifyTrue(isWidgetVisible("$_openFileDialog"));
    
     	//TODO: add another test to open a empty sheet verify sheet opened
     	//verifyFalse(jq(".toolbarMask").isVisible());
