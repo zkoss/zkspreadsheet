@@ -31,9 +31,9 @@ public class SS_208_Test extends SSAbstractTestCase {
 		waitResponse();
 		click(jq("$composeFormulaTextbox"));
 		waitResponse();
-		type(jq("$composeFormulaTextbox"), "f7,f8,f9");
+		type(jq("$composeFormulaTextbox"), "f7,f8");
 		waitResponse();
-		click(jq("$okBtn img"));
+		click(jq("@window[title=\"Function Arguments\"] $okBtn img"));
 		waitResponse();
 		
 		//verify

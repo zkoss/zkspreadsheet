@@ -41,9 +41,8 @@ public class SS_209_Test extends SSAbstractTestCase {
 		waitResponse();
 			
 		//TODO: verify current focus
-		String item2 = jq(".z-listitem:eq(1)").html();
-		String itemSelected = jq(".z-listitem-seld").html();	
-		verifyEquals(item2, itemSelected);
+		String classname = jq("$_composeFormulaDialog @textbox:eq(2)").attr("class");
+		verifyTrue(classname.contains("focus"));	
 	}
 }
 
