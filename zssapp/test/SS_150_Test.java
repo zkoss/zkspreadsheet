@@ -30,7 +30,7 @@ public class SS_150_Test extends SSAbstractTestCase {
 		
 		//verify
         String bottomBorder = jq(".z-menu-popup:last a:eq(1)").text();
-        verifyEquals(bottomBorder, "Bottom border");
+        verifyEquals(bottomBorder, " Bottom border");
 	}
 }
 
