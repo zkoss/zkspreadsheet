@@ -114,7 +114,7 @@
 	</north>
 	<center autoscroll="true" flex="true" >
 <!--		<include style="padding:3px;" id="xcontents" />-->
-		<div id="xcontents" style="padding:3px;"></div>
+		<div id="xcontents" style="padding:3px;" width="100%" height="100%"></div>
 	</center>
 </borderlayout>
 </window>
