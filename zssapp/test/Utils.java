@@ -7,7 +7,7 @@
 public class Utils {
 
     public static String getTarget() {
-        return "http://jenkins:8890/zssappdemo/";
+        return "http://10.1.3.142:8890/zssappdemo/";
     }
 
     public static String getBrowsers() {
@@ -15,7 +15,7 @@ public class Utils {
     }
 
     public static int getTimeout() {
-        return 6000;
+        return 10000;
     }
 
 }
