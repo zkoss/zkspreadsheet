@@ -3378,7 +3378,13 @@ public final class BookHelper {
         	}
     	}
     	
-		if (diffD != 0) {			
+		if (diffD != 0) {
+			if (h1 < 0) {
+				h1 = 0;
+			}
+			if (h2 < 0) {
+				h2 = 0;
+			}
 			final Calendar cal1 = Calendar.getInstance(); //TODO Timezone?
 			final Calendar cal2 = Calendar.getInstance(); //TODO Timezone?
 			cal1.set(y1, m1, d1, h1, min1, s1);
