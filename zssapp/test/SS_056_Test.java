@@ -29,6 +29,7 @@ public class SS_056_Test extends SSAbstractTestCase {
         
         // Click Transpose
         click(jq("$pasteTranspose"));
+        waitResponse();
         
         // Verify
         String val1 = getSpecifiedCell(11, 12).text();
