@@ -26,11 +26,11 @@ public class SS_136_Test extends SSAbstractTestCase {
 		
 		//verify
 		String b13text = getSpecifiedCell(1, 12).text();
-		verifyEquals(b13text, "Total assets");
+		verifyEquals(b13text, "Total\u00A0assets");
 		String b15text = getSpecifiedCell(1, 14).text();
-		verifyEquals(b15text, "Current assets");
+		verifyEquals(b15text, "Current\u00A0assets");
 		String b17text = getSpecifiedCell(1, 16).text();
-		verifyEquals(b17text, "Average total assets");
+		verifyEquals(b17text, "Average\u00A0total\u00A0assets");
 	}
 }
 

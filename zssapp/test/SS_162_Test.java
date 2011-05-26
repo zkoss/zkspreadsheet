@@ -17,7 +17,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 public class SS_162_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
-		verifyFalse(jq("$_openFileDialog").isVisible());
+		verifyFalse(isWidgetVisible("$_openFileDialog"));
 		
 		selectCells(5,5,5,5);
 
@@ -26,7 +26,7 @@ public class SS_162_Test extends SSAbstractTestCase {
 		waitResponse();
 		
 		//verify
-		verifyTrue(jq("$_openFileDialog").isVisible());
+		verifyTrue(isWidgetVisible("$_openFileDialog"));
 		
 		//TODO: in IE, will open browser dialog
 	}

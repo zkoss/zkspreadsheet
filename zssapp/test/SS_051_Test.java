@@ -1,5 +1,6 @@
 import org.zkoss.ztl.JQuery;
 
+//focus in cell F21,ctrl+x,focus on cell N11, ctrl+v 
 public class SS_051_Test extends SSAbstractTestCase {
 
     @Override
@@ -11,7 +12,7 @@ public class SS_051_Test extends SSAbstractTestCase {
         clickCell(cell_F_21);
         clickCell(cell_F_21);
 
-        // Ctrl + C
+        // Ctrl + X
         keyDownNative(CTRL);
         waitResponse();
         keyDownNative(X);

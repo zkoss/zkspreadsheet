@@ -1,6 +1,6 @@
 import org.zkoss.ztl.JQuery;
 
-
+//focus cell F21, ctrl+c, focus cell N11, ctrl+v
 public class SS_050_Test extends SSAbstractTestCase {
 
     @Override

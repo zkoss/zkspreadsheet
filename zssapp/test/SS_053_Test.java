@@ -1,6 +1,6 @@
 import org.zkoss.ztl.JQuery;
 
-
+//focus cell J17,ctrl+c,focus cell L17, paste the formula
 public class SS_053_Test extends SSAbstractTestCase {
 
     @Override

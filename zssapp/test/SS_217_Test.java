@@ -36,7 +36,7 @@ public class SS_217_Test extends SSAbstractTestCase {
 		
 		//verify
 		String h1value = getSpecifiedCell(7,0).text();
-		verifyEquals(h1value,"12345 2/3");
+		verifyEquals(h1value,"12345\u00A02/3");
 	}
 }
 
