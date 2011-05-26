@@ -17,7 +17,7 @@ import com.thoughtworks.selenium.Selenium;
 public abstract class SSAbstractTestCase extends ZKClientTestCase {
     public SSAbstractTestCase() {
         target = Utils.getTarget();
-        browsers = getBrowsers("all");
+        browsers = getBrowsers(Utils.getBrowsers());
         _timeout = Utils.getTimeout();
     }
     
