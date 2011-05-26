@@ -4,6 +4,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.zkoss.ztl.JQuery;
 import org.zkoss.ztl.ZKClientTestCase;
+import org.zkoss.ztl.util.ConfigHelper;
 
 import com.thoughtworks.selenium.Selenium;
 
@@ -16,7 +17,7 @@ import com.thoughtworks.selenium.Selenium;
 public abstract class SSAbstractTestCase extends ZKClientTestCase {
     public SSAbstractTestCase() {
         target = Utils.getTarget();
-        browsers = getBrowsers(Utils.getBrowsers());
+        browsers = getBrowsers("all");
         _timeout = Utils.getTimeout();
     }
     
