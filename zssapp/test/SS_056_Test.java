@@ -6,9 +6,7 @@ public class SS_056_Test extends SSAbstractTestCase {
     @Override
     protected void executeTest() {
         // Select source cell
-        JQuery cell_J_13 = getSpecifiedCell(9, 12);
-        clickCell(cell_J_13);
-        clickCell(cell_J_13);
+    	selectCells(7, 12, 8, 12);
         
         // Ctrl + C
         keyDownNative(CTRL);
@@ -21,7 +19,7 @@ public class SS_056_Test extends SSAbstractTestCase {
         waitResponse();
         
         // Right click target cell
-        JQuery cell_L_13 = loadTargetCell();
+        JQuery cell_L_13 = getSpecifiedCell(11, 12);
         clickCell(cell_L_13);
 
         // Click Paste icon
@@ -33,13 +31,9 @@ public class SS_056_Test extends SSAbstractTestCase {
         click(jq("$pasteTranspose"));
         
         // Verify
-        cell_L_13 = loadTargetCell();
-        String formulaBarValue = jq("$formulaEditor").val();
-        verifyEquals("Incorrect value: " + formulaBarValue, "=+L12", formulaBarValue);
+        String val1 = getSpecifiedCell(11, 12).text();
+        String val2 = getSpecifiedCell(11, 13).text();
+        verifyEquals("46,500", val1);
+        verifyEquals("56,000", val2);
     }
-    
-    private JQuery loadTargetCell() {
-        return getSpecifiedCell(11, 12);
-    }
-
 }
