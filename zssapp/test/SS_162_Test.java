@@ -23,6 +23,7 @@ public class SS_162_Test extends SSAbstractTestCase {
 
 		//O:79
 		pressCtrlWithChar("79");
+		waitResponse();
 		
 		//verify
 		verifyTrue(jq("$_openFileDialog").isVisible());
