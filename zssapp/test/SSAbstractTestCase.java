@@ -6,6 +6,7 @@ import org.zkoss.ztl.JQuery;
 import org.zkoss.ztl.ZKClientTestCase;
 import org.zkoss.ztl.util.ConfigHelper;
 
+import com.google.common.base.Objects;
 import com.thoughtworks.selenium.Selenium;
 
 /**
@@ -310,5 +311,46 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      */
     public boolean isWidgetVisible(String selector) {
     	return widget(jq(selector)).exists() && jq(selector).isVisible();
+    }
+    
+    /**
+     * Click dropdown button at nth-menu
+     * @param selector
+     */
+    public void clickDropdownButtonMenu(String buttonSelector, int nthIndex) {
+    	JQuery jq = jq(buttonSelector);
+    	mouseOver(jq);
+    	clickAt(jq, "30, 0");
+    	click(jq(".z-menu-popup:visible .z-menu-item:eq(" + nthIndex + ")"));
+    	waitResponse();
+    }
+    
+    /**
+     * Click dropdown button at menu
+     * @param selector
+     * @param string
+     */
+    public void clickDropdownButtonMenu(String buttonSelector, String menuLabel) {
+    	JQuery jq = jq(buttonSelector);
+    	mouseOver(jq);
+    	clickAt(jq, "30, 0");
+    	JQuery menus = jq(".z-menu-popup:visible .z-menu-item .z-menu-item-cnt");
+    	int size = menus.length();
+    	for (int i = 0; i < size; i++) {
+    		JQuery menu = jq(".z-menu-popup:visible .z-menu-item .z-menu-item-cnt:eq(" + i + ")");
+    		if (menu.text().indexOf(menuLabel) >= 0) {
+    			click(menu.parent());
+    			return;
+    		}
+    	}
+    }
+    
+    /**
+     * Returns row JQuery elements
+     * @param row - Base on 0
+     * @return A JQuery object of row.
+     */
+    public JQuery getRow(int row) {
+    	 return jq(".zsscroll div.zsrow[z\\\\.r=\"" + row + "\"]");
     }
 }
