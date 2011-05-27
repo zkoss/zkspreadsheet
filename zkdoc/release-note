@@ -48,6 +48,7 @@ ZK Spreadsheet 2.1.0
   337 Filter dropdown button incorrectly change to "filter icon" after click the dropdown button and press OK.
   338 Reapply filter fail to work
   339 "=" + mouse click to input formula
+  340 Spreadsheet hyperlink font underline in wrong position
   
 	------------
 ZK Spreadsheet 2.0.1
