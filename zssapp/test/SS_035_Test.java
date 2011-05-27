@@ -1,6 +1,6 @@
 import org.zkoss.ztl.JQuery;
 
-
+//Format>>Font>>Align>>Center
 public class SS_035_Test extends SSAbstractTestCase {
 
     @Override
