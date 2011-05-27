@@ -49,6 +49,7 @@ ZK Spreadsheet 2.1.0
   338 Reapply filter fail to work
   339 "=" + mouse click to input formula
   340 Spreadsheet hyperlink font underline in wrong position
+  341 ZK Spreadsheet App: open custom sort range twice, UI doesn't work well
   
 	------------
 ZK Spreadsheet 2.0.1

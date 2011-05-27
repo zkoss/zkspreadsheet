@@ -335,7 +335,8 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 			if (sort.sortIndex >= 0 && getItemCount() > 0) {
 				int idx = getSpreadsheetIndexOffset(ss, sort.sortIndex, sortOrientation);
 				setSelectedIndex(idx >= 0 ? idx : 0);
-			}
+			} else
+				setSelectedIndex(-1);
 		}
 
 		public void onSelect () {
