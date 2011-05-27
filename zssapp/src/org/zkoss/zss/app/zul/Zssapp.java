@@ -40,7 +40,8 @@ public class Zssapp extends Div implements IdSpace  {
 	//TODO: in mainWin id space, move to here
 	private Spreadsheet spreadsheet;
 	
-	private Window mainWin;
+	//private Window mainWin;
+	private Div mainWin;
 	
 	Appmenubar _appmenubar;
 	

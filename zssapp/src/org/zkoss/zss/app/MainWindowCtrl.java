@@ -127,7 +127,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 	RangeHelper rangeh;
 
-	Window mainWin;
+	//Window mainWin;
+	Div mainWin;
 	/*Menus*/
 	FileMenu fileMenu;
 	EditMenu editMenu;

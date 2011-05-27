@@ -5,7 +5,7 @@
 <?component name="cheatsheet" inline="true" macroURI="~./zssapp/html/cheatsheet.zul"?>
 
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
-<window id="mainWin" apply="org.zkoss.zss.app.MainWindowCtrl" height="100%" width="100%" style="margin:0px;padding:0px;position:relative;">
+<div id="mainWin" apply="org.zkoss.zss.app.MainWindowCtrl" height="100%" width="100%">
 	<style>
 		body {
 			padding: 0;
@@ -304,5 +304,5 @@
 	<cellmenupopup id="cellMenupopup"></cellmenupopup>
 	<cellcontext id="cellContext"></cellcontext>
 	<cheatsheet id="cheatsheet" />
-</window>
+</div>
 </zk>
