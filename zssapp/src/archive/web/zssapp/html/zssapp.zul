@@ -5,7 +5,7 @@
 <?component name="cheatsheet" inline="true" macroURI="~./zssapp/html/cheatsheet.zul"?>
 
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
-<div id="mainWin" apply="org.zkoss.zss.app.MainWindowCtrl" height="100%" width="100%">
+<div id="mainWin" use="org.zkoss.zss.app.zul.IdDiv" apply="org.zkoss.zss.app.MainWindowCtrl" height="100%" width="100%">
 	<style>
 		body {
 			padding: 0;
