@@ -23,6 +23,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.engine.EventDispatcher;
 
 /**
+ * Internal Use Only. 
  * Generic spreadsheet data event dispatch listener(used for dispatching
  * spreadsheet data events from the spreadsheet Book to spreadsheet UI).
  * Each spreadsheet UI must has exactly one associated DataEventDispatchListener.

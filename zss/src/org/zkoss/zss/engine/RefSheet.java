@@ -239,8 +239,8 @@ public interface RefSheet {
 
 	/**
 	 * Sets whether the given reference contains indirect precedents.
-	 * @param tRow top row index of the range
-	 * @param lCol left column index of the range
+	 * @param row top row index of the range
+	 * @param col left column index of the range
 	 * @param withIndirectPrecedent whether the reference contains indirect precedents.
 	 */
 	public void setRefWithIndirectPrecedent(int row, int col, boolean withIndirectPrecedent);
