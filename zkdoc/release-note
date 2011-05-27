@@ -47,6 +47,7 @@ ZK Spreadsheet 2.1.0
   336 Showing incorrect contents when press filter drop button in merge cell 
   337 Filter dropdown button incorrectly change to "filter icon" after click the dropdown button and press OK.
   338 Reapply filter fail to work
+  339 "=" + mouse click to input formula
   
 	------------
 ZK Spreadsheet 2.0.1

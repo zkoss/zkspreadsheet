@@ -252,7 +252,8 @@ public class FormulaEditor extends Textbox {
 		if (currentEditcell != null) {
 			oldEdit = Ranges.range(sheet, top, left).getEditText();
 			oldText = Utils.getCellText(sheet, currentEditcell); //escaped HTML to show cell value
-			bookCtrl.escapeAndUpdateText(currentEditcell, oldEdit);
+			if (!isComposingFormula(newEdit))
+				bookCtrl.escapeAndUpdateText(currentEditcell, oldEdit);
 
 			if (!editExistingFormula && isComposingFormula(oldEdit) && addedFocusNames.size() == 0) {
 				editExistingFormula = true;
