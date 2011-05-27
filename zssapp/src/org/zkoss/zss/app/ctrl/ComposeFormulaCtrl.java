@@ -111,6 +111,7 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 					public void onEvent(Event event) throws Exception {
 						ArgWrapper last = args.get(args.size() - 1);
 						if (last.equals(arg) && info.isMultipleParameter()) {
+							focusToIndex = args.size() - 1;
 							args.add(createNextArg());
 							argsListbox.setModel(newListModelInstance(args));
 						} else {
@@ -133,8 +134,7 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 				int focusIdx = -1;
 				if (focusToIndex >= 0 && focusToIndex < inputs.size()) {
 					focusIdx = focusToIndex;
-				}
-				else if (inputs.size() > 1) {
+				} else if (inputs.size() > 1) {
 					focusIdx = 0;
 				}
 				if (focusIdx >= 0) {

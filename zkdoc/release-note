@@ -50,6 +50,7 @@ ZK Spreadsheet 2.1.0
   339 "=" + mouse click to input formula
   340 Spreadsheet hyperlink font underline in wrong position
   341 ZK Spreadsheet App: open custom sort range twice, UI doesn't work well
+  342 ZK Spreadsheet App: use compose formula dialog, when focus one last textbox, focus will change to first textbox
   
 	------------
 ZK Spreadsheet 2.0.1
