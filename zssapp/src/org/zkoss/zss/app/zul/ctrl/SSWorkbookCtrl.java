@@ -48,7 +48,6 @@ import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
-import org.zkoss.zul.Image;
 import org.zkoss.zul.Messagebox;
 
 /**
@@ -190,7 +189,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 				}
 				Widget widget = (Widget)imageWidget.newInstance();
 				Method setImageMethod = imageWidget.getDeclaredMethod("setContent", org.zkoss.image.Image.class);
-				setImageMethod.invoke(widget, (Image)media);
+				setImageMethod.invoke(widget, (org.zkoss.image.Image)media);
 				widget.setRow(spreadsheet.getSelection().getTop());
 				widget.setColumn(spreadsheet.getSelection().getLeft());
 				
