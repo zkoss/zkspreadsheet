@@ -183,22 +183,21 @@ public class FileMenu extends Menu implements IdSpace {
                 boolean isOpen = workbenchCtrl.getWorkbookCtrl().hasBook();
                 boolean savePermission = FileHelper.hasSavePermission();
                 
-    			saveFile.setDisabled(!savePermission);
-    			//TODO: not implemented yet
+                //TODO: not impl
     			saveFileAs.setDisabled(true);
-    			saveFileAndClose.setDisabled(!savePermission);
-    			
     			if (isOpen) {
 	    			deleteFile.setDisabled(false);
 	    			exportPdf.setDisabled(_exportToPdfDisabled | false);
 	    			exportHtml.setDisabled(_exportToHtmlDisabled | false);
 	    			exportExcel.setDisabled(_exportToExcelDisabled | false);
-	    			saveFileAndClose.setDisabled(false);
+	    			saveFile.setDisabled(!savePermission);
+	    			saveFileAndClose.setDisabled(!savePermission);
     			} else {
 	    			deleteFile.setDisabled(true);
 	    			exportPdf.setDisabled(true);
 	    			exportHtml.setDisabled(true);
 	    			exportExcel.setDisabled(true);
+	    			saveFile.setDisabled(true);
 	    			saveFileAndClose.setDisabled(true);
     			}
     			
