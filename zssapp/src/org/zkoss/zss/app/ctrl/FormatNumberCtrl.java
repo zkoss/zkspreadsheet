@@ -21,6 +21,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
+import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Button;
@@ -62,6 +63,7 @@ public class FormatNumberCtrl extends GenericForwardComposer {
 	
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
+		//TODO: move to WorkbookCtrl
 		spreadsheet = Zssapps.getSpreadsheetFromArg();
 	}
 	
@@ -87,7 +89,12 @@ public class FormatNumberCtrl extends GenericForwardComposer {
 
 		if (selectedItem != null) {
 			String formatCodes = selectedItem.getValue().toString();
-			Utils.setDataFormat(spreadsheet.getSelectedSheet(), spreadsheet.getSelection(), formatCodes);			
+			Rect sel = spreadsheet.getSelection();
+			if (sel.getBottom() >= spreadsheet.getMaxrows())
+				sel.setBottom(spreadsheet.getMaxrows() - 1);
+			if (sel.getRight() >= spreadsheet.getMaxcolumns())
+				sel.setRight(spreadsheet.getMaxcolumns() - 1);
+			Utils.setDataFormat(spreadsheet.getSelectedSheet(), sel, formatCodes);			
 		} else {
 			showSelectFormatDialog();
 			return;
