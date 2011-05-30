@@ -1,4 +1,4 @@
-<?page title="ZK Spreadsheet 2.0.0 Live Demo!" contentType="text/html;charset=UTF-8"?>
+<?page title="ZK Spreadsheet 2.1.0 Live Demo!" contentType="text/html;charset=UTF-8"?>
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 <style>
 	.headerTitle{
