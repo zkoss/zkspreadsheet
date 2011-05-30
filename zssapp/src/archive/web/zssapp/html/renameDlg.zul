@@ -1,5 +1,5 @@
 <window id="_renameSheetDialog" title="Rename to" border="normal" use="org.zkoss.zss.app.zul.Dialog"
-mode="modal" closable="true" position="center" apply="org.zkoss.zss.app.ctrl.RenameSheetCtrl">
+mode="modal" closable="true" position="center" apply="org.zkoss.zss.app.ctrl.RenameSheetCtrl" width="220px">
 	<hlayout>
 		Sheet name:
 		<textbox id="sheetNameTB" />
