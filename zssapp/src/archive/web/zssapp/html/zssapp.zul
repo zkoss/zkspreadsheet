@@ -165,7 +165,7 @@
 		
 		<!-- SECTION **********FastIconToolbar*********************************************** -->
 		<south id="fastIconBtn" size="30px" border="0" style="background: #F5F5F5; border-bottom: 1px solid #D8D8D8;">
-			<hlayout spacing="0.4em">
+			<hlayout id="fastIconHLayout" spacing="0.4em">
 	<!--		<toolbarbutton disabled="true" id="print"  src="~./zssapp/image/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>-->
 				<toolbarbutton id="saveBtn" image="~./zssapp/image/disk-black.png" disabled="true" tooltiptext="${c:l('file.saved')}"/>
 				<toolbarbutton id="exportToPDFBtn" src="~./zssapp/image/document-pdf.png" tooltiptext="${c:l('export.pdf')}"/>
@@ -253,14 +253,16 @@
 		</south>
 	</borderlayout>
 	<div id="toolbarMask" sclass="toolbarMask" >
-		<attribute w:name="onBind">
-			var $t = jq(this.$f('topToolbars')),
-				$m = jq(this.$f('mainNavigator')),
-				mnHgh = zk.parseInt($m.children('.z-north').css('height'));
-			//TODO: for width: I should use onSize event to sync width, In IE, can not set long size, opacity won't work
-			jq(this.$n()).css({'width': '2000px', 
-				'height': (zk.parseInt($t.css('height')) - mnHgh) + 'px', 
-				'top': mnHgh + 'px'});
+		<attribute w:name="setVisible">
+		function (visible) {
+			this.$setVisible(visible);
+			var n = this.$n();
+				$t = jq(this.$f('topToolbars')),
+				$f = jq(this.$f('fastIconHLayout')),
+				dim = $f.zk.dimension(true);
+			zk(n).position(dim, 'overlap');
+			jq(n).css({'width': $f.width() + 'px', 'height': $f.height() + 'px'});
+		}
 		</attribute>
 	</div>
 	<borderlayout vflex="true" sclass="zssapp-splt">
