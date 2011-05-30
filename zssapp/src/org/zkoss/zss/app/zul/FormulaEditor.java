@@ -34,6 +34,7 @@ import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.EditboxEditingEvent;
 import org.zkoss.zss.ui.event.Events;
+import org.zkoss.zss.ui.event.StartEditingEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Textbox;
@@ -459,7 +460,6 @@ public class FormulaEditor extends Textbox {
 				new EventListener() {
 					public void onEvent(Event event) throws Exception {
 						StopEditingEvent evt = (StopEditingEvent)event;
-
 						//setText((String) evt.getEditingValue());
 
 						//chart not implement yet
@@ -482,11 +482,11 @@ public class FormulaEditor extends Textbox {
 					}
 				});
 		//TODO: add ON_START_EDITING, add cell focus if cell is formula
-		bookCtrl.addEventListener(Events.ON_EDITBOX_EDITING,
+		bookCtrl.addEventListener(Events.ON_START_EDITING,
 				new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				EditboxEditingEvent evt = (EditboxEditingEvent)event;
-				newEdit = (String) evt.getEditingValue();
+				StartEditingEvent evt = (StartEditingEvent)event;
+				newEdit = (String) evt.getClientValue();
 				if (isStartEditingFormula(newEdit)) {
 					cacheFormulaEditingInfo();
 				}
@@ -498,6 +498,13 @@ public class FormulaEditor extends Textbox {
 					addedFocusNames.add(FORMULA_FOCUS_NAME);
 					bookCtrl.moveEditorFocus(FORMULA_FOCUS_NAME, FORMULA_COLOR, top, left);
 				}
+				setText((String) evt.getEditingValue());
+			}
+		});
+		bookCtrl.addEventListener(Events.ON_EDITBOX_EDITING,
+				new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				EditboxEditingEvent evt = (EditboxEditingEvent)event;
 				setText((String) evt.getEditingValue());
 			}
 		});
