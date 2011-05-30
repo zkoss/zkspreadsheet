@@ -68,6 +68,8 @@ public class FormulaEditor extends Textbox {
 	private int formulaRow;
 	private int formulaColumn;
 	private Cell formulaCell;
+	private String formulaText;
+	private String formulaEdit;
 	/*cache added focus names*/
 	private LinkedHashSet<String> addedFocusNames = new LinkedHashSet<String>();
 	private Worksheet formulaSheet;
@@ -187,6 +189,8 @@ public class FormulaEditor extends Textbox {
 		formulaColumn = bookCtrl.getSelection().getLeft();
 		formulaCell = Utils.getCell(bookCtrl.getSelectedSheet(), formulaRow, formulaColumn);
 		formulaSheet = bookCtrl.getSelectedSheet();
+		formulaText = Utils.getCellText(formulaSheet, formulaCell);
+		formulaEdit = Utils.getEditText(formulaCell);
 	}
 	
 	private boolean isStartEditingFormula(String edit) {
@@ -344,7 +348,10 @@ public class FormulaEditor extends Textbox {
 		if (oldText != null && currentEditcell != null) {
 			//already escape, simply update
 			bookCtrl.updateText(currentEditcell, oldText);
-			bookCtrl.escapeAndUpdateText(formulaCell, oldText);
+			bookCtrl.escapeAndUpdateText(formulaCell, formulaText != null ? formulaText : oldText);
+			if (formulaEdit != null) {
+				Utils.setEditText(formulaCell, formulaEdit);
+			}
 		}
 	}
 
@@ -424,6 +431,8 @@ public class FormulaEditor extends Textbox {
 		clearCellReferenceFocus();
 		editExistingFormula = false;
 		formulaCell = null;
+		formulaText = null;
+		formulaEdit = null;
 		newEdit = null;
 		formulaRow = 0;
 		formulaColumn = 0;

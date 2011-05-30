@@ -1073,10 +1073,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			mdstr = "c_" + row + "_" + col;
 			if (this._lastmdstr == mdstr) {
 				wgt.fireCellEvt(type, shx, shy, md1[2], row, col, mx, my);
-				if (type == "dbc") {
-					sheet.dp.startEditing();
-					sheet.dp._openEditbox();
-				}
+				if (type == "dbc")
+					sheet._enterEditing(null);
 			}
 		} else if ((cmp = zkS.parentByZSType(elm, "STheader",1)) != null ||
 			(cmp = zkS.parentByZSType(elm, "SLheader",1)) != null) {
@@ -1145,6 +1143,14 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			evt.stop();
 		}
 	},
+	_enterEditing: function(evt) {
+		var pos = this.getLastFocus(),
+			row = pos.row,
+			col = pos.column,
+			cell = this.getCell(row, col);
+		this.dp.startEditing(evt, cell.edit);
+		this.dp._openEditbox();
+	},
 	_doKeydown: function(evt) {
 		this._skipress = false;
 		//wait async event, skip
@@ -1211,10 +1217,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			evt.stop();
 			break;
 		case 113: //F2
-			if(this.state == zss.SSheetCtrl.FOCUSED) {
-				this.dp.startEditing(evt);
-				this.dp._openEditbox();
-			}
+			if(this.state == zss.SSheetCtrl.FOCUSED)
+				this._enterEditing(evt);
 			evt.stop();
 			break;
 		case 13://Enter
