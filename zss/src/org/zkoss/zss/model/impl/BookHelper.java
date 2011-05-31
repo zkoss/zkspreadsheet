@@ -508,6 +508,13 @@ public final class BookHelper {
 
 		return sb.toString();
 	}
+	
+	public static String awtColorToHTMLColor(java.awt.Color color) {
+		final int r = color.getRed();
+		final int g = color.getGreen();
+		final int b = color.getBlue();
+		return "#"+BookHelper.toHex(r)+BookHelper.toHex(g)+BookHelper.toHex(b);
+	}
 
 	/* given alignment and cell type, return real alignment */
 	//Halignment determined by style alignment, text format and value type  

@@ -99,10 +99,7 @@ public class CellFormatHelper {
 	}
 
 	private String toHTMLColor(Color color) {
-		final int r = color.getRed();
-		final int g = color.getGreen();
-		final int b = color.getBlue();
-		return "#"+BookHelper.toHex(r)+BookHelper.toHex(g)+BookHelper.toHex(b);
+		return BookHelper.awtColorToHTMLColor(color);
 	}
 	
 	private boolean processBottomBorder(StringBuffer sb) {
