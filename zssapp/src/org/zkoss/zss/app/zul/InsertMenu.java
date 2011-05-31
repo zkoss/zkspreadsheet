@@ -20,6 +20,7 @@ import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -104,6 +105,8 @@ public class InsertMenu extends Menu implements IdSpace {
 		workbenchCtrl.addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				setDisabled(!workbenchCtrl.getWorkbookCtrl().hasBook());
+				
+				insertImage.setDisabled(!WebApps.getFeature("pe"));
 			}
 		});
 	}
