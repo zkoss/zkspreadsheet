@@ -17,10 +17,12 @@ apply="org.zkoss.zss.app.file.ExportToHtmlWindowCtrl">
 				<radio id="currSheet" label="${c:l('export.currentSheet')}" radiogroup="range"></radio>
 				<radio id="allSheet" label="${c:l('export.allSheet')}" radiogroup="range"></radio>
 			</row>
+			<!--
 			<row spans="3">
 				<label value="Option"></label>
 			</row>
-			<row>
+			-->
+			<row style="display:none;">
 			   	<checkbox id="noHeader" label="${c:l('export.noHeader')}" />
         		<checkbox id="noGridlines" label="${c:l('export.noGridlines')}" />	
 			</row>
