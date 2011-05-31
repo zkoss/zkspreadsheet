@@ -1,5 +1,7 @@
 import org.zkoss.ztl.JQuery;
 
+//"Select a cell
+//Click Shift cells down menuitem"
 public class SS_018_Test extends SSAbstractTestCase {
 
 	@Override
@@ -16,13 +18,16 @@ public class SS_018_Test extends SSAbstractTestCase {
 		waitResponse();
 		click("jq('$shiftCellDown a.z-menu-item-cnt')");
 		waitResponse();
-		String newValue = getCellContent(cell_B_6);
+		sleep(5000);
+		cell_B_6 = getSpecifiedCell(1, 5);
+		String newValue = getSpecifiedCell(1, 5).text();
 		String newDownCellValue = getCellContent(cell_B_7);
 
 		// TODO verify if pasted cell style is cleared
         verifyTrue("Original cell value=" + origValue 
         		+ ", Original down cell value=" + downCellValue 
-        		+ ", New down cell value=" + newDownCellValue, 
+        		+ ", New down cell value=" + newDownCellValue
+        		+ ", new value in B6 =" + newValue, 
         		"".equals(newValue));
 	}
 }

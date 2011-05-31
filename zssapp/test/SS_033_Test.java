@@ -1,6 +1,7 @@
 import org.zkoss.ztl.JQuery;
 import org.zkoss.ztl.util.ColorVerifingHelper;
 
+//Format>> Background color
 
 public class SS_033_Test extends SSAbstractTestCase {
 

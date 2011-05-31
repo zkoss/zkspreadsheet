@@ -4,9 +4,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.zkoss.ztl.JQuery;
 import org.zkoss.ztl.ZKClientTestCase;
-import org.zkoss.ztl.util.ConfigHelper;
 
-import com.google.common.base.Objects;
 import com.thoughtworks.selenium.Selenium;
 
 /**
@@ -30,6 +28,7 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
                 windowFocus();
                 waitResponse();
                 windowMaximize();
+                sleep(2000L);
                 waitResponse();
                 executeTest();
             }catch(Exception e){
@@ -50,8 +49,8 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @return
      */
     public String getCellStyle(int col, int row){
-    	return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"]").attr("style")
-    	+jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").attr("style");
+    	return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"]").first().attr("style")
+    	+jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").first().attr("style");
     }
     
     public static final String CELL_WITHOUT_STYLE = "rgba(0, 0, 0, 0):Arial:left";
@@ -79,10 +78,23 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @return A JQuery object of cell. (Inner div)
      */
     public JQuery getSpecifiedCell(int col, int row) {
-    	//for not IE
-        return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").first();
+    	//for not IE    	
+//    	if(isFF3()){
+//    		col++;
+//    		row++;
+//    		return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").first();
+//    	}
+//    	else{
+    		return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").first();	
+//    	}
+        
     }
 
+    private boolean isFF3(){
+    	String ffVer = String.valueOf(getEval("zk.ff"));
+    	return ffVer.startsWith("3");
+    }
+    
     /**
      * 
      * @param col - Base on 0
@@ -116,9 +128,9 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     }
     
     public void clickCell(JQuery cellLocator) {
-        mouseDownAt(cellLocator, "1,2");
+        mouseDownAt(cellLocator, "4,4");
         waitResponse();
-        mouseUpAt(cellLocator, "1,2");
+        mouseUpAt(cellLocator, "4,4");
         waitResponse();
     }
     
@@ -166,17 +178,17 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @param row: 0-based
      */
     public void rightClickCell(int column, int row){
-		mouseDownAt(getSpecifiedCell(column, row),"2,2");
+		mouseDownAt(getSpecifiedCell(column, row),"4,4");
 		waitResponse();
-		mouseUpAt(getSpecifiedCell(column, row),"2,2");
+		mouseUpAt(getSpecifiedCell(column, row),"4,4");
 		waitResponse();
 	
-		mouseDownAt(getSpecifiedCell(column, row),"2,2");
+		mouseDownAt(getSpecifiedCell(column, row),"4,4");
 		waitResponse();
-		mouseUpAt(getSpecifiedCell(column, row),"2,2");
+		mouseUpAt(getSpecifiedCell(column, row),"4,4");
 		waitResponse();
 
-		contextMenuAt(getSpecifiedCell(column, row), "2,2");
+		contextMenuAt(getSpecifiedCell(column, row), "4,4");
 		waitResponse();
     }
 
@@ -191,16 +203,16 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     	//It's necessary to duplicate mouseDownAt target cell,
     	//because the first time may not really focused on target cell,
     	//but focus on cell A1
-		mouseDownAt(getSpecifiedCell(left, top),"2,2");
+		mouseDownAt(getSpecifiedCell(left, top),"4,4");
 		waitResponse();
-		mouseUpAt(getSpecifiedCell(left, top),"2,2");
+		mouseUpAt(getSpecifiedCell(left, top),"4,4");
 		waitResponse();
 	
-		mouseDownAt(getSpecifiedCell(left, top),"2,2");
+		mouseDownAt(getSpecifiedCell(left, top),"4,4");
 		waitResponse();
-		mouseMoveAt(getSpecifiedCell(right, bottom),"2,2");
+		mouseMoveAt(getSpecifiedCell(right, bottom),"4,4");
 		waitResponse();
-		mouseUpAt(getSpecifiedCell(right, bottom),"2,2");
+		mouseUpAt(getSpecifiedCell(right, bottom),"4,4");
 		waitResponse();
     }
     /**

@@ -26,6 +26,7 @@ public class SS_153_Test extends SSAbstractTestCase {
 
 		//verify
 		String style = getCellStyle(1, 12);
+		System.out.println(">>>>>:"+style);
 		verifyTrue(containsIgnoreCase(style, "text-align: right"));		
 	}
 }

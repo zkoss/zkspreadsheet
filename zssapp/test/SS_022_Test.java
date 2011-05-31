@@ -1,5 +1,7 @@
 import org.zkoss.ztl.JQuery;
 
+//"Select a cell
+//Click Shift cells up menuitem"
 public class SS_022_Test extends SSAbstractTestCase {
 
 	@Override
@@ -23,10 +25,10 @@ public class SS_022_Test extends SSAbstractTestCase {
 
 		// TODO verify if pasted cell style is cleared
         verifyTrue("Original cell value=" + origValue 
-        		+ ", Original down cell value=" + downCellValue 
-        		+ ", Original downDown cell value=" + downDownCellValue 
-        		+ ", New cell value=" + newValue 
-        		+ ", New down cell value=" + newDownCellValue, 
+        		+ "\n, Original down cell value=" + downCellValue 
+        		+ "\n, Original downDown cell value=" + downDownCellValue 
+        		+ "\n, New cell value=" + newValue 
+        		+ "\n, New down cell value=" + newDownCellValue, 
         		downCellValue.equals(newValue) && newDownCellValue.equals(downDownCellValue));
 	}
 }

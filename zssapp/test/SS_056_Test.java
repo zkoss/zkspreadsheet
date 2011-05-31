@@ -1,5 +1,6 @@
 import org.zkoss.ztl.JQuery;
 
+//Toolbar>>Paste>>Transpose
 
 public class SS_056_Test extends SSAbstractTestCase {
 
