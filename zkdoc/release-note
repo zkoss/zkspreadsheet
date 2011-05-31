@@ -54,6 +54,8 @@ ZK Spreadsheet 2.1.0
   344 ZK Spreadsheet App: after close sheet should not able to click save sheet menu
   345 ZK Spreadsheet App: select a column and apply number format, cause server no response
   346 ZK Spreadsheet App: compose formula dialog input formula to wrong cell
+  347 Wrong page orientation for PDF export in Portrait mode
+  348 Formula cell formatting lost in PDF export file
   
   
 	------------
