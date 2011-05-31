@@ -87,7 +87,7 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	
 	public void onOpen$_exportToPdfDialog(ForwardEvent event) {
 		loadPrintSetting();
-		noHeader.setChecked(false);
+		noHeader.setChecked(true);
 		try {
 			_exportToPdfDialog.setMode(Window.MODAL);
 		} catch (InterruptedException e) {
