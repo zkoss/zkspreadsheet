@@ -30,6 +30,7 @@ import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.model.Ranges;
+import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Button;
@@ -152,7 +153,6 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 		args = createArgs(info.getRequiredParameter(), info.getParameterNames());
 		argsListbox.setModel(newListModelInstance(args));
 		composeFormulaTextbox.focus();
-		
 		getDesktopWorkbenchContext().getWorkbookCtrl().addEventListener(org.zkoss.zss.ui.event.Events.ON_CELL_SELECTION, onCellSelected);
 	}
 	
@@ -251,7 +251,7 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 	}
 	
 	public void onClick$okBtn() {
-		getDesktopWorkbenchContext().getWorkbookCtrl().insertFormula(formulaStart.getValue() + composeFormulaTextbox.getText() + formulaEnd.getValue());
+		getDesktopWorkbenchContext().getWorkbookCtrl().insertFormula(info.getRowIndex(), info.getColIndex(), formulaStart.getValue() + composeFormulaTextbox.getText() + formulaEnd.getValue());
 		//Note. insert formula may throw exception and won't fire book content changed event, need to fire own event to update UI
 		getDesktopWorkbenchContext().fireContentsChanged();
 		_composeFormulaDialog.fireOnClose(null);

@@ -53,6 +53,8 @@ ZK Spreadsheet 2.1.0
   343 ZK Spreadsheet App: insert image cause class cast exception
   344 ZK Spreadsheet App: after close sheet should not able to click save sheet menu
   345 ZK Spreadsheet App: select a column and apply number format, cause server no response
+  346 ZK Spreadsheet App: compose formula dialog input formula to wrong cell
+  
   
 	------------
 ZK Spreadsheet 2.0.1

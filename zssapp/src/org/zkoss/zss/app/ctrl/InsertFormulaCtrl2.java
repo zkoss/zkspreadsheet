@@ -31,6 +31,7 @@ import org.zkoss.zss.app.formula.Formulas;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
+import org.zkoss.zss.ui.Position;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
@@ -62,6 +63,9 @@ public class InsertFormulaCtrl2 extends GenericForwardComposer {
 	private Button okBtn;
 	
 	LinkedHashMap<String, List<FormulaMetaInfo>> formulaInfos;
+	
+	private int rowIdx;
+	private int colIdx;
 	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -103,6 +107,10 @@ public class InsertFormulaCtrl2 extends GenericForwardComposer {
 		searchTextbox.setText(null);
 		initFunctionListbox();
 		searchTextbox.focus();
+		
+		Position pos = getDesktopWorkbenchContext().getWorkbookCtrl().getCellFocus();
+		rowIdx = pos.getRow();
+		colIdx = pos.getColumn();
 	}
 	
 	public void onSelect$categoryCombobox() {
@@ -147,8 +155,10 @@ public class InsertFormulaCtrl2 extends GenericForwardComposer {
 		
 		FormulaMetaInfo info = (FormulaMetaInfo) item.getValue();
 		if (info.getRequiredParameter() == 0) {
-			getDesktopWorkbenchContext().getWorkbookCtrl().insertFormula("=" + info.getFunction() + "()");
+			getDesktopWorkbenchContext().getWorkbookCtrl().insertFormula(rowIdx, colIdx, "=" + info.getFunction() + "()");
 		} else {
+			info.setRowIndex(rowIdx);
+			info.setColIndex(colIdx);
 			getDesktopWorkbenchContext().getWorkbenchCtrl().
 				openComposeFormulaDialog((FormulaMetaInfo)item.getValue());
 		}

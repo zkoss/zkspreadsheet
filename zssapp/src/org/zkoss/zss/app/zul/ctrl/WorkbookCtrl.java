@@ -101,7 +101,7 @@ public interface WorkbookCtrl {
 	
 	public void insertImage(Media media);
 	
-	public void insertFormula(String formula);
+	public void insertFormula(int rowIdx, int colIdx, String formula);
 	
 	//TODO: use clip board interface, return  
 	public void cutSelection();

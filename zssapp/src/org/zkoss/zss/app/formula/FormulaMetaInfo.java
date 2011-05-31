@@ -27,6 +27,9 @@ public class FormulaMetaInfo {
 	private String description;
 	private int requiredParameter;
 	private String multipleParameter;
+	
+	private int rowIndex;
+	private int colIndex;
 
 	/**
 	 * @param category
@@ -92,5 +95,17 @@ public class FormulaMetaInfo {
 			args[i] = args[i].trim();
 		}
 		return args;
+	}
+	public int getRowIndex() {
+		return rowIndex;
+	}
+	public void setRowIndex(int rowIndex) {
+		this.rowIndex = rowIndex;
+	}
+	public int getColIndex() {
+		return colIndex;
+	}
+	public void setColIndex(int colIndex) {
+		this.colIndex = colIndex;
 	}
 }

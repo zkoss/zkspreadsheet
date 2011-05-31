@@ -267,9 +267,8 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		spreadsheet.setRowfreeze(rowfreeze);
 	}
 
-	public void insertFormula(String formula) {
-		Rect rect = spreadsheet.getSelection();
-		Range rng = Ranges.range(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getLeft());
+	public void insertFormula(int rowIdx, int colIdx, String formula) {
+		Range rng = Ranges.range(spreadsheet.getSelectedSheet(), rowIdx, colIdx);
 		//Note. can not catch evaluate exception here
 		rng.setEditText(formula);
 	}
