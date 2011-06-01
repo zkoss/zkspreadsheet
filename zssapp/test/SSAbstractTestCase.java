@@ -78,16 +78,7 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @return A JQuery object of cell. (Inner div)
      */
     public JQuery getSpecifiedCell(int col, int row) {
-    	//for not IE    	
-//    	if(isFF3()){
-//    		col++;
-//    		row++;
-//    		return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").first();
-//    	}
-//    	else{
-    		return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").first();	
-//    	}
-        
+    	return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").first();	
     }
 
     private boolean isFF3(){
@@ -128,10 +119,18 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     }
     
     public void clickCell(JQuery cellLocator) {
+    	//works for FF3,
+    	mouseMoveAt(cellLocator, "4,4");
+    	waitResponse();
         mouseDownAt(cellLocator, "4,4");
         waitResponse();
         mouseUpAt(cellLocator, "4,4");
         waitResponse();
+        
+//        mouseDown(cellLocator);
+//        waitResponse();
+//        mouseUp(cellLocator);
+//        waitResponse();
     }
     
     public void rightClickCell(JQuery cellLocator) {

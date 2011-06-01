@@ -1,6 +1,7 @@
 import org.zkoss.ztl.JQuery;
 
-
+//Edit>>Clear Content
+//clear cell F21
 public class SS_014_Test extends SSAbstractTestCase {
 
     @Override
@@ -16,6 +17,8 @@ public class SS_014_Test extends SSAbstractTestCase {
         String newValue = getCellContent(cell_F_21);
     	
     	// TODO verify if pasted value is same as copied value
-        verifyTrue("Original value=" + origValue + ", Cleared value=" + newValue, "".equals(newValue));
+        verifyTrue("Original value=" + origValue + "" +
+        		"\n, Cleared value=" + newValue, 
+        		"".equals(newValue));
     }
 }

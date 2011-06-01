@@ -1,6 +1,7 @@
 import org.zkoss.ztl.JQuery;
 import org.zkoss.ztl.util.ColorVerifingHelper;
 
+//Toolbar>>Border>>outside border
 
 public class SS_075_Test extends SSAbstractTestCase {
 
@@ -9,16 +10,8 @@ public class SS_075_Test extends SSAbstractTestCase {
         // Select L13:M14
     	selectCells(11, 12, 12, 13);
         
-        // Click Border icon
-        JQuery borderIcon = jq("$fastIconBtn $borderBtn:visible");
-        mouseOver(borderIcon);
-        waitResponse();
-        clickAt(borderIcon, "30,0");
-        waitResponse();
-        
-        // Click outside border
-        click(jq(".z-menu-popup:visible .z-menu-item:eq(6)"));
-        waitResponse();
+    	//click Outside borders in border toolbar button
+    	clickDropdownButtonMenu("$fastIconBtn $borderBtn","Outside borders");
         
         // Verify
         verifyTrue(ColorVerifingHelper.isEqualColor("#FFFFFF", loadCellL13().parent().css("border-right-color")));

@@ -1,7 +1,7 @@
 import org.zkoss.ztl.JQuery;
 
-//"Select a cell
-//Click Shift cells down menuitem"
+//"Select a cell, 
+//edit -> insert -> Shift cells down"
 public class SS_018_Test extends SSAbstractTestCase {
 
 	@Override
@@ -25,9 +25,9 @@ public class SS_018_Test extends SSAbstractTestCase {
 
 		// TODO verify if pasted cell style is cleared
         verifyTrue("Original cell value=" + origValue 
-        		+ ", Original down cell value=" + downCellValue 
-        		+ ", New down cell value=" + newDownCellValue
-        		+ ", new value in B6 =" + newValue, 
+        		+ "\n, Original down cell value=" + downCellValue 
+        		+ "\n, New down cell value=" + newDownCellValue
+        		+ "\n, new value in B6 =" + newValue, 
         		"".equals(newValue));
 	}
 }

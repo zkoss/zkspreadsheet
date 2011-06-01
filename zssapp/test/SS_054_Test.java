@@ -6,10 +6,10 @@ public class SS_054_Test extends SSAbstractTestCase {
     @Override
     protected void executeTest() {
         // Select source cell
-        JQuery cell_J_13 = getSpecifiedCell(8, 12);
-        String origValue = numberOnly(getCellContent(cell_J_13));
-        clickCell(cell_J_13);
-        clickCell(cell_J_13);
+        JQuery cell_I_13 = getSpecifiedCell(8, 12);
+        String origValue = numberOnly(getCellContent(cell_I_13));
+        clickCell(cell_I_13);
+        clickCell(cell_I_13);
         
         // Ctrl + C
         keyDownNative(CTRL);
@@ -30,13 +30,17 @@ public class SS_054_Test extends SSAbstractTestCase {
         clickAt(jq("$pasteDropdownBtn"), "30,2");
         waitResponse();
         
+        //TODO: strange, in IE8, this line works like click "paste", not "paste value"?
         // Click Paste value
         click(jq("$pasteValue"));
         waitResponse();
         
         // Verify
-        cell_L_13 = loadTargetCell();
-        verifyEquals("Incorrect result! L13=" + cell_L_13.text(), origValue, cell_L_13.text());
+        cell_L_13 = getSpecifiedCell(11, 12);
+        String result = cell_L_13.text();
+        System.out.println(">>>result "+result);
+        verifyEquals("Incorrect result! L13=" + result, "56000", result);
+        sleep(5000);
     }
     
     private JQuery loadTargetCell() {

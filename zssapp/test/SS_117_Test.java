@@ -28,7 +28,12 @@ public class SS_117_Test extends SSAbstractTestCase {
 		click(jq("$okBtn td.z-button-cm"));
 		waitResponse();
 
-		verifyTrue(getSpecifiedCell(5,11).height() == 40);
+//		int height = getSpecifiedCell(5,11).height();
+//		System.out.println(">>>height =" + height);
+		//too rigid
+//		verifyTrue(getSpecifiedCell(5,11).height() == 40);
+		verifyTrue(getSpecifiedCell(5,11).height() >= 40-2);
+		verifyTrue(getSpecifiedCell(5,11).height() <= 40+2);
 	}
 }
 
