@@ -169,6 +169,13 @@ if="deploy.jboss.required">
 	<copy todir="${codegen.archive.dir}" preservelastmodified="yes" failonerror="false">
 		<fileset dir="srcresources" includes="**/functionMetadata*.txt"/>
 	</copy>
+	<copy todir="${codegen.archive.dir}" preservelastmodified="yes" failonerror="false">
+		<fileset dir="src" includes="**/excelStyle.css"/>
+	</copy>
+	<copy todir="${codegen.archive.dir}" preservelastmodified="yes" failonerror="false">
+		<fileset dir="srcpv" includes="zssPublicCert.store"/>
+		<fileset dir="srcpv" includes="**/Resources.properties"/>
+	</copy>
 	
 	<jar jarfile="${out.dir}/${jar.name}" manifest="${manifest.mf}">
 		<fileset dir="${out.dir}" excludes="${exclude.list}"/>
@@ -276,6 +283,7 @@ if="deploy.jboss.required">
 	<delete quiet="true" dir="${tmp.dir}"/>
 	<delete quiet="true" dir="${outv.dir}"/>
 	<delete quiet="true" dir="${codegen.dir}"/>
+	<delete quiet="true" dir="target"/>
 	<delete quiet="true">
 		<fileset dir="${dist.lib.dir}" includes="${xar.name}, ${jad.name}"/>
 		<!--fileset dir="${jboss.lib.dir}" includes="${xar.name}"/-->

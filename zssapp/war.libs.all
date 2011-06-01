@@ -2,9 +2,9 @@ breeze.jar
 zcommon.jar
 zweb.jar
 zk.jar
+zkex.nosrc.jar
 zul.jar
 zhtml.jar
-zkex.nosrc.jar
 zkplus.jar
 ckez.jar
 gmapsz.jar
@@ -24,6 +24,7 @@ zpoi.jar
 zss.jar
 zssex.jar
 zsspdf.jar
+zsshtml.jar
 opencsv.jar
 commons-math.jar
 ooxml-schemas-1.1.jar
