@@ -13,12 +13,7 @@
     <max-requests-per-session>5</max-requests-per-session>
     <max-pushes-per-session>3</max-pushes-per-session>
 </session-config>
- -->
-<library-property>
-<name>org.zkoss.zk.WPD.cache</name>
-<value>false</value>
-</library-property>
- 
+-->
 	<client-config>
 		<debug-js>true</debug-js>
 	</client-config>

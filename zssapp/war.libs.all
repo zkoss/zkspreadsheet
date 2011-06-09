@@ -2,7 +2,7 @@ breeze.jar
 zcommon.jar
 zweb.jar
 zk.jar
-zkex.nosrc.jar
+zkex.jar
 zul.jar
 zhtml.jar
 zkplus.jar
