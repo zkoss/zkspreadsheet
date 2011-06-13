@@ -2,6 +2,7 @@ breeze.jar
 zcommon.jar
 zweb.jar
 zk.jar
+zkex.jar
 zul.jar
 zhtml.jar
 zkplus.jar
@@ -21,6 +22,9 @@ commons-digester.jar
 iText-5.0.3.jar
 zpoi.jar
 zss.jar
+zssex.jar
+zsspdf.jar
+zsshtml.jar
 opencsv.jar
 commons-math.jar
 ooxml-schemas-1.1.jar
