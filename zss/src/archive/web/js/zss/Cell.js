@@ -38,7 +38,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			this._sheet._doMousedblclick(evt);
 		},
 		doKeyDown_: function (evt) {
-			this._sheet.doKeyDown_(evt);
+			this._sheet._doKeyDown(evt);
 		},
 		afterKeyDown_: function (evt) {
 			this._sheet._wgt.afterKeyDown_(evt);
@@ -315,8 +315,8 @@ zss.Cell = zk.$extends(zk.Object, {
 				//set text directly when DOM is ready
 				if (inner.$n() && this.defaultRowHgh)
 					inner.setText(txt, vtal, this.halign, true);
-				else /*TODO: avoid use addSSInitLater */
-					sheet.addSSInitLater(zss.Cell._processInnerText, this, inner, txt);
+				else //feel faster using insertSSInitLater
+					sheet.insertSSInitLater(zss.Cell._processInnerText, this, inner, txt);
 			}
 			if (sheet.config.textOverflow && !this.wrap) {
 				sheet.addSSInitLater(zss.Cell._processOverflow, this);
