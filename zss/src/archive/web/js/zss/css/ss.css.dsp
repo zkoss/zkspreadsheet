@@ -1,21 +1,10 @@
 <%@ page contentType="text/css;charset=UTF-8" %>
 <%@ taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" %>
 
-/* default value 
-topHeight=20
-leftWidth=36
-cellPadding=5
-rowHeight=20
-colWidth=60
-lineHeight=20
--moz-user-select:none;-khtml-user-select:none;
-*/
-
 .zssheet {
 	position: relative;
 	width: 100px;
 	height: 100px;
-	/*font-family: Tahoma, Arial, Helvetica, sans-serif;*/
 	background:#A4C3EB;
 	overflow:hidden;
 	border:1px solid #D8D8D8;
@@ -29,6 +18,7 @@ lineHeight=20
 	width: 100%;
 	height:100%;
 	left:0px;
+	background-color:#CAD7E6;
 }
 
 .zsdata {
@@ -36,9 +26,10 @@ lineHeight=20
 	top: 0px;
 	display: block;
 	position: relative;
-	padding-top: 20px; /*topHeight*/
-	padding-left: 36px; /*leftWidth*/
+	padding-top: 20px;
+	padding-left: 36px;
 	overflow: hidden;
+	background-color:#EEEEFF;
 }
 .zsdatapad{
 	position: relative;
@@ -73,6 +64,13 @@ lineHeight=20
 	overflow-y: visible;/*don't set hidden, otherwise sometime there will appear h-scrollbar in row*/
 	white-space: nowrap;
 	z-index: 1;
+	<c:if test="${c:browser('ie')}"> 
+		font-size:0;
+	</c:if>
+	<c:if test="${c:isExplorer() && !c:isExplorer7()}">
+		position: static;
+		overflow-y: hidden;
+	</c:if>
 }
 
 .zscell {
@@ -90,14 +88,38 @@ lineHeight=20
 	z-index:10;
 	position: relative;
 	cursor : default;
+	<c:if test="${c:browser('ie')}">
+		display: inline-block;
+		zoom: 1;
+		*display: inline;
+	</c:if>
+	<c:if test="${c:isSafari()}">
+		display: inline-block;
+	</c:if>
+	<c:if test="${c:isOpera()}">
+		display: inline-block;
+		vertical-align:text-top;
+		/*vertical-align: top;*//* DIFF : important, vertical align will cause opera scrollbar disappear*/
+	</c:if>
 }
 
 .zscell-over {
 	border-right: 1px;
 	border-right-style:hidden;
-	
 	overflow: visible;
 	position: relative;
+	<c:if test="${c:browser('ie')}">
+		border-right: 0px;
+		margin-right: 1px;
+	</c:if>
+	<c:if test="${c:isSafari()}">
+		border-right: 0px;
+		margin-right: 1px;
+	</c:if>
+	<c:if test="${c:isOpera()}">
+		border-right: 0px;
+		margin-right: 1px;
+	</c:if>
 }
 
 .zscell-over-b {
@@ -110,6 +132,18 @@ lineHeight=20
 	box-orient: horizontal;
 	box-pack: start;
 	box-align: center;
+	<c:if test="${c:isGecko()}">
+		display: -moz-box;
+		-moz-box-orient: horizontal;
+		-moz-box-pack: start;
+		-moz-box-align: center;
+	</c:if>
+	<c:if test="${c:isSafari()}">
+		display: -webkit-box;
+		-webkit-box-orient: horizontal;
+		-webkit-box-pack: start;
+		-webkit-box-align: center;
+	</c:if>
 }
 
 .zscell-inner-mid-center {
@@ -117,6 +151,18 @@ lineHeight=20
 	box-orient: horizontal;
 	box-pack: center;
 	box-align: center;
+	<c:if test="${c:isGecko()}">
+		display: -moz-box;
+		-moz-box-orient: horizontal;
+		-moz-box-pack: center;
+		-moz-box-align: center;
+	</c:if>
+	<c:if test="${c:isSafari()}">
+		display: -webkit-box;
+		-webkit-box-orient: horizontal;
+		-webkit-box-pack: center;
+		-webkit-box-align: center;		
+	</c:if>
 }
 
 .zscell-inner-mid-right {
@@ -124,6 +170,18 @@ lineHeight=20
 	box-orient: horizontal;
 	box-pack: end;
 	box-align: center;
+	<c:if test="${c:isGecko()}">
+		display: -moz-box;
+		-moz-box-orient: horizontal;
+		-moz-box-pack: end;
+		-moz-box-align: center;
+	</c:if>
+	<c:if test="${c:isSafari()}">
+		display: -webkit-box;
+		-webkit-box-orient: horizontal;
+		-webkit-box-pack: end;
+		-webkit-box-align: center;		
+	</c:if>
 }
 
 .zscell-inner-btm-left {
@@ -131,6 +189,18 @@ lineHeight=20
 	box-orient: horizontal;
 	box-pack: start;
 	box-align: end;
+	<c:if test="${c:isGecko()}">
+		display: -moz-box;
+		-moz-box-orient: horizontal;
+		-moz-box-pack: start;
+		-moz-box-align: end;
+	</c:if>
+	<c:if test="${c:isSafari()}">
+		display: -webkit-box;
+		-webkit-box-orient: horizontal;
+		-webkit-box-pack: start;
+		-webkit-box-align: end;
+	</c:if>
 }
 
 .zscell-inner-btm-center {
@@ -138,6 +208,18 @@ lineHeight=20
 	box-orient: horizontal;
 	box-pack: center;
 	box-align: end;
+	<c:if test="${c:isGecko()}">
+		display: -moz-box;
+		-moz-box-orient: horizontal;
+		-moz-box-pack: center;
+		-moz-box-align: end;
+	</c:if>
+	<c:if test="${c:isSafari()}">
+		display: -webkit-box;
+		-webkit-box-orient: horizontal;
+		-webkit-box-pack: center;
+		-webkit-box-align: end;		
+	</c:if>
 }
 
 .zscell-inner-btm-right {
@@ -145,6 +227,18 @@ lineHeight=20
 	box-orient: horizontal;
 	box-pack: end;
 	box-align: end;
+	<c:if test="${c:isGecko()}">
+		display: -moz-box;
+		-moz-box-orient: horizontal;
+		-moz-box-pack: end;
+		-moz-box-align: end;
+	</c:if>
+	<c:if test="${c:isSafari()}">
+		display: -webkit-box;
+		-webkit-box-orient: horizontal;
+		-webkit-box-pack: end;
+		-webkit-box-align: end;
+	</c:if>
 }
 
 .zscelltxt {
@@ -201,6 +295,18 @@ lineHeight=20
 	position: relative;
 	overflow: visible;
 	background-color:#FFFFFF;
+	<c:if test="${c:isExplorer7()}">
+		top: 1px;
+	</c:if>
+	<c:if test="${c:isExplorer() && !c:isExplorer7()}">
+		top: -1px;
+	</c:if>
+	<c:if test="${c:isSafari()}">
+		top: 1px;
+	</c:if>
+	<c:if test="${c:isOpera()}">
+		top: 1px;
+	</c:if>
 }
 
 .zstopcell {
@@ -219,6 +325,17 @@ lineHeight=20
 	overflow: hidden;
 	position:relative;
 	cursor : default;
+	<c:if test="${c:browser('ie')}">
+		display: inline-block;
+		zoom: 1;
+		*display: inline;
+	</c:if>
+	<c:if test="${c:isSafari()}">
+		display: inline-block;
+	</c:if>
+	<c:if test="${c:isOpera()}">
+		display: inline-block;
+	</c:if>
 }
 
 .zstop-sel {
@@ -287,6 +404,9 @@ lineHeight=20
 	font-size: smaller;
 	height: 19px; /* rowHeight - 1, 1 is border */
 	text-align: center;
+	<c:if test="${c:browser('ie')}">
+		font-size: 10px;
+	</c:if>
 }
 
 .zsleft-sel {
@@ -338,6 +458,9 @@ lineHeight=20
 	height: 20px; /* topHeight - 2, 2 is border */
 	background-color:#DAE7F6;
 	overflow: hidden;
+	<c:if test="${c:browser('ie')}">
+		*font-size: 0;
+	</c:if>
 }
 
 .zscorneri {
@@ -362,11 +485,19 @@ lineHeight=20
 	z-index: 2;
 	display: none;
 	border: 3px solid #BBBBBB;
+	<c:if test="${c:browser('ie')}">
+		font-size: 0;
+	</c:if>
 }
 .zsfocmarki{
 	position: absolute;
 	width:100%;
 	height:100%;
+	<c:if test="${c:browser('ie')}">
+		font-size: 0;
+		filter: alpha(opacity=0);
+		background: #FFFFFF;
+	</c:if>
 }
 .zsselect {
 	position: absolute;
@@ -374,18 +505,28 @@ lineHeight=20
 	display: none;
 	cursor: move;
 	border: 3px solid #222222;
-	
+	<c:if test="${c:browser('ie')}">
+		font-size: 0;
+	</c:if>
 }
 .zsselecti{
 	position: absolute;
 	cursor: default;
 	width:100%;
 	height:100%;
+	<c:if test="${c:browser('ie')}">
+		font-size: 0;
+		filter: alpha(opacity=0);
+		background: #FFFFFF;
+	</c:if>
 }
 
 .zsselecti-r{
 	background-color: #E3ECF7;
 	opacity:.5;
+	<c:if test="${c:browser('ie')}">
+		filter: alpha(opacity=50);
+	</c:if>
 }
 
 .zsseldot {
@@ -397,6 +538,9 @@ lineHeight=20
 	border: 1px solid white;
 	background-color: #222222;
 	cursor: crosshair;
+	<c:if test="${c:browser('ie')}">
+		font-size: 0;
+	</c:if>
 }
 
 .zsselchg {
@@ -413,6 +557,10 @@ lineHeight=20
 	height:100%;
 	background-color: #BBAABB;
 	opacity:.4;
+	<c:if test="${c:browser('ie')}">
+		filter: alpha(opacity=40);
+		background-color: #99FFAA;
+	</c:if>
 }
 
 .zshighlight {
@@ -451,23 +599,46 @@ lineHeight=20
 }
 
 
-.zshboun{/*hboundary*/
+.zshboun{
 	display: -moz-inline-box;
 	position:relative;
-	height:20px; /* topHeight */
-	width:0px; /* set width to 0 */
+	height:20px;
+	width:0px;
 	left:-3px;
 	z-index:2;
 	vertical-align:top;
+	<c:if test="${c:browser('ie')}">
+		display: inline-block;
+		zoom: 1;
+		*display: inline;
+	</c:if>
+	<c:if test="${c:isSafari()}">
+		display: inline-block;
+	</c:if>
+	<c:if test="${c:isOpera()}">
+		display: inline-block;
+	</c:if>
 }
 .zshbouni{
 	position: relative;
 	height:100%;
 	width:7px;
+	<c:if test="${c:browser('ie')}">
+		*position: absolute;
+		display: inline-block;
+		zoom: 1;
+		*display: inline;
+	</c:if>
+	<c:if test="${c:isSafari()}">
+		display: inline-block;
+	</c:if>
+	<c:if test="${c:isOpera()}">
+		display: inline-block;
+	</c:if>
 }
-.zsvboun{/*vboundary*/
+.zsvboun{
 	position:relative;
-	height:0px; /* set height to 0 */
+	height:0px;
 	top:-3px;
 	z-index:2;
 }
@@ -475,6 +646,10 @@ lineHeight=20
 	position: relative;
 	height:7px;
 	width:100%;
+	<c:if test="${c:browser('ie')}">
+		*position: absolute;
+		font-size: 0;
+	</c:if>
 }
 .zshbouni-over{
 	background: #A9C4E9;
@@ -488,6 +663,19 @@ lineHeight=20
 	position: relative;
 	height:100%;
 	width:3px;
+	<c:if test="${c:browser('ie')}">
+		display: inline-block;
+		zoom: 1;
+		*display: inline;
+		*position: absolute;
+		*left:7px;
+	</c:if>
+	<c:if test="${c:isSafari()}">
+		display: inline-block;
+	</c:if>
+	<c:if test="${c:isOpera()}">
+		display: inline-block;
+	</c:if>
 }
 .zshbounw-over{
 	background: #A9C4E9;
@@ -497,6 +685,11 @@ lineHeight=20
 	position: relative;
 	height:3px;
 	width:100%;
+	<c:if test="${c:browser('ie')}">
+		font-size: 0;
+		*position: absolute;
+		*top:7px;
+	</c:if>
 }
 .zsvbounw-over{
 	background: #A9C4E9;
@@ -526,6 +719,9 @@ lineHeight=20
 	background-color : #A9C4E9;
 	opacity:.75;
 	display:table;
+	<c:if test="${c:browser('ie')}">
+		filter:alpha(opacity=75);
+	</c:if>
 }
 .zssmask2{
 	display:table-cell;
