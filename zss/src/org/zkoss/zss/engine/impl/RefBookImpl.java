@@ -128,7 +128,8 @@ public class RefBookImpl implements RefBook {
 	@Override
 	public Ref getOrCreateVariableRef(String name, RefSheet dummy) {
 		final Ref ref = new VarRefImpl(name, dummy);
-		return _variableRefs.putIfAbsent(name, ref);
+		final Ref ret = _variableRefs.putIfAbsent(name, ref);
+		return ret != null ? ret : ref;
 	}
 
 	@Override
