@@ -390,6 +390,14 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		resubscribeBookListeners();
 	}
 	
+	public void setBook(Book book) {
+		unsubscribeBookListeners();
+		removeBookFromDesktopIfNeeded();
+		spreadsheet.setBook(book);
+		storeBookInDesktop(spreadsheet);
+		resubscribeBookListeners();
+	}
+	
 	public void openBook(SpreadSheetMetaInfo info) {
 		unsubscribeBookListeners();
 		final Book targetBook = getBookFromDesktop(info.getSrc());

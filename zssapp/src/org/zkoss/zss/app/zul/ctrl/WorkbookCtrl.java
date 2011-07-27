@@ -21,6 +21,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
+import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
@@ -175,6 +176,8 @@ public interface WorkbookCtrl {
 	 * @param src
 	 */
 	public void setBookSrc(String src);
+	
+	public void setBook(Book book);
 	
 	/**
 	 * Returns whether current sheet is protected or not
