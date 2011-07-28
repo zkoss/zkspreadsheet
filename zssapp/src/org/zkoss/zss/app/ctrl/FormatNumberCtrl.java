@@ -14,10 +14,8 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.ctrl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
@@ -39,38 +37,44 @@ public class FormatNumberCtrl extends GenericForwardComposer {
 	private Dialog _formatNumberDialog;
 	private Listbox mfn_category;
 	private Listbox mfn_general;
+	private Listbox selectedCategory;
 	
 	private Button okBtn;
 	
 	private Spreadsheet spreadsheet;
 	
-	Map mapLabelListbox;
-	public FormatNumberCtrl() {
-		mapLabelListbox = new HashMap();
-
-		mapLabelListbox.put("General", "mfn_general");
-		mapLabelListbox.put("Number", "mfn_number");
-		mapLabelListbox.put("Currency", "mfn_currency");
-		mapLabelListbox.put("Accounting", "mfn_accounting");
-		mapLabelListbox.put("Date", "mfn_date");
-		mapLabelListbox.put("Time", "mfn_time");
-		mapLabelListbox.put("Percentage", "mfn_percentage");
-		mapLabelListbox.put("Fraction", "mfn_fraction");
-		mapLabelListbox.put("Scientific", "mfn_scientific");
-		mapLabelListbox.put("Text", "mfn_text");
-		mapLabelListbox.put("Special", "mfn_special");
-	}
-	
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		//TODO: move to WorkbookCtrl
 		spreadsheet = Zssapps.getSpreadsheetFromArg();
+		
+		openFormatList("mfn_general");
+	}
+	
+	public void onSelect$mfn_category(SelectEvent event) {
+		openFormatList((String)mfn_category.getSelectedItem().getValue());
 	}
 	
 	public void onOpen$_formatNumberDialog() {
 		try {
 			_formatNumberDialog.setMode(Window.MODAL);
 		} catch (InterruptedException e) {
+		}
+	}
+	
+	public void openFormatList(String listId) {
+		String[] myList = {"mfn_general","mfn_number","mfn_currency","mfn_accounting","mfn_date","mfn_time","mfn_percentage","mfn_fraction","mfn_scientific","mfn_text","mfn_special"};
+		for(int i = 0; i< myList.length; i++){
+			Listbox lb = (Listbox) self.getFellow(myList[i]);
+			if(lb != null){
+				if(listId.equals(myList[i])){
+					lb.setVisible(true);
+					lb.setSelectedIndex(0);
+					selectedCategory = lb;
+				}else{
+					lb.setVisible(false);
+				}
+			}				
 		}
 	}
 
@@ -80,12 +84,11 @@ public class FormatNumberCtrl extends GenericForwardComposer {
 			showSelectFormatDialog();
 			return;
 		}
-		Listbox selectedList = (Listbox)self.getFellow((String)mapLabelListbox.get(seldItem.getLabel()));
-		if (selectedList == mfn_general) {
+		if (selectedCategory == null || selectedCategory == mfn_general) {
 			showSelectFormatDialog();
 			return;
 		}
-		Listitem selectedItem = selectedList.getSelectedItem();
+		Listitem selectedItem = selectedCategory.getSelectedItem();
 
 		if (selectedItem != null) {
 			String formatCodes = selectedItem.getValue().toString();

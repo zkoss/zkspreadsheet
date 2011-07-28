@@ -13,28 +13,23 @@
 				<listhead >
 					<listheader label="Category:" sort="auto" />
 				</listhead>
-				<listitem label="General" onClick="openOnlyMyList(&quot;mfn_general&quot;)"
-					onCreate="openOnlyMyList(&quot;mfn_general&quot;)" />
-				<listitem label="Number" onClick="openOnlyMyList(&quot;mfn_number&quot;)" />
-				<listitem label="Currency" onClick="openOnlyMyList(&quot;mfn_currency&quot;)" />
-				<listitem label="Accounting"
-					onClick="openOnlyMyList(&quot;mfn_accounting&quot;)" />
-				<listitem label="Date" onClick="openOnlyMyList(&quot;mfn_date&quot;)" />
-				<listitem label="Time" onClick="openOnlyMyList(&quot;mfn_time&quot;)" />
-				<listitem label="Percentage"
-					onClick="openOnlyMyList(&quot;mfn_percentage&quot;)" />
-				<listitem label="Fraction" onClick="openOnlyMyList(&quot;mfn_fraction&quot;)" />
-				<listitem label="Scientific"
-					onClick="openOnlyMyList(&quot;mfn_scientific&quot;)" />
-				<listitem label="Text" onClick="openOnlyMyList(&quot;mfn_text&quot;)" />
-				<listitem label="Special" onClick="openOnlyMyList(&quot;mfn_special&quot;)" />
+				<listitem id="formatGeneral" label="General" value="mfn_general"/>
+				<listitem id="formatNumber" label="Number" value="mfn_number"/>
+				<listitem id="formatCurrency" label="Currency" value="mfn_currency"/>
+				<listitem id="formatAccounting" label="Accounting" value="mfn_accounting"/>
+				<listitem id="formatDate" label="Date" value="mfn_date"/>
+				<listitem id="formatTime" label="Time" value="mfn_time"/>
+				<listitem id="formatPercentage" label="Percentage" value="mfn_percentage"/>
+				<listitem id="formatFraction" label="Fraction" value="mfn_fraction"/>
+				<listitem id="formatScientific" label="Scientific" value="mfn_scientific"/>
+				<listitem id="formatText" label="Text" value="mfn_text"/>
+				<listitem id="formatSpecial" label="Special" value="mfn_special"/>
 		</listbox>
 		<div >
 			<listbox id="mfn_general" rows="11" width="220px">
 			<listhead>
 					<listheader label="Sample:" />
 			</listhead>
-<!--				<listitem label="general" value="General" />-->
 				<listitem label="No specific number format" value="" />
 			</listbox>
 			<listbox id="mfn_number" rows="11" width="210px">
@@ -150,22 +145,6 @@
 	<div height="25px" style="float:right;padding: 5px;">
 		<button id="okBtn" mold="trendy" image="~./zssapp/image/check.png"/>
 	</div>
-	<zscript><![CDATA[
-		void openOnlyMyList(String listId){
-			String[] myList = {"mfn_general","mfn_number","mfn_currency","mfn_accounting","mfn_date","mfn_time","mfn_percentage","mfn_fraction","mfn_scientific","mfn_text","mfn_special"};
-			for(int i = 0; i< myList.length; i++){
-				Listbox lb = self.getFellow(myList[i]);
-				if(lb != null){
-					if(listId.equals(myList[i])){
-						lb.setVisible(true);
-						lb.setSelectedIndex(0);
-					}else{
-						lb.setVisible(false);
-					}
-				}				
-			}
-		}
-	]]></zscript>
 	</div>
 </window>
 </zk>
