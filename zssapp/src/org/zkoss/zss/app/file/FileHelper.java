@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Map;
 
 import org.zkoss.io.Files;
@@ -27,6 +28,7 @@ import org.zkoss.lang.Library;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zss.app.init.ZssappWebInit;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Exporter;
 import org.zkoss.zss.model.Exporters;
@@ -137,11 +139,13 @@ public class FileHelper {
 	}
 	
 	public static void openNewSpreadsheet(Spreadsheet ss) {
-		FileInputStream input = null;
+		InputStream input = null;
 		try {
-			input = new FileInputStream(getSpreadsheetStorageFolderPath() + EMPTY_FILE_NAME);
+			ClassLoader loader = Thread.currentThread().getContextClassLoader();
+			input = loader.getResourceAsStream("web/zssapp/xls/Untitled");
+			
 			ss.setBookFromStream(input, EMPTY_FILE_NAME);
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
 			if (input != null)

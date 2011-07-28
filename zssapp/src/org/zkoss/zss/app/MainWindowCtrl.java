@@ -15,9 +15,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.app;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.io.InputStream;
 import java.util.Iterator;
 
 import org.zkoss.lang.Library;
@@ -31,6 +29,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -198,6 +197,10 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
+		
+		//TODO: do it after "afterCompose"
+		FileHelper.openNewSpreadsheet(spreadsheet);
+		
 		//TODO: replace this mechanism
 		initZssappComponents();
 		init();
@@ -214,6 +217,9 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 	
 	public void init() {
+		boolean isPE = WebApps.getFeature("pe");
+		exportToPDFBtn.setDisabled(!isPE);
+		
 		//Note. setSrcName will set spreadsheet's src name, but not the book name
 		// if setSrc will init a book, then setSrcName only change the src name, 
 		// if setSrc again with the first same book, the book will register two listener 
