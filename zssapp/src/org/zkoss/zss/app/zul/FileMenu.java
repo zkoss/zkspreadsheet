@@ -20,6 +20,7 @@ import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.app.Consts;
@@ -186,10 +187,11 @@ public class FileMenu extends Menu implements IdSpace {
                 //TODO: not impl
     			saveFileAs.setDisabled(true);
     			if (isOpen) {
+    				boolean isPE = WebApps.getFeature("pe");
 	    			deleteFile.setDisabled(false);
-	    			exportPdf.setDisabled(_exportToPdfDisabled | false);
-	    			exportHtml.setDisabled(_exportToHtmlDisabled | false);
-	    			exportExcel.setDisabled(_exportToExcelDisabled | false);
+	    			exportPdf.setDisabled(_exportToPdfDisabled | !isPE | false );
+	    			exportHtml.setDisabled(_exportToHtmlDisabled | !isPE | false);
+	    			exportExcel.setDisabled(_exportToExcelDisabled | !isPE | false);
 	    			saveFile.setDisabled(!savePermission);
 	    			saveFileAndClose.setDisabled(!savePermission);
     			} else {
