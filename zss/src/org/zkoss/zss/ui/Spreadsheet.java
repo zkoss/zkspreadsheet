@@ -52,15 +52,15 @@ import org.zkoss.lang.Objects;
 import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.FormulaParseException;
+import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellReference;
-import org.zkoss.poi.ss.usermodel.AutoFilter;
-import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
@@ -80,6 +80,7 @@ import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.WebApp;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
@@ -310,14 +311,17 @@ public class Spreadsheet extends XulElement implements Serializable {
 				Book book = null;
 				if (importer instanceof ExcelImporter) {
 					URL url = null;
-
+					
 					if (_src.startsWith("/")) {// try to load by application
 						// context.
-						File file = new File(Executions.getCurrent()
-								.getDesktop().getWebApp().getRealPath(_src));
-						if (file.exists()) {
-							url = file.toURI().toURL();
-						}
+						WebApp wapp = Executions.getCurrent().getDesktop().getWebApp();
+						String path = wapp.getRealPath(_src);
+						if (path != null) {
+							File file = new File(path);
+							if (file.exists())
+								url = file.toURI().toURL();
+						} else
+							url = wapp.getResource(_src); 
 					}
 					if (url == null) {// try to load from class loader
 						url = new ClassLocator().getResource(_src);

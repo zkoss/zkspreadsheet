@@ -4,6 +4,8 @@ ZK Spreadsheet 2.2.0
 
 *Bug
    28 Spreadsheet data binding does not work
+   31 NullPointerException in some application server. ex Domino
+   
 	------------
 ZK Spreadsheet 2.1.0
 
