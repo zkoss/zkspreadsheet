@@ -15,6 +15,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.zul.ctrl;
 
 import org.zkoss.poi.ss.usermodel.BorderStyle;
+import org.zkoss.web.fn.ServletFns;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
@@ -454,6 +455,11 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 	}
 
 	public void onCreate() {
+		//bug on IE6, cause div expand
+		if (ServletFns.isBrowser("ie6")) {
+			container.setHflex("min");
+		}
+		
 		CellStyleContext context = getCellStyleContext();
 		DisposedEventListener listener = new DisposedEventListener() {
 			public boolean isDisposed() {

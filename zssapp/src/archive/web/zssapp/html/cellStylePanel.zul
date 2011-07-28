@@ -18,16 +18,7 @@
 		.z-menu-item-cnt,.impactFont .z-combo-item-text{ font-size:14px;
 		font-family:impact; }
 	</style>
-	<zscript><![CDATA[ 
-	import org.zkoss.web.fn.ServletFns;
-	]]></zscript>
-	<hlayout id="container" height="100%" spacing="0" >
-		<attribute name="onCreate"><![CDATA[
-	    //TODO: bug on IE6, cause div expand
-		if (ServletFns.isBrowser("ie6")) {
-			container.setHflex("min");
-		}
-		]]></attribute>
+	<hlayout id="container" height="100%" spacing="0">
 		<combobox id="fontFamily" mold="rounded" width="125px">
 			<comboitem label="Calibri" sclass="calibriFont" />
 			<comboitem label="Courier New" sclass="courierFont" />
