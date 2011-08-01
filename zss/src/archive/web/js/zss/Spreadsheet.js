@@ -442,7 +442,9 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		/** 
 		 * the encoded URL for the dynamic generated content, or empty
 		 */
-		scss: null,
+		scss: function (url) {
+			zk.loadCSS(this._scss, this.uuid + "-sheet");
+		},
 		sheetId: null,
 		focusRect: null,
 		selectionRect: null,
@@ -774,7 +776,9 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		if (this.getSheetId() == null) //no sheet at all
 			return;
 		var sheet = this.sheetCtrl = new zss.SSheetCtrl(this.$n(), this);
-		this._loadCSSDirect(this._scss, this.uuid + "-sheet");
+
+		
+		//this._loadCSSDirect(this._scss, this.uuid + "-sheet");
 		
 		this._initMaxColumn();
 		this._initMaxRow();
@@ -786,7 +790,6 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	},
 	bind_: function () {
 		_calScrollWidth();
-		
 		this.$supers('bind_', arguments);
 
 		this._initControl();
@@ -1037,14 +1040,6 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		if (this.sheetCtrl && this.sheetCtrl.state == zss.SSheetCtrl.FOCUSED)
 			this.sheetCtrl._doKeyup(evt);
 	},
-	_loadCSSDirect: function (uri, id) {
-		var e = document.createElement("LINK");
-		if (id) e.id = id;
-		e.rel = "stylesheet";
-		e.type = "text/css";
-		e.href = uri;
-		document.getElementsByTagName("HEAD")[0].appendChild(e);
-	},
 	linkTo: function (href, type, evt) {
 		//1: LINK_URL
 		//2: LINK_DOCUMENT
@@ -1091,13 +1086,9 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			if (zk.ie6_ || zk.ie7_)
 				jq(sheet.activeBlock.comp).toggleClass('zssnosuch');
 		} else {
-			sheet._initcount++;
-			if (sheet._initcount > 20)
-				sheet._initcount = 0;
-			
 			setTimeout(function () {
 				zss.Spreadsheet.initLaterAfterCssReady(sheet);
-			}, 100);
+			}, 10);
 		}		
 	}
 });
