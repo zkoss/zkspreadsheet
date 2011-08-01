@@ -321,26 +321,45 @@
 	vertical-align: top;
 	/*line-height: 20px; lineHeigth*/
 	border-right: 1px solid #7F9DB9;
-	background-image: url(${c:encodeURL('~./zss/img/s_hd.gif')});
+	background:#E8EDF4;
 	overflow: hidden;
 	position:relative;
 	cursor : default;
+	<c:if test="${c:isGecko()}">
+		background-image: -moz-linear-gradient(top, #F9FCFD, #D3DBE9);
+	</c:if>
 	<c:if test="${c:browser('ie')}">
 		display: inline-block;
 		zoom: 1;
 		*display: inline;
+		filter:  progid:DXImageTransform.Microsoft.gradient(startColorStr='#F9FCFD', EndColorStr='#D3DBE9'); /* IE6,IE7 */
+		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#F9FCFD', EndColorStr='#D3DBE9')"; /* IE8 */
 	</c:if>
 	<c:if test="${c:isSafari()}">
 		display: inline-block;
+		background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #F9FCFD),color-stop(1, #D3DBE9));
 	</c:if>
 	<c:if test="${c:isOpera()}">
 		display: inline-block;
+		background-image: -o-linear-gradient(#F9FCFD, #D3DBE9);
 	</c:if>
 }
 
 .zstop-sel {
-	/*background:#ffd58d;*/
-	background-image: url(${c:encodeURL('~./zss/img/s_hds.gif')});
+	background:#FFD58D;
+	<c:if test="${c:isGecko()}">
+		background-image: -moz-linear-gradient(top, #F9D99F, #F1C15F);
+	</c:if>
+	<c:if test="${c:browser('ie')}">
+		filter:  progid:DXImageTransform.Microsoft.gradient(startColorStr='#F9D99F', EndColorStr='#F1C15F'); /* IE6,IE7 */
+		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#F9D99F', EndColorStr='#F1C15F')"; /* IE8 */
+	</c:if>
+	<c:if test="${c:isSafari()}">
+		background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #F9D99F),color-stop(1, #F1C15F));
+	</c:if>
+	<c:if test="${c:isOpera()}">
+		background-image: -o-linear-gradient(#F9D99F, #F1C15F);
+	</c:if>
 }
 
 .zstopcelltxt {
