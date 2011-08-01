@@ -427,8 +427,6 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		}
 
 		this.showMask(false);
-		//close busy after all initial after load block
-		//this.addSSInitLater(function(sheet){sheet.showBusy(false);},this);
 		
 		//bug 1951423 IE : row is broken when scroll down, st time to do ss initiallater
 		var self = this;
@@ -2184,12 +2182,6 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	 */
 	hideInfo: function () {
 		this.info.hideInfo();
-	},
-	/**
-	 * Display busy
-	 */
-	showBusy: function (show) {
-		jq(this.busycmp).css('visibility', show ? 'visible' : 'hidden');
 	},
 	/**
 	 * Display mark

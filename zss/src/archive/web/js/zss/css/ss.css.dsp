@@ -732,17 +732,6 @@
 	font-style:bold;
 	color:white;
 }
-.zssbusy{
-	position: absolute;
-	z-index: 1000;
-	left: 8px;
-	top: 2px;
-	width: 16px;
-	height: 16px;
-	background-image : url(${c:encodeURL('~./zss/img/busy.gif')});
-	visibility : hidden;
-}
-
 
 .zsmergee{
 	display:none!important;

@@ -29,7 +29,7 @@ function (out) {
 		leftHeaderHiddens = this._leftHeaderHiddens;
 
 	out.push('<div', this.domAttrs_(), '><textarea id="', uuid, '-fo" class="zsfocus"></textarea>',
-			'<div id="', uuid, '-mask" class="zssmask" zs.t="SMask"><div class="zssmask2"><div id="', uuid, '-masktxt" class="zssmasktxt" align="center"></div></div></div><div id="', uuid, '-busy" class="zssbusy"></div>', 
+			'<div id="', uuid, '-mask" class="zssmask" zs.t="SMask"><div class="zssmask2"><div id="', uuid, '-masktxt" class="zssmasktxt" align="center"></div></div></div>', 
 			'<div id="', uuid, '-sp" class="zsscroll" zs.t="SScrollpanel">',
 			'<div id="', uuid, '-dp" class="zsdata" zs.t="SDatapanel" ', dataPanel,' z.skipdsc="true">',
 			'<div id="', uuid, '-datapad" class="zsdatapad"></div>',
