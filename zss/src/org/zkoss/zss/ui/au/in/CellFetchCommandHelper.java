@@ -910,6 +910,7 @@ public class CellFetchCommandHelper{
 		Cell cell = Utils.getCell(sheet, row, col); 
 		
 		if (cell != null) {
+			jcell.setData("ctype", cell.getCellType());
 			CellStyle style = cell.getCellStyle();
 			
 			boolean wrap = false;

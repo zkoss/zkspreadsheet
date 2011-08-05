@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.zkoss.json.JSONArray;
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
 import org.zkoss.lang.Objects;
@@ -1853,11 +1854,10 @@ public class Spreadsheet extends XulElement implements Serializable {
 	}
 	
 	private void responseUpdateCell(Worksheet sheet, String sheetId, int left, int top, int right, int bottom) {
-		int row, col;
-		for (int j = top; j <= bottom; j++) {
-			for (int i = left; i <= right; i++) {
-				row = j;
-				col = i;
+		int row = top, col = left;
+		JSONArray ary = new JSONArray();
+		for (; row <= bottom; row++) {
+			for (col = left; col <= right; col++) {
 
 				// update cell only in block or in freeze panels
 				if (row > _loadedRect.getBottom()
@@ -1874,7 +1874,10 @@ public class Spreadsheet extends XulElement implements Serializable {
 				result.setData("r", row);
 				result.setData("c", col);
 				result.setData("type", "udcell");
-
+				
+				if (cell != null)
+					result.setData("ctype", cell.getCellType());
+				
 				CellStyle style = (cell == null) ? null : cell.getCellStyle();
 				if (style != null)
 					result.setData("lock", style.getLocked());
@@ -1933,10 +1936,10 @@ public class Spreadsheet extends XulElement implements Serializable {
 				if (cell != null) {
 					result.setData("edit", Utils.getEditText(cell));
 				}
-				// responseUpdateCell(row + "_" + col + "_" + _updateCellId.last(), "", sheetId, result.toString());
-				response(row + "_" + col + "_" + _updateCellId.last(), new AuDataUpdate(this, "", sheetId, result.toString()));
+				ary.add(result);
 			}
 		}
+		response(row + "_" + col + "_" + _updateCellId.last(), new AuDataUpdate(this, "", sheetId, ary.toJSONString()));
 	}
 	
 	/**
@@ -2174,6 +2177,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 			}
 
 			if (cell != null) {
+				HTMLs.appendAttribute(sb, "z.ctype", cell.getCellType());
+				
 				CellStyle style = cell.getCellStyle();
 				if (style != null && !style.getLocked()) {
 					HTMLs.appendAttribute(sb, "z.lock", "f"); //default cell lock is true

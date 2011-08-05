@@ -242,13 +242,99 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			return tn.textContent || tn.innerText;
 		},
 		onSize: zk.gecko ? function () {
-			var $n = jq(this.$n());
-			jq(this.firstChild.$n()).css('width', $n.css('width'));
+			var n = this.$n();
+			if (!n) {
+				this.clearCache();
+				n = this.$n();
+			}
+			jq(this.firstChild.$n()).css('width', jq(n).css('width'));
 		} : zk.$void
 	});
+	
+	//condition: cell type is string, halign is left, no wrap, no merge
+	function evalOverflow(ctrl) {
+		return ctrl.cellType == STR_CELL && !ctrl.wrap && !ctrl.merid 
+				&& ctrl.halign == 'l' && ctrl.sheet.config.textOverflow;
+	}
+	
+	//cache
+	var NUM_CELL = 0,
+		STR_CELL = 1,
+		FORMULA_CELL = 2,
+		BLANK_CELL = 3,
+		BOOLEAN_CELL = 4,
+		ERROR_CELL = 5;
 
 zss.Cell = zk.$extends(zk.Object, {
+	/**
+	 * Whether cell is locked or not
+	 * 
+	 * Default: true
+	 */
 	lock: true,
+	/**
+	 * Indicate whether should invoke processd overflow on cell or not
+	 * 
+	 * Currently, supports left aligned cell only
+	 */
+	overflow: false,
+	/**
+	 * Re-process overflow
+	 */
+	redoOverflow: false,
+	/**
+	 * Indicate current cell's width is insufficient, overflow cell content to neighbor cells
+	 */
+	//overflowed,
+	/**
+	 * Indicate current cell is overlap by a overflowed cell
+	 */
+	//overlapBy: null,
+	/**
+	 * Cell type
+	 * 
+	 * <ul>
+	 * 	<li>0: Numeric Cell type</li>
+	 * 	<li>1: String Cell type</li>
+	 * 	<li>2: Formula Cell type</li>
+	 * 	<li>3: Blank Cell type</li>
+	 * 	<li>4: Boolean Cell type</li>
+	 * 	<li>5: Error Cell type</li>
+	 * </ul>
+	 * 
+	 * Default: Blank Cell type 
+	 */
+	cellType: 3,
+	/**
+	 * Horizontal alignment for the cell
+	 * 
+	 * <ul>
+	 * 	<li>l: align left</li>
+	 * 	<li>c: align center</li>
+	 * 	<li>r: align right</li>
+	 * </ul>
+	 * 
+	 * Default: align left
+	 */
+	halign: "l",
+	/**
+	 * Vertical alignment for the cell
+	 * 
+	 * <ul>
+	 * 	<li>t: align top</li>
+	 * 	<li>c: align center</li>
+	 * 	<li>b: align bottom</li>
+	 * </ul>
+	 * 
+	 * Default: align top
+	 */
+	valign: 't',
+	/**
+	 * Whether the text should be wrapped
+	 * 
+	 * Default: false
+	 */
+	wrap: false,
 	$init: function (sheet, block, cmp, edit) {
 		this.$supers('$init', arguments);
 		this.id = cmp.id;
@@ -256,8 +342,6 @@ zss.Cell = zk.$extends(zk.Object, {
 		this.sheet = sheet;
 		this.block = block;
 		this.comp = cmp;
-		this.overby = null;
-		this.overhead = false;//overhead, this cell is a overflow's left cell
 		this.edit = edit;
 
 		var $n = jq(cmp);
@@ -266,25 +350,27 @@ zss.Cell = zk.$extends(zk.Object, {
 		this.defaultRowHgh = ('1' == $n.attr('z.drh'));
 			
 		this.zsw = $n.attr('z.zsw');
-
 		if (this.zsw)
 			this.zsw = zk.parseInt(this.zsw);
 
 		this.zsh = $n.attr('z.zsh');
-
 		if (this.zsh)
 			this.zsh = zk.parseInt(this.zsh);
-		var lock = $n.attr('z.lock');
+
+		var lock = $n.attr('z.lock'),
+			cellType = $n.attr('z.ctype'),
+			wrap = this.wrap = $n.attr('z.wrap') == "t",
+			halign = $n.attr('z.hal'),
+			valign = $n.attr('z.vtal');
 		if (lock != undefined)
 			this.lock = !(lock == "f");
-		var wrap = this.wrap = $n.attr('z.wrap') == "t";
-		this.halign = $n.attr('z.hal');
-		if (!this.halign)
-			this.halign = "l";//default h align is left;
-		var vtal = this.valign = $n.attr('z.vtal');
-		if (!vtal)
-			vtal = this.valign = "t";//default v align is top;
-		
+		if (cellType != undefined)
+			this.cellType = cellType;
+		if (halign)
+			this.halign = halign;
+		if (valign)
+			this.valign = valign;
+
 		var inner = null,
 			txtCmp = this.txtcomp = $n.children('DIV:first')[0],
 			txt = this.txtcomp.innerHTML,
@@ -307,31 +393,30 @@ zss.Cell = zk.$extends(zk.Object, {
 			}*/
 		}
 
-		if (!txt)
-			this._updateHasTxt(false);
-		else {
-			this._updateHasTxt(true);
-			if (inner) {
-				//set text directly when DOM is ready
-				if (inner.$n() && this.defaultRowHgh)
-					inner.setText(txt, vtal, this.halign, true);
-				else //feel faster using insertSSInitLater
-					sheet.insertSSInitLater(zss.Cell._processInnerText, this, inner, txt);
-			}
-			if (sheet.config.textOverflow && !this.wrap) {
-				sheet.addSSInitLater(zss.Cell._processOverflow, this);
-			}
-		}
 		//process merge.
 		var mid = $n.attr('z.merid');
-		if (zkS.t(mid)) {
+		if (mid) {
 			this.merr = zk.parseInt($n.attr('z.merr')); 
-			this.merid = zk.parseInt(mid);
+			this.merid = zk.parseInt(mid); //merge id start from 1
 			this.merl = zk.parseInt($n.attr('z.merl')); 
 			this.mert = zk.parseInt($n.attr('z.mert')); 
 			this.merb = zk.parseInt($n.attr('z.merb')); 
 		}
 		cmp.ctrl = this;
+		
+		this._updateHasTxt(!!txt);
+		if (txt) {
+			this._updateHasTxt(true);
+			if (inner) {
+				//set text directly when DOM is ready
+				if (inner.$n() && this.defaultRowHgh)
+					inner.setText(txt, this.valign, this.halign, true);
+				else //feel faster using insertSSInitLater
+					sheet.insertSSInitLater(zss.Cell._processInnerText, this, inner, txt);
+			}
+			if (this.overflow = evalOverflow(this))
+				sheet.addSSInitLater(zss.Cell._processOverflow, this);
+		}
 	},
 	/**
 	 * Returns whether cell locked or not
@@ -375,11 +460,17 @@ zss.Cell = zk.$extends(zk.Object, {
 	setText: function (txt) {
 		if (!txt)
 			txt = "";
+		var oldTxt = this.getText(),
+			difTxt = txt != oldTxt;
 		this._updateHasTxt(txt != "");
 		this._setText(txt);
 
-		if (this.sheet.config.textOverflow)
-			zss.Cell._processOverflow(this);
+		if (this.overflow) {
+			if (this.redoOverflow || difTxt) {
+				zss.Cell._processOverflow(this);
+				this.redoOverflow = false;
+			}
+		}
 	},
 	getText: function () {
 		if (this._inner)
@@ -417,10 +508,9 @@ zss.Cell = zk.$extends(zk.Object, {
 	cleanup: function () {
 		this.invalid = true;
 		this._updateHasTxt(false);
-		if (this.overhead && !this.block.invalid) {
-			//remove the overby relation , because the cell that is overbyed maybe not be destroied.
-			zss.Cell._clearOverbyRelation(this);
-			this.block._overflowcell.$remove(this);	
+		if (this.overflowed && !this.block.invalid) {
+			//remove the overlap relation , because the cell that is overlaped maybe not be destroied.
+			zss.Cell._clearOverlapRelation(this);
 		}
 		var inner = this._inner;
 		if (inner) {
@@ -428,7 +518,7 @@ zss.Cell = zk.$extends(zk.Object, {
 			this._inner = null;
 		}
 		if (this.comp) this.comp.ctrl = null;
-		this.comp = this.txtcomp = this.sheet = this.overby = 
+		this.comp = this.txtcomp = this.sheet = this.overlapBy = 
 			this.block = this._inner = this._vflex = this.lock = this.defaultRowHgh = null;
 	},
 	/**
@@ -486,18 +576,19 @@ zss.Cell = zk.$extends(zk.Object, {
 			cmp = document.createElement("div"),
 			drh = parm.drh,
 			lock = parm.lock,
+			cellType = parm.ctype,
 			$n = jq(cmp);
 
 		$n.attr({"zs.t": "SCell", "z.c": col, "z.r": row, 
 			"z.hal": (hal ? hal : "l"), "z.vtal": (vtal ? vtal : "t"), 'z.drh': !drh ? '0' : drh});
 		
 		if (lock != undefined && !lock) $n.attr("z.lock", "f");
+		if (cellType != undefined) $n.attr("z.ctype", cellType);
 		if (zsw) $n.attr("z.zsw", zsw);
 		if (zsh) $n.attr("z.zsh", zsh);
 		if (parm.wrap) $n.attr("z.wrap", "t");
 		if (parm.rbo) $n.attr("z.rbo", "t");
-		
-		if (zkS.t(merid))
+		if (merid)
 			$n.attr({"z.merr": merr, "z.merid": merid, "z.merl": merl, "z.mert": mert, "z.merb": merb}).addClass(merl == col && mert == row? "zsmerge" + merid : mert == row ? "zsmergee" : "zsmergeeu");
 		
 		if (st)
@@ -522,55 +613,36 @@ zss.Cell = zk.$extends(zk.Object, {
 	 * @param map parameter setting
 	 */
 	updateCell: function (ctrl, parm) {
-		var txt = parm.txt,
-			edit = parm.edit,
-			st = parm.st,//style
+		var st = parm.st,//style
 			ist = parm.ist,//style of inner div
-			wrap = parm.wrap,
 			hal = parm.hal,
 			vtal = parm.vtal,
 			lock = parm.lock,
-			rbo = parm.rbo,
+			cellType = parm.ctype,
 			cmp = ctrl.comp;
-		if (lock != undefined)
-			ctrl.lock = lock;
-		if (!wrap)
-			wrap = false;
-		jq(cmp).attr("z.wrap", wrap);	
-		ctrl.wrap = wrap;
-		var txtcmp = ctrl.txtcomp;
-		
-		if (!st)
-			st = "";
-		if (!ist)
-			ist = "";
-		cmp.style.cssText = st;
-		txtcmp.style.cssText = ist;
-		
-		ctrl.halign = hal;
-		if (!ctrl.halign)
-			ctrl.halign = "l";//default h align is left;
-		if (!vtal)
-			vtal = 't';//default v align is top
-		if (vtal != ctrl.valign) {
-			ctrl.valign = vtal;
-		}
-		
-		ctrl.rborder = (rbo == true);
-		ctrl.setText(txt);
+		ctrl.cellType = cellType != undefined ? cellType : BLANK_CELL;
+		ctrl.lock = !!lock;//default is locked
+		ctrl.wrap = parm.wrap;
+		cmp.style.cssText = !st ? '' : st;
+		ctrl.txtcomp.style.cssText = !ist ? '' : ist;
+		ctrl.halign = !hal ? "l" : hal;//default h align is left
+		ctrl.valign = !vtal ? 't' : vtal;//default v align is top
+		ctrl.rborder = !!parm.rbo;
 		ctrl.edit = parm.edit;
+		ctrl.overflow = evalOverflow(ctrl);
+		ctrl.setText(parm.txt);
 	},
-	_clearOverbyRelation: function (ctrl) {
+	_clearOverlapRelation: function (ctrl) {
 		var cmp = ctrl.comp,
 			sheet = ctrl.sheet;
-		if (ctrl.overhead && !sheet.invalid) {
-			var next = jq(cmp).next('DIV')[0],
-				nctrl;
+		if (this.overflowed && !sheet.invalid) {
+			var next = cmp.nextSibling,
+				nCtrl;
 			while (next) {
-				nctrl = next.ctrl;
-				if (nctrl && nctrl.overby == ctrl) {
-					nctrl.overby = null;
-					next = jq(next).next('DIV')[0];
+				nCtrl = next.ctrl;
+				if (nCtrl && nCtrl.overlapBy == ctrl) {
+					nCtrl.overlapBy = null;
+					next = next.nextSibling;
 					continue;	
 				}
 				break;
@@ -586,7 +658,7 @@ zss.Cell = zk.$extends(zk.Object, {
 		
 		cellInnerWgt.setText(txt, ctrl.valign, ctrl.halign, ctrl.defaultRowHgh);
 	},
-	_processOverflow: function (ctrl) {
+	_processOverflow: function (ctrl) {		
 		var sheet = ctrl.sheet;
 		if (ctrl.invalid || !sheet.config.textOverflow) {
 			//a cell might load on demand, it will cause a initial later to process text overflow(see also,CellBlock._createCell)
@@ -597,42 +669,32 @@ zss.Cell = zk.$extends(zk.Object, {
 		var cmp = ctrl.comp,
 			block = ctrl.block,
 			txtcmp = ctrl.txtcomp;
-
 		jq(txtcmp).css({'width': '', 'position': ''});//remove old value.
-		//1995735,force IE recaluate some thing first
-		if (zk.ie && txtcmp.clientWidth) {}
-
 		var sw = txtcmp.scrollWidth,
-			cw = cmp.clientWidth - 2 * sheet.cellPad,
-			oldoverby = ctrl.overby,
-			overflow = (ctrl.hastxt && ctrl.halign == "l" && !ctrl.wrap  && !zkS.t(ctrl.merid)  && sw > cw); 
-		
-		if (overflow) {//process condition, halign is left, no wrap
-			if (!ctrl.overhead && !block._overflowcell.$contains(ctrl))
-				block._overflowcell.push(ctrl);
-
-			ctrl.overhead = true;
+			cellPad = sheet.cellPad,
+			oldOverlapBy = ctrl.overlapBy,
+			overflow = ctrl.overflow && sw > (cmp.clientWidth - 2 * cellPad);
+		if (overflow) {
+			ctrl.overflowed = true;
 			txtcmp.style.position = zk.ie || zk.safari ? "absolute" : "relative";
-
 			var w = cmp.clientWidth,
 				prev = cmp,
-				next = jq(cmp).next('DIV')[0],
-				count = 0;
+				next = cmp.nextSibling;
 			while (next) {
+				var nCtrl = next.ctrl,
+					rBorder = prev.ctrl.rborder;
 				if (!next.ctrl) {//next no initial yet, then delay and process again.
 					zkS.addDelayBatch(zss.Cell._processOverflow, false, ctrl);
 					return;
 				}
-				next.ctrl.overby = ctrl;
-				if (next.ctrl.hastxt) {
-					jq(prev).removeClass(prev.ctrl.rborder ? "zscell-over-b" : "zscell-over");
+				nCtrl.overlapBy = null;
+				if (nCtrl.hastxt) {
+					jq(prev).removeClass(rBorder ? "zscell-over-b" : "zscell-over");
 					break;
 				}
-				if (prev.ctrl.rborder) {
-					jq(prev).removeClass("zscell-over").addClass("zscell-over-b");
-				} else {
-					jq(prev).removeClass("zscell-over-b").addClass("zscell-over");
-				}
+				
+				jq(prev).removeClass(rBorder ? "zscell-over" : "zscell-over-b")
+						.addClass(rBorder ? "zscell-over-b" : "zscell-over");
 				
 				var ow = next.offsetWidth;
 				w = w + ow;
@@ -640,44 +702,40 @@ zss.Cell = zk.$extends(zk.Object, {
 					jq(next).removeClass(next.ctrl.rborder ? "zscell-over-b" : "zscell-over");
 					
 					//keep remove next overflow if it is over by this cell
-					next = jq(next).next('DIV')[0];//next.nextSibling;
+					next = next.nextSibling;
 					while (next) {
-						if (ctrl != next.ctrl.overby)
+						if (ctrl != next.ctrl.overlapBy)
 							break;
 						jq(next).removeClass(next.ctrl.rborder ? "zscell-over-b" : "zscell-over");
 
-						next.ctrl.overby = null;
-						next = jq(next).next('DIV')[0];
+						next.ctrl.overlapBy = null;
+						next = next.nextSibling;
 					}
 					break;
 				}
 				prev = next;
-				next = jq(next).next('DIV')[0];
+				next = next.nextSibling;//jq(next).next('DIV')[0];
 			}
-			w =  w - sheet.cellPad;
-			if (w < 0) w = 0;// bug, when some column or row is invisible, the w might be samlle then zero
-			jq(txtcmp).css('width', jq.px0(w));
+			w =  w - cellPad;
+			jq(txtcmp).css('width', jq.px0(w));//when some column or row is invisible, the w might be samlle then zero
 		} else {
-			if (ctrl.overhead)
-				block._overflowcell.$remove(ctrl);	
-			ctrl.overhead = false;
+			ctrl.overflowed = false;
 			jq(cmp).removeClass(cmp.ctrl.rborder ? "zscell-over-b" : "zscell-over");
-
-			var next = jq(cmp).next('DIV')[0];
+			
+			var next = cmp.nextSibling;
 			while (next) {
 				//next no initial yet skip to check
 				if(!next.ctrl || 
-					ctrl != next.ctrl.overby && (oldoverby ? oldoverby != next.ctrl.overby : true))
+					ctrl != next.ctrl.overlapBy && (oldOverlapBy ? oldOverlapBy != next.ctrl.overlapBy : true))
 					break;
 				jq(next).removeClass(next.ctrl.rborder ? "zscell-over-b" : "zscell-over");
 
-				next.ctrl.overby = null;
-				next = jq(next).next('DIV')[0];
+				next.ctrl.overlapBy = null;
+				next = next.nextSibling;
 			}
 		}
-		
-		if (oldoverby)
-			zss.Cell._processOverflow(oldoverby);
+		if (oldOverlapBy)
+			zss.Cell._processOverflow(oldOverlapBy);
 	}
 });
 })();

@@ -125,7 +125,7 @@ zss.Editbox = zk.$extends(zk.Object, {
 			$edit = jq(editorcmp);
 
 		editorcmp.value = value;
-		var w = cellcmp.ctrl.overhead ? (cellcmp.firstChild.offsetWidth + this.sheet.cellPad) : (cellcmp.offsetWidth),
+		var w = cellcmp.ctrl.overflowed ? (cellcmp.firstChild.offsetWidth + this.sheet.cellPad) : (cellcmp.offsetWidth),
 			h = cellcmp.offsetHeight,
 			l = cellcmp.offsetLeft,
 			t = cellcmp.parentNode.offsetTop;

@@ -458,8 +458,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			var block = this.activeBlock;
 			if (col < block.range.left)// insert before current block, then jump
 				block.reloadBlock("east");
-			else 
-				block._processTextOverflow(col);
+			else
+				this._wgt.setProcessOverflowCol_(col);
 		} else if (result.type == "row") {//jump to another bolck, not a neighbor
 			var row = result.row,
 				size = result.size;
@@ -482,7 +482,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			var block = this.activeBlock;
 			if (row < block.range.top)// insert before current block, then jump
 				block.reloadBlock("south");
-		}		
+		}
+
 		dp._fixSize(this.activeBlock);
 		this._fixSize();
 
@@ -523,7 +524,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				block.reloadBlock("east");
 				lfv = false;
 			} else
-				block._processTextOverflow(col);
+				this._wgt.setProcessOverflowCol_(col);
 			
 			this._syncColFocusAndSelection(col, col + size - 1);
 		} else if (result.type == "row") {//jump to another bolck, not a neighbor
@@ -1456,21 +1457,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			dp.updateWidth((hidden ? 0 : width) - oldw);
 		
 			//process text overflow when resize column
-			var block = this.activeBlock;
-			block._processTextOverflow(col);
-			
-			if (this.cp.block)
-				this.cp.block._processTextOverflow(col);	
-
-			if(this.tp.block)
-				this.tp.block._processTextOverflow(col);	
-
-			if(this.lp.block)
-				this.lp.block._processTextOverflow(col);	
-			
-			var fzc = this.frozenCol;
-			
-			if (fzc >= col) {
+			this._wgt.setProcessOverflowCol_(col, zss.Spreadsheet.SRC_CMD_SET_COL_WIDTH);	
+			if (this.frozenCol >= col) {
 				this.lp._fixSize();
 				this.cp._fixSize();
 			}
@@ -1652,9 +1640,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 
 	},
 	_updateText: function (result) {
-		var row = result.r,
-			col = result.c,
-			cell = this.activeBlock.getCell(row, col);
+		var cell = this.activeBlock.getCell(result.r, result.c);
 		if (cell)//update if cell exist
 			cell._setText(result.val);
 	},
@@ -1662,23 +1648,27 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		var row = result.r,
 			col = result.c,
 			cell = this.activeBlock.getCell(row, col),
-			parm = {"txt": result.val,"edit":result.edit};
-		zkS.copyParm(result, parm, ["st", "ist", "wrap", "hal", "vtal", "drh", "lock", "rbo", "merr", "merl", "mert", "merb"]);
-		
-		if (cell)//update when cell exist
-			zss.Cell.updateCell(cell, parm);
+			parm = {"txt": result.val, "edit":result.edit},
+			cBlock = this.cp.block,
+			tBlock = this.tp.block,
+			lBlock = this.lp.block,
+			updateCell = zss.Cell.updateCell;
+		zkS.copyParm(result, parm, ["st", "ist", "wrap", "hal", "vtal", "drh", "lock", "ctype", "rbo", "merr", "merl", "mert", "merb"]);
 
-		if (this.cp.block) {
-			cell = this.cp.block.getCell(row, col);
-			if (cell) zss.Cell.updateCell(cell, parm);
+		if (cell)//update when cell exist
+			updateCell(cell, parm);
+		
+		if (cBlock) {
+			cell = cBlock.getCell(row, col);
+			if (cell) updateCell(cell, parm);
 		}
-		if (this.tp.block) {
-			cell = this.tp.block.getCell(row, col);
-			if (cell) zss.Cell.updateCell(cell, parm);
+		if (tBlock) {
+			cell = tBlock.getCell(row, col);
+			if (cell) updateCell(cell, parm);
 		}
-		if (this.lp.block) {
-			cell = this.lp.block.getCell(row, col);
-			if (cell) zss.Cell.updateCell(cell, parm);
+		if (lBlock) {
+			cell = lBlock.getCell(row, col);
+			if (cell) updateCell(cell, parm);
 		}
 		//feature #26: Support copy/paste value to local Excel
 		var ls = this.getLastSelection();
@@ -2313,22 +2303,24 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			top = result.top,
 			right = result.right,
 			bottom = result.bottom,
-			sheetid = this.sheetid;
-		
-		var cssid = sheetid + "-sheet" + ((zk.opera) ? "-opera" : ""),//opera bug, it cannot insert rul to special position
-			name = "#" + sheetid;
+			sheetid = this.sheetid,
+			cssid = sheetid + "-sheet" + ((zk.opera) ? "-opera" : ""),//opera bug, it cannot insert rul to special position
+			name = "#" + sheetid,
+			cBlock = this.cp.block,
+			tBlock = this.tp.block,
+			lBlock = this.lp.block;
 		zcss.removeRule(name + " .zsmerge" + id, cssid);
 		zcss.removeRule(name + " .zsmerge" + id + " .zscelltxt", cssid);
 		
 		this.mergeMatrix.removeMergeRange(id);
 		this.activeBlock.removeMergeRange(id, left, top, right, bottom);
 
-		if(this.cp.block)
-			this.cp.block.removeMergeRange(id, left, top, right, bottom);
-		if(this.tp.block)
-			this.tp.block.removeMergeRange(id, left, top, right, bottom);
-		if(this.lp.block)
-			this.lp.block.removeMergeRange(id, left, top, right, bottom);
+		if(cBlock)
+			cBlock.removeMergeRange(id, left, top, right, bottom);
+		if(tBlock)
+			tBlock.removeMergeRange(id, left, top, right, bottom);
+		if(lBlock)
+			lBlockck.removeMergeRange(id, left, top, right, bottom);
 	},
 	_addMergeRange: function (result) {
 		var id = result.id,
@@ -2337,29 +2329,32 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			right = result.right,
 			bottom = result.bottom,
 			width = result.width,
-			height = result.height;
-
-		var cssid = this.sheetid + "-sheet" + ((zk.opera) ? "-opera" : ""),//opera bug, it cannot insert rul to special position
+			height = result.height,
+			cssid = this.sheetid + "-sheet" + ((zk.opera) ? "-opera" : ""),//opera bug, it cannot insert rul to special position
 			cp = this.cellPad,
 			celltextwidth = width - 2 * cp - 1,
 			cellwidth = zk.ie || zk.safari || zk.opera ? celltextwidth : width,
 			celltextheight = height - 1,
 			cellheight = zk.ie || zk.safari || zk.opera ? celltextheight : height,
-			name = "#" + this.sheetid;
+			name = "#" + this.sheetid,
+			cBlock = this.cp.block,
+			tBlock = this.tp.block,
+			lBlock = this.lp.block;
+
 		zcss.setRule(name + " .zsmerge" + id, "width", cellwidth + "px", true, cssid);
 		zcss.setRule(name + " .zsmerge" + id + " .zscelltxt", "width", celltextwidth + "px", true, cssid);
 		zcss.setRule(name + " .zsmerge" + id, "height", cellheight + "px", true, cssid);
 		zcss.setRule(name + " .zsmerge" + id + " .zscelltxt", "height", celltextheight + "px", true, cssid);
 		
-		this.mergeMatrix.addMergeRange(id, left, top, right, bottom);		
+		this.mergeMatrix.addMergeRange(id, left, top, right, bottom);	
 		this.activeBlock.addMergeRange(id, left, top, right, bottom);
-
-		if(this.cp.block)
-			this.cp.block.addMergeRange(id, left, top, right, bottom);
-		if(this.tp.block)
-			this.tp.block.addMergeRange(id, left, top, right, bottom);
-		if(this.lp.block)
-			this.lp.block.addMergeRange(id, left, top, right, bottom);
+		
+		if(cBlock)
+			cBlock.addMergeRange(id, left, top, right, bottom);
+		if(tBlock)
+			tBlock.addMergeRange(id, left, top, right, bottom);
+		if(lBlock)
+			lBlock.addMergeRange(id, left, top, right, bottom);
 		
 		this.moveCellFocus(top, left);		
 	}

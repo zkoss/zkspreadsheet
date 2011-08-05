@@ -101,11 +101,18 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	}
 	
 	function _doCellUpdateCmd (sheet, data, token) {
-		sheet._cmdCellUpdate(jq.evalJSON(data));
+		data = jq.evalJSON(data);
+		if (jq.isArray(data)) {
+			var i = data.length;
+			while (i--)
+				sheet._cmdCellUpdate(data[i]);
+		} else
+			sheet._cmdCellUpdate(data);
 		if (token != "") {
 			zkS.doCallback(token);
 		}
 	}
+
 	function _doBlockUpdateCmd (sheet, data, token) {
 		sheet._cmdBlockUpdate(jq.evalJSON(data));
 		if (token != "")
@@ -228,6 +235,18 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  * Spreadsheet is a is a rich ZK Component to handle EXCEL like behavior
  */
 zss.Spreadsheet = zk.$extends(zul.Widget, {
+	/**
+	 * Indicate whether shall process cell's overflow or not
+	 */
+	//_shallProcessOverflow: 0
+	/**
+	 * Process overflow column index
+	 */
+	_processOverflowCol: 0,
+	/**
+	 * Map source command and relate column index. For process overflow
+	 */
+	_srcCmd: {},
 	$init: function () {
 		this.$supers('$init', arguments);
 		this._cssFlex = _flexSupport();
@@ -776,9 +795,6 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		if (this.getSheetId() == null) //no sheet at all
 			return;
 		var sheet = this.sheetCtrl = new zss.SSheetCtrl(this.$n(), this);
-
-		
-		//this._loadCSSDirect(this._scss, this.uuid + "-sheet");
 		
 		this._initMaxColumn();
 		this._initMaxRow();
@@ -793,12 +809,10 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		this.$supers('bind_', arguments);
 
 		this._initControl();
-		//zWatch.listen({onShow: this, onHide: this, onSize: this});
-		zWatch.listen({onShow: this, onSize: this});
+		zWatch.listen({onShow: this, onSize: this, onResponse: this});
 	},
 	unbind_: function () {
-		//zWatch.unlisten({onShow: this, onHide: this, onSize: this});
-		zWatch.unlisten({onShow: this, onSize: this});
+		zWatch.unlisten({onShow: this, onSize: this, onResponse: this});
 
 		this._maxColumnMap = this._maxRowMap = null;
 		
@@ -813,6 +827,37 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			window.CollectGarbage();
 		
 		this.$supers('unbind_', arguments);
+	},
+	/**
+	 * Set process cell's overflow column range
+	 */
+	setProcessOverflowCol_: function (colIdx, cmd) {
+		this._shallProcessOverflowType = true;
+		this._processOverflowCol = Math.max(colIdx, this._processOverflowCol);
+		if (cmd != undefined)
+			this._srcCmd[cmd] = colIdx;
+	},
+	onResponse: function () {
+		var col = this._processOverflowCol,
+			overflow = this._shallProcessOverflow,
+			cmd = this._srcCmd;
+
+		if (overflow) {
+			var sCtrl = this.sheetCtrl,
+				cBlock = sCtrl.cp.block,
+				tBlock = sCtrl.tp.block,
+				lBlock = sCtrl.lp.block;
+			sCtrl.activeBlock._processTextOverflow(col, cmd);
+			if (cBlock)
+				cBlock._processTextOverflow(col, cmd);
+			if (tBlock)
+				tBlock._processTextOverflow(col, cmd);
+			if (lBlock)
+				lBlock._processTextOverflow(col, cmd);
+			this._shallProcessOverflow = false;
+			this._processOverflowCol = 0;
+			this._srcCmd = {};
+		}
 	},
 	onShow: _zkf = function () {
 		var sheet = this.sheetCtrl;
@@ -1059,6 +1104,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 }, {
 	CELL_MOUSE_EVENT_NAME: {lc:'onCellClick', rc:'onCellRightClick', dbc:'onCellDoubleClick', af:'onFilter'},
 	HEADER_MOUSE_EVENT_NAME: {lc:'onHeaderClick', rc:'onHeaderRightClick', dbc:'onHeaderDoubleClick'},
+	SRC_CMD_SET_COL_WIDTH: 'setColWidth',
 	initLaterAfterCssReady: function (sheet) {
 		if (zcss.findRule(".zs_indicator", sheet.id + "-sheet") != null) {
 

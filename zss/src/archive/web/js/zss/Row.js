@@ -197,8 +197,8 @@ zss.Row = zk.$extends(zk.Object, {
 			//because of overflow logic, we must maintain overflow link from overhead
 			//copy over flow attrbute overby and overhead,
 			if (tempcell) {
-				if (tempcell.overhead) ctrl.overby = tempcell;
-				else if(tempcell.overby) ctrl.overby = tempcell.overby;
+				if (tempcell.overflowed) ctrl.overlapBy = tempcell;
+				else if(tempcell.overlapBy) ctrl.overlapBy = tempcell.overlapBy;
 			}
 			this.pushCellI(ctrl, index + i);
 		}

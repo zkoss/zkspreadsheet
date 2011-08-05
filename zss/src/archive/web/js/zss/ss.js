@@ -27,8 +27,7 @@ zkS = {};
  * i want if scentance pass even val=0
  */
 zkS.t = function (val) {
-	if(val || val===0) return true;
-	return false;
+	return val || val === 0;
 };
 
 zkS._delayInit = false;/*should i init header and cell by dealy bath*/
@@ -121,10 +120,9 @@ zkS.parentByZSType = function(el, type, pathlen) {
 
 
 zkS.copyParm = function (src, dest, parms) {
-	var size = parms.length;
-	for(var i = 0; i < size; i++){
+	var i = parms.length;
+	while(i--)
 		dest[parms[i]] = src[parms[i]];	
-	}
 };
 
 zkS.trimFirst = function (comp, tag) {

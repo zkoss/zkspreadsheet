@@ -18,7 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 
 (function () {
-	var CELL_PARAMS = ["txt", "st", "ist", "wrap", "hal", "vtal", "drh", "rbo", "merr", "merid", "merl", "mert", "merb", "zsw", "edit", "lock"];
+	var CELL_PARAMS = ["txt", "st", "ist", "wrap", "hal", "vtal", "drh", "rbo", "merr", "merid", "merl", "mert", "merb", "zsw", "edit", "lock", "ctype"];
 /**
  * CellBlockCtrl is used for controlling cells, include load cell, creating cell, merge cell and cell position index
  */
@@ -31,8 +31,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 		this.comp = cmp;
 		zk(cmp).disableSelection();//disable block is selectable
 
-		this.range = new zss.Range(left, top, 0, 0, true);
-		this._overflowcell = [];//cell is overflow
+		this.range = new zss.Range(left, top, 0, 0, true);	
 		this._textedcell = [];//cell has text
 		this._lastDir = null;
 		this.rows = [];
@@ -51,7 +50,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 		}
 		
 		//this.rowcmps = null;
-		this.rows.length = this._overflowcell.length = this._textedcell.length = 0;
+		this.rows.length = this._textedcell.length = 0;
 		this.rows = this._overflowcell = this._textedcell = null;
 	},
 	/**
@@ -94,7 +93,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 	 * @param int width
 	 */
 	addMergeRange: function (id, left, top, right, bottom, width) {
-		var cell = cell1 = this.getCell(top, left);
+		var cell = ctrl = this.getCell(top, left);
 		if (!cell) return;
 		var comp;
 		for (var r = top; r <= bottom; ++r) {
@@ -117,7 +116,6 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 				cell.merb = bottom;
 			}
 		}
-		zss.Cell._processOverflow(cell1);
 	},
 	/**
 	 * Remove the merge range of the cell
@@ -129,7 +127,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 	 * @param int width
 	 */
 	removeMergeRange: function (id, left, top, right, bottom, width) {
-		var cell = cell1 = this.getCell(top, left);
+		var cell = ctrl = this.getCell(top, left);
 		if (!cell) return;
 		var merl = cell.merl,
 			merr = cell.merr,
@@ -157,20 +155,37 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 				cell.merid = cell.merr = cell.merl = cell.mert = cell.merb = ud;
 			}
 		}
-		zss.Cell._processOverflow(cell1);
+		ctrl.redoOverflow = true;
 	},
-	_processTextOverflow: function (colbefore) {
+	_processTextOverflow: function (colbefore, cmd) {
 		var sheet = this.sheet;
 		if (!sheet.config.textOverflow) return;
 		
 		var txtcells = this._textedcell,
-			size = txtcells.length,
-			i = 0;
-		for (; i < size; i++) {
+			i = txtcells.length;
+		while (i--) {
 			var ctrl = txtcells[i];
-			if(/*!ctrl.wrap && */(!colbefore || ctrl.c <= colbefore)){
-				//TODO i shoud process the closer cell only.
-				zss.Cell._processOverflow(ctrl);
+			if(ctrl.overflow && ctrl.c <= colbefore) {
+				var col = colbefore,
+					row = ctrl.r,
+					redo = false,
+					prevCell = this.getCell(row, col);
+				while (prevCell) {
+					if (prevCell.overlapBy) {
+						redo = true;
+						break;
+					}
+					var cmdCol = cmd[zss.Spreadsheet.SRC_CMD_SET_COL_WIDTH];
+					if (cmdCol && cmdCol == prevCell.c && prevCell.overflow)
+						redo = true;
+					else if (prevCell.overflowed)
+						redo = true;
+					if (redo == true)
+						break;
+					prevCell = this.getCell(row, --col);
+				}
+				if (redo)
+					zss.Cell._processOverflow(ctrl);
 			}
 		}
 	},	

@@ -418,8 +418,6 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		
 		if (scroll)
 			sheet.sp.scrollToVisible(null, null, cell);	
-		if (sheet.config.textOverflow)
-			zss.Cell._processOverflow(cell);
 		return true;
 	},
 	/* re-focus current cell , and stop editing*/
