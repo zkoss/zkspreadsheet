@@ -108,7 +108,7 @@ zkS.parentByZSType = function(el, type, pathlen) {
 			if (!el.attributes) 
 				continue;
 			for (var j = 0; j < size; j++) {
-				if (jq(el).attr('zs.t') == type[j])
+				if (el.getAttribute('zs.t') == type[j])
 					return el;
 			}
 			if (pathlen && i++ > pathlen)

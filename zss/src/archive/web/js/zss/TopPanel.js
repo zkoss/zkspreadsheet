@@ -25,8 +25,8 @@ zss.TopPanel = zk.$extends(zk.Object, {
 	$init: function (sheet, node, corner) {
 		this.$supers('$init', arguments);
 		var wgt = sheet._wgt,
-			inner = jq(node).children('DIV:first')[0],
-			head = jq(inner).children('DIV:first')[0],
+			inner = node.firstChild,
+			head = inner.firstChild,
 			fontSize = corner && zk.ie ? wgt._getTopHeaderFontSize() : null;//head: contains headers.
 
 		if (fontSize)
@@ -39,7 +39,7 @@ zss.TopPanel = zk.$extends(zk.Object, {
 		this.icomp = inner;
 		this.hcomp = head;
 		
-		this.hidehead = ((jq(head).attr('z.hide') == "true") ? true : false);
+		this.hidehead = head.getAttribute('z.hide') == "true";
 		this.sheet = sheet;
 		node.ctrl = this;
 		
@@ -68,10 +68,10 @@ zss.TopPanel = zk.$extends(zk.Object, {
 			tpheaders = corner ? sheet.tp.headers : null;
 		for (var i = 0, j = 0; i < size; i++) {
 			header = nodes[i];
-			if (jq(header).attr('zs.t') == 'STheader') {
+			if (header.getAttribute('zs.t') == 'STheader') {
 				if (fontSize)
 					jq(header).css('font-size', fontSize);
-				idx = zk.parseInt(jq(header).attr('z.c'));
+				idx = zk.parseInt(header.getAttribute('z.c'));
 				boundary = nodes[i + 1];
 				headers.push(new zss.Header(sheet, header, boundary, idx, zss.Header.HOR, tpheaders ? tpheaders[j++] : null));
 			}
@@ -155,17 +155,17 @@ zss.TopPanel = zk.$extends(zk.Object, {
 	_doMouseover: function (evt) {
 		if (this.sheet.headerdrag) return;
 		var n = evt.domTarget;
-		if (jq(n).attr('zs.t') == "SBoun")
+		if (n.getAttribute('zs.t') == "SBoun")
 			n.parentNode.ctrlref._processDrag(true, false);
-		if (jq(n).attr('zs.t') == "SBoun2")
+		if (n.getAttribute('zs.t') == "SBoun2")
 			n.parentNode.ctrlref._processDrag(true, true);
 	},
 	_doMouseout: function (evt){
 		if (this.sheet.headerdrag) return;
 		var n = evt.domTarget;
-		if (jq(n).attr('zs.t') == "SBoun")
+		if (n.getAttribute('zs.t') == "SBoun")
 			n.parentNode.ctrlref._processDrag(false, false);
-		if (jq(n).attr('zs.t') == "SBoun2")
+		if (n.getAttribute('zs.t') == "SBoun2")
 			n.parentNode.ctrlref._processDrag(false, true);
 	},
 	_createEastHeader: function (headerdata, width) {

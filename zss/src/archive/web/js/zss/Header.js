@@ -68,12 +68,12 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				sheet._setRowHeight(idx, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
 		}
 		//clear header style
-		jq(ctrl.comp).removeAttr('style');
-		jq(ctrl.icomp).removeAttr('style');
+		ctrl.comp.removeAttribute('style');
+		ctrl.icomp.removeAttribute('style');
 		if (cousin) {
-			jq(cousin.comp).removeAttr('style');
-			jq(cousin.icomp).removeAttr('style');
-			jq(cp.comp).removeAttr('style');
+			cousin.comp.removeAttribute('style');
+			cousin.icomp.removeAttribute('style');
+			cp.comp.removeAttribute('style');
 		}
 
 		//gain focus and reallocate mark , then show it, 
@@ -260,22 +260,22 @@ zss.Header = zk.$extends(zk.Object, {
 		this.orgsize = null;
 		
 		if (type == zss.Header.HOR) {
-			this.zsw = jq(header).attr('z.zsw');
+			this.zsw = header.getAttribute('z.zsw');
 			if (this.zsw)
 				this.zsw = zk.parseInt(this.zsw);
 		} else {
-			this.zsh = jq(header).attr('z.zsh');
+			this.zsh = header.getAttribute('z.zsh');
 			if (this.zsh) 
 				this.zsh = zk.parseInt(this.zsh);
 		}
 		
 		boundary.ctrlref = this;
 		this.bcomp = boundary;
-		this.ibcomp = jq(boundary).children("DIV:first")[0];
-		this.ibcomp2 = jq(boundary).children("DIV:last")[0];
+		this.ibcomp = boundary.firstChild;
+		this.ibcomp2 = boundary.lastChild;
 		if (this.ibcomp2 == this.ibcomp) 
 			delete this.ibcomp2;
-		this.icomp = jq(header).children("DIV:first")[0];
+		this.icomp = header.firstChild;
 	},
 	/**
 	 * Returns the header node
@@ -372,10 +372,10 @@ zss.Header = zk.$extends(zk.Object, {
 	resetInfo: function (newindex, newnm) {
 		this.index = newindex;
 		if (this.type == zss.Header.HOR) {
-			jq(this.comp).attr("z.c", newindex);
+			this.comp.setAttribute("z.c", newindex);
 			jq(this.icomp).text(newnm);
 		} else {
-			jq(this.comp).attr("z.r", newindex);
+			this.comp.setAttribute("z.r", newindex);
 			jq(this.icomp).text(newnm);
 		}
 	},

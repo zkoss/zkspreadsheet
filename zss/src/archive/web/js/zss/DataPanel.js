@@ -39,8 +39,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		wgt.domListen_(focus, 'onBlur', '_doDataPanelBlur');
 		wgt.domListen_(focus, 'onFocus', '_doDataPanelFocus');
 
-		this.width = zk.parseInt(jq(dataPanel).attr("z.w"));
-		this.height = zk.parseInt(jq(dataPanel).attr("z.h"));
+		this.width = zk.parseInt(dataPanel.getAttribute("z.w"));
+		this.height = zk.parseInt(dataPanel.getAttribute("z.h"));
 
 		this.paddingl = this.paddingt = 0;
 		var pdl = this.paddingl + sheet.leftWidth,

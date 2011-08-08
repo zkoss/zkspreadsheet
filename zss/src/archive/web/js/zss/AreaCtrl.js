@@ -55,7 +55,7 @@ zss.AreaCtrl = zk.$extends(zk.Object, {
 		this.sheetid = sheet.sheetid;
 		cmp.ctrl = this;
 		this.comp = cmp;
-		this.icomp = jq(cmp).children("DIV:first")[0];
+		this.icomp = cmp.firstChild;
 		this.sheet = sheet;
 		this.lastRange = range ? range : new zss.Range(0,0,0,0);
 		this.mode = mode;//null,inner,outer
@@ -210,7 +210,7 @@ zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 		if (elm && elm.tagName.toLowerCase() == 'a') {
 			if (!this._isHyperlinkTimeout(new Date().getTime())) {//not time out yet
 				var href = elm.href,
-					type = jq(elm).attr('z.t');
+					type = elm.getAttribute('z.t');
 				this.sheet._wgt.linkTo(href, type, evt);
 				this.sheet._sendOnHyperlink(row, col, href, type, evt);
 			}

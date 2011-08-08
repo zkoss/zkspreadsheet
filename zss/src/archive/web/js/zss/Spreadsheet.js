@@ -773,8 +773,8 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	},
 	_getTopHeaderFontSize: function () {
 		var head = this.$n('tophead'),
-			col = head != null ? jq(head).children('div:first')[0] : null;
-		if (col && jq(col).attr('zs.t') == 'STheader')
+			col = head != null ? head.firstChild : null;
+		if (col && col.getAttribute('zs.t') == 'STheader')
 			return jq(col).css('font-size');
 		return null;
 	},
@@ -832,7 +832,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	 * Set process cell's overflow column range
 	 */
 	setProcessOverflowCol_: function (colIdx, cmd) {
-		this._shallProcessOverflowType = true;
+		this._shallProcessOverflow = true;
 		this._processOverflowCol = Math.max(colIdx, this._processOverflowCol);
 		if (cmd != undefined)
 			this._srcCmd[cmd] = colIdx;

@@ -29,38 +29,37 @@ zss.CornerPanel = zk.$extends(zk.Object, {
 	$init: function (sheet) {
 		this.$supers('$init', arguments);
 		var wgt = sheet._wgt,
-			cornerPanel = wgt.$n('co'),
+			cPanel = wgt.$n('co'),
 			fzr = sheet.frozenRow,
 			fzc = sheet.frozenCol;
-		this.id = cornerPanel.id;
+		this.id = cPanel.id;
 		this.sheetid = sheet.sheetid;
-		this.comp = cornerPanel;
+		this.comp = cPanel;
 		this.sheet = sheet;
-		cornerPanel.ctrl = this;
+		cPanel.ctrl = this;
 		
 		if (fzc > -1) {
 			//initial top panel
-			this.topcomp = jq(cornerPanel).children('DIV:first')[0];
+			this.topcomp = cPanel.firstChild;
 			this.tp = new zss.TopPanel(sheet, this.topcomp, true);
 		}
 	
 		if (fzr > -1) {
 			//initial left panel
 			var top = this.topcomp;
-			this.leftcomp = (top ? jq(top).next('DIV')[0] : jq(cornerPanel).children('DIV:first')[0]);
+			this.leftcomp = (top ? top.nextSibling : cPanel.firstChild);
 			this.lp = new zss.LeftPanel(sheet, this.leftcomp, true);	
 		}
 		
 		if (this.tp && this.lp) {
-			var blockcomp = jq(this.leftcomp).next('DIV')[0];
+			var blockcomp = this.leftcomp.nextSibling,
+				selareacmp = blockcomp.nextSibling,
+				selchgcmp = selareacmp.nextSibling,
+				focuscmp = selchgcmp.nextSibling,
+				hlcmp = focuscmp.nextSibling;
+
 			this.block = new zss.CellBlockCtrl(sheet, blockcomp, 0, 0);
 			this.block.loadByComp(blockcomp);
-
-			var selareacmp = jq(blockcomp).next("DIV")[0],
-				selchgcmp = jq(selareacmp).next("DIV")[0],
-				focuscmp = jq(selchgcmp).next("DIV")[0],
-				hlcmp = jq(focuscmp).next("DIV")[0];
-	
 			this.selArea = new zss.SelAreaCtrlCorner(sheet, selareacmp, sheet.initparm.selrange.clone());
 			this.selChgArea = new zss.SelChgCtrlCorner(sheet, selchgcmp);
 			this.focusMark = new zss.FocusMarkCtrlCorner(sheet, focuscmp, sheet.initparm.focus.clone());

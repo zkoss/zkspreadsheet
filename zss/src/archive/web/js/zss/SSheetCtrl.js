@@ -828,7 +828,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			}
 			if (firebtndown)
 				this._doBtndown(evt, 'af', btn.$n(), btn);
-			else if (_isLeftMouseEvt(evt) || jq(cmp).attr('zs.t') == "SHighlight") {
+			else if (_isLeftMouseEvt(evt) || cmp.getAttribute('zs.t') == "SHighlight") {
 				sheet.dp.moveFocus(row, col, false, true, false, true);
 				var ls = this.getLastSelection();//cause of merge, focus might be change, get form last
 				this.selType = zss.SelDrag.SELCELLS;
@@ -874,7 +874,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			}
 		} else if ((cmp = zkS.parentByZSType(elm, "SLheader")) != null 
 			|| (cmp = zkS.parentByZSType(elm, "STheader")) != null) {
-			var type = (jq(cmp).attr('zs.t') == "SLheader") ? zss.Header.VER : zss.Header.HOR,
+			var type = (cmp.getAttribute('zs.t') == "SLheader") ? zss.Header.VER : zss.Header.HOR,
 				row, col, onsel,	//process select row or column
 				ls = this.selArea.lastRange;
 			this._lastmdstr = "h";
@@ -2320,7 +2320,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		if(tBlock)
 			tBlock.removeMergeRange(id, left, top, right, bottom);
 		if(lBlock)
-			lBlockck.removeMergeRange(id, left, top, right, bottom);
+			lBlock.removeMergeRange(id, left, top, right, bottom);
 	},
 	_addMergeRange: function (result) {
 		var id = result.id,
@@ -2391,7 +2391,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		sheet.activeBlock.loadByComp(blockcmp, row);
 		
 		var next = wgt.$n('select');
-		if (jq(next).attr('zs.t') == "SSelect") {
+		if (next.getAttribute('zs.t') == "SSelect") {
 			sheet.selareacmp = next;
 			sheet.selchgcmp = wgt.$n('selchg');
 			sheet.focusmarkcmp = wgt.$n('focmark');
@@ -2412,24 +2412,6 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		//initial scroll info
 		sheet.sinfo = new zss.ScrollInfo(sheet, sheet.sinfocmp);
 		sheet.info = new zss.Info(sheet, sheet.infocmp);
-	},
-	_getColumnCells: function (sheet, index) {
-		var cells = [],
-			next = jq(sheet.dpcmp).children("DIV:first")[0];
-		while (next) {
-			if (jq(next).attr('zs.t') == "SRow") {
-				var nextcell = jq(next).children("DIV:first")[0];
-				while (nextcell) {
-					if (nextcell.ctrl.c == index) {
-						cells.push(nextcell);
-						break;
-					}
-					nextcell = jq(nextcell).next("DIV")[0];
-				}
-			}
-			next = jq(next).next("DIV")[0];	
-		}
-		return cells;
 	},
 	_getVisibleRange: function (sheet) {
 		var sp = sheet.sp,

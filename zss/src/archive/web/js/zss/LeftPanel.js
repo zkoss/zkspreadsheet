@@ -24,9 +24,9 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 	$init: function (sheet, node, corner) {
 		this.$supers('$init', arguments);	
 		var wgt = sheet._wgt,
-			pad = jq(node).children('DIV:first')[0],
-			inner = jq(pad).next('DIV')[0],
-			head = jq(inner).children('DIV:first')[0];
+			pad = node.firstChild,
+			inner = pad.nextSibling,
+			head = inner.firstChild;
 
 		this.id = node.id;
 		this.sheetid = sheet.sheetid;
@@ -36,7 +36,7 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 		this.padcomp = pad;
 		this.icomp = inner;
 		this.hcomp = head;
-		this.hidehead = ((jq(head).attr("z.hide") == "true") ? true : false);
+		this.hidehead = head.getAttribute("z.hide") == "true";
 		
 		this.sheet = sheet;
 		node.ctrl = this;
@@ -62,8 +62,8 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 
 		for (var i = 0, j = 0; i < size; i++) {
 			header = nodes[i];
-			if (jq(header).attr('zs.t') == 'SLheader') {
-				idx = zk.parseInt(jq(header).attr('z.r'));
+			if (header.getAttribute('zs.t') == 'SLheader') {
+				idx = zk.parseInt(header.getAttribute('z.r'));
 				boundary = nodes[i + 1];
 				headers.push(new zss.Header(sheet, header, boundary, idx, zss.Header.VER, lpheaders ? lpheaders[j++] : null));
 			}
@@ -73,15 +73,14 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 	_initFrozenColumn: function (sheet, head) {
 		var fzc = sheet.frozenCol;
 		if (fzc > -1) {
-			var leftBlock = jq(head).next("DIV")[0]; //leftBlock: contains freeze Columns
+			var leftBlock = head.nextSibling, //leftBlock: contains freeze Columns
+				selArea = leftBlock.nextSibling,
+				selChg = selArea.nextSibling,
+				focus = selChg.nextSibling,
+				highlight = focus.nextSibling;
+
 			this.block = new zss.CellBlockCtrl(sheet, leftBlock, 0, 0);
 			this.block.loadByComp(leftBlock);
-			
-			var selArea = jq(leftBlock).next("DIV")[0],
-				selChg = jq(selArea).next("DIV")[0],
-				focus = jq(selChg).next("DIV")[0],
-				highlight = jq(focus).next("DIV")[0];
-			
 			this.selArea = new zss.SelAreaCtrlLeft(sheet, selArea, sheet.initparm.selrange.clone());
 			this.selChgArea = new zss.SelChgCtrlLeft(sheet, selChg);
 			this.focusMark = new zss.FocusMarkCtrlLeft(sheet, focus, sheet.initparm.focus.clone());
@@ -130,16 +129,16 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 	},
 	_doMouseover: function (evt) {
 		var n = evt.domTarget;
-		if (jq(n).attr('zs.t') == "SBoun")
+		if (n.getAttribute('zs.t') == "SBoun")
 			n.parentNode.ctrlref._processDrag(true, false);
-		if (jq(n).attr('zs.t') == "SBoun2")
+		if (n.getAttribute('zs.t') == "SBoun2")
 			n.parentNode.ctrlref._processDrag(true, true);
 	},
 	_doMouseout: function (evt) {
 		var n = evt.domTarget;
-		if (jq(n).attr('zs.t') == "SBoun")
+		if (n.getAttribute('zs.t') == "SBoun")
 			n.parentNode.ctrlref._processDrag(false, false);
-		if (jq(n).attr('zs.t') == "SBoun2")
+		if (n.getAttribute('zs.t') == "SBoun2")
 			n.parentNode.ctrlref._processDrag(false, true);
 	},
 	_clearAllHeader: function () {

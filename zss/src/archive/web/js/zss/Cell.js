@@ -342,6 +342,7 @@ zss.Cell = zk.$extends(zk.Object, {
 		this.sheet = sheet;
 		this.block = block;
 		this.comp = cmp;
+		this.txtcomp = cmp.firstChild;
 		this.edit = edit;
 
 		var $n = jq(cmp);
@@ -372,7 +373,6 @@ zss.Cell = zk.$extends(zk.Object, {
 			this.valign = valign;
 
 		var inner = null,
-			txtCmp = this.txtcomp = $n.children('DIV:first')[0],
 			txt = this.txtcomp.innerHTML,
 			vflex = this._vflex = sheet._wgt._cssFlex;/*support CSS flexbox or not; FF flexbox cause bug 340*/
 		if (this.valign != "t" && txt) {

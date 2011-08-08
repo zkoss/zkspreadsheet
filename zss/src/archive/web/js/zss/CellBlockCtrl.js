@@ -469,24 +469,23 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 	loadByComp: function (cmp, row) {
 		this.comp = cmp;
 		cmp.ctrl = this;
-		var next = jq(cmp).children("DIV:first")[0],
+		var next = cmp.firstChild,
 			minx = miny = maxx = maxy = 0;
 		while (next) {
-			if (jq(next).attr('zs.t') == "SRow") {
+			if (next.getAttribute('zs.t') == "SRow") {
 				var ctrl = new zss.Row(this.sheet, this, next);
 				this.rows.push(ctrl);
-				var r = zk.parseInt(jq(next).attr("z.r")),
-					nextcell = jq(next).children('DIV:first')[0],
+				var r = zk.parseInt(next.getAttribute("z.r")),
+					cell = next.firstChild,
 					editrow = this.sheet._wgt._edittext[r];
-				while (nextcell) {
-					var c = zk.parseInt(jq(nextcell).attr("z.c"));
+				while (cell) {
+					var c = zk.parseInt(cell.getAttribute("z.c"));
 					if (minx > c)
 						minx = c;
 					if (maxx < c)
 						maxx = c;
-					var cell = new zss.Cell(this.sheet, this, nextcell, editrow[c]);
-					ctrl.pushCell(cell);
-					nextcell = jq(nextcell).next('DIV')[0];
+					ctrl.pushCell(new zss.Cell(this.sheet, this, cell, editrow[c]));
+					cell = cell.nextSibling;
 				}
 				
 				if (miny > r)
@@ -498,7 +497,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 				zkS.trimLast(next, "DIV");
 				if (r == row && ctrl.prepareFilterBtns_)
 					ctrl.prepareFilterBtns_();
-				next = jq(next).next('DIV')[0];
+				next = next.nextSibling;
 				continue;	
 			}
 		}

@@ -28,8 +28,8 @@ zss.Row = zk.$extends(zk.Object, {
 		this.sheetid = sheet.id;
 		this.block = block;
 		this.comp= cmp;
-		this.r = zk.parseInt(jq(cmp).attr("z.r"));
-		this.zsh = jq(cmp).attr("z.zsh");
+		this.r = zk.parseInt(cmp.getAttribute("z.r"));
+		this.zsh = cmp.getAttribute("z.zsh");
 		if (this.zsh)
 			this.zsh = zk.parseInt(this.zsh);
 		this.cells = [];
@@ -223,9 +223,9 @@ zss.Row = zk.$extends(zk.Object, {
 	resetRowIndex: function (newrow) {
 		this.r = newrow;
 		var cells = this.cells,
-			size = cells.length;
-		jq(this.comp).attr("z.r", newrow);
-		for (var i = 0; i < size; i++)
+			i = cells.length;
+		this.comp.setAttribute("z.r", newrow);
+		while (i--)
 			cells[i].resetRowIndex(newrow);
 	},
 	/**
