@@ -231,6 +231,437 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			//jq(scroll).css('overflow-y', 'hidden');
 		}
 	}
+	
+	function newRowHeaderAttr(v) {
+		return {
+			//TODO: move to widget
+			//type: 'SLheader',
+			r: v.r,
+			title: v.t,
+			hidden: !!v.hd,
+			heightId: v.h,
+			//TODO: move this to widget
+			/*
+			getClass: function () {
+				var cls = 'zsleftcell zsrow',
+					hId = this.heightId;
+				return hId ? cls + ' zslh' + hId : cls;
+			},
+			getInnerClass: function () {
+				var cls = 'zsleftcelltxt',
+					hId = this.heightId;
+				return hId ? cls + ' zslh' + hId : cls;
+			}
+			*/
+		};
+	}
+	
+	function newColumnHeaderAttr(v) {
+		return {
+			//TODO: move to widget
+			//type: 'STheader',
+			c: v.c,
+			title: v.t,
+			hidden: !!v.hd,
+			widthId: v.w,
+			//TODO: move this to widget
+			/*
+			getClass: function () {
+				var cls = 'zstopcell',
+					wId = this.widthId;
+				return wId ? cls + ' zsw' + wId : cls;
+			},
+			getInnerClass: function () {
+				var cls = 'zstopcelltxt',
+					wId = this.widthId;
+				return wId ? cls + ' zswi' + wId : cls;
+			}
+			*/
+		};
+	}
+	
+	var ATTR_ALL = 1,
+		ATTR_TEXT = 2,
+		ATTR_STYLE = 3,
+		ATTR_SIZE = 4,
+		ATTR_MERGE = 5;
+	function newCell(v, type) {
+		var c = {
+			/**
+			 * Row number
+			 */
+			//r
+			/**
+			 * Column number
+			 */
+			//c
+			/**
+			 * Cell type
+			 */
+			//cellType,
+			/**
+			 * Cell text
+			 */
+			//text
+			/**
+			 * Cell edit text
+			 */
+			//editText,
+			/**
+			 * Cell format text
+			 */
+			//formatText
+			/**
+			 * Cell is locked or not
+			 * 
+			 * Default: true
+			 */
+			//lock
+			/**
+			 * whether the text should be wrapped or not
+			 * 
+			 * Default: false
+			 */
+			//wrap
+			/**
+			 * Horizontal alignment
+			 * 
+			 * <ul>
+			 * 	<li>l: align left</li>
+			 * 	<li>c: align center</li>
+			 * 	<li>r: align right</li>
+			 * </ul>
+			 * 
+			 * Default: "l"
+			 */
+			//halign
+			/**
+			 * Vertical alignment
+			 * 
+			 * <ul>
+			 * 	<li>t: align top</li>
+			 * 	<li>c: align center</li>
+			 * 	<li>b: align bottom</li>
+			 * </ul>
+			 * 
+			 * Default: "t"
+			 */
+			//valign
+			/**
+			 * default row height
+			 */
+			//defaultRowHgh
+			/**
+			 * Merge CSS class
+			 */
+			//mergeCls: v.mcls,
+			/**
+			 * Merge id
+			 */
+			//mergeId: v.mi,
+			/**
+			 * Merge rect
+			 */
+			//merge: null,
+			/**
+			 * Width id
+			 */
+			//widthId: v.w,
+			/**
+			 * Height id
+			 */
+			//heightId: v.h,
+			/**
+			 * Cell style
+			 */
+			//style
+			/**
+			 * Inner cell style
+			 */
+			//innerStyle
+			/**
+			 * Whether cell has right border or not
+			 * 
+			 * default: false
+			 */
+			//rightBorder
+			update: function (v, type) {
+				var upAll = type == ATTR_ALL,
+					upText = (upAll || type == ATTR_TEXT),
+					upStyle = (upAll || type == ATTR_STYLE),
+					upSize = (upAll || type == ATTR_SIZE),
+					upMerge = (upAll || type == ATTR_MERGE);
+				if (upText) {
+					var cellType = v.ct,
+						mergedText = v.meft;
+					this.cellType = cellType != undefined ? cellType : 3;
+					if (mergedText != undefined) {
+						this.text = this.editText = this.formatText = mergedText;
+					} else {
+						var text = v.t,
+							editText = v.et
+							formatText = v.ft;
+						this.text = text != undefined ? text : '';
+						this.editText = editText != undefined ? editText : '';
+						this.formatText = formatText != undefined ? formatText : '';
+					}
+				}
+				if (upStyle) {
+					var style = v.s,
+						innerStyle = v.is,
+						wrap = v.wp,
+						rbo = v.rb,
+						lock = v.l,
+						halign = v.ha,
+						valign = v.va;
+					this.style = style != undefined ? style : '';
+					this.innerStyle = innerStyle != undefined ? innerStyle : '';
+					this.wrap = wrap != undefined ? wrap == 't' : false;
+					this.lock = lock != undefined ? lock : true;
+					this.halign = halign != undefined ? halign : 'l';
+					this.valign = valign != undefined ? valign : 't';
+					this.rightBorder = rbo != undefined ? rb == 't' : false;
+				}
+				if (upSize) {
+					var wId = v.w,
+						hId = v.h,
+						drh = v.drh;
+					this.widthId = wId;
+					this.heightId = hId;
+					this.defaultRowHgh = drh != undefined ? drh == 't' : true;
+				}
+				if (upMerge) {
+					this.mergeId = v.mi;
+					this.mergeCls = v.mcls;
+					if (this.mergeId) {
+						this.merge = newRect(v.mt, v.ml, v.mb, v.mr);
+					}
+				}
+			},
+			clear: function () {
+				this.r = this.c = this.cellType = this.text = 
+					this.editText = this.formatText = this.lock = this.style = this.innerStyle =
+					this.wrap = this.halign = this.valign = this.defaultRowHgh = this.rightBorder =
+					this.mergeCls = this.mergeId = this.merge = this.widthId = this.heightId = null;
+			},
+			//TODO: move this to widget
+			/*
+			getClass: function () {
+				var cls = 'zscell ',
+					hId = this.heightId,
+					wId = this.widthId,
+					mId = this.mergeId,
+					mCls = this.mergeCls;
+				if (hId)
+					cls += (' zshi' + hId);
+				if (wId)
+					cls += (' zsw' + wId);
+				if (mCls)
+					cls += mCls;
+				return cls;
+			},
+			*/
+			//TODO: move this to widget
+			/*
+			getInnerClass: function () {
+				var cls = 'zscelltxt',
+					hId = this.heightId,
+					wId = this.widthId;
+				if (hId)
+					cls += (' zshi' + hId);
+				if (wId)
+					cls += (' zswi' + wId);
+				return cls;
+			}
+			*/
+		}
+		c.update(v, type);
+		return c;
+	}
+	
+	function newRow(v, type, left, right) {
+		var row = {
+			//TODO: move to widget
+			//type: 'SRow',
+			//row number
+			r: v.r,
+			heightId: v.h,
+			cells: [],
+			update: function (attr, type, left, right) {
+				var src = attr.cs,
+					i = left,
+					j = 0,
+					cell,
+					r = this.r,
+					cs = this.cells;
+				for (; i <= right; i++) {
+					var c = cs[i];
+					if (!c) {
+						c = cs[i] = newCell(src[j++], type);
+						c.r = r;
+						c.c = i;
+					} else {
+						c.update(src[j++], type);
+					}
+				}
+			},
+			getCell: function (num) {
+				return this.cells[num];
+			},
+			clear: function (lCol, rCol) {
+				var cells = this.cells;
+				for (var i = lCol; i <= rCol; i++) {
+					var c = cells[i];
+					if (c) {
+						c.clear();
+						cells[i] = null;
+					}
+				}
+			},
+			//TODO: move to widget
+			/*
+			getClass: function () {
+				var cls = 'zsrow',
+					hId = this.heightId;
+				return hId ? cls + ' zsh' + hId : 'zsrow';
+			}
+			*/
+		}
+		row.update(v, type, left, right);
+		return row;
+	}
+	
+	function newRect(tRow, lCol, bRow, rCol) {
+		return {
+			top: tRow,
+			left: lCol,
+			bottom: bRow,
+			right: rCol
+		}
+	}
+
+	function newCachedRange(v) {
+		var range = {
+			rows: [],
+			//current range rect
+			rect: null,
+			updateRect: function (top, left, btm, right, dir, domRange) {
+				var rect = this.rect;
+				if (!rect) {
+					this.rect = newRect(top, left, btm, right);
+					return;
+				}
+				else if (this.containsRange(top, left, btm, right)) {
+					return;
+				}
+				/*
+				else {
+					var rect = this.rect;
+					switch (dir) {
+					case 'visible':
+						rect.right = right;
+						rect.bottom = btm;
+					case 'east':
+						var width = (right - left + 1);
+						if (domRange) {
+							var nLeftCol = domRange.left - width;
+							if (nLeftCol > 0) {
+								this.clear(top, rect.left, btm, nLeftCol - 1);
+								rect.left = nLeftCol;
+							}
+						}
+						rect.right = right;
+						break;
+					case 'west':
+						var width = (right - left + 1);
+						if (domRange) {
+							var nRightCol = domRange.right - width;
+							if (nRightCol > 0) {
+								this.clear(top, nRightCol + 1, btm, rect.right);
+								rect.right = nRightCol;
+							}
+						}
+						rect.left = left;
+						break;
+					case 'south':
+						var hgh = (btm - top + 1);
+						if (domRange) {
+							var nTopRow = domRange.top - hgh;
+							if (nTopRow > 0) {
+								this.clear(rect.top, left, nTopRow - 1, right);
+								rect.top = nTopRow;
+							}
+						}
+						rect.bottom = btm;
+						break;
+					case 'north':
+						var hgh = (btm - top + 1);
+						if (domRange) {
+							var nBtmRow = domRange.bottom - hgh;
+							if (nBtmRow > 0) {
+								this.clear(rect.bottom, left, nBtmRow + 1, right);
+								rect.bottom = nBtmRow;
+							}
+						}
+						rect.top = top;
+						break;
+					}
+				}*/
+			},
+			clear: function (tRow, lCol, bRow, rCol) {
+				var rows = this.rows,
+					i = (bRow - tRow + 1),
+					colSize = (rCol - lCol + 1);
+				while (i--) {
+					var r = rows[i];
+					if (r) {
+						r.clear(lCol, rCol);
+					}
+				}
+			},
+			containsRange: function (tRow, lCol, bRow, rCol) {
+				var rect = this.rect;
+				return	tRow >= rect.top && lCol >= rect.left &&
+							bRow <= rect.bottom && rCol <= rect.right;
+			},
+			update: function (v, range) {
+				var attrType = v.at,
+					top = v.t,
+					left = v.l,
+					btm = v.b,
+					right = v.r,
+					src = v.rs,
+					rows = this.rows,
+					i = top, 
+					s = 0;
+				
+				this.updateRect(top, left, btm, right, v.dir, range);
+				var rect = this.rect,
+					maxBtm = rect.bottom,
+					maxRight = rect.right;
+				if (btm > maxBtm) {
+					btm = maxBtm;
+				}
+				if (right > maxRight) {
+					right = maxRight;
+				}
+					
+				for (; i <= btm; i++) {
+					var row = rows[i];
+					if (!row) {
+						rows[i] = newRow(src[s++], attrType, left, right);
+					} else {
+						row.update(src[s++], attrType, left, right);
+					}
+				}
+			},
+			getRow: function (num) {
+				return this.rows[num];
+			}
+		};
+		range.update(v);
+		return range;
+	}
 /**
  * Spreadsheet is a is a rich ZK Component to handle EXCEL like behavior
  */
@@ -369,9 +800,11 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		rowSize: _size,
 		rowBegin: null,
 		rowEnd: null,
+		preloadRowSize: null,
 		rowOuter: null,
 		colBegin: null,
 		colEnd: null,
+		preloadColSize: null,
 		cellOuter: null,
 		cellInner: null,
 		celltext: null,
@@ -509,6 +942,23 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		 */
 		columnHeadHidden: null,
 		copysrc: null //flag to show whether a copy source has set
+	},
+	_activeRange: null,
+	/**
+	 * Sets active range
+	 */
+	setActiveRange: function (v) {
+		var aRange = this._activeRange;
+		if (!aRange) {
+			this._activeRange = newCachedRange(v);
+		} else {
+			var sheet = this.sheetCtrl,
+				range;
+			if (sheet) {
+				range = sheet.activeBlock.range; //Dom elements range
+				aRange.update(jq.evalJSON(v), range);
+			}
+		}
 	},
 	/**
 	 * Synchronize widgets position to cell

@@ -93,6 +93,24 @@ public class UtilFns {
 		return text;
 	}
 	
+	static public String getCellFormatText(Spreadsheet ss, int row,int column) {
+		Worksheet sheet = ss.getSelectedSheet();
+		final Cell cell = Utils.getCell(sheet, row, column);
+		String text = "";
+		if (cell != null) {
+			final FormatText ft = Utils.getFormatText(cell);
+			if (ft != null) {
+				if (ft.isRichTextString()) {
+					final RichTextString rstr = ft.getRichTextString();
+					text = rstr == null ? "" : rstr.toString();
+				} else if (ft.isCellFormatResult()) {
+					text = ft.getCellFormatResult().text;
+				}
+			}
+		}
+		return text;
+	}
+
 	//Gets Cell edit text by given row and column
 	static public String getEdittext(Spreadsheet ss,int row,int column){
 		Worksheet sheet = ss.getSelectedSheet();
@@ -113,7 +131,7 @@ public class UtilFns {
 	}
 	static public Integer getColEnd(Spreadsheet ss){
 		int max = ss.getMaxcolumns();
-		
+
 		max = max<=10?max-1:10;
 		
 		int row_top = getRowBegin(ss).intValue();

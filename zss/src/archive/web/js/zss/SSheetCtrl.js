@@ -1775,20 +1775,46 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	},
 	//feature #26: Support copy/paste value to local Excel
 	_prepareCopy: function () {
-		var ls = this.getLastSelection(),
-			result='';
-		for(var r = ls.top; r <= ls.bottom; ++r) {
-			for(var c = ls.left; c <= ls.right; ++c) {
-				var cell = this.getCell(r, c),
-					val = !cell ? null : cell.getPureText();
-				if (val != null)
-					result+=val;
-				if (c < ls.right)
-					result+='\t';
+		var range =  this._wgt._activeRange,
+			ls = this.getLastSelection()
+			top = ls.top,
+			btm = ls.bottom,
+			left = ls.left,
+			right = ls.right,
+			result = '';
+		if (range) {
+			var rows = range.rows;
+			for(var r = top; r <= btm; ++r) {
+				var row = rows[r];
+				for(var c = left; c <= right; ++c) {
+					var val = '';
+					if (row) {
+						var cell = row.cells[c];
+						if (cell) {
+							val = cell.formatText;
+						}
+					}
+					result += val;
+					if (c < ls.right)
+						result+='\t';
+					
+				}
+				result += '\n';
 			}
-			result+='\n';
+		} else {
+			for(var r = top; r <= btm; ++r) {
+				for(var c = left; c <= right; ++c) {
+					var cell = this.getCell(r, c),
+						val = !cell ? null : cell.getPureText();
+					if (val != null)
+						result+=val;
+					if (c < ls.right)
+						result+='\t';
+				}
+				result+='\n';
+			}
 		}
-		
+
 		if (this.state != zss.SSheetCtrl.FOCUSED)
 			return;
 		var focustag = this.dp.focustag;

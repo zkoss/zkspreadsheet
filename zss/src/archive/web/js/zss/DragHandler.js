@@ -122,7 +122,7 @@ zss.SelDrag = zk.$extends(zss.DragHandler, {
 		} else if ((cmp = zkS.parentByZSType(elm, ["SScrollpanel", "SCorner", "SLheader", "STheader"], 2)) != null
 			|| zkS.parentByZSType(elm, "SSheet", 5) == null ) {
 			var dir = "";
-			switch (cmp.getAttribute('zs.t')) {
+			switch (jq(cmp).attr('zs.t')) {
 			case 'SCorner':
 				dir = "lt";
 				break;
@@ -298,7 +298,7 @@ zss.SelChgDrag = zk.$extends(zss.DragHandler, {
 		} else if((cmp = zkS.parentByZSType(elm, ["SScrollpanel", "SCorner", "SLheader", "STheader"], 2)) != null
 			|| zkS.parentByZSType(elm, "SSheet", 5) == null ){
 			var dir = "";
-			switch (cmp.getAttribute('zs.t')) {
+			switch (jq(cmp).attr('zs.t')) {
 			case 'SCorner':
 				dir = "lt";
 				break;
