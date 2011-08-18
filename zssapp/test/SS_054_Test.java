@@ -7,7 +7,7 @@ public class SS_054_Test extends SSAbstractTestCase {
     protected void executeTest() {
         // Select source cell
         JQuery cell_I_13 = getSpecifiedCell(8, 12);
-        String origValue = numberOnly(getCellContent(cell_I_13));
+        String origValue = numberOnly(getCellText(cell_I_13));
         clickCell(cell_I_13);
         clickCell(cell_I_13);
         
