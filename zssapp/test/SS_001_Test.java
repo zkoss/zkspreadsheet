@@ -3,16 +3,23 @@ import org.zkoss.ztl.JQuery;
 
 public class SS_001_Test extends SSAbstractTestCase {
 
+	/**
+	 * Testcase:
+	 * 
+	 * 1. Select cell
+	 * 2. Click File menu
+	 * 
+	 * Expected:
+	 * Selection remain focus
+	 */
     @Override
     protected void executeTest() {
-        JQuery cell = getSpecifiedCell(5, 20);
-        clickCell(cell);
-        clickCell(cell);
+    	verifyFalse(isFocusOnCell(5, 20));
+    	JQuery cell = focusOnCell(5, 20);
 
     	click("jq('$fileMenu button.z-menu-btn')");
     	waitResponse();
-    	// TODO verify if cell is still selected
-    	String display = jq("div.zsselect").css("display");
-    	verifyTrue("css display=" + display, !"none".equals(display));
+    	sleep(1000);
+    	verifyTrue(isFocusOnCell(cell));
     }
 }

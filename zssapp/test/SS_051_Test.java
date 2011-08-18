@@ -8,7 +8,7 @@ public class SS_051_Test extends SSAbstractTestCase {
         // Click the same cell twice times because focus always on A1 at first
         // time.
         JQuery cell_F_21 = getSpecifiedCell(5, 20);
-        String sourceValue = getCellContent(cell_F_21);
+        String sourceValue = getCellText(cell_F_21);
         clickCell(cell_F_21);
         clickCell(cell_F_21);
 
@@ -41,7 +41,7 @@ public class SS_051_Test extends SSAbstractTestCase {
         cell_F_21 = getSpecifiedCell(5, 20);
         String originalCellValue = cell_F_21.text();
         verifyTrue("F21 current value: " + originalCellValue, originalCellValue.isEmpty());
-        String targetValue = getCellContent(cell_N_11);
+        String targetValue = getCellText(cell_N_11);
         verifyEquals("Cut value=" + sourceValue + ", Pasted value=" + targetValue, sourceValue, targetValue);
     }
 

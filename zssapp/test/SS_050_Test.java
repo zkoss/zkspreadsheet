@@ -36,8 +36,8 @@ public class SS_050_Test extends SSAbstractTestCase {
         
         // Verify value        
         cell_N_11 = getSpecifiedCell(13, 10); // Here must get from dom again.
-        String sourceValue = getCellContent(cell_F_21);
-        String targetValue = getCellContent(cell_N_11);
+        String sourceValue = getCellText(cell_F_21);
+        String targetValue = getCellText(cell_N_11);
         verifyEquals("Copied value=" + sourceValue + ", Pasted value=" + targetValue, sourceValue, targetValue);
     }
 

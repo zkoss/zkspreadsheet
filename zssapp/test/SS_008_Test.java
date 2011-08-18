@@ -1,16 +1,22 @@
-import org.zkoss.ztl.JQuery;
 
 
 public class SS_008_Test extends SSAbstractTestCase {
 
+	/**
+	 * Testcase:
+	 * Select cell(s)
+	 * Click Edit menu
+	 * 
+	 * Expected:
+	 * Selection remain focus
+	 */
     @Override
     protected void executeTest() {
     	selectCells(1,5,5,8);
     	click("jq('$editMenu button.z-menu-btn')");
     	waitResponse();
     	
-    	// TODO verify if selection is still in focus
-//    	verifyTrue(widget(jq("div.z-menu-popup")).exists());
-
+    	// TODO verify focus on "selection"
+    	verifyTrue(isFocusOnCell(1, 5));
     }
 }

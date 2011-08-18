@@ -5,9 +5,9 @@ public class SS_020_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
 		JQuery cell_F_11 = getSpecifiedCell(5, 10);
-		String origValue = getCellContent(cell_F_11);
+		String origValue = getCellText(cell_F_11);
 		JQuery cell_G_11 = getSpecifiedCell(6, 10);
-		String rightCellValue = getCellContent(cell_G_11);
+		String rightCellValue = getCellText(cell_G_11);
 		clickCell(cell_F_11);
 		clickCell(cell_F_11);
 		click("jq('$editMenu button.z-menu-btn')");
@@ -16,8 +16,8 @@ public class SS_020_Test extends SSAbstractTestCase {
 		waitResponse();
 		click("jq('$insertEntireColumn a.z-menu-item-cnt')");
 		waitResponse();
-		String newValue = getCellContent(cell_F_11);
-		String newDownCellValue = getCellContent(cell_G_11);
+		String newValue = getCellText(cell_F_11);
+		String newDownCellValue = getCellText(cell_G_11);
 
 		// TODO verify if pasted cell style is cleared
         verifyTrue("Original cell value=" + origValue 

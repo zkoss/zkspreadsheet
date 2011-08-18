@@ -1,4 +1,3 @@
-import org.zkoss.ztl.JQuery;
 
 
 public class SS_007_Test extends SSAbstractTestCase {
@@ -14,6 +13,6 @@ public class SS_007_Test extends SSAbstractTestCase {
     	click("jq('$export td.z-button-cm')");
     	waitResponse();
     	
-    	// TODO verify if exported pdf is generated
+    	//TODO: verify if exported pdf is generated
     }
 }

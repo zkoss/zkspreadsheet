@@ -8,7 +8,7 @@ public class SS_013_Test extends SSAbstractTestCase {
     protected void executeTest() {
         JQuery cell_F_21 = getSpecifiedCell(5, 20);
         
-        String sourceValue = getCellContent(cell_F_21);
+        String sourceValue = getCellText(cell_F_21);
         clickCell(cell_F_21);
         clickCell(cell_F_21);
     	click("jq('$editMenu button.z-menu-btn')");
@@ -22,11 +22,10 @@ public class SS_013_Test extends SSAbstractTestCase {
     	waitResponse();
     	click("jq('$paste a.z-menu-item-cnt')");
     	waitResponse();
-        String targetValue = getCellContent(cell_M_10);
+        String targetValue = getCellText(cell_M_10);
     	
         sleep(5000);
         
-    	// TODO verify if pasted value is same as copied value
         verifyEquals("Copied value=" + sourceValue + ", Pasted value=" + targetValue, sourceValue, targetValue);
     }
 }

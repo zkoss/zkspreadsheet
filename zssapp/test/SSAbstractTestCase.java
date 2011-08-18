@@ -71,6 +71,15 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     	result += ":"+jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").css("text-align");
     	return result;
     }
+    
+//    public boolean isDefaultCellStyle(int row, int col) {
+//    	
+//    }
+//    
+//    public boolean isSameCellStyle() {
+//    	
+//    }
+    
     /**
      * 
      * @param col - Base on 0
@@ -80,6 +89,17 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     public JQuery getSpecifiedCell(int col, int row) {
     	return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").first();	
     }
+    
+    public String getCellTextColor(int col, int row) {
+    	String cellStyle = getCellStyle(col, row);
+    	cellStyle = cellStyle.replaceAll(" ", "");
+    	int startIdx = cellStyle.indexOf(";color:");
+    	return startIdx >=0 ? cellStyle.substring(startIdx + 1, cellStyle.indexOf(";", startIdx + ";color:".length())) : "";
+    }
+    
+//    public String getCellBackground(int col, int row) {
+//    	
+//    }
 
     private boolean isFF3(){
     	String ffVer = String.valueOf(getEval("zk.ff"));
@@ -114,7 +134,7 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
        return jq("div.zsleftcell[z\\\\.r=\"" + row + "\"] div"); 
     }
     
-    public String getCellContent(JQuery cellLocator) {
+    public String getCellText(JQuery cellLocator) {
         return cellLocator.text();
     }
     
@@ -214,6 +234,35 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
 		mouseUpAt(getSpecifiedCell(right, bottom),"4,4");
 		waitResponse();
     }
+    
+    public JQuery focusOnCell(int left, int top) {
+    	selectCells(left, top, left, top);
+    	return getSpecifiedCell(left, top);
+    }
+    
+    public boolean isFocusOnCell(int left, int top) {
+    	return isFocusOnCell(getSpecifiedCell(left, top));
+    }
+    
+    public boolean isFocusOnCell(JQuery cell) {
+    	boolean isDisplayFocus = jq("div.zsscroll .zsdata .zsselect").isVisible();
+    	int[] cellOffset = cell.zk().revisedOffset();
+    	int[] focusOffset = jq("div.zsselect").zk().revisedOffset();
+    	
+    	//tested on chrome only
+    	return isDisplayFocus && 
+    		(cellOffset[0] - 4 == focusOffset[0]) &&
+    		(cellOffset[1] - 2 == focusOffset[1]);
+    }
+    
+    public boolean isFocusVisible() {
+    	return jq("div.zsscroll .zsdata .zsselect").isVisible();
+    }
+    
+    public boolean isHighlighVisible() {
+    	return jq("div.zsscroll .zsdata .zshighlight").isVisible();
+    }
+    
     /**
      * 
      * @param left: column number of left top cell, 0-based
@@ -363,5 +412,77 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      */
     public JQuery getRow(int row) {
     	 return jq(".zsscroll div.zsrow[z\\\\.r=\"" + row + "\"]");
+    }
+    
+//    public void setFontColor(String hex) {
+//    	click(jq("$fontColorBtn"));
+//    	waitResponse();
+//        JQuery colorTextbox = jq(".z-colorpalette-hex-inp:visible");
+//        type(colorTextbox, hex);
+//        waitResponse();
+//        keyPressEnter(colorTextbox);
+//    }
+//    
+//    public void setCellBackgroundColor(String hex) {
+//    	click(jq("$cellColorBtn"));
+//    	waitResponse();
+//        JQuery colorTextbox = jq(".z-colorpalette-hex-inp:visible");
+//        type(colorTextbox, hex);
+//        waitResponse();
+//        keyPressEnter(colorTextbox);
+//    }
+    
+    /**
+     *  Set cell plain text as input by the end user.
+     */
+    public void setCellEditText(int col, int row, String txt) {
+    	JQuery cell = getSpecifiedCell(col, row);
+    	clickCell(cell);
+    	typeKeys(cell, txt);
+    	keyPressEnter(jq(".zsedit"));
+    }
+    
+    final int RIGHT = 0;
+    final int DOWN = 1;
+    final int LEFT = 2;
+    final int UP = 3;
+    public void setRangeEditText(int col, int row, int orientation, String[] data) {
+    	//ensure focus
+    	JQuery cell = getSpecifiedCell(col, row);
+    	clickCell(cell);
+    	
+    	int topRow = row;
+    	int btmRow = row;
+    	int leftCol = col;
+    	int rightCol = col;
+    	
+    	final int size = data.length;
+    	switch (orientation) {
+    	case RIGHT:
+    		rightCol += size;
+    		break;
+    	case DOWN:
+    		btmRow += size;
+    		break;
+    	case LEFT:
+    		leftCol -= size;
+    		leftCol++;
+    		break;
+    	case UP:
+    		topRow -= size;
+    		topRow++;
+    		break;
+    	}
+    	
+    	int iter = 0;
+    	for (int r = topRow; r <= btmRow; r++) {
+    		for (int c = leftCol; c <= rightCol; c++) {
+    			if (r <= 0 || c <= 0)
+    				continue;
+    			if (iter < size) {
+    				setCellEditText(c, r, data[iter++]);
+    			}
+    		}
+    	}
     }
 }
