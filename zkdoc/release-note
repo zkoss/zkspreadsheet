@@ -1,10 +1,12 @@
 	------------
-ZK Spreadsheet 2.2.0
+ZK Spreadsheet 2.1.1
 *Features:
 
 *Bug
    28 Spreadsheet data binding does not work
    31 NullPointerException in some application server. ex Domino
+   37 A timer doesn't cleanup, cause tomcat cannot stop
+   
    
 	------------
 ZK Spreadsheet 2.1.0
