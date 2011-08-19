@@ -1776,7 +1776,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	//feature #26: Support copy/paste value to local Excel
 	_prepareCopy: function () {
 		var range =  this._wgt._activeRange,
-			ls = this.getLastSelection()
+			ls = this.getLastSelection(),
 			top = ls.top,
 			btm = ls.bottom,
 			left = ls.left,
@@ -1808,13 +1808,12 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 						val = !cell ? null : cell.getPureText();
 					if (val != null)
 						result+=val;
-					if (c < ls.right)
+					if (c < right)
 						result+='\t';
 				}
 				result+='\n';
 			}
 		}
-
 		if (this.state != zss.SSheetCtrl.FOCUSED)
 			return;
 		var focustag = this.dp.focustag;
