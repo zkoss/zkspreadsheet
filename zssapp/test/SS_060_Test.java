@@ -3,26 +3,18 @@ import org.zkoss.ztl.JQuery;
 
 public class SS_060_Test extends SSAbstractTestCase {
 
+	/**
+	 * Sets font family
+	 */
     @Override
     protected void executeTest() {
-        JQuery cell_B_8 = getSpecifiedCell(1, 7);
-        clickCell(cell_B_8);
-        clickCell(cell_B_8);
+    	focusOnCell(1, 7);
         click(jq("$fontCtrlPanel $fontFamily:visible i.z-combobox-rounded-btn"));
         JQuery fontItem = jq(".z-combobox-rounded-pp .timeFont:visible");
         
-        if (fontItem != null) {
-            click(fontItem);
-        }
-        
-        cell_B_8 = getSpecifiedCell(1, 7);
-        String style = cell_B_8.css("font-family");
-        
-        if (style != null) {
-            verifyTrue("Unexcepted result: " + style, "Times New Roman".equalsIgnoreCase(style));
-        } else {
-            verifyTrue("Cannot get style of specified cell!", false); 
-        }
+        click(fontItem);
+        String cellFont = getCellFontFamily(1, 7);
+        verifyTrue("Unexcepted result: " + cellFont, "Times New Roman".equalsIgnoreCase(cellFont));
     }
 
 }

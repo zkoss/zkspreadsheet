@@ -16,32 +16,18 @@ This program is distributed under Apache License Version 2.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
 
-//right click "fill color" : B13
 public class SS_149_Test extends SSAbstractTestCase {
+	
+	/**
+	 * Set cell background color
+	 */
 	@Override
 	protected void executeTest() {
-		rightClickCell(1,12);
-		click(jq("div[title=\"Fill color\"] img.z-colorbtn-btn:eq(2)"));
-		waitResponse();
-
-	    // Input color hex code, then press Enter.
-        JQuery colorTextbox = jq(".z-colorbtn-pp:visible .z-colorpalette-hex-inp");
-        String bgColorStr = "#00ff00";
-        type(colorTextbox, bgColorStr);
-        keyPressEnter(colorTextbox);
-        
-        //Verify
-        JQuery cell_B_13_Outer = getSpecifiedCellOuter(1, 12);
-        String style = cell_B_13_Outer.css("background-color");
-
-        //input "#00ff00", but it actually get "009900"
-        //Is it acceptable in this spec?
-        if (style != null) {
-            verifyTrue("Unexcepted result: " + cell_B_13_Outer.css("background-color"), 
-            		ColorVerifingHelper.isEqualColor("#00ff00", style));
-        } else {
-            verifyTrue("Cannot get style of specified cell!", false);
-        }
+		String selectedColor = setCellBackgroundColorByFastToolbarbutton(1, 12, 98);
+		String cellColor = getCellBackgroundColor(1, 12);
+		
+        //TODO: decode # format and compare color
+		verifyEquals("rgb(153, 102, 255)", cellColor);
 	}
 }
 

@@ -1,44 +1,29 @@
-import org.zkoss.ztl.JQuery;
 
 
 public class SS_057_Test extends SSAbstractTestCase {
 
+	/**
+	 * Paste special
+	 */
     @Override
     protected void executeTest() {
-        // Select source cell
-        JQuery cell_J_13 = getSpecifiedCell(9, 12);
-        clickCell(cell_J_13);
-        clickCell(cell_J_13);
+    	String srcText = getCellText(5, 11);
+    	String srcTextEnd = getCellText(8, 13);
+    	selectCells(5, 11, 8, 13);
+    	click("$copyBtn");
+    	
+    	focusOnCell(12, 11);
+        clickDropdownButtonMenu("$fastIconBtn $pasteDropdownBtn", "Paste Special");
+        // shows dialog
+        verifyTrue(isWidgetVisible("$_pasteSpecialDialog"));
         
-        // Ctrl + C
-        keyDownNative(CTRL);
-        waitResponse();
-        keyDownNative(C);
-        waitResponse();
-        keyUpNative(C);
-        waitResponse();
-        keyUpNative(CTRL);
-        waitResponse();
+        //paste all
+        click("$_pasteSpecialDialog $okBtn");
+        verifyFalse(isWidgetVisible("$_pasteSpecialDialog"));
         
-        // Right click target cell
-        JQuery cell_L_13 = loadTargetCell();
-        clickCell(cell_L_13);
-
-        // Click Paste icon
-        mouseOver(jq("$pasteDropdownBtn"));
-        clickAt(jq("$pasteDropdownBtn"), "30,2");
-        waitResponse();
-        
-        // Click Paste Special
-        click(jq("$pasteSpecial"));
-        waitResponse();
-        
-        // Verify
-        verifyTrue(jq("$_pasteSpecialDialog").isVisible());
+        String targetText = getCellText(12, 11);
+        String targetTextEnd = getCellText(15, 13);
+        verifyEquals(srcText, targetText);
+        verifyEquals(srcTextEnd, targetTextEnd);
     }
-    
-    private JQuery loadTargetCell() {
-        return getSpecifiedCell(11, 12);
-    }
-
 }

@@ -1,4 +1,3 @@
-import org.zkoss.ztl.JQuery;
 
 
 public class SS_056_Test extends SSAbstractTestCase {
@@ -8,36 +7,27 @@ public class SS_056_Test extends SSAbstractTestCase {
 	 */
     @Override
     protected void executeTest() {
-        // Select source cell
-    	selectCells(7, 12, 8, 12);
-        
-        // Ctrl + C
-        keyDownNative(CTRL);
-        waitResponse();
-        keyDownNative(C);
-        waitResponse();
-        keyUpNative(C);
-        waitResponse();
-        keyUpNative(CTRL);
-        waitResponse();
-        
-        // Right click target cell
-        JQuery cell_L_13 = getSpecifiedCell(11, 12);
-        clickCell(cell_L_13);
+    	
+    	selectCells(5, 11, 6, 11);
+    	String srcText1 = getCellText(5, 11);
+    	String srcText2 = getCellText(6, 11);
+    	click("$copyBtn");
+    	
+    	/**
+    	 * Transpose
+    	 */
+    	focusOnCell(12, 11);
+    	clickDropdownButtonMenu("$fastIconBtn $pasteDropdownBtn", "Transpose");
+    	
+    	/**
+    	 * Expect: Transpose
+    	 */
+    	String targetText1 = getCellText(12, 11);
+    	String targetText2 = getCellText(12, 12);
+    	verifyEquals(srcText1, targetText1);
+    	verifyEquals(srcText2, targetText2);
 
-        // Click Paste icon
-        mouseOver(jq("$pasteDropdownBtn"));
-        clickAt(jq("$pasteDropdownBtn"), "30,2");
-        waitResponse();
-        
-        // Click Transpose
-        click(jq("$pasteTranspose"));
-        waitResponse();
-        
-        // Verify
-        String val1 = getSpecifiedCell(11, 12).text();
-        String val2 = getSpecifiedCell(11, 13).text();
-        verifyEquals("46,500", val1);
-        verifyEquals("56,000", val2);
+    	//after transpose, the right hand side cell text shall remain empty
+    	verifyTrue("".equals(getCellText(13, 11)));
     }
 }

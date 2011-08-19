@@ -6,30 +6,19 @@ public class SS_067_Test extends SSAbstractTestCase {
 
     @Override
     protected void executeTest() {
-        // Select cell
-        JQuery cell_B_8 = getSpecifiedCell(1, 7);
-        clickCell(cell_B_8);
-        clickCell(cell_B_8);
+        focusOnCell(1, 7);
         
         // Click font color button on the toolbar
-        click(jq("$cellColorBtn"));
+        click(jq("$fontCtrlPanel $cellColorBtn"));
         waitResponse();
         
-        // Input color hex code, then press Enter.
-        JQuery colorTextbox = jq(".z-colorbtn-pp:visible .z-colorpalette-hex-inp");
-        String bgColorStr = "#990033";
-        type(colorTextbox, bgColorStr);
-        keyPressEnter(colorTextbox);
-        
+        JQuery color = jq(".z-colorpalette:visible div.z-colorpalette-colorbox:nth-child(98)");
+        //TODO: decode #9966ff format to rgb format
+        //String selectedColor = color.first().text();
+    	mouseOver(color);
+    	click(color);
+    	
         //Verify
-        cell_B_8 = getSpecifiedCellOuter(1, 7);
-        String style = cell_B_8.css("background-color");
-        
-        if (style != null) {
-            verifyTrue("Unexcepted result: " + cell_B_8.css("background-color"), ColorVerifingHelper.isEqualColor(bgColorStr, style));
-        } else {
-            verifyTrue("Cannot get style of specified cell!", false);
-        }
+        verifyEquals("rgb(153, 102, 255)", getCellBackgroundColor(1, 7));
     }
-
 }

@@ -4,32 +4,25 @@ import org.zkoss.ztl.util.ColorVerifingHelper;
 
 public class SS_066_Test extends SSAbstractTestCase {
 
+	/**
+	 * Sets cell font color from toolbar
+	 */
     @Override
     protected void executeTest() {
-        // Select cell
-        JQuery cell_B_8 = getSpecifiedCell(1, 7);
-        clickCell(cell_B_8);
-        clickCell(cell_B_8);
+        focusOnCell(1, 7);
         
         // Click font color button on the toolbar
-        click(jq("$fontColorBtn"));
+        click(jq("$fontCtrlPanel $fontColorBtn"));
         waitResponse();
         
-        // Input color hex code, then press Enter.
-        JQuery colorTextbox = jq(".z-colorpalette-hex-inp:visible");
-        String fontColorStr = "#990033";
-        type(colorTextbox, fontColorStr);
-        keyPressEnter(colorTextbox);
+        JQuery color = jq(".z-colorpalette:visible div.z-colorpalette-colorbox:nth-child(98)");
+        String selectedColor = color.first().text();
+    	mouseOver(color);
+    	click(color);
+    	waitResponse();
         
         //Verify
-        cell_B_8 = getSpecifiedCell(1, 7);
-        String style = cell_B_8.css("color");
-        
-        if (style != null) {
-            verifyTrue("Unexcepted result: " + cell_B_8.css("color"), ColorVerifingHelper.isEqualColor(fontColorStr, style));
-        } else {
-            verifyTrue("Cannot get style of specified cell!", false);
-        }
+        verifyTrue(ColorVerifingHelper.isEqualColor(selectedColor, getCellFontColor(1, 7)));
     }
 
 }

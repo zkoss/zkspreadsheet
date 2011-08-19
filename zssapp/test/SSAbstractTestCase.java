@@ -55,11 +55,80 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     
     public String getCellBackgroundColor(int col, int row) {
     	String style = getSpecifiedCellOuter(col, row).attr("style");
-    	int startIdx = style.indexOf("background-color");
+    	int startIdx = style.indexOf("background-color:");
     	if (startIdx < 0)
     		return "";
     	int endIdx = style.indexOf(";", startIdx);
-    	return style.substring(startIdx + "background-color".length(), endIdx);
+    	return style.substring(startIdx + "background-color:".length(), endIdx).trim();
+    }
+    
+    public String getCellFontFamily(int col, int row) {
+    	String font = getSpecifiedCell(1, 7).css("font-family");
+    	return font != null ? font.replaceAll("'", "") : "";
+    }
+    
+    public String getCellFontColor(int col, int row) {
+    	String color = getSpecifiedCell(col, row).css("color");
+    	return color;
+    }
+    
+
+//    /**
+//     * Set cell font color by top toolbar button
+//     * 
+//     * @param lCol
+//     * @param tRow
+//     * @param rCol
+//     * @param bRow
+//     * @param nthColorPalette
+//     * @return
+//     */
+//    public String setCellFontColorByToolbarbutton(int lCol, int tRow, int rCol, int bRow, int nthColorPalette) {
+//    	click(jq("$fontCtrlPanel $fontColorBtn"));
+//    	click(jq());
+//    }
+    
+    /**
+     * Sets cell font color by fast toolbar button
+     */
+    public String setCellFontColorByFastToolbarbutton(int lCol, int tRow, int rCol, int bRow, int nthColorPalette) {
+    	rightClickCells(lCol, tRow, rCol, bRow);
+    	click("$cellContext $fontCtrlPanel:visible $fontColorBtn");
+    	
+        JQuery color = jq(".z-colorpalette:visible div.z-colorpalette-colorbox:nth-child(" + nthColorPalette + ")");
+        String selectedColor = color.first().text();
+    	mouseOver(color);
+    	click(color);
+    	waitResponse();
+    	return selectedColor;
+    }
+    
+    public String setCellBackgroundColorByFastToolbarbutton(int lCol, int tRow, int rCol, int bRow, int nthColorPalette) {
+    	rightClickCells(lCol, tRow, rCol, bRow);
+    	click("$cellContext $fontCtrlPanel:visible $cellColorBtn");
+    	
+        JQuery color = jq(".z-colorpalette:visible div.z-colorpalette-colorbox:nth-child(" + nthColorPalette + ")");
+        String selectedColor = color.first().text();
+    	mouseOver(color);
+    	click(color);
+    	waitResponse();
+    	return selectedColor;
+    }
+    
+    public String setCellBackgroundColorByFastToolbarbutton(int col, int row, int nthColorPalette) {
+    	return setCellBackgroundColorByFastToolbarbutton(col, row, col, row, nthColorPalette);
+    }
+    
+    /**
+     * Sets cell font color
+     * 
+     * @param col
+     * @param row
+     * @param nthColorPalette
+     * @return
+     */
+    public String setCellFontColorByFastToolbarbutton(int col, int row, int nthColorPalette) {
+    	return setCellFontColorByFastToolbarbutton(col, row, col, row, nthColorPalette);
     }
     
     public static final String CELL_WITHOUT_STYLE = "rgba(0, 0, 0, 0):Arial:left";

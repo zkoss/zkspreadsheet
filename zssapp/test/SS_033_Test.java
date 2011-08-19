@@ -5,6 +5,10 @@ import org.zkoss.ztl.util.ColorVerifingHelper;
 
 public class SS_033_Test extends SSAbstractTestCase {
 
+
+	/**
+	 * Font color
+	 */
     @Override
     protected void executeTest() {
         JQuery cell_B_8 = getSpecifiedCell(1, 7);
@@ -16,12 +20,6 @@ public class SS_033_Test extends SSAbstractTestCase {
     	click(jq("$backgroundColorMenu a.z-menu-cnt-img"));
     	waitResponse();
 
-    	// Input color hex code, then press Enter.
-    	//JQuery colorTextbox = jq(".z-colorpalette-hex-inp:visible");
-    	//String backgroundColorStr = "#990033";
-        //type(colorTextbox, backgroundColorStr);
-        //keyPressEnter(colorTextbox); //selenium key press enter does not work well
-        
     	JQuery color = jq("$backgroundColorMenu .z-colorpalette div.z-colorpalette-colorbox:nth-child(98)");
     	mouseOver(color);
     	click(color);
