@@ -10,9 +10,10 @@ public class SS_007_Test extends SSAbstractTestCase {
     	waitResponse();
     	click("jq('$exportPdf a.z-menu-item-cnt')");
     	waitResponse();
-    	click("jq('$export td.z-button-cm')");
+    	//TODO: verify if exported pdf is generated
+    	//click("jq('$export td.z-button-cm')");
     	waitResponse();
     	
-    	//TODO: verify if exported pdf is generated
+    	
     }
 }

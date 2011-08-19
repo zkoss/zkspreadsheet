@@ -1,9 +1,11 @@
 import org.zkoss.ztl.JQuery;
 
-//Toolbar>>Paste>>Transpose
 
 public class SS_056_Test extends SSAbstractTestCase {
-
+	
+	/**
+	 * Paste Transpose
+	 */
     @Override
     protected void executeTest() {
         // Select source cell

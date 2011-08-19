@@ -16,9 +16,9 @@ public class SS_018_Test extends SSAbstractTestCase {
 		waitResponse();
 		mouseOver(jq("$insert a.z-menu-cnt-img"));		
 		waitResponse();
-		click("jq('$shiftCellDown a.z-menu-item-cnt')");
+		click("jq('$shiftCellDown a.z-menu-item-cnt:visible')");
 		waitResponse();
-		sleep(5000);
+
 		cell_B_6 = getSpecifiedCell(1, 5);
 		String newValue = getSpecifiedCell(1, 5).text();
 		String newDownCellValue = getCellText(cell_B_7);

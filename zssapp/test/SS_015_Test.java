@@ -21,6 +21,7 @@ public class SS_015_Test extends SSAbstractTestCase {
     	waitResponse();
 
     	String newText = getCellText(cell_F_5);
+    	waitResponse();
     	String newTextColor = getCellTextColor(5, 5);
     	
     	/**

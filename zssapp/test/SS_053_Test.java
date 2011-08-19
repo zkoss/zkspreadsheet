@@ -1,37 +1,31 @@
-import org.zkoss.ztl.JQuery;
 
-//focus cell J17,ctrl+c,focus cell L17, paste the formula
 public class SS_053_Test extends SSAbstractTestCase {
 
+	/**
+	 * Paste (formula only)
+	 */
     @Override
     protected void executeTest() {
-        JQuery cell_J_17 = getSpecifiedCell(9, 16);
-        clickCell(cell_J_17);
-        clickCell(cell_J_17);
-        
-        // Ctrl + C
-        keyDownNative(CTRL);
-        waitResponse();
-        keyDownNative(C);
-        waitResponse();
-        keyUpNative(C);
-        waitResponse();
-        keyUpNative(CTRL);
-        waitResponse();
-        
-        // Click target cell - L17
-        clickCell(getSpecifiedCell(11, 16));
-        mouseOver(jq("$pasteDropdownBtn"));
-        clickAt(jq("$pasteDropdownBtn"), "30,2");
-        waitResponse();
-        
-        // Click Formulas
-        click(jq("$pasteFormula"));
-        waitResponse();
-        
-        // Verify
-        String formulaBarValue = jq("$formulaEditor").val();
-        verifyEquals("Incorrect value: " + formulaBarValue, "=K17", formulaBarValue);
+    	
+    	focusOnCell(5, 14);
+    	String srcCellBackgroundColor = getCellBackgroundColor(5, 14);
+    	click("$copyBtn");
+    	verifyTrue("Source cell shall has background for testing", srcCellBackgroundColor.length() > 0);
+    	
+    	//paste formula
+    	focusOnCell(12, 13);
+    	clickDropdownButtonMenu("$fastIconBtn $pasteDropdownBtn", "Formulas");
+    	
+    	focusOnCell(12, 13);
+    	String formulaBarValue = jq("$formulaEditor").val();
+    	String targetCellBackgroundColor = getCellBackgroundColor(12, 13);
+    	
+        /**
+         * Expect: 
+         * paste text and formula etc.. but do not paste style
+         */
+    	verifyTrue("cell shall be formula", formulaBarValue.startsWith("="));
+        verifyNotEquals("paste formula do not paste cell style", srcCellBackgroundColor, targetCellBackgroundColor);
     }
 
 }

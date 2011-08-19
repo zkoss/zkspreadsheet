@@ -53,6 +53,15 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     	+jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").first().attr("style");
     }
     
+    public String getCellBackgroundColor(int col, int row) {
+    	String style = getSpecifiedCellOuter(col, row).attr("style");
+    	int startIdx = style.indexOf("background-color");
+    	if (startIdx < 0)
+    		return "";
+    	int endIdx = style.indexOf(";", startIdx);
+    	return style.substring(startIdx + "background-color".length(), endIdx);
+    }
+    
     public static final String CELL_WITHOUT_STYLE = "rgba(0, 0, 0, 0):Arial:left";
     public static final String CELL_WITHOUT_STYLE2 = "transparent:Arial:left";
     
@@ -132,6 +141,10 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      */
     public JQuery getRowHeader(int row) {
        return jq("div.zsleftcell[z\\\\.r=\"" + row + "\"] div"); 
+    }
+    
+    public String getCellText(int col, int row) {
+    	return getSpecifiedCell(col, row).text();
     }
     
     public String getCellText(JQuery cellLocator) {
