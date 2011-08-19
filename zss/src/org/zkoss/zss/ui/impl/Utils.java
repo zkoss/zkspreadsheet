@@ -546,6 +546,13 @@ public class Utils {
 				}
 				CellStyle newCellStyle = book.createCellStyle();
 				newCellStyle.cloneStyleFrom(cs);
+				
+				//bug#ZSS-34: cell background color does not show in excel
+				//20110819, henrichen@zkoss.org: set color to a cell shall change its fillPattern to "solid" automatically
+				final short patternType = cs.getFillPattern();
+				if (patternType == CellStyle.NO_FILL) {
+					newCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+				}
 				BookHelper.setFillForegroundColor(newCellStyle, bsColor);
 				Range rng = Utils.getRange(sheet, row, col);
 				rng.setStyle(newCellStyle);

@@ -6,6 +6,7 @@ ZK Spreadsheet 2.1.1
    ZSS-28 Spreadsheet data binding does not work
    ZSS-31 NullPointerException in some application server. ex Domino
    ZSS-33 Nullpointer when change the color of cell
+   ZSS-34 cell background color does not show in excel
    ZSS-35 A exported xlsx is not loadable again by Excel or Spreadsheet
    ZSS-36 Exception when exporting excel twice
    ZSS-37 A timer doesn't cleanup, cause tomcat cannot stop
