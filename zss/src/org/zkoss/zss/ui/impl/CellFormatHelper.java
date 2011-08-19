@@ -72,7 +72,10 @@ public class CellFormatHelper {
 				return "";
 
 			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
-			String bgColor = BookHelper.colorToHTML(_book, style.getFillForegroundColorColor());
+			//ZSS-34 cell background color does not show in excel
+			//20110819, henrichen: if fill pattern is NO_FILL, shall not show the cell background color
+			String bgColor = style.getFillPattern() != CellStyle.NO_FILL ? 
+				BookHelper.colorToHTML(_book, style.getFillForegroundColorColor()) : null;
 			if (BookHelper.AUTO_COLOR.equals(bgColor)) {
 				bgColor = null;
 			}
@@ -144,7 +147,9 @@ public class CellFormatHelper {
 			CellStyle style = next.getCellStyle();
 			if (style != null){
 				//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
-				String bgColor = BookHelper.colorToHTML(_book, style.getFillForegroundColorColor());
+				//ZSS-34 cell background color does not show in excel
+				String bgColor = style.getFillPattern() != CellStyle.NO_FILL ? 
+						BookHelper.colorToHTML(_book, style.getFillForegroundColorColor()) : null;
 				if (BookHelper.AUTO_COLOR.equals(bgColor)) {
 					bgColor = null;
 				}
@@ -160,7 +165,9 @@ public class CellFormatHelper {
 			
 			if (style != null){
 				//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
-				String bgColor = BookHelper.colorToHTML(_book, style.getFillForegroundColorColor());
+				//ZSS-34 cell background color does not show in excel
+				String bgColor = style.getFillPattern() != CellStyle.NO_FILL ? 
+						BookHelper.colorToHTML(_book, style.getFillForegroundColorColor()) : null;
 				if (BookHelper.AUTO_COLOR.equals(bgColor)) {
 					bgColor = null;
 				}
@@ -209,7 +216,9 @@ public class CellFormatHelper {
 				if (style != null){
 					int bb = style.getBorderLeft();//get left here
 					//String color = BookHelper.indexToRGB(_book, style.getLeftBorderColor());
-					String color = BookHelper.colorToHTML(_book, style.getLeftBorderColorColor());
+					//ZSS-34 cell background color does not show in excel
+					String color = style.getFillPattern() != CellStyle.NO_FILL ? 
+							BookHelper.colorToHTML(_book, style.getLeftBorderColorColor()) : null;
 						hitRight = appendBorderStyle(sb, "right", bb, color);
 				}
 			}
@@ -220,7 +229,9 @@ public class CellFormatHelper {
 			CellStyle style = next.getCellStyle();
 			if (style != null){
 				//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
-				String bgColor = BookHelper.colorToHTML(_book, style.getFillForegroundColorColor());
+				//ZSS-34 cell background color does not show in excel
+				String bgColor = style.getFillPattern() != CellStyle.NO_FILL ? 
+						BookHelper.colorToHTML(_book, style.getFillForegroundColorColor()) : null;
 				if (BookHelper.AUTO_COLOR.equals(bgColor)) {
 					bgColor = null;
 				}
@@ -235,7 +246,9 @@ public class CellFormatHelper {
 			CellStyle style = _cell.getCellStyle();
 			if (style != null){
 				//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
-				String bgColor = BookHelper.colorToHTML(_book, style.getFillForegroundColorColor());
+				//ZSS-34 cell background color does not show in excel
+				String bgColor = style.getFillPattern() != CellStyle.NO_FILL ? 
+						BookHelper.colorToHTML(_book, style.getFillForegroundColorColor()) : null;
 				if (BookHelper.AUTO_COLOR.equals(bgColor)) {
 					bgColor = null;
 				}

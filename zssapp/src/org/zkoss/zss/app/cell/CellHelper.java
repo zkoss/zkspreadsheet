@@ -79,7 +79,9 @@ public final class CellHelper {
 	public static String getBackgroundHTMLColor(Cell cell) {
 		CellStyle cellStyle = cell.getCellStyle();
 		Book book = (Book)cell.getSheet().getWorkbook();
-		String color = BookHelper.colorToHTML(book, cellStyle.getFillForegroundColorColor());
+		//bug#ZSS-34: cell background color does not show in excel
+		String color = cellStyle.getFillPattern() != CellStyle.NO_FILL ? 
+				BookHelper.colorToHTML(book, cellStyle.getFillForegroundColorColor()) : null;
 		if (color == null || BookHelper.AUTO_COLOR.equals(color))
 			return "#FFFFFF";
 		return color;
