@@ -15,6 +15,10 @@ it will be useful, but WITHOUT ANY WARRANTY.
 
 //select F6:I9, and CTRL+X
 public class SS_155_Test extends SSAbstractTestCase {
+	
+	/**
+	 * Select cells and use Ctrl + 'x'
+	 */
 	@Override
 	protected void executeTest() {
 		//verify
@@ -23,7 +27,11 @@ public class SS_155_Test extends SSAbstractTestCase {
 		selectCells(5,5,8,8);		
 		pressCtrlWithChar(X);
 		
-		//verify
+		/**
+		 * Expect:
+		 * 
+		 * select range has high light
+		 */
 		verifyTrue(jq("div.zshighlight").width() != 0);
 	}
 }

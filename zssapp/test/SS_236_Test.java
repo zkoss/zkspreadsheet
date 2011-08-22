@@ -1,6 +1,6 @@
 import org.zkoss.ztl.JQuery;
 
-/* SS_238_Test.java
+/* SS_236_Test.java
 
 {{IS_NOTE
 	Purpose:
@@ -21,7 +21,7 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
  * @author sam
  *
  */
-public class SS_238_Test extends SSAbstractTestCase {		
+public class SS_236_Test extends SSAbstractTestCase {		
 	
 	/**
 	 * Steps

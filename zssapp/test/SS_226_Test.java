@@ -35,18 +35,19 @@ public class SS_226_Test extends SSAbstractTestCase {
 		clickCell(F11);
 		
 		//click filter menu
-		//clickDropdownButtonMenu("$fastIconBtn $sortDropdownBtn", 3);
 		clickDropdownButtonMenu("$fastIconBtn $sortDropdownBtn", "Filter");
-		int btmSize = getRow(5).children(".zsbtn").length();
-		verifyEquals(btmSize, 6);
+		waitResponse();
+		
+		int btmSize = getRow(11).children(".zsbtn").length();
+		verifyEquals(6, btmSize);
 
 		//TODO: verify buttons position
 		//clickCell(getSpecifiedCell(2, 6));
 		
-		//toggle autofilter off
+		//toggle auto filter off
 		clickCell(F11);
 		clickDropdownButtonMenu("$fastIconBtn $sortDropdownBtn", "Filter");
-		verifyEquals(getRow(5).children(".zsbtn").length(), 0);
+		verifyEquals(getRow(11).children(".zsbtn").length(), 0);
 	}
 
 }

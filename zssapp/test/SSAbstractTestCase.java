@@ -235,6 +235,15 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
 //        waitResponse();
     }
     
+    public void dragFill(int srcCol, int srcRow, int targetCol, int targetRow) {
+    	focusOnCell(srcCol, srcRow);
+    	mouseOver(jq(".zsseldot"));
+    	mouseDownAt(jq(".zsseldot"), ""+ 1 + "," + 1);
+    	mouseMoveAt(getSpecifiedCell(targetCol, targetRow), "2,2");
+    	mouseUpAt(getSpecifiedCell(targetCol, targetRow), "2,2");
+    	waitResponse();
+    }
+    
     public void rightClickCell(JQuery cellLocator) {
         contextMenuAt(cellLocator, "2,2");
     }

@@ -15,8 +15,11 @@ This program is distributed under Apache License Version 2.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
 
-//right click "Border" to have popup menu: B11:F13
 public class SS_150_Test extends SSAbstractTestCase {
+	
+	/**
+	 * Open border menu (from fast toolbar)
+	 */
 	@Override
 	protected void executeTest() {
 		rightClickCells(1,10,5,12);
@@ -32,10 +35,14 @@ public class SS_150_Test extends SSAbstractTestCase {
         clickAt(borderIcon, "30,0");
         waitResponse();
 		
-		//verify
-        String bottomBorder = jq(".z-menu-popup:visible .z-menu-item:eq(1)").text();
-        verifyEquals(bottomBorder, " Bottom border");
-//        sleep(5000);
+		
+        /**
+         * Expected
+         * 
+         * Open set border menu
+         */
+        String topBorder = jq(".z-menu-popup:visible .z-menu-item:eq(1)").text();
+        verifyEquals(topBorder, " Top border");
 	}
 }
 

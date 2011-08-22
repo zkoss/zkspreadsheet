@@ -6,6 +6,8 @@ import org.zkoss.ztl.JQuery;
 //then press enter
 
 public class SS_225_Test extends SSAbstractTestCase {
+	
+	
 	@Override
 	protected void executeTest() {
 		selectCells(10, 14, 10, 14);

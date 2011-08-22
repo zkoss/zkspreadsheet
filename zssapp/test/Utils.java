@@ -12,7 +12,7 @@ public class Utils {
     }
 
     public static String getBrowsers() {
-        return "chrome";
+        return "ie";
     }
 
     public static int getTimeout() {

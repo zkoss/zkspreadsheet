@@ -15,6 +15,10 @@ it will be useful, but WITHOUT ANY WARRANTY.
 
 //B12:G16, custom sort, has headers, sort by column B
 public class SS_199_Test extends SSAbstractTestCase {
+	
+	/**
+	 * Custom sort with "My data has headers"
+	 */
 	@Override
 	protected void executeTest() {
 		rightClickCells(1,11,7,15);
@@ -33,7 +37,7 @@ public class SS_199_Test extends SSAbstractTestCase {
 		click(jq("@comboitem[label=\"Column B\"] td.z-comboitem-text"));
 		waitResponse();
 		
-		click(jq("$okBtn td.z-button-cm"));
+		click("$okBtn:visible td.z-button-cm");
 		waitResponse();
 		
 		//verify

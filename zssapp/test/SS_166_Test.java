@@ -15,6 +15,10 @@ it will be useful, but WITHOUT ANY WARRANTY.
 
 //select B13:G18, and Delete to clear content
 public class SS_166_Test extends SSAbstractTestCase {
+	
+	/**
+	 * "Delete" key: clear cell style and cell text
+	 */
 	@Override
 	protected void executeTest() {
 		selectCells(1,12,6,17);
@@ -27,10 +31,10 @@ public class SS_166_Test extends SSAbstractTestCase {
 		
 		//verify
 		String b13value = getSpecifiedCell(1,12).text();
-		verifyEquals(b13value,null);
+		verifyTrue("".equals(b13value));
 
 		String g18value = getSpecifiedCell(6,17).text();
-		verifyEquals(g18value,null);
+		verifyTrue("".equals(g18value));
 	}
 }
 
