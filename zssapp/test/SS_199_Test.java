@@ -41,15 +41,15 @@ public class SS_199_Test extends SSAbstractTestCase {
 		waitResponse();
 		
 		//verify
-		String b13value = getSpecifiedCell(1,12).text();
-		String b14value = getSpecifiedCell(1,13).text();
-		String b15value = getSpecifiedCell(1,14).text();
-		String b16value = getSpecifiedCell(1,15).text();
+		String b13value = getCellText(1,12);
+		String b14value = getCellText(1,13);
+		String b15value = getCellText(1,14);
+		String b16value = getCellText(1,15);
 
-		String f13value = getSpecifiedCell(5,12).text();
-		String f14value = getSpecifiedCell(5,13).text();
-		String f15value = getSpecifiedCell(5,14).text();
-		String f16value = getSpecifiedCell(5,15).text();
+		String f13value = getCellText(5,12);
+		String f14value = getCellText(5,13);
+		String f15value = getCellText(5,14);
+		String f16value = getCellText(5,15);
 
 		verifyEquals(b13value,"Average\u00A0total\u00A0assets");
 		verifyEquals(b14value,"Current\u00A0assets");
