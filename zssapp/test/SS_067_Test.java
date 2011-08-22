@@ -13,12 +13,13 @@ public class SS_067_Test extends SSAbstractTestCase {
         waitResponse();
         
         JQuery color = jq(".z-colorpalette:visible div.z-colorpalette-colorbox:nth-child(98)");
-        //TODO: decode #9966ff format to rgb format
-        //String selectedColor = color.first().text();
+        String selectedColor = color.first().text();
     	mouseOver(color);
     	click(color);
     	
+        //TODO: compare hex format and rgb format
         //Verify
-        verifyEquals("rgb(153, 102, 255)", getCellBackgroundColor(1, 7));
+    	String bg = getCellBackgroundColor(1, 7);
+        verifyTrue("rgb(153, 102, 255)".equals(bg) || "#9966cc".equals(bg));
     }
 }

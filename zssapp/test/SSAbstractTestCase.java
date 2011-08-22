@@ -56,7 +56,7 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     
     public String getCellBackgroundColor(int col, int row) {
     	String style = getSpecifiedCellOuter(col, row).attr("style");
-    	int startIdx = style.indexOf("background-color:");
+    	int startIdx = Math.max(style.indexOf("background-color:"), style.indexOf("BACKGROUND-COLOR:")) ;
     	if (startIdx < 0)
     		return "";
     	int endIdx = style.indexOf(";", startIdx);
@@ -172,7 +172,7 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     public String getCellTextColor(int col, int row) {
     	String cellStyle = getCellStyle(col, row);
     	cellStyle = cellStyle.replaceAll(" ", "");
-    	int startIdx = cellStyle.indexOf(";color:");
+    	int startIdx = Math.max(cellStyle.indexOf(";color:"), cellStyle.indexOf(";COLOR:"));
     	return startIdx >=0 ? cellStyle.substring(startIdx + 1, cellStyle.indexOf(";", startIdx + ";color:".length())) : "";
     }
     
@@ -183,6 +183,11 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     private boolean isFF3(){
     	String ffVer = String.valueOf(getEval("zk.ff"));
     	return ffVer.startsWith("3");
+    }
+    
+    private boolean isIE() {
+    	String ieVer = String.valueOf(getEval("zk.ie"));
+    	return ieVer != null && ieVer.length() > 0;
     }
     
     /**
@@ -214,7 +219,7 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     }
     
     public String getCellText(int col, int row) {
-    	if (isFF3()) {
+    	if (isFF3() || isIE()) {
     		JQuery cell = getSpecifiedCell(col, row).children().children();
     		Iterator<JQuery> i = cell.iterator();
     		while (i.hasNext()) {
@@ -232,7 +237,7 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     }
     
     public String getCellText(JQuery cellLocator) {
-    	if (isFF3()) {
+    	if (isFF3() || isIE()) {
     		JQuery cell = cellLocator.children().children();
     		Iterator<JQuery> i = cell.iterator();
     		while (i.hasNext()) {

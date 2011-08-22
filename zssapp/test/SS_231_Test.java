@@ -26,9 +26,9 @@ public class SS_231_Test extends SSAbstractTestCase {
 		mouseUpAt(getSpecifiedCell(11, 17),"-2,-2");
 		waitResponse();
 		
-		String k15value = getSpecifiedCell(10,14).text();
-		String k16value = getSpecifiedCell(10,15).text();
-		String k17value = getSpecifiedCell(10,16).text();
+		String k15value = getCellText(10,14);
+		String k16value = getCellText(10,15);
+		String k17value = getCellText(10,16);
 		verifyEquals(k15value,"Mar");
 		verifyEquals(k16value,"Apr");
 		verifyEquals(k17value,"May");

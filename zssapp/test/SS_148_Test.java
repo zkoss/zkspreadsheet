@@ -26,8 +26,8 @@ public class SS_148_Test extends SSAbstractTestCase {
         String selectedColor = setCellFontColorByFastToolbarbutton(1, 12, 98);
         String newFontColor = getCellFontColor(1, 12);
         
-        //TODO: decode # format and compare color
-        verifyEquals("rgb(153, 102, 255)", newFontColor);
+        //TODO: compare hex # format and RGB format
+        verifyTrue("rgb(153, 102, 255)".equals(newFontColor) || "#9966cc".equals(newFontColor));
 	}
 }
 

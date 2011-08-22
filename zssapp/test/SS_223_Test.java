@@ -19,10 +19,10 @@ public class SS_223_Test extends SSAbstractTestCase {
 		mouseUpAt(getSpecifiedCell(10,12),"2,2");
 		waitResponse();
 		
-		String k13value = getSpecifiedCell(10,12).text();
-		String k14value = getSpecifiedCell(10,13).text();
-		String l13value = getSpecifiedCell(11,12).text();
-		String l14value = getSpecifiedCell(11,13).text();
+		String k13value = getCellText(10,12);
+		String k14value = getCellText(10,13);
+		String l13value = getCellText(11,12);
+		String l14value = getCellText(11,13);
 		
 		verifyEquals(k13value,"45,000");
 		verifyEquals(k14value,"80,000");

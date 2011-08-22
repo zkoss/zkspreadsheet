@@ -41,8 +41,8 @@ public class SS_150_Test extends SSAbstractTestCase {
          * 
          * Open set border menu
          */
-        String topBorder = jq(".z-menu-popup:visible .z-menu-item:eq(1)").text();
-        verifyEquals(topBorder, " Top border");
+        String topBorder = jq(".z-menu-popup:visible .z-menu-item:eq(1)").text().trim();
+        verifyEquals(topBorder, "Top border");
 	}
 }
 
