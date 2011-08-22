@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.junit.Test;
@@ -213,10 +214,38 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     }
     
     public String getCellText(int col, int row) {
+    	if (isFF3()) {
+    		JQuery cell = getSpecifiedCell(col, row).children().children();
+    		Iterator<JQuery> i = cell.iterator();
+    		while (i.hasNext()) {
+    			JQuery j = i.next();
+    			if (!j.isVisible())
+    				continue;
+    			String str = j.text();
+    			if (str != null && str.length() > 0) {
+    				return str;
+    			}
+    		}
+    		return "";
+    	}
     	return getSpecifiedCell(col, row).text();
     }
     
     public String getCellText(JQuery cellLocator) {
+    	if (isFF3()) {
+    		JQuery cell = cellLocator.children().children();
+    		Iterator<JQuery> i = cell.iterator();
+    		while (i.hasNext()) {
+    			JQuery j = i.next();
+    			if (!j.isVisible())
+    				continue;
+    			String str = j.text();
+    			if (str != null && str.length() > 0) {
+    				return str;
+    			}
+    		}
+    		return "";
+    	}
         return cellLocator.text();
     }
     

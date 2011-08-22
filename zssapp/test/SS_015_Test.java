@@ -9,8 +9,7 @@ public class SS_015_Test extends SSAbstractTestCase {
     @Override
     protected void executeTest() {
         JQuery cell_F_5 = getSpecifiedCell(5, 5);
-        //String orgTxt = getCellContent(cell_F_5); //fail to equal, encoding seems different
-        String orgTxt = "Beginning of Year";
+        String orgTxt = getCellText(cell_F_5); //chrome fail to equal, encoding seems different
         String orgTextColor = getCellTextColor(5, 5);
 
         clickCell(cell_F_5);

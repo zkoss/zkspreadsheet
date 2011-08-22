@@ -21,7 +21,7 @@ public class SS_114_Test extends SSAbstractTestCase {
 	protected void executeTest() {
 		//verify
 		String beforeF12Style = getCellCompositeStyle(5, 11);
-		String beforef12value = getSpecifiedCell(5,11).text();
+		String beforef12value = getCellText(5, 11);
 		
 		
 		rightClickRowHeader(11);
@@ -30,7 +30,7 @@ public class SS_114_Test extends SSAbstractTestCase {
 
 		//verify
 		String afterF12Style = getCellCompositeStyle(5, 11);
-		String afterf12value = getSpecifiedCell(5,11).text();
+		String afterf12value = getCellText(5, 11);
 		
 		verifyEquals(beforef12value,afterf12value);
 		verifyTrue(CELL_WITHOUT_STYLE.equals(afterF12Style) || CELL_WITHOUT_STYLE2.equals(afterF12Style));	

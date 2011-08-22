@@ -8,7 +8,7 @@ public class SS_016_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
 		JQuery cell_F_5 = getSpecifiedCell(5, 5);
-		String origValue = getCellText(cell_F_5);
+		String origValue = getCellText(5, 5);
 		String orgTextColor = getCellTextColor(5, 5);
 		
 		clickCell(cell_F_5);
@@ -17,7 +17,7 @@ public class SS_016_Test extends SSAbstractTestCase {
 		waitResponse();
 		click("jq('$clearAll a.z-menu-item-cnt')");
 		waitResponse();
-		String newValue = getCellText(cell_F_5);
+		String newValue = getCellText(5, 5);
 		String newTextColor = getCellTextColor(5, 5);
 		
 		/**

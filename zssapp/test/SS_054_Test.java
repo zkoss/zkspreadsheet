@@ -25,7 +25,7 @@ public class SS_054_Test extends SSAbstractTestCase {
     	/**
     	 * Paste value, no style, no format
     	 */
-    	verifyTrue("paste value, no formula", !(targetFormulaBarValue.indexOf("=") < 0));
+    	verifyTrue("paste value: shall not be formula", !(targetFormulaBarValue.indexOf("=") >= 0));
     	srcCellText = srcCellText.replace(",", "");
     	verifyEquals("paste value, no format", srcCellText, targetFormulaBarValue);
     }
