@@ -3,20 +3,17 @@
 public class SS_005_Test extends SSAbstractTestCase {
 
 	/**
-	 * Click File menu and select Import menuitem
-	 * 
-	 * Expected:
-	 * Opens an Import dialog
+	 * Import file dialog
 	 */
     @Override
     protected void executeTest() {
     	verifyFalse(isWidgetVisible("$_importFileDialog"));
     	
-    	click("jq('$fileMenu button.z-menu-btn')");
+    	click("$fileMenu");
     	waitResponse();
-    	click("jq('$importFile a.z-menu-item-cnt')");
+    	click("$importFile");
     	waitResponse();
     	
-    	verifyTrue(isWidgetVisible("$_importFileDialog"));
+    	verifyTrue("Improt file dialog shall be visible", isWidgetVisible("$_importFileDialog"));
     }
 }

@@ -2,13 +2,16 @@
 
 public class SS_003_Test extends SSAbstractTestCase {
 
+	/**
+	 * Open file dialog
+	 */
     @Override
     protected void executeTest() {
     	verifyFalse(isWidgetVisible("$_openFileDialog"));
     	
-    	click("jq('$fileMenu button.z-menu-btn')");
+    	click("$fileMenu");
     	waitResponse();
-    	click("jq('$openFile a.z-menu-item-cnt')");
+    	click("$openFile");
     	waitResponse();
     	
     	verifyTrue(isWidgetVisible("$_openFileDialog"));

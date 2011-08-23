@@ -10,9 +10,9 @@ public class SS_012_Test extends SSAbstractTestCase {
     	selectCells(1,5,5,8);
     	verifyFalse(isHighlighVisible());
     	
-    	click("jq('$editMenu button.z-menu-btn')");
+    	click("$editMenu");
     	waitResponse();
-    	click("jq('$copy a.z-menu-item-cnt')");
+    	click("$copy");
     	waitResponse();
     	
     	/**

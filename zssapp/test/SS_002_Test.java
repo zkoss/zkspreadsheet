@@ -6,20 +6,23 @@ import org.zkoss.ztl.JQuery;
 public class SS_002_Test extends SSAbstractTestCase {
 
 	/**
-	 * Click File menu and select New menuitem
-	 * 
-	 * Expected:
-	 * Open a blank spreadsheet
+	 * Open a empty spreadsheet
 	 */
     @Override
     protected void executeTest() {
-    	click("jq('$fileMenu button.z-menu-btn')");
+    	click("$fileMenu");
     	waitResponse();
-    	click("jq('$newFile a.z-menu-item-cnt')");
-    	waitResponse();
+    	click("$newFile:visible");
+        /**
+         * Expect:
+         * 
+         * spreadsheet mask is invisible, cell text shall be empty
+         */
+        verifyFalse("mask shall be invisible", isWidgetVisible(".zssmask")) ;
+
     	Random randomGenerator = new Random();
         JQuery newc = getSpecifiedCell(randomGenerator.nextInt(25), randomGenerator.nextInt(25));
         String newcValue = getCellText(newc);
-        verifyTrue("".equals(newcValue) || newc == null); 
+        verifyTrue("".equals(newcValue) || newc == null);
     }
 }

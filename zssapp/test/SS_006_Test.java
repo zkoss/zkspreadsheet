@@ -2,20 +2,21 @@
 
 public class SS_006_Test extends SSAbstractTestCase {
 
+
 	/**
-	 * Expected:
-	 * 
-	 * Opens Export to PDF dialog
+	 * Open export PDF dialog
 	 */
     @Override
     protected void executeTest() {
-    	click("jq('$fileMenu button.z-menu-btn')");
-    	waitResponse();
-    	click("jq('@menu[label=\"Export\"] a.z-menu-cnt-img')");
-    	waitResponse();
-    	click("jq('$exportPdf a.z-menu-item-cnt')");
+    	click("$fileMenu");
+    	mouseOver(jq("@menu[label=\"Export\"]"));
+    	click("$exportPdf");
     	waitResponse();
     	
-    	verifyTrue(isWidgetVisible("$_exportToPdfDialog"));
+    	/**
+    	 * Expected:
+    	 * Opens Export to PDF dialog
+    	 */
+    	verifyTrue("Export PDF dialog shall be visible", isWidgetVisible("$_exportToPdfDialog"));
     }
 }

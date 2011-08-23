@@ -4,6 +4,9 @@ import org.zkoss.ztl.JQuery;
 //copy cell F21 to cell M10
 public class SS_013_Test extends SSAbstractTestCase {
 
+	/**
+	 * Paste selection
+	 */
     @Override
     protected void executeTest() {
         JQuery cell_F_21 = getSpecifiedCell(5, 20);
@@ -11,21 +14,18 @@ public class SS_013_Test extends SSAbstractTestCase {
         String sourceValue = getCellText(cell_F_21);
         clickCell(cell_F_21);
         clickCell(cell_F_21);
-    	click("jq('$editMenu button.z-menu-btn')");
+    	click("$editMenu");
     	waitResponse();
-    	click("jq('$copy a.z-menu-item-cnt')");
+    	click("$copy");
     	waitResponse();
         JQuery cell_M_10 = getSpecifiedCell(12, 9);
-        sleep(5000);
         clickCell(cell_M_10);
-    	click("jq('$editMenu button.z-menu-btn')");
+    	click("$editMenu");
     	waitResponse();
-    	click("jq('$paste a.z-menu-item-cnt')");
+    	click("$paste");
     	waitResponse();
         String targetValue = getCellText(cell_M_10);
-    	
-        sleep(5000);
-        
+    	        
         verifyEquals("Copied value=" + sourceValue + ", Pasted value=" + targetValue, sourceValue, targetValue);
     }
 }

@@ -3,20 +3,20 @@
 public class SS_008_Test extends SSAbstractTestCase {
 
 	/**
-	 * Testcase:
-	 * Select cell(s)
-	 * Click Edit menu
-	 * 
-	 * Expected:
-	 * Selection remain focus
+	 * Edit menu
 	 */
     @Override
     protected void executeTest() {
     	selectCells(1,5,5,8);
-    	click("jq('$editMenu button.z-menu-btn')");
+    	click("$editMenu");
     	waitResponse();
     	
-    	// TODO verify focus on "selection"
+    	// TODO verify focus insdie "selection"
+    	/**
+    	 * Expected:
+    	 * 
+	 	 * Selection remain focus
+    	 */
     	verifyTrue(isFocusOnCell(1, 5));
     }
 }

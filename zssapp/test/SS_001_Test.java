@@ -17,9 +17,7 @@ public class SS_001_Test extends SSAbstractTestCase {
     	verifyFalse(isFocusOnCell(5, 20));
     	JQuery cell = focusOnCell(5, 20);
 
-    	click("jq('$fileMenu button.z-menu-btn')");
-    	waitResponse();
-    	sleep(1000);
+    	click("$fileMenu");
     	verifyTrue(isFocusOnCell(cell));
     }
 }
