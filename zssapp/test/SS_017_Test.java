@@ -14,9 +14,7 @@ public class SS_017_Test extends SSAbstractTestCase {
 		clickCell(J12);
 		clickCell(J12);
 		click("$editMenu");
-		waitResponse();
-		mouseOver("$insert");		
-		waitResponse();
+		mouseOver(jq("$insert"));		
 		click("$shiftCellRight");
 		waitResponse();
 		String newValue = getCellText(J12);
