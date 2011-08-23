@@ -374,7 +374,9 @@ zss.Cell = zk.$extends(zk.Object, {
 
 		var inner = null,
 			txt = this.txtcomp.innerHTML,
-			vflex = this._vflex = sheet._wgt._cssFlex;/*support CSS flexbox or not; FF flexbox cause bug 340*/
+			//TODO: use CSS to fix bug 340
+			/*support CSS flexbox or not; FF flexbox cause bug 340*/
+			vflex = this._vflex = sheet._wgt._cssFlex && !zk.gecko;
 		if (this.valign != "t" && txt) {
 			inner = this._appendInner();
 		}
