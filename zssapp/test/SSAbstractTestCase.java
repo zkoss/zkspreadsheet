@@ -50,6 +50,9 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @return
      */
     public String getCellStyle(int col, int row){
+    	if (isIE6() || isIE7()) {
+    		return getSpecifiedCell(col, row).attr("style");
+    	}
     	return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"]").first().attr("style")
     	+jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").first().attr("style");
     }
@@ -60,17 +63,22 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     	if (startIdx < 0)
     		return "";
     	int endIdx = style.indexOf(";", startIdx);
+    	endIdx = endIdx > 0 ? endIdx : style.length();
     	return style.substring(startIdx + "background-color:".length(), endIdx).trim();
     }
     
     public String getCellFontFamily(int col, int row) {
-    	String font = getSpecifiedCell(1, 7).css("font-family");
+    	String font = getSpecifiedCell(col, row).css("font-family");
     	return font != null ? font.replaceAll("'", "") : "";
     }
     
     public String getCellFontColor(int col, int row) {
     	String color = getSpecifiedCell(col, row).css("color");
     	return color;
+    }
+    
+    public String getCellFontAlign(int col, int row) {
+    	return getSpecifiedCell(col, row).css("text-align");
     }
     
 
@@ -145,6 +153,13 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      */
     public String getCellCompositeStyle(int col, int row){
     	String result ="";
+    	if (isIE6() || isIE7()) {
+    		result += getCellBackgroundColor(col, row);
+    		result += (":" + getCellFontFamily(col, row));
+    		result += (":" + getCellFontAlign(col, row));
+    		return result;
+    	}
+    	
     	result += jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"]").css("background-color");
     	result += ":"+jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").css("font-family");
     	result += ":"+jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").css("text-align");
@@ -166,6 +181,11 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @return A JQuery object of cell. (Inner div)
      */
     public JQuery getSpecifiedCell(int col, int row) {
+    	if (isIE6() || isIE7()) {
+    		JQuery r = getRow(row);
+    		JQuery cell = r.children().eq(col);
+    		return cell.children().first();
+    	}
     	return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"] div").first();	
     }
     
@@ -190,6 +210,25 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     	return ieVer != null && ieVer.length() > 0;
     }
     
+    private boolean isIE7() {
+    	return isIE() && isIE(7);
+    }
+    private boolean isIE6() {
+    	return isIE() && isIE(6);
+    }
+    
+    private boolean isIE(int version) {
+    	if (!isIE())
+    		return false;
+    	Integer ver = null;
+    	try {
+    		ver = Integer.valueOf(getEval("zk.ie"));
+    	} catch (NumberFormatException ex) {
+    		return false;
+    	}
+    	return ver != null && ver == version;
+    }
+    
     /**
      * 
      * @param col - Base on 0
@@ -197,6 +236,8 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @return A JQuery object of cell Outer div.
      */    
     public JQuery getSpecifiedCellOuter(int col, int row) {
+    	if (isIE6() || isIE7())
+    		return getSpecifiedCell(col, row).parent();
         return jq("div.zscell[z\\\\.c=\"" + col + "\"][z\\\\.r=\"" + row + "\"]");
     }
 
@@ -206,6 +247,10 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @return A JQuery object of column header.
      */
     public JQuery getColumnHeader(int col) {
+    	if (isIE6() || isIE7()) {
+    		JQuery cols =  jq("div.zstopcell");
+    		return cols.eq(col);
+    	}
         return jq("div.zstopcell[z\\\\.c=\"" + col + "\"] div");
     }
     
@@ -215,6 +260,10 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @return A JQuery object of row header.
      */
     public JQuery getRowHeader(int row) {
+    	if (isIE6() || isIE7()) {
+    		JQuery rows = jq("div.zsleftcell");
+    		return rows.eq(row);
+    	}
        return jq("div.zsleftcell[z\\\\.r=\"" + row + "\"] div"); 
     }
     
@@ -254,6 +303,11 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
         return cellLocator.text();
     }
     
+    /**
+     * {@link Deprecated}
+     * 
+     * @param cellLocator
+     */
     public void clickCell(JQuery cellLocator) {
     	//works for FF3,
     	mouseMoveAt(cellLocator, "4,4");
@@ -536,7 +590,12 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @return A JQuery object of row.
      */
     public JQuery getRow(int row) {
-    	 return jq(".zsscroll div.zsrow[z\\\\.r=\"" + row + "\"]");
+    	if (isIE6() || isIE7()) {
+    		JQuery r = jq(".zsscroll .zsblock").children().eq(row);
+    		if (r.length() >= 1)
+    			return r;
+    	}
+    	return jq(".zsscroll div.zsrow[z\\\\.r=\"" + row + "\"]"); //IE7 does not work
     }
     
 //    public void setFontColor(String hex) {
