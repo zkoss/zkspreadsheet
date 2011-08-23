@@ -13,11 +13,11 @@ public class SS_017_Test extends SSAbstractTestCase {
 		String rightCellValue = getCellText(K12);
 		clickCell(J12);
 		clickCell(J12);
-		click("jq('$editMenu button.z-menu-btn')");
+		click("$editMenu");
 		waitResponse();
-		mouseOver(jq("$insert a.z-menu-cnt-img"));		
+		mouseOver("$insert");		
 		waitResponse();
-		click("jq('$shiftCellRight a.z-menu-item-cnt')");
+		click("$shiftCellRight");
 		waitResponse();
 		String newValue = getCellText(J12);
 		String newRightCellValue = getCellText(K12);

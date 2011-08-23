@@ -5,12 +5,7 @@ import org.zkoss.ztl.JQuery;
 public class SS_014_Test extends SSAbstractTestCase {
 
 	/**
-	 * Select cell area
-	 * Click Edit menu
-	 * Select clear content menuitem
-	 * 
-	 * Expected:
-	 * Set selected area value to empty, keep original style 
+	 * Clear Content
 	 */
     @Override
     protected void executeTest() {
@@ -18,12 +13,16 @@ public class SS_014_Test extends SSAbstractTestCase {
         String origValue = getCellText(cell_F_21);
         clickCell(cell_F_21);
         clickCell(cell_F_21);
-    	click("jq('$editMenu button.z-menu-btn')");
+    	click("$editMenu");
     	waitResponse();
-    	click("jq('$clearContent a.z-menu-item-cnt')");
+    	click("$clearContent");
     	waitResponse();
         String newValue = getCellText(cell_F_21);
     	
+        /**
+         * Expected:
+	     * clear selection text and style 
+         */
         verifyTrue("Original value=" + origValue + "" +
         		"\n, Cleared value=" + newValue, 
         		"".equals(newValue));

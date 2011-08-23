@@ -9,13 +9,12 @@ public class SS_015_Test extends SSAbstractTestCase {
     @Override
     protected void executeTest() {
         JQuery cell_F_5 = getSpecifiedCell(5, 5);
-        //String orgTxt = getCellText(cell_F_5); //chrome fail to equal, encoding seems different
         String orgTextColor = getCellTextColor(5, 5);
         clickCell(cell_F_5);
         clickCell(cell_F_5);
-    	click("jq('$editMenu button.z-menu-btn')");
+    	click("$editMenu");
     	waitResponse();
-    	click("jq('$clearStyle a.z-menu-item-cnt')");
+    	click("$clearStyle");
     	waitResponse();
 
     	String newText = getCellText(cell_F_5);
