@@ -239,7 +239,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			r: v.r,
 			title: v.t,
 			hidden: !!v.hd,
-			heightId: v.h,
+			heightId: v.h
 			//TODO: move this to widget
 			/*
 			getClass: function () {
@@ -263,7 +263,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			c: v.c,
 			title: v.t,
 			hidden: !!v.hd,
-			widthId: v.w,
+			widthId: v.w
 			//TODO: move this to widget
 			/*
 			getClass: function () {
@@ -443,7 +443,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					this.editText = this.formatText = this.lock = this.style = this.innerStyle =
 					this.wrap = this.halign = this.valign = this.defaultRowHgh = this.rightBorder =
 					this.mergeCls = this.mergeId = this.merge = this.widthId = this.heightId = null;
-			},
+			}
 			//TODO: move this to widget
 			/*
 			getClass: function () {
@@ -517,7 +517,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 						cells[i] = null;
 					}
 				}
-			},
+			}
 			//TODO: move to widget
 			/*
 			getClass: function () {
@@ -894,9 +894,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		/** 
 		 * the encoded URL for the dynamic generated content, or empty
 		 */
-		scss: function (url) {
-			zk.loadCSS(this._scss, this.uuid + "-sheet");
-		},
+		scss: null,
 		sheetId: null,
 		focusRect: null,
 		selectionRect: null,
@@ -1244,6 +1242,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	_initControl: function () {
 		if (this.getSheetId() == null) //no sheet at all
 			return;
+		zk.loadCSS(this._scss, this.uuid + "-sheet");
 		var sheet = this.sheetCtrl = new zss.SSheetCtrl(this.$n(), this);
 		
 		this._initMaxColumn();

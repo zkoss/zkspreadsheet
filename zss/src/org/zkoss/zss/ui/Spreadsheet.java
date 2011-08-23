@@ -1140,12 +1140,12 @@ public class Spreadsheet extends XulElement implements Serializable {
 		int colEnd = Math.max(getColEnd(this), getColumnfreeze());
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) this.getExtraCtrl());
 		//TODO: dynamic update range
-		int preloadCol = getPreloadColumnSize() - 1;
-		int preloadRow = getPreloadRowSize() - 1;
+		int preloadCol = getPreloadColumnSize();
+		int preloadRow = getPreloadRowSize();
 		if (preloadCol > 0 && preloadRow > 0) {
-			preloadCol = preloadCol < getMaxcolumns() ? preloadCol : getMaxcolumns() - 1;
-			preloadRow = preloadRow < getMaxrows() ? preloadRow : getMaxrows() - 1;
-			renderer.render("activeRange", spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.CELL_ATTR_TEXT, 0, 0, preloadCol, preloadRow));
+			renderer.render("activeRange", 
+				spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.CELL_ATTR_TEXT, 
+					0, 0, Math.min(preloadCol - 1, getMaxcolumns() - 1), Math.min(preloadRow - 1, getMaxrows() - 1)));
 		}
 		//renderer.render("rowHeaders", spreadsheetCtrl.getRowHeaderAttrs(sheet, rowBegin, rowEnd));
 		//renderer.render("colHeaders", spreadsheetCtrl.getColumnHeaderAttrs(sheet, colBegin, colEnd));
@@ -1824,12 +1824,11 @@ public class Spreadsheet extends XulElement implements Serializable {
 		// should also update the left - 1, top - 1 part
 		top = top > 0 ? top - 1 : 0;
 		
-		int preloadCol = getPreloadColumnSize() - 1;
-		int preloadRow = getPreloadRowSize() - 1;
-		if (preloadCol > 0 && preloadRow > 0) {
-			preloadCol = preloadCol < getMaxcolumns() ? preloadCol : getMaxcolumns() - 1;
-			preloadRow = preloadRow < getMaxrows() ? preloadRow : getMaxrows() - 1;
-			updateRange(sheet, sheetId, left, top, right, bottom);
+		int preloadColRight = getPreloadColumnSize();
+		int preloadRow = getPreloadRowSize();
+		if (preloadColRight > 0 && preloadRow > 0) {
+			updateRange(sheet, sheetId, 
+				left, top, Math.min(right + preloadColRight - 1, getMaxcolumns() - 1), Math.min(bottom + preloadRow - 1, getMaxrows() - 1));
 		}
 
 		final int loadLeft = _loadedRect.getLeft();
@@ -2828,8 +2827,13 @@ public class Spreadsheet extends XulElement implements Serializable {
 			right = right >= _maxColumns - 1 ? _maxColumns - 1 : right;
 			int top = _loadedRect.getTop();
 			int bottom = _loadedRect.getBottom();
+			int preloadRowBottom = getPreloadRowSize();
+			if (preloadRowBottom > 0) {
+				preloadRowBottom = Math.min(getMaxrows() - 1, bottom + (preloadRowBottom - 1));
+			}
+			
 			log.debug("update cells when insert column " + col + ",size:" + size + ":" + left + "," + top + "," + right + "," + bottom);
-			updateCell(sheet, left, top, right, bottom);
+			updateCell(sheet, left, top, right, Math.max(bottom, preloadRowBottom));
 			
 			//update inserted column widths
 			updateColWidths(sheet, col, size); 
@@ -2896,7 +2900,13 @@ public class Spreadsheet extends XulElement implements Serializable {
 			int top = row;
 			bottom = bottom + size - 1;
 			bottom = bottom >= _maxRows - 1 ? _maxRows - 1 : bottom;
-			updateCell(sheet, _loadedRect.getLeft(), top, _loadedRect.getRight(), bottom);
+			
+			int preloadColRight = getPreloadColumnSize();
+			if (preloadColRight > 0) {
+				preloadColRight = Math.min(getMaxcolumns() - 1, _loadedRect.getRight() + (preloadColRight - 1));
+			}
+			
+			updateCell(sheet, _loadedRect.getLeft(), top, Math.max(_loadedRect.getRight(), preloadColRight), bottom);
 			
 			// update the inserted row height
 			updateRowHeights(sheet, row, size); //update row height
@@ -2967,7 +2977,13 @@ public class Spreadsheet extends XulElement implements Serializable {
 			// update surround cell
 			int left = col;
 			right = left;
-			updateCell(sheet, left, _loadedRect.getTop(), right, _loadedRect.getBottom());
+			
+			int preloadRowBottom = getPreloadRowSize();
+			if (preloadRowBottom > 0) {
+				preloadRowBottom = Math.min(getMaxrows() - 1, _loadedRect.getBottom() + (preloadRowBottom - 1));
+			}
+			
+			updateCell(sheet, left, _loadedRect.getTop(), right, Math.max(_loadedRect.getBottom(), preloadRowBottom));
 		}
 
 		public void removeRows(Worksheet sheet, int row, int size) {
@@ -3022,10 +3038,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 
 			result.setData("maxrow", _maxRows);
 			result.setData("rowfreeze", _rowFreeze);
-			/**
-			 * removerc_ -> removeColumn
-			 * TODO need Utils.nextUpdateId() ?
-			 */
+
 			// smartUpdateValues("removerc_"+Utils.nextUpdateId(),new Object[]{"",Utils.getId(sheet),result.toString()});
 			response("removeRowColumn" + Utils.nextUpdateId(), new AuRemoveRowColumn(Spreadsheet.this, "", Utils.getSheetUuid(sheet), result.toString()));
 			_loadedRect.setBottom(bottom);
@@ -3033,7 +3046,13 @@ public class Spreadsheet extends XulElement implements Serializable {
 			// update surround cell
 			int top = row;
 			bottom = top;
-			updateCell(sheet, _loadedRect.getLeft(), top, _loadedRect.getRight(), bottom);
+			
+			int preloadColRight = getPreloadColumnSize();
+			if (preloadColRight > 0) {
+				preloadColRight = Math.min(getMaxcolumns() - 1, _loadedRect.getRight() + preloadColRight - 1);
+			}
+			
+			updateCell(sheet, _loadedRect.getLeft(), top, Math.max(_loadedRect.getRight(), preloadColRight) , bottom);
 		}
 
 		private void removeAffectedMergeRange(Worksheet sheet, int type, int index) {
