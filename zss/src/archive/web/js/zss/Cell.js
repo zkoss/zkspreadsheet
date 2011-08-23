@@ -623,8 +623,13 @@ zss.Cell = zk.$extends(zk.Object, {
 		ctrl.cellType = cellType != undefined ? cellType : BLANK_CELL;
 		ctrl.lock = !!lock;//default is locked
 		ctrl.wrap = parm.wrap;
-		cmp.style.cssText = !st ? '' : st;
-		ctrl.txtcomp.style.cssText = !ist ? '' : ist;
+		st = !st ? '' : st;
+		ist = !ist ? '' : ist;
+		if (cmp.style.cssText != st || ctrl.txtcomp.style.cssText != ist) {
+			cmp.style.cssText = st;
+			ctrl.txtcomp.style.cssText = ist;
+			ctrl.redoOverflow = true;
+		}
 		ctrl.halign = !hal ? "l" : hal;//default h align is left
 		ctrl.valign = !vtal ? 't' : vtal;//default v align is top
 		ctrl.rborder = !!parm.rbo;
