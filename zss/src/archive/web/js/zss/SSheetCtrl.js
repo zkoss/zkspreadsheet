@@ -1435,8 +1435,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			if (w < 0)
 				zcss.setRule(name+" .zsmerge"+range.id,"display","none",true,cssid);
 			else {
-				zcss.setRule(name+" .zsmerge"+range.id,"width",cellwidth+"px",true,cssid);
-				zcss.setRule(name+" .zsmerge"+range.id+" .zscelltxt","width",celltextwidth+"px",true,cssid);
+				zcss.setRule(name+" .zsmerge"+range.id,"width", jq.px0(cellwidth), true,cssid);
+				zcss.setRule(name+" .zsmerge"+range.id+" .zscelltxt","width", jq.px0(celltextwidth), true,cssid);
 				if (fixpadding)
 					zcss.setRule(name+" .zsmerge"+range.id,"padding", "0px",true,cssid);
 				else
@@ -1595,8 +1595,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			if (h < 0)
 				zcss.setRule(name+" .zsmerge"+range.id,"display","none",true,cssid);
 			else {
-				zcss.setRule(name+" .zsmerge"+range.id,"height",cellheight+"px",true,cssid);
-				zcss.setRule(name+" .zsmerge"+range.id+" .zscelltxt","height",celltextheight+"px",true,cssid);
+				zcss.setRule(name+" .zsmerge"+range.id,"height", jq.px0(cellheight), true,cssid);
+				zcss.setRule(name+" .zsmerge"+range.id+" .zscelltxt","height", jq.px0(celltextheight),true,cssid);
 			}
 		}
 		

@@ -10,7 +10,7 @@ ZK Spreadsheet 2.1.1
    ZSS-35 A exported xlsx is not loadable again by Excel or Spreadsheet
    ZSS-36 Exception when exporting excel twice
    ZSS-37 A timer doesn't cleanup, cause tomcat cannot stop
-   
+   ZSS-39 Hide row on IE7 will popup javascript error message
    
 	------------
 ZK Spreadsheet 2.1.0
