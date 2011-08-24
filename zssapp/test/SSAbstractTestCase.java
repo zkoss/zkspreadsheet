@@ -77,6 +77,43 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     	return color;
     }
     
+    public final static int BORDER_TOP = 0;
+    public final static int BORDER_RIGHT = 1;
+    public final static int BORDER_BOTTOM = 2;
+    public final static int BORDER_LEFT = 3;
+
+    public String getCellBorderColor(int col, int row, int borderType) {
+    	JQuery cell = getSpecifiedCellOuter(col, row);
+    	String style = cell.attr("style");
+    	
+    	int startIdx = -1;
+    	int borderLength = 0;
+    	switch (borderType) {
+    	case BORDER_TOP:
+    		borderLength = "border-top:".length();
+    		startIdx = Math.max(style.indexOf("border-top:"), style.indexOf("BORDER-TOP:"));
+    		break;
+    	case BORDER_RIGHT:
+    		borderLength = "border-right:".length();
+    		startIdx = Math.max(style.indexOf("border-right:"), style.indexOf("BORDER-RIGHT:"));
+    		break;
+    	case BORDER_BOTTOM:
+    		borderLength = "border-bottom:".length();
+    		startIdx = Math.max(style.indexOf("border-bottom:"), style.indexOf("BORDER-BOTTOM:"));
+    		break;
+    	case BORDER_LEFT:
+    		borderLength = "border-right:".length();
+    		startIdx = Math.max(style.indexOf("border-right:"), style.indexOf("BORDER-RIGHT:"));
+    		break;
+    	}
+    	
+		if (startIdx < 0)
+			return "";
+    	int endIdx = style.indexOf(";", startIdx);
+    	endIdx = endIdx > 0 ? endIdx : style.length();
+    	return style.substring(startIdx + borderLength, endIdx).trim();
+    }
+    
     public String getCellFontAlign(int col, int row) {
     	return getSpecifiedCell(col, row).css("text-align");
     }
@@ -96,6 +133,35 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
 //    	click(jq("$fontCtrlPanel $fontColorBtn"));
 //    	click(jq());
 //    }
+    public String setCellFontColorByToolbarbutton(int col, int row, int nthColorPalette) {
+    	return setCellFontColorByToolbarbutton(col, row, col, row, nthColorPalette);
+    }
+    
+    public String setCellFontColorByToolbarbutton(int lCol, int tRow, int rCol, int bRow, int nthColorPalette) {
+    	selectCells(lCol, tRow, rCol, bRow);
+    	click(jq("$fontCtrlPanel $fontColorBtn"));
+        JQuery color = jq(".z-colorpalette:visible div.z-colorpalette-colorbox:nth-child(" + nthColorPalette + ")");
+        String selectedColor = color.first().text();
+    	mouseOver(color);
+    	click(color);
+    	waitResponse();
+    	return selectedColor;
+    }
+    
+    public String setCellBackgroundColorByToolbarbutton(int col, int row, int nthColorPalette) {
+    	return setCellBackgroundColorByToolbarbutton(col, row, col, row, nthColorPalette);
+    }
+    
+    public String setCellBackgroundColorByToolbarbutton(int lCol, int tRow, int rCol, int bRow, int nthColorPalette) {
+    	selectCells(lCol, tRow, rCol, bRow);
+    	click(jq("$fontCtrlPanel $cellColorBtn"));
+        JQuery color = jq(".z-colorpalette:visible div.z-colorpalette-colorbox:nth-child(" + nthColorPalette + ")");
+        String selectedColor = color.first().text();
+    	mouseOver(color);
+    	click(color);
+    	waitResponse();
+    	return selectedColor;
+    }
     
     /**
      * Sets cell font color by fast toolbar button
