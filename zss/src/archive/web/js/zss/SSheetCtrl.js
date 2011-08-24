@@ -1670,10 +1670,10 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			cell = lBlock.getCell(row, col);
 			if (cell) updateCell(cell, parm);
 		}
-		//feature #26: Support copy/paste value to local Excel
+		//feature #26: Support copy/paste value to local Excel		
 		var ls = this.getLastSelection();
 		if (row >= ls.top && row <= ls.bottom && col >= ls.left && col <= ls.right)
-			this._prepareCopy();
+			this._wgt._prepareCopy = true; //prepareCopy onResponse
 	},
 	_updateHeaderSelectionCss: function (range, remove) {
 		var top = range.top,

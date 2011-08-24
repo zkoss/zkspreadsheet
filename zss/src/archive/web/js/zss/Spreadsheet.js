@@ -678,6 +678,10 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	 * Map source command and relate column index. For process overflow
 	 */
 	_srcCmd: {},
+	/**
+	 * Prepare copy
+	 */
+	_prepareCopy: false,
 	$init: function () {
 		this.$supers('$init', arguments);
 		this._cssFlex = _flexSupport();
@@ -1306,6 +1310,11 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			this._shallProcessOverflow = false;
 			this._processOverflowCol = 0;
 			this._srcCmd = {};
+		}
+		
+		if (this._prepareCopy) {
+			this.sheetCtrl._prepareCopy();
+			this._prepareCopy = false;
 		}
 	},
 	onShow: _zkf = function () {

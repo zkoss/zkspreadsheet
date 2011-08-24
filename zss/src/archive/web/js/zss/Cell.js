@@ -490,14 +490,15 @@ zss.Cell = zk.$extends(zk.Object, {
 
 		var vtal = this.valign,
 			hal =  this.halign,
-			wrap = this.wrap;
+			wrap = this.wrap,
+			defaultRowHgh = this.defaultRowHgh;
 		if (this._inner)
-			this._inner.setText(txt, vtal, hal);
+			this._inner.setText(txt, vtal, hal, defaultRowHgh);
 		else if (vtal == 't')
 			this.txtcomp.innerHTML = txt;
 		else if (txt) {
 			this._appendInner();
-			this._inner.setText(txt, vtal, hal);
+			this._inner.setText(txt, vtal, hal, defaultRowHgh);
 		}
 	},
 	/**
