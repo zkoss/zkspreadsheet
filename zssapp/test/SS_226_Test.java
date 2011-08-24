@@ -35,7 +35,7 @@ public class SS_226_Test extends SSAbstractTestCase {
 		clickCell(F11);
 		
 		//click filter menu
-		clickDropdownButtonMenu("$fastIconBtn $sortDropdownBtn", "Filter");
+		clickDropdownButtonMenu("$fastIconBtn $sortDropdownBtn div.z-dpbutton-btn", "Filter");
 		waitResponse();
 		
 		int btmSize = getRow(11).children(".zsbtn").length();
@@ -46,7 +46,7 @@ public class SS_226_Test extends SSAbstractTestCase {
 		
 		//toggle auto filter off
 		clickCell(F11);
-		clickDropdownButtonMenu("$fastIconBtn $sortDropdownBtn", "Filter");
+		clickDropdownButtonMenu("$fastIconBtn $sortDropdownBtn div.z-dpbutton-btn", "Filter");
 		verifyEquals(getRow(11).children(".zsbtn").length(), 0);
 	}
 

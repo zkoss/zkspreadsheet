@@ -10,7 +10,7 @@ public class SS_074_Test extends SSAbstractTestCase {
     	selectCells(11, 12, 12, 13);
 
     	//click all borders in border toolbar button
-    	clickDropdownButtonMenu("$fastIconBtn $borderBtn","All borders");
+    	clickDropdownButtonMenu("$fastIconBtn $borderBtn div.z-dpbutton-btn","All borders");
     	
 
         // Verify

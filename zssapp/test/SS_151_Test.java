@@ -18,10 +18,12 @@ public class SS_151_Test extends SSAbstractTestCase {
 	@Override
 	protected void executeTest() {
 		rightClickCell(5,16);
-		click(jq("$styleCtrlBottomPanel @dropdownbutton$halignBtn div.z-dpbutton-btn"));
-		waitResponse();
-		click(jq(" @menupopup @menuitem[label=\"Align Text Left\"] a.z-menu-item-cnt:eq(2)"));
-		waitResponse();
+//		click(jq("$styleCtrlBottomPanel @dropdownbutton$halignBtn div.z-dpbutton-btn"));
+//		waitResponse();
+//		click(jq(" @menupopup @menuitem[label=\"Align Text Left\"] a.z-menu-item-cnt:eq(2)"));
+//		waitResponse();
+		clickDropdownButtonMenu("$styleCtrlBottomPanel @dropdownbutton$halignBtn div.z-dpbutton-btn", "Align Text Left");
+		
 		rightClickCell(1,13);
 		
 		//how to verify

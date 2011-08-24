@@ -20,7 +20,7 @@ public class SS_054_Test extends SSAbstractTestCase {
     	
     	//paste value
     	focusOnCell(12, 14);
-    	clickDropdownButtonMenu("$fastIconBtn $pasteDropdownBtn", "Values");
+    	clickDropdownButtonMenu("$fastIconBtn $pasteDropdownBtn div.z-dpbutton-btn", "Values");
     	String targetFormulaBarValue = jq("$formulaEditor").val();
     	/**
     	 * Paste value, no style, no format

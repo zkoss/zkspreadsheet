@@ -14,7 +14,7 @@ public class SS_053_Test extends SSAbstractTestCase {
     	
     	//paste formula
     	focusOnCell(12, 13);
-    	clickDropdownButtonMenu("$fastIconBtn $pasteDropdownBtn", "Formulas");
+    	clickDropdownButtonMenu("$fastIconBtn $pasteDropdownBtn div.z-dpbutton-btn", "Formulas");
     	
     	focusOnCell(12, 13);
     	String formulaBarValue = jq("$formulaEditor").val();
