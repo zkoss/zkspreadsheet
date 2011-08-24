@@ -10,11 +10,10 @@ public class SS_020_Test extends SSAbstractTestCase {
 		String rightCellValue = getCellText(cell_G_11);
 		clickCell(cell_F_11);
 		clickCell(cell_F_11);
-		click("jq('$editMenu button.z-menu-btn')");
+		click("$editMenu");
 		waitResponse();
-		mouseOver(jq("$insert a.z-menu-cnt-img"));		
-		waitResponse();
-		click("jq('$insertEntireColumn a.z-menu-item-cnt')");
+		mouseOver(jq("$insert"));		
+		click("$insertEntireColumn");
 		waitResponse();
 		String newValue = getCellText(cell_F_11);
 		String newDownCellValue = getCellText(cell_G_11);

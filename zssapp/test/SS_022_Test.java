@@ -18,11 +18,11 @@ public class SS_022_Test extends SSAbstractTestCase {
 		String downDownCellValue = getCellText(cell_F_13);
 		clickCell(cell_F_11);
 		clickCell(cell_F_11);
-		click("jq('$editMenu button.z-menu-btn')");
+		click("$editMenu");
 		waitResponse();
-		mouseOver(jq("$delete a.z-menu-cnt-img"));		
+		mouseOver(jq("$delete"));		
 		waitResponse();
-		click("jq('$shiftCellUp a.z-menu-item-cnt')");
+		click("$shiftCellUp");
 		waitResponse();
 		String newValue = getCellText(cell_F_11);
 		String newDownCellValue = getCellText(cell_F_12);

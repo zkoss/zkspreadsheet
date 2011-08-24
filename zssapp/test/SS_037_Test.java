@@ -9,7 +9,7 @@ public class SS_037_Test extends SSAbstractTestCase {
         clickCell(cell);
         clickCell(cell);
 
-    	click("jq('$insertMenu button.z-menu-btn')");
+    	click(jq("$insertMenu"));
     	waitResponse();
     	// TODO verify if cell is still selected
     	String display = jq("div.zsselect").css("display");

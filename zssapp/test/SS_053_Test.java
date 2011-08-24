@@ -19,7 +19,9 @@ public class SS_053_Test extends SSAbstractTestCase {
     	focusOnCell(12, 13);
     	String formulaBarValue = jq("$formulaEditor").val();
     	String targetCellBackgroundColor = getCellBackgroundColor(12, 13);
-    	
+    	System.out.println("formulaEditor: " + formulaBarValue);
+    	System.out.println("srcCellBackgroundColor: " + srcCellBackgroundColor);
+    	System.out.println("targetCellBackgroundColor: " + targetCellBackgroundColor);
         /**
          * Expect: 
          * paste text and formula etc.. but do not paste style

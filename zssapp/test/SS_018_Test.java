@@ -14,11 +14,11 @@ public class SS_018_Test extends SSAbstractTestCase {
 
 		clickCell(cell_B_6);
 		clickCell(cell_B_6);
-		click("jq('$editMenu button.z-menu-btn')");
+		click("$editMenu");
 		waitResponse();
-		mouseOver(jq("$insert a.z-menu-cnt-img"));		
+		mouseOver(jq("$insert"));		
 		waitResponse();
-		click("jq('$shiftCellDown a.z-menu-item-cnt:visible')");
+		click("$shiftCellDown:visible");
 		waitResponse();
 
 		cell_B_6 = getSpecifiedCell(1, 5);

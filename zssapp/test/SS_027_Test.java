@@ -1,4 +1,3 @@
-import org.zkoss.ztl.JQuery;
 
 
 public class SS_027_Test extends SSAbstractTestCase {
@@ -6,20 +5,20 @@ public class SS_027_Test extends SSAbstractTestCase {
     @Override
     protected void executeTest() {
     	//freeze some rows first
-    	click("jq('$viewMenu button.z-menu-btn')");
+    	click("$viewMenu");
     	waitResponse();
-    	mouseOver(jq("$freezeRows a.z-menu-cnt-img"));
+    	mouseOver(jq("$freezeRows"));
     	waitResponse();
-    	click("jq('$freezeRow5 a.z-menu-item-cnt')");
+    	click("$freezeRow5");
     	waitResponse();
     	verifyTrue(jq("div.zstopblock").width() != 0);
     	
     	//unfreeze all rows
-    	click("jq('$viewMenu button.z-menu-btn')");
+    	click("$viewMenu");
     	waitResponse();
-    	mouseOver(jq("$freezeRows a.z-menu-cnt-img"));
+    	mouseOver(jq("$freezeRows"));
     	waitResponse();
-    	click("jq('$unfreezeRows a.z-menu-item-cnt')");
+    	click("$unfreezeRows)");
     	waitResponse();
     	
     	// TODO: Verify if all rows are unfroze

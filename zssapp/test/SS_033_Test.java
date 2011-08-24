@@ -15,9 +15,9 @@ public class SS_033_Test extends SSAbstractTestCase {
         clickCell(cell_B_8);
         clickCell(cell_B_8);
 
-    	click("jq('$formatMenu button.z-menu-btn')");
+    	click(jq("$formatMenu"));
     	waitResponse();
-    	click(jq("$backgroundColorMenu a.z-menu-cnt-img"));
+    	click(jq("$backgroundColorMenu"));
     	waitResponse();
 
     	JQuery color = jq("$backgroundColorMenu .z-colorpalette div.z-colorpalette-colorbox:nth-child(98)");

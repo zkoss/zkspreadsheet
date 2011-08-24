@@ -10,9 +10,9 @@ public class SS_041_Test extends SSAbstractTestCase {
 //    	int origChildren = widget(jq("@tab")).nChildren();
     	JQuery marketTab = jq("@tab[label=\"Market\"] span.z-tab-text");
     	int origChildren = jq("$sheets @tab").children().length();
-    	click("jq('$insertMenu button.z-menu-btn')");
+    	click(jq("$insertMenu"));
     	waitResponse();
-    	click("jq('$insertSheet a.z-menu-item-cnt')");
+    	click(jq("$insertSheet"));
     	waitResponse();
     	
     	// TODO verify if uploaed image is displayed properly

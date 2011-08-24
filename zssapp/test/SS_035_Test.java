@@ -8,11 +8,11 @@ public class SS_035_Test extends SSAbstractTestCase {
         JQuery cell_J_22 = getSpecifiedCell(9, 21);
         clickCell(cell_J_22);
         clickCell(cell_J_22);
-		click("jq('$formatMenu button.z-menu-btn')");
+		click(jq("$formatMenu"));
 		waitResponse();
-		mouseOver(jq("$align a.z-menu-cnt-img"));		
+		mouseOver(jq("$align"));		
 		waitResponse();
-		click("jq('$alignCenter a.z-menu-item-cnt')");
+		click(jq("$alignCenter"));
 		waitResponse();
       
         cell_J_22 = getSpecifiedCell(9, 21);
