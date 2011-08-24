@@ -22,7 +22,10 @@ public class SS_086_3_Test extends SSAbstractTestCase {
         
         if (aTag != null) {
             String href = aTag.attr("href");
-            verifyEquals("Unexpected result: " + href, "Input!A1", href);
+            if (isIE6() || isIE7()) //IE6 / IE7 add "http://...." in href attr
+            	verifyTrue("Unexpected result: " + href, href.lastIndexOf("Input!A1") >= 0);
+            else
+            	verifyEquals("Unexpected result: " + href, "Input!A1", href);
         } else {
             verifyTrue("Cannot get value of specified cell!", false);
         }

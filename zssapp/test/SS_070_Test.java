@@ -11,16 +11,8 @@ public class SS_070_Test extends SSAbstractTestCase {
         clickCell(cell_L_13);
         clickCell(cell_L_13);
         
-        // Click Border icon
-        JQuery borderIcon = jq("$fastIconBtn $borderBtn:visible");
-        mouseOver(borderIcon);
-        waitResponse();
-        clickAt(borderIcon, "30,0");
-        waitResponse();
-        
-        // Click top border
-        click(jq(".z-menu-popup:visible .z-menu-item:eq(1)"));
-        waitResponse();
+        focusOnCell(11, 12);
+        clickDropdownButtonMenu("$fastIconBtn $borderBtn", "Top border");
         
         // Verify
         verifyTrue(ColorVerifingHelper.isEqualColor("#000000", getSpecifiedCell(11, 11).parent().css("border-bottom-color")));

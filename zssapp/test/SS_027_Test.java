@@ -18,7 +18,7 @@ public class SS_027_Test extends SSAbstractTestCase {
     	waitResponse();
     	mouseOver(jq("$freezeRows"));
     	waitResponse();
-    	click("$unfreezeRows)");
+    	click("$unfreezeRows");
     	waitResponse();
     	
     	// TODO: Verify if all rows are unfroze

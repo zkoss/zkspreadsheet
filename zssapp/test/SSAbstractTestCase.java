@@ -58,13 +58,7 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     }
     
     public String getCellBackgroundColor(int col, int row) {
-    	String style = getSpecifiedCellOuter(col, row).attr("style");
-    	int startIdx = Math.max(style.indexOf("background-color:"), style.indexOf("BACKGROUND-COLOR:")) ;
-    	if (startIdx < 0)
-    		return "";
-    	int endIdx = style.indexOf(";", startIdx);
-    	endIdx = endIdx > 0 ? endIdx : style.length();
-    	return style.substring(startIdx + "background-color:".length(), endIdx).trim();
+    	return getSpecifiedCellOuter(col, row).css("background-color");
     }
     
     public String getCellFontFamily(int col, int row) {
@@ -271,19 +265,19 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     	return ffVer.startsWith("3");
     }
     
-    private boolean isIE() {
+    protected boolean isIE() {
     	String ieVer = String.valueOf(getEval("zk.ie"));
     	return ieVer != null && ieVer.length() > 0;
     }
     
-    private boolean isIE7() {
+    protected boolean isIE7() {
     	return isIE() && isIE(7);
     }
-    private boolean isIE6() {
+    protected boolean isIE6() {
     	return isIE() && isIE(6);
     }
     
-    private boolean isIE(int version) {
+    protected boolean isIE(int version) {
     	if (!isIE())
     		return false;
     	Integer ver = null;
@@ -639,8 +633,11 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     	JQuery jq = jq(buttonSelector);
     	mouseOver(jq);
     	clickAt(jq, "30, 0");
+    	waitResponse();
     	JQuery menus = jq(".z-menu-popup:visible .z-menu-item .z-menu-item-cnt");
     	int size = menus.length();
+    	if (size == 0)
+    		throw new RuntimeException("menu item not found: " + menuLabel);
     	for (int i = 0; i < size; i++) {
     		JQuery menu = jq(".z-menu-popup:visible .z-menu-item .z-menu-item-cnt:eq(" + i + ")");
     		if (menu.text().indexOf(menuLabel) >= 0) {
@@ -648,6 +645,7 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     			return;
     		}
     	}
+    	throw new RuntimeException("menu item not found: " + menuLabel);
     }
     
     /**
