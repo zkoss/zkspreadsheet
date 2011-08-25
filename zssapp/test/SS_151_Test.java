@@ -22,7 +22,7 @@ public class SS_151_Test extends SSAbstractTestCase {
 //		waitResponse();
 //		click(jq(" @menupopup @menuitem[label=\"Align Text Left\"] a.z-menu-item-cnt:eq(2)"));
 //		waitResponse();
-		clickDropdownButtonMenu("$styleCtrlBottomPanel @dropdownbutton$halignBtn div.z-dpbutton-btn", "Align Text Left");
+		clickDropdownButtonMenu("$styleCtrlBottomPanel @dropdownbutton$halignBtn", "Align Text Left");
 		
 		rightClickCell(1,13);
 		

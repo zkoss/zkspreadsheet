@@ -7,7 +7,7 @@ public class SS_007_Test extends SSAbstractTestCase {
 	 */
     @Override
     protected void executeTest() {
-    	click("jq('$fileMenu button.z-menu-btn')");
+    	click(jq("$fileMenu"));
     	mouseOver("@menu[label=\"Export\"]");
     	waitResponse();
     	click("$exportPdf");

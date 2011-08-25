@@ -11,7 +11,7 @@ public class SS_075_Test extends SSAbstractTestCase {
     	selectCells(11, 12, 12, 13);
         
     	//click Outside borders in border toolbar button
-    	clickDropdownButtonMenu("$fastIconBtn $borderBtn div.z-dpbutton-btn","Outside borders");
+    	clickDropdownButtonMenu("$fastIconBtn $borderBtn","Outside borders");
         
         // Verify
         verifyTrue(ColorVerifingHelper.isEqualColor("#FFFFFF", loadCellL13().parent().css("border-right-color")));

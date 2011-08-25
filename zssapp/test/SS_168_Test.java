@@ -6,9 +6,9 @@ public class SS_168_Test extends SSAbstractTestCase {
     protected void executeTest() {
     	verifyFalse(isWidgetVisible("$_openFileDialog"));
     	
-    	click("jq('$fileMenu button.z-menu-btn')");
+    	click(jq("$fileMenu"));
     	waitResponse();
-    	click("jq('$openFile a.z-menu-item-cnt')");
+    	click(jq("$openFile"));
     	waitResponse();
     	
     	verifyTrue(isWidgetVisible("$_openFileDialog"));

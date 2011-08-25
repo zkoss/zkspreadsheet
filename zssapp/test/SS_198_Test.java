@@ -31,13 +31,13 @@ public class SS_198_Test extends SSAbstractTestCase {
 		waitResponse();
 		
 		//check "Case sensitive"
-		click(jq("@window[title=\"Custom Sort\"] input[type=\"checkbox\"]:eq(0)"));
+		click(jq("$_customSortDialog $caseSensitive"));
 		waitResponse();
 		
 		//choose sort by "Column I"
-		click(jq(" @div @combobox i.z-combobox-rounded-btn-readonly:eq(1)"));
+		click(jq("$sortLevel i.z-combobox-rounded-btn:eq(0)"));
 		waitResponse();
-		click(jq("@comboitem[label=\"Column I\"] td.z-comboitem-text"));
+		click(jq(".z-combobox-rounded-pp:visible @comboitem[label=\"Column I\"] td.z-comboitem-text"));
 		waitResponse();
 		
 		//click OK button

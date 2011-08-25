@@ -17,7 +17,7 @@ public class SS_056_Test extends SSAbstractTestCase {
     	 * Transpose
     	 */
     	focusOnCell(12, 11);
-    	clickDropdownButtonMenu("$fastIconBtn $pasteDropdownBtn div.z-dpbutton-btn", "Transpose");
+    	clickDropdownButtonMenu("$fastIconBtn $pasteDropdownBtn", "Transpose");
     	
     	/**
     	 * Expect: Transpose

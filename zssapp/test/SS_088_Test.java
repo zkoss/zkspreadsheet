@@ -10,7 +10,7 @@ public class SS_088_Test extends SSAbstractTestCase {
         selectCells(1, 18, 1, 21);
         
         // Click drop down button of Sort
-        clickDropdownButtonMenu("$fastIconBtn  $sortDropdownBtn div.z-dpbutton-btn", "Descending");
+        clickDropdownButtonMenu("$fastIconBtn  $sortDropdownBtn", "Descending");
         
         // Verify
         verifyTrue(getCellText(1, 18).startsWith("T"));

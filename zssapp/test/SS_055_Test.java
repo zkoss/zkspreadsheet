@@ -10,8 +10,8 @@ public class SS_055_Test extends SSAbstractTestCase {
     protected void executeTest() {
         // Select source cell
         JQuery cell_J_13 = getSpecifiedCell(9, 12);
-        String sourceBorderBottomStyle = getCellBorderColor(9, 12, BORDER_BOTTOM);
-        String sourceBorderRightStyle = getCellBorderColor(9, 12, BORDER_RIGHT);
+        String sourceBorderBottomStyle = getCellBorderStyle(9, 12, BORDER_BOTTOM);
+        String sourceBorderRightStyle = getCellBorderStyle(9, 12, BORDER_RIGHT);
         clickCell(cell_J_13);
         clickCell(cell_J_13);
         
@@ -38,8 +38,8 @@ public class SS_055_Test extends SSAbstractTestCase {
         waitResponse();
         
         // Verify
-        String targetBorderBottom = getCellBorderColor(11, 12, BORDER_BOTTOM);
-        String targetBorderRIGHT = getCellBorderColor(11, 12, BORDER_RIGHT);
+        String targetBorderBottom = getCellBorderStyle(11, 12, BORDER_BOTTOM);
+        String targetBorderRIGHT = getCellBorderStyle(11, 12, BORDER_RIGHT);
         verifyNotEquals("border-bottom are not the same.", sourceBorderBottomStyle, targetBorderBottom);
         verifyNotEquals("border-right are not the same.", sourceBorderRightStyle, targetBorderRIGHT);
     }

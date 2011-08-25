@@ -13,7 +13,7 @@ public class SS_057_Test extends SSAbstractTestCase {
     	click("$copyBtn");
     	
     	focusOnCell(12, 11);
-        clickDropdownButtonMenu("$fastIconBtn $pasteDropdownBtn div.z-dpbutton-btn", "Paste Special");
+        clickDropdownButtonMenu("$fastIconBtn $pasteDropdownBtn", "Paste Special");
         // shows dialog
         verifyTrue(isWidgetVisible("$_pasteSpecialDialog"));
         

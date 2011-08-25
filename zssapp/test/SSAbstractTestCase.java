@@ -76,8 +76,7 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     public final static int BORDER_BOTTOM = 2;
     public final static int BORDER_LEFT = 3;
 
-    public String getCellBorderColor(int col, int row, int borderType) {
-    	JQuery cell = getSpecifiedCellOuter(col, row);
+    public String getCellBorderStyle(JQuery cell, int borderType) {
     	String style = cell.attr("style");
     	
     	int startIdx = -1;
@@ -106,6 +105,10 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
     	int endIdx = style.indexOf(";", startIdx);
     	endIdx = endIdx > 0 ? endIdx : style.length();
     	return style.substring(startIdx + borderLength, endIdx).trim();
+    }
+    
+    public String getCellBorderStyle(int col, int row, int borderType) {
+    	return getCellBorderStyle(getSpecifiedCellOuter(col, row), borderType);
     }
     
     public String getCellFontAlign(int col, int row) {
@@ -435,19 +438,16 @@ public abstract class SSAbstractTestCase extends ZKClientTestCase {
      * @param column: 0-based
      * @param row: 0-based
      */
-    public void rightClickCell(int column, int row){
-		mouseDownAt(getSpecifiedCell(column, row),"4,4");
+    public JQuery rightClickCell(int column, int row){
+    	JQuery cell = getSpecifiedCell(column, row);
+		mouseDownAt(cell,"4,4");
+		mouseUpAt(cell,"4,4");
 		waitResponse();
-		mouseUpAt(getSpecifiedCell(column, row),"4,4");
+		mouseDownAt(cell,"4,4");
+		mouseUpAt(cell,"4,4");
+		contextMenuAt(cell, "4,4");
 		waitResponse();
-	
-		mouseDownAt(getSpecifiedCell(column, row),"4,4");
-		waitResponse();
-		mouseUpAt(getSpecifiedCell(column, row),"4,4");
-		waitResponse();
-
-		contextMenuAt(getSpecifiedCell(column, row), "4,4");
-		waitResponse();
+		return cell;
     }
 
     /**
