@@ -269,6 +269,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	private SequenceId _custColId = new SequenceId(-1, 2);
 	private SequenceId _custRowId = new SequenceId(-1, 2);
 	private SequenceId _updateCellId = new SequenceId(0, 1);// to handle batch
+	private SequenceId _updateRangeId = new SequenceId(0, 1);
 	private SequenceId _focusId = new SequenceId(0, 1);
 	
 	public Spreadsheet() {
@@ -1877,7 +1878,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	public void updateRange(Worksheet sheet, String sheetId, int left, int top, int right, int bottom) {
 		SpreadsheetCtrl ctrl = (SpreadsheetCtrl) getExtraCtrl();
 		String ret = ctrl.getRangeAttrs(sheet, SpreadsheetCtrl.CELL_ATTR_TEXT, left, top, right, bottom).toJSONString();
-		response(bottom + "_" + right + "_" + _updateCellId.last(), new AuUpdateData(this, AuUpdateData.UPDATE_RANGE_FUNCTION, "", sheetId, ret));
+		response(bottom + "_" + right + "_" + _updateRangeId.next(), new AuUpdateData(this, AuUpdateData.UPDATE_RANGE_FUNCTION, "", sheetId, ret));
 	}
 	
 	public void escapeAndUpdateText(Cell cell, String text) {
@@ -2500,9 +2501,9 @@ public class Spreadsheet extends XulElement implements Serializable {
 						final String cellText = getCelltext(Spreadsheet.this, row, col);
 						final String editText = getEdittext(Spreadsheet.this, row, col);
 						final String formatText = getCellFormatText(Spreadsheet.this, row, col);
-						if (Objects.equals(cellText, editText) && Objects.equals(editText, formatText))
+						if (Objects.equals(cellText, editText) && Objects.equals(editText, formatText)) {
 							attrs.put("meft", cellText);
-						else {
+						} else {
 							attrs.put("t", cellText);
 							attrs.put("et", editText);
 							attrs.put("ft", formatText);
