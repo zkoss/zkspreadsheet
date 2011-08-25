@@ -2384,8 +2384,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			return sb;
 		}
 		
-		private void putMergeAttr(JSONObject attrs, int row, int col) {
-			Worksheet sheet = getSelectedSheet();
+		private void putMergeAttr(Worksheet sheet, int row, int col, JSONObject attrs) {
 			MergeMatrixHelper matrix = getMergeMatrixHelper(sheet);
 			boolean isLeftTop = matrix.isMergeRangeLeftTop(row, col);
 			MergedRect block;
@@ -2478,7 +2477,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			
 			//merge attr
 			if (updateMerge) {
-				putMergeAttr(attrs, row, col);
+				putMergeAttr(sheet, row, col, attrs);
 			}
 			
 			//style attr
@@ -3913,6 +3912,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			result.setData("val", "");
 
 			// responseUpdateCell("stop", token, Utils.getId(sheet), result.toString());
+			updateRange(sheet, Utils.getSheetUuid(sheet), colIdx, rowIdx, colIdx, rowIdx);
 			smartUpdate("dataUpdateStop", new String[] { token,	Utils.getSheetUuid(sheet), result.toString() });
 		} catch (RuntimeException x) {
 			processCancelEditing0(token, sheet, rowIdx, colIdx);
