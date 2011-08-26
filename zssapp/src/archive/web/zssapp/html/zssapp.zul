@@ -257,8 +257,8 @@
 		function (visible) {
 			this.$setVisible(visible);
 			var n = this.$n();
-				$t = jq(this.$f('topToolbars')),
-				$f = jq(this.$f('fastIconHLayout')),
+				$t = jq(this.$f('topToolbars', true)),
+				$f = jq(this.$f('fastIconHLayout', true)),
 				dim = $f.zk.dimension(true);
 			zk(n).position(dim, 'overlap');
 			jq(n).css({'width': $f.width() + 'px', 'height': $f.height() + 'px'});
@@ -294,7 +294,8 @@
 		<center flex="true">
 			<div>				
 				<sheets id="sheets" vflex="min"></sheets>
-				<spreadsheet id="spreadsheet" maxrows="200"
+				<spreadsheet id="spreadsheet"
+						maxrows="200"
 						maxcolumns="40" vflex="true" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
 						forward="onCtrlKey=mainWin.onSSCtrlKeys">
 				</spreadsheet>
