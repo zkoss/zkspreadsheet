@@ -3913,7 +3913,9 @@ public class Spreadsheet extends XulElement implements Serializable {
 			result.setData("val", "");
 
 			// responseUpdateCell("stop", token, Utils.getId(sheet), result.toString());
-			updateRange(sheet, Utils.getSheetUuid(sheet), colIdx, rowIdx, colIdx, rowIdx);
+			if (getPreloadColumnSize() > 0 && getPreloadRowSize() > 0) {
+				updateRange(sheet, Utils.getSheetUuid(sheet), colIdx, rowIdx, colIdx, rowIdx);
+			}
 			smartUpdate("dataUpdateStop", new String[] { token,	Utils.getSheetUuid(sheet), result.toString() });
 		} catch (RuntimeException x) {
 			processCancelEditing0(token, sheet, rowIdx, colIdx);
