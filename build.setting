@@ -9,4 +9,4 @@ debugpv=false
 optimizepv=true
 #jboss.deploy=default/deploy
 #start.service=Apache Tomcat 6
-version=2.1.1-Freshly
+version=2.1.1
