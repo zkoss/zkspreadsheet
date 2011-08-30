@@ -2002,7 +2002,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 				ary.add(result);
 			}
 		}
-		response(row + "_" + col + "_" + _updateCellId.last(), new AuDataUpdate(this, "", sheetId, ary.toJSONString()));
+		response(row + "_" + col + "_" + _updateCellId.next(), new AuDataUpdate(this, "", sheetId, ary.toJSONString()));
 	}
 	
 	/**
