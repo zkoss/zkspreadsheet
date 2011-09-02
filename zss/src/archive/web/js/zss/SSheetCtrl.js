@@ -1126,7 +1126,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	_doKeypress: function (evt) {
 		if (this._skipress) //wait async event, skip
 			return;
-		
+
 		var charcode = evt.which;
 		var	c = asciiChar(charcode == 0 && evt.keyCode == 9 ? keyCode : charcode);
 		//ascii, not editing, not special key
@@ -1154,9 +1154,11 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		this._skipress = false;
 		//wait async event, skip
 		//handle spreadsheet common keydown event
-
 		if (this.isAsync()) return;
 		
+		//ctrl-paste: avoid multi-paste same clipboard content to focus textarea
+		if (this._wgt._ctrlPasteDown)
+			evt.stop();
 		var keycode = evt.keyCode,
 			ctrl;
 		switch (keycode) {

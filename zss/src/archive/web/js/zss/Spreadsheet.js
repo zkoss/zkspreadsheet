@@ -678,6 +678,10 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	 * Map source command and relate column index. For process overflow
 	 */
 	_srcCmd: {},
+	/**
+	 * Indicate Ctrl-Paste event key down status
+	 */
+	_ctrlPasteDown: false,
 	$init: function () {
 		this.$supers('$init', arguments);
 		this._cssFlex = _flexSupport();
@@ -1501,8 +1505,15 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			dragHandler.doMousemove(evt);
 	},
 	doKeyDown_: function (evt) {
-		if (this.sheetCtrl)
-			this.sheetCtrl._doKeydown(evt);
+		var sheet = this.sheetCtrl;
+		if (sheet) {
+			sheet._doKeydown(evt);
+			// CTRL-V: a flag that whether stop event 
+			// for avoid multi-paste same clipboard content to focus textarea or not
+			if (evt.ctrlKey && evt.keyCode == 86) {
+				this._ctrlPasteDown = true;
+			}
+		}
 		this.$supers('doKeyDown_', arguments);
 	},
 	afterKeyDown_: function (evt) {
@@ -1531,8 +1542,11 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	//feature#161: Support copy&paste from clipboard to a cell
 	doKeyUp_: function (evt) {
 		this.$supers('doKeyUp_', arguments);
-		if (this.sheetCtrl && this.sheetCtrl.state == zss.SSheetCtrl.FOCUSED)
-			this.sheetCtrl._doKeyup(evt);
+		var sheet = this.sheetCtrl;
+		if (sheet && sheet.state == zss.SSheetCtrl.FOCUSED) {
+			sheet._doKeyup(evt);
+		}
+		this._ctrlPasteDown = false;
 	},
 	linkTo: function (href, type, evt) {
 		//1: LINK_URL

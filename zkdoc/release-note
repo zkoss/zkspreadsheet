@@ -1,4 +1,11 @@
 	------------
+ZK Spreadsheet 2.2.0
+*Features:
+
+*Bug
+	ZSS-40 Press Ctrl+V for long time does not work correctly
+	
+	------------
 ZK Spreadsheet 2.1.1
 *Features:
 
