@@ -38,7 +38,7 @@ function (out) {
 		out.push('<div ', rowOuter[r],' zs.t="SRow">');
 		
 		for (var c = colBegin; c <= colEnd; c++) {
-			out.push('<div zs.t="SCell" ', cellOuter[r][c], ' ><div ', cellInner[r][c], '>', celltext[r][c], '</div></div>');
+			out.push('<div zs.t="SCell" ', cellOuter[r][c], ' ><div ', cellInner[r][c], '>', zk.ie6_ || zk.ie7_ ? '<div style="left:0px;position:absolute;width:100%;">' + celltext[r][c] + '</div>' : celltext[r][c], '</div></div>');
 		}
 		out.push('</div>');
 	}

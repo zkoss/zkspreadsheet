@@ -1628,12 +1628,13 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			setTimeout(function () {
 				local._fixSize();
 			}, 0);
-
+			
 			this._wgt.syncWidgetPos(row, -1);
 		}
 		//sync focus and selection area
 		this._syncRowFocusAndSelection(row, row);
-		this.activeBlock.onRowHeightChanged(row);
+		this._wgt.fire('onRowHeightChanged', {row: row});
+
 		if (fireevent) {
 			this._wgt.fire('onZSSHeaderModif', 
 					{sheetId: this.serverSheetId, type: "left", event: "size", index: row, newsize: height, id: zsh, hidden: hidden},

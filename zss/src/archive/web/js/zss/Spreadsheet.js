@@ -19,67 +19,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 
 (function () {
-	/**
-	 * Includes flexbox support function
-	 * 
-	 * Modernizr v1.7
-	 * http://www.modernizr.com
-	 *
-	 * Developed by: 
-	 * - Faruk Ates  http://farukat.es/
-	 * - Paul Irish  http://paulirish.com/
-	 *
-	 * Copyright (c) 2009-2011
-	 * Dual-licensed under the BSD or MIT licenses.
-	 * http://www.modernizr.com/license/
-	 * 
-	 */
-	function _flexSupport() {
-		var docElement = document.documentElement,
-			prefixes = ' -webkit- -moz- -o- -ms- -khtml- '.split(' ');
-        /**
-         * set_prefixed_value_css sets the property of a specified element
-         * adding vendor prefixes to the VALUE of the property.
-         * @param {Element} element
-         * @param {string} property The property name. This will not be prefixed.
-         * @param {string} value The value of the property. This WILL be prefixed.
-         * @param {string=} extra Additional CSS to append unmodified to the end of
-         * the CSS string.
-         */
-        function set_prefixed_value_css(element, property, value, extra) {
-            property += ':';
-            element.style.cssText = (property + prefixes.join(value + ';' + property)).slice(0, -property.length) + (extra || '');
-        }
-
-        /**
-         * set_prefixed_property_css sets the property of a specified element
-         * adding vendor prefixes to the NAME of the property.
-         * @param {Element} element
-         * @param {string} property The property name. This WILL be prefixed.
-         * @param {string} value The value of the property. This will not be prefixed.
-         * @param {string=} extra Additional CSS to append unmodified to the end of
-         * the CSS string.
-         */
-        function set_prefixed_property_css(element, property, value, extra) {
-            element.style.cssText = prefixes.join(property + ':' + value + ';') + (extra || '');
-        }
-        
-        var c = document.createElement('div'),
-	        elem = document.createElement('div');
-	
-	    set_prefixed_value_css(c, 'display', 'box', 'width:42px;padding:0;');
-	    set_prefixed_property_css(elem, 'box-flex', '1', 'width:10px;');
-	
-	    c.appendChild(elem);
-	    docElement.appendChild(c);
-	
-	    var ret = elem.offsetWidth === 42;
-	
-	    c.removeChild(elem);
-	    docElement.removeChild(c);
-	
-	    return ret;
-	}
 	function _calScrollWidth () {
 		if(zkS.t(zss.Spreadsheet.scrollWidth)) return;
 	    // scroll scrolling div
@@ -348,10 +287,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			 */
 			//valign
 			/**
-			 * default row height
-			 */
-			//defaultRowHgh
-			/**
 			 * Merge CSS class
 			 */
 			//mergeCls: v.mcls,
@@ -428,7 +363,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 						drh = v.drh;
 					this.widthId = wId;
 					this.heightId = hId;
-					this.defaultRowHgh = drh != undefined ? drh == 't' : true;
 				}
 				if (upMerge) {
 					this.mergeId = v.mi;
@@ -441,7 +375,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			clear: function () {
 				this.r = this.c = this.cellType = this.text = 
 					this.editText = this.formatText = this.lock = this.style = this.innerStyle =
-					this.wrap = this.halign = this.valign = this.defaultRowHgh = this.rightBorder =
+					this.wrap = this.halign = this.valign = this.rightBorder =
 					this.mergeCls = this.mergeId = this.merge = this.widthId = this.heightId = null;
 			}
 			//TODO: move this to widget
@@ -682,9 +616,12 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	 * Indicate Ctrl-Paste event key down status
 	 */
 	_ctrlPasteDown: false,
+	/**
+	 * Row height changed event listener
+	 */
+	_rowHeightChangedListeners: [],
 	$init: function () {
 		this.$supers('$init', arguments);
-		this._cssFlex = _flexSupport();
 	},
 	$define: {
 		/**
@@ -1257,16 +1194,48 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		if (typeof show != 'undefined')
 			this.setDisplayGridlines(show);
 	},
+	/**
+	 * Row header height changed event
+	 */
+	onRowHeightChanged: function (evt) {
+		var ls = this._rowHeightChangedListeners,
+			i = ls.length;
+		if (i)
+			while (i--) {
+				var o = ls[i],
+					context = o.context || this;
+				o.fn.apply(context, [evt]);
+			}
+	},
+	_listenRowHeightChanged: function (context, fn) {
+		var ls = this._rowHeightChangedListeners;
+		ls.push({fn: fn, context: context});
+	},
+	_unlistenRowHeightChanged: function (context, fn) {
+		var ls = this._rowHeightChangedListeners,
+			i = ls.length;
+		while (i--) {
+			var o = ls[i];
+			if (o.fn == fn && o.context == context) {
+				ls.splice(i, 1);
+				break;
+			}
+		}
+	},
 	bind_: function () {
 		_calScrollWidth();
 		this.$supers('bind_', arguments);
 
 		this._initControl();
+		this.listen({onRowHeightChanged: this});
 		zWatch.listen({onShow: this, onSize: this, onResponse: this});
 	},
 	unbind_: function () {
 		zWatch.unlisten({onShow: this, onSize: this, onResponse: this});
-
+		this.unlisten({onRowHeightChanged: this})
+		var ls = this._rowHeightChangedListeners;
+		ls.splice(0, ls.length);
+		
 		this._maxColumnMap = this._maxRowMap = null;
 		
 		var n = this.$n(),

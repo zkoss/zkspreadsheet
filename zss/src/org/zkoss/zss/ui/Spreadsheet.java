@@ -1974,8 +1974,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 					break;
 				}
 				final Row rowobj = sheet.getRow(row);
-				result.setData("drh", //bug#320 NullPointerException
-						rowobj == null || isDefaultRowHeight(sheet.getDefaultRowHeight(), rowobj.getHeight(), 40) ? "1" : "0");
 				int verAlign = style != null ? style.getVerticalAlignment() : -1;
 				switch (verAlign) {
 				//top is client side's default, ignore it
@@ -2003,15 +2001,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 			}
 		}
 		response(row + "_" + col + "_" + _updateCellId.next(), new AuDataUpdate(this, "", sheetId, ary.toJSONString()));
-	}
-	
-	/**
-	 *
-	 * @param rowIdx
-	 * @return
-	 */
-	private static boolean isDefaultRowHeight(int defaultRowHeight, int rowHeight, int toleranceRange) {
-		return Math.abs(defaultRowHeight - rowHeight) <= toleranceRange;
 	}
 	
 	private HeaderPositionHelper myGetColumnPositionHelper(Worksheet sheet, int maxcol) {
@@ -2426,7 +2415,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 		 *  <li>wp: wrap</li>
 		 *  <li>ha: horizontal alignment</>
 		 *  <li>va: vertical alignment</>
-		 *  <li>drh: default row height</li>
 		 *  <li>mi: merge id</li>
 		 *  <li>ml: merge left</li>
 		 *  <li>mr: merge right</li>
@@ -2443,7 +2431,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 		 *  <li>Wrap: false</li>
 		 *  <li>Horizontal alignment: left</>
 		 *  <li>Vertical alignment: top</>
-		 *  <li>Default row height: true</li>
 		 * </ul>
 		 */
 		public JSONObject getCellAttr(Worksheet sheet, int type, int row, int col) {
@@ -2541,16 +2528,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 						attrs.put("va", "b");
 						break;
 					}
-					
-					/**
-					 * A custom attribute, used for browser that doesn't support CSS flexbox.
-					 * Use ZK flex to achieve flexbox effect, this attribute indicate browser can ignore use flex.
-					 */
-					if (updateSize) {
-						boolean defaultRowHeight = isDefaultRowHeight(sheet.getDefaultRowHeight(), cell.getRow().getHeight(), 40);
-						if (!defaultRowHeight)
-							attrs.put("drh", "f"); // "0" stand for false
-					}
 				}
 			}
 			return attrs;
@@ -2616,9 +2593,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 					HTMLs.appendAttribute(sb, "z.hal", "r");
 					break;
 				}
-				/*indicate browser can delay flex*/
-				HTMLs.appendAttribute(sb, "z.drh", 
-						isDefaultRowHeight(sheet.getDefaultRowHeight(), cell.getRow().getHeight(), 40) ? "1" : "0");
 				//default height doesn't need to align
 				int verAlign = style != null ? style.getVerticalAlignment() : -1;
 				switch (verAlign) {

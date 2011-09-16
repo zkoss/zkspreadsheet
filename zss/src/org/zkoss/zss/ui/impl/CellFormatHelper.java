@@ -71,6 +71,8 @@ public class CellFormatHelper {
 			if (style == null)
 				return "";
 
+				
+			
 			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 			//ZSS-34 cell background color does not show in excel
 			//20110819, henrichen: if fill pattern is NO_FILL, shall not show the cell background color
@@ -296,9 +298,24 @@ public class CellFormatHelper {
 			CellStyle style = _cell.getCellStyle();
 			if (style == null)
 				return "";
-
+			
 			final StringBuffer sb = new StringBuffer();
 			sb.append(BookHelper.getTextCSSStyle(_book, _cell));
+			
+			//vertical alignment
+			int verticalAlignment = style.getVerticalAlignment();
+			sb.append("display: table-cell;");
+			switch (verticalAlignment) {
+			case CellStyle.VERTICAL_TOP:
+				sb.append("vertical-align: top;");
+				break;
+			case CellStyle.VERTICAL_CENTER:
+				sb.append("vertical-align: middle;");
+				break;
+			case CellStyle.VERTICAL_BOTTOM:
+				sb.append("vertical-align: bottom;");
+				break;
+			}
 			
 			final Font font = _book.getFontAt(style.getFontIndex());
 			

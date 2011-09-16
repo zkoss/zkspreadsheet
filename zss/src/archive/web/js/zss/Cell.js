@@ -17,240 +17,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 }}IS_RIGHT
 */
 (function () {
-	var Div = zul.wgt.Div;
-	zss.BaseInner = zk.$extends(zul.wgt.Div, {
-		setSheet: function (sheet) {
-			this._sheet = sheet;
-		},
-		doClick_: function (evt) {
-			this._sheet._doMouseleftclick(evt);
-		},
-		doMouseDown_: function (evt) {
-			this._sheet._doMousedown(evt);
-		},
-		doMouseUp_: function (evt) {
-			this._sheet._doMouseup(evt);
-		},
-		doRightClick_: function (evt) {
-			this._sheet._doMouserightclick(evt);
-		},
-		doDoubleClick_: function (evt) {
-			this._sheet._doMousedblclick(evt);
-		},
-		doKeyDown_: function (evt) {
-			this._sheet._doKeyDown(evt);
-		},
-		afterKeyDown_: function (evt) {
-			this._sheet._wgt.afterKeyDown_(evt);
-		},
-		doKeyPress_: function (evt) {
-			this._sheet._doKeypress(evt);
-		}
-	});
-
-	/**
-	 * Cell inner container base on ZK flex for vertical alignment.
-	 */
-	zss.FlexInner = zk.$extends(zss.BaseInner, {
-		$init: function () {
-			this.$supers('$init', arguments);
-			this.appendChild(new Div());
-			this.appendChild(new Div());
-			this.appendChild(new Div());
-			this.setWidth('100%');
-			this.setHeight('100%');
-		},
-		/**
-		 * Sets the text
-		 * @param string indicate vertical alignment
-		 * @param string indicate horizontal alignment
-		 * @param boolean wrap text or not
-		 * @param boolean whether the height of the cell is default row height or not
-		 */
-		setText: function (t, valign, halign, defaultRowHgh) {
-			var $t = this.firstChild,
-				$c = $t.nextSibling,
-				$b = this.lastChild;
-			this.valign = valign;
-			switch (valign) {
-			// set top div visible; hide other div
-			case 't':
-				$t.$n().innerHTML = t;
-				$c.setVisible(false);
-				$b.setVisible(false);
-				if (!defaultRowHgh)
-					this._initShowAndFlex([$t]);
-				if (zk.ie6_)
-					this._restoreFontSize($t.$n());
-				break;
-			//set top div flex=true, center div flex=min, bottom div flex=true
-			case 'c':
-				$c.$n().innerHTML = t;
-				$c.setVisible(true);
-				if (!defaultRowHgh)
-					this._initShowAndFlex([$t, $b], true);
-				if (zk.ie6_)
-					this._restoreFontSize($c.$n());
-				break;
-			//set top flex=true; center div invisible, bottom div flex=min
-			case 'b':
-				$c.setVisible(false);
-				$b.$n().innerHTML = t;
-				$b.setVisible(true);
-				$b.setVflex(-65500);
-				if (!defaultRowHgh)
-					this._initShowAndFlex([$t], true);
-				if (zk.ie6_)
-					this._restoreFontSize($b.$n());
-			}
-			this.fixFlexHeight();
-		},
-		/**
-		 * Fix flexed height
-		 */
-		fixFlexHeight: zk.ie6_ ? function () {
-			var n = this.$n();
-			if (!n)
-				this._node = n = jq(this.uuid, zk)[0];
-			if (n) {
-				var cellHgh = n.parentNode.offsetHeight,
-					curHgh = n.offsetHeight,
-					$t = this.firstChild,
-					$c = $t.nextSibling,
-					$b = this.lastChild;
-				if (curHgh > cellHgh) {
-					var differHgh = curHgh - cellHgh;
-					switch (this.valign) {
-					case 'c':
-						var tn = $t.$n(),
-							bn = $b.$n(),
-							setHgh = Math.round(((tn.offsetHeight + bn.offsetHeight) - differHgh) / 2),
-							cssProp = {'height': setHgh + 'px', 'font-size': '0'};
-						jq(tn).css(cssProp);
-						jq(bn).css(cssProp);
-						break;
-					case 'b':
-						var tn = $t.$n(),
-							tnHgh = tn.offsetHeight,
-							tnOffsetTop = tn.offsetTop,
-							setHgh = tnHgh - differHgh;
-						jq(tn).css({'height': setHgh + 'px', 'font-size': '0'});
-					}
-				}
-			}
-		} : zk.$void,
-		_restoreFontSize: function (n) {
-			jq(n).css('font-size', jq(this.$n()).css('font-size'));
-		},
-		getText: function () {
-			var $t = this.firstChild;
-			switch (this.valign) {
-			case 't':
-				return $t.$n().innerHTML;
-			case 'c':
-				var $c = $t.nextSibling;
-				return $c.$n().innerHTML;
-			case 'b':
-				var $b = this.lastChild; 
-				return $b.$n().innerHTML;
-			}
-			return null;
-		},
-		getPureText: function () { //feature #26:Support copy/paste value to local Excel
-			var $t = this.firstChild;
-			switch (this.valign) {
-			case 't':
-				var tn = $t.$n();
-				return tn.textContent || tn.innerText;
-			case 'c':
-				var $c = $t.nextSibling, cn = $c.$n();
-				return cn.textContent || cn.innerText;
-			case 'b':
-				var $b = this.lastChild, bn = $b.$n();
-				return bn.textContent || bn.innerText;
-			}
-			return null;
-		},
-		onSize: function () {
-			var $t = this.firstChild,
-				$c = $t.nextSibling,
-				$b = this.lastChild;
-			switch (this.valign) {
-			case 't':
-				this._initShowAndFlex([$t], false);
-				break;
-			case 'c':
-				this._initShowAndFlex([$t, $b], false);
-				break;
-			case 'b':
-				this._initShowAndFlex([$t], false);
-				break;
-			}
-			this.fixFlexHeight();
-		},
-		/**
-		 * Clean widget's text, set visible and flex it.
-		 * @param widget list to show and flex
-		 * @param boolean whether to clear text or not
-		 */
-		_initShowAndFlex: function (visWgts, clear) {
-			var $t = this.firstChild,
-				wgts = [$t, $t.nextSibling, this.lastChild],
-				flex = false; 
-			for (var i = 0; i < wgts.length; i++) {
-				var w = wgts[i];
-				if (visWgts.$contains(w)) {
-					flex = true;
-					if (clear)
-						w.$n().innerHTML = '';
-					w.$n().style.height = '';
-					w.setVisible(true);
-					w.setVflex(true);
-				}	
-			}
-			if (flex)
-				zWatch.fireDown('onSize', this);
-		}
-	});
-
-
-	/**
-	 * Cell inner container base on CSS flexbox for vertical alignment.
-	 */
-	zss.FlexboxInner = zk.$extends(zss.BaseInner, {
-		_vtal: {'t': 'top', 'c': 'mid', 'b': 'btm'},
-		_htal: {'l': 'left', 'c': 'center', 'r': 'right'},
-		$init: function () {
-			this.$supers('$init', arguments);
-			this.appendChild(new Div());
-			this.setWidth('100%');
-			this.setHeight('100%');
-		},
-		setText: function (t, valign, halign) {
-			var n = this.firstChild.$n(),
-				cls = 'zscell-inner-';
-			n.innerHTML = t;
-			cls += this._vtal[valign] + '-' + this._htal[halign];
-			jq(n.parentNode).attr('class', '').addClass(cls);
-			this.onSize();
-		},
-		getText: function () {
-			return this.firstChild.$n().innerHTML;
-		},
-		getPureText: function () { //feature #26: Support copy/paste value to local Excel
-			var tn = this.firstChild.$n(); 
-			return tn.textContent || tn.innerText;
-		},
-		onSize: zk.gecko ? function () {
-			var n = this.$n();
-			if (!n) {
-				this.clearCache();
-				n = this.$n();
-			}
-			jq(this.firstChild.$n()).css('width', jq(n).css('width'));
-		} : zk.$void
-	});
-	
 	//condition: cell type is string, halign is left, no wrap, no merge
 	function evalOverflow(ctrl) {
 		return ctrl.cellType == STR_CELL && !ctrl.wrap && !ctrl.merid 
@@ -263,9 +29,13 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		FORMULA_CELL = 2,
 		BLANK_CELL = 3,
 		BOOLEAN_CELL = 4,
-		ERROR_CELL = 5;
-
+		ERROR_CELL = 5,
+		Cell = 
 zss.Cell = zk.$extends(zk.Object, {
+	/**
+	 * Cell text
+	 */
+	text: '',
 	/**
 	 * Whether cell is locked or not
 	 * 
@@ -328,13 +98,20 @@ zss.Cell = zk.$extends(zk.Object, {
 	 * 
 	 * Default: align top
 	 */
-	valign: 't',
+	//valign: 't',
 	/**
 	 * Whether the text should be wrapped
 	 * 
 	 * Default: false
 	 */
 	wrap: false,
+	/**
+	 * Whether listen onRowHeightChanged event or not 
+	 * Currently, use only on IE6/IE7 for vertical align
+	 * 
+	 * Default: false
+	 */
+	//_listenRowHeightChanged: false,
 	$init: function (sheet, block, cmp, edit) {
 		this.$supers('$init', arguments);
 		this.id = cmp.id;
@@ -348,8 +125,7 @@ zss.Cell = zk.$extends(zk.Object, {
 		var $n = jq(cmp);
 		this.r = zk.parseInt($n.attr('z.r'));
 		this.c = zk.parseInt($n.attr('z.c'));
-		this.defaultRowHgh = ('1' == $n.attr('z.drh'));
-			
+
 		this.zsw = $n.attr('z.zsw');
 		if (this.zsw)
 			this.zsw = zk.parseInt(this.zsw);
@@ -369,31 +145,13 @@ zss.Cell = zk.$extends(zk.Object, {
 			this.cellType = cellType;
 		if (halign)
 			this.halign = halign;
-		if (valign)
-			this.valign = valign;
+		this.valign = valign ? valign : 't';
 
-		var inner = null,
-			txt = this.txtcomp.innerHTML,
-			//TODO: use CSS to fix bug 340
-			/*support CSS flexbox or not; FF flexbox cause bug 340*/
-			vflex = this._vflex = sheet._wgt._cssFlex && !zk.gecko;
-		if (this.valign != "t" && txt) {
-			inner = this._appendInner();
-		}
+		var txt = this.text = 
+			zk.ie6_ || zk.ie7_ ? this.txtcomp.firstChild.innerHTML : this.txtcomp.innerHTML;
 		//is this cell has right border,
 		//i must do some special processing when textoverfow when with rborder.
 		this.rborder = $n.attr('z.rbo') == "t";
-
-		if (!txt) {
-			txt = "";
-		} else {
-			//TODO should i check space cell for better performance?
-			/*var t = txt.trim();
-			(txt.charCodeAt(0)==160 ){//160 is &nbsp;
-			if(t.length ==0){
-				
-			}*/
-		}
 
 		//process merge.
 		var mid = $n.attr('z.merid');
@@ -409,15 +167,13 @@ zss.Cell = zk.$extends(zk.Object, {
 		this._updateHasTxt(!!txt);
 		if (txt) {
 			this._updateHasTxt(true);
-			if (inner) {
-				//set text directly when DOM is ready
-				if (inner.$n() && this.defaultRowHgh)
-					inner.setText(txt, this.valign, this.halign, true);
-				else //feel faster using insertSSInitLater
-					sheet.insertSSInitLater(zss.Cell._processInnerText, this, inner, txt);
+			if (zk.ie6_ || zk.ie7_) {
+				sheet._wgt._listenRowHeightChanged(this, this._onRowHeightChanged);
+				this._listenRowHeightChanged = true;
+				sheet.insertSSInitLater(Cell._processVerticalAlign, this);
 			}
 			if (this.overflow = evalOverflow(this))
-				sheet.addSSInitLater(zss.Cell._processOverflow, this);
+				sheet.addSSInitLater(Cell._processOverflow, this);
 		}
 	},
 	/**
@@ -438,24 +194,6 @@ zss.Cell = zk.$extends(zk.Object, {
 		jq(this.comp).css('z-index', bool ? "" : 1);
 	},
 	/**
-	 * Append inner child for vertical alignment
-	 * @param boolean support flexbox or not
-	 */
-	_appendInner: function () {
-		var inner = null,
-			txtCmp = this.txtcomp,
-			ctmp = jq('<div id="ctmp"></div>');
-		$(txtCmp).empty().append(ctmp);
-		inner = this._inner = this._vflex ? new zss.FlexboxInner() : new zss.FlexInner();
-		if (inner.onSize)
-			this.onSize = function () {
-				inner.onSize();
-			};
-		inner.replaceHTML(ctmp);
-		inner.setSheet(this.sheet);
-		return inner;
-	},
-	/**
 	 * Sets the text of the cell
 	 * @param string text
 	 */
@@ -469,10 +207,46 @@ zss.Cell = zk.$extends(zk.Object, {
 
 		if (this.overflow) {
 			if (this.redoOverflow || difTxt) {
-				zss.Cell._processOverflow(this);
+				Cell._processOverflow(this);
 				this.redoOverflow = false;
 			}
 		}
+	},
+	_setVerticalAlign: function () {
+		var	v = this.valign,
+			text = this.text,
+			txtcomp = this.txtcomp;
+		if (txtcomp.style.display == 'none' || !text)
+			return;
+		var	$n = jq(txtcomp),
+			$txtInner = zk.ie6_ || zk.ie7_ ? $n.children('div') : null;
+		if ($txtInner)
+			$n.css('position', 'relative');
+		else
+			return;
+		
+		switch (v) {
+		case 't':
+			$txtInner.css({'top': "0px", 'bottom': ''});
+			break;
+		case 'c':
+			var ch = $n.height(),
+				ich = $txtInner.height();
+			if (!ch || !ich)
+				return;
+			var	ah = (ch - ich) / 2,
+				p = Math.ceil(ah * 100 / ch);
+			if (p)
+				$txtInner.css({'top': p + "%", 'bottom': ''});
+			break;
+		case 'b':
+			$txtInner.css({'bottom': "0px", 'top': ''});	
+			break;
+		}
+	},
+	_onRowHeightChanged: function (evt) {
+		if (evt.data.row == this.r)
+			this._setVerticalAlign();
 	},
 	getText: function () {
 		if (this._inner)
@@ -488,30 +262,37 @@ zss.Cell = zk.$extends(zk.Object, {
 		if (!txt)
 			txt = "";
 
-		var vtal = this.valign,
-			hal =  this.halign;
-		if (this._inner)
-			this._inner.setText(txt, vtal, hal);
-		else if (vtal == 't')
-			this.txtcomp.innerHTML = txt;
-		else if (txt) {
-			this._appendInner();
-			this._inner.setText(txt, vtal, hal);
+		if (zk.ie6_ || zk.ie7_)
+			this.text = this.txtcomp.firstChild.innerHTML = txt;
+		else
+			this.text = this.txtcomp.innerHTML = txt;
+		
+		if (zk.ie6_ || zk.ie7_) {
+			if (txt) {
+				this._setVerticalAlign();
+				if (!this._listenRowHeightChanged) {
+					this._listenRowHeightChanged = true;
+					this.sheet._wgt._listenRowHeightChanged(this, this._onRowHeightChanged);
+				}
+			} else {
+				if (this._listenRowHeightChanged) {
+					this.sheet._wgt._unlistenRowHeightChanged(this, this._onRowHeightChanged);
+					this._listenRowHeightChanged = false;
+				}
+			}
 		}
 	},
-	/**
-	 * Invoke after append this cell to DOM tree
-	 */
-	afterAppend: zk.ie6_ ? function () {
-		if (this._inner)
-			this._inner.fixFlexHeight();
-	} : zk.$void,
 	cleanup: function () {
 		this.invalid = true;
+		
+		if (this._listenRowHeightChanged) {
+			this.sheet._wgt._unlistenRowHeightChanged(this, this._onRowHeightChanged);
+		}
+		
 		this._updateHasTxt(false);
 		if (this.overflowed && !this.block.invalid) {
 			//remove the overlap relation , because the cell that is overlaped maybe not be destroied.
-			zss.Cell._clearOverlapRelation(this);
+			Cell._clearOverlapRelation(this);
 		}
 		var inner = this._inner;
 		if (inner) {
@@ -519,8 +300,8 @@ zss.Cell = zk.$extends(zk.Object, {
 			this._inner = null;
 		}
 		if (this.comp) this.comp.ctrl = null;
-		this.comp = this.txtcomp = this.sheet = this.overlapBy = 
-			this.block = this._inner = this._vflex = this.lock = this.defaultRowHgh = null;
+		this.comp = this.txtcomp = this.sheet = this.overlapBy = this._listenRowHeightChanged =
+			this.block = this._inner = this._vflex = this.lock = null;
 	},
 	/**
 	 * Sets the width position index
@@ -595,10 +376,13 @@ zss.Cell = zk.$extends(zk.Object, {
 		if (st)
 			cmp.style.cssText = st;
 		
-		var txtcmp = document.createElement("div");
+		var $txt = jq('<div>' + (zk.ie6_ || zk.ie7_ ? '<div style="left:0px;position:absolute;width:100%"></div>' : '') +'</div>'),
+			txtcmp = $txt[0],
+			txtInner = zk.ie6_ || zk.ie7_ ? txtcmp.firstChild : null;
 		if (ist)
 			txtcmp.style.cssText = ist;
-		txtcmp.innerHTML = txt ? txt : "";
+		txt = txt ? txt : "";
+		txtInner ? txtInner.innerHTML = txt : txtcmp.innerHTML = txt;
 		cmp.appendChild(txtcmp);
 		
 		var sclazz = "zscell" + (zsw ? " zsw" + zsw : "") + (zsh ? " zshi" + zsh : "");
@@ -631,8 +415,8 @@ zss.Cell = zk.$extends(zk.Object, {
 			ctrl.txtcomp.style.cssText = ist;
 			ctrl.redoOverflow = true;
 		}
-		ctrl.halign = !hal ? "l" : hal;//default h align is left
-		ctrl.valign = !vtal ? 't' : vtal;//default v align is top
+		ctrl.halign = !hal ? "l" : hal;//default horizontal align is left
+		ctrl.valign = !vtal ? 't' : vtal;//default vertical align is top
 		ctrl.rborder = !!parm.rbo;
 		ctrl.edit = parm.edit;
 		ctrl.overflow = evalOverflow(ctrl);
@@ -656,13 +440,13 @@ zss.Cell = zk.$extends(zk.Object, {
 		}
 	},
 	/**
-	 * Invoke after CSS ready, set text and alignment
+	 * Invoke after CSS ready, set alignment
 	 */
-	_processInnerText: function (ctrl, cellInnerWgt, txt) {
+	_processVerticalAlign: function (ctrl) {
 		if (ctrl.invalid)
 			return;
 		
-		cellInnerWgt.setText(txt, ctrl.valign, ctrl.halign, ctrl.defaultRowHgh);
+		ctrl._setVerticalAlign();
 	},
 	_processOverflow: function (ctrl) {		
 		var sheet = ctrl.sheet;

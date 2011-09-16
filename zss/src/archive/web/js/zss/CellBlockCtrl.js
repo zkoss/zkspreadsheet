@@ -75,14 +75,6 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 		
 		return this.rows[row - range.top].getCellAt(col - range.left);
 	},
-	onRowHeightChanged: function (row) {
-		var range = this.range;
-		if (row < range.top || row > range.bottom)
-			return;
-		
-		var row = this.rows[row - range.top];
-		row.onHeightChanged();
-	},
 	/**
 	 * Sets the merge range of the cell
 	 * @param id
