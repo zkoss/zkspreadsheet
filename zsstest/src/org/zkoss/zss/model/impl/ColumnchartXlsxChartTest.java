@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Chart;
+import org.zkoss.poi.ss.usermodel.ZssChart;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.util.resource.ClassLocator;
@@ -66,7 +67,7 @@ public class ColumnchartXlsxChartTest {
 	@Test
 	public void testColumnchart() {
 		XSSFSheet sheet1 = (XSSFSheet) _book.getSheet("Sheet1");
-		List<Chart> chartInfos = new DrawingManagerImpl(sheet1).getCharts();
+		List<ZssChart> chartInfos = new DrawingManagerImpl(sheet1).getCharts();
 /*		HSSFChart[] charts = HSSFChart.getSheetCharts(sheet1);
 		assertEquals(2, charts.length);
 		HSSFChart chart = charts[0];
