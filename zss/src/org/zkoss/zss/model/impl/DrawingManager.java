@@ -6,7 +6,7 @@ package org.zkoss.zss.model.impl;
 import java.util.List;
 
 import org.zkoss.poi.ss.usermodel.Chart;
-import org.zkoss.poi.ss.usermodel.ZssChart;
+import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.poi.ss.usermodel.Combo;
 import org.zkoss.poi.ss.usermodel.Picture;
 
@@ -26,7 +26,7 @@ public interface DrawingManager {
 	 * Returns charts in sheet.
 	 * @return charts in sheet.
 	 */
-	public List<ZssChart> getCharts();
+	public List<ZssChartX> getCharts();
 
 	public List<Combo> getCombos();
 }

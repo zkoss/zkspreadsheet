@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Chart;
-import org.zkoss.poi.ss.usermodel.ZssChart;
+import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.poi.ss.usermodel.Combo;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.Row;
@@ -119,7 +119,7 @@ public class SheetCtrlImpl implements SheetCtrl {
 		// TODO Auto-generated method stub
 		return new DrawingManager() {
 			@Override
-			public List<ZssChart> getCharts() {
+			public List<ZssChartX> getCharts() {
 				return Collections.emptyList();
 			}
 
