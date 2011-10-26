@@ -1,9 +1,11 @@
 	------------
 ZK Spreadsheet 2.2.0
 *Features:
-
+   ZSS-41 Support showing more charts: area, stacked area, scatter, bubble, stacked bar, stacked bar3d(EE version)
+   ZSS-44 Support API to add a new chart
+  
 *Bug
-	ZSS-40 Press Ctrl+V for long time does not work correctly
+   ZSS-40 Press Ctrl+V for long time does not work correctly
 	
 	------------
 ZK Spreadsheet 2.1.1

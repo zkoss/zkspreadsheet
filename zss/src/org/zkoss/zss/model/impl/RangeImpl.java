@@ -27,19 +27,32 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGraphicalObjectFrame;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.CellValue;
+import org.zkoss.poi.ss.usermodel.Chart;
+import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.usermodel.charts.AxisPosition;
+import org.zkoss.poi.ss.usermodel.charts.ChartAxis;
+import org.zkoss.poi.ss.usermodel.charts.ChartData;
+import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
+import org.zkoss.poi.ss.usermodel.charts.ChartType;
+import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
 import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.xssf.usermodel.XSSFChart;
+import org.zkoss.poi.xssf.usermodel.XSSFChartX;
+import org.zkoss.poi.xssf.usermodel.XSSFDrawing;
+
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
@@ -1967,5 +1980,19 @@ public class RangeImpl implements Range {
 		BookHelper.notifyBtnChanges(new HashSet<Ref>(buttonChange.getRefs()));
 		
 		return af;
+	}
+
+	@Override
+	public void addChart(ClientAnchor anchor, ChartData data, ChartType type,
+			ChartGrouping grouping, LegendPosition pos) {
+		
+		DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
+		XSSFChartX chartX = (XSSFChartX) dm.addChartX(_sheet, anchor, data, type, grouping, pos);
+		final RangeImpl rng = (RangeImpl) Ranges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
+		final Collection<Ref> refs = rng.getRefs();
+		if (refs != null && !refs.isEmpty()) {
+			final Ref ref = refs.iterator().next();
+			BookHelper.notifyChartAdd(ref, chartX);
+		}
 	}
 }

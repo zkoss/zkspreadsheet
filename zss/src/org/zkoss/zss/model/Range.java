@@ -16,9 +16,15 @@ package org.zkoss.zss.model;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.Chart;
+import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.charts.ChartData;
+import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
+import org.zkoss.poi.ss.usermodel.charts.ChartType;
+import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
 import org.zkoss.zss.model.impl.BookHelper;
 
 /**
@@ -488,4 +494,10 @@ public interface Range {
 	 * Clear all application of the current {@link AutoFilter}. 
 	 */
 	public void showAllData();
+
+	/**
+	 * Add a chart into the sheet of this Range 
+	 * @param anchor 
+	 */
+	public void addChart(ClientAnchor anchor, ChartData data, ChartType type, ChartGrouping grouping, LegendPosition pos);
 }

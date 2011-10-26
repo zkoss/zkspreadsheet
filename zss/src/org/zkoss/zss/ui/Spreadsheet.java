@@ -62,6 +62,7 @@ import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.logging.Log;
@@ -1582,10 +1583,27 @@ public class Spreadsheet extends XulElement implements Serializable {
 					onProtectSheet((SSDataEvent)event);
 				}
 			});
+			addEventListener(SSDataEvent.ON_CHART_ADD, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onChartAdd((SSDataEvent)event);
+				}
+			});
 		}
 		private Worksheet getSheet(Ref rng) {
 			return Utils.getSheetByRefSheet(_book, rng.getOwnerSheet()); 
 		}
+		private void onChartAdd(SSDataEvent event) {
+			final Ref rng = event.getRef();
+			final Worksheet sheet = getSheet(rng);
+			final int left = rng.getLeftCol();
+			final int top = rng.getTopRow();
+			final int right = rng.getRightCol();
+			int bottom = rng.getBottomRow();
+			final Object payload = event.getPayload();
+			addChartWidget(sheet, (ZssChartX) payload);
+			updateWidget(sheet, left, top, right, bottom);
+		}  
 		private void onContentChange(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final Worksheet sheet = getSheet(rng);
@@ -3676,6 +3694,15 @@ public class Spreadsheet extends XulElement implements Serializable {
 		//setup gridline
 		setDisplayGridlines(_selectedSheet.isDisplayGridlines());
 		setProtectSheet(_selectedSheet.getProtect());
+	}
+	
+	private void addChartWidget(Worksheet sheet, ZssChartX chart) {
+		//load widgets
+		List list = loadWidgetLoaders();
+		int size = list.size();
+		for (int i = 0; i < size; i++) {
+			((WidgetLoader) list.get(i)).addChartWidget(sheet, chart);
+		}
 	}
 
 	private void clearHeaderSizeHelper(boolean row, boolean col) {

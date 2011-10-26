@@ -91,6 +91,7 @@ import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.usermodel.DataValidationConstraint.ValidationType;
+import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
 import org.zkoss.poi.ss.util.CellReference;
@@ -300,6 +301,14 @@ public final class BookHelper {
 				final RefBook refBook = refSheet.getOwnerBook();
 				refBook.publish(new SSDataEvent(SSDataEvent.ON_SIZE_CHANGE, ref, SSDataEvent.MOVE_NO));
 			}
+		}
+	}
+	
+	public static void notifyChartAdd(Ref ref, ZssChartX chartX) {
+		if (ref != null) {
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final RefBook refBook = refSheet.getOwnerBook();
+			refBook.publish(new SSDataEvent(SSDataEvent.ON_CHART_ADD, ref, chartX));
 		}
 	}
 	

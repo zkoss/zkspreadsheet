@@ -57,6 +57,9 @@ public class SSDataEvent extends Event implements Serializable {
 	/** Identifies the protect sheet status change. **/
 	public static final String ON_PROTECT_SHEET = "onProtectSheet";
 	
+	/** Indentifies one chart added. **/
+	public static final String ON_CHART_ADD = "onChartAdd";
+	
 	/** Identifies no move direction when add or remove a range. */
 	public static final int MOVE_NO = 1000;
 	/** Identifies move direction as vertical(down or up) when add or remove a range. */
@@ -68,6 +71,18 @@ public class SSDataEvent extends Event implements Serializable {
 	private String _password;
 	private Ref _rng; //the applied range
 	private Ref _org; //the original range
+	private Object _payload; //the payload of this event
+	
+	/**
+	 * Constructor of the SSDataEvent.
+	 * @param name event name
+	 * @param rng a reference to a range of cells.
+	 * @param payload payload of this event.
+	 */
+	public SSDataEvent(String name, Ref rng, Object payload) {
+		this(name, rng, null, MOVE_NO);
+		_payload = payload;
+	}
 	
 	/**
 	 * Constructor of the SSDataEvent.
@@ -129,8 +144,12 @@ public class SSDataEvent extends Event implements Serializable {
 		return _password;
 	}
 	
+	public Object getPayload() {
+		return _payload;
+	}
+	
 	public String toString() {
-		return "["+getName()+" -> "+_rng+","+_org+"]";
+		return "["+getName()+" -> "+_rng+","+_org+","+_payload+"]";
 	}
 	
 }

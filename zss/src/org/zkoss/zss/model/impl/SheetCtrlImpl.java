@@ -21,10 +21,15 @@ import java.util.Set;
 
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Chart;
+import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.poi.ss.usermodel.Combo;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.charts.ChartData;
+import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
+import org.zkoss.poi.ss.usermodel.charts.ChartType;
+import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Worksheet;
@@ -131,6 +136,13 @@ public class SheetCtrlImpl implements SheetCtrl {
 			@Override
 			public List<Combo> getCombos() {
 				return Collections.emptyList();
+			}
+
+			@Override
+			public ZssChartX addChartX(Worksheet sheet, ClientAnchor anchor,
+					ChartData data, ChartType type, ChartGrouping grouping,
+					LegendPosition pos) {
+				return null;
 			}
 		};
 	}
