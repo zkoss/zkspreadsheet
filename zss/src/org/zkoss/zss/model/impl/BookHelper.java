@@ -87,6 +87,7 @@ import org.zkoss.poi.ss.usermodel.ErrorConstants;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
+import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Workbook;
@@ -304,11 +305,29 @@ public final class BookHelper {
 		}
 	}
 	
+	public static void notifyWidgetChanges(Set<Ref> all) {
+		if (all != null) {
+			for(Ref ref : all) {
+				final RefSheet refSheet = ref.getOwnerSheet();
+				final RefBook refBook = refSheet.getOwnerBook();
+				refBook.publish(new SSDataEvent(SSDataEvent.ON_WIDGET_CHANGE, ref, SSDataEvent.MOVE_NO));
+			}
+		}
+	}
+	
 	public static void notifyChartAdd(Ref ref, ZssChartX chartX) {
 		if (ref != null) {
 			final RefSheet refSheet = ref.getOwnerSheet();
 			final RefBook refBook = refSheet.getOwnerBook();
 			refBook.publish(new SSDataEvent(SSDataEvent.ON_CHART_ADD, ref, chartX));
+		}
+	}
+	
+	public static void notifyPictureAdd(Ref ref, Picture picture) {
+		if (ref != null) {
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final RefBook refBook = refSheet.getOwnerBook();
+			refBook.publish(new SSDataEvent(SSDataEvent.ON_PICTURE_ADD, ref, picture));
 		}
 	}
 	

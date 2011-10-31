@@ -16,11 +16,11 @@ package org.zkoss.zss.model;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
@@ -500,4 +500,18 @@ public interface Range {
 	 * @param anchor 
 	 */
 	public void addChart(ClientAnchor anchor, ChartData data, ChartType type, ChartGrouping grouping, LegendPosition pos);
+
+	/**
+	 * Add a picture into the sheet of this Range
+	 * @param anchor picture anchor
+	 * @param image image data
+	 * @param format image format
+	 * @see Workbook#PICTURE_TYPE_EMF
+     * @see Workbook#PICTURE_TYPE_WMF
+     * @see Workbook#PICTURE_TYPE_PICT
+     * @see Workbook#PICTURE_TYPE_JPEG
+     * @see Workbook#PICTURE_TYPE_PNG
+     * @see Workbook#PICTURE_TYPE_DIB
+	 */
+	public void addPicture(ClientAnchor anchor, byte[] image, int format);
 }

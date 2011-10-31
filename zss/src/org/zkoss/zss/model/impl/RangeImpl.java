@@ -13,6 +13,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -38,6 +39,7 @@ import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
+import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.model.Worksheet;
@@ -52,6 +54,7 @@ import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFChart;
 import org.zkoss.poi.xssf.usermodel.XSSFChartX;
 import org.zkoss.poi.xssf.usermodel.XSSFDrawing;
+import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.engine.Ref;
@@ -1986,13 +1989,25 @@ public class RangeImpl implements Range {
 	public void addChart(ClientAnchor anchor, ChartData data, ChartType type,
 			ChartGrouping grouping, LegendPosition pos) {
 		
-		DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
-		XSSFChartX chartX = (XSSFChartX) dm.addChartX(_sheet, anchor, data, type, grouping, pos);
+		final DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
+		final XSSFChartX chartX = (XSSFChartX) dm.addChartX(_sheet, anchor, data, type, grouping, pos);
 		final RangeImpl rng = (RangeImpl) Ranges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
 		final Collection<Ref> refs = rng.getRefs();
 		if (refs != null && !refs.isEmpty()) {
 			final Ref ref = refs.iterator().next();
 			BookHelper.notifyChartAdd(ref, chartX);
+		}
+	}
+
+	@Override
+	public void addPicture(ClientAnchor anchor, byte[] image, int format) {
+		DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
+		final Picture picture = dm.addPicture(_sheet, anchor, image, format);
+		final RangeImpl rng = (RangeImpl) Ranges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
+		final Collection<Ref> refs = rng.getRefs();
+		if (refs != null && !refs.isEmpty()) {
+			final Ref ref = refs.iterator().next();
+			BookHelper.notifyPictureAdd(ref, picture);
 		}
 	}
 }

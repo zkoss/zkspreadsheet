@@ -283,4 +283,8 @@ public class EmptyRange implements Range {
 	public void addChart(ClientAnchor anchor, ChartData data, ChartType type,
 			ChartGrouping grouping, LegendPosition pos) {
 	}
+
+	@Override
+	public void addPicture(ClientAnchor anchor, byte[] image, int format) {
+	}
 }

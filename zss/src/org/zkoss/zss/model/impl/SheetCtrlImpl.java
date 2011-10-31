@@ -144,6 +144,12 @@ public class SheetCtrlImpl implements SheetCtrl {
 					LegendPosition pos) {
 				return null;
 			}
+
+			@Override
+			public Picture addPicture(Worksheet sheet, ClientAnchor anchor,
+					byte[] imageData, int format) {
+				return null;
+			}
 		};
 	}
 }

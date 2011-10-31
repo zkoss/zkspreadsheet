@@ -19,6 +19,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.sys;
 
 //import org.zkoss.zss.model.Sheet;
+import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -64,4 +65,6 @@ public interface WidgetLoader {
 	//public void onLoadOnDeman(String sheetid,int left,int top,int right,int bottom);
 
 	public void addChartWidget(Worksheet sheet, ZssChartX chart);
+	
+	public void addPictureWidget(Worksheet sheet, Picture picture);
 }

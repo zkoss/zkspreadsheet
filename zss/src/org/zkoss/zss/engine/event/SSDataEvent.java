@@ -60,6 +60,12 @@ public class SSDataEvent extends Event implements Serializable {
 	/** Indentifies one chart added. **/
 	public static final String ON_CHART_ADD = "onChartAdd";
 	
+	/** Indentifies one picture added. **/
+	public static final String ON_PICTURE_ADD = "onPictureAdd";
+	
+	/** Indentifies the change of a widget. */
+	public static final String ON_WIDGET_CHANGE = "onWidgetChange";
+	
 	/** Identifies no move direction when add or remove a range. */
 	public static final int MOVE_NO = 1000;
 	/** Identifies move direction as vertical(down or up) when add or remove a range. */
