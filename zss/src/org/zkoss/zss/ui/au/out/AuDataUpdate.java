@@ -26,10 +26,7 @@ import org.zkoss.zk.ui.Component;
  *
  */
 public class AuDataUpdate extends AuResponse {
-	public AuDataUpdate(Component comp, String token, String sheetid, String data ) {
-		/**
-		 * cellUpdate -> dataUpdate
-		 */
-		super("setAttr", comp, new Object[] {comp.getUuid(), "dataUpdate", new String[]{token, sheetid, data}});
+	public AuDataUpdate(Component comp, String token, String sheetid, Object data ) {
+		super("setAttr", comp, new Object[] {comp.getUuid(), "dataUpdate", new Object[]{token, sheetid, data}});
 	}
 }

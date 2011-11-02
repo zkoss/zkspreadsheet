@@ -38,11 +38,27 @@ public interface SpreadsheetCtrl {
 
 	final public static String CHILD_PASSING_KEY = "zsschildren";
 	
-	public final static int CELL_ATTR_ALL = 1;
-	public final static int CELL_ATTR_TEXT = 2;
-	public final static int CELL_ATTR_STYLE = 3;
-	public final static int CELL_ATTR_SIZE = 4;
-	public final static int CELL_ATTR_MERGE = 5;
+	//TODO: measure best load size
+	public static final int MIN_LOAD_COLUMN_SIZE = 20;
+	public static final int MIN_LOAD_ROW_SIZE = 20;
+	
+	public enum CellAttribute {
+		ALL(1), TEXT(2), STYLE(3), SIZE(5), MERGE(5);
+		
+		int value;
+		CellAttribute(int value) {
+			this.value = value;
+		}
+		
+		public String toString() {
+			return "" + value;
+		}
+	}
+	
+	public enum Header {
+		NONE, ROW, COLUMN, BOTH;
+		
+	}
 	
 	public HeaderPositionHelper getRowPositionHelper(String sheetId);
 	
@@ -61,20 +77,7 @@ public interface SpreadsheetCtrl {
 	
 	public JSONObject getColumnHeaderAttrs(Worksheet sheet, int colStart, int colEnd);
 	
-	public JSONObject getRangeAttrs(Worksheet sheet, int attrType, int left, int top, int right, int bottom);
-	
-	public String getCellOuterAttrs(int row,int col);
-
-	public String getCellInnerAttrs(int row,int col);
-
-	public String getRowOuterAttrs(int row);
-
-	public String getTopHeaderOuterAttrs(int col);
-	
-	public String getTopHeaderInnerAttrs(int col);
-
-	public String getLeftHeaderOuterAttrs(int row);
-	public String getLeftHeaderInnerAttrs(int row);
+	public JSONObject getRangeAttrs(Worksheet sheet, Header containsHeader, CellAttribute type, int left, int top, int right, int bottom);
 	
 	public String getDataPanelAttrs();
 	

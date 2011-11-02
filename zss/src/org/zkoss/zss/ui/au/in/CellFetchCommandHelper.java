@@ -19,33 +19,22 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.au.in;
 
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
+import org.zkoss.json.JSONObject;
 import org.zkoss.lang.Objects;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.Hyperlink;
-import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.util.logging.Log;
-import org.zkoss.xml.HTMLs;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.model.FormatText;
-import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.SheetCtrl;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.CellFormatHelper;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.JSONObj;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
-import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.Utils;
-import org.zkoss.zss.ui.impl.HeaderPositionHelper.HeaderPositionInfo;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
@@ -170,17 +159,18 @@ public class CellFetchCommandHelper{
 					int top = _mergeMatrix.getTopConnectedRow(blockTop, blockLeft, right);
 					
 					if (bottom > blockBottom) {
-						String result = loadSouth(sheet, type, blockLeft, blockTop, blockRight, blockBottom, bottom - blockBottom);
+						String result = loadSouth(sheet, type, blockLeft, blockTop, blockRight, blockBottom, bottom - blockBottom, -1, -1, -1);
 						responseDataBlock("South", "", sheetId, result);
 					}
 					if (top < blockTop) {
-						String result = loadNorth(sheet, type, blockLeft, blockTop, blockRight, bottom, blockTop - top);
+						String result = loadNorth(sheet, type, blockLeft, blockTop, blockRight, bottom, blockTop - top, -1, -1, -1);
 						responseDataBlock("North", "", sheetId, result);
 					}
 					int size = right - blockRight;//right - (blockRight +1) +1
 
-					String result = loadEast(sheet, type, blockLeft, top, blockRight, bottom, size);
-					responseDataBlock("East", token, sheetId, result);
+					//String result = 
+					LoadResult result = loadEast(sheet, type, blockLeft, top, blockRight, bottom, size, -1, -1);
+					responseDataBlock("East", token, sheetId, result.json.toJSONString());
 				} else if ("south".equals(direction)) {
 					
 					int bottom = blockBottom + fetchHeight;
@@ -191,17 +181,17 @@ public class CellFetchCommandHelper{
 					int left = _mergeMatrix.getLeftConnectedColumn(blockLeft, blockTop, bottom);
 
 					if (right > blockRight) {
-						String result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, right - blockRight);
-						responseDataBlock("East", "", sheetId, result);
+						LoadResult result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, right - blockRight, -1, -1);
+						responseDataBlock("East", "", sheetId, result.json.toJSONString());
 					}
 					if (left < blockLeft) {
-						String result = loadWest(sheet, type, blockLeft, blockTop, right, blockBottom, blockLeft - left);
-						responseDataBlock("West", "", sheetId, result);
+						LoadResult result = loadWest(sheet, type, blockLeft, blockTop, right, blockBottom, blockLeft - left, -1, -1);
+						responseDataBlock("West", "", sheetId, result.json.toJSONString());
 					}
 
 					int size = bottom - blockBottom;
 					
-					String result = loadSouth(sheet, type, left, blockTop, right, blockBottom, size);
+					String result = loadSouth(sheet, type, left, blockTop, right, blockBottom, size, -1, -1, -1);
 					responseDataBlock("South", token, sheetId, result);
 				} else if ("west".equals(direction)) {
 					
@@ -212,17 +202,17 @@ public class CellFetchCommandHelper{
 					int top = _mergeMatrix.getTopConnectedRow(blockTop, left, blockRight);
 					
 					if (bottom > blockBottom) {
-						String result = loadSouth(sheet, type, blockLeft, blockTop, blockRight, blockBottom, bottom - blockBottom);
+						String result = loadSouth(sheet, type, blockLeft, blockTop, blockRight, blockBottom, bottom - blockBottom, -1, -1, -1);
 						responseDataBlock("South", "", sheetId, result);
 					}
 					if (top < blockTop) {
-						String result = loadNorth(sheet, type, blockLeft, blockTop, blockRight, bottom, blockTop - top);
+						String result = loadNorth(sheet, type, blockLeft, blockTop, blockRight, bottom, blockTop - top, -1, -1, -1);
 						responseDataBlock("North", "", sheetId, result);
 					}
 					int size = blockLeft - left ;//blockLeft -1 - left + 1;
 					
-					String result = loadWest(sheet, type, blockLeft, blockTop,	blockRight, blockBottom, size);
-					responseDataBlock("West", token, sheetId, result);
+					LoadResult result = loadWest(sheet, type, blockLeft, blockTop,	blockRight, blockBottom, size, -1, -1);
+					responseDataBlock("West", token, sheetId, result.json.toJSONString());
 				} else if("north".equals(direction)) {
 					
 					
@@ -233,19 +223,19 @@ public class CellFetchCommandHelper{
 					int left = _mergeMatrix.getLeftConnectedColumn(blockLeft,top, blockBottom);
 					
 					if (right > blockRight) {
-						String result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, right - blockRight);
-						responseDataBlock("East", "", sheetId, result);
+						LoadResult result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, right - blockRight, -1, -1);
+						responseDataBlock("East", "", sheetId, result.json.toJSONString());
 					}
 					if (left < blockLeft) {
-						String result = loadWest(sheet,type,blockLeft,blockTop,right,blockBottom,blockLeft - left);
-						responseDataBlock("West", "", sheetId,result);
+						LoadResult result = loadWest(sheet,type,blockLeft,blockTop,right,blockBottom,blockLeft - left, -1, -1);
+						responseDataBlock("West", "", sheetId, result.json.toJSONString());
 					}
 					int size = blockTop - top;
-					String result = loadNorth(sheet, type, left, blockTop, right, blockBottom, size);
+					String result = loadNorth(sheet, type, left, blockTop, right, blockBottom, size, -1, -1, -1);
 					responseDataBlock("North", token, sheetId, result);
 				}
 			} else if("visible".equals(type)) {
-				loadForVisible((Spreadsheet) comp, sheetId, sheet, type, dpWidth, dpHeight, viewWidth, viewHeight, blockLeft, blockTop, blockRight, blockBottom, rangeLeft, rangeTop, rangeRight, rangeBottom);
+				loadForVisible((Spreadsheet) comp, sheetId, sheet, type, dpWidth, dpHeight, viewWidth, viewHeight, blockLeft, blockTop, blockRight, blockBottom, rangeLeft, rangeTop, rangeRight, rangeBottom, fetchWidth, fetchHeight);
 				//always ack for call back
 				String ack = ackResult();
 				responseDataBlock(null, token,sheetId,ack);
@@ -262,8 +252,8 @@ public class CellFetchCommandHelper{
 	}
 	
 	private void loadForVisible(Spreadsheet spreadsheet, String sheetId, Worksheet sheet, String type, int dpWidth,
-			int dpHeight, int viewWidth, int viewHeight, int blockLeft,int blockTop,int blockRight, int blockBottom,
-			int rangeLeft, int rangeTop, int rangeRight,int rangeBottom) {
+			int dpHeight, int viewWidth, int viewHeight, int blockLeft, int blockTop, int blockRight, int blockBottom,
+			int rangeLeft, int rangeTop, int rangeRight, int rangeBottom, int cacheRangeWidth, int cacheRangeHeight) {
 		
 		if (rangeRight > spreadsheet.getMaxcolumns() - 1) {
 			rangeRight = spreadsheet.getMaxcolumns() - 1;
@@ -276,43 +266,48 @@ public class CellFetchCommandHelper{
 		int top = Math.min(rangeTop, blockTop);
 		int right = Math.max(rangeRight, blockRight);
 		int bottom = Math.max(rangeBottom, blockBottom);
+		
+		int cacheRangeRight = -1;
+		int cacheRangeLeft = -1;
 
-		if (right > blockRight) {
+		boolean loadEast = right > blockRight;
+		boolean loadWest = left < blockLeft;
+		boolean loadSouth = bottom > blockBottom;
+		boolean loadNorth = top < blockTop;
+		if (loadEast) {
 			
 			right = _mergeMatrix.getRightConnectedColumn(right, top, bottom);
 
-			int size = right - blockRight;
-			String result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, size);
-			responseDataBlock("East", "", sheetId, result);
-			blockRight += size;
+			int width = right - blockRight;
+			LoadResult result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, width, cacheRangeWidth, loadSouth && cacheRangeHeight > 0 ? -1 : cacheRangeHeight);
+			cacheRangeRight = result.index;
+			responseDataBlock("East", "", sheetId, result.json.toJSONString());
+			blockRight += width;
 		}
-		
-		if (left < blockLeft) {
+		if (loadWest) {
 
 			left = _mergeMatrix.getLeftConnectedColumn(left, top, bottom);
-
 			int size = blockLeft - left;
-			String result = loadWest(sheet, type, blockLeft, blockTop, right, blockBottom, size);
-			responseDataBlock("West", "", sheetId, result);
+			LoadResult result = loadWest(sheet, type, blockLeft, blockTop, right, blockBottom, size, cacheRangeWidth, loadSouth && cacheRangeHeight > 0 ? -1 : cacheRangeHeight);
+			cacheRangeLeft = result.index;
+			responseDataBlock("West", "", sheetId, result.json.toJSONString());
 			blockLeft -= size;
 		}
-
-		if (bottom > blockBottom) {
+		if (loadSouth) {
 			
 			bottom = _mergeMatrix.getBottomConnectedRow(bottom, left, right);
 			
-			int size = bottom - blockBottom;
-			String result = loadSouth(sheet, type, left, blockTop, right, blockBottom, size);
+			int height = bottom - blockBottom;
+			String result = loadSouth(sheet, type, left, blockTop, right, blockBottom, height, cacheRangeLeft, cacheRangeRight, cacheRangeHeight);
 			responseDataBlock("South", "", sheetId, result);
-			blockBottom += size;
+			blockBottom += height;
 		}
-
-		if (top < blockTop) {
+		if (loadNorth) {
 			
 			top = _mergeMatrix.getTopConnectedRow(top, left, right);
 			
 			int size = blockTop - top;
-			String result = loadNorth(sheet, type, left, blockTop, right, bottom, size);
+			String result = loadNorth(sheet, type, left, blockTop, right, bottom, size, cacheRangeLeft, cacheRangeRight, cacheRangeHeight);
 			responseDataBlock("North", "", sheetId, result);
 			blockTop -= size;
 		}
@@ -331,15 +326,6 @@ public class CellFetchCommandHelper{
 		return jresult.toString();
 	}
 	
-	
-	private String pruneResult(String dir, int reserve) {
-		JSONObj jresult = new JSONObj();
-		jresult.setData("type", "prune");
-		jresult.setData("dir", dir);
-		jresult.setData("reserve", reserve);
-		return jresult.toString();
-	}
-
 	private String jumpResult(Worksheet sheet, int left, int top, int right, int bottom) {
 		top = _mergeMatrix.getTopConnectedRow(top, left, right);
 		bottom = _mergeMatrix.getBottomConnectedRow(bottom, left, right);
@@ -350,61 +336,73 @@ public class CellFetchCommandHelper{
 		int h = bottom - top + 1;
 		
 		//check merge range;
-		JSONObj jresult = new JSONObj();
-		List rd = new ArrayList();
+		JSONObject json = new JSONObject();
 		
-		jresult.setData("type", "jump");
-		jresult.setData("dir", "jump");
-		jresult.setData("left", left);
-		jresult.setData("top", top);
-		jresult.setData("width", w);
-		jresult.setData("height", h);
-		jresult.setData("data", rd);
+		json.put("type", "jump");
+		json.put("left", left);
+		json.put("top", top);
+		json.put("width", w);
+		json.put("height", h);
 		
-		// prepare header
-		JSONObj jheader;
-		List theaders = null;
-		List lheaders = null;
-		boolean filltheader = false;
-		
-		if (!_hidecolhead) {
-			theaders = new ArrayList();
-			jresult.setData("theader", theaders);
-		}
-
-		if (!_hiderowhead) {
-			lheaders = new ArrayList();
-			jresult.setData("lheader", lheaders);
+		SpreadsheetCtrl.Header header = SpreadsheetCtrl.Header.NONE;
+		if (!_hidecolhead && !_hiderowhead) {
+			header = SpreadsheetCtrl.Header.BOTH;
+		} else if (!_hidecolhead) {
+			header = SpreadsheetCtrl.Header.COLUMN;
+		} else if (!_hiderowhead) {
+			header = SpreadsheetCtrl.Header.ROW;
 		}
 		
-		JSONObj jrow, jcell;
-		// append row
+		int preloadColSize = _spreadsheet.getPreloadColumnSize();
+		int preloadRowSize = _spreadsheet.getPreloadRowSize();
+		
 		int re = top + h;
 		int ce = left + w;
-		for (int i = top; i < re; i++) {
-			jrow = new JSONObj();
-			rd.add(jrow);
-			prepareRowData(jrow, sheet, i);
-			List cells = new ArrayList();
-			jrow.setData("cells", cells);
-			for (int j = left; j < ce; j++) {
-				jcell = new JSONObj();
-				Cell cell = Utils.getCell(sheet, i, j);
-				cells.add(jcell);
-				prepareCellData(jcell, sheet, i, j);
-				if (!_hidecolhead && !filltheader) {
-					jheader = new JSONObj();
-					prepareTopHeaderData(jheader, j);
-					theaders.add(jheader);
-				}
-			}
-			filltheader = true;
-			if (!_hiderowhead) {
-				jheader = new JSONObj();
-				prepareLeftHeaderData(jheader, i);
-				lheaders.add(jheader);
-			}
+		
+		int rangeLeft = left;
+		int rangeRight = right;
+		int rangeTop = top;
+		int rangeBtm = bottom;
+		
+		if (preloadColSize > 0 && preloadRowSize > 0) {
+			//extends both
+			preloadColSize = preloadColSize / 2;
+			preloadRowSize = preloadRowSize / 2;
+			
+			int newLeft = Math.max(rangeLeft - preloadColSize, 0);
+			int newTop = Math.max(rangeTop - preloadRowSize, 0);
+			int newRight = Math.min(rangeRight + preloadColSize, _spreadsheet.getMaxcolumns() - 1);
+			int newBtm = Math.min(rangeBtm + preloadRowSize, _spreadsheet.getMaxrows() - 1);
+			
+			rangeTop = _mergeMatrix.getTopConnectedRow(newTop, newLeft, newRight);
+			rangeBtm = _mergeMatrix.getBottomConnectedRow(newBtm, newLeft, newRight);
+			rangeRight = _mergeMatrix.getRightConnectedColumn(newRight, newTop, newBtm);
+			rangeLeft = _mergeMatrix.getLeftConnectedColumn(newLeft, newTop, newBtm);
+			
+		} else if (preloadColSize > 0) {
+			//extends range left and right
+			int preloadSize =  preloadColSize / 2;
+			int newLeft = Math.max(rangeLeft - preloadSize, 0);
+			int newRight = Math.min(rangeRight + preloadSize, _spreadsheet.getMaxcolumns() - 1);
+			
+			rangeLeft = _mergeMatrix.getLeftConnectedColumn(newLeft, rangeTop, rangeBtm);
+			rangeRight = _mergeMatrix.getRightConnectedColumn(newRight, rangeTop, rangeBtm);
+		} else if (preloadRowSize > 0) {
+			
+			int preloadSize = preloadRowSize / 2;
+			int newTop = Math.max(rangeTop - preloadSize, 0);
+			int newBtm = Math.min(rangeBtm + preloadSize, _spreadsheet.getMaxrows() - 1);
+			
+			rangeTop = _mergeMatrix.getTopConnectedRow(newTop, rangeLeft, rangeRight);
+			rangeBtm = _mergeMatrix.getBottomConnectedRow(newBtm, rangeLeft, rangeRight);
 		}
+
+		
+		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
+		JSONObject data = spreadsheetCtrl.getRangeAttrs(sheet, 
+				header, SpreadsheetCtrl.CellAttribute.ALL, rangeLeft, rangeTop, rangeRight, rangeBtm);
+		data.put("dir", "jump");
+		json.put("data", data);
 		
 		_lastleft = left;
 		_lastright = right;
@@ -415,67 +413,45 @@ public class CellFetchCommandHelper{
 		// prepare top frozen cell
 		int fzr = _spreadsheet.getRowfreeze();
 		if (fzr > -1) {
-			JSONObj topFrozen = new JSONObj();
-			jresult.setData("topfrozen", topFrozen);
-
-			List tfrd = new ArrayList();
-
-			topFrozen.setData("type", "jump");
-			topFrozen.setData("dir", "jump");
-			topFrozen.setData("left", left);
-			topFrozen.setData("top", 0);
-			topFrozen.setData("width", w);
-			topFrozen.setData("height", fzr + 1);
-			topFrozen.setData("data", tfrd);
-
+			
+			JSONObject topFrozen = new JSONObject();
+			json.put("topFrozen", topFrozen);
+			
+			topFrozen.put("type", "jump");
+			topFrozen.put("dir", "jump");
+			topFrozen.put("left", left);
+			topFrozen.put("top", 0);
+			topFrozen.put("width", w);
+			topFrozen.put("height", fzr + 1);
+			
 			ce = left + w;
-			for (int i = 0; i <= fzr; i++) {
-				jrow = new JSONObj();
-				tfrd.add(jrow);
-				prepareRowData(jrow, sheet, i);
-				List cells = new ArrayList();
-				jrow.setData("cells", cells);
-				for (int j = left; j < ce; j++) {
-					jcell = new JSONObj(); // cell
-					Cell cell = Utils.getCell(sheet, i, j);
-					cells.add(jcell);
-					prepareCellData(jcell, sheet, i, j);
-				}
-			}
+			
+			data = spreadsheetCtrl.getRangeAttrs(sheet, 
+					header, SpreadsheetCtrl.CellAttribute.ALL, rangeLeft, 0, rangeRight, fzr);
+			topFrozen.put("data", data);
 		}
 		
 		
 		//prepare left frozen cell
 		int fzc = _spreadsheet.getColumnfreeze();
 		if (fzc > -1) {
-			JSONObj leftFrozen = new JSONObj();
-			jresult.setData("leftfrozen", leftFrozen);
+			JSONObject leftFrozen = new JSONObject();
+			json.put("leftFrozen", leftFrozen);
 			
-			List lfrd = new ArrayList();
-			leftFrozen.setData("type", "jump");
-			leftFrozen.setData("dir", "jump");
-			leftFrozen.setData("left", 0);
-			leftFrozen.setData("top", top);
-			leftFrozen.setData("width", fzc + 1);
-			leftFrozen.setData("height", h);
-			leftFrozen.setData("data", lfrd);
+			leftFrozen.put("type", "jump");
+			leftFrozen.put("dir", "jump");
+			leftFrozen.put("left", 0);
+			leftFrozen.put("top", top);
+			leftFrozen.put("width", fzc + 1);
+			leftFrozen.put("height", h);
 			
 			re = top + h;
-			for (int i = top; i < re; i++) {
-				jrow = new JSONObj();
-				lfrd.add(jrow);
-				prepareRowData(jrow, sheet, i);
-				List cells = new ArrayList();
-				jrow.setData("cells", cells);
-				for (int j = 0; j <= fzc; j++) {
-					jcell = new JSONObj(); // cell
-					Cell cell = Utils.getCell(sheet, i, j);
-					cells.add(jcell);
-					prepareCellData(jcell, sheet, i, j);
-				}
-			}
+			
+			data = spreadsheetCtrl.getRangeAttrs(sheet, 
+					header, SpreadsheetCtrl.CellAttribute.ALL, 0, rangeTop, fzc, rangeBtm);
+			leftFrozen.put("data", data);
 		}
-		return jresult.toString();
+		return json.toString();
 	}
 	
 	private String jump(String dir,Spreadsheet spreadsheet,String sheetId, Worksheet sheet, String type,
@@ -535,61 +511,26 @@ public class CellFetchCommandHelper{
 		return jumpResult(sheet,left,top,right,bottom);
 	}
 	
-	private String loadEast(Worksheet sheet,String type, 
+	private LoadResult loadEast(Worksheet sheet,String type, 
 			int blockLeft,int blockTop,int blockRight, int blockBottom,
-			int fetchWidth) {
+			int fetchWidth, int rangeWidth, int rangeHeight) {
 
-		/**
-		 * { "data":[ 
-		 * 	{ "type":"row", "index":1, "cells":[ 
-		 * 		{ "index":1,"txt":"", "format":""; }, 
-		 * 		{ "index":1, "txt":"", "format":""; } 
-		 * 	] }
-		 * ] }
-		 */
-
-		JSONObj jresult = new JSONObj();
-		List rd = new ArrayList();
-
-		jresult.setData("type", "neighbor");
-		jresult.setData("dir", "east");
-		jresult.setData("width", fetchWidth);
-		jresult.setData("height", blockBottom - blockTop + 1);
-		jresult.setData("data", rd);
-		JSONObj jrow, jcell;
-		JSONObj jheader;
-		List headers = null;
-		if (!_hidecolhead) {
-			headers = new ArrayList();
-			jresult.setData("theader", headers);
-		}
-		boolean fillheader = false;
+		JSONObject json = new JSONObject();
+		json.put("type", "neighbor");
+		json.put("width", fetchWidth);
+		json.put("height", blockBottom - blockTop + 1); //the range of height to generate DOM
 		
 		//append row
 		int cs = blockRight + 1;
 		int ce = cs + fetchWidth;
+		int rangeRight = Math.min(rangeWidth > fetchWidth ? cs + rangeWidth - 1 : ce - 1, _spreadsheet.getMaxcolumns() - 1); 
+		int rangeBottom = rangeHeight < 0 ? blockBottom : blockBottom + rangeHeight;
+		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
 		
-		for (int i = blockTop; i <= blockBottom; i++) {
-			jrow = new JSONObj();
-			rd.add(jrow);
-			prepareRowData(jrow, sheet, i);
-			List cells = new ArrayList();
-
-			jrow.setData("cells", cells);
-			for (int j = cs; j < ce; j++) {
-				jcell = new JSONObj(); // cell
-				Cell cell = Utils.getCell(sheet, i, j);
-				cells.add(jcell);
-				prepareCellData(jcell, sheet, i, j);
-				if (!_hidecolhead && !fillheader) {
-					jheader = new JSONObj();
-					prepareTopHeaderData(jheader, j);
-					headers.add(jheader);
-				}
-
-			}
-			fillheader = true;
-		}
+		JSONObject data = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, 
+				SpreadsheetCtrl.CellAttribute.ALL, cs, blockTop, rangeRight, rangeBottom);
+		data.put("dir", "east");
+		json.put("data", data);
 	
 		_lastleft = blockLeft;
 		_lastright = ce - 1;
@@ -599,78 +540,44 @@ public class CellFetchCommandHelper{
 		//process frozen row data
 		int fzr = _spreadsheet.getRowfreeze();
 		if (fzr > -1) {
-			JSONObj topFrozen = new JSONObj();
-			jresult.setData("topfrozen", topFrozen);
-
-			List tfrd = new ArrayList();
-
-			topFrozen.setData("type", "neighbor");
-			topFrozen.setData("dir", "east");
-			topFrozen.setData("width", fetchWidth);
-			topFrozen.setData("height", fzr + 1);
-			topFrozen.setData("data", tfrd);
-
-			for (int i = 0; i <= fzr; i++) {
-				jrow = new JSONObj();
-				tfrd.add(jrow);
-				prepareRowData(jrow, sheet, i);
-				List cells = new ArrayList();
-				jrow.setData("cells", cells);
-				for (int j = cs; j < ce; j++) {
-					jcell = new JSONObj(); // cell
-					Cell cell = Utils.getCell(sheet, i, j);
-					cells.add(jcell);
-					prepareCellData(jcell, sheet, i, j);
-				}
-			}
+			
+			JSONObject topFrozen = new JSONObject();
+			json.put("topFrozen", topFrozen);
+			
+			topFrozen.put("type", "neighbor");
+			topFrozen.put("width", fetchWidth);
+			topFrozen.put("height", fzr + 1);
+			
+			data = spreadsheetCtrl.getRangeAttrs(sheet, _hiderowhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
+					cs, 0, rangeRight, fzr);
+			data.put("dir", "east");
+			topFrozen.put("data", data);
 		}
-		return jresult.toString();
+		return new LoadResult(rangeRight, json);
 	}
 	
-	private String loadWest(Worksheet sheet,String type,
+	private LoadResult loadWest(Worksheet sheet,String type,
 			int blockLeft,int blockTop,int blockRight, int blockBottom,
-			int fetchWidth) {
+			int fetchWidth, int rangeWidth, int rangeHeight) {
 		
-		JSONObj jresult = new JSONObj();
-		List rd = new ArrayList();
-
-		jresult.setData("type", "neighbor");
-		jresult.setData("dir", "west");
-		jresult.setData("width", fetchWidth);// increased cell size
-		jresult.setData("height", blockBottom - blockTop + 1);// increased cell size
-		jresult.setData("data", rd);
-		JSONObj jrow, jcell;
-		JSONObj jheader;
-		List headers = null;
-		if (!_hidecolhead) {
-			headers = new ArrayList();
-			jresult.setData("theader", headers);
-		}
-		boolean fillheader = false;
+		JSONObject json = new JSONObject();
+		json.put("type", "neighbor");
+		json.put("width", fetchWidth);// increased cell size
+		json.put("height", blockBottom - blockTop + 1);// increased cell size
 		
 		// append row
 		int cs = blockLeft - 1;
 		int ce = cs - fetchWidth;
-		for (int i = blockTop; i <= blockBottom; i++) {
-			jrow = new JSONObj();
-			rd.add(jrow);
-			prepareRowData(jrow, sheet, i);
-			List cells = new ArrayList();
-			jrow.setData("cells", cells);
-			for (int j = cs; j > ce; j--) {
-				jcell = new JSONObj();
-				Cell cell = Utils.getCell(sheet, i, j);
-				cells.add(jcell);
-				prepareCellData(jcell, sheet, i, j);
-
-				if (!_hidecolhead && !fillheader) {
-					jheader = new JSONObj();
-					prepareTopHeaderData(jheader, j);
-					headers.add(jheader);
-				}
-			}
-			fillheader = true;
-		}
+		int rangeLeft = rangeWidth > fetchWidth ? blockLeft - rangeWidth - 1: ce + 1;
+		if (rangeLeft < 0)
+			rangeLeft = 0;
+		int rangeBottom = rangeHeight < 0 ? blockBottom : blockBottom + rangeHeight;
+		
+		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
+		JSONObject data = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, 
+				SpreadsheetCtrl.CellAttribute.ALL, rangeLeft, blockTop, cs, rangeBottom);
+		data.put("dir", "west");
+		json.put("data", data);
 		
 		_lastleft = ce+1;
 		_lastright = blockRight;
@@ -680,76 +587,41 @@ public class CellFetchCommandHelper{
 		// process frozen row data
 		int fzr = _spreadsheet.getRowfreeze();
 		if (fzr > -1) {
-			JSONObj topFrozen = new JSONObj();
-			jresult.setData("topfrozen", topFrozen);
-
-			List tfrd = new ArrayList();
-
-			topFrozen.setData("type", "neighbor");
-			topFrozen.setData("dir", "west");
-			topFrozen.setData("width", fetchWidth);
-			topFrozen.setData("height", fzr + 1);
-			topFrozen.setData("data", tfrd);
-
-			for (int i = 0; i <= fzr; i++) {
-				jrow = new JSONObj();
-				tfrd.add(jrow);
-				prepareRowData(jrow, sheet, i);
-				List cells = new ArrayList();
-				jrow.setData("cells", cells);
-				for (int j = cs; j > ce; j--) {
-					jcell = new JSONObj(); // cell
-					Cell cell = Utils.getCell(sheet, i, j);
-					cells.add(jcell);
-					prepareCellData(jcell, sheet, i, j);
-				}
-			}
+			
+			JSONObject topFrozen = new JSONObject();
+			json.put("topFrozen", topFrozen);
+			
+			topFrozen.put("type", "neighbor");
+			topFrozen.put("width", fetchWidth);
+			topFrozen.put("height", fzr + 1);
+			
+			data = spreadsheetCtrl.getRangeAttrs(sheet, _hiderowhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
+					rangeLeft, 0, cs, fzr);
+			data.put("dir", "west");
+			topFrozen.put("data", data);
 		}
-		
-		return jresult.toString();
+		return new LoadResult(rangeLeft, json);
 	}
 	
-	private String loadSouth(Worksheet sheet,String type, 
-			int blockLeft,int blockTop,int blockRight, int blockBottom,
-			int fetchHeight) {
+	private String loadSouth(Worksheet sheet, String type, 
+			int blockLeft,int blockTop, int blockRight, int blockBottom, int fetchHeight, int rangeLeft, int rangeRight, int cacheRangeHeight) {
 		
-		JSONObj jresult = new JSONObj();
-		List rd = new ArrayList();
-
-		jresult.setData("type", "neighbor");
-		jresult.setData("dir", "south");
-		jresult.setData("width", blockRight - blockLeft + 1);
-		jresult.setData("height", fetchHeight);
-		jresult.setData("data", rd);
-		JSONObj jrow, jcell;
-		JSONObj jheader;
-		List headers = null;
-		if (!_hiderowhead) {
-			headers = new ArrayList();
-			jresult.setData("lheader", headers);
-		}
+		JSONObject json = new JSONObject();
+		json.put("type", "neighbor");
+		json.put("width", blockRight - blockLeft + 1);
+		json.put("height", fetchHeight);
 
 		int rs = blockBottom + 1;
 		int re = rs + fetchHeight;
+		int rangeBottom = Math.min(cacheRangeHeight > fetchHeight ? rs + cacheRangeHeight - 1 : re - 1, _spreadsheet.getMaxrows() - 1);
+		rangeLeft = rangeLeft > 0 && rangeLeft < blockLeft ? rangeLeft : blockLeft;
+		rangeRight = Math.min(Math.max(blockRight, rangeRight), _spreadsheet.getMaxcolumns() - 1);
+		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
+		JSONObject data = spreadsheetCtrl.getRangeAttrs(sheet, 
+				_hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, rangeLeft, rs, rangeRight, rangeBottom);
+		data.put("dir", "south");
+		json.put("data", data);
 
-		for (int i = rs; i < re; i++) {
-			jrow = new JSONObj();
-			rd.add(jrow);
-			prepareRowData(jrow, sheet, i);
-			List cells = new ArrayList();
-			jrow.setData("cells", cells);
-			for (int j = blockLeft; j <= blockRight; j++) {
-				jcell = new JSONObj();
-				Cell cell = Utils.getCell(sheet, i, j);
-				cells.add(jcell);
-				prepareCellData(jcell, sheet, i, j);
-			}
-			if (!_hiderowhead) {
-				jheader = new JSONObj();
-				prepareLeftHeaderData(jheader, i);
-				headers.add(jheader);
-			}
-		}
 		_lastleft = blockLeft;
 		_lastright = blockRight;
 		_lasttop = blockTop;
@@ -758,243 +630,72 @@ public class CellFetchCommandHelper{
 		// process frozen left
 		int fzc = _spreadsheet.getColumnfreeze();
 		if (fzc > -1) {
-			JSONObj leftFrozen = new JSONObj();
-			jresult.setData("leftfrozen", leftFrozen);
-
-			List lfrd = new ArrayList();
-
-			leftFrozen.setData("type", "neighbor");
-			leftFrozen.setData("dir", "south");
-			leftFrozen.setData("width", fzc + 1);
-			leftFrozen.setData("height", fetchHeight);
-			leftFrozen.setData("data", lfrd);
-
-			rs = blockBottom + 1;
-			re = rs + fetchHeight;
-
-			for (int i = rs; i < re; i++) {
-				jrow = new JSONObj();
-				lfrd.add(jrow);
-				prepareRowData(jrow, sheet, i);
-				List cells = new ArrayList();
-				jrow.setData("cells", cells);
-				for (int j = 0; j <= fzc; j++) {
-					jcell = new JSONObj(); // cell
-					Cell cell = Utils.getCell(sheet, i, j);
-					cells.add(jcell);
-					prepareCellData(jcell, sheet, i, j);
-				}
-			}
+			
+			JSONObject leftFrozen = new JSONObject();
+			json.put("leftFrozen", leftFrozen);
+			
+			leftFrozen.put("type", "neighbor");
+			leftFrozen.put("width", fzc + 1);
+			leftFrozen.put("height", fetchHeight);
+			data = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, SpreadsheetCtrl.CellAttribute.ALL,
+					0, rs, fzc, rangeBottom);
+			data.put("dir", "south");
+			leftFrozen.put("data", data);
 		}
 
-		return jresult.toString();
+		return json.toString();
 	}
 	private String loadNorth(Worksheet sheet,String type, 
-			int blockLeft,int blockTop,int blockRight, int blockBottom,
-			int fetchHeight) {
+			int blockLeft, int blockTop, int blockRight, int blockBottom,
+			int fetchHeight, int rangeLeft, int rangeRight, int cacheRangeHeight) {
 
-		JSONObj jresult = new JSONObj();
-		List rd = new ArrayList();
+		JSONObject json = new JSONObject();
+		json.put("type", "neighbor");
+		json.put("width", blockRight - blockLeft + 1);
+		json.put("height", fetchHeight);
 		
-		jresult.setData("type", "neighbor");
-		jresult.setData("dir", "north");
-		jresult.setData("width", blockRight - blockLeft + 1);
-		jresult.setData("height", fetchHeight);
-		jresult.setData("data", rd);
-		JSONObj jrow, jcell;
-		JSONObj jheader;
-		List headers = null;
-		if (!_hiderowhead) {
-			headers = new ArrayList();
-			jresult.setData("lheader", headers);
-		}
-		// append row
 		int rs = blockTop - 1;
 		int re = rs - fetchHeight;
-		for (int i = rs; i > re; i--) {
-			jrow = new JSONObj();
-			rd.add(jrow);
-			prepareRowData(jrow, sheet, i);
-			List cells = new ArrayList();
-			jrow.setData("cells", cells);
-			for (int j = blockLeft; j <= blockRight; j++) {
-				jcell = new JSONObj();
-				Cell cell = Utils.getCell(sheet, i, j);
-				cells.add(jcell);
-				prepareCellData(jcell, sheet, i, j);
-			}
-			if (!_hiderowhead) {
-				jheader = new JSONObj();
-				prepareLeftHeaderData(jheader, i);
-				headers.add(jheader);
-			}
-		}
+		int rangeTop = cacheRangeHeight > fetchHeight ? rs - cacheRangeHeight - 1 : re + 1;
+		rangeLeft = rangeLeft > 0 && rangeLeft < blockLeft ? rangeLeft : blockLeft;
+		rangeRight = Math.min(Math.max(blockRight, rangeRight), _spreadsheet.getMaxcolumns() - 1);
+		
+		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
+		JSONObject data = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
+				rangeLeft, rangeTop, rangeRight, rs);
+		data.put("dir", "north");
+		json.put("data", data);
+		
 		_lastleft = blockLeft;
 		_lastright = blockRight;
 		_lasttop = re + 1;
 		_lastbottom = blockBottom;
 		
-		
 		// process frozen left
 		int frc = _spreadsheet.getColumnfreeze();
 		if (frc > -1) {
-			JSONObj leftFrozen = new JSONObj();
-			jresult.setData("leftfrozen", leftFrozen);
-
-			List lfrd = new ArrayList();
-
-			leftFrozen.setData("type", "neighbor");
-			leftFrozen.setData("dir", "north");
-			leftFrozen.setData("width", frc + 1);
-			leftFrozen.setData("height", fetchHeight);
-			leftFrozen.setData("data", lfrd);
-
-			rs = blockTop - 1;
-			re = rs - fetchHeight;
-
-			for (int i = rs; i > re; i--) {
-				jrow = new JSONObj();
-				lfrd.add(jrow);
-				prepareRowData(jrow, sheet, i);
-				List cells = new ArrayList();
-				jrow.setData("cells", cells);
-				for (int j = 0; j <= frc; j++) {
-					jcell = new JSONObj(); // cell
-					Cell cell = Utils.getCell(sheet, i, j);
-					cells.add(jcell);
-					prepareCellData(jcell, sheet, i, j);
-				}
-			}
-		}
-		
-		return jresult.toString();
-	}
-	
-	private void prepareTopHeaderData(JSONObj jheader, int col) {
-		jheader.setData("ix", col);
-		String name = (String) _spreadsheet.getColumntitle(col);
-		jheader.setData("nm", name);
-		final HeaderPositionInfo info = _colHelper.getInfo(col);
-		if (info != null) {
-			jheader.setData("zsw", info.id);
-			if (info.hidden) {
-				jheader.setData("hn", true);
-			}
-		}
-	}
-	
-	private void prepareLeftHeaderData(JSONObj jheader, int row) {
-		jheader.setData("ix", row);
-		String name = (String) _spreadsheet.getRowtitle(row);
-		jheader.setData("nm", name);
-		final HeaderPositionInfo info = _rowHelper.getInfo(row);
-		if (info != null) {
-			jheader.setData("zsh", info.id);
-			if (info.hidden) {
-				jheader.setData("hn", true);
-			}
-		}
-	}
-	
-	private void prepareRowData(JSONObj jrow, Worksheet sheet,int row) {
-		jrow.setData("ix", row);
-		HeaderPositionInfo info = _rowHelper.getInfo(row);
-		if (info != null)
-			jrow.setData("zsh", info.id);
-	}
-	
-	private void prepareCellData(JSONObj jcell, Worksheet sheet,int row,int col) {
-
-		jcell.setData("ix", col);// index
-		
-		Cell cell = Utils.getCell(sheet, row, col); 
-		
-		if (cell != null) {
-			jcell.setData("ctype", cell.getCellType());
-			CellStyle style = cell.getCellStyle();
 			
-			boolean wrap = false;
+			JSONObject leftFrozen = new JSONObject();
+			json.put("leftFrozen", leftFrozen);
 			
-			CellFormatHelper cfh = new CellFormatHelper(sheet, row, col, _mergeMatrix);
-			String st = cfh.getHtmlStyle();
-			String ist = cfh.getInnerHtmlStyle();
-			if (st != null && !"".equals(st)) {
-				jcell.setData("st", st);// style of text cell.
-			}
-			if (ist != null && !"".equals(ist)) {
-				jcell.setData("ist", ist);// inner style of text cell
-			}
-			if (style != null && style.getWrapText()) {
-				wrap = true;
-				jcell.setData("wrap", true);// warp
-			}
-			//default locked is true, send to client if locked is false
-			if (style != null && !style.getLocked()) {
-				jcell.setData("lock", false);
-			}
-			if (cfh.hasRightBorder()) {
-				jcell.setData("rbo", true);// right border, when processing text overflow, must take care this.
-			}
-
-			final FormatText ft = Utils.getFormatText(cell);
-			RichTextString rstr = ft != null && ft.isRichTextString()? ft.getRichTextString() : null;
-			String text = rstr == null ? ft != null ? Utils.escapeCellText(ft.getCellFormatResult().text, wrap, true) : "" : Utils.formatRichTextString(sheet, rstr, wrap);
-			Hyperlink hlink = Utils.getHyperlink(cell);
-			if (hlink != null) {
-				text = Utils.formatHyperlink(sheet, hlink, text, wrap);
-			}
-			jcell.setData("txt", text);
-			jcell.setData("edit", Utils.getEditText(cell));
-
-			int textHAlign = BookHelper.getRealAlignment(cell);
-			switch(textHAlign) {
-			case CellStyle.ALIGN_CENTER:
-			case CellStyle.ALIGN_CENTER_SELECTION:
-				jcell.setData("hal", "c");
-				break;
-			case CellStyle.ALIGN_RIGHT:
-				jcell.setData("hal", "r");
-				break;
-			}
-			int verAlign = style.getVerticalAlignment();
-			switch (verAlign) {
-			//top is client side's default, ignore it
-			//case CellStyle.VERTICAL_TOP:
-			case CellStyle.VERTICAL_CENTER:
-				jcell.setData("vtal", "c");
-				break;
-			case CellStyle.VERTICAL_BOTTOM:
-				jcell.setData("vtal", "b");
-				break;
-			}
-		} else {
-			jcell.setData("txt", "");
-			CellFormatHelper cfh = new CellFormatHelper(sheet, row, col, _ctrl.getMergeMatrixHelper(sheet));
-			String st = cfh.getHtmlStyle();
-			String ist = cfh.getInnerHtmlStyle();
-			if (st != null && !"".equals(st))
-				jcell.setData("st", st);// style of text cell.
-
-			if (ist != null && !"".equals(ist))
-				jcell.setData("ist", ist);// inner style of text cell
-
-			if (cfh.hasRightBorder())
-				jcell.setData("rbo", true);// format
+			leftFrozen.put("type", "neighbor");
+			leftFrozen.put("width", frc + 1);
+			leftFrozen.put("height", fetchHeight);
+			data = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, SpreadsheetCtrl.CellAttribute.ALL,
+					0, rangeTop, frc, rs);
+			data.put("dir", "north");
+			leftFrozen.put("data", data);
 		}
+		return json.toString();
+	}
+	
+	private class LoadResult {
+		int index;
+		JSONObject json;
 		
-		MergedRect rect = _mergeMatrix.getMergeRange(row, col);
-		if ((rect != null)) {
-			jcell.setData("merr", rect.getRight());// right
-			jcell.setData("merid", rect.getId());// right
-			jcell.setData("merl", rect.getLeft());// left
-			jcell.setData("mert", rect.getTop());// top
-			jcell.setData("merb", rect.getBottom());// bottom
+		LoadResult(int loadSize, JSONObject json) {
+			this.index = loadSize;
+			this.json = json;
 		}
-
-		HeaderPositionInfo info = _colHelper.getInfo(col);
-		if (info != null) {
-			jcell.setData("zsw", info.id);
-		}
-		
 	}
 }

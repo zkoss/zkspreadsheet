@@ -159,31 +159,31 @@ public class UtilFns {
 		return Integer.valueOf(max);//Integer.valueOf(ss.getMaxcolumn()-1);
 	}
 	
-	static public String getRowOuterAttrs(Spreadsheet ss,int row){
-		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getRowOuterAttrs(row);
-	}
-	
-	static public String getCellOuterAttrs(Spreadsheet ss,int row,int col){
-		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getCellOuterAttrs(row,col);
-	}
-	
-	static public String getCellInnerAttrs(Spreadsheet ss,int row,int col){
-		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getCellInnerAttrs(row,col);
-	}
-	static public String getTopHeaderOuterAttrs(Spreadsheet ss,int col){
-		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getTopHeaderOuterAttrs(col);
-	}
-	static public String getTopHeaderInnerAttrs(Spreadsheet ss,int col){
-		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getTopHeaderInnerAttrs(col);
-	}
-	
-	static public String getLeftHeaderOuterAttrs(Spreadsheet ss,int row){
-		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getLeftHeaderOuterAttrs(row);
-	}
-	
-	static public String getLeftHeaderInnerAttrs(Spreadsheet ss,int row){
-		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getLeftHeaderInnerAttrs(row);
-	}
+//	static public String getRowOuterAttrs(Spreadsheet ss,int row){
+//		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getRowOuterAttrs(row);
+//	}
+//	
+//	static public String getCellOuterAttrs(Spreadsheet ss,int row,int col){
+//		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getCellOuterAttrs(row,col);
+//	}
+//	
+//	static public String getCellInnerAttrs(Spreadsheet ss,int row,int col){
+//		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getCellInnerAttrs(row,col);
+//	}
+//	static public String getTopHeaderOuterAttrs(Spreadsheet ss,int col){
+//		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getTopHeaderOuterAttrs(col);
+//	}
+//	static public String getTopHeaderInnerAttrs(Spreadsheet ss,int col){
+//		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getTopHeaderInnerAttrs(col);
+//	}
+//	
+//	static public String getLeftHeaderOuterAttrs(Spreadsheet ss,int row){
+//		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getLeftHeaderOuterAttrs(row);
+//	}
+//	
+//	static public String getLeftHeaderInnerAttrs(Spreadsheet ss,int row){
+//		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getLeftHeaderInnerAttrs(row);
+//	}
 	
 	static public Boolean getTopHeaderHiddens(Spreadsheet ss, int col) {
 		return ((SpreadsheetCtrl)ss.getExtraCtrl()).getTopHeaderHiddens(col);

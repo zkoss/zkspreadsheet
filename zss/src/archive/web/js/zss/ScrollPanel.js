@@ -23,7 +23,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 zss.ScrollPanel = zk.$extends(zk.Object, {
 	$init: function (sheet) {
 		this.$supers('$init', arguments);
-		var local = this,
+		var self = this,
 			wgt = sheet._wgt,
 			scrollPanel = wgt.$n('sp');
 		
@@ -37,25 +37,25 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 		this.timerRunning = false;//is timer for scroll running.
 		this.lastMove = "";//the last move of scrolling,
 		scrollPanel.ctrl = this;
-
 		
 		sheet.insertSSInitLater(function() {//datapanel doesn't ready when cell initialing, so invoke later.
-			var dtcmp = local.sheet.dp.comp,//zkSDatapanelCtrl._currcmp(local);
-				sccmp = local.comp;
-			local.minLeft = local._getMaxScrollLeft(dtcmp, sccmp);
-			local.minTop = local._getMaxScrollTop(dtcmp, sccmp);
-			local.minHeight = dtcmp.offsetHeight;
-			local.minWidth = dtcmp.offsetWidth;
+			var dtcmp = self.sheet.dp.comp,//zkSDatapanelCtrl._currcmp(self);
+				sccmp = self.comp;
+			self.minLeft = self._getMaxScrollLeft(dtcmp, sccmp);
+			self.minTop = self._getMaxScrollTop(dtcmp, sccmp);
+			self.minHeight = dtcmp.offsetHeight;
+			self.minWidth = dtcmp.offsetWidth;
 
-			wgt.domListen_(scrollPanel, 'onScroll', '_doScrollPanelScrolling');
-			wgt.domListen_(scrollPanel, 'onMouseDown', '_doScrollPanelMouseDown');
+			wgt.domListen_(scrollPanel, 'onScroll', self.proxy(self._doScrolling))
+				.domListen_(scrollPanel, 'onMouseDown', self.proxy(self._doMousedown));
 		}, false);
 	},
 	cleanup: function () {
 		var wgt = this.sheet._wgt,
 			n = wgt.$n('sp');
-		wgt.domUnlisten_(n, 'onScroll', '_doScrollPanelScrolling');
-		wgt.domUnlisten_(n, 'onMouseDown', '_doScrollPanelMouseDown');
+		
+		wgt.domUnlisten_(n, 'onScroll', this.proxy(this._doScrolling))
+			.domUnlisten_(n, 'onMouseDown', this.proxy(this._doMousedown));
 		
 		this.invalid = true;
 		if(this.comp) this.comp.ctrl = null;
@@ -120,11 +120,21 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 	_hscrollTimeoutId: null,
 	_fireOnVScroll: function (time) {
 		clearTimeout(this._vscrollTimeoutId);
-		this._vscrollTimeoutId = setTimeout(this.proxy(this._doVScroll), time >= 0 ? time : zk.gecko ? 200 : 60);
+		
+		//this._vscrollTimeoutId = setTimeout(this.proxy(this._doVScroll), time >= 0 ? time : zk.gecko ? 200 : 60);
+		var self = this;
+		this._vscrollTimeoutId = setTimeout(function () {
+			self._doVScroll();
+		}, time >= 0 ? time : 60);
 	},
 	_fireOnHScroll: function (time) {
 		clearTimeout(this._hscrollTimeoutId);
-		this._hscrollTimeoutId = setTimeout(this.proxy(this._doHScroll), time >= 0 ? time : zk.gecko ? 200 : 60);
+		
+		//this._hscrollTimeoutId = setTimeout(this.proxy(this._doHScroll), time >= 0 ? time : zk.gecko ? 200 : 60);
+		var self = this;
+		this._vscrollTimeoutId = setTimeout(function () {
+			self._doHScroll();
+		}, time >= 0 ? time : 60);
 	},
 	_doVScroll: function () {
 		this._doScroll(true);
@@ -162,7 +172,6 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 		}
 		
 		var cellcmp = cell.comp,
-			local = this,
 			spcmp = this.comp,
 			block = sheet.activeBlock,
 			w = cellcmp.offsetWidth, // component width

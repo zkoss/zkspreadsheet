@@ -16,93 +16,205 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	it will be useful, but WITHOUT ANY WARRANTY.
 }}IS_RIGHT
 */
+(function () {
 
-/**
- * LeftPanel represent the left area of the spreadsheet. It contains row headers of the spreadsheet
- */
-zss.LeftPanel = zk.$extends(zk.Object, {
-	$init: function (sheet, node, corner) {
-		this.$supers('$init', arguments);	
-		var wgt = sheet._wgt,
-			pad = node.firstChild,
-			inner = pad.nextSibling,
-			head = inner.firstChild;
-
-		this.id = node.id;
-		this.sheetid = sheet.sheetid;
-		this.comp = node;
-		zk(node).disableSelection();//disable selectable
-		
-		this.padcomp = pad;
-		this.icomp = inner;
-		this.hcomp = head;
-		this.hidehead = head.getAttribute("z.hide") == "true";
+zss.Panel = zk.$extends(zk.Widget, {
+	widgetName: 'Panel',
+	$o: zk.$void, //owner, fellows relationship no needed
+	$init: function (sheet, hide, start, end, data, isCorner) {
+		this.$supers(zss.Panel, '$init', []);
 		
 		this.sheet = sheet;
-		node.ctrl = this;
+		this.hidehead = hide;
+		this.isCorner = isCorner;
 		
-		this.headers = this._initHeader(sheet, head, corner);
-		
-		//not a corner left panel
-		if (!corner) {
-			this._initFrozenColumn(sheet, head);
-		}
-
-		wgt.domListen_(node, 'onMouseOver', '_doLeftPanelMouseOver');
-		wgt.domListen_(node, 'onMouseOut', '_doLeftPanelMouseOut');
+		this.headers = this.initHeaders_(sheet, start, end, data, isCorner);
+		this.block = this.initFrozenBlock_(sheet, start, end, data);
 	},
-	_initHeader: function (sheet, head, corner) {
-		var headers = [],
-			nodes = jq(head).children('div'),
-			size = nodes.length,
-			header,
-			idx,
-			boundary,
-			lpheaders = corner ? sheet.lp.headers : null;
-
-		for (var i = 0, j = 0; i < size; i++) {
-			header = nodes[i];
-			if (header.getAttribute('zs.t') == 'SLheader') {
-				idx = zk.parseInt(header.getAttribute('z.r'));
-				boundary = nodes[i + 1];
-				headers.push(new zss.Header(sheet, header, boundary, idx, zss.Header.VER, lpheaders ? lpheaders[j++] : null));
+	/**
+	 * Create zss.Header child widgets, invoke on Panel widget initialization
+	 */
+	initHeaders_: function (sheet, start, end, data, isCorner) {
+		//to be overridden
+		return null;//return header widget array
+	},
+	/**
+	 * Create frozen block, invoke on Panel widget initialization 
+	 */
+	initFrozenBlock_: function (sheet, start, end, data) {
+		//to be overridden
+		return null;//return zss.CellBlockCtrl if there's frozen area
+	},
+	createHeaders_: function (dir, start, end) {
+		var sheet = this.sheet,
+			headers = this.getHeaderData_(),
+			isInsert = this.isInsert_(dir),
+			type = this.getHeaderType_(),
+			html = '',
+			hs = [];
+		if ('jump' == dir)
+			this._clearAllHeader();
+		
+		for (var i = start; i <= end; i++) {
+			var h = new zss.Header(sheet, type, headers[i]);
+			html += h.getHtml();
+			hs.push(h);
+		}
+		isInsert ? this.insertHeaders_(hs, html) : this.appendHeaders_(hs, html);
+		this.updateSelectionCSS_();
+	},
+	updateSelectionCSS_: function () {
+		//to be overridden
+	},
+	_clearAllHeader: function () {
+		var hs = this.headers,
+			size = hs ? hs.length : 0;
+		this.removeChildFromStart_(size);
+	},
+	/**
+	 * Returns the cached active range data source
+	 */
+	getHeaderData_: function () {
+		//to be overridden
+	},
+	/**
+	 * Returns frozen data
+	 */
+	getFrozenData_: function () {
+		//to be overridden
+	},
+	/**
+	 * Returns frozen header data
+	 */
+	getFrozenHeaderData_: function () {
+		//to be overridden
+	},
+	getHeaderType_: function () {
+		//to be overridden
+	},
+	isInsert_: function (dir) {
+		//to be overridden
+	},
+	/**
+	 * Append zss.Header widgets
+	 * 
+	 * @param array zss.Header widgets
+	 * @param string html
+	 */
+	appendHeaders_: function (headers, html) {
+		var ary = this.headers,
+			l = headers.length;
+		jq(this.hcomp).append(html);
+		for (var i = 0; i < l; i++) {
+			var h = headers[i];
+			ary.push(h);
+			h.bind_();
+		}
+	},
+	/**
+	 * Insert zss.Header widgets
+	 * 
+	 * @param array zss.Headers widgets
+	 * @param string html
+	 */
+	insertHeaders_: function (headers, html) {
+		var ary = this.headers,
+			l = headers.length;
+		jq(html).insertBefore(this.hcomp.firstChild);
+		for (var i = 0; i < l; i++) {
+			var h = headers[i];
+			ary.unshift(h);
+			h.bind_();
+		}
+	},
+	/**
+	 * Insert zss.Header widget
+	 * 
+	 * @param int index
+	 * @param zss.Header 
+	 * @param boolean ignoreDom
+	 */
+	insertHeader_: function (index, header, ignoreDom) {
+		var headers = this.headers,
+			sibling = headers[index];
+		this.insertBefore(header, sibling, ignoreDom);
+		headers.splice(index, 0, header);
+	},
+	/**
+	 * Create cells and associated headers
+	 */
+	create_: function (dir, headerStart, headerEnd, frozenStart, frozenEnd) {
+		//to be overridden
+	},
+	/**
+	 * Remove child from start
+	 * 
+	 * @param int size 
+	 */
+	removeChildFromStart_: function (size) {
+		if (this.hidehead)
+			return;
+		var headers = this.headers;
+		while (size--) {
+			if (!headers.length)
+				return;
+			headers.shift().detach();
+		}
+	},
+	/**
+	 * Remove headers from end
+	 * 
+	 * @param int size 
+	 */
+	removeChildFromEnd_: function (size) {
+		if (this.hidehead) return;
+		
+		var headers = this.headers;
+		while (size--) {
+			if (!headers.length)
+				return;
+			headers.pop().detach();
+		}
+	},
+	removeHeader_: function (index, size) {
+		var ctrl,
+			headers = this.headers;
+		
+		if (index > headers.length) return;
+		
+		if (index == 0)
+			this.removeChildFromStart_(size);
+		else {
+			var rem = headers.slice(index, index + size),
+				tail = headers.slice(index + size, headers.length);
+			headers.length = index;
+			headers.push.apply(headers, tail);
+			
+			var header = rem.pop();
+			for (; header; header = rem.pop()) {
+				header.detach();
 			}
 		}
-		return headers;
 	},
-	_initFrozenColumn: function (sheet, head) {
-		var fzc = sheet.frozenCol;
-		if (fzc > -1) {
-			var leftBlock = head.nextSibling, //leftBlock: contains freeze Columns
-				selArea = leftBlock.nextSibling,
-				selChg = selArea.nextSibling,
-				focus = selChg.nextSibling,
-				highlight = focus.nextSibling;
-
-			this.block = new zss.CellBlockCtrl(sheet, leftBlock, 0, 0);
-			this.block.loadByComp(leftBlock);
-			this.selArea = new zss.SelAreaCtrlLeft(sheet, selArea, sheet.initparm.selrange.clone());
-			this.selChgArea = new zss.SelChgCtrlLeft(sheet, selChg);
-			this.focusMark = new zss.FocusMarkCtrlLeft(sheet, focus, sheet.initparm.focus.clone());
-			this.hlArea = new zss.HighlightLeft(sheet, highlight, sheet.initparm.hlrange.clone(), "inner");
-
-		}
-	},
-	cleanup: function () {
-		var wgt = this.sheet._wgt,
-			n = this.comp;
-		wgt.domUnlisten_(n, 'onMouseOver', '_doLeftPanelMouseOver');
-		wgt.domUnlisten_(n, 'onMouseOut', '_doLeftPanelMouseOut');
+	bind_: function () {
+		this.$supers(zss.Panel, 'bind_', arguments);
 		
-		this.invalid = true;
-		if (this.comp) this.comp.ctrl = null;
-		this.comp = this.icomp = this.hcomp = this.sheet = null;
+		var n = this.comp = this.$n();
+		n.ctrl = this;
+		zk(n).disableSelection();//disable selectable
+		
+		this.padcomp = this.$n('pad'),
+		this.icomp = this.$n('real'),
+		this.hcomp = this.icomp.firstChild;
 		
 		if (this.block) {
-			this.block.cleanup();
-			this.block = null;
+			this.bindFrozenCtrl_();
 		}
-		
+	},
+	bindFrozenCtrl_: function () {
+		//to be overridden
+	},
+	unbindFrozenCtrl_: function () {
 		if (this.selArea) {
 			this.selArea.cleanup();
 			this.selArea = null;
@@ -119,163 +231,160 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 			this.hlArea.cleanup();
 			this.hlArea = null;
 		}
-		
-		var i = this.headers.length;
-		while (i--) {
-			this.headers[i].cleanup();
-			this.headers[i] = null;
-		}
-		this.headers = null;
 	},
-	_doMouseover: function (evt) {
+	unbind_: function () {
+		
+		if (this.headers) {
+			this.headers.splice(0, this.headers.length);
+		}
+		this.unbindFrozenCtrl_();
+		this.comp = this.comp.ctrl = this.padcomp = this.icomp = 
+		this.hcomp = this.headers = this.block = this.sheet = null;
+		this.$supers(zss.Panel, 'unbind_', arguments);
+	},
+	getTypeAttr_: function () {
+		//to be overridden
+	},
+	hasPad_: function () {
+		return false;
+	},
+	doTooltipOver_: zk.$void,
+	doTooltipOut_: zk.$void,
+	doClick_: zk.$void,
+	doMouseDown_: zk.$void,
+	doMouseUp_: zk.$void,
+	doRightClick_: zk.$void,
+	doDoubleClick_: zk.$void,
+	doMouseOver_: function (evt) {
 		var n = evt.domTarget;
 		if (n.getAttribute('zs.t') == "SBoun")
 			n.parentNode.ctrlref._processDrag(true, false);
 		if (n.getAttribute('zs.t') == "SBoun2")
 			n.parentNode.ctrlref._processDrag(true, true);
 	},
-	_doMouseout: function (evt) {
+	doMouseOut_: function (evt) {
 		var n = evt.domTarget;
 		if (n.getAttribute('zs.t') == "SBoun")
 			n.parentNode.ctrlref._processDrag(false, false);
 		if (n.getAttribute('zs.t') == "SBoun2")
 			n.parentNode.ctrlref._processDrag(false, true);
 	},
-	_clearAllHeader: function () {
-		jq(this.hcomp).text('');
-		var i = this.headers.length
-		while (i--) {
-			this.headers[i].cleanup();
-			this.headers[i] = null;
-		}
-		this.headers = [];
-	},
-	_createSouthHeader: function (headerdata, height) {
-		if (this.hidehead) return;
-		for (var j = 0;j < height; j++) {
-			var header = headerdata[j],
-				parm = {type: zss.Header.VER};
-			zkS.copyParm(header, parm, ["ix", "nm", "zsw", "zsh"]);
-			var headerctrl = zss.Header.createComp(this.sheet, parm);
-			this.pushHeaderE(headerctrl);
-		}
-		this._updateSelectionCSS();
-	},
-	_createNorthHeader: function (headerdata, height) {
-		if (this.hidehead) return;
-		for (var j = 0; j < height; j++) {
-			var header = headerdata[j],
-				parm = {type: zss.Header.VER};
-			zkS.copyParm(header, parm, ["ix", "nm", "zsw", "zsh"]);
-			var headerctrl = zss.Header.createComp(this.sheet, parm);
-			this.pushHeaderS(headerctrl);
-		}
-		this._updateSelectionCSS();
-	},
-	_createJumpHeader: function (headerdata, height) {
-		if (this.hidehead) return;
-		//clear all
-		this._clearAllHeader();
-		
-		for (var j = 0; j < height; j++) {
-			var header = headerdata[j],
-				parm = {type: zss.Header.VER};
-			zkS.copyParm(header, parm, ["ix", "nm", "zsw", "zsh"]);
-			var headerctrl = zss.Header.createComp(this.sheet, parm);
-			this.pushHeaderE(headerctrl);
-		}
-		this._updateSelectionCSS();
-	},
-	/**
-	 * Sets the header to the end
-	 * @param zss.Header
-	 */
-	pushHeaderE: function (headerctrl) {
-		if (this.hidehead) return;
-		this.headers.push(headerctrl);
-		this.hcomp.appendChild(headerctrl.comp);
-		this.hcomp.appendChild(headerctrl.bcomp);
-	},
-	/**
-	 * Sets the header to start
-	 * @param zss.Header
-	 */
-	pushHeaderS: function (headerctrl) {
-		if (this.hidehead) return;
-		this.headers.unshift(headerctrl);
-		this.hcomp.insertBefore(headerctrl.bcomp, this.hcomp.firstChild);
-		this.hcomp.insertBefore(headerctrl.comp, headerctrl.bcomp);
-	},
-	/**
-	 * Sets the header position by index
-	 * @param zss.Header
-	 * @param int index
-	 */
-	pushHeaderI: function (headerctrl, index) {
-		if (this.hidehead) return;
-		var headers = this.headers,
-			size = headers.length;
-		if (index > size)
-			throw('index out of bound:' + index + ' > ' + size);
-
-		if (index == 0)
-			this.pushHeaderS(headerctrl);
-		else if(index == size)
-			this.pushHeaderE(headerctrl);
-		else {
-			var tail = headers.slice(index, size);
-			headers.length = index;
-			headers.push(headerctrl);
-			headers.push.apply(headers, tail);
-			
-			this.hcomp.insertBefore(headerctrl.bcomp, tail[0].comp);
-			this.hcomp.insertBefore(headerctrl.comp, headerctrl.bcomp);
-		}
-	},
-	_removeNorthHeader: function (size) {
-		if (this.hidehead) return;
-
-		var headers = this.headers,
-			header;
-		while (size--) {
-			header = headers.shift();
-			jq(header.comp).remove();
-			jq(header.bcomp).remove();
-			header.cleanup();
-		}
-	},
-	_removeSouthHeader: function (size) {
-		if (this.hidehead) return;
-		var headers = this.headers,
-			header;
-		while (size--) {
-			header = headers.pop();
-			jq(header.comp).remove();
-			jq(header.bcomp).remove();
-			header.cleanup();
-		}
-	},
-	_removeHeader: function (index, size) {
-		var ctrl,
-			headers = this.headers;
-		
-		if (index > headers.length) return;
-		
-		if (index == 0)
-			this._removeNorthHeader(size);
-		else {
-			var rem = headers.slice(index, index + size),
-				tail = headers.slice(index + size, headers.length);
-			headers.length = index;
-			headers.push.apply(headers, tail);
-			
-			var header = rem.pop();
-			for (; header; header = rem.pop()) {
-				jq(header.comp).remove();
-				jq(header.bcomp).remove();
-				header.cleanup();
+	redraw: function (out) {
+		var type = this.type,
+			type = this.isCorner ? 'corner' + type : type,
+			uid = this.uuid;
+		out.push('<div id="', uid, '" class="zs', type, ' zsfz', type, '" zs.t="',
+				this.getTypeAttr_(), '">', 
+				(this.hasPad_() ? '<div id="' + uid + '-pad" class="zs' + type + 'pad"></div>' : ''),
+				'<div id="', uid, '-real" class="zs', type, 
+				'i"><div id="', uid, '-head" class="zs', type, 'head">');
+		if (!this.hidehead) {
+			var hs = this.headers,
+				size = hs.length;
+			for (var i = 0; i < size; i++) {
+				out.push(hs[i].getHtml());
 			}
 		}
+		out.push('</div>'); //head div end
+		if (this.block) { //frozen block
+			this.block.redraw(out);
+			out.push('<div id="', uid, '-select" class="zsselect" zs.t="SSelect">',
+					'<div class="zsselecti" zs.t="SSelInner"></div><div class="zsseldot" zs.t="SSelDot"></div></div>',
+					'<div id="', uid, '-selchg" class="zsselchg" zs.t="SSelChg"><div class="zsselchgi"></div></div>',
+					'<div id="', uid, '-focmark" class="zsfocmark" zs.t="SFocus"><div class="zsfocmarki"></div></div>',
+					'<div id="', uid, '-highlight" class="zshighlight" zs.t="SHighlight"><div class="zshighlighti"></div></div>');
+		}
+		out.push('</div></div>');
+	}
+});
+/**
+ * LeftPanel represent the left area of the spreadsheet. It contains row headers of the spreadsheet
+ */
+zss.LeftPanel = zk.$extends(zss.Panel, {
+	widgetName: 'LeftPanel',
+	type: 'left',
+	initHeaders_: function (sheet, start, end, data, isCorner) {		
+		var ary = [],
+			headers = data.rowHeaders,
+			type = zss.Header.VER,
+			leftHeaders = isCorner ? sheet.lp.headers : null,
+			j = 0;
+		for (var i = start; i <= end; i++) {
+			var h = new zss.Header(sheet, type, headers[i], leftHeaders ? leftHeaders[j++] : null);
+			this.appendChild(h, true);
+			ary.push(h);
+		}
+		return ary;
+	},
+	/**
+	 * Create cells and associated headers
+	 */
+	create_: function (dir, rowStart, rowEnd, frozenColStart, forzenColEnd) {
+		this.createHeaders_(dir, rowStart, rowEnd);
+		
+		var createFrozen = frozenColStart >= 0 && forzenColEnd >= 0;
+		if ('jump' == dir && createFrozen) {
+			var oldBlock = this.block;
+			this.block = new zss.CellBlockCtrl(sheet, rowStart, frozenColStart, rowEnd, forzenColEnd, this.getFrozenData_(), 'left');
+			oldBlock ? oldBlock.replaceWidget(this.block) : this.appendChild(this.block);
+		} else if (this.block && createFrozen) {
+			this.block.create_(dir, rowStart, frozenColStart, rowEnd, forzenColEnd, this.getFrozenData_());
+		}
+	},
+	initFrozenBlock_: function (sheet, tRow, bRow, data) {
+		var c = sheet.frozenCol;
+		if (c > -1) {
+			var b = new zss.CellBlockCtrl(sheet, tRow, 0, bRow, c, data, 'left');
+			this.appendChild(b, true);
+			return b;
+		}
+		return null;
+	},
+	getHeaderData_: function () {
+		return this.sheet._wgt._activeRange.rowHeaders;
+	},
+	getFrozenData_: function () {
+		return this.sheet._wgt._activeRange.leftFrozen;
+	},
+	getFrozenHeaderData_: function () {
+		var leftFrozen = this.getFrozenData_();
+		return leftFrozen ? leftFrozen.columnHeaders : null;
+	},
+	getHeaderType_: function () {
+		return zss.Header.VER;
+	},
+	isInsert_: function (dir) {
+		return 'north' == dir; 
+	},
+	bindFrozenCtrl_: function () {
+		var sheet = this.sheet,
+			selArea = this.$n('select'),
+			selChg = selArea.nextSibling,
+			focus = selChg.nextSibling,
+			highlight = focus.nextSibling;
+		
+		this.selArea = new zss.SelAreaCtrlLeft(sheet, selArea, sheet.initparm.selrange.clone());
+		this.selChgArea = new zss.SelChgCtrlLeft(sheet, selChg);
+		this.focusMark = new zss.FocusMarkCtrlLeft(sheet, focus, sheet.initparm.focus.clone());
+		this.hlArea = new zss.HighlightLeft(sheet, highlight, sheet.initparm.hlrange.clone(), "inner");
+	},
+	getTypeAttr_: function () {
+		return 'SLeftPanel';
+	},
+	hasPad_: function () {
+		return true;
+	},
+	removeChildFromStart_: function (size) {
+		if (this.block) {
+			this.block.removeRowsFromStart_(size);
+		}
+		this.$supers(zss.LeftPanel, 'removeChildFromStart_', arguments);
+	},
+	removeChildFromEnd_: function (size) {
+		if (this.block) {
+			this.block.removeRowsFromEnd_(size);
+		}
+		this.$supers(zss.LeftPanel, 'removeChildFromEnd_', arguments);
 	},
 	_updateHeight: function (height) {
 		if (this.height == height) return;
@@ -329,7 +438,7 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 				jq(header.comp)[remove ? 'removeClass' : 'addClass']("zsleft-sel");
 		}
 	},
-	_updateSelectionCSS: function () {
+	updateSelectionCSS_: function () {
 		var sheet = this.sheet,
 			selRange = sheet.selArea.lastRange;
 		if (selRange) {
@@ -388,8 +497,8 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 		
 		var index = row - top,
 			ctrl,
-			nm,
-			parm = {type: zss.Header.VER};
+			rowHeaders = this.getHeaderData_(),
+			type = zss.Header.VER;
 		
 		//insert row intersect with selection range, must remove selection CSS before insert cells
 		var sheet = this.sheet,
@@ -402,10 +511,9 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 		}
 			
 		for (var i = 0; i < size; i++) {
-			parm.ix = row + i;
-			parm.nm = extnm[i];
-			ctrl = zss.Header.createComp(this.sheet, parm);
-			this.pushHeaderI(ctrl, index + i);
+			var r = row + i;
+			ctrl = new zss.Header(sheet, type, rowHeaders[r]);
+			this.insertHeader_(index + i, ctrl);
 		}
 		extnm = extnm.slice(size, extnm.length);
 		this.shiftHeaderInfo(index + size, row + size, extnm);
@@ -451,7 +559,7 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 		if ((row + size) > bottom)
 			size = bottom - row + 1;
 
-		this._removeHeader(index, size);
+		this.removeHeader_(index, size);
 		this.shiftHeaderInfo(index, row, extnm);
 	},
 	_fixSize: function() {
@@ -463,10 +571,11 @@ zss.LeftPanel = zk.$extends(zk.Object, {
 		if (fzc > -1)
 			leftw = leftw + sheet.custColWidth.getStartPixel(fzc + 1);
 		
-		var name = "#" + this.sheetid,
-			sid = this.sheetid + "-sheet";
+		var name = "#" + sheet.sheetid,
+			sid = sheet.sheetid + "-sheet";
 
 		zcss.setRule(name + " .zsleft", ["width"], [(fzc > -1 ? leftw - 1 : leftw) + "px"], true, sid);
 		zcss.setRule(name + " .zslefti", ["width"], [leftw + "px"], true, sid);
 	}
 });
+})();

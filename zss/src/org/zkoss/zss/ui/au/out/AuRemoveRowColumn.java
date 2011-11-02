@@ -26,10 +26,7 @@ import org.zkoss.zk.ui.Component;
  *
  */
 public class AuRemoveRowColumn extends AuResponse {
-	public AuRemoveRowColumn(Component comp, String token, String sheetid, String data) {
-		/**
-		 * removerc_ -> removeRowColumn
-		 */
-		super("setAttr", comp, new Object[] {comp.getUuid(), "removeRowColumn",  new String[]{token, sheetid, data}});
+	public AuRemoveRowColumn(Component comp, String token, String sheetid, Object data) {
+		super("setAttr", comp, new Object[] {comp.getUuid(), "removeRowColumn",  new Object[]{token, sheetid, data}});
 	}
 }

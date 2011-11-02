@@ -39,31 +39,44 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		return;
 	}
 	
-	function _doCellUpdateCmd (sheet, data, token) {
-		data = jq.evalJSON(data);
-		if (jq.isArray(data)) {
-			var i = data.length;
-			while (i--)
-				sheet._cmdCellUpdate(data[i]);
-		} else
-			sheet._cmdCellUpdate(data);
-		if (token != "") {
+	function doUpdate(wgt, data, token) {
+		wgt.sheetCtrl._cmdCellUpdate(data);
+		if (token)
 			zkS.doCallback(token);
-		}
 	}
 
-	function _doBlockUpdateCmd (sheet, data, token) {
-		sheet._cmdBlockUpdate(jq.evalJSON(data));
-		if (token != "")
+	function doBlockUpdate(wgt, json, token) {
+		var ar = wgt._activeRange,
+			tp = json.type;
+		if (ar && tp != 'ack') { //fetch cell will empty return,(not thing need to fetch)
+			var d = json.data,
+				tRow = d.t,
+				lCol = d.l,
+				bRow = tRow + json.height - 1,
+				rCol = lCol + json.width - 1,
+				leftFrozen = json.leftFrozen,
+				topFrozen = json.topFrozen;
+			
+			ar.update(d);
+			if (leftFrozen) {
+				ar.leftFrozen = newCachedRange(leftFrozen.data);
+			}
+			if (topFrozen) {
+				ar.topFrozen = newCachedRange(topFrozen.data);
+			}
+			wgt.sheetCtrl._cmdBlockUpdate(tp, d.dir, tRow, lCol, bRow, rCol, leftFrozen, topFrozen);
+		}
+		if (token)
 			zkS.doCallback(token);
 	}
+	
 	function _doInsertRCCmd (sheet, data, token) {
-		sheet._cmdInsertRC(jq.evalJSON(data));
+		sheet._cmdInsertRC(data);
 		if (token != "")
 			zkS.doCallback(token);	
 	}
 	function _doRemoveRCCmd (sheet, data, token) {
-		sheet._cmdRemoveRC(jq.evalJSON(data), true);
+		sheet._cmdRemoveRC(data, true);
 		if (token != "")
 			zkS.doCallback(token);
 	}
@@ -73,13 +86,14 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			zkS.doCallback(token);
 	}
 	function _doSizeCmd (sheet, data, token) {
-		sheet._cmdSize(jq.evalJSON(data), true);
+		sheet._cmdSize(data, true);
 		if (token != "")
 			zkS.doCallback(token);
 	}
 	function _doMaxrowCmd (sheet, data) {
 		sheet._cmdMaxrow(data);
 	}
+	
 	function _doMaxcolumnCmd (sheet, data) {
 		sheet._cmdMaxcolumn(data);
 	}
@@ -169,54 +183,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			jq(top).css('height', height);
 			//jq(scroll).css('overflow-y', 'hidden');
 		}
-	}
-	
-	function newRowHeaderAttr(v) {
-		return {
-			//TODO: move to widget
-			//type: 'SLheader',
-			r: v.r,
-			title: v.t,
-			hidden: !!v.hd,
-			heightId: v.h
-			//TODO: move this to widget
-			/*
-			getClass: function () {
-				var cls = 'zsleftcell zsrow',
-					hId = this.heightId;
-				return hId ? cls + ' zslh' + hId : cls;
-			},
-			getInnerClass: function () {
-				var cls = 'zsleftcelltxt',
-					hId = this.heightId;
-				return hId ? cls + ' zslh' + hId : cls;
-			}
-			*/
-		};
-	}
-	
-	function newColumnHeaderAttr(v) {
-		return {
-			//TODO: move to widget
-			//type: 'STheader',
-			c: v.c,
-			title: v.t,
-			hidden: !!v.hd,
-			widthId: v.w
-			//TODO: move this to widget
-			/*
-			getClass: function () {
-				var cls = 'zstopcell',
-					wId = this.widthId;
-				return wId ? cls + ' zsw' + wId : cls;
-			},
-			getInnerClass: function () {
-				var cls = 'zstopcelltxt',
-					wId = this.widthId;
-				return wId ? cls + ' zswi' + wId : cls;
-			}
-			*/
-		};
 	}
 	
 	var ATTR_ALL = 1,
@@ -355,7 +321,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					this.lock = lock != undefined ? lock : true;
 					this.halign = halign != undefined ? halign : 'l';
 					this.valign = valign != undefined ? valign : 't';
-					this.rightBorder = rbo != undefined ? rb == 't' : false;
+					this.rightBorder = rbo != undefined ? rbo == 't' : false;
 				}
 				if (upSize) {
 					var wId = v.w,
@@ -371,43 +337,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 						this.merge = newRect(v.mt, v.ml, v.mb, v.mr);
 					}
 				}
-			},
-			clear: function () {
-				this.r = this.c = this.cellType = this.text = 
-					this.editText = this.formatText = this.lock = this.style = this.innerStyle =
-					this.wrap = this.halign = this.valign = this.rightBorder =
-					this.mergeCls = this.mergeId = this.merge = this.widthId = this.heightId = null;
 			}
-			//TODO: move this to widget
-			/*
-			getClass: function () {
-				var cls = 'zscell ',
-					hId = this.heightId,
-					wId = this.widthId,
-					mId = this.mergeId,
-					mCls = this.mergeCls;
-				if (hId)
-					cls += (' zshi' + hId);
-				if (wId)
-					cls += (' zsw' + wId);
-				if (mCls)
-					cls += mCls;
-				return cls;
-			},
-			*/
-			//TODO: move this to widget
-			/*
-			getInnerClass: function () {
-				var cls = 'zscelltxt',
-					hId = this.heightId,
-					wId = this.widthId;
-				if (hId)
-					cls += (' zshi' + hId);
-				if (wId)
-					cls += (' zswi' + wId);
-				return cls;
-			}
-			*/
 		}
 		c.update(v, type);
 		return c;
@@ -415,12 +345,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	
 	function newRow(v, type, left, right) {
 		var row = {
-			//TODO: move to widget
-			//type: 'SRow',
-			//row number
 			r: v.r,
 			heightId: v.h,
-			cells: [],
+			cells: {},
 			update: function (attr, type, left, right) {
 				var src = attr.cs,
 					i = left,
@@ -441,25 +368,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			},
 			getCell: function (num) {
 				return this.cells[num];
-			},
-			clear: function (lCol, rCol) {
-				var cells = this.cells;
-				for (var i = lCol; i <= rCol; i++) {
-					var c = cells[i];
-					if (c) {
-						c.clear();
-						cells[i] = null;
-					}
-				}
 			}
-			//TODO: move to widget
-			/*
-			getClass: function () {
-				var cls = 'zsrow',
-					hId = this.heightId;
-				return hId ? cls + ' zsh' + hId : 'zsrow';
-			}
-			*/
 		}
 		row.update(v, type, left, right);
 		return row;
@@ -473,13 +382,27 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			right: rCol
 		}
 	}
+	
+	function updateHeaders(src, dest) {
+		var headers = src.hs,
+			i = src.s,
+			end = src.e,
+			j = 0;
+		for (; i <= end; i++) {
+			dest[i] = headers[j++];
+		}
+	}
 
 	function newCachedRange(v) {
 		var range = {
-			rows: [],
+			topFrozen: null,
+			leftFrozen: null,
+			rows: {},
+			rowHeaders: {},
+			columnHeaders: {},
 			//current range rect
 			rect: null,
-			updateRect: function (top, left, btm, right, dir, domRange) {
+			updateBoundary: function (dir, top, left, btm, right) {
 				var rect = this.rect;
 				if (!rect) {
 					this.rect = newRect(top, left, btm, right);
@@ -487,99 +410,163 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				}
 				else if (this.containsRange(top, left, btm, right)) {
 					return;
-				}
-				/*
-				else {
+				} else {
 					var rect = this.rect;
 					switch (dir) {
 					case 'visible':
 						rect.right = right;
 						rect.bottom = btm;
+						break;
+					case 'jump':
+						delete this.rect;
+						delete this.rows;
+						delete this.rowHeaders;
+						delete this.columnHeaders;	
+						
+						this.rect = newRect(top, left, btm, right);
+						this.rows = {};
+						this.rowHeaders = {};
+						this.columnHeaders = {};
+						break;
 					case 'east':
-						var width = (right - left + 1);
-						if (domRange) {
-							var nLeftCol = domRange.left - width;
-							if (nLeftCol > 0) {
-								this.clear(top, rect.left, btm, nLeftCol - 1);
-								rect.left = nLeftCol;
-							}
-						}
 						rect.right = right;
 						break;
 					case 'west':
-						var width = (right - left + 1);
-						if (domRange) {
-							var nRightCol = domRange.right - width;
-							if (nRightCol > 0) {
-								this.clear(top, nRightCol + 1, btm, rect.right);
-								rect.right = nRightCol;
-							}
-						}
 						rect.left = left;
 						break;
 					case 'south':
-						var hgh = (btm - top + 1);
-						if (domRange) {
-							var nTopRow = domRange.top - hgh;
-							if (nTopRow > 0) {
-								this.clear(rect.top, left, nTopRow - 1, right);
-								rect.top = nTopRow;
-							}
-						}
 						rect.bottom = btm;
 						break;
 					case 'north':
-						var hgh = (btm - top + 1);
-						if (domRange) {
-							var nBtmRow = domRange.bottom - hgh;
-							if (nBtmRow > 0) {
-								this.clear(rect.bottom, left, nBtmRow + 1, right);
-								rect.bottom = nBtmRow;
-							}
-						}
 						rect.top = top;
 						break;
 					}
-				}*/
+				}
 			},
-			clear: function (tRow, lCol, bRow, rCol) {
+			pruneLeft: function (size) {
 				var rows = this.rows,
-					i = (bRow - tRow + 1),
-					colSize = (rCol - lCol + 1);
-				while (i--) {
-					var r = rows[i];
-					if (r) {
-						r.clear(lCol, rCol);
+					left = this.rect.left,
+					colHeaders = this.columnHeaders;
+				for (var p in rows) {
+					var r = rows[p],
+						cs = r.cells,
+						i = left,
+						j = size;
+					while (j--) {
+						delete cs[i++];
 					}
 				}
+				i = left;
+				j = size;
+				while (j--) {
+					delete colHeaders[i++];
+				}
+				this.rect.left = left + size;
+			},
+			pruneRight: function (size) {
+				var rows = this.rows,
+					right = this.rect.right,
+					colHeaders = this.columnHeaders;
+				for (var p in rows) {
+					var r = rows[p],
+						cs = r.cells,
+						i = right,
+						j = size;
+					while (j--) {
+						delete cs[i--];
+					}
+				}
+				i = right,
+				j = size;
+				while (j--) {
+					delete colHeaders[i--];
+				}
+				this.rect.right = right - size;
+			},
+			pruneTop: function (size) {
+				var rows = this.rows,
+					rowHeaders = this.rowHeaders,
+					i = top = this.rect.top,
+					j = size;
+				while (j--) {
+					delete rows[i];
+					delete rowHeaders[i];
+					i++;
+				}
+				this.rect.top = top + size;
+			},
+			pruneBottom: function (size) {
+				var rows = this.rows,
+					rowHeaders = this.rowHeaders,
+					i = btm = this.rect.bottom,
+					j = size;
+				while (j--) {
+					delete rows[i];
+					delete rowHeaders[i];
+					i--;
+				}
+				this.rect.bottom = btm - size;
 			},
 			containsRange: function (tRow, lCol, bRow, rCol) {
 				var rect = this.rect;
 				return	tRow >= rect.top && lCol >= rect.left &&
 							bRow <= rect.bottom && rCol <= rect.right;
 			},
-			update: function (v, range) {
+			renameColumnHeaders: function (col, size, extnm) {
+				var headers = this.columnHeaders,
+					i = col,
+					j = 0,
+					l = extnm.length;
+				while (j < l) {
+					var h = headers[i++];
+					if (h) {
+						h.t = extnm[j];
+					}
+					j++;
+				}
+			},
+			_updateHeaders: function (headers, index, size, extnm) {
+				var	i = index,
+					j = 0,
+					l = extnm.length;
+				while (j < l) {
+					var h = headers[i++];
+					if (h) {
+						h.t = extnm[j];
+					}
+					j++;
+				}
+			},
+			insertColumnHeaders: function (col, size, extnm) {
+				this._updateHeaders(this.columnHeaders, col, size, extnm);
+				this.rect.right += size;
+			},
+			removeColumnHeaders: function (col, size, extnm) {
+				this._updateHeaders(this.columnHeaders, col, size, extnm);
+				this.rect.right -= size;
+			},
+			insertRowHeaders: function (row, size, extnm) {
+				this._updateHeaders(this.rowHeaders, row, size, extnm);
+				this.rect.bottom += size; 
+			},
+			removeRowHeaders: function (row, size, extnm) {
+				this._updateHeaders(this.rowHeaders, row, size, extnm);
+				this.rect.bottom -= size;
+			},
+			update: function (v) {
 				var attrType = v.at,
 					top = v.t,
 					left = v.l,
 					btm = v.b,
 					right = v.r,
 					src = v.rs,
-					rows = this.rows,
+					rowHeaderObj = v.rhs,
+					colHeaderObj = v.chs,
 					i = top, 
 					s = 0;
 				
-				this.updateRect(top, left, btm, right, v.dir, range);
-				var rect = this.rect,
-					maxBtm = rect.bottom,
-					maxRight = rect.right;
-				if (btm > maxBtm) {
-					btm = maxBtm;
-				}
-				if (right > maxRight) {
-					right = maxRight;
-				}
-					
+				this.updateBoundary(v.dir, top, left, btm, right);
+				var rows = this.rows;
 				for (; i <= btm; i++) {
 					var row = rows[i];
 					if (!row) {
@@ -587,6 +574,13 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					} else {
 						row.update(src[s++], attrType, left, right);
 					}
+				}
+				
+				if (rowHeaderObj) {
+					updateHeaders(rowHeaderObj, this.rowHeaders);
+				}
+				if (colHeaderObj) {
+					updateHeaders(colHeaderObj, this.columnHeaders);
 				}
 			},
 			getRow: function (num) {
@@ -599,19 +593,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 /**
  * Spreadsheet is a is a rich ZK Component to handle EXCEL like behavior
  */
+var Spreadsheet =
 zss.Spreadsheet = zk.$extends(zul.Widget, {
-	/**
-	 * Indicate whether shall process cell's overflow or not
-	 */
-	//_shallProcessOverflow: 0
-	/**
-	 * Process overflow column index
-	 */
-	_processOverflowCol: 0,
-	/**
-	 * Map source command and relate column index. For process overflow
-	 */
-	_srcCmd: {},
 	/**
 	 * Indicate Ctrl-Paste event key down status
 	 */
@@ -620,9 +603,6 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	 * Row height changed event listener
 	 */
 	_rowHeightChangedListeners: [],
-	$init: function () {
-		this.$supers('$init', arguments);
-	},
 	$define: {
 		/**
 		 * synchronized update data
@@ -632,12 +612,13 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			var sheet = this.sheetCtrl;
 			if (!sheet) return;
 			var token = v[0],
-				data = v[2];
+				json = jq.evalJSON(v[2]);
 			
-			if (sheet._initiated)
-				_doBlockUpdateCmd(sheet, data, token);
-			else
-				sheet.addSSInitLater(_doBlockUpdateCmd, sheet, data, token);
+			if (sheet._initiated) {
+				doBlockUpdate(this, json, token);
+			} else {
+				sheet.addSSInitLater(doBlockUpdate, this, json, token);
+			}
 		},
 		dataBlockUpdateJump: _dataUpdate,
 		dataBlockUpdateEast: _dataUpdate,
@@ -654,10 +635,12 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			if (!sheet)	return;
 			var token = v[0],
 				data = v[2];
-			if (sheet._initiated)
-				_doCellUpdateCmd(sheet, data, token);
-			else
-				sheet.addSSInitLater(_doCellUpdateCmd, sheet, data, token);
+			
+			if (sheet._initiated) {
+				doUpdate(this, data, token);
+			} else {
+				sheet.addSSInitLater(doUpdate, this, data, token);
+			}
 		},
 		dataUpdateStart: _updateCell,
 		dataUpdateCancel: _updateCell,
@@ -739,23 +722,8 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		 */
 		protect: null,
 		rowSize: _size,
-		rowBegin: null,
-		rowEnd: null,
 		preloadRowSize: null,
-		rowOuter: null,
-		colBegin: null,
-		colEnd: null,
 		preloadColSize: null,
-		cellOuter: null,
-		cellInner: null,
-		celltext: null,
-		edittext: null,
-		topHeaderOuter: null,
-		topHeaderInner: null,
-		leftHeaderOuter: null,
-		leftHeaderInner: null,
-		topHeaderHiddens: null,
-		leftHeaderHiddens: null,
 		dataPanel: null,
 		/**
 		 * Sets the customized titles of column header.
@@ -887,15 +855,16 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	 * Sets active range
 	 */
 	setActiveRange: function (v) {
-		var aRange = this._activeRange;
-		if (!aRange) {
-			this._activeRange = newCachedRange(v);
+		var ar = this._activeRange;
+		if (!ar) {
+			this._activeRange = ar = newCachedRange(v);
+			this.appendChild(this.sheetCtrl = new zss.SSheetCtrl());
 		} else {
 			var sheet = this.sheetCtrl,
 				range;
 			if (sheet) {
-				range = sheet.activeBlock.range; //Dom elements range
-				aRange.update(jq.evalJSON(v), range);
+				ar.update(jq.evalJSON(v));
+				this._triggerContentsChanged = true;
 			}
 		}
 	},
@@ -1024,8 +993,9 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		if (zk.ie) {
 			var self = this;
 			setTimeout(function () {
-				if (self.sheetCtrl)
-					self.sheetCtrl.dp.gainFocus(trigger);
+				var sht = self.sheetCtrl;
+				if (sht && sht._initiated)
+					sht.dp.gainFocus(trigger);
 			}, 0);
 		} else if (this.sheetCtrl)
 			this.sheetCtrl.dp.gainFocus(trigger);
@@ -1160,13 +1130,6 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			this.fireX(e);
 		}
 	},
-	_getTopHeaderFontSize: function () {
-		var head = this.$n('tophead'),
-			col = head != null ? head.firstChild : null;
-		if (col && col.getAttribute('zs.t') == 'STheader')
-			return jq(col).css('font-size');
-		return null;
-	},
 	_initFrozenArea: function () {
 		var rowFreeze = this.getRowFreeze(),
 			colFreeze = this.getColumnFreeze();
@@ -1183,9 +1146,6 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	_initControl: function () {
 		if (this.getSheetId() == null) //no sheet at all
 			return;
-		zk.loadCSS(this._scss, this.uuid + "-sheet");
-		var sheet = this.sheetCtrl = new zss.SSheetCtrl(this.$n(), this);
-		
 		this._initMaxColumn();
 		this._initMaxRow();
 		this._initFrozenArea();
@@ -1194,91 +1154,33 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		if (typeof show != 'undefined')
 			this.setDisplayGridlines(show);
 	},
-	/**
-	 * Row header height changed event
-	 */
-	onRowHeightChanged: function (evt) {
-		var ls = this._rowHeightChangedListeners,
-			i = ls.length;
-		if (i)
-			while (i--) {
-				var o = ls[i],
-					context = o.context || this;
-				o.fn.apply(context, [evt]);
-			}
-	},
-	_listenRowHeightChanged: function (context, fn) {
-		var ls = this._rowHeightChangedListeners;
-		ls.push({fn: fn, context: context});
-	},
-	_unlistenRowHeightChanged: function (context, fn) {
-		var ls = this._rowHeightChangedListeners,
-			i = ls.length;
-		while (i--) {
-			var o = ls[i];
-			if (o.fn == fn && o.context == context) {
-				ls.splice(i, 1);
-				break;
-			}
-		}
-	},
-	bind_: function () {
+	bind_: function (desktop, skipper, after) {
 		_calScrollWidth();
 		this.$supers('bind_', arguments);
-
 		this._initControl();
-		this.listen({onRowHeightChanged: this});
 		zWatch.listen({onShow: this, onSize: this, onResponse: this});
 	},
 	unbind_: function () {
 		zWatch.unlisten({onShow: this, onSize: this, onResponse: this});
-		this.unlisten({onRowHeightChanged: this})
+		
 		var ls = this._rowHeightChangedListeners;
 		ls.splice(0, ls.length);
 		
+		var r = this._activeRange;
+		if (r) {
+			this._activeRange = null;
+		}
 		this._maxColumnMap = this._maxRowMap = null;
 		
-		var n = this.$n(),
-			ctrl = n.ctrl;
-		if (n.ctrl) {
-			ctrl.cleanup();
-			removeSSheet(ctrl.sheetid + "-sheet");
-			ctrl = null;
-		}
+		removeSSheet(this.uuid + "-sheet");
+		this.$supers('unbind_', arguments);
 		if (window.CollectGarbage)
 			window.CollectGarbage();
-		
-		this.$supers('unbind_', arguments);
-	},
-	/**
-	 * Set process cell's overflow column range
-	 */
-	setProcessOverflowCol_: function (colIdx, cmd) {
-		this._shallProcessOverflow = true;
-		this._processOverflowCol = Math.max(colIdx, this._processOverflowCol);
-		if (cmd != undefined)
-			this._srcCmd[cmd] = colIdx;
 	},
 	onResponse: function () {
-		var col = this._processOverflowCol,
-			overflow = this._shallProcessOverflow,
-			cmd = this._srcCmd;
-
-		if (overflow) {
-			var sCtrl = this.sheetCtrl,
-				cBlock = sCtrl.cp.block,
-				tBlock = sCtrl.tp.block,
-				lBlock = sCtrl.lp.block;
-			sCtrl.activeBlock._processTextOverflow(col, cmd);
-			if (cBlock)
-				cBlock._processTextOverflow(col, cmd);
-			if (tBlock)
-				tBlock._processTextOverflow(col, cmd);
-			if (lBlock)
-				lBlock._processTextOverflow(col, cmd);
-			this._shallProcessOverflow = false;
-			this._processOverflowCol = 0;
-			this._srcCmd = {};
+		if (this._triggerContentsChanged != undefined) {
+			this.sheetCtrl.fire('onContentsChanged');
+			delete this._triggerContentsChanged;
 		}
 	},
 	onShow: _zkf = function () {
@@ -1365,16 +1267,6 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		if (sheet.state < zss.SSheetCtrl.FOCUSED)
 			sheet.dp.gainFocus(false);
 	},
-	_doScrollPanelScrolling: function (evt) {
-		var sp = this.sheetCtrl.sp;
-		if (sp)
-			sp._doScrolling(evt);
-	},
-	_doScrollPanelMouseDown: function (evt) {
-		var sp = this.sheetCtrl.sp;
-		if (sp)
-			sp._doMousedown(evt);
-	},
 	_doEditboxBlur: function (evt) {
 		var sheet = this.sheetCtrl,
 			dp =  sheet.dp;
@@ -1399,26 +1291,6 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		var editor = this.sheetCtrl.editor;
 		if (editor)
 			editor._doKeyup(evt);
-	},
-	_doLeftPanelMouseOver: function (evt) {
-		var lp = this.sheetCtrl.lp;
-		if (lp)
-			lp._doMouseover(evt);
-	},
-	_doLeftPanelMouseOut: function (evt) {
-		var lp = this.sheetCtrl.lp;
-		if (lp)
-			lp._doMouseout(evt);
-	},
-	_doTopPanelMouseOver: function (evt) {
-		var tp = this.sheetCtrl.tp;
-		if (tp)
-			tp._doMouseover(evt);
-	},
-	_doTopPanelMouseOut: function (evt) {
-		var tp = this.sheetCtrl.tp;
-		if (tp)
-			tp._doMouseout(evt);
 	},
 	_doSelAreaMouseMove: function (evt) {
 		var sel = this.sheetCtrl.selArea;
@@ -1538,7 +1410,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	HEADER_MOUSE_EVENT_NAME: {lc:'onHeaderClick', rc:'onHeaderRightClick', dbc:'onHeaderDoubleClick'},
 	SRC_CMD_SET_COL_WIDTH: 'setColWidth',
 	initLaterAfterCssReady: function (sheet) {
-		if (zcss.findRule(".zs_indicator", sheet.id + "-sheet") != null) {
+		if (zcss.findRule(".zs_indicator", sheet.sheetid + "-sheet") != null) {
 
 			sheet._cmdGridlines(sheet._wgt.isDisplayGridlines());
 			sheet._initiated = true;
@@ -1550,7 +1422,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			sheet._doSSInitLater();
 			if (sheet._initmove) {//#1995031
 				sheet.showMask(false);
-			} else if(zk(sheet._wgt).isRealVisible() && !sheet.activeBlock.loadForVisible()){
+			} else if(zk(sheet._wgt).isRealVisible() &&	!sheet.activeBlock.loadForVisible()){
 				//if no loadfor visible send after init, then we must sync the block size
 				sheet.sendSyncblock(true);
 				sheet.showMask(false);
@@ -1558,7 +1430,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			if (zk.opera)
 				//opera cannot insert rule on special index,
 				//so I must create another style sheet to control style rule priority
-				createSSheet("", sheet.id + "-sheet-opera");//heigher
+				createSSheet("", sheet.sheetid + "-sheet-opera");//heigher
 			
 			//force IE to update CSS
 			if (zk.ie6_ || zk.ie7_)
@@ -1566,8 +1438,10 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		} else {
 			setTimeout(function () {
 				zss.Spreadsheet.initLaterAfterCssReady(sheet);
-			}, 10);
+			}, 1);
 		}		
 	}
 });
+
+
 })();

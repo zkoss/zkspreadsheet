@@ -18,40 +18,65 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 
 (function () {
-	var CELL_PARAMS = ["txt", "st", "ist", "wrap", "hal", "vtal", "drh", "rbo", "merr", "merid", "merl", "mert", "merb", "zsw", "edit", "lock", "ctype"];
+
 /**
  * CellBlockCtrl is used for controlling cells, include load cell, creating cell, merge cell and cell position index
  */
-zss.CellBlockCtrl = zk.$extends(zk.Object, {
+zss.CellBlockCtrl = zk.$extends(zk.Widget, {
+	widgetName: 'CellBlock',
 	range: null,
-	$init: function (sheet, cmp, left, top) {
-		this.$supers('$init', arguments);
+	_lastDir: null,
+	$o: zk.$void, //owner, fellows relationship no needed
+	$init: function (sheet, tRow, lCol, bRow, rCol, data, type) {
+		this.$supers(zss.CellBlockCtrl, '$init', []); //DO NOT pass "arguments" or all fields will be copied into this Object. 
+		
 		this.sheet = sheet;
-		this.sheetid = sheet.sheetid;
-		this.comp = cmp;
-		zk(cmp).disableSelection();//disable block is selectable
-
-		this.range = new zss.Range(left, top, 0, 0, true);	
-		this._textedcell = [];//cell has text
-		this._lastDir = null;
+		this.type = type;
 		this.rows = [];
-		cmp.ctrl = this;
-	},
-	cleanup: function (cmp) {
-		this.invalid = true;
-		this.sheet = null;	
-		if (this.comp) this.comp.ctrl = null;
-		this.comp = null;
+		this.range = new zss.Range(lCol, tRow, rCol, bRow);
 		
-		var i = this.rows.length;
-		while (i--) {
-			this.rows[i].cleanup();
-			this.rows[i] = null;
+		var rows = data.rows,
+			block = this;
+		for (var r = tRow; r <= bRow; r++) {
+			var row = new zss.Row(sheet, block, r, data);
+			for (var c = lCol;  c <= rCol; c++) {
+				row.appendCell(new zss.Cell(sheet, block, r, c, data));
+			}
+			this.appendRow(row);
 		}
+	},
+	redraw: function (out) {
+		out.push('<div id="', this.uuid, '" class="', this.getZclass(), '">');
+		var rows = this.rows,
+			size = rows.length;
+		for (var i = 0; i < size; i++) {
+			rows[i].redraw(out);
+		}
+		out.push('</div>');
+	},
+	//super//
+	getZclass: function () {
+		var t = this.type;
+		return t ? 'zs' + t + 'block' : 'zsblock';
+	},
+	bind_: function () {
+		this.$supers(zss.CellBlockCtrl, 'bind_', arguments);
 		
-		//this.rowcmps = null;
-		this.rows.length = this._textedcell.length = 0;
-		this.rows = this._overflowcell = this._textedcell = null;
+		var n = this.comp = this.$n();
+		zk(n).disableSelection(); //disableSelection()
+	},
+	unbind_: function () {
+		this.$supers(zss.CellBlockCtrl, 'unbind_', arguments);
+		
+		var rows = this.rows;
+		rows.splice(0, rows.length);
+		this.sheet = this.comp = this.rows = this.range = null;
+	},
+	doMouseDown_: function (evt) {
+		this.sheet._doMousedown(evt);
+	},
+	doMouseUp_: function (evt) {
+		this.sheet._doMouseup(evt);
 	},
 	/**
 	 * Returns the row of the spreadsheet
@@ -72,7 +97,6 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 		var range = this.range;
 		if(row < range.top || row > range.bottom || col < range.left || col > range.right)
 			return null;
-		
 		return this.rows[row - range.top].getCellAt(col - range.left);
 	},
 	/**
@@ -149,160 +173,80 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 		}
 		ctrl.redoOverflow = true;
 	},
-	_processTextOverflow: function (colbefore, cmd) {
-		var sheet = this.sheet;
-		if (!sheet.config.textOverflow) return;
+	/**
+	 * Update cells
+	 */
+	update_: function (tRow, lCol, bRow, rCol) {
+		for (var r = tRow; r <= bRow; r++) {
+			for (var c = lCol; c <= rCol; c++) {
+				var cell = this.getCell(r, c);
+				if (cell)
+					cell.update_();
+			}
+		}
+	},
+	/**
+	 * Dynamic create cells
+	 * 
+	 * @param dir the dir to create cells
+	 * @param tRow
+	 * @param lCol
+	 * @param bRow
+	 * @param rCol
+	 */
+	create_: function (dir, tRow, lCol, bRow, rCol, data) {
 		
-		var txtcells = this._textedcell,
-			i = txtcells.length;
-		while (i--) {
-			var ctrl = txtcells[i];
-			if(ctrl.overflow && ctrl.c <= colbefore) {
-				var col = colbefore,
-					row = ctrl.r,
-					redo = false,
-					prevCell = this.getCell(row, col);
-				while (prevCell) {
-					if (prevCell.overlapBy) {
-						redo = true;
-						break;
-					}
-					var cmdCol = cmd[zss.Spreadsheet.SRC_CMD_SET_COL_WIDTH];
-					if (cmdCol && cmdCol == prevCell.c && prevCell.overflow)
-						redo = true;
-					else if (prevCell.overflowed)
-						redo = true;
-					if (redo == true)
-						break;
-					prevCell = this.getCell(row, --col);
+		var sheet = this.sheet,
+			block = this,
+			cr = this.range,
+			rs = this.rows,
+			data = data || sheet._wgt._activeRange,
+			isNewRow = false,
+			isTop = 'north' == dir,
+			isBtm = 'south' == dir,
+			isJump = 'jump' == dir,
+			isVer = isTop || isBtm || isJump,
+			isLeft = 'west' == dir,
+			isRight = 'east' == dir;
+		for (var r = tRow, j = 0; r <= bRow; r++) {
+			var row = isVer ? new zss.Row(sheet, block, r, data) : this.getRow(r),
+				html = isVer ? row.getHtmlPrologHalf() : '';
+			for (var c = lCol, i = 0;  c <= rCol; c++) {
+				var cell = new zss.Cell(sheet, block, r, c, data);
+				if (isLeft) {
+					row.insertCell(i++, cell); //row has been attach to DOM tree
+				} else if (isRight) {
+					row.appendCell(cell); //row has been attach to DOM tree
+				} else if (isVer) {
+					row.appendCell(cell, true); //not attach to DOM tree yet
+					html += cell.getHtml();
 				}
-				if (redo)
-					zss.Cell._processOverflow(ctrl);
 			}
-		}
-	},	
-	_createEastCell: function (blockdata, width, height) {
-		for (var i = 0 ; i < height; i++) {
-			var type = blockdata[i].type,
-				rowindex = blockdata[i].ix,
-				cells = blockdata[i].cells,
-				rowcmp = this.rows[i].comp;
+			if (isVer)
+				html += row.getHtmlEpilogHalf();
 			
-			jq(rowcmp).css('display', 'none');//for speed up
-			for (var j = 0; j < width; j++) {
-				var cell = cells[j],
-					parm ={row: rowindex, col: cell.ix, zsh: blockdata[i].zsh};
-				zkS.copyParm(cell, parm, CELL_PARAMS);
-				
-				var cellctrl = zss.Cell.createComp(this.sheet, this, parm);
-				rowcmp.ctrl.pushCellE(cellctrl);
+			if (isBtm)
+				this.appendRow(row, html);
+			else if (isTop) {
+				this.insertRow(j++, row, html);
 			}
-			jq(rowcmp).css('display', '');
-		}
-		this.range.extendRight(width);
-	},
-	_createWestCell: function (blockdata, width, height) {
-		for(var i = 0; i < height; i++) {
-			var type = blockdata[i].type,
-				rowindex = blockdata[i].ix,
-				cells = blockdata[i].cells;
-			
-			var rowcmp = this.rows[i].comp;
-			//jq(rowcmp).css('display', 'none');//for speed up
-			for (var j = 0; j < width; j++) {
-				var cell = cells[j],
-					parm ={row: rowindex, col: cell.ix, zsh: blockdata[i].zsh};
-				zkS.copyParm(cell, parm, CELL_PARAMS);
-				
-				var cellctrl = zss.Cell.createComp(this.sheet, this, parm);
-				rowcmp.ctrl.pushCellS(cellctrl);
-			}
-			//jq(rowcmp).css('display', '');
-		}
-		this.range.extendLeft(width);
-	},
-	_createNorthCell: function (blockdata, width, height) {
-		var rowctrls = [];
-
-		for (var i = 0; i < height; i++) {
-			var type = blockdata[i].type,
-				rowindex = blockdata[i].ix,
-				cells = blockdata[i].cells,
-				parm = {row: rowindex};
-			zkS.copyParm(blockdata[i], parm, ["zsh"]);
-			var ctrl = new zss.Row.createComp(this.sheet, this,parm),
-				rowcmp =  ctrl.comp;
-			//this.rowcmps[rowindex] = rowcmp;
-			for (var j = 0; j < width; j++) {
-				var cell = cells[j];
-				parm = {row: rowindex, col: cell.ix, zsh: blockdata[i].zsh};
-				zkS.copyParm(cell, parm, CELL_PARAMS);
-
-				var cellctrl = zss.Cell.createComp(this.sheet, this,parm);
-				rowcmp.ctrl.pushCellE(cellctrl);	
-			}
-			rowctrls.push(ctrl);
-		}
-		for (var i = 0; i < height; i++)
-			this.pushRowS(rowctrls[i]);
-
-		this.range.extendTop(height);
-	},
-	_createSouthCell: function (blockdata, width, height) {
-		var rowctrls = [];
-		for (var i = 0; i < height; i++) {
-			var type = blockdata[i].type,
-				rowindex = blockdata[i].ix,
-				cells = blockdata[i].cells,
-				parm = {row:rowindex};
-			zkS.copyParm(blockdata[i], parm, ["zsh"]);
-			
-			var ctrl = new zss.Row.createComp(this.sheet, this, parm),
-				rowcmp =  ctrl.comp;
-			//this.rowcmps[rowindex] = rowcmp;
-			for (var j = 0; j < width; j++) {
-				var cell = cells[j],
-					parm = {row: rowindex, col: cell.ix, zsh: blockdata[i].zsh};
-				zkS.copyParm(cell, parm, CELL_PARAMS);
-				
-				var cellctrl = zss.Cell.createComp(this.sheet, this, parm);
-				rowcmp.ctrl.pushCellE(cellctrl);	
-			}
-			rowctrls.push(ctrl);
 		}
 		
-		for (var i = 0; i < height; i++)
-			this.pushRowE(rowctrls[i]);
-		
-		this.range.extendBottom(height);
-	},
-	_createJumpCell : function (blockdata, width, height) {
-		var rowctrls = [];
-		for (var i = 0; i < height; i++) {
-			var type = blockdata[i].type,
-				rowindex = blockdata[i].ix,
-				cells = blockdata[i].cells,
-				parm ={row: rowindex};
-			zkS.copyParm(blockdata[i], parm, ["zsh"]);
-			
-			var ctrl = new zss.Row.createComp(this.sheet, this, parm),
-				rowcmp =  ctrl.comp;
-			//this.rowcmps[rowindex] = rowcmp;
-			for (var j = 0; j < width; j++) {
-				var cell = cells[j];
-					parm = {row: rowindex, col: cell.ix, zsh:blockdata[i].zsh};
-				zkS.copyParm(cell, parm, CELL_PARAMS);
-				
-				var cellctrl = zss.Cell.createComp(this.sheet, this, parm);
-				rowcmp.ctrl.pushCellE(cellctrl);	
-			}
-			rowctrls.push(ctrl);
+		var r = this.range,
+			width = rCol - lCol + 1,
+			height = bRow - tRow + 1;
+		if (isBtm)
+			r.extendBottom(height);
+		else if (isTop)
+			r.extendTop(height);
+		else if (isLeft)
+			r.extendLeft(width);
+		else if (isRight)
+			r.extendRight(width);
+		else if (isJump) {
+			var oldRange = r;
+			this.range = new zss.Range(oldRange.left, oldRange.top, width, height, true);
 		}
-		for (var i = 0; i < height; i++) {
-			this.pushRowE(rowctrls[i]);
-		}
-		var oldRange = this.range;
-		this.range = new zss.Range(oldRange.left, oldRange.top, width, height, true);
 	},
 	/**
 	 * Sets rows's width position index
@@ -342,23 +286,29 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 		this.range.extendRight(size);
 	},
 	/**
+	 * TODO: copyCells is fast ??
+	 * 
 	 * Insert new row
 	 * @param int row the row to insert
 	 * @param int size the size of the row  
 	 */
-	insertNewRow: function (row, size) {
+	insertNewRow: function (row, size, data) {
 		if (row > (this.range.bottom + 1) || row < this.range.top) return;
 		var index = row - this.range.top,
 			ctrl,
 			rows = this.rows,
 			temprow = (index >= rows.length) ? rows[rows.length - 1] : rows[index],
 			sheet = this.sheet,
-			parm = {};
+			data = sheet._wgt._activeRange,
+			block = this;
 		for (var i = 0; i < size; i++) {
-			parm.row = row + i;
-			ctrl = zss.Row.createComp(this.sheet, this, parm);
-			zss.Row.copyCells(temprow, ctrl);
-			this.pushRowI(ctrl, index + i);
+			var r = row + i,
+				html = '';
+			
+			ctrl = new zss.Row(sheet, block, r, data);
+			html += ctrl.getHtmlPrologHalf();
+			html += zss.Row.copyCells(temprow, ctrl);
+			this.insertRow(r, ctrl, html);
 		}
 		this.shiftRowInfo(index + size, row + size);
 		this.range.extendBottom(size);
@@ -411,27 +361,43 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 		var ctrl = rem.pop();
 
 		for (; ctrl; ctrl = rem.pop()) {
-			jq(ctrl.comp).remove();
-			ctrl.cleanup();
+			ctrl.detach();
 		}
 		this.range.extendBottom(-size);
 		this.shiftRowInfo(index, row);
 	},
 	/**
-	 * Sets the row to the end of the header
-	 * @param zss.Row row
+	 * Insert zss.Row widget at start with html content [optional]
+	 * 
+	 * @param int index
+	 * @param zss.Row rowwidget
+	 * @param string htmlContent
 	 */
-	pushRowE: function (row) {
-		this.rows.push(row);
-		this.comp.appendChild(row.comp);
+	insertRow: function (index, row, htmlContent) {
+		var ignoeChildDom = htmlContent === undefined || !!htmlContent;
+		var rows = this.rows,
+			sibling = rows[index];
+		this.insertBefore(row, sibling, ignoeChildDom);
+		rows.splice(index, 0, row);
+		if (htmlContent) {
+			jq(htmlContent).insertBefore(sibling.$n());
+			row.bind_();
+		}
 	},
 	/**
-	 * Sets the row to the start of the header
-	 * @param zss.Row row
+	 * Append zss.Row widget to the end with html content [optional]
+	 * 
+	 * @param row zss.Row widget
+	 * @param string htmlContent
 	 */
-	pushRowS: function (row) {
-		this.rows.unshift(row);
-		this.comp.insertBefore(row.comp, this.comp.firstChild);
+	appendRow: function (row, htmlContent) {
+		var ignoeChildDom = htmlContent === undefined || !!htmlContent;
+		this.appendChild(row, ignoeChildDom);
+		this.rows.push(row);
+		if (htmlContent) {
+			jq(this.comp).append(htmlContent);
+			row.bind_();
+		}
 	},
 	/**
 	 * Sets the row by index
@@ -457,48 +423,6 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 			this.comp.insertBefore(rowctrl.comp, tail[0].comp);	
 		}
 	},
-	/** load existed for element, this method is called when initial.**/
-	loadByComp: function (cmp, row) {
-		this.comp = cmp;
-		cmp.ctrl = this;
-		var next = cmp.firstChild,
-			minx = miny = maxx = maxy = 0;
-		while (next) {
-			if (next.getAttribute('zs.t') == "SRow") {
-				var ctrl = new zss.Row(this.sheet, this, next);
-				this.rows.push(ctrl);
-				var r = zk.parseInt(next.getAttribute("z.r")),
-					cell = next.firstChild,
-					editrow = this.sheet._wgt._edittext[r];
-				while (cell) {
-					var c = zk.parseInt(cell.getAttribute("z.c"));
-					if (minx > c)
-						minx = c;
-					if (maxx < c)
-						maxx = c;
-					ctrl.pushCell(new zss.Cell(this.sheet, this, cell, editrow[c]));
-					cell = cell.nextSibling;
-				}
-				
-				if (miny > r)
-					miny = r;
-				if (maxy < r)
-					maxy = r;
-
-				zkS.trimFirst(next, "DIV");
-				zkS.trimLast(next, "DIV");
-				if (r == row && ctrl.prepareFilterBtns_)
-					ctrl.prepareFilterBtns_();
-				next = next.nextSibling;
-				continue;	
-			}
-		}
-		var cleft = minx,
-			ctop = miny,
-			cw = maxx - minx + 1,
-			ch = maxy - miny + 1;
-		this.range = new zss.Range(cleft, ctop, cw, ch, true);
-	},
 	/**
 	 * Hide the cell
 	 */
@@ -511,56 +435,37 @@ zss.CellBlockCtrl = zk.$extends(zk.Object, {
 	show : function () {
 		jq(this.comp).css('display', 'block');
 	},
-	_removeWestCell: function (size) {
-		rows = this.rows;
-		var rowsize = this.rows.length,
+	removeColumnsFromStart_: function (size) {
+		var rows = this.rows,
+			rowSize = this.rows.length,
 			i = 0;
-		for(; i < rowsize; i++)
+		for(; i < rowSize; i++)
 			this.rows[i].removeLeftCell(size);
 		this.range.extendLeft(-size);
 	},
-	_removeEastCell: function (size) {
-		rows = this.rows;
-		var rowsize = this.rows.length,
+	removeColumnsFromEnd_: function (size) {
+		var rows = this.rows,
+			rowSize = this.rows.length,
 			i = 0;
-		for(; i < rowsize; i++)
-			this.rows[i].removeRightCell(size);
+		for(; i < rowSize; i++)
+			rows[i].removeRightCell(size);
 		this.range.extendRight(-size);
 	},
-	_removeNorthCell: function (size) {
-		rows = this.rows;
-		var cmp = this.comp,
-			rowsize = this.rows.length,
-			i = 0,
-			rowctrl;
-		for (; i < size; i++) {
-			rowctrl = rows.shift();
-			jq(rowctrl.comp).remove();
-			rowctrl.cleanup();
+	removeRowsFromStart_: function (size) {
+		var rows = this.rows,
+			i = size;
+		while (i--) {
+			rows.shift().detach();
 		}
 		this.range.extendTop(-size);
 	},
-	_removeSouthCell: function (size) {
-		rows = this.rows;
-		var cmp = this.comp,
-			rowsize = this.rows.length,
-			i = 0,
-			rowctrl;
-		for(; i < size; i++) {
-			rowctrl = rows.pop();
-			jq(rowctrl.comp).remove();
-			rowctrl.cleanup();
+	removeRowsFromEnd_: function (size) {
+		var rows = this.rows,
+			i = size;
+		while (i--) {
+			rows.pop().detach();
 		}
 		this.range.extendBottom(-size);
-	}
-}, {
-	createComp: function (sheet, left, top, sclass) {
-	/*
-	<div zs.t="SBlock" class="zsblock">
-	*/	
-		var cmp = document.createElement("div");
-		jq(cmp).attr("zs.t", "SBlock").addClass(!sclass ? "zsblock" : sclass);
-		return new zss.CellBlockCtrl(sheet, cmp, left, top);
 	}
 });
 })();

@@ -94,22 +94,20 @@ zkS.doCallback = function (token) {
 	}
 };
 
-
 zkS.parentByZSType = function(el, type, pathlen) {
 	if (el) {
 		if (!(type instanceof Array))
 			type = [type];
 		var i = 0,
 			size = type.length, 
-			ancestors = jq(el).parents();
-		ancestors.splice(0,0,el);
-		for(var k = 0, len = ancestors.length; k < len; ++k) {
-			var el = ancestors[k];
-			if (!el.attributes) 
+			n = el;
+		for(; !!n; n = n.parentNode) {
+			if (!n.attributes) 
 				continue;
-			for (var j = 0; j < size; j++) {
-				if (el.getAttribute('zs.t') == type[j])
-					return el;
+			j = size;
+			while (j--) {
+				if (n.getAttribute('zs.t') == type[j])
+					return n;
 			}
 			if (pathlen && i++ > pathlen)
 				break;
@@ -118,28 +116,11 @@ zkS.parentByZSType = function(el, type, pathlen) {
 	return null;
 };
 
-
 zkS.copyParm = function (src, dest, parms) {
 	var i = parms.length;
 	while(i--)
 		dest[parms[i]] = src[parms[i]];	
 };
-
-zkS.trimFirst = function (comp, tag) {
-	var node = comp.firstChild;
-	while(node && node.tagName!=tag){
-		comp.removeChild(node);
-		node = comp.firstChild;
-	}
-};
-zkS.trimLast = function (comp, tag) {
-	var node = comp.lastChild;
-	while(node && node.tagName != tag) {
-		comp.removeChild(node);
-		node = comp.lastChild;
-	}
-};
-
 
 /** Returns the data for onClick. */
 zkS._getMouseData = function (evt, target) {

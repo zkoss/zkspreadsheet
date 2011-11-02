@@ -71,42 +71,30 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				return headers[j];
 		return null;
 	}
-	
+
 /**
  *  SSheetCtrl controls spreadsheet
+ *  
+ *  Sheet events
+ *  <ul>
+ *  	<li>onContentsChanged</li>
+ *  </ul>
+ *  
  */
-zss.SSheetCtrl = zk.$extends(zk.Object, {
-	$init: function (cmp, wgt) {
-		this.$supers(zss.SSheetCtrl, '$init', arguments);
-		this._wgt = wgt;
-		this.id = cmp.id;
-		this.sheetid = cmp.id;//must keep this for search current
-		cmp.ctrl = this;
-		this.comp = cmp;
-		var local = this;
-		this.activeBlock = null;
-		this.pageKeySize = 100;
-		this._initiated = false;
-		var initparm = this.initparm = {};//initial time parameter
-		this._clienttxt = '';
-		
-		this.afterInit(function () {
-			zss.Spreadsheet.initLaterAfterCssReady(local);
-		}, false);
-		
-		//init function later queue, the function in this queue will be invoke in ZK InitialLater
-		//I create this queue because ZK initial later doesn't support parameter.
-		this._initLaterQ = [];//after init function queue
-		this._initLaterQ.urgent = 0;//after init function queue
-		
-		this.state = zss.SSheetCtrl.NOFOCUS;
+var SheetCtrl = 
+zss.SSheetCtrl = zk.$extends(zk.Widget, {
+	widgetName: 'SSheetCtrl',
+	$o: zk.$void, //no need to invoke _addIdSpaceDown, no fellows relationship
+	afterParentChanged_: function () { //all attributes set when afterParentChanged_
+		var self = this,
+			wgt = this._wgt = this.parent;
+		if (window.START) {
+			zk.log('spreadsheet created: ' + (jq.now() - window.START));
+		}
+		this.sheetid = wgt.uuid;
 		
 		//current server sheet index
 		this.serverSheetId = wgt.getSheetId();
-		
-		//initial default size;
-		this.topHeightDt = this.leftWidthDt = this.rowHeightDt = 
-			this.colWidthDt = this.lineHeightDt = this.cellPadDt =  false;
 		
 		var maxCols = wgt.getMaxColumn(),
 			maxRows = wgt.getMaxRow(),
@@ -116,7 +104,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			rowHeight = wgt.getRowHeight(),
 			colWidth = wgt.getColumnWidth(),
 			lineHeight = wgt.getLineh();
-
+	
 		this.maxCols = maxCols != null ? maxCols : 10;//255;
 		this.maxRows = maxRows != null ? maxRows : 10;//1000; 
 		this.topHeight = topHeight != null ? topHeight : 20;
@@ -125,6 +113,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		this.rowHeight = rowHeight != null ? rowHeight : 20;
 		this.colWidth = colWidth != null ? colWidth : 80;
 		this.lineHeight = lineHeight != null ? lineHeight : 20;
+		var initparm = this.initparm = {};//initial time parameter
 		var fs = wgt.getFocusRect();
 		fs = fs.split(",");
 		initparm.focus = new zss.Pos(zk.parseInt(fs[1]), zk.parseInt(fs[0]));//[row,col]
@@ -140,16 +129,17 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			
 			this.addSSInitLater(function() {
 				var range = local.initparm.hlrange;
-				local.hlArea.show = true;
-				local.moveHighlight(range.left, range.top, range.right, range.bottom);
+				self.hlArea.show = true;
+				self.moveHighlight(range.left, range.top, range.right, range.bottom);
 			});
 			
 		} else
 			initparm.hlrange = new zss.Range(-1, -1, -1, -1);
+		var self = this;
+		this.addSSInitLater(function() {
+			delete self.initparm;
+		});
 
-		this.config = new zss.Configuration();
-		
-		//customized width Top Header array
 		var csc = wgt.getCsc(),
 			array = [];
 		if (csc && csc != "") {
@@ -172,7 +162,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		}
 		this.custRowHeight = new zss.PositionHelper(this.rowHeight, array);
 		this.custRowHeight.ids = new zss.Id(0, 2);
-
+	
 		//merge range
 		var mers = wgt.getMergeRange(),
 			array = [];
@@ -187,28 +177,141 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				array.push(range);
 			}
 		}
-
 		//frozen row & column
-		var fzr = wgt.getRowFreeze(),
-			fzc = wgt.getColumnFreeze();
-		this.frozenRow = fzr != null ? zk.parseInt(fzr) : -1;
-		this.frozenCol = fzc != null ? zk.parseInt(fzc) : -1;
+		this.frozenRow = wgt.getRowFreeze();
+		this.frozenCol = wgt.getColumnFreeze();
 		
 		this.mergeMatrix = new zss.MergeMatrix(array, this);
 		
-		//init inner components
-		zss.SSheetCtrl._initInnerComp(this, this._wgt._autoFilter ? this._wgt._autoFilter.range.top : null);
-		
+		var sheet = this,
+			ar = wgt._activeRange;
+		if (ar) {
+			var	rows = ar.rows,
+				rect = ar.rect,
+				tRow = rect.top,
+				lCol = rect.left,
+				rCol = rect.right,
+				rowHeadHidden = wgt._rowHeadHidden,
+				colHeadHidden = wgt._columnHeadHidden;
+			//TODO: measure best init size
+			bRow = tRow + 20; //load row size
+			rCol = lCol + 20; //load column size
+			if (bRow > rect.bottom)
+				bRow = rect.bottom;
+			if (rCol > rect.right)
+				rCol = rect.right;
+			this.appendChild(this.activeBlock = new zss.MainBlockCtrl(sheet, tRow, lCol, bRow, rCol, ar), true);
+			this.appendChild(this.tp = new zss.TopPanel(sheet, rowHeadHidden, lCol, rCol, ar), true);
+			this.appendChild(this.lp = new zss.LeftPanel(sheet, colHeadHidden, tRow, bRow, ar), true);
+			this.appendChild(this.cp = new zss.CornerPanel(sheet, rowHeadHidden, colHeadHidden, lCol, tRow, rCol, bRow, ar), true);
+		}
 		this.innerClicking = 0;// mouse down counter to check that is focus rellay lost.
+	},
+	$init: function () {
+		this.$supers(zss.SSheetCtrl, '$init', arguments);
+		
+		this.pageKeySize = 100;
+		this._initiated = false;
+		
+		this._clienttxt = '';
+		
+		//init function later queue, the function in this queue will be invoke in ZK InitialLater
+		//I create this queue because ZK initial later doesn't support parameter.
+		this._initLaterQ = [];//after init function queue
+		this._initLaterQ.urgent = 0;//after init function queue
+		
+		this.state = zss.SSheetCtrl.NOFOCUS;
+		
+		//initial default size;
+		this.topHeightDt = this.leftWidthDt = this.rowHeightDt = 
+			this.colWidthDt = this.lineHeightDt = this.cellPadDt =  false;
 
+		this.config = new zss.Configuration();
+	},
+	bind_: function (desktop, skipper, after) {
+		this.$supers(SheetCtrl, 'bind_', arguments);
+		this.listen({onContentsChanged: this});
+		
+		zss.SSheetCtrl._initInnerComp(this, this._wgt._autoFilter ? this._wgt._autoFilter.range.top : null);
+		var wgt = this._wgt,
+			n = this.comp = wgt.$n(),
+			self = n.ctrl = this;
+		zss.Spreadsheet.initLaterAfterCssReady(self);
+		
 		if (zk(wgt).isRealVisible()) {
 			this.insertSSInitLater(function () {
-				local._fixSize();//fix size and scroll after initial.
+				self._fixSize();//fix size and scroll after initial.
 			});
 		}
-		this.addSSInitLater(function() {
-			delete local.initparm;
-		});
+	},
+	unbind_: function () { 
+		this.unlisten({onContentsChanged: this});
+		this.animateHighlight(false);
+		this.invalid = true;
+
+		if(this.comp) this.comp.ctrl = null;
+		this.comp = this.busycmp = this.maskcmp = this.spcmp = this.topcmp = 
+		this.leftcmp = this.dpcmp = this.sinfocmp = this.infocmp = this.focusmarkcmp =
+		this.selareacmp = this.selchgcmp = this.hlcmp = this.wpcmp = null;
+		
+		if (this.dragging) {
+			this.dragging.cleanup();
+			this.dragging = null;
+		}
+		
+		this.sp.cleanup();
+		this.dp.cleanup();
+		
+		this.sinfo.cleanup();
+		this.info.cleanup();
+		this.editor.cleanup();
+		this.focusMark.cleanup();
+		this.selArea.cleanup();
+		this.selChgArea.cleanup();
+		this.hlArea.cleanup();
+		this.sp = this.dp = this.tp = this.lp = this.cp = this.sinfo = this.info = 
+		this.editor = this.focusMark = this.selArea = this.selChgArea = this.hlArea = null;
+		
+		this.custTHSize = this.custLHSize = this._initLaterQ =
+		this._lastmdelm = this._lastmdstr = null;
+		
+		this.$supers(SheetCtrl, 'unbind_', arguments);
+	},
+	/**
+	 * Sets the overflow column, columns before need to process overflow
+	 * 
+	 * @param int row the row index
+	 * @param int col the column index
+	 * @param boolean run indicate whether to process overflow now or not
+	 */
+	triggerOverflowColumn_: function (row, col, run) {
+		var r = this._overflowRange;
+		if (!r)
+			r = this._overflowRange = {}; //tRow, bRow, and col attributes
+		var rCol = r.col;
+		rCol ? r.col = Math.max(rCol, col) : r.col = col;
+		if (row) {
+			var	tRow = r.tRow,
+				bRow = r.bRow;
+			tRow ? r.tRow = Math.min(tRow, row) : r.tRow = row;
+			bRow ? r.bRow = Math.max(bRow, row) : r.bRow = row;
+		}
+		if (run) {
+			this.fireProcessOverflow_();
+		}
+	},
+	/**
+	 * Fire process cell overflow event
+	 */
+	fireProcessOverflow_: function () {
+		var r = this._overflowRange;
+		if (r != undefined) {
+			this.fire('onProcessOverflow', {col: r.col, tRow: r.tRow, bRow: r.bRow});
+			delete this._overflowRange;
+		}
+	},
+	onContentsChanged: function (evt) {
+		this.fireProcessOverflow_();
 	},
 	addEditorFocus : function(name, color){
 		var x = this.focusmarkcmp,
@@ -243,41 +346,6 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		this._fixSize();
 		if (!this.activeBlock.loadForVisible()) //bug#303:avoid hide to visible and the mask is still there
 			this.showMask(false);
-	},
-	cleanup: function () {
-		this.animateHighlight(false);
-		this.invalid = true;
-
-		if(this.comp) this.comp.ctrl = null;
-		this.comp = this.busycmp = this.maskcmp = this.spcmp = this.topcmp = 
-		this.leftcmp = this.dpcmp = this.sinfocmp = this.infocmp = this.focusmarkcmp =
-		this.selareacmp = this.selchgcmp = this.hlcmp = this.wpcmp = null;
-		
-		if (this.dragging) {
-			this.dragging.cleanup();
-			this.dragging = null;
-		}
-		
-		this.sp.cleanup();
-		this.dp.cleanup();
-		this.tp.cleanup();
-		this.lp.cleanup();
-		this.cp.cleanup();
-		this.sinfo.cleanup();
-		this.info.cleanup();
-		this.editor.cleanup();
-		this.focusMark.cleanup();
-		this.selArea.cleanup();
-		this.selChgArea.cleanup();
-		this.hlArea.cleanup();
-		this.sp = this.dp = this.tp = this.lp = this.cp = this.sinfo = this.info = 
-		this.editor = this.focusMark = this.selArea = this.selChgArea = this.hlArea = null;
-		
-		if (this.activeBlock)
-			this.activeBlock.cleanup();
-		
-		this.activeBlock = this.custTHSize = this.custLHSize = this._initLaterQ =
-		this._lastmdelm = this._lastmdstr = null;
 	},
 	/**
 	 * Returns whether is dragging or not
@@ -367,7 +435,14 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			this._updateText(result);
 			break;
 		case "udcell":
-			this._updateCell(result);
+			var wgt = this._wgt,
+				data = result,
+				ar = this._wgt._activeRange;
+			if (ar) {
+				ar.update(data);
+				wgt.sheetCtrl.update_(data.t, data.l, data.b, data.r);
+				wgt._triggerContentsChanged = true;
+			}
 			break;
 		case "startedit":
 			var dp = this.dp;
@@ -387,9 +462,10 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			break;
 		}
 	},
-	_cmdBlockUpdate: function (result) {
-		if (result.type == "neighbor") {//move to a neighbor block
-			this.activeBlock._createCell(result);
+	_cmdBlockUpdate: function (type, dir, tRow, lCol, bRow, rCol, leftFrozen, topFrozen) {
+		switch (type) {
+		case 'neighbor': //move to a neighbor block
+			this.activeBlock.create_(dir, tRow, lCol, bRow, rCol, leftFrozen, topFrozen);
 			if (zk.ie) {
 				//ie have some display error(cell overlap) when scroll up(neighbor north)
 				//same issue when scroll right
@@ -404,28 +480,18 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				jq(dp).css('display', '');
 				jq(l).css('display', '');
 			}
-		} else if (result.type == "jump") {//jump to another bolck, not a neighbor
-
-			var oldBlock = this.activeBlock;
-			this.activeBlock = zss.MainBlockCtrl.createComp(this, result.left, result.top);
-			this.activeBlock._createCell(result);
-
-			// to avoid row slip effect when replace child, i hide it, the show it (but it cause flash effect)
-			//this.activeBlock.hide();
-			this.dp.comp.replaceChild(this.activeBlock.comp, oldBlock.comp);
-			//this.activeBlock.show();
-			
+			break;
+		case 'jump'://jump to another bolck, not a neighbor
+			var oldBlock = this.activeBlock,
+				wgt = this._wgt,
+				ar = wgt._activeRange;
+			oldBlock.replaceWidget(this.activeBlock = new zss.MainBlockCtrl(this, tRow, lCol, bRow, rCol, ar), leftFrozen, topFrozen);
 			this.dp._fixSize(this.activeBlock);
-			oldBlock.cleanup();
-		} else if (result.type == "prune") {//jump to another bolck, not a neighbor
-			
-			this.activeBlock.pruneCell(result.dir, null, result.reserve);
-		} else if (result.type == "ack") {//fetch cell will empty return,(not thing need to fetch)
-			
-		} else if (result.type == "error") {//fetch cell with exception
-			
+			break;
+		case 'error': //fetch cell with exception
+			break;
 		}
-
+		
 		this.showMask(false);
 		
 		//bug 1951423 IE : row is broken when scroll down, st time to do ss initiallater
@@ -435,11 +501,13 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		}, 0);
 	},
 	_cmdInsertRC: function (result) {
-		var local = this;
 		if (result.type == "column") {
 			var col = result.col,
-				size = result.size;
-			this._insertNewColumn(col, size, result.extnm);
+				size = result.size,
+				nm = result.extnm,
+				ar = this._wgt._activeRange;
+			ar.insertColumnHeaders(col, size, nm);
+			this._insertNewColumn(col, size, nm);
 			//update positionHelper
 			this.custColWidth.shiftMeta(col, size);
 			// adjust data panel size;
@@ -459,11 +527,14 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			if (col < block.range.left)// insert before current block, then jump
 				block.reloadBlock("east");
 			else
-				this._wgt.setProcessOverflowCol_(col);
+				this.triggerOverflowColumn_(null, col);
 		} else if (result.type == "row") {//jump to another bolck, not a neighbor
 			var row = result.row,
-				size = result.size;
-			this._insertNewRow(row, size, result.extnm);
+				size = result.size,
+				nm = result.extnm,
+				ar = this._wgt._activeRange;
+			ar.insertRowHeaders(row, size, nm);
+			this._insertNewRow(row, size, nm);
 			//update positionHelper
 			this.custRowHeight.shiftMeta(row, size);
 			// adjust datapanel size;
@@ -498,9 +569,11 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		var lfv = true;
 		if (result.type == "column") {
 			var col = result.col,
-				size = result.size;
-			
-			this._removeColumn(col,size,result.extnm)
+				size = result.size,
+				nm = result.extnm,
+				ar = this._wgt._activeRange;
+			ar.removeColumnHeaders(col, size, nm);
+			this._removeColumn(col, size, nm);
 			
 			// adjust datapanel size;
 			var dp = this.dp,
@@ -524,13 +597,16 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 				block.reloadBlock("east");
 				lfv = false;
 			} else
-				this._wgt.setProcessOverflowCol_(col);
+				this.triggerOverflowColumn_(null, col);// no need to invoke 
 			
 			this._syncColFocusAndSelection(col, col + size - 1);
 		} else if (result.type == "row") {//jump to another bolck, not a neighbor
 			var row = result.row,
-				size = result.size;
-			this._removeRow(row, size, result.extnm);
+				size = result.size,
+				nm = result.extnm,
+				ar = this._wgt._activeRange;
+			ar.removeRowHeaders(row, size, nm);
+			this._removeRow(row, size, nm);
 			
 			// adjust datapanel size;
 			var dp = this.dp,
@@ -876,17 +952,18 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			|| (cmp = zkS.parentByZSType(elm, "STheader")) != null) {
 			var type = (cmp.getAttribute('zs.t') == "SLheader") ? zss.Header.VER : zss.Header.HOR,
 				row, col, onsel,	//process select row or column
-				ls = this.selArea.lastRange;
+				ls = this.selArea.lastRange,
+				header = evt.target;
 			this._lastmdstr = "h";
 			if (type == zss.Header.HOR) {
 				row = -1;
-				col = cmp.ctrl.index;
+				col = header.index;
 				if(col >= ls.left && col <= ls.right &&
 					ls.top == 0 && ls.bottom == this.maxRows - 1) {
 					onsel = true;
 				}
 			} else {
-				row = cmp.ctrl.index;
+				row = header.index;
 				col = -1;
 				if(row >= ls.top && row <= ls.bottom &&
 					ls.left == 0 && ls.right == this.maxCols - 1) {
@@ -1275,9 +1352,9 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		if (h)
 			jq(sheetcmp).css('height', h);
 		
-		var local = this;
+		var self = this;
 		setTimeout(function(){
-			local._resize();
+			self._resize();
 		}, 0);
 	},
 	/**fix sp, tp and lp size*/
@@ -1459,7 +1536,8 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			dp.updateWidth((hidden ? 0 : width) - oldw);
 		
 			//process text overflow when resize column
-			this._wgt.setProcessOverflowCol_(col, zss.Spreadsheet.SRC_CMD_SET_COL_WIDTH);	
+			this.triggerOverflowColumn_(null, col + 1, true);
+			
 			if (this.frozenCol >= col) {
 				this.lp._fixSize();
 				this.cp._fixSize();
@@ -1470,9 +1548,10 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 			
 			if(loadvis) this.activeBlock.loadForVisible();
 		
-			var local = this;
+			var self = this;
 			setTimeout(function(){
-				local._fixSize();
+				self._fixSize();
+				//self.triggerOverflowColumn_(null, col + 1, true);
 			}, 0);
 
 			this._wgt.syncWidgetPos(-1, col);
@@ -1633,7 +1712,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		}
 		//sync focus and selection area
 		this._syncRowFocusAndSelection(row, row);
-		this._wgt.fire('onRowHeightChanged', {row: row});
+		this.fire('onRowHeightChanged', {row: row});
 
 		if (fireevent) {
 			this._wgt.fire('onZSSHeaderModif', 
@@ -1644,38 +1723,27 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	},
 	_updateText: function (result) {
 		var cell = this.activeBlock.getCell(result.r, result.c);
-		if (cell)//update if cell exist
-			cell._setText(result.val);
+		if (cell)//update if cell exist 
+			cell.setText(result.val, true);
 	},
-	_updateCell: function (result) {
-		var row = result.r,
-			col = result.c,
-			cell = this.activeBlock.getCell(row, col),
-			parm = {"txt": result.val, "edit":result.edit},
-			cBlock = this.cp.block,
-			tBlock = this.tp.block,
-			lBlock = this.lp.block,
-			updateCell = zss.Cell.updateCell;
-		zkS.copyParm(result, parm, ["st", "ist", "wrap", "hal", "vtal", "drh", "lock", "ctype", "rbo", "merr", "merl", "mert", "merb"]);
-
-		if (cell)//update when cell exist
-			updateCell(cell, parm);
+	/**
+	 * Update cells
+	 */
+	update_: function (tRow, lCol, bRow, rCol) {
+		var cb = this.cp.block,
+			tb = this.tp.block,
+			lb = this.lp.block;
+		this.activeBlock.update_(tRow, lCol, bRow, rCol);
+		if (cb)
+			cb.update_(tRow, lCol, bRow, rCol);
+		if (tb)
+			tb.update_(tRow, lCol, bRow, rCol);
+		if (lb)
+			lb.update_(tRow, lCol, bRow, rCol);
 		
-		if (cBlock) {
-			cell = cBlock.getCell(row, col);
-			if (cell) updateCell(cell, parm);
-		}
-		if (tBlock) {
-			cell = tBlock.getCell(row, col);
-			if (cell) updateCell(cell, parm);
-		}
-		if (lBlock) {
-			cell = lBlock.getCell(row, col);
-			if (cell) updateCell(cell, parm);
-		}
 		//feature #26: Support copy/paste value to local Excel		
 		var ls = this.getLastSelection();
-		if (row >= ls.top && row <= ls.bottom && col >= ls.left && col <= ls.right)
+		if (tRow >= ls.top && bRow <= ls.bottom && lCol >= ls.left && rCol <= ls.right)
 			//this._wgt._prepareCopy = true; //prepareCopy onResponse. Timeing issue: do prepare copy at response will too late
 			this._prepareCopy();
 	},
@@ -2394,6 +2462,7 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 	EDITING: 6, //3*2 ,
 	STOP_EDIT: 9, //4*2 + 1;//async state is odd
 	_initInnerComp: function (sheet, row) {
+
 		var wgt = sheet._wgt;
 		sheet.maskcmp = wgt.$n('mask');
 		sheet.busycmp = wgt.$n('busy');
@@ -2406,18 +2475,20 @@ zss.SSheetCtrl = zk.$extends(zk.Object, {
 		sheet.infocmp = wgt.$n('info');
 		sheet.cpcmp = wgt.$n('co');
 
-
 		sheet.sp = new zss.ScrollPanel(sheet);
 		sheet.dp = new zss.DataPanel(sheet);
-		sheet.tp = new zss.TopPanel(sheet, sheet.topcmp);
-		sheet.lp = new zss.LeftPanel(sheet, sheet.leftcmp);
-		sheet.cp = new zss.CornerPanel(sheet);
+		//TODO: move to init
+//		sheet.cp = new zss.CornerPanel(sheet);
 		
-		var dppadcmp = wgt.$n('datapad'),
-			blockcmp = wgt.$n('block');
+		var dppadcmp = wgt.$n('datapad');
+			//blockcmp = wgt.$n('block');
+//			blockcmp = wgt._mainBlock.$n();
 	
-		sheet.activeBlock = new zss.MainBlockCtrl(sheet, blockcmp, 0, 0);
-		sheet.activeBlock.loadByComp(blockcmp, row);
+//		wgt._mainBlock._setSheetCtrl(sheet);
+//		sheet.activeBlock = wgt._mainBlock;
+
+//		sheet.activeBlock = new zss.MainBlockCtrl(sheet, blockcmp, 0, 0);
+//		sheet.activeBlock.loadByComp(blockcmp, row);
 		
 		var next = wgt.$n('select');
 		if (next.getAttribute('zs.t') == "SSelect") {

@@ -17,7 +17,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 }}IS_RIGHT
 */
 
-
 /**
  * CornerPanel is used for represent the frozen area
  * 
@@ -25,70 +24,71 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  * 1. Top panel if has frozen column
  * 2. Left panel if has frozen row
  */
-zss.CornerPanel = zk.$extends(zk.Object, {
-	$init: function (sheet) {
-		this.$supers('$init', arguments);
-		var wgt = sheet._wgt,
-			cPanel = wgt.$n('co'),
-			fzr = sheet.frozenRow,
-			fzc = sheet.frozenCol;
-		this.id = cPanel.id;
-		this.sheetid = sheet.sheetid;
-		this.comp = cPanel;
+zss.CornerPanel = zk.$extends(zk.Widget, {
+	widgetName: 'CornerPanel',
+	$o: zk.$void, //owner, fellows relationship no needed
+	$init: function (sheet, rowHeadHidden, columnHeadHidden, lCol, tRow, rCol, bRow, data) {
+		this.$supers(zss.CornerPanel, '$init', []);
+		
 		this.sheet = sheet;
-		cPanel.ctrl = this;
 		
-		if (fzc > -1) {
-			//initial top panel
-			this.topcomp = cPanel.firstChild;
-			this.tp = new zss.TopPanel(sheet, this.topcomp, true);
+		var r = sheet.frozenRow,
+			c = sheet.frozenCol,
+			tp, lp;
+		if (c > -1) {
+			this.appendChild(tp = this.tp = new zss.TopPanel(sheet, columnHeadHidden, 0, c, data, true), true);
 		}
-	
-		if (fzr > -1) {
-			//initial left panel
-			var top = this.topcomp;
-			this.leftcomp = (top ? top.nextSibling : cPanel.firstChild);
-			this.lp = new zss.LeftPanel(sheet, this.leftcomp, true);	
+		if (r > -1) {
+			this.appendChild(lp = this.lp = new zss.LeftPanel(sheet, rowHeadHidden, 0, r, data, true), true);
 		}
+		if (tp && lp) {
+			this.appendChild(this.block = new zss.CellBlockCtrl(sheet, tRow, lCol, bRow, rCol, data, 'corner'), true);
+		}
+	},
+	redraw: function (out) {
+		var uid = this.uuid,
+			sheet = this.sheet,
+			fRow = sheet.frozenRow,
+			fCol = sheet.frozenCol;
+		out.push('<div id="', uid, '-co" class="zscorner zsfzcorner" zs.t="SCorner">');
+		if (this.tp) {
+			this.tp.redraw(out);
+		}
+		if (this.lp) {
+			this.lp.redraw(out);
+		}
+		if (this.block) {
+			this.block.redraw(out);
+			out.push('<div id="', uid, '-select" class="zsselect" zs.t="SSelect">',
+					'<div class="zsselecti" zs.t="SSelInner"></div><div class="zsseldot" zs.t="SSelDot"></div></div>',
+					'<div id="', uid, '-selchg" class="zsselchg" zs.t="SSelChg"><div class="zsselchgi"></div></div>',
+					'<div id="', uid, '-focmark" class="zsfocmark" zs.t="SFocus"><div class="zsfocmarki"></div></div>',
+					'<div id="', uid, '-highlight" class="zshighlight" zs.t="SHighlight"><div class="zshighlighti"></div></div>');
+		}
+		out.push('<div class="zscorneri" ></div></div>');
+	},
+	bind_: function () {
+		this.$supers(zss.CornerPanel, 'bind_', arguments);
 		
-		if (this.tp && this.lp) {
-			var blockcomp = this.leftcomp.nextSibling,
-				selareacmp = blockcomp.nextSibling,
+		this.comp = this.$n('co');
+		if (this.block) {
+			var sheet = this.sheet,
+				selareacmp = this.$n('select'),
 				selchgcmp = selareacmp.nextSibling,
 				focuscmp = selchgcmp.nextSibling,
 				hlcmp = focuscmp.nextSibling;
 
-			this.block = new zss.CellBlockCtrl(sheet, blockcomp, 0, 0);
-			this.block.loadByComp(blockcomp);
 			this.selArea = new zss.SelAreaCtrlCorner(sheet, selareacmp, sheet.initparm.selrange.clone());
 			this.selChgArea = new zss.SelChgCtrlCorner(sheet, selchgcmp);
 			this.focusMark = new zss.FocusMarkCtrlCorner(sheet, focuscmp, sheet.initparm.focus.clone());
 			this.hlArea = new zss.HighlightCorner(sheet, hlcmp, sheet.initparm.hlrange.clone(), "inner");
 		}
 	},
-	cleanup: function () {
-		this.invalid = true;
-		
-		if (this.tp) {
-			this.tp.cleanup();
-			this.tp = this.topcomp = null;
-		}
-		
-		if (this.lp) {
-			this.lp.cleanup();
-			this.lp = this.leftcomp = null;
-		}
-		
-		if (this.block) {
-			this.block.cleanup();
-			this.block = null;
-		}
-		
+	unbind_: function () {
 		if (this.selArea) {
 			this.selArea.cleanup();
 			this.selArea = null;
 		}
-		
 		if (this.selChgArea) {
 			this.selChgArea.cleanup();
 			this.selChgArea = null;
@@ -101,10 +101,8 @@ zss.CornerPanel = zk.$extends(zk.Object, {
 			this.hlArea.cleanup();
 			this.hlArea = null;
 		}
-		
-		if (this.comp) this.comp.ctrl = null;
-		this.comp = null;
-		this.sheet = null;
+		this.sheet = this.tp = this.lp = this.block = this.comp = null;
+		this.$supers(zss.CornerPanel, 'unbind_', arguments);
 	},
 	_cornerHeight: function () {
 		var sheet = this.sheet,
@@ -121,8 +119,9 @@ zss.CornerPanel = zk.$extends(zk.Object, {
 			(lw - 1 + sheet.custColWidth.getStartPixel(fzc + 1)) : lw;
 	},
 	_fixSize: function () {
-		var name = "#" + this.sheetid,
-			sid = this.sheetid + "-sheet";
+		var sheetid = this.sheet.sheetid,
+			name = "#" + sheetid,
+			sid = sheetid + "-sheet";
 		
 		zcss.setRule(name + " .zscorner", ["width", "height"],
 			[this._cornerWidth() + "px", this._cornerHeight() + "px"], true, sid);

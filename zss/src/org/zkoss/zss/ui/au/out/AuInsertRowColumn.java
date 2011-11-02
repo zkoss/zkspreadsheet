@@ -26,10 +26,7 @@ import org.zkoss.zk.ui.Component;
  *
  */
 public class AuInsertRowColumn extends AuResponse {
-	public AuInsertRowColumn(Component comp, String token, String sheetid, String data) {
-		/**
-		 * insertrc_ -> insertRowColumn
-		 */
-		super("setAttr", comp, new Object[] {comp.getUuid(), "insertRowColumn",  new String[]{token, sheetid, data}});
+	public AuInsertRowColumn(Component comp, String token, String sheetid, Object data) {
+		super("setAttr", comp, new Object[] {comp.getUuid(), "insertRowColumn",  new Object[]{token, sheetid, data}});
 	}
 }
