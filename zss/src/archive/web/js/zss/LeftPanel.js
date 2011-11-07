@@ -251,10 +251,18 @@ zss.Panel = zk.$extends(zk.Widget, {
 	doTooltipOver_: zk.$void,
 	doTooltipOut_: zk.$void,
 	doClick_: zk.$void,
-	doMouseDown_: zk.$void,
-	doMouseUp_: zk.$void,
-	doRightClick_: zk.$void,
-	doDoubleClick_: zk.$void,
+	doMouseDown_: function (evt) {
+		this.sheet._doMousedown(evt);
+	},
+	doMouseUp_: function (evt) {
+		this.sheet._doMouseup(evt);
+	},
+	doRightClick_: function (evt) {
+		this.sheet._doMouserightclick(evt);
+	},
+	doDoubleClick_: function (evt) {
+		this.sheet._doMousedblclick(evt);
+	},
 	doMouseOver_: function (evt) {
 		var n = evt.domTarget;
 		if (n.getAttribute('zs.t') == "SBoun")
