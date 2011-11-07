@@ -337,7 +337,7 @@ zss.Cell =  zk.$extends(zk.Widget, {
 			Cell._processOverflow(this);
 		}
 		if (this.hastxt && (zk.ie6_ || zk.ie7_) && this.valign != 't') {
-			this._setVerticalAlign();
+			this._updateVerticalAlign();
 		}
 	},
 	bind_: function (desktop, skipper, after) {
@@ -514,7 +514,7 @@ zss.Cell =  zk.$extends(zk.Widget, {
 		if (ctrl.invalid)
 			return;
 		
-		ctrl._setVerticalAlign();
+		ctrl._updateVerticalAlign();
 	},
 	_processOverflow: function (ctrl) {		
 		var sheet = ctrl.sheet;
