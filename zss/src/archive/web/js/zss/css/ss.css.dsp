@@ -249,7 +249,7 @@
 }
 
 .zstopcelltxt {
-	font-size: smaller;
+	font-size: 11px;
 	text-align: center;
 	width: 49px;  /* colWidth - 2*cellPadding - 1 , 1 is border*/
 }
@@ -306,7 +306,7 @@
 	cursor : default;
 }
 .zsleftcelltxt {
-	font-size: smaller;
+	font-size: 11px;
 	height: 19px; /* rowHeight - 1, 1 is border */
 	text-align: center;
 	<c:if test="${c:browser('ie')}">

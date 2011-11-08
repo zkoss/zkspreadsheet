@@ -652,7 +652,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	public void setPreloadColumnSize(int size) {
 		if (_preloadColumnSize != size) {
 			_preloadColumnSize = size < 0 ? 0 : size;
-			smartUpdate("preloadRowSize", _preloadRowSize);
+			smartUpdate("preloadColSize", _preloadRowSize);
 		}
 	}
 	

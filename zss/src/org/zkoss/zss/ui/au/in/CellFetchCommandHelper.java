@@ -76,7 +76,7 @@ public class CellFetchCommandHelper{
 		if (comp == null)
 			throw new UiException(MZk.ILLEGAL_REQUEST_COMPONENT_REQUIRED, this);
 		final Map data = request.getData();
-		if (data == null || data.size() != 20)
+		if (data == null || data.size() != 22)
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA,
 				new Object[] {Objects.toString(data), this});
 		
@@ -125,6 +125,9 @@ public class CellFetchCommandHelper{
 		int rangeRight = (Integer)data.get("rangeRight");
 		int rangeBottom = (Integer)data.get("rangeBottom");
 		
+		int cacheRangeFetchTopHeight = (Integer)data.get("arFetchTopHeight");
+		int cacheRangeFetchBtmHeight = (Integer)data.get("arFetchBtmHeight");
+		
 		try{
 			if("jump".equals(type)){
 				String result = null;
@@ -168,8 +171,7 @@ public class CellFetchCommandHelper{
 					}
 					int size = right - blockRight;//right - (blockRight +1) +1
 
-					//String result = 
-					LoadResult result = loadEast(sheet, type, blockLeft, top, blockRight, bottom, size, -1, -1);
+					LoadResult result = loadEast(sheet, type, blockLeft, top, blockRight, bottom, size, -1, cacheRangeFetchTopHeight, cacheRangeFetchBtmHeight);
 					responseDataBlock("East", token, sheetId, result.json.toJSONString());
 				} else if ("south".equals(direction)) {
 					
@@ -181,11 +183,11 @@ public class CellFetchCommandHelper{
 					int left = _mergeMatrix.getLeftConnectedColumn(blockLeft, blockTop, bottom);
 
 					if (right > blockRight) {
-						LoadResult result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, right - blockRight, -1, -1);
+						LoadResult result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, right - blockRight, -1, -1, -1);
 						responseDataBlock("East", "", sheetId, result.json.toJSONString());
 					}
 					if (left < blockLeft) {
-						LoadResult result = loadWest(sheet, type, blockLeft, blockTop, right, blockBottom, blockLeft - left, -1, -1);
+						LoadResult result = loadWest(sheet, type, blockLeft, blockTop, right, blockBottom, blockLeft - left, -1, -1, -1);
 						responseDataBlock("West", "", sheetId, result.json.toJSONString());
 					}
 
@@ -211,7 +213,7 @@ public class CellFetchCommandHelper{
 					}
 					int size = blockLeft - left ;//blockLeft -1 - left + 1;
 					
-					LoadResult result = loadWest(sheet, type, blockLeft, blockTop,	blockRight, blockBottom, size, -1, -1);
+					LoadResult result = loadWest(sheet, type, blockLeft, blockTop,	blockRight, blockBottom, size, -1, cacheRangeFetchTopHeight, cacheRangeFetchBtmHeight);
 					responseDataBlock("West", token, sheetId, result.json.toJSONString());
 				} else if("north".equals(direction)) {
 					
@@ -223,11 +225,11 @@ public class CellFetchCommandHelper{
 					int left = _mergeMatrix.getLeftConnectedColumn(blockLeft,top, blockBottom);
 					
 					if (right > blockRight) {
-						LoadResult result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, right - blockRight, -1, -1);
+						LoadResult result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, right - blockRight, -1, -1, -1);
 						responseDataBlock("East", "", sheetId, result.json.toJSONString());
 					}
 					if (left < blockLeft) {
-						LoadResult result = loadWest(sheet,type,blockLeft,blockTop,right,blockBottom,blockLeft - left, -1, -1);
+						LoadResult result = loadWest(sheet,type,blockLeft,blockTop,right,blockBottom,blockLeft - left, -1, -1, -1);
 						responseDataBlock("West", "", sheetId, result.json.toJSONString());
 					}
 					int size = blockTop - top;
@@ -279,7 +281,7 @@ public class CellFetchCommandHelper{
 			right = _mergeMatrix.getRightConnectedColumn(right, top, bottom);
 
 			int width = right - blockRight;
-			LoadResult result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, width, cacheRangeWidth, loadSouth && cacheRangeHeight > 0 ? -1 : cacheRangeHeight);
+			LoadResult result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, width, cacheRangeWidth, -1, loadSouth && cacheRangeHeight > 0 ? -1 : cacheRangeHeight);
 			cacheRangeRight = result.index;
 			responseDataBlock("East", "", sheetId, result.json.toJSONString());
 			blockRight += width;
@@ -288,7 +290,7 @@ public class CellFetchCommandHelper{
 
 			left = _mergeMatrix.getLeftConnectedColumn(left, top, bottom);
 			int size = blockLeft - left;
-			LoadResult result = loadWest(sheet, type, blockLeft, blockTop, right, blockBottom, size, cacheRangeWidth, loadSouth && cacheRangeHeight > 0 ? -1 : cacheRangeHeight);
+			LoadResult result = loadWest(sheet, type, blockLeft, blockTop, right, blockBottom, size, cacheRangeWidth, -1, loadSouth && cacheRangeHeight > 0 ? -1 : cacheRangeHeight);
 			cacheRangeLeft = result.index;
 			responseDataBlock("West", "", sheetId, result.json.toJSONString());
 			blockLeft -= size;
@@ -513,7 +515,7 @@ public class CellFetchCommandHelper{
 	
 	private LoadResult loadEast(Worksheet sheet,String type, 
 			int blockLeft,int blockTop,int blockRight, int blockBottom,
-			int fetchWidth, int rangeWidth, int rangeHeight) {
+			int fetchWidth, int rangeWidth, int rangeTopHeight, int rangeBtmHeight) {
 
 		JSONObject json = new JSONObject();
 		json.put("type", "neighbor");
@@ -523,12 +525,15 @@ public class CellFetchCommandHelper{
 		//append row
 		int cs = blockRight + 1;
 		int ce = cs + fetchWidth;
-		int rangeRight = Math.min(rangeWidth > fetchWidth ? cs + rangeWidth - 1 : ce - 1, _spreadsheet.getMaxcolumns() - 1); 
-		int rangeBottom = rangeHeight < 0 ? blockBottom : blockBottom + rangeHeight;
-		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
+		json.put("top", blockTop);
+		json.put("left", cs);
 		
+		int rangeTop = rangeTopHeight > 0 ? blockTop - rangeTopHeight + 1 : blockTop;
+		int rangeRight = Math.min(rangeWidth > fetchWidth ? cs + rangeWidth - 1 : ce - 1, _spreadsheet.getMaxcolumns() - 1); 
+		int rangeBottom = rangeBtmHeight < 0 ? blockBottom : blockBottom + rangeBtmHeight - 1;
+		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
 		JSONObject data = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, 
-				SpreadsheetCtrl.CellAttribute.ALL, cs, blockTop, rangeRight, rangeBottom);
+				SpreadsheetCtrl.CellAttribute.ALL, cs, rangeTop, rangeRight, rangeBottom);
 		data.put("dir", "east");
 		json.put("data", data);
 	
@@ -558,7 +563,7 @@ public class CellFetchCommandHelper{
 	
 	private LoadResult loadWest(Worksheet sheet,String type,
 			int blockLeft,int blockTop,int blockRight, int blockBottom,
-			int fetchWidth, int rangeWidth, int rangeHeight) {
+			int fetchWidth, int rangeWidth, int rangeTopHeight, int rangeBtmHeight) {
 		
 		JSONObject json = new JSONObject();
 		json.put("type", "neighbor");
@@ -568,14 +573,17 @@ public class CellFetchCommandHelper{
 		// append row
 		int cs = blockLeft - 1;
 		int ce = cs - fetchWidth;
+		json.put("top", blockTop);
+		json.put("left", ce + 1);
+		
+		int rangeTop = rangeTopHeight > 0 ? blockTop - rangeTopHeight + 1 : blockTop;
 		int rangeLeft = rangeWidth > fetchWidth ? blockLeft - rangeWidth - 1: ce + 1;
 		if (rangeLeft < 0)
 			rangeLeft = 0;
-		int rangeBottom = rangeHeight < 0 ? blockBottom : blockBottom + rangeHeight;
-		
+		int rangeBottom = rangeBtmHeight < 0 ? blockBottom : blockBottom + rangeBtmHeight - 1;
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
 		JSONObject data = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, 
-				SpreadsheetCtrl.CellAttribute.ALL, rangeLeft, blockTop, cs, rangeBottom);
+				SpreadsheetCtrl.CellAttribute.ALL, rangeLeft, rangeTop, cs, rangeBottom);
 		data.put("dir", "west");
 		json.put("data", data);
 		
@@ -613,12 +621,15 @@ public class CellFetchCommandHelper{
 
 		int rs = blockBottom + 1;
 		int re = rs + fetchHeight;
+		json.put("top", rs);
+		json.put("left", blockLeft);
+		
 		int rangeBottom = Math.min(cacheRangeHeight > fetchHeight ? rs + cacheRangeHeight - 1 : re - 1, _spreadsheet.getMaxrows() - 1);
 		rangeLeft = rangeLeft > 0 && rangeLeft < blockLeft ? rangeLeft : blockLeft;
 		rangeRight = Math.min(Math.max(blockRight, rangeRight), _spreadsheet.getMaxcolumns() - 1);
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
-		JSONObject data = spreadsheetCtrl.getRangeAttrs(sheet, 
-				_hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, rangeLeft, rs, rangeRight, rangeBottom);
+		JSONObject data = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
+				rangeLeft, rs, rangeRight, rangeBottom);
 		data.put("dir", "south");
 		json.put("data", data);
 
@@ -656,10 +667,12 @@ public class CellFetchCommandHelper{
 		
 		int rs = blockTop - 1;
 		int re = rs - fetchHeight;
+		json.put("top", re + 1);
+		json.put("left", blockLeft);
+		
 		int rangeTop = cacheRangeHeight > fetchHeight ? rs - cacheRangeHeight - 1 : re + 1;
 		rangeLeft = rangeLeft > 0 && rangeLeft < blockLeft ? rangeLeft : blockLeft;
 		rangeRight = Math.min(Math.max(blockRight, rangeRight), _spreadsheet.getMaxcolumns() - 1);
-		
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
 		JSONObject data = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
 				rangeLeft, rangeTop, rangeRight, rs);

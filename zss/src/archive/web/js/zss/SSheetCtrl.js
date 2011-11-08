@@ -88,9 +88,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	afterParentChanged_: function () { //all attributes set when afterParentChanged_
 		var self = this,
 			wgt = this._wgt = this.parent;
-		if (window.START) {
-			zk.log('spreadsheet created: ' + (jq.now() - window.START));
-		}
 		this.sheetid = wgt.uuid;
 		
 		//current server sheet index

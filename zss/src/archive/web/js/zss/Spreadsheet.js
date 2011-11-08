@@ -50,8 +50,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			tp = json.type;
 		if (ar && tp != 'ack') { //fetch cell will empty return,(not thing need to fetch)
 			var d = json.data,
-				tRow = d.t,
-				lCol = d.l,
+				tRow = json.top,
+				lCol = json.left,
 				bRow = tRow + json.height - 1,
 				rCol = lCol + json.width - 1,
 				leftFrozen = json.leftFrozen,
@@ -486,26 +486,26 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			pruneTop: function (size) {
 				var rows = this.rows,
 					rowHeaders = this.rowHeaders,
-					i = top = this.rect.top,
+					i = this.rect.top,
 					j = size;
 				while (j--) {
 					delete rows[i];
 					delete rowHeaders[i];
 					i++;
 				}
-				this.rect.top = top + size;
+				this.rect.top += size;
 			},
 			pruneBottom: function (size) {
 				var rows = this.rows,
 					rowHeaders = this.rowHeaders,
-					i = btm = this.rect.bottom,
+					i = this.rect.bottom,
 					j = size;
 				while (j--) {
 					delete rows[i];
 					delete rowHeaders[i];
 					i--;
 				}
-				this.rect.bottom = btm - size;
+				this.rect.bottom -= size;
 			},
 			containsRange: function (tRow, lCol, bRow, rCol) {
 				var rect = this.rect;
