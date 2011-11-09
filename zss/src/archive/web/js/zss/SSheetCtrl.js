@@ -437,7 +437,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				ar = this._wgt._activeRange;
 			if (ar) {
 				ar.update(data);
-				wgt.sheetCtrl.update_(data.t, data.l, data.b, data.r);
+				this.update_(data.t, data.l, data.b, data.r);
 				wgt._triggerContentsChanged = true;
 			}
 			break;

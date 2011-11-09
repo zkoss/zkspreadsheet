@@ -243,8 +243,8 @@ zss.Cell =  zk.$extends(zk.Widget, {
 		this._updateHasTxt(txt != "");
 		this._setText(txt);
 
-		if (this.overflow || this.redoOverflow) {
-			if (difTxt) {
+		if (this.overflow) {
+			if (difTxt || this.redoOverflow) {
 				Cell._processOverflow(this);
 				if (!noTriggerOverflowEvt)
 					this.sheet.triggerOverflowColumn_(this.r, this.c);
@@ -329,7 +329,7 @@ zss.Cell =  zk.$extends(zk.Widget, {
 		return '<div id="' + uid + '" class="' + this.getZclass() + '" zs.t="SCell" '
 				+ (style ? 'style="' +  style + '"' : '') + '><div id="' + uid + '-real" class="' +
 				this._getInnerClass() + '" ' + (innerStyle ? 'style="' + innerStyle + '"' : '') + 
-				'>' + (zk.ie6_ || zk.ie7_ ? '<div style="left:0px;position:absolute;width:100%">' + text + '</div>' : text) + '</div></div>';
+				'>' + (zk.ie6_ || zk.ie7_ ? '<div style="left:0px;position:absolute;width:100%;">' + text + '</div>' : text) + '</div></div>';
 	},
 	_onRowAdded: function () {
 		if (this.overflow) {
@@ -495,6 +495,9 @@ zss.Cell =  zk.$extends(zk.Widget, {
 		}
 		var cmp = ctrl.comp,
 			txtcmp = ctrl.txtcomp;
+		if (zk.ie6_ || zk.ie7_) {
+			txtcmp = txtcmp.firstChild;
+		}
 		jq(txtcmp).css({'width': '', 'position': ''});//remove old value.
 		var sw = txtcmp.scrollWidth,
 			cellPad = sheet.cellPad,
@@ -540,7 +543,7 @@ zss.Cell =  zk.$extends(zk.Widget, {
 				next = next.nextSibling;//jq(next).next('DIV')[0];
 			}
 			w =  w - cellPad;
-			jq(txtcmp).css('width', jq.px0(w));//when some column or row is invisible, the w might be samlle then zero
+			jq(zk.ie6_ || zk.ie7_ ? txtcmp.parentNode : txtcmp).css('width', jq.px0(w));//when some column or row is invisible, the w might be samlle then zero
 		} else {
 			ctrl.overflowed = false;
 			jq(cmp).removeClass(cmp.ctrl.rborder ? "zscell-over-b" : "zscell-over");
