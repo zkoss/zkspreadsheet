@@ -622,7 +622,8 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			left = range.left,
 			right = range.right,
 			bottom = range.bottom,
-			ar = sheet._wgt._activeRange;
+			ar = sheet._wgt._activeRange,
+			created = false;
 		
 		//create east from cache
 		if (right + 1 <= rCol) {
@@ -636,6 +637,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				chd = true;
 			}
 			if (chd) { //after create cell from cache, range's value may changed
+				created = true;
 				range = this.range;
 				top = range.top;
 				left = range.left;
@@ -655,6 +657,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				chd = true;
 			}
 			if (chd) {
+				created = true;
 				range = this.range;
 				top = range.top;
 				left = range.left;
@@ -696,6 +699,10 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			});
 			this._sendOnCellFetch(token, "visible", "", -1, -1, fetchWidth, fetchHeight, vrange);
 			return true;
+		}
+		
+		if (created) {
+			sheet.sendSyncblock(true);
 		}
 		return false;
 	},

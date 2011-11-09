@@ -1074,16 +1074,12 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 		if (_protectSheet)
 			renderer.render("protect", _protectSheet);
-		/**
-		 * toph -> topPanelHeight
-		 */
+		
 		renderer.render("topPanelHeight", th);
+		
 		int lw = isHiderowhead() ? 1 : this.getLeftheadwidth();
 		renderer.render("leftPanelWidth", lw);
 
-		/**
-		 * cellpad -> cellPadding
-		 */
 		renderer.render("cellPadding", _cellpadding);
 		String css = getDynamicMediaURI(this, _cssVersion++, "ss_" + this.getUuid(), "css");
 		renderer.render("loadcss", new JavaScriptValue("zk.loadCSS('" + css + "', '" + this.getUuid() + "-sheet" + "')"));
@@ -1093,17 +1089,9 @@ public class Spreadsheet extends XulElement implements Serializable {
 		renderer.render("maxColumn", getMaxcolumnsInJSON());
 
 		renderer.render("sheetId", getSelectedSheetId());
-		/**
-		 * fs -> focusRect
-		 */
+		
 		renderer.render("focusRect", getRectStr(_focusRect));
-		/**
-		 * sel -> selectionRect
-		 */
 		renderer.render("selectionRect", getRectStr(_selectionRect));
-		/**
-		 * hl -> highLightRect
-		 */
 		if (_highlightRect != null) {
 			renderer.render("highLightRect", getRectStr(_highlightRect));
 		}
@@ -1140,7 +1128,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 		 */
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) this.getExtraCtrl());
 		
-		//TODO: dynamic update range
 		int preloadColSize = getPreloadColumnSize();
 		int preloadRowSize = getPreloadRowSize();
 		renderer.render("activeRange", 
@@ -1788,13 +1775,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 		left = left > 0 ? left - 1 : 0;// for border, when update a range, we
 		// should also update the left - 1, top - 1 part
 		top = top > 0 ? top - 1 : 0;
-		
-//		int preloadColRight = getPreloadColumnSize();
-//		int preloadRow = getPreloadRowSize();
-//		if (preloadColRight > 0 && preloadRow > 0) {
-//			updateRange(sheet, sheetId, 
-//				left, top, Math.min(right + preloadColRight - 1, getMaxcolumns() - 1), Math.min(bottom + preloadRow - 1, getMaxrows() - 1));
-//		}
 
 		final int loadLeft = _loadedRect.getLeft();
 		final int loadTop = _loadedRect.getTop();
@@ -2032,28 +2012,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 		public WidgetHandler getWidgetHandler() {
 			return Spreadsheet.this.getWidgetHandler();
 		}
-
-//		public String getRowOuterAttrs(int row) {
-//			Worksheet sheet = getSelectedSheet();
-//			HeaderPositionHelper helper = Spreadsheet.this.getRowPositionHelper(sheet);
-//			StringBuffer sb = new StringBuffer();
-//			sb.append("class=\"zsrow");
-//			HeaderPositionInfo info = helper.getInfo(row);
-//			int zsh = -1;
-//			if (info != null) {
-//				zsh = info.id;
-//				sb.append(" zsh").append(zsh);
-//			}
-//			sb.append("\"");
-//
-//			HTMLs.appendAttribute(sb, "z.r", row);
-//
-//			if (zsh >= 0) {
-//				HTMLs.appendAttribute(sb, "z.zsh", zsh);
-//			}
-//
-//			return sb.toString();
-//		}
 		
 		public JSONObject getRowHeaderAttrs(Worksheet sheet, int rowStart, int rowEnd) {
 			return getHeaderAttrs(sheet, true, rowStart, rowEnd);

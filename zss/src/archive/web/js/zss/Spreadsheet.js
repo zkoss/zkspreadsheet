@@ -1412,7 +1412,6 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 				sheet.showMask(false);
 			} else if(zk(sheet._wgt).isRealVisible() &&	!sheet.activeBlock.loadForVisible()){
 				//if no loadfor visible send after init, then we must sync the block size
-				sheet.sendSyncblock(true);
 				sheet.showMask(false);
 			}
 			if (zk.opera)
