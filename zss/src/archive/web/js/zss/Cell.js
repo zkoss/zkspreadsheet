@@ -191,10 +191,7 @@ zss.Cell =  zk.$extends(zk.Widget, {
 		var r = this.r,
 			c = this.c,
 			data = this.src.getRow(r).getCell(c) || this.sheet._wgt._activeRange.getRow(r).getCell(c),
-			edit = data.editText,
 			format = data.formatText,
-			lock = data.lock,
-			wrap = data.wrap,
 			st = this.style = data.style,
 			ist = this.innerStyle = data.innerStyle,
 			n = this.comp,
@@ -204,6 +201,8 @@ zss.Cell =  zk.$extends(zk.Widget, {
 			txtNode.style.cssText = ist;
 		}
 		this.cellType = data.cellType;
+		this.lock = data.lock;
+		this.wrap = data.wrap;
 		this.halign = data.halign;
 		this.valign = data.valign;
 		this.rborder = data.rightBorder;
@@ -460,36 +459,6 @@ zss.Cell =  zk.$extends(zk.Widget, {
 		this.r = newrow;
 	}
 }, {
-	/**
-	 * Update cell's text and style
-	 * @param zss.Cell ctrl
-	 * @param map parameter setting
-	 */
-	updateCell: function (ctrl, parm) {
-		var st = parm.st,//style
-			ist = parm.ist,//style of inner div
-			hal = parm.hal,
-			vtal = parm.vtal,
-			lock = parm.lock,
-			cellType = parm.ctype,
-			cmp = ctrl.comp;
-		ctrl.cellType = cellType != undefined ? cellType : BLANK_CELL;
-		ctrl.lock = !!lock;//default is locked
-		ctrl.wrap = parm.wrap;
-		st = !st ? '' : st;
-		ist = !ist ? '' : ist;
-		if (cmp.style.cssText != st || ctrl.txtcomp.style.cssText != ist) {
-			cmp.style.cssText = st;
-			ctrl.txtcomp.style.cssText = ist;
-		}
-
-		ctrl.halign = !hal ? "l" : hal;//default horizontal align is left
-		ctrl.valign = !vtal ? 't' : vtal;//default vertical align is top
-		ctrl.rborder = !!parm.rbo;
-		ctrl.edit = parm.edit;
-		ctrl._updateListenOverflow(evalOverflow(ctrl));
-		ctrl.setText(parm.txt);
-	},
 	_clearOverlapRelation: function (ctrl) {
 		var cmp = ctrl.comp,
 			sheet = ctrl.sheet;
