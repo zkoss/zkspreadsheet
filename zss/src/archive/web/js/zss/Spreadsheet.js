@@ -135,11 +135,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		var node = document.getElementById(id);
 		if(node && node.type == "text/css"){
 			node.parentNode.removeChild(node);
-			if (zk.ie) {//refresh for IE
-				createSSheet("", id);
-				node = document.getElementById(id);
-				node.parentNode.removeChild(node);		
-			}
 		}
 	}
 	/**
@@ -599,10 +594,6 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	 * Indicate Ctrl-Paste event key down status
 	 */
 	_ctrlPasteDown: false,
-	/**
-	 * Row height changed event listener
-	 */
-	_rowHeightChangedListeners: [],
 	$define: {
 		/**
 		 * synchronized update data
@@ -1162,9 +1153,6 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	},
 	unbind_: function () {
 		zWatch.unlisten({onShow: this, onSize: this, onResponse: this});
-		
-		var ls = this._rowHeightChangedListeners;
-		ls.splice(0, ls.length);
 		
 		var r = this._activeRange;
 		if (r) {

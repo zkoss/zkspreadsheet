@@ -309,15 +309,9 @@ zss.Header = zk.$extends(zk.Widget, {
 		this.$supers(zss.Header, 'unbind_', arguments);
 	},
 	detach: function () {
-		var b = this.bcomp,
-			b1 = this.ibcomp,
-			b2 = this.ibcomp2;
+		var b = this.bcomp;
 		if (b)
 			b.parentNode.removeChild(b);
-		if (b1)
-			b1.parentNode.removeChild(b1);
-		if (b2)
-			b2.parentNode.removeChild(b2);
 		this.$supers(zss.Header, 'detach', arguments);
 	},
 	doTooltipOver_: zk.$void,
