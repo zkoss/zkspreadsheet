@@ -68,8 +68,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 	unbind_: function () {
 		this.$supers(zss.CellBlockCtrl, 'unbind_', arguments);
 		
-		var rows = this.rows;
-		rows.splice(0, rows.length);
+		delete this.rows;
 		this.sheet = this.comp = this.rows = this.range = null;
 	},
 	doMouseDown_: function (evt) {
@@ -374,8 +373,8 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 	 * @param string htmlContent
 	 */
 	insertRow: function (index, row, htmlContent) {
-		var ignoeChildDom = htmlContent === undefined || !!htmlContent;
-		var rows = this.rows,
+		var ignoeChildDom = htmlContent === undefined || !!htmlContent,
+			rows = this.rows,
 			sibling = rows[index];
 		this.insertBefore(row, sibling, ignoeChildDom);
 		rows.splice(index, 0, row);
@@ -455,6 +454,8 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 		var rows = this.rows,
 			i = size;
 		while (i--) {
+			if (!rows.length)
+				return;
 			rows.shift().detach();
 		}
 		this.range.extendTop(-size);
@@ -463,6 +464,8 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 		var rows = this.rows,
 			i = size;
 		while (i--) {
+			if (!rows.length)
+				return;
 			rows.pop().detach();
 		}
 		this.range.extendBottom(-size);

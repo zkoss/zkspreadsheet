@@ -55,12 +55,10 @@ zss.Panel = zk.$extends(zk.Widget, {
 		if ('jump' == dir)
 			this._clearAllHeader();
 		
-		for (var i = start; i <= end; i++) {
+		for (var i = start, j = 0; i <= end; i++) {
 			var h = new zss.Header(sheet, type, headers[i]);
-			html += h.getHtml();
-			hs.push(h);
+			isInsert ? this.insertHeader_(j++, h) : this.appendHeader_(h);
 		}
-		isInsert ? this.insertHeaders_(hs, html) : this.appendHeaders_(hs, html);
 		this.updateSelectionCSS_();
 	},
 	updateSelectionCSS_: function () {
@@ -96,36 +94,16 @@ zss.Panel = zk.$extends(zk.Widget, {
 		//to be overridden
 	},
 	/**
-	 * Append zss.Header widgets
+	 * Append zss.Header widget
 	 * 
-	 * @param array zss.Header widgets
+	 * @param zss.Header header
 	 * @param string html
 	 */
-	appendHeaders_: function (headers, html) {
-		var ary = this.headers,
-			l = headers.length;
-		jq(this.hcomp).append(html);
-		for (var i = 0; i < l; i++) {
-			var h = headers[i];
-			ary.push(h);
-			h.bind_();
-		}
-	},
-	/**
-	 * Insert zss.Header widgets
-	 * 
-	 * @param array zss.Headers widgets
-	 * @param string html
-	 */
-	insertHeaders_: function (headers, html) {
-		var ary = this.headers,
-			l = headers.length;
-		jq(html).insertBefore(this.hcomp.firstChild);
-		for (var i = 0; i < l; i++) {
-			var h = headers[i];
-			ary.unshift(h);
-			h.bind_();
-		}
+	appendHeader_: function (header) {
+		this.appendChild(header, true);
+		jq(this.hcomp).append(header.getHtml());
+		header.bind_();
+		this.headers.push(header);
 	},
 	/**
 	 * Insert zss.Header widget
@@ -134,16 +112,20 @@ zss.Panel = zk.$extends(zk.Widget, {
 	 * @param zss.Header 
 	 * @param boolean ignoreDom
 	 */
-	insertHeader_: function (index, header, ignoreDom) {
+	insertHeader_: function (index, header) {
 		var headers = this.headers,
 			sibling = headers[index];
-		this.insertBefore(header, sibling, ignoreDom);
+		this.insertBefore(header, sibling, true);
 		headers.splice(index, 0, header);
+		var $anchor = jq(header.getHtmlEpilogHalf());
+		$anchor.insertBefore(sibling.$n());
+		jq(header.getHtmlPrologHalf()).insertBefore($anchor);
+		header.bind_();
 	},
 	/**
 	 * Create cells and associated headers
 	 */
-	create_: function (dir, headerStart, headerEnd, frozenStart, frozenEnd) {
+	create_: function (dir, headerStart, headerEnd, frozenStart, frozenEnd, createFrozenOnly) {
 		//to be overridden
 	},
 	/**
@@ -327,8 +309,9 @@ zss.LeftPanel = zk.$extends(zss.Panel, {
 	/**
 	 * Create cells and associated headers
 	 */
-	create_: function (dir, rowStart, rowEnd, frozenColStart, forzenColEnd) {
-		this.createHeaders_(dir, rowStart, rowEnd);
+	create_: function (dir, rowStart, rowEnd, frozenColStart, forzenColEnd, createFrozenOnly) {
+		if (!createFrozenOnly)
+			this.createHeaders_(dir, rowStart, rowEnd);
 		
 		var createFrozen = frozenColStart >= 0 && forzenColEnd >= 0;
 		if ('jump' == dir && createFrozen) {
@@ -352,7 +335,9 @@ zss.LeftPanel = zk.$extends(zss.Panel, {
 		return this.sheet._wgt._activeRange.rowHeaders;
 	},
 	getFrozenData_: function () {
-		return this.sheet._wgt._activeRange.leftFrozen;
+		var a = this.sheet._wgt._activeRange,
+			f = a.leftFrozen;
+		return f ? f : a;
 	},
 	getFrozenHeaderData_: function () {
 		var leftFrozen = this.getFrozenData_();

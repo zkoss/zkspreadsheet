@@ -40,8 +40,10 @@ zss.TopPanel = zk.$extends(zss.Panel, {
 	/**
 	 * Create cells and associated headers
 	 */
-	create_: function (dir, colStart, colEnd, frozenRowStart, frozenRowEnd) {
-		this.createHeaders_(dir, colStart, colEnd);
+	create_: function (dir, colStart, colEnd, frozenRowStart, frozenRowEnd, createFrozenOnly) {
+		if (!createFrozenOnly)
+			this.createHeaders_(dir, colStart, colEnd);
+		
 		var createFrozen = frozenRowStart >= 0 && frozenRowEnd >= 0;
 		if ('jump' == dir && createFrozen) {
 			var oldBlock = this.block;
@@ -64,7 +66,10 @@ zss.TopPanel = zk.$extends(zss.Panel, {
 		return this.sheet._wgt._activeRange.columnHeaders;
 	},
 	getFrozenData_: function () {
-		return this.sheet._wgt._activeRange.topFrozen;
+		//return this.sheet._wgt._activeRange.topFrozen;
+		var a = this.sheet._wgt._activeRange,
+			f = a.topFrozen;
+		return f ? f : a;
 	},
 	getFrozenHeaderData_: function () {
 		var topFrozen =  this.getFrozenData_();

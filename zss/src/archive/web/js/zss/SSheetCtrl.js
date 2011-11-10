@@ -2474,18 +2474,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 
 		sheet.sp = new zss.ScrollPanel(sheet);
 		sheet.dp = new zss.DataPanel(sheet);
-		//TODO: move to init
-//		sheet.cp = new zss.CornerPanel(sheet);
 		
 		var dppadcmp = wgt.$n('datapad');
-			//blockcmp = wgt.$n('block');
-//			blockcmp = wgt._mainBlock.$n();
-	
-//		wgt._mainBlock._setSheetCtrl(sheet);
-//		sheet.activeBlock = wgt._mainBlock;
-
-//		sheet.activeBlock = new zss.MainBlockCtrl(sheet, blockcmp, 0, 0);
-//		sheet.activeBlock.loadByComp(blockcmp, row);
 		
 		var next = wgt.$n('select');
 		if (next.getAttribute('zs.t') == "SSelect") {

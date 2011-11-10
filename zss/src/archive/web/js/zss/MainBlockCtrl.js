@@ -88,21 +88,33 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			var tRow = cr.bottom + 1,
 				lCol = cr.left,
 				rCol = cr.right,
-				bRow = tRow + size - 1;
+				bRow = tRow + size - 1,
+				cache = false;
 			bRow = Math.min(bRow, sheet.maxRows - 1);
 			if (ar.containsRange(tRow, lCol, bRow, rCol)) {
 				this.create_(dir, tRow, lCol, bRow, rCol);
 				if (cr.top + vr.height < vr.top) {
 					this.pruneCell('north', vr, jump ? null : vr.top - (cr.top + vr.height));
 				}
-				return true; 
+				cache = true;
 			}
+			if (cache) {
+				var fCol = sheet._wgt.getColumnFreeze();
+				if (fCol > 0) {
+					if ((ar.leftFrozen && ar.leftFrozen.containsRange(tRow, 0, bRow, fCol)) || ar.containsRange(tRow, 0, bRow, fCol))
+						sheet.lp.create_(dir, tRow, bRow, 0, fCol, true);
+				}
+				sheet.sendSyncblock();
+				this.sheet.dp._fixSize(this);
+			}
+			return cache;
 			break;
 		case 'north':
 			var bRow = cr.top - 1,
 				lCol = cr.left,
 				rCol = cr.right,
-				tRow = bRow - size + 1;
+				tRow = bRow - size + 1,
+				cache = false;
 			bRow = bRow >= 0 ? bRow : 0;
 			tRow = tRow >= 0 ? tRow : 0;
 			if (ar.containsRange(tRow, lCol, bRow, rCol)) {
@@ -110,14 +122,25 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				if (cr.bottom - vr.height > vr.bottom) {
 					this.pruneCell('south', vr, jump ? null : cr.bottom - vr.height - vr.bottom);
 				}
-				return true; 
+				cache = true;
 			}
+			if (cache) {
+				var fCol = sheet._wgt.getColumnFreeze();
+				if (fCol > 0) {
+					if ((ar.leftFrozen && ar.leftFrozen.containsRange(tRow, 0, bRow, fCol)) || ar.containsRange(tRow, 0, bRow, fCol))
+						sheet.lp.create_(dir, tRow, bRow, 0, fCol, true);
+				}
+				sheet.sendSyncblock();
+				this.sheet.dp._fixSize(this);
+			}
+			return cache;
 			break;
 		case 'west':
 			var tRow = cr.top,
 				bRow = cr.bottom,
 				rCol = cr.left - 1,
-				lCol = rCol - size + 1;
+				lCol = rCol - size + 1,
+				cache = false;
 			rCol = rCol >= 0 ? rCol : 0;
 			lCol = lCol >= 0 ? lCol : 0;
 			if (ar.containsRange(tRow, lCol, bRow, rCol)) {
@@ -125,22 +148,49 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				if (cr.right - vr.width > vr.right) {
 					this.pruneCell('east', vr, jump ? null : cr.right - vr.width - vr.right);
 				}
-				return true; 
-			}	
+				cache = true;
+			}
+			if (cache) {
+				var fRow = sheet._wgt.getRowFreeze();
+				if (fRow > 0) {
+					//create top frozen
+					if ((ar.topFrozen && ar.topFrozen.containsRange(top, 0, lCol, fRow, rCol)) ||
+							ar.containsRange(0, lCol, fRow, rCol)) {
+						sheet.tp.create_(dir, lCol, rCol, 0, fRow, true);
+					}
+				}
+				sheet.sendSyncblock();
+				this.sheet.dp._fixSize(this);
+			}
+			return cache;
 			break;
 		case 'east':
 			var tRow = cr.top,
 				bRow = cr.bottom,
 				lCol = cr.right + 1,
-				rCol = lCol + size - 1;
+				rCol = lCol + size - 1,
+				cache = false;
 			rCol = Math.min(rCol, sheet.maxCols - 1);
 			if (ar.containsRange(tRow, lCol, bRow, rCol)) {
 				this.create_(dir, tRow, lCol, bRow, rCol)
 				if (cr.left + vr.width < vr.left) {
 					this.pruneCell('west', vr, jump ? null : (vr.left - (cr.left + vr.width)));
 				}
-				return true; 
+				cache = true;
 			}
+			if (cache) {
+				var fRow = sheet._wgt.getRowFreeze();
+				if (fRow > 0 && fRow < bRow) {
+					//create top frozen
+					if ((ar.topFrozen && ar.topFrozen.containsRange(0, lCol, fRow, rCol)) ||
+							ar.containsRange(0, lCol, fRow, rCol)) {
+						sheet.tp.create_(dir, lCol, rCol, 0, fRow, true);
+					}
+				}
+				sheet.sendSyncblock();
+				this.sheet.dp._fixSize(this);
+			}
+			return cache;
 			break;
 		}
 		return false;
@@ -162,13 +212,15 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			if (range.top >= ctop && range.top <= cbottom) {
 				if(range.bottom < cbottom)
 					return; //the visible is be contained.
+				var hgh = range.bottom - cbottom + 1;
 				//neighbor south
-				if (!this._createCellsIfCached('south', range.height)) {
+				if (hgh > 0 && !this._createCellsIfCached('south', hgh)) {
 					sheet.activeBlock.loadCell(range.bottom, range.left, (alwaysjump ? -1 : 20), null, alwaysjump);
 				}
 			} else if(ctop >= range.top && ctop <= range.bottom) {
+				var hgh = ctop - range.top + 1;
 				//neighbor north;
-				if (!this._createCellsIfCached('north', range.height)) {
+				if (!this._createCellsIfCached('north', hgh)) {
 					sheet.activeBlock.loadCell(range.top,range.left, (alwaysjump ? -1 : 20), null, alwaysjump);
 				}
 			} else if(range.top > cbottom) {
@@ -190,13 +242,15 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			if (range.left >= cleft && range.left <= cright) {
 				if (range.bottom < cbottom)
 					return; //the visible is be contained.
+				var width = range.right - cright + 1;
 				//neighbor east
-				if (!this._createCellsIfCached('east', range.width)) {
+				if (width > 0 && !this._createCellsIfCached('east', width)) {
 					sheet.activeBlock.loadCell(range.top, range.right, (alwaysjump ? -1 : 5), null, alwaysjump);
 				}
 			} else if (cleft >= range.left && cleft <= range.right) {
+				var width = cleft - range.left + 1;
 				//neighbor west;
-				if (!this._createCellsIfCached('west', range.width)) {
+				if (!this._createCellsIfCached('west', width)) {
 					sheet.activeBlock.loadCell(range.top, range.left, (alwaysjump ? -1 : 5), null, alwaysjump);
 				}
 			} else if (range.left>cright) {
@@ -627,16 +681,24 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		
 		//create east from cache
 		if (right + 1 <= rCol) {
-			var chd = false;
+			var b = false,
+				fRow = sheet._wgt.getRowFreeze();
+			if (fRow > 0 && fRow < bottom) {
+				//create top frozen
+				if ((ar.topFrozen && ar.topFrozen.containsRange(top, right + 1, fRow, rCol)) ||
+						ar.containsRange(top, right + 1, fRow, rCol)) {
+					sheet.tp.create_(top, right + 1, fRow, rCol);
+				}
+			}
 			if (ar.containsRange(top, right + 1, bottom, rCol)) {
 				this.create_('east', top, right + 1, bottom, rCol);
-				chd = true;
-			} else if (ar.rect.right > right + 1 && ar.containsRange(top, right + 1, bottom, ar.rect.right)) {	
+				b = true;
+			} else if (ar.rect.right > right + 1 && ar.rect.right < rCol && ar.containsRange(top, right + 1, bottom, ar.rect.right)) {
 				//create partial east from cache
 				this.create_('east', top, right + 1, bottom, ar.rect.right);
-				chd = true;
+				b = true;
 			}
-			if (chd) { //after create cell from cache, range's value may changed
+			if (b) { //after create cell from cache, range's value may changed
 				created = true;
 				range = this.range;
 				top = range.top;
@@ -647,16 +709,22 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		}
 		//create south from cache
 		if (bottom + 1 <= bRow) {
-			var chd = false;
-			if (ar.containsRange(bottom + 1, lCol, bRow, rCol)) {
-				this.create_('south', bottom + 1, lCol, bRow, rCol);
-				chd = true;
-			} else if (ar.containsRange(bottom + 1, lCol, bRow, right)) {
-				//create partial south; need to fetch south-east range
-				this.create_('south', bottom + 1, lCol, bRow, right);
-				chd = true;
+			var b = false,
+				fCol = sheet._wgt.getColumnFreeze();
+			if (fCol > 0 && fCol < rCol) {
+				if ((ar.leftFrozen && ar.leftFrozen.containsRange(bottom + 1, 0, bRow, fCol)) || 
+						ar.containsRange(bottom + 1, 0, bRow, fCol)) {
+					sheet.lp.create_('south', bottom + 1, bRow, 0, fCol, true);
+				}
 			}
-			if (chd) {
+			if (ar.containsRange(bottom + 1, lCol, bRow, right)) {
+				this.create_('south', bottom + 1, lCol, bRow, right);
+				b = true;
+			} else if (ar.rect.bottom > bottom + 1 && ar.rect.bottom < bRow && ar.containsRange(bottom + 1, lCol, ar.rect.bottom, right)) {	
+				this.create_('south', bottom + 1, lCol, ar.rect.bottom, right);
+				b = true;
+			}
+			if (b) {
 				created = true;
 				range = this.range;
 				top = range.top;

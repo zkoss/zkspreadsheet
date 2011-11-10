@@ -272,11 +272,18 @@ zss.Header = zk.$extends(zk.Widget, {
 		out.push(this.getHtml());
 	},
 	getHtml: function () {
+		return this.getHtmlPrologHalf() + this.getHtmlEpilogHalf();
+	},
+	getHtmlPrologHalf: function () {
 		var uid = this.uuid,
 			isTop = this.type == TopHeader;
 		return '<div id="' + uid + '" zs.t="' + (isTop ? "STheader" : "SLheader") + '" class="' + this.getZclass() + 
-			'"><div class="' + this._getInnerClass() + '">' + this.title + '</div></div><div id="' + uid + 
-			'-boun" class="' + (isTop ? 'zshboun' : 'zsvboun') + 
+			'"><div class="' + this._getInnerClass() + '">' + this.title + '</div></div>';
+	},
+	getHtmlEpilogHalf: function () {
+		var uid = this.uuid,
+			isTop = this.type == TopHeader;
+		return '<div id="' + uid + '-boun" class="' + (isTop ? 'zshboun' : 'zsvboun') + 
 			'"><div zs.t="SBoun" class="' + (isTop ? 'zshbouni' : 'zsvbouni') + '"></div></div>';
 	},
 	bind_: function () {

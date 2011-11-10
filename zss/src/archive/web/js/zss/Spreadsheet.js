@@ -44,6 +44,34 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		if (token)
 			zkS.doCallback(token);
 	}
+	
+	function copyRow(lCol, rCol, srcRow) {
+		var row = {
+			r: srcRow.r,
+			heightId: srcRow.heightId,
+			cells: {},
+			update: srcRow.update,
+			getCell: srcRow.getCell
+		}
+		copyCells(lCol, rCol, srcRow, row);
+		return row;
+	}
+	
+	function copyCells(lCol, rCol, srcRow, dstRow) {
+		var srcCells = srcRow.cells,
+			dstCells = dstRow.cells;
+		for (var c = lCol; c <= rCol; c++) {
+			dstCells[c] = cloneCell(srcCells[c]);
+		}
+	}
+	
+	function cloneCell(cell) {
+		var c = {};
+		for (var p in cell) {
+			c[p] = cell[p];
+		}
+		return c;
+	}
 
 	function doBlockUpdate(wgt, json, token) {
 		var ar = wgt._activeRange,
@@ -60,9 +88,59 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			ar.update(d);
 			if (leftFrozen) {
 				ar.leftFrozen = newCachedRange(leftFrozen.data);
+				var	srcRows = ar.rows,
+					f = ar.leftFrozen,
+					fRect = f.rect,
+					fRows = f.rows,
+					fTop = fRect.top,
+					fBtm = fRect.bottom,
+					fRight = fRect.right;
+				if (ar.rect.top < fTop) {
+					//copy top rows
+					for (var r = ar.rect.top; r < fTop; r++) {
+						fRows[r] = copyRow(0, fRight, srcRows[r]);
+					}
+					fRect.top = ar.rect.top;
+				}
+				if (fBtm < ar.rect.bottom) {
+					//copy bottom rows
+					for (var r = fRect.bottom + 1; r <= ar.rect.bottom; r++) {
+						fRows[r] = copyRow(0, fRight, srcRows[r]);
+					}
+					fRect.bottom = ar.rect.bottom;
+				}
 			}
 			if (topFrozen) {
 				ar.topFrozen = newCachedRange(topFrozen.data);
+				var left = ar.rect.left,
+					right = ar.rect.right,
+					srcRows = ar.rows,
+					f = ar.topFrozen,
+					fRect = f.rect,
+					fLeft = fRect.left,
+					fRight = fLeft.right;
+				if (left < fLeft) {
+					//copy left cells
+					var fRows = f.rows,
+						fTop = fRect.top,
+						fBtm = fRect.bottom;
+					for (r = fTop; r <= fBtm; r++) {
+						var srcRow = srcRows[r],
+							dstRow = fRows[r];
+						copyCells(left, fLeft, srcRow, dstRow);
+					}
+				}
+				if (fRight < ar.rect.right) {
+					//copy right cells
+					var fRows = f.rows,
+						fTop = fRect.top,
+						fBtm = fRect.bottom;
+					for (r = fTop; r <= fBtm; r++) {
+						var srcRow = srcRows[r],
+							dstRow = fRows[r];
+						copyCells(fRect.right + 1, right, srcRow, dstRow);
+					}
+				}
 			}
 			wgt.sheetCtrl._cmdBlockUpdate(tp, d.dir, tRow, lCol, bRow, rCol, leftFrozen, topFrozen);
 		}
@@ -457,6 +535,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					delete colHeaders[i++];
 				}
 				this.rect.left = left + size;
+				if (this.topFrozen) {
+					this.topFrozen.pruneLeft(size);
+				}
 			},
 			pruneRight: function (size) {
 				var rows = this.rows,
@@ -477,6 +558,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					delete colHeaders[i--];
 				}
 				this.rect.right = right - size;
+				if (this.topFrozen) {
+					this.topFrozen.pruneRight(size);
+				}
 			},
 			pruneTop: function (size) {
 				var rows = this.rows,
@@ -487,6 +571,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					delete rows[i];
 					delete rowHeaders[i];
 					i++;
+				}
+				if (this.leftFrozen) {
+					this.leftFrozen.pruneTop(size);
 				}
 				this.rect.top += size;
 			},
@@ -499,6 +586,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					delete rows[i];
 					delete rowHeaders[i];
 					i--;
+				}
+				if (this.leftFrozen) {
+					this.leftFrozen.pruneBottom(size);
 				}
 				this.rect.bottom -= size;
 			},
