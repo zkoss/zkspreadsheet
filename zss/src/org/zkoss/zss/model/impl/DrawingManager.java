@@ -39,4 +39,6 @@ public interface DrawingManager {
 			ChartGrouping grouping, LegendPosition pos);
 	
 	public Picture addPicture(Worksheet sheet, ClientAnchor anchor, byte[] imageData, int format);
+	
+	public void deletePicture(Worksheet sheet, Picture picture);
 }

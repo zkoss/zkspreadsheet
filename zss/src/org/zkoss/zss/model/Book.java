@@ -18,6 +18,7 @@ import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.usermodel.PictureData;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
@@ -142,4 +143,10 @@ public interface Book extends Workbook {
 	 * Returns ZK Spreadsheet {@link Worksheet} by index(0-based). 
 	 */
 	public Worksheet getWorksheetAt(int index);
+
+    /**
+     * Delete the PictureData.
+     * @param pictureData
+     */
+    void deletePictureData(PictureData pictureData);
 }

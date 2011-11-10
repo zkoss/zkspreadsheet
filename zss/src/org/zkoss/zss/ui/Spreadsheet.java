@@ -1496,6 +1496,12 @@ public class Spreadsheet extends XulElement implements Serializable {
 					onPictureAdd((SSDataEvent)event);
 				}
 			});
+			addEventListener(SSDataEvent.ON_PICTURE_DELETE, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onPictureDelete((SSDataEvent)event);
+				}
+			});
 			addEventListener(SSDataEvent.ON_WIDGET_CHANGE, new EventListener() {
 				@Override
 				public void onEvent(Event event) throws Exception {
@@ -1526,6 +1532,17 @@ public class Spreadsheet extends XulElement implements Serializable {
 			final int bottom = rng.getBottomRow();
 			final Object payload = event.getPayload();
 			addPictureWidget(sheet, (Picture) payload);
+			updateWidget(sheet, left, top, right, bottom);
+		}
+		private void onPictureDelete(SSDataEvent event) {
+			final Ref rng = event.getRef();
+			final Worksheet sheet = getSheet(rng);
+			final int left = rng.getLeftCol();
+			final int top = rng.getTopRow();
+			final int right = rng.getRightCol();
+			final int bottom = rng.getBottomRow();
+			final Object payload = event.getPayload();
+			deletePictureWidget(sheet, (Picture) payload);
 			updateWidget(sheet, left, top, right, bottom);
 		}
 		private void onWidgetChange(SSDataEvent event) {
@@ -3545,6 +3562,15 @@ public class Spreadsheet extends XulElement implements Serializable {
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
 			((WidgetLoader) list.get(i)).addPictureWidget(sheet, picture);
+		}
+	}
+
+	private void deletePictureWidget(Worksheet sheet, Picture picture) {
+		//load widgets
+		List list = loadWidgetLoaders();
+		int size = list.size();
+		for (int i = 0; i < size; i++) {
+			((WidgetLoader) list.get(i)).deletePictureWidget(sheet, picture);
 		}
 	}
 

@@ -330,7 +330,15 @@ public final class BookHelper {
 			refBook.publish(new SSDataEvent(SSDataEvent.ON_PICTURE_ADD, ref, picture));
 		}
 	}
-	
+
+	public static void notifyPictureDelete(Ref ref, Picture picture) {
+		if (ref != null) {
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final RefBook refBook = refSheet.getOwnerBook();
+			refBook.publish(new SSDataEvent(SSDataEvent.ON_PICTURE_DELETE, ref, picture));
+		}
+	}
+
 	public static void notifyBtnChanges(Set<Ref> all) {
 		if (all != null) {
 			for(Ref ref : all) {

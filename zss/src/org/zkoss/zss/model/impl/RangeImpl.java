@@ -1986,7 +1986,7 @@ public class RangeImpl implements Range {
 	}
 
 	@Override
-	public void addChart(ClientAnchor anchor, ChartData data, ChartType type,
+	public Chart addChart(ClientAnchor anchor, ChartData data, ChartType type,
 			ChartGrouping grouping, LegendPosition pos) {
 		
 		final DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
@@ -1997,10 +1997,11 @@ public class RangeImpl implements Range {
 			final Ref ref = refs.iterator().next();
 			BookHelper.notifyChartAdd(ref, chartX);
 		}
+		return chartX.getChart();
 	}
 
 	@Override
-	public void addPicture(ClientAnchor anchor, byte[] image, int format) {
+	public Picture addPicture(ClientAnchor anchor, byte[] image, int format) {
 		DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
 		final Picture picture = dm.addPicture(_sheet, anchor, image, format);
 		final RangeImpl rng = (RangeImpl) Ranges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
@@ -2008,6 +2009,20 @@ public class RangeImpl implements Range {
 		if (refs != null && !refs.isEmpty()) {
 			final Ref ref = refs.iterator().next();
 			BookHelper.notifyPictureAdd(ref, picture);
+		}
+		return picture;
+	}
+	
+	@Override
+	public void deletePicture(Picture picture) {
+		DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
+		ClientAnchor anchor = picture.getPreferredSize();
+		final RangeImpl rng = (RangeImpl) Ranges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
+		final Collection<Ref> refs = rng.getRefs();
+		dm.deletePicture(_sheet, picture); //must after getPreferredSize() or anchor is gone!
+		if (refs != null && !refs.isEmpty()) {
+			final Ref ref = refs.iterator().next();
+			BookHelper.notifyPictureDelete(ref, picture);
 		}
 	}
 }

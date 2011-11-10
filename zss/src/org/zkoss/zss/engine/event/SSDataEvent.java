@@ -63,6 +63,9 @@ public class SSDataEvent extends Event implements Serializable {
 	/** Indentifies one picture added. **/
 	public static final String ON_PICTURE_ADD = "onPictureAdd";
 	
+	/** Indentifies the specified picture deleted. **/
+	public static final String ON_PICTURE_DELETE = "onPictureRemove";
+	
 	/** Indentifies the change of a widget. */
 	public static final String ON_WIDGET_CHANGE = "onWidgetChange";
 	

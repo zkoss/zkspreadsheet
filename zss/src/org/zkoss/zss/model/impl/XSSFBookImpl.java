@@ -36,6 +36,7 @@ import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
+import org.zkoss.poi.ss.usermodel.PictureData;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFColor;
 import org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook;
@@ -219,6 +220,11 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 			}
 		}
 		BookHelper.reevaluateAndNotify(this, last, all);
+	}
+	
+	@Override
+	public void deletePictureData(PictureData img) {
+		getAllPictures().remove(img);
 	}
 	
 	//--Workbook--//

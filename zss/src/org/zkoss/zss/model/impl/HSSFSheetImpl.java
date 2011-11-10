@@ -52,6 +52,7 @@ import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.DataValidationConstraint;
 import org.zkoss.poi.ss.usermodel.DataValidationHelper;
+import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.zkoss.poi.ss.util.CellRangeAddress;
@@ -1227,10 +1228,18 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Worksheet {
     	super.removeMergedRegion(index);
     }
 
-    //--Sheet--//
+    //--Worksheet--//
+    @Override
     public Book getBook() {
     	return (Book) getWorkbook();
     }
+    
+	@Override
+	public List<Picture> getPictures() {
+		DrawingManager dm = getDrawingManager();
+		return new ArrayList<Picture>(dm.getPictures());
+	}
+    
     //--SheetCtrl--//
     private volatile SheetCtrl _sheetCtrl = null;
     private SheetCtrl getSheetCtrl() {

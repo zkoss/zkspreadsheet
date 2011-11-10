@@ -16,8 +16,10 @@ package org.zkoss.zss.model;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
+import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
@@ -497,12 +499,13 @@ public interface Range {
 
 	/**
 	 * Add a chart into the sheet of this Range 
-	 * @param anchor 
+	 * @param anchor
+	 * @return the created chart 
 	 */
-	public void addChart(ClientAnchor anchor, ChartData data, ChartType type, ChartGrouping grouping, LegendPosition pos);
+	public Chart addChart(ClientAnchor anchor, ChartData data, ChartType type, ChartGrouping grouping, LegendPosition pos);
 
 	/**
-	 * Add a picture into the sheet of this Range
+	 * Insert a picture into the sheet of this Range
 	 * @param anchor picture anchor
 	 * @param image image data
 	 * @param format image format
@@ -512,6 +515,14 @@ public interface Range {
      * @see Workbook#PICTURE_TYPE_JPEG
      * @see Workbook#PICTURE_TYPE_PNG
      * @see Workbook#PICTURE_TYPE_DIB
+     * @return the created picture
 	 */
-	public void addPicture(ClientAnchor anchor, byte[] image, int format);
+	public Picture addPicture(ClientAnchor anchor, byte[] image, int format);
+
+
+	/**
+	 * Delete an existing picture from the sheet of this Range.
+	 * @param picture the picture
+	 */
+	public void deletePicture(Picture picture);
 }

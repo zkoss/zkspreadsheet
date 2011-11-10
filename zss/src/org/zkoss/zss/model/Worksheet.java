@@ -12,6 +12,10 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model;
 
+import java.util.List;
+
+import org.zkoss.poi.ss.usermodel.Picture;
+
 
 /**
  * ZK Spreadsheet sheet.
@@ -24,4 +28,10 @@ public interface Worksheet extends org.zkoss.poi.ss.usermodel.Sheet {
 	 * @return the associated ZK Spreadsheet {@link Book} of this ZK Spreadsheet Sheet.
 	 */
     public Book getBook();
+    
+    /**
+     * Returns pictures in this ZK Spreadsheet sheet.
+     * @return pictures in this ZK Spreadsheet sheet.
+     */
+    public List<Picture> getPictures();
 }

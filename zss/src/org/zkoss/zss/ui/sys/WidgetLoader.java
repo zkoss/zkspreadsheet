@@ -67,4 +67,6 @@ public interface WidgetLoader {
 	public void addChartWidget(Worksheet sheet, ZssChartX chart);
 	
 	public void addPictureWidget(Worksheet sheet, Picture picture);
+	
+	public void deletePictureWidget(Worksheet sheet, Picture picture);
 }

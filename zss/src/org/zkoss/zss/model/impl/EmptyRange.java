@@ -18,6 +18,7 @@ import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
+import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.charts.ChartData;
@@ -280,11 +281,17 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public void addChart(ClientAnchor anchor, ChartData data, ChartType type,
+	public Chart addChart(ClientAnchor anchor, ChartData data, ChartType type,
 			ChartGrouping grouping, LegendPosition pos) {
+		return null;
 	}
 
 	@Override
-	public void addPicture(ClientAnchor anchor, byte[] image, int format) {
+	public Picture addPicture(ClientAnchor anchor, byte[] image, int format) {
+		return null;
+	}
+
+	@Override
+	public void deletePicture(Picture picture) {
 	}
 }

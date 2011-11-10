@@ -44,6 +44,7 @@ import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.PtgShifter;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellReference;
@@ -101,11 +102,17 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
     	super.removeMergedRegion(index);
     }
 
-    //--Sheet--//
+    //--Worksheet--//
 	public Book getBook() {
 		return (Book) getWorkbook();
 	}
 
+	@Override
+	public List<Picture> getPictures() {
+		DrawingManager dm = getDrawingManager();
+		return new ArrayList<Picture>(dm.getPictures());
+	}
+	
 	//20100914, henrichen@zkoss.org: Shift rows only, don't handle formula
     /**
      * Shifts rows between startRow and endRow n number of rows.

@@ -150,6 +150,10 @@ public class SheetCtrlImpl implements SheetCtrl {
 					byte[] imageData, int format) {
 				return null;
 			}
+
+			@Override
+			public void deletePicture(Worksheet sheet, Picture picture) {
+			}
 		};
 	}
 }
