@@ -54,10 +54,16 @@ public class CellFetchCommandHelper{
 	private MergeMatrixHelper _mergeMatrix;
 	private boolean _hidecolhead;
 	private boolean _hiderowhead;
-	private int _lastleft;
+	
+	private int _lastleft; 
 	private int _lastright;
 	private int _lasttop;
 	private int _lastbottom;
+	
+	private int _loadedLeft;
+	private int _loadedRight;
+	private int _loadedTop;
+	private int _loadedBottom;
 	
 	private void responseDataBlock(String postfix, String token, String sheetid, String result) {
 		//bug 1953830 Unnecessary command was sent and break the processing
@@ -128,6 +134,11 @@ public class CellFetchCommandHelper{
 		int cacheRangeFetchTopHeight = (Integer)data.get("arFetchTopHeight");
 		int cacheRangeFetchBtmHeight = (Integer)data.get("arFetchBtmHeight");
 		
+		_loadedLeft = rangeLeft;
+		_loadedTop = rangeTop;
+		_loadedRight = rangeRight;
+		_loadedBottom = rangeBottom;
+		
 		try{
 			if("jump".equals(type)){
 				String result = null;
@@ -162,16 +173,19 @@ public class CellFetchCommandHelper{
 					int top = _mergeMatrix.getTopConnectedRow(blockTop, blockLeft, right);
 					
 					if (bottom > blockBottom) {
-						String result = loadSouth(sheet, type, blockLeft, blockTop, blockRight, blockBottom, bottom - blockBottom, -1, -1, -1);
-						responseDataBlock("South", "", sheetId, result);
+						LoadResult result = loadSouth(sheet, type, blockLeft, blockTop, blockRight, blockBottom, bottom - blockBottom, -1, -1, -1);
+						syncLoadedRect(result);
+						responseDataBlock("South", "", sheetId, result.json.toJSONString());
 					}
 					if (top < blockTop) {
-						String result = loadNorth(sheet, type, blockLeft, blockTop, blockRight, bottom, blockTop - top, -1, -1, -1);
-						responseDataBlock("North", "", sheetId, result);
+						LoadResult result = loadNorth(sheet, type, blockLeft, blockTop, blockRight, bottom, blockTop - top, -1, -1, -1);
+						syncLoadedRect(result);
+						responseDataBlock("North", "", sheetId, result.json.toJSONString());
 					}
 					int size = right - blockRight;//right - (blockRight +1) +1
 
 					LoadResult result = loadEast(sheet, type, blockLeft, top, blockRight, bottom, size, -1, cacheRangeFetchTopHeight, cacheRangeFetchBtmHeight);
+					syncLoadedRect(result);
 					responseDataBlock("East", token, sheetId, result.json.toJSONString());
 				} else if ("south".equals(direction)) {
 					
@@ -184,17 +198,20 @@ public class CellFetchCommandHelper{
 
 					if (right > blockRight) {
 						LoadResult result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, right - blockRight, -1, -1, -1);
+						syncLoadedRect(result);
 						responseDataBlock("East", "", sheetId, result.json.toJSONString());
 					}
 					if (left < blockLeft) {
 						LoadResult result = loadWest(sheet, type, blockLeft, blockTop, right, blockBottom, blockLeft - left, -1, -1, -1);
+						syncLoadedRect(result);
 						responseDataBlock("West", "", sheetId, result.json.toJSONString());
 					}
 
 					int size = bottom - blockBottom;
 					
-					String result = loadSouth(sheet, type, left, blockTop, right, blockBottom, size, -1, -1, -1);
-					responseDataBlock("South", token, sheetId, result);
+					LoadResult result = loadSouth(sheet, type, left, blockTop, right, blockBottom, size, -1, -1, -1);
+					syncLoadedRect(result);
+					responseDataBlock("South", token, sheetId, result.json.toJSONString());
 				} else if ("west".equals(direction)) {
 					
 					int left = blockLeft - fetchWidth ;//blockLeft - 1 - fetchWidth + 1;
@@ -204,19 +221,21 @@ public class CellFetchCommandHelper{
 					int top = _mergeMatrix.getTopConnectedRow(blockTop, left, blockRight);
 					
 					if (bottom > blockBottom) {
-						String result = loadSouth(sheet, type, blockLeft, blockTop, blockRight, blockBottom, bottom - blockBottom, -1, -1, -1);
-						responseDataBlock("South", "", sheetId, result);
+						LoadResult result = loadSouth(sheet, type, blockLeft, blockTop, blockRight, blockBottom, bottom - blockBottom, -1, -1, -1);
+						syncLoadedRect(result);
+						responseDataBlock("South", "", sheetId, result.json.toJSONString());
 					}
 					if (top < blockTop) {
-						String result = loadNorth(sheet, type, blockLeft, blockTop, blockRight, bottom, blockTop - top, -1, -1, -1);
-						responseDataBlock("North", "", sheetId, result);
+						LoadResult result = loadNorth(sheet, type, blockLeft, blockTop, blockRight, bottom, blockTop - top, -1, -1, -1);
+						syncLoadedRect(result);
+						responseDataBlock("North", "", sheetId, result.json.toJSONString());
 					}
 					int size = blockLeft - left ;//blockLeft -1 - left + 1;
 					
 					LoadResult result = loadWest(sheet, type, blockLeft, blockTop,	blockRight, blockBottom, size, -1, cacheRangeFetchTopHeight, cacheRangeFetchBtmHeight);
+					syncLoadedRect(result);
 					responseDataBlock("West", token, sheetId, result.json.toJSONString());
 				} else if("north".equals(direction)) {
-					
 					
 					int top = blockTop - fetchHeight;
 					top = _mergeMatrix.getTopConnectedRow(top, blockLeft, blockRight);
@@ -226,15 +245,18 @@ public class CellFetchCommandHelper{
 					
 					if (right > blockRight) {
 						LoadResult result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, right - blockRight, -1, -1, -1);
+						syncLoadedRect(result);
 						responseDataBlock("East", "", sheetId, result.json.toJSONString());
 					}
 					if (left < blockLeft) {
 						LoadResult result = loadWest(sheet,type,blockLeft,blockTop,right,blockBottom,blockLeft - left, -1, -1, -1);
+						syncLoadedRect(result);
 						responseDataBlock("West", "", sheetId, result.json.toJSONString());
 					}
 					int size = blockTop - top;
-					String result = loadNorth(sheet, type, left, blockTop, right, blockBottom, size, -1, -1, -1);
-					responseDataBlock("North", token, sheetId, result);
+					LoadResult result = loadNorth(sheet, type, left, blockTop, right, blockBottom, size, -1, -1, -1);
+					syncLoadedRect(result);
+					responseDataBlock("North", token, sheetId, result.json.toJSONString());
 				}
 			} else if("visible".equals(type)) {
 				loadForVisible((Spreadsheet) comp, sheetId, sheet, type, dpWidth, dpHeight, viewWidth, viewHeight, blockLeft, blockTop, blockRight, blockBottom, rangeLeft, rangeTop, rangeRight, rangeBottom, fetchWidth, fetchHeight);
@@ -250,7 +272,9 @@ public class CellFetchCommandHelper{
 			responseDataBlock("Error", "", sheetId, ackError(x.getMessage()));
 			throw new UiException(x.getMessage(), x);
 		}
-		((SpreadsheetInCtrl) _ctrl).setLoadedRect(_lastleft, _lasttop,	_lastright, _lastbottom);
+		
+		((SpreadsheetInCtrl) _ctrl).setLoadedRect(_loadedLeft, _loadedTop, _loadedRight, _loadedBottom);
+		((SpreadsheetInCtrl) _ctrl).setVisibleRect(_lastleft, _lasttop,	_lastright, _lastbottom);
 	}
 	
 	private void loadForVisible(Spreadsheet spreadsheet, String sheetId, Worksheet sheet, String type, int dpWidth,
@@ -282,7 +306,8 @@ public class CellFetchCommandHelper{
 
 			int width = right - blockRight;
 			LoadResult result = loadEast(sheet, type, blockLeft, blockTop, blockRight, blockBottom, width, cacheRangeWidth, -1, loadSouth && cacheRangeHeight > 0 ? -1 : cacheRangeHeight);
-			cacheRangeRight = result.index;
+			cacheRangeRight = result.loadedRight;
+			syncLoadedRect(result);
 			responseDataBlock("East", "", sheetId, result.json.toJSONString());
 			blockRight += width;
 		}
@@ -291,7 +316,8 @@ public class CellFetchCommandHelper{
 			left = _mergeMatrix.getLeftConnectedColumn(left, top, bottom);
 			int size = blockLeft - left;
 			LoadResult result = loadWest(sheet, type, blockLeft, blockTop, right, blockBottom, size, cacheRangeWidth, -1, loadSouth && cacheRangeHeight > 0 ? -1 : cacheRangeHeight);
-			cacheRangeLeft = result.index;
+			cacheRangeLeft = result.loadedLeft;
+			syncLoadedRect(result);
 			responseDataBlock("West", "", sheetId, result.json.toJSONString());
 			blockLeft -= size;
 		}
@@ -300,8 +326,10 @@ public class CellFetchCommandHelper{
 			bottom = _mergeMatrix.getBottomConnectedRow(bottom, left, right);
 			
 			int height = bottom - blockBottom;
-			String result = loadSouth(sheet, type, left, blockTop, right, blockBottom, height, cacheRangeLeft, cacheRangeRight, cacheRangeHeight);
-			responseDataBlock("South", "", sheetId, result);
+			LoadResult result = loadSouth(sheet, type, left, blockTop, right, blockBottom, height, cacheRangeLeft, cacheRangeRight, cacheRangeHeight);
+			rangeBottom = result.loadedBottom;
+			syncLoadedRect(result);
+			responseDataBlock("South", "", sheetId, result.json.toJSONString());
 			blockBottom += height;
 		}
 		if (loadNorth) {
@@ -309,10 +337,18 @@ public class CellFetchCommandHelper{
 			top = _mergeMatrix.getTopConnectedRow(top, left, right);
 			
 			int size = blockTop - top;
-			String result = loadNorth(sheet, type, left, blockTop, right, bottom, size, cacheRangeLeft, cacheRangeRight, cacheRangeHeight);
-			responseDataBlock("North", "", sheetId, result);
+			LoadResult result = loadNorth(sheet, type, left, blockTop, right, bottom, size, cacheRangeLeft, cacheRangeRight, cacheRangeHeight);
+			syncLoadedRect(result);
+			responseDataBlock("North", "", sheetId, result.json.toJSONString());
 			blockTop -= size;
 		}
+	}
+	
+	private void syncLoadedRect(LoadResult loadResult) {
+		_loadedLeft = loadResult.loadedLeft;
+		_loadedRight = loadResult.loadedRight;
+		_loadedTop = loadResult.loadedTop;
+		_loadedBottom = loadResult.loadedBottom;
 	}
 	
 	private String ackResult(){
@@ -411,6 +447,10 @@ public class CellFetchCommandHelper{
 		_lasttop = top;
 		_lastbottom = bottom;
 		
+		_loadedLeft = rangeLeft;
+		_loadedRight = rangeRight;
+		_loadedTop = rangeTop;
+		_loadedRight = rangeBtm;
 		
 		// prepare top frozen cell
 		int fzr = _spreadsheet.getRowfreeze();
@@ -558,7 +598,7 @@ public class CellFetchCommandHelper{
 			data.put("dir", "east");
 			topFrozen.put("data", data);
 		}
-		return new LoadResult(rangeRight, json);
+		return new LoadResult(cs, rangeTop, rangeRight, rangeBottom, json);
 	}
 	
 	private LoadResult loadWest(Worksheet sheet,String type,
@@ -608,10 +648,10 @@ public class CellFetchCommandHelper{
 			data.put("dir", "west");
 			topFrozen.put("data", data);
 		}
-		return new LoadResult(rangeLeft, json);
+		return new LoadResult(rangeLeft, rangeTop, cs, rangeBottom, json);
 	}
 	
-	private String loadSouth(Worksheet sheet, String type, 
+	private LoadResult loadSouth(Worksheet sheet, String type, 
 			int blockLeft,int blockTop, int blockRight, int blockBottom, int fetchHeight, int rangeLeft, int rangeRight, int cacheRangeHeight) {
 		
 		JSONObject json = new JSONObject();
@@ -654,9 +694,9 @@ public class CellFetchCommandHelper{
 			leftFrozen.put("data", data);
 		}
 
-		return json.toString();
+		return new LoadResult(rangeLeft, rs, rangeRight, rangeBottom, json);
 	}
-	private String loadNorth(Worksheet sheet,String type, 
+	private LoadResult loadNorth(Worksheet sheet,String type, 
 			int blockLeft, int blockTop, int blockRight, int blockBottom,
 			int fetchHeight, int rangeLeft, int rangeRight, int cacheRangeHeight) {
 
@@ -699,15 +739,21 @@ public class CellFetchCommandHelper{
 			data.put("dir", "north");
 			leftFrozen.put("data", data);
 		}
-		return json.toString();
+		return new LoadResult(rangeLeft, rangeTop, rangeRight, rs, json);
 	}
 	
 	private class LoadResult {
-		int index;
+		int loadedTop;
+		int loadedLeft;
+		int loadedBottom;
+		int loadedRight;
 		JSONObject json;
 		
-		LoadResult(int loadSize, JSONObject json) {
-			this.index = loadSize;
+		LoadResult(int left, int top, int right, int bottom, JSONObject json) {
+			loadedLeft = left;
+			loadedTop = top;
+			loadedRight = right;
+			loadedBottom = bottom;
 			this.json = json;
 		}
 	}

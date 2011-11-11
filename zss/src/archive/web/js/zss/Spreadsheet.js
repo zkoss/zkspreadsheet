@@ -421,6 +421,17 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			r: v.r,
 			heightId: v.h,
 			cells: {},
+			updateColumnWidthId: function (col, id) {
+				var cell = this.cells[col];
+				if (cell)
+					cell.widthId = id;
+			},
+			updateRowHeightId: function (id) {
+				var cells = this.cells;
+				for (var p in cells) {
+					cells[p].heightId = id;
+				}
+			},
 			update: function (attr, type, left, right) {
 				var src = attr.cs,
 					i = left,
@@ -475,6 +486,28 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			columnHeaders: {},
 			//current range rect
 			rect: null,
+			updateColumnWidthId: function (col, id) {
+				var r = this.rect,
+					rows = this.rows,
+					tRow = r.top,
+					bRow = r.bottom;
+				for (var r = tRow; r <= bRow; r++) {
+					var row = rows[r];
+					if (row)
+						row.updateColumnWidthId(col, id);
+				}
+				if (this.leftFrozen) {
+					this.leftFrozen.updateColumnWidthId(col, id);
+				}
+			},
+			updateRowHeightId: function (row, id) {
+				var row = this.rows[row];
+				if (row)
+					row.updateRowHeightId(id);
+				if (this.topFrozen) {
+					this.leftFrozen.updateRowHeightId(row, id);
+				}
+			},
 			updateBoundary: function (dir, top, left, btm, right) {
 				var rect = this.rect;
 				if (!rect) {

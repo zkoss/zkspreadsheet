@@ -437,7 +437,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				ar = this._wgt._activeRange;
 			if (ar) {
 				ar.update(data);
-				this.update_(data.t, data.l, data.b, data.r);
+				var visibleRect = data.vr;
+				this.update_(visibleRect.t, visibleRect.l, visibleRect.b, visibleRect.r);
 				wgt._triggerContentsChanged = true;
 			}
 			break;
@@ -1472,6 +1473,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			zsw = zkS.t(metaid) ? metaid : custColWidth.ids.next();
 			custColWidth.setCustomizedSize(col, width, zsw, hidden);
 			this._appendZSW(col, zsw);
+			this._wgt._activeRange.updateColumnWidthId(col, zsw);
 		} else {
 			zsw = zkS.t(metaid) ? metaid : meta[2];
 			custColWidth.setCustomizedSize(col, width, zsw, hidden);
@@ -1637,6 +1639,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			zsh = zkS.t(metaid) ? metaid : custRowHeight.ids.next();
 			custRowHeight.setCustomizedSize(row, height, zsh, hidden);
 			this._appendZSH(row, zsh);
+			this._wgt._activeRange.updateRowHeightId(row, zsh);
 		} else {
 			zsh = zkS.t(metaid) ? metaid : meta[2];
 			custRowHeight.setCustomizedSize(row, height, zsh, hidden);
@@ -2332,7 +2335,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	sendSyncblock: function (now) {
 		var spcmp = this.sp.comp,
 			dp = this.dp,
-			brange = this.activeBlock.range;
+			brange = this.activeBlock.range,
+			rect = this._wgt._activeRange.rect;
 
 		this._wgt.fire('onZSSSyncBlock', {
 			sheetId: this.sheetid,
@@ -2348,10 +2352,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			fetchTop: -1,
 			fetchWidth: -1,
 			fetchHeight: -1,
-			rangeLeft: -1,
-			rangeTop: -1,
-			rangeRight: -1,
-			rangeBottom: -1
+			rangeLeft: rect.left,
+			rangeTop: rect.top,
+			rangeRight: rect.right,
+			rangeBottom: rect.bottom
 		}, now ? {toServer: true} : null, (now ? 25 : -1));
 	},
 	_insertNewColumn: function (col, size, extnm) {

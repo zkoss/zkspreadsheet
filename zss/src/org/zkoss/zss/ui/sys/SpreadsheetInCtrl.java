@@ -63,4 +63,14 @@ public interface SpreadsheetInCtrl {
 	 * Indicate user do some scroll, and change loaded rectangle.
 	 */
 	public void setLoadedRect(int left,int top,int right,int bottom);
+	
+	/**
+	 * Indicate user's visible range 
+	 * 
+	 * @param left
+	 * @param top
+	 * @param right
+	 * @param bottom
+	 */
+	public void setVisibleRect(int left, int top,int right, int bottom);
 }

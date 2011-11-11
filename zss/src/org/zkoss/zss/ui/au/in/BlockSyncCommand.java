@@ -71,7 +71,8 @@ public class BlockSyncCommand implements Command{
 		int rangeRight = (Integer) data.get("rangeRight");
 		int rangeBottom = (Integer) data.get("rangeBottom");
 		
-		ctrl.setLoadedRect(blockLeft, blockTop, blockRight, blockBottom);	
+		ctrl.setLoadedRect(rangeLeft, rangeTop, rangeRight, rangeBottom);	
+		ctrl.setVisibleRect(blockLeft, blockTop, blockRight, blockBottom);
 	}
 
 	public String getCommand() {

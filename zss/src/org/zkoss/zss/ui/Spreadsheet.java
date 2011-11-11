@@ -212,6 +212,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 
 	private Rect _focusRect = new Rect(0, 0, 0, 0);
 	private Rect _selectionRect = new Rect(0, 0, 0, 0);
+	private Rect _visibleRect = new Rect();
 	private Rect _loadedRect = new Rect();
 	private Rect _highlightRect = null;
 
@@ -1882,6 +1883,13 @@ public class Spreadsheet extends XulElement implements Serializable {
 		JSONObject result = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.NONE, CellAttribute.ALL, left, top, right, bottom);
 		result.put("type", "udcell");
 		
+		JSONObject visibleRect = new JSONObject();
+		visibleRect.put("t", _visibleRect.getTop());
+		visibleRect.put("l", _visibleRect.getLeft());
+		visibleRect.put("b", _visibleRect.getBottom());
+		visibleRect.put("r", _visibleRect.getRight());
+		result.put("vr", visibleRect);
+		
 		response(top + "_" + left + "_" + _updateCellId.next(), 
 				new AuDataUpdate(this, "", sheetId, result));
 	}
@@ -2015,6 +2023,11 @@ public class Spreadsheet extends XulElement implements Serializable {
 
 		public void setLoadedRect(int left, int top, int right, int bottom) {
 			_loadedRect.set(left, top, right, bottom);
+			getWidgetHandler().onLoadOnDemand(getSelectedSheet(), left, top, right, bottom);
+		}
+		
+		public void setVisibleRect(int left, int top, int right, int bottom) {
+			_visibleRect.set(left, top, right, bottom);
 			getWidgetHandler().onLoadOnDemand(getSelectedSheet(), left, top, right, bottom);
 		}
 
