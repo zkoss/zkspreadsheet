@@ -13,7 +13,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.poi.hssf.usermodel;
 
-import org.zkoss.poi.ddf.EscherBlipRecord;
+import org.zkoss.poi.ddf.EscherBSERecord;
 import org.zkoss.poi.hssf.model.InternalWorkbook;
 
 /**
@@ -32,7 +32,7 @@ public class HSSFWorkbookHelper {
 	public InternalWorkbook getInternalWorkbook() {
 		return _book.getWorkbook();
 	}
-	public HSSFPictureData newHSSFPictureData(EscherBlipRecord blip) {
-		return new HSSFPictureData(blip);
+	public HSSFPictureData newHSSFPictureData(EscherBSERecord bse) {
+		return new HSSFPictureData(bse);
 	}
 }

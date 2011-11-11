@@ -294,4 +294,8 @@ public class EmptyRange implements Range {
 	@Override
 	public void deletePicture(Picture picture) {
 	}
+
+	@Override
+	public void movePicture(Picture picture, ClientAnchor anchor) {
+	}
 }

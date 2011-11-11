@@ -525,4 +525,11 @@ public interface Range {
 	 * @param picture the picture
 	 */
 	public void deletePicture(Picture picture);
+	
+	/**
+	 * Update picture anchor.
+	 * @param picture the picture to change anchor
+	 * @param anchor the new anchor
+	 */
+	public void movePicture(Picture picture, ClientAnchor anchor);
 }

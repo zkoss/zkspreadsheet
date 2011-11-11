@@ -2025,4 +2025,16 @@ public class RangeImpl implements Range {
 			BookHelper.notifyPictureDelete(ref, picture);
 		}
 	}
+
+	@Override
+	public void movePicture(Picture picture, ClientAnchor anchor) {
+		DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
+		dm.movePicture(_sheet, picture, anchor);
+		final RangeImpl rng = (RangeImpl) Ranges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
+		final Collection<Ref> refs = rng.getRefs();
+		if (refs != null && !refs.isEmpty()) {
+			final Ref ref = refs.iterator().next();
+			BookHelper.notifyPictureUpdate(ref, picture);
+		}
+	}
 }

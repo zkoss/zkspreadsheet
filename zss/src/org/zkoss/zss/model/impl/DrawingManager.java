@@ -41,4 +41,6 @@ public interface DrawingManager {
 	public Picture addPicture(Worksheet sheet, ClientAnchor anchor, byte[] imageData, int format);
 	
 	public void deletePicture(Worksheet sheet, Picture picture);
+	
+	public void movePicture(Worksheet sheet, Picture picture, ClientAnchor anchor);
 }

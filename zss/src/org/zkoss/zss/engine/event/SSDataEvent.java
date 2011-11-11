@@ -57,14 +57,15 @@ public class SSDataEvent extends Event implements Serializable {
 	/** Identifies the protect sheet status change. **/
 	public static final String ON_PROTECT_SHEET = "onProtectSheet";
 	
-	/** Indentifies one chart added. **/
+	/** Identifies one chart added. **/
 	public static final String ON_CHART_ADD = "onChartAdd";
 	
-	/** Indentifies one picture added. **/
+	/** Identifies one picture added. **/
 	public static final String ON_PICTURE_ADD = "onPictureAdd";
-	
-	/** Indentifies the specified picture deleted. **/
+	/** Identifies the specified picture deleted. **/
 	public static final String ON_PICTURE_DELETE = "onPictureRemove";
+	/** Identifies the specified pciture changed. **/
+	public static final String ON_PICTURE_UPDATE = "onPictureChange";
 	
 	/** Indentifies the change of a widget. */
 	public static final String ON_WIDGET_CHANGE = "onWidgetChange";

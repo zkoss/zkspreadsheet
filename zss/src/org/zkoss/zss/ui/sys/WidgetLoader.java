@@ -69,4 +69,6 @@ public interface WidgetLoader {
 	public void addPictureWidget(Worksheet sheet, Picture picture);
 	
 	public void deletePictureWidget(Worksheet sheet, Picture picture);
+	
+	public void updatePictureWidget(Worksheet sheet, Picture picture);
 }

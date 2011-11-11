@@ -1503,6 +1503,12 @@ public class Spreadsheet extends XulElement implements Serializable {
 					onPictureDelete((SSDataEvent)event);
 				}
 			});
+			addEventListener(SSDataEvent.ON_PICTURE_UPDATE, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onPictureUpdate((SSDataEvent)event);
+				}
+			});
 			addEventListener(SSDataEvent.ON_WIDGET_CHANGE, new EventListener() {
 				@Override
 				public void onEvent(Event event) throws Exception {
@@ -1522,7 +1528,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			final int bottom = rng.getBottomRow();
 			final Object payload = event.getPayload();
 			addChartWidget(sheet, (ZssChartX) payload);
-			updateWidget(sheet, left, top, right, bottom);
+//			updateWidget(sheet, left, top, right, bottom);
 		}
 		private void onPictureAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -1533,7 +1539,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			final int bottom = rng.getBottomRow();
 			final Object payload = event.getPayload();
 			addPictureWidget(sheet, (Picture) payload);
-			updateWidget(sheet, left, top, right, bottom);
+//			updateWidget(sheet, left, top, right, bottom);
 		}
 		private void onPictureDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -1544,6 +1550,17 @@ public class Spreadsheet extends XulElement implements Serializable {
 			final int bottom = rng.getBottomRow();
 			final Object payload = event.getPayload();
 			deletePictureWidget(sheet, (Picture) payload);
+//			updateWidget(sheet, left, top, right, bottom);
+		}
+		private void onPictureUpdate(SSDataEvent event) {
+			final Ref rng = event.getRef();
+			final Worksheet sheet = getSheet(rng);
+			final int left = rng.getLeftCol();
+			final int top = rng.getTopRow();
+			final int right = rng.getRightCol();
+			final int bottom = rng.getBottomRow();
+			final Object payload = event.getPayload();
+			updatePictureWidget(sheet, (Picture) payload);
 			updateWidget(sheet, left, top, right, bottom);
 		}
 		private void onWidgetChange(SSDataEvent event) {
@@ -3584,6 +3601,15 @@ public class Spreadsheet extends XulElement implements Serializable {
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
 			((WidgetLoader) list.get(i)).deletePictureWidget(sheet, picture);
+		}
+	}
+	
+	private void updatePictureWidget(Worksheet sheet, Picture picture) {
+		//load widgets
+		List list = loadWidgetLoaders();
+		int size = list.size();
+		for (int i = 0; i < size; i++) {
+			((WidgetLoader) list.get(i)).updatePictureWidget(sheet, picture);
 		}
 	}
 

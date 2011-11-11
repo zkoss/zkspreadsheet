@@ -154,6 +154,11 @@ public class SheetCtrlImpl implements SheetCtrl {
 			@Override
 			public void deletePicture(Worksheet sheet, Picture picture) {
 			}
+
+			@Override
+			public void movePicture(Worksheet sheet, Picture picture,
+					ClientAnchor anchor) {
+			}
 		};
 	}
 }

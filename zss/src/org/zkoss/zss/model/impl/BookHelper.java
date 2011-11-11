@@ -339,6 +339,14 @@ public final class BookHelper {
 		}
 	}
 
+	public static void notifyPictureUpdate(Ref ref, Picture picture) {
+		if (ref != null) {
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final RefBook refBook = refSheet.getOwnerBook();
+			refBook.publish(new SSDataEvent(SSDataEvent.ON_PICTURE_UPDATE, ref, picture));
+		}
+	}
+
 	public static void notifyBtnChanges(Set<Ref> all) {
 		if (all != null) {
 			for(Ref ref : all) {

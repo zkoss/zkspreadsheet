@@ -224,7 +224,7 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 
 	@Override
 	public void deletePictureData(PictureData img) {
-		getAllPictures().remove(img);
+		super.deletePictureData(img);
 	}
 
 	//--Workbook--//
