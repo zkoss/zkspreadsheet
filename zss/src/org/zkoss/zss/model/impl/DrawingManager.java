@@ -5,6 +5,7 @@ package org.zkoss.zss.model.impl;
 
 import java.util.List;
 
+import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.poi.ss.usermodel.Combo;
@@ -43,4 +44,6 @@ public interface DrawingManager {
 	public void deletePicture(Worksheet sheet, Picture picture);
 	
 	public void movePicture(Worksheet sheet, Picture picture, ClientAnchor anchor);
+
+	public void moveChart(Worksheet sheet, Chart chart, ClientAnchor anchor);
 }

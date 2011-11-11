@@ -70,6 +70,7 @@ public interface SpreadsheetCtrl {
 	public Rect getSelectionRect();
 	public Rect getFocusRect();
 	public Rect getLoadedRect();
+	public Rect getVisibleRect();
 	
 	public WidgetHandler getWidgetHandler();
 	

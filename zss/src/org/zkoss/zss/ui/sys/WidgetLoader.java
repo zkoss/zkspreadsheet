@@ -71,4 +71,6 @@ public interface WidgetLoader {
 	public void deletePictureWidget(Worksheet sheet, Picture picture);
 	
 	public void updatePictureWidget(Worksheet sheet, Picture picture);
+	
+	public void updateChartWidget(Worksheet sheet, org.zkoss.poi.ss.usermodel.Chart chart);
 }

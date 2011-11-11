@@ -159,6 +159,11 @@ public class SheetCtrlImpl implements SheetCtrl {
 			public void movePicture(Worksheet sheet, Picture picture,
 					ClientAnchor anchor) {
 			}
+
+			@Override
+			public void moveChart(Worksheet sheet, Chart chart,
+					ClientAnchor anchor) {
+			}
 		};
 	}
 }

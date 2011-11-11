@@ -532,4 +532,11 @@ public interface Range {
 	 * @param anchor the new anchor
 	 */
 	public void movePicture(Picture picture, ClientAnchor anchor);
+
+	/**
+	 * Update chart anchor.
+	 * @param picture the picture to change anchor
+	 * @param anchor the new anchor
+	 */
+	public void moveChart(Chart chart, ClientAnchor anchor);
 }

@@ -73,6 +73,7 @@ import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.CellValue;
+import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Comment;
@@ -344,6 +345,14 @@ public final class BookHelper {
 			final RefSheet refSheet = ref.getOwnerSheet();
 			final RefBook refBook = refSheet.getOwnerBook();
 			refBook.publish(new SSDataEvent(SSDataEvent.ON_PICTURE_UPDATE, ref, picture));
+		}
+	}
+
+	public static void notifyChartUpdate(Ref ref, Chart chart) {
+		if (ref != null) {
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final RefBook refBook = refSheet.getOwnerBook();
+			refBook.publish(new SSDataEvent(SSDataEvent.ON_CHART_UPDATE, ref, chart));
 		}
 	}
 

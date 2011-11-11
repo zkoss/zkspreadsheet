@@ -2037,4 +2037,16 @@ public class RangeImpl implements Range {
 			BookHelper.notifyPictureUpdate(ref, picture);
 		}
 	}
+
+	@Override
+	public void moveChart(Chart chart, ClientAnchor anchor) {
+		DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
+		dm.moveChart(_sheet, chart, anchor);
+		final RangeImpl rng = (RangeImpl) Ranges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
+		final Collection<Ref> refs = rng.getRefs();
+		if (refs != null && !refs.isEmpty()) {
+			final Ref ref = refs.iterator().next();
+			BookHelper.notifyChartUpdate(ref, chart);
+		}
+	}
 }

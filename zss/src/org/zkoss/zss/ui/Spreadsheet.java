@@ -53,6 +53,7 @@ import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.Picture;
@@ -1491,6 +1492,12 @@ public class Spreadsheet extends XulElement implements Serializable {
 					onChartAdd((SSDataEvent)event);
 				}
 			});
+			addEventListener(SSDataEvent.ON_CHART_UPDATE, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onChartUpdate((SSDataEvent)event);
+				}
+			});
 			addEventListener(SSDataEvent.ON_PICTURE_ADD, new EventListener() {
 				@Override
 				public void onEvent(Event event) throws Exception {
@@ -1530,6 +1537,17 @@ public class Spreadsheet extends XulElement implements Serializable {
 			addChartWidget(sheet, (ZssChartX) payload);
 //			updateWidget(sheet, left, top, right, bottom);
 		}
+		private void onChartUpdate(SSDataEvent event) {
+			final Ref rng = event.getRef();
+			final Worksheet sheet = getSheet(rng);
+			final int left = rng.getLeftCol();
+			final int top = rng.getTopRow();
+			final int right = rng.getRightCol();
+			final int bottom = rng.getBottomRow();
+			final Object payload = event.getPayload();
+			updateChartWidget(sheet, (Chart) payload);
+//			updateWidget(sheet, left, top, right, bottom);
+		}
 		private void onPictureAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final Worksheet sheet = getSheet(rng);
@@ -1561,7 +1579,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			final int bottom = rng.getBottomRow();
 			final Object payload = event.getPayload();
 			updatePictureWidget(sheet, (Picture) payload);
-			updateWidget(sheet, left, top, right, bottom);
+//			updateWidget(sheet, left, top, right, bottom);
 		}
 		private void onWidgetChange(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -2046,6 +2064,10 @@ public class Spreadsheet extends XulElement implements Serializable {
 		public void setVisibleRect(int left, int top, int right, int bottom) {
 			_visibleRect.set(left, top, right, bottom);
 			getWidgetHandler().onLoadOnDemand(getSelectedSheet(), left, top, right, bottom);
+		}
+
+		public Rect getVisibleRect() {
+			return (Rect) _visibleRect.cloneSelf();
 		}
 
 		public boolean addWidget(Widget widget) {
@@ -3610,6 +3632,15 @@ public class Spreadsheet extends XulElement implements Serializable {
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
 			((WidgetLoader) list.get(i)).updatePictureWidget(sheet, picture);
+		}
+	}
+
+	private void updateChartWidget(Worksheet sheet, Chart chart) {
+		//load widgets
+		List list = loadWidgetLoaders();
+		int size = list.size();
+		for (int i = 0; i < size; i++) {
+			((WidgetLoader) list.get(i)).updateChartWidget(sheet, chart);
 		}
 	}
 

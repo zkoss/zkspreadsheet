@@ -298,4 +298,8 @@ public class EmptyRange implements Range {
 	@Override
 	public void movePicture(Picture picture, ClientAnchor anchor) {
 	}
+
+	@Override
+	public void moveChart(Chart chart, ClientAnchor anchor) {
+	}
 }
