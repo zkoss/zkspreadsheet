@@ -437,8 +437,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				ar = this._wgt._activeRange;
 			if (ar) {
 				ar.update(data);
-				var visibleRect = data.vr;
-				this.update_(visibleRect.t, visibleRect.l, visibleRect.b, visibleRect.r);
+				this.update_(data.t, data.l, data.b, data.r);
 				wgt._triggerContentsChanged = true;
 			}
 			break;
@@ -504,7 +503,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				size = result.size,
 				nm = result.extnm,
 				ar = this._wgt._activeRange;
-			ar.insertColumnHeaders(col, size, nm);
+			ar.insertColumns(col, size, nm);
 			this._insertNewColumn(col, size, nm);
 			//update positionHelper
 			this.custColWidth.shiftMeta(col, size);
@@ -531,7 +530,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				size = result.size,
 				nm = result.extnm,
 				ar = this._wgt._activeRange;
-			ar.insertRowHeaders(row, size, nm);
+			ar.insertRows(row, size, nm);
 			this._insertNewRow(row, size, nm);
 			//update positionHelper
 			this.custRowHeight.shiftMeta(row, size);
@@ -570,7 +569,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				size = result.size,
 				nm = result.extnm,
 				ar = this._wgt._activeRange;
-			ar.removeColumnHeaders(col, size, nm);
+			ar.removeColumns(col, size, nm);
 			this._removeColumn(col, size, nm);
 			
 			// adjust datapanel size;
@@ -603,7 +602,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				size = result.size,
 				nm = result.extnm,
 				ar = this._wgt._activeRange;
-			ar.removeRowHeaders(row, size, nm);
+			ar.removeRows(row, size, nm);
 			this._removeRow(row, size, nm);
 			
 			// adjust datapanel size;
@@ -1133,7 +1132,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			my = evt.pageY;
 			shx = Math.round(mx - sheetofs[0]);
 			shy = Math.round(my - sheetofs[1]);
-			
 			var cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false),
 				cx = cellpos[4]; //x relative to cell 
 			row = cellpos[0];
@@ -1143,7 +1141,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			if (this.selArea) {
 				this.selArea._tryAndEndHyperlink(row, col, evt);
 			}
-			
 			mdstr = "c_" + row + "_" + col;
 			if (this._lastmdstr == mdstr) {
 				wgt.fireCellEvt(type, shx, shy, md1[2], row, col, mx, my);
@@ -2299,9 +2296,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		
 		if (row <= fzr && col <= fzc)
 			cell = this.cp.block.getCell(row, col); //corner
-		else if(row <= fzr) 
+		else if(fzr > 0 && row <= fzr) 
 			cell = this.tp.block.getCell(row, col); //top panel
-		else if(col <= fzc) 
+		else if(fzc > 0 && col <= fzc) 
 			cell = this.lp.block.getCell(row, col); //left panel.
 		else 
 			cell = this.activeBlock.getCell(row, col); //data panel

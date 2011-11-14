@@ -168,6 +168,9 @@ zss.Cell =  zk.$extends(zk.Widget, {
 	doClick_: function (evt) {
 		//do nothing. eat the event.
 	},
+	doRightClick_: function (evt) {
+		this.sheet._doMouserightclick(evt);
+	},
 	doMouseDown_: function (evt) {
 		this.sheet._doMousedown(evt);
 	},

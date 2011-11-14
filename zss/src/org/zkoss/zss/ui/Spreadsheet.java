@@ -1934,14 +1934,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 		SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) this.getExtraCtrl());
 		JSONObject result = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.NONE, CellAttribute.ALL, left, top, right, bottom);
 		result.put("type", "udcell");
-		
-		JSONObject visibleRect = new JSONObject();
-		visibleRect.put("t", _visibleRect.getTop());
-		visibleRect.put("l", _visibleRect.getLeft());
-		visibleRect.put("b", _visibleRect.getBottom());
-		visibleRect.put("r", _visibleRect.getRight());
-		result.put("vr", visibleRect);
-		
 		response(top + "_" + left + "_" + _updateCellId.next(), 
 				new AuDataUpdate(this, "", sheetId, result));
 	}
@@ -2475,205 +2467,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 			}
 			return attrs;
 		}
-		
-//		public String getCellOuterAttrs(int row, int col) {
-//			StringBuffer sb = new StringBuffer();
-//			Worksheet sheet = getSelectedSheet();
-//			MergeMatrixHelper matrix = getMergeMatrixHelper(sheet);
-//			HeaderPositionHelper rowHelper = Spreadsheet.this.getRowPositionHelper(sheet);
-//			HeaderPositionHelper colHelper = Spreadsheet.this.getColumnPositionHelper(sheet);
-//			Cell cell = Utils.getCell(sheet, row, col);
-//
-//			// class="zscell zscw${cstatus.index} zsrhi${rstatus.index} ${s:getCellSClass(self,rstatus.index,cstatus.index)}"
-//			sb.append("class=\"zscell");
-//			int zsh = -1;
-//			int zsw = -1;
-//			HeaderPositionInfo info = colHelper.getInfo(col);
-//			if (info != null) {
-//				zsw = info.id;
-//				sb.append(" zsw").append(zsw);
-//			}
-//			info = rowHelper.getInfo(row);
-//			if (info != null) {
-//				zsh = info.id;
-//				sb.append(" zshi").append(zsh);
-//			}
-//			appendMergeSClass(sb, row, col);
-//			sb.append("\" ");
-//
-//			CellFormatHelper cfh = new CellFormatHelper(sheet, row, col,
-//					getMergeMatrixHelper(sheet));
-//			HTMLs.appendAttribute(sb, "style", cfh.getHtmlStyle());
-//
-//			HTMLs.appendAttribute(sb, "z.r", row);
-//			HTMLs.appendAttribute(sb, "z.c", col);
-//			if (zsw >= 0) {
-//				HTMLs.appendAttribute(sb, "z.zsw", zsw);
-//			}
-//			if (zsh >= 0) {
-//				HTMLs.appendAttribute(sb, "z.zsh", zsh);
-//			}
-//
-//			if (cell != null) {
-//				HTMLs.appendAttribute(sb, "z.ctype", cell.getCellType());
-//				
-//				CellStyle style = cell.getCellStyle();
-//				if (style != null && !style.getLocked()) {
-//					HTMLs.appendAttribute(sb, "z.lock", "f"); //default cell lock is true
-//				}
-//				
-//				if (style != null && style.getWrapText()) {
-//					HTMLs.appendAttribute(sb, "z.wrap", "t");
-//				}
-//
-//				int textHAlign = BookHelper.getRealAlignment(cell);
-//				switch(textHAlign) {
-//				case CellStyle.ALIGN_CENTER:
-//				case CellStyle.ALIGN_CENTER_SELECTION:
-//					HTMLs.appendAttribute(sb, "z.hal", "c");
-//					break;
-//				case CellStyle.ALIGN_RIGHT:
-//					HTMLs.appendAttribute(sb, "z.hal", "r");
-//					break;
-//				}
-//				//default height doesn't need to align
-//				int verAlign = style != null ? style.getVerticalAlignment() : -1;
-//				switch (verAlign) {
-//				//top is client side's default, ignore it
-//				//case CellStyle.VERTICAL_TOP:
-//				case CellStyle.VERTICAL_CENTER:
-//					HTMLs.appendAttribute(sb, "z.vtal", "c");
-//					break;
-//				case CellStyle.VERTICAL_BOTTOM:
-//					HTMLs.appendAttribute(sb, "z.vtal", "b");
-//					break;
-//				}
-//
-//				if (cfh.hasRightBorder()) {
-//					HTMLs.appendAttribute(sb, "z.rbo", "t");
-//				}
-//			}
-//
-//			MergedRect block;
-//			if ((block = matrix.getMergeRange(row, col)) != null) {
-//				HTMLs.appendAttribute(sb, "z.merr", block.getRight());
-//				HTMLs.appendAttribute(sb, "z.merid", block.getId());
-//				HTMLs.appendAttribute(sb, "z.merl", block.getLeft());
-//				HTMLs.appendAttribute(sb, "z.mert", block.getTop());
-//				HTMLs.appendAttribute(sb, "z.merb", block.getBottom());
-//			}
-//
-//			return sb.toString();
-//		}
-//
-//		public String getCellInnerAttrs(int row, int col) {
-//			Worksheet sheet = getSelectedSheet();
-//			StringBuffer sb = new StringBuffer();
-//			HeaderPositionHelper rowHelper = Spreadsheet.this
-//					.getRowPositionHelper(sheet);
-//			HeaderPositionHelper colHelper = Spreadsheet.this
-//					.getColumnPositionHelper(sheet);
-//
-//			// class="zscelltxt zscwi${cstatus.index} zsrhi${rstatus.index}"
-//			sb.append("class=\"zscelltxt");
-//			HeaderPositionInfo info = colHelper.getInfo(col);
-//			if (info != null) {
-//				sb.append(" zswi").append(info.id);
-//			}
-//			info = rowHelper.getInfo(row);
-//			if (info != null) {
-//				sb.append(" zshi").append(info.id);
-//			}
-//			sb.append("\" ");
-//
-//			CellFormatHelper cfh = new CellFormatHelper(sheet, row, col,
-//					getMergeMatrixHelper(sheet));
-//			HTMLs.appendAttribute(sb, "style", cfh.getInnerHtmlStyle());
-//
-//			return sb.toString();
-//		}
-//
-//		public String getTopHeaderOuterAttrs(int col) {
-//			Worksheet sheet = getSelectedSheet();
-//			HeaderPositionHelper colHelper = Spreadsheet.this
-//					.getColumnPositionHelper(sheet);
-//			StringBuffer sb = new StringBuffer();
-//
-//			// class="zstopcell zscw${status.index}" z.c="${status.index}"
-//			sb.append("class=\"zstopcell");
-//			int zsw = -1;
-//			HeaderPositionInfo info = colHelper.getInfo(col);
-//			if (info != null) {
-//				zsw = info.id;
-//				sb.append(" zsw").append(zsw);
-//			}
-//			sb.append("\" ");
-//
-//			HTMLs.appendAttribute(sb, "z.c", col);
-//			if (zsw >= 0) {
-//				HTMLs.appendAttribute(sb, "z.zsw", zsw);
-//			}
-//
-//			return sb.toString();
-//		}
-//
-//		public String getTopHeaderInnerAttrs(int col) {
-//			Worksheet sheet = getSelectedSheet();
-//			HeaderPositionHelper colHelper = Spreadsheet.this
-//					.getColumnPositionHelper(sheet);
-//			StringBuffer sb = new StringBuffer();
-//
-//			// class="zstopcelltxt zscw${status.index}"
-//			sb.append("class=\"zstopcelltxt");
-//			HeaderPositionInfo info = colHelper.getInfo(col);
-//			if (info != null) {
-//				sb.append(" zswi").append(info.id);
-//			}
-//			sb.append("\" ");
-//
-//			return sb.toString();
-//		}
-//
-//		public String getLeftHeaderOuterAttrs(int row) {
-//			Worksheet sheet = getSelectedSheet();
-//			HeaderPositionHelper rowHelper = Spreadsheet.this
-//					.getRowPositionHelper(sheet);
-//			StringBuffer sb = new StringBuffer();
-//
-//			// class="zsleftcell zsrow zslrh${status.index}"
-//			// z.r="${status.index}"
-//			sb.append("class=\"zsleftcell zsrow");
-//			int zsh = -1;
-//			HeaderPositionInfo info = rowHelper.getInfo(row);
-//			if (info != null) {
-//				zsh = info.id;
-//				sb.append(" zslh").append(zsh);
-//			}
-//			sb.append("\" ");
-//
-//			HTMLs.appendAttribute(sb, "z.r", row);
-//			if (zsh >= 0) {
-//				HTMLs.appendAttribute(sb, "z.zsh", zsh);
-//			}
-//
-//			return sb.toString();
-//		}
-//
-//		public String getLeftHeaderInnerAttrs(int row) {
-//			Worksheet sheet = getSelectedSheet();
-//			HeaderPositionHelper rowHelper = Spreadsheet.this
-//					.getRowPositionHelper(sheet);
-//			StringBuffer sb = new StringBuffer();
-//
-//			sb.append("class=\"zsleftcelltxt ");
-//			HeaderPositionInfo info = rowHelper.getInfo(row);
-//			if (info != null) {
-//				sb.append(" zslh").append(info.id);
-//			}
-//			sb.append("\" ");
-//
-//			return sb.toString();
-//		}
 
 		/**
 		 * API for implementation, gets data panel attributes, only spreadsheet
@@ -2713,9 +2506,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 			//TODO: seems no need at all ???
 			List extnm = new ArrayList();
 			int right = size + _loadedRect.getRight();
-			int preloadColSize = Spreadsheet.this.getPreloadColumnSize();
-			if (preloadColSize > 0)
-				right = Math.min(right + preloadColSize - 1, Spreadsheet.this.getMaxcolumns() - 1);
 			for (int i = col; i <= right; i++) {
 				extnm.add(getColumntitle(i));
 			}
@@ -2744,13 +2534,9 @@ public class Spreadsheet extends XulElement implements Serializable {
 			right = right >= _maxColumns - 1 ? _maxColumns - 1 : right;
 			int top = _loadedRect.getTop();
 			int bottom = _loadedRect.getBottom();
-			int preloadRowBottom = getPreloadRowSize();
-			if (preloadRowBottom > 0) {
-				preloadRowBottom = Math.min(getMaxrows() - 1, bottom + (preloadRowBottom - 1));
-			}
 			
 			log.debug("update cells when insert column " + col + ",size:" + size + ":" + left + "," + top + "," + right + "," + bottom);
-			updateCell(sheet, left, top, right, Math.max(bottom, preloadRowBottom));
+			updateCell(sheet, left, top, right, bottom);
 			
 			//update inserted column widths
 			updateColWidths(sheet, col, size); 
@@ -2789,9 +2575,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 
 			List extnm = new ArrayList();
 			int bottom = size + _loadedRect.getBottom();
-			int preloadRowSize = Spreadsheet.this.getPreloadRowSize();
-			if (preloadRowSize > 0)
-				bottom = Math.min(bottom + preloadRowSize - 1, Spreadsheet.this.getMaxrows());
 			for (int i = row; i <= bottom; i++) {
 				extnm.add(getRowtitle(i));
 			}
@@ -2816,13 +2599,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			int top = row;
 			bottom = bottom + size - 1;
 			bottom = bottom >= _maxRows - 1 ? _maxRows - 1 : bottom;
-			
-			int preloadColRight = getPreloadColumnSize();
-			if (preloadColRight > 0) {
-				preloadColRight = Math.min(getMaxcolumns() - 1, _loadedRect.getRight() + (preloadColRight - 1));
-			}
-			
-			updateCell(sheet, _loadedRect.getLeft(), top, Math.max(_loadedRect.getRight(), preloadColRight), bottom);
+			updateCell(sheet, _loadedRect.getLeft(), top, _loadedRect.getRight(), bottom);
 			
 			// update the inserted row height
 			updateRowHeights(sheet, row, size); //update row height
@@ -2858,10 +2635,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 			List extnm = new ArrayList();
 
 			int right = _loadedRect.getRight() - size;
-			int preloadColSize = Spreadsheet.this.getPreloadColumnSize();
-			if (preloadColSize > 0)
-				right = right + preloadColSize - 1;
-			//TODO: why this ?
 			if (right < col) {
 				right = col - 1;
 			}
@@ -2893,12 +2666,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			int left = col;
 			right = left;
 			
-			int preloadRowBottom = getPreloadRowSize();
-			if (preloadRowBottom > 0) {
-				preloadRowBottom = Math.min(getMaxrows() - 1, _loadedRect.getBottom() + (preloadRowBottom - 1));
-			}
-			
-			updateCell(sheet, left, _loadedRect.getTop(), right, Math.max(_loadedRect.getBottom(), preloadRowBottom));
+			updateCell(sheet, left, _loadedRect.getTop(), right, _loadedRect.getBottom());
 		}
 
 		public void removeRows(Worksheet sheet, int row, int size) {
@@ -2930,10 +2698,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 			List extnm = new ArrayList();
 
 			int bottom = _loadedRect.getBottom() - size;
-			int preloadRowSize = Spreadsheet.this.getPreloadRowSize();
-			if (preloadRowSize > 0)
-				bottom = bottom + preloadRowSize - 1;
-			//TODO: why this ?
 			if (bottom < row) {
 				bottom = row - 1;
 			}
@@ -2965,12 +2729,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			int top = row;
 			bottom = top;
 			
-			int preloadColRight = getPreloadColumnSize();
-			if (preloadColRight > 0) {
-				preloadColRight = Math.min(getMaxcolumns() - 1, _loadedRect.getRight() + preloadColRight - 1);
-			}
-			
-			updateCell(sheet, _loadedRect.getLeft(), top, Math.max(_loadedRect.getRight(), preloadColRight) , bottom);
+			updateCell(sheet, _loadedRect.getLeft(), top, _loadedRect.getRight(), bottom);
 		}
 
 		private void removeAffectedMergeRange(Worksheet sheet, int type, int index) {
@@ -3878,12 +3637,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 			result.setData("type", "stopedit");
 			result.setData("val", "");
 
-			// responseUpdateCell("stop", token, Utils.getId(sheet), result.toString());
-			//TODO: no need ??
-//			if (getPreloadColumnSize() > 0 && getPreloadRowSize() > 0) {
-//				updateRange(sheet, Utils.getSheetUuid(sheet), colIdx, rowIdx, colIdx, rowIdx);
-//			}
-			//TODO: seems no need ??
 			smartUpdate("dataUpdateStop", new Object[] { token,	Utils.getSheetUuid(sheet), result});
 		} catch (RuntimeException x) {
 			processCancelEditing0(token, sheet, rowIdx, colIdx);

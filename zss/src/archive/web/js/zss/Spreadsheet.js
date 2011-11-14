@@ -450,6 +450,24 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					}
 				}
 			},
+			removeColumns: function (col, size, rCol) {
+				var cs = this.cells,
+					i = size,
+					lCol = col;
+				for (var c = col; c <= rCol; c++) {
+					var cell = cs[c];
+					if (cell) {
+						if (i > 0) {
+							delete cs[c];
+							i--;
+						} else {
+							delete cs[c];
+							cell.c -= size; //re-index
+							cs[cell.c] = cell;
+						}
+					}
+				}
+			},
 			getCell: function (num) {
 				return this.cells[num];
 			}
@@ -655,20 +673,47 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					j++;
 				}
 			},
-			insertColumnHeaders: function (col, size, extnm) {
+			insertColumns: function (col, size, extnm) {
 				this._updateHeaders(this.columnHeaders, col, size, extnm);
 				this.rect.right += size;
 			},
-			removeColumnHeaders: function (col, size, extnm) {
+			removeColumns: function (col, size, extnm) {
 				this._updateHeaders(this.columnHeaders, col, size, extnm);
+				var r = this.rect,
+					rows = this.rows,
+					rCol = r.right,
+					tRow = r.top,
+					bRow = r.bottom;
+				for (var r = tRow; r <= bRow; r++) {
+					var row = rows[r];
+					if (row) {
+						row.removeColumns(col, size, rCol);
+					}
+				}
 				this.rect.right -= size;
 			},
-			insertRowHeaders: function (row, size, extnm) {
+			insertRows: function (row, size, extnm) {
 				this._updateHeaders(this.rowHeaders, row, size, extnm);
 				this.rect.bottom += size; 
 			},
-			removeRowHeaders: function (row, size, extnm) {
+			removeRows: function (row, size, extnm) {
 				this._updateHeaders(this.rowHeaders, row, size, extnm);
+				var rows = this.rows,
+					bRow = this.rect.bottom,
+					i = size;
+				for (var r = row; r <= bRow; r++) {
+					var row = rows[r];
+					if (row) {
+						if (i > 0) {
+							delete rows[r];
+							i--;
+						} else {
+							delete rows[r];
+							row.r -= size;
+							rows[row.r] = row;
+						}
+					}
+				}
 				this.rect.bottom -= size;
 			},
 			update: function (v) {
