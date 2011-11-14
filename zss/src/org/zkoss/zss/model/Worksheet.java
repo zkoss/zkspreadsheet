@@ -14,6 +14,7 @@ package org.zkoss.zss.model;
 
 import java.util.List;
 
+import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.Picture;
 
 
@@ -34,4 +35,10 @@ public interface Worksheet extends org.zkoss.poi.ss.usermodel.Sheet {
      * @return pictures in this ZK Spreadsheet sheet.
      */
     public List<Picture> getPictures();
+    
+    /**
+     * Returns charts in this ZK Spreadsheet sheet.
+     * @return charts in this ZK Spreadsheet sheet.
+     */
+    public List<Chart> getCharts();
 }

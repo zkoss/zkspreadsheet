@@ -124,7 +124,7 @@ public class SheetCtrlImpl implements SheetCtrl {
 		// TODO Auto-generated method stub
 		return new DrawingManager() {
 			@Override
-			public List<ZssChartX> getCharts() {
+			public List<ZssChartX> getChartXs() {
 				return Collections.emptyList();
 			}
 
@@ -163,6 +163,15 @@ public class SheetCtrlImpl implements SheetCtrl {
 			@Override
 			public void moveChart(Worksheet sheet, Chart chart,
 					ClientAnchor anchor) {
+			}
+
+			@Override
+			public List<Chart> getCharts() {
+				return null;
+			}
+
+			@Override
+			public void deleteChart(Worksheet sheet, Chart chart) {
 			}
 		};
 	}

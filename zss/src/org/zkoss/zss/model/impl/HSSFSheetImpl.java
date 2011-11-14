@@ -49,6 +49,7 @@ import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.PtgShifter;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.DataValidationConstraint;
 import org.zkoss.poi.ss.usermodel.DataValidationHelper;
@@ -1238,6 +1239,12 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Worksheet {
 	public List<Picture> getPictures() {
 		DrawingManager dm = getDrawingManager();
 		return new ArrayList<Picture>(dm.getPictures());
+	}
+    
+	@Override
+	public List<Chart> getCharts() {
+		DrawingManager dm = getDrawingManager();
+		return dm.getCharts();
 	}
     
     //--SheetCtrl--//

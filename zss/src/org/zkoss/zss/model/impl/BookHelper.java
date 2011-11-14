@@ -324,6 +324,14 @@ public final class BookHelper {
 		}
 	}
 	
+	public static void notifyChartDelete(Ref ref, Chart chart) {
+		if (ref != null) {
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final RefBook refBook = refSheet.getOwnerBook();
+			refBook.publish(new SSDataEvent(SSDataEvent.ON_CHART_DELETE, ref, chart));
+		}
+	}
+
 	public static void notifyPictureAdd(Ref ref, Picture picture) {
 		if (ref != null) {
 			final RefSheet refSheet = ref.getOwnerSheet();

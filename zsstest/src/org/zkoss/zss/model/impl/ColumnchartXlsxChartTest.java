@@ -67,7 +67,7 @@ public class ColumnchartXlsxChartTest {
 	@Test
 	public void testColumnchart() {
 		XSSFSheet sheet1 = (XSSFSheet) _book.getSheet("Sheet1");
-		List<ZssChartX> chartInfos = new DrawingManagerImpl(sheet1).getCharts();
+		List<ZssChartX> chartInfos = new DrawingManagerImpl(sheet1).getChartXs();
 /*		HSSFChart[] charts = HSSFChart.getSheetCharts(sheet1);
 		assertEquals(2, charts.length);
 		HSSFChart chart = charts[0];

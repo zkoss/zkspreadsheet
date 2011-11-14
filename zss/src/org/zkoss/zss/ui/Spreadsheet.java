@@ -1492,6 +1492,12 @@ public class Spreadsheet extends XulElement implements Serializable {
 					onChartAdd((SSDataEvent)event);
 				}
 			});
+			addEventListener(SSDataEvent.ON_CHART_DELETE, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onChartDelete((SSDataEvent)event);
+				}
+			});
 			addEventListener(SSDataEvent.ON_CHART_UPDATE, new EventListener() {
 				@Override
 				public void onEvent(Event event) throws Exception {
@@ -1535,6 +1541,17 @@ public class Spreadsheet extends XulElement implements Serializable {
 			final int bottom = rng.getBottomRow();
 			final Object payload = event.getPayload();
 			addChartWidget(sheet, (ZssChartX) payload);
+//			updateWidget(sheet, left, top, right, bottom);
+		}
+		private void onChartDelete(SSDataEvent event) {
+			final Ref rng = event.getRef();
+			final Worksheet sheet = getSheet(rng);
+			final int left = rng.getLeftCol();
+			final int top = rng.getTopRow();
+			final int right = rng.getRightCol();
+			final int bottom = rng.getBottomRow();
+			final Object payload = event.getPayload();
+			deleteChartWidget(sheet, (Chart) payload);
 //			updateWidget(sheet, left, top, right, bottom);
 		}
 		private void onChartUpdate(SSDataEvent event) {
@@ -3632,6 +3649,15 @@ public class Spreadsheet extends XulElement implements Serializable {
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
 			((WidgetLoader) list.get(i)).updatePictureWidget(sheet, picture);
+		}
+	}
+
+	private void deleteChartWidget(Worksheet sheet, Chart chart) {
+		//load widgets
+		List list = loadWidgetLoaders();
+		int size = list.size();
+		for (int i = 0; i < size; i++) {
+			((WidgetLoader) list.get(i)).deleteChartWidget(sheet, chart);
 		}
 	}
 

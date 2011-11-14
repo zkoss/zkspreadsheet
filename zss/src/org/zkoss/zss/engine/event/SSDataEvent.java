@@ -59,13 +59,15 @@ public class SSDataEvent extends Event implements Serializable {
 	
 	/** Identifies one chart added. **/
 	public static final String ON_CHART_ADD = "onChartAdd";
+	/** Identifies the specified chart deleted. **/
+	public static final String ON_CHART_DELETE = "onChartDelete";
 	/** Identifies the specified chart changed. **/
 	public static final String ON_CHART_UPDATE = "onChartUpdate";
 	
 	/** Identifies one picture added. **/
 	public static final String ON_PICTURE_ADD = "onPictureAdd";
 	/** Identifies the specified picture deleted. **/
-	public static final String ON_PICTURE_DELETE = "onPictureRemove";
+	public static final String ON_PICTURE_DELETE = "onPictureDelete";
 	/** Identifies the specified pciture changed. **/
 	public static final String ON_PICTURE_UPDATE = "onPictureUpdate";
 	

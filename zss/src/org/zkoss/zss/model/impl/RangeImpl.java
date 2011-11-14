@@ -2049,4 +2049,17 @@ public class RangeImpl implements Range {
 			BookHelper.notifyChartUpdate(ref, chart);
 		}
 	}
+
+	@Override
+	public void deleteChart(Chart chart) {
+		DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
+		ClientAnchor anchor = chart.getPreferredSize();
+		final RangeImpl rng = (RangeImpl) Ranges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
+		final Collection<Ref> refs = rng.getRefs();
+		dm.deleteChart(_sheet, chart); //must after getPreferredSize() or anchor is gone!
+		if (refs != null && !refs.isEmpty()) {
+			final Ref ref = refs.iterator().next();
+			BookHelper.notifyChartDelete(ref, chart);
+		}
+	}
 }

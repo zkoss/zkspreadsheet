@@ -6,6 +6,8 @@ ZK Spreadsheet 2.2.0
    ZSS-45 Support API to add a new picture in 2007 file format(.xlsx)
    ZSS-46 Support API to delete an existing picture in 2007 file format(.xlsx)
    ZSS-47 Support API to move an existing picture in 2007 file format(.xlsx)
+   ZSS-48 Support API to move an existing chart in 2007 file format(.xlsx)
+   ZSS-51 Support API to delete an existing chart in 2007 file format(.xlsx)
   
 *Bug
    ZSS-40 Press Ctrl+V for long time does not work correctly

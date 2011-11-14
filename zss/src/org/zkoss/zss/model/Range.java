@@ -522,7 +522,7 @@ public interface Range {
 
 	/**
 	 * Delete an existing picture from the sheet of this Range.
-	 * @param picture the picture
+	 * @param picture the picture to be deleted
 	 */
 	public void deletePicture(Picture picture);
 	
@@ -539,4 +539,10 @@ public interface Range {
 	 * @param anchor the new anchor
 	 */
 	public void moveChart(Chart chart, ClientAnchor anchor);
+	
+	/**
+	 * Delete an existing chart from the sheet of this Range.
+	 * @param chart the chart to be deleted
+	 */
+	public void deleteChart(Chart chart);
 }

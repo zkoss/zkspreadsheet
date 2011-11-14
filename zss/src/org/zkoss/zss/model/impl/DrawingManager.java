@@ -32,7 +32,7 @@ public interface DrawingManager {
 	 * Returns charts in sheet.
 	 * @return charts in sheet.
 	 */
-	public List<ZssChartX> getCharts();
+	public List<ZssChartX> getChartXs();
 
 	public List<Combo> getCombos();
 	
@@ -46,4 +46,8 @@ public interface DrawingManager {
 	public void movePicture(Worksheet sheet, Picture picture, ClientAnchor anchor);
 
 	public void moveChart(Worksheet sheet, Chart chart, ClientAnchor anchor);
+	
+	public List<Chart> getCharts();
+	
+	public void deleteChart(Worksheet sheet, Chart chart);
 }

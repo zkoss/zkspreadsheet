@@ -72,7 +72,7 @@ public class ColumnchartXlsChartTest {
 	@Test
 	public void testColumnchart() {
 		HSSFSheet sheet1 = (HSSFSheet) _book.getSheet("Sheet1");
-		List<ZssChartX> chartXes = new DrawingManagerImpl(sheet1).getCharts();
+		List<ZssChartX> chartXes = new DrawingManagerImpl(sheet1).getChartXs();
 		assertEquals(1, chartXes.size());
 		HSSFChart chart = (HSSFChart) chartXes.get(0).getChartInfo();
 		assertEquals("2003-2006 Income Summary", chart.getChartTitle());

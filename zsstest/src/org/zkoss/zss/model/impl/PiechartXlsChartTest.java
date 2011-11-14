@@ -70,7 +70,7 @@ public class PiechartXlsChartTest {
 	@Test
 	public void testColumnchart() {
 		HSSFSheet sheet1 = (HSSFSheet) _book.getSheet("Sheet1");
-		List<ZssChartX> chartXes = new DrawingManagerImpl(sheet1).getCharts();
+		List<ZssChartX> chartXes = new DrawingManagerImpl(sheet1).getChartXs();
 		assertEquals(1, chartXes.size());
 		HSSFChartX chartX = (HSSFChartX) chartXes.get(0); 
 		HSSFChart chart = (HSSFChart) chartX.getChartInfo();
