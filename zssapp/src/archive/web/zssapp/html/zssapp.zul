@@ -127,7 +127,7 @@
 	<borderlayout id="topToolbars" height="56px" style="border-left:1px solid #E1E1E1;border-right:1px solid #E1E1E1;">
 		<!-- SECTION **********Navigator bar************************************************* -->
 		<north id="mainNavigator" size="27px" flex="true" border="0">
-			<hlayout hflex="true" sclass="zssapp-menubar" spacing="0">
+			<hlayout sclass="zssapp-menubar z-valign-top" spacing="0">
 				<menubar id="menubar">
 					<filemenu id="fileMenu" label="${c:l('file')}" ></filemenu>
 					<editmenu id="editMenu" label="${c:l('edit')}"></editmenu>
@@ -211,8 +211,33 @@
 				<toolbarbutton id="mergeCellBtn" image="~./zssapp/image/table-join.png" tooltiptext="${c:l('cell.merge')}"
 					forward="onClick=onMergeCellClick" />
 				<div sclass="toolbarSeparator"></div>		
-				<toolbarbutton disabled="true" id="insertChartBtn" src="~./zssapp/image/chart-pie.png" tooltiptext="${c:l('insert.chart')}"
-					forward="onClick=onInsertChart(pie)" />
+				<toolbarbutton id="insertImageBtn" image="~./zssapp/image/image.png" tooltiptext="${c:l('insert.image')}"/>
+				<div use="org.zkoss.zss.app.zul.IdDiv" apply="org.zkoss.zss.app.ctrl.InsertChartCtrl">
+					<dropdownbutton id="insertChartBtn" src="~./zssapp/image/chart-pie.png" tooltiptext="${c:l('insert.chart')}">
+						<menupopup>
+							<menuitem id="insertBarChart" label="${c:l('chart.barchart')}"></menuitem>
+							<menuitem id="insertBarChart3D" label="${c:l('chart.barchart3D')}"></menuitem>
+							<menuitem id="insertLineChart" label="${c:l('chart.linechart')}"></menuitem>
+							<menuitem id="insertLineChart3D" label="${c:l('chart.linechart3D')}"></menuitem>
+							<menuitem id="insertPieChart" label="${c:l('chart.piechart')}"></menuitem>
+							<menuitem id="insertPieChart3D" label="${c:l('chart.piechart3D')}"></menuitem>
+							<!-- Not support yet -->
+<!-- 							<menuitem id="insertOfPieChart" label="${c:l('chart.ofpiechart')}"></menuitem> -->
+							<menuitem id="insertAreaChart" label="${c:l('chart.areachart')}"></menuitem>
+							<menuitem id="insertAreaChart3D" label="${c:l('chart.areachart3D')}"></menuitem>
+							<!-- Not support yet -->
+<!-- 							<menuitem id="insertSurfaceChart" label="${c:l('chart.surfacechart')}"></menuitem> -->
+<!-- 							<menuitem id="insertSurfaceChart3D" label="${c:l('chart.surfacechart3D')}"></menuitem> -->
+<!-- 							<menuitem id="insertBubbleChart" label="${c:l('chart.bubblechart')}"></menuitem> -->
+							<menuitem id="insertDoughnutChart" label="${c:l('chart.doughnutchart')}"></menuitem>
+							<!-- Not support yet -->
+<!-- 							<menuitem id="insertRadarChart" label="${c:l('chart.radarchart')}"></menuitem> -->
+							<menuitem id="insertScatterChart" label="${c:l('chart.scatterchart')}"></menuitem>
+							<!-- Not support yet -->
+<!-- 							<menuitem id="insertStockChart" label="${c:l('chart.stockchart')}"></menuitem> -->
+						</menupopup>
+					</dropdownbutton>
+				</div>
 				<toolbarbutton id="insertHyperlinkBtn" src="~./zssapp/image/hyperlink.png" tooltiptext="${c:l('hyperlink')}"/>
 				<div sclass="toolbarSeparator"></div>
 					<dropdownbutton id="sortDropdownBtn" image="~./zssapp/image/sort-filter.png" tooltiptext="${c:l('sortAndFilter')}">
@@ -295,6 +320,8 @@
 			<div>				
 				<sheets id="sheets" vflex="min"></sheets>
 				<spreadsheet id="spreadsheet"
+						preloadRowSize="200"
+						preloadColumnSize="20"
 						maxrows="200"
 						maxcolumns="40" vflex="true" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
 						forward="onCtrlKey=mainWin.onSSCtrlKeys">

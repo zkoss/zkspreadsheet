@@ -6,8 +6,8 @@
 		}
 </style>
 <div style="padding:2px;">
-<vlayout spacing="2px">
-	<hlayout vflex="min" spacing="3px">
+<vlayout spacing="2px" height="48px">
+	<hlayout height="24px" spacing="3px">
 		<div id="fontCtrlPanel" use="org.zkoss.zss.app.zul.ctrl.CellStyleCtrlPanel"
 				fontfamilywidth="86px"
 				fontsizewidth="48px"

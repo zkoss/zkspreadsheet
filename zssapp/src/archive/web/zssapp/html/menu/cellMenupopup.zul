@@ -5,9 +5,7 @@
 	<menuitem id="paste" label="${c:l('edit.paste')}" />
 	<menuitem id="pasteSpecial" label="${c:l('pasteSpecial')}"/>
 	<menuseparator />
-<!--	<menuitem id="insert" label="${c:l('insert')}">-->
-<!--	</menuitem>-->
-	<menu label="${c:l('insert')}">
+	<menu id="insertMenu" label="${c:l('insert')}">
 		<menupopup>
 			<menuitem id="shiftCellRight" label="Shift cells right"></menuitem>
 			<menuitem id="shiftCellDown" label="Shift cells down"/>
@@ -15,8 +13,6 @@
 			<menuitem id="insertEntireColumn" label="Entire column" />
 		</menupopup>
 	</menu>
-<!--	<menuitem id="delete" label="${c:l('delete')}">-->
-<!--	</menuitem>-->
 	<menu id="delete" label="${c:l('delete')}">
 		<menupopup>
 			<menuitem id="shiftCellLeft" label="Shift cells left"></menuitem>
@@ -25,14 +21,14 @@
 			<menuitem id="deleteEntireColumn" label="Entire column" />
 		</menupopup>
 	</menu>
-	<menu label="Clear">
+	<menu id="clearMenu" label="Clear">
 		<menupopup>
 			<menuitem id="clearContent" label="${c:l('edit.clearContent')}" />
 			<menuitem id="clearStyle" label="${c:l('edit.clearStyle')}" />
 		</menupopup>
 	</menu>
 	<menuseparator />
-	<menu label="${c:l('sort')}">
+	<menu id="sortMenu" label="${c:l('sort')}">
 		<menupopup>
 			<menuitem id="sortAscending" label="${c:l('sort.ascending')}" image="~./zssapp/image/asc.png" >
 			</menuitem>

@@ -22,8 +22,33 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.zkoss.poi.ss.formula.eval.NotImplementedException;
 import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.ClientAnchor;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.charts.CategoryData;
+import org.zkoss.poi.ss.usermodel.charts.ChartData;
+import org.zkoss.poi.ss.usermodel.charts.ChartDataSource;
+import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
+import org.zkoss.poi.ss.usermodel.charts.ChartTextSource;
+import org.zkoss.poi.ss.usermodel.charts.ChartType;
+import org.zkoss.poi.ss.usermodel.charts.DataSources;
+import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
+import org.zkoss.poi.ss.usermodel.charts.XYData;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.xssf.usermodel.XSSFClientAnchor;
+import org.zkoss.poi.xssf.usermodel.charts.XSSFArea3DChartData;
+import org.zkoss.poi.xssf.usermodel.charts.XSSFAreaChartData;
+import org.zkoss.poi.xssf.usermodel.charts.XSSFBar3DChartData;
+import org.zkoss.poi.xssf.usermodel.charts.XSSFBarChartData;
+import org.zkoss.poi.xssf.usermodel.charts.XSSFDoughnutChartData;
+import org.zkoss.poi.xssf.usermodel.charts.XSSFLine3DChartData;
+import org.zkoss.poi.xssf.usermodel.charts.XSSFLineChartData;
+import org.zkoss.poi.xssf.usermodel.charts.XSSFPie3DChartData;
+import org.zkoss.poi.xssf.usermodel.charts.XSSFPieChartData;
+import org.zkoss.poi.xssf.usermodel.charts.XSSFScatChartData;
 import org.zkoss.util.media.Media;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WebApps;
@@ -46,6 +71,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.Widget;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.Events;
+import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zul.Messagebox;
@@ -601,5 +627,326 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void updateText(Cell cell, String text) {
 		spreadsheet.updateText(cell, text);
+	}
+	
+	public String getColumnTitle(int col) {
+		return Labels.getLabel("column") + " " + spreadsheet.getColumntitle(col);
+	}
+
+	public String getRowTitle(int row) {
+		return Labels.getLabel("row") + " " + spreadsheet.getRowtitle(row);
+	}
+	
+	public Rect getVisibleRect() {
+		SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
+		return ctrl.getVisibleRect();
+	}
+
+	public void addChart(int row, int col, ChartType chartType) {
+		Worksheet sheet = spreadsheet.getSelectedSheet();
+		
+		Rect selection = spreadsheet.getSelection();
+		Ranges.range(sheet).addChart(getClientCenterAnchor(row, col), newChartData(chartType, selection), chartType, ChartGrouping.STANDARD, LegendPosition.RIGHT);
+	}
+	
+	private ChartData newChartData(ChartType chartType, Rect selection) {
+		ChartData data = null;
+		
+		switch (chartType) {
+		case Area3D:
+			data = fillCategoryData(new XSSFArea3DChartData());
+			break;
+		case Area:
+			data = fillCategoryData(new XSSFAreaChartData());
+			break;
+		case Bar3D:
+			data = fillCategoryData(new XSSFBar3DChartData());
+			//((XSSFBar3DChartData) data).setGrouping(ChartGrouping.STANDARD);
+			break;
+		case Bar:
+			data = fillCategoryData(new XSSFBarChartData());
+			//((XSSFBarChartData) data).setGrouping(ChartGrouping.STANDARD);
+			break;
+		case Bubble:
+			throw new UnsupportedOperationException();
+		case Doughnut:
+			data = fillCategoryData(new XSSFDoughnutChartData());
+			break;
+		case Line3D:
+			data = fillCategoryData(new XSSFLine3DChartData());
+			break;
+		case Line:
+			data = fillCategoryData(new XSSFLineChartData());
+			break;
+		case Pie3D:
+			data = fillCategoryData(new XSSFPie3DChartData());
+			break;
+		case OfPie:
+//			break;
+			throw new UnsupportedOperationException();
+		case Pie:
+			data = fillCategoryData(new XSSFPieChartData());
+			break;
+		case Radar:
+			throw new NotImplementedException("Radar data not impl");
+		case Scatter:
+			data = fillXYData(new XSSFScatChartData());
+			break;
+		case Stock:
+//			data = fillCategoryData(new XSSFStockChartData());
+//			break;
+			throw new UnsupportedOperationException();
+		case Surface3D:
+//			break;
+			throw new UnsupportedOperationException();
+		case Surface:
+//			break;
+			throw new UnsupportedOperationException();
+		}
+		return data;
+	}
+	
+	private ChartData fillXYData(XYData data) {
+		final Rect selection = spreadsheet.getSelection();
+		final Worksheet sheet = spreadsheet.getSelectedSheet();
+		
+		Rect rect = getChartDataRange(selection, sheet);
+		int colIdx = rect.getLeft();
+		int rowIdx = rect.getTop();
+		
+		ChartDataSource<Number> horValues = null;
+		ArrayList<ChartTextSource> titles = new ArrayList<ChartTextSource>();
+		ArrayList<ChartDataSource<Number>> values = new ArrayList<ChartDataSource<Number>>();
+		
+		int colWidth = selection.getRight() - colIdx;
+		int rowHeight = selection.getBottom() - rowIdx;
+		if (rowHeight > colWidth) {
+			//find horizontal value, at least 1 column
+			if (colIdx < selection.getRight()) {
+				int lCol = selection.getLeft();
+				int rCol = lCol;
+				if (rCol < colIdx) {
+					rCol = colIdx - 1;
+				} else {
+					colIdx += 1;
+				}
+				String startCell = spreadsheet.getColumntitle(lCol) + spreadsheet.getRowtitle(rowIdx);
+				String endCell = spreadsheet.getColumntitle(rCol) + spreadsheet.getRowtitle(selection.getBottom());
+				horValues = DataSources.fromNumericCellRange(sheet, CellRangeAddress.valueOf(startCell + ":" + endCell));
+			} else { 
+				//TODO "1", "2", "3"... as Y value
+			}
+			//find values
+			int i = 1;
+			for (int c = colIdx; c <= selection.getRight(); c++) {
+				//find title
+				String title = "";
+				int row = rowIdx - 1;
+				if (row >= selection.getTop())
+					title += Ranges.range(sheet, selection.getTop(), c, row, c).getText().toString();
+				else {
+					title += ("Series" + i++);
+				}
+				titles.add(DataSources.fromString(title));
+				
+				String startCell = spreadsheet.getColumntitle(c) + spreadsheet.getRowtitle(rowIdx);
+				String endCell = spreadsheet.getColumntitle(c) + spreadsheet.getRowtitle(selection.getBottom());
+				values.add(DataSources.fromNumericCellRange(sheet, CellRangeAddress.valueOf(startCell + ":" + endCell)));
+			}
+		} else {
+			//find horizontal value, at least 1 row
+			if (rowIdx < selection.getBottom()) {
+				int tRow = selection.getTop();
+				int bRow = tRow;
+				if (bRow < rowIdx) {
+					bRow = rowIdx - 1;
+				} else {
+					rowIdx += 1;
+				}
+				String startCell = spreadsheet.getColumntitle(colIdx) + spreadsheet.getRowtitle(tRow);
+				String endCell = spreadsheet.getColumntitle(selection.getRight()) + spreadsheet.getRowtitle(tRow);
+				horValues = DataSources.fromNumericCellRange(sheet, CellRangeAddress.valueOf(startCell + ":" + endCell));
+			} else {
+				//TODO: "1", "2", "3" ...
+			}
+			//find values
+			int i = 1;
+			for (int r = rowIdx; r <= selection.getBottom(); r++) {
+				//find title
+				String title = "";
+				int col = colIdx - 1;
+				if (col >= selection.getLeft()) {
+					title += Ranges.range(sheet, r, selection.getLeft(), r, col).getText().toString();
+				} else {
+					title += ("Series" + i++);
+				}
+				titles.add(DataSources.fromString(title));
+				
+				String startCell = spreadsheet.getColumntitle(colIdx) + spreadsheet.getRowtitle(r);
+				String endCell = spreadsheet.getColumntitle(selection.getRight()) + spreadsheet.getRowtitle(r);
+				values.add(DataSources.fromNumericCellRange(sheet, CellRangeAddress.valueOf(startCell + ":" + endCell)));
+			}
+		}
+		
+		for (int i = 0; i < values.size(); i++) {
+			data.addSerie(titles.get(i), horValues, values.get(i));
+		}
+		return data;
+	}
+
+	private Rect getChartDataRange(Rect selection, Worksheet sheet) {
+		//assume can't find number cell, use last cell as value
+		int colIdx = selection.getLeft();
+		int rowIdx = -1;
+		for (int r = selection.getBottom(); r >= selection.getTop(); r--) {
+			Row row = sheet.getRow(r);
+			int rCol = colIdx;
+			for (int c = selection.getRight(); c >= rCol; c--) {
+				if (isQualifiedCell(row.getCell(c))) {
+					colIdx = c;
+					rowIdx = r;
+				} else {
+					break;
+				}
+			}
+		}
+		if (rowIdx == -1) { //can not find number cell, use last cell as chart's value
+			rowIdx = selection.getBottom();
+			colIdx = selection.getRight();
+		}
+		return new Rect(colIdx, rowIdx, selection.getRight(), selection.getBottom());
+	}
+	
+	private CategoryData fillCategoryData(CategoryData data) {
+		final Rect selection = spreadsheet.getSelection();
+		final Worksheet sheet = spreadsheet.getSelectedSheet();
+		
+		Rect rect = getChartDataRange(selection, sheet);
+		int colIdx = rect.getLeft();
+		int rowIdx = rect.getTop();
+		
+		ChartDataSource<String> cats = null;
+		ArrayList<ChartTextSource> titles = new ArrayList<ChartTextSource>();
+		ArrayList<ChartDataSource<Number>> vals = new ArrayList<ChartDataSource<Number>>();
+		
+		int colWidth = selection.getRight() - colIdx;
+		int rowHeight = selection.getBottom() - rowIdx;
+		if (rowHeight > colWidth) { //catalog by row, value by column
+			//find catalog
+			int col = colIdx - 1;
+			if (col >= selection.getLeft()) {
+				String startCell = spreadsheet.getColumntitle(selection.getLeft()) + spreadsheet.getRowtitle(rowIdx);
+				String endCell = spreadsheet.getColumntitle(col) + spreadsheet.getRowtitle(selection.getBottom());
+				cats = DataSources.fromStringCellRange(sheet, CellRangeAddress.valueOf(startCell + ":" + endCell));
+			} else { //can't find catalog string
+				//TODO: how to create "1", "2"...
+			}
+			//find value, by column
+			int i = 1;
+			for (int c = colIdx; c <= selection.getRight(); c++) {
+				//find title
+				String title = "";
+				int row = rowIdx - 1;
+				if (row >= selection.getTop())
+					title += Ranges.range(sheet, selection.getTop(), c, row, c).getText().toString();
+				else {
+					title += ("Series" + i++);
+				}
+				titles.add(DataSources.fromString(title));
+				
+				String startCell = spreadsheet.getColumntitle(c) + spreadsheet.getRowtitle(rowIdx);
+				String endCell = spreadsheet.getColumntitle(c) + spreadsheet.getRowtitle(selection.getBottom());
+				ChartDataSource<Number> val = DataSources.fromNumericCellRange(sheet, CellRangeAddress.valueOf(startCell + ":" + endCell));
+				vals.add(val);
+			}
+		} else { //catalog by column, value by row
+			//find catalog
+			int row = rowIdx - 1;
+			if (row >= selection.getTop()) {
+				String startCell = spreadsheet.getColumntitle(colIdx) + spreadsheet.getRowtitle(row);
+				String endCell = spreadsheet.getColumntitle(selection.getRight()) + spreadsheet.getRowtitle(row);
+				cats = DataSources.fromStringCellRange(sheet, CellRangeAddress.valueOf(startCell + ":" + endCell));
+			} else { //can't find catalog string
+				//TODO: how to create "1", "2"...
+			}
+			
+			//find value
+			int i = 1;
+			for (int r = rowIdx; r <= selection.getBottom(); r++) {
+				//find title
+				
+				String title = "";
+				int col = colIdx - 1;
+				if (col >= selection.getLeft()) {
+					title += Ranges.range(sheet, r, selection.getLeft(), r, col).getText().toString();
+				} else {
+					title += ("Series" + i++);
+				}
+				titles.add(DataSources.fromString(title));
+				
+				String startCell = spreadsheet.getColumntitle(colIdx) + spreadsheet.getRowtitle(r);
+				String endCell = spreadsheet.getColumntitle(selection.getRight()) + spreadsheet.getRowtitle(r);
+				ChartDataSource<Number> val = DataSources.fromNumericCellRange(sheet, CellRangeAddress.valueOf(startCell + ":" + endCell));
+				vals.add(val);
+			}
+		}
+		
+		for (int i = 0; i < vals.size(); i++) {
+			data.addSerie(titles.get(i), cats, vals.get(i));
+		}
+		return data;
+	}
+	
+	private boolean isQualifiedCell(Cell cell) {
+		if (cell == null)
+			return true;
+		int cellType = cell.getCellType();
+		return cellType == Cell.CELL_TYPE_NUMERIC || 
+			cellType == Cell.CELL_TYPE_FORMULA || 
+			cellType == Cell.CELL_TYPE_BLANK;
+	}
+	
+	private ClientAnchor getClientCenterAnchor(int row, int col) {
+		HeaderPositionHelper rowSizeHelper = (HeaderPositionHelper) spreadsheet.getAttribute("_rowCellSize");
+		HeaderPositionHelper colSizeHelper = (HeaderPositionHelper) spreadsheet.getAttribute("_colCellSize");
+		
+		int chartWidth = 600;
+		int chartHeight = 300;
+		
+		int lCol = col;
+		int tRow = row;
+		int rCol = lCol;
+		int bRow = tRow;
+		int offsetWidth = 0;
+		int offsetHeight = 0;
+		for (int r = tRow; r < spreadsheet.getMaxrows(); r++) {
+			int cellHeight = rowSizeHelper.getSize(r);
+			chartHeight -= cellHeight;
+			if (chartHeight <= 0) {
+				bRow = r;
+				if (chartHeight < 0) {
+					offsetHeight = cellHeight - Math.abs(chartHeight);
+				}
+				break;
+			}
+		}
+		for (int c = lCol; c < spreadsheet.getMaxcolumns(); c++) {
+			int cellWidth = colSizeHelper.getSize(c);
+			chartWidth -= cellWidth;
+			if (chartWidth <= 0) {
+				rCol = c;
+				if (chartWidth < 0) {
+					offsetWidth = cellWidth - Math.abs(chartWidth);
+				}
+				break;
+			}
+		}
+		ClientAnchor anchor = new XSSFClientAnchor(0, 0, pxToEmu(offsetWidth), pxToEmu(offsetHeight), lCol, tRow, rCol, bRow);
+		return anchor;
+	}
+	
+	/** convert pixel to EMU */
+	public static int pxToEmu(int px) {
+		return (int) Math.round(((double)px) * 72 * 20 * 635 / 96); //assume 96dpi
 	}
 }

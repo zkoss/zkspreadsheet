@@ -13,7 +13,7 @@
 			disabled="true" />
 		<menuitem id="importFile" label="${c:l('file.import')}"
 			disabled="true" />
-		<menu label="${c:l('file.export')}">
+		<menu id="exportFile" label="${c:l('file.export')}">
 			<menupopup>
 				<menuitem id="exportPdf" label="${c:l('export.pdf')}"/>
 				<menuitem id="exportHtml" label="${c:l('export.html')}"/>

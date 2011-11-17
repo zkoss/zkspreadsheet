@@ -18,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
@@ -283,8 +284,16 @@ public interface WorkbookCtrl {
 	
 	/**
 	 * Deletes current selected sheet, returns next sheet index
-	 * <> Returns -1 if delete sheet fail
+	 * <p> Returns -1 if delete sheet fail
 	 * @return index
 	 */
 	public int deleteSheet();
+	
+	public void addChart(int row, int col, ChartType type);
+	
+	public String getColumnTitle(int col);
+	
+	public String getRowTitle(int row);
+
+	public Rect getVisibleRect();
 }

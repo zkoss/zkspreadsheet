@@ -15,7 +15,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.app;
 
-import java.io.InputStream;
 import java.util.Iterator;
 
 import org.zkoss.lang.Library;
