@@ -66,7 +66,7 @@ public class BlockSyncCommand implements Command{
 		int fetchWidth = (Integer) data.get("fetchWidth");
 		int fetchHeight = (Integer) data.get("fetchHeight");
 
-		int rangeLeft = (Integer) data.get("rangeLeft");// visible range
+		int rangeLeft = (Integer) data.get("rangeLeft");// active range
 		int rangeTop = (Integer) data.get("rangeTop");
 		int rangeRight = (Integer) data.get("rangeRight");
 		int rangeBottom = (Integer) data.get("rangeBottom");

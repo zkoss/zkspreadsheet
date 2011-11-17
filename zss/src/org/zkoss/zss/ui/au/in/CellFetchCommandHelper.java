@@ -82,7 +82,7 @@ public class CellFetchCommandHelper{
 		if (comp == null)
 			throw new UiException(MZk.ILLEGAL_REQUEST_COMPONENT_REQUIRED, this);
 		final Map data = request.getData();
-		if (data == null || data.size() != 22)
+		if (data == null || data.size() != 26)
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA,
 				new Object[] {Objects.toString(data), this});
 		
@@ -130,6 +130,11 @@ public class CellFetchCommandHelper{
 		int rangeTop = (Integer)data.get("rangeTop"); 
 		int rangeRight = (Integer)data.get("rangeRight");
 		int rangeBottom = (Integer)data.get("rangeBottom");
+		
+		int arLeft = (Integer)data.get("arLeft");//active range
+		int arTop = (Integer)data.get("arTop");
+		int arRight = (Integer)data.get("arRight");
+		int arBottom = (Integer)data.get("arBottom");
 		
 		int cacheRangeFetchTopHeight = (Integer)data.get("arFetchTopHeight");
 		int cacheRangeFetchBtmHeight = (Integer)data.get("arFetchBtmHeight");
@@ -273,7 +278,7 @@ public class CellFetchCommandHelper{
 			throw new UiException(x.getMessage(), x);
 		}
 		
-		((SpreadsheetInCtrl) _ctrl).setLoadedRect(_loadedLeft, _loadedTop, _loadedRight, _loadedBottom);
+		((SpreadsheetInCtrl) _ctrl).setLoadedRect(_loadedLeft < arLeft ? _loadedLeft : arLeft, _loadedTop < arTop ? _loadedTop : arTop, _loadedRight > arRight ? _loadedRight : arRight, _loadedBottom > arBottom ? _loadedBottom : arBottom);
 		((SpreadsheetInCtrl) _ctrl).setVisibleRect(_lastleft, _lasttop,	_lastright, _lastbottom);
 	}
 	

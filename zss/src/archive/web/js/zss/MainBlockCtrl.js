@@ -277,14 +277,14 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		var range = this.range,
 			spcmp = this.sheet.sp.comp,
 			dp = this.sheet.dp,
+			arRect = sheet._wgt._activeRange.rect,
 			arTopHgh = -1,
 			arBtmHgh = -1
 			arLeftWidth = -1,
 			arRightWidth = -1;
 		if (('east' == direction || 'west' == direction) && this.sheet._wgt._preloadRowSize > 0) {
-			var	ar = sheet._wgt._activeRange,
-				topHgh = range.top - ar.rect.top + 1,
-				btmHgh = ar.rect.bottom - range.bottom + 1;
+			var	topHgh = range.top - arRect.top + 1,
+				btmHgh = arRect.bottom - range.bottom + 1;
 			if (topHgh > 1)
 				arTopHgh = topHgh;
 			if (btmHgh > 1)
@@ -293,8 +293,8 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		//TODO: if the amount of cell to load is small, shall load extra cells, not prune cached cells.
 		if ('north' == direction || 'south' == direction) {
 			var	ar = sheet._wgt._activeRange,
-				leftWidth = range.left - ar.rect.left,
-				rightWidth = ar.rect.right - range.right;
+				leftWidth = range.left - arRect.left,
+				rightWidth = arRect.right - range.right;
 			
 			if (leftWidth > 0) {
 				ar.pruneLeft(leftWidth);
@@ -309,7 +309,8 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		 dpWidth: dp.width, dpHeight: dp.height, viewWidth: spcmp.clientWidth, viewHeight: spcmp.clientHeight,
 		 blockLeft: range.left, blockTop: range.top, blockRight: range.right, blockBottom: range.bottom,
 		 fetchLeft: fetchLeft, fetchTop: fetchTop, fetchWidth: fetchWidth, fetchHeight: fetchHeight,
-		 rangeLeft: vrange.left, rangeTop: vrange.top, rangeRight: vrange.right, rangeBottom: vrange.bottom, 
+		 rangeLeft: vrange.left, rangeTop: vrange.top, rangeRight: vrange.right, rangeBottom: vrange.bottom,
+		 arLeft: arRect.left, arTop: arRect.top, arRight: arRect.right, arBottom: arRect.bottom,
 		 arFetchTopHeight: arTopHgh, arFetchBtmHeight: arBtmHgh}, {toServer: true}, 25);
 	},
 	/**
@@ -627,7 +628,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				sheet.lp.removeChildFromEnd_(size);
 				var rowSize = wgt._preloadRowSize;
 				if (rowSize <= 0) {
-					ar.pruneTop(size);
+					ar.pruneBottom(size);
 				} else {
 					var pruneSize = (ar.rect.bottom - b + 1) - rowSize;
 					if (pruneSize > 0)
@@ -676,8 +677,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			left = range.left,
 			right = range.right,
 			bottom = range.bottom,
-			ar = sheet._wgt._activeRange,
-			created = false;
+			ar = sheet._wgt._activeRange;
 		
 		//create east from cache
 		if (right + 1 <= rCol) {
@@ -699,7 +699,6 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				b = true;
 			}
 			if (b) { //after create cell from cache, range's value may changed
-				created = true;
 				range = this.range;
 				top = range.top;
 				left = range.left;
@@ -725,7 +724,6 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				b = true;
 			}
 			if (b) {
-				created = true;
 				range = this.range;
 				top = range.top;
 				left = range.left;
@@ -769,9 +767,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			return true;
 		}
 		
-		if (created) {
-			sheet.sendSyncblock(true);
-		}
+		sheet.sendSyncblock(true);
 		return false;
 	},
 	/**
