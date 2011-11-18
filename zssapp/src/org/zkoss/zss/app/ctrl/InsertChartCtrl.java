@@ -40,7 +40,8 @@ public class InsertChartCtrl extends GenericForwardComposer {
 	
 	/*views*/
 	private Dropdownbutton insertChartBtn;
-	
+	private Menuitem insertColumnChart;
+	private Menuitem insertColumnChart3D;
 	private Menuitem insertBarChart;
 	private Menuitem insertBarChart3D;
 	private Menuitem insertLineChart;
@@ -49,7 +50,7 @@ public class InsertChartCtrl extends GenericForwardComposer {
 	private Menuitem insertPieChart3D;
 	private Menuitem insertOfPieChart; //Not support yet
 	private Menuitem insertAreaChart;
-	private Menuitem insertAreaChart3D;
+	private Menuitem insertAreaChart3D; //Not support yet
 	private Menuitem insertSurfaceChart;
 	private Menuitem insertSurfaceChart3D;
 	private Menuitem insertBubbleChart;
@@ -59,6 +60,14 @@ public class InsertChartCtrl extends GenericForwardComposer {
 	private Menuitem insertStockChart; //Not support yet
 	
 	private Dialog insertChartAtDialog;
+	
+	public void onClick$insertColumnChart() {
+		insertChart(ChartType.Column);
+	}
+	
+	public void onClick$insertColumnChart3D() {
+		insertChart(ChartType.Column3D);
+	}
 	
 	public void onClick$insertBarChart() {
 		insertChart(ChartType.Bar);
@@ -136,7 +145,7 @@ public class InsertChartCtrl extends GenericForwardComposer {
 		return Zssapp.getDesktopWorkbenchContext(self);
 	}
 	
-	protected void insertChart(final ChartType chartType) {
+	protected void insertChart(ChartType chartType) {
 		//open dialog to get insert at
 		if (insertChartAtDialog == null) {
 			insertChartAtDialog = (Dialog)Executions.createComponents(Consts._InsertWidgetAtDialog_zul, (Component)spaceOwner, null);
@@ -145,6 +154,8 @@ public class InsertChartCtrl extends GenericForwardComposer {
 				@Override
 				public void onEvent(Event event) throws Exception {
 					Map data = (Map)event.getData();
+					ChartType chartType = (ChartType) insertChartAtDialog.getAttribute("chartType");
+					insertChartAtDialog.setAttribute("chartType", null); //clear it
 					if (data != null && chartType != null) {
 						Integer col = (Integer) data.get("column");
 						Integer row = (Integer) data.get("row");
@@ -153,6 +164,7 @@ public class InsertChartCtrl extends GenericForwardComposer {
 				}
 			});
 		}
+		insertChartAtDialog.setAttribute("chartType", chartType); //put into dialog attribute for onClose() listener
 		insertChartAtDialog.fireOnOpen(null);
 	}
 }

@@ -41,6 +41,8 @@ import org.zkoss.poi.xssf.usermodel.charts.XSSFArea3DChartData;
 import org.zkoss.poi.xssf.usermodel.charts.XSSFAreaChartData;
 import org.zkoss.poi.xssf.usermodel.charts.XSSFBar3DChartData;
 import org.zkoss.poi.xssf.usermodel.charts.XSSFBarChartData;
+import org.zkoss.poi.xssf.usermodel.charts.XSSFColumn3DChartData;
+import org.zkoss.poi.xssf.usermodel.charts.XSSFColumnChartData;
 import org.zkoss.poi.xssf.usermodel.charts.XSSFDoughnutChartData;
 import org.zkoss.poi.xssf.usermodel.charts.XSSFLine3DChartData;
 import org.zkoss.poi.xssf.usermodel.charts.XSSFLineChartData;
@@ -663,8 +665,16 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 			data = fillCategoryData(new XSSFBar3DChartData());
 			//((XSSFBar3DChartData) data).setGrouping(ChartGrouping.STANDARD);
 			break;
+		case Column3D:
+			data = fillCategoryData(new XSSFColumn3DChartData());
+			//((XSSFBar3DChartData) data).setGrouping(ChartGrouping.STANDARD);
+			break;
 		case Bar:
 			data = fillCategoryData(new XSSFBarChartData());
+			//((XSSFBarChartData) data).setGrouping(ChartGrouping.STANDARD);
+			break;
+		case Column:
+			data = fillCategoryData(new XSSFColumnChartData());
 			//((XSSFBarChartData) data).setGrouping(ChartGrouping.STANDARD);
 			break;
 		case Bubble:
@@ -733,21 +743,17 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 				String startCell = spreadsheet.getColumntitle(lCol) + spreadsheet.getRowtitle(rowIdx);
 				String endCell = spreadsheet.getColumntitle(rCol) + spreadsheet.getRowtitle(selection.getBottom());
 				horValues = DataSources.fromNumericCellRange(sheet, CellRangeAddress.valueOf(startCell + ":" + endCell));
-			} else { 
-				//TODO "1", "2", "3"... as Y value
 			}
 			//find values
 			int i = 1;
 			for (int c = colIdx; c <= selection.getRight(); c++) {
 				//find title
-				String title = "";
+				String title = null;
 				int row = rowIdx - 1;
-				if (row >= selection.getTop())
-					title += Ranges.range(sheet, selection.getTop(), c, row, c).getText().toString();
-				else {
-					title += ("Series" + i++);
+				if (row >= selection.getTop()) {
+					title = "" + Ranges.range(sheet, selection.getTop(), c, row, c).getText().toString();
 				}
-				titles.add(DataSources.fromString(title));
+				titles.add(title == null ? null : DataSources.fromString(title));
 				
 				String startCell = spreadsheet.getColumntitle(c) + spreadsheet.getRowtitle(rowIdx);
 				String endCell = spreadsheet.getColumntitle(c) + spreadsheet.getRowtitle(selection.getBottom());
@@ -766,21 +772,17 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 				String startCell = spreadsheet.getColumntitle(colIdx) + spreadsheet.getRowtitle(tRow);
 				String endCell = spreadsheet.getColumntitle(selection.getRight()) + spreadsheet.getRowtitle(tRow);
 				horValues = DataSources.fromNumericCellRange(sheet, CellRangeAddress.valueOf(startCell + ":" + endCell));
-			} else {
-				//TODO: "1", "2", "3" ...
 			}
 			//find values
 			int i = 1;
 			for (int r = rowIdx; r <= selection.getBottom(); r++) {
 				//find title
-				String title = "";
+				String title = null;
 				int col = colIdx - 1;
 				if (col >= selection.getLeft()) {
-					title += Ranges.range(sheet, r, selection.getLeft(), r, col).getText().toString();
-				} else {
-					title += ("Series" + i++);
+					title = "" + Ranges.range(sheet, r, selection.getLeft(), r, col).getText().toString();
 				}
-				titles.add(DataSources.fromString(title));
+				titles.add(title == null ? null : DataSources.fromString(title));
 				
 				String startCell = spreadsheet.getColumntitle(colIdx) + spreadsheet.getRowtitle(r);
 				String endCell = spreadsheet.getColumntitle(selection.getRight()) + spreadsheet.getRowtitle(r);
@@ -838,21 +840,17 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 				String startCell = spreadsheet.getColumntitle(selection.getLeft()) + spreadsheet.getRowtitle(rowIdx);
 				String endCell = spreadsheet.getColumntitle(col) + spreadsheet.getRowtitle(selection.getBottom());
 				cats = DataSources.fromStringCellRange(sheet, CellRangeAddress.valueOf(startCell + ":" + endCell));
-			} else { //can't find catalog string
-				//TODO: how to create "1", "2"...
 			}
 			//find value, by column
 			int i = 1;
 			for (int c = colIdx; c <= selection.getRight(); c++) {
 				//find title
-				String title = "";
+				String title = null;
 				int row = rowIdx - 1;
-				if (row >= selection.getTop())
-					title += Ranges.range(sheet, selection.getTop(), c, row, c).getText().toString();
-				else {
-					title += ("Series" + i++);
+				if (row >= selection.getTop()) {
+					title = "" + Ranges.range(sheet, selection.getTop(), c, row, c).getText().toString();
 				}
-				titles.add(DataSources.fromString(title));
+				titles.add(title == null ? null : DataSources.fromString(title));
 				
 				String startCell = spreadsheet.getColumntitle(c) + spreadsheet.getRowtitle(rowIdx);
 				String endCell = spreadsheet.getColumntitle(c) + spreadsheet.getRowtitle(selection.getBottom());
@@ -866,23 +864,18 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 				String startCell = spreadsheet.getColumntitle(colIdx) + spreadsheet.getRowtitle(row);
 				String endCell = spreadsheet.getColumntitle(selection.getRight()) + spreadsheet.getRowtitle(row);
 				cats = DataSources.fromStringCellRange(sheet, CellRangeAddress.valueOf(startCell + ":" + endCell));
-			} else { //can't find catalog string
-				//TODO: how to create "1", "2"...
 			}
 			
 			//find value
 			int i = 1;
 			for (int r = rowIdx; r <= selection.getBottom(); r++) {
 				//find title
-				
-				String title = "";
+				String title = null;
 				int col = colIdx - 1;
 				if (col >= selection.getLeft()) {
-					title += Ranges.range(sheet, r, selection.getLeft(), r, col).getText().toString();
-				} else {
-					title += ("Series" + i++);
+					title = "" + Ranges.range(sheet, r, selection.getLeft(), r, col).getText().toString();
 				}
-				titles.add(DataSources.fromString(title));
+				titles.add(title == null ? null : DataSources.fromString(title));
 				
 				String startCell = spreadsheet.getColumntitle(colIdx) + spreadsheet.getRowtitle(r);
 				String endCell = spreadsheet.getColumntitle(selection.getRight()) + spreadsheet.getRowtitle(r);
