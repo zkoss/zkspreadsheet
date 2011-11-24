@@ -17,9 +17,9 @@ package org.zkoss.zss.app.zul.ctrl;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import org.zkoss.image.AImage;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
-import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
 import org.zkoss.zss.model.Book;
@@ -101,7 +101,7 @@ public interface WorkbookCtrl {
 	
 	public void insertSheet();
 	
-	public void insertImage(Media media);
+	public void addImage(int row, int col, AImage image);
 	
 	public void insertFormula(int rowIdx, int colIdx, String formula);
 	

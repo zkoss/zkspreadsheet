@@ -211,7 +211,7 @@
 				<toolbarbutton id="mergeCellBtn" image="~./zssapp/image/table-join.png" tooltiptext="${c:l('cell.merge')}"
 					forward="onClick=onMergeCellClick" />
 				<div sclass="toolbarSeparator"></div>		
-				<toolbarbutton id="insertImageBtn" image="~./zssapp/image/image.png" tooltiptext="${c:l('insert.image')}"/>
+				<toolbarbutton id="insertImageBtn" image="~./zssapp/image/image.png" tooltiptext="${c:l('insert.image')}" upload="true"/>
 				<div use="org.zkoss.zss.app.zul.IdDiv" apply="org.zkoss.zss.app.ctrl.InsertChartCtrl">
 					<dropdownbutton id="insertChartBtn" src="~./zssapp/image/chart-pie.png" tooltiptext="${c:l('insert.chart')}">
 						<menupopup>

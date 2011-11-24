@@ -15,17 +15,18 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.zul.ctrl;
 
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.zkoss.image.AImage;
 import org.zkoss.poi.ss.formula.eval.NotImplementedException;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.usermodel.charts.CategoryData;
 import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.usermodel.charts.ChartDataSource;
@@ -49,10 +50,10 @@ import org.zkoss.poi.xssf.usermodel.charts.XSSFLineChartData;
 import org.zkoss.poi.xssf.usermodel.charts.XSSFPie3DChartData;
 import org.zkoss.poi.xssf.usermodel.charts.XSSFPieChartData;
 import org.zkoss.poi.xssf.usermodel.charts.XSSFScatChartData;
-import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.Clients;
@@ -70,13 +71,11 @@ import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.Widget;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
-import org.zkoss.zul.Messagebox;
 
 /**
  * 
@@ -88,7 +87,6 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	private Spreadsheet spreadsheet;
 	
 	private String lastSheetName = null;
-	private HashMap<String, List<Widget>> sheetWidgets = new HashMap<String, List<Widget>>(); 
 
 	/* book event listeners; Boolean value means the listener has subscribed on book or not */
 	private HashMap<EventListener, Boolean> bookListeners = new HashMap<EventListener, Boolean>();
@@ -157,19 +155,9 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public void setSelectedSheet(String name) {
-		//TODO: remove last sheet widget shall not handle by AP
 		Worksheet lastsheet = spreadsheet.getSelectedSheet();
-		List<Widget> rmWgtList = sheetWidgets.get(lastSheetName);
-		if (rmWgtList != null) {
-			SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
-			for (Widget w : rmWgtList) {
-				ctrl.removeWidget(w);
-			}
-		}
 		
 		Integer lastIdx = Integer.valueOf(spreadsheet.getBook().getSheetIndex(lastsheet));
-		if (lastIdx < 0) //sheet deleted
-			sheetWidgets.remove(lastSheetName);
 		
 		spreadsheet.setSelectedSheet(name);		
 		//handle the copy/cut highlight
@@ -182,16 +170,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 			}
 		}
 		
-		//TODO: insert sheet widget shall not handle by AP
 		lastSheetName = name;
-		List<Widget> addWgtList = sheetWidgets.get(lastSheetName);
-		if (addWgtList != null) {
-			SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
-			for (Widget w : addWgtList) {
-				ctrl.addWidget(w);
-			}
-		}
-		
 		spreadsheet.focus(); //move focus in to spreadsheet
 	}
 
@@ -205,38 +184,28 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 				rect.getBottom(), rect.getRight()).setHidden(hide);
 	}
 
-	public void insertImage(Media media) {
-		//TODO: insert image shall not handle by AP
-		try {
-			if (media instanceof org.zkoss.image.Image && WebApps.getFeature("pe")) {
-				Class imageWidget = null;
-				try {
-					imageWidget = Class.forName("org.zkoss.zssex.ui.widget.ImageWidget");
-				} catch (ClassNotFoundException ex) {
-					return;
-				}
-				Widget widget = (Widget)imageWidget.newInstance();
-				Method setImageMethod = imageWidget.getDeclaredMethod("setContent", org.zkoss.image.Image.class);
-				setImageMethod.invoke(widget, (org.zkoss.image.Image)media);
-				widget.setRow(spreadsheet.getSelection().getTop());
-				widget.setColumn(spreadsheet.getSelection().getLeft());
-				
-				Worksheet seldSheet = spreadsheet.getSelectedSheet();
-				String sheetName = seldSheet.getSheetName();
-				List<Widget> wgtList = sheetWidgets.get(sheetName);
-				if (wgtList == null)
-					sheetWidgets.put(sheetName, wgtList = new ArrayList<Widget>());
-				wgtList.add(widget);
-				
-				SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
-				ctrl.addWidget(widget);
-			} else if (media != null) {
-				Messagebox.show("Not an image: " + media, "Error",
-						Messagebox.OK, Messagebox.ERROR);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+	public void addImage(int row, int col, AImage image) {
+		if (WebApps.getFeature("pe")) {
+			Ranges.range(spreadsheet.getSelectedSheet()).addPicture(getClientCenterAnchor(row, col, image.getWidth(), image.getHeight()), image.getByteData(), getImageFormat(image));
 		}
+	}
+	
+	private int getImageFormat(AImage image) {
+		String format = image.getFormat();
+		if ("dib".equalsIgnoreCase(format)) {
+			return Workbook.PICTURE_TYPE_DIB;
+		} else if ("emf".equalsIgnoreCase(format)) {
+			return Workbook.PICTURE_TYPE_EMF;
+		} else if ("wmf".equalsIgnoreCase(format)) {
+			return Workbook.PICTURE_TYPE_WMF;
+		} else if ("jpeg".equalsIgnoreCase(format)) {
+			return Workbook.PICTURE_TYPE_JPEG;
+		} else if ("pict".equalsIgnoreCase(format)) {
+			return Workbook.PICTURE_TYPE_PICT;
+		} else if ("png".equalsIgnoreCase(format)) {
+			return Workbook.PICTURE_TYPE_PNG;
+		}
+		throw new UiException("Unsupported format: " + format);
 	}
 
 	public void insertSheet() {
@@ -250,14 +219,6 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void renameSelectedSheet(String name) {
 		SheetHelper.renameSheet(spreadsheet, name);
-		List<Widget> wgts = sheetWidgets.get(lastSheetName);
-		if (wgts != null) {
-			sheetWidgets.remove(lastSheetName);
-			sheetWidgets.put(name, wgts);
-			SpreadsheetCtrl ctrl = (SpreadsheetCtrl) spreadsheet.getExtraCtrl();
-			for (Widget w : wgts)
-				ctrl.addWidget(w);
-		}
 	}
 
 	public void shiftCell(int direction) {
@@ -648,7 +609,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		Worksheet sheet = spreadsheet.getSelectedSheet();
 		
 		Rect selection = spreadsheet.getSelection();
-		Ranges.range(sheet).addChart(getClientCenterAnchor(row, col), newChartData(chartType, selection), chartType, ChartGrouping.STANDARD, LegendPosition.RIGHT);
+		Ranges.range(sheet).addChart(getClientCenterAnchor(row, col, 600, 300), newChartData(chartType, selection), chartType, ChartGrouping.STANDARD, LegendPosition.RIGHT);
 	}
 	
 	private ChartData newChartData(ChartType chartType, Rect selection) {
@@ -899,12 +860,9 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 			cellType == Cell.CELL_TYPE_BLANK;
 	}
 	
-	private ClientAnchor getClientCenterAnchor(int row, int col) {
+	private ClientAnchor getClientCenterAnchor(int row, int col, int widgetWidth, int widgetHeight) {
 		HeaderPositionHelper rowSizeHelper = (HeaderPositionHelper) spreadsheet.getAttribute("_rowCellSize");
 		HeaderPositionHelper colSizeHelper = (HeaderPositionHelper) spreadsheet.getAttribute("_colCellSize");
-		
-		int chartWidth = 600;
-		int chartHeight = 300;
 		
 		int lCol = col;
 		int tRow = row;
@@ -914,22 +872,22 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		int offsetHeight = 0;
 		for (int r = tRow; r < spreadsheet.getMaxrows(); r++) {
 			int cellHeight = rowSizeHelper.getSize(r);
-			chartHeight -= cellHeight;
-			if (chartHeight <= 0) {
+			widgetHeight -= cellHeight;
+			if (widgetHeight <= 0) {
 				bRow = r;
-				if (chartHeight < 0) {
-					offsetHeight = cellHeight - Math.abs(chartHeight);
+				if (widgetHeight < 0) {
+					offsetHeight = cellHeight - Math.abs(widgetHeight);
 				}
 				break;
 			}
 		}
 		for (int c = lCol; c < spreadsheet.getMaxcolumns(); c++) {
 			int cellWidth = colSizeHelper.getSize(c);
-			chartWidth -= cellWidth;
-			if (chartWidth <= 0) {
+			widgetWidth -= cellWidth;
+			if (widgetWidth <= 0) {
 				rCol = c;
-				if (chartWidth < 0) {
-					offsetWidth = cellWidth - Math.abs(chartWidth);
+				if (widgetWidth < 0) {
+					offsetWidth = cellWidth - Math.abs(widgetWidth);
 				}
 				break;
 			}

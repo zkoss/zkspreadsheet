@@ -14,8 +14,8 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul.ctrl;
 
+import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.zss.app.formula.FormulaMetaInfo;
-import org.zkoss.zss.model.Range;
 
 /**
  * @author Sam
@@ -49,7 +49,7 @@ public interface WorkbenchCtrl {
 	public void openFormatNumberDialog();
 	
 	public void openSaveFileDialog();
-	
+		
 	public void updateGridlinesCheckbox();
 
 	/**

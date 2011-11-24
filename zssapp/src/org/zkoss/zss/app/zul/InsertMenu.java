@@ -16,6 +16,8 @@ package org.zkoss.zss.app.zul;
 
 import java.util.List;
 
+import org.zkoss.image.AImage;
+import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
@@ -27,9 +29,12 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
+import org.zkoss.zss.app.zul.ctrl.WorkbookCtrl;
+import org.zkoss.zss.ui.Position;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
+import org.zkoss.zul.Messagebox;
 
 /**
  * @author Sam
@@ -37,14 +42,11 @@ import org.zkoss.zul.Menupopup;
  */
 public class InsertMenu extends Menu implements IdSpace {
 
-	
 	private Menupopup insertMenupopup;	
 	private Menuitem insertFormula;
-	private Menuitem insertChart;
 	private Menuitem insertImage;
 	private Menuitem insertSheet;
 
-	
 	public InsertMenu() {
 		Executions.createComponents(Consts._InsertMenu_zul, this, null);
 		Components.wireVariables(this, this, '$', true, true);
@@ -58,16 +60,21 @@ public class InsertMenu extends Menu implements IdSpace {
 		}
 	}
 	
-	public void onClick$insertChart() {
-		throw new UiException("insert Chart not implement yet");
-	}
-	
 	public void onUpload$insertImage(ForwardEvent event) {
-		final DesktopWorkbenchContext workbenchCtrl = getDesktopWorkbenchContext();
-		if (workbenchCtrl.getWorkbookCtrl().hasBook()) {
+		final WorkbookCtrl workbookCtrl = getWorkbookCtrl();
+		if (workbookCtrl.hasBook()) {
 			insertMenupopup.close();
 			UploadEvent evt = (UploadEvent)event.getOrigin();
-			workbenchCtrl.getWorkbookCtrl().insertImage(evt.getMedia());
+			final Media media = evt.getMedia();
+			if (media instanceof AImage) {
+				Position p = workbookCtrl.getCellFocus();
+				workbookCtrl.addImage(p.getRow(), p.getColumn(), (AImage)media);
+			} else {
+				try {
+					Messagebox.show("Upload content must be image format");
+				} catch (InterruptedException e) {
+				}
+			}
 		}
 	}
 	
@@ -83,7 +90,11 @@ public class InsertMenu extends Menu implements IdSpace {
 		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
 	
-	public DesktopWorkbenchContext getDesktopWorkbenchContext() {
+	private WorkbookCtrl getWorkbookCtrl() {
+		return getDesktopWorkbenchContext().getWorkbookCtrl();
+	}
+	
+	private DesktopWorkbenchContext getDesktopWorkbenchContext() {
 		return Zssapp.getDesktopWorkbenchContext(this);
 	}
 	

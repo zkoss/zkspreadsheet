@@ -1,6 +1,6 @@
 <zk>
 	<window id="insertWidgetAtDialog" title="${c:l('insert.widgetAt')}" border="normal" mode="modal" position="center"
-		closable="true" use="org.zkoss.zss.app.zul.Dialog" apply="org.zkoss.zss.app.ctrl.InsertWidgetAtCtrl" hflex="min">
+		closable="true" use="org.zkoss.zss.app.ctrl.InsertWidgetAtSpecificCellDialog" hflex="min">
 		<div style="padding:5px;">
 			<combobox id="columns" width="90px">
 			</combobox>

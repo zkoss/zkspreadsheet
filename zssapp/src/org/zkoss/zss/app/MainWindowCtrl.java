@@ -17,12 +17,14 @@ package org.zkoss.zss.app;
 
 import java.util.Iterator;
 
+import org.zkoss.image.AImage;
 import org.zkoss.lang.Library;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -34,6 +36,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.KeyEvent;
 import org.zkoss.zk.ui.event.SizeEvent;
+import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.cell.EditHelper;
@@ -158,6 +161,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	Toolbarbutton insertChartBtn;
 	Toolbarbutton cutBtn;
 	Toolbarbutton copyBtn;
+	Toolbarbutton insertImageBtn;
 	Checkbox gridlinesCheckbox;
 	Checkbox protectSheet;
 	CellMenupopup cellMenupopup;
@@ -544,7 +548,11 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		getDesktopWorkbenchContext().fireWorkbookChanged();
 	}
 	
-	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
+	private WorkbookCtrl getWorkbookCtrl() {
+		return  getDesktopWorkbenchContext().getWorkbookCtrl();
+	}
+	
+	private DesktopWorkbenchContext getDesktopWorkbenchContext() {
 		return Zssapp.getDesktopWorkbenchContext(self);
 	}
 	
@@ -913,6 +921,21 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	public void onInsertFormula(ForwardEvent event) {
 		Window win = (Window) mainWin.getFellow("formulaCategory");
 		win.doHighlighted();
+	}
+	
+	public void onUpload$insertImageBtn(UploadEvent evt) {
+		if (spreadsheet.getBook() != null) {
+			final Media media = evt.getMedia();
+			if (media instanceof AImage) {
+				Position p = spreadsheet.getCellFocus();
+				getWorkbookCtrl().addImage(p.getRow(), p.getColumn(), (AImage)media);
+			} else {
+				try {
+					Messagebox.show("Upload content must be image format");
+				} catch (InterruptedException e) {
+				}
+			}
+		}
 	}
 
 	public void onInsertRows(ForwardEvent event) {

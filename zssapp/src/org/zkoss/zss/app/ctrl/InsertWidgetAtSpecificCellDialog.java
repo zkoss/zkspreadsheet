@@ -19,10 +19,11 @@ package org.zkoss.zss.app.ctrl;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
@@ -35,9 +36,9 @@ import org.zkoss.zul.Messagebox;
 
 /**
  * @author sam
- *
+ * 
  */
-public class InsertWidgetAtCtrl extends GenericForwardComposer {
+public class InsertWidgetAtSpecificCellDialog extends Dialog implements AfterCompose {
 
 	/*Views*/
 	private Dialog insertWidgetAtDialog;
@@ -50,8 +51,10 @@ public class InsertWidgetAtCtrl extends GenericForwardComposer {
 	private ListModelList availableRows;
 	
 	@Override
-	public void doAfterCompose(Component comp) throws Exception {
-		super.doAfterCompose(comp);
+	public void afterCompose() {
+		Components.wireVariables(this, this);
+		Components.addForwards(this, this);
+		
 		buildHeaderModel();
 		
 		columns.setModel(availableColumns);
@@ -76,7 +79,11 @@ public class InsertWidgetAtCtrl extends GenericForwardComposer {
 		});
 	}
 	
-	public void onOpen$insertWidgetAtDialog() {
+	public void onOpen$insertWidgetAtDialog(ForwardEvent evt) {
+		updateCenterColumnRow();
+	}
+	
+	private void updateCenterColumnRow() {
 		final Rect visibleRect = getWorkbookCtrl().getVisibleRect();
 		int width = ((visibleRect.getRight() - visibleRect.getLeft() + 1) / 4);
 		int col = visibleRect.getLeft() + width;
@@ -100,7 +107,7 @@ public class InsertWidgetAtCtrl extends GenericForwardComposer {
 			}
 			return;
 		}
-		HashMap<String, Integer> data = new HashMap<String, Integer>();
+		HashMap data = new HashMap();
 		data.put("column", Integer.valueOf(col));
 		data.put("row", Integer.valueOf(row));
 		insertWidgetAtDialog.fireOnClose(data);
@@ -129,6 +136,6 @@ public class InsertWidgetAtCtrl extends GenericForwardComposer {
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {
-		return Zssapp.getDesktopWorkbenchContext(self);
+		return Zssapp.getDesktopWorkbenchContext(this);
 	}
 }
