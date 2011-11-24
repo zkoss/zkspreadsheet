@@ -78,6 +78,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  *  Sheet events
  *  <ul>
  *  	<li>onContentsChanged</li>
+ *  	<li>onFocused</li>
  *  </ul>
  *  
  */

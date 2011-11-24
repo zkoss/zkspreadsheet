@@ -21,11 +21,7 @@ package org.zkoss.zss.ui;
 
 import static org.zkoss.zss.ui.fn.UtilFns.getCellFormatText;
 import static org.zkoss.zss.ui.fn.UtilFns.getCelltext;
-import static org.zkoss.zss.ui.fn.UtilFns.getColBegin;
-import static org.zkoss.zss.ui.fn.UtilFns.getColEnd;
 import static org.zkoss.zss.ui.fn.UtilFns.getEdittext;
-import static org.zkoss.zss.ui.fn.UtilFns.getRowBegin;
-import static org.zkoss.zss.ui.fn.UtilFns.getRowEnd;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,9 +51,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
-import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.Picture;
-import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.poi.ss.util.CellRangeAddress;
@@ -82,10 +76,8 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WebApp;
-import org.zkoss.zk.ui.event.CreateEvent;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.ext.BeforeCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
 import org.zkoss.zk.ui.sys.JavaScriptValue;
@@ -106,9 +98,11 @@ import org.zkoss.zss.ui.au.in.Command;
 import org.zkoss.zss.ui.au.in.EditboxEditingCommand;
 import org.zkoss.zss.ui.au.in.HeaderCommand;
 import org.zkoss.zss.ui.au.in.HeaderMouseCommand;
+import org.zkoss.zss.ui.au.in.MoveWidgetCommand;
 import org.zkoss.zss.ui.au.in.SelectionChangeCommand;
 import org.zkoss.zss.ui.au.in.StartEditingCommand;
 import org.zkoss.zss.ui.au.in.StopEditingCommand;
+import org.zkoss.zss.ui.au.in.WidgetCtrlKeyCommand;
 import org.zkoss.zss.ui.au.out.AuCellFocus;
 import org.zkoss.zss.ui.au.out.AuCellFocusTo;
 import org.zkoss.zss.ui.au.out.AuDataUpdate;
@@ -3888,6 +3882,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 		addClientEvent(Spreadsheet.class, "onZSSHeaderModif", CE_IMPORTANT);
 		addClientEvent(Spreadsheet.class, "onZSSCellMouse", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, "onZSSHeaderMouse", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, "onZSSMoveWidget", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, "onZSSWidgetCtrlKey", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 	}
 
 	final Command[] Commands = { new BlockSyncCommand(),
@@ -3895,7 +3891,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 			new CellFocusedCommand(), new CellMouseCommand(),
 			new SelectionChangeCommand(), new HeaderMouseCommand(),
 			new HeaderCommand(), new StartEditingCommand(),
-			new StopEditingCommand(), new EditboxEditingCommand()};
+			new StopEditingCommand(), new EditboxEditingCommand(), 
+			new MoveWidgetCommand(), new WidgetCtrlKeyCommand()};
 
 	// super//
 	/**

@@ -1289,6 +1289,45 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			this.fireX(e);
 		}
 	},
+	/**
+	 * Fire Move widget event
+	 * 
+	 * type
+	 * <ul>
+	 * 	<li>onWidgetSize</li>
+	 * 	<li>onWidgetMove</li>
+	 * </li>
+	 * 
+	 * @param string wgt the widget type
+	 * @param string type the event type
+	 * @param string id the id of the widget
+	 * @param int dx1 the x coordinate within the first cell
+	 * @param int dy1 the y coordinate within the first cell
+	 * @param int dx2 the x coordinate within the second cell
+	 * @param int dy2 the y coordinate within the second cell
+	 * @param int col1 the column (0 based) of the first cell
+	 * @param int row1 the row (0 based) of the first cell
+	 * @param int col2 the column (0 based) of the second cell
+	 * @param int row2 the row (0 based) of the second cell
+	 */
+	fireMoveWidgetEvt: function (wgt, type, id, dx1, dy1, dx2, dy2, col1, row1, col2, row2) {
+		this.fire('onZSSMoveWidget', {wgt: wgt, type: type, id: id, dx1: dx1, dy1: dy1, 
+			dx2: dx2, dy2: dy2, col1: col1, row1: row1, col2: col2, row2: row2}, {toServer: true}, 25);
+	},
+	/**
+	 * Fire widget control key event
+	 * 
+	 * @param string wgt the widget type
+	 * @param string id
+	 * @param int keyCode
+	 * @param boolean ctrlKey
+	 * @param boolean shiftKey
+	 * @param boolean altKey
+	 */
+	fireWidgetCtrlKeyEvt: function (wgt, id, keyCode, ctrlKey, shiftKey, altKey) {
+		this.fire('onZSSWidgetCtrlKey', {wgt: wgt, id: id, keyCode: keyCode, 
+			ctrlKey: ctrlKey, shiftKey: shiftKey, altKey: altKey}, {toServer: true}, 25);
+	},
 	_initFrozenArea: function () {
 		var rowFreeze = this.getRowFreeze(),
 			colFreeze = this.getColumnFreeze();

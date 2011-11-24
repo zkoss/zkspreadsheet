@@ -7,6 +7,8 @@ ZK Spreadsheet 2.2.0
    ZSS-46 Support API to delete an existing picture in 2007 file format(.xlsx)
    ZSS-47 Support API to move an existing picture in 2007 file format(.xlsx)
    ZSS-48 Support API to move an existing chart in 2007 file format(.xlsx)
+   ZSS-49 ZSS Spreadsheet App shall support insert chart dynamically
+   ZSS-50 ZSS Spreadsheet App shall support insert image dynamically
    ZSS-51 Support API to delete an existing chart in 2007 file format(.xlsx)
   
 *Bug

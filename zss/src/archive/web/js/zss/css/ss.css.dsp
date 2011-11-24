@@ -664,6 +664,28 @@
 	visibility:hidden;/* hidden when loading, javascript will show it after init*/
 }
 
+.zswidget-drag {
+	background: #FFFFFF;
+	border: 2px solid #333333;
+	opacity:.5;
+	<c:if test="${c:browser('ie')}">
+		filter: alpha(opacity=50);
+	</c:if>
+}
+
+.zswidget-focus {
+	border: 1px solid #CFDDDE;
+	border-radius: 1px;
+}
+
+.zswidget-real, .zswidget-real a:hover{
+	cursor: move;
+}
+
+.zswidget-focus .zswidget-cave {
+	border: 5px solid #E8FDFD;
+}
+
 .chartborder img {
 	border: 1px solid #868686;
 }
