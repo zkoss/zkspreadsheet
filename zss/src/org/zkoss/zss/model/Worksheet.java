@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.Picture;
-
+import org.zkoss.poi.ss.usermodel.DataValidation;
 
 /**
  * ZK Spreadsheet sheet.
@@ -41,4 +41,10 @@ public interface Worksheet extends org.zkoss.poi.ss.usermodel.Sheet {
      * @return charts in this ZK Spreadsheet sheet.
      */
     public List<Chart> getCharts();
+    
+    /**
+     * Returns validations in this ZK Spreadsheet sheet.
+     * @return
+     */
+    public List<DataValidation> getDataValidations();
 }

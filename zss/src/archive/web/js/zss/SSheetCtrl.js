@@ -901,7 +901,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				firebtndown = (rx >= btn.imgleft && rx < right && ry >= btn.imgtop && ry < bottom); //click on AutoFilter button
 			}
 			if (firebtndown)
-				this._doBtndown(evt, 'af', btn.$n(), btn);
+				this._doBtndown(evt, btn.btntype, btn.$n(), btn);
 			else if (_isLeftMouseEvt(evt) || cmp.getAttribute('zs.t') == "SHighlight") {
 				sheet.dp.moveFocus(row, col, false, true, false, true);
 				var ls = this.getLastSelection();//cause of merge, focus might be change, get form last

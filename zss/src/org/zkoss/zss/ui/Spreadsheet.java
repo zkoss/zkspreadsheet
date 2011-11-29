@@ -54,7 +54,9 @@ import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
+import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.util.CellRangeAddressList;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
@@ -1046,7 +1048,45 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 		return null;
 	}
+
+	private List<Map> convertDataValidationToJSON(List<DataValidation> dvs) {
+		if (dvs != null && !dvs.isEmpty()) {
+			List<Map> results = new ArrayList<Map>(dvs.size());
+			for(DataValidation dv : dvs) {
+				results.add(convertDataValidationToJSON(dv));
+			}
+			return results;
+		}
+		return null;
+	}
 	
+	private Map convertDataValidationToJSON(DataValidation dv) {
+		final CellRangeAddressList addrList = dv.getRegions();
+		final int addrCount = addrList.countRanges();
+		final List<Map> addrmapary = new ArrayList<Map>(addrCount);
+		for (int j = 0; j < addrCount; ++j) {
+			final CellRangeAddress addr = addrList.getCellRangeAddress(j); 
+			final int left = addr.getFirstColumn();
+			final int right = addr.getLastColumn();
+			final int top = addr.getFirstRow();
+			final int bottom = addr.getLastRow();
+			final Worksheet sheet = this.getSelectedSheet();
+			final Map<String, Integer> addrmap = new HashMap<String, Integer>();
+			addrmap.put("left", left);
+			addrmap.put("top", top);
+			addrmap.put("right", right);
+			addrmap.put("bottom", bottom);
+			addrmapary.add(addrmap);
+		}
+		final Map validMap = new HashMap();
+		validMap.put("rangeList", addrmapary); //range list
+		validMap.put("showButton", dv.getSuppressDropDownArrow()); //whether show dropdown button
+		validMap.put("showPrompt", dv.getShowPromptBox()); //whether show prompt box
+		validMap.put("showTitle", dv.getPromptBoxTitle()); //the prompt box title
+		validMap.put("promptText", dv.getPromptBoxText()); //the prompt box text
+		return validMap;
+	}
+
 	protected void renderProperties(ContentRenderer renderer) throws IOException {
 		super.renderProperties(renderer);
 		Worksheet sheet = this.getSelectedSheet();
@@ -1137,6 +1177,14 @@ public class Spreadsheet extends XulElement implements Serializable {
 		renderer.render("columnHeadHidden", _hideColhead);
 		renderer.render("rowHeadHidden", _hideRowhead);
 		renderer.render("dataPanel", ((SpreadsheetCtrl) this.getExtraCtrl()).getDataPanelAttrs());
+
+		//handle Validation, must after render("activeRange" ...)
+		List<Map> dvs = convertDataValidationToJSON(sheet.getDataValidations());
+		if (dvs != null) {
+			renderer.render("dataValidations", dvs);
+		} else {
+			renderer.render("dataValidations", (String) null);
+		}
 	}
 
 	/**
@@ -1300,7 +1348,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	private void updateAutoFilter(AutoFilter af) {
 		smartUpdate("autoFilter", convertAutoFilterToJSON(af));
 	}
-	
+
     /**
      * Sets the sheet protection
      * @param boolean protect
@@ -3869,6 +3917,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 		addClientEvent(Spreadsheet.class, Events.ON_HEADER_DOUBLE_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_HYPERLINK, 0);
 		addClientEvent(Spreadsheet.class, Events.ON_FILTER, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_VALIDATE_DROP, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_CTRL_KEY, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_BLUR,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		

@@ -399,4 +399,9 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 	public Worksheet getWorksheet(String name) {
 		return (Worksheet) getSheet(name);
 	}
+	
+	@Override
+	public boolean isDate1904() {
+		return super.isDate1904();
+	}
 }

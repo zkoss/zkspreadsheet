@@ -51,7 +51,9 @@ public class CellMouseCommand implements Command {
 		//TODO a little patch, "af" might shall be fired by a separate command?
 		final Map data = (Map) request.getData();
 		String type = (String) data.get("type");//command type
-		if (data == null || (!"af".equals(type) && data.size() != 9) || ("af".equals(type) && data.size() != 10))
+		if (data == null 
+			|| (!"af".equals(type) && !"dv".equals(type) && data.size() != 9) 
+			|| (("af".equals(type) || "dv".equals(type)) && data.size() != 10))
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), this});
 		
 		int shx = (Integer) data.get("shx");//x offset against spreadsheet
@@ -75,6 +77,8 @@ public class CellMouseCommand implements Command {
 			type = org.zkoss.zss.ui.event.Events.ON_CELL_DOUBLE_CLICK;
 		} else if ("af".equals(type)) {
 			type = org.zkoss.zss.ui.event.Events.ON_FILTER;
+		} else if ("dv".equals(type)) {
+			type = org.zkoss.zss.ui.event.Events.ON_VALIDATE_DROP;
 		} else {
 			throw new UiException("unknow type : " + type);
 		}
@@ -82,6 +86,9 @@ public class CellMouseCommand implements Command {
 		if (org.zkoss.zss.ui.event.Events.ON_FILTER.equals(type)) {
 			int field = (Integer) data.get("field");
 			Events.postEvent(new FilterMouseEvent(type, comp, shx, shy, key, sheet, row, col, mx, my, field));
+		} else if (org.zkoss.zss.ui.event.Events.ON_VALIDATE_DROP.equals(type)) {
+			int dvindex = (Integer) data.get("field");
+			Events.postEvent(new FilterMouseEvent(type, comp, shx, shy, key, sheet, row, col, mx, my, dvindex));
 		} else {
 			Events.postEvent(new CellMouseEvent(type, comp, shx, shy, key, sheet, row, col, mx, my));
 		}

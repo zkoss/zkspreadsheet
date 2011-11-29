@@ -29,6 +29,7 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGraphicalObjectFrame;
+import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
@@ -37,6 +38,9 @@ import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
+import org.zkoss.poi.ss.usermodel.DataValidation;
+import org.zkoss.poi.ss.usermodel.DataValidationConstraint;
+import org.zkoss.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.Picture;
@@ -300,7 +304,6 @@ public class RangeImpl implements Range {
 		}
 		return null;
 	}
-	
 	@Override
 	public void setEditText(String txt) {
 		Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
@@ -309,11 +312,18 @@ public class RangeImpl implements Range {
 			final int lCol = ref.getLeftCol();
 			final RefSheet refSheet = ref.getOwnerSheet();
 			final Cell cell = getCell(tRow, lCol, refSheet);
-
+			
 			final Object[] values = BookHelper.editTextToValue(txt, cell);
+			final Worksheet sheet = BookHelper.getSheet(_sheet, refSheet);
+			
+			final int cellType = values == null ? -1 : ((Integer)values[0]).intValue();
+			final Object value = values == null ? null : values[1];
+			if (!BookHelper.validate(sheet, tRow, lCol, value, cellType)) { //fail validation
+				return;
+			}
 			
 			Set<Ref>[] refs = null;
-			if (values != null) {
+			if (cellType != -1) {
 				switch(((Integer)values[0]).intValue()) {
 				case Cell.CELL_TYPE_FORMULA:
 					refs = setFormula((String)values[1]); //Formula
@@ -340,7 +350,6 @@ public class RangeImpl implements Range {
 			} else {
 				refs = setValue((String) null); 
 			}
-			
 			reevaluateAndNotify(refs);
 		}
 	}

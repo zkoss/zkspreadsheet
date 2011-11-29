@@ -70,6 +70,12 @@ public class Events {
 	 */
 	public static final String ON_FILTER = "onFilter";
 	
+	/**
+	 * The onValidateDrop event (used with {@link CellMouseEvent}).
+	 * Sent when user click on the validation drop down button
+	 */
+	public static final String ON_VALIDATE_DROP = "onValidateDrop";
+	
 	/** The onCellChange event (used with {@link CellEvent}).
 	 * Sent when cell contents changed.
 	 */

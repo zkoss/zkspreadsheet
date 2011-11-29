@@ -149,4 +149,14 @@ public interface Book extends Workbook {
      * @param pictureData
      */
     void deletePictureData(PictureData pictureData);
+    
+    /**
+     * Gets a boolean value that indicates whether the date systems used in the workbook starts in 1904.
+     * <p>
+     * The default value is false, meaning that the workbook uses the 1900 date system,
+     * where 1/1/1900 is the first day in the system..
+     * </p>
+     * @return true if the date systems used in the workbook starts in 1904
+     */
+    boolean isDate1904();
 }

@@ -1601,7 +1601,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			//TODO LINK_DOCUMENT
 	}
 }, {
-	CELL_MOUSE_EVENT_NAME: {lc:'onCellClick', rc:'onCellRightClick', dbc:'onCellDoubleClick', af:'onFilter'},
+	CELL_MOUSE_EVENT_NAME: {lc:'onCellClick', rc:'onCellRightClick', dbc:'onCellDoubleClick', af:'onFilter', dv:'onValidateDrop'},
 	HEADER_MOUSE_EVENT_NAME: {lc:'onHeaderClick', rc:'onHeaderRightClick', dbc:'onHeaderDoubleClick'},
 	SRC_CMD_SET_COL_WIDTH: 'setColWidth',
 	initLaterAfterCssReady: function (sheet) {

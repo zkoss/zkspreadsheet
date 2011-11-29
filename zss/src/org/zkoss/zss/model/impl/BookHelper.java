@@ -13,6 +13,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
+import java.awt.Container;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,6 +65,8 @@ import org.zkoss.poi.ss.formula.FormulaParsingWorkbook;
 import org.zkoss.poi.ss.formula.FormulaRenderer;
 import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.PtgShifter;
+import org.zkoss.poi.ss.formula.eval.ArrayEval;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaPtgBase;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
@@ -93,6 +96,7 @@ import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.usermodel.DataValidationConstraint.ValidationType;
+import org.zkoss.poi.ss.usermodel.DataValidationConstraint.OperatorType;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
@@ -258,6 +262,12 @@ public final class BookHelper {
 			return ((HSSFBookImpl)book).getFunctionMapper();
 		else
 			return ((XSSFBookImpl)book).getFunctionMapper();
+	}
+	
+	public static void clearFormulaCache(Cell cell) {
+		if (cell != null) {
+			((Book)cell.getSheet().getWorkbook()).getFormulaEvaluator().notifySetFormula(cell);
+		}
 	}
 	
 	/*package*/ static void clearFormulaCache(Book book, Set<Ref> all) {
@@ -1266,9 +1276,24 @@ public final class BookHelper {
 	}
 	public static Object[] editTextToValue(String txt, Cell cell) {
 		if (txt != null) {
+			final String formatStr = cell == null ? 
+					null : cell.getCellStyle().getDataFormatString();
+			return editTextToValue(txt, formatStr);
+		}
+		return null;
+		
+	}
+	/**
+	 * 
+	 * @param txt the text to be input
+	 * @param formatStr the cell text format 
+	 * @return object array with the value type in 0(an Integer), 
+	 * 		the value in 1(an Object), and the date format in 2(a String if parse as a date)   
+	 */
+	public static Object[] editTextToValue(String txt, String formatStr) {
+		if (txt != null) {
 			//bug #300:	Numbers in Text-cells are not treated as text (leading zero is removed)
-			if (cell != null) {
-		        final String formatStr = cell.getCellStyle().getDataFormatString();
+			if (formatStr != null) {
 				if (isStringFormat(formatStr)) { 
 					return new Object[] {new Integer(Cell.CELL_TYPE_STRING), txt}; //string
 				}
@@ -4660,5 +4685,261 @@ public final class BookHelper {
 	        }
 		}
 		return false;
+	}
+	
+	private static CellValue evaluateFormula(Book book, int sheetIndex, String formula) {
+		final XelContext old = XelContextHolder.getXelContext();
+		try {
+			final VariableResolver resolver = BookHelper.getVariableResolver(book);
+			final FunctionMapper mapper = BookHelper.getFunctionMapper(book);
+			final XelContext ctx = new SimpleXelContext(resolver, mapper);
+			ctx.setAttribute("zkoss.zss.CellType", Object.class);
+			XelContextHolder.setXelContext(ctx);
+			final CellValue cv = book.getFormulaEvaluator().evaluateFormula(sheetIndex, formula);
+			return cv;
+		} finally {
+			XelContextHolder.setXelContext(old);
+		}
+	}
+
+	private static ValueEval evaluateFormulaValueEval(Book book, int sheetIndex, String formula) {
+		final XelContext old = XelContextHolder.getXelContext();
+		try {
+			final VariableResolver resolver = BookHelper.getVariableResolver(book);
+			final FunctionMapper mapper = BookHelper.getFunctionMapper(book);
+			final XelContext ctx = new SimpleXelContext(resolver, mapper);
+			ctx.setAttribute("zkoss.zss.CellType", Object.class);
+			XelContextHolder.setXelContext(ctx);
+			return book.getFormulaEvaluator().evaluateFormulaValueEval(sheetIndex, formula);
+		} finally {
+			XelContextHolder.setXelContext(old);
+		}
+	}
+
+	private static CellValue getEvalValue(Worksheet sheet, String txt) {
+		final Object[] values = BookHelper.editTextToValue(txt, (String)null);
+		int cellType = values == null ? -1 : ((Integer)values[0]).intValue();
+		Object value = values == null ? null : values[1];
+		return getCellValue(sheet, cellType, value);
+	}
+	
+	private static CellValue getCellValue(Worksheet sheet, int cellType, Object value) {
+		if (cellType != -1 && value != null) {
+			switch(cellType) {
+			case Cell.CELL_TYPE_FORMULA:
+				final Book book = sheet.getBook();
+				final int sheetIndex = book.getSheetIndex(sheet);
+				return BookHelper.evaluateFormula(book, sheetIndex, (String) value);
+			case Cell.CELL_TYPE_STRING:
+				return new CellValue((String)value); //String
+			case Cell.CELL_TYPE_BOOLEAN:
+				return CellValue.valueOf(((Boolean)value).booleanValue()); //boolean
+			case Cell.CELL_TYPE_NUMERIC:
+				if (value instanceof Date) {
+			        boolean date1904 = sheet.getBook().isDate1904();
+			        double num = DateUtil.getExcelDate((Date)value, date1904);
+					value = new Double(num);
+				}
+				return new CellValue(((Number)value).doubleValue());
+			case Cell.CELL_TYPE_ERROR:
+				return CellValue.getError(((Byte)value).intValue() & 0xff);
+			}
+		}
+		return null;
+	}
+	
+	private static boolean equalCellValue(CellValue cv1, CellValue cv2) {
+		if (cv1.getCellType() != cv2.getCellType()) {
+			return false;
+		}
+		switch(cv1.getCellType()) {
+		case Cell.CELL_TYPE_FORMULA:
+		case Cell.CELL_TYPE_STRING:
+			return Objects.equals(cv1.getStringValue(), cv2.getStringValue());
+		case Cell.CELL_TYPE_BOOLEAN:
+			return cv1.getBooleanValue() ==  cv2.getBooleanValue();
+		case Cell.CELL_TYPE_NUMERIC:
+			return cv1.getNumberValue() == cv2.getNumberValue();
+		case Cell.CELL_TYPE_ERROR:
+			return cv1.getErrorValue() == cv2.getErrorValue();
+		}
+		return false;
+	}
+	private static boolean validateListOperation(Worksheet sheet, DataValidationConstraint constraint, CellValue target) {
+		if (target == null) {
+			return false;
+		}
+		String[] list = constraint.getExplicitListValues();
+		if (list != null) {
+			CellValue candidate = null;
+			for(int j = 0; j < list.length; ++j) {
+				String txt = list[j];
+				if (txt == null) {
+					continue; //skip
+				} else if (txt.startsWith("=")) { //must be string
+					candidate = new CellValue(txt);
+				} else {
+					candidate = getEvalValue(sheet, txt);
+				}
+				if (candidate != null && equalCellValue(target, candidate)) {
+					return true;
+				}
+			}
+			return false;
+		} else {
+			String txt = constraint.getFormula1();
+			Book book = sheet.getBook();
+			final ValueEval ve = BookHelper.evaluateFormulaValueEval(book, book.getSheetIndex(sheet), txt);
+			if (ve instanceof ArrayEval) {
+				final ArrayEval ae = (ArrayEval) ve;
+				if (ae.isColumn() || ae.isRow()) {
+					final int rows = ae.getHeight();
+					final int cols = ae.getWidth();
+					for (int r = 0; r < rows; ++r) {
+						for (int c = 0; c < cols; ++c) {
+							ValueEval xve = ae.getValue(r, c);
+							final CellValue candidate = book.getFormulaEvaluator().getCellValueByValueEval(xve);
+							if (equalCellValue(target, candidate)) {
+								return true;
+							}
+						}
+					}
+				}
+			} else {
+				final CellValue candidate = book.getFormulaEvaluator().getCellValueByValueEval(ve);
+				if (equalCellValue(target, candidate)) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+	private static boolean validateOperation(Worksheet sheet, DataValidationConstraint constraint, Number value) {
+		if (value == null) {
+			return false;
+		}
+		String f1 = constraint.getFormula1();
+		CellValue cv1 = getEvalValue(sheet, f1);
+		if (cv1 == null) {
+			return true;
+		}
+		if (cv1.getCellType() != Cell.CELL_TYPE_NUMERIC) { //type does not match
+			return false;
+		}
+		double v1 = cv1.getNumberValue();
+		double v = value.doubleValue();
+		switch(constraint.getOperator()) {
+			case OperatorType.BETWEEN:
+			{
+				final String f2 = constraint.getFormula2();
+				final CellValue cv2 = getEvalValue(sheet, f2);
+				if (cv2.getCellType() != Cell.CELL_TYPE_NUMERIC) { //type does not match
+					return false;
+				}
+				final double v2 = cv2.getNumberValue();
+				return v >= v1 && v <= v2;
+			}
+			case OperatorType.NOT_BETWEEN:
+			{
+				final String f2 = constraint.getFormula2();
+				final CellValue cv2 = getEvalValue(sheet, f2);
+				if (cv2.getCellType() != Cell.CELL_TYPE_NUMERIC) { //type does not match
+					return false;
+				}
+				final double v2 = cv2.getNumberValue();
+				return v < v1 || v > v2;
+			}
+			case OperatorType.EQUAL:
+				return v == v1;
+			case OperatorType.NOT_EQUAL:
+				return v != v1;
+			case OperatorType.GREATER_THAN:
+				return v > v1;
+			case OperatorType.LESS_THAN:
+				return v < v1;
+			case OperatorType.GREATER_OR_EQUAL:
+				return v >= v1;
+			case OperatorType.LESS_OR_EQUAL:
+				return v <= v1;
+		}
+		
+		return true;
+	}
+	
+	private static boolean isInteger(Object value) {
+		if (value instanceof Number) {
+			return ((Number)value).intValue() ==  ((Number)value).doubleValue();
+		}
+		return false;
+	}
+	
+	private static boolean isDecimal(Object value) {
+		return value instanceof Number;
+	}
+	
+	private static boolean isString(Object value) {
+		return value instanceof String; 
+	}
+	
+	/*package*/ static boolean validate(Worksheet sheet, int row, int col, Object value, int cellType) {
+		DataValidation dv = sheet.getDataValidation(row, col);
+		//no validation constraint
+		if (dv == null) {
+			return true;
+		}
+		final DataValidationConstraint constraint = dv.getValidationConstraint();
+		//allow any value => no need to do validation
+		if (constraint.getValidationType() == ValidationType.ANY) { //can be any value, meaning no validation
+			return true;
+		}
+		//ignore empty and value is empty
+		if (value == null || (value instanceof String && ((String)value).length() == 0)) {
+			if (dv.getEmptyCellAllowed()) {
+				return true;
+			}
+		}
+		//get new evaluated formula value 
+		if (cellType == Cell.CELL_TYPE_FORMULA) {
+			final Book book = sheet.getBook();
+			final int sheetIndex = book.getSheetIndex(sheet);
+			final CellValue cv = BookHelper.evaluateFormula(book, sheetIndex, (String) value);
+			value = BookHelper.getValueByCellValue(cv);
+			cellType = cv.getCellType();
+		}
+		//start validation
+		boolean success = true;
+		switch(constraint.getValidationType()) {
+			// Integer ('Whole number') type
+			case ValidationType.INTEGER:
+				if (!isInteger(value) || !validateOperation(sheet, constraint, (Number)value)) {
+					success = false;
+				}
+				break;
+			// Decimal type
+			case ValidationType.DECIMAL:
+			// Date type
+			case ValidationType.DATE:
+				// Time type
+			case ValidationType.TIME:
+				if (!isDecimal(value) || !validateOperation(sheet, constraint, (Number)value)) {
+					success = false;
+				}
+				break;
+			// List type ( combo box type )
+			case ValidationType.LIST:
+				if (!validateListOperation(sheet, constraint, getCellValue(sheet, cellType, value))) {;
+					success = false;
+				}
+				break;
+			// String length type
+			case ValidationType.TEXT_LENGTH:
+				if (!isString(value) || !validateOperation(sheet, constraint, Integer.valueOf(value == null ? 0 : ((String)value).length()))) {
+					success = false;
+				}
+			// Formula ( 'Custom' ) type
+			case ValidationType.FORMULA:
+				throw new UnsupportedOperationException("Custom Validation is not supported yet!");
+		}
+		return success;
 	}
 }

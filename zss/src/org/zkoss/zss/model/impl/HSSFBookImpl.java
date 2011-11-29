@@ -323,4 +323,9 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 	public Worksheet getWorksheet(String name) {
 		return (Worksheet) getSheet(name);
 	}
+	
+	@Override
+	public boolean isDate1904() {
+		return new HSSFWorkbookHelper(this).getInternalWorkbook().isUsing1904DateWindowing();
+	}
 }
