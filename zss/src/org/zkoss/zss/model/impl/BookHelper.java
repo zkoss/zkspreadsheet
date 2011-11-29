@@ -65,7 +65,9 @@ import org.zkoss.poi.ss.formula.FormulaParsingWorkbook;
 import org.zkoss.poi.ss.formula.FormulaRenderer;
 import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.PtgShifter;
+import org.zkoss.poi.ss.formula.eval.AreaEval;
 import org.zkoss.poi.ss.formula.eval.ArrayEval;
+import org.zkoss.poi.ss.formula.eval.NumberEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaPtgBase;
@@ -4702,7 +4704,7 @@ public final class BookHelper {
 		}
 	}
 
-	private static ValueEval evaluateFormulaValueEval(Book book, int sheetIndex, String formula) {
+	private static ValueEval evaluateFormulaValueEval(Book book, int sheetIndex, String formula, boolean ignoreDereference) {
 		final XelContext old = XelContextHolder.getXelContext();
 		try {
 			final VariableResolver resolver = BookHelper.getVariableResolver(book);
@@ -4710,7 +4712,7 @@ public final class BookHelper {
 			final XelContext ctx = new SimpleXelContext(resolver, mapper);
 			ctx.setAttribute("zkoss.zss.CellType", Object.class);
 			XelContextHolder.setXelContext(ctx);
-			return book.getFormulaEvaluator().evaluateFormulaValueEval(sheetIndex, formula);
+			return book.getFormulaEvaluator().evaluateFormulaValueEval(sheetIndex, formula, ignoreDereference);
 		} finally {
 			XelContextHolder.setXelContext(old);
 		}
@@ -4765,6 +4767,42 @@ public final class BookHelper {
 		}
 		return false;
 	}
+	
+	//get validation list, null if not a LIST validation.
+	public static String[] getValidationList(Worksheet sheet, DataValidation validation) {
+		DataValidationConstraint constraint = validation.getValidationConstraint();
+		if (constraint.getValidationType() != ValidationType.LIST) {
+			return null;
+		}
+		String[] list = constraint.getExplicitListValues();
+		if (list != null) {
+			return list;
+		}
+		String txt = constraint.getFormula1();
+		Book book = sheet.getBook();
+		final ValueEval ve = BookHelper.evaluateFormulaValueEval(book, book.getSheetIndex(sheet), txt, true);
+		if (ve instanceof AreaEval) {
+			final AreaEval ae = (AreaEval) ve;
+			if (ae.isColumn() || ae.isRow()) {
+				final int rows = ae.getHeight();
+				final int cols = ae.getWidth();
+				final int top = ae.getFirstRow();
+				final int left = ae.getFirstColumn();
+				String[] xlist = new String[rows*cols];
+				for (int r = 0, j=0; r < rows; ++r) {
+					int rowIndex = r + top; 
+					for (int c = 0; c < cols; ++c) {
+						int colIndex = c + left;
+						final Cell cell = BookHelper.getCell(sheet, rowIndex, colIndex);
+						xlist[j++] = BookHelper.getCellText(cell);
+					}
+				}
+				return xlist;
+			}
+		}
+		return null;
+	}
+	
 	private static boolean validateListOperation(Worksheet sheet, DataValidationConstraint constraint, CellValue target) {
 		if (target == null) {
 			return false;
@@ -4789,7 +4827,7 @@ public final class BookHelper {
 		} else {
 			String txt = constraint.getFormula1();
 			Book book = sheet.getBook();
-			final ValueEval ve = BookHelper.evaluateFormulaValueEval(book, book.getSheetIndex(sheet), txt);
+			final ValueEval ve = BookHelper.evaluateFormulaValueEval(book, book.getSheetIndex(sheet), txt, false);
 			if (ve instanceof ArrayEval) {
 				final ArrayEval ae = (ArrayEval) ve;
 				if (ae.isColumn() || ae.isRow()) {
