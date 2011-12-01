@@ -707,3 +707,64 @@
 .zsfilter {
 	background-image: url(${c:encodeURL('~./zss/img/filter.gif')});
 }
+
+.zspopuppanel {
+	position:absolute;
+	width:0px;
+	height:0px;
+	top:0px;
+	left:0px;
+	overflow:visible;
+	z-index:10;
+}
+
+.zscellpopup {
+	overflow:hidden;
+	position:absolute;
+	top:0px;
+	left:0px;
+	z-index:10;
+	background: #FFFFFF;
+	border: 1px solid #333333;
+}
+
+.zsdv-popup-cave {
+	margin: 0;
+	padding: 0;
+}
+
+.zsdv-item {
+	list-style: none;
+	padding: 2px;
+	margin: 0;
+	font-size: 12px;
+}
+
+.zsdv-item a.zsdv-item-text {
+	text-decoration: none !important;
+	white-space: nowrap;
+	color: #000000;
+}
+
+.zsdv-item-over, .zsdv-item-over a.zsdv-item-text {
+	color: #FFFFFF;
+	background: #3399FF;
+} 
+
+.zsdvp-cave {
+	padding: 1px 2px;
+	background: #FFFFE1;
+}
+
+.zsdvp-title {
+	font-weight: bold;
+	color: #333333;
+	padding: 2px 2px 0;
+	word-wrap: break-word;
+}
+
+.zsdvp-text {
+	padding: 0 2px 2px;
+	color: #555555;
+	word-wrap: break-word;
+}

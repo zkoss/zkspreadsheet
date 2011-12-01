@@ -1082,8 +1082,17 @@ public class Spreadsheet extends XulElement implements Serializable {
 		validMap.put("rangeList", addrmapary); //range list
 		validMap.put("showButton", dv.getSuppressDropDownArrow()); //whether show dropdown button
 		validMap.put("showPrompt", dv.getShowPromptBox()); //whether show prompt box
-		validMap.put("showTitle", dv.getPromptBoxTitle()); //the prompt box title
+		validMap.put("promptTitle", dv.getPromptBoxTitle()); //the prompt box title
 		validMap.put("promptText", dv.getPromptBoxText()); //the prompt box text
+		String[] validationList = BookHelper.getValidationList(getSelectedSheet(), dv);
+		if (validationList != null) {
+			JSONArray jsonAry = new JSONArray();
+			for (String v : validationList) {
+				jsonAry.add(v);
+			}
+			validMap.put("validationList", jsonAry);
+		}
+		
 		return validMap;
 	}
 

@@ -462,7 +462,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 				focustag.focus();
 				jq(focustag).select();
 			}, 0);
-			this.sheet.fire('onFocused');
+			this.sheet.fire('onFocused', {row: row, col: col});
 		}
 	},
 	/* process focus lost */
