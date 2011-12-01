@@ -55,6 +55,7 @@ import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.poi.ss.usermodel.DataValidation;
+import org.zkoss.poi.ss.usermodel.DataValidation.ErrorStyle;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
 import org.zkoss.poi.ss.util.CellReference;
@@ -88,6 +89,8 @@ import org.zkoss.zss.engine.event.EventDispatchListener;
 import org.zkoss.zss.engine.event.SSDataEvent;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Importer;
+import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.ExcelImporter;
@@ -3655,7 +3658,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 					.getColumn(), val, useEditValue);
 		} else {
 			processCancelEditing0(token, event.getSheet(), event.getRow(),
-					event.getColumn());
+					event.getColumn(), false);
 		}
 	}
 
@@ -3663,7 +3666,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 		if (!event.isCancel()) {
 			processStopEditing0(token, event.getSheet(), event.getRow(), event.getColumn(), event.getEditingValue());
 		} else
-			processCancelEditing0(token, event.getSheet(), event.getRow(), event.getColumn());
+			processCancelEditing0(token, event.getSheet(), event.getRow(), event.getColumn(), false);
 	}
 	
 	private void showFormulaError(FormulaParseException ex) {
@@ -3678,9 +3681,26 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 	}
 
-	private void processStopEditing0(String token, Worksheet sheet, int rowIdx, int colIdx, Object value) {
+	private void processStopEditing0(final String token, final Worksheet sheet, final int rowIdx, final int colIdx, final Object value) {
 		try {
-			Utils.setEditText(sheet, rowIdx, colIdx, value == null ? "" : value.toString());
+			if(!Utils.setEditTextWithValidation(this, sheet, rowIdx, colIdx, value == null ? "" : value.toString(),
+				//callback
+				new EventListener() {
+					@Override
+					public void onEvent(Event event) throws Exception {
+						final String eventname = event.getName();
+						if (Messagebox.ON_CANCEL.equals(eventname)) { //cancel
+							Spreadsheet.this.processCancelEditing0(token, sheet, rowIdx, colIdx, true); //skipMove
+						} else if (Messagebox.ON_OK.equals(eventname)) { //ok
+							Spreadsheet.this.processStopEditing0(token, sheet, rowIdx, colIdx, value);
+						} else { //retry
+							Spreadsheet.this.processRetryEditing0(token, sheet, rowIdx, colIdx, value);
+						}
+					}
+				}
+			)) {
+				return;
+			}
 
 			JSONObj result = new JSONObj();
 			result.setData("r", rowIdx);
@@ -3690,7 +3710,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 
 			smartUpdate("dataUpdateStop", new Object[] { token,	Utils.getSheetUuid(sheet), result});
 		} catch (RuntimeException x) {
-			processCancelEditing0(token, sheet, rowIdx, colIdx);
+			processCancelEditing0(token, sheet, rowIdx, colIdx, false);
 			if (x instanceof FormulaParseException) {
 				showFormulaError((FormulaParseException)x);
 			} else {
@@ -3711,18 +3731,34 @@ public class Spreadsheet extends XulElement implements Serializable {
 			}
 			smartUpdate("dataUpdateStart", new Object[] { token, Utils.getSheetUuid(sheet), result});
 		} catch (RuntimeException x) {
-			processCancelEditing0(token, sheet, row, col);
+			processCancelEditing0(token, sheet, row, col, false);
 			throw x;
 		}
 	}
 
-	private void processCancelEditing0(String token, Worksheet sheet, int row, int col) {
+	private void processCancelEditing0(String token, Worksheet sheet, int row, int col, boolean skipMove) {
 		JSONObject result = new JSONObject();
 		result.put("r", row);
 		result.put("c", col);
 		result.put("type", "canceledit");
 		result.put("val", "");
+		result.put("sk", skipMove);
 		smartUpdate("dataUpdateCancel", new Object[] { token, Utils.getSheetUuid(sheet), result});
+	}
+
+	private void processRetryEditing0(String token, Worksheet sheet, int row, int col, Object value) {
+		try {
+			processCancelEditing0(token, sheet, row, col, true);
+			JSONObject result = new JSONObject();
+			result.put("r", row);
+			result.put("c", col);
+			result.put("type", "retryedit");
+			result.put("val", value);
+			smartUpdate("dataUpdateRetry", new Object[] { "", Utils.getSheetUuid(sheet), result});
+		} catch (RuntimeException x) {
+			processCancelEditing0(token, sheet, row, col, false);
+			throw x;
+		}
 	}
 
 	public boolean insertBefore(Component newChild, Component refChild) {
@@ -3990,5 +4026,134 @@ public class Spreadsheet extends XulElement implements Serializable {
 	
 	public void response(String key, AuResponse response) {
 		super.response(key, response);
+	}
+	
+	private final static Map<Integer, String> iconMap = new HashMap<Integer, String>(3);
+	static {
+		iconMap.put(ErrorStyle.INFO, Messagebox.INFORMATION);
+		iconMap.put(ErrorStyle.STOP, Messagebox.ERROR);
+		iconMap.put(ErrorStyle.WARNING, Messagebox.EXCLAMATION);
+	}
+	//return true if a valid input; false otherwise and show Error Alert if required 
+	public boolean validate(Worksheet sheet, final int row, final int col, final String txt, 
+		final EventListener callback) {
+		final Worksheet ssheet = this.getSelectedSheet();
+		if (ssheet == null || !ssheet.equals(sheet)) { //skip no sheet case
+			return true;
+		}
+		if (_inCallback) { //skip validation check
+			return true;
+		}
+		final Range rng = Ranges.range(sheet, row, col);
+		final DataValidation dv = rng.validate(txt);
+		if (dv != null) {
+			if (dv.getShowErrorBox()) {
+				String errTitle = dv.getErrorBoxTitle();
+				String errText = dv.getErrorBoxText();
+				if (errTitle == null) {
+					errTitle = "ZK Spreadsheet";
+				}
+				if (errText == null) {
+					errText = "The value you entered is not valid.\n\nA user has restricted values that can be entered into this cell.";
+				}
+				final int errStyle = dv.getErrorStyle();
+				try {
+					switch(errStyle) {
+						case ErrorStyle.STOP:
+						{
+							final int btn = Messagebox.show(
+								errText, errTitle, Messagebox.RETRY|Messagebox.CANCEL, 
+								Messagebox.ERROR, Messagebox.RETRY, new EventListener() {
+								@Override
+								public void onEvent(Event event) throws Exception {
+									final String evtname = event.getName();
+									if (Messagebox.ON_RETRY.equals(evtname)) {
+										retry(callback);
+									} else if (Messagebox.ON_CANCEL.equals(evtname)) {
+										cancel(callback);
+									}
+								}
+							});
+						}
+						break;
+						case ErrorStyle.WARNING:
+						{
+							errText += "\n\nContinue?";
+							final int btn = Messagebox.show(
+								errText, errTitle, Messagebox.YES|Messagebox.NO|Messagebox.CANCEL, 
+								Messagebox.EXCLAMATION, Messagebox.NO, new EventListener() {
+								@Override
+								public void onEvent(Event event) throws Exception {
+									final String evtname = event.getName();
+									if (Messagebox.ON_NO.equals(evtname)) {
+										retry(callback);
+									} else if (Messagebox.ON_CANCEL.equals(evtname)) {
+										cancel(callback);
+									} else if (Messagebox.ON_YES.equals(evtname)) {
+										ok(callback);
+									}
+								}
+							});
+							if (getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && btn == Messagebox.YES) {
+								return true;
+							}
+						}
+						break;
+						case ErrorStyle.INFO:
+						{
+							final int btn = Messagebox.show(
+								errText, errTitle, Messagebox.OK|Messagebox.CANCEL, 
+								Messagebox.INFORMATION, Messagebox.OK, new EventListener() {
+								@Override
+								public void onEvent(Event event) throws Exception {
+									final String evtname = event.getName();
+									if (Messagebox.ON_CANCEL.equals(evtname)) {
+										cancel(callback);
+									} else if (Messagebox.ON_OK.equals(evtname)) {
+										ok(callback);
+									}
+								}
+							});
+							if (getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && btn == Messagebox.OK) {
+								return true;
+							}
+						}
+						break;
+					}
+				} catch (InterruptedException e) {
+					//ignore
+				}
+			}
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean _inCallback = false;
+	private void errorBoxCallback(EventListener callback, String eventname) {
+		if (!getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && callback != null) {
+			try {
+				_inCallback = true;
+				callback.onEvent(new Event(eventname, this));
+			} catch (Exception e) {
+				throw UiException.Aide.wrap(e);
+			} finally {
+				_inCallback = false;
+			}
+		}
+	}
+	//when user press OK/YES button of the validation ErrorBox, have to call back to resend the setEditText() operation 
+	private void ok(EventListener callback) {
+		errorBoxCallback(callback, Messagebox.ON_OK);
+	}
+	//when user press RETRY/NO button of the validation ErrorBox, have to call back to handle UI operation 
+	private void retry(EventListener callback) {
+		//TODO: shall set focus back to cell at (row, col), select the text, enter edit mode
+		errorBoxCallback(callback, Messagebox.ON_RETRY);
+	}
+	//when user press CANCEL button of the validation ErrorBox, have to call back to handle UI operation 
+	private void cancel(EventListener callback) {
+		//TODO: shall set focus back to cell at (row, col) and restore cell value
+		errorBoxCallback(callback, Messagebox.ON_CANCEL);
 	}
 }

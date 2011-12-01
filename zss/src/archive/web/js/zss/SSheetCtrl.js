@@ -458,6 +458,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var dp = this.dp;
 			dp.cancelEditing();
 			break;
+		case "retryedit":
+			var dp = this.dp;
+			dp.retryEditing(value);
+			break;
 		}
 	},
 	_cmdBlockUpdate: function (type, dir, tRow, lCol, bRow, rCol, leftFrozen, topFrozen) {

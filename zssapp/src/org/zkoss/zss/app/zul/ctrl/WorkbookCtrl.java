@@ -296,4 +296,6 @@ public interface WorkbookCtrl {
 	public String getRowTitle(int row);
 
 	public Rect getVisibleRect();
+	
+	public boolean setEditTextWithValidation(Worksheet sheet, int row, int col, String txt, EventListener callback);
 }

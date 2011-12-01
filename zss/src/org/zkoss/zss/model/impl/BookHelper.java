@@ -4919,21 +4919,21 @@ public final class BookHelper {
 		return value instanceof String; 
 	}
 	
-	/*package*/ static boolean validate(Worksheet sheet, int row, int col, Object value, int cellType) {
+	/*package*/ static DataValidation validate(Worksheet sheet, int row, int col, Object value, int cellType) {
 		DataValidation dv = sheet.getDataValidation(row, col);
 		//no validation constraint
 		if (dv == null) {
-			return true;
+			return null;
 		}
 		final DataValidationConstraint constraint = dv.getValidationConstraint();
 		//allow any value => no need to do validation
 		if (constraint.getValidationType() == ValidationType.ANY) { //can be any value, meaning no validation
-			return true;
+			return null;
 		}
 		//ignore empty and value is empty
 		if (value == null || (value instanceof String && ((String)value).length() == 0)) {
 			if (dv.getEmptyCellAllowed()) {
-				return true;
+				return null;
 			}
 		}
 		//get new evaluated formula value 
@@ -4978,6 +4978,6 @@ public final class BookHelper {
 			case ValidationType.FORMULA:
 				throw new UnsupportedOperationException("Custom Validation is not supported yet!");
 		}
-		return success;
+		return success ? null : dv;
 	}
 }

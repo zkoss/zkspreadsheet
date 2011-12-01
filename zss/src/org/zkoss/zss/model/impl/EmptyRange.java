@@ -17,6 +17,7 @@ import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
+import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
@@ -305,5 +306,10 @@ public class EmptyRange implements Range {
 
 	@Override
 	public void deleteChart(Chart chart) {
+	}
+
+	@Override
+	public DataValidation validate(String txt) {
+		return null;
 	}
 }

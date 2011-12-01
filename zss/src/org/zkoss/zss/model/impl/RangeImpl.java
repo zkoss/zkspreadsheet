@@ -13,7 +13,6 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -23,13 +22,11 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGraphicalObjectFrame;
-import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
@@ -39,28 +36,20 @@ import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.DataValidation;
-import org.zkoss.poi.ss.usermodel.DataValidationConstraint;
-import org.zkoss.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.zss.model.Worksheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
-import org.zkoss.poi.ss.usermodel.charts.AxisPosition;
-import org.zkoss.poi.ss.usermodel.charts.ChartAxis;
 import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
 import org.zkoss.poi.ss.util.CellRangeAddress;
-import org.zkoss.poi.xssf.usermodel.XSSFChart;
 import org.zkoss.poi.xssf.usermodel.XSSFChartX;
-import org.zkoss.poi.xssf.usermodel.XSSFDrawing;
-import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
-
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.RefSheet;
@@ -76,6 +65,7 @@ import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
+import org.zkoss.zss.model.Worksheet;
 /**
  * Implementation of {@link Range} which plays a facade to operate on the spreadsheet data models
  * and maintain the reference dependency. 
@@ -304,6 +294,28 @@ public class RangeImpl implements Range {
 		}
 		return null;
 	}
+	
+	//return null if a valid input; otherwise the associated DataVailation for invalid input.
+	@Override
+	public DataValidation validate(String txt) {
+		Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
+		if (ref != null) {
+			final int tRow = ref.getTopRow();
+			final int lCol = ref.getLeftCol();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final Cell cell = getCell(tRow, lCol, refSheet);
+			
+			final Object[] values = BookHelper.editTextToValue(txt, cell);
+			final Worksheet sheet = BookHelper.getSheet(_sheet, refSheet);
+			
+			final int cellType = values == null ? -1 : ((Integer)values[0]).intValue();
+			final Object value = values == null ? null : values[1];
+			
+			return BookHelper.validate(sheet, tRow, lCol, value, cellType);
+		}
+		return null;
+	}
+	
 	@Override
 	public void setEditText(String txt) {
 		Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
@@ -318,9 +330,6 @@ public class RangeImpl implements Range {
 			
 			final int cellType = values == null ? -1 : ((Integer)values[0]).intValue();
 			final Object value = values == null ? null : values[1];
-			if (!BookHelper.validate(sheet, tRow, lCol, value, cellType)) { //fail validation
-				return;
-			}
 			
 			Set<Ref>[] refs = null;
 			if (cellType != -1) {

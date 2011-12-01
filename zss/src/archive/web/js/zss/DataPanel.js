@@ -247,6 +247,12 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			}
 		}
 	},
+	retryEditing: function (val) {
+		var sheet = this.sheet,
+			editor = sheet.editor;
+		this.startEditing(null, val);
+		this._openEditbox(val);
+	},
 	//open editbox
 	_openEditbox: function (initval) {
 		var sheet = this.sheet,
@@ -299,19 +305,22 @@ zss.DataPanel = zk.$extends(zk.Object, {
 					token = zkS.addCallback(function(){
 						if (sheet.invalid) return;
 						sheet.state = zss.SSheetCtrl.FOCUSED;
-						sheet.dp.moveDown();
+						if (!sheet._skipMove) //@see Spreadsheet.js#doUpdate()
+							sheet.dp.moveDown();
 					});
 				} else if (type == "moveright") {//move right after aysnchronized call back
 					token = zkS.addCallback(function(){
 						if (sheet.invalid) return;
 						sheet.state = zss.SSheetCtrl.FOCUSED;
-						sheet.dp.moveRight();
+						if (!sheet._skipMove) //@see Spreadsheet.js#doUpdate()
+							sheet.dp.moveRight();
 					});
 				} else if (type == "moveleft") {//move right after aysnchronized call back
 					token = zkS.addCallback (function(){
 						if (sheet.invalid) return;
 						sheet.state = zss.SSheetCtrl.FOCUSED;
-						sheet.dp.moveLeft();
+						if (!sheet._skipMove) //@see Spreadsheet.js#doUpdate()
+							sheet.dp.moveLeft();
 					});
 				} else if (type == "refocus") {//refocuse after aysnchronized call back
 					token = zkS.addCallback(function(){

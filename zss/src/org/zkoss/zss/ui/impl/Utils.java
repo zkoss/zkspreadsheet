@@ -42,6 +42,7 @@ import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.engine.RefSheet;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Worksheet;
@@ -1268,5 +1269,11 @@ public class Utils {
 		}
 	}
 
-
+	public static boolean setEditTextWithValidation(Spreadsheet ss, Worksheet sheet, int row, int col, String txt, EventListener callback) {
+		if (ss.validate(sheet, row, col, txt, callback)) {
+			setEditText(sheet, row, col, txt);
+			return true;
+		}
+		return false;
+	}
 }

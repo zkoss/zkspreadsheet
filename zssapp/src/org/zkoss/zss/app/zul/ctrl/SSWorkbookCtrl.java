@@ -55,6 +55,7 @@ import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WebApps;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zss.app.cell.CellHelper;
@@ -894,6 +895,10 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		}
 		ClientAnchor anchor = new XSSFClientAnchor(0, 0, pxToEmu(offsetWidth), pxToEmu(offsetHeight), lCol, tRow, rCol, bRow);
 		return anchor;
+	}
+	
+	public boolean setEditTextWithValidation(Worksheet sheet, int row, int col, String txt, EventListener okCallback) {
+		return Utils.setEditTextWithValidation(spreadsheet, sheet, row, col, txt, okCallback);
 	}
 	
 	/** convert pixel to EMU */

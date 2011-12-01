@@ -40,9 +40,11 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	}
 	
 	function doUpdate(wgt, data, token) {
+		wgt.sheetCtrl._skipMove = data.sk; //whether to skip moving the focus/selection after update
 		wgt.sheetCtrl._cmdCellUpdate(data);
 		if (token)
 			zkS.doCallback(token);
+		delete wgt.sheetCtrl._skipMove; //reset to don't skip
 	}
 	
 	function copyRow(lCol, rCol, srcRow) {
@@ -804,6 +806,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		dataUpdateStart: _updateCell,
 		dataUpdateCancel: _updateCell,
 		dataUpdateStop: _updateCell,
+		dataUpdateRetry: _updateCell,
 		redrawWidget: function (v) {
 			var serverSheetId = v[0],
 				wgtUuid = v[1],
