@@ -1,6 +1,7 @@
 	------------
 ZK Spreadsheet 2.2.0
 *Features:
+   ZSS-01  Support validation dropdown list
    ZSS-41 Support showing more charts: area, stacked area, scatter, bubble, stacked bar, stacked bar3d in 2007 file format(.xlsx)
    ZSS-44 Support API to add a new chart in 2007 file format(.xlsx)
    ZSS-45 Support API to add a new picture in 2007 file format(.xlsx)
