@@ -354,7 +354,7 @@ zss.Cell =  zk.$extends(zk.Widget, {
 		var hasText = !!this.text,
 			processValign = false;
 		this._updateHasTxt(hasText);
-		if (hasText && (zk.ie6_ || zk.ie7_) && this.valign != 't') { //ie6 / ie7 doesn't suport css vertical align
+		if (hasText && (zk.ie6_ || zk.ie7_) && this.valign != 't') { // IE6 / IE7 doesn't support CSS vertical align
 			processValign = true;
 			this._updateListenRowHeightChanged(true);
 		}
@@ -497,9 +497,11 @@ zss.Cell =  zk.$extends(zk.Widget, {
 			return;
 		}
 		var cmp = ctrl.comp,
-			txtcmp = ctrl.txtcomp;
+			txtcmp = ctrl.txtcomp,
+			prevPos;
 		if (zk.ie6_ || zk.ie7_) {
 			txtcmp = txtcmp.firstChild;
+			prevPos = txtcmp.style.position;
 		}
 		jq(txtcmp).css({'width': '', 'position': ''});//remove old value.
 		var sw = txtcmp.scrollWidth,
@@ -508,7 +510,6 @@ zss.Cell =  zk.$extends(zk.Widget, {
 			overflow = ctrl.overflow && sw > (cmp.clientWidth - 2 * cellPad);
 		if (overflow) {
 			ctrl.overflowed = true;
-			txtcmp.style.position = zk.ie || zk.safari ? "absolute" : "relative";
 			var w = cmp.clientWidth,
 				prev = cmp,
 				next = cmp.nextSibling;
@@ -562,6 +563,9 @@ zss.Cell =  zk.$extends(zk.Widget, {
 				next.ctrl.overlapBy = null;
 				next = next.nextSibling;
 			}
+		}
+		if ((zk.ie6_ || zk.ie7_) && prevPos) {
+			txtcmp.style.position = prevPos;
 		}
 		if (oldOverlapBy)
 			Cell._processOverflow(oldOverlapBy);
