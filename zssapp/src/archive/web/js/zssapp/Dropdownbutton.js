@@ -67,7 +67,7 @@ zssapp.Dropdownbutton = zk.$extends(zul.LabelImageWidget, {
 			zkn = zk(n),
 			w = zkn.offsetWidth(),
 			x = evt.domEvent.clientX - zkn.revisedOffset()[0];
-		return (x > (w - this._dpWidth));
+		return (x >= (w - this._dpWidth));
 	},
 	onChildAdded_: function (child) {
 		this.$supers('onChildAdded_', arguments);
