@@ -255,18 +255,14 @@ zss.Cell =  zk.$extends(zk.Widget, {
 			}
 		}
 	},
-	_updateVerticalAlign: function () {
+	_updateVerticalAlign: zk.ie6_ || zk.ie7_ ? function () {
 		var	v = this.valign,
 			text = this.text,
 			txtcomp = this.txtcomp;
 		if (txtcomp.style.display == 'none' || !text)
 			return;
 		var	$n = jq(txtcomp),
-			$txtInner = zk.ie6_ || zk.ie7_ ? $n.children('div') : null;
-		if ($txtInner)
-			$n.css('position', 'relative');
-		else
-			return;
+			$txtInner = jq($n[0].firstChild);
 		
 		switch (v) {
 		case 't':
@@ -286,7 +282,7 @@ zss.Cell =  zk.$extends(zk.Widget, {
 			$txtInner.css({'bottom': "0px", 'top': ''});	
 			break;
 		}
-	},
+	} : zk.$void(),
 	_onRowHeightChanged: function (evt) {
 		if (evt.data.row == this.r)
 			this._updateVerticalAlign();
@@ -510,6 +506,9 @@ zss.Cell =  zk.$extends(zk.Widget, {
 			overflow = ctrl.overflow && sw > (cmp.clientWidth - 2 * cellPad);
 		if (overflow) {
 			ctrl.overflowed = true;
+			if (zk.ie6_) {
+				ctrl.$n('real').style.position = 'absolute';
+			}
 			var w = cmp.clientWidth,
 				prev = cmp,
 				next = cmp.nextSibling;

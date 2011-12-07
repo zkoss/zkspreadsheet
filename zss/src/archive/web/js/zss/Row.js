@@ -47,11 +47,22 @@ zss.Row = zk.$extends(zk.Widget, {
 		this.$supers(zss.Row, 'bind_', arguments);
 		this.comp = this.$n();
 		this.fire('onRowAdded');
+		if (zk.ie6_) {
+			this.sheet.listen({onRowHeightChanged: this.proxy(this._onRowHeightChanged)});
+		}
 	},
 	unbind_: function () {
+		if (zk.ie6_) {
+			this.sheet.unlisten({onRowHeightChanged: this.proxy(this._onRowHeightChanged)});
+		}
 		delete this.cells;
 		this.comp = this.r = this.zsh = null;
 		this.$supers(zss.Row, 'unbind_', arguments);
+	},
+	_onRowHeightChanged: function (evt) {
+		if (this.r >= evt.data.row) {
+			zk(this.$n()).redoCSS();
+		}
 	},
 	/**
 	 * Append zss.Cell at the end of the row
