@@ -66,7 +66,7 @@ public class Events {
 	
 	/**
 	 * The onFilter event (used with {@link CellMouseEvent}).
-	 * Sent whenuser click on the filter button.
+	 * Sent when user click on the filter button.
 	 */
 	public static final String ON_FILTER = "onFilter";
 	
