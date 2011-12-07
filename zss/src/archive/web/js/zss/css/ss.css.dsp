@@ -725,7 +725,8 @@
 	left:0px;
 	z-index:10;
 	background: #FFFFFF;
-	border: 1px solid #333333;
+	border: 1px solid #868686;
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .zsdv-popup-cave {
@@ -751,9 +752,20 @@
 	background: #3399FF;
 } 
 
-.zsdvp-cave {
+.zsdvp-popup {
+	background: #FFFFE1;
+	<c:if test="${c:browser('ie7-') || c:browser('ie6-') || c:isOpera()}">
+		width: 200px;
+		height: 90px;
+		overflow: auto;
+	</c:if>
+}
+
+.zsdvp-popup-cave {
 	padding: 1px 2px;
 	background: #FFFFE1;
+	display: block;
+	overflow: auto;
 }
 
 .zsdvp-title {
@@ -761,10 +773,156 @@
 	color: #333333;
 	padding: 2px 2px 0;
 	word-wrap: break-word;
+	zoom: 1;
 }
 
 .zsdvp-text {
 	padding: 0 2px 2px;
 	color: #555555;
 	word-wrap: break-word;
+	zoom: 1;
+}
+
+.zsafp-popup, .zsafp-popup-cave {
+	height: 235px;
+	width: 240px;
+}
+
+.zsafp-search {
+	border-bottom: 1px solid #D8D8D8;
+	width: 100%;
+	padding: 2px;
+}
+
+.zsafp-search-inp {
+	background: #FFFFFF;
+	border: none;
+	font-size: 12px;
+	width: 215px;
+}
+
+.zsafp-items {
+	overflow-y: auto;
+	overflow-x: hidden;
+	height: 158px;
+	width: 100%;
+	border-bottom: 1px solid #D8D8D8;
+	position: relative;
+}
+
+.zsafp-item {
+	padding: 2px 2px 2px 20px;
+	position: relative;
+	background-position: left center;
+	font-size: 13px;
+	cursor: pointer;
+	<c:if test="${c:browser('ie6-')}">
+		padding-left: 2px;
+	</c:if>
+}
+
+.zsafp-item-over {
+	background: #D6F0FD;
+}
+
+.zsafp-item-hide {
+	display: none;
+}
+
+.zsafp-item-checkbox {
+	height: 16px;
+	width: 16px;
+	background-repeat: no-repeat;
+	position: absolute;
+	left: 3px;
+	top: 2px;
+	background: url(${c:encodeURL('~./zss/img/ui-check-box-uncheck.png')}) no-repeat transparent;
+	<c:if test="${c:browser('ie6-')}">
+		background-image: url(${c:encodeURL('~./zss/img/ui-check-box-uncheck.gif')});
+	</c:if>
+}
+
+<c:if test="${c:browser('ie6-')}">
+.zsafp-item-text {
+	margin-left: 22px;
+}
+</c:if>
+
+.zsafp-item-seld .zsafp-item-checkbox {
+	background: url(${c:encodeURL('~./zss/img/ui-check-box.png')}) no-repeat transparent;
+	<c:if test="${c:browser('ie6-')}">
+		background-image: url(${c:encodeURL('~./zss/img/ui-check-box.gif')});
+	</c:if>
+}
+
+.zsafp-item-seld-mix .zsafp-item-checkbox {
+	background: url(${c:encodeURL('~./zss/img/ui-check-box-mix.png')}) no-repeat transparent;
+	<c:if test="${c:browser('ie6-')}">
+		background-image: url(${c:encodeURL('~./zss/img/ui-check-box-mix.gif')});
+	</c:if>
+}
+	
+.zsafp-search-icon {
+	background: url(${c:encodeURL('~./zss/img/magnifier-zoom.png')}) no-repeat transparent;
+	display: inline-block;
+	position: absolute;
+	right: 4px;
+	top: 4px;
+	width: 16px;
+	height: 16px;
+	<c:if test="${c:browser('ie6-')}">
+		background-image: url(${c:encodeURL('~./zss/img/magnifier-zoom.gif')});
+	</c:if>
+}
+
+.zsafp-btns {
+	padding: 10px 12px;
+	position: absolute;
+	right: 0;
+	<c:if test="${c:isExplorer() and not c:browser('ie8')}">
+		width: 150px;
+		height: 50px;
+	</c:if>
+}
+
+.zsafp-btn {
+	cursor: pointer;
+	border-radius: 2px;
+	height: 27px;
+	width: 50px;
+	padding: 0 8px;
+	display: inline-block;
+	<c:if test="${c:isExplorer() and not c:browser('ie8')}">
+		position: absolute;
+	</c:if>
+	border: 1px solid #C7C7C7;
+	margin: 0 8px;
+}
+
+.zsafp-btn-disd {
+	cursor: default;
+	opacity: 0.6;
+	<c:if test="${c:browser('ie')}">
+		filter: alpha(opacity=60);
+	</c:if>
+}
+
+.zsafp-ok-btn {
+	background: url(${c:encodeURL('~./zss/img/tick.png')}) no-repeat 25px 5px #EFEFEF;
+	<c:if test="${c:isExplorer() and not c:browser('ie8')}">
+		left: 0;
+	</c:if>
+	<c:if test="${c:browser('ie6-')}">
+		background-image: url(${c:encodeURL('~./zss/img/tick.gif')});
+	</c:if>
+}
+
+.zsafp-cancel-btn {
+	background: url(${c:encodeURL('~./zss/img/cross.png')}) no-repeat 25px 5px #EFEFEF;
+	<c:if test="${c:isExplorer() and not c:browser('ie8')}">
+		right: 8px;
+	</c:if>
+	<c:if test="${c:browser('ie6-')}">
+		background-image: url(${c:encodeURL('~./zss/img/cross.gif')});
+	</c:if>
 }

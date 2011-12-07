@@ -13,6 +13,7 @@ ZK Spreadsheet 2.2.0
    ZSS-50 ZSS Spreadsheet App shall support insert image dynamically
    ZSS-51 Support API to delete an existing chart in 2007 file format(.xlsx)
    ZSS-54 Chart/Image widget shall be able to move, sizing and delete
+   ZSS-55 Auto filter dialog support search function
   
 *Bug
    ZSS-40 Press Ctrl+V for long time does not work correctly

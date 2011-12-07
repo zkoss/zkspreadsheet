@@ -50,12 +50,12 @@ import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Chart;
+import org.zkoss.poi.ss.usermodel.DataValidation;
+import org.zkoss.poi.ss.usermodel.DataValidation.ErrorStyle;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
-import org.zkoss.poi.ss.usermodel.DataValidation;
-import org.zkoss.poi.ss.usermodel.DataValidation.ErrorStyle;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
 import org.zkoss.poi.ss.util.CellReference;
@@ -101,6 +101,7 @@ import org.zkoss.zss.ui.au.in.CellMouseCommand;
 import org.zkoss.zss.ui.au.in.CellSelectionCommand;
 import org.zkoss.zss.ui.au.in.Command;
 import org.zkoss.zss.ui.au.in.EditboxEditingCommand;
+import org.zkoss.zss.ui.au.in.FilterCommand;
 import org.zkoss.zss.ui.au.in.HeaderCommand;
 import org.zkoss.zss.ui.au.in.HeaderMouseCommand;
 import org.zkoss.zss.ui.au.in.MoveWidgetCommand;
@@ -3986,7 +3987,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			new SelectionChangeCommand(), new HeaderMouseCommand(),
 			new HeaderCommand(), new StartEditingCommand(),
 			new StopEditingCommand(), new EditboxEditingCommand(), 
-			new MoveWidgetCommand(), new WidgetCtrlKeyCommand()};
+			new MoveWidgetCommand(), new WidgetCtrlKeyCommand(), new FilterCommand()};
 
 	// super//
 	/**
