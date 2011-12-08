@@ -41,6 +41,7 @@ import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
@@ -983,10 +984,14 @@ public class RangeImpl implements Range {
 	private Ref copy(Ref srcRef, int srcColCount, int srcRowCount, Range dstRange, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, ChangeInfo info) {
 		if (pasteType == Range.PASTE_COLUMN_WIDTHS) { //ignore transpose in such case when only one srcRef
 			final int lCol = srcRef.getLeftCol();
-			final int rCol = srcRef.getRightCol();
-			for (int j = lCol; j <= rCol; ++j) {
-				final int char256 = _sheet.getColumnWidth(j);
-				dstRange.setColumnWidth(char256);
+			final int colCount = srcRef.getColumnCount();
+			final int dstlCol = dstRange.getColumn();
+			final int dsttRow = dstRange.getRow();
+			final Worksheet sheet = dstRange.getSheet();
+			for (int j = 0; j < colCount; ++j) {
+				final int char256 = _sheet.getColumnWidth(lCol + j);
+				//bug# ZSS-52: Past special, copy column width's behavior doesn't correct
+				new RangeImpl(dsttRow, dstlCol + j, sheet, sheet).setColumnWidth(char256);
 			}
 		}
 		final int dstColCount = transpose ? dstRef.getRowCount() : dstRef.getColumnCount();

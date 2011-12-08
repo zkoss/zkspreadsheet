@@ -29,6 +29,7 @@ import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
 import org.zkoss.zss.model.Areas;
 import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.Worksheet;
 
 /**
  * Class to represent an empty Range.
@@ -114,7 +115,7 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public Sheet getSheet() {
+	public Worksheet getSheet() {
 		return null;
 	}
 

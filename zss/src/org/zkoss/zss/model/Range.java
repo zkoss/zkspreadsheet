@@ -283,10 +283,10 @@ public interface Range {
 	public void setRowHeight(int points);
 
 	/**
-	 * Returns associate sheet of this range.
-	 * @return associate sheet of this range.
+	 * Returns associate {@link Worksheet} of this range.
+	 * @return associate {@link Worksheet} of this range.
 	 */
-	public Sheet getSheet();
+	public Worksheet getSheet();
 	
 	/**
 	 * Return the range that contains the cell specified in row, col (relative to this Range).
