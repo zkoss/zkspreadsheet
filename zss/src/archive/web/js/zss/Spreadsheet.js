@@ -1232,6 +1232,9 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	 */
 	_isFireCellEvt: function (type) {
 		var evtnm = zss.Spreadsheet.CELL_MOUSE_EVENT_NAME[type];
+		if ('onFilter' == evtnm) { //server side prepare auto filter popup information for client side
+			return true;
+		}
 		return evtnm && this.isListen(evtnm, {asapOnly: true});
 	},
 	/**

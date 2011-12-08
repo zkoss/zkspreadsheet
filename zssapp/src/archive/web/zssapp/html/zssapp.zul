@@ -262,6 +262,7 @@
 								src="~./zssapp/image/funnel--arrow.png" />
 						</menupopup>
 					</dropdownbutton>
+<!-- 					<toolbarbutton id="dataValidation" image="~./zssapp/image/application-task.png" tooltiptext="${c:l('dataValidation')}"/> -->
 				<div sclass="toolbarSeparator"></div>
 				<checkbox id="gridlinesCheckbox" tooltiptext="${c:l('gridlines')}" image="~./zssapp/image/grid.png">
 					<attribute w:name="onBind">
