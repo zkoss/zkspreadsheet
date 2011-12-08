@@ -81,7 +81,6 @@ import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.CellMouseEvent;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.Events;
-import org.zkoss.zss.ui.event.FilterMouseEvent;
 import org.zkoss.zss.ui.event.HeaderEvent;
 import org.zkoss.zss.ui.event.HeaderMouseEvent;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
@@ -192,7 +191,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	Dialog _customSortDialog;
 	Dialog _exportToPdfDialog;
 	Dialog _exportToHtmlDialog;
-	Dialog _autoFilterDialog;
 
 	public Spreadsheet getSpreadsheet() {
 		return spreadsheet;
@@ -512,20 +510,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	
 	public void onClick$reapplyFilter() {
 		Ranges.range(spreadsheet.getSelectedSheet()).applyFilter();
-	}
-
-	public void onFilter$spreadsheet(FilterMouseEvent event) {
-		final Worksheet sheet = spreadsheet.getSelectedSheet();
-		final AutoFilter autoFilter = sheet.getAutoFilter();
-		final CellRangeAddress cellRangeAddr = autoFilter.getRangeAddress();
-		final int left = cellRangeAddr.getFirstColumn();
-		final int top = cellRangeAddr.getFirstRow();
-		final int right = cellRangeAddr.getLastColumn();
-		final int bottom = cellRangeAddr.getLastRow();
-		final Range range = 
-			Ranges.range(spreadsheet.getSelectedSheet(), top, left, bottom, right);
-		final int fieldIdx = event.getField();
-		openAutoFilterDialog(new Object[]{fieldIdx, left + fieldIdx - 1, range});
 	}
 	
 	public void onClick$insertHyperlinkBtn() {
@@ -889,8 +873,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 					Messagebox.show("cannot delete all Columns");
 					return;
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 			// TODO undo/redo
@@ -1270,7 +1252,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		try {
 			Messagebox.show("Not implement yet");
 		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -1390,13 +1371,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		if (_exportToPdfDialog == null || _exportToPdfDialog.isInvalidated())
 			_exportToPdfDialog = (Dialog) Executions.createComponents(Consts._ExportToPDF_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
 		_exportToPdfDialog.fireOnOpen(null);
-	}
-	
-	public void openAutoFilterDialog(Object param) {
-		//TODO: If _autoFilterDialog needs cell has client side uuid, then it could use Popup and specify position
-		if (_autoFilterDialog == null || _autoFilterDialog.isInvalidated())
-			_autoFilterDialog = (Dialog) Executions.createComponents(Consts._AutoFilter_zul, mainWin, null);
-		_autoFilterDialog.fireOnOpen(param);
 	}
 		
 	private static boolean hasZssPdf() {

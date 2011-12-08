@@ -62,6 +62,4 @@ public interface WorkbenchCtrl {
 	 * Open rename sheet dialog
 	 */
 	public void openRenameSheetDialog(String originalSheetName);
-	
-	public void openAutoFilterDialog(Object data);
 }
