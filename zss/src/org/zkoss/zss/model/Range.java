@@ -548,9 +548,9 @@ public interface Range {
 	public void deleteChart(Chart chart);
 	
 	/**
-	 * Returns whether the plain text input by the end user is valid or not.
+	 * Returns whether the plain text input by the end user is valid or not;
+	 * note the validation only applies to the left-top cell of this Range.
 	 * @param txt the string input by the end user.
-	 * @param eventQueue event queue to pass ValidationEvent so UI knows what to do.
 	 * @return null if a valid input to the specified range; otherwise, the DataValidation
 	 */
 	public DataValidation validate(String txt);
