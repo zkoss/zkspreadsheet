@@ -764,6 +764,14 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	 * Indicate Ctrl-Paste event key down status
 	 */
 	_ctrlPasteDown: false,
+	/**
+	 * Indicate whether to always open hyperlink in a separate browser tab window; default true.
+	 * <p>If this value is true, Spreadsheet will always open the link in a separate browser tab window.</p>
+	 * <p>If this value is false, Spreadsheet will click to open the link in the same browser tab window; or 
+	 * CTRL-click to open the link in a separate browser tab window.</p>
+	 * @see #linkTo
+	 */
+	_linkToNewTab: true, //ZSS-13: Support Open hyperlink in a separate browser tab window
 	$define: {
 		/**
 		 * synchronized update data
@@ -1595,11 +1603,12 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		//2: LINK_DOCUMENT
 		//3: LINK_EMAIL
 		//4: LINK_FILE
-		if (type == 1 && !evt.ctrlKey) //LINK_URL, no CTRL
-			location.href = href;
-		else if (type == 1 && evt.ctrlKey)//LINK_URL, with CTRL
-			window.open(href);
-		else if (type == 3) //LINK_EMAIL
+		if (type == 1) {
+			if (this._linkToNewTab || evt.ctrlKey) //LINK_URL, always link to new tab window or CTRL-click
+				window.open(href);
+			else //LINK_URL, no CTRL
+				location.href = href;
+		} else if (type == 3) //LINK_EMAIL
 			location.href = href;
 //		else if (type == 4) //LINK_FILE
 			//TODO LINK_FILE

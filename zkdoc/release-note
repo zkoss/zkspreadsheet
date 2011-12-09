@@ -2,6 +2,7 @@
 ZK Spreadsheet 2.2.0
 *Features:
    ZSS-01 Support validation dropdown list
+   ZSS-13 Support Open hyperlink in a separate browser tab window
    ZSS-26 Need css running in zk.wcs not css.dsp
    ZSS-41 Support showing more charts: area, stacked area, scatter, bubble, stacked bar, stacked bar3d in 2007 file format(.xlsx)
    ZSS-44 Support API to add a new chart in 2007 file format(.xlsx)
@@ -17,14 +18,27 @@ ZK Spreadsheet 2.2.0
   
 *Bug
    ZSS-40 Press Ctrl+V for long time does not work correctly
+   ZSS-52: Past special, copy column width's behavior doesn't correct
+   
+* Upgrade Notes
+  + Per the feature ZSS-13, Spreadsheet will always open hyperlink in a separate browser tab window. 
+    If you need to keep the original behavior (click to open hyperlink in the same browser tab window; 
+	CTL-click to open hyperlink in a separate browser tab window), please specify in zk.xml the 
+	following library property to false:
+	<library-property>
+		<name>org.zkoss.zss.ui.Spreadsheet.linkToNewTab</name>
+		<value>false</value>
+	</library-property>
 	
 	------------
 ZK Spreadsheet 2.1.1
 *Features:
 
 *Bug
+   ZSS-25 Cell with hyperlink in Firefox got redundant line
    ZSS-28 Spreadsheet data binding does not work
    ZSS-31 NullPointerException in some application server. ex Domino
+   ZSS-32 xls file set cell style cause exception
    ZSS-33 Nullpointer when change the color of cell
    ZSS-34 cell background color does not show in excel
    ZSS-35 A exported xlsx is not loadable again by Excel or Spreadsheet

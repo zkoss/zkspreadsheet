@@ -1100,12 +1100,23 @@ public class Spreadsheet extends XulElement implements Serializable {
 		return validMap;
 	}
 
+	//ZSS-13: Support Open hyperlink in a separate browser tab window
+	private boolean getLinkToNewTab() {
+		final String linkToNewTab = Library.getProperty("org.zkoss.zss.ui.Spreadsheet.linkToNewTab", "true");
+		return Boolean.valueOf(linkToNewTab);
+	}
+	
 	protected void renderProperties(ContentRenderer renderer) throws IOException {
 		super.renderProperties(renderer);
 		Worksheet sheet = this.getSelectedSheet();
 		if (sheet == null) {
 			return;
 		}
+		//handle link to new browser tab window; default to link to new tab
+		if (!getLinkToNewTab()) {
+			renderer.render("_linkToNewTab", false);
+		}
+		
 		//handle AutoFilter
 		Map afmap = convertAutoFilterToJSON(sheet.getAutoFilter());
 		if (afmap != null) {
