@@ -1026,7 +1026,21 @@ public final class BookHelper {
 		case Cell.CELL_TYPE_FORMULA:
 			return "="+(cell instanceof XSSFCell ? getFormulaString((XSSFCell)cell) : cell.getCellFormula());
 		case Cell.CELL_TYPE_NUMERIC:
-			return NumberToTextConverter.toText(cell.getNumericCellValue());
+			final double val = cell.getNumericCellValue();
+			if (DateUtil.isCellDateFormatted(cell)) { //ZSS-15 edit date cells doesn't work
+				String formatString = null;
+				if (Math.abs(val) < 1) { //time only
+					formatString = "h:mm:ss AM/PM";
+				} else if (isInteger(Double.valueOf(val))) { //date only
+					formatString = "mm/dd/yyyy";
+				} else { //date + time
+					formatString = "mm/dd/yyyy h:mm:ss AM/PM";
+				}
+				final boolean date1904 = ((Book)cell.getSheet().getWorkbook()).isDate1904();
+				return new DataFormatter().formatRawCellContents(val, -1, formatString, date1904);
+			} else {
+				return NumberToTextConverter.toText(val);
+			}
 		case Cell.CELL_TYPE_STRING:
 			return cell.getStringCellValue(); 
 		default:
