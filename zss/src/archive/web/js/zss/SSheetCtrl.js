@@ -1142,8 +1142,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			row = cellpos[0];
 			col = cellpos[1];
 			
-			//try hyperlink
-			if (this.selArea) {
+			//try hyperlink, ZSS-21: Right click on hyperlink should not jump to the link
+			if (type == 'lc' && this.selArea) {
 				this.selArea._tryAndEndHyperlink(row, col, evt);
 			}
 			mdstr = "c_" + row + "_" + col;

@@ -17,13 +17,14 @@ ZK Spreadsheet 2.2.0
    ZSS-55 Auto filter dialog support search function
   
 *Bug
+   ZSS-21 Right click on hyperlink should not jump to the link
    ZSS-40 Press Ctrl+V for long time does not work correctly
-   ZSS-52: Past special, copy column width's behavior doesn't correct
+   ZSS-52 Past special, copy column width's behavior doesn't correct
    
 * Upgrade Notes
   + Per the feature ZSS-13, Spreadsheet will always open hyperlink in a separate browser tab window. 
     If you need to keep the original behavior (click to open hyperlink in the same browser tab window; 
-	CTL-click to open hyperlink in a separate browser tab window), please specify in zk.xml the 
+	CTRL-click to open hyperlink in a separate browser tab window), please specify in zk.xml the 
 	following library property to false:
 	<library-property>
 		<name>org.zkoss.zss.ui.Spreadsheet.linkToNewTab</name>
