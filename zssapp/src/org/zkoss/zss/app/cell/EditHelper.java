@@ -161,6 +161,11 @@ public final class EditHelper {
 					getDefaultPasteType(), 
 					getDefaultPasteOperation(), 
 					false, false);
+			if (rng == null) { //cannot paste
+				ss.setSelection(dstRange);
+				ss.focus();
+				return;
+			}
 			clearHighlightIfNeed(ss);
 			clearCutRangeIfNeed(ss);
 			
@@ -237,6 +242,11 @@ public final class EditHelper {
 					pasteType, 
 					pasteOperation, 
 					skipBlanks, transpose);
+			if (rng == null) { //cannot paste
+				ss.setSelection(dst);
+				ss.focus();
+				return;
+			}
 			clearHighlightIfNeed(ss);
 			clearCutRangeIfNeed(ss);
 			ss.setSelection(new Rect(rng.getColumn(), rng.getRow(), rng.getLastColumn(), rng.getLastRow()));

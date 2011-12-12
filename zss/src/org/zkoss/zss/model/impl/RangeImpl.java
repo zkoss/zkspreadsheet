@@ -833,7 +833,9 @@ public class RangeImpl implements Range {
 			} else {
 				pasteRef = copy(ref1, srcColCount, srcRowCount, dstRange, dstRef, pasteType, pasteOp, skipBlanks, transpose, info);
 			}
-			notifyMergeChange(ref1.getOwnerSheet().getOwnerBook(), info, ref1, SSDataEvent.ON_CONTENTS_CHANGE, SSDataEvent.MOVE_NO);
+			if (pasteRef != null) {
+				notifyMergeChange(ref1.getOwnerSheet().getOwnerBook(), info, ref1, SSDataEvent.ON_CONTENTS_CHANGE, SSDataEvent.MOVE_NO);
+			}
 			return pasteRef;
 		}
 		return null;
@@ -944,10 +946,34 @@ public class RangeImpl implements Range {
 		final int dstColCount = transpose ? srcRowCount * rowRepeat : srcColCount * colRepeat; 
 		final int dstB = dstT + dstRowCount - 1;
 		final int dstR = dstL + dstColCount - 1;
+		
+		//ZSS-22: Shall not allow Copy and Paste operation in a protected spreadsheet
+		final Worksheet dstSheet = BookHelper.getSheet(_sheet, dstRefSheet);
+		if (dstSheet.getProtect()) {
+			for (int r = dstT; r <= dstB; ++r) {
+				final Row row = dstSheet.getRow(r);
+				if (row != null) {
+					for (int c = dstL; c <= dstR; ++c) {
+						final Cell cell = row.getCell(c);
+						if (cell != null) {
+							final CellStyle cs = cell.getCellStyle();
+							if (cs != null && cs.getLocked()) {
+								//protected and locked, return null to indicate no paste ref
+								return null;
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		return new AreaRefImpl(dstT, dstL, dstB, dstR, dstRefSheet);
 	}
 	private Ref copyRefs(boolean sameRow, SortedMap<Integer, Ref> srcRefs, int srcColCount, int srcRowCount, int colRepeat, int rowRepeat, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, ChangeInfo info) {
 		final Ref pasteRef = getPasteRef(srcRowCount, srcColCount, rowRepeat, colRepeat, dstRef, transpose);
+		if (pasteRef == null) {
+			return null;
+		}
 		if (pasteType == Range.PASTE_COLUMN_WIDTHS) {
 			final Integer lastKey = srcRefs.lastKey();
 			final Ref srcRef = srcRefs.get(lastKey);
@@ -983,16 +1009,7 @@ public class RangeImpl implements Range {
 	
 	private Ref copy(Ref srcRef, int srcColCount, int srcRowCount, Range dstRange, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, ChangeInfo info) {
 		if (pasteType == Range.PASTE_COLUMN_WIDTHS) { //ignore transpose in such case when only one srcRef
-			final int lCol = srcRef.getLeftCol();
-			final int colCount = srcRef.getColumnCount();
-			final int dstlCol = dstRange.getColumn();
-			final int dsttRow = dstRange.getRow();
-			final Worksheet sheet = dstRange.getSheet();
-			for (int j = 0; j < colCount; ++j) {
-				final int char256 = _sheet.getColumnWidth(lCol + j);
-				//bug# ZSS-52: Past special, copy column width's behavior doesn't correct
-				new RangeImpl(dsttRow, dstlCol + j, sheet, sheet).setColumnWidth(char256);
-			}
+			transpose = false; //ignore transpose
 		}
 		final int dstColCount = transpose ? dstRef.getRowCount() : dstRef.getColumnCount();
 		final int dstRowCount = transpose ? dstRef.getColumnCount() : dstRef.getRowCount();
@@ -1020,8 +1037,10 @@ public class RangeImpl implements Range {
 			BookHelper.setColumnWidth(dstSheet, dstCol, dstCol, char256);
 		}
 		final Book book = (Book) dstSheet.getWorkbook();
+		//bug# ZSS-52: Past special, copy column width's behavior doesn't correct
+		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
 		final Set<Ref> affected = new HashSet<Ref>();
-		affected.add(dstRef);
+		affected.add(dstRef.isWholeColumn() ? dstRef : new AreaRefImpl(0, dstlCol, maxrow, dstRef.getRightCol(), dstRefSheet));
 		BookHelper.notifySizeChanges(book, affected);
 	}
 	
@@ -1029,6 +1048,9 @@ public class RangeImpl implements Range {
 		final int srcRowCount = srcRef.getRowCount();
 		final int srcColCount = srcRef.getColumnCount();
 		final Ref pasteRef = getPasteRef(srcRowCount, srcColCount, rowRepeat, colRepeat, dstRef, transpose);
+		if (pasteRef == null) {
+			return null;
+		}
 		if (pasteType == Range.PASTE_COLUMN_WIDTHS) {
 			final int srclCol = srcRef.getLeftCol();
 			final Worksheet srcSheet = BookHelper.getSheet(_sheet, srcRef.getOwnerSheet());

@@ -53,6 +53,7 @@ import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.SheetCtrl;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zul.Messagebox;
 
 /**
  * Internal Use Only. Utility class for {@link Spreadsheet}.
@@ -171,7 +172,15 @@ public class Utils {
 	public static Range pasteSpecial(Worksheet srcSheet, Rect srcRect, Worksheet dstSheet, int tRow, int lCol, int bRow, int rCol, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
 		Range rng = Utils.getRange(srcSheet, srcRect.getTop(), srcRect.getLeft(), srcRect.getBottom(), srcRect.getRight());
 		Range dstRange = Utils.getRange(dstSheet, tRow, lCol, bRow, rCol);
-		return rng.pasteSpecial(dstRange, pasteType, pasteOp, skipBlanks, transpose);
+		Range pasteRange = rng.pasteSpecial(dstRange, pasteType, pasteOp, skipBlanks, transpose);
+		if (pasteRange == null) {
+			try {
+				Messagebox.show("The cell that you are trying to change is protected and locked.", "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION);
+			} catch (InterruptedException e) {
+				//ignore
+			}
+		}
+		return pasteRange;
 	}
 
 	/**
@@ -726,7 +735,14 @@ public class Utils {
 	public static void copyCell(Worksheet srcSheet, int srcRow, int srcCol, Worksheet dstSheet, int dstRow, int dstCol) {
 		final Range srcRange = getRange(srcSheet, srcRow, srcCol);
 		final Range dstRange = getRange(dstSheet, dstRow, dstCol);
-		srcRange.copy(dstRange);
+		final Range pasteRange = srcRange.copy(dstRange);
+		if(pasteRange == null) {
+			try {
+				Messagebox.show("The cell that you are trying to change is protected and locked.", "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION);
+			} catch (InterruptedException e) {
+				//ignore
+			}
+		}
 	}
 	
 	public static void copyCell(Cell cell, Worksheet dstSheet, int dstRow, int dstCol) {

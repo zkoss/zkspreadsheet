@@ -19,6 +19,7 @@ ZK Spreadsheet 2.2.0
 *Bug
    ZSS-15 edit date cells doesn't work
    ZSS-21 Right click on hyperlink should not jump to the link
+   ZSS-22 Shall not allow Copy and Paste operation in a protected spreadsheet
    ZSS-40 Press Ctrl+V for long time does not work correctly
    ZSS-52 Past special, copy column width's behavior doesn't correct
    
