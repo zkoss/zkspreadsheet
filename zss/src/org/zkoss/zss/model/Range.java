@@ -554,4 +554,10 @@ public interface Range {
 	 * @return null if a valid input to the specified range; otherwise, the DataValidation
 	 */
 	public DataValidation validate(String txt);
+	
+	/**
+	 * Returns whether any cell is protected and locked in this Range.
+	 * @return true if any cell is protected and locked in this Range.
+	 */
+	public boolean isAnyCellProtected();
 }

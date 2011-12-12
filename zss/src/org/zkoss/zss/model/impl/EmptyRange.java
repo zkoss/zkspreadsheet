@@ -313,4 +313,9 @@ public class EmptyRange implements Range {
 	public DataValidation validate(String txt) {
 		return null;
 	}
+
+	@Override
+	public boolean isAnyCellProtected() {
+		return true;
+	}
 }

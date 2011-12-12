@@ -938,6 +938,41 @@ public class RangeImpl implements Range {
 			dstrCol += srcColCount;
 		}
 	}
+	
+	//Any cell is protecetd and locked
+	public boolean isAnyCellProtected() {
+		final Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
+		if (ref != null) {
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final int left = ref.getLeftCol();
+			final int right = ref.getRightCol();
+			final int top = ref.getTopRow();
+			final int bottom = ref.getBottomRow();
+			
+			//ZSS-22: Shall not allow Copy and Paste operation in a protected spreadsheet
+			final Worksheet sheet = BookHelper.getSheet(_sheet, refSheet);
+			if (sheet.getProtect()) {
+				for (int r = top; r <= bottom; ++r) {
+					final Row row = sheet.getRow(r);
+					if (row != null) {
+						for (int c = left; c <= right; ++c) {
+							final Cell cell = row.getCell(c);
+							if (cell != null) {
+								final CellStyle cs = cell.getCellStyle();
+								if (cs != null && cs.getLocked()) {
+									//as long as one is protected and locked, return true
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+			return false;
+		}
+		return true;
+	}
+	
 	private Ref getPasteRef(int srcRowCount, int srcColCount, int rowRepeat, int colRepeat, Ref dstRef, boolean transpose) {
 		final RefSheet dstRefSheet = dstRef.getOwnerSheet();
 		final int dstT = dstRef.getTopRow();
@@ -949,25 +984,8 @@ public class RangeImpl implements Range {
 		
 		//ZSS-22: Shall not allow Copy and Paste operation in a protected spreadsheet
 		final Worksheet dstSheet = BookHelper.getSheet(_sheet, dstRefSheet);
-		if (dstSheet.getProtect()) {
-			for (int r = dstT; r <= dstB; ++r) {
-				final Row row = dstSheet.getRow(r);
-				if (row != null) {
-					for (int c = dstL; c <= dstR; ++c) {
-						final Cell cell = row.getCell(c);
-						if (cell != null) {
-							final CellStyle cs = cell.getCellStyle();
-							if (cs != null && cs.getLocked()) {
-								//protected and locked, return null to indicate no paste ref
-								return null;
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		return new AreaRefImpl(dstT, dstL, dstB, dstR, dstRefSheet);
+		final Ref pasteRef = new AreaRefImpl(dstT, dstL, dstB, dstR, dstRefSheet);
+		return new RangeImpl(pasteRef, dstSheet).isAnyCellProtected() ? null : pasteRef;
 	}
 	private Ref copyRefs(boolean sameRow, SortedMap<Integer, Ref> srcRefs, int srcColCount, int srcRowCount, int colRepeat, int rowRepeat, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, ChangeInfo info) {
 		final Ref pasteRef = getPasteRef(srcRowCount, srcColCount, rowRepeat, colRepeat, dstRef, transpose);

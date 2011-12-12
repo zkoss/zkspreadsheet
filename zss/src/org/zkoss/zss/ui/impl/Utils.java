@@ -174,13 +174,17 @@ public class Utils {
 		Range dstRange = Utils.getRange(dstSheet, tRow, lCol, bRow, rCol);
 		Range pasteRange = rng.pasteSpecial(dstRange, pasteType, pasteOp, skipBlanks, transpose);
 		if (pasteRange == null) {
-			try {
-				Messagebox.show("The cell that you are trying to change is protected and locked.", "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION);
-			} catch (InterruptedException e) {
-				//ignore
-			}
+			showProtectMessage();
 		}
 		return pasteRange;
+	}
+	
+	private static void showProtectMessage() {
+		try {
+			Messagebox.show("The cell that you are trying to change is protected and locked.", "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION);
+		} catch (InterruptedException e) {
+			//ignore
+		}
 	}
 
 	/**
@@ -737,11 +741,7 @@ public class Utils {
 		final Range dstRange = getRange(dstSheet, dstRow, dstCol);
 		final Range pasteRange = srcRange.copy(dstRange);
 		if(pasteRange == null) {
-			try {
-				Messagebox.show("The cell that you are trying to change is protected and locked.", "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION);
-			} catch (InterruptedException e) {
-				//ignore
-			}
+			showProtectMessage();
 		}
 	}
 	
