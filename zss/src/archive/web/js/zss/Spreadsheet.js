@@ -393,7 +393,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					this.style = style != undefined ? style : '';
 					this.innerStyle = innerStyle != undefined ? innerStyle : '';
 					this.wrap = wrap != undefined ? wrap == 't' : false;
-					this.lock = lock != undefined ? lock : true;
+					//bug ZSS-56: Unlock a cell, protect sheet, cannot double click to edit the cell
+					this.lock = lock != undefined ? lock != 'f' : true;
 					this.halign = halign != undefined ? halign : 'l';
 					this.valign = valign != undefined ? valign : 't';
 					this.rightBorder = rbo != undefined ? rbo == 't' : false;
