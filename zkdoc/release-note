@@ -15,11 +15,14 @@ ZK Spreadsheet 2.2.0
    ZSS-51 Support API to delete an existing chart in 2007 file format(.xlsx)
    ZSS-54 Chart/Image widget shall be able to move, sizing and delete
    ZSS-55 Auto filter dialog support search function
+   ZSS-59 Formula editor support cancel button and apply button
+   ZSS-60 Editing formula support use mouse to select a cell or a selection
   
 *Bug
    ZSS-15 edit date cells doesn't work
    ZSS-21 Right click on hyperlink should not jump to the link
    ZSS-22 Shall not allow Copy and Paste operation in a protected spreadsheet
+   ZSS-29 Formula editor cursor not correctly positioned in different browser when focus changed when composing formula
    ZSS-40 Press Ctrl+V for long time does not work correctly
    ZSS-52 Past special, copy column width's behavior doesn't correct
    ZSS-56 Unlock a cell, protect sheet, cannot double click to edit the cell

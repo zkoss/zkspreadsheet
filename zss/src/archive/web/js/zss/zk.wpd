@@ -10,7 +10,7 @@
 
 Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 -->
-<package name="zss" language="xul/html" depends="zul">
+<package name="zss" language="xul/html" depends="zul,zul.layout, zul.inp">
 	<widget name="Spreadsheet"/>
 	<script src="AreaCtrl.js"/>
 	<script src="AutoScrollCtrl.js"/>
@@ -21,6 +21,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 	<script src="DragHandler.js"/>
 	<script src="Editbox.js"/>
 	<script src="FocusMarkCtrl.js"/>
+	<script src="Formulabar.js"/>
 	<script src="Header.js" />
 	<script src="Highlight.js"/>
 	<script src="Id.js" />

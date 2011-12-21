@@ -30,8 +30,12 @@ var NUM_CELL = 0,
 	BOOLEAN_CELL = 4,
 	ERROR_CELL = 5,
 	Cell = 
-zss.Cell =  zk.$extends(zk.Widget, {
+zss.Cell = zk.$extends(zk.Widget, {
 	widgetName: 'Cell',
+	/**
+	 * Cell reference address
+	 */
+	ref: null,
 	/**
 	 * The data source of the cell
 	 */
@@ -130,12 +134,12 @@ zss.Cell =  zk.$extends(zk.Widget, {
 		this.r = row;
 		this.c = col;
 		this.src = src;
-		var data = src.getRow(row).getCell(col);
 		
-		this.text = data.text ? data.text : '';
+		var	data = src.getRow(row).getCell(col);
+		this.text = data.text || '';
+		this.ref = data.ref;
 		this.edit = data.editText ? data.editText : '';
 		this.hastxt = !!this.text;
-		
 		this.zsw = data.widthId;
 		this.zsh = data.heightId;
 		

@@ -10,6 +10,10 @@
 	border:1px solid #D8D8D8;
 }
 
+.zss-center {
+	background:#A4C3EB;
+}
+
 .zsscroll {
 	top: 0px;
 	position: absolute;
@@ -925,4 +929,143 @@
 	<c:if test="${c:browser('ie6-')}">
 		background-image: url(${c:encodeURL('~./zss/img/cross.gif')});
 	</c:if>
+}
+
+.zsnamebox {
+	width: 100%;
+	position: relative;
+	background: #FFFFFF;
+	border: 1px solid #D8D8D8;
+	border-top: 0;
+	padding-bottom: 1px;
+}
+.zsnamebox-inp {
+	font-size: 14px;
+	border: 0;
+	height: 14px;
+	padding: 5px 4px;
+	text-align: center;
+}
+.zsnamebox-disd .zsnamebox-inp {
+	cursor: default;
+}
+.zsnamebox-icon {
+	background: url(${c:encodeURL('~./zss/img/namebox-arrow.png')}) no-repeat;
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 24px;
+	height: 24px;
+	cursor: pointer;
+	<c:if test="${c:browser('ie6-')}">
+		background-image: url(${c:encodeURL('~./zss/img/namebox-arrow.gif')});
+	</c:if>
+}
+.zsnamebox-disd .zsnamebox-icon {
+	cursor: default;
+	opacity: 0.5;
+	<c:if test="${c:browser('ie')}">
+		filter: alpha(opacity=50);
+	</c:if>
+}
+.zsnamebox-pp {
+	position:absolute;
+	background: #FFFFFF;
+	border: 1px solid #868686;
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+	z-index: 20;
+}
+.zsnamebox-item-over {
+	background: #3399FF;
+	color: #FFFFFF;
+}
+.zsformulabar-blank {
+	width: 100%;
+	height: 100%;
+  	background-color: #FEFEFE;
+  	background-image: -moz-linear-gradient(top, #FEFEFE, #E4ECF7); /* FF3.6 */
+ 	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #FEFEFE),color-stop(1, #E4ECF7)); /* Saf4+, Chrome */
+            filter:  progid:DXImageTransform.Microsoft.gradient(startColorStr='#FEFEFE', EndColorStr='#E4ECF7'); /* IE6,IE7 */
+        -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#FEFEFE', EndColorStr='#E4ECF7')"; /* IE8 */
+}
+
+.zsformulabar-okbtn .z-toolbarbutton-cnt, .zsformulabar-cancelbtn .z-toolbarbutton-cnt {
+	width: 20px;
+	height: 17px;
+	font-size: 14px;
+	text-align: center;
+	padding-top: 0;
+	padding-bottom: 4px;
+	<c:if test="${c:browser('ie')}">
+		padding-top: 1px;
+		padding-bottom: 3px;
+	</c:if>
+	<c:if test="${c:browser('ie6-')}">
+		font-family: Lucida Sans Unicode;
+	</c:if>
+}
+.zsformulabar-formulabtn .z-toolbarbutton-cnt {
+	font-size: 14px;
+	font-style: italic;
+	text-align: center;
+	padding-top: 0;
+	padding-bottom: 4px;
+	<c:if test="${c:browser('ie')}">
+		padding-top: 1px;
+		padding-bottom: 3px;
+	</c:if>
+}
+.zsformulabar-buttons {
+	position: absolute;
+	top: 0;
+	right: -1px;
+	padding-left: 4px;
+	padding-top: 1px;
+	height: 24px;
+	border-bottom: 1px solid #D8D8D8;
+}
+.zsformulabar-west {
+	border-right: 0;
+}
+.zsformulabar-center-cave-colbtn {
+	position: absolute;
+	right: 0;
+	top: 0;
+	height: 100%;
+	padding-top: 1px;
+	border-left: 1px solid #D8D8D8;
+	background: #F5F5F5;
+}
+.zsformulabar-expandbtn-body-over {
+	background: url(${c:encodeURL('~./zss/img/toolbarbtn-ctr.gif')}) 0 -500px;
+}
+.zsformulabar-expandbtn .z-toolbarbutton-cnt {
+	width: 20px;
+	height: 17px;
+	padding: 2px;
+	background: url(${c:encodeURL('~./zss/img/arrow-270-small.png')}) no-repeat 4px 2px transparent;
+	<c:if test="${c:browser('ie6-')}">
+		background-image: url(${c:encodeURL('~./zss/img/arrow-270-small.gif')});
+	</c:if>	
+}
+.zsformulabar-expandbtn-expanded .z-toolbarbutton-cnt {
+	background: url(${c:encodeURL('~./zss/img/arrow-090-small.png')}) no-repeat 4px 2px transparent;
+	<c:if test="${c:browser('ie6-')}">
+		background-image: url(${c:encodeURL('~./zss/img/arrow-090-small.gif')});
+	</c:if>		
+}
+.zsformulabar-editor {
+	border: 1px solid #D8D8D8;
+	border-top: 0;
+	overflow: hidden;
+	margin-top: -1px;
+}
+.zsformulabar-editor-real {
+	border: 0;
+	font-size: 16px;
+	padding: 2px 3px 0 3px;
+	font-family: arial,sans-serif;
+	position: relative;
+	top: 0;
+	left: 0;
 }

@@ -179,6 +179,21 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	}
 	
 	/**
+	 * Returns whether has CSS link in head or not
+	 * 
+	 * @return boolean
+	 */
+	function hasCSS (id) {
+		var head = document.getElementsByTagName("head")[0];
+		for (var n = head.firstChild; n; n = n.nextSibling) {
+			if (n.id == id) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Create a StyleSheet at the end of head node
 	 * @param {String} cssText the default style css text.
 	 * @param {String} id the id of this style sheet, null-able, you must assign the id if you want to remove it later.
@@ -276,6 +291,10 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			 */
 			//c
 			/**
+			 * Cell reference address 
+			 */
+			//ref
+			/**
 			 * Cell type
 			 */
 			//cellType,
@@ -367,6 +386,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					upStyle = (upAll || type == ATTR_STYLE),
 					upSize = (upAll || type == ATTR_SIZE),
 					upMerge = (upAll || type == ATTR_MERGE);
+				this.ref = v.ref;
 				if (upText) {
 					var cellType = v.ct,
 						mergedText = v.meft;
@@ -500,6 +520,12 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 	function newCachedRange(v) {
 		var range = {
+			/**
+			 * Cell reference address
+			 * 
+			 * Keep track created {@link zss.Cell} references
+			 */
+			cellRefs: {},
 			topFrozen: null,
 			leftFrozen: null,
 			rows: {},
@@ -760,7 +786,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  * Spreadsheet is a is a rich ZK Component to handle EXCEL like behavior
  */
 var Spreadsheet =
-zss.Spreadsheet = zk.$extends(zul.Widget, {
+zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 	/**
 	 * Indicate Ctrl-Paste event key down status
 	 */
@@ -773,6 +799,10 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	 * @see #linkTo
 	 */
 	_linkToNewTab: true, //ZSS-13: Support Open hyperlink in a separate browser tab window
+	$init: function () {
+		this.$supers(Spreadsheet, '$init', arguments);
+		this.appendChild(new zul.layout.Center({'sclass': 'zss-center'}), true);
+	},
 	$define: {
 		/**
 		 * synchronized update data
@@ -1019,6 +1049,22 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		 * TODO avoid use invalidate
 		 */
 		columnHeadHidden: null,
+		/**
+		 * Sets whether show formula bar or not
+		 * @param boolean show true to show formula bar
+		 */
+		/**
+		 * Returns whether show formula bar
+		 * @return boolean
+		 */
+		showFormulabar: function (show) {
+			var w = this._formulabar;
+			if (!w && show) {
+				this.appendChild(this._formulabar = new zss.Formulabar());
+			} else if (w) {
+				w.setVisible(show);
+			}
+		},
 		copysrc: null //flag to show whether a copy source has set
 	},
 	_activeRange: null,
@@ -1029,7 +1075,7 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		var ar = this._activeRange;
 		if (!ar) {
 			this._activeRange = ar = newCachedRange(v);
-			this.appendChild(this.sheetCtrl = new zss.SSheetCtrl());
+			this.center.appendChild(this.sheetCtrl = new zss.SSheetCtrl());
 		} else {
 			var sheet = this.sheetCtrl,
 				range;
@@ -1038,6 +1084,13 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 				this._triggerContentsChanged = true;
 			}
 		}
+	},
+	appendChild: function (child, ignoreDom) {
+		if (!child.getPosition) {
+			//Ghost widget needs a fake getPosition function
+			child.getPosition = function () {return '';};
+		}
+		this.$supers(Spreadsheet, 'appendChild', arguments);
 	},
 	/**
 	 * Synchronize widgets position to cell
@@ -1170,6 +1223,12 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			}, 0);
 		} else if (this.sheetCtrl)
 			this.sheetCtrl.dp.gainFocus(trigger);
+	},
+	/**
+	 * Returns whether child DOM Element has focus or not
+	 */
+	hasFocus: function () {
+		return jq.isAncestor(this.$n(), document.activeElement);
 	},
 	/**
 	 * Add editor focus
@@ -1359,6 +1418,10 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 	_initControl: function () {
 		if (this.getSheetId() == null) //no sheet at all
 			return;
+		var cssId = this.uuid + "-sheet";
+		if (!hasCSS(cssId)) { //unbind may remove css, need to check again
+			zk.loadCSS(this._scss, cssId);
+		}
 		this._initMaxColumn();
 		this._initMaxRow();
 		this._initFrozenArea();
@@ -1371,10 +1434,10 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		_calScrollWidth();
 		this.$supers('bind_', arguments);
 		this._initControl();
-		zWatch.listen({onShow: this, onSize: this, onResponse: this});
+		zWatch.listen({onResponse: this});
 	},
 	unbind_: function () {
-		zWatch.unlisten({onShow: this, onSize: this, onResponse: this});
+		zWatch.unlisten({onResponse: this});
 		
 		var r = this._activeRange;
 		if (r) {
@@ -1393,75 +1456,8 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 			delete this._triggerContentsChanged;
 		}
 	},
-	onShow: _zkf = function () {
-		var sheet = this.sheetCtrl;
-		if (!sheet || !sheet._initiated) return;
-
-		sheet._resize();
-	},/*
-	onHide: function () {
-		//zssd("onHide:" + this.$n());
-	},*/
-	onSize: _zkf,
 	domClass_: function (no) {
 		return 'zssheet';
-	},
-	/**
-	 * To do, don't use html attr. replace with widget function
-	 */
-	domAttrs_: function (no) {
-		var attrs = this.$supers('domAttrs_', arguments) + ' z.type="zss.ss.SSheet" zs.t="SSheet"',
-			rowHeight = this._rowHeight,
-			colWidth = this._columnWidth,
-			toph = this._topPanelHeight,
-			leftw = this._leftPanelWidth,
-			cellpad = this._cellPadding,
-			css = this._scss,
-			maxCol = this.getMaxColumn(),
-			maxRow = this.getMaxRow(),
-			id = this._sheetId,
-			focusRect = this._focusRect,
-			selRect = this._selectionRect,
-			highLightRect = this._highLightRect,
-			merge = this._mergeRange,
-			colFreeze = this.getColumnFreeze(),
-			rowFreeze = this.getRowFreeze();
-		
-		if (rowHeight)
-			attrs += ' z.rowh="' + rowHeight + '"';
-		if (colWidth)
-			attrs += ' z.colw="' + colWidth + '"';
-		if (toph)
-			attrs += ' z.toph="' + toph + '"';
-		if (leftw)
-			attrs += ' z.leftw="' + leftw + '"';
-		if (cellpad)
-			attrs += ' z.cellpad="' + cellpad + '"';
-		if (css)
-			attrs += ' z.scss="' + css + '"';
-		if (maxCol)
-			attrs += ' z.maxc="' + maxCol + '"';
-		if (maxRow)
-			attrs += ' z.maxr="' + maxRow + '"';
-		if (id)
-			attrs += ' z.sheetId="' + id + '"';
-		if (focusRect)
-			attrs += ' z.fs="' + focusRect + '"';
-		if (selRect)
-			attrs += ' z.sel="' + selRect + '"';
-		if (highLightRect)
-			attrs += ' z.hl="' + highLightRect + '"';
-		if (this._csc)
-			attrs += ' z.csc="' + this._csc + '"';
-		if (this._csr)
-			attrs += ' z.csr="' + this._csr + '"';
-		if (merge)
-			attrs += ' z.mers="' + merge + '"';
-		if (colFreeze)
-			attrs += ' z.fzc="' + colFreeze + '"';
-		if (rowFreeze)
-			attrs += ' z.fzr="' + rowFreeze + '"';
-		return attrs;
 	},
 	_doDataPanelBlur: function (evt) {
 		var sheet = this.sheetCtrl;
@@ -1476,31 +1472,6 @@ zss.Spreadsheet = zk.$extends(zul.Widget, {
 		var sheet = this.sheetCtrl;
 		if (sheet.state < zss.SSheetCtrl.FOCUSED)
 			sheet.dp.gainFocus(false);
-	},
-	_doEditboxBlur: function (evt) {
-		var sheet = this.sheetCtrl,
-			dp =  sheet.dp;
-		if (dp)
-			dp.stopEditing(sheet.innerClicking > 0 ? "refocus" : "lostfocus");
-	},
-	_doEditboxKeyPress: function (evt) {
-		var editor = this.sheetCtrl.editor;
-		if (editor)
-			editor.autoAdjust(evt);
-	},
-	_doEditboxKeyDown: function (evt) {
-		var editor = this.sheetCtrl.editor;
-		if (editor) {
-			if (editor.disabled)
-				evt.stop();
-			else
-				editor._doKeydown(evt);
-		}
-	},
-	_doEditboxKeyUp: function (evt) {
-		var editor = this.sheetCtrl.editor;
-		if (editor)
-			editor._doKeyup(evt);
 	},
 	_doSelAreaMouseMove: function (evt) {
 		var sel = this.sheetCtrl.selArea;

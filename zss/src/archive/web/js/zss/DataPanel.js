@@ -106,8 +106,12 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	},
 	/**
 	 * Start editing on cell
+	 * 
+	 * @param evt
+	 * @param val
+	 * @param type editing type. Either 'inlineEditing' or 'formulabarEditing'
 	 */
-	startEditing: function (evt, val) {
+	startEditing: function (evt, val, type) {
 		var sheet = this.sheet;
 		if (sheet.config.readonly) 
 			return false;
@@ -115,6 +119,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		var pos = sheet.getLastFocus(),
 			row = pos.row,
 			col = pos.column,
+			type = type || 'inlineEditing',
 			cell = sheet.getCell(row, col);
 		if (this._wgt.isProtect() && cell && cell.isLocked()) {
 			sheet.showInfo("Can not edit on a protected cell.", true);
@@ -126,20 +131,25 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			return false;	
 		}
 		if (!val) val = null;
+		sheet.state = zss.SSheetCtrl.START_EDIT;
 		
 		//bug, if I use loadCell and didn't add a call back function to scroll to loaded block
 		//when after loadCell, it always invoke loadForVisible , then UI will invoke a loadForVisible 
 		//depends on current UI range. so UI moveFocus instead.
 		//sheet.activeBlock.loadCell(row,col,5,null);
-		sheet.dp.moveFocus(row, col, true, true);
+		if ('inlineEditing' == type) {
+			sheet.dp.moveFocus(row, col, true, true);
+		} else { //open inline editor without focus	
+			this._openEditbox(null, true); 
+		}
 		
-		sheet.state = zss.SSheetCtrl.START_EDIT;
+		sheet.fire('onStartEditing', {row: row, col: col, value: val});
 		sheet._wgt.fire('onStartEditing',
-				{token: "", sheetId: sheet.serverSheetId, row: row, col: col, clienttxt: val}, null, 25);
+				{token: "", sheetId: sheet.serverSheetId, row: row, col: col, clienttxt: val, type: type}, null, 25);
 		return true;
 	},
 	//feature#161: Support copy&paste from clipboard to a cell
-	_speedCopy: function (value) { 
+	_speedCopy: function (value, type) { 
 		var sheet = this.sheet,
 			pos = sheet.getLastFocus(),
 			top = pos.row,
@@ -150,7 +160,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			rlen = rows.length,
 			bottom = top + rlen - 1,
 			vals = [],
-			val = null;
+			val = null,
+			type = type || 'inlineEditing';
 		for(var r = 0; r < rlen; ++r) {
 			var row = rows[r],
 				cols = row.split('\t'),
@@ -177,17 +188,17 @@ zss.DataPanel = zk.$extends(zk.Object, {
 				if (sheet.state != zss.SSheetCtrl.START_EDIT) {
 					sheet.state = zss.SSheetCtrl.START_EDIT;
 					sheet._wgt.fire('onStartEditing',
-							{token: "", sheetId: sheet.serverSheetId, row: ri, col: ci, clienttxt: val}, null, 25);
+							{token: "", sheetId: sheet.serverSheetId, row: ri, col: ci, clienttxt: val, type: type}, null, 25);
 				}
 				sheet.state = zss.SSheetCtrl.FOCUSED;
 				sheet._wgt.fire('onStopEditing',
-						{token: "", sheetId: sheet.serverSheetId, row: ri, col: ci, value: val}, {toServer: true}, 25);
+						{token: "", sheetId: sheet.serverSheetId, row: ri, col: ci, value: val, type: type}, {toServer: true}, 25);
 			}
 		}
 		return {left:left,top:top,right:right,bottom:bottom};
 	},
 	//bug #117 Barcode Scanner data incomplete
-	_speedInput: function (value) {
+	_speedInput: function (value, type) {
 		var sheet = this.sheet,
 			pos = sheet.getLastFocus(),
 			top = pos.row,
@@ -195,7 +206,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			ri = top,
 			ci = left,
 			rows = value.split(zkS._enterChar),
-			val = '';
+			val = '',
+			type = type || 'inlineEditing';
 		for(var r = 0, rlen = rows.length; r < rlen; ++r) {
 			var row = rows[r],
 				cols = row.split('\t');
@@ -209,11 +221,11 @@ zss.DataPanel = zk.$extends(zk.Object, {
 				if (sheet.state != zss.SSheetCtrl.START_EDIT) {
 					sheet.state = zss.SSheetCtrl.START_EDIT;
 					sheet._wgt.fire('onStartEditing',
-							{token: "", sheetId: sheet.serverSheetId, row: ri, col: ci, clienttxt: val}, null, 25);
+							{token: "", sheetId: sheet.serverSheetId, row: ri, col: ci, clienttxt: val, type: type}, null, 25);
 				}
 				sheet.state = zss.SSheetCtrl.FOCUSED;
 				sheet._wgt.fire('onStopEditing',
-						{token: "", sheetId: sheet.serverSheetId, row: ri, col: ci, value: val}, {toServer: true}, 25);
+						{token: "", sheetId: sheet.serverSheetId, row: ri, col: ci, value: val, type: type}, {toServer: true}, 25);
 			}
 		}
 		if (left != ci || top != ri) //shall move focus
@@ -227,78 +239,107 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			this._openEditbox(val);
 		}
 	},
-	//@param value to start editing
-	//@param server boolean whether the value come from server 
+	/**
+	 * Start editing using inline editor
+	 * 
+	 * @param value to start editing
+	 * @param server boolean whether the value come from server
+	 */
 	_startEditing: function (value, server) {
 		var sheet = this.sheet,
 			cell = sheet.getFocusedCell();
 
 		//bug #117 Barcode Scanner data incomplete
 		if (cell != null) {
-			var editor = sheet.editor;
-			if( sheet.state == zss.SSheetCtrl.START_EDIT) {
+			var editor = sheet.inlineEditor;
+			if(sheet.state == zss.SSheetCtrl.START_EDIT) {
 				if (!server)
 					value = sheet._clienttxt;
 				sheet._clienttxt = '';
 				this._speedInput(value);
+				editor._startEditing();
 			} else if (server && sheet.state == zss.SSheetCtrl.EDITING && editor.comp.value != value) {
-				var pos = sheet.getLastFocus();
-				editor.edit(cell.comp, pos.row, pos.column, value);
-			}
+				var p = sheet.getLastFocus();
+				editor.edit(cell.comp, p.row, p.column, value);
+			}	
 		}
 	},
+	/**
+	 * Retry editing using inline editor
+	 */
 	retryEditing: function (val) {
-		var sheet = this.sheet,
-			editor = sheet.editor;
 		this.startEditing(null, val);
 		this._openEditbox(val);
 	},
-	//open editbox
-	_openEditbox: function (initval) {
+	/**
+	 * Open inline editor
+	 * 
+	 * @param string initval the value of editor
+	 * @param boolean noFocus whether focus on inline editor or not
+	 */
+	_openEditbox: function (initval, noFocus) {
 		var sheet = this.sheet,
 			cell = sheet.getFocusedCell();
 			
 		if (cell != null) {
 			if( sheet.state == zss.SSheetCtrl.START_EDIT) {
-				var editor = sheet.editor,
+				var editor = sheet.inlineEditor,
 					pos = sheet.getLastFocus(),
-					value = initval != null ? initval : cell.edit;
-				editor.edit(cell.comp, pos.row, pos.column, value ? value : '');
+					value = initval || cell.edit;
+				editor.edit(cell.comp, pos.row, pos.column, value ? value : '', noFocus);
 				sheet.state = zss.SSheetCtrl.EDITING;
 			}
 		}
 	},
-		
+	/**
+	 * Returns the editor
+	 * 
+	 * @param string editing type. Either 'inlineEditing' or 'formulabarEditing'
+	 */
+	getEditor: function (type) {
+		var sheet = this.sheet;
+		if (type) {
+			return type == 'inlineEditing' ? sheet.inlineEditor : sheet.formulabarEditor;
+		} else {
+			return sheet.inlineEditor.isEditing() ? sheet.inlineEditor : sheet.formulabarEditor;
+		}
+	},
 	/**
 	 * Cancel editing on cell
 	 */
-	cancelEditing: function () {
+	cancelEditing: function (type) {
 		var sheet = this.sheet;
-
 		if (sheet.state >= zss.SSheetCtrl.FOCUSED) {
-			var editor = sheet.editor;
-			editor.cancel();
+			this.getEditor(type).cancel();
 			sheet.state = zss.SSheetCtrl.FOCUSED;
 			this.reFocus(true);
 		}
 	},
 	/**
 	 * Stop editing on cell
+	 * 
+	 * @param string type the action type (move cell focus, lost cell focus etc..) after stop editing
 	 */
 	stopEditing: function (type) {
-		var sheet = this.sheet;
+		var sheet = this.sheet,
+			inlineEditing = sheet.inlineEditor.isEditing(),
+			editingType = inlineEditing ? 'inlineEditing' : 'formulabarEditing';
 		if (sheet.state == zss.SSheetCtrl.EDITING) {
 
 			sheet.state = zss.SSheetCtrl.STOP_EDIT;
 
-			var editor = this.sheet.editor;
-			editor.disable(true);
-			var row = editor.row,
-				col = editor.col,
-				value = editor.currentValue(),
-				cell = sheet.getCell(row, col),
+			var data = this._wgt._activeRange,
+				editor = inlineEditing ? this.sheet.inlineEditor : this.sheet.formulabarEditor,
+				edit = null;
+			if (editor) {
+				editor.disable(true);
+				var row = editor.row,
+					col = editor.col,
+					value = editor.getValue(),
+					cell = sheet.getCell(row, col),
 				edit = cell ? cell.edit : null;
-			
+			}
+
 			if (edit != value) { //has to send back to server
 				var token = "";
 				if (type == "movedown") {//move down after aysnchronized call back
@@ -334,11 +375,12 @@ zss.DataPanel = zk.$extends(zk.Object, {
 						sheet.dp._doFocusLost();
 					});
 				}
-	
-				//zkau.send({uuid: this.sheetid, cmd: "onZSSStopEditing", data: [token,sheet.serverSheetId,row,col,value]},25/*zkau.asapTimeout(cmp, "onOpen")*/);
+				
+				sheet.fire('onStopEditing', {row: row, col: col, value: value});
 				sheet._wgt.fire('onStopEditing', 
-						{token: token, sheetId: sheet.serverSheetId, row: row, col: col, value: value}, {toServer: true}, 25);
+						{token: token, sheetId: sheet.serverSheetId, row: row, col: col, value: value, type: editingType}, {toServer: true}, 25);
 			} else {
+				sheet.fire('onStopEditing', {row: row, col: col, value: value});
 				this._stopEditing();
 				if (type == "movedown") {//move down
 					if (sheet.invalid) return;
@@ -363,10 +405,14 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			}
 		}
 	},
+	/**
+	 * Stop inline editing
+	 */
 	_stopEditing: function () {
 		var sheet = this.sheet;
-		if (sheet.state == zss.SSheetCtrl.STOP_EDIT)
-			var editor = this.sheet.editor.stop();
+		if (sheet.state == zss.SSheetCtrl.STOP_EDIT) {
+			sheet.inlineEditor.stop();
+		}
 	},
 	/* move focus to a cell, this method will do - 
 	* 1. stop editing, 
@@ -382,10 +428,21 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	* @param {boolean} noslevt don't send onCellSelection Event to server side
 	*/
 	moveFocus: function(row, col, scroll, selection, noevt, noslevt) {
-		
-		this.stopEditing("refocus");
-		var sheet = this.sheet,
-			fzr = sheet.frozenRow,
+		var sheet = this.sheet;
+		if (sheet && !sheet.editingFormulaInfo) {
+			this.stopEditing("refocus");
+		} else { //when editing formula, always set focus back to editor
+			
+			var sf = this;
+			setTimeout(function () {
+				var info = sheet.editingFormulaInfo;
+				if (info) {
+					info.moveCell = true;
+					sf.getEditor(info.type).focus();
+				}
+			});
+		}
+		var fzr = sheet.frozenRow,
 			fzc = sheet.frozenCol,
 			local = this,
 			fn = function () {
@@ -431,7 +488,6 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	},
 	/* re-focus current cell , and stop editing*/
 	reFocus: function (scroll) {
-		
 		var pos = this.sheet.getLastFocus();
 		this.moveFocus(pos.row, pos.column, scroll, true);
 	},
@@ -471,7 +527,6 @@ zss.DataPanel = zk.$extends(zk.Object, {
 				focustag.focus();
 				jq(focustag).select();
 			}, 0);
-			this.sheet.fire('onFocused', {row: row, col: col});
 		}
 	},
 	/* process focus lost */

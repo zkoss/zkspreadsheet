@@ -78,7 +78,10 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  *  Sheet events
  *  <ul>
  *  	<li>onContentsChanged</li>
- *  	<li>onFocused</li>
+ *  	<li>onFocused: fire when sheet has focus (cell, widget etc...)</li>
+ *  	<li>onCellSelection</li>
+ *  	<li>onStartEditing</li>
+ *  	<li>onStopEditing</li>
  *  </ul>
  *  
  */
@@ -86,9 +89,20 @@ var SheetCtrl =
 zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	widgetName: 'SSheetCtrl',
 	$o: zk.$void, //no need to invoke _addIdSpaceDown, no fellows relationship
+	/**
+	 * Editing formula info
+	 * 
+	 * <ul>
+	 * 	<li>start: the start index position in formula string, for insert cell address reference</li>
+	 * 	<li>end: the end index position in formula string, for insert cell address reference</li>
+	 * 	<li>type: either 'inlineEditiong' or 'formulabarEditing'</li>
+	 *  <li>moveCell: boolean indicate whether key event shall move cell or not</li>
+	 * </ul>
+	 */
+	editingFormulaInfo: null,
 	afterParentChanged_: function () { //all attributes set when afterParentChanged_
 		var self = this,
-			wgt = this._wgt = this.parent;
+			wgt = this._wgt = this.parent.parent; //zul.layout.Center -> zss.Spreadsheet
 		this.sheetid = wgt.uuid;
 		
 		//current server sheet index
@@ -166,7 +180,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			array = [];
 		if (mers && mers != "") {
 			mers = mers.split(";");
-			var size  = mers.length,
+			var size = mers.length,
 				r;
 			for (var i = 0; i < size; i++) {
 				r = mers[i].split(",");
@@ -183,6 +197,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		
 		var sheet = this,
 			ar = wgt._activeRange;
+		this.appendChild(this.inlineEditor = new zss.Editbox(sheet));
 		if (ar) {
 			var	rows = ar.rows,
 				rect = ar.rect,
@@ -207,7 +222,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	$init: function () {
 		this.$supers(zss.SSheetCtrl, '$init', arguments);
-		
+		this.setHflex(true);
+		this.setVflex(true);
 		this.pageKeySize = 100;
 		this._initiated = false;
 		
@@ -226,21 +242,20 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 
 		this.config = new zss.Configuration();
 	},
+	setFlexSize_: function(sz, isFlexMin) {
+		var r = this.$supers(zss.SSheetCtrl, 'setFlexSize_', arguments);
+		this._resize();
+		return r;
+	},
 	bind_: function (desktop, skipper, after) {
 		this.$supers(SheetCtrl, 'bind_', arguments);
 		this.listen({onContentsChanged: this});
 		
 		zss.SSheetCtrl._initInnerComp(this, this._wgt._autoFilter ? this._wgt._autoFilter.range.top : null);
 		var wgt = this._wgt,
-			n = this.comp = wgt.$n(),
+			n = this.comp = this.$n(),
 			self = n.ctrl = this;
 		zss.Spreadsheet.initLaterAfterCssReady(self);
-		
-		if (zk(wgt).isRealVisible()) {
-			this.insertSSInitLater(function () {
-				self._fixSize();//fix size and scroll after initial.
-			});
-		}
 	},
 	unbind_: function () { 
 		this.unlisten({onContentsChanged: this});
@@ -262,13 +277,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		
 		this.sinfo.cleanup();
 		this.info.cleanup();
-		this.editor.cleanup();
 		this.focusMark.cleanup();
 		this.selArea.cleanup();
 		this.selChgArea.cleanup();
 		this.hlArea.cleanup();
 		this.sp = this.dp = this.tp = this.lp = this.cp = this.sinfo = this.info = 
-		this.editor = this.focusMark = this.selArea = this.selChgArea = this.hlArea = null;
+		this.inlineEditor = this.focusMark = this.selArea = this.selChgArea = this.hlArea = null;
 		
 		this.custTHSize = this.custLHSize = this._initLaterQ =
 		this._lastmdelm = this._lastmdstr = null;
@@ -443,24 +457,24 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 			break;
 		case "startedit":
-			var dp = this.dp;
-			if (!this.dp._moveFocus(row, col, true, true)) {
-				//TODO, if cell not initial, i should skip or put to delay batch? 
-				break;
+			var editType = result.et,
+				dp = this.dp;
+			if ('inlineEditing' == editType) {
+				if (!dp._moveFocus(row, col, true, true)) {
+					//TODO, if cell not initial, i should skip or put to delay batch? 
+					break;
+				}
 			}
-			dp._startEditing(value, server);
+			dp._startEditing(value, server, editType);
 			break;
 		case "stopedit":
-			var dp = this.dp;
-			dp._stopEditing(value);
+			this.dp._stopEditing();
 			break;
 		case "canceledit":
-			var dp = this.dp;
-			dp.cancelEditing();
+			this.dp.cancelEditing(result.et);
 			break;
 		case "retryedit":
-			var dp = this.dp;
-			dp.retryEditing(value);
+			this.dp.retryEditing(value);
 			break;
 		}
 	},
@@ -815,7 +829,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			return;
 		} else
 			this._nfdown = false;
-
 		if (!_isEvtButton(evt, "lr"))
 			return;
 		
@@ -1220,14 +1233,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}
 	},
 	_enterEditing: function(evt) {
-		var pos = this.getLastFocus(),
-			row = pos.row,
-			col = pos.column,
-			cell = this.getCell(row, col);
-		this.dp.startEditing(evt, cell.edit);
+		var p = this.getLastFocus();
+		this.dp.startEditing(evt, this.getCell(p.row, p.column).edit);
 		this.dp._openEditbox();
 	},
-	_doKeydown: function(evt) {
+	_doKeydown: function(evt, editor) {
 		this._skipress = false;
 		//wait async event, skip
 		//handle spreadsheet common keydown event
@@ -1248,22 +1258,26 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			evt.stop();
 			break;
 		case 35: //End
-			if(this.state != zss.SSheetCtrl.FOCUSED) break; //editing
+			var info = this.editingFormulaInfo;
+			if((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break; //editing
 			this.dp.moveEnd(evt);
 			evt.stop();
 			break;
 		case 36: //Home
-			if(this.state != zss.SSheetCtrl.FOCUSED) break;//editing
+			var info = this.editingFormulaInfo;
+			if((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break;//editing
 			this.dp.moveHome(evt);
 			evt.stop();
 			break;
 		case 37: //Left
-			if(this.state != zss.SSheetCtrl.FOCUSED) break;//editing
+			var info = this.editingFormulaInfo;
+			if((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break;//editing
 			this.dp.moveLeft(evt);
 			evt.stop();
 			break;
 		case 38: //Up
-			if(this.state != zss.SSheetCtrl.FOCUSED) break;//editing
+			var info = this.editingFormulaInfo;
+			if((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break;//editing
 			this.dp.moveUp(evt);
 			evt.stop();
 			break;
@@ -1271,7 +1285,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			if (this.state == zss.SSheetCtrl.EDITING){
 				if (evt.altKey || evt.ctrlKey)
 					break;
-
 				this.dp.stopEditing(evt.shiftKey ? "moveleft" : "moveright");//invoke move right after stopEdit
 				evt.stop();
 				break;
@@ -1285,12 +1298,14 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 			break;
 		case 39: //Right
-			if (this.state != zss.SSheetCtrl.FOCUSED) break;//editing
+			var info = this.editingFormulaInfo;
+			if ((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break;//editing
 			this.dp.moveRight(evt);
 			evt.stop();
 			break;
 		case 40: //Down
-			if (this.state != zss.SSheetCtrl.FOCUSED) break;//editing
+			var info = this.editingFormulaInfo;
+			if ((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break;//editing
 			this.dp.moveDown(evt);
 			evt.stop();
 			break;
@@ -1302,7 +1317,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		case 13://Enter
 			if (this.state == zss.SSheetCtrl.EDITING){
 				if(evt.altKey || evt.ctrlKey){
-					this.editor.newLine();
+					this.dp.getEditor().newLine();
 					evt.stop();
 					break;
 				}
@@ -1824,6 +1839,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}
 		
 		var selRange = new zss.Range(left, top, right, bottom);
+		this.fire('onCellSelection', {left: left, top: top, right: right, bottom: bottom});
 		this.selArea.relocate(selRange);
 		
 		if (show) {
@@ -1959,8 +1975,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	 * Sets cell's focus mark
 	 * @param int row row index
 	 * @param int col column index
+	 * @param boolean noEvt indicate whether shall fire onFocused or not
 	 */
-	moveCellFocus: function (row, col) {
+	moveCellFocus: function (row, col, noEvt) {
 		var show = !(this.state == zss.SSheetCtrl.NOFOCUS),
 			cell = this.getCell(row, col);
 		if (cell && cell.merl < col) {//check if a merged cell
@@ -1968,6 +1985,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			row = cell.mert;
 		}
 		this.focusMark.relocate(row, col);
+		if (!noEvt) {
+			this.fire('onFocused', {row: row, col: col});
+		}
 		if (show)
 			this.focusMark.showMark();
 		if (this.tp.focusMark) {
@@ -2299,14 +2319,20 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			fzc = this.frozenCol,
 			cell = null;
 		
-		if (row <= fzr && col <= fzc)
-			cell = this.cp.block.getCell(row, col); //corner
-		else if(fzr > 0 && row <= fzr) 
-			cell = this.tp.block.getCell(row, col); //top panel
-		else if(fzc > 0 && col <= fzc) 
-			cell = this.lp.block.getCell(row, col); //left panel.
-		else 
+		if (row <= fzr && col <= fzc) { //corner
+			var cp = this.cp;
+			cell = cp && cp.block ? cp.block.getCell(row, col) : null
+		}
+		else if(fzr > 0 && row <= fzr) {
+			var tp = this.tp;
+			cell = tp && tp.block ? tp.block.getCell(row, col) : null; //top panel
+		}
+		else if(fzc > 0 && col <= fzc)  {
+			var lp = this.lp;
+			cell = lp && lp.block ? lp.block.getCell(row, col) : null; //left panel.
+		} else {
 			cell = this.activeBlock.getCell(row, col); //data panel
+		} 
 		return cell;
 	},
 	/**
@@ -2495,7 +2521,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			sheet.selArea = new zss.SelAreaCtrl(sheet, sheet.selareacmp, sheet.initparm.selrange.clone());
 			sheet.selChgArea = new zss.SelChgCtrl(sheet, sheet.selchgcmp);
 			sheet.hlArea = new zss.Highlight(sheet, sheet.hlcmp,sheet.initparm.hlrange.clone(), "inner");
-			sheet.editor = new zss.Editbox(sheet);
+			//sheet.inlineEditor = new zss.Editbox(sheet);
 		} else {
 			//error
 			//zk.log('error to parse component');

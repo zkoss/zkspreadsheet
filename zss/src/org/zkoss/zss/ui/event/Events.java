@@ -129,4 +129,10 @@ public class Events {
 	 * Sent when user click on the hyperlink of a cell.
 	 */
 	public static final String ON_HYPERLINK = "onHyperlink";
+	
+	/**
+	 * The onInsertFormula event (used with {@link Event})
+	 * Sent when user click on the insert formula button 
+	 */
+	public static final String ON_INSERT_FORMULA = "onInsertFormula";
 }
