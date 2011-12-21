@@ -23,7 +23,6 @@ import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
-import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -35,7 +34,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.KeyEvent;
-import org.zkoss.zk.ui.event.SizeEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.cell.CellHelper;
@@ -53,7 +51,6 @@ import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.EditMenu;
 import org.zkoss.zss.app.zul.FileMenu;
 import org.zkoss.zss.app.zul.FormatMenu;
-import org.zkoss.zss.app.zul.FormulaEditor;
 import org.zkoss.zss.app.zul.InsertMenu;
 import org.zkoss.zss.app.zul.RowHeaderMenupopup;
 import org.zkoss.zss.app.zul.Sheets;
@@ -89,12 +86,10 @@ import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.North;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
 
@@ -165,18 +160,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	Checkbox protectSheet;
 	CellMenupopup cellMenupopup;
 	
-	/* Formula bar */
-	North formulaBar;
-	Combobox focusPosition;
-	Comboitem lbpos;
-	Toolbarbutton insertFormulaBtn;
-	FormulaEditor formulaEditor;
-	Div extendEditorBar;
-	Toolbarbutton extendEditorBtn;
-	boolean _formulaBarOpen = false; //whether extends height of the formulaBar
-	private final static String FORMULA_BAR_ARROW_DOWN_IMAGE_SRC = "~./zssapp/image/arrow-270-small.png";
-	private final static String FORMULA_BAR_ARROW_UP_IMAGE_SRC = "~./zssapp/image/arrow-090-small.png";
-	
 	/*Dialog*/
 	Dialog _insertFormulaDialog;
 	Dialog _insertHyperlinkDialog;
@@ -245,11 +228,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 		workbenchContext.addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				formulaEditor.setValue(null);
 				boolean isOpen = spreadsheet.getBook() != null;
-				formulaEditor.setDisabled(!isOpen);
-				focusPosition.setDisabled(!isOpen);
-				insertFormulaBtn.setDisabled(!isOpen);
 				toolbarMask.setVisible(!isOpen);
 				closeBtn.setVisible(isOpen);
 				setSaveButtonState(isOpen ? true : null);
@@ -298,7 +277,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				Rect rect = spreadsheet.getSelection();
 				Range rng = Ranges.range(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getLeft());
 				rng.setEditText(formula);
-				formulaEditor.setText(rng.getEditText());
 			}
 		});
 		workbenchContext.getWorkbookCtrl().addBookEventListener(new EventListener() {
@@ -383,7 +361,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		Cell cell = Utils.getCell(seldSheet, row, col);
 		if (cell != null) {
 			getCellStyleContext().doTargetChange(new SSRectCellStyle(cell, spreadsheet));
-			formulaEditor.setText(Ranges.range(seldSheet, row, col).getEditText());
 		}
 	}
 	public void onClick$saveBtn() {
@@ -416,51 +393,11 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			EditHelper.onPasteEventHandler(spreadsheet, val);
 			
 	}
-	public void onClick$insertFormulaBtn() {
+	public void onInsertFormula$spreadsheet() {
 		openInsertFormulaDialog();
 		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 	}
-	private int _formulaBarSize = 26 + LINE_HEIGHT;
-	private int toIntsize(String sz) {
-		if (sz.endsWith("px")) {
-			return Integer.valueOf(sz.substring(0, sz.length() - 2)).intValue();
-		}
-		return 26; //default
-	}
-	public void  onClick$extendEditorBtn() {
-		_formulaBarOpen = !_formulaBarOpen;
-		if (!_formulaBarOpen) {
-			_formulaBarSize = toIntsize(formulaBar.getSize());
-		}
-		extendEditorBtn.setImage(
-				_formulaBarOpen ? FORMULA_BAR_ARROW_UP_IMAGE_SRC : FORMULA_BAR_ARROW_DOWN_IMAGE_SRC);
-		adjustFormulaBarHeight();
-	}
-	private static final int LINE_HEIGHT = 19;
-	private void adjustFormulaBarHeight() {
-		final int extra = _formulaBarSize - formulaBar.getMinsize();
-		if (extra <= 0) {
-			_formulaBarSize = formulaBar.getMinsize() + LINE_HEIGHT;
-		} else {
-			final int rest = extra % LINE_HEIGHT;
-			_formulaBarSize = formulaBar.getMinsize() + (rest > 0 ? extra + (LINE_HEIGHT - rest) : extra);
-		}
-		String size = (_formulaBarOpen ? _formulaBarSize : formulaBar.getMinsize()) + "px";
-		formulaBar.setSize(size);
-		extendEditorBar.setHeight(size);
-	}
-	public void onSize$formulaBar(SizeEvent evt) {
-		int height = toIntsize(evt.getHeight());
-		if (height <= formulaBar.getMinsize()) {
-			_formulaBarOpen = false;
-		} else {
-			_formulaBarSize = height;
-			_formulaBarOpen = true;
-		}
-		extendEditorBtn.setImage(
-				_formulaBarOpen ? FORMULA_BAR_ARROW_UP_IMAGE_SRC : FORMULA_BAR_ARROW_DOWN_IMAGE_SRC);
-		adjustFormulaBarHeight();
-	}
+
 	public void onSortSelector(ForwardEvent event) {
 		//TODO: replace forward event
 		String param = (String) event.getData();
@@ -583,14 +520,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			lastCol = event.getColumn();
 
 			Cell cell = Utils.getOrCreateCell(sheet, lastRow, lastCol);
-
-			// reading the text from cell to formula bar
-			CellReference cr = new CellReference(lastRow, lastCol, false, false);
-			String posStr = cr.formatAsString();
-			lbpos.setLabel(posStr);
-			focusPosition.setRawValue(posStr);
-			focusPosition.setSelectedItem(lbpos);
-
 			// read format from cell and assign it to toolbar
 			// merge cell
 			isMergeCell = isMergedCell(event.getRow(), event.getColumn(), event.getRow(), event.getColumn());
@@ -599,7 +528,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			getCellStyleContext().doTargetChange(new SSRectCellStyle(cell, spreadsheet));
 
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -885,11 +813,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		}
 	}
 
-	private boolean onViewFormulaBar() {
-		formulaBar.setVisible(!formulaBar.isVisible());
-		return formulaBar.isVisible();
-	}
-
 	// SECTION FORMAT MENU
 	public void onFormatNumber(ForwardEvent event) {
 		Window win = (Window) mainWin.getFellow("formatNumberWin");
@@ -897,12 +820,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		win.setLeft("170px");
 		win.setTop("24px");
 		win.doPopup();// Modal();
-	}
-
-	// SECTION INSERT MENU
-	public void onInsertFormula(ForwardEvent event) {
-		Window win = (Window) mainWin.getFellow("formulaCategory");
-		win.doHighlighted();
 	}
 	
 	public void onUpload$insertImageBtn(UploadEvent evt) {
@@ -1290,7 +1207,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 
 	public boolean toggleFormulaBar() {
-		return onViewFormulaBar();
+		spreadsheet.setShowFormulabar(!spreadsheet.isShowFormulabar());
+		return spreadsheet.isShowFormulabar();
 	}
 
 	public void openComposeFormulaDialog(FormulaMetaInfo metainfo) {

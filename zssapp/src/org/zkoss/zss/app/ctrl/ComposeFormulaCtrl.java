@@ -30,7 +30,6 @@ import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.model.Ranges;
-import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Button;
@@ -42,7 +41,7 @@ import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.SimpleListModel;
 import org.zkoss.zul.Textbox;
-import org.zkoss.zul.impl.api.InputElement;
+import org.zkoss.zul.impl.InputElement;
 
 /**
  * @author Sam

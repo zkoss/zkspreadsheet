@@ -491,25 +491,26 @@ public class FormulaEditor extends Textbox {
 					}
 				});
 		//TODO: add ON_START_EDITING, add cell focus if cell is formula
-		bookCtrl.addEventListener(Events.ON_START_EDITING,
-				new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				StartEditingEvent evt = (StartEditingEvent)event;
-				newEdit = (String) evt.getClientValue();
-				if (isStartEditingFormula(newEdit)) {
-					cacheFormulaEditingInfo();
-				}
-				if (isComposingFormula(newEdit)) {
-					int left = bookCtrl.getSelection().getLeft();
-					int top = bookCtrl.getSelection().getTop();
-					formulaCell = Utils.getCell(bookCtrl.getSelectedSheet(), top, left);
-
-					addedFocusNames.add(FORMULA_FOCUS_NAME);
-					bookCtrl.moveEditorFocus(FORMULA_FOCUS_NAME, FORMULA_COLOR, top, left);
-				}
-				setText((String) evt.getEditingValue());
-			}
-		});
+//		bookCtrl.addEventListener(Events.ON_START_EDITING,
+//				new EventListener() {
+//			public void onEvent(Event event) throws Exception {
+//				StartEditingEvent evt = (StartEditingEvent)event;
+//				newEdit = (String) evt.getClientValue();
+//				if (isStartEditingFormula(newEdit)) {
+//					cacheFormulaEditingInfo();
+//				}
+//				if (isComposingFormula(newEdit)) {
+//					int left = bookCtrl.getSelection().getLeft();
+//					int top = bookCtrl.getSelection().getTop();
+//					formulaCell = Utils.getCell(bookCtrl.getSelectedSheet(), top, left);
+//
+//					addedFocusNames.add(FORMULA_FOCUS_NAME);
+//					bookCtrl.moveEditorFocus(FORMULA_FOCUS_NAME, FORMULA_COLOR, top, left);
+//				}
+//				setText((String) evt.getEditingValue());
+//			}
+//		});
+		
 		bookCtrl.addEventListener(Events.ON_EDITBOX_EDITING,
 				new EventListener() {
 			public void onEvent(Event event) throws Exception {

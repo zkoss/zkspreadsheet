@@ -1,6 +1,6 @@
 <zk>
 	<tabbox id="tabbox">
-		<tabs id="tabs">
+		<tabs id="tabs" sclass="zssapp-tabs">
 		</tabs>
 	</tabbox>
 	<menupopup id="sheetContextMenu">

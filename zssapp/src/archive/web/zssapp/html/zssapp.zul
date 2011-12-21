@@ -43,11 +43,6 @@
 			background-image: none;
 			font-size: 14px;
 		}
-		.formulaBtn{
-			background-position: 0 center;
-			text-align:center;
-			border-left:1px solid #D8D8D8;
-		}
 		div.z-tabpanel { 
 			border-bottom:none; 
 			border-left:none;
@@ -95,6 +90,7 @@
 		}
 		.toolbarMask{
 			position:absolute;
+			visibility: hidden;
 			left: 0;
 			background:none repeat scroll 0 0 #E0E1E3;
 			z-index:100; 
@@ -105,7 +101,7 @@
 		.zssapp-menubar {
 			border-top : 1px solid #D8D8D8;
 			border-bottom : 1px solid #D8D8D8;
-			background-image: url(${c:encodeURL('~./zul/img/breeze/menu/menu-bg.png')});
+			background-image: url(${c:encodeURL('~./zssapp/image/menu-bg.png')});
 		}
 		.zssapp-menubar .z-menubar-hor {
 			border-top : 0;
@@ -122,7 +118,19 @@
 		            filter:  progid:DXImageTransform.Microsoft.gradient(startColorStr='#FEFEFE', EndColorStr='#E4ECF7'); /* IE6,IE7 */
 		        -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#FEFEFE', EndColorStr='#E4ECF7')"; /* IE8 */
 		}
-			
+		.zssapp-tabs .z-tab-hl, .zssapp-tabs .z-tab-hr, .zssapp-tabs .z-tab-hm {
+			background: #F9F9F9;
+		}
+		.zssapp-tabs .z-tab {
+			border: 1px solid #D4D4D4;
+			border-top: 0;
+		}
+		.zssapp-tabs .z-tab-seld, 
+		.zssapp-tabs .z-tab-seld .z-tab-hl, 
+		.zssapp-tabs .z-tab-seld .z-tab-hr, 
+		.zssapp-tabs .z-tab-seld .z-tab-hm {
+			background-color: #FFFFFF;
+		}
 	</style>
 	<borderlayout id="topToolbars" height="56px" style="border-left:1px solid #E1E1E1;border-right:1px solid #E1E1E1;">
 		<!-- SECTION **********Navigator bar************************************************* -->
@@ -164,7 +172,7 @@
 		</north>
 		
 		<!-- SECTION **********FastIconToolbar*********************************************** -->
-		<south id="fastIconBtn" size="30px" border="0" style="background: #F5F5F5; border-bottom: 1px solid #D8D8D8;">
+		<south id="fastIconBtn" size="30px" border="0" style="background: #F5F5F5;">
 			<hlayout id="fastIconHLayout" spacing="0.4em">
 	<!--		<toolbarbutton disabled="true" id="print"  src="~./zssapp/image/printer.png" forward="onPrint" tooltiptext="${c:l('file.print')}"/>-->
 				<toolbarbutton id="saveBtn" image="~./zssapp/image/disk-black.png" disabled="true" tooltiptext="${c:l('file.saved')}"/>
@@ -290,40 +298,16 @@
 				$f = jq(this.$f('fastIconHLayout', true)),
 				dim = $f.zk.dimension(true);
 			zk(n).position(dim, 'overlap');
-			jq(n).css({'width': $f.width() + 'px', 'height': $f.height() + 'px'});
+			jq(n).css({'width': $f.width() + 'px', 'height': $f.height() + 'px', 'visibility': visible ? 'visible' : 'hidden'});
 		}
 		</attribute>
 	</div>
 	<borderlayout vflex="true" sclass="zssapp-splt">
-		<!-- SECTION **********Formula bar*********************************************** -->
-		<north id="formulaBar" size="26px" minsize="26" splittable="true" flex="true" border="0px" style="border-bottom: 1px solid #D8D8D8;">
-			<hlayout spacing="0px" hflex="true" sclass="z-valign-top">
-				<vlayout spacing="0px" vflex="true" hflex="min"  style="border-right: 1px solid #D8D8D8;">
-					<hlayout spacing="0px" hflex="min">
-						<combobox id="focusPosition" sclass="focusPosCombobox" 
-									height="21px" width="185px" mold="rounded"
-									style="text-align:center;">
-							<comboitem id="lbpos" label="A1" />
-						</combobox>
-						<div hflex="min" sclass="formulaBtn" style="background:#F5F5F5;">
-							<toolbarbutton id="insertFormulaBtn" style="text-decoration:none;color:black;font-size:16px;font-style:italic;text-align:center;"
-											label="f(x)"/>
-						</div>
-					</hlayout>
-					<div sclass="zssapp-empty" vflex="true" hflex="min"></div>
-				</vlayout>
-				<formulaeditor id="formulaEditor" style="font-size:16px;border:0px;padding:3px" hflex="true" vflex="true"/>
-				<div id="extendEditorBar" sclass="formulaBtn" style="background:#F5F5F5;" width="23px" vflex="true">
-					<toolbarbutton id="extendEditorBtn" style="text-decoration:none;color:black;font-size:10px;text-align:center;" 
-						image="~./zssapp/image/arrow-270-small.png"/>
-				</div>
-			</hlayout>
-		</north>
 		<!--  SECTION ********Sheets & Spreadsheet*************************************** -->
-		<center flex="true">
-			<div>				
-				<sheets id="sheets" vflex="min"></sheets>
+		<center flex="true" border="0">
+			<div>
 				<spreadsheet id="spreadsheet"
+						showFormulabar="true"
 						preloadRowSize="200"
 						preloadColumnSize="20"
 						maxrows="200"
@@ -332,6 +316,9 @@
 				</spreadsheet>
 			</div>
 		</center>
+		<south size="24px">
+			<sheets id="sheets" width="100%"></sheets>
+		</south>
 	</borderlayout>
 	<columnheadermenupopup id="columnHeaderMenupopup"/>
 	<rowheadermenupopup id="rowHeaderMenupopup"></rowheadermenupopup>
