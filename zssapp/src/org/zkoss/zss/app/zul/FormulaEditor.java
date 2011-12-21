@@ -90,7 +90,7 @@ public class FormulaEditor extends Textbox {
 
 	private void addFormulaEditCellFocus() {
 		WorkbookCtrl bookCtrl = getDesktopWorkbenchContext().getWorkbookCtrl();
-		bookCtrl.moveEditorFocus(FORMULA_FOCUS_NAME, FORMULA_COLOR, formulaRow, formulaColumn);
+		bookCtrl.moveEditorFocus(FORMULA_FOCUS_NAME, FORMULA_FOCUS_NAME, FORMULA_COLOR, formulaRow, formulaColumn);
 		addedFocusNames.add(FORMULA_FOCUS_NAME);
 	}
 	
@@ -136,7 +136,7 @@ public class FormulaEditor extends Textbox {
 			               (addedFocusNames.contains(FORMULA_FOCUS_NAME) ? addedFocusNames.size() - 1 : addedFocusNames.size()) % FORMULA_COLORS.length];
 			newFocus.add(name);
 			addedFocusNames.add(name);
-			bookCtrl.moveEditorFocus(name, color, row, col);
+			bookCtrl.moveEditorFocus(name, name, color, row, col);
 		}
 		if (startEditingFormula) {
 			newFocus.add(FORMULA_FOCUS_NAME);

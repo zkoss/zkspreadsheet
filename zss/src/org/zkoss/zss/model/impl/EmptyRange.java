@@ -318,4 +318,12 @@ public class EmptyRange implements Range {
 	public boolean isAnyCellProtected() {
 		return true;
 	}
+
+	@Override
+	public void notifyMoveFocus(Object token) {
+	}
+
+	@Override
+	public void notifyDeleteFocus(Object token) {
+	}
 }

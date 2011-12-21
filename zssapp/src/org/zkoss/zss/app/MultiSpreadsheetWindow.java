@@ -61,9 +61,9 @@ public class MultiSpreadsheetWindow extends Window implements AfterCompose{
 		
 		Spreadsheet targetSpreadsheet;
 		if(event.getTarget()==ss[0])
-			ss[1].moveEditorFocus("ss1", "red", row, col);
+			ss[1].moveEditorFocus("ss1", "ss1", "red", row, col);
 		else
-			ss[0].moveEditorFocus("ss0", "green", row, col);
+			ss[0].moveEditorFocus("ss0", "ss0", "green", row, col);
 	}
 	
 	

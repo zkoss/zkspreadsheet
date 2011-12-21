@@ -33,4 +33,16 @@ public interface BookCtrl {
 	 * @return next sheet id.
 	 */
 	public Object nextSheetId();
+	
+	/**
+	 * Return next focus id for the UI.
+	 * @return next focus id.
+	 */
+	public String nextFocusId();
+	
+	public void addFocus(Object focus);
+	
+	public void removeFocus(Object focus);
+	
+	public boolean containsFocus(Object focus);
 }

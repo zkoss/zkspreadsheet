@@ -325,7 +325,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	onContentsChanged: function (evt) {
 		this.fireProcessOverflow_();
 	},
-	addEditorFocus : function(name, color){
+	addEditorFocus : function(id, name, color){
 		var x = this.focusmarkcmp,
 			div = x.cloneNode(true);
 		div.style.borderColor = color;
@@ -333,24 +333,24 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		x.parentNode.appendChild(div);
 		if(!this.editorFocusMark)
 			this.editorFocusMark = new Object();
-		this.editorFocusMark[name] = new zss.FocusMarkCtrl(this, div, new zss.Pos(0, 0));
+		this.editorFocusMark[id] = new zss.FocusMarkCtrl(this, div, new zss.Pos(0, 0));
 	},
-	removeEditorFocus : function(name){
+	removeEditorFocus : function(id){
 		if (!this.editorFocusMark)
 			return;
-		var ctrl = this.editorFocusMark[name];
+		var ctrl = this.editorFocusMark[id];
 		if (ctrl) {
 			ctrl.comp.parentNode.removeChild(ctrl.comp);
 			ctrl.cleanup();
 		}
-		this.editorFocusMark[name] = null;
+		this.editorFocusMark[id] = null;
 	},
-	moveEditorFocus : function(name, color, row, col){
-		if(!this.editorFocusMark || !this.editorFocusMark[name]){
-			this.addEditorFocus(name, color);
+	moveEditorFocus : function(id, name, color, row, col){
+		if(!this.editorFocusMark || !this.editorFocusMark[id]){
+			this.addEditorFocus(id, name, color);
 		}
-		this.editorFocusMark[name].relocate(row, col);
-		this.editorFocusMark[name].showMark();
+		this.editorFocusMark[id].relocate(row, col);
+		this.editorFocusMark[id].showMark();
 	},
 	_resize: function () {
 		if (this.invalid) return;

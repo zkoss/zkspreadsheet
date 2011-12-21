@@ -12,9 +12,13 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
+import java.util.Iterator;
+import java.util.WeakHashMap;
+
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.impl.RefBookImpl;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.ui.Focus;
 
 /**
  * Implementation of {@link BookCtrl}.
@@ -23,6 +27,8 @@ import org.zkoss.zss.model.Book;
  */
 public class BookCtrlImpl implements BookCtrl {
 	private int _shid;
+	private int _focusid;
+	private WeakHashMap<Object, String> _focusMap = new WeakHashMap<Object, String>(20);
 	
 	@Override
 	public RefBook newRefBook(Book book) {
@@ -31,5 +37,36 @@ public class BookCtrlImpl implements BookCtrl {
 	
 	public Object nextSheetId() {
 		return Integer.toString((_shid++ & 0x7FFFFFFF), 32);
+	}
+
+	@Override
+	public String nextFocusId() {
+		return Integer.toString((++_focusid & 0x7FFFFFFF), 32);
+	}
+
+	@Override
+	public void addFocus(Object focus) {
+		_focusMap.put(focus, ((Focus)focus).getId());
+	}
+
+	@Override
+	public void removeFocus(Object focus) {
+		_focusMap.remove(focus);
+	}
+
+	@Override
+	public boolean containsFocus(Object focus) {
+		syncFocus();
+		return _focusMap.containsKey(focus);
+	}
+	
+	//if browser is closed directly
+	private void syncFocus() { 
+		for (final Iterator<Object> it = _focusMap.keySet().iterator(); it.hasNext(); ) {
+			final Focus focus = (Focus) it.next();
+			if (focus.isDetached()) {
+				it.remove();
+			}
+		}
 	}
 }

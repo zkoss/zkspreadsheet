@@ -560,4 +560,16 @@ public interface Range {
 	 * @return true if any cell is protected and locked in this Range.
 	 */
 	public boolean isAnyCellProtected();
+
+	/**
+	 * Move focus of the sheet of this Range(used for book collaboration).
+	 * @param token the token to identify the focus
+	 */
+	public void notifyMoveFocus(Object token);
+	
+	/**
+	 * Delete focus of the sheet of this Range(used for book collaboration). 
+	 * @param token the token to identify the registration
+	 */
+	public void notifyDeleteFocus(Object token);
 }

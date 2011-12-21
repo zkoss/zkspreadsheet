@@ -561,12 +561,12 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		}
 	}
 
-	public void moveEditorFocus(String name, String color, int row, int col) {
-		spreadsheet.moveEditorFocus(name, color, row, col);
+	public void moveEditorFocus(String id, String name, String color, int row, int col) {
+		spreadsheet.moveEditorFocus(id, name, color, row, col);
 	}
 
-	public void removeEditorFocus(String name) {
-		spreadsheet.removeEditorFocus(name);
+	public void removeEditorFocus(String id) {
+		spreadsheet.removeEditorFocus(id);
 	}
 
 	public Rect getSelection() {

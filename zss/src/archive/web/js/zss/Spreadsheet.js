@@ -1233,23 +1233,23 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 	/**
 	 * Add editor focus
 	 */
-	addEditorFocus: function (name, color, row, col) {
+	addEditorFocus: function (id, name, color, row, col) {
 		if (this.sheetCtrl)
-			this.sheetCtrl.addEditorFocus(name, color);
+			this.sheetCtrl.addEditorFocus(id, name, color);
 	},
 	/**
 	 * Move the editor focus 
 	 */
-	moveEditorFocus: function (name, color, row, col) {
+	moveEditorFocus: function (id, name, color, row, col) {
 		if (this.sheetCtrl)
-			this.sheetCtrl.moveEditorFocus(name, color, zk.parseInt(row), zk.parseInt(col));
+			this.sheetCtrl.moveEditorFocus(id, name, color, zk.parseInt(row), zk.parseInt(col));
 	},
 	/**
 	 * Remove the editor focus
 	 */
-	removeEditorFocus: function (name, color, row, col) {
+	removeEditorFocus: function (id, name, color, row, col) {
 		if (this.sheetCtrl)
-			this.sheetCtrl.removeEditorFocus(name);
+			this.sheetCtrl.removeEditorFocus(id);
 	},
 	/**
 	 * Sets the highlight rectangle or sets a null value to hide it.

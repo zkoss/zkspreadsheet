@@ -303,17 +303,6 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 		getOrCreateRefBook().setShareScope(scope);
 	}
 
-	//--BookCtrl--//
-	@Override
-	public RefBook newRefBook(Book book) {
-		return getBookCtrl().newRefBook(book);
-	}
-	
-	@Override
-	public String nextSheetId() {
-		return (String) getBookCtrl().nextSheetId();
-	}
-
 	@Override
 	public Worksheet getWorksheetAt(int index) {
 		return (Worksheet) getSheetAt(index);
@@ -327,5 +316,35 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 	@Override
 	public boolean isDate1904() {
 		return new HSSFWorkbookHelper(this).getInternalWorkbook().isUsing1904DateWindowing();
+	}
+
+	//--BookCtrl--//
+	@Override
+	public RefBook newRefBook(Book book) {
+		return getBookCtrl().newRefBook(book);
+	}
+	
+	@Override
+	public String nextSheetId() {
+		return (String) getBookCtrl().nextSheetId();
+	}
+
+	@Override
+	public String nextFocusId() {
+		return (String) getBookCtrl().nextFocusId();
+	}
+
+	@Override
+	public void addFocus(Object focus) {
+		getBookCtrl().addFocus(focus);
+	}
+
+	@Override
+	public void removeFocus(Object focus) {
+		getBookCtrl().removeFocus(focus);	}
+
+	@Override
+	public boolean containsFocus(Object focus) {
+		return getBookCtrl().containsFocus(focus);
 	}
 }

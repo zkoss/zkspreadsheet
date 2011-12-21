@@ -49,9 +49,11 @@ import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
+import org.zkoss.zss.engine.event.SSDataEvent;
 import org.zkoss.zss.formula.DefaultFunctionResolver;
 import org.zkoss.zss.formula.FunctionResolver;
 import org.zkoss.zss.formula.NoCacheClassifier;
@@ -379,6 +381,22 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 		getOrCreateRefBook().setShareScope(scope);
 	}
 	
+	@Override
+	public Worksheet getWorksheet(String name) {
+		return (Worksheet) getSheet(name);
+	}
+	
+	@Override
+	public boolean isDate1904() {
+		return super.isDate1904();
+	}
+
+	@Override
+	public Worksheet getWorksheetAt(int index) {
+		return (Worksheet) getSheetAt(index);
+	}
+
+    
 	//--BookCtrl--//
 	@Override
 	public RefBook newRefBook(Book book) {
@@ -389,19 +407,23 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 	public Object nextSheetId() {
 		return getBookCtrl().nextSheetId();
 	}
-
-	@Override
-	public Worksheet getWorksheetAt(int index) {
-		return (Worksheet) getSheetAt(index);
-	}
-
-	@Override
-	public Worksheet getWorksheet(String name) {
-		return (Worksheet) getSheet(name);
-	}
 	
 	@Override
-	public boolean isDate1904() {
-		return super.isDate1904();
+	public String nextFocusId() {
+		return (String) getBookCtrl().nextFocusId();
+	}
+
+	@Override
+	public void addFocus(Object focus) {
+		getBookCtrl().addFocus(focus);
+	}
+
+	@Override
+	public void removeFocus(Object focus) {
+		getBookCtrl().removeFocus(focus);	}
+
+	@Override
+	public boolean containsFocus(Object focus) {
+		return getBookCtrl().containsFocus(focus);
 	}
 }

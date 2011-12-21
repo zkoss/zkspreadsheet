@@ -81,6 +81,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WebApp;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
 import org.zkoss.zk.ui.sys.JavaScriptValue;
@@ -94,6 +95,7 @@ import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.ExcelImporter;
+import org.zkoss.zss.model.impl.BookCtrl;
 import org.zkoss.zss.ui.au.in.BlockSyncCommand;
 import org.zkoss.zss.ui.au.in.CellFetchCommand;
 import org.zkoss.zss.ui.au.in.CellFocusedCommand;
@@ -119,6 +121,7 @@ import org.zkoss.zss.ui.au.out.AuRemoveRowColumn;
 import org.zkoss.zss.ui.au.out.AuRetrieveFocus;
 import org.zkoss.zss.ui.au.out.AuSelection;
 import org.zkoss.zss.ui.au.out.AuUpdateData;
+import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HyperlinkEvent;
@@ -211,7 +214,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	
 	//TODO undo/redo
 	//StateManager stateManager = new StateManager(this);
-	private Collection _focuses = new LinkedList();
+	private Map<String, Focus> _focuses = new HashMap<String, Focus>(20); //id -> Focus
 
 	private Rect _focusRect = new Rect(0, 0, 0, 0);
 	private Rect _selectionRect = new Rect(0, 0, 0, 0);
@@ -274,6 +277,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 	private SequenceId _updateCellId = new SequenceId(0, 1);// to handle batch
 	private SequenceId _updateRangeId = new SequenceId(0, 1);
 	private SequenceId _focusId = new SequenceId(0, 1);
+
+	private String _userName;
 	
 	public Spreadsheet() {
 		this.addEventListener("onStartEditingImpl", new EventListener() {
@@ -380,24 +385,73 @@ public class Spreadsheet extends XulElement implements Serializable {
 			initBook0(book);
 		}
 	}
-	
+	private Focus _focus;
+	private void deleteFocus() {
+		if (_selectedSheet != null && _focus != null) {
+			final Range rng = Ranges.range(_selectedSheet);
+			rng.notifyDeleteFocus(_focus);
+			((BookCtrl)_book).removeFocus(_focus);
+			_focus = null;
+		}
+	}
+	private void moveFocus() {
+		if (_selectedSheet != null) {
+			if (_focus == null) {
+				_focus = newFocus();
+				((BookCtrl)_book).addFocus(_focus);
+			}
+			final Range rng = Ranges.range(_selectedSheet);
+			rng.notifyMoveFocus(_focus);
+		}
+	}
+	private EventListener _focusListener = null;
+	private void doMoveSelfFocus(CellEvent event){
+		syncEditorFocus();
+		int row=event.getRow();
+		int col=event.getColumn();
+		_focus.row = row;
+		_focus.col = col;
+		moveFocus();
+	}
 	private void initBook0(Book book) {
 		if (_book != null) {
+			if (_focusListener != null)
+				removeEventListener(Events.ON_CELL_FOUCSED, _focusListener);
+			deleteFocus();
 			_book.unsubscribe(_dataListener);
 			_book.removeVariableResolver(_variableResolver);
 			_book.removeFunctionMapper(_functionMapper);
+			if (_focusListener != null)
+				removeEventListener(Events.ON_CELL_FOUCSED, _focusListener);
 		}
 		_book = book;
 		if (_book != null) {
 			_book.subscribe(_dataListener);
 			_book.addVariableResolver(_variableResolver);
 			_book.addFunctionMapper(_functionMapper);
+			if (_focus == null) { //focus name default to Spreadsheet id
+				_focus = newFocus();
+				((BookCtrl)_book).addFocus(_focus);
+			}
+			if (EventQueues.APPLICATION.equals(_book.getShareScope()) || EventQueues.SESSION.equals(_book.getShareScope()) ) { //have to sync focus
+				this.addEventListener(Events.ON_CELL_FOUCSED, _focusListener = new EventListener() {
+					@Override
+					public void onEvent(Event event) throws Exception {
+						doMoveSelfFocus((CellEvent) event);
+					}
+				});
+			}
 		}
 		if (_selectedSheet != null) {
 			doSheetClean(_selectedSheet);
 		}
 		_selectedSheet = null;
 		_selectedSheetId = null;
+	}
+	
+	private Focus newFocus() {
+		final String focusName = _userName == null ? ""+ (getId() == null ? getUuid() : getId()) : _userName;
+		return new Focus(((BookCtrl)_book).nextFocusId(), focusName, "#000", 0, 0, this);
 	}
 	
 	/**
@@ -1508,11 +1562,28 @@ public class Spreadsheet extends XulElement implements Serializable {
 
 	}
 
+	private final static String[] FOCUS_COLORS = 
+		new String[]{"#FFC000","#FFFF00","#92D050","#00B050","#00B0F0","#0070C0","#002060","#7030A0",
+					"#4F81BD","#F29436","#9BBB59","#8064A2","#4BACC6","#F79646","#C00000","#FF0000",
+					"#0000FF","#008000","#9900CC","#800080","#800000","#FF6600","#CC0099","#00FFFF"};
+	
 	/* DataListener to handle sheet data event */
 	private class InnerDataListener extends EventDispatchListener implements Serializable {
 		private static final long serialVersionUID = 20100330164021L;
 
 		public InnerDataListener() {
+			addEventListener(SSDataEvent.ON_FOCUS_MOVE, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onFocusMove((SSDataEvent)event);
+				}
+			});
+			addEventListener(SSDataEvent.ON_FOCUS_DELETE, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onFocusDelete((SSDataEvent)event);
+				}
+			});
 			addEventListener(SSDataEvent.ON_CONTENTS_CHANGE, new EventListener() {
 				@Override
 				public void onEvent(Event event) throws Exception {
@@ -1619,71 +1690,64 @@ public class Spreadsheet extends XulElement implements Serializable {
 		private Worksheet getSheet(Ref rng) {
 			return Utils.getSheetByRefSheet(_book, rng.getOwnerSheet()); 
 		}
+		private int _colorIndex = 0;
+		
+		private String nextFocusColor() {
+			return FOCUS_COLORS[_colorIndex++ % FOCUS_COLORS.length]; 
+		}
+		private void onFocusMove(SSDataEvent event) {
+			final Ref rng = event.getRef();
+			if (getSheet(rng).equals(_selectedSheet)) { //same sheet
+				final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
+				final String id = focus.id;
+				if (!id.equals(_focus.id)) {
+					final Focus ofocus = _focuses.get(id);
+					moveEditorFocus(id, focus.name, ofocus != null ? ofocus.color : nextFocusColor(), focus.row, focus.col);
+				}
+			}
+		}
+		private void onFocusDelete(SSDataEvent event) {
+			final Ref rng = event.getRef();
+			if (BookHelper.getSheet(_book, rng.getOwnerSheet()).equals(_selectedSheet)) { //same sheet
+				final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
+				removeEditorFocus(focus.id);
+			}
+		}
 		private void onChartAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final Worksheet sheet = getSheet(rng);
-			final int left = rng.getLeftCol();
-			final int top = rng.getTopRow();
-			final int right = rng.getRightCol();
-			final int bottom = rng.getBottomRow();
 			final Object payload = event.getPayload();
 			addChartWidget(sheet, (ZssChartX) payload);
-//			updateWidget(sheet, left, top, right, bottom);
 		}
 		private void onChartDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final Worksheet sheet = getSheet(rng);
-			final int left = rng.getLeftCol();
-			final int top = rng.getTopRow();
-			final int right = rng.getRightCol();
-			final int bottom = rng.getBottomRow();
 			final Object payload = event.getPayload();
 			deleteChartWidget(sheet, (Chart) payload);
-//			updateWidget(sheet, left, top, right, bottom);
 		}
 		private void onChartUpdate(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final Worksheet sheet = getSheet(rng);
-			final int left = rng.getLeftCol();
-			final int top = rng.getTopRow();
-			final int right = rng.getRightCol();
-			final int bottom = rng.getBottomRow();
 			final Object payload = event.getPayload();
 			updateChartWidget(sheet, (Chart) payload);
-//			updateWidget(sheet, left, top, right, bottom);
 		}
 		private void onPictureAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final Worksheet sheet = getSheet(rng);
-			final int left = rng.getLeftCol();
-			final int top = rng.getTopRow();
-			final int right = rng.getRightCol();
-			final int bottom = rng.getBottomRow();
 			final Object payload = event.getPayload();
 			addPictureWidget(sheet, (Picture) payload);
-//			updateWidget(sheet, left, top, right, bottom);
 		}
 		private void onPictureDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final Worksheet sheet = getSheet(rng);
-			final int left = rng.getLeftCol();
-			final int top = rng.getTopRow();
-			final int right = rng.getRightCol();
-			final int bottom = rng.getBottomRow();
 			final Object payload = event.getPayload();
 			deletePictureWidget(sheet, (Picture) payload);
-//			updateWidget(sheet, left, top, right, bottom);
 		}
 		private void onPictureUpdate(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final Worksheet sheet = getSheet(rng);
-			final int left = rng.getLeftCol();
-			final int top = rng.getTopRow();
-			final int right = rng.getRightCol();
-			final int bottom = rng.getBottomRow();
 			final Object payload = event.getPayload();
 			updatePictureWidget(sheet, (Picture) payload);
-//			updateWidget(sheet, left, top, right, bottom);
 		}
 		private void onWidgetChange(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -1781,12 +1845,16 @@ public class Spreadsheet extends XulElement implements Serializable {
 				for (int c = left; c <= right; ++c) {
 					updateColWidth(sheet, c);
 				}
+				final Rect rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleRect();
+				syncFriendFocusesPosition(left, rect.getTop(), rect.getRight(), rect.getBottom());
 			} else if (rng.isWholeRow()) {
 				final int top = rng.getTopRow();
 				final int bottom = rng.getBottomRow();
 				for (int r = top; r <= bottom; ++r) {
 					updateRowHeight(sheet, r);
 				}
+				final Rect rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleRect();
+				syncFriendFocusesPosition(rect.getLeft(), top, rect.getRight(), rect.getBottom());
 			}
 		}
 		private void onBtnChange(SSDataEvent event) {
@@ -2085,7 +2153,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 			HeaderPositionHelper helper = Spreadsheet.this.getColumnPositionHelper(sheet);
 			helper.setInfoValues(column, newsize, id, hidden);
 
-			sheet.setColumnWidth(column, Utils.pxToFileChar256(newsize, ((Book)sheet.getWorkbook()).getDefaultCharWidth()));
+			Ranges.range(sheet, 0, column).setColumnWidth(Utils.pxToFileChar256(newsize, ((Book)sheet.getWorkbook()).getDefaultCharWidth()));
+			//sheet.setColumnWidth(column, Utils.pxToFileChar256(newsize, ((Book)sheet.getWorkbook()).getDefaultCharWidth()));
 		}
 
 		public void setRowSize(String sheetId, int rownum, int newsize, int id, boolean hidden) {
@@ -2095,11 +2164,12 @@ public class Spreadsheet extends XulElement implements Serializable {
 			} else {
 				sheet = Utils.getSheetByUuid(_book, sheetId);
 			}
-			Row row = sheet.getRow(rownum);
-			if (row == null) {
-				row = sheet.createRow(rownum);
-			}
-			row.setHeight((short)Utils.pxToTwip(newsize));
+			//Row row = sheet.getRow(rownum);
+			//if (row == null) {
+			//	row = sheet.createRow(rownum);
+			//}
+			Ranges.range(sheet, rownum, 0).setRowHeight(Utils.pxToPoint(newsize));
+			//row.setHeight((short)Utils.pxToTwip(newsize));
 			HeaderPositionHelper helper = Spreadsheet.this.getRowPositionHelper(sheet);
 			helper.setInfoValues(rownum, newsize, id, hidden);
 		}
@@ -3436,6 +3506,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	}
 
 	private void doSheetClean(Worksheet sheet) {
+		deleteFocus();
 		List list = loadWidgetLoaders();
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
@@ -3463,6 +3534,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 		//setup gridline
 		setDisplayGridlines(_selectedSheet.isDisplayGridlines());
 		setProtectSheet(_selectedSheet.getProtect());
+		//register collaborated focus
+		moveFocus();
 	}
 	
 	private void addChartWidget(Worksheet sheet, ZssChartX chart) {
@@ -3909,36 +3982,58 @@ public class Spreadsheet extends XulElement implements Serializable {
 	/**
 	 * Remove editor's focus on specified name
 	 */
-	public void removeEditorFocus(String name){
-		response("removeEditorFocus" + _focusId.next(), new AuInvoke((Component)this, "removeEditorFocus", name));
-		removeFocus(name);
+	public void removeEditorFocus(String id){
+		response("removeEditorFocus" + _focusId.next(), new AuInvoke((Component)this, "removeEditorFocus", id));
+		_focuses.remove(id);
 	}
 	
 	/**
 	 *  Add and move other editor's focus
 	 */
-	public void moveEditorFocus(String name, String color, int row ,int col){
-		response("moveEditorFocus" + _focusId.next(), new AuInvoke((Component)this, "moveEditorFocus", new String[]{name, color,""+row,""+col}));
-		removeFocus(name);
-		_focuses.add(new Focus(name, color, row, col));
-	
+	public void moveEditorFocus(String id, String name, String color, int row ,int col){
+		if (_focus != null && !_focus.id.equals(id)) {
+			response("moveEditorFocus" + _focusId.next(), new AuInvoke((Component)this, "moveEditorFocus", new String[]{id, name, color,""+row,""+col}));
+			_focuses.put(id, new Focus(id, name, color, row, col, null));
+		}
 	}
-	/**
-	 * remove editor focus on specified editor name
-	 */
-	private void removeFocus(String name){
-		Focus targetFocus = null;
-		Iterator iter = _focuses.iterator();
-		for(;iter.hasNext();){
-			Focus _focus=(Focus)iter.next();
-			if((_focus).name.equals(name)){
-				targetFocus=_focus;
-				break;
+	
+	private void syncEditorFocus() {
+		if (_book != null) {
+			synchronized(_book) {
+				for(final Iterator<Focus> it = _focuses.values().iterator(); it.hasNext();) {
+					final Focus focus = it.next();
+					if (!((BookCtrl)_book).containsFocus(focus)) { //
+						it.remove();
+						removeEditorFocus(focus.id); //remove from the client
+					}
+				}
 			}
 		}
-		_focuses.remove(targetFocus);
+	}
+	
+	/**
+	 * Set focus name of this spreadsheet.
+	 * @param name focus name that show on other Spreadsheet
+	 */
+	public void setUserName(String name) {
+		if (_focus != null) {
+			_focus.name = name;
+		}
+		_userName = name;
 	}
 
+	//sync friend focus position
+	private void syncFriendFocusesPosition(int left, int top, int right, int bottom) {
+		int row = -1, col = -1;
+		for(Focus focus : _focuses.values()) {
+			row=focus.row;
+			col=focus.col;
+			if(col>=left && col<=right && row>=top  && row<=bottom) {
+				this.moveEditorFocus(focus.id, focus.name, focus.color, row, col);
+			}
+		}
+	}
+	
 	/**
 	 * update/invalidate all focus/selection/hightlight to align with cell border
 	 */
@@ -3969,16 +4064,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 			
 			response("updateSelfHightlight", new AuInvoke((Component)this,"updateSelfHighlight", new String[]{""+hL,""+hT,""+hR,""+hB}));
 			
-		}
-		Iterator iter = _focuses.iterator();
-		for(;iter.hasNext();){
-			Focus _focus=(Focus)iter.next();
-			row=_focus.row;
-			col=_focus.col;
-			if((col>=left && col<=right) ||
-			   (row>=top  && row<=bottom)){
-				this.moveEditorFocus(_focus.name, _focus.color, row, col);
-			}
 		}
 	}
 	

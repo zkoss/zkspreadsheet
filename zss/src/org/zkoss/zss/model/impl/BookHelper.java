@@ -252,6 +252,12 @@ public final class BookHelper {
 		return targetBook.getWorksheet(sheetName);
 	}
 	
+	public static Worksheet getSheet(Book book, RefSheet refSheet) {
+		final Book targetBook = BookHelper.getBook(book, refSheet);
+		final String sheetName = refSheet.getSheetName();
+		return targetBook.getWorksheet(sheetName);
+	}
+	
 	public static VariableResolver getVariableResolver(Book book) {
 		if (book instanceof HSSFBookImpl) 
 			return ((HSSFBookImpl)book).getVariableResolver();
@@ -403,6 +409,18 @@ public final class BookHelper {
 				refBook.publish(new SSDataEvent(SSDataEvent.ON_PROTECT_SHEET, ref, password));
 			}
 		}
+	}
+	
+	/*package*/ static void notifyMoveFocus(Ref ref, Object obj) {
+		final RefSheet refSheet = ref.getOwnerSheet();
+		final RefBook refBook = refSheet.getOwnerBook();
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_FOCUS_MOVE, ref, obj));
+	}
+	
+	/*package*/ static void notifyDeleteFocus(Ref ref, Object obj) {
+		final RefSheet refSheet = ref.getOwnerSheet();
+		final RefBook refBook = refSheet.getOwnerBook();
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_FOCUS_DELETE, ref, obj));
 	}
 	
 	public static void reevaluateAndNotify(Book book, Set<Ref> last, Set<Ref> all) {

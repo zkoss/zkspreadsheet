@@ -54,12 +54,13 @@ public interface WorkbookCtrl {
 	/**
 	 * Add and move other editor's focus
 	 * 
+	 * @param id
 	 * @param name
 	 * @param color
 	 * @param row
 	 * @param col
 	 */
-	public void moveEditorFocus(String name, String color, int row ,int col);
+	public void moveEditorFocus(String id, String name, String color, int row ,int col);
 	
 	/**
 	 * Remove editor's focus on specified name
