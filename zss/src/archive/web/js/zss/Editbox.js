@@ -361,6 +361,11 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
 			sheet.inlineEditor.setValue(v);
 			this._wgt.fire('onEditboxEditing', {token: '', sheetId: sheet.serverSheetId, clienttxt: n.value});
 			
+			if (!v) {
+				sheet.editingFormulaInfo = null;
+				return;
+			}
+			
 			var tp = 'formulabarEditing';
 			if (info) {
 				info.type = tp;
@@ -554,6 +559,12 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 				formulabarEditor.setValue(value, end);
 			}
 			sheet._wgt.fire('onEditboxEditing', {token: '', sheetId: sheet.serverSheetId, clienttxt: value});
+			
+			if (!value) {
+				sheet.editingFormulaInfo = null;
+				return;
+			}
+			
 			var tp = this._type;
 			if (info) {
 				info.type = tp;
