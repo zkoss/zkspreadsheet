@@ -541,6 +541,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 		if (!Objects.equals(_src, src)) {
 			_src = src;
 			setBook(null);
+			invalidate();
 		}
 	}
 

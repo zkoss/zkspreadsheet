@@ -490,6 +490,9 @@ zss.Formulabar = zk.$extends(zul.layout.North, {
    	},
    	redrawHTML_: function () {
    		return this.$supers(zss.Formulabar, 'redrawHTML_', arguments);
+   	},
+   	getSclass: function () {
+   		return 'zsformulabar';
    	}
 });
 })();

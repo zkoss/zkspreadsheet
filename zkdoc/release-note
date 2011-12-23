@@ -27,6 +27,7 @@ ZK Spreadsheet 2.2.0
    ZSS-40 Press Ctrl+V for long time does not work correctly
    ZSS-52 Past special, copy column width's behavior doesn't correct
    ZSS-56 Unlock a cell, protect sheet, cannot double click to edit the cell
+   ZSS-61 setSrc doesn't work on a empty spreadsheet
    
 * Upgrade Notes
   + Per the feature ZSS-13, Spreadsheet will always open hyperlink in a separate browser tab window. 
