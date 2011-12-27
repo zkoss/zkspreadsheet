@@ -303,7 +303,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				ar.pruneRight(rightWidth);
 			}
 		}
-			
+
 		sheet._wgt.fire('onZSSCellFetch', 
 		 {token: token, sheetId: sheet.serverSheetId, type: type, direction: direction,
 		 dpWidth: dp.width, dpHeight: dp.height, viewWidth: spcmp.clientWidth, viewHeight: spcmp.clientHeight,
@@ -661,6 +661,9 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 	loadForVisible: function (vrange) {
 		var local = this,
 			sheet = this.sheet;
+		if (this.loadstate != zss.MainBlockCtrl.IDLE) { //waiting previous loading.
+			return true;
+		}
 		if (!vrange)
 			vrange = zss.SSheetCtrl._getVisibleRange(sheet);
 		
@@ -748,10 +751,10 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				fetchHeight = this._getFetchHeight(bRow);
 			} else if (ar.rect.right < rCol) { //preload east only
 				fetchWidth = this._getFetchWidth(rCol);
-				fetchHeight = ar.rect.bottom - bottom;
+				fetchHeight = ar.rect.bottom - bottom + 1;
 			} else if (ar.rect.bottom < bRow) { //preload south only
 				fetchHeight = this._getFetchHeight(bRow);
-				fetchWidth = ar.rect.right - right;
+				fetchWidth = ar.rect.right - right + 1;
 			}
 
 			var token = zkS.addCallback(function () {
@@ -763,6 +766,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				if (local.invalid) return;
 				sheet.activeBlock.loadstate = zss.MainBlockCtrl.IDLE;
 			});
+			this.loadstate = zss.MainBlockCtrl.LOADING;
 			this._sendOnCellFetch(token, "visible", "", -1, -1, fetchWidth, fetchHeight, vrange);
 			return true;
 		}

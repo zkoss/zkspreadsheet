@@ -247,6 +247,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	setFlexSize_: function(sz, isFlexMin) {
 		var r = this.$supers(zss.SSheetCtrl, 'setFlexSize_', arguments);
+		if (!this._initiated) {
+			zss.Spreadsheet.initLaterAfterCssReady(this);
+		}
 		this._resize();
 		return r;
 	},
@@ -258,7 +261,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		var wgt = this._wgt,
 			n = this.comp = this.$n(),
 			self = n.ctrl = this;
-		zss.Spreadsheet.initLaterAfterCssReady(self);
 	},
 	unbind_: function () { 
 		this.unlisten({onContentsChanged: this});

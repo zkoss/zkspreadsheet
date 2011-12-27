@@ -303,9 +303,13 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    		var sheet = this.sheet;
    		if (sheet) {
    			if (sheet.state == zss.SSheetCtrl.FOCUSED) {
-   			   	var d = evt.data;
-   			   	this.$n('real').value = sheet.getCell(d.top, d.left).edit || '';
-				this.syncEditorPosition(0);
+   			   	var d = evt.data,
+   			   		cell = sheet.getCell(d.top, d.left);
+   			   	if (cell) {
+   			   		this.$n('real').value = cell.edit || '';
+   			   		this.syncEditorPosition(0);
+   			   	} else {
+   			   	}
    			} else if (sheet.state == zss.SSheetCtrl.EDITING) {
    				var info = sheet.editingFormulaInfo;
    				if (info && 'formulabarEditing' == info.type) {
