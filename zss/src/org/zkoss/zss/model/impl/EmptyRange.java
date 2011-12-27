@@ -320,10 +320,14 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public void notifyMoveFocus(Object token) {
+	public void notifyMoveFriendFocus(Object token) {
 	}
 
 	@Override
-	public void notifyDeleteFocus(Object token) {
+	public void notifyDeleteFriendFocus(Object token) {
+	}
+
+	@Override
+	public void deleteSheet() {
 	}
 }

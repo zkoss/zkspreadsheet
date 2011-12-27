@@ -80,6 +80,7 @@ import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HeaderEvent;
 import org.zkoss.zss.ui.event.HeaderMouseEvent;
+import org.zkoss.zss.ui.event.SheetDeleteEvent;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.Utils;
@@ -293,6 +294,13 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		});
 
 		// ADD Event Listener
+		spreadsheet.addEventListener(Events.ON_SHEET_DELETE,
+				new EventListener() {
+					@Override
+					public void onEvent(Event event) throws Exception {
+						doSheetDeleteEvent((SheetDeleteEvent) event);
+					}
+				});
 		spreadsheet.addEventListener(Events.ON_CELL_FOUCSED,
 				new EventListener() {
 					public void onEvent(Event event) throws Exception {
@@ -508,6 +516,19 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		}
 	}
 
+	void doSheetDeleteEvent(final SheetDeleteEvent event) {
+		final Book book = spreadsheet.getBook();
+		if (book == null) {
+			return;
+		}
+		final String deleted = event.getDelSheetName();
+		final String selectedSheetName = spreadsheet.getSelectedSheetName(); 
+		if (deleted.equals(selectedSheetName)) {
+			final String name = event.getNewSheetName();
+			sheets.setCurrentSheetByName(name);
+		}
+		getDesktopWorkbenchContext().fireRefresh(); //refresh sheets
+	}
 	void doFocusedEvent(final CellEvent event) {
 		final Book book = spreadsheet.getBook();
 		if (book == null) {

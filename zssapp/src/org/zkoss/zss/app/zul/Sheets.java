@@ -17,6 +17,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.zul;
 
 import java.util.List;
+import java.util.Iterator;
 
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
@@ -27,6 +28,8 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.MouseEvent;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
+import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.Ranges;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
@@ -82,6 +85,17 @@ public class Sheets extends Div implements IdSpace {
 	public void setCurrentSheet(int index) {
 		tabbox.setSelectedIndex(index);
 		getDesktopWorkbenchContext().getWorkbookCtrl().setSelectedSheet(tabbox.getSelectedTab().getLabel());
+	}
+	
+	public void setCurrentSheetByName(String name) {
+		int j = 0;
+		for (final Iterator it = tabs.getChildren().iterator(); it.hasNext(); ++j) {
+			final Tab tab = (Tab) it.next();
+			if (name.equals(tab.getLabel())) {
+				setCurrentSheet(j);
+				break;
+			}
+		}
 	}
 	
 	/**
@@ -170,7 +184,10 @@ public class Sheets extends Div implements IdSpace {
 	}
 	
 	public void onClick$deleteSheet() {
-		int newIdx = getDesktopWorkbenchContext().getWorkbookCtrl().deleteSheet();
+		Range rng = Ranges.range(getDesktopWorkbenchContext().getWorkbookCtrl().getSelectedSheet());
+		rng.deleteSheet();
+		
+/*		int newIdx = getDesktopWorkbenchContext().getWorkbookCtrl().deleteSheet();
 		if (newIdx >= 0) {
 			tabbox.setSelectedIndex(newIdx);
 			redraw();
@@ -181,7 +198,7 @@ public class Sheets extends Div implements IdSpace {
 			} catch (InterruptedException e) {
 			}
 		}
-	}
+*/	}
 	
 	public void onClick$renameSheet() {
 		getDesktopWorkbenchContext().getWorkbenchCtrl().openRenameSheetDialog(getCurrenSheet());

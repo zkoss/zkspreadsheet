@@ -18,7 +18,9 @@ ZK Spreadsheet 2.2.0
    ZSS-58 Support collaboration editing with color cell selection focus box
    ZSS-59 Formula editor support cancel button and apply button
    ZSS-60 Editing formula support use mouse to select a cell or a selection
-  
+   ZSS-62 ZPOI upgrade to POI 3.8 beta5
+   ZSS-64 ZK Spreadsheet App shall support sheet deletion collaboration
+
 *Bug
    ZSS-15 edit date cells doesn't work
    ZSS-21 Right click on hyperlink should not jump to the link

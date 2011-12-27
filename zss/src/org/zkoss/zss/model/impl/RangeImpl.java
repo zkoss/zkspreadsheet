@@ -67,6 +67,7 @@ import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zul.Messagebox;
 /**
  * Implementation of {@link Range} which plays a facade to operate on the spreadsheet data models
  * and maintain the reference dependency. 
@@ -2241,18 +2242,45 @@ public class RangeImpl implements Range {
 	}
 
 	@Override
-	public void notifyMoveFocus(Object token) {
+	public void notifyMoveFriendFocus(Object token) {
 		Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
 		if (ref != null) {
-			BookHelper.notifyMoveFocus(ref, token);
+			BookHelper.notifyMoveFriendFocus(ref, token);
 		}
 	}
 
 	@Override
-	public void notifyDeleteFocus(Object token) {
+	public void notifyDeleteFriendFocus(Object token) {
 		Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
 		if (ref != null) {
-			BookHelper.notifyDeleteFocus(ref, token);
+			BookHelper.notifyDeleteFriendFocus(ref, token);
+		}
+	}
+
+	@Override
+	public void deleteSheet() {
+		synchronized (_sheet) {
+			Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
+			if (ref != null) {
+				final Book book = _sheet.getBook();
+				if (book != null) {
+					final int index = book.getSheetIndex(_sheet);
+					if (index != -1) {
+						final int sheetCount = book.getNumberOfSheets();
+						if (sheetCount == 1) {
+							try {
+								Messagebox.show("A workbook must contain at least one visible worksheet");
+							} catch (InterruptedException e) {
+							}
+						}
+						final String delSheetName = _sheet.getSheetName(); //must getName before remove
+						book.removeSheetAt(index);
+						final int newIndex =  index < (sheetCount - 1) ? index : (index - 1);
+						final String newSheetName = book.getSheetName(newIndex);
+						BookHelper.notifyDeleteSheet(ref, new Object[] {delSheetName, newSheetName});
+					}
+				}
+			}
 		}
 	}
 }

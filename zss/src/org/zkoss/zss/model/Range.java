@@ -565,11 +565,16 @@ public interface Range {
 	 * Move focus of the sheet of this Range(used for book collaboration).
 	 * @param token the token to identify the focus
 	 */
-	public void notifyMoveFocus(Object token);
+	public void notifyMoveFriendFocus(Object token);
 	
 	/**
 	 * Delete focus of the sheet of this Range(used for book collaboration). 
 	 * @param token the token to identify the registration
 	 */
-	public void notifyDeleteFocus(Object token);
+	public void notifyDeleteFriendFocus(Object token);
+	
+	/**
+	 * Delete sheet of this Range.
+	 */
+	public void deleteSheet();
 }

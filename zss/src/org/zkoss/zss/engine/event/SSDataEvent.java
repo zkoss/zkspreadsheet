@@ -71,13 +71,16 @@ public class SSDataEvent extends Event implements Serializable {
 	/** Identifies the specified pciture changed. **/
 	public static final String ON_PICTURE_UPDATE = "onPictureUpdate";
 	
-	/** Indentifies the change of a widget. */
+	/** Identifies the change of a widget. */
 	public static final String ON_WIDGET_CHANGE = "onWidgetChange";
 
-	/** Indentifies the move of a focus of other spreadsheet. Used in collaboration.*/
-	public static final String ON_FOCUS_MOVE = "onFocusMove";
-	/** Indentifies the deletion of a focus of other spreadsheet. Used in collaboration.*/
-	public static final String ON_FOCUS_DELETE = "onFocusDelete";
+	/** Identifies the move of a focus of other spreadsheet. Used in collaboration.*/
+	public static final String ON_FRIEND_FOCUS_MOVE = "onFriendFocusMove";
+	/** Identifies the deletion of a focus of other spreadsheet. Used in collaboration.*/
+	public static final String ON_FRIEND_FOCUS_DELETE = "onFriendFocusDelete";
+	
+	/** Identifies the deletion of a sheet. */
+	public static final String ON_SHEET_DELETE = "onSheetDelete";
 	
 	/** Identifies no move direction when add or remove a range. */
 	public static final int MOVE_NO = 1000;

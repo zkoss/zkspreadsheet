@@ -411,16 +411,22 @@ public final class BookHelper {
 		}
 	}
 	
-	/*package*/ static void notifyMoveFocus(Ref ref, Object obj) {
+	/*package*/ static void notifyMoveFriendFocus(Ref ref, Object obj) {
 		final RefSheet refSheet = ref.getOwnerSheet();
 		final RefBook refBook = refSheet.getOwnerBook();
-		refBook.publish(new SSDataEvent(SSDataEvent.ON_FOCUS_MOVE, ref, obj));
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_FRIEND_FOCUS_MOVE, ref, obj));
 	}
 	
-	/*package*/ static void notifyDeleteFocus(Ref ref, Object obj) {
+	/*package*/ static void notifyDeleteFriendFocus(Ref ref, Object obj) {
 		final RefSheet refSheet = ref.getOwnerSheet();
 		final RefBook refBook = refSheet.getOwnerBook();
-		refBook.publish(new SSDataEvent(SSDataEvent.ON_FOCUS_DELETE, ref, obj));
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_FRIEND_FOCUS_DELETE, ref, obj));
+	}
+	
+	/*package*/ static void notifyDeleteSheet(Ref ref, Object newIndex) {
+		final RefSheet refSheet = ref.getOwnerSheet();
+		final RefBook refBook = refSheet.getOwnerBook();
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_SHEET_DELETE, ref, newIndex));
 	}
 	
 	public static void reevaluateAndNotify(Book book, Set<Ref> last, Set<Ref> all) {

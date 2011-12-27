@@ -135,4 +135,10 @@ public class Events {
 	 * Sent when user click on the insert formula button 
 	 */
 	public static final String ON_INSERT_FORMULA = "onInsertFormula";
+	
+	/**
+	 * The onSheetDelete event.
+	 * Sent when sheet is deleted.
+	 */
+	public static final String ON_SHEET_DELETE = "onSheetDelete";
 }

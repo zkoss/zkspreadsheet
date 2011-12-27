@@ -125,6 +125,7 @@ import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HyperlinkEvent;
+import org.zkoss.zss.ui.event.SheetDeleteEvent;
 import org.zkoss.zss.ui.event.StartEditingEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
 import org.zkoss.zss.ui.impl.CellFormatHelper;
@@ -200,6 +201,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	
 	private String _selectedSheetId;
 	transient private Worksheet _selectedSheet;
+	transient private String _selectedSheetName;
 
 	private int _rowFreeze = -1; // how many fixed rows
 	private boolean _rowFreezeset = false;
@@ -389,7 +391,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	private void deleteFocus() {
 		if (_selectedSheet != null && _focus != null) {
 			final Range rng = Ranges.range(_selectedSheet);
-			rng.notifyDeleteFocus(_focus);
+			rng.notifyDeleteFriendFocus(_focus);
 			((BookCtrl)_book).removeFocus(_focus);
 			_focus = null;
 		}
@@ -401,7 +403,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 				((BookCtrl)_book).addFocus(_focus);
 			}
 			final Range rng = Ranges.range(_selectedSheet);
-			rng.notifyMoveFocus(_focus);
+			rng.notifyMoveFriendFocus(_focus);
 		}
 	}
 	private EventListener _focusListener = null;
@@ -447,6 +449,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 		_selectedSheet = null;
 		_selectedSheetId = null;
+		_selectedSheetName = null;
 	}
 	
 	private Focus newFocus() {
@@ -465,6 +468,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 		_selectedSheet=null;
 		_selectedSheetId=null;
+		_selectedSheetName = null;
 		//bug#315: freezed pane rows/columns don't work when setting Spreadsheet from Composer.
 		//setRowfreeze(-1);
 		//setColumnfreeze(-1);
@@ -605,6 +609,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			doSheetClean(_selectedSheet);
 			_selectedSheet = null;
 			_selectedSheetId = null;
+			_selectedSheetName = null;
 		}
 
 		if (_selectedSheet == null || !_selectedSheet.getSheetName().equals(name)) {
@@ -1573,16 +1578,23 @@ public class Spreadsheet extends XulElement implements Serializable {
 		private static final long serialVersionUID = 20100330164021L;
 
 		public InnerDataListener() {
-			addEventListener(SSDataEvent.ON_FOCUS_MOVE, new EventListener() {
+			addEventListener(SSDataEvent.ON_SHEET_DELETE, new EventListener() {
+
 				@Override
 				public void onEvent(Event event) throws Exception {
-					onFocusMove((SSDataEvent)event);
+					onSheetDelete((SSDataEvent)event);
 				}
 			});
-			addEventListener(SSDataEvent.ON_FOCUS_DELETE, new EventListener() {
+			addEventListener(SSDataEvent.ON_FRIEND_FOCUS_MOVE, new EventListener() {
 				@Override
 				public void onEvent(Event event) throws Exception {
-					onFocusDelete((SSDataEvent)event);
+					onFriendFocusMove((SSDataEvent)event);
+				}
+			});
+			addEventListener(SSDataEvent.ON_FRIEND_FOCUS_DELETE, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onFriendFocusDelete((SSDataEvent)event);
 				}
 			});
 			addEventListener(SSDataEvent.ON_CONTENTS_CHANGE, new EventListener() {
@@ -1688,15 +1700,21 @@ public class Spreadsheet extends XulElement implements Serializable {
 				}
 			});
 		}
+		private void onSheetDelete(SSDataEvent event) {
+			final Object[] payload = (Object[]) event.getPayload(); 
+			final String delSheetName = (String) payload[0]; //deleted sheet name
+			final String newSheetName= (String) payload[1]; //new selected sheet name
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_SHEET_DELETE, Spreadsheet.this, delSheetName, newSheetName));
+		}
+		
+		private int _colorIndex = 0;
 		private Worksheet getSheet(Ref rng) {
 			return Utils.getSheetByRefSheet(_book, rng.getOwnerSheet()); 
 		}
-		private int _colorIndex = 0;
-		
 		private String nextFocusColor() {
 			return FOCUS_COLORS[_colorIndex++ % FOCUS_COLORS.length]; 
 		}
-		private void onFocusMove(SSDataEvent event) {
+		private void onFriendFocusMove(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			if (getSheet(rng).equals(_selectedSheet)) { //same sheet
 				final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
@@ -1707,7 +1725,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 				}
 			}
 		}
-		private void onFocusDelete(SSDataEvent event) {
+		private void onFriendFocusDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			if (BookHelper.getSheet(_book, rng.getOwnerSheet()).equals(_selectedSheet)) { //same sheet
 				final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
@@ -3507,7 +3525,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 	}
 
 	private void doSheetClean(Worksheet sheet) {
-		deleteFocus();
+		if (getBook().getSheetIndex(sheet) != -1)
+			deleteFocus();
 		List list = loadWidgetLoaders();
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
@@ -3537,6 +3556,11 @@ public class Spreadsheet extends XulElement implements Serializable {
 		setProtectSheet(_selectedSheet.getProtect());
 		//register collaborated focus
 		moveFocus();
+		_selectedSheetName = _selectedSheet.getSheetName();
+	}
+	
+	public String getSelectedSheetName() {
+		return _selectedSheet != null ? _selectedSheetName : null;
 	}
 	
 	private void addChartWidget(Worksheet sheet, ZssChartX chart) {
