@@ -25,6 +25,7 @@ ZK Spreadsheet 2.2.0
    ZSS-15 edit date cells doesn't work
    ZSS-21 Right click on hyperlink should not jump to the link
    ZSS-22 Shall not allow Copy and Paste operation in a protected spreadsheet
+   ZSS-24 key on numpad is not work on Opera
    ZSS-29 Formula editor cursor not correctly positioned in different browser when focus changed when composing formula
    ZSS-40 Press Ctrl+V for long time does not work correctly
    ZSS-42 Export PDF, merged cell's border doesn't show up correctly

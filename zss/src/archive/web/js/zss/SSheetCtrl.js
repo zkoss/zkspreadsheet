@@ -19,6 +19,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 (function () {
 	_skey = [32,106,107,109,110,111,186,187,188,189,190,191,192,220,221,222,219];
+	_opearKey = [42, 43, 45, 47, 61];
 	function asciiChar (charcode) {
 		if ((charcode != 13 && charcode != 9 && charcode < 32) || charcode > 127) return null;
 		return String.fromCharCode(charcode);
@@ -37,6 +38,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		if(r) return true;
 		while (i--)
 			if(keycode == _skey[i]) return true;
+		if (zk.opera && _opearKey.$contains(keycode))
+			return true;
 		//firefox fire + and ; with keycode 61 & 59
 		if(zk.gecko && (keycode == 61 || keycode == 59)) return true;
 		
@@ -1217,8 +1220,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if (this._skipress) //wait async event, skip
 			return;
 
-		var charcode = evt.which;
-		var	c = asciiChar(charcode == 0 && evt.keyCode == 9 ? keyCode : charcode);
+		var charcode = evt.which,
+			c = asciiChar(charcode == 0 && evt.keyCode == 9 ? keyCode : charcode);
 		//ascii, not editing, not special key
 		if (c != null && !(evt.altKey || evt.ctrlKey) && this.state != zss.SSheetCtrl.EDITING) {
 			if (this.state == zss.SSheetCtrl.START_EDIT) //startEditing but not get response from server yet
@@ -1228,7 +1231,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 					this._clienttxt = c;
 			}
 			//bug #117: Barcode Scanner data incomplete
-			this._fireOnOpenAndEdit(); 				
+			this._fireOnOpenAndEdit();
 			evt.stop();
 		}
 	},
@@ -1237,7 +1240,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this.dp.startEditing(evt, this.getCell(p.row, p.column).edit);
 		this.dp._openEditbox();
 	},
-	_doKeydown: function(evt, editor) {
+	_doKeydown: function(evt) {
 		this._skipress = false;
 		//wait async event, skip
 		//handle spreadsheet common keydown event
@@ -1341,8 +1344,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}
 		//in my notebook,some keycode ex : LEFT(37) and RIGHT(39) will fire keypress after keydown,
 		//it confuse with the ascii value "%' and ''', so add this to do some controll in key press
-		if (!isAsciiCharkey(keycode))
+		if (!isAsciiCharkey(keycode)) {
 			this._skipress = true;
+		}
 	},
 	_doKeyup: function(evt) { //feature #161: Support copy&paste from clipboard to a cell
 		//if(this._skipress) delete this._skipress;
