@@ -129,7 +129,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					fRect.bottom = ar.rect.bottom;
 				}
 				//row contains wrap cell may have height Id on client side
-				syncHeightId(ar, ar.topFrozen);
+				syncHeightId(ar, ar.leftFrozen);
 			}
 			if (topFrozen) {
 				ar.topFrozen = newCachedRange(topFrozen.data);
