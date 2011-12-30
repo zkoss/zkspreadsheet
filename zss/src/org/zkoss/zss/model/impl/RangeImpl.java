@@ -43,6 +43,7 @@ import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
@@ -2259,7 +2260,7 @@ public class RangeImpl implements Range {
 
 	@Override
 	public void deleteSheet() {
-		synchronized (_sheet) {
+		synchronized (_sheet.getBook()) {
 			Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
 			if (ref != null) {
 				final Book book = _sheet.getBook();

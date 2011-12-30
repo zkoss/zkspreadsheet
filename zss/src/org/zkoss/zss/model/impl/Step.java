@@ -32,6 +32,11 @@ public interface Step {
 	public static final int DATE = 6;
 	public static final int TIME = 7;
 	public static final int BLANK = 8;
+	public static final int US_SHORT_WEEK = 0x11; //ZSS-69
+	public static final int US_SHORT_MONTH = 0x12; //ZSS-69
+	public static final int US_FULL_WEEK = 0x13; //ZSS-69
+	public static final int US_FULL_MONTH = 0x14; //ZSS-69
+	
 	/** Return next value of this step sequence per the source cell.
 	 * 
 	 * @param srcCell the source cell for filling

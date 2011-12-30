@@ -24,10 +24,16 @@ import org.zkoss.util.Locales;
  *
  */
 public class CircularData {
+	public static final int UPPER = 2;
+	public static final int LOWER = 1;
+	public static final int NORMAL = 0;
+	
 	private final String[] _data;
+	private final Locale _locale;
 
-	/*package*/ CircularData(String[] dataKey, int type) {
-		_data = type == 1 ? getDataL(dataKey) : type == 2 ? getDataU(dataKey) : getDataN(dataKey);  
+	/*package*/ CircularData(String[] dataKey, int type, Locale locale) { //ZSS-69
+		_locale = locale;
+		_data = type == LOWER ? getDataL(dataKey) : type == UPPER ? getDataU(dataKey) : getDataN(dataKey);
 	}
 	/*package*/ String getData(int current) {
 		return _data[current];
@@ -37,6 +43,13 @@ public class CircularData {
 			if (_data[j].equalsIgnoreCase(x)) {
 				return j;
 			}
+		}
+		return -1;
+	}
+	/*package*/ int getIndexByStartsWith(String x) { //ZSS-67
+		for(int j = 0; j < _data.length; ++j) {
+			if (_data[j].startsWith(x))
+				return j;
 		}
 		return -1;
 	}
@@ -50,18 +63,16 @@ public class CircularData {
 	private String[] getDataL(String[] dataKey) { //all lowercase. E.g. sunday, monday...
 		final String[] weekfn = getDataN(dataKey);
 		final String[] weekL = new String[weekfn.length];
-		final Locale current = Locales.getCurrent();
 		for(int j = 0; j < weekfn.length; ++j) {
-			weekL[j] = weekfn[j].toLowerCase(current);
+			weekL[j] = weekfn[j].toLowerCase(_locale); //ZSS-69
 		}
 		return weekL;
 	}
 	private String[] getDataU(String[] dataKey) { //all uppercase. E.g. SUNDAY, MONDAY...
 		final String[] weekfn = getDataN(dataKey);
 		final String[] weekU = new String[weekfn.length];
-		final Locale current = Locales.getCurrent();
 		for(int j = 0; j < weekfn.length; ++j) {
-			weekU[j] = weekfn[j].toUpperCase(current);
+			weekU[j] = weekfn[j].toUpperCase(_locale); //ZSS-69
 		}
 		return weekU;
 	}

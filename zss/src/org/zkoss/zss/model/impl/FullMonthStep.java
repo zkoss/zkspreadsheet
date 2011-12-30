@@ -15,18 +15,20 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
+import java.util.Locale;
+
 import org.zkoss.poi.ss.usermodel.Cell;
 
 /**
- * Full week Step.
+ * Full month Step.
  * @author henrichen
  *
  */
 /*package*/ class FullMonthStep implements Step {
 	private final CircularStep _innerStep;
 	private final int _type;
-	public FullMonthStep(int initial, int step, int type, int datatype) {
-		_innerStep = new CircularStep(initial, step, new FullMonthData(type));
+	public FullMonthStep(int initial, int step, int type, int datatype, Locale locale) { //ZSS-69
+		_innerStep = new CircularStep(initial, step, FullMonthData.getInstance(type, locale)); 
 		_type = datatype;
 	}
 	@Override

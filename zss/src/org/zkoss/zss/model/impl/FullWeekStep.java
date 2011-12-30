@@ -15,6 +15,8 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
+import java.util.Locale;
+
 import org.zkoss.poi.ss.usermodel.Cell;
 
 /**
@@ -25,8 +27,8 @@ import org.zkoss.poi.ss.usermodel.Cell;
 /*package*/ class FullWeekStep implements Step {
 	private final CircularStep _innerStep;
 	private final int _type;
-	public FullWeekStep(int initial, int step, int type, int datatype) {
-		_innerStep = new CircularStep(initial, step, new FullWeekData(type));
+	public FullWeekStep(int initial, int step, int type, int datatype, Locale locale) { //ZSS-69
+		_innerStep = new CircularStep(initial, step, FullWeekData.getInstance(type, locale));
 		_type = datatype;
 	}
 	@Override

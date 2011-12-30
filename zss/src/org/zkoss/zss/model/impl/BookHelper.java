@@ -13,7 +13,6 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
-import java.awt.Container;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -67,7 +67,6 @@ import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.PtgShifter;
 import org.zkoss.poi.ss.formula.eval.AreaEval;
 import org.zkoss.poi.ss.formula.eval.ArrayEval;
-import org.zkoss.poi.ss.formula.eval.NumberEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaPtgBase;
@@ -75,6 +74,7 @@ import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.ptg.RefPtgBase;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
+import org.zkoss.poi.ss.usermodel.BuiltinFormats;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.CellValue;
@@ -86,6 +86,8 @@ import org.zkoss.poi.ss.usermodel.CreationHelper;
 import org.zkoss.poi.ss.usermodel.DataFormatter;
 import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.DataValidationConstraint;
+import org.zkoss.poi.ss.usermodel.DataValidationConstraint.OperatorType;
+import org.zkoss.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.zkoss.poi.ss.usermodel.DataValidationHelper;
 import org.zkoss.poi.ss.usermodel.DateUtil;
 import org.zkoss.poi.ss.usermodel.Drawing;
@@ -97,9 +99,8 @@ import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Workbook;
-import org.zkoss.poi.ss.usermodel.DataValidationConstraint.ValidationType;
-import org.zkoss.poi.ss.usermodel.DataValidationConstraint.OperatorType;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
+import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
 import org.zkoss.poi.ss.util.CellReference;
@@ -134,7 +135,6 @@ import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.BookSeries;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.impl.Styles;
 
 /**
@@ -982,7 +982,7 @@ public final class BookHelper {
 		} else if (cellType == Cell.CELL_TYPE_STRING) {
 			return cell.getRichStringCellValue();
 		}
-	    final String result = new DataFormatter().formatCellValue(cell, cellType);
+	    final String result = new DataFormatter(ZssContext.getCurrent().getLocale(), false).formatCellValue(cell, cellType); //ZSS-68
 		return newRichTextString(cell, result);
 	}
 	public static FormatTextImpl getFormatText(Cell cell) {
@@ -1003,7 +1003,7 @@ public final class BookHelper {
 			}
 		}
 	
-		final CellFormat format = CellFormat.getInstance(formatStr == null ? "" : formatStr);
+		final CellFormat format = CellFormat.getInstance(formatStr == null ? "" : formatStr, ZssContext.getCurrent().getLocale()); //ZSS-68
 		return new FormatTextImpl(format.apply(cell));
 	}
 
@@ -1052,16 +1052,17 @@ public final class BookHelper {
 		case Cell.CELL_TYPE_NUMERIC:
 			final double val = cell.getNumericCellValue();
 			if (DateUtil.isCellDateFormatted(cell)) { //ZSS-15 edit date cells doesn't work
+				final Locale locale = ZssContext.getCurrent().getLocale(); //ZSS-68
 				String formatString = null;
 				if (Math.abs(val) < 1) { //time only
-					formatString = "h:mm:ss AM/PM";
+					formatString = getDateFormatString(TIME, locale);//"h:mm:ss AM/PM"; //ZSS-67
 				} else if (isInteger(Double.valueOf(val))) { //date only
-					formatString = "mm/dd/yyyy";
+					formatString = getDateFormatString(DATE, locale); //"mm/dd/yyyy"; //ZSS-67
 				} else { //date + time
-					formatString = "mm/dd/yyyy h:mm:ss AM/PM";
+					formatString = getDateFormatString(DATE_TIME, locale);//"mm/dd/yyyy h:mm:ss AM/PM" //ZSS-67
 				}
 				final boolean date1904 = ((Book)cell.getSheet().getWorkbook()).isDate1904();
-				return new DataFormatter().formatRawCellContents(val, -1, formatString, date1904);
+				return new DataFormatter(locale, false).formatRawCellContents(val, -1, formatString, date1904); //ZSS-68
 			} else {
 				return NumberToTextConverter.toText(val);
 			}
@@ -1071,6 +1072,17 @@ public final class BookHelper {
 			throw new UiException("Unknown cell type:"+cellType);
 		}
 	}
+
+	//ZSS-67
+	//date format type
+	private static final int TIME = 0x13;
+	private static final int DATE = 0x0e;
+	private static final int DATE_TIME = 0x100;
+	
+	private static String getDateFormatString(int formatType, Locale locale) {
+		return BuiltinFormats.getBuiltinFormat(formatType, locale);
+	}
+	
 	//check sheet reference; sheet could have been deleted
     private static String getFormulaString(XSSFCell cell){
     	String formula = cell.getCellFormula();
@@ -1352,31 +1364,39 @@ public final class BookHelper {
 					new Object[] {Integer.valueOf(Cell.CELL_TYPE_STRING), txt}: //string
 					new Object[] {Integer.valueOf(Cell.CELL_TYPE_ERROR), new Byte(err)}; //error
 			} else {
-				//20110321, respect the current locale
-	            final char dot = Formatters.getDecimalSeparator();
-	            final char comma = Formatters.getGroupingSeparator();
-	            String txt0 = txt;
-	            if (dot != '.' || comma != ',') {
-	            	final int dotPos = txt.lastIndexOf(dot);
-            		txt0 = txt.replace(comma, ',');
-	            	if (dotPos >= 0) {
-	            		txt0 = txt0.substring(0, dotPos)+'.'+txt0.substring(dotPos+1);
-	            	}
-	            }
-				try {
-					final Double val = Double.parseDouble(txt0);
-					return new Object[] {new Integer(Cell.CELL_TYPE_NUMERIC), val}; //double
-				} catch (NumberFormatException ex) {
-					final Object[] results = parseToDate(txt); 
-					if (results[0] instanceof String) { 
-						return new Object[] {new Integer(Cell.CELL_TYPE_STRING), results[0]}; //string
-					} else { //if (result[0] instanceof Date)
-						return new Object[] {Integer.valueOf(Cell.CELL_TYPE_NUMERIC), results[0], results[1]}; //date with format
-					}
-				}
+	            return parseEditTextToDoubleDateOrString(txt); //ZSS-67
 			}
 		}
 		return null;
+	}
+	private static Object[] parseEditTextToDoubleDateOrString(String txt) {
+		//TODO prepare a NumberInputMask that will set number format if input with comma thousand separator.
+		final Locale locale = ZssContext.getCurrent().getLocale(); //ZSS-67
+        final char dot = Formatters.getDecimalSeparator(locale);
+        final char comma = Formatters.getGroupingSeparator(locale);
+		String txt0 = txt;
+		if (dot != '.' || comma != ',') {
+	    	final int dotPos = txt.lastIndexOf(dot);
+			txt0 = txt.replace(comma, ',');
+	    	if (dotPos >= 0) {
+	    		txt0 = txt0.substring(0, dotPos)+'.'+txt0.substring(dotPos+1);
+	    	}
+		}
+
+		try {
+			final Double val = Double.parseDouble(txt0);
+			return new Object[] {new Integer(Cell.CELL_TYPE_NUMERIC), val}; //double
+		} catch (NumberFormatException ex) {
+			return parseEditTextToDateOrString(txt);
+		}
+	}
+	private static Object[] parseEditTextToDateOrString(String txt) {
+		final Object[] results = parseToDate(txt); 
+		if (results[0] instanceof String) { 
+			return new Object[] {new Integer(Cell.CELL_TYPE_STRING), results[0]}; //string
+		} else { //if (result[0] instanceof Date)
+			return new Object[] {Integer.valueOf(Cell.CELL_TYPE_NUMERIC), results[0], results[1]}; //date with format
+		}
 	}
 
 	private static byte getErrorCode(String errString) {
@@ -3164,29 +3184,29 @@ public final class BookHelper {
 		//FILL_INVALID
 		throw new UiException("Destination range must include source range and can be fill in one direction only"); 
 	}
-	private static int getShortWeekIndex(String x) {
-		return new ShortWeekData(0).getIndex(x);
+	private static int getShortWeekIndex(String x, Locale locale) { //ZSS-69
+		return ShortWeekData.getInstance(CircularData.NORMAL, locale).getIndex(x);
 	}
-	private static int getFullWeekIndex(String x) {
-		return new FullWeekData(0).getIndex(x); 
+	private static int getFullWeekIndex(String x, Locale locale) { //ZSS-69
+		return FullWeekData.getInstance(CircularData.NORMAL, locale).getIndex(x); 
 	}
-	private static int getShortMonthIndex(String x) {
-		return new ShortMonthData(0).getIndex(x);
+	private static int getShortMonthIndex(String x, Locale locale) { //ZSS-69
+		return ShortMonthData.getInstance(CircularData.NORMAL, locale).getIndex(x);
 	}
-	private static int getFullMonthIndex(String x) {
-		return new FullMonthData(0).getIndex(x);
+	private static int getFullMonthIndex(String x, Locale locale) { //ZSS-69
+		return FullMonthData.getInstance(CircularData.NORMAL, locale).getIndex(x);
 	}
-	private static boolean isShortWeek(String x) {
-		return getShortWeekIndex(x) >= 0;
+	private static boolean isShortWeek(String x, Locale locale) { //ZSS-69
+		return getShortWeekIndex(x, locale) >= 0;
 	}
-	private static boolean isFullWeek(String x) {
-		return getFullWeekIndex(x) >= 0;
+	private static boolean isFullWeek(String x, Locale locale) { //ZSS-69
+		return getFullWeekIndex(x, locale) >= 0;
 	}
-	private static boolean isShortMonth(String x) {
-		return getShortMonthIndex(x) >= 0;
+	private static boolean isShortMonth(String x, Locale locale) { //ZSS-69
+		return getShortMonthIndex(x, locale) >= 0;
 	}
-	private static boolean isFullMonth(String x) {
-		return getFullMonthIndex(x) >= 0;
+	private static boolean isFullMonth(String x, Locale locale) { //ZSS-69
+		return getFullMonthIndex(x, locale) >= 0;
 	}
 	private static int nextWeekIndex(int current, int step) {
 		return nextCircularIndex(current, step, 7);
@@ -3201,19 +3221,33 @@ public final class BookHelper {
 		}
 		return current % modulo;
 	}
-	private static int getWeekMonthSubType(String x) {
-		if (isShortWeek(x)) {
+	//ZSS-69, locale then US when doing drag-fill
+	private static int getWeekMonthSubType(String x, Locale locale) { 
+		if (isShortWeek(x, locale)) {
 			return Step.SHORT_WEEK; //a short week
 		}
-		if (isShortMonth(x)) {
+		if (isShortMonth(x, locale)) {
 			return Step.SHORT_MONTH; //a  short month
 		}
-		if (isFullWeek(x)) {
+		if (isFullWeek(x, locale)) {
 			return Step.FULL_WEEK; //a full week
 		}
-		if (isFullMonth(x)) {
+		if (isFullMonth(x, locale)) {
 			return Step.FULL_MONTH; //a  full month
-		} else if (Strings.isBlank(x)){
+		}
+		if (isShortWeek(x, Locale.US)) {
+			return Step.US_SHORT_WEEK; //a US short week
+		}
+		if (isShortMonth(x, Locale.US)) {
+			return Step.US_SHORT_MONTH; //a US short month
+		}
+		if (isFullWeek(x, Locale.US)) {
+			return Step.US_FULL_WEEK; //a US full week
+		}
+		if (isFullMonth(x, Locale.US)) {
+			return Step.US_FULL_MONTH; //a US full month
+		}
+		if (Strings.isBlank(x)){
 			return Step.BLANK; //a blank string
 		} else {
 			return Step.STRING; //a pure string
@@ -3232,7 +3266,7 @@ public final class BookHelper {
 	private static int getDateTimeSubType(Cell cell) {
         if (DateUtil.isCellDateFormatted(cell)) {
         	//check if a pure time format
-        	SimpleDateFormat format = (SimpleDateFormat) DataFormatter.getJavaFormat(cell);
+        	SimpleDateFormat format = (SimpleDateFormat) DataFormatter.getJavaFormat(cell, ZssContext.getCurrent().getLocale()); //ZSS-69
         	final String pattern = format.toPattern();
         	return isDatePattern(pattern) ? Step.DATE : Step.TIME; //a date or a time
         }
@@ -3247,6 +3281,7 @@ public final class BookHelper {
 			int b = 0, e = 0;
 			int prevtype = -1;
 			int subType = -1;
+			final Locale locale = ZssContext.getCurrent().getLocale(); //ZSS-69
 			for (int j = 0; j < srcCells.length; ++j) {
 				final Cell cell = srcCells[j];
 				final int type = cell == null ? Cell.CELL_TYPE_BLANK : cell.getCellType();
@@ -3258,7 +3293,7 @@ public final class BookHelper {
 					prevtype = type;
 					if (type == Cell.CELL_TYPE_STRING) { //could be Blank, String, short week/month, full week/month
 						final String x = cell.getStringCellValue();
-						subType = getWeekMonthSubType(x);
+						subType = getWeekMonthSubType(x, locale); //ZSS-69
 					} else if (type == Cell.CELL_TYPE_NUMERIC) { //could be number/date/time
 						subType = getDateTimeSubType(cell);
 					}
@@ -3267,7 +3302,7 @@ public final class BookHelper {
 				//type == prevtype
 				if (type == Cell.CELL_TYPE_STRING) { //check if week/month
 					final String x = cell.getStringCellValue();
-					final int curSubType = getWeekMonthSubType(x);
+					final int curSubType = getWeekMonthSubType(x, locale); //ZSS-69
 					if (curSubType == subType) {
 						e = j;
 						continue;
@@ -3330,6 +3365,7 @@ public final class BookHelper {
 				}
 				break;
 			case Cell.CELL_TYPE_STRING:
+				final Locale locale = ZssContext.getCurrent().getLocale(); //ZSS-69 locale aware then US when drag-fill
 				switch(subType) {
 				default:
 				case Step.BLANK:
@@ -3339,16 +3375,28 @@ public final class BookHelper {
 					step = CopyStep.instance;
 					break;
 				case Step.SHORT_WEEK: //short week
-					step = getShortWeekStep(srcCells, b, e, positive);
+					step = getShortWeekStep(srcCells, b, e, positive, locale);
 					break;
 				case Step.SHORT_MONTH: //short month
-					step = getShortMonthStep(srcCells, b, e, positive);
+					step = getShortMonthStep(srcCells, b, e, positive, locale);
 					break;
 				case Step.FULL_WEEK: //full week
-					step = getFullWeekStep(srcCells, b, e, positive);
+					step = getFullWeekStep(srcCells, b, e, positive, locale);
 					break;
 				case Step.FULL_MONTH: //full month
-					step = getFullMonthStep(srcCells, b, e, positive);
+					step = getFullMonthStep(srcCells, b, e, positive, locale);
+					break;
+				case Step.US_SHORT_WEEK: //US short week
+					step = getShortWeekStep(srcCells, b, e, positive, Locale.US);
+					break;
+				case Step.US_SHORT_MONTH: //US short month
+					step = getShortMonthStep(srcCells, b, e, positive, Locale.US);
+					break;
+				case Step.US_FULL_WEEK: //US full week
+					step = getFullWeekStep(srcCells, b, e, positive, Locale.US);
+					break;
+				case Step.US_FULL_MONTH: //US full month
+					step = getFullMonthStep(srcCells, b, e, positive, Locale.US);
 					break;
 				}
  				break;
@@ -3375,7 +3423,7 @@ public final class BookHelper {
 		parts[j++]= cal.get(Calendar.MONTH);
 		parts[j++]= cal.get(Calendar.DAY_OF_MONTH);
 		
-    	final SimpleDateFormat format = (SimpleDateFormat) DataFormatter.getJavaFormat(srcCell);
+    	final SimpleDateFormat format = (SimpleDateFormat) DataFormatter.getJavaFormat(srcCell, ZssContext.getCurrent().getLocale()); //ZSS-68
     	final String pattern1 = format.toPattern();
 		final boolean withtime = isTimePattern(pattern1);
 		if (withtime) {
@@ -3587,7 +3635,7 @@ public final class BookHelper {
 		}
 		return 0; //normal case
 	}
-	private static Step getShortWeekStep(Cell[] srcCells, int b, int e, boolean positive) {
+	private static Step getShortWeekStep(Cell[] srcCells, int b, int e, boolean positive, Locale locale) { //ZSS-69
 		final int count = e-b+1;
 		String bWeek = null;
 		int preIndex = -1;
@@ -3595,7 +3643,7 @@ public final class BookHelper {
 		for (int j = b; j <= e; ++j) {
 			final Cell srcCell = srcCells[j];
 			final String x = srcCell.getStringCellValue(); 	
-			final int weekIndex = getShortWeekIndex(x);
+			final int weekIndex = getShortWeekIndex(x, locale); //ZSS-69
 			if (step == 0) {
 				if (preIndex >= 0) {
 					step = weekIndex - preIndex;
@@ -3614,9 +3662,9 @@ public final class BookHelper {
 				}
 			}
 		}
-		return new ShortWeekStep(preIndex, step, getCaseType(bWeek), b == e ? Step.SHORT_WEEK : -1);
+		return new ShortWeekStep(preIndex, step, getCaseType(bWeek), b == e ? Step.SHORT_WEEK : -1, locale); //ZSS-69
 	}
-	private static Step getFullWeekStep(Cell[] srcCells, int b, int e, boolean positive) {
+	private static Step getFullWeekStep(Cell[] srcCells, int b, int e, boolean positive, Locale locale) { //ZSS-69
 		final int count = e-b+1;
 		String bWeek = null;
 		int preIndex = -1;
@@ -3624,7 +3672,7 @@ public final class BookHelper {
 		for (int j = b; j <= e; ++j) {
 			final Cell srcCell = srcCells[j];
 			final String x = srcCell.getStringCellValue(); 	
-			final int weekIndex = getFullWeekIndex(x);
+			final int weekIndex = getFullWeekIndex(x, locale); //ZSS-69
 			if (step == 0) {
 				if (preIndex >= 0) {
 					step = weekIndex - preIndex;
@@ -3643,9 +3691,9 @@ public final class BookHelper {
 				}
 			}
 		}
-		return new FullWeekStep(preIndex, step, getCaseType(bWeek), b == e ? Step.FULL_WEEK : -1);
+		return new FullWeekStep(preIndex, step, getCaseType(bWeek), b == e ? Step.FULL_WEEK : -1, locale); //ZSS-69
 	}
-	private static Step getShortMonthStep(Cell[] srcCells, int b, int e, boolean positive) {
+	private static Step getShortMonthStep(Cell[] srcCells, int b, int e, boolean positive, Locale locale) {
 		final int count = e-b+1;
 		String bMonth = null;
 		int preIndex = -1;
@@ -3653,7 +3701,7 @@ public final class BookHelper {
 		for (int j = b; j <= e; ++j) {
 			final Cell srcCell = srcCells[j];
 			final String x = srcCell.getStringCellValue(); 	
-			final int monthIndex = getShortMonthIndex(x);
+			final int monthIndex = getShortMonthIndex(x, locale); //ZSS-69
 			if (step == 0) {
 				if (preIndex >= 0) {
 					step = monthIndex - preIndex;
@@ -3672,9 +3720,9 @@ public final class BookHelper {
 				}
 			}
 		}
-		return new ShortMonthStep(preIndex, step, getCaseType(bMonth), b == e ? Step.SHORT_MONTH : -1);
+		return new ShortMonthStep(preIndex, step, getCaseType(bMonth), b == e ? Step.SHORT_MONTH : -1, locale); //ZSS-69
 	}
-	private static Step getFullMonthStep(Cell[] srcCells, int b, int e, boolean positive) {
+	private static Step getFullMonthStep(Cell[] srcCells, int b, int e, boolean positive, Locale locale) { //ZSS-69
 		final int count = e-b+1;
 		String bMonth = null;
 		int preIndex = -1;
@@ -3682,7 +3730,7 @@ public final class BookHelper {
 		for (int j = b; j <= e; ++j) {
 			final Cell srcCell = srcCells[j];
 			final String x = srcCell.getStringCellValue(); 	
-			final int monthIndex = getFullMonthIndex(x);
+			final int monthIndex = getFullMonthIndex(x, locale); //ZSS-69
 			if (step == 0) {
 				if (preIndex >= 0) {
 					step = monthIndex - preIndex;
@@ -3701,7 +3749,7 @@ public final class BookHelper {
 				}
 			}
 		}
-		return new FullMonthStep(preIndex, step, getCaseType(bMonth), b == e ? Step.FULL_MONTH : -1);
+		return new FullMonthStep(preIndex, step, getCaseType(bMonth), b == e ? Step.FULL_MONTH : -1, locale); //ZSS-69
 	}
 	
 	private static StepChunk getRowStepChunk(Worksheet sheet, int fillType, int col, int row1, int row2, boolean pos, int colCount) {

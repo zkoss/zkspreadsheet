@@ -20,6 +20,9 @@ ZK Spreadsheet 2.2.0
    ZSS-60 Editing formula support use mouse to select a cell or a selection
    ZSS-62 ZPOI upgrade to POI 3.8 beta5
    ZSS-64 ZK Spreadsheet App shall support sheet deletion collaboration
+   ZSS-67 Support locale aware Date and Number input 
+   ZSS-68 Support showing Date and Number with current locale 
+   ZSS-69 Support locale aware drag fill for Month and Week 
 
 *Bug
    ZSS-15 edit date cells doesn't work
