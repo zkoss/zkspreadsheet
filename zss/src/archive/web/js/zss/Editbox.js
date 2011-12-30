@@ -351,6 +351,8 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
 			sheet._doKeydown(evt);
 		}
 	},
+	afterKeyDown_: function (evt, simulated) {//must eat the event, otherwise cause delete key evt doesn't work correctly
+	},
 	doKeyUp_: function (evt) {
 		var sheet = this.sheet,
 			keycode = evt.keyCode;
@@ -488,9 +490,6 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 	   		});
 	   	}
 	},
-	doKeyPress_: function () {
-		this.autoAdjust(true);
-	},
 	doMouseDown_: function (evt) {
 		var sheet = this.sheet;
 		if (sheet) {
@@ -501,6 +500,9 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 				}
 			}
 		}
+	},
+	doKeyPress_: function (evt) {
+		this.autoAdjust(true);
 	},
 	doKeyDown_: function (evt) {
 		if (this.disabled)
@@ -547,6 +549,8 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 				break;
 			}	
 		}
+	},
+	afterKeyDown_: function (evt, simulated) {//must eat the event, otherwise cause delete key evt doesn't work correctly
 	},
 	doKeyUp_: function (evt) {
 		var sheet = this.sheet;
