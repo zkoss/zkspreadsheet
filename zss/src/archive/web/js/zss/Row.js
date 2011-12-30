@@ -42,8 +42,9 @@ zss.Row = zk.$extends(zk.Widget, {
 		var data = src.getRow(row);
 		this.zsh = data.heightId;
 		this.cells = [];
+		this.wrapedCells = [];
 	},
-	bind_: function () {
+	bind_: function (desktop, skipper, after) {
 		this.$supers(zss.Row, 'bind_', arguments);
 		this.comp = this.$n();
 		this.fire('onRowAdded');
@@ -59,6 +60,67 @@ zss.Row = zk.$extends(zk.Widget, {
 		this.comp = this.r = this.zsh = null;
 		this.$supers(zss.Row, 'unbind_', arguments);
 	},
+	_updateWrapRowHeight: function () {
+		var row = this.r,
+			custRowHeight = this.sheet.custRowHeight,
+			meta = custRowHeight.getMeta(row),
+			orgHgh = custRowHeight._getCustomizedSize(row),
+			hgh = orgHgh,
+			cells = this.wrapedCells,
+			i = cells.length;
+		while (i--) {
+			var c = cells[i];
+			if (c) {
+				hgh = Math.max(hgh, c.getTextHeight());
+			}
+		}
+		
+//		if (jq(this.$n()).height() == hgh) {
+//			return;
+//		}
+		
+		var sheet = this.sheet,
+			shtId = sheet.sheetid,
+			zsh = this.zsh,
+			cssId = shtId + "-sheet",
+			cssPrefix = '#' + shtId;
+		if (!zsh) {
+			zsh = meta ? meta[2] : custRowHeight.ids.next();
+			custRowHeight.setCustomizedSize(row, hgh, zsh, false, true);
+			sheet._appendZSH(row, zsh); //this doesn't work correctly ?? seems works, TEST it
+			sheet._wgt._activeRange.updateRowHeightId(row, zsh);
+		} else {
+			custRowHeight.setCustomizedSize(row, hgh, zsh, false, true);
+		}
+			
+		zcss.setRule(cssPrefix + " .zsh" + zsh, ["height"], [hgh + "px"], true, cssId);
+		zcss.setRule(cssPrefix + " .zshi" + zsh, "height", hgh + "px", true, cssId);
+		var h2 = (hgh > 0) ? hgh - 1 : 0;
+		zcss.setRule(cssPrefix + " .zslh" + zsh, ["display", "height", "line-height"], ["", h2 + "px", h2 + "px"], true, cssId);
+		
+		//TODO: update focus shall handle by FocusMarkCtrl by listen onRowHeightChanged evt
+		var fPos = sheet.getLastFocus(),
+			sPos = sheet.getLastSelection();
+		sheet.moveCellFocus(fPos.row, fPos.column, true);
+		sheet.moveCellSelection(sPos.left, sPos.top, sPos.right, sPos.bottom, false, true);
+		sheet.fire('onRowHeightChanged', {row: row});
+	},
+	processWrapCell: function (cell) {
+		if (this.sheet.custRowHeight.isDefaultSize(cell.r)) {
+			var wrapedCells = this.wrapedCells;
+			if (cell.wrap) {
+				if (!wrapedCells.$contains(cell)) {
+					wrapedCells.push(cell);
+				}
+				this._updateWrapRowHeight();
+			} else {
+				if (wrapedCells.$remove(cell)) {
+					this._updateWrapRowHeight();
+				}
+			}
+		} 
+	},
+	//IE6 only
 	_onRowHeightChanged: function (evt) {
 		if (this.r >= evt.data.row) {
 			zk(this.$n()).redoCSS();
@@ -169,11 +231,13 @@ zss.Row = zk.$extends(zk.Widget, {
 	 * @param int zsh the height position index
 	 */
 	appendZSH: function (zsh) {
-		this.zsh = zsh;
-		jq(this.comp).addClass("zsh" + zsh);
-		var size = this.cells.length;
-		for (var i = 0; i < size; i++)
-			this.cells[i].appendZSH(zsh);
+		if (zsh) {
+			this.zsh = zsh;
+			jq(this.comp).addClass("zsh" + zsh);
+			var size = this.cells.length;
+			for (var i = 0; i < size; i++)
+				this.cells[i].appendZSH(zsh);	
+		}
 	},
 	/**
 	 * Insert new cell

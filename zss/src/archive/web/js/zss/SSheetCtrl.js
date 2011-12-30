@@ -254,13 +254,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		return r;
 	},
 	bind_: function (desktop, skipper, after) {
+		zss.SSheetCtrl._initInnerComp(this, this._wgt._autoFilter ? this._wgt._autoFilter.range.top : null);
 		this.$supers(SheetCtrl, 'bind_', arguments);
 		this.listen({onContentsChanged: this});
 		
-		zss.SSheetCtrl._initInnerComp(this, this._wgt._autoFilter ? this._wgt._autoFilter.range.top : null);
-		var wgt = this._wgt,
-			n = this.comp = this.$n(),
-			self = n.ctrl = this;
+		var n = this.comp = this.$n();
+		n.ctrl = this;
 	},
 	unbind_: function () { 
 		this.unlisten({onContentsChanged: this});
@@ -1801,7 +1800,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	 * @param int right column end index
 	 * @param int bottom row end index
 	 * @param boolean snap whether snap to merge cell border
-	 * @param boolean not trigger focus
+	 * @param boolean not trigger DOM Element focus event
 	 */
 	moveCellSelection: function (left, top, right, bottom, snap, noTrigger) {
 		var lastRange = this.selArea.lastRange;

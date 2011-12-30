@@ -225,20 +225,15 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 				html += row.getHtmlEpilogHalf();
 			
 			if (isBtm)
-				this.appendRow(row, html);
+				this.appendRow(row, html, true);
 			else if (isTop) {
-				this.insertRow(j++, row, html);
+				this.insertRow(j++, row, html, true);
 			}
 		}
 		
 		var r = this.range,
-			width = rCol - lCol + 1,
-			height = bRow - tRow + 1;
-		if (isBtm)
-			r.extendBottom(height);
-		else if (isTop)
-			r.extendTop(height);
-		else if (isLeft)
+			width = rCol - lCol + 1;
+		if (isLeft)
 			r.extendLeft(width);
 		else if (isRight)
 			r.extendRight(width);
@@ -285,8 +280,6 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 		this.range.extendRight(size);
 	},
 	/**
-	 * TODO: copyCells is fast ??
-	 * 
 	 * Insert new row
 	 * @param int row the row to insert
 	 * @param int size the size of the row  
@@ -307,10 +300,9 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			ctrl = new zss.Row(sheet, block, r, data);
 			html += ctrl.getHtmlPrologHalf();
 			html += zss.Row.copyCells(temprow, ctrl);
-			this.insertRow(r, ctrl, html);
+			this.insertRow(r, ctrl, html, true);
 		}
 		this.shiftRowInfo(index + size, row + size);
-		this.range.extendBottom(size);
 	},
 	/**
 	 * Shift row info
@@ -371,16 +363,20 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 	 * @param int index
 	 * @param zss.Row rowwidget
 	 * @param string htmlContent
+	 * @param boolean extendRange whether shall extend block range or not
 	 */
-	insertRow: function (index, row, htmlContent) {
+	insertRow: function (index, row, htmlContent, extendRange) {
 		var ignoeChildDom = htmlContent === undefined || !!htmlContent,
 			rows = this.rows,
 			sibling = rows[index];
 		this.insertBefore(row, sibling, ignoeChildDom);
 		rows.splice(index, 0, row);
+		if (extendRange) {
+			this.range.extendTop(1);
+		}
 		if (htmlContent) {
 			jq(htmlContent).insertBefore(sibling.$n());
-			row.bind_();
+			row.bind();
 		}
 	},
 	/**
@@ -388,14 +384,18 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 	 * 
 	 * @param row zss.Row widget
 	 * @param string htmlContent
+	 * @param boolean extendRange whether shall extend block range or not
 	 */
-	appendRow: function (row, htmlContent) {
+	appendRow: function (row, htmlContent, extendRange) {
 		var ignoeChildDom = htmlContent === undefined || !!htmlContent;
 		this.appendChild(row, ignoeChildDom);
 		this.rows.push(row);
+		if (extendRange) {
+			this.range.extendBottom(1);
+		}
 		if (htmlContent) {
 			jq(this.comp).append(htmlContent);
-			row.bind_();
+			row.bind();
 		}
 	},
 	/**

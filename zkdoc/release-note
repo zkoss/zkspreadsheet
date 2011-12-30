@@ -27,6 +27,7 @@ ZK Spreadsheet 2.2.0
    ZSS-21 Right click on hyperlink should not jump to the link
    ZSS-22 Shall not allow Copy and Paste operation in a protected spreadsheet
    ZSS-24 key on numpad is not work on Opera
+   ZSS-27 Wrap text does not change row height to make all content visible
    ZSS-29 Formula editor cursor not correctly positioned in different browser when focus changed when composing formula
    ZSS-40 Press Ctrl+V for long time does not work correctly
    ZSS-42 Export PDF, merged cell's border doesn't show up correctly
@@ -34,6 +35,7 @@ ZK Spreadsheet 2.2.0
    ZSS-52 Past special, copy column width's behavior doesn't correct
    ZSS-56 Unlock a cell, protect sheet, cannot double click to edit the cell
    ZSS-61 setSrc doesn't work on a empty spreadsheet
+   ZSS-65 When cell wrap, cell shall hide overflow text
    
 * Upgrade Notes
   + Per the feature ZSS-13, Spreadsheet will always open hyperlink in a separate browser tab window. 

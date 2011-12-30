@@ -261,12 +261,12 @@ zss.Header = zk.$extends(zk.Widget, {
 	getZclass: function () {
 		var id = this._pId;
 		return this.type == TopHeader ? 
-				'zstopcell' + (id ? ' zsw' + id : '') : 'zsleftcell zsrow zslh' + id;
+				'zstopcell' + (id ? ' zsw' + id : '') : 'zsleftcell zsrow' + (id ? ' zslh' + id : '');
 	},
 	_getInnerClass: function () {
 		var id = this._pId;
 		return this.type == TopHeader ? 
-				'zstopcelltxt zsw' + id : 'zsleftcelltxt zslh' + id;
+				'zstopcelltxt' + (id ? ' zsw' + id : '') : 'zsleftcelltxt' + (id ? ' zslh' + id : '');
 	},
 	redraw: function (out) {
 		out.push(this.getHtml());

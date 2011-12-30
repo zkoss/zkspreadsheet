@@ -74,6 +74,23 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		}
 		return c;
 	}
+	
+	/**
+	 * Sync frozen range heightId with main range, 
+	 * the heightId may exist in client side only when row contains wrap cell
+	 */
+	function syncHeightId(srcRange, dstRange) {
+		var srcRows = srcRange.rows,
+			dstRows = dstRange.rows,
+			dstRowHeaders = dstRange.rowHeaders;
+		for (var rowNum in dstRows) {
+			var row = dstRows[rowNum],
+				hId = srcRows[rowNum].heightId;
+			if (hId && !row.heightId) {
+				dstRange.updateRowHeightId(rowNum, hId);
+			}
+		}
+	}
 
 	function doBlockUpdate(wgt, json, token) {
 		var ar = wgt._activeRange,
@@ -99,7 +116,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					fRight = fRect.right;
 				if (ar.rect.top < fTop) {
 					//copy top rows
-					for (var r = ar.rect.top; r < fTop; r++) {
+					for (var r = ar.rect.top; r <= fTop; r++) {
 						fRows[r] = copyRow(0, fRight, srcRows[r]);
 					}
 					fRect.top = ar.rect.top;
@@ -111,6 +128,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					}
 					fRect.bottom = ar.rect.bottom;
 				}
+				//row contains wrap cell may have height Id on client side
+				syncHeightId(ar, ar.topFrozen);
 			}
 			if (topFrozen) {
 				ar.topFrozen = newCachedRange(topFrozen.data);
@@ -120,7 +139,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					f = ar.topFrozen,
 					fRect = f.rect,
 					fLeft = fRect.left,
-					fRight = fLeft.right;
+					fRight = fRect.right;
 				if (left < fLeft) {
 					//copy left cells
 					var fRows = f.rows,
@@ -143,6 +162,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 						copyCells(fRect.right + 1, right, srcRow, dstRow);
 					}
 				}
+				//row contains wrap cell may have height Id on client side
+				syncHeightId(ar, ar.topFrozen);
 			}
 			wgt.sheetCtrl._cmdBlockUpdate(tp, d.dir, tRow, lCol, bRow, rCol, leftFrozen, topFrozen);
 		}
@@ -450,6 +471,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					cell.widthId = id;
 			},
 			updateRowHeightId: function (id) {
+				this.heightId = id;
 				var cells = this.cells;
 				for (var p in cells) {
 					cells[p].heightId = id;
@@ -461,7 +483,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					j = 0,
 					cell,
 					r = this.r,
-					cs = this.cells;
+					cs = this.cells,
+					hId = this.heightId;
 				for (; i <= right; i++) {
 					var c = cs[i];
 					if (!c) {
@@ -470,6 +493,10 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 						c.c = i;
 					} else {
 						c.update(src[j++], type);
+					}
+					//row contains wrap cell may have height Id on client side
+					if (!c.heightId && hId) {
+						c.heightId = hId;
 					}
 				}
 			},
@@ -537,7 +564,10 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				var r = this.rect,
 					rows = this.rows,
 					tRow = r.top,
-					bRow = r.bottom;
+					bRow = r.bottom,
+					header = this.columnHeaders[col];
+				if (header)
+					header.p = id;
 				for (var r = tRow; r <= bRow; r++) {
 					var row = rows[r];
 					if (row)
@@ -548,9 +578,12 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				}
 			},
 			updateRowHeightId: function (row, id) {
-				var row = this.rows[row];
-				if (row)
-					row.updateRowHeightId(id);
+				var r = this.rows[row],
+					header = this.rowHeaders[row];
+				if (r)
+					r.updateRowHeightId(id);
+				if (header)
+					header.p = id;
 				if (this.topFrozen) {
 					this.leftFrozen.updateRowHeightId(row, id);
 				}
@@ -572,8 +605,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 						break;
 					case 'jump':
 						delete this.rect;
-						delete this.rows;
-						delete this.rowHeaders;
+						//row contains wrap cell may have height Id on client side, delete it later
+						//delete this.rows;
+						//delete this.rowHeaders;
 						delete this.columnHeaders;	
 						
 						this.rect = newRect(top, left, btm, right);
@@ -755,14 +789,28 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					rowHeaderObj = v.rhs,
 					colHeaderObj = v.chs,
 					i = top, 
-					s = 0;
-				
+					s = 0,
+					dir = v.dir;
+				var oldRows = {},
+					oldRowHeaders = {};
+				if ('jump' == dir) {
+					//row contains wrap cell may have height Id on client side
+					oldRows = this.oldRows = this.rows,
+					oldRowHeaders = this.oldRowHeaders = this.rowHeaders;
+				}
 				this.updateBoundary(v.dir, top, left, btm, right);
 				var rows = this.rows;
 				for (; i <= btm; i++) {
 					var row = rows[i];
 					if (!row) {
-						rows[i] = newRow(src[s++], attrType, left, right);
+						row = rows[i] = newRow(src[s++], attrType, left, right);
+						//row contains wrap cell may have height Id on client side
+						if ('jump' == dir) {
+							var oldRow = oldRows[i];
+							if (oldRow && oldRow.heightId && !row.heightId) {
+								row.updateRowHeightId(oldRow.heightId);
+							}
+						}
 					} else {
 						row.update(src[s++], attrType, left, right);
 					}
@@ -770,9 +818,25 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				
 				if (rowHeaderObj) {
 					updateHeaders(rowHeaderObj, this.rowHeaders);
+					//row contains wrap cell may have height Id on client side
+					if ('jump' == dir) {
+						var headers = this.rowHeaders;
+						for (var i in headers) {
+							var h = headers[i],
+								oldHeader = oldRowHeaders[i];
+							if (!h.p && oldHeader && oldHeader.p) {
+								h.p = oldHeader.p; //position id
+							}
+						}
+					}
 				}
 				if (colHeaderObj) {
 					updateHeaders(colHeaderObj, this.columnHeaders);
+				}
+				//row contains wrap cell may have height Id on client side
+				if ('jump' == dir) {
+					delete this.oldRows;
+					delete this.oldRowHeaders;
 				}
 			},
 			getRow: function (num) {
