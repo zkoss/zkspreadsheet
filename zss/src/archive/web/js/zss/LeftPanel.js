@@ -115,12 +115,16 @@ zss.Panel = zk.$extends(zk.Widget, {
 	insertHeader_: function (index, header) {
 		var headers = this.headers,
 			sibling = headers[index];
-		this.insertBefore(header, sibling, true);
-		headers.splice(index, 0, header);
-		var $anchor = jq(header.getHtmlEpilogHalf());
-		$anchor.insertBefore(sibling.$n());
-		jq(header.getHtmlPrologHalf()).insertBefore($anchor);
-		header.bind_();
+		if (!sibling) {
+			this.appendHeader_(header);
+		} else {
+			this.insertBefore(header, sibling, true);
+			headers.splice(index, 0, header);
+			var $anchor = jq(header.getHtmlEpilogHalf());
+			$anchor.insertBefore(sibling.$n());
+			jq(header.getHtmlPrologHalf()).insertBefore($anchor);
+			header.bind_();	
+		}
 	},
 	/**
 	 * Create cells and associated headers

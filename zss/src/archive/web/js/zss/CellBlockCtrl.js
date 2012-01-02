@@ -369,14 +369,18 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 		var ignoeChildDom = htmlContent === undefined || !!htmlContent,
 			rows = this.rows,
 			sibling = rows[index];
-		this.insertBefore(row, sibling, ignoeChildDom);
-		rows.splice(index, 0, row);
-		if (extendRange) {
-			this.range.extendTop(1);
-		}
-		if (htmlContent) {
-			jq(htmlContent).insertBefore(sibling.$n());
-			row.bind();
+		if (!sibling) {
+			this.appendRow(row, htmlContent, extendRange);
+		} else {
+			this.insertBefore(row, sibling, ignoeChildDom);
+			rows.splice(index, 0, row);
+			if (extendRange) {
+				this.range.extendTop(1);
+			}
+			if (htmlContent) {
+				jq(htmlContent).insertBefore(sibling.$n());
+				row.bind();
+			}	
 		}
 	},
 	/**
