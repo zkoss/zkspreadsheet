@@ -1152,7 +1152,7 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 	appendChild: function (child, ignoreDom) {
 		if (!child.getPosition) {
 			//Ghost widget needs a fake getPosition function
-			child.getPosition = function () {return '';};
+			child.getPosition = zk.$void;
 		}
 		this.$supers(Spreadsheet, 'appendChild', arguments);
 	},
