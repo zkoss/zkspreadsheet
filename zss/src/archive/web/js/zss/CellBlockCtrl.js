@@ -300,9 +300,10 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			ctrl = new zss.Row(sheet, block, r, data);
 			html += ctrl.getHtmlPrologHalf();
 			html += zss.Row.copyCells(temprow, ctrl);
-			this.insertRow(r, ctrl, html, true);
+			this.insertRow(r, ctrl, html);
 		}
 		this.shiftRowInfo(index + size, row + size);
+		this.range.extendBottom(size);
 	},
 	/**
 	 * Shift row info
@@ -463,6 +464,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			rows.shift().detach();
 		}
 		this.range.extendTop(-size);
+		zk.log('removeRowsFromStart_ top: ' + this.range.top + ', rmed row size: ' + size);
 	},
 	removeRowsFromEnd_: function (size) {
 		var rows = this.rows,
