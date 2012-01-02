@@ -464,7 +464,6 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			rows.shift().detach();
 		}
 		this.range.extendTop(-size);
-		zk.log('removeRowsFromStart_ top: ' + this.range.top + ', rmed row size: ' + size);
 	},
 	removeRowsFromEnd_: function (size) {
 		var rows = this.rows,
