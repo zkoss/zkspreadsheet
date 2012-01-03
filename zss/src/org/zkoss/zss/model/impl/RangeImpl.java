@@ -589,6 +589,17 @@ public class RangeImpl implements Range {
 		}
 	}
 	
+	private Row getRow(int rowIndex, RefSheet refSheet) {
+		final Book book = BookHelper.getBook(_sheet, refSheet);
+		if (book != null) {
+			final Worksheet sheet = book.getWorksheet(refSheet.getSheetName());
+			if (sheet != null) {
+				return sheet.getRow(rowIndex);
+			}
+		}
+		return null;
+	}
+	
 	private Cell getCell(int rowIndex, int colIndex, RefSheet refSheet) {
 		//locate the model book and sheet of the refSheet
 		final Book book = BookHelper.getBook(_sheet, refSheet);
@@ -1229,6 +1240,11 @@ public class RangeImpl implements Range {
 	
 	@Override
 	public void setRowHeight(int points) {
+		setRowHeight(points, true);
+	}
+	
+	@Override
+	public void setRowHeight(int points, boolean customHeight) {
 		synchronized (_sheet) {
 			if (_refs != null && !_refs.isEmpty()) {
 				final Ref ref = _refs.iterator().next();
@@ -1236,7 +1252,7 @@ public class RangeImpl implements Range {
 				final int tRow = ref.getTopRow();
 				final int bRow = ref.getBottomRow();
 				final Worksheet sheet = BookHelper.getSheet(_sheet, refSheet);
-				final Set<Ref> all = BookHelper.setRowHeight(sheet, tRow, bRow, (short) (points * 20)); //in twips
+				final Set<Ref> all = BookHelper.setRowHeight(sheet, tRow, bRow, (short) (points * 20), customHeight); //in twips, set customHeight
 				if (all != null) {
 					final Book book = (Book) _sheet.getWorkbook();
 					BookHelper.notifySizeChanges(book, all);
@@ -2283,5 +2299,19 @@ public class RangeImpl implements Range {
 				}
 			}
 		}
+	}
+
+	@Override
+	public boolean isCustomHeight() {
+		Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
+		if (ref != null) {
+			final int tRow = ref.getTopRow();
+			final RefSheet refSheet = ref.getOwnerSheet();
+			final Row row = getRow(tRow, refSheet);
+			if (row != null) {
+				return row.isCustomHeight();
+			}
+		}
+		return false;
 	}
 }

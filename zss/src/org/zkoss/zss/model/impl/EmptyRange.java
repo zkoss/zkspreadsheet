@@ -330,4 +330,13 @@ public class EmptyRange implements Range {
 	@Override
 	public void deleteSheet() {
 	}
+
+	@Override
+	public void setRowHeight(int points, boolean customHeight) {
+	}
+
+	@Override
+	public boolean isCustomHeight() {
+		return false;
+	}
 }

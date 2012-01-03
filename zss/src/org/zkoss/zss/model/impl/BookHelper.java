@@ -3113,24 +3113,27 @@ public final class BookHelper {
 		return all;
 	}
 	
-	public static Set<Ref> setRowHeight(Worksheet sheet, int tRow, int bRow, short twips) {
+	public static Set<Ref> setRowHeight(Worksheet sheet, int tRow, int bRow, short twips, boolean customHeight) {
 		final Book book = (Book) sheet.getWorkbook();
 		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
 		final RefSheet refSheet = BookHelper.getRefSheet(book, sheet);
 		final Set<Ref> all = new HashSet<Ref>();
 		for (int row = tRow; row <= bRow; ++row) {
-			final int orgTwips = sheet.getColumnWidth(row);
-			if (twips != orgTwips) {
-				BookHelper.setRowHeight(sheet, row, twips);
-				all.add(new AreaRefImpl(row, 0, row, maxcol, refSheet));
+			Row rowobj = sheet.getRow(row);
+			final int orgTwips = rowobj == null ? sheet.getDefaultRowHeight() : rowobj.getHeight();
+			if ((twips < 0 && orgTwips < 0) || twips == orgTwips) {
+				continue;
 			}
+			BookHelper.setRowHeight(sheet, row, twips, customHeight);
+			all.add(new AreaRefImpl(row, 0, row, maxcol, refSheet));
 		}
 		return all;
 	}
 	
-	public static void setRowHeight(Worksheet sheet, int row, short twips) {
+	public static void setRowHeight(Worksheet sheet, int row, short twips, boolean customHeight) {
 		final Row rowx = BookHelper.getOrCreateRow(sheet, row);
 		rowx.setHeight(twips);
+		rowx.setCustomHeight(twips < 0 ? false : customHeight);
 	}
 	
 	public static short getRowHeight(Worksheet sheet, int row) {

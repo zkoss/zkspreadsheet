@@ -277,11 +277,23 @@ public interface Range {
 	public void setColumnWidth(int char256);
 	
 	/**
-	 * Sets row height in points.
+	 * Sets row height in points and always set customHeight flag to true.
 	 * @param points new row height in points.
 	 */
 	public void setRowHeight(int points);
 
+	/**
+	 * Sets row height in points with customHeight flag.
+	 * @param points new row height in points
+	 * @param customHeight true if manually set by user. 
+	 */
+	public void setRowHeight(int points, boolean customHeight);
+	
+	/**
+	 * Returns Whether the row with customHeight. 
+	 */
+	public boolean isCustomHeight();
+	
 	/**
 	 * Returns associate {@link Worksheet} of this range.
 	 * @return associate {@link Worksheet} of this range.
