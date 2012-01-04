@@ -702,23 +702,23 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		
 		//create east from cache
 		if (right + 1 <= rCol) {
-			var b = false,
+			var createFromCache = false,
 				fRow = sheet._wgt.getRowFreeze();
 			if (ar.containsRange(top, right + 1, bottom, rCol)) {
 				this.create_('east', top, right + 1, bottom, rCol);
 				if (fRow > -1) {
 					sheet.tp.create_('east', right + 1, rCol, 0, fRow, true);
 				}
-				b = true;
+				createFromCache = true;
 			} else if (ar.rect.right > right + 1 && ar.rect.right < rCol && ar.containsRange(top, right + 1, bottom, ar.rect.right)) {
 				//create partial east from cache
 				this.create_('east', top, right + 1, bottom, ar.rect.right);
 				if (fRow > -1) {
 					sheet.tp.create_('east', right + 1, ar.rect.right, 0, fRow, true);
 				}
-				b = true;
+				createFromCache = true;
 			}
-			if (b) { //after create cell from cache, range's value may changed
+			if (createFromCache) { //after create cell from cache, range's value may changed
 				range = this.range;
 				top = range.top;
 				left = range.left;
@@ -726,25 +726,26 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				bottom = range.bottom;
 			}
 		}
+
 		//create south from cache
 		if (bottom + 1 <= bRow) {
-			var b = false,
+			var createFromCache = false,
 				fCol = sheet._wgt.getColumnFreeze();
-			if (ar.containsRange(bottom + 1, lCol, bRow, right)) {
-				this.create_('south', bottom + 1, lCol, bRow, right);
+			if (ar.containsRange(bottom + 1, left, bRow, right)) {
+				this.create_('south', bottom + 1, left, bRow, right);
 				if (fCol > -1) {
 					sheet.lp.create_('south', bottom + 1, bRow, 0, fCol, true);
 				}
-				b = true;
-			} else if (ar.rect.bottom > bottom + 1 && ar.rect.bottom < bRow && ar.containsRange(bottom + 1, lCol, ar.rect.bottom, right)) {
+				createFromCache = true;
+			} else if (ar.rect.bottom > bottom + 1 && ar.rect.bottom < bRow && ar.containsRange(bottom + 1, left, ar.rect.bottom, right)) {
 				//create partial south from cache
-				this.create_('south', bottom + 1, lCol, ar.rect.bottom, right);
+				this.create_('south', bottom + 1, left, ar.rect.bottom, right);
 				if (fCol > -1) {
 					sheet.lp.create_('south', bottom + 1, ar.rect.bottom, 0, fCol, true);
 				}
-				b = true;
+				createFromCache = true;
 			}
-			if (b) {
+			if (createFromCache) {
 				range = this.range;
 				top = range.top;
 				left = range.left;
@@ -755,23 +756,23 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		
 		//create north from cache
 		if (tRow < top) {
-			var b = false,
+			var createFromCache = false,
 				fCol = sheet._wgt.getColumnFreeze();
-			if (ar.containsRange(tRow, lCol, top - 1, right)) {
-				this.create_('north', tRow, lCol, top - 1, right);
+			if (ar.containsRange(tRow, left, top - 1, right)) {
+				this.create_('north', tRow, left, top - 1, right);
 				if (fCol > -1) {
 					sheet.lp.create_('north', tRow, top - 1, 0, fCol, true);
 				}
-				b = true;
-			} else if (ar.rect.top > tRow && ar.rect.top < top - 1 && ar.containsRange(ar.rect.top, lCol, top - 1, right)) {
+				createFromCache = true;
+			} else if (ar.rect.top > tRow && ar.rect.top < top - 1 && ar.containsRange(ar.rect.top, left, top - 1, right)) {
 				//create partial north from cache
-				this.create_('north', ar.rect.top, lCol, top - 1, right);
+				this.create_('north', ar.rect.top, left, top - 1, right);
 				if (fCol > -1) {
 					sheet.lp.create_('north', ar.rect.top, top - 1, 0, fCol, true);
 				}
-				b = true;
+				createFromCache = true;
 			}
-			if (b) {
+			if (createFromCache) {
 				range = this.range;
 				top = range.top;
 				left = range.left;
