@@ -150,10 +150,10 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					var fRows = f.rows,
 						fTop = fRect.top,
 						fBtm = fRect.bottom;
-					for (r = fTop; r < fBtm; r++) {
+					for (r = fTop; r <= fBtm; r++) {
 						var srcRow = srcRows[r],
 							dstRow = fRows[r];
-						copyCells(left, fLeft, srcRow, dstRow);
+						copyCells(left, fLeft - 1, srcRow, dstRow);
 					}
 				}
 				if (fRight < right) {
