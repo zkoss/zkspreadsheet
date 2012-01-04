@@ -457,23 +457,30 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 	},
 	removeRowsFromStart_: function (size) {
 		var rows = this.rows,
-			i = size;
+			i = size,
+			rm = 0;
 		while (i--) {
-			if (!rows.length)
-				return;
+			if (!rows.length) {
+				break;
+			}
 			rows.shift().detach();
+			rm++;
 		}
-		this.range.extendTop(-size);
+		this.range.extendTop(-rm);
+		return rm;
 	},
 	removeRowsFromEnd_: function (size) {
 		var rows = this.rows,
-			i = size;
+			i = size,
+			rm = 0;
 		while (i--) {
-			if (!rows.length)
-				return;
+			if (!rows.length) {
+				break;
+			}
 			rows.pop().detach();
+			rm++;
 		}
-		this.range.extendBottom(-size);
+		this.range.extendBottom(-rm);
 	}
 });
 })();
