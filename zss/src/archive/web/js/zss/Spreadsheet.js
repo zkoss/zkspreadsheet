@@ -110,7 +110,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			ar.update(d);
 			if (leftFrozen) {
 				ar.leftFrozen = newCachedRange(leftFrozen.data);
-				//TODO: fine-tune the following code, src row may be null
+				//TODO: fine-tune the following code
 				var	srcRows = ar.rows,
 					f = ar.leftFrozen,
 					fRect = f.rect,
@@ -121,14 +121,20 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				if (ar.rect.top < fTop) {
 					//copy top rows
 					for (var r = ar.rect.top; r < fTop; r++) {
-						fRows[r] = copyRow(0, fRight, srcRows[r]);
+						var srcRow = srcRows[r];
+						if (srcRow) {
+							fRows[r] = copyRow(0, fRight, srcRow);
+						}
 					}
 					fRect.top = ar.rect.top;
 				}
 				if (fBtm < ar.rect.bottom) {
 					//copy bottom rows
 					for (var r = fRect.bottom + 1; r <= ar.rect.bottom; r++) {
-						fRows[r] = copyRow(0, fRight, srcRows[r]);
+						var srcRow = srcRows[r];
+						if (srcRow) {
+							fRows[r] = copyRow(0, fRight, srcRow);	
+						}
 					}
 					fRect.bottom = ar.rect.bottom;
 				}
@@ -137,7 +143,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			}
 			if (topFrozen) {
 				ar.topFrozen = newCachedRange(topFrozen.data);
-				//TODO: fine-tune the following code, src row may be null
+				//TODO: fine-tune the following code
 				var left = ar.rect.left,
 					right = ar.rect.right,
 					srcRows = ar.rows,
@@ -153,7 +159,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					for (r = fTop; r <= fBtm; r++) {
 						var srcRow = srcRows[r],
 							dstRow = fRows[r];
-						copyCells(left, fLeft - 1, srcRow, dstRow);
+						if (srcRow) {
+							copyCells(left, fLeft - 1, srcRow, dstRow);	
+						}
 					}
 				}
 				if (fRight < right) {
@@ -164,7 +172,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					for (r = fTop; r <= fBtm; r++) {
 						var srcRow = srcRows[r],
 							dstRow = fRows[r];
-						copyCells(fRect.right + 1, right, srcRow, dstRow);
+						if (srcRow) {
+							copyCells(fRect.right + 1, right, srcRow, dstRow);
+						}
 					}
 				}
 				//row contains wrap cell may have height Id on client side
@@ -715,19 +725,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				var rect = this.rect;
 				return	tRow >= rect.top && lCol >= rect.left &&
 							bRow <= rect.bottom && rCol <= rect.right;
-			},
-			renameColumnHeaders: function (col, size, extnm) {
-				var headers = this.columnHeaders,
-					i = col,
-					j = 0,
-					l = extnm.length;
-				while (j < l) {
-					var h = headers[i++];
-					if (h) {
-						h.t = extnm[j];
-					}
-					j++;
-				}
 			},
 			_updateHeaders: function (headers, index, size, extnm) {
 				var	i = index,
