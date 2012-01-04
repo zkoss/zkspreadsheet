@@ -85,9 +85,12 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			dstRowHeaders = dstRange.rowHeaders;
 		for (var rowNum in dstRows) {
 			var row = dstRows[rowNum],
-				hId = srcRows[rowNum].heightId;
-			if (hId && !row.heightId) {
-				dstRange.updateRowHeightId(rowNum, hId);
+				srcRow = srcRows[rowNum];
+			if (srcRow) {
+				var hId = srcRow.heightId;
+				if (hId && !row.heightId) {
+					dstRange.updateRowHeightId(rowNum, hId);	
+				}
 			}
 		}
 	}
@@ -107,6 +110,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			ar.update(d);
 			if (leftFrozen) {
 				ar.leftFrozen = newCachedRange(leftFrozen.data);
+				//TODO: fine-tune the following code, src row may be null
 				var	srcRows = ar.rows,
 					f = ar.leftFrozen,
 					fRect = f.rect,
@@ -116,7 +120,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					fRight = fRect.right;
 				if (ar.rect.top < fTop) {
 					//copy top rows
-					for (var r = ar.rect.top; r <= fTop; r++) {
+					for (var r = ar.rect.top; r < fTop; r++) {
 						fRows[r] = copyRow(0, fRight, srcRows[r]);
 					}
 					fRect.top = ar.rect.top;
@@ -133,6 +137,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			}
 			if (topFrozen) {
 				ar.topFrozen = newCachedRange(topFrozen.data);
+				//TODO: fine-tune the following code, src row may be null
 				var left = ar.rect.left,
 					right = ar.rect.right,
 					srcRows = ar.rows,
@@ -145,13 +150,13 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					var fRows = f.rows,
 						fTop = fRect.top,
 						fBtm = fRect.bottom;
-					for (r = fTop; r <= fBtm; r++) {
+					for (r = fTop; r < fBtm; r++) {
 						var srcRow = srcRows[r],
 							dstRow = fRows[r];
 						copyCells(left, fLeft, srcRow, dstRow);
 					}
 				}
-				if (fRight < ar.rect.right) {
+				if (fRight < right) {
 					//copy right cells
 					var fRows = f.rows,
 						fTop = fRect.top,
