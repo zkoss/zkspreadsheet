@@ -41,6 +41,8 @@ ZK Spreadsheet 2.2.0
    ZSS-61 setSrc doesn't work on a empty spreadsheet
    ZSS-65 When cell wrap, cell shall hide overflow text
    ZSS-70 scroll down with freeze column, in freeze area, some row is empty
+   ZSS-71 Use preloadRowSize width column freeze, when scroll down very fast and multiple times in short time, doesn't work well
+   ZSS-72 Set one column freeze, and set preloadColumnSize, cause JS error
    
 * Upgrade Notes
   + Per the feature ZSS-13, Spreadsheet will always open hyperlink in a separate browser tab window. 

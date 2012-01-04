@@ -101,17 +101,16 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			bRow = Math.min(bRow, sheet.maxRows - 1);
 			if (ar.containsRange(tRow, lCol, bRow, rCol)) {
 				this.create_(dir, tRow, lCol, bRow, rCol);
+				var fCol = sheet._wgt.getColumnFreeze();
+				if (fCol > -1) {
+					sheet.lp.create_(dir, tRow, bRow, 0, fCol, true);
+				}
 				if (cr.top + vr.height < vr.top) {
 					this.pruneCell('north', vr, jump ? null : vr.top - (cr.top + vr.height));
 				}
 				cache = true;
 			}
 			if (cache) {
-				var fCol = sheet._wgt.getColumnFreeze();
-				if (fCol > 0) {
-					if ((ar.leftFrozen && ar.leftFrozen.containsRange(tRow, 0, bRow, fCol)) || ar.containsRange(tRow, 0, bRow, fCol))
-						sheet.lp.create_(dir, tRow, bRow, 0, fCol, true);
-				}
 				sheet.sendSyncblock();
 				this.sheet.dp._fixSize(this);
 				this._recheckVisible();
@@ -128,17 +127,16 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			tRow = tRow >= 0 ? tRow : 0;
 			if (ar.containsRange(tRow, lCol, bRow, rCol)) {
 				this.create_(dir, tRow, lCol, bRow, rCol);
+				var fCol = sheet._wgt.getColumnFreeze();
+				if (fCol > -1) {
+					sheet.lp.create_(dir, tRow, bRow, 0, fCol, true);
+				}
 				if (cr.bottom - vr.height > vr.bottom) {
 					this.pruneCell('south', vr, jump ? null : cr.bottom - vr.height - vr.bottom);
 				}
 				cache = true;
 			}
 			if (cache) {
-				var fCol = sheet._wgt.getColumnFreeze();
-				if (fCol > 0) {
-					if ((ar.leftFrozen && ar.leftFrozen.containsRange(tRow, 0, bRow, fCol)) || ar.containsRange(tRow, 0, bRow, fCol))
-						sheet.lp.create_(dir, tRow, bRow, 0, fCol, true);
-				}
 				sheet.sendSyncblock();
 				this.sheet.dp._fixSize(this);
 				this._recheckVisible();
@@ -155,20 +153,16 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			lCol = lCol >= 0 ? lCol : 0;
 			if (ar.containsRange(tRow, lCol, bRow, rCol)) {
 				this.create_(dir, tRow, lCol, bRow, rCol);
+				var fRow = sheet._wgt.getRowFreeze();
+				if (fRow > -1) {
+					sheet.tp.create_(dir, lCol, rCol, 0, fRow, true);
+				}
 				if (cr.right - vr.width > vr.right) {
 					this.pruneCell('east', vr, jump ? null : cr.right - vr.width - vr.right);
 				}
 				cache = true;
 			}
 			if (cache) {
-				var fRow = sheet._wgt.getRowFreeze();
-				if (fRow > 0) {
-					//create top frozen
-					if ((ar.topFrozen && ar.topFrozen.containsRange(top, 0, lCol, fRow, rCol)) ||
-							ar.containsRange(0, lCol, fRow, rCol)) {
-						sheet.tp.create_(dir, lCol, rCol, 0, fRow, true);
-					}
-				}
 				sheet.sendSyncblock();
 				this.sheet.dp._fixSize(this);
 				this._recheckVisible();
@@ -183,21 +177,17 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				cache = false;
 			rCol = Math.min(rCol, sheet.maxCols - 1);
 			if (ar.containsRange(tRow, lCol, bRow, rCol)) {
-				this.create_(dir, tRow, lCol, bRow, rCol)
+				this.create_(dir, tRow, lCol, bRow, rCol);
+				var fRow = sheet._wgt.getRowFreeze();
+				if (fRow > -1) {
+					sheet.tp.create_(dir, lCol, rCol, 0, fRow, true);
+				}
 				if (cr.left + vr.width < vr.left) {
 					this.pruneCell('west', vr, jump ? null : (vr.left - (cr.left + vr.width)));
 				}
 				cache = true;
 			}
 			if (cache) {
-				var fRow = sheet._wgt.getRowFreeze();
-				if (fRow > 0 && fRow < bRow) {
-					//create top frozen
-					if ((ar.topFrozen && ar.topFrozen.containsRange(0, lCol, fRow, rCol)) ||
-							ar.containsRange(0, lCol, fRow, rCol)) {
-						sheet.tp.create_(dir, lCol, rCol, 0, fRow, true);
-					}
-				}
 				sheet.sendSyncblock();
 				this.sheet.dp._fixSize(this);
 				this._recheckVisible();
@@ -581,6 +571,9 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			if (l <= 0 || l < this.range.left) return;
 			var size = l - this.range.left;
 			if (size > 0) {
+				if (size > this.range.width) {
+					size = this.range.width;
+				}
 				this.removeColumnsFromStart_(size);
 				sheet.tp.removeChildFromStart_(size);
 				var colSize = wgt._preloadColSize;
@@ -600,12 +593,15 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			if(r > this.range.right) return;
 			var size = this.range.right - r;
 			if (size > 0) {
+				if (size > this.range.width) {
+					size = this.range.width;
+				}
 				this.removeColumnsFromEnd_(size);
 				sheet.tp.removeChildFromEnd_(size);
 				var colSize = wgt._preloadColSize;
-				if (colSize <= 0)
+				if (colSize <= 0) {
 					ar.pruneRight(size);
-				else {
+				} else {
 					var pruneSize = (ar.rect.right - r + 1) - colSize;
 					if (pruneSize > 0)
 						ar.pruneRight(pruneSize);
@@ -619,6 +615,9 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			if(t <= 0 || t < this.range.top) return;
 			var size = t - this.range.top;
 			if (size > 0) {
+				if (size > this.range.height) {
+					size = this.range.height;
+				}
 				this.removeRowsFromStart_(size);
 				sheet.lp.removeChildFromStart_(size);
 				var rowSize = wgt._preloadRowSize;
@@ -626,8 +625,9 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 					ar.pruneTop(size);
 				} else {
 					var pruneSize = (t - ar.rect.top + 1) - rowSize;
-					if (pruneSize > 0)
+					if (pruneSize > 0) {
 						ar.pruneTop(pruneSize);
+					}
 				}
 				sync = true;
 			}
@@ -638,6 +638,9 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			if (b > this.range.bottom) return;
 			var size = this.range.bottom - b;
 			if (size > 0) {
+				if (size > this.range.height) {
+					size = this.range.height;
+				}
 				this.removeRowsFromEnd_(size);
 				sheet.lp.removeChildFromEnd_(size);
 				var rowSize = wgt._preloadRowSize;
@@ -645,8 +648,9 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 					ar.pruneBottom(size);
 				} else {
 					var pruneSize = (ar.rect.bottom - b + 1) - rowSize;
-					if (pruneSize > 0)
+					if (pruneSize > 0) {
 						ar.pruneBottom(pruneSize);
+					}
 				}
 			}
 			sync = true;
@@ -700,19 +704,18 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		if (right + 1 <= rCol) {
 			var b = false,
 				fRow = sheet._wgt.getRowFreeze();
-			if (fRow > 0 && fRow < bottom) {
-				//create top frozen
-				if ((ar.topFrozen && ar.topFrozen.containsRange(top, right + 1, fRow, rCol)) ||
-						ar.containsRange(top, right + 1, fRow, rCol)) {
-					sheet.tp.create_(top, right + 1, fRow, rCol);
-				}
-			}
 			if (ar.containsRange(top, right + 1, bottom, rCol)) {
 				this.create_('east', top, right + 1, bottom, rCol);
+				if (fRow > -1) {
+					sheet.tp.create_('east', right + 1, rCol, 0, fRow, true);
+				}
 				b = true;
 			} else if (ar.rect.right > right + 1 && ar.rect.right < rCol && ar.containsRange(top, right + 1, bottom, ar.rect.right)) {
 				//create partial east from cache
 				this.create_('east', top, right + 1, bottom, ar.rect.right);
+				if (fRow > -1) {
+					sheet.tp.create_('east', right + 1, ar.rect.right, 0, fRow, true);
+				}
 				b = true;
 			}
 			if (b) { //after create cell from cache, range's value may changed
@@ -727,18 +730,18 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		if (bottom + 1 <= bRow) {
 			var b = false,
 				fCol = sheet._wgt.getColumnFreeze();
-			if (fCol > 0 && fCol < rCol) {
-				if ((ar.leftFrozen && ar.leftFrozen.containsRange(bottom + 1, 0, bRow, fCol)) || 
-						ar.containsRange(bottom + 1, 0, bRow, fCol)) {
-					sheet.lp.create_('south', bottom + 1, bRow, 0, fCol, true);
-				}
-			}
 			if (ar.containsRange(bottom + 1, lCol, bRow, right)) {
 				this.create_('south', bottom + 1, lCol, bRow, right);
+				if (fCol > -1) {
+					sheet.lp.create_('south', bottom + 1, bRow, 0, fCol, true);
+				}
 				b = true;
 			} else if (ar.rect.bottom > bottom + 1 && ar.rect.bottom < bRow && ar.containsRange(bottom + 1, lCol, ar.rect.bottom, right)) {
 				//create partial south from cache
 				this.create_('south', bottom + 1, lCol, ar.rect.bottom, right);
+				if (fCol > -1) {
+					sheet.lp.create_('south', bottom + 1, ar.rect.bottom, 0, fCol, true);
+				}
 				b = true;
 			}
 			if (b) {
@@ -754,18 +757,18 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		if (tRow < top) {
 			var b = false,
 				fCol = sheet._wgt.getColumnFreeze();
-			if (fCol > 0 && fCol < rCol) {
-				if ((ar.leftFrozen && ar.leftFrozen.containsRange(tRow, 0, top - 1, fCol)) || 
-						ar.containsRange(tRow, 0, top - 1, fCol)) {
-					sheet.lp.create_('north', tRow, top - 1, 0, fCol, true);
-				}
-			}
 			if (ar.containsRange(tRow, lCol, top - 1, right)) {
 				this.create_('north', tRow, lCol, top - 1, right);
+				if (fCol > -1) {
+					sheet.lp.create_('north', tRow, top - 1, 0, fCol, true);
+				}
 				b = true;
 			} else if (ar.rect.top > tRow && ar.rect.top < top - 1 && ar.containsRange(ar.rect.top, lCol, top - 1, right)) {
 				//create partial north from cache
 				this.create_('north', ar.rect.top, lCol, top - 1, right);
+				if (fCol > -1) {
+					sheet.lp.create_('north', ar.rect.top, top - 1, 0, fCol, true);
+				}
 				b = true;
 			}
 			if (b) {
