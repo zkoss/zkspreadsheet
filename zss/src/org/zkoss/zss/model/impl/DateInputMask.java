@@ -738,11 +738,12 @@ public class DateInputMask { //ZSS-67
 		
 		//match text: "Jul 18, 1965 2:3:5.100 A"
 		public FormatInfo(Pattern mask, String format, String groupMatchText, String ampm1MatchText, Locale locale) {
-			System.out.println("---local:"+locale+"---------------------------------");			
+/*			System.out.println("---local:"+locale+"---------------------------------");			
 			System.out.println("pattern  :"+mask);			
 			System.out.println("format   :"+format);			
 			System.out.println("groupText:"+groupMatchText);			
 			System.out.println("ampm1MatchText:"+ampm1MatchText);			
+*/
 			_locale = locale;
 			_mask = mask;
 			_format = format;

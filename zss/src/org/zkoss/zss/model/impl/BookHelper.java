@@ -1056,10 +1056,19 @@ public final class BookHelper {
 				String formatString = null;
 				if (Math.abs(val) < 1) { //time only
 					formatString = getDateFormatString(TIME, locale);//"h:mm:ss AM/PM"; //ZSS-67
+					if (formatString == null) { //ZSS-76
+						formatString = "h:mm:ss AM/PM";
+					}
 				} else if (isInteger(Double.valueOf(val))) { //date only
 					formatString = getDateFormatString(DATE, locale); //"mm/dd/yyyy"; //ZSS-67
+					if (formatString == null) { //ZSS-76
+						formatString = "mm/dd/yyyy";
+					}
 				} else { //date + time
 					formatString = getDateFormatString(DATE_TIME, locale);//"mm/dd/yyyy h:mm:ss AM/PM" //ZSS-67
+					if (formatString == null) { //ZSS-76
+						formatString = "mm/dd/yyyy h:mm:ss AM/PM";
+					}
 				}
 				final boolean date1904 = ((Book)cell.getSheet().getWorkbook()).isDate1904();
 				return new DataFormatter(locale, false).formatRawCellContents(val, -1, formatString, date1904); //ZSS-68
