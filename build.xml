@@ -164,6 +164,7 @@ Copyright (C) 2002 Potix Corporation. All Rights Reserved.
 		<condition property="clean.all.required">
 			<isset property="do.all"/>
 		</condition>
+<!--		
 		<condition property="clean.bin.required">
 			<and>
 				<isset property="do.all"/>
@@ -174,7 +175,8 @@ Copyright (C) 2002 Potix Corporation. All Rights Reserved.
 					</or>
 				</not>
 			</and>
-		</condition>
+		</condition> 
+-->
 	</target>
 	<target name="config.build" depends="config">
 		<mkdir dir="${codegen.dir}"/>

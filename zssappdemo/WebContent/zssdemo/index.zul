@@ -1,4 +1,4 @@
-<?page title="ZK Spreadsheet 2.1.1 Live Demo!" contentType="text/html;charset=UTF-8"?>
+<?page title="ZK Spreadsheet 2.2.0 Live Demo!" contentType="text/html;charset=UTF-8"?>
 <zk xmlns:w="http://www.zkoss.org/2005/zk/client">
 <style>
 	.headerTitle{
@@ -94,7 +94,7 @@
 			<hbox style="padding:0 30px;width:100%;background:red url('img/category-bg.png') repeat-x;" >
 				<div sclass="headerIcon" style="position:relative;width:90px;border-width:0px;margin-right:100px">
 					<toolbarbutton src="/img/ZK-Logo.gif" href="http://www.zkoss.org/" />
-					<label value="Spreadsheet 2.1.1 Live Demo!" style="width:100px;position:absolute;left:100px;top:0;line-height:28px;font-size:16px;font-weight:bold;font-family:calibri,Verdana,Tahoma,Arial,Helvetica,sans-serif;color:#0F3B82"/>
+					<label value="Spreadsheet 2.2.0 Live Demo!" style="width:100px;position:absolute;left:100px;top:0;line-height:28px;font-size:16px;font-weight:bold;font-family:calibri,Verdana,Tahoma,Arial,Helvetica,sans-serif;color:#0F3B82"/>
 				</div>
 				<div id="app0" sclass="headerIcon app0" width="160px" height="80px" tooltiptext="ZK Spreadsheet App"></div>
 				<div width="300px" height="80px" style="margin:10px;">

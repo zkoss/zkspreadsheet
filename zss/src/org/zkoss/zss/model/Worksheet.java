@@ -44,7 +44,7 @@ public interface Worksheet extends org.zkoss.poi.ss.usermodel.Sheet {
     
     /**
      * Returns validations in this ZK Spreadsheet sheet.
-     * @return
+     * @return validations in this ZK Spreadsheet sheet.
      */
     public List<DataValidation> getDataValidations();
 }

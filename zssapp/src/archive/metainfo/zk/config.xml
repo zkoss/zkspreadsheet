@@ -17,8 +17,8 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 	<version>
 		<version-class>org.zkoss.zss.app.Version</version-class>
-		<version-uid>2.1.1</version-uid>
-		<zk-version>5.0.5</zk-version>
+		<version-uid>2.2.0</version-uid>
+		<zk-version>5.0.7</zk-version>
 	</version>
 
 	<listener>

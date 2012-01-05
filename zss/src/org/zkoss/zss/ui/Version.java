@@ -27,5 +27,5 @@ package org.zkoss.zss.ui;
 public class Version {
 	/** Returns the version UID.
 	 */
-	public static final String UID = "2.1.1";
+	public static final String UID = "2.2.0";
 }

@@ -548,7 +548,7 @@ public interface Range {
 
 	/**
 	 * Update chart anchor.
-	 * @param picture the picture to change anchor
+	 * @param chart the chart to change anchor
 	 * @param anchor the new anchor
 	 */
 	public void moveChart(Chart chart, ClientAnchor anchor);
