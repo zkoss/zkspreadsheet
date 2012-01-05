@@ -426,6 +426,15 @@ public class Spreadsheet extends XulElement implements Serializable {
 			if (_focusListener != null)
 				removeEventListener(Events.ON_CELL_FOUCSED, _focusListener);
 		}
+		
+		 //Shall clean selected sheet before set new book (ZSS-75: set book null, cause NPE)
+		if (_selectedSheet != null) {
+			doSheetClean(_selectedSheet);
+		}
+		_selectedSheet = null;
+		_selectedSheetId = null;
+		_selectedSheetName = null;
+		
 		_book = book;
 		if (_book != null) {
 			_book.subscribe(_dataListener);
@@ -444,12 +453,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 				});
 			}
 		}
-		if (_selectedSheet != null) {
-			doSheetClean(_selectedSheet);
-		}
-		_selectedSheet = null;
-		_selectedSheetId = null;
-		_selectedSheetName = null;
 	}
 	
 	private Focus newFocus() {

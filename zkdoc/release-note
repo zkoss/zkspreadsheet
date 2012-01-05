@@ -45,6 +45,7 @@ ZK Spreadsheet 2.2.0
    ZSS-72 Set one column freeze, and set preloadColumnSize, cause JS error
    ZSS-73 Scroll down and scroll right, then scroll top, cause empty area
    ZSS-74 Set maxcolumns 20 cause JS error
+   ZSS-75 Set book null, cause NPE
    
 * Upgrade Notes
   + Per the feature ZSS-13, Spreadsheet will always open hyperlink in a separate browser tab window. 
