@@ -42,7 +42,10 @@ public class ShortMonthData extends CircularData { //ZSS-69
 			if (symbols == null) {
 				symbols = DateFormatSymbols.getInstance(Locale.US);
 			}
-			value = new ShortMonthData(symbols.getShortMonths(), type, locale);
+			String[] month13 = symbols.getShortMonths();
+			String[] month12 = new String[12];
+			System.arraycopy(month13, 0, month12, 0, 12);
+			value = new ShortMonthData(month12, type, locale);
 			_monthData.put(key, value);
 		}
 		return value;

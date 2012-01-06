@@ -42,7 +42,10 @@ public class FullMonthData extends CircularData { //ZSS-69
 			if (symbols == null) {
 				symbols = DateFormatSymbols.getInstance(Locale.US);
 			}
-			value = new FullMonthData(symbols.getMonths(), type, locale);
+			String[] month13 = symbols.getMonths();
+			String[] month12 = new String[12];
+			System.arraycopy(month13, 0, month12, 0, 12);
+			value = new FullMonthData(month12, type, locale);
 			_monthData.put(key, value);
 		}
 		return value;

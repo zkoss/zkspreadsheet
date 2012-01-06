@@ -68,20 +68,20 @@
 				<listitem label="*3/14/2001" value="m/d/yyyy" />
 				<listitem label="3/14/01" value="m/d/yy;@" />
 				<listitem label="03/14/01" value="mm/dd/yy;@" />
-				<!--  <listitem label="March 14, 2001" value="[$-409]mmmm d, yyyy;@" />-->
-				<listitem label="14-Mar-2001" value="[$-409]d-mmm-yyyy;@" />
-				<listitem label="4-Mar-01" value="[$-409]d-mmm-yy;@" />
-				<listitem label="04-Mar-01" value="[$-409]dd-mmm-yy;@" />
+				<!--  <listitem label="March 14, 2001" value="mmmm d, yyyy;@" />-->
+				<listitem label="14-Mar-2001" value="d-mmm-yyyy;@" />
+				<listitem label="4-Mar-01" value="d-mmm-yy;@" />
+				<listitem label="04-Mar-01" value="dd-mmm-yy;@" />
 				<listitem label="3/14" value="m/d;@" />
-				<listitem label="14-Mar" value="[$-409]d-mmm;@" />
-				<listitem label="Mar-01" value="[$-409]mmm-yy;@" />
-				<listitem label="March-01" value="[$-409]mmmm-yy;@" />
-				<!-- <listitem label="M-01" value="[$-409]mmmmm-yy;@" />-->
-				<listitem label="Mar" value="[$-409]mmmmm;@" />
-				<listitem label="3/14/01 13:30" value="[$-409]m/d/yy h:mm;@" />
-				<listitem label="3/14/01 1:30 PM" value="[$-409]m/d/yy h:mm AM/PM;@" />
+				<listitem label="14-Mar" value="d-mmm;@" />
+				<listitem label="Mar-01" value="mmm-yy;@" />
+				<listitem label="March-01" value="mmmm-yy;@" />
+				<!-- <listitem label="M-01" value="mmmmm-yy;@" />-->
+				<listitem label="Mar" value="mmmmm;@" />
+				<listitem label="3/14/01 13:30" value="m/d/yy h:mm;@" />
+				<listitem label="3/14/01 1:30 PM" value="m/d/yy h:mm AM/PM;@" />
 				<!-- 
-				<listitem label="*Wednesday, March 14, 2001" value="[$-F800]dddd, mmmm dd, yyyy" />
+				<listitem label="*Wednesday, March 14, 2001" value="dddd, mmmm dd, yyyy" />
 				<listitem label="3/14/2001" value="m/d/yyyy;@" />  
 				-->
 			</listbox>
@@ -89,14 +89,14 @@
 			<listhead >
 					<listheader label="Sample:" />
 			</listhead>
-				<listitem label="*1:30:55 PM" value="[$-F400]h:mm:ss AM/PM" />
+				<listitem label="*1:30:55 PM" value="h:mm:ss AM/PM" />
 				<listitem label="13:30" value="h:mm;@" />
-				<listitem label="1:30 PM" value="[$-409]h:mm AM/PM;@" />
+				<listitem label="1:30 PM" value="h:mm AM/PM;@" />
 				<listitem label="13:30:55" value="h:mm:ss;@" />
-				<listitem label="1:30:55 PM" value="[$-409]h:mm:ss AM/PM;@" />
+				<listitem label="1:30:55 PM" value="h:mm:ss AM/PM;@" />
 				<listitem label="30:55.2" value="mm:ss.0;@" />
 				<listitem label="37:30:55" value="[h]:mm:ss;@" />
-				<listitem label="*3/14/01 1:30 PM" value="[$-409]m/d/yy h:mm AM/PM;@" />
+				<listitem label="*3/14/01 1:30 PM" value="m/d/yy h:mm AM/PM;@" />
 				<listitem label="*3/14/01 13:30" value="m/d/yy h:mm;@" />
 			</listbox>
 			<listbox id="mfn_percentage" rows="11" width="210px">
