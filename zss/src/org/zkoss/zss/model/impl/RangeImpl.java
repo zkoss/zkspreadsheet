@@ -37,6 +37,7 @@ import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
+import org.zkoss.poi.ss.usermodel.FormulaError;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
@@ -1639,7 +1640,38 @@ public class RangeImpl implements Range {
 
 	@Override
 	public void setValue(Object value) {
-		setEditText(value != null ? value.toString() : null);
+		//ZSS-78: Implementation of RangeImpl#setValue() is not correct
+		synchronized (_sheet) {
+			Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
+			if (ref != null) {
+				Set<Ref>[] refs = null;
+				if (value instanceof FormulaError) {
+					refs = setValue(Byte.valueOf(((FormulaError)value).getCode()));
+				} else if (value instanceof Byte) {
+					try {
+						FormulaError.forInt(((Byte)value).byteValue());
+						refs = setValue((Byte) value);
+					} catch (IllegalArgumentException ex) {
+						refs = setValue((Number) value);
+					}
+				} else if (value instanceof Number) {
+					refs = setValue((Number)value);
+				} else if (value instanceof String) {
+					refs = setValue((String) value);
+				} else if (value instanceof Boolean) {
+					refs = setValue((Boolean) value);
+				} else if (value instanceof Date) {
+					refs = setValue((Date) value);
+				} else if (value == null) {
+					refs = setValue((String) null);
+				} else {
+					 throw new IllegalArgumentException("Unknown value type; must be a FormulaError, a leagal errorCode(a Byte), a Number, a String, a Boolean, a Date, or null: " + value);
+				}
+				if (refs != null) {
+					reevaluateAndNotify(refs);
+				}
+			}
+		}
 	}
 
 	@Override
