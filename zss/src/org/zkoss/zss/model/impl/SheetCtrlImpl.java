@@ -83,6 +83,11 @@ public class SheetCtrlImpl implements SheetCtrl {
 		return _uuid;
 	}
     private Map<String, CellRangeAddress> _mergedRegions;
+	private Map<String, CellRangeAddress> getMergedRegions() { //ZSS-77: Drag fill "Jan" on new sheet, cause NPE
+		if (_mergedRegions == null)
+			initMerged();
+		return _mergedRegions;
+	}
 	@Override
 	public void initMerged() {
     	final int num = _sheet.getNumMergedRegions();
@@ -96,19 +101,22 @@ public class SheetCtrlImpl implements SheetCtrl {
 	}
 	@Override
 	public CellRangeAddress getMerged(int row, int col) {
-		return _mergedRegions.get(mergeId(row, col));	
+		final Map<String, CellRangeAddress> mergedRegions = getMergedRegions(); 
+		return mergedRegions.get(mergeId(row, col));	
 	}
 	@Override
 	public void addMerged(CellRangeAddress addr) {
 		final int tRow = addr.getFirstRow();
 		final int lCol = addr.getFirstColumn();
-		_mergedRegions.put(mergeId(tRow, lCol), addr);
+		final Map<String, CellRangeAddress> mergedRegions = getMergedRegions();
+		mergedRegions.put(mergeId(tRow, lCol), addr);
 	}
 	@Override
 	public void deleteMerged(CellRangeAddress addr) {
 		final int tRow = addr.getFirstRow();
 		final int lCol = addr.getFirstColumn();
-		_mergedRegions.remove(mergeId(tRow, lCol));
+		final Map<String, CellRangeAddress> mergedRegions = getMergedRegions();
+		mergedRegions.remove(mergeId(tRow, lCol));
 	}
 	private String mergeId(int row, int col) {
 		return row+"_"+col;
