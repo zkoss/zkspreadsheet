@@ -49,6 +49,7 @@ ZK Spreadsheet 2.2.0
    ZSS-76 Set data format cause NPE in US locale
    ZSS-77 Drag fill "Jan" on new sheet, cause NPE
    ZSS-78 Implementation of RangeImpl#setValue() is not correct
+   ZSS-79 zss JSF component cause JS error
    
 * Upgrade Notes
   + Per the feature ZSS-13, Spreadsheet will always open hyperlink in a separate browser tab window. 

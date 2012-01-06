@@ -421,7 +421,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 	_editing: false,
 	_type: 'inlineEditing',
 	$init: function (sheet) {
-		this.$supers('$init', arguments);
+		this.$supers(zss.Editbox, '$init', []);
 		var wgt = this._wgt = sheet._wgt;
 		
 		this.sheet = sheet;
