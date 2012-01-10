@@ -21,6 +21,7 @@ import java.util.Map;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
@@ -48,19 +49,37 @@ public class InsertChartCtrl extends GenericForwardComposer {
 	private Menuitem insertLineChart3D;
 	private Menuitem insertPieChart;
 	private Menuitem insertPieChart3D;
-	private Menuitem insertOfPieChart; //Not support yet
+//	private Menuitem insertOfPieChart; //Not support yet
 	private Menuitem insertAreaChart;
-	private Menuitem insertAreaChart3D; //Not support yet
-	private Menuitem insertSurfaceChart;
-	private Menuitem insertSurfaceChart3D;
-	private Menuitem insertBubbleChart;
+//	private Menuitem insertAreaChart3D; //Not support yet
+//	private Menuitem insertSurfaceChart; //Not support yet
+//	private Menuitem insertSurfaceChart3D; //Not support yet
+//	private Menuitem insertBubbleChart; //Not support yet
 	private Menuitem insertDoughnutChart;
-	private Menuitem insertRadarChart;
+//	private Menuitem insertRadarChart; //Not support yet
 	private Menuitem insertScatterChart;
-	private Menuitem insertStockChart; //Not support yet
+//	private Menuitem insertStockChart; //Not support yet
 	
 	private Dialog insertChartAtDialog;
 	
+	@Override
+	public void doAfterCompose(Component comp) throws Exception {
+		super.doAfterCompose(comp);
+		
+		boolean disable = !WebApps.getFeature("pe");
+		insertColumnChart.setDisabled(disable);
+		insertColumnChart3D.setDisabled(disable);
+		insertBarChart.setDisabled(disable);
+		insertBarChart3D.setDisabled(disable);
+		insertLineChart.setDisabled(disable);
+		insertLineChart3D.setDisabled(disable);
+		insertPieChart.setDisabled(disable);
+		insertPieChart3D.setDisabled(disable);
+		insertAreaChart.setDisabled(disable);
+		insertDoughnutChart.setDisabled(disable);
+		insertScatterChart.setDisabled(disable);
+	}
+
 	public void onClick$insertColumnChart() {
 		insertChart(ChartType.Column);
 	}

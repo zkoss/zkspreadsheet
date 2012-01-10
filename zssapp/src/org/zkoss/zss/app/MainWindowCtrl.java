@@ -204,6 +204,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	public void init() {
 		boolean isPE = WebApps.getFeature("pe");
 		exportToPDFBtn.setDisabled(!isPE);
+		filter.setDisabled(!isPE);
 		
 		//Note. setSrcName will set spreadsheet's src name, but not the book name
 		// if setSrc will init a book, then setSrcName only change the src name, 
