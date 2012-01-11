@@ -9,9 +9,9 @@
 		<device-type>ajax</device-type>
 		<timeout-uri>/timeout.zul</timeout-uri><!-- An empty URL can cause the browser to reload the same URL -->
 	</device-config>
-<!--	<client-config>-->
-<!--		<debug-js>true</debug-js>-->
-<!--	</client-config>-->
+<!-- 	<client-config> -->
+<!-- 		<debug-js>true</debug-js> -->
+<!-- 	</client-config> -->
 <!--	<library-property>-->
 <!--		<name>org.zkoss.zss.app.file.fileHelper.importPermission</name>-->
 <!--		<value>true</value>-->

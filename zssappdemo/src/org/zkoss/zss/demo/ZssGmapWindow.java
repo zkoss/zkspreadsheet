@@ -60,6 +60,9 @@ public class ZssGmapWindow extends GenericForwardComposer {
 
 		if (fluSpreadsheet == null)
 			return;
+		fluSpreadsheet.setRowfreeze(1);
+		fluSpreadsheet.setColumnfreeze(0);
+		
 		sheet = fluSpreadsheet.getSelectedSheet();
 		
 		myChart.setModel(new SimplePieModel());
@@ -128,16 +131,16 @@ public class ZssGmapWindow extends GenericForwardComposer {
 			mymap.setZoom(5);
 		}
 		
-		self.addEventListener("onEchoInitLater", new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				//Note. In *IE7*: when use gmap, borderlayout, chart and row/column freeze, 
-				// will cause UI error
-				//TODO: find out why
-				fluSpreadsheet.setRowfreeze(1);
-				fluSpreadsheet.setColumnfreeze(0);
-			}
-		});
-		org.zkoss.zk.ui.event.Events.echoEvent(new Event("onEchoInitLater", self, null));
+//		self.addEventListener("onEchoInitLater", new EventListener() {
+//			public void onEvent(Event event) throws Exception {
+//				//Note. In *IE7*: when use gmap, borderlayout, chart and row/column freeze, 
+//				// will cause UI error
+//				//TODO: cause error
+//				fluSpreadsheet.setRowfreeze(1);
+//				fluSpreadsheet.setColumnfreeze(0);
+//			}
+//		});
+//		org.zkoss.zk.ui.event.Events.echoEvent(new Event("onEchoInitLater", self, null));
 	}
 	
 	public void onEditboxEditingEvent(EditboxEditingEvent event) {
