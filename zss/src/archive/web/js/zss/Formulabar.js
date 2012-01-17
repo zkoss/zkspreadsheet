@@ -366,7 +366,7 @@ zss.FormulabarCenterCave = zk.$extends(zk.Widget, {
    		this._wgt = wgt;
    		
    		this.appendChild(this.editor = new zss.FormulabarEditor(wgt));
-   		this.appendChild(this.expandBtn = new zss.ExpandFormulabarButton(wgt));
+   		this.appendChild(this.expandBtn = new zss.ExpandFormulabarButton());
    	},
    	bind_: function () {
    		this.$supers(zss.FormulabarCenterCave, 'bind_', arguments);

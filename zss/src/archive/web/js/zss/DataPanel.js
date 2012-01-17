@@ -24,7 +24,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 zss.DataPanel = zk.$extends(zk.Object, {
 	cacheMap: {}, //handle element cache, not implement yet
 	$init: function (sheet) {
-		this.$supers('$init', arguments);
+		this.$supers(zss.DataPanel, '$init', []);
 		var wgt = this._wgt = sheet._wgt,
 			dataPanel = wgt.$n('dp'),
 			focus  = this.focustag = wgt.$n('fo');

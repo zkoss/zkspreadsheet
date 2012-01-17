@@ -33,7 +33,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -93,9 +92,9 @@ import org.zkoss.zss.model.Importer;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.impl.BookCtrl;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.ExcelImporter;
-import org.zkoss.zss.model.impl.BookCtrl;
 import org.zkoss.zss.ui.au.in.BlockSyncCommand;
 import org.zkoss.zss.ui.au.in.CellFetchCommand;
 import org.zkoss.zss.ui.au.in.CellFocusedCommand;
@@ -132,9 +131,12 @@ import org.zkoss.zss.ui.impl.CellFormatHelper;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper.HeaderPositionInfo;
 import org.zkoss.zss.ui.impl.JSONObj;
+import org.zkoss.zss.ui.impl.MergeAggregation;
+import org.zkoss.zss.ui.impl.MergeAggregation.MergeIndex;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.SequenceId;
+import org.zkoss.zss.ui.impl.StringAggregation;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl.CellAttribute;
@@ -1272,15 +1274,26 @@ public class Spreadsheet extends XulElement implements Serializable {
 		 */
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) this.getExtraCtrl());
 		
+		int colSize = SpreadsheetCtrl.DEFAULT_LOAD_COLUMN_SIZE;
 		int preloadColSize = getPreloadColumnSize();
+		if (preloadColSize == -1) {
+			colSize = Math.min(colSize, getMaxcolumns() - 1);
+		} else {
+			colSize = Math.min(preloadColSize - 1, getMaxcolumns() - 1);
+		}
+		int rowSize = SpreadsheetCtrl.DEFAULT_LOAD_ROW_SIZE;
 		int preloadRowSize = getPreloadRowSize();
+		if (preloadRowSize == -1) {
+			rowSize = Math.min(rowSize, getMaxrows() - 1);
+		} else {
+			rowSize = Math.min(preloadRowSize - 1, getMaxrows() - 1);
+		}
 		renderer.render("activeRange", 
 			spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 0, 0, 
-				Math.max(SpreadsheetCtrl.MIN_LOAD_COLUMN_SIZE, Math.min(preloadColSize - 1, getMaxcolumns() - 1)) , 
-				Math.max(SpreadsheetCtrl.MIN_LOAD_ROW_SIZE, Math.min(preloadRowSize - 1, getMaxrows() - 1))));
+					colSize , rowSize));
 		
-		renderer.render("preloadRowSize", getPreloadRowSize());
-		renderer.render("preloadColSize", getPreloadColumnSize());
+		renderer.render("preloadRowSize", preloadColSize);
+		renderer.render("preloadColSize", preloadRowSize);
 		
 		renderer.render("columnHeadHidden", _hideColhead);
 		renderer.render("rowHeadHidden", _hideRowhead);
@@ -2321,7 +2334,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 		 * 	<li>i: column index</li>
 		 *  <li>t: title</li>
 		 *  <li>p: position info id</li>
-		 *  <li>h: hidden/li>
 		 * </ul>
 		 * 
 		 * Ignore attribute if it's default
@@ -2337,12 +2349,16 @@ public class Spreadsheet extends XulElement implements Serializable {
 			attrs.put("i", col);
 			attrs.put("t", Spreadsheet.this.getColumntitle(col));
 
-			HeaderPositionHelper colHelper = Spreadsheet.this.getColumnPositionHelper(sheet);			
+			HeaderPositionHelper colHelper = Spreadsheet.this.getColumnPositionHelper(sheet);
 			HeaderPositionInfo info = colHelper.getInfo(col);
 			if (info != null) {
 				attrs.put("p", info.id);
-				if (info.hidden)
-					attrs.put("h", "t"); //t stand for true;
+//				if (info.size != defaultSize) {
+//					attrs.put("s", info.size);
+//				}
+//				if (info.hidden) {
+//					attrs.put("h", 1); //1 stand for true;
+//				}
 			}
 			return attrs;
 		}
@@ -2354,7 +2370,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 		 * 	<li>i: row index</li>
 		 *  <li>t: title</li>
 		 *  <li>p: position info id</li>
-		 *  <li>h: hidden/li>
 		 * </ul>
 		 * 
 		 * Ignore attribute if it's default
@@ -2374,8 +2389,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 			HeaderPositionInfo info = rowHelper.getInfo(row);
 			if (info != null) {
 				attrs.put("p", info.id);
-				if (info.hidden)
-					attrs.put("h", "t");
+//				if (info.hidden)
+//					attrs.put("h", 1);
 			}
 			return attrs;
 		}
@@ -2391,6 +2406,9 @@ public class Spreadsheet extends XulElement implements Serializable {
 		 *  <li>at: range update Attribute Type</li>
 		 *  <li>rs: rows, a JSONArray object</li>
 		 *  <li>cs: cells, a JSONArray object</li>
+		 * 	<li>s: strings, a JSONArray object</li>
+		 *  <li>st: styles, a JSONArray object</li>
+		 *  <li>m: merge attributes</li>
 		 *  <li>rhs: row headers, a JSONArray object</li>
 		 *  <li>chs: column headers, a JSONArray object</li>
 		 * </ul>
@@ -2414,6 +2432,9 @@ public class Spreadsheet extends XulElement implements Serializable {
 			JSONArray rows = new JSONArray();
 			attrs.put("rs", rows);
 			
+			StringAggregation styleAggregation = new StringAggregation();
+			StringAggregation textAggregation = new StringAggregation();
+			MergeAggregation mergeAggregation = new MergeAggregation(getMergeMatrixHelper(sheet));
 			for (int row = top; row <= bottom; row++) {
 				JSONObject r = getRowAttrs(row);
 				rows.add(r);
@@ -2421,9 +2442,13 @@ public class Spreadsheet extends XulElement implements Serializable {
 				JSONArray cells = new JSONArray();
 				r.put("cs", cells);
 				for (int col = left; col <= right; col++) {
-					cells.add(getCellAttr(sheet, type, row, col));
+					cells.add(getCellAttr(sheet, type, row, col, styleAggregation, textAggregation, mergeAggregation));
 				}
 			}
+			
+			attrs.put("s", textAggregation.getJSONArray());
+			attrs.put("st", styleAggregation.getJSONArray());
+			attrs.put("m", mergeAggregation.getJSONObject());
 			
 			boolean addRowColumnHeader = containsHeader == Header.BOTH;
 			boolean addRowHeader = addRowColumnHeader || containsHeader == Header.ROW;
@@ -2467,49 +2492,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 			return attrs;
 		}
 
-		private StringBuffer appendMergeSClass(StringBuffer sb, int row, int col) {
-			Worksheet sheet = getSelectedSheet();
-			MergeMatrixHelper mmhelper = getMergeMatrixHelper(sheet);
-			// Cell cell = sheet.getCell(row,col);
-			// if(cell!=null){
-			boolean islefttop = mmhelper.isMergeRangeLeftTop(row, col);
-			MergedRect block;
-
-			if (islefttop) {
-				block = mmhelper.getMergeRange(row, col);
-				sb.append(" zsmerge").append(block.getId());
-			} else if ((block = mmhelper.getMergeRange(row, col)) != null) {
-				sb.append(block.getTop() == row ? " zsmergee" : " zsmergeeu");
-			} else {
-				// System.out.println("3>>>>>"+row+","+col);
-			}
-
-			// }
-			return sb;
-		}
-		
-		private void putMergeAttr(Worksheet sheet, int row, int col, JSONObject attrs) {
-			MergeMatrixHelper matrix = getMergeMatrixHelper(sheet);
-			boolean isLeftTop = matrix.isMergeRangeLeftTop(row, col);
-			MergedRect block;
-			block = matrix.getMergeRange(row, col);
-			if (isLeftTop) {
-				block = matrix.getMergeRange(row, col);
-				attrs.put("mcls", " zsmerge" + block.getId());
-			} else if ((block = matrix.getMergeRange(row, col)) != null) {
-				attrs.put("mcls", block.getTop() == row ? " zsmergee" : " zsmergeeu");
-			}
-			
-			if ((block = matrix.getMergeRange(row, col)) != null) {
-				attrs.put("mi", block.getId());
-				attrs.put("ml", block.getLeft());
-				attrs.put("mr", block.getRight());
-				attrs.put("mt", block.getTop());
-				attrs.put("mb", block.getBottom());
-			}
-		}
-
 		/**
+		 * 
 		 * Cell attributes
 		 * 
 		 * <ul>
@@ -2529,13 +2513,9 @@ public class Spreadsheet extends XulElement implements Serializable {
 		 *  <li>wp: wrap</li>
 		 *  <li>ha: horizontal alignment</>
 		 *  <li>va: vertical alignment</>
-		 *  <li>mi: merge id</li>
-		 *  <li>ml: merge left</li>
-		 *  <li>mr: merge right</li>
-		 *  <li>mt: merge top</li>
-		 *  <li>mb: merge top</li>
-		 *  <li>mcls: merge css class</li>
-		 *  <li>ref: Cell Reference</li>
+		 *  <li>mi: merge id index</li>
+		 *  <li>mc: merge CSS index</li>
+		 *  <li>rf: Cell Reference</li>
 		 * </ul>
 		 * 
 		 * Ignore put attribute if it's default
@@ -2548,7 +2528,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 		 *  <li>Vertical alignment: top</>
 		 * </ul>
 		 */
-		public JSONObject getCellAttr(Worksheet sheet, CellAttribute type, int row, int col) {
+		public JSONObject getCellAttr(Worksheet sheet, CellAttribute type, int row, int col, StringAggregation styleAggregation, StringAggregation textAggregation, MergeAggregation mergeAggregation) {
 			boolean updateAll = type == CellAttribute.ALL,
 				updateText = (updateAll || type == CellAttribute.TEXT),
 				updateStyle = (updateAll || type == CellAttribute.STYLE),
@@ -2564,17 +2544,12 @@ public class Spreadsheet extends XulElement implements Serializable {
 //				attrs.put("c", col);
 //			}
 			CellReference cr = new CellReference(row, col, false, false);
-			attrs.put("ref", cr.formatAsString());
+			attrs.put("rf", cr.formatAsString());
 			
 			//width, height id
 			if (updateSize) {
-				HeaderPositionHelper rowHelper = Spreadsheet.this.getRowPositionHelper(sheet);
-				HeaderPositionInfo info = rowHelper.getInfo(row);
-				if (info != null && info.id >= 0) {
-					attrs.put("h", info.id);
-				}
 				HeaderPositionHelper colHelper = Spreadsheet.this.getColumnPositionHelper(sheet);
-				info = colHelper.getInfo(col);
+				HeaderPositionInfo info = colHelper.getInfo(col);
 				if (info != null && info.id >= 0) {
 					attrs.put("w", info.id);
 				}
@@ -2582,35 +2557,48 @@ public class Spreadsheet extends XulElement implements Serializable {
 			
 			//merge attr
 			if (updateMerge) {
-				putMergeAttr(sheet, row, col, attrs);
+				MergeIndex mergeIndex = mergeAggregation.add(row, col);
+				if (mergeIndex != null) {
+					attrs.put("mi", mergeIndex.getMergeId());
+					attrs.put("mc", mergeIndex.getMergeCSSId());
+				}
 			}
 			
 			//style attr
 			if (updateStyle) {
 				CellFormatHelper cfh = new CellFormatHelper(sheet, row, col, getMergeMatrixHelper(sheet));
 				String style = cfh.getHtmlStyle();
-				if (!Strings.isEmpty(style))
-					attrs.put("s", cfh.getHtmlStyle());
-				attrs.put("is", cfh.getInnerHtmlStyle());
+				if (!Strings.isEmpty(style)) {
+					int idx = styleAggregation.add(style);
+					attrs.put("s", idx);
+				}
+				String innerStyle = cfh.getInnerHtmlStyle();
+				if (!Strings.isEmpty(innerStyle)) {
+					int idx = styleAggregation.add(innerStyle);
+					attrs.put("is", idx);
+				}
 				if (cfh.hasRightBorder()) {
-					attrs.put("rb", "t"); 
+					attrs.put("rb", 1); 
 				}
 			}
 			
-			if (cell != null) {				
+			if (cell != null) {
+				int cellType = cell.getCellType();
+				if (cellType != Cell.CELL_TYPE_BLANK)
+					attrs.put("ct", cellType);
+				
 				if (updateText) {
-					int cellType = cell.getCellType();
 					if (cellType != Cell.CELL_TYPE_BLANK) {
-						attrs.put("ct", cellType);
 						final String cellText = getCelltext(Spreadsheet.this, row, col);
 						final String editText = getEdittext(Spreadsheet.this, row, col);
 						final String formatText = getCellFormatText(Spreadsheet.this, row, col);
+						
 						if (Objects.equals(cellText, editText) && Objects.equals(editText, formatText)) {
-							attrs.put("meft", cellText);
+							attrs.put("meft", textAggregation.add(cellText));
 						} else {
-							attrs.put("t", cellText);
-							attrs.put("et", editText);
-							attrs.put("ft", formatText);
+							attrs.put("t", textAggregation.add(cellText));
+							attrs.put("et", textAggregation.add(editText));
+							attrs.put("ft", textAggregation.add(formatText));
 						}
 					}
 				}
@@ -2623,7 +2611,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 					
 					boolean wrap = cellStyle.getWrapText();
 					if (wrap)
-						attrs.put("wp", "t"); //t stand for "true"
+						attrs.put("wp", 1);
 					
 					int horizontalAlignment = BookHelper.getRealAlignment(cell);
 					switch(horizontalAlignment) {
@@ -2638,12 +2626,14 @@ public class Spreadsheet extends XulElement implements Serializable {
 					
 					int verticalAlignment = cellStyle.getVerticalAlignment();
 					switch(verticalAlignment) {
+					case CellStyle.VERTICAL_TOP:
+						attrs.put("va", "t");
+						break;
 					case CellStyle.VERTICAL_CENTER:
 						attrs.put("va", "c");
 						break;
-					case CellStyle.VERTICAL_BOTTOM:
-						attrs.put("va", "b");
-						break;
+					//case CellStyle.VERTICAL_BOTTOM: //default
+					//	break;
 					}
 				}
 			}

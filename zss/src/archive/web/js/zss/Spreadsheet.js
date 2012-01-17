@@ -316,7 +316,17 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		ATTR_STYLE = 3,
 		ATTR_SIZE = 4,
 		ATTR_MERGE = 5;
-	function newCell(v, type) {
+	/**
+	 * Create Cell model
+	 * 
+	 * @param JSON Object v data from server
+	 * @param int type update type. Default ATTR_ALL means update all cell attributes
+	 * @param int heightId height style id
+	 * @param Array texts text string aggregation
+	 * @param Array styles style string aggregation
+	 * @param Object mergeInfos the merge info aggregation
+	 */
+	function newCell(v, type, heightId, texts, styles, mergeInfos) {
 		var c = {
 			/**
 			 * Row number
@@ -416,66 +426,91 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			 * default: false
 			 */
 			//rightBorder
-			update: function (v, type) {
+			/**
+			 * Update Cell model
+			 * 
+			 * @param JSON Object v data from server
+			 * @param int type update type. Default ATTR_ALL means update all cell attributes
+			 * @param int heightId height style id
+			 * @param Array texts text string aggregation
+			 * @param Array styles style string aggregation
+			 * @param Object mergeInfos the merge info aggregation
+			 */
+			update: function (v, type, heightId, texts, styles, mergeInfos) {
 				var upAll = type == ATTR_ALL,
 					upText = (upAll || type == ATTR_TEXT),
 					upStyle = (upAll || type == ATTR_STYLE),
 					upSize = (upAll || type == ATTR_SIZE),
-					upMerge = (upAll || type == ATTR_MERGE);
-				this.ref = v.ref;
+					upMerge = (upAll || type == ATTR_MERGE),
+					cellType = v.ct;
+				this.ref = v.rf;
+				this.cellType = cellType != undefined ? cellType : 3;//default is BLANK_CELL
 				if (upText) {
-					var cellType = v.ct,
-						mergedText = v.meft;
-					this.cellType = cellType != undefined ? cellType : 3;
-					if (mergedText != undefined) {
-						this.text = this.editText = this.formatText = mergedText;
+					var mergedTextId = v.meft;
+					if (mergedTextId != undefined) {//index start from 0
+						this.text = this.editText = this.formatText = texts[mergedTextId] || '';
 					} else {
-						var text = v.t,
-							editText = v.et
-							formatText = v.ft;
-						this.text = text != undefined ? text : '';
-						this.editText = editText != undefined ? editText : '';
-						this.formatText = formatText != undefined ? formatText : '';
+						var tId = v.t,
+							eId = v.et
+							fId = v.ft;
+						this.text = tId != undefined ? texts[tId] : '';
+						this.editText = eId != undefined ? texts[eId] : '';
+						this.formatText = fId != undefined ? texts[fId] : '';
 					}
 				}
 				if (upStyle) {
-					var style = v.s,
-						innerStyle = v.is,
+					var sId = v.s,
+						isId = v.is,
 						wrap = v.wp,
 						rbo = v.rb,
 						lock = v.l,
 						halign = v.ha,
 						valign = v.va;
-					this.style = style != undefined ? style : '';
-					this.innerStyle = innerStyle != undefined ? innerStyle : '';
-					this.wrap = wrap != undefined ? wrap == 't' : false;
+					this.style = sId != undefined ? styles[sId] : '';
+					this.innerStyle = isId != undefined ? styles[isId] : '';
+					this.wrap = wrap != undefined;
 					//bug ZSS-56: Unlock a cell, protect sheet, cannot double click to edit the cell
 					this.lock = lock != undefined ? lock != 'f' : true;
-					this.halign = halign != undefined ? halign : 'l';
-					this.valign = valign != undefined ? valign : 't';
-					this.rightBorder = rbo != undefined ? rbo == 't' : false;
+					this.halign = halign || 'l'; //horizontal align: default left
+					this.valign = valign || 'b'; //vertical align: default bottom 
+					this.rightBorder = rbo != undefined;
 				}
 				if (upSize) {
-					var wId = v.w,
-						hId = v.h,
-						drh = v.drh;
-					this.widthId = wId;
-					this.heightId = hId;
+					this.widthId = v.w;
+					this.heightId = heightId;
 				}
 				if (upMerge) {
-					this.mergeId = v.mi;
-					this.mergeCls = v.mcls;
-					if (this.mergeId) {
-						this.merge = newRect(v.mt, v.ml, v.mb, v.mr);
+					
+					var idx = v.mi,
+						cssIdx = v.mc;
+					if (idx != undefined) {
+						var info = mergeInfos.r[idx],
+							css = mergeInfos.cs[cssIdx];
+						this.mergeId = info.i;
+						this.mergeCls = css;
+						if (this.mergeId) {
+							this.merge = newRect(info.t, info.l, info.b, info.r);
+						}
 					}
 				}
 			}
 		}
-		c.update(v, type);
+		c.update(v, type, heightId, texts, styles, mergeInfos);
 		return c;
 	}
 	
-	function newRow(v, type, left, right) {
+	/**
+	 * Create Row model
+	 * 
+	 * @param JSON Object v row data from server
+	 * @param int update data type
+	 * @param int update cell left number
+	 * @param int update cell right number
+	 * @param Array texts text string aggregation
+	 * @param Array styles style string aggregation
+	 * @param Object mergeInfos the merge info aggregation
+	 */
+	function newRow(v, type, left, right, texts, styles, mergeInfos) {
 		var row = {
 			r: v.r,
 			heightId: v.h,
@@ -492,7 +527,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					cells[p].heightId = id;
 				}
 			},
-			update: function (attr, type, left, right) {
+			update: function (attr, type, left, right, texts, styles, mergeInfos) {
 				var src = attr.cs,
 					i = left,
 					j = 0,
@@ -503,11 +538,11 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				for (; i <= right; i++) {
 					var c = cs[i];
 					if (!c) {
-						c = cs[i] = newCell(src[j++], type);
+						c = cs[i] = newCell(src[j++], type, hId, texts, styles, mergeInfos);
 						c.r = r;
 						c.c = i;
 					} else {
-						c.update(src[j++], type);
+						c.update(src[j++], type, hId, texts, styles, mergeInfos);
 					}
 					//row contains wrap cell may have height Id on client side
 					if (!c.heightId && hId) {
@@ -537,7 +572,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				return this.cells[num];
 			}
 		}
-		row.update(v, type, left, right);
+		row.update(v, type, left, right, texts, styles, mergeInfos);
 		return row;
 	}
 	
@@ -788,6 +823,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					btm = v.b,
 					right = v.r,
 					src = v.rs,
+					textAggregation = v.s,
+					styleAggregation = v.st,
+					mergeAggregation = v.m,
 					rowHeaderObj = v.rhs,
 					colHeaderObj = v.chs,
 					i = top, 
@@ -805,7 +843,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				for (; i <= btm; i++) {
 					var row = rows[i];
 					if (!row) {
-						row = rows[i] = newRow(src[s++], attrType, left, right);
+						row = rows[i] = newRow(src[s++], attrType, left, right, textAggregation, styleAggregation, mergeAggregation);
 						//row contains wrap cell may have height Id on client side
 						if ('jump' == dir) {
 							var oldRow = oldRows[i];
@@ -814,7 +852,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 							}
 						}
 					} else {
-						row.update(src[s++], attrType, left, right);
+						row.update(src[s++], attrType, left, right, textAggregation, styleAggregation, mergeAggregation);
 					}
 				}
 				
@@ -935,8 +973,9 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 				sheet = this.sheetCtrl;
 			if (sheet._initiated)
 				_doInsertRCCmd(sheet, data, token);
-			else
+			else {
 				sheet.addSSInitLater(_doInsertRCCmd, sheet, data, token);
+			}
 		},
 		/**
 		 * Removes row or column
@@ -949,12 +988,10 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 
 			if (sheet._initiated)
 				_doRemoveRCCmd(sheet, data, token);
-			else
+			else {
 				sheet.addSSInitLater(_doRemoveRCCmd, sheet, data, token);
+			}
 		},
-		/**
-		 * merge_ -> mergeCell
-		 */
 		mergeCell: function (v) {
 			var sheet = this.sheetCtrl;
 			if (!sheet) return;
@@ -963,8 +1000,9 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 
 			if (sheet._initiated)
 				_doMergeCmd(sheet, data, token);
-			else
+			else {
 				sheet.addSSInitLater(_doMergeCmd, sheet, data, token);
+			}
 		},
 		columnSize:  _size = function (v) {
 			var sheet = this.sheetCtrl;
@@ -973,8 +1011,9 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 			var data = v[2];
 			if (sheet._initiated)
 				_doSizeCmd(sheet, data);
-			else 
+			else {
 				sheet.addSSInitLater(_doSizeCmd, sheet, data);
+			}
 		},
 		/**
 		 * Sets sheet protection
@@ -1191,8 +1230,9 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		
 		if (sheet._initiated)
 			_doMaxcolumnCmd(sheet, v);
-		else
+		else {
 			sheet.addSSInitLater(_doMaxcolumnCmd, sheet, v);
+		}
 	},
 	_initMaxColumn: function () {
 		var data = this._maxColumnData
@@ -1229,8 +1269,9 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		
 		if (sheet._initiated)
 			_doMaxrowCmd(sheet, v);
-		else
+		else {
 			sheet.addSSInitLater(_doMaxrowCmd, sheet, v);
+		}
 	},
 	_initMaxRow: function () {
 		var data = this._maxRowData;
@@ -1477,9 +1518,18 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 			
 			if (sheet._initiated)
 				syncFrozenArea(sheet);
-			else
+			else {
 				sheet.addSSInitLater(syncFrozenArea, sheet);
+			}
 		}	
+	},
+	/**
+	 * Returns whether load CSS or not
+	 * 
+	 * @return boolean
+	 */
+	hasCSS: function () {
+		return hasCSS(this.uuid + "-sheet");
 	},
 	_initControl: function () {
 		if (this.getSheetId() == null) //no sheet at all
@@ -1498,8 +1548,8 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 	},
 	bind_: function (desktop, skipper, after) {
 		_calScrollWidth();
-		this.$supers('bind_', arguments);
 		this._initControl();
+		this.$supers('bind_', arguments);
 		zWatch.listen({onResponse: this});
 	},
 	unbind_: function () {

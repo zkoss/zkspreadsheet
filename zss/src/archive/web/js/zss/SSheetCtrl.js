@@ -146,14 +146,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				var range = local.initparm.hlrange;
 				self.hlArea.show = true;
 				self.moveHighlight(range.left, range.top, range.right, range.bottom);
+				delete self.initparm;
 			});
 			
 		} else
 			initparm.hlrange = new zss.Range(-1, -1, -1, -1);
-		var self = this;
-		this.addSSInitLater(function() {
-			delete self.initparm;
-		});
 
 		var csc = wgt.getCsc(),
 			array = [];
@@ -268,7 +265,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 
 		if(this.comp) this.comp.ctrl = null;
 		this.comp = this.busycmp = this.maskcmp = this.spcmp = this.topcmp = 
-		this.leftcmp = this.dpcmp = this.sinfocmp = this.infocmp = this.focusmarkcmp =
+		this.leftcmp = this.sinfocmp = this.infocmp = this.focusmarkcmp =
 		this.selareacmp = this.selchgcmp = this.hlcmp = this.wpcmp = null;
 		
 		if (this.dragging) {
@@ -420,7 +417,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	_doSSInitLater: function () {
 		if(this.invalid) return;
-		
 		var local = this,
 			queu = local._initLaterQ;
 
@@ -2496,21 +2492,19 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	EDITING: 6, //3*2 ,
 	STOP_EDIT: 9, //4*2 + 1;//async state is odd
 	_initInnerComp: function (sheet, row) {
-
 		var wgt = sheet._wgt;
 		sheet.maskcmp = wgt.$n('mask');
 		sheet.busycmp = wgt.$n('busy');
 		sheet.spcmp = wgt.$n('sp');//scroll panel comp
 		sheet.topcmp = wgt.$n('top');//top panel comp
 		sheet.leftcmp = wgt.$n('left');//left panel comp
-		sheet.dpcmp = wgt.$n('dp');//data panel comp
 		sheet.wpcmp = wgt.$n('wp');//widget panel comp
 		sheet.sinfocmp = wgt.$n('sinfo');
 		sheet.infocmp = wgt.$n('info');
 		sheet.cpcmp = wgt.$n('co');
 
-		sheet.sp = new zss.ScrollPanel(sheet);
 		sheet.dp = new zss.DataPanel(sheet);
+		sheet.sp = new zss.ScrollPanel(sheet); //ScrollPanel depends DataPanel
 		
 		var dppadcmp = wgt.$n('datapad');
 		

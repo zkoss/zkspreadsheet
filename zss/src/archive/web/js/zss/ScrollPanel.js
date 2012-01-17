@@ -23,8 +23,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 zss.ScrollPanel = zk.$extends(zk.Object, {
 	$init: function (sheet) {
 		this.$supers('$init', arguments);
-		var self = this,
-			wgt = sheet._wgt,
+		var wgt = sheet._wgt,
 			scrollPanel = wgt.$n('sp');
 		
 		this.id = scrollPanel.id;
@@ -38,17 +37,14 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 		this.lastMove = "";//the last move of scrolling,
 		scrollPanel.ctrl = this;
 		
-		sheet.insertSSInitLater(function() {//datapanel doesn't ready when cell initialing, so invoke later.
-			var dtcmp = self.sheet.dp.comp,//zkSDatapanelCtrl._currcmp(self);
-				sccmp = self.comp;
-			self.minLeft = self._getMaxScrollLeft(dtcmp, sccmp);
-			self.minTop = self._getMaxScrollTop(dtcmp, sccmp);
-			self.minHeight = dtcmp.offsetHeight;
-			self.minWidth = dtcmp.offsetWidth;
-
-			wgt.domListen_(scrollPanel, 'onScroll', self.proxy(self._doScrolling))
-				.domListen_(scrollPanel, 'onMouseDown', self.proxy(self._doMousedown));
-		}, false);
+		var dtcmp = this.sheet.dp.comp,//zkSDatapanelCtrl._currcmp(self);
+			sccmp = this.comp;
+		this.minLeft = this._getMaxScrollLeft(dtcmp, sccmp);
+		this.minTop = this._getMaxScrollTop(dtcmp, sccmp);
+		this.minHeight = dtcmp.offsetHeight;
+		this.minWidth = dtcmp.offsetWidth;
+		wgt.domListen_(scrollPanel, 'onScroll', this.proxy(this._doScrolling))
+			.domListen_(scrollPanel, 'onMouseDown', this.proxy(this._doMousedown));
 	},
 	cleanup: function () {
 		var wgt = this.sheet._wgt,

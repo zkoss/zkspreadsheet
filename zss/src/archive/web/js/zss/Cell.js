@@ -104,9 +104,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 	 * 	<li>b: align bottom</li>
 	 * </ul>
 	 * 
-	 * Default: align top
+	 * Default: align bottom
 	 */
-	valign: 't',
+	valign: 'b',
 	/**
 	 * Whether the text should be wrapped
 	 * 
@@ -153,8 +153,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 		if (mId) {
 			var r = data.merge;
 			this.merid = mId;
-			this.mergeId = mId;
-			
 			this.merl = r.left;
 			this.merr = r.right;
 			this.mert = r.top;
@@ -245,7 +243,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 	},
 	_updateHasTxt: function (bool) {
 		this.hastxt = bool;
-		jq(this.comp).css('z-index', bool ? "" : 1);
+		
+		var zIdx = this.getZIndex();
+		jq(this.comp).css('z-index', bool ? "" : zIdx);
 	},
 	/**
 	 * Sets the text of the cell
@@ -364,23 +364,69 @@ zss.Cell = zk.$extends(zk.Widget, {
 	getHtml: function () {
 		var	uid = this.uuid,
 			text = this.text,
-			style = this.style,
+			style = this.domStyle_(),
 			innerStyle = this.innerStyle;
 		return '<div id="' + uid + '" class="' + this.getZclass() + '" zs.t="SCell" '
 				+ (style ? 'style="' +  style + '"' : '') + '><div id="' + uid + '-real" class="' +
 				this._getInnerClass() + '" ' + (innerStyle ? 'style="' + innerStyle + '"' : '') + 
 				'>' + (zk.ie6_ || zk.ie7_ ? '<div style="left:0px;position:absolute;width:100%;">' + text + '</div>' : text) + '</div></div>';
 	},
+	getZIndex: function () {
+		return this.text ? null : 1;
+	},
+	domStyle_: function () {
+		var st = this.style;
+		if (st) {
+			return st;
+		} else {
+			var zIdx = this.getZIndex();
+			if (zIdx){
+				return 'z-index:' + zIdx + ';';
+			}
+		}
+	},
+	_calcuateTextWidth: function () {
+		var n = this.getTextNode(),
+			st = n.style,
+			$n = jq(n);
+		if (st) {
+			var ow = st.width,
+				op = st.position;
+			if (ow) {
+				$n.css({'width': ''});
+			}
+			var w = $n.width();
+			if (ow) { //recover original width
+				$n.css({'width': ow});
+			}
+			return w;
+		} else {
+			return $n.width();
+		}
+	},
 	_onRowAdded: function () {
 		if (this.overflow) {
-			Cell._processOverflow(this);
+			var sht = this.sheet,
+				sf = this;
+			if (zk.gecko == 1.9) {
+				//FF 3.x couldn't get the correct width in time, process later
+				setTimeout(function () {
+					if (sf._calcuateTextWidth() > jq(sf.$n()).width()) {
+						Cell._processOverflow(sf);
+					}
+				});
+			} else {
+				if (sf._calcuateTextWidth() > jq(sf.$n()).width()) {
+					Cell._processOverflow(sf);
+				}
+			}
 		}
 		if (this.hastxt && (zk.ie6_ || zk.ie7_) && this.valign != 't') {
 			this._updateVerticalAlign();
 		}
 		if (this.cellType == STR_CELL && this.wrap) {
 			var sht = this.sheet;
-			if (!sht._initiated) {//not load CSS yet
+			if (!sht._wgt.hasCSS()) {//not load CSS yet
 				var sf = this;
 				sht.addSSInitLater(function () {
 					sf.parent.processWrapCell(sf);
@@ -400,11 +446,14 @@ zss.Cell = zk.$extends(zk.Widget, {
 			sheet = this.sheet;
 		n.ctrl = this;
 		this.txtcomp = n.firstChild;
+		if (this.cellType == BLANK_CELL) {//no need to process overflow and wrap
+			return;
+		}
 		
 		this._updateListenOverflow(evalOverflow(this));
 		var hasText = !!this.text,
 			processValign = false;
-		this._updateHasTxt(hasText);
+		
 		if (hasText && (zk.ie6_ || zk.ie7_) && this.valign != 't') { // IE6 / IE7 doesn't support CSS vertical align
 			processValign = true;
 			this._updateListenRowHeightChanged(true);
@@ -421,7 +470,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this._updateListenOverflow(false);
 		this._updateListenRowHeightChanged(false);
 		
-		this._updateHasTxt(false);
 		if (this.overflowed) {
 			//remove the overlap relation , because the cell that is overlaped maybe not be destroied.
 			Cell._clearOverlapRelation(this);
@@ -460,14 +508,13 @@ zss.Cell = zk.$extends(zk.Widget, {
 		var cls = 'zscell',
 			hId = this.heightId,
 			wId = this.widthId,
-			mId = this.mergeId,
 			mCls = this.mergeCls;
 		if (hId)
 			cls += (' zshi' + hId);
 		if (wId)
 			cls += (' zsw' + wId);
 		if (mCls)
-			cls += mCls;
+			cls += (' ' + mCls);
 		return cls;
 	},
 	_getInnerClass: function () {
@@ -569,46 +616,31 @@ zss.Cell = zk.$extends(zk.Widget, {
 				ctrl.$n('real').style.position = 'absolute';
 			}
 			var w = cmp.clientWidth,
-				prev = cmp,
-				next = cmp.nextSibling;
-			while (next) {
-				var nCtrl = next.ctrl,
-					rBorder = prev.ctrl.rborder;
-
-				nCtrl.overlapBy = null;
-				if (nCtrl.hastxt) {
+				prevCell = ctrl,
+				nextCell = ctrl.nextSibling;
+			while (nextCell) {
+				var	prev = prevCell.comp,
+					rBorder = prevCell.rborder;
+				if (nextCell.text) {
 					jq(prev).removeClass(rBorder ? "zscell-over-b" : "zscell-over");
 					break;
-				}
-				
-				jq(prev).removeClass(rBorder ? "zscell-over" : "zscell-over-b")
-						.addClass(rBorder ? "zscell-over-b" : "zscell-over");
-				
-				var ow = next.offsetWidth;
-				w = w + ow;
-				if (w > sw) {
-					jq(next).removeClass(next.ctrl.rborder ? "zscell-over-b" : "zscell-over");
-					
-					//keep remove next overflow if it is over by this cell
-					next = next.nextSibling;
-					while (next) {
-						if (ctrl != next.ctrl.overlapBy)
-							break;
-						jq(next).removeClass(next.ctrl.rborder ? "zscell-over-b" : "zscell-over");
-
-						next.ctrl.overlapBy = null;
-						next = next.nextSibling;
+				} else {
+					jq(prev)
+					.removeClass(rBorder ? "zscell-over" : "zscell-over-b")
+					.addClass(rBorder ? "zscell-over-b" : "zscell-over");
+					w = w + nextCell.comp.offsetWidth;
+					if (w > sw) {
+						break;
 					}
-					break;
 				}
-				prev = next;
-				next = next.nextSibling;//jq(next).next('DIV')[0];
+				prevCell = nextCell;
+				nextCell = nextCell.nextSibling;
 			}
 			w =  w - cellPad;
 			jq(zk.ie6_ || zk.ie7_ ? txtcmp.parentNode : txtcmp).css('width', jq.px0(w));//when some column or row is invisible, the w might be samlle then zero
 		} else {
 			ctrl.overflowed = false;
-			jq(cmp).removeClass(cmp.ctrl.rborder ? "zscell-over-b" : "zscell-over");
+			jq(cmp).removeClass(ctrl.rborder ? "zscell-over-b" : "zscell-over");
 			
 			var next = cmp.nextSibling;
 			while (next) {
@@ -625,8 +657,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 		if ((zk.ie6_ || zk.ie7_) && prevPos) {
 			txtcmp.style.position = prevPos;
 		}
-		if (oldOverlapBy)
+		if (oldOverlapBy) {
 			Cell._processOverflow(oldOverlapBy);
+		}
 	}
 });
 })();

@@ -122,7 +122,6 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 					comp = cell.comp;
 					jq(comp).addClass(r == top ? "zsmergee" : "zsmergeeu");
 				}
-				jq(comp).attr({"z.merid": id, "z.merr": right, "z.merl": left, "z.mert": top, "z.merb": bottom});
 	
 				cell.merid = id;
 				cell.merr = right;
@@ -166,7 +165,6 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 					comp = cell.comp;
 					jq(comp).removeClass(r == mert ? "zsmergee" : "zsmergeeu");
 				}
-				jq(comp).removeAttr("z.merid").removeAttr("z.merr").removeAttr("z.merl").removeAttr("z.mert").removeAttr("z.merb");
 				cell.merid = cell.merr = cell.merl = cell.mert = cell.merb = ud;
 			}
 		}
