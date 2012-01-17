@@ -1,6 +1,14 @@
 	------------
 ZK Spreadsheet 2.2.0
 *Features:
+
+*Bug
+   ZSS-81 Cannot input formula with proper external book name
+   ZSS-82 Exception when user input an inexisting book or sheet in formula
+
+	------------
+ZK Spreadsheet 2.2.0
+*Features:
    ZSS-01 Support validation dropdown list
    ZSS-13 Support Open hyperlink in a separate browser tab window
    ZSS-26 Need css running in zk.wcs not css.dsp
