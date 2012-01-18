@@ -38,9 +38,8 @@ public interface SpreadsheetCtrl {
 
 	final public static String CHILD_PASSING_KEY = "zsschildren";
 	
-	//TODO: measure best load size
-	public static final int DEFAULT_LOAD_COLUMN_SIZE = 35;
-	public static final int DEFAULT_LOAD_ROW_SIZE = 45;
+	public static final int DEFAULT_LOAD_COLUMN_SIZE = 40;
+	public static final int DEFAULT_LOAD_ROW_SIZE = 50;
 	
 	public enum CellAttribute {
 		ALL(1), TEXT(2), STYLE(3), SIZE(5), MERGE(5);
