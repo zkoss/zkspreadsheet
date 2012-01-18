@@ -32,7 +32,6 @@ public class MergeAggregation {
 	private MergeMatrixHelper _helper;
 	
 	private StringAggregation _mergeCSS = new StringAggregation();
-	private HashMap<String, Integer> _cssIndex = new HashMap<String, Integer>();
 	
 	/**
 	 * Key: merge id of MergedRect
