@@ -292,16 +292,20 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		}
 	},
 	/**
-	 * Returns the editor
+	 * Returns the editor. Default returns {@link zss.Editbox} 
 	 * 
-	 * @param string editing type. Either 'inlineEditing' or 'formulabarEditing'
+	 * @param string editing type. Either 'inlineEditing' or 'formulabarEditing'.
 	 */
 	getEditor: function (type) {
 		var sheet = this.sheet;
 		if (type) {
-			return type == 'inlineEditing' ? sheet.inlineEditor : sheet.formulabarEditor;
+			return type == 'formulabarEditing' ? sheet.formulabarEditor : sheet.inlineEditor;
 		} else {
-			return sheet.inlineEditor.isEditing() ? sheet.inlineEditor : sheet.formulabarEditor;
+			var inlineEditor = sheet.inlineEditor;
+			if (inlineEditor.isEditing() || !sheet.formulabarEditor) {
+				return inlineEditor;
+			}
+			return sheet.formulabarEditor;
 		}
 	},
 	/**

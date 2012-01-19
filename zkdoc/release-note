@@ -3,6 +3,7 @@ ZK Spreadsheet 2.2.1
 *Features:
 
 *Bug
+   ZSS-80 Press ESC cannot cancel editing when formula bar is hidden.
    ZSS-81 Cannot input formula with proper external book name
    ZSS-82 Exception when user input an inexisting book or sheet in formula
 
