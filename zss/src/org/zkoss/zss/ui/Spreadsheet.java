@@ -3133,33 +3133,33 @@ public class Spreadsheet extends XulElement implements Serializable {
 		StringBuffer sb = new StringBuffer();
 
 		// zcss.setRule(name+" .zsdata",["padding-top","padding-left"],[th+"px",lw+"px"],true,sid);
-		sb.append(name).append(" .zsdata{\n");
-		sb.append("padding-top:").append(th).append("px;\n");
-		sb.append("padding-left:").append(lw).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zsdata{");
+		sb.append("padding-top:").append(th).append("px;");
+		sb.append("padding-left:").append(lw).append("px;");
+		sb.append("}");
 
 		// zcss.setRule(name+" .zsrow","height",rh+"px",true,sid);
-		sb.append(name).append(" .zsrow{\n");
-		sb.append("height:").append(rh).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zsrow{");
+		sb.append("height:").append(rh).append("px;");
+		sb.append("}");
 
 		// zcss.setRule(name+" .zscell",["padding","height","width","line-height"],["0px "+cp+"px 0px "+cp+"px",cellheight+"px",cellwidth+"px",lh+"px"],true,sid);
-		sb.append(name).append(" .zscell{\n");
-		sb.append("padding:").append("0px " + cp + "px 0px " + cp + "px;\n");
-		sb.append("height:").append(cellheight).append("px;\n");
-		sb.append("width:").append(cellwidth).append("px;\n");
+		sb.append(name).append(" .zscell{");
+		sb.append("padding:").append("0px " + cp + "px 0px " + cp + "px;");
+		sb.append("height:").append(cellheight).append("px;");
+		sb.append("width:").append(cellwidth).append("px;");
 		if (!showgrid) {
-			sb.append("border-bottom:1px solid #FFFFFF;\n")
-			  .append("border-right:1px solid #FFFFFF;\n");
+			sb.append("border-bottom:1px solid #FFFFFF;")
+			  .append("border-right:1px solid #FFFFFF;");
 		}
 		// sb.append("line-height:").append(lh).append("px;\n");
-		sb.append("}\n");
+		sb.append("}");
 
 		// zcss.setRule(name+" .zscelltxt",["width","height"],[celltextwidth+"px",cellheight+"px"],true,sid);
-		sb.append(name).append(" .zscelltxt{\n");
-		sb.append("width:").append(celltextwidth).append("px;\n");
-		sb.append("height:").append(cellheight).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zscelltxt{");
+		sb.append("width:").append(celltextwidth).append("px;");
+		sb.append("height:").append(cellheight).append("px;");
+		sb.append("}");
 
 		// zcss.setRule(name+" .zstop",["left","height","line-height"],[lw+"px",(th-2)+"px",lh+"px"],true,sid);
 
@@ -3174,24 +3174,24 @@ public class Spreadsheet extends XulElement implements Serializable {
 			toph = toph + rowHelper.getStartPixel(fzr + 1);
 		}
 
-		sb.append(name).append(" .zstop{\n");
-		sb.append("left:").append(lw).append("px;\n");
-		sb.append("height:").append(fzr > -1 ? toph - 1 : toph).append("px;\n");
+		sb.append(name).append(" .zstop{");
+		sb.append("left:").append(lw).append("px;");
+		sb.append("height:").append(fzr > -1 ? toph - 1 : toph).append("px;");
 		// sb.append("line-height:").append(toph).append("px;\n");
-		sb.append("}\n");
+		sb.append("}");
 
-		sb.append(name).append(" .zstopi{\n");
-		sb.append("height:").append(toph).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zstopi{");
+		sb.append("height:").append(toph).append("px;");
+		sb.append("}");
 
-		sb.append(name).append(" .zstophead{\n");
-		sb.append("height:").append(topheadh).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zstophead{");
+		sb.append("height:").append(topheadh).append("px;");
+		sb.append("}");
 
-		sb.append(name).append(" .zscornertop{\n");
-		sb.append("left:").append(lw).append("px;\n");
-		sb.append("height:").append(cornertoph).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zscornertop{");
+		sb.append("left:").append(lw).append("px;");
+		sb.append("height:").append(cornertoph).append("px;");
+		sb.append("}");
 
 		// relative, so needn't set top position.
 		/*
@@ -3201,18 +3201,18 @@ public class Spreadsheet extends XulElement implements Serializable {
 		 */
 
 		// zcss.setRule(name+" .zstopcell",["padding","height","width","line-height"],["0px "+cp+"px 0px "+cp+"px",th+"px",cellwidth+"px",lh+"px"],true,sid);
-		sb.append(name).append(" .zstopcell{\n");
-		sb.append("padding:").append("0px " + cp + "px 0px " + cp + "px;\n");
-		sb.append("height:").append(topheadh).append("px;\n");
-		sb.append("width:").append(cellwidth).append("px;\n");
-		sb.append("line-height:").append(topheadh).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zstopcell{");
+		sb.append("padding:").append("0px " + cp + "px 0px " + cp + "px;");
+		sb.append("height:").append(topheadh).append("px;");
+		sb.append("width:").append(cellwidth).append("px;");
+		sb.append("line-height:").append(topheadh).append("px;");
+		sb.append("}");
 
 		// zcss.setRule(name+" .zstopcelltxt","width", celltextwidth
 		// +"px",true,sid);
-		sb.append(name).append(" .zstopcelltxt{\n");
-		sb.append("width:").append(celltextwidth).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zstopcelltxt{");
+		sb.append("width:").append(celltextwidth).append("px;");
+		sb.append("}");
 
 		// zcss.setRule(name+" .zsleft",["top","width"],[th+"px",(lw-2)+"px"],true,sid);
 
@@ -3224,58 +3224,58 @@ public class Spreadsheet extends XulElement implements Serializable {
 			leftw = leftw + colHelper.getStartPixel(fzc + 1);
 		}
 
-		sb.append(name).append(" .zsleft{\n");
-		sb.append("top:").append(th).append("px;\n");
+		sb.append(name).append(" .zsleft{");
+		sb.append("top:").append(th).append("px;");
 		sb.append("width:").append(fzc > -1 ? leftw - 1 : leftw)
-				.append("px;\n");
-		sb.append("}\n");
+				.append("px;");
+		sb.append("}");
 
-		sb.append(name).append(" .zslefti{\n");
-		sb.append("width:").append(leftw).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zslefti{");
+		sb.append("width:").append(leftw).append("px;");
+		sb.append("}");
 
-		sb.append(name).append(" .zslefthead{\n");
-		sb.append("width:").append(leftheadw).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zslefthead{");
+		sb.append("width:").append(leftheadw).append("px;");
+		sb.append("}");
 
-		sb.append(name).append(" .zsleftblock{\n");
-		sb.append("left:").append(leftblockleft).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zsleftblock{");
+		sb.append("left:").append(leftblockleft).append("px;");
+		sb.append("}");
 
-		sb.append(name).append(" .zscornerleft{\n");
-		sb.append("top:").append(th).append("px;\n");
-		sb.append("width:").append(leftheadw).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zscornerleft{");
+		sb.append("top:").append(th).append("px;");
+		sb.append("width:").append(leftheadw).append("px;");
+		sb.append("}");
 
 		// zcss.setRule(name+" .zsleftcell",["height","line-height"],[(rh-1)+"px",(rh)+"px"],true,sid);//for
 		// middle the text, i use row leight instead of lh
-		sb.append(name).append(" .zsleftcell{\n");
-		sb.append("height:").append(rh - 1).append("px;\n");
-		sb.append("line-height:").append(rh - 1).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zsleftcell{");
+		sb.append("height:").append(rh - 1).append("px;");
+		sb.append("line-height:").append(rh - 1).append("px;");
+		sb.append("}");
 
 		// zcss.setRule(name+" .zscorner",["width","height"],[(lw-2)+"px",(th-2)+"px"],true,sid);
 
-		sb.append(name).append(" .zscorner{\n");
+		sb.append(name).append(" .zscorner{");
 		sb.append("width:").append(fzc > -1 ? leftw : leftw + 1)
-				.append("px;\n");
-		sb.append("height:").append(fzr > -1 ? toph : toph + 1).append("px;\n");
-		sb.append("}\n");
+				.append("px;");
+		sb.append("height:").append(fzr > -1 ? toph : toph + 1).append("px;");
+		sb.append("}");
 
-		sb.append(name).append(" .zscorneri{\n");
-		sb.append("width:").append(lw - 2).append("px;\n");
-		sb.append("height:").append(th - 2).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zscorneri{");
+		sb.append("width:").append(lw - 2).append("px;");
+		sb.append("height:").append(th - 2).append("px;");
+		sb.append("}");
 
-		sb.append(name).append(" .zscornerblock{\n");
-		sb.append("left:").append(lw).append("px;\n");
-		sb.append("top:").append(th).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zscornerblock{");
+		sb.append("left:").append(lw).append("px;");
+		sb.append("top:").append(th).append("px;");
+		sb.append("}");
 
 		// zcss.setRule(name+" .zshboun","height",th+"px",true,sid);
-		sb.append(name).append(" .zshboun{\n");
-		sb.append("height:").append(th).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zshboun{");
+		sb.append("height:").append(th).append("px;");
+		sb.append("}");
 
 		// zcss.setRule(name+" .zshboun","height",th+"px",true,sid);
 /*		sb.append(name).append(" .zshboun{\n");
@@ -3283,27 +3283,27 @@ public class Spreadsheet extends XulElement implements Serializable {
 		sb.append("}\n");
 */
 		// zcss.setRule(name+" .zshbouni","height",th+"px",true,sid);
-		sb.append(name).append(" .zshbouni{\n");
-		sb.append("height:").append(th).append("px;\n");
-		sb.append("}\n");
+		sb.append(name).append(" .zshbouni{");
+		sb.append("height:").append(th).append("px;");
+		sb.append("}");
 
-		sb.append(name).append(" .zsfztop{\n");
+		sb.append(name).append(" .zsfztop{");
 		sb.append("border-bottom-style:").append(fzr > -1 ? "solid" : "none")
 				.append(";");
-		sb.append("}\n");
-		sb.append(name).append(" .zsfzcorner{\n");
+		sb.append("}");
+		sb.append(name).append(" .zsfzcorner{");
 		sb.append("border-bottom-style:").append(fzr > -1 ? "solid" : "none")
 				.append(";");
-		sb.append("}\n");
+		sb.append("}");
 
-		sb.append(name).append(" .zsfzleft{\n");
+		sb.append(name).append(" .zsfzleft{");
 		sb.append("border-right-style:").append(fzc > -1 ? "solid" : "none")
 				.append(";");
-		sb.append("}\n");
-		sb.append(name).append(" .zsfzcorner{\n");
+		sb.append("}");
+		sb.append(name).append(" .zsfzcorner{");
 		sb.append("border-right-style:").append(fzc > -1 ? "solid" : "none")
 				.append(";");
-		sb.append("}\n");
+		sb.append("}");
 
 		// TODO transparent border mode
 
@@ -3317,11 +3317,9 @@ public class Spreadsheet extends XulElement implements Serializable {
 				/** for IE6 **/
 				String color_to_transparent = "tomato";
 				sb.append("_border-color:" + color_to_transparent + ";");
-				sb
-						.append("_filter:chroma(color=" + color_to_transparent
-								+ ");");
+				sb.append("_filter:chroma(color=" + color_to_transparent + ");");
 			}
-			sb.append("}\n");
+			sb.append("}");
 		}
 
 		List<HeaderPositionInfo> infos = colHelper.getInfos();
@@ -3344,18 +3342,18 @@ public class Spreadsheet extends XulElement implements Serializable {
 			}
 
 			if (width <= 0) {
-				sb.append(name).append(" .zsw").append(cid).append("{\n");
-				sb.append("display:none;\n");
-				sb.append("}\n");
+				sb.append(name).append(" .zsw").append(cid).append("{");
+				sb.append("display:none;");
+				sb.append("}");
 
 			} else {
-				sb.append(name).append(" .zsw").append(cid).append("{\n");
-				sb.append("width:").append(cellwidth).append("px;\n");
-				sb.append("}\n");
+				sb.append(name).append(" .zsw").append(cid).append("{");
+				sb.append("width:").append(cellwidth).append("px;");
+				sb.append("}");
 
-				sb.append(name).append(" .zswi").append(cid).append("{\n");
-				sb.append("width:").append(celltextwidth).append("px;\n");
-				sb.append("}\n");
+				sb.append(name).append(" .zswi").append(cid).append("{");
+				sb.append("width:").append(celltextwidth).append("px;");
+				sb.append("}");
 			}
 		}
 
@@ -3374,31 +3372,31 @@ public class Spreadsheet extends XulElement implements Serializable {
 
 				sb.append(name).append(" .zsh").append(cid).append("{\n");
 				sb.append("display:none;");
-				sb.append("}\n");
+				sb.append("}");
 
-				sb.append(name).append(" .zslh").append(cid).append("{\n");
+				sb.append(name).append(" .zslh").append(cid).append("{");
 				sb.append("display:none;");
-				sb.append("}\n");
+				sb.append("}");
 
 			} else {
-				sb.append(name).append(" .zsh").append(cid).append("{\n");
+				sb.append(name).append(" .zsh").append(cid).append("{");
 				sb.append("height:").append(height).append("px;");
-				sb.append("}\n");
+				sb.append("}");
 
-				sb.append(name).append(" .zshi").append(cid).append("{\n");
+				sb.append(name).append(" .zshi").append(cid).append("{");
 				sb.append("height:").append(cellheight).append("px;");
-				sb.append("}\n");
+				sb.append("}");
 
 				int h2 = (height < 1) ? 0 : height - 1;
 
-				sb.append(name).append(" .zslh").append(cid).append("{\n");
+				sb.append(name).append(" .zslh").append(cid).append("{");
 				sb.append("height:").append(h2).append("px;");
 				sb.append("line-height:").append(h2).append("px;");
-				sb.append("}\n");
+				sb.append("}");
 
 			}
 		}
-		sb.append(".zs_header{}\n");// for indicating add new rule before this
+		sb.append(".zs_header{}");// for indicating add new rule before this
 
 		// merge size;
 		List ranges = mmhelper.getRanges();
@@ -3436,14 +3434,14 @@ public class Spreadsheet extends XulElement implements Serializable {
 			}
 
 			if (width <= 0 || height <= 0) { //total hidden
-				sb.append(name).append(" .zsmerge").append(block.getId()).append("{\n");
+				sb.append(name).append(" .zsmerge").append(block.getId()).append("{");
 				sb.append("display:none;");
-				sb.append("}\n");
+				sb.append("}");
 
 				sb.append(name).append(" .zsmerge").append(block.getId());
-				sb.append(" .zscelltxt").append("{\n");
+				sb.append(" .zscelltxt").append("{");
 				sb.append("display:none;");
-				sb.append("}\n");
+				sb.append("}");
 			} else {
 				celltextwidth = width - 2 * cp - 1;// 1 is border width
 				int celltextheight = height - 1; //1 is border height
@@ -3456,20 +3454,20 @@ public class Spreadsheet extends XulElement implements Serializable {
 					cellheight = height;
 				}
 				
-				sb.append(name).append(" .zsmerge").append(block.getId()).append("{\n");
+				sb.append(name).append(" .zsmerge").append(block.getId()).append("{");
 				sb.append("width:").append(cellwidth).append("px;");
 				sb.append("height:").append(cellheight).append("px;");
-				sb.append("}\n");
+				sb.append("}");
 	
 				sb.append(name).append(" .zsmerge").append(block.getId());
-				sb.append(" .zscelltxt").append("{\n");
+				sb.append(" .zscelltxt").append("{");
 				sb.append("width:").append(celltextwidth).append("px;");
 				sb.append("height:").append(celltextheight).append("px;");
-				sb.append("}\n");
+				sb.append("}");
 			}
 		}
 
-		sb.append(".zs_indicator{}\n");// for indicating the css is load ready
+		sb.append(".zs_indicator{}");// for indicating the css is load ready
 
 		return sb.toString();
 	}
