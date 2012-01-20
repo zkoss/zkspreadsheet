@@ -68,12 +68,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	function _isRightMouseEvt (evt) {
 		return (evt.which) && (evt.which == 3);
 	}
-	function _findHeader(headers, index) {
-		for(var j = 0, len = headers.length; j < len; ++j)
-			if (headers[j].index == index)
-				return headers[j];
-		return null;
-	}
 
 /**
  *  SSheetCtrl controls spreadsheet
@@ -1216,7 +1210,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	_doKeypress: function (evt) {
 		if (this._skipress) //wait async event, skip
 			return;
-
 		var charcode = evt.which,
 			c = asciiChar(charcode == 0 && evt.keyCode == 9 ? keyCode : charcode);
 		//ascii, not editing, not special key
@@ -1332,7 +1325,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			break;
 		case 27://ESC
 			if (this.state == zss.SSheetCtrl.EDITING) {
-				this.dp.cancelEditing(evt);
+				this.dp.cancelEditing();
 				evt.stop();
 			} else if(this.state == zss.SSheetCtrl.FOCUSED) {
 				//TODO should i send onCancel here?
@@ -1542,8 +1535,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		
 		//adjust header
 		var tp = this.tp, 
-			headers = tp ? tp.headers : null,
-			header = headers ? _findHeader(headers, col) : null;
+			header = tp ? tp.getHeader(col) : null;
 		if (header)
 			header.setColumnHeader(hidden);
 		
@@ -1701,8 +1693,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		
 		//adjust header
 		var lp = this.lp,
-			headers = lp ? lp.headers : null,
-			header = headers ? _findHeader(headers, row) : null;
+			header = lp ? lp.getHeader(row) : null;
 		if (header)
 			header.setRowHeader(hidden);
 		

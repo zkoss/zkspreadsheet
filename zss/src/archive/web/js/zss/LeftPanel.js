@@ -32,6 +32,16 @@ zss.Panel = zk.$extends(zk.Widget, {
 		this.block = this.initFrozenBlock_(sheet, start, end, data);
 	},
 	/**
+	 * Returns {@link Header}
+	 */
+	getHeader: function (index) {
+		var headers = this.headers;
+		for(var j = 0, len = headers.length; j < len; ++j)
+			if (headers[j].index == index)
+				return headers[j];
+		return null;
+	},
+	/**
 	 * Create zss.Header child widgets, invoke on Panel widget initialization
 	 */
 	initHeaders_: function (sheet, start, end, data, isCorner) {
