@@ -2188,7 +2188,12 @@ public class Spreadsheet extends XulElement implements Serializable {
 			HeaderPositionHelper helper = Spreadsheet.this.getColumnPositionHelper(sheet);
 			helper.setInfoValues(column, newsize, id, hidden);
 
-			Ranges.range(sheet, 0, column).setColumnWidth(Utils.pxToFileChar256(newsize, ((Book)sheet.getWorkbook()).getDefaultCharWidth()));
+			final Range rng = Ranges.range(sheet, 0, column);
+			if (hidden) {
+				rng.setHidden(hidden);
+			} else {
+				rng.setColumnWidth(Utils.pxToFileChar256(newsize, ((Book)sheet.getWorkbook()).getDefaultCharWidth()));
+			}
 			//sheet.setColumnWidth(column, Utils.pxToFileChar256(newsize, ((Book)sheet.getWorkbook()).getDefaultCharWidth()));
 		}
 
@@ -2203,7 +2208,12 @@ public class Spreadsheet extends XulElement implements Serializable {
 			//if (row == null) {
 			//	row = sheet.createRow(rownum);
 			//}
-			Ranges.range(sheet, rownum, 0).setRowHeight(Utils.pxToPoint(newsize));
+			final Range rng = Ranges.range(sheet, rownum, 0);
+			if (hidden) {
+				rng.setHidden(hidden);
+			} else {
+				rng.setRowHeight(Utils.pxToPoint(newsize));
+			}
 			//row.setHeight((short)Utils.pxToTwip(newsize));
 			HeaderPositionHelper helper = Spreadsheet.this.getRowPositionHelper(sheet);
 			helper.setInfoValues(rownum, newsize, id, hidden);
@@ -2216,8 +2226,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			} else {
 				sheet = Utils.getSheetByUuid(_book, sheetId);
 			}
-			HeaderPositionHelper helper = Spreadsheet.this
-					.getColumnPositionHelper(sheet);
+			HeaderPositionHelper helper = Spreadsheet.this.getColumnPositionHelper(sheet);
 			return helper;
 		}
 
