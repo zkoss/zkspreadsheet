@@ -87,7 +87,7 @@ public class Spreadsheet extends Widget {
 //		cell.click();
 //		cell.click();
 		
-		JQuery target = new JQuery(cellDOMElementScript(row, col), timeBlocker, webDriver);
+		JQuery target = jqFactory.create(cellDOMElementScript(row, col));
 		
 		//if spreadsheet widget doesn't have focus, the first event will focus on last focus
 		new JavascriptActions(webDriver)
@@ -112,7 +112,6 @@ public class Spreadsheet extends Widget {
 	 */
 	public JQuery jq$focus() {
 		String script = widgetScript() + ".$n('fo')";
-//		return new JQuery(script, timeBlocker, webDriver);
 		return jqFactory.create(script);
 	}
 	
@@ -138,9 +137,14 @@ public class Spreadsheet extends Widget {
 		return new LeftPanel(script, jqFactory, timeBlocker, webDriver);
 	}
 	
-	//TODO: get Cell widget
-//	public Cell getCell(int row, int col) {
-//	}
+	public Row getRow(int row) {
+		return getMainBlock().getRow(row);
+	}
+	
+	public MainBlock getMainBlock() {
+		String script = sheetCtrlScript() + ".activeBlock";
+		return new MainBlock(script, jqFactory, timeBlocker, webDriver);
+	}
 	
 	//TODO: 
 //	public DOMElement getCellDOMElement(int row, int col) {

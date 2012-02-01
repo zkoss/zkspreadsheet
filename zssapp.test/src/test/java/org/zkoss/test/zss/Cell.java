@@ -1,4 +1,4 @@
-/* LeftPanel.java
+/* Cell.java
 
 {{IS_NOTE
 	Purpose:
@@ -6,7 +6,7 @@
 	Description:
 		
 	History:
-		Jan 19, 2012 3:35:52 PM , Created by sam
+		Feb 1, 2012 2:48:41 PM , Created by sam
 }}IS_NOTE
 
 Copyright (C) 2012 Potix Corporation. All Rights Reserved.
@@ -25,14 +25,10 @@ import org.zkoss.test.Widget;
  * @author sam
  *
  */
-public class LeftPanel extends Widget {
+public class Cell extends Widget {
 
-	/*package*/ LeftPanel(String widgetScript, JQueryFactory jqFactory, ConditionalTimeBlocker au, WebDriver webDriver) {
+	/*package*/ Cell(String widgetScript, JQueryFactory jqFactory,
+			ConditionalTimeBlocker au, WebDriver webDriver) {
 		super(widgetScript, jqFactory, au, webDriver);
-	}
-	
-	public Header getRowHeader(int row) {
-		String script = widgetScript() + ".getHeader(" + row + ")";
-		return new Header(script, jqFactory, timeBlocker, webDriver);
 	}
 }

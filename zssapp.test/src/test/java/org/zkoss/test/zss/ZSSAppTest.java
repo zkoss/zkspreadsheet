@@ -22,7 +22,6 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
 import org.zkoss.test.ConditionalTimeBlocker;
-import org.zkoss.test.JQuery;
 import org.zkoss.test.JQueryFactory;
 import org.zkoss.test.TestingEnvironment;
 
@@ -64,7 +63,6 @@ public class ZSSAppTest {
 	@Inject
 	JQueryFactory jqFactory;
 	
-	//TODO: inject-able ? use AssistedInject ?
 	protected Navigation navigation;
 	protected JavascriptExecutor javascriptExecutor;
 	

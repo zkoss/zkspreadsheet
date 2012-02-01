@@ -40,17 +40,20 @@ public class JQuery {
 	
 	protected final ConditionalTimeBlocker timeBlocker;
 	
+	protected final JQueryFactory jqFactory;
+	
 	protected final WebDriver webDriver;
 	
 	protected final JavascriptExecutor javascriptExecutor;
 	
 	@Inject
-	public JQuery(@Assisted String selector, ConditionalTimeBlocker timeBlocker, WebDriver webDriver) {
+	public JQuery(@Assisted String selector, ConditionalTimeBlocker timeBlocker, JQueryFactory jqFactory, WebDriver webDriver) {
 		if (Strings.isNullOrEmpty(selector))
 			throw new IllegalArgumentException("JQuery selector can not be empty");
 		out = new StringBuffer(JQ.replace("%1", selector));
 		
 		this.timeBlocker = timeBlocker;
+		this.jqFactory = jqFactory;
 		this.webDriver = webDriver;
 		javascriptExecutor = (JavascriptExecutor)webDriver;
 	}
@@ -122,9 +125,28 @@ public class JQuery {
 		}
 	}
 	
-//	public JQuery first() {
-//		return new JQuery(out, ".first()", au, webDriver);
-//	}
+	public int length() {
+		Object length = javascriptExecutor.executeScript(out.toString() + ".length");
+		Method m = null;
+		try {
+			m = length.getClass().getMethod("intValue");
+			return (Integer)m.invoke(length);
+		} catch (Exception ex) {
+			throw new RuntimeException("can't find intValue method");
+		}
+	}
+	
+	public JQuery children() {
+		return jqFactory.create(out.toString().replace("return ", "") + ".children()");
+	}
+	
+	public JQuery children(String selector) {
+		return jqFactory.create(out.toString().replace("return ", "") + ".children('" + selector +"')");
+	}
+	
+	public JQuery first() {
+		return jqFactory.create(out.toString().replace("return ", "") + ".first()");
+	}
 //	
 //	public JQuery last() {
 //		return new JQuery(out, ".last()", au, webDriver);
