@@ -589,4 +589,24 @@ public interface Range {
 	 * Delete sheet of this Range.
 	 */
 	public void deleteSheet();
+	
+	/**
+	 * Create sheet of this book as specified in this Range.
+	 * @param name the name of the new created sheet; null would use default 
+	 * "SheetX" name where X is the next sheet number.
+	 */
+	public void createSheet(String name);
+	
+	/**
+     * Set(Rename) the name of the sheet as specified in this Range.
+	 * @param name
+	 */
+	public void setSheetName(String name);
+	
+    /**
+     * Sets the order of the sheet as specified in this Range.
+     *
+     * @param pos the position that we want to insert the sheet into (0 based)
+     */
+	public void setSheetOrder(int pos);
 }

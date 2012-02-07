@@ -423,10 +423,28 @@ public final class BookHelper {
 		refBook.publish(new SSDataEvent(SSDataEvent.ON_FRIEND_FOCUS_DELETE, ref, obj));
 	}
 	
-	/*package*/ static void notifyDeleteSheet(Ref ref, Object newIndex) {
+	/*package*/ static void notifyDeleteSheet(Ref ref, Object[] namePairs) {
 		final RefSheet refSheet = ref.getOwnerSheet();
 		final RefBook refBook = refSheet.getOwnerBook();
-		refBook.publish(new SSDataEvent(SSDataEvent.ON_SHEET_DELETE, ref, newIndex));
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_SHEET_DELETE, ref, namePairs));
+	}
+	
+	/*package*/ static void notifyCreateSheet(Ref ref, String sheetName) {
+		final RefSheet refSheet = ref.getOwnerSheet();
+		final RefBook refBook = refSheet.getOwnerBook();
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_SHEET_CREATE, ref, sheetName));
+	}
+
+	/*package*/ static void notifyChangeSheetName(Ref ref, String sheetName) {
+		final RefSheet refSheet = ref.getOwnerSheet();
+		final RefBook refBook = refSheet.getOwnerBook();
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_SHEET_NAME_CHANGE, ref, sheetName));
+	}
+	
+	/*package*/ static void notifyChangeSheetOrder(Ref ref, String sheetName) {
+		final RefSheet refSheet = ref.getOwnerSheet();
+		final RefBook refBook = refSheet.getOwnerBook();
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_SHEET_ORDER_CHANGE, ref, sheetName));
 	}
 	
 	public static void reevaluateAndNotify(Book book, Set<Ref> last, Set<Ref> all) {

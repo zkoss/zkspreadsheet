@@ -141,4 +141,19 @@ public class Events {
 	 * Sent when sheet is deleted.
 	 */
 	public static final String ON_SHEET_DELETE = "onSheetDelete";
+	/**
+	 * The onSheetCreate event.
+	 * Sent when sheet is deleted.
+	 */
+	public static final String ON_SHEET_CREATE = "onSheetCreate";
+	/**
+	 * The onSheetNameChange event.
+	 * Sent when sheet is deleted.
+	 */
+	public static final String ON_SHEET_NAME_CHANGE = "onSheetNameChange";
+	/**
+	 * The onSheetOrderChange event.
+	 * Sent when sheet is deleted.
+	 */
+	public static final String ON_SHEET_ORDER_CHANGE = "onSheetOrderChange";
 }

@@ -1,7 +1,10 @@
 	------------
 ZK Spreadsheet 2.2.1
 *Features:
-
+   ZSS-85 Range support createSheet API that supports collaboration
+   ZSS-86 Range support setSheetName API that supports collaboration
+   ZSS-87 Range support setSheetOrder API that supports collaboration
+   
 *Bug
    ZSS-80 Press ESC cannot cancel editing when formula bar is hidden.
    ZSS-81 Cannot input formula with proper external book name

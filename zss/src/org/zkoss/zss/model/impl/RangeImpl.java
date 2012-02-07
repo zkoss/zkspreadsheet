@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
@@ -2303,6 +2304,60 @@ public class RangeImpl implements Range {
 		Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
 		if (ref != null) {
 			BookHelper.notifyDeleteFriendFocus(ref, token);
+		}
+	}
+	
+	@Override
+	public void createSheet(String name) {
+		synchronized (_sheet.getBook()) {
+			Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
+			if (ref != null) {
+				final Book book = _sheet.getBook();
+				if (book != null) {
+					if (Strings.isBlank(name)) {
+						book.createSheet();
+					} else {
+						book.createSheet(name);
+					}
+					BookHelper.notifyCreateSheet(ref, name);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void setSheetName(String name) {
+		synchronized (_sheet.getBook()) {
+			Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
+			if (ref != null) {
+				final Book book = _sheet.getBook();
+				if (book != null) {
+					if (!Strings.isBlank(name)) {
+						final int pos= book.getSheetIndex(_sheet);
+						if (pos >= 0) {
+							book.setSheetName(pos, name);
+							BookHelper.notifyChangeSheetName(ref, name);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void setSheetOrder(int pos) {
+		synchronized (_sheet.getBook()) {
+			Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
+			if (ref != null) {
+				final Book book = _sheet.getBook();
+				if (book != null) {
+					final String name = book.getSheetName(pos);
+					if (!Strings.isBlank(name)) {
+						book.setSheetOrder(name, pos);
+						BookHelper.notifyChangeSheetOrder(ref, name);
+					}
+				}
+			}
 		}
 	}
 

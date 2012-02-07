@@ -124,7 +124,9 @@ import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HyperlinkEvent;
+import org.zkoss.zss.ui.event.SheetCreateEvent;
 import org.zkoss.zss.ui.event.SheetDeleteEvent;
+import org.zkoss.zss.ui.event.SheetUpdateEvent;
 import org.zkoss.zss.ui.event.StartEditingEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
 import org.zkoss.zss.ui.impl.CellFormatHelper;
@@ -1594,8 +1596,25 @@ public class Spreadsheet extends XulElement implements Serializable {
 		private static final long serialVersionUID = 20100330164021L;
 
 		public InnerDataListener() {
+			addEventListener(SSDataEvent.ON_SHEET_ORDER_CHANGE, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onSheetOrderChange((SSDataEvent)event);
+				}
+			});
+			addEventListener(SSDataEvent.ON_SHEET_NAME_CHANGE, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onSheetNameChange((SSDataEvent)event);
+				}
+			});
+			addEventListener(SSDataEvent.ON_SHEET_CREATE, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onSheetCreate((SSDataEvent)event);
+				}
+			});
 			addEventListener(SSDataEvent.ON_SHEET_DELETE, new EventListener() {
-
 				@Override
 				public void onEvent(Event event) throws Exception {
 					onSheetDelete((SSDataEvent)event);
@@ -1715,6 +1734,18 @@ public class Spreadsheet extends XulElement implements Serializable {
 					onWidgetChange((SSDataEvent)event);
 				}
 			});
+		}
+		private void onSheetOrderChange(SSDataEvent event) {
+			final String name = (String) event.getPayload(); 
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_ORDER_CHANGE, Spreadsheet.this, name));
+		}
+		private void onSheetNameChange(SSDataEvent event) {
+			final String name = (String) event.getPayload(); 
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_NAME_CHANGE, Spreadsheet.this, name));
+		}
+		private void onSheetCreate(SSDataEvent event) {
+			final String name = (String) event.getPayload(); 
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetCreateEvent(Events.ON_SHEET_CREATE, Spreadsheet.this, name));
 		}
 		private void onSheetDelete(SSDataEvent event) {
 			final Object[] payload = (Object[]) event.getPayload(); 
