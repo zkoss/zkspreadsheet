@@ -1,23 +1,5 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <zk>
-	<style>
-		.arialFont .z-menu-item-cnt, .arialFont .z-combo-item-text{
-		font-size:14px; font-family:arial; } .calibriFont
-		.z-menu-item-cnt, .calibriFont .z-combo-item-text{
-		font-size:14px; font-family:calibri; } .timeFont
-		.z-menu-item-cnt,.timeFont .z-combo-item-text{ font-size:14px;
-		font-family:time new roman; } .courierFont
-		.z-menu-item-cnt,.courierFont .z-combo-item-text{
-		font-size:14px; font-family:courier new; } .comicFont
-		.z-menu-item-cnt,.comicFont .z-combo-item-text{ font-size:14px;
-		font-family:comic Sans MS; } .centuryFont
-		.z-menu-item-cnt,.centuryFont .z-combo-item-text{
-		font-size:14px; font-family:century gothic; } .georgiaFont
-		.z-menu-item-cnt,.georgiaFont .z-combo-item-text{
-		font-size:14px; font-family:georgia; } .impactFont
-		.z-menu-item-cnt,.impactFont .z-combo-item-text{ font-size:14px;
-		font-family:impact; }
-	</style>
 	<hlayout id="container" height="100%" spacing="0">
 		<combobox id="fontFamily" mold="rounded" width="125px">
 			<comboitem label="Calibri" sclass="calibriFont" />

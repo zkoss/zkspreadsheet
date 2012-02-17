@@ -211,7 +211,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void insertSheet() {
 		int sheetCount = spreadsheet.getBook().getNumberOfSheets();
-		spreadsheet.getBook().createSheet("sheet " + (sheetCount + 1));
+		Ranges.range(spreadsheet.getSelectedSheet()).createSheet("Sheet " + (sheetCount + 1));
 	}
 
 	public void reGainFocus() {
@@ -219,7 +219,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public void renameSelectedSheet(String name) {
-		SheetHelper.renameSheet(spreadsheet, name);
+		Ranges.range(spreadsheet.getSelectedSheet()).setSheetName(name);
 	}
 
 	public void shiftCell(int direction) {

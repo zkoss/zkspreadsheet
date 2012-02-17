@@ -1,18 +1,4 @@
 <window id="fileExportWin" sclass="fileExportWin" title="Export File" border="normal" width="420px" height="270px" visible="false">
-	<style>
-		.fileExportWin .z-window-embedded-cnt { 
-			padding:7px; 
-		}
-		.fileExportWin .z-list-cell-cnt{
-			padding:5px 5px 5px 2px;
-		}
-		.fileExportWin .hintLabel{
-			margin:5px;
-			font-size:16px;
-			font-family:Calibri;
-		}
-	</style>
-
 	<label sclass="hintLabel" value="Choose a Spreadsheet to Export:"/>
 	<vbox style="margin:5px">	
 <!--	//TODO:strange behavior for mold="paging" pageSize="3"-->

@@ -98,26 +98,6 @@ public final class SheetHelper {
 		return -1;
 	}
 	
-	/**
-	 * Rename sheet
-	 * @param spreadsheet
-	 * @param name
-	 * @return
-	 */
-	public static int renameSheet(Spreadsheet spreadsheet, String name) {
-		final Book book = spreadsheet.getBook();
-		if (book != null) {
-			final Sheet selsheet  = spreadsheet.getSelectedSheet();
-			Sheet sheet = book.getSheet(name);
-			if(sheet != null)
-				return -1;
-			final int index = book.getSheetIndex(selsheet);
-			book.setSheetName(index, name); //will handle refSheet inside 
-			return index;
-		}
-		return -1;
-	}
-	
 	public static Rect getSpreadsheetMaxSelection(Spreadsheet spreadsheet) {
 		Rect selection = spreadsheet.getSelection();// selection is cloned
 		if (selection.getBottom() >= spreadsheet.getMaxrows())

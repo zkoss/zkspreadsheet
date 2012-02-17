@@ -2,11 +2,6 @@
 <window id="_formatNumberDialog" title="Number Format" width="360px" border="normal" 
 	mode="modal" use="org.zkoss.zss.app.zul.Dialog"
 	closable="true" position="center" apply="org.zkoss.zss.app.ctrl.FormatNumberCtrl">
-	<style>
-		.redItem .z-listcell-cnt {
-			color: red;
-		}
-	</style>
 	<div style="margin:7px">
 	<hlayout spacing="0px">
 		<listbox id="mfn_category" width="100px">

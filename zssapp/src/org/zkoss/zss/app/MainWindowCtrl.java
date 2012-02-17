@@ -114,7 +114,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	boolean isFreezeColumn = false;
 	
 	Spreadsheet spreadsheet;
-	Sheets sheets;
 	
 	// For fast Icon
 	boolean isMergeCell = false;
@@ -213,11 +212,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		final DesktopWorkbenchContext workbenchContext = getDesktopWorkbenchContext();
 		workbenchContext.doTargetChange(new SSWorkbookCtrl(spreadsheet));
 		workbenchContext.setWorkbenchCtrl(this);
-		workbenchContext.addEventListener(Consts.ON_SHEET_REFRESH, new EventListener(){
-			public void onEvent(Event event) throws Exception {
-				sheets.redraw();
-			}
-		});
+		
 		if (!FileHelper.hasSavePermission())
 			saveBtn.setVisible(false);
 		workbenchContext.addEventListener(Consts.ON_WORKBOOK_SAVED,	new EventListener() {
@@ -238,11 +233,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				gridlinesCheckbox.setChecked(isOpen && spreadsheet.getSelectedSheet().isDisplayGridlines());
 				protectSheet.setChecked(isOpen && spreadsheet.getSelectedSheet().getProtect());
 				protectSheet.setDisabled(!isOpen);
-				if (isOpen) {
-					sheets.redraw();
-				} else if (!isOpen) {
-					sheets.clear();
-				}
 				
 				//TODO: provide clip board interface, to allow save cut, copy, high light info
 				//use set setHighlight null can cancel selection, but need to re-store selection when select same sheet again
@@ -299,7 +289,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				new EventListener() {
 					@Override
 					public void onEvent(Event event) throws Exception {
-						doSheetDeleteEvent((SheetDeleteEvent) event);
+						//TODO: rm this ?
+//						doSheetDeleteEvent((SheetDeleteEvent) event);
 					}
 				});
 		spreadsheet.addEventListener(Events.ON_CELL_FOUCSED,
@@ -486,10 +477,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		return Zssapp.getDesktopWorkbenchContext(self);
 	}
 	
-	public void redrawSheetTabbox() {
-		sheets.redraw();
-	}
-	
 	public void setSelectedSheet(String name) {
 		spreadsheet.setSelectedSheet(name);
 		gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
@@ -516,20 +503,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			return;
 		}
 	}
-
-	void doSheetDeleteEvent(final SheetDeleteEvent event) {
-		final Book book = spreadsheet.getBook();
-		if (book == null) {
-			return;
-		}
-		final String deleted = event.getDelSheetName();
-		final String selectedSheetName = spreadsheet.getSelectedSheetName(); 
-		if (deleted.equals(selectedSheetName)) {
-			final String name = event.getNewSheetName();
-			sheets.setCurrentSheetByName(name);
-		}
-		getDesktopWorkbenchContext().fireRefresh(); //refresh sheets
-	}
+	
 	void doFocusedEvent(final CellEvent event) {
 		final Book book = spreadsheet.getBook();
 		if (book == null) {
@@ -886,16 +860,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void onInsertSheet() {
-		final Book book = spreadsheet.getBook();
-		if (book == null) {
-			return;
-		}
-		int sheetCount = book.getNumberOfSheets();
-		Worksheet addedSheet = (Worksheet)spreadsheet.getBook().createSheet("sheet " + (sheetCount + 1));
-		sheets.addSheet(addedSheet.getSheetName());
 	}
 
 	// SECTION HELP MENU
