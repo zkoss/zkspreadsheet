@@ -24,6 +24,8 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.RichTextString;
+import org.zkoss.zk.ui.Execution;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.FormatText;
 import org.zkoss.zss.model.Worksheet;
@@ -89,11 +91,8 @@ public class CellFormatHelper {
 			final RichTextString rstr = isRichText ? ft.getRichTextString() : null;
 			final String txt = rstr != null ? rstr.getString() : ft.getCellFormatResult().text;
 			
-			if (bgColor != null && (txt == null || txt.trim().equals(""))) {
-				// not text but has bg color, i must set the z-index to 0
-				// otherwise, it will cover the overflow text of previous cell
-				// use 0, safari not wrok when zindex = -1;
-				sb.append("z-index:0;");
+			if(_cell.getCellType() == Cell.CELL_TYPE_BLANK) {
+				sb.append("z-index:-1;"); //For IE6/IE7's overflow
 			}
 		}
 

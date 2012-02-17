@@ -45,10 +45,20 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			this.appendRow(row);
 		}
 	},
+	//override
+	setVisible: function (visible) {
+		if (this._visible != visible) {
+			this._visible = visible;
+			var n = this.$n();
+			if (n)
+				n.style.visibility = visible ? 'visible' : 'hidden';
+		}
+	},
 	redraw: function (out) {
-		out.push('<div id="', this.uuid, '" class="', this.getZclass(), '">');
 		var rows = this.rows,
+			vis = this.isVisible() ? 'visible' : 'hidden',
 			size = rows.length;
+		out.push('<div id="', this.uuid, '" class="', this.getZclass(), '" style="visibility:' + vis +';">');
 		for (var i = 0; i < size; i++) {
 			rows[i].redraw(out);
 		}
@@ -192,12 +202,13 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 	 * @param rCol
 	 */
 	create_: function (dir, tRow, lCol, bRow, rCol, data) {
-		
+		//TODO: test left/top frozen 
+		//data = data || sheet._wgt._activeRange,
 		var sheet = this.sheet,
+			data = data || sheet._wgt._cacheCtrl.getSelectedSheet(),
 			block = this,
 			cr = this.range,
 			rs = this.rows,
-			data = data || sheet._wgt._activeRange,
 			isNewRow = false,
 			isTop = 'north' == dir,
 			isBtm = 'south' == dir,
@@ -289,7 +300,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			rows = this.rows,
 			temprow = (index >= rows.length) ? rows[rows.length - 1] : rows[index],
 			sheet = this.sheet,
-			data = sheet._wgt._activeRange,
+			data = sheet._wgt._cacheCtrl.getSelectedSheet(),
 			block = this;
 		for (var i = 0; i < size; i++) {
 			var r = row + i,

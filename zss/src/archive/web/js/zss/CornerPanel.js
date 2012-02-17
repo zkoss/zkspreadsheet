@@ -119,12 +119,9 @@ zss.CornerPanel = zk.$extends(zk.Widget, {
 			(lw - 1 + sheet.custColWidth.getStartPixel(fzc + 1)) : lw;
 	},
 	_fixSize: function () {
-		var sheetid = this.sheet.sheetid,
-			name = "#" + sheetid,
-			sid = sheetid + "-sheet";
-		
-		zcss.setRule(name + " .zscorner", ["width", "height"],
-			[this._cornerWidth() + "px", this._cornerHeight() + "px"], true, sid);
+		var wgt = this.sheet._wgt;
+		zcss.setRule(wgt.getSelectorPrefix() + " .zscorner", ["width", "height"],
+			[this._cornerWidth() + "px", this._cornerHeight() + "px"], true, wgt.getSheetCSSId());
 	},
 	/**
 	 * Sets the column's width position index

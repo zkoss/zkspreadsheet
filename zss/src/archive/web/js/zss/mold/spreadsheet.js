@@ -7,17 +7,18 @@ function (out) {
 	var uuid = this.uuid,
 		centerUid = this.center.uuid,
 		sheet = this.sheetCtrl,
+		sheetPanel = this._sheetPanel,
 		activeBlock = sheet.activeBlock,
 		topPanel = sheet.tp,
 		leftPanel = sheet.lp,
 		cornerPanel = sheet.cp,
 		hidecolhead = this.isColumnHeadHidden(),
 		hiderowhead = this.isRowHeadHidden(),
-		dataPanel = this._dataPanel;
-	out.push('<div ', this.domAttrs_(), '>', formulabar ? formulabar.redrawHTML_() : '' ,'<div id="', centerUid, '" ><div id="' + centerUid + '-real" class="z-center"><div id="' + centerUid + '-cave" class="z-center-body"><div id="' + sheet.uuid + '"><textarea id="', uuid, '-fo" class="zsfocus"></textarea>',
+		style = this._shtStyle;
+	out.push('<div ', this.domAttrs_(), '>', style ? style.redrawHTML_() : '', formulabar ? formulabar.redrawHTML_() : '' ,'<div id="', centerUid, '" ><div id="' + centerUid + '-real" class="z-center zscenter"><div id="' + centerUid + '-cave" class="z-center-body"><div ' + sheet.domAttrs_() + '><textarea id="', uuid, '-fo" class="zsfocus"></textarea>',
 			'<div id="', uuid, '-mask" class="zssmask" zs.t="SMask"><div class="zssmask2"><div id="', uuid, '-masktxt" class="zssmasktxt" align="center"></div></div></div>', 
 			'<div id="', uuid, '-sp" class="zsscroll" zs.t="SScrollpanel">',
-			'<div id="', uuid, '-dp" class="zsdata" zs.t="SDatapanel" ', dataPanel,' z.skipdsc="true">',
+			'<div id="', uuid, '-dp" class="zsdata" zs.t="SDatapanel">',
 			'<div id="', uuid, '-datapad" class="zsdatapad"></div>');
 
 	if (activeBlock)
@@ -43,5 +44,9 @@ function (out) {
 	if (cornerPanel)
 		cornerPanel.redraw(out);
 	
-    out.push('</div></div></div></div></div>');
+    out.push('</div></div></div></div>');
+    if (sheetPanel) {
+    	out.push(sheetPanel.redrawHTML_());
+    }
+    out.push('</div>');
 }

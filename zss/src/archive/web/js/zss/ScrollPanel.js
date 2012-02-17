@@ -21,13 +21,16 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  * ScrollPanel is used to handle spreadsheet scroll moving event,  
  */
 zss.ScrollPanel = zk.$extends(zk.Object, {
+	/**
+	 * Scroll direction
+	 */
+	dir: 'south',
 	$init: function (sheet) {
 		this.$supers('$init', arguments);
 		var wgt = sheet._wgt,
 			scrollPanel = wgt.$n('sp');
 		
 		this.id = scrollPanel.id;
-		this.sheetid = sheet.sheetid;
 		this.sheet = sheet;
 		this.comp = scrollPanel;
 		this.currentTop = this.currentLeft = this.timerCount = 0;
@@ -45,6 +48,28 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 		this.minWidth = dtcmp.offsetWidth;
 		wgt.domListen_(scrollPanel, 'onScroll', this.proxy(this._doScrolling))
 			.domListen_(scrollPanel, 'onMouseDown', this.proxy(this._doMousedown));
+	},
+	/**
+	 * Returns the direction that scroll to
+	 * 
+	 * <ul>
+	 * 	<li>north</li>
+	 * 	<li>west</li>
+	 * 	<li>east</li>
+	 * 	<li>south</li>
+	 * </ul>
+	 * 
+	 * @return string direction
+	 */
+	getDirection: function () {
+		return this.dir;
+	},
+	reset: function (top, left) {
+		var n = this.comp;
+		n.scrollLeft = left;
+		n.scrollTop = top;
+		this.currentTop = top;
+		this.currentLeft = left;
 	},
 	cleanup: function () {
 		var wgt = this.sheet._wgt,
@@ -81,6 +106,11 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 			moveLeft = scleft < this.currentLeft,
 			moveTop = sctop < this.currentTop;
 		
+		if (moveHorizontal) {
+			this.dir = moveLeft ? 'west' : 'east';
+		} else {
+			this.dir = moveTop ? 'north' : 'south';
+		}
 		this.currentLeft = scleft;
 		this.currentTop = sctop;
 		sheet.tp._updateLeftPos(-this.currentLeft);

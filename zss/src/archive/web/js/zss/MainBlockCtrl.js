@@ -20,6 +20,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 (function () {
 	var IDLE = 0,
 		LOADING = 1;
+
 /**
  * MainBlockCtrl handle scroll event and load spreadsheet content
  */
@@ -88,8 +89,10 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 	 */
 	_createCellsIfCached: function (dir, size, jump) {
 		var sheet = this.sheet,
+			wgt = sheet._wgt,
 			cr = this.range,
-			ar = sheet._wgt._activeRange,
+			maxCellSize = wgt.getMaxRenderedCellSize(),
+			ar = wgt._cacheCtrl.getSelectedSheet(),
 			vr = zss.SSheetCtrl._getVisibleRange(sheet);
 		switch (dir) {
 		case 'south':
@@ -101,21 +104,18 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			bRow = Math.min(bRow, sheet.maxRows - 1);
 			if (ar.containsRange(tRow, lCol, bRow, rCol)) {
 				this.create_(dir, tRow, lCol, bRow, rCol);
+				var size = this.range.size(),
+					prune = size > maxCellSize;
 				var fCol = sheet._wgt.getColumnFreeze();
 				if (fCol > -1) {
 					sheet.lp.create_(dir, tRow, bRow, 0, fCol, true);
 				}
-				if (cr.top + vr.height < vr.top) {
+				//TODO: minimize prune size
+				if (prune && cr.top + vr.height < vr.top) {
 					this.pruneCell('north', vr, jump ? null : vr.top - (cr.top + vr.height));
 				}
 				cache = true;
 			}
-			if (cache) {
-				sheet.sendSyncblock();
-				this.sheet.dp._fixSize(this);
-				this._recheckVisible();
-			}
-			return cache;
 			break;
 		case 'north':
 			var bRow = cr.top - 1,
@@ -127,21 +127,18 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			tRow = tRow >= 0 ? tRow : 0;
 			if (ar.containsRange(tRow, lCol, bRow, rCol)) {
 				this.create_(dir, tRow, lCol, bRow, rCol);
+				var size = this.range.size(),
+					prune = size > maxCellSize;
 				var fCol = sheet._wgt.getColumnFreeze();
 				if (fCol > -1) {
 					sheet.lp.create_(dir, tRow, bRow, 0, fCol, true);
 				}
-				if (cr.bottom - vr.height > vr.bottom) {
+				//TODO: minimize prune size
+				if (prune && (cr.bottom - vr.height > vr.bottom)) {
 					this.pruneCell('south', vr, jump ? null : cr.bottom - vr.height - vr.bottom);
 				}
 				cache = true;
 			}
-			if (cache) {
-				sheet.sendSyncblock();
-				this.sheet.dp._fixSize(this);
-				this._recheckVisible();
-			}
-			return cache;
 			break;
 		case 'west':
 			var tRow = cr.top,
@@ -153,21 +150,19 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			lCol = lCol >= 0 ? lCol : 0;
 			if (ar.containsRange(tRow, lCol, bRow, rCol)) {
 				this.create_(dir, tRow, lCol, bRow, rCol);
+				var size = this.range.size(),
+					prune = size > maxCellSize;
 				var fRow = sheet._wgt.getRowFreeze();
 				if (fRow > -1) {
 					sheet.tp.create_(dir, lCol, rCol, 0, fRow, true);
 				}
-				if (cr.right - vr.width > vr.right) {
+				
+				//TODO: "cr.right - vr.width > vr.right"
+				if (prune && (cr.right - vr.width > vr.right)) {
 					this.pruneCell('east', vr, jump ? null : cr.right - vr.width - vr.right);
 				}
 				cache = true;
 			}
-			if (cache) {
-				sheet.sendSyncblock();
-				this.sheet.dp._fixSize(this);
-				this._recheckVisible();
-			}
-			return cache;
 			break;
 		case 'east':
 			var tRow = cr.top,
@@ -178,22 +173,26 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			rCol = Math.min(rCol, sheet.maxCols - 1);
 			if (ar.containsRange(tRow, lCol, bRow, rCol)) {
 				this.create_(dir, tRow, lCol, bRow, rCol);
+				var size = this.range.size(),
+					prune = size > maxCellSize;
 				var fRow = sheet._wgt.getRowFreeze();
 				if (fRow > -1) {
 					sheet.tp.create_(dir, lCol, rCol, 0, fRow, true);
 				}
-				if (cr.left + vr.width < vr.left) {
+				
+				//TODO: minimize prune size
+				if (prune && (cr.left + vr.width < vr.left)) {
 					this.pruneCell('west', vr, jump ? null : (vr.left - (cr.left + vr.width)));
 				}
 				cache = true;
 			}
-			if (cache) {
-				sheet.sendSyncblock();
-				this.sheet.dp._fixSize(this);
-				this._recheckVisible();
-			}
-			return cache;
 			break;
+		}
+		if (cache) {
+			//sheet.sendSyncblock();
+			this.sheet.dp._fixSize(this);
+			this._recheckVisible(); //will sendSyncblock 
+			return true; //use cache
 		}
 		return false;
 	},
@@ -281,11 +280,12 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			range = this.range,
 			spcmp = this.sheet.sp.comp,
 			dp = this.sheet.dp,
-			arRect = sheet._wgt._activeRange.rect,
+			arRect = wgt._cacheCtrl.getSelectedSheet().rect,
 			arTopHgh = -1,
 			arBtmHgh = -1
 			arLeftWidth = -1,
 			arRightWidth = -1;
+
 		if (('east' == direction || 'west' == direction) && this.sheet._wgt._preloadRowSize > 0) {
 			var	topHgh = range.top - arRect.top + 1,
 				btmHgh = arRect.bottom - range.bottom + 1;
@@ -296,18 +296,21 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		}
 		//TODO: if the amount of cell to load is small, shall load extra cells, not prune cached cells.
 		if ('north' == direction || 'south' == direction) {
-			var	ar = sheet._wgt._activeRange,
+			var	ar = sheet._wgt._cacheCtrl.getSelectedSheet(),
 				leftWidth = range.left - arRect.left,
 				rightWidth = arRect.right - range.right;
 			
 			if (leftWidth > 0) {
+				//TODO: shall NOT prune left data
 				ar.pruneLeft(leftWidth);
 			}
 			if (rightWidth > 0) {
+				//TODO: shall NOT prune right data
 				ar.pruneRight(rightWidth);
 			}
 		}
 
+		//TODO: use spreadsheet.fetchActiveRange instead of onZSSCellFetch
 		wgt.fire('onZSSCellFetch', 
 		 {token: token, sheetId: sheet.serverSheetId, type: type, direction: direction,
 		 dpWidth: dp.width, dpHeight: dp.height, viewWidth: spcmp.clientWidth, viewHeight: spcmp.clientHeight,
@@ -380,13 +383,19 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 					token = zkS.addCallback(function () {
 						if (sheet.invalid) return;
 						var block = sheet.activeBlock,//get current activeBlock again.
-							lastDir = block._lastDir; 
+							lastDir = block._lastDir,
+							wgt = sheet._wgt,
+							maxCellSize = wgt.getMaxRenderedCellSize(),
+							size = block.range.size(),
+							prune = size > maxCellSize;
 						block._lastDir = "H";
-						if (lastDir && lastDir == "V"){
-							block.pruneCell("south", range, 1);
-							block.pruneCell("north", range, 1);
-						} else if(pruneres >= 0) {
-							block.pruneCell("east", range, pruneres);
+						if (prune) {
+							if (lastDir && lastDir == "V"){
+								block.pruneCell("south", range, 1);
+								block.pruneCell("north", range, 1);
+							} else if(pruneres >= 0) {
+								block.pruneCell("east", range, pruneres);
+							}	
 						}
 						block.loadstate = zss.MainBlockCtrl.IDLE;
 						if(callbackfn) callbackfn();
@@ -420,13 +429,19 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 					token = zkS.addCallback(function () {
 						if (sheet.invalid) return;
 						var block = sheet.activeBlock,//get current activeBlock again.
-							lastDir = block._lastDir; 
+							lastDir = block._lastDir,
+							wgt = sheet._wgt,
+							maxCellSize = wgt.getMaxRenderedCellSize(),
+							size = block.range.size(),
+							prune = size > maxCellSize;
 						block._lastDir = "H";
-						if (lastDir && lastDir == "V") {
-							block.pruneCell("south", range, 1);
-							block.pruneCell("north", range, 1);
-						} else if (pruneres >= 0){
-							block.pruneCell("west", range, pruneres);
+						if (prune) {
+							if (lastDir && lastDir == "V") {
+								block.pruneCell("south", range, 1);
+								block.pruneCell("north", range, 1);
+							} else if (pruneres >= 0){
+								block.pruneCell("west", range, pruneres);
+							}	
 						}
 						block.loadstate = zss.MainBlockCtrl.IDLE;
 						if (callbackfn) callbackfn();
@@ -459,13 +474,19 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 					token = zkS.addCallback(function () {
 						if (sheet.invalid) return;
 						var block = sheet.activeBlock,//get current activeBlock again.
-							lastDir = block._lastDir; 
+							lastDir = block._lastDir,
+							wgt = sheet._wgt,
+							maxCellSize = wgt.getMaxRenderedCellSize(),
+							size = block.range.size(),
+							prune = size > maxCellSize;
 						local._lastDir = "V";
-						if (lastDir && lastDir == "H") {
-							block.pruneCell("east", range, 1);
-							block.pruneCell("west", range, 1);
-						} else if (pruneres >= 0) {
-							block.pruneCell("south", range, pruneres);
+						if (prune) {
+							if (lastDir && lastDir == "H") {
+								block.pruneCell("east", range, 1);
+								block.pruneCell("west", range, 1);
+							} else if (pruneres >= 0) {
+								block.pruneCell("south", range, pruneres);
+							}	
 						}
 						sheet.activeBlock.loadstate = zss.MainBlockCtrl.IDLE;
 						if (callbackfn) callbackfn();
@@ -498,14 +519,21 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 					
 					token = zkS.addCallback(function () {
 						if (sheet.invalid) return;
-						var block = sheet.activeBlock ;//get current activeBlock again.
-						var lastDir = block._lastDir; 
+						//get current activeBlock again.
+						var block = sheet.activeBlock,
+							lastDir = block._lastDir,
+							wgt = sheet._wgt,
+							maxCellSize = wgt.getMaxRenderedCellSize(),
+							size = block.range.size(),
+							prune = size > maxCellSize;
 						block._lastDir = "V";
-						if (lastDir && lastDir == "H") {
-							block.pruneCell("east", range, 1);
-							block.pruneCell("west", range, 1);
-						} else if(pruneres >= 0) {
-							block.pruneCell("north", range, pruneres);
+						if (prune) {
+							if (lastDir && lastDir == "H") {
+								block.pruneCell("east", range, 1);
+								block.pruneCell("west", range, 1);
+							} else if(pruneres >= 0) {
+								block.pruneCell("north", range, pruneres);
+							}	
 						}
 						block.loadstate = zss.MainBlockCtrl.IDLE;
 						if (callbackfn) callbackfn();
@@ -560,9 +588,10 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		if (!reserve || reserve < 0)
 			reserve = 0;
 		
-		var sync = false;
-		var wgt = sheet._wgt,
-			ar = wgt._activeRange,
+		var sync = false,
+			wgt = sheet._wgt,
+			pruneCache = wgt.isClientCacheDisabled(),
+			ar = wgt._cacheCtrl.getSelectedSheet(),
 			rect = ar.rect;
 		if (type == "west") {
 			var l = range.left - reserve;
@@ -576,15 +605,17 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				}
 				this.removeColumnsFromStart_(size);
 				sheet.tp.removeChildFromStart_(size);
-				var colSize = wgt._preloadColSize;
-				if (colSize <= 0)
-					ar.pruneLeft(size);
-				else {
-					var pruneSize = (l - ar.rect.left + 1) - colSize;
-					if (pruneSize > 0)
-						ar.pruneLeft(pruneSize);
+				if (pruneCache) {
+					var colSize = wgt.getPreloadColumnSize();
+					if (colSize <= 0)
+						ar.pruneLeft(size);
+					else {
+						var pruneSize = (l - ar.rect.left + 1) - colSize;
+						if (pruneSize > 0)
+							ar.pruneLeft(pruneSize);
+					}
+					sync = true;
 				}
-				sync = true;
 			}
 		} else if (type == "east") {
 			var r = range.right + reserve;
@@ -598,15 +629,17 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				}
 				this.removeColumnsFromEnd_(size);
 				sheet.tp.removeChildFromEnd_(size);
-				var colSize = wgt._preloadColSize;
-				if (colSize <= 0) {
-					ar.pruneRight(size);
-				} else {
-					var pruneSize = (ar.rect.right - r + 1) - colSize;
-					if (pruneSize > 0)
-						ar.pruneRight(pruneSize);
+				if (pruneCache) {
+					var colSize = wgt.getPreloadColumnSize();
+					if (colSize <= 0) {
+						ar.pruneRight(size);
+					} else {
+						var pruneSize = (ar.rect.right - r + 1) - colSize;
+						if (pruneSize > 0)
+							ar.pruneRight(pruneSize);
+					}
+					sync = true;
 				}
-				sync = true;
 			}
 		} else if (type == "north") {
 			var t = range.top - reserve;
@@ -620,16 +653,18 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				}
 				this.removeRowsFromStart_(size);
 				sheet.lp.removeChildFromStart_(size);
-				var rowSize = wgt._preloadRowSize;
-				if (rowSize <= 0) {
-					ar.pruneTop(size);
-				} else {
-					var pruneSize = (t - ar.rect.top + 1) - rowSize;
-					if (pruneSize > 0) {
-						ar.pruneTop(pruneSize);
+				if (pruneCache) {
+					var rowSize = wgt._preloadRowSize;
+					if (rowSize <= 0) {
+						ar.pruneTop(size);
+					} else {
+						var pruneSize = (t - ar.rect.top + 1) - rowSize;
+						if (pruneSize > 0) {
+							ar.pruneTop(pruneSize);
+						}
 					}
+					sync = true;
 				}
-				sync = true;
 			}
 		} else if (type == "south") {
 			var b = range.bottom + reserve;
@@ -643,17 +678,20 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 				}
 				this.removeRowsFromEnd_(size);
 				sheet.lp.removeChildFromEnd_(size);
-				var rowSize = wgt._preloadRowSize;
-				if (rowSize <= 0) {
-					ar.pruneBottom(size);
-				} else {
-					var pruneSize = (ar.rect.bottom - b + 1) - rowSize;
-					if (pruneSize > 0) {
-						ar.pruneBottom(pruneSize);
+				if (pruneCache) {
+					var rowSize = wgt._preloadRowSize;
+					if (rowSize <= 0) {
+						ar.pruneBottom(size);
+					} else {
+						var pruneSize = (ar.rect.bottom - b + 1) - rowSize;
+						if (pruneSize > 0) {
+							ar.pruneBottom(pruneSize);
+						}
 					}
+					sync = true;
 				}
 			}
-			sync = true;
+			
 		}
 		if (sync) {
 			//bug 1951423 IE : row is broken when scroll down
@@ -666,11 +704,11 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 	},
 	_getFetchWidth: function (rCol) {
 		var sheet = this.sheet;
-		return Math.min(sheet._wgt.getMaxColumn(), rCol + Math.round(sheet._wgt._preloadColSize / 2)) - this.range.right;
+		return Math.min(sheet._wgt.getMaxColumns(), rCol + Math.round(sheet._wgt.getPreloadColumnSize() / 2)) - this.range.right;
 	},
 	_getFetchHeight: function (bRow) {
 		var sheet = this.sheet;
-		return Math.min(sheet._wgt.getMaxRow(), bRow + Math.round(sheet._wgt._preloadRowSize / 2)) - this.range.bottom;
+		return Math.min(sheet._wgt.getMaxRows(), bRow + Math.round(sheet._wgt.getPreloadRowSize() / 2)) - this.range.bottom;
 	},
 	/**
 	 * Load content and set the range to visible 
@@ -698,7 +736,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			left = range.left,
 			right = range.right,
 			bottom = range.bottom,
-			ar = sheet._wgt._activeRange;
+			ar = sheet._wgt._cacheCtrl.getSelectedSheet();
 		
 		//create east from cache
 		if (right + 1 <= rCol) {
@@ -782,6 +820,7 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		}
 		
 		if (tRow > bottom || bRow < top || lCol > right || rCol < left) {
+			
 			//visible range not cross this block,  this should invoke a jump 
 			//invoke a jump to top,left of visual range.
 			this.loadCell(vrange.top, vrange.left, 0, null, true);
@@ -816,6 +855,12 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 			this._sendOnCellFetch(token, "visible", "", -1, -1, fetchWidth, fetchHeight, vrange);
 			return true;
 		}
+
+		var deferLoader = sheet.deferLoader;
+		if (!deferLoader) {
+			deferLoader = sheet.deferLoader = new zss.DeferLoader(sheet);
+		}
+		deferLoader.asyncRun(); //check if need to load data later
 		
 		sheet.sendSyncblock(true);
 		return false;

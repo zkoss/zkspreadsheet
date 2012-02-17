@@ -5,13 +5,14 @@
 	position: relative;
 	width: 100px;
 	height: 100px;
-	background:#A4C3EB;
+	background:#FFFFFF;
 	overflow:hidden;
 	border:1px solid #D8D8D8;
 }
 
-.zss-center {
-	background:#A4C3EB;
+.zscenter {
+	border:0;
+	border-top:1px solid #C5C5C5;
 }
 
 .zsscroll {
@@ -22,7 +23,7 @@
 	width: 100%;
 	height:100%;
 	left:0px;
-	background-color:#CAD7E6;
+	background-color:#FFFFFF;
 }
 
 .zsdata {
@@ -33,7 +34,7 @@
 	padding-top: 20px;
 	padding-left: 36px;
 	overflow: hidden;
-	background-color:#EEEEFF;
+	background-color:#FFFFFF;
 }
 .zsdatapad{
 	position: relative;
@@ -137,6 +138,17 @@
 	text-align: left;
 	width: 49px; /* colWidth - 2*cellPadding - 1 , 1 is border*/
 	overflow: hidden;
+	<c:if test="${c:browser('ie7-') || c:browser('ie6-')}">
+		zoom: 1;
+	</c:if>
+}
+
+.zscelltxt-real {
+	width: 100%;
+	<c:if test="${c:browser('ie7-') || c:browser('ie6-')}">
+		left: 0;
+		position: absolute;
+	</c:if>
 }
 
 .zstop {
@@ -1068,4 +1080,38 @@
 	position: relative;
 	top: 0;
 	left: 0;
+}
+
+.zssheetselector .z-tab-hl, .zssheetselector .z-tab-hr, .zssheetselector .z-tab-hm {
+	background: #F9F9F9;
+}
+
+.zssheetselector .z-tab {
+	border: 1px solid #D4D4D4;
+	border-top: 0;
+}
+
+.zssheetselector .z-tab-seld, 
+.zssheetselector .z-tab-seld .z-tab-hl, 
+.zssheetselector .z-tab-seld .z-tab-hr, 
+.zssheetselector .z-tab-seld .z-tab-hm {
+	background-color: #FFFFFF;
+}
+
+.zssheetselector .z-tabs-left-scroll,
+.zssheetselector .z-tabs-right-scroll {
+	margin-top: -3px;
+}
+
+<c:if test="${c:isGecko()}">
+.zssheetselector .z-tabs-cnt {
+	-moz-user-select: text;
+}
+.zssheetselector .z-tab {
+	-moz-user-select: text;
+}
+</c:if>	
+
+.zssheet-editor {
+	padding: 1px 0;
 }

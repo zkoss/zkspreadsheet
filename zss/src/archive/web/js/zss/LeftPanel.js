@@ -346,10 +346,10 @@ zss.LeftPanel = zk.$extends(zss.Panel, {
 		return null;
 	},
 	getHeaderData_: function () {
-		return this.sheet._wgt._activeRange.rowHeaders;
+		return this.sheet._wgt._cacheCtrl.getSelectedSheet().rowHeaders;
 	},
 	getFrozenData_: function () {
-		var a = this.sheet._wgt._activeRange,
+		var a = this.sheet._wgt._cacheCtrl.getSelectedSheet(),
 			f = a.leftFrozen;
 		return f ? f : a;
 	},
@@ -394,13 +394,11 @@ zss.LeftPanel = zk.$extends(zss.Panel, {
 		this.$supers(zss.LeftPanel, 'removeChildFromEnd_', arguments);
 	},
 	_updateHeight: function (height) {
-		if (this.height == height) return;
 		jq(this.comp).css('height', jq.px0(height));
 		this.height = height;
 		this._updateBlockHeight();
 	},	
 	_updateTopPos: function (toppos) {
-		if (this.toppos == toppos) return;
 		jq(this.icomp).css('top', jq.px(toppos));
 		this.toppos = toppos;
 		this._updateBlockHeight();
@@ -445,9 +443,18 @@ zss.LeftPanel = zk.$extends(zss.Panel, {
 				jq(header.comp)[remove ? 'removeClass' : 'addClass']("zsleft-sel");
 		}
 	},
+	/**
+	 * Sets the selection range of the header
+	 * 
+	 * Update CSS after header created (this.createHeaders_), ignore update selection when sheet CSS not ready
+	 */
 	updateSelectionCSS_: function () {
 		var sheet = this.sheet,
+			wgt = sheet._wgt,
 			selRange = sheet.selArea.lastRange;
+		if (!wgt.isSheetCSSReady())
+			return;
+		
 		if (selRange) {
 			var top = selRange.top,
 				bottom = selRange.bottom;
@@ -571,15 +578,15 @@ zss.LeftPanel = zk.$extends(zss.Panel, {
 	},
 	_fixSize: function() {
 		var sheet = this.sheet,
+			wgt = sheet._wgt,
 			lw = sheet.leftWidth,
 			leftw = lw-1,
-			fzc = sheet.frozenCol;
+			fzc = sheet.frozenCol,
+			name = wgt.getSelectorPrefix(),
+			sid = wgt.getSheetCSSId();
 		
 		if (fzc > -1)
 			leftw = leftw + sheet.custColWidth.getStartPixel(fzc + 1);
-		
-		var name = "#" + sheet.sheetid,
-			sid = sheet.sheetid + "-sheet";
 
 		zcss.setRule(name + " .zsleft", ["width"], [(fzc > -1 ? leftw - 1 : leftw) + "px"], true, sid);
 		zcss.setRule(name + " .zslefti", ["width"], [leftw + "px"], true, sid);

@@ -196,15 +196,17 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    	 * @param int p the text cursor position. If doesn't specify, use current text cursor position
    	 */
    	syncEditorPosition: function (p) {
+		var	sheet = this.sheet;
+		if (!sheet)
+			return;
+		
 		var n = this.$n('real');
-		if (p == undefined) {
-			p = zk(n).getSelectionRange()[1];
-		}
+		p = p != undefined ? p : zk(n).getSelectionRange()[1];
 		if (!p) {
 			jq(n).css('top', '0px');
 			return;
 		}
-		var	lineHeight = zk.parseInt(jq(n).css('line-height')),
+		var	lineHeight = sheet.lineHeight,
 			str = n.value,
 			len = str.length,
 			lineNum = 1;
@@ -238,8 +240,7 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    		if (this.isRealVisible()) {
    	   		syncEditorHeight(n);
    	   		
-   	   		var p = pos || n.value.length;
-   	   		this.syncEditorPosition(p);
+   	   		this.syncEditorPosition(pos != undefined ? pos : n.value.length);
    		}
    	},
    	getValue: function () {

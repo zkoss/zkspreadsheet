@@ -79,9 +79,6 @@ public interface SpreadsheetCtrl {
 	
 	public JSONObject getRangeAttrs(Worksheet sheet, Header containsHeader, CellAttribute type, int left, int top, int right, int bottom);
 	
-	public String getDataPanelAttrs();
-	
-	
 	/**
 	 * Add widget to the {@link WidgetHandler} of this spreadsheet, 
 	 * 

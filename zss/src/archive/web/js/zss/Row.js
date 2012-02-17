@@ -21,13 +21,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  * 
  * Row represent a row of the spreadsheet, it also be container that contains cells of the row
  */
-
-/**
- * Row event
- * <ul>
- * 	<li>onRowAdded: when Row attach to DOM</li>
- * </ul>
- */
 zss.Row = zk.$extends(zk.Widget, {
 	widgetName: 'Row',
 	$o: zk.$void, //owner, fellows relationship no needed
@@ -45,9 +38,19 @@ zss.Row = zk.$extends(zk.Widget, {
 		this.wrapedCells = [];
 	},
 	bind_: function (desktop, skipper, after) {
-		this.$supers(zss.Row, 'bind_', arguments);
-		this.comp = this.$n();
-		this.fire('onRowAdded');
+		this.$supers(zss.Row, 'bind_', arguments);//after bind cells, may need to process wrap height
+		var sf = this,
+			sheet = this.sheet,
+			wgt = sheet._wgt,
+			wrapCells = this.wrapedCells;
+		if (wrapCells.length) {
+			if (wgt.isSheetCSSReady())
+				this._updateWrapRowHeight();
+			else
+				sheet.addSSInitLater(function () {
+					sf._updateWrapRowHeight();
+				});
+		}
 		if (zk.ie6_) {
 			this.sheet.listen({onRowHeightChanged: this.proxy(this._onRowHeightChanged)});
 		}
@@ -57,10 +60,11 @@ zss.Row = zk.$extends(zk.Widget, {
 			this.sheet.unlisten({onRowHeightChanged: this.proxy(this._onRowHeightChanged)});
 		}
 		delete this.cells;
-		this.comp = this.r = this.zsh = null;
+		this.r = this.zsh = null;
 		this.$supers(zss.Row, 'unbind_', arguments);
 	},
 	_updateWrapRowHeight: function () {
+		var start = jq.now();
 		var row = this.r,
 			custRowHeight = this.sheet.custRowHeight,
 			meta = custRowHeight.getMeta(row),
@@ -74,48 +78,52 @@ zss.Row = zk.$extends(zk.Widget, {
 				hgh = Math.max(hgh, c.getTextHeight());
 			}
 		}
-		
+
 //		if (jq(this.$n()).height() == hgh) {
 //			return;
 //		}
 		
 		var sheet = this.sheet,
-			shtId = sheet.sheetid,
+			wgt = sheet._wgt,
 			zsh = this.zsh,
-			cssId = shtId + "-sheet",
-			cssPrefix = '#' + shtId;
+			cssId = wgt.getSheetCSSId(),
+			pf = wgt.getSelectorPrefix();
 		if (!zsh) {
 			zsh = meta ? meta[2] : custRowHeight.ids.next();
 			custRowHeight.setCustomizedSize(row, hgh, zsh, false, true);
 			sheet._appendZSH(row, zsh); //this doesn't work correctly ?? seems works, TEST it
-			sheet._wgt._activeRange.updateRowHeightId(row, zsh);
+			sheet._wgt._cacheCtrl.getSelectedSheet().updateRowHeightId(row, zsh);
 		} else {
 			custRowHeight.setCustomizedSize(row, hgh, zsh, false, true);
 		}
 			
-		zcss.setRule(cssPrefix + " .zsh" + zsh, ["height"], [hgh + "px"], true, cssId);
-		zcss.setRule(cssPrefix + " .zshi" + zsh, "height", hgh + "px", true, cssId);
+		zcss.setRule(pf + " .zsh" + zsh, ["height"], [hgh + "px"], true, cssId);
+		zcss.setRule(pf + " .zshi" + zsh, "height", hgh + "px", true, cssId);
 		var h2 = (hgh > 0) ? hgh - 1 : 0;
-		zcss.setRule(cssPrefix + " .zslh" + zsh, ["display", "height", "line-height"], ["", h2 + "px", h2 + "px"], true, cssId);
+		zcss.setRule(pf + " .zslh" + zsh, ["display", "height", "line-height"], ["", h2 + "px", h2 + "px"], true, cssId);
 		
 		//TODO: update focus shall handle by FocusMarkCtrl by listen onRowHeightChanged evt
 		var fPos = sheet.getLastFocus(),
 			sPos = sheet.getLastSelection();
 		sheet.moveCellFocus(fPos.row, fPos.column, true);
 		sheet.moveCellSelection(sPos.left, sPos.top, sPos.right, sPos.bottom, false, true);
+		zk.log('_updateWrapRowHeight: ' + (jq.now() - start));
 		sheet.fire('onRowHeightChanged', {row: row});
 	},
-	processWrapCell: function (cell) {
+	processWrapCell: function (cell, ignoreUpdateNow) {
 		if (this.sheet.custRowHeight.isDefaultSize(cell.r)) {
 			var wrapedCells = this.wrapedCells;
 			if (cell.wrap) {
 				if (!wrapedCells.$contains(cell)) {
 					wrapedCells.push(cell);
 				}
-				this._updateWrapRowHeight();
+				if (!ignoreUpdateNow)
+					this._updateWrapRowHeight();
 			} else {
 				if (wrapedCells.$remove(cell)) {
-					this._updateWrapRowHeight();
+					if (!ignoreUpdateNow) {
+						this._updateWrapRowHeight();
+					}
 				}
 			}
 		} 
@@ -233,7 +241,7 @@ zss.Row = zk.$extends(zk.Widget, {
 	appendZSH: function (zsh) {
 		if (zsh) {
 			this.zsh = zsh;
-			jq(this.comp).addClass("zsh" + zsh);
+			jq(this.$n()).addClass("zsh" + zsh);
 			var size = this.cells.length;
 			for (var i = 0; i < size; i++)
 				this.cells[i].appendZSH(zsh);	

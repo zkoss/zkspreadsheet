@@ -63,11 +63,10 @@ zss.TopPanel = zk.$extends(zss.Panel, {
 		return null;
 	},
 	getHeaderData_: function () {
-		return this.sheet._wgt._activeRange.columnHeaders;
+		return this.sheet._wgt._cacheCtrl.getSelectedSheet().columnHeaders;
 	},
 	getFrozenData_: function () {
-		//return this.sheet._wgt._activeRange.topFrozen;
-		var a = this.sheet._wgt._activeRange,
+		var a = this.sheet._wgt._cacheCtrl.getSelectedSheet(),
 			f = a.topFrozen;
 		return f ? f : a;
 	},
@@ -294,9 +293,18 @@ zss.TopPanel = zk.$extends(zss.Panel, {
 		if (this.block)
 			this.block.removeRow(row, size);
 	},
+	/**
+	 * Sets the selection range of the header
+	 * 
+	 * Update CSS after header created (this.createHeaders_), ignore update selection when sheet CSS not ready
+	 */
 	updateSelectionCSS_: function () {
 		var sheet = this.sheet,
+			wgt = sheet._wgt,
 			selRange = sheet.selArea.lastRange;
+		if (!wgt.isSheetCSSReady())
+			return;
+		
 		if (selRange) {
 			var left = selRange.left,
 				right = selRange.right;
@@ -305,16 +313,16 @@ zss.TopPanel = zk.$extends(zss.Panel, {
 	},
 	_fixSize: function() {
 		var sheet = this.sheet,
+			wgt = sheet._wgt,
 			th = sheet.topHeight,
 			toph = th - 1,
-			fzr = sheet.frozenRow;
+			fzr = sheet.frozenRow,
+			name = wgt.getSelectorPrefix(),
+			sid = wgt.getSheetCSSId();
 		
 		if (fzr > -1)
 			toph = toph + sheet.custRowHeight.getStartPixel(fzr + 1);
 		
-		var sheetid = sheet.sheetid,
-			name = "#" + sheetid,
-			sid = sheetid + "-sheet";
 		zcss.setRule(name + " .zstop", ["height"], [(fzr > -1 ? toph - 1: toph) + "px"], true, sid);
 		zcss.setRule(name + " .zstopi", ["height"], [toph + "px"], true, sid);
 	}

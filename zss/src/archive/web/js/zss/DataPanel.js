@@ -16,7 +16,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	it will be useful, but WITHOUT ANY WARRANTY.
 }}IS_RIGHT
 */
-
+(function () {
 
 /**
  * A DataPanel represent the spreadsheet cells 
@@ -30,7 +30,6 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			focus  = this.focustag = wgt.$n('fo');
 
 		this.id = dataPanel.id;
-		this.sheetid = sheet.sheetid;
 		this.sheet = sheet;
 		this.comp = dataPanel;
 		this.comp.ctrl = this;
@@ -39,13 +38,14 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		wgt.domListen_(focus, 'onBlur', '_doDataPanelBlur');
 		wgt.domListen_(focus, 'onFocus', '_doDataPanelFocus');
 
-		this.width = zk.parseInt(dataPanel.getAttribute("z.w"));
-		this.height = zk.parseInt(dataPanel.getAttribute("z.h"));
+		this.width = sheet.custColWidth.getStartPixel(wgt.getMaxColumns());
+		this.height = sheet.custRowHeight.getStartPixel(wgt.getMaxRows());
 
 		this.paddingl = this.paddingt = 0;
 		var pdl = this.paddingl + sheet.leftWidth,
 			pdt = sheet.topHeight;//this.paddingt + sheet.topHeight;
-		jq(dataPanel).css({'padding-left': jq.px0(pdl), 'padding-top': jq.px0(pdt), 'width': jq.px0(this.width), 'height': jq.px0(this.height)});
+//		jq(dataPanel).css({'padding-left': jq.px0(pdl), 'padding-top': jq.px0(pdt), 'width': jq.px0(this.width), 'height': jq.px0(this.height)});
+		jq(dataPanel).css({'width': jq.px0(this.width), 'height': jq.px0(this.height)});
 	},
 	cleanup: function() {
 		var focus = this.focustag,
@@ -58,6 +58,14 @@ zss.DataPanel = zk.$extends(zk.Object, {
 
 		if (this.comp) this.comp.ctrl = null;
 		this._wgt = this.comp = this.padcomp = this.sheet = null;
+	},
+	reset: function (width, height) {
+		var wgt = this._wgt,
+			l = this.paddingl = wgt.getLeftPanelWidth(),
+			t = this.paddingt = wgt.getTopPanelHeight();
+		this.width = width;
+		this.height = height;
+		jq(this.comp).css({'padding-left': jq.px0(l), 'padding-top': jq.px0(t),'width': jq.px0(width), 'height': jq.px0(height)});
 	},
 	/**
 	 * Sets the height
@@ -76,10 +84,13 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		jq(this.comp).css('width', jq.px0(this.width));
 	},
 	_fixSize: function (block) {
-		var sheet = this.sheet,
+		var wgt = this._wgt,
+			sheet = this.sheet,
 			custColWidth = sheet.custColWidth,
 			custRowHeight = sheet.custRowHeight;
 		
+		this.width = sheet.custColWidth.getStartPixel(wgt.getMaxColumns());
+		this.height = sheet.custRowHeight.getStartPixel(wgt.getMaxRows());
 		this.paddingl = custColWidth.getStartPixel(block.range.left);
 		this.paddingt = custRowHeight.getStartPixel(block.range.top);
 		
@@ -88,6 +99,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			pdl = this.paddingl + sheet.leftWidth;
 		
 		jq(this.comp).css({'padding-left': jq.px0(pdl), 'padding-top': jq.px0(sheet.topHeight), 'width': jq.px0(width)});
+		jq(this.comp).css({'width': jq.px0(width)});
 		jq(this.padcomp).css('height', jq.px0(this.paddingt));
 		sheet.tp._updateLeftPadding(pdl);
 		sheet.lp._updateTopPadding(this.paddingt);
@@ -332,7 +344,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 
 			sheet.state = zss.SSheetCtrl.STOP_EDIT;
 
-			var data = this._wgt._activeRange,
+			var data = this._wgt._cacheCtrl.getSelectedSheet(),
 				editor = inlineEditing ? this.sheet.inlineEditor : this.sheet.formulabarEditor,
 				edit = null;
 			if (editor) {
@@ -772,3 +784,4 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		this.moveFocus(row, col, true, true);
 	}
 });
+})();

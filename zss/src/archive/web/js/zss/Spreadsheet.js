@@ -96,7 +96,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	}
 
 	function doBlockUpdate(wgt, json, token) {
-		var ar = wgt._activeRange,
+		var ar = wgt._cacheCtrl.getSelectedSheet(),
 			tp = json.type;
 		if (ar && tp != 'ack') { //fetch cell will empty return,(not thing need to fetch)
 			var d = json.data,
@@ -109,7 +109,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			
 			ar.update(d);
 			if (leftFrozen) {
-				ar.leftFrozen = newCachedRange(leftFrozen.data);
+				ar.leftFrozen = new zss.ActiveRange(leftFrozen.data);
 				//TODO: fine-tune the following code
 				var	srcRows = ar.rows,
 					f = ar.leftFrozen,
@@ -142,7 +142,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				syncHeightId(ar, ar.leftFrozen);
 			}
 			if (topFrozen) {
-				ar.topFrozen = newCachedRange(topFrozen.data);
+				ar.topFrozen = new zss.ActiveRange(topFrozen.data);
 				//TODO: fine-tune the following code
 				var left = ar.rect.left,
 					right = ar.rect.right,
@@ -215,18 +215,18 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	}
 	
 	/**
-	 * Returns whether has CSS link in head or not
+	 * Returns CSS link in head
 	 * 
-	 * @return boolean
+	 * @return StyleSheet object
 	 */
 	function hasCSS (id) {
 		var head = document.getElementsByTagName("head")[0];
 		for (var n = head.firstChild; n; n = n.nextSibling) {
 			if (n.id == id) {
-				return true;
+				return n;
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	/**
@@ -310,582 +310,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			//jq(scroll).css('overflow-y', 'hidden');
 		}
 	}
-	
-	var ATTR_ALL = 1,
-		ATTR_TEXT = 2,
-		ATTR_STYLE = 3,
-		ATTR_SIZE = 4,
-		ATTR_MERGE = 5;
-	/**
-	 * Create Cell model
-	 * 
-	 * @param JSON Object v data from server
-	 * @param int type update type. Default ATTR_ALL means update all cell attributes
-	 * @param int heightId height style id
-	 * @param Array texts text string aggregation
-	 * @param Array styles style string aggregation
-	 * @param Object mergeInfos the merge info aggregation
-	 */
-	function newCell(v, type, heightId, texts, styles, mergeInfos) {
-		var c = {
-			/**
-			 * Row number
-			 */
-			//r
-			/**
-			 * Column number
-			 */
-			//c
-			/**
-			 * Cell reference address 
-			 */
-			//ref
-			/**
-			 * Cell type
-			 */
-			//cellType,
-			/**
-			 * Cell text
-			 */
-			//text
-			/**
-			 * Cell edit text
-			 */
-			//editText,
-			/**
-			 * Cell format text
-			 */
-			//formatText
-			/**
-			 * Cell is locked or not
-			 * 
-			 * Default: true
-			 */
-			//lock
-			/**
-			 * whether the text should be wrapped or not
-			 * 
-			 * Default: false
-			 */
-			//wrap
-			/**
-			 * Horizontal alignment
-			 * 
-			 * <ul>
-			 * 	<li>l: align left</li>
-			 * 	<li>c: align center</li>
-			 * 	<li>r: align right</li>
-			 * </ul>
-			 * 
-			 * Default: "l"
-			 */
-			//halign
-			/**
-			 * Vertical alignment
-			 * 
-			 * <ul>
-			 * 	<li>t: align top</li>
-			 * 	<li>c: align center</li>
-			 * 	<li>b: align bottom</li>
-			 * </ul>
-			 * 
-			 * Default: "t"
-			 */
-			//valign
-			/**
-			 * Merge CSS class
-			 */
-			//mergeCls: v.mcls,
-			/**
-			 * Merge id
-			 */
-			//mergeId: v.mi,
-			/**
-			 * Merge rect
-			 */
-			//merge: null,
-			/**
-			 * Width id
-			 */
-			//widthId: v.w,
-			/**
-			 * Height id
-			 */
-			//heightId: v.h,
-			/**
-			 * Cell style
-			 */
-			//style
-			/**
-			 * Inner cell style
-			 */
-			//innerStyle
-			/**
-			 * Whether cell has right border or not
-			 * 
-			 * default: false
-			 */
-			//rightBorder
-			/**
-			 * Update Cell model
-			 * 
-			 * @param JSON Object v data from server
-			 * @param int type update type. Default ATTR_ALL means update all cell attributes
-			 * @param int heightId height style id
-			 * @param Array texts text string aggregation
-			 * @param Array styles style string aggregation
-			 * @param Object mergeInfos the merge info aggregation
-			 */
-			update: function (v, type, heightId, texts, styles, mergeInfos) {
-				var upAll = type == ATTR_ALL,
-					upText = (upAll || type == ATTR_TEXT),
-					upStyle = (upAll || type == ATTR_STYLE),
-					upSize = (upAll || type == ATTR_SIZE),
-					upMerge = (upAll || type == ATTR_MERGE),
-					cellType = v.ct;
-				this.ref = v.rf;
-				this.cellType = cellType != undefined ? cellType : 3;//default is BLANK_CELL
-				if (upText) {
-					var mergedTextId = v.meft;
-					if (mergedTextId != undefined) {//index start from 0
-						this.text = this.editText = this.formatText = texts[mergedTextId] || '';
-					} else {
-						var tId = v.t,
-							eId = v.et
-							fId = v.ft;
-						this.text = tId != undefined ? texts[tId] : '';
-						this.editText = eId != undefined ? texts[eId] : '';
-						this.formatText = fId != undefined ? texts[fId] : '';
-					}
-				}
-				if (upStyle) {
-					var sId = v.s,
-						isId = v.is,
-						wrap = v.wp,
-						rbo = v.rb,
-						lock = v.l,
-						halign = v.ha,
-						valign = v.va;
-					this.style = sId != undefined ? styles[sId] : '';
-					this.innerStyle = isId != undefined ? styles[isId] : '';
-					this.wrap = wrap != undefined;
-					//bug ZSS-56: Unlock a cell, protect sheet, cannot double click to edit the cell
-					this.lock = lock != undefined ? lock != 'f' : true;
-					this.halign = halign || 'l'; //horizontal align: default left
-					this.valign = valign || 'b'; //vertical align: default bottom 
-					this.rightBorder = rbo != undefined;
-				}
-				if (upSize) {
-					this.widthId = v.w;
-					this.heightId = heightId;
-				}
-				if (upMerge) {
-					
-					var idx = v.mi,
-						cssIdx = v.mc;
-					if (idx != undefined) {
-						var info = mergeInfos.r[idx],
-							css = mergeInfos.cs[cssIdx];
-						this.mergeId = info.i;
-						this.mergeCls = css;
-						if (this.mergeId) {
-							this.merge = newRect(info.t, info.l, info.b, info.r);
-						}
-					}
-				}
-			}
-		}
-		c.update(v, type, heightId, texts, styles, mergeInfos);
-		return c;
-	}
-	
-	/**
-	 * Create Row model
-	 * 
-	 * @param JSON Object v row data from server
-	 * @param int update data type
-	 * @param int update cell left number
-	 * @param int update cell right number
-	 * @param Array texts text string aggregation
-	 * @param Array styles style string aggregation
-	 * @param Object mergeInfos the merge info aggregation
-	 */
-	function newRow(v, type, left, right, texts, styles, mergeInfos) {
-		var row = {
-			r: v.r,
-			heightId: v.h,
-			cells: {},
-			updateColumnWidthId: function (col, id) {
-				var cell = this.cells[col];
-				if (cell)
-					cell.widthId = id;
-			},
-			updateRowHeightId: function (id) {
-				this.heightId = id;
-				var cells = this.cells;
-				for (var p in cells) {
-					cells[p].heightId = id;
-				}
-			},
-			update: function (attr, type, left, right, texts, styles, mergeInfos) {
-				var src = attr.cs,
-					i = left,
-					j = 0,
-					cell,
-					r = this.r,
-					cs = this.cells,
-					hId = this.heightId;
-				for (; i <= right; i++) {
-					var c = cs[i];
-					if (!c) {
-						c = cs[i] = newCell(src[j++], type, hId, texts, styles, mergeInfos);
-						c.r = r;
-						c.c = i;
-					} else {
-						c.update(src[j++], type, hId, texts, styles, mergeInfos);
-					}
-					//row contains wrap cell may have height Id on client side
-					if (!c.heightId && hId) {
-						c.heightId = hId;
-					}
-				}
-			},
-			removeColumns: function (col, size, rCol) {
-				var cs = this.cells,
-					i = size,
-					lCol = col;
-				for (var c = col; c <= rCol; c++) {
-					var cell = cs[c];
-					if (cell) {
-						if (i > 0) {
-							delete cs[c];
-							i--;
-						} else {
-							delete cs[c];
-							cell.c -= size; //re-index
-							cs[cell.c] = cell;
-						}
-					}
-				}
-			},
-			getCell: function (num) {
-				return this.cells[num];
-			}
-		}
-		row.update(v, type, left, right, texts, styles, mergeInfos);
-		return row;
-	}
-	
-	function newRect(tRow, lCol, bRow, rCol) {
-		return {
-			top: tRow,
-			left: lCol,
-			bottom: bRow,
-			right: rCol
-		}
-	}
-	
-	function updateHeaders(src, dest) {
-		var headers = src.hs,
-			i = src.s,
-			end = src.e,
-			j = 0;
-		for (; i <= end; i++) {
-			dest[i] = headers[j++];
-		}
-	}
 
-	function newCachedRange(v) {
-		var range = {
-			/**
-			 * Cell reference address
-			 * 
-			 * Keep track created {@link zss.Cell} references
-			 */
-			cellRefs: {},
-			topFrozen: null,
-			leftFrozen: null,
-			rows: {},
-			rowHeaders: {},
-			columnHeaders: {},
-			//current range rect
-			rect: null,
-			updateColumnWidthId: function (col, id) {
-				var r = this.rect,
-					rows = this.rows,
-					tRow = r.top,
-					bRow = r.bottom,
-					header = this.columnHeaders[col];
-				if (header)
-					header.p = id;
-				for (var r = tRow; r <= bRow; r++) {
-					var row = rows[r];
-					if (row)
-						row.updateColumnWidthId(col, id);
-				}
-				if (this.leftFrozen) {
-					this.leftFrozen.updateColumnWidthId(col, id);
-				}
-			},
-			updateRowHeightId: function (row, id) {
-				var r = this.rows[row],
-					header = this.rowHeaders[row];
-				if (r)
-					r.updateRowHeightId(id);
-				if (header)
-					header.p = id;
-				if (this.topFrozen) {
-					this.leftFrozen.updateRowHeightId(row, id);
-				}
-			},
-			updateBoundary: function (dir, top, left, btm, right) {
-				var rect = this.rect;
-				if (!rect) {
-					this.rect = newRect(top, left, btm, right);
-					return;
-				}
-				else if (this.containsRange(top, left, btm, right)) {
-					return;
-				} else {
-					var rect = this.rect;
-					switch (dir) {
-					case 'visible':
-						rect.right = right;
-						rect.bottom = btm;
-						break;
-					case 'jump':
-						delete this.rect;
-						//row contains wrap cell may have height Id on client side, delete it later
-						//delete this.rows;
-						//delete this.rowHeaders;
-						delete this.columnHeaders;	
-						
-						this.rect = newRect(top, left, btm, right);
-						this.rows = {};
-						this.rowHeaders = {};
-						this.columnHeaders = {};
-						break;
-					case 'east':
-						rect.right = right;
-						break;
-					case 'west':
-						rect.left = left;
-						break;
-					case 'south':
-						rect.bottom = btm;
-						break;
-					case 'north':
-						rect.top = top;
-						break;
-					}
-				}
-			},
-			pruneLeft: function (size) {
-				var rows = this.rows,
-					left = this.rect.left,
-					colHeaders = this.columnHeaders;
-				for (var p in rows) {
-					var r = rows[p],
-						cs = r.cells,
-						i = left,
-						j = size;
-					while (j--) {
-						delete cs[i++];
-					}
-				}
-				i = left;
-				j = size;
-				while (j--) {
-					delete colHeaders[i++];
-				}
-				this.rect.left = left + size;
-				if (this.topFrozen) {
-					this.topFrozen.pruneLeft(size);
-				}
-			},
-			pruneRight: function (size) {
-				var rows = this.rows,
-					right = this.rect.right,
-					colHeaders = this.columnHeaders;
-				for (var p in rows) {
-					var r = rows[p],
-						cs = r.cells,
-						i = right,
-						j = size;
-					while (j--) {
-						delete cs[i--];
-					}
-				}
-				i = right,
-				j = size;
-				while (j--) {
-					delete colHeaders[i--];
-				}
-				this.rect.right = right - size;
-				if (this.topFrozen) {
-					this.topFrozen.pruneRight(size);
-				}
-			},
-			pruneTop: function (size) {
-				var rows = this.rows,
-					rowHeaders = this.rowHeaders,
-					i = this.rect.top,
-					j = size;
-				while (j--) {
-					delete rows[i];
-					delete rowHeaders[i];
-					i++;
-				}
-				if (this.leftFrozen) {
-					this.leftFrozen.pruneTop(size);
-				}
-				this.rect.top += size;
-			},
-			pruneBottom: function (size) {
-				var rows = this.rows,
-					rowHeaders = this.rowHeaders,
-					i = this.rect.bottom,
-					j = size;
-				while (j--) {
-					delete rows[i];
-					delete rowHeaders[i];
-					i--;
-				}
-				if (this.leftFrozen) {
-					this.leftFrozen.pruneBottom(size);
-				}
-				this.rect.bottom -= size;
-			},
-			containsRange: function (tRow, lCol, bRow, rCol) {
-				var rect = this.rect;
-				return	tRow >= rect.top && lCol >= rect.left &&
-							bRow <= rect.bottom && rCol <= rect.right;
-			},
-			_updateHeaders: function (headers, index, size, extnm) {
-				var	i = index,
-					j = 0,
-					l = extnm.length;
-				while (j < l) {
-					var h = headers[i++];
-					if (h) {
-						h.t = extnm[j];
-					}
-					j++;
-				}
-			},
-			insertColumns: function (col, size, extnm) {
-				this._updateHeaders(this.columnHeaders, col, size, extnm);
-				this.rect.right += size;
-			},
-			removeColumns: function (col, size, extnm) {
-				this._updateHeaders(this.columnHeaders, col, size, extnm);
-				var r = this.rect,
-					rows = this.rows,
-					rCol = r.right,
-					tRow = r.top,
-					bRow = r.bottom;
-				for (var r = tRow; r <= bRow; r++) {
-					var row = rows[r];
-					if (row) {
-						row.removeColumns(col, size, rCol);
-					}
-				}
-				this.rect.right -= size;
-			},
-			insertRows: function (row, size, extnm) {
-				this._updateHeaders(this.rowHeaders, row, size, extnm);
-				this.rect.bottom += size; 
-			},
-			removeRows: function (row, size, extnm) {
-				this._updateHeaders(this.rowHeaders, row, size, extnm);
-				var rows = this.rows,
-					bRow = this.rect.bottom,
-					i = size;
-				for (var r = row; r <= bRow; r++) {
-					var row = rows[r];
-					if (row) {
-						if (i > 0) {
-							delete rows[r];
-							i--;
-						} else {
-							delete rows[r];
-							row.r -= size;
-							rows[row.r] = row;
-						}
-					}
-				}
-				this.rect.bottom -= size;
-			},
-			update: function (v) {
-				var attrType = v.at,
-					top = v.t,
-					left = v.l,
-					btm = v.b,
-					right = v.r,
-					src = v.rs,
-					textAggregation = v.s,
-					styleAggregation = v.st,
-					mergeAggregation = v.m,
-					rowHeaderObj = v.rhs,
-					colHeaderObj = v.chs,
-					i = top, 
-					s = 0,
-					dir = v.dir;
-				var oldRows = {},
-					oldRowHeaders = {};
-				if ('jump' == dir) {
-					//row contains wrap cell may have height Id on client side
-					oldRows = this.oldRows = this.rows,
-					oldRowHeaders = this.oldRowHeaders = this.rowHeaders;
-				}
-				this.updateBoundary(v.dir, top, left, btm, right);
-				var rows = this.rows;
-				for (; i <= btm; i++) {
-					var row = rows[i];
-					if (!row) {
-						row = rows[i] = newRow(src[s++], attrType, left, right, textAggregation, styleAggregation, mergeAggregation);
-						//row contains wrap cell may have height Id on client side
-						if ('jump' == dir) {
-							var oldRow = oldRows[i];
-							if (oldRow && oldRow.heightId && !row.heightId) {
-								row.updateRowHeightId(oldRow.heightId);
-							}
-						}
-					} else {
-						row.update(src[s++], attrType, left, right, textAggregation, styleAggregation, mergeAggregation);
-					}
-				}
-				
-				if (rowHeaderObj) {
-					updateHeaders(rowHeaderObj, this.rowHeaders);
-					//row contains wrap cell may have height Id on client side
-					if ('jump' == dir) {
-						var headers = this.rowHeaders;
-						for (var i in headers) {
-							var h = headers[i],
-								oldHeader = oldRowHeaders[i];
-							if (!h.p && oldHeader && oldHeader.p) {
-								h.p = oldHeader.p; //position id
-							}
-						}
-					}
-				}
-				if (colHeaderObj) {
-					updateHeaders(colHeaderObj, this.columnHeaders);
-				}
-				//row contains wrap cell may have height Id on client side
-				if ('jump' == dir) {
-					delete this.oldRows;
-					delete this.oldRowHeaders;
-				}
-			},
-			getRow: function (num) {
-				return this.rows[num];
-			}
-		};
-		range.update(v);
-		return range;
-	}
 /**
  * Spreadsheet is a is a rich ZK Component to handle EXCEL like behavior
  */
@@ -903,11 +328,42 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 	 * @see #linkTo
 	 */
 	_linkToNewTab: true, //ZSS-13: Support Open hyperlink in a separate browser tab window
+	_cellPadding: 2,
+	_protect: false,
+	_maxRows: 20,
+	_maxColumns: 10,
+	_rowFreeze: -1,
+	_columnFreeze: -1,
+	_clientCacheDisabled: false,
+	_topPanelHeight: 20,
+	_leftPanelWidth: 36,
+	_maxRenderedCellSize: 8000,
+	_displayGridlines: true,
 	$init: function () {
 		this.$supers(Spreadsheet, '$init', arguments);
-		this.appendChild(new zul.layout.Center({'sclass': 'zss-center'}), true);
+		this.appendChild(new zul.layout.Center());
 	},
 	$define: {
+		/**
+		 * Indicate cache data at client, won't prune data while scrolling sheet
+		 */
+		clientCacheDisabled: null,
+		/**
+		 * Sets labels
+		 */
+		labels: function (v) {
+			var labelCtrl = this._labelsCtrl = new zss.Labels();
+			for (var key in v) {
+				//key.substr(4): remove prefix 'zss.';
+				var val = v[key],
+					keys = key.substr(4).split('.'),
+					prefix = keys[0],
+					postfix = keys[1],
+					fn = 'set' + prefix.charAt(0).toUpperCase() + prefix.substr(1) + 
+					postfix.charAt(0).toUpperCase() + postfix.substr(1);
+				labelCtrl[fn].call(labelCtrl, val);
+			}
+		},
 		/**
 		 * synchronized update data
 		 * @param array
@@ -1016,21 +472,77 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 			}
 		},
 		/**
-		 * Sets sheet protection
-		 * <p>
-		 * 	Default is false
-		 * </p>
+		 * Sets sheet protection. Default is false
 		 * @param boolean
 		 */
 		/**
 		 * Returns whether protection is enabled or disabled
 		 * @return boolean
 		 */
-		protect: null,
+		protect: function (v) {
+			var sheetPanel = this._sheetPanel;
+			if (sheetPanel) {
+				sheetPanel.getSheetSelector().setProtectSheetCheckmark(v);
+			}
+		},
 		rowSize: _size,
 		preloadRowSize: null,
-		preloadColSize: null,
-		dataPanel: null,
+		preloadColumnSize: null,
+		initRowSize: null,
+		initColumnSize: null,
+		maxRenderedCellSize: null,
+		/**
+		 * Sets the maximum visible number of rows of this spreadsheet. For example, if you set
+		 * this parameter to 40, it will allow showing only row 0 to 39. The minimal value of max number of rows
+		 * must large than 0; <br/>
+		 * Default : 20.
+		 * 
+		 * @param maxrows  the maximum visible number of rows
+		 */
+		/**
+		 * Returns the maximum visible number of rows of this spreadsheet. You can assign
+		 * new number by calling {@link #setMaxrows(int)}.
+		 * 
+		 * @return the maximum visible number of rows.
+		 */
+		maxRows: null,
+		/**
+		 * Sets the maximum column number of this spreadsheet.
+		 * for example, if you set to 40, which means it allow column 0 to 39. 
+		 * the minimal value of maxcols must large than 0;
+		 * <br/>
+		 * Default : 10.
+		 * 
+		 * @param string
+		 */
+		/**
+		 * Returns the maximum visible number of columns of this spreadsheet.
+		 * 
+		 * @return the maximum visible number of columns 
+		 */
+		maxColumns: null,
+		/**
+		 * Sets the row freeze of this spreadsheet
+		 * 
+		 * @param rowfreeze row index
+		 */
+		/**
+		 * Returns the row freeze index of this spreadsheet, zero base. Default : -1
+		 * 
+		 * @return the row freeze of selected sheet.
+		 */
+		rowFreeze: null,
+		/**
+		 * Sets the column freeze of this spreadsheet
+		 * 
+		 * @param columnfreeze  column index
+		 */
+		/**
+		 * Returns the column freeze index of this spreadsheet, zero base. Default : -1
+		 * 
+		 * @return the column freeze of selected sheet.
+		 */
+		columnFreeze: null,
 		/**
 		 * Sets the customized titles of column header.
 		 * @param string array
@@ -1057,26 +569,16 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		 * Gets the default row height of the selected sheet
 		 * @return default value depends on selected sheet
 		 */
-		/**
-		 * TODO avoid use invalidate
-		 */
 		rowHeight: null,
 		/**
-		 * Sets the default row height of the selected sheet
-		 * @param rowHeight the row height
+		 * Sets the default column width of the selected sheet
+		 * @param columnWidth the default column width
 		 */
 		/**
 		 * Gets the default column width of the selected sheet
 		 * @return default value depends on selected sheet
 		 */
-		/**
-		 * TODO avoid use invalidate
-		 */
 		columnWidth: null,
-		/**
-		 * TODO there is no lineh ?
-		 */
-		lineh: null,
 		/**
 		 * Sets the top head panel height, must large then 0.
 		 * @param topHeight top header height
@@ -1086,9 +588,6 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		 * default 20
 		 * @return int
 		 */
-		/**
-		 * TODO avoid use invalidate
-		 */
 		topPanelHeight: null,
 		/**
 		 * Sets the left head panel width, must large then 0.
@@ -1096,10 +595,7 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		 */
 		/**
 		 * Gets the left head panel width
-		 * @return default value is 28
-		 */
-		/**
-		 * TODO avoid use invalidate
+		 * @return default value is 36
 		 */
 		leftPanelWidth: null,
 		/**
@@ -1108,9 +604,68 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		cellPadding: null,
 		/** 
 		 * the encoded URL for the dynamic generated content, or empty
+		 * 
+		 * @param string href CSS link
 		 */
-		scss: null,
-		sheetId: null,
+		scss: function (href) {
+			var el = this.getCSS();
+			if (el) {
+				jq(el).attr('href', href);
+			}
+		},
+		/**
+		 * Sets selected sheet uuid
+		 * 
+		 * @param string sheey uuid
+		 * @param boolean fromServer
+		 * @param zss.Range visible range (from client) 
+		 */
+		sheetId: function (id, fromServer, visRange) {
+			//For isSheetCSSReady() to work correctly.
+			//when during select sheet in client side, server send focus au response first (set attributes later), 
+			// _sheetId will be last selected sheet, cause isSheetCSSReady() doesn't work correctly 
+			this._invalidatedSheetId = false;
+			
+			var sheetCtrl = this.sheetCtrl,
+				cacheCtrl = this._cacheCtrl,
+				sheetPanel = this._sheetPanel,
+				sheetSelector = sheetPanel ? sheetPanel.getSheetSelector() : null;
+			if (sheetSelector)
+				sheetSelector.setSelectedSheet(id);
+			if (sheetCtrl && cacheCtrl && cacheCtrl.getSelectedSheet().sheetId != id) {
+				if (!fromServer) {
+					cacheCtrl.setSelectedSheetBy(id);	
+				}
+				sheetCtrl.doSheetSelected(visRange);
+			}
+			var loadSheetStart = this._loadSheetStart;
+			if (loadSheetStart) {
+				this._loadSheetStart = false;
+			}
+		},
+		/**
+		 * Sets whether display gridlines.
+		 * 
+		 * @param boolean show true to show the gridlines; default is true.
+		 */
+		/**
+		 * Returns whether display gridlines. default is true
+		 * 
+		 * @return boolean
+		 */
+		displayGridlines: function (show) {
+			var sheet = this.sheetCtrl;
+			if (!sheet) return;
+
+			if (this.isSheetCSSReady()) {
+				sheet.setDisplayGridlines(show);
+			} else {
+				//set cell focus after CSS ready
+				sheet.addSSInitLater(function () {
+					sheet.setDisplayGridlines(show);
+				});
+			}
+		},
 		focusRect: null,
 		selectionRect: null,
 		highLightRect: null,
@@ -1138,9 +693,6 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		 * Returns if row head is hidden
 		 * @return boolean
 		 */
-		/**
-		 * TODO avoid use invalidate
-		 */
 		rowHeadHidden: null,
 		/**
 		 * Sets true to hide the column head of  this spread sheet.
@@ -1149,9 +701,6 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		/**
 		 * Returns if column head is hidden
 		 * @return boolean
-		 */
-		/**
-		 * TODO avoid use invalidate
 		 */
 		columnHeadHidden: null,
 		/**
@@ -1170,22 +719,61 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 				w.setVisible(show);
 			}
 		},
+		/**
+		 * Sets whether show sheet panel or not
+		 * @param true if want to show sheet tab panel
+		 */
+		/**
+		 * Returns whether show sheet panel
+		 * @return boolean
+		 */
+		showSheetpanel: function (show) {
+			var w = this._sheetPanel;
+			if (!w && show) {
+				this.appendChild(this._sheetPanel = new zss.Sheetpanel());
+			} else if (w) {
+				w.setVisible(show);
+			}
+		},
+		/**
+		 * Sets sheet's name and uuid of book
+		 */
+		sheetLabels: function (v) {
+			var sheetPanel = this._sheetPanel;
+			if (sheetPanel) {
+				sheetPanel.getSheetSelector().setSheetLabels(v);
+			}
+		},
 		copysrc: null //flag to show whether a copy source has set
 	},
-	_activeRange: null,
+	getSheetCSSId: function () {
+		return this.uuid + '-sheet';
+	},
+	getSelectorPrefix: function () {
+		return '#' + this.uuid;
+	},
+	/**
+	 * Returns whether CSS loaded from server or not
+	 */
+	isSheetCSSReady: function () {
+		if (this._invalidatedSheetId) {//set by zss.Sheetpanel, indicate current sheetId is invalidated
+			return false;
+		}
+		return !!zcss.findRule(this.getSelectorPrefix() + " .zs_indicator_" + this.getSheetId(), this.getSheetCSSId());
+	},
 	/**
 	 * Sets active range
 	 */
 	setActiveRange: function (v) {
-		var ar = this._activeRange;
-		if (!ar) {
-			this._activeRange = ar = newCachedRange(v);
+		var c = this._cacheCtrl;
+		if (!c) {
+			this._cacheCtrl = c = new zss.CacheCtrl(this, v);
 			this.center.appendChild(this.sheetCtrl = new zss.SSheetCtrl());
 		} else {
 			var sheet = this.sheetCtrl,
 				range;
 			if (sheet) {
-				ar.update(jq.evalJSON(v));
+				c.setSelectedSheet(v);
 				this._triggerContentsChanged = true;
 			}
 		}
@@ -1215,93 +803,19 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		}
 	},
 	/**
-	 * Sets the maximum column number of this spread sheet.
-	 * for example, if you set to 40, which means it allow column 0 to 39. 
-	 * the minimal value of maxcols must large than 0;
-	 * @param string
-	 */
-	setMaxColumn: function (v) {
-		this._maxColumnData = jq.evalJSON(v);
-		this._setMaxColumn(this._maxColumnData);
-	},
-	_setMaxColumn: function (v) {
-		var sheet = this.sheetCtrl;
-		if (!sheet) return;
-		
-		if (sheet._initiated)
-			_doMaxcolumnCmd(sheet, v);
-		else {
-			sheet.addSSInitLater(_doMaxcolumnCmd, sheet, v);
-		}
-	},
-	_initMaxColumn: function () {
-		var data = this._maxColumnData
-		if (data)
-			this._setMaxColumn(data);
-	},
-	getMaxColumn: function () {
-		var data = this._maxColumnData;
-		if (!data) return null;
-		
-		return data.maxcol;
-	},
-	getColumnFreeze: function () {
-		var data = this._maxColumnData;
-		if (!data) return null;
-		
-		return data.colfreeze;
-	},
-	/**
-	 * Sets the maximum row number of this spread sheet.
-	 * for example, if you set to 40, which means it allow row 0 to 39.
-	 * the minimal value of maxrows must large than 0;
-	 * <br/>
-	 * Default : 40.
-	 * @param string
-	 */
-	setMaxRow: function (v) {
-		this._maxRowData = jq.evalJSON(v);
-		this._setMaxRow(this._maxRowData);
-	},
-	_setMaxRow: function (v) {
-		var sheet = this.sheetCtrl;
-		if (!sheet) return;
-		
-		if (sheet._initiated)
-			_doMaxrowCmd(sheet, v);
-		else {
-			sheet.addSSInitLater(_doMaxrowCmd, sheet, v);
-		}
-	},
-	_initMaxRow: function () {
-		var data = this._maxRowData;
-		if (data)
-			this._setMaxRow(data);
-	},
-	/**
-	 * Returns the maximum row number of this spreadsheet.
-	 * @return the maximum row number.
-	 */
-	getMaxRow: function () {
-		var data = this._maxRowData;
-		if (!data) return null;
-		
-		return data.maxrow;
-	},
-	getRowFreeze: function () {
-		var data = this._maxRowData;
-		if (!data) return null;
-		
-		return data.rowfreeze;
-	},
-	/**
 	 * Returns the current focus of spreadsheet to Server
 	 */
 	setRetrieveFocus: function (v) {
 		var sheet = this.sheetCtrl;
 		if (!sheet) return;
 		
-		sheet._cmdRetriveFocus(jq.evalJSON(v));
+		if (this.isSheetCSSReady()) {
+			sheet._cmdRetriveFocus(v);
+		} else {
+			sheet.addSSInitLater(function () {
+				sheet._cmdRetriveFocus(v);
+			});
+		}
 	},
 	/**
 	 * Sets the current focus of spreadsheet
@@ -1310,7 +824,14 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		var sheet = this.sheetCtrl;
 		if (!sheet) return;
 
-		sheet._cmdCellFocus(jq.evalJSON(v));
+		if (this.isSheetCSSReady()) {
+			sheet._cmdCellFocus(v);
+		} else {
+			//set cell focus after CSS ready
+			sheet.addSSInitLater(function () {
+				sheet._cmdCellFocus(v);
+			});
+		}
 	},
 	/**
 	 * Retrieve client side spreadsheet focus.The cell focus and selection will
@@ -1365,32 +886,14 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		var sheet = this.sheetCtrl;
 		if (!sheet) return;
 		
-		sheet._cmdHighlight(jq.evalJSON(v));
-	},
-	/**
-	 * Sets whether display gridlines.
-	 * @param boolean show true to show the gridlines; default is true.
-	 */
-	setDisplayGridlines: function (show) {
-		var sheet = this.sheetCtrl;
-		if (!sheet) {
-			this._dpGridlines = show; //reserver value for init
-			return;
+		if (this.isSheetCSSReady()) {
+			sheet._cmdHighlight(v);
+		} else {
+			//set highlight after CSS ready
+			sheet.addSSInitLater(function () {
+				sheet._cmdHighlight(v);
+			});
 		}
-		if (show == !this._hideGridlines) 
-			return;
-		//Note. for IE, need to delay set gridline after css ready
-		if (sheet._initiated)
-			sheet._cmdGridlines(show);
-		this._hideGridlines = !show;
-
-	},
-	/**
-	 * Returns whether display gridlines.
-	 * @return boolean
-	 */
-	isDisplayGridlines: function () {
-		return !this._hideGridlines;
 	},
 	/**
 	 * Sets the selection rectangle of the spreadsheet
@@ -1399,7 +902,14 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		var sheet = this.sheetCtrl;
 		if (!sheet) return;
 		
-		sheet._cmdSelection(jq.evalJSON(v));
+		if (this.isSheetCSSReady()) {
+			sheet._cmdSelection(v);
+		} else {
+			//set selection after CSS ready
+			sheet.addSSInitLater(function () {
+				sheet._cmdSelection(v);
+			});
+		}
 	},
 	/**
 	 * Returns whether if the server has registers Cell click event or not
@@ -1509,6 +1019,30 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		this.fire('onZSSWidgetCtrlKey', {wgt: wgt, id: id, keyCode: keyCode, 
 			ctrlKey: ctrlKey, shiftKey: shiftKey, altKey: altKey}, {toServer: true}, 25);
 	},
+	fireSheetAction: function (act, value) {
+		this.fire('onZSSAction', {sheetId: this.getSheetId(), tag: 'sheet', act: act, value: value || ''}, {toServer: true});
+	},
+	/**
+	 * Fetch active range. Currently fetch north/south/west/south direction
+	 */
+	fetchActiveRange: function (top, left, right, bottom) {
+		if (!this._fetchActiveRange) {
+			this.fire('onZSSFetchActiveRange', 
+				{sheetId: this.getSheetId(), top: top, left: left, right: right, bottom: bottom}, {toServer: true});
+			this._fetchActiveRange = true;
+		}
+	},
+	/**
+	 * Recive active range data
+	 */
+	setActiveRangeUpdate: function (v) {
+		this._fetchActiveRange = null;
+		var cacheCtrl = this._cacheCtrl;
+		if (cacheCtrl) {
+			cacheCtrl.getSelectedSheet().fetchUpdate(v);
+			this.sheetCtrl.sendSyncblock();
+		}
+	},
 	_initFrozenArea: function () {
 		var rowFreeze = this.getRowFreeze(),
 			colFreeze = this.getColumnFreeze();
@@ -1528,23 +1062,18 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 	 * 
 	 * @return boolean
 	 */
-	hasCSS: function () {
+	getCSS: function () {
 		return hasCSS(this.uuid + "-sheet");
 	},
 	_initControl: function () {
 		if (this.getSheetId() == null) //no sheet at all
 			return;
-		var cssId = this.uuid + "-sheet";
+		var cssId = this.uuid + '-sheet';
 		if (!hasCSS(cssId)) { //unbind may remove css, need to check again
 			zk.loadCSS(this._scss, cssId);
 		}
-		this._initMaxColumn();
-		this._initMaxRow();
+		
 		this._initFrozenArea();
-
-		var show = this._dpGridlines;
-		if (typeof show != 'undefined')
-			this.setDisplayGridlines(show);
 	},
 	bind_: function (desktop, skipper, after) {
 		_calScrollWidth();
@@ -1555,13 +1084,9 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 	unbind_: function () {
 		zWatch.unlisten({onResponse: this});
 		
-		var r = this._activeRange;
-		if (r) {
-			this._activeRange = null;
-		}
-		this._maxColumnMap = this._maxRowMap = null;
+		this._cacheCtrl = this._maxColumnMap = this._maxRowMap = null;
 		
-		removeSSheet(this.uuid + "-sheet");
+		removeSSheet(this.getSheetCSSId());
 		this.$supers('unbind_', arguments);
 		if (window.CollectGarbage)
 			window.CollectGarbage();
@@ -1578,6 +1103,7 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 	_doDataPanelBlur: function (evt) {
 		var sheet = this.sheetCtrl;
 		if (sheet.innerClicking <= 0 && sheet.state == zss.SSheetCtrl.FOCUSED) {
+			//TODO: check zk.currentFocus, if child of spreadsheet, do not _doFocusLost 
 			sheet.dp._doFocusLost();
 		} else if(sheet.state == zss.SSheetCtrl.FOCUSED) {
 			//retrive focus back to focustag
@@ -1708,9 +1234,9 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 	HEADER_MOUSE_EVENT_NAME: {lc:'onHeaderClick', rc:'onHeaderRightClick', dbc:'onHeaderDoubleClick'},
 	SRC_CMD_SET_COL_WIDTH: 'setColWidth',
 	initLaterAfterCssReady: function (sheet) {
-		if (zcss.findRule(".zs_indicator", sheet.sheetid + "-sheet") != null) {
-
-			sheet._cmdGridlines(sheet._wgt.isDisplayGridlines());
+		var wgt = sheet._wgt,
+			sheetId = wgt.getSheetId();
+		if (wgt.isSheetCSSReady()) {
 			sheet._initiated = true;
 			//since some initial depends on width or height,
 			//so first ss initial later must invoke after css ready,
@@ -1727,7 +1253,7 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 			if (zk.opera)
 				//opera cannot insert rule on special index,
 				//so I must create another style sheet to control style rule priority
-				createSSheet("", sheet.sheetid + "-sheet-opera");//heigher
+				createSSheet("", wgt.uuid + "-sheet-opera");//heigher
 			
 			//force IE to update CSS
 			if (zk.ie6_ || zk.ie7_)

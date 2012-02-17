@@ -77,11 +77,16 @@ public class Rect {
 	}
 	
 	public Object cloneSelf(){
-		return new Rect(_left,_top,_right,_bottom);
+		return (Rect)new Rect(_left,_top,_right,_bottom);
 	}
 	
 	public String toString(){
 		return "left:"+_left+",top:"+_top+",right:"+_right+",bottom:"+_bottom;
+	}
+	
+	public boolean contains(int tRow, int lCol, int bRow, int rCol) {
+		return	tRow >= _top && lCol >= _left &&
+				bRow <= _bottom && rCol <= _right;
 	}
 
 	public int hashCode() {

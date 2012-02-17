@@ -2351,7 +2351,7 @@ public class RangeImpl implements Range {
 			if (ref != null) {
 				final Book book = _sheet.getBook();
 				if (book != null) {
-					final String name = book.getSheetName(pos);
+					final String name = _sheet.getSheetName();
 					if (!Strings.isBlank(name)) {
 						book.setSheetOrder(name, pos);
 						BookHelper.notifyChangeSheetOrder(ref, name);

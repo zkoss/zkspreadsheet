@@ -27,12 +27,8 @@ import org.zkoss.zk.ui.Component;
  *
  */
 public class AuHighlight extends AuResponse {
-
-	public AuHighlight(Component comp, String data) {
-		/**
-		 * rename zsshighlight -> selectionHighlight
-		 */
-		//super("zsshighlight", comp, new String[] {comp.getUuid(), data});
+	
+	public AuHighlight(Component comp, Object data) {
 		super("setAttr", comp, new Object[] {comp.getUuid(), "selectionHighlight", data});
 	}
 }

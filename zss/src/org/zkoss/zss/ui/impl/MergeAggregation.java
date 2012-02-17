@@ -77,6 +77,17 @@ public class MergeAggregation {
 	}
 	
 	/**
+	 * Returns MergeIndex that added to this MergeAggregation
+	 * 
+	 * @param row
+	 * @param col
+	 * @return MergedRect, returns null if cell not merged
+	 */
+	public MergedRect getMergedRect(int row, int col) {
+		return _helper.getMergeRange(row, col);
+	}
+	
+	/**
 	 * 
 	 * <ul>
 	 * 	<li>r: merge rects</li>

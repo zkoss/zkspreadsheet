@@ -116,21 +116,24 @@ public class CellFetchCommandHelper{
 		int viewWidth = (Integer)data.get("viewWidth");//pixel value of view width(scrollpanel.clientWidth)
 		int viewHeight = (Integer)data.get("viewHeight");//pixel value of value height
 		
+		//current rendered block range
 		int blockLeft = (Integer)data.get("blockLeft");
 		int blockTop = (Integer)data.get("blockTop"); 
 		int blockRight = (Integer)data.get("blockRight");// + blockLeft - 1;
-		int blockBottom = (Integer)data.get("blockBottom");// + blockTop - 1;;
+		int blockBottom = (Integer)data.get("blockBottom");// + blockTop - 1;
 		
 		int fetchLeft = (Integer)data.get("fetchLeft");
 		int fetchTop = (Integer)data.get("fetchTop"); 
 		int fetchWidth = (Integer)data.get("fetchWidth");
 		int fetchHeight = (Integer)data.get("fetchHeight");
 		
+		//visible range: cells that going to render
 		int rangeLeft = (Integer)data.get("rangeLeft");//visible range
 		int rangeTop = (Integer)data.get("rangeTop"); 
 		int rangeRight = (Integer)data.get("rangeRight");
 		int rangeBottom = (Integer)data.get("rangeBottom");
 		
+		//active range: extra cell's data
 		int arLeft = (Integer)data.get("arLeft");//active range
 		int arTop = (Integer)data.get("arTop");
 		int arRight = (Integer)data.get("arRight");

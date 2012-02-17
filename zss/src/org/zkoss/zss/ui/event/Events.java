@@ -141,6 +141,7 @@ public class Events {
 	 * Sent when sheet is deleted.
 	 */
 	public static final String ON_SHEET_DELETE = "onSheetDelete";
+
 	/**
 	 * The onSheetCreate event.
 	 * Sent when sheet is deleted.

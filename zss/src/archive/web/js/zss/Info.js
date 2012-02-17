@@ -24,7 +24,6 @@ zss.Info = zk.$extends(zk.Object, {
 	$init: function (sheet, cmp) {
 		this.$supers('$init', arguments);
 		this.sheet = sheet;
-		this.sheetid = sheet.sheetid;
 		this.comp = cmp;
 		this.txtcomp = jq(cmp).children("SPAN:first")[0];
 		this.visible = false;

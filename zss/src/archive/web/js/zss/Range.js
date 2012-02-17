@@ -43,6 +43,10 @@ zss.Range = zk.$extends(zk.Object, {
 			this.height = this.bottom - this.top + 1 ;
 		}
 	},
+	size: function () {
+		var size = this.width * this.height;
+		return size >= 0 ? size : 0;
+	},
 	clone: function (){
 		return new zss.Range(this.left, this.top, this.right, this.bottom);
 	},
