@@ -83,11 +83,11 @@ public class ColumnHeaderMenupopup  extends Menupopup implements IdSpace {
 	}
 	
 	public void onClick$columnWidth() {
-		getDesktopWorkbookContext().getWorkbenchCtrl().openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_COLUMN);
+//		getDesktopWorkbookContext().getWorkbenchCtrl().openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_COLUMN);
 	}
 	
 	public void onClick$numberFormat() {
-		getDesktopWorkbookContext().getWorkbenchCtrl().openFormatNumberDialog();
+//		getDesktopWorkbookContext().getWorkbenchCtrl().openFormatNumberDialog();
 	}
 	
 	public void onClick$hide() {

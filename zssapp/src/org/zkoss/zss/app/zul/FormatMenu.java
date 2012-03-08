@@ -122,7 +122,7 @@ public class FormatMenu extends Menu implements IdSpace {
 	}
 	
 	public void onClick$formatNumber() {
-		getDesktopWorkbenchContext().getWorkbenchCtrl().openFormatNumberDialog();
+//		getDesktopWorkbenchContext().getWorkbenchCtrl().openFormatNumberDialog();
 	}
 	
 	protected DesktopWorkbenchContext getDesktopWorkbenchContext() {

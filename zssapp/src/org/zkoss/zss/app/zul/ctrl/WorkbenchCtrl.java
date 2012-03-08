@@ -14,8 +14,8 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul.ctrl;
 
-import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.zss.app.formula.FormulaMetaInfo;
+import org.zkoss.zss.ui.Rect;
 
 /**
  * @author Sam
@@ -38,15 +38,15 @@ public interface WorkbenchCtrl {
 	
 	public void openPasteSpecialDialog();
 	
-	public void openCustomSortDialog();
+	public void openCustomSortDialog(Rect selection);
 	
-	public void openHyperlinkDialog();
+	public void openHyperlinkDialog(Rect selection);
 	
 	public boolean toggleFormulaBar();
 	
 	public void openComposeFormulaDialog(FormulaMetaInfo metainfo);
 	
-	public void openFormatNumberDialog();
+	public void openFormatNumberDialog(Rect selection);
 	
 	public void openSaveFileDialog();
 		
@@ -56,7 +56,7 @@ public interface WorkbenchCtrl {
 	 * 
 	 * @param headerType header type {@link WorkbookCtrl}
 	 */
-	public void openModifyHeaderSizeDialog(int headerType);
+	public void openModifyHeaderSizeDialog(int headerType, Rect selection);
 	
 	/**
 	 * Open rename sheet dialog

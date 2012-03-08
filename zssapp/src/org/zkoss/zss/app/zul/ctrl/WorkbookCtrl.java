@@ -259,13 +259,13 @@ public interface WorkbookCtrl {
 	 * Sets column width of selected columns
 	 * @param width
 	 */
-	public void setColumnWidthInPx(int width);
+	public void setColumnWidthInPx(int width, Rect selection);
 
 	/**
 	 * Sets row height of selected rows
 	 * @param height
 	 */
-	public void setRowHeightInPx(int height);
+	public void setRowHeightInPx(int height, Rect selection);
 	
 	public int getDefaultCharWidth();
 	

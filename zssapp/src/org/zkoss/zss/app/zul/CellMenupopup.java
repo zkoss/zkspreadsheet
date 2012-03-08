@@ -147,7 +147,8 @@ public class CellMenupopup extends Menupopup implements IdSpace {
 	}
 	
 	public void onClick$customSort() {
-		getDesktopWorkbookContext().getWorkbenchCtrl().openCustomSortDialog();
+		System.out.println("rm onClick$customSort");
+//		getDesktopWorkbookContext().getWorkbenchCtrl().openCustomSortDialog();
 	}
 	
 	public void onClick$formula() {
@@ -155,7 +156,8 @@ public class CellMenupopup extends Menupopup implements IdSpace {
 	}
 
 	public void onClick$format() {
-		getDesktopWorkbookContext().getWorkbenchCtrl().openFormatNumberDialog();
+		System.out.println("rm onClick$format");
+//		getDesktopWorkbookContext().getWorkbenchCtrl().openFormatNumberDialog();
 	}
 	
 	public void onCheck$locked() {
@@ -169,7 +171,8 @@ public class CellMenupopup extends Menupopup implements IdSpace {
 	}
 	
 	public void onClick$hyperlink() {
-		getDesktopWorkbookContext().getWorkbenchCtrl().openHyperlinkDialog();
+		System.out.println("rm onClick$hyperlink");
+//		getDesktopWorkbookContext().getWorkbenchCtrl().openHyperlinkDialog();
 	}
 	
 	private void init(CellStyle cellStyle) {

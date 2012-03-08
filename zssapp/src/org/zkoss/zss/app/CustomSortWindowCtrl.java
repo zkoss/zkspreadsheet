@@ -26,6 +26,8 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.zul.Dialog;
@@ -106,7 +108,9 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		return arg;
 	}
 	
-	public void onOpen$_customSortDialog() {
+	public void onOpen$_customSortDialog(ForwardEvent event) {
+		Rect selection = (Rect) event.getOrigin().getData();
+		ss.setSelection(selection);
 		init();
 		try {
 			_customSortDialog.setMode(Window.MODAL);

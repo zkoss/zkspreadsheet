@@ -28,12 +28,14 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.SheetVisitor;
 import org.zkoss.zss.ui.impl.Utils;
@@ -75,7 +77,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	private Include content;
 	
 	private Spreadsheet ss;
-	
+	private Rect selection;
 	private boolean isCellHasDisplayString;
 	
 	public void doAfterCompose(Component comp) throws Exception {
@@ -89,7 +91,8 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 		setLinkType(webBtn);
 	}
 	
-	public void onOpen$_insertHyperlinkDialog() {
+	public void onOpen$_insertHyperlinkDialog(ForwardEvent event) {
+		selection = (Rect) event.getOrigin().getData();
 		init();
 		try {
 			_insertHyperlinkDialog.setMode(Window.MODAL);
@@ -98,7 +101,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void init() {
-		String display = Utils.getRange(ss.getSelectedSheet(), ss.getSelection().getTop(), ss.getSelection().getLeft()).getEditText();
+		String display = Utils.getRange(ss.getSelectedSheet(), selection.getTop(), selection.getLeft()).getEditText();
 		isCellHasDisplayString = !"".equals(display);
 		if (isCellHasDisplayString)
 			displayHyperlink.setValue(display);
@@ -126,7 +129,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 			return;
 		}
 		
-		Utils.setHyperlink(ss.getSelectedSheet(), ss.getSelection().getTop(), ss.getSelection().getLeft(), 
+		Utils.setHyperlink(ss.getSelectedSheet(), selection.getTop(), selection.getLeft(), 
 				getLinkTarget(), addr, getDisplay());
 
 		_insertHyperlinkDialog.fireOnClose(null);
