@@ -11,6 +11,7 @@ ZK Spreadsheet 2.2.1
    ZSS-82 Exception when user input an inexisting book or sheet in formula
    ZSS-83 Drag header not able to hide, unhide
    ZSS-84 Validation button doesn't show after row 20
+   ZSS-89 AutoFilter not work correctly on sheet first load
    ZSS-91 zssjsf.jar not work with GlassFish
 
 	------------
