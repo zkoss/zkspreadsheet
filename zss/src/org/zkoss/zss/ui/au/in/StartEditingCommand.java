@@ -41,7 +41,6 @@ import org.zkoss.zss.ui.impl.Utils;
  *
  */
 public class StartEditingCommand implements Command {
-	final static String Command = org.zkoss.zss.ui.event.Events.ON_START_EDITING;
 
 	public void process (AuRequest request) {
 		final Component comp = request.getComponent();
@@ -73,9 +72,5 @@ public class StartEditingCommand implements Command {
 				row, col, editText, clienttxt);
 		Events.postEvent(event);
 		Events.postEvent(new Event("onStartEditingImpl", comp, new Object[] {token, event, type}));
-	}
-
-	public String getCommand() {
-		return Command;
 	}
 }

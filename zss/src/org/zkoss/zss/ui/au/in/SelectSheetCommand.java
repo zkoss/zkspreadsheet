@@ -37,11 +37,6 @@ import org.zkoss.zss.ui.event.Events;
 public class SelectSheetCommand implements Command {
 
 	@Override
-	public String getCommand() {
-		return "onZSSSelectSheet";
-	}
-	
-	@Override
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();
 		if (comp == null)

@@ -310,12 +310,12 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			//jq(scroll).css('overflow-y', 'hidden');
 		}
 	}
-
+	
 /**
  * Spreadsheet is a is a rich ZK Component to handle EXCEL like behavior
  */
-var Spreadsheet =
-zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
+var Spreadsheet = 
+zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	/**
 	 * Indicate Ctrl-Paste event key down status
 	 */
@@ -339,9 +339,20 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 	_leftPanelWidth: 36,
 	_maxRenderedCellSize: 8000,
 	_displayGridlines: true,
+	/**
+	 * Contains spreadsheet's toolbar
+	 */
+	//_topPanel: null
+	/**
+	 * Contains zss.Formulabar, zss.SSheetCtrl
+	 */
+	//cave: null
 	$init: function () {
 		this.$supers(Spreadsheet, '$init', arguments);
-		this.appendChild(new zul.layout.Center());
+		
+		this.appendChild(this.cave = new zul.layout.Borderlayout({
+			vflex: true, sclass: 'zscave'
+		}));//contains zss.SSheetCtrl
 	},
 	$define: {
 		/**
@@ -356,11 +367,8 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 			for (var key in v) {
 				//key.substr(4): remove prefix 'zss.';
 				var val = v[key],
-					keys = key.substr(4).split('.'),
-					prefix = keys[0],
-					postfix = keys[1],
-					fn = 'set' + prefix.charAt(0).toUpperCase() + prefix.substr(1) + 
-					postfix.charAt(0).toUpperCase() + postfix.substr(1);
+					postfix = key.substr(4),
+					fn = 'set' + postfix.charAt(0).toUpperCase() + postfix.substr(1);
 				labelCtrl[fn].call(labelCtrl, val);
 			}
 		},
@@ -482,6 +490,10 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		protect: function (v) {
 			var sheetPanel = this._sheetPanel;
 			if (sheetPanel) {
+				var sheet = this.sheetCtrl;
+				if (sheet) {
+					sheet.fireProtectSheet(v);
+				}
 				sheetPanel.getSheetSelector().setProtectSheetCheckmark(v);
 			}
 		},
@@ -646,7 +658,8 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		/**
 		 * Sets whether display gridlines.
 		 * 
-		 * @param boolean show true to show the gridlines; default is true.
+		 * Default: true
+		 * @param boolean show true to show the gridlines;
 		 */
 		/**
 		 * Returns whether display gridlines. default is true
@@ -704,6 +717,32 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		 */
 		columnHeadHidden: null,
 		/**
+		 * Sets whether show toolbar or not
+		 * 
+		 * Default: false
+		 * @param boolean show true to show toolbar
+		 */
+		/**
+		 * Returns whther show toolbar
+		 * @return boolean
+		 */
+		showToolbar: function (show) {
+			var w = this._toolbar;
+			if (!w && show) {
+				var tb = this._toolbar = new zss.Toolbar(this),
+					topPanel = this.getTopPanel();
+				topPanel.appendChild(tb);
+				topPanel.setHeight(tb.getSize());
+			} else if (w) {
+				w.setVisible(show);
+			}
+		},
+		actionDisabled: function (v) {
+			var tb = this._toolbar;
+			if (tb)
+				tb.setDisabled(v);
+		},
+		/**
 		 * Sets whether show formula bar or not
 		 * @param boolean show true to show formula bar
 		 */
@@ -714,7 +753,7 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		showFormulabar: function (show) {
 			var w = this._formulabar;
 			if (!w && show) {
-				this.appendChild(this._formulabar = new zss.Formulabar());
+				this.cave.appendChild(this._formulabar = new zss.Formulabar(this));
 			} else if (w) {
 				w.setVisible(show);
 			}
@@ -730,7 +769,7 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		showSheetpanel: function (show) {
 			var w = this._sheetPanel;
 			if (!w && show) {
-				this.appendChild(this._sheetPanel = new zss.Sheetpanel());
+				this.cave.appendChild(this._sheetPanel = new zss.Sheetpanel(this));
 			} else if (w) {
 				w.setVisible(show);
 			}
@@ -745,6 +784,14 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 			}
 		},
 		copysrc: null //flag to show whether a copy source has set
+	},
+	getTopPanel: function () {
+		var tp = this._topPanel;
+		if (!tp) {
+			tp = this._topPanel = new zul.layout.Borderlayout({vflex: 'min'});
+			this.insertBefore(tp, this.firstChild);
+		}
+		return tp;
 	},
 	getSheetCSSId: function () {
 		return this.uuid + '-sheet';
@@ -768,7 +815,10 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		var c = this._cacheCtrl;
 		if (!c) {
 			this._cacheCtrl = c = new zss.CacheCtrl(this, v);
-			this.center.appendChild(this.sheetCtrl = new zss.SSheetCtrl());
+			
+			var center = new zul.layout.Center({border: 0});
+			center.appendChild(this.sheetCtrl = new zss.SSheetCtrl(this));
+			this.cave.appendChild(center);
 		} else {
 			var sheet = this.sheetCtrl,
 				range;
@@ -778,12 +828,13 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 			}
 		}
 	},
-	appendChild: function (child, ignoreDom) {
-		if (!child.getPosition) {
-			//Ghost widget needs a fake getPosition function
-			child.getPosition = zk.$void;
+	getUpload: function () {
+		return this._$upload;
+	},
+	onChildAdded_: function (child) {
+		if (child.$instanceof(zss.Upload)) {
+			this._$upload = child;
 		}
-		this.$supers(Spreadsheet, 'appendChild', arguments);
 	},
 	/**
 	 * Synchronize widgets position to cell
@@ -1019,8 +1070,13 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		this.fire('onZSSWidgetCtrlKey', {wgt: wgt, id: id, keyCode: keyCode, 
 			ctrlKey: ctrlKey, shiftKey: shiftKey, altKey: altKey}, {toServer: true}, 25);
 	},
-	fireSheetAction: function (act, value) {
-		this.fire('onZSSAction', {sheetId: this.getSheetId(), tag: 'sheet', act: act, value: value || ''}, {toServer: true});
+	fireToolbarAction: function (act, extra) {
+		var data = {sheetId: this.getSheetId(), tag: 'toolbar', act: act};
+		this.fire('onZSSAction', zk.copy(data, extra), {toServer: true});
+	},
+	fireSheetAction: function (act, extra) {
+		var data = {sheetId: this.getSheetId(), tag: 'sheet', act: act};
+		this.fire('onZSSAction', zk.copy(data, extra), {toServer: true});
 	},
 	/**
 	 * Fetch active range. Currently fetch north/south/west/south direction
@@ -1068,6 +1124,7 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 	_initControl: function () {
 		if (this.getSheetId() == null) //no sheet at all
 			return;
+		
 		var cssId = this.uuid + '-sheet';
 		if (!hasCSS(cssId)) { //unbind may remove css, need to check again
 			zk.loadCSS(this._scss, cssId);
@@ -1079,6 +1136,13 @@ zss.Spreadsheet = zk.$extends(zul.layout.Borderlayout, {
 		_calScrollWidth();
 		this._initControl();
 		this.$supers('bind_', arguments);
+		
+		var sheet = this.sheetCtrl;
+		if (sheet) {
+			sheet.fireProtectSheet(this.isProtect());
+			sheet.fireDisplayGridlines(this.isDisplayGridlines());
+		}
+		
 		zWatch.listen({onResponse: this});
 	},
 	unbind_: function () {

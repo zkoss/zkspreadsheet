@@ -41,7 +41,6 @@ import org.zkoss.zss.ui.impl.Utils;
  *
  */
 public class StopEditingCommand implements Command {
-	final static String Command = org.zkoss.zss.ui.event.Events.ON_STOP_EDITING;
 	
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();
@@ -66,9 +65,5 @@ public class StopEditingCommand implements Command {
 		CellEvent event = new StopEditingEvent(org.zkoss.zss.ui.event.Events.ON_STOP_EDITING, comp, sheet, row, col, value);
 		Events.postEvent(event);
 		Events.postEvent(new Event("onStopEditingImpl", comp, new Object[] {token, event, type}));
-	}
-
-	public String getCommand() {
-		return Command;
 	}
 }

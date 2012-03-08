@@ -35,11 +35,6 @@ import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 public class FetchActiveRangeCommand implements Command {
 
 	@Override
-	public String getCommand() {
-		return "onZSSFetchActiveRange";
-	}
-
-	@Override
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();
 		if (comp == null)

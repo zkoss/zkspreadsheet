@@ -128,7 +128,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		}
 		return ts;
 	}
-	
+
 /**
  *  SSheetCtrl controls spreadsheet
  *  
@@ -142,7 +142,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  *  </ul>
  *  
  */
-zss.SSheetCtrl = zk.$extends(zk.Widget, {
+zss.SSheetCtrl = zk.$extends(zk.Widget, {	
 	widgetName: 'SSheetCtrl',
 	$o: zk.$void, //no need to invoke _addIdSpaceDown, no fellows relationship
 	/**
@@ -157,6 +157,29 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	 */
 	editingFormulaInfo: null,
 	lineHeight: 20,
+	$init: function (wgt) {
+		this.$supers(zss.SSheetCtrl, '$init', []);
+		this._wgt = wgt;
+		this.setHflex(true);
+		this.setVflex(true);
+		this.pageKeySize = 100;
+		this._initiated = false;
+		
+		this._clienttxt = '';
+		
+		//init function later queue, the function in this queue will be invoke in ZK InitialLater
+		//I create this queue because ZK initial later doesn't support parameter.
+		this._initLaterQ = [];//after init function queue
+		this._initLaterQ.urgent = 0;//after init function queue
+		
+		this.state = zss.SSheetCtrl.NOFOCUS;
+		
+		//initial default size;
+		this.topHeightDt = this.leftWidthDt = this.rowHeightDt = 
+			this.colWidthDt = this.lineHeightDt = this.cellPadDt =  false;
+
+		this.config = new zss.Configuration();
+	},
 	doSheetSelected: function (visRng) {
 		if (this.bindLevel < 0) {//this method shall invoke after bind
 			return;
@@ -266,7 +289,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	afterParentChanged_: function () { //all attributes set when afterParentChanged_
 		var self = this,
-			wgt = this._wgt = this.parent.parent; //zul.layout.Center -> zss.Spreadsheet
+			wgt = this._wgt;
 		
 		this.sheetid = wgt.uuid;
 		
@@ -349,28 +372,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		
 		this.innerClicking = 0;// mouse down counter to check that is focus rellay lost.
 	},
-	$init: function () {
-		this.$supers(zss.SSheetCtrl, '$init', arguments);
-		this.setHflex(true);
-		this.setVflex(true);
-		this.pageKeySize = 100;
-		this._initiated = false;
-		
-		this._clienttxt = '';
-		
-		//init function later queue, the function in this queue will be invoke in ZK InitialLater
-		//I create this queue because ZK initial later doesn't support parameter.
-		this._initLaterQ = [];//after init function queue
-		this._initLaterQ.urgent = 0;//after init function queue
-		
-		this.state = zss.SSheetCtrl.NOFOCUS;
-		
-		//initial default size;
-		this.topHeightDt = this.leftWidthDt = this.rowHeightDt = 
-			this.colWidthDt = this.lineHeightDt = this.cellPadDt =  false;
-
-		this.config = new zss.Configuration();
-	},
 	setFlexSize_: function(sz, isFlexMin) {
 		var r = this.$supers(zss.SSheetCtrl, 'setFlexSize_', arguments);
 		if (!this._initiated) {
@@ -380,8 +381,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		return r;
 	},
 	bind_: function (desktop, skipper, after) {
-		zss.SSheetCtrl._initInnerComp(this, this._wgt._autoFilter ? this._wgt._autoFilter.range.top : null);
 		this.$supers(zss.SSheetCtrl, 'bind_', arguments);
+		
+		zss.SSheetCtrl._initInnerComp(this, this._wgt._autoFilter ? this._wgt._autoFilter.range.top : null);
 		this.listen({onContentsChanged: this});
 		
 		var n = this.comp = this.$n();
@@ -451,6 +453,13 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			this.fire('onProcessOverflow', {col: r.col, tRow: r.tRow, bRow: r.bRow});
 			delete this._overflowRange;
 		}
+	},
+	//TODO: change to fire 'onSelectedSheet' evt
+	fireProtectSheet: function (protect) {
+		this.fire('onProtectSheet', {protect: protect});
+	},
+	fireDisplayGridlines: function (show) {
+		this.fire('onDisplayGridlines', {show: show});
 	},
 	onContentsChanged: function (evt) {
 		this.fireProcessOverflow_();
@@ -1196,6 +1205,70 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this._doMouseclick(evt, "dbc");
 		evt.stop();
 	},
+	getStyleMenupopup: function () {
+		var p = this._styleMenupopup;
+		if (!p) {
+			p = this._styleMenupopup = new zss.MenupopupFactory(this._wgt).style();
+			this.appendChild(p);
+		}
+		return p;
+	},
+	getRowHeaderMenupopup: function () {
+		var p = this._rowHeaderMenupopup;
+		if (!p) {
+			p = this._rowHeaderMenupopup = new zss.MenupopupFactory(this._wgt).rowHeader();
+			this.appendChild(p);
+		}
+		return p;
+	},
+	showRowHeaderMenu: function (pageX, pageY) {
+		var y = pageY - 70;
+		this.getStyleMenupopup().open(null, [pageX + 5, y < 0 ? 0 : y]);
+		this.getRowHeaderMenupopup().open(null, [pageX, pageY]);
+	},
+	getColumnHeaderMenupopup: function () {
+		var p = this._columnHeaderMenupopup;
+		if (!p) {
+			p = this._columnHeaderMenupopup = new zss.MenupopupFactory(this._wgt).columnHeader();
+			this.appendChild(p);
+		}
+		return p;
+	},
+	showColumnHeaderMenu: function (pageX, pageY) {
+		var y = pageY - 70;
+		this.getStyleMenupopup().open(null, [pageX + 5, y < 0 ? 0 : y]);
+		this.getColumnHeaderMenupopup().open(null, [pageX, pageY]);
+	},
+	getCellMenupopup: function () {
+		var p = this._cellMenupopup;
+		if (!p) {
+			p = this._cellMenupopup = new zss.MenupopupFactory(this._wgt).cell();
+			this.appendChild(p);
+		}
+		return p;
+	},
+	showCellContextMenu: function (pageX, pageY) {
+		var y = pageY - 70;
+		this.getStyleMenupopup().open(null, [pageX + 5, y < 0 ? 0 : y]);
+		this.getCellMenupopup().open(null, [pageX + 5, pageY]);
+	},
+	runAfterMouseClick: function (fn) {
+		var fns = this._afterMouseClick;
+		if (!fns) {
+			fns = this._afterMouseClick = [];
+		}
+		fns.push(fn);
+	},
+	doAfterMouseClick: function () {
+		var fns = this._afterMouseClick;
+		if (fns) {
+			var fn;
+			while (fn = fns.shift()) {
+				fn();
+			}
+			this._afterMouseClick = null;
+		}
+	},
 	/**
 	 * @param zk.Event, mouse event
 	 * @param string type "lc" for left click, "rc" for right click, "dbc" for double click, "af" for autofilter
@@ -1234,9 +1307,13 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			col = cellpos[1];
 			mdstr = "c_" + row + "_" + col;
 
-			if (this._lastmdstr == mdstr)
+			if (this._lastmdstr == mdstr) {
+				if (type == 'rc') {
+					this.showCellContextMenu(mx, my);
+				}
 				wgt.fireCellEvt(type, shx, shy, md1[2], row, col, mx, my);
-
+			}
+				
 			if (type == 'lc' && this.selArea) {
 				this.selArea._setHyperlinkElment(elm);
 				this.selArea._tryAndEndHyperlink(row, col, evt);
@@ -1291,9 +1368,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 			mdstr = "c_" + row + "_" + col;
 			if (this._lastmdstr == mdstr) {
-				wgt.fireCellEvt(type, shx, shy, md1[2], row, col, mx, my);
-				if (type == "dbc")
+				if (type == 'rc') {
+					this.showCellContextMenu(mx, my);
+				} else if (type == "dbc") {
 					sheet._enterEditing(null);
+				}
+				wgt.fireCellEvt(type, shx, shy, md1[2], row, col, mx, my);
 			}
 		} else if ((cmp = zkS.parentByZSType(elm, "STheader",1)) != null ||
 			(cmp = zkS.parentByZSType(elm, "SLheader",1)) != null) {
@@ -1314,9 +1394,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				col = -1;
 			}
 			mdstr = "h_" + row + "_" + col;
-			if (this._lastmdstr == mdstr)
+			if (this._lastmdstr == mdstr) {
+				this['show' + (row > 0 ? 'Row' : 'Column') + 'HeaderMenu'](mx, my);
 				wgt.fireHeaderEvt(type, shx, shy, md1[2], row, col, mx, my);
+			}
 		}
+		this.doAfterMouseClick();
 	},
 	_sendOnCellFocused: function (row, col) {
 		var wgt = this._wgt;
@@ -1917,6 +2000,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		var wgt = this._wgt,
 			bc = show ? '':'#FFFFFF';
 		zcss.setRule(wgt.getSelectorPrefix() + ' .zscell', ['border-bottom-color', 'border-right-color'],[bc, bc], true, wgt.getSheetCSSId());
+		this.fireDisplayGridlines(show);
 	},
 	/**
 	 * Sets the cell's selection area and display it
@@ -2370,7 +2454,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	moveHighlight: function (left, top, right, bottom) {
 		
 		//1995691 Highlight doesn't showup after invalidate
-//		var show = this.hlArea.show;
+		var show = this.hlArea.show;
 		
 		if (left < 0 || top < 0 || right < 0 || bottom < 0) {
 			this.hideHighlight();
@@ -2384,17 +2468,17 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 
 		if (this.tp.hlArea) {
 			this.tp.hlArea.relocate(hlRange);
-//			if (show) 
+			if (show) 
 				this.tp.hlArea.showArea();
 		}
 		if (this.lp.hlArea) {
 			this.lp.hlArea.relocate(hlRange);
-//			if (show) 
+			if (show) 
 				this.lp.hlArea.showArea();
 		}
 		if (this.cp.hlArea) {
 			this.cp.hlArea.relocate(hlRange);
-//			if (show) 
+			if (show) 
 				this.cp.hlArea.showArea();
 		}
 	},
@@ -2645,6 +2729,46 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			lBlock.addMergeRange(id, left, top, right, bottom);
 		
 		this.moveCellFocus(top, left);		
+	},
+	redraw: function (out) {
+		var wgt = this._wgt,
+			uuid = this.uuid,
+			activeBlock = this.activeBlock,
+			topPanel = this.tp,
+			leftPanel = this.lp,
+			cornerPanel = this.cp,
+			hidecolhead = wgt.isColumnHeadHidden(),
+			hiderowhead = wgt.isRowHeadHidden();
+		out.push('<div ' + this.domAttrs_() + '><textarea id="', uuid, '-fo" class="zsfocus"></textarea>',
+				'<div id="', uuid, '-mask" class="zssmask" zs.t="SMask"><div class="zssmask2"><div id="', uuid, '-masktxt" class="zssmasktxt" align="center"></div></div></div>', 
+				'<div id="', uuid, '-sp" class="zsscroll" zs.t="SScrollpanel">',
+				'<div id="', uuid, '-dp" class="zsdata" zs.t="SDatapanel">',
+				'<div id="', uuid, '-datapad" class="zsdatapad"></div>');
+
+		if (activeBlock)
+			activeBlock.redraw(out);
+		
+		out.push(
+				'<div id="', uuid, '-select" class="zsselect" zs.t="SSelect"><div id="', uuid, '-selecti" class="zsselecti" zs.t="SSelInner"></div><div class="zsseldot" zs.t="SSelDot"></div></div>',
+				'<div id="', uuid, '-selchg" class="zsselchg" zs.t="SSelChg"><div id="', uuid, '-selchgi" class="zsselchgi"></div></div>',
+				'<div id="', uuid, '-focmark" class="zsfocmark" zs.t="SFocus"><div id="', uuid, '-focmarki" class="zsfocmarki"></div></div>',
+				'<div id="', uuid, '-highlight" class="zshighlight" zs.t="SHighlight"><div id="', uuid, '-highlighti" ,class="zshighlighti" zs.t="SHlInner"></div></div>',
+				'</div>' + this.inlineEditor.redrawHTML_(),
+				'<div id="', uuid, '-wp" class="zswidgetpanel" zs.t="SWidgetpanel"></div><div id="', uuid, '-pp" class="zspopuppanel"></div></div>');
+		
+		if (topPanel)
+			topPanel.redraw(out);
+		
+		if (leftPanel)
+			leftPanel.redraw(out);
+		
+		out.push('<span id="', uuid, '-sinfo" class="zsscrollinfo"><span class="zsscrollinfoinner"></span></span>',
+				'<span id="', uuid, '-info" class="zsinfo"><span class="zsinfoinner"></span></span>');
+		
+		if (cornerPanel)
+			cornerPanel.redraw(out);
+		
+	    out.push('</div>');
 	}
 }, {
 	NOFOCUS: 0,
@@ -2653,29 +2777,28 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	EDITING: 6, //3*2 ,
 	STOP_EDIT: 9, //4*2 + 1;//async state is odd
 	_initInnerComp: function (sheet, row) {
-		var wgt = sheet._wgt;
-		sheet.maskcmp = wgt.$n('mask');
-		sheet.busycmp = wgt.$n('busy');
-		sheet.spcmp = wgt.$n('sp');//scroll panel comp
-		sheet.topcmp = wgt.$n('top');//top panel comp
-		sheet.leftcmp = wgt.$n('left');//left panel comp
-		sheet.wpcmp = wgt.$n('wp');//widget panel comp
-		sheet.sinfocmp = wgt.$n('sinfo');
-		sheet.infocmp = wgt.$n('info');
-		sheet.cpcmp = wgt.$n('co');
+		sheet.maskcmp = sheet.$n('mask');
+		sheet.busycmp = sheet.$n('busy');
+		sheet.spcmp = sheet.$n('sp');//scroll panel comp
+		sheet.topcmp = sheet.$n('top');//top panel comp
+		sheet.leftcmp = sheet.$n('left');//left panel comp
+		sheet.wpcmp = sheet.$n('wp');//widget panel comp
+		sheet.sinfocmp = sheet.$n('sinfo');
+		sheet.infocmp = sheet.$n('info');
+		sheet.cpcmp = sheet.$n('co');
 
 		sheet.dp = new zss.DataPanel(sheet);
 		sheet.sp = new zss.ScrollPanel(sheet); //ScrollPanel depends DataPanel
 		
-		var dppadcmp = wgt.$n('datapad');
+		var dppadcmp = sheet.$n('datapad');
 		
-		var next = wgt.$n('select');
+		var next = sheet.$n('select');
 		if (next.getAttribute('zs.t') == "SSelect") {
 			sheet.selareacmp = next;
-			sheet.selchgcmp = wgt.$n('selchg');
-			sheet.focusmarkcmp = wgt.$n('focmark');
-			sheet.hlcmp = wgt.$n('highlight');
-			sheet.editorcmp = wgt.$n('eb');
+			sheet.selchgcmp = sheet.$n('selchg');
+			sheet.focusmarkcmp = sheet.$n('focmark');
+			sheet.hlcmp = sheet.$n('highlight');
+			sheet.editorcmp = sheet.$n('eb');
 			
 			sheet.focusMark = new zss.FocusMarkCtrl(sheet, sheet.focusmarkcmp, sheet.initparm.focus.clone());
 			sheet.selArea = new zss.SelAreaCtrl(sheet, sheet.selareacmp, sheet.initparm.selrange.clone());

@@ -59,12 +59,7 @@ import org.zkoss.zss.ui.impl.Utils;
  */
 public class CellMouseCommand implements Command {
 	
-	final static String Command = "onZSSCellMouse";
 	private FilterRowInfo blankRowInfo;
-	
-	public String getCommand() {
-		return Command;
-	}
 	
 	//-- super --//
 	public void process(AuRequest request) {

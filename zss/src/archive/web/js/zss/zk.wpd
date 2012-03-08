@@ -12,8 +12,10 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 -->
 <package name="zss" language="xul/html" depends="zul,zul.layout, zul.inp, zul.tab, zul.menu, zul.box">
 	<widget name="Spreadsheet"/>
+	<widget name="Upload"/>
 	<script src="AreaCtrl.js"/>
 	<script src="AutoScrollCtrl.js"/>
+	<script src="Button.js"/>
 	<script src="CacheCtrl.js"/>
 	<script src="CellBlockCtrl.js"/>
 	<script src="Cell.js"/>
@@ -33,6 +35,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 	<script src="MergeMatrix.js"/>
 	<script src="CornerPanel.js"/>
 	<script src="LeftPanel.js" />
+	<script src="Toolbar.js" />
 	<script src="TopPanel.js" />
 	<script src="Pos.js" />
 	<script src="PositionHelper.js" />

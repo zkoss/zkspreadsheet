@@ -117,8 +117,7 @@ public class CellVisitorContext {
 	}
 	
 	public String getFontColor() {
-//		String color = BookHelper.getFontHTMLColor(book, getFont());
-		String color = BookHelper.getFontHTMLColor(getCell(), getFont());
+		String color = BookHelper.getFontHTMLColor(getOrCreateCell(), getFont());
 		return color == null || BookHelper.AUTO_COLOR.equals(color) ? "#000000" : color;
 	}
 

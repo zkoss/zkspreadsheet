@@ -18,20 +18,21 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.au.in;
 
+import static org.zkoss.zss.ui.au.in.Commands.parseKeys;
+
 import java.util.Map;
+
 import org.zkoss.lang.Objects;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.MouseEvent;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.HeaderEvent;
 import org.zkoss.zss.ui.event.HeaderMouseEvent;
 import org.zkoss.zss.ui.impl.Utils;
-import static org.zkoss.zss.ui.au.in.Commands.parseKeys;
 
 /**
  * A Command (client to server) for handling user(client) start editing a cell
@@ -39,8 +40,7 @@ import static org.zkoss.zss.ui.au.in.Commands.parseKeys;
  *
  */
 public class HeaderMouseCommand implements Command {
-	final static String Command = "onZSSHeaderMouse";
-	//-- super --//
+	
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();
 		if (comp == null)
@@ -78,9 +78,5 @@ public class HeaderMouseCommand implements Command {
 		int index = (row == -1) ? col : row;
 				
 		Events.postEvent(new HeaderMouseEvent(type, comp, shx, shy, key, sheet, htype, index, mx, my));
-	}
-	
-	public String getCommand() {
-		return Command;
 	}
 }

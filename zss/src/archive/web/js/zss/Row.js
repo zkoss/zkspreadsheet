@@ -107,7 +107,6 @@ zss.Row = zk.$extends(zk.Widget, {
 			sPos = sheet.getLastSelection();
 		sheet.moveCellFocus(fPos.row, fPos.column, true);
 		sheet.moveCellSelection(sPos.left, sPos.top, sPos.right, sPos.bottom, false, true);
-		zk.log('_updateWrapRowHeight: ' + (jq.now() - start));
 		sheet.fire('onRowHeightChanged', {row: row});
 	},
 	processWrapCell: function (cell, ignoreUpdateNow) {

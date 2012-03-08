@@ -421,8 +421,9 @@ zss.Formulabar = zk.$extends(zul.layout.North, {
 	$o: zk.$void, //owner, fellows relationship no needed
     //default expand formulabar size
    	_prevExpandedSize: 47,
-   	$init: function () {
-   		this.$supers(zss.Formulabar, '$init', arguments);
+   	$init: function (wgt) {
+   		this.$supers(zss.Formulabar, '$init', []);
+   		this._wgt = wgt;
    		this.setFlex(true);
    		this.setBorder(0);
    		this.setSize('27px');
@@ -431,7 +432,7 @@ zss.Formulabar = zk.$extends(zul.layout.North, {
    		this.setCollapsible(false);
    	},
    	afterParentChanged_: function () { 
-    	var wgt = this._wgt = this.parent,
+    	var wgt = this._wgt,
    			cave = new zul.layout.Borderlayout(),
    			west = new zss.FormulabarWest(wgt),
    			center = new zss.FormulabarCenter(wgt),

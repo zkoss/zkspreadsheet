@@ -26,14 +26,14 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	$init: function (sheet) {
 		this.$supers(zss.DataPanel, '$init', []);
 		var wgt = this._wgt = sheet._wgt,
-			dataPanel = wgt.$n('dp'),
-			focus  = this.focustag = wgt.$n('fo');
+			dataPanel = sheet.$n('dp'),
+			focus  = this.focustag = sheet.$n('fo');
 
 		this.id = dataPanel.id;
 		this.sheet = sheet;
 		this.comp = dataPanel;
 		this.comp.ctrl = this;
-		this.padcomp =  wgt.$n('datapad');
+		this.padcomp =  sheet.$n('datapad');
 
 		wgt.domListen_(focus, 'onBlur', '_doDataPanelBlur');
 		wgt.domListen_(focus, 'onFocus', '_doDataPanelFocus');

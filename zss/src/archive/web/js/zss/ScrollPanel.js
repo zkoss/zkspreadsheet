@@ -26,9 +26,9 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 	 */
 	dir: 'south',
 	$init: function (sheet) {
-		this.$supers('$init', arguments);
+		this.$supers('$init', []);
 		var wgt = sheet._wgt,
-			scrollPanel = wgt.$n('sp');
+			scrollPanel = sheet.$n('sp');
 		
 		this.id = scrollPanel.id;
 		this.sheet = sheet;

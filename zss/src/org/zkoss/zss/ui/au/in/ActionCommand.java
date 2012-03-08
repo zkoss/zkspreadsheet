@@ -28,20 +28,14 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.ui.Action;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.SpreadsheetLabel;
 import org.zkoss.zss.ui.impl.Utils;
 
 /**
  * @author sam
- *
  */
 public class ActionCommand implements Command {
-
-	@Override
-	public String getCommand() {
-		return "onZSSAction";
-	}
 
 	@Override
 	public void process(AuRequest request) {
@@ -50,7 +44,7 @@ public class ActionCommand implements Command {
 			throw new UiException(MZk.ILLEGAL_REQUEST_COMPONENT_REQUIRED, ActionCommand.class);
 		
 		final Map data = (Map) request.getData();
-		if (data == null || data.size() != 4)
+		if (data == null || data.size() < 2)
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), ActionCommand.class });
 		
 		Spreadsheet spreadsheet = ((Spreadsheet) comp);
@@ -60,18 +54,18 @@ public class ActionCommand implements Command {
 		if (sheet != null) {
 			String tag = (String) data.get("tag");
 			String act = (String) data.get("act");
-			String value = (String) data.get("value");
-			if ("sheet".equals(tag)) {
-				processSheet(act, value, sheet, spreadsheet);
+			if ("toolbar".equals(tag)) {
+				spreadsheet.getActionHandler().dispatch(act, data);
+			} else if ("sheet".equals(tag)) {
+				processSheet(act, data, sheet, spreadsheet);
 			}
 		}
 	}
 	
-	
-	private void processSheet(String action, String value, Worksheet sheet, Spreadsheet spreadsheet) {
+	private void processSheet(String action, Map data, Worksheet sheet, Spreadsheet spreadsheet) {
 		Book book = spreadsheet.getBook();
 		if ("add".equals(action)) {
-			String prefix = Labels.getLabel(SpreadsheetLabel.Sheet.SHEET.getLabelKey());
+			String prefix = Labels.getLabel(Action.SHEET.getLabelKey());
 			if (Strings.isEmpty(prefix))
 				prefix = "Sheet";
 			int numSheet = book.getNumberOfSheets();
@@ -90,7 +84,8 @@ public class ActionCommand implements Command {
 				spreadsheet.setSelectedSheet(sel.getSheetName());
 			}
 		} else if ("rename".equals(action)) {
-			Ranges.range(sheet).setSheetName(value);
+			String name = (String) data.get("name");
+			Ranges.range(sheet).setSheetName(name);
 		} else if ("protect".equals(action)) {
 			boolean protect = sheet.getProtect();
 			Ranges.range(sheet).protectSheet(protect ? null : "");// toggle sheet protect

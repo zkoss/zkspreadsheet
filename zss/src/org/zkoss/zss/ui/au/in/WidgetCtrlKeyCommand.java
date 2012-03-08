@@ -40,11 +40,6 @@ import org.zkoss.zss.ui.Spreadsheet;
 public class WidgetCtrlKeyCommand implements Command {
 
 	@Override
-	public String getCommand() {
-		return "onZSSWidgetCtrlKey";
-	}
-
-	@Override
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();
 		if (comp == null)

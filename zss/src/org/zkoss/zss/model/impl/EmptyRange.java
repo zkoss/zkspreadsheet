@@ -339,4 +339,31 @@ public class EmptyRange implements Range {
 	public boolean isCustomHeight() {
 		return false;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.zkoss.zss.model.Range#createSheet(java.lang.String)
+	 */
+	@Override
+	public void createSheet(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.zkoss.zss.model.Range#setSheetName(java.lang.String)
+	 */
+	@Override
+	public void setSheetName(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.zkoss.zss.model.Range#setSheetOrder(int)
+	 */
+	@Override
+	public void setSheetOrder(int pos) {
+		// TODO Auto-generated method stub
+		
+	}
 }

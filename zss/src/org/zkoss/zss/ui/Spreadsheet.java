@@ -152,6 +152,7 @@ import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl.CellAttribute;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
+import org.zkoss.zss.ui.sys.ActionHandler;
 import org.zkoss.zss.ui.sys.WidgetHandler;
 import org.zkoss.zss.ui.sys.WidgetLoader;
 import org.zkoss.zul.Messagebox;
@@ -202,6 +203,10 @@ public class Spreadsheet extends XulElement implements Serializable {
 	private static final String WIDGET_HANDLER = "org.zkoss.zss.ui.sys.WidgetHandler.class";
 	private static final String WIDGET_LOADERS = "org.zkoss.zss.ui.sys.WidgetLoader.class";
 	
+	public static final String TOOLBAR_ACTION = "org.zkoss.zss.ui.ToolbarAction";
+	public static final String TOOLBAR_DISABLED_ACTION = "org.zkoss.zss.ui.ToolbarAction.disabled";
+	public static final String ACTION_HANDLER = "org.zkoss.zss.ui.ActionHandler.class";
+	
 	private static final int DEFAULT_TOP_HEAD_HEIGHT = 20;
 	private static final int DEFAULT_LEFT_HEAD_WIDTH = 36;
 	private static final int DEFAULT_CELL_PADDING = 2;
@@ -240,6 +245,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	private boolean _hideGridlines; //hide gridlines
 	private boolean _protectSheet;
 	private boolean _showFormulabar;
+	private boolean _showToolbar;
 	private boolean _showSheetpanel;
 	
 	//TODO undo/redo
@@ -311,6 +317,10 @@ public class Spreadsheet extends XulElement implements Serializable {
 	
 	private static Integer _defMaxRenderedCellSize;
 	
+	private Set<Action> _actionDisabled = getDefaultActiobDisabled();
+	
+	private static Set<Action> _defToolbarActiobDisabled;
+	
 	public Spreadsheet() {
 		this.addEventListener("onStartEditingImpl", new EventListener() {
 			public void onEvent(Event event) throws Exception {
@@ -338,6 +348,22 @@ public class Spreadsheet extends XulElement implements Serializable {
 		if (_defMaxRenderedCellSize == null)
 			_defMaxRenderedCellSize = Integer.valueOf(Library.getProperty("org.zkoss.zss.spreadsheet.maxRenderedCellSize", "" + DEFAULT_MAX_RENDERED_CELL_SIZE));
 		return _defMaxRenderedCellSize;
+	}
+	
+	private static Set<Action> getDefaultActiobDisabled() {
+		if (_defToolbarActiobDisabled == null) {
+			_defToolbarActiobDisabled = new HashSet<Action>();
+			HashMap<String, Action> toolbarActions = Action.getAll();
+			
+			String[] actions = Library.getProperty(TOOLBAR_DISABLED_ACTION, "").split(",");
+			for (String a : actions) {
+				String action = a.trim();
+				if (toolbarActions.containsKey(action)) {
+					_defToolbarActiobDisabled.add(toolbarActions.get(action));
+				}
+			}
+		}
+		return _defToolbarActiobDisabled; 
 	}
 	
 	/**
@@ -490,6 +516,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 	}
 	private EventListener _focusListener = null;
+
+	private ActionHandler _actionHandler;
 	private void doMoveSelfFocus(CellEvent event){
 		syncEditorFocus();
 		int row=event.getRow();
@@ -717,6 +745,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			if (_selectedSheet != null)
 				doSheetClean(_selectedSheet);
 			_selectedSheet = sheet;
+			
 			_selectedSheetId = Utils.getSheetUuid(_selectedSheet);
 		}
 	}
@@ -1271,6 +1300,27 @@ public class Spreadsheet extends XulElement implements Serializable {
 	}
 	
 	/**
+	 * Sets whether show toolbar or not
+	 * 
+	 * Default: false
+	 * @param showToolbar true to show toolbar
+	 */
+	public void setShowToolbar(boolean showToolbar) {
+		if (_showToolbar != showToolbar) {
+			_showToolbar = showToolbar;
+			smartUpdate("showToolbar", _showToolbar);
+		}
+	}
+	
+	/**
+	 * Returns whether shows toolbar
+	 * @return boolean
+	 */
+	public boolean isShowToolbar() {
+		return _showToolbar;
+	}
+	
+	/**
 	 * Sets whether show formula bar or not
 	 * @param showFormulabar true if want to show formula bar
 	 */
@@ -1417,7 +1467,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	 */
 	private Map<String, String> getLabels() {
 		HashMap<String, String> labels = new HashMap<String, String>();
-		for (String key : SpreadsheetLabel.getLabelKeys()) {
+		for (String key : Action.getLabelKeys()) {
 			String value = Labels.getLabel(key);
 			if (!Strings.isEmpty(value)) {
 				labels.put(key, value);
@@ -1462,6 +1512,13 @@ public class Spreadsheet extends XulElement implements Serializable {
 			renderer.render("labels", labels);
 		}
 		
+		if (_showToolbar) {
+			if (_actionDisabled.size() > 0) {
+				renderer.render("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
+			}
+			renderer.render("showToolbar", _showToolbar);
+		}
+			
 		renderer.render("showFormulabar", _showFormulabar);
 		Worksheet sheet = this.getSelectedSheet();
 		if (sheet == null) {
@@ -1490,9 +1547,9 @@ public class Spreadsheet extends XulElement implements Serializable {
 		//handle AutoFilter
 		Map afmap = convertAutoFilterToJSON(sheet.getAutoFilter());
 		if (afmap != null) {
-			renderer.render("_autoFilter", afmap);
+			renderer.render("autoFilter", afmap);
 		} else {
-			renderer.render("_autoFilter", (String) null);
+			renderer.render("autoFilter", (String) null);
 		}
 		int rowHeight = getRowheight();
 		if (rowHeight != DEFAULT_ROW_HEIGHT) {
@@ -2514,7 +2571,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			HeaderPositionHelper helper = Spreadsheet.this.getColumnPositionHelper(sheet);
 			helper.setInfoValues(column, newsize, id, hidden);
 
-			final Range rng = Ranges.range(sheet, -1, column);
+			final Range rng = Ranges.range(sheet, -1, column).getColumns();
 			if (hidden) {
 				rng.setHidden(hidden);
 			} else {
@@ -2534,7 +2591,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			//if (row == null) {
 			//	row = sheet.createRow(rownum);
 			//}
-			final Range rng = Ranges.range(sheet, rownum, -1);
+			final Range rng = Ranges.range(sheet, rownum, -1).getRows();
 			if (hidden) {
 				rng.setHidden(hidden);
 			} else {
@@ -3015,12 +3072,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 						break;
 					//case CellStyle.VERTICAL_BOTTOM: //default
 					//	break;
-					}
-					
-					Font font = _book.getFontAt(cellStyle.getFontIndex());
-					short fontHeight = font.getFontHeightInPoints();
-					if (fontHeight != XSSFFont.DEFAULT_FONT_SIZE) {
-						attrs.put("fs", fontHeight + "pt");
 					}
 				}
 			}
@@ -3889,6 +3940,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 	}
 
 	private void doSheetSelected(Worksheet sheet) {
+		org.zkoss.zk.ui.event.Events.postEvent(new Event(Events.ON_SHEET_SELECT, this));
+		
 		//load widgets
 		List list = loadWidgetLoaders();
 		int size = list.size();
@@ -4042,7 +4095,88 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 		return _widgetLoaders;
 	}
+	
+	/**
+	 * Sets action disabled true
+	 * 
+	 * @param Action
+	 */
+	public void setActionDisabled(String actions) {
+		HashMap<String, Action> all = Action.getAll();
+		
+		boolean changed = false;
+		for (String s : actions.split(",")) {
+			String toolbarAction = s.trim();
+			if (all.containsKey(toolbarAction)) {
+				Action act = all.get(toolbarAction);
+				if (!_actionDisabled.contains(act)) {
+					_actionDisabled.add(act);
+					changed = true;
+				}
+			}
+		}
+		if (changed) {
+			smartUpdate("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
+		}
+	}
 
+	public void setActionDisabled(boolean disabled, Action action) {
+		boolean changed = false;
+		if (disabled && !_actionDisabled.contains(action)) {
+			_actionDisabled.add(action);
+			changed = true;
+		} else if (!disabled && _actionDisabled.contains(action)) {
+			_actionDisabled.remove(action);
+			changed = true;
+		}
+		if (changed) {
+			smartUpdate("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
+		}
+	}
+	
+	public Set<Action> getActionDisabled() {
+		return _actionDisabled;
+	}
+	
+	private static List<String> convertActionDisabledToJSON(Set<Action> disabled) {
+		ArrayList<String> disd = new ArrayList<String>(disabled.size());
+		for (Action a : disabled) {
+			disd.add(a.toString());
+		}
+		return disd;
+	}
+	
+	/**
+	 * Sets action handler
+	 * 
+	 * @param actionHandler
+	 */
+	public void setActionHandler(ActionHandler actionHandler) {
+		_actionHandler = actionHandler;
+	}
+	
+	/**
+	 * Returns action handler
+	 * 
+	 * @return 
+	 */
+	public ActionHandler getActionHandler() {
+		if (_actionHandler == null) {
+			String cls = (String) Library.getProperty(ACTION_HANDLER);
+			if (cls != null) {
+				try {
+					_actionHandler = (ActionHandler) Classes.newInstance(cls, null, null);
+					_actionHandler.bind(this);
+				} catch (Exception x) {
+					throw new UiException(x);
+				}
+			} else {
+				_actionHandler = new DefaultToolbarActionHandler();
+			}
+		}
+		return _actionHandler;
+	}
+	
 	/**
 	 * get widget handler
 	 */
@@ -4468,28 +4602,20 @@ public class Spreadsheet extends XulElement implements Serializable {
 		addClientEvent(Spreadsheet.class, Events.ON_EDITBOX_EDITING, 0);
 		addClientEvent(Spreadsheet.class, Events.ON_STOP_EDITING, 0);
 
-		addClientEvent(Spreadsheet.class, "onZSSSelectSheet", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, "onZSSCellFocused", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, "onZSSCellFetch", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, "onZSSSyncBlock", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, "onZSSHeaderModif", CE_IMPORTANT);
-		addClientEvent(Spreadsheet.class, "onZSSCellMouse", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, "onZSSHeaderMouse", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, "onZSSMoveWidget", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, "onZSSWidgetCtrlKey", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, "onZSSFetchActiveRange", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, "onZSSAction", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_ACTION, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_FETCH, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_FOCUSED, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_MOUSE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_FETCH_ACTIVE_RANGE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_HEADER_MODIF, CE_IMPORTANT);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_HEADER_MOUSE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_MOVE_WIDGET, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_WIDGET_CTRL_KEY, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_SELECT_SHEET, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_SYNC_BLOCK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 	}
 
-	final Command[] Commands = { new BlockSyncCommand(),
-			new CellFetchCommand(), new CellSelectionCommand(),
-			new CellFocusedCommand(), new CellMouseCommand(),
-			new SelectionChangeCommand(), new HeaderMouseCommand(),
-			new HeaderCommand(), new StartEditingCommand(),
-			new StopEditingCommand(), new EditboxEditingCommand(), 
-			new MoveWidgetCommand(), new WidgetCtrlKeyCommand(), 
-			new FilterCommand(), new SelectSheetCommand(),
-			new FetchActiveRangeCommand(), new ActionCommand()};
+
 
 	// super//
 	/**
@@ -4509,11 +4635,11 @@ public class Spreadsheet extends XulElement implements Serializable {
 			}
 			return;
 		}
-		for (Command comObj : Commands) {
-			if (comObj.getCommand().equals(cmd)) {
-				comObj.process(request);
-				return;
-			}
+		
+		Command command = InnerEvts.getCommand(cmd);
+		if (command != null) {
+			command.process(request);
+			return;
 		}
 		
 		super.service(request, everError);
@@ -4658,5 +4784,48 @@ public class Spreadsheet extends XulElement implements Serializable {
 	private void cancel(EventListener callback) {
 		//TODO: shall set focus back to cell at (row, col) and restore cell value
 		errorBoxCallback(callback, Messagebox.ON_CANCEL);
+	}
+	
+	private class DefaultToolbarActionHandler extends ActionHandler {
+
+		DefaultToolbarActionHandler() {
+			super(Spreadsheet.this);
+		}
+		
+		@Override
+		public void doNewBook() {
+		}
+
+		@Override
+		public void doSaveBook() {
+		}
+
+		@Override
+		public void doExportPDF() {
+		}
+
+		@Override
+		public void doPasteSpecial(Rect selection) {
+		}
+
+		@Override
+		public void doCustomSort(Rect selection) {
+		}
+
+		@Override
+		public void doHyperlink(Rect selection) {
+		}
+
+		@Override
+		public void doFormatCell(Rect selection) {
+		}
+
+		@Override
+		public void doColumnWidth(Rect selection) {
+		}
+
+		@Override
+		public void doRowHeight(Rect selection) {
+		}
 	}
 }

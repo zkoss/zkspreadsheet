@@ -76,10 +76,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 	 */
 	cellType: 3,
 	/**
-	 * Cell font size, default is 11pt 
-	 */
-	fontSize: '11pt',
-	/**
 	 * Horizontal alignment for the cell
 	 * 
 	 * <ul>
@@ -152,7 +148,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.lock = data.lock;
 		this.cellType = data.cellType;
 		
-		this.fontSize = data.fontSize;
 		this.halign = data.halign;
 		this.valign = data.valign;
 		this.rborder = data.rightBorder;
@@ -175,6 +170,44 @@ zss.Cell = zk.$extends(zk.Widget, {
 		
 		this.style = data.style;
 		this.innerStyle = data.innerStyle;
+	},
+	getVerticalAlign: function () {
+		switch (this.valign) {
+		case 'b':
+			return 'verticalAlignBottom';
+		case 'c':
+			return 'verticalAlignMiddle';
+		case 't':
+			return 'verticalAlignTop';
+		}
+	},
+	getHorizontalAlign: function () {
+		switch (this.halign) {
+		case 'l':
+			return 'horizontalAlignLeft';
+		case 'c':
+			return 'horizontalAlignCenter';
+		case 'r':
+			return 'horizontalAlignRight';
+		}
+	},
+	getFontName: function () {
+		return jq(this.getTextNode()).css('font-family');
+	},
+	getFontSize: function () {
+		return zk.parseInt(jq(this.getTextNode()).css('font-size'));
+	},
+	isFontBold: function () {
+		return jq(this.getTextNode()).css('font-weight') == '700';
+	},
+	isFontItalic: function () {
+		return jq(this.getTextNode()).css('font-style') == 'italic';
+	},
+	isFontUnderline: function () {
+		return jq(this.$n('cave')).css('text-decoration') == 'underline';
+	},
+	isFontStrikeout: function () {
+		return jq(this.$n('cave')).css('text-decoration') == 'line-through';
 	},
 	doClick_: function (evt) {
 		//do nothing. eat the event.
@@ -225,7 +258,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 		
 		this.lock = data.lock;
-		this.fontSize = data.fontSize;
 		this.wrap = data.wrap;
 		this.halign = data.halign;
 		this.valign = data.valign;

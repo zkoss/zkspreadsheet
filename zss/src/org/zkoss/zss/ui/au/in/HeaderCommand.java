@@ -39,8 +39,6 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
  *
  */
 public class HeaderCommand implements Command {
-	final static String Command = "onZSSHeaderModif";
-
 
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();
@@ -104,9 +102,5 @@ public class HeaderCommand implements Command {
 		} else {
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {"Event:"+event, this});
 		}
-	}
-
-	public String getCommand() {
-		return Command;
 	}
 }

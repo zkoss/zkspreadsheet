@@ -39,7 +39,6 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
  *
  */
 public class CellFocusedCommand implements Command {
-	final static String Command = "onZSSCellFocused";
 
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();
@@ -62,9 +61,5 @@ public class CellFocusedCommand implements Command {
 		ctrl.setFocusRect(col, row, col, row);
 		
 		Events.postEvent(new CellEvent(org.zkoss.zss.ui.event.Events.ON_CELL_FOUCSED, comp, sheet, row, col));
-	}
-
-	public String getCommand() {
-		return Command;
 	}
 }

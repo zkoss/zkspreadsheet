@@ -39,7 +39,6 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
  *
  */
 public class SelectionChangeCommand implements Command {
-	final static String Command = org.zkoss.zss.ui.event.Events.ON_SELECTION_CHANGE;
 
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();
@@ -103,9 +102,5 @@ public class SelectionChangeCommand implements Command {
 		ctrl.setSelectionRect(left, top, right, bottom);	
 		
 		Events.postEvent(evt);
-	}
-
-	public String getCommand() {
-		return Command;
 	}
 }

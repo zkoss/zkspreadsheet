@@ -204,8 +204,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 						rbo = v.rb,
 						lock = v.l,
 						halign = v.ha,
-						valign = v.va,
-						fontSize = v.fs;
+						valign = v.va;
 					this.style = sId != undefined ? styles[sId] : '';
 					this.innerStyle = isId != undefined ? styles[isId] : '';
 					this.wrap = wrap != undefined;
@@ -214,7 +213,6 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 					this.halign = halign || 'l'; //horizontal align: default left
 					this.valign = valign || 'b'; //vertical align: default bottom 
 					this.rightBorder = rbo != undefined;
-					this.fontSize = fontSize || '11pt';
 				}
 				if (upSize) {
 					this.widthId = v.w;

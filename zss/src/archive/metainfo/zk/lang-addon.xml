@@ -57,4 +57,15 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			<css-uri>css/ss.css.dsp</css-uri>
 		</mold>
 	</component>
+	
+	<component>
+		<component-name>zssupload</component-name>
+		<component-class>org.zkoss.zss.ui.impl.Upload</component-class>
+		<widget-class>zss.Upload</widget-class>
+	</component>
+	<component>
+		<component-name>zssuploader</component-name>
+		<component-class>org.zkoss.zss.ui.impl.Uploader</component-class>
+		<widget-class>zss.Uploader</widget-class>
+	</component>
 </language-addon>

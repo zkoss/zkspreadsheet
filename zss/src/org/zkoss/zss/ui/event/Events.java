@@ -147,6 +147,13 @@ public class Events {
 	 * Sent when sheet is deleted.
 	 */
 	public static final String ON_SHEET_CREATE = "onSheetCreate";
+	
+	/**
+	 * The onSheetSelect event
+	 * Sent when sheet is selected.
+	 */
+	public static final String ON_SHEET_SELECT = "onSheetSelect";
+	
 	/**
 	 * The onSheetNameChange event.
 	 * Sent when sheet is deleted.
@@ -157,4 +164,14 @@ public class Events {
 	 * Sent when sheet is deleted.
 	 */
 	public static final String ON_SHEET_ORDER_CHANGE = "onSheetOrderChange";
+	
+	/**
+	 * 
+	 */
+	public static final String ON_TOOLBAR_ACTION = "onToolbarAction";
+	
+	/**
+	 * 
+	 */
+	//public static final String ON_CLICK_MENUITEM = "onClickMenuitem";
 }

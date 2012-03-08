@@ -36,11 +36,6 @@ import org.zkoss.zss.ui.Spreadsheet;
 public class FilterCommand implements Command {
 
 	@Override
-	public String getCommand() {
-		return "onZSSFilter";
-	}
-
-	@Override
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();
 		if (comp == null)

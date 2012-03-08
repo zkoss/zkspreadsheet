@@ -24,11 +24,11 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 		
 		var sheet = this.sheet = wgt.sheetCtrl,
 			labels = wgt._labelsCtrl,
-			del = this.deleteSheet = new zul.menu.Menuitem({'label': labels.getSheetDelete(), 'onClick': this.proxy(this.onClickDeleteSheet)}),
-			rename = this.renameSheet = new zul.menu.Menuitem({'label': labels.getSheetRename(), 'onClick': this.proxy(this.onClickRenameSheet)}),
-			protect = this.protectSheet = new zul.menu.Menuitem({'label': labels.getSheetProtect(), 'checkmark': true, 'onClick': this.proxy(this.onClickProtectSheet)}),
-			moveLeft = this.moveLeft = new zul.menu.Menuitem({'label': labels.getSheetMoveLeft(), 'onClick': this.proxy(this.onClickMoveSheetLeft)}),
-			moveRight = this.moveRight = new zul.menu.Menuitem({'label': labels.getSheetMoveRight(), 'onClick': this.proxy(this.onClickMoveSheetRight)});
+			del = this.deleteSheet = new zul.menu.Menuitem({'label': labels.getDeleteSheet(), 'onClick': this.proxy(this.onClickDeleteSheet)}),
+			rename = this.renameSheet = new zul.menu.Menuitem({'label': labels.getRenameSheet(), 'onClick': this.proxy(this.onClickRenameSheet)}),
+			protect = this.protectSheet = new zul.menu.Menuitem({'label': labels.getProtectSheet(), 'checkmark': true, 'onClick': this.proxy(this.onClickProtectSheet)}),
+			moveLeft = this.moveLeft = new zul.menu.Menuitem({'label': labels.getMoveSheetLeft(), 'onClick': this.proxy(this.onClickMoveSheetLeft)}),
+			moveRight = this.moveRight = new zul.menu.Menuitem({'label': labels.getMoveSheetRight(), 'onClick': this.proxy(this.onClickMoveSheetRight)});
 		
 		this.appendChild(del);
 		this.appendChild(rename);
@@ -128,7 +128,7 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 		
 		if (name != text) {
 			var wgt = this._wgt;
-			this._wgt.fireSheetAction('rename', text);
+			this._wgt.fireSheetAction('rename', {name: text});
 		}
 		this.stopEditing();
 	},
@@ -220,7 +220,7 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 	//when select a sheet, hide current sheet's widget, for better UI presentation
 	_hideSheetWidget: function () {
 		var wgt = this._wgt,
-			n = wgt.$n('wp'),
+			n = wgt.sheetCtrl.$n('wp'),
 			cn = n.firstChild;
 		for (;cn; cn = cn.nextSibling) {
 			var id = cn.id;
@@ -349,17 +349,6 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
    	}
 });
 
-zss.AddSheetPopup = zk.$extends(zul.wgt.Popup, {
-	$init: function (label) {
-		this.$supers(zss.AddSheetPopup, '$init', arguments);
-		this.appendChild(new zul.wgt.Label({'value': label}));
-	},
-	open: function (ref, offset, position, opts) {
-		position = 'before_start';
-		this.$supers(zss.AddSheetPopup, 'open', arguments);
-	}
-});
-
 zss.SheetpanelCave = zk.$extends(zk.Widget, {
 	$o: zk.$void,
 	$init: function (wgt) {
@@ -369,20 +358,18 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 		this._wgt = wgt;
 		
 		var menu = new zss.SheetMenupopup(wgt),
-			addSheetPopup = new zss.AddSheetPopup(wgt._labelsCtrl.getSheetAdd()),
 			addSheetBtn = this.addSheetButton = new zul.wgt.Toolbarbutton({
-				'image': zk.ajaxURI('/web/zss/img/plus.png', {au: true}),
-				'onClick': this.proxy(this.onClickAddSheet)
-				}),
+				tooltiptext: wgt._labelsCtrl.getAddSheet(),
+				image: zk.ajaxURI('/web/zss/img/plus.png', {au: true}),
+				onClick: this.proxy(this.onClickAddSheet)
+			}),
 			hlayout = this.hlayout = new zul.box.Hlayout({spacing: 0}),
 			sheetSelector = this.sheetSelector = new zss.SheetSelector(wgt, menu);
-		addSheetBtn.setTooltip(addSheetPopup);
 		hlayout.appendChild(addSheetBtn);
 		hlayout.appendChild(sheetSelector);
 		
 		this.appendChild(hlayout);
 		this.appendChild(menu);
-		this.appendChild(addSheetPopup);
 	},
 	setFlexSize_: function(sz, isFlexMin) {
 		var r = this.$supers(zss.SheetpanelCave, 'setFlexSize_', arguments),
@@ -393,7 +380,6 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 		return r;
 	},
 	onClickAddSheet: function () {
-		zk.log('onClickAddSheet');
 		this._wgt.fireSheetAction("add");
 	},
 	redraw: function (out) {
@@ -410,13 +396,12 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 
 zss.Sheetpanel = zk.$extends(zul.layout.South, {
 	$o: zk.$void,
-	$init: function () {
-		this.$supers(zss.Sheetpanel, '$init', arguments);
+	$init: function (wgt) {
+		this.$supers(zss.Sheetpanel, '$init', []);
+		this._wgt = wgt;
 		this.setBorder(0);
 		this.setSize('24px');
-	},
-	afterParentChanged_: function () {
-		var wgt = this._wgt = this.parent;
+		
 		this.appendChild(this.cave = new zss.SheetpanelCave(wgt));
 	},
 	getSheetSelector: function () {

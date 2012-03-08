@@ -33,9 +33,4 @@ public class CellFetchCommand implements Command {
 	public void process(AuRequest request) {
 		new CellFetchCommandHelper().process(request);
 	}
-
-
-	public String getCommand() {
-		return Command;
-	}
 }
