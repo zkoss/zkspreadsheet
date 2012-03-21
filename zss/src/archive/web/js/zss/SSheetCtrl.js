@@ -946,7 +946,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	_cmdHighlight: function (result) {
 		var type = result.type;
 		if (type == "hide") {
-			this.hideHighlight();
+			this.hideHighlight(true);
 		} else if(type == "show") {
 			this.moveHighlight(result.left, result.top, result.right, result.bottom);
 		}
