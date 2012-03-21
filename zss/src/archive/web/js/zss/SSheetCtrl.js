@@ -2023,6 +2023,16 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		zcss.setRule(wgt.getSelectorPrefix() + ' .zscell', ['border-bottom-color', 'border-right-color'],[bc, bc], true, wgt.getSheetCSSId());
 		this.fireDisplayGridlines(show);
 	},
+	deferFireCellSelection: function (left, top, right, bottom) {
+		var id = this._fireCellSelectionId,
+			self = this;
+		if (id) {
+			clearTimeout(id);
+		}
+		this._fireCellSelectionId = setTimeout(function () {
+			self.fire('onCellSelection', {left: left, top: top, right: right, bottom: bottom});		
+		}, 50);
+	},
 	/**
 	 * Sets the cell's selection area and display it
 	 * 
@@ -2075,7 +2085,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}
 		
 		var selRange = new zss.Range(left, top, right, bottom);
-		this.fire('onCellSelection', {left: left, top: top, right: right, bottom: bottom});
+		this.deferFireCellSelection(left, top, right, bottom);
 		this.selArea.relocate(selRange);
 		
 		if (show) {
