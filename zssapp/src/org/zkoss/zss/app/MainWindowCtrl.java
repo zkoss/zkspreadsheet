@@ -27,29 +27,23 @@ import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
-import org.zkoss.zk.ui.event.KeyEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.ctrl.HeaderSizeCtrl;
 import org.zkoss.zss.app.ctrl.RenameSheetCtrl;
 import org.zkoss.zss.app.file.FileHelper;
 import org.zkoss.zss.app.formula.FormulaMetaInfo;
-import org.zkoss.zss.app.sheet.SheetHelper;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.FileMenu;
 import org.zkoss.zss.app.zul.ViewMenu;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.Zssapps;
-import org.zkoss.zss.app.zul.ctrl.CellStyleContextEvent;
 import org.zkoss.zss.app.zul.ctrl.DesktopCellStyleContext;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.app.zul.ctrl.SSRectCellStyle;
 import org.zkoss.zss.app.zul.ctrl.SSWorkbookCtrl;
-import org.zkoss.zss.app.zul.ctrl.StyleModification;
 import org.zkoss.zss.app.zul.ctrl.WorkbenchCtrl;
 import org.zkoss.zss.app.zul.ctrl.WorkbookCtrl;
 import org.zkoss.zss.engine.event.SSDataEvent;
-import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
@@ -58,9 +52,8 @@ import org.zkoss.zss.ui.Action;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
-import org.zkoss.zss.ui.event.Events;
+import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.Utils;
@@ -153,6 +146,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	Dialog _customSortDialog;
 	Dialog _exportToPdfDialog;
 	Dialog _exportToHtmlDialog;
+	
+	MainActionHandler actionHandler;
 
 	public Spreadsheet getSpreadsheet() {
 		return spreadsheet;
@@ -161,7 +156,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
-		spreadsheet.setActionHandler(new MainActionHandler());
+		spreadsheet.setActionHandler(actionHandler = new MainActionHandler());
 		
 		//TODO: do it after "afterCompose"
 		FileHelper.openNewSpreadsheet(spreadsheet);
@@ -260,23 +255,9 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				String evtName = event.getName();
 				if (evtName == SSDataEvent.ON_CONTENTS_CHANGE) {
 					doContentChanged();
-				} else if (evtName == SSDataEvent.ON_PROTECT_SHEET) {
-//					protectSheet.setChecked(spreadsheet.getSelectedSheet().getProtect());
-				} else if (evtName == SSDataEvent.ON_BTN_CHANGE) {
-//					syncAutoFilterStatus();
 				}
 			}
 		});
-
-		// ADD Event Listener
-		spreadsheet.addEventListener(Events.ON_SHEET_DELETE,
-				new EventListener() {
-					@Override
-					public void onEvent(Event event) throws Exception {
-						//TODO: rm this ?
-//						doSheetDeleteEvent((SheetDeleteEvent) event);
-					}
-				});
 		
 		//TODO: rm ON_CELL_FOUCSED listener
 //		spreadsheet.addEventListener(Events.ON_CELL_FOUCSED,
@@ -321,13 +302,13 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 //						cellContext.doPopup();
 //					}
 //				});
-		spreadsheet.addEventListener(Events.ON_START_EDITING, 
-				new EventListener() {
-					public void onEvent(Event event) throws Exception {
-						System.out.println("shall clear selection highlight ???");
+		
+//		spreadsheet.addEventListener(Events.ON_START_EDITING, 
+//				new EventListener() {
+//					public void onEvent(Event event) throws Exception {
 //						EditHelper.clearCutOrCopy(spreadsheet);
-					}
-				});
+//					}
+//				});
 		
 	}
 
@@ -353,53 +334,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		} else
 			workbench.getWorkbenchCtrl().openSaveFileDialog();
 	}
-	
-//	public void onClick$exportToPDFBtn() {
-//		openExportPdfDialog();
-//		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
-//	}
-	
-//	public void onClick$pasteDropdownBtn() {
-//		getDesktopWorkbenchContext().getWorkbookCtrl().pasteSelection();
-//		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
-//	}
-	
-//	public void onDropdown$pasteDropdownBtn() {
-//		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
-//	}
-	
-//	public void onDropdown$sortDropdownBtn() {
-//		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
-//	}
-	
-//	public void onPasteSelector(ForwardEvent event) {
-//		String val = (String) event.getData();
-//		if ("pasteSpecial".equals(val))
-//			openPasteSpecialDialog();
-////		else
-////			EditHelper.onPasteEventHandler(spreadsheet, val);
-//			
-//	}
-	
-	public void onInsertFormula$spreadsheet() {
-		openInsertFormulaDialog();
-		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
-	}
-
-//	public void onSortSelector(ForwardEvent event) {
-//		//TODO: replace forward event
-//		String param = (String) event.getData();
-//		if (param == null)
-//			return;
-//		if (param.equals(Labels.getLabel("sort.custom"))) {
-//			openCustomSortDialog();
-//		} else {
-//			if (SortSelector.getSortOrder(param))
-//				CellHelper.sortAscending(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
-//			else
-//				CellHelper.sortDescending(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
-//		}
-//	}
 
 //	public void syncAutoFilterStatus() {
 //		final Worksheet worksheet = spreadsheet.getSelectedSheet();
@@ -422,36 +356,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 ////		reapplyFilter.setDisabled(!appliedFilter);
 //	}
 	
-	public void onClick$filter() {
-		Rect rect = spreadsheet.getSelection();
-		final Worksheet sheet = spreadsheet.getSelectedSheet();
-		Range range = Ranges.range(sheet, rect.getTop(), rect.getLeft(), rect.getBottom(), rect.getRight());
-		range.autoFilter();
-	}
-	
-	public void onClick$clearFilter() {
-		Ranges.range(spreadsheet.getSelectedSheet()).showAllData();
-	}
-	
-	public void onClick$reapplyFilter() {
-		Ranges.range(spreadsheet.getSelectedSheet()).applyFilter();
-	}
-	
-//	public void onClick$cutBtn() {
-//		getDesktopWorkbenchContext().getWorkbookCtrl().cutSelection();
-//		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
-//	}
-	
-//	public void onClick$copyBtn() {
-//		getDesktopWorkbenchContext().getWorkbookCtrl().copySelection();
-//		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
-//	}
-
-	public void onClick$closeBtn() {
-		getDesktopWorkbenchContext().getWorkbookCtrl().close();
-		getDesktopWorkbenchContext().fireWorkbookChanged();
-	}
-	
 	private WorkbookCtrl getWorkbookCtrl() {
 		return  getDesktopWorkbenchContext().getWorkbookCtrl();
 	}
@@ -460,55 +364,28 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		return Zssapp.getDesktopWorkbenchContext(self);
 	}
 	
-	public void setSelectedSheet(String name) {
-		spreadsheet.setSelectedSheet(name);
-//		gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
-	}
-
-	public void updateGridlinesCheckbox() {
-//		gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
-	}
-	
-	// SECTION Spreadsheet Event Handler
-//	void doMouseEvent(CellMouseEvent event) {
-//		event_x = event.getClientx();
-//		event_y = event.getClienty();
-//
-//		cellMenupopup.open(event_x + 5, event.getClienty());
-//	}
-
-//	void doHeaderMouseEvent(HeaderMouseEvent event) {
-//		if (HeaderEvent.TOP_HEADER == event.getType()) {
-//			columnHeaderMenupopup.open(event.getClientx(), event.getClienty());
-//		} else if ((HeaderEvent.LEFT_HEADER == event.getType())) {
-//			rowHeaderMenupopup.open(event.getClientx(), event.getClienty());
-//		} else {
+//	void doFocusedEvent(final CellEvent event) {
+//		final Book book = spreadsheet.getBook();
+//		if (book == null) {
 //			return;
 //		}
+//		// SECTION WORK1 FocusedEvent
+//		try {
+//			Worksheet sheet = event.getSheet();
+//			lastRow = event.getRow();
+//			lastCol = event.getColumn();
+//
+//			Cell cell = Utils.getOrCreateCell(sheet, lastRow, lastCol);
+//			// read format from cell and assign it to toolbar
+//			// merge cell
+//			isMergeCell = isMergedCell(event.getRow(), event.getColumn(), event.getRow(), event.getColumn());
+////			mergeCellBtn.setSclass(isMergeCell ? "clicked" : null);
+//
+//			getCellStyleContext().doTargetChange(new SSRectCellStyle(cell, spreadsheet));
+//
+//		} catch (Exception e) {
+//		}
 //	}
-	
-	void doFocusedEvent(final CellEvent event) {
-		final Book book = spreadsheet.getBook();
-		if (book == null) {
-			return;
-		}
-		// SECTION WORK1 FocusedEvent
-		try {
-			Worksheet sheet = event.getSheet();
-			lastRow = event.getRow();
-			lastCol = event.getColumn();
-
-			Cell cell = Utils.getOrCreateCell(sheet, lastRow, lastCol);
-			// read format from cell and assign it to toolbar
-			// merge cell
-			isMergeCell = isMergedCell(event.getRow(), event.getColumn(), event.getRow(), event.getColumn());
-//			mergeCellBtn.setSclass(isMergeCell ? "clicked" : null);
-
-			getCellStyleContext().doTargetChange(new SSRectCellStyle(cell, spreadsheet));
-
-		} catch (Exception e) {
-		}
-	}
 	
 	private boolean isMergedCell(int tRow, int lCol, int bRow, int rCol) {
 		MergeMatrixHelper mmhelper = spreadsheet.getMergeMatrixHelper(spreadsheet.getSelectedSheet());
@@ -535,28 +412,16 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 //		mergeCellBtn.setSclass(isMergeCell ? "clicked" : null);
 	}
-
-	// SECTION CtrlKeys
-	public void onSSCtrlKeys(ForwardEvent event) {
-		Event orig = event.getOrigin();
-		while (orig instanceof ForwardEvent) {
-			orig = ((ForwardEvent) orig).getOrigin();
-		}
-		if (orig instanceof KeyEvent) {
-			_onSSCtrlKeys((KeyEvent) orig);
-		}
-	}
-
-	public void _onSSCtrlKeys(KeyEvent event) {
+	
+	public void onCtrlKey$spreadsheet(KeyEvent event) {
+		Rect selection = event.getSelection();
 		char c = (char) event.getKeyCode();
 		try {
 			if (46 == event.getKeyCode()) {// delete
 				if (event.isCtrlKey())
-					CellHelper.clearStyle(spreadsheet, 
-							SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
+					actionHandler.doClearStyle(selection);
 				else
-					CellHelper.clearContent(spreadsheet,
-							SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
+					actionHandler.doClearContent(selection);
 				return;
 			}
 
@@ -565,22 +430,16 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 			switch (c) {
 			case 'X':
-				//TODO: what if do nothing here ??
-				System.out.println("shall cut by key evt ??");
-//				EditHelper.doCut(spreadsheet);
+				actionHandler.doCut(selection);
 				break;
 			case 'C':
-				//TODO: what if do nothing here ??
-				System.out.println("shall copy by key evt ??");
-//				EditHelper.doCopy(spreadsheet);
+				actionHandler.doCopy(selection);
 				break;
 			case 'V':
-				System.out.println("shall paste by key evt ??");
-//				EditHelper.doPaste(spreadsheet);
+				actionHandler.doPaste(selection);
 				break;
 			case 'D':
-				CellHelper.clearContent(spreadsheet,
-						SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
+				actionHandler.doClearContent(selection);
 				break;
 			case 'E':// for testing
 				spreadsheet.setCellFocus(new Position(2, 2));
@@ -598,45 +457,37 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 						workbench.getWorkbenchCtrl().openSaveFileDialog();
 				}
 				break;
-			// TODO undo
-			/*
-			 * case 'Z': spreadsheet.undo(); break;
-			 */
-			// TODO redo
-			/*
-			 * case 'Y': spreadsheet.redo(); break;
-			 */
 			case 'O':
 				openOpenFileDialog();
 				break;
-			case 'F':
-				//TODO: 
-				break;
 			case 'B':
-				getCellStyleContext().modifyStyle(new StyleModification(){
-					public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style, CellStyleContextEvent candidteEvt) {
-						candidteEvt.setExecutor(MainWindowCtrl.this);
-						style.setBold(!style.isBold());
-					}
-				});
+				actionHandler.doFontBold(selection);
+//				getCellStyleContext().modifyStyle(new StyleModification(){
+//					public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style, CellStyleContextEvent candidteEvt) {
+//						candidteEvt.setExecutor(MainWindowCtrl.this);
+//						style.setBold(!style.isBold());
+//					}
+//				});
 				break;
 			case 'I':
-				getCellStyleContext().modifyStyle(new StyleModification(){
-					public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style, CellStyleContextEvent candidteEvt) {
-						candidteEvt.setExecutor(MainWindowCtrl.this);
-						style.setItalic(!style.isItalic());
-					}
-				});
+				actionHandler.doFontItalic(selection);
+//				getCellStyleContext().modifyStyle(new StyleModification(){
+//					public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style, CellStyleContextEvent candidteEvt) {
+//						candidteEvt.setExecutor(MainWindowCtrl.this);
+//						style.setItalic(!style.isItalic());
+//					}
+//				});
 				break;
 			case 'U':
-				getCellStyleContext().modifyStyle(new StyleModification(){
-					public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style, CellStyleContextEvent candidteEvt) {
-						candidteEvt.setExecutor(MainWindowCtrl.this);
-						boolean isUnderline = style.getUnderline() ==  org.zkoss.zss.app.zul.ctrl.CellStyle.UNDERLINE_SINGLE;
-						style.setUnderline(isUnderline ? 
-								org.zkoss.zss.app.zul.ctrl.CellStyle.UNDERLINE_NONE : org.zkoss.zss.app.zul.ctrl.CellStyle.UNDERLINE_SINGLE);
-					}
-				});
+				actionHandler.doFontUnderline(selection);
+//				getCellStyleContext().modifyStyle(new StyleModification(){
+//					public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style, CellStyleContextEvent candidteEvt) {
+//						candidteEvt.setExecutor(MainWindowCtrl.this);
+//						boolean isUnderline = style.getUnderline() ==  org.zkoss.zss.app.zul.ctrl.CellStyle.UNDERLINE_SINGLE;
+//						style.setUnderline(isUnderline ? 
+//								org.zkoss.zss.app.zul.ctrl.CellStyle.UNDERLINE_NONE : org.zkoss.zss.app.zul.ctrl.CellStyle.UNDERLINE_SINGLE);
+//					}
+//				});
 				break;
 			default:
 				return;

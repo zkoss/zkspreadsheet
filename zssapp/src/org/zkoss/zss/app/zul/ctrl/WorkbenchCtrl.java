@@ -49,8 +49,6 @@ public interface WorkbenchCtrl {
 	public void openFormatNumberDialog(Rect selection);
 	
 	public void openSaveFileDialog();
-		
-	public void updateGridlinesCheckbox();
 
 	/**
 	 * 

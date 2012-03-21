@@ -8,7 +8,7 @@
 	<menubar id="menubar" width="100%" style="border-bottom:0;border-right:1px solid #D8D8D8;border-left:1px solid #D8D8D8;">
 		<filemenu id="fileMenu" label="${c:l('file')}" ></filemenu>
 		<viewmenu id="viewMenu" label="${c:l('view')}"></viewmenu>
-        <menu label="${c:l('help')}">
+        <menu id="helpMenu" label="${c:l('help')}">
 			<menupopup>
 				<attribute w:name="onOpen">
 					this.$f('spreadsheet', true).focus(false);
@@ -26,8 +26,7 @@
 				showFormulabar="true"
 				showSheetpanel="true"
 				maxrows="200"
-				maxcolumns="40" vflex="true" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" 
-				forward="onCtrlKey=mainWin.onSSCtrlKeys">
+				maxcolumns="40" vflex="true" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" >
 	</spreadsheet>
 	<cheatsheet id="cheatsheet" />
 </div>
