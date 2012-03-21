@@ -17,6 +17,8 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 package org.zkoss.test.zss.cases;
 
 import org.junit.Test;
+import org.zkoss.test.zss.ZSSAppTest;
+import org.zkoss.test.zss.ZSSTestCase;
 
 /**
  * Select sheet test
@@ -24,7 +26,8 @@ import org.junit.Test;
  * @author sam
  *
  */
-public class SS_050_Test {
+@ZSSTestCase
+public class SS_050_Test extends ZSSAppTest {
 
 	
 	//1. focus [5, 10] at first sheet

@@ -30,6 +30,7 @@ public enum Keycode {
 	D(68),
 	E(69),
 	I(73),
+	O(79),
 	U(85),
 	V(86),
 	X(88);

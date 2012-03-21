@@ -7,7 +7,7 @@ import org.zkoss.test.zss.ZSSTestCase;
 
 import com.google.common.base.Strings;
 
-/* SS_237_Test.java
+/* SS_047_Test.java
 
 {{IS_NOTE
 	Purpose:

@@ -41,7 +41,8 @@ public class CellCache {
 		FONT_COLOR,
 		FILL_COLOR,
 		BOTTOM_BORDER,
-		RIGHT_BORDER
+		RIGHT_BORDER, 
+		CELL_TYPE
 	}
 	
 	public enum EqualCondition {
@@ -111,6 +112,10 @@ public class CellCache {
 	
 	public int getCol() {
 		return col;
+	}
+	
+	public void setCellType(CellType cellType) {
+		this.cellType = cellType;
 	}
 	
 	public CellType getCellType() {
@@ -271,8 +276,6 @@ public class CellCache {
 					&& Objects.equal(this.edit, that.edit);
 			}
 			equal = equal && Objects.equal(this.cellType, that.cellType) 
-//				&& Objects.equal(this.text, that.text)
-//				&& (this.cellType == CellType.FORMULA && that.cellType == CellType.FORMULA) || Objects.equal(this.edit, that.edit)
 				&& Objects.equal(this.horizontalAlign, that.horizontalAlign)
 				&& Objects.equal(this.verticalAlign, that.verticalAlign)
 				&& Objects.equal(this.fontColor, that.fontColor)
@@ -280,19 +283,18 @@ public class CellCache {
 				&& Objects.equal(this.bottomBorder, that.bottomBorder)
 				&& Objects.equal(this.rightBorder, that.rightBorder);
 			if (!equal) {
-				//TODO: use logger ?
-				System.out.println("this [r:" + this.row + ",c:" + this.col + "] != that [r:" + that.row + ",c:" + that.col + "]");
-				System.out.println("this: " + this.toString());
-				System.out.println("that: " + that.toString());
-				
-				System.out.println("text? " + Objects.equal(this.text, that.text));
-				System.out.println("edit? " + Objects.equal(this.edit, that.edit));
-				System.out.println("horizontalAlign? " + Objects.equal(this.horizontalAlign, that.horizontalAlign));
-				System.out.println("verticalAlign? " + Objects.equal(this.verticalAlign, that.verticalAlign));
-				System.out.println("fontColor? " + Objects.equal(this.fontColor, that.fontColor));
-				System.out.println("fillColor? " + Objects.equal(this.fillColor, that.fillColor));
-				System.out.println("bottomBorder? " + Objects.equal(this.bottomBorder, that.bottomBorder));
-				System.out.println("rightBorder? " + Objects.equal(this.rightBorder, that.rightBorder));
+//				System.out.println("this [r:" + this.row + ",c:" + this.col + "] != that [r:" + that.row + ",c:" + that.col + "]");
+//				System.out.println("this: " + this.toString());
+//				System.out.println("that: " + that.toString());
+//				
+//				System.out.println("text? " + Objects.equal(this.text, that.text));
+//				System.out.println("edit? " + Objects.equal(this.edit, that.edit));
+//				System.out.println("horizontalAlign? " + Objects.equal(this.horizontalAlign, that.horizontalAlign));
+//				System.out.println("verticalAlign? " + Objects.equal(this.verticalAlign, that.verticalAlign));
+//				System.out.println("fontColor? " + Objects.equal(this.fontColor, that.fontColor));
+//				System.out.println("fillColor? " + Objects.equal(this.fillColor, that.fillColor));
+//				System.out.println("bottomBorder? " + Objects.equal(this.bottomBorder, that.bottomBorder));
+//				System.out.println("rightBorder? " + Objects.equal(this.rightBorder, that.rightBorder));
 			}
 			return equal;
 		}

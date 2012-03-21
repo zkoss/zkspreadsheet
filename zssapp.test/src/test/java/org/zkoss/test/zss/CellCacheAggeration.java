@@ -71,6 +71,9 @@ public class CellCacheAggeration extends ArrayList<CellCache> {
 			CellCache from = that.get(i);
 			for (CellCache.Field f : fields) {
 				switch (f) {
+				case CELL_TYPE:
+					c.setCellType(from.getCellType());
+					break;
 				case MERGE:
 					c.setMerge(from.getMerge());
 					break;

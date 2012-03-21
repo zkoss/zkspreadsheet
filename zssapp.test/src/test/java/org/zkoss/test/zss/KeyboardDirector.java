@@ -20,13 +20,13 @@ import java.util.Iterator;
 
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.Mouse;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.zkoss.test.CompundKey;
 import org.zkoss.test.ConditionalTimeBlocker;
 import org.zkoss.test.JQuery;
 import org.zkoss.test.JavascriptActions;
+import org.zkoss.test.Keycode;
 import org.zkoss.test.MouseButton;
 
 import com.google.common.collect.Iterators;
@@ -59,6 +59,7 @@ public class KeyboardDirector {
 			final CharSequence first = keys.subSequence(0, 1);
 			WebElement webElement = spreadsheet.jq$focus().getWebElement();
 			webElement.sendKeys(first);
+			timeBlocker.waitUntil(1);
 			timeBlocker.waitResponse();
 			
 			try {
@@ -71,9 +72,10 @@ public class KeyboardDirector {
 				//if protect sheet, cannot edit, will throw ElementNotVisibleException
 			}
 		} else {
-			WebElement webElement = spreadsheet.jq$focus().getWebElement();
-			webElement.sendKeys(keys);
-			timeBlocker.waitResponse();
+			delete(row, col);
+//			WebElement webElement = spreadsheet.jq$focus().getWebElement();
+//			webElement.sendKeys(keys);
+//			timeBlocker.waitResponse();
 		}
 	}
 	
@@ -98,8 +100,6 @@ public class KeyboardDirector {
 			//protect sheet will cause ElementNotVisibleException ex
 		}
 //		new JavascriptActions(webDriver).enter(spreadsheet.getInlineEditor().jq$n()).perform();
-		
-//		timeBlocker.waitUntil(1);
 		timeBlocker.waitResponse();
 	}
 	
@@ -128,9 +128,100 @@ public class KeyboardDirector {
 
 	public void ctrlCopy(int tRow, int lCol, int bRow, int rCol) {
 		spreadsheet.setSelection(tRow, lCol, bRow, rCol);
-		new JavascriptActions(webDriver).ctrlCopy(spreadsheet.jq$n()).perform();
+		
+		new JavascriptActions(webDriver)
+		.ctrlCopy(spreadsheet.jq$n())
+		.perform();
+		
 		timeBlocker.waitResponse();
 	}
+	
+	public void ctrlCut(int tRow, int lCol, int bRow, int rCol) {
+		spreadsheet.setSelection(tRow, lCol, bRow, rCol);
+		
+		new JavascriptActions(webDriver)
+		.ctrlCut(spreadsheet.jq$n())
+		.perform();
+		
+		timeBlocker.waitResponse();
+	}
+	
+	public void ctrlPaste(int row, int col) {
+		spreadsheet.focus(row, col);
+		
+		new JavascriptActions(webDriver)
+		.ctrlPaste(spreadsheet.jq$n())
+		.perform();
+		
+		timeBlocker.waitResponse();
+	}
+	
+	public void ctrlFontBold(int tRow, int lCol, int bRow, int rCol) {
+		spreadsheet.setSelection(tRow, lCol, bRow, rCol);
+		
+		new JavascriptActions(webDriver)
+		.ctrlFontBold(spreadsheet.jq$n())
+		.perform();
+		
+		timeBlocker.waitUntil(1);
+		timeBlocker.waitResponse();
+	}
+	
+	public void ctrlFontItalic(int tRow, int lCol, int bRow, int rCol) {
+		spreadsheet.setSelection(tRow, lCol, bRow, rCol);
+		
+		new JavascriptActions(webDriver)
+		.ctrlFontItalic(spreadsheet.jq$n())
+		.perform();
+		
+		timeBlocker.waitUntil(1);
+		timeBlocker.waitResponse();
+	}
+	
+	public void ctrlFontUnderline(int tRow, int lCol, int bRow, int rCol) {
+		spreadsheet.setSelection(tRow, lCol, bRow, rCol);
+		
+		new JavascriptActions(webDriver)
+		.ctrlFontUnderline(spreadsheet.jq$n())
+		.perform();
+		
+		timeBlocker.waitUntil(1);
+		timeBlocker.waitResponse();
+	}
+	
+	public void ctrlDelete(int tRow, int lCol, int bRow, int rCol) {
+		spreadsheet.setSelection(tRow, lCol, bRow, rCol);
+		
+		new JavascriptActions(webDriver)
+		.ctrlDelete(spreadsheet.jq$n())
+		.perform();
+		
+		timeBlocker.waitResponse();
+	}
+	
+
+	public void ctrlD(int tRow, int lCol, int bRow, int rCol) {
+		spreadsheet.setSelection(tRow, lCol, bRow, rCol);
+		
+		new JavascriptActions(webDriver)
+		.ctrlD(spreadsheet.jq$n())
+		.perform();
+		
+		timeBlocker.waitResponse();
+	}
+	
+	public void delete(int tRow, int lCol, int bRow, int rCol) {
+		spreadsheet.setSelection(tRow, lCol, bRow, rCol);
+		
+		JQuery target = spreadsheet.jq$n();
+		new JavascriptActions(webDriver)
+		.keyDown(target, Keycode.DELETE.intValue())
+		.keyDown(target, Keycode.DELETE.intValue())
+		.perform();
+		
+		timeBlocker.waitResponse();
+	}
+
 
 	public void shiftSelect(int tRow, int lCol, int bRow, int rCol) {
 		spreadsheet.focus(tRow, lCol);

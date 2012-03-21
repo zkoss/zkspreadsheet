@@ -71,8 +71,15 @@ public class JavascriptActions extends Actions {
 		return this;
 	}
 	
-	public JavascriptActions ctrlClear(JQuery target) {
+	public JavascriptActions ctrlD(JQuery target) {
 		int keyCode = Keycode.D.intValue();
+		ctrlKeyDown(target, keyCode);
+		ctrlKeyUp(target, keyCode);
+		return this;
+	}
+	
+	public JavascriptActions ctrlDelete(JQuery target) {
+		int keyCode = Keycode.DELETE.intValue();
 		ctrlKeyDown(target, keyCode);
 		ctrlKeyUp(target, keyCode);
 		return this;

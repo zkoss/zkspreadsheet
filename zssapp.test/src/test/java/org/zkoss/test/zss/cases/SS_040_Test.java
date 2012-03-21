@@ -56,11 +56,7 @@ public class SS_040_Test extends ZSSAppTest {
 		int rCol = 7;
 		CellCacheAggeration.Builder builder = getCellCacheAggerationBuilder(tRow, lCol, bRow, rCol);
 		CellCacheAggeration copyFrom = builder.build();
-		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenuitem-copy");
-		
-		//TODO: change to use ctrlCopy
-//		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
+		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(11, 10);
 		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
@@ -79,11 +75,7 @@ public class SS_040_Test extends ZSSAppTest {
 		int rCol = 7;
 		CellCacheAggeration.Builder builder = getCellCacheAggerationBuilder(tRow, lCol, bRow, rCol);
 		CellCacheAggeration copyFrom = builder.build();
-		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenuitem-copy");
-		
-		//TODO: change to use ctrlCopy
-//		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
+		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(11, 10);
 		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
@@ -92,7 +84,6 @@ public class SS_040_Test extends ZSSAppTest {
 		click("$_pasteSpecialDialog $okBtn");
 		
 		Assert.assertTrue(copyFrom.equals(builder.offset(11, 10).build(), EqualCondition.COLUMN_WIDTH_ONLY));
-		//TODO: verify paste dest remain same content
 	}
 	
 	@Test
@@ -103,11 +94,7 @@ public class SS_040_Test extends ZSSAppTest {
 		int rCol = 7;
 		CellCacheAggeration.Builder builder = getCellCacheAggerationBuilder(tRow, lCol, bRow, rCol);
 		CellCacheAggeration copyFrom = builder.build();
-		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenuitem-copy");
-		
-		//TODO: change to use ctrlCopy
-//		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
+		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(11, 10);
 		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
@@ -128,11 +115,7 @@ public class SS_040_Test extends ZSSAppTest {
 		int rCol = 7;
 		CellCacheAggeration.Builder builder = getCellCacheAggerationBuilder(tRow, lCol, bRow, rCol);
 		CellCacheAggeration copyFrom = builder.build();
-		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenuitem-copy");
-		
-		//TODO: change to use ctrlCopy
-//		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
+		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(11, 10);
 		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
@@ -153,11 +136,7 @@ public class SS_040_Test extends ZSSAppTest {
 		int rCol = 7;
 		CellCacheAggeration.Builder builder = getCellCacheAggerationBuilder(tRow, lCol, bRow, rCol);
 		CellCacheAggeration copyFrom = builder.build();
-		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenuitem-copy");
-		
-		//TODO: change to use ctrlCopy
-//		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
+		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(11, 10);
 		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
@@ -178,11 +157,7 @@ public class SS_040_Test extends ZSSAppTest {
 		int rCol = 7;
 		CellCacheAggeration.Builder builder = getCellCacheAggerationBuilder(tRow, lCol, bRow, rCol);
 		CellCacheAggeration copyFrom = builder.build();
-		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenuitem-copy");
-		
-		//TODO: change to use ctrlCopy
-//		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
+		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(11, 10);
 		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
@@ -203,20 +178,16 @@ public class SS_040_Test extends ZSSAppTest {
 		int rCol = 7;
 		CellCacheAggeration.Builder builder = getCellCacheAggerationBuilder(tRow, lCol, bRow, rCol);
 		CellCacheAggeration copyFrom = builder.build();
-		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenuitem-copy");
-		
-		//TODO: change to use ctrlCopy
-//	keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
+		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(11, 10);
 		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
 		
-		jq("$valueWithNumFmt input").getWebElement().click();
+		jq("$fmt input").getWebElement().click();
 		click("$_pasteSpecialDialog $okBtn");
 		
 		CellCacheAggeration pasteTo = builder.offset(11, 10).build();
-		copyFrom.merge(pasteTo, CellCache.Field.TEXT, CellCache.Field.EDIT);
+		copyFrom.merge(pasteTo, CellCache.Field.CELL_TYPE, CellCache.Field.TEXT, CellCache.Field.EDIT);
 		Assert.assertEquals(copyFrom, pasteTo);	
 	}
 	
@@ -234,11 +205,7 @@ public class SS_040_Test extends ZSSAppTest {
 		int lCol = 10;
 		int bRow = 9;
 		int rCol = 10;
-		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenuitem-copy");
-		
-		//TODO: change to use ctrlCopy
-//		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
+		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(5, 11);
 		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");

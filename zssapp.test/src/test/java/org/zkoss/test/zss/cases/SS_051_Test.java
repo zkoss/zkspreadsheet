@@ -34,7 +34,7 @@ import com.google.inject.name.Names;
  * @author sam
  *
  */
-public class SS_239_Test {
+public class SS_051_Test {
 	
 	public static class ValidationEnvironment extends TestingEnvironment{
 		protected void configure() {
