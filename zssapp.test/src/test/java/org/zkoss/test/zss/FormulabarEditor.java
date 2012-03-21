@@ -21,6 +21,8 @@ import org.zkoss.test.ConditionalTimeBlocker;
 import org.zkoss.test.JQueryFactory;
 import org.zkoss.test.Widget;
 
+import com.google.inject.Inject;
+
 /**
  * @author sam
  *
@@ -31,7 +33,8 @@ public class FormulabarEditor extends Widget {
 	 * @param widgetId
 	 * @param webDriver
 	 */
-	/*package*/ FormulabarEditor(String widgetScript, JQueryFactory jqFactory, ConditionalTimeBlocker timeBlocker, WebDriver webDriver) {
-		super(widgetScript, jqFactory, timeBlocker, webDriver);
+	@Inject
+	/*package*/ FormulabarEditor(SheetCtrl sheet, JQueryFactory jqFactory, ConditionalTimeBlocker timeBlocker, WebDriver webDriver) {
+		super(sheet.widgetScript() + ".formulabarEditor", jqFactory, timeBlocker, webDriver);
 	}
 }

@@ -80,7 +80,8 @@ public class SS_239_Test {
 		Assert.assertTrue(buttons.first().isVisible());
 		
 		spreadsheet.focus(25, 3);
-		Assert.assertEquals(25, buttons.length());
+		buttons = spreadsheet.getRow(25).jq$n().children(".zsdropdown");
+		Assert.assertEquals(1, buttons.length());
 		Assert.assertTrue(buttons.first().isVisible());
 	}
 }

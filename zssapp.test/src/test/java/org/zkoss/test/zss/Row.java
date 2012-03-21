@@ -32,8 +32,8 @@ public class Row extends Widget {
 		super(widgetScript, jqFactory, au, webDriver);
 	}
 
-	public Cell getCell(int col) {
-		String script = widgetScript() + ".getCell(" + col + ")";
-		return new Cell(script, jqFactory, timeBlocker, webDriver);
-	}
+//	public Cell getCell(int col) {
+//		String script = widgetScript() + ".getCell(" + col + ")";
+//		return new Cell(script, jqFactory, timeBlocker, webDriver);
+//	}
 }

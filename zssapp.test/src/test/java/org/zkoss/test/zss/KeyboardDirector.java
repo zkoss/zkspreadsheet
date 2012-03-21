@@ -16,13 +16,20 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.test.zss;
 
+import java.util.Iterator;
+
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.Mouse;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.zkoss.test.CompundKey;
 import org.zkoss.test.ConditionalTimeBlocker;
 import org.zkoss.test.JQuery;
 import org.zkoss.test.JavascriptActions;
+import org.zkoss.test.MouseButton;
 
+import com.google.common.collect.Iterators;
 import com.google.inject.Inject;
 
 /**
@@ -47,27 +54,52 @@ public class KeyboardDirector {
 	public void sendKeys(int row, int col, CharSequence keys) {
 		spreadsheet.focus(row, col);
 		
-		//TODO: this assume spreadsheet on focus mode, need to deal with editing mode ?
-		final CharSequence first = keys.subSequence(0, 1);
-		WebElement webElement = spreadsheet.jq$focus().getWebElement();
-		webElement.sendKeys(first);
-		timeBlocker.waitResponse();
-
+		//TODO: test selenium: shall not lost input char
 		if (keys.length() > 1) {
-			final CharSequence rest = keys.subSequence(1, keys.length());
+			final CharSequence first = keys.subSequence(0, 1);
+			WebElement webElement = spreadsheet.jq$focus().getWebElement();
+			webElement.sendKeys(first);
+			timeBlocker.waitResponse();
+			
+			try {
+				final CharSequence rest = keys.subSequence(1, keys.length());
 
-			webElement = spreadsheet.getInlineEditor().getWebElement();
-			webElement.sendKeys(rest);
+				webElement = spreadsheet.getInlineEditor().getWebElement();
+				webElement.sendKeys(rest);
+				timeBlocker.waitResponse();	
+			} catch (ElementNotVisibleException ex) {
+				//if protect sheet, cannot edit, will throw ElementNotVisibleException
+			}
+		} else {
+			WebElement webElement = spreadsheet.jq$focus().getWebElement();
+			webElement.sendKeys(keys);
 			timeBlocker.waitResponse();
 		}
 	}
 	
+	public void setEditText(int tRow, int lCol, int bRow, int rCol, String[] texts) {
+		Iterator<String> t = Iterators.cycle(texts);
+		
+		for (int r = tRow; r <= bRow; r++) {
+			for (int c = lCol; c <= rCol; c++) {
+				String txt = t.next();
+				setEditText(r, c, txt);
+			}
+		}
+	}
+	
 	public void setEditText(int row, int col, CharSequence keys) {
-
+		//TODO: not always work correctly, fix it.
 		sendKeys(row, col, keys);
-		spreadsheet.getInlineEditor().jq$n().getWebElement().sendKeys(Keys.ENTER);
+		
+		try {
+			spreadsheet.getInlineEditor().jq$n().getWebElement().sendKeys(Keys.ENTER);
+		} catch (ElementNotVisibleException ex) {
+			//protect sheet will cause ElementNotVisibleException ex
+		}
 //		new JavascriptActions(webDriver).enter(spreadsheet.getInlineEditor().jq$n()).perform();
 		
+//		timeBlocker.waitUntil(1);
 		timeBlocker.waitResponse();
 	}
 	
@@ -92,5 +124,21 @@ public class KeyboardDirector {
 		JQuery target = spreadsheet.jq$n();
 		new JavascriptActions(webDriver).delete(target).perform();
 		timeBlocker.waitResponse();
+	}
+
+	public void ctrlCopy(int tRow, int lCol, int bRow, int rCol) {
+		spreadsheet.setSelection(tRow, lCol, bRow, rCol);
+		new JavascriptActions(webDriver).ctrlCopy(spreadsheet.jq$n()).perform();
+		timeBlocker.waitResponse();
+	}
+
+	public void shiftSelect(int tRow, int lCol, int bRow, int rCol) {
+		spreadsheet.focus(tRow, lCol);
+		
+		JQuery target = spreadsheet.getCell(bRow, rCol).jq$n();
+		new JavascriptActions(webDriver)
+		.mouseDown(target, MouseButton.LEFT, CompundKey.SHIFT)
+		.mouseUp(target, MouseButton.LEFT, CompundKey.SHIFT)
+		.perform();
 	}
 }

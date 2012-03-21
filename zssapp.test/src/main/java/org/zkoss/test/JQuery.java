@@ -147,6 +147,26 @@ public class JQuery {
 	public JQuery first() {
 		return jqFactory.create(out.toString().replace("return ", "") + ".first()");
 	}
+	
+	public JQuery eq(int index) {
+		return jqFactory.create(out.toString().replace("return ", "") + ".eq(" + index + ")");
+	}
+	
+	public String attr(String attributeName) {
+		return (String) javascriptExecutor.executeScript(out.toString() + ".attr('" + attributeName + "')");
+	}
+	
+	public boolean hasClass(String className) {
+		return (Boolean) javascriptExecutor.executeScript(out.toString() + ".hasClass('" + className + "')");
+	}
+	
+	public String val() {
+		return (String) javascriptExecutor.executeScript(out.toString() + ".val()");
+	}
+	
+	public String text() {
+		return (String) javascriptExecutor.executeScript(out.toString() + ".text()");
+	}
 //	
 //	public JQuery last() {
 //		return new JQuery(out, ".last()", au, webDriver);

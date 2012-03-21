@@ -21,6 +21,8 @@ import org.zkoss.test.ConditionalTimeBlocker;
 import org.zkoss.test.JQueryFactory;
 import org.zkoss.test.Widget;
 
+import com.google.inject.Inject;
+
 
 /**
  * @author sam
@@ -28,9 +30,10 @@ import org.zkoss.test.Widget;
  */
 public class MainBlock extends Widget {
 
-	/*package*/ MainBlock(String widgetScript, JQueryFactory jqFactory,
+	@Inject
+	/*package*/ MainBlock(SheetCtrl sheet, JQueryFactory jqFactory,
 			ConditionalTimeBlocker au, WebDriver webDriver) {
-		super(widgetScript, jqFactory, au, webDriver);
+		super(sheet.widgetScript() + ".activeBlock", jqFactory, au, webDriver);
 	}
 	
 	public Row getRow(int row) {

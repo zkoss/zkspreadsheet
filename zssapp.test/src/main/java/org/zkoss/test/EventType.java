@@ -21,8 +21,8 @@ package org.zkoss.test;
  *
  */
 public enum EventType {
-	KEYDOWN, KEYUP, MOUSEDOWN, MOUSEUP, MOUSEOVER, MOUSEMOVE, MOUSECLICK, CONTEXTMENU;
-
+	KEYDOWN, KEYUP, MOUSEDOWN, MOUSEUP, MOUSEOVER, MOUSEMOVE, CLICK, CONTEXTMENU;
+	
 	@Override
 	public String toString() {
 		return super.toString().toLowerCase();

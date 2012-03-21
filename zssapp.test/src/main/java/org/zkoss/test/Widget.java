@@ -94,6 +94,10 @@ public abstract class Widget {
 		return jqFactory.create($n());
 	}
 	
+	public JQuery jq$n(String subId) {
+		return jqFactory.create($n(subId));
+	}
+	
 	/**
 	 * Returns the {@link JQuery} selector of the widget
 	 * 
@@ -132,5 +136,10 @@ public abstract class Widget {
 	 */
 	public WebElement getWebElement() {
 		return jq$n().getWebElement();
+	}
+	
+	public boolean isExist() {
+		Boolean exist = (Boolean) javascriptExecutor.executeScript("return " + widgetScript() + " != null");
+		return exist;
 	}
 }

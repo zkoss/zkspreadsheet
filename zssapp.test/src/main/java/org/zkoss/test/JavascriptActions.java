@@ -34,10 +34,6 @@ import com.google.inject.Inject;
  */
 public class JavascriptActions extends Actions {
 
-	public enum CompundKey {
-		CTRL, SHIFT, ALT
-	}
-	
 	final protected WebDriver webDriver;
 	
 	final protected JavascriptExecutor javascriptExecutor;
@@ -155,7 +151,7 @@ public class JavascriptActions extends Actions {
 	}
 	
 	public JavascriptActions mouseClick(JQuery target, MouseButton type, CompundKey...compundKeys) {
-		action.addAction(new ScriptAction(triggerEventScript(target, EventType.MOUSECLICK, -1, type, compundKeys, 0, 0)));
+		action.addAction(new ScriptAction(triggerEventScript(target, EventType.CLICK, -1, type, compundKeys, 0, 0)));
 		return this;
 	}
 	

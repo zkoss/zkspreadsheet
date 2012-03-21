@@ -21,6 +21,8 @@ import org.zkoss.test.ConditionalTimeBlocker;
 import org.zkoss.test.JQueryFactory;
 import org.zkoss.test.Widget;
 
+import com.google.inject.Inject;
+
 /**
  * @author sam
  *
@@ -31,7 +33,8 @@ public class InlineEditor extends Widget {
 	 * @param widgetId
 	 * @param webDriver
 	 */
-	/*package*/ InlineEditor(String widgetScript, JQueryFactory jqFactory, ConditionalTimeBlocker timeBlocker, WebDriver webDriver) {
-		super(widgetScript, jqFactory, timeBlocker, webDriver);
+	@Inject
+	/*package*/ InlineEditor(SheetCtrl sheet, JQueryFactory jqFactory, ConditionalTimeBlocker timeBlocker, WebDriver webDriver) {
+		super(sheet.widgetScript() + ".inlineEditor", jqFactory, timeBlocker, webDriver);
 	}
 }

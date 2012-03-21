@@ -39,13 +39,13 @@ public class SS_237_Test extends ZSSAppTest {
 	 */
 	@Test
 	public void inline_editing_enter() {
-		if (!Strings.isNullOrEmpty(spreadsheet.getCellEdit(12, 5))) {
+		if (!Strings.isNullOrEmpty(getCell(12, 5).getEdit())) {
 			keyboardDirector.delete(12, 5);
-			Assert.assertTrue("Cell text shall be empty", Strings.isNullOrEmpty(spreadsheet.getCellEdit(5, 13)));
+			Assert.assertTrue("Cell text shall be empty", Strings.isNullOrEmpty(getCell(5, 13).getEdit()));
 		}
 		
 		keyboardDirector.setEditText(12, 5, "a"); //setEditText press enter at end
-		Assert.assertTrue("Cell text shall be 'a'", "a".equals(spreadsheet.getCellEdit(12, 5)));
+		Assert.assertTrue("Cell text shall be 'a'", "a".equals(getCell(12, 5).getEdit()));
 	}
 	
 	
@@ -57,12 +57,12 @@ public class SS_237_Test extends ZSSAppTest {
 	@Test
 	public void inline_editing_cancel() {
 		
-		String originalText = spreadsheet.getCellEdit(12, 5);
+		String originalText = getCell(12, 5).getEdit();
 		
 		keyboardDirector.sendKeys(12, 5, "abcdefg");
 		keyboardDirector.esc(spreadsheet.getInlineEditor().jq$n());
 		
-		String text = spreadsheet.getCellEdit(12, 5);
+		String text = getCell(12, 5).getEdit();
 		Assert.assertTrue("Cell text shall not changed", originalText.equals(text));
 	}
 }
