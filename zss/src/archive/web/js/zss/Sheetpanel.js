@@ -24,11 +24,33 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 		
 		var sheet = this.sheet = wgt.sheetCtrl,
 			labels = wgt._labelsCtrl,
-			del = this.deleteSheet = new zul.menu.Menuitem({'label': labels.getDeleteSheet(), 'onClick': this.proxy(this.onClickDeleteSheet)}),
-			rename = this.renameSheet = new zul.menu.Menuitem({'label': labels.getRenameSheet(), 'onClick': this.proxy(this.onClickRenameSheet)}),
-			protect = this.protectSheet = new zul.menu.Menuitem({'label': labels.getProtectSheet(), 'checkmark': true, 'onClick': this.proxy(this.onClickProtectSheet)}),
-			moveLeft = this.moveLeft = new zul.menu.Menuitem({'label': labels.getMoveSheetLeft(), 'onClick': this.proxy(this.onClickMoveSheetLeft)}),
-			moveRight = this.moveRight = new zul.menu.Menuitem({'label': labels.getMoveSheetRight(), 'onClick': this.proxy(this.onClickMoveSheetRight)});
+			del = this.deleteSheet = new zss.Menuitem({
+				$action: 'deleteSheet',
+				label: labels.getDeleteSheet(), 
+				onClick: 
+				this.proxy(this.onClickDeleteSheet)
+			}, wgt),
+			rename = this.renameSheet = new zss.Menuitem({
+				$action: 'renameSheet',
+				label: labels.getRenameSheet(), 
+				onClick: this.proxy(this.onClickRenameSheet)
+			}, wgt),
+			protect = this.protectSheet = new zss.Menuitem({
+				$action: 'protectSheet',
+				label: labels.getProtectSheet(), 
+				checkmark: true, 
+				onClick: this.proxy(this.onClickProtectSheet)
+			}, wgt),
+			moveLeft = this.moveLeft = new zss.Menuitem({
+				$action: 'moveSheetLeft',
+				label: labels.getMoveSheetLeft(), 
+				onClick: this.proxy(this.onClickMoveSheetLeft)
+			}),
+			moveRight = this.moveRight = new zss.Menuitem({
+				$action: 'moveSheetRight',
+				label: labels.getMoveSheetRight(), 
+				onClick: this.proxy(this.onClickMoveSheetRight)
+			}, wgt);
 		
 		this.appendChild(del);
 		this.appendChild(rename);
@@ -106,7 +128,8 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 		this.appendChild(this.textbox = new zul.inp.Textbox({
 			visible: false,
 			onOK: this.proxy(this.onStopEditing),
-			onCancel: this.proxy(this.onCancelEditing)
+			onCancel: this.proxy(this.onCancelEditing),
+			sclass: 'zssheettab-rename-textbox'
 		}));
 	},
 	$define: {
@@ -181,6 +204,9 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 	},
 	getTextNode: function () {
 		return this.$n('text');
+	},
+	getSclass: function () {
+		return 'zssheettab';
 	}
 });
 
@@ -358,7 +384,8 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 		this._wgt = wgt;
 		
 		var menu = new zss.SheetMenupopup(wgt),
-			addSheetBtn = this.addSheetButton = new zul.wgt.Toolbarbutton({
+			addSheetBtn = this.addSheetButton = new zss.Toolbarbutton({
+				$action: 'addSheet',
 				tooltiptext: wgt._labelsCtrl.getAddSheet(),
 				image: zk.ajaxURI('/web/zss/img/plus.png', {au: true}),
 				onClick: this.proxy(this.onClickAddSheet)

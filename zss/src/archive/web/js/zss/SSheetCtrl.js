@@ -444,6 +444,19 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			this.fireProcessOverflow_();
 		}
 	},
+	triggerWrap: function (row, run) {
+		var r = this._wrapRange;
+		if (!r) {
+			r = this._wrapRange = {};//tRow, bRow
+		}
+		var	tRow = r.tRow,
+			bRow = r.bRow;
+		tRow ? r.tRow = Math.min(tRow, row) : r.tRow = row;
+		bRow ? r.bRow = Math.max(bRow, row) : r.bRow = row;
+		if (run) {
+			this.fireProcessWrap_();
+		}
+	},
 	/**
 	 * Fire process cell overflow event
 	 */
@@ -452,6 +465,13 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if (r != undefined) {
 			this.fire('onProcessOverflow', {col: r.col, tRow: r.tRow, bRow: r.bRow});
 			delete this._overflowRange;
+		}
+	},
+	fireProcessWrap_: function () {
+		var r = this._wrapRange;
+		if (r != undefined) {
+			this.fire('onProcessWrap', {tRow: r.tRow, bRow: r.bRow});
+			delete this._wrapRange;
 		}
 	},
 	//TODO: change to fire 'onSelectedSheet' evt
@@ -463,6 +483,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	onContentsChanged: function (evt) {
 		this.fireProcessOverflow_();
+		this.fireProcessWrap_();
 	},
 	addEditorFocus : function(id, name, color){
 		var x = this.focusmarkcmp,
@@ -2729,6 +2750,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			lBlock.addMergeRange(id, left, top, right, bottom);
 		
 		this.moveCellFocus(top, left);		
+	},
+	afterKeyDown_: function (wevt) {
+		var wgt = this._wgt; 
+		wevt.target = wgt; //mimic as keydown directly sent to wgt
+		return wgt.afterKeyDown_(wevt, true);
 	},
 	redraw: function (out) {
 		var wgt = this._wgt,

@@ -289,7 +289,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.cellType = cellType;
 		
 		//merged cell won't change row height automatically
-		if (this.cellType == STR_CELL && this.merid && processWrap) {//must process wrap after set text
+		if (this.cellType == STR_CELL && !this.merid && processWrap) {//must process wrap after set text
 			this.parent.processWrapCell(this, true);
 		}
 	},
@@ -429,6 +429,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		return this.$n('real');
 	},
 	_clearOverflow: function () {
+		jq(this.getTextNode()).css('width', '');//clear overflow
 		jq(this.$n()).removeClass("zscell-over").removeClass("zscell-over-b");
 	},
 	_processOverflow: function (fromEvt) {

@@ -1246,6 +1246,14 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	},
 	afterKeyDown_: function (evt) {
 		if (this.sheetCtrl.state != zss.SSheetCtrl.EDITING) {
+			var data = evt.data,
+				sel = this.sheetCtrl.getLastSelection();
+			if (sel) {
+				data.tRow = sel.top;
+				data.lCol = sel.left;
+				data.bRow = sel.bottom;
+				data.rCol = sel.right;
+			}
 			this.$supers('afterKeyDown_', arguments);
 			//feature #26: Support copy/paste value to local Excel
 			var keyCode = evt.keyCode;

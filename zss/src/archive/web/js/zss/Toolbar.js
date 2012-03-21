@@ -62,11 +62,13 @@ zss.ToolbarTabbox = zk.$extends(zul.tab.Tabbox, {
 		var labels = wgt._labelsCtrl,
 			tbs = new zul.tab.Tabs(),
 			homeTab = new zul.tab.Tab({
-				label: labels.getHomePanel()
+				label: labels.getHomePanel(),
+				sclass: 'zstab-homePanel'
 			}),
 			insertTab = new zul.tab.Tab({
 				label: labels.getInsertPanel(),
-				onClick: this.proxy(this.onClickInsertTab)
+				onClick: this.proxy(this.onClickInsertTab),
+				sclass: 'zstab-insertPanel'
 			}),
 			//TODO: formulaTab = new zul.tab.Tab({
 			//	label: labels.getFormulaPanel(),

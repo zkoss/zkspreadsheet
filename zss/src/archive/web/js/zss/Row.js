@@ -50,6 +50,7 @@ zss.Row = zk.$extends(zk.Widget, {
 				sheet.addSSInitLater(function () {
 					sf._updateWrapRowHeight();
 				});
+			this._listenProcessWrap(true);
 		}
 		if (zk.ie6_) {
 			this.sheet.listen({onRowHeightChanged: this.proxy(this._onRowHeightChanged)});
@@ -63,8 +64,23 @@ zss.Row = zk.$extends(zk.Widget, {
 		this.r = this.zsh = null;
 		this.$supers(zss.Row, 'unbind_', arguments);
 	},
+	_listenProcessWrap: function (b) {
+		var curr = !!this._processWrap;
+		if (curr != b) {
+			this.sheet[b ? 'listen' : 'unlisten']({onProcessWrap: this.proxy(this._onProcessWrap)});
+			this._processWrap = b;
+		}
+	},
+	_onProcessWrap: function (evt) {
+		var d = evt.data,
+			r = this.r,
+			tRow = d.tRow,
+			bRow = d.bRow;
+		if (tRow && bRow && r >= tRow && r <= bRow) {
+			this._updateWrapRowHeight();
+		}
+	},
 	_updateWrapRowHeight: function () {
-		var start = jq.now();
 		var row = this.r,
 			custRowHeight = this.sheet.custRowHeight,
 			meta = custRowHeight.getMeta(row),
@@ -120,11 +136,18 @@ zss.Row = zk.$extends(zk.Widget, {
 					this._updateWrapRowHeight();
 			} else {
 				if (wrapedCells.$remove(cell)) {
-					if (!ignoreUpdateNow) {
+					//if there's no wrap cell to process, shall restore row height by invoke updateWrapRowHeight
+					if (!ignoreUpdateNow ||
+						!wrapedCells.length) {
 						this._updateWrapRowHeight();
 					}
 				}
 			}
+			
+			var size = wrapedCells.length;
+			this._listenProcessWrap(size);
+			if (ignoreUpdateNow) //process wrap on sheet onContentChange
+				this.sheet.triggerWrap(this.r);
 		} 
 	},
 	//IE6 only

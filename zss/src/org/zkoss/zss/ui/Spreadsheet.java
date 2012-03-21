@@ -778,19 +778,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 	private void updateSheetAttributes(boolean cacheInClient) {
 		Worksheet sheet = _selectedSheet;
 		
-		boolean updateCSS = false;
-		//force Chrome update CSS
-		boolean isSafari = Executions.getCurrent().isSafari();
-		if (isSafari) {
-			updateCSS = true;
-			String css = getDynamicMediaURI(this, _cssVersion++, "ss_" + this.getUuid() + "_" + getSelectedSheetId(), "css");
-			smartUpdate("scss", css);
-		}
+		smartUpdate("scss", getDynamicMediaURI(this, _cssVersion++, "ss_" + this.getUuid() + "_" + getSelectedSheetId(), "css"));
 		if (!cacheInClient)	{
-			if (!updateCSS) {
-				String css = getDynamicMediaURI(this, _cssVersion++, "ss_" + this.getUuid() + "_" + getSelectedSheetId(), "css");
-				smartUpdate("scss", css);	
-			}
 			
 			smartUpdate("rowFreeze", getRowfreeze());
 			smartUpdate("columnFreeze", getColumnfreeze());
@@ -3909,7 +3898,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 			if (bExtRequired && format != null)
 				sb.append('.').append(format);
 		}
-		
+
 		return desktop.getDynamicMediaURI(comp, sb.toString()); // already
 		// encoded
 	}

@@ -125,7 +125,10 @@ zss.FontSizeCombobox = zk.$extends(zul.inp.Combobox, {
 			            '18', '20', '22', '24', '26', '28', 
 			            '36', '48', '72'];
 			for (var i = 0, len = size.length; i < len; i++) {
-				this.appendChild(new zul.inp.Comboitem({label: size[i]}));
+				this.appendChild(new zul.inp.Comboitem({
+					label: size[i],
+					sclass: 'zsfontsize-' + size[i]
+				}));
 			}
 		}
 		this.$supers(zss.FontSizeCombobox, '_doBtnClick', arguments);
@@ -324,13 +327,13 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 			if (src) {
 				this.setImage(src);
 			}
-			$n.removeClass(this.getSclass() + '-seld');
+			$n.removeClass(this._getSclass() + '-seld');
 		}
 		
 		if (seld) {
-			$n.addClass(this.getSclass() + '-seld');	
+			$n.addClass(this._getSclass() + '-seld');	
 		} else {
-			$n.removeClass(this.getSclass() + '-seld');
+			$n.removeClass(this._getSclass() + '-seld');
 		}
 	},
 	bind_: function () {
@@ -339,7 +342,7 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 		if (cave) { //contains menupopup, expand button width
 			var disd = this.isClickDisabled(),
 				seld = this._seldImage,
-				scls = this.getSclass(),
+				scls = this._getSclass(),
 				$n = jq(this.$n()),
 				cnt = cave.parentNode,
 				$cv = jq(cave),
@@ -379,7 +382,7 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 			taget = evt.domTarget;
 		if (cv) {
 			if (jq.isAncestor(cv, taget)) {
-				jq(cv).addClass(this.getSclass() + '-cave-over');
+				jq(cv).addClass(this._getSclass() + '-cave-over');
 			}	
 		}
 		this.$supers(zss.Toolbarbutton, 'doMouseOver_', arguments);
@@ -387,7 +390,7 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 	doMouseOut_: function (evt) {
 		var cv = this.$n('cave');
 		if (cv) {
-			jq(cv).removeClass(this.getSclass() + '-cave-over');
+			jq(cv).removeClass(this._getSclass() + '-cave-over');
 		}
 		this.$supers(zss.Toolbarbutton, 'doMouseOut_', arguments);
 	},
@@ -395,7 +398,7 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 		var cnt = this.$supers(zss.Toolbarbutton, 'domContent_', arguments);
 		if (this.getPopup()) {
 			var uid = this.uuid,
-				scls = this.getSclass();
+				scls = this._getSclass();
 			return '<div id="' + uid + '-real" class="' + scls + '-real">' + 
 				cnt + '</div><div id="' + uid + '-cave" class="' + 
 				scls +'-cave"><div class="' + scls +'-arrow"></div></div>';
@@ -403,17 +406,20 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 			return cnt;
 		}
 	},
-	getSclass: function () {
+	_getSclass: function () {
 		return 'zstbtn';
+	},
+	getSclass: function () {
+		return 'zstbtn-' + this.get$action() + ' ' + this._getSclass();
 	}
 }, {
 	_rmActive: function (wgt) {
 		var n = wgt.$n(),
 			cv = wgt.$n('cave');
 		if (cv) {
-			jq(cv).removeClass(wgt.getSclass() + '-cave-over');
+			jq(cv).removeClass(wgt._getSclass() + '-cave-over');
 		}
-		jq(n).removeClass(wgt.getZclass() + '-over');
+		jq(n).removeClass(wgt._getSclass() + '-over');
 	}
 });
 zk.copy(zss.Toolbarbutton.prototype, AbstractButtonHandler);
@@ -497,7 +503,7 @@ zss.CheckableToolbarButton = zk.$extends(zul.wgt.Toolbarbutton, {
 			this.getCheckImage() +') no-repeat transparent;"></div>' + this.$supers(zul.wgt.Toolbarbutton, 'domContent_', arguments);
 	},
 	getSclass: function () {
-		return 'zschktbtn';
+		return 'zschktbtn-' + this.get$action() + ' zschktbtn';
 	}
 });
 zk.copy(zss.CheckableToolbarButton.prototype, AbstractButtonHandler);
@@ -634,8 +640,8 @@ if (zk.feature.pe) {
 				var uid = this.uuid,
 					cnt = this.$supers(zss.Colorbutton, 'domContent_', arguments),
 					color = this.getColor();
-				return cnt + '<div id="' + uid + '-color" class="' + this.getSclass() + 
-					'-color" style="background:' + this.getColor() + ';"></div><div id="' + uid + '-pp" style="display:none;" class="z-colorbtn-pp">' +
+				return cnt + '<div id="' + uid + '-color" class="zstbtn-color" style="background:' 
+					+ this.getColor() + ';"></div><div id="' + uid + '-pp" style="display:none;" class="z-colorbtn-pp">' +
 					'<div id="' + uid + '-palette-btn" class="z-colorbtn-palette-btn"></div><div id="' + 
 					uid + '-picker-btn" class="z-colorbtn-picker-btn"></div></div>';//Note. use Colorbox's "z-colorbtn-pp"
 			}
@@ -801,11 +807,16 @@ zss.Menu = zk.$extends(zul.menu.Menu, {
 		this.color = evt.data.color;
 	},
 	getSclass: function () {
-		return zk.feature.pe && this.getContent() ? 'zscolormenu' : '';
+		return zk.feature.pe && this.getContent() ? 
+				'zscolormenu' : 'zsmenu-' + this._sclass;
 	}
 });
 
 zss.Menuitem = zk.$extends(zul.menu.Menuitem, {
+	$init: function (props, wgt) {
+		this.$supers(zss.Menuitem, '$init', [props]);
+		this._wgt = wgt;
+	},
 	$define: {
 		/**
 		 * Represent button's action at server side
@@ -813,13 +824,20 @@ zss.Menuitem = zk.$extends(zul.menu.Menuitem, {
 		$action: null,
 	},
 	setDisabled: function (actions) {
-		var d = this.isDisabled();
-		if (actions.$contains(this.get$action())) {
-			if (!d)
-				this.$supers(zss.Menuitem, 'setDisabled', [true]);
-		} else if (d) {//clear disabled
-			this.$supers(zss.Menuitem, 'setDisabled', [false]);
+		if (jq.isArray(actions)) {
+			var d = this.isDisabled();
+			if (actions.$contains(this.get$action())) {
+				if (!d)
+					this.$supers(zss.Menuitem, 'setDisabled', [true]);
+			} else if (d) {//clear disabled
+				this.$supers(zss.Menuitem, 'setDisabled', [false]);
+			}	
+		} else {
+			this.$supers(zss.Menuitem, 'setDisabled', arguments);
 		}
+	},
+	getSclass: function () {
+		return 'zsmenuitem-' + this.get$action();
 	}
 });
 zk.copy(zss.Menuitem.prototype, AbstractPopupHandler);
@@ -1040,7 +1058,8 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 		var wgt = this._wgt,
 			p = new zss.Menupopup(),
 			insertCellMenu = new zss.Menu({
-				label: wgt._labelsCtrl.getInsertCell()
+				label: wgt._labelsCtrl.getInsertCell(),
+				sclass: 'insertCell'
 			}),
 			insertCellMP = new zss.Menupopup();
 		
@@ -1057,7 +1076,8 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 		var wgt = this._wgt,
 			p = new zss.Menupopup(),
 			deleteCellMenu = new zss.Menu({
-				label: wgt._labelsCtrl.getDeleteCell()
+				label: wgt._labelsCtrl.getDeleteCell(),
+				sclass: 'deleteCell'
 			}),
 			deleteCellMP = new zss.Menupopup();
 		deleteCellMP.appendChild(newActionMenuitem(wgt, 'shiftCellLeft'));
@@ -1190,19 +1210,23 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 		var wgt = this._wgt,
 			p = new zss.Menupopup(wgt),
 			insertMenu = new zss.Menu({
-				label: wgt._labelsCtrl.getInsert()
+				label: wgt._labelsCtrl.getInsert(),
+				sclass: 'insert'
 			}),
 			insertMP = new zss.Menupopup(),
 			deleteMenu = new zss.Menu({
-				label: wgt._labelsCtrl.getDel()
+				label: wgt._labelsCtrl.getDel(),
+				sclass: 'del'
 			}),
 			deleteMP = new zss.Menupopup(),
 			filterMenu = new zss.Menu({
-				label: wgt._labelsCtrl.getFilter()
+				label: wgt._labelsCtrl.getFilter(),
+				sclass: 'filter'
 			}),
 			filterMP = new zss.Menupopup(),
 			sortMenu = new zss.Menu({
-				label: wgt._labelsCtrl.getSort()
+				label: wgt._labelsCtrl.getSort(),
+				sclass: 'sort'
 			}),
 			sortMP = new zss.Menupopup();
 		p.appendChild(newActionMenuitem(wgt, 'cut'));
@@ -1240,6 +1264,7 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 		p.appendChild(sortMenu);
 		p.appendChild(new zul.menu.Menuseparator());
 		
+		p.appendChild(newActionMenuitem(wgt, 'formatCell'));
 		p.appendChild(newActionMenuitem(wgt, 'hyperlink'));
 		return p;
 	},
@@ -1377,18 +1402,22 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	},
 	fontBold: function () {
 		var wgt = this._wgt,
-			b = newActionToolbarbutton(wgt, 'fontBold', '/web/zss/img/edit-bold.png');
-		
-		b.listen({onBind: function () {
-			var sheet = wgt.sheetCtrl;
-			if (sheet) {
-				sheet.listen({onCellSelection: function (evt) {
+			b = newActionToolbarbutton(wgt, 'fontBold', '/web/zss/img/edit-bold.png'),
+			fn = function (evt) {
+				var sheet = wgt.sheetCtrl;
+				if (sheet) {
 					var d = evt.data,
 						c = sheet.getCell(d.top, d.left);
 					if (c) {
 						b.setSelectedEffect(c.isFontBold());
-					}
-				}});
+					}	
+				}
+			};
+		
+		b.listen({onBind: function () {
+			var sheet = wgt.sheetCtrl;
+			if (sheet) {
+				sheet.listen({onCellSelection: fn});
 			}
 		}});
 		b.listen({onClick: function () {
@@ -1401,18 +1430,22 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	},
 	fontItalic: function () {
 		var wgt = this._wgt,
-			b = newActionToolbarbutton(this._wgt, 'fontItalic', '/web/zss/img/edit-italic.png');
-		
-		b.listen({onBind: function () {
-			var sheet = wgt.sheetCtrl;
-			if (sheet) {
-				sheet.listen({onCellSelection: function (evt) {
+			b = newActionToolbarbutton(this._wgt, 'fontItalic', '/web/zss/img/edit-italic.png'),
+			fn = function (evt) {
+				var sheet = wgt.sheetCtrl;
+				if (sheet) {
 					var d = evt.data,
 						c = sheet.getCell(d.top, d.left);
 					if (c) {
 						b.setSelectedEffect(c.isFontItalic());
-					}
-				}});
+					}	
+				}
+			};
+		
+		b.listen({onBind: function () {
+			var sheet = wgt.sheetCtrl;
+			if (sheet) {
+				sheet.listen({onCellSelection: fn});
 			}
 		}});
 		b.listen({onClick: function () {
@@ -1425,18 +1458,22 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	},
 	fontUnderline: function () {
 		var wgt = this._wgt,
-			b = newActionToolbarbutton(this._wgt, 'fontUnderline', '/web/zss/img/edit-underline.png');
-		
-		b.listen({onBind: function () {
-			var sheet = wgt.sheetCtrl;
-			if (sheet) {
-				sheet.listen({onCellSelection: function (evt) {
+			b = newActionToolbarbutton(this._wgt, 'fontUnderline', '/web/zss/img/edit-underline.png'),
+			fn = function (evt) {
+				var sheet = wgt.sheetCtrl;
+				if (sheet) {
 					var d = evt.data,
 						c = sheet.getCell(d.top, d.left);
 					if (c) {
 						b.setSelectedEffect(c.isFontUnderline());
 					}
-				}});
+				}
+			};
+		
+		b.listen({onBind: function () {
+			var sheet = wgt.sheetCtrl;
+			if (sheet) {
+				sheet.listen({onCellSelection: fn});
 			}
 		}});
 		b.listen({onClick: function () {
@@ -1448,18 +1485,22 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	},
 	fontStrike: function () {
 		var wgt = this._wgt,
-			b = newActionToolbarbutton(this._wgt, 'fontStrike', '/web/zss/img/edit-strike.png');
-		
-		b.listen({onBind: function () {
-			var sheet = wgt.sheetCtrl;
-			if (sheet) {
-				sheet.listen({onCellSelection: function (evt) {
+			b = newActionToolbarbutton(this._wgt, 'fontStrike', '/web/zss/img/edit-strike.png'),
+			fn = function (evt) {
+				var sheet = wgt.sheetCtrl;
+				if (sheet) {
 					var d = evt.data,
 						c = sheet.getCell(d.top, d.left);
 					if (c) {
 						b.setSelectedEffect(c.isFontStrikeout());
 					}
-				}});
+				}
+			};
+		
+		b.listen({onBind: function () {
+			var sheet = wgt.sheetCtrl;
+			if (sheet) {
+				sheet.listen({onCellSelection: fn});
 			}
 		}});
 		b.listen({onClick: function () {
@@ -1515,12 +1556,10 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'verticalAlign', '/web/zss/img/edit-vertical-alignment-top.png'),
 			p = new zss.MenupopupFactory(wgt).verticalAlign(),
-			item = p.firstChild;
-		
-		b.listen({onBind: function () {
-			var sheet = wgt.sheetCtrl;
-			if (sheet) {
-				sheet.listen({onCellSelection: function (evt) {
+			item = p.firstChild,
+			fn = function (evt) {
+				var sheet = wgt.sheetCtrl;
+				if (sheet) {
 					var d = evt.data,
 						c = sheet.getCell(d.top, d.left);
 					if (c) {
@@ -1532,8 +1571,14 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 								break;
 							}
 						}
-					}
-				}});
+					}	
+				}
+			};
+		
+		b.listen({onBind: function () {
+			var sheet = wgt.sheetCtrl;
+			if (sheet) {
+				sheet.listen({onCellSelection: fn});
 			}
 		}});
 		for (;item; item = item.nextSibling) {
@@ -1552,12 +1597,10 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'horizontalAlign', '/web/zss/img/edit-alignment.png'),
 			p = new zss.MenupopupFactory(wgt).horizontalAlign(),
-			item = p.firstChild;
-		
-		b.listen({onBind: function () {
-			var sheet = wgt.sheetCtrl;
-			if (sheet) {
-				sheet.listen({onCellSelection: function (evt) {
+			item = p.firstChild,
+			fn = function (evt) {
+				var sheet = wgt.sheetCtrl;
+				if (sheet) {
 					var d = evt.data,
 						c = sheet.getCell(d.top, d.left);
 					if (c) {
@@ -1569,8 +1612,14 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 								break;
 							}
 						}
-					}
-				}});
+					}	
+				}
+			};
+		
+		b.listen({onBind: function () {
+			var sheet = wgt.sheetCtrl;
+			if (sheet) {
+				sheet.listen({onCellSelection: fn});
 			}
 		}});
 		for (;item; item = item.nextSibling) {
@@ -1586,7 +1635,25 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		return b;
 	},
 	wrapText: function () {
-		return newActionToolbarbutton(this._wgt, 'wrapText', '/web/zss/img/edit-wrap.png');
+		var wgt = this._wgt,
+			b = newActionToolbarbutton(wgt, 'wrapText', '/web/zss/img/edit-wrap.png'),
+			fn = function (evt) {
+				var sheet = wgt.sheetCtrl;
+				if (sheet) {
+					var d = evt.data,
+						c = sheet.getCell(d.top, d.left);
+					if (c) {
+						b.setSelectedEffect(c.wrap);
+					}	
+				}
+			};
+		b.listen({onBind: function () {
+			var sheet = wgt.sheetCtrl;
+			if (sheet) {
+				sheet.listen({onCellSelection: fn});
+			}
+		}});
+		return b;
 	},
 	mergeAndCenter: function () {
 		var wgt = this._wgt,
@@ -1598,12 +1665,14 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'insert', '/web/zss/img/document-insert.png');
 		b.setPopup(new zss.MenupopupFactory(wgt).insert());
+		b.setClickDisabled(true);
 		return b;
 	},
 	del: function () {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'del', '/web/zss/img/document-hf-delete-footer.png');
 		b.setPopup(new zss.MenupopupFactory(wgt).del());
+		b.setClickDisabled(true);
 		return b;
 	},
 	format: function () {
@@ -1673,6 +1742,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		var wgt = this._wgt,
 			b = newActionToolbarbutton(wgt, 'sortAndFilter', '/web/zss/img/sort-filter.png');
 		b.setPopup(new zss.MenupopupFactory(wgt).sortAndFilter());
+		b.setClickDisabled(true);
 		return b;
 	},
 	autoSum: function () {

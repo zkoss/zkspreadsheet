@@ -26,6 +26,7 @@ import org.zkoss.zss.ui.au.in.CellFocusedCommand;
 import org.zkoss.zss.ui.au.in.CellMouseCommand;
 import org.zkoss.zss.ui.au.in.CellSelectionCommand;
 import org.zkoss.zss.ui.au.in.Command;
+import org.zkoss.zss.ui.au.in.CtrlKeyCommand;
 import org.zkoss.zss.ui.au.in.EditboxEditingCommand;
 import org.zkoss.zss.ui.au.in.FetchActiveRangeCommand;
 import org.zkoss.zss.ui.au.in.FilterCommand;
@@ -62,6 +63,7 @@ import org.zkoss.zss.ui.au.in.WidgetCtrlKeyCommand;
 	static final String ON_ZSS_START_EDITING = org.zkoss.zss.ui.event.Events.ON_START_EDITING;
 	static final String ON_ZSS_STOP_EDITING = org.zkoss.zss.ui.event.Events.ON_STOP_EDITING;
 	static final String ON_ZSS_SYNC_BLOCK = "onZSSSyncBlock";
+	static final String ON_ZSS_CTRL_KEY = org.zkoss.zk.ui.event.Events.ON_CTRL_KEY;
 	
 	static final Map<String, Command> CMDS;
 	static{
@@ -83,6 +85,7 @@ import org.zkoss.zss.ui.au.in.WidgetCtrlKeyCommand;
 		CMDS.put(ON_ZSS_START_EDITING, new StartEditingCommand());
 		CMDS.put(ON_ZSS_STOP_EDITING, new StopEditingCommand());
 		CMDS.put(ON_ZSS_SYNC_BLOCK, new BlockSyncCommand());
+		CMDS.put(ON_ZSS_CTRL_KEY, new CtrlKeyCommand());
 	}
 	/**
 	 * 

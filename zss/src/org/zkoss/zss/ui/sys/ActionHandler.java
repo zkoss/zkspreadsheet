@@ -325,37 +325,49 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doHideRow(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(), selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-		.getRows()
-		.setHidden(true);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+			.getRows()
+			.setHidden(true);
+		}
 	}
 	/**
 	 * @param selection
 	 */
 	public void doUnhideRow(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(), selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-		.getRows()
-		.setHidden(false);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+			.getRows()
+			.setHidden(false);	
+		}
 	}
 	/**
 	 * @param selection
 	 */
 	public void doUnhideColumn(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(), selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-		.getColumns()
-		.setHidden(false);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+			.getColumns()
+			.setHidden(false);	
+		}
 	}
 	/**
 	 * @param selection
 	 */
 	public void doHideColumn(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(), selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-		.getColumns()
-		.setHidden(true);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+			.getColumns()
+			.setHidden(true);	
+		}
 	}
 	/**
 	 * @param selection
@@ -418,31 +430,37 @@ public abstract class ActionHandler {
 	}
 	
 	protected void setVerticalAlign(final short alignment, Rect selection) {
-		Utils.visitCells(_spreadsheet.getSelectedSheet(), selection, new CellVisitor(){
-			@Override
-			public void handle(CellVisitorContext context) {
-				final short srcAlign = context.getVerticalAlignment();
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.visitCells(sheet, selection, new CellVisitor(){
+				@Override
+				public void handle(CellVisitorContext context) {
+					final short srcAlign = context.getVerticalAlignment();
 
-				if (srcAlign != alignment) {
-					CellStyle newStyle = context.cloneCellStyle();
-					newStyle.setVerticalAlignment(alignment);
-					context.getRange().setStyle(newStyle);
-				}
-			}});
+					if (srcAlign != alignment) {
+						CellStyle newStyle = context.cloneCellStyle();
+						newStyle.setVerticalAlignment(alignment);
+						context.getRange().setStyle(newStyle);
+					}
+				}});
+		}
 	}
 	
 	protected void setHorizontalAlign(final short alignment, Rect selection) {
-		Utils.visitCells(_spreadsheet.getSelectedSheet(), selection, new CellVisitor(){
-			@Override
-			public void handle(CellVisitorContext context) {
-				final short srcAlign = context.getAlignment();
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.visitCells(sheet, selection, new CellVisitor(){
+				@Override
+				public void handle(CellVisitorContext context) {
+					final short srcAlign = context.getAlignment();
 
-				if (srcAlign != alignment) {
-					CellStyle newStyle = context.cloneCellStyle();
-					newStyle.setAlignment(alignment);
-					context.getRange().setStyle(newStyle);
-				}
-			}});
+					if (srcAlign != alignment) {
+						CellStyle newStyle = context.cloneCellStyle();
+						newStyle.setAlignment(alignment);
+						context.getRange().setStyle(newStyle);
+					}
+				}});
+		}
 	}
 	
 	protected Rect getSelection(Map data) {
@@ -513,7 +531,6 @@ public abstract class ActionHandler {
 			}
 		});
 		
-		//TODO: test
 		Upload upload = new Upload();
 		upload.appendChild(_insertPicture = new Uploader());
 		_insertPicture.setId(Action.INSERT_PICTURE.toString());
@@ -601,7 +618,7 @@ public abstract class ActionHandler {
 	 */
 	public void doCopy(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null) {
+		if (sheet != null && validSelection(selection)) {
 			_clipboard = new Clipboard(Clipboard.Type.COPY, selection, sheet, _spreadsheet.getBook());
 			_spreadsheet.setHighlight(selection);
 		}
@@ -654,11 +671,16 @@ public abstract class ActionHandler {
 		}
 	}
 	
+	private boolean validSelection(Rect selection) {
+		return selection.getTop() >= 0 && selection.getLeft() >= 0
+			&& selection.getBottom() >= 0 && selection.getRight() >= 0;
+	}
+	
 	/**
 	 * Execute when user click paste 
 	 */
 	public void doPaste(Rect selection) {
-		if (_clipboard != null) {
+		if (_clipboard != null && validSelection(selection)) {
 			doPasteImpl(selection, Range.PASTE_ALL, Range.PASTEOP_NONE, false, false);
 		}
 	}
@@ -668,7 +690,7 @@ public abstract class ActionHandler {
 	 * Execute when user click paste formula
 	 */
 	public void doPasteFormula(Rect selection) {
-		if (_clipboard != null) {
+		if (_clipboard != null && validSelection(selection)) {
 			doPasteImpl(selection, Range.PASTE_FORMULAS, Range.PASTEOP_NONE, false, false);
 		}
 	}
@@ -677,7 +699,7 @@ public abstract class ActionHandler {
 	 *  Execute when user click paste value
 	 */
 	public void doPasteValue(Rect selection) {
-		if (_clipboard != null) {
+		if (_clipboard != null && validSelection(selection)) {
 			doPasteImpl(selection, Range.PASTE_VALUES, Range.PASTEOP_NONE, false, false);
 		}
 	}
@@ -686,7 +708,7 @@ public abstract class ActionHandler {
 	 * Execute when user click paste all except border
 	 */
 	public void doPasteAllExceptBorder(Rect selection) {
-		if (_clipboard != null) {
+		if (_clipboard != null && validSelection(selection)) {
 			doPasteImpl(selection, Range.PASTE_ALL_EXCEPT_BORDERS, Range.PASTEOP_NONE, false, false);
 		}
 	}
@@ -695,7 +717,7 @@ public abstract class ActionHandler {
 	 * Execute when user click paste transpose
 	 */
 	public void doPasteTranspose(Rect selection) {
-		if (_clipboard != null) {
+		if (_clipboard != null && validSelection(selection)) {
 			doPasteImpl(selection, Range.PASTE_ALL, Range.PASTEOP_NONE, false, true);
 		}
 	}
@@ -710,7 +732,7 @@ public abstract class ActionHandler {
 	 */
 	public void doCut(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null) {
+		if (sheet != null && validSelection(selection)) {
 			_clipboard = new Clipboard(Clipboard.Type.CUT, selection, sheet, _spreadsheet.getBook());
 			_spreadsheet.setHighlight(selection);
 		}
@@ -722,7 +744,10 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doFontFamily(String fontFamily, Rect selection) {
-		Utils.setFontFamily(_spreadsheet.getSelectedSheet(), selection, fontFamily);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.setFontFamily(sheet, selection, fontFamily);	
+		}
 	}
 	
 	/**
@@ -731,8 +756,11 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doFontSize(int fontSize, Rect selection) {
-		short fontHeightInPoint = (short)(fontSize * 20);
-		Utils.setFontHeight(_spreadsheet.getSelectedSheet(), selection, fontHeightInPoint);	
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			short fontHeightInPoint = (short)(fontSize * 20);
+			Utils.setFontHeight(sheet, selection, fontHeightInPoint);		
+		}
 	}
 	
 	private Font getCellFont(int row, int col) {
@@ -748,10 +776,12 @@ public abstract class ActionHandler {
 	 */
 	public void doFontBold(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		boolean fontBold = Font.BOLDWEIGHT_BOLD ==  getCellFont(row, col).getBoldweight();
-		Utils.setFontBold(sheet, selection, !fontBold);
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			boolean fontBold = Font.BOLDWEIGHT_BOLD ==  getCellFont(row, col).getBoldweight();
+			Utils.setFontBold(sheet, selection, !fontBold);	
+		}
 	}
 	
 	/**
@@ -761,9 +791,11 @@ public abstract class ActionHandler {
 	 */
 	public void doFontItalic(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		Utils.setFontItalic(sheet, selection, !getCellFont(row, col).getItalic());
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			Utils.setFontItalic(sheet, selection, !getCellFont(row, col).getItalic());	
+		}
 	}
 	
 	/**
@@ -773,9 +805,11 @@ public abstract class ActionHandler {
 	 */
 	public void doFontStrikeout(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		Utils.setFontStrikeout(sheet, selection, !getCellFont(row, col).getStrikeout());
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			Utils.setFontStrikeout(sheet, selection, !getCellFont(row, col).getStrikeout());	
+		}
 	}
 	
 	/**
@@ -785,10 +819,12 @@ public abstract class ActionHandler {
 	 */
 	public void doFontUnderline(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		boolean underline = Font.U_SINGLE == getCellFont(row, col).getUnderline();
-		Utils.setFontUnderline(sheet, selection, underline ? Font.U_NONE : Font.U_SINGLE);
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			boolean underline = Font.U_SINGLE == getCellFont(row, col).getUnderline();
+			Utils.setFontUnderline(sheet, selection, underline ? Font.U_NONE : Font.U_SINGLE);	
+		}
 	}
 	
 	/**
@@ -814,8 +850,11 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderBottom(String color, Rect selection) {
-		Utils.setBorder(_spreadsheet.getSelectedSheet(), selection, 
-				BookHelper.BORDER_EDGE_BOTTOM, BorderStyle.MEDIUM, color);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.setBorder(sheet, selection, 
+					BookHelper.BORDER_EDGE_BOTTOM, BorderStyle.MEDIUM, color);
+		}
 	}
 	
 	/**
@@ -824,8 +863,11 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBoderTop(String color, Rect selection) {
-		Utils.setBorder(_spreadsheet.getSelectedSheet(), selection, 
-				BookHelper.BORDER_EDGE_TOP, BorderStyle.MEDIUM, color);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.setBorder(sheet, selection, 
+					BookHelper.BORDER_EDGE_TOP, BorderStyle.MEDIUM, color);	
+		}
 	}
 	
 	/**
@@ -834,8 +876,11 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderLeft(String color, Rect selection) {
-		Utils.setBorder(_spreadsheet.getSelectedSheet(), selection, 
-				BookHelper.BORDER_EDGE_LEFT, BorderStyle.MEDIUM, color);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.setBorder(sheet, selection, 
+					BookHelper.BORDER_EDGE_LEFT, BorderStyle.MEDIUM, color);
+		}
 	}
 	
 	/**
@@ -844,8 +889,11 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderRight(String color, Rect selection) {
-		Utils.setBorder(_spreadsheet.getSelectedSheet(), selection, 
-				BookHelper.BORDER_EDGE_RIGHT, BorderStyle.MEDIUM, color);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.setBorder(sheet, selection, 
+					BookHelper.BORDER_EDGE_RIGHT, BorderStyle.MEDIUM, color);	
+		}
 	}
 	
 	/**
@@ -854,8 +902,11 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderNo(String color, Rect selection) {
-		Utils.setBorder(_spreadsheet.getSelectedSheet(), selection, 
-				BookHelper.BORDER_FULL, BorderStyle.NONE, color);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.setBorder(sheet, selection, 
+					BookHelper.BORDER_FULL, BorderStyle.NONE, color);	
+		}
 	}
 	
 	/**
@@ -864,8 +915,11 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderAll(String color, Rect selection) {
-		Utils.setBorder(_spreadsheet.getSelectedSheet(), selection, 
-				BookHelper.BORDER_FULL, BorderStyle.MEDIUM, color);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.setBorder(sheet, selection, 
+					BookHelper.BORDER_FULL, BorderStyle.MEDIUM, color);	
+		}
 	}
 	
 	/**
@@ -874,8 +928,11 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderOutside(String color, Rect selection) {
-		Utils.setBorder(_spreadsheet.getSelectedSheet(), selection, 
-				BookHelper.BORDER_OUTLINE, BorderStyle.MEDIUM, color);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.setBorder(sheet, selection, 
+					BookHelper.BORDER_OUTLINE, BorderStyle.MEDIUM, color);	
+		}
 	}
 	
 	/**
@@ -884,8 +941,11 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderInside(String color, Rect selection) {
-		Utils.setBorder(_spreadsheet.getSelectedSheet(), selection, 
-				BookHelper.BORDER_INSIDE, BorderStyle.MEDIUM, color);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.setBorder(sheet, selection, 
+					BookHelper.BORDER_INSIDE, BorderStyle.MEDIUM, color);	
+		}
 	}
 	
 	/**
@@ -894,8 +954,11 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderInsideHorizontal(String color, Rect selection) {
-		Utils.setBorder(_spreadsheet.getSelectedSheet(), selection, 
-				BookHelper.BORDER_INSIDE_HORIZONTAL, BorderStyle.MEDIUM, color);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.setBorder(sheet, selection, 
+					BookHelper.BORDER_INSIDE_HORIZONTAL, BorderStyle.MEDIUM, color);	
+		}
 	}
 	
 	/**
@@ -904,8 +967,11 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderInsideVertical(String color, Rect selection) {
-		Utils.setBorder(_spreadsheet.getSelectedSheet(), selection, 
-				BookHelper.BORDER_INSIDE_VERTICAL, BorderStyle.MEDIUM, color);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.setBorder(sheet, selection, 
+					BookHelper.BORDER_INSIDE_VERTICAL, BorderStyle.MEDIUM, color);	
+		}
 	}
 	
 	/**
@@ -915,7 +981,10 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doFontColor(String color, Rect selection) {
-		Utils.setFontColor(	_spreadsheet.getSelectedSheet(), selection, color);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.setFontColor(sheet, selection, color);	
+		}
 	}
 	
 	/**
@@ -925,7 +994,10 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doFillColor(String color, Rect selection) {
-		Utils.setBackgroundColor(_spreadsheet.getSelectedSheet(), selection, color);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.setBackgroundColor(sheet, selection, color);	
+		}
 	}
 	
 	/**
@@ -981,122 +1053,160 @@ public abstract class ActionHandler {
 	 */
 	public void doWrapText(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		final boolean wrapText = !Utils.getOrCreateCell(sheet, row, col).getCellStyle().getWrapText();
-		Utils.setWrapText(sheet, selection, wrapText);
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			final boolean wrapText = !Utils.getOrCreateCell(sheet, row, col).getCellStyle().getWrapText();
+			Utils.setWrapText(sheet, selection, wrapText);	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doMergeAndCenter(Rect selection) {
-		Range range = Ranges.range(_spreadsheet.getSelectedSheet(),	selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
-		range.merge(false);
-		doHorizontalAlignCenter(selection);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+			range.merge(false);
+			doHorizontalAlignCenter(selection);	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doMergeAcross(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(),	selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-		.merge(true);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+			.merge(true);	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doMergeCell(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(),	selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-		.merge(false);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+			.merge(false);	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doUnmergeCell(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(),	selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-		.unMerge();
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+			.unMerge();	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doShiftCellRight(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(), selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-		.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+			.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doShiftCellDown(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(), selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-		.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+			.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doInsertSheetRow(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(), selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-		.getRows()
-		.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+			.getRows()
+			.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doInsertSheetColumn(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(), selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-		.getColumns()
-		.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+			.getColumns()
+			.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doShiftCellLeft(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(), selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-		.delete(Range.SHIFT_LEFT);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+			.delete(Range.SHIFT_LEFT);	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doShiftCellUp(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(), selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-		.delete(Range.SHIFT_UP);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+			.delete(Range.SHIFT_UP);	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doDeleteSheetRow(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(), selection.getTop(), 0, selection.getBottom(), 0)
-		.getRows()
-		.delete(Range.SHIFT_UP);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), 0, selection.getBottom(), 0)
+			.getRows()
+			.delete(Range.SHIFT_UP);	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doDeleteSheetColumn(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(), 0, selection.getLeft(), 0, selection.getRight())
-		.getColumns()
-		.delete(Range.SHIFT_LEFT);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, 0, selection.getLeft(), 0, selection.getRight())
+			.getColumns()
+			.delete(Range.SHIFT_LEFT);	
+		}
 	}
 
 	protected void clearStyleImp(Rect selection, Worksheet worksheet) {
@@ -1110,16 +1220,22 @@ public abstract class ActionHandler {
 	 * Execute when user click clear style
 	 */
 	public void doClearStyle(Rect selection) {
-		clearStyleImp(selection, _spreadsheet.getSelectedSheet());
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			clearStyleImp(selection, sheet);	
+		}
 	}
 	
 	/**
 	 * Execute when user click clear content
 	 */
 	public void doClearContent(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(),	selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-		.clearContents();
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+			.clearContents();	
+		}
 	}
 	
 	/**
@@ -1134,16 +1250,22 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doSortAscending(Rect selection) {
-		Utils.sort(_spreadsheet.getSelectedSheet(), selection,
-				null, null, null, false, false, false);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.sort(sheet, selection,
+					null, null, null, false, false, false);	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doSortDescending(Rect selection) {
-		Utils.sort(_spreadsheet.getSelectedSheet(), selection,
-				null, new boolean[] { true }, null, false, false, false);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Utils.sort(sheet, selection,
+					null, new boolean[] { true }, null, false, false, false);	
+		}
 	}
 	
 	/**
@@ -1155,23 +1277,32 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doFilter(Rect selection) {
-		Ranges
-		.range(_spreadsheet.getSelectedSheet(), selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-		.autoFilter();
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			Ranges
+			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+			.autoFilter();	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doClearFilter() {
-		Ranges.range(_spreadsheet.getSelectedSheet()).showAllData();
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null) {
+			Ranges.range(sheet).showAllData();	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doReapplyFilter() {
-		Ranges.range(_spreadsheet.getSelectedSheet()).applyFilter();
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null) {
+			Ranges.range(sheet).applyFilter();	
+		}
 	}
 	
 	/**
@@ -1179,7 +1310,9 @@ public abstract class ActionHandler {
 	 */
 	public void doProtectSheet() {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		Ranges.range(sheet).protectSheet(sheet.getProtect() ? null : "");
+		if (sheet != null) {
+			Ranges.range(sheet).protectSheet(sheet.getProtect() ? null : "");	
+		}
 	}
 	
 	/**
@@ -1187,130 +1320,165 @@ public abstract class ActionHandler {
 	 */
 	public void doGridlines() {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		Ranges.range(sheet).setDisplayGridlines(!sheet.isDisplayGridlines());
+		if (sheet != null) {
+			Ranges.range(sheet).setDisplayGridlines(!sheet.isDisplayGridlines());	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doColumnChart(Rect selection) {
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		ChartData data = fillCategoryData(new XSSFColumnChartData(), selection);
-		
-		Ranges.range(_spreadsheet.getSelectedSheet())
-		.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Column, ChartGrouping.STANDARD, LegendPosition.RIGHT);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			ChartData data = fillCategoryData(new XSSFColumnChartData(), selection);
+			
+			Ranges.range(sheet)
+			.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Column, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
+		}
 	}
 	
 	/**
 	 * @param selection
 	 */
 	public void doColumnChart3D(Rect selection) {
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		ChartData data = fillCategoryData(new XSSFColumn3DChartData(), selection);
-		
-		Ranges.range(_spreadsheet.getSelectedSheet())
-		.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Column3D, ChartGrouping.STANDARD, LegendPosition.RIGHT);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			ChartData data = fillCategoryData(new XSSFColumn3DChartData(), selection);
+			
+			Ranges.range(sheet)
+			.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Column3D, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
+		}
 	}
 	/**
 	 * @param selection
 	 */
 	public void doLineChart(Rect selection) {
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		ChartData data = fillCategoryData(new XSSFLineChartData(), selection);
-		
-		Ranges.range(_spreadsheet.getSelectedSheet())
-		.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Line, ChartGrouping.STANDARD, LegendPosition.RIGHT);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			ChartData data = fillCategoryData(new XSSFLineChartData(), selection);
+			
+			Ranges.range(sheet)
+			.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Line, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
+		}
 	}
 	/**
 	 * @param selection
 	 */
 	public void doLineChart3D(Rect selection) {
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		ChartData data = fillCategoryData(new XSSFLine3DChartData(), selection);
-		
-		Ranges.range(_spreadsheet.getSelectedSheet())
-		.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Line3D, ChartGrouping.STANDARD, LegendPosition.RIGHT);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			ChartData data = fillCategoryData(new XSSFLine3DChartData(), selection);
+			
+			Ranges.range(sheet)
+			.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Line3D, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
+		}
 	}
 	/**
 	 * @param selection
 	 */
 	public void doPieChart(Rect selection) {
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		ChartData data = fillCategoryData(new XSSFPieChartData(), selection);
-		
-		Ranges.range(_spreadsheet.getSelectedSheet())
-		.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Pie, ChartGrouping.STANDARD, LegendPosition.RIGHT);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			ChartData data = fillCategoryData(new XSSFPieChartData(), selection);
+			
+			Ranges.range(sheet)
+			.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Pie, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
+		}
 	}
 	/**
 	 * @param selection
 	 */
 	public void doPieChart3D(Rect selection) {
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		ChartData data = fillCategoryData(new XSSFPie3DChartData(), selection);
-		
-		Ranges.range(_spreadsheet.getSelectedSheet())
-		.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Pie3D, ChartGrouping.STANDARD, LegendPosition.RIGHT);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			ChartData data = fillCategoryData(new XSSFPie3DChartData(), selection);
+			
+			Ranges.range(sheet)
+			.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Pie3D, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
+		}
 	}
 	/**
 	 * @param selection
 	 */
 	public void doBarChart(Rect selection) {
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		ChartData data = fillCategoryData(new XSSFBarChartData(), selection);
-		
-		Ranges.range(_spreadsheet.getSelectedSheet())
-		.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Bar, ChartGrouping.STANDARD, LegendPosition.RIGHT);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			ChartData data = fillCategoryData(new XSSFBarChartData(), selection);
+			
+			Ranges.range(sheet)
+			.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Bar, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
+		}
 	}
 	/**
 	 * @param selection
 	 */
 	public void doBarChart3D(Rect selection) {
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		ChartData data = fillCategoryData(new XSSFBar3DChartData(), selection);
-		
-		Ranges.range(_spreadsheet.getSelectedSheet())
-		.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Bar3D, ChartGrouping.STANDARD, LegendPosition.RIGHT);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			ChartData data = fillCategoryData(new XSSFBar3DChartData(), selection);
+			
+			Ranges.range(sheet)
+			.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Bar3D, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
+		}
 	}
 	/**
 	 * @param selection
 	 */
 	public void doAreaChart(Rect selection) {
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		ChartData data = fillCategoryData(new XSSFAreaChartData(), selection);
-		
-		Ranges.range(_spreadsheet.getSelectedSheet())
-		.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Area, ChartGrouping.STANDARD, LegendPosition.RIGHT);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			ChartData data = fillCategoryData(new XSSFAreaChartData(), selection);
+			
+			Ranges.range(sheet)
+			.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Area, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
+		}
 	}
 	/**
 	 * @param selection
 	 */
 	public void doScatterChart(Rect selection) {
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		ChartData data = fillXYData(new XSSFScatChartData(), selection);
-		
-		Ranges.range(_spreadsheet.getSelectedSheet())
-		.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Scatter, ChartGrouping.STANDARD, LegendPosition.RIGHT);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			ChartData data = fillXYData(new XSSFScatChartData(), selection);
+			
+			Ranges.range(sheet)
+			.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Scatter, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
+		}
 	}
 	/**
 	 * @param selection
 	 */
 	public void doDoughnutChart(Rect selection) {
-		int row = selection.getTop();
-		int col = selection.getLeft();
-		ChartData data = fillCategoryData(new XSSFDoughnutChartData(), selection);
-		
-		Ranges.range(_spreadsheet.getSelectedSheet())
-		.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Doughnut, ChartGrouping.STANDARD, LegendPosition.RIGHT);
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		if (sheet != null && validSelection(selection)) {
+			int row = selection.getTop();
+			int col = selection.getLeft();
+			ChartData data = fillCategoryData(new XSSFDoughnutChartData(), selection);
+			
+			Ranges.range(sheet)
+			.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Doughnut, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
+		}
 	}
 	
 	private boolean isQualifiedCell(Cell cell) {
