@@ -23,6 +23,7 @@ import org.openqa.selenium.WebElement;
 import org.zkoss.test.Color;
 import org.zkoss.test.JQuery;
 import org.zkoss.test.zss.CellCacheAggeration;
+import org.zkoss.test.zss.Header;
 import org.zkoss.test.zss.ZSSAppTest;
 import org.zkoss.test.zss.ZSSTestCase;
 
@@ -241,5 +242,19 @@ public class SS_035_Test extends ZSSAppTest {
 		mouseDirector.openColumnContextMenu(4, 6);
 		click(".z-menu-popup:visible .zsmenuitem-unhideColumn");
 		Assert.assertTrue(spreadsheet.getColumn(5).jq$n().isVisible());
+	}
+	
+	@Test
+	public void toggle_column_hide_by_drag () {
+		final int COLUMN_F = 5;
+		spreadsheet.focus(0, 5);
+		Header header = spreadsheet.getTopPanel().getColumnHeader(COLUMN_F);
+		Assert.assertTrue("Header shall be visible and has width", header.isVisible() && header.getWidth() > 0);
+		
+		mouseDirector.dragColumnToHide(COLUMN_F);
+		Assert.assertTrue("Header shall be hidden", !header.isVisible());
+		
+		mouseDirector.dragColumnToResize(COLUMN_F, 50);
+		Assert.assertTrue("Header shall be unhide", header.isVisible() && header.getWidth() == 50);
 	}
 }

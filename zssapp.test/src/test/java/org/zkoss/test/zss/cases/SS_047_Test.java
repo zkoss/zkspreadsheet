@@ -30,7 +30,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
  *
  */
 @ZSSTestCase
-public class SS_237_Test extends ZSSAppTest {
+public class SS_047_Test extends ZSSAppTest {
 
 	/**
 	 * 1. select a cell (if not empty cell, remove value use Delete key)
@@ -41,7 +41,7 @@ public class SS_237_Test extends ZSSAppTest {
 	public void inline_editing_enter() {
 		if (!Strings.isNullOrEmpty(getCell(12, 5).getEdit())) {
 			keyboardDirector.delete(12, 5);
-			Assert.assertTrue("Cell text shall be empty", Strings.isNullOrEmpty(getCell(5, 13).getEdit()));
+			Assert.assertTrue("Cell text shall be empty", Strings.isNullOrEmpty(getCell(12, 5).getEdit()));
 		}
 		
 		keyboardDirector.setEditText(12, 5, "a"); //setEditText press enter at end

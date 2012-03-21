@@ -24,7 +24,7 @@ import org.junit.Test;
  * @author sam
  *
  */
-public class SS_50_Test {
+public class SS_050_Test {
 
 	
 	//1. focus [5, 10] at first sheet
