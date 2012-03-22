@@ -54,7 +54,6 @@ public class FileMenu extends Menu implements IdSpace {
 	private Menuitem exportPdf;
 	private boolean _exportToPdfDisabled; /* default false */
 
-	//TODO:Peter, test export to html
 	private Menuitem exportHtml;
 	private boolean _exportToHtmlDisabled; /* default false */
 
@@ -77,6 +76,33 @@ public class FileMenu extends Menu implements IdSpace {
 		
 		//TODO: save as not implement yet
 		saveFileAs.setDisabled(true);
+	}
+	
+	public void setSaveFileDisabled(boolean disabled) {
+		saveFile.setDisabled(true);
+	}
+	
+	public void setSaveFileAndCloseDisabled(boolean disabled) {
+		saveFileAndClose.setDisabled(disabled);
+	}
+	
+	public void setDeleteFileDisabled(boolean disabled) {
+		deleteFile.setDisabled(disabled);
+	}
+	
+	public void setExportPdfDisabled(boolean disabled) {
+		_exportToPdfDisabled = disabled;
+		exportPdf.setDisabled(disabled);
+	}
+
+	public void setExportHtmlDisabled(boolean disabled) {
+		_exportToHtmlDisabled = disabled;
+		exportHtml.setDisabled(disabled);
+	}
+	
+	public void setExportExcelDisabled(boolean disabled) {
+		_exportToExcelDisabled = disabled;
+		exportExcel.setDisabled(disabled);
 	}
 	
 	public void onClick$newFile() {
@@ -131,17 +157,7 @@ public class FileMenu extends Menu implements IdSpace {
 	public void onClick$importFile() {
 		getDesktopWorkbenchContext().getWorkbenchCtrl().openImportFileDialog();
 	}
-
-	public void setExportPdfDisabled(boolean disabled) {
-		_exportToPdfDisabled = disabled;
-		exportPdf.setDisabled(disabled);
-	}
-
-	public void setExportHtmlDisabled(boolean disabled) {
-		_exportToHtmlDisabled = disabled;
-		exportHtml.setDisabled(disabled);
-	}
-
+	
 	//TODO: remove
 	public void onClick$exportPdf() {
 		getDesktopWorkbenchContext().getWorkbenchCtrl().openExportPdfDialog(null);
@@ -150,11 +166,6 @@ public class FileMenu extends Menu implements IdSpace {
 	//TODO: remove
 	public void onClick$exportHtml() {
 		getDesktopWorkbenchContext().getWorkbenchCtrl().openExportHtmlDialog(null);
-	}
-
-	public void setExportExcelDisabled(boolean disabled) {
-		_exportToExcelDisabled = disabled;
-		exportExcel.setDisabled(disabled);
 	}
 	
 	public void onClick$exportExcel() {

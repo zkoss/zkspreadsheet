@@ -83,8 +83,42 @@ public abstract class ActionHandler {
 	protected Spreadsheet _spreadsheet;
 	protected Uploader _insertPicture;
 	protected Rect _insertPictureSelection;
-	
 	protected Book _book;
+	protected Clipboard _clipboard;
+	protected Action[] disabledActionOnBookClose = new Action[]{
+			Action.EXPORT_PDF, 
+			Action.PASTE,
+			Action.CUT,
+			Action.COPY,
+			Action.FONT_FAMILY,
+			Action.FONT_SIZE,
+			Action.FONT_BOLD,
+			Action.FONT_ITALIC,
+			Action.FONT_UNDERLINE,
+			Action.FONT_STRIKE,
+			Action.BORDER,
+			Action.FONT_COLOR,
+			Action.FILL_COLOR,
+			Action.VERTICAL_ALIGN,
+			Action.HORIZONTAL_ALIGN,
+			Action.WRAP_TEXT,
+			Action.MERGE_AND_CENTER,
+			Action.INSERT,
+			Action.DELETE,
+			Action.CLEAR,
+			Action.SORT_AND_FILTER,
+			Action.PROTECT_SHEET,
+			Action.GRIDLINES,
+			Action.INSERT_PICTURE,
+			Action.COLUMN_CHART,
+			Action.LINE_CHART,
+			Action.PIE_CHART,
+			Action.BAR_CHART,
+			Action.AREA_CHART,
+			Action.SCATTER_CHART,
+			Action.OTHER_CHART,
+			Action.HYPERLINK
+	};
 	protected EventListener _bookListener = new EventListener() {
 
 		@Override
@@ -95,8 +129,6 @@ public abstract class ActionHandler {
 			}
 		}
 	};
-	
-	protected Clipboard _clipboard;
 	
 	public ActionHandler() {}
 	public ActionHandler(Spreadsheet spreadsheet) {
@@ -381,12 +413,11 @@ public abstract class ActionHandler {
 	
 	public void doCloseBook() {
 		_spreadsheet.setSrc(null);
-//		_spreadsheet.setSrcName(null);
-//		_spreadsheet.setBook(null);
 		clearClipboard();
 		_insertPictureSelection = null;
-		
-		//TODO: disable all from server side ??
+		for (Action a : disabledActionOnBookClose) {
+			_spreadsheet.setActionDisabled(true, a);
+		}
 	}
 	
 	public void doInsertPicture(UploadEvent evt) {
@@ -551,6 +582,11 @@ public abstract class ActionHandler {
 	public void doSheetSelect() {
 		syncClipboard();
 		syncAutoFilter();
+		
+		//enable action button
+		for (Action action : disabledActionOnBookClose) {
+			_spreadsheet.setActionDisabled(false, action);
+		}
 	}
 	
 	/**

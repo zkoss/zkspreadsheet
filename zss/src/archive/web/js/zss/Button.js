@@ -362,7 +362,7 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 	doClick_: function (evt) {
 		var	cv = this.$n('cave'),
 			taget = evt.domTarget;
-		if(cv && jq.isAncestor(cv, taget)) {
+		if(!this.isDisabled() && cv && jq.isAncestor(cv, taget)) {
 			var pp = this._pp;
 			if (pp) {
 				if (!pp.parent) {//menupopup not render yet
@@ -371,16 +371,17 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 				pp.open(this, null, 'after_start');	
 			}
 		} else {
-			if (!this.isClickDisabled()) {
+			if (!this.isClickDisabled() && !this.isDisabled()) {
 				this.fire('onClick');
 			}
+			jq(this.$n('cave')).removeClass(this._getSclass() + '-cave-over');
 		}
 		//controls fire onClick event, not invoke this.$supers('doClick_')
 	},
 	doMouseOver_: function (evt) {
 		var	cv = this.$n('cave'),
 			taget = evt.domTarget;
-		if (cv) {
+		if (!this.isDisabled() && cv) {
 			if (jq.isAncestor(cv, taget)) {
 				jq(cv).addClass(this._getSclass() + '-cave-over');
 			}	
@@ -1520,9 +1521,12 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 				tooltiptext: wgt._labelsCtrl.getBorder(),
 				image: zk.ajaxURI('/web/zss/img/border-bottom.png', AU),
 				onClick: function () {
-					var s = wgt.sheetCtrl.getLastSelection(),
-						color = pp.colorMenu ? pp.colorMenu.getColor() : '' ;
-					wgt.fireToolbarAction('border', {color: color, tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});
+					var sht = wgt.sheetCtrl;
+					if (sht) {
+						var s = sht.getLastSelection(),
+							color = pp.colorMenu ? pp.colorMenu.getColor() : '' ;
+						wgt.fireToolbarAction('border', {color: color, tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});	
+					}
 				}
 			}, wgt);
 		b.setPopup(pp);
@@ -1536,8 +1540,11 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 			tooltiptext: wgt._labelsCtrl.getFillColor(),
 			image: zk.ajaxURI('/web/zss/img/paint-can-color.png', AU),
 			onClick: function () {
-				var s = wgt.sheetCtrl.getLastSelection();
-				wgt.fireToolbarAction('fillColor', {color: this.getColor(), tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});
+				var sht = wgt.sheetCtrll;
+				if (sht) {
+					var s = sht.getLastSelection();
+					wgt.fireToolbarAction('fillColor', {color: this.getColor(), tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});	
+				}
 			}
 		}, wgt);
 	},
@@ -1549,8 +1556,11 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 			tooltiptext: wgt._labelsCtrl.getFontColor(),
 			image: zk.ajaxURI('/web/zss/img/edit-color.png', AU),
 			onClick: function () {
-				var s = wgt.sheetCtrl.getLastSelection();
-				wgt.fireToolbarAction('fontColor', {color: this.getColor(), tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});
+				var sht = wgt.sheetCtrl;
+				if (sht) {
+					var s = sht.getLastSelection();
+					wgt.fireToolbarAction('fontColor', {color: this.getColor(), tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});
+				}
 			}
 		}, wgt);
 	},

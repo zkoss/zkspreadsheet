@@ -38,14 +38,64 @@ public class ViewMenu extends Menu implements IdSpace {
 	
 	private Menuitem viewFormulaBar;
 	private Menupopup freezeRowsMenupopup;
-	private Menuitem unfreezeRows;
 	private Menupopup freezeColsMenupopup;
+	
+	private Menuitem unfreezeRows;
 	private Menuitem unfreezeCols;
+	
+	private Menuitem freezeRow1;
+	private Menuitem freezeRow2;
+	private Menuitem freezeRow3;
+	private Menuitem freezeRow4;
+	private Menuitem freezeRow5;
+	private Menuitem freezeRow6;
+	private Menuitem freezeRow7;
+	private Menuitem freezeRow8;
+	private Menuitem freezeRow9;
+	private Menuitem freezeRow10;
+	
+	private Menuitem freezeCol1;
+	private Menuitem freezeCol2;
+	private Menuitem freezeCol3;
+	private Menuitem freezeCol4;
+	private Menuitem freezeCol5;
+	private Menuitem freezeCol6;
+	private Menuitem freezeCol7;
+	private Menuitem freezeCol8;
+	private Menuitem freezeCol9;
+	private Menuitem freezeCol10;
 	
 	public ViewMenu() {
 		Executions.createComponents(Consts._ViewMenu_zul, this, null);
 		Components.wireVariables(this, this, '$', true, true);
 		Components.addForwards(this, this, '$');
+	}
+	
+	public void setFreezeUnFreezeDisabled(boolean disabled) {
+		unfreezeRows.setDisabled(disabled);
+		unfreezeCols.setDisabled(disabled);
+		
+		freezeRow1.setDisabled(disabled);
+		freezeRow2.setDisabled(disabled);
+		freezeRow3.setDisabled(disabled);
+		freezeRow4.setDisabled(disabled);
+		freezeRow5.setDisabled(disabled);
+		freezeRow6.setDisabled(disabled);
+		freezeRow7.setDisabled(disabled);
+		freezeRow8.setDisabled(disabled);
+		freezeRow9.setDisabled(disabled);
+		freezeRow10.setDisabled(disabled);
+		
+		freezeCol1.setDisabled(disabled);
+		freezeCol2.setDisabled(disabled);
+		freezeCol3.setDisabled(disabled);
+		freezeCol4.setDisabled(disabled);
+		freezeCol5.setDisabled(disabled);
+		freezeCol6.setDisabled(disabled);
+		freezeCol7.setDisabled(disabled);
+		freezeCol8.setDisabled(disabled);
+		freezeCol9.setDisabled(disabled);
+		freezeCol10.setDisabled(disabled);
 	}
 	
 	public void onClick$viewFormulaBar() {

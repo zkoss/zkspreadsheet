@@ -52,16 +52,13 @@ import org.zkoss.zss.ui.Action;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.ActionHandler;
-import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
-import org.zkoss.zul.Menu;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
@@ -76,20 +73,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	private final static String KEY_PDF = "org.zkoss.zss.app.exportToPdf";
 	private final static String KEY_HTML = "org.zkoss.zss.app.exportToHtml";
 	
-	static int event_x = 200;
-	static int event_y = 200;
-
-	int lastRow = 0;
-	int lastCol = 0;
-	boolean isFreezeRow = false;
-	boolean isFreezeColumn = false;
-	
 	Spreadsheet spreadsheet;
-	
-	// For fast Icon
-	boolean isMergeCell = false;
-
-	int chartKey = 0;
 
 	RangeHelper rangeh;
 
@@ -98,39 +82,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	/*Menus*/
 	FileMenu fileMenu;
 	ViewMenu viewMenu;
-	
-//	ColumnHeaderMenupopup columnHeaderMenupopup;
-//	RowHeaderMenupopup rowHeaderMenupopup;
-	
-	/*dropdown button menu*/
-//	Menuitem filter;
-//	Menuitem clearFilter;
-//	Menuitem reapplyFilter;
-	
-	Menu insertImageMenu;
-	Menu insertPieChart;
-	
-	/* Toolbar buttons */
-	Borderlayout topToolbars;
-//	Div toolbarMask;
-	
-//	Dropdownbutton pasteDropdownBtn;
-//	Dropdownbutton sortDropdownBtn;
-//	Toolbarbutton saveBtn;
-//	Toolbarbutton closeBtn;
-//	CellStyleCtrlPanel fontCtrlPanel;
-//	Toolbarbutton exportToPDFBtn;
-//	Toolbarbutton insertHyperlinkBtn;
-//	Toolbarbutton mergeCellBtn;
-//	Toolbarbutton insertChartBtn;
-//	Toolbarbutton cutBtn;
-//	Toolbarbutton copyBtn;
-//	Toolbarbutton insertImageBtn;
-//	Checkbox gridlinesCheckbox;
-//	Checkbox protectSheet;
-	
-//	CellContext cellContext;
-//	CellMenupopup cellMenupopup;
 	
 	/*Dialog*/
 	Dialog _insertFormulaDialog;
@@ -178,8 +129,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	
 	public void init() {
 		boolean isPE = WebApps.getFeature("pe");
-//		exportToPDFBtn.setDisabled(!isPE);
-//		filter.setDisabled(!isPE);
 		
 		//Note. setSrcName will set spreadsheet's src name, but not the book name
 		// if setSrc will init a book, then setSrcName only change the src name, 
@@ -223,24 +172,12 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				}
 			}
 		});
-		workbenchContext.addEventListener(Consts.ON_SHEET_CHANGED, new EventListener() {
-			public void onEvent(Event event) throws Exception {
-//				gridlinesCheckbox.setChecked(spreadsheet.getSelectedSheet().isDisplayGridlines());
-//				protectSheet.setChecked(spreadsheet.getSelectedSheet().getProtect());
-//				syncAutoFilterStatus();
-			}
-		});
+
 		workbenchContext.addEventListener(Consts.ON_SHEET_CONTENTS_CHANGED,  new EventListener(){
 			public void onEvent(Event event) throws Exception {
 				doContentChanged();
 			}}
 		);
-		//TODO: remove to WorkbookCtrl
-//		workbenchContext.addEventListener(Consts.ON_SHEET_MERGE_CELL, new EventListener() {
-//			public void onEvent(Event event) throws Exception {
-//				onMergeCellClick(null);
-//			}
-//		});
 		
 		workbenchContext.addEventListener(Consts.ON_SHEET_INSERT_FORMULA, new EventListener() {
 			public void onEvent(Event event) throws Exception {
@@ -258,58 +195,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				}
 			}
 		});
-		
-		//TODO: rm ON_CELL_FOUCSED listener
-//		spreadsheet.addEventListener(Events.ON_CELL_FOUCSED,
-//				new EventListener() {
-//					public void onEvent(Event event) throws Exception {
-//						doFocusedEvent((CellEvent) event);
-//					}
-//				});
-
-//		spreadsheet.addEventListener(Events.ON_CELL_RIGHT_CLICK,
-//				new EventListener() {
-//					public void onEvent(Event event) throws Exception {
-//						System.out.println("ON_CELL_RIGHT_CLICK: " + event);
-////						doMouseEvent((CellMouseEvent) event);
-//					}
-//				});
-
-//		spreadsheet.addEventListener(Events.ON_HEADER_RIGHT_CLICK,
-//				new EventListener() {
-//					public void onEvent(Event event) throws Exception {
-//						doHeaderMouseEvent((HeaderMouseEvent) event);
-//					}
-//				});
-
-		//TODO: rm ON_CELL_SELECTION listener
-//		spreadsheet.addEventListener(Events.ON_CELL_SELECTION,
-//				new EventListener() {
-//					public void onEvent(Event event) throws Exception {
-//						doSelectionEvent((CellSelectionEvent) event);
-//					}
-//				});
-		
-		//TODO: rm ON_CELL_RIGHT_CLICK listener
-//		spreadsheet.addEventListener(Events.ON_CELL_RIGHT_CLICK, 
-//				new EventListener() {
-//					public void onEvent(Event event) throws Exception {
-//						CellMouseEvent evt = (CellMouseEvent)event;
-//						int clientX = evt.getClientx();
-//						int clientY = evt.getClienty();
-//						cellContext.setLeft(Integer.toString(clientX + 5) + "px");
-//						cellContext.setTop(Integer.toString(clientY - 100) + "px");
-//						cellContext.doPopup();
-//					}
-//				});
-		
-//		spreadsheet.addEventListener(Events.ON_START_EDITING, 
-//				new EventListener() {
-//					public void onEvent(Event event) throws Exception {
-//						EditHelper.clearCutOrCopy(spreadsheet);
-//					}
-//				});
-		
 	}
 
 	public void doContentChanged() {
@@ -364,29 +249,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		return Zssapp.getDesktopWorkbenchContext(self);
 	}
 	
-//	void doFocusedEvent(final CellEvent event) {
-//		final Book book = spreadsheet.getBook();
-//		if (book == null) {
-//			return;
-//		}
-//		// SECTION WORK1 FocusedEvent
-//		try {
-//			Worksheet sheet = event.getSheet();
-//			lastRow = event.getRow();
-//			lastCol = event.getColumn();
-//
-//			Cell cell = Utils.getOrCreateCell(sheet, lastRow, lastCol);
-//			// read format from cell and assign it to toolbar
-//			// merge cell
-//			isMergeCell = isMergedCell(event.getRow(), event.getColumn(), event.getRow(), event.getColumn());
-////			mergeCellBtn.setSclass(isMergeCell ? "clicked" : null);
-//
-//			getCellStyleContext().doTargetChange(new SSRectCellStyle(cell, spreadsheet));
-//
-//		} catch (Exception e) {
-//		}
-//	}
-	
 	private boolean isMergedCell(int tRow, int lCol, int bRow, int rCol) {
 		MergeMatrixHelper mmhelper = spreadsheet.getMergeMatrixHelper(spreadsheet.getSelectedSheet());
 		for (final Iterator iter = mmhelper.getRanges().iterator(); iter
@@ -402,17 +264,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		}
 		return false;
 	}
-
-	public void doSelectionEvent(CellSelectionEvent event) {
-		isMergeCell = isMergedCell(
-				spreadsheet.getSelection().getTop(), 
-				spreadsheet.getSelection().getLeft(), 
-				spreadsheet.getSelection().getBottom(),
-				spreadsheet.getSelection().getRight());
-
-//		mergeCellBtn.setSclass(isMergeCell ? "clicked" : null);
-	}
 	
+	//TODO: move to ActionHandler
 	public void onCtrlKey$spreadsheet(KeyEvent event) {
 		Rect selection = event.getSelection();
 		char c = (char) event.getKeyCode();
@@ -462,32 +315,12 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				break;
 			case 'B':
 				actionHandler.doFontBold(selection);
-//				getCellStyleContext().modifyStyle(new StyleModification(){
-//					public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style, CellStyleContextEvent candidteEvt) {
-//						candidteEvt.setExecutor(MainWindowCtrl.this);
-//						style.setBold(!style.isBold());
-//					}
-//				});
 				break;
 			case 'I':
 				actionHandler.doFontItalic(selection);
-//				getCellStyleContext().modifyStyle(new StyleModification(){
-//					public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style, CellStyleContextEvent candidteEvt) {
-//						candidteEvt.setExecutor(MainWindowCtrl.this);
-//						style.setItalic(!style.isItalic());
-//					}
-//				});
 				break;
 			case 'U':
 				actionHandler.doFontUnderline(selection);
-//				getCellStyleContext().modifyStyle(new StyleModification(){
-//					public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style, CellStyleContextEvent candidteEvt) {
-//						candidteEvt.setExecutor(MainWindowCtrl.this);
-//						boolean isUnderline = style.getUnderline() ==  org.zkoss.zss.app.zul.ctrl.CellStyle.UNDERLINE_SINGLE;
-//						style.setUnderline(isUnderline ? 
-//								org.zkoss.zss.app.zul.ctrl.CellStyle.UNDERLINE_NONE : org.zkoss.zss.app.zul.ctrl.CellStyle.UNDERLINE_SINGLE);
-//					}
-//				});
 				break;
 			default:
 				return;
@@ -503,59 +336,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	 */
 	private DesktopCellStyleContext getCellStyleContext() {
 		return Zssapp.getDesktopCellStyleContext(self);
-	}
-
-	public void onExportFile(ForwardEvent event) {
-		throw new UiException("export file not implement yet");
-//		Listbox fle_files = (Listbox) Path
-//				.getComponent("//p1/mainWin/fileExportWin/fle_files");
-//
-//		String filename = fle_files.getSelectedItem().getLabel();
-//		exportFile(filename);
-//
-//		Window fileExportWin = (Window) Path
-//				.getComponent("//p1/mainWin/fileExportWin");
-//		fileExportWin.setVisible(false);
-	}
-
-	public void exportFile(String filename) {// current or other
-												// files(stack_level=0)
-	// TODO
-		throw new UiException("export file not implmented yet");
-		/*
-		 * // current editing file System.out.println("exportFile filename: " +
-		 * filename + ", spreadsheet source: " + spreadsheet.getSrc()); if
-		 * (filename.equals(spreadsheet.getSrc())) {
-		 * System.out.println("exportFile if: "); ByteArrayOutputStream
-		 * baoStream = new ByteArrayOutputStream(); ExcelExporter exporter = new
-		 * ExcelExporter(); exporter.exports(spreadsheet.getBook(), baoStream);
-		 * byte[] bin = baoStream.toByteArray(); Filedownload.save(new
-		 * ByteArrayInputStream(bin), "application/vnd.ms-excel", filename); }
-		 * else {// other files System.out.println("exportFile else"); HashMap
-		 * hm = fileh.readMetafile(); Object objs[] = (Object[])
-		 * hm.get(filename); if (objs != null) { String hashFilename =
-		 * fileh.xlsDir + ((String) objs[1]);
-		 * System.out.println("hashFilename: " + hashFilename); FileInputStream
-		 * iStream = null; try { iStream = new FileInputStream(hashFilename); }
-		 * catch (FileNotFoundException e) { e.printStackTrace(); }
-		 * Filedownload.save(iStream, "application/vnd.ms-excel", filename); } }
-		 */}
-
-	public void onPrint(ForwardEvent event) {
-		throw new UiException("print not implement yet");
-//		String printKey = "" + System.currentTimeMillis();
-//		Session session = Executions.getCurrent().getDesktop().getSession();
-//		session.setAttribute("zssFromHi" + printKey, spreadsheet);
-//
-//		Window win = (Window) mainWin.getFellow("menuPrintWin");
-//		Button printBtn = (Button) win.getFellow("printBtn");
-//		printBtn.setHref("print.zul?printKey=" + printKey);
-//		printBtn.setTooltip("print.zul?printKey=" + printKey);
-//
-//		win.setPosition("parent");
-//		win.setTop("100px");
-//		win.setLeft("100px");
-//		win.doPopup();
 	}
 
 	public void onRevision(ForwardEvent event) {
@@ -579,116 +359,14 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		// spreadsheet.redo();
 	}
 
-	//TODO: move these method to compositive component
-//	public void onEditCut(ForwardEvent event) {
-//		EditHelper.doCut(spreadsheet);
-//	}
-//
-//	public void onEditCopy(ForwardEvent event) {
-//		EditHelper.doCopy(spreadsheet);
-//	}
-
-//	public void onEditPaste(ForwardEvent event) {
-//		EditHelper.doPaste(spreadsheet);
-//	}
-
-	public void onDeleteRows(ForwardEvent event) {
-		try {
-			Worksheet sheet = spreadsheet.getSelectedSheet();
-			Rect rect = spreadsheet.getSelection();
-			int top = rect.getTop();
-			int bottom = rect.getBottom();
-			if (top == 0 && bottom == spreadsheet.getMaxrows() - 1) {
-				try {
-					Messagebox.show("cannot delete all Rows");
-					return;
-				} catch (InterruptedException e) {
-				}
-			}
-			// TODO undo/redo
-			// spreadsheet.pushDeleteRowColState(-1, top, -1, bottom);
-			Utils.deleteRows(sheet, top, bottom);
-			spreadsheet.focus();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void onDeleteColumns(ForwardEvent event) {
-		try {
-			Worksheet sheet = spreadsheet.getSelectedSheet();
-			Rect rect = spreadsheet.getSelection();
-			int left = rect.getLeft();
-			int right = rect.getRight();
-			if (left == 0 && right == spreadsheet.getMaxcolumns() - 1) {
-				try {
-					Messagebox.show("cannot delete all Columns");
-					return;
-				} catch (InterruptedException e) {
-				}
-			}
-			// TODO undo/redo
-			// spreadsheet.pushDeleteRowColState(left, -1, right, -1);
-			Utils.deleteColumns(sheet, left, right);
-			spreadsheet.focus();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	// SECTION FORMAT MENU
-	public void onFormatNumber(ForwardEvent event) {
-		Window win = (Window) mainWin.getFellow("formatNumberWin");
-		win.setPosition("parent");
-		win.setLeft("170px");
-		win.setTop("24px");
-		win.doPopup();// Modal();
-	}
-	
-//	public void onUpload$insertImageBtn(UploadEvent evt) {
-//		if (spreadsheet.getBook() != null) {
-//			final Media media = evt.getMedia();
-//			if (media instanceof AImage) {
-//				Position p = spreadsheet.getCellFocus();
-//				getWorkbookCtrl().addImage(p.getRow(), p.getColumn(), (AImage)media);
-//			} else {
-//				try {
-//					Messagebox.show("Upload content must be image format");
-//				} catch (InterruptedException e) {
-//				}
-//			}
-//		}
+//	public void onFormatNumber(ForwardEvent event) {
+//		Window win = (Window) mainWin.getFellow("formatNumberWin");
+//		win.setPosition("parent");
+//		win.setLeft("170px");
+//		win.setTop("24px");
+//		win.doPopup();// Modal();
 //	}
-
-	public void onInsertRows(ForwardEvent event) {
-		try {
-			final Rect rect = spreadsheet.getSelection();
-			final int top = rect.getTop();
-			final int bottom = rect.getBottom();
-			// TODO undo/redo
-			// spreadsheet.pushInsertRowColState(-1, top, -1, bottom);
-			Utils.insertRows(spreadsheet.getSelectedSheet(), top, bottom);
-			spreadsheet.focus();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void onInsertColumns(ForwardEvent event) {
-		try {
-			Rect rect = spreadsheet.getSelection();
-			int left = rect.getLeft();
-			int right = rect.getRight();
-
-			// TODO undo/redo
-			// spreadsheet.pushInsertRowColState(left, -1, right, -1);
-			Utils.insertColumns(spreadsheet.getSelectedSheet(), left, right);
-			spreadsheet.focus();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	// SECTION HELP MENU
 	public void onHelpCheatsheet(ForwardEvent event) {
@@ -699,175 +377,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		win.doPopup();
 	}
 
-	public void onFormulaListOK() {
-		Combobox formulaList = (Combobox) Path.getComponent("//p1/mainWin/formulaList");
-
-		int left = spreadsheet.getSelection().getLeft();
-		int top = spreadsheet.getSelection().getTop();
-		String formula = formulaList.getSelectedItem().getLabel();
-		if (formula != null) {
-			final Worksheet sheet = spreadsheet.getSelectedSheet();
-			Cell cell = Utils.getOrCreateCell(sheet, top, left);
-			cell.setCellFormula(formula + "()");
-		}
-		formulaList.setText("");
-	}
-
-//	public void onMergeCellClick(ForwardEvent event) {
-//		try {
-//			// isMergeCell should read from the cell
-//			// and search all over the cell if any one is merged then unmerge
-//			// all
-//			isMergeCell = !isMergeCell;
-//			if (isMergeCell) {
-//				mergeCellBtn.setClass("clicked");
-//			}
-//
-//			if (isMergeCell) {
-//				// TODO: undo/redo
-//				// spreadsheet.pushCellState();
-//				Rect sel = spreadsheet.getSelection();
-//				if (sel.getLeft() == sel.getRight() && sel.getTop() == sel.getBottom()) {
-//					mergeCellBtn.setClass("toolIcon");
-//				} else {
-//					Utils.mergeCells(spreadsheet.getSelectedSheet(), sel.getTop(), sel.getLeft(), sel.getBottom(), sel.getRight(), false);
-//				}
-//				spreadsheet.focus();
-//			} else {
-//				// TODO: undo/redo
-//				// spreadsheet.pushCellState();
-//				Rect sel = spreadsheet.getSelection();
-//				Utils.unmergeCells(spreadsheet.getSelectedSheet(),
-//						sel.getTop(), sel.getLeft(), sel.getBottom(), sel
-//								.getRight());
-//				spreadsheet.focus();
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-
-
-
 	public void onRange(ForwardEvent event) {
 		rangeh.dispatcher((String) event.getData());
-	}
-
-
-
-	public void onClick$insertPieChart(Event evt) {
-		// TODO remove me, insert PieChart
-		throw new UiException("insert pie chart is not implmented yet");
-		/*
-		 * Component cmp = execution.createComponents("piechart.zul", mainWin,
-		 * null); if (cmp != null) { System.out.println("create cmp"); } Chart
-		 * chart = (Chart)cmp.getFellow("mychart"); ChartWidget wgt = new
-		 * ChartWidget(); wgt.setChart(chart);
-		 * 
-		 * int col = spreadsheet.getSelection().getLeft(); int row =
-		 * spreadsheet.getSelection().getTop(); wgt.setRow(row);
-		 * wgt.setColumn(col); SpreadsheetCtrl ctrl = (SpreadsheetCtrl)
-		 * spreadsheet.getExtraCtrl(); ctrl.addWidget(wgt);
-		 */}
-
-	public void onInsertChart(ForwardEvent event) {
-		// TODO remove me, insert chart
-		throw new UiException("insert chart is not implmented yet");
-		/*
-		 * final int left = spreadsheet.getSelection().getLeft(); final int
-		 * right = spreadsheet.getSelection().getRight(); final int top =
-		 * spreadsheet.getSelection().getTop(); final int bottom =
-		 * spreadsheet.getSelection().getBottom(); Sheet sheet =
-		 * spreadsheet.getSelectedSheet();
-		 * 
-		 * final String modelType=(String)event.getData();
-		 * 
-		 * //BarModel model2=new SimpleBarModel(); StringBuffer strBuf = new
-		 * StringBuffer();
-		 * strBuf.append("<window title=\"test\" width=\"420px\" id=\"chartWin"
-		 * +(chartKey++)+"\" border=\"normal\">");strBuf.append(
-		 * "<chart id=\"myChart\" width=\"400px\" height=\"200px\" type=\""
-		 * +modelType+"\" threeD=\"true\" fgAlpha=\"128\">");
-		 * strBuf.append("<zscript>"); p(modelType);
-		 * if(modelType.equals("pie")){
-		 * strBuf.append("myChart.setModel(new SimplePieModel());"); }
-		 * if(modelType.equals("bar")){
-		 * strBuf.append("myChart.setModel(new SimpleCategoryModel());"); }
-		 * strBuf.append("</zscript>"); strBuf.append("</chart>");
-		 * strBuf.append("</window>"); Window win= (Window)
-		 * Executions.createComponentsDirectly(strBuf.toString(), null, mainWin,
-		 * null); Chart myChart = (Chart) win.getFellow("myChart"); ChartModel
-		 * model=myChart.getModel(); for(int row=top; row<=bottom; row++){ Cell
-		 * cellName=sheet.getCell(row, left); String name; if(cellName==null ||
-		 * cellName.getText()==null) name=""; else name=cellName.getText();
-		 * for(int col=left+1; col<=right; col++){ Cell
-		 * cellValue=sheet.getCell(row, col); double value; if(cellValue==null
-		 * || cellValue.getResult()==null) value=0; else{ try{
-		 * value=((Double)cellValue.getResult()).doubleValue(); }catch(Exception
-		 * e){ value=0; }
-		 * 
-		 * //p(name); //p(""+value); if(modelType.equals("pie")){
-		 * ((PieModel)model).setValue((Comparable)name,new Double(value)); }
-		 * if(modelType.equals("bar")){
-		 * ((CategoryModel)model).setValue((Comparable)name, (Comparable)new
-		 * Long(col-left), new Double(value)); } } } }
-		 * if(modelType.equals("pie")) myChart.setModel((PieModel)model);
-		 * if(modelType.equals("bar")) myChart.setModel((CategoryModel)model);
-		 * 
-		 * win.doOverlapped(); //win.setSizable(true); win.setClosable(true);
-		 * //win.setAttribute(SpreadsheetCtrl.CHILD_PASSING_KEY,"");
-		 * //spreadsheet.appendChild(win); mainWin.appendChild(win);
-		 * 
-		 * win.setLeft("100px"); win.setTop("200px"); win.doOverlapped();
-		 * //spreadsheet.smartUpdate("appendWidget",win.getUuid());
-		 * 
-		 * 
-		 * 
-		 * 
-		 * //Add EventListener for updating chart
-		 * myChart.addEventListener(Events.ON_STOP_EDITING, new EventListener()
-		 * { public void onEvent(Event event) throws Exception { int
-		 * modRow=((CellEvent)event).getRow(); int
-		 * modCol=((CellEvent)event).getColumn(); if(left<=modCol &&
-		 * modCol<=right && top<=modRow && modRow<=bottom){
-		 * //p("ChartValue Editing:"+(String)event.getData());
-		 * //p("row: "+top+" "+bottom); //p("col: "+left+" "+right);
-		 * //p("event:"+modelType); Sheet sheet=((CellEvent)event).getSheet();
-		 * Chart myChart=(Chart)event.getTarget(); ChartModel model =
-		 * myChart.getModel(); if(modelType.equals("pie"))
-		 * ((PieModel)model).clear(); if(modelType.equals("bar"))
-		 * ((CategoryModel)model).clear();
-		 * 
-		 * for(int row=top; row<=bottom; row++){ Cell
-		 * cellName=sheet.getCell(row, left); String name; if(cellName==null ||
-		 * cellName.getText()==null) name=""; else name=cellName.getText();
-		 * 
-		 * for(int col=left+1; col<=right; col++){ Cell
-		 * cellValue=sheet.getCell(row, col); double value; if(cellValue==null
-		 * || cellValue.getResult()==null) value=0; else{ try{
-		 * value=((Double)cellValue.getResult()).doubleValue(); }catch(Exception
-		 * e){ value=0; }
-		 * 
-		 * //p(name); //p(""+value); if(modelType.equals("pie")){
-		 * ((PieModel)model).setValue((Comparable)name,new Double(value)); }
-		 * if(modelType.equals("bar")){
-		 * ((CategoryModel)model).setValue((Comparable)name, (Comparable)new
-		 * Long(col-left), new Double(value)); } } } }
-		 * if(modelType.equals("pie")) myChart.setModel((PieModel)model);
-		 * if(modelType.equals("bar")) myChart.setModel((CategoryModel)model);
-		 * 
-		 * }
-		 * 
-		 * } });
-		 * 
-		 * win.addEventListener(org.zkoss.zk.ui.event.Events.ON_CLICK, new
-		 * EventListener(){
-		 * 
-		 * public void onEvent(Event event) throws Exception { Rect rect=new
-		 * Rect(); rect.setBottom(bottom); rect.setTop(top);
-		 * rect.setRight(right); rect.setLeft(left);
-		 * spreadsheet.setSelection(rect); } });
-		 */
 	}
 
 	public void reloadRevisionMenu() {
@@ -978,23 +489,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 //		}
 //		return null;
 //	}
-
-	public void onNotImplement(ForwardEvent event) {
-		try {
-			Messagebox.show("Not implement yet");
-		} catch (InterruptedException e) {
-		}
-	}
-	
-	public void onCheck$gridlinesCheckbox() {
-		Worksheet sheet = spreadsheet.getSelectedSheet();
-		Utils.getRange(sheet, 0, 0).setDisplayGridlines(!sheet.isDisplayGridlines());
-		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
-	}
-	
-	public void onCheck$protectSheet() {
-//		getDesktopWorkbenchContext().getWorkbookCtrl().protectSheet(protectSheet.isChecked() ? "" : null);
-	}
 
 	public void openCustomSortDialog(Rect selection) {
 		if (_customSortDialog == null || _customSortDialog.isInvalidated())
@@ -1162,6 +656,18 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		return true;
 	}
 	
+	public void onSheetSelect$spreadsheet() {
+		
+		fileMenu.setSaveFileDisabled(false);
+		fileMenu.setSaveFileAndCloseDisabled(false);
+		fileMenu.setDeleteFileDisabled(false);
+		fileMenu.setExportPdfDisabled(false);
+		fileMenu.setExportHtmlDisabled(false);
+		fileMenu.setExportExcelDisabled(false);
+		
+		viewMenu.setFreezeUnFreezeDisabled(false);
+	}
+	
 	private class MainActionHandler extends ActionHandler {
 		
 		MainActionHandler() {
@@ -1184,6 +690,20 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				} else
 					workbench.getWorkbenchCtrl().openSaveFileDialog();	
 			}
+		}
+
+		@Override
+		public void doCloseBook() {
+			super.doCloseBook();
+			
+			fileMenu.setSaveFileDisabled(true);
+			fileMenu.setSaveFileAndCloseDisabled(true);
+			fileMenu.setDeleteFileDisabled(true);
+			fileMenu.setExportPdfDisabled(true);
+			fileMenu.setExportHtmlDisabled(true);
+			fileMenu.setExportExcelDisabled(true);
+			
+			viewMenu.setFreezeUnFreezeDisabled(true);
 		}
 
 		@Override
