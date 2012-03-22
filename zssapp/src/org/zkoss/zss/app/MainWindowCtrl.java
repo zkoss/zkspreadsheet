@@ -264,72 +264,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		}
 		return false;
 	}
-	
-	//TODO: move to ActionHandler
-	public void onCtrlKey$spreadsheet(KeyEvent event) {
-		Rect selection = event.getSelection();
-		char c = (char) event.getKeyCode();
-		try {
-			if (46 == event.getKeyCode()) {// delete
-				if (event.isCtrlKey())
-					actionHandler.doClearStyle(selection);
-				else
-					actionHandler.doClearContent(selection);
-				return;
-			}
-
-			if (false == event.isCtrlKey())
-				return;
-
-			switch (c) {
-			case 'X':
-				actionHandler.doCut(selection);
-				break;
-			case 'C':
-				actionHandler.doCopy(selection);
-				break;
-			case 'V':
-				actionHandler.doPaste(selection);
-				break;
-			case 'D':
-				actionHandler.doClearContent(selection);
-				break;
-			case 'E':// for testing
-				spreadsheet.setCellFocus(new Position(2, 2));
-				spreadsheet.setSelection(new Rect(2, 2, 4, 4));
-				break;
-			case 'S':
-				//TODO: check permission from WorkbookCtrl
-				if (FileHelper.hasSavePermission()) {
-					//TODO: refactor duplicate save logic
-					DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
-					if (workbench.getWorkbookCtrl().hasFileExtentionName()) {
-						workbench.getWorkbookCtrl().save();
-						workbench.fireWorkbookSaved();
-					} else
-						workbench.getWorkbenchCtrl().openSaveFileDialog();
-				}
-				break;
-			case 'O':
-				openOpenFileDialog();
-				break;
-			case 'B':
-				actionHandler.doFontBold(selection);
-				break;
-			case 'I':
-				actionHandler.doFontItalic(selection);
-				break;
-			case 'U':
-				actionHandler.doFontUnderline(selection);
-				break;
-			default:
-				return;
-			}
-
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
 
 	/**
 	 * @return
@@ -718,6 +652,32 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			if (spreadsheet.getSelectedSheet() != null && validSelection(selection)) {
 				spreadsheet.setSelection(selection);
 				openPasteSpecialDialog();	
+			}
+		}
+		
+		
+
+		@Override
+		public void doCtrlKey(KeyEvent event) {
+			super.doCtrlKey(event);
+			if (spreadsheet.getSelectedSheet() != null && validSelection(event.getSelection())) {
+				switch (event.getKeyCode()) {
+				case 'S':
+					//TODO: check permission from WorkbookCtrl
+					if (FileHelper.hasSavePermission()) {
+						//TODO: refactor duplicate save logic
+						DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
+						if (workbench.getWorkbookCtrl().hasFileExtentionName()) {
+							workbench.getWorkbookCtrl().save();
+							workbench.fireWorkbookSaved();
+						} else
+							workbench.getWorkbenchCtrl().openSaveFileDialog();
+					}
+					break;
+				case 'O':
+					openOpenFileDialog();
+					break;
+				}
 			}
 		}
 

@@ -67,6 +67,7 @@ import org.zkoss.zss.ui.Action;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.Events;
+import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.impl.CellVisitor;
 import org.zkoss.zss.ui.impl.CellVisitorContext;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
@@ -561,6 +562,14 @@ public abstract class ActionHandler {
 				doSheetSelect();
 			}
 		});
+		_spreadsheet.addEventListener(Events.ON_CTRL_KEY, new EventListener() {
+
+			@Override
+			public void onEvent(Event event) throws Exception {
+				KeyEvent evt = (KeyEvent) event;
+				doCtrlKey((KeyEvent) event);
+			}
+		});
 		
 		Upload upload = new Upload();
 		upload.appendChild(_insertPicture = new Uploader());
@@ -574,6 +583,53 @@ public abstract class ActionHandler {
 			}
 		});
 		_spreadsheet.appendChild(upload);
+	}
+	
+	/**
+	 * Execute when user press key
+	 * @param event
+	 */
+	public void doCtrlKey(KeyEvent event) {
+		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		Rect selection = event.getSelection();
+		if (sheet == null || !validSelection(selection)) {
+			return;
+		}
+		
+		if (46 == event.getKeyCode()) {
+			if (event.isCtrlKey())
+				doClearStyle(selection);
+			else
+				doClearContent(selection);
+			return;
+		}
+		if (false == event.isCtrlKey())
+			return;
+		
+		char keyCode = (char) event.getKeyCode();
+		switch (keyCode) {
+		case 'X':
+			doCut(selection);
+			break;
+		case 'C':
+			doCopy(selection);
+			break;
+		case 'V':
+			doPaste(selection);
+			break;
+		case 'D':
+			doClearContent(selection);
+			break;
+		case 'B':
+			doFontBold(selection);
+			break;
+		case 'I':
+			doFontItalic(selection);
+			break;
+		case 'U':
+			doFontUnderline(selection);
+			break;
+		}
 	}
 	
 	/**

@@ -18,10 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.event;
 
-import org.zkoss.zss.ui.event.CellEvent;
-import org.zkoss.zss.ui.event.CellMouseEvent;
-import org.zkoss.zss.ui.event.HeaderMouseEvent;
-import org.zkoss.zss.ui.event.StopEditingEvent;
+
 
 
 /**
@@ -166,12 +163,7 @@ public class Events {
 	public static final String ON_SHEET_ORDER_CHANGE = "onSheetOrderChange";
 	
 	/**
-	 * 
+	 * The ON_CTRL_KEY event (used with {@link KeyEvent})
 	 */
-	public static final String ON_TOOLBAR_ACTION = "onToolbarAction";
-	
-	/**
-	 * 
-	 */
-	//public static final String ON_CLICK_MENUITEM = "onClickMenuitem";
+	public static final String ON_CTRL_KEY = org.zkoss.zk.ui.event.Events.ON_CTRL_KEY;
 }
