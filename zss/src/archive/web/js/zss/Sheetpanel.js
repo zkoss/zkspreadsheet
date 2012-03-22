@@ -294,10 +294,9 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 						focus = snapshop.getFocus(),
 						sel = snapshop.getSelection(),
 						hsel = snapshop.getHighlight(),
-						css = snapshop.getScss();
-					if (!zk.safari) {//Chrome require change href
-						wgt.setScss(css);
-					}
+						dv = snapshop.getDataValidations(),
+						af = snapshop.getAutoFilter();
+					
 					if (focus) {
 						row = focus.row;
 						col = focus.column;
@@ -313,6 +312,16 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 						htop = hsel.top;
 						hright = hsel.right;
 						hbottom = hsel.bottom;
+					}
+					if (dv) {
+						wgt.setDataValidations(dv);
+					} else if (wgt.setDataValidations) {
+						wgt.setDataValidations(null);
+					}
+					if (af) {
+						wgt.setAutoFilter(af);
+					} else if (wgt.setAutoFilter) {
+						wgt.setAutoFilter(null);
 					}
 					wgt.setSheetId(targetSheetId, false, visRng);//replace widgets: cells, headers etc..
 					

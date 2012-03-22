@@ -686,6 +686,19 @@ zss.Snapshot = zk.$extends(zk.Object, {
 		this.setScrollPanelPos({'scrollLeft': scrollPanel.currentLeft, 'scrollTop': scrollPanel.currentTop});
 		this.setLeftPanelPos(leftPanel.toppos);
 		this.setTopPanelPos(topPanel.leftpos);
+		
+		if (wgt.getDataValidations) {
+			var dv = wgt.getDataValidations();
+			if (dv) {
+				this.setDataValidations(dv);
+			}
+		}
+		if (wgt.getAutoFilter) {
+			var af = wgt.getAutoFilter();
+			if (af) {
+				this.setAutoFilter(af);
+			}
+		}
 	},
 	$define: {
 		scss: null,
@@ -726,7 +739,9 @@ zss.Snapshot = zk.$extends(zk.Object, {
 		topPanelPos: null,
 		focus: null,
 		selection: null,
-		highlight: null
+		highlight: null,
+		dataValidations: null,
+		autoFilter: null
 	}
 });
 

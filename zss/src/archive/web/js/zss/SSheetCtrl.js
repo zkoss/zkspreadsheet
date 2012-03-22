@@ -86,6 +86,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		if (wgt.isSheetCSSReady()) {
 			sheet.activeBlock.setVisible(true); //show cells
 			sheet._doSSInitLater(); //may show focus, process wrap height
+			wgt.focus();
 		} else {
 			setTimeout(function () {
 				doAfterCSSReady(sheet);
