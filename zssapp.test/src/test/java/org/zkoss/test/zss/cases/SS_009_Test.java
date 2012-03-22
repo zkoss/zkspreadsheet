@@ -32,7 +32,7 @@ public class SS_009_Test extends ZSSAppTest {
 	@Test
 	public void open_cheatssheet() {
 	
-		click("$helpMemu");
+		click("$helpMenu");
 		click("$openCheatsheet");
 		
 		Assert.assertTrue("cheatsheet popup window shall open", isVisible("$cheatsheet div.z-window-popup-cnt"));

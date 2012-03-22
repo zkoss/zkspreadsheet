@@ -36,7 +36,5 @@ public class SS_010_Test extends ZSSAppTest {
 		click(".zstbtn-closeBook");
 		
 		Assert.assertFalse(hasBook());
-		
-		//TODO: click other button shall not cause any error
 	}
 }

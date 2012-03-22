@@ -211,7 +211,6 @@ public class CellCache {
 		}
 		
 		if (set.contains(EqualCondition.VALUE)) {
-			equal = this.text.equals(that.getText());
 			if (this.cellType == CellType.FORMULA) {
 				equal = that.cellType != CellType.FORMULA;
 			} else if (this.cellType == CellType.NUMBER) {
@@ -235,6 +234,8 @@ public class CellCache {
 			}
 		}
 		if (!equal) {
+			System.out.println("!equal1 this: " + this.toString());
+			System.out.println("!equal1 that: " + that.toString());
 			return equal;
 		}
 		

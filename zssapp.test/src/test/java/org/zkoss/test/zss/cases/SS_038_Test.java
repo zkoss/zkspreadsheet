@@ -71,8 +71,7 @@ public class SS_038_Test  extends ZSSAppTest {
 		
 		verifyPasteAll(PasteSource.COPY, from, builder.offset(11, 10).build());
 	}
-	
-	
+
 	@Test
 	public void ctrl_d_delete_content() {
 		int tRow = 11;
@@ -96,7 +95,7 @@ public class SS_038_Test  extends ZSSAppTest {
 		
 		verifyClearStyle(cache);
 	}
-	
+
 	@Test
 	public void ctrl_o_openfile() {
 		spreadsheet.focus(0, 0);
@@ -111,7 +110,7 @@ public class SS_038_Test  extends ZSSAppTest {
 		
 		Assert.assertTrue(isVisible("$_openFileDialog"));
 	}
-	
+
 	@Test
 	public void ctrl_b_fontbold() {
 		int tRow = 12;
@@ -123,10 +122,13 @@ public class SS_038_Test  extends ZSSAppTest {
 		Iterator<Cell> i = iterator(tRow, lCol, bRow, rCol);
 		while (i.hasNext()) {
 			Cell c = i.next();
+			if (!c.isFontBold()) {
+				System.out.println(c);
+			}
 			Assert.assertTrue(c.isFontBold());
 		}
 	}
-	
+
 	@Test
 	public void ctrl_i_fontitalic() {
 		int tRow = 12;

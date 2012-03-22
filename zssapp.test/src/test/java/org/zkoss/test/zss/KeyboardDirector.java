@@ -22,6 +22,7 @@ import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.zkoss.test.Browser;
 import org.zkoss.test.CompundKey;
 import org.zkoss.test.ConditionalTimeBlocker;
 import org.zkoss.test.JQuery;
@@ -44,38 +45,41 @@ public class KeyboardDirector {
 	
 	final ConditionalTimeBlocker timeBlocker;
 	
+	final Browser browser;
+	
 	@Inject
-	/*package*/ KeyboardDirector (Spreadsheet spreadsheet, ConditionalTimeBlocker timeBlocker, WebDriver webDriver) {
+	/*package*/ KeyboardDirector (Spreadsheet spreadsheet, Browser browser,
+			ConditionalTimeBlocker timeBlocker, WebDriver webDriver) {
 		this.spreadsheet = spreadsheet;
 		this.timeBlocker = timeBlocker;
 		this.webDriver = webDriver;
+		this.browser = browser;
 	}
 	
 	public void sendKeys(int row, int col, CharSequence keys) {
 		spreadsheet.focus(row, col);
 		
 		//TODO: test selenium: shall not lost input char
-		if (keys.length() > 1) {
+		if (keys.length() > 0) {
 			final CharSequence first = keys.subSequence(0, 1);
 			WebElement webElement = spreadsheet.jq$focus().getWebElement();
 			webElement.sendKeys(first);
 			timeBlocker.waitUntil(1);
 			timeBlocker.waitResponse();
 			
-			try {
-				final CharSequence rest = keys.subSequence(1, keys.length());
+			if (keys.length() > 1) {
+				try {
+					final CharSequence rest = keys.subSequence(1, keys.length());
 
-				webElement = spreadsheet.getInlineEditor().getWebElement();
-				webElement.sendKeys(rest);
-				timeBlocker.waitResponse();	
-			} catch (ElementNotVisibleException ex) {
-				//if protect sheet, cannot edit, will throw ElementNotVisibleException
+					webElement = spreadsheet.getInlineEditor().getWebElement();
+					webElement.sendKeys(rest);
+					timeBlocker.waitResponse();	
+				} catch (ElementNotVisibleException ex) {
+					//if protect sheet, cannot edit, will throw ElementNotVisibleException
+				}	
 			}
 		} else {
 			delete(row, col);
-//			WebElement webElement = spreadsheet.jq$focus().getWebElement();
-//			webElement.sendKeys(keys);
-//			timeBlocker.waitResponse();
 		}
 	}
 	
@@ -100,6 +104,7 @@ public class KeyboardDirector {
 			//protect sheet will cause ElementNotVisibleException ex
 		}
 //		new JavascriptActions(webDriver).enter(spreadsheet.getInlineEditor().jq$n()).perform();
+		timeBlocker.waitUntil(1);
 		timeBlocker.waitResponse();
 	}
 	
@@ -196,6 +201,7 @@ public class KeyboardDirector {
 		.ctrlDelete(spreadsheet.jq$n())
 		.perform();
 		
+		timeBlocker.waitUntil(1);
 		timeBlocker.waitResponse();
 	}
 	
@@ -207,6 +213,7 @@ public class KeyboardDirector {
 		.ctrlD(spreadsheet.jq$n())
 		.perform();
 		
+		timeBlocker.waitUntil(1);
 		timeBlocker.waitResponse();
 	}
 	
@@ -219,6 +226,7 @@ public class KeyboardDirector {
 		.keyDown(target, Keycode.DELETE.intValue())
 		.perform();
 		
+		timeBlocker.waitUntil(1);
 		timeBlocker.waitResponse();
 	}
 
@@ -231,5 +239,8 @@ public class KeyboardDirector {
 		.mouseDown(target, MouseButton.LEFT, CompundKey.SHIFT)
 		.mouseUp(target, MouseButton.LEFT, CompundKey.SHIFT)
 		.perform();
+		
+		timeBlocker.waitUntil(1);
+		timeBlocker.waitResponse();
 	}
 }

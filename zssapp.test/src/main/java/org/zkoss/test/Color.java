@@ -28,7 +28,9 @@ public class Color {
 	
 	public Color(String color) {
 		color = color.toUpperCase();
-		if (isRGB(color)) {
+		if (isRGBA(color)) {
+			this.hex = rgbaTohex(color);
+		} else if (isRGB(color)) {
 			this.hex = rgbToHex(color);
 		} else {
 			if (color.indexOf("#") < 0)
@@ -45,6 +47,10 @@ public class Color {
 		return color.indexOf("RGB") >= 0;
 	}
 	
+	private boolean isRGBA(String color) {
+		return color.indexOf("RGBA") >= 0;
+	}
+	
 	private boolean isHex(String color) {
 		boolean hex = color.indexOf("#") >= 0;
 		boolean rgb = color.indexOf("RGB") >= 0;
@@ -53,7 +59,27 @@ public class Color {
 		else
 			throw new IllegalArgumentException("[" + color + "] is not color format");
 	}
-	
+	// convert RGBA color data to hex
+	private String rgbaTohex(String rgba) {
+		int index = rgba.indexOf("RGBA");
+		if (index < 0)
+			throw new IllegalArgumentException("[" + rgba + "] is not RGBA format");
+		
+		rgba = rgba.substring(index + "RGBA".length());
+		rgba = rgba.replace("(", "");
+		rgba = rgba.replace(")", "");
+		String[] ary = rgba.split(",");
+		int r = Integer.parseInt(ary[0].trim());
+		int g = Integer.parseInt(ary[1].trim());
+		int b = Integer.parseInt(ary[2].trim());
+		int a = Integer.parseInt(ary[3].trim());
+		
+	    if (r > 255 || g > 255 || b > 255 || a > 255)
+	    	throw new IllegalArgumentException();
+	    
+	    return "#" + toHex(r)+toHex(g)+toHex(b);
+	}
+
 	//assume UpperCase
 	private String rgbToHex(String rgb) {
 		int index = rgb.indexOf("RGB");

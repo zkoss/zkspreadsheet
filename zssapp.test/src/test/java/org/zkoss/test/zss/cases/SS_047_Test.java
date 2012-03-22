@@ -38,12 +38,7 @@ public class SS_047_Test extends ZSSAppTest {
 	 * 3. press Enter shall change the cell value
 	 */
 	@Test
-	public void inline_editing_enter() {
-		if (!Strings.isNullOrEmpty(getCell(12, 5).getEdit())) {
-			keyboardDirector.delete(12, 5);
-			Assert.assertTrue("Cell text shall be empty", Strings.isNullOrEmpty(getCell(12, 5).getEdit()));
-		}
-		
+	public void inline_editing_enter() {		
 		keyboardDirector.setEditText(12, 5, "a"); //setEditText press enter at end
 		Assert.assertTrue("Cell text shall be 'a'", "a".equals(getCell(12, 5).getEdit()));
 	}

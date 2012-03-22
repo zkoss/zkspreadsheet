@@ -86,7 +86,7 @@ public class SS_028_Test extends ZSSAppTest {
 		click(".zstbtn-sortAndFilter .zstbtn-arrow");
 		click(".zsmenuitem-filter");
 		
-		int buttonSize = spreadsheet.getRow(11).jq$n().children(".zsbtn").length();
+		int buttonSize = jq(".zsbtn").length();
 		Assert.assertEquals(6, buttonSize);
 		
 		//toggle off

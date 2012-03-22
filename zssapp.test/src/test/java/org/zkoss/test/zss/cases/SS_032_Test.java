@@ -41,7 +41,7 @@ public class SS_032_Test extends ZSSAppTest {
 	public void formulabar_editor() {
 		
 		spreadsheet.focus(12, 10);
-		JQuery formulaBar = jq(".zsformulbar-editor-real");
+		JQuery formulaBar = jq(".zsformulabar-editor-real");
 		formulaBar.getWebElement().click();
 		formulaBar.getWebElement().sendKeys("123456");
 		formulaBar.getWebElement().sendKeys(Keys.ENTER);

@@ -47,4 +47,14 @@ public class SS_001_Test extends ZSSAppTest {
 		
 		Assert.assertTrue("Focus shall remain at same cell", spreadsheet.isSelection(5, 5));
 	}
+	
+	@Test
+	public void click_help_menu() {
+		Assert.assertFalse(spreadsheet.isSelection(5, 5));
+		
+		spreadsheet.focus(5, 5);
+		click("$helpMenu");
+		
+		Assert.assertTrue("Focus shall remain at same cell", spreadsheet.isSelection(5, 5));
+	}
 }

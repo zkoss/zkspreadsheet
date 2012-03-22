@@ -108,6 +108,7 @@ public class SS_042_Test extends ZSSAppTest {
 		click("$composeFormulaTextbox");
 		inp = jq("$composeFormulaTextbox").getWebElement();
 		inp.sendKeys("f7,f8,f9");
+		timeBlocker.waitUntil(1);
 		inp.sendKeys(Keys.ENTER);
 		timeBlocker.waitResponse();
 		
@@ -125,10 +126,8 @@ public class SS_042_Test extends ZSSAppTest {
 		WebElement inp = jq("$searchTextbox").getWebElement();
 		inp.sendKeys("sum");
 		inp.sendKeys(Keys.ENTER);
+		timeBlocker.waitUntil(1);
 		timeBlocker.waitResponse();
-		if (browser.isSafari() || browser.isGecko()) {
-			timeBlocker.waitUntil(1);
-		}
 		
 		click("@listcell[label=\"SUM\"]");
 		click("$_insertFormulaDialog $okBtn");
@@ -136,10 +135,8 @@ public class SS_042_Test extends ZSSAppTest {
 		inp = jq("@window[mode=\"overlapped\"][title=\"Function Arguments\"] @textbox:eq(1)").getWebElement();
 		inp.sendKeys("f7");
 		inp.sendKeys(Keys.TAB);
+		timeBlocker.waitUntil(1);
 		timeBlocker.waitResponse();
-		if (browser.isSafari() || browser.isGecko()) {
-			timeBlocker.waitUntil(1);
-		}
 			
 		String classname = jq("$_composeFormulaDialog @textbox:eq(2)").attr("class");
 		Assert.assertTrue(classname.contains("focus"));	

@@ -134,7 +134,9 @@ public class Cell extends Widget {
 	}
 	
 	public String getFontFamily() {
-		return jq$n("real").css("font-family").toLowerCase();
+		String fontFamily = jq$n("real").css("font-family").toLowerCase();
+		fontFamily = fontFamily.replace("'", "");//Note. chrome font name may have '
+		return fontFamily;
 	}
 	
 	public String getFontSize() {
@@ -146,7 +148,8 @@ public class Cell extends Widget {
 	}
 	
 	public boolean isFontBold() {
-		return "700".equals(getFontWeight());
+		String fontWeight = getFontWeight();
+		return "700".equals(fontWeight) || "bold".equalsIgnoreCase(fontWeight);
 	}
 	
 	public boolean isFontItalic() {
@@ -167,7 +170,8 @@ public class Cell extends Widget {
 	
 	public Color getFillColor() {
 		String c = jq$n().css("background-color").toUpperCase();
-		if (c.indexOf("TRANSPARENT") >= 0)
+		//Note. in chrome will use RGBA(0, 0, 0, 0) = TRANSPARENT
+		if (c.indexOf("TRANSPARENT") >= 0 || c.indexOf("RGBA(0, 0, 0, 0)") >= 0)
 			c = "#FFFFFF";
 		return new Color(c);
 	}

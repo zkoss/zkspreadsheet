@@ -63,8 +63,8 @@ public class SS_033_Test extends ZSSAppTest {
         WebElement inp = jq("$mailAddr").getWebElement();
         inp.sendKeys("example@potix.com");
         inp.sendKeys(Keys.TAB);
-        inp.sendKeys(Keys.ENTER);
-        timeBlocker.waitResponse();
+        timeBlocker.waitUntil(1);
+        click("$_insertHyperlinkDialog $okBtn");
         
         JQuery link = getCell(11, 10).jq$n("real").children().first();
         Assert.assertEquals("mailto:example@potix.com", link.attr("href"));

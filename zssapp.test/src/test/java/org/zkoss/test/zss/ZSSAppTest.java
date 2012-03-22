@@ -518,8 +518,9 @@ public class ZSSAppTest {
 			int row = c.getRow();
 			int col = c.getCol();
 			Cell current = getCell(row, col);
-			if (row != bRow)
+			if (row != bRow) {
 				Assert.assertFalse(current.hasBottomBorder());
+			}
 			if (col != rCol)
 				Assert.assertFalse(current.hasRightBorder());
 			Assert.assertEquals(new Color("#FFFFFF"), current.getFillColor());

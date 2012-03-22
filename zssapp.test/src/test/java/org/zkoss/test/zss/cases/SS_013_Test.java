@@ -110,6 +110,4 @@ public class SS_013_Test extends ZSSAppTest {
 		
 		verifyFontFamily(fontFamily.replace("-", " "), tRow, lCol, bRow, rCol);
 	}
-	
-
 }

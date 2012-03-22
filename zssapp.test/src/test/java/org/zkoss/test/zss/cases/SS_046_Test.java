@@ -44,6 +44,8 @@ public class SS_046_Test extends ZSSAppTest {
 		new JavascriptActions(webDriver)
 		.enter(jq(".zsformulabar-editor-real"))
 		.perform();
+		timeBlocker.waitUntil(1);
+		timeBlocker.waitResponse();
 
 		Assert.assertEquals("125000", getCell(14, 10).getText());
 	} 

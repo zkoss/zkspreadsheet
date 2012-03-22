@@ -105,9 +105,9 @@ public class SS_012_Test extends ZSSAppTest {
 		CellCacheAggeration copyFrom = builder.build();
 		spreadsheet.setSelection(11, 5, 12, 5);
 		click(".zstbtn-copy");
-		click(".zstbtn-paste .zstbtn-arrow");
 		
 		focus(11, 10);
+		click(".zstbtn-paste .zstbtn-arrow");
 		click(".zsmenuitem-pasteSpecial");
 		
 		Assert.assertTrue(isVisible("$_pasteSpecialDialog"));
@@ -197,6 +197,6 @@ public class SS_012_Test extends ZSSAppTest {
 		click(".zsmenuitem-pasteValue");
 		
 		CellCacheAggeration pasteTo = builder.offset(pasteToRow, pasteToCol).build();
-		Assert.assertTrue(copyFrom.equals(pasteTo, EqualCondition.VALUE));
+		Assert.assertTrue(copyFrom.equals(pasteTo, EqualCondition.VALUE, EqualCondition.IGNORE_NUMBER_FORMAT));
 	}
 }

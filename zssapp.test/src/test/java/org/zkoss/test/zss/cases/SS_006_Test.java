@@ -40,4 +40,20 @@ public class SS_006_Test extends ZSSAppTest {
     	click("$viewFormulaBar a.z-menu-item-cnt-unck");
     	Assert.assertTrue("Formula bar shall be visible", isVisible(".zsformulabar"));
 	}
+	
+	//TODO
+//	@Test
+//	public void formula_bar_insert_function () {
+//		
+//	}
+//	
+//	@Test
+//	public void formula_bar_clear() {
+//		
+//	}
+//	
+//	@Test
+//	public void formula_bar_apply() {
+//		
+//	}
 }

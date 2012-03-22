@@ -209,7 +209,6 @@ public class SS_035_Test extends ZSSAppTest {
 		click(".z-menu-popup:visible .zsmenuitem-formatCell");
 		Assert.assertTrue(isVisible("$_formatNumberDialog"));
 		
-		click("$format a.z-menu-item-cnt");
 		click("@listcell[label=\"Accounting\"] div.z-overflow-hidden");
 		click("@listcell[label=\"$1,234\"] div.z-overflow-hidden");
 		click("$_formatNumberDialog $okBtn");

@@ -80,12 +80,12 @@ public class SS_040_Test extends ZSSAppTest {
 		mouseDirector.openCellContextMenu(11, 10);
 		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
 		
-		jq("$$colWidth input").getWebElement().click();
+		jq("$colWidth input").getWebElement().click();
 		click("$_pasteSpecialDialog $okBtn");
 		
 		Assert.assertTrue(copyFrom.equals(builder.offset(11, 10).build(), EqualCondition.COLUMN_WIDTH_ONLY));
 	}
-	
+
 	@Test
 	public void paste_special_formulas() {
 		int tRow = 15;
@@ -169,7 +169,7 @@ public class SS_040_Test extends ZSSAppTest {
 		copyFrom.merge(pasteTo, CellCache.Field.VERTICAL_ALIGN, CellCache.Field.HORIZONTAL_ALIGN, CellCache.Field.FONT_COLOR, CellCache.Field.FILL_COLOR, CellCache.Field.BOTTOM_BORDER, CellCache.Field.RIGHT_BORDER);
 		Assert.assertTrue(copyFrom.equals(pasteTo, EqualCondition.VALUE));
 	}
-	
+
 	@Test
 	public void paste_special_formats() {
 		int tRow = 15;
@@ -190,7 +190,7 @@ public class SS_040_Test extends ZSSAppTest {
 		copyFrom.merge(pasteTo, CellCache.Field.CELL_TYPE, CellCache.Field.TEXT, CellCache.Field.EDIT);
 		Assert.assertEquals(copyFrom, pasteTo);	
 	}
-	
+
 	@Test
 	public void paste_special_skip_blanks() {
 		//K5:K9, 10, 20, <blank>, 40, <blank>
@@ -219,7 +219,7 @@ public class SS_040_Test extends ZSSAppTest {
 		Assert.assertEquals("40", getCell(8, 11).getText());
 		Assert.assertEquals("90", getCell(9, 11).getText());
 	}
-	
+
 	@Test
 	public void paste_special_transpose() {
 		CellCache F12 = getCellCache(11, 5);
