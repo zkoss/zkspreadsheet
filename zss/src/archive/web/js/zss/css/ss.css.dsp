@@ -739,7 +739,7 @@
 }
 
 .zscellpopup {
-	overflow:auto;
+	overflow:hidden;
 	position:absolute;
 	top:0px;
 	left:0px;
@@ -747,7 +747,6 @@
 	background: #FFFFFF;
 	border: 1px solid #868686;
 	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-	height: 155px;
 }
 
 .zsdv-popup-cave {

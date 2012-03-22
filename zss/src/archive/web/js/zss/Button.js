@@ -1540,7 +1540,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 			tooltiptext: wgt._labelsCtrl.getFillColor(),
 			image: zk.ajaxURI('/web/zss/img/paint-can-color.png', AU),
 			onClick: function () {
-				var sht = wgt.sheetCtrll;
+				var sht = wgt.sheetCtrl;
 				if (sht) {
 					var s = sht.getLastSelection();
 					wgt.fireToolbarAction('fillColor', {color: this.getColor(), tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});	
