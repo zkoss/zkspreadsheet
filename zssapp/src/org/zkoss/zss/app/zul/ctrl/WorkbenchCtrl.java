@@ -28,9 +28,9 @@ public interface WorkbenchCtrl {
 	/**
 	 * Open export pdf dialog
 	 */
-	public void openExportPdfDialog();
+	public void openExportPdfDialog(Rect selection);
 	
-	public void openExportHtmlDialog();
+	public void openExportHtmlDialog(Rect selection);
 	
 	public void openOpenFileDialog();
 	

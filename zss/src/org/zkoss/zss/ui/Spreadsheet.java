@@ -4790,7 +4790,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 
 		@Override
-		public void doExportPDF() {
+		public void doExportPDF(Rect selection) {
 		}
 
 		@Override

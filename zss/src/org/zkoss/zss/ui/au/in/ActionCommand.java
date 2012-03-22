@@ -48,15 +48,14 @@ public class ActionCommand implements Command {
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), ActionCommand.class });
 		
 		Spreadsheet spreadsheet = ((Spreadsheet) comp);
-		
-		String sheetId = (String) data.get("sheetId");
-		Worksheet sheet = Utils.getSheetByUuid(spreadsheet.getBook(), sheetId);
-		if (sheet != null) {
-			String tag = (String) data.get("tag");
-			String act = (String) data.get("act");
-			if ("toolbar".equals(tag)) {
-				spreadsheet.getActionHandler().dispatch(act, data);
-			} else if ("sheet".equals(tag)) {
+		String tag = (String) data.get("tag");
+		String act = (String) data.get("act");
+		if ("toolbar".equals(tag)) {
+			spreadsheet.getActionHandler().dispatch(act, data);
+		} else if ("sheet".equals(tag) && spreadsheet.getBook() != null) {
+			String sheetId = (String) data.get("sheetId");
+			Worksheet sheet = Utils.getSheetByUuid(spreadsheet.getBook(), sheetId);
+			if (sheet != null) {
 				processSheet(act, data, sheet, spreadsheet);
 			}
 		}

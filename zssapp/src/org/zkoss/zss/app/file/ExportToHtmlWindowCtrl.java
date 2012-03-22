@@ -76,13 +76,16 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 	Checkbox noGridlines;
 	
 	Button export;
-	
-//	Button test;
-	
+		
+	Rect selection;
 	Spreadsheet ss;
 	
 	public void onOpen$_exportToHtmlDialog(ForwardEvent event) {
 		loadPrintSetting();
+		
+		selection = (Rect) event.getOrigin().getData();
+		currSelection.setDisabled(selection == null);
+		
 		noHeader.setChecked(false);
 		try {
 			_exportToHtmlDialog.setMode(Window.MODAL);

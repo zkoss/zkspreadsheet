@@ -142,12 +142,14 @@ public class FileMenu extends Menu implements IdSpace {
 		exportHtml.setDisabled(disabled);
 	}
 
+	//TODO: remove
 	public void onClick$exportPdf() {
-		getDesktopWorkbenchContext().getWorkbenchCtrl().openExportPdfDialog();
+		getDesktopWorkbenchContext().getWorkbenchCtrl().openExportPdfDialog(null);
 	}
 
+	//TODO: remove
 	public void onClick$exportHtml() {
-		getDesktopWorkbenchContext().getWorkbenchCtrl().openExportHtmlDialog();
+		getDesktopWorkbenchContext().getWorkbenchCtrl().openExportHtmlDialog(null);
 	}
 
 	public void setExportExcelDisabled(boolean disabled) {

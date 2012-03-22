@@ -83,10 +83,13 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	
 	Button export;
 	
+	Rect selection;
 	Spreadsheet ss;
 	
 	public void onOpen$_exportToPdfDialog(ForwardEvent event) {
 		loadPrintSetting();
+		selection = (Rect) event.getOrigin().getData();
+		currSelection.setDisabled(selection == null);
 		noHeader.setChecked(true);
 		try {
 			_exportToPdfDialog.setMode(Window.MODAL);
@@ -181,7 +184,7 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 		if (seld == allSheet) {
 			exporter.export(book, outputStream);
 		} else if (seld == currSelection){
-			Rect rect = ss.getSelection();
+			Rect rect = selection;
 			String area = ss.getColumntitle(rect.getLeft()) + ss.getRowtitle(rect.getTop()) + ":" + 
 				ss.getColumntitle(rect.getRight()) + ss.getRowtitle(rect.getBottom());
 			exporter.exportSelection(ss.getSelectedSheet(), new AreaReference(area), outputStream);

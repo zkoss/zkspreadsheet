@@ -1090,7 +1090,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		_importFileDialog.fireOnOpen(null);
 	}
 	
-	public void openExportPdfDialog() {
+	public void openExportPdfDialog(Rect selection) {
 		if (!hasZssPdf()) {
 			try {
 				Messagebox.show("Please download Zss Pdf from ZK");
@@ -1100,7 +1100,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		}
 		if (_exportToPdfDialog == null || _exportToPdfDialog.isInvalidated())
 			_exportToPdfDialog = (Dialog) Executions.createComponents(Consts._ExportToPDF_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
-		_exportToPdfDialog.fireOnOpen(null);
+		_exportToPdfDialog.fireOnOpen(selection);
 	}
 		
 	private static boolean hasZssPdf() {
@@ -1128,7 +1128,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 	//TODO: mimic openExportPdfDialog()
 	@Override
-	public void openExportHtmlDialog() {
+	public void openExportHtmlDialog(Rect selection) {
 		if (!hasZssHtml()) {
 			try {
 				Messagebox.show("Please download Zss Html from ZK");
@@ -1176,23 +1176,29 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 		@Override
 		public void doSaveBook() {
-			DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
-			if (workbench.getWorkbookCtrl().hasFileExtentionName()) {
-				workbench.getWorkbookCtrl().save();
-				workbench.fireWorkbookSaved();
-			} else
-				workbench.getWorkbenchCtrl().openSaveFileDialog();
+			if (spreadsheet.getBook() != null) {
+				DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
+				if (workbench.getWorkbookCtrl().hasFileExtentionName()) {
+					workbench.getWorkbookCtrl().save();
+					workbench.fireWorkbookSaved();
+				} else
+					workbench.getWorkbenchCtrl().openSaveFileDialog();	
+			}
 		}
 
 		@Override
-		public void doExportPDF() {
-			openExportPdfDialog();
+		public void doExportPDF(Rect selection) {
+			if (spreadsheet.getBook() != null && validSelection(selection)) {
+				openExportPdfDialog(selection);	
+			}
 		}
 
 		@Override
 		public void doPasteSpecial(Rect selection) {
-			spreadsheet.setSelection(selection);
-			openPasteSpecialDialog();
+			if (spreadsheet.getSelectedSheet() != null && validSelection(selection)) {
+				spreadsheet.setSelection(selection);
+				openPasteSpecialDialog();	
+			}
 		}
 
 		@Override
@@ -1219,27 +1225,37 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 		@Override
 		public void doCustomSort(Rect selection) {
-			openCustomSortDialog(selection);
+			if (spreadsheet.getSelectedSheet() != null && validSelection(selection)) {
+				openCustomSortDialog(selection);
+			}
 		}
 
 		@Override
 		public void doHyperlink(Rect selection) {
-			openHyperlinkDialog(selection);
+			if (spreadsheet.getSelectedSheet() != null && validSelection(selection)) {
+				openHyperlinkDialog(selection);
+			}
 		}
 
 		@Override
 		public void doFormatCell(Rect selection) {
-			openFormatNumberDialog(selection);
+			if (spreadsheet.getSelectedSheet() != null && validSelection(selection)) {
+				openFormatNumberDialog(selection);	
+			}
 		}
 
 		@Override
 		public void doColumnWidth(Rect selection) {
-			openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_COLUMN, selection);
+			if (spreadsheet.getSelectedSheet() != null && validSelection(selection)) {
+				openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_COLUMN, selection);	
+			}
 		}
 
 		@Override
 		public void doRowHeight(Rect selection) {
-			openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_ROW, selection);
+			if (spreadsheet.getSelectedSheet() != null && validSelection(selection)) {
+				openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_ROW, selection);	
+			}
 		}
 	}
 }

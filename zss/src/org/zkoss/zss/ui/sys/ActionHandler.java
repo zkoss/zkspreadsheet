@@ -116,7 +116,7 @@ public abstract class ActionHandler {
 		} else if (Action.SAVE_BOOK.equals(toolbarAction)) {
 			doSaveBook();
 		} else if (Action.EXPORT_PDF.equals(toolbarAction)) {
-			doExportPDF();
+			doExportPDF(getSelection(data));
 		} else if (Action.PASTE.equals(toolbarAction)) {
 			doPaste(getSelection(data));
 		} else if (Action.PASTE_FORMULA.equals(toolbarAction)) {
@@ -603,7 +603,7 @@ public abstract class ActionHandler {
 	/**
 	 * Execute when user click export PDF
 	 */
-	public abstract void doExportPDF();
+	public abstract void doExportPDF(Rect selection);
 	
 	public Clipboard getClipboard() {
 		return _clipboard;
@@ -671,7 +671,7 @@ public abstract class ActionHandler {
 		}
 	}
 	
-	private boolean validSelection(Rect selection) {
+	protected boolean validSelection(Rect selection) {
 		return selection.getTop() >= 0 && selection.getLeft() >= 0
 			&& selection.getBottom() >= 0 && selection.getRight() >= 0;
 	}

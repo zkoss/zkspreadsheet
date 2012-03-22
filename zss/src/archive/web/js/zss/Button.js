@@ -1306,6 +1306,8 @@ zss.Buttons = zk.$extends(zk.Object, {
 				if (sheet) {
 					var s = sheet.getLastSelection();
 					wgt.fireToolbarAction(action, {tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});
+				} else {
+					wgt.fireToolbarAction(action, {tRow: -1, lCol: -1, bRow: -1, rCol: -1});
 				}
 			}
 		}, wgt);
