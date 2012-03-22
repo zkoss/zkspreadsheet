@@ -436,10 +436,10 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		_insertHyperlinkDialog.fireOnOpen(selection);
 	}
 
-	public void openInsertFormulaDialog() {
+	public void openInsertFormulaDialog(Rect selection) {
 		if (_insertFormulaDialog == null || _insertFormulaDialog.isInvalidated())
 			_insertFormulaDialog = (Dialog)Executions.createComponents(Consts._InsertFormulaDialog2_zul, mainWin, null);
-		_insertFormulaDialog.fireOnOpen(null);
+		_insertFormulaDialog.fireOnOpen(selection);
 	}
 
 	public void openPasteSpecialDialog() {
@@ -736,6 +736,11 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			if (spreadsheet.getSelectedSheet() != null && validSelection(selection)) {
 				openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_ROW, selection);	
 			}
+		}
+
+		@Override
+		public void doInsertFunction(Rect selection) {
+			openInsertFormulaDialog(selection);
 		}
 	}
 }

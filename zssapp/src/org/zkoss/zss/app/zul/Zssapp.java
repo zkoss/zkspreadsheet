@@ -133,10 +133,7 @@ public class Zssapp extends Div implements IdSpace  {
 		Menubar _menubar;
 		
 		FileMenu fileMenu;
-		EditMenu editMenu;
 		ViewMenu viewMenu;
-		FormatMenu formatMenu;
-		InsertMenu insertMenu;
 		
 		public Appmenubar(Menubar menubar) {
 			_menubar = menubar;
@@ -147,20 +144,8 @@ public class Zssapp extends Div implements IdSpace  {
 			return fileMenu;
 		}
 
-		public EditMenu getEditMenu() {
-			return editMenu;
-		}
-
 		public ViewMenu getViewMenu() {
 			return viewMenu;
-		}
-
-		public FormatMenu getFormatMenu() {
-			return formatMenu;
-		}
-
-		public InsertMenu getInsertMenu() {
-			return insertMenu;
 		}
 	}
 }

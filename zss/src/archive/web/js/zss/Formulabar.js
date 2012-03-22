@@ -290,9 +290,11 @@ zss.FormulabarWestCave = zk.$extends(zk.Widget, {
 		}
 	},
 	_onClickInsertFormulabar: function () {
-		var sheet = this.sheet;
+		var wgt = this._wgt,
+			sheet = wgt.sheetCtrl;
 		if (sheet) {
-			this._wgt.fire('onInsertFormula');
+			var s = sheet.getLastSelection();
+			wgt.fireToolbarAction('insertFunction', {tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});
 		}
 	},
 	getNamebox: function () {

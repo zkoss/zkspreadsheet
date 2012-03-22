@@ -4581,7 +4581,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 		addClientEvent(Spreadsheet.class, Events.ON_HEADER_RIGHT_CLICK,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_HEADER_DOUBLE_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_HYPERLINK, 0);
-		addClientEvent(Spreadsheet.class, Events.ON_INSERT_FORMULA, 0);
 		addClientEvent(Spreadsheet.class, Events.ON_FILTER, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_VALIDATE_DROP, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_CTRL_KEY, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
@@ -4815,6 +4814,10 @@ public class Spreadsheet extends XulElement implements Serializable {
 
 		@Override
 		public void doRowHeight(Rect selection) {
+		}
+
+		@Override
+		public void doInsertFunction(Rect selection) {
 		}
 	}
 }

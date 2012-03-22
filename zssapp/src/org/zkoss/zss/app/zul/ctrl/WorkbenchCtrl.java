@@ -23,7 +23,7 @@ import org.zkoss.zss.ui.Rect;
  */
 public interface WorkbenchCtrl {
 
-	public void openInsertFormulaDialog();
+	public void openInsertFormulaDialog(Rect selection);
 	
 	/**
 	 * Open export pdf dialog

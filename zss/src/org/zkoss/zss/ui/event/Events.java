@@ -128,12 +128,6 @@ public class Events {
 	public static final String ON_HYPERLINK = "onHyperlink";
 	
 	/**
-	 * The onInsertFormula event (used with {@link org.zkoss.zk.ui.event.Event})
-	 * Sent when user click on the insert formula button 
-	 */
-	public static final String ON_INSERT_FORMULA = "onInsertFormula";
-	
-	/**
 	 * The onSheetDelete event.
 	 * Sent when sheet is deleted.
 	 */

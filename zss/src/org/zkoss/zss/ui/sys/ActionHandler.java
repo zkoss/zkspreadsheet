@@ -351,8 +351,15 @@ public abstract class ActionHandler {
 			doHideRow(getSelection(data));
 		} else if (Action.UNHIDE_ROW.equals(toolbarAction)) {
 			doUnhideRow(getSelection(data));
+		} else if (Action.INSERT_FUNCTION.equals(toolbarAction)) {
+			doInsertFunction(getSelection(data));
 		}
 	}
+	
+	/**
+	 * @param selection
+	 */
+	public abstract void doInsertFunction(Rect selection);
 	
 	/**
 	 * @param selection

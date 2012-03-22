@@ -24,6 +24,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zkplus.databind.BindingListModelList;
 import org.zkoss.zss.app.formula.FormulaMetaInfo;
@@ -32,6 +33,7 @@ import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.ui.Position;
+import org.zkoss.zss.ui.Rect;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
@@ -99,7 +101,10 @@ public class InsertFormulaCtrl2 extends GenericForwardComposer {
 		});
 	}
 	
-	public void onOpen$_insertFormulaDialog() {
+	public void onOpen$_insertFormulaDialog(ForwardEvent evt) {
+		
+		Rect selection = (Rect) evt.getOrigin().getData();
+		
 		try {
 			_insertFormulaDialog.setMode(Window.MODAL);
 		} catch (InterruptedException e) {
@@ -108,9 +113,8 @@ public class InsertFormulaCtrl2 extends GenericForwardComposer {
 		initFunctionListbox();
 		searchTextbox.focus();
 		
-		Position pos = getDesktopWorkbenchContext().getWorkbookCtrl().getCellFocus();
-		rowIdx = pos.getRow();
-		colIdx = pos.getColumn();
+		rowIdx = selection.getTop();
+		colIdx = selection.getLeft();
 	}
 	
 	public void onSelect$categoryCombobox() {
