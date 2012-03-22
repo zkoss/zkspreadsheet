@@ -82,4 +82,20 @@ public class SheetCtrl extends Widget {
 		
 		return new Rect(Util.intValue(lCol), Util.intValue(tRow), Util.intValue(rCol), Util.intValue(bRow));
 	}
+
+	public Rect getVisibleRange() {
+		
+		String script = "return " + widgetScript() + ".$class._getVisibleRange(" + widgetScript() +")";
+		Boolean hasVisibleRange = (Boolean)javascriptExecutor.executeScript(script + " != null");
+		if (hasVisibleRange == null || !hasVisibleRange) {
+			return null;
+		}
+		
+		Object lCol = javascriptExecutor.executeScript(script + ".left");
+		Object rCol = javascriptExecutor.executeScript(script + ".right");
+		Object tRow = javascriptExecutor.executeScript(script + ".top");
+		Object bRow = javascriptExecutor.executeScript(script + ".bottom");
+		
+		return new Rect(Util.intValue(lCol), Util.intValue(tRow), Util.intValue(rCol), Util.intValue(bRow));
+	}
 }

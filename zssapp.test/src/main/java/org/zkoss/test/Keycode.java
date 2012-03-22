@@ -23,6 +23,8 @@ package org.zkoss.test;
 public enum Keycode {
 	ENTER(13), 
 	ESC(27),
+	PAGE_UP(33),
+	PAGE_DOWN(34),
 	DELETE(46),
 	A(65),
 	B(66),

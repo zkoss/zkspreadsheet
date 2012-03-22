@@ -105,6 +105,11 @@ public class Spreadsheet extends Widget {
 			&& selection.getRight() == rCol;
 	}
 	
+	public Rect getVisibleRange() {
+		SheetCtrl sheet = injector.getInstance(SheetCtrl.class);
+		return sheet.getVisibleRange();
+	}
+	
 	public boolean isHighlight(int tRow, int lCol, int bRow, int rCol) {
 		SheetCtrl sheet = injector.getInstance(SheetCtrl.class);
 		if (!sheet.isHighlightVisible())

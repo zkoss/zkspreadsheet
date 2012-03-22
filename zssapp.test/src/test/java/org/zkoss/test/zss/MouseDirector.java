@@ -23,6 +23,7 @@ import org.zkoss.test.ConditionalTimeBlocker;
 import org.zkoss.test.JQuery;
 import org.zkoss.test.JQueryFactory;
 import org.zkoss.test.JavascriptActions;
+import org.zkoss.test.Keycode;
 import org.zkoss.test.MouseButton;
 import org.zkoss.test.Style;
 
@@ -272,6 +273,32 @@ public class MouseDirector {
 		.mouseMove(drag, MouseButton.LEFT)
 		.mouseMove(dropAt, MouseButton.LEFT)
 		.mouseUp(dropAt, MouseButton.LEFT)
+		.perform();
+		
+		timeBlocker.waitResponse();
+	}
+	
+	public void pageUp(int row, int col) {
+		spreadsheet.focus(row, col);
+		
+		JQuery target = spreadsheet.jq$n();
+		int keycode = Keycode.PAGE_UP.intValue();
+		new JavascriptActions(webDriver)
+		.keyDown(target, keycode)
+		.keyUp(target, keycode)
+		.perform();
+		
+		timeBlocker.waitResponse();
+	}
+
+	public void pageDown(int row, int col) {
+		spreadsheet.focus(row, col);
+		
+		JQuery target = spreadsheet.jq$n();
+		int keycode = Keycode.PAGE_DOWN.intValue();
+		new JavascriptActions(webDriver)
+		.keyDown(target, keycode)
+		.keyUp(target, keycode)
 		.perform();
 		
 		timeBlocker.waitResponse();
