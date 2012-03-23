@@ -43,12 +43,6 @@
 		<extends>menu</extends>
 		<component-class>org.zkoss.zss.app.zul.ViewMenu</component-class>
 	</component>
-	
-	<component>
-		<component-name>insertmenu</component-name>
-		<extends>menu</extends>
-		<component-class>org.zkoss.zss.app.zul.InsertMenu</component-class>
-	</component>
 
 	<component>
 		<component-name>zssapp</component-name>
