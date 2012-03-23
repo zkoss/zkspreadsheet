@@ -1469,25 +1469,28 @@ public final class BookHelper {
 			return style;
 		}
 		if ((pasteType & BookHelper.INNERPASTE_BORDERS) == 0) { //no border
-			final CellStyle style = dstCell.getSheet().getWorkbook().createCellStyle();
-			final short borderLeft = style.getBorderLeft();
-			final short borderTop = style.getBorderTop();
-			final short borderRight = style.getBorderRight();
-			final short borderBottom = style.getBorderBottom();
-			final short borderLeftColor = style.getLeftBorderColor();
-			final short borderTopColor = style.getTopBorderColor();
-			final short borderRightColor = style.getRightBorderColor();
-			final short borderBottomColor = style.getBottomBorderColor();
-			style.cloneStyleFrom(srcStyle);
-			style.setBorderLeft(borderLeft );
-			style.setBorderTop(borderTop);
-			style.setBorderRight(borderRight);
-			style.setBorderBottom(borderBottom);
-			style.setLeftBorderColor(borderLeftColor);
-			style.setTopBorderColor(borderTopColor);
-			style.setRightBorderColor(borderRightColor);
-			style.setBottomBorderColor(borderBottomColor);
-			return style;
+			final CellStyle newStyle = dstCell.getSheet().getWorkbook().createCellStyle();
+			final CellStyle dstStyle = dstCell.getCellStyle();
+			
+			final short borderLeft = dstStyle.getBorderLeft();
+			final short borderTop = dstStyle.getBorderTop();
+			final short borderRight = dstStyle.getBorderRight();
+			final short borderBottom = dstStyle.getBorderBottom();
+			final short borderLeftColor = dstStyle.getLeftBorderColor();
+			final short borderTopColor = dstStyle.getTopBorderColor();
+			final short borderRightColor = dstStyle.getRightBorderColor();
+			final short borderBottomColor = dstStyle.getBottomBorderColor();
+			
+			newStyle.cloneStyleFrom(srcStyle);
+			newStyle.setBorderLeft(borderLeft );
+			newStyle.setBorderTop(borderTop);
+			newStyle.setBorderRight(borderRight);
+			newStyle.setBorderBottom(borderBottom);
+			newStyle.setLeftBorderColor(borderLeftColor);
+			newStyle.setTopBorderColor(borderTopColor);
+			newStyle.setRightBorderColor(borderRightColor);
+			newStyle.setBottomBorderColor(borderBottomColor);
+			return newStyle;
 		}
 		return srcStyle;
 	}

@@ -15,6 +15,7 @@ ZK Spreadsheet 2.2.1
    ZSS-89 AutoFilter not work correctly on sheet first load
    ZSS-91 zssjsf.jar not work with GlassFish
    ZSS-92 hide column/row by menu, and unhide it by drag doesn't work
+   ZSS-93 paste all expect border shall not set paste destination border to empty
    ZSS-94 set sheet name twice throw exception
 
 	------------
