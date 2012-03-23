@@ -248,7 +248,7 @@ public class SS_036_Test extends ZSSAppTest {
 	@Test
 	public void toggle_row_hide_by_drag () {
 		final int ROW_6 = 5;
-		spreadsheet.focus(5, 0);
+		spreadsheet.focus(ROW_6, 0);
 		
 		Header header = spreadsheet.getLeftPanel().getRowHeader(ROW_6);
 		Assert.assertTrue("Header shall be visible and has width", header.isVisible() && header.getHeight() > 0);
@@ -259,5 +259,17 @@ public class SS_036_Test extends ZSSAppTest {
 		mouseDirector.dragRowToResize(ROW_6, 50);
 		Assert.assertTrue("Header shall be unhide", header.isVisible() && header.getHeight() == 50);
 		
+	}
+	
+	@Test
+	public void hide_row_by_menu_unhide_row_by_drag() {
+		final int ROW_6 = 5;
+		mouseDirector.openRowContextMenu(ROW_6);
+		click(".z-menu-popup:visible .zsmenuitem-hideRow");
+		Assert.assertFalse(spreadsheet.getRow(ROW_6).jq$n().isVisible());
+		
+		Header header = spreadsheet.getLeftPanel().getRowHeader(ROW_6);
+		mouseDirector.dragRowToResize(ROW_6, 50);
+		Assert.assertTrue("Header shall be unhide", header.isVisible() && header.getHeight() == 50);
 	}
 }

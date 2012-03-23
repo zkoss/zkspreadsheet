@@ -43,7 +43,7 @@ public class SS_034_Test extends ZSSAppTest {
 	@Test
 	public void delete_sheet() {
 		int sheetSize = jq(".zssheettab").length();
-		click(jq(".zssheettab").first());
+		rightClick(jq(".zssheettab").first());
 		click(".zsmenuitem-deleteSheet");
 		
 		Assert.assertEquals(sheetSize - 1, jq(".zssheettab").length());
@@ -62,6 +62,18 @@ public class SS_034_Test extends ZSSAppTest {
 		timeBlocker.waitUntil(1);
 		
 		Assert.assertEquals("PP", jq(".zssheettab-text").first().text());
+		
+		//rename twice
+		rightClick(jq(".zssheettab").first());
+		click(".zsmenuitem-renameSheet");
+		
+		editor = jq(".zssheettab-rename-textbox").getWebElement();
+		editor.clear();
+		editor.sendKeys("SS");
+		editor.sendKeys(Keys.ENTER);
+		timeBlocker.waitUntil(1);
+		
+		Assert.assertEquals("SS", jq(".zssheettab-text").first().text());
 	}
 	
 	@Test

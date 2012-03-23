@@ -233,27 +233,41 @@ public class SS_035_Test extends ZSSAppTest {
 	
 	@Test
 	public void toggle_column_hide() {
-		mouseDirector.openColumnContextMenu(5);//column F
+		final int COLUMN_F = 5;
+		mouseDirector.openColumnContextMenu(COLUMN_F);
 		
 		click(".z-menu-popup:visible .zsmenuitem-hideColumn");
-		Assert.assertFalse(spreadsheet.getColumn(5).jq$n().isVisible());
+		Assert.assertFalse(spreadsheet.getColumn(COLUMN_F).jq$n().isVisible());
 		
 		mouseDirector.openColumnContextMenu(4, 6);
 		click(".z-menu-popup:visible .zsmenuitem-unhideColumn");
-		Assert.assertTrue(spreadsheet.getColumn(5).jq$n().isVisible());
+		Assert.assertTrue(spreadsheet.getColumn(COLUMN_F).jq$n().isVisible());
 	}
 	
 	@Test
 	public void toggle_column_hide_by_drag () {
-		final int COLUMN_F = 5;
+		final int F = 5;
 		spreadsheet.focus(0, 5);
-		Header header = spreadsheet.getTopPanel().getColumnHeader(COLUMN_F);
+		Header header = spreadsheet.getTopPanel().getColumnHeader(F);
 		Assert.assertTrue("Header shall be visible and has width", header.isVisible() && header.getWidth() > 0);
 		
-		mouseDirector.dragColumnToHide(COLUMN_F);
+		mouseDirector.dragColumnToHide(F);
 		Assert.assertTrue("Header shall be hidden", !header.isVisible());
 		
-		mouseDirector.dragColumnToResize(COLUMN_F, 50);
+		mouseDirector.dragColumnToResize(F, 50);
+		Assert.assertTrue("Header shall be unhide", header.isVisible() && header.getWidth() == 50);
+	}
+	
+	@Test
+	public void hide_column_by_menu_unhide_column_by_drag() {
+		final int F = 5;
+		Header header = spreadsheet.getTopPanel().getColumnHeader(F);
+		mouseDirector.openColumnContextMenu(F);
+		
+		click(".z-menu-popup:visible .zsmenuitem-hideColumn");
+		Assert.assertFalse(spreadsheet.getColumn(F).jq$n().isVisible());
+		
+		mouseDirector.dragColumnToResize(F, 50);
 		Assert.assertTrue("Header shall be unhide", header.isVisible() && header.getWidth() == 50);
 	}
 }
