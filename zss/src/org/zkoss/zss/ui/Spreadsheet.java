@@ -2561,12 +2561,10 @@ public class Spreadsheet extends XulElement implements Serializable {
 			helper.setInfoValues(column, newsize, id, hidden);
 
 			final Range rng = Ranges.range(sheet, -1, column).getColumns();
-			if (hidden) {
-				rng.setHidden(hidden);
-			} else {
+			rng.setHidden(hidden);
+			if (!hidden) {
 				rng.setColumnWidth(Utils.pxToFileChar256(newsize, ((Book)sheet.getWorkbook()).getDefaultCharWidth()));
 			}
-			//sheet.setColumnWidth(column, Utils.pxToFileChar256(newsize, ((Book)sheet.getWorkbook()).getDefaultCharWidth()));
 		}
 
 		public void setRowSize(String sheetId, int rownum, int newsize, int id, boolean hidden) {
@@ -2576,14 +2574,10 @@ public class Spreadsheet extends XulElement implements Serializable {
 			} else {
 				sheet = Utils.getSheetByUuid(_book, sheetId);
 			}
-			//Row row = sheet.getRow(rownum);
-			//if (row == null) {
-			//	row = sheet.createRow(rownum);
-			//}
+			
 			final Range rng = Ranges.range(sheet, rownum, -1).getRows();
-			if (hidden) {
-				rng.setHidden(hidden);
-			} else {
+			rng.setHidden(hidden);
+			if (!hidden) {
 				rng.setRowHeight(Utils.pxToPoint(newsize));
 			}
 			//row.setHeight((short)Utils.pxToTwip(newsize));

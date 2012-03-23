@@ -14,6 +14,7 @@ ZK Spreadsheet 2.2.1
    ZSS-88 Merge and wrap cell shall not change row height
    ZSS-89 AutoFilter not work correctly on sheet first load
    ZSS-91 zssjsf.jar not work with GlassFish
+   ZSS-92 hide column/row by menu, and unhide it by drag doesn't work
 
 	------------
 ZK Spreadsheet 2.2.0
