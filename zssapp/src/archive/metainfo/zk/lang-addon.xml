@@ -31,43 +31,6 @@
 			<css-uri>css/dropdownbutton.css.dsp</css-uri>
 		</mold>
 	</component>
-	
-	<component>
-		<component-name>rowheadermenupopup</component-name>
-		<extends>menupopup</extends>
-		<component-class>org.zkoss.zss.app.zul.RowHeaderMenupopup</component-class>
-	</component>
-	
-	<component>
-		<component-name>columnheadermenupopup</component-name>
-		<extends>menupopup</extends>
-		<component-class>org.zkoss.zss.app.zul.ColumnHeaderMenupopup</component-class>
-	</component>
-	
-	<component>
-		<component-name>cellmenupopup</component-name>
-		<extends>menupopup</extends>
-		<component-class>org.zkoss.zss.app.zul.CellMenupopup</component-class>
-	</component>
-	
-	<component>
-		<component-name>sheets</component-name>
-		<extends>div</extends>
-		<component-class>org.zkoss.zss.app.zul.Sheets</component-class>
-	</component>
-	
-	<component>
-		<component-name>cellcontext</component-name>
-		<extends>window</extends>
-		<component-class>org.zkoss.zss.app.zul.CellContext</component-class>
-	</component>
-
-	<component>
-		<component-name>formulaeditor</component-name>
-		<extends>textbox</extends>
-		<component-class>org.zkoss.zss.app.zul.FormulaEditor</component-class>
-		<widget-class>zssapp.Formulaeditor</widget-class>
-	</component>
 
 	<component>
 		<component-name>filemenu</component-name>
@@ -76,21 +39,9 @@
 	</component>
 	
 	<component>
-		<component-name>editmenu</component-name>
-		<extends>menu</extends>
-		<component-class>org.zkoss.zss.app.zul.EditMenu</component-class>
-	</component>
-	
-	<component>
 		<component-name>viewmenu</component-name>
 		<extends>menu</extends>
 		<component-class>org.zkoss.zss.app.zul.ViewMenu</component-class>
-	</component>
-	
-	<component>
-		<component-name>formatmenu</component-name>
-		<extends>menu</extends>
-		<component-class>org.zkoss.zss.app.zul.FormatMenu</component-class>
 	</component>
 	
 	<component>
