@@ -216,7 +216,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this.colWidth = wgt.getColumnWidth(); //default column width 80
 		this.frozenRow = wgt.getRowFreeze();
 		this.frozenCol = wgt.getColumnFreeze();
-		
+
 		this.custColWidth = new zss.PositionHelper(this.colWidth, snapshop ? snapshop.getCustColWidth() : newPositionArray(wgt.getCsc()));
 		this.custColWidth.ids = new zss.Id(0, 2);
 		
@@ -250,7 +250,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				topPanel = new zss.TopPanel(sheet, rowHeadHidden, lCol, rCol, data),
 				leftPanel = new zss.LeftPanel(sheet, colHeadHidden, tRow, bRow, data),
 				cornerPanel = new zss.CornerPanel(sheet, rowHeadHidden, colHeadHidden, lCol, tRow, rCol, bRow, data);
-			
+
 			if (!sheetCSSReady) {//set visible after CSS loaded
 				activeBlock.setVisible(false);
 			}
@@ -272,16 +272,19 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				this.appendChild(this.cp = cornerPanel, true);
 			}
 			if (oldBlock) {
-				oldBlock.replaceWidget(this.activeBlock = activeBlock);
+				//Note. do not use MainBlockCtrl.replaceWidget (for row/column freeze)
+				activeBlock.replaceHTML(oldBlock.$n(), this.desktop, null, true);
+				this.activeBlock = activeBlock;
 			} else {
 				this.appendChild(this.activeBlock = activeBlock, true);
 			}
+
 			dp._fixSize(this.activeBlock);
 			this._fixSize();
 		}
 		if (!sheetCSSReady) {
 			this.addSSInitLater(function () {
-				sheet._resize(); //why use 300 ~ 400 ms ??
+				sheet._resize();
 			});
 		} else {
 			this._resize();
@@ -2822,7 +2825,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		sheet.wpcmp = sheet.$n('wp');//widget panel comp
 		sheet.sinfocmp = sheet.$n('sinfo');
 		sheet.infocmp = sheet.$n('info');
-		sheet.cpcmp = sheet.$n('co');
 
 		sheet.dp = new zss.DataPanel(sheet);
 		sheet.sp = new zss.ScrollPanel(sheet); //ScrollPanel depends DataPanel

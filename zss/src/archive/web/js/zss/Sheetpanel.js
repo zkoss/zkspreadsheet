@@ -272,7 +272,8 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 			var useCache = false,
 				row = -1, col = -1,
 				left = -1, top = -1, right = -1, bottom = -1,
-				hleft = -1, htop = -1, hright = -1, hbottom = -1;
+				hleft = -1, htop = -1, hright = -1, hbottom = -1,
+				frow = -1, fcol = -1;
 			
 			this._hideSheetWidget();
 			
@@ -295,7 +296,9 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 						sel = snapshop.getSelection(),
 						hsel = snapshop.getHighlight(),
 						dv = snapshop.getDataValidations(),
-						af = snapshop.getAutoFilter();
+						af = snapshop.getAutoFilter(),
+						frow = snapshop.getRowFreeze(),
+						fcol = snapshop.getColumnFreeze();
 					
 					if (focus) {
 						row = focus.row;
@@ -344,7 +347,8 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 				{sheetId: targetSheetId, cache: useCache, 
 				row: row, col: col, 
 				left: left, top: top, right: right, bottom: bottom,
-				hleft: hleft, htop: htop, hright: hright, hbottom: hbottom}, {toServer: true});
+				hleft: hleft, htop: htop, hright: hright, hbottom: hbottom,
+				frow: frow, fcol: fcol}, {toServer: true});
 		}
 	},
 	//shall invoke this at the end of process setSelectedSheet

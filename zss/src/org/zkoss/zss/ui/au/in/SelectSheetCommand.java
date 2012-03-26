@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.zkoss.lang.Objects;
 import org.zkoss.zk.au.AuRequest;
+import org.zkoss.zk.au.AuRequests;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
@@ -44,7 +45,7 @@ public class SelectSheetCommand implements Command {
 					SelectSheetCommand.class);
 		
 		final Map data = (Map) request.getData();
-		if (data == null || data.size() != 12)
+		if (data == null || data.size() != 14)
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), SelectSheetCommand.class });
 		
 		Spreadsheet spreadsheet = ((Spreadsheet) comp);
@@ -65,6 +66,10 @@ public class SelectSheetCommand implements Command {
 		int highlightRight = (Integer)data.get("hright");
 		int highlightBottom = (Integer)data.get("hbottom");
 		
+		//freeze
+		int rowfreeze = AuRequests.getInt(data, "frow", -1);
+		int colfreeze = AuRequests.getInt(data, "fcol", -1);
+		
 		Book book = spreadsheet.getBook();
 		int len = book.getNumberOfSheets();
 		for (int i = 0; i < len; i++) {
@@ -72,7 +77,8 @@ public class SelectSheetCommand implements Command {
 			if (sheetId.equals(((SheetCtrl)sheet).getUuid())) {
 				spreadsheet.setSelectedSheetDirectly(sheet.getSheetName(), cacheInClient, row, col, 
 						left, top, right, bottom,
-						highlightLeft, highlightTop, highlightRight, highlightBottom);
+						highlightLeft, highlightTop, highlightRight, highlightBottom,
+						rowfreeze, colfreeze);
 				break;
 			}
 		}

@@ -32,8 +32,9 @@ zss.CornerPanel = zk.$extends(zk.Widget, {
 		
 		this.sheet = sheet;
 		
-		var r = sheet.frozenRow,
-			c = sheet.frozenCol,
+		var wgt = sheet._wgt,
+			r = wgt.getRowFreeze(),
+			c = wgt.getColumnFreeze(),
 			tp, lp;
 		if (c > -1) {
 			this.appendChild(tp = this.tp = new zss.TopPanel(sheet, columnHeadHidden, 0, c, data, true), true);
@@ -42,6 +43,12 @@ zss.CornerPanel = zk.$extends(zk.Widget, {
 			this.appendChild(lp = this.lp = new zss.LeftPanel(sheet, rowHeadHidden, 0, r, data, true), true);
 		}
 		if (tp && lp) {
+			if (c > -1) {
+				rCol = c;
+			}
+			if (r > -1) {
+				bRow = r;
+			}
 			this.appendChild(this.block = new zss.CellBlockCtrl(sheet, tRow, lCol, bRow, rCol, data, 'corner'), true);
 		}
 	},
@@ -50,7 +57,7 @@ zss.CornerPanel = zk.$extends(zk.Widget, {
 			sheet = this.sheet,
 			fRow = sheet.frozenRow,
 			fCol = sheet.frozenCol;
-		out.push('<div id="', uid, '-co" class="zscorner zsfzcorner" zs.t="SCorner">');
+		out.push('<div id="' + uid + '" class="zscorner zsfzcorner" zs.t="SCorner">');
 		if (this.tp) {
 			this.tp.redraw(out);
 		}
@@ -70,7 +77,7 @@ zss.CornerPanel = zk.$extends(zk.Widget, {
 	bind_: function () {
 		this.$supers(zss.CornerPanel, 'bind_', arguments);
 		
-		this.comp = this.$n('co');
+		this.comp = this.$n();
 		if (this.block) {
 			var sheet = this.sheet,
 				selareacmp = this.$n('select'),

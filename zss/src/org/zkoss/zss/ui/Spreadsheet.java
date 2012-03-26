@@ -752,7 +752,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 	
 	public void setSelectedSheetDirectly(String name, boolean cacheInClient, int row, int col, 
 			int left, int top, int right, int bottom,
-			int highlightLeft, int highlightTop, int highlightRight, int highlightBottom) {
+			int highlightLeft, int highlightTop, int highlightRight, int highlightBottom,
+			int rowfreeze, int colfreeze) {
 		setSelectedSheetImpl(name);
 		if (row >= 0 && col >= 0) {
 			this.setCellFocus(new Position(row, col));
@@ -770,15 +771,22 @@ public class Spreadsheet extends XulElement implements Serializable {
 			this.setHighlight(null);//hide highlight
 		}
 		doSheetSelected(_selectedSheet);
-		updateSheetAttributes(cacheInClient);
+		
+		updateSheetAttributes(cacheInClient, rowfreeze, colfreeze);
 	}
 	
-	
-	
-	private void updateSheetAttributes(boolean cacheInClient) {
+	private void updateSheetAttributes(boolean cacheInClient, int rowfreeze, int colfreeze) {
+		if (cacheInClient && (rowfreeze >= 0 || colfreeze >= 0)) {
+			//Need _rowFreeze/_colFreeze for CSS
+			//Note when use cache, do not use setRowfreeze/setColumnfreeze (cause invalidate)
+			_rowFreeze = rowfreeze;
+			_colFreeze = colfreeze;
+		}
+		
 		Worksheet sheet = _selectedSheet;
 		
-		smartUpdate("scss", getDynamicMediaURI(this, _cssVersion++, "ss_" + this.getUuid() + "_" + getSelectedSheetId(), "css"));
+		String css = getDynamicMediaURI(this, _cssVersion++, "ss_" + this.getUuid() + "_" + getSelectedSheetId(), "css");
+		smartUpdate("scss", css);
 		if (!cacheInClient)	{
 			
 			smartUpdate("rowFreeze", getRowfreeze());
@@ -3910,7 +3918,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 		_custColId = new SequenceId(-1, 2);
 		_custRowId = new SequenceId(-1, 2);
 		
-		//TODO: need reset ?
 //		_loadedRect.set(-1, -1, -1, -1);
 		_selectionRect.set(0, 0, 0, 0);
 		_focusRect.set(0, 0, 0, 0);
