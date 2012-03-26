@@ -71,6 +71,8 @@ import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.impl.CellVisitor;
 import org.zkoss.zss.ui.impl.CellVisitorContext;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
+import org.zkoss.zss.ui.impl.MergeMatrixHelper;
+import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.Upload;
 import org.zkoss.zss.ui.impl.Uploader;
 import org.zkoss.zss.ui.impl.Utils;
@@ -1166,9 +1168,30 @@ public abstract class ActionHandler {
 	public void doMergeAndCenter(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && validSelection(selection)) {
-			Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
-			range.merge(false);
-			doHorizontalAlignCenter(selection);	
+			int tRow = selection.getTop();
+			int lCol = selection.getLeft();
+			int bRow = selection.getBottom();
+			int rCol = selection.getRight();
+			
+			boolean merged = false;
+			MergeMatrixHelper mergeHelper = _spreadsheet.getMergeMatrixHelper(sheet);
+			for (int r = tRow; r <= bRow; r++) {
+				for (int c = lCol; c <= rCol; c++) {
+					MergedRect rect = mergeHelper.getMergeRange(r, c);
+					if (rect != null) {
+						merged = true;
+						break;
+					}
+				}
+			}
+			
+			Range range = Ranges.range(sheet, tRow, lCol, bRow, rCol);
+			if (merged) {
+				range.unMerge();
+			} else {
+				range.merge(false);
+				doHorizontalAlignCenter(selection);	
+			}
 		}
 	}
 	
