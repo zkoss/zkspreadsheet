@@ -1095,6 +1095,9 @@
 	position: relative;
 	top: 0;
 	left: 0;
+	<c:if test="${c:isSafari()}">
+		padding-top: 4px;
+	</c:if>
 }
 
 .zssheetselector .z-tab-hl, .zssheetselector .z-tab-hr, .zssheetselector .z-tab-hm {
