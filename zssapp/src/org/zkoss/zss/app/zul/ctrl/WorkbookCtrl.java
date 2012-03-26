@@ -105,14 +105,7 @@ public interface WorkbookCtrl {
 	public void addImage(int row, int col, AImage image);
 	
 	public void insertFormula(int rowIdx, int colIdx, String formula);
-	
-	//TODO: use clip board interface, return  
-	public void cutSelection();
-	
-	public void copySelection();
-	
-	public void pasteSelection();
-	
+		
 	public void clearSelectionContent();
 	
 	public void clearSelectionStyle();

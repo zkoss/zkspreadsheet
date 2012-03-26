@@ -111,21 +111,6 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		CellHelper.clearStyle(spreadsheet, SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
 	}
 
-	public void copySelection() {
-		System.out.println("rm Edit menu copy");
-//		spreadsheet.getToolbarActionHandler().doCopy();
-	}
-
-	public void cutSelection() {
-		System.out.println("rm Edit menu cut");
-//		spreadsheet.getToolbarActionHandler().doCut();
-	}
-	
-	public void pasteSelection() {
-		System.out.println("rm Edit menu paste selection");
-//		spreadsheet.getToolbarActionHandler().doPaste();
-	}
-
 	public void insertColumnLeft() {
 		if (spreadsheet.getSelection() == null)
 			return;
@@ -162,7 +147,6 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		
 		spreadsheet.setSelectedSheet(name);		
 		//TODO: handle the copy/cut highlight
-		System.out.println("TODO: handle the copy/cut highlight");
 //		final Worksheet sheet = EditHelper.getSourceSheet(spreadsheet);
 //		if (sheet != null) {
 //			if (sheet.equals(spreadsheet.getSelectedSheet())) {
