@@ -113,9 +113,14 @@ zss.FontSizeCombobox = zk.$extends(zul.inp.Combobox, {
 			sheet = wgt.sheetCtrl,
 			sel = evt.data.reference;
 		if (sheet && sel) {
-			var s = sheet.getLastSelection();
+			var s = sheet.getLastSelection(),
+				tRow = s.top,
+				lCol = s.left,
+				bRow = s.bottom,
+				rCol = s.right;
+			sheet.triggerSelection(tRow, lCol, bRow, rCol);
 			wgt.fireToolbarAction('fontSize', 
-				{size: sel.getLabel(), tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});	
+				{size: sel.getLabel(), tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol});
 		}
 	},
 	_doBtnClick: function (evt) {
@@ -201,9 +206,14 @@ zss.FontFamilyCombobox = zk.$extends(zul.inp.Combobox, {
 			sheet = wgt.sheetCtrl,
 			sel = evt.data.reference;
 		if (sheet && sel) {
-			var s = sheet.getLastSelection();
+			var s = sheet.getLastSelection(),
+				tRow = s.top,
+				lCol = s.left,
+				bRow = s.bottom,
+				rCol = s.right;
+			sheet.triggerSelection(tRow, lCol, bRow, rCol);
 			wgt.fireToolbarAction('fontFamily', 
-				{name: sel.getLabel(), tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});	
+				{name: sel.getLabel(), tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol});
 		}
 	},
 	_doBtnClick: function (evt) {
@@ -374,7 +384,6 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 			if (!this.isClickDisabled() && !this.isDisabled()) {
 				this.fire('onClick');
 			}
-			jq(this.$n('cave')).removeClass(this._getSclass() + '-cave-over');
 		}
 		//controls fire onClick event, not invoke this.$supers('doClick_')
 	},
@@ -883,8 +892,13 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 			onClick: function () {
 				var sheet = wgt.sheetCtrl;
 				if (sheet) {
-					var s = sheet.getLastSelection();
-					wgt.fireToolbarAction(action, {tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});
+					var s = sheet.getLastSelection(),
+						tRow = s.top,
+						lCol = s.left,
+						bRow = s.bottom,
+						rCol = s.right;
+					sheet.triggerSelection(tRow, lCol, bRow, rCol);
+					wgt.fireToolbarAction(action, {tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol});
 				}
 			}
 		});
@@ -1305,8 +1319,13 @@ zss.Buttons = zk.$extends(zk.Object, {
 			onClick: function () {
 				var sheet = wgt.sheetCtrl;
 				if (sheet) {
-					var s = sheet.getLastSelection();
-					wgt.fireToolbarAction(action, {tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});
+					var s = sheet.getLastSelection(),
+						tRow = s.top,
+						lCol = s.left,
+						bRow = s.bottom,
+						rCol = s.right;
+					sheet.triggerSelection(tRow, lCol, bRow, rCol);
+					wgt.fireToolbarAction(action, {tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol});
 				} else {
 					wgt.fireToolbarAction(action, {tRow: -1, lCol: -1, bRow: -1, rCol: -1});
 				}

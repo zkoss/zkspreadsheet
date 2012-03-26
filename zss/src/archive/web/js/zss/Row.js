@@ -94,7 +94,7 @@ zss.Row = zk.$extends(zk.Widget, {
 				hgh = Math.max(hgh, c.getTextHeight());
 			}
 		}
-
+		
 //		if (jq(this.$n()).height() == hgh) {
 //			return;
 //		}
@@ -103,7 +103,8 @@ zss.Row = zk.$extends(zk.Widget, {
 			wgt = sheet._wgt,
 			zsh = this.zsh,
 			cssId = wgt.getSheetCSSId(),
-			pf = wgt.getSelectorPrefix();
+			pf = wgt.getSelectorPrefix(),
+			h2 = (hgh > 0) ? hgh - 1 : 0;
 		if (!zsh) {
 			zsh = meta ? meta[2] : custRowHeight.ids.next();
 			custRowHeight.setCustomizedSize(row, hgh, zsh, false, true);
@@ -114,8 +115,7 @@ zss.Row = zk.$extends(zk.Widget, {
 		}
 			
 		zcss.setRule(pf + " .zsh" + zsh, ["height"], [hgh + "px"], true, cssId);
-		zcss.setRule(pf + " .zshi" + zsh, "height", hgh + "px", true, cssId);
-		var h2 = (hgh > 0) ? hgh - 1 : 0;
+		zcss.setRule(pf + " .zshi" + zsh, "height", h2 + "px", true, cssId);
 		zcss.setRule(pf + " .zslh" + zsh, ["display", "height", "line-height"], ["", h2 + "px", h2 + "px"], true, cssId);
 		
 		//TODO: update focus shall handle by FocusMarkCtrl by listen onRowHeightChanged evt

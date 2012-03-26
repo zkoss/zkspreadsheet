@@ -485,9 +485,30 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	fireDisplayGridlines: function (show) {
 		this.fire('onDisplayGridlines', {show: show});
 	},
+	triggerSelection: function (tRow, lCol, bRow, rCol) {
+		var r = this._selectionRange;
+		if (!r) {
+			r = this._selectionRange = {};//tRow, lCol, bRow, rCol
+		}
+		
+		var top = r.tRow,
+			left = r.lCol,
+			btm = r.bRow,
+			right = r.rCol;
+		top ? r.tRow = Math.min(tRow, top) : r.tRow = tRow;
+		left ? r.lCol = Math.min(lCol, left) : r.lCol = lCol;
+		btm ? r.bRow = Math.max(bRow, btm) : r.bRow = bRow;
+		right ? r.rCol = Math.max(rCol, right) : r.rCol = rCol;
+	},
 	onContentsChanged: function (evt) {
 		this.fireProcessOverflow_();
 		this.fireProcessWrap_();
+		
+		var r = this._selectionRange;
+		if (r) {
+			this.deferFireCellSelection(r.lCol, r.tRow, r.rCol, r.bRow);
+			this._selectionRange = null;
+		}
 	},
 	addEditorFocus : function(id, name, color){
 		var x = this.focusmarkcmp,
