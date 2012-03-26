@@ -229,7 +229,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		var data = wgt._cacheCtrl.getSelectedSheet(),
 			sheetCSSReady = wgt.isSheetCSSReady();
 		visRng = visRng || zss.SSheetCtrl._getVisibleRange(this);
-		if (data) {
+		if (data) {			
 			var oldBlock = this.activeBlock,
 				oldTopPanel = this.tp,
 				oldLeftPanel = this.lp,
@@ -279,6 +279,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				this.appendChild(this.activeBlock = activeBlock, true);
 			}
 
+			this.fireProtectSheet(wgt.isProtect());
+			this.fireDisplayGridlines(wgt.isDisplayGridlines());
+			
 			dp._fixSize(this.activeBlock);
 			this._fixSize();
 		}

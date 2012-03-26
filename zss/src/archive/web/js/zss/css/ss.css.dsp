@@ -1021,10 +1021,20 @@
 		font-family: Lucida Sans Unicode;
 	</c:if>
 }
-.zsformulabar-formulabtn .z-toolbarbutton-cnt {
+.zsformulabar-insertbtn .z-toolbarbutton-cnt {
 	font-size: 14px;
 	font-style: italic;
 	text-align: center;
+	padding-top: 0;
+	padding-bottom: 4px;
+	<c:if test="${c:browser('ie')}">
+		padding-top: 1px;
+		padding-bottom: 3px;
+	</c:if>
+}
+.zsformulabar-insertbtn .zsformulabar-insertbtn-body-over .z-toolbarbutton-cnt,
+.zsformulabar-okbtn .zsformulabar-okbtn-body-over .z-toolbarbutton-cnt,
+.zsformulabar-cancelbtn .zsformulabar-cancelbtn-body-over .z-toolbarbutton-cnt {
 	padding-top: 0;
 	padding-bottom: 4px;
 	<c:if test="${c:browser('ie')}">

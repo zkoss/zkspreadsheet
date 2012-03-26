@@ -235,7 +235,7 @@ zss.FormulabarWestCave = zk.$extends(zk.Widget, {
 		
 		var cancelBtn = this._cancelBtn = new zss.FormulabarButton({label: '✗', sclass: 'zsformulabar-cancelbtn', 'onClick': this.proxy(this._onClickCancelBtn)}),
 			okBtn = this._okBtn = new zss.FormulabarButton({label: '✓', sclass: 'zsformulabar-okbtn', 'onClick': this.proxy(this._onClickOKBtn)}),
-			formulaBtn = this._formulaBtn = new zss.FormulabarButton({label: 'f(x)', sclass: 'zsformulabar-formulabtn', 'onClick': this.proxy(this._onClickInsertFormulabar)});
+			formulaBtn = this._formulaBtn = new zss.FormulabarButton({label: 'f(x)', sclass: 'zsformulabar-insertbtn', 'onClick': this.proxy(this._onClickInsertFormulabar)});
 		cancelBtn.setVisible(false);
 		okBtn.setVisible(false);
 		this.appendChild(cancelBtn);
