@@ -102,7 +102,7 @@ public class SS_035_Test extends ZSSAppTest {
 		int lCol = 5;
 		int bRow = 20;
 		int rCol = 5;
-		CellCacheAggeration cache = getCellCacheAggerationBuilder(tRow, lCol, bRow, rCol).build();
+		CellCacheAggeration cache = getCellCacheAggerationBuilder(tRow, lCol, bRow, rCol).build("border");
 		mouseDirector.openColumnContextMenu(5);
 		
 		click(".zsstylepanel .zstbtn-border .zstbtn-arrow");

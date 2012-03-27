@@ -100,7 +100,7 @@ public class SS_019_Test extends ZSSAppTest {
 	private void setBorderWithColorAndVerify(BorderType border, int tRow, int lCol, int bRow, int rCol) {
 		CellCacheAggeration.Builder builder = getCellCacheAggerationBuilder(tRow, lCol, bRow, rCol);
 		spreadsheet.setSelection(tRow, lCol, bRow, rCol);
-		CellCacheAggeration borderComparsionCache = builder.expand(1).build();
+		CellCacheAggeration borderComparsionCache = builder.expand(1).build("border");
 		Color color = selectAnotherBorderColor();
 		
 		click(".zstbtn-border .zstbtn-arrow");

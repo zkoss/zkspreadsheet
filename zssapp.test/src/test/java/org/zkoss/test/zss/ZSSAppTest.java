@@ -211,7 +211,7 @@ public class ZSSAppTest {
 	
 	protected CellCache getCellCache(int row, int col) {
 		CellCache.Factory factory = injector.getInstance(CellCache.Factory.class);
-		return factory.create(row, col);
+		return factory.create(row, col, "all");
 	}
 	
 	protected CellType getCellType(int row, int col) {
@@ -599,6 +599,7 @@ public class ZSSAppTest {
 	}
 	
 	private static int pxToPoint(double px) {
-		return Double.valueOf(px * 72 / 96).intValue(); //assume 96dpi
+		Double val = Double.valueOf(px * 72 / 96);
+		return  Long.valueOf(Math.round(val)).intValue(); //assume 96dpi
 	}
 }

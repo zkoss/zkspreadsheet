@@ -70,9 +70,8 @@ public class ZK {
 	 */
 	public int sumStyles(String areas, Style styles) {
 		String script = _out.toString() + ".sumStyles('" +areas + "', jq." + styles + ")";
-		//Firefox return Long
-		//TODO: check other browsers, may return different type
-		Long sum = (Long) _javascriptExecutor.executeScript(script);
-		return sum.intValue();
+		//Firefox return Long, IE return Double
+		Object sum = _javascriptExecutor.executeScript(script);
+		return Util.intValue(sum);
 	}
 }

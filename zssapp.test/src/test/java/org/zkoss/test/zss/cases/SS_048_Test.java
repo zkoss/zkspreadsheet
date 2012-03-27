@@ -161,7 +161,9 @@ public class SS_048_Test extends ZSSAppTest {
 		
         WebElement inp = jq("$addrCombobox input.z-combobox-inp").getWebElement();
         inp.sendKeys("http://ja.wikipedia.org/wiki");
+        timeBlocker.waitUntil(1);
         inp.sendKeys(Keys.TAB);
+        timeBlocker.waitResponse();
         click("$_insertHyperlinkDialog $okBtn");
         
         JQuery link = getCell(11, 10).jq$n("real").children().first();

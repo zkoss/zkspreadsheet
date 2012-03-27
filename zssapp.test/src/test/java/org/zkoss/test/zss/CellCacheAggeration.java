@@ -223,10 +223,21 @@ public class CellCacheAggeration extends ArrayList<CellCache> {
 		}
 		
 		public CellCacheAggeration build() {
+//			CellCacheAggeration aggeration = new CellCacheAggeration(tRow, lCol, bRow, rCol);
+//			for (int r = tRow; r <= bRow; r++) {
+//				for (int c = lCol; c <= rCol; c++) {
+//					aggeration.add(cellCacheFactory.create(r, c));
+//				}
+//			}
+//			return aggeration;
+			return build("all");
+		}
+		
+		public CellCacheAggeration build(String option) {
 			CellCacheAggeration aggeration = new CellCacheAggeration(tRow, lCol, bRow, rCol);
 			for (int r = tRow; r <= bRow; r++) {
 				for (int c = lCol; c <= rCol; c++) {
-					aggeration.add(cellCacheFactory.create(r, c));
+					aggeration.add(cellCacheFactory.create(r, c, option));
 				}
 			}
 			return aggeration;

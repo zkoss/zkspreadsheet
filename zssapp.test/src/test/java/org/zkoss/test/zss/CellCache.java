@@ -83,27 +83,31 @@ public class CellCache {
 	
 	final Cell.Factory cellFactory;
 	
-	
 	@Inject
-	/*package*/ CellCache(@Assisted("row") Integer row, @Assisted("col") Integer col,
+	/*package*/ CellCache(@Assisted("row") Integer row, @Assisted("col") Integer col, @Assisted("option") String option, 
 			Cell.Factory cellFactory) {
 		this.cellFactory = cellFactory;
 		this.row = row;
 		this.col = col;
 		
 		Cell cell = cellFactory.create(row, col);
-		width = cell.getWidth();
-		height = cell.getHeight();
-		cellType = cell.getCellType();
-		merge = cell.isMerged();
-		text = cell.getText();
-		edit = cell.getEdit();
-		horizontalAlign = cell.getHorizontalAlign();
-		verticalAlign = cell.getVerticalAlign();
-		fontColor = cell.getFontColor();
-		fillColor = cell.getFillColor();
-		bottomBorder = cell.getBottomBorder();
-		rightBorder = cell.getRightBorder();
+		if ("border".equals(option)) {//cache border attribute only
+			bottomBorder = cell.getBottomBorder();
+			rightBorder = cell.getRightBorder();
+		} else {//cache all attributes
+			width = cell.getWidth();
+			height = cell.getHeight();
+			cellType = cell.getCellType();
+			merge = cell.isMerged();
+			text = cell.getText();
+			edit = cell.getEdit();
+			horizontalAlign = cell.getHorizontalAlign();
+			verticalAlign = cell.getVerticalAlign();
+			fontColor = cell.getFontColor();
+			fillColor = cell.getFillColor();
+			bottomBorder = cell.getBottomBorder();
+			rightBorder = cell.getRightBorder();	
+		}
 	}
 	
 	public int getRow() {
@@ -320,6 +324,9 @@ public class CellCache {
 	}
 	
 	public static interface Factory {
-		public CellCache create(@Assisted("row") Integer row, @Assisted("col") Integer col);
+		/**
+		 * @param option String: use "all" to cache all attributes; "border" to cache border attributes only
+		 */
+		public CellCache create(@Assisted("row") Integer row, @Assisted("col") Integer col, @Assisted("option") String option);
 	}
 }

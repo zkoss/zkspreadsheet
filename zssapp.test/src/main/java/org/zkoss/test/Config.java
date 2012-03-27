@@ -45,6 +45,7 @@ public class Config {
 //			throw new IllegalStateException("Config shall invoke Config.init() first");
 //		}
 //		return Browser.FIREFOX;
-		return Browser.CHROME;
+//		return Browser.CHROME;
+		return Browser.IE;
 	}
 }

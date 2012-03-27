@@ -99,11 +99,14 @@ public class KeyboardDirector {
 		sendKeys(row, col, keys);
 		
 		try {
-			spreadsheet.getInlineEditor().jq$n().getWebElement().sendKeys(Keys.ENTER);
+//			spreadsheet.getInlineEditor().jq$n().getWebElement().sendKeys(Keys.ENTER);
+			
+			new JavascriptActions(webDriver)
+			.enter(spreadsheet.getInlineEditor().jq$n())
+			.perform();
 		} catch (ElementNotVisibleException ex) {
 			//protect sheet will cause ElementNotVisibleException ex
 		}
-//		new JavascriptActions(webDriver).enter(spreadsheet.getInlineEditor().jq$n()).perform();
 		timeBlocker.waitUntil(1);
 		timeBlocker.waitResponse();
 	}
