@@ -1029,7 +1029,7 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 		
 		p.appendChild(newColorActionMenuitem(wgt, colorMenu, 'borderNo', '/web/zss/img/border.png'));
 		p.appendChild(newColorActionMenuitem(wgt, colorMenu, 'borderAll', '/web/zss/img/border-all.png'));
-		p.appendChild(newColorActionMenuitem(wgt, colorMenu, 'borderOutside', '/web/zss/img/border-all.png'));
+		p.appendChild(newColorActionMenuitem(wgt, colorMenu, 'borderOutside', '/web/zss/img/border-outside.png'));
 		p.appendChild(newColorActionMenuitem(wgt, colorMenu, 'borderInside', '/web/zss/img/border-inside.png'));
 		p.appendChild(new zul.menu.Menuseparator());
 		
