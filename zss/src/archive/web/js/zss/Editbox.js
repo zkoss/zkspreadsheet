@@ -395,7 +395,7 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
    	setWidth: function (v) {
    		this.$supers(zss.FormulabarEditor, 'setWidth', arguments);
    		var w = this.$n().clientWidth;
-   		this.$n('real').style.width = jq.px(zk.ie ? w - 8: w); //8: IE's textarea scrollbar width
+   		jq(this.$n('real')).css('width', jq.px(zk.ie ? w - 8 : w));//8: IE's textarea scrollbar width
    	},
    	setHeight: function (v) {
    		this.$supers(zss.FormulabarEditor, 'setHeight', arguments);

@@ -433,6 +433,9 @@
 	<c:if test="${c:browser('ie')}">
 		font-size: 0;
 	</c:if>
+	<c:if test="${c:isGecko3()}">
+		-moz-user-select: none;
+	</c:if>
 }
 .zsselecti{
 	position: absolute;
@@ -1092,7 +1095,7 @@
 	font-size: 16px;
 	padding: 2px 3px 0 3px;
 	font-family: arial,sans-serif;
-	position: relative;
+	position: absolute;
 	top: 0;
 	left: 0;
 	<c:if test="${c:isSafari()}">

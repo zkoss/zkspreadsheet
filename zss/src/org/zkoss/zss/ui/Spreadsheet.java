@@ -756,19 +756,19 @@ public class Spreadsheet extends XulElement implements Serializable {
 			int rowfreeze, int colfreeze) {
 		setSelectedSheetImpl(name);
 		if (row >= 0 && col >= 0) {
-			this.setCellFocus(new Position(row, col));
+			this.setCellFocusDirectly(new Position(row, col));
 		} else {
-			this.setCellFocus(new Position(0, 0));
+			this.setCellFocusDirectly(new Position(0, 0));
 		}
 		if (top >= 0 && right >= 0 && bottom >= 0 && left >=0) {
-			this.setSelection(new Rect(left, top, right, bottom));
+			this.setSelectionDirectly(new Rect(left, top, right, bottom));
 		} else {
-			this.setSelection(new Rect(0, 0, 0, 0));
+			this.setSelectionDirectly(new Rect(0, 0, 0, 0));
 		}
 		if (highlightLeft >= 0 && highlightTop >= 0 && highlightRight >= 0 && highlightBottom >= 0) {
-			this.setHighlight(new Rect(highlightLeft, highlightTop, highlightRight, highlightBottom));
+			this.setHighlightDirectly(new Rect(highlightLeft, highlightTop, highlightRight, highlightBottom));
 		} else {
-			this.setHighlight(null);//hide highlight
+			this.setHighlightDirectly(null);//hide highlight
 		}
 		doSheetSelected(_selectedSheet);
 		
@@ -1730,17 +1730,21 @@ public class Spreadsheet extends XulElement implements Serializable {
 					|| sel.getTop() > sel.getBottom()) {
 				throw new UiException("illegal selection : " + sel.toString());
 			}
-			_selectionRect.set(sel.getLeft(), sel.getTop(), sel.getRight(), sel.getBottom());
-
-			HashMap args = new HashMap();
-			args.put("type", "move");
-			args.put("left", sel.getLeft());
-			args.put("top", sel.getTop());
-			args.put("right", sel.getRight());
-			args.put("bottom", sel.getBottom());
-			
-			response("selection" + this.getUuid(), new AuSelection(this, args));
+			setSelectionDirectly(sel);
 		}
+	}
+	
+	private void setSelectionDirectly(Rect sel) {
+		_selectionRect.set(sel.getLeft(), sel.getTop(), sel.getRight(), sel.getBottom());
+
+		HashMap args = new HashMap();
+		args.put("type", "move");
+		args.put("left", sel.getLeft());
+		args.put("top", sel.getTop());
+		args.put("right", sel.getRight());
+		args.put("bottom", sel.getBottom());
+		
+		response("selection" + this.getUuid(), new AuSelection(this, args));
 	}
 
 	/**
@@ -1762,30 +1766,34 @@ public class Spreadsheet extends XulElement implements Serializable {
 	 */
 	public void setHighlight(Rect highlight) {
 		if (!Objects.equals(_highlightRect, highlight)) {
-			HashMap args = new HashMap();
-			
-			if (highlight == null) {
+			setHighlightDirectly(highlight);
+		}
+	}
+	
+	private void setHighlightDirectly(Rect highlight) {
+		HashMap args = new HashMap();
+		
+		if (highlight == null) {
+			_highlightRect = null;
+			args.put("type", "hide");
+		} else {
+			final int left = Math.max(highlight.getLeft(), 0);
+			final int right = Math.min(highlight.getRight(), this.getMaxcolumns()-1);
+			final int top = Math.max(highlight.getTop(), 0);
+			final int bottom = Math.min(highlight.getBottom(), this.getMaxrows()-1);
+			if (left > right || top > bottom) {
 				_highlightRect = null;
 				args.put("type", "hide");
 			} else {
-				final int left = Math.max(highlight.getLeft(), 0);
-				final int right = Math.min(highlight.getRight(), this.getMaxcolumns()-1);
-				final int top = Math.max(highlight.getTop(), 0);
-				final int bottom = Math.min(highlight.getBottom(), this.getMaxrows()-1);
-				if (left > right || top > bottom) {
-					_highlightRect = null;
-					args.put("type", "hide");
-				} else {
-					_highlightRect = new Rect(left, top, right, bottom);
-					args.put("type", "show");
-					args.put("left", left);
-					args.put("top", top);
-					args.put("right", right);
-					args.put("bottom", bottom);
-				}
+				_highlightRect = new Rect(left, top, right, bottom);
+				args.put("type", "show");
+				args.put("left", left);
+				args.put("top", top);
+				args.put("right", right);
+				args.put("bottom", bottom);
 			}
-			response("selectionHighlight", new AuHighlight(this, args));
 		}
+		response("selectionHighlight", new AuHighlight(this, args));
 	}
 	
 	/**
@@ -1846,16 +1854,19 @@ public class Spreadsheet extends XulElement implements Serializable {
 					|| focus.getRow() >= this.getMaxrows()) {
 				throw new UiException("illegal position : " + focus.toString());
 			}
-			_focusRect.set(focus.getColumn(), focus.getRow(),
-					focus.getColumn(), focus.getRow());
-			Map args = new HashMap();
-			args.put("type", "move");
-			args.put("row", focus.getRow());
-			args.put("column", focus.getColumn());
-
-			// smartUpdateValues("cellfocus",new Object[]{"",Utils.getId(getSelectedSheet()),result.toString()});
-			response("cellFocus" + this.getUuid(), new AuCellFocus(this, args));
+			setCellFocusDirectly(focus);
 		}
+	}
+	
+	private void setCellFocusDirectly(Position focus) {
+		_focusRect.set(focus.getColumn(), focus.getRow(),
+				focus.getColumn(), focus.getRow());
+		Map args = new HashMap();
+		args.put("type", "move");
+		args.put("row", focus.getRow());
+		args.put("column", focus.getColumn());
+
+		response("cellFocus" + this.getUuid(), new AuCellFocus(this, args));
 	}
 
 	/** VariableResolver to handle model's variable **/

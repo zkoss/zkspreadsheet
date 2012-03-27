@@ -327,6 +327,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		var sheet = this.sheet;
 		if (sheet.state >= zss.SSheetCtrl.FOCUSED) {
 			this.getEditor(type).cancel();
+			sheet.fire('onStopEditing'); //hide formulabar's button
 			sheet.state = zss.SSheetCtrl.FOCUSED;
 			this.reFocus(true);
 		}

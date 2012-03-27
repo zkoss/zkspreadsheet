@@ -709,7 +709,7 @@ if (zk.feature.pe) {
 			this.$supers(PalettePop, 'unbind_', arguments);
 		},
 		onFloatUp: function (ctl) {
-			if (!zUtl.isAncestor(this.parent, ctl.origin))
+			if (!zUtl.isAncestor(this, ctl.origin))
 				this.closePopup();
 		},
 		doMouseOver_: _onCell = function (evt) {
@@ -727,6 +727,7 @@ if (zk.feature.pe) {
 				p = this.$n('pp'),
 				$t = jq(evt.domTarget),
 				scls = this.getSclass();
+
 			if (jq.isAncestor(p, t)) {
 				if ($t.attr('class').indexOf(scls + '-cell-cnt') >= 0) {
 					var hex = $t.children('i').text();
