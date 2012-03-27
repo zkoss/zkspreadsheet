@@ -33,7 +33,7 @@ public class SS_032_Test extends ZSSAppTest {
 	@Test
 	public void open_insert_formula_dialog() {
 		
-		click(".zsformulabar-formulabtn");
+		click(".zsformulabar-insertbtn");
 		Assert.assertTrue(isVisible("$_insertFormulaDialog"));
 	} 
 	
