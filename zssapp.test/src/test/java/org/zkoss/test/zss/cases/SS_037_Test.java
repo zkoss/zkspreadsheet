@@ -408,7 +408,7 @@ public class SS_037_Test extends ZSSAppTest {
 		
 		jq("$_customSortDialog $sortLevel @combobox:eq(0)').children('i.z-combobox-rounded-btn").getWebElement().click();
 		//sort by column F
-		jq(".z-combobox-rounded-pp:visible tbody").children(":eq(5)").getWebElement().click();
+		jq(".z-combobox-rounded-pp:visible tbody").children().eq(5).getWebElement().click();
 		
 		click("$_customSortDialog $okBtn");
 		
@@ -430,7 +430,7 @@ public class SS_037_Test extends ZSSAppTest {
         timeBlocker.waitUntil(1);
         inp.sendKeys(Keys.TAB);
         click("$_insertHyperlinkDialog $okBtn");
-        
+        timeBlocker.waitResponse();
         
         JQuery link = getCell(11, 10).jq$n("real").children().first();
         
