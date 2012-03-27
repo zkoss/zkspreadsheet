@@ -219,7 +219,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	 * 
 	 * @return StyleSheet object
 	 */
-	function hasCSS (id) {
+	function getCSS (id) {
 		var head = document.getElementsByTagName("head")[0];
 		for (var n = head.firstChild; n; n = n.nextSibling) {
 			if (n.id == id) {
@@ -621,8 +621,8 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		 */
 		scss: function (href) {
 			var el = this.getCSS();
-			if (el) {
-				jq(el).attr('href', href);
+			if (el && this.bindLevel >= 0) {//Chrome need to check bindLevel; if not, CSS won't update correctly
+				el.href = href;
 			}
 		},
 		/**
@@ -1119,14 +1119,14 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	 * @return boolean
 	 */
 	getCSS: function () {
-		return hasCSS(this.uuid + "-sheet");
+		return getCSS(this.uuid + "-sheet");
 	},
 	_initControl: function () {
 		if (this.getSheetId() == null) //no sheet at all
 			return;
 		
 		var cssId = this.uuid + '-sheet';
-		if (!hasCSS(cssId)) { //unbind may remove css, need to check again
+		if (!getCSS(cssId)) { //unbind may remove css, need to check again
 			zk.loadCSS(this._scss, cssId);
 		}
 		
@@ -1139,6 +1139,9 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		
 		var sheet = this.sheetCtrl;
 		if (sheet) {
+			if (zk.safari) {
+				zk(sheet.$n()).redoCSS();
+			}
 			sheet.fireProtectSheet(this.isProtect());
 			sheet.fireDisplayGridlines(this.isDisplayGridlines());
 		}
