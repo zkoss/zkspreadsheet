@@ -52,6 +52,16 @@
 		<artifactId>selenium-java</artifactId>
 		<version>2.20.0</version>
 	</dependency>
+	<dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-server</artifactId>
+        <version>2.20.0</version>
+    </dependency> 
+	<dependency>
+        <groupId>com.opera</groupId>
+        <artifactId>operadriver</artifactId>
+        <version>0.11</version>
+    </dependency> 
 	<!-- classpath scanning:  -->
 	<dependency>
 		<groupId>org.reflections</groupId>
