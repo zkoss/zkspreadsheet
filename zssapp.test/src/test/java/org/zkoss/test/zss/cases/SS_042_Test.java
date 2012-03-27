@@ -108,7 +108,7 @@ public class SS_042_Test extends ZSSAppTest {
 		click("$composeFormulaTextbox");
 		inp = jq("$composeFormulaTextbox").getWebElement();
 		inp.sendKeys("f7,f8,f9");
-		timeBlocker.waitUntil(1);
+		timeBlocker.waitUntil(2);//IE7 need wait longer when test with VM
 		inp.sendKeys(Keys.ENTER);
 		timeBlocker.waitResponse();
 		
