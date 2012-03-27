@@ -35,7 +35,7 @@ public class SS_042_Test extends ZSSAppTest {
 	public void insert_formula_dialog_search() {
 		spreadsheet.focus(0, 10); 
 		
-		click(".zsformulabar-formulabtn");
+		click(".zsformulabar-insertbtn");
 		WebElement inp = jq("$searchTextbox").getWebElement();
 		inp.sendKeys("bin");
 		inp.sendKeys(Keys.ENTER);
@@ -56,7 +56,7 @@ public class SS_042_Test extends ZSSAppTest {
 	@Test
 	public void insert_formula_dialog_category() {
 		spreadsheet.focus(0, 10);
-		click(".zsformulabar-formulabtn");
+		click(".zsformulabar-insertbtn");
 		click("$categoryCombobox i.z-combobox-btn");
 		click("@comboitem[label=\"Text\"] td.z-comboitem-text");
 		
@@ -73,7 +73,7 @@ public class SS_042_Test extends ZSSAppTest {
 	public void insert_formula_dialog_select_formula() {
 		spreadsheet.focus(0, 10);
 		
-		click(".zsformulabar-formulabtn");
+		click(".zsformulabar-insertbtn");
 		click("@listcell[label=\"ACCRINT\"]");		
 		
 		//verify
@@ -86,7 +86,7 @@ public class SS_042_Test extends ZSSAppTest {
 	public void insert_formula_dialog_ok() {
 		spreadsheet.focus(0, 10);
 		
-		click(".zsformulabar-formulabtn");
+		click(".zsformulabar-insertbtn");
 		click("@listcell[label=\"ACCRINT\"]");		
 		click("$okBtn");
 		
@@ -97,7 +97,7 @@ public class SS_042_Test extends ZSSAppTest {
 	public void compose_formula_dialog_textbox() {
 		spreadsheet.focus(0, 10);
 		
-		click(".zsformulabar-formulabtn");
+		click(".zsformulabar-insertbtn");
 		WebElement inp = jq("$searchTextbox").getWebElement();
 		inp.sendKeys("sum");
 		inp.sendKeys(Keys.ENTER);
@@ -122,7 +122,7 @@ public class SS_042_Test extends ZSSAppTest {
 	public void compose_formula_dialog_arguments() {
 		spreadsheet.focus(0, 10);
 		
-		click(".zsformulabar-formulabtn");
+		click(".zsformulabar-insertbtn");
 		WebElement inp = jq("$searchTextbox").getWebElement();
 		inp.sendKeys("sum");
 		inp.sendKeys(Keys.ENTER);
