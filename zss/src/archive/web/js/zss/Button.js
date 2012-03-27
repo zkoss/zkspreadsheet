@@ -832,7 +832,7 @@ zss.Menuitem = zk.$extends(zul.menu.Menuitem, {
 		/**
 		 * Represent button's action at server side
 		 */
-		$action: null,
+		$action: null
 	},
 	setDisabled: function (actions) {
 		if (jq.isArray(actions)) {
