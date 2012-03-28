@@ -455,7 +455,7 @@ zss.UploadToolbarbutton = zk.$extends(zss.Toolbarbutton, {
 			var u = upload.getUploader(this.get$action());//server side upload event listener
 			if (u) {
 				u.parasitize(this);
-				u._uplder = new zul.Upload(u, this.$n(), this._upload);
+				u._uplder = new zul.Upload(u, null, this._upload);
 			}
 		}
 	},
