@@ -34,16 +34,19 @@ public class ConditionalTimeBlocker {
 
 	final WebDriver webDriver;
 	
+	final Browser browser;
+	
 	final JavascriptExecutor javascriptExecutor;
 	
 	@Inject
-	public ConditionalTimeBlocker (WebDriver webDriver) {
+	public ConditionalTimeBlocker (WebDriver webDriver, Browser browser) {
 		this.webDriver = webDriver;
+		this.browser = browser;
 		javascriptExecutor = (JavascriptExecutor)webDriver;
 	}
 	
 	public void waitResponse () {
-		waitUntil(new Predicate<Void>() {
+		waitUntil(browser.isIE6() || browser.isIE7() ? 10 : 5, new Predicate<Void>() {
 			public boolean apply(Void input) {
 				Boolean ret = null;
 				try {
