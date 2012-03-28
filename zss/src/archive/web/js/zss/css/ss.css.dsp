@@ -958,6 +958,9 @@
 	border-top: 0;
 	border-left: 0;
 	padding-bottom: 1px;
+	<c:if test="${c:browser('ie7-') || c:browser('ie6-')}">
+		height: 24px;
+	</c:if>
 }
 .zsnamebox-inp {
 	font-size: 14px;
@@ -1052,6 +1055,7 @@
 	padding-left: 4px;
 	padding-top: 1px;
 	height: 24px;
+	background: #F7F7F7;
 	border-bottom: 1px solid #D8D8D8;
 }
 .zsformulabar-west {
@@ -1101,7 +1105,7 @@
 	<c:if test="${c:isSafari()}">
 		padding-top: 4px;
 	</c:if>
-	<c:if test="${c:isOpera()}">
+	<c:if test="${c:isOpera() || c:browser('ie7-') || c:browser('ie6-')}">
 		padding-top: 5px;
 	</c:if>
 }
