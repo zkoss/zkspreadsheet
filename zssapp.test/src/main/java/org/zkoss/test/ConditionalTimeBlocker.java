@@ -19,6 +19,7 @@ package org.zkoss.test;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -44,7 +45,13 @@ public class ConditionalTimeBlocker {
 	public void waitResponse () {
 		waitUntil(new Predicate<Void>() {
 			public boolean apply(Void input) {
-				return !(Boolean) javascriptExecutor.executeScript("return !!zAu.processing();");
+				Boolean ret = null;
+				try {
+					ret = !(Boolean) javascriptExecutor.executeScript("return !!zAu.processing();");
+				} catch (WebDriverException ex) {
+					//ignore js error
+				}
+				return ret != null && ret;
 			}
 		});
 	}
