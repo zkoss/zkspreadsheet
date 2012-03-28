@@ -163,7 +163,8 @@ public class SS_048_Test extends ZSSAppTest {
         inp.sendKeys("http://ja.wikipedia.org/wiki");
         timeBlocker.waitUntil(1);
         inp.sendKeys(Keys.TAB);
-        timeBlocker.waitResponse();
+        if (browser.isIE6() || browser.isIE7())
+        	timeBlocker.waitUntil(3);
         click("$_insertHyperlinkDialog $okBtn");
         
         JQuery link = getCell(11, 10).jq$n("real").children().first();
