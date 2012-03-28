@@ -18,6 +18,7 @@ ZK Spreadsheet 2.2.1
    ZSS-93 paste all expect border shall not set paste destination border to empty
    ZSS-94 set sheet name twice throw exception
    ZSS-95 wrap cell cause cell border invisible
+   ZSS-96 inline editor shall not input cell ref when click a cell
 
 	------------
 ZK Spreadsheet 2.2.0

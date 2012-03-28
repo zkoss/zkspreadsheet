@@ -709,6 +709,8 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		this.row = this.col = -1;
 	},
 	stop: function () {
+		if (this.sheet)
+			this.sheet.editingFormulaInfo = null;
 		this._editing = false;
 		this.disable(true);
 		var editorcmp = this.comp,

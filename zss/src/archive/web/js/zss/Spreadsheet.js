@@ -1174,7 +1174,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			sheet.dp._doFocusLost();
 		} else if(sheet.state == zss.SSheetCtrl.FOCUSED) {
 			//retrive focus back to focustag
-			sheet.dp.gainFocus(true);
+			sheet.dp.gainFocus(false);//Note. no prepare copy (in safari, it trigger onFloatUp evt, cause menupopup close)
 		}
 	},
 	_doDataPanelFocus: function (evt) {
