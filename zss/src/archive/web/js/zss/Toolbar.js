@@ -25,7 +25,7 @@ zss.ToolbarTabpanel = zk.$extends(zul.tab.Tabpanel, {
 	createButtonsIfNotExist: function () {
 		var tb = this.toolbar;
 		if (!tb) {
-			tb = this.toolbar = new zul.wgt.Toolbar({height: '23px'});
+			tb = this.toolbar = new zul.wgt.Toolbar({sclass: 'zstoolbar'});
 			var btns = new zss.ButtonBuilder(this._wgt).addAll(this._actions).build();
 			for (var i = 0, len = btns.length; i < len; i++) {
 				var b = btns[i];

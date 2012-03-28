@@ -143,6 +143,7 @@
 	width: 49px; /* colWidth - 2*cellPadding - 1 , 1 is border*/
 	overflow: hidden;
 	<c:if test="${c:browser('ie7-') || c:browser('ie6-')}">
+		position: absolute;
 		zoom: 1;
 	</c:if>
 }
@@ -1144,9 +1145,20 @@
 	padding: 1px 0;
 }
 
-.zstbtn .z-toolbarbutton-cnt {
-	overflow: hidden;
+<c:if test="${c:browser('ie6-')}">
+.zstbtn .zstbtn-cave {
+	margin-right: -12px;
 }
+.zstbtn .z-toolbarbutton-cnt {
+	overflow: visible;
+}
+.zschktbtn {
+	font-size: 0;
+}
+.zschktbtn IMG {
+	margin-right: -16px;
+}
+</c:if>	
 
 .zstbtn-cave {
 	position: absolute;
@@ -1202,10 +1214,20 @@
 	</c:if>
 }
 
+<c:if test="${c:browser('ie6-')}">
+.zstbtn .z-toolbarbutton-body,
+.zstbtn .zstbtn-cave  {
+	font-size: 0;
+}
+</c:if>
+
 .zstbtn-arrow {
 	width: 10px;
 	height: 16px;
 	background: url(${c:encodeURL('~./zss/img/arrow-down.gif')}) no-repeat;
+	<c:if test="${c:browser('ie6-')}">
+		font-size: 0;
+	</c:if>
 }
 
 .zstbtn-sep {
@@ -1310,6 +1332,9 @@
 	left: 3px;
 	bottom: 2px;
 	position: absolute;
+	<c:if test="${c:browser('ie6-')}">
+		font-size: 0;
+	</c:if>
 }
 
 .zschktbtn img {
@@ -1368,4 +1393,8 @@
 	width: 11px;
 	margin: 2px;
 	cursor: pointer;
+}
+
+.zstoolbar {
+	height: 23px;
 }

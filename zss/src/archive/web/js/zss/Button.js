@@ -16,6 +16,9 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 */
 (function () {
 
+if (zk.ie6_ && !jq.IE6_ALPHAFIX) {
+	jq.IE6_ALPHAFIX = '.png';
+}
 var AU = {au: true},
 	AbstractButtonHandler = {
 		doMouseDown_: function (evt) {
@@ -506,7 +509,7 @@ zss.CheckableToolbarButton = zk.$extends(zul.wgt.Toolbarbutton, {
 		}
 	},
 	getCheckImage: function () {
-		return zk.ajaxURI('/web/zss/img/' + ((this.isChecked() ? 'ui-check-box' : 'ui-check-box-uncheck')) + '.png', {au: true});
+		return zk.ajaxURI('/web/zss/img/' + ((this.isChecked() ? 'ui-check-box' : 'ui-check-box-uncheck')) + (zk.ie6_ ? '.gif' : '.png'), {au: true});
 	},
 	domContent_: function () {
 		return '<div id="' + this.uuid + '-real" class="' + this.getSclass() + '-check" style="background: url(' + 
