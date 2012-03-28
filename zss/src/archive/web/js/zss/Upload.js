@@ -30,7 +30,8 @@ zss.Upload = zk.$extends(zk.Widget, {
 				return chd;
 			}
 		}
-	}
+	},
+	redraw: zk.$void
 });
 
 zss.Uploader = zk.$extends(zk.Widget, {
@@ -39,7 +40,8 @@ zss.Uploader = zk.$extends(zk.Widget, {
 		this.$n = function () {
 			return wgt.$n();
 		}
-	}
+	},
+	redraw: zk.$void
 });
 
 })();
