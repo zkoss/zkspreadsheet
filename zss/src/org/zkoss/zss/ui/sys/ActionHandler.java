@@ -89,6 +89,7 @@ public abstract class ActionHandler {
 	protected Book _book;
 	protected Clipboard _clipboard;
 	protected Action[] disabledActionOnBookClose = new Action[]{
+			Action.SAVE_BOOK,
 			Action.EXPORT_PDF, 
 			Action.PASTE,
 			Action.CUT,

@@ -351,6 +351,8 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	$init: function () {
 		this.$supers(Spreadsheet, '$init', arguments);
 		
+		this._labelsCtrl = new zss.Labels();//for I18N
+		
 		this.appendChild(this.cave = new zul.layout.Borderlayout({
 			vflex: true, sclass: 'zscave'
 		}));//contains zss.SSheetCtrl
@@ -364,7 +366,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		 * Sets labels
 		 */
 		labels: function (v) {
-			var labelCtrl = this._labelsCtrl = new zss.Labels();
+			var labelCtrl = this._labelsCtrl;
 			for (var key in v) {
 				//key.substr(4): remove prefix 'zss.';
 				var val = v[key],
