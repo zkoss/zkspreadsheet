@@ -5,6 +5,9 @@ ZK Spreadsheet 2.2.1
    ZSS-86 Range support setSheetName API that supports collaboration
    ZSS-87 Range support setSheetOrder API that supports collaboration
    ZSS-97 Spreadsheet support row/column/cell context menu
+   ZSS-98 Spreadsheet support toolbar
+   ZSS-99 Spreadsheet support sheetpanel
+   ZSS-100 Spreadsheet support sheet cache
    
 *Bug
    ZSS-80 Press ESC cannot cancel editing when formula bar is hidden.
