@@ -518,6 +518,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 	private EventListener _focusListener = null;
 
 	private ActionHandler _actionHandler;
+
+	private boolean _showContextMenu;
 	private void doMoveSelfFocus(CellEvent event){
 		syncEditorFocus();
 		int row=event.getRow();
@@ -1353,6 +1355,25 @@ public class Spreadsheet extends XulElement implements Serializable {
 		return _showSheetpanel;
 	}
 	
+	/**
+	 * Sets whether show ContextMenu or not
+	 * @param showContextMenu
+	 */
+	public void setShowContextMenu(boolean showContextMenu) {
+		if (_showContextMenu != showContextMenu) {
+			_showContextMenu = showContextMenu;
+			smartUpdate("showContextMenu", _showContextMenu);
+		}
+	}
+	
+	/**
+	 * Returns whether show ContextMenu
+	 * @return
+	 */
+	public boolean isShowContextMenu() {
+		return _showContextMenu;
+	}
+	
 	private Map convertAutoFilterToJSON(AutoFilter af) {
 		if (af != null) {
 			final CellRangeAddress addr = af.getRangeAddress();
@@ -1514,12 +1535,18 @@ public class Spreadsheet extends XulElement implements Serializable {
 				renderer.render("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
 			}
 			renderer.render("showToolbar", _showToolbar);
+			
+			getActionHandler().bind(this);//init for toolbar's "upload picture" button
 		}
 			
 		renderer.render("showFormulabar", _showFormulabar);
 		Worksheet sheet = this.getSelectedSheet();
 		if (sheet == null) {
 			return;
+		}
+		
+		if (_showContextMenu) {
+			renderer.render("showContextMenu", _showContextMenu);	
 		}
 		
 		if (_clientCacheDisabled) //default: use client cache

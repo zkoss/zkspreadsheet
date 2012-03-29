@@ -50,6 +50,9 @@ zss.ToolbarTabpanel = zk.$extends(zul.tab.Tabpanel, {
 				btn.setDisabled(actions);
 			}	
 		}
+	},
+	getSclass: function () {
+		return 'zstbtabpanel';
 	}
 })
 

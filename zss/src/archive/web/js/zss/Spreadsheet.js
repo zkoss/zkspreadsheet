@@ -339,6 +339,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	_leftPanelWidth: 36,
 	_maxRenderedCellSize: 8000,
 	_displayGridlines: true,
+	_showContextMenu: false,
 	/**
 	 * Contains spreadsheet's toolbar
 	 */
@@ -760,11 +761,11 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		},
 		/**
 		 * Sets whether show sheet panel or not
-		 * @param true if want to show sheet tab panel
+		 * @param boolean true if want to show sheet tab panel
 		 */
 		/**
 		 * Returns whether show sheet panel
-		 * @return boolean
+		 * @return boolean 
 		 */
 		showSheetpanel: function (show) {
 			var w = this._sheetPanel;
@@ -774,6 +775,14 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 				w.setVisible(show);
 			}
 		},
+		/**
+		 * Sets whether show ContextMenu or not. Default is false
+		 * @param boolean true if want to show ContextMenu (row/column/cell)
+		 * 
+		 * Returns whether show ContextMenu
+		 * @return boolean
+		 */
+		showContextMenu: null,
 		/**
 		 * Sets sheet's name and uuid of book
 		 */

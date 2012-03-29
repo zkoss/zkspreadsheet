@@ -660,8 +660,10 @@ public abstract class ActionHandler {
 	 * @param spreadsheet
 	 */
 	public void bind(Spreadsheet spreadsheet) {
-		_spreadsheet = spreadsheet;
-		init();
+		if (_spreadsheet != spreadsheet) {
+			_spreadsheet = spreadsheet;
+			init();	
+		}
 	}
 	
 	/**

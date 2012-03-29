@@ -1395,6 +1395,10 @@
 	cursor: pointer;
 }
 
+.zstbtabpanel {
+	padding: 0;
+}
+
 .zstoolbar {
 	height: 23px;
 }

@@ -468,7 +468,7 @@ zss.UploadToolbarbutton = zk.$extends(zss.Toolbarbutton, {
 		if (sheet) {
 			var s = sheet.getLastSelection();
 			wgt.fireToolbarAction(this.get$action(), {color: '', tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});
-			jq(this.$n()).find('input').trigger('click');
+			jq(this.$n().nextSibling).find('input').trigger('click');
 		}
 	}
 });
