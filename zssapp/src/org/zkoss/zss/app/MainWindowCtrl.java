@@ -649,6 +649,15 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 		@Override
 		public void doPasteSpecial(Rect selection) {
+			Clipboard copyFrom = getClipboard();
+			if (copyFrom == null) {
+				try {
+					Messagebox.show("Spreadsheet must has highlight area as paste source, please set spreadsheet's highlight area");
+				} catch (InterruptedException e) {
+				}
+				return;
+			}
+
 			if (spreadsheet.getSelectedSheet() != null && validSelection(selection)) {
 				spreadsheet.setSelection(selection);
 				openPasteSpecialDialog();	
