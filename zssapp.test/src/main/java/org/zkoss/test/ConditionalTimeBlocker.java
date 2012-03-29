@@ -46,7 +46,8 @@ public class ConditionalTimeBlocker {
 	}
 	
 	public void waitResponse () {
-		waitUntil(browser.isIE6() || browser.isIE7() ? 10 : 5, new Predicate<Void>() {
+		int timeOutInSeconds = browser.isIE6() || browser.isIE7() || browser.isFF36() ? 10 : 5;
+		waitUntil(timeOutInSeconds, new Predicate<Void>() {
 			public boolean apply(Void input) {
 				Boolean ret = null;
 				try {

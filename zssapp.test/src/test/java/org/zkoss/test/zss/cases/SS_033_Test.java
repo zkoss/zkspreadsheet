@@ -42,8 +42,10 @@ public class SS_033_Test extends ZSSAppTest {
 		
         WebElement inp = jq("$addrCombobox input.z-combobox-inp").getWebElement();
         inp.sendKeys("http://ja.wikipedia.org/wiki");
-        if (browser.isIE6() || browser.isIE7()) {
+        if (browser.isIE6() || browser.isIE7() || browser.isFF36()) {
         	timeBlocker.waitUntil(3);
+        } else {
+        	timeBlocker.waitResponse();
         }
         inp.sendKeys(Keys.ENTER);
         timeBlocker.waitResponse();
@@ -64,7 +66,7 @@ public class SS_033_Test extends ZSSAppTest {
 		
         WebElement inp = jq("$mailAddr").getWebElement();
         inp.sendKeys("example@potix.com");
-        timeBlocker.waitUntil(1);
+        timeBlocker.waitResponse();
         inp.sendKeys(Keys.TAB);
         timeBlocker.waitResponse();
         click("$_insertHyperlinkDialog $okBtn");

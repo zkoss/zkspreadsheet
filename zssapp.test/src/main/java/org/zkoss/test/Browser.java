@@ -82,4 +82,10 @@ public class Browser {
 	public boolean isIE6() {
     	return isIE() && isIE(6);
     }
+
+	public boolean isFF36() {
+		Object obj =  javascriptExecutor.executeScript("return zk.ff");
+		Integer ver = Util.intValue(obj);
+		return ver != null && ver == 3;
+	}
 }
