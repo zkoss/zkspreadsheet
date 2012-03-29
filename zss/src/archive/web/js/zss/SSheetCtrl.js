@@ -96,7 +96,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	
 	function newPositionArray(str) {
 		var array = [];
-		if (str && str != "") {
+		if (str) {
 			str = str.split(",");
 			var size  = str.length;
 			for (var i = 0; i < size; i = i + 4)

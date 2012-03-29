@@ -334,6 +334,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	_maxColumns: 10,
 	_rowFreeze: -1,
 	_columnFreeze: -1,
+	_rowHeight: 20,
 	_clientCacheDisabled: false,
 	_topPanelHeight: 20,
 	_leftPanelWidth: 36,
