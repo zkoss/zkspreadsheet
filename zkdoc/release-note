@@ -1,3 +1,9 @@
+ZK Spreadsheet 2.3
+*Features:
+
+*Bug
+   ZSS-103 SLN function throws NotImplementedException
+
 	------------
 ZK Spreadsheet 2.2.1
 *Features:
