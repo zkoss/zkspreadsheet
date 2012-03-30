@@ -4,7 +4,7 @@
 	<groupId>org.zkoss.zss</groupId>
 	<artifactId>zssapp</artifactId>
 	<properties>
-		<zk.version>5.0.10</zk.version>
+		<zk.version>5.0.11</zk.version>
 		<zkel.version>1.1.0</zkel.version>
 		<commons-lang.version>2.4</commons-lang.version>
 		<bsh.version>2.0b4</bsh.version>
@@ -27,7 +27,7 @@
 -->
 		<gmapsz.version>2.0.52.FL.20110504</gmapsz.version>
 	</properties>
-	<version>2.2.0</version>
+	<version>2.3.0</version>
 	<packaging>jar</packaging>
 	<name>ZK Spreadsheet App</name>
 	<url>http://www.zkoss.org/zssapp</url>
