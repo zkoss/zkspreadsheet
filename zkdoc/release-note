@@ -1,12 +1,6 @@
-ZK Spreadsheet 2.3.0
-*Features:
-
-*Bug
-   ZSS-103 SLN function throws NotImplementedException
-
 	------------
-ZK Spreadsheet 2.2.1
-*Features:
+ZK Spreadsheet 2.3.0
+*Features:   
    ZSS-85 Range support createSheet API that supports collaboration
    ZSS-86 Range support setSheetName API that supports collaboration
    ZSS-87 Range support setSheetOrder API that supports collaboration
@@ -14,7 +8,7 @@ ZK Spreadsheet 2.2.1
    ZSS-98 Spreadsheet support toolbar
    ZSS-99 Spreadsheet support sheetpanel
    ZSS-100 Spreadsheet support sheet cache
-   
+
 *Bug
    ZSS-80 Press ESC cannot cancel editing when formula bar is hidden.
    ZSS-81 Cannot input formula with proper external book name
@@ -29,6 +23,7 @@ ZK Spreadsheet 2.2.1
    ZSS-94 set sheet name twice throw exception
    ZSS-95 wrap cell cause cell border invisible
    ZSS-96 inline editor shall not input cell ref when click a cell
+   ZSS-103 SLN function throws NotImplementedException
 
 	------------
 ZK Spreadsheet 2.2.0
