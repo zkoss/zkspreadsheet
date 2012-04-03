@@ -8,6 +8,7 @@ ZK Spreadsheet 2.3.0
    ZSS-98 Spreadsheet support toolbar
    ZSS-99 Spreadsheet support sheetpanel
    ZSS-100 Spreadsheet support sheet cache
+   ZSS-104 ZPOI upgrade to POI 3.8 - Final
 
 *Bug
    ZSS-80 Press ESC cannot cancel editing when formula bar is hidden.
