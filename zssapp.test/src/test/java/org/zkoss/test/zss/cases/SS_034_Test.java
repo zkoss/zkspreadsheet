@@ -22,6 +22,8 @@ import org.junit.Test;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.zkoss.test.JQuery;
+import org.zkoss.test.JavascriptActions;
+import org.zkoss.test.Keycode;
 import org.zkoss.test.zss.ZSSAppTest;
 import org.zkoss.test.zss.ZSSTestCase;
 
@@ -55,10 +57,14 @@ public class SS_034_Test extends ZSSAppTest {
 		rightClick(jq(".zssheettab").first());
 		click(".zsmenuitem-renameSheet");
 		
-		WebElement editor = jq(".zssheettab-rename-textbox").getWebElement();
+		JQuery $editor = jq(".zssheettab-rename-textbox");
+		WebElement editor = $editor.getWebElement();
 		editor.clear();
 		editor.sendKeys("PP");
-		editor.sendKeys(Keys.ENTER);
+		new JavascriptActions(webDriver)
+		.keyDown($editor, Keycode.ENTER.intValue())
+		.keyUp($editor, Keycode.ENTER.intValue())
+		.perform();
 		timeBlocker.waitUntil(1);
 		
 		Assert.assertEquals("PP", jq(".zssheettab-text").first().text());
@@ -70,7 +76,10 @@ public class SS_034_Test extends ZSSAppTest {
 		editor = jq(".zssheettab-rename-textbox").getWebElement();
 		editor.clear();
 		editor.sendKeys("SS");
-		editor.sendKeys(Keys.ENTER);
+		new JavascriptActions(webDriver)
+		.keyDown($editor, Keycode.ENTER.intValue())
+		.keyUp($editor, Keycode.ENTER.intValue())
+		.perform();
 		timeBlocker.waitUntil(1);
 		
 		Assert.assertEquals("SS", jq(".zssheettab-text").first().text());

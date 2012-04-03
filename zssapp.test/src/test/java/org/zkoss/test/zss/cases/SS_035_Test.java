@@ -22,6 +22,8 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.zkoss.test.Color;
 import org.zkoss.test.JQuery;
+import org.zkoss.test.JavascriptActions;
+import org.zkoss.test.Keycode;
 import org.zkoss.test.zss.CellCacheAggeration;
 import org.zkoss.test.zss.Header;
 import org.zkoss.test.zss.ZSSAppTest;
@@ -221,10 +223,15 @@ public class SS_035_Test extends ZSSAppTest {
 		mouseDirector.openColumnContextMenu(5);//column F
 		
 		click(".z-menu-popup:visible .zsmenuitem-columnWidth");
-		WebElement input =  jq("$headerSize").getWebElement();
+		JQuery $input = jq("$headerSize");
+		WebElement input = $input.getWebElement();
 		input.clear();
 		input.sendKeys("120");
-		input.sendKeys(Keys.ENTER);
+		new JavascriptActions(webDriver)
+		.keyDown($input, Keycode.ENTER.intValue())
+		.keyUp($input, Keycode.ENTER.intValue())
+		.perform();
+		
 		timeBlocker.waitUntil(1);
 		timeBlocker.waitResponse();
 		

@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.zkoss.test.JavascriptActions;
 import org.zkoss.test.zss.ZSSAppTest;
 import org.zkoss.test.zss.ZSSTestCase;
 
@@ -46,7 +47,9 @@ public class SS_039_Test extends ZSSAppTest {
     	Assert.assertTrue(isVisible("$_openFileDialog"));
     	
     	WebElement e = jq("$_openFileDialog $filesListbox .z-listcell").getWebElement();
+    	//TODO: doubleClick on FF 10 doesn't work well 
     	new Actions(webDriver).doubleClick(e).perform();
+    	
     	timeBlocker.waitResponse();
 		if (browser.isSafari() || browser.isGecko()) {
 			timeBlocker.waitUntil(1);

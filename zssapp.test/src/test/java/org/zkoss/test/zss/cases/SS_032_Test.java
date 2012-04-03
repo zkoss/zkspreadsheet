@@ -20,6 +20,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.Keys;
 import org.zkoss.test.JQuery;
+import org.zkoss.test.JavascriptActions;
+import org.zkoss.test.Keycode;
 import org.zkoss.test.zss.ZSSAppTest;
 import org.zkoss.test.zss.ZSSTestCase;
 
@@ -44,7 +46,10 @@ public class SS_032_Test extends ZSSAppTest {
 		JQuery formulaBar = jq(".zsformulabar-editor-real");
 		formulaBar.getWebElement().click();
 		formulaBar.getWebElement().sendKeys("123456");
-		formulaBar.getWebElement().sendKeys(Keys.ENTER);
+		new JavascriptActions(webDriver)
+		.keyDown(formulaBar, Keycode.ENTER.intValue())
+		.keyUp(formulaBar, Keycode.ENTER.intValue())
+		.perform();
 		timeBlocker.waitUntil(1);
 		
 		Assert.assertEquals("123456", getCell(12, 10).getText());

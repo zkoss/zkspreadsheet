@@ -21,6 +21,9 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.zkoss.test.JQuery;
+import org.zkoss.test.JavascriptActions;
+import org.zkoss.test.Keycode;
 import org.zkoss.test.zss.ZSSAppTest;
 import org.zkoss.test.zss.ZSSTestCase;
 
@@ -36,9 +39,15 @@ public class SS_042_Test extends ZSSAppTest {
 		spreadsheet.focus(0, 10); 
 		
 		click(".zsformulabar-insertbtn");
-		WebElement inp = jq("$searchTextbox").getWebElement();
+		JQuery $inp = jq("$searchTextbox");
+		WebElement inp = $inp.getWebElement();
 		inp.sendKeys("bin");
-		inp.sendKeys(Keys.ENTER);
+		
+		new JavascriptActions(webDriver)
+		.keyDown($inp, Keycode.ENTER.intValue())
+		.keyUp($inp, Keycode.ENTER.intValue())
+		.perform();
+		
 		timeBlocker.waitResponse();
 		if (browser.isSafari() || browser.isGecko()) {
 			timeBlocker.waitUntil(1);
@@ -98,9 +107,13 @@ public class SS_042_Test extends ZSSAppTest {
 		spreadsheet.focus(0, 10);
 		
 		click(".zsformulabar-insertbtn");
-		WebElement inp = jq("$searchTextbox").getWebElement();
+		JQuery $inp = jq("$searchTextbox");
+		WebElement inp = $inp.getWebElement();
 		inp.sendKeys("sum");
-		inp.sendKeys(Keys.ENTER);
+		new JavascriptActions(webDriver)
+		.keyDown($inp, Keycode.ENTER.intValue())
+		.keyUp($inp, Keycode.ENTER.intValue())
+		.perform();
 		timeBlocker.waitResponse();
 		
 		click("@listcell[label=\"SUM\"]");
@@ -123,9 +136,13 @@ public class SS_042_Test extends ZSSAppTest {
 		spreadsheet.focus(0, 10);
 		
 		click(".zsformulabar-insertbtn");
-		WebElement inp = jq("$searchTextbox").getWebElement();
+		JQuery $inp = jq("$searchTextbox");
+		WebElement inp = $inp.getWebElement();
 		inp.sendKeys("sum");
-		inp.sendKeys(Keys.ENTER);
+		new JavascriptActions(webDriver)
+		.keyDown($inp, Keycode.ENTER.intValue())
+		.keyUp($inp, Keycode.ENTER.intValue())
+		.perform();
 		timeBlocker.waitUntil(1);
 		timeBlocker.waitResponse();
 		

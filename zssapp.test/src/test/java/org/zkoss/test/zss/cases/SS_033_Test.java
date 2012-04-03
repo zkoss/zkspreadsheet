@@ -22,6 +22,8 @@ import org.junit.Test;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.zkoss.test.JQuery;
+import org.zkoss.test.JavascriptActions;
+import org.zkoss.test.Keycode;
 import org.zkoss.test.zss.ZSSAppTest;
 import org.zkoss.test.zss.ZSSTestCase;
 
@@ -40,14 +42,19 @@ public class SS_033_Test extends ZSSAppTest {
 		click(".zstbtn-hyperlink");
 		Assert.assertTrue(isVisible("$_insertHyperlinkDialog"));
 		
-        WebElement inp = jq("$addrCombobox input.z-combobox-inp").getWebElement();
+		JQuery $inp = jq("$addrCombobox input.z-combobox-inp");
+        WebElement inp = $inp.getWebElement();
         inp.sendKeys("http://ja.wikipedia.org/wiki");
         if (browser.isIE6() || browser.isIE7() || browser.isFF36()) {
         	timeBlocker.waitUntil(3);
         } else {
         	timeBlocker.waitResponse();
         }
-        inp.sendKeys(Keys.ENTER);
+        new JavascriptActions(webDriver)
+        .keyDown($inp, Keycode.ENTER.intValue())
+        .keyUp($inp, Keycode.ENTER.intValue())
+        .perform();
+        
         timeBlocker.waitResponse();
         
         JQuery link = getCell(11, 10).jq$n("real").children().first();
