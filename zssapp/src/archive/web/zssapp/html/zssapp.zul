@@ -24,7 +24,7 @@
 				actionDisabled="saveBook, clearFilter, reapplyFilter"
 				showToolbar="true"
 				showFormulabar="true"
-				showSheetpanel="true"
+				showSheetbar="true"
 				showContextMenu="true"
 				maxrows="200"
 				maxcolumns="40" vflex="true" width="100%" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" >

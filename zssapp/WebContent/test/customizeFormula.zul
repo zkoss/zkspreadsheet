@@ -1,0 +1,14 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?xel-method prefix="zss" name="foo"
+        class="org.zkoss.zss.app.test.CustomizeFormula"
+        signature="org.zkoss.poi.ss.formula.eval.ValueEval foo(org.zkoss.poi.ss.formula.eval.ValueEval[] args, int
+			srcRowIndex, int srcColumnIndex)"?>
+<?xel-method prefix="zss" name="bar"
+        class="org.zkoss.zss.app.test.CustomizeFormula"
+        signature="org.zkoss.poi.ss.formula.eval.ValueEval bar(org.zkoss.poi.ss.formula.eval.ValueEval[] args, int
+			srcRowIndex, int srcColumnIndex)"?>
+<zk>
+<spreadsheet id="spreadsheet" src="/xls/empty.xlsx"
+		maxrows="100" maxcolumns="20" width="100%" vflex="1">
+</spreadsheet>
+</zk>

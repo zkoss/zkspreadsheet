@@ -1,0 +1,8 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+<div apply="org.zkoss.zss.app.test.AutofilterComposer" width="100%" height="100%">
+<spreadsheet id="spreadsheet" src="/xls/empty.xlsx"
+		maxrows="100" maxcolumns="20" width="100%" vflex="1">
+</spreadsheet>
+</div>
+</zk>
