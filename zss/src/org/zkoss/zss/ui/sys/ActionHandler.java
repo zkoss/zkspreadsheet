@@ -653,6 +653,7 @@ public abstract class ActionHandler {
 		for (Action action : disabledActionOnBookClose) {
 			_spreadsheet.setActionDisabled(false, action);
 		}
+		_spreadsheet.setActionDisabled(true, Action.SAVE_BOOK);
 	}
 	
 	/**
@@ -666,6 +667,14 @@ public abstract class ActionHandler {
 			init();	
 		}
 	}
+	
+	/**
+	 * Returns {@link Spreadsheet}
+	 * @return
+	 */
+	public Spreadsheet getSpreadsheet() {
+		return _spreadsheet;
+	} 
 	
 	/**
 	 * When user click Home pane

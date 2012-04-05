@@ -1,4 +1,4 @@
-/* Sheetpanel.js
+/* Sheetbar.js
 
 {{IS_NOTE
 	Purpose:
@@ -70,9 +70,9 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 		this._wgt.fireSheetAction('delete');
 	},
 	onClickRenameSheet: function () {
-		var sheetPanel = this._wgt._sheetPanel;
-		if (sheetPanel) {
-			var tab = sheetPanel.getSheetSelector().getSelectedTab();
+		var sheetBar = this._wgt._sheetBar;
+		if (sheetBar) {
+			var tab = sheetBar.getSheetSelector().getSelectedTab();
 			if (tab)
 				tab.startEditing();
 		}
@@ -434,10 +434,10 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 	}
 });
 
-zss.Sheetpanel = zk.$extends(zul.layout.South, {
+zss.Sheetbar = zk.$extends(zul.layout.South, {
 	$o: zk.$void,
 	$init: function (wgt) {
-		this.$supers(zss.Sheetpanel, '$init', []);
+		this.$supers(zss.Sheetbar, '$init', []);
 		this._wgt = wgt;
 		this.setBorder(0);
 		this.setSize('24px');
@@ -448,10 +448,10 @@ zss.Sheetpanel = zk.$extends(zul.layout.South, {
 		return this.cave.sheetSelector;
 	},
    	redrawHTML_: function () {
-   		return this.$supers(zss.Sheetpanel, 'redrawHTML_', arguments);
+   		return this.$supers(zss.Sheetbar, 'redrawHTML_', arguments);
    	},
    	getSclass: function () {
-   		return 'zssheetpanel';
+   		return 'zssheetbar';
    	}
 });
 })();

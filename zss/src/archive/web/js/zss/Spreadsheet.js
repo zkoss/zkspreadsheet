@@ -492,13 +492,13 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		 * @return boolean
 		 */
 		protect: function (v) {
-			var sheetPanel = this._sheetPanel;
-			if (sheetPanel) {
+			var sheetBar = this._sheetBar;
+			if (sheetBar) {
 				var sheet = this.sheetCtrl;
 				if (sheet) {
 					sheet.fireProtectSheet(v);
 				}
-				sheetPanel.getSheetSelector().setProtectSheetCheckmark(v);
+				sheetBar.getSheetSelector().setProtectSheetCheckmark(v);
 			}
 		},
 		rowSize: _size,
@@ -644,8 +644,8 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			
 			var sheetCtrl = this.sheetCtrl,
 				cacheCtrl = this._cacheCtrl,
-				sheetPanel = this._sheetPanel,
-				sheetSelector = sheetPanel ? sheetPanel.getSheetSelector() : null;
+				sheetBar = this._sheetBar,
+				sheetSelector = sheetBar ? sheetBar.getSheetSelector() : null;
 			if (sheetSelector)
 				sheetSelector.setSelectedSheet(id);
 			if (sheetCtrl && cacheCtrl && cacheCtrl.getSelectedSheet().sheetId != id) {
@@ -738,7 +738,12 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 				topPanel.appendChild(tb);
 				topPanel.setHeight(tb.getSize());
 			} else if (w) {
-				w.setVisible(show);
+				var v = w.isVisible();
+				if (v != show) {
+					w.setVisible(show);
+					this.getTopPanel().setVisible(show);
+					zUtl.fireSized(this, -1);
+				}
 			}
 		},
 		actionDisabled: function (v) {
@@ -763,17 +768,17 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			}
 		},
 		/**
-		 * Sets whether show sheet panel or not
-		 * @param boolean true if want to show sheet tab panel
+		 * Sets whether show sheetbar or not
+		 * @param boolean true if want to show sheetbar
 		 */
 		/**
-		 * Returns whether show sheet panel
+		 * Returns whether show sheetbar
 		 * @return boolean 
 		 */
-		showSheetpanel: function (show) {
-			var w = this._sheetPanel;
+		showSheetbar: function (show) {
+			var w = this._sheetBar;
 			if (!w && show) {
-				this.cave.appendChild(this._sheetPanel = new zss.Sheetpanel(this));
+				this.cave.appendChild(this._sheetBar = new zss.Sheetbar(this));
 			} else if (w) {
 				w.setVisible(show);
 			}
@@ -790,9 +795,9 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		 * Sets sheet's name and uuid of book
 		 */
 		sheetLabels: function (v) {
-			var sheetPanel = this._sheetPanel;
-			if (sheetPanel) {
-				sheetPanel.getSheetSelector().setSheetLabels(v);
+			var sheetBar = this._sheetBar;
+			if (sheetBar) {
+				sheetBar.getSheetSelector().setSheetLabels(v);
 			}
 		},
 		copysrc: null //flag to show whether a copy source has set
@@ -815,7 +820,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	 * Returns whether CSS loaded from server or not
 	 */
 	isSheetCSSReady: function () {
-		if (this._invalidatedSheetId) {//set by zss.Sheetpanel, indicate current sheetId is invalidated
+		if (this._invalidatedSheetId) {//set by zss.Sheetbar, indicate current sheetId is invalidated
 			return false;
 		}
 		return !!zcss.findRule(this.getSelectorPrefix() + " .zs_indicator_" + this.getSheetId(), this.getSheetCSSId());

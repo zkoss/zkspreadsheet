@@ -203,7 +203,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 	private static final String WIDGET_HANDLER = "org.zkoss.zss.ui.sys.WidgetHandler.class";
 	private static final String WIDGET_LOADERS = "org.zkoss.zss.ui.sys.WidgetLoader.class";
 	
-	public static final String TOOLBAR_ACTION = "org.zkoss.zss.ui.ToolbarAction";
 	public static final String TOOLBAR_DISABLED_ACTION = "org.zkoss.zss.ui.ToolbarAction.disabled";
 	public static final String ACTION_HANDLER = "org.zkoss.zss.ui.ActionHandler.class";
 	
@@ -246,7 +245,7 @@ public class Spreadsheet extends XulElement implements Serializable {
 	private boolean _protectSheet;
 	private boolean _showFormulabar;
 	private boolean _showToolbar;
-	private boolean _showSheetpanel;
+	private boolean _showSheetbar;
 	
 	//TODO undo/redo
 	//StateManager stateManager = new StateManager(this);
@@ -1338,21 +1337,21 @@ public class Spreadsheet extends XulElement implements Serializable {
 	}
 	
 	/**
-	 * Sets whether show sheet panel or not
-	 * @param showSheetpanel true if want to show sheet tab panel
+	 * Sets whether show sheetbar or not
+	 * @param showSheetbar true if want to show sheet tab panel
 	 */
-	public void setShowSheetpanel(boolean showSheetpanel) {
-		if (_showSheetpanel != showSheetpanel) {
-			_showSheetpanel = showSheetpanel;
-			smartUpdate("showSheetpanel", _showSheetpanel);
+	public void setShowSheetbar(boolean showSheetbar) {
+		if (_showSheetbar != showSheetbar) {
+			_showSheetbar = showSheetbar;
+			smartUpdate("showSheetbar", _showSheetbar);
 		}
 	}
 	
 	/**
-	 * Returns whether show sheet tab panel
+	 * Returns whether show sheetbar
 	 */
-	public boolean isShowSheetpanel() {
-		return _showSheetpanel;
+	public boolean isShowSheetbar() {
+		return _showSheetbar;
 	}
 	
 	/**
@@ -1560,8 +1559,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 		if (sheetLabels != null) {
 			renderer.render("sheetLabels", sheetLabels);
 		}
-		if (_showSheetpanel)
-			renderer.render("showSheetpanel", _showSheetpanel);
+		if (_showSheetbar)
+			renderer.render("showSheetbar", _showSheetbar);
 		
 		//handle link to new browser tab window; default to link to new tab
 		if (!getLinkToNewTab()) {
@@ -4181,6 +4180,9 @@ public class Spreadsheet extends XulElement implements Serializable {
 	 */
 	public void setActionHandler(ActionHandler actionHandler) {
 		_actionHandler = actionHandler;
+		if (_actionHandler != null) {
+			_actionHandler.bind(this);
+		}
 	}
 	
 	/**
