@@ -45,15 +45,12 @@ public class SS_033_Test extends ZSSAppTest {
 		JQuery $inp = jq("$addrCombobox input.z-combobox-inp");
         WebElement inp = $inp.getWebElement();
         inp.sendKeys("http://ja.wikipedia.org/wiki");
-        if (browser.isIE6() || browser.isIE7() || browser.isFF36()) {
+        if (browser.isIE6() || browser.isIE7() || browser.isGecko()) {
         	timeBlocker.waitUntil(3);
         } else {
         	timeBlocker.waitResponse();
         }
-        new JavascriptActions(webDriver)
-        .keyDown($inp, Keycode.ENTER.intValue())
-        .keyUp($inp, Keycode.ENTER.intValue())
-        .perform();
+        click("$_insertHyperlinkDialog $okBtn");
         
         timeBlocker.waitResponse();
         
@@ -75,7 +72,11 @@ public class SS_033_Test extends ZSSAppTest {
         inp.sendKeys("example@potix.com");
         timeBlocker.waitResponse();
         inp.sendKeys(Keys.TAB);
-        timeBlocker.waitResponse();
+        if (browser.isIE6() || browser.isIE7() || browser.isGecko()) {
+        	timeBlocker.waitUntil(3);
+        } else {
+        	timeBlocker.waitResponse();
+        }
         click("$_insertHyperlinkDialog $okBtn");
         
         JQuery link = getCell(11, 10).jq$n("real").children().first();
