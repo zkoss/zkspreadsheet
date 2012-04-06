@@ -290,6 +290,8 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		removeBookFromDesktopIfNeeded();
 		spreadsheet.setSrcName(null);
 		spreadsheet.setBook(null);
+		
+		spreadsheet.getActionHandler().disableActionOnBookClosed();
 	}
 
 	public void addBookEventListener(EventListener listener) {
