@@ -1669,6 +1669,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	 * @return zss.Pos
 	 */
 	getLastFocus: function () {
+		if (!this.focusMark)
+			return null;
 		return new zss.Pos(this.focusMark.row, this.focusMark.column);
 	},
 	/**
@@ -1676,6 +1678,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	 * @return zss.Range
 	 */
 	getLastSelection: function () {
+		if (!this.selArea)
+			return null;
 		var range = this.selArea.lastRange;
 		return !range ? null : new zss.Range(range.left, range.top, range.right, range.bottom);
 	},

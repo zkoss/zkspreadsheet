@@ -121,8 +121,10 @@ zss.Row = zk.$extends(zk.Widget, {
 		//TODO: update focus shall handle by FocusMarkCtrl by listen onRowHeightChanged evt
 		var fPos = sheet.getLastFocus(),
 			sPos = sheet.getLastSelection();
-		sheet.moveCellFocus(fPos.row, fPos.column, true);
-		sheet.moveCellSelection(sPos.left, sPos.top, sPos.right, sPos.bottom, false, true);
+		if (fPos && sPos) {
+			sheet.moveCellFocus(fPos.row, fPos.column, true);
+			sheet.moveCellSelection(sPos.left, sPos.top, sPos.right, sPos.bottom, false, true);	
+		}
 		sheet.fire('onRowHeightChanged', {row: row});
 	},
 	processWrapCell: function (cell, ignoreUpdateNow) {
