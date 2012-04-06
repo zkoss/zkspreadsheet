@@ -90,7 +90,7 @@ public abstract class ActionHandler {
 	protected Rect _insertPictureSelection;
 	protected Book _book;
 	protected Clipboard _clipboard;
-	protected Set<Action> disabledActionOnBookClosed = new HashSet<Action>();
+	protected Set<Action> toggleAction = new HashSet<Action>();
 	private static Action[] _defaultDisabledActionOnBookClosed = new Action[]{
 			Action.SAVE_BOOK,
 			Action.EXPORT_PDF, 
@@ -426,24 +426,24 @@ public abstract class ActionHandler {
 	public abstract void doRowHeight(Rect selection);
 	
 	/**
-	 * Initializes disabled action on spreadsheet book closed
+	 * Initializes actions that will enable on sheet selected, and will disable on book closed
 	 */
-	public void initDisabledActionOnBookClosed() {
-		if (disabledActionOnBookClosed.size() == 0) {
+	public void initToggleAction() {
+		if (toggleAction.size() == 0) {
 			for (Action a : _defaultDisabledActionOnBookClosed) {
-				disabledActionOnBookClosed.add(a);
+				toggleAction.add(a);
 			}
 		}
 	}
 	
 	public void enableActionOnSheetSelected() {
-		for (Action action : disabledActionOnBookClosed) {
+		for (Action action : toggleAction) {
 			_spreadsheet.setActionDisabled(false, action);
 		}
 	}
 	
 	public void disableActionOnBookClosed() {
-		for (Action a : disabledActionOnBookClosed) {
+		for (Action a : toggleAction) {
 			_spreadsheet.setActionDisabled(true, a);
 		}
 	}
@@ -629,7 +629,7 @@ public abstract class ActionHandler {
 		});
 		_spreadsheet.appendChild(upload);
 		
-		initDisabledActionOnBookClosed();
+		initToggleAction();
 	}
 	
 	/**

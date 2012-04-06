@@ -611,7 +611,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 		@Override
 		public void doSaveBook() {
-			if (spreadsheet.getBook() != null) {
+			if (FileHelper.hasSavePermission() && spreadsheet.getBook() != null) {
 				DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
 				if (workbench.getWorkbookCtrl().hasFileExtentionName()) {
 					workbench.getWorkbookCtrl().save();
@@ -748,12 +748,12 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		}
 
 		@Override
-		public void initDisabledActionOnBookClosed() {
-			super.initDisabledActionOnBookClosed();
+		public void initToggleAction() {
+			super.initToggleAction();
 			
 			 boolean savePermission = FileHelper.hasSavePermission();
 			 if (!savePermission) {
-				 disabledActionOnBookClosed.add(Action.SAVE_BOOK);
+				 toggleAction.remove(Action.SAVE_BOOK);
 			 }
 		}
 	}
