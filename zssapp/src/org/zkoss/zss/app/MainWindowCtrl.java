@@ -199,7 +199,10 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 	public void doContentChanged() {
 		//enable SAVE_BOOK button
-		spreadsheet.setActionDisabled(false, Action.SAVE_BOOK);
+		 boolean savePermission = FileHelper.hasSavePermission();
+		 if (savePermission) {
+			 spreadsheet.setActionDisabled(false, Action.SAVE_BOOK);
+		 }
 		
 		Worksheet seldSheet = spreadsheet.getSelectedSheet();
 		Rect seld =  spreadsheet.getSelection();
@@ -591,15 +594,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 	
 	public void onSheetSelect$spreadsheet() {
-		
-		fileMenu.setSaveFileDisabled(false);
-		fileMenu.setSaveFileAndCloseDisabled(false);
-		fileMenu.setDeleteFileDisabled(false);
-		fileMenu.setExportPdfDisabled(false);
-		fileMenu.setExportHtmlDisabled(false);
-		fileMenu.setExportExcelDisabled(false);
-		
-		viewMenu.setFreezeUnFreezeDisabled(false);
+		getDesktopWorkbenchContext().fireWorkbookChanged();
 	}
 	
 	private class MainActionHandler extends ActionHandler {
@@ -750,6 +745,16 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		@Override
 		public void doInsertFunction(Rect selection) {
 			openInsertFormulaDialog(selection);
+		}
+
+		@Override
+		public void initDisabledActionOnBookClosed() {
+			super.initDisabledActionOnBookClosed();
+			
+			 boolean savePermission = FileHelper.hasSavePermission();
+			 if (!savePermission) {
+				 disabledActionOnBookClosed.add(Action.SAVE_BOOK);
+			 }
 		}
 	}
 }

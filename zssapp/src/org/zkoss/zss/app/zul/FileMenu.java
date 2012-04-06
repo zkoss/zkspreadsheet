@@ -45,8 +45,6 @@ public class FileMenu extends Menu implements IdSpace {
 	private Menuitem openFile;
 
 	private Menuitem saveFile;
-	//TODO: not implement yet
-	private Menuitem saveFileAs;
 	private Menuitem saveFileAndClose;
 	//TODO: permission control
 	private Menuitem deleteFile;
@@ -60,9 +58,6 @@ public class FileMenu extends Menu implements IdSpace {
 	private Menuitem exportExcel;
 	private boolean _exportToExcelDisabled;
 	
-	private Menuitem fileReversion;
-	private Menuitem print;
-	
 	public FileMenu() {
 		Executions.createComponents(Consts._FileMenu_zul, this, null);
 		Components.wireVariables(this, this, '$', true, true);
@@ -73,9 +68,6 @@ public class FileMenu extends Menu implements IdSpace {
 		boolean saveDisabled = !FileHelper.hasSavePermission();
 		saveFile.setDisabled(saveDisabled);
 		saveFileAndClose.setDisabled(saveDisabled);
-		
-		//TODO: save as not implement yet
-		saveFileAs.setDisabled(true);
 	}
 	
 	public void setSaveFileDisabled(boolean disabled) {
@@ -158,12 +150,10 @@ public class FileMenu extends Menu implements IdSpace {
 		getDesktopWorkbenchContext().getWorkbenchCtrl().openImportFileDialog();
 	}
 	
-	//TODO: remove
 	public void onClick$exportPdf() {
 		getDesktopWorkbenchContext().getWorkbenchCtrl().openExportPdfDialog(null);
 	}
 
-	//TODO: remove
 	public void onClick$exportHtml() {
 		getDesktopWorkbenchContext().getWorkbenchCtrl().openExportHtmlDialog(null);
 	}
@@ -197,8 +187,6 @@ public class FileMenu extends Menu implements IdSpace {
                 boolean isOpen = workbenchCtrl.getWorkbookCtrl().hasBook();
                 boolean savePermission = FileHelper.hasSavePermission();
                 
-                //TODO: not impl
-    			saveFileAs.setDisabled(true);
     			if (isOpen) {
     				boolean isPE = WebApps.getFeature("pe");
 	    			deleteFile.setDisabled(false);
@@ -215,10 +203,6 @@ public class FileMenu extends Menu implements IdSpace {
 	    			saveFile.setDisabled(true);
 	    			saveFileAndClose.setDisabled(true);
     			}
-    			
-    			//TODO: not implemented yet
-    			fileReversion.setDisabled(true);
-    			print.setDisabled(true);
             }
         });
 	}

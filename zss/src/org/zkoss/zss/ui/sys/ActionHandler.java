@@ -17,7 +17,9 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.sys;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.zkoss.image.AImage;
 import org.zkoss.lang.Objects;
@@ -88,7 +90,8 @@ public abstract class ActionHandler {
 	protected Rect _insertPictureSelection;
 	protected Book _book;
 	protected Clipboard _clipboard;
-	protected Action[] disabledActionOnBookClose = new Action[]{
+	protected Set<Action> disabledActionOnBookClosed = new HashSet<Action>();
+	private static Action[] _defaultDisabledActionOnBookClosed = new Action[]{
 			Action.SAVE_BOOK,
 			Action.EXPORT_PDF, 
 			Action.PASTE,
@@ -139,7 +142,7 @@ public abstract class ActionHandler {
 		_spreadsheet = spreadsheet;
 		init();
 	}
-	
+
 	public void dispatch(String toolbarAction, Map data) {
 		if (Action.HOME_PANEL.toString().equals(toolbarAction)) {
 			doHomePanel();
@@ -422,13 +425,45 @@ public abstract class ActionHandler {
 	 */
 	public abstract void doRowHeight(Rect selection);
 	
+	/**
+	 * Initializes disabled action on spreadsheet book closed
+	 */
+	public void initDisabledActionOnBookClosed() {
+		if (disabledActionOnBookClosed.size() == 0) {
+			for (Action a : _defaultDisabledActionOnBookClosed) {
+				disabledActionOnBookClosed.add(a);
+			}
+		}
+	}
+	
+	public void enableActionOnSheetSelected() {
+		for (Action action : disabledActionOnBookClosed) {
+			_spreadsheet.setActionDisabled(false, action);
+		}
+	}
+	
+	public void disableActionOnBookClosed() {
+		for (Action a : disabledActionOnBookClosed) {
+			_spreadsheet.setActionDisabled(true, a);
+		}
+	}
+	
+	/**
+	 * Execute when user select sheet
+	 */
+	public void doSheetSelect() {
+		syncClipboard();
+		syncAutoFilter();
+		
+		enableActionOnSheetSelected();
+	}
+	
 	public void doCloseBook() {
 		_spreadsheet.setSrc(null);
 		clearClipboard();
 		_insertPictureSelection = null;
-		for (Action a : disabledActionOnBookClose) {
-			_spreadsheet.setActionDisabled(true, a);
-		}
+		
+		disableActionOnBookClosed();
 	}
 	
 	public void doInsertPicture(UploadEvent evt) {
@@ -593,6 +628,8 @@ public abstract class ActionHandler {
 			}
 		});
 		_spreadsheet.appendChild(upload);
+		
+		initDisabledActionOnBookClosed();
 	}
 	
 	/**
@@ -640,20 +677,6 @@ public abstract class ActionHandler {
 			doFontUnderline(selection);
 			break;
 		}
-	}
-	
-	/**
-	 * Execute when user select sheet
-	 */
-	public void doSheetSelect() {
-		syncClipboard();
-		syncAutoFilter();
-		
-		//enable action button
-		for (Action action : disabledActionOnBookClose) {
-			_spreadsheet.setActionDisabled(false, action);
-		}
-		_spreadsheet.setActionDisabled(true, Action.SAVE_BOOK);
 	}
 	
 	/**
