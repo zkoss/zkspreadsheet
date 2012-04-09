@@ -170,15 +170,6 @@ if="deploy.jboss.required">
 	<copy todir="${codegen.archive.dir}" preservelastmodified="yes" failonerror="false">
 		<fileset dir="srcresources" includes="**/functionMetadata*.txt"/>
 	</copy>
-	<!-- for zsshtml -->
-	<copy todir="${codegen.archive.dir}" preservelastmodified="yes" failonerror="false">
-		<fileset dir="src" includes="**/excelStyle.css"/>
-	</copy>
-	<!-- for zssex -->
-	<copy todir="${codegen.archive.dir}" preservelastmodified="yes" failonerror="false">
-		<fileset dir="srcpv" includes="zssPublicCert.store"/>
-		<fileset dir="srcpv" includes="**/Resources.properties"/>
-	</copy>
 	
 	<jar jarfile="${out.dir}/${jar.name}" manifest="${manifest.mf}">
 		<fileset dir="${out.dir}" excludes="${exclude.list}"/>
@@ -186,6 +177,26 @@ if="deploy.jboss.required">
 		 excludes="META-INF/MANIFEST.MF, ${zipjs}/**, ${zipcss}/**"/>
 		<fileset dir="${codegen.archive.dir}" includes="**"
 		 excludes="META-INF/MANIFEST.MF"/>
+	</jar>
+</target>
+<target name="build.jar2" depends="build.jar" if="build.jar2.required">
+	<!-- for zsshtml -->
+	<copy todir="${codegen.archive.dir}" preservelastmodified="yes" failonerror="false">
+		<fileset dir="src" includes="**/excelStyle.css"/>
+	</copy>
+	
+	<!-- for zssex -->
+	<copy todir="${codegen.archive.dir}" preservelastmodified="yes" failonerror="false">
+		<fileset dir="srcpv" includes="zssPublicCert.store"/>
+		<fileset dir="srcpv" includes="**/Resources.properties"/>
+	</copy>
+	
+	<jar jarfile="${out.dir}/${jar2.name}" manifest="${manifest.mf}">
+		<fileset dir="${out.dir}" excludes="${exclude.list}"/>
+		<fileset dir="${src.archive.dir}" includes="**"
+		 excludes="META-INF/MANIFEST.MF, ${zipjs}/**, ${zipcss}/**"/>
+		<fileset dir="${codegen.archive.dir}" includes="**"
+		 excludes="META-INF/MANIFEST.MF, **/*.src.js"/>
 	</jar>
 </target>
 <target name="build.jad" depends="compile" if="build.jad.required">
@@ -270,7 +281,7 @@ if="deploy.jboss.required">
 </target>
 
 <target name="build"
- depends="config.build, build.war, build.jad, build.jar, build.ear, deploy">
+ depends="config.build, build.war, build.jad, build.jar, build.jar2, build.ear, deploy">
 </target>
 
 <!-- ===== -->
