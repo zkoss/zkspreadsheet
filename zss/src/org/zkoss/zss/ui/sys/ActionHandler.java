@@ -436,13 +436,13 @@ public abstract class ActionHandler {
 		}
 	}
 	
-	public void enableActionOnSheetSelected() {
+	public void toggleActionOnSheetSelected() {
 		for (Action action : toggleAction) {
 			_spreadsheet.setActionDisabled(false, action);
 		}
 	}
 	
-	public void disableActionOnBookClosed() {
+	public void toggleActionOnBookClosed() {
 		for (Action a : toggleAction) {
 			_spreadsheet.setActionDisabled(true, a);
 		}
@@ -455,7 +455,7 @@ public abstract class ActionHandler {
 		syncClipboard();
 		syncAutoFilter();
 		
-		enableActionOnSheetSelected();
+		toggleActionOnSheetSelected();
 	}
 	
 	public void doCloseBook() {
@@ -463,7 +463,7 @@ public abstract class ActionHandler {
 		clearClipboard();
 		_insertPictureSelection = null;
 		
-		disableActionOnBookClosed();
+		toggleActionOnBookClosed();
 	}
 	
 	public void doInsertPicture(UploadEvent evt) {

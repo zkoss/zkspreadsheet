@@ -21,7 +21,6 @@
         </menu>
 	</menubar>
 	<spreadsheet id="spreadsheet"
-				actionDisabled="saveBook, clearFilter, reapplyFilter"
 				showToolbar="true"
 				showFormulabar="true"
 				showSheetbar="true"

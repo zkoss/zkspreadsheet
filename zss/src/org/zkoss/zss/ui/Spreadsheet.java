@@ -4122,30 +4122,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 		return _widgetLoaders;
 	}
-	
-	/**
-	 * Sets action disabled true
-	 * 
-	 * @param Action
-	 */
-	public void setActionDisabled(String actions) {
-		HashMap<String, Action> all = Action.getAll();
-		
-		boolean changed = false;
-		for (String s : actions.split(",")) {
-			String toolbarAction = s.trim();
-			if (all.containsKey(toolbarAction)) {
-				Action act = all.get(toolbarAction);
-				if (!_actionDisabled.contains(act)) {
-					_actionDisabled.add(act);
-					changed = true;
-				}
-			}
-		}
-		if (changed) {
-			smartUpdate("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
-		}
-	}
 
 	public void setActionDisabled(boolean disabled, Action action) {
 		boolean changed = false;
@@ -4161,8 +4137,8 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 	}
 	
-	public Set<Action> getActionDisabled() {
-		return _actionDisabled;
+	public boolean isActionDisabled(Action action) {
+		return _actionDisabled.contains(action);
 	}
 	
 	private static List<String> convertActionDisabledToJSON(Set<Action> disabled) {

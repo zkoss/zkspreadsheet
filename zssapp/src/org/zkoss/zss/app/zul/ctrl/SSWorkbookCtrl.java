@@ -291,7 +291,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		spreadsheet.setSrcName(null);
 		spreadsheet.setBook(null);
 		
-		spreadsheet.getActionHandler().disableActionOnBookClosed();
+		spreadsheet.getActionHandler().toggleActionOnBookClosed();
 	}
 
 	public void addBookEventListener(EventListener listener) {
@@ -328,8 +328,12 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	 */
 	private void unsubscribeBookListeners() {
 		Book book = spreadsheet.getBook();
-		if (book == null)
+		if (book == null) {
+			for (EventListener listener : bookListeners.keySet()) {
+				bookListeners.put(listener, Boolean.FALSE);
+			}
 			return;
+		}
 		for (EventListener listener : bookListeners.keySet()) {
 			boolean subscribed = bookListeners.get(listener);
 			if (subscribed) {
