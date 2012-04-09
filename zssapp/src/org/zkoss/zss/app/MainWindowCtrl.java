@@ -637,7 +637,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 		@Override
 		public void doExportPDF(Rect selection) {
-			if (spreadsheet.getBook() != null && validSelection(selection)) {
+			if (spreadsheet.getBook() != null && isValidSelection(selection)) {
 				openExportPdfDialog(selection);	
 			}
 		}
@@ -653,7 +653,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				return;
 			}
 
-			if (spreadsheet.getSelectedSheet() != null && validSelection(selection)) {
+			if (spreadsheet.getSelectedSheet() != null && isValidSelection(selection)) {
 				spreadsheet.setSelection(selection);
 				openPasteSpecialDialog();	
 			}
@@ -664,7 +664,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		@Override
 		public void doCtrlKey(KeyEvent event) {
 			super.doCtrlKey(event);
-			if (spreadsheet.getSelectedSheet() != null && validSelection(event.getSelection())) {
+			if (spreadsheet.getSelectedSheet() != null && isValidSelection(event.getSelection())) {
 				switch (event.getKeyCode()) {
 				case 'S':
 					//TODO: check permission from WorkbookCtrl
@@ -709,35 +709,35 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 		@Override
 		public void doCustomSort(Rect selection) {
-			if (spreadsheet.getSelectedSheet() != null && validSelection(selection)) {
+			if (spreadsheet.getSelectedSheet() != null && isValidSelection(selection)) {
 				openCustomSortDialog(selection);
 			}
 		}
 
 		@Override
 		public void doHyperlink(Rect selection) {
-			if (spreadsheet.getSelectedSheet() != null && validSelection(selection)) {
+			if (spreadsheet.getSelectedSheet() != null && isValidSelection(selection)) {
 				openHyperlinkDialog(selection);
 			}
 		}
 
 		@Override
 		public void doFormatCell(Rect selection) {
-			if (spreadsheet.getSelectedSheet() != null && validSelection(selection)) {
+			if (spreadsheet.getSelectedSheet() != null && isValidSelection(selection)) {
 				openFormatNumberDialog(selection);	
 			}
 		}
 
 		@Override
 		public void doColumnWidth(Rect selection) {
-			if (spreadsheet.getSelectedSheet() != null && validSelection(selection)) {
+			if (spreadsheet.getSelectedSheet() != null && isValidSelection(selection)) {
 				openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_COLUMN, selection);	
 			}
 		}
 
 		@Override
 		public void doRowHeight(Rect selection) {
-			if (spreadsheet.getSelectedSheet() != null && validSelection(selection)) {
+			if (spreadsheet.getSelectedSheet() != null && isValidSelection(selection)) {
 				openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_ROW, selection);	
 			}
 		}
@@ -754,7 +754,5 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			 boolean savePermission = FileHelper.hasSavePermission();
 			 getSpreadsheet().setActionDisabled(!savePermission, Action.SAVE_BOOK);
 		}
-		
-		
 	}
 }
