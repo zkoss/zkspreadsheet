@@ -372,7 +372,7 @@ public abstract class ActionHandler {
 	 */
 	public void doHideRow(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.getRows()
@@ -384,7 +384,7 @@ public abstract class ActionHandler {
 	 */
 	public void doUnhideRow(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.getRows()
@@ -396,7 +396,7 @@ public abstract class ActionHandler {
 	 */
 	public void doUnhideColumn(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.getColumns()
@@ -408,7 +408,7 @@ public abstract class ActionHandler {
 	 */
 	public void doHideColumn(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.getColumns()
@@ -508,7 +508,7 @@ public abstract class ActionHandler {
 	
 	protected void setVerticalAlign(final short alignment, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.visitCells(sheet, selection, new CellVisitor(){
 				@Override
 				public void handle(CellVisitorContext context) {
@@ -525,7 +525,7 @@ public abstract class ActionHandler {
 	
 	protected void setHorizontalAlign(final short alignment, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.visitCells(sheet, selection, new CellVisitor(){
 				@Override
 				public void handle(CellVisitorContext context) {
@@ -639,7 +639,7 @@ public abstract class ActionHandler {
 	public void doCtrlKey(KeyEvent event) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		Rect selection = event.getSelection();
-		if (sheet == null || !validSelection(selection)) {
+		if (sheet == null || !isValidSelection(selection)) {
 			return;
 		}
 		
@@ -754,7 +754,7 @@ public abstract class ActionHandler {
 	 */
 	public void doCopy(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			_clipboard = new Clipboard(Clipboard.Type.COPY, selection, sheet, _spreadsheet.getBook());
 			_spreadsheet.setHighlight(selection);
 		}
@@ -807,7 +807,7 @@ public abstract class ActionHandler {
 		}
 	}
 	
-	protected boolean validSelection(Rect selection) {
+	protected boolean isValidSelection(Rect selection) {
 		return selection.getTop() >= 0 && selection.getLeft() >= 0
 			&& selection.getBottom() >= 0 && selection.getRight() >= 0;
 	}
@@ -816,7 +816,7 @@ public abstract class ActionHandler {
 	 * Execute when user click paste 
 	 */
 	public void doPaste(Rect selection) {
-		if (_clipboard != null && validSelection(selection)) {
+		if (_clipboard != null && isValidSelection(selection)) {
 			doPasteImpl(selection, Range.PASTE_ALL, Range.PASTEOP_NONE, false, false);
 		}
 	}
@@ -826,7 +826,7 @@ public abstract class ActionHandler {
 	 * Execute when user click paste formula
 	 */
 	public void doPasteFormula(Rect selection) {
-		if (_clipboard != null && validSelection(selection)) {
+		if (_clipboard != null && isValidSelection(selection)) {
 			doPasteImpl(selection, Range.PASTE_FORMULAS, Range.PASTEOP_NONE, false, false);
 		}
 	}
@@ -835,7 +835,7 @@ public abstract class ActionHandler {
 	 *  Execute when user click paste value
 	 */
 	public void doPasteValue(Rect selection) {
-		if (_clipboard != null && validSelection(selection)) {
+		if (_clipboard != null && isValidSelection(selection)) {
 			doPasteImpl(selection, Range.PASTE_VALUES, Range.PASTEOP_NONE, false, false);
 		}
 	}
@@ -844,7 +844,7 @@ public abstract class ActionHandler {
 	 * Execute when user click paste all except border
 	 */
 	public void doPasteAllExceptBorder(Rect selection) {
-		if (_clipboard != null && validSelection(selection)) {
+		if (_clipboard != null && isValidSelection(selection)) {
 			doPasteImpl(selection, Range.PASTE_ALL_EXCEPT_BORDERS, Range.PASTEOP_NONE, false, false);
 		}
 	}
@@ -853,7 +853,7 @@ public abstract class ActionHandler {
 	 * Execute when user click paste transpose
 	 */
 	public void doPasteTranspose(Rect selection) {
-		if (_clipboard != null && validSelection(selection)) {
+		if (_clipboard != null && isValidSelection(selection)) {
 			doPasteImpl(selection, Range.PASTE_ALL, Range.PASTEOP_NONE, false, true);
 		}
 	}
@@ -868,7 +868,7 @@ public abstract class ActionHandler {
 	 */
 	public void doCut(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			_clipboard = new Clipboard(Clipboard.Type.CUT, selection, sheet, _spreadsheet.getBook());
 			_spreadsheet.setHighlight(selection);
 		}
@@ -881,7 +881,7 @@ public abstract class ActionHandler {
 	 */
 	public void doFontFamily(String fontFamily, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.setFontFamily(sheet, selection, fontFamily);	
 		}
 	}
@@ -893,7 +893,7 @@ public abstract class ActionHandler {
 	 */
 	public void doFontSize(int fontSize, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			short fontHeightInPoint = (short)(fontSize * 20);
 			Utils.setFontHeight(sheet, selection, fontHeightInPoint);		
 		}
@@ -912,7 +912,7 @@ public abstract class ActionHandler {
 	 */
 	public void doFontBold(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			boolean fontBold = Font.BOLDWEIGHT_BOLD ==  getCellFont(row, col).getBoldweight();
@@ -927,7 +927,7 @@ public abstract class ActionHandler {
 	 */
 	public void doFontItalic(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			Utils.setFontItalic(sheet, selection, !getCellFont(row, col).getItalic());	
@@ -941,7 +941,7 @@ public abstract class ActionHandler {
 	 */
 	public void doFontStrikeout(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			Utils.setFontStrikeout(sheet, selection, !getCellFont(row, col).getStrikeout());	
@@ -955,7 +955,7 @@ public abstract class ActionHandler {
 	 */
 	public void doFontUnderline(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			boolean underline = Font.U_SINGLE == getCellFont(row, col).getUnderline();
@@ -987,7 +987,7 @@ public abstract class ActionHandler {
 	 */
 	public void doBorderBottom(String color, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.setBorder(sheet, selection, 
 					BookHelper.BORDER_EDGE_BOTTOM, BorderStyle.MEDIUM, color);
 		}
@@ -1000,7 +1000,7 @@ public abstract class ActionHandler {
 	 */
 	public void doBoderTop(String color, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.setBorder(sheet, selection, 
 					BookHelper.BORDER_EDGE_TOP, BorderStyle.MEDIUM, color);	
 		}
@@ -1013,7 +1013,7 @@ public abstract class ActionHandler {
 	 */
 	public void doBorderLeft(String color, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.setBorder(sheet, selection, 
 					BookHelper.BORDER_EDGE_LEFT, BorderStyle.MEDIUM, color);
 		}
@@ -1026,7 +1026,7 @@ public abstract class ActionHandler {
 	 */
 	public void doBorderRight(String color, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.setBorder(sheet, selection, 
 					BookHelper.BORDER_EDGE_RIGHT, BorderStyle.MEDIUM, color);	
 		}
@@ -1039,7 +1039,7 @@ public abstract class ActionHandler {
 	 */
 	public void doBorderNo(String color, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.setBorder(sheet, selection, 
 					BookHelper.BORDER_FULL, BorderStyle.NONE, color);	
 		}
@@ -1052,7 +1052,7 @@ public abstract class ActionHandler {
 	 */
 	public void doBorderAll(String color, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.setBorder(sheet, selection, 
 					BookHelper.BORDER_FULL, BorderStyle.MEDIUM, color);	
 		}
@@ -1065,7 +1065,7 @@ public abstract class ActionHandler {
 	 */
 	public void doBorderOutside(String color, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.setBorder(sheet, selection, 
 					BookHelper.BORDER_OUTLINE, BorderStyle.MEDIUM, color);	
 		}
@@ -1078,7 +1078,7 @@ public abstract class ActionHandler {
 	 */
 	public void doBorderInside(String color, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.setBorder(sheet, selection, 
 					BookHelper.BORDER_INSIDE, BorderStyle.MEDIUM, color);	
 		}
@@ -1091,7 +1091,7 @@ public abstract class ActionHandler {
 	 */
 	public void doBorderInsideHorizontal(String color, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.setBorder(sheet, selection, 
 					BookHelper.BORDER_INSIDE_HORIZONTAL, BorderStyle.MEDIUM, color);	
 		}
@@ -1104,7 +1104,7 @@ public abstract class ActionHandler {
 	 */
 	public void doBorderInsideVertical(String color, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.setBorder(sheet, selection, 
 					BookHelper.BORDER_INSIDE_VERTICAL, BorderStyle.MEDIUM, color);	
 		}
@@ -1118,7 +1118,7 @@ public abstract class ActionHandler {
 	 */
 	public void doFontColor(String color, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.setFontColor(sheet, selection, color);	
 		}
 	}
@@ -1131,7 +1131,7 @@ public abstract class ActionHandler {
 	 */
 	public void doFillColor(String color, Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.setBackgroundColor(sheet, selection, color);	
 		}
 	}
@@ -1189,7 +1189,7 @@ public abstract class ActionHandler {
 	 */
 	public void doWrapText(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			final boolean wrapText = !Utils.getOrCreateCell(sheet, row, col).getCellStyle().getWrapText();
@@ -1202,7 +1202,7 @@ public abstract class ActionHandler {
 	 */
 	public void doMergeAndCenter(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int tRow = selection.getTop();
 			int lCol = selection.getLeft();
 			int bRow = selection.getBottom();
@@ -1235,7 +1235,7 @@ public abstract class ActionHandler {
 	 */
 	public void doMergeAcross(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.merge(true);	
@@ -1247,7 +1247,7 @@ public abstract class ActionHandler {
 	 */
 	public void doMergeCell(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.merge(false);	
@@ -1259,7 +1259,7 @@ public abstract class ActionHandler {
 	 */
 	public void doUnmergeCell(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.unMerge();	
@@ -1271,7 +1271,7 @@ public abstract class ActionHandler {
 	 */
 	public void doShiftCellRight(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);	
@@ -1283,7 +1283,7 @@ public abstract class ActionHandler {
 	 */
 	public void doShiftCellDown(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);	
@@ -1295,7 +1295,7 @@ public abstract class ActionHandler {
 	 */
 	public void doInsertSheetRow(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.getRows()
@@ -1308,7 +1308,7 @@ public abstract class ActionHandler {
 	 */
 	public void doInsertSheetColumn(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.getColumns()
@@ -1321,7 +1321,7 @@ public abstract class ActionHandler {
 	 */
 	public void doShiftCellLeft(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.delete(Range.SHIFT_LEFT);	
@@ -1333,7 +1333,7 @@ public abstract class ActionHandler {
 	 */
 	public void doShiftCellUp(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.delete(Range.SHIFT_UP);	
@@ -1345,7 +1345,7 @@ public abstract class ActionHandler {
 	 */
 	public void doDeleteSheetRow(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), 0, selection.getBottom(), 0)
 			.getRows()
@@ -1358,7 +1358,7 @@ public abstract class ActionHandler {
 	 */
 	public void doDeleteSheetColumn(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, 0, selection.getLeft(), 0, selection.getRight())
 			.getColumns()
@@ -1378,7 +1378,7 @@ public abstract class ActionHandler {
 	 */
 	public void doClearStyle(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			clearStyleImp(selection, sheet);	
 		}
 	}
@@ -1388,7 +1388,7 @@ public abstract class ActionHandler {
 	 */
 	public void doClearContent(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.clearContents();	
@@ -1408,7 +1408,7 @@ public abstract class ActionHandler {
 	 */
 	public void doSortAscending(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.sort(sheet, selection,
 					null, null, null, false, false, false);	
 		}
@@ -1419,7 +1419,7 @@ public abstract class ActionHandler {
 	 */
 	public void doSortDescending(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Utils.sort(sheet, selection,
 					null, new boolean[] { true }, null, false, false, false);	
 		}
@@ -1435,7 +1435,7 @@ public abstract class ActionHandler {
 	 */
 	public void doFilter(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.autoFilter();	
@@ -1487,7 +1487,7 @@ public abstract class ActionHandler {
 	 */
 	public void doColumnChart(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			ChartData data = fillCategoryData(new XSSFColumnChartData(), selection);
@@ -1502,7 +1502,7 @@ public abstract class ActionHandler {
 	 */
 	public void doColumnChart3D(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			ChartData data = fillCategoryData(new XSSFColumn3DChartData(), selection);
@@ -1516,7 +1516,7 @@ public abstract class ActionHandler {
 	 */
 	public void doLineChart(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			ChartData data = fillCategoryData(new XSSFLineChartData(), selection);
@@ -1530,7 +1530,7 @@ public abstract class ActionHandler {
 	 */
 	public void doLineChart3D(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			ChartData data = fillCategoryData(new XSSFLine3DChartData(), selection);
@@ -1544,7 +1544,7 @@ public abstract class ActionHandler {
 	 */
 	public void doPieChart(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			ChartData data = fillCategoryData(new XSSFPieChartData(), selection);
@@ -1558,7 +1558,7 @@ public abstract class ActionHandler {
 	 */
 	public void doPieChart3D(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			ChartData data = fillCategoryData(new XSSFPie3DChartData(), selection);
@@ -1572,7 +1572,7 @@ public abstract class ActionHandler {
 	 */
 	public void doBarChart(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			ChartData data = fillCategoryData(new XSSFBarChartData(), selection);
@@ -1586,7 +1586,7 @@ public abstract class ActionHandler {
 	 */
 	public void doBarChart3D(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			ChartData data = fillCategoryData(new XSSFBar3DChartData(), selection);
@@ -1600,7 +1600,7 @@ public abstract class ActionHandler {
 	 */
 	public void doAreaChart(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			ChartData data = fillCategoryData(new XSSFAreaChartData(), selection);
@@ -1614,7 +1614,7 @@ public abstract class ActionHandler {
 	 */
 	public void doScatterChart(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			ChartData data = fillXYData(new XSSFScatChartData(), selection);
@@ -1628,7 +1628,7 @@ public abstract class ActionHandler {
 	 */
 	public void doDoughnutChart(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
-		if (sheet != null && validSelection(selection)) {
+		if (sheet != null && isValidSelection(selection)) {
 			int row = selection.getTop();
 			int col = selection.getLeft();
 			ChartData data = fillCategoryData(new XSSFDoughnutChartData(), selection);
