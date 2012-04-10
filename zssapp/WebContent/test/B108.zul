@@ -1,0 +1,8 @@
+<zk>
+	<spreadsheet src="/xls/graficas.xlsx"
+		id="spreadsheet"
+		showSheetbar="true"
+		maxrows="100"
+		maxcolumns="20" width="100%" vflex="1">
+	</spreadsheet>
+</zk>
