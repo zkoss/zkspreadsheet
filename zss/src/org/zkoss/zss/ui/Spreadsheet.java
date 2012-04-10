@@ -4123,6 +4123,12 @@ public class Spreadsheet extends XulElement implements Serializable {
 		return _widgetLoaders;
 	}
 
+	/**
+	 * Sets the {@link Action} disabled
+	 * 
+	 * @param disabled
+	 * @param action
+	 */
 	public void setActionDisabled(boolean disabled, Action action) {
 		boolean changed = false;
 		if (disabled && !_actionDisabled.contains(action)) {
@@ -4137,6 +4143,12 @@ public class Spreadsheet extends XulElement implements Serializable {
 		}
 	}
 	
+	/**
+	 * Returns whther {@link Action} disabled or not
+	 * 
+	 * @param action
+	 * @return boolean
+	 */
 	public boolean isActionDisabled(Action action) {
 		return _actionDisabled.contains(action);
 	}

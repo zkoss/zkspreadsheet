@@ -243,20 +243,16 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 		if (selTab)
 			this.setSelectedTab(selTab);
 	},
-	//when select a sheet, hide current sheet's widget, for better UI presentation
-	_hideSheetWidget: function () {
+	//when select different sheet, detach current sheet's widgets
+	_detachSheetWidget: function () {
 		var wgt = this._wgt,
-			n = wgt.sheetCtrl.$n('wp'),
-			cn = n.firstChild;
-		for (;cn; cn = cn.nextSibling) {
-			var id = cn.id;
-			if (id) {
-				var w = zk.Widget.$(id);
-				if (w) {
-					w.setVisible(false);
-				}
+			n = wgt.sheetCtrl.$n('wp');
+		jq(n).children().each(function (i, n) {
+			var w = zk.Widget.$(n.id);
+			if (w) {
+				w.detach();
 			}
-		}
+		});
 	},
 	_onSelectSheet: function (evt) {
 		var tab = evt.target;
@@ -275,7 +271,7 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 				hleft = -1, htop = -1, hright = -1, hbottom = -1,
 				frow = -1, fcol = -1;
 			
-			this._hideSheetWidget();
+			this._detachSheetWidget();
 			
 			//For wgt.isSheetCSSReady() to work correctly.
 			//when during select sheet in client side, server send focus Au command response first (set attributes later), 

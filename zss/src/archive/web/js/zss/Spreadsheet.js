@@ -419,15 +419,21 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		dataUpdateStop: _updateCell,
 		dataUpdateRetry: _updateCell,
 		redrawWidget: function (v) {
+			var	sheet = this.sheetCtrl;
+			if (!sheet)	return;
+			
 			var serverSheetId = v[0],
 				wgtUuid = v[1],
-				sheet = this.sheetCtrl;
-			if (!sheet || serverSheetId != this.getSheetId())
-				return;
-
-			var wgt = zk.Widget.$(wgtUuid);
-			if (wgt)
-				wgt.redrawWidgetTo(sheet);
+				fn = function () {
+					var w = zk.Widget.$(wgtUuid);
+					if (w)
+						w.redrawWidgetTo(sheet);
+				};
+			if (!this.isSheetCSSReady()) {
+				sheet.addSSInitLater(fn);
+			} else {
+				fn();
+			}
 		},
 		/**
 		 * Inserts new row or column

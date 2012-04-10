@@ -751,8 +751,9 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		public void toggleActionOnSheetSelected() {
 			super.toggleActionOnSheetSelected();
 			
-			 boolean savePermission = FileHelper.hasSavePermission();
-			 getSpreadsheet().setActionDisabled(!savePermission, Action.SAVE_BOOK);
+//			boolean savePermission = FileHelper.hasSavePermission();
+			//save button will enable onContentChange
+			getSpreadsheet().setActionDisabled(true, Action.SAVE_BOOK);
 		}
 	}
 }

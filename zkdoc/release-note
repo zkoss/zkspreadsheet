@@ -6,7 +6,7 @@ ZK Spreadsheet 2.3.0
    ZSS-87 Range support setSheetOrder API that supports collaboration
    ZSS-97 Spreadsheet support row/column/cell context menu
    ZSS-98 Spreadsheet support toolbar
-   ZSS-99 Spreadsheet support sheetpanel
+   ZSS-99 Spreadsheet support sheetbar
    ZSS-100 Spreadsheet support sheet cache
    ZSS-104 ZPOI upgrade to POI 3.8 - Final
 
@@ -25,6 +25,7 @@ ZK Spreadsheet 2.3.0
    ZSS-95 wrap cell cause cell border invisible
    ZSS-96 inline editor shall not input cell ref when click a cell
    ZSS-103 SLN function throws NotImplementedException
+   ZSS-109 scroll sheet down and drag widget, the drag view's position is wrong
 
 	------------
 ZK Spreadsheet 2.2.0

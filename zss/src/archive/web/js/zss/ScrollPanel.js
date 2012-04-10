@@ -72,8 +72,9 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 		this.currentLeft = left;
 	},
 	cleanup: function () {
-		var wgt = this.sheet._wgt,
-			n = wgt.$n('sp');
+		var sheet = this.sheet,
+			wgt = sheet._wgt,
+			n = sheet.$n('sp');
 		
 		wgt.domUnlisten_(n, 'onScroll', this.proxy(this._doScrolling))
 			.domUnlisten_(n, 'onMouseDown', this.proxy(this._doMousedown));
