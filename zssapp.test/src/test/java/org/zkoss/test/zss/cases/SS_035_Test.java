@@ -244,11 +244,11 @@ public class SS_035_Test extends ZSSAppTest {
 		mouseDirector.openColumnContextMenu(COLUMN_F);
 		
 		click(".z-menu-popup:visible .zsmenuitem-hideColumn");
-		Assert.assertFalse(spreadsheet.getColumn(COLUMN_F).jq$n().isVisible());
+		Assert.assertFalse(spreadsheet.getColumnHeader(COLUMN_F).jq$n().isVisible());
 		
 		mouseDirector.openColumnContextMenu(4, 6);
 		click(".z-menu-popup:visible .zsmenuitem-unhideColumn");
-		Assert.assertTrue(spreadsheet.getColumn(COLUMN_F).jq$n().isVisible());
+		Assert.assertTrue(spreadsheet.getColumnHeader(COLUMN_F).jq$n().isVisible());
 	}
 	
 	@Test
@@ -272,7 +272,7 @@ public class SS_035_Test extends ZSSAppTest {
 		mouseDirector.openColumnContextMenu(F);
 		
 		click(".z-menu-popup:visible .zsmenuitem-hideColumn");
-		Assert.assertFalse(spreadsheet.getColumn(F).jq$n().isVisible());
+		Assert.assertFalse(spreadsheet.getColumnHeader(F).jq$n().isVisible());
 		
 		mouseDirector.dragColumnToResize(F, 50);
 		Assert.assertTrue("Header shall be unhide", header.isVisible() && header.getWidth() == 50);

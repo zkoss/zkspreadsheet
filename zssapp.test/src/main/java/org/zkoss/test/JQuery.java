@@ -127,13 +127,7 @@ public class JQuery {
 	
 	public int length() {
 		Object length = javascriptExecutor.executeScript(out.toString() + ".length");
-		Method m = null;
-		try {
-			m = length.getClass().getMethod("intValue");
-			return (Integer)m.invoke(length);
-		} catch (Exception ex) {
-			throw new RuntimeException("can't find intValue method");
-		}
+		return Util.intValue(length);
 	}
 	
 	public JQuery children() {

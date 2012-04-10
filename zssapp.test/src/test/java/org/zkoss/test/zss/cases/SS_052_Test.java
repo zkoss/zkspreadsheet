@@ -1,4 +1,4 @@
-/* SS_239_Test.java
+/* SS_052_Test.java
 
 {{IS_NOTE
 	Purpose:
@@ -6,7 +6,7 @@
 	Description:
 		
 	History:
-		Feb 1, 2012 2:13:10 PM , Created by sam
+		Apr 10, 2012 4:27:24 PM , Created by sam
 }}IS_NOTE
 
 Copyright (C) 2012 Potix Corporation. All Rights Reserved.
@@ -16,7 +16,8 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.test.zss.cases;
 
-import org.junit.Assert;
+import junit.framework.Assert;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
@@ -24,6 +25,7 @@ import org.zkoss.test.BugTestingEnvironment;
 import org.zkoss.test.ConditionalTimeBlocker;
 import org.zkoss.test.JQuery;
 import org.zkoss.test.JQueryFactory;
+import org.zkoss.test.zss.MouseDirector;
 import org.zkoss.test.zss.Spreadsheet;
 import org.zkoss.test.zss.ZSSTestCase;
 
@@ -36,15 +38,15 @@ import com.google.inject.name.Names;
  *
  */
 @ZSSTestCase
-public class SS_051_Test {
+public class SS_052_Test {
 	
-	public static class ValidationEnvironment extends BugTestingEnvironment {
+	public static class B108 extends BugTestingEnvironment {
 		protected void configure() {
-			//Validation URL
+			
 			bind(String.class)
 			.annotatedWith(Names.named("URL"))
-			.toInstance("http://localhost:8088/zssapp/test/validation.zul");
-			
+			.toInstance("http://localhost:8088/zssapp/test/B108.zul");
+
 			bind(String.class)
 			.annotatedWith(Names.named("Spreadsheet Id"))
 			.toInstance("spreadsheet");
@@ -54,7 +56,7 @@ public class SS_051_Test {
 	}
 	
 	@Rule
-	public GuiceBerryRule guiceBerry = new GuiceBerryRule(ValidationEnvironment.class);
+	public GuiceBerryRule guiceBerry = new GuiceBerryRule(B108.class);
 	
 	@Inject
 	protected Spreadsheet spreadsheet;
@@ -66,24 +68,26 @@ public class SS_051_Test {
 	JQueryFactory jqFactory;
 	
 	@Inject
-	protected ConditionalTimeBlocker timeBlocker;
+	MouseDirector mouseDirector;
 	
-	/**
-	 * Refer to http://tracker.zkoss.org/browse/ZSS-84
-	 * 
-	 * Validation button shall show on column D, from row 1 ~ row 100
-	 */
+	@Inject
+	ConditionalTimeBlocker timeBlocker;
+	
+	JQuery jq(String selector) {
+		return jqFactory.create("'" + selector + "'");
+	}
+	
 	@Test
-	public void validation_buttons() {
-		spreadsheet.focus(1, 3);
+	public void B108() {
 		
-		JQuery buttons = spreadsheet.getMainBlock().getRow(1).jq$n().children(".zsdropdown");
-		Assert.assertEquals(1, buttons.length());
-		Assert.assertTrue(buttons.first().isVisible());
+		int firstSheetWidgetSize = jq(".zswidgetpanel").children().length();
+		Assert.assertEquals(9, firstSheetWidgetSize);
 		
-		spreadsheet.focus(25, 3);
-		buttons = spreadsheet.getMainBlock().getRow(25).jq$n().children(".zsdropdown");
-		Assert.assertEquals(1, buttons.length());
-		Assert.assertTrue(buttons.first().isVisible());
+		JQuery secondSheet = jq(".zssheettab").eq(1);
+		mouseDirector.click(secondSheet);
+		timeBlocker.waitResponse();
+		
+		int secondSheetWidgetSize = jq(".zswidgetpanel").children().length();
+		Assert.assertEquals(9, secondSheetWidgetSize);
 	}
 }

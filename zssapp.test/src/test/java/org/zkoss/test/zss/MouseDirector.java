@@ -125,7 +125,7 @@ public class MouseDirector {
 	public void openRowContextMenu(int tRow, int bRow) {
 		selectRow(tRow, bRow);
 		
-		JQuery target = spreadsheet.getRow(tRow).jq$n();
+		JQuery target = spreadsheet.getRowHeader(tRow).jq$n();
 		new JavascriptActions(webDriver)
 			.mouseOver(target, MouseButton.RIGHT)
 			.mouseDown(target, MouseButton.RIGHT)
@@ -137,8 +137,8 @@ public class MouseDirector {
 	public void selectRow(int tRow, int bRow) {
 		selectRow(tRow);
 		
-		JQuery from = spreadsheet.getRow(tRow).jq$n();
-		JQuery to = spreadsheet.getRow(bRow).jq$n();		
+		JQuery from = spreadsheet.getRowHeader(tRow).jq$n();
+		JQuery to = spreadsheet.getRowHeader(bRow).jq$n();		
 		new JavascriptActions(webDriver)
 			.mouseOver(from, MouseButton.LEFT)
 			.mouseDown(from, MouseButton.LEFT)
@@ -149,7 +149,7 @@ public class MouseDirector {
 	}
 
 	public void selectRow(int tRow) {
-		JQuery c = spreadsheet.getRow(tRow).jq$n();
+		JQuery c = spreadsheet.getRowHeader(tRow).jq$n();
 		new JavascriptActions(webDriver)
 			.mouseOver(c, MouseButton.LEFT)
 			.mouseDown(c, MouseButton.LEFT)
@@ -165,7 +165,7 @@ public class MouseDirector {
 	public void openColumnContextMenu(int lCol, int rCol) {
 		selectColumn(lCol, rCol);
 		
-		JQuery target = spreadsheet.getColumn(lCol).jq$n();
+		JQuery target = spreadsheet.getColumnHeader(lCol).jq$n();
 		new JavascriptActions(webDriver)
 			.mouseOver(target, MouseButton.RIGHT)
 			.mouseDown(target, MouseButton.RIGHT)
@@ -175,7 +175,7 @@ public class MouseDirector {
 	}
 	
 	public void selectColumn(int col) {
-		JQuery c = spreadsheet.getColumn(col).jq$n();
+		JQuery c = spreadsheet.getColumnHeader(col).jq$n();
 		new JavascriptActions(webDriver)
 			.mouseOver(c, MouseButton.LEFT)
 			.mouseDown(c, MouseButton.LEFT)
@@ -188,8 +188,8 @@ public class MouseDirector {
 		//click
 		selectColumn(lCol);
 		
-		JQuery from = spreadsheet.getColumn(lCol).jq$n();
-		JQuery to = spreadsheet.getColumn(rCol).jq$n();		
+		JQuery from = spreadsheet.getColumnHeader(lCol).jq$n();
+		JQuery to = spreadsheet.getColumnHeader(rCol).jq$n();		
 		new JavascriptActions(webDriver)
 			.mouseOver(from, MouseButton.LEFT)
 			.mouseDown(from, MouseButton.LEFT)

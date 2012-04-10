@@ -93,7 +93,7 @@ public class SS_028_Test extends ZSSAppTest {
 		click(".zstbtn-sortAndFilter .zstbtn-arrow");
 		click(".zsmenuitem-filter");
 		spreadsheet.focus(11, 5);
-		buttonSize = spreadsheet.getRow(11).jq$n().children(".zsbtn").length();
+		buttonSize = jq(".zsbtn").length();
 		Assert.assertEquals(0, buttonSize);
 	}
 	
@@ -118,7 +118,7 @@ public class SS_028_Test extends ZSSAppTest {
 		click(".zsafp-ok-btn");
 		
 		//step3: verify "1" is invisible
-		Assert.assertFalse(spreadsheet.getRow(13).jq$n().isVisible());
+		Assert.assertFalse(spreadsheet.getRowHeader(13).jq$n().isVisible());
 		
 		//step4: edit "2" -> "1"
 		keyboardDirector.setEditText(14, 11, "1");
@@ -128,7 +128,7 @@ public class SS_028_Test extends ZSSAppTest {
 		click(".zsmenuitem-reapplyFilter");
 		
 		//step6: hide 2 rows
-		Assert.assertFalse(spreadsheet.getRow(14).jq$n().isVisible());
+		Assert.assertFalse(spreadsheet.getRowHeader(14).jq$n().isVisible());
 	}
 	
 	@Test
@@ -150,14 +150,14 @@ public class SS_028_Test extends ZSSAppTest {
 		click(".zsafp-ok-btn");
 		
 		//verify "1" is invisible
-		Assert.assertFalse(spreadsheet.getRow(13).jq$n().isVisible());
+		Assert.assertFalse(spreadsheet.getRowHeader(13).jq$n().isVisible());
 		
 		//step4: clear autofilter
 		click(".zstbtn-sortAndFilter .zstbtn-arrow");
 		click(".zsmenuitem-clearFilter");
 		
 		//step5: verify "1" is visible
-		Assert.assertTrue(spreadsheet.getRow(13).jq$n().isVisible());
+		Assert.assertTrue(spreadsheet.getRowHeader(13).jq$n().isVisible());
 		
 	}
 }

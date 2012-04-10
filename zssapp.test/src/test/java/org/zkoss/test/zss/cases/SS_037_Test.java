@@ -356,7 +356,7 @@ public class SS_037_Test extends ZSSAppTest {
 		click(".zsafp-ok-btn");
 		
 		//step3: verify "1" is invisible
-		Assert.assertFalse(spreadsheet.getRow(13).jq$n().isVisible());
+		Assert.assertFalse(spreadsheet.getRowHeader(13).jq$n().isVisible());
 		
 		//step4: edit "2" -> "1"
 		keyboardDirector.setEditText(14, 11, "1");
@@ -367,7 +367,7 @@ public class SS_037_Test extends ZSSAppTest {
 		click(".z-menu-popup:visible .zsmenuitem-reapplyFilter");
 		
 		//step6: hide 2 rows
-		Assert.assertFalse(spreadsheet.getRow(14).jq$n().isVisible());
+		Assert.assertFalse(spreadsheet.getRowHeader(14).jq$n().isVisible());
 	}
 	
 	@Test

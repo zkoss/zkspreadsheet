@@ -34,6 +34,7 @@ import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Named;
 import com.google.inject.throwingproviders.ThrowingProviderBinder;
+import com.opera.core.systems.OperaDriver;
 
 /**
  * @author sam
@@ -78,6 +79,8 @@ public class TestingEnvironment extends AbstractModule {
 			} catch (MalformedURLException e) {
 				throw new RuntimeException(e);
 			}
+		case OPERA:
+			return new OperaDriver();
 		}
 		throw new RuntimeException("fail to create WebDriver");
 	}

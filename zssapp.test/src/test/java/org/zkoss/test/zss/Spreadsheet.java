@@ -154,7 +154,7 @@ public class Spreadsheet extends Widget {
 		return injector.getInstance(LeftPanel.class);
 	}
 	
-	public Header getRow(int row) {
+	public Header getRowHeader(int row) {
 		return injector.getInstance(LeftPanel.class).getRowHeader(row);
 	}
 	
@@ -162,7 +162,7 @@ public class Spreadsheet extends Widget {
 		return injector.getInstance(MainBlock.class);
 	}
 	
-	public Header getColumn(int col) {
+	public Header getColumnHeader(int col) {
 		return injector.getInstance(TopPanel.class).getColumnHeader(col);
 	}
 }

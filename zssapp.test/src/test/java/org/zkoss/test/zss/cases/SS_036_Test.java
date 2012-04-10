@@ -245,11 +245,11 @@ public class SS_036_Test extends ZSSAppTest {
 		mouseDirector.openRowContextMenu(12);
 		
 		click(".z-menu-popup:visible .zsmenuitem-hideRow");
-		Assert.assertFalse(spreadsheet.getRow(12).jq$n().isVisible());
+		Assert.assertFalse(spreadsheet.getRowHeader(12).jq$n().isVisible());
 		
 		mouseDirector.openRowContextMenu(11, 13);
 		click(".z-menu-popup:visible .zsmenuitem-unhideRow");
-		Assert.assertTrue(spreadsheet.getRow(12).jq$n().isVisible());
+		Assert.assertTrue(spreadsheet.getRowHeader(12).jq$n().isVisible());
 	}
 	
 	@Test
@@ -273,7 +273,7 @@ public class SS_036_Test extends ZSSAppTest {
 		final int ROW_6 = 5;
 		mouseDirector.openRowContextMenu(ROW_6);
 		click(".z-menu-popup:visible .zsmenuitem-hideRow");
-		Assert.assertFalse(spreadsheet.getRow(ROW_6).jq$n().isVisible());
+		Assert.assertFalse(spreadsheet.getRowHeader(ROW_6).jq$n().isVisible());
 		
 		Header header = spreadsheet.getLeftPanel().getRowHeader(ROW_6);
 		mouseDirector.dragRowToResize(ROW_6, 50);
