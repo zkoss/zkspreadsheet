@@ -28,6 +28,7 @@ ZK Spreadsheet 2.3.0
    ZSS-109 scroll sheet down and drag widget, the drag view's position is wrong
    ZSS-110 move chart will cause NPE when using xls format file
    ZSS-107 area/scatter chart not show chart content
+   ZSS-112 set book that contains chart, switch sheet not show chart correctly
    
 	------------
 ZK Spreadsheet 2.2.0

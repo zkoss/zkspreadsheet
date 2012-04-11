@@ -21,7 +21,6 @@
 				<menuitem id="exportExcel" label="${c:l('export.excel')}"/>
 			</menupopup>
 		</menu>
-		<menuseparator />
 		<!-- NotImplement -->
 <!-- 		<menuitem id="fileReversion" label="${c:l('file.reversion')}" -->
 <!-- 			forward="onRevision" disabled="true" /> -->
