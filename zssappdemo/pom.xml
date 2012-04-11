@@ -4,12 +4,27 @@
   <groupId>org.zkoss.zss</groupId>
   <artifactId>zssappdemo</artifactId>
   <properties>
-  	<zk.version>5.0.9</zk.version>
-  	<gmapsz.version>2.0.52.FL.20110504</gmapsz.version>
+  	<zk.version>5.0.11</zk.version>
+  	<gmapsz.version>2.0.51</gmapsz.version>
+  	<jfreechart.version>1.0.13</jfreechart.version>
   </properties>
   <version>2.3.0</version>
   <packaging>war</packaging>
   <url>http://www.zkoss.org/zss</url>
+  	<repositories>
+		<repository>
+			<id>zk repository</id>
+			<url>http://mavensync.zkoss.org/maven2</url>
+		</repository>
+		<repository>
+			<id>ZSS EE Evaluation</id>
+			<url>http://mavensync.zkoss.org/zss/ee-eval</url>
+		</repository>
+		<repository>
+			<id>ZK EE Evaluation</id>
+			<url>http://mavensync.zkoss.org/zk/ee-eval</url>
+		</repository>
+	</repositories>
   <dependencies>
     <dependency>
       <groupId>org.zkoss.zss</groupId>
@@ -37,6 +52,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.zkoss.zss</groupId>
+      <artifactId>zsshtml</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.zkoss.common</groupId>
       <artifactId>zcommon</artifactId>
       <version>${zk.version}</version>
@@ -49,6 +69,11 @@
     <dependency>
 	  <groupId>org.zkoss.zk</groupId>
 	  <artifactId>zk</artifactId>
+	  <version>${zk.version}</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.zkoss.zk</groupId>
+	  <artifactId>zkex</artifactId>
 	  <version>${zk.version}</version>
 	</dependency>
     <dependency>
@@ -65,6 +90,11 @@
 		<groupId>org.zkoss.theme</groupId>
 		<artifactId>breeze</artifactId>
 		<version>${zk.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>jfree</groupId>
+		<artifactId>jfreechart</artifactId>
+		<version>${jfreechart.version}</version>
 	</dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
