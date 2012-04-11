@@ -26,7 +26,8 @@ ZK Spreadsheet 2.3.0
    ZSS-96 inline editor shall not input cell ref when click a cell
    ZSS-103 SLN function throws NotImplementedException
    ZSS-109 scroll sheet down and drag widget, the drag view's position is wrong
-
+   ZSS-110 move chart will cause NPE when using xls format file
+   
 	------------
 ZK Spreadsheet 2.2.0
 *Features:
