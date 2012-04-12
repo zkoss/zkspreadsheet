@@ -29,6 +29,7 @@ ZK Spreadsheet 2.3.0
    ZSS-110 move chart will cause NPE when using xls format file
    ZSS-107 area/scatter chart not show chart content
    ZSS-112 set book that contains chart, switch sheet not show chart correctly
+   ZSS-113 delete sheet's chart cause NPE, xls format only
    
 	------------
 ZK Spreadsheet 2.2.0
@@ -55,7 +56,7 @@ ZK Spreadsheet 2.2.0
    ZSS-66 POI row object should provide information about the height is changed by end user or not
    ZSS-67 Support locale aware Date and Number input 
    ZSS-68 Support showing Date and Number with current locale 
-   ZSS-69 Support locale aware drag fill for Month and Week 
+   ZSS-69 Support locale aware drag fill for Month and Week
 
 *Bug
    ZSS-15 edit date cells doesn't work

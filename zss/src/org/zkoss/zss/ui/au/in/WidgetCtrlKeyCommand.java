@@ -22,6 +22,7 @@ import java.util.Map;
 import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.Picture;
+import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
@@ -63,11 +64,11 @@ public class WidgetCtrlKeyCommand implements Command {
 		int keyCode = (Integer) data.get("keyCode");
 		DrawingManager dm = ((SheetCtrl)sheet).getDrawingManager();
 		if (KeyEvent.DELETE == keyCode) {
-			List<Chart> charts = dm.getCharts();
-			for (Chart chart : charts) {
-				if (chart.getChartId().equals(widgetId)) {
+			List<ZssChartX> charts = dm.getChartXs();
+			for (ZssChartX chartX : charts) {
+				Chart chart = chartX.getChart();
+				if (chart != null && chart.getChartId().equals(widgetId)) {
 					Ranges.range(sheet).deleteChart(chart);
-					break;
 				}
 			}
 		}
