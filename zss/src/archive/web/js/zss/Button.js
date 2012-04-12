@@ -704,12 +704,12 @@ if (zk.feature.pe) {
 			}
 		},
 		bind_: function () {
-			this.$supers('bind_', arguments);
+			this.$supers(zss.Colorbutton, 'bind_', arguments);
 			zWatch.listen({onFloatUp: this});
 		},
 		unbind_: function () {
 			zWatch.unlisten({onFloatUp: this});
-			this.$supers(PalettePop, 'unbind_', arguments);
+			this.$supers(zss.Colorbutton, 'unbind_', arguments);
 		},
 		onFloatUp: function (ctl) {
 			if (!zUtl.isAncestor(this, ctl.origin))
