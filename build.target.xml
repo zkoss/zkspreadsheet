@@ -171,6 +171,17 @@ if="deploy.jboss.required">
 		<fileset dir="srcresources" includes="**/functionMetadata*.txt"/>
 	</copy>
 	
+	<!-- for zsshtml -->
+	<copy todir="${codegen.archive.dir}" preservelastmodified="yes" failonerror="false">
+		<fileset dir="src" includes="**/excelStyle.css"/>
+	</copy>
+	
+	<!-- for zssex -->
+	<copy todir="${codegen.archive.dir}" preservelastmodified="yes" failonerror="false">
+		<fileset dir="srcpv" includes="zssPublicCert.store"/>
+		<fileset dir="srcpv" includes="**/Resources.properties"/>
+	</copy>
+	
 	<jar jarfile="${out.dir}/${jar.name}" manifest="${manifest.mf}">
 		<fileset dir="${out.dir}" excludes="${exclude.list}"/>
 		<fileset dir="${src.archive.dir}" includes="**"
