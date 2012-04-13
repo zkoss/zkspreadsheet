@@ -30,6 +30,7 @@ ZK Spreadsheet 2.3.0
    ZSS-107 area/scatter chart not show chart content
    ZSS-112 set book that contains chart, switch sheet not show chart correctly
    ZSS-113 delete sheet's chart cause NPE, xls format only
+   ZSS-116 export sheet with chart cause Exception (xls format only)
    
 	------------
 ZK Spreadsheet 2.2.0
