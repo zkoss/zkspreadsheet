@@ -613,15 +613,32 @@ if (zk.feature.pe) {
 				this._$onHide();
 				jq(this.$n()).removeClass('z-toolbarbutton-over');
 			},
-			unbind_: function () {
+			bind_: function () {
+				this.$supers(zss.Colorbutton, 'bind_', arguments);
+				
 				var paletteBtn = this.$n('palette-btn'),
-					pickerBtn = this.$n('picker-btn');
+					pickerBtn = this.$n('picker-btn'),
+					sf = this;
+				if (paletteBtn) {
+					this.domListen_(paletteBtn, 'onClick', 'openPalette');
+				}
+				if (pickerBtn) {
+					this.domListen_(pickerBtn, 'onClick', function () {
+						var picker = sf._picker,
+							n = picker.$n();
+						if (!n) {
+							sf.appendChild(picker);
+						}
+						sf.openPicker();
+					});
+				}
+			},
+			unbind_: function () {
+				var paletteBtn = this.$n('palette-btn');
 				if (paletteBtn) {
 					this.domUnlisten_(paletteBtn, 'onClick', 'openPalette');
 				}
-				if (pickerBtn) {
-					this.domUnlisten_(this.$n('picker-btn'), 'onClick', 'openPicker')
-				}
+				jq(this.$n('picker-btn')).unbind();
 				this.$supers(zss.Colorbutton, 'unbind_', arguments);
 			},
 			appnedPopup_: function () {
