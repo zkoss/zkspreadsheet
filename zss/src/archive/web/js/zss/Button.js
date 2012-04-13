@@ -661,11 +661,17 @@ if (zk.feature.pe) {
 				var taget = evt.domTarget,
 					paletteBtn = this.$n('palette-btn'),
 					pickerBtn = this.$n('picker-btn');
-				if (taget == paletteBtn || taget == pickerBtn) {
+					pick = this._picker,
+					palette = this._palette;
+				if (taget == paletteBtn || taget == pickerBtn || 
+					jq.isAncestor(pick.$n(), taget) || jq.isAncestor(palette.$n(), taget)) {
 					return false;
 				}
 				return !this.isClickDisabled() && !this.isDisabled();
 			},
+			doKeyDown_: zk.$void,
+			doKeyUp_: zk.$void,
+			doKeyPress_: zk.$void,
 			onChange: function (hex) {//invoke from Color Palette, not from event
 				this.setColor(hex);
 				this.fire('onClick');
