@@ -384,11 +384,14 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 				pp.open(this, null, 'after_start');	
 			}
 		} else {
-			if (!this.isClickDisabled() && !this.isDisabled()) {
+			if (this.isFireOnClick_(evt)) {
 				this.fire('onClick');
 			}
 		}
 		//controls fire onClick event, not invoke this.$supers('doClick_')
+	},
+	isFireOnClick_: function (evt) {
+		return !this.isClickDisabled() && !this.isDisabled();
 	},
 	doMouseOver_: function (evt) {
 		var	cv = this.$n('cave'),
@@ -654,6 +657,15 @@ if (zk.feature.pe) {
 					this.domListen_(paletteBtn, 'onClick', 'openPalette');
 				}
 			},
+			isFireOnClick_: function (evt) {
+				var taget = evt.domTarget,
+					paletteBtn = this.$n('palette-btn'),
+					pickerBtn = this.$n('picker-btn');
+				if (taget == paletteBtn || taget == pickerBtn) {
+					return false;
+				}
+				return !this.isClickDisabled() && !this.isDisabled();
+			},
 			onChange: function (hex) {//invoke from Color Palette, not from event
 				this.setColor(hex);
 				this.fire('onClick');
@@ -676,6 +688,7 @@ if (zk.feature.pe) {
 					uid + '-picker-btn" class="z-colorbtn-picker-btn"></div></div>';//Note. use Colorbox's "z-colorbtn-pp"
 			}
 		});
+//		zk.copy(zss.Colorbutton.prototype, AbstractPopupHandler);
 	})
 } else {//ZK CE version
 	zss.Colorbutton = zk.$extends(zss.Toolbarbutton, {
