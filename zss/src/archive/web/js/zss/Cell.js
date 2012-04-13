@@ -198,16 +198,19 @@ zss.Cell = zk.$extends(zk.Widget, {
 		return zk.parseInt(jq(this.getTextNode()).css('font-size'));
 	},
 	isFontBold: function () {
-		return jq(this.getTextNode()).css('font-weight') == '700';
+		var b = jq(this.getTextNode()).css('font-weight');
+		return b && (b == '700' || b == 'bold');
 	},
 	isFontItalic: function () {
 		return jq(this.getTextNode()).css('font-style') == 'italic';
 	},
 	isFontUnderline: function () {
-		return jq(this.$n('cave')).css('text-decoration') == 'underline';
+		var s = jq(this.$n('cave')).css('text-decoration');
+		return s && s.indexOf('underline') >= 0;
 	},
 	isFontStrikeout: function () {
-		return jq(this.$n('cave')).css('text-decoration') == 'line-through';
+		var s = jq(this.$n('cave')).css('text-decoration');
+		return s && s.indexOf('line-through') >= 0;
 	},
 	doClick_: function (evt) {
 		//do nothing. eat the event.
