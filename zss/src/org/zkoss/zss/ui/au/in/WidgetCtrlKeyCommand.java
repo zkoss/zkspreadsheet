@@ -64,11 +64,11 @@ public class WidgetCtrlKeyCommand implements Command {
 		int keyCode = (Integer) data.get("keyCode");
 		DrawingManager dm = ((SheetCtrl)sheet).getDrawingManager();
 		if (KeyEvent.DELETE == keyCode) {
-			List<ZssChartX> charts = dm.getChartXs();
-			for (ZssChartX chartX : charts) {
-				Chart chart = chartX.getChart();
+			List<Chart> charts = dm.getCharts();
+			for (Chart chart : charts) {
 				if (chart != null && chart.getChartId().equals(widgetId)) {
 					Ranges.range(sheet).deleteChart(chart);
+					break;
 				}
 			}
 		}
