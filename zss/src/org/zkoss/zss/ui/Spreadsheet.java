@@ -3101,6 +3101,12 @@ public class Spreadsheet extends XulElement implements Serializable {
 					//case CellStyle.VERTICAL_BOTTOM: //default
 					//	break;
 					}
+					
+					Font font = _book.getFontAt(cellStyle.getFontIndex());
+					short fontHeight = font.getFontHeightInPoints();
+					if (fontHeight != XSSFFont.DEFAULT_FONT_SIZE) {
+						attrs.put("fs", fontHeight);
+					}
 				}
 			}
 			return attrs;

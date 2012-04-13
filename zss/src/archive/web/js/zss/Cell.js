@@ -110,6 +110,10 @@ zss.Cell = zk.$extends(zk.Widget, {
 	 */
 	overflow: false,
 	/**
+	 * The font size in point
+	 */
+	fontSize: 11,
+	/**
 	 * Max overflow-able cell index
 	 * 
 	 * Default: null
@@ -194,8 +198,13 @@ zss.Cell = zk.$extends(zk.Widget, {
 	getFontName: function () {
 		return jq(this.getTextNode()).css('font-family');
 	},
+	/**
+	 * Return cell font size in point
+	 * 
+	 * @return int font size
+	 */
 	getFontSize: function () {
-		return zk.parseInt(jq(this.getTextNode()).css('font-size'));
+		return this.fontSize;
 	},
 	isFontBold: function () {
 		var b = jq(this.getTextNode()).css('font-weight');
@@ -252,8 +261,11 @@ zss.Cell = zk.$extends(zk.Widget, {
 			wrapChd = this.wrap != data.wrap,
 			processWrap = data.wrap || wrapChd || (this.wrap && this.getText() != data.text),
 			cave = this.$n('cave'),
-			prevWidth = cave.style.width;
-		
+			prevWidth = cave.style.width,
+			fontSize = data.fontSize;
+		if (fontSize) {
+			this.fontSize = fontSize;
+		}
 		this.$n().style.cssText = st;
 		cave.style.cssText = ist;
 		if (prevWidth && (zk.ie6_ || zk.ie7_)) {//IE6/IE7 set overflow width at cave

@@ -166,6 +166,12 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 			 */
 			//maxOverflowCol
 			/**
+			 * Cell font size in point
+			 * 
+			 * default: 11
+			 */
+			//fontSize
+			/**
 			 * Update Cell model
 			 * 
 			 * @param JSON Object v data from server
@@ -204,7 +210,8 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 						rbo = v.rb,
 						lock = v.l,
 						halign = v.ha,
-						valign = v.va;
+						valign = v.va,
+						fontSize = v.fs;
 					this.style = sId != undefined ? styles[sId] : '';
 					this.innerStyle = isId != undefined ? styles[isId] : '';
 					this.wrap = wrap != undefined;
@@ -213,6 +220,8 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 					this.halign = halign || 'l'; //horizontal align: default left
 					this.valign = valign || 'b'; //vertical align: default bottom 
 					this.rightBorder = rbo != undefined;
+					if (fontSize)
+						this.fontSize = fontSize;
 				}
 				if (upSize) {
 					this.widthId = v.w;
