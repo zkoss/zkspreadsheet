@@ -307,6 +307,8 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 				html = '';
 			
 			ctrl = new zss.Row(sheet, block, r, data);
+			//ZSS-120: use default row height first, row's height will update by server if needed 
+			ctrl.zsh = null;
 			html += ctrl.getHtmlPrologHalf();
 			html += zss.Row.copyCells(temprow, ctrl);
 			this.insertRow(r, ctrl, html);

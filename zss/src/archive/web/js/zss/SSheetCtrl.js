@@ -763,8 +763,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 
 		dp._fixSize(this.activeBlock);
 		this._fixSize();
-
 		this.sendSyncblock();
+		
+		var sel = this.getLastSelection();
+		if (sel)
+			this.moveCellSelection(sel.left, sel.top, sel.right, sel.bottom);
 		
 		var self = this;
 		setTimeout(function () {
