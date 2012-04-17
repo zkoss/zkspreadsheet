@@ -31,3 +31,4 @@ ooxml-schemas-1.1.jar
 xmlbeans-2.3.0.jar
 dom4j-1.6.1.jar
 stax-api-1.0.1.jar
+commons-codec-1.4.jar
