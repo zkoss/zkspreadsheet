@@ -24,6 +24,8 @@ import java.util.Set;
 import org.zkoss.image.AImage;
 import org.zkoss.lang.Objects;
 import org.zkoss.lang.Strings;
+import org.zkoss.poi.hssf.usermodel.HSSFClientAnchor;
+import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
@@ -1851,8 +1853,12 @@ public abstract class ActionHandler {
 				break;
 			}
 		}
-		ClientAnchor anchor = new XSSFClientAnchor(0, 0, pxToEmu(offsetWidth), pxToEmu(offsetHeight), lCol, tRow, rCol, bRow);
-		return anchor;
+		
+		if (_spreadsheet.getBook() instanceof HSSFWorkbook) {
+			return new HSSFClientAnchor(0, 0, offsetWidth, offsetHeight, (short)lCol, tRow, (short)rCol, bRow);
+		} else {
+			return new XSSFClientAnchor(0, 0, pxToEmu(offsetWidth), pxToEmu(offsetHeight), lCol, tRow, rCol, bRow);
+		}
 	}
 	
 	/** convert pixel to EMU */
