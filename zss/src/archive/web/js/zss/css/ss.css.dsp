@@ -1145,6 +1145,10 @@
 	padding: 1px 0;
 }
 
+.zstbtn .z-toolbarbutton-cnt {
+	overflow: hidden;
+}
+
 <c:if test="${c:browser('ie6-')}">
 .zstbtn .zstbtn-cave {
 	margin-right: -12px;
