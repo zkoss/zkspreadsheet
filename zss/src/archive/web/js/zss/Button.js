@@ -963,6 +963,8 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 	$init: function (wgt) {
 		this.$supers(zss.StylePanel, '$init', []);
+		if (zk.ie6_)
+			this.setWidth('186px');
 		this._wgt = wgt;
 		
 		var	self = this,
