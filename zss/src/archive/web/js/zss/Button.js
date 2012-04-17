@@ -661,10 +661,11 @@ if (zk.feature.pe) {
 				var taget = evt.domTarget,
 					paletteBtn = this.$n('palette-btn'),
 					pickerBtn = this.$n('picker-btn');
-					pick = this._picker,
-					palette = this._palette;
+					pick = this._picker.$n(),
+					palette = this._palette.$n();
 				if (taget == paletteBtn || taget == pickerBtn || 
-					jq.isAncestor(pick.$n(), taget) || jq.isAncestor(palette.$n(), taget)) {
+					(pick != null && jq.isAncestor(pick, taget)) || 
+					(palette != null && jq.isAncestor(palette, taget))) {
 					return false;
 				}
 				return !this.isClickDisabled() && !this.isDisabled();
@@ -694,7 +695,6 @@ if (zk.feature.pe) {
 					uid + '-picker-btn" class="z-colorbtn-picker-btn"></div></div>';//Note. use Colorbox's "z-colorbtn-pp"
 			}
 		});
-//		zk.copy(zss.Colorbutton.prototype, AbstractPopupHandler);
 	})
 } else {//ZK CE version
 	zss.Colorbutton = zk.$extends(zss.Toolbarbutton, {
