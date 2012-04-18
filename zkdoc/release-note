@@ -32,6 +32,7 @@ ZK Spreadsheet 2.3.0
    ZSS-113 delete sheet's chart cause NPE, xls format only
    ZSS-116 export sheet with chart cause Exception (xls format only)
    ZSS-120 insert new row not work well
+   ZSS-122 Cell editing is blocked with regular expression check in Japanese locale
    ZSS-123 zssapp insert image cause exception, xls format only
    
 	------------
