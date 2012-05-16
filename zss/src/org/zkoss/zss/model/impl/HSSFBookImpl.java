@@ -16,6 +16,7 @@ package org.zkoss.zss.model.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.zkoss.lang.Classes;
@@ -35,6 +36,8 @@ import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.PictureData;
+import org.zkoss.poi.ss.usermodel.PivotCache;
+import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
@@ -346,5 +349,15 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 	@Override
 	public boolean containsFocus(Object focus) {
 		return getBookCtrl().containsFocus(focus);
+	}
+
+	@Override
+	public List<PivotCache> getPivotCaches(Book book) {
+		return  getBookCtrl().getPivotCaches(book);
+	}
+
+	@Override
+	public PivotCache createPivotCache(AreaReference sourceRef, Book book) {
+		return getBookCtrl().createPivotCache(sourceRef, book);
 	}
 }

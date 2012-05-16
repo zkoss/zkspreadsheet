@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.openxmlformats.schemas.officeDocument.x2006.docPropsVTypes.CTVariant;
@@ -27,16 +28,18 @@ import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTVect
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
 import org.zkoss.poi.POIXMLProperties;
-import org.zkoss.poi.ss.formula.ptg.Ptg;
-import org.zkoss.poi.ss.formula.SheetNameFormatter;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaType;
+import org.zkoss.poi.ss.formula.SheetNameFormatter;
 import org.zkoss.poi.ss.formula.WorkbookEvaluator;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.PictureData;
+import org.zkoss.poi.ss.usermodel.PivotCache;
+import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFColor;
 import org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook;
@@ -49,11 +52,9 @@ import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
-import org.zkoss.zss.engine.event.SSDataEvent;
 import org.zkoss.zss.formula.DefaultFunctionResolver;
 import org.zkoss.zss.formula.FunctionResolver;
 import org.zkoss.zss.formula.NoCacheClassifier;
@@ -425,5 +426,15 @@ public class XSSFBookImpl extends XSSFWorkbook implements Book, BookCtrl {
 	@Override
 	public boolean containsFocus(Object focus) {
 		return getBookCtrl().containsFocus(focus);
+	}
+
+	@Override
+	public List<PivotCache> getPivotCaches(Book book) {
+		return getBookCtrl().getPivotCaches(book);
+	}
+
+	@Override
+	public PivotCache createPivotCache(AreaReference sourceRef, Book book) {
+		return getBookCtrl().createPivotCache(sourceRef, book);
 	}
 }

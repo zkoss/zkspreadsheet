@@ -54,6 +54,7 @@ import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.DataValidationConstraint;
 import org.zkoss.poi.ss.usermodel.DataValidationHelper;
 import org.zkoss.poi.ss.usermodel.Picture;
+import org.zkoss.poi.ss.usermodel.PivotTable;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.zkoss.poi.ss.util.CellRangeAddress;
@@ -1246,6 +1247,12 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Worksheet {
 		DrawingManager dm = getDrawingManager();
 		return dm.getCharts();
 	}
+	
+	@Override
+	public List<PivotTable> getPivotTables() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
     //--SheetCtrl--//
     private volatile SheetCtrl _sheetCtrl = null;
@@ -1303,6 +1310,10 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Worksheet {
 	@Override
 	public DrawingManager getDrawingManager() {
 		return getSheetCtrl().getDrawingManager();
+	}
+	@Override
+	public PivotTableManager getPivotTableManager() {
+		return getSheetCtrl().getPivotTableManager();
 	}
 	@Override
 	public void whenRenameSheet(String oldname, String newname) {

@@ -12,6 +12,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.impl;
 
+import org.zkoss.poi.ss.usermodel.PivotTable;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 
 /**
@@ -67,6 +68,8 @@ public interface SheetCtrl {
 	 * @return drawing manager
 	 */
 	public DrawingManager getDrawingManager();
+	
+	public PivotTableManager getPivotTableManager();
 	
 	/**
 	 * Callback when the name of a sheet in the associated book changes.
