@@ -73,14 +73,4 @@ public class BookCtrlImpl implements BookCtrl {
 			}
 		}
 	}
-
-	@Override
-	public List<PivotCache> getPivotCaches(Book book) {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public PivotCache createPivotCache(AreaReference sourceRef, Book book) {
-		return null;
-	}
 }

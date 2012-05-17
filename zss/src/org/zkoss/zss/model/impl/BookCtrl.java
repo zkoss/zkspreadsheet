@@ -49,8 +49,4 @@ public interface BookCtrl {
 	public void removeFocus(Object focus);
 	
 	public boolean containsFocus(Object focus);
-	
-	public PivotCache createPivotCache(AreaReference sourceRef, Book book);
-	
-	public List<PivotCache> getPivotCaches(Book book);
 }

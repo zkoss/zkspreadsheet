@@ -1312,10 +1312,6 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, Worksheet {
 		return getSheetCtrl().getDrawingManager();
 	}
 	@Override
-	public PivotTableManager getPivotTableManager() {
-		return getSheetCtrl().getPivotTableManager();
-	}
-	@Override
 	public void whenRenameSheet(String oldname, String newname) {
 		getSheetCtrl().whenRenameSheet(oldname, newname);
 	}

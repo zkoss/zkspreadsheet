@@ -123,12 +123,6 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
 		return dm.getCharts();
 	}
 	
-	@Override
-	public List<PivotTable> getPivotTables() {
-		PivotTableManager pm = getSheetCtrl().getPivotTableManager();
-		return pm.getPivotTables();
-	}
-	
 	//20100914, henrichen@zkoss.org: Shift rows only, don't handle formula
     /**
      * Shifts rows between startRow and endRow n number of rows.
@@ -1226,10 +1220,6 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
 	@Override
 	public DrawingManager getDrawingManager() {
 		return getSheetCtrl().getDrawingManager();
-	}
-	@Override
-	public PivotTableManager getPivotTableManager() {
-		return getSheetCtrl().getPivotTableManager();
 	}
 	@Override
 	public void whenRenameSheet(String oldname, String newname) {

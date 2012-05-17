@@ -8,7 +8,7 @@
   	<gmapsz.version>2.0.51</gmapsz.version>
   	<jfreechart.version>1.0.13</jfreechart.version>
   </properties>
-  <version>2.3.0</version>
+  <version>2.4.0</version>
   <packaging>war</packaging>
   <url>http://www.zkoss.org/zss</url>
   	<repositories>

@@ -350,14 +350,4 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 	public boolean containsFocus(Object focus) {
 		return getBookCtrl().containsFocus(focus);
 	}
-
-	@Override
-	public List<PivotCache> getPivotCaches(Book book) {
-		return  getBookCtrl().getPivotCaches(book);
-	}
-
-	@Override
-	public PivotCache createPivotCache(AreaReference sourceRef, Book book) {
-		return getBookCtrl().createPivotCache(sourceRef, book);
-	}
 }

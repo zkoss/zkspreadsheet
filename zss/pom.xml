@@ -8,7 +8,7 @@
 		<zk.version>5.0.11</zk.version>
 		<commons-math.version>1.2</commons-math.version>
 	</properties>
-	<version>2.3.0</version>
+	<version>2.4.0</version>
 	<packaging>jar</packaging>
 	<name>ZK Spreadsheet</name>
 	<url>http://www.zkoss.org/zss</url>

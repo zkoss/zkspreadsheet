@@ -183,21 +183,4 @@ public class SheetCtrlImpl implements SheetCtrl {
 			}
 		};
 	}
-	
-	@Override
-	public PivotTableManager getPivotTableManager() {
-		return new PivotTableManager() {
-
-			@Override
-			public List<PivotTable> getPivotTables() {
-				return Collections.emptyList();
-			}
-
-			@Override
-			public PivotTable createPivotTable(CellReference destination,
-					String name, PivotCache pivotCache) {
-				return null;
-			}
-		};
-	}
 }

@@ -69,8 +69,6 @@ public interface SheetCtrl {
 	 */
 	public DrawingManager getDrawingManager();
 	
-	public PivotTableManager getPivotTableManager();
-	
 	/**
 	 * Callback when the name of a sheet in the associated book changes.
 	 * @param oldname old sheet name
