@@ -95,6 +95,13 @@ depends="config.build, stop.service, deploy.tomcat.files, start.service"
 if="deploy.tomcat.required">
 </target>
 
+<target name="deploy.osgi" if="deploy.lib.required">
+    <move overwrite="true" todir="${dist.osgi.dir}" >
+        <fileset dir="${dist.osgi.dir}" includes="*.bar" />
+        <mapper type="glob" from="*.bar" to="*.osgi.jar" />
+    </move>
+</target>
+
 <target name="deploy.jboss.intact" depends="config.build"
 if="deploy.jboss.intact.required">
 	<!-- deploy to server intact -->
@@ -140,7 +147,7 @@ if="deploy.jboss.required">
 	</copy>
 </target>
 
-<target name="deploy" depends="deploy.lib, deploy.tomcat, deploy.jboss">
+<target name="deploy" depends="deploy.lib, deploy.osgi, deploy.tomcat, deploy.jboss">
 </target>
 
 <!-- ===== -->
@@ -291,8 +298,27 @@ if="deploy.jboss.required">
 	</ear>
 </target>
 
+<target name="build.osgi1" depends="build.jar" if="build.jar.required">
+	<mkdir dir="${dist.osgi.dir}"/>
+	<echo file="${dist.osgi.dir}/${bnd.config.name}" message="Bundle-Version:${project.version}"/>
+</target>
+
+<target name="build.osgi2" depends="build.jar2" if="build.jar2.required">
+	<echo file="${dist.osgi.dir}/${bnd2.config.name}" message="Bundle-Version:${project.version}"/>
+</target>
+
+<target name="build.osgi" depends="build.osgi1, build.osgi2" if="build.jar.required">
+	<taskdef resource="aQute/bnd/ant/taskdef.properties" classpath="${bnd.lib.jar}"/>
+	<bndwrap output="${dist.osgi.dir}" definitions="${dist.osgi.dir}">
+		<fileset dir="${out.dir}" includes="${jar.name}, ${jar2.name}"/>
+	</bndwrap>
+	<delete quiet="true">
+		<fileset dir="${dist.osgi.dir}" includes="${bnd.config.name}, ${bnd2.config.name}"/>
+	</delete>
+</target>
+
 <target name="build"
- depends="config.build, build.war, build.jad, build.jar, build.jar2, build.ear, deploy">
+ depends="config.build, build.war, build.jad, build.jar, build.jar2, build.ear, build.osgi, deploy">
 </target>
 
 <!-- ===== -->
@@ -315,6 +341,7 @@ if="deploy.jboss.required">
 		<fileset dir="${jboss.deploy1.dir}" includes="${xar.name}"/>
 		<!--fileset dir="${tomcat.lib.dir}" includes="${xar.name}"/-->
 		<fileset dir="${tomcat.webapps.dir}" includes="${xar.name}"/>
+		<fileset dir="${dist.osgi.dir}" includes="${xar.name}"/>
 	</delete>
 </target>
 
