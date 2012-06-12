@@ -23,6 +23,7 @@ iText-5.0.3.jar
 zpoi.jar
 zss.jar
 zssex.nosrc.jar
+zpoiex.jar
 zsspdf.jar
 zsshtml.jar
 opencsv.jar

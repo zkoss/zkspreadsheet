@@ -21,6 +21,7 @@ commons-logging.jar
 commons-digester.jar
 iText-5.0.3.jar
 zpoi.jar
+zpoiex.jar
 zss.jar
 zssex.jar
 zsspdf.jar
