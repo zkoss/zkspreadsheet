@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.zkoss.zss</groupId>
+	<groupId>org.zkoss.poi</groupId>
 	<artifactId>zpoi</artifactId>
 	<properties>
 		<zk.version>5.0.11</zk.version>
@@ -15,7 +15,7 @@
 		<junit.version>4.8.1</junit.version>
 		<commons-codec.version>1.5</commons-codec.version>
 	</properties>
-	<version>2.4.0</version>
+	<version>3.8.1</version>
 	<packaging>jar</packaging>
 	<name>ZK Spreadsheet POI</name>
 	<url>http://www.zkoss.org/zss</url>
