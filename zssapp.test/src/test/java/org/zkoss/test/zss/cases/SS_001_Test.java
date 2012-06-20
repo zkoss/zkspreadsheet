@@ -31,30 +31,30 @@ public class SS_001_Test extends ZSSAppTest {
 
 	@Test
 	public void click_file_menu() {
-		Assert.assertFalse(spreadsheet.isSelection(5, 5));
+		Assert.assertFalse(spreadsheet.isSelection(6, 1));
 		
-		spreadsheet.focus(5, 5);
+		spreadsheet.focus(6, 1);
 		click("$fileMenu");
-		Assert.assertTrue("Focus shall remain at same cell", spreadsheet.isSelection(5, 5));
+		Assert.assertTrue("Focus shall remain at same cell", spreadsheet.isSelection(6, 1));
 	}
 	
 	@Test
 	public void click_view_menu() {
-		Assert.assertFalse(spreadsheet.isSelection(5, 5));
+		Assert.assertFalse(spreadsheet.isSelection(6, 1));
 		
-		spreadsheet.focus(5, 5);
+		spreadsheet.focus(6, 1);
 		click("$viewMenu");
 		
-		Assert.assertTrue("Focus shall remain at same cell", spreadsheet.isSelection(5, 5));
+		Assert.assertTrue("Focus shall remain at same cell", spreadsheet.isSelection(6, 1));
 	}
 	
 	@Test
 	public void click_help_menu() {
-		Assert.assertFalse(spreadsheet.isSelection(5, 5));
+		Assert.assertFalse(spreadsheet.isSelection(6, 1));
 		
-		spreadsheet.focus(5, 5);
+		spreadsheet.focus(6, 1);
 		click("$helpMenu");
 		
-		Assert.assertTrue("Focus shall remain at same cell", spreadsheet.isSelection(5, 5));
+		Assert.assertTrue("Focus shall remain at same cell", spreadsheet.isSelection(6, 1));
 	}
 }
