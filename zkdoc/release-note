@@ -2,6 +2,12 @@ ZK Spreadsheet 2.4.0
 *Features:   
 	ZSS-124 Support import pivot table API
 	ZSS-128 Support export pivot table API
+	
+*Bug
+	ZSS-131 Sheets contains unsupported drawing object cannot opening, get null pointer exception
+	ZSS-134 Sheets contains unsupported cell format, cannot opening, get null pointer exception
+	ZSS-132 Export to PDF on a sheet get null pointer exception
+	ZSS-141 Export sheet to PDF doesn't show last column
 
 	------------
 ZK Spreadsheet 2.3.0
