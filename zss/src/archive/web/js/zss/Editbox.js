@@ -86,18 +86,21 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			tp = type || 'inlineEditing',
 			start = p[0],
 			end = p[1],
-			v = n.value;
-		if (start != end) { //text has selection, need to replace cell reference
-			return {start: start, end: end, type: tp};
-		} else {
-			if (!start) {
-				return {start: 0, end: 0, type: tp};
+			v = n.value,
+			firstChar = v.charAt(0);
+		if (firstChar && firstChar == '=') {
+			if (start != end) { //text has selection, need to replace cell reference
+				return {start: start, end: end, type: tp};
 			} else {
-				var DELIMITERS = ['=', '+', '-', '*', '/', '!', ':', '^', '&', '(',  ',', '.'],
-					i = start - 1,
-					c = v.charAt(i);
-				if (DELIMITERS.$contains(c)) {
-					return {start: start, end: start, type: tp};
+				if (!start) {
+					return {start: 0, end: 0, type: tp};
+				} else {
+					var DELIMITERS = ['=', '+', '-', '*', '/', '!', ':', '^', '&', '(',  ',', '.'],
+						i = start - 1,
+						c = v.charAt(i);
+					if (DELIMITERS.$contains(c)) {
+						return {start: start, end: start, type: tp};
+					}
 				}
 			}
 		}
