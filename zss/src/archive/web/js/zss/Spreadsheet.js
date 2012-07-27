@@ -23,8 +23,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		if(zkS.t(zss.Spreadsheet.scrollWidth)) return;
 	    // scroll scrolling div
 		var body = document.body,
-			scr = jq('<div style="position:absolute;top:0px;left:0px;width:50px;height:50px;overflow:auto;"></div>')[0],
-			inn = jq('<div style="width:100px;height:100px;"></div>')[0]; //scroll content div
+			scr = jq('<div style="position:absolute;top:0px;left:0px;width:80px;height:50px;overflow:auto;"></div>')[0],
+			inn = jq('<div style="width:100px;height:100px;overflow: scroll;"></div>')[0]; //scroll content div
 	    // Put the scrolli div in the scrolling div
 	    scr.appendChild(inn);
 
