@@ -11,6 +11,7 @@ ZK Spreadsheet 2.4.0
 	ZSS-142 Invalid format cause NullPointerException
 	ZSS-143 Cell addres gets into cell value on user input
 	ZSS-148 Open sheet with chart without label cause exception
+	ZSS-149 DateValue does not reconize Leap day
 	ZSS-150 The row/column header size is not correct on Firefox
 
 	------------
