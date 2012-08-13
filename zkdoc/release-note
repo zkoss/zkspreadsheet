@@ -9,7 +9,8 @@ ZK Spreadsheet 2.4.0
 	ZSS-132 Export to PDF on a sheet get null pointer exception
 	ZSS-141 Export sheet to PDF doesn't show last column
 	ZSS-142 Invalid format cause NullPointerException
-	ZSS-143 Cell addres gets into cell value on user input
+	ZSS-143 Cell addres gets into cell value on user input	
+	ZSS-145	Freezing a row causes the rows above the frozen row to be unselectable.
 	ZSS-148 Open sheet with chart without label cause exception
 	ZSS-149 DateValue does not reconize Leap day
 	ZSS-150 The row/column header size is not correct on Firefox
