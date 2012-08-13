@@ -114,7 +114,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			fzc = sheet.frozenCol,
 			pos = sheet.getLastFocus();
 
-		return fzc > -1 ? (pos.column <= fzc || pos.row <= fzr) ? true : false : false;
+		return fzc > -1 && pos.column <= fzc
+			|| fzr > -1 && pos.row <= fzr;
 	},
 	/**
 	 * Start editing on cell
