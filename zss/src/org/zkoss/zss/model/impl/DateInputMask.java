@@ -854,7 +854,7 @@ public class DateInputMask { //ZSS-67
 		//given month and year, return the maxday
 		private int getMaxday(int month, int year) {
 			int maxday = MAXDAYS[month];
-			if (month == 2 && isLeapYear(year)) {
+			if (month == 1 && isLeapYear(year)) {//Feb index = 1
 				return maxday + 1;
 			}
 			return maxday;
