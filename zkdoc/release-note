@@ -7,6 +7,7 @@ ZK Spreadsheet 2.4.0
 	ZSS-131 Sheets contains unsupported drawing object cannot opening, get null pointer exception
 	ZSS-134 Sheets contains unsupported cell format, cannot opening, get null pointer exception
 	ZSS-132 Export to PDF on a sheet get null pointer exception
+	ZSS-138 Initiate book with property cause NullPointerException
 	ZSS-141 Export sheet to PDF doesn't show last column
 	ZSS-142 Invalid format cause NullPointerException
 	ZSS-143 Cell addres gets into cell value on user input	
