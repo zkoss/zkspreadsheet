@@ -89,6 +89,7 @@ public abstract class ActionHandler {
 	
 	protected Spreadsheet _spreadsheet;
 	protected Uploader _insertPicture;
+	protected Upload _upload;
 	protected Rect _insertPictureSelection;
 	protected Book _book;
 	protected Clipboard _clipboard;
@@ -136,6 +137,22 @@ public abstract class ActionHandler {
 			if (evt.getName().equals(SSDataEvent.ON_BTN_CHANGE)) {
 				syncAutoFilter();
 			}
+		}
+	};
+	
+	protected EventListener _doSelectSheetListener = new EventListener() {
+		
+		@Override
+		public void onEvent(Event event) throws Exception {
+			doSheetSelect();
+		}
+	};
+	
+	protected EventListener _doCtrlKeyListener = new EventListener() {
+		
+		@Override
+		public void onEvent(Event event) throws Exception {
+			doCtrlKey((KeyEvent) event);
 		}
 	};
 	
@@ -602,34 +619,21 @@ public abstract class ActionHandler {
 	}
 	
 	private void init() {
-		_spreadsheet.addEventListener(Events.ON_SHEET_SELECT, new EventListener() {
-			
-			@Override
-			public void onEvent(Event event) throws Exception {
-				doSheetSelect();
-			}
-		});
-		_spreadsheet.addEventListener(Events.ON_CTRL_KEY, new EventListener() {
-
-			@Override
-			public void onEvent(Event event) throws Exception {
-				KeyEvent evt = (KeyEvent) event;
-				doCtrlKey((KeyEvent) event);
-			}
-		});
+		_spreadsheet.addEventListener(Events.ON_SHEET_SELECT, _doSelectSheetListener);
+		_spreadsheet.addEventListener(Events.ON_CTRL_KEY, _doCtrlKeyListener);
 		
-		Upload upload = new Upload();
-		upload.appendChild(_insertPicture = new Uploader());
-		_insertPicture.setId(Action.INSERT_PICTURE.toString());
-		
-		_insertPicture.addEventListener(org.zkoss.zk.ui.event.Events.ON_UPLOAD, new EventListener() {
-			
-			@Override
-			public void onEvent(Event event) throws Exception {
-				doInsertPicture((UploadEvent)event);
-			}
-		});
-		_spreadsheet.appendChild(upload);
+		if (_upload == null) {
+			_upload = new Upload();
+			_upload.appendChild(_insertPicture = new Uploader());
+			_insertPicture.addEventListener(org.zkoss.zk.ui.event.Events.ON_UPLOAD, new EventListener() {
+				
+				@Override
+				public void onEvent(Event event) throws Exception {
+					doInsertPicture((UploadEvent)event);
+				}
+			});
+		}
+		_upload.setParent(_spreadsheet);
 		
 		initToggleAction();
 	}
@@ -690,6 +694,20 @@ public abstract class ActionHandler {
 		if (_spreadsheet != spreadsheet) {
 			_spreadsheet = spreadsheet;
 			init();	
+		}
+	}
+	
+	/**
+	 * Unbind the handler's target
+	 */
+	public void unbind() {
+		if (_spreadsheet != null) {
+			if (_upload.getParent() == _spreadsheet) {
+				_spreadsheet.removeChild(_upload);
+			}
+			
+			_spreadsheet.removeEventListener(Events.ON_SHEET_SELECT, _doSelectSheetListener);
+			_spreadsheet.removeEventListener(Events.ON_CTRL_KEY, _doCtrlKeyListener);
 		}
 	}
 	

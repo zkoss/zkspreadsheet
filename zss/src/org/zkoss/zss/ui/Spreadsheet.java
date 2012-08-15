@@ -78,12 +78,14 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WebApp;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueues;
+import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
 import org.zkoss.zk.ui.sys.JavaScriptValue;
@@ -99,24 +101,7 @@ import org.zkoss.zss.model.impl.BookCtrl;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.ExcelImporter;
 import org.zkoss.zss.model.impl.SheetCtrl;
-import org.zkoss.zss.ui.au.in.ActionCommand;
-import org.zkoss.zss.ui.au.in.BlockSyncCommand;
-import org.zkoss.zss.ui.au.in.CellFetchCommand;
-import org.zkoss.zss.ui.au.in.CellFocusedCommand;
-import org.zkoss.zss.ui.au.in.CellMouseCommand;
-import org.zkoss.zss.ui.au.in.CellSelectionCommand;
 import org.zkoss.zss.ui.au.in.Command;
-import org.zkoss.zss.ui.au.in.EditboxEditingCommand;
-import org.zkoss.zss.ui.au.in.FetchActiveRangeCommand;
-import org.zkoss.zss.ui.au.in.FilterCommand;
-import org.zkoss.zss.ui.au.in.HeaderCommand;
-import org.zkoss.zss.ui.au.in.HeaderMouseCommand;
-import org.zkoss.zss.ui.au.in.MoveWidgetCommand;
-import org.zkoss.zss.ui.au.in.SelectSheetCommand;
-import org.zkoss.zss.ui.au.in.SelectionChangeCommand;
-import org.zkoss.zss.ui.au.in.StartEditingCommand;
-import org.zkoss.zss.ui.au.in.StopEditingCommand;
-import org.zkoss.zss.ui.au.in.WidgetCtrlKeyCommand;
 import org.zkoss.zss.ui.au.out.AuCellFocus;
 import org.zkoss.zss.ui.au.out.AuCellFocusTo;
 import org.zkoss.zss.ui.au.out.AuDataUpdate;
@@ -148,11 +133,11 @@ import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.SequenceId;
 import org.zkoss.zss.ui.impl.StringAggregation;
 import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.sys.ActionHandler;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl.CellAttribute;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
-import org.zkoss.zss.ui.sys.ActionHandler;
 import org.zkoss.zss.ui.sys.WidgetHandler;
 import org.zkoss.zss.ui.sys.WidgetLoader;
 import org.zkoss.zul.Messagebox;
@@ -192,7 +177,7 @@ import org.zkoss.zul.impl.XulElement;
  * @author dennischen
  */
 
-public class Spreadsheet extends XulElement implements Serializable {
+public class Spreadsheet extends XulElement implements Serializable, AfterCompose {
 	private static final Log log = Log.lookup(Spreadsheet.class);
 
 	private static final long serialVersionUID = 1L;
@@ -1534,8 +1519,6 @@ public class Spreadsheet extends XulElement implements Serializable {
 				renderer.render("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
 			}
 			renderer.render("showToolbar", _showToolbar);
-			
-			getActionHandler().bind(this);//init for toolbar's "upload picture" button
 		}
 			
 		renderer.render("showFormulabar", _showFormulabar);
@@ -4173,6 +4156,9 @@ public class Spreadsheet extends XulElement implements Serializable {
 	 * @param actionHandler
 	 */
 	public void setActionHandler(ActionHandler actionHandler) {
+		if (_actionHandler != null && _actionHandler != actionHandler) {
+			_actionHandler.unbind();
+		}
 		_actionHandler = actionHandler;
 		if (_actionHandler != null) {
 			_actionHandler.bind(this);
@@ -4853,6 +4839,14 @@ public class Spreadsheet extends XulElement implements Serializable {
 
 		@Override
 		public void doInsertFunction(Rect selection) {
+		}
+	}
+
+	@Override
+	public void afterCompose() {
+		//ZSS-127: bind event on afterCompose
+		if (_showToolbar) {
+			getActionHandler().bind(Spreadsheet.this);//init for toolbar's "upload picture" button
 		}
 	}
 }

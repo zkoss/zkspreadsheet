@@ -23,13 +23,8 @@ zss.Upload = zk.$extends(zk.Widget, {
 	$init: function () {
 		this.$supers(zss.Upload, '$init', [{visible: false}]);
 	},
-	getUploader: function (id) {
-		var chd = this.firstChild;
-		for (; chd; chd = chd.nextSibling) {
-			if (chd.id == id) {
-				return chd;
-			}
-		}
+	getUploader: function () {
+		return this.firstChild;
 	},
 	redraw: zk.$void
 });
