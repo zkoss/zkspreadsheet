@@ -16,6 +16,7 @@ ZK Spreadsheet 2.5.0
 	ZSS-148 Open sheet with chart without label cause exception
 	ZSS-149 DateValue does not reconize Leap day
 	ZSS-150 The row/column header size is not correct on Firefox
+	ZSS-152 Set new cell text with wrap text, should change row height accordingly
 
 	------------
 ZK Spreadsheet 2.3.0
