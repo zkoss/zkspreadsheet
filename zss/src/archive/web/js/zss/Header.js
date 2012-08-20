@@ -290,7 +290,8 @@ zss.Header = zk.$extends(zk.Widget, {
 		this.$supers(zss.Header, 'bind_', arguments);
 
 		var header = this.$n(),
-			boundary = this.$n("boun");
+			boundary = this.$n("boun"),
+			p = this._pId;
 		
 		this.comp = header;
 		header.ctrl = this;
@@ -304,6 +305,9 @@ zss.Header = zk.$extends(zk.Widget, {
 			delete this.ibcomp2;
 		
 		this.icomp = header.firstChild;
+		
+		if (p != undefined)
+			this.appendZSH(p);
 	},
 	unbind_: function () {		
 		if (this.drag) {

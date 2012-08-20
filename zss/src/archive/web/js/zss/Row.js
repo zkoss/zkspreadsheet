@@ -76,7 +76,7 @@ zss.Row = zk.$extends(zk.Widget, {
 			r = this.r,
 			tRow = d.tRow,
 			bRow = d.bRow;
-		if (tRow && bRow && r >= tRow && r <= bRow) {
+		if (tRow != undefined && bRow != undefined && r >= tRow && r <= bRow) {
 			this._updateWrapRowHeight();
 		}
 	},

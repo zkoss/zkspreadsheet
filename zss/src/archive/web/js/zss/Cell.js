@@ -305,6 +305,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 		
 		//merged cell won't change row height automatically
 		if (this.cellType == STR_CELL && !this.merid && processWrap) {//must process wrap after set text
+			if (txtChd)
+				this._txtHgh = jq(this.getTextNode()).height();//cache txt height
 			this.parent.processWrapCell(this, true);
 		}
 	},
@@ -349,7 +351,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 	 * @return int height
 	 */
 	getTextHeight: function () {
-		return jq(this.getTextNode()).height();
+		var h = this._txtHgh;
+		return h ? h : this._txtHgh = jq(this.getTextNode()).height();
 	},
 	_updateVerticalAlign: zk.ie6_ || zk.ie7_ ? function () {
 		var	v = this.valign,
@@ -512,7 +515,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		var n = this.comp = this.$n(),
 			sheet = this.sheet;
 		n.ctrl = this;
-		this.txtcomp = this.getTextNode();
+		this.cave = n.firstChild;
 		if (this.cellType == BLANK_CELL) {//no need to process overflow and wrap
 			return;
 		}
@@ -536,7 +539,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this._updateListenOverflow(false);
 		this._updateListenRowHeightChanged(false);
 		
-		this.comp = this.comp.ctrl = this.txtcomp = this.sheet = this.overlapBy = this._listenRowHeightChanged =
+		this.comp = this.comp.ctrl = this.cave = this.sheet = this.overlapBy = this._listenRowHeightChanged =
 		this.block = this.lock = null;
 		
 		this.$supers(zss.Cell, 'unbind_', arguments);
@@ -617,7 +620,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		if (zsw) {
 			this.zsw = zsw;
 			jq(this.comp).addClass("zsw" + zsw);
-			jq(this.txtcomp).addClass("zswi" + zsw);
+			jq(this.cave).addClass("zswi" + zsw);
 		}
 	},
 	/**
@@ -628,7 +631,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		if (zsh) {
 			this.zsh = zsh;
 			jq(this.comp).addClass("zshi" + zsh);
-			jq(this.txtcomp).addClass("zshi" + zsh);	
+			jq(this.cave).addClass("zshi" + zsh);	
 		}
 	},
 	/**
