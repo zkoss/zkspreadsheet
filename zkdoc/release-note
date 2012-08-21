@@ -4,6 +4,7 @@ ZK Spreadsheet 2.5.0
 	ZSS-128 Support export pivot table API
 	
 *Bug
+	ZSS-125 Zk Spreedsheet performances problem with an excel file generated with jexcel
  	ZSS-127 Cannot open a popup/modal window including ZSS with IllegalStateException
 	ZSS-131 Sheets contains unsupported drawing object cannot opening, get null pointer exception
 	ZSS-134 Sheets contains unsupported cell format, cannot opening, get null pointer exception
