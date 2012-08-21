@@ -95,9 +95,8 @@ zss.Row = zk.$extends(zk.Widget, {
 			}
 		}
 		
-//		if (jq(this.$n()).height() == hgh) {
-//			return;
-//		}
+		if (jq(this.$n()).height() == hgh)
+			return;//correct row height, no need to set CSS row height
 		
 		var sheet = this.sheet,
 			wgt = sheet._wgt,
@@ -113,8 +112,8 @@ zss.Row = zk.$extends(zk.Widget, {
 		} else {
 			custRowHeight.setCustomizedSize(row, hgh, zsh, false, true);
 		}
-			
-		zcss.setRule(pf + " .zsh" + zsh, ["height"], [hgh + "px"], true, cssId);
+		
+		zcss.setRule(pf + " .zsh" + zsh, "height", hgh + "px", true, cssId);
 		zcss.setRule(pf + " .zshi" + zsh, "height", h2 + "px", true, cssId);
 		zcss.setRule(pf + " .zslh" + zsh, ["display", "height", "line-height"], ["", h2 + "px", h2 + "px"], true, cssId);
 		
@@ -146,8 +145,7 @@ zss.Row = zk.$extends(zk.Widget, {
 				}
 			}
 			
-			var size = wrapedCells.length;
-			this._listenProcessWrap(size);
+			this._listenProcessWrap(!!wrapedCells.length);
 			if (ignoreUpdateNow) //process wrap on sheet onContentChange
 				this.sheet.triggerWrap(this.r);
 		} 

@@ -239,6 +239,8 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 				this.insertRow(j++, row, html, true);
 			}
 		}
+		//ZSS 125: wrap text processed on row.bind_, within appendRow / insertRow
+		delete sheet._wrapRange;
 		
 		var r = this.range,
 			width = rCol - lCol + 1;

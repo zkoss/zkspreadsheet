@@ -257,7 +257,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 			overflow = data.overflow,
 			maxOverflowCol = data.maxOverflowCol,
 			cellType = data.cellType,
-			txtChd = data.text != this.text,
+			txt = data.text,
+			txtChd = txt != this.text,
 			wrapChd = this.wrap != data.wrap,
 			processWrap = data.wrap || wrapChd || (this.wrap && this.getText() != data.text),
 			cave = this.$n('cave'),
@@ -280,7 +281,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.edit = data.editText;
 		
 		this._updateListenOverflow(overflow);
-		this.setText(data.text, false, wrapChd); //when wrap changed, shall re-process overflow
+		this.setText(txt, false, wrapChd); //when wrap changed, shall re-process overflow
 		if (this.overflow != overflow 
 			|| this.maxOverflowCol != maxOverflowCol
 			|| this.overflow && txtChd) {
@@ -303,10 +304,10 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 		this.cellType = cellType;
 		
+		if (txtChd && processWrap)
+			this._txtHgh = jq(this.getTextNode()).height();//cache txt height
 		//merged cell won't change row height automatically
 		if (this.cellType == STR_CELL && !this.merid && processWrap) {//must process wrap after set text
-			if (txtChd)
-				this._txtHgh = jq(this.getTextNode()).height();//cache txt height
 			this.parent.processWrapCell(this, true);
 		}
 	},
@@ -352,7 +353,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 	 */
 	getTextHeight: function () {
 		var h = this._txtHgh;
-		return h ? h : this._txtHgh = jq(this.getTextNode()).height();
+		return h != undefined ? h : this._txtHgh = jq(this.getTextNode()).height();
 	},
 	_updateVerticalAlign: zk.ie6_ || zk.ie7_ ? function () {
 		var	v = this.valign,
