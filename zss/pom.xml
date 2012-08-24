@@ -46,9 +46,9 @@
 	</pluginRepositories>
 	<dependencies>
 		<dependency>
-			<groupId>org.zkoss.zss</groupId>
+			<groupId>org.zkoss.poi</groupId>
 			<artifactId>zpoi</artifactId>
-			<version>${project.version}</version>
+			<version>3.8.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
