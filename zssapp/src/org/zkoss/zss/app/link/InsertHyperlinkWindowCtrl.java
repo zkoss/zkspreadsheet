@@ -227,7 +227,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 			
 			@Override
 			public void onEvent(Event evt) throws Exception {
-				Comboitem seld = addr.getSelectedItem();
+				Comboitem seld = (Comboitem)addr.getSelectedItem();
 				if (seld != null)
 					displayHyperlink.setValue(seld.getLabel());
 			}

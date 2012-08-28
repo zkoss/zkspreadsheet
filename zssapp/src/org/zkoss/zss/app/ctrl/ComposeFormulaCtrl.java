@@ -92,10 +92,7 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 			}
 		});
 		argsListbox.setItemRenderer(new ListitemRenderer() {
-
-			@Override
-			public void render(Listitem item, Object data, int index)
-					throws Exception {
+			public void render(Listitem item, Object data) throws Exception {
 				final ArgWrapper arg = (ArgWrapper)data;
 				item.setValue(arg);
 				item.appendChild(new Listcell(arg.getName()));
@@ -130,6 +127,12 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 				Listcell cell = new Listcell();
 				cell.appendChild(tb);
 				item.appendChild(cell);
+			}
+
+			@Override
+			public void render(Listitem item, Object data, int index)
+					throws Exception {
+				render(item, data);
 			}
 		});
 		argsListbox.addEventListener("onAfterRender", new EventListener() {

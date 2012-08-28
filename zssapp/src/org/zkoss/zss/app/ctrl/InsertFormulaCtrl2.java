@@ -88,12 +88,16 @@ public class InsertFormulaCtrl2 extends GenericForwardComposer {
 		});
 		
 		functionListbox.setItemRenderer(new ListitemRenderer() {
-			@Override
-			public void render(Listitem item, Object data, int index)
-					throws Exception {
+			public void render(Listitem item, Object data) throws Exception {
 				FormulaMetaInfo info = (FormulaMetaInfo)data;
 				item.setLabel(info.getFunction());
 				item.setValue(info);
+			}
+
+			@Override
+			public void render(Listitem item, Object data, int index)
+					throws Exception {
+				render(item, data);
 			}
 		});
 		functionListbox.addEventListener(Events.ON_DOUBLE_CLICK, new EventListener() {

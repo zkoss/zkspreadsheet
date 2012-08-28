@@ -112,11 +112,9 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 		allFilesListbox.appendChild(listhead);
 		
 		allFilesListbox.setItemRenderer(new ListitemRenderer() {
-
-			@Override
-			public void render(Listitem item, Object data, int index)
-					throws Exception {
-				final SpreadSheetMetaInfo info = (SpreadSheetMetaInfo)data;
+			
+			public void render(Listitem item, Object obj) throws Exception {
+				final SpreadSheetMetaInfo info = (SpreadSheetMetaInfo)obj;
 				item.setValue(info);
 				item.appendChild(new Listcell(info.getFileName()));
 				item.appendChild(new Listcell(info.getFormatedImportDateString()));
@@ -132,6 +130,12 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 						_importFileDialog.fireOnClose(null);
 					}
 				});
+			}
+
+			@Override
+			public void render(Listitem item, Object data, int index)
+					throws Exception {
+				render(item, data);
 			}
 		});
 	}
@@ -154,7 +158,6 @@ public class ImportFileWindowCtrl extends GenericForwardComposer  {
 		try {
 			WorkspaceContext.getInstance(desktop).store(((UploadEvent) event.getOrigin()).getMedia());
 		} catch (UnsupportedSpreadSheetFileException e) {
-			//TODO: use I18n to replace message string
 			Messagebox.show("Please import xls or xlsx file");
 		}
 		allFilesListbox.setModel(new ListModelList(SpreadSheetMetaInfo.getMetaInfos().values()));	

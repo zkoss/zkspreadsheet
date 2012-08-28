@@ -21,6 +21,7 @@ import org.zkoss.lang.Library;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.event.Event;
@@ -48,6 +49,7 @@ import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.ui.Action;
+import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.KeyEvent;
@@ -55,6 +57,7 @@ import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zss.ui.sys.ActionHandler;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
@@ -460,9 +463,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 
 	public void openFormatNumberDialog(Rect selection) {
-		if (_formatNumberDialog == null || _formatNumberDialog.isInvalidated()) {
+		if (_formatNumberDialog == null || _formatNumberDialog.isInvalidated())
 			_formatNumberDialog = (Dialog) Executions.createComponents(Consts._FormatNumberDialog_zul, mainWin, Zssapps.newSpreadsheetArg(spreadsheet));
-		}
 		_formatNumberDialog.fireOnOpen(selection);	
 	}
 

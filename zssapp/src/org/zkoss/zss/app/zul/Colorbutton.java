@@ -21,6 +21,7 @@ import java.util.Map;
 import org.zkoss.image.Image;
 import org.zkoss.lang.Objects;
 import org.zkoss.zk.au.AuRequest;
+import org.zkoss.zk.au.DeferredValue;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
@@ -111,7 +112,7 @@ public class Colorbutton extends XulElement {
 			dt.getExecution().encodeURL(_src): null;
 	}
 
-	private class EncodedImageURL implements org.zkoss.zk.au.DeferredValue {
+	private class EncodedImageURL implements DeferredValue {
 		public Object getValue() {
 			return getEncodedImageURL();
 		}

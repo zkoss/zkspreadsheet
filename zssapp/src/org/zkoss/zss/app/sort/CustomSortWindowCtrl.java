@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Components;
@@ -28,7 +29,6 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
@@ -267,11 +267,9 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	
 	private ListitemRenderer sortLevelRenderer = new ListitemRenderer() {
 
-		@Override
-		public void render(Listitem item, Object data, int index)
-				throws Exception {
+		public void render(Listitem item, Object obj) throws Exception {
 			Listcell cell = new Listcell();
-			SortLevel sort = (SortLevel)data;
+			SortLevel sort = (SortLevel)obj;
 			SortLevel first = (SortLevel)sortLevelModel.get(0);
 			cell.appendChild(sort.equals(first) ? 
 					(Component)new Label(getLabel("sort.sortBy")) : (Component)new Label(getLabel("sort.thenBy")));
@@ -288,7 +286,12 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 			idxSel.setAttribute(SortAlgorithm.class.getCanonicalName(), sortMethod);
 			item.appendChild(cell);
 		}
-		
+
+		@Override
+		public void render(Listitem item, Object data, int index)
+				throws Exception {
+			render(item, data);
+		}
 	};
 	
 	

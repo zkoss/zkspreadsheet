@@ -46,10 +46,14 @@ public class SaveFileWindowCtrl extends GenericForwardComposer {
 
 		fileFormat.setReadonly(true);
 		fileFormat.setItemRenderer(new ComboitemRenderer() {
+			public void render(Comboitem item, Object data) throws Exception {
+				item.setLabel(data.toString());
+			}
+
 			@Override
 			public void render(Comboitem item, Object data, int index)
 					throws Exception {
-				item.setLabel(data.toString());
+				render(item, data);
 			}
 		});
 		fileFormat.addEventListener("onAfterRender", new EventListener() {
