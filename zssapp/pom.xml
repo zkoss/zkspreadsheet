@@ -4,7 +4,7 @@
 	<groupId>org.zkoss.zss</groupId>
 	<artifactId>zssapp</artifactId>
 	<properties>
-		<zk.version>5.0.11</zk.version>
+		<zk.version>6.5.0-SNAPSHOT</zk.version>
 		<zkel.version>1.1.0</zkel.version>
 		<commons-lang.version>2.4</commons-lang.version>
 		<bsh.version>2.0b4</bsh.version>
@@ -32,16 +32,12 @@
 	</scm>
 	<repositories>
 		<repository>
-			<id>zk repository</id>
+			<id>ZK Repository</id>
 			<url>http://mavensync.zkoss.org/maven2</url>
 		</repository>
 		<repository>
-			<id>ZSS EE Evaluation</id>
-			<url>http://mavensync.zkoss.org/zss/ee-eval</url>
-		</repository>
-		<repository>
-			<id>ZK EE Evaluation</id>
-			<url>http://mavensync.zkoss.org/zk/ee-eval</url>
+			<id>ZK Evaluation Repository</id>
+			<url>http://mavensync.zkoss.org/eval/</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
@@ -67,11 +63,6 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>${servlet.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.theme</groupId>
-			<artifactId>breeze</artifactId>
-			<version>${zk.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -124,9 +115,10 @@
 			<version>${zk.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.zkoss.zkforge.el</groupId>
-			<artifactId>zcommons-el</artifactId>
-			<version>${zkel.version}</version>
+			<groupId>org.zkoss.common</groupId>
+			<artifactId>zel</artifactId>
+			<version>${zk.version}</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -140,11 +132,15 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.zkoss.poi</groupId>
+			<artifactId>zpoiex</artifactId>
+			<version>3.8.1</version>
+		</dependency>
+		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zss</artifactId>
 			<version>${project.version}</version>
 		</dependency>
- 		
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zsspdf</artifactId>
@@ -169,7 +165,7 @@
 			</resource>
 		</resources>
 		<plugins>
-			<plugin>
+			<!--<plugin>
 				<groupId>org.zkoss.maven</groupId>
 				<artifactId>yuicompressor-maven-plugin-zk</artifactId>
 				<version>1.1.4</version>
@@ -180,7 +176,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin>-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
