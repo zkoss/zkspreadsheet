@@ -575,11 +575,17 @@ if (zk.feature.pe) {
 				
 				this._wgt = wgt;
 				this._currColor = new zkex.inp.Color();
-				this._picker = new zkex.inp.Colorpicker({_wgt: this});
-				var palette = this._palette = new zkex.inp.Colorpalette({_wgt: this});
-				palette.open = this.proxy(this.openPopup);
+				
+				if (zkex.inp.PickerPop) {//ZK 5
+					this._picker = new zkex.inp.PickerPop({_wgt: this});
+					this._palette = new zkex.inp.PalettePop({_wgt: this});
+				} else {//ZK 6.5
+					this._picker = new zkex.inp.Colorpicker({_wgt: this});
+					this._palette = new zkex.inp.Colorpalette({_wgt: this});
+				}
+				this._palette.open = this.proxy(this.openPopup);
 					
-				this.setPopup(palette);//default open color palette
+				this.setPopup(this._palette);//default open color palette
 			},
 			$define: {
 				/** Sets the image URI.

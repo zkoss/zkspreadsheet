@@ -2553,12 +2553,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return helper;
 	}
 	
+	
+	@Override
+	public Object getExtraCtrl() {
+		return newExtraCtrl();
+	}
+
 	/**
 	 * Return a extra controller. only spreadsheet developer need to call this
 	 * method.
 	 */
-	@Override
-	public Object getExtraCtrl() {
+	protected Object newExtraCtrl() {
 		return new ExtraCtrl();
 	}
 

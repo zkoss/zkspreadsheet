@@ -389,15 +389,17 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	bind_: function (desktop, skipper, after) {
 		this.$supers(zss.SSheetCtrl, 'bind_', arguments);
+		//ZSS 125: already process wrap on row.bind_
+		delete this._wrapRange;
 		
 		zss.SSheetCtrl._initInnerComp(this, this._wgt._autoFilter ? this._wgt._autoFilter.range.top : null);
-		this.listen({onContentsChanged: this});
+		this.listen({onContentsChanged: this, onRowHeightChanged: this});
 		
 		var n = this.comp = this.$n();
 		n.ctrl = this;
 	},
 	unbind_: function () { 
-		this.unlisten({onContentsChanged: this});
+		this.unlisten({onContentsChanged: this, onRowHeightChanged: this});
 		this.animateHighlight(false);
 		this.invalid = true;
 
@@ -511,6 +513,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if (r) {
 			this.deferFireCellSelection(r.lCol, r.tRow, r.rCol, r.bRow);
 			this._selectionRange = null;
+		}
+	},
+	onRowHeightChanged: function () {
+		var h = this.hlArea;
+		if (h.show) {
+			h.relocate();
 		}
 	},
 	addEditorFocus : function(id, name, color){
