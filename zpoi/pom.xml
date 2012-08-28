@@ -59,6 +59,7 @@
 			<groupId>org.zkoss.common</groupId>
 			<artifactId>zcommon</artifactId>
 			<version>${zk.version}</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
