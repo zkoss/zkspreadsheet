@@ -40,6 +40,7 @@ import java.util.Set;
 
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
+import org.zkoss.json.JavaScriptValue;
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
 import org.zkoss.lang.Objects;
@@ -78,7 +79,6 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WebApp;
@@ -88,7 +88,6 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
-import org.zkoss.zk.ui.sys.JavaScriptValue;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.event.EventDispatchListener;
 import org.zkoss.zss.engine.event.SSDataEvent;
@@ -1907,7 +1906,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (page != null) {
 				final FunctionMapper mapper = page.getFunctionMapper();
 				if (mapper != null) {
-					return mapper.getClassNames();
+					return new ArrayList<String>(0);
 				}
 			}
 			return null;
@@ -1918,7 +1917,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (page != null) {
 				final FunctionMapper mapper = page.getFunctionMapper();
 				if (mapper != null) {
-					return mapper.resolveClass(name);
+					return null;
 				}
 			}
 			return null;
@@ -2554,18 +2553,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return helper;
 	}
 	
-	
-	@Override
-	public Object getExtraCtrl() {
-		return newExtraCtrl();
-	}
-
 	/**
 	 * Return a extra controller. only spreadsheet developer need to call this
 	 * method.
 	 */
 	@Override
-	protected Object newExtraCtrl() {
+	public Object getExtraCtrl() {
 		return new ExtraCtrl();
 	}
 
@@ -4294,15 +4287,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	private void showFormulaError(FormulaParseException ex) {
-		try {
-			Messagebox.show(ex.getMessage(), "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION, new EventListener() {
-				public void onEvent(Event evt) {
-					Spreadsheet.this.focus();
-				}
-			});
-		} catch (InterruptedException e) {
-			// ignore
-		}
+		Messagebox.show(ex.getMessage(), "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION, new EventListener() {
+			public void onEvent(Event evt) {
+				Spreadsheet.this.focus();
+			}
+		});
 	}
 
 	private void processStopEditing0(final String token, final Worksheet sheet, final int rowIdx, final int colIdx, final Object value, final String editingType) {
@@ -4695,71 +4684,67 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					errText = "The value you entered is not valid.\n\nA user has restricted values that can be entered into this cell.";
 				}
 				final int errStyle = dv.getErrorStyle();
-				try {
-					switch(errStyle) {
-						case ErrorStyle.STOP:
-						{
-							final int btn = Messagebox.show(
-								errText, errTitle, Messagebox.RETRY|Messagebox.CANCEL, 
-								Messagebox.ERROR, Messagebox.RETRY, new EventListener() {
-								@Override
-								public void onEvent(Event event) throws Exception {
-									final String evtname = event.getName();
-									if (Messagebox.ON_RETRY.equals(evtname)) {
-										retry(callback);
-									} else if (Messagebox.ON_CANCEL.equals(evtname)) {
-										cancel(callback);
-									}
+				switch(errStyle) {
+					case ErrorStyle.STOP:
+					{
+						final int btn = Messagebox.show(
+							errText, errTitle, Messagebox.RETRY|Messagebox.CANCEL, 
+							Messagebox.ERROR, Messagebox.RETRY, new EventListener() {
+							@Override
+							public void onEvent(Event event) throws Exception {
+								final String evtname = event.getName();
+								if (Messagebox.ON_RETRY.equals(evtname)) {
+									retry(callback);
+								} else if (Messagebox.ON_CANCEL.equals(evtname)) {
+									cancel(callback);
 								}
-							});
-						}
-						break;
-						case ErrorStyle.WARNING:
-						{
-							errText += "\n\nContinue?";
-							final int btn = Messagebox.show(
-								errText, errTitle, Messagebox.YES|Messagebox.NO|Messagebox.CANCEL, 
-								Messagebox.EXCLAMATION, Messagebox.NO, new EventListener() {
-								@Override
-								public void onEvent(Event event) throws Exception {
-									final String evtname = event.getName();
-									if (Messagebox.ON_NO.equals(evtname)) {
-										retry(callback);
-									} else if (Messagebox.ON_CANCEL.equals(evtname)) {
-										cancel(callback);
-									} else if (Messagebox.ON_YES.equals(evtname)) {
-										ok(callback);
-									}
-								}
-							});
-							if (getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && btn == Messagebox.YES) {
-								return true;
 							}
-						}
-						break;
-						case ErrorStyle.INFO:
-						{
-							final int btn = Messagebox.show(
-								errText, errTitle, Messagebox.OK|Messagebox.CANCEL, 
-								Messagebox.INFORMATION, Messagebox.OK, new EventListener() {
-								@Override
-								public void onEvent(Event event) throws Exception {
-									final String evtname = event.getName();
-									if (Messagebox.ON_CANCEL.equals(evtname)) {
-										cancel(callback);
-									} else if (Messagebox.ON_OK.equals(evtname)) {
-										ok(callback);
-									}
-								}
-							});
-							if (getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && btn == Messagebox.OK) {
-								return true;
-							}
-						}
-						break;
+						});
 					}
-				} catch (InterruptedException e) {
-					//ignore
+					break;
+					case ErrorStyle.WARNING:
+					{
+						errText += "\n\nContinue?";
+						final int btn = Messagebox.show(
+							errText, errTitle, Messagebox.YES|Messagebox.NO|Messagebox.CANCEL, 
+							Messagebox.EXCLAMATION, Messagebox.NO, new EventListener() {
+							@Override
+							public void onEvent(Event event) throws Exception {
+								final String evtname = event.getName();
+								if (Messagebox.ON_NO.equals(evtname)) {
+									retry(callback);
+								} else if (Messagebox.ON_CANCEL.equals(evtname)) {
+									cancel(callback);
+								} else if (Messagebox.ON_YES.equals(evtname)) {
+									ok(callback);
+								}
+							}
+						});
+						if (getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && btn == Messagebox.YES) {
+							return true;
+						}
+					}
+					break;
+					case ErrorStyle.INFO:
+					{
+						final int btn = Messagebox.show(
+							errText, errTitle, Messagebox.OK|Messagebox.CANCEL, 
+							Messagebox.INFORMATION, Messagebox.OK, new EventListener() {
+							@Override
+							public void onEvent(Event event) throws Exception {
+								final String evtname = event.getName();
+								if (Messagebox.ON_CANCEL.equals(evtname)) {
+									cancel(callback);
+								} else if (Messagebox.ON_OK.equals(evtname)) {
+									ok(callback);
+								}
+							}
+						});
+						if (getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && btn == Messagebox.OK) {
+							return true;
+						}
+					}
+					break;
 				}
 			}
 			return false;

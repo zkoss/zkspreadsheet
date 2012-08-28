@@ -57,16 +57,6 @@ public class JoinFunctionMapper implements FunctionMapper {
 	
 	//--FunctionMapper--//
 	@Override
-	public Collection<String> getClassNames() {
-		return new ArrayList<String>(0);
-	}
-
-	@Override
-	public Class<?> resolveClass(String arg0) throws XelException {
-		return null;
-	}
-
-	@Override
 	public Function resolveFunction(String arg0, String arg1) throws XelException {
 		for (FunctionMapper mapper : _mappers) {
 			final Function fun = mapper.resolveFunction(arg0, arg1);

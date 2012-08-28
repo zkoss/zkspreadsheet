@@ -555,7 +555,6 @@ zss.DisplayGridlinesCheckbutton = zk.$extends(zss.CheckableToolbarButton, {
 if (zk.feature.pe) {
 	zk.load('zkex.inp', null, function () { 
 		zss.Colorbutton = zk.$extends(zss.Toolbarbutton, {
-			widgetName: 'Colorbutton',
 			_color: '#000000', /*default color*/
 			$init: function (props, wgt) {
 				this.$supers(zss.Colorbutton, '$init', [props]);
@@ -576,8 +575,8 @@ if (zk.feature.pe) {
 				
 				this._wgt = wgt;
 				this._currColor = new zkex.inp.Color();
-				this._picker = new zkex.inp.PickerPop({_wgt: this});
-				var palette = this._palette = new zkex.inp.PalettePop({_wgt: this});
+				this._picker = new zkex.inp.Colorpicker({_wgt: this});
+				var palette = this._palette = new zkex.inp.Colorpalette({_wgt: this});
 				palette.open = this.proxy(this.openPopup);
 					
 				this.setPopup(palette);//default open color palette

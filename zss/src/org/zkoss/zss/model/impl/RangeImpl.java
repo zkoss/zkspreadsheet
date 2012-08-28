@@ -2372,10 +2372,7 @@ public class RangeImpl implements Range {
 					if (index != -1) {
 						final int sheetCount = book.getNumberOfSheets();
 						if (sheetCount == 1) {
-							try {
-								Messagebox.show("A workbook must contain at least one visible worksheet");
-							} catch (InterruptedException e) {
-							}
+							Messagebox.show("A workbook must contain at least one visible worksheet");
 						}
 						final String delSheetName = _sheet.getSheetName(); //must getName before remove
 						book.removeSheetAt(index);
