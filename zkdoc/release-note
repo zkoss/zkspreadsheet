@@ -5,6 +5,7 @@ ZK Spreadsheet 2.5.0
 	
 *Bug
 	ZSS-125 Zk Spreedsheet performances problem with an excel file generated with jexcel
+	ZSS-126 ZKS performances problem with an excel file generated AND FORMATTED with Apache POI
  	ZSS-127 Cannot open a popup/modal window including ZSS with IllegalStateException
 	ZSS-131 Sheets contains unsupported drawing object cannot opening, get null pointer exception
 	ZSS-134 Sheets contains unsupported cell format, cannot opening, get null pointer exception
@@ -18,7 +19,8 @@ ZK Spreadsheet 2.5.0
 	ZSS-149 DateValue does not reconize Leap day
 	ZSS-150 The row/column header size is not correct on Firefox
 	ZSS-152 Set new cell text with wrap text, should change row height accordingly
-
+	ZSS-155 Spreadsheet's color button doesn't work with ZK 6.5
+	
 	------------
 ZK Spreadsheet 2.3.0
 *Features:   
