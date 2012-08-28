@@ -16,13 +16,11 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.ctrl;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -38,7 +36,6 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.model.Range;
-import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.ui.impl.Utils;
@@ -253,8 +250,10 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 		}
 		
 		_filterListbox.setItemRenderer(new ListitemRenderer() {
+
 			@Override
-			public void render(Listitem item, Object data) throws Exception {
+			public void render(Listitem item, Object data, int index)
+					throws Exception {
 				RowInfo info = (RowInfo)data;
 				item.setLabel(info.display);
 			}

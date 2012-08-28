@@ -16,7 +16,6 @@ package org.zkoss.zss.app.sheet;
 
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;

@@ -54,12 +54,9 @@ public class OpenFileWindowCtrl extends GenericForwardComposer {
 	}
 	
 	public void onOpen$_openFileDialog() {
-		try {
-			filesListbox.setModel(new ListModelList(
+		filesListbox.setModel(new ListModelList(
 					WorkspaceContext.getInstance(desktop).getMetainfos()));
-			_openFileDialog.setMode(Window.MODAL);
-		} catch (InterruptedException e) {
-		}
+		_openFileDialog.setMode(Window.MODAL);
 	}
 
 	private void initFileListbox() {
@@ -75,10 +72,10 @@ public class OpenFileWindowCtrl extends GenericForwardComposer {
 		filesListbox.appendChild(listhead);
 		
 		filesListbox.setItemRenderer(new ListitemRenderer() {
-			
 			@Override
-			public void render(Listitem item, Object obj) throws Exception {
-				final SpreadSheetMetaInfo info = (SpreadSheetMetaInfo)obj;
+			public void render(Listitem item, Object data, int index)
+					throws Exception {
+				final SpreadSheetMetaInfo info = (SpreadSheetMetaInfo)data;
 				item.setValue(info);
 				item.appendChild(new Listcell(info.getFileName()));
 				item.appendChild(new Listcell(info.getFormatedImportDateString()));
@@ -102,11 +99,7 @@ public class OpenFileWindowCtrl extends GenericForwardComposer {
 			getDesktopWorkbenchContext().fireWorkbookChanged();
 			_openFileDialog.fireOnClose(null);
 		} catch (UnsupportedSpreadSheetFileException e) {
-			try {
-				//TODO: I18n
-				Messagebox.show("Import file format " + event.getMedia().getName() + " not supported");
-			} catch (InterruptedException e1) {
-			}
+			Messagebox.show("Import file format " + event.getMedia().getName() + " not supported");
 		}
 	}
 	

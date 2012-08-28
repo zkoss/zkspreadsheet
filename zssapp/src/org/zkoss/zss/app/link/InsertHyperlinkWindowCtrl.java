@@ -41,15 +41,15 @@ import org.zkoss.zss.ui.impl.SheetVisitor;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.DefaultTreeModel;
+import org.zkoss.zul.DefaultTreeNode;
 import org.zkoss.zul.Include;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.SimpleTreeModel;
-import org.zkoss.zul.SimpleTreeNode;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Tree;
 import org.zkoss.zul.Treeitem;
 import org.zkoss.zul.Window;
-import org.zkoss.zul.api.Comboitem;
 
 /**
  * @author Sam
@@ -94,10 +94,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	public void onOpen$_insertHyperlinkDialog(ForwardEvent event) {
 		selection = (Rect) event.getOrigin().getData();
 		init();
-		try {
-			_insertHyperlinkDialog.setMode(Window.MODAL);
-		} catch (InterruptedException e) {
-		}
+		_insertHyperlinkDialog.setMode(Window.MODAL);
 	}
 	
 	private void init() {
@@ -122,10 +119,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	public void onClick$okBtn() {
 		String addr = getAddress();
 		if ("".equals(addr)) {
-			try {
-				Messagebox.show("Please input address");
-			} catch (InterruptedException e) {
-			}
+			Messagebox.show("Please input address");
 			return;
 		}
 		
@@ -302,18 +296,18 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 			if (book == null) {
 				return;
 			}
-			final ArrayList<SimpleTreeNode> nodes = new ArrayList<SimpleTreeNode>();
+			final ArrayList<DefaultTreeNode> nodes = new ArrayList<DefaultTreeNode>();
 			Utils.visitSheets(book, new SheetVisitor(){
 				@Override
 				public void handle(Sheet sheet) {
-					nodes.add(new SimpleTreeNode(sheet.getSheetName(), Collections.EMPTY_LIST));
+					nodes.add(new DefaultTreeNode(sheet.getSheetName(), Collections.EMPTY_LIST));
 				}});
 			
 			/**
 			 * TODO: use i-18n instead hardcode
 			 */
-			SimpleTreeNode root = new SimpleTreeNode("Cell Reference", nodes);
-			SimpleTreeModel model = new SimpleTreeModel(root);
+			DefaultTreeNode root = new DefaultTreeNode("Cell Reference", nodes);
+			DefaultTreeModel model = new DefaultTreeModel(root);
 			tree.setModel(model);
 			
 			tree.addEventListener(Events.ON_SELECT, new EventListener() {

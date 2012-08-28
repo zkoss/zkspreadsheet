@@ -16,8 +16,8 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul;
 
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
@@ -33,7 +33,6 @@ import org.zkoss.zss.model.Ranges;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabs;

@@ -20,7 +20,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Map;
 
 import org.zkoss.io.Files;
@@ -28,7 +27,6 @@ import org.zkoss.lang.Library;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.app.init.ZssappWebInit;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Exporter;
 import org.zkoss.zss.model.Exporters;
@@ -123,10 +121,7 @@ public class FileHelper {
 			ss.setBookFromStream(input, info.getFileName());
 			return true;
 		} catch (FileNotFoundException e) {
-			try {
-				Messagebox.show("Can not find file: " + info.getFileName());
-			} catch (InterruptedException e1) {
-			}
+			Messagebox.show("Can not find file: " + info.getFileName());
 		} finally {
 			if (input != null)
 				try {
@@ -172,11 +167,8 @@ public class FileHelper {
 			c.export(wb, out);
 			SpreadSheetMetaInfo.add(info);
 		} catch (IOException e) {
-			try {
-				Messagebox.show("Save excel failed");
-				e.printStackTrace();
-			} catch (InterruptedException e1) {
-			}
+			Messagebox.show("Save excel failed");
+			e.printStackTrace();
 			return;
 		} finally {
 			if (out != null)
@@ -220,10 +212,7 @@ public class FileHelper {
 		try {
 			SpreadSheetMetaInfo.delete(info);
 		} catch (IOException e) {
-			try {
-				Messagebox.show("Delete file failed");
-			} catch (InterruptedException e1) {
-			}
+			Messagebox.show("Delete file failed");
 		}
 	}
 

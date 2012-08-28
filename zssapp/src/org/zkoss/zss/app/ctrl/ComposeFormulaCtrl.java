@@ -92,7 +92,10 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 			}
 		});
 		argsListbox.setItemRenderer(new ListitemRenderer() {
-			public void render(Listitem item, Object data) throws Exception {
+
+			@Override
+			public void render(Listitem item, Object data, int index)
+					throws Exception {
 				final ArgWrapper arg = (ArgWrapper)data;
 				item.setValue(arg);
 				item.appendChild(new Listcell(arg.getName()));
@@ -236,10 +239,7 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 					args.add(createNextArg());
 				}
 			} else {
-				try {
-					Messagebox.show("You've entered too many arguments for this function");
-				} catch (InterruptedException e) {
-				}
+				Messagebox.show("You've entered too many arguments for this function");
 				return;
 			}
 		for (int i = 0; i < args.size() && i < arg.length; i++) {

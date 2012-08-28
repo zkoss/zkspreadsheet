@@ -14,13 +14,8 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.event;
 
-import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.event.ForwardEvent;
-import org.zkoss.zss.app.MainWindowCtrl;
 import org.zkoss.zss.model.impl.BookHelper;
-import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.Utils;
 
 /**
  * Spreadsheet helper for set border, font, background event.

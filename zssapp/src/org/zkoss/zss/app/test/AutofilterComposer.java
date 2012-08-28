@@ -16,9 +16,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.test;
 
-import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;

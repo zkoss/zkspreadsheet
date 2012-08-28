@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.zss.model.Worksheet;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Components;
@@ -29,6 +28,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
@@ -181,19 +181,13 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	
 	public void onClick$okBtn () {
 		if (hasEmptyArgs(sortLevelModel.getInnerList())) {
-			try {
-				Messagebox.show(getLabel("sort.err.hasEmptyField"));
-			} catch (InterruptedException e) {
-			}
+			Messagebox.show(getLabel("sort.err.hasEmptyField"));
 			return;
 		}
 		
 		String dupTarget = checkDuplicateSortIndex(sortLevelModel.getInnerList());
 		if (dupTarget != null) {
-			try {
-				Messagebox.show(dupTarget + " " + getLabel("sort.err.duplicateField"));
-			} catch (InterruptedException e) {
-			}
+			Messagebox.show(dupTarget + " " + getLabel("sort.err.duplicateField"));
 			return;
 		}
 		
@@ -273,9 +267,11 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 	
 	private ListitemRenderer sortLevelRenderer = new ListitemRenderer() {
 
-		public void render(Listitem item, Object obj) throws Exception {
+		@Override
+		public void render(Listitem item, Object data, int index)
+				throws Exception {
 			Listcell cell = new Listcell();
-			SortLevel sort = (SortLevel)obj;
+			SortLevel sort = (SortLevel)data;
 			SortLevel first = (SortLevel)sortLevelModel.get(0);
 			cell.appendChild(sort.equals(first) ? 
 					(Component)new Label(getLabel("sort.sortBy")) : (Component)new Label(getLabel("sort.thenBy")));

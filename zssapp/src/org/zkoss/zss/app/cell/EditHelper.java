@@ -14,18 +14,8 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.cell;
 
-import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
-import org.zkoss.zss.app.Consts;
-import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.model.Range;
-import org.zkoss.zss.model.Ranges;
-import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.Utils;
 
 /**
  * A spreadsheet editor helper for onCopy, onPaste, onCut event.

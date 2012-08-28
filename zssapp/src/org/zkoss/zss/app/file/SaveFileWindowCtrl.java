@@ -46,7 +46,9 @@ public class SaveFileWindowCtrl extends GenericForwardComposer {
 
 		fileFormat.setReadonly(true);
 		fileFormat.setItemRenderer(new ComboitemRenderer() {
-			public void render(Comboitem item, Object data) throws Exception {
+			@Override
+			public void render(Comboitem item, Object data, int index)
+					throws Exception {
 				item.setLabel(data.toString());
 			}
 		});
@@ -65,10 +67,7 @@ public class SaveFileWindowCtrl extends GenericForwardComposer {
 		if ("Untitled".lastIndexOf(src) >= 0) {
 			fileName.setValue("Book1");
 		}
-		try {
-			_saveFileDialog.setMode(Window.MODAL);
-		} catch (InterruptedException e) {
-		}
+		_saveFileDialog.setMode(Window.MODAL);
 	}
 
 	public void onOK$fileName() {
@@ -87,10 +86,7 @@ public class SaveFileWindowCtrl extends GenericForwardComposer {
 			getDesktopWorkbenchContext().fireWorkbookSaved();
 			_saveFileDialog.fireOnClose(null);
 		} else
-			try {
-				Messagebox.show("File name can not be empty");
-			} catch (InterruptedException e) {
-			}
+			Messagebox.show("File name can not be empty");
 	}
 
 	private DesktopWorkbenchContext getDesktopWorkbenchContext() {

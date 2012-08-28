@@ -2,12 +2,10 @@ package org.zkoss.zss.app;
 
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zk.ui.Path;
-//import org.zkoss.zss.model.Sheet;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
-//import org.zkoss.zss.ui.impl.Styles;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Window;
 
