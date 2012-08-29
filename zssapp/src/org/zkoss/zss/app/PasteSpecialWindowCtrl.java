@@ -107,8 +107,8 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 					dst.getLeft(),
 					dst.getBottom(),
 					dst.getRight(),
-					getPasteType((String)pasteSelector.getSelectedItem().getValue()), 
-					getPasteOperation((String)operationSelector.getSelectedItem().getValue()), 
+					getPasteType(pasteSelector.getSelectedItem().getValue().toString()), 
+					getPasteOperation(operationSelector.getSelectedItem().getValue().toString()), 
 					skipBlanks.isChecked(), transpose.isChecked());
 			
 			
