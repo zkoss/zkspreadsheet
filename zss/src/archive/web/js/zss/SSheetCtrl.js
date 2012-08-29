@@ -144,7 +144,6 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  *  
  */
 zss.SSheetCtrl = zk.$extends(zk.Widget, {	
-	widgetName: 'SSheetCtrl',
 	$o: zk.$void, //no need to invoke _addIdSpaceDown, no fellows relationship
 	/**
 	 * Editing formula info
@@ -1464,7 +1463,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 			mdstr = "h_" + row + "_" + col;
 			if (this._lastmdstr == mdstr) {
-				this['show' + (row > 0 ? 'Row' : 'Column') + 'HeaderMenu'](mx, my);
+				
+				this['show' + (headercmp.ctrl.type == 'V' ? 'Row' : 'Column') + 'HeaderMenu'](mx, my);
 				wgt.fireHeaderEvt(type, shx, shy, md1[2], row, col, mx, my);
 			}
 		}
