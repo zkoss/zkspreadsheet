@@ -19,6 +19,7 @@ ZK Spreadsheet 2.5.0
 	ZSS-149 DateValue does not reconize Leap day
 	ZSS-150 The row/column header size is not correct on Firefox
 	ZSS-152 Set new cell text with wrap text, should change row height accordingly
+	ZSS-154 Cannot delete the first row, throw IllegalArgumentException
 	ZSS-155 Spreadsheet's color button doesn't work with ZK 6.5
 	
 	------------
