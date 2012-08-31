@@ -139,10 +139,12 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			return false;
 		}
 		
+		/* ZSS-145: allow edit on frozen cell
 		if (this.isFocusOnFrozen()) {
 			sheet.showInfo("Can not edit on a frozen cell.", true);
 			return false;	
 		}
+		 */
 		if (!val) val = null;
 		sheet.state = zss.SSheetCtrl.START_EDIT;
 		

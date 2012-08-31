@@ -652,13 +652,11 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 		editorcmp.value = value;
 		var w = cellcmp.ctrl.overflowed ? (cellcmp.firstChild.offsetWidth + this.sheet.cellPad) : (cellcmp.offsetWidth),
 			h = cellcmp.offsetHeight,
-			l = cellcmp.offsetLeft,
-			t = cellcmp.parentNode.offsetTop;
-			blockcmp = cellcmp.ctrl.block.comp;//add block offset
-
-		//IE6 only: .zsrow css position changed from "relative" -> "static" for cell vertical merge which cause cellcmp.offsetLeft change
-		l += zk.ie6_ ? 0 : blockcmp.offsetLeft;//block 
-		t += blockcmp.offsetTop;//block
+			$cell = cellcmp.ctrl,
+			scrollPanel = sheet.sp,
+			l = sheet.custColWidth.getStartPixel($cell.c) + sheet.leftWidth - scrollPanel.currentLeft,
+			t = sheet.custRowHeight.getStartPixel($cell.r) + sheet.topHeight - scrollPanel.currentTop;
+		
 		t -= 1;//position adjust
 		w -= 1;
 		h -= 1;

@@ -2841,8 +2841,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				'<div id="', uuid, '-selchg" class="zsselchg" zs.t="SSelChg"><div id="', uuid, '-selchgi" class="zsselchgi"></div></div>',
 				'<div id="', uuid, '-focmark" class="zsfocmark" zs.t="SFocus"><div id="', uuid, '-focmarki" class="zsfocmarki"></div></div>',
 				'<div id="', uuid, '-highlight" class="zshighlight" zs.t="SHighlight"><div id="', uuid, '-highlighti" ,class="zshighlighti" zs.t="SHlInner"></div></div>',
-				'</div>' + this.inlineEditor.redrawHTML_(),
-				'<div id="', uuid, '-wp" class="zswidgetpanel" zs.t="SWidgetpanel"></div><div id="', uuid, '-pp" class="zspopuppanel"></div></div>');
+				'</div><div id="', uuid, '-wp" class="zswidgetpanel" zs.t="SWidgetpanel"></div><div id="', uuid, '-pp" class="zspopuppanel"></div></div>');
 		
 		if (topPanel)
 			topPanel.redraw(out);
@@ -2850,7 +2849,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if (leftPanel)
 			leftPanel.redraw(out);
 		
-		out.push('<span id="', uuid, '-sinfo" class="zsscrollinfo"><span class="zsscrollinfoinner"></span></span>',
+		out.push(this.inlineEditor.redrawHTML_() + '<span id="', uuid, '-sinfo" class="zsscrollinfo"><span class="zsscrollinfoinner"></span></span>',
 				'<span id="', uuid, '-info" class="zsinfo"><span class="zsinfoinner"></span></span>');
 		
 		if (cornerPanel)
