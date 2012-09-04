@@ -273,10 +273,13 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
             String formula = name.getRefersToFormula();
             int sheetIndex = name.getSheetIndex();
 
-            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.NAMEDRANGE, sheetIndex);
-            if (shifter.adjustFormula(ptgs, sheetIndex)) {
-                String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
-                name.setRefersToFormula(shiftedFmla);
+            // 20120904 samchuang@zkoss.org: ZSS-153, user define formula name range doesn't need to adjust range
+            if (formula != null) {
+                Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.NAMEDRANGE, sheetIndex);
+                if (shifter.adjustFormula(ptgs, sheetIndex)) {
+                    String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
+                    name.setRefersToFormula(shiftedFmla);
+                }	
             }
         }
     }
