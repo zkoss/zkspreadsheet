@@ -23,7 +23,7 @@ ZK Spreadsheet 2.5.0
 	ZSS-153 After adding a user defined function to a sheet the application throws a NPE inserting/deleting rows/columns/cells
 	ZSS-155 Spreadsheet's color button doesn't work with ZK 6.5
 	ZSS-156 Insert a image first, then insert a chart, delete the chart cause NullPointerException
-	
+	ZSS-157 With frozen area, contiguous scrolling down, cells may missing
 	------------
 ZK Spreadsheet 2.3.0
 *Features:   
