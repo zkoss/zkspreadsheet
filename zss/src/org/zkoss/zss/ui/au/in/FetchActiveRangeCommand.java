@@ -18,6 +18,7 @@ package org.zkoss.zss.ui.au.in;
 
 import java.util.Map;
 
+import org.zkoss.json.JSONObject;
 import org.zkoss.lang.Objects;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
@@ -57,8 +58,16 @@ public class FetchActiveRangeCommand implements Command {
 		if (sheetId.equals(((SheetCtrl)sheet).getUuid())) {
 			final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) spreadsheet.getExtraCtrl());
 			
-			spreadsheet.smartUpdate("activeRangeUpdate",
-				spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, left, top, right, bottom));
+			JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, left, top, right, bottom);
+			if (spreadsheet.getColumnfreeze() >= 0) {
+				mainBlock.put("leftFrozen", 
+						spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 0, top, spreadsheet.getColumnfreeze(), bottom));
+			}
+			if (spreadsheet.getRowfreeze() >= 0) {
+				mainBlock.put("topFrozen", 
+						spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, left, 0, right, spreadsheet.getRowfreeze()));
+			}
+			spreadsheet.smartUpdate("activeRangeUpdate", mainBlock);
 		}
 	}
 }

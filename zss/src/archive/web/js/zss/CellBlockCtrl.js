@@ -202,8 +202,6 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 	 * @param rCol
 	 */
 	create_: function (dir, tRow, lCol, bRow, rCol, data) {
-		//TODO: test left/top frozen 
-		//data = data || sheet._wgt._activeRange,
 		var sheet = this.sheet,
 			data = data || sheet._wgt._cacheCtrl.getSelectedSheet(),
 			block = this,

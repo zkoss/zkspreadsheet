@@ -672,13 +672,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			break;
 		}
 	},
-	_cmdBlockUpdate: function (type, dir, tRow, lCol, bRow, rCol, leftFrozen, topFrozen) {
+	_cmdBlockUpdate: function (type, dir, tRow, lCol, bRow, rCol) {
 		switch (type) {
 		case 'neighbor': //move to a neighbor block
-			this.activeBlock.create_(dir, tRow, lCol, bRow, rCol, leftFrozen, topFrozen);
+			this.activeBlock.loadForVisible();
 			if (zk.ie) {
 				//TODO: test if set display none could speedup or not when switch cache  
-				
 				//ie have some display error(cell overlap) when scroll up(neighbor north)
 				//same issue when scroll right
 				var dp = this.dp.comp,
@@ -697,13 +696,13 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var oldBlock = this.activeBlock,
 				wgt = this._wgt,
 				data = wgt._cacheCtrl.getSelectedSheet();
-			oldBlock.replaceWidget(this.activeBlock = new zss.MainBlockCtrl(this, tRow, lCol, bRow, rCol, data), leftFrozen, topFrozen);
+			oldBlock.replaceWidget(this.activeBlock = new zss.MainBlockCtrl(this, tRow, lCol, bRow, rCol, data));
 			this.dp._fixSize(this.activeBlock);
+			this.activeBlock.loadForVisible();
 			break;
 		case 'error': //fetch cell with exception
 			break;
 		}
-		
 		this.showMask(false);
 		
 		//bug 1951423 IE : row is broken when scroll down, st time to do ss initiallater
@@ -889,7 +888,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			dp._fixSize(this.activeBlock);
 			this._fixSize();
 			
-			this.activeBlock.loadForVisible()
+			this.activeBlock.loadForVisible();
 		} else if (maxcol < this.maxCols) {
 			var result = {};
 			result.type = "column";
@@ -917,7 +916,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			dp._fixSize(this.activeBlock);
 			this._fixSize();
 			
-			this.activeBlock.loadForVisible()
+			this.activeBlock.loadForVisible();
 		} else if (maxrow < this.maxRows) {
 			var result = {};
 			result.type = "row";
@@ -2902,7 +2901,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		sheet.info = new zss.Info(sheet, sheet.infocmp);
 	},
 	_getVisibleRange: function (sheet) {
-		var sp = sheet.sp,
+		var //scrollSize = zss.Spreadsheet.scrollWidth, 
+			sp = sheet.sp,
 			spcmp = sp.comp,
 			scrollLeft = spcmp.scrollLeft,
 			scrollTop = spcmp.scrollTop,

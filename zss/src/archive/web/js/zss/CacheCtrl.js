@@ -15,7 +15,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 }}IS_RIGHT
 */
 (function () {
-	
+
 	function newRect(tRow, lCol, bRow, rCol) {
 		return {
 			top: tRow,
@@ -578,7 +578,7 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 			this.update(v);
 		}
 	},
-	update: function (v) {
+	update: function (v, dir) {
 		var attrType = v.at,
 			top = v.t,
 			left = v.l,
@@ -592,9 +592,42 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 			colHeaderObj = v.chs,
 			i = top, 
 			s = 0,
-			dir = v.dir;
-		var oldRows = {},
+			dir = dir || v.dir,
+			oldRows = {},
 			oldRowHeaders = {};
+		
+		//left frozen
+		var lfd = v.leftFrozen,//left frozen data
+			tfd = v.topFrozen;//top frozen data
+		if (lfd) {
+			if (!this.leftFrozen) {//init left frozen, clone data from main block first
+				var sRect = this.rect,
+					st = sRect.top,
+					sb = sRect.bottom;
+				this.leftFrozen = new zss.ActiveRange(lfd);
+				this.leftFrozen.clone(st, 0, sb, lfd.r, this);
+				var lr = this.leftFrozen.rect;
+				lr.top = Math.min(st, lfd.t);
+				lr.bottom = Math.max(sb, lfd.b);
+			} else {
+				this.leftFrozen.update(lfd, dir);
+			}
+		}
+		if (tfd) {
+			if (!this.topFrozen) {
+				var sRect = this.rect,
+					sl = sRect.left,
+					sr = sRect.right;
+				this.topFrozen = new zss.ActiveRange(tfd);
+				this.topFrozen.clone(0, sl, tfd.b, sr, this);
+				var tr = this.topFrozen.rect;
+				tr.left = Math.min(sl, tfd.l);
+				tr.right = Math.max(sr, tfd.r);
+			} else {
+				this.topFrozen.update(tfd, dir);
+			}
+		}
+		
 		if ('jump' == dir) {
 			//row contains wrap cell may have height Id on client side
 			oldRows = this.oldRows = this.rows,
@@ -643,6 +676,44 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 	},
 	getRow: function (num) {
 		return this.rows[num];
+	},
+	clone: function (tRow, lCol, bRow, rCol, src) {
+		var rows = this.rows,
+			cpRowsFn = zss.ActiveRange.copyRow;
+		for (var r = tRow; r <= bRow; r++) {
+			var sRow = src.getRow(r);
+			rows[r] = cpRowsFn(lCol, rCol, sRow); 
+		}
+	}
+}, {//static
+	copyRow: function (lCol, rCol, srcRow) {
+		var row = {
+			r: srcRow.r,
+			heightId: srcRow.heightId,
+			cells: {},
+			update: srcRow.update,
+			getCell: srcRow.getCell,
+			updateColumnWidthId: srcRow.updateColumnWidthId,
+			updateRowHeightId: srcRow.updateRowHeightId,
+			removeColumns: srcRow.removeColumns
+		};
+		zss.ActiveRange.copyCells(lCol, rCol, srcRow, row);
+		return row;
+	},
+	copyCells: function (lCol, rCol, srcRow, dstRow) {
+		var srcCells = srcRow.cells,
+			dstCells = dstRow.cells,
+			ccFn = zss.ActiveRange.cloneCell;
+		for (var c = lCol; c <= rCol; c++) {
+			dstCells[c] = ccFn(srcCells[c]);
+		}
+	},
+	cloneCell: function (cell) {
+		var c = {};
+		for (var p in cell) {
+			c[p] = cell[p];
+		}
+		return c;
 	}
 });
 

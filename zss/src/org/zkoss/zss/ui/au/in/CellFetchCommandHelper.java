@@ -445,10 +445,10 @@ public class CellFetchCommandHelper{
 
 		
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
-		JSONObject data = spreadsheetCtrl.getRangeAttrs(sheet, 
+		JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, 
 				header, SpreadsheetCtrl.CellAttribute.ALL, rangeLeft, rangeTop, rangeRight, rangeBtm);
-		data.put("dir", "jump");
-		json.put("data", data);
+		mainBlock.put("dir", "jump");
+		json.put("data", mainBlock);
 		
 		_lastleft = left;
 		_lastright = right;
@@ -463,43 +463,15 @@ public class CellFetchCommandHelper{
 		// prepare top frozen cell
 		int fzr = _spreadsheet.getRowfreeze();
 		if (fzr > -1) {
-			
-			JSONObject topFrozen = new JSONObject();
-			json.put("topFrozen", topFrozen);
-			
-			topFrozen.put("type", "jump");
-			topFrozen.put("dir", "jump");
-			topFrozen.put("left", left);
-			topFrozen.put("top", 0);
-			topFrozen.put("width", w);
-			topFrozen.put("height", fzr + 1);
-			
-			ce = left + w;
-			
-			data = spreadsheetCtrl.getRangeAttrs(sheet, 
-					header, SpreadsheetCtrl.CellAttribute.ALL, rangeLeft, 0, rangeRight, fzr);
-			topFrozen.put("data", data);
+			mainBlock.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, 
+					header, SpreadsheetCtrl.CellAttribute.ALL, rangeLeft, 0, rangeRight, fzr));
 		}
-		
-		
+
 		//prepare left frozen cell
 		int fzc = _spreadsheet.getColumnfreeze();
 		if (fzc > -1) {
-			JSONObject leftFrozen = new JSONObject();
-			json.put("leftFrozen", leftFrozen);
-			
-			leftFrozen.put("type", "jump");
-			leftFrozen.put("dir", "jump");
-			leftFrozen.put("left", 0);
-			leftFrozen.put("top", top);
-			leftFrozen.put("width", fzc + 1);
-			leftFrozen.put("height", h);
-			
-			re = top + h;
-			
-			data = spreadsheetCtrl.getRangeAttrs(sheet, 
-					header, SpreadsheetCtrl.CellAttribute.ALL, 0, rangeTop, fzc, rangeBtm);
-			leftFrozen.put("data", data);
+			mainBlock.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, 
+					header, SpreadsheetCtrl.CellAttribute.ALL, 0, rangeTop, fzc, rangeBtm));
 		}
 		return json.toString();
 	}
@@ -580,10 +552,10 @@ public class CellFetchCommandHelper{
 		int rangeRight = rangeWidth > fetchWidth ? cs + rangeWidth - 1 : ce - 1; 
 		int rangeBottom = rangeBtmHeight < 0 ? blockBottom : blockBottom + rangeBtmHeight - 1;
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
-		JSONObject data = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, 
+		JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, 
 				SpreadsheetCtrl.CellAttribute.ALL, cs, rangeTop, rangeRight, rangeBottom);
-		data.put("dir", "east");
-		json.put("data", data);
+		mainBlock.put("dir", "east");
+		json.put("data", mainBlock);
 	
 		_lastleft = blockLeft;
 		_lastright = ce - 1;
@@ -593,18 +565,8 @@ public class CellFetchCommandHelper{
 		//process frozen row data
 		int fzr = _spreadsheet.getRowfreeze();
 		if (fzr > -1) {
-			
-			JSONObject topFrozen = new JSONObject();
-			json.put("topFrozen", topFrozen);
-			
-			topFrozen.put("type", "neighbor");
-			topFrozen.put("width", fetchWidth);
-			topFrozen.put("height", fzr + 1);
-			
-			data = spreadsheetCtrl.getRangeAttrs(sheet, _hiderowhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
-					cs, 0, rangeRight, fzr);
-			data.put("dir", "east");
-			topFrozen.put("data", data);
+			mainBlock.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hiderowhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
+					cs, 0, rangeRight, fzr));
 		}
 		return new LoadResult(cs, rangeTop, rangeRight, rangeBottom, json);
 	}
@@ -630,10 +592,10 @@ public class CellFetchCommandHelper{
 			rangeLeft = 0;
 		int rangeBottom = rangeBtmHeight < 0 ? blockBottom : blockBottom + rangeBtmHeight - 1;
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
-		JSONObject data = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, 
+		JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, 
 				SpreadsheetCtrl.CellAttribute.ALL, rangeLeft, rangeTop, cs, rangeBottom);
-		data.put("dir", "west");
-		json.put("data", data);
+		mainBlock.put("dir", "west");
+		json.put("data", mainBlock);
 		
 		_lastleft = ce+1;
 		_lastright = blockRight;
@@ -643,18 +605,8 @@ public class CellFetchCommandHelper{
 		// process frozen row data
 		int fzr = _spreadsheet.getRowfreeze();
 		if (fzr > -1) {
-			
-			JSONObject topFrozen = new JSONObject();
-			json.put("topFrozen", topFrozen);
-			
-			topFrozen.put("type", "neighbor");
-			topFrozen.put("width", fetchWidth);
-			topFrozen.put("height", fzr + 1);
-			
-			data = spreadsheetCtrl.getRangeAttrs(sheet, _hiderowhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
-					rangeLeft, 0, cs, fzr);
-			data.put("dir", "west");
-			topFrozen.put("data", data);
+			mainBlock.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hiderowhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
+					rangeLeft, 0, cs, fzr));
 		}
 		return new LoadResult(rangeLeft, rangeTop, cs, rangeBottom, json);
 	}
@@ -676,10 +628,10 @@ public class CellFetchCommandHelper{
 		rangeLeft = rangeLeft > 0 && rangeLeft < blockLeft ? rangeLeft : blockLeft;
 		rangeRight = Math.max(blockRight, rangeRight);
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
-		JSONObject data = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
+		JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
 				rangeLeft, rs, rangeRight, rangeBottom);
-		data.put("dir", "south");
-		json.put("data", data);
+		mainBlock.put("dir", "south");
+		json.put("data", mainBlock);
 
 		_lastleft = blockLeft;
 		_lastright = blockRight;
@@ -689,17 +641,8 @@ public class CellFetchCommandHelper{
 		// process frozen left
 		int fzc = _spreadsheet.getColumnfreeze();
 		if (fzc > -1) {
-			
-			JSONObject leftFrozen = new JSONObject();
-			json.put("leftFrozen", leftFrozen);
-			
-			leftFrozen.put("type", "neighbor");
-			leftFrozen.put("width", fzc + 1);
-			leftFrozen.put("height", fetchHeight);
-			data = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, SpreadsheetCtrl.CellAttribute.ALL,
-					0, rs, fzc, rangeBottom);
-			data.put("dir", "south");
-			leftFrozen.put("data", data);
+			mainBlock.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, SpreadsheetCtrl.CellAttribute.ALL,
+					0, rs, fzc, rangeBottom));
 		}
 
 		return new LoadResult(rangeLeft, rs, rangeRight, rangeBottom, json);
@@ -723,10 +666,10 @@ public class CellFetchCommandHelper{
 //		rangeRight = Math.min(Math.max(blockRight, rangeRight), _spreadsheet.getMaxcolumns() - 1);
 		rangeRight = Math.max(blockRight, rangeRight);
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) _spreadsheet.getExtraCtrl());
-		JSONObject data = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
+		JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
 				rangeLeft, rangeTop, rangeRight, rs);
-		data.put("dir", "north");
-		json.put("data", data);
+		mainBlock.put("dir", "north");
+		json.put("data", mainBlock);
 		
 		_lastleft = blockLeft;
 		_lastright = blockRight;
@@ -736,17 +679,8 @@ public class CellFetchCommandHelper{
 		// process frozen left
 		int frc = _spreadsheet.getColumnfreeze();
 		if (frc > -1) {
-			
-			JSONObject leftFrozen = new JSONObject();
-			json.put("leftFrozen", leftFrozen);
-			
-			leftFrozen.put("type", "neighbor");
-			leftFrozen.put("width", frc + 1);
-			leftFrozen.put("height", fetchHeight);
-			data = spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, SpreadsheetCtrl.CellAttribute.ALL,
-					0, rangeTop, frc, rs);
-			data.put("dir", "north");
-			leftFrozen.put("data", data);
+			mainBlock.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, SpreadsheetCtrl.CellAttribute.ALL,
+					0, rangeTop, frc, rs));
 		}
 		return new LoadResult(rangeLeft, rangeTop, rangeRight, rs, json);
 	}

@@ -43,7 +43,7 @@ zss.TopPanel = zk.$extends(zss.Panel, {
 	create_: function (dir, colStart, colEnd, frozenRowStart, frozenRowEnd, createFrozenOnly) {
 		if (!createFrozenOnly)
 			this.createHeaders_(dir, colStart, colEnd);
-		
+
 		var createFrozen = frozenRowStart >= 0 && frozenRowEnd >= 0;
 		if ('jump' == dir && createFrozen) {
 			var oldBlock = this.block;

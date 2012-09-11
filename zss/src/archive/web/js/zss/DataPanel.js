@@ -84,25 +84,32 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		jq(this.comp).css('width', jq.px0(this.width));
 	},
 	_fixSize: function (block) {
-		var wgt = this._wgt,
+		var self = this,
+			wgt = this._wgt,
 			sheet = this.sheet,
 			custColWidth = sheet.custColWidth,
 			custRowHeight = sheet.custRowHeight;
+		if (this._tId) {
+			clearTimeout(this._tId);
+			this._tId = null;
+		}
 		
-		this.width = sheet.custColWidth.getStartPixel(wgt.getMaxColumns());
-		this.height = sheet.custRowHeight.getStartPixel(wgt.getMaxRows());
-		this.paddingl = custColWidth.getStartPixel(block.range.left);
-		this.paddingt = custRowHeight.getStartPixel(block.range.top);
-		
-		var width = this.width - this.paddingl,
-			height = this.height,
-			pdl = this.paddingl + sheet.leftWidth;
-		
-		jq(this.comp).css({'padding-left': jq.px0(pdl), 'padding-top': jq.px0(sheet.topHeight), 'width': jq.px0(width)});
-		jq(this.comp).css({'width': jq.px0(width)});
-		jq(this.padcomp).css('height', jq.px0(this.paddingt));
-		sheet.tp._updateLeftPadding(pdl);
-		sheet.lp._updateTopPadding(this.paddingt);
+		this._tId = setTimeout(function () {
+			self.width = sheet.custColWidth.getStartPixel(wgt.getMaxColumns());
+			self.height = sheet.custRowHeight.getStartPixel(wgt.getMaxRows());
+			self.paddingl = custColWidth.getStartPixel(block.range.left);
+			self.paddingt = custRowHeight.getStartPixel(block.range.top);
+			
+			var width = self.width - self.paddingl,
+				height = self.height,
+				pdl = self.paddingl + sheet.leftWidth;
+			
+			jq(self.comp).css({'padding-left': jq.px0(pdl), 'padding-top': jq.px0(sheet.topHeight), 'width': jq.px0(width)});
+			jq(self.comp).css({'width': jq.px0(width)});
+			jq(self.padcomp).css('height', jq.px0(self.paddingt));
+			sheet.tp._updateLeftPadding(pdl);
+			sheet.lp._updateTopPadding(self.paddingt);
+		});
 	},
 	/**
 	 * Returns whether is focus on frozen area or not.
