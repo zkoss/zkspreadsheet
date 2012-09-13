@@ -630,7 +630,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}
 		queu.urgent = 0;
 	},
-	_cmdCellUpdate: function (result) {
+	_cmdCellUpdate: function (shtId, result) {
 		var type = result.type,
 			row = result.r,
 			col = result.c,
@@ -643,11 +643,15 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		case "udcell":
 			var wgt = this._wgt,
 				data = result,
-				ar = this._wgt._cacheCtrl.getSelectedSheet();
-			if (ar) {
-				ar.update(data);
-				this.update_(data.t, data.l, data.b, data.r);
-				wgt._triggerContentsChanged = true;
+				cCtl = this._wgt._cacheCtrl,
+				cacheSheet = cCtl.getSheetBy(shtId),
+				selSheet = cCtl.getSelectedSheet();
+			if (cacheSheet) {
+				cacheSheet.update(data);
+				if (cacheSheet.id == selSheet.id) {//update current sheet
+					this.update_(data.t, data.l, data.b, data.r);
+					wgt._triggerContentsChanged = true;
+				}
 			}
 			break;
 		case "startedit":

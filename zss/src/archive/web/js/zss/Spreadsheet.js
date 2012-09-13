@@ -39,9 +39,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		return;
 	}
 	
-	function doUpdate(wgt, data, token) {
+	function doUpdate(wgt, shtId, data, token) {
 		wgt.sheetCtrl._skipMove = data.sk; //whether to skip moving the focus/selection after update
-		wgt.sheetCtrl._cmdCellUpdate(data);
+		wgt.sheetCtrl._cmdCellUpdate(shtId, data);
 		if (token)
 			zkS.doCallback(token);
 		delete wgt.sheetCtrl._skipMove; //reset to don't skip
@@ -282,12 +282,13 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			var sheet = this.sheetCtrl;
 			if (!sheet)	return;
 			var token = v[0],
+				shtId = v[1],
 				data = v[2];
 			
 			if (sheet._initiated) {
-				doUpdate(this, data, token);
+				doUpdate(this, shtId, data, token);
 			} else {
-				sheet.addSSInitLater(doUpdate, this, data, token);
+				sheet.addSSInitLater(doUpdate, this, shtId, data, token);
 			}
 		},
 		dataUpdateStart: _updateCell,
