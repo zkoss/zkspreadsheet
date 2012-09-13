@@ -861,6 +861,9 @@ zss.CacheCtrl = zk.$extends(zk.Object, {
 	setSelectedSheetBy: function (sheetId) {
 		this.selected = this.sheets[sheetId];
 	},
+	getSheetBy: function (shtId) {
+		return this.sheets[shtId];
+	},
 	setSelectedSheet: function (v) {
 		var sheetId = v.id,
 			rng = this.sheets[sheetId] = new zss.ActiveRange(v);
