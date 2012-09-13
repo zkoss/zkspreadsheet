@@ -1,10 +1,10 @@
 zcommon.jar
+zel.jar
 zweb.jar
 zk.jar
 zul.jar
 zkex.jar
 zkplus.jar
-zcommons-el.jar
 bsh.jar
 commons-fileupload.jar
 commons-io.jar
