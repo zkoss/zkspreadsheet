@@ -42,6 +42,10 @@ public class ActiveRangeHelper {
 		return activeRanges.get(sheet);
 	}
 	
+	public boolean containsSheet(Worksheet sheet) {
+		return activeRanges.containsKey(sheet);
+	}
+	
 	public boolean contains(Worksheet sheet, int row, int col) {
 		return contains(sheet, row, col, row, col);
 	}

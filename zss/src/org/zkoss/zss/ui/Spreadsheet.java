@@ -527,6 +527,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_selectedSheet != null) {
 			doSheetClean(_selectedSheet);
 		}
+		if (!Objects.equals(_book, book)) {
+			removeAttribute(MERGE_MATRIX_KEY);
+			clearHeaderSizeHelper(true, true);
+			_custColId = new SequenceId(-1, 2);
+			_custRowId = new SequenceId(-1, 2);
+		}
 		_selectedSheet = null;
 		_selectedSheetId = null;
 		_selectedSheetName = null;
@@ -2335,9 +2341,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	public MergeMatrixHelper getMergeMatrixHelper(Worksheet sheet) {
-		if (sheet != getSelectedSheet())
-			throw new UiException("not current selected sheet ");
-		MergeMatrixHelper mmhelper = (MergeMatrixHelper) getAttribute(MERGE_MATRIX_KEY);
+		HelperContainer<MergeMatrixHelper> helpers = (HelperContainer) getAttribute(MERGE_MATRIX_KEY);
+		if (helpers == null) {
+			helpers = new HelperContainer<MergeMatrixHelper>();
+			setAttribute(MERGE_MATRIX_KEY, helpers);
+		}
+		
+		final String sheetId = ((SheetCtrl)sheet).getUuid();
+		MergeMatrixHelper mmhelper = helpers.getHelper(sheetId);
 		int fzr = getRowfreeze();
 		int fzc = getColumnfreeze();
 		if (mmhelper == null) {
@@ -2347,8 +2358,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				final CellRangeAddress addr = sheet.getMergedRegion(j);
 				mergeRanges.add(new int[] {addr.getFirstColumn(), addr.getFirstRow(), addr.getLastColumn(), addr.getLastRow()});
 			}
-			mmhelper = new MergeMatrixHelper(mergeRanges, fzr, fzc);
-			setAttribute(MERGE_MATRIX_KEY, mmhelper);
+			helpers.putHelper(sheetId, mmhelper = new MergeMatrixHelper(mergeRanges, fzr, fzc));
 		} else {
 			mmhelper.update(fzr, fzc);
 		}
@@ -2370,10 +2380,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (sheet == null) {
 			return null;
 		}
-		if (sheet != getSelectedSheet())
-			throw new UiException("not current selected sheet: "+sheet.getSheetName());
-		HeaderPositionHelper helper = (HeaderPositionHelper) getAttribute(ROW_SIZE_HELPER_KEY);
-
+		
+		HelperContainer<HeaderPositionHelper> helpers = (HelperContainer) getAttribute(ROW_SIZE_HELPER_KEY);
+		if (helpers == null) {
+			setAttribute(ROW_SIZE_HELPER_KEY, helpers = new HelperContainer<HeaderPositionHelper>());
+		}
+		final String sheetId = ((SheetCtrl)sheet).getUuid();
+		HeaderPositionHelper helper = helpers.getHelper(sheetId);
+				
 		int maxcol = 0;
 		if (helper == null) {
 			int defaultSize = this.getRowheight();
@@ -2392,9 +2406,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				}
 			}
 			
-			helper = new HeaderPositionHelper(defaultSize, infos);
-
-			setAttribute(ROW_SIZE_HELPER_KEY, helper);
+			helpers.putHelper(sheetId, helper = new HeaderPositionHelper(defaultSize, infos));
 		}
 		return new HeaderPositionHelper[] {helper, myGetColumnPositionHelper(sheet, maxcol)};
 	}
@@ -2424,8 +2436,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			return;// since it is invalidate, we don't need to do anymore
 
 		String sheetId = Utils.getSheetUuid(sheet);
-		if (!sheetId.equals(this.getSelectedSheetId()))
+		if (!getActiveRangeHelper().containsSheet(sheet))
 			return;
+		
 		left = left > 0 ? left - 1 : 0;// for border, when update a range, we
 		// should also update the left - 1, top - 1 part
 		top = top > 0 ? top - 1 : 0;
@@ -2528,10 +2541,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	private HeaderPositionHelper myGetColumnPositionHelper(Worksheet sheet, int maxcol) {
-		if (sheet != getSelectedSheet())
-			throw new UiException("not current selected sheet ");
-		HeaderPositionHelper helper = (HeaderPositionHelper) getAttribute(COLUMN_SIZE_HELPER_KEY);
-
+		HelperContainer<HeaderPositionHelper> helpers = (HelperContainer) getAttribute(COLUMN_SIZE_HELPER_KEY);
+		if (helpers == null) {
+			setAttribute(COLUMN_SIZE_HELPER_KEY, helpers = new HelperContainer<HeaderPositionHelper>());
+		}
+		final String sheetId = ((SheetCtrl)sheet).getUuid();
+		HeaderPositionHelper helper = helpers.getHelper(sheetId);
+		
 		if (helper == null) {
 			final int defaultColSize = sheet.getDefaultColumnWidth();
 			final int defaultColSize256 = defaultColSize * 256; 
@@ -2547,8 +2563,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					infos.add(new HeaderPositionInfo(j, colwidth, _custColId.next(), hidden));
 				}
 			}
-			helper = new HeaderPositionHelper(defaultColSizeInPx, infos);
-			setAttribute(COLUMN_SIZE_HELPER_KEY, helper);
+
+			helpers.putHelper(sheetId, helper = new HeaderPositionHelper(defaultColSizeInPx, infos));
 		}
 		return helper;
 	}
@@ -3036,9 +3052,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				
 				if (updateText) {
 					if (cellType != Cell.CELL_TYPE_BLANK) {
-						final String cellText = getCelltext(Spreadsheet.this, row, col);
-						final String editText = getEdittext(Spreadsheet.this, row, col);
-						final String formatText = getCellFormatText(Spreadsheet.this, row, col);
+						final String cellText = getCelltext(sheet, row, col);
+						final String editText = getEdittext(sheet, row, col);
+						final String formatText = getCellFormatText(sheet, row, col);
 						
 						if (Objects.equals(cellText, editText) && Objects.equals(editText, formatText)) {
 							attrs.put("meft", textAggregation.add(cellText));
@@ -3937,10 +3953,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		for (int i = 0; i < size; i++) {
 			((WidgetLoader) list.get(i)).onSheetClean(sheet);
 		}
-		removeAttribute(MERGE_MATRIX_KEY);
-		clearHeaderSizeHelper(true, true);
-		_custColId = new SequenceId(-1, 2);
-		_custRowId = new SequenceId(-1, 2);
 		
 //		_loadedRect.set(-1, -1, -1, -1);
 		_selectionRect.set(0, 0, 0, 0);
@@ -4837,6 +4849,18 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		//ZSS-127: bind event on afterCompose
 		if (_showToolbar) {
 			getActionHandler().bind(Spreadsheet.this);//init for toolbar's "upload picture" button
+		}
+	}
+	
+	private class HelperContainer<T> {
+		HashMap<String, T> helpers = new HashMap<String, T>();
+		
+		T getHelper(String sheetId) {
+			return helpers.get(sheetId);
+		}
+		
+		void putHelper(String sheetId, T helper) {
+			helpers.put(sheetId, helper);
 		}
 	}
 }
