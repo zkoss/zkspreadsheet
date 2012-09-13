@@ -463,6 +463,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 		var	rBorder = this.rborder,
 			n = this.$n(),
 			$n = jq(this.$n());
+		if ($n.width() >= jq(this.getTextNode()).width()) {//text node width is smaller then cell width, no need to overflow 
+			return;
+		}
 		if (max == -1) {//unlimited overflow width
 			$n
 			.removeClass(rBorder ? "zscell-over" : "zscell-over-b")
