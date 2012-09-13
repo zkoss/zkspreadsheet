@@ -24,6 +24,8 @@ ZK Spreadsheet 2.5.0
 	ZSS-155 Spreadsheet's color button doesn't work with ZK 6.5
 	ZSS-156 Insert a image first, then insert a chart, delete the chart cause NullPointerException
 	ZSS-157 With frozen area, contiguous scrolling down, cells may missing
+	ZSS-158 Second sheet doesn't update cell value
+	
 	------------
 ZK Spreadsheet 2.3.0
 *Features:   
