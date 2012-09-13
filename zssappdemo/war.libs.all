@@ -1,5 +1,5 @@
-breeze.jar
 zcommon.jar
+zel.jar
 zweb.jar
 zk.jar
 zul.jar
@@ -8,7 +8,6 @@ zkex.jar
 zkplus.jar
 ckez.jar
 gmapsz.jar
-zcommons-el.jar
 bsh.jar
 commons-fileupload.jar
 commons-io.jar
