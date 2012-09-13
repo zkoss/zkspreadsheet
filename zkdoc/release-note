@@ -25,6 +25,7 @@ ZK Spreadsheet 2.5.0
 	ZSS-156 Insert a image first, then insert a chart, delete the chart cause NullPointerException
 	ZSS-157 With frozen area, contiguous scrolling down, cells may missing
 	ZSS-158 Second sheet doesn't update cell value
+	ZSS-159 Cell with overflow shall has right border when text total width is smaller then cell width
 	
 	------------
 ZK Spreadsheet 2.3.0
