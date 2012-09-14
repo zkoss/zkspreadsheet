@@ -17,7 +17,6 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 (function () {
 
 zss.Namebox = zk.$extends(zk.Widget, {
-	widgetName: 'Namebox',
    	//indicate whether redraw name items or not
    	_redrawNames: false,
    	$init: function (wgt) {
@@ -203,7 +202,6 @@ zss.Namebox = zk.$extends(zk.Widget, {
 });
 	
 zss.FormulabarButton = zk.$extends(zul.wgt.Toolbarbutton, {
-	widgetName: 'FormulabarButton',
 	setDomVisible_: function (n, visible, opts) {
 		this.$supers(zss.FormulabarButton, 'setDomVisible_', [n, visible, {visibility:1}]);
 	},
@@ -223,7 +221,6 @@ zss.FormulabarButton = zk.$extends(zul.wgt.Toolbarbutton, {
 });
 
 zss.FormulabarWestCave = zk.$extends(zk.Widget, {
-	widgetName: 'FormulabarWestCave',
 	$o: zk.$void, //owner, fellows relationship no needed
 	$init: function (wgt) {
 		this.$supers(zss.FormulabarWestCave, '$init', []);
@@ -319,7 +316,6 @@ zss.FormulabarWestCave = zk.$extends(zk.Widget, {
 });
 
 zss.FormulabarWest = zk.$extends(zul.layout.West, {
-	widgetName: 'FormulabarWest',
 	$o: zk.$void, //owner, fellows relationship no needed
    	$init: function (wgt) {
    		this.$supers(zss.FormulabarWest, '$init', []);
@@ -339,7 +335,6 @@ zss.FormulabarWest = zk.$extends(zul.layout.West, {
 });
     
 zss.ExpandFormulabarButton = zk.$extends(zss.FormulabarButton, {
-	widgetName: 'ExpandFormulabarButton',
    	_expanded: false,
    	bind_: function () {
    		this.$supers(zss.ExpandFormulabarButton, 'bind_', arguments);
@@ -361,7 +356,6 @@ zss.ExpandFormulabarButton = zk.$extends(zss.FormulabarButton, {
 });
 
 zss.FormulabarCenterCave = zk.$extends(zk.Widget, {
-	widgetName: 'FormulabarCenterCave',
 	$o: zk.$void, //owner, fellows relationship no needed
    	$init: function (wgt) {
    		this.$supers(zss.FormulabarCenterCave, '$init', []);
@@ -398,7 +392,6 @@ zss.FormulabarCenterCave = zk.$extends(zk.Widget, {
 });
 
 zss.FormulabarCenter = zk.$extends(zul.layout.Center, {
-	widgetName: 'FormulabarCenter',
 	$o: zk.$void, //owner, fellows relationship no needed
    	$init: function (wgt) {
    		this.$supers(zss.FormulabarCenter, '$init', []);
@@ -419,7 +412,6 @@ zss.FormulabarCenter = zk.$extends(zul.layout.Center, {
 });
 
 zss.Formulabar = zk.$extends(zul.layout.North, {
-	widgetName: 'Formulabar',
 	$o: zk.$void, //owner, fellows relationship no needed
     //default expand formulabar size
    	_prevExpandedSize: 47,

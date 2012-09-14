@@ -285,7 +285,7 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
 	   			if (!sheet._wgt.hasFocus()) {
 	   				sheet.dp.stopEditing(sheet.innerClicking > 0 ? "refocus" : "lostfocus");
 	   			}
-	   		});
+	   		}, 300);//ZSS-161: if click on cancel button: set timeout to change evt order: cancel btn click evt -> blur evt  
 	   	}
    	},
    	_onContentsChanged: function (evt) {
@@ -491,7 +491,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 	   			if (!sheet._wgt.hasFocus()) {
 	   				sheet.dp.stopEditing(sheet.innerClicking > 0 ? "refocus" : "lostfocus");
 	   			}
-	   		});
+	   		}, 300);//ZSS-161: if click on cancel button: set timeout to change evt order: cancel btn click evt -> blur evt  
 	   	}
 	},
 	doMouseDown_: function (evt) {
