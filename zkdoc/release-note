@@ -10,12 +10,12 @@ ZK Spreadsheet 2.5.0
 	ZSS-131 Sheets contains unsupported drawing object cannot opening, get null pointer exception
 	ZSS-134 Sheets contains unsupported cell format, cannot opening, get null pointer exception
 	ZSS-132 Export to PDF on a sheet get null pointer exception
-  ZSS-136 Export to PDF with image, the same image will repeat on each page (when using portrait)
+  	ZSS-136 Export to PDF with image, the same image will repeat on each page (when using portrait)
 	ZSS-138 Initiate book with property cause NullPointerException
 	ZSS-141 Export sheet to PDF doesn't show last column
 	ZSS-142 Invalid format cause NullPointerException
 	ZSS-143 Cell addres gets into cell value on user input	
-  ZSS-147 Exporting to pdf throws NullPointerException	ZSS-145	Freezing a row causes the rows above the frozen row to be unselectable.
+  	ZSS-147 Exporting to pdf throws NullPointerException	ZSS-145	Freezing a row causes the rows above the frozen row to be unselectable.
 	ZSS-148 Open sheet with chart without label cause exception
 	ZSS-149 DateValue does not reconize Leap day
 	ZSS-150 The row/column header size is not correct on Firefox
@@ -27,6 +27,8 @@ ZK Spreadsheet 2.5.0
 	ZSS-157 With frozen area, contiguous scrolling down, cells may missing
 	ZSS-158 Second sheet doesn't update cell value
 	ZSS-159 Cell with overflow shall has right border when text total width is smaller then cell width
+	ZSS-160: Formula button in toolbar is missing
+	ZSS-161: Cancel edit button on formula bar not working
 	
 	------------
 ZK Spreadsheet 2.3.0
