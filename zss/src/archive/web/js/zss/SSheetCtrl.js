@@ -770,7 +770,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			if (row < block.range.top)// insert before current block, then jump
 				block.reloadBlock("south");
 		}
-
+		
 		dp._fixSize(this.activeBlock);
 		this._fixSize();
 		this.sendSyncblock();
@@ -781,6 +781,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		
 		var self = this;
 		setTimeout(function () {
+			var h = self.hlArea;
+			if (h.show) {
+				h.relocate();
+			}
 			self._doSSInitLater();//after creating cell need to invoke init later
 		},0);
 	},
@@ -851,7 +855,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 			this._syncRowFocusAndSelection(row, row + size - 1);
 		}
-
+		
 		dp._fixSize(this.activeBlock);
 		this._fixSize();		
 		this.sendSyncblock();
@@ -873,6 +877,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		
 		var self = this;
 		setTimeout(function () {
+			var h = self.hlArea;
+			if (h.show) {
+				h.relocate();
+			}
 			self._doSSInitLater();//after creating cell need to invoke init later
 		}, 0);
 	},

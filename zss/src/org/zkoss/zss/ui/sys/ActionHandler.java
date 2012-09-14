@@ -1319,7 +1319,10 @@ public abstract class ActionHandler {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.getRows()
-			.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);	
+			.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
+			
+			_spreadsheet.setHighlight(null);
+			clearClipboard();
 		}
 	}
 	
@@ -1332,7 +1335,10 @@ public abstract class ActionHandler {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 			.getColumns()
-			.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);	
+			.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
+			
+			_spreadsheet.setHighlight(null);
+			clearClipboard();
 		}
 	}
 	
@@ -1369,7 +1375,10 @@ public abstract class ActionHandler {
 			Ranges
 			.range(sheet, selection.getTop(), 0, selection.getBottom(), 0)
 			.getRows()
-			.delete(Range.SHIFT_UP);	
+			.delete(Range.SHIFT_UP);
+			
+			_spreadsheet.setHighlight(null);
+			clearClipboard();
 		}
 	}
 	
@@ -1382,7 +1391,10 @@ public abstract class ActionHandler {
 			Ranges
 			.range(sheet, 0, selection.getLeft(), 0, selection.getRight())
 			.getColumns()
-			.delete(Range.SHIFT_LEFT);	
+			.delete(Range.SHIFT_LEFT);
+			
+			_spreadsheet.setHighlight(null);
+			clearClipboard();
 		}
 	}
 
