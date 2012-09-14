@@ -707,6 +707,10 @@
 	border-radius: 1px;
 }
 
+.zswidget-ifocus {
+	position: absolute;	
+}
+
 .zswidget-real, .zswidget-real a:hover{
 	cursor: move;
 }
