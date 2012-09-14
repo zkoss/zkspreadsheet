@@ -147,8 +147,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.ref = data.ref;
 		this.edit = data.editText ? data.editText : '';
 		this.hastxt = !!this.text;
-		this.zsw = data.widthId;
-		this.zsh = data.heightId;
+		this.zsw = src.getColumnWidthId(col);
+		this.zsh = src.getRowHeightId(row);
 		this.lock = data.lock;
 		this.cellType = data.cellType;
 		
@@ -167,8 +167,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 			this.mergeCls = data.mergeCls;
 		}
 		this.wrap = data.wrap;
-		this.heightId = data.heightId;
-		this.widthId = data.widthId;
 		this.overflow = data.overflow;
 		this.maxOverflowCol = data.maxOverflowCol;
 		
@@ -595,8 +593,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 	//super//
 	getZclass: function () {
 		var cls = 'zscell',
-			hId = this.heightId,
-			wId = this.widthId,
+			hId = this.zsh,
+			wId = this.zsw,
 			mCls = this.mergeCls;
 		if (hId)
 			cls += (' zshi' + hId);
@@ -608,8 +606,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 	},
 	_getInnerClass: function () {
 		var cls = 'zscelltxt',
-			hId = this.heightId,
-			wId = this.widthId;
+			hId = this.zsh,
+			wId = this.zsw;
 		if (hId)
 			cls += (' zshi' + hId);
 		if (wId)

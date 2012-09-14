@@ -2945,8 +2945,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		 * <ul>
 		 * 	<li>r: row number</li>
 		 *  <li>c: column number</li>
-		 *  <li>w: width index</li>
-		 *  <li>h: height index</li>
 		 *  <li>t: cell html text</li>
 		 *  <li>et: cell edit text</li>
 		 *  <li>ft: format text</li>
@@ -3005,12 +3003,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			
 			//width, height id
 			if (updateSize) {
-				HeaderPositionHelper colHelper = Spreadsheet.this.getColumnPositionHelper(sheet);
-				HeaderPositionInfo info = colHelper.getInfo(col);
-				if (info != null && info.id >= 0) {
-					attrs.put("w", info.id);
-				}
-				
 				if (cell != null) {
 					//process overflow when cell type is string, halign is left, no wrap, no merge
 					CellStyle cellStyle = cell.getCellStyle();

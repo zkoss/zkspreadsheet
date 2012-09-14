@@ -224,8 +224,6 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 						this.fontSize = fontSize;
 				}
 				if (upSize) {
-					this.widthId = v.w;
-					this.heightId = heightId;
 					this.overflow = !!v.ovf;
 					if (this.overflow) {
 						this.maxOverflowCol = v.moc;
@@ -379,6 +377,10 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 			this.leftFrozen.updateColumnWidthId(col, id);
 		}
 	},
+	getColumnWidthId: function (col) {
+		var c = this.columnHeaders[col];
+		return c ? c.p : null;
+	},
 	updateRowHeightId: function (row, id) {
 		var r = this.rows[row],
 			header = this.rowHeaders[row];
@@ -389,6 +391,10 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 		if (this.topFrozen) {
 			this.leftFrozen.updateRowHeightId(row, id);
 		}
+	},
+	getRowHeightId: function (row) {
+		var r = this.rowHeaders[row];
+		return r ? r.p : null; 
 	},
 	updateBoundary: function (dir, top, left, btm, right) {
 		var rect = this.rect;
