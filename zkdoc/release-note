@@ -27,8 +27,8 @@ ZK Spreadsheet 2.5.0
 	ZSS-157 With frozen area, contiguous scrolling down, cells may missing
 	ZSS-158 Second sheet doesn't update cell value
 	ZSS-159 Cell with overflow shall has right border when text total width is smaller then cell width
-	ZSS-160: Formula button in toolbar is missing
-	ZSS-161: Cancel edit button on formula bar not working
+	ZSS-160 Formula button in toolbar is missing
+	ZSS-161 Cancel edit button on formula bar not working
 	
 	------------
 ZK Spreadsheet 2.3.0
