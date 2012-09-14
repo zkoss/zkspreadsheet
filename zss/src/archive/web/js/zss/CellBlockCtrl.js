@@ -73,7 +73,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 		this.$supers(zss.CellBlockCtrl, 'bind_', arguments);
 		
 		var n = this.comp = this.$n();
-		zk(n).disableSelection(); //disableSelection()
+//		zk(n).disableSelection(); //disableSelection()
 	},
 	unbind_: function () {
 		this.$supers(zss.CellBlockCtrl, 'unbind_', arguments);

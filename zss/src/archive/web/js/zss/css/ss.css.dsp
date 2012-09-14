@@ -62,6 +62,11 @@
 	position: relative;
 	overflow: visible;
 	background-color:#FFFFFF;
+	user-select: none;
+	-o-user-select:none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
 }
 
 .zsrow {
