@@ -4844,14 +4844,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	
-	private class HelperContainer<T> {
+	public class HelperContainer<T> {
 		HashMap<String, T> helpers = new HashMap<String, T>();
 		
-		T getHelper(String sheetId) {
+		public T getHelper(String sheetId) {
 			return helpers.get(sheetId);
 		}
 		
-		void putHelper(String sheetId, T helper) {
+		public void putHelper(String sheetId, T helper) {
 			helpers.put(sheetId, helper);
 		}
 	}

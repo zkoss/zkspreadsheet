@@ -67,9 +67,11 @@ import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.impl.BookHelper;
+import org.zkoss.zss.model.impl.SheetCtrl;
 import org.zkoss.zss.ui.Action;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.Spreadsheet.HelperContainer;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.impl.CellVisitor;
@@ -1852,8 +1854,9 @@ public abstract class ActionHandler {
 	}
 	
 	protected ClientAnchor getClientAnchor(int row, int col, int widgetWidth, int widgetHeight) {
-		HeaderPositionHelper rowSizeHelper = (HeaderPositionHelper) _spreadsheet.getAttribute("_rowCellSize");
-		HeaderPositionHelper colSizeHelper = (HeaderPositionHelper) _spreadsheet.getAttribute("_colCellSize");
+		final String sid = ((SheetCtrl)_spreadsheet.getSelectedSheet()).getUuid();
+		HeaderPositionHelper rowSizeHelper = ((HelperContainer<HeaderPositionHelper>) _spreadsheet.getAttribute("_rowCellSize")).getHelper(sid);
+		HeaderPositionHelper colSizeHelper = ((HelperContainer<HeaderPositionHelper>) _spreadsheet.getAttribute("_colCellSize")).getHelper(sid);
 		
 		int lCol = col;
 		int tRow = row;
