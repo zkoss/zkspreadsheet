@@ -21,12 +21,12 @@ import java.util.Map;
 import org.zkoss.image.Image;
 import org.zkoss.lang.Objects;
 import org.zkoss.zk.au.AuRequest;
-import org.zkoss.zk.au.DeferredValue;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.sys.ContentRenderer;
+import org.zkoss.zk.ui.util.DeferredValue;
 import org.zkoss.zul.impl.Utils;
 import org.zkoss.zul.impl.XulElement;
 
