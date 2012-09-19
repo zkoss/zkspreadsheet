@@ -2959,7 +2959,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		 *  <li>va: vertical alignment</>
 		 *  <li>mi: merge id index</li>
 		 *  <li>mc: merge CSS index</li>
-		 *  <li>rf: Cell Reference</li>
 		 *  <li>fs: font size</li>
 		 *  <li>ovf: overflow</li>
 		 * </ul>
@@ -2991,8 +2990,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //				attrs.put("r", row);
 //				attrs.put("c", col);
 //			}
-			CellReference cr = new CellReference(row, col, false, false);
-			attrs.put("rf", cr.formatAsString());
 			
 			//merge
 			MergeIndex mergeIndex = mergeAggregation.add(row, col);

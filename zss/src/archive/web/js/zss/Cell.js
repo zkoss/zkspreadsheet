@@ -142,9 +142,11 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.c = col;
 		this.src = src;
 		
-		var	data = src.getRow(row).getCell(col);
+		var	data = src.getRow(row).getCell(col),
+			colHeader = src.columnHeaders[col],
+			rowHeader = src.rowHeaders[row];
 		this.text = data.text || '';
-		this.ref = data.ref;
+		this.ref = colHeader.t + rowHeader.t;
 		this.edit = data.editText ? data.editText : '';
 		this.hastxt = !!this.text;
 		this.zsw = src.getColumnWidthId(col);
@@ -641,6 +643,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 	 * @param int column index
 	 */
 	resetColumnIndex: function (newcol) {
+		var	src = this.src;
+		this.ref = src.columnHeaders[newcol].t + src.rowHeaders[this.r].t;
 		this.c = newcol;
 	},
 	/**
@@ -648,6 +652,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 	 * @param int row index
 	 */
 	resetRowIndex: function (newrow) {
+		var	src = this.src;
+		this.ref = src.columnHeaders[this.c].t + src.rowHeaders[newrow].t;
 		this.r = newrow;
 	}
 });

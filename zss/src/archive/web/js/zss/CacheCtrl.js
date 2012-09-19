@@ -188,7 +188,6 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 					upSize = (upAll || type == ATTR_SIZE),
 					upMerge = (upAll || type == ATTR_MERGE),
 					cellType = v.ct;
-				this.ref = v.rf;
 				this.cellType = cellType != undefined ? cellType : 3;//default is BLANK_CELL
 				if (upText) {
 					var mergedTextId = v.meft;
@@ -519,8 +518,41 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 		return	tRow >= rect.top && lCol >= rect.left &&
 					bRow <= rect.bottom && rCol <= rect.right;
 	},
-	insertColumns: function (col, size, headers) {
+	insertNewColumn: function (colIdx, size, headers) {
 		updateHeaders(this.columnHeaders, headers);
+		var rows = this.rows;
+			rng = this.rect,
+			rCol = rng.right;
+		for (var r = rng.top; r <= rng.bottom; r++) {
+			var cs = rows[r].cells,
+				c = colIdx,
+				cb = colIdx + size,//column index boundary 
+				ccs = [],//clone cells
+				cfn = zss.ActiveRange.cloneCell;
+			//clone cells for insert later (after shift)
+			for (; c < cb; c++) {
+				ccs.push(cfn(cs[c]));
+			}
+			
+			//shift cells right
+			cb = colIdx - 1;
+			c = rCol;
+			while (c != cb) {
+				var cell = cs[c--],
+					oIdx = cell.c,//old index
+					nIdx = oIdx + size;//new index
+				cell.c = nIdx;
+				cs[nIdx] = cell;
+				cs[oIdx] = null;
+			}
+			
+			//insert cells form clone
+			var cc;
+			c = colIdx;
+			while (cc = ccs.shift()) {
+				cs[c++] = cc; 
+			}
+		}
 		this.rect.right += size;
 	},
 	removeColumns: function (col, size, headers) {
@@ -538,9 +570,42 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 		}
 		this.rect.right -= size;
 	},
-	insertRows: function (row, size, headers) {
+	insertNewRow: function (rowIdx, size, headers) {
 		updateHeaders(this.rowHeaders, headers);
 		
+		var rows = this.rows;
+			rng = this.rect,
+			lCol = rng.left,
+			rCol = rng.right,
+			r = rowIdx,
+			rb = rowIdx + size,
+			crs = [], //clone rows
+			cfn = zss.ActiveRange.copyRow;
+
+		//cloned rows for insert later (after shift row)
+		for (;r < rb; r++) {
+			crs.push(cfn(lCol, rCol, rows[r]));
+		}
+		
+		//shift rows
+		rb = rowIdx - 1;
+		r = rng.bottom;
+		while (r != rb) {
+			var row = rows[r--],
+				oIdx = row.r,//old index
+				nIdx = oIdx + size;//new index
+			row.r = nIdx;
+			rows[nIdx] = row;
+			rows[oIdx] = null;
+		}
+		
+		//insert rows from clone
+		var ro;
+		r = rowIdx;
+		while (ro = crs.shift()) {
+			rows[r++] = ro;
+		}
+			
 		this.rect.bottom += size; 
 	},
 	removeRows: function (row, size, headers) {

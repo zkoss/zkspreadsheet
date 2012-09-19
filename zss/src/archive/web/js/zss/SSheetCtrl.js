@@ -721,7 +721,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				size = result.size,
 				headers = result.hs,
 				ar = this._wgt._cacheCtrl.getSelectedSheet();
-			ar.insertColumns(col, size, headers);
+			ar.insertNewColumn(col, size, headers);
 			this._insertNewColumn(col, size, toHeaderTitleArray(headers.hs));
 			//update positionHelper
 			this.custColWidth.shiftMeta(col, size);
@@ -748,7 +748,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				size = result.size,
 				headers = result.hs,
 				ar = this._wgt._cacheCtrl.getSelectedSheet();
-			ar.insertRows(row, size, headers);
+			ar.insertNewRow(row, size, headers);
 			this._insertNewRow(row, size, toHeaderTitleArray(headers.hs));
 			
 			//update positionHelper
