@@ -642,6 +642,7 @@ if (zk.feature.pe) {
 						sf.openPicker();
 					});
 				}
+				zWatch.listen({onFloatUp: this});
 			},
 			unbind_: function () {
 				var paletteBtn = this.$n('palette-btn');
@@ -649,7 +650,19 @@ if (zk.feature.pe) {
 					this.domUnlisten_(paletteBtn, 'onClick', 'openPalette');
 				}
 				jq(this.$n('picker-btn')).unbind();
+				zWatch.unlisten({onFloatUp: this});
 				this.$supers(zss.Colorbutton, 'unbind_', arguments);
+			},
+			onFloatUp: function (ctl) {
+				if (this._picker.isVisible() || this._palette.isVisible()) {
+					var wgt = ctl.origin;
+					for (var floatFound; wgt; wgt = wgt.parent) {
+						if (wgt == this) {
+							return;
+						}
+					}
+					this.closePopup();
+				}
 			},
 			appnedPopup_: function () {
 				this.appendChild(this._picker);
