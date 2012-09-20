@@ -435,7 +435,9 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 		if (cv) {
 			jq(cv).removeClass(wgt._getSclass() + '-cave-over');
 		}
-		jq(n).removeClass(wgt._getSclass() + '-over');
+		jq(n)
+		.removeClass(wgt._getSclass() + '-over')
+		.removeClass(wgt.getZclass() + '-over');
 	}
 });
 zk.copy(zss.Toolbarbutton.prototype, AbstractButtonHandler);
