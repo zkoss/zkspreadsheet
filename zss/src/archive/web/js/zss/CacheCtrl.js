@@ -240,6 +240,10 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 						if (this.mergeId) {
 							this.merge = newRect(info.t, info.l, info.b, info.r);
 						}
+					} else if (this.mergeId) {//remove merge
+						delete this.mergeId;
+						delete this.mergeCls;
+						delete this.merge;
 					}
 				}
 			}
