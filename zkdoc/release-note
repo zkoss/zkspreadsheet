@@ -34,7 +34,8 @@ ZK Spreadsheet 2.5.0
 	ZSS-164 Mouse click on chart widget, the sheet will move up, chrome only
 	ZSS-166 Insert columns, then switch sheet cause wrong cell content
 	ZSS-167 Delete rows, then switch sheet, cause cells missing
-	
+	ZSS-168 Color button shall close when close when mouse click on cell or other button
+
 	------------
 ZK Spreadsheet 2.3.0
 *Features:   
