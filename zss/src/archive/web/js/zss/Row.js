@@ -32,8 +32,7 @@ zss.Row = zk.$extends(zk.Widget, {
 		this.src = src;
 		this.r = row;
 		
-		var data = src.getRow(row);
-		this.zsh = data.heightId;
+		this.zsh = src.getRowHeightId(row);
 		this.cells = [];
 		this.wrapedCells = [];
 	},
