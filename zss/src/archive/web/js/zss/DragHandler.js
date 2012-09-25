@@ -64,6 +64,7 @@ zss.DragHandler = zk.$extends(zk.Object, {
 		this.stopAutoScroll();
 		zk(document.body).enableSelection();
 		this.sheet.stopDragging();
+		/* ZSS-169: set paste src only when user set selection by drag cells
 		//feature #26: Support copy/paste value to local Excel
 		var sheet = this.sheet,
 			self = this;
@@ -76,11 +77,12 @@ zss.DragHandler = zk.$extends(zk.Object, {
 				setTimeout(function () {
 					if (!self._isMenupopupOpen()) {
 						focustag.focus();
-						jq(focustag).select();	
+						jq(focustag).select();
 					}
 				}, 0);
 			});
 		}
+		*/
 	},
 	stopAutoScroll : function (){
 		if (this.scrollctrl) {

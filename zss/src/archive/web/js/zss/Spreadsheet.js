@@ -234,6 +234,8 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		this.appendChild(this.cave = new zul.layout.Borderlayout({
 			vflex: true, sclass: 'zscave'
 		}));//contains zss.SSheetCtrl
+		
+		this._onResponseCallback = [];
 	},
 	$define: {
 		/**
@@ -683,7 +685,10 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 				sheetBar.getSheetSelector().setSheetLabels(v);
 			}
 		},
-		copysrc: null //flag to show whether a copy source has set
+		copysrc: null, //flag to show whether a copy source has set
+		//flag that indicate server has done paste operation, no need to do paste at client,
+		//Note. this flag will clear at onResponse()
+		doPasteFromServer: null
 	},
 	getTopPanel: function () {
 		var tp = this._topPanel;
@@ -853,12 +858,23 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		var sheet = this.sheetCtrl;
 		if (!sheet) return;
 		
+		var sf = this,
+			//ZSS-169
+			fn = function () {
+			if (sf._ctrlPasteDown) {//set selection after keyup
+				sf._afterKeyUpCallback = function () {
+					sheet._cmdSelection(v);
+				};
+			} else {
+				sheet._cmdSelection(v);
+			}
+		};
 		if (this.isSheetCSSReady()) {
-			sheet._cmdSelection(v);
+			fn();
 		} else {
 			//set selection after CSS ready
 			sheet.addSSInitLater(function () {
-				sheet._cmdSelection(v);
+				fn();
 			});
 		}
 	},
@@ -1065,6 +1081,13 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			this.sheetCtrl.fire('onContentsChanged');
 			delete this._triggerContentsChanged;
 		}
+
+		var fns = this._onResponseCallback,
+			fn = null;
+		while (fn = fns.pop()) {
+			fn();
+		}
+		this._doPasteFromServer = false;
 	},
 	domClass_: function (no) {
 		return 'zssheet';
@@ -1186,6 +1209,12 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		var sheet = this.sheetCtrl;
 		if (sheet && sheet.state == zss.SSheetCtrl.FOCUSED) {
 			sheet._doKeyup(evt);
+			//ZSS-169
+			var fn = this._afterKeyUpCallback;
+			if (fn) {
+				fn();
+				delete this._afterKeyUpCallback;
+			}
 		}
 		this._ctrlPasteDown = false;
 	},

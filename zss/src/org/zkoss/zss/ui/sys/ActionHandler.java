@@ -158,6 +158,14 @@ public abstract class ActionHandler {
 		}
 	};
 	
+	protected EventListener _doClearClipboard = new EventListener() {
+
+		@Override
+		public void onEvent(Event event) throws Exception {
+			clearClipboard();
+		}
+	};
+	
 	public ActionHandler() {}
 	public ActionHandler(Spreadsheet spreadsheet) {
 		_spreadsheet = spreadsheet;
@@ -481,7 +489,7 @@ public abstract class ActionHandler {
 	
 	public void doCloseBook() {
 		_spreadsheet.setSrc(null);
-		clearClipboard();
+		_clipboard = null;
 		_insertPictureSelection = null;
 		
 		toggleActionOnBookClosed();
@@ -574,12 +582,11 @@ public abstract class ActionHandler {
 		if (_clipboard != null) {
 			final Book srcBook = _clipboard.book;
 			if (!srcBook.equals(_spreadsheet.getBook())) {
-				clearClipboard();
+				_clipboard = null;
 			} else {
 				final Worksheet srcSheet = _clipboard.sourceSheet;
 				boolean validSheet = srcBook.getSheetIndex(srcSheet) >= 0;
 				if (!validSheet) {
-					_spreadsheet.setHighlight(null);
 					clearClipboard();
 				} else if (!srcSheet.equals(_spreadsheet.getSelectedSheet())) {
 					_spreadsheet.setHighlight(null);
@@ -623,6 +630,9 @@ public abstract class ActionHandler {
 	private void init() {
 		_spreadsheet.addEventListener(Events.ON_SHEET_SELECT, _doSelectSheetListener);
 		_spreadsheet.addEventListener(Events.ON_CTRL_KEY, _doCtrlKeyListener);
+		
+		_spreadsheet.addEventListener(Events.ON_CELL_DOUBLE_CLICK, _doClearClipboard);
+		_spreadsheet.addEventListener(Events.ON_START_EDITING, _doClearClipboard);
 		
 		if (_upload == null) {
 			_upload = new Upload();
@@ -670,6 +680,8 @@ public abstract class ActionHandler {
 			doCopy(selection);
 			break;
 		case 'V':
+			if (_clipboard != null)
+				_spreadsheet.smartUpdate("doPasteFromServer", true);
 			doPaste(selection);
 			break;
 		case 'D':
@@ -769,6 +781,8 @@ public abstract class ActionHandler {
 	
 	public void clearClipboard() {
 		_clipboard = null;
+		_spreadsheet.setHighlight(null);
+		//TODO: shall also clear client side clipboard if possible
 	}
 	
 	/**
@@ -1272,7 +1286,9 @@ public abstract class ActionHandler {
 		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-			.merge(false);	
+			.merge(false);
+			
+			clearClipboard();
 		}
 	}
 	
@@ -1284,7 +1300,9 @@ public abstract class ActionHandler {
 		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-			.unMerge();	
+			.unMerge();
+			
+			clearClipboard();
 		}
 	}
 	
@@ -1296,7 +1314,9 @@ public abstract class ActionHandler {
 		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-			.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);	
+			.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
+			
+			clearClipboard();
 		}
 	}
 	
@@ -1308,7 +1328,9 @@ public abstract class ActionHandler {
 		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-			.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);	
+			.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
+			
+			clearClipboard();
 		}
 	}
 	
@@ -1323,7 +1345,6 @@ public abstract class ActionHandler {
 			.getRows()
 			.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
 			
-			_spreadsheet.setHighlight(null);
 			clearClipboard();
 		}
 	}
@@ -1339,7 +1360,6 @@ public abstract class ActionHandler {
 			.getColumns()
 			.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
 			
-			_spreadsheet.setHighlight(null);
 			clearClipboard();
 		}
 	}
@@ -1352,7 +1372,9 @@ public abstract class ActionHandler {
 		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-			.delete(Range.SHIFT_LEFT);	
+			.delete(Range.SHIFT_LEFT);
+			
+			clearClipboard();
 		}
 	}
 	
@@ -1364,7 +1386,9 @@ public abstract class ActionHandler {
 		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-			.delete(Range.SHIFT_UP);	
+			.delete(Range.SHIFT_UP);
+			
+			clearClipboard();
 		}
 	}
 	
@@ -1379,7 +1403,6 @@ public abstract class ActionHandler {
 			.getRows()
 			.delete(Range.SHIFT_UP);
 			
-			_spreadsheet.setHighlight(null);
 			clearClipboard();
 		}
 	}
@@ -1395,7 +1418,6 @@ public abstract class ActionHandler {
 			.getColumns()
 			.delete(Range.SHIFT_LEFT);
 			
-			_spreadsheet.setHighlight(null);
 			clearClipboard();
 		}
 	}
@@ -1413,7 +1435,9 @@ public abstract class ActionHandler {
 	public void doClearStyle(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
-			clearStyleImp(selection, sheet);	
+			clearStyleImp(selection, sheet);
+			
+			clearClipboard();
 		}
 	}
 	
@@ -1425,7 +1449,9 @@ public abstract class ActionHandler {
 		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-			.clearContents();	
+			.clearContents();
+			
+			clearClipboard();
 		}
 	}
 	
@@ -1444,7 +1470,9 @@ public abstract class ActionHandler {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			Utils.sort(sheet, selection,
-					null, null, null, false, false, false);	
+					null, null, null, false, false, false);
+			
+			clearClipboard();
 		}
 	}
 	
@@ -1455,7 +1483,9 @@ public abstract class ActionHandler {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			Utils.sort(sheet, selection,
-					null, new boolean[] { true }, null, false, false, false);	
+					null, new boolean[] { true }, null, false, false, false);
+			
+			clearClipboard();
 		}
 	}
 	
@@ -1472,7 +1502,9 @@ public abstract class ActionHandler {
 		if (sheet != null && isValidSelection(selection)) {
 			Ranges
 			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-			.autoFilter();	
+			.autoFilter();
+			
+			clearClipboard();
 		}
 	}
 	
@@ -1482,7 +1514,9 @@ public abstract class ActionHandler {
 	public void doClearFilter() {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null) {
-			Ranges.range(sheet).showAllData();	
+			Ranges.range(sheet).showAllData();
+			
+			clearClipboard();
 		}
 	}
 	
@@ -1492,7 +1526,9 @@ public abstract class ActionHandler {
 	public void doReapplyFilter() {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null) {
-			Ranges.range(sheet).applyFilter();	
+			Ranges.range(sheet).applyFilter();
+			
+			clearClipboard();
 		}
 	}
 	

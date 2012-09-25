@@ -1641,10 +1641,26 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		//if(this._skipress) delete this._skipress;
 		//check CTRL-V and do the copy on the sheet!
 		if (evt.ctrlKey && evt.keyCode == 86) {
-			var focustag = this.dp.focustag,
-				value = jq(focustag).val(),
-				pos = this.dp._speedCopy(value);
-			this._doCellSelection(pos.left, pos.top, pos.right, pos.bottom);
+			var wgt = this._wgt,
+				sl = this,
+				o = zAu.processing(),
+				//ZSS-169
+				fn = function () {
+					if (!wgt._doPasteFromServer) {//do paste from client when server doesn't do it
+						var focustag = sl.dp.focustag,
+							value = jq(focustag).val(),
+							pos = sl.dp._speedCopy(value);
+						
+						wgt._onResponseCallback.push(function () {
+							sl._doCellSelection(pos.left, pos.top, pos.right, pos.bottom);
+						});
+					}	
+				};
+			if (o && o == zAu.shallIgnoreESC()) {//send au command, wait 
+				wgt._onResponseCallback.push(fn); 
+			} else {
+				fn();
+			}
 		}
 	},
 	/**
@@ -2057,11 +2073,13 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if (lb)
 			lb.update_(tRow, lCol, bRow, rCol);
 		
+		/* ZSS-169: prepare client side paste src when user set selection by drag cells 
 		//feature #26: Support copy/paste value to local Excel		
 		var ls = this.getLastSelection();
-		if (tRow >= ls.top && bRow <= ls.bottom && lCol >= ls.left && rCol <= ls.right)
-			//this._wgt._prepareCopy = true; //prepareCopy onResponse. Timeing issue: do prepare copy at response will too late
-			this._prepareCopy();
+		if (tRow >= ls.top && bRow <= ls.bottom && lCol >= ls.left && rCol <= ls.right) {
+			this._prepareCopy(debug);
+		}
+		*/
 	},
 	_updateHeaderSelectionCss: function (range, remove) {
 		var top = range.top,
