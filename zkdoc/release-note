@@ -35,6 +35,7 @@ ZK Spreadsheet 2.5.0
 	ZSS-166 Insert columns, then switch sheet cause wrong cell content
 	ZSS-167 Delete rows, then switch sheet, cause cells missing
 	ZSS-168 Color button shall close when close when mouse click on cell or other button
+	ZSS-169 Copy/Paste sometimes not work correctly
 
 	------------
 ZK Spreadsheet 2.3.0
