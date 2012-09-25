@@ -14,8 +14,9 @@ ZK Spreadsheet 2.5.0
 	ZSS-138 Initiate book with property cause NullPointerException
 	ZSS-141 Export sheet to PDF doesn't show last column
 	ZSS-142 Invalid format cause NullPointerException
-	ZSS-143 Cell addres gets into cell value on user input	
-  	ZSS-147 Exporting to pdf throws NullPointerException	ZSS-145	Freezing a row causes the rows above the frozen row to be unselectable.
+	ZSS-143 Cell addres gets into cell value on user input
+	ZSS-145	Freezing a row causes the rows above the frozen row to be unselectable.	
+  	ZSS-147 Exporting to pdf throws NullPointerException
 	ZSS-148 Open sheet with chart without label cause exception
 	ZSS-149 DateValue does not reconize Leap day
 	ZSS-150 The row/column header size is not correct on Firefox
@@ -36,7 +37,8 @@ ZK Spreadsheet 2.5.0
 	ZSS-167 Delete rows, then switch sheet, cause cells missing
 	ZSS-168 Color button shall close when close when mouse click on cell or other button
 	ZSS-169 Copy/Paste sometimes not work correctly
-
+	ZSS-170 Insert row at certain row not work correctly
+	
 	------------
 ZK Spreadsheet 2.3.0
 *Features:   
