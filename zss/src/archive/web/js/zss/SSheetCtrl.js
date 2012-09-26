@@ -1644,6 +1644,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var wgt = this._wgt,
 				sl = this,
 				o = zAu.processing(),
+				isAu = o && o == zAu.shallIgnoreESC(),
 				//ZSS-169
 				fn = function () {
 					if (!wgt._doPasteFromServer) {//do paste from client when server doesn't do it
@@ -1651,12 +1652,13 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 							value = jq(focustag).val(),
 							pos = sl.dp._speedCopy(value);
 						
+						//Note. _speedCopy will fire edit cmd to server, set selection after response
 						wgt._onResponseCallback.push(function () {
 							sl._doCellSelection(pos.left, pos.top, pos.right, pos.bottom);
 						});
 					}	
 				};
-			if (o && o == zAu.shallIgnoreESC()) {//send au command, wait 
+			if (isAu) {
 				wgt._onResponseCallback.push(fn); 
 			} else {
 				fn();

@@ -687,7 +687,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		},
 		copysrc: null, //flag to show whether a copy source has set
 		//flag that indicate server has done paste operation, no need to do paste at client,
-		//Note. this flag will clear at onResponse()
+		//Note. this flag will clear by doKeyUp()
 		doPasteFromServer: null
 	},
 	getTopPanel: function () {
@@ -1087,7 +1087,6 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		while (fn = fns.pop()) {
 			fn();
 		}
-		this._doPasteFromServer = false;
 	},
 	domClass_: function (no) {
 		return 'zssheet';
@@ -1217,6 +1216,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			}
 		}
 		this._ctrlPasteDown = false;
+		this._doPasteFromServer = false;
 	},
 	linkTo: function (href, type, evt) {
 		//1: LINK_URL
