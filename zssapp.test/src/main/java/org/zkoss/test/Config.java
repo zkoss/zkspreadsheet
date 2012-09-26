@@ -26,7 +26,7 @@ import java.util.Properties;
 public class Config {
 	
 	public enum Browser {
-		FIREFOX, CHROME, IE;
+		FIREFOX, CHROME, IE, OPERA;
 	}
 	
 //	@Inject

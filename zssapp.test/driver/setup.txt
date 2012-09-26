@@ -1,0 +1,10 @@
+**Note**
+Copy drivers to /archive/
+For example
+Copy /driver/IEDriverServer.exe to /archive/IEDriverServer.exe
+
+
+
+Refer to "Required Configuration"
+http://code.google.com/p/selenium/wiki/InternetExplorerDriver
+http://code.google.com/p/selenium/wiki/ChromeDriver

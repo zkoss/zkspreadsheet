@@ -16,14 +16,14 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.test;
 
-import java.net.MalformedURLException;
+import java.io.File;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.google.guiceberry.GuiceBerryEnvMain;
 import com.google.guiceberry.GuiceBerryModule;
@@ -66,19 +66,35 @@ public class TestingEnvironment extends AbstractModule {
 	//TODO: how to use CheckedProvider
 	@Provides
 	@Singleton
-	public WebDriver provideWebDriver(Config config) {
+	public WebDriver provideWebDriver(Config config) throws URISyntaxException {
 		Config.Browser target = config.getBrowser();
+		ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+		URL driverURL = null;
 		switch (target) {
 		case FIREFOX:
+			
 			return new FirefoxDriver();
 		case IE:
+			driverURL = contextClassLoader.getResource("archive/IEDriverServer.exe");
+			if (driverURL == null) {
+				throw new NullPointerException("Cannot find IEDriverServer instance, copy IEDriverServer.exe from driver to /src/archive/");
+			}
+			System.setProperty("webdriver.ie.driver", new File(driverURL.toURI()).getAbsolutePath());
 			return new InternetExplorerDriver();
 		case CHROME:
+			driverURL = contextClassLoader.getResource("archive/chromedriver.exe");
+			if (driverURL == null) {
+				throw new NullPointerException("Cannot find chromedriver instance, copy chromedriver.exe from driver to /src/archive/");
+			}
+			System.setProperty("webdriver.chrome.driver", new File(driverURL.toURI()).getAbsolutePath());
+			return new ChromeDriver();
+			/*
 			try {
 				return new RemoteWebDriver(new URL("http://localhost:9515"), DesiredCapabilities.chrome());
 			} catch (MalformedURLException e) {
 				throw new RuntimeException(e);
 			}
+			*/
 		case OPERA:
 			return new OperaDriver();
 		}
