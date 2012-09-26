@@ -52,7 +52,7 @@ public class ZSSAppTest {
 			//ZSSApp URL
 			bind(String.class)
 			.annotatedWith(Names.named("URL"))
-			.toInstance("http://localhost:8088/zssapp/");
+			.toInstance("http://localhost:8080/zssapp/");
 			
 			bind(String.class)
 			.annotatedWith(Names.named("Spreadsheet Id"))
