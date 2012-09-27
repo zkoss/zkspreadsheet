@@ -45,6 +45,7 @@ public class SS_033_Test extends ZSSAppTest {
 		JQuery $inp = jq("$addrCombobox input.z-combobox-inp");
         WebElement inp = $inp.getWebElement();
         inp.sendKeys("http://ja.wikipedia.org/wiki");
+        inp.sendKeys(Keys.TAB);
         if (browser.isIE6() || browser.isIE7() || browser.isGecko()) {
         	timeBlocker.waitUntil(3);
         } else {

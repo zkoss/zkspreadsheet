@@ -138,10 +138,10 @@ public class SS_035_Test extends ZSSAppTest {
 		CellCacheAggeration from = getCellCacheAggerationBuilder(5, 5, 20, 5).build();
 		
 		mouseDirector.openColumnContextMenu(5);//column F
-		click(".z-menu-popup:visible .zsmenuitem-cut");
+		click(".z-menupopup:visible .zsmenuitem-cut");
 		
 		mouseDirector.openColumnContextMenu(10);//column K
-		click(".z-menu-popup:visible .zsmenuitem-paste");
+		click(".z-menupopup:visible .zsmenuitem-paste");
 		
 		verifyPasteAll(PasteSource.CUT, from, 5, 10, 20, 10);
 	}
@@ -151,10 +151,10 @@ public class SS_035_Test extends ZSSAppTest {
 		CellCacheAggeration from = getCellCacheAggerationBuilder(5, 5, 20, 5).build();
 		
 		mouseDirector.openColumnContextMenu(5);//column F
-		click(".z-menu-popup:visible .zsmenuitem-copy");
+		click(".z-menupopup:visible .zsmenuitem-copy");
 		
 		mouseDirector.openColumnContextMenu(10);//column K
-		click(".z-menu-popup:visible .zsmenuitem-paste");
+		click(".z-menupopup:visible .zsmenuitem-paste");
 		
 		verifyPasteAll(PasteSource.COPY, from, 5, 10, 20, 10);
 	}
@@ -164,10 +164,10 @@ public class SS_035_Test extends ZSSAppTest {
 	public void column_paste_special() {
 		CellCacheAggeration from = getCellCacheAggerationBuilder(5, 5, 20, 5).build();
 		mouseDirector.openColumnContextMenu(5);//column F
-		click(".z-menu-popup:visible .zsmenuitem-copy");
+		click(".z-menupopup:visible .zsmenuitem-copy");
 		
 		mouseDirector.openColumnContextMenu(10);//column K
-		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
+		click(".z-menupopup:visible .zsmenuitem-pasteSpecial");
 		Assert.assertTrue(isVisible("$_pasteSpecialDialog"));
 		click("$_pasteSpecialDialog $okBtn");
 		
@@ -180,7 +180,7 @@ public class SS_035_Test extends ZSSAppTest {
 		CellCacheAggeration from = builder.build();
 		mouseDirector.openColumnContextMenu(5);//column F
 		
-		click(".z-menu-popup:visible .zsmenuitem-insertSheetColumn");
+		click(".z-menupopup:visible .zsmenuitem-insertSheetColumn");
 		
 		verifyInsert(Insert.CELL_RIGHT, from, builder);
 	}
@@ -191,7 +191,7 @@ public class SS_035_Test extends ZSSAppTest {
 		CellCacheAggeration from = builder.right().build();
 		mouseDirector.openColumnContextMenu(5);//column F
 		
-		click(".z-menu-popup:visible .zsmenuitem-deleteSheetColumn");
+		click(".z-menupopup:visible .zsmenuitem-deleteSheetColumn");
 		
 		verifyDelete(Delete.CELL_LEFT, from, builder, null);
 	}
@@ -200,7 +200,7 @@ public class SS_035_Test extends ZSSAppTest {
 	public void column_clear_content() {
 		CellCacheAggeration cache = getCellCacheAggerationBuilder(5, 5, 20, 5).build();
 		mouseDirector.openColumnContextMenu(5);//column F
-		click(".z-menu-popup:visible .zsmenuitem-clearContent");
+		click(".z-menupopup:visible .zsmenuitem-clearContent");
 		verifyClearContent(cache);
 	}
 	
@@ -208,7 +208,7 @@ public class SS_035_Test extends ZSSAppTest {
 	public void column_format_number() {
 		
 		mouseDirector.openColumnContextMenu(5);//column F
-		click(".z-menu-popup:visible .zsmenuitem-formatCell");
+		click(".z-menupopup:visible .zsmenuitem-formatCell");
 		Assert.assertTrue(isVisible("$_formatNumberDialog"));
 		
 		click("@listcell[label=\"Accounting\"] div.z-overflow-hidden");
@@ -222,7 +222,7 @@ public class SS_035_Test extends ZSSAppTest {
 	public void column_width() {
 		mouseDirector.openColumnContextMenu(5);//column F
 		
-		click(".z-menu-popup:visible .zsmenuitem-columnWidth");
+		click(".z-menupopup:visible .zsmenuitem-columnWidth");
 		JQuery $input = jq("$headerSize");
 		WebElement input = $input.getWebElement();
 		input.clear();
@@ -243,11 +243,11 @@ public class SS_035_Test extends ZSSAppTest {
 		final int COLUMN_F = 5;
 		mouseDirector.openColumnContextMenu(COLUMN_F);
 		
-		click(".z-menu-popup:visible .zsmenuitem-hideColumn");
+		click(".z-menupopup:visible .zsmenuitem-hideColumn");
 		Assert.assertFalse(spreadsheet.getColumnHeader(COLUMN_F).jq$n().isVisible());
 		
 		mouseDirector.openColumnContextMenu(4, 6);
-		click(".z-menu-popup:visible .zsmenuitem-unhideColumn");
+		click(".z-menupopup:visible .zsmenuitem-unhideColumn");
 		Assert.assertTrue(spreadsheet.getColumnHeader(COLUMN_F).jq$n().isVisible());
 	}
 	
@@ -271,7 +271,7 @@ public class SS_035_Test extends ZSSAppTest {
 		Header header = spreadsheet.getTopPanel().getColumnHeader(F);
 		mouseDirector.openColumnContextMenu(F);
 		
-		click(".z-menu-popup:visible .zsmenuitem-hideColumn");
+		click(".z-menupopup:visible .zsmenuitem-hideColumn");
 		Assert.assertFalse(spreadsheet.getColumnHeader(F).jq$n().isVisible());
 		
 		mouseDirector.dragColumnToResize(F, 50);

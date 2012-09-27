@@ -45,7 +45,7 @@ public class SS_012_Test extends ZSSAppTest {
 		CellCacheAggeration pasteTo = builder.offset(11, 10).build();
 		Assert.assertEquals(copyFrom, pasteTo);
 	}
-	
+
 	@Test
 	public void paste_all_by_menuitem() {
 		CellCacheAggeration.Builder builder = getCellCacheAggerationBuilder(11, 5, 16, 5);
@@ -199,4 +199,5 @@ public class SS_012_Test extends ZSSAppTest {
 		CellCacheAggeration pasteTo = builder.offset(pasteToRow, pasteToCol).build();
 		Assert.assertTrue(copyFrom.equals(pasteTo, EqualCondition.VALUE, EqualCondition.IGNORE_NUMBER_FORMAT));
 	}
+	
 }

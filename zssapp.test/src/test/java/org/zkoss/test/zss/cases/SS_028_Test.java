@@ -57,7 +57,7 @@ public class SS_028_Test extends ZSSAppTest {
 		Assert.assertTrue(getCell(20, 1).getText().startsWith("C"));
 		Assert.assertTrue(getCell(21, 1).getText().startsWith("A"));
 	}
-	
+
 	@Test
 	public void custom_sort() {
 		//B19-I22
@@ -68,9 +68,9 @@ public class SS_028_Test extends ZSSAppTest {
 		
 		Assert.assertTrue("shall open customSort Dialog", isVisible("$_customSortDialog"));
 		
-		jq("$_customSortDialog $sortLevel @combobox:eq(0)').children('i.z-combobox-rounded-btn").getWebElement().click();
+		click(jq("$_customSortDialog $sortLevel @combobox:eq(0)').children('i.z-combobox-rounded-btn"));
 		//sort by column F
-		jq(".z-combobox-rounded-pp:visible tbody").children(":eq(5)").getWebElement().click();
+		click(jq(".z-combobox-rounded-pp:visible tbody").children(":eq(5)"));
 		
 		click("$_customSortDialog $okBtn");
 		

@@ -42,12 +42,12 @@ public class SS_040_Test extends ZSSAppTest {
 		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(11, 10);
-		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
+		click(".z-menupopup:visible .zsmenuitem-pasteSpecial");
 		click("$_pasteSpecialDialog $okBtn");
 		
 		Assert.assertEquals(copyFrom, builder.offset(11, 10).build());
 	}
-	
+
 	@Test
 	public void paste_special_all_except_borders() {
 		int tRow = 15;
@@ -59,7 +59,7 @@ public class SS_040_Test extends ZSSAppTest {
 		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(11, 10);
-		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
+		click(".z-menupopup:visible .zsmenuitem-pasteSpecial");
 		
 		jq("$allExcpetBorder input").getWebElement().click();
 		click("$_pasteSpecialDialog $okBtn");
@@ -78,7 +78,7 @@ public class SS_040_Test extends ZSSAppTest {
 		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(11, 10);
-		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
+		click(".z-menupopup:visible .zsmenuitem-pasteSpecial");
 		
 		jq("$colWidth input").getWebElement().click();
 		click("$_pasteSpecialDialog $okBtn");
@@ -97,7 +97,7 @@ public class SS_040_Test extends ZSSAppTest {
 		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(11, 10);
-		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
+		click(".z-menupopup:visible .zsmenuitem-pasteSpecial");
 		
 		jq("$formula input").getWebElement().click();
 		click("$_pasteSpecialDialog $okBtn");
@@ -118,7 +118,7 @@ public class SS_040_Test extends ZSSAppTest {
 		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(11, 10);
-		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
+		click(".z-menupopup:visible .zsmenuitem-pasteSpecial");
 		
 		jq("$formulaWithNum input").getWebElement().click();
 		click("$_pasteSpecialDialog $okBtn");
@@ -139,7 +139,7 @@ public class SS_040_Test extends ZSSAppTest {
 		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(11, 10);
-		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
+		click(".z-menupopup:visible .zsmenuitem-pasteSpecial");
 		
 		jq("$value input").getWebElement().click();
 		click("$_pasteSpecialDialog $okBtn");
@@ -160,7 +160,7 @@ public class SS_040_Test extends ZSSAppTest {
 		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(11, 10);
-		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
+		click(".z-menupopup:visible .zsmenuitem-pasteSpecial");
 		
 		jq("$valueWithNumFmt input").getWebElement().click();
 		click("$_pasteSpecialDialog $okBtn");
@@ -181,7 +181,7 @@ public class SS_040_Test extends ZSSAppTest {
 		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(11, 10);
-		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
+		click(".z-menupopup:visible .zsmenuitem-pasteSpecial");
 		
 		jq("$fmt input").getWebElement().click();
 		click("$_pasteSpecialDialog $okBtn");
@@ -208,7 +208,7 @@ public class SS_040_Test extends ZSSAppTest {
 		keyboardDirector.ctrlCopy(tRow, lCol, bRow, rCol);
 		
 		mouseDirector.openCellContextMenu(5, 11);
-		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
+		click(".z-menupopup:visible .zsmenuitem-pasteSpecial");
 		
 		jq("$skipBlanks input").getWebElement().click();
 		click("$_pasteSpecialDialog $okBtn");
@@ -228,7 +228,7 @@ public class SS_040_Test extends ZSSAppTest {
 		click(".zstbtn-copy");
 		
 		mouseDirector.openCellContextMenu(11, 10);
-		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
+		click(".z-menupopup:visible .zsmenuitem-pasteSpecial");
 		
 		jq("$transpose input").getWebElement().click();
 		click("$_pasteSpecialDialog $okBtn");

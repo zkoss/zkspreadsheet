@@ -66,10 +66,11 @@ public class SS_038_Test  extends ZSSAppTest {
 		
 		CellCacheAggeration.Builder builder = getCellCacheAggerationBuilder(tRow, lCol, bRow, rCol);
 		CellCacheAggeration from = builder.build();
-		spreadsheet.focus(11, 10);
-		keyboardDirector.ctrlPaste(11, 10);
+		spreadsheet.focus(15, 8);
+		keyboardDirector.ctrlPaste(15, 8);
 		
-		verifyPasteAll(PasteSource.COPY, from, builder.offset(11, 10).build());
+		//TODO: shall not compare cell's right border, since right border may effect by other cell
+		verifyPasteAll(PasteSource.COPY, from, builder.offset(15, 8).build());
 	}
 
 	@Test

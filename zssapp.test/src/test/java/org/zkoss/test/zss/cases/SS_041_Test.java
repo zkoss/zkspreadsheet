@@ -35,16 +35,16 @@ public class SS_041_Test extends ZSSAppTest {
 	
 	private void openCustomSortDialog(int tRow, int lCol, int bRow, int rCol) {
 		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenu-sort");
-		click(".z-menu-popup:visible .zsmenuitem-customSort");
+		click(".z-menupopup:visible .zsmenu-sort");
+		click(".z-menupopup:visible .zsmenuitem-customSort");
 		Assert.assertTrue(isVisible("$_customSortDialog"));
 	}
 	
 	@Test
 	public void custom_sort_add_button() {
 		mouseDirector.openCellContextMenu(12, 1, 16, 1);
-		click(".z-menu-popup:visible .zsmenu-sort");
-		click(".z-menu-popup:visible .zsmenuitem-customSort");
+		click(".z-menupopup:visible .zsmenu-sort");
+		click(".z-menupopup:visible .zsmenuitem-customSort");
 		Assert.assertTrue(isVisible("$_customSortDialog"));
 		
 		click("$addBtn");
@@ -93,8 +93,8 @@ public class SS_041_Test extends ZSSAppTest {
 		keyboardDirector.setEditText(11, 10, "A");
 		keyboardDirector.setEditText(12, 10, "a");
 		mouseDirector.openCellContextMenu(11, 10, 12, 10);
-		click(".z-menu-popup:visible .zsmenu-sort");
-		click(".z-menu-popup:visible .zsmenuitem-customSort");
+		click(".z-menupopup:visible .zsmenu-sort");
+		click(".z-menupopup:visible .zsmenuitem-customSort");
 		Assert.assertTrue(isVisible("$_customSortDialog"));
 		
 		jq("$_customSortDialog $caseSensitive input").getWebElement().click();

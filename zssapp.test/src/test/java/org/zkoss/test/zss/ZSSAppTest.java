@@ -20,6 +20,7 @@ import java.util.Iterator;
 
 import junit.framework.Assert;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.openqa.selenium.JavascriptExecutor;
@@ -35,6 +36,8 @@ import org.zkoss.test.TestingEnvironment;
 import org.zkoss.test.zss.Cell.CellType;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.testing.TearDown;
+import com.google.common.testing.TearDownAccepter;
 import com.google.guiceberry.junit4.GuiceBerryRule;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -136,12 +139,11 @@ public class ZSSAppTest {
 	protected Injector injector;
 	
 	@Inject
-	protected WebDriver webDriver;
+	protected WebDriver webDriver;	
 	
 	@Inject
 	protected JQueryFactory jqFactory;
 	
-	protected Navigation navigation;
 	protected JavascriptExecutor javascriptExecutor;
 	
 	@Inject
@@ -165,9 +167,6 @@ public class ZSSAppTest {
 	@Before
 	public void setUp() {
 		javascriptExecutor = (JavascriptExecutor) webDriver;
-		navigation = webDriver.navigate();
-		navigation.refresh();
-		
 		timeBlocker.waitResponse();
 	}
 	

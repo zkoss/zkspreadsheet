@@ -95,7 +95,7 @@ public class SS_034_Test extends ZSSAppTest {
 		JQuery target = jq(".zssheettab").first();
 		target.getWebElement().click();
 		rightClick(target);
-		click(".z-menu-popup:visible .zsmenuitem-protectSheet");
+		click(".z-menupopup:visible .zsmenuitem-protectSheet");
 		
 		spreadsheet.focus(11, 10);
 		keyboardDirector.setEditText(11, 10, "DEF");
@@ -109,14 +109,14 @@ public class SS_034_Test extends ZSSAppTest {
 		rightClick(jq(".zssheettab").first());
 		
 		String cssName = jq(".zsmenuitem-moveSheetLeft").attr("class");
-		Assert.assertTrue(cssName.indexOf("z-menu-item-disd") >= 0);
+		Assert.assertTrue(cssName.indexOf("z-menuitem-disd") >= 0);
 		
 		//move the second sheet left
 		JQuery sheet = jq(".zssheettab").eq(1);
 		String sheetName = sheet.text();
 		click(sheet);
 		rightClick(sheet);
-		click(".z-menu-popup:visible .zsmenuitem-moveSheetLeft");
+		click(".z-menupopup:visible .zsmenuitem-moveSheetLeft");
 		
 		JQuery firstSheet = jq(".zssheettab").first();
 		Assert.assertEquals(sheetName, firstSheet.text());
@@ -127,7 +127,7 @@ public class SS_034_Test extends ZSSAppTest {
 		JQuery sheet = jq(".zssheettab").first();
 		String sheetName = sheet.text();
 		rightClick(sheet);
-		click(".z-menu-popup:visible .zsmenuitem-moveSheetRight");
+		click(".z-menupopup:visible .zsmenuitem-moveSheetRight");
 		
 		Assert.assertEquals(sheetName, jq(".zssheettab").eq(1).text());
 	} 

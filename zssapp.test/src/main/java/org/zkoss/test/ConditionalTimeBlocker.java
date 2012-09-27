@@ -58,6 +58,10 @@ public class ConditionalTimeBlocker {
 				return ret != null && ret;
 			}
 		});
+		
+		if (browser.isSafari()) {//wait a sec, sometimes chrome finish au processing, but result doesn't come out, SS_045_Test
+			waitUntil(1);
+		}
 	}
 	
 	/**

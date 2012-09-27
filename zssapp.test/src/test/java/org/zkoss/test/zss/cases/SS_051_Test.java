@@ -17,6 +17,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 package org.zkoss.test.zss.cases;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
@@ -67,6 +68,11 @@ public class SS_051_Test {
 	
 	@Inject
 	protected ConditionalTimeBlocker timeBlocker;
+	
+	@Before
+	public void setUp() {
+		timeBlocker.waitResponse();
+	}
 	
 	/**
 	 * Refer to http://tracker.zkoss.org/browse/ZSS-84

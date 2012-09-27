@@ -140,11 +140,11 @@ public class SS_037_Test extends ZSSAppTest {
 		CellCacheAggeration copyFrom = builder.build();
 		
 		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenuitem-cut");
+		click(".z-menupopup:visible .zsmenuitem-cut");
 		
 		spreadsheet.focus(11, 10);
 		mouseDirector.openCellContextMenu(11, 10);
-		click(".z-menu-popup:visible .zsmenuitem-paste");
+		click(".z-menupopup:visible .zsmenuitem-paste");
 		
 		verifyPasteAll(PasteSource.CUT, copyFrom, builder.offset(11, 10).build());
 	}
@@ -159,11 +159,11 @@ public class SS_037_Test extends ZSSAppTest {
 		CellCacheAggeration copyFrom = builder.build();
 		
 		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenuitem-copy");
+		click(".z-menupopup:visible .zsmenuitem-copy");
 		
 		spreadsheet.focus(11, 10);
 		mouseDirector.openCellContextMenu(11, 10);
-		click(".z-menu-popup:visible .zsmenuitem-paste");
+		click(".z-menupopup:visible .zsmenuitem-paste");
 		
 		verifyPasteAll(PasteSource.COPY, copyFrom, builder.offset(11, 10).build());
 	}
@@ -178,11 +178,11 @@ public class SS_037_Test extends ZSSAppTest {
 		CellCacheAggeration copyFrom = builder.build();
 		
 		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenuitem-copy");
+		click(".z-menupopup:visible .zsmenuitem-copy");
 		
 		spreadsheet.focus(11, 10);
 		mouseDirector.openCellContextMenu(11, 10);
-		click(".z-menu-popup:visible .zsmenuitem-pasteSpecial");
+		click(".z-menupopup:visible .zsmenuitem-pasteSpecial");
 		
 		Assert.assertTrue(isVisible("$_pasteSpecialDialog"));
 		click("$_pasteSpecialDialog $okBtn");
@@ -199,8 +199,8 @@ public class SS_037_Test extends ZSSAppTest {
 		CellCacheAggeration src = builder.build();
 		
 		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenu-insert");
-		click(".z-menu-popup:visible .zsmenuitem-shiftCellRight");
+		click(".z-menupopup:visible .zsmenu-insert");
+		click(".z-menupopup:visible .zsmenuitem-shiftCellRight");
 		
 		verifyInsert(Insert.CELL_RIGHT, src, builder);
 	}
@@ -215,8 +215,8 @@ public class SS_037_Test extends ZSSAppTest {
 		CellCacheAggeration src = builder.build();
 		
 		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenu-insert");
-		click(".z-menu-popup:visible .zsmenuitem-shiftCellDown");
+		click(".z-menupopup:visible .zsmenu-insert");
+		click(".z-menupopup:visible .zsmenuitem-shiftCellDown");
 		
 		verifyInsert(Insert.CELL_DOWN, src, builder);
 	}
@@ -233,8 +233,8 @@ public class SS_037_Test extends ZSSAppTest {
 		CellCacheAggeration cache = builder.build();
 		
 		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenu-insert");
-		click(".z-menu-popup:visible .zsmenuitem-insertSheetRow");
+		click(".z-menupopup:visible .zsmenu-insert");
+		click(".z-menupopup:visible .zsmenuitem-insertSheetRow");
 		
 		verifyInsert(Insert.CELL_DOWN, cache, builder);
 	}
@@ -251,8 +251,8 @@ public class SS_037_Test extends ZSSAppTest {
 		CellCacheAggeration cache = builder.build();
 		
 		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenu-insert");
-		click(".z-menu-popup:visible .zsmenuitem-insertSheetColumn");
+		click(".z-menupopup:visible .zsmenu-insert");
+		click(".z-menupopup:visible .zsmenuitem-insertSheetColumn");
 		verifyInsert(Insert.CELL_RIGHT, cache, builder);
 	}
 	
@@ -266,8 +266,8 @@ public class SS_037_Test extends ZSSAppTest {
 		CellCacheAggeration src = builder.right().build();
 		
 		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenu-del");
-		click(".z-menu-popup:visible .zsmenuitem-shiftCellLeft");
+		click(".z-menupopup:visible .zsmenu-del");
+		click(".z-menupopup:visible .zsmenuitem-shiftCellLeft");
 		
 		verifyDelete(Delete.CELL_LEFT, src, builder, null);
 	}
@@ -282,8 +282,8 @@ public class SS_037_Test extends ZSSAppTest {
 		CellCacheAggeration src = builder.down().build();
 		
 		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenu-del");
-		click(".z-menu-popup:visible .zsmenuitem-shiftCellUp");
+		click(".z-menupopup:visible .zsmenu-del");
+		click(".z-menupopup:visible .zsmenuitem-shiftCellUp");
 		
 		verifyDelete(Delete.CELL_UP, src, builder, null);	
 	}
@@ -299,8 +299,8 @@ public class SS_037_Test extends ZSSAppTest {
 		CellCacheAggeration src = builder.down().expandRight(5).build();
 		
 		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenu-del");
-		click(".z-menu-popup:visible .zsmenuitem-deleteSheetRow");
+		click(".z-menupopup:visible .zsmenu-del");
+		click(".z-menupopup:visible .zsmenuitem-deleteSheetRow");
 		
 		verifyDelete(Delete.CELL_UP, src, builder, 5);	
 	}
@@ -316,8 +316,8 @@ public class SS_037_Test extends ZSSAppTest {
 		CellCacheAggeration src = builder.right().expandDown(5).build();
 		
 		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenu-del");
-		click(".z-menu-popup:visible .zsmenuitem-deleteSheetColumn");
+		click(".z-menupopup:visible .zsmenu-del");
+		click(".z-menupopup:visible .zsmenuitem-deleteSheetColumn");
 		
 		verifyDelete(Delete.CELL_LEFT, src, builder, 5);	
 	}
@@ -330,7 +330,7 @@ public class SS_037_Test extends ZSSAppTest {
 		int rCol = 6;
 		CellCacheAggeration src = getCellCacheAggerationBuilder(tRow, lCol, bRow, rCol).build();
 		mouseDirector.openCellContextMenu(tRow, lCol, bRow, rCol);
-		click(".z-menu-popup:visible .zsmenuitem-clearContent");
+		click(".z-menupopup:visible .zsmenuitem-clearContent");
 		
 		verifyClearContent(src);
 	}
@@ -345,8 +345,8 @@ public class SS_037_Test extends ZSSAppTest {
 		mouseDirector.openCellContextMenu(tRow, lCol);
 		
 		//step1: apply filter
-		click(".z-menu-popup:visible .zsmenu-filter");
-		click(".z-menu-popup:visible .zsmenuitem-filter");
+		click(".z-menupopup:visible .zsmenu-filter");
+		click(".z-menupopup:visible .zsmenuitem-filter");
 		
 		//step2: apply autofilter with criteria, to hide "1"
 		spreadsheet.focus(tRow, lCol);
@@ -363,8 +363,8 @@ public class SS_037_Test extends ZSSAppTest {
 		
 		//step5: reapply autofilter
 		mouseDirector.openCellContextMenu(tRow, lCol);
-		click(".z-menu-popup:visible .zsmenu-filter");
-		click(".z-menu-popup:visible .zsmenuitem-reapplyFilter");
+		click(".z-menupopup:visible .zsmenu-filter");
+		click(".z-menupopup:visible .zsmenuitem-reapplyFilter");
 		
 		//step6: hide 2 rows
 		Assert.assertFalse(spreadsheet.getRowHeader(14).jq$n().isVisible());
@@ -375,8 +375,8 @@ public class SS_037_Test extends ZSSAppTest {
 		//B19-I22
 		mouseDirector.openCellContextMenu(18, 1, 21, 8);
 		
-		click(".z-menu-popup:visible .zsmenu-sort");
-		click(".z-menu-popup:visible .zsmenuitem-sortAscending");
+		click(".z-menupopup:visible .zsmenu-sort");
+		click(".z-menupopup:visible .zsmenuitem-sortAscending");
 		
 		Assert.assertTrue(getCell(18, 1).getText().startsWith("A"));
 		Assert.assertTrue(getCell(19, 1).getText().startsWith("C"));
@@ -388,8 +388,8 @@ public class SS_037_Test extends ZSSAppTest {
 	public void cell_sort_descending() {
 		mouseDirector.openCellContextMenu(18, 1, 21, 8);
 		
-		click(".z-menu-popup:visible .zsmenu-sort");
-		click(".z-menu-popup:visible .zsmenuitem-sortDescending");
+		click(".z-menupopup:visible .zsmenu-sort");
+		click(".z-menupopup:visible .zsmenuitem-sortDescending");
 		
 		Assert.assertTrue(getCell(18, 1).getText().startsWith("T"));
 		Assert.assertTrue(getCell(19, 1).getText().startsWith("O"));
@@ -401,14 +401,14 @@ public class SS_037_Test extends ZSSAppTest {
 	public void cell_custom_sort() {
 		mouseDirector.openCellContextMenu(18, 1, 21, 8);
 		
-		click(".z-menu-popup:visible .zsmenu-sort");
-		click(".z-menu-popup:visible .zsmenuitem-customSort");
+		click(".z-menupopup:visible .zsmenu-sort");
+		click(".z-menupopup:visible .zsmenuitem-customSort");
 		
 		Assert.assertTrue("shall open customSort Dialog", isVisible("$_customSortDialog"));
 		
-		jq("$_customSortDialog $sortLevel @combobox:eq(0)').children('i.z-combobox-rounded-btn").getWebElement().click();
+		click(jq("$_customSortDialog $sortLevel @combobox:eq(0)').children('i.z-combobox-rounded-btn"));
 		//sort by column F
-		jq(".z-combobox-rounded-pp:visible tbody").children().eq(5).getWebElement().click();
+		click(jq(".z-combobox-rounded-pp:visible tbody").children().eq(5));
 		
 		click("$_customSortDialog $okBtn");
 		
@@ -422,7 +422,7 @@ public class SS_037_Test extends ZSSAppTest {
 	public void cell_hyperlink() {
 		mouseDirector.openCellContextMenu(11, 10);
 		
-		click(".z-menu-popup:visible .zsmenuitem-hyperlink");
+		click(".z-menupopup:visible .zsmenuitem-hyperlink");
 		Assert.assertTrue(isVisible("$_insertHyperlinkDialog"));
 		
         WebElement inp = jq("$addrCombobox input.z-combobox-inp").getWebElement();
