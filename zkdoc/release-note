@@ -38,6 +38,7 @@ ZK Spreadsheet 2.5.0
 	ZSS-168 Color button shall close when close when mouse click on cell or other button
 	ZSS-169 Copy/Paste sometimes not work correctly
 	ZSS-170 Insert row at certain row not work correctly
+	ZSS-171 Input "=" on cell shall not append cell reference
 	
 	------------
 ZK Spreadsheet 2.3.0
