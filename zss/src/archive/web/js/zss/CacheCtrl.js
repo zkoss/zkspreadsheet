@@ -532,7 +532,7 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 				c = colIdx,
 				cb = colIdx + size,//column index boundary 
 				ccs = [],//clone cells
-				cfn = zss.ActiveRange.cloneCell;
+				cfn = zss.ActiveRange.clone;
 			//clone cells for insert later (after shift)
 			for (; c < cb; c++) {
 				ccs.push(cfn(cs[c]));
@@ -754,10 +754,20 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 	},
 	clone: function (tRow, lCol, bRow, rCol, src) {
 		var rows = this.rows,
-			cpRowsFn = zss.ActiveRange.copyRow;
+			rhs = this.rowHeaders,
+			chs = this.columnHeaders,
+			srcRowHeaders = src.rowHeaders,
+			srcColHeaders = src.columnHeaders,
+			cpRowsFn = zss.ActiveRange.copyRow,
+			cfn = zss.ActiveRange.clone;
 		for (var r = tRow; r <= bRow; r++) {
 			var sRow = src.getRow(r);
-			rows[r] = cpRowsFn(lCol, rCol, sRow); 
+			rows[r] = cpRowsFn(lCol, rCol, sRow);
+			rhs[r] = cfn(srcRowHeaders[r]);//clone row headers
+		}
+		
+		for (var c = lCol; c <= rCol; c++) {
+			chs[c] = cfn(srcColHeaders[c]);
 		}
 	}
 }, {//static
@@ -778,15 +788,15 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 	copyCells: function (lCol, rCol, srcRow, dstRow) {
 		var srcCells = srcRow.cells,
 			dstCells = dstRow.cells,
-			ccFn = zss.ActiveRange.cloneCell;
+			fn = zss.ActiveRange.clone;
 		for (var c = lCol; c <= rCol; c++) {
-			dstCells[c] = ccFn(srcCells[c]);
+			dstCells[c] = fn(srcCells[c]);
 		}
 	},
-	cloneCell: function (cell) {
+	clone: function (src) {
 		var c = {};
-		for (var p in cell) {
-			c[p] = cell[p];
+		for (var p in src) {
+			c[p] = src[p];
 		}
 		return c;
 	}

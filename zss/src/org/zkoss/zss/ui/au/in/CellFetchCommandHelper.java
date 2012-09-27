@@ -565,7 +565,7 @@ public class CellFetchCommandHelper{
 		//process frozen row data
 		int fzr = _spreadsheet.getRowfreeze();
 		if (fzr > -1) {
-			mainBlock.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hiderowhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
+			mainBlock.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hiderowhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 
 					cs, 0, rangeRight, fzr));
 		}
 		return new LoadResult(cs, rangeTop, rangeRight, rangeBottom, json);
@@ -605,7 +605,7 @@ public class CellFetchCommandHelper{
 		// process frozen row data
 		int fzr = _spreadsheet.getRowfreeze();
 		if (fzr > -1) {
-			mainBlock.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hiderowhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.ROW, SpreadsheetCtrl.CellAttribute.ALL, 
+			mainBlock.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hiderowhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 
 					rangeLeft, 0, cs, fzr));
 		}
 		return new LoadResult(rangeLeft, rangeTop, cs, rangeBottom, json);
@@ -641,7 +641,7 @@ public class CellFetchCommandHelper{
 		// process frozen left
 		int fzc = _spreadsheet.getColumnfreeze();
 		if (fzc > -1) {
-			mainBlock.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, SpreadsheetCtrl.CellAttribute.ALL,
+			mainBlock.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL,
 					0, rs, fzc, rangeBottom));
 		}
 
@@ -679,7 +679,7 @@ public class CellFetchCommandHelper{
 		// process frozen left
 		int frc = _spreadsheet.getColumnfreeze();
 		if (frc > -1) {
-			mainBlock.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.COLUMN, SpreadsheetCtrl.CellAttribute.ALL,
+			mainBlock.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL,
 					0, rangeTop, frc, rs));
 		}
 		return new LoadResult(rangeLeft, rangeTop, rangeRight, rs, json);

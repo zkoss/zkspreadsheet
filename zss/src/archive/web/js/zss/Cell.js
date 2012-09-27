@@ -146,7 +146,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 			colHeader = src.columnHeaders[col],
 			rowHeader = src.rowHeaders[row];
 		this.text = data.text || '';
-		this.ref = colHeader.t + rowHeader.t;
+		if (colHeader && rowHeader) {
+			this.ref = colHeader.t + rowHeader.t;
+		}
 		this.edit = data.editText ? data.editText : '';
 		this.hastxt = !!this.text;
 		this.zsw = src.getColumnWidthId(col);
