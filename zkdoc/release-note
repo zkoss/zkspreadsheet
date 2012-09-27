@@ -39,6 +39,7 @@ ZK Spreadsheet 2.5.0
 	ZSS-169 Copy/Paste sometimes not work correctly
 	ZSS-170 Insert row at certain row not work correctly
 	ZSS-171 Input "=" on cell shall not append cell reference
+	ZSS-172 Edit cell formula and use mouse to select cell, press enter cause wrong cell selection
 	
 	------------
 ZK Spreadsheet 2.3.0
