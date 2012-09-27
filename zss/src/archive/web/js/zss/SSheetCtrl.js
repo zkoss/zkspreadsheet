@@ -2168,7 +2168,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}
 		
 		var selRange = new zss.Range(left, top, right, bottom);
-		this.deferFireCellSelection(left, top, right, bottom);
+		this.state == zss.SSheetCtrl.START_EDIT ? 
+				this.fire('onCellSelection', {left: left, top: top, right: right, bottom: bottom}) : this.deferFireCellSelection(left, top, right, bottom);
 		this.selArea.relocate(selRange);
 		
 		if (show) {
