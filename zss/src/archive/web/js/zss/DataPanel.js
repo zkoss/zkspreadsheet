@@ -357,15 +357,11 @@ zss.DataPanel = zk.$extends(zk.Object, {
 
 			var data = this._wgt._cacheCtrl.getSelectedSheet(),
 				editor = inlineEditing ? this.sheet.inlineEditor : this.sheet.formulabarEditor,
-				edit = null;
-			if (editor) {
-				editor.disable(true);
-				var row = editor.row,
-					col = editor.col,
-					value = editor.getValue(),
-					cell = sheet.getCell(row, col),
+				value = editor.getValue(), 
+				row = editor.row, 
+				col = editor.col, 
+				cell = sheet.getCell(row, col),
 				edit = cell ? cell.edit : null;
-			}
 
 			if (edit != value) { //has to send back to server
 				var token = "";
@@ -374,21 +370,21 @@ zss.DataPanel = zk.$extends(zk.Object, {
 						if (sheet.invalid) return;
 						sheet.state = zss.SSheetCtrl.FOCUSED;
 						if (!sheet._skipMove) //@see Spreadsheet.js#doUpdate()
-							sheet.dp.moveDown();
+							sheet.dp.moveDown(null, row, col);
 					});
 				} else if (type == "moveright") {//move right after aysnchronized call back
 					token = zkS.addCallback(function(){
 						if (sheet.invalid) return;
 						sheet.state = zss.SSheetCtrl.FOCUSED;
 						if (!sheet._skipMove) //@see Spreadsheet.js#doUpdate()
-							sheet.dp.moveRight();
+							sheet.dp.moveRight(null, row, col);
 					});
 				} else if (type == "moveleft") {//move right after aysnchronized call back
 					token = zkS.addCallback (function(){
 						if (sheet.invalid) return;
 						sheet.state = zss.SSheetCtrl.FOCUSED;
 						if (!sheet._skipMove) //@see Spreadsheet.js#doUpdate()
-							sheet.dp.moveLeft();
+							sheet.dp.moveLeft(null, row, col);
 					});
 				} else if (type == "refocus") {//refocuse after aysnchronized call back
 					token = zkS.addCallback(function(){
@@ -710,15 +706,15 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	/**
 	 * Move down
 	 */
-	moveDown: function(evt) {
+	moveDown: function(evt, r, c) {
 		var sheet = this.sheet;
 		if (zkS.isEvtKey(evt, "s")) {
 			sheet.shiftSelection("down");
 			return;
 		}
 		var pos = sheet.getLastFocus(),
-			row = pos.row,
-			col = pos.column;
+			row = r ? r : pos.row,
+			col = c ? c : pos.column;
 		if (row < 0 || col < 0) return;
 		
 		var cell = sheet.getCell(row, col);
@@ -742,15 +738,15 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	/**
 	 * Move to the left column
 	 */
-	moveLeft: function(evt) {
+	moveLeft: function(evt, r, c) {
 		var sheet = this.sheet;
 		if (zkS.isEvtKey(evt,"s")) {
 			sheet.shiftSelection("left");
 			return;
 		}
 		var pos = sheet.getLastFocus(),
-			row = pos.row,
-			col = pos.column;
+			row = r ? r : pos.row,
+			col = c ? c : pos.column;
 		if (row < 0 || col < 0) return;
 		if (col > 0) {
 			var prevcol = col - 1,
@@ -766,15 +762,15 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	/**
 	 * Move to the right column 
 	 */
-	moveRight: function(evt) {
+	moveRight: function(evt, r, c) {
 		var sheet = this.sheet;
 		if (zkS.isEvtKey(evt, "s")) {
 			sheet.shiftSelection("right");
 			return;
 		}
 		var pos = sheet.getLastFocus(),
-			row = pos.row,
-			col = pos.column;
+			row = r ? r : pos.row,
+			col = c ? c : pos.column;
 		if(row < 0 || col < 0) return;
 		
 		var cell = sheet.getCell(row, col);
