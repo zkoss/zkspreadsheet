@@ -1084,9 +1084,10 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 
 		var fns = this._onResponseCallback,
 			fn = null;
-		while (fn = fns.pop()) {
+		while (fn = fns.shift()) {
 			fn();
 		}
+		this._sendAu = false;
 	},
 	domClass_: function (no) {
 		return 'zssheet';
@@ -1159,6 +1160,15 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		if (dragHandler)
 			dragHandler.doMousemove(evt);
 	},
+	sendAU_: function (evt, timeout, opts) {
+		if (evt.name == 'onCtrlKey') {
+			//client side need to know whether server do paste action at server side or not
+			//if server side doesn't perform paste action, client side will do paste at doKeyUp_()
+			timeout = 0;
+		}
+		this._sendAu = true;//a flag that indicat au processing
+		this.$supers('sendAU_', arguments);
+	},
 	doKeyDown_: function (evt) {
 		var sheet = this.sheetCtrl;
 		if (sheet) {
@@ -1205,7 +1215,11 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	//feature#161: Support copy&paste from clipboard to a cell
 	doKeyUp_: function (evt) {
 		this.$supers('doKeyUp_', arguments);
-		var sheet = this.sheetCtrl;
+		var sl = this,
+			sheet = this.sheetCtrl,
+			clearFn = function () {
+				sl._doPasteFromServer = false;
+			};
 		if (sheet && sheet.state == zss.SSheetCtrl.FOCUSED) {
 			sheet._doKeyup(evt);
 			//ZSS-169
@@ -1216,7 +1230,11 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			}
 		}
 		this._ctrlPasteDown = false;
-		this._doPasteFromServer = false;
+		if (this._sendAu) {//au processing, reset _doPasteFromServer on after response
+			this._onResponseCallback.push(clearFn);
+		} else {
+			clearFn();
+		}
 	},
 	linkTo: function (href, type, evt) {
 		//1: LINK_URL

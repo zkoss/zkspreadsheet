@@ -1643,8 +1643,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if (evt.ctrlKey && evt.keyCode == 86) {
 			var wgt = this._wgt,
 				sl = this,
-				o = zAu.processing(),
-				isAu = o && o == zAu.shallIgnoreESC(),
 				//ZSS-169
 				fn = function () {
 					if (!wgt._doPasteFromServer) {//do paste from client when server doesn't do it
@@ -1658,7 +1656,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 						});
 					}	
 				};
-			if (isAu) {
+			if (wgt._sendAu) {//flag that indicate ZK send Au request. (cannot use zAu.processing(), it may be null since ZK use timeout to send request) 
 				wgt._onResponseCallback.push(fn); 
 			} else {
 				fn();
