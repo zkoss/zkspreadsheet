@@ -1,0 +1,12 @@
+D.ON=true
+javadoc=~/prj/javadoc
+combinejavadoc=true
+#htmldoc=~/prj/zkweb/ptroot/WebContent/doc
+unzip=true
+debug=true
+optimize=true
+debugpv=false
+optimizepv=true
+#jboss.deploy=default/deploy
+#start.service=Apache Tomcat 6
+version=3.8.1
