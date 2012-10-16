@@ -309,7 +309,8 @@ zss.DataPanel = zk.$extends(zk.Object, {
 					pos = sheet.getLastFocus(),
 					value = initval || cell.edit;
 				editor.edit(cell.comp, pos.row, pos.column, value ? value : '', noFocus);
-				sheet.state = zss.SSheetCtrl.EDITING;
+				//ZSS 171
+//				sheet.state = zss.SSheetCtrl.EDITING;
 			}
 		}
 	},

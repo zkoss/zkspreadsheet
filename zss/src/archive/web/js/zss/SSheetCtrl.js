@@ -664,6 +664,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				}
 			}
 			dp._startEditing(value, server, editType);
+			this.state = zss.SSheetCtrl.EDITING;//ZSS-171
 			break;
 		case "stopedit":
 			this.dp._stopEditing();
