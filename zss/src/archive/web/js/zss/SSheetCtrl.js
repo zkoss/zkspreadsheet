@@ -1877,8 +1877,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 
 			//update datapanel padding
 			dp._fixSize(this.activeBlock);
-			
-			if(loadvis) this.activeBlock.loadForVisible();
 		
 			var self = this;
 			setTimeout(function(){
@@ -1895,8 +1893,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if (fireevent) {
 			this._wgt.fire('onZSSHeaderModif', 
 					{sheetId: this.serverSheetId, type: "top", event: "size", index: col, newsize: width, id: zsw, hidden: hidden},
-					{toServer: true}, 25);
+					{toServer: true, sendAhead: true}, 25);//ZSS-180
 		}
+		//ZSS-180
+		if(col < this.maxCols && loadvis) this.activeBlock.loadForVisible();
 	},
 	_syncColFocusAndSelection: function(left, right) {
 		var focPos = this.getLastFocus(),
@@ -2034,8 +2034,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 	
 			dp._fixSize(this.activeBlock);
-			
-			if (loadvis) this.activeBlock.loadForVisible();
 		
 			var local = this;
 			setTimeout(function () {
@@ -2051,9 +2049,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if (fireevent) {
 			this._wgt.fire('onZSSHeaderModif', 
 					{sheetId: this.serverSheetId, type: "left", event: "size", index: row, newsize: height, id: zsh, hidden: hidden},
-					{toServer: true}, 25);
+					{toServer: true, sendAhead: true}, 25);//ZSS-180
 		}
-
+		//ZSS-180
+		if (row < this.maxRows && loadvis) this.activeBlock.loadForVisible();
 	},
 	_updateText: function (result) {
 		var cell = this.activeBlock.getCell(result.r, result.c);
