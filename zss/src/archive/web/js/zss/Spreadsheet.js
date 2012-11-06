@@ -690,6 +690,11 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		//Note. this flag will clear by doKeyUp()
 		doPasteFromServer: null
 	},
+	clearCachedSize_: function () {
+		this.getTopPanel().clearCachedSize_();
+		this.cave.clearCachedSize_();
+		this.$supers(zss.Spreadsheet, 'clearCachedSize_', arguments);
+	},
 	getTopPanel: function () {
 		var tp = this._topPanel;
 		if (!tp) {

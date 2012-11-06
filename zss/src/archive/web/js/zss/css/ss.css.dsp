@@ -1409,9 +1409,6 @@
 }
 
 .zstbtabpanel {
+	background: #EEEEEE;
 	padding: 0;
-}
-
-.zstoolbar {
-	height: 23px;
 }

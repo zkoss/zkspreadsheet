@@ -16,6 +16,46 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 */
 (function () {
 
+zss.ResizeableToolbar = zk.$extends(zul.wgt.Toolbar, {
+	$init: function (wgt) {
+		this.$supers(zss.ResizeableToolbar, '$init', []);
+		this._wgt = wgt;
+	},
+	bind_: function () {
+		this.$supers(zss.ResizeableToolbar, 'bind_', arguments);
+		zWatch.listen({onSize: this});
+	},
+	unbind_: function () {
+		zWatch.unlisten({onSize: this});
+		this.$supers(zss.ResizeableToolbar, 'unbind_', arguments);
+	},
+	//ZSS-177
+	onSize: function () {
+		var prevHgh = this._hgh,
+			curHgh = jq(this.$n('cave')).height();
+		if (prevHgh && prevHgh != curHgh) {
+			var panel = this.parent,
+				tb = panel.getTabbox(),
+				zkn = jq(this.$n()).zk,
+				cv = this._wgt.cave,
+				h = curHgh + zkn.sumStyles('tb', jq.paddings) + zkn.sumStyles('tb', jq.borders);
+			panel.setHeight(h + 'px');
+			
+			tb.clearCachedSize_();//clear tabbox vflex height cache
+			tb.parent.clearCachedSize_();//clear north vflex height cache
+			
+			//1. resize top panel (toolbar)
+			zWatch.fire('onFitSize', this._wgt, {reverse:true})
+			
+			//2. resize cave (sheet content)
+			this._wgt.clearCachedSize_();//clear sheet cave size
+			zFlex.onSize.apply(cv);
+			cv.resize();
+		}
+		this._hgh = curHgh;
+	}
+});
+
 zss.ToolbarTabpanel = zk.$extends(zul.tab.Tabpanel, {
 	$init: function (actions, wgt) {
 		this.$supers(zss.ToolbarTabpanel, '$init', []);
@@ -25,7 +65,7 @@ zss.ToolbarTabpanel = zk.$extends(zul.tab.Tabpanel, {
 	createButtonsIfNotExist: function () {
 		var tb = this.toolbar;
 		if (!tb) {
-			tb = this.toolbar = new zul.wgt.Toolbar({sclass: 'zstoolbar'});
+			tb = this.toolbar = new zss.ResizeableToolbar(this._wgt);
 			var btns = new zss.ButtonBuilder(this._wgt).addAll(this._actions).build();
 			for (var i = 0, len = btns.length; i < len; i++) {
 				var b = btns[i];
@@ -54,13 +94,14 @@ zss.ToolbarTabpanel = zk.$extends(zul.tab.Tabpanel, {
 	getSclass: function () {
 		return 'zstbtabpanel';
 	}
-})
+});
 
 zss.ToolbarTabbox = zk.$extends(zul.tab.Tabbox, {
 	$o: zk.$void,
 	$init: function (wgt) {
 		this.$supers(zss.ToolbarTabbox, '$init', []);
 		this._wgt = wgt;
+		this.setVflex('min');
 		
 		var labels = wgt._labelsCtrl,
 			tbs = new zul.tab.Tabs(),
@@ -97,7 +138,11 @@ zss.ToolbarTabbox = zk.$extends(zul.tab.Tabbox, {
 		
 		this.setSelectedTab(homeTab);
 		
-		var tb = new zul.wgt.Toolbar();
+		var tb = new zul.wgt.Toolbar({
+				ignoreFlexSize_: function () {
+					return true;
+				}
+			});
 		tb.appendChild(new zss.Toolbarbutton({
 			$action: 'closeBook',
 			tooltiptext: wgt._labelsCtrl.getCloseBook(),
@@ -120,9 +165,9 @@ zss.Toolbar = zk.$extends(zul.layout.North, {
 	$o: zk.$void,
 	$init: function (wgt) {
 		this.$supers(zss.Toolbar, '$init', []);
-		this.setSize('53px');
 		this.setBorder(0);
 		this._wgt = wgt;
+		this.setVflex('min');
 		
 		this.appendChild(this.toolbarTabbox = new zss.ToolbarTabbox(wgt));
 	},
@@ -133,6 +178,16 @@ zss.Toolbar = zk.$extends(zul.layout.North, {
 		for (; panel; panel = panel.nextSibling) {
 			panel.setDisabled(actions);
 		}
+	},
+	//	ZSS-177
+	setFlexSize_: function(sz, isFlexMin) {
+		var sz = this.$supers(zss.Toolbar, 'setFlexSize_', arguments),
+			sh = sz.height,
+			$cv = jq(this.$n('cave'));
+		if (sh && $cv.height() != sh) {
+			$cv.height(sh + 'px');
+		}
+		return sz;
 	}
 });
 })();
