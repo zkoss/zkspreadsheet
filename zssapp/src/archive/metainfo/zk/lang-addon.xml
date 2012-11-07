@@ -6,7 +6,7 @@
 
 	<version>
 		<version-class>org.zkoss.zss.app.Version</version-class>
-		<version-uid>2.5.0</version-uid>
+		<version-uid>2.6.0</version-uid>
 		<zk-version>5.0.7</zk-version><!-- or later -->
 	</version>
 	
