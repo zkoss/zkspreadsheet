@@ -1,3 +1,11 @@
+	------------
+ZK Spreadsheet 2.6.0
+*Features:
+
+*Bug
+	ZSS-171 Input "=" on cell shall not append cell reference
+	ZSS-177 Resizing the browser wraps the toolbar but the overflow goes under the formula bar
+
 ZK Spreadsheet 2.5.0
 *Features:   
 	ZSS-124 Support import pivot table API
