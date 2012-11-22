@@ -346,7 +346,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				}
 			}
 		}
-		return _defToolbarActiobDisabled; 
+		return new HashSet<Action>(_defToolbarActiobDisabled); 
 	}
 	
 	/**
