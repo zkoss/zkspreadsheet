@@ -5,6 +5,8 @@ ZK Spreadsheet 2.6.0
 *Bug
 	ZSS-171 Input "=" on cell shall not append cell reference
 	ZSS-177 Resizing the browser wraps the toolbar but the overflow goes under the formula bar
+	ZSS-179 spreadsheet exception :XmlValueDisconnectedException
+	ZSS-183 Cannot enable save button when using collaboration Edit
 
 ZK Spreadsheet 2.5.0
 *Features:   
