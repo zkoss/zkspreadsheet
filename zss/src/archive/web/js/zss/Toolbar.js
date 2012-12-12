@@ -33,7 +33,7 @@ zss.ResizeableToolbar = zk.$extends(zul.wgt.Toolbar, {
 	onSize: function () {
 		var prevHgh = this._hgh,
 			curHgh = jq(this.$n('cave')).height();
-		if (prevHgh && prevHgh != curHgh) {
+		if (!prevHgh || prevHgh != curHgh) {
 			var panel = this.parent,
 				tb = panel.getTabbox(),
 				zkn = jq(this.$n()).zk,

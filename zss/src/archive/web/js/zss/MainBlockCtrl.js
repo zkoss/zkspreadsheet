@@ -26,6 +26,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  */
 zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 	loadstate: IDLE,
+	_loadVisibleOnResponse: false,
 	replaceWidget: function (newwgt) {
 		this.$supers(zss.MainBlockCtrl, 'replaceWidget', [newwgt]); //create cells
 		
@@ -677,6 +678,13 @@ zss.MainBlockCtrl = zk.$extends(zss.CellBlockCtrl, {
 		var local = this,
 			sheet = this.sheet;
 		if (this.loadstate != zss.MainBlockCtrl.IDLE) { //waiting previous loading.
+			if (!this._loadVisibleOnResponse) {
+				this._loadVisibleOnResponse = true;
+				sheet._wgt._onResponseCallback.push(function () {
+					local.loadForVisible.apply(local);
+					local._loadVisibleOnResponse = false;
+				});
+			}
 			return true;
 		}
 		if (!vrange)
