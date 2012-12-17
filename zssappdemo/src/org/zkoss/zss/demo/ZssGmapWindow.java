@@ -169,15 +169,12 @@ public class ZssGmapWindow extends GenericForwardComposer {
 				final Integer rowIdx = Integer.valueOf(row);
 				final Integer colIdx = Integer.valueOf(col);
 				final String prevValue = prevCellValue;
-				try {
-					Messagebox.show("Cell value need to be number format", "Error", 
-							Messagebox.OK, Messagebox.ERROR, new EventListener() {
-								public void onEvent(Event event) throws Exception {
-									Ranges.range(sheet, rowIdx, colIdx).setEditText(prevValue);
-								}
-							});
-				} catch (InterruptedException e) {
-				}
+				Messagebox.show("Cell value need to be number format", "Error", 
+						Messagebox.OK, Messagebox.ERROR, new EventListener() {
+							public void onEvent(Event event) throws Exception {
+								Ranges.range(sheet, rowIdx, colIdx).setEditText(prevValue);
+							}
+						});
 				return;
 			}
 		} else {
@@ -208,6 +205,10 @@ public class ZssGmapWindow extends GenericForwardComposer {
 
 		mymap.setLat(lat);
 		mymap.setLng(lng);
+		for (Gmarker gmarker : gmarkerArray) {
+			if (gmarker != null && gmarker.isOpen())
+				gmarker.setOpen(false);
+		}
 		gmarkerArray[row].setOpen(true);
 	}
 	
