@@ -7,35 +7,10 @@
 		final String time = "" + new java.util.Date().getTime();
 		final String gaURL = "http://www.zkoss.org/resource/js/page/gaz.js?" + time;
 
-		// To add more keys: http://www.google.com/apis/maps/signup.html
-
-		String gkey = "ABQIAAAAJOQKP6_Fg9PlONKFXfrA8BRCK5tQxQb6Q0MG_4w8_kU_Mikk9hQv0QnBfkRnS7ZQAp0oroApl-aemw";
-		if (sn.indexOf("www.potix.com") >= 0) { // http://www.potix.com/
-			gkey = "ABQIAAAAmGxmYR57XDAbAumS9tV5fxRYCo_4ZGj_-54kHesWSk0nMkbs4xTpq0zo9O75_ZqvsSLGY2YkC7jjNg";
-		} else if (sn.indexOf("www.zkoss.org") >= 0) { // http://www.zkoss.org/
-			gkey = "ABQIAAAAmGxmYR57XDAbAumS9tV5fxQXyylOlR69a1vFTcUcpV6DXdesOBSMEHfkewcSzwEwBT7UzVx8ep8vjA";
-		} else if (sn.indexOf("zkoss.org") >= 0) { // http://www.zkoss.org/
-			gkey = "ABQIAAAAakIm31AXAvNGFHV8i1Tx8RSF4KLGEmvBsS1z1zAsQZvbQceuNRQBsm65qGaXpTWjZsc2bl-hm2Vyfw";
-		} else if (sn.indexOf("zktest") >= 0) { //zktest		
-			gkey="ABQIAAAAWaNkzbzygbuWnmqS4YCEZhTOLZK1h7IfBeBWqZtjq6JJy913gBRHY1uafo5XzZVSyXXksjv_jHoUsA";
-		} else if (sn.indexOf("zktest2") >= 0) { //zktest2	
-			gkey="ABQIAAAAWaNkzbzygbuWnmqS4YCEZhTWO6y1eecluAZvbpmC7meqCt-saxSETUOirx46xfUyu-Z-mqLCi4vo9A";
-		} else if (sn.indexOf("localhost") >= 0) { // localhost
-			if (sp == 80) // http://localhost/
-				gkey = "ABQIAAAAmGxmYR57XDAbAumS9tV5fxT2yXp_ZAY8_ufC3CFXhHIE1NvwkxRUITTZ-rzsyEVih16Hn3ApyUpSkA";
-			else if (sp == 8080) // http://localhost:8080
-				gkey = "ABQIAAAAmGxmYR57XDAbAumS9tV5fxTwM0brOpm-All5BF6PoaKBxRWWERSynObNOWSyMNmLGAMZAO1WkDUubA";
-			else if (sp == 7799)
-				gkey = "ABQIAAAAmGxmYR57XDAbAumS9tV5fxTT6-Op-9nAQgn7qnDG0QjE8aldaBRU1BQK2ADNWCt1BR2yg4ghOM6YIA";
-		} else if (sn.indexOf("10.1.3.109") >= 0) { //testing machine
-			gkey = "ABQIAAAAmGxmYR57XDAbAumS9tV5fxRH_TqzcXpN9L4M_uyKWmd4zG1XhRQmwU2NxJsQBHJoz5uEVgu7ohapUQ";
-		}
-
 		String buildVersion = "?v=" + org.zkoss.zk.ui.http.WebManager.getWebManager((javax.servlet.ServletContext)Sessions.getCurrent().getWebApp().getNativeContext()).getWebApp().getBuild();
 		String cssHref = "/css/index.css.dsp" + buildVersion;
 ]]></zscript>
 <?link rel="shortcut icon" type="image/x-icon" href="http://www.zkoss.org/img/favicon.ico" ?>
-<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=true&amp;key=${gkey}" type="text/javascript"></script>
 <script src='zssactions.js?${time}' type="text/javascript"></script>
 <style src="${cssHref}"></style>
 
@@ -88,7 +63,7 @@
 		<chart id="myChart" width="255px" type="pie" threeD="true" fgAlpha="128" height="270px"/>
 	</east>
 	<south size="60%">
-		<gmaps id="mymap" width="100%" height="100%" showLargeCtrl="true" style="border:1px solid black;margin-top:5px"/>
+		<gmaps id="mymap" version="3.5" width="100%" height="100%" showLargeCtrl="true" style="border:1px solid black;margin-top:5px"/>
 	</south>
 	</borderlayout>
 </window>

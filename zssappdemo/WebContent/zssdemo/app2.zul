@@ -33,7 +33,7 @@
 		<chart id="myChart" width="255px" type="pie" threeD="true" fgAlpha="128" height="270px"/>
 	</east>
 	<south size="60%">
-		<gmaps id="mymap" width="100%" height="100%" showLargeCtrl="true" style="border:1px solid black;margin-top:5px"/>
+		<gmaps id="mymap" version="3.5" width="100%" height="100%" showLargeCtrl="true" style="border:1px solid black;margin-top:5px"/>
 	</south>
 </borderlayout>
 </window>
