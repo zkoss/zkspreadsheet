@@ -1561,19 +1561,19 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var info = this.editingFormulaInfo;
 			if((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break;//editing
 			this.dp.moveHome(evt);
-			evt.stop();
+			//evt.stop(); //ZSS-181
 			break;
 		case 37: //Left
 			var info = this.editingFormulaInfo;
 			if((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break;//editing
 			this.dp.moveLeft(evt);
-			evt.stop();
+			//evt.stop(); //ZSS-181
 			break;
 		case 38: //Up
 			var info = this.editingFormulaInfo;
 			if((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break;//editing
 			this.dp.moveUp(evt);
-			evt.stop();
+			//evt.stop(); //ZSS-181
 			break;
 		case 9://tab;
 			if (this.state == zss.SSheetCtrl.EDITING){
@@ -1595,13 +1595,13 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var info = this.editingFormulaInfo;
 			if ((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break;//editing
 			this.dp.moveRight(evt);
-			evt.stop();
+			//evt.stop(); //ZSS-181
 			break;
 		case 40: //Down
 			var info = this.editingFormulaInfo;
 			if ((!info || (info && !info.moveCell)) && this.state != zss.SSheetCtrl.FOCUSED) break;//editing
 			this.dp.moveDown(evt);
-			evt.stop();
+			//evt.stop(); //ZSS-181
 			break;
 		case 113: //F2
 			if(this.state == zss.SSheetCtrl.FOCUSED)
