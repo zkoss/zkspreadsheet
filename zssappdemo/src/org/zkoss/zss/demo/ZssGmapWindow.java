@@ -18,9 +18,13 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.demo;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
+
 import org.zkoss.gmaps.Gmaps;
 import org.zkoss.gmaps.Gmarker;
 import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.util.Locales;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
@@ -53,6 +57,7 @@ public class ZssGmapWindow extends GenericForwardComposer {
 	final int numOfRows = 42;
 	int row, col;
 	String prevCellValue;
+	NumberFormat format;
 	
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -90,26 +95,23 @@ public class ZssGmapWindow extends GenericForwardComposer {
 				});
 //		((SheetImpl) sheet).setSelectionRect(new Rect(0,1,0,1));
 //		((SheetImpl) sheet).setFocusRect(new Rect(0,1,0,1));
+		format = NumberFormat.getInstance(Locales.getCurrent());
 		
 		for (int row = 2; row < numOfRows; row++) {
 			String state = Ranges.range(sheet, row, 0).getEditText();
 			// String division = sheet.getCell(row, 1).getEditText();
 
-			int numOfCase = (int) Double.parseDouble(
-					Ranges.range(sheet, row, 1).getEditText());
+			int numOfCase = (int) format.parse(Ranges.range(sheet, row, 1).getEditText()).intValue();
 
 			int numOfDeath = 0;
 			try {
-				numOfDeath = (int) Double.parseDouble(
-						Ranges.range(sheet, row, 2).getEditText());
+				numOfDeath = format.parse(Ranges.range(sheet, row, 2).getEditText()).intValue();
 			} catch (Exception e) {
 			}
 
 			String description = Ranges.range(sheet, row, 3).getEditText();
-			double lat = Double.parseDouble(
-					Ranges.range(sheet, row, 4).getEditText());
-			double lng = Double.parseDouble(
-					Ranges.range(sheet, row, 5).getEditText());
+			double lat = format.parse(Ranges.range(sheet, row, 4).getEditText()).doubleValue();
+			double lng = format.parse(Ranges.range(sheet, row, 5).getEditText()).doubleValue();
 			String content = "<span style=\"color:#346b93;font-weight:bold\">"
 					+ state	+ "</span><br/><span style=\"color:red\">"
 					+ numOfCase	+ "</span> cases<br/><span style=\"color:red\">"
@@ -143,7 +145,7 @@ public class ZssGmapWindow extends GenericForwardComposer {
 //		org.zkoss.zk.ui.event.Events.echoEvent(new Event("onEchoInitLater", self, null));
 	}
 	
-	public void onEditboxEditingEvent(EditboxEditingEvent event) {
+	public void onEditboxEditingEvent(EditboxEditingEvent event) throws ParseException {
 		if (sheet == null || mymap == null)
 			return;
 
@@ -154,7 +156,7 @@ public class ZssGmapWindow extends GenericForwardComposer {
 			updateRow(row, false);
 	}
 	
-	public void onStopEditingEvent(StopEditingEvent event) {
+	public void onStopEditingEvent(StopEditingEvent event) throws ParseException {
 		if (sheet == null || myChart == null)
 			return;
 		row = event.getRow();
@@ -163,9 +165,9 @@ public class ZssGmapWindow extends GenericForwardComposer {
 		if (col == 1 || col == 2) {
 			Double val = null;
 			try {
-				val = Double.parseDouble(str);
+				val = format.parse(str).doubleValue();
 				Ranges.range(sheet, row, col).setEditText(str);
-			} catch (NumberFormatException ex) {
+			} catch (ParseException e) {
 				final Integer rowIdx = Integer.valueOf(row);
 				final Integer colIdx = Integer.valueOf(col);
 				final String prevValue = prevCellValue;
@@ -187,7 +189,7 @@ public class ZssGmapWindow extends GenericForwardComposer {
 		}
 	}
 	
-	public void FocusedEvent(CellEvent event) {
+	public void FocusedEvent(CellEvent event) throws ParseException {
 		if (mymap == null || sheet == null)
 			return;
 
@@ -198,10 +200,8 @@ public class ZssGmapWindow extends GenericForwardComposer {
 		if (row < 2 || row > 41)// the header row
 			return;
 
-		double lat = Double.parseDouble(
-				Ranges.range(sheet, row, 4).getEditText());
-		double lng = Double.parseDouble(
-				Ranges.range(sheet, row, 5).getEditText());
+		double lat = format.parse(Ranges.range(sheet, row, 4).getEditText()).doubleValue();
+		double lng = format.parse(Ranges.range(sheet, row, 5).getEditText()).doubleValue();
 
 		mymap.setLat(lat);
 		mymap.setLng(lng);
@@ -240,7 +240,7 @@ public class ZssGmapWindow extends GenericForwardComposer {
 		}
 	}
 	
-	public void updateRow(int row, boolean evalValue) {
+	public void updateRow(int row, boolean evalValue) throws ParseException {
 		if (mymap == null || sheet == null
 				|| Utils.getCell(sheet, row, 3) == null)
 			return;
@@ -249,9 +249,8 @@ public class ZssGmapWindow extends GenericForwardComposer {
 		// String division = sheet.getCell(row, 1).getEditText();
 		int numOfCase = 0;
 		try {
-			numOfCase = (int) Double.parseDouble(
-					Ranges.range(sheet, row, 1).getEditText());
-		} catch (NumberFormatException e) {
+			numOfCase = (int) format.parse(Ranges.range(sheet, row, 1).getEditText()).intValue();
+		} catch (ParseException e) {
 			if (evalValue)
 				throw new UiException("Cell value need to be number format");
 			else
@@ -259,9 +258,8 @@ public class ZssGmapWindow extends GenericForwardComposer {
 		}
 		int numOfDeath = 0;
 		try {
-			numOfDeath = (int) Double.parseDouble(
-					Ranges.range(sheet, row, 2).getEditText());
-		} catch (NumberFormatException e) {
+			numOfDeath = (int) format.parse(Ranges.range(sheet, row, 2).getEditText()).intValue();
+		} catch (ParseException e) {
 			if (evalValue)
 				throw new UiException("Cell value need to be number format");
 			else
@@ -269,10 +267,8 @@ public class ZssGmapWindow extends GenericForwardComposer {
 		}
 		String description = Ranges.range(sheet, row, 3).getEditText();
 
-		double lat = Double.parseDouble(
-				Ranges.range(sheet, row, 4).getEditText());
-		double lng = Double.parseDouble(
-				Ranges.range(sheet, row, 5).getEditText());
+		double lat = format.parse(Ranges.range(sheet, row, 4).getEditText()).doubleValue();
+		double lng = format.parse(Ranges.range(sheet, row, 5).getEditText()).doubleValue();
 		String content = "<span style=\"color:#346b93;font-weight:bold\">"
 				+ state	+ "</span><br/><span style=\"color:red\">"
 				+ numOfCase	+ "</span> cases<br/><span style=\"color:red\">"
