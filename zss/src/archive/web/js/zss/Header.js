@@ -323,7 +323,9 @@ zss.Header = zk.$extends(zk.Widget, {
 	},
 	doTooltipOver_: zk.$void,
 	doTooltipOut_: zk.$void,
-	doClick_: zk.$void,
+	doClick_: function (evt) {
+		this.sheet._doMouseleftclick(evt);
+	},
 	doMouseDown_: function (evt) {
 		this.sheet._doMousedown(evt);
 	},
