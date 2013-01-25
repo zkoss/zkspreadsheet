@@ -1,6 +1,7 @@
 	------------
 ZK Spreadsheet 2.6.0
 *Features:
+	ZSS-187 Better support for CellStyles while setBorders
 
 *Bug
 	ZSS-171 Input "=" on cell shall not append cell reference
@@ -10,7 +11,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-183 Cannot enable save button when using collaboration Edit
 	ZSS-184 Merge and Center in Demo Site (as well as ours) is sporadically unclickable
 	ZSS-188 onHeaderClick not work
-  ZSS-189 PDF export throws Color 'auto_color' not found exception
+  	ZSS-189 PDF export throws Color 'auto_color' not found exception
 
 ZK Spreadsheet 2.5.0
 *Features:   
