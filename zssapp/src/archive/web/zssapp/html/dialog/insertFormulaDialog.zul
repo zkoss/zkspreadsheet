@@ -16,7 +16,7 @@
 	</hlayout>	
 </hlayout>
 <div height="5px"></div>
-<vlayout height="255px">
+<vlayout height="275px"  >
 	<label value="Select a function"/>
 	<listbox id="functionListbox" rows="6">
 	</listbox>

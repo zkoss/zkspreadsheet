@@ -556,6 +556,16 @@ public class Formulas {
 					"WEIBULL(x, alpha, beta, cumulative)",
 					"Returns the Weibull distribution",
 					4, null));
+		
+		/* Lookup & Reference */
+		List<FormulaMetaInfo> lookupAndRefAry = new LinkedList<FormulaMetaInfo>();
+		formulaInfos.put(LOOKUP_REF, lookupAndRefAry);
+		lookupAndRefAry.add(new FormulaMetaInfo(LOOKUP_REF,
+				"VLOOKUP",
+				"VLOOKUP(lookup_value, table_array, col_index_num, range_lookup)",
+				"Searches for a value in the first column of a table array and returns a value in the same row from another column in the table array. ", 
+				4, null));
+		
 		/* Math */
 		List<FormulaMetaInfo> mathAry = new LinkedList<FormulaMetaInfo>();
 		formulaInfos.put(MATH_TRIG, mathAry);
