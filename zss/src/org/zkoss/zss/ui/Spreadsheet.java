@@ -1446,12 +1446,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		final Map validMap = new HashMap();
 		validMap.put("rangeList", addrmapary); //range list
-		validMap.put("showButton", dv.getSuppressDropDownArrow()); //whether show dropdown button
 		validMap.put("showPrompt", dv.getShowPromptBox()); //whether show prompt box
 		validMap.put("promptTitle", dv.getPromptBoxTitle()); //the prompt box title
 		validMap.put("promptText", dv.getPromptBoxText()); //the prompt box text
 		String[] validationList = BookHelper.getValidationList(getSelectedSheet(), dv);
 		if (validationList != null) {
+			//ZSS-197: the method is useful only list validation objects
+			validMap.put("showButton", dv.getSuppressDropDownArrow()); //whether show dropdown button
+			
 			JSONArray jsonAry = new JSONArray();
 			for (String v : validationList) {
 				jsonAry.add(v);
