@@ -561,9 +561,14 @@ public class Formulas {
 		List<FormulaMetaInfo> lookupAndRefAry = new LinkedList<FormulaMetaInfo>();
 		formulaInfos.put(LOOKUP_REF, lookupAndRefAry);
 		lookupAndRefAry.add(new FormulaMetaInfo(LOOKUP_REF,
+				"HLOOKUP",
+				"HLOOKUP(lookup_value, table_array, row_index_num, range_lookup)",
+				"Searches for a value in the top row of a table or an array of values, and then returns a value in the same column from a row you specify in the table or array.", 
+				4, null));
+		lookupAndRefAry.add(new FormulaMetaInfo(LOOKUP_REF,
 				"VLOOKUP",
 				"VLOOKUP(lookup_value, table_array, col_index_num, range_lookup)",
-				"Searches for a value in the first column of a table array and returns a value in the same row from another column in the table array. ", 
+				"Searches for a value in the first column of a table array and returns a value in the same row from another column in the table array.", 
 				4, null));
 		
 		/* Math */
