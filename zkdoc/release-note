@@ -13,6 +13,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-188 onHeaderClick not work
   	ZSS-189 PDF export throws Color 'auto_color' not found exception
   	ZSS-197 Data Validation shall not show dropdown button when data source is not list
+  	ZSS-198 Data validation's message shall auto-disappear when focus on other cell
 
 ZK Spreadsheet 2.5.0
 *Features:   
