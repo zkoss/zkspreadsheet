@@ -15,6 +15,7 @@ ZK Spreadsheet 2.6.0
   	ZSS-196 Data validation list source cannot refer to different sheet's value
   	ZSS-197 Data Validation shall not show dropdown button when data source is not list
   	ZSS-198 Data validation's message shall auto-disappear when focus on other cell
+  	ZSS-199 Select a row and apply filter doesn't work well
   	ZSS-207 Date validation button not show on first focus
   	
 
