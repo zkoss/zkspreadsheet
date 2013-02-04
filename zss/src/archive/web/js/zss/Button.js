@@ -953,12 +953,13 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 				var sheet = wgt.sheetCtrl;
 				if (sheet) {
 					var s = sheet.getLastSelection(),
+						type = sheet.selType;
 						tRow = s.top,
 						lCol = s.left,
 						bRow = s.bottom,
 						rCol = s.right;
 					sheet.triggerSelection(tRow, lCol, bRow, rCol);
-					wgt.fireToolbarAction(action, {tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol});
+					wgt.fireToolbarAction(action, {tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol, action: type});
 				}
 			}
 		});

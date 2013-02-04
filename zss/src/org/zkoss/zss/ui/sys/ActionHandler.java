@@ -574,7 +574,9 @@ public abstract class ActionHandler {
 		int bRow = (Integer) data.get("bRow");
 		int lCol = (Integer) data.get("lCol");
 		int rCol = (Integer) data.get("rCol");
-		Rect r = new Rect(lCol, tRow, rCol, bRow);
+		Integer action = (Integer) data.get("action");
+		Rect r = action != null ? 
+				new Rect(action, lCol, tRow, rCol, bRow) : new Rect(lCol, tRow, rCol, bRow);
 		return r;
 	}
 	
@@ -1500,9 +1502,16 @@ public abstract class ActionHandler {
 	public void doFilter(Rect selection) {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
-			Ranges
-			.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-			.autoFilter();
+			Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+			//ZSS-199
+			switch (selection.getSelectionType()) {
+			case Rect.SELECT_ROW:
+				range.getRows().autoFilter();
+				break;
+			default:
+				range.autoFilter();
+				break;
+			}
 			
 			clearClipboard();
 		}

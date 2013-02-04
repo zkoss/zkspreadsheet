@@ -1908,6 +1908,33 @@ public class RangeImpl implements Range {
 		return allblank ? null : new int[] {minc, minr, maxc, maxr};
 	}
 	
+	//given row return the maximum range
+	private CellRangeAddress getRowCurrentRegion(Worksheet sheet, int topRow, int btmRow) {
+		int minc = 0;
+		int maxc = 0;
+		int minr = topRow;
+		int maxr = btmRow;
+		final Row roworg = sheet.getRow(topRow);
+		for (int c = minc; c <= roworg.getLastCellNum(); c++) {
+			boolean foundMax = false;
+			for (int r = minr + 1; r <= sheet.getLastRowNum(); r++) {
+				int[] cellMinMax = getCellMinMax(sheet, r, c);
+				if (cellMinMax == null && r >= btmRow) {
+					break;
+				}
+				if (cellMinMax != null) {
+					foundMax = true;
+					maxr = Math.max(maxr, cellMinMax[3]);
+				}
+			}
+			if (foundMax) {
+				maxc = c;
+			}
+		}
+
+		return new CellRangeAddress(minr, maxr, minc, maxc);
+	}
+	
 	//given a cell return the maximum range
 	private CellRangeAddress getCurrentRegion(Worksheet sheet, int row, int col) {
 		int minc = col;
@@ -1995,7 +2022,16 @@ public class RangeImpl implements Range {
 				//If it's a multi cell range, it's the range intersect with largest range of the sheet.
 				//If it's a single cell range, it has to be extend to a continuous range by looking up the near 8 cells of the single cell.
 				affectedArea = new CellRangeAddress(getRow(), getLastRow(), getColumn(), getLastColumn());
-				if (BookHelper.isOneCell(_sheet, affectedArea)) { //only one cell selected(include merged one), try to look the max range surround by blank cells 
+				final Ref ref = getRefs().iterator().next();
+				//ZSS-199
+				if (ref.isWholeRow()) {
+					//extend to a continuous range from the top row
+					CellRangeAddress maxRange = getRowCurrentRegion(_sheet, ref.getTopRow(), ref.getBottomRow());
+					if (maxRange == null) {
+						throw new RuntimeException(ALL_BLANK_MSG);
+					}
+					affectedArea = maxRange;
+				} else if (BookHelper.isOneCell(_sheet, affectedArea)) { //only one cell selected(include merged one), try to look the max range surround by blank cells 
 					CellRangeAddress maxRange = getCurrentRegion(_sheet, getRow(), getColumn());
 					if (maxRange == null) {
 						throw new RuntimeException(ALL_BLANK_MSG);
