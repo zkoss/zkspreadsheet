@@ -1296,9 +1296,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	showRowHeaderMenu: function (pageX, pageY) {
 		var show = this._wgt.isShowContextMenu();
 		if (show) {
-			var y = pageY - 70;
-			this.getStyleMenupopup().open(null, [pageX + 5, y < 0 ? 0 : y]);
-			this.getRowHeaderMenupopup().open(null, [pageX, pageY]);	
+			var x = pageX + 5,
+				menu = this.getRowHeaderMenupopup();
+			menu.open(null, [x, pageY]);
+			this.openStyleMenupopup(x, menu);
 		}
 	},
 	getColumnHeaderMenupopup: function () {
@@ -1312,9 +1313,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	showColumnHeaderMenu: function (pageX, pageY) {
 		var show = this._wgt.isShowContextMenu();
 		if (show) {
-			var y = pageY - 70;
-			this.getStyleMenupopup().open(null, [pageX + 5, y < 0 ? 0 : y]);
-			this.getColumnHeaderMenupopup().open(null, [pageX, pageY]);	
+			var x = pageX + 5,
+				menu = this.getColumnHeaderMenupopup();
+			menu.open(null, [x, pageY]);
+			this.openStyleMenupopup(x, menu);
 		}
 	},
 	getCellMenupopup: function () {
@@ -1328,10 +1330,15 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	showCellContextMenu: function (pageX, pageY) {
 		var show = this._wgt.isShowContextMenu();
 		if (show) {
-			var y = pageY - 70;
-			this.getStyleMenupopup().open(null, [pageX + 5, y < 0 ? 0 : y]);
-			this.getCellMenupopup().open(null, [pageX + 5, pageY]);	
+			var x = pageX + 5,
+				menu = this.getCellMenupopup();
+			menu.open(null, [x, pageY]);
+			this.openStyleMenupopup(x, menu);
 		}
+	},
+	openStyleMenupopup: function (x, refPop) {
+		var y = zk.parseInt(jq(refPop.$n()).css('top')) - 70;//70: space between menupopup
+		this.getStyleMenupopup().open(null, [x, y < 0 ? 0 : y]);
 	},
 	runAfterMouseClick: function (fn) {
 		var fns = this._afterMouseClick;
