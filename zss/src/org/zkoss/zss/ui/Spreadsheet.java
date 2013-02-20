@@ -2125,7 +2125,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		private void onFriendFocusMove(SSDataEvent event) {
 			final Ref rng = event.getRef();
-			if (getSheet(rng).equals(_selectedSheet)) { //same sheet
+			Worksheet sheet = getSheet(rng);
+			if (sheet == null) {//ZSS-209: book may removed
+				return;
+			}
+			if (sheet.equals(_selectedSheet)) { //same sheet
 				final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
 				final String id = focus.id;
 				if (!id.equals(_focus.id)) {
@@ -2136,7 +2140,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		private void onFriendFocusDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
-			if (BookHelper.getSheet(_book, rng.getOwnerSheet()).equals(_selectedSheet)) { //same sheet
+			Worksheet sheet = BookHelper.getSheet(_book, rng.getOwnerSheet());
+			if (sheet == null) {//ZSS-209: book may removed
+				return;
+			}
+			if (sheet.equals(_selectedSheet)) { //same sheet
 				final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
 				removeEditorFocus(focus.id);
 			}
