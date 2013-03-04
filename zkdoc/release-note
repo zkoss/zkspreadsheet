@@ -19,6 +19,7 @@ ZK Spreadsheet 2.6.0
   	ZSS-204 cell context menu covers text formatting menu for cells in lower part of the screen
   	ZSS-207 Date validation button not show on first focus
   	ZSS-209 NullPointerException when set spreadsheet book in a loop
+  	ZSS-212 Missing characters when export to PDF
 
 ZK Spreadsheet 2.5.0
 *Features:   
