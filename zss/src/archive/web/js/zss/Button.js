@@ -564,6 +564,12 @@ if (zk.feature.pe) {
 				
 				var thispt = zss.Colorbutton.prototype,
 					superpt = zkex.inp.Colorbox.prototype;
+				
+				if (!superpt.openPalette && superpt.$class.$copyf) {//ZSS-217
+					superpt.$class.$copyf();
+					superpt.$class.$copied = true;
+				}
+				
 				thispt.openPopup = superpt.openPopup;
 				thispt._$closePopup = superpt.closePopup;//need customize closePopup
 				thispt.openPalette = superpt.openPalette;
