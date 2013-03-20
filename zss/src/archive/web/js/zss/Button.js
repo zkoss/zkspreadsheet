@@ -352,7 +352,7 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 	bind_: function () {
 		this.$supers(zss.Toolbarbutton, 'bind_', arguments);
 		var cave = this.$n('cave');
-		if (cave) { //contains menupopup, expand button width
+		if (cave && !this._calWidth) { //contains menupopup, expand button width
 			var disd = this.isClickDisabled(),
 				seld = this._seldImage,
 				scls = this._getSclass(),
@@ -364,6 +364,7 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 			if (w <= 32)//min size
 				w = 32;
 			this.setWidth(w + 'px');
+			this._calWidth = true;//ZSS-216
 			if (disd) {
 				jq(cnt).addClass(scls + '-clk-disd');
 			}
