@@ -22,6 +22,7 @@ ZK Spreadsheet 2.6.0
   	ZSS-210 CellStyle.cloneStyleFrom not work when copy cell style from different book
   	ZSS-212 Missing characters when export to PDF
   	ZSS-216 Disable button cause the button expand
+  	ZSS-217 Javascript error with ZK 6.5.1.1 version
 
 ZK Spreadsheet 2.5.0
 *Features:   
