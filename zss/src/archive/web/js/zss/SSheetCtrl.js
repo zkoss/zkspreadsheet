@@ -1280,7 +1280,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	getStyleMenupopup: function () {
 		var p = this._styleMenupopup;
 		if (!p) {
-			p = this._styleMenupopup = new zss.MenupopupFactory(this._wgt).style();
+			var wgt = this._wgt;
+			p = this._styleMenupopup = new zss.MenupopupFactory(wgt).style();
+			p.setDisabled(wgt.getActionDisabled());
 			this.appendChild(p);
 		}
 		return p;
@@ -1288,7 +1290,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	getRowHeaderMenupopup: function () {
 		var p = this._rowHeaderMenupopup;
 		if (!p) {
-			p = this._rowHeaderMenupopup = new zss.MenupopupFactory(this._wgt).rowHeader();
+			var wgt = this._wgt;
+			p = this._rowHeaderMenupopup = new zss.MenupopupFactory(wgt).rowHeader();
+			p.setDisabled(wgt.getActionDisabled());
 			this.appendChild(p);
 		}
 		return p;
@@ -1305,7 +1309,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	getColumnHeaderMenupopup: function () {
 		var p = this._columnHeaderMenupopup;
 		if (!p) {
+			var wgt = this._wgt;
 			p = this._columnHeaderMenupopup = new zss.MenupopupFactory(this._wgt).columnHeader();
+			p.setDisabled(wgt.getActionDisabled());
 			this.appendChild(p);
 		}
 		return p;
@@ -1322,7 +1328,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	getCellMenupopup: function () {
 		var p = this._cellMenupopup;
 		if (!p) {
-			p = this._cellMenupopup = new zss.MenupopupFactory(this._wgt).cell();
+			var wgt = this._wgt;
+			p = this._cellMenupopup = new zss.MenupopupFactory(wgt).cell();
+			p.setDisabled(wgt.getActionDisabled());
 			this.appendChild(p);
 		}
 		return p;
@@ -1334,6 +1342,27 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				menu = this.getCellMenupopup();
 			menu.open(null, [x, pageY]);
 			this.openStyleMenupopup(x, menu);
+		}
+	},
+	setActionDisabled: function (actions) {
+		var show = this._wgt.isShowContextMenu();
+		if (show && actions) {
+			var cellPopup = this.getCellMenupopup();
+			if (cellPopup) {
+				cellPopup.setDisabled(actions);
+			}
+			var rowPopup = this.getRowHeaderMenupopup();
+			if (rowPopup) {
+				rowPopup.setDisabled(actions);
+			}
+			var colPopup = this.getColumnHeaderMenupopup();
+			if (colPopup) {
+				colPopup.setDisabled(actions);
+			}
+			var stylePopup = this.getStyleMenupopup();
+			if (stylePopup) {
+				stylePopup.setDisabled(actions);
+			}
 		}
 	},
 	openStyleMenupopup: function (x, refPop) {
@@ -1660,9 +1689,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 							pos = sl.dp._speedCopy(value);
 						
 						//Note. _speedCopy will fire edit cmd to server, set selection after response
-						wgt._onResponseCallback.push(function () {
-							sl._doCellSelection(pos.left, pos.top, pos.right, pos.bottom);
-						});
+						if (pos)
+							wgt._onResponseCallback.push(function () {
+								sl._doCellSelection(pos.left, pos.top, pos.right, pos.bottom);
+							});
 					}	
 				};
 			if (wgt._sendAu) {//flag that indicate ZK send Au request. (cannot use zAu.processing(), it may be null since ZK use timeout to send request) 

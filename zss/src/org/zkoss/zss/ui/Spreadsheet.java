@@ -4845,9 +4845,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 	@Override
 	public void afterCompose() {
+		String ctrlKeys = getCtrlKeys();
 		//ZSS-127: bind event on afterCompose
-		if (_showToolbar) {
-			getActionHandler().bind(Spreadsheet.this);//init for toolbar's "upload picture" button
+		if (_showToolbar 
+		|| (ctrlKeys != null && (ctrlKeys.toLowerCase().indexOf("^c") >= 0 || ctrlKeys.indexOf("^v") >= 0))) {
+			getActionHandler().bind(Spreadsheet.this);//init for toolbar's "upload picture" button & copy-paste by Ctrl key
 		}
 	}
 	

@@ -570,7 +570,7 @@ if (zk.feature.pe) {
 					superpt.$class.$copied = true;
 				}
 				
-				thispt.openPopup = superpt.openPopup;
+				thispt._$openPopup = superpt.openPopup;
 				thispt._$closePopup = superpt.closePopup;//need customize closePopup
 				thispt.openPalette = superpt.openPalette;
 				thispt.closePalette = superpt.closePalette;
@@ -622,7 +622,12 @@ if (zk.feature.pe) {
 						c.style.backgroundColor = hex;
 				}
 			},
+			openPopup: function () {
+				this._open = true;
+				this._$openPopup();
+			},
 			closePopup: function () {
+				this._open = false;
 				this._$closePopup();
 				jq(this.$n()).removeClass('z-toolbarbutton-over');
 			},
@@ -661,7 +666,7 @@ if (zk.feature.pe) {
 				this.$supers(zss.Colorbutton, 'unbind_', arguments);
 			},
 			onFloatUp: function (ctl) {
-				if (this._picker.isVisible() || this._palette.isVisible()) {
+				if (this._open) {
 					var wgt = ctl.origin;
 					for (var floatFound; wgt; wgt = wgt.parent) {
 						if (wgt == this) {
@@ -716,10 +721,15 @@ if (zk.feature.pe) {
 				var uid = this.uuid,
 					cnt = this.$supers(zss.Colorbutton, 'domContent_', arguments),
 					color = this.getColor();
-				return cnt + '<div id="' + uid + '-color" class="zstbtn-color" style="background:' 
+				cnt = cnt + '<div id="' + uid + '-color" class="zstbtn-color" style="background:' 
 					+ this.getColor() + ';"></div><div id="' + uid + '-pp" style="display:none;" class="z-colorbtn-pp">' +
 					'<div id="' + uid + '-palette-btn" class="z-colorbtn-palette-btn"></div><div id="' + 
-					uid + '-picker-btn" class="z-colorbtn-picker-btn"></div></div>';//Note. use Colorbox's "z-colorbtn-pp"
+					uid + '-picker-btn" class="z-colorbtn-picker-btn"></div>';//Note. use Colorbox's "z-colorbtn-pp"
+				for (var w = this.firstChild; w; w = w.nextSibling) {
+					cnt += w.redrawHTML_();
+				}
+				cnt += '</div>';
+				return cnt;
 			}
 		});
 	})
@@ -1018,6 +1028,16 @@ zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 			tb.appendChild(b);
 		}
 		this.appendChild(tb);
+	},
+	setDisabled: function (actions) {
+		for (var n = this.firstChild; n; n = n.nextSibling) {//toolbars
+			for (var chd = n.firstChild;chd; chd = chd.nextSibling) {//buttons
+				if (!chd.setDisabled) {
+					continue;
+				}
+				chd.setDisabled(actions);
+			}
+		}
 	},
 	_closeStylePanel: function () {
 		this.close({sendOnOpen:true});

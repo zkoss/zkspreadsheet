@@ -170,6 +170,19 @@ zss.DataPanel = zk.$extends(zk.Object, {
 				{token: "", sheetId: sheet.serverSheetId, row: row, col: col, clienttxt: val, type: type}, null, 25);
 		return true;
 	},
+	_isProtect: function (tRow, lCol, bRow, rCol) {
+		var shtProtect = this._wgt.isProtect(),
+			data = this._wgt._cacheCtrl.getSelectedSheet();
+		for (var r = tRow; r <= bRow; r++) {
+			for (var c = lCol; c <= rCol; c++) {
+				var cell = data.getRow(r).getCell(c);
+				if (shtProtect && cell && cell.lock) {
+					return true;
+				}
+			}
+		}
+		return false;
+	},
 	//feature#161: Support copy&paste from clipboard to a cell
 	_speedCopy: function (value, type) { 
 		var sheet = this.sheet,
@@ -198,6 +211,11 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			--rlen;
 			if (rlen > 0)
 				--bottom;
+		}
+		if (this._isProtect(top, left, bottom, right)) {
+			sheet.showInfo("Can not edit on a protected cell.", true);
+			sheet._doCellSelection(left, top, right, bottom);
+			return;
 		}
 		var clenmax = right - left + 1;
 		for(var r = 0; r < rlen; ++r) {
