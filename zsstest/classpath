@@ -1,6 +1,6 @@
-../dist/lib/zcommon.jar
-../dist/lib/zpoi.jar
-../dist/lib/zss.jar
-../dist/lib/zssex.jar
-../dist/lib/ext/commons-math.jar
-../dist/lib/ext/junit-4.8.1.jar
+$ZSS/dist/lib/zcommon.jar
+$ZSS/dist/lib/zpoi.jar
+$ZSS/dist/lib/zss.jar
+$ZSS/dist/lib/zssex.jar
+$ZSS/dist/lib/ext/commons-math.jar
+$ZSS/dist/lib/ext/junit-4.8.1.jar

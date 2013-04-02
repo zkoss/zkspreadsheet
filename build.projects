@@ -1,8 +1,8 @@
 zpoi
-zpoiex
+$ZSSCML/zpoiex
 zss
-zssex
-zsspdf
-zsshtml
-zssjsp
-zssjsf
+$ZSSCML/zssex
+$ZSSCML/zsspdf
+$ZSSCML/zsshtml
+$ZSSCML/zssjsp
+$ZSSCML/zssjsf

@@ -99,6 +99,20 @@ else
 	exit 1
 fi
 
+maindir="$(pwd)"
+if [ "$ZSS" = "" ] ; then
+	ZSS=$maindir
+fi
+if [ "$ZSSCML" = "" ] ; then
+	if [ -d "zssex" ] ; then
+		ZSSCML="."
+	elif [ -d "../zsscml/zssex" ] ; then
+		ZSSCML="../zsscml"
+	else
+		echo "ZSSCML path is not found!!"
+	fi
+fi
+
 #-- parsing cmd
 cmdList=" bd br cd cr ud ur doc jsrc build.debug build.release clean clean.debug clean.release utest.debug utest.release javadoc jsdoc help"
 if [ \( $# != 0 \) -a \( "${cmdList#* $1 }" != "$cmdList" \) ] ; then
@@ -214,6 +228,8 @@ fi
 #Add a project to the target list (the redudant ones won't be added)
 if [ $# != 0 ] ; then
 	for target in $* ; do
+		eval "target=\"$target\""
+		target=${target#\./}
 		target=${target%/}
 		targetListOld="$targetListOld $target"
 		if [ \( ! -d $target \) -a \( ! -d ${target}Test \) ] ; then
@@ -231,6 +247,7 @@ else
 	fi
 	targetListOld="$(cat build.projects | tr '\n' ' ')"
 	targetListOld="${targetListOld% }"
+	eval "targetListOld=\"$targetListOld\""
 	doall="-Ddo.all=true"
 		#denote all projects are built; passed to build.xml
 fi
@@ -255,10 +272,10 @@ function addToTargetList
 	fi
 }
 
-
 targetList=
 if [ "${cmd#utest}" != "$cmd" ] ; then #utest
 	for target in $targetListOld ; do
+		target=${target#\./}
 		if [ "${target%Test}" = "$target" ] ; then
 			target=${target}Test
 		fi
@@ -266,6 +283,7 @@ if [ "${cmd#utest}" != "$cmd" ] ; then #utest
 	done
 else
 	for target in $targetListOld ; do
+		target=${target#\./}
 		addToTargetList $target
 	done
 fi
@@ -326,6 +344,8 @@ function invoke_ant
 	else
 		prjnm=$2
 	fi
+
+	prjnm=${prjnm#*/*/} #trim ../../
 	
 	#handle class.test.local
 	local class_test=
@@ -351,12 +371,14 @@ function invoke_ant
 	if [ -f classpath ] ; then
 		#retrieve path
 		CP=$(cat classpath | tr '\n' ':')
+		eval "CP=\"$CP\""
+
 		CP=${CP%:}
 
 		#javadoc.class.path shall not contain '.', because xdoclet will
 		#ignore files that are found in classpath
 		DCP=$(echo $CP | sed -e 's/:\.:/:/g' -e 's/^\.://' -e 's/:\.$//')
-		if [ "$TERM" = "cygwin" ] ; then
+		if [ "$TERM" = "cygwin" ] || [ "$OSTYPE" = "cygwin" ] ; then
 			DCP=$(safe_cygpath "-mp" "$DCP")
 				#Don't convert CP because it is used by bash directly
 		fi
@@ -512,6 +534,7 @@ function invoke_ant
 		-Djboss.profile="$jboss_profile" -Djboss.ear="$jboss_ear" \
 		-Djboss.home="$jboss_home" -Dtomcat.home="$tomcat_home" \
 		-Djs.trim=$jstrim -Dzipjs=$zipjslist\
+		-Dmaindir="$maindir" \
 		-Dzipcss=$zipcsslist\
 		-Dwar.libs="$war_libs" -Dbasedir=. \
 		-Dear.libs="$ear_libs" \
@@ -524,7 +547,7 @@ function invoke_ant
 		-Dshare.javadoc.dir="$javadocdir" \
 		-Djavadoc.class.path="$DCP" -Dapp.name=$app $unziplist \
 		-Droot.context=$rootContext -Dgentime=$gentime \
-		$dfnList -buildfile ../build.xml $1
+		$dfnList -buildfile $maindir/build.xml $1
 	fi
 
 	if [ $? != 0 ] ; then
@@ -566,6 +589,7 @@ if [ "$javadocAll" = "true" ] ; then
 else
 	echo "targets: ${targetList}"
 	for target in $targetList ; do
+		cd $maindir
 		if [ -d $target ] ; then
 			invoke_ant $cmd $target
 		else
