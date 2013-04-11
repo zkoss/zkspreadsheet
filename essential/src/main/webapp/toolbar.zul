@@ -1,0 +1,28 @@
+<zk>
+	<toolbar apply="org.zkoss.zss.essential.ToolbarCtrl">
+		<script type="text/javascript">
+		
+		function focusSS(base,ssid){
+			base.$f(ssid, true).focus(false);
+		}
+		</script>
+		<!-- copy and paste -->
+		<toolbarbutton id="paste" image="~./zss/img/clipboard-paste.png" sclass="narrow-right"/>
+		<toolbarbutton id="pasteMenu" image="~./zss/img/arrow-down.gif" sclass="narrow-left" />
+		<toolbarbutton id="cut" image="~./zss/img/scissors-blue.png"/>
+		<toolbarbutton id="copy" image="~./zss/img/blue-document-copy.png"/>
+		<space sclass="sep-v" />
+		<!-- font -->
+		<combobox id="fontfamilyBox" style="width:105px"/>
+		<combobox id="fontsizeBox" style="width:45px"/>
+		<toolbarbutton id="fontBold" image="~./zss/img/edit-bold.png"/>
+		<toolbarbutton id="fontItalic" image="~./zss/img/edit-italic.png"/>
+		<toolbarbutton id="fontUnderline" image="~./zss/img/edit-underline.png"/>
+		<toolbarbutton id="cutStrike" image="~./zss/img/edit-strike.png"/>
+		<!-- border  -->
+		
+		<!-- color -->
+		
+		
+	</toolbar>
+</zk>

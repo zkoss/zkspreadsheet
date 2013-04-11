@@ -1,0 +1,16 @@
+<?link  rel="stylesheet" type="text/css" href="/style.css"?>
+<zk>
+	<window hflex="1" vflex="1" apply="org.zkoss.zss.essential.MainCtrl">
+		<vlayout hflex="1" vflex="1" spacing="0px">
+			<div hflex="1" vflex="min" >
+				<include src="/toolbar.zul" spreadsheetId="ss" spreadsheetPath="../ss"/>
+			</div>
+			<spreadsheet hflex="1" vflex="1" 
+				id="ss"
+				showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true"
+				maxrows="100" maxcolumns="40"
+				ctrlKeys="^X^C^V^B^I^U#del"
+				/>
+		</vlayout>
+	</window>
+</zk>
