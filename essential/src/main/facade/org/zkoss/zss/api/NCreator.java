@@ -1,12 +1,10 @@
 package org.zkoss.zss.api;
 
-import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
-import org.zkoss.zss.model.impl.BookHelper;
 
 public class NCreator {
 

@@ -9,6 +9,13 @@
 		<!-- copy and paste -->
 		<toolbarbutton id="paste" image="~./zss/img/clipboard-paste.png" sclass="narrow-right"/>
 		<toolbarbutton id="pasteMenu" image="~./zss/img/arrow-down.gif" sclass="narrow-left" />
+		<menupopup id="pastePopup">
+			<menuitem id="pasteValue" label="Values"/>
+			<menuitem id="pasteFormula" label="Formula"/>
+			<menuitem id="pasteAllNOBorder" label="All except border"/>
+			<menuitem id="pasteTranspose" label="Transpose"/>
+		</menupopup>
+		
 		<toolbarbutton id="cut" image="~./zss/img/scissors-blue.png"/>
 		<toolbarbutton id="copy" image="~./zss/img/blue-document-copy.png"/>
 		<space sclass="sep-v" />

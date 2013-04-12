@@ -28,6 +28,8 @@ import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.Menupopup;
+import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.impl.XulElement;
 
 public class ToolbarCtrl extends SelectorComposer<Component> {
@@ -39,6 +41,14 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	String sspath;
 	NSpreadsheet nss;
 
+	
+	@Wire
+	Toolbarbutton paste;
+	@Wire
+	Toolbarbutton pasteMenu;
+	@Wire
+	Menupopup pastePopup;
+	
 	@Wire
 	Combobox fontNameBox;
 	ListModelList<FontName> fontNameList;
@@ -69,6 +79,8 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			((XulElement) c).setWidgetListener("onClick", script);
 			((XulElement) c).setWidgetListener("onSelect", script);
 		}
+		
+		
 	}
 
 	public void postInitSpreadsheet() {
@@ -116,6 +128,8 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		fontSizeList.add(48);
 
 		fontSizeBox.setModel(fontSizeList);
+		
+		clearClipboard();
 	}
 
 	ClipInfo clipinfo;
@@ -140,15 +154,51 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	private void clearClipboard() {
 		clipinfo = null;
 		nss.setHighlight(null);
+		pasteMenu.setDisabled(true);
+		paste.setDisabled(true);
 	}
 
 	private void setClipboard(NSheet sheet, Rect rect, ClipInfo.Type type) {
 		clipinfo = new ClipInfo(sheet, rect, type);
 		nss.setHighlight(rect);
 	}
+	
+	enum PasteType{
+		ALL,
+		VALUE,
+		FORMULA,
+		ALL_NO_BORDER,
+		TRANSPORT
+	}
+
+	@Listen("onClick=#pasteMenu")
+	public void doPasteMenu(){
+		pastePopup.open(pasteMenu);
+	}
 
 	@Listen("onClick=#paste")
 	public void doPaste() {
+		doPaste0(PasteType.ALL);
+	}
+	@Listen("onClick=#pasteValue")
+	public void doPasteValue() {
+		doPaste0(PasteType.VALUE);
+	}
+	@Listen("onClick=#pasteFormula")
+	public void doPasteFormula() {
+		doPaste0(PasteType.FORMULA);
+	}
+	@Listen("onClick=#pasteAllNOBorder")
+	public void doAllNOBorder() {
+		doPaste0(PasteType.ALL_NO_BORDER);
+	}
+	@Listen("onClick=#pasteTranspose")
+	public void doPasteTransport() {
+		doPaste0(PasteType.TRANSPORT);
+	}
+	
+	
+	private void doPaste0(PasteType type) {
 		if (clipinfo == null)
 			return;
 
@@ -169,11 +219,28 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
 
-		boolean r;
+		boolean r = true;
 		if (clipinfo.type == Type.CUT) {
 			r = CellOperationUtil.cut(src,dest);
 		}else{
-			r = CellOperationUtil.copy(src,dest);
+			switch(type){
+			case ALL:
+				r = CellOperationUtil.paste(src,dest);
+				break;
+			case VALUE:
+				r = CellOperationUtil.pasteValue(src, dest);
+				break;
+			case FORMULA:
+				r = CellOperationUtil.pasteFormula(src, dest);
+				break;
+			case ALL_NO_BORDER:
+				r = CellOperationUtil.pasteAllExceptBorder(src, dest);
+				break;
+			case TRANSPORT:
+				r = CellOperationUtil.pasteTranspose(src, dest);
+				break;
+				
+			}
 		}
 		
 		if (!r) {
@@ -196,12 +263,17 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	public void doCopy() {
 		Rect rect = nss.getSelection();
 		setClipboard(nss.getSelectedSheet(), rect, ClipInfo.Type.COPY);
+		pasteMenu.setDisabled(false);
+		paste.setDisabled(false);
 	}
 
 	@Listen("onClick=#cut")
 	public void doCut() {
 		Rect rect = nss.getSelection();
 		setClipboard(nss.getSelectedSheet(), rect, ClipInfo.Type.CUT);
+		//TODO should disable some past-special toolbar button
+		pasteMenu.setDisabled(true);
+		paste.setDisabled(false);
 	}
 
 	static public class FontName implements Serializable {

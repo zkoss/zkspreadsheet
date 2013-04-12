@@ -1,6 +1,8 @@
 package org.zkoss.zss.api;
 
 import org.zkoss.zss.api.NRange.BatchLockLevel;
+import org.zkoss.zss.api.NRange.PasteOperation;
+import org.zkoss.zss.api.NRange.PasteType;
 import org.zkoss.zss.api.NRange.VisitorLockLevel;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NFont;
@@ -26,9 +28,20 @@ public class CellOperationUtil {
 		return result.get();
 	}
 
-	public static boolean copy(NRange src, NRange dest) {
-		//call single range operation
+	public static boolean paste(NRange src, NRange dest) {
 		return src.paste(dest);
+	}
+	public static boolean pasteFormula(NRange src, NRange dest) {
+		return src.pasteSpecial(dest, PasteType.PASTE_FORMULAS, PasteOperation.PASTEOP_NONE, false, false);
+	}
+	public static boolean pasteValue(NRange src, NRange dest) {
+		return src.pasteSpecial(dest, PasteType.PASTE_VALUES, PasteOperation.PASTEOP_NONE, false, false);
+	}
+	public static boolean pasteAllExceptBorder(NRange src, NRange dest) {
+		return src.pasteSpecial(dest, PasteType.PASTE_ALL_EXCEPT_BORDERS, PasteOperation.PASTEOP_NONE, false, false);
+	}
+	public static boolean pasteTranspose(NRange src, NRange dest) {
+		return src.pasteSpecial(dest, PasteType.PASTE_ALL, PasteOperation.PASTEOP_NONE, false, true);
 	}
 	
 	static class Result<T> {
