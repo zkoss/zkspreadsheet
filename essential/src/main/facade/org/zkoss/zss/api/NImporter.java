@@ -1,7 +1,8 @@
-package org.zkoss.zss.api.model;
+package org.zkoss.zss.api;
 
 import java.io.InputStream;
 
+import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.model.Importer;
 
 public class NImporter {

@@ -18,6 +18,26 @@
 	padding:2px 0;
 }
 
+.font-family .z-comboitem-text{
+	font-size: 18px;
+}
+.font-family .arial .z-comboitem-text{
+	font-family: Arial;
+	font-size: 18px;
+}
+.font-family .courier-new .z-comboitem-text{
+	font-family: Courier New;
+	font-size: 18px;
+}
+.font-family .times-new-roman .z-comboitem-text{
+	font-family: Times New Roman;
+	font-size: 18px;
+}
+.font-family .ms-sans-serif .z-comboitem-text{
+	font-family: MS Sans Serif;
+	font-size: 18px;
+}
+
 
 /***/
 .z-toolbar .fontbox{

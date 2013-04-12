@@ -1,4 +1,4 @@
-package org.zkoss.zss.api.model;
+package org.zkoss.zss.api;
 
 import org.zkoss.zss.model.Importer;
 import org.zkoss.zss.model.Importers;

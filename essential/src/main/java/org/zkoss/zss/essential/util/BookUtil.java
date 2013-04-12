@@ -6,12 +6,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.zkoss.lang.SystemException;
+import org.zkoss.zk.ui.WebApps;
+import org.zkoss.zss.api.NExporter;
+import org.zkoss.zss.api.NExporters;
+import org.zkoss.zss.api.NImporter;
+import org.zkoss.zss.api.NImporters;
 import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.model.NBook.BookType;
-import org.zkoss.zss.api.model.NExporter;
-import org.zkoss.zss.api.model.NExporters;
-import org.zkoss.zss.api.model.NImporter;
-import org.zkoss.zss.api.model.NImporters;
 
 
 public class BookUtil {
@@ -35,7 +36,8 @@ public class BookUtil {
 			is = BookUtil.class.getResourceAsStream("_blank.xls");
 			break;
 		case EXCEL_2007:
-			is = BookUtil.class.getResourceAsStream("_blank.xlsx");
+//			is = BookUtil.class.getResourceAsStream("_blank.xlsx");
+			is = WebApps.getCurrent().getResourceAsStream("/WEB-INF/excelsrc/copyPasteBase.xlsx");
 			break;
 		default :
 			throw new SystemException("Unknow book type" + type);

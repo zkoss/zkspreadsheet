@@ -1,10 +1,25 @@
 package org.zkoss.zss.api;
 
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.zss.api.model.NCellStyle;
+import org.zkoss.zss.api.model.NSheet;
+import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.Worksheet;
 
 public class NRange {
 	
-	enum PasteType{
+	enum VisitorLockLevel{
+		BOOK,
+		NONE//for you just visit and do nothing
+	}
+	enum BatchLockLevel{
+		BOOK,
+		SHEET
+	}
+	
+	public enum PasteType{
 		PASTE_ALL,
 		PASTE_ALL_EXCEPT_BORDERS,
 		PASTE_COLUMN_WIDTHS,
@@ -17,7 +32,7 @@ public class NRange {
 		PASTE_VALUES_AND_NUMBER_FORMATS;
 	}
 	
-	enum PasteOperation{
+	public enum PasteOperation{
 		PASTEOP_ADD,
 		PASTEOP_SUB,
 		PASTEOP_MUL,
@@ -25,12 +40,20 @@ public class NRange {
 		PASTEOP_NONE;
 	}
 	
+	NSheet nsheet;
 	
 	Range range;
 	public NRange(Range range) {
 		this.range = range;
 	}
 	
+	
+	public NCreator getCreator(){
+		return new NCreator(range);
+	}
+	public NGetter getGetter(){
+		return new NGetter(range);
+	}
 	
 	public Range getNative(){
 		return range;
@@ -84,70 +107,117 @@ public class NRange {
 	 */
 	public boolean pasteSpecial(NRange dest,PasteType type,PasteOperation op,boolean skipBlanks,boolean transpose) {
 //		if(!isAnyCellProtected()){ // ranges seems this in copy/paste already
-		Range r = range.pasteSpecial(dest.getNative(), toPasteTypeNative(type), toPasteOpNative(op), skipBlanks, transpose);
+		Range r = range.pasteSpecial(dest.getNative(), EnumUtil.toRangePasteTypeNative(type), EnumUtil.toRangePasteOpNative(op), skipBlanks, transpose);
 		return r!=null;
 //		}
-	}
-	
-	private <T> void assertArgNotNull(T obj,String name){
-		if(obj == null){
-			throw new IllegalArgumentException("argument "+name==null?"":name+" is null");
-		}
-	}
-
-
-	private int toPasteOpNative(PasteOperation op) {
-		assertArgNotNull(op,"paste operation");
-		switch(op){
-		case PASTEOP_ADD:
-			return Range.PASTEOP_ADD;
-		case PASTEOP_SUB:
-			return Range.PASTEOP_SUB;
-		case PASTEOP_MUL:
-			return Range.PASTEOP_MUL;
-		case PASTEOP_DIV:
-			return Range.PASTEOP_DIV;
-		case PASTEOP_NONE:
-			return Range.PASTEOP_NONE;
-		}
-		throw new IllegalArgumentException("unknow paste operation "+op);
-	}
-
-
-	private int toPasteTypeNative(PasteType type) {
-		assertArgNotNull(type,"paste type");
-		switch(type){
-		case PASTE_ALL:
-			return Range.PASTE_ALL;
-		case PASTE_ALL_EXCEPT_BORDERS:
-			return Range.PASTE_ALL_EXCEPT_BORDERS;
-		case PASTE_COLUMN_WIDTHS:
-			return Range.PASTE_COLUMN_WIDTHS;
-		case PASTE_COMMENTS:
-			return Range.PASTE_COMMENTS;
-		case PASTE_FORMATS:
-			return Range.PASTE_FORMATS;
-		case PASTE_FORMULAS:
-			return Range.PASTE_FORMULAS;
-		case PASTE_FORMULAS_AND_NUMBER_FORMATS:
-			return Range.PASTE_FORMULAS_AND_NUMBER_FORMATS;
-		case PASTE_VALIDATAION:
-			return Range.PASTE_VALIDATAION;
-		case PASTE_VALUES:
-			return Range.PASTE_VALUES;
-		case PASTE_VALUES_AND_NUMBER_FORMATS:
-			return Range.PASTE_VALUES_AND_NUMBER_FORMATS;
-		}
-		throw new IllegalArgumentException("unknow paste operation "+type);
 	}
 
 
 	public void clearContents() {
 		range.clearContents();		
 	}
-
-
-	public void clearStyles() {
-		range.setStyle(null);//will use default book cell style
+	
+	public NSheet getSheet(){
+		if(nsheet!=null){
+			return nsheet;
+		}
+		return nsheet = new NSheet(range.getSheet());
 	}
+
+ 
+	public void clearStyles() {
+		range.setStyle(null);//will use default book cell style		
+	}
+
+	public void setStyle(NCellStyle nstyle) {
+		range.setStyle(nstyle==null?null:nstyle.getNative());
+	}
+
+
+	public int getColumn() {
+		return range.getColumn();
+	}
+	public int getRow() {
+		return range.getRow();
+	}
+	public int getLastColumn() {
+		return range.getLastColumn();
+	}
+	public int getLastRow() {
+		return range.getLastRow();
+	}
+	
+	
+	
+	public void batch(NBatchRunner run,BatchLockLevel lock){
+		if(lock==BatchLockLevel.BOOK){
+			synchronized(range.getSheet().getBook()){
+				run.run(this);
+			}
+		}else if(lock==BatchLockLevel.SHEET){
+			synchronized(range.getSheet()){
+				run.run(this);
+			}
+		}
+	}
+	/**
+	 * visit all cells in this range
+	 * @param visitor the visitor 
+	 * @param create create cell if it doesn't exist, if it is true, it will also lock the sheet
+	 * @param lock lock the sheet if you will do any modification of the sheet 
+	 */
+	public void visit(final NCellVisitor visitor,VisitorLockLevel lock){
+		final int r=getRow();
+		final int lr=getLastRow();
+		final int c=getColumn();
+		final int lc=getLastColumn();
+		
+		Runnable run = new Runnable(){
+			public void run(){
+				for(int i=r;i<=lr;i++){
+					for(int j=c;j<=lc;j++){
+						visit0(visitor,i,j);
+					}
+				}
+			}
+		};
+		
+		if(lock!=null && lock!=VisitorLockLevel.NONE){
+			if(lock==VisitorLockLevel.BOOK){
+				synchronized(range.getSheet().getBook()){
+					synchronized(range.getSheet()){
+						run.run();
+					}
+				}
+			}else{
+				//TODO sheet level?
+			}
+		}else{
+			run.run();
+		}
+	}
+	
+	private void visit0(NCellVisitor visitor,int r, int c){
+		boolean create = visitor.createIfNotExist(r,c);
+		Worksheet sheet = range.getSheet();
+		Row row = sheet.getRow(r);
+		if(row==null){
+			if(create){
+				row = sheet.createRow(r);
+			}else{
+				return;
+			}
+		}
+		Cell cell = row.getCell(c);
+		if(cell==null){
+			if(create){
+				cell = row.createCell(c);
+			}else{
+				return;
+			}
+		}
+		visitor.visit(NRanges.range(getSheet(),r,c));
+	}
+	
+	
 }

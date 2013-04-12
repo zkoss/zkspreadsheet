@@ -22,6 +22,10 @@ public class NBook {
 			throw new IllegalArgumentException("unknow book type "+book);
 		}
 	}
+	
+	public Object getSyncObject(){
+		return book;//Rage impl use it to do sync
+	}
 
 	public Book getNative() {
 		return book;

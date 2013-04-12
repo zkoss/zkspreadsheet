@@ -1,5 +1,6 @@
 package org.zkoss.zss.api.model;
 
+import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Worksheet;
 
 public class NSheet {
@@ -8,7 +9,9 @@ public class NSheet {
 		this.sheet = sheet;
 	}
 	
-	
+	public Object getSyncObject(){
+		return sheet;//Rage impl use it to do sync
+	}
 	
 	public Worksheet getNative(){
 		return sheet;

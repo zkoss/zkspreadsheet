@@ -13,12 +13,20 @@
 		<toolbarbutton id="copy" image="~./zss/img/blue-document-copy.png"/>
 		<space sclass="sep-v" />
 		<!-- font -->
-		<combobox id="fontfamilyBox" style="width:105px"/>
-		<combobox id="fontsizeBox" style="width:45px"/>
+		<combobox id="fontNameBox" style="width:120px" sclass="font-family">
+			<template name="model">
+				<comboitem label="${each.displayName}" sclass="${each.displayStyle}" />
+			</template>
+		</combobox>
+		<combobox id="fontSizeBox" style="width:45px">
+			<template name="model">
+				<comboitem label="${each}"/>
+			</template>
+		</combobox>
 		<toolbarbutton id="fontBold" image="~./zss/img/edit-bold.png"/>
 		<toolbarbutton id="fontItalic" image="~./zss/img/edit-italic.png"/>
 		<toolbarbutton id="fontUnderline" image="~./zss/img/edit-underline.png"/>
-		<toolbarbutton id="cutStrike" image="~./zss/img/edit-strike.png"/>
+		<toolbarbutton id="fontStrike" image="~./zss/img/edit-strike.png"/>
 		<!-- border  -->
 		
 		<!-- color -->

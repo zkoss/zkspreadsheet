@@ -1,6 +1,8 @@
 package org.zkoss.zss.essential;
 
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.ui.NSpreadsheet;
@@ -16,7 +18,14 @@ public class MainCtrl extends SelectorComposer<Component> {
 		super.doAfterCompose(comp);
 		
 		Spreadsheet ss = (Spreadsheet)comp.getFellow("ss");
+		ss.focus();
+		//TODO before this bug fix http://tracker.zkoss.org/browse/ZSS-220, i have to add this go get last selection
+		ss.addEventListener("onCellSelection", new EventListener<Event>() {
+			public void onEvent(Event event) throws Exception {}
+		}); 
+		
 		ss.setActionHandler(new MainActionHandler());
+		
 		
 		//
 		NBook book = readBook();
