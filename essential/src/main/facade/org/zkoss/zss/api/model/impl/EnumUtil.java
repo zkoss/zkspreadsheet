@@ -1,8 +1,11 @@
 package org.zkoss.zss.api.model.impl;
 
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.zss.api.NRange.PasteOperation;
 import org.zkoss.zss.api.NRange.PasteType;
+import org.zkoss.zss.api.model.NCellStyle.FillPatternType;
+import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.api.model.NFont.Boldweight;
 import org.zkoss.zss.api.model.NFont.TypeOffset;
@@ -139,5 +142,92 @@ public class EnumUtil {
 			return Font.BOLDWEIGHT_NORMAL;
 		}
 		throw new IllegalArgumentException("unknow font boldweight "+boldweight);
+	}
+
+	public static FillPatternType toStyleFillPattern(short pattern) {
+		switch(pattern){
+		case CellStyle.NO_FILL:
+			return NCellStyle.FillPatternType.NO_FILL;
+		case CellStyle.SOLID_FOREGROUND:
+			return NCellStyle.FillPatternType.SOLID_FOREGROUND;
+		case CellStyle.FINE_DOTS:
+			return NCellStyle.FillPatternType.FINE_DOTS;
+		case CellStyle.ALT_BARS:
+			return NCellStyle.FillPatternType.ALT_BARS;
+		case CellStyle.SPARSE_DOTS:
+			return NCellStyle.FillPatternType.SPARSE_DOTS;
+		case CellStyle.THICK_HORZ_BANDS:
+			return NCellStyle.FillPatternType.THICK_HORZ_BANDS;
+		case CellStyle.THICK_VERT_BANDS:
+			return NCellStyle.FillPatternType.THICK_VERT_BANDS;
+		case CellStyle.THICK_BACKWARD_DIAG:
+			return NCellStyle.FillPatternType.THICK_BACKWARD_DIAG;
+		case CellStyle.THICK_FORWARD_DIAG:
+			return NCellStyle.FillPatternType.THICK_FORWARD_DIAG;
+		case CellStyle.BIG_SPOTS:
+			return NCellStyle.FillPatternType.BIG_SPOTS;
+		case CellStyle.BRICKS:
+			return NCellStyle.FillPatternType.BRICKS;
+		case CellStyle.THIN_HORZ_BANDS:
+			return NCellStyle.FillPatternType.THIN_HORZ_BANDS;
+		case CellStyle.THIN_VERT_BANDS:
+			return NCellStyle.FillPatternType.THIN_VERT_BANDS;
+		case CellStyle.THIN_BACKWARD_DIAG:
+			return NCellStyle.FillPatternType.THIN_BACKWARD_DIAG;
+		case CellStyle.THIN_FORWARD_DIAG:
+			return NCellStyle.FillPatternType.THIN_FORWARD_DIAG;
+		case CellStyle.SQUARES:
+			return NCellStyle.FillPatternType.SQUARES;
+		case CellStyle.DIAMONDS:
+			return NCellStyle.FillPatternType.DIAMONDS;
+		case CellStyle.LESS_DOTS:
+			return NCellStyle.FillPatternType.LESS_DOTS;
+		case CellStyle.LEAST_DOTS:
+			return NCellStyle.FillPatternType.LEAST_DOTS;
+		}
+		throw new IllegalArgumentException("unknow pattern type "+pattern);	}
+	
+	public static short toStyleFillPattern(FillPatternType pattern) {
+		switch(pattern){
+		case NO_FILL:
+			return CellStyle.NO_FILL;
+		case SOLID_FOREGROUND:
+			return CellStyle.SOLID_FOREGROUND;
+		case FINE_DOTS:
+			return CellStyle.FINE_DOTS;
+		case ALT_BARS:
+			return CellStyle.ALT_BARS;
+		case SPARSE_DOTS:
+			return CellStyle.SPARSE_DOTS;
+		case THICK_HORZ_BANDS:
+			return CellStyle.THICK_HORZ_BANDS;
+		case THICK_VERT_BANDS:
+			return CellStyle.THICK_VERT_BANDS;
+		case THICK_BACKWARD_DIAG:
+			return CellStyle.THICK_BACKWARD_DIAG;
+		case THICK_FORWARD_DIAG:
+			return CellStyle.THICK_FORWARD_DIAG;
+		case BIG_SPOTS:
+			return CellStyle.BIG_SPOTS;
+		case BRICKS:
+			return CellStyle.BRICKS;
+		case THIN_HORZ_BANDS:
+			return CellStyle.THIN_HORZ_BANDS;
+		case THIN_VERT_BANDS:
+			return CellStyle.THIN_VERT_BANDS;
+		case THIN_BACKWARD_DIAG:
+			return CellStyle.THIN_BACKWARD_DIAG;
+		case THIN_FORWARD_DIAG:
+			return CellStyle.THIN_FORWARD_DIAG;
+		case SQUARES:
+			return CellStyle.SQUARES;
+		case DIAMONDS:
+			return CellStyle.DIAMONDS;
+		case LESS_DOTS:
+			return CellStyle.LESS_DOTS;
+		case LEAST_DOTS:
+			return CellStyle.LEAST_DOTS;
+		}
+		throw new IllegalArgumentException("unknow pattern type "+pattern);
 	}
 }

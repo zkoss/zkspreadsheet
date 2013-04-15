@@ -44,8 +44,11 @@
 		<toolbarbutton id="fontColor" image="~./zss/img/edit-color.png" sclass="narrow-right"/>
 		 -->
 		<colorbox id="fontColorbox" color="#FFFFFF" width="7px" height="12px" />
-		
+
+		<!-- 
 		<toolbarbutton id="fillColor" image="~./zss/img/paint-can-color.png"/>
+		 -->
+		<colorbox id="fillColorbox" color="#FFFFFF" width="7px" height="12px" />
 		
 		
 	</toolbar>

@@ -1,10 +1,12 @@
 package org.zkoss.zss.api;
 
+import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.zss.api.NRange.BatchLockLevel;
 import org.zkoss.zss.api.NRange.PasteOperation;
 import org.zkoss.zss.api.NRange.PasteType;
 import org.zkoss.zss.api.NRange.VisitorLockLevel;
 import org.zkoss.zss.api.model.NCellStyle;
+import org.zkoss.zss.api.model.NCellStyle.FillPatternType;
 import org.zkoss.zss.api.model.NColor;
 import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.api.model.NFont.Boldweight;
@@ -235,14 +237,50 @@ public class CellOperationUtil {
 			}
 			
 			public void apply(NRange range,NCellStyle newCellstyle, NFont newfont) {
-				//TODO need to check with Henri, and Sam, why current implementation doesn't call set font color directly
+				
 				//check it in XSSFCellStyle , it is just a delegator, but do some thing in HSSF
 				newfont.setFontColor(color);
 				
-				//call style's set font color will cause set color after set a theme color issue(after clone form default)
+				//TODO need to check with Henri, and Sam, why current implementation doesn't call set font color directly
+				//TODO call style's set font color will cause set color after set a theme color issue(after clone form default)
 //				newCellstyle.setFontColor(color); 
 			}
 		});
+	}
+	
+	
+	/**
+	 * @param htmlColor '#rgb-hex-code'
+	 */
+	public static void applyCellColor(NRange range, final String htmlColor) {
+		final NColor color = range.getGetter().getColorFromHtmlColor(htmlColor);
+		
+		range.visit(new NCellVisitor(){
+			@Override
+			public void visit(NRange cellRange) {
+				if(cellRange.isAnyCellProtected()){//don't apply if protected
+					return;
+				}
+				NCellStyle ostyle = cellRange.getGetter().getCellStyle();
+				NColor ocolor = ostyle.getBackgroundColor();
+				
+				if(ocolor.equals(color)){
+					return;
+				}
+				
+				NCellStyle nstyle = cellRange.getCreator().createCellStyle(ostyle);
+				nstyle.setBackgroundColor(color);
+				
+				//bug#ZSS-34: cell background color does not show in excel
+				//20110819, henrichen@zkoss.org: set color to a cell shall change its fillPattern to "solid" automatically
+				FillPatternType patternType = nstyle.getFillPattern();
+				if (patternType == FillPatternType.NO_FILL) {
+					nstyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+				}
+				
+				cellRange.setStyle(nstyle);
+			}
+		},VisitorLockLevel.BOOK);//will create style, use book level.
 	}
 
 }

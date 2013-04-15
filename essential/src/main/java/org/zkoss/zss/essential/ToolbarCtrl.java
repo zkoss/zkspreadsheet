@@ -59,9 +59,9 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	ListModelList<Integer> fontSizeList;
 	
 	@Wire
-	Toolbarbutton fontColor;
-	@Wire
 	Colorbox fontColorbox;
+	@Wire
+	Colorbox fillColorbox;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -445,8 +445,22 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		
 		System.out.println("apply font color "+rect+","+htmlColor);
 		
-		CellOperationUtil.applyFontColor(dest, htmlColor);
+		CellOperationUtil.applyFontColor(dest, htmlColor);		
+	}
+	
+	@Listen("onChange=#fillColorbox")
+	public void doFillColor(){
+		String htmlColor = fillColorbox.getColor(); //'#HEX-RGB'
+		if(htmlColor==null){
+			return;
+		}
+
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
 		
+		System.out.println("apply fill color "+rect+","+htmlColor);
 		
+		CellOperationUtil.applyCellColor(dest, htmlColor);		
 	}
 }
