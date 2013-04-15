@@ -2,7 +2,6 @@ package org.zkoss.zss.api.model;
 
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
-import org.zkoss.zss.api.model.NFont.Underline;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.impl.BookHelper;

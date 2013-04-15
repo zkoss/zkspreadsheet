@@ -4,7 +4,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.zss.api.NRange.PasteOperation;
 import org.zkoss.zss.api.NRange.PasteType;
-import org.zkoss.zss.api.model.NCellStyle.FillPatternType;
+import org.zkoss.zss.api.model.NCellStyle.FillPattern;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.api.model.NFont.Boldweight;
@@ -144,50 +144,50 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow font boldweight "+boldweight);
 	}
 
-	public static FillPatternType toStyleFillPattern(short pattern) {
+	public static FillPattern toStyleFillPattern(short pattern) {
 		switch(pattern){
 		case CellStyle.NO_FILL:
-			return NCellStyle.FillPatternType.NO_FILL;
+			return NCellStyle.FillPattern.NO_FILL;
 		case CellStyle.SOLID_FOREGROUND:
-			return NCellStyle.FillPatternType.SOLID_FOREGROUND;
+			return NCellStyle.FillPattern.SOLID_FOREGROUND;
 		case CellStyle.FINE_DOTS:
-			return NCellStyle.FillPatternType.FINE_DOTS;
+			return NCellStyle.FillPattern.FINE_DOTS;
 		case CellStyle.ALT_BARS:
-			return NCellStyle.FillPatternType.ALT_BARS;
+			return NCellStyle.FillPattern.ALT_BARS;
 		case CellStyle.SPARSE_DOTS:
-			return NCellStyle.FillPatternType.SPARSE_DOTS;
+			return NCellStyle.FillPattern.SPARSE_DOTS;
 		case CellStyle.THICK_HORZ_BANDS:
-			return NCellStyle.FillPatternType.THICK_HORZ_BANDS;
+			return NCellStyle.FillPattern.THICK_HORZ_BANDS;
 		case CellStyle.THICK_VERT_BANDS:
-			return NCellStyle.FillPatternType.THICK_VERT_BANDS;
+			return NCellStyle.FillPattern.THICK_VERT_BANDS;
 		case CellStyle.THICK_BACKWARD_DIAG:
-			return NCellStyle.FillPatternType.THICK_BACKWARD_DIAG;
+			return NCellStyle.FillPattern.THICK_BACKWARD_DIAG;
 		case CellStyle.THICK_FORWARD_DIAG:
-			return NCellStyle.FillPatternType.THICK_FORWARD_DIAG;
+			return NCellStyle.FillPattern.THICK_FORWARD_DIAG;
 		case CellStyle.BIG_SPOTS:
-			return NCellStyle.FillPatternType.BIG_SPOTS;
+			return NCellStyle.FillPattern.BIG_SPOTS;
 		case CellStyle.BRICKS:
-			return NCellStyle.FillPatternType.BRICKS;
+			return NCellStyle.FillPattern.BRICKS;
 		case CellStyle.THIN_HORZ_BANDS:
-			return NCellStyle.FillPatternType.THIN_HORZ_BANDS;
+			return NCellStyle.FillPattern.THIN_HORZ_BANDS;
 		case CellStyle.THIN_VERT_BANDS:
-			return NCellStyle.FillPatternType.THIN_VERT_BANDS;
+			return NCellStyle.FillPattern.THIN_VERT_BANDS;
 		case CellStyle.THIN_BACKWARD_DIAG:
-			return NCellStyle.FillPatternType.THIN_BACKWARD_DIAG;
+			return NCellStyle.FillPattern.THIN_BACKWARD_DIAG;
 		case CellStyle.THIN_FORWARD_DIAG:
-			return NCellStyle.FillPatternType.THIN_FORWARD_DIAG;
+			return NCellStyle.FillPattern.THIN_FORWARD_DIAG;
 		case CellStyle.SQUARES:
-			return NCellStyle.FillPatternType.SQUARES;
+			return NCellStyle.FillPattern.SQUARES;
 		case CellStyle.DIAMONDS:
-			return NCellStyle.FillPatternType.DIAMONDS;
+			return NCellStyle.FillPattern.DIAMONDS;
 		case CellStyle.LESS_DOTS:
-			return NCellStyle.FillPatternType.LESS_DOTS;
+			return NCellStyle.FillPattern.LESS_DOTS;
 		case CellStyle.LEAST_DOTS:
-			return NCellStyle.FillPatternType.LEAST_DOTS;
+			return NCellStyle.FillPattern.LEAST_DOTS;
 		}
 		throw new IllegalArgumentException("unknow pattern type "+pattern);	}
 	
-	public static short toStyleFillPattern(FillPatternType pattern) {
+	public static short toStyleFillPattern(FillPattern pattern) {
 		switch(pattern){
 		case NO_FILL:
 			return CellStyle.NO_FILL;

@@ -2,14 +2,13 @@ package org.zkoss.zss.api.model;
 
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Color;
-import org.zkoss.zss.api.model.NCellStyle.FillPatternType;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.impl.BookHelper;
 
 public class NCellStyle {
 
-	public enum FillPatternType{
+	public enum FillPattern{
 		NO_FILL,
 		SOLID_FOREGROUND,
 		FINE_DOTS,
@@ -103,11 +102,11 @@ public class NCellStyle {
 		BookHelper.setFillForegroundColor(style, color.getNative());
 	}
 	
-	public FillPatternType getFillPattern(){
+	public FillPattern getFillPattern(){
 		return EnumUtil.toStyleFillPattern(style.getFillPattern());
 	}
 
-	public void setFillPattern(FillPatternType pattern) {
+	public void setFillPattern(FillPattern pattern) {
 		style.setFillPattern(EnumUtil.toStyleFillPattern(pattern));	
 	}
 	

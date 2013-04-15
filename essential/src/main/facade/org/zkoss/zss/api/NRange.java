@@ -2,10 +2,10 @@ package org.zkoss.zss.api;
 
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NSheet;
 import org.zkoss.zss.api.model.impl.EnumUtil;
-import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Worksheet;
 
@@ -232,5 +232,10 @@ public class NRange {
 	
 	public boolean isWholeSheet() { 
 		return range.isWholeSheet();
+	}
+
+
+	public NBook getBook() {
+		return getSheet().getBook();
 	}
 }

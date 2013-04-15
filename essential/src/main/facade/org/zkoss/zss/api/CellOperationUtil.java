@@ -1,12 +1,11 @@
 package org.zkoss.zss.api;
 
-import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.zss.api.NRange.BatchLockLevel;
 import org.zkoss.zss.api.NRange.PasteOperation;
 import org.zkoss.zss.api.NRange.PasteType;
 import org.zkoss.zss.api.NRange.VisitorLockLevel;
 import org.zkoss.zss.api.model.NCellStyle;
-import org.zkoss.zss.api.model.NCellStyle.FillPatternType;
+import org.zkoss.zss.api.model.NCellStyle.FillPattern;
 import org.zkoss.zss.api.model.NColor;
 import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.api.model.NFont.Boldweight;
@@ -72,7 +71,7 @@ public class CellOperationUtil {
 			
 			public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont){
 				//use the new font name to search it.
-				return cellRange.getGetter().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), fontName, 
+				return cellRange.getBook().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), fontName, 
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
@@ -91,7 +90,7 @@ public class CellOperationUtil {
 			
 			public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont){
 				//use the new font name to search it.
-				return cellRange.getGetter().findFont(oldFont.getBoldweight(), oldFont.getColor(), height, oldFont.getFontName(), 
+				return cellRange.getBook().findFont(oldFont.getBoldweight(), oldFont.getColor(), height, oldFont.getFontName(), 
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
@@ -160,7 +159,7 @@ public class CellOperationUtil {
 			}
 			
 			public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont){
-				return cellRange.getGetter().findFont(boldweight, oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
+				return cellRange.getBook().findFont(boldweight, oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
@@ -177,7 +176,7 @@ public class CellOperationUtil {
 			}
 			
 			public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont){
-				return cellRange.getGetter().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
+				return cellRange.getBook().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
 						italic, oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
@@ -194,7 +193,7 @@ public class CellOperationUtil {
 			}
 			
 			public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont){
-				return cellRange.getGetter().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
+				return cellRange.getBook().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
 						oldFont.isItalic(), strikeout, oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
@@ -211,7 +210,7 @@ public class CellOperationUtil {
 			}
 			
 			public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont){
-				return cellRange.getGetter().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
+				return cellRange.getBook().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), underline);
 			}
 			
@@ -225,14 +224,14 @@ public class CellOperationUtil {
 	 * @param htmlColor '#rgb-hex-code'
 	 */
 	public static void applyFontColor(NRange range, final String htmlColor) {
-		final NColor color = range.getGetter().getColorFromHtmlColor(htmlColor);
+		final NColor color = range.getBook().getColorFromHtmlColor(htmlColor);
 		applyFontStyle(range, new FontStyleApplier() {
 			public boolean ignore(NRange range,NCellStyle oldCellstyle, NFont oldFont) {
 				return oldFont.getColor().toHtmlColor().equals(htmlColor);
 			}
 			
 			public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont){
-				return cellRange.getGetter().findFont(oldFont.getBoldweight(), color, oldFont.getFontHeight(), oldFont.getFontName(), 
+				return cellRange.getBook().findFont(oldFont.getBoldweight(), color, oldFont.getFontHeight(), oldFont.getFontName(), 
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
@@ -253,7 +252,7 @@ public class CellOperationUtil {
 	 * @param htmlColor '#rgb-hex-code'
 	 */
 	public static void applyCellColor(NRange range, final String htmlColor) {
-		final NColor color = range.getGetter().getColorFromHtmlColor(htmlColor);
+		final NColor color = range.getBook().getColorFromHtmlColor(htmlColor);
 		
 		range.visit(new NCellVisitor(){
 			@Override
@@ -273,9 +272,9 @@ public class CellOperationUtil {
 				
 				//bug#ZSS-34: cell background color does not show in excel
 				//20110819, henrichen@zkoss.org: set color to a cell shall change its fillPattern to "solid" automatically
-				FillPatternType patternType = nstyle.getFillPattern();
-				if (patternType == FillPatternType.NO_FILL) {
-					nstyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+				FillPattern patternType = nstyle.getFillPattern();
+				if (patternType == FillPattern.NO_FILL) {
+					nstyle.setFillPattern(FillPattern.SOLID_FOREGROUND);
 				}
 				
 				cellRange.setStyle(nstyle);

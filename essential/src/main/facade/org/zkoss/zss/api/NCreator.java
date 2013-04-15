@@ -45,10 +45,4 @@ public class NCreator {
 			
 
 	}
-
-	public NFont createFont() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

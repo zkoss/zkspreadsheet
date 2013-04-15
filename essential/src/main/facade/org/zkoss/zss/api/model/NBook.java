@@ -1,6 +1,13 @@
 package org.zkoss.zss.api.model;
 
+import org.zkoss.poi.ss.usermodel.Color;
+import org.zkoss.poi.ss.usermodel.Font;
+import org.zkoss.zss.api.model.NFont.Boldweight;
+import org.zkoss.zss.api.model.NFont.TypeOffset;
+import org.zkoss.zss.api.model.NFont.Underline;
+import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.HSSFBookImpl;
 import org.zkoss.zss.model.impl.XSSFBookImpl;
 
@@ -21,10 +28,6 @@ public class NBook {
 		} else {
 			throw new IllegalArgumentException("unknow book type "+book);
 		}
-	}
-	
-	public Object getSyncObject(){
-		return book;//Rage impl use it to do sync
 	}
 
 	public Book getNative() {
@@ -68,4 +71,21 @@ public class NBook {
 		if(sheet==null) return -1;
 		return book.getSheetIndex(sheet.getNative());
 	}
+	
+
+	public NFont findFont(Boldweight boldweight, NColor color, short fontHeight,
+			String fontName, boolean italic, boolean strikeout,
+			TypeOffset typeOffset, Underline underline) {
+		Font font;
+		
+		font = book.findFont(EnumUtil.toFontBoldweight(boldweight), color.getNative(), fontHeight, fontName,
+				italic, strikeout, EnumUtil.toFontTypeOffset(typeOffset), EnumUtil.toFontUnderline(underline));
+		return font==null?null:new NFont(book,font);
+	}
+
+	public NColor getColorFromHtmlColor(String htmlColor) {
+		Color color = BookHelper.HTMLToColor(book, htmlColor);//never null
+		return new NColor(book,color);
+	}
+	
 }

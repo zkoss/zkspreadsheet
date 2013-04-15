@@ -1,16 +1,12 @@
 package org.zkoss.zss.api.model;
 
-import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Worksheet;
 
 public class NSheet {
 	Worksheet sheet;
+	NBook nbook;
 	public NSheet(Worksheet sheet){
 		this.sheet = sheet;
-	}
-	
-	public Object getSyncObject(){
-		return sheet;//Rage impl use it to do sync
 	}
 	
 	public Worksheet getNative(){
@@ -39,6 +35,13 @@ public class NSheet {
 		} else if (!sheet.equals(other.sheet))
 			return false;
 		return true;
+	}
+
+	public NBook getBook() {
+		if(nbook!=null){
+			return nbook;
+		}
+		return nbook = new NBook(sheet.getBook());
 	}
 	
 	
