@@ -62,4 +62,10 @@ public class NSpreadsheet {
 		ss.setHighlight(rect);
 	}
 
+	public int getMaxcolumns() {
+		return ss.getMaxcolumns();
+	}
+	public int getMaxrows() {
+		return ss.getMaxrows();
+	}
 }

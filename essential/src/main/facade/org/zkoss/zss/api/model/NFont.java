@@ -97,7 +97,8 @@ public class NFont {
 		Font sfont = src.getNative();
 		
 		font.setBoldweight(sfont.getBoldweight());
-		BookHelper.setFontColor(book, font, BookHelper.getFontColor(book, sfont));
+		Color srcColor = BookHelper.getFontColor(book, sfont);
+		BookHelper.setFontColor(book, font, srcColor);
 		font.setFontHeight(sfont.getFontHeight());
 		font.setFontName(sfont.getFontName());
 		font.setItalic(sfont.getItalic());
@@ -123,5 +124,8 @@ public class NFont {
 	}
 	public void setFontHeight(short height){
 		font.setFontHeight(height);
+	}
+	public void setFontColor(NColor color) {
+		BookHelper.setFontColor(book, font, color.getNative());
 	}
 }

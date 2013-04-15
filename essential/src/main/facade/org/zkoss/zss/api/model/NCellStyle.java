@@ -66,6 +66,12 @@ public class NCellStyle {
 	public void cloneAttribute(NCellStyle src) {
 		style.cloneStyleFrom(src.getNative());
 	}
+
+//	public void setFontColor(NColor color) {
+//		//set color form here will not go through BookHelper, cause set color issue of a theme color in XSSFont.
+//		//use font set color
+//		style.setFontColorColor(color.getNative());
+//	}
 	
 
 }

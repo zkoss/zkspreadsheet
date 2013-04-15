@@ -5,6 +5,9 @@
 		function focusSS(base,ssid){
 			base.$f(ssid, true).focus(false);
 		}
+		function openPicker(base,id){
+			base.$f(id).openPicker();
+		}
 		</script>
 		<!-- copy and paste -->
 		<toolbarbutton id="paste" image="~./zss/img/clipboard-paste.png" sclass="narrow-right"/>
@@ -37,6 +40,12 @@
 		<!-- border  -->
 		
 		<!-- color -->
+		<!-- 
+		<toolbarbutton id="fontColor" image="~./zss/img/edit-color.png" sclass="narrow-right"/>
+		 -->
+		<colorbox id="fontColorbox" color="#FFFFFF" width="7px" height="12px" />
+		
+		<toolbarbutton id="fillColor" image="~./zss/img/paint-can-color.png"/>
 		
 		
 	</toolbar>

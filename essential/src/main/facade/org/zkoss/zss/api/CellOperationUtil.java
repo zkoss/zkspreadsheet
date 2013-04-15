@@ -5,6 +5,7 @@ import org.zkoss.zss.api.NRange.PasteOperation;
 import org.zkoss.zss.api.NRange.PasteType;
 import org.zkoss.zss.api.NRange.VisitorLockLevel;
 import org.zkoss.zss.api.model.NCellStyle;
+import org.zkoss.zss.api.model.NColor;
 import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.api.model.NFont.Boldweight;
 import org.zkoss.zss.api.model.NFont.Underline;
@@ -102,13 +103,16 @@ public class CellOperationUtil {
 		applyFontHeight(range,(short)(size*20));
 	}
 	
-	private interface FontStyleApplier {
+	public interface FontStyleApplier {
+		/** should ignore this cellRange**/
 		public boolean ignore(NRange cellRange,NCellStyle oldCellstyle,NFont oldFont);
+		/** find the font to apply to new style, return null mean not found, and will create a new font**/
 		public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont);
-		public void apply(NRange cellRange,NCellStyle cellstyle,NFont newfont);
+		/** apply style to new font, will be call when {@code #search() return null}**/
+		public void apply(NRange cellRange,NCellStyle newCellstyle,NFont newfont);
 	}
 	
-	private static void applyFontStyle(NRange range,final FontStyleApplier applyer){
+	public static void applyFontStyle(NRange range,final FontStyleApplier applyer){
 		//use use cell visitor to visit cells respectively
 		//use BOOK level lock because we will create BOOK level Object (style, font)
 		range.visit(new NCellVisitor(){
@@ -132,11 +136,15 @@ public class CellOperationUtil {
 				if( nfont== null){
 					//create new font base old font if not found
 					nfont = cellRange.getCreator().createFont(ofont);
+					nstyle.setFont(nfont);
+					
 					//set the apply
 					applyer.apply(cellRange,nstyle, nfont);
+				}else{
+					nstyle.setFont(nfont);
 				}
 				
-				nstyle.setFont(nfont);
+				
 				cellRange.setStyle(nstyle);
 			}},VisitorLockLevel.BOOK);
 	}
@@ -154,7 +162,7 @@ public class CellOperationUtil {
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
-			public void apply(NRange range,NCellStyle cellstyle, NFont newfont) {
+			public void apply(NRange range,NCellStyle newCellstyle, NFont newfont) {
 				newfont.setBoldweight(boldweight);
 			}
 		});
@@ -171,7 +179,7 @@ public class CellOperationUtil {
 						italic, oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
-			public void apply(NRange range,NCellStyle cellstyle, NFont newfont) {
+			public void apply(NRange range,NCellStyle newCellstyle, NFont newfont) {
 				newfont.setItalic(italic);
 			}
 		});
@@ -188,7 +196,7 @@ public class CellOperationUtil {
 						oldFont.isItalic(), strikeout, oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
-			public void apply(NRange range,NCellStyle cellstyle, NFont newfont) {
+			public void apply(NRange range,NCellStyle newCellstyle, NFont newfont) {
 				newfont.setStrikeout(strikeout);
 			}
 		});
@@ -205,8 +213,34 @@ public class CellOperationUtil {
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), underline);
 			}
 			
-			public void apply(NRange range,NCellStyle cellstyle, NFont newfont) {
+			public void apply(NRange range,NCellStyle newCellstyle, NFont newfont) {
 				newfont.setUnderline(underline);
+			}
+		});
+	}
+	
+	/**
+	 * @param htmlColor '#rgb-hex-code'
+	 */
+	public static void applyFontColor(NRange range, final String htmlColor) {
+		final NColor color = range.getGetter().getColorFromHtmlColor(htmlColor);
+		applyFontStyle(range, new FontStyleApplier() {
+			public boolean ignore(NRange range,NCellStyle oldCellstyle, NFont oldFont) {
+				return oldFont.getColor().toHtmlColor().equals(htmlColor);
+			}
+			
+			public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont){
+				return cellRange.getGetter().findFont(oldFont.getBoldweight(), color, oldFont.getFontHeight(), oldFont.getFontName(), 
+						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
+			}
+			
+			public void apply(NRange range,NCellStyle newCellstyle, NFont newfont) {
+				//TODO need to check with Henri, and Sam, why current implementation doesn't call set font color directly
+				//check it in XSSFCellStyle , it is just a delegator, but do some thing in HSSF
+				newfont.setFontColor(color);
+				
+				//call style's set font color will cause set color after set a theme color issue(after clone form default)
+//				newCellstyle.setFontColor(color); 
 			}
 		});
 	}

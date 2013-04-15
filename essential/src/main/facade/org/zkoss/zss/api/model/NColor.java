@@ -2,6 +2,7 @@ package org.zkoss.zss.api.model;
 
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.impl.BookHelper;
 
 public class NColor {
 
@@ -40,6 +41,10 @@ public class NColor {
 
 	public Color getNative() {
 		return color;
+	}
+
+	public String toHtmlColor() {
+		return BookHelper.colorToHTML(book,color);
 	}
 
 }

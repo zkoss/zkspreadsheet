@@ -5,6 +5,7 @@ import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NSheet;
 import org.zkoss.zss.api.model.impl.EnumUtil;
+import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Worksheet;
 
@@ -161,7 +162,8 @@ public class NRange {
 		}
 	}
 	/**
-	 * visit all cells in this range
+	 * visit all cells in this range, make sure you call this in a limited range, 
+	 * don't use it for all row/column selection, it will spend much time to iterate the cell 
 	 * @param visitor the visitor 
 	 * @param create create cell if it doesn't exist, if it is true, it will also lock the sheet
 	 * @param lock lock the sheet if you will do any modification of the sheet 
@@ -220,4 +222,15 @@ public class NRange {
 	}
 	
 	
+	public boolean isWholeColumn() { 
+		return range.isWholeColumn();
+	}
+
+	public boolean isWholeRow() { 
+		return range.isWholeRow();
+	}
+	
+	public boolean isWholeSheet() { 
+		return range.isWholeSheet();
+	}
 }

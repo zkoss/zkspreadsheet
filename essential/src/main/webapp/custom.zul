@@ -5,6 +5,10 @@
 			<div hflex="1" vflex="min" >
 				<include src="/toolbar.zul" spreadsheetId="ss" spreadsheetPath="../ss"/>
 			</div>
+			<hbox>
+			<button label="invalidate" onClick="ss.invalidate()"/>
+			<button label="enlarge" onClick="ss.setMaxrows(500);"/>
+			</hbox>
 			<spreadsheet hflex="1" vflex="1" 
 				id="ss"
 				showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true"

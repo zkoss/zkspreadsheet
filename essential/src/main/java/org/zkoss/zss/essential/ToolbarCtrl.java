@@ -15,6 +15,7 @@ import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zkex.zul.Colorbox;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.NRange;
 import org.zkoss.zss.api.NRanges;
@@ -56,6 +57,11 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	@Wire
 	Combobox fontSizeBox;
 	ListModelList<Integer> fontSizeList;
+	
+	@Wire
+	Toolbarbutton fontColor;
+	@Wire
+	Colorbox fontColorbox;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -202,7 +208,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		if (clipinfo == null)
 			return;
 
-		Rect rect = nss.getSelection();
+		Rect rect = getSelection();
 		if (rect == null)
 			return;
 
@@ -261,7 +267,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 
 	@Listen("onClick=#copy")
 	public void doCopy() {
-		Rect rect = nss.getSelection();
+		Rect rect = getSelection();
 		setClipboard(nss.getSelectedSheet(), rect, ClipInfo.Type.COPY);
 		pasteMenu.setDisabled(false);
 		paste.setDisabled(false);
@@ -269,7 +275,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 
 	@Listen("onClick=#cut")
 	public void doCut() {
-		Rect rect = nss.getSelection();
+		Rect rect = getSelection();
 		setClipboard(nss.getSelectedSheet(), rect, ClipInfo.Type.CUT);
 		//TODO should disable some past-special toolbar button
 		pasteMenu.setDisabled(true);
@@ -309,7 +315,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		}
 		String fontName = font.getFontName();
 		//
-		Rect rect = nss.getSelection();
+		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
 		//protection issue?
@@ -324,7 +330,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		}
 		
 		//
-		Rect rect = nss.getSelection();
+		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
 		//protection issue?
@@ -333,7 +339,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	
 	@Listen("onClick=#fontBold")
 	public void doFontBold() {
-		Rect rect = nss.getSelection();
+		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
 		
@@ -353,7 +359,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	
 	@Listen("onClick=#fontItalic")
 	public void doFontItalic() {
-		Rect rect = nss.getSelection();
+		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
 		
@@ -366,7 +372,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	
 	@Listen("onClick=#fontStrike")
 	public void doFontStrike() {
-		Rect rect = nss.getSelection();
+		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
 		
@@ -380,7 +386,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	
 	@Listen("onClick=#fontUnderline")
 	public void doFontUnderline() {
-		Rect rect = nss.getSelection();
+		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
 		
@@ -405,4 +411,42 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	// <toolbarbutton id="fontItalic" image="~./zss/img/edit-italic.png"/>
 	// <toolbarbutton id="fontUnderline" image="~./zss/img/edit-underline.png"/>
 	// <toolbarbutton id="fontStrike" image="~./zss/img/edit-strike.png"/>
+	
+	
+	
+	
+	
+	
+	private Rect getSelection(){
+		Rect rect = nss.getSelection();
+		//TODO re-format rect before zss support well rows,colums selection handling
+		int r = rect.getRight();
+		int b = rect.getBottom();
+		rect = new Rect(rect.getLeft(), rect.getTop(),
+				(r <= nss.getMaxcolumns()) ? r : nss.getMaxcolumns(),
+				(b <= nss.getMaxrows()) ? b : nss.getMaxrows());
+
+		return rect;
+	}
+	
+	
+	
+	
+	@Listen("onChange=#fontColorbox")
+	public void doFontColor(){
+		String htmlColor = fontColorbox.getColor(); //'#HEX-RGB'
+		if(htmlColor==null){
+			return;
+		}
+
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		
+		System.out.println("apply font color "+rect+","+htmlColor);
+		
+		CellOperationUtil.applyFontColor(dest, htmlColor);
+		
+		
+	}
 }
