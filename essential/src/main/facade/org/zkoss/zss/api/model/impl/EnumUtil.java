@@ -4,8 +4,10 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.zss.api.NRange.PasteOperation;
 import org.zkoss.zss.api.NRange.PasteType;
+import org.zkoss.zss.api.model.NCellStyle.Alignment;
 import org.zkoss.zss.api.model.NCellStyle.FillPattern;
 import org.zkoss.zss.api.model.NCellStyle;
+import org.zkoss.zss.api.model.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.api.model.NFont.Boldweight;
 import org.zkoss.zss.api.model.NFont.TypeOffset;
@@ -229,5 +231,70 @@ public class EnumUtil {
 			return CellStyle.LEAST_DOTS;
 		}
 		throw new IllegalArgumentException("unknow pattern type "+pattern);
+	}
+
+	public static short toCellAlignemnt(Alignment alignment) {
+		switch(alignment){
+		case GENERAL:
+			return CellStyle.ALIGN_GENERAL;
+		case LEFT:
+			return CellStyle.ALIGN_LEFT;
+		case CENTER:
+			return CellStyle.ALIGN_CENTER;
+		case RIGHT:
+			return CellStyle.ALIGN_RIGHT;
+		case FILL:
+			return CellStyle.ALIGN_FILL;
+		case JUSTIFY:
+			return CellStyle.ALIGN_JUSTIFY;
+		case CENTER_SELECTION:
+			return CellStyle.ALIGN_CENTER_SELECTION;
+		}
+		throw new IllegalArgumentException("unknow cell alignment "+alignment);
+	}
+	public static Alignment toCellAlignemnt(short alignment) {
+		switch(alignment){
+		case CellStyle.ALIGN_GENERAL:
+			return Alignment.GENERAL;
+		case CellStyle.ALIGN_LEFT:
+			return Alignment.LEFT;
+		case CellStyle.ALIGN_CENTER:
+			return Alignment.CENTER;
+		case CellStyle.ALIGN_RIGHT:
+			return Alignment.RIGHT;
+		case CellStyle.ALIGN_FILL:
+			return Alignment.FILL;
+		case CellStyle.ALIGN_JUSTIFY:
+			return Alignment.JUSTIFY;
+		case CellStyle.ALIGN_CENTER_SELECTION:
+			return Alignment.CENTER_SELECTION;
+		}
+		throw new IllegalArgumentException("unknow cell alignment "+alignment);
+	}
+	public static short toCellVerticalAlignemnt(VerticalAlignment alignment) {
+		switch(alignment){
+		case TOP:
+			return CellStyle.VERTICAL_TOP;
+		case CENTER:
+			return CellStyle.VERTICAL_CENTER;
+		case BOTTOM:
+			return CellStyle.VERTICAL_BOTTOM;
+		case JUSTIFY:
+			return CellStyle.VERTICAL_JUSTIFY;
+		}
+		throw new IllegalArgumentException("unknow cell vertical alignment "+alignment);
+	}
+	public static VerticalAlignment toCellVerticalAlignemnt(short alignment) {
+		switch(alignment){
+		case CellStyle.VERTICAL_TOP:
+			return VerticalAlignment.TOP;
+		case CellStyle.VERTICAL_CENTER:
+			return VerticalAlignment.CENTER;
+		case CellStyle.VERTICAL_BOTTOM:
+			return VerticalAlignment.BOTTOM;
+		case CellStyle.VERTICAL_JUSTIFY:
+			return VerticalAlignment.JUSTIFY;
+		}
+		throw new IllegalArgumentException("unknow cell vertical alignment "+alignment);
 	}
 }

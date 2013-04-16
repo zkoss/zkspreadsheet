@@ -5,7 +5,9 @@ import org.zkoss.zss.api.NRange.PasteOperation;
 import org.zkoss.zss.api.NRange.PasteType;
 import org.zkoss.zss.api.NRange.VisitorLockLevel;
 import org.zkoss.zss.api.model.NCellStyle;
+import org.zkoss.zss.api.model.NCellStyle.Alignment;
 import org.zkoss.zss.api.model.NCellStyle.FillPattern;
+import org.zkoss.zss.api.model.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.api.model.NColor;
 import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.api.model.NFont.Boldweight;
@@ -253,33 +255,89 @@ public class CellOperationUtil {
 	 */
 	public static void applyCellColor(NRange range, final String htmlColor) {
 		final NColor color = range.getBook().getColorFromHtmlColor(htmlColor);
-		
-		range.visit(new NCellVisitor(){
+		applyCellStyle(range, new CellStyleApplier() {
+
+			public boolean ignore(NRange cellRange, NCellStyle oldCellstyle) {
+				NColor ocolor = oldCellstyle.getBackgroundColor();
+				return ocolor.equals(color);
+			}
+
+			public void apply(NRange cellRange, NCellStyle newCellstyle) {
+				newCellstyle.setBackgroundColor(color);
+				
+				FillPattern patternType = newCellstyle.getFillPattern();
+				if (patternType == FillPattern.NO_FILL) {
+					newCellstyle.setFillPattern(FillPattern.SOLID_FOREGROUND);
+				}
+			}
+		});
+	}
+
+	public static void applyCellAlignment(NRange range,final Alignment alignment) {
+		applyCellStyle(range, new CellStyleApplier() {
+
+			public boolean ignore(NRange cellRange, NCellStyle oldCellstyle) {
+				Alignment oldalign = oldCellstyle.getAlignment();
+				return oldalign.equals(alignment);
+			}
+
+			public void apply(NRange cellRange, NCellStyle newCellstyle) {
+				newCellstyle.setAlignment(alignment);
+			}
+		});
+	}
+
+	public static void applyCellVerticalAlignment(NRange range,final VerticalAlignment alignment) {
+		applyCellStyle(range, new CellStyleApplier() {
+
+			public boolean ignore(NRange cellRange, NCellStyle oldCellstyle) {
+				VerticalAlignment oldalign = oldCellstyle.getVerticalAlignment();
+				return oldalign.equals(alignment);
+			}
+
+			public void apply(NRange cellRange, NCellStyle newCellstyle) {
+				newCellstyle.setVerticalAlignment(alignment);
+			}
+		});
+	}
+	
+	
+	public interface CellStyleApplier {
+		/** should ignore this cellRange**/
+		public boolean ignore(NRange cellRange,NCellStyle oldCellstyle);
+		/** apply style to new cell**/
+		public void apply(NRange cellRange,NCellStyle newCellstyle);
+	}
+	
+	public static void applyCellStyle(NRange range,
+			final CellStyleApplier applyer) {
+		// use use cell visitor to visit cells respectively
+		// use BOOK level lock because we will create BOOK level Object (style,
+		// font)
+		range.visit(new NCellVisitor() {
 			@Override
 			public void visit(NRange cellRange) {
-				if(cellRange.isAnyCellProtected()){//don't apply if protected
+				if (cellRange.isAnyCellProtected()) {// don't apply if protected
 					return;
 				}
 				NCellStyle ostyle = cellRange.getGetter().getCellStyle();
-				NColor ocolor = ostyle.getBackgroundColor();
-				
-				if(ocolor.equals(color)){
+				if (applyer.ignore(cellRange, ostyle)) {// ignore or not, to
+														// prevent unnecessary
+														// creation
 					return;
 				}
-				
-				NCellStyle nstyle = cellRange.getCreator().createCellStyle(ostyle);
-				nstyle.setBackgroundColor(color);
-				
-				//bug#ZSS-34: cell background color does not show in excel
-				//20110819, henrichen@zkoss.org: set color to a cell shall change its fillPattern to "solid" automatically
-				FillPattern patternType = nstyle.getFillPattern();
-				if (patternType == FillPattern.NO_FILL) {
-					nstyle.setFillPattern(FillPattern.SOLID_FOREGROUND);
-				}
-				
+				// 2.create a new style from old one, the original one is shared
+				// between cells
+				// TODO what if it is the last referenced, could I just use it?
+				// who will delete old if I use new
+				NCellStyle nstyle = cellRange.getCreator().createCellStyle(
+						ostyle);
+
+				// set the apply
+				applyer.apply(cellRange, nstyle);
+
 				cellRange.setStyle(nstyle);
 			}
-		},VisitorLockLevel.BOOK);//will create style, use book level.
+		}, VisitorLockLevel.BOOK);
 	}
-
 }

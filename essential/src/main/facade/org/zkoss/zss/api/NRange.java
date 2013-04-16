@@ -220,20 +220,6 @@ public class NRange {
 		}
 		visitor.visit(NRanges.range(getSheet(),r,c));
 	}
-	
-	
-	public boolean isWholeColumn() { 
-		return range.isWholeColumn();
-	}
-
-	public boolean isWholeRow() { 
-		return range.isWholeRow();
-	}
-	
-	public boolean isWholeSheet() { 
-		return range.isWholeSheet();
-	}
-
 
 	public NBook getBook() {
 		return getSheet().getBook();

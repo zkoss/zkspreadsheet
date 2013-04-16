@@ -19,6 +19,7 @@ import org.zkoss.zkex.zul.Colorbox;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.NRange;
 import org.zkoss.zss.api.NRanges;
+import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NFont.Boldweight;
 import org.zkoss.zss.api.model.NFont.Underline;
 import org.zkoss.zss.api.model.NSheet;
@@ -62,6 +63,12 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	Colorbox fontColorbox;
 	@Wire
 	Colorbox fillColorbox;
+	
+	
+	@Wire
+	Toolbarbutton alignMenu;
+	@Wire
+	Menupopup alignPopup;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -443,8 +450,6 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
 		
-		System.out.println("apply font color "+rect+","+htmlColor);
-		
 		CellOperationUtil.applyFontColor(dest, htmlColor);		
 	}
 	
@@ -459,8 +464,64 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
 		
-		System.out.println("apply fill color "+rect+","+htmlColor);
-		
 		CellOperationUtil.applyCellColor(dest, htmlColor);		
 	}
+	
+	
+	@Listen("onClick=#alignMenu")
+	public void doAlignMenu(){
+		alignPopup.open(alignMenu);
+	}
+
+	@Listen("onClick=#alignTop")
+	public void doAlignTop() {
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		
+		CellOperationUtil.applyCellVerticalAlignment(dest,NCellStyle.VerticalAlignment.TOP);
+	}
+	@Listen("onClick=#alignMiddle")
+	public void doAlignMiddle() {
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		
+		CellOperationUtil.applyCellVerticalAlignment(dest,NCellStyle.VerticalAlignment.CENTER);
+	}
+	@Listen("onClick=#alignBottom")
+	public void doAlignBottom() {
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		
+		CellOperationUtil.applyCellVerticalAlignment(dest,NCellStyle.VerticalAlignment.BOTTOM);
+	}
+	
+	
+	@Listen("onClick=#alignLeft")
+	public void doAlignLeft() {
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		
+		CellOperationUtil.applyCellAlignment(dest,NCellStyle.Alignment.LEFT);
+	}
+	@Listen("onClick=#alignCenter")
+	public void doAlignCenter() {
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		
+		CellOperationUtil.applyCellAlignment(dest,NCellStyle.Alignment.CENTER);
+	}
+	@Listen("onClick=#alignRight")
+	public void doAlignRight() {
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		
+		CellOperationUtil.applyCellAlignment(dest,NCellStyle.Alignment.RIGHT);
+	}
+	
 }

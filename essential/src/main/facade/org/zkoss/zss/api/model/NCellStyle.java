@@ -30,6 +30,22 @@ public class NCellStyle {
 		LEAST_DOTS
 	}
 	
+	public enum Alignment{
+		GENERAL,
+		LEFT,
+		CENTER,
+		RIGHT,
+		FILL,
+		JUSTIFY,
+		CENTER_SELECTION
+	}
+	public enum VerticalAlignment{
+		TOP,
+		CENTER,
+		BOTTOM,
+		JUSTIFY
+	}
+	
 	
 	Book book;
 	CellStyle style;
@@ -123,6 +139,18 @@ public class NCellStyle {
 //		//use font set color
 //		style.setFontColorColor(color.getNative());
 //	}
-	
+
+	public void setAlignment(Alignment alignment){
+		style.setAlignment(EnumUtil.toCellAlignemnt(alignment));
+	}
+	public Alignment getAlignment(){
+		return EnumUtil.toCellAlignemnt(style.getAlignment());
+	}
+	public void setVerticalAlignment(VerticalAlignment alignment){
+		style.setVerticalAlignment(EnumUtil.toCellVerticalAlignemnt(alignment));
+	}
+	public VerticalAlignment getVerticalAlignment(){
+		return EnumUtil.toCellVerticalAlignemnt(style.getVerticalAlignment());
+	}
 
 }

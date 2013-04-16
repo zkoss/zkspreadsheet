@@ -43,13 +43,24 @@
 		<!-- 
 		<toolbarbutton id="fontColor" image="~./zss/img/edit-color.png" sclass="narrow-right"/>
 		 -->
+		FC:
 		<colorbox id="fontColorbox" color="#FFFFFF" width="7px" height="12px" />
 
 		<!-- 
 		<toolbarbutton id="fillColor" image="~./zss/img/paint-can-color.png"/>
 		 -->
+		BC:
 		<colorbox id="fillColorbox" color="#FFFFFF" width="7px" height="12px" />
 		
+		<toolbarbutton id="alignMenu" image="~./zss/img/edit-alignment.png" />
+		<menupopup id="alignPopup">
+			<menuitem id="alignLeft" label="Text Left"/>
+			<menuitem id="alignCenter" label="Text Center"/>
+			<menuitem id="alignRight" label="Text Right"/>
+			<menuitem id="alignTop" label="Align Top"/>
+			<menuitem id="alignMiddle" label="Align Middle"/>
+			<menuitem id="alignBottom" label="Align Bottom"/>
+		</menupopup>
 		
 	</toolbar>
 </zk>
