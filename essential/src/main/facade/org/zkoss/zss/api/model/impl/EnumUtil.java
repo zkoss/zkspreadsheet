@@ -1,7 +1,10 @@
 package org.zkoss.zss.api.model.impl;
 
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Font;
+import org.zkoss.zss.api.NRange.ApplyBorderType;
+import org.zkoss.zss.api.NRange.ApplyBorderLineStyle;
 import org.zkoss.zss.api.NRange.PasteOperation;
 import org.zkoss.zss.api.NRange.PasteType;
 import org.zkoss.zss.api.model.NCellStyle.Alignment;
@@ -13,6 +16,7 @@ import org.zkoss.zss.api.model.NFont.Boldweight;
 import org.zkoss.zss.api.model.NFont.TypeOffset;
 import org.zkoss.zss.api.model.NFont.Underline;
 import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.impl.BookHelper;
 
 public class EnumUtil {
 	
@@ -296,5 +300,69 @@ public class EnumUtil {
 			return VerticalAlignment.JUSTIFY;
 		}
 		throw new IllegalArgumentException("unknow cell vertical alignment "+alignment);
+	}
+
+	public static short toCellApplyBorderType(ApplyBorderType type) {
+		switch(type){
+		case FULL:
+			return BookHelper.BORDER_FULL;
+		case EDGE_BOTTOM:
+			return BookHelper.BORDER_EDGE_BOTTOM;
+		case EDGE_RIGHT:
+			return BookHelper.BORDER_EDGE_RIGHT;
+		case EDGE_TOP:
+			return BookHelper.BORDER_EDGE_TOP;
+		case EDGE_LEFT:
+			return BookHelper.BORDER_EDGE_LEFT;
+		case OUTLINE:
+			return BookHelper.BORDER_OUTLINE;
+		case INSIDE:
+			return BookHelper.BORDER_INSIDE;
+		case INSIDE_HORIZONTAL:
+			return BookHelper.BORDER_INSIDE_HORIZONTAL;
+		case INSIDE_VERTICAL:
+			return BookHelper.BORDER_INSIDE_VERTICAL;
+		case DIAGONAL:
+			return BookHelper.BORDER_DIAGONAL;
+		case DIAGONAL_DOWN:
+			return BookHelper.BORDER_DIAGONAL_DOWN;
+		case DIAGONAL_UP:
+			return BookHelper.BORDER_DIAGONAL_UP;
+		}
+		throw new IllegalArgumentException("unknow cell border apply type "+type);
+	}
+
+	public static BorderStyle toCellBorderLineStyle(ApplyBorderLineStyle lineStyle) {
+		switch(lineStyle){
+		case NONE:
+			return BorderStyle.NONE;
+		case THIN:
+			return BorderStyle.THIN;
+		case MEDIUM:
+			return BorderStyle.MEDIUM;
+		case DASHED:
+			return BorderStyle.DASHED;
+		case HAIR:
+			return BorderStyle.HAIR;
+		case THICK:
+			return BorderStyle.THICK;
+		case DOUBLE:
+			return BorderStyle.DOUBLE;
+		case DOTTED:
+			return BorderStyle.DOTTED;
+		case MEDIUM_DASHED:
+			return BorderStyle.MEDIUM_DASHED;
+		case DASH_DOT:
+			return BorderStyle.DASH_DOT;
+		case MEDIUM_DASH_DOT:
+			return BorderStyle.MEDIUM_DASH_DOT;
+		case DASH_DOT_DOT:
+			return BorderStyle.DASH_DOT_DOT;
+		case MEDIUM_DASH_DOT_DOT:
+			return BorderStyle.MEDIUM_DASH_DOT_DOT;
+		case SLANTED_DASH_DOT:
+			return BorderStyle.SLANTED_DASH_DOT;
+		}
+		throw new IllegalArgumentException("unknow cell border line style "+lineStyle);
 	}
 }

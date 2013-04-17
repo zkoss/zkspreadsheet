@@ -61,18 +61,18 @@
 		
 		<toolbarbutton id="borderMenu" image="~./zss/img/border-bottom.png" />
 		<menupopup id="borderPopup">
-			<menuitem id="botterBottom" label="Bottom Border"/>
-			<menuitem id="botterTop" label="Top Border"/>
-			<menuitem id="botterLeft" label="Left Border"/>
-			<menuitem id="botterRight" label="Right Border"/>
+			<menuitem id="borderBottom" label="Bottom Border"/>
+			<menuitem id="borderTop" label="Top Border"/>
+			<menuitem id="borderLeft" label="Left Border"/>
+			<menuitem id="borderRight" label="Right Border"/>
 			<menuseparator/>
-			<menuitem id="botterNo" label="No Borders"/>
-			<menuitem id="botterAll" label="All Borders"/>
-			<menuitem id="botterOutside" label="Outside Borders"/>
-			<menuitem id="botterInside" label="Inside Borders"/>
+			<menuitem id="borderNo" label="No Borders"/>
+			<menuitem id="borderAll" label="All Borders"/>
+			<menuitem id="borderOutside" label="Outside Borders"/>
+			<menuitem id="borderInside" label="Inside Borders"/>
 			<menuseparator/>
-			<menuitem id="botterInsideHorizontal" label="Inside Horizontal Borders"/>
-			<menuitem id="botterInsideVertical" label="Inside Vertical Borders"/>
+			<menuitem id="borderInsideHorizontal" label="Inside Horizontal Borders"/>
+			<menuitem id="borderInsideVertical" label="Inside Vertical Borders"/>
 			<menuseparator/>
 			<menu id="borderColor" label="Border Color" content="#color=#000000" />
 		</menupopup>

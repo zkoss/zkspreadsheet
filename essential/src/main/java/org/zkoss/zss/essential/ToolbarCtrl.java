@@ -17,6 +17,8 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.NRange;
+import org.zkoss.zss.api.NRange.ApplyBorderType;
+import org.zkoss.zss.api.NRange.ApplyBorderLineStyle;
 import org.zkoss.zss.api.NRanges;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NFont.Boldweight;
@@ -565,15 +567,66 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	public void doBorderMenu(){
 		borderPopup.open(borderMenu);
 	}
+	@Listen("onClick=#borderAll")
+	public void onBorderAll(){
+		doBorder0(ApplyBorderType.FULL,ApplyBorderLineStyle.MEDIUM);
+	}
+	@Listen("onClick=#borderNo")
+	public void onBorderNo(){
+		doBorder0(ApplyBorderType.FULL,ApplyBorderLineStyle.NONE);
+	}
 	
 	@Listen("onClick=#borderBottom")
 	public void onBorderBottom(){
+		doBorder0(ApplyBorderType.EDGE_BOTTOM,ApplyBorderLineStyle.MEDIUM);
+	}
+	
+	@Listen("onClick=#borderTop")
+	public void onBorderTop(){
+		doBorder0(ApplyBorderType.EDGE_TOP,ApplyBorderLineStyle.MEDIUM);
+	}
+	
+	@Listen("onClick=#borderLeft")
+	public void onBorderLeft(){
+		doBorder0(ApplyBorderType.EDGE_LEFT,ApplyBorderLineStyle.MEDIUM);
+	}
+	
+	@Listen("onClick=#borderRight")
+	public void onBorderRight(){
+		doBorder0(ApplyBorderType.EDGE_RIGHT,ApplyBorderLineStyle.MEDIUM);
+	}
+	
+	@Listen("onClick=#borderOutside")
+	public void onBorderOutside(){
+		doBorder0(ApplyBorderType.OUTLINE,ApplyBorderLineStyle.MEDIUM);
+	}
+	
+	@Listen("onClick=#borderInside")
+	public void onBorderInside(){
+		doBorder0(ApplyBorderType.INSIDE,ApplyBorderLineStyle.MEDIUM);
+	}
+	
+	@Listen("onClick=#borderInsideHorizontal")
+	public void onBorderInsideHor(){
+		doBorder0(ApplyBorderType.INSIDE_HORIZONTAL,ApplyBorderLineStyle.MEDIUM);
+	}
+	
+	@Listen("onClick=#borderInsideVertical")
+	public void onBorderInsideVer(){
+		doBorder0(ApplyBorderType.INSIDE_VERTICAL,ApplyBorderLineStyle.MEDIUM);
+	}
+	
+	
+	
+	private void doBorder0(ApplyBorderType type,ApplyBorderLineStyle style){
 		String htmlColor = borderColor.getContent(); //'#HEX-RGB'
 		if(htmlColor==null){
 			return;
 		}
 		htmlColor = htmlColor.substring(htmlColor.lastIndexOf("#"));
-		
-		
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		CellOperationUtil.applyBorder(dest,type, style, htmlColor);
 	}
 }

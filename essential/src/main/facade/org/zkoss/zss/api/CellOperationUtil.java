@@ -1,9 +1,10 @@
 package org.zkoss.zss.api;
 
-import org.zkoss.zss.api.NRange.BatchLockLevel;
+import org.zkoss.zss.api.NRange.ApplyBorderLineStyle;
+import org.zkoss.zss.api.NRange.ApplyBorderType;
 import org.zkoss.zss.api.NRange.PasteOperation;
 import org.zkoss.zss.api.NRange.PasteType;
-import org.zkoss.zss.api.NRange.VisitorLockLevel;
+import org.zkoss.zss.api.NRange.LockLevel;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NCellStyle.Alignment;
 import org.zkoss.zss.api.model.NCellStyle.FillPattern;
@@ -39,7 +40,7 @@ public class CellOperationUtil {
 				}
 				result.set(r);
 			}
-		}, BatchLockLevel.BOOK);
+		}, LockLevel.BOOK);
 
 		return result.get();
 	}
@@ -175,7 +176,7 @@ public class CellOperationUtil {
 				
 				
 				cellRange.setStyle(nstyle);
-			}},VisitorLockLevel.BOOK);
+			}},LockLevel.BOOK);
 	}
 
 	
@@ -363,6 +364,13 @@ public class CellOperationUtil {
 
 				cellRange.setStyle(nstyle);
 			}
-		}, VisitorLockLevel.BOOK);
+		}, LockLevel.BOOK);
+	}
+	
+	public static void applyBorder(NRange range,ApplyBorderType type,ApplyBorderLineStyle lineStyle,String htmlColor){
+		if(range.isProtected())
+			return;
+		//use range api directly,
+		range.applyBorder(type, lineStyle, htmlColor);
 	}
 }

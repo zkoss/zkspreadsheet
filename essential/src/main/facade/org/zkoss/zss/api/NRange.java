@@ -16,11 +16,7 @@ import org.zkoss.zss.model.Worksheet;
  */
 public class NRange {
 	
-	enum VisitorLockLevel{
-		BOOK,
-		NONE//for you just visit and do nothing
-	}
-	enum BatchLockLevel{
+	enum LockLevel{
 		BOOK,
 		NONE//for you just visit and do nothing
 	}
@@ -47,99 +43,34 @@ public class NRange {
 	}
 	
 	public enum ApplyBorderType{
-		EDGE,
+		FULL,
+		EDGE_BOTTOM,
 		EDGE_RIGHT,
 		EDGE_TOP,
 		EDGE_LEFT,
+		OUTLINE,
+		INSIDE,
 		INSIDE_HORIZONTAL,
 		INSIDE_VERTICAL,
+		DIAGONAL,
 		DIAGONAL_DOWN,
-		DIAGONAL_UP;
+		DIAGONAL_UP
 	}
 	
-	public enum BorderLineStyle{
-		 /**
-	     * No border
-	     */
-
+	public enum ApplyBorderLineStyle{
 	    NONE,
-
-	    /**
-	     * Thin border
-	     */
-
 	    THIN,
-
-	    /**
-	     * Medium border
-	     */
-
 	    MEDIUM,
-
-	    /**
-	     * dash border
-	     */
-
 	    DASHED,
-
-	    /**
-	     * dot border
-	     */
-
 	    HAIR,
-
-	    /**
-	     * Thick border
-	     */
-
 	    THICK,
-
-	    /**
-	     * double-line border
-	     */
-
 	    DOUBLE,
-
-	    /**
-	     * hair-line border
-	     */
-
 	    DOTTED,
-
-	    /**
-	     * Medium dashed border
-	     */
-
 	    MEDIUM_DASHED,
-
-	    /**
-	     * dash-dot border
-	     */
-
 	    DASH_DOT,
-
-	    /**
-	     * medium dash-dot border
-	     */
-
 	    MEDIUM_DASH_DOT,
-
-	    /**
-	     * dash-dot-dot border
-	     */
-
 	    DASH_DOT_DOT,
-
-	    /**
-	     * medium dash-dot-dot border
-	     */
-
 	    MEDIUM_DASH_DOT_DOT,
-
-	    /**
-	     * slanted dash-dot border
-	     */
-
 	    SLANTED_DASH_DOT;
 	}
 	
@@ -232,7 +163,7 @@ public class NRange {
 		range.setStyle(null);//will use default book cell style		
 	}
 
-	public void setStyle(NCellStyle nstyle) {
+	public void setStyle(final NCellStyle nstyle) {
 		range.setStyle(nstyle==null?null:nstyle.getNative());
 	}
 
@@ -249,15 +180,25 @@ public class NRange {
 	public int getLastRow() {
 		return range.getLastRow();
 	}
-	public void batch(NBatchRunner run,BatchLockLevel lock){
-		if(lock==BatchLockLevel.BOOK){
-			synchronized(range.getSheet().getBook()){
+	
+//	public void batch(NBatchRunner run){
+//		batch(run,LockLevel.BOOK);
+//	}
+	public void batch(NBatchRunner run,LockLevel lock){
+		switch(lock){
+		case NONE:
+			run.run(this);
+			return;
+		case BOOK:
+			synchronized(range.getSheet().getBook()){//it just show concept, we have a betterway to do read-write lock
 				run.run(this);
 			}
-		}else{
-			run.run(this);
+			return;
 		}
 	}
+//	public void visit(NCellVisitor visitor){
+//		visit(visitor,LockLevel.BOOK);
+//	}
 	/**
 	 * visit all cells in this range, make sure you call this in a limited range, 
 	 * don't use it for all row/column selection, it will spend much time to iterate the cell 
@@ -265,7 +206,7 @@ public class NRange {
 	 * @param create create cell if it doesn't exist, if it is true, it will also lock the sheet
 	 * @param lock lock the sheet if you will do any modification of the sheet 
 	 */
-	public void visit(final NCellVisitor visitor,VisitorLockLevel lock){
+	public void visit(final NCellVisitor visitor,LockLevel lock){
 		final int r=getRow();
 		final int lr=getLastRow();
 		final int c=getColumn();
@@ -281,18 +222,16 @@ public class NRange {
 			}
 		};
 		
-		if(lock!=null && lock!=VisitorLockLevel.NONE){
-			if(lock==VisitorLockLevel.BOOK){
-				synchronized(range.getSheet().getBook()){
-					synchronized(range.getSheet()){
-						run.run();
-					}
-				}
-			}else{
-				//TODO sheet level?
-			}
-		}else{
+		
+		switch(lock){
+		case NONE:
 			run.run();
+			return;
+		case BOOK:
+			synchronized(range.getSheet().getBook()){
+				run.run();
+			}
+			return;
 		}
 	}
 	
@@ -322,8 +261,8 @@ public class NRange {
 		return getSheet().getBook();
 	}
 	
-	public void applyBorder(ApplyBorderType type,BorderLineStyle lineStyle,String htmlColor){
-		
+	public void applyBorder(ApplyBorderType type,ApplyBorderLineStyle lineStyle,String htmlColor){
+		range.setBorders(EnumUtil.toCellApplyBorderType(type), EnumUtil.toCellBorderLineStyle(lineStyle), htmlColor);
 	}
 
 
