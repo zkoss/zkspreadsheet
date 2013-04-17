@@ -1,12 +1,17 @@
 package org.zkoss.zss.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NSheet;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
 
 /**
@@ -74,11 +79,17 @@ public class NRange {
 	    SLANTED_DASH_DOT;
 	}
 	
-	NSheet nsheet;
-	
 	Range range;
-	public NRange(Range range) {
+	
+	private SharedContext sharedCtx;
+	
+	public NRange(NSheet sheet,Range range) {
 		this.range = range;
+		sharedCtx = new SharedContext(sheet);
+	}
+	public NRange(Range range,SharedContext ctx) {
+		this.range = range;
+		sharedCtx = ctx;
 	}
 	
 	
@@ -91,6 +102,56 @@ public class NRange {
 	
 	public Range getNative(){
 		return range;
+	}
+	
+	static class SharedContext{
+		NSheet nsheet;
+		List<MergeArea> mergeAreas;
+		
+		private SharedContext(NSheet nsheet){
+			this.nsheet = nsheet;
+			
+		}
+		
+		public NSheet getSheet(){
+			return nsheet;
+		}
+		
+		
+		public List<MergeArea> getMergeAreas(){
+			initMergeRangesCache();
+			return mergeAreas;
+		}
+		
+		
+		private void initMergeRangesCache(){
+			if(mergeAreas==null){//TODO a better way to cache(index) this.(I this MergeMatrixHelper is not good enough now)
+				Worksheet sheet = nsheet.getNative();
+				int sz = sheet.getNumMergedRegions();
+				mergeAreas = new ArrayList<MergeArea>(sz);
+				for(int j = sz - 1; j >= 0; --j) {
+					final CellRangeAddress addr = sheet.getMergedRegion(j);
+					mergeAreas.add(new MergeArea(addr.getFirstColumn(), addr.getFirstRow(), addr.getLastColumn(), addr.getLastRow()));
+				}
+			}
+		}
+		
+		public void resetMergeAreas(){
+			mergeAreas = null;
+		}
+	}
+	private static class MergeArea{
+		int r,lr,c,lc;
+		public MergeArea(int c,int r,int lc,int lr){
+			this.c = c;
+			this.r = r;
+			this.lc = lc;
+			this.lr = lr;
+		}
+
+		public boolean contains(int c, int r) {
+			return c >= this.c && c <= this.lc && r >= this.r && r <= this.lr;
+		}
 	}
 	
 	
@@ -118,6 +179,9 @@ public class NRange {
 		return true;
 	}
 
+	public boolean isProtected() {
+		return getSheet().isProtected();
+	}	
 
 //	public boolean isAnyCellProtected(){
 //		return range.isAnyCellProtected();
@@ -152,10 +216,7 @@ public class NRange {
 	}
 	
 	public NSheet getSheet(){
-		if(nsheet!=null){
-			return nsheet;
-		}
-		return nsheet = new NSheet(range.getSheet());
+		return sharedCtx.getSheet();
 	}
 
  
@@ -222,7 +283,6 @@ public class NRange {
 			}
 		};
 		
-		
 		switch(lock){
 		case NONE:
 			run.run();
@@ -254,19 +314,76 @@ public class NRange {
 				return;
 			}
 		}
-		visitor.visit(NRanges.range(getSheet(),r,c));
+		visitor.visit(new NRange(Ranges.range(range.getSheet(),r,c),sharedCtx));
 	}
 
 	public NBook getBook() {
 		return getSheet().getBook();
 	}
 	
+	public void applyBorderAround(ApplyBorderLineStyle lineStyle,String htmlColor){
+		range.borderAround(EnumUtil.toCellBorderLineStyle(lineStyle), htmlColor);
+	}
+	
 	public void applyBorder(ApplyBorderType type,ApplyBorderLineStyle lineStyle,String htmlColor){
 		range.setBorders(EnumUtil.toCellApplyBorderType(type), EnumUtil.toCellBorderLineStyle(lineStyle), htmlColor);
 	}
 
+	
+	public boolean hasMergeCell(){
+		final Result<Boolean> result = new Result<Boolean>(Boolean.FALSE);
+		visit(new NCellVisitor(){
+			public boolean createIfNotExist(int row, int column) {
+				return false;
+			}
+			@Override
+			public void visit(NRange cellRange) {
+				int c = cellRange.getColumn();
+				int r = cellRange.getRow();
+				for(MergeArea ma:sharedCtx.getMergeAreas()){//TODO index, not loop
+					if(ma.contains(c, r)){
+						result.set(Boolean.TRUE);
+						return;
+					}
+				}
+			}}
+		,LockLevel.NONE);
+		return result.get();
+	}
+	
+	
+	static public class Result<T> {
+		T r;
+		public Result(){}
+		public Result(T r){
+			this.r = r;
+		}
+		
+		public T get(){
+			return r;
+		}
+		
+		public void set(T r){
+			this.r = r;
+		}
+	}
 
-	public boolean isProtected() {
-		return getSheet().isProtected();
+	public void merge(boolean across){
+		range.merge(across);
+	}
+	
+	public void unMerge(){
+		range.unMerge();
+	}
+
+	
+	public NRange getCellRange(int rowOffset,int colOffset){
+		NRange cellRange = new NRange(Ranges.range(range.getSheet(),getRow()+rowOffset,getColumn()+colOffset),sharedCtx);
+		return cellRange;
+	}
+	
+	/** get the top-left cell range of this range**/
+	public NRange getFirst() {
+		return getCellRange(0,0);
 	}
 }

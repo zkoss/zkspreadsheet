@@ -5,6 +5,7 @@ import org.zkoss.zss.api.NRange.ApplyBorderType;
 import org.zkoss.zss.api.NRange.PasteOperation;
 import org.zkoss.zss.api.NRange.PasteType;
 import org.zkoss.zss.api.NRange.LockLevel;
+import org.zkoss.zss.api.NRange.Result;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NCellStyle.Alignment;
 import org.zkoss.zss.api.model.NCellStyle.FillPattern;
@@ -75,23 +76,7 @@ public class CellOperationUtil {
 		}
 		return src.pasteSpecial(dest, PasteType.PASTE_ALL, PasteOperation.PASTEOP_NONE, false, true);
 	}
-	
-	static class Result<T> {
-		T r;
-		public Result(){}
-		public Result(T r){
-			this.r = r;
-		}
-		
-		public T get(){
-			return r;
-		}
-		
-		public void set(T r){
-			this.r = r;
-		}
-	}
-	
+
 	public static void applyFontName(NRange range,final String fontName){
 		applyFontStyle(range, new FontStyleApplier() {
 			public boolean ignore(NRange range,NCellStyle oldCellstyle, NFont oldFont) {
@@ -372,5 +357,50 @@ public class CellOperationUtil {
 			return;
 		//use range api directly,
 		range.applyBorder(type, lineStyle, htmlColor);
+	}
+	
+	
+	public static void toggleMergeCenter(NRange range){
+		if(range.isProtected())
+			return;
+		range.batch(new NBatchRunner() {
+			public void run(NRange range) {
+				if(range.hasMergeCell()){
+					range.unMerge();
+				}else{
+					range.merge(false);
+					//align the left/top one
+					applyCellAlignment(range.getFirst(),Alignment.CENTER);
+				}
+			}
+		}, LockLevel.BOOK);
+	}
+	
+	public static void merge(NRange range,boolean across){
+		if(range.isProtected())
+			return;
+		
+		range.merge(across);
+	}
+	
+	public static void unMerge(NRange range){
+		if(range.isProtected())
+			return;
+		range.unMerge();
+	}
+	
+	
+	public static void applyCellWrapText(NRange range,final boolean wraptext) {
+		applyCellStyle(range, new CellStyleApplier() {
+
+			public boolean ignore(NRange cellRange, NCellStyle oldCellstyle) {
+				boolean oldwrap = oldCellstyle.isWrapText();
+				return oldwrap==wraptext;
+			}
+
+			public void apply(NRange cellRange, NCellStyle newCellstyle) {
+				newCellstyle.setWrapText(wraptext);
+			}
+		});
 	}
 }

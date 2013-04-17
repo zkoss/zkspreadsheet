@@ -153,4 +153,12 @@ public class NCellStyle {
 		return EnumUtil.toCellVerticalAlignemnt(style.getVerticalAlignment());
 	}
 
+	public boolean isWrapText() {
+		return style.getWrapText();
+	}
+
+	public void setWrapText(boolean wraptext) {
+		style.setWrapText(wraptext);
+	}
+
 }

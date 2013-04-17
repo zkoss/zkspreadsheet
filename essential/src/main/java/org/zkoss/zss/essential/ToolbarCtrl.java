@@ -94,6 +94,12 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	Menupopup borderPopup;
 	@Wire
 	Menu borderColor;	
+	
+	
+	@Wire
+	Toolbarbutton mergeMenu;
+	@Wire
+	Menupopup mergePopup;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -378,7 +384,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
 		
-		NRange first = NRanges.range(nss.getSelectedSheet(), rect.getTop(),rect.getLeft());
+		NRange first = dest.getFirst();
 		
 		//toggle and apply bold of first cell to dest
 		Boldweight bw = first.getGetter().getCellStyle().getFont().getBoldweight();
@@ -398,7 +404,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
 		
-		NRange first = NRanges.range(nss.getSelectedSheet(), rect.getTop(),rect.getLeft());
+		NRange first = dest.getFirst();
 		
 		//toggle and apply bold of first cell to dest
 		boolean italic = !first.getGetter().getCellStyle().getFont().isItalic();
@@ -411,7 +417,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
 		
-		NRange first = NRanges.range(nss.getSelectedSheet(), rect.getTop(),rect.getLeft());
+		NRange first = dest.getFirst();
 		
 		//toggle and apply bold of first cell to dest
 		boolean strikeout = !first.getGetter().getCellStyle().getFont().isStrikeout();
@@ -425,7 +431,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
 		
-		NRange first = NRanges.range(nss.getSelectedSheet(), rect.getTop(),rect.getLeft());
+		NRange first = dest.getFirst();
 		
 		//toggle and apply bold of first cell to dest
 		Underline underline = first.getGetter().getCellStyle().getFont().getUnderline();
@@ -437,19 +443,6 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		
 		CellOperationUtil.applyFontUnderline(dest, underline);	
 	}
-
-	// <space sclass="sep-v" />
-	// <!-- font -->
-	// <combobox id="fontfamilyBox" style="width:105px"/>
-	// <combobox id="fontsizeBox" style="width:45px"/>
-	// <toolbarbutton id="fontBold" image="~./zss/img/edit-bold.png"/>
-	// <toolbarbutton id="fontItalic" image="~./zss/img/edit-italic.png"/>
-	// <toolbarbutton id="fontUnderline" image="~./zss/img/edit-underline.png"/>
-	// <toolbarbutton id="fontStrike" image="~./zss/img/edit-strike.png"/>
-	
-	
-	
-	
 	
 	
 	private Rect getSelection(){
@@ -628,5 +621,60 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
 		CellOperationUtil.applyBorder(dest,type, style, htmlColor);
+	}
+	
+	// Wrap
+	@Listen("onClick=#wrapTextMenu")
+	public void doWrapTExt() {
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		
+		NRange first = dest.getFirst();
+		
+		//toggle and apply 
+		boolean wrapped = first.getGetter().getCellStyle().isWrapText();
+		
+		wrapped = !wrapped;
+		
+		CellOperationUtil.applyCellWrapText(dest, wrapped);	
+	}
+	
+	// Merge
+	@Listen("onClick=#mergeMenu")
+	public void doMergeMenu() {
+		mergePopup.open(mergeMenu);
+	}
+
+	@Listen("onClick=#mergeCenter")
+	public void onMergeCenter() {
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		CellOperationUtil.toggleMergeCenter(dest);
+	}
+
+	@Listen("onClick=#mergeAcross")
+	public void onMergeAcross() {
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		CellOperationUtil.merge(dest, true);
+	}
+
+	@Listen("onClick=#mergeAll")
+	public void onMergeAll() {
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		CellOperationUtil.merge(dest, false);
+	}
+
+	@Listen("onClick=#unMerge")
+	public void onUnMerge() {
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		CellOperationUtil.unMerge(dest);
 	}
 }

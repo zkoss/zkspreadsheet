@@ -37,6 +37,7 @@ public class BookUtil {
 			break;
 		case EXCEL_2007:
 //			is = BookUtil.class.getResourceAsStream("_blank.xlsx");
+//			is = WebApps.getCurrent().getResourceAsStream("/WEB-INF/excelsrc/bug.xlsx");
 			is = WebApps.getCurrent().getResourceAsStream("/WEB-INF/excelsrc/copyPasteBase.xlsx");
 			break;
 		default :
