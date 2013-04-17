@@ -44,7 +44,10 @@ public class NSheet {
 		return nbook = new NBook(sheet.getBook());
 	}
 	
-	
+
+	public boolean isProtected() {
+		return sheet.getProtect();
+	}
 	
 	
 }

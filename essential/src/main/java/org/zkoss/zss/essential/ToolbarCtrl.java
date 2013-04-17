@@ -15,7 +15,6 @@ import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zkex.zul.Colorbox;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.NRange;
 import org.zkoss.zss.api.NRanges;
@@ -30,6 +29,7 @@ import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menupopup;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.impl.XulElement;
@@ -59,16 +59,39 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	Combobox fontSizeBox;
 	ListModelList<Integer> fontSizeList;
 	
+//	@Wire
+//	Colorbox fontColorbox;
+//	@Wire
+//	Colorbox fillColorbox;
+	
 	@Wire
-	Colorbox fontColorbox;
+	Toolbarbutton fontColorMenu;
 	@Wire
-	Colorbox fillColorbox;
+	Menupopup fontColorPopup;
+	@Wire
+	Toolbarbutton fillColorMenu;
+	@Wire
+	Menupopup fillColorPopup;
+	@Wire
+	Menu fontColor;
+	@Wire
+	Menu fillColor;	
+	
 	
 	
 	@Wire
 	Toolbarbutton alignMenu;
 	@Wire
 	Menupopup alignPopup;
+	
+	
+	
+	@Wire
+	Toolbarbutton borderMenu;
+	@Wire
+	Menupopup borderPopup;
+	@Wire
+	Menu borderColor;	
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -257,10 +280,13 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		}
 		
 		if (!r) {
-			if (dest.isAnyCellProtected()) {
+			if (dest.isProtected()) {
 				// show protected message.
 				ClientUtil.showWarn("Cann't paste to a protected sheet/area");
 			} else {
+				if (clipinfo.type == Type.CUT && src.isProtected()) {
+					ClientUtil.showWarn("Cann't cut from a protected sheet/area");
+				}
 				// TODO another reason?
 				ClientUtil.showWarn("Cann't paste, reason unknow");
 			}
@@ -436,15 +462,23 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		return rect;
 	}
 	
+	//Color
+	@Listen("onClick=#fontColorMenu")
+	public void doFontColorMenu(){
+		fontColorPopup.open(fontColorMenu);
+	}
+	@Listen("onClick=#fillColorMenu")
+	public void doFillColorMenu(){
+		fillColorPopup.open(fillColorMenu);
+	}
 	
-	
-	
-	@Listen("onChange=#fontColorbox")
+	@Listen("onChange=#fontColor")
 	public void doFontColor(){
-		String htmlColor = fontColorbox.getColor(); //'#HEX-RGB'
+		String htmlColor = fontColor.getContent(); //'#HEX-RGB'
 		if(htmlColor==null){
 			return;
 		}
+		htmlColor = htmlColor.substring(htmlColor.lastIndexOf("#"));
 
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
@@ -453,12 +487,13 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		CellOperationUtil.applyFontColor(dest, htmlColor);		
 	}
 	
-	@Listen("onChange=#fillColorbox")
+	@Listen("onChange=#fillColor")
 	public void doFillColor(){
-		String htmlColor = fillColorbox.getColor(); //'#HEX-RGB'
+		String htmlColor = fillColor.getContent(); //'#HEX-RGB'
 		if(htmlColor==null){
 			return;
 		}
+		htmlColor = htmlColor.substring(htmlColor.lastIndexOf("#"));
 
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
@@ -467,7 +502,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		CellOperationUtil.applyCellColor(dest, htmlColor);		
 	}
 	
-	
+	//Align
 	@Listen("onClick=#alignMenu")
 	public void doAlignMenu(){
 		alignPopup.open(alignMenu);
@@ -524,4 +559,21 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		CellOperationUtil.applyCellAlignment(dest,NCellStyle.Alignment.RIGHT);
 	}
 	
+	
+	//Border
+	@Listen("onClick=#borderMenu")
+	public void doBorderMenu(){
+		borderPopup.open(borderMenu);
+	}
+	
+	@Listen("onClick=#borderBottom")
+	public void onBorderBottom(){
+		String htmlColor = borderColor.getContent(); //'#HEX-RGB'
+		if(htmlColor==null){
+			return;
+		}
+		htmlColor = htmlColor.substring(htmlColor.lastIndexOf("#"));
+		
+		
+	}
 }

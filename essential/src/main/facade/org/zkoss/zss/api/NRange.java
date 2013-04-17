@@ -9,6 +9,11 @@ import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Worksheet;
 
+/**
+ * 1.Range is not handling the protection issue, if you have handle it yourself before calling the api(by calling {@code #isProtected()})
+ * @author dennis
+ *
+ */
 public class NRange {
 	
 	enum VisitorLockLevel{
@@ -17,7 +22,7 @@ public class NRange {
 	}
 	enum BatchLockLevel{
 		BOOK,
-		SHEET
+		NONE//for you just visit and do nothing
 	}
 	
 	public enum PasteType{
@@ -39,6 +44,103 @@ public class NRange {
 		PASTEOP_MUL,
 		PASTEOP_DIV,
 		PASTEOP_NONE;
+	}
+	
+	public enum ApplyBorderType{
+		EDGE,
+		EDGE_RIGHT,
+		EDGE_TOP,
+		EDGE_LEFT,
+		INSIDE_HORIZONTAL,
+		INSIDE_VERTICAL,
+		DIAGONAL_DOWN,
+		DIAGONAL_UP;
+	}
+	
+	public enum BorderLineStyle{
+		 /**
+	     * No border
+	     */
+
+	    NONE,
+
+	    /**
+	     * Thin border
+	     */
+
+	    THIN,
+
+	    /**
+	     * Medium border
+	     */
+
+	    MEDIUM,
+
+	    /**
+	     * dash border
+	     */
+
+	    DASHED,
+
+	    /**
+	     * dot border
+	     */
+
+	    HAIR,
+
+	    /**
+	     * Thick border
+	     */
+
+	    THICK,
+
+	    /**
+	     * double-line border
+	     */
+
+	    DOUBLE,
+
+	    /**
+	     * hair-line border
+	     */
+
+	    DOTTED,
+
+	    /**
+	     * Medium dashed border
+	     */
+
+	    MEDIUM_DASHED,
+
+	    /**
+	     * dash-dot border
+	     */
+
+	    DASH_DOT,
+
+	    /**
+	     * medium dash-dot border
+	     */
+
+	    MEDIUM_DASH_DOT,
+
+	    /**
+	     * dash-dot-dot border
+	     */
+
+	    DASH_DOT_DOT,
+
+	    /**
+	     * medium dash-dot-dot border
+	     */
+
+	    MEDIUM_DASH_DOT_DOT,
+
+	    /**
+	     * slanted dash-dot border
+	     */
+
+	    SLANTED_DASH_DOT;
 	}
 	
 	NSheet nsheet;
@@ -85,10 +187,10 @@ public class NRange {
 		return true;
 	}
 
-	
-	public boolean isAnyCellProtected(){
-		return range.isAnyCellProtected();
-	}
+
+//	public boolean isAnyCellProtected(){
+//		return range.isAnyCellProtected();
+//	}
 
 	/* short-cut for pasteSpecial, it is original Range.copy*/
 	/**
@@ -147,18 +249,13 @@ public class NRange {
 	public int getLastRow() {
 		return range.getLastRow();
 	}
-	
-	
-	
 	public void batch(NBatchRunner run,BatchLockLevel lock){
 		if(lock==BatchLockLevel.BOOK){
 			synchronized(range.getSheet().getBook()){
 				run.run(this);
 			}
-		}else if(lock==BatchLockLevel.SHEET){
-			synchronized(range.getSheet()){
-				run.run(this);
-			}
+		}else{
+			run.run(this);
 		}
 	}
 	/**
@@ -223,5 +320,14 @@ public class NRange {
 
 	public NBook getBook() {
 		return getSheet().getBook();
+	}
+	
+	public void applyBorder(ApplyBorderType type,BorderLineStyle lineStyle,String htmlColor){
+		
+	}
+
+
+	public boolean isProtected() {
+		return getSheet().isProtected();
 	}
 }

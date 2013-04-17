@@ -40,18 +40,15 @@
 		<!-- border  -->
 		
 		<!-- color -->
-		<!-- 
-		<toolbarbutton id="fontColor" image="~./zss/img/edit-color.png" sclass="narrow-right"/>
-		 -->
-		FC:
-		<colorbox id="fontColorbox" color="#FFFFFF" width="7px" height="12px" />
-
-		<!-- 
-		<toolbarbutton id="fillColor" image="~./zss/img/paint-can-color.png"/>
-		 -->
-		BC:
-		<colorbox id="fillColorbox" color="#FFFFFF" width="7px" height="12px" />
-		
+		<toolbarbutton id="fontColorMenu" image="~./zss/img/edit-color.png" />
+		<menupopup id="fontColorPopup">
+			<menu id="fontColor" label="Font color" content="#color=#FFFFFF" />
+		</menupopup>
+		<toolbarbutton id="fillColorMenu" image="~./zss/img/paint-can-color.png" />
+		<menupopup id="fillColorPopup">
+			<menu id="fillColor" label="Fill color" content="#color=#FFFFFF" />
+		</menupopup>
+	
 		<toolbarbutton id="alignMenu" image="~./zss/img/edit-alignment.png" />
 		<menupopup id="alignPopup">
 			<menuitem id="alignLeft" label="Text Left"/>
@@ -60,6 +57,24 @@
 			<menuitem id="alignTop" label="Align Top"/>
 			<menuitem id="alignMiddle" label="Align Middle"/>
 			<menuitem id="alignBottom" label="Align Bottom"/>
+		</menupopup>
+		
+		<toolbarbutton id="borderMenu" image="~./zss/img/border-bottom.png" />
+		<menupopup id="borderPopup">
+			<menuitem id="botterBottom" label="Bottom Border"/>
+			<menuitem id="botterTop" label="Top Border"/>
+			<menuitem id="botterLeft" label="Left Border"/>
+			<menuitem id="botterRight" label="Right Border"/>
+			<menuseparator/>
+			<menuitem id="botterNo" label="No Borders"/>
+			<menuitem id="botterAll" label="All Borders"/>
+			<menuitem id="botterOutside" label="Outside Borders"/>
+			<menuitem id="botterInside" label="Inside Borders"/>
+			<menuseparator/>
+			<menuitem id="botterInsideHorizontal" label="Inside Horizontal Borders"/>
+			<menuitem id="botterInsideVertical" label="Inside Vertical Borders"/>
+			<menuseparator/>
+			<menu id="borderColor" label="Border Color" content="#color=#000000" />
 		</menupopup>
 		
 	</toolbar>

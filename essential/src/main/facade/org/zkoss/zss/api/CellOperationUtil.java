@@ -13,10 +13,22 @@ import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.api.model.NFont.Boldweight;
 import org.zkoss.zss.api.model.NFont.Underline;
 
+/**
+ * the utit to help UI to deal with UI operation of a Range.
+ * it also handles 1.the sheet protection, 2. 
+ * @author dennis
+ *
+ */
 public class CellOperationUtil {
 
 	public static boolean cut(NRange src, final NRange dest) {
 		final Result<Boolean> result = new Result<Boolean>();
+		if(src.isProtected()){
+			return false;
+		}
+		if(dest.isProtected()){
+			return false;
+		}
 		//use batch-runner to run multiple range operation
 		src.batch(new NBatchRunner() {
 			public void run(NRange range) {
@@ -27,24 +39,39 @@ public class CellOperationUtil {
 				}
 				result.set(r);
 			}
-		}, BatchLockLevel.SHEET);
+		}, BatchLockLevel.BOOK);
 
 		return result.get();
 	}
 
 	public static boolean paste(NRange src, NRange dest) {
+		if(dest.isProtected()){
+			return false;
+		}
 		return src.paste(dest);
 	}
 	public static boolean pasteFormula(NRange src, NRange dest) {
+		if(dest.isProtected()){
+			return false;
+		}
 		return src.pasteSpecial(dest, PasteType.PASTE_FORMULAS, PasteOperation.PASTEOP_NONE, false, false);
 	}
 	public static boolean pasteValue(NRange src, NRange dest) {
+		if(dest.isProtected()){
+			return false;
+		}
 		return src.pasteSpecial(dest, PasteType.PASTE_VALUES, PasteOperation.PASTEOP_NONE, false, false);
 	}
 	public static boolean pasteAllExceptBorder(NRange src, NRange dest) {
+		if(dest.isProtected()){
+			return false;
+		}
 		return src.pasteSpecial(dest, PasteType.PASTE_ALL_EXCEPT_BORDERS, PasteOperation.PASTEOP_NONE, false, false);
 	}
 	public static boolean pasteTranspose(NRange src, NRange dest) {
+		if(dest.isProtected()){
+			return false;
+		}
 		return src.pasteSpecial(dest, PasteType.PASTE_ALL, PasteOperation.PASTEOP_NONE, false, true);
 	}
 	
@@ -118,12 +145,11 @@ public class CellOperationUtil {
 	public static void applyFontStyle(NRange range,final FontStyleApplier applyer){
 		//use use cell visitor to visit cells respectively
 		//use BOOK level lock because we will create BOOK level Object (style, font)
+		if(range.isProtected())
+			return;
 		range.visit(new NCellVisitor(){
 			@Override
 			public void visit(NRange cellRange) {
-				if(cellRange.isAnyCellProtected()){//don't apply if protected
-					return;
-				}
 				NCellStyle ostyle = cellRange.getGetter().getCellStyle();
 				NFont ofont = ostyle.getFont();
 				if(applyer.ignore(cellRange,ostyle,ofont)){//ignore or not, to prevent unnecessary creation
@@ -314,12 +340,11 @@ public class CellOperationUtil {
 		// use use cell visitor to visit cells respectively
 		// use BOOK level lock because we will create BOOK level Object (style,
 		// font)
+		if(range.isProtected())
+			return;
 		range.visit(new NCellVisitor() {
 			@Override
 			public void visit(NRange cellRange) {
-				if (cellRange.isAnyCellProtected()) {// don't apply if protected
-					return;
-				}
 				NCellStyle ostyle = cellRange.getGetter().getCellStyle();
 				if (applyer.ignore(cellRange, ostyle)) {// ignore or not, to
 														// prevent unnecessary
