@@ -100,6 +100,12 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	Toolbarbutton mergeMenu;
 	@Wire
 	Menupopup mergePopup;
+	
+	
+	@Wire
+	Toolbarbutton clearMenu;
+	@Wire
+	Menupopup clearPopup;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -263,47 +269,49 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
 
-		boolean r = true;
+		
+		
+		if (dest.isProtected()) {
+			// show protected message.
+			ClientUtil.showWarn("Cann't paste to a protected sheet/area");
+			return;
+		} else if (clipinfo.type == Type.CUT && src.isProtected()) {
+			ClientUtil.showWarn("Cann't cut from a protected sheet/area");
+			return;
+		}
+		
+		
+		
 		if (clipinfo.type == Type.CUT) {
-			r = CellOperationUtil.cut(src,dest);
+			CellOperationUtil.cut(src,dest);
 		}else{
 			switch(type){
 			case ALL:
-				r = CellOperationUtil.paste(src,dest);
+				CellOperationUtil.paste(src,dest);
 				break;
 			case VALUE:
-				r = CellOperationUtil.pasteValue(src, dest);
+				CellOperationUtil.pasteValue(src, dest);
 				break;
 			case FORMULA:
-				r = CellOperationUtil.pasteFormula(src, dest);
+				CellOperationUtil.pasteFormula(src, dest);
 				break;
 			case ALL_NO_BORDER:
-				r = CellOperationUtil.pasteAllExceptBorder(src, dest);
+				CellOperationUtil.pasteAllExceptBorder(src, dest);
 				break;
 			case TRANSPORT:
-				r = CellOperationUtil.pasteTranspose(src, dest);
+				CellOperationUtil.pasteTranspose(src, dest);
 				break;
-				
 			}
 		}
 		
-		if (!r) {
-			if (dest.isProtected()) {
-				// show protected message.
-				ClientUtil.showWarn("Cann't paste to a protected sheet/area");
-			} else {
-				if (clipinfo.type == Type.CUT && src.isProtected()) {
-					ClientUtil.showWarn("Cann't cut from a protected sheet/area");
-				}
-				// TODO another reason?
-				ClientUtil.showWarn("Cann't paste, reason unknow");
-			}
-			return;
-		}
 		if (clipinfo.type == Type.CUT) {
 			clearClipboard();
 		}
 
+	}
+	
+	private void showProtectionMessage(){
+		ClientUtil.showWarn("Cann't modify a protected sheet/area");
 	}
 
 	@Listen("onClick=#copy")
@@ -359,7 +367,13 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
-		//protection issue?
+		
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
+		
+		
 		CellOperationUtil.applyFontName(dest, fontName);
 	}
 	
@@ -374,7 +388,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
-		//protection issue?
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		CellOperationUtil.applyFontSize(dest,size.shortValue());
 	}
 	
@@ -383,7 +400,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
-		
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		NRange first = dest.getFirst();
 		
 		//toggle and apply bold of first cell to dest
@@ -403,7 +423,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
-		
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		NRange first = dest.getFirst();
 		
 		//toggle and apply bold of first cell to dest
@@ -416,7 +439,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
-		
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		NRange first = dest.getFirst();
 		
 		//toggle and apply bold of first cell to dest
@@ -430,7 +456,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
-		
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		NRange first = dest.getFirst();
 		
 		//toggle and apply bold of first cell to dest
@@ -478,7 +507,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
-		
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		CellOperationUtil.applyFontColor(dest, htmlColor);		
 	}
 	
@@ -493,7 +525,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
-		
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		CellOperationUtil.applyCellColor(dest, htmlColor);		
 	}
 	
@@ -508,7 +543,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
-		
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		CellOperationUtil.applyCellVerticalAlignment(dest,NCellStyle.VerticalAlignment.TOP);
 	}
 	@Listen("onClick=#alignMiddle")
@@ -516,7 +554,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
-		
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		CellOperationUtil.applyCellVerticalAlignment(dest,NCellStyle.VerticalAlignment.CENTER);
 	}
 	@Listen("onClick=#alignBottom")
@@ -524,7 +565,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
-		
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		CellOperationUtil.applyCellVerticalAlignment(dest,NCellStyle.VerticalAlignment.BOTTOM);
 	}
 	
@@ -534,7 +578,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
-		
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		CellOperationUtil.applyCellAlignment(dest,NCellStyle.Alignment.LEFT);
 	}
 	@Listen("onClick=#alignCenter")
@@ -542,7 +589,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
-		
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		CellOperationUtil.applyCellAlignment(dest,NCellStyle.Alignment.CENTER);
 	}
 	@Listen("onClick=#alignRight")
@@ -550,7 +600,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
-		
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		CellOperationUtil.applyCellAlignment(dest,NCellStyle.Alignment.RIGHT);
 	}
 	
@@ -620,6 +673,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		CellOperationUtil.applyBorder(dest,type, style, htmlColor);
 	}
 	
@@ -629,7 +686,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
-		
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		NRange first = dest.getFirst();
 		
 		//toggle and apply 
@@ -651,6 +711,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		CellOperationUtil.toggleMergeCenter(dest);
 	}
 
@@ -659,6 +723,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		CellOperationUtil.merge(dest, true);
 	}
 
@@ -667,6 +735,10 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		CellOperationUtil.merge(dest, false);
 	}
 
@@ -675,6 +747,53 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		Rect rect = getSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
 		CellOperationUtil.unMerge(dest);
+	}
+	
+	
+	// Clear
+	@Listen("onClick=#clearMenu")
+	public void doClearMenu() {
+		clearPopup.open(clearMenu);
+	}
+	
+	@Listen("onClick=#clearContents")
+	public void onClearContents() {
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
+		CellOperationUtil.clearContents(dest);
+	}
+	
+	@Listen("onClick=#clearStyles")
+	public void onClearStyles() {
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
+		CellOperationUtil.clearStyles(dest);
+	}
+	
+	@Listen("onClick=#clearAll")
+	public void onClearAll() {
+		Rect rect = getSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		if(dest.isProtected()){
+			showProtectionMessage();
+			return;
+		}
+		CellOperationUtil.clearAll(dest);
 	}
 }

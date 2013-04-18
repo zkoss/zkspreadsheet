@@ -76,13 +76,22 @@
 			<menuseparator/>
 			<menu id="borderColor" label="Border Color" content="#color=#000000" />
 		</menupopup>
+		
 		<toolbarbutton id="wrapTextMenu" image="~./zss/img/edit-wrap.png" />
+		
 		<toolbarbutton id="mergeMenu" label="Merge" />
 		<menupopup id="mergePopup">
 			<menuitem id="mergeCenter" label="Mrege &amp; Center"/>
 			<menuitem id="mergeAcross" label="Merge Across"/>
 			<menuitem id="mergeAll" label="Merge All"/>
 			<menuitem id="unMerge" label="Un Merge"/>
+		</menupopup>
+		
+		<toolbarbutton id="clearMenu" image="~./zss/img/broom.png" />
+		<menupopup id="clearPopup">
+			<menuitem id="clearContents" label="Clear content"/>
+			<menuitem id="clearStyles" label="Clear style"/>
+			<menuitem id="clearAll" label="clearAll"/>
 		</menupopup>
 		
 	</toolbar>

@@ -403,4 +403,29 @@ public class CellOperationUtil {
 			}
 		});
 	}
+
+	public static void clearContents(NRange range) {
+		if(range.isProtected())
+			return;
+		range.clearContents();
+	}
+	
+	public static void clearStyles(NRange range) {
+		if(range.isProtected())
+			return;
+		range.clearStyles();
+	}
+	
+	public static void clearAll(NRange range){
+		if(range.isProtected())
+			return;
+
+		//use batch-runner to run multiple range operation
+		range.batch(new NBatchRunner() {
+			public void run(NRange range) {
+				range.clearContents();// it removes value and formula only
+				range.clearStyles();
+			}
+		}, LockLevel.BOOK);
+	}
 }
