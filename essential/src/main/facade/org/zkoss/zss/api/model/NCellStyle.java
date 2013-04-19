@@ -178,5 +178,60 @@ public class NCellStyle {
 	public void setWrapText(boolean wraptext) {
 		style.setWrapText(wraptext);
 	}
+	
+	public void setBorderLeft(BorderType borderType){
+		style.setBorderLeft(EnumUtil.toStyleBorderType(borderType));
+	}
+	public BorderType getBorderLeft(){
+		return EnumUtil.toStyleBorderType(style.getBorderLeft());
+	}
 
+	public void setBorderTop(BorderType borderType){
+		style.setBorderTop(EnumUtil.toStyleBorderType(borderType));
+	}
+	public BorderType getBorderTop(){
+		return EnumUtil.toStyleBorderType(style.getBorderTop());
+	}
+
+	public void setBorderRight(BorderType borderType){
+		style.setBorderRight(EnumUtil.toStyleBorderType(borderType));
+	}
+	public BorderType getBorderRight(){
+		return EnumUtil.toStyleBorderType(style.getBorderRight());
+	}
+
+	public void setBorderBottom(BorderType borderType){
+		style.setBorderBottom(EnumUtil.toStyleBorderType(borderType));
+	}
+	public BorderType getBorderBottom(){
+		return EnumUtil.toStyleBorderType(style.getBorderBottom());
+	}
+	
+	public void setBorderTopColor(Color color){
+		BookHelper.setTopBorderColor(style, color);
+	}
+	public NColor getBorderTopColor(){
+		return new NColor(book,style.getTopBorderColorColor());
+	}
+	
+	public void setBorderLeftColor(Color color){
+		BookHelper.setLeftBorderColor(style, color);
+	}
+	public NColor getBorderLeftColor(){
+		return new NColor(book,style.getLeftBorderColorColor());
+	}
+	
+	public void setBorderBottomColor(Color color){
+		BookHelper.setBottomBorderColor(style, color);
+	}
+	public NColor getBorderBottomColor(){
+		return new NColor(book,style.getBottomBorderColorColor());
+	}
+	
+	public void setBorderRightColor(Color color){
+		BookHelper.setRightBorderColor(style, color);
+	}
+	public NColor getBorderRightColor(){
+		return new NColor(book,style.getRightBorderColorColor());
+	}
 }

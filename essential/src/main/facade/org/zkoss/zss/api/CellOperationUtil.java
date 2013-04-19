@@ -252,7 +252,7 @@ public class CellOperationUtil {
 			public void apply(NRange range,NCellStyle newCellstyle, NFont newfont) {
 				
 				//check it in XSSFCellStyle , it is just a delegator, but do some thing in HSSF
-				newfont.setFontColor(color);
+				newfont.setColor(color);
 				
 				//TODO need to check with Henri, and Sam, why current implementation doesn't call set font color directly
 				//TODO call style's set font color will cause set color after set a theme color issue(after clone form default)

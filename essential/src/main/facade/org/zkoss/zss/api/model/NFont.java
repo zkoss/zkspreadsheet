@@ -124,7 +124,7 @@ public class NFont {
 	public void setFontHeight(short height){
 		font.setFontHeight(height);
 	}
-	public void setFontColor(NColor color) {
+	public void setColor(NColor color) {
 		BookHelper.setFontColor(book, font, color.getNative());
 	}
 }
