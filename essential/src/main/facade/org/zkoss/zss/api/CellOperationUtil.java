@@ -1,6 +1,5 @@
 package org.zkoss.zss.api;
 
-import org.zkoss.zss.api.NRange.ApplyBorderLineStyle;
 import org.zkoss.zss.api.NRange.ApplyBorderType;
 import org.zkoss.zss.api.NRange.PasteOperation;
 import org.zkoss.zss.api.NRange.PasteType;
@@ -8,6 +7,7 @@ import org.zkoss.zss.api.NRange.LockLevel;
 import org.zkoss.zss.api.NRange.Result;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NCellStyle.Alignment;
+import org.zkoss.zss.api.model.NCellStyle.BorderType;
 import org.zkoss.zss.api.model.NCellStyle.FillPattern;
 import org.zkoss.zss.api.model.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.api.model.NColor;
@@ -352,11 +352,11 @@ public class CellOperationUtil {
 		}, LockLevel.BOOK);
 	}
 	
-	public static void applyBorder(NRange range,ApplyBorderType type,ApplyBorderLineStyle lineStyle,String htmlColor){
+	public static void applyBorder(NRange range,ApplyBorderType type,BorderType borderType,String htmlColor){
 		if(range.isProtected())
 			return;
 		//use range api directly,
-		range.applyBorder(type, lineStyle, htmlColor);
+		range.applyBorder(type, borderType, htmlColor);
 	}
 	
 	
@@ -370,7 +370,7 @@ public class CellOperationUtil {
 				}else{
 					range.merge(false);
 					//align the left/top one
-					applyCellAlignment(range.getFirst(),Alignment.CENTER);
+					applyCellAlignment(range.getLeftTop(),Alignment.CENTER);
 				}
 			}
 		}, LockLevel.BOOK);

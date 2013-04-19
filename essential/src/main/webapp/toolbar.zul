@@ -94,5 +94,20 @@
 			<menuitem id="clearAll" label="clearAll"/>
 		</menupopup>
 		
+		<toolbarbutton id="insertMenu" image="~./zss/img/document-insert.png" />
+		<menupopup id="insertPopup">
+			<menuitem id="insertCellRight" label="Shift Cell Right"/>
+			<menuitem id="insertCellDown" label="Shift Cell Down"/>
+			<menuitem id="insertRows" label="Insert Rows"/>
+			<menuitem id="insertColumns" label="Insert Columns"/>
+		</menupopup>
+		
+		<toolbarbutton id="deleteMenu" image="~./zss/img/document-hf-delete-footer.png" />
+		<menupopup id="deletePopup">
+			<menuitem id="deleteCellLeft" label="Shift Cell Left"/>
+			<menuitem id="deleteCellUp" label="Shift Cell Up"/>
+			<menuitem id="deleteRows" label="Delete Rows"/>
+			<menuitem id="deleteColumns" label="Delete Columns"/>
+		</menupopup>
 	</toolbar>
 </zk>

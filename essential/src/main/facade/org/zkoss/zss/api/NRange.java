@@ -8,6 +8,7 @@ import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.model.NCellStyle;
+import org.zkoss.zss.api.model.NCellStyle.BorderType;
 import org.zkoss.zss.api.model.NSheet;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.Range;
@@ -62,21 +63,23 @@ public class NRange {
 		DIAGONAL_UP
 	}
 	
-	public enum ApplyBorderLineStyle{
-	    NONE,
-	    THIN,
-	    MEDIUM,
-	    DASHED,
-	    HAIR,
-	    THICK,
-	    DOUBLE,
-	    DOTTED,
-	    MEDIUM_DASHED,
-	    DASH_DOT,
-	    MEDIUM_DASH_DOT,
-	    DASH_DOT_DOT,
-	    MEDIUM_DASH_DOT_DOT,
-	    SLANTED_DASH_DOT;
+	/** Shift direction of insert and delete**/
+	public enum InsertShift{
+		DEFAULT,
+		RIGHT,
+		DOWN
+	}
+	/** copy origin of insert and delete**/
+	public enum InsertCopyOrigin{
+		NONE,
+		LEFT_ABOVE,
+		RIGHT_BELOW,
+	}
+	/** Shift direction of insert and delete**/
+	public enum DeleteShift{
+		DEFAULT,
+		LEFT,
+		UP
 	}
 	
 	Range range;
@@ -321,12 +324,12 @@ public class NRange {
 		return getSheet().getBook();
 	}
 	
-	public void applyBorderAround(ApplyBorderLineStyle lineStyle,String htmlColor){
-		range.borderAround(EnumUtil.toCellBorderLineStyle(lineStyle), htmlColor);
+	public void applyBorderAround(BorderType borderType,String htmlColor){
+		range.borderAround(EnumUtil.toRangeBorderType(borderType), htmlColor);
 	}
 	
-	public void applyBorder(ApplyBorderType type,ApplyBorderLineStyle lineStyle,String htmlColor){
-		range.setBorders(EnumUtil.toCellApplyBorderType(type), EnumUtil.toCellBorderLineStyle(lineStyle), htmlColor);
+	public void applyBorder(ApplyBorderType type,BorderType borderType,String htmlColor){
+		range.setBorders(EnumUtil.toRangeApplyBorderType(type), EnumUtil.toRangeBorderType(borderType), htmlColor);
 	}
 
 	
@@ -383,7 +386,37 @@ public class NRange {
 	}
 	
 	/** get the top-left cell range of this range**/
-	public NRange getFirst() {
+	public NRange getLeftTop() {
 		return getCellRange(0,0);
+	}
+	
+	/** **/
+	public NRange getRowRange(){
+		return new NRange(range.getRows(),sharedCtx);
+	}
+	
+	public NRange getColumnRange(){
+		return new NRange(range.getColumns(),sharedCtx);
+	}
+	
+	public boolean isContainWholeRow(){
+		//TODO, the impl of Ref/Range is opposite to my concept , have to check this
+		//original range, wholeColumn means the 'a column' if full selectced, which means, it's rows are full selected. 
+		return range.isWholeColumn();
+	}
+	public boolean isContainWholeColumn(){
+		//TODO, the impl of Ref/Range is opposite to my concept , have to check this
+		return range.isWholeRow();
+	}
+	public boolean isContainWholeSheet(){
+		return range.isWholeSheet();
+	}
+	
+	public void insert(InsertShift shift,InsertCopyOrigin copyOrigin){
+		range.insert(EnumUtil.toRangeInsertShift(shift), EnumUtil.toRangeInsertCopyOrigin(copyOrigin));
+	}
+	
+	public void delete(DeleteShift shift){
+		range.delete(EnumUtil.toRangeDeleteShift(shift));
 	}
 }

@@ -4,10 +4,13 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.zss.api.NRange.ApplyBorderType;
-import org.zkoss.zss.api.NRange.ApplyBorderLineStyle;
+import org.zkoss.zss.api.NRange.DeleteShift;
+import org.zkoss.zss.api.NRange.InsertCopyOrigin;
+import org.zkoss.zss.api.NRange.InsertShift;
 import org.zkoss.zss.api.NRange.PasteOperation;
 import org.zkoss.zss.api.NRange.PasteType;
 import org.zkoss.zss.api.model.NCellStyle.Alignment;
+import org.zkoss.zss.api.model.NCellStyle.BorderType;
 import org.zkoss.zss.api.model.NCellStyle.FillPattern;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NCellStyle.VerticalAlignment;
@@ -237,7 +240,7 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow pattern type "+pattern);
 	}
 
-	public static short toCellAlignemnt(Alignment alignment) {
+	public static short toStyleAlignemnt(Alignment alignment) {
 		switch(alignment){
 		case GENERAL:
 			return CellStyle.ALIGN_GENERAL;
@@ -256,7 +259,7 @@ public class EnumUtil {
 		}
 		throw new IllegalArgumentException("unknow cell alignment "+alignment);
 	}
-	public static Alignment toCellAlignemnt(short alignment) {
+	public static Alignment toStyleAlignemnt(short alignment) {
 		switch(alignment){
 		case CellStyle.ALIGN_GENERAL:
 			return Alignment.GENERAL;
@@ -275,7 +278,7 @@ public class EnumUtil {
 		}
 		throw new IllegalArgumentException("unknow cell alignment "+alignment);
 	}
-	public static short toCellVerticalAlignemnt(VerticalAlignment alignment) {
+	public static short toStyleVerticalAlignemnt(VerticalAlignment alignment) {
 		switch(alignment){
 		case TOP:
 			return CellStyle.VERTICAL_TOP;
@@ -288,7 +291,7 @@ public class EnumUtil {
 		}
 		throw new IllegalArgumentException("unknow cell vertical alignment "+alignment);
 	}
-	public static VerticalAlignment toCellVerticalAlignemnt(short alignment) {
+	public static VerticalAlignment toStyleVerticalAlignemnt(short alignment) {
 		switch(alignment){
 		case CellStyle.VERTICAL_TOP:
 			return VerticalAlignment.TOP;
@@ -302,7 +305,7 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow cell vertical alignment "+alignment);
 	}
 
-	public static short toCellApplyBorderType(ApplyBorderType type) {
+	public static short toRangeApplyBorderType(ApplyBorderType type) {
 		switch(type){
 		case FULL:
 			return BookHelper.BORDER_FULL;
@@ -332,7 +335,75 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow cell border apply type "+type);
 	}
 
-	public static BorderStyle toCellBorderLineStyle(ApplyBorderLineStyle lineStyle) {
+	public static short toStyleBorderType(BorderType borderType) {
+		switch(borderType){
+		case NONE:
+			return CellStyle.BORDER_NONE;
+		case THIN:
+			return CellStyle.BORDER_THIN;
+		case MEDIUM:
+			return CellStyle.BORDER_MEDIUM;
+		case DASHED:
+			return CellStyle.BORDER_DASHED;
+		case HAIR:
+			return CellStyle.BORDER_HAIR;
+		case THICK:
+			return CellStyle.BORDER_THICK;
+		case DOUBLE:
+			return CellStyle.BORDER_DOUBLE;
+		case DOTTED:
+			return CellStyle.BORDER_DOTTED;
+		case MEDIUM_DASHED:
+			return CellStyle.BORDER_MEDIUM_DASHED;
+		case DASH_DOT:
+			return CellStyle.BORDER_DASH_DOT;
+		case MEDIUM_DASH_DOT:
+			return CellStyle.BORDER_MEDIUM_DASH_DOT;
+		case DASH_DOT_DOT:
+			return CellStyle.BORDER_DASH_DOT_DOT;
+		case MEDIUM_DASH_DOT_DOT:
+			return CellStyle.BORDER_MEDIUM_DASH_DOT_DOT;
+		case SLANTED_DASH_DOT:
+			return CellStyle.BORDER_SLANTED_DASH_DOT;
+		}
+		throw new IllegalArgumentException("unknow style border type "+borderType);
+	}
+	
+	public static BorderType toStyleBorderType(short borderType) {
+		switch(borderType){
+		case CellStyle.BORDER_NONE:
+			return BorderType.NONE;
+		case CellStyle.BORDER_THIN:
+			return BorderType.THIN;
+		case CellStyle.BORDER_MEDIUM:
+			return BorderType.MEDIUM;
+		case CellStyle.BORDER_DASHED:
+			return BorderType.DASHED;
+		case CellStyle.BORDER_HAIR:
+			return BorderType.HAIR;
+		case CellStyle.BORDER_THICK:
+			return BorderType.THICK;
+		case CellStyle.BORDER_DOUBLE:
+			return BorderType.DOUBLE;
+		case CellStyle.BORDER_DOTTED:
+			return BorderType.DOTTED;
+		case CellStyle.BORDER_MEDIUM_DASHED:
+			return BorderType.MEDIUM_DASHED;
+		case CellStyle.BORDER_DASH_DOT:
+			return BorderType.DASH_DOT;
+		case CellStyle.BORDER_MEDIUM_DASH_DOT:
+			return BorderType.MEDIUM_DASH_DOT;
+		case CellStyle.BORDER_DASH_DOT_DOT:
+			return BorderType.DASH_DOT_DOT;
+		case CellStyle.BORDER_MEDIUM_DASH_DOT_DOT:
+			return BorderType.MEDIUM_DASH_DOT_DOT;
+		case CellStyle.BORDER_SLANTED_DASH_DOT:
+			return BorderType.SLANTED_DASH_DOT;
+		}
+		throw new IllegalArgumentException("unknow style border type "+borderType);
+	}
+	
+	public static BorderStyle toRangeBorderType(BorderType lineStyle) {
 		switch(lineStyle){
 		case NONE:
 			return BorderStyle.NONE;
@@ -364,5 +435,41 @@ public class EnumUtil {
 			return BorderStyle.SLANTED_DASH_DOT;
 		}
 		throw new IllegalArgumentException("unknow cell border line style "+lineStyle);
+	}
+
+	public static int toRangeInsertShift(InsertShift shift) {
+		switch(shift){
+		case DEFAULT:
+			return Range.SHIFT_DEFAULT;
+		case DOWN:
+			return Range.SHIFT_DOWN;
+		case RIGHT:
+			return Range.SHIFT_RIGHT;
+		}
+		throw new IllegalArgumentException("unknow range insert shift "+shift);
+	}
+
+	public static int toRangeInsertCopyOrigin(InsertCopyOrigin copyOrigin) {
+		switch(copyOrigin){
+		case NONE:
+			return Range.FORMAT_NONE;
+		case LEFT_ABOVE:
+			return Range.FORMAT_LEFTABOVE;
+		case RIGHT_BELOW:
+			return Range.FORMAT_RIGHTBELOW;
+		}
+		throw new IllegalArgumentException("unknow range insert copy origin "+copyOrigin);
+	}
+	
+	public static int toRangeDeleteShift(DeleteShift shift) {
+		switch(shift){
+		case DEFAULT:
+			return Range.SHIFT_DEFAULT;
+		case UP:
+			return Range.SHIFT_UP;
+		case LEFT:
+			return Range.SHIFT_LEFT;
+		}
+		throw new IllegalArgumentException("unknow range delete shift "+shift);
 	}
 }

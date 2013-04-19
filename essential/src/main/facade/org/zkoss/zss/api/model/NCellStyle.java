@@ -46,6 +46,23 @@ public class NCellStyle {
 		JUSTIFY
 	}
 	
+	public enum BorderType{
+	    NONE,
+	    THIN,
+	    MEDIUM,
+	    DASHED,
+	    HAIR,
+	    THICK,
+	    DOUBLE,
+	    DOTTED,
+	    MEDIUM_DASHED,
+	    DASH_DOT,
+	    MEDIUM_DASH_DOT,
+	    DASH_DOT_DOT,
+	    MEDIUM_DASH_DOT_DOT,
+	    SLANTED_DASH_DOT;
+	}
+	
 	
 	Book book;
 	CellStyle style;
@@ -141,17 +158,18 @@ public class NCellStyle {
 //	}
 
 	public void setAlignment(Alignment alignment){
-		style.setAlignment(EnumUtil.toCellAlignemnt(alignment));
+		style.setAlignment(EnumUtil.toStyleAlignemnt(alignment));
 	}
 	public Alignment getAlignment(){
-		return EnumUtil.toCellAlignemnt(style.getAlignment());
+		return EnumUtil.toStyleAlignemnt(style.getAlignment());
 	}
 	public void setVerticalAlignment(VerticalAlignment alignment){
-		style.setVerticalAlignment(EnumUtil.toCellVerticalAlignemnt(alignment));
+		style.setVerticalAlignment(EnumUtil.toStyleVerticalAlignemnt(alignment));
 	}
 	public VerticalAlignment getVerticalAlignment(){
-		return EnumUtil.toCellVerticalAlignemnt(style.getVerticalAlignment());
+		return EnumUtil.toStyleVerticalAlignemnt(style.getVerticalAlignment());
 	}
+	
 
 	public boolean isWrapText() {
 		return style.getWrapText();
