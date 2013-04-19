@@ -79,13 +79,13 @@ public interface Ref {
 	public Set<Ref> getPrecedents();
 	
 	/**
-	 * Returns whether this reference cover the whole row. 
+	 * Returns whether this reference cover the whole row (all column selected). 
 	 * @return whether this reference cover the whole row.
 	 */
 	public boolean isWholeRow();
 	
 	/**
-	 * Returns whether this reference cover the whole column.
+	 * Returns whether this reference cover the whole column (all row selected).
 	 * @return whether this reference cover the whole column.
 	 */
 	public boolean isWholeColumn();

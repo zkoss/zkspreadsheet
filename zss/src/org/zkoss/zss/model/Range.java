@@ -609,4 +609,19 @@ public interface Range {
      * @param pos the position that we want to insert the sheet into (0 based)
      */
 	public void setSheetOrder(int pos);
+	
+	/**
+	 * Check if this range cover an entire rows (form 0, and last row to the max available row of a sheet) 
+	 */
+	public boolean isWholeRow();
+	
+	/**
+	 * Check if this range cover an entire columns (form 0, and last row to the max available column of a sheet) 
+	 */
+	public boolean isWholeColumn();
+	
+	/**
+	 * Check if this range cover an entire sheet 
+	 */
+	public boolean isWholeSheet();
 }

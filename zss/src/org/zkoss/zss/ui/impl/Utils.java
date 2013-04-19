@@ -519,20 +519,20 @@ public class Utils {
 		new SheetSelector().doVisit(book, visitor);
 	}
 	
-	/**
-	 * 
-	 * @param sheet
-	 * @param rect
-	 * @param vistor
-	 * @param filters
-	 */
-	public static void visitCells(Worksheet sheet, Rect rect, CellVisitor vistor, CellFilter... filters) {
-		CellSelector selector = new CellSelector();
-		for(CellFilter cellFilter : filters){
-			selector.addFilter(cellFilter);
-		}
-		selector.doVisit(sheet, rect, vistor);
-	}
+//	/**
+//	 * 
+//	 * @param sheet
+//	 * @param rect
+//	 * @param vistor
+//	 * @param filters
+//	 */
+//	public static void visitCells(Worksheet sheet, Rect rect, CellVisitor vistor, CellFilter... filters) {
+//		CellSelector selector = new CellSelector();
+//		for(CellFilter cellFilter : filters){
+//			selector.addFilter(cellFilter);
+//		}
+//		selector.doVisit(sheet, rect, vistor);
+//	}
 	
 	
 	

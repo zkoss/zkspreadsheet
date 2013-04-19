@@ -2434,4 +2434,19 @@ public class RangeImpl implements Range {
 		}
 		return false;
 	}
+	
+	public boolean isWholeRow(){
+		Ref ref = _refs.iterator().next();
+		return ref.isWholeRow();
+	}
+	
+	public boolean isWholeColumn(){
+		Ref ref = _refs.iterator().next();
+		return ref.isWholeColumn();
+	}
+	
+	public boolean isWholeSheet(){
+		Ref ref = _refs.iterator().next();
+		return ref.isWholeSheet();
+	}
 }

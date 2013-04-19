@@ -4611,13 +4611,15 @@ public final class BookHelper {
 		return indexHash.get(Integer.valueOf(index));
 	}
 	
-	private static void setFontColor(Workbook book, Font font, Color color) {
+	public static void setFontColor(Workbook book, Font font, Color color) {
 		if (font instanceof HSSFFont) {
 			if (color instanceof HSSFColorExt) { //not palette color
 				color = ((HSSFColorExt)color).getSimilarColor(((HSSFWorkbook)book).getCustomPalette());
 			}
 			((HSSFFont)font).setColor(((HSSFColor)color).getIndex());
 		} else {
+			//20130415, dennischen, force reset, set rgb color is not able to override previous set a color with theme(color form default cell) 
+			((XSSFFont)font).setColor(null);
 			((XSSFFont)font).setColor((XSSFColor)color);
 		}
 	}

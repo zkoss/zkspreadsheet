@@ -366,4 +366,19 @@ public class EmptyRange implements Range {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public boolean isWholeRow() {
+		return false;
+	}
+
+	@Override
+	public boolean isWholeColumn() {
+		return false;
+	}
+
+	@Override
+	public boolean isWholeSheet() {
+		return false;
+	}
 }
