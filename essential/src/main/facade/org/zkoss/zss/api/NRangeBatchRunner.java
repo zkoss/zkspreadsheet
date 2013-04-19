@@ -1,6 +1,6 @@
 package org.zkoss.zss.api;
 
-public abstract class NBatchRunner {
+public abstract class NRangeBatchRunner {
 
 	abstract public void run(NRange range);
 }

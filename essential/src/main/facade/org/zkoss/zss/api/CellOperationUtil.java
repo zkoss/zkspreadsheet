@@ -1,6 +1,9 @@
 package org.zkoss.zss.api;
 
 import org.zkoss.zss.api.NRange.ApplyBorderType;
+import org.zkoss.zss.api.NRange.DeleteShift;
+import org.zkoss.zss.api.NRange.InsertCopyOrigin;
+import org.zkoss.zss.api.NRange.InsertShift;
 import org.zkoss.zss.api.NRange.PasteOperation;
 import org.zkoss.zss.api.NRange.PasteType;
 import org.zkoss.zss.api.NRange.LockLevel;
@@ -32,7 +35,7 @@ public class CellOperationUtil {
 			return false;
 		}
 		//use batch-runner to run multiple range operation
-		src.batch(new NBatchRunner() {
+		src.batch(new NRangeBatchRunner() {
 			public void run(NRange range) {
 				boolean r = range.paste(dest);
 				if(r){
@@ -133,7 +136,7 @@ public class CellOperationUtil {
 		//use BOOK level lock because we will create BOOK level Object (style, font)
 		if(range.isProtected())
 			return;
-		range.visit(new NCellVisitor(){
+		range.visit(new NRangeCellVisitor(){
 			@Override
 			public void visit(NRange cellRange) {
 				NCellStyle ostyle = cellRange.getGetter().getCellStyle();
@@ -328,7 +331,7 @@ public class CellOperationUtil {
 		// font)
 		if(range.isProtected())
 			return;
-		range.visit(new NCellVisitor() {
+		range.visit(new NRangeCellVisitor() {
 			@Override
 			public void visit(NRange cellRange) {
 				NCellStyle ostyle = cellRange.getGetter().getCellStyle();
@@ -363,7 +366,7 @@ public class CellOperationUtil {
 	public static void toggleMergeCenter(NRange range){
 		if(range.isProtected())
 			return;
-		range.batch(new NBatchRunner() {
+		range.batch(new NRangeBatchRunner() {
 			public void run(NRange range) {
 				if(range.hasMergeCell()){
 					range.unMerge();
@@ -421,11 +424,30 @@ public class CellOperationUtil {
 			return;
 
 		//use batch-runner to run multiple range operation
-		range.batch(new NBatchRunner() {
+		range.batch(new NRangeBatchRunner() {
 			public void run(NRange range) {
 				range.clearContents();// it removes value and formula only
 				range.clearStyles();
 			}
 		}, LockLevel.BOOK);
+	}
+
+	public static void insert(NRange range, InsertShift shift,
+			InsertCopyOrigin copyOrigin) {
+		if(range.isProtected())
+			return;
+		range.insert(shift, copyOrigin);
+	}
+	
+	public static void delete(NRange range, DeleteShift shift) {
+		if(range.isProtected())
+			return;
+		range.delete(shift);
+	}
+
+	public static void sort(NRange range, boolean desc) {
+		if(range.isProtected())
+			return;
+		range.sort(desc);
 	}
 }

@@ -8,9 +8,9 @@ import org.zkoss.zss.model.Range;
 
 public class NCreator {
 
-	Range range;
+	NRange range;
 	
-	public NCreator(Range range) {
+	public NCreator(NRange range) {
 		this.range = range;
 	}
 	
@@ -20,7 +20,7 @@ public class NCreator {
 	 * @return the new cell style
 	 */
 	public NCellStyle createCellStyle(NCellStyle src){
-		Book book = range.getSheet().getBook();
+		Book book = range.getNative().getSheet().getBook();
 //		synchronized(book){//should be protected in range.batch,visit
 			NCellStyle style = new NCellStyle(book,book.createCellStyle());
 			if(src!=null){
@@ -31,7 +31,7 @@ public class NCreator {
 	}
 
 	public NFont createFont(NFont src) {
-		Book book = range.getSheet().getBook();
+		Book book = range.getNative().getSheet().getBook();
 //		synchronized(book){
 			Font font = book.createFont();
 

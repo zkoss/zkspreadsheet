@@ -14,6 +14,7 @@ import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.impl.BookHelper;
 
 /**
  * 1.Range is not handling the protection issue, if you have handle it yourself before calling the api(by calling {@code #isProtected()})
@@ -82,6 +83,10 @@ public class NRange {
 		UP
 	}
 	
+	public enum SortDataOption{
+		TEXT_AS_NUMBERS
+	}
+	
 	Range range;
 	
 	private SharedContext sharedCtx;
@@ -97,10 +102,10 @@ public class NRange {
 	
 	
 	public NCreator getCreator(){
-		return new NCreator(range);
+		return new NCreator(this);
 	}
 	public NGetter getGetter(){
-		return new NGetter(range);
+		return new NGetter(this);
 	}
 	
 	public Range getNative(){
@@ -248,7 +253,7 @@ public class NRange {
 //	public void batch(NBatchRunner run){
 //		batch(run,LockLevel.BOOK);
 //	}
-	public void batch(NBatchRunner run,LockLevel lock){
+	public void batch(NRangeBatchRunner run,LockLevel lock){
 		switch(lock){
 		case NONE:
 			run.run(this);
@@ -270,7 +275,7 @@ public class NRange {
 	 * @param create create cell if it doesn't exist, if it is true, it will also lock the sheet
 	 * @param lock lock the sheet if you will do any modification of the sheet 
 	 */
-	public void visit(final NCellVisitor visitor,LockLevel lock){
+	public void visit(final NRangeCellVisitor visitor,LockLevel lock){
 		final int r=getRow();
 		final int lr=getLastRow();
 		final int c=getColumn();
@@ -298,7 +303,7 @@ public class NRange {
 		}
 	}
 	
-	private void visit0(NCellVisitor visitor,int r, int c){
+	private void visit0(NRangeCellVisitor visitor,int r, int c){
 		boolean create = visitor.createIfNotExist(r,c);
 		Worksheet sheet = range.getSheet();
 		Row row = sheet.getRow(r);
@@ -335,7 +340,7 @@ public class NRange {
 	
 	public boolean hasMergeCell(){
 		final Result<Boolean> result = new Result<Boolean>(Boolean.FALSE);
-		visit(new NCellVisitor(){
+		visit(new NRangeCellVisitor(){
 			public boolean createIfNotExist(int row, int column) {
 				return false;
 			}
@@ -380,6 +385,12 @@ public class NRange {
 	}
 
 	
+	public NRange getShiftRange(int rowOffset,int colOffset){
+		NRange offsetRange = new NRange(range.getOffset(rowOffset, colOffset),sharedCtx);
+		return offsetRange;
+	}
+	
+	
 	public NRange getCellRange(int rowOffset,int colOffset){
 		NRange cellRange = new NRange(Ranges.range(range.getSheet(),getRow()+rowOffset,getColumn()+colOffset),sharedCtx);
 		return cellRange;
@@ -418,5 +429,51 @@ public class NRange {
 	
 	public void delete(DeleteShift shift){
 		range.delete(EnumUtil.toRangeDeleteShift(shift));
+	}
+	
+	public void sort(boolean desc){	
+		sort(desc,false,false,false,null);
+	}
+	
+	public void sort(boolean desc,
+			boolean header, 
+			boolean matchCase, 
+			boolean sortByRows, 
+			SortDataOption dataOption){
+		
+		
+		NRange index = null;
+		int r = getRow();
+		int c = getColumn();
+		int lr = getLastRow();
+		int lc = getLastColumn();
+		
+		index = NRanges.range(this.getSheet(),r,c,sortByRows?r:lr,sortByRows?lc:c);
+		
+		sort(index,desc,header,matchCase,sortByRows,dataOption,
+				null,false,null,null,false,null);
+	}
+	
+	public void sort(NRange index1,
+			boolean desc1,
+			boolean header, 
+			/*int orderCustom, //not implement*/
+			boolean matchCase, 
+			boolean sortByRows, 
+			/*int sortMethod, //not implement*/
+			SortDataOption dataOption1,
+			NRange index2,boolean desc2,SortDataOption dataOption2,
+			NRange index3,boolean desc3,SortDataOption dataOption3){
+		
+		//TODO review the full impl for range1,range2,range3
+		
+		range.sort(index1==null?null:index1.getNative(), desc1, 
+				index2==null?null:index2.getNative()/*rng2*/, -1 /*type*/, desc2/*desc2*/, 
+				index3==null?null:index3.getNative()/*rng3*/, desc3/*desc3*/,
+				header?BookHelper.SORT_HEADER_YES:BookHelper.SORT_HEADER_NO/*header*/,
+				-1/*orderCustom*/, matchCase, sortByRows, -1/*sortMethod*/, 
+				dataOption1==null?-1:EnumUtil.toRangeSortDataOption(dataOption1)/*dataOption1*/,
+				dataOption2==null?-1:EnumUtil.toRangeSortDataOption(dataOption2)/*dataOption2*/,
+				dataOption3==null?-1:EnumUtil.toRangeSortDataOption(dataOption3)/*dataOption3*/);
 	}
 }

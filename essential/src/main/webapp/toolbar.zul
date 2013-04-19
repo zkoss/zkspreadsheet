@@ -87,13 +87,6 @@
 			<menuitem id="unMerge" label="Un Merge"/>
 		</menupopup>
 		
-		<toolbarbutton id="clearMenu" image="~./zss/img/broom.png" />
-		<menupopup id="clearPopup">
-			<menuitem id="clearContents" label="Clear content"/>
-			<menuitem id="clearStyles" label="Clear style"/>
-			<menuitem id="clearAll" label="clearAll"/>
-		</menupopup>
-		
 		<toolbarbutton id="insertMenu" image="~./zss/img/document-insert.png" />
 		<menupopup id="insertPopup">
 			<menuitem id="insertCellRight" label="Shift Cell Right"/>
@@ -109,5 +102,27 @@
 			<menuitem id="deleteRows" label="Delete Rows"/>
 			<menuitem id="deleteColumns" label="Delete Columns"/>
 		</menupopup>
+		
+				
+		<toolbarbutton id="clearMenu" image="~./zss/img/broom.png" />
+		<menupopup id="clearPopup">
+			<menuitem id="clearContents" label="Clear content"/>
+			<menuitem id="clearStyles" label="Clear style"/>
+			<menuitem id="clearAll" label="clearAll"/>
+		</menupopup>
+		
+		<toolbarbutton id="sortMenu" image="~./zss/img/asc.png" />
+		<menupopup id="sortPopup">
+			<menuitem id="sortAscending" label="Ascending"/>
+			<menuitem id="sortDescending" label="Descending"/>
+		</menupopup>
+		
+		<toolbarbutton id="filterMenu" image="~./zss/img/funnel--pencil.png" />
+		<menupopup id="filterPopup">
+			<menuitem id="toggleFilter" label="Toggle Filter"/>
+			<menuitem id="clearFilter" label="Reset Filter"/>
+			<menuitem id="reapplyFilter" label="Reapply Filter"/>
+		</menupopup>
+		
 	</toolbar>
 </zk>

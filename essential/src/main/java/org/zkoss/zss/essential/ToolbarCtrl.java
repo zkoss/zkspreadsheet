@@ -119,6 +119,16 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	Toolbarbutton deleteMenu;
 	@Wire
 	Menupopup deletePopup;
+	
+	@Wire
+	Toolbarbutton sortMenu;
+	@Wire
+	Menupopup sortPopup;
+	
+	@Wire
+	Toolbarbutton filterMenu;
+	@Wire
+	Menupopup filterPopup;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -699,7 +709,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	
 	// Wrap
 	@Listen("onClick=#wrapTextMenu")
-	public void doWrapTExt() {
+	public void doWrapText() {
 		Rect rect = getSafeSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
@@ -830,7 +840,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			return;
 		}
 		
-		dest.insert(InsertShift.RIGHT, InsertCopyOrigin.RIGHT_BELOW);
+		CellOperationUtil.insert(dest,InsertShift.RIGHT, InsertCopyOrigin.RIGHT_BELOW);
 		
 		clearClipboard();
 	}
@@ -845,7 +855,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			return;
 		}
 		
-		dest.insert(InsertShift.DOWN, InsertCopyOrigin.LEFT_ABOVE);
+		CellOperationUtil.insert(dest,InsertShift.DOWN, InsertCopyOrigin.LEFT_ABOVE);
 		
 		clearClipboard();
 	}
@@ -866,7 +876,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			ClientUtil.showWarn("Cann't insert more row");
 			return;
 		}
-		dest.insert(InsertShift.DOWN, InsertCopyOrigin.LEFT_ABOVE);
+		CellOperationUtil.insert(dest,InsertShift.DOWN, InsertCopyOrigin.LEFT_ABOVE);
 		
 		clearClipboard();
 	}
@@ -886,7 +896,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			ClientUtil.showWarn("Cann't insert more column");
 			return;
 		}
-		dest.insert(InsertShift.RIGHT, InsertCopyOrigin.RIGHT_BELOW);
+		CellOperationUtil.insert(dest,InsertShift.RIGHT, InsertCopyOrigin.RIGHT_BELOW);
 		
 		clearClipboard();
 	}
@@ -905,7 +915,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			showProtectionMessage();
 			return;
 		}
-		dest.delete(DeleteShift.LEFT);
+		CellOperationUtil.delete(dest,DeleteShift.LEFT);
 		clearClipboard();
 		
 	}
@@ -919,7 +929,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			showProtectionMessage();
 			return;
 		}
-		dest.delete(DeleteShift.UP);
+		CellOperationUtil.delete(dest,DeleteShift.UP);
 		clearClipboard();
 	}
 	
@@ -937,7 +947,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			ClientUtil.showWarn("Cann't delete all rows");
 			return;
 		}
-		dest.delete(DeleteShift.UP);
+		CellOperationUtil.delete(dest,DeleteShift.UP);
 		clearClipboard();
 	}
 	
@@ -955,7 +965,40 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			ClientUtil.showWarn("Cann't delete all columns");
 			return;
 		}
-		dest.delete(DeleteShift.LEFT);
+		CellOperationUtil.delete(dest,DeleteShift.LEFT);
+		clearClipboard();
+	}
+	
+	
+	//sort
+	@Listen("onClick=#sortMenu")
+	public void doSortMenu() {
+		sortPopup.open(sortMenu);
+	}
+
+	@Listen("onClick=#sortAscending")
+	public void onSortAscending() {
+		Rect rect = getSafeSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		if (dest.isProtected()) {
+			showProtectionMessage();
+			return;
+		}
+		CellOperationUtil.sort(dest,false);
+		clearClipboard();
+	}
+	
+	@Listen("onClick=#sortDescending")
+	public void onSortDescending() {
+		Rect rect = getSafeSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		if (dest.isProtected()) {
+			showProtectionMessage();
+			return;
+		}
+		CellOperationUtil.sort(dest,true);
 		clearClipboard();
 	}
 }

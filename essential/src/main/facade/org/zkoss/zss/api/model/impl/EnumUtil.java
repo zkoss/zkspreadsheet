@@ -9,6 +9,7 @@ import org.zkoss.zss.api.NRange.InsertCopyOrigin;
 import org.zkoss.zss.api.NRange.InsertShift;
 import org.zkoss.zss.api.NRange.PasteOperation;
 import org.zkoss.zss.api.NRange.PasteType;
+import org.zkoss.zss.api.NRange.SortDataOption;
 import org.zkoss.zss.api.model.NCellStyle.Alignment;
 import org.zkoss.zss.api.model.NCellStyle.BorderType;
 import org.zkoss.zss.api.model.NCellStyle.FillPattern;
@@ -471,5 +472,13 @@ public class EnumUtil {
 			return Range.SHIFT_LEFT;
 		}
 		throw new IllegalArgumentException("unknow range delete shift "+shift);
+	}
+
+	public static int toRangeSortDataOption(SortDataOption dataOption) {
+		switch(dataOption){
+		case TEXT_AS_NUMBERS:
+			return BookHelper.SORT_TEXT_AS_NUMBERS;
+		}
+		throw new IllegalArgumentException("unknow sort data option "+dataOption);
 	}
 }

@@ -10,9 +10,9 @@ import org.zkoss.zss.model.Worksheet;
 
 public class NGetter {
 
-	Range range;
+	NRange range;
 
-	public NGetter(Range range) {
+	public NGetter(NRange range) {
 		this.range = range;
 	}
 
@@ -22,7 +22,7 @@ public class NGetter {
 	 * @return cell style if cell is exist, the check row style and column cell style if cell not found, if row and column style is not exist, then return default style of sheet
 	 */
 	public NCellStyle getCellStyle() {
-		Worksheet sheet = range.getSheet();
+		Worksheet sheet = range.getNative().getSheet();
 		Book book = sheet.getBook();
 		
 		int r = range.getRow();
