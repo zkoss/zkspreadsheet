@@ -67,7 +67,7 @@ public class NBook {
 		return type; 
 	}
 
-	public int getSheeteetIndex(NSheet sheet) {
+	public int getSheetIndex(NSheet sheet) {
 		if(sheet==null) return -1;
 		return book.getSheetIndex(sheet.getNative());
 	}

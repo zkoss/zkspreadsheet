@@ -9,6 +9,8 @@ import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NCellStyle.BorderType;
+import org.zkoss.zss.api.model.NHyperlink;
+import org.zkoss.zss.api.model.NHyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.NSheet;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.Range;
@@ -95,6 +97,20 @@ public class NRange {
 		TOP10,
 		TOP10PERCENT,
 		VALUES
+	}
+	
+	public enum AutoFillType{
+		COPY,
+		DAYS,
+		DEFAULT,
+		FORMATS,
+		MONTHS,
+		SERIES,
+		VALUES,
+		WEEKDAYS,
+		YEARS,
+		GROWTH_TREND,
+		LINER_TREND		
 	}
 	
 	Range range;
@@ -509,8 +525,130 @@ public class NRange {
 	public void resetAutoFilter(){
 		range.showAllData();
 	}
-	/** re-apply the filter to filter again**/
-	public void reapplyAutoFilter(){
+	/** apply the filter to filter again**/
+	public void applyAutoFilter(){
 		range.applyFilter();
+	}
+	
+	/** enable sheet protection and apply a password**/
+	public void protectSheet(String password){
+		range.protectSheet(password);
+	}
+	
+	public void fill(NRange dest,AutoFillType fillType){
+		range.autoFill(dest.getNative(), EnumUtil.toRangeAutoFillType(fillType));
+	}
+	
+	public void fillDown(){
+		range.fillDown();
+	}
+	
+	public void fillLeft(){
+		range.fillLeft();
+	}
+	
+	public void fillUp(){
+		range.fillUp();
+	}
+	
+	public void fillRight(){
+		range.fillRight();
+	}
+	
+	/** shift this range with a offset row and column**/
+	public void shift(int rowOffset,int colOffset){
+		range.move(rowOffset, colOffset);
+	}
+	
+	public String getEditText(){
+		//
+		return range.getEditText();
+	}
+	
+	public void setEditText(String editText){
+		range.setEditText(editText);
+	}
+	
+	
+	//TODO need to verify the object type
+	public Object getValue(){
+		return range.getValue();
+	}
+	
+	public void eanbleDisplayGridlines(boolean enable){
+		range.setDisplayGridlines(enable);
+	}
+	
+	public boolean isDisplayGridlines(){
+		return getSheet().isDisplayGridlines();
+	}
+	
+	public void setHidden(boolean hidden){
+		range.setHidden(hidden);
+	}
+	
+	public void setHyperlink(HyperlinkType type,String address,String displayLabel){
+		range.setHyperlink(EnumUtil.toHyperlinkType(type), address, displayLabel);
+	}
+	
+	public void setSheetName(String name){
+		range.setSheetName(name);
+	}
+	
+	public String getSheetName(){
+		return getSheet().getSheetName();
+	}
+	
+	public void setSheetOrder(int pos){
+		range.setSheetOrder(pos);
+	}
+	
+	public int getSheetOrder(){
+		return getBook().getSheetIndex(getSheet());
+	}
+	
+	public void setValue(Object value){
+		range.setValue(value);
+	}
+
+	//api that need special object wrap
+	
+	
+	public void getSpecialWrapObject(){
+
+		range.getFormatText();//FormatText
+		range.getHyperlink();//Hyperlink
+		
+		range.getRichEditText();//RichTextString
+		range.getText();//RichTextString (what is the difference of getRichEditText)
+		
+		
+		range.validate("");//DataValidation
+		
+	}
+	
+	
+	public void getInternal(){
+		range.notifyDeleteFriendFocus(null);//by Spreadsheet
+		range.notifyMoveFriendFocus(null);//
+	}
+	
+	
+	//API of range that n-oone use it.
+	
+	
+	public void getNoOneUse(){
+		
+		range.getCount();
+		range.getCurrentRegion();
+		range.getDependents();
+		range.getDirectDependents();
+		range.getPrecedents();
+		
+		range.isCustomHeight();
+		
+		//range.pasteSpecial(pasteType, pasteOp, SkipBlanks, transpose);
+		
+		
 	}
 }

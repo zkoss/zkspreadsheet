@@ -52,6 +52,13 @@ public class NSheet {
 	public boolean isAutoFilterEnabled() {
 		return sheet.isAutoFilterMode();
 	}
-	
+
+	public boolean isDisplayGridlines() {
+		return sheet.isDisplayGridlines();
+	}
+
+	public String getSheetName() {
+		return sheet.getSheetName();
+	}
 	
 }

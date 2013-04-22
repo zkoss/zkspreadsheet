@@ -1,10 +1,12 @@
 package org.zkoss.zss.api.model.impl;
 
+import org.apache.poi.common.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.zss.api.NRange.ApplyBorderType;
+import org.zkoss.zss.api.NRange.AutoFillType;
 import org.zkoss.zss.api.NRange.AutoFilterOperation;
 import org.zkoss.zss.api.NRange.DeleteShift;
 import org.zkoss.zss.api.NRange.InsertCopyOrigin;
@@ -21,6 +23,7 @@ import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.api.model.NFont.Boldweight;
 import org.zkoss.zss.api.model.NFont.TypeOffset;
 import org.zkoss.zss.api.model.NFont.Underline;
+import org.zkoss.zss.api.model.NHyperlink.HyperlinkType;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.impl.BookHelper;
 
@@ -502,5 +505,60 @@ public class EnumUtil {
 			return AutoFilter.FILTEROP_VALUES;
 		}
 		throw new IllegalArgumentException("unknow autofilter operation "+filterOp);
+	}
+
+	public static int toRangeAutoFillType(AutoFillType fillType) {
+		switch(fillType){
+		case COPY:
+			return Range.FILL_COPY;
+		case DAYS:
+			return Range.FILL_DAYS;
+		case DEFAULT:
+			return Range.FILL_DEFAULT;
+		case FORMATS:
+			return Range.FILL_FORMATS;
+		case MONTHS:
+			return Range.FILL_MONTHS;
+		case SERIES:
+			return Range.FILL_SERIES;
+		case VALUES:
+			return Range.FILL_VALUES;
+		case WEEKDAYS:
+			return Range.FILL_WEEKDAYS;
+		case YEARS:
+			return Range.FILL_YEARS;
+		case GROWTH_TREND:
+			return Range.FILL_GROWTH_TREND;
+		case LINER_TREND:
+			return Range.FILL_LINER_TREND;
+		}
+		throw new IllegalArgumentException("unknow autofill type "+fillType);
+	}
+
+	public static int toHyperlinkType(HyperlinkType type) {
+		switch(type){
+		case URL:
+			return Hyperlink.LINK_URL;
+		case DOCUMENT:
+			return Hyperlink.LINK_DOCUMENT;
+		case EMAIL:
+			return Hyperlink.LINK_EMAIL;
+		case FILE:
+			return Hyperlink.LINK_FILE;
+		}
+		throw new IllegalArgumentException("unknow hyperlink type "+type);
+	}
+	public static HyperlinkType toHyperlinkType(int type) {
+		switch(type){
+		case Hyperlink.LINK_URL:
+			return HyperlinkType.URL;
+		case Hyperlink.LINK_DOCUMENT:
+			return HyperlinkType.DOCUMENT;
+		case Hyperlink.LINK_EMAIL:
+			return HyperlinkType.EMAIL;
+		case Hyperlink.LINK_FILE:
+			return HyperlinkType.FILE;
+		}
+		throw new IllegalArgumentException("unknow hyperlink type "+type);
 	}
 }

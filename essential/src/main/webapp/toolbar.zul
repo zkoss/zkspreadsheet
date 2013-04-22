@@ -121,7 +121,7 @@
 		<menupopup id="filterPopup">
 			<menuitem id="toggleFilter" label="Toggle Filter"/>
 			<menuitem id="resetFilter" label="Reset Filter"/>
-			<menuitem id="reapplyFilter" label="Reapply Filter"/>
+			<menuitem id="applyFilter" label="Reapply Filter"/>
 		</menupopup>
 		
 	</toolbar>

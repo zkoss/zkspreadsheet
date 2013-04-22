@@ -280,7 +280,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			return;
 
 		// check if in the same book only
-		if (nss.getBook().getSheeteetIndex(clipinfo.sheet) < 0) {
+		if (nss.getBook().getSheetIndex(clipinfo.sheet) < 0) {
 			clearClipboard();
 			return;
 		}
@@ -1037,8 +1037,8 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		clearClipboard();
 	}
 	
-	@Listen("onClick=#reapplyFilter")
-	public void onReapplyFilter() {
+	@Listen("onClick=#applyFilter")
+	public void onAapplyFilter() {
 		Rect rect = getSafeSelection();
 		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
 				rect.getLeft(), rect.getBottom(), rect.getRight());
@@ -1047,7 +1047,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			return;
 		}
 		
-		dest.reapplyAutoFilter();
+		dest.applyAutoFilter();
 		clearClipboard();
 	}
 }
