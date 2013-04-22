@@ -120,7 +120,7 @@
 		<toolbarbutton id="filterMenu" image="~./zss/img/funnel--pencil.png" />
 		<menupopup id="filterPopup">
 			<menuitem id="toggleFilter" label="Toggle Filter"/>
-			<menuitem id="clearFilter" label="Reset Filter"/>
+			<menuitem id="resetFilter" label="Reset Filter"/>
 			<menuitem id="reapplyFilter" label="Reapply Filter"/>
 		</menupopup>
 		

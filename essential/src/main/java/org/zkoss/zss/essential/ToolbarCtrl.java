@@ -1001,4 +1001,53 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		CellOperationUtil.sort(dest,true);
 		clearClipboard();
 	}
+	
+	
+	//filter
+	@Listen("onClick=#filterMenu")
+	public void doFilterMenu() {
+		filterPopup.open(filterMenu);
+	}
+	
+	@Listen("onClick=#toggleFilter")
+	public void onToggleFilter() {
+		Rect rect = getSafeSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		if (dest.isProtected()) {
+			showProtectionMessage();
+			return;
+		}
+		
+		dest.enableAutoFilter(!dest.isAutoFilterEnabled());
+		clearClipboard();
+	}
+	
+	@Listen("onClick=#resetFilter")
+	public void onResetFilter() {
+		Rect rect = getSafeSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		if (dest.isProtected()) {
+			showProtectionMessage();
+			return;
+		}
+		
+		dest.resetAutoFilter();
+		clearClipboard();
+	}
+	
+	@Listen("onClick=#reapplyFilter")
+	public void onReapplyFilter() {
+		Rect rect = getSafeSelection();
+		NRange dest = NRanges.range(nss.getSelectedSheet(), rect.getTop(),
+				rect.getLeft(), rect.getBottom(), rect.getRight());
+		if (dest.isProtected()) {
+			showProtectionMessage();
+			return;
+		}
+		
+		dest.reapplyAutoFilter();
+		clearClipboard();
+	}
 }

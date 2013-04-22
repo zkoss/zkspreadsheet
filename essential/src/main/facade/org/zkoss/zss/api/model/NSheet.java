@@ -48,6 +48,10 @@ public class NSheet {
 	public boolean isProtected() {
 		return sheet.getProtect();
 	}
+
+	public boolean isAutoFilterEnabled() {
+		return sheet.isAutoFilterMode();
+	}
 	
 	
 }

@@ -87,6 +87,16 @@ public class NRange {
 		TEXT_AS_NUMBERS
 	}
 	
+	public enum AutoFilterOperation{
+		AND,
+		BOTTOM10,
+		BOTOOM10PERCENT,
+		OR,
+		TOP10,
+		TOP10PERCENT,
+		VALUES
+	}
+	
 	Range range;
 	
 	private SharedContext sharedCtx;
@@ -475,5 +485,32 @@ public class NRange {
 				dataOption1==null?-1:EnumUtil.toRangeSortDataOption(dataOption1)/*dataOption1*/,
 				dataOption2==null?-1:EnumUtil.toRangeSortDataOption(dataOption2)/*dataOption2*/,
 				dataOption3==null?-1:EnumUtil.toRangeSortDataOption(dataOption3)/*dataOption3*/);
+	}
+	
+	/** check if auto filter is enable or not.**/
+	public boolean isAutoFilterEnabled(){
+		return getSheet().isAutoFilterEnabled();
+	}
+	
+	/** enable/disable autofilter of the sheet**/
+	public void enableAutoFilter(boolean enable){
+		if(isAutoFilterEnabled() == enable){
+			return ;
+		}
+		range.autoFilter();//toggle on/off automatically
+	}
+	/** enable filter with condition **/
+	//TODO have to review this after I know more detail
+	public void enableAutoFilter(int field, AutoFilterOperation filterOp, Object criteria1, Object criteria2, Boolean visibleDropDown){
+		range.autoFilter(field,criteria1,EnumUtil.toRangeAutoFilterOperation(filterOp),criteria2,visibleDropDown);
+	}
+	
+	/** clear condition of filter, show all the data**/
+	public void resetAutoFilter(){
+		range.showAllData();
+	}
+	/** re-apply the filter to filter again**/
+	public void reapplyAutoFilter(){
+		range.applyFilter();
 	}
 }

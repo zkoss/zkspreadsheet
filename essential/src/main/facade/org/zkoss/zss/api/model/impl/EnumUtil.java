@@ -1,9 +1,11 @@
 package org.zkoss.zss.api.model.impl;
 
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.zss.api.NRange.ApplyBorderType;
+import org.zkoss.zss.api.NRange.AutoFilterOperation;
 import org.zkoss.zss.api.NRange.DeleteShift;
 import org.zkoss.zss.api.NRange.InsertCopyOrigin;
 import org.zkoss.zss.api.NRange.InsertShift;
@@ -480,5 +482,25 @@ public class EnumUtil {
 			return BookHelper.SORT_TEXT_AS_NUMBERS;
 		}
 		throw new IllegalArgumentException("unknow sort data option "+dataOption);
+	}
+
+	public static int toRangeAutoFilterOperation(AutoFilterOperation filterOp) {
+		switch(filterOp){
+		case AND:
+			return AutoFilter.FILTEROP_AND;
+		case OR:
+			return AutoFilter.FILTEROP_OR;
+		case TOP10:
+			return AutoFilter.FILTEROP_TOP10;
+		case TOP10PERCENT:
+			return AutoFilter.FILTEROP_TOP10PERCENT;
+		case BOTTOM10:
+			return AutoFilter.FILTEROP_BOTTOM10;
+		case BOTOOM10PERCENT:
+			return AutoFilter.FILTEROP_BOTOOM10PERCENT;
+		case VALUES:
+			return AutoFilter.FILTEROP_VALUES;
+		}
+		throw new IllegalArgumentException("unknow autofilter operation "+filterOp);
 	}
 }
