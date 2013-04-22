@@ -1,7 +1,10 @@
 package org.zkoss.zss.api.ui;
 
+import org.zkoss.zss.api.model.ModelRef;
 import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.model.NSheet;
+import org.zkoss.zss.api.model.SimpleRef;
+import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -46,7 +49,7 @@ public class NSpreadsheet {
 	}
 
 	public NBook getBook() {
-		return new NBook(ss.getBook());
+		return new NBook(new SimpleRef<Book>(ss.getBook()));
 	}
 
 	public Rect getSelection() {
@@ -55,7 +58,7 @@ public class NSpreadsheet {
 
 	public NSheet getSelectedSheet() {
 		Worksheet sheet = ss.getSelectedSheet();
-		return sheet==null?null:new NSheet(sheet);
+		return sheet==null?null:new NSheet(new SimpleRef<Worksheet>(sheet));
 	}
 
 	public void setHighlight(Rect rect) {

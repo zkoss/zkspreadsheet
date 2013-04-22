@@ -16,11 +16,12 @@ public class NBook {
 		EXCEL_2003, EXCEL_2007
 	}
 
-	Book book;
+	ModelRef<Book> bookRef;
 	BookType type;
 	
-	public NBook(Book book){
-		this.book = book;
+	public NBook(ModelRef<Book> ref){
+		this.bookRef = ref;
+		Book book = ref.get();
 		if (book instanceof HSSFBookImpl) {
 			type = BookType.EXCEL_2003;
 		} else if (book instanceof XSSFBookImpl) {
@@ -31,14 +32,18 @@ public class NBook {
 	}
 
 	public Book getNative() {
-		return book;
+		return bookRef.get();
+	}
+	
+	public ModelRef<Book> getRef(){
+		return bookRef;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((book == null) ? 0 : book.hashCode());
+		result = prime * result + ((bookRef == null) ? 0 : bookRef.hashCode());
 		return result;
 	}
 
@@ -51,16 +56,16 @@ public class NBook {
 		if (getClass() != obj.getClass())
 			return false;
 		NBook other = (NBook) obj;
-		if (book == null) {
-			if (other.book != null)
+		if (bookRef == null) {
+			if (other.bookRef != null)
 				return false;
-		} else if (!book.equals(other.book))
+		} else if (!bookRef.equals(other.bookRef))
 			return false;
 		return true;
 	}
 
 	public String getBookName() {
-		return book.getBookName();
+		return getNative().getBookName();
 	}
 	
 	public BookType getType(){
@@ -69,7 +74,7 @@ public class NBook {
 
 	public int getSheetIndex(NSheet sheet) {
 		if(sheet==null) return -1;
-		return book.getSheetIndex(sheet.getNative());
+		return getNative().getSheetIndex(sheet.getNative());
 	}
 	
 
@@ -78,14 +83,14 @@ public class NBook {
 			TypeOffset typeOffset, Underline underline) {
 		Font font;
 		
-		font = book.findFont(EnumUtil.toFontBoldweight(boldweight), color.getNative(), fontHeight, fontName,
+		font = getNative().findFont(EnumUtil.toFontBoldweight(boldweight), color.getNative(), fontHeight, fontName,
 				italic, strikeout, EnumUtil.toFontTypeOffset(typeOffset), EnumUtil.toFontUnderline(underline));
-		return font==null?null:new NFont(book,font);
+		return font==null?null:new NFont(bookRef,new SimpleRef<Font>(font));
 	}
 
 	public NColor getColorFromHtmlColor(String htmlColor) {
-		Color color = BookHelper.HTMLToColor(book, htmlColor);//never null
-		return new NColor(book,color);
+		Color color = BookHelper.HTMLToColor(getNative(), htmlColor);//never null
+		return new NColor(bookRef,new SimpleRef<Color>(color));
 	}
 	
 }

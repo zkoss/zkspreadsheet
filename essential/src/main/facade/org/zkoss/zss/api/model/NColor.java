@@ -6,19 +6,19 @@ import org.zkoss.zss.model.impl.BookHelper;
 
 public class NColor {
 
-	Book book;
-	Color color;
+	ModelRef<Book> bookRef;
+	ModelRef<Color> colorRef;
 
-	public NColor(Book book, Color color) {
-		this.book = book;
-		this.color = color;
+	public NColor(ModelRef<Book> book, ModelRef<Color> color) {
+		this.bookRef = book;
+		this.colorRef = color;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((color == null) ? 0 : color.hashCode());
+		result = prime * result + ((colorRef == null) ? 0 : colorRef.hashCode());
 		return result;
 	}
 
@@ -31,20 +31,23 @@ public class NColor {
 		if (getClass() != obj.getClass())
 			return false;
 		NColor other = (NColor) obj;
-		if (color == null) {
-			if (other.color != null)
+		if (colorRef == null) {
+			if (other.colorRef != null)
 				return false;
-		} else if (!color.equals(other.color))
+		} else if (!colorRef.equals(other.colorRef))
 			return false;
 		return true;
 	}
 
 	public Color getNative() {
-		return color;
+		return colorRef.get();
+	}
+	public ModelRef<Color> getRef(){
+		return colorRef;
 	}
 
 	public String toHtmlColor() {
-		return BookHelper.colorToHTML(book,color);
+		return BookHelper.colorToHTML(bookRef.get(),colorRef.get());
 	}
 
 }

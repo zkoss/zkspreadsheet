@@ -2,6 +2,7 @@ package org.zkoss.zss.api.model;
 
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Color;
+import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.impl.BookHelper;
@@ -64,25 +65,28 @@ public class NCellStyle {
 	}
 	
 	
-	Book book;
-	CellStyle style;
+	ModelRef<Book> bookRef;
+	ModelRef<CellStyle> styleRef;
 	
 	NFont nfont;
 	
-	public NCellStyle(Book book,CellStyle style) {
-		this.book = book;
-		this.style = style;
+	public NCellStyle(ModelRef<Book> book,ModelRef<CellStyle> style) {
+		this.bookRef = book;
+		this.styleRef = style;
 	}
 	
 	public CellStyle getNative(){
-		return style;
+		return styleRef.get();
+	}
+	public ModelRef<CellStyle> getRef(){
+		return styleRef;
 	}
 	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((style == null) ? 0 : style.hashCode());
+		result = prime * result + ((styleRef == null) ? 0 : styleRef.hashCode());
 		return result;
 	}
 	@Override
@@ -94,10 +98,10 @@ public class NCellStyle {
 		if (getClass() != obj.getClass())
 			return false;
 		NCellStyle other = (NCellStyle) obj;
-		if (style == null) {
-			if (other.style != null)
+		if (styleRef == null) {
+			if (other.styleRef != null)
 				return false;
-		} else if (!style.equals(other.style))
+		} else if (!styleRef.equals(other.styleRef))
 			return false;
 		return true;
 	}
@@ -106,41 +110,43 @@ public class NCellStyle {
 		if(nfont!=null){
 			return nfont;
 		}
-		return nfont = new NFont(book,book.getFontAt(style.getFontIndex()));
+		Book book = bookRef.get();
+		Font font = book.getFontAt(getNative().getFontIndex());
+		return nfont = new NFont(bookRef,new SimpleRef<Font>(font));
 	}
 
 	public void setFont(NFont nfont) {
 		this.nfont = nfont; 
-		style.setFont(nfont==null?null:nfont.getNative());
+		getNative().setFont(nfont==null?null:nfont.getNative());
 	}
 	
 	
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append("[").append(style).append("]");
+		sb.append("[").append(getNative()).append("]");
 		sb.append("font:[").append(getFont()).append("]");
 		return sb.toString();
 	}
 
 	public void cloneAttribute(NCellStyle src) {
-		style.cloneStyleFrom(src.getNative());
+		getNative().cloneStyleFrom(src.getNative());
 	}
 
 	public NColor getBackgroundColor() {
-		Color srcColor = style.getFillForegroundColorColor();
-		return new NColor(book,srcColor);
+		Color srcColor = getNative().getFillForegroundColorColor();
+		return new NColor(bookRef,new SimpleRef<Color>(srcColor));
 	}
 	
 	public void setBackgroundColor(NColor color) {
-		BookHelper.setFillForegroundColor(style, color.getNative());
+		BookHelper.setFillForegroundColor(getNative(), color.getNative());
 	}
 	
 	public FillPattern getFillPattern(){
-		return EnumUtil.toStyleFillPattern(style.getFillPattern());
+		return EnumUtil.toStyleFillPattern(getNative().getFillPattern());
 	}
 
 	public void setFillPattern(FillPattern pattern) {
-		style.setFillPattern(EnumUtil.toStyleFillPattern(pattern));	
+		getNative().setFillPattern(EnumUtil.toStyleFillPattern(pattern));	
 	}
 	
 //	public NColor getForegroundColor(){
@@ -158,80 +164,80 @@ public class NCellStyle {
 //	}
 
 	public void setAlignment(Alignment alignment){
-		style.setAlignment(EnumUtil.toStyleAlignemnt(alignment));
+		getNative().setAlignment(EnumUtil.toStyleAlignemnt(alignment));
 	}
 	public Alignment getAlignment(){
-		return EnumUtil.toStyleAlignemnt(style.getAlignment());
+		return EnumUtil.toStyleAlignemnt(getNative().getAlignment());
 	}
 	public void setVerticalAlignment(VerticalAlignment alignment){
-		style.setVerticalAlignment(EnumUtil.toStyleVerticalAlignemnt(alignment));
+		getNative().setVerticalAlignment(EnumUtil.toStyleVerticalAlignemnt(alignment));
 	}
 	public VerticalAlignment getVerticalAlignment(){
-		return EnumUtil.toStyleVerticalAlignemnt(style.getVerticalAlignment());
+		return EnumUtil.toStyleVerticalAlignemnt(getNative().getVerticalAlignment());
 	}
 	
 
 	public boolean isWrapText() {
-		return style.getWrapText();
+		return getNative().getWrapText();
 	}
 
 	public void setWrapText(boolean wraptext) {
-		style.setWrapText(wraptext);
+		getNative().setWrapText(wraptext);
 	}
 	
 	public void setBorderLeft(BorderType borderType){
-		style.setBorderLeft(EnumUtil.toStyleBorderType(borderType));
+		getNative().setBorderLeft(EnumUtil.toStyleBorderType(borderType));
 	}
 	public BorderType getBorderLeft(){
-		return EnumUtil.toStyleBorderType(style.getBorderLeft());
+		return EnumUtil.toStyleBorderType(getNative().getBorderLeft());
 	}
 
 	public void setBorderTop(BorderType borderType){
-		style.setBorderTop(EnumUtil.toStyleBorderType(borderType));
+		getNative().setBorderTop(EnumUtil.toStyleBorderType(borderType));
 	}
 	public BorderType getBorderTop(){
-		return EnumUtil.toStyleBorderType(style.getBorderTop());
+		return EnumUtil.toStyleBorderType(getNative().getBorderTop());
 	}
 
 	public void setBorderRight(BorderType borderType){
-		style.setBorderRight(EnumUtil.toStyleBorderType(borderType));
+		getNative().setBorderRight(EnumUtil.toStyleBorderType(borderType));
 	}
 	public BorderType getBorderRight(){
-		return EnumUtil.toStyleBorderType(style.getBorderRight());
+		return EnumUtil.toStyleBorderType(getNative().getBorderRight());
 	}
 
 	public void setBorderBottom(BorderType borderType){
-		style.setBorderBottom(EnumUtil.toStyleBorderType(borderType));
+		getNative().setBorderBottom(EnumUtil.toStyleBorderType(borderType));
 	}
 	public BorderType getBorderBottom(){
-		return EnumUtil.toStyleBorderType(style.getBorderBottom());
+		return EnumUtil.toStyleBorderType(getNative().getBorderBottom());
 	}
 	
 	public void setBorderTopColor(Color color){
-		BookHelper.setTopBorderColor(style, color);
+		BookHelper.setTopBorderColor(getNative(), color);
 	}
 	public NColor getBorderTopColor(){
-		return new NColor(book,style.getTopBorderColorColor());
+		return new NColor(bookRef,new SimpleRef<Color>(getNative().getTopBorderColorColor()));
 	}
 	
 	public void setBorderLeftColor(Color color){
-		BookHelper.setLeftBorderColor(style, color);
+		BookHelper.setLeftBorderColor(getNative(), color);
 	}
 	public NColor getBorderLeftColor(){
-		return new NColor(book,style.getLeftBorderColorColor());
+		return new NColor(bookRef,new SimpleRef<Color>(getNative().getLeftBorderColorColor()));
 	}
 	
 	public void setBorderBottomColor(Color color){
-		BookHelper.setBottomBorderColor(style, color);
+		BookHelper.setBottomBorderColor(getNative(), color);
 	}
 	public NColor getBorderBottomColor(){
-		return new NColor(book,style.getBottomBorderColorColor());
+		return new NColor(bookRef,new SimpleRef<Color>(getNative().getBottomBorderColorColor()));
 	}
 	
 	public void setBorderRightColor(Color color){
-		BookHelper.setRightBorderColor(style, color);
+		BookHelper.setRightBorderColor(getNative(), color);
 	}
 	public NColor getBorderRightColor(){
-		return new NColor(book,style.getRightBorderColorColor());
+		return new NColor(bookRef,new SimpleRef<Color>(getNative().getRightBorderColorColor()));
 	}
 }

@@ -4,8 +4,8 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.api.model.NCellStyle;
+import org.zkoss.zss.api.model.SimpleRef;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Worksheet;
 
 public class NGetter {
@@ -46,7 +46,7 @@ public class NGetter {
 			style = book.getCellStyleAt((short) 0);
 		}
 		
-		return new NCellStyle(sheet.getBook(), style);		
+		return new NCellStyle(range.getBook().getRef(), new SimpleRef<CellStyle>(style));		
 	}
 
 }

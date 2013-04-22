@@ -1,10 +1,11 @@
 package org.zkoss.zss.api;
 
+import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NFont;
+import org.zkoss.zss.api.model.SimpleRef;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Range;
 
 public class NCreator {
 
@@ -22,7 +23,7 @@ public class NCreator {
 	public NCellStyle createCellStyle(NCellStyle src){
 		Book book = range.getNative().getSheet().getBook();
 //		synchronized(book){//should be protected in range.batch,visit
-			NCellStyle style = new NCellStyle(book,book.createCellStyle());
+			NCellStyle style = new NCellStyle(range.getBook().getRef(),new SimpleRef<CellStyle>(book.createCellStyle()));
 			if(src!=null){
 				style.cloneAttribute(src);
 			}
@@ -35,7 +36,7 @@ public class NCreator {
 //		synchronized(book){
 			Font font = book.createFont();
 
-			NFont nf = new NFont(book,font);
+			NFont nf = new NFont(range.getBook().getRef(),new SimpleRef<Font>(font));
 			if(src!=null){
 				nf.cloneAttribute(src);
 			}

@@ -26,29 +26,32 @@ public class NFont {
 		BOLD
 	}
 	
-	Book book;
-	Font font;
+	ModelRef<Book> bookRef;
+	ModelRef<Font> fontRef;
 	
-	public NFont(Book book, Font font) {
-		this.book = book;
-		this.font = font;
+	public NFont(ModelRef<Book> book, ModelRef<Font> font) {
+		this.bookRef = book;
+		this.fontRef = font;
 	}
 	public String getFontName() {
-		return font.getFontName();
+		return getNative().getFontName();
 	}
 	public Font getNative() {
-		return font;
+		return fontRef.get();
+	}
+	public ModelRef<Font> getRef(){
+		return fontRef;
 	}
 	
 	public NColor getColor(){
-		Color c = BookHelper.getFontColor(book, font);
-		return new NColor(book,c);
+		Color c = BookHelper.getFontColor(bookRef.get(), fontRef.get());
+		return new NColor(bookRef,new SimpleRef<Color>(c));
 	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((font == null) ? 0 : font.hashCode());
+		result = prime * result + ((fontRef == null) ? 0 : fontRef.hashCode());
 		return result;
 	}
 	@Override
@@ -60,44 +63,44 @@ public class NFont {
 		if (getClass() != obj.getClass())
 			return false;
 		NFont other = (NFont) obj;
-		if (font == null) {
-			if (other.font != null)
+		if (fontRef == null) {
+			if (other.fontRef != null)
 				return false;
-		} else if (!font.equals(other.font))
+		} else if (!fontRef.equals(other.fontRef))
 			return false;
 		return true;
 	}
 	public Boldweight getBoldweight() {
-		return EnumUtil.toFontBoldweight(font.getBoldweight());
+		return EnumUtil.toFontBoldweight(getNative().getBoldweight());
 	}
 	public short getFontHeight() {
-		return font.getFontHeight();
+		return getNative().getFontHeight();
 	}
 	public boolean isItalic() {
-		return font.getItalic();
+		return getNative().getItalic();
 	}
 	public boolean isStrikeout() {
-		return font.getStrikeout();
+		return getNative().getStrikeout();
 	}
 	public TypeOffset getTypeOffset() {
-		return EnumUtil.toFontTypeOffset(font.getTypeOffset());
+		return EnumUtil.toFontTypeOffset(getNative().getTypeOffset());
 	}
 	public Underline getUnderline() {
-		return EnumUtil.toFontUnderline(font.getUnderline());
+		return EnumUtil.toFontUnderline(getNative().getUnderline());
 	}
 
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append("[").append(font).append("]");
+		sb.append("[").append(getNative()).append("]");
 		sb.append(getFontName());
 		return sb.toString();
 	}
 	public void cloneAttribute(NFont src) {
 		Font sfont = src.getNative();
-		
+		Font font = getNative();
 		font.setBoldweight(sfont.getBoldweight());
-		Color srcColor = BookHelper.getFontColor(book, sfont);
-		BookHelper.setFontColor(book, font, srcColor);
+		Color srcColor = BookHelper.getFontColor(bookRef.get(), sfont);
+		BookHelper.setFontColor(bookRef.get(), font, srcColor);
 		font.setFontHeight(sfont.getFontHeight());
 		font.setFontName(sfont.getFontName());
 		font.setItalic(sfont.getItalic());
@@ -106,25 +109,25 @@ public class NFont {
 		font.setUnderline(sfont.getUnderline());
 	}
 	public void setFontName(String fontName) {
-		font.setFontName(fontName);
+		getNative().setFontName(fontName);
 	}
 	public void setBoldweight(Boldweight boldweight) {
-		font.setBoldweight(EnumUtil.toFontBoldweight(boldweight));
+		getNative().setBoldweight(EnumUtil.toFontBoldweight(boldweight));
 	}
 	public void setItalic(boolean italic) {
-		font.setItalic(italic);		
+		getNative().setItalic(italic);		
 	}
 	
 	public void setStrikeout(boolean strikeout) {
-		font.setStrikeout(strikeout);	
+		getNative().setStrikeout(strikeout);	
 	}
 	public void setUnderline(Underline underline) {
-		font.setUnderline(EnumUtil.toFontUnderline(underline));
+		getNative().setUnderline(EnumUtil.toFontUnderline(underline));
 	}
 	public void setFontHeight(short height){
-		font.setFontHeight(height);
+		getNative().setFontHeight(height);
 	}
 	public void setColor(NColor color) {
-		BookHelper.setFontColor(book, font, color.getNative());
+		BookHelper.setFontColor(bookRef.get(), getNative(), color.getNative());
 	}
 }

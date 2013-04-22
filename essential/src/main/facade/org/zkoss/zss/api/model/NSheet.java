@@ -1,23 +1,27 @@
 package org.zkoss.zss.api.model;
 
+import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Worksheet;
 
 public class NSheet {
-	Worksheet sheet;
+	ModelRef<Worksheet> sheetRef;
 	NBook nbook;
-	public NSheet(Worksheet sheet){
-		this.sheet = sheet;
+	public NSheet(ModelRef<Worksheet> sheet){
+		this.sheetRef = sheet;
 	}
 	
 	public Worksheet getNative(){
-		return sheet;
+		return sheetRef.get();
+	}
+	public ModelRef<Worksheet> getRef(){
+		return sheetRef;
 	}
 	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((sheet == null) ? 0 : sheet.hashCode());
+		result = prime * result + ((sheetRef == null) ? 0 : sheetRef.hashCode());
 		return result;
 	}
 	@Override
@@ -29,10 +33,10 @@ public class NSheet {
 		if (getClass() != obj.getClass())
 			return false;
 		NSheet other = (NSheet) obj;
-		if (sheet == null) {
-			if (other.sheet != null)
+		if (sheetRef == null) {
+			if (other.sheetRef != null)
 				return false;
-		} else if (!sheet.equals(other.sheet))
+		} else if (!sheetRef.equals(other.sheetRef))
 			return false;
 		return true;
 	}
@@ -41,24 +45,25 @@ public class NSheet {
 		if(nbook!=null){
 			return nbook;
 		}
-		return nbook = new NBook(sheet.getBook());
+		nbook = new NBook(new SimpleRef<Book>(getNative().getBook()));
+		return nbook;
 	}
 	
 
 	public boolean isProtected() {
-		return sheet.getProtect();
+		return getNative().getProtect();
 	}
 
 	public boolean isAutoFilterEnabled() {
-		return sheet.isAutoFilterMode();
+		return getNative().isAutoFilterMode();
 	}
 
 	public boolean isDisplayGridlines() {
-		return sheet.isDisplayGridlines();
+		return getNative().isDisplayGridlines();
 	}
 
 	public String getSheetName() {
-		return sheet.getSheetName();
+		return getNative().getSheetName();
 	}
 	
 }
