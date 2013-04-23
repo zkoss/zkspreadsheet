@@ -139,7 +139,7 @@ public class CellOperationUtil {
 		range.visit(new NRangeCellVisitor(){
 			@Override
 			public void visit(NRange cellRange) {
-				NCellStyle ostyle = cellRange.getGetter().getCellStyle();
+				NCellStyle ostyle = cellRange.getCellStyle();
 				NFont ofont = ostyle.getFont();
 				if(applyer.ignore(cellRange,ostyle,ofont)){//ignore or not, to prevent unnecessary creation
 					return;
@@ -334,7 +334,7 @@ public class CellOperationUtil {
 		range.visit(new NRangeCellVisitor() {
 			@Override
 			public void visit(NRange cellRange) {
-				NCellStyle ostyle = cellRange.getGetter().getCellStyle();
+				NCellStyle ostyle = cellRange.getCellStyle();
 				if (applyer.ignore(cellRange, ostyle)) {// ignore or not, to
 														// prevent unnecessary
 														// creation

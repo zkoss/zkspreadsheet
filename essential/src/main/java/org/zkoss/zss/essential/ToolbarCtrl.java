@@ -430,7 +430,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		NRange first = dest.getLeftTop();
 		
 		//toggle and apply bold of first cell to dest
-		Boldweight bw = first.getGetter().getCellStyle().getFont().getBoldweight();
+		Boldweight bw = first.getCellStyle().getFont().getBoldweight();
 		if(Boldweight.BOLD.equals(bw)){
 			bw = Boldweight.NORMAL;
 		}else{
@@ -453,7 +453,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		NRange first = dest.getLeftTop();
 		
 		//toggle and apply bold of first cell to dest
-		boolean italic = !first.getGetter().getCellStyle().getFont().isItalic();
+		boolean italic = !first.getCellStyle().getFont().isItalic();
 		CellOperationUtil.applyFontItalic(dest, italic);	
 	}
 	
@@ -469,7 +469,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		NRange first = dest.getLeftTop();
 		
 		//toggle and apply bold of first cell to dest
-		boolean strikeout = !first.getGetter().getCellStyle().getFont().isStrikeout();
+		boolean strikeout = !first.getCellStyle().getFont().isStrikeout();
 		CellOperationUtil.applyFontStrikeout(dest, strikeout);
 	}
 	
@@ -486,7 +486,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		NRange first = dest.getLeftTop();
 		
 		//toggle and apply bold of first cell to dest
-		Underline underline = first.getGetter().getCellStyle().getFont().getUnderline();
+		Underline underline = first.getCellStyle().getFont().getUnderline();
 		if(Underline.NONE.equals(underline)){
 			underline = Underline.SINGLE;
 		}else{
@@ -720,7 +720,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		NRange first = dest.getLeftTop();
 		
 		//toggle and apply 
-		boolean wrapped = first.getGetter().getCellStyle().isWrapText();
+		boolean wrapped = first.getCellStyle().isWrapText();
 		
 		wrapped = !wrapped;
 		

@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.model.NCellStyle;
+import org.zkoss.zss.api.model.SimpleRef;
 import org.zkoss.zss.api.model.NCellStyle.BorderType;
-import org.zkoss.zss.api.model.NHyperlink;
 import org.zkoss.zss.api.model.NHyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.NSheet;
 import org.zkoss.zss.api.model.impl.EnumUtil;
+import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
@@ -129,9 +131,6 @@ public class NRange {
 	
 	public NCreator getCreator(){
 		return new NCreator(this);
-	}
-	public NGetter getGetter(){
-		return new NGetter(this);
 	}
 	
 	public Range getNative(){
@@ -609,6 +608,41 @@ public class NRange {
 	
 	public void setValue(Object value){
 		range.setValue(value);
+	}
+	
+	
+
+	/**
+	 * get the first cell style of this range
+	 * 
+	 * @return cell style if cell is exist, the check row style and column cell style if cell not found, if row and column style is not exist, then return default style of sheet
+	 */
+	public NCellStyle getCellStyle() {
+		Worksheet sheet = range.getSheet();
+		Book book = sheet.getBook();
+		
+		int r = range.getRow();
+		int c = range.getColumn();
+		CellStyle style = null;
+		Row row = sheet.getRow(r);
+		if (row != null){
+			Cell cell = row.getCell(c);
+			
+			if (cell != null){//cell style
+				style = cell.getCellStyle();
+			}
+			if(style==null && row.isFormatted()){//row sytle
+				style = row.getRowStyle();
+			}
+		}
+		if(style==null){//col style
+			style = sheet.getColumnStyle(c);
+		}
+		if(style==null){//default
+			style = book.getCellStyleAt((short) 0);
+		}
+		
+		return new NCellStyle(getBook().getRef(), new SimpleRef<CellStyle>(style));		
 	}
 
 	//api that need special object wrap
