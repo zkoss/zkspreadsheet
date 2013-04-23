@@ -426,25 +426,36 @@ public class NRange {
 		return getCellRange(0,0);
 	}
 	
-	/** **/
+	/**
+	 *  Return a range that represents all columns and between the first-row and last-row of this range
+	 **/
 	public NRange getRowRange(){
 		return new NRange(range.getRows(),sharedCtx);
 	}
 	
+	/**
+	 *  Return a range that represents all rows and between the first-column and last-column of this range
+	 **/
 	public NRange getColumnRange(){
 		return new NRange(range.getColumns(),sharedCtx);
 	}
 	
-	public boolean isContainWholeRow(){
-		//TODO, the impl of Ref/Range is opposite to my concept , have to check this
-		//original range, wholeColumn means the 'a column' if full selectced, which means, it's rows are full selected. 
+	/**
+	 * Check if this range represents a whole column, which mean all rows are included, 
+	 */
+	public boolean isWholeColumn(){
 		return range.isWholeColumn();
 	}
-	public boolean isContainWholeColumn(){
-		//TODO, the impl of Ref/Range is opposite to my concept , have to check this
+	/**
+	 * Check if this range represents a whole row, which mean all column are included, 
+	 */
+	public boolean isWholeRow(){
 		return range.isWholeRow();
 	}
-	public boolean isContainWholeSheet(){
+	/**
+	 * Check if this range represents a whole sheet, which mean all column and row are included, 
+	 */
+	public boolean isWholeSheet(){
 		return range.isWholeSheet();
 	}
 	
@@ -648,7 +659,7 @@ public class NRange {
 	//api that need special object wrap
 	
 	
-	public void getSpecialWrapObject(){
+	public void apiSpecialWrapObject(){
 
 		range.getFormatText();//FormatText
 		range.getHyperlink();//Hyperlink
@@ -662,7 +673,7 @@ public class NRange {
 	}
 	
 	
-	public void getInternal(){
+	public void api4Internal(){
 		range.notifyDeleteFriendFocus(null);//by Spreadsheet
 		range.notifyMoveFriendFocus(null);//
 	}
@@ -671,7 +682,7 @@ public class NRange {
 	//API of range that n-oone use it.
 	
 	
-	public void getNoOneUse(){
+	public void apiNoOneUse(){
 		
 		range.getCount();
 		range.getCurrentRegion();

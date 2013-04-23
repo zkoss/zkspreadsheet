@@ -872,7 +872,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		dest = dest.getRowRange();//get row with whole column
 //		System.out.println(">>>>rows "+dest.getRow()+","+dest.getLastRow()+","+dest.getColumn()+","+dest.getLastColumn());
 		
-		if(dest.isContainWholeRow()){
+		if(dest.isWholeColumn()){
 			ClientUtil.showWarn("Cann't insert more row");
 			return;
 		}
@@ -892,7 +892,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		}
 		dest = dest.getColumnRange();//get column with whole rows
 //		System.out.println(">>>>columns "+dest.getRow()+","+dest.getLastRow()+","+dest.getColumn()+","+dest.getLastColumn());
-		if(dest.isContainWholeColumn()){
+		if(dest.isWholeRow()){
 			ClientUtil.showWarn("Cann't insert more column");
 			return;
 		}
@@ -943,7 +943,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			return;
 		}
 		dest = dest.getRowRange();
-		if(dest.isContainWholeRow()){
+		if(dest.isWholeColumn()){
 			ClientUtil.showWarn("Cann't delete all rows");
 			return;
 		}
@@ -961,7 +961,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			return;
 		}
 		dest = dest.getColumnRange();
-		if(dest.isContainWholeColumn()){
+		if(dest.isWholeRow()){
 			ClientUtil.showWarn("Cann't delete all columns");
 			return;
 		}
