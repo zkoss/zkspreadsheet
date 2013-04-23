@@ -27,7 +27,7 @@ import org.zkoss.zss.model.impl.BookHelper;
  */
 public class NRange {
 	
-	enum LockLevel{
+	enum SyncLevel{
 		BOOK,
 		NONE//for you just visit and do nothing
 	}
@@ -116,6 +116,12 @@ public class NRange {
 	}
 	
 	Range range;
+	
+	SyncLevel syncLevel = SyncLevel.BOOK;
+	
+	public void setSyncLevel(SyncLevel syncLevel){
+		this.syncLevel = syncLevel;
+	}
 	
 	private SharedContext sharedCtx;
 	
@@ -238,6 +244,7 @@ public class NRange {
 	 */
 	public boolean pasteSpecial(NRange dest,PasteType type,PasteOperation op,boolean skipBlanks,boolean transpose) {
 //		if(!isAnyCellProtected()){ // ranges seems this in copy/paste already
+		//TODO the syncLevel
 		Range r = range.pasteSpecial(dest.getNative(), EnumUtil.toRangePasteTypeNative(type), EnumUtil.toRangePasteOpNative(op), skipBlanks, transpose);
 		return r!=null;
 //		}
@@ -245,6 +252,7 @@ public class NRange {
 
 
 	public void clearContents() {
+		//TODO the syncLevel
 		range.clearContents();		
 	}
 	
@@ -254,10 +262,11 @@ public class NRange {
 
  
 	public void clearStyles() {
-		range.setStyle(null);//will use default book cell style		
+		setStyle(null);//will use default book cell style		
 	}
 
 	public void setStyle(final NCellStyle nstyle) {
+		//TODO the syncLevel
 		range.setStyle(nstyle==null?null:nstyle.getNative());
 	}
 
@@ -275,11 +284,8 @@ public class NRange {
 		return range.getLastRow();
 	}
 	
-//	public void batch(NBatchRunner run){
-//		batch(run,LockLevel.BOOK);
-//	}
-	public void batch(NRangeBatchRunner run,LockLevel lock){
-		switch(lock){
+	public void sync(NRangeSyncRunner run){
+		switch(syncLevel){
 		case NONE:
 			run.run(this);
 			return;
@@ -290,17 +296,16 @@ public class NRange {
 			return;
 		}
 	}
-//	public void visit(NCellVisitor visitor){
-//		visit(visitor,LockLevel.BOOK);
-//	}
 	/**
 	 * visit all cells in this range, make sure you call this in a limited range, 
 	 * don't use it for all row/column selection, it will spend much time to iterate the cell 
 	 * @param visitor the visitor 
 	 * @param create create cell if it doesn't exist, if it is true, it will also lock the sheet
-	 * @param lock lock the sheet if you will do any modification of the sheet 
 	 */
-	public void visit(final NRangeCellVisitor visitor,LockLevel lock){
+	public void visit(final NRangeCellVisitor visitor){
+		visit0(visitor,syncLevel);
+	}
+	private void visit0(final NRangeCellVisitor visitor,SyncLevel sync){
 		final int r=getRow();
 		final int lr=getLastRow();
 		final int c=getColumn();
@@ -310,13 +315,13 @@ public class NRange {
 			public void run(){
 				for(int i=r;i<=lr;i++){
 					for(int j=c;j<=lc;j++){
-						visit0(visitor,i,j);
+						visitCell(visitor,i,j);
 					}
 				}
 			}
 		};
 		
-		switch(lock){
+		switch(sync){
 		case NONE:
 			run.run();
 			return;
@@ -328,7 +333,7 @@ public class NRange {
 		}
 	}
 	
-	private void visit0(NRangeCellVisitor visitor,int r, int c){
+	private void visitCell(NRangeCellVisitor visitor,int r, int c){
 		boolean create = visitor.createIfNotExist(r,c);
 		Worksheet sheet = range.getSheet();
 		Row row = sheet.getRow(r);
@@ -354,18 +359,19 @@ public class NRange {
 		return getSheet().getBook();
 	}
 	
-	public void applyBorderAround(BorderType borderType,String htmlColor){
-		range.borderAround(EnumUtil.toRangeBorderType(borderType), htmlColor);
+	public void applyBordersAround(BorderType borderType,String htmlColor){
+		applyBorders(ApplyBorderType.OUTLINE,borderType, htmlColor);
 	}
 	
-	public void applyBorder(ApplyBorderType type,BorderType borderType,String htmlColor){
+	public void applyBorders(ApplyBorderType type,BorderType borderType,String htmlColor){
+		//TODO the syncLevel
 		range.setBorders(EnumUtil.toRangeApplyBorderType(type), EnumUtil.toRangeBorderType(borderType), htmlColor);
 	}
 
 	
 	public boolean hasMergeCell(){
 		final Result<Boolean> result = new Result<Boolean>(Boolean.FALSE);
-		visit(new NRangeCellVisitor(){
+		visit0(new NRangeCellVisitor(){
 			public boolean createIfNotExist(int row, int column) {
 				return false;
 			}
@@ -379,8 +385,7 @@ public class NRange {
 						return;
 					}
 				}
-			}}
-		,LockLevel.NONE);
+			}},SyncLevel.NONE);
 		return result.get();
 	}
 	
@@ -402,15 +407,17 @@ public class NRange {
 	}
 
 	public void merge(boolean across){
+		//TODO the syncLevel
 		range.merge(across);
 	}
 	
 	public void unMerge(){
+		//TODO the syncLevel
 		range.unMerge();
 	}
 
 	
-	public NRange getShiftRange(int rowOffset,int colOffset){
+	public NRange getShiftedRange(int rowOffset,int colOffset){
 		NRange offsetRange = new NRange(range.getOffset(rowOffset, colOffset),sharedCtx);
 		return offsetRange;
 	}
@@ -460,10 +467,12 @@ public class NRange {
 	}
 	
 	public void insert(InsertShift shift,InsertCopyOrigin copyOrigin){
+		//TODO the syncLevel
 		range.insert(EnumUtil.toRangeInsertShift(shift), EnumUtil.toRangeInsertCopyOrigin(copyOrigin));
 	}
 	
 	public void delete(DeleteShift shift){
+		//TODO the syncLevel
 		range.delete(EnumUtil.toRangeDeleteShift(shift));
 	}
 	
@@ -476,8 +485,6 @@ public class NRange {
 			boolean matchCase, 
 			boolean sortByRows, 
 			SortDataOption dataOption){
-		
-		
 		NRange index = null;
 		int r = getRow();
 		int c = getColumn();
@@ -501,6 +508,8 @@ public class NRange {
 			NRange index2,boolean desc2,SortDataOption dataOption2,
 			NRange index3,boolean desc3,SortDataOption dataOption3){
 		
+		//TODO the syncLevel
+		
 		//TODO review the full impl for range1,range2,range3
 		
 		range.sort(index1==null?null:index1.getNative(), desc1, 
@@ -520,62 +529,74 @@ public class NRange {
 	
 	/** enable/disable autofilter of the sheet**/
 	public void enableAutoFilter(boolean enable){
+		//TODO the syncLevel
 		if(isAutoFilterEnabled() == enable){
 			return ;
 		}
+		
 		range.autoFilter();//toggle on/off automatically
 	}
 	/** enable filter with condition **/
 	//TODO have to review this after I know more detail
 	public void enableAutoFilter(int field, AutoFilterOperation filterOp, Object criteria1, Object criteria2, Boolean visibleDropDown){
+		//TODO the syncLevel
 		range.autoFilter(field,criteria1,EnumUtil.toRangeAutoFilterOperation(filterOp),criteria2,visibleDropDown);
 	}
 	
 	/** clear condition of filter, show all the data**/
 	public void resetAutoFilter(){
+		//TODO the syncLevel
 		range.showAllData();
 	}
 	/** apply the filter to filter again**/
 	public void applyAutoFilter(){
+		//TODO the syncLevel
 		range.applyFilter();
 	}
 	
 	/** enable sheet protection and apply a password**/
 	public void protectSheet(String password){
+		//TODO the syncLevel
 		range.protectSheet(password);
 	}
 	
 	public void fill(NRange dest,AutoFillType fillType){
+		//TODO the syncLevel
 		range.autoFill(dest.getNative(), EnumUtil.toRangeAutoFillType(fillType));
 	}
 	
 	public void fillDown(){
+		//TODO the syncLevel
 		range.fillDown();
 	}
 	
 	public void fillLeft(){
+		//TODO the syncLevel
 		range.fillLeft();
 	}
 	
 	public void fillUp(){
+		//TODO the syncLevel
 		range.fillUp();
 	}
 	
 	public void fillRight(){
+		//TODO the syncLevel
 		range.fillRight();
 	}
 	
 	/** shift this range with a offset row and column**/
 	public void shift(int rowOffset,int colOffset){
+		//TODO the syncLevel
 		range.move(rowOffset, colOffset);
 	}
 	
 	public String getEditText(){
-		//
 		return range.getEditText();
 	}
 	
 	public void setEditText(String editText){
+		//TODO the syncLevel
 		range.setEditText(editText);
 	}
 	
@@ -586,6 +607,7 @@ public class NRange {
 	}
 	
 	public void eanbleDisplayGridlines(boolean enable){
+		//TODO the syncLevel
 		range.setDisplayGridlines(enable);
 	}
 	
@@ -594,14 +616,17 @@ public class NRange {
 	}
 	
 	public void setHidden(boolean hidden){
+		//TODO the syncLevel
 		range.setHidden(hidden);
 	}
 	
 	public void setHyperlink(HyperlinkType type,String address,String displayLabel){
+		//TODO the syncLevel
 		range.setHyperlink(EnumUtil.toHyperlinkType(type), address, displayLabel);
 	}
 	
 	public void setSheetName(String name){
+		//TODO the syncLevel
 		range.setSheetName(name);
 	}
 	
@@ -610,6 +635,7 @@ public class NRange {
 	}
 	
 	public void setSheetOrder(int pos){
+		//TODO the syncLevel
 		range.setSheetOrder(pos);
 	}
 	
@@ -618,6 +644,7 @@ public class NRange {
 	}
 	
 	public void setValue(Object value){
+		//TODO the syncLevel
 		range.setValue(value);
 	}
 	

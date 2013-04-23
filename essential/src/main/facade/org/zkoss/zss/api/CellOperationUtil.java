@@ -6,7 +6,6 @@ import org.zkoss.zss.api.NRange.InsertCopyOrigin;
 import org.zkoss.zss.api.NRange.InsertShift;
 import org.zkoss.zss.api.NRange.PasteOperation;
 import org.zkoss.zss.api.NRange.PasteType;
-import org.zkoss.zss.api.NRange.LockLevel;
 import org.zkoss.zss.api.NRange.Result;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NCellStyle.Alignment;
@@ -35,7 +34,7 @@ public class CellOperationUtil {
 			return false;
 		}
 		//use batch-runner to run multiple range operation
-		src.batch(new NRangeBatchRunner() {
+		src.sync(new NRangeSyncRunner() {
 			public void run(NRange range) {
 				boolean r = range.paste(dest);
 				if(r){
@@ -44,7 +43,7 @@ public class CellOperationUtil {
 				}
 				result.set(r);
 			}
-		}, LockLevel.BOOK);
+		});
 
 		return result.get();
 	}
@@ -164,7 +163,7 @@ public class CellOperationUtil {
 				
 				
 				cellRange.setStyle(nstyle);
-			}},LockLevel.BOOK);
+			}});
 	}
 
 	
@@ -352,21 +351,21 @@ public class CellOperationUtil {
 
 				cellRange.setStyle(nstyle);
 			}
-		}, LockLevel.BOOK);
+		});
 	}
 	
 	public static void applyBorder(NRange range,ApplyBorderType type,BorderType borderType,String htmlColor){
 		if(range.isProtected())
 			return;
 		//use range api directly,
-		range.applyBorder(type, borderType, htmlColor);
+		range.applyBorders(type, borderType, htmlColor);
 	}
 	
 	
 	public static void toggleMergeCenter(NRange range){
 		if(range.isProtected())
 			return;
-		range.batch(new NRangeBatchRunner() {
+		range.sync(new NRangeSyncRunner() {
 			public void run(NRange range) {
 				if(range.hasMergeCell()){
 					range.unMerge();
@@ -376,7 +375,7 @@ public class CellOperationUtil {
 					applyCellAlignment(range.getLeftTop(),Alignment.CENTER);
 				}
 			}
-		}, LockLevel.BOOK);
+		});
 	}
 	
 	public static void merge(NRange range,boolean across){
@@ -424,12 +423,12 @@ public class CellOperationUtil {
 			return;
 
 		//use batch-runner to run multiple range operation
-		range.batch(new NRangeBatchRunner() {
+		range.sync(new NRangeSyncRunner() {
 			public void run(NRange range) {
 				range.clearContents();// it removes value and formula only
 				range.clearStyles();
 			}
-		}, LockLevel.BOOK);
+		});
 	}
 
 	public static void insert(NRange range, InsertShift shift,
