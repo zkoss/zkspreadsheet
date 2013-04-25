@@ -25,7 +25,7 @@ ZK Spreadsheet 2.6.0
   ZSS-216 Disable button cause the button expand
   ZSS-217 Javascript error with ZK 6.5.1.1 version
   ZSS-218 get NotImplementedException exception  
-
+  ZSS-220 Can't get correct selection if I didn't listen to onCellSelection
 
 ZK Spreadsheet 2.5.0
 *Features:   
