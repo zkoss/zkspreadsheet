@@ -4597,24 +4597,33 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 */
 
 	static {
-		addClientEvent(Spreadsheet.class, Events.ON_CELL_FOUCSED, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_CELL_SELECTION,	CE_DUPLICATE_IGNORE);
+		//ZSS-220 Can't get correct selection if I didn't listen to onCellSelection
+		//onCellSelection should be a important event.
+		addClientEvent(Spreadsheet.class, Events.ON_CELL_SELECTION,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_SELECTION_CHANGE, CE_IMPORTANT | CE_DUPLICATE_IGNORE | CE_NON_DEFERRABLE);
+		
+		//mark1, dennis 2013/4/25
+		//coulde considered to remove following code, because they are post by a command handler, they are not posted from lcient side. 
+		//(on_cell_xx and on_header_xx are post by cell-mouse and header-mouse handler)
+		addClientEvent(Spreadsheet.class, Events.ON_CELL_FOUCSED, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_RIGHT_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_DOUBLE_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_HEADER_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_HEADER_RIGHT_CLICK,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_HEADER_DOUBLE_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		
+		addClientEvent(Spreadsheet.class, Events.ON_START_EDITING, 0);
+		addClientEvent(Spreadsheet.class, Events.ON_EDITBOX_EDITING, 0);
+		addClientEvent(Spreadsheet.class, Events.ON_STOP_EDITING, 0);
+		//end of mark1
+		
 		addClientEvent(Spreadsheet.class, Events.ON_HYPERLINK, 0);
 		addClientEvent(Spreadsheet.class, Events.ON_FILTER, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_VALIDATE_DROP, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_CTRL_KEY, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_BLUR,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		
-		addClientEvent(Spreadsheet.class, Events.ON_START_EDITING, 0);
-		addClientEvent(Spreadsheet.class, Events.ON_EDITBOX_EDITING, 0);
-		addClientEvent(Spreadsheet.class, Events.ON_STOP_EDITING, 0);
 
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_ACTION, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_FETCH, CE_IMPORTANT | CE_DUPLICATE_IGNORE);

@@ -32,6 +32,7 @@ import org.zkoss.poi.hssf.util.HSSFColorExt;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
@@ -74,7 +75,13 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 		
 		FunctionResolver resolver = (FunctionResolver) BookHelper.getLibraryInstance(FunctionResolver.CLASS);
 		if (resolver == null) resolver = new DefaultFunctionResolver();
-		_evaluator = HSSFFormulaEvaluator.create(this, NoCacheClassifier.instance, resolver.getUDFFinder()); 
+		
+		//http://tracker.zkoss.org/browse/ZSS-218
+		UDFFinder udff = resolver.getUDFFinder();
+		if(udff!=null){
+			insertToolPack(0, udff);
+		}
+		_evaluator = HSSFFormulaEvaluator.create(this, NoCacheClassifier.instance, null); 
 		_bookEvaluator = _evaluator.getWorkbookEvaluator(); 
 		_bookEvaluator.setDependencyTracker(resolver.getDependencyTracker(this));
 		_functionMapper = new JoinFunctionMapper(resolver.getFunctionMapper());
