@@ -7,6 +7,7 @@ import org.zkoss.zss.api.model.NFont.TypeOffset;
 import org.zkoss.zss.api.model.NFont.Underline;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.model.impl.HSSFBookImpl;
 import org.zkoss.zss.model.impl.XSSFBookImpl;
@@ -91,6 +92,15 @@ public class NBook {
 	public NColor getColorFromHtmlColor(String htmlColor) {
 		Color color = BookHelper.HTMLToColor(getNative(), htmlColor);//never null
 		return new NColor(bookRef,new SimpleRef<Color>(color));
+	}
+
+	public int getNumberOfSheets() {
+		return getNative().getNumberOfSheets();
+	}
+	
+	public NSheet getSheetAt(int index){
+		Worksheet sheet = getNative().getWorksheetAt(index);
+		return new NSheet(new SimpleRef<Worksheet>(sheet));
 	}
 	
 }

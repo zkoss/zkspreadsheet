@@ -71,4 +71,8 @@ public class NSpreadsheet {
 	public int getMaxVisibleRows() {
 		return ss.getMaxrows();
 	}
+
+	public void setSelectedSheet(String name) {
+		ss.setSelectedSheet(name);
+	}
 }

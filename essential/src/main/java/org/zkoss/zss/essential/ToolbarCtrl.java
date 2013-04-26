@@ -29,6 +29,7 @@ import org.zkoss.zss.api.NRange.InsertCopyOrigin;
 import org.zkoss.zss.api.NRange.InsertShift;
 import org.zkoss.zss.api.NRanges;
 import org.zkoss.zss.api.NSheetAnchor;
+import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NCellStyle.BorderType;
 import org.zkoss.zss.api.model.NChart.Grouping;
@@ -1198,5 +1199,47 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		//shift 2 column right for the selection width 
 		return new NSheetAnchor(row, lCol+2, 
 				row==lRow?row+7:lRow+1, col==lCol?lCol+7+w:lCol+2+w);
+	}
+	
+	
+	
+	// some test
+	@Listen("onClick=#testAddSheet")
+	public void onTestAddSheet() {
+		NRange dest = NRanges.range(nss.getSelectedSheet());
+		if (dest.isProtected()) {
+			showProtectionMessage();
+			return;
+		}
+		
+		NSheet sheet = dest.createSheet(null);
+		
+		nss.setSelectedSheet(sheet.getSheetName());
+	}
+	@Listen("onClick=#testDeleteSheet")
+	public void onTestDeleteSheet() {
+		NSheet sheet = nss.getSelectedSheet();
+		NBook book = sheet.getBook();
+		NRange dest = NRanges.range(sheet);
+		if (dest.isProtected()) {
+			showProtectionMessage();
+			return;
+		}
+		
+		if(dest.getBook().getNumberOfSheets()<=1){
+			ClientUtil.showWarn("Cann't delete last sheet");
+			return;
+		}
+		
+		int index = book.getSheetIndex(sheet);
+		if(index!=0){
+			index--;
+		}
+		
+		
+		dest.deleteSheet();
+		
+		//you have to handle the selected sheet manually as well.
+		nss.setSelectedSheet(book.getSheetAt(index).getSheetName());
 	}
 }

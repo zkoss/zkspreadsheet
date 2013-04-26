@@ -781,8 +781,21 @@ public class NRange {
 	}
 	
 	
+	public NSheet createSheet(String name){
+		//TODO the syncLevel
+		Book book = getSheet().getBook().getNative();
+		int n = book.getNumberOfSheets();
+		range.createSheet(name);
+		
+		Worksheet sheet = book.getWorksheetAt(n);
+		return new NSheet(new SimpleRef<Worksheet>(sheet));
+		
+	}
 	
-	
+	public void deleteSheet(){
+		//TODO the syncLevel
+		range.deleteSheet();
+	}
 	
 	
 	//api that need special object wrap

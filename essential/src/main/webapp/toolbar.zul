@@ -124,6 +124,7 @@
 			<menuitem id="applyFilter" label="Reapply Filter"/>
 		</menupopup>
 		
+		<space sclass="sep-v" />
 		<toolbarbutton id="addImage" image="~./zss/img/image.png" upload="true" />
 		
 		<toolbarbutton id="chartMenu" image="~./zss/img/image.png" />
@@ -138,5 +139,8 @@
 			
 		</menupopup>
 		
+		<space sclass="sep-v" />	
+		<toolbarbutton id="testAddSheet" image="~./zss/img/plus.png" />
+		<toolbarbutton id="testDeleteSheet" image="~./zss/img/plus.png" />
 	</toolbar>
 </zk>
