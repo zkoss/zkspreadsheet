@@ -3,32 +3,30 @@ package org.zkoss.zss.api;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 import org.zkoss.poi.hssf.usermodel.HSSFClientAnchor;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
-import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Picture;
+import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFClientAnchor;
 import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.model.NBook.BookType;
 import org.zkoss.zss.api.model.NCellStyle;
+import org.zkoss.zss.api.model.NCellStyle.BorderType;
 import org.zkoss.zss.api.model.NChart;
 import org.zkoss.zss.api.model.NChart.Grouping;
 import org.zkoss.zss.api.model.NChart.LegendPosition;
 import org.zkoss.zss.api.model.NChart.Type;
 import org.zkoss.zss.api.model.NChartData;
+import org.zkoss.zss.api.model.NHyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.NPicture;
 import org.zkoss.zss.api.model.NPicture.Format;
-import org.zkoss.zss.api.model.SimpleRef;
-import org.zkoss.zss.api.model.NCellStyle.BorderType;
-import org.zkoss.zss.api.model.NHyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.NSheet;
+import org.zkoss.zss.api.model.SimpleRef;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Range;
@@ -706,11 +704,17 @@ public class NRange {
 		NBook book = getSheet().getBook();
 		ClientAnchor can = null;
 		if(book.getType()==BookType.EXCEL_2003){
+			//it looks like not correct, need to double check this
 			can = new HSSFClientAnchor(anchor.getXOffset(),anchor.getYOffset(),anchor.getLastXOffset(),anchor.getLastYOffset(),
 					(short)anchor.getColumn(),(short)anchor.getRow(),(short)anchor.getLastColumn(),(short)anchor.getLastRow());
 		}else{
-			can = new XSSFClientAnchor(anchor.getXOffset(),anchor.getYOffset(),anchor.getLastXOffset(),anchor.getLastYOffset(),
+			//code refer from ActionHandler.getClientAngent
+			//but it looks like not correct, need to double check this
+			can = new XSSFClientAnchor(UnitUtil.pxToEmu(anchor.getXOffset()),UnitUtil.pxToEmu(anchor.getYOffset()),
+					UnitUtil.pxToEmu(anchor.getLastXOffset()),UnitUtil.pxToEmu(anchor.getLastYOffset()),
 					(short)anchor.getColumn(),(short)anchor.getRow(),(short)anchor.getLastColumn(),(short)anchor.getLastRow());
+//			can = new XSSFClientAnchor(anchor.getXOffset(),anchor.getYOffset(),anchor.getLastXOffset(),anchor.getLastYOffset(),
+//					(short)anchor.getColumn(),(short)anchor.getRow(),(short)anchor.getLastColumn(),(short)anchor.getLastRow());
 		}
 		return can;
 	}

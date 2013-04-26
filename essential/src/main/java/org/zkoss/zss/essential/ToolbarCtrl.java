@@ -6,6 +6,7 @@ import java.util.Map;
 import org.dom4j.IllegalAddException;
 import org.zkoss.image.AImage;
 import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -34,10 +35,11 @@ import org.zkoss.zss.api.model.NChart.Grouping;
 import org.zkoss.zss.api.model.NChart.LegendPosition;
 import org.zkoss.zss.api.model.NChart;
 import org.zkoss.zss.api.model.NChartData;
-import org.zkoss.zss.api.model.NChartDataUtil;
+import org.zkoss.zss.api.model.NChartUtil;
 import org.zkoss.zss.api.model.NFont.Boldweight;
 import org.zkoss.zss.api.model.NFont.Underline;
 import org.zkoss.zss.api.model.NPicture.Format;
+import org.zkoss.zss.api.model.NPictureUtil;
 import org.zkoss.zss.api.model.NSheet;
 import org.zkoss.zss.api.ui.NSpreadsheet;
 import org.zkoss.zss.essential.ToolbarCtrl.ClipInfo.Type;
@@ -521,8 +523,8 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		int r = sel.getRight();
 		int b = sel.getBottom();
 		sel = new Rect(sel.getLeft(), sel.getTop(),
-				(r <= nss.getMaxcolumns()) ? r : nss.getMaxcolumns(),
-				(b <= nss.getMaxrows()) ? b : nss.getMaxrows());
+				(r <= nss.getMaxVisibleColumns()) ? r : nss.getMaxVisibleColumns(),
+				(b <= nss.getMaxVisibleRows()) ? b : nss.getMaxVisibleRows());
 
 		return sel;
 	}
@@ -1087,24 +1089,16 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		}
 		
 		Format format = getPictureFormat(media);
-		if(format==null || !media.isBinary()){
+		if(format==null || !media.isBinary() || !(media instanceof AImage)){
 			ClientUtil.showWarn("Can't support the uploaded file");
 			return;
 		}
 		
 		//set anchor to selection area
-		NSheetAnchor anchor = toPictureAnchor(sel);
-		
-		dest.addPicture(anchor, media.getByteData(), format);
-	}
+		NSheetAnchor anchor = NPictureUtil.toFilledAnchor(nss.getSelectedSheet(), sel.getTop(), sel.getLeft(),
+				((AImage) media).getWidth(), ((AImage) media).getHeight());
 
-	private NSheetAnchor toPictureAnchor(Rect sel) {
-		int row = sel.getLeft();
-		int col = sel.getTop();
-		int lRow = sel.getBottom();
-		int lCol = sel.getRight();		
-		return new NSheetAnchor(row, col, 
-				row==lRow?lRow+10:lRow+1, col==lCol?lCol+6:lCol+1);
+		dest.addPicture(anchor, media.getByteData(), format);
 	}
 
 	private Format getPictureFormat(Media media) {
@@ -1190,7 +1184,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 		}
 		//set anchor to selection area
 		NSheetAnchor anchor = toChartAnchor(sel);
-		NChartData data = NChartDataUtil.getChartData(nss.getSelectedSheet(),sel, type);
+		NChartData data = NChartUtil.getChartData(nss.getSelectedSheet(),sel, type);
 		
 		dest.addChart(anchor, data, type, grouping, pos);
 	}

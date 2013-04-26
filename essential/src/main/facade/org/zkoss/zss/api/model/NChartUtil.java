@@ -36,7 +36,7 @@ import org.zkoss.zss.ui.Rect;
  *
  */
 //NOTE this class have to locate in EE
-public class NChartDataUtil {
+public class NChartUtil {
 
 	public static NChartData getChartData(NSheet sheet, Rect selection,
 			Type type) {
