@@ -5,14 +5,11 @@ import java.util.Map;
 
 import org.dom4j.IllegalAddException;
 import org.zkoss.image.AImage;
-import org.zkoss.poi.ss.usermodel.Workbook;
-import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zk.ui.Path;
-import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
@@ -28,19 +25,13 @@ import org.zkoss.zss.api.NRange.DeleteShift;
 import org.zkoss.zss.api.NRange.InsertCopyOrigin;
 import org.zkoss.zss.api.NRange.InsertShift;
 import org.zkoss.zss.api.NRanges;
-import org.zkoss.zss.api.NSheetAnchor;
-import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NCellStyle.BorderType;
-import org.zkoss.zss.api.model.NChart.Grouping;
-import org.zkoss.zss.api.model.NChart.LegendPosition;
 import org.zkoss.zss.api.model.NChart;
 import org.zkoss.zss.api.model.NChartData;
 import org.zkoss.zss.api.model.NChartUtil;
 import org.zkoss.zss.api.model.NFont.Boldweight;
 import org.zkoss.zss.api.model.NFont.Underline;
-import org.zkoss.zss.api.model.NPicture.Format;
-import org.zkoss.zss.api.model.NPictureUtil;
 import org.zkoss.zss.api.model.NSheet;
 import org.zkoss.zss.api.ui.NSpreadsheet;
 import org.zkoss.zss.essential.ToolbarCtrl.ClipInfo.Type;
@@ -1040,7 +1031,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			return;
 		}
 		
-		dest.enableAutoFilter(!dest.isAutoFilterEnabled());
+		CellOperationUtil.toggleAutoFilter(dest);
 		clearClipboard();
 	}
 	
@@ -1054,7 +1045,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			return;
 		}
 		
-		dest.resetAutoFilter();
+		CellOperationUtil.resetAutoFilter(dest);
 		clearClipboard();
 	}
 	
@@ -1068,7 +1059,7 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			return;
 		}
 		
-		dest.applyAutoFilter();
+		CellOperationUtil.applyAutoFilter(dest);
 		clearClipboard();
 	}
 	
@@ -1076,7 +1067,8 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	@Listen("onUpload=#addImage")
 	public void onAddImage(UploadEvent evt) {
 		Rect sel = getSafeSelection();
-		NRange dest = NRanges.range(nss.getSelectedSheet());
+		NRange dest = NRanges.range(nss.getSelectedSheet(), sel.getTop(),
+				sel.getLeft(), sel.getBottom(), sel.getRight());
 		//TODO should check protection before upload, but how ? if we didn't use Filulpoad.get()
 		if (dest.isProtected()) {
 			showProtectionMessage();
@@ -1089,36 +1081,15 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 			return;
 		}
 		
-		Format format = getPictureFormat(media);
-		if(format==null || !media.isBinary() || !(media instanceof AImage)){
+		if(!(media instanceof AImage) || CellOperationUtil.getPictureFormat((AImage)media)==null){
 			ClientUtil.showWarn("Can't support the uploaded file");
 			return;
 		}
-		
-		//set anchor to selection area
-		NSheetAnchor anchor = NPictureUtil.toFilledAnchor(nss.getSelectedSheet(), sel.getTop(), sel.getLeft(),
-				((AImage) media).getWidth(), ((AImage) media).getHeight());
-
-		dest.addPicture(anchor, media.getByteData(), format);
+		CellOperationUtil.addPicture(dest,(AImage)media);
+		clearClipboard();
 	}
 
-	private Format getPictureFormat(Media media) {
-		String format = media.getFormat();
-		if ("dib".equalsIgnoreCase(format)) {
-			return Format.DIB;
-		} else if ("emf".equalsIgnoreCase(format)) {
-			return Format.EMF;
-		} else if ("wmf".equalsIgnoreCase(format)) {
-			return Format.WMF;
-		} else if ("jpeg".equalsIgnoreCase(format)) {
-			return Format.JPEG;
-		} else if ("pict".equalsIgnoreCase(format)) {
-			return Format.PICT;
-		} else if ("png".equalsIgnoreCase(format)) {
-			return Format.PNG;
-		}
-		return null;
-	}
+
 	
 	//chart
 	//filter
@@ -1178,30 +1149,18 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 
 	private void addChart(NChart.Type type, NChart.Grouping grouping, NChart.LegendPosition pos) {
 		Rect sel = getSafeSelection();
-		NRange dest = NRanges.range(nss.getSelectedSheet());
+		NRange dest = NRanges.range(nss.getSelectedSheet(), sel.getTop(),
+				sel.getLeft(), sel.getBottom(), sel.getRight());
 		if (dest.isProtected()) {
 			showProtectionMessage();
 			return;
 		}
 		//set anchor to selection area
-		NSheetAnchor anchor = toChartAnchor(sel);
 		NChartData data = NChartUtil.getChartData(nss.getSelectedSheet(),sel, type);
 		
-		dest.addChart(anchor, data, type, grouping, pos);
+		CellOperationUtil.addChart(dest,data,type,grouping,pos);
+		clearClipboard();
 	}
-	
-	private NSheetAnchor toChartAnchor(Rect sel) {
-		int row = sel.getLeft();
-		int col = sel.getTop();
-		int lRow = sel.getBottom();
-		int lCol = sel.getRight();
-		int w = lCol-col+1;
-		//shift 2 column right for the selection width 
-		return new NSheetAnchor(row, lCol+2, 
-				row==lRow?row+7:lRow+1, col==lCol?lCol+7+w:lCol+2+w);
-	}
-	
-	
 	
 	
 }

@@ -1,5 +1,6 @@
 package org.zkoss.zss.api;
 
+import org.zkoss.image.AImage;
 import org.zkoss.zss.api.NRange.ApplyBorderType;
 import org.zkoss.zss.api.NRange.DeleteShift;
 import org.zkoss.zss.api.NRange.InsertCopyOrigin;
@@ -12,10 +13,13 @@ import org.zkoss.zss.api.model.NCellStyle.Alignment;
 import org.zkoss.zss.api.model.NCellStyle.BorderType;
 import org.zkoss.zss.api.model.NCellStyle.FillPattern;
 import org.zkoss.zss.api.model.NCellStyle.VerticalAlignment;
+import org.zkoss.zss.api.model.NChart;
+import org.zkoss.zss.api.model.NChartData;
 import org.zkoss.zss.api.model.NColor;
 import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.api.model.NFont.Boldweight;
 import org.zkoss.zss.api.model.NFont.Underline;
+import org.zkoss.zss.api.model.NPicture.Format;
 
 /**
  * the utit to help UI to deal with UI operation of a Range.
@@ -448,5 +452,83 @@ public class CellOperationUtil {
 		if(range.isProtected())
 			return;
 		range.sort(desc);
+	}
+	
+	public static void toggleAutoFilter(NRange range) {
+		if(range.isProtected())
+			return;
+		range.enableAutoFilter(!range.isAutoFilterEnabled());
+	}
+	
+	public static void resetAutoFilter(NRange range) {
+		if(range.isProtected())
+			return;
+		range.resetAutoFilter();
+	}
+	
+	public static void applyAutoFilter(NRange range) {
+		if(range.isProtected())
+			return;
+		range.applyAutoFilter();
+	}
+	
+	public static void addPicture(NRange range, AImage image){
+		addPicture(range,image.getByteData(),getPictureFormat(image),image.getWidth(),image.getHeight());
+	}
+	
+	public static void addPicture(NRange range, byte[] binary, Format format,int widthPx, int heightPx){
+		NSheetAnchor anchor = UnitUtil.toFilledAnchor(range.getSheet(), range.getRow(),range.getColumn(),
+				widthPx, heightPx);
+		addPicture(range,anchor,binary,format);
+		
+	}
+	public static void addPicture(NRange range, NSheetAnchor anchor, byte[] binary, Format format){
+		if(range.isProtected())
+			return;
+		range.addPicture(anchor, binary, format);
+	}
+	
+	public static Format getPictureFormat(AImage image) {
+		String format = image.getFormat();
+		if ("dib".equalsIgnoreCase(format)) {
+			return Format.DIB;
+		} else if ("emf".equalsIgnoreCase(format)) {
+			return Format.EMF;
+		} else if ("wmf".equalsIgnoreCase(format)) {
+			return Format.WMF;
+		} else if ("jpeg".equalsIgnoreCase(format)) {
+			return Format.JPEG;
+		} else if ("pict".equalsIgnoreCase(format)) {
+			return Format.PICT;
+		} else if ("png".equalsIgnoreCase(format)) {
+			return Format.PNG;
+		}
+		return null;
+	}
+	
+	
+	public static void addChart(NRange range, NChartData data, NChart.Type type, NChart.Grouping grouping,
+			NChart.LegendPosition pos) {
+		NSheetAnchor anchor = toChartAnchor(range);
+		addChart(range,anchor, data, type, grouping, pos);
+	}
+	
+	public static void addChart(NRange range, NSheetAnchor anchor, NChartData data, NChart.Type type, NChart.Grouping grouping,
+			NChart.LegendPosition pos) {
+		if (range.isProtected())
+			return;
+		range.addChart(anchor, data, type, grouping, pos);
+	}
+	
+	
+	private static NSheetAnchor toChartAnchor(NRange range) {
+		int row = range.getRow();
+		int col = range.getColumn();
+		int lRow = range.getLastRow();
+		int lCol = range.getLastColumn();
+		int w = lCol-col+1;
+		//shift 2 column right for the selection width 
+		return new NSheetAnchor(row, lCol+2, 
+				row==lRow?row+7:lRow+1, col==lCol?lCol+7+w:lCol+2+w);
 	}
 }
