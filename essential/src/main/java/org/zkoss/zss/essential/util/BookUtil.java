@@ -36,9 +36,9 @@ public class BookUtil {
 			is = BookUtil.class.getResourceAsStream("_blank.xls");
 			break;
 		case EXCEL_2007:
-			is = BookUtil.class.getResourceAsStream("_blank.xlsx");
+//			is = BookUtil.class.getResourceAsStream("_blank.xlsx");
 //			is = WebApps.getCurrent().getResourceAsStream("/WEB-INF/excelsrc/bug.xlsx");
-//			is = WebApps.getCurrent().getResourceAsStream("/WEB-INF/excelsrc/copyPasteBase.xlsx");
+			is = WebApps.getCurrent().getResourceAsStream("/WEB-INF/excelsrc/copyPasteBase.xlsx");
 			break;
 		default :
 			throw new SystemException("Unknow book type" + type);

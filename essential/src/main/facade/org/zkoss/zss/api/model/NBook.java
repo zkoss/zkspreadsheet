@@ -103,4 +103,10 @@ public class NBook {
 		return new NSheet(new SimpleRef<Worksheet>(sheet));
 	}
 	
+	public NSheet getSheet(String name){
+		Worksheet sheet = getNative().getWorksheet(name);
+		
+		return sheet==null?null:new NSheet(new SimpleRef<Worksheet>(sheet));
+	}
+	
 }

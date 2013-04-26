@@ -1,0 +1,21 @@
+<zk>
+	<toolbar apply="org.zkoss.zss.essential.SheetbarCtrl">
+		<script type="text/javascript">
+
+			function focusSS(base,ssid){ base.$f(ssid,
+			true).focus(false); } function openPicker(base,id){
+			base.$f(id).openPicker(); }
+		</script>
+		<menupopup id="sheetPopup">
+			<menuitem id="deleteSheet" label="Delete" />
+			<menuitem id="renameSheet" label="Rename" />
+			<menuitem id="protectSheet" label="Protect" />
+			<menuseparator></menuseparator>
+			<menuitem id="moveSheetLeft" label="Move Left" />
+			<menuitem id="moveSheetRight" label="Move Right" />
+		</menupopup>
+		<toolbarbutton id="addSheet" image="~./zss/img/plus.png" />
+		<space sclass="sep-v" />
+	</toolbar>
+
+</zk>

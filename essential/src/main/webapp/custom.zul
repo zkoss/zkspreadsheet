@@ -5,6 +5,9 @@
 			<div hflex="1" vflex="min" >
 				<include src="/toolbar.zul" spreadsheetId="ss" spreadsheetPath="../ss"/>
 			</div>
+			<div hflex="1" vflex="min" >
+				<include src="/sheetbar.zul" spreadsheetId="ss" spreadsheetPath="../ss"/>
+			</div>
 			<hbox>
 			<button label="invalidate" onClick="ss.invalidate()"/>
 			<button label="enlarge" onClick="ss.setMaxrows(500);"/>

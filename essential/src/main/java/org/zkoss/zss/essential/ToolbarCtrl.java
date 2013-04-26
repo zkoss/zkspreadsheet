@@ -1203,43 +1203,5 @@ public class ToolbarCtrl extends SelectorComposer<Component> {
 	
 	
 	
-	// some test
-	@Listen("onClick=#testAddSheet")
-	public void onTestAddSheet() {
-		NRange dest = NRanges.range(nss.getSelectedSheet());
-		if (dest.isProtected()) {
-			showProtectionMessage();
-			return;
-		}
-		
-		NSheet sheet = dest.createSheet(null);
-		
-		nss.setSelectedSheet(sheet.getSheetName());
-	}
-	@Listen("onClick=#testDeleteSheet")
-	public void onTestDeleteSheet() {
-		NSheet sheet = nss.getSelectedSheet();
-		NBook book = sheet.getBook();
-		NRange dest = NRanges.range(sheet);
-		if (dest.isProtected()) {
-			showProtectionMessage();
-			return;
-		}
-		
-		if(dest.getBook().getNumberOfSheets()<=1){
-			ClientUtil.showWarn("Cann't delete last sheet");
-			return;
-		}
-		
-		int index = book.getSheetIndex(sheet);
-		if(index!=0){
-			index--;
-		}
-		
-		
-		dest.deleteSheet();
-		
-		//you have to handle the selected sheet manually as well.
-		nss.setSelectedSheet(book.getSheetAt(index).getSheetName());
-	}
+	
 }
