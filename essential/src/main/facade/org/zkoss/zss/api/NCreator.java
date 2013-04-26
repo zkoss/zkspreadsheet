@@ -6,6 +6,7 @@ import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.api.model.SimpleRef;
 import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.Worksheet;
 
 public class NCreator {
 
@@ -43,7 +44,14 @@ public class NCreator {
 			
 			return nf;
 //		}
-			
-
 	}
+	
+//	public NCellAnchor createCellAnchor(int row,int col,int width,int height){
+//		NCellAnchor anchor = null;
+//		Worksheet sheet = range.getNative().getSheet();
+//		sheet.getColumnWidth(columnIndex)
+//		
+//		
+//		return anchor;
+//	}
 }

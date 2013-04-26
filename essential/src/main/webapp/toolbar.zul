@@ -124,5 +124,19 @@
 			<menuitem id="applyFilter" label="Reapply Filter"/>
 		</menupopup>
 		
+		<toolbarbutton id="addImage" image="~./zss/img/image.png" upload="true" />
+		
+		<toolbarbutton id="chartMenu" image="~./zss/img/image.png" />
+		<menupopup id="chartPopup">
+			<menuitem id="addColumnChart" label="Column Chart"/>
+			<menuitem id="addLineChart" label="Line Chart"/>
+			<menuitem id="addPieChart" label="Pie Chart"/>
+			<menuitem id="addBarChart" label="Bar Chart"/>
+			<menuitem id="addAreaChart" label="Area Chart"/>
+			<menuitem id="addScatterChart" label="Scatter Chart"/>
+			<menuitem id="addDoughnutChart" label="Doughnut Chart"/>
+			
+		</menupopup>
+		
 	</toolbar>
 </zk>

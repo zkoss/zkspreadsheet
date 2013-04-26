@@ -43,6 +43,7 @@ public class MainCtrl extends SelectorComposer<Component> {
 		}
 		if (book == null) {// default from resource
 			book = BookUtil.newBook("newBook", NBook.BookType.EXCEL_2007);
+//			book = BookUtil.newBook("newBook", NBook.BookType.EXCEL_2003);
 		}
 		return book;
 	}

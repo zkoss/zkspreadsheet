@@ -5,6 +5,9 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Font;
+import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
+import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.zss.api.NRange.ApplyBorderType;
 import org.zkoss.zss.api.NRange.AutoFillType;
 import org.zkoss.zss.api.NRange.AutoFilterOperation;
@@ -19,11 +22,15 @@ import org.zkoss.zss.api.model.NCellStyle.BorderType;
 import org.zkoss.zss.api.model.NCellStyle.FillPattern;
 import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NCellStyle.VerticalAlignment;
+import org.zkoss.zss.api.model.NChart.Grouping;
+import org.zkoss.zss.api.model.NChart.LegendPosition;
+import org.zkoss.zss.api.model.NChart.Type;
 import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.api.model.NFont.Boldweight;
 import org.zkoss.zss.api.model.NFont.TypeOffset;
 import org.zkoss.zss.api.model.NFont.Underline;
 import org.zkoss.zss.api.model.NHyperlink.HyperlinkType;
+import org.zkoss.zss.api.model.NPicture.Format;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.impl.BookHelper;
 
@@ -560,5 +567,96 @@ public class EnumUtil {
 			return HyperlinkType.FILE;
 		}
 		throw new IllegalArgumentException("unknow hyperlink type "+type);
+	}
+
+	public static int toPictureFormat(Format format) {
+		switch(format){
+		case EMF:
+			return Workbook.PICTURE_TYPE_EMF;
+		case WMF:
+			return Workbook.PICTURE_TYPE_WMF;
+		case PICT:
+			return Workbook.PICTURE_TYPE_PICT;
+		case JPEG:
+			return Workbook.PICTURE_TYPE_JPEG;
+		case PNG:
+			return Workbook.PICTURE_TYPE_PNG;
+		case DIB:
+			return Workbook.PICTURE_TYPE_DIB;
+		}
+		throw new IllegalArgumentException("unknow pciture format "+format);
+	}
+
+	public static ChartType toChartType(Type type) {
+		switch(type){
+		case Area3D:
+			return ChartType.Area3D;
+		case Area:
+			return ChartType.Area3D;
+		case Bar3D:
+			return ChartType.Bar3D;
+		case Bar:
+			return ChartType.Bar;
+		case Bubble:
+			return ChartType.Bubble;
+		case Column:
+			return ChartType.Column;
+		case Column3D:
+			return ChartType.Column3D;
+		case Doughnut:
+			return ChartType.Doughnut;
+		case Line3D:
+			return ChartType.Line3D;
+		case Line:
+			return ChartType.Line;
+		case OfPie:
+			return ChartType.OfPie;
+		case Pie3D:
+			return ChartType.Pie3D;
+		case Pie:
+			return ChartType.Pie;
+		case Radar:
+			return ChartType.Radar;
+		case Scatter:
+			return ChartType.Scatter;
+		case Stock:
+			return ChartType.Stock;
+		case Surface3D:
+			return ChartType.Surface3D;
+		case Surface:
+			return ChartType.Surface;
+		}
+		throw new IllegalArgumentException("unknow chart type "+type);
+	}
+
+	public static ChartGrouping toChartGrouping(Grouping grouping) {
+		switch(grouping){
+		case STANDARD:
+			return ChartGrouping.STANDARD;
+		case STACKED:
+			return ChartGrouping.STACKED;
+		case PERCENT_STACKED:
+			return ChartGrouping.PERCENT_STACKED;
+		case CLUSTERED:
+			return ChartGrouping.CLUSTERED;//bar only
+		}
+		throw new IllegalArgumentException("unknow grouping "+grouping);
+	}
+
+	public static org.zkoss.poi.ss.usermodel.charts.LegendPosition toLegendPosition(
+			LegendPosition pos) {
+		switch(pos){
+		case BOTTOM:
+			return org.zkoss.poi.ss.usermodel.charts.LegendPosition.BOTTOM;
+		case LEFT:
+			return org.zkoss.poi.ss.usermodel.charts.LegendPosition.LEFT;
+		case RIGHT:
+			return org.zkoss.poi.ss.usermodel.charts.LegendPosition.RIGHT;
+		case TOP:
+			return org.zkoss.poi.ss.usermodel.charts.LegendPosition.TOP;
+		case TOP_RIGHT:
+			return org.zkoss.poi.ss.usermodel.charts.LegendPosition.TOP_RIGHT;
+		}
+		throw new IllegalArgumentException("unknow legend position "+pos);
 	}
 }

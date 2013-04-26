@@ -41,6 +41,7 @@ public class MainActionHandler extends ActionHandler {
 
 	@Override
 	public void doNewBook() {
+//		NBook book = BookUtil.newBook("newBook", NBook.BookType.EXCEL_2003);
 		NBook book = BookUtil.newBook("newBook", NBook.BookType.EXCEL_2007);
 		getNSpreadsheet().setBook(book);
 		ClientUtil.showInfo("You are now using a new empty book");

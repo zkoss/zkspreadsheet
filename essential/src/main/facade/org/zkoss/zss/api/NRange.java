@@ -3,12 +3,28 @@ package org.zkoss.zss.api;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
+import org.zkoss.poi.hssf.usermodel.HSSFClientAnchor;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.Chart;
+import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Picture;
+import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.xssf.usermodel.XSSFClientAnchor;
 import org.zkoss.zss.api.model.NBook;
+import org.zkoss.zss.api.model.NBook.BookType;
 import org.zkoss.zss.api.model.NCellStyle;
+import org.zkoss.zss.api.model.NChart;
+import org.zkoss.zss.api.model.NChart.Grouping;
+import org.zkoss.zss.api.model.NChart.LegendPosition;
+import org.zkoss.zss.api.model.NChart.Type;
+import org.zkoss.zss.api.model.NChartData;
+import org.zkoss.zss.api.model.NPicture;
+import org.zkoss.zss.api.model.NPicture.Format;
 import org.zkoss.zss.api.model.SimpleRef;
 import org.zkoss.zss.api.model.NCellStyle.BorderType;
 import org.zkoss.zss.api.model.NHyperlink.HyperlinkType;
@@ -19,6 +35,8 @@ import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.model.impl.BookHelper;
+import org.zkoss.zss.model.impl.DrawingManager;
+import org.zkoss.zss.model.impl.SheetCtrl;
 
 /**
  * 1.Range is not handling the protection issue, if you have handle it yourself before calling the api(by calling {@code #isProtected()})
@@ -112,8 +130,9 @@ public class NRange {
 		WEEKDAYS,
 		YEARS,
 		GROWTH_TREND,
-		LINER_TREND		
+		LINER_TREND
 	}
+
 	
 	Range range;
 	
@@ -682,7 +701,86 @@ public class NRange {
 		
 		return new NCellStyle(getBook().getRef(), new SimpleRef<CellStyle>(style));		
 	}
-
+	
+	private ClientAnchor toClientAnchor(NSheetAnchor anchor){
+		NBook book = getSheet().getBook();
+		ClientAnchor can = null;
+		if(book.getType()==BookType.EXCEL_2003){
+			can = new HSSFClientAnchor(anchor.getXOffset(),anchor.getYOffset(),anchor.getLastXOffset(),anchor.getLastYOffset(),
+					(short)anchor.getColumn(),(short)anchor.getRow(),(short)anchor.getLastColumn(),(short)anchor.getLastRow());
+		}else{
+			can = new XSSFClientAnchor(anchor.getXOffset(),anchor.getYOffset(),anchor.getLastXOffset(),anchor.getLastYOffset(),
+					(short)anchor.getColumn(),(short)anchor.getRow(),(short)anchor.getLastColumn(),(short)anchor.getLastRow());
+		}
+		return can;
+	}
+	
+	public NPicture addPicture(NSheetAnchor anchor,byte[] image,Format format){
+		ClientAnchor an = toClientAnchor(anchor);
+		Picture pic = range.addPicture(an, image, EnumUtil.toPictureFormat(format));
+		return new NPicture(getBook().getRef(), new SimpleRef<Picture>(pic));
+	}
+	
+	public List<NPicture> getPictures(){
+		//TODO the syncLevel
+		NBook book = getSheet().getBook();
+		DrawingManager dm = ((SheetCtrl)getSheet().getBook().getNative()).getDrawingManager();
+		List<NPicture> pictures = new ArrayList<NPicture>();
+		for(Picture pic:dm.getPictures()){
+			pictures.add(new NPicture(book.getRef(), new SimpleRef<Picture>(pic)));
+		}
+		return pictures;
+	}
+	
+	public void deletePicture(NPicture picture){
+		//TODO the syncLevel
+		range.deletePicture(picture.getNative());
+	}
+	
+	public void movePicture(NSheetAnchor anchor,NPicture picture){
+		//TODO the syncLevel
+		ClientAnchor an = toClientAnchor(anchor);
+		range.movePicture(picture.getNative(), an);
+	}
+	
+	//currently, we only support to modify chart in XSSF
+	public NChart addChart(NSheetAnchor anchor,NChartData data,Type type, Grouping grouping, LegendPosition pos){
+		//TODO the syncLevel
+		ClientAnchor an = toClientAnchor(anchor);
+		ChartData cdata = data.getNative();
+		Chart chart = range.addChart(an, cdata, EnumUtil.toChartType(type), EnumUtil.toChartGrouping(grouping), EnumUtil.toLegendPosition(pos));
+		return new NChart(getBook().getRef(), new SimpleRef<Chart>(chart));
+	}
+	
+	public List<NChart> getCharts(){
+		//TODO the syncLevel
+		NBook book = getSheet().getBook();
+		DrawingManager dm = ((SheetCtrl)getSheet().getBook().getNative()).getDrawingManager();
+		List<NChart> charts = new ArrayList<NChart>();
+		for(Chart chart:dm.getCharts()){
+			charts.add(new NChart(book.getRef(), new SimpleRef<Chart>(chart)));
+		}
+		return charts;
+	}
+	
+	//currently, we only support to modify chart in XSSF
+	public void deleteChart(NChart chart){
+		//TODO the syncLevel
+		range.deleteChart(chart.getNative());
+	}
+	
+	//currently, we only support to modify chart in XSSF
+	public void moveChart(NSheetAnchor anchor,NChart chart){
+		//TODO the syncLevel
+		ClientAnchor an = toClientAnchor(anchor);
+		range.moveChart(chart.getNative(), an);
+	}
+	
+	
+	
+	
+	
+	
 	//api that need special object wrap
 	
 	
@@ -719,8 +817,6 @@ public class NRange {
 		
 		range.isCustomHeight();
 		
-		//range.pasteSpecial(pasteType, pasteOp, SkipBlanks, transpose);
-		
-		
+		//range.pasteSpecial(pasteType, pasteOp, SkipBlanks, transpose);		
 	}
 }
