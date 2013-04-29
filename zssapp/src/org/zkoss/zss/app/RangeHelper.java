@@ -50,11 +50,11 @@ public class RangeHelper {
 
 	// dummy
 	public void onRangeAdd() {
-		final XBook book = spreadsheet.getBook();
+		final XBook book = spreadsheet.getXBook();
 		if (book == null) {
 			return;
 		}
-		Sheet sheet = spreadsheet.getSelectedSheet();
+		Sheet sheet = spreadsheet.getSelectedXSheet();
 		int sheetindex = book.getSheetIndex(sheet);
 		int left = spreadsheet.getSelection().getLeft();
 		int top = spreadsheet.getSelection().getTop();
@@ -76,7 +76,7 @@ public class RangeHelper {
 
 	// dummy
 	public void onRangeDelete() {
-		final XBook book = spreadsheet.getBook();
+		final XBook book = spreadsheet.getXBook();
 		if (book == null) {
 			return;
 		}
@@ -101,7 +101,7 @@ public class RangeHelper {
 
 	// dummy
 	public void onRangeChoose() {
-		final XBook book = spreadsheet.getBook();
+		final XBook book = spreadsheet.getXBook();
 		if (book == null) {
 			return;
 		}
@@ -130,7 +130,7 @@ public class RangeHelper {
 	}
 
 	public void onRangeSelectChange(String type) {
-		final XBook book = spreadsheet.getBook();
+		final XBook book = spreadsheet.getXBook();
 		if (book == null) {
 			return;
 		}

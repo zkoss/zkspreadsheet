@@ -116,7 +116,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 			return;
 		
 		Rect rect = spreadsheet.getSelection();
-		CellHelper.shiftEntireColumnRight(spreadsheet.getSelectedSheet(), 
+		CellHelper.shiftEntireColumnRight(spreadsheet.getSelectedXSheet(), 
 				rect.getLeft(), rect.getRight());
 	}
 
@@ -125,25 +125,25 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		if (rect == null)
 			return;
 		
-		CellHelper.shiftEntireColumnLeft(spreadsheet.getSelectedSheet(), 
+		CellHelper.shiftEntireColumnLeft(spreadsheet.getSelectedXSheet(), 
 				rect.getLeft(), rect.getRight());
 	}
 
 	public void insertRowAbove() {
-		CellHelper.shiftEntireRowDown(spreadsheet.getSelectedSheet(), 
+		CellHelper.shiftEntireRowDown(spreadsheet.getSelectedXSheet(), 
 				spreadsheet.getSelection().getTop(), 
 				spreadsheet.getSelection().getBottom());
 	}
 
 	public void deleteRow() {
 		Rect rect = spreadsheet.getSelection();
-		CellHelper.shiftEntireRowUp(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getBottom());
+		CellHelper.shiftEntireRowUp(spreadsheet.getSelectedXSheet(), rect.getTop(), rect.getBottom());
 	}
 
 	public void setSelectedSheet(String name) {
-		XSheet lastsheet = spreadsheet.getSelectedSheet();
+		XSheet lastsheet = spreadsheet.getSelectedXSheet();
 		
-		Integer lastIdx = Integer.valueOf(spreadsheet.getBook().getSheetIndex(lastsheet));
+		Integer lastIdx = Integer.valueOf(spreadsheet.getXBook().getSheetIndex(lastsheet));
 		
 		spreadsheet.setSelectedSheet(name);		
 		//TODO: handle the copy/cut highlight
@@ -165,14 +165,14 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		if (rect == null)
 			return;
 		
-		XRanges.range(spreadsheet.getSelectedSheet(), 
+		XRanges.range(spreadsheet.getSelectedXSheet(), 
 				rect.getTop(), rect.getLeft(), 
 				rect.getBottom(), rect.getRight()).setHidden(hide);
 	}
 
 	public void addImage(int row, int col, AImage image) {
 		if (WebApps.getFeature("pe")) {
-			XRanges.range(spreadsheet.getSelectedSheet()).addPicture(getClientCenterAnchor(row, col, image.getWidth(), image.getHeight()), image.getByteData(), getImageFormat(image));
+			XRanges.range(spreadsheet.getSelectedXSheet()).addPicture(getClientCenterAnchor(row, col, image.getWidth(), image.getHeight()), image.getByteData(), getImageFormat(image));
 		}
 	}
 	
@@ -195,8 +195,8 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public void insertSheet() {
-		int sheetCount = spreadsheet.getBook().getNumberOfSheets();
-		XRanges.range(spreadsheet.getSelectedSheet()).createSheet("Sheet " + (sheetCount + 1));
+		int sheetCount = spreadsheet.getXBook().getNumberOfSheets();
+		XRanges.range(spreadsheet.getSelectedXSheet()).createSheet("Sheet " + (sheetCount + 1));
 	}
 
 	public void reGainFocus() {
@@ -204,11 +204,11 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public void renameSelectedSheet(String name) {
-		XRanges.range(spreadsheet.getSelectedSheet()).setSheetName(name);
+		XRanges.range(spreadsheet.getSelectedXSheet()).setSheetName(name);
 	}
 
 	public void shiftCell(int direction) {
-		XSheet sheet = spreadsheet.getSelectedSheet();
+		XSheet sheet = spreadsheet.getSelectedXSheet();
 		Rect rect = spreadsheet.getSelection();
 		
 		switch (direction) {
@@ -229,9 +229,9 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void sort(boolean isSortDescending) {
 		if (isSortDescending)
-			CellHelper.sortDescending(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
+			CellHelper.sortDescending(spreadsheet.getSelectedXSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
 		else
-			CellHelper.sortAscending(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
+			CellHelper.sortAscending(spreadsheet.getSelectedXSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
 	}
 
 	public void setColumnFreeze(int columnFreeze) {
@@ -243,7 +243,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public void insertFormula(int rowIdx, int colIdx, String formula) {
-		XRange rng = XRanges.range(spreadsheet.getSelectedSheet(), rowIdx, colIdx);
+		XRange rng = XRanges.range(spreadsheet.getSelectedXSheet(), rowIdx, colIdx);
 		//Note. can not catch evaluate exception here
 		rng.setEditText(formula);
 	}
@@ -262,7 +262,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public void setDataFormat(String format) {
-		Utils.setDataFormat(spreadsheet.getSelectedSheet(), 
+		Utils.setDataFormat(spreadsheet.getSelectedXSheet(), 
 				spreadsheet.getSelection(), format);
 	}
 
@@ -273,7 +273,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public ByteArrayOutputStream exportToExcel() {
-		XBook wb = spreadsheet.getBook();
+		XBook wb = spreadsheet.getXBook();
 	    XExporter c = XExporters.getExporter("excel");
 	    ByteArrayOutputStream out = new ByteArrayOutputStream();
 	    c.export(wb, out);
@@ -281,7 +281,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public String getBookName() {
-		XBook b = spreadsheet.getBook();
+		XBook b = spreadsheet.getXBook();
 		return b != null ? b.getBookName() : null;
 	}
 
@@ -295,7 +295,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public void addBookEventListener(EventListener listener) {
-		XBook book = spreadsheet.getBook();
+		XBook book = spreadsheet.getXBook();
 		bookListeners.put(listener, book != null ? Boolean.TRUE : Boolean.FALSE);
 		if (book != null)
 			book.subscribe(listener);
@@ -303,7 +303,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	
 	public void removeBookEventListener(EventListener listener) {
 		bookListeners.remove(listener);
-		XBook book = spreadsheet.getBook();
+		XBook book = spreadsheet.getXBook();
 		if (book != null)
 			book.subscribe(listener);
 	}
@@ -312,7 +312,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	 * Subscribe all book event listener when {@link XBook} changed
 	 */
 	private void resubscribeBookListeners() {
-		XBook book = spreadsheet.getBook();
+		XBook book = spreadsheet.getXBook();
 		if (book == null)
 			return;
 		for (EventListener listener : bookListeners.keySet()) {
@@ -327,7 +327,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	 * Unsubscribe all book event listener before {@link XBook} change
 	 */
 	private void unsubscribeBookListeners() {
-		XBook book = spreadsheet.getBook();
+		XBook book = spreadsheet.getXBook();
 		if (book == null) {
 			for (EventListener listener : bookListeners.keySet()) {
 				bookListeners.put(listener, Boolean.FALSE);
@@ -359,7 +359,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		final XBook targetBook = getBookFromDesktop(src);
 		removeBookFromDesktopIfNeeded();
 		if (targetBook != null) {
-			spreadsheet.setBook(targetBook);
+			spreadsheet.setXBook(targetBook);
 			spreadsheet.setSrcName(src);
 		}
 		else {
@@ -374,7 +374,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	public void setBook(XBook book) {
 		unsubscribeBookListeners();
 		removeBookFromDesktopIfNeeded();
-		spreadsheet.setBook(book);
+		spreadsheet.setXBook(book);
 		storeBookInDesktop(spreadsheet);
 		resubscribeBookListeners();
 	}
@@ -384,7 +384,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		final XBook targetBook = getBookFromDesktop(info.getSrc());
 		removeBookFromDesktopIfNeeded();
 		if (targetBook != null) {
-			spreadsheet.setBook(targetBook);
+			spreadsheet.setXBook(targetBook);
 			spreadsheet.setSrcName(info.getSrc());
 		} else {
 			FileHelper.openSpreadsheet(spreadsheet, info);
@@ -416,7 +416,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	 * @param spreadsheet
 	 */
 	private void storeBookInDesktop(Spreadsheet spreadsheet) {
-		XBook book = spreadsheet.getBook();
+		XBook book = spreadsheet.getXBook();
 		HashMap<XBook, LinkedHashSet<Spreadsheet>> books = getDesktopBooks();
 		LinkedHashSet<Spreadsheet> ss = books.get(book);
 		if (ss == null) {
@@ -429,7 +429,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	 * Remove {@link #Book} from desktop when others spreadsheet doesn't reference to the book
 	 */
 	private void removeBookFromDesktopIfNeeded() {
-		XBook book = spreadsheet.getBook();
+		XBook book = spreadsheet.getXBook();
 		if (book == null)
 			return;
 		
@@ -440,7 +440,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 		LinkedHashSet<Spreadsheet> ss = books.get(book);
 		for (Spreadsheet s : ss) {
-			XBook b = s.getBook();
+			XBook b = s.getXBook();
 			if (!s.equals(spreadsheet) && b != null && b.equals(book)) {
 				hasSpreadsheetRef = true;
 				break;
@@ -470,7 +470,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public boolean hasBook() {
-		return spreadsheet.getBook() != null;
+		return spreadsheet.getXBook() != null;
 	}
 
 	public String getSrc() {
@@ -488,24 +488,24 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public void setColumnWidthInPx(int width, Rect selection) {
-		final int char256 = Utils.pxToFileChar256(width, ((XBook)spreadsheet.getSelectedSheet().getWorkbook()).getDefaultCharWidth());
-		XRanges.range(spreadsheet.getSelectedSheet(), 0, selection.getLeft(), 0, selection.getRight()).getColumns().setColumnWidth(char256);
+		final int char256 = Utils.pxToFileChar256(width, ((XBook)spreadsheet.getSelectedXSheet().getWorkbook()).getDefaultCharWidth());
+		XRanges.range(spreadsheet.getSelectedXSheet(), 0, selection.getLeft(), 0, selection.getRight()).getColumns().setColumnWidth(char256);
 	}
 
 	public void setRowHeightInPx(int height, Rect selection) {
 		int point = Utils.pxToPoint(height);
 		XRanges
-		.range(spreadsheet.getSelectedSheet(), selection.getTop(), 0, selection.getBottom(), 0)
+		.range(spreadsheet.getSelectedXSheet(), selection.getTop(), 0, selection.getBottom(), 0)
 		.getRows()
 		.setRowHeight(point);
 	}
 
 	public int getDefaultCharWidth() {
-		return ((XBook)spreadsheet.getSelectedSheet().getWorkbook()).getDefaultCharWidth();
+		return ((XBook)spreadsheet.getSelectedXSheet().getWorkbook()).getDefaultCharWidth();
 	}
 	
 	public List<String> getSheetNames() {
-		final XBook book = spreadsheet.getBook();
+		final XBook book = spreadsheet.getXBook();
 		List<String> names = new ArrayList<String>(book.getNumberOfSheets());
 		for (int i = 0; i < book.getNumberOfSheets(); i++) {
 			names.add(book.getSheetAt(i).getSheetName());
@@ -526,15 +526,15 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public boolean isSheetProtect() {
-		return spreadsheet.getSelectedSheet().getProtect();
+		return spreadsheet.getSelectedXSheet().getProtect();
 	}
 	
 	public void protectSheet(String password) {
-		XRanges.range(spreadsheet.getSelectedSheet()).protectSheet(password);
+		XRanges.range(spreadsheet.getSelectedXSheet()).protectSheet(password);
 	}
 
 	public XSheet getSelectedSheet() {
-		return spreadsheet.getSelectedSheet();
+		return spreadsheet.getSelectedXSheet();
 	}
 
 	public String getReference(int row, int column) {
@@ -549,7 +549,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		spreadsheet.focusTo(row, column);
 		if (fireFocusEvent) {
 			org.zkoss.zk.ui.event.Events.sendEvent(
-					new CellEvent(Events.ON_CELL_FOUCSED, spreadsheet, spreadsheet.getSelectedSheet(), row, column));
+					new CellEvent(Events.ON_CELL_FOUCSED, spreadsheet, spreadsheet.getSelectedXSheet(), row, column));
 		}
 	}
 
@@ -600,7 +600,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public void addChart(int row, int col, ChartType chartType) {
-		XSheet sheet = spreadsheet.getSelectedSheet();
+		XSheet sheet = spreadsheet.getSelectedXSheet();
 		
 		Rect selection = spreadsheet.getSelection();
 		XRanges.range(sheet).addChart(getClientCenterAnchor(row, col, 600, 300), newChartData(chartType, selection), chartType, ChartGrouping.STANDARD, LegendPosition.RIGHT);
@@ -673,7 +673,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	
 	private ChartData fillXYData(XYData data) {
 		final Rect selection = spreadsheet.getSelection();
-		final XSheet sheet = spreadsheet.getSelectedSheet();
+		final XSheet sheet = spreadsheet.getSelectedXSheet();
 		
 		Rect rect = getChartDataRange(selection, sheet);
 		int colIdx = rect.getLeft();
@@ -776,7 +776,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	
 	private CategoryData fillCategoryData(CategoryData data) {
 		final Rect selection = spreadsheet.getSelection();
-		final XSheet sheet = spreadsheet.getSelectedSheet();
+		final XSheet sheet = spreadsheet.getSelectedXSheet();
 		
 		Rect rect = getChartDataRange(selection, sheet);
 		int colIdx = rect.getLeft();

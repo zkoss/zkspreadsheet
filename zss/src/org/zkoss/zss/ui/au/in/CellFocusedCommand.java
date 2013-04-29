@@ -52,7 +52,7 @@ public class CellFocusedCommand implements Command {
 		int row = (Integer) data.get("row");
 		int col = (Integer) data.get("col");
 		
-		XSheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
 		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return;
 

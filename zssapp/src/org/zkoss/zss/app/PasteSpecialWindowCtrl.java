@@ -102,7 +102,7 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 			
 			XRange rng = Utils.pasteSpecial(srcSheet, 
 					srcRect, 
-					ss.getSelectedSheet(), 
+					ss.getSelectedXSheet(), 
 					dst.getTop(),
 					dst.getLeft(),
 					dst.getBottom(),

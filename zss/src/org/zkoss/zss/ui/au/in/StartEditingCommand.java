@@ -57,7 +57,7 @@ public class StartEditingCommand implements Command {
 		String clienttxt = (String) data.get("clienttxt");
 		String type = (String) data.get("type");
 
-		XSheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
 		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		

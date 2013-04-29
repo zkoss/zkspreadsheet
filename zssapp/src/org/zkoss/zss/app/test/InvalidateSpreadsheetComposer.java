@@ -40,7 +40,7 @@ public class InvalidateSpreadsheetComposer extends GenericForwardComposer {
 		XImporter importer = XImporters.getImporter("excel");
 		final InputStream is = Sessions.getCurrent().getWebApp().getResourceAsStream("/xls/graficas.xlsx");
 		XBook book = importer.imports(is, "graficas.xlsx");
-		spreadsheet.setBook(book);		
+		spreadsheet.setXBook(book);		
 	}
 
 	public void onClick$invalidateSpreadsheetBtn() {

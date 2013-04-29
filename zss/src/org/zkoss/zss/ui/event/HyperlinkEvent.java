@@ -37,7 +37,7 @@ public class HyperlinkEvent extends CellMouseEvent{
 		final Map data = request.getData();
 		final Component comp = request.getComponent();
 		String sheetId = (String) data.get("sheetId");
-		XSheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
 		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return null;
 		

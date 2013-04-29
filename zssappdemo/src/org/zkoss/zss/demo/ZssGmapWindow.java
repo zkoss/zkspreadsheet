@@ -68,7 +68,7 @@ public class ZssGmapWindow extends GenericForwardComposer {
 		fluSpreadsheet.setRowfreeze(1);
 		fluSpreadsheet.setColumnfreeze(0);
 		
-		sheet = fluSpreadsheet.getSelectedSheet();
+		sheet = fluSpreadsheet.getSelectedXSheet();
 		
 		myChart.setModel(new SimplePieModel());
 		updateChart();

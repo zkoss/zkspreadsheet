@@ -52,7 +52,7 @@ public class MoveWidgetCommand implements Command {
 		
 		String type = (String) data.get("type");
 		if ("onWidgetMove".equals(type) || "onWidgetSize".equals(type)) {
-			processWidgetMove(((Spreadsheet) comp).getSelectedSheet(), data);
+			processWidgetMove(((Spreadsheet) comp).getSelectedXSheet(), data);
 		}
 	}
 

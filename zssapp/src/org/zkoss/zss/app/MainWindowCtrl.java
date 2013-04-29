@@ -151,7 +151,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 		workbenchContext.addEventListener(Consts.ON_WORKBOOK_CHANGED, new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				boolean isOpen = spreadsheet.getBook() != null;
+				boolean isOpen = spreadsheet.getXBook() != null;
 //				toolbarMask.setVisible(!isOpen);
 //				closeBtn.setVisible(isOpen);
 				
@@ -167,7 +167,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				
 				if (isOpen) {
 					getCellStyleContext().doTargetChange(
-							new SSRectCellStyle(Utils.getOrCreateCell(spreadsheet.getSelectedSheet(), 0, 0), spreadsheet));
+							new SSRectCellStyle(Utils.getOrCreateCell(spreadsheet.getSelectedXSheet(), 0, 0), spreadsheet));
 //					syncAutoFilterStatus();
 				}
 			}
@@ -183,7 +183,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			public void onEvent(Event event) throws Exception {
 				String formula = (String)event.getData();
 				Rect rect = spreadsheet.getSelection();
-				XRange rng = XRanges.range(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getLeft());
+				XRange rng = XRanges.range(spreadsheet.getSelectedXSheet(), rect.getTop(), rect.getLeft());
 				rng.setEditText(formula);
 			}
 		});
@@ -204,7 +204,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			 spreadsheet.setActionDisabled(false, Action.SAVE_BOOK);
 		 }
 		
-		XSheet seldSheet = spreadsheet.getSelectedSheet();
+		XSheet seldSheet = spreadsheet.getSelectedXSheet();
 		Rect seld =  spreadsheet.getSelection();
 		int row = seld.getTop();
 		int col = seld.getLeft();
@@ -253,7 +253,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	}
 	
 	private boolean isMergedCell(int tRow, int lCol, int bRow, int rCol) {
-		MergeMatrixHelper mmhelper = spreadsheet.getMergeMatrixHelper(spreadsheet.getSelectedSheet());
+		MergeMatrixHelper mmhelper = spreadsheet.getMergeMatrixHelper(spreadsheet.getSelectedXSheet());
 		for (final Iterator iter = mmhelper.getRanges().iterator(); iter
 				.hasNext();) {
 			MergedRect block = (MergedRect) iter.next();
@@ -480,8 +480,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		if (headerType == WorkbookCtrl.HEADER_TYPE_ROW) {
 			for (int i = selection.getTop(); i <= selection.getBottom(); i++) {
 				if (prev < 0)
-					prev = Utils.getRowHeightInPx(spreadsheet.getSelectedSheet(), i);
-				else if (prev != Utils.getRowHeightInPx(spreadsheet.getSelectedSheet(), i)) {
+					prev = Utils.getRowHeightInPx(spreadsheet.getSelectedXSheet(), i);
+				else if (prev != Utils.getRowHeightInPx(spreadsheet.getSelectedXSheet(), i)) {
 					sameVal = false;
 					break;
 				}
@@ -489,8 +489,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		} else {
 			for (int i = selection.getLeft(); i <= selection.getRight(); i++) {
 				if (prev < 0)
-					prev = Utils.getColumnWidthInPx(spreadsheet.getSelectedSheet(), i);
-				else if (prev != Utils.getColumnWidthInPx(spreadsheet.getSelectedSheet(), i)) {
+					prev = Utils.getColumnWidthInPx(spreadsheet.getSelectedXSheet(), i);
+				else if (prev != Utils.getColumnWidthInPx(spreadsheet.getSelectedXSheet(), i)) {
 					sameVal = false;
 					break;
 				}
@@ -605,7 +605,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 		@Override
 		public void doSaveBook() {
-			if (FileHelper.hasSavePermission() && spreadsheet.getBook() != null) {
+			if (FileHelper.hasSavePermission() && spreadsheet.getXBook() != null) {
 				DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
 				if (workbench.getWorkbookCtrl().hasFileExtentionName()) {
 					workbench.getWorkbookCtrl().save();
@@ -631,7 +631,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 		@Override
 		public void doExportPDF(Rect selection) {
-			if (spreadsheet.getBook() != null && isValidSelection(selection)) {
+			if (spreadsheet.getXBook() != null && isValidSelection(selection)) {
 				openExportPdfDialog(selection);	
 			}
 		}
@@ -644,7 +644,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				return;
 			}
 
-			if (spreadsheet.getSelectedSheet() != null && isValidSelection(selection)) {
+			if (spreadsheet.getSelectedXSheet() != null && isValidSelection(selection)) {
 				spreadsheet.setSelection(selection);
 				openPasteSpecialDialog();	
 			}
@@ -655,7 +655,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		@Override
 		public void doCtrlKey(KeyEvent event) {
 			super.doCtrlKey(event);
-			if (spreadsheet.getSelectedSheet() != null && isValidSelection(event.getSelection())) {
+			if (spreadsheet.getSelectedXSheet() != null && isValidSelection(event.getSelection())) {
 				switch (event.getKeyCode()) {
 				case 'S':
 					//TODO: check permission from WorkbookCtrl
@@ -700,35 +700,35 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 		@Override
 		public void doCustomSort(Rect selection) {
-			if (spreadsheet.getSelectedSheet() != null && isValidSelection(selection)) {
+			if (spreadsheet.getSelectedXSheet() != null && isValidSelection(selection)) {
 				openCustomSortDialog(selection);
 			}
 		}
 
 		@Override
 		public void doHyperlink(Rect selection) {
-			if (spreadsheet.getSelectedSheet() != null && isValidSelection(selection)) {
+			if (spreadsheet.getSelectedXSheet() != null && isValidSelection(selection)) {
 				openHyperlinkDialog(selection);
 			}
 		}
 
 		@Override
 		public void doFormatCell(Rect selection) {
-			if (spreadsheet.getSelectedSheet() != null && isValidSelection(selection)) {
+			if (spreadsheet.getSelectedXSheet() != null && isValidSelection(selection)) {
 				openFormatNumberDialog(selection);	
 			}
 		}
 
 		@Override
 		public void doColumnWidth(Rect selection) {
-			if (spreadsheet.getSelectedSheet() != null && isValidSelection(selection)) {
+			if (spreadsheet.getSelectedXSheet() != null && isValidSelection(selection)) {
 				openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_COLUMN, selection);	
 			}
 		}
 
 		@Override
 		public void doRowHeight(Rect selection) {
-			if (spreadsheet.getSelectedSheet() != null && isValidSelection(selection)) {
+			if (spreadsheet.getSelectedXSheet() != null && isValidSelection(selection)) {
 				openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_ROW, selection);	
 			}
 		}

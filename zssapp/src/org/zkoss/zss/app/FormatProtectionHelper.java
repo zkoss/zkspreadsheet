@@ -25,7 +25,7 @@ public class FormatProtectionHelper {
 			int right = spreadsheet.getSelection().getRight();
 			int top = spreadsheet.getSelection().getTop();
 			int bottom = spreadsheet.getSelection().getBottom();
-			XSheet sheet = spreadsheet.getSelectedSheet();
+			XSheet sheet = spreadsheet.getSelectedXSheet();
 			for (int row = top; row <= bottom; row++) {
 				for (int col = left; col <= right; col++) {
 					final Cell cell = Utils.getCell(sheet, row, col);

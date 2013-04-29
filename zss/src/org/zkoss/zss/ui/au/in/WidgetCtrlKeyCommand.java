@@ -51,7 +51,7 @@ public class WidgetCtrlKeyCommand implements Command {
 				new Object[] {Objects.toString(data), this});
 		
 		String widgetType = (String) data.get("wgt");
-		XSheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
 		if ("chart".equals(widgetType)) {
 			processChart(sheet, data);
 		} else if ("image".equals(widgetType)) {

@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
+import org.zkoss.util.logging.Log;
 
 /**
  * <p>Provides utility method to get instance of specific {@link XImporter} implementation
@@ -41,6 +42,9 @@ import org.zkoss.lang.Library;
  */
 public class XImporters {
 
+	
+	static private Log log = Log.lookup(XImporters.class);
+	
 	private static String DEFAULT_ZSS_IMPORTERS_KEY = "org.zkoss.zss.model.default.Importer.class";
 	private static String DEFAULT_ZSSEX_IMPORTERS_KEY = "org.zkoss.zssex.model.default.Importer.class";
 	private static String USER_DEFINED_IMPORTERS_KEY = "org.zkoss.zss.model.Importer.class";
@@ -54,10 +58,14 @@ public class XImporters {
 	 */
 	public static XImporter getImporter(String type) {
 		if(typeClss == null) {
-			typeClss = new HashMap<String,String>();
-			loadImporters(DEFAULT_ZSS_IMPORTERS_KEY);
-			loadImporters(DEFAULT_ZSSEX_IMPORTERS_KEY);
-			loadImporters(USER_DEFINED_IMPORTERS_KEY);
+			synchronized(XImporters.class){
+				if(typeClss==null){
+					typeClss = new HashMap<String,String>();
+					loadImporters(DEFAULT_ZSS_IMPORTERS_KEY);
+					loadImporters(DEFAULT_ZSSEX_IMPORTERS_KEY);
+					loadImporters(USER_DEFINED_IMPORTERS_KEY);
+				}
+			}
 		}
 		
 		String importerClnm = typeClss.get(type);
@@ -68,6 +76,7 @@ public class XImporters {
 					return (XImporter) o;
 				}
 			} catch(Exception ex) {
+				log.warning(ex.getMessage(),ex);
 			}
 		}
 		return null;

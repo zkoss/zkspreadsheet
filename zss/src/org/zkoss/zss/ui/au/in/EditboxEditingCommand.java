@@ -50,7 +50,7 @@ public class EditboxEditingCommand implements Command {
 		String sheetId = (String) data.get("sheetId");
 		String clienttxt = (String) data.get("clienttxt");
 
-		XSheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
 		if (!Utils.getSheetUuid(sheet).equals(sheetId)) {
 			return;
 		}

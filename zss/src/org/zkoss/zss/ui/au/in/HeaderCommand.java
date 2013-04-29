@@ -59,7 +59,7 @@ public class HeaderCommand implements Command {
 	
 	private void processTopHeader(Spreadsheet spreadsheet, Map data){
 		String sheetId = (String) data.get("sheetId");
-		XSheet sheet = spreadsheet.getSelectedSheet();
+		XSheet sheet = spreadsheet.getSelectedXSheet();
 		if(!Utils.getSheetUuid(sheet).equals(sheetId)) {
 			return;
 		}
@@ -84,7 +84,7 @@ public class HeaderCommand implements Command {
 	
 	private void processLeftHeader(Spreadsheet spreadsheet, Map data){
 		String sheetId = (String) data.get("sheetId");
-		XSheet sheet = spreadsheet.getSelectedSheet();
+		XSheet sheet = spreadsheet.getSelectedXSheet();
 		if(!Utils.getSheetUuid(sheet).equals(sheetId)) {
 			return;
 		}

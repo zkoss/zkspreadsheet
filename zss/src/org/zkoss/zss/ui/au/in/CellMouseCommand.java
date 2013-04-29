@@ -85,7 +85,7 @@ public class CellMouseCommand implements Command {
 		int my = (Integer) data.get("my");
 		
 		Spreadsheet spreadsheet = (Spreadsheet) comp;
-		XSheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
 		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		

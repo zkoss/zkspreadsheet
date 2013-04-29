@@ -30,7 +30,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 
 	<zscript language="Java">
 	import org.zkoss.zss.ui.*;
-	import org.zkoss.zss.model.*;
+	import org.zkoss.zss.api.*;
 	</zscript>
 	<zscript language="JavaScript">
 	importPackage(Packages.org.zkoss.zss.ui);
@@ -38,7 +38,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	</zscript>
 	<zscript language="Groovy" each-time="true">
 	import org.zkoss.zss.ui.*
-	import org.zkoss.zss.model.*
+	import org.zkoss.zss.api.*
 	</zscript>
 	<zscript language="Ruby">
 	module Java

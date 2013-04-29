@@ -36,7 +36,7 @@ public class AutofilterComposer extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
-		sheet = spreadsheet.getSelectedSheet();
+		sheet = spreadsheet.getSelectedXSheet();
 		initAutofilter();
 	}
 

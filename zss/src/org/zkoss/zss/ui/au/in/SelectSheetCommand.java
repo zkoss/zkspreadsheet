@@ -70,7 +70,7 @@ public class SelectSheetCommand implements Command {
 		int rowfreeze = AuRequests.getInt(data, "frow", -1);
 		int colfreeze = AuRequests.getInt(data, "fcol", -1);
 		
-		XBook book = spreadsheet.getBook();
+		XBook book = spreadsheet.getXBook();
 		int len = book.getNumberOfSheets();
 		for (int i = 0; i < len; i++) {
 			XSheet sheet = book.getWorksheetAt(i);

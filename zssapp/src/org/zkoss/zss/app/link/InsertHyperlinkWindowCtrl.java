@@ -98,7 +98,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void init() {
-		String display = Utils.getRange(ss.getSelectedSheet(), selection.getTop(), selection.getLeft()).getEditText();
+		String display = Utils.getRange(ss.getSelectedXSheet(), selection.getTop(), selection.getLeft()).getEditText();
 		isCellHasDisplayString = !"".equals(display);
 		if (isCellHasDisplayString)
 			displayHyperlink.setValue(display);
@@ -123,7 +123,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 			return;
 		}
 		
-		Utils.setHyperlink(ss.getSelectedSheet(), selection.getTop(), selection.getLeft(), 
+		Utils.setHyperlink(ss.getSelectedXSheet(), selection.getTop(), selection.getLeft(), 
 				getLinkTarget(), addr, getDisplay());
 
 		_insertHyperlinkDialog.fireOnClose(null);
@@ -292,7 +292,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	}
 	private void buildDocumentTree(final Tree tree, final Textbox cellRef) {
 		if (tree != null) {
-			final XBook book = ss.getBook();
+			final XBook book = ss.getXBook();
 			if (book == null) {
 				return;
 			}

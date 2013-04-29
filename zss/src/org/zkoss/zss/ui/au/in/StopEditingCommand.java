@@ -57,7 +57,7 @@ public class StopEditingCommand implements Command {
 		String value = (String) data.get("value");
 		String type = (String) data.get("type");
 		
-		XSheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
 		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		

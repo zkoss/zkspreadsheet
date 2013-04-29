@@ -41,7 +41,7 @@ public class ValidationComposer extends GenericForwardComposer {
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		sheet = spreadsheet.getSelectedSheet();
+		sheet = spreadsheet.getSelectedXSheet();
 		initValidation();
 	}
 

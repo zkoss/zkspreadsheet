@@ -87,6 +87,11 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
+import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.impl.BookImpl;
+import org.zkoss.zss.api.model.impl.SheetImpl;
+import org.zkoss.zss.api.model.impl.SimpleRef;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.event.EventDispatchListener;
 import org.zkoss.zss.engine.event.SSDataEvent;
@@ -407,7 +412,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * 
 	 * @return the book model of this spread sheet.
 	 */
-	public XBook getBook() {
+	public XBook getXBook() {
 		if (_book == null) {
 			if (_src == null) {
 				return null;
@@ -467,7 +472,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * 
 	 * @param book the book data model.
 	 */
-	public void setBook(XBook book) {
+	public void setXBook(XBook book) {
 		if (!Objects.equals(book, _book)) {
 			initBook0(book);
 			invalidate();
@@ -589,8 +594,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * Gets the selected sheet, the default selected sheet is first sheet.
 	 * @return #{@link XSheet}
 	 */
-	public XSheet getSelectedSheet() {
-		final XBook book = getBook();
+	public XSheet getSelectedXSheet() {
+		final XBook book = getXBook();
 		if (book == null) {
 			return null;
 		}
@@ -611,19 +616,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return _selectedSheet;
 	}
 
-	public XSheet getSheet(int index){
-		final XBook book = getBook();
+	public XSheet getXSheetAt(int index){
+		final XBook book = getXBook();
 		return book != null ? (XSheet)book.getSheetAt(index) : null;
 	}
 	
-	public int indexOfSheet(XSheet sheet){
-		final XBook book = getBook();
+	public int indexOfXSheet(XSheet sheet){
+		final XBook book = getXBook();
 		return book != null ? book.getSheetIndex(sheet) : -1;
 	}
 	
 	private String getSelectedSheetId() {
 		if (_selectedSheetId == null) {
-			getSelectedSheet();
+			getSelectedXSheet();
 		}
 		return _selectedSheetId;
 	}
@@ -669,7 +674,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			book.setName(src);
 		_src = src;
 		*/
-		final XBook book = (XBook) this.getBook();
+		final XBook book = (XBook) this.getXBook();
 		if (book != null)
 			_src = src;
 	}
@@ -714,7 +719,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	private void setSelectedSheetImpl(String name) {
-		final XBook book = getBook();
+		final XBook book = getXBook();
 		if (book == null) {
 			return;
 		}
@@ -969,7 +974,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	public int getRowfreeze() {
 		if (_rowFreezeset)
 			return _rowFreeze;
-		final XSheet sheet = getSelectedSheet();
+		final XSheet sheet = getSelectedXSheet();
 		if (sheet != null) {
 			 if (BookHelper.isFreezePane(sheet)) { //issue #103: Freeze row/column is not correctly interpreted
 				 _rowFreeze = BookHelper.getRowFreeze(sheet) - 1;
@@ -1009,7 +1014,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	public int getColumnfreeze() {
 		if (_colFreezeset)
 			return _colFreeze;
-		XSheet sheet = getSelectedSheet();
+		XSheet sheet = getSelectedXSheet();
 		if (sheet != null) {
 			 if (BookHelper.isFreezePane(sheet)) {//issue #103: Freeze row/column is not correctly interpreted
 				 _colFreeze = BookHelper.getColumnFreeze(sheet) - 1;
@@ -1179,7 +1184,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @return default value depends on selected sheet
 	 */
 	public int getRowheight() {
-		XSheet sheet = getSelectedSheet();
+		XSheet sheet = getSelectedXSheet();
 		int rowHeight = sheet != null ? sheet.getDefaultRowHeight() : -1;
 
 		return (rowHeight <= 0) ? _defaultRowHeight : Utils.twipToPx(rowHeight);
@@ -1191,7 +1196,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @param rowHeight the row height
 	 */
 	public void setRowheight(int rowHeight) {
-		XSheet sheet = getSelectedSheet();
+		XSheet sheet = getSelectedXSheet();
 		int rowHeightTwip = Utils.pxToTwip(rowHeight);
 		int dh = sheet.getDefaultRowHeight();
 
@@ -1210,7 +1215,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @return default value depends on selected sheet
 	 */
 	public int getColumnwidth() {
-		final XSheet sheet = getSelectedSheet();
+		final XSheet sheet = getSelectedXSheet();
 		return Utils.getDefaultColumnWidthInPx(sheet);
 	}
 
@@ -1219,7 +1224,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @param columnWidth the default column width
 	 */
 	public void setColumnwidth(int columnWidth) {
-		final XSheet sheet = getSelectedSheet();
+		final XSheet sheet = getSelectedXSheet();
 		int dw = sheet.getDefaultColumnWidth();
 		if (dw != columnWidth) {
 			sheet.setDefaultColumnWidth(columnWidth);
@@ -1233,7 +1238,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	private int getDefaultCharWidth() {
-		final XSheet sheet = getSelectedSheet();
+		final XSheet sheet = getSelectedXSheet();
 		return Utils.getDefaultCharWidth(sheet);
 	}
 
@@ -1373,7 +1378,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final int left = addr.getFirstColumn();
 			final int right = addr.getLastColumn();
 			final int top = addr.getFirstRow();
-			final XSheet sheet = this.getSelectedSheet();
+			final XSheet sheet = this.getSelectedXSheet();
 			addrmap.put("left", left);
 			addrmap.put("top", top);
 			addrmap.put("right", right);
@@ -1436,7 +1441,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final int right = addr.getLastColumn();
 			final int top = addr.getFirstRow();
 			final int bottom = addr.getLastRow();
-			final XSheet sheet = this.getSelectedSheet();
+			final XSheet sheet = this.getSelectedXSheet();
 			final Map<String, Integer> addrmap = new HashMap<String, Integer>();
 			addrmap.put("left", left);
 			addrmap.put("top", top);
@@ -1449,7 +1454,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		validMap.put("showPrompt", dv.getShowPromptBox()); //whether show prompt box
 		validMap.put("promptTitle", dv.getPromptBoxTitle()); //the prompt box title
 		validMap.put("promptText", dv.getPromptBoxText()); //the prompt box text
-		String[] validationList = BookHelper.getValidationList(getSelectedSheet(), dv);
+		String[] validationList = BookHelper.getValidationList(getSelectedXSheet(), dv);
 		if (validationList != null) {
 			//ZSS-197: the method is useful only list validation objects
 			validMap.put("showButton", dv.getSuppressDropDownArrow()); //whether show dropdown button
@@ -1529,7 +1534,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 			
 		renderer.render("showFormulabar", _showFormulabar);
-		XSheet sheet = this.getSelectedSheet();
+		XSheet sheet = this.getSelectedXSheet();
 		if (sheet == null) {
 			return;
 		}
@@ -2212,7 +2217,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onRangeInsert(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedSheet().equals(sheet))
+			if (!getSelectedXSheet().equals(sheet))
 				return;
 			_updateCellId.next();
 			if (rng.isWholeColumn()) {
@@ -2228,7 +2233,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onRangeDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedSheet().equals(sheet))
+			if (!getSelectedXSheet().equals(sheet))
 				return;
 			_updateCellId.next();
 			if (rng.isWholeColumn()) {
@@ -2246,7 +2251,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final Ref rng = event.getRef();
 			final Ref orng = event.getOriginalRef();
 			final XSheet sheet = getSheet(orng);
-			if (!getSelectedSheet().equals(sheet))
+			if (!getSelectedXSheet().equals(sheet))
 				return;
 			((ExtraCtrl) getExtraCtrl()).updateMergeCell(sheet, 
 					rng.getLeftCol(), rng.getTopRow(), rng.getRightCol(), rng.getBottomRow(),
@@ -2255,7 +2260,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onMergeAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedSheet().equals(sheet))
+			if (!getSelectedXSheet().equals(sheet))
 				return;
 			((ExtraCtrl) getExtraCtrl()).addMergeCell(sheet, 
 					rng.getLeftCol(), rng.getTopRow(), rng.getRightCol(), rng.getBottomRow());
@@ -2264,7 +2269,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onMergeDelete(SSDataEvent event) {
 			final Ref orng = event.getRef();
 			final XSheet sheet = getSheet(orng);
-			if (!getSelectedSheet().equals(sheet))
+			if (!getSelectedXSheet().equals(sheet))
 				return;
 			((ExtraCtrl) getExtraCtrl()).deleteMergeCell(sheet, orng.getLeftCol(),
 					orng.getTopRow(), orng.getRightCol(), orng.getBottomRow());
@@ -2273,7 +2278,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			//TODO shall pass the range over to the client side and let client side do it; rather than iterate each column and send multiple command
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedSheet().equals(sheet))
+			if (!getSelectedXSheet().equals(sheet))
 				return;
 			if (rng.isWholeColumn()) {
 				final int left = rng.getLeftCol();
@@ -2296,21 +2301,21 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onBtnChange(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedSheet().equals(sheet))
+			if (!getSelectedXSheet().equals(sheet))
 				return;
 			updateAutoFilter(sheet.getAutoFilter());
 		}
 		private void onDisplayGridlines(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedSheet().equals(sheet))
+			if (!getSelectedXSheet().equals(sheet))
 				return;
 			setDisplayGridlines(event.isShow());
 		}
 		private void onProtectSheet(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedSheet().equals(sheet))
+			if (!getSelectedXSheet().equals(sheet))
 				return;
 			setProtectSheet(event.getProtect());
 		}
@@ -2431,7 +2436,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @param bottom bottom of block
 	 */
 	/* package */void updateCell(int left, int top, int right, int bottom) {
-		updateCell(getSelectedSheet(), left, top, right, bottom);
+		updateCell(getSelectedXSheet(), left, top, right, bottom);
 	}
 
 	private void updateWidget(XSheet sheet, int left, int top, int right, int bottom) {
@@ -2604,7 +2609,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		public void setColumnSize(String sheetId, int column, int newsize, int id, boolean hidden) {
 			XSheet sheet;
 			if (getSelectedSheetId().equals(sheetId)) {
-				sheet = getSelectedSheet();
+				sheet = getSelectedXSheet();
 			} else {
 				sheet = Utils.getSheetByUuid(_book, sheetId);
 			}
@@ -2622,7 +2627,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		public void setRowSize(String sheetId, int rownum, int newsize, int id, boolean hidden) {
 			XSheet sheet;
 			if (getSelectedSheetId().equals(sheetId)) {
-				sheet = getSelectedSheet();
+				sheet = getSelectedXSheet();
 			} else {
 				sheet = Utils.getSheetByUuid(_book, sheetId);
 			}
@@ -2640,7 +2645,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		public HeaderPositionHelper getColumnPositionHelper(String sheetId) {
 			XSheet sheet;
 			if (getSelectedSheetId().equals(sheetId)) {
-				sheet = getSelectedSheet();
+				sheet = getSelectedXSheet();
 			} else {
 				sheet = Utils.getSheetByUuid(_book, sheetId);
 			}
@@ -2651,7 +2656,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		public HeaderPositionHelper getRowPositionHelper(String sheetId) {
 			XSheet sheet;
 			if (getSelectedSheetId().equals(sheetId)) {
-				sheet = getSelectedSheet();
+				sheet = getSelectedXSheet();
 			} else {
 				sheet = Utils.getSheetByUuid(_book, sheetId);
 			}
@@ -2689,12 +2694,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		public void setLoadedRect(int left, int top, int right, int bottom) {
 			getActiveRangeHelper().setActiveRange(_selectedSheet, top, left, bottom, right);
-			getWidgetHandler().onLoadOnDemand(getSelectedSheet(), left, top, right, bottom);
+			getWidgetHandler().onLoadOnDemand(getSelectedXSheet(), left, top, right, bottom);
 		}
 		
 		public void setVisibleRect(int left, int top, int right, int bottom) {
 			_visibleRect.set(left, top, right, bottom);
-			getWidgetHandler().onLoadOnDemand(getSelectedSheet(), left, top, right, bottom);
+			getWidgetHandler().onLoadOnDemand(getSelectedXSheet(), left, top, right, bottom);
 		}
 
 		public Rect getVisibleRect() {
@@ -2909,7 +2914,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		 * </ul>
 		 */
 		public JSONObject getRowAttrs(int row) {
-			XSheet sheet = getSelectedSheet();
+			XSheet sheet = getSelectedXSheet();
 			HeaderPositionHelper helper = Spreadsheet.this.getRowPositionHelper(sheet);
 			JSONObject attrs = new JSONObject();
 			//row num
@@ -3461,7 +3466,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		@Override
 		public Boolean getLeftHeaderHiddens(int row) {
-			XSheet sheet = getSelectedSheet();
+			XSheet sheet = getSelectedXSheet();
 			HeaderPositionHelper rowHelper = Spreadsheet.this
 					.getRowPositionHelper(sheet);
 			HeaderPositionInfo info = rowHelper.getInfo(row);
@@ -3470,7 +3475,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		@Override
 		public Boolean getTopHeaderHiddens(int col) {
-			XSheet sheet = getSelectedSheet();
+			XSheet sheet = getSelectedXSheet();
 			HeaderPositionHelper colHelper = Spreadsheet.this
 					.getColumnPositionHelper(sheet);
 			HeaderPositionInfo info = colHelper.getInfo(col);
@@ -3528,7 +3533,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 	private String getSheetDefaultRules() {
 
-		XSheet sheet = getSelectedSheet();
+		XSheet sheet = getSelectedXSheet();
 
 		HeaderPositionHelper colHelper = this.getColumnPositionHelper(sheet);
 		HeaderPositionHelper rowHelper = this.getRowPositionHelper(sheet);
@@ -3945,7 +3950,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	private void doSheetClean(XSheet sheet) {
-		if (getBook().getSheetIndex(sheet) != -1)
+		if (getXBook().getSheetIndex(sheet) != -1)
 			deleteFocus();
 		List list = loadWidgetLoaders();
 		int size = list.size();
@@ -4072,7 +4077,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		//TODO: reset here ?
 //		_loadedRect.set(-1, -1, -1, -1);
 		
-		XSheet sheet = getSelectedSheet();
+		XSheet sheet = getSelectedXSheet();
 
 		clearHeaderSizeHelper(true, true);
 		// remove this, beacuse invalidate will cause client side rebuild,
@@ -4689,7 +4694,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	//return true if a valid input; false otherwise and show Error Alert if required 
 	public boolean validate(XSheet sheet, final int row, final int col, final String txt, 
 		final EventListener callback) {
-		final XSheet ssheet = this.getSelectedSheet();
+		final XSheet ssheet = this.getSelectedXSheet();
 		if (ssheet == null || !ssheet.equals(sheet)) { //skip no sheet case
 			return true;
 		}
@@ -4872,5 +4877,48 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		public void putHelper(String sheetId, T helper) {
 			helpers.put(sheetId, helper);
 		}
+	}
+
+	//new wrapped API
+	
+	
+	public Book getBook(){
+		XBook book = getXBook();
+		return book==null?null:new BookImpl(new SimpleRef<XBook>(book));
+	}
+	
+	public void setBook(Book book) {
+		setXBook((XBook)(book==null?null:((BookImpl)book).getNative()));
+	}
+	
+	public Sheet getSelectedSheet(){
+		XSheet sheet = getSelectedXSheet();
+		return sheet==null?null:new SheetImpl(new SimpleRef<XSheet>(sheet));
+	}
+	
+	public Sheet getSheetAt(int index){
+		XSheet sheet = getXSheetAt(index);
+		return sheet==null?null:new SheetImpl(new SimpleRef<XSheet>(sheet));
+	}
+	
+	public int indexOfSheet(Sheet sheet){
+		final XBook book = getXBook();
+		return book != null ? book.getSheetIndex(((SheetImpl)sheet).getNative()) : -1;
+	}
+	
+	public int getMaxVisibleColumns() {
+		return getMaxcolumns();
+	}
+
+	public int getMaxVisibleRows() {
+		return getMaxrows();
+	}
+	
+	public void setMaxVisibleColumns(int maxcols){
+		this.setMaxcolumns(maxcols);
+	}
+	
+	public void setMaxVisibleRows(int maxrows){
+		this.setMaxrows(maxrows);
 	}
 }

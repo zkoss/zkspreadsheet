@@ -134,7 +134,7 @@ public class UtilFns {
 		int row_top = getRowBegin(ss).intValue();
 		int row_bottom = getRowEnd(ss).intValue();
 		
-		XSheet sheet = ss.getSelectedSheet();
+		XSheet sheet = ss.getSelectedXSheet();
 		MergeMatrixHelper mmhelper = ((SpreadsheetCtrl)ss.getExtraCtrl()).getMergeMatrixHelper(sheet);
 		Set blocks = mmhelper.getRangesByColumn(max);
 		Iterator iter = blocks.iterator();

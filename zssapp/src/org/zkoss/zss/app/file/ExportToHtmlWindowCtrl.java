@@ -98,7 +98,7 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void loadPrintSetting() {
-		noGridlines.setChecked(!ss.getSelectedSheet().isPrintGridlines());
+		noGridlines.setChecked(!ss.getSelectedXSheet().isPrintGridlines());
 		range.setSelectedItem(currSheet);
 	}
 	
@@ -108,26 +108,26 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 	 */
 	private void applyPrintSetting() {
 		//TODO: move to sheet context
-		ss.getSelectedSheet().setPrintGridlines(includeGridlines());
-		final XBook book = ss.getBook(); 
+		ss.getSelectedXSheet().setPrintGridlines(includeGridlines());
+		final XBook book = ss.getXBook(); 
 		if (book == null) {
 			return;
 		}
 		int numSheet = book.getNumberOfSheets();
 		for (int i = 0; i < numSheet; i++) {
-			Sheet sheet = ss.getSheet(i);
+			Sheet sheet = ss.getXSheetAt(i);
 			PrintSetup setup = sheet.getPrintSetup();
 		}
 	}
 	
 	private void revertPrintSetting() {
-		final XBook book = ss.getBook();
+		final XBook book = ss.getXBook();
 		if (book == null) {
 			return;
 		}
 		int numSheet = book.getNumberOfSheets();
 		for (int i = 0; i < numSheet; i++) {
-			Sheet sheet = ss.getSheet(i);
+			Sheet sheet = ss.getXSheetAt(i);
 			PrintSetup setup = sheet.getPrintSetup();
 		}
 	}
@@ -165,7 +165,7 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 //	}
 	
 	private void export(XExporter exporter, OutputStream outputStream) {
-		final XBook book = ss.getBook();
+		final XBook book = ss.getXBook();
 		if (book == null) {
 			return;
 		}
@@ -176,9 +176,9 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 			Rect rect = ss.getSelection();
 			String area = ss.getColumntitle(rect.getLeft()) + ss.getRowtitle(rect.getTop()) + ":" + 
 				ss.getColumntitle(rect.getRight()) + ss.getRowtitle(rect.getBottom());
-			exporter.exportSelection(ss.getSelectedSheet(), new AreaReference(area), outputStream);
+			exporter.exportSelection(ss.getSelectedXSheet(), new AreaReference(area), outputStream);
 		} else {
-			exporter.export(ss.getSelectedSheet(), outputStream);
+			exporter.export(ss.getSelectedXSheet(), outputStream);
 		}
 	}
 	

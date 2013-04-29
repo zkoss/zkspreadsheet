@@ -155,7 +155,7 @@ public class FileHelper {
 	public static void saveSpreadsheet(Spreadsheet spreadsheet) {
 		String filename = spreadsheet.getSrc();
 		SpreadSheetMetaInfo info = SpreadSheetMetaInfo.newInstance(filename);
-		XBook wb = spreadsheet.getBook();
+		XBook wb = spreadsheet.getXBook();
 		XExporter c = XExporters.getExporter("excel");
 		
 		String fileName = getSpreadsheetStorageFolderPath() + info.getHashFileName();

@@ -102,15 +102,15 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void loadPrintSetting() {
-		noGridlines.setChecked(!ss.getSelectedSheet().isPrintGridlines());
+		noGridlines.setChecked(!ss.getSelectedXSheet().isPrintGridlines());
 		range.setSelectedItem(currSheet);
 		loadOrientationSetting();
 	}
 	
 	private void loadOrientationSetting() {
 		//TODO: move to sheet context
-		orgOrientation = ss.getSelectedSheet().getPrintSetup().getLandscape();
-		if (ss.getSelectedSheet().getPrintSetup().getLandscape()) {
+		orgOrientation = ss.getSelectedXSheet().getPrintSetup().getLandscape();
+		if (ss.getSelectedXSheet().getPrintSetup().getLandscape()) {
 			orientation.setSelectedItem(landscape);
 		}
 		else
@@ -122,29 +122,29 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	 */
 	private void applyPrintSetting() {
 		//TODO: move to sheet context
-		ss.getSelectedSheet().getPrintSetup().setLandscape(orientation.getSelectedItem() == landscape);
-		ss.getSelectedSheet().setPrintGridlines(includeGridlines());
+		ss.getSelectedXSheet().getPrintSetup().setLandscape(orientation.getSelectedItem() == landscape);
+		ss.getSelectedXSheet().setPrintGridlines(includeGridlines());
 		boolean isLandscape = orientation.getSelectedItem() == landscape;
-		final XBook book = ss.getBook(); 
+		final XBook book = ss.getXBook(); 
 		if (book == null) {
 			return;
 		}
 		int numSheet = book.getNumberOfSheets();
 		for (int i = 0; i < numSheet; i++) {
-			Sheet sheet = ss.getSheet(i);
+			Sheet sheet = ss.getXSheetAt(i);
 			PrintSetup setup = sheet.getPrintSetup();
 			setup.setLandscape(isLandscape);
 		}
 	}
 	
 	private void revertPrintSetting() {
-		final XBook book = ss.getBook();
+		final XBook book = ss.getXBook();
 		if (book == null) {
 			return;
 		}
 		int numSheet = book.getNumberOfSheets();
 		for (int i = 0; i < numSheet; i++) {
-			Sheet sheet = ss.getSheet(i);
+			Sheet sheet = ss.getXSheetAt(i);
 			PrintSetup setup = sheet.getPrintSetup();
 			setup.setLandscape(orgOrientation);
 		}
@@ -173,7 +173,7 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void export(XExporter exporter, OutputStream outputStream) {
-		final XBook book = ss.getBook();
+		final XBook book = ss.getXBook();
 		if (book == null) {
 			return;
 		}
@@ -184,9 +184,9 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 			Rect rect = selection;
 			String area = ss.getColumntitle(rect.getLeft()) + ss.getRowtitle(rect.getTop()) + ":" + 
 				ss.getColumntitle(rect.getRight()) + ss.getRowtitle(rect.getBottom());
-			exporter.exportSelection(ss.getSelectedSheet(), new AreaReference(area), outputStream);
+			exporter.exportSelection(ss.getSelectedXSheet(), new AreaReference(area), outputStream);
 		} else
-			exporter.export(ss.getSelectedSheet(), outputStream);
+			exporter.export(ss.getSelectedXSheet(), outputStream);
 	}
 	
 	private boolean includeHeadings () {

@@ -85,7 +85,7 @@ public final class CellHelper {
 	}
 
 	public static void clearContent(Spreadsheet spreadsheet, Rect rect) {
-		Utils.visitCells(spreadsheet.getSelectedSheet(), 
+		Utils.visitCells(spreadsheet.getSelectedXSheet(), 
 				rect, 
 				new CellVisitor() {
 					@Override
@@ -100,9 +100,9 @@ public final class CellHelper {
 	
 	public static void clearStyle(Spreadsheet spreadsheet, Rect rect) {
 		XRanges.range(
-				spreadsheet.getSelectedSheet(), 
+				spreadsheet.getSelectedXSheet(), 
 				rect.getTop(), rect.getLeft(),rect.getBottom(), rect.getRight()).
-					setStyle(spreadsheet.getBook().createCellStyle());
+					setStyle(spreadsheet.getXBook().createCellStyle());
 	}
 	
 	/**

@@ -44,7 +44,7 @@ public class FilterCommand implements Command {
 		final Map data = request.getData();
 		String type = (String) data.get("type");
 		if ("onApplyFilter".equals(type)) {
-			applyFilter(((Spreadsheet) comp).getSelectedSheet(), data);
+			applyFilter(((Spreadsheet) comp).getSelectedXSheet(), data);
 		}
 	}
 	

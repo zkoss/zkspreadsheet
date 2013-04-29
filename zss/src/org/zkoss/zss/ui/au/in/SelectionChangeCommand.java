@@ -52,7 +52,7 @@ public class SelectionChangeCommand implements Command {
 		
 		String sheetId= (String) data.get("sheetId");
 		
-		XSheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
 		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		

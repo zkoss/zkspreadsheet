@@ -44,9 +44,9 @@ public class MultiSpreadsheetWindow extends Window implements AfterCompose{
 		
 		XSheet targetSheet;
 		if(event.getTarget()==ss[0])
-			targetSheet=ss[1].getSelectedSheet();
+			targetSheet=ss[1].getSelectedXSheet();
 		else
-			targetSheet=ss[0].getSelectedSheet();
+			targetSheet=ss[0].getSelectedXSheet();
 		
 		Cell tmpCell=Utils.getOrCreateCell(targetSheet, row, col);
 		Utils.setEditText(tmpCell, (String)event.getEditingValue());

@@ -52,9 +52,9 @@ public class ActionCommand implements Command {
 		String act = (String) data.get("act");
 		if ("toolbar".equals(tag)) {
 			spreadsheet.getActionHandler().dispatch(act, data);
-		} else if ("sheet".equals(tag) && spreadsheet.getBook() != null) {
+		} else if ("sheet".equals(tag) && spreadsheet.getXBook() != null) {
 			String sheetId = (String) data.get("sheetId");
-			XSheet sheet = Utils.getSheetByUuid(spreadsheet.getBook(), sheetId);
+			XSheet sheet = Utils.getSheetByUuid(spreadsheet.getXBook(), sheetId);
 			if (sheet != null) {
 				processSheet(act, data, sheet, spreadsheet);
 			}
@@ -62,7 +62,7 @@ public class ActionCommand implements Command {
 	}
 	
 	private void processSheet(String action, Map data, XSheet sheet, Spreadsheet spreadsheet) {
-		XBook book = spreadsheet.getBook();
+		XBook book = spreadsheet.getXBook();
 		if ("add".equals(action)) {
 			String prefix = Labels.getLabel(Action.SHEET.getLabelKey());
 			if (Strings.isEmpty(prefix))
