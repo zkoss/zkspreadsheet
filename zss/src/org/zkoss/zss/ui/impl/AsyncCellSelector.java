@@ -18,7 +18,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Rect;
 
 /**
@@ -27,7 +27,7 @@ import org.zkoss.zss.ui.Rect;
  */
 public class AsyncCellSelector extends CellSelector {
 	
-	public void doVisit(final Worksheet sheet, final Rect rect, final CellVisitor vistor){
+	public void doVisit(final XSheet sheet, final Rect rect, final CellVisitor vistor){
 		new Thread(){
 			public void run() {
 				AsyncCellSelector.super.doVisit(sheet, rect, vistor);

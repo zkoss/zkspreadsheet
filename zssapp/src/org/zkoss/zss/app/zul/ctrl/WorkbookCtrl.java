@@ -22,8 +22,8 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -96,7 +96,7 @@ public interface WorkbookCtrl {
 	
 	public void renameSelectedSheet(String name);
 	
-	public Worksheet getSelectedSheet();
+	public XSheet getSelectedSheet();
 	
 	public void setSelectedSheet(String name);
 	
@@ -172,7 +172,7 @@ public interface WorkbookCtrl {
 	 */
 	public void setBookSrc(String src);
 	
-	public void setBook(Book book);
+	public void setBook(XBook book);
 	
 	/**
 	 * Returns whether current sheet is protected or not
@@ -291,5 +291,5 @@ public interface WorkbookCtrl {
 
 	public Rect getVisibleRect();
 	
-	public boolean setEditTextWithValidation(Worksheet sheet, int row, int col, String txt, EventListener callback);
+	public boolean setEditTextWithValidation(XSheet sheet, int row, int col, String txt, EventListener callback);
 }

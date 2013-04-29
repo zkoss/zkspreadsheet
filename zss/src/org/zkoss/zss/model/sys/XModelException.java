@@ -25,37 +25,37 @@ import org.zkoss.lang.SystemException;
  *
  * @author tomyeh
  */
-public class ModelException extends SystemException {
+public class XModelException extends SystemException {
 	private static final long serialVersionUID = 8278035139743537846L;
 
-	public ModelException(String msg, Throwable cause) {
+	public XModelException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
-	public ModelException(String s) {
+	public XModelException(String s) {
 		super(s);
 	}
-	public ModelException(Throwable cause) {
+	public XModelException(Throwable cause) {
 		super(cause);
 	}
-	public ModelException() {
+	public XModelException() {
 	}
 
-	public ModelException(int code, Object[] fmtArgs, Throwable cause) {
+	public XModelException(int code, Object[] fmtArgs, Throwable cause) {
 		super(code, fmtArgs, cause);
 	}
-	public ModelException(int code, Object fmtArg, Throwable cause) {
+	public XModelException(int code, Object fmtArg, Throwable cause) {
 		super(code, fmtArg, cause);
 	}
-	public ModelException(int code, Object[] fmtArgs) {
+	public XModelException(int code, Object[] fmtArgs) {
 		super(code, fmtArgs);
 	}
-	public ModelException(int code, Object fmtArg) {
+	public XModelException(int code, Object fmtArg) {
 		super(code, fmtArg);
 	}
-	public ModelException(int code, Throwable cause) {
+	public XModelException(int code, Throwable cause) {
 		super(code, cause);
 	}
-	public ModelException(int code) {
+	public XModelException(int code) {
 		super(code);
 	}
 }

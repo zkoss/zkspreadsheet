@@ -5,15 +5,15 @@ import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.zss.api.model.NColor;
 import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.api.model.impl.EnumUtil;
-import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 
 public class NFontImpl implements NFont{
 	
-	ModelRef<Book> bookRef;
+	ModelRef<XBook> bookRef;
 	ModelRef<Font> fontRef;
 	
-	public NFontImpl(ModelRef<Book> book, ModelRef<Font> font) {
+	public NFontImpl(ModelRef<XBook> book, ModelRef<Font> font) {
 		this.bookRef = book;
 		this.fontRef = font;
 	}

@@ -24,9 +24,9 @@ import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.model.sys.Range;
-import org.zkoss.zss.model.sys.Ranges;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
@@ -48,11 +48,11 @@ public class FilterCommand implements Command {
 		}
 	}
 	
-	private void applyFilter (Worksheet worksheet, Map data) {
+	private void applyFilter (XSheet worksheet, Map data) {
 		final boolean selectAll = (Boolean) data.get("all");
 		final String cellRangeAddr = (String) data.get("range");
 		final int field = (Integer) data.get("field");
-		final Range range = Ranges.range(worksheet, cellRangeAddr);
+		final XRange range = XRanges.range(worksheet, cellRangeAddr);
 		
 		if (selectAll) {
 			range.autoFilter(field, null, AutoFilter.FILTEROP_VALUES, null, null);

@@ -25,8 +25,8 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.Events;
@@ -70,10 +70,10 @@ public class SelectSheetCommand implements Command {
 		int rowfreeze = AuRequests.getInt(data, "frow", -1);
 		int colfreeze = AuRequests.getInt(data, "fcol", -1);
 		
-		Book book = spreadsheet.getBook();
+		XBook book = spreadsheet.getBook();
 		int len = book.getNumberOfSheets();
 		for (int i = 0; i < len; i++) {
-			Worksheet sheet = book.getWorksheetAt(i);
+			XSheet sheet = book.getWorksheetAt(i);
 			if (sheetId.equals(((SheetCtrl)sheet).getUuid())) {
 				spreadsheet.setSelectedSheetDirectly(sheet.getSheetName(), cacheInClient, row, col, 
 						left, top, right, bottom,

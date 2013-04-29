@@ -30,9 +30,9 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.Exporter;
-import org.zkoss.zss.model.sys.Exporters;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XExporter;
+import org.zkoss.zss.model.sys.XExporters;
 import org.zkoss.zss.model.sys.impl.Headings;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -109,7 +109,7 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 	private void applyPrintSetting() {
 		//TODO: move to sheet context
 		ss.getSelectedSheet().setPrintGridlines(includeGridlines());
-		final Book book = ss.getBook(); 
+		final XBook book = ss.getBook(); 
 		if (book == null) {
 			return;
 		}
@@ -121,7 +121,7 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void revertPrintSetting() {
-		final Book book = ss.getBook();
+		final XBook book = ss.getBook();
 		if (book == null) {
 			return;
 		}
@@ -137,7 +137,7 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 		
 		applyPrintSetting();
 		
-		Exporter c = Exporters.getExporter("html");
+		XExporter c = XExporters.getExporter("html");
 		if (c instanceof Headings) {
 			((Headings)c).enableHeadings(includeHeadings());
 		}
@@ -164,8 +164,8 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 //		Ranges.range((Worksheet) sheet,3,3).setValue(expr);
 //	}
 	
-	private void export(Exporter exporter, OutputStream outputStream) {
-		final Book book = ss.getBook();
+	private void export(XExporter exporter, OutputStream outputStream) {
+		final XBook book = ss.getBook();
 		if (book == null) {
 			return;
 		}

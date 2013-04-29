@@ -2,15 +2,15 @@ package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.zss.api.model.NColor;
-import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 
 public class NColorImpl implements NColor{
 
-	ModelRef<Book> bookRef;
+	ModelRef<XBook> bookRef;
 	ModelRef<Color> colorRef;
 
-	public NColorImpl(ModelRef<Book> book, ModelRef<Color> color) {
+	public NColorImpl(ModelRef<XBook> book, ModelRef<Color> color) {
 		this.bookRef = book;
 		this.colorRef = color;
 	}

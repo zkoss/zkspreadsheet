@@ -14,11 +14,11 @@ package org.zkoss.zss.model;
 import java.io.OutputStream;
 
 import org.zkoss.poi.ss.util.AreaReference;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XSheet;
 
 /**
- * This interface defines methods for exporting ZK Spreadsheet {@link Book} into another 
+ * This interface defines methods for exporting ZK Spreadsheet {@link XBook} into another 
  * format written to a  {@link OutputStream}.
  * @author ashish
  * @author dennischen
@@ -27,26 +27,26 @@ import org.zkoss.zss.model.sys.Worksheet;
 public interface Exporter {
 
 	/**
-	 * Exports ZK Spreadsheet {@link Book} into another format written to a 
+	 * Exports ZK Spreadsheet {@link XBook} into another format written to a 
 	 * {@link OutputStream}. Note that it exports entire workbook. 
 	 * @param workbook
 	 * @param outputStream
 	 */
-	public void export(Book workbook, OutputStream outputStream);
+	public void export(XBook workbook, OutputStream outputStream);
 
 	/**
 	 * Exports ZK Spreadsheet sheet into another format written to a 
 	 * @param worksheet sheet instance that contains selected area
 	 * @param outputStream outoutStream to which exported contents to be written
 	 */
-	public void export(Worksheet worksheet, OutputStream outputStream);
+	public void export(XSheet worksheet, OutputStream outputStream);
 
 	/**
 	 * Exports selected area of ZK Spreadsheet active sheet represented by 
-	 * {@link org.zkoss.zss.model.sys.Range}
+	 * {@link org.zkoss.zss.model.sys.XRange}
 	 * @param worksheet sheet instance that contains selected area
 	 * @param area area representing selected area to be exported
 	 * @param outputStream outoutStream to which exported contents to be written
 	 */
-	public void exportSelection(Worksheet worksheet, AreaReference area, OutputStream outputStream);
+	public void exportSelection(XSheet worksheet, AreaReference area, OutputStream outputStream);
 }

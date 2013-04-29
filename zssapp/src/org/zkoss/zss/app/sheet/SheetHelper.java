@@ -15,7 +15,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.sheet;
 
 import org.zkoss.poi.ss.usermodel.Sheet;
-import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
@@ -33,7 +33,7 @@ public final class SheetHelper {
 	 * @return -1 if fail to shift sheet
 	 */
 	public static int shiftSheetLeft(Spreadsheet spreadsheet) {
-		final Book book = spreadsheet.getBook();
+		final XBook book = spreadsheet.getBook();
 		if (book != null) {
 			String name = spreadsheet.getSelectedSheet().getSheetName();
 			Sheet sheet = spreadsheet.getSelectedSheet();
@@ -53,7 +53,7 @@ public final class SheetHelper {
 	 * @return -1 if fail to shift sheet
 	 */
 	public static int shiftSheetRight(Spreadsheet spreadsheet) {
-		final Book book = spreadsheet.getBook();
+		final XBook book = spreadsheet.getBook();
 		if (book != null) {
 			String name = spreadsheet.getSelectedSheet().getSheetName();
 			Sheet sheet = spreadsheet.getSelectedSheet();
@@ -75,7 +75,7 @@ public final class SheetHelper {
 	 * @return new index, -1 if delete sheet fail
 	 */
 	public static int deleteSheet(Spreadsheet spreadsheet) {
-		final Book book = spreadsheet.getBook();
+		final XBook book = spreadsheet.getBook();
 		if (book != null) {
 			//Note. Sheet must contain at least one sheet
 			int sheetCount = book.getNumberOfSheets();

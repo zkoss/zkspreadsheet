@@ -26,9 +26,9 @@ import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.FormatText;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XFormatText;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 
 /**
@@ -42,9 +42,9 @@ public class CellFormatHelper {
 	 */
 	private Cell _cell;
 
-	private Worksheet _sheet;
+	private XSheet _sheet;
 	
-	private Book _book;
+	private XBook _book;
 
 	private int _row;
 
@@ -55,9 +55,9 @@ public class CellFormatHelper {
 	
 	private MergeMatrixHelper _mmHelper;
 
-	public CellFormatHelper(Worksheet sheet, int row, int col, MergeMatrixHelper mmhelper) {
+	public CellFormatHelper(XSheet sheet, int row, int col, MergeMatrixHelper mmhelper) {
 		_sheet = sheet;
-		_book = (Book) _sheet.getWorkbook(); 
+		_book = (XBook) _sheet.getWorkbook(); 
 		_row = row;
 		_col = col;
 		_cell = Utils.getCell(sheet, row, col);
@@ -86,7 +86,7 @@ public class CellFormatHelper {
 			if (bgColor != null) {
 				sb.append("background-color:").append(bgColor).append(";");
 			}
-			final FormatText ft = Utils.getFormatText(_cell);
+			final XFormatText ft = Utils.getFormatText(_cell);
 			final boolean isRichText = ft.isRichTextString();
 			final RichTextString rstr = isRichText ? ft.getRichTextString() : null;
 			final String txt = rstr != null ? rstr.getString() : ft.getCellFormatResult().text;
@@ -322,7 +322,7 @@ public class CellFormatHelper {
 			sb.append(BookHelper.getFontCSSStyle(_cell, font));
 
 			//condition color
-			final FormatText ft = Utils.getFormatText(_cell);
+			final XFormatText ft = Utils.getFormatText(_cell);
 			final boolean isRichText = ft.isRichTextString();
 			if (!isRichText && ft.getCellFormatResult().textColor != null) {
 				final Color textColor = ft.getCellFormatResult().textColor;

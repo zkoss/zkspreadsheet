@@ -20,8 +20,8 @@ import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
 
 /**
- * <p>Provides utility method to get instance of specific {@link Importer} implementation
- * such as "excel". Other implementations of {@link Importer} can be registered 
+ * <p>Provides utility method to get instance of specific {@link XImporter} implementation
+ * such as "excel". Other implementations of {@link XImporter} can be registered 
  * via library property in zk.xml
  * </p><p>
  * For example
@@ -39,7 +39,7 @@ import org.zkoss.lang.Library;
  * @author ashish
  *
  */
-public class Importers {
+public class XImporters {
 
 	private static String DEFAULT_ZSS_IMPORTERS_KEY = "org.zkoss.zss.model.default.Importer.class";
 	private static String DEFAULT_ZSSEX_IMPORTERS_KEY = "org.zkoss.zssex.model.default.Importer.class";
@@ -47,12 +47,12 @@ public class Importers {
 	private static Map<String,String> typeClss;
 	
 	/**
-	 * Returns instance of specific {@link Importer} implementation 
+	 * Returns instance of specific {@link XImporter} implementation 
 	 * as identified by type
 	 * @param type
 	 * @return Importer instance or null if not found
 	 */
-	public static Importer getImporter(String type) {
+	public static XImporter getImporter(String type) {
 		if(typeClss == null) {
 			typeClss = new HashMap<String,String>();
 			loadImporters(DEFAULT_ZSS_IMPORTERS_KEY);
@@ -64,8 +64,8 @@ public class Importers {
 		if(importerClnm != null && importerClnm.length() > 0) {
 			try {
 				Object o = Classes.newInstanceByThread(importerClnm);
-				if(o instanceof Importer) {
-					return (Importer) o;
+				if(o instanceof XImporter) {
+					return (XImporter) o;
 				}
 			} catch(Exception ex) {
 			}

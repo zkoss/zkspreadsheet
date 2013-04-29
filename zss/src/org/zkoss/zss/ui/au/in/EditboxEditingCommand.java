@@ -21,7 +21,7 @@ package org.zkoss.zss.ui.au.in;
 import java.util.Map;
 
 import org.zkoss.lang.Objects;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
@@ -50,7 +50,7 @@ public class EditboxEditingCommand implements Command {
 		String sheetId = (String) data.get("sheetId");
 		String clienttxt = (String) data.get("clienttxt");
 
-		Worksheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		XSheet sheet = ((Spreadsheet) comp).getSelectedSheet();
 		if (!Utils.getSheetUuid(sheet).equals(sheetId)) {
 			return;
 		}

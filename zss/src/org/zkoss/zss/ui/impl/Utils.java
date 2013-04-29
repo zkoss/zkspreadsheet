@@ -44,11 +44,11 @@ import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.engine.RefSheet;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.FormatText;
-import org.zkoss.zss.model.sys.Range;
-import org.zkoss.zss.model.sys.Ranges;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XFormatText;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Rect;
@@ -63,13 +63,13 @@ import org.zkoss.zul.Messagebox;
 public class Utils {
 	private static final Log log = Log.lookup(Utils.class);
 
-	public static void autoFilter(Worksheet sheet, Rect selection) {
+	public static void autoFilter(XSheet sheet, Rect selection) {
 		int left = selection.getLeft();
 		int right = selection.getRight();
 		int top = selection.getTop();
 		int btm = selection.getBottom();
 		
-		Range rng = Utils.getRange(sheet, top, left, btm, right);
+		XRange rng = Utils.getRange(sheet, top, left, btm, right);
 				
 		rng.autoFilter();
 	}
@@ -86,16 +86,16 @@ public class Utils {
 	 * @param matchCase true to match the string cases; false to ignore string cases
 	 * @param sortByRows false indicate sort by column (sort from top to bottom); true indicate sort by row (sort from left to right) 
 	 */
-	public static void sort(Worksheet sheet, Rect selection, int[] index, boolean[] order, int[] dataOption, boolean header, boolean matchCase, boolean sortByRows) {
+	public static void sort(XSheet sheet, Rect selection, int[] index, boolean[] order, int[] dataOption, boolean header, boolean matchCase, boolean sortByRows) {
 		int left = selection.getLeft();
 		int right = selection.getRight();
 		int top = selection.getTop();
 		int btm = selection.getBottom();
 		
-		Range rng = Utils.getRange(sheet, top, left, btm, right);
-		Range rng1 = null;
-		Range rng2 = null;
-		Range rng3 = null;
+		XRange rng = Utils.getRange(sheet, top, left, btm, right);
+		XRange rng1 = null;
+		XRange rng2 = null;
+		XRange rng3 = null;
 		boolean desc1 = false;
 		boolean desc2 = false;
 		boolean desc3 = false;
@@ -169,10 +169,10 @@ public class Utils {
 	 * @param transpose true to transpose rows and columns when pasting to this range; default false
 	 * @return the real pasted range
 	 */
-	public static Range pasteSpecial(Worksheet srcSheet, Rect srcRect, Worksheet dstSheet, int tRow, int lCol, int bRow, int rCol, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
-		Range rng = Utils.getRange(srcSheet, srcRect.getTop(), srcRect.getLeft(), srcRect.getBottom(), srcRect.getRight());
-		Range dstRange = Utils.getRange(dstSheet, tRow, lCol, bRow, rCol);
-		Range pasteRange = rng.pasteSpecial(dstRange, pasteType, pasteOp, skipBlanks, transpose);
+	public static XRange pasteSpecial(XSheet srcSheet, Rect srcRect, XSheet dstSheet, int tRow, int lCol, int bRow, int rCol, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
+		XRange rng = Utils.getRange(srcSheet, srcRect.getTop(), srcRect.getLeft(), srcRect.getBottom(), srcRect.getRight());
+		XRange dstRange = Utils.getRange(dstSheet, tRow, lCol, bRow, rCol);
+		XRange pasteRange = rng.pasteSpecial(dstRange, pasteType, pasteOp, skipBlanks, transpose);
 		if (pasteRange == null) {
 			showProtectMessage();
 		}
@@ -192,7 +192,7 @@ public class Utils {
 	 * @param address
 	 * @param display
 	 */
-	public static void setHyperlink(Worksheet sheet, int rowIndex, int colIndex, int linkType, String address, String display) {
+	public static void setHyperlink(XSheet sheet, int rowIndex, int colIndex, int linkType, String address, String display) {
 		Utils.getRange(sheet, rowIndex, colIndex).setHyperlink(linkType, address, display);
 	}
 	/**
@@ -209,7 +209,7 @@ public class Utils {
 	 * @param typeOffset offset type to use
 	 * @param underline underline type
 	 */
-	public static void setFont(Worksheet sheet, Rect rect, final short boldWeight, final Color color, final short fontHeight, final String fontName, 
+	public static void setFont(XSheet sheet, Rect rect, final short boldWeight, final Color color, final short fontHeight, final String fontName, 
 			final boolean italic, final boolean strikeout, final short typeOffset, final byte underline) {
 
 		visitCells(sheet, rect, new CellVisitor(){
@@ -233,7 +233,7 @@ public class Utils {
 	 * @param rect
 	 * @param color color (in string as #RRGGBB)
 	 */
-	public static void setFontColor(final Worksheet sheet, Rect rect, final String color) {
+	public static void setFontColor(final XSheet sheet, Rect rect, final String color) {
 		visitCells(sheet, rect, new CellVisitor() {
 
 			@Override
@@ -261,7 +261,7 @@ public class Utils {
 	 * @param rect selection range
 	 * @param fontName font name
 	 */
-	public static void setFontFamily(final Worksheet sheet, Rect rect, final String fontName) {
+	public static void setFontFamily(final XSheet sheet, Rect rect, final String fontName) {
 
 		visitCells(sheet, rect, new CellVisitor(){
 
@@ -289,7 +289,7 @@ public class Utils {
 	 * @param rect selection range
 	 * @param fontHeight font height in 1/20ths of a point
 	 */
-	public static void setFontHeight(final Worksheet sheet, Rect rect, final short fontHeight) {
+	public static void setFontHeight(final XSheet sheet, Rect rect, final short fontHeight) {
 
 		visitCells(sheet, rect, new CellVisitor(){
 
@@ -315,7 +315,7 @@ public class Utils {
 	 * @param rect
 	 * @param isBold
 	 */
-	public static void setFontBold(final Worksheet sheet, Rect rect, final boolean isBold) {
+	public static void setFontBold(final XSheet sheet, Rect rect, final boolean isBold) {
 
 		visitCells(sheet, rect, new CellVisitor(){
 
@@ -341,7 +341,7 @@ public class Utils {
 	 * @param rect
 	 * @param isItalic
 	 */
-	public static void setFontItalic(final Worksheet sheet, Rect rect, final boolean isItalic) {
+	public static void setFontItalic(final XSheet sheet, Rect rect, final boolean isItalic) {
 
 		visitCells(sheet, rect, new CellVisitor(){
 
@@ -368,7 +368,7 @@ public class Utils {
 	 * @param rect
 	 * @param underline
 	 */
-	public static void setFontUnderline(final Worksheet sheet, Rect rect, final byte underline) {
+	public static void setFontUnderline(final XSheet sheet, Rect rect, final byte underline) {
 		
 		visitCells(sheet, rect, new CellVisitor(){
 
@@ -396,7 +396,7 @@ public class Utils {
 	 * @param rect
 	 * @param isStrikeout
 	 */
-	public static void setFontStrikeout(final Worksheet sheet, Rect rect, final boolean isStrikeout) {
+	public static void setFontStrikeout(final XSheet sheet, Rect rect, final boolean isStrikeout) {
 		visitCells(sheet, rect, new CellVisitor(){
 
 			public void handle(CellVisitorContext context) {
@@ -421,7 +421,7 @@ public class Utils {
 	 * @param rect
 	 * @param alignment
 	 */
-	public static void setAlignment(Worksheet sheet, Rect rect, final short alignment) {
+	public static void setAlignment(XSheet sheet, Rect rect, final short alignment) {
 		visitCells(sheet, rect, new CellVisitor(){
 			@Override
 			public void handle(CellVisitorContext context) {
@@ -441,7 +441,7 @@ public class Utils {
 	 * @param rect
 	 * @param wrapped
 	 */
-	public static void setWrapText(Worksheet sheet, Rect rect, final boolean wrapped) {
+	public static void setWrapText(XSheet sheet, Rect rect, final boolean wrapped) {
 		visitCells(sheet, rect, new CellVisitor(){
 			@Override
 			public void handle(CellVisitorContext context) {
@@ -461,7 +461,7 @@ public class Utils {
 	 * @param rect
 	 * @param locked
 	 */
-	public static void setLocked(Worksheet sheet, Rect rect, final boolean locked) {
+	public static void setLocked(XSheet sheet, Rect rect, final boolean locked) {
 		visitCells(sheet, rect, new CellVisitor(){
 			@Override
 			public void handle(CellVisitorContext context) {
@@ -481,7 +481,7 @@ public class Utils {
 	 * @param rect
 	 * @param format
 	 */
-	public static void setDataFormat(Worksheet sheet, Rect rect, final String format) {
+	public static void setDataFormat(XSheet sheet, Rect rect, final String format) {
 		visitCells(sheet, rect, new CellVisitor(){
 			@Override
 			public void handle(CellVisitorContext context) {
@@ -506,16 +506,16 @@ public class Utils {
 	 * @param rect
 	 * @param vistor
 	 */
-	public static void visitCells(Worksheet sheet, Rect rect, CellVisitor vistor) {
+	public static void visitCells(XSheet sheet, Rect rect, CellVisitor vistor) {
 		new CellSelector().doVisit(sheet, rect, vistor);
 	}
 
 	/**
-	 * Visit each worksheet in the {@link Book}.
+	 * Visit each worksheet in the {@link XBook}.
 	 * @param book
 	 * @param visitor
 	 */
-	public static void visitSheets(Book book, SheetVisitor visitor) {
+	public static void visitSheets(XBook book, SheetVisitor visitor) {
 		new SheetSelector().doVisit(book, visitor);
 	}
 	
@@ -543,8 +543,8 @@ public class Utils {
 	 * @param rect selection range
 	 * @param color color to use
 	 */
-	public static void setBackgroundColor(Worksheet sheet, Rect rect, String color) {
-		final Book book  = (Book) sheet.getWorkbook();
+	public static void setBackgroundColor(XSheet sheet, Rect rect, String color) {
+		final XBook book  = (XBook) sheet.getWorkbook();
 		final Color bsColor = BookHelper.HTMLToColor(book, color);
 		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
 			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
@@ -564,7 +564,7 @@ public class Utils {
 					newCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 				}
 				BookHelper.setFillForegroundColor(newCellStyle, bsColor);
-				Range rng = Utils.getRange(sheet, row, col);
+				XRange rng = Utils.getRange(sheet, row, col);
 				rng.setStyle(newCellStyle);
 			}
 	}
@@ -577,13 +577,13 @@ public class Utils {
 	 * @param lineStyle border line style
 	 * @param color border color
 	 */
-	public static void setBorder(Worksheet sheet, Rect rect, short borderType, BorderStyle lineStyle, String color) {
+	public static void setBorder(XSheet sheet, Rect rect, short borderType, BorderStyle lineStyle, String color) {
 		int lCol = rect.getLeft();
 		int rCol = rect.getRight();
 		int tRow = rect.getTop();
 		int bRow = rect.getBottom();
 
-		Range rng = Ranges.range(sheet, tRow, lCol, bRow, rCol);
+		XRange rng = XRanges.range(sheet, tRow, lCol, bRow, rCol);
 		rng.setBorders(borderType, lineStyle, color);
 	}
 	
@@ -593,7 +593,7 @@ public class Utils {
 	 * @param hlink the Hyperlink
 	 * @return the HTML &lt;a> format string
 	 */
-	public static String formatHyperlink(Worksheet sheet, Hyperlink hlink, String cellText, boolean wrap) {
+	public static String formatHyperlink(XSheet sheet, Hyperlink hlink, String cellText, boolean wrap) {
 		if (hlink == null) {
 			return cellText;
 		}
@@ -601,7 +601,7 @@ public class Utils {
 		final String linkLabel = hlink.getLabel();
 		final String label = !"".equals(cellText) ? cellText :  
 				Utils.escapeCellText(linkLabel == null ? hlink.getAddress() : linkLabel, wrap, false);
-		return BookHelper.formatHyperlink((Book)sheet.getWorkbook(), hlink.getType(), address, label);
+		return BookHelper.formatHyperlink((XBook)sheet.getWorkbook(), hlink.getType(), address, label);
 	}
 	/**
 	 * Format and escape a {@link RichTextString} to HTML &lt;span> string.
@@ -610,9 +610,9 @@ public class Utils {
 	 * @param wrap whether wrap the string if see "\n".
 	 * @return the HTML &lt;span> format string
 	 */
-	public static String formatRichTextString(Worksheet sheet, RichTextString rstr, boolean wrap) {
+	public static String formatRichTextString(XSheet sheet, RichTextString rstr, boolean wrap) {
 		final List<int[]> indexes = new ArrayList<int[]>(rstr.numFormattingRuns()+1);
-		String text = BookHelper.formatRichText((Book)sheet.getWorkbook(), rstr, indexes);
+		String text = BookHelper.formatRichText((XBook)sheet.getWorkbook(), rstr, indexes);
 		return Utils.escapeCellText(text, wrap, true, indexes);
 	}
 
@@ -703,7 +703,7 @@ public class Utils {
 	 * @param colIndex the column index of the cell
 	 * @return or create if not exist the {@link Cell} per the given sheet, row index, and column index. 
 	 */
-	public static Cell getOrCreateCell(Worksheet sheet,int rowIndex, int colIndex){
+	public static Cell getOrCreateCell(XSheet sheet,int rowIndex, int colIndex){
 		Row row = getOrCreateRow(sheet, rowIndex);
 		Cell cell = row.getCell(colIndex);
 		if (cell == null) {
@@ -712,7 +712,7 @@ public class Utils {
 		return cell;
 	}
 	
-	public static Row getOrCreateRow(Worksheet sheet, int rowIndex) {
+	public static Row getOrCreateRow(XSheet sheet, int rowIndex) {
 		Row row = sheet.getRow(rowIndex);
 		if (row == null) {
 			row = sheet.createRow(rowIndex);
@@ -727,143 +727,143 @@ public class Utils {
 	 * @param colIndex the column index of the cell
 	 * @return the {@link Cell} per the given sheet, row index, and column index; return null if cell not exists. 
 	 */
-	public static Cell getCell(Worksheet sheet,int rowIndex, int colIndex){
+	public static Cell getCell(XSheet sheet,int rowIndex, int colIndex){
 		final Row row = sheet.getRow(rowIndex);
 		return row != null ? row.getCell(colIndex) : null; 
 	}
 	
-	public static void copyCell(Worksheet srcSheet, int srcRow, int srcCol, Worksheet dstSheet, int dstRow, int dstCol) {
-		final Range srcRange = getRange(srcSheet, srcRow, srcCol);
-		final Range dstRange = getRange(dstSheet, dstRow, dstCol);
-		final Range pasteRange = srcRange.copy(dstRange);
+	public static void copyCell(XSheet srcSheet, int srcRow, int srcCol, XSheet dstSheet, int dstRow, int dstCol) {
+		final XRange srcRange = getRange(srcSheet, srcRow, srcCol);
+		final XRange dstRange = getRange(dstSheet, dstRow, dstCol);
+		final XRange pasteRange = srcRange.copy(dstRange);
 		if(pasteRange == null) {
 			showProtectMessage();
 		}
 	}
 	
-	public static void copyCell(Cell cell, Worksheet dstSheet, int dstRow, int dstCol) {
-		copyCell((Worksheet)cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex(), dstSheet, dstRow, dstCol);
+	public static void copyCell(Cell cell, XSheet dstSheet, int dstRow, int dstCol) {
+		copyCell((XSheet)cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex(), dstSheet, dstRow, dstCol);
 	}
 	
-	public static void insertRows(Worksheet sheet, int startRow, int endRow) {
-		final Book book = (Book)sheet.getWorkbook();
-		final Range rng = getRange(sheet, startRow, 0, endRow, book.getSpreadsheetVersion().getLastColumnIndex());
-		rng.insert(Range.SHIFT_DEFAULT, Range.FORMAT_LEFTABOVE);
+	public static void insertRows(XSheet sheet, int startRow, int endRow) {
+		final XBook book = (XBook)sheet.getWorkbook();
+		final XRange rng = getRange(sheet, startRow, 0, endRow, book.getSpreadsheetVersion().getLastColumnIndex());
+		rng.insert(XRange.SHIFT_DEFAULT, XRange.FORMAT_LEFTABOVE);
 	}
 
-	public static void deleteRows(Worksheet sheet, int startRow, int endRow) {
-		final Book book = (Book)sheet.getWorkbook();
-		final Range rng = getRange(sheet, startRow, 0, endRow, book.getSpreadsheetVersion().getLastColumnIndex());
-		rng.delete(Range.SHIFT_DEFAULT);
+	public static void deleteRows(XSheet sheet, int startRow, int endRow) {
+		final XBook book = (XBook)sheet.getWorkbook();
+		final XRange rng = getRange(sheet, startRow, 0, endRow, book.getSpreadsheetVersion().getLastColumnIndex());
+		rng.delete(XRange.SHIFT_DEFAULT);
 	}
 
-	public static void insertColumns(Worksheet sheet, int startCol, int endCol) {
-		final Book book = (Book)sheet.getWorkbook();
-		final Range rng = getRange(sheet, 0, startCol, book.getSpreadsheetVersion().getLastRowIndex(), endCol);
-		rng.insert(Range.SHIFT_DEFAULT, Range.FORMAT_LEFTABOVE);
+	public static void insertColumns(XSheet sheet, int startCol, int endCol) {
+		final XBook book = (XBook)sheet.getWorkbook();
+		final XRange rng = getRange(sheet, 0, startCol, book.getSpreadsheetVersion().getLastRowIndex(), endCol);
+		rng.insert(XRange.SHIFT_DEFAULT, XRange.FORMAT_LEFTABOVE);
 	}
 
-	public static void deleteColumns(Worksheet sheet, int startCol, int endCol) {
-		final Book book = (Book)sheet.getWorkbook();
-		final Range rng = getRange(sheet, 0, startCol, book.getSpreadsheetVersion().getLastRowIndex(), endCol);
-		rng.delete(Range.SHIFT_DEFAULT);
+	public static void deleteColumns(XSheet sheet, int startCol, int endCol) {
+		final XBook book = (XBook)sheet.getWorkbook();
+		final XRange rng = getRange(sheet, 0, startCol, book.getSpreadsheetVersion().getLastRowIndex(), endCol);
+		rng.delete(XRange.SHIFT_DEFAULT);
 	}
 
-	public static void setCellValue(Worksheet sheet, int rowIndex, int colIndex, String value) {
+	public static void setCellValue(XSheet sheet, int rowIndex, int colIndex, String value) {
 		final Cell cell = getOrCreateCell(sheet, rowIndex, colIndex);
 		cell.setCellValue(value);
 	}
-	public static void setCellValue(Worksheet sheet, int rowIndex, int colIndex, double value) {
+	public static void setCellValue(XSheet sheet, int rowIndex, int colIndex, double value) {
 		final Cell cell = getOrCreateCell(sheet, rowIndex, colIndex);
 		cell.setCellValue(value);
 	}
-	public static void setCellValue(Worksheet sheet, int rowIndex, int colIndex, boolean value) {
+	public static void setCellValue(XSheet sheet, int rowIndex, int colIndex, boolean value) {
 		final Cell cell = getOrCreateCell(sheet, rowIndex, colIndex);
 		cell.setCellValue(value);
 	}
-	public static void setCellValue(Worksheet sheet, int rowIndex, int colIndex, Date value) {
+	public static void setCellValue(XSheet sheet, int rowIndex, int colIndex, Date value) {
 		final Cell cell = getOrCreateCell(sheet, rowIndex, colIndex);
 		cell.setCellValue(value);
 	}
-	public static void setCellValue(Worksheet sheet, int rowIndex, int colIndex, int value) {
+	public static void setCellValue(XSheet sheet, int rowIndex, int colIndex, int value) {
 		final Cell cell = getOrCreateCell(sheet, rowIndex, colIndex);
 		cell.setCellValue(value);
 	}
 	
 	/**
-	 * Return a cell {@link Range} per the given sheet, row index, and column index.
-	 * @param sheet the sheet to get the {@link Range} from. 
+	 * Return a cell {@link XRange} per the given sheet, row index, and column index.
+	 * @param sheet the sheet to get the {@link XRange} from. 
 	 * @param row the row index of the cell
 	 * @param col the column index of the cell
-	 * @return a cell {@link Range} per the given sheet, row index, and column index.
+	 * @return a cell {@link XRange} per the given sheet, row index, and column index.
 	 */
-	public static Range getRange(Worksheet sheet, int row, int col) {
-		return Ranges.range(sheet, row, col);
+	public static XRange getRange(XSheet sheet, int row, int col) {
+		return XRanges.range(sheet, row, col);
 	}
 
 	/**
-	 * Returns a area {@link Range} per the given sheet, top row index, left column index, 
+	 * Returns a area {@link XRange} per the given sheet, top row index, left column index, 
 	 * bottom row index, and right column index.
-	 * @param sheet the sheet to get the {@link Range} from. 
+	 * @param sheet the sheet to get the {@link XRange} from. 
 	 * @param tRow the top row index of the area
 	 * @param lCol the left column index of the area
 	 * @param bRow the bottom row index of the area
 	 * @param rCol the right column index of the area
-	 * @return a area {@link Range} per the given sheet, top row index, left column index, 
+	 * @return a area {@link XRange} per the given sheet, top row index, left column index, 
 	 * bottom row index, and right column index.
 	 */
-	public static Range getRange(Worksheet sheet, int tRow, int lCol, int bRow, int rCol) {
-		return Ranges.range(sheet, tRow, lCol, bRow, rCol);
+	public static XRange getRange(XSheet sheet, int tRow, int lCol, int bRow, int rCol) {
+		return XRanges.range(sheet, tRow, lCol, bRow, rCol);
 	}
 	
 	/**
-	 * Return a 3D cell {@link Range} per the given sheet, row index, and column index.
-	 * @param firstSheet the sheet to get the {@link Range} from. 
-	 * @param lastSheet the sheet to get the {@link Range} from. 
+	 * Return a 3D cell {@link XRange} per the given sheet, row index, and column index.
+	 * @param firstSheet the sheet to get the {@link XRange} from. 
+	 * @param lastSheet the sheet to get the {@link XRange} from. 
 	 * @param row the row index of the cell
 	 * @param col the column index of the cell
-	 * @return a cell {@link Range} per the given sheet, row index, and column index.
+	 * @return a cell {@link XRange} per the given sheet, row index, and column index.
 	 */
-	public static Range getRange(Worksheet firstSheet, Worksheet lastSheet, int row, int col) {
-		return Ranges.range(firstSheet, lastSheet, row, col);
+	public static XRange getRange(XSheet firstSheet, XSheet lastSheet, int row, int col) {
+		return XRanges.range(firstSheet, lastSheet, row, col);
 	}
 	
 	/**
-	 * Return a 3D area {@link Range} per the given sheet, top row index, left column index, 
+	 * Return a 3D area {@link XRange} per the given sheet, top row index, left column index, 
 	 * bottom row index, and right column index.
-	 * @param firstSheet the sheet to get the {@link Range} from. 
-	 * @param lastSheet the sheet to get the {@link Range} from. 
+	 * @param firstSheet the sheet to get the {@link XRange} from. 
+	 * @param lastSheet the sheet to get the {@link XRange} from. 
 	 * @param tRow the top row index of the area
 	 * @param lCol the left column index of the area
 	 * @param bRow the bottom row index of the area
 	 * @param rCol the right column index of the area
-	 * @return a 3D area {@link Range} per the given sheet, top row index, left column index, 
+	 * @return a 3D area {@link XRange} per the given sheet, top row index, left column index, 
 	 * bottom row index, and right column index.
 	 */
-	public static Range getRange(Worksheet firstSheet, Worksheet lastSheet, int tRow, int lCol, int bRow, int rCol) {
-		return Ranges.range(firstSheet, lastSheet, tRow, lCol, bRow, rCol);
+	public static XRange getRange(XSheet firstSheet, XSheet lastSheet, int tRow, int lCol, int bRow, int rCol) {
+		return XRanges.range(firstSheet, lastSheet, tRow, lCol, bRow, rCol);
 	} 
 	
 	/**
-	 * Returns the uuid of the specified {@link Worksheet}. 
-	 * to identify a {@link Worksheet})
+	 * Returns the uuid of the specified {@link XSheet}. 
+	 * to identify a {@link XSheet})
 	 * @param sheet the sheet
-	 * @return the uuid of the specified {@link Worksheet}.
+	 * @return the uuid of the specified {@link XSheet}.
 	 */
-	public static String getSheetUuid(Worksheet sheet){
+	public static String getSheetUuid(XSheet sheet){
 		return ((SheetCtrl)sheet).getUuid();
 	}
 	
 	/**
-	 * Returns the {@link Worksheet} of the specified uuid; null if id not exists.
-	 * @param book the book the contains the {@link Worksheet}
+	 * Returns the {@link XSheet} of the specified uuid; null if id not exists.
+	 * @param book the book the contains the {@link XSheet}
 	 * @param uuid the sheet uuid
-	 * @return the {@link Worksheet} of the specified uuid; null if id not exists.
+	 * @return the {@link XSheet} of the specified uuid; null if id not exists.
 	 */
-	public static Worksheet getSheetByUuid(Book book, String uuid) {
+	public static XSheet getSheetByUuid(XBook book, String uuid) {
 		int count = book.getNumberOfSheets();
 		for(int j = 0; j < count; ++j) {
-			Worksheet sheet = book.getWorksheetAt(j);
+			XSheet sheet = book.getWorksheetAt(j);
 			if (uuid.equals(getSheetUuid(sheet))) {
 				return sheet;
 			}
@@ -881,12 +881,12 @@ public class Utils {
 	}
 	
 	/**
-	 * Returns the associated model sheet({@link Worksheet}) per the given the reference sheet({@link RefSheet}). 
+	 * Returns the associated model sheet({@link XSheet}) per the given the reference sheet({@link RefSheet}). 
 	 * @param book the model book
 	 * @param refSheet the reference sheet
-	 * @return the associated model sheet({@link Worksheet}) per the given the reference sheet({@link RefSheet}).
+	 * @return the associated model sheet({@link XSheet}) per the given the reference sheet({@link RefSheet}).
 	 */
-	public static Worksheet getSheetByRefSheet(Book book, RefSheet refSheet) {
+	public static XSheet getSheetByRefSheet(XBook book, RefSheet refSheet) {
 		return book.getWorksheet(refSheet.getSheetName());
 	}
 
@@ -896,7 +896,7 @@ public class Utils {
 	 * @return the {@link Hyperlink} to be shown on the specified cell.
 	 */
 	public static Hyperlink getHyperlink(Cell cell) {
-		Range range = getRange((Worksheet)cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
+		XRange range = getRange((XSheet)cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
 		return range.getHyperlink();
 	}
 	/**
@@ -905,21 +905,21 @@ public class Utils {
 	 * @return the {@link RichTextString} to be shown on the specified cell.
 	 */
 	public static RichTextString getText(Cell cell) {
-		Range range = getRange((Worksheet)cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
+		XRange range = getRange((XSheet)cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
 		return range.getText();
 	}
 	
-	public static FormatText getFormatText(Cell cell) {
+	public static XFormatText getFormatText(Cell cell) {
 		//TODO, shall cache the FormatText inside cell. value/style/evaluate then invalidate the cache 
-		Range range = getRange((Worksheet)cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
+		XRange range = getRange((XSheet)cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
 		return range.getFormatText();
 	}
 	
-	public static String getCellText(Worksheet sheet, Cell cell) {
+	public static String getCellText(XSheet sheet, Cell cell) {
 		CellStyle style = (cell == null) ? null : cell.getCellStyle();
 		boolean wrap = style != null && style.getWrapText();
 		Hyperlink hlink = cell == null ? null : Utils.getHyperlink(cell);
-		final FormatText ft = (cell == null) ? null : Utils.getFormatText(cell);
+		final XFormatText ft = (cell == null) ? null : Utils.getFormatText(cell);
 		
 		final RichTextString rstr = ft != null && ft.isRichTextString() ? ft.getRichTextString() : null; 
 		String text = rstr != null ? Utils.formatRichTextString(sheet, rstr, wrap) : ft != null ? Utils.escapeCellText(ft.getCellFormatResult().text, wrap, true) : "";
@@ -945,7 +945,7 @@ public class Utils {
 	 * @param col the column index
 	 * @param value the user input text
 	 */
-	public static void setEditText(Worksheet sheet, int row, int col, String value) {
+	public static void setEditText(XSheet sheet, int row, int col, String value) {
 		final Cell cell = getOrCreateCell(sheet, row, col);
 		setEditText(cell, value);
 	}
@@ -956,7 +956,7 @@ public class Utils {
 	 * @param txt the user input text.
 	 */
 	public static void setEditText(Cell cell, String txt) {
-		final Range range = getRange((Worksheet)cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
+		final XRange range = getRange((XSheet)cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
 		range.setEditText(txt);
 	}
 
@@ -966,7 +966,7 @@ public class Utils {
 	 * @return the {@link RichTextString} for editing on the cell.
 	 */
 	public static RichTextString getRichEditText(Cell cell) {
-		final Range range = getRange((Worksheet)cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
+		final XRange range = getRange((XSheet)cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
 		return range.getRichEditText();
 	}
 	
@@ -976,21 +976,21 @@ public class Utils {
 	 * @param value the user input {@link RichTextString} to be set into the cell.
 	 */
 	public static void setRichEditText(Cell cell, RichTextString value) {
-		final Range range = getRange((Worksheet)cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
+		final XRange range = getRange((XSheet)cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex());
 		range.setRichEditText(value);
 	}
 	
-	public static void mergeCells(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, boolean across) {
-		Range rng = getRange(sheet, tRow, lCol, bRow, rCol);
+	public static void mergeCells(XSheet sheet, int tRow, int lCol, int bRow, int rCol, boolean across) {
+		XRange rng = getRange(sheet, tRow, lCol, bRow, rCol);
 		rng.merge(across);
 	}
 	
-	public static void unmergeCells(Worksheet sheet, int tRow, int lCol, int bRow, int rCol) {
-		Range rng = getRange(sheet, tRow, lCol, bRow, rCol);
+	public static void unmergeCells(XSheet sheet, int tRow, int lCol, int bRow, int rCol) {
+		XRange rng = getRange(sheet, tRow, lCol, bRow, rCol);
 		rng.unMerge();
 	}
 	
-	public static int getWidthInPx(Worksheet zkSheet, ClientAnchor anchor, int charWidth) {
+	public static int getWidthInPx(XSheet zkSheet, ClientAnchor anchor, int charWidth) {
 	    final int l = anchor.getCol1();
 	    final int lfrc = anchor.getDx1();
 	    
@@ -1017,7 +1017,7 @@ public class Utils {
 	    return width;
 	}
 	
-	public static int getHeightInPx(Worksheet zkSheet, ClientAnchor anchor) {
+	public static int getHeightInPx(XSheet zkSheet, ClientAnchor anchor) {
 	    final int t = anchor.getRow1();
 	    final int tfrc = anchor.getDy1();
 	    
@@ -1043,7 +1043,7 @@ public class Utils {
 	    return height;
 	}
 	
-	public static int getTopFraction(Worksheet zkSheet, ClientAnchor anchor) {
+	public static int getTopFraction(XSheet zkSheet, ClientAnchor anchor) {
 	    final int t = anchor.getRow1();
 	    final int tfrc = anchor.getDy1();
 	    
@@ -1052,7 +1052,7 @@ public class Utils {
 	    return tfrc >= 256 ? th : (th * tfrc / 256);  
 	}
 	
-	public static int getLeftFraction(Worksheet zkSheet, ClientAnchor anchor, int charWidth) {
+	public static int getLeftFraction(XSheet zkSheet, ClientAnchor anchor, int charWidth) {
 	    final int l = anchor.getCol1();
 	    final int lfrc = anchor.getDx1();
 	    
@@ -1061,15 +1061,15 @@ public class Utils {
 	    return lfrc >= 1024 ? lw : (lw * lfrc / 1024);  
 	}
 	
-	public static int getColumnWidthInPx(Worksheet sheet, int col) {
-		return getWidthAny(sheet, col, ((Book)sheet.getWorkbook()).getDefaultCharWidth());
+	public static int getColumnWidthInPx(XSheet sheet, int col) {
+		return getWidthAny(sheet, col, ((XBook)sheet.getWorkbook()).getDefaultCharWidth());
 	}
 	
-	public static int getRowHeightInPx(Worksheet sheet, int row) {
+	public static int getRowHeightInPx(XSheet sheet, int row) {
 		return getHeightAny(sheet, row);
 	}
 	
-	public static int getRowHeightInPx(Worksheet sheet, Row row) {
+	public static int getRowHeightInPx(XSheet sheet, Row row) {
 		final int defaultHeight = sheet.getDefaultRowHeight();
 		int h = row == null ? defaultHeight : row.getHeight();
 		if (h == 0xFF) {
@@ -1078,15 +1078,15 @@ public class Utils {
 		return twipToPx(h);
 	}
 	
-	public static int getDefaultColumnWidthInPx(Worksheet sheet) {
+	public static int getDefaultColumnWidthInPx(XSheet sheet) {
 		int columnWidth = sheet != null ? sheet.getDefaultColumnWidth() : -1;
 		return columnWidth <= 0 ? 64 : Utils.defaultColumnWidthToPx(columnWidth, getDefaultCharWidth(sheet));
 	}
 	
-	public static int getDefaultCharWidth(Worksheet sheet) {
-		return ((Book)sheet.getWorkbook()).getDefaultCharWidth();
+	public static int getDefaultCharWidth(XSheet sheet) {
+		return ((XBook)sheet.getWorkbook()).getDefaultCharWidth();
 	}
-	public static int getWidthAny(Worksheet zkSheet,int col, int charWidth){
+	public static int getWidthAny(XSheet zkSheet,int col, int charWidth){
 		int w = zkSheet.getColumnWidth(col);
 		if (w == zkSheet.getDefaultColumnWidth() * 256) { //default column width
 			return Utils.defaultColumnWidthToPx(w / 256, charWidth);
@@ -1094,7 +1094,7 @@ public class Utils {
 		return fileChar256ToPx(w, charWidth);
 	}
 	
-	public static int getHeightAny(Worksheet sheet, int row){
+	public static int getHeightAny(XSheet sheet, int row){
 		return getRowHeightInPx(sheet, sheet.getRow(row));
 	}
 	
@@ -1192,11 +1192,11 @@ public class Utils {
 		return Math.floor(w * 100 + 0.5) / 100;
 	}
 
-	public static String getColumnTitle(Worksheet sheet, int col) {
+	public static String getColumnTitle(XSheet sheet, int col) {
 		return CellReference.convertNumToColString(col);
 	}
 	
-	public static String getRowTitle(Worksheet sheet, int row) {
+	public static String getRowTitle(XSheet sheet, int row) {
 		return ""+(row+1);
 	}
 
@@ -1206,9 +1206,9 @@ public class Utils {
 	 * @param col
 	 * @param px column width in pixel
 	 */
-	public static void setColumnWidth(Worksheet sheet, int col, int px) {
-		final int char256 = Utils.pxToFileChar256(px, ((Book)sheet.getWorkbook()).getDefaultCharWidth());
-		final Range rng = Utils.getRange(sheet, -1 , col);
+	public static void setColumnWidth(XSheet sheet, int col, int px) {
+		final int char256 = Utils.pxToFileChar256(px, ((XBook)sheet.getWorkbook()).getDefaultCharWidth());
+		final XRange rng = Utils.getRange(sheet, -1 , col);
 		rng.setColumnWidth(char256);
 	}
 	
@@ -1218,62 +1218,62 @@ public class Utils {
 	 * @param row
 	 * @param px row height in pixel 
 	 */
-	public static void setRowHeight(Worksheet sheet, int row, int px) {
+	public static void setRowHeight(XSheet sheet, int row, int px) {
 		final int points = Utils.pxToPoint(px);
-		final Range rng = Utils.getRange(sheet, row, -1);
+		final XRange rng = Utils.getRange(sheet, row, -1);
 		rng.setRowHeight(points);
 	}
 	
-	public static void moveRows(Worksheet sheet, int tRow, int bRow, int nRow) {
-		final int maxcol = ((Book)sheet.getWorkbook()).getSpreadsheetVersion().getLastColumnIndex();
-		final Range rng = Utils.getRange(sheet, tRow, 0, bRow, maxcol);
+	public static void moveRows(XSheet sheet, int tRow, int bRow, int nRow) {
+		final int maxcol = ((XBook)sheet.getWorkbook()).getSpreadsheetVersion().getLastColumnIndex();
+		final XRange rng = Utils.getRange(sheet, tRow, 0, bRow, maxcol);
 		rng.move(nRow, 0);
 	}
 
-	public static void moveColumns(Worksheet sheet, int lCol, int rCol, int nCol) {
-		final int maxrow = ((Book)sheet.getWorkbook()).getSpreadsheetVersion().getLastRowIndex();
-		final Range rng = Utils.getRange(sheet, 0, lCol, maxrow, rCol);
+	public static void moveColumns(XSheet sheet, int lCol, int rCol, int nCol) {
+		final int maxrow = ((XBook)sheet.getWorkbook()).getSpreadsheetVersion().getLastRowIndex();
+		final XRange rng = Utils.getRange(sheet, 0, lCol, maxrow, rCol);
 		rng.move(0, nCol);
 	}
 	
-	public static void moveCells(Worksheet sheet, int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
-		final Range rng = Utils.getRange(sheet, tRow, lCol, bRow, rCol);
+	public static void moveCells(XSheet sheet, int tRow, int lCol, int bRow, int rCol, int nRow, int nCol) {
+		final XRange rng = Utils.getRange(sheet, tRow, lCol, bRow, rCol);
 		rng.move(nRow, nCol);
 	}
 	
-	public static void fillRows(Worksheet sheet, int srctRow, int srcbRow, int dsttRow, int dstbRow) {
-		final int maxcol = ((Book)sheet.getWorkbook()).getSpreadsheetVersion().getLastColumnIndex();
+	public static void fillRows(XSheet sheet, int srctRow, int srcbRow, int dsttRow, int dstbRow) {
+		final int maxcol = ((XBook)sheet.getWorkbook()).getSpreadsheetVersion().getLastColumnIndex();
 		fillRows(sheet, srctRow, 0, srcbRow, maxcol, dsttRow, dstbRow);
 	}
 	
-	private static void fillRows(Worksheet sheet, int srctRow, int srclCol, int srcbRow, int srcrCol, int dsttRow, int dstbRow) {
+	private static void fillRows(XSheet sheet, int srctRow, int srclCol, int srcbRow, int srcrCol, int dsttRow, int dstbRow) {
 		if (srctRow == dsttRow && srcbRow > dstbRow) { //if remove bottom
-			final Range rng = Utils.getRange(sheet, dstbRow+1, srclCol, srcbRow, srcrCol);
+			final XRange rng = Utils.getRange(sheet, dstbRow+1, srclCol, srcbRow, srcrCol);
 			rng.clearContents();
 		} else { //fill
-			final Range srcRange = Utils.getRange(sheet, srctRow, srclCol, srcbRow, srcrCol);
-			final Range dstRange = Utils.getRange(sheet, dsttRow, srclCol, dstbRow, srcrCol); 
-			srcRange.autoFill(dstRange, Range.FILL_DEFAULT);
+			final XRange srcRange = Utils.getRange(sheet, srctRow, srclCol, srcbRow, srcrCol);
+			final XRange dstRange = Utils.getRange(sheet, dsttRow, srclCol, dstbRow, srcrCol); 
+			srcRange.autoFill(dstRange, XRange.FILL_DEFAULT);
 		}
 	}
 	
-	public static void fillColumns(Worksheet sheet, int srclCol, int srcrCol, int dstlCol, int dstrCol) {
-		final int maxrow = ((Book)sheet.getWorkbook()).getSpreadsheetVersion().getLastRowIndex();
+	public static void fillColumns(XSheet sheet, int srclCol, int srcrCol, int dstlCol, int dstrCol) {
+		final int maxrow = ((XBook)sheet.getWorkbook()).getSpreadsheetVersion().getLastRowIndex();
 		fillColumns(sheet, 0, srclCol, maxrow, srcrCol, dstlCol, dstrCol);
 	}
 	
-	private static void fillColumns(Worksheet sheet, int srctRow, int srclCol, int srcbRow, int srcrCol, int dstlCol, int dstrCol) {
+	private static void fillColumns(XSheet sheet, int srctRow, int srclCol, int srcbRow, int srcrCol, int dstlCol, int dstrCol) {
 		if (srclCol == dstlCol && srcrCol > dstrCol) { //if remove right
-			final Range rng = Utils.getRange(sheet, srctRow, dstrCol+1, srcbRow, srcrCol);
+			final XRange rng = Utils.getRange(sheet, srctRow, dstrCol+1, srcbRow, srcrCol);
 			rng.clearContents();
 		} else { //fill
-			final Range srcRange = Utils.getRange(sheet, srctRow, srclCol, srcbRow, srcrCol);
-			final Range dstRange = Utils.getRange(sheet, srctRow, dstlCol, srcbRow, dstrCol); 
-			srcRange.autoFill(dstRange, Range.FILL_DEFAULT);
+			final XRange srcRange = Utils.getRange(sheet, srctRow, srclCol, srcbRow, srcrCol);
+			final XRange dstRange = Utils.getRange(sheet, srctRow, dstlCol, srcbRow, dstrCol); 
+			srcRange.autoFill(dstRange, XRange.FILL_DEFAULT);
 		}
 	}
 	
-	public static void fillCells(Worksheet sheet, int srctRow, int srclCol, int srcbRow, int srcrCol, int dsttRow, int dstlCol, int dstbRow, int dstrCol) {
+	public static void fillCells(XSheet sheet, int srctRow, int srclCol, int srcbRow, int srcrCol, int dsttRow, int dstlCol, int dstbRow, int dstrCol) {
 		if (srctRow == dsttRow && srcbRow == dstbRow) { //fillColumns
 			fillColumns(sheet, srctRow, srclCol, srcbRow, srcrCol, dstlCol, dstrCol);
 		} else if (srclCol == dstlCol && srcrCol == dstrCol) { //fillRows
@@ -1281,7 +1281,7 @@ public class Utils {
 		}
 	}
 
-	public static boolean setEditTextWithValidation(Spreadsheet ss, Worksheet sheet, int row, int col, String txt, EventListener callback) {
+	public static boolean setEditTextWithValidation(Spreadsheet ss, XSheet sheet, int row, int col, String txt, EventListener callback) {
 		if (ss.validate(sheet, row, col, txt, callback)) {
 			setEditText(sheet, row, col, txt);
 			return true;

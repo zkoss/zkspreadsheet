@@ -3,7 +3,7 @@ package org.zkoss.zss.api;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.api.model.NSheet;
 import org.zkoss.zss.api.model.impl.NSheetImpl;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.impl.Utils;
 
 public class UnitUtil {
@@ -48,7 +48,7 @@ public class UnitUtil {
 		int lX = 0;
 		int lY = 0;
 		
-		Worksheet ws = ((NSheetImpl)sheet).getNative();
+		XSheet ws = ((NSheetImpl)sheet).getNative();
 //		Book book = ws.getBook();
 		for(int i = column;;i++){
 			if(ws.isColumnHidden(i)){

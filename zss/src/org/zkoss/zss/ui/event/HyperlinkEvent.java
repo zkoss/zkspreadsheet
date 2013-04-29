@@ -16,7 +16,7 @@ package org.zkoss.zss.ui.event;
 import java.util.Map;
 
 import org.zkoss.poi.ss.usermodel.Hyperlink;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.au.AuRequests;
 import org.zkoss.zk.ui.Component;
@@ -37,7 +37,7 @@ public class HyperlinkEvent extends CellMouseEvent{
 		final Map data = request.getData();
 		final Component comp = request.getComponent();
 		String sheetId = (String) data.get("sheetId");
-		Worksheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		XSheet sheet = ((Spreadsheet) comp).getSelectedSheet();
 		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return null;
 		
@@ -53,7 +53,7 @@ public class HyperlinkEvent extends CellMouseEvent{
 				AuRequests.getInt(data, "pageX", 0, true),
 				AuRequests.getInt(data, "pageY", 0, true), keys);
 	}
-	public HyperlinkEvent(String name, Component target, Worksheet sheet, int row ,int col, String href, int type, int x, int y,
+	public HyperlinkEvent(String name, Component target, XSheet sheet, int row ,int col, String href, int type, int x, int y,
 			int pageX, int pageY, int keys) {
 		super(name, target, x, y, keys, sheet, row, col, pageX, pageY);
 		this._href = href;

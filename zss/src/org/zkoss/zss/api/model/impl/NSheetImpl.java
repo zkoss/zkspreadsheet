@@ -2,20 +2,20 @@ package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.model.NSheet;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XSheet;
 
 public class NSheetImpl implements NSheet{
-	ModelRef<Worksheet> sheetRef;
+	ModelRef<XSheet> sheetRef;
 	NBook nbook;
-	public NSheetImpl(ModelRef<Worksheet> sheet){
+	public NSheetImpl(ModelRef<XSheet> sheet){
 		this.sheetRef = sheet;
 	}
 	
-	public Worksheet getNative(){
+	public XSheet getNative(){
 		return sheetRef.get();
 	}
-	public ModelRef<Worksheet> getRef(){
+	public ModelRef<XSheet> getRef(){
 		return sheetRef;
 	}
 	
@@ -47,7 +47,7 @@ public class NSheetImpl implements NSheet{
 		if(nbook!=null){
 			return nbook;
 		}
-		nbook = new NBookImpl(new SimpleRef<Book>(getNative().getBook()));
+		nbook = new NBookImpl(new SimpleRef<XBook>(getNative().getBook()));
 		return nbook;
 	}
 	

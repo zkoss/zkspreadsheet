@@ -62,10 +62,10 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zss.engine.event.SSDataEvent;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.Range;
-import org.zkoss.zss.model.sys.Ranges;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Action;
@@ -94,7 +94,7 @@ public abstract class ActionHandler {
 	protected Uploader _insertPicture;
 	protected Upload _upload;
 	protected Rect _insertPictureSelection;
-	protected Book _book;
+	protected XBook _book;
 	protected Clipboard _clipboard;
 	protected Set<Action> toggleAction = new HashSet<Action>();
 	private static Action[] _defaultDisabledActionOnBookClosed = new Action[]{
@@ -445,10 +445,10 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doHideRow(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 				.getRows()
 				.setHidden(true);	
@@ -461,10 +461,10 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doUnhideRow(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 				.getRows()
 				.setHidden(false);	
@@ -477,10 +477,10 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doUnhideColumn(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 				.getColumns()
 				.setHidden(false);	
@@ -493,10 +493,10 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doHideColumn(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 				.getColumns()
 				.setHidden(true);	
@@ -567,13 +567,13 @@ public abstract class ActionHandler {
 			return;
 		}
 		
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null) {
 			if (!sheet.getProtect()) {
 				final Media media = evt.getMedia();
 				if (media instanceof AImage) {
 					AImage image = (AImage)media;
-					Ranges
+					XRanges
 					.range(_spreadsheet.getSelectedSheet())
 					.addPicture(getClientAnchor(_insertPictureSelection.getTop(), _insertPictureSelection.getLeft(), 
 							image.getWidth(), image.getHeight()), image.getByteData(), getImageFormat(image));
@@ -610,7 +610,7 @@ public abstract class ActionHandler {
 	}
 	
 	protected void setVerticalAlign(final short alignment, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.visitCells(sheet, selection, new CellVisitor(){
@@ -631,7 +631,7 @@ public abstract class ActionHandler {
 	}
 	
 	protected void setHorizontalAlign(final short alignment, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.visitCells(sheet, selection, new CellVisitor(){
@@ -664,11 +664,11 @@ public abstract class ActionHandler {
 	
 	protected void syncClipboard() {
 		if (_clipboard != null) {
-			final Book srcBook = _clipboard.book;
+			final XBook srcBook = _clipboard.book;
 			if (!srcBook.equals(_spreadsheet.getBook())) {
 				_clipboard = null;
 			} else {
-				final Worksheet srcSheet = _clipboard.sourceSheet;
+				final XSheet srcSheet = _clipboard.sourceSheet;
 				boolean validSheet = srcBook.getSheetIndex(srcSheet) >= 0;
 				if (!validSheet) {
 					clearClipboard();
@@ -682,7 +682,7 @@ public abstract class ActionHandler {
 	}
 	
 	protected void syncAutoFilter() {
-		final Worksheet worksheet = _spreadsheet.getSelectedSheet();
+		final XSheet worksheet = _spreadsheet.getSelectedSheet();
 		boolean appliedFilter = false;
 		AutoFilter af = worksheet.getAutoFilter();
 		if (af != null) {
@@ -739,7 +739,7 @@ public abstract class ActionHandler {
 	 * @param event
 	 */
 	public void doCtrlKey(KeyEvent event) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		Rect selection = event.getSelection();
 		if (sheet == null || !isValidSelection(selection)) {
 			return;
@@ -873,7 +873,7 @@ public abstract class ActionHandler {
 	 * Execute when user click copy
 	 */
 	public void doCopy(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			_clipboard = new Clipboard(Clipboard.Type.COPY, selection, sheet, _spreadsheet.getBook());
 			_spreadsheet.setHighlight(selection);
@@ -887,10 +887,10 @@ public abstract class ActionHandler {
 	 * @param transpose
 	 */
 	protected void doPasteImpl(Rect selection, int pasteType, int pasteOperation, boolean skipBlank, boolean transpose) {
-		Book srcBook = _clipboard.book;
-		Book targetBook = _spreadsheet.getBook();
+		XBook srcBook = _clipboard.book;
+		XBook targetBook = _spreadsheet.getBook();
 		if (targetBook != null && targetBook.equals(srcBook)) {
-			final Worksheet srcSheet = _clipboard.sourceSheet;
+			final XSheet srcSheet = _clipboard.sourceSheet;
 			boolean validSheet = srcBook.getSheetIndex(srcSheet) >= 0;
 			if (!validSheet) {
 				clearClipboard();
@@ -898,7 +898,7 @@ public abstract class ActionHandler {
 			}
 			
 			final Rect srcRect = _clipboard.sourceRect;
-			Range rng = Utils.pasteSpecial(srcSheet,
+			XRange rng = Utils.pasteSpecial(srcSheet,
 					srcRect, 
 					_spreadsheet.getSelectedSheet(), 
 					selection.getTop(),
@@ -910,7 +910,7 @@ public abstract class ActionHandler {
 					skipBlank, transpose);
 			
 			if (_clipboard.type == Clipboard.Type.CUT) {
-				Ranges
+				XRanges
 				.range(srcSheet, srcRect.getTop(), srcRect.getLeft(), srcRect.getBottom(), srcRect.getRight())
 				.clearContents();
 				
@@ -932,7 +932,7 @@ public abstract class ActionHandler {
 			&& selection.getBottom() >= 0 && selection.getRight() >= 0;
 	}
 	
-	protected boolean isProtected(int tRow, int lCol, int bRow, int rCol, Worksheet sheet) {
+	protected boolean isProtected(int tRow, int lCol, int bRow, int rCol, XSheet sheet) {
 		boolean shtProtect = sheet.getProtect();
 		if (!shtProtect)
 			return false;
@@ -965,10 +965,10 @@ public abstract class ActionHandler {
 	 * Execute when user click paste 
 	 */
 	public void doPaste(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && _clipboard != null && isValidSelection(selection)) {
 			if (!isProtected(selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight(), sheet)) {
-				doPasteImpl(selection, Range.PASTE_ALL, Range.PASTEOP_NONE, false, false);
+				doPasteImpl(selection, XRange.PASTE_ALL, XRange.PASTEOP_NONE, false, false);
 			} else {
 				showProtectMessage();
 			}
@@ -980,10 +980,10 @@ public abstract class ActionHandler {
 	 * Execute when user click paste formula
 	 */
 	public void doPasteFormula(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && _clipboard != null && isValidSelection(selection)) {
 			if (!isProtected(selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight(), sheet)) {
-				doPasteImpl(selection, Range.PASTE_FORMULAS, Range.PASTEOP_NONE, false, false);
+				doPasteImpl(selection, XRange.PASTE_FORMULAS, XRange.PASTEOP_NONE, false, false);
 			} else {
 				showProtectMessage();
 			}
@@ -994,10 +994,10 @@ public abstract class ActionHandler {
 	 *  Execute when user click paste value
 	 */
 	public void doPasteValue(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && _clipboard != null && isValidSelection(selection)) {
 			if (!isProtected(selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight(), sheet)) {
-				doPasteImpl(selection, Range.PASTE_VALUES, Range.PASTEOP_NONE, false, false);
+				doPasteImpl(selection, XRange.PASTE_VALUES, XRange.PASTEOP_NONE, false, false);
 			} else {
 				showProtectMessage();
 			}
@@ -1008,10 +1008,10 @@ public abstract class ActionHandler {
 	 * Execute when user click paste all except border
 	 */
 	public void doPasteAllExceptBorder(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && _clipboard != null && isValidSelection(selection)) {
 			if (!isProtected(selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight(), _spreadsheet.getSelectedSheet())) {
-				doPasteImpl(selection, Range.PASTE_ALL_EXCEPT_BORDERS, Range.PASTEOP_NONE, false, false);
+				doPasteImpl(selection, XRange.PASTE_ALL_EXCEPT_BORDERS, XRange.PASTEOP_NONE, false, false);
 			} else {
 				showProtectMessage();
 			}
@@ -1022,10 +1022,10 @@ public abstract class ActionHandler {
 	 * Execute when user click paste transpose
 	 */
 	public void doPasteTranspose(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && _clipboard != null && isValidSelection(selection)) {
 			if (!isProtected(selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight(), sheet)) {
-				doPasteImpl(selection, Range.PASTE_ALL, Range.PASTEOP_NONE, false, true);
+				doPasteImpl(selection, XRange.PASTE_ALL, XRange.PASTEOP_NONE, false, true);
 			} else {
 				showProtectMessage();
 			}
@@ -1041,7 +1041,7 @@ public abstract class ActionHandler {
 	 * Execute when user click cut
 	 */
 	public void doCut(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!isProtected(selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight(), sheet)) {
 				_clipboard = new Clipboard(Clipboard.Type.CUT, selection, sheet, _spreadsheet.getBook());
@@ -1058,7 +1058,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doFontFamily(String fontFamily, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.setFontFamily(sheet, selection, fontFamily);	
@@ -1074,7 +1074,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doFontSize(int fontSize, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				short fontHeightInPoint = (short)(fontSize * 20);
@@ -1086,7 +1086,7 @@ public abstract class ActionHandler {
 	}
 	
 	private Font getCellFont(int row, int col) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		Cell cell = Utils.getOrCreateCell(sheet, row, col);
 		return _spreadsheet.getBook().getFontAt(cell.getCellStyle().getFontIndex());
 	}
@@ -1097,7 +1097,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doFontBold(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
@@ -1116,7 +1116,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doFontItalic(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
@@ -1134,7 +1134,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doFontStrikeout(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
@@ -1152,7 +1152,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doFontUnderline(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
@@ -1188,7 +1188,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderBottom(String color, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.setBorder(sheet, selection, 
@@ -1205,7 +1205,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBoderTop(String color, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.setBorder(sheet, selection, 
@@ -1222,7 +1222,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderLeft(String color, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.setBorder(sheet, selection, 
@@ -1239,7 +1239,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderRight(String color, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.setBorder(sheet, selection, 
@@ -1256,7 +1256,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderNo(String color, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.setBorder(sheet, selection, 
@@ -1273,7 +1273,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderAll(String color, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.setBorder(sheet, selection, 
@@ -1290,7 +1290,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderOutside(String color, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.setBorder(sheet, selection, 
@@ -1307,7 +1307,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderInside(String color, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.setBorder(sheet, selection, 
@@ -1324,7 +1324,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderInsideHorizontal(String color, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.setBorder(sheet, selection, 
@@ -1341,7 +1341,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBorderInsideVertical(String color, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.setBorder(sheet, selection, 
@@ -1359,7 +1359,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doFontColor(String color, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.setFontColor(sheet, selection, color);
@@ -1376,7 +1376,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doFillColor(String color, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.setBackgroundColor(sheet, selection, color);
@@ -1392,7 +1392,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doVerticalAlignTop(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				setVerticalAlign(CellStyle.VERTICAL_TOP, selection);
@@ -1408,7 +1408,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doVerticalAlignMiddle(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				setVerticalAlign(CellStyle.VERTICAL_CENTER, selection);
@@ -1424,7 +1424,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doVerticalAlignBottom(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				setVerticalAlign(CellStyle.VERTICAL_BOTTOM, selection);
@@ -1438,7 +1438,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doHorizontalAlignLeft(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				setHorizontalAlign(CellStyle.ALIGN_LEFT, selection);
@@ -1452,7 +1452,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doHorizontalAlignCenter(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				setHorizontalAlign(CellStyle.ALIGN_CENTER, selection);
@@ -1466,7 +1466,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doHorizontalAlignRight(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				setHorizontalAlign(CellStyle.ALIGN_RIGHT, selection);
@@ -1480,7 +1480,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doWrapText(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
@@ -1497,7 +1497,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doMergeAndCenter(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int tRow = selection.getTop();
@@ -1517,7 +1517,7 @@ public abstract class ActionHandler {
 					}
 				}
 				
-				Range range = Ranges.range(sheet, tRow, lCol, bRow, rCol);
+				XRange range = XRanges.range(sheet, tRow, lCol, bRow, rCol);
 				if (merged) {
 					range.unMerge();
 				} else {
@@ -1534,10 +1534,10 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doMergeAcross(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 				.merge(true);	
 			} else {
@@ -1550,10 +1550,10 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doMergeCell(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 				.merge(false);
 				
@@ -1568,10 +1568,10 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doUnmergeCell(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 				.unMerge();
 				
@@ -1586,12 +1586,12 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doShiftCellRight(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-				.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
+				.insert(XRange.SHIFT_RIGHT, XRange.FORMAT_RIGHTBELOW);
 				
 				clearClipboard();	
 			} else {
@@ -1604,12 +1604,12 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doShiftCellDown(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-				.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
+				.insert(XRange.SHIFT_DOWN, XRange.FORMAT_LEFTABOVE);
 				
 				clearClipboard();	
 			} else {
@@ -1622,13 +1622,13 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doInsertSheetRow(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 				.getRows()
-				.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
+				.insert(XRange.SHIFT_DOWN, XRange.FORMAT_LEFTABOVE);
 				
 				clearClipboard();	
 			} else {
@@ -1641,13 +1641,13 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doInsertSheetColumn(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 				.getColumns()
-				.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
+				.insert(XRange.SHIFT_RIGHT, XRange.FORMAT_RIGHTBELOW);
 				
 				clearClipboard();	
 			} else {
@@ -1660,12 +1660,12 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doShiftCellLeft(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-				.delete(Range.SHIFT_LEFT);
+				.delete(XRange.SHIFT_LEFT);
 				
 				clearClipboard();	
 			} else {
@@ -1678,12 +1678,12 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doShiftCellUp(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-				.delete(Range.SHIFT_UP);
+				.delete(XRange.SHIFT_UP);
 				
 				clearClipboard();	
 			} else {
@@ -1696,13 +1696,13 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doDeleteSheetRow(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, selection.getTop(), 0, selection.getBottom(), 0)
 				.getRows()
-				.delete(Range.SHIFT_UP);
+				.delete(XRange.SHIFT_UP);
 				
 				clearClipboard();	
 			} else {
@@ -1715,13 +1715,13 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doDeleteSheetColumn(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, 0, selection.getLeft(), 0, selection.getRight())
 				.getColumns()
-				.delete(Range.SHIFT_LEFT);
+				.delete(XRange.SHIFT_LEFT);
 				
 				clearClipboard();	
 			} else {
@@ -1730,9 +1730,9 @@ public abstract class ActionHandler {
 		}
 	}
 
-	protected void clearStyleImp(Rect selection, Worksheet worksheet) {
+	protected void clearStyleImp(Rect selection, XSheet worksheet) {
 		final CellStyle defaultStyle = worksheet.getBook().createCellStyle();
-		Ranges
+		XRanges
 		.range(worksheet, selection.getTop(), selection.getLeft(),selection.getBottom(), selection.getRight())
 		.setStyle(defaultStyle);
 	}
@@ -1741,7 +1741,7 @@ public abstract class ActionHandler {
 	 * Execute when user click clear style
 	 */
 	public void doClearStyle(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				clearStyleImp(selection, sheet);
@@ -1757,10 +1757,10 @@ public abstract class ActionHandler {
 	 * Execute when user click clear content
 	 */
 	public void doClearContent(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
+				XRanges
 				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
 				.clearContents();
 				
@@ -1775,7 +1775,7 @@ public abstract class ActionHandler {
 	 * Execute when user click clear all
 	 */
 	public void doClearAll(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				doClearContent(selection);
@@ -1790,7 +1790,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doSortAscending(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.sort(sheet, selection,
@@ -1807,7 +1807,7 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doSortDescending(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				Utils.sort(sheet, selection,
@@ -1829,10 +1829,10 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doFilter(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+				XRange range = XRanges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 				//ZSS-199
 				switch (selection.getSelectionType()) {
 				case Rect.SELECT_ROW:
@@ -1854,10 +1854,10 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doClearFilter() {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null) {
 			if (!sheet.getProtect()) {
-				Ranges.range(sheet).showAllData();
+				XRanges.range(sheet).showAllData();
 				
 				clearClipboard();
 			} else {
@@ -1870,10 +1870,10 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doReapplyFilter() {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null) {
 			if (!sheet.getProtect()) {
-				Ranges.range(sheet).applyFilter();
+				XRanges.range(sheet).applyFilter();
 				
 				clearClipboard();	
 			} else {
@@ -1886,9 +1886,9 @@ public abstract class ActionHandler {
 	 * 
 	 */
 	public void doProtectSheet() {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null) {
-			Ranges.range(sheet).protectSheet(sheet.getProtect() ? null : "");
+			XRanges.range(sheet).protectSheet(sheet.getProtect() ? null : "");
 			
 			//TODO: disable information from worksheet
 			boolean protect = sheet.getProtect();
@@ -1902,9 +1902,9 @@ public abstract class ActionHandler {
 	 * 
 	 */
 	public void doGridlines() {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null) {
-			Ranges.range(sheet).setDisplayGridlines(!sheet.isDisplayGridlines());	
+			XRanges.range(sheet).setDisplayGridlines(!sheet.isDisplayGridlines());	
 		}
 	}
 	
@@ -1912,14 +1912,14 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doColumnChart(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
 				int col = selection.getLeft();
 				ChartData data = fillCategoryData(new XSSFColumnChartData(), selection);
 				
-				Ranges.range(sheet)
+				XRanges.range(sheet)
 				.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Column, ChartGrouping.STANDARD, LegendPosition.RIGHT);		
 			} else {
 				showProtectMessage();
@@ -1931,14 +1931,14 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doColumnChart3D(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
 				int col = selection.getLeft();
 				ChartData data = fillCategoryData(new XSSFColumn3DChartData(), selection);
 				
-				Ranges.range(sheet)
+				XRanges.range(sheet)
 				.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Column3D, ChartGrouping.STANDARD, LegendPosition.RIGHT);		
 			} else {
 				showProtectMessage();
@@ -1949,14 +1949,14 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doLineChart(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
 				int col = selection.getLeft();
 				ChartData data = fillCategoryData(new XSSFLineChartData(), selection);
 				
-				Ranges.range(sheet)
+				XRanges.range(sheet)
 				.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Line, ChartGrouping.STANDARD, LegendPosition.RIGHT);		
 			} else {
 				showProtectMessage();
@@ -1967,14 +1967,14 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doLineChart3D(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
 				int col = selection.getLeft();
 				ChartData data = fillCategoryData(new XSSFLine3DChartData(), selection);
 				
-				Ranges.range(sheet)
+				XRanges.range(sheet)
 				.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Line3D, ChartGrouping.STANDARD, LegendPosition.RIGHT);		
 			} else {
 				showProtectMessage();
@@ -1985,14 +1985,14 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doPieChart(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
 				int col = selection.getLeft();
 				ChartData data = fillCategoryData(new XSSFPieChartData(), selection);
 				
-				Ranges.range(sheet)
+				XRanges.range(sheet)
 				.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Pie, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
 			} else {
 				showProtectMessage();
@@ -2003,14 +2003,14 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doPieChart3D(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
 				int col = selection.getLeft();
 				ChartData data = fillCategoryData(new XSSFPie3DChartData(), selection);
 				
-				Ranges.range(sheet)
+				XRanges.range(sheet)
 				.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Pie3D, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
 			} else {
 				showProtectMessage();
@@ -2021,14 +2021,14 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBarChart(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
 				int col = selection.getLeft();
 				ChartData data = fillCategoryData(new XSSFBarChartData(), selection);
 				
-				Ranges.range(sheet)
+				XRanges.range(sheet)
 				.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Bar, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
 			} else {
 				showProtectMessage();
@@ -2039,14 +2039,14 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doBarChart3D(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
 				int col = selection.getLeft();
 				ChartData data = fillCategoryData(new XSSFBar3DChartData(), selection);
 				
-				Ranges.range(sheet)
+				XRanges.range(sheet)
 				.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Bar3D, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
 			} else {
 				showProtectMessage();
@@ -2057,14 +2057,14 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doAreaChart(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
 				int col = selection.getLeft();
 				ChartData data = fillCategoryData(new XSSFAreaChartData(), selection);
 				
-				Ranges.range(sheet)
+				XRanges.range(sheet)
 				.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Area, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
 			} else {
 				showProtectMessage();
@@ -2075,14 +2075,14 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doScatterChart(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
 				int col = selection.getLeft();
 				ChartData data = fillXYData(new XSSFScatChartData(), selection);
 				
-				Ranges.range(sheet)
+				XRanges.range(sheet)
 				.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Scatter, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
 			} else {
 				showProtectMessage();
@@ -2093,14 +2093,14 @@ public abstract class ActionHandler {
 	 * @param selection
 	 */
 	public void doDoughnutChart(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
 				int row = selection.getTop();
 				int col = selection.getLeft();
 				ChartData data = fillCategoryData(new XSSFDoughnutChartData(), selection);
 				
-				Ranges.range(sheet)
+				XRanges.range(sheet)
 				.addChart(getClientAnchor(row, col, 600, 300), data, ChartType.Doughnut, ChartGrouping.STANDARD, LegendPosition.RIGHT);	
 			} else {
 				showProtectMessage();
@@ -2118,7 +2118,7 @@ public abstract class ActionHandler {
 	}
 	
 	private Rect getChartDataRange(Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		//assume can't find number cell, use last cell as value
 		int colIdx = selection.getLeft();
 		int rowIdx = -1;
@@ -2142,7 +2142,7 @@ public abstract class ActionHandler {
 	}
 	
 	protected ChartData fillXYData(XYData data, Rect selection) {
-		final Worksheet sheet = _spreadsheet.getSelectedSheet();
+		final XSheet sheet = _spreadsheet.getSelectedSheet();
 		
 		Rect rect = getChartDataRange(selection);
 		int colIdx = rect.getLeft();
@@ -2175,7 +2175,7 @@ public abstract class ActionHandler {
 				String title = null;
 				int row = rowIdx - 1;
 				if (row >= selection.getTop()) {
-					title = "" + Ranges.range(sheet, selection.getTop(), c, row, c).getText().toString();
+					title = "" + XRanges.range(sheet, selection.getTop(), c, row, c).getText().toString();
 				}
 				titles.add(title == null ? null : DataSources.fromString(title));
 				
@@ -2204,7 +2204,7 @@ public abstract class ActionHandler {
 				String title = null;
 				int col = colIdx - 1;
 				if (col >= selection.getLeft()) {
-					title = "" + Ranges.range(sheet, r, selection.getLeft(), r, col).getText().toString();
+					title = "" + XRanges.range(sheet, r, selection.getLeft(), r, col).getText().toString();
 				}
 				titles.add(title == null ? null : DataSources.fromString(title));
 				
@@ -2221,7 +2221,7 @@ public abstract class ActionHandler {
 	}
 	
 	protected CategoryData fillCategoryData(CategoryData data, Rect selection) {
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		Rect rect = getChartDataRange(selection);
 		int colIdx = rect.getLeft();
 		int rowIdx = rect.getTop();
@@ -2247,7 +2247,7 @@ public abstract class ActionHandler {
 				String title = null;
 				int row = rowIdx - 1;
 				if (row >= selection.getTop()) {
-					title = "" + Ranges.range(sheet, selection.getTop(), c, row, c).getText().toString();
+					title = "" + XRanges.range(sheet, selection.getTop(), c, row, c).getText().toString();
 				}
 				titles.add(title == null ? null : DataSources.fromString(title));
 				
@@ -2272,7 +2272,7 @@ public abstract class ActionHandler {
 				String title = null;
 				int col = colIdx - 1;
 				if (col >= selection.getLeft()) {
-					title = "" + Ranges.range(sheet, r, selection.getLeft(), r, col).getText().toString();
+					title = "" + XRanges.range(sheet, r, selection.getLeft(), r, col).getText().toString();
 				}
 				titles.add(title == null ? null : DataSources.fromString(title));
 				
@@ -2364,11 +2364,11 @@ public abstract class ActionHandler {
 		}
 		
 		public final Type type;
-		public final Book book;
+		public final XBook book;
 		public final Rect sourceRect;
-		public final Worksheet sourceSheet;
+		public final XSheet sourceSheet;
 		
-		public Clipboard(Type type, Rect sourceRect, Worksheet sourceSheet, Book book) {
+		public Clipboard(Type type, Rect sourceRect, XSheet sourceSheet, XBook book) {
 			this.type = checkNotNull("Clipboard's type cannot be null", type);
 			this.book = checkNotNull("Clipboard's book cannot be null", book);
 			this.sourceRect = checkNotNull("Clipboard's sourceRect cannot be null", sourceRect);

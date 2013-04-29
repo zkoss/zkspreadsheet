@@ -14,16 +14,16 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.sys;
 
 /**
- * Represent a series of correlated {@link Book}s that might refer to each other.
+ * Represent a series of correlated {@link XBook}s that might refer to each other.
  * <p>Note: this feature requires ZK Spreadsheet EE.</p>
  * 
  * @author henrichen
  */
-public interface BookSeries {
+public interface XBookSeries {
 	/**
-	 * Return the {@link Book} with the specified book name.
+	 * Return the {@link XBook} with the specified book name.
 	 * @param bookName the book name
-	 * @return the {@link Book} with the specified book name.
+	 * @return the {@link XBook} with the specified book name.
 	 */
-	public Book getBook(String bookName);
+	public XBook getBook(String bookName);
 }

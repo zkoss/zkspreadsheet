@@ -31,7 +31,7 @@ import org.zkoss.zss.api.model.NFont.TypeOffset;
 import org.zkoss.zss.api.model.NFont.Underline;
 import org.zkoss.zss.api.model.NHyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.NPicture.Format;
-import org.zkoss.zss.model.sys.Range;
+import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 
 public class EnumUtil {
@@ -46,15 +46,15 @@ public class EnumUtil {
 		assertArgNotNull(op,"paste operation");
 		switch(op){
 		case PASTEOP_ADD:
-			return Range.PASTEOP_ADD;
+			return XRange.PASTEOP_ADD;
 		case PASTEOP_SUB:
-			return Range.PASTEOP_SUB;
+			return XRange.PASTEOP_SUB;
 		case PASTEOP_MUL:
-			return Range.PASTEOP_MUL;
+			return XRange.PASTEOP_MUL;
 		case PASTEOP_DIV:
-			return Range.PASTEOP_DIV;
+			return XRange.PASTEOP_DIV;
 		case PASTEOP_NONE:
-			return Range.PASTEOP_NONE;
+			return XRange.PASTEOP_NONE;
 		}
 		throw new IllegalArgumentException("unknow paste operation "+op);
 	}
@@ -64,25 +64,25 @@ public class EnumUtil {
 		assertArgNotNull(type,"paste type");
 		switch(type){
 		case PASTE_ALL:
-			return Range.PASTE_ALL;
+			return XRange.PASTE_ALL;
 		case PASTE_ALL_EXCEPT_BORDERS:
-			return Range.PASTE_ALL_EXCEPT_BORDERS;
+			return XRange.PASTE_ALL_EXCEPT_BORDERS;
 		case PASTE_COLUMN_WIDTHS:
-			return Range.PASTE_COLUMN_WIDTHS;
+			return XRange.PASTE_COLUMN_WIDTHS;
 		case PASTE_COMMENTS:
-			return Range.PASTE_COMMENTS;
+			return XRange.PASTE_COMMENTS;
 		case PASTE_FORMATS:
-			return Range.PASTE_FORMATS;
+			return XRange.PASTE_FORMATS;
 		case PASTE_FORMULAS:
-			return Range.PASTE_FORMULAS;
+			return XRange.PASTE_FORMULAS;
 		case PASTE_FORMULAS_AND_NUMBER_FORMATS:
-			return Range.PASTE_FORMULAS_AND_NUMBER_FORMATS;
+			return XRange.PASTE_FORMULAS_AND_NUMBER_FORMATS;
 		case PASTE_VALIDATAION:
-			return Range.PASTE_VALIDATAION;
+			return XRange.PASTE_VALIDATAION;
 		case PASTE_VALUES:
-			return Range.PASTE_VALUES;
+			return XRange.PASTE_VALUES;
 		case PASTE_VALUES_AND_NUMBER_FORMATS:
-			return Range.PASTE_VALUES_AND_NUMBER_FORMATS;
+			return XRange.PASTE_VALUES_AND_NUMBER_FORMATS;
 		}
 		throw new IllegalArgumentException("unknow paste operation "+type);
 	}
@@ -453,11 +453,11 @@ public class EnumUtil {
 	public static int toRangeInsertShift(InsertShift shift) {
 		switch(shift){
 		case DEFAULT:
-			return Range.SHIFT_DEFAULT;
+			return XRange.SHIFT_DEFAULT;
 		case DOWN:
-			return Range.SHIFT_DOWN;
+			return XRange.SHIFT_DOWN;
 		case RIGHT:
-			return Range.SHIFT_RIGHT;
+			return XRange.SHIFT_RIGHT;
 		}
 		throw new IllegalArgumentException("unknow range insert shift "+shift);
 	}
@@ -465,11 +465,11 @@ public class EnumUtil {
 	public static int toRangeInsertCopyOrigin(InsertCopyOrigin copyOrigin) {
 		switch(copyOrigin){
 		case NONE:
-			return Range.FORMAT_NONE;
+			return XRange.FORMAT_NONE;
 		case LEFT_ABOVE:
-			return Range.FORMAT_LEFTABOVE;
+			return XRange.FORMAT_LEFTABOVE;
 		case RIGHT_BELOW:
-			return Range.FORMAT_RIGHTBELOW;
+			return XRange.FORMAT_RIGHTBELOW;
 		}
 		throw new IllegalArgumentException("unknow range insert copy origin "+copyOrigin);
 	}
@@ -477,11 +477,11 @@ public class EnumUtil {
 	public static int toRangeDeleteShift(DeleteShift shift) {
 		switch(shift){
 		case DEFAULT:
-			return Range.SHIFT_DEFAULT;
+			return XRange.SHIFT_DEFAULT;
 		case UP:
-			return Range.SHIFT_UP;
+			return XRange.SHIFT_UP;
 		case LEFT:
-			return Range.SHIFT_LEFT;
+			return XRange.SHIFT_LEFT;
 		}
 		throw new IllegalArgumentException("unknow range delete shift "+shift);
 	}
@@ -517,27 +517,27 @@ public class EnumUtil {
 	public static int toRangeAutoFillType(AutoFillType fillType) {
 		switch(fillType){
 		case COPY:
-			return Range.FILL_COPY;
+			return XRange.FILL_COPY;
 		case DAYS:
-			return Range.FILL_DAYS;
+			return XRange.FILL_DAYS;
 		case DEFAULT:
-			return Range.FILL_DEFAULT;
+			return XRange.FILL_DEFAULT;
 		case FORMATS:
-			return Range.FILL_FORMATS;
+			return XRange.FILL_FORMATS;
 		case MONTHS:
-			return Range.FILL_MONTHS;
+			return XRange.FILL_MONTHS;
 		case SERIES:
-			return Range.FILL_SERIES;
+			return XRange.FILL_SERIES;
 		case VALUES:
-			return Range.FILL_VALUES;
+			return XRange.FILL_VALUES;
 		case WEEKDAYS:
-			return Range.FILL_WEEKDAYS;
+			return XRange.FILL_WEEKDAYS;
 		case YEARS:
-			return Range.FILL_YEARS;
+			return XRange.FILL_YEARS;
 		case GROWTH_TREND:
-			return Range.FILL_GROWTH_TREND;
+			return XRange.FILL_GROWTH_TREND;
 		case LINER_TREND:
-			return Range.FILL_LINER_TREND;
+			return XRange.FILL_LINER_TREND;
 		}
 		throw new IllegalArgumentException("unknow autofill type "+fillType);
 	}

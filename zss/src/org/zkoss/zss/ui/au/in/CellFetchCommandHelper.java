@@ -28,7 +28,7 @@ import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
@@ -88,7 +88,7 @@ public class CellFetchCommandHelper{
 		
 		_spreadsheet = ((Spreadsheet)comp);
 		if(_spreadsheet.isInvalidated()) return;//since it is invalidate, i don't need to update
-		final Worksheet selSheet = _spreadsheet.getSelectedSheet();
+		final XSheet selSheet = _spreadsheet.getSelectedSheet();
 		final String sheetId = (String) data.get("sheetId");
 		if (selSheet == null || !sheetId.equals(((SheetCtrl)selSheet).getUuid())) { //not current selected sheet, skip.
 			return;
@@ -102,7 +102,7 @@ public class CellFetchCommandHelper{
 		_rowHelper = _ctrl.getRowPositionHelper(sheetId);
 		_colHelper = _ctrl.getColumnPositionHelper(sheetId);
 		
-		Worksheet sheet = _spreadsheet.getSelectedSheet();
+		XSheet sheet = _spreadsheet.getSelectedSheet();
 		if(!Utils.getSheetUuid(sheet).equals(sheetId)) return;
 		
 		_mergeMatrix = _ctrl.getMergeMatrixHelper(sheet);
@@ -285,7 +285,7 @@ public class CellFetchCommandHelper{
 		((SpreadsheetInCtrl) _ctrl).setVisibleRect(_lastleft, _lasttop,	_lastright, _lastbottom);
 	}
 	
-	private void loadForVisible(Spreadsheet spreadsheet, String sheetId, Worksheet sheet, String type, int dpWidth,
+	private void loadForVisible(Spreadsheet spreadsheet, String sheetId, XSheet sheet, String type, int dpWidth,
 			int dpHeight, int viewWidth, int viewHeight, int blockLeft, int blockTop, int blockRight, int blockBottom,
 			int visibleLeft, int visibleTop, int visibleRight, int visibleBottom, int cacheRangeWidth, int cacheRangeHeight) {
 		
@@ -371,7 +371,7 @@ public class CellFetchCommandHelper{
 		return jresult.toString();
 	}
 	
-	private String jumpResult(Worksheet sheet, int left, int top, int right, int bottom) {
+	private String jumpResult(XSheet sheet, int left, int top, int right, int bottom) {
 		top = _mergeMatrix.getTopConnectedRow(top, left, right);
 		bottom = _mergeMatrix.getBottomConnectedRow(bottom, left, right);
 		right = _mergeMatrix.getRightConnectedColumn(right,top,bottom);
@@ -475,7 +475,7 @@ public class CellFetchCommandHelper{
 		return json.toString();
 	}
 	
-	private String jump(String dir,Spreadsheet spreadsheet,String sheetId, Worksheet sheet, String type,
+	private String jump(String dir,Spreadsheet spreadsheet,String sheetId, XSheet sheet, String type,
 			int dpWidth, int dpHeight, int viewWidth, int viewHeight,
 			int blockLeft, int blockTop, int blockRight, int blockBottom,
 			int col, int row, 
@@ -532,7 +532,7 @@ public class CellFetchCommandHelper{
 		return jumpResult(sheet,left,top,right,bottom);
 	}
 	
-	private LoadResult loadEast(Worksheet sheet,String type, 
+	private LoadResult loadEast(XSheet sheet,String type, 
 			int blockLeft,int blockTop,int blockRight, int blockBottom,
 			int fetchWidth, int rangeWidth, int rangeTopHeight, int rangeBtmHeight) {
 
@@ -570,7 +570,7 @@ public class CellFetchCommandHelper{
 		return new LoadResult(cs, rangeTop, rangeRight, rangeBottom, json);
 	}
 	
-	private LoadResult loadWest(Worksheet sheet,String type,
+	private LoadResult loadWest(XSheet sheet,String type,
 			int blockLeft,int blockTop,int blockRight, int blockBottom,
 			int fetchWidth, int rangeWidth, int rangeTopHeight, int rangeBtmHeight) {
 		
@@ -610,7 +610,7 @@ public class CellFetchCommandHelper{
 		return new LoadResult(rangeLeft, rangeTop, cs, rangeBottom, json);
 	}
 	
-	private LoadResult loadSouth(Worksheet sheet, String type, 
+	private LoadResult loadSouth(XSheet sheet, String type, 
 			int blockLeft,int blockTop, int blockRight, int blockBottom, int fetchHeight, int rangeLeft, int cacheRight, int cacheRangeHeight) {
 		
 		JSONObject json = new JSONObject();
@@ -646,7 +646,7 @@ public class CellFetchCommandHelper{
 
 		return new LoadResult(rangeLeft, rs, cacheRight, rangeBottom, json);
 	}
-	private LoadResult loadNorth(Worksheet sheet,String type, 
+	private LoadResult loadNorth(XSheet sheet,String type, 
 			int blockLeft, int blockTop, int blockRight, int blockBottom,
 			int fetchHeight, int rangeLeft, int rangeRight, int cacheRangeHeight) {
 

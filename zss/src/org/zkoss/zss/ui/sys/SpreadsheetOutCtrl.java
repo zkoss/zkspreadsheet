@@ -20,7 +20,7 @@ package org.zkoss.zss.ui.sys;
 
 
 //import org.zkoss.zss.model.Sheet;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 
 /**
  * Special controller interface for controlling Server to Client behavior.
@@ -30,20 +30,20 @@ import org.zkoss.zss.model.sys.Worksheet;
  */
 public interface SpreadsheetOutCtrl {
 	
-	public void insertColumns(Worksheet sheet,int col,int size);
+	public void insertColumns(XSheet sheet,int col,int size);
 	
-	public void insertRows(Worksheet sheet,int row,int size);
+	public void insertRows(XSheet sheet,int row,int size);
 	
-	public void removeColumns(Worksheet sheet,int col,int size);
+	public void removeColumns(XSheet sheet,int col,int size);
 	
-	public void removeRows(Worksheet sheet,int row,int size);
+	public void removeRows(XSheet sheet,int row,int size);
 	
-	public void updateMergeCell(Worksheet sheet,int left,int top,int right,int bottom,
+	public void updateMergeCell(XSheet sheet,int left,int top,int right,int bottom,
 			int oleft,int otop,int oright,int obottom);
-	public void deleteMergeCell(Worksheet sheet,int left,int top,int right,int bottom);
+	public void deleteMergeCell(XSheet sheet,int left,int top,int right,int bottom);
 	
-	public void addMergeCell(Worksheet sheet,int left,int top,int right,int bottom);
+	public void addMergeCell(XSheet sheet,int left,int top,int right,int bottom);
 	
-	public void setColumnWidth(Worksheet sheet,int col,int width, int id, boolean hidden);
-	public void setRowHeight(Worksheet sheet,int row, int height, int id, boolean hidden);
+	public void setColumnWidth(XSheet sheet,int col,int width, int id, boolean hidden);
+	public void setRowHeight(XSheet sheet,int row, int height, int id, boolean hidden);
 }

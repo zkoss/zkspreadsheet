@@ -37,9 +37,9 @@ import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.zul.Dialog;
-import org.zkoss.zss.model.sys.Range;
-import org.zkoss.zss.model.sys.Ranges;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Button;
@@ -71,15 +71,15 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 
 	private int fieldIndex = 0;
 	private int columnIndex = 0;
-	private Worksheet worksheet;
-	private Range range;
+	private XSheet worksheet;
+	private XRange range;
 	
-	private boolean isHiddenRow(Worksheet sheet, int rowIdx) {
+	private boolean isHiddenRow(XSheet sheet, int rowIdx) {
 		final Row r = sheet.getRow(rowIdx);
 		return r != null && r.getZeroHeight();
 	}
 	
-	private void fetchRowInfos(FilterColumn fc, Range range, Set<RowInfo> all, Set<RowInfo> selected) {
+	private void fetchRowInfos(FilterColumn fc, XRange range, Set<RowInfo> all, Set<RowInfo> selected) {
 		final Set criteria1 = fc == null ? null : fc.getCriteria1();
 		final boolean nofilter = criteria1 == null || criteria1.isEmpty(); 
 		boolean hasBlank = false;
@@ -230,8 +230,8 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 	}
 	public void onOpen$_autoFilterDialog(ForwardEvent evt) {
 		Object[] info = (Object[]) evt.getOrigin().getData();
-		range = (Range) info[2];
-		worksheet = (Worksheet) range.getSheet();
+		range = (XRange) info[2];
+		worksheet = (XSheet) range.getSheet();
 		final AutoFilter af = worksheet.getAutoFilter();
 		if (af == null) {
 			return;

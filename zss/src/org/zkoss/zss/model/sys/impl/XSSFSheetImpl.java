@@ -62,16 +62,16 @@ import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFRowHelper;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.Range;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XSheet;
 
 /**
- * Implementation of {@link Worksheet} based on XSSFSheet.
+ * Implementation of {@link XSheet} based on XSSFSheet.
  * @author henrichen
  *
  */
-public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
+public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
 	//--XSSFSheet--//
     public XSSFSheetImpl() {
         super();
@@ -107,8 +107,8 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
     }
 
     //--Worksheet--//
-	public Book getBook() {
-		return (Book) getWorkbook();
+	public XBook getBook() {
+		return (XBook) getWorkbook();
 	}
 
 	@Override
@@ -142,7 +142,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
     public List<CellRangeAddress[]>  shiftRowsOnly(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight,
     		boolean moveComments, boolean clearRest, int copyOrigin) {
     	//prepare source format row
-    	final int srcRownum = n <= 0 ? -1 : copyOrigin == Range.FORMAT_RIGHTBELOW ? startRow : copyOrigin == Range.FORMAT_LEFTABOVE ? startRow - 1 : -1;
+    	final int srcRownum = n <= 0 ? -1 : copyOrigin == XRange.FORMAT_RIGHTBELOW ? startRow : copyOrigin == XRange.FORMAT_LEFTABOVE ? startRow - 1 : -1;
     	final XSSFRow srcRow = srcRownum >= 0 ? getRow(srcRownum) : null;
     	final Map<Integer, Cell> srcCells = srcRow != null ? BookHelper.copyRowCells(srcRow, srcRow.getFirstCellNum(), srcRow.getLastCellNum()) : null;
     	final short srcHeight = srcRow != null ? srcRow.getHeight() : -1;
@@ -332,7 +332,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
     public List<CellRangeAddress[]> shiftRowsRange(int startRow, int endRow, int n, int lCol, int rCol,
             boolean copyRowHeight, boolean resetOriginalRowHeight, boolean moveComments, boolean clearRest, int copyOrigin) {
     	//prepare source format row
-    	final int srcRownum = n <= 0 ? -1 : copyOrigin == Range.FORMAT_RIGHTBELOW ? startRow : copyOrigin == Range.FORMAT_LEFTABOVE ? startRow - 1 : -1;
+    	final int srcRownum = n <= 0 ? -1 : copyOrigin == XRange.FORMAT_RIGHTBELOW ? startRow : copyOrigin == XRange.FORMAT_LEFTABOVE ? startRow - 1 : -1;
     	final XSSFRow srcRow = srcRownum >= 0 ? getRow(srcRownum) : null;
     	final Map<Integer, Cell> srcCells = srcRow != null ? BookHelper.copyRowCells(srcRow, lCol, rCol) : null;
     	final short srcHeight = srcRow != null ? srcRow.getHeight() : -1;
@@ -568,7 +568,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
     public List<CellRangeAddress[]> shiftColumnsOnly(int startCol, int endCol, int n,
             boolean copyColWidth, boolean resetOriginalColWidth, boolean moveComments, boolean clearRest, int copyOrigin) {
     	//prepared inserting column format
-    	final int srcCol = n <= 0 ? -1 : copyOrigin == Range.FORMAT_RIGHTBELOW ? startCol : copyOrigin == Range.FORMAT_LEFTABOVE ? startCol - 1 : -1; 
+    	final int srcCol = n <= 0 ? -1 : copyOrigin == XRange.FORMAT_RIGHTBELOW ? startCol : copyOrigin == XRange.FORMAT_LEFTABOVE ? startCol - 1 : -1; 
     	final CellStyle colStyle = srcCol >= 0 ? getColumnStyle(srcCol) : null;
     	final int colWidth = srcCol >= 0 ? getColumnWidth(srcCol) : -1; 
     	final Map<Integer, Cell> cells = srcCol >= 0 ? new HashMap<Integer, Cell>() : null;
@@ -854,7 +854,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
     public List<CellRangeAddress[]> shiftColumnsRange(int startCol, int endCol, int n, int tRow, int bRow,
             boolean copyColWidth, boolean resetOriginalColWidth, boolean moveComments, boolean clearRest, int copyOrigin) {
     	//prepared inserting column format
-    	final int srcCol = n <= 0 ? -1 : copyOrigin == Range.FORMAT_RIGHTBELOW ? startCol : copyOrigin == Range.FORMAT_LEFTABOVE ? startCol - 1 : -1; 
+    	final int srcCol = n <= 0 ? -1 : copyOrigin == XRange.FORMAT_RIGHTBELOW ? startCol : copyOrigin == XRange.FORMAT_LEFTABOVE ? startCol - 1 : -1; 
     	final CellStyle colStyle = srcCol >= 0 ? getColumnStyle(srcCol) : null;
     	final int colWidth = srcCol >= 0 ? getColumnWidth(srcCol) : -1; 
     	final Map<Integer, Cell> cells = srcCol >= 0 ? new HashMap<Integer, Cell>() : null;
@@ -1180,7 +1180,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, Worksheet {
     					clsnm = "org.zkoss.zss.model.impl.SheetCtrlImpl";
     				}
     				try {
-						ctrl = _sheetCtrl = (SheetCtrl) Classes.newInstanceByThread(clsnm, new Class[] {Book.class, Worksheet.class}, new Object[] {getBook(), this});
+						ctrl = _sheetCtrl = (SheetCtrl) Classes.newInstanceByThread(clsnm, new Class[] {XBook.class, XSheet.class}, new Object[] {getBook(), this});
 					} catch (Exception e) {
 						ctrl = _sheetCtrl = new SheetCtrlImpl(getBook(), this); 
 					}

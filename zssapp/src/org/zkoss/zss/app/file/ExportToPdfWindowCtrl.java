@@ -30,9 +30,9 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.Exporter;
-import org.zkoss.zss.model.sys.Exporters;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XExporter;
+import org.zkoss.zss.model.sys.XExporters;
 import org.zkoss.zss.model.sys.impl.Headings;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -125,7 +125,7 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 		ss.getSelectedSheet().getPrintSetup().setLandscape(orientation.getSelectedItem() == landscape);
 		ss.getSelectedSheet().setPrintGridlines(includeGridlines());
 		boolean isLandscape = orientation.getSelectedItem() == landscape;
-		final Book book = ss.getBook(); 
+		final XBook book = ss.getBook(); 
 		if (book == null) {
 			return;
 		}
@@ -138,7 +138,7 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void revertPrintSetting() {
-		final Book book = ss.getBook();
+		final XBook book = ss.getBook();
 		if (book == null) {
 			return;
 		}
@@ -155,7 +155,7 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 		
 		applyPrintSetting();
 		
-		Exporter c = Exporters.getExporter("pdf");
+		XExporter c = XExporters.getExporter("pdf");
 		if (c instanceof Headings) {
 			((Headings)c).enableHeadings(includeHeadings());
 		}
@@ -172,8 +172,8 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 		_exportToPdfDialog.fireOnClose(null);
 	}
 	
-	private void export(Exporter exporter, OutputStream outputStream) {
-		final Book book = ss.getBook();
+	private void export(XExporter exporter, OutputStream outputStream) {
+		final XBook book = ss.getBook();
 		if (book == null) {
 			return;
 		}

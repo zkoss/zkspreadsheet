@@ -29,7 +29,7 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.SelectionChangeEvent;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
@@ -52,7 +52,7 @@ public class SelectionChangeCommand implements Command {
 		
 		String sheetId= (String) data.get("sheetId");
 		
-		Worksheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		XSheet sheet = ((Spreadsheet) comp).getSelectedSheet();
 		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
@@ -108,7 +108,7 @@ public class SelectionChangeCommand implements Command {
 		Events.postEvent(evt);
 	}
 	
-	private boolean isProtect(int tRow, int lCol, int bRow, int rCol, Worksheet sheet) {
+	private boolean isProtect(int tRow, int lCol, int bRow, int rCol, XSheet sheet) {
 		boolean shtProtect = sheet.getProtect();
 		if (!shtProtect)
 			return false;

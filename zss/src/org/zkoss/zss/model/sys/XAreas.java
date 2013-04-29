@@ -14,11 +14,11 @@ package org.zkoss.zss.model.sys;
 
 
 /**
- * A collection of single-area {@link Range}s in a selection; an area is a contiguous block of cells.
+ * A collection of single-area {@link XRange}s in a selection; an area is a contiguous block of cells.
  * @author henrichen
  *
  */
-public interface Areas extends Iterable<Range> {
+public interface XAreas extends Iterable<XRange> {
 	/**
 	 * Returns the number of single area Range in this collection.
 	 * @return the number of objects in this collection.
@@ -28,6 +28,6 @@ public interface Areas extends Iterable<Range> {
 	/**
 	 * Returns a single object from this collection. 
 	 */
-	public Range getItem();
+	public XRange getItem();
 }
 

@@ -44,9 +44,9 @@ import org.zkoss.zss.app.zul.ctrl.SSWorkbookCtrl;
 import org.zkoss.zss.app.zul.ctrl.WorkbenchCtrl;
 import org.zkoss.zss.app.zul.ctrl.WorkbookCtrl;
 import org.zkoss.zss.engine.event.SSDataEvent;
-import org.zkoss.zss.model.sys.Range;
-import org.zkoss.zss.model.sys.Ranges;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ui.Action;
 import org.zkoss.zss.ui.Position;
@@ -183,7 +183,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			public void onEvent(Event event) throws Exception {
 				String formula = (String)event.getData();
 				Rect rect = spreadsheet.getSelection();
-				Range rng = Ranges.range(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getLeft());
+				XRange rng = XRanges.range(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getLeft());
 				rng.setEditText(formula);
 			}
 		});
@@ -204,7 +204,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			 spreadsheet.setActionDisabled(false, Action.SAVE_BOOK);
 		 }
 		
-		Worksheet seldSheet = spreadsheet.getSelectedSheet();
+		XSheet seldSheet = spreadsheet.getSelectedSheet();
 		Rect seld =  spreadsheet.getSelection();
 		int row = seld.getTop();
 		int col = seld.getLeft();
@@ -685,7 +685,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			//setProperRowHeightByFontSize(spreadsheet.getSelectedSheet(), selection, fontSize);
 		}
 		
-		private void setProperRowHeightByFontSize(Worksheet sheet, Rect rect, int size) {	
+		private void setProperRowHeightByFontSize(XSheet sheet, Rect rect, int size) {	
 			int tRow = rect.getTop();
 			int bRow = rect.getBottom();
 			int col = rect.getLeft();
@@ -693,7 +693,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			for (int i = tRow; i <= bRow; i++) {
 				//Note. add extra padding height: 4
 				if ((size + 4) > (Utils.pxToPoint(Utils.twipToPx(BookHelper.getRowHeight(sheet, i))))) {
-					Ranges.range(sheet, i, col).setRowHeight(size + 4);
+					XRanges.range(sheet, i, col).setRowHeight(size + 4);
 				}
 			}
 		}

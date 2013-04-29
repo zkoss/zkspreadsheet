@@ -2,14 +2,14 @@ package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.zss.api.model.NChart;
-import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.XBook;
 
 public class NChartImpl implements NChart{
 	
-	ModelRef<Book> bookRef;
+	ModelRef<XBook> bookRef;
 	ModelRef<Chart> chartRef;
 	
-	public NChartImpl(ModelRef<Book> bookRef, ModelRef<Chart> chartRef) {
+	public NChartImpl(ModelRef<XBook> bookRef, ModelRef<Chart> chartRef) {
 		this.bookRef = bookRef;
 		this.chartRef = chartRef;
 	}

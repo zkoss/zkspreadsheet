@@ -14,7 +14,7 @@ import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 
 /**
  * ZK Spreadsheet Drawing manager. 
@@ -36,18 +36,18 @@ public interface DrawingManager {
 
 	public List<Combo> getCombos();
 	
-	public ZssChartX addChartX(Worksheet sheet, ClientAnchor anchor, ChartData data, ChartType type,
+	public ZssChartX addChartX(XSheet sheet, ClientAnchor anchor, ChartData data, ChartType type,
 			ChartGrouping grouping, LegendPosition pos);
 	
-	public Picture addPicture(Worksheet sheet, ClientAnchor anchor, byte[] imageData, int format);
+	public Picture addPicture(XSheet sheet, ClientAnchor anchor, byte[] imageData, int format);
 	
-	public void deletePicture(Worksheet sheet, Picture picture);
+	public void deletePicture(XSheet sheet, Picture picture);
 	
-	public void movePicture(Worksheet sheet, Picture picture, ClientAnchor anchor);
+	public void movePicture(XSheet sheet, Picture picture, ClientAnchor anchor);
 
-	public void moveChart(Worksheet sheet, Chart chart, ClientAnchor anchor);
+	public void moveChart(XSheet sheet, Chart chart, ClientAnchor anchor);
 	
 	public List<Chart> getCharts();
 	
-	public void deleteChart(Worksheet sheet, Chart chart);
+	public void deleteChart(XSheet sheet, Chart chart);
 }

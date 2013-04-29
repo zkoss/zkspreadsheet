@@ -17,7 +17,7 @@ import org.zkoss.poi.ss.usermodel.Name;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.CellReference;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.EmptyRange;
 import org.zkoss.zss.model.sys.impl.RangeImpl;
 
@@ -26,26 +26,26 @@ import org.zkoss.zss.model.sys.impl.RangeImpl;
  * @author henrichen
  *
  */
-public class Ranges {
-	/** Returns the associated {@link Range} of the whole specified {@link Worksheet}. 
+public class XRanges {
+	/** Returns the associated {@link XRange} of the whole specified {@link XSheet}. 
 	 *  
-	 * @param sheet the {@link Worksheet} the Range will refer to.
-	 * @return the associated {@link Range} of the whole specified {@link Worksheet}. 
+	 * @param sheet the {@link XSheet} the Range will refer to.
+	 * @return the associated {@link XRange} of the whole specified {@link XSheet}. 
 	 */
-	public static Range range(Worksheet sheet) {
-		final Book book = (Book) sheet.getWorkbook();
+	public static XRange range(XSheet sheet) {
+		final XBook book = (XBook) sheet.getWorkbook();
 		final SpreadsheetVersion ver = book.getSpreadsheetVersion();
 		return newRange(sheet, sheet, 0, 0, ver.getLastRowIndex(), ver.getLastColumnIndex());
 	}
 	
-	/** Returns the associated {@link Range} of the specified {@link Worksheet} and area reference string (e.g. "A1:D4" or "Sheet2!A1:D4") or name of a NamedRange (e.g. "MyRange");
+	/** Returns the associated {@link XRange} of the specified {@link XSheet} and area reference string (e.g. "A1:D4" or "Sheet2!A1:D4") or name of a NamedRange (e.g. "MyRange");
 	 * note that if reference string contains sheet name, the returned range will refer to the named sheet. 
 	 *  
-	 * @param sheet the {@link Worksheet} the Range will refer to.
+	 * @param sheet the {@link XSheet} the Range will refer to.
 	 * @param reference the area the Range will refer to (e.g. "A1:D4").
-	 * @return the associated {@link Range} of the specified {@link Worksheet} and area reference string (e.g. "A1:D4"). 
+	 * @return the associated {@link XRange} of the specified {@link XSheet} and area reference string (e.g. "A1:D4"). 
 	 */
-	public static Range range(Worksheet sheet, String reference) {
+	public static XRange range(XSheet sheet, String reference) {
 		AreaReference ref = getAreaReference(sheet, reference);
 		if (ref == null) {
 			//try NamedRange
@@ -62,14 +62,14 @@ public class Ranges {
 		return range(sheet, ref);
 	}
 	
-	private static AreaReference getAreaReference(Worksheet sheet, String reference) {
+	private static AreaReference getAreaReference(XSheet sheet, String reference) {
 		String[] parts = separateReference(reference);
 		final String sheet1 = parts[0];
 		final String sheet2 = parts[1];
 		final String lt = parts[2];
 		final String rb = parts[3];
 		final String c1str = (sheet1 != null ? sheet1 : "") + (sheet2 != null ? (":" + sheet2) : "") + (sheet1 != null ? "!" : "") + lt;
-		final SpreadsheetVersion ver = ((Book)sheet.getWorkbook()).getSpreadsheetVersion();  
+		final SpreadsheetVersion ver = ((XBook)sheet.getWorkbook()).getSpreadsheetVersion();  
 		final int maxcol = ver.getLastColumnIndex();
 		final int maxrow = ver.getLastRowIndex();
 
@@ -141,21 +141,21 @@ public class Ranges {
 		return new StringBuffer(32);
 	}
 	
-	/** Returns the associated {@link Range} of the specified {@link Worksheet} and AreaReference. note that if AreaReference 
+	/** Returns the associated {@link XRange} of the specified {@link XSheet} and AreaReference. note that if AreaReference 
 	 * contains sheet name, the returned range will refer to the named sheet. 
 	 *  
-	 * @param sheet the {@link Worksheet} the Range will refer to.
+	 * @param sheet the {@link XSheet} the Range will refer to.
 	 * @param ref the AreaReference the Range will refer to.
-	 * @return the associated {@link Range} of the specified {@link Worksheet} and area reference string (e.g. "A1:D4"). 
+	 * @return the associated {@link XRange} of the specified {@link XSheet} and area reference string (e.g. "A1:D4"). 
 	 */
-	public static Range range(Worksheet sheet, AreaReference ref) {
+	public static XRange range(XSheet sheet, AreaReference ref) {
 		final CellReference c1 = ref.getFirstCell();
 		final CellReference c2 = ref.getLastCell();
 		final String sheetnm1 = c1.getSheetName();
 		final String sheetnm2 = c2.getSheetName();
-		final Book book = sheet.getBook(); 
-		final Worksheet sheet1 = sheetnm1 != null ? book.getWorksheet(sheetnm1) : sheet;
-		final Worksheet sheet2 = sheetnm2 != null ? book.getWorksheet(sheetnm2) : sheet;
+		final XBook book = sheet.getBook(); 
+		final XSheet sheet1 = sheetnm1 != null ? book.getWorksheet(sheetnm1) : sheet;
+		final XSheet sheet2 = sheetnm2 != null ? book.getWorksheet(sheetnm2) : sheet;
 		final int tRow = c1.getRow();
 		final int lCol = c1.getCol();
 		final int bRow = c2.getRow();
@@ -163,62 +163,62 @@ public class Ranges {
 		return newRange(sheet1, sheet2, tRow, lCol, bRow, rCol);
 	}
 	
-	/** Returns the associated {@link Range} of the specified {@link Worksheet} and cell row and column. 
+	/** Returns the associated {@link XRange} of the specified {@link XSheet} and cell row and column. 
 	 *  
-	 * @param sheet the {@link Worksheet} the Range will refer to.
+	 * @param sheet the {@link XSheet} the Range will refer to.
 	 * @param row row index of the cell the Range will refer to.
 	 * @param col column index of the cell the Range will refer to.
-	 * @return the associated {@link Range} of the specified {@link Worksheet} and cell . 
+	 * @return the associated {@link XRange} of the specified {@link XSheet} and cell . 
 	 */
-	public static Range range(Worksheet sheet, int row, int col) {
+	public static XRange range(XSheet sheet, int row, int col) {
 		return newRange(sheet, sheet, row, col, row, col);
 	}
 
-	/** Returns the associated {@link Range} of the specified {@link Worksheet} and area. 
+	/** Returns the associated {@link XRange} of the specified {@link XSheet} and area. 
 	 *  
-	 * @param sheet the {@link Worksheet} the Range will refer to.
+	 * @param sheet the {@link XSheet} the Range will refer to.
 	 * @param tRow top row index of the area the Range will refer to.
 	 * @param lCol left column index of the area the Range will refer to.
 	 * @param bRow bottom row index of the area the Range will refer to.
 	 * @param rCol right column index fo the area the Range will refer to.
-	 * @return the associated {@link Range} of the specified {@link Worksheet} and area.
+	 * @return the associated {@link XRange} of the specified {@link XSheet} and area.
 	 */
-	public static Range range(Worksheet sheet, int tRow, int lCol, int bRow, int rCol) {
+	public static XRange range(XSheet sheet, int tRow, int lCol, int bRow, int rCol) {
 		return newRange(sheet, sheet, tRow, lCol, bRow, rCol);
 	}
 	
-	/** Returns the associated three dimension {@link Range} of the specified {@link Worksheet}s 
+	/** Returns the associated three dimension {@link XRange} of the specified {@link XSheet}s 
 	 * and cell row and column. 
 	 *  
-	 * @param firstSheet the first {@link Worksheet} the Range will start referring to.
-	 * @param lastSheet the last {@link Worksheet} the Range will end referring to.
+	 * @param firstSheet the first {@link XSheet} the Range will start referring to.
+	 * @param lastSheet the last {@link XSheet} the Range will end referring to.
 	 * @param row row index of the cell the Range will refer to.
 	 * @param col column index of the cell the Range will refer to.
-	 * @return the associated {@link Range} of the specified {@link Worksheet} and cell . 
+	 * @return the associated {@link XRange} of the specified {@link XSheet} and cell . 
 	 */
-	public static Range range(Worksheet firstSheet, Worksheet lastSheet, int row, int col) {
+	public static XRange range(XSheet firstSheet, XSheet lastSheet, int row, int col) {
 		return newRange(firstSheet, lastSheet, row, col, row, col);
 	}
 	
-	/** Returns the associated three dimension {@link Range} of the specified {@link Worksheet}s and area. 
+	/** Returns the associated three dimension {@link XRange} of the specified {@link XSheet}s and area. 
 	 *  
-	 * @param firstSheet the first {@link Worksheet} the Range will start referring to.
-	 * @param lastSheet the last {@link Worksheet} the Range will end referring to.
+	 * @param firstSheet the first {@link XSheet} the Range will start referring to.
+	 * @param lastSheet the last {@link XSheet} the Range will end referring to.
 	 * @param tRow top row index of the area the Range will refer to.
 	 * @param lCol left column index of the area the Range will refer to.
 	 * @param bRow bottom row index of the area the Range will refer to.
 	 * @param rCol right column index fo the area the Range will refer to.
-	 * @return the associated {@link Range} of the specified {@link Worksheet} and area.
+	 * @return the associated {@link XRange} of the specified {@link XSheet} and area.
 	 */
-	public static Range range(Worksheet firstSheet, Worksheet lastSheet, int tRow, int lCol, int bRow, int rCol) {
+	public static XRange range(XSheet firstSheet, XSheet lastSheet, int tRow, int lCol, int bRow, int rCol) {
 		return newRange(firstSheet, lastSheet, tRow, lCol, bRow, rCol);
 	}
 	
-	private static Range newRange(Worksheet firstSheet, Worksheet lastSheet, int tRow, int lCol, int bRow, int rCol) {
+	private static XRange newRange(XSheet firstSheet, XSheet lastSheet, int tRow, int lCol, int bRow, int rCol) {
 		return tRow == bRow && lCol == rCol ? 
 				new RangeImpl(tRow, lCol, firstSheet, lastSheet):
 				new RangeImpl(tRow, lCol, bRow, rCol, firstSheet, lastSheet);
 	}
 	
-	public static final Range EMPTY_RANGE = new EmptyRange();
+	public static final XRange EMPTY_RANGE = new EmptyRange();
 }

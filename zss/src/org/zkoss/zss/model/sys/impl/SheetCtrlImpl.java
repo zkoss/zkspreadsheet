@@ -32,8 +32,8 @@ import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellReference;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XSheet;
 
 /**
  * Common implementation of the {@link SheetCtrl} interface. 
@@ -41,12 +41,12 @@ import org.zkoss.zss.model.sys.Worksheet;
  *
  */
 public class SheetCtrlImpl implements SheetCtrl {
-	private final Book _book;
-	protected final Worksheet _sheet;
+	private final XBook _book;
+	protected final XSheet _sheet;
 	private boolean _evalAll;
 	private String _uuid;
 	
-	public SheetCtrlImpl(Book book, Worksheet sheet) {
+	public SheetCtrlImpl(XBook book, XSheet sheet) {
 		_book = book;
 		_sheet = sheet;
 	}
@@ -147,29 +147,29 @@ public class SheetCtrlImpl implements SheetCtrl {
 			}
 
 			@Override
-			public ZssChartX addChartX(Worksheet sheet, ClientAnchor anchor,
+			public ZssChartX addChartX(XSheet sheet, ClientAnchor anchor,
 					ChartData data, ChartType type, ChartGrouping grouping,
 					LegendPosition pos) {
 				return null;
 			}
 
 			@Override
-			public Picture addPicture(Worksheet sheet, ClientAnchor anchor,
+			public Picture addPicture(XSheet sheet, ClientAnchor anchor,
 					byte[] imageData, int format) {
 				return null;
 			}
 
 			@Override
-			public void deletePicture(Worksheet sheet, Picture picture) {
+			public void deletePicture(XSheet sheet, Picture picture) {
 			}
 
 			@Override
-			public void movePicture(Worksheet sheet, Picture picture,
+			public void movePicture(XSheet sheet, Picture picture,
 					ClientAnchor anchor) {
 			}
 
 			@Override
-			public void moveChart(Worksheet sheet, Chart chart,
+			public void moveChart(XSheet sheet, Chart chart,
 					ClientAnchor anchor) {
 			}
 
@@ -179,7 +179,7 @@ public class SheetCtrlImpl implements SheetCtrl {
 			}
 
 			@Override
-			public void deleteChart(Worksheet sheet, Chart chart) {
+			public void deleteChart(XSheet sheet, Chart chart) {
 			}
 		};
 	}

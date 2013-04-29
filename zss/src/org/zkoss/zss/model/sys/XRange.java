@@ -36,7 +36,7 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
  * 
  * @author henrichen
  */
-public interface Range {
+public interface XRange {
 	//shift of #insert
 	public final static int SHIFT_DEFAULT = 0;
 	public final static int SHIFT_RIGHT = 1;
@@ -142,7 +142,7 @@ public interface Range {
 	 * Returns formatted text + text color of this Range.
 	 * @return formatted text + text color of this Range.
 	 */
-	public FormatText getFormatText();
+	public XFormatText getFormatText();
 	
 	/**
 	 * Returns the hyperlink of this Range.
@@ -179,7 +179,7 @@ public interface Range {
 	 * @param dstRange the destination range.
 	 * @return the real destination range.
 	 */
-	public Range copy(Range dstRange);
+	public XRange copy(XRange dstRange);
 	
 	/**
 	 * Pastes a Range from the Clipboard into this range.
@@ -189,7 +189,7 @@ public interface Range {
 	 * @param transpose true to transpose rows and columns when pasting to this range; default false.
 	 * @return real destination range that was pasted into.
 	 */
-	public Range pasteSpecial(int pasteType, int pasteOp, boolean SkipBlanks, boolean transpose);
+	public XRange pasteSpecial(int pasteType, int pasteOp, boolean SkipBlanks, boolean transpose);
 	
 	/**
 	 * Pastes to a destination Range from this range.
@@ -200,7 +200,7 @@ public interface Range {
 	 * @param transpose true to transpose rows and columns when pasting to this range; default false.
 	 * @return real destination range that was pasted into.
 	 */
-	public Range pasteSpecial(Range dstRange, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose);
+	public XRange pasteSpecial(XRange dstRange, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose);
 	
 	/**
 	 * Insert this Range. 
@@ -233,7 +233,7 @@ public interface Range {
 	 * @param dataOption2 see numeric String as number or not for key2.
 	 * @param dataOption3 see numeric String as number or not for key3.
 	 */
-	public void sort(Range rng1, boolean desc1, Range rng2, int type, boolean desc2, Range rng3, boolean desc3, int header, int orderCustom,
+	public void sort(XRange rng1, boolean desc1, XRange rng2, int type, boolean desc2, XRange rng3, boolean desc3, int header, int orderCustom,
 			boolean matchCase, boolean sortByRows, int sortMethod, int dataOption1, int dataOption2, int dataOption3);
 
 	/**
@@ -295,10 +295,10 @@ public interface Range {
 	public boolean isCustomHeight();
 	
 	/**
-	 * Returns associate {@link Worksheet} of this range.
-	 * @return associate {@link Worksheet} of this range.
+	 * Returns associate {@link XSheet} of this range.
+	 * @return associate {@link XSheet} of this range.
 	 */
-	public Worksheet getSheet();
+	public XSheet getSheet();
 	
 	/**
 	 * Return the range that contains the cell specified in row, col (relative to this Range).
@@ -306,7 +306,7 @@ public interface Range {
 	 * @param col column index relative to this Range(note that it is 0-based)
 	 * @return the range that contains the cell specified in row, col (relative to this Range).
 	 */
-	public Range getCells(int row, int col);
+	public XRange getCells(int row, int col);
 	
 	/**
 	 * Sets a Style object to this Range.
@@ -320,7 +320,7 @@ public interface Range {
 	 * @param dstRange destination range to do the auto fill. Note the given destination Range must include this source Range
 	 * @param fillType the fillType
 	 */
-	public void autoFill(Range dstRange, int fillType);
+	public void autoFill(XRange dstRange, int fillType);
 	
 	/**
 	 * Clears the data from this Range.
@@ -394,55 +394,55 @@ public interface Range {
 	public void setHyperlink(int linkType, String address, String display);
 	
 	/**
-	 * Returns an {@link Areas} which is a collection of each single selected area(also Range) of this multiple-selected Range. 
+	 * Returns an {@link XAreas} which is a collection of each single selected area(also Range) of this multiple-selected Range. 
 	 * If this Range is a single selected Range, this method return the Areas which contains only this Range itself.
-	 * @return an {@link Areas} which is a collection of each single selected area(also Range) of this multiple-selected Range.
+	 * @return an {@link XAreas} which is a collection of each single selected area(also Range) of this multiple-selected Range.
 	 */
-	public Areas getAreas();
+	public XAreas getAreas();
 	
 	/**
-	 * Returns a {@link Range} that represent all columns of the 1st selected area of this Range. Note that only the 1st selected area is considered if this Range is a multiple-selected Range. 
-	 * @return a {@link Range} that represent all columns of this Range.
+	 * Returns a {@link XRange} that represent all columns of the 1st selected area of this Range. Note that only the 1st selected area is considered if this Range is a multiple-selected Range. 
+	 * @return a {@link XRange} that represent all columns of this Range.
 	 */
-	public Range getColumns();
+	public XRange getColumns();
 	
 	/**
-	 * Returns a {@link Range} that represent all rows of the 1st selected area of this Range. Note that only the 1st selected area is considered if this Range is a multiple-selected Range. 
-	 * @return a {@link Range} that represent all rows of this Range.
+	 * Returns a {@link XRange} that represent all rows of the 1st selected area of this Range. Note that only the 1st selected area is considered if this Range is a multiple-selected Range. 
+	 * @return a {@link XRange} that represent all rows of this Range.
 	 */
-	public Range getRows();
+	public XRange getRows();
 
 	/**
-	 * Returns a {@link Range} that represent all dependents of the left-top cell of the 1st selected area of this Range. 
+	 * Returns a {@link XRange} that represent all dependents of the left-top cell of the 1st selected area of this Range. 
 	 * Note that only the left-top cell of the 1st selected area is considered if this Range is a multiple-selected Range.
 	 * This could be multiple-selected Range if there are more than one dependent. 
-	 * @return a {@link Range} that represent all dependents of the left-top cell of the 1st selected area of this Range.
+	 * @return a {@link XRange} that represent all dependents of the left-top cell of the 1st selected area of this Range.
 	 */
-	public Range getDependents();
+	public XRange getDependents();
 	
 	/**
-	 * Returns a {@link Range} that represent all direct dependents of the left-top cell of the 1st selected area of this Range. 
+	 * Returns a {@link XRange} that represent all direct dependents of the left-top cell of the 1st selected area of this Range. 
 	 * Note that only the left-top cell of the 1st selected area is considered if this Range is a multiple-selected Range. 
 	 * This method could return multiple-selected Range if there are more than one dependent. 
-	 * @return a {@link Range} that represent all direct dependents of the left-top cell of the 1st selected area of this Range.
+	 * @return a {@link XRange} that represent all direct dependents of the left-top cell of the 1st selected area of this Range.
 	 */
-	public Range getDirectDependents();
+	public XRange getDirectDependents();
 	
 	/** 
-	 * Returns a {@link Range} that represent all precedents of the left-top cell of the 1st selected area of this Range. 
+	 * Returns a {@link XRange} that represent all precedents of the left-top cell of the 1st selected area of this Range. 
 	 * Note that only the left-top cell of the 1st selected area is considered if this Range is a multiple-selected Range.
 	 * This method could return multiple-selected Range if there are more than one precedent. 
-	 * @return a {@link Range} that represent all precedents of the left-top cell of the 1st selected area of this Range.
+	 * @return a {@link XRange} that represent all precedents of the left-top cell of the 1st selected area of this Range.
 	 */
-	public Range getPrecedents();
+	public XRange getPrecedents();
 	
 	/**
-	 * Returns a {@link Range} that represent all direct precedents of the left-top cell of the 1st selected area of this Range. 
+	 * Returns a {@link XRange} that represent all direct precedents of the left-top cell of the 1st selected area of this Range. 
 	 * Note that only the left-top cell of the 1st selected area is considered if this Range is a multiple-selected Range. 
 	 * This method could return multiple-selected Range if there are more than one precedent. 
-	 * @return a {@link Range} that represent all direct precedents of the left-top cell of the 1st selected area of this Range.
+	 * @return a {@link XRange} that represent all direct precedents of the left-top cell of the 1st selected area of this Range.
 	 */
-	public Range getDirectPrecedents();
+	public XRange getDirectPrecedents();
 	
 	/**
 	 * Returns the number of the 1st row of the 1st area in this Range(0-based; i.e. row1 return 0)
@@ -487,18 +487,18 @@ public interface Range {
 	public Object getValue();
 	
 	/**
-	 * Returns a {@link Range} that represents a range that offset from this Range. 
+	 * Returns a {@link XRange} that represents a range that offset from this Range. 
 	 * @param rowOffset positive means downward; 0 means don't change row; negative means upward.
 	 * @param colOffset positive means rightward; 0 means don't change column; negative means leftward.
-	 * @return a {@link Range} that represents a range that offset from this Range.
+	 * @return a {@link XRange} that represents a range that offset from this Range.
 	 */
-	public Range getOffset(int rowOffset, int colOffset);
+	public XRange getOffset(int rowOffset, int colOffset);
 	
 	/**
-	 * Returns a {@link Range} that bounds current Left-top cell of this Range with a combination of blank Rows and Columns.
-	 * @return a {@link Range} that bounds current Left-top cell of this Range with a combination of blank Rows and Columns.
+	 * Returns a {@link XRange} that bounds current Left-top cell of this Range with a combination of blank Rows and Columns.
+	 * @return a {@link XRange} that bounds current Left-top cell of this Range with a combination of blank Rows and Columns.
 	 */
-	public Range getCurrentRegion();
+	public XRange getCurrentRegion();
 	
 	/**
 	 * Reapply current {@link AutoFilter}.

@@ -18,7 +18,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
-import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.XBook;
 
 /**
  * @author Sam
@@ -29,7 +29,7 @@ public class SheetSelector {
 	/**
 	 * Visit each sheet in book
 	 */
-	public void doVisit(Book book, SheetVisitor visitor) {
+	public void doVisit(XBook book, SheetVisitor visitor) {
 		int numSheet = book.getNumberOfSheets();
 		for (int i = 0; i < numSheet; i++) {
 			visitor.handle(book.getSheetAt(i));

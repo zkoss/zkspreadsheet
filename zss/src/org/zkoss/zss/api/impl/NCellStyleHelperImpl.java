@@ -9,7 +9,7 @@ import org.zkoss.zss.api.model.impl.NBookImpl;
 import org.zkoss.zss.api.model.impl.NCellStyleImpl;
 import org.zkoss.zss.api.model.impl.NFontImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
-import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.XBook;
 
 public class NCellStyleHelperImpl implements NCellStyleHelper{
 
@@ -25,7 +25,7 @@ public class NCellStyleHelperImpl implements NCellStyleHelper{
 	 * @return the new cell style
 	 */
 	public NCellStyle createCellStyle(NCellStyle src){
-		Book book = range.getNative().getSheet().getBook();
+		XBook book = range.getNative().getSheet().getBook();
 //		synchronized(book){//should be protected in range.batch,visit
 			NCellStyle style = new NCellStyleImpl(((NBookImpl)range.getBook()).getRef(),new SimpleRef<CellStyle>(book.createCellStyle()));
 			if(src!=null){
@@ -36,7 +36,7 @@ public class NCellStyleHelperImpl implements NCellStyleHelper{
 	}
 
 	public NFont createFont(NFont src) {
-		Book book = range.getNative().getSheet().getBook();
+		XBook book = range.getNative().getSheet().getBook();
 //		synchronized(book){
 			Font font = book.createFont();
 

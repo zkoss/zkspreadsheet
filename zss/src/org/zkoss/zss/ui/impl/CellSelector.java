@@ -23,7 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Rect;
 
 /**
@@ -56,7 +56,7 @@ public class CellSelector {
 //		return this;
 //	}
 
-	public void doVisit(Worksheet sheet, Rect rect, CellVisitor vistor){
+	public void doVisit(XSheet sheet, Rect rect, CellVisitor vistor){
 		for (int row = rect.getTop(); row <= rect.getBottom(); row++) {
 			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
 				CellVisitorContext context = new CellVisitorContext(sheet, row, col);

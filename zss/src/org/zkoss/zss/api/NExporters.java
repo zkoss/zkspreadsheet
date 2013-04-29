@@ -1,13 +1,13 @@
 package org.zkoss.zss.api;
 
 import org.zkoss.zss.api.impl.NExporterImpl;
-import org.zkoss.zss.model.sys.Exporter;
-import org.zkoss.zss.model.sys.Exporters;
+import org.zkoss.zss.model.sys.XExporter;
+import org.zkoss.zss.model.sys.XExporters;
 
 public class NExporters {
 
 	public static NExporter getExporter(String type) {
-		Exporter exp = Exporters.getExporter(type);
+		XExporter exp = XExporters.getExporter(type);
 		return exp==null?null:new NExporterImpl(exp);
 	}
 

@@ -43,9 +43,9 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zss.model.sys.Range;
-import org.zkoss.zss.model.sys.Ranges;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellMouseEvent;
@@ -85,7 +85,7 @@ public class CellMouseCommand implements Command {
 		int my = (Integer) data.get("my");
 		
 		Spreadsheet spreadsheet = (Spreadsheet) comp;
-		Worksheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		XSheet sheet = ((Spreadsheet) comp).getSelectedSheet();
 		if (!Utils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
@@ -115,11 +115,11 @@ public class CellMouseCommand implements Command {
 		}
 	}
 	
-	private void processFilter (int row, int col, int field, Worksheet worksheet, Spreadsheet spreadsheet) {
+	private void processFilter (int row, int col, int field, XSheet worksheet, Spreadsheet spreadsheet) {
 		final AutoFilter autoFilter = worksheet.getAutoFilter();
 		final FilterColumn filterColumn = autoFilter.getFilterColumn(field - 1);
 		final String rangeAddr = autoFilter.getRangeAddress().formatAsString();
-		final Range range = Ranges.range(worksheet, rangeAddr);
+		final XRange range = XRanges.range(worksheet, rangeAddr);
 		
 		spreadsheet.smartUpdate("autoFilterPopup", 
 			convertFilterInfoToJSON(row, col, field, rangeAddr, scanRows(field, filterColumn, range, worksheet)));
@@ -160,7 +160,7 @@ public class CellMouseCommand implements Command {
 		return data;
 	}
 	
-	private TreeSet<FilterRowInfo> scanRows(int field, FilterColumn fc, Range range, Worksheet worksheet) {
+	private TreeSet<FilterRowInfo> scanRows(int field, FilterColumn fc, XRange range, XSheet worksheet) {
 		TreeSet<FilterRowInfo> orderedRowInfos = new TreeSet<FilterRowInfo>(new FilterRowInfoComparator());
 		
 		blankRowInfo = new FilterRowInfo(BLANK_VALUE, "(Blanks)");
@@ -204,7 +204,7 @@ public class CellMouseCommand implements Command {
 		return orderedRowInfos;
 	}
 	
-	private static boolean isHiddenRow(int rowIdx, Worksheet worksheet) {
+	private static boolean isHiddenRow(int rowIdx, XSheet worksheet) {
 		final Row r = worksheet.getRow(rowIdx);
 		return r != null && r.getZeroHeight();
 	}

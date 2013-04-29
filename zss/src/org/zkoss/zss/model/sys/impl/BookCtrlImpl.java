@@ -21,7 +21,7 @@ import org.zkoss.poi.ss.usermodel.PivotCache;
 import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.impl.RefBookImpl;
-import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.ui.Focus;
 
 /**
@@ -35,7 +35,7 @@ public class BookCtrlImpl implements BookCtrl {
 	private WeakHashMap<Object, String> _focusMap = new WeakHashMap<Object, String>(20);
 	
 	@Override
-	public RefBook newRefBook(Book book) {
+	public RefBook newRefBook(XBook book) {
 		return new RefBookImpl(book.getBookName(), book.getSpreadsheetVersion().getLastRowIndex(), book.getSpreadsheetVersion().getLastColumnIndex());
 	}
 	

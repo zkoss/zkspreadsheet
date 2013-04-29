@@ -21,8 +21,8 @@ import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.FontUnderline;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.sheet.SheetHelper;
-import org.zkoss.zss.model.sys.Ranges;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -58,7 +58,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 	}
 	
 	public void setFontSize(int size) {
-		Worksheet sheet = spreadsheet.getSelectedSheet();
+		XSheet sheet = spreadsheet.getSelectedSheet();
 		Rect rect = spreadsheet.getSelection();
 
 		Utils.setFontHeight(sheet, 
@@ -71,7 +71,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 		return (short)(size * 20);
 	}
 	
-	private void setProperRowHeightByFontSize(Worksheet sheet, Rect rect, int size) {	
+	private void setProperRowHeightByFontSize(XSheet sheet, Rect rect, int size) {	
 		int tRow = rect.getTop();
 		int bRow = rect.getBottom();
 		int col = rect.getLeft();
@@ -79,7 +79,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 		for (int i = tRow; i <= bRow; i++) {
 			//Note. add extra padding height: 4
 			if ((size + 4) > (Utils.pxToPoint(Utils.twipToPx(BookHelper.getRowHeight(sheet, i))))) {
-				Ranges.range(sheet, i, col).setRowHeight(size + 4);
+				XRanges.range(sheet, i, col).setRowHeight(size + 4);
 			}
 		}
 	}

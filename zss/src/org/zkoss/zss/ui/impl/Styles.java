@@ -23,8 +23,8 @@ import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.util.logging.Log;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 /**
  * A utility class to help spreadsheet set style of a cell
@@ -40,9 +40,9 @@ public class Styles {
 		return destination;
 	}
 	
-	public static void setFontColor(Worksheet sheet, int row, int col, String color){
+	public static void setFontColor(XSheet sheet, int row, int col, String color){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
-		final Book book = (Book) sheet.getWorkbook();
+		final XBook book = (XBook) sheet.getWorkbook();
 		final short fontIdx = cell.getCellStyle().getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final Color orgColor = BookHelper.getFontColor(book, font);
@@ -63,9 +63,9 @@ public class Styles {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setFillColor(Worksheet sheet, int row, int col, String color){
+	public static void setFillColor(XSheet sheet, int row, int col, String color){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
-		final Book book = (Book) sheet.getWorkbook();
+		final XBook book = (XBook) sheet.getWorkbook();
 		final Color orgColor = cell.getCellStyle().getFillForegroundColorColor();
 		final Color newColor = BookHelper.HTMLToColor(book, color);
 		if (orgColor == newColor || orgColor != null  && orgColor.equals(newColor)) { //no change, skip
@@ -76,7 +76,7 @@ public class Styles {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setTextWrap(Worksheet sheet,int row,int col,boolean wrap){
+	public static void setTextWrap(XSheet sheet,int row,int col,boolean wrap){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
 		final boolean textWrap = cell.getCellStyle().getWrapText();
 		if (wrap == textWrap) { //no change, skip
@@ -87,9 +87,9 @@ public class Styles {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setFontSize(Worksheet sheet,int row,int col,int fontHeight){
+	public static void setFontSize(XSheet sheet,int row,int col,int fontHeight){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
-		final Book book = (Book) sheet.getWorkbook();
+		final XBook book = (XBook) sheet.getWorkbook();
 		final short fontIdx = cell.getCellStyle().getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final short orgSize = font.getFontHeight();
@@ -109,9 +109,9 @@ public class Styles {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setFontStrikethrough(Worksheet sheet,int row,int col, boolean strikeout){
+	public static void setFontStrikethrough(XSheet sheet,int row,int col, boolean strikeout){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
-		final Book book = (Book) sheet.getWorkbook();
+		final XBook book = (XBook) sheet.getWorkbook();
 		final short fontIdx = cell.getCellStyle().getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final boolean orgStrikeout = font.getStrikeout();
@@ -131,9 +131,9 @@ public class Styles {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setFontType(Worksheet sheet,int row,int col,String name){
+	public static void setFontType(XSheet sheet,int row,int col,String name){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
-		final Book book = (Book) sheet.getWorkbook();
+		final XBook book = (XBook) sheet.getWorkbook();
 		final short fontIdx = cell.getCellStyle().getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final String orgName = font.getFontName();
@@ -153,22 +153,22 @@ public class Styles {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setBorder(Worksheet sheet,int row,int col, String color, short linestyle){
+	public static void setBorder(XSheet sheet,int row,int col, String color, short linestyle){
 		setBorder(sheet,row,col, BookHelper.HTMLToColor(sheet.getWorkbook(), color), linestyle, 0xF);
 	}
-	public static void setBorderTop(Worksheet sheet,int row,int col,String color, short linestyle){
+	public static void setBorderTop(XSheet sheet,int row,int col,String color, short linestyle){
 		setBorder(sheet,row,col, BookHelper.HTMLToColor(sheet.getWorkbook(), color), linestyle, 0x4);
 	}
-	public static void setBorderLeft(Worksheet sheet,int row,int col,String color, short linestyle){
+	public static void setBorderLeft(XSheet sheet,int row,int col,String color, short linestyle){
 		setBorder(sheet,row,col, BookHelper.HTMLToColor(sheet.getWorkbook(), color), linestyle, 0x8);
 	}
-	public static void setBorderBottom(Worksheet sheet,int row,int col,String color, short linestyle){
+	public static void setBorderBottom(XSheet sheet,int row,int col,String color, short linestyle){
 		setBorder(sheet,row,col, BookHelper.HTMLToColor(sheet.getWorkbook(), color), linestyle, 0x1);
 	}
-	public static void setBorderRight(Worksheet sheet,int row,int col,String color, short linestyle){
+	public static void setBorderRight(XSheet sheet,int row,int col,String color, short linestyle){
 		setBorder(sheet,row,col, BookHelper.HTMLToColor(sheet.getWorkbook(), color), linestyle, 0x2);
 	}
-	public static void setBorder(Worksheet sheet,int row,int col, short color, short lineStyle, int at){
+	public static void setBorder(XSheet sheet,int row,int col, short color, short lineStyle, int at){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
 		final CellStyle style = cloneCellStyle(cell);
 		if((at & BookHelper.BORDER_EDGE_LEFT)!=0) {
@@ -189,7 +189,7 @@ public class Styles {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setBorder(Worksheet sheet,int row,int col, Color color, short lineStyle, int at){
+	public static void setBorder(XSheet sheet,int row,int col, Color color, short lineStyle, int at){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
 		final CellStyle style = cloneCellStyle(cell);
 		if((at & BookHelper.BORDER_EDGE_LEFT)!=0) {
@@ -211,9 +211,9 @@ public class Styles {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setFontBoldWeight(Worksheet sheet,int row,int col,short boldWeight){
+	public static void setFontBoldWeight(XSheet sheet,int row,int col,short boldWeight){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
-		final Book book = (Book) sheet.getWorkbook();
+		final XBook book = (XBook) sheet.getWorkbook();
 		final short fontIdx = cell.getCellStyle().getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final short orgBoldWeight = font.getBoldweight();
@@ -233,9 +233,9 @@ public class Styles {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setFontItalic(Worksheet sheet, int row, int col, boolean italic) {
+	public static void setFontItalic(XSheet sheet, int row, int col, boolean italic) {
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
-		final Book book = (Book) sheet.getWorkbook();
+		final XBook book = (XBook) sheet.getWorkbook();
 		final short fontIdx = cell.getCellStyle().getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final boolean orgItalic = font.getItalic();
@@ -255,9 +255,9 @@ public class Styles {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setFontUnderline(Worksheet sheet,int row,int col, byte underline){
+	public static void setFontUnderline(XSheet sheet,int row,int col, byte underline){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
-		final Book book = (Book) sheet.getWorkbook();
+		final XBook book = (XBook) sheet.getWorkbook();
 		final short fontIdx = cell.getCellStyle().getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final byte orgUnderline = font.getUnderline();
@@ -277,7 +277,7 @@ public class Styles {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setTextHAlign(Worksheet sheet,int row,int col, short align){
+	public static void setTextHAlign(XSheet sheet,int row,int col, short align){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
 		final short orgAlign = cell.getCellStyle().getAlignment();
 		if (align == orgAlign) { //no change, skip
@@ -288,7 +288,7 @@ public class Styles {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setTextVAlign(Worksheet sheet,int row,int col, short valign){
+	public static void setTextVAlign(XSheet sheet,int row,int col, short valign){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
 		final short orgValign = cell.getCellStyle().getVerticalAlignment();
 		if (valign == orgValign) { //no change, skip

@@ -5,11 +5,11 @@ import java.io.FileOutputStream;
 import org.zkoss.zss.api.NExporter;
 import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.model.impl.NBookImpl;
-import org.zkoss.zss.model.sys.Exporter;
+import org.zkoss.zss.model.sys.XExporter;
 
 public class NExporterImpl implements NExporter {
-	Exporter exporter;
-	public NExporterImpl(Exporter exporter){
+	XExporter exporter;
+	public NExporterImpl(XExporter exporter){
 		if(exporter==null){
 			throw new IllegalAccessError("exporter not found");
 		}

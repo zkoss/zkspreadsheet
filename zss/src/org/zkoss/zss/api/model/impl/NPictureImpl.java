@@ -2,14 +2,14 @@ package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.zss.api.model.NPicture;
-import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.XBook;
 
 public class NPictureImpl implements NPicture{
 	
-	ModelRef<Book> bookRef;
+	ModelRef<XBook> bookRef;
 	ModelRef<Picture> picRef;
 	
-	public NPictureImpl(ModelRef<Book> bookRef, SimpleRef<Picture> picRef) {
+	public NPictureImpl(ModelRef<XBook> bookRef, SimpleRef<Picture> picRef) {
 		this.bookRef = bookRef;
 		this.picRef = picRef;
 	}

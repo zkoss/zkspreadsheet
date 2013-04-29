@@ -28,8 +28,8 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.KeyEvent;
-import org.zkoss.zss.model.sys.Ranges;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.DrawingManager;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -51,7 +51,7 @@ public class WidgetCtrlKeyCommand implements Command {
 				new Object[] {Objects.toString(data), this});
 		
 		String widgetType = (String) data.get("wgt");
-		Worksheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		XSheet sheet = ((Spreadsheet) comp).getSelectedSheet();
 		if ("chart".equals(widgetType)) {
 			processChart(sheet, data);
 		} else if ("image".equals(widgetType)) {
@@ -59,7 +59,7 @@ public class WidgetCtrlKeyCommand implements Command {
 		}
 	}
 	
-	private void processChart(Worksheet sheet, Map data) {
+	private void processChart(XSheet sheet, Map data) {
 		String widgetId = (String) data.get("id");
 		int keyCode = (Integer) data.get("keyCode");
 		DrawingManager dm = ((SheetCtrl)sheet).getDrawingManager();
@@ -67,14 +67,14 @@ public class WidgetCtrlKeyCommand implements Command {
 			List<Chart> charts = dm.getCharts();
 			for (Chart chart : charts) {
 				if (chart != null && chart.getChartId().equals(widgetId)) {
-					Ranges.range(sheet).deleteChart(chart);
+					XRanges.range(sheet).deleteChart(chart);
 					break;
 				}
 			}
 		}
 	}
 	
-	private void processPicture(Worksheet sheet, Map data) {
+	private void processPicture(XSheet sheet, Map data) {
 		String widgetId = (String) data.get("id");
 		int keyCode = (Integer) data.get("keyCode");
 		DrawingManager dm = ((SheetCtrl)sheet).getDrawingManager();
@@ -82,7 +82,7 @@ public class WidgetCtrlKeyCommand implements Command {
 			List<Picture> pics = dm.getPictures();
 			for (Picture pic : pics) {
 				if (pic.getPictureId().equals(widgetId)) {
-					Ranges.range(sheet).deletePicture(pic);
+					XRanges.range(sheet).deletePicture(pic);
 					break;
 				}
 			}

@@ -16,7 +16,7 @@ package org.zkoss.zss.formula;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.poi.ss.formula.DependencyTracker;
 import org.zkoss.xel.FunctionMapper;
-import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.XBook;
 
 /**
  * Interface to glue POI function mechanism to zkoss xel function mechanism.
@@ -42,5 +42,5 @@ public interface FunctionResolver {
 	 * @param book the associated book for the dependency tracker.
 	 * @return the associated {@link DependencyTracker}.
 	 */
-	public DependencyTracker getDependencyTracker(Book book);
+	public DependencyTracker getDependencyTracker(XBook book);
 }

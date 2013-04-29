@@ -23,83 +23,83 @@ import java.net.URL;
 import org.zkoss.poi.POIXMLDocument;
 import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
 import org.zkoss.poi.ss.usermodel.Workbook;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.Importer;
-import org.zkoss.zss.model.sys.ModelException;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XImporter;
+import org.zkoss.zss.model.sys.XModelException;
 
 /**
- * Imports an Excel file into as a {@link Book}.
+ * Imports an Excel file into as a {@link XBook}.
  * @author henrichen
  *
  */
-public class ExcelImporter implements Importer {
+public class ExcelImporter implements XImporter {
 	@Override
-	public Book imports(String filename) {
+	public XBook imports(String filename) {
 		InputStream is = null;
 		try {
 			is = new FileInputStream(filename);
 			return importsFromStream(is, filename);
 		} catch (Exception e) {
-			throw ModelException.Aide.wrap(e);
+			throw XModelException.Aide.wrap(e);
 		} finally {
 			if (is != null) {
 				try {
 					is.close();
 				} catch (IOException e) {
-					throw ModelException.Aide.wrap(e);
+					throw XModelException.Aide.wrap(e);
 				}
 			}
 		}
 	}
 
 	@Override
-	public Book imports(File file) {
+	public XBook imports(File file) {
 		final String name = file.getName();
 		InputStream is = null;
 		try {
 			is = new FileInputStream(file);
 			return importsFromStream(is, name);
 		} catch (Exception e) {
-			throw ModelException.Aide.wrap(e);
+			throw XModelException.Aide.wrap(e);
 		} finally {
 			if (is != null) {
 				try {
 					is.close();
 				} catch (IOException e) {
-					throw ModelException.Aide.wrap(e);
+					throw XModelException.Aide.wrap(e);
 				}
 			}
 		}
 	}
 
 	@Override
-	public Book imports(InputStream is, String bookname) {
+	public XBook imports(InputStream is, String bookname) {
 		try {
 			return importsFromStream(is, bookname);
 		} catch (Exception e) {
-			throw ModelException.Aide.wrap(e);
+			throw XModelException.Aide.wrap(e);
 		}
 	}
 	
-	public Book importsFromURL(URL url) {
+	public XBook importsFromURL(URL url) {
 		InputStream is = null;
 		try {
 			is = url.openStream();
 			return importsFromStream(is, url.toString());
 		} catch (Exception ex) {
-			throw ModelException.Aide.wrap(ex);
+			throw XModelException.Aide.wrap(ex);
 		} finally {
 			if (is != null) {
 				try {
 					is.close();
 				} catch(IOException ex) {
-					throw ModelException.Aide.wrap(ex);
+					throw XModelException.Aide.wrap(ex);
 				}
 			}
 		}
 	}
 	
-	private Book importsFromStream(InputStream is, String bookname) 
+	private XBook importsFromStream(InputStream is, String bookname) 
 	throws IOException {
 		final int j = bookname.lastIndexOf("/");
 		if (j >=0) {

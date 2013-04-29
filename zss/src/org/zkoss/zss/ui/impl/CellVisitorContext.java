@@ -22,9 +22,9 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.Range;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 
 /**
@@ -36,18 +36,18 @@ public class CellVisitorContext {
 
 	private int row;
 	private int col;
-	private Worksheet sheet;
-	private Book book;
+	private XSheet sheet;
+	private XBook book;
 	/**
 	 * @param sheet
 	 * @param row
 	 * @param col
 	 */
-	public CellVisitorContext(Worksheet sheet, int row, int col) {
+	public CellVisitorContext(XSheet sheet, int row, int col) {
 		this.sheet = sheet;
 		this.row = row;
 		this.col = col;
-		book  = (Book) sheet.getWorkbook();
+		book  = (XBook) sheet.getWorkbook();
 	}	
 	
 	/**
@@ -141,7 +141,7 @@ public class CellVisitorContext {
 	 * Returns the range
 	 * @return the range
 	 */
-	public Range getRange() {
+	public XRange getRange() {
 		return Utils.getRange(sheet, row, col);
 	}
 
@@ -161,11 +161,11 @@ public class CellVisitorContext {
 		return Utils.getCell(sheet, row, col);
 	}
 	
-	public Worksheet getSheet() {
+	public XSheet getSheet() {
 		return sheet;
 	}
 	
-	public Book getBook() {
+	public XBook getBook() {
 		return book;
 	}
 	

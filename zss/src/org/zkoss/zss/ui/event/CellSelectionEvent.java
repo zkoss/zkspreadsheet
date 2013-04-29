@@ -20,7 +20,7 @@ package org.zkoss.zss.ui.event;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 
 /**
  * Event class about selection of cell
@@ -34,14 +34,14 @@ public class CellSelectionEvent extends Event{
 	public static final int SELECT_COLUMN = 0x03;
 	public static final int SELECT_ALL = 0x04;
 	
-	private Worksheet _sheet;
+	private XSheet _sheet;
 	private int _action;
 	private int _left;
 	private int _top;
 	private int _right;
 	private int _bottom;
 
-	public CellSelectionEvent(String name, Component target,Worksheet sheet,int action, int left, int top,int right, int bottom, Object data) {
+	public CellSelectionEvent(String name, Component target,XSheet sheet,int action, int left, int top,int right, int bottom, Object data) {
 		super(name, target, data);
 		_sheet = sheet;
 		_action = action;
@@ -51,7 +51,7 @@ public class CellSelectionEvent extends Event{
 		_bottom = bottom;
 	}
 	
-	public CellSelectionEvent(String name, Component target,Worksheet sheet,int action, int left, int top,int right, int bottom) {
+	public CellSelectionEvent(String name, Component target,XSheet sheet,int action, int left, int top,int right, int bottom) {
 		this(name,target,sheet,action,left,top,right,bottom,null);
 	}
 	
@@ -59,7 +59,7 @@ public class CellSelectionEvent extends Event{
 	 * get Sheet
 	 * @return sheet the related sheet 
 	 */
-	public Worksheet getSheet(){
+	public XSheet getSheet(){
 		return _sheet;
 	}
 

@@ -33,7 +33,7 @@ import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.RefSheet;
 import org.zkoss.zss.engine.impl.CellRefImpl;
 import org.zkoss.zss.engine.impl.DependencyTrackerHelper;
-import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.XelContextHolder;
 
@@ -43,8 +43,8 @@ import org.zkoss.zss.model.sys.impl.XelContextHolder;
  *
  */
 public class DefaultDependencyTracker implements DependencyTracker {
-	private final Book _book;
-	public DefaultDependencyTracker(Book book) {
+	private final XBook _book;
+	public DefaultDependencyTracker(XBook book) {
 		_book = book;
 	}
 	
@@ -94,7 +94,7 @@ public class DefaultDependencyTracker implements DependencyTracker {
 		if ("#REF".equals(refSheetname) || "#REF".equals(refLastSheetName)) { //handle refer to deleted sheet
 			return;
 		}
-		final Book targetBook = BookHelper.getBook(_book, refBookname);
+		final XBook targetBook = BookHelper.getBook(_book, refBookname);
 		if (targetBook == null) {
 			throw new UiException("cannot find the named book, have you add it in the Books:"+ refBookname);
 		}

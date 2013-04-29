@@ -7,17 +7,17 @@ import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NColor;
 import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.api.model.impl.EnumUtil;
-import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 
 public class NCellStyleImpl implements NCellStyle{
 	
-	ModelRef<Book> bookRef;
+	ModelRef<XBook> bookRef;
 	ModelRef<CellStyle> styleRef;
 	
 	NFontImpl nfont;
 	
-	public NCellStyleImpl(ModelRef<Book> book,ModelRef<CellStyle> style) {
+	public NCellStyleImpl(ModelRef<XBook> book,ModelRef<CellStyle> style) {
 		this.bookRef = book;
 		this.styleRef = style;
 	}
@@ -57,7 +57,7 @@ public class NCellStyleImpl implements NCellStyle{
 		if(nfont!=null){
 			return nfont;
 		}
-		Book book = bookRef.get();
+		XBook book = bookRef.get();
 		Font font = book.getFontAt(getNative().getFontIndex());
 		return nfont = new NFontImpl(bookRef,new SimpleRef<Font>(font));
 	}

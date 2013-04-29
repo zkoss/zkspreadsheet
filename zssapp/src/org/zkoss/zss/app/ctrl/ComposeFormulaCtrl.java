@@ -29,7 +29,7 @@ import org.zkoss.zss.app.formula.FormulaMetaInfo;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
-import org.zkoss.zss.model.sys.Ranges;
+import org.zkoss.zss.model.sys.XRanges;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Button;
@@ -74,7 +74,7 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 			CellSelectionEvent evt = (CellSelectionEvent) event;
 			Cell cell = Utils.getCell(evt.getSheet(), evt.getTop(), evt.getLeft());
 			if (cell == null) {
-				Ranges.range(evt.getSheet(), evt.getTop(), evt.getLeft()).setEditText("0");
+				XRanges.range(evt.getSheet(), evt.getTop(), evt.getLeft()).setEditText("0");
 			}
 			if (focusComponent != null) {
 				focusComponent.setText(getDesktopWorkbenchContext().getWorkbookCtrl().getCurrentCellPosition());

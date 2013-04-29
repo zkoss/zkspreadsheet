@@ -24,12 +24,12 @@ import org.zkoss.poi.ss.usermodel.PivotTable;
  * @author henrichen
  *
  */
-public interface Worksheet extends org.zkoss.poi.ss.usermodel.Sheet {
+public interface XSheet extends org.zkoss.poi.ss.usermodel.Sheet {
 	/**
-	 * Returns the associated ZK Spreadsheet {@link Book} of this ZK Spreadsheet Sheet. 
-	 * @return the associated ZK Spreadsheet {@link Book} of this ZK Spreadsheet Sheet.
+	 * Returns the associated ZK Spreadsheet {@link XBook} of this ZK Spreadsheet Sheet. 
+	 * @return the associated ZK Spreadsheet {@link XBook} of this ZK Spreadsheet Sheet.
 	 */
-    public Book getBook();
+    public XBook getBook();
     
     /**
      * Returns pictures in this ZK Spreadsheet sheet.

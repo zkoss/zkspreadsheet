@@ -42,10 +42,10 @@ import org.zkoss.zss.api.model.impl.NChartImpl;
 import org.zkoss.zss.api.model.impl.NPictureImpl;
 import org.zkoss.zss.api.model.impl.NSheetImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.Range;
-import org.zkoss.zss.model.sys.Ranges;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.DrawingManager;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
@@ -57,7 +57,7 @@ import org.zkoss.zss.model.sys.impl.SheetCtrl;
  */
 public class NRangeImpl implements NRange{
 	
-	Range range;
+	XRange range;
 	
 	SyncLevel syncLevel = SyncLevel.BOOK;
 	
@@ -67,11 +67,11 @@ public class NRangeImpl implements NRange{
 	
 	private SharedContext sharedCtx;
 	
-	public NRangeImpl(NSheet sheet,Range range) {
+	public NRangeImpl(NSheet sheet,XRange range) {
 		this.range = range;
 		sharedCtx = new SharedContext((NSheetImpl)sheet);
 	}
-	private NRangeImpl(Range range,SharedContext ctx) {
+	private NRangeImpl(XRange range,SharedContext ctx) {
 		this.range = range;
 		sharedCtx = ctx;
 	}
@@ -81,7 +81,7 @@ public class NRangeImpl implements NRange{
 		return new NCellStyleHelperImpl(this);
 	}
 	
-	public Range getNative(){
+	public XRange getNative(){
 		return range;
 	}
 	
@@ -107,7 +107,7 @@ public class NRangeImpl implements NRange{
 		
 		private void initMergeRangesCache(){
 			if(mergeAreas==null){//TODO a better way to cache(index) this.(I this MergeMatrixHelper is not good enough now)
-				Worksheet sheet = nsheet.getNative();
+				XSheet sheet = nsheet.getNative();
 				int sz = sheet.getNumMergedRegions();
 				mergeAreas = new ArrayList<MergeArea>(sz);
 				for(int j = sz - 1; j >= 0; --j) {
@@ -187,7 +187,7 @@ public class NRangeImpl implements NRange{
 	public boolean pasteSpecial(NRange dest,PasteType type,PasteOperation op,boolean skipBlanks,boolean transpose) {
 //		if(!isAnyCellProtected()){ // ranges seems this in copy/paste already
 		//TODO the syncLevel
-		Range r = range.pasteSpecial(((NRangeImpl)dest).getNative(), EnumUtil.toRangePasteTypeNative(type), EnumUtil.toRangePasteOpNative(op), skipBlanks, transpose);
+		XRange r = range.pasteSpecial(((NRangeImpl)dest).getNative(), EnumUtil.toRangePasteTypeNative(type), EnumUtil.toRangePasteOpNative(op), skipBlanks, transpose);
 		return r!=null;
 //		}
 	}
@@ -277,7 +277,7 @@ public class NRangeImpl implements NRange{
 	
 	private void visitCell(NCellVisitor visitor,int r, int c){
 		boolean create = visitor.createIfNotExist(r,c);
-		Worksheet sheet = range.getSheet();
+		XSheet sheet = range.getSheet();
 		Row row = sheet.getRow(r);
 		if(row==null){
 			if(create){
@@ -294,7 +294,7 @@ public class NRangeImpl implements NRange{
 				return;
 			}
 		}
-		visitor.visit(new NRangeImpl(Ranges.range(range.getSheet(),r,c),sharedCtx));
+		visitor.visit(new NRangeImpl(XRanges.range(range.getSheet(),r,c),sharedCtx));
 	}
 
 	public NBook getBook() {
@@ -366,7 +366,7 @@ public class NRangeImpl implements NRange{
 	
 	
 	public NRangeImpl getCellRange(int rowOffset,int colOffset){
-		NRangeImpl cellRange = new NRangeImpl(Ranges.range(range.getSheet(),getRow()+rowOffset,getColumn()+colOffset),sharedCtx);
+		NRangeImpl cellRange = new NRangeImpl(XRanges.range(range.getSheet(),getRow()+rowOffset,getColumn()+colOffset),sharedCtx);
 		return cellRange;
 	}
 	
@@ -590,7 +590,7 @@ public class NRangeImpl implements NRange{
 		range.setValue(value);
 	}
 	
-	private ModelRef<Book> getBookRef(){
+	private ModelRef<XBook> getBookRef(){
 		return ((NBookImpl)getBook()).getRef();
 	}
 	
@@ -601,8 +601,8 @@ public class NRangeImpl implements NRange{
 	 * @return cell style if cell is exist, the check row style and column cell style if cell not found, if row and column style is not exist, then return default style of sheet
 	 */
 	public NCellStyle getCellStyle() {
-		Worksheet sheet = range.getSheet();
-		Book book = sheet.getBook();
+		XSheet sheet = range.getSheet();
+		XBook book = sheet.getBook();
 		
 		int r = range.getRow();
 		int c = range.getColumn();
@@ -711,12 +711,12 @@ public class NRangeImpl implements NRange{
 	
 	public NSheet createSheet(String name){
 		//TODO the syncLevel
-		Book book = ((NBookImpl)getBook()).getNative();
+		XBook book = ((NBookImpl)getBook()).getNative();
 		int n = book.getNumberOfSheets();
 		range.createSheet(name);
 		
-		Worksheet sheet = book.getWorksheetAt(n);
-		return new NSheetImpl(new SimpleRef<Worksheet>(sheet));
+		XSheet sheet = book.getWorksheetAt(n);
+		return new NSheetImpl(new SimpleRef<XSheet>(sheet));
 		
 	}
 	

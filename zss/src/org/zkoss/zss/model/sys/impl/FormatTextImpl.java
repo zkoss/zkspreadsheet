@@ -15,14 +15,14 @@ package org.zkoss.zss.model.sys.impl;
 
 import org.zkoss.poi.ss.format.CellFormatResult;
 import org.zkoss.poi.ss.usermodel.RichTextString;
-import org.zkoss.zss.model.sys.FormatText;
+import org.zkoss.zss.model.sys.XFormatText;
 
 /**
  * A cell formatted result holder class. 
  * @author henrichen
  *
  */
-public class FormatTextImpl implements FormatText {
+public class FormatTextImpl implements XFormatText {
 	private final CellFormatResult _result;
 	private final RichTextString _rstr;
 	

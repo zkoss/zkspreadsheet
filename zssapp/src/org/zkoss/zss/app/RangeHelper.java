@@ -4,7 +4,7 @@ import org.zkoss.poi.ss.usermodel.Name;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zk.ui.Path;
-import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Listbox;
@@ -50,7 +50,7 @@ public class RangeHelper {
 
 	// dummy
 	public void onRangeAdd() {
-		final Book book = spreadsheet.getBook();
+		final XBook book = spreadsheet.getBook();
 		if (book == null) {
 			return;
 		}
@@ -76,7 +76,7 @@ public class RangeHelper {
 
 	// dummy
 	public void onRangeDelete() {
-		final Book book = spreadsheet.getBook();
+		final XBook book = spreadsheet.getBook();
 		if (book == null) {
 			return;
 		}
@@ -101,7 +101,7 @@ public class RangeHelper {
 
 	// dummy
 	public void onRangeChoose() {
-		final Book book = spreadsheet.getBook();
+		final XBook book = spreadsheet.getBook();
 		if (book == null) {
 			return;
 		}
@@ -130,7 +130,7 @@ public class RangeHelper {
 	}
 
 	public void onRangeSelectChange(String type) {
-		final Book book = spreadsheet.getBook();
+		final XBook book = spreadsheet.getBook();
 		if (book == null) {
 			return;
 		}

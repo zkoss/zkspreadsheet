@@ -21,7 +21,7 @@ import org.zkoss.poi.ss.usermodel.RichTextString;
  * @author henrichen
  *
  */
-public interface FormatText {
+public interface XFormatText {
 	/**
 	 * Returns whether the formatted text a RichTextString.
 	 * @return whether a RichTextString.

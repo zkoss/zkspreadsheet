@@ -49,23 +49,23 @@ import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.formula.DefaultFunctionResolver;
 import org.zkoss.zss.formula.FunctionResolver;
 import org.zkoss.zss.formula.NoCacheClassifier;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.BookSeries;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XBookSeries;
+import org.zkoss.zss.model.sys.XSheet;
 
 /**
- * Implementation of {@link Book} based on HSSFWorkbook.
+ * Implementation of {@link XBook} based on HSSFWorkbook.
  * @author henrichen
  *
  */
-public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
+public class HSSFBookImpl extends HSSFWorkbook implements XBook, BookCtrl {
 	private final String _bookname;
 	private final FormulaEvaluator _evaluator;
 	private final WorkbookEvaluator _bookEvaluator;
 	private final FunctionMapper _functionMapper;
 	private final VariableResolver _variableResolver;
 	private RefBook _refBook;
-	private BookSeries _bookSeries;
+	private XBookSeries _bookSeries;
 	private int _defaultCharWidth = 7; //TODO: don't know how to calculate this yet per the default font.
 	private final HSSFWorkbookHelper _helper;
 
@@ -100,11 +100,11 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 		return _refBook;
 	}
 	
-	/*package*/ BookSeries getBookSeries() {
+	/*package*/ XBookSeries getBookSeries() {
 		return _bookSeries;
 	}
 	
-	/*package*/ void setBookSeries(BookSeries bookSeries) {
+	/*package*/ void setBookSeries(XBookSeries bookSeries) {
 		_bookSeries = bookSeries;
 	}
 	
@@ -314,13 +314,13 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 	}
 
 	@Override
-	public Worksheet getWorksheetAt(int index) {
-		return (Worksheet) getSheetAt(index);
+	public XSheet getWorksheetAt(int index) {
+		return (XSheet) getSheetAt(index);
 	}
 
 	@Override
-	public Worksheet getWorksheet(String name) {
-		return (Worksheet) getSheet(name);
+	public XSheet getWorksheet(String name) {
+		return (XSheet) getSheet(name);
 	}
 	
 	@Override
@@ -330,7 +330,7 @@ public class HSSFBookImpl extends HSSFWorkbook implements Book, BookCtrl {
 
 	//--BookCtrl--//
 	@Override
-	public RefBook newRefBook(Book book) {
+	public RefBook newRefBook(XBook book) {
 		return getBookCtrl().newRefBook(book);
 	}
 	

@@ -26,19 +26,19 @@ import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
-import org.zkoss.zss.model.sys.Areas;
-import org.zkoss.zss.model.sys.FormatText;
-import org.zkoss.zss.model.sys.Range;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XAreas;
+import org.zkoss.zss.model.sys.XFormatText;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XSheet;
 
 /**
  * Class to represent an empty Range.
  * @author henrichen
  */
-public class EmptyRange implements Range {
+public class EmptyRange implements XRange {
 
 	@Override
-	public void autoFill(Range dstRange, int fillType) {
+	public void autoFill(XRange dstRange, int fillType) {
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public Range copy(Range dstRange) {
+	public XRange copy(XRange dstRange) {
 		return null;
 	}
 
@@ -75,12 +75,12 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public Areas getAreas() {
+	public XAreas getAreas() {
 		return new AreasImpl();
 	}
 
 	@Override
-	public Range getCells(int row, int col) {
+	public XRange getCells(int row, int col) {
 		return this;
 	}
 
@@ -90,7 +90,7 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public Range getColumns() {
+	public XRange getColumns() {
 		return this;
 	}
 
@@ -100,12 +100,12 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public Range getDependents() {
+	public XRange getDependents() {
 		return this;
 	}
 
 	@Override
-	public Range getDirectDependents() {
+	public XRange getDirectDependents() {
 		return this;
 	}
 
@@ -115,12 +115,12 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public Worksheet getSheet() {
+	public XSheet getSheet() {
 		return null;
 	}
 
 	@Override
-	public FormatText getFormatText() {
+	public XFormatText getFormatText() {
 		return null;
 	}
 
@@ -140,7 +140,7 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public Range getRows() {
+	public XRange getRows() {
 		return this;
 	}
 
@@ -162,13 +162,13 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public Range pasteSpecial(int pasteType, int operation, boolean SkipBlanks,
+	public XRange pasteSpecial(int pasteType, int operation, boolean SkipBlanks,
 			boolean transpose) {
 		return null;
 	}
 
 	@Override
-	public Range pasteSpecial(Range dstRange, int pasteType, int pasteOp,
+	public XRange pasteSpecial(XRange dstRange, int pasteType, int pasteOp,
 			boolean skipBlanks, boolean transpose) {
 		return null;
 	}
@@ -215,8 +215,8 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public void sort(Range rng1, boolean desc1, Range rng2, int type,
-			boolean desc2, Range rng3, boolean desc3, int header,
+	public void sort(XRange rng1, boolean desc1, XRange rng2, int type,
+			boolean desc2, XRange rng3, boolean desc3, int header,
 			int orderCustom, boolean matchCase, boolean sortByRows,
 			int sortMethod, int dataOption1, int dataOption2, int dataOption3) {
 	}
@@ -226,12 +226,12 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public Range getDirectPrecedents() {
+	public XRange getDirectPrecedents() {
 		return this;
 	}
 
 	@Override
-	public Range getPrecedents() {
+	public XRange getPrecedents() {
 		return this;
 	}
 
@@ -255,7 +255,7 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public Range getOffset(int rowOffset, int colOffset) {
+	public XRange getOffset(int rowOffset, int colOffset) {
 		return this;
 	}
 
@@ -270,7 +270,7 @@ public class EmptyRange implements Range {
 	}
 
 	@Override
-	public Range getCurrentRegion() {
+	public XRange getCurrentRegion() {
 		return this;
 	}
 

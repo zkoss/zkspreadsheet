@@ -17,21 +17,21 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.zkoss.poi.ss.util.AreaReference;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.Exporter;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XExporter;
+import org.zkoss.zss.model.sys.XSheet;
 
 /**
- * Exports {@link Book} contents as an Excel file.
+ * Exports {@link XBook} contents as an Excel file.
  * @author ashish
  *
  */
-public class ExcelExporter implements Exporter {
+public class ExcelExporter implements XExporter {
 
 	/**
-	 * Exports {@link Book} as an Excel file to given {@link OutputStream}
+	 * Exports {@link XBook} as an Excel file to given {@link OutputStream}
 	 */
-	public void export(Book workbook, OutputStream outputStream) {
+	public void export(XBook workbook, OutputStream outputStream) {
 		try {
 			workbook.write(outputStream);
 		} catch (IOException e) {
@@ -41,11 +41,11 @@ public class ExcelExporter implements Exporter {
 		
 	}
 
-	public void export(Worksheet worksheet, OutputStream outputStream) {
+	public void export(XSheet worksheet, OutputStream outputStream) {
 		throw new UnsupportedOperationException();
 	}
 
-	public void exportSelection(Worksheet worksheet, AreaReference area,
+	public void exportSelection(XSheet worksheet, AreaReference area,
 			OutputStream outputStream) {
 		throw new UnsupportedOperationException();
 	}

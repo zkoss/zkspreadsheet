@@ -24,28 +24,28 @@ import java.io.InputStream;
 
 import org.zkoss.poi.ss.usermodel.Workbook;
 /**
- * Importer class that used to import a input stream into a ZK Spreadsheet {@link Book}.
+ * Importer class that used to import a input stream into a ZK Spreadsheet {@link XBook}.
  * @author henrichen
  *
  */
-public interface Importer {
+public interface XImporter {
 	/**
 	 * Imports a file into a spreadsheet book.
 	 * @param filename a filename
 	 * @return the {@link Workbook}
 	 */
-	public Book imports(String filename);
+	public XBook imports(String filename);
 	/**
 	 * Imports a file into a spreadsheet book.
 	 * @param file a file
 	 * @return the {@link Workbook}
 	 */
-	public Book imports(File file);
+	public XBook imports(File file);
 	/**
 	 * Imports an input stream into a spreadsheet book.
 	 * @param is inputstream
 	 * @param bookname the book name
 	 * @return the {@link Workbook}
 	 */
-	public Book imports(InputStream is, String bookname);
+	public XBook imports(InputStream is, String bookname);
 }

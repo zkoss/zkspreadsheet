@@ -9,20 +9,20 @@ import org.zkoss.zss.api.model.NFont.TypeOffset;
 import org.zkoss.zss.api.model.NFont.Underline;
 import org.zkoss.zss.api.model.NSheet;
 import org.zkoss.zss.api.model.impl.EnumUtil;
-import org.zkoss.zss.model.sys.Book;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.HSSFBookImpl;
 import org.zkoss.zss.model.sys.impl.XSSFBookImpl;
 
 public class NBookImpl implements NBook{
 
-	ModelRef<Book> bookRef;
+	ModelRef<XBook> bookRef;
 	BookType type;
 	
-	public NBookImpl(ModelRef<Book> ref){
+	public NBookImpl(ModelRef<XBook> ref){
 		this.bookRef = ref;
-		Book book = ref.get();
+		XBook book = ref.get();
 		if (book instanceof HSSFBookImpl) {
 			type = BookType.EXCEL_2003;
 		} else if (book instanceof XSSFBookImpl) {
@@ -32,11 +32,11 @@ public class NBookImpl implements NBook{
 		}
 	}
 
-	public Book getNative() {
+	public XBook getNative() {
 		return bookRef.get();
 	}
 	
-	public ModelRef<Book> getRef(){
+	public ModelRef<XBook> getRef(){
 		return bookRef;
 	}
 
@@ -99,14 +99,14 @@ public class NBookImpl implements NBook{
 	}
 	
 	public NSheetImpl getSheetAt(int index){
-		Worksheet sheet = getNative().getWorksheetAt(index);
-		return new NSheetImpl(new SimpleRef<Worksheet>(sheet));
+		XSheet sheet = getNative().getWorksheetAt(index);
+		return new NSheetImpl(new SimpleRef<XSheet>(sheet));
 	}
 	
 	public NSheetImpl getSheet(String name){
-		Worksheet sheet = getNative().getWorksheet(name);
+		XSheet sheet = getNative().getWorksheet(name);
 		
-		return sheet==null?null:new NSheetImpl(new SimpleRef<Worksheet>(sheet));
+		return sheet==null?null:new NSheetImpl(new SimpleRef<XSheet>(sheet));
 	}
 	
 }

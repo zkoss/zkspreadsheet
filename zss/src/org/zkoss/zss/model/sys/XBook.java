@@ -30,7 +30,7 @@ import org.zkoss.zk.ui.event.EventQueues;
  * @author henrichen
  *
  */
-public interface Book extends Workbook {
+public interface XBook extends Workbook {
 	/**
 	 * Returns the spreadsheet version of this book (EXCEL97 or EXCEL2007).
 	 * @return the spreadsheet version of this book.
@@ -135,14 +135,14 @@ public interface Book extends Workbook {
 	public String getShareScope();
 	
 	/**
-	 * Returns ZK Spreadsheet {@link Worksheet} by name.
+	 * Returns ZK Spreadsheet {@link XSheet} by name.
 	 */
-	public Worksheet getWorksheet(String name);
+	public XSheet getWorksheet(String name);
 	
 	/**
-	 * Returns ZK Spreadsheet {@link Worksheet} by index(0-based). 
+	 * Returns ZK Spreadsheet {@link XSheet} by index(0-based). 
 	 */
-	public Worksheet getWorksheetAt(int index);
+	public XSheet getWorksheetAt(int index);
 
     /**
      * Delete the PictureData.

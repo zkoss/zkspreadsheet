@@ -16,16 +16,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.zkoss.zss.model.sys.Areas;
-import org.zkoss.zss.model.sys.Range;
+import org.zkoss.zss.model.sys.XAreas;
+import org.zkoss.zss.model.sys.XRange;
 
 /**
- * Implementation of the {@link Areas}.
+ * Implementation of the {@link XAreas}.
  * @author henrichen
  *
  */
-public class AreasImpl implements Areas {
-	private List<Range> _areas;
+public class AreasImpl implements XAreas {
+	private List<XRange> _areas;
 	
 	/*package*/ AreasImpl() {
 		_areas = new ArrayList(4);
@@ -38,16 +38,16 @@ public class AreasImpl implements Areas {
 	}
 
 	@Override
-	public Range getItem() {
+	public XRange getItem() {
 		return _areas.get(0);
 	}
 
 	@Override
-	public Iterator<Range> iterator() {
+	public Iterator<XRange> iterator() {
 		return _areas.iterator();
 	}
 	
-	/*package*/ void addArea(Range rng) {
+	/*package*/ void addArea(XRange rng) {
 		_areas.add(rng);
 	}
 }

@@ -30,8 +30,8 @@ import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.zk.ui.UiException;
 //import org.zkoss.zss.model.Cell;
 //import org.zkoss.zss.model.Format;
-import org.zkoss.zss.model.sys.FormatText;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XFormatText;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
@@ -66,7 +66,7 @@ public class UtilFns {
 	/**
 	 * Gets Cell text by given row and column
 	 */
-	static public String getCelltext(Worksheet sheet, int row,int column){
+	static public String getCelltext(XSheet sheet, int row,int column){
 		/*List list = ss.getBook().getSheets();
 		if(list.size()<=ss.getSelectedIndex()){
 			throw new XelException("No such sheet :"+ss.getSelectedIndex());
@@ -75,7 +75,7 @@ public class UtilFns {
 		String text = "";
 		if (cell != null) {
 			boolean wrap = cell.getCellStyle().getWrapText();
-			final FormatText ft = Utils.getFormatText(cell);
+			final XFormatText ft = Utils.getFormatText(cell);
 			if (ft != null) {
 				if (ft.isRichTextString()) {
 					final RichTextString rstr = ft.getRichTextString();
@@ -92,11 +92,11 @@ public class UtilFns {
 		return text;
 	}
 	
-	static public String getCellFormatText(Worksheet sheet, int row,int column) {
+	static public String getCellFormatText(XSheet sheet, int row,int column) {
 		final Cell cell = Utils.getCell(sheet, row, column);
 		String text = "";
 		if (cell != null) {
-			final FormatText ft = Utils.getFormatText(cell);
+			final XFormatText ft = Utils.getFormatText(cell);
 			if (ft != null) {
 				if (ft.isRichTextString()) {
 					final RichTextString rstr = ft.getRichTextString();
@@ -110,7 +110,7 @@ public class UtilFns {
 	}
 
 	//Gets Cell edit text by given row and column
-	static public String getEdittext(Worksheet sheet, int row,int column){
+	static public String getEdittext(XSheet sheet, int row,int column){
 		final Cell cell = Utils.getCell(sheet, row, column);
 		return cell != null ? Utils.getEditText(cell) : "";
 	}
@@ -134,7 +134,7 @@ public class UtilFns {
 		int row_top = getRowBegin(ss).intValue();
 		int row_bottom = getRowEnd(ss).intValue();
 		
-		Worksheet sheet = ss.getSelectedSheet();
+		XSheet sheet = ss.getSelectedSheet();
 		MergeMatrixHelper mmhelper = ((SpreadsheetCtrl)ss.getExtraCtrl()).getMergeMatrixHelper(sheet);
 		Set blocks = mmhelper.getRangesByColumn(max);
 		Iterator iter = blocks.iterator();

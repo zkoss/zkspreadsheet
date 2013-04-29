@@ -18,9 +18,9 @@ package org.zkoss.zss.app.test;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.model.sys.Range;
-import org.zkoss.zss.model.sys.Ranges;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
@@ -30,7 +30,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 public class AutofilterComposer extends GenericForwardComposer {
 	
 	private Spreadsheet spreadsheet;
-	private Worksheet sheet;
+	private XSheet sheet;
 	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -42,13 +42,13 @@ public class AutofilterComposer extends GenericForwardComposer {
 
 	
 	private void prepareDummyData() {
-		Range rng = Ranges.range(sheet);
+		XRange rng = XRanges.range(sheet);
 		int colSize = 10;
 		int rowSize = 50;
 		
 		for (int c = 0; c < colSize; c++) {
 			for (int r = 0; r < rowSize; r++) {
-				Ranges.range(sheet, r, c).setEditText(c + "_" + r);
+				XRanges.range(sheet, r, c).setEditText(c + "_" + r);
 			}
 		}
 	}
@@ -56,7 +56,7 @@ public class AutofilterComposer extends GenericForwardComposer {
 	private void initAutofilter() {
 		prepareDummyData();
 		
-		Ranges.range(sheet, 0, 0).autoFilter();
+		XRanges.range(sheet, 0, 0).autoFilter();
 	}
 	
 	

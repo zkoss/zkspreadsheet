@@ -28,8 +28,8 @@ import org.zkoss.zss.api.model.NChart.Type;
 import org.zkoss.zss.api.model.impl.NChartDataImpl;
 import org.zkoss.zss.api.model.impl.NSheetImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
-import org.zkoss.zss.model.sys.Ranges;
-import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Rect;
 
 /**
@@ -118,7 +118,7 @@ public class NChartDataUtil {
 		return new CellRangeAddress(row,lastRow,column,lastColumn);
 	}
 	
-	private static Worksheet toPoiSheet(NSheet sheet){
+	private static XSheet toPoiSheet(NSheet sheet){
 		return ((NSheetImpl)sheet).getNative();
 	}
 	
@@ -156,7 +156,7 @@ public class NChartDataUtil {
 				String title = null;
 				int row = rowIdx - 1;
 				if (row >= selection.getTop()) {
-					title = Ranges.range(toPoiSheet(sheet), selection.getTop(), c, row, c).getText().toString();
+					title = XRanges.range(toPoiSheet(sheet), selection.getTop(), c, row, c).getText().toString();
 				}
 				titles.add(title == null ? null : DataSources.fromString(title));
 				
@@ -187,7 +187,7 @@ public class NChartDataUtil {
 				String title = null;
 				int col = colIdx - 1;
 				if (col >= selection.getLeft()) {
-					title = Ranges.range(toPoiSheet(sheet), r, selection.getLeft(), r, col).getText().toString();
+					title = XRanges.range(toPoiSheet(sheet), r, selection.getLeft(), r, col).getText().toString();
 				}
 				titles.add(title == null ? null : DataSources.fromString(title));
 				
@@ -232,7 +232,7 @@ public class NChartDataUtil {
 				String title = null;
 				int row = rowIdx - 1;
 				if (row >= selection.getTop()) {
-					title = Ranges.range(toPoiSheet(sheet), selection.getTop(), c, row, c).getText().toString();
+					title = XRanges.range(toPoiSheet(sheet), selection.getTop(), c, row, c).getText().toString();
 				}
 				titles.add(title == null ? null : DataSources.fromString(title));
 
@@ -259,7 +259,7 @@ public class NChartDataUtil {
 				String title = null;
 				int col = colIdx - 1;
 				if (col >= selection.getLeft()) {
-					title = Ranges.range(toPoiSheet(sheet), r, selection.getLeft(), r,
+					title = XRanges.range(toPoiSheet(sheet), r, selection.getLeft(), r,
 									col).getText().toString();
 				}
 				titles.add(title == null ? null : DataSources.fromString(title));
@@ -282,7 +282,7 @@ public class NChartDataUtil {
 		// assume can't find number cell, use last cell as value
 		int colIdx = selection.getLeft();
 		int rowIdx = -1;
-		Worksheet ws = toPoiSheet(sheet);
+		XSheet ws = toPoiSheet(sheet);
 		for (int r = selection.getBottom(); r >= selection.getTop(); r--) {
 			Row row = ws.getRow(r);
 			int rCol = colIdx;

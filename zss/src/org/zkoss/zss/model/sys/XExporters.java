@@ -20,8 +20,8 @@ import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
 
 /**
- * <p>Provides utility method to get instance of specific {@link Exporter} implementation
- * such as "excel" or "pdf". Other implementations of {@link Exporter} can be registered 
+ * <p>Provides utility method to get instance of specific {@link XExporter} implementation
+ * such as "excel" or "pdf". Other implementations of {@link XExporter} can be registered 
  * via library property in zk.xml
  * </p><p>
  * For example
@@ -39,7 +39,7 @@ import org.zkoss.lang.Library;
  * @author ashish
  *
  */
-public class Exporters {
+public class XExporters {
 	private static String DEFAULT_ZSS_EXPORTERS_KEY = "org.zkoss.zss.model.default.Exporter.class";
 	private static String DEFAULT_ZSSEX_EXPORTERS_KEY = "org.zkoss.zssex.model.default.Exporter.class";
 	private static String USER_DEFINED_EXPORTERS_KEY = "org.zkoss.zss.model.Exporter.class";
@@ -50,7 +50,7 @@ public class Exporters {
 	 * @param type
 	 * @return Exporter instance or null if not found
 	 */
-	public static Exporter getExporter(String type) {
+	public static XExporter getExporter(String type) {
 		if(typeClss == null) {
 			typeClss = new HashMap<String,String>();
 			loadExporters(DEFAULT_ZSS_EXPORTERS_KEY);
@@ -62,8 +62,8 @@ public class Exporters {
 		if(exporterClnm != null && exporterClnm.length() > 0) {
 			try {
 				Object o = Classes.newInstanceByThread(exporterClnm);
-				if(o instanceof Exporter) {
-					return (Exporter) o;
+				if(o instanceof XExporter) {
+					return (XExporter) o;
 				}
 			} catch(Exception ex) {
 			}
