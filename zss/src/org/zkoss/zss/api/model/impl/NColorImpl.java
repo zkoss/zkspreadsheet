@@ -2,8 +2,8 @@ package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.zss.api.model.NColor;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.impl.BookHelper;
+import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.impl.BookHelper;
 
 public class NColorImpl implements NColor{
 

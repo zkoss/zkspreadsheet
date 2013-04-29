@@ -37,15 +37,10 @@ import org.zkoss.lang.Library;
  * separated by comma.
  * </p> 
  * @author ashish
- *
+ * @author dennischen
+ * @deprecated since 3.0.0, please use class in package {@code org.zkoss.zss.api}
  */
 public class Importers {
-
-	private static String DEFAULT_ZSS_IMPORTERS_KEY = "org.zkoss.zss.model.default.Importer.class";
-	private static String DEFAULT_ZSSEX_IMPORTERS_KEY = "org.zkoss.zssex.model.default.Importer.class";
-	private static String USER_DEFINED_IMPORTERS_KEY = "org.zkoss.zss.model.Importer.class";
-	private static Map<String,String> typeClss;
-	
 	/**
 	 * Returns instance of specific {@link Importer} implementation 
 	 * as identified by type
@@ -53,34 +48,6 @@ public class Importers {
 	 * @return Importer instance or null if not found
 	 */
 	public static Importer getImporter(String type) {
-		if(typeClss == null) {
-			typeClss = new HashMap<String,String>();
-			loadImporters(DEFAULT_ZSS_IMPORTERS_KEY);
-			loadImporters(DEFAULT_ZSSEX_IMPORTERS_KEY);
-			loadImporters(USER_DEFINED_IMPORTERS_KEY);
-		}
-		
-		String importerClnm = typeClss.get(type);
-		if(importerClnm != null && importerClnm.length() > 0) {
-			try {
-				Object o = Classes.newInstanceByThread(importerClnm);
-				if(o instanceof Importer) {
-					return (Importer) o;
-				}
-			} catch(Exception ex) {
-			}
-		}
-		return null;
-	}
-
-	private static void loadImporters(String key) {
-		String sTypeClss = Library.getProperty(key);
-		if(sTypeClss != null) {
-			String[] importers = sTypeClss.split(",");
-			for(int i=0;i<importers.length;i++) {
-				String[] importerClssPair = importers[i].split("=");
-				typeClss.put(importerClssPair[0].trim(), importerClssPair[1].trim());
-			}
-		}
+		throw new ModelException("the api was not support anymore, please use api in org.zkoss.zss.api");
 	}
 }

@@ -2,7 +2,7 @@ package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.zss.api.model.NPicture;
-import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.sys.Book;
 
 public class NPictureImpl implements NPicture{
 	

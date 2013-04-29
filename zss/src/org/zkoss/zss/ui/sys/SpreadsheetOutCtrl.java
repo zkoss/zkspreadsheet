@@ -20,7 +20,7 @@ package org.zkoss.zss.ui.sys;
 
 
 //import org.zkoss.zss.model.Sheet;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.Worksheet;
 
 /**
  * Special controller interface for controlling Server to Client behavior.

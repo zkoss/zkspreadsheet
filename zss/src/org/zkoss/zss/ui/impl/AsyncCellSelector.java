@@ -18,7 +18,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.Worksheet;
 import org.zkoss.zss.ui.Rect;
 
 /**

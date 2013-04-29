@@ -42,13 +42,13 @@ import org.zkoss.zss.api.model.impl.NChartImpl;
 import org.zkoss.zss.api.model.impl.NPictureImpl;
 import org.zkoss.zss.api.model.impl.NSheetImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Range;
-import org.zkoss.zss.model.Ranges;
-import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.model.impl.BookHelper;
-import org.zkoss.zss.model.impl.DrawingManager;
-import org.zkoss.zss.model.impl.SheetCtrl;
+import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.Range;
+import org.zkoss.zss.model.sys.Ranges;
+import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.model.sys.impl.DrawingManager;
+import org.zkoss.zss.model.sys.impl.SheetCtrl;
 
 /**
  * 1.Range is not handling the protection issue, if you have handle it yourself before calling the api(by calling {@code #isProtected()})

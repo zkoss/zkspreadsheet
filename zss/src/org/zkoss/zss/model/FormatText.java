@@ -19,7 +19,8 @@ import org.zkoss.poi.ss.usermodel.RichTextString;
 /**
  * Holding class for possible cell formatted text results
  * @author henrichen
- *
+ * @author dennischen
+ * @deprecated since 3.0.0, please use class in package {@code org.zkoss.zss.api}
  */
 public interface FormatText {
 	/**

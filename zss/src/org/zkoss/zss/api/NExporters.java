@@ -1,8 +1,8 @@
 package org.zkoss.zss.api;
 
 import org.zkoss.zss.api.impl.NExporterImpl;
-import org.zkoss.zss.model.Exporter;
-import org.zkoss.zss.model.Exporters;
+import org.zkoss.zss.model.sys.Exporter;
+import org.zkoss.zss.model.sys.Exporters;
 
 public class NExporters {
 

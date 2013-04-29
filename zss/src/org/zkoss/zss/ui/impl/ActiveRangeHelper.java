@@ -18,7 +18,7 @@ package org.zkoss.zss.ui.impl;
 
 import java.util.HashMap;
 
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.Worksheet;
 import org.zkoss.zss.ui.Rect;
 
 /**

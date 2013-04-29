@@ -26,7 +26,8 @@ import org.zkoss.poi.ss.usermodel.Workbook;
 /**
  * Importer class that used to import a input stream into a ZK Spreadsheet {@link Book}.
  * @author henrichen
- *
+ * @author dennischen
+ * @deprecated since 3.0.0, please use class in package {@code org.zkoss.zss.api}
  */
 public interface Importer {
 	/**

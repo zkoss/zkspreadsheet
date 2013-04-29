@@ -34,7 +34,7 @@ import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
-import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.sys.Book;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.SheetVisitor;

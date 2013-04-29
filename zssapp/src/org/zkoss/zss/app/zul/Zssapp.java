@@ -23,7 +23,7 @@ import org.zkoss.zk.ui.IdSpace;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.ctrl.DesktopCellStyleContext;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
-import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.sys.Book;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Menubar;

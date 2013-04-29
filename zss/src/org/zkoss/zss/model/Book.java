@@ -28,7 +28,8 @@ import org.zkoss.zk.ui.event.EventQueues;
 /**
  * ZK Spreadsheet book.
  * @author henrichen
- *
+ * @author dennischen
+ * @deprecated since 3.0.0, please use class in package {@code org.zkoss.zss.api}
  */
 public interface Book extends Workbook {
 	/**

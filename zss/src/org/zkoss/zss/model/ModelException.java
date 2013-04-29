@@ -24,6 +24,8 @@ import org.zkoss.lang.SystemException;
  * Represents a data model related exception.
  *
  * @author tomyeh
+ * @author dennischen
+ * @deprecated since 3.0.0, please use class in package {@code org.zkoss.zss.api}
  */
 public class ModelException extends SystemException {
 	private static final long serialVersionUID = 8278035139743537846L;

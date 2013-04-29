@@ -33,9 +33,9 @@ import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.RefSheet;
 import org.zkoss.zss.engine.impl.CellRefImpl;
 import org.zkoss.zss.engine.impl.DependencyTrackerHelper;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.impl.BookHelper;
-import org.zkoss.zss.model.impl.XelContextHolder;
+import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.model.sys.impl.XelContextHolder;
 
 /**
  * Implementation of formula dependency tracking.

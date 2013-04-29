@@ -18,6 +18,8 @@ package org.zkoss.zss.model;
  * <p>Note: this feature requires ZK Spreadsheet EE.</p>
  * 
  * @author henrichen
+ * @author dennischen
+ * @deprecated since 3.0.0, please use class in package {@code org.zkoss.zss.api}
  */
 public interface BookSeries {
 	/**

@@ -26,10 +26,10 @@ import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.FormatText;
-import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.model.impl.BookHelper;
+import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.FormatText;
+import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.impl.BookHelper;
 
 /**
  * @author Dennis.Chen

@@ -24,9 +24,9 @@ import org.zkoss.poi.ss.usermodel.DataValidationHelper;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.model.Exporter;
-import org.zkoss.zss.model.Exporters;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.Exporter;
+import org.zkoss.zss.model.sys.Exporters;
+import org.zkoss.zss.model.sys.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Filedownload;
 

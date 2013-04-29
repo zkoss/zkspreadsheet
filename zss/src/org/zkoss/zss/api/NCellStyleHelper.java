@@ -8,7 +8,7 @@ import org.zkoss.zss.api.model.impl.NBookImpl;
 import org.zkoss.zss.api.model.impl.NCellStyleImpl;
 import org.zkoss.zss.api.model.impl.NFontImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
-import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.sys.Book;
 
 //TODO rename to cell helper?
 public interface NCellStyleHelper {

@@ -20,7 +20,7 @@ package org.zkoss.zss.ui.event;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.Worksheet;
 
 /**
  * Event class about selection of cell

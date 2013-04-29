@@ -31,8 +31,8 @@ import org.zkoss.zss.api.model.NFont.TypeOffset;
 import org.zkoss.zss.api.model.NFont.Underline;
 import org.zkoss.zss.api.model.NHyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.NPicture.Format;
-import org.zkoss.zss.model.Range;
-import org.zkoss.zss.model.impl.BookHelper;
+import org.zkoss.zss.model.sys.Range;
+import org.zkoss.zss.model.sys.impl.BookHelper;
 
 public class EnumUtil {
 	

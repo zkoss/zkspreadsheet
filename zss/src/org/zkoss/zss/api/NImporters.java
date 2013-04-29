@@ -1,8 +1,8 @@
 package org.zkoss.zss.api;
 
 import org.zkoss.zss.api.impl.NImporterImpl;
-import org.zkoss.zss.model.Importer;
-import org.zkoss.zss.model.Importers;
+import org.zkoss.zss.model.sys.Importer;
+import org.zkoss.zss.model.sys.Importers;
 
 public class NImporters {
 

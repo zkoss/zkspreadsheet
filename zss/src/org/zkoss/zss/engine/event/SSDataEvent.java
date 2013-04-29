@@ -23,7 +23,7 @@ import java.io.Serializable;
 
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zss.engine.Ref;
-import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.sys.Book;
 
 
 /**

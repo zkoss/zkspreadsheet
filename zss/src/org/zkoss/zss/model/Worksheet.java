@@ -22,7 +22,8 @@ import org.zkoss.poi.ss.usermodel.PivotTable;
 /**
  * ZK Spreadsheet sheet.
  * @author henrichen
- *
+ * @author dennischen
+ * @deprecated since 3.0.0, please use class in package {@code org.zkoss.zss.api}
  */
 public interface Worksheet extends org.zkoss.poi.ss.usermodel.Sheet {
 	/**

@@ -7,8 +7,8 @@ import org.zkoss.zss.api.model.NCellStyle;
 import org.zkoss.zss.api.model.NColor;
 import org.zkoss.zss.api.model.NFont;
 import org.zkoss.zss.api.model.impl.EnumUtil;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.impl.BookHelper;
+import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.impl.BookHelper;
 
 public class NCellStyleImpl implements NCellStyle{
 	

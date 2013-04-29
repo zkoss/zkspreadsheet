@@ -17,7 +17,7 @@ import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.poi.ss.formula.DefaultDependencyTracker;
 import org.zkoss.poi.ss.formula.DependencyTracker;
 import org.zkoss.xel.FunctionMapper;
-import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.sys.Book;
 
 /**
  * Interface to glue POI function to ZK function.

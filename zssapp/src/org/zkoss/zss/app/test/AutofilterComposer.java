@@ -18,9 +18,9 @@ package org.zkoss.zss.app.test;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.model.Range;
-import org.zkoss.zss.model.Ranges;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.Range;
+import org.zkoss.zss.model.sys.Ranges;
+import org.zkoss.zss.model.sys.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**

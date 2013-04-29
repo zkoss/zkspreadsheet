@@ -25,9 +25,9 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.model.impl.SheetCtrl;
+import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.Events;
 

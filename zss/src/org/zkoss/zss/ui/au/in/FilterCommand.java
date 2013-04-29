@@ -24,9 +24,9 @@ import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.model.Range;
-import org.zkoss.zss.model.Ranges;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.Range;
+import org.zkoss.zss.model.sys.Ranges;
+import org.zkoss.zss.model.sys.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**

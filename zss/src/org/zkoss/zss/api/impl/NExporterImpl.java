@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import org.zkoss.zss.api.NExporter;
 import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.model.impl.NBookImpl;
-import org.zkoss.zss.model.Exporter;
+import org.zkoss.zss.model.sys.Exporter;
 
 public class NExporterImpl implements NExporter {
 	Exporter exporter;

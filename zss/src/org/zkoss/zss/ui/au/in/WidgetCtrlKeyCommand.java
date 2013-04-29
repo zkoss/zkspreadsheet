@@ -28,10 +28,10 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.KeyEvent;
-import org.zkoss.zss.model.Ranges;
-import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.model.impl.DrawingManager;
-import org.zkoss.zss.model.impl.SheetCtrl;
+import org.zkoss.zss.model.sys.Ranges;
+import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.impl.DrawingManager;
+import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**

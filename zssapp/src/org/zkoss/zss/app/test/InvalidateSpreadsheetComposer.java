@@ -20,9 +20,9 @@ import java.io.InputStream;
 
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Importer;
-import org.zkoss.zss.model.Importers;
+import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.Importer;
+import org.zkoss.zss.model.sys.Importers;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 

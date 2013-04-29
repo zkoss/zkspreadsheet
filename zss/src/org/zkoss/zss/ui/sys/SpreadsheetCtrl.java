@@ -21,7 +21,7 @@ package org.zkoss.zss.ui.sys;
 
 //import org.zkoss.zss.model.Sheet;
 import org.zkoss.json.JSONObject;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.Worksheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Widget;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;

@@ -21,7 +21,7 @@ package org.zkoss.zss.ui.sys;
 //import org.zkoss.zss.model.Sheet;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**

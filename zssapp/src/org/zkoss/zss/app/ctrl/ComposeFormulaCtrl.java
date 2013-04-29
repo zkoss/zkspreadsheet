@@ -29,7 +29,7 @@ import org.zkoss.zss.app.formula.FormulaMetaInfo;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
-import org.zkoss.zss.model.Ranges;
+import org.zkoss.zss.model.sys.Ranges;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Button;

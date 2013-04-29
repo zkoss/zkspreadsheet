@@ -16,7 +16,8 @@ package org.zkoss.zss.model;
 /**
  * A collection of single-area {@link Range}s in a selection; an area is a contiguous block of cells.
  * @author henrichen
- *
+ * @author dennischen
+ * @deprecated since 3.0.0, please use class in package {@code org.zkoss.zss.api}
  */
 public interface Areas extends Iterable<Range> {
 	/**

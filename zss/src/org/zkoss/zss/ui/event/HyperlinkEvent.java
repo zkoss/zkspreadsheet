@@ -16,7 +16,7 @@ package org.zkoss.zss.ui.event;
 import java.util.Map;
 
 import org.zkoss.poi.ss.usermodel.Hyperlink;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.Worksheet;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.au.AuRequests;
 import org.zkoss.zk.ui.Component;

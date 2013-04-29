@@ -9,11 +9,11 @@ import org.zkoss.zss.api.model.NFont.TypeOffset;
 import org.zkoss.zss.api.model.NFont.Underline;
 import org.zkoss.zss.api.model.NSheet;
 import org.zkoss.zss.api.model.impl.EnumUtil;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.model.impl.BookHelper;
-import org.zkoss.zss.model.impl.HSSFBookImpl;
-import org.zkoss.zss.model.impl.XSSFBookImpl;
+import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.model.sys.impl.HSSFBookImpl;
+import org.zkoss.zss.model.sys.impl.XSSFBookImpl;
 
 public class NBookImpl implements NBook{
 

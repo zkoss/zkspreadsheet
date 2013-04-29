@@ -28,8 +28,8 @@ import org.zkoss.zss.api.model.NChart.Type;
 import org.zkoss.zss.api.model.impl.NChartDataImpl;
 import org.zkoss.zss.api.model.impl.NSheetImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
-import org.zkoss.zss.model.Ranges;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.Ranges;
+import org.zkoss.zss.model.sys.Worksheet;
 import org.zkoss.zss.ui.Rect;
 
 /**

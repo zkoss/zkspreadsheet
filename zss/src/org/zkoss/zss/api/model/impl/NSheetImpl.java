@@ -2,8 +2,8 @@ package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.model.NSheet;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.Worksheet;
 
 public class NSheetImpl implements NSheet{
 	ModelRef<Worksheet> sheetRef;

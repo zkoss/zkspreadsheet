@@ -20,7 +20,7 @@ package org.zkoss.zss.ui.event;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.MouseEvent;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.Worksheet;
 
 /**
  * A class from handle event which about mouse event on a cell

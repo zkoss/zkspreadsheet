@@ -3,7 +3,7 @@ package org.zkoss.zss.api;
 import org.zkoss.zss.api.impl.NRangeImpl;
 import org.zkoss.zss.api.model.NSheet;
 import org.zkoss.zss.api.model.impl.NSheetImpl;
-import org.zkoss.zss.model.Ranges;
+import org.zkoss.zss.model.sys.Ranges;
 
 public class NRanges {
 

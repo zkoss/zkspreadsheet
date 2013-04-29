@@ -28,13 +28,15 @@ import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
-import org.zkoss.zss.model.impl.BookHelper;
+import org.zkoss.zss.model.sys.impl.BookHelper;
 
 /**
  * Range that represents a cell, a row, a column, or selection of cells containing one or 
  * more contiguous blocks of cells, or a 3-D blocks of cells.
  * 
  * @author henrichen
+ * @author dennischen
+ * @deprecated since 3.0.0, please use class in package {@code org.zkoss.zss.api}
  */
 public interface Range {
 	//shift of #insert

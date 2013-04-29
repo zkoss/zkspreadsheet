@@ -6,8 +6,8 @@ import org.zkoss.zss.api.NImporter;
 import org.zkoss.zss.api.model.NBook;
 import org.zkoss.zss.api.model.impl.NBookImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Importer;
+import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.Importer;
 
 
 public class NImporterImpl implements NImporter{

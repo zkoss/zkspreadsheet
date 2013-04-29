@@ -2,7 +2,7 @@ package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.zss.api.model.NChart;
-import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.sys.Book;
 
 public class NChartImpl implements NChart{
 	

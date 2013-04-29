@@ -3,7 +3,7 @@ package org.zkoss.zss.api;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.api.model.NSheet;
 import org.zkoss.zss.api.model.impl.NSheetImpl;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.Worksheet;
 import org.zkoss.zss.ui.impl.Utils;
 
 public class UnitUtil {

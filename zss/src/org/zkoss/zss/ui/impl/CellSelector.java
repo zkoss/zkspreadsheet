@@ -23,7 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.Worksheet;
 import org.zkoss.zss.ui.Rect;
 
 /**

@@ -28,7 +28,7 @@ import org.zkoss.zss.app.Dropdownbutton;
 import org.zkoss.zss.app.zul.Colorbutton;
 import org.zkoss.zss.app.zul.DisposedEventListener;
 import org.zkoss.zss.app.zul.Zssapp;
-import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.sys.Range;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Hlayout;

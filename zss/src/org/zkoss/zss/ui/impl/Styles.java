@@ -23,9 +23,9 @@ import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.util.logging.Log;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.model.impl.BookHelper;
+import org.zkoss.zss.model.sys.Book;
+import org.zkoss.zss.model.sys.Worksheet;
+import org.zkoss.zss.model.sys.impl.BookHelper;
 /**
  * A utility class to help spreadsheet set style of a cell
  * @author Dennis.Chen

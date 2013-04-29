@@ -37,49 +37,16 @@ import org.zkoss.lang.Library;
  * value separated by comma.
  * </p> 
  * @author ashish
- *
+ * @author dennischen
+ * @deprecated since 3.0.0, please use class in package {@code org.zkoss.zss.api}
  */
-public class Exporters {
-	private static String DEFAULT_ZSS_EXPORTERS_KEY = "org.zkoss.zss.model.default.Exporter.class";
-	private static String DEFAULT_ZSSEX_EXPORTERS_KEY = "org.zkoss.zssex.model.default.Exporter.class";
-	private static String USER_DEFINED_EXPORTERS_KEY = "org.zkoss.zss.model.Exporter.class";
-	private static Map<String,String> typeClss;
-	
+public class Exporters {	
 	/**
 	 * Returns specific (@link Exporter} implementation as identified by type.
 	 * @param type
 	 * @return Exporter instance or null if not found
 	 */
 	public static Exporter getExporter(String type) {
-		if(typeClss == null) {
-			typeClss = new HashMap<String,String>();
-			loadExporters(DEFAULT_ZSS_EXPORTERS_KEY);
-			loadExporters(DEFAULT_ZSSEX_EXPORTERS_KEY);
-			loadExporters(USER_DEFINED_EXPORTERS_KEY);
-		}
-		
-		String exporterClnm = typeClss.get(type);
-		if(exporterClnm != null && exporterClnm.length() > 0) {
-			try {
-				Object o = Classes.newInstanceByThread(exporterClnm);
-				if(o instanceof Exporter) {
-					return (Exporter) o;
-				}
-			} catch(Exception ex) {
-			}
-		}
-		return null;
-	}
-
-	private static void loadExporters(String key) {
-		String sTypeClss = Library.getProperty(key);
-		if(sTypeClss != null) {
-			String[] exporters = sTypeClss.split(",");
-			
-			for(int i=0;i<exporters.length;i++) {
-				String[] exporterClssPair = exporters[i].split("=");
-				typeClss.put(exporterClssPair[0].trim(), exporterClssPair[1].trim());
-			}
-		}
+		throw new ModelException("the api was not support anymore, please use api in org.zkoss.zss.api");
 	}
 }

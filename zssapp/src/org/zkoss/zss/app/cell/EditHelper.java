@@ -14,7 +14,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.cell;
 
-import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.sys.Range;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
