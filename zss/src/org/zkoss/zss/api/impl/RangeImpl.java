@@ -108,7 +108,7 @@ public class RangeImpl implements Range{
 				mergeAreas = new ArrayList<MergeArea>(sz);
 				for(int j = sz - 1; j >= 0; --j) {
 					final CellRangeAddress addr = sheet.getMergedRegion(j);
-					mergeAreas.add(new MergeArea(addr.getFirstColumn(), addr.getFirstRow(), addr.getLastColumn(), addr.getLastRow()));
+					mergeAreas.add(new MergeArea(addr.getFirstRow(),addr.getFirstColumn(), addr.getLastRow(),addr.getLastColumn()));
 				}
 			}
 		}
@@ -119,15 +119,20 @@ public class RangeImpl implements Range{
 	}
 	private static class MergeArea{
 		int r,lr,c,lc;
-		public MergeArea(int c,int r,int lc,int lr){
+		public MergeArea(int r,int c,int lr,int lc){
 			this.c = c;
 			this.r = r;
 			this.lc = lc;
 			this.lr = lr;
 		}
 
-		public boolean contains(int c, int r) {
-			return c >= this.c && c <= this.lc && r >= this.r && r <= this.lr;
+		public boolean contains(int row,int col) {
+			return col >= this.c && col <= this.lc && row >= this.r && row <= this.lr;
+		}
+
+		public boolean isUnion(int row, int column, int lastRow, int lastColumn) {
+			return contains(row, column) || contains(lastRow, lastColumn)
+					|| contains(row, lastColumn) || contains(lastRow, column);
 		}
 	}
 	
@@ -253,7 +258,8 @@ public class RangeImpl implements Range{
 			public void run(){
 				for(int i=r;i<=lr;i++){
 					for(int j=c;j<=lc;j++){
-						visitCell(visitor,i,j);
+						if(!visitCell(visitor,i,j))
+							break;
 					}
 				}
 			}
@@ -271,26 +277,33 @@ public class RangeImpl implements Range{
 		}
 	}
 	
-	private void visitCell(CellVisitor visitor,int r, int c){
-		boolean create = visitor.createIfNotExist(r,c);
+	private boolean visitCell(CellVisitor visitor,int r, int c){
+		boolean ignore = false;
+		boolean ignoreSet = false;
 		XSheet sheet = range.getSheet();
 		Row row = sheet.getRow(r);
 		if(row==null){
-			if(create){
+			ignore = visitor.ignoreIfNotExist(r,c);
+			ignoreSet = true;
+			if(!ignore){
 				row = sheet.createRow(r);
 			}else{
-				return;
+				return true;
 			}
 		}
 		Cell cell = row.getCell(c);
 		if(cell==null){
-			if(create){
+			if(!ignoreSet){
+				ignore = visitor.ignoreIfNotExist(r,c);
+				ignoreSet = true;
+			}
+			if(!ignore){
 				cell = row.createCell(c);
 			}else{
-				return;
+				return true;
 			}
 		}
-		visitor.visit(new RangeImpl(XRanges.range(range.getSheet(),r,c),sharedCtx));
+		return visitor.visit(new RangeImpl(XRanges.range(range.getSheet(),r,c),sharedCtx));
 	}
 
 	public Book getBook() {
@@ -309,22 +322,32 @@ public class RangeImpl implements Range{
 	
 	public boolean hasMergeCell(){
 		final Result<Boolean> result = new Result<Boolean>(Boolean.FALSE);
-		visit0(new CellVisitor(){
-			public boolean createIfNotExist(int row, int column) {
-				return false;
+		//TODO use visitor is bad performance, I should check merge area directly
+		for(MergeArea ma:sharedCtx.getMergeAreas()){
+			if(ma.isUnion(getRow(),getColumn(),getLastRow(),getLastColumn())){
+				return true;
 			}
-			@Override
-			public void visit(Range cellRange) {
-				int c = cellRange.getColumn();
-				int r = cellRange.getRow();
-				for(MergeArea ma:sharedCtx.getMergeAreas()){//TODO index, not loop
-					if(ma.contains(c, r)){
-						result.set(Boolean.TRUE);
-						return;
-					}
-				}
-			}},SyncLevel.NONE);
-		return result.get();
+		}
+		return false;
+		
+		
+//		visit0(new CellVisitor(){
+//			public boolean ignoreIfNotExist(int row, int column) {
+//				return true;
+//			}
+//			@Override
+//			public boolean visit(Range cellRange) {
+//				int c = cellRange.getColumn();
+//				int r = cellRange.getRow();
+//				for(MergeArea ma:sharedCtx.getMergeAreas()){//TODO index, not loop
+//					if(ma.contains(c, r)){
+//						result.set(Boolean.TRUE);
+//						return false;//break visit
+//					}
+//				}
+//				return true;
+//			}},SyncLevel.NONE);
+//		return result.get();
 	}
 	
 	

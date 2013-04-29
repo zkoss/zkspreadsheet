@@ -157,11 +157,12 @@ public class CellOperationUtil {
 			return;
 		range.visit(new CellVisitor(){
 			@Override
-			public void visit(Range cellRange) {
+			public boolean visit(Range cellRange) {
 				CellStyle ostyle = cellRange.getCellStyle();
 				Font ofont = ostyle.getFont();
-				if(applyer.ignore(cellRange,ostyle,ofont)){//ignore or not, to prevent unnecessary creation
-					return;
+				//ignore or not, to prevent unnecessary creation
+				if(applyer.ignore(cellRange,ostyle,ofont)){
+					return true;//continue visit
 				}
 				//2.create a new style from old one, the original one is shared between cells
 				//TODO what if it is the last referenced, could I just use it? who will delete old if I use new
@@ -183,11 +184,12 @@ public class CellOperationUtil {
 				
 				
 				cellRange.setStyle(nstyle);
+				return true;
 			}
 
 			@Override
-			public boolean createIfNotExist(int row, int column) {
-				return true;
+			public boolean ignoreIfNotExist(int row, int column) {
+				return false;
 			}});
 	}
 
@@ -357,12 +359,12 @@ public class CellOperationUtil {
 			return;
 		range.visit(new CellVisitor() {
 			@Override
-			public void visit(Range cellRange) {
+			public boolean visit(Range cellRange) {
 				CellStyle ostyle = cellRange.getCellStyle();
-				if (applyer.ignore(cellRange, ostyle)) {// ignore or not, to
-														// prevent unnecessary
-														// creation
-					return;
+				
+				// ignore or not, to prevent unnecessary creation
+				if (applyer.ignore(cellRange, ostyle)) {
+					return true;//continue visit
 				}
 				// 2.create a new style from old one, the original one is shared
 				// between cells
@@ -375,11 +377,12 @@ public class CellOperationUtil {
 				applyer.apply(cellRange, nstyle);
 
 				cellRange.setStyle(nstyle);
+				return true;
 			}
 
 			@Override
-			public boolean createIfNotExist(int row, int column) {
-				return true;
+			public boolean ignoreIfNotExist(int row, int column) {
+				return false;
 			}
 		});
 	}
