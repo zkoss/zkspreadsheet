@@ -19,7 +19,7 @@ import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.EmptyRange;
-import org.zkoss.zss.model.sys.impl.RangeImpl;
+import org.zkoss.zss.model.sys.impl.XRangeImpl;
 
 /**
  * Internal Use Only. Utilities regarding Range operation.
@@ -216,8 +216,8 @@ public class XRanges {
 	
 	private static XRange newRange(XSheet firstSheet, XSheet lastSheet, int tRow, int lCol, int bRow, int rCol) {
 		return tRow == bRow && lCol == rCol ? 
-				new RangeImpl(tRow, lCol, firstSheet, lastSheet):
-				new RangeImpl(tRow, lCol, bRow, rCol, firstSheet, lastSheet);
+				new XRangeImpl(tRow, lCol, firstSheet, lastSheet):
+				new XRangeImpl(tRow, lCol, bRow, rCol, firstSheet, lastSheet);
 	}
 	
 	public static final XRange EMPTY_RANGE = new EmptyRange();

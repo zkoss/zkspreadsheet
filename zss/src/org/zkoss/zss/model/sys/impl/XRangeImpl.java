@@ -77,7 +77,7 @@ import org.zkoss.zul.Messagebox;
  * @author henrichen
  *
  */
-public class RangeImpl implements XRange {
+public class XRangeImpl implements XRange {
 	private final XSheet _sheet;
 	private int _left = Integer.MAX_VALUE;
 	private int _top = Integer.MAX_VALUE;
@@ -85,7 +85,7 @@ public class RangeImpl implements XRange {
 	private int _bottom = Integer.MIN_VALUE;
 	private Set<Ref> _refs;
 
-	public RangeImpl(int row, int col, XSheet sheet, XSheet lastSheet) {
+	public XRangeImpl(int row, int col, XSheet sheet, XSheet lastSheet) {
 		_sheet = sheet;
 		initCellRef(row, col, sheet, lastSheet);
 	}
@@ -103,7 +103,7 @@ public class RangeImpl implements XRange {
 		}
 	}
 	
-	public RangeImpl(int tRow, int lCol, int bRow, int rCol, XSheet sheet, XSheet lastSheet) {
+	public XRangeImpl(int tRow, int lCol, int bRow, int rCol, XSheet sheet, XSheet lastSheet) {
 		_sheet = sheet;
 		if (tRow == bRow && lCol == rCol) 
 			initCellRef(tRow, lCol, sheet, lastSheet);
@@ -111,12 +111,12 @@ public class RangeImpl implements XRange {
 			initAreaRef(tRow, lCol, bRow, rCol, sheet, lastSheet);
 	}
 	
-	/*package*/ RangeImpl(Ref ref, XSheet sheet) {
+	/*package*/ XRangeImpl(Ref ref, XSheet sheet) {
 		_sheet = BookHelper.getSheet(sheet, ref.getOwnerSheet());
 		addRef(ref);
 	}
 	
-	private RangeImpl(Set<Ref> refs, XSheet sheet) {
+	private XRangeImpl(Set<Ref> refs, XSheet sheet) {
 		_sheet = sheet;
 		for(Ref ref : refs) {
 			addRef(ref);
@@ -795,7 +795,7 @@ public class RangeImpl implements XRange {
 		synchronized(sheets[0]) { 
 			synchronized(sheets[1]) {
 				final Ref ref = paste0(dstRange, pasteType, pasteOp, skipBlanks, transpose);
-				return ref == null ? null : new RangeImpl(ref, BookHelper.getSheet(_sheet, ref.getOwnerSheet()));
+				return ref == null ? null : new XRangeImpl(ref, BookHelper.getSheet(_sheet, ref.getOwnerSheet()));
 			}
 		}
 	}
@@ -805,9 +805,9 @@ public class RangeImpl implements XRange {
 	public void sort(XRange rng1, boolean desc1, XRange rng2, int type, boolean desc2, XRange rng3, boolean desc3, int header, int orderCustom,
 			boolean matchCase, boolean sortByRows, int sortMethod, int dataOption1, int dataOption2, int dataOption3) {
 		synchronized(_sheet) {
-			final Ref key1 = rng1 != null ? ((RangeImpl)rng1).getRefs().iterator().next() : null;
-			final Ref key2 = rng2 != null ? ((RangeImpl)rng2).getRefs().iterator().next() : null;
-			final Ref key3 = rng3 != null ? ((RangeImpl)rng3).getRefs().iterator().next() : null;
+			final Ref key1 = rng1 != null ? ((XRangeImpl)rng1).getRefs().iterator().next() : null;
+			final Ref key2 = rng2 != null ? ((XRangeImpl)rng2).getRefs().iterator().next() : null;
+			final Ref key3 = rng3 != null ? ((XRangeImpl)rng3).getRefs().iterator().next() : null;
 			if (_refs != null && !_refs.isEmpty()) {
 				final Ref ref = _refs.iterator().next();
 				final int tRow = ref.getTopRow();
@@ -833,15 +833,15 @@ public class RangeImpl implements XRange {
 		synchronized(sheets[0]) { //enforce lock sequence
 			synchronized(sheets[1]) {
 				final Ref ref = paste0(dstRange, XRange.PASTE_ALL, XRange.PASTEOP_NONE, false, false);
-				return ref == null ? null : new RangeImpl(ref, BookHelper.getSheet(_sheet, ref.getOwnerSheet()));
+				return ref == null ? null : new XRangeImpl(ref, BookHelper.getSheet(_sheet, ref.getOwnerSheet()));
 			}
 		}
 	}
 	private Ref paste0(XRange dstRange, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
-		if (_refs != null && !_refs.isEmpty() && !((RangeImpl)dstRange).getRefs().isEmpty()) {
+		if (_refs != null && !_refs.isEmpty() && !((XRangeImpl)dstRange).getRefs().isEmpty()) {
 			//check if follow the copy rule
 			//destination range allow only one contiguous reference
-			if (((RangeImpl)dstRange).getRefs().size() > 1) {
+			if (((XRangeImpl)dstRange).getRefs().size() > 1) {
 				throw new UiException("Command cannot be used on multiple selections");
 			}
 			//source range can handle only same rows/columns multiple references
@@ -849,7 +849,7 @@ public class RangeImpl implements XRange {
 			Ref ref1 = it.next();
 			int srcRowCount = ref1.getRowCount();
 			int srcColCount = ref1.getColumnCount();
-			final Ref dstRef = ((RangeImpl)dstRange).getRefs().iterator().next();
+			final Ref dstRef = ((XRangeImpl)dstRange).getRefs().iterator().next();
 			final Set<Ref> toEval = new HashSet<Ref>();
 			final Set<Ref> affected = new HashSet<Ref>();
 			final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
@@ -949,7 +949,7 @@ public class RangeImpl implements XRange {
 			final Ref ref = getRefs().iterator().next();
 			final int col1 = ref.getLeftCol() + col;
 			final int row1 = ref.getTopRow() + row;
-			return new RangeImpl(row1, col1, _sheet, _sheet);
+			return new XRangeImpl(row1, col1, _sheet, _sheet);
 		}
 	}
 			
@@ -1055,7 +1055,7 @@ public class RangeImpl implements XRange {
 		//ZSS-22: Shall not allow Copy and Paste operation in a protected spreadsheet
 		final XSheet dstSheet = BookHelper.getSheet(_sheet, dstRefSheet);
 		final Ref pasteRef = new AreaRefImpl(dstT, dstL, dstB, dstR, dstRefSheet);
-		return new RangeImpl(pasteRef, dstSheet).isAnyCellProtected() ? null : pasteRef;
+		return new XRangeImpl(pasteRef, dstSheet).isAnyCellProtected() ? null : pasteRef;
 	}
 	private Ref copyRefs(boolean sameRow, SortedMap<Integer, Ref> srcRefs, int srcColCount, int srcRowCount, int colRepeat, int rowRepeat, Ref dstRef, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose, ChangeInfo info) {
 		final Ref pasteRef = getPasteRef(srcRowCount, srcColCount, rowRepeat, colRepeat, dstRef, transpose);
@@ -1307,13 +1307,13 @@ public class RangeImpl implements XRange {
 	@Override
 	public void autoFill(XRange dstRange, int fillType) {
 		synchronized (_sheet) {
-			if (_refs != null && !_refs.isEmpty() && !((RangeImpl)dstRange).getRefs().isEmpty()) {
+			if (_refs != null && !_refs.isEmpty() && !((XRangeImpl)dstRange).getRefs().isEmpty()) {
 				//destination range allow only one contiguous reference
-				if (((RangeImpl)dstRange).getRefs().size() > 1) {
+				if (((XRangeImpl)dstRange).getRefs().size() > 1) {
 					throw new UiException("Command cannot be used on multiple selections");
 				}
 				final Ref srcRef = _refs.iterator().next();
-				final Ref dstRef = ((RangeImpl)dstRange).getRefs().iterator().next();
+				final Ref dstRef = ((XRangeImpl)dstRange).getRefs().iterator().next();
 				fillRef(srcRef, dstRef, fillType);
 			}
 		}
@@ -1486,7 +1486,7 @@ public class RangeImpl implements XRange {
 	}
 	
 	private XRange refToRange(Ref ref) {
-		return new RangeImpl(ref, _sheet);
+		return new XRangeImpl(ref, _sheet);
 	}
 
 	@Override
@@ -1515,7 +1515,7 @@ public class RangeImpl implements XRange {
 		final int col1 = ref.getLeftCol();
 		final int col2 = ref.getRightCol();
 		final XBook book = (XBook) sheet.getWorkbook();
-		return new RangeImpl(0, col1, book.getSpreadsheetVersion().getLastRowIndex(), col2, sheet, sheet);
+		return new XRangeImpl(0, col1, book.getSpreadsheetVersion().getLastRowIndex(), col2, sheet, sheet);
 	}
 	
 	@Override
@@ -1525,7 +1525,7 @@ public class RangeImpl implements XRange {
 		final int row1 = ref.getTopRow();
 		final int row2 = ref.getBottomRow();
 		final XBook book = (XBook) sheet.getWorkbook();
-		return new RangeImpl(row1, 0, row2, book.getSpreadsheetVersion().getLastColumnIndex(), sheet, sheet);
+		return new XRangeImpl(row1, 0, row2, book.getSpreadsheetVersion().getLastColumnIndex(), sheet, sheet);
 	}
 	
 	@Override
@@ -1538,7 +1538,7 @@ public class RangeImpl implements XRange {
 			final RefSheet refSheet = ref.getOwnerSheet();
 			Set<Ref> refs = ((RefSheetImpl)refSheet).getAllDependents(row, col);
 			return refs != null && !refs.isEmpty() ?
-					new RangeImpl(refs, sheet) : XRanges.EMPTY_RANGE;
+					new XRangeImpl(refs, sheet) : XRanges.EMPTY_RANGE;
 		}
 	}
 	
@@ -1552,7 +1552,7 @@ public class RangeImpl implements XRange {
 			final RefSheet refSheet = ref.getOwnerSheet();
 			Set<Ref> refs = ((RefSheetImpl)refSheet).getDirectDependents(row, col);
 			return refs != null && !refs.isEmpty() ?
-					new RangeImpl(refs, sheet) : XRanges.EMPTY_RANGE;
+					new XRangeImpl(refs, sheet) : XRanges.EMPTY_RANGE;
 		}
 	}
 	
@@ -1566,7 +1566,7 @@ public class RangeImpl implements XRange {
 			final RefSheet refSheet = ref.getOwnerSheet();
 			Set<Ref> refs = refSheet.getAllPrecedents(row, col);
 			return refs != null && !refs.isEmpty() ?
-					new RangeImpl(refs, sheet) : XRanges.EMPTY_RANGE;
+					new XRangeImpl(refs, sheet) : XRanges.EMPTY_RANGE;
 		}
 		
 	}
@@ -1581,7 +1581,7 @@ public class RangeImpl implements XRange {
 			final RefSheet refSheet = ref.getOwnerSheet();
 			Set<Ref> refs = refSheet.getDirectPrecedents(row, col);
 			return refs != null && !refs.isEmpty() ?
-					new RangeImpl(refs, sheet) : XRanges.EMPTY_RANGE;
+					new XRangeImpl(refs, sheet) : XRanges.EMPTY_RANGE;
 		}
 	}
 	
@@ -1715,7 +1715,7 @@ public class RangeImpl implements XRange {
 			if (nrefs.isEmpty()) {
 				return XRanges.EMPTY_RANGE;
 			} else{
-				return new RangeImpl(nrefs, _sheet);
+				return new XRangeImpl(nrefs, _sheet);
 			}
 		}
 		return XRanges.EMPTY_RANGE;
@@ -1816,8 +1816,8 @@ public class RangeImpl implements XRange {
 			final int col = ref.getLeftCol();
 			CellRangeAddress cra = getCurrentRegion(_sheet, row, col);
 			return cra == null ? 
-					new RangeImpl(row, col, _sheet, _sheet) :
-					new RangeImpl(cra.getFirstRow(), cra.getFirstColumn(), cra.getLastRow(), cra.getLastColumn(), _sheet, _sheet);
+					new XRangeImpl(row, col, _sheet, _sheet) :
+					new XRangeImpl(cra.getFirstRow(), cra.getFirstColumn(), cra.getLastRow(), cra.getLastColumn(), _sheet, _sheet);
 		}
 	}
 	
@@ -2069,7 +2069,7 @@ public class RangeImpl implements XRange {
 			//I have to know the top row area to show/remove the combo button
 			//changed by this autofilter action, it's not the same area
 			//and then send ON_CONTENTS_CHANGE event
-			RangeImpl buttonChange = (RangeImpl) XRanges.range(_sheet, 
+			XRangeImpl buttonChange = (XRangeImpl) XRanges.range(_sheet, 
 					affectedArea.getFirstRow(),affectedArea.getFirstColumn(),
 					affectedArea.getFirstRow(),affectedArea.getLastColumn());
 			
@@ -2124,7 +2124,7 @@ public class RangeImpl implements XRange {
 				if (rowobj != null && rowobj.getZeroHeight()) { //a hidden row
 					final int left = rowobj.getFirstCellNum();
 					final int right = rowobj.getLastCellNum() - 1;
-					final RangeImpl rng = (RangeImpl) new RangeImpl(r, left, r, right, _sheet, _sheet); 
+					final XRangeImpl rng = (XRangeImpl) new XRangeImpl(r, left, r, right, _sheet, _sheet); 
 					all.addAll(rng.getRefs());
 					rng.getRows().setHidden(false); //unhide
 				}
@@ -2133,7 +2133,7 @@ public class RangeImpl implements XRange {
 			BookHelper.notifyCellChanges(_sheet.getBook(), all); //unhidden row must reevaluate
 			
 			//update button
-			final RangeImpl buttonChange = (RangeImpl) XRanges.range(_sheet, row1, col1, row1, col2);
+			final XRangeImpl buttonChange = (XRangeImpl) XRanges.range(_sheet, row1, col1, row1, col2);
 			BookHelper.notifyBtnChanges(new HashSet<Ref>(buttonChange.getRefs()));
 		}
 	}
@@ -2167,14 +2167,14 @@ public class RangeImpl implements XRange {
 				if (hidden) { //to be hidden
 					final Row rowobj = _sheet.getRow(r);
 					if (rowobj == null || !rowobj.getZeroHeight()) { //a non-hidden row
-						new RangeImpl(r, col1, _sheet, _sheet).getRows().setHidden(true);
+						new XRangeImpl(r, col1, _sheet, _sheet).getRows().setHidden(true);
 					}
 				} else { //to be shown
 					final Row rowobj = _sheet.getRow(r);
 					if (rowobj != null && rowobj.getZeroHeight()) { //a hidden row
 						final int left = rowobj.getFirstCellNum();
 						final int right = rowobj.getLastCellNum() - 1;
-						final RangeImpl rng = (RangeImpl) new RangeImpl(r, left, r, right, _sheet, _sheet); 
+						final XRangeImpl rng = (XRangeImpl) new XRangeImpl(r, left, r, right, _sheet, _sheet); 
 						all.addAll(rng.getRefs());
 						rng.getRows().setHidden(false); //unhide
 					}
@@ -2183,7 +2183,7 @@ public class RangeImpl implements XRange {
 			BookHelper.notifyCellChanges(_sheet.getBook(), all); //unhidden row must reevaluate
 			
 			//update button
-			final RangeImpl buttonChange = (RangeImpl) XRanges.range(_sheet, row1, col1, row1, col2);
+			final XRangeImpl buttonChange = (XRangeImpl) XRanges.range(_sheet, row1, col1, row1, col2);
 			BookHelper.notifyBtnChanges(new HashSet<Ref>(buttonChange.getRefs()));
 		}
 	}
@@ -2214,14 +2214,14 @@ public class RangeImpl implements XRange {
 				if (cr1 != null && !cr1.isEmpty() && !cr1.contains(val)) { //to be hidden
 					final Row rowobj = _sheet.getRow(r);
 					if (rowobj == null || !rowobj.getZeroHeight()) { //a non-hidden row
-						new RangeImpl(r, col, _sheet, _sheet).getRows().setHidden(true);
+						new XRangeImpl(r, col, _sheet, _sheet).getRows().setHidden(true);
 					}
 				} else { //candidate to be shown (other FieldColumn might still hide this row!
 					final Row rowobj = _sheet.getRow(r);
 					if (rowobj != null && rowobj.getZeroHeight() && canUnhide(af, fc, r, col1)) { //a hidden row and no other hidden filtering
 						final int left = rowobj.getFirstCellNum();
 						final int right = rowobj.getLastCellNum() - 1;
-						final RangeImpl rng = (RangeImpl) new RangeImpl(r, left, r, right, _sheet, _sheet); 
+						final XRangeImpl rng = (XRangeImpl) new XRangeImpl(r, left, r, right, _sheet, _sheet); 
 						all.addAll(rng.getRefs());
 						rng.getRows().setHidden(false); //unhide
 					}
@@ -2231,7 +2231,7 @@ public class RangeImpl implements XRange {
 			BookHelper.notifyCellChanges(_sheet.getBook(), all); //unhidden row must reevaluate
 			
 			//update button
-			final RangeImpl buttonChange = (RangeImpl) XRanges.range(_sheet, row1, col, row1, col);
+			final XRangeImpl buttonChange = (XRangeImpl) XRanges.range(_sheet, row1, col, row1, col);
 			BookHelper.notifyBtnChanges(new HashSet<Ref>(buttonChange.getRefs()));
 			
 			return af;
@@ -2244,7 +2244,7 @@ public class RangeImpl implements XRange {
 		synchronized (_sheet) {
 			final DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
 			final XSSFChartX chartX = (XSSFChartX) dm.addChartX(_sheet, anchor, data, type, grouping, pos);
-			final RangeImpl rng = (RangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
+			final XRangeImpl rng = (XRangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
 			final Collection<Ref> refs = rng.getRefs();
 			if (refs != null && !refs.isEmpty()) {
 				final Ref ref = refs.iterator().next();
@@ -2259,7 +2259,7 @@ public class RangeImpl implements XRange {
 		synchronized (_sheet) {
 			DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
 			final Picture picture = dm.addPicture(_sheet, anchor, image, format);
-			final RangeImpl rng = (RangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
+			final XRangeImpl rng = (XRangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
 			final Collection<Ref> refs = rng.getRefs();
 			if (refs != null && !refs.isEmpty()) {
 				final Ref ref = refs.iterator().next();
@@ -2274,7 +2274,7 @@ public class RangeImpl implements XRange {
 		synchronized (_sheet) {
 			DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
 			ClientAnchor anchor = picture.getPreferredSize();
-			final RangeImpl rng = (RangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
+			final XRangeImpl rng = (XRangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
 			final Collection<Ref> refs = rng.getRefs();
 			dm.deletePicture(_sheet, picture); //must after getPreferredSize() or anchor is gone!
 			if (refs != null && !refs.isEmpty()) {
@@ -2289,7 +2289,7 @@ public class RangeImpl implements XRange {
 		synchronized (_sheet) {
 			DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
 			dm.movePicture(_sheet, picture, anchor);
-			final RangeImpl rng = (RangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
+			final XRangeImpl rng = (XRangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
 			final Collection<Ref> refs = rng.getRefs();
 			if (refs != null && !refs.isEmpty()) {
 				final Ref ref = refs.iterator().next();
@@ -2303,7 +2303,7 @@ public class RangeImpl implements XRange {
 		synchronized (_sheet) {
 			DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
 			dm.moveChart(_sheet, chart, anchor);
-			final RangeImpl rng = (RangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
+			final XRangeImpl rng = (XRangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
 			final Collection<Ref> refs = rng.getRefs();
 			if (refs != null && !refs.isEmpty()) {
 				final Ref ref = refs.iterator().next();
@@ -2317,7 +2317,7 @@ public class RangeImpl implements XRange {
 		synchronized (_sheet) {
 			DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
 			ClientAnchor anchor = chart.getPreferredSize();
-			final RangeImpl rng = (RangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
+			final XRangeImpl rng = (XRangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
 			final Collection<Ref> refs = rng.getRefs();
 			dm.deleteChart(_sheet, chart); //must after getPreferredSize() or anchor is gone!
 			if (refs != null && !refs.isEmpty()) {

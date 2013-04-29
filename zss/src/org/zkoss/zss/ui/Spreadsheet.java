@@ -406,8 +406,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	/**
+	 * Internal use only.
 	 * Returns the book model of this Spreadsheet. If you call this method at
-	 * first time and the book has not assigned by {@link #setBook(XBook)}, this
+	 * first time and the book has not assigned by {@link #setXBook(XBook)}, this
 	 * will create a new model depends on src;
 	 * 
 	 * @return the book model of this spread sheet.
@@ -614,16 +615,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			doSheetSelected(_selectedSheet);
 		}
 		return _selectedSheet;
-	}
-
-	public XSheet getXSheetAt(int index){
-		final XBook book = getXBook();
-		return book != null ? (XSheet)book.getSheetAt(index) : null;
-	}
-	
-	public int indexOfXSheet(XSheet sheet){
-		final XBook book = getXBook();
-		return book != null ? book.getSheetIndex(sheet) : -1;
 	}
 	
 	private String getSelectedSheetId() {
@@ -849,6 +840,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * new number by calling {@link #setMaxrows(int)}.
 	 * 
 	 * @return the maximum visible number of rows.
+	 * @deprecated since 3.0.0, use {@code #getMaxVisibleRows()} 
 	 */
 	public int getMaxrows() {
 		return _maxRows;
@@ -861,6 +853,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * Default : 20.
 	 * 
 	 * @param maxrows  the maximum visible number of rows
+	 * @deprecated since 3.0.0, use {@code #setMaxVisibleRows(int)} 
 	 */
 	public void setMaxrows(int maxrows) {
 		if (maxrows < 1) {
@@ -906,7 +899,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * Returns the maximum visible number of columns of this spreadsheet. You can assign
 	 * new numbers by calling {@link #setMaxcolumns(int)}.
 	 * 
-	 * @return the maximum visible number of columns 
+	 * @return the maximum visible number of columns
+	 * @deprecated since 3.0.0, use {@code #getMaxVisibleColumns()} 
 	 */
 	public int getMaxcolumns() {
 		return _maxColumns;
@@ -918,6 +912,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * max number of columns must large than 0;
 	 * 
 	 * @param maxcols  the maximum visible number of columns
+	 * @deprecated since 3.0.0, use {@code #setMaxVisibleColumns(int)} 
 	 */
 	public void setMaxcolumns(int maxcols) {
 		if (maxcols < 1) {
@@ -4879,45 +4874,81 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 
-	//new wrapped API
+	//new wrapped API since 3.0.0
 	
-	
+	/**
+	 * Returns the book model of this Spreadsheet. If you call this method at
+	 * first time and the book has not assigned by {@link #setBook(Book)}, this
+	 * will create a new model depends on src;
+	 * 
+	 * @return the book model of this spread sheet.
+	 */
 	public Book getBook(){
 		XBook book = getXBook();
 		return book==null?null:new BookImpl(new SimpleRef<XBook>(book));
 	}
 	
+	/**
+	 * Sets the book data model of this spread sheet.
+	 * 
+	 * @param book the book data model.
+	 */
 	public void setBook(Book book) {
 		setXBook((XBook)(book==null?null:((BookImpl)book).getNative()));
 	}
 	
+	/**
+	 * Gets the selected sheet, the default selected sheet is first sheet.
+	 * @return #{@link Sheet}
+	 */
 	public Sheet getSelectedSheet(){
 		XSheet sheet = getSelectedXSheet();
 		return sheet==null?null:new SheetImpl(new SimpleRef<XSheet>(sheet));
 	}
 	
-	public Sheet getSheetAt(int index){
-		XSheet sheet = getXSheetAt(index);
-		return sheet==null?null:new SheetImpl(new SimpleRef<XSheet>(sheet));
-	}
-	
-	public int indexOfSheet(Sheet sheet){
-		final XBook book = getXBook();
-		return book != null ? book.getSheetIndex(((SheetImpl)sheet).getNative()) : -1;
-	}
-	
+	/**
+	 * Returns the maximum visible number of columns of this spreadsheet. You can assign
+	 * new numbers by calling {@link #setMaxVisibleColumns(int)}.
+	 * 
+	 * @return the maximum visible number of columns 
+	 * @since 3.0.0
+	 */
 	public int getMaxVisibleColumns() {
 		return getMaxcolumns();
 	}
 
+	/**
+	 * Returns the maximum visible number of rows of this spreadsheet. You can assign
+	 * new number by calling {@link #setMaxVisibleRows(int)}.
+	 * 
+	 * @return the maximum visible number of rows.
+	 * @since 3.0.0
+	 */
 	public int getMaxVisibleRows() {
 		return getMaxrows();
 	}
 	
+	/**
+	 * Sets the maximum visible number of columns of this spreadsheet. For example, if you
+	 * set this parameter to 40, it will allow showing only column 0 to column 39. the minimal value of
+	 * max number of columns must large than 0;
+	 * 
+	 * @param maxcols  the maximum visible number of columns 
+	 * @since 3.0.0
+	 */
 	public void setMaxVisibleColumns(int maxcols){
 		this.setMaxcolumns(maxcols);
 	}
 	
+	/**
+	 * Sets the maximum visible number of rows of this spreadsheet. For example, if you set
+	 * this parameter to 40, it will allow showing only row 0 to 39. The minimal value of max number of rows
+	 * must large than 0; <br/>
+	 * Default : 20.
+	 * 
+	 * @param maxrows  the maximum visible number of rows
+	 * @since 3.0.0
+	 */
 	public void setMaxVisibleRows(int maxrows){
 		this.setMaxrows(maxrows);
 	}

@@ -131,7 +131,7 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 		}
 		int numSheet = book.getNumberOfSheets();
 		for (int i = 0; i < numSheet; i++) {
-			Sheet sheet = ss.getXSheetAt(i);
+			Sheet sheet = book.getSheetAt(i);
 			PrintSetup setup = sheet.getPrintSetup();
 			setup.setLandscape(isLandscape);
 		}
@@ -144,7 +144,7 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 		}
 		int numSheet = book.getNumberOfSheets();
 		for (int i = 0; i < numSheet; i++) {
-			Sheet sheet = ss.getXSheetAt(i);
+			Sheet sheet = book.getSheetAt(i);
 			PrintSetup setup = sheet.getPrintSetup();
 			setup.setLandscape(orgOrientation);
 		}
