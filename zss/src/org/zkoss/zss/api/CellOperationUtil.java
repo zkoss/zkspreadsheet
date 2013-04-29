@@ -1,24 +1,24 @@
 package org.zkoss.zss.api;
 
 import org.zkoss.image.AImage;
-import org.zkoss.zss.api.NRange.ApplyBorderType;
-import org.zkoss.zss.api.NRange.DeleteShift;
-import org.zkoss.zss.api.NRange.InsertCopyOrigin;
-import org.zkoss.zss.api.NRange.InsertShift;
-import org.zkoss.zss.api.NRange.PasteOperation;
-import org.zkoss.zss.api.NRange.PasteType;
-import org.zkoss.zss.api.model.NCellStyle;
-import org.zkoss.zss.api.model.NCellStyle.Alignment;
-import org.zkoss.zss.api.model.NCellStyle.BorderType;
-import org.zkoss.zss.api.model.NCellStyle.FillPattern;
-import org.zkoss.zss.api.model.NCellStyle.VerticalAlignment;
-import org.zkoss.zss.api.model.NChart;
-import org.zkoss.zss.api.model.NChartData;
-import org.zkoss.zss.api.model.NColor;
-import org.zkoss.zss.api.model.NFont;
-import org.zkoss.zss.api.model.NFont.Boldweight;
-import org.zkoss.zss.api.model.NFont.Underline;
-import org.zkoss.zss.api.model.NPicture.Format;
+import org.zkoss.zss.api.Range.ApplyBorderType;
+import org.zkoss.zss.api.Range.DeleteShift;
+import org.zkoss.zss.api.Range.InsertCopyOrigin;
+import org.zkoss.zss.api.Range.InsertShift;
+import org.zkoss.zss.api.Range.PasteOperation;
+import org.zkoss.zss.api.Range.PasteType;
+import org.zkoss.zss.api.model.CellStyle;
+import org.zkoss.zss.api.model.CellStyle.Alignment;
+import org.zkoss.zss.api.model.CellStyle.BorderType;
+import org.zkoss.zss.api.model.CellStyle.FillPattern;
+import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
+import org.zkoss.zss.api.model.Chart;
+import org.zkoss.zss.api.model.ChartData;
+import org.zkoss.zss.api.model.Color;
+import org.zkoss.zss.api.model.Font;
+import org.zkoss.zss.api.model.Font.Boldweight;
+import org.zkoss.zss.api.model.Font.Underline;
+import org.zkoss.zss.api.model.Picture.Format;
 
 /**
  * the utit to help UI to deal with UI operation of a Range.
@@ -45,7 +45,7 @@ public class CellOperationUtil {
 		}
 	}
 	
-	public static boolean cut(NRange src, final NRange dest) {
+	public static boolean cut(Range src, final Range dest) {
 		final Result<Boolean> result = new Result<Boolean>();
 		if(src.isProtected()){
 			return false;
@@ -54,8 +54,8 @@ public class CellOperationUtil {
 			return false;
 		}
 		//use batch-runner to run multiple range operation
-		src.sync(new NRangeRunner() {
-			public void run(NRange range) {
+		src.sync(new RangeRunner() {
+			public void run(Range range) {
 				boolean r = range.paste(dest);
 				if(r){
 					range.clearContents();// it removes value and formula only
@@ -68,106 +68,106 @@ public class CellOperationUtil {
 		return result.get();
 	}
 
-	public static boolean paste(NRange src, NRange dest) {
+	public static boolean paste(Range src, Range dest) {
 		if(dest.isProtected()){
 			return false;
 		}
 		return src.paste(dest);
 	}
-	public static boolean pasteFormula(NRange src, NRange dest) {
+	public static boolean pasteFormula(Range src, Range dest) {
 		if(dest.isProtected()){
 			return false;
 		}
 		return src.pasteSpecial(dest, PasteType.PASTE_FORMULAS, PasteOperation.PASTEOP_NONE, false, false);
 	}
-	public static boolean pasteValue(NRange src, NRange dest) {
+	public static boolean pasteValue(Range src, Range dest) {
 		if(dest.isProtected()){
 			return false;
 		}
 		return src.pasteSpecial(dest, PasteType.PASTE_VALUES, PasteOperation.PASTEOP_NONE, false, false);
 	}
-	public static boolean pasteAllExceptBorder(NRange src, NRange dest) {
+	public static boolean pasteAllExceptBorder(Range src, Range dest) {
 		if(dest.isProtected()){
 			return false;
 		}
 		return src.pasteSpecial(dest, PasteType.PASTE_ALL_EXCEPT_BORDERS, PasteOperation.PASTEOP_NONE, false, false);
 	}
-	public static boolean pasteTranspose(NRange src, NRange dest) {
+	public static boolean pasteTranspose(Range src, Range dest) {
 		if(dest.isProtected()){
 			return false;
 		}
 		return src.pasteSpecial(dest, PasteType.PASTE_ALL, PasteOperation.PASTEOP_NONE, false, true);
 	}
 
-	public static void applyFontName(NRange range,final String fontName){
+	public static void applyFontName(Range range,final String fontName){
 		applyFontStyle(range, new FontStyleApplier() {
-			public boolean ignore(NRange range,NCellStyle oldCellstyle, NFont oldFont) {
+			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
 				//the font name(family) is equals, not need to set it.
 				return oldFont.getFontName().equals(fontName);
 			}
 			
-			public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont){
+			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
 				//use the new font name to search it.
 				return cellRange.getBook().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), fontName, 
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
-			public void apply(NRange range,NCellStyle cellstyle, NFont newfont) {
+			public void apply(Range range,CellStyle cellstyle, Font newfont) {
 				newfont.setFontName(fontName);
 			}
 		});
 	}
 
-	public static void applyFontHeight(NRange range, final short height) {
+	public static void applyFontHeight(Range range, final short height) {
 		applyFontStyle(range, new FontStyleApplier() {
-			public boolean ignore(NRange range,NCellStyle oldCellstyle, NFont oldFont) {
+			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
 				//the font name(family) is equals, not need to set it.
 				return oldFont.getFontHeight() == height;
 			}
 			
-			public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont){
+			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
 				//use the new font name to search it.
 				return cellRange.getBook().findFont(oldFont.getBoldweight(), oldFont.getColor(), height, oldFont.getFontName(), 
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
-			public void apply(NRange range,NCellStyle cellstyle, NFont newfont) {
+			public void apply(Range range,CellStyle cellstyle, Font newfont) {
 				newfont.setFontHeight(height);
 			}
 		});
 	}
-	public static void applyFontSize(NRange range, final short size) {
+	public static void applyFontSize(Range range, final short size) {
 		//fontSize = fontHeightInPoints = fontHeight/20
 		applyFontHeight(range,(short)(size*20));
 	}
 	
 	public interface FontStyleApplier {
 		/** should ignore this cellRange**/
-		public boolean ignore(NRange cellRange,NCellStyle oldCellstyle,NFont oldFont);
+		public boolean ignore(Range cellRange,CellStyle oldCellstyle,Font oldFont);
 		/** find the font to apply to new style, return null mean not found, and will create a new font**/
-		public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont);
+		public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont);
 		/** apply style to new font, will be call when {@code #search() return null}**/
-		public void apply(NRange cellRange,NCellStyle newCellstyle,NFont newfont);
+		public void apply(Range cellRange,CellStyle newCellstyle,Font newfont);
 	}
 	
-	public static void applyFontStyle(NRange range,final FontStyleApplier applyer){
+	public static void applyFontStyle(Range range,final FontStyleApplier applyer){
 		//use use cell visitor to visit cells respectively
 		//use BOOK level lock because we will create BOOK level Object (style, font)
 		if(range.isProtected())
 			return;
-		range.visit(new NCellVisitor(){
+		range.visit(new CellVisitor(){
 			@Override
-			public void visit(NRange cellRange) {
-				NCellStyle ostyle = cellRange.getCellStyle();
-				NFont ofont = ostyle.getFont();
+			public void visit(Range cellRange) {
+				CellStyle ostyle = cellRange.getCellStyle();
+				Font ofont = ostyle.getFont();
 				if(applyer.ignore(cellRange,ostyle,ofont)){//ignore or not, to prevent unnecessary creation
 					return;
 				}
 				//2.create a new style from old one, the original one is shared between cells
 				//TODO what if it is the last referenced, could I just use it? who will delete old if I use new
-				NCellStyle nstyle = cellRange.getCellStyleHelper().createCellStyle(ostyle);
+				CellStyle nstyle = cellRange.getCellStyleHelper().createCellStyle(ostyle);
 				
-				NFont nfont = null;
+				Font nfont = null;
 				//3.search if there any font already in book
 				nfont = applyer.search(cellRange,ostyle,ofont);
 				if( nfont== null){
@@ -193,69 +193,69 @@ public class CellOperationUtil {
 
 	
 
-	public static void applyFontBoldweight(NRange range,final Boldweight boldweight) {
+	public static void applyFontBoldweight(Range range,final Boldweight boldweight) {
 		applyFontStyle(range, new FontStyleApplier() {
-			public boolean ignore(NRange range,NCellStyle oldCellstyle, NFont oldFont) {
+			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
 				return oldFont.getBoldweight().equals(boldweight);
 			}
 			
-			public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont){
+			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
 				return cellRange.getBook().findFont(boldweight, oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
-			public void apply(NRange range,NCellStyle newCellstyle, NFont newfont) {
+			public void apply(Range range,CellStyle newCellstyle, Font newfont) {
 				newfont.setBoldweight(boldweight);
 			}
 		});
 	}
 
-	public static void applyFontItalic(NRange range, final boolean italic) {
+	public static void applyFontItalic(Range range, final boolean italic) {
 		applyFontStyle(range, new FontStyleApplier() {
-			public boolean ignore(NRange range,NCellStyle oldCellstyle, NFont oldFont) {
+			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
 				return oldFont.isItalic()==italic;
 			}
 			
-			public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont){
+			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
 				return cellRange.getBook().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
 						italic, oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
-			public void apply(NRange range,NCellStyle newCellstyle, NFont newfont) {
+			public void apply(Range range,CellStyle newCellstyle, Font newfont) {
 				newfont.setItalic(italic);
 			}
 		});
 	}
 
-	public static void applyFontStrikeout(NRange range, final boolean strikeout) {
+	public static void applyFontStrikeout(Range range, final boolean strikeout) {
 		applyFontStyle(range, new FontStyleApplier() {
-			public boolean ignore(NRange range,NCellStyle oldCellstyle, NFont oldFont) {
+			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
 				return oldFont.isStrikeout()==strikeout;
 			}
 			
-			public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont){
+			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
 				return cellRange.getBook().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
 						oldFont.isItalic(), strikeout, oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
-			public void apply(NRange range,NCellStyle newCellstyle, NFont newfont) {
+			public void apply(Range range,CellStyle newCellstyle, Font newfont) {
 				newfont.setStrikeout(strikeout);
 			}
 		});
 	}
 	
-	public static void applyFontUnderline(NRange range,final Underline underline) {
+	public static void applyFontUnderline(Range range,final Underline underline) {
 		applyFontStyle(range, new FontStyleApplier() {
-			public boolean ignore(NRange range,NCellStyle oldCellstyle, NFont oldFont) {
+			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
 				return oldFont.getUnderline().equals(underline);
 			}
 			
-			public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont){
+			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
 				return cellRange.getBook().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), underline);
 			}
 			
-			public void apply(NRange range,NCellStyle newCellstyle, NFont newfont) {
+			public void apply(Range range,CellStyle newCellstyle, Font newfont) {
 				newfont.setUnderline(underline);
 			}
 		});
@@ -264,19 +264,19 @@ public class CellOperationUtil {
 	/**
 	 * @param htmlColor '#rgb-hex-code'
 	 */
-	public static void applyFontColor(NRange range, final String htmlColor) {
-		final NColor color = range.getBook().getColorFromHtmlColor(htmlColor);
+	public static void applyFontColor(Range range, final String htmlColor) {
+		final Color color = range.getBook().getColorFromHtmlColor(htmlColor);
 		applyFontStyle(range, new FontStyleApplier() {
-			public boolean ignore(NRange range,NCellStyle oldCellstyle, NFont oldFont) {
+			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
 				return oldFont.getColor().getHtmlColor().equals(htmlColor);
 			}
 			
-			public NFont search(NRange cellRange,NCellStyle oldCellstyle, NFont oldFont){
+			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
 				return cellRange.getBook().findFont(oldFont.getBoldweight(), color, oldFont.getFontHeight(), oldFont.getFontName(), 
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
-			public void apply(NRange range,NCellStyle newCellstyle, NFont newfont) {
+			public void apply(Range range,CellStyle newCellstyle, Font newfont) {
 				
 				//check it in XSSFCellStyle , it is just a delegator, but do some thing in HSSF
 				newfont.setColor(color);
@@ -292,16 +292,16 @@ public class CellOperationUtil {
 	/**
 	 * @param htmlColor '#rgb-hex-code'
 	 */
-	public static void applyCellColor(NRange range, final String htmlColor) {
-		final NColor color = range.getBook().getColorFromHtmlColor(htmlColor);
+	public static void applyCellColor(Range range, final String htmlColor) {
+		final Color color = range.getBook().getColorFromHtmlColor(htmlColor);
 		applyCellStyle(range, new CellStyleApplier() {
 
-			public boolean ignore(NRange cellRange, NCellStyle oldCellstyle) {
-				NColor ocolor = oldCellstyle.getBackgroundColor();
+			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
+				Color ocolor = oldCellstyle.getBackgroundColor();
 				return ocolor.equals(color);
 			}
 
-			public void apply(NRange cellRange, NCellStyle newCellstyle) {
+			public void apply(Range cellRange, CellStyle newCellstyle) {
 				newCellstyle.setBackgroundColor(color);
 				
 				FillPattern patternType = newCellstyle.getFillPattern();
@@ -312,29 +312,29 @@ public class CellOperationUtil {
 		});
 	}
 
-	public static void applyCellAlignment(NRange range,final Alignment alignment) {
+	public static void applyCellAlignment(Range range,final Alignment alignment) {
 		applyCellStyle(range, new CellStyleApplier() {
 
-			public boolean ignore(NRange cellRange, NCellStyle oldCellstyle) {
+			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
 				Alignment oldalign = oldCellstyle.getAlignment();
 				return oldalign.equals(alignment);
 			}
 
-			public void apply(NRange cellRange, NCellStyle newCellstyle) {
+			public void apply(Range cellRange, CellStyle newCellstyle) {
 				newCellstyle.setAlignment(alignment);
 			}
 		});
 	}
 
-	public static void applyCellVerticalAlignment(NRange range,final VerticalAlignment alignment) {
+	public static void applyCellVerticalAlignment(Range range,final VerticalAlignment alignment) {
 		applyCellStyle(range, new CellStyleApplier() {
 
-			public boolean ignore(NRange cellRange, NCellStyle oldCellstyle) {
+			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
 				VerticalAlignment oldalign = oldCellstyle.getVerticalAlignment();
 				return oldalign.equals(alignment);
 			}
 
-			public void apply(NRange cellRange, NCellStyle newCellstyle) {
+			public void apply(Range cellRange, CellStyle newCellstyle) {
 				newCellstyle.setVerticalAlignment(alignment);
 			}
 		});
@@ -343,22 +343,22 @@ public class CellOperationUtil {
 	
 	public interface CellStyleApplier {
 		/** should ignore this cellRange**/
-		public boolean ignore(NRange cellRange,NCellStyle oldCellstyle);
+		public boolean ignore(Range cellRange,CellStyle oldCellstyle);
 		/** apply style to new cell**/
-		public void apply(NRange cellRange,NCellStyle newCellstyle);
+		public void apply(Range cellRange,CellStyle newCellstyle);
 	}
 	
-	public static void applyCellStyle(NRange range,
+	public static void applyCellStyle(Range range,
 			final CellStyleApplier applyer) {
 		// use use cell visitor to visit cells respectively
 		// use BOOK level lock because we will create BOOK level Object (style,
 		// font)
 		if(range.isProtected())
 			return;
-		range.visit(new NCellVisitor() {
+		range.visit(new CellVisitor() {
 			@Override
-			public void visit(NRange cellRange) {
-				NCellStyle ostyle = cellRange.getCellStyle();
+			public void visit(Range cellRange) {
+				CellStyle ostyle = cellRange.getCellStyle();
 				if (applyer.ignore(cellRange, ostyle)) {// ignore or not, to
 														// prevent unnecessary
 														// creation
@@ -368,7 +368,7 @@ public class CellOperationUtil {
 				// between cells
 				// TODO what if it is the last referenced, could I just use it?
 				// who will delete old if I use new
-				NCellStyle nstyle = cellRange.getCellStyleHelper().createCellStyle(
+				CellStyle nstyle = cellRange.getCellStyleHelper().createCellStyle(
 						ostyle);
 
 				// set the apply
@@ -384,7 +384,7 @@ public class CellOperationUtil {
 		});
 	}
 	
-	public static void applyBorder(NRange range,ApplyBorderType type,BorderType borderType,String htmlColor){
+	public static void applyBorder(Range range,ApplyBorderType type,BorderType borderType,String htmlColor){
 		if(range.isProtected())
 			return;
 		//use range api directly,
@@ -392,11 +392,11 @@ public class CellOperationUtil {
 	}
 	
 	
-	public static void toggleMergeCenter(NRange range){
+	public static void toggleMergeCenter(Range range){
 		if(range.isProtected())
 			return;
-		range.sync(new NRangeRunner() {
-			public void run(NRange range) {
+		range.sync(new RangeRunner() {
+			public void run(Range range) {
 				if(range.hasMergeCell()){
 					range.unMerge();
 				}else{
@@ -408,107 +408,107 @@ public class CellOperationUtil {
 		});
 	}
 	
-	public static void merge(NRange range,boolean across){
+	public static void merge(Range range,boolean across){
 		if(range.isProtected())
 			return;
 		
 		range.merge(across);
 	}
 	
-	public static void unMerge(NRange range){
+	public static void unMerge(Range range){
 		if(range.isProtected())
 			return;
 		range.unMerge();
 	}
 	
 	
-	public static void applyCellWrapText(NRange range,final boolean wraptext) {
+	public static void applyCellWrapText(Range range,final boolean wraptext) {
 		applyCellStyle(range, new CellStyleApplier() {
 
-			public boolean ignore(NRange cellRange, NCellStyle oldCellstyle) {
+			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
 				boolean oldwrap = oldCellstyle.isWrapText();
 				return oldwrap==wraptext;
 			}
 
-			public void apply(NRange cellRange, NCellStyle newCellstyle) {
+			public void apply(Range cellRange, CellStyle newCellstyle) {
 				newCellstyle.setWrapText(wraptext);
 			}
 		});
 	}
 
-	public static void clearContents(NRange range) {
+	public static void clearContents(Range range) {
 		if(range.isProtected())
 			return;
 		range.clearContents();
 	}
 	
-	public static void clearStyles(NRange range) {
+	public static void clearStyles(Range range) {
 		if(range.isProtected())
 			return;
 		range.clearStyles();
 	}
 	
-	public static void clearAll(NRange range){
+	public static void clearAll(Range range){
 		if(range.isProtected())
 			return;
 
 		//use batch-runner to run multiple range operation
-		range.sync(new NRangeRunner() {
-			public void run(NRange range) {
+		range.sync(new RangeRunner() {
+			public void run(Range range) {
 				range.clearContents();// it removes value and formula only
 				range.clearStyles();
 			}
 		});
 	}
 
-	public static void insert(NRange range, InsertShift shift,
+	public static void insert(Range range, InsertShift shift,
 			InsertCopyOrigin copyOrigin) {
 		if(range.isProtected())
 			return;
 		range.insert(shift, copyOrigin);
 	}
 	
-	public static void delete(NRange range, DeleteShift shift) {
+	public static void delete(Range range, DeleteShift shift) {
 		if(range.isProtected())
 			return;
 		range.delete(shift);
 	}
 
-	public static void sort(NRange range, boolean desc) {
+	public static void sort(Range range, boolean desc) {
 		if(range.isProtected())
 			return;
 		range.sort(desc);
 	}
 	
-	public static void toggleAutoFilter(NRange range) {
+	public static void toggleAutoFilter(Range range) {
 		if(range.isProtected())
 			return;
 		range.enableAutoFilter(!range.isAutoFilterEnabled());
 	}
 	
-	public static void resetAutoFilter(NRange range) {
+	public static void resetAutoFilter(Range range) {
 		if(range.isProtected())
 			return;
 		range.resetAutoFilter();
 	}
 	
-	public static void applyAutoFilter(NRange range) {
+	public static void applyAutoFilter(Range range) {
 		if(range.isProtected())
 			return;
 		range.applyAutoFilter();
 	}
 	
-	public static void addPicture(NRange range, AImage image){
+	public static void addPicture(Range range, AImage image){
 		addPicture(range,image.getByteData(),getPictureFormat(image),image.getWidth(),image.getHeight());
 	}
 	
-	public static void addPicture(NRange range, byte[] binary, Format format,int widthPx, int heightPx){
-		NSheetAnchor anchor = UnitUtil.toFilledAnchor(range.getSheet(), range.getRow(),range.getColumn(),
+	public static void addPicture(Range range, byte[] binary, Format format,int widthPx, int heightPx){
+		SheetAnchor anchor = UnitUtil.toFilledAnchor(range.getSheet(), range.getRow(),range.getColumn(),
 				widthPx, heightPx);
 		addPicture(range,anchor,binary,format);
 		
 	}
-	public static void addPicture(NRange range, NSheetAnchor anchor, byte[] binary, Format format){
+	public static void addPicture(Range range, SheetAnchor anchor, byte[] binary, Format format){
 		if(range.isProtected())
 			return;
 		range.addPicture(anchor, binary, format);
@@ -533,28 +533,28 @@ public class CellOperationUtil {
 	}
 	
 	
-	public static void addChart(NRange range, NChartData data, NChart.Type type, NChart.Grouping grouping,
-			NChart.LegendPosition pos) {
-		NSheetAnchor anchor = toChartAnchor(range);
+	public static void addChart(Range range, ChartData data, Chart.Type type, Chart.Grouping grouping,
+			Chart.LegendPosition pos) {
+		SheetAnchor anchor = toChartAnchor(range);
 		addChart(range,anchor, data, type, grouping, pos);
 	}
 	
-	public static void addChart(NRange range, NSheetAnchor anchor, NChartData data, NChart.Type type, NChart.Grouping grouping,
-			NChart.LegendPosition pos) {
+	public static void addChart(Range range, SheetAnchor anchor, ChartData data, Chart.Type type, Chart.Grouping grouping,
+			Chart.LegendPosition pos) {
 		if (range.isProtected())
 			return;
 		range.addChart(anchor, data, type, grouping, pos);
 	}
 	
 	
-	private static NSheetAnchor toChartAnchor(NRange range) {
+	private static SheetAnchor toChartAnchor(Range range) {
 		int row = range.getRow();
 		int col = range.getColumn();
 		int lRow = range.getLastRow();
 		int lCol = range.getLastColumn();
 		int w = lCol-col+1;
 		//shift 2 column right for the selection width 
-		return new NSheetAnchor(row, lCol+2, 
+		return new SheetAnchor(row, lCol+2, 
 				row==lRow?row+7:lRow+1, col==lCol?lCol+7+w:lCol+2+w);
 	}
 }

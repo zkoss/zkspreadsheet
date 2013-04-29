@@ -1,8 +1,8 @@
 package org.zkoss.zss.api;
 
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.zss.api.model.NSheet;
-import org.zkoss.zss.api.model.impl.NSheetImpl;
+import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.impl.Utils;
 
@@ -18,12 +18,12 @@ public class UnitUtil {
 	}
 	
 	
-	public static int getRowHeightInPx(NSheet sheet,int row){
-		return Utils.getRowHeightInPx(((NSheetImpl)sheet).getNative(), row);
+	public static int getRowHeightInPx(Sheet sheet,int row){
+		return Utils.getRowHeightInPx(((SheetImpl)sheet).getNative(), row);
 	}
 	
-	public static int getColumnWidthInPx(NSheet sheet,int col){
-		return Utils.getColumnWidthInPx(((NSheetImpl)sheet).getNative(), col);
+	public static int getColumnWidthInPx(Sheet sheet,int col){
+		return Utils.getColumnWidthInPx(((SheetImpl)sheet).getNative(), col);
 	}
 
 	/**
@@ -42,13 +42,13 @@ public class UnitUtil {
 		return Utils.twipToPx(twip);
 	}
 	
-	public static NSheetAnchor toFilledAnchor(NSheet sheet,int row, int column, int widthPx, int heightPx){
+	public static SheetAnchor toFilledAnchor(Sheet sheet,int row, int column, int widthPx, int heightPx){
 		int lRow = 0;
 		int lColumn = 0;
 		int lX = 0;
 		int lY = 0;
 		
-		XSheet ws = ((NSheetImpl)sheet).getNative();
+		XSheet ws = ((SheetImpl)sheet).getNative();
 //		Book book = ws.getBook();
 		for(int i = column;;i++){
 			if(ws.isColumnHidden(i)){
@@ -78,6 +78,6 @@ public class UnitUtil {
 				break;
 			}
 		}
-		return new NSheetAnchor(row,column,0,0,lRow,lColumn,lX,lY);
+		return new SheetAnchor(row,column,0,0,lRow,lColumn,lX,lY);
 	}
 }
