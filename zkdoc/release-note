@@ -2,10 +2,6 @@
 ZK Spreadsheet 2.6.0
 *Features:
 	ZSS-187 Better support for CellStyles while setBorders
-  ZSS-251 Support to override the default formula implementation
-* Upgrade Notes
-  + Your own formula has the higher priority than default implementation, 
-    which mean if your formula has the same name as default one, yours will be called and ignore the default one.
 
 *Bug
 	ZSS-171 Input "=" on cell shall not append cell reference
