@@ -81,7 +81,7 @@ public class HSSFBookImpl extends HSSFWorkbook implements XBook, BookCtrl {
 		if(udff!=null){
 			insertToolPack(0, udff);
 		}
-		_evaluator = HSSFFormulaEvaluator.create(this, NoCacheClassifier.instance, null); 
+		_evaluator = HSSFFormulaEvaluator.create(this, NoCacheClassifier.instance, TolerantUDFFinder.instance); 
 		_bookEvaluator = _evaluator.getWorkbookEvaluator(); 
 		_bookEvaluator.setDependencyTracker(resolver.getDependencyTracker(this));
 		_functionMapper = new JoinFunctionMapper(resolver.getFunctionMapper());

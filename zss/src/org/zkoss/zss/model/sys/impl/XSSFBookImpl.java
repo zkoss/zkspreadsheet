@@ -111,7 +111,7 @@ public class XSSFBookImpl extends XSSFWorkbook implements XBook, BookCtrl {
 		if(udff!=null){
 			insertToolPack(0, udff);
 		}
-		_evaluator = XSSFFormulaEvaluator.create(this, NoCacheClassifier.instance, null); 
+		_evaluator = XSSFFormulaEvaluator.create(this, NoCacheClassifier.instance, TolerantUDFFinder.instance); 
 		_bookEvaluator = _evaluator.getWorkbookEvaluator(); 
 		_bookEvaluator.setDependencyTracker(resolver.getDependencyTracker(this));
 		_functionMapper = new JoinFunctionMapper(resolver.getFunctionMapper());
