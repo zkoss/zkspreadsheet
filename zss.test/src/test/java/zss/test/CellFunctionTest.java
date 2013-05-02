@@ -12,6 +12,10 @@ import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
+/**
+ * For testing those user actions that can be performed on a cell, e.g. copy and paste.
+ * 
+ */
 public class CellFunctionTest extends SpreadsheetTestCaseBase{
 
 	@Test

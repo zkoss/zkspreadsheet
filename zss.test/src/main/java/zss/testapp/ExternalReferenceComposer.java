@@ -6,7 +6,6 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.BookSeries;
 import org.zkoss.zss.model.Importer;
@@ -14,6 +13,7 @@ import org.zkoss.zss.model.Importers;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zssex.model.impl.BookSeriesImpl;
 
+@SuppressWarnings("serial")
 public class ExternalReferenceComposer extends SelectorComposer<Component>{
 	
 	@Wire("#src")
