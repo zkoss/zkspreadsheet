@@ -1,0 +1,6 @@
+<zk>
+	<window title="Bare ZK Spreadsheet" border="normal" height="100%">
+		<spreadsheet src="/TestFile2007-Formula.xlsx" maxrows="250" maxcolumns="40" width="100%"
+			height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true"/>
+	</window>
+</zk>
