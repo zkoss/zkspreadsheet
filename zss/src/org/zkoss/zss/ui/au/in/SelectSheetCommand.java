@@ -30,6 +30,7 @@ import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.Events;
+import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
 /**
  * @author sam
@@ -75,7 +76,7 @@ public class SelectSheetCommand implements Command {
 		for (int i = 0; i < len; i++) {
 			XSheet sheet = book.getWorksheetAt(i);
 			if (sheetId.equals(((SheetCtrl)sheet).getUuid())) {
-				spreadsheet.setSelectedSheetDirectly(sheet.getSheetName(), cacheInClient, row, col, 
+				((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setSelectedSheetDirectly(sheet.getSheetName(), cacheInClient, row, col, 
 						left, top, right, bottom,
 						highlightLeft, highlightTop, highlightRight, highlightBottom,
 						rowfreeze, colfreeze);

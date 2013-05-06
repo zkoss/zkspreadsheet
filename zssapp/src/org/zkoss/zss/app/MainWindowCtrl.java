@@ -56,7 +56,7 @@ import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.Utils;
-import org.zkoss.zss.ui.sys.ActionHandler;
+import org.zkoss.zss.ui.sys.XActionHandler;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Messagebox;
@@ -591,7 +591,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		getDesktopWorkbenchContext().fireWorkbookChanged();
 	}
 	
-	private class MainActionHandler extends ActionHandler {
+	private class MainActionHandler extends XActionHandler {
 		
 		MainActionHandler() {
 			super(spreadsheet);
@@ -631,7 +631,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 		@Override
 		public void doExportPDF(Rect selection) {
-			if (spreadsheet.getXBook() != null && isValidSelection(selection)) {
+			if (spreadsheet.getXBook() != null) {
 				openExportPdfDialog(selection);	
 			}
 		}
@@ -644,7 +644,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				return;
 			}
 
-			if (spreadsheet.getSelectedXSheet() != null && isValidSelection(selection)) {
+			if (spreadsheet.getSelectedXSheet() != null) {
 				spreadsheet.setSelection(selection);
 				openPasteSpecialDialog();	
 			}
@@ -655,7 +655,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		@Override
 		public void doCtrlKey(KeyEvent event) {
 			super.doCtrlKey(event);
-			if (spreadsheet.getSelectedXSheet() != null && isValidSelection(event.getSelection())) {
+			if (spreadsheet.getSelectedXSheet() != null) {
 				switch (event.getKeyCode()) {
 				case 'S':
 					//TODO: check permission from WorkbookCtrl
@@ -700,35 +700,35 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 
 		@Override
 		public void doCustomSort(Rect selection) {
-			if (spreadsheet.getSelectedXSheet() != null && isValidSelection(selection)) {
+			if (spreadsheet.getSelectedXSheet() != null) {
 				openCustomSortDialog(selection);
 			}
 		}
 
 		@Override
 		public void doHyperlink(Rect selection) {
-			if (spreadsheet.getSelectedXSheet() != null && isValidSelection(selection)) {
+			if (spreadsheet.getSelectedXSheet() != null) {
 				openHyperlinkDialog(selection);
 			}
 		}
 
 		@Override
 		public void doFormatCell(Rect selection) {
-			if (spreadsheet.getSelectedXSheet() != null && isValidSelection(selection)) {
+			if (spreadsheet.getSelectedXSheet() != null) {
 				openFormatNumberDialog(selection);	
 			}
 		}
 
 		@Override
 		public void doColumnWidth(Rect selection) {
-			if (spreadsheet.getSelectedXSheet() != null && isValidSelection(selection)) {
+			if (spreadsheet.getSelectedXSheet() != null) {
 				openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_COLUMN, selection);	
 			}
 		}
 
 		@Override
 		public void doRowHeight(Rect selection) {
-			if (spreadsheet.getSelectedXSheet() != null && isValidSelection(selection)) {
+			if (spreadsheet.getSelectedXSheet() != null) {
 				openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_ROW, selection);	
 			}
 		}

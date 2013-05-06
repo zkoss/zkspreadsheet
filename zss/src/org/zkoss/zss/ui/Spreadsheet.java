@@ -137,7 +137,6 @@ import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.SequenceId;
 import org.zkoss.zss.ui.impl.StringAggregation;
 import org.zkoss.zss.ui.impl.Utils;
-import org.zkoss.zss.ui.sys.ActionHandler;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl.CellAttribute;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
@@ -324,6 +323,31 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				processStopEditing((String) data[0], (StopEditingEvent) data[1], (String) data[2]);
 			}
 		});
+		
+		//EVENT for ActionHandler, code are moved from original place to here
+//		EventListener l = new EventListener() {
+//			public void onEvent(Event event) throws Exception {
+//				getActionHandler().aaaa();
+//			}
+//		};
+//		this.addEventListener(Events.ON_SHEET_SELECT, l);
+//		EventListener l = new EventListener() {
+//			public void onEvent(Event event) throws Exception {
+//				getActionHandler().aaaa();
+//			}
+//		};
+//		this.addEventListener(Events.ON_CTRL_KEY, l);
+//		
+//		//clear clipboard
+//		l = new EventListener() {
+//			public void onEvent(Event event) throws Exception {
+//				getActionHandler().aaaa();
+//			}
+//		};
+//		this.addEventListener(Events.ON_CELL_DOUBLE_CLICK, l);
+//		this.addEventListener(Events.ON_START_EDITING, l);
+		
+		//end for action-handler
 	}
 	
 	private static boolean isDefaultClientCacheDisabled() {
@@ -506,7 +530,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	private EventListener _focusListener = null;
 
-	private ActionHandler _actionHandler;
+	private UserActionHandler _actionHandler;
 
 	private boolean _showContextMenu;
 	private void doMoveSelfFocus(CellEvent event){
@@ -568,28 +592,28 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return new Focus(((BookCtrl)_book).nextFocusId(), focusName, "#000", 0, 0, this);
 	}
 	
-	/**
-	 * 
-	 * @param is
-	 * @param src
-	 */
-	public void setBookFromStream(InputStream is, String src){
-		if(_selectedSheet!=null){
-			doSheetClean(_selectedSheet);
-		}
-		_selectedSheet=null;
-		_selectedSheetId=null;
-		_selectedSheetName = null;
-		//bug#315: freezed pane rows/columns don't work when setting Spreadsheet from Composer.
-		//setRowfreeze(-1);
-		//setColumnfreeze(-1);
-		//setBook(null);
-		_importer = new ExcelImporter();
-		_src=src;
-		final XBook book = ((ExcelImporter)_importer).imports(is, src);
-		initBook(book);
-		invalidate();
-	}
+//	/**
+//	 * 
+//	 * @param is
+//	 * @param src
+//	 */
+//	public void setBookFromStream(InputStream is, String src){
+//		if(_selectedSheet!=null){
+//			doSheetClean(_selectedSheet);
+//		}
+//		_selectedSheet=null;
+//		_selectedSheetId=null;
+//		_selectedSheetName = null;
+//		//bug#315: freezed pane rows/columns don't work when setting Spreadsheet from Composer.
+//		//setRowfreeze(-1);
+//		//setColumnfreeze(-1);
+//		//setBook(null);
+//		_importer = new ExcelImporter();
+//		_src=src;
+//		final XBook book = ((ExcelImporter)_importer).imports(is, src);
+//		initBook(book);
+//		invalidate();
+//	}
 
 	/**
 	 * Gets the selected sheet, the default selected sheet is first sheet.
@@ -677,7 +701,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * 
 	 * @return the importer
 	 */
-	public XImporter getImporter() {
+	public XImporter getXImporter() {
 		return _importer;
 	}
 
@@ -688,7 +712,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * format (e.g. an Excel file) by the specified src (@link
 	 * #setSrc(). The default importer is {@link ExcelImporter}.
 	 */
-	public void setImporter(XImporter importer) {
+	public void setXImporter(XImporter importer) {
 		if (!Objects.equals(importer, _importer)) {
 			_importer = importer;
 			setBook(null);
@@ -737,7 +761,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	
-	public void setSelectedSheetDirectly(String name, boolean cacheInClient, int row, int col, 
+	private void setSelectedSheetDirectly(String name, boolean cacheInClient, int row, int col, 
 			int left, int top, int right, int bottom,
 			int highlightLeft, int highlightTop, int highlightRight, int highlightBottom,
 			int rowfreeze, int colfreeze) {
@@ -1522,9 +1546,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		
 		if (_showToolbar) {
-			if (_actionDisabled.size() > 0) {
+			//20130507,Dennis,add commnet check, no actionDisabled json will cause client error when show context menu.
+//			if (_actionDisabled.size() > 0) {
 				renderer.render("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
-			}
+//			}
 			renderer.render("showToolbar", _showToolbar);
 		}
 			
@@ -2341,7 +2366,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	
-	public ActiveRangeHelper getActiveRangeHelper() {
+	private ActiveRangeHelper getActiveRangeHelper() {
 		ActiveRangeHelper activeRangeHelper = (ActiveRangeHelper) getAttribute(ACTIVE_RANGE_HELPER);
 		if (activeRangeHelper == null) {
 			setAttribute(ACTIVE_RANGE_HELPER, activeRangeHelper = new ActiveRangeHelper());
@@ -2350,7 +2375,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return activeRangeHelper;
 	}
 	
-	public MergeMatrixHelper getMergeMatrixHelper(XSheet sheet) {
+	private MergeMatrixHelper getMergeMatrixHelper(XSheet sheet) {
 		HelperContainer<MergeMatrixHelper> helpers = (HelperContainer) getAttribute(MERGE_MATRIX_KEY);
 		if (helpers == null) {
 			helpers = new HelperContainer<MergeMatrixHelper>();
@@ -2496,52 +2521,52 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	
-	/**
-	 * Internal Use Only
-	 */
-	public void updateRange(XSheet sheet, String sheetId, int left, int top, int right, int bottom) {
-		SpreadsheetCtrl ctrl = (SpreadsheetCtrl) getExtraCtrl();
-		String ret = ctrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.NONE, SpreadsheetCtrl.CellAttribute.ALL, left, top, right, bottom).toJSONString();
-		response(bottom + "_" + right + "_" + _updateRangeId.next(), new AuUpdateData(this, AuUpdateData.UPDATE_RANGE_FUNCTION, "", sheetId, ret));
-	}
+//	/**
+//	 * Internal Use Only
+//	 */
+//	public void updateRange(XSheet sheet, String sheetId, int left, int top, int right, int bottom) {
+//		SpreadsheetCtrl ctrl = (SpreadsheetCtrl) getExtraCtrl();
+//		String ret = ctrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.NONE, SpreadsheetCtrl.CellAttribute.ALL, left, top, right, bottom).toJSONString();
+//		response(bottom + "_" + right + "_" + _updateRangeId.next(), new AuUpdateData(this, AuUpdateData.UPDATE_RANGE_FUNCTION, "", sheetId, ret));
+//	}
 	
-	public void escapeAndUpdateText(Cell cell, String text) {
-		final CellStyle style = (cell == null) ? null : cell.getCellStyle();
-		final boolean wrap = style != null && style.getWrapText();
-		text = Utils.escapeCellText(text, wrap, true);
-		updateText(cell, text);
-	}
+//	public void escapeAndUpdateText(Cell cell, String text) {
+//		final CellStyle style = (cell == null) ? null : cell.getCellStyle();
+//		final boolean wrap = style != null && style.getWrapText();
+//		text = Utils.escapeCellText(text, wrap, true);
+//		updateText(cell, text);
+//	}
 	
-	/**
-	 * Internal Use Only
-	 */
-	public void updateText(Cell cell, String text) {
-		if (cell == null)
-			return;
-		final int row = cell.getRowIndex();
-		final int col = cell.getColumnIndex();
-		final Rect rect = getActiveRangeHelper().getRect(_selectedSheet);
-		if (rect == null)
-			return;
-		// update cell only in block or in freeze panels
-		if (row > rect.getBottom()
-				|| (row < rect.getTop() && row > getRowfreeze()))
-			return;
-		if (col > rect.getRight()
-				|| (col < rect.getLeft() && row > getColumnfreeze()))
-			return;
-
-		// if(cell==null) continue;
-
-		final JSONObj result = new JSONObj();
-		result.setData("r", row);
-		result.setData("c", col);
-		result.setData("type", "udtext");
-		result.setData("val", text);
-		final String sheetId = Utils.getSheetUuid((XSheet) cell.getSheet());
-		response(row + "_" + col + "_" + _updateCellId.next(), new AuDataUpdate(this, "", sheetId, result));
-	}
-	
+//	/**
+//	 * Internal Use Only
+//	 */
+//	public void updateText(Cell cell, String text) {
+//		if (cell == null)
+//			return;
+//		final int row = cell.getRowIndex();
+//		final int col = cell.getColumnIndex();
+//		final Rect rect = getActiveRangeHelper().getRect(_selectedSheet);
+//		if (rect == null)
+//			return;
+//		// update cell only in block or in freeze panels
+//		if (row > rect.getBottom()
+//				|| (row < rect.getTop() && row > getRowfreeze()))
+//			return;
+//		if (col > rect.getRight()
+//				|| (col < rect.getLeft() && row > getColumnfreeze()))
+//			return;
+//
+//		// if(cell==null) continue;
+//
+//		final JSONObj result = new JSONObj();
+//		result.setData("r", row);
+//		result.setData("c", col);
+//		result.setData("type", "udtext");
+//		result.setData("val", text);
+//		final String sheetId = Utils.getSheetUuid((XSheet) cell.getSheet());
+//		response(row + "_" + col + "_" + _updateCellId.next(), new AuDataUpdate(this, "", sheetId, result));
+//	}
+//	
 	private void responseUpdateCell(XSheet sheet, String sheetId, int left, int top, int right, int bottom) {
 		SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) this.getExtraCtrl());
 		JSONObject result = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.NONE, CellAttribute.ALL, left, top, right, bottom);
@@ -3476,6 +3501,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			HeaderPositionInfo info = colHelper.getInfo(col);
 			return info == null ? Boolean.FALSE : Boolean.valueOf(info.hidden);
 		}
+
+		@Override
+		public void setSelectedSheetDirectly(String name,
+				boolean cacheInClient, int row, int col, int left, int top,
+				int right, int bottom, int highlightLeft, int highlightTop,
+				int highlightRight, int highlightBottom, int rowfreeze,
+				int colfreeze) {
+			Spreadsheet.this.setSelectedSheetDirectly(name, cacheInClient, row, col, left,
+					top, right, bottom, highlightLeft, highlightTop,
+					highlightRight, highlightBottom, rowfreeze, colfreeze);
+		}
 	}
 
 	public void invalidate() {
@@ -4121,35 +4157,35 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return _widgetLoaders;
 	}
 
-	/**
-	 * Sets the {@link Action} disabled
-	 * 
-	 * @param disabled
-	 * @param action
-	 */
-	public void setActionDisabled(boolean disabled, Action action) {
-		boolean changed = false;
-		if (disabled && !_actionDisabled.contains(action)) {
-			_actionDisabled.add(action);
-			changed = true;
-		} else if (!disabled && _actionDisabled.contains(action)) {
-			_actionDisabled.remove(action);
-			changed = true;
-		}
-		if (changed) {
-			smartUpdate("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
-		}
-	}
+//	/**
+//	 * Sets the {@link Action} disabled
+//	 * 
+//	 * @param disabled
+//	 * @param action
+//	 */
+//	public void setActionDisabled(boolean disabled, Action action) {
+//		boolean changed = false;
+//		if (disabled && !_actionDisabled.contains(action)) {
+//			_actionDisabled.add(action);
+//			changed = true;
+//		} else if (!disabled && _actionDisabled.contains(action)) {
+//			_actionDisabled.remove(action);
+//			changed = true;
+//		}
+//		if (changed) {
+//			smartUpdate("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
+//		}
+//	}
 	
-	/**
-	 * Returns whther {@link Action} disabled or not
-	 * 
-	 * @param action
-	 * @return boolean
-	 */
-	public boolean isActionDisabled(Action action) {
-		return _actionDisabled.contains(action);
-	}
+//	/**
+//	 * Returns whther {@link Action} disabled or not
+//	 * 
+//	 * @param action
+//	 * @return boolean
+//	 */
+//	public boolean isActionDisabled(Action action) {
+//		return _actionDisabled.contains(action);
+//	}
 	
 	private static List<String> convertActionDisabledToJSON(Set<Action> disabled) {
 		ArrayList<String> disd = new ArrayList<String>(disabled.size());
@@ -4164,14 +4200,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * 
 	 * @param actionHandler
 	 */
-	public void setActionHandler(ActionHandler actionHandler) {
-		if (_actionHandler != null && _actionHandler != actionHandler) {
-			_actionHandler.unbind();
-		}
+	public void setActionHandler(UserActionHandler actionHandler) {
 		_actionHandler = actionHandler;
-		if (_actionHandler != null) {
-			_actionHandler.bind(this);
-		}
 	}
 	
 	/**
@@ -4179,18 +4209,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * 
 	 * @return 
 	 */
-	public ActionHandler getActionHandler() {
+	public UserActionHandler getActionHandler() {
 		if (_actionHandler == null) {
 			String cls = (String) Library.getProperty(ACTION_HANDLER);
 			if (cls != null) {
 				try {
-					_actionHandler = (ActionHandler) Classes.newInstance(cls, null, null);
-					_actionHandler.bind(this);
+					_actionHandler = (UserActionHandler) Classes.newInstance(cls, null, null);
 				} catch (Exception x) {
 					throw new UiException(x);
 				}
 			} else {
-				_actionHandler = new DefaultToolbarActionHandler();
+				_actionHandler = new DefaultUserActionHandler();
 			}
 		}
 		return _actionHandler;
@@ -4502,7 +4531,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	/**
 	 * Remove editor's focus on specified name
 	 */
-	public void removeEditorFocus(String id){
+	private void removeEditorFocus(String id){
 		response("removeEditorFocus" + _focusId.next(), new AuInvoke((Component)this, "removeEditorFocus", id));
 		_focuses.remove(id);
 	}
@@ -4510,7 +4539,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	/**
 	 *  Add and move other editor's focus
 	 */
-	public void moveEditorFocus(String id, String name, String color, int row ,int col){
+	private void moveEditorFocus(String id, String name, String color, int row ,int col){
 		if (_focus != null && !_focus.id.equals(id)) {
 			response("moveEditorFocus" + _focusId.next(), new AuInvoke((Component)this, "moveEditorFocus", new String[]{id, name, color,""+row,""+col}));
 			_focuses.put(id, new Focus(id, name, color, row, col, null));
@@ -4554,38 +4583,38 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	
-	/**
-	 * update/invalidate all focus/selection/hightlight to align with cell border
-	 */
-	public void updateFocus(int left, int top, int right, int bottom){
-		int row,col,sL,sT,sR,sB,hL,hT,hR,hB;
-		row=col=sL=sT=sR=sB=hL=hT=hR=hB=-1;
-		Position pos = this.getCellFocus();
-		if(pos!=null){
-			row=pos.getRow();
-			col=pos.getColumn();
-			response("updateSelfFocus", new AuInvoke((Component)this,"updateSelfFocus", new String[]{""+row,""+col}));
-		}
-		Rect rect = this.getSelection();
-		if(rect!=null){
-			sL=rect.getLeft();
-			sT=rect.getTop();
-			sR=rect.getRight();
-			sB=rect.getBottom();	
-			response("updateSelfSelection", new AuInvoke((Component)this,"updateSelfSelection", new String[]{""+sL,""+sT,""+sR,""+sB}));
-		}
-		
-		rect=this.getHighlight();
-		if(rect!=null){
-			hL=rect.getLeft();
-			hT=rect.getTop();
-			hR=rect.getRight();
-			hB=rect.getBottom();
-			
-			response("updateSelfHightlight", new AuInvoke((Component)this,"updateSelfHighlight", new String[]{""+hL,""+hT,""+hR,""+hB}));
-			
-		}
-	}
+//	/**
+//	 * update/invalidate all focus/selection/hightlight to align with cell border
+//	 */
+//	public void updateFocus(int left, int top, int right, int bottom){
+//		int row,col,sL,sT,sR,sB,hL,hT,hR,hB;
+//		row=col=sL=sT=sR=sB=hL=hT=hR=hB=-1;
+//		Position pos = this.getCellFocus();
+//		if(pos!=null){
+//			row=pos.getRow();
+//			col=pos.getColumn();
+//			response("updateSelfFocus", new AuInvoke((Component)this,"updateSelfFocus", new String[]{""+row,""+col}));
+//		}
+//		Rect rect = this.getSelection();
+//		if(rect!=null){
+//			sL=rect.getLeft();
+//			sT=rect.getTop();
+//			sR=rect.getRight();
+//			sB=rect.getBottom();	
+//			response("updateSelfSelection", new AuInvoke((Component)this,"updateSelfSelection", new String[]{""+sL,""+sT,""+sR,""+sB}));
+//		}
+//		
+//		rect=this.getHighlight();
+//		if(rect!=null){
+//			hL=rect.getLeft();
+//			hT=rect.getTop();
+//			hR=rect.getRight();
+//			hB=rect.getBottom();
+//			
+//			response("updateSelfHightlight", new AuInvoke((Component)this,"updateSelfHighlight", new String[]{""+hL,""+hT,""+hR,""+hB}));
+//			
+//		}
+//	}
 	
 	/**
 	 * @param sheet
@@ -4686,171 +4715,131 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		iconMap.put(ErrorStyle.STOP, Messagebox.ERROR);
 		iconMap.put(ErrorStyle.WARNING, Messagebox.EXCLAMATION);
 	}
-	//return true if a valid input; false otherwise and show Error Alert if required 
+	//return true if a valid input; false otherwise and show Error Alert if required
+	//TODO think another way to provide this feature.
+	/**
+	 * @deprecated since 3.0.0 please use {@link ValidationHelper}
+	 */
+	@Deprecated
 	public boolean validate(XSheet sheet, final int row, final int col, final String txt, 
 		final EventListener callback) {
-		final XSheet ssheet = this.getSelectedXSheet();
-		if (ssheet == null || !ssheet.equals(sheet)) { //skip no sheet case
-			return true;
-		}
-		if (_inCallback) { //skip validation check
-			return true;
-		}
-		final XRange rng = XRanges.range(sheet, row, col);
-		final DataValidation dv = rng.validate(txt);
-		if (dv != null) {
-			if (dv.getShowErrorBox()) {
-				String errTitle = dv.getErrorBoxTitle();
-				String errText = dv.getErrorBoxText();
-				if (errTitle == null) {
-					errTitle = "ZK Spreadsheet";
-				}
-				if (errText == null) {
-					errText = "The value you entered is not valid.\n\nA user has restricted values that can be entered into this cell.";
-				}
-				final int errStyle = dv.getErrorStyle();
-				switch(errStyle) {
-					case ErrorStyle.STOP:
-					{
-						final int btn = Messagebox.show(
-							errText, errTitle, Messagebox.RETRY|Messagebox.CANCEL, 
-							Messagebox.ERROR, Messagebox.RETRY, new EventListener() {
-							@Override
-							public void onEvent(Event event) throws Exception {
-								final String evtname = event.getName();
-								if (Messagebox.ON_RETRY.equals(evtname)) {
-									retry(callback);
-								} else if (Messagebox.ON_CANCEL.equals(evtname)) {
-									cancel(callback);
-								}
-							}
-						});
-					}
-					break;
-					case ErrorStyle.WARNING:
-					{
-						errText += "\n\nContinue?";
-						final int btn = Messagebox.show(
-							errText, errTitle, Messagebox.YES|Messagebox.NO|Messagebox.CANCEL, 
-							Messagebox.EXCLAMATION, Messagebox.NO, new EventListener() {
-							@Override
-							public void onEvent(Event event) throws Exception {
-								final String evtname = event.getName();
-								if (Messagebox.ON_NO.equals(evtname)) {
-									retry(callback);
-								} else if (Messagebox.ON_CANCEL.equals(evtname)) {
-									cancel(callback);
-								} else if (Messagebox.ON_YES.equals(evtname)) {
-									ok(callback);
-								}
-							}
-						});
-						if (getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && btn == Messagebox.YES) {
-							return true;
-						}
-					}
-					break;
-					case ErrorStyle.INFO:
-					{
-						final int btn = Messagebox.show(
-							errText, errTitle, Messagebox.OK|Messagebox.CANCEL, 
-							Messagebox.INFORMATION, Messagebox.OK, new EventListener() {
-							@Override
-							public void onEvent(Event event) throws Exception {
-								final String evtname = event.getName();
-								if (Messagebox.ON_CANCEL.equals(evtname)) {
-									cancel(callback);
-								} else if (Messagebox.ON_OK.equals(evtname)) {
-									ok(callback);
-								}
-							}
-						});
-						if (getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && btn == Messagebox.OK) {
-							return true;
-						}
-					}
-					break;
-				}
-			}
-			return false;
-		}
-		return true;
+		return new ValidationHelper(this).validate(sheet, row, col, txt, callback);
 	}
-	
-	private boolean _inCallback = false;
-	private void errorBoxCallback(EventListener callback, String eventname) {
-		if (!getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && callback != null) {
-			try {
-				_inCallback = true;
-				callback.onEvent(new Event(eventname, this));
-			} catch (Exception e) {
-				throw UiException.Aide.wrap(e);
-			} finally {
-				_inCallback = false;
-			}
-		}
-	}
-	//when user press OK/YES button of the validation ErrorBox, have to call back to resend the setEditText() operation 
-	private void ok(EventListener callback) {
-		errorBoxCallback(callback, Messagebox.ON_OK);
-	}
-	//when user press RETRY/NO button of the validation ErrorBox, have to call back to handle UI operation 
-	private void retry(EventListener callback) {
-		//TODO: shall set focus back to cell at (row, col), select the text, enter edit mode
-		errorBoxCallback(callback, Messagebox.ON_RETRY);
-	}
-	//when user press CANCEL button of the validation ErrorBox, have to call back to handle UI operation 
-	private void cancel(EventListener callback) {
-		//TODO: shall set focus back to cell at (row, col) and restore cell value
-		errorBoxCallback(callback, Messagebox.ON_CANCEL);
-	}
-	
-	private class DefaultToolbarActionHandler extends ActionHandler {
-
-		DefaultToolbarActionHandler() {
-			super(Spreadsheet.this);
-		}
-		
-		@Override
-		public void doNewBook() {
-		}
-
-		@Override
-		public void doSaveBook() {
-		}
-
-		@Override
-		public void doExportPDF(Rect selection) {
-		}
-
-		@Override
-		public void doPasteSpecial(Rect selection) {
-		}
-
-		@Override
-		public void doCustomSort(Rect selection) {
-		}
-
-		@Override
-		public void doHyperlink(Rect selection) {
-		}
-
-		@Override
-		public void doFormatCell(Rect selection) {
-		}
-
-		@Override
-		public void doColumnWidth(Rect selection) {
-		}
-
-		@Override
-		public void doRowHeight(Rect selection) {
-		}
-
-		@Override
-		public void doInsertFunction(Rect selection) {
-		}
-	}
+////		final XSheet ssheet = this.getSelectedXSheet();
+////		if (ssheet == null || !ssheet.equals(sheet)) { //skip no sheet case
+////			return true;
+////		}
+////		if (_inCallback) { //skip validation check
+////			return true;
+////		}
+////		final XRange rng = XRanges.range(sheet, row, col);
+////		final DataValidation dv = rng.validate(txt);
+////		if (dv != null) {
+////			if (dv.getShowErrorBox()) {
+////				String errTitle = dv.getErrorBoxTitle();
+////				String errText = dv.getErrorBoxText();
+////				if (errTitle == null) {
+////					errTitle = "ZK Spreadsheet";
+////				}
+////				if (errText == null) {
+////					errText = "The value you entered is not valid.\n\nA user has restricted values that can be entered into this cell.";
+////				}
+////				final int errStyle = dv.getErrorStyle();
+////				switch(errStyle) {
+////					case ErrorStyle.STOP:
+////					{
+////						final int btn = Messagebox.show(
+////							errText, errTitle, Messagebox.RETRY|Messagebox.CANCEL, 
+////							Messagebox.ERROR, Messagebox.RETRY, new EventListener() {
+////							@Override
+////							public void onEvent(Event event) throws Exception {
+////								final String evtname = event.getName();
+////								if (Messagebox.ON_RETRY.equals(evtname)) {
+////									retry(callback);
+////								} else if (Messagebox.ON_CANCEL.equals(evtname)) {
+////									cancel(callback);
+////								}
+////							}
+////						});
+////					}
+////					break;
+////					case ErrorStyle.WARNING:
+////					{
+////						errText += "\n\nContinue?";
+////						final int btn = Messagebox.show(
+////							errText, errTitle, Messagebox.YES|Messagebox.NO|Messagebox.CANCEL, 
+////							Messagebox.EXCLAMATION, Messagebox.NO, new EventListener() {
+////							@Override
+////							public void onEvent(Event event) throws Exception {
+////								final String evtname = event.getName();
+////								if (Messagebox.ON_NO.equals(evtname)) {
+////									retry(callback);
+////								} else if (Messagebox.ON_CANCEL.equals(evtname)) {
+////									cancel(callback);
+////								} else if (Messagebox.ON_YES.equals(evtname)) {
+////									ok(callback);
+////								}
+////							}
+////						});
+////						if (getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && btn == Messagebox.YES) {
+////							return true;
+////						}
+////					}
+////					break;
+////					case ErrorStyle.INFO:
+////					{
+////						final int btn = Messagebox.show(
+////							errText, errTitle, Messagebox.OK|Messagebox.CANCEL, 
+////							Messagebox.INFORMATION, Messagebox.OK, new EventListener() {
+////							@Override
+////							public void onEvent(Event event) throws Exception {
+////								final String evtname = event.getName();
+////								if (Messagebox.ON_CANCEL.equals(evtname)) {
+////									cancel(callback);
+////								} else if (Messagebox.ON_OK.equals(evtname)) {
+////									ok(callback);
+////								}
+////							}
+////						});
+////						if (getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && btn == Messagebox.OK) {
+////							return true;
+////						}
+////					}
+////					break;
+////				}
+////			}
+////			return false;
+////		}
+////		return true;
+////	}
+//	
+////	private boolean _inCallback = false;
+////	private void errorBoxCallback(EventListener callback, String eventname) {
+////		if (!getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && callback != null) {
+////			try {
+////				_inCallback = true;
+////				callback.onEvent(new Event(eventname, this));
+////			} catch (Exception e) {
+////				throw UiException.Aide.wrap(e);
+////			} finally {
+////				_inCallback = false;
+////			}
+////		}
+////	}
+////	//when user press OK/YES button of the validation ErrorBox, have to call back to resend the setEditText() operation 
+////	private void ok(EventListener callback) {
+////		errorBoxCallback(callback, Messagebox.ON_OK);
+////	}
+////	//when user press RETRY/NO button of the validation ErrorBox, have to call back to handle UI operation 
+////	private void retry(EventListener callback) {
+////		//TODO: shall set focus back to cell at (row, col), select the text, enter edit mode
+////		errorBoxCallback(callback, Messagebox.ON_RETRY);
+////	}
+////	//when user press CANCEL button of the validation ErrorBox, have to call back to handle UI operation 
+////	private void cancel(EventListener callback) {
+////		//TODO: shall set focus back to cell at (row, col) and restore cell value
+////		errorBoxCallback(callback, Messagebox.ON_CANCEL);
+////	}
 
 	@Override
 	public void afterCompose() {
@@ -4858,7 +4847,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		//ZSS-127: bind event on afterCompose
 		if (_showToolbar 
 		|| (ctrlKeys != null && (ctrlKeys.toLowerCase().indexOf("^c") >= 0 || ctrlKeys.indexOf("^v") >= 0))) {
-			getActionHandler().bind(Spreadsheet.this);//init for toolbar's "upload picture" button & copy-paste by Ctrl key
 		}
 	}
 	

@@ -73,4 +73,14 @@ public interface SpreadsheetInCtrl {
 	 * @param bottom
 	 */
 	public void setVisibleRect(int left, int top,int right, int bottom);
+	
+	
+	/**
+	 * 
+	 */
+	//20130507, Dennis, move to internal controller api
+	public void setSelectedSheetDirectly(String name, boolean cacheInClient, int row, int col, 
+			int left, int top, int right, int bottom,
+			int highlightLeft, int highlightTop, int highlightRight, int highlightBottom,
+			int rowfreeze, int colfreeze);
 }

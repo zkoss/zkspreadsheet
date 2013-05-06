@@ -75,28 +75,23 @@ public class CellOperationUtil {
 		return src.paste(dest);
 	}
 	public static boolean pasteFormula(Range src, Range dest) {
-		if(dest.isProtected()){
-			return false;
-		}
-		return src.pasteSpecial(dest, PasteType.PASTE_FORMULAS, PasteOperation.PASTEOP_NONE, false, false);
+		return pasteSpecial(src, dest, PasteType.PASTE_FORMULAS, PasteOperation.PASTEOP_NONE, false, false);
 	}
 	public static boolean pasteValue(Range src, Range dest) {
-		if(dest.isProtected()){
-			return false;
-		}
-		return src.pasteSpecial(dest, PasteType.PASTE_VALUES, PasteOperation.PASTEOP_NONE, false, false);
+		return pasteSpecial(src, dest, PasteType.PASTE_VALUES, PasteOperation.PASTEOP_NONE, false, false);
 	}
 	public static boolean pasteAllExceptBorder(Range src, Range dest) {
-		if(dest.isProtected()){
-			return false;
-		}
-		return src.pasteSpecial(dest, PasteType.PASTE_ALL_EXCEPT_BORDERS, PasteOperation.PASTEOP_NONE, false, false);
+		return pasteSpecial(src, dest, PasteType.PASTE_ALL_EXCEPT_BORDERS, PasteOperation.PASTEOP_NONE, false, false);
 	}
 	public static boolean pasteTranspose(Range src, Range dest) {
+		return pasteSpecial(src, dest, PasteType.PASTE_ALL, PasteOperation.PASTEOP_NONE, false, true);
+	}
+	
+	public static boolean pasteSpecial(Range src, Range dest,PasteType pasteType, PasteOperation pasteOperation, boolean skipBlank, boolean transpose){
 		if(dest.isProtected()){
 			return false;
 		}
-		return src.pasteSpecial(dest, PasteType.PASTE_ALL, PasteOperation.PASTEOP_NONE, false, true);
+		return src.pasteSpecial(dest, pasteType, pasteOperation, skipBlank, transpose);
 	}
 
 	public static void applyFontName(Range range,final String fontName){
@@ -482,82 +477,15 @@ public class CellOperationUtil {
 			return;
 		range.sort(desc);
 	}
-	
-	public static void toggleAutoFilter(Range range) {
-		if(range.isProtected())
-			return;
-		range.enableAutoFilter(!range.isAutoFilterEnabled());
-	}
-	
-	public static void resetAutoFilter(Range range) {
-		if(range.isProtected())
-			return;
-		range.resetAutoFilter();
-	}
-	
-	public static void applyAutoFilter(Range range) {
-		if(range.isProtected())
-			return;
-		range.applyAutoFilter();
-	}
-	
-	public static void addPicture(Range range, AImage image){
-		addPicture(range,image.getByteData(),getPictureFormat(image),image.getWidth(),image.getHeight());
-	}
-	
-	public static void addPicture(Range range, byte[] binary, Format format,int widthPx, int heightPx){
-		SheetAnchor anchor = UnitUtil.toFilledAnchor(range.getSheet(), range.getRow(),range.getColumn(),
-				widthPx, heightPx);
-		addPicture(range,anchor,binary,format);
-		
-	}
-	public static void addPicture(Range range, SheetAnchor anchor, byte[] binary, Format format){
-		if(range.isProtected())
-			return;
-		range.addPicture(anchor, binary, format);
-	}
-	
-	public static Format getPictureFormat(AImage image) {
-		String format = image.getFormat();
-		if ("dib".equalsIgnoreCase(format)) {
-			return Format.DIB;
-		} else if ("emf".equalsIgnoreCase(format)) {
-			return Format.EMF;
-		} else if ("wmf".equalsIgnoreCase(format)) {
-			return Format.WMF;
-		} else if ("jpeg".equalsIgnoreCase(format)) {
-			return Format.JPEG;
-		} else if ("pict".equalsIgnoreCase(format)) {
-			return Format.PICT;
-		} else if ("png".equalsIgnoreCase(format)) {
-			return Format.PNG;
-		}
-		return null;
-	}
-	
-	
-	public static void addChart(Range range, ChartData data, Chart.Type type, Chart.Grouping grouping,
-			Chart.LegendPosition pos) {
-		SheetAnchor anchor = toChartAnchor(range);
-		addChart(range,anchor, data, type, grouping, pos);
-	}
-	
-	public static void addChart(Range range, SheetAnchor anchor, ChartData data, Chart.Type type, Chart.Grouping grouping,
-			Chart.LegendPosition pos) {
+
+	public static void hide(Range range) {
 		if (range.isProtected())
 			return;
-		range.addChart(anchor, data, type, grouping, pos);
+		range.setHidden(true);
 	}
-	
-	
-	private static SheetAnchor toChartAnchor(Range range) {
-		int row = range.getRow();
-		int col = range.getColumn();
-		int lRow = range.getLastRow();
-		int lCol = range.getLastColumn();
-		int w = lCol-col+1;
-		//shift 2 column right for the selection width 
-		return new SheetAnchor(row, lCol+2, 
-				row==lRow?row+7:lRow+1, col==lCol?lCol+7+w:lCol+2+w);
+	public static void unHide(Range range) {
+		if (range.isProtected())
+			return;
+		range.setHidden(false);
 	}
 }

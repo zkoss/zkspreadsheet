@@ -53,6 +53,7 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.ValidationHelper;
 import org.zkoss.zul.Messagebox;
 
 /**
@@ -1282,7 +1283,8 @@ public class Utils {
 	}
 
 	public static boolean setEditTextWithValidation(Spreadsheet ss, XSheet sheet, int row, int col, String txt, EventListener callback) {
-		if (ss.validate(sheet, row, col, txt, callback)) {
+		ValidationHelper helper = new ValidationHelper(ss);
+		if (helper.validate(sheet, row, col, txt, callback)) {
 			setEditText(sheet, row, col, txt);
 			return true;
 		}

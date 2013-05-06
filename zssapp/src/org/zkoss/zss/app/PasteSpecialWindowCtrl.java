@@ -28,7 +28,7 @@ import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
-import org.zkoss.zss.ui.sys.ActionHandler.Clipboard;
+import org.zkoss.zss.ui.sys.XActionHandler.Clipboard;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Messagebox;
