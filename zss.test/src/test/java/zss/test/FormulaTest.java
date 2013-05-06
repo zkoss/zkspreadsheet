@@ -28,9 +28,10 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	private static ComponentAgent zss ;
 	private static Spreadsheet spreadsheet ;
 	
-	private static final String END_OF_FORMULA="END OF FORMULA";
+	//tolerance delta value between correct value and expected value for a double number
 	private static final double DELTA = 1e-5;
 	
+	// after reading the number of row without a formula, the program will stop to read more rows
 	private static final int MAX_ROW_READ_FROM_LAST_FORUMULA = 30;
 	
 	@Rule
@@ -45,91 +46,72 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		
 	}
 	
-//	@Test
-	public void testFirst() {
-		Worksheet sheet = spreadsheet.getSheet(0);
-		System.out.println("start test formulas in sheet: "+sheet.getSheetName());
-//		int nFormula = testFormulaByRangesInSheet(sheet);
-		int nFormula = testFormulaByPoiInSheet(sheet);
-		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
-	}
-	
-//	@Test
-	public void testTemp() {
-		Worksheet sheet = spreadsheet.getSheet(1);
-		System.out.println("start test formulas in sheet: "+sheet.getSheetName());
-//		int nFormula = testFormulaByRangesInSheet(sheet);
-		int nFormula = testFormulaByPoiInSheet(sheet);
-		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
-	}
-	
+
 	@Test
 	public void testMath() {
-		Worksheet sheet = spreadsheet.getSheet(1);
+		Worksheet sheet = spreadsheet.getSheet(2);
 		
 		int nFormula = testFormulaByRangesInSheet(sheet);
+//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
 	
 	@Test
 	public void testLogical() {
-		Worksheet sheet = spreadsheet.getSheet(2); 
+		Worksheet sheet = spreadsheet.getSheet(3); 
 		
 		int nFormula = testFormulaByRangesInSheet(sheet);
+//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
 	
 	@Test
 	public void testText() {
-		Worksheet sheet = spreadsheet.getSheet(3); 
+		Worksheet sheet = spreadsheet.getSheet(4); 
 		
 		int nFormula = testFormulaByRangesInSheet(sheet);
+//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
 	
 	@Test
 	public void testInfo() {
-		Worksheet sheet = spreadsheet.getSheet(4); 
+		Worksheet sheet = spreadsheet.getSheet(5); 
 		
 		int nFormula = testFormulaByRangesInSheet(sheet);
+//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
 
 	@Test
 	public void testDateTime() {
-		Worksheet sheet = spreadsheet.getSheet(5); 
+		Worksheet sheet = spreadsheet.getSheet(6); 
 		
 		int nFormula = testFormulaByRangesInSheet(sheet);
+//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
 	
 	@Test
 	public void testFinancial() {
-		Worksheet sheet = spreadsheet.getSheet(6); 
+		Worksheet sheet = spreadsheet.getSheet(7); 
 		
 		int nFormula = testFormulaByRangesInSheet(sheet);
+//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
 	
 	@Test
 	public void testStatistical() {
-		Worksheet sheet = spreadsheet.getSheet(7); 
-		
-		int nFormula = testFormulaByRangesInSheet(sheet);
-		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
-	}	
-
-	@Test
-	public void testEngineering() {
 		Worksheet sheet = spreadsheet.getSheet(8); 
 		
 		int nFormula = testFormulaByRangesInSheet(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}	
-	
-//	@Test
-	public void testUnsupported() {
+
+	@Test
+	public void testEngineering() {
 		Worksheet sheet = spreadsheet.getSheet(9); 
 		
 		int nFormula = testFormulaByRangesInSheet(sheet);
@@ -137,7 +119,25 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}	
 	
-
+	@Test
+	public void testUnsupported() {
+		Worksheet sheet = spreadsheet.getSheet(10); 
+		
+		int nFormula = testFormulaByRangesInSheet(sheet);
+//		int nFormula = testFormulaByPoiInSheet(sheet);
+		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
+	}	
+	
+	@Test
+	public void testCustom() {
+		Worksheet sheet = spreadsheet.getSheet(11); 
+		
+		int nFormula = testFormulaByRangesInSheet(sheet);
+//		int nFormula = testFormulaByPoiInSheet(sheet);
+		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
+	}	
+	
+	
 
 	//verify in text
 	private int testFormulaByRangesInSheet(Worksheet sheet) {
@@ -158,7 +158,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 				}
 				String expected = Ranges.range(sheet, row, 2).getText().getString();
 				
-				collector.checkThat(getFailedReason(formulaCell),expected, equalTo(formulaResult));
+				collector.checkThat(getFailedReason(formulaCell),formulaResult, equalTo(expected));
 				nFormula ++;
 				nRowFromLastFormula = 0;
 			}
@@ -168,39 +168,43 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		return nFormula;
 	}	
 	
+	
+	/*
+	 * Some formulas that cannot pass the test by Ranges API will also failed the test by POI API only when those formulas
+	 * are put in the "first" sheet.  If they are not in the "first" sheet, the error won't occur.
+	 */
+//	@Test
+	public void testFirst() {
+		Worksheet sheet = spreadsheet.getSheet(0);
+		int nFormula = testFormulaByPoiInSheet(sheet);
+		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
+	}
+	
+//	@Test
+	public void testTemp() {
+		Worksheet sheet = spreadsheet.getSheet(1);
+		int nFormula = testFormulaByPoiInSheet(sheet);
+		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
+	}
+	
+	
+	
 	//verify each formula according cell's value
 	private int testFormulaByPoiInSheet(Worksheet sheet) {
 		int nRowFromLastFormula = 0; //reset when read a formula cell
 		int nFormula = 0;
-		String nameColumnText = null;
 		int row = 0 ; //current working row
 		while (!isNoMoreFormula(nRowFromLastFormula)){
-			nameColumnText = Ranges.range(sheet, row, 0).getEditText();
 			Cell formulaCell = getCell(sheet, row, 1);
 			Cell expectedCell = getCell(sheet, row, 2);
 			Cell verifyCell = getCell(sheet, row, 3);
 			if (isFormulaRow(verifyCell)
 					&& formulaCell!=null && formulaCell.getCellType() == Cell.CELL_TYPE_FORMULA){ 
-				switch(formulaCell.getCachedFormulaResultType()){
-
-				case Cell.CELL_TYPE_NUMERIC:
-					collector.checkThat(getFailedReason(formulaCell),
-							expectedCell.getNumericCellValue(), IsCloseTo.closeTo(formulaCell.getNumericCellValue(), DELTA));
-					break;
-				case Cell.CELL_TYPE_STRING:
-					collector.checkThat(getFailedReason(formulaCell),
-							expectedCell.getStringCellValue(), equalTo(formulaCell.getStringCellValue()));
-					break;
-				case Cell.CELL_TYPE_BOOLEAN:
-					collector.checkThat(getFailedReason(formulaCell),
-							expectedCell.getBooleanCellValue(), equalTo(formulaCell.getBooleanCellValue()));
-					break;
-				case Cell.CELL_TYPE_ERROR:
-					collector.checkThat(getFailedReason(formulaCell),
-							Byte.toString(formulaCell.getErrorCellValue()), equalTo(getCellValue(expectedCell).toString()));
-					break;
-				default:
-					fail("unsupported cell type:"+formulaCell.getCachedFormulaResultType()+" at row "+row+", column 1");
+				if (formulaCell.getCachedFormulaResultType() == Cell.CELL_TYPE_NUMERIC){
+					collector.checkThat(getFailedReason(formulaCell),formulaCell.getNumericCellValue()
+							, IsCloseTo.closeTo(expectedCell.getNumericCellValue(),DELTA));
+				}else{
+					collector.checkThat(getFailedReason(formulaCell),getCellValue(formulaCell), equalTo(getCellValue(expectedCell)));
 				}
 				nFormula ++;
 				nRowFromLastFormula = 0;				
@@ -212,13 +216,19 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	}
 	
 	private Object getCellValue(Cell cell) {
-		switch(cell.getCellType()){
+		int cellType = cell.getCellType() == Cell.CELL_TYPE_FORMULA ? cell.getCachedFormulaResultType():cell.getCellType();
+		switch(cellType){
 		case Cell.CELL_TYPE_NUMERIC:
 			return cell.getNumericCellValue();
 		case Cell.CELL_TYPE_STRING:
 			return cell.getStringCellValue();
+		case Cell.CELL_TYPE_BOOLEAN:
+			return cell.getBooleanCellValue();
+		case Cell.CELL_TYPE_ERROR:
+			return cell.getErrorCellValue();
+		default:
+			return "";
 		}
-		return "TODO";
 	}
 	
 

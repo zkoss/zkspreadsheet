@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib>
+    <uri>http://www.zkoss.org/zss/test/custom</uri>
+    <description>
+        User defined functions.
+    </description>
+    <import>
+        <import-name>CurrencyFns</import-name>
+        <import-class>zss.testapp.formula.CurrencyFns</import-class>
+    </import>
+ 
+    <function>
+        <name>USD2NTD</name>
+        <function-class>zss.testapp.formula.CurrencyFns
+        </function-class>
+        <function-signature>double toTWD(double,double);</function-signature>
+        <description>
+            Returns equivalent amount in TWD for the given USD amount.
+        </description>
+    </function>
+</taglib>
