@@ -1,3 +1,6 @@
+<?xel-method prefix="zss" name="toTWD"
+    class="zss.testapp.formula.CurrencyFns"  
+    signature="double toTWD(double,double)"?>
 <zk>
 	<window title="Bare ZK Spreadsheet" border="normal" height="100%">
 		<spreadsheet src="/TestFile2007-Formula.xlsx" maxrows="250" maxcolumns="40" width="100%"

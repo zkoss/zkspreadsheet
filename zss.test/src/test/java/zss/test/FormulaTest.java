@@ -27,10 +27,11 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	private static DesktopAgent desktop; 
 	private static ComponentAgent zss ;
 	private static Spreadsheet spreadsheet ;
-//	private static Book book;
 	
 	private static final String END_OF_FORMULA="END OF FORMULA";
 	private static final double DELTA = 1e-5;
+	
+	private static final int MAX_ROW_READ_FROM_LAST_FORUMULA = 30;
 	
 	@Rule
     public ErrorCollector collector = new ErrorCollector();
@@ -41,11 +42,26 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		
 		zss = desktop.query("spreadsheet");
 		spreadsheet = zss.as(Spreadsheet.class);
-//		spreadsheet.setSelectedSheet("formula-math"); java.lang.IllegalStateException: publish() can be called only in an event listener
-//		book = spreadsheet.getBook();
 		
 	}
 	
+//	@Test
+	public void testFirst() {
+		Worksheet sheet = spreadsheet.getSheet(0);
+		System.out.println("start test formulas in sheet: "+sheet.getSheetName());
+//		int nFormula = testFormulaByRangesInSheet(sheet);
+		int nFormula = testFormulaByPoiInSheet(sheet);
+		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
+	}
+	
+//	@Test
+	public void testTemp() {
+		Worksheet sheet = spreadsheet.getSheet(1);
+		System.out.println("start test formulas in sheet: "+sheet.getSheetName());
+//		int nFormula = testFormulaByRangesInSheet(sheet);
+		int nFormula = testFormulaByPoiInSheet(sheet);
+		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
+	}
 	
 	@Test
 	public void testMath() {
@@ -108,23 +124,57 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		Worksheet sheet = spreadsheet.getSheet(8); 
 		
 		int nFormula = testFormulaByRangesInSheet(sheet);
+//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}	
 	
-	@Test
+//	@Test
 	public void testUnsupported() {
 		Worksheet sheet = spreadsheet.getSheet(9); 
 		
 		int nFormula = testFormulaByRangesInSheet(sheet);
+//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
+	}	
+	
+
+
+	//verify in text
+	private int testFormulaByRangesInSheet(Worksheet sheet) {
+		int nRowFromLastFormula = 0; //reset when read a formula cell
+		int nFormula = 0;
+		int row = 0 ; //current working row
+		while (!isNoMoreFormula(nRowFromLastFormula)){
+			Cell formulaCell = getCell(sheet, row, 1);
+			Cell verifyCell = getCell(sheet, row, 3);
+			if (isFormulaRow(verifyCell)
+					&& formulaCell!=null && formulaCell.getCellType() == Cell.CELL_TYPE_FORMULA){ 
+				String formulaResult = null;
+				
+				try{
+					formulaResult = Ranges.range(sheet, row, 1).getText().getString();
+				}catch (Exception e) {
+					formulaResult = e.getMessage();
+				}
+				String expected = Ranges.range(sheet, row, 2).getText().getString();
+				
+				collector.checkThat(getFailedReason(formulaCell),expected, equalTo(formulaResult));
+				nFormula ++;
+				nRowFromLastFormula = 0;
+			}
+			row ++;
+			nRowFromLastFormula++;
+		}
+		return nFormula;
 	}	
 	
 	//verify each formula according cell's value
 	private int testFormulaByPoiInSheet(Worksheet sheet) {
+		int nRowFromLastFormula = 0; //reset when read a formula cell
 		int nFormula = 0;
 		String nameColumnText = null;
 		int row = 0 ; //current working row
-		while (!isNoMoreFormula(nameColumnText)){
+		while (!isNoMoreFormula(nRowFromLastFormula)){
 			nameColumnText = Ranges.range(sheet, row, 0).getEditText();
 			Cell formulaCell = getCell(sheet, row, 1);
 			Cell expectedCell = getCell(sheet, row, 2);
@@ -147,47 +197,29 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 					break;
 				case Cell.CELL_TYPE_ERROR:
 					collector.checkThat(getFailedReason(formulaCell),
-							expectedCell.getErrorCellValue(), equalTo(formulaCell.getErrorCellValue()));
+							Byte.toString(formulaCell.getErrorCellValue()), equalTo(getCellValue(expectedCell).toString()));
 					break;
 				default:
 					fail("unsupported cell type:"+formulaCell.getCachedFormulaResultType()+" at row "+row+", column 1");
 				}
 				nFormula ++;
-				
+				nRowFromLastFormula = 0;				
 			}
 			row ++;
+			nRowFromLastFormula++;
 		}
 		return nFormula;
 	}
 	
-	//verify in text
-	private int testFormulaByRangesInSheet(Worksheet sheet) {
-		int nFormula = 0;
-		String nameColumnText = null;
-		int row = 0 ; //current working row
-		while (!isNoMoreFormula(nameColumnText)){
-			nameColumnText = Ranges.range(sheet, row, 0).getEditText();
-			Cell formulaCell = getCell(sheet, row, 1);
-			Cell verifyCell = getCell(sheet, row, 3);
-			if (isFormulaRow(verifyCell)
-					&& formulaCell!=null && formulaCell.getCellType() == Cell.CELL_TYPE_FORMULA){ 
-				String formulaResult = null;
-				
-				try{
-					formulaResult = Ranges.range(sheet, row, 1).getText().getString();
-				}catch (Exception e) {
-					formulaResult = e.getMessage();
-				}
-				String expected = Ranges.range(sheet, row, 2).getText().getString();
-				
-				collector.checkThat(getFailedReason(formulaCell),expected, equalTo(formulaResult));
-				nFormula ++;
-				
-			}
-			row ++;
+	private Object getCellValue(Cell cell) {
+		switch(cell.getCellType()){
+		case Cell.CELL_TYPE_NUMERIC:
+			return cell.getNumericCellValue();
+		case Cell.CELL_TYPE_STRING:
+			return cell.getStringCellValue();
 		}
-		return nFormula;
-	}	
+		return "TODO";
+	}
 	
 
 	private boolean isFormulaRow(Cell verifyCell) {
@@ -201,7 +233,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	}
 
 
-	private boolean isNoMoreFormula(String nameColumnText) {
-		return END_OF_FORMULA.equals(nameColumnText);
+	private boolean isNoMoreFormula(int nRowFromLastFormula) {
+		return nRowFromLastFormula > MAX_ROW_READ_FROM_LAST_FORUMULA;
 	}
 }
