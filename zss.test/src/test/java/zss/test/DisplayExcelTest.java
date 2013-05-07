@@ -4,21 +4,22 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
-import org.zkoss.poi.xssf.usermodel.XSSFColor;
 import org.zkoss.zats.mimic.ComponentAgent;
 import org.zkoss.zats.mimic.DesktopAgent;
 import org.zkoss.zats.mimic.Zats;
 import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
 
+import com.lowagie.text.Cell;
+
 /**
  * Test case for the function "display Excel files".
  * Testing for the sheet "cell-text".
+ * 
+ * Because the specification of color is unclear, we don't test color-related feature.
  * 
  * @author Hawk
  *
@@ -38,11 +39,12 @@ public class DisplayExcelTest extends SpreadsheetTestCaseBase{
 		
 		zss = desktop.query("spreadsheet");
 		spreadsheet = zss.as(Spreadsheet.class);
-		sheet = zss.as(Spreadsheet.class).getSelectedSheet();
+		sheet = zss.as(Spreadsheet.class).getSheet(0);
 		book = spreadsheet.getBook();
 		
 	}
 	
+	/*
 	@Test
 	public void testFontColor() {
 		
@@ -72,6 +74,7 @@ public class DisplayExcelTest extends SpreadsheetTestCaseBase{
 		
 
 	}
+	*/
 	
 	@Test
 	public void testFontFamily(){
@@ -149,10 +152,31 @@ public class DisplayExcelTest extends SpreadsheetTestCaseBase{
 		assertEquals(Font.U_DOUBLE_ACCOUNTING, font.getUnderline());
 	}
 	
-	
+	/*
 	@Test
 	public void testCellBackgroundColor(){
-		assertEquals("", getCell(sheet, 11, 1).getCellStyle().getFillBackgroundColor());
-		assertEquals("", getCell(sheet, 11, 0).getCellStyle().getFillBackgroundColor());
+//		assertEquals("", getCell(sheet, 11, 0).getCellStyle().getFillBackgroundColor());
+		System.out.println(((XSSFColor)getCell(sheet, 11, 0).getCellStyle().getFillBackgroundColorColor()).getARGBHex());
+		assertEquals("", book.getCellStyleAt(getCell(sheet, 11, 1).getCellStyle().getIndex()).getFillBackgroundColor());
+	}
+	*/
+	
+	@Test
+	public void testMixedCellStyle(){
+		Font font = book.getFontAt(getCell(sheet, 14, 1).getCellStyle().getFontIndex());
+		assertEquals("Georgia", font.getFontName());
+		font = book.getFontAt(getCell(sheet, 15, 1).getCellStyle().getFontIndex());
+		assertEquals("Georgia", font.getFontName());
+		
+		font = book.getFontAt(getCell(sheet, 14, 2).getCellStyle().getFontIndex());
+		assertEquals("Times New Roman", font.getFontName());
+		font = book.getFontAt(getCell(sheet, 15, 2).getCellStyle().getFontIndex());
+		assertEquals("Times New Roman", font.getFontName());
+	}
+	
+	@Test
+	public void testAlignment(){
+		//horizontal alignment
+		assertEquals(Cell.ALIGN_LEFT,getCell(sheet,27,1).getCellStyle().getAlignment());
 	}
 }

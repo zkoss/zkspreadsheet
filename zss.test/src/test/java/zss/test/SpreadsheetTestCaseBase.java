@@ -4,11 +4,8 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.xssf.usermodel.XSSFColor;
 import org.zkoss.zats.mimic.Zats;
 import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.model.impl.BookHelper;
-import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
 
 public class SpreadsheetTestCaseBase {
@@ -32,9 +29,12 @@ public class SpreadsheetTestCaseBase {
 		return Utils.getCell(sheet, row, col);
 	}
 
+	/*
 	protected XSSFColor getCellFontColor(Spreadsheet spreadsheet, int row, int column) {
+		//FIXME do not use BookHelper
 		return (XSSFColor)BookHelper.getFontColor(spreadsheet.getBook(),
 			spreadsheet.getBook().getFontAt(Utils.getCell(spreadsheet.getSelectedSheet(), row, column).getCellStyle().getFontIndex()));
 	}
+	*/
 
 }
