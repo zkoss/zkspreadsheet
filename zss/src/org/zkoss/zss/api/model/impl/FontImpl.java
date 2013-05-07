@@ -77,7 +77,7 @@ public class FontImpl implements Font{
 		sb.append(getFontName());
 		return sb.toString();
 	}
-	public void cloneAttribute(Font src) {
+	public void copyAttributeFrom(Font src) {
 		org.zkoss.poi.ss.usermodel.Font sfont = ((FontImpl)src).getNative();
 		org.zkoss.poi.ss.usermodel.Font font = getNative();
 		font.setBoldweight(sfont.getBoldweight());

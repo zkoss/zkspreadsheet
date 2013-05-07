@@ -76,22 +76,6 @@ public class BookImpl implements Book{
 		if(sheet==null) return -1;
 		return getNative().getSheetIndex(((SheetImpl)sheet).getNative());
 	}
-	
-
-	public FontImpl findFont(Boldweight boldweight, Color color, short fontHeight,
-			String fontName, boolean italic, boolean strikeout,
-			TypeOffset typeOffset, Underline underline) {
-		Font font;
-		
-		font = getNative().findFont(EnumUtil.toFontBoldweight(boldweight), ((ColorImpl)color).getNative(), fontHeight, fontName,
-				italic, strikeout, EnumUtil.toFontTypeOffset(typeOffset), EnumUtil.toFontUnderline(underline));
-		return font==null?null:new FontImpl(bookRef,new SimpleRef<Font>(font));
-	}
-
-	public Color getColorFromHtmlColor(String htmlColor) {
-		org.zkoss.poi.ss.usermodel.Color color = BookHelper.HTMLToColor(getNative(), htmlColor);//never null
-		return new ColorImpl(bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(color));
-	}
 
 	public int getNumberOfSheets() {
 		return getNative().getNumberOfSheets();

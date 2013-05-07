@@ -9,7 +9,6 @@ import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFClientAnchor;
-import org.zkoss.zss.api.CellStyleHelper;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.CellVisitor;
 import org.zkoss.zss.api.RangeRunner;
@@ -73,8 +72,8 @@ public class RangeImpl implements Range{
 	}
 	
 	
-	public CellStyleHelper getCellStyleHelper(){
-		return new CellStyleHelperImpl(this);
+	public StyleHelper getStyleHelper(){
+		return new StyleHelperImpl(this);
 	}
 	
 	public XRange getNative(){
@@ -675,7 +674,7 @@ public class RangeImpl implements Range{
 	public List<Picture> getPictures(){
 		//TODO the syncLevel
 		Book book = getSheet().getBook();
-		DrawingManager dm = ((SheetCtrl)getSheet().getBook().getNative()).getDrawingManager();
+		DrawingManager dm = ((SheetCtrl)((BookImpl)getBook()).getNative()).getDrawingManager();
 		List<Picture> pictures = new ArrayList<Picture>();
 		for(org.zkoss.poi.ss.usermodel.Picture pic:dm.getPictures()){
 			pictures.add(new PictureImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic)));
@@ -706,7 +705,7 @@ public class RangeImpl implements Range{
 	public List<Chart> getCharts(){
 		//TODO the syncLevel
 		Book book = getSheet().getBook();
-		DrawingManager dm = ((SheetCtrl)getSheet().getBook().getNative()).getDrawingManager();
+		DrawingManager dm = ((SheetCtrl)((BookImpl)getBook()).getNative()).getDrawingManager();
 		List<Chart> charts = new ArrayList<Chart>();
 		for(org.zkoss.poi.ss.usermodel.Chart chart:dm.getCharts()){
 			charts.add(new ChartImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart)));

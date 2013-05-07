@@ -30,7 +30,6 @@ public interface Font {
 	public boolean isStrikeout();
 	public TypeOffset getTypeOffset();
 	public Underline getUnderline();
-	public void cloneAttribute(Font src);
 	public void setFontName(String fontName);
 	public void setBoldweight(Boldweight boldweight);
 	public void setItalic(boolean italic);

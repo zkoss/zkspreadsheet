@@ -23,8 +23,6 @@ public interface CellStyle {
 
 	public void setFont(Font nfont);
 
-	public void cloneAttribute(CellStyle src);
-
 	public Color getBackgroundColor();
 
 	public void setBackgroundColor(Color color);

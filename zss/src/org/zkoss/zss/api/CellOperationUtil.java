@@ -108,7 +108,7 @@ public class CellOperationUtil {
 			
 			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
 				//use the new font name to search it.
-				return cellRange.getBook().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), fontName, 
+				return cellRange.getStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), fontName, 
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
@@ -127,7 +127,7 @@ public class CellOperationUtil {
 			
 			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
 				//use the new font name to search it.
-				return cellRange.getBook().findFont(oldFont.getBoldweight(), oldFont.getColor(), height, oldFont.getFontName(), 
+				return cellRange.getStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), height, oldFont.getFontName(), 
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
@@ -166,14 +166,14 @@ public class CellOperationUtil {
 				}
 				//2.create a new style from old one, the original one is shared between cells
 				//TODO what if it is the last referenced, could I just use it? who will delete old if I use new
-				CellStyle nstyle = cellRange.getCellStyleHelper().createCellStyle(ostyle);
+				CellStyle nstyle = cellRange.getStyleHelper().createCellStyle(ostyle);
 				
 				Font nfont = null;
 				//3.search if there any font already in book
 				nfont = applyer.search(cellRange,ostyle,ofont);
 				if( nfont== null){
 					//create new font base old font if not found
-					nfont = cellRange.getCellStyleHelper().createFont(ofont);
+					nfont = cellRange.getStyleHelper().createFont(ofont);
 					nstyle.setFont(nfont);
 					
 					//set the apply
@@ -202,7 +202,7 @@ public class CellOperationUtil {
 			}
 			
 			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return cellRange.getBook().findFont(boldweight, oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
+				return cellRange.getStyleHelper().findFont(boldweight, oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
@@ -219,7 +219,7 @@ public class CellOperationUtil {
 			}
 			
 			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return cellRange.getBook().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
+				return cellRange.getStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
 						italic, oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
@@ -236,7 +236,7 @@ public class CellOperationUtil {
 			}
 			
 			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return cellRange.getBook().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
+				return cellRange.getStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
 						oldFont.isItalic(), strikeout, oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
@@ -253,7 +253,7 @@ public class CellOperationUtil {
 			}
 			
 			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return cellRange.getBook().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
+				return cellRange.getStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), underline);
 			}
 			
@@ -267,14 +267,14 @@ public class CellOperationUtil {
 	 * @param htmlColor '#rgb-hex-code'
 	 */
 	public static void applyFontColor(Range range, final String htmlColor) {
-		final Color color = range.getBook().getColorFromHtmlColor(htmlColor);
+		final Color color = range.getStyleHelper().createColorFromHtmlColor(htmlColor);
 		applyFontStyle(range, new FontStyleApplier() {
 			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
 				return oldFont.getColor().getHtmlColor().equals(htmlColor);
 			}
 			
 			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return cellRange.getBook().findFont(oldFont.getBoldweight(), color, oldFont.getFontHeight(), oldFont.getFontName(), 
+				return cellRange.getStyleHelper().findFont(oldFont.getBoldweight(), color, oldFont.getFontHeight(), oldFont.getFontName(), 
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
@@ -295,7 +295,7 @@ public class CellOperationUtil {
 	 * @param htmlColor '#rgb-hex-code'
 	 */
 	public static void applyCellColor(Range range, final String htmlColor) {
-		final Color color = range.getBook().getColorFromHtmlColor(htmlColor);
+		final Color color = range.getStyleHelper().createColorFromHtmlColor(htmlColor);
 		applyCellStyle(range, new CellStyleApplier() {
 
 			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
@@ -370,7 +370,7 @@ public class CellOperationUtil {
 				// between cells
 				// TODO what if it is the last referenced, could I just use it?
 				// who will delete old if I use new
-				CellStyle nstyle = cellRange.getCellStyleHelper().createCellStyle(
+				CellStyle nstyle = cellRange.getStyleHelper().createCellStyle(
 						ostyle);
 
 				// set the apply
