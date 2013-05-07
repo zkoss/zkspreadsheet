@@ -172,6 +172,11 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	/*
 	 * Some formulas that cannot pass the test by Ranges API will also failed the test by POI API only when those formulas
 	 * are put in the "first" sheet.  If they are not in the "first" sheet, the error won't occur.
+	 * The root cause is that those specific formulas cells' getCachedFormulaResultType() always return 
+	 * CELL_TYPE_ERROR in the first sheet, but when those formulas are not put in first sheet, 
+	 * getCachedFormulaResultType() returns correct type.
+	 * 
+	 * Perform testFirst() and testTemp() can reproduce the error mentioned above.
 	 */
 //	@Test
 	public void testFirst() {
