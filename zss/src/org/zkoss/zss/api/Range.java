@@ -27,7 +27,7 @@ import org.zkoss.zss.api.model.Sheet;
  */
 public interface Range {
 	
-	enum SyncLevel{
+	public enum SyncLevel{
 		BOOK,
 		NONE//for you just visit and do nothing
 	}
@@ -114,7 +114,15 @@ public interface Range {
 		GROWTH_TREND,
 		LINER_TREND
 	}
-
+	
+	public enum CellType{
+		NUMERIC,
+		STRING,
+		FORMULA,
+		BLANK,
+		BOOLEAN,
+		ERROR;
+	}
 
 	public void setSyncLevel(SyncLevel syncLevel);
 	
@@ -127,31 +135,9 @@ public interface Range {
 	public int getLastColumn();
 	public int getLastRow();
 	
-	public StyleHelper getStyleHelper();
-
-	public boolean isProtected();
+	public CellStyleHelper getCellStyleHelper();
 	
-	public void clearContents();
-
-	public void clearStyles();
-
-	/**
-	 * @param dest the destination 
-	 * @return true if paste successfully, past to a protected sheet with any
-	 *         locked cell in the destination range will always cause past fail.
-	 */
-	public boolean paste(Range dest);
-	
-	/**
-	 * @param dest the destination 
-	 * @param transpose TODO
-	 * @return true if paste successfully, past to a protected sheet with any
-	 *         locked cell in the destination range will always cause past fail.
-	 */
-	public boolean pasteSpecial(Range dest,PasteType type,PasteOperation op,boolean skipBlanks,boolean transpose);
-
-
-	public void setStyle(CellStyle nstyle);
+	public CellValueHelper getCellValueHelper();
 	
 	public void sync(RangeRunner run);
 	/**
@@ -161,14 +147,6 @@ public interface Range {
 	 * @param create create cell if it doesn't exist, if it is true, it will also lock the sheet
 	 */
 	public void visit(final CellVisitor visitor);
-	
-	public void applyBorders(ApplyBorderType type,BorderType borderType,String htmlColor);
-
-	public boolean hasMergeCell();
-	
-	public void merge(boolean across);
-	
-	public void unMerge();
 
 	public Range getShiftedRange(int rowOffset,int colOffset);
 	
@@ -197,6 +175,39 @@ public interface Range {
 	 */
 	public boolean isWholeSheet();
 	
+	/*
+	 * ==================================================
+	 * operation of cell area  relative API
+	 * ==================================================
+	 */
+	
+	public void clearContents();
+
+	public void clearStyles();
+
+	/**
+	 * @param dest the destination 
+	 * @return true if paste successfully, past to a protected sheet with any
+	 *         locked cell in the destination range will always cause past fail.
+	 */
+	public boolean paste(Range dest);
+	
+	/**
+	 * @param dest the destination 
+	 * @param transpose TODO
+	 * @return true if paste successfully, past to a protected sheet with any
+	 *         locked cell in the destination range will always cause past fail.
+	 */
+	public boolean pasteSpecial(Range dest,PasteType type,PasteOperation op,boolean skipBlanks,boolean transpose);
+	
+	public void applyBorders(ApplyBorderType type,BorderType borderType,String htmlColor);
+
+	public boolean hasMergeCell();
+	
+	public void merge(boolean across);
+	
+	public void unMerge();
+	
 	public void insert(InsertShift shift,InsertCopyOrigin copyOrigin);
 	
 	public void delete(DeleteShift shift);
@@ -220,20 +231,6 @@ public interface Range {
 			Range index2,boolean desc2,SortDataOption dataOption2,
 			Range index3,boolean desc3,SortDataOption dataOption3);
 	
-	/** check if auto filter is enable or not.**/
-	public boolean isAutoFilterEnabled();
-	
-	/** enable/disable autofilter of the sheet**/
-	public void enableAutoFilter(boolean enable);
-	/** enable filter with condition **/
-	//TODO have to review this after I know more detail
-	public void enableAutoFilter(int field, AutoFilterOperation filterOp, Object criteria1, Object criteria2, Boolean visibleDropDown);
-	
-	/** clear condition of filter, show all the data**/
-	public void resetAutoFilter();
-	/** apply the filter to filter again**/
-	public void applyAutoFilter();
-	
 	/** enable sheet protection and apply a password**/
 	public void protectSheet(String password);
 	
@@ -250,21 +247,43 @@ public interface Range {
 	/** shift this range with a offset row and column**/
 	public void shift(int rowOffset,int colOffset);
 	
-	public String getEditText();
 	
-	public void setEditText(String editText);
+	/* 
+	 * ==================================================
+	 * cell relative API
+	 * ==================================================
+	 */
 	
+	public void setCellStyle(CellStyle nstyle);
 	
-	//TODO need to verify the object type
-	public Object getValue();
+	public String getCellEditText();
+	
+	public void setCellEditText(String editText);
+	
+	public Object getCellValue();
+	
+	public void setCellValue(Object value);
+	
+	public void setCellHyperlink(HyperlinkType type,String address,String displayLabel);
+	
+	/**
+	 * get the first cell style of this range
+	 * 
+	 * @return cell style if cell is exist, the check row style and column cell style if cell not found, if row and column style is not exist, then return default style of sheet
+	 */
+	public CellStyle getCellStyle();
+	
+	/* 
+	 * ==================================================
+	 * sheet relative API
+	 * ==================================================
+	 */
 	
 	public void setDisplaySheetGridlines(boolean enable);
 	
 	public boolean isDisplaySheetGridlines();
 	
 	public void setHidden(boolean hidden);
-	
-	public void setHyperlink(HyperlinkType type,String address,String displayLabel);
 	
 	public void setSheetName(String name);
 	
@@ -274,16 +293,22 @@ public interface Range {
 	
 	public int getSheetOrder();
 	
-	public void setValue(Object value);
-	
-	
 
-	/**
-	 * get the first cell style of this range
-	 * 
-	 * @return cell style if cell is exist, the check row style and column cell style if cell not found, if row and column style is not exist, then return default style of sheet
-	 */
-	public CellStyle getCellStyle();
+	public boolean isProtected();
+	
+	/** check if auto filter is enable or not.**/
+	public boolean isAutoFilterEnabled();
+	
+	/** enable/disable autofilter of the sheet**/
+	public void enableAutoFilter(boolean enable);
+	/** enable filter with condition **/
+	//TODO have to review this after I know more detail
+	public void enableAutoFilter(int field, AutoFilterOperation filterOp, Object criteria1, Object criteria2, Boolean visibleDropDown);
+	
+	/** clear condition of filter, show all the data**/
+	public void resetAutoFilter();
+	/** apply the filter to filter again**/
+	public void applyAutoFilter();
 	
 	public Picture addPicture(SheetAnchor anchor,byte[] image,Format format);
 	
@@ -310,10 +335,30 @@ public interface Range {
 	
 	
 	/**
+	 * a cell value helper for get and set value of cell
+	 */
+	public interface CellValueHelper {
+		
+		public int getRow();
+		public int getColumn();
+		
+		public CellType getType();
+		public Object getValue();
+		public String getFormatText();
+		public String getEditText();
+		
+		public void setValue(Object value);
+		
+		public void setEditText(String editText);
+		
+		//public void setCellType(CellType type);
+	}
+	
+	/**
 	 * a cell style helper to create style relative object for cell
 	 * @author dennis
 	 */
-	public interface StyleHelper {
+	public interface CellStyleHelper {
 
 		/**
 		 * create a new cell style and clone attribute from src if it is not null

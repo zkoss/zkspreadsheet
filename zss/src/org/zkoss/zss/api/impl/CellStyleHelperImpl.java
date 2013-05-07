@@ -1,6 +1,6 @@
 package org.zkoss.zss.api.impl;
 
-import org.zkoss.zss.api.Range.StyleHelper;
+import org.zkoss.zss.api.Range.CellStyleHelper;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Color;
@@ -17,11 +17,11 @@ import org.zkoss.zss.api.model.impl.SimpleRef;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 
-/*package*/ class StyleHelperImpl implements StyleHelper{
+/*package*/ class CellStyleHelperImpl implements CellStyleHelper{
 
 	RangeImpl range;
 	
-	public StyleHelperImpl(RangeImpl range) {
+	public CellStyleHelperImpl(RangeImpl range) {
 		this.range = range;
 	}
 	

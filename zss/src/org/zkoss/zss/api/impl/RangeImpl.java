@@ -56,6 +56,9 @@ public class RangeImpl implements Range{
 	
 	SyncLevel syncLevel = SyncLevel.BOOK;
 	
+	CellStyleHelper cellStyleHelper;
+	CellValueHelper cellValueHelper;
+	
 	public void setSyncLevel(SyncLevel syncLevel){
 		this.syncLevel = syncLevel;
 	}
@@ -72,8 +75,18 @@ public class RangeImpl implements Range{
 	}
 	
 	
-	public StyleHelper getStyleHelper(){
-		return new StyleHelperImpl(this);
+	public CellStyleHelper getCellStyleHelper(){
+		if(cellStyleHelper==null){
+			cellStyleHelper = new CellStyleHelperImpl(this);
+		}
+		return cellStyleHelper;
+	}
+	
+	public CellValueHelper getCellValueHelper(){
+		if(cellValueHelper==null){
+			cellValueHelper = new CellValueHelperImpl(this);
+		}
+		return cellValueHelper;
 	}
 	
 	public XRange getNative(){
@@ -204,10 +217,10 @@ public class RangeImpl implements Range{
 
  
 	public void clearStyles() {
-		setStyle(null);//will use default book cell style		
+		setCellStyle(null);//will use default book cell style		
 	}
 
-	public void setStyle(final CellStyle nstyle) {
+	public void setCellStyle(final CellStyle nstyle) {
 		//TODO the syncLevel
 		range.setStyle(nstyle==null?null:((CellStyleImpl)nstyle).getNative());
 	}
@@ -279,13 +292,19 @@ public class RangeImpl implements Range{
 	private boolean visitCell(CellVisitor visitor,int r, int c){
 		boolean ignore = false;
 		boolean ignoreSet = false;
+		boolean create = false;
+		boolean createSet = false;
 		XSheet sheet = range.getSheet();
 		Row row = sheet.getRow(r);
 		if(row==null){
 			ignore = visitor.ignoreIfNotExist(r,c);
 			ignoreSet = true;
 			if(!ignore){
-				row = sheet.createRow(r);
+				create = visitor.createIfNotExist(r, c);
+				createSet = true;
+				if(create){
+					row = sheet.createRow(r);
+				}
 			}else{
 				return true;
 			}
@@ -297,7 +316,13 @@ public class RangeImpl implements Range{
 				ignoreSet = true;
 			}
 			if(!ignore){
-				cell = row.createCell(c);
+				if(!createSet){
+					create = visitor.createIfNotExist(r, c);
+					createSet = true;
+				}
+				if(create){
+					cell = row.createCell(c);
+				}
 			}else{
 				return true;
 			}
@@ -551,18 +576,18 @@ public class RangeImpl implements Range{
 		range.move(rowOffset, colOffset);
 	}
 	
-	public String getEditText(){
+	public String getCellEditText(){
 		return range.getEditText();
 	}
 	
-	public void setEditText(String editText){
+	public void setCellEditText(String editText){
 		//TODO the syncLevel
 		range.setEditText(editText);
 	}
 	
 	
 	//TODO need to verify the object type
-	public Object getValue(){
+	public Object getCellValue(){
 		return range.getValue();
 	}
 	
@@ -580,7 +605,7 @@ public class RangeImpl implements Range{
 		range.setHidden(hidden);
 	}
 	
-	public void setHyperlink(HyperlinkType type,String address,String displayLabel){
+	public void setCellHyperlink(HyperlinkType type,String address,String displayLabel){
 		//TODO the syncLevel
 		range.setHyperlink(EnumUtil.toHyperlinkType(type), address, displayLabel);
 	}
@@ -603,7 +628,7 @@ public class RangeImpl implements Range{
 		return getBook().getSheetIndex(getSheet());
 	}
 	
-	public void setValue(Object value){
+	public void setCellValue(Object value){
 		//TODO the syncLevel
 		range.setValue(value);
 	}
