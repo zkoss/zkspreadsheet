@@ -4,12 +4,17 @@ import java.util.List;
 
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle;
+import org.zkoss.zss.api.model.Color;
+import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.Chart.Type;
 import org.zkoss.zss.api.model.ChartData;
+import org.zkoss.zss.api.model.Font.Boldweight;
+import org.zkoss.zss.api.model.Font.TypeOffset;
+import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Picture.Format;
@@ -18,7 +23,7 @@ import org.zkoss.zss.api.model.Sheet;
 /**
  * 1.Range is not handling the protection issue, if you have handle it yourself before calling the api(by calling {@code #isProtected()})
  * @author dennis
- *
+ * @since 3.0.0
  */
 public interface Range {
 	
@@ -122,7 +127,7 @@ public interface Range {
 	public int getLastColumn();
 	public int getLastRow();
 	
-	public CellStyleHelper getCellStyleHelper();
+	public StyleHelper getStyleHelper();
 
 	public boolean isProtected();
 	
@@ -302,4 +307,50 @@ public interface Range {
 	public Sheet createSheet(String name);
 	
 	public void deleteSheet();
+	
+	
+	/**
+	 * a cell style helper to create style relative object for cell
+	 * @author dennis
+	 */
+	public interface StyleHelper {
+
+		/**
+		 * create a new cell style and clone attribute from src if it is not null
+		 * @param src the source to clone, could be null
+		 * @return the new cell style
+		 */
+		public CellStyle createCellStyle(CellStyle src);
+
+		/**
+		 * create a new font and clone attribute from src if it is not null
+		 * @param src the source to clone, could be null
+		 * @return the new font
+		 */
+		public Font createFont(Font src);
+		
+		/**
+		 * create a color object from a htmlColor expression
+		 * @param htmlColor html color expression, ex. #FF00FF
+		 * @return a Color object
+		 */
+		public Color createColorFromHtmlColor(String htmlColor);
+		
+		/**
+		 * find the font with given condition
+		 * @param boldweight
+		 * @param color
+		 * @param fontHeight
+		 * @param fontName
+		 * @param italic
+		 * @param strikeout
+		 * @param typeOffset
+		 * @param underline
+		 * @return null if not found
+		 */
+		public Font findFont(Boldweight boldweight, Color color,
+				short fontHeight, String fontName, boolean italic,
+				boolean strikeout, TypeOffset typeOffset, Underline underline);
+	}
+
 }

@@ -72,7 +72,7 @@ public class CellStyleImpl implements CellStyle{
 		return sb.toString();
 	}
 
-	public void cloneAttribute(CellStyle src) {
+	public void copyAttributeFrom(CellStyle src) {
 		getNative().cloneStyleFrom(((CellStyleImpl)src).getNative());
 	}
 
