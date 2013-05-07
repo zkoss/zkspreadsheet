@@ -1,21 +1,24 @@
-package zss.test;
+package zss.test.display;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
+import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.zats.mimic.ComponentAgent;
 import org.zkoss.zats.mimic.DesktopAgent;
 import org.zkoss.zats.mimic.Zats;
-import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.Utils;
 
-import com.lowagie.text.Cell;
+import zss.test.SpreadsheetTestCaseBase;
+
 
 /**
+ * Test cases are organized by "Testcase Class per Feature" pattern.
  * Test case for the function "display Excel files".
  * Testing for the sheet "cell-text".
  * 
@@ -24,13 +27,11 @@ import com.lowagie.text.Cell;
  * @author Hawk
  *
  */
-public class DisplayExcelTest extends SpreadsheetTestCaseBase{
+public class CellTextTest extends SpreadsheetTestCaseBase{
 
 	private static DesktopAgent desktop; 
 	private static ComponentAgent zss ;
-	private static Spreadsheet spreadsheet ;
 	private static Worksheet sheet;
-	private static Book book;
 	
 	@BeforeClass
 	public static void initialize(){
@@ -38,9 +39,7 @@ public class DisplayExcelTest extends SpreadsheetTestCaseBase{
 		desktop = Zats.newClient().connect("/display.zul");
 		
 		zss = desktop.query("spreadsheet");
-		spreadsheet = zss.as(Spreadsheet.class);
 		sheet = zss.as(Spreadsheet.class).getSheet(0);
-		book = spreadsheet.getBook();
 		
 	}
 	
@@ -78,77 +77,81 @@ public class DisplayExcelTest extends SpreadsheetTestCaseBase{
 	
 	@Test
 	public void testFontFamily(){
-		Font font = book.getFontAt(getCell(sheet, 3, 0).getCellStyle().getFontIndex());
+		Font font = getFont(sheet, 3, 0);
 		assertEquals("Arial", font.getFontName());
-		font = book.getFontAt(getCell(sheet, 3, 1).getCellStyle().getFontIndex());
+		font = getFont(sheet, 3, 1);
 		assertEquals("Arial Black", font.getFontName());
-		font = book.getFontAt(getCell(sheet, 3, 2).getCellStyle().getFontIndex());
+		font = getFont(sheet, 3, 2);
 		assertEquals("Calibri", font.getFontName());
-		font = book.getFontAt(getCell(sheet, 3, 3).getCellStyle().getFontIndex());
+		font = getFont(sheet, 3, 3);
 		assertEquals("Comic Sans MS", font.getFontName());
-		font = book.getFontAt(Utils.getCell(sheet, 3, 4).getCellStyle().getFontIndex());
+		font = getFont(sheet, 3, 4);
 		assertEquals("Courier New", font.getFontName());
-		font = book.getFontAt(Utils.getCell(sheet, 3, 5).getCellStyle().getFontIndex());
+		font = getFont(sheet, 3, 5);
 		assertEquals("Georgia", font.getFontName());
-		font = book.getFontAt(Utils.getCell(sheet, 3, 6).getCellStyle().getFontIndex());
+		font = getFont(sheet, 3, 6);
 		assertEquals("Impact", font.getFontName());
-		font = book.getFontAt(Utils.getCell(sheet, 3, 7).getCellStyle().getFontIndex());
+		font = getFont(sheet, 3, 7);
 		assertEquals("Lucida Console", font.getFontName());
-		font = book.getFontAt(Utils.getCell(sheet, 3, 8).getCellStyle().getFontIndex());
+		font = getFont(sheet, 3, 8);
 		assertEquals("Lucida Sans Unicode", font.getFontName());
-		font = book.getFontAt(Utils.getCell(sheet, 3, 9).getCellStyle().getFontIndex());
+		font = getFont(sheet, 3, 9);
 		assertEquals("Palatino Linotype", font.getFontName());
-		font = book.getFontAt(Utils.getCell(sheet, 3, 10).getCellStyle().getFontIndex());
+		font = getFont(sheet, 3, 10);
 		assertEquals("Tahoma", font.getFontName());
 		
-		font = book.getFontAt(Utils.getCell(sheet, 4, 0).getCellStyle().getFontIndex());
+		font = getFont(sheet, 4, 0);
 		assertEquals("Times New Roman", font.getFontName());
-		font = book.getFontAt(Utils.getCell(sheet, 4, 1).getCellStyle().getFontIndex());
+		font = getFont(sheet, 4, 1);
 		assertEquals("Trebuchet MS", font.getFontName());
-		font = book.getFontAt(Utils.getCell(sheet, 4, 2).getCellStyle().getFontIndex());
+		font = getFont(sheet, 4, 2);
 		assertEquals("Verdana", font.getFontName());
-		font = book.getFontAt(Utils.getCell(sheet, 4, 3).getCellStyle().getFontIndex());
+		font = getFont(sheet, 4, 3);
 		assertEquals("Microsoft Sans Serif", font.getFontName());
-//		font = book.getFontAt(Utils.getCell(sheet, 4, 4).getCellStyle().getFontIndex());
+//		font = getFont(sheet, 4, 4).getCellStyle().getFontIndex());
 //		assertEquals("Ms Serif", font.getFontName()); non-existed font 
-		font = book.getFontAt(Utils.getCell(sheet, 4, 5).getCellStyle().getFontIndex());
+		font = getFont(sheet, 4, 5);
 		assertEquals("Book Antiqua", font.getFontName());
+	}
+
+	private Font getFont(Worksheet sheet, int row, int column) {
+		return sheet.getBook().getFontAt(getCell(sheet, 3, 0).getCellStyle().getFontIndex());
 	}
 
 	@Test
 	public void testFontSize(){
-		Font font = book.getFontAt(getCell(sheet, 6, 0).getCellStyle().getFontIndex());
+		Font font =getFont(sheet, 6, 0);
 		assertEquals(8, font.getFontHeight()/20);
 		
-		font = book.getFontAt(getCell(sheet, 6, 1).getCellStyle().getFontIndex());
+		font =getFont(sheet, 6, 1);
 		assertEquals(12, font.getFontHeight()/20);
 		
-		font = book.getFontAt(getCell(sheet, 6, 2).getCellStyle().getFontIndex());
+		font =getFont(sheet, 6, 2);
 		assertEquals(28, font.getFontHeight()/20);
 		
-		font = book.getFontAt(getCell(sheet, 6, 3).getCellStyle().getFontIndex());
+		font =getFont(sheet, 6, 3);
 		assertEquals(72, font.getFontHeight()/20);
 	}
 	
 	
 	@Test
 	public void testFontStyle(){
-		Font font = book.getFontAt(getCell(sheet,9, 0).getCellStyle().getFontIndex());
+		Font font =getFont(sheet,9, 0);
 		assertEquals(Font.BOLDWEIGHT_BOLD, font.getBoldweight());
 		
-		font = book.getFontAt(getCell(sheet,9, 1).getCellStyle().getFontIndex());
+		font =getFont(sheet,9, 1);
 		assertEquals(true, font.getItalic());
 		
-		font = book.getFontAt(getCell(sheet,9, 2).getCellStyle().getFontIndex());
+		font =getFont(sheet,9, 2);
 		assertEquals(true, font.getStrikeout());
 		
-		font = book.getFontAt(getCell(sheet,9, 3).getCellStyle().getFontIndex());
+		font =getFont(sheet,9, 3);
 		assertEquals(Font.U_SINGLE, font.getUnderline());
-		font = book.getFontAt(getCell(sheet,9, 4).getCellStyle().getFontIndex());
+		font =getFont(sheet,9, 4);
 		assertEquals(Font.U_DOUBLE, font.getUnderline());
-		font = book.getFontAt(getCell(sheet,9, 5).getCellStyle().getFontIndex());
+		font =getFont(sheet,9, 5);
 		assertEquals(Font.U_SINGLE_ACCOUNTING, font.getUnderline());
-		font = book.getFontAt(getCell(sheet,9, 6).getCellStyle().getFontIndex());
+		font =getFont(sheet,9, 6);
 		assertEquals(Font.U_DOUBLE_ACCOUNTING, font.getUnderline());
 	}
 	
@@ -163,20 +166,41 @@ public class DisplayExcelTest extends SpreadsheetTestCaseBase{
 	
 	@Test
 	public void testMixedCellStyle(){
-		Font font = book.getFontAt(getCell(sheet, 14, 1).getCellStyle().getFontIndex());
+		Font font =getFont(sheet, 14, 1);
 		assertEquals("Georgia", font.getFontName());
-		font = book.getFontAt(getCell(sheet, 15, 1).getCellStyle().getFontIndex());
+		font =getFont(sheet, 15, 1);
 		assertEquals("Georgia", font.getFontName());
 		
-		font = book.getFontAt(getCell(sheet, 14, 2).getCellStyle().getFontIndex());
+		font =getFont(sheet, 14, 2);
 		assertEquals("Times New Roman", font.getFontName());
-		font = book.getFontAt(getCell(sheet, 15, 2).getCellStyle().getFontIndex());
+		font =getFont(sheet, 15, 2);
 		assertEquals("Times New Roman", font.getFontName());
 	}
 	
 	@Test
 	public void testAlignment(){
+		//vertical alignment
+		assertEquals(CellStyle.VERTICAL_TOP, getCell(sheet,26,1).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.VERTICAL_CENTER, getCell(sheet,26,2).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.VERTICAL_BOTTOM, getCell(sheet,26,3).getCellStyle().getVerticalAlignment());
+
 		//horizontal alignment
-		assertEquals(Cell.ALIGN_LEFT,getCell(sheet,27,1).getCellStyle().getAlignment());
+		assertEquals(CellStyle.ALIGN_LEFT,getCell(sheet,27,1).getCellStyle().getAlignment());
+		assertEquals(CellStyle.ALIGN_CENTER,getCell(sheet,27,2).getCellStyle().getAlignment());
+		assertEquals(CellStyle.ALIGN_RIGHT,getCell(sheet,27,3).getCellStyle().getAlignment());
+		
+		//combined alignment
+		assertEquals(CellStyle.VERTICAL_TOP,getCell(sheet,28,1).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.ALIGN_LEFT,getCell(sheet,28,1).getCellStyle().getAlignment());
+		assertEquals(CellStyle.VERTICAL_CENTER,getCell(sheet,28,2).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.ALIGN_CENTER,getCell(sheet,28,2).getCellStyle().getAlignment());
+		assertEquals(CellStyle.VERTICAL_BOTTOM,getCell(sheet,28,3).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.ALIGN_RIGHT,getCell(sheet,28,3).getCellStyle().getAlignment());
+	}
+	
+	@Test
+	public void testHyperlink(){
+		assertEquals(Hyperlink.LINK_URL, Ranges.range(sheet, 30, 1).getHyperlink().getType());
+		assertEquals("http://www.zkoss.org/", Ranges.range(sheet, 30, 1).getHyperlink().getAddress());
 	}
 }
