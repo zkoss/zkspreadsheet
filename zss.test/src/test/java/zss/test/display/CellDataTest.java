@@ -36,7 +36,6 @@ public class CellDataTest extends SpreadsheetTestCaseBase{
 		
 		zss = desktop.query("spreadsheet");
 		sheet = zss.as(Spreadsheet.class).getSheet(3);
-//		zss.as(Spreadsheet.class).getBook().getw
 		
 	}
 	
