@@ -21,8 +21,13 @@ import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
 
 /**
- * 1.Range is not handling the protection issue, if you have handle it yourself before calling the api(by calling {@code #isProtected()})
+ * Range that represents a cell, a row, a column, or selection of cells containing one or 
+ * more contiguous blocks of cells, or a 3-D blocks of cells. <br/>
+ * You have to use this class's API to do any operation of the {@link Sheet}, then the upload will sync to the UI automatically.<br/>
+ * To get the instance of a {@link Range}, please use the {@link Ranges} API.
+ * 
  * @author dennis
+ * @see Ranges
  * @since 3.0.0
  */
 public interface Range {

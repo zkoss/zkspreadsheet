@@ -21,10 +21,9 @@ import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Picture.Format;
 
 /**
- * the utit to help UI to deal with UI operation of a Range.
- * it also handles 1.the sheet protection, 2. 
+ * The utility to help UI to deal with user's operation of a Range.
  * @author dennis
- *
+ * @since 3.0.0
  */
 public class CellOperationUtil {
 
