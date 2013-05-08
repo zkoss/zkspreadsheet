@@ -51,7 +51,7 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
-import org.zkoss.zss.ui.Action;
+import org.zkoss.zss.ui.UserAction;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.Spreadsheet.HelperContainer;
@@ -79,84 +79,84 @@ public abstract class XActionHandler {
 //	protected Upload _upload;
 //	protected Rect _insertPictureSelection;
 	private Clipboard _clipboard;
-	protected Set<Action> toggleAction = new HashSet<Action>();
-	private static Action[] _defaultDisabledActionOnBookClosed = new Action[]{
-			Action.SAVE_BOOK,
-			Action.EXPORT_PDF, 
-			Action.PASTE,
-			Action.CUT,
-			Action.COPY,
-			Action.FONT_FAMILY,
-			Action.FONT_SIZE,
-			Action.FONT_BOLD,
-			Action.FONT_ITALIC,
-			Action.FONT_UNDERLINE,
-			Action.FONT_STRIKE,
-			Action.BORDER,
-			Action.FONT_COLOR,
-			Action.FILL_COLOR,
-			Action.VERTICAL_ALIGN,
-			Action.HORIZONTAL_ALIGN,
-			Action.WRAP_TEXT,
-			Action.MERGE_AND_CENTER,
-			Action.INSERT,
-			Action.DELETE,
-			Action.CLEAR,
-			Action.SORT_AND_FILTER,
-			Action.PROTECT_SHEET,
-			Action.GRIDLINES,
-			Action.INSERT_PICTURE,
-			Action.COLUMN_CHART,
-			Action.LINE_CHART,
-			Action.PIE_CHART,
-			Action.BAR_CHART,
-			Action.AREA_CHART,
-			Action.SCATTER_CHART,
-			Action.OTHER_CHART,
-			Action.HYPERLINK
+	protected Set<UserAction> toggleAction = new HashSet<UserAction>();
+	private static UserAction[] _defaultDisabledActionOnBookClosed = new UserAction[]{
+			UserAction.SAVE_BOOK,
+			UserAction.EXPORT_PDF, 
+			UserAction.PASTE,
+			UserAction.CUT,
+			UserAction.COPY,
+			UserAction.FONT_FAMILY,
+			UserAction.FONT_SIZE,
+			UserAction.FONT_BOLD,
+			UserAction.FONT_ITALIC,
+			UserAction.FONT_UNDERLINE,
+			UserAction.FONT_STRIKE,
+			UserAction.BORDER,
+			UserAction.FONT_COLOR,
+			UserAction.FILL_COLOR,
+			UserAction.VERTICAL_ALIGN,
+			UserAction.HORIZONTAL_ALIGN,
+			UserAction.WRAP_TEXT,
+			UserAction.MERGE_AND_CENTER,
+			UserAction.INSERT,
+			UserAction.DELETE,
+			UserAction.CLEAR,
+			UserAction.SORT_AND_FILTER,
+			UserAction.PROTECT_SHEET,
+			UserAction.GRIDLINES,
+			UserAction.INSERT_PICTURE,
+			UserAction.COLUMN_CHART,
+			UserAction.LINE_CHART,
+			UserAction.PIE_CHART,
+			UserAction.BAR_CHART,
+			UserAction.AREA_CHART,
+			UserAction.SCATTER_CHART,
+			UserAction.OTHER_CHART,
+			UserAction.HYPERLINK
 	};
 	//TODO the disable action information should get from worksheet, not hard coded
-	private static Action[] _defaultDisabledActionOnSheetProtected = new Action[]{
-			Action.FONT_FAMILY,
-			Action.FONT_SIZE,
-			Action.FONT_BOLD,
-			Action.FONT_ITALIC,
-			Action.FONT_UNDERLINE,
-			Action.FONT_STRIKE,
-			Action.BORDER,
-			Action.FONT_COLOR,
-			Action.FILL_COLOR,
-			Action.VERTICAL_ALIGN,
-			Action.HORIZONTAL_ALIGN,
-			Action.WRAP_TEXT,
-			Action.MERGE_AND_CENTER,
-			Action.INSERT,
-			Action.INSERT_SHIFT_CELL_RIGHT,
-			Action.INSERT_SHIFT_CELL_DOWN,
-			Action.INSERT_SHEET_ROW,
-			Action.INSERT_SHEET_COLUMN,
-			Action.DELETE,
-			Action.DELETE_SHIFT_CELL_LEFT,
-			Action.DELETE_SHIFT_CELL_UP,
-			Action.DELETE_SHEET_ROW,
-			Action.DELETE_SHEET_COLUMN,
-			Action.CLEAR,
-			Action.CLEAR_CONTENT,
-			Action.FORMAT_CELL,
-			Action.SORT_ASCENDING,
-			Action.SORT_DESCENDING,
-			Action.CUSTOM_SORT,
-			Action.FILTER,
-			Action.SORT_AND_FILTER,
-			Action.INSERT_PICTURE,
-			Action.COLUMN_CHART,
-			Action.LINE_CHART,
-			Action.PIE_CHART,
-			Action.BAR_CHART,
-			Action.AREA_CHART,
-			Action.SCATTER_CHART,
-			Action.OTHER_CHART,
-			Action.HYPERLINK
+	private static UserAction[] _defaultDisabledActionOnSheetProtected = new UserAction[]{
+			UserAction.FONT_FAMILY,
+			UserAction.FONT_SIZE,
+			UserAction.FONT_BOLD,
+			UserAction.FONT_ITALIC,
+			UserAction.FONT_UNDERLINE,
+			UserAction.FONT_STRIKE,
+			UserAction.BORDER,
+			UserAction.FONT_COLOR,
+			UserAction.FILL_COLOR,
+			UserAction.VERTICAL_ALIGN,
+			UserAction.HORIZONTAL_ALIGN,
+			UserAction.WRAP_TEXT,
+			UserAction.MERGE_AND_CENTER,
+			UserAction.INSERT,
+			UserAction.INSERT_SHIFT_CELL_RIGHT,
+			UserAction.INSERT_SHIFT_CELL_DOWN,
+			UserAction.INSERT_SHEET_ROW,
+			UserAction.INSERT_SHEET_COLUMN,
+			UserAction.DELETE,
+			UserAction.DELETE_SHIFT_CELL_LEFT,
+			UserAction.DELETE_SHIFT_CELL_UP,
+			UserAction.DELETE_SHEET_ROW,
+			UserAction.DELETE_SHEET_COLUMN,
+			UserAction.CLEAR,
+			UserAction.CLEAR_CONTENT,
+			UserAction.FORMAT_CELL,
+			UserAction.SORT_ASCENDING,
+			UserAction.SORT_DESCENDING,
+			UserAction.CUSTOM_SORT,
+			UserAction.FILTER,
+			UserAction.SORT_AND_FILTER,
+			UserAction.INSERT_PICTURE,
+			UserAction.COLUMN_CHART,
+			UserAction.LINE_CHART,
+			UserAction.PIE_CHART,
+			UserAction.BAR_CHART,
+			UserAction.AREA_CHART,
+			UserAction.SCATTER_CHART,
+			UserAction.OTHER_CHART,
+			UserAction.HYPERLINK
 	};
 	
 	
@@ -302,177 +302,177 @@ public abstract class XActionHandler {
 	
 	private void dispatch0(Spreadsheet spreadsheet, String action, Rect selection, Map extraData) {
 		
-		if (Action.HOME_PANEL.toString().equals(action)) {
+		if (UserAction.HOME_PANEL.toString().equals(action)) {
 			doHomePanel();
-		} else if (Action.INSERT_PANEL.equals(action)) {
+		} else if (UserAction.INSERT_PANEL.equals(action)) {
 			doInsertPanel();
-		} else if (Action.FORMULA_PANEL.equals(action)) {
+		} else if (UserAction.FORMULA_PANEL.equals(action)) {
 			doFormulaPanel();
-		} else if (Action.NEW_BOOK.equals(action)) {
+		} else if (UserAction.NEW_BOOK.equals(action)) {
 			doNewBook();
-		} else if (Action.SAVE_BOOK.equals(action)) {
+		} else if (UserAction.SAVE_BOOK.equals(action)) {
 			doSaveBook();
-		} else if (Action.EXPORT_PDF.equals(action)) {
+		} else if (UserAction.EXPORT_PDF.equals(action)) {
 			doExportPDF(selection);
-		} else if (Action.PASTE.equals(action)) {
+		} else if (UserAction.PASTE.equals(action)) {
 			doPaste(selection);
-		} else if (Action.PASTE_FORMULA.equals(action)) {
+		} else if (UserAction.PASTE_FORMULA.equals(action)) {
 			doPasteFormula(selection);
-		} else if (Action.PASTE_VALUE.equals(action)) {
+		} else if (UserAction.PASTE_VALUE.equals(action)) {
 			doPasteValue(selection);
-		} else if (Action.PASTE_ALL_EXPECT_BORDERS.equals(action)) {
+		} else if (UserAction.PASTE_ALL_EXPECT_BORDERS.equals(action)) {
 			doPasteAllExceptBorder(selection);
-		} else if (Action.PASTE_TRANSPOSE.equals(action)) {
+		} else if (UserAction.PASTE_TRANSPOSE.equals(action)) {
 			doPasteTranspose(selection);
-		} else if (Action.PASTE_SPECIAL.equals(action)) {
+		} else if (UserAction.PASTE_SPECIAL.equals(action)) {
 			doPasteSpecial(selection);
-		} else if (Action.CUT.equals(action)) {
+		} else if (UserAction.CUT.equals(action)) {
 			doCut(selection);	
-		} else if (Action.COPY.equals(action)) {
+		} else if (UserAction.COPY.equals(action)) {
 			doCopy(selection);
-		} else if (Action.FONT_FAMILY.equals(action)) {
+		} else if (UserAction.FONT_FAMILY.equals(action)) {
 			doFontFamily((String)extraData.get("name"), selection);
-		} else if (Action.FONT_SIZE.equals(action)) {
+		} else if (UserAction.FONT_SIZE.equals(action)) {
 			Integer fontSize = Integer.parseInt((String)extraData.get("size"));
 			doFontSize(fontSize, selection);
-		} else if (Action.FONT_BOLD.equals(action)) {
+		} else if (UserAction.FONT_BOLD.equals(action)) {
 			doFontBold(selection);
-		} else if (Action.FONT_ITALIC.equals(action)) {
+		} else if (UserAction.FONT_ITALIC.equals(action)) {
 			doFontItalic(selection);
-		} else if (Action.FONT_UNDERLINE.equals(action)) {
+		} else if (UserAction.FONT_UNDERLINE.equals(action)) {
 			doFontUnderline(selection);
-		} else if (Action.FONT_STRIKE.equals(action)) {
+		} else if (UserAction.FONT_STRIKE.equals(action)) {
 			doFontStrikeout(selection);
-		} else if (Action.BORDER.equals(action)) {
+		} else if (UserAction.BORDER.equals(action)) {
 			doBorder(getBorderColor(extraData), selection);
-		} else if (Action.BORDER_BOTTOM.equals(action)) {
+		} else if (UserAction.BORDER_BOTTOM.equals(action)) {
 			doBorderBottom(getBorderColor(extraData), selection);
-		} else if (Action.BORDER_TOP.equals(action)) {
+		} else if (UserAction.BORDER_TOP.equals(action)) {
 			doBoderTop(getBorderColor(extraData), selection);
-		} else if (Action.BORDER_LEFT.equals(action)) {
+		} else if (UserAction.BORDER_LEFT.equals(action)) {
 			doBorderLeft(getBorderColor(extraData), selection);
-		} else if (Action.BORDER_RIGHT.equals(action)) {
+		} else if (UserAction.BORDER_RIGHT.equals(action)) {
 			doBorderRight(getBorderColor(extraData), selection);
-		} else if (Action.BORDER_NO.equals(action)) {
+		} else if (UserAction.BORDER_NO.equals(action)) {
 			doBorderNo(getBorderColor(extraData), selection);
-		} else if (Action.BORDER_ALL.equals(action)) {
+		} else if (UserAction.BORDER_ALL.equals(action)) {
 			doBorderAll(getBorderColor(extraData), selection);
-		} else if (Action.BORDER_OUTSIDE.equals(action)) {
+		} else if (UserAction.BORDER_OUTSIDE.equals(action)) {
 			doBorderOutside(getBorderColor(extraData), selection);
-		} else if (Action.BORDER_INSIDE.equals(action)) {
+		} else if (UserAction.BORDER_INSIDE.equals(action)) {
 			doBorderInside(getBorderColor(extraData), selection);
-		} else if (Action.BORDER_INSIDE_HORIZONTAL.equals(action)) {
+		} else if (UserAction.BORDER_INSIDE_HORIZONTAL.equals(action)) {
 			doBorderInsideHorizontal(getBorderColor(extraData), selection);
-		} else if (Action.BORDER_INSIDE_VERTICAL.equals(action)) {
+		} else if (UserAction.BORDER_INSIDE_VERTICAL.equals(action)) {
 			doBorderInsideVertical(getBorderColor(extraData), selection);
-		} else if (Action.FONT_COLOR.equals(action)) {
+		} else if (UserAction.FONT_COLOR.equals(action)) {
 			doFontColor(getFontColor(extraData), selection);
-		} else if (Action.FILL_COLOR.equals(action)) {
+		} else if (UserAction.FILL_COLOR.equals(action)) {
 			doFillColor(getFillColor(extraData), selection);
-		} else if (Action.VERTICAL_ALIGN_TOP.equals(action)) {
+		} else if (UserAction.VERTICAL_ALIGN_TOP.equals(action)) {
 			doVerticalAlignTop(selection);
-		} else if (Action.VERTICAL_ALIGN_MIDDLE.equals(action)) {
+		} else if (UserAction.VERTICAL_ALIGN_MIDDLE.equals(action)) {
 			doVerticalAlignMiddle(selection);
-		} else if (Action.VERTICAL_ALIGN_BOTTOM.equals(action)) {
+		} else if (UserAction.VERTICAL_ALIGN_BOTTOM.equals(action)) {
 			doVerticalAlignBottom(selection);
-		} else if (Action.HORIZONTAL_ALIGN_LEFT.equals(action)) {
+		} else if (UserAction.HORIZONTAL_ALIGN_LEFT.equals(action)) {
 			doHorizontalAlignLeft(selection);
-		} else if (Action.HORIZONTAL_ALIGN_CENTER.equals(action)) {
+		} else if (UserAction.HORIZONTAL_ALIGN_CENTER.equals(action)) {
 			doHorizontalAlignCenter(selection);
-		} else if (Action.HORIZONTAL_ALIGN_RIGHT.equals(action)) {
+		} else if (UserAction.HORIZONTAL_ALIGN_RIGHT.equals(action)) {
 			doHorizontalAlignRight(selection);
-		} else if (Action.WRAP_TEXT.equals(action)) {
+		} else if (UserAction.WRAP_TEXT.equals(action)) {
 			doWrapText(selection);
-		} else if (Action.MERGE_AND_CENTER.equals(action)) {
+		} else if (UserAction.MERGE_AND_CENTER.equals(action)) {
 			doMergeAndCenter(selection);
-		} else if (Action.MERGE_ACROSS.equals(action)) {
+		} else if (UserAction.MERGE_ACROSS.equals(action)) {
 			doMergeAcross(selection);
-		} else if (Action.MERGE_CELL.equals(action)) {
+		} else if (UserAction.MERGE_CELL.equals(action)) {
 			doMergeCell(selection);
-		} else if (Action.UNMERGE_CELL.equals(action)) {
+		} else if (UserAction.UNMERGE_CELL.equals(action)) {
 			doUnmergeCell(selection);
-		} else if (Action.INSERT_SHIFT_CELL_RIGHT.equals(action)) {
+		} else if (UserAction.INSERT_SHIFT_CELL_RIGHT.equals(action)) {
 			doShiftCellRight(selection);
-		} else if (Action.INSERT_SHIFT_CELL_DOWN.equals(action)) {
+		} else if (UserAction.INSERT_SHIFT_CELL_DOWN.equals(action)) {
 			doShiftCellDown(selection);
-		} else if (Action.INSERT_SHEET_ROW.equals(action)) {
+		} else if (UserAction.INSERT_SHEET_ROW.equals(action)) {
 			doInsertSheetRow(selection);
-		} else if (Action.INSERT_SHEET_COLUMN.equals(action)) {
+		} else if (UserAction.INSERT_SHEET_COLUMN.equals(action)) {
 			doInsertSheetColumn(selection);
-		} else if (Action.DELETE_SHIFT_CELL_LEFT.equals(action)) {
+		} else if (UserAction.DELETE_SHIFT_CELL_LEFT.equals(action)) {
 			doShiftCellLeft(selection);
-		} else if (Action.DELETE_SHIFT_CELL_UP.equals(action)) {
+		} else if (UserAction.DELETE_SHIFT_CELL_UP.equals(action)) {
 			doShiftCellUp(selection);
-		} else if (Action.DELETE_SHEET_ROW.equals(action)) {
+		} else if (UserAction.DELETE_SHEET_ROW.equals(action)) {
 			doDeleteSheetRow(selection);
-		} else if (Action.DELETE_SHEET_COLUMN.equals(action)) {
+		} else if (UserAction.DELETE_SHEET_COLUMN.equals(action)) {
 			doDeleteSheetColumn(selection);
-		} else if (Action.SORT_ASCENDING.equals(action)) {
+		} else if (UserAction.SORT_ASCENDING.equals(action)) {
 			doSortAscending(selection);
-		} else if (Action.SORT_DESCENDING.equals(action)) {
+		} else if (UserAction.SORT_DESCENDING.equals(action)) {
 			doSortDescending(selection);
-		} else if (Action.CUSTOM_SORT.equals(action)) {
+		} else if (UserAction.CUSTOM_SORT.equals(action)) {
 			doCustomSort(selection);
-		} else if (Action.FILTER.equals(action)) {
+		} else if (UserAction.FILTER.equals(action)) {
 			doFilter(selection);
-		} else if (Action.CLEAR_FILTER.equals(action)) {
+		} else if (UserAction.CLEAR_FILTER.equals(action)) {
 			doClearFilter();
-		} else if (Action.REAPPLY_FILTER.equals(action)) {
+		} else if (UserAction.REAPPLY_FILTER.equals(action)) {
 			doReapplyFilter();
-		} else if (Action.CLEAR_CONTENT.equals(action)) {
+		} else if (UserAction.CLEAR_CONTENT.equals(action)) {
 			doClearContent(selection);
-		} else if (Action.CLEAR_STYLE.equals(action)) {
+		} else if (UserAction.CLEAR_STYLE.equals(action)) {
 			doClearStyle(selection);
-		} else if (Action.CLEAR_ALL.equals(action)) {
+		} else if (UserAction.CLEAR_ALL.equals(action)) {
 			doClearAll(selection);
-		} else if (Action.PROTECT_SHEET.equals(action)) {
+		} else if (UserAction.PROTECT_SHEET.equals(action)) {
 			doProtectSheet();
-		} else if (Action.GRIDLINES.equals(action)) {
+		} else if (UserAction.GRIDLINES.equals(action)) {
 			doGridlines();
-		} else if (Action.COLUMN_CHART.equals(action)) {
+		} else if (UserAction.COLUMN_CHART.equals(action)) {
 			doColumnChart(selection);
-		} else if (Action.COLUMN_CHART_3D.equals(action)) {
+		} else if (UserAction.COLUMN_CHART_3D.equals(action)) {
 			doColumnChart3D(selection);
-		} else if (Action.LINE_CHART.equals(action)) {
+		} else if (UserAction.LINE_CHART.equals(action)) {
 			doLineChart(selection);
-		} else if (Action.LINE_CHART_3D.equals(action)) {
+		} else if (UserAction.LINE_CHART_3D.equals(action)) {
 			doLineChart3D(selection);
-		} else if (Action.PIE_CHART.equals(action)) {
+		} else if (UserAction.PIE_CHART.equals(action)) {
 			doPieChart(selection);
-		} else if (Action.PIE_CHART_3D.equals(action)) {
+		} else if (UserAction.PIE_CHART_3D.equals(action)) {
 			doPieChart3D(selection);
-		} else if (Action.BAR_CHART.equals(action)) {
+		} else if (UserAction.BAR_CHART.equals(action)) {
 			doBarChart(selection);
-		} else if (Action.BAR_CHART_3D.equals(action)) {
+		} else if (UserAction.BAR_CHART_3D.equals(action)) {
 			doBarChart3D(selection);
-		} else if (Action.AREA_CHART.equals(action)) {
+		} else if (UserAction.AREA_CHART.equals(action)) {
 			doAreaChart(selection);
-		} else if (Action.SCATTER_CHART.equals(action)) {
+		} else if (UserAction.SCATTER_CHART.equals(action)) {
 			doScatterChart(selection);
-		} else if (Action.DOUGHNUT_CHART.equals(action)) {
+		} else if (UserAction.DOUGHNUT_CHART.equals(action)) {
 			doDoughnutChart(selection);
-		} else if (Action.HYPERLINK.equals(action)) {
+		} else if (UserAction.HYPERLINK.equals(action)) {
 			doHyperlink(selection);
-		} else if (Action.INSERT_PICTURE.equals(action)) {
+		} else if (UserAction.INSERT_PICTURE.equals(action)) {
 			//TODO 
 //			doBeforeInsertPicture(selection);
-		} else if (Action.CLOSE_BOOK.equals(action)) {
+		} else if (UserAction.CLOSE_BOOK.equals(action)) {
 			doCloseBook();
-		} else if (Action.FORMAT_CELL.equals(action)) {
+		} else if (UserAction.FORMAT_CELL.equals(action)) {
 			doFormatCell(selection);
-		} else if (Action.COLUMN_WIDTH.equals(action)) {
+		} else if (UserAction.COLUMN_WIDTH.equals(action)) {
 			doColumnWidth(selection);
-		} else if (Action.ROW_HEIGHT.equals(action)) {
+		} else if (UserAction.ROW_HEIGHT.equals(action)) {
 			doRowHeight(selection);
-		} else if (Action.HIDE_COLUMN.equals(action)) {
+		} else if (UserAction.HIDE_COLUMN.equals(action)) {
 			doHideColumn(selection);
-		} else if (Action.UNHIDE_COLUMN.equals(action)) {
+		} else if (UserAction.UNHIDE_COLUMN.equals(action)) {
 			doUnhideColumn(selection);
-		} else if (Action.HIDE_ROW.equals(action)) {
+		} else if (UserAction.HIDE_ROW.equals(action)) {
 			doHideRow(selection);
-		} else if (Action.UNHIDE_ROW.equals(action)) {
+		} else if (UserAction.UNHIDE_ROW.equals(action)) {
 			doUnhideRow(selection);
-		} else if (Action.INSERT_FUNCTION.equals(action)) {
+		} else if (UserAction.INSERT_FUNCTION.equals(action)) {
 			doInsertFunction(selection);
 		}
 	}
@@ -542,7 +542,7 @@ public abstract class XActionHandler {
 	 */
 	private void initToggleAction() {
 		if (toggleAction.size() == 0) {
-			for (Action a : _defaultDisabledActionOnBookClosed) {
+			for (UserAction a : _defaultDisabledActionOnBookClosed) {
 				toggleAction.add(a);
 			}
 		}

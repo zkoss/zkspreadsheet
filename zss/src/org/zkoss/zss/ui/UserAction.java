@@ -1,4 +1,4 @@
-/* Toolbars.java
+/* UserAction.java
 
 {{IS_NOTE
 	Purpose:
@@ -24,7 +24,7 @@ import java.util.HashMap;
  * @author sam
  *
  */
-public enum Action {
+public enum UserAction {
 	
 	SHEET("sheet"),
 	ADD_SHEET("addSheet"),
@@ -147,7 +147,7 @@ public enum Action {
 	SEPARATOR("separator");
 	
 	private final String action;
-	private Action(String key) {
+	private UserAction(String key) {
 		this.action = key;
 	}
 	
@@ -165,9 +165,9 @@ public enum Action {
 	}
 	
 	public static Collection<String> getLabelKeys() {
-		Action[] enums = Action.class.getEnumConstants();
+		UserAction[] enums = UserAction.class.getEnumConstants();
 		ArrayList<String> keys = new ArrayList<String>(enums.length);
-		for (Action a : enums) {
+		for (UserAction a : enums) {
 			keys.add(a.getLabelKey());
 		}
 		return keys;
@@ -178,10 +178,10 @@ public enum Action {
 	 * 
 	 * @return
 	 */
-	public static HashMap<String, Action> getAll() {
-		Action[] enums = Action.class.getEnumConstants();
-		HashMap<String, Action> actions = new HashMap<String, Action>(enums.length);
-		for (Action t : enums) {
+	public static HashMap<String, UserAction> getAll() {
+		UserAction[] enums = UserAction.class.getEnumConstants();
+		HashMap<String, UserAction> actions = new HashMap<String, UserAction>(enums.length);
+		for (UserAction t : enums) {
 			actions.put(t.toString(), t);
 		}
 		return actions;

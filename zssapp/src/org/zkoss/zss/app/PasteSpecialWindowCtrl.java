@@ -93,7 +93,7 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 	public void onClick$okBtn() {
 		okBtn.setDisabled(true);
 		
-		Clipboard clipboard = ss.getActionHandler().getClipboard();
+		Clipboard clipboard = ss.getUserActionHandler().getClipboard();
 		
 		if (clipboard != null) {
 			final XSheet srcSheet = clipboard.sourceSheet;
@@ -122,7 +122,7 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 				.range(srcSheet, srcRect.getTop(), srcRect.getLeft(),srcRect.getBottom(), srcRect.getRight())
 				.setStyle(defaultStyle);
 				
-				ss.getActionHandler().clearClipboard();
+				ss.getUserActionHandler().clearClipboard();
 				ss.setHighlight(null);
 			}
 			

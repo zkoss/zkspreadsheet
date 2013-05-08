@@ -1,268 +1,288 @@
 package org.zkoss.zss.ui;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.zkoss.image.AImage;
 import org.zkoss.lang.Strings;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Desktop;
-import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.SheetAnchor;
-import org.zkoss.zss.api.SheetOperationUtil;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.SheetAnchor;
+import org.zkoss.zss.api.SheetOperationUtil;
 import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.Chart;
-import org.zkoss.zss.api.model.ChartData;
-import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.CellStyle.Alignment;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
+import org.zkoss.zss.api.model.Chart;
+import org.zkoss.zss.api.model.ChartData;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.DefaultUserActionHandler.Clipboard.Type;
+import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
-import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.Messagebox;
 
-public class DefaultUserActionHandler implements UserActionHandler {
+public class DefaultUserActionHandler implements UserActionHandler,EventListener<Event> {
 	
 	private static ThreadLocal<UserActionContext> _ctx = new ThreadLocal<UserActionContext>();
 	private Clipboard _clipboard;
 
 	
+	private void checkCtx(){
+		if(_ctx.get()==null){
+			throw new IllegalAccessError("can't found action context");
+		}
+	}
+	
 	protected Spreadsheet getSpreadsheet(){
+		checkCtx();
 		return _ctx.get().spreadsheet;
 	}
 	
 	protected Sheet getSheet(){
+		checkCtx();
 		return _ctx.get().sheet;
 	}
 	
 	protected Book getBook(){
-		return getSheet().getBook();
+		checkCtx();
+		Sheet sheet = getSheet();
+		return sheet==null?null:sheet.getBook();
 	}
 	
 	protected Rect getSelection(){
+		checkCtx();
 		return _ctx.get().selection;
 	}
 	
+	protected Object getExtraData(String key){
+		checkCtx();
+		Map data = _ctx.get().extraData;
+		if(data!=null){
+			return data.get(key);
+		}
+		return null;
+	}
+	
 	@Override
-	public void handleAction(Spreadsheet spreadsheet, Sheet targetSheet,
+	public boolean handleAction(Spreadsheet spreadsheet, Sheet targetSheet,
 			String action, Rect selection, Map<String, Object> extraData) {
 		final UserActionContext ctx = new UserActionContext(spreadsheet, targetSheet,action,selection,extraData);
 		_ctx.set(ctx);
 		try{
-			dispatchAction(spreadsheet,targetSheet,action,selection,extraData);
+			return dispatchAction(spreadsheet,targetSheet,action,selection,extraData);
 		}finally{
 			_ctx.set(null);
 		}
 	}
 	
 	
-	protected void dispatchAction(Spreadsheet spreadsheet, Sheet targetSheet,
+	protected boolean dispatchAction(Spreadsheet spreadsheet, Sheet targetSheet,
 			String action, Rect selection, Map<String, Object> extraData) {
 		
-		if (Action.HOME_PANEL.toString().equals(action)) {
-			doShowHomePanel();
-		} else if (Action.INSERT_PANEL.equals(action)) {
-			doShowInsertPanel();
-		} else if (Action.FORMULA_PANEL.equals(action)) {
-			doShowFormulaPanel();
-		} else if (Action.ADD_SHEET.toString().equals(action)) {
-			doAddSheet();
-		} else if (Action.DELETE_SHEET.equals(action)) {
-			doDeleteSheet();
-		} else if (Action.RENAME_SHEET.equals(action)) {
+		if (UserAction.HOME_PANEL.toString().equals(action)) {
+			return doShowHomePanel();
+		} else if (UserAction.INSERT_PANEL.equals(action)) {
+			return doShowInsertPanel();
+		} else if (UserAction.FORMULA_PANEL.equals(action)) {
+			return doShowFormulaPanel();
+		} else if (UserAction.ADD_SHEET.toString().equals(action)) {
+			return doAddSheet();
+		} else if (UserAction.DELETE_SHEET.equals(action)) {
+			return doDeleteSheet();
+		} else if (UserAction.RENAME_SHEET.equals(action)) {
 			String name = (String) extraData.get("name");
-			doRenameSheet(name);
-		} else if (Action.MOVE_SHEET_LEFT.equals(action)) {
-			doMoveSheetLeft();
-		} else if (Action.MOVE_SHEET_RIGHT.equals(action)) {
-			doMoveSheetRight();
-		} else if (Action.PROTECT_SHEET.equals(action)) {
-			doProtectSheet();
-		} else if (Action.GRIDLINES.equals(action)) {
-			doGridlines();
-		} else if (Action.NEW_BOOK.equals(action)) {
-			doNewBook();
-		} else if (Action.SAVE_BOOK.equals(action)) {
-			doSaveBook();
-		} else if (Action.EXPORT_PDF.equals(action)) {
-			doExportPDF();
-		} else if (Action.PASTE.equals(action)) {
-			doPaste();
-		} else if (Action.PASTE_FORMULA.equals(action)) {
-			doPasteFormula();
-		} else if (Action.PASTE_VALUE.equals(action)) {
-			doPasteValue();
-		} else if (Action.PASTE_ALL_EXPECT_BORDERS.equals(action)) {
-			doPasteAllExceptBorder();
-		} else if (Action.PASTE_TRANSPOSE.equals(action)) {
-			doPasteTranspose();
-		} else if (Action.PASTE_SPECIAL.equals(action)) {
-			doPasteSpecial();
-		} else if (Action.CUT.equals(action)) {
-			doCut();	
-		} else if (Action.COPY.equals(action)) {
-			doCopy();
-		} else if (Action.FONT_FAMILY.equals(action)) {
-			doFontFamily((String)extraData.get("name"));
-		} else if (Action.FONT_SIZE.equals(action)) {
+			return doRenameSheet(name);
+		} else if (UserAction.MOVE_SHEET_LEFT.equals(action)) {
+			return doMoveSheetLeft();
+		} else if (UserAction.MOVE_SHEET_RIGHT.equals(action)) {
+			return doMoveSheetRight();
+		} else if (UserAction.PROTECT_SHEET.equals(action)) {
+			return doProtectSheet();
+		} else if (UserAction.GRIDLINES.equals(action)) {
+			return doGridlines();
+		} else if (UserAction.NEW_BOOK.equals(action)) {
+			return doNewBook();
+		} else if (UserAction.SAVE_BOOK.equals(action)) {
+			return doSaveBook();
+		} else if (UserAction.EXPORT_PDF.equals(action)) {
+			return doExportPDF();
+		} else if (UserAction.PASTE.equals(action)) {
+			return doPaste();
+		} else if (UserAction.PASTE_FORMULA.equals(action)) {
+			return doPasteFormula();
+		} else if (UserAction.PASTE_VALUE.equals(action)) {
+			return doPasteValue();
+		} else if (UserAction.PASTE_ALL_EXPECT_BORDERS.equals(action)) {
+			return doPasteAllExceptBorder();
+		} else if (UserAction.PASTE_TRANSPOSE.equals(action)) {
+			return doPasteTranspose();
+		} else if (UserAction.PASTE_SPECIAL.equals(action)) {
+			return doPasteSpecial();
+		} else if (UserAction.CUT.equals(action)) {
+			return doCut();	
+		} else if (UserAction.COPY.equals(action)) {
+			return doCopy();
+		} else if (UserAction.FONT_FAMILY.equals(action)) {
+			return doFontFamily((String)extraData.get("name"));
+		} else if (UserAction.FONT_SIZE.equals(action)) {
 			Integer fontSize = Integer.parseInt((String)extraData.get("size"));
-			doFontSize(fontSize);
-		} else if (Action.FONT_BOLD.equals(action)) {
-			doFontBold();
-		} else if (Action.FONT_ITALIC.equals(action)) {
-			doFontItalic();
-		} else if (Action.FONT_UNDERLINE.equals(action)) {
-			doFontUnderline();
-		} else if (Action.FONT_STRIKE.equals(action)) {
-			doFontStrikeout();
-		} else if (Action.BORDER.equals(action)) {
-			doBorder(getBorderColor(extraData));
-		} else if (Action.BORDER_BOTTOM.equals(action)) {
-			doBorderBottom(getBorderColor(extraData));
-		} else if (Action.BORDER_TOP.equals(action)) {
-			doBoderTop(getBorderColor(extraData));
-		} else if (Action.BORDER_LEFT.equals(action)) {
-			doBorderLeft(getBorderColor(extraData));
-		} else if (Action.BORDER_RIGHT.equals(action)) {
-			doBorderRight(getBorderColor(extraData));
-		} else if (Action.BORDER_NO.equals(action)) {
-			doBorderNo(getBorderColor(extraData));
-		} else if (Action.BORDER_ALL.equals(action)) {
-			doBorderAll(getBorderColor(extraData));
-		} else if (Action.BORDER_OUTSIDE.equals(action)) {
-			doBorderOutside(getBorderColor(extraData));
-		} else if (Action.BORDER_INSIDE.equals(action)) {
-			doBorderInside(getBorderColor(extraData));
-		} else if (Action.BORDER_INSIDE_HORIZONTAL.equals(action)) {
-			doBorderInsideHorizontal(getBorderColor(extraData));
-		} else if (Action.BORDER_INSIDE_VERTICAL.equals(action)) {
-			doBorderInsideVertical(getBorderColor(extraData));
-		} else if (Action.FONT_COLOR.equals(action)) {
-			doFontColor(getFontColor(extraData));
-		} else if (Action.FILL_COLOR.equals(action)) {
-			doFillColor(getFillColor(extraData));
-		} else if (Action.VERTICAL_ALIGN_TOP.equals(action)) {
-			doVerticalAlignTop();
-		} else if (Action.VERTICAL_ALIGN_MIDDLE.equals(action)) {
-			doVerticalAlignMiddle();
-		} else if (Action.VERTICAL_ALIGN_BOTTOM.equals(action)) {
-			doVerticalAlignBottom();
-		} else if (Action.HORIZONTAL_ALIGN_LEFT.equals(action)) {
-			doHorizontalAlignLeft();
-		} else if (Action.HORIZONTAL_ALIGN_CENTER.equals(action)) {
-			doHorizontalAlignCenter();
-		} else if (Action.HORIZONTAL_ALIGN_RIGHT.equals(action)) {
-			doHorizontalAlignRight();
-		} else if (Action.WRAP_TEXT.equals(action)) {
-			doWrapText();
-		} else if (Action.MERGE_AND_CENTER.equals(action)) {
-			doMergeAndCenter();
-		} else if (Action.MERGE_ACROSS.equals(action)) {
-			doMergeAcross();
-		} else if (Action.MERGE_CELL.equals(action)) {
-			doMergeCell();
-		} else if (Action.UNMERGE_CELL.equals(action)) {
-			doUnmergeCell();
-		} else if (Action.INSERT_SHIFT_CELL_RIGHT.equals(action)) {
-			doShiftCellRight();
-		} else if (Action.INSERT_SHIFT_CELL_DOWN.equals(action)) {
-			doShiftCellDown();
-		} else if (Action.INSERT_SHEET_ROW.equals(action)) {
-			doInsertSheetRow();
-		} else if (Action.INSERT_SHEET_COLUMN.equals(action)) {
-			doInsertSheetColumn();
-		} else if (Action.DELETE_SHIFT_CELL_LEFT.equals(action)) {
-			doShiftCellLeft();
-		} else if (Action.DELETE_SHIFT_CELL_UP.equals(action)) {
-			doShiftCellUp();
-		} else if (Action.DELETE_SHEET_ROW.equals(action)) {
-			doDeleteSheetRow();
-		} else if (Action.DELETE_SHEET_COLUMN.equals(action)) {
-			doDeleteSheetColumn();
-		} else if (Action.SORT_ASCENDING.equals(action)) {
-			doSortAscending();
-		} else if (Action.SORT_DESCENDING.equals(action)) {
-			doSortDescending();
-		} else if (Action.CUSTOM_SORT.equals(action)) {
-			doCustomSort();
-		} else if (Action.FILTER.equals(action)) {
-			doFilter();
-		} else if (Action.CLEAR_FILTER.equals(action)) {
-			doClearFilter();
-		} else if (Action.REAPPLY_FILTER.equals(action)) {
-			doReapplyFilter();
-		} else if (Action.CLEAR_CONTENT.equals(action)) {
-			doClearContent();
-		} else if (Action.CLEAR_STYLE.equals(action)) {
-			doClearStyle();
-		} else if (Action.CLEAR_ALL.equals(action)) {
-			doClearAll();
-		} else if (Action.COLUMN_CHART.equals(action)) {
-			doColumnChart();
-		} else if (Action.COLUMN_CHART_3D.equals(action)) {
-			doColumnChart3D();
-		} else if (Action.LINE_CHART.equals(action)) {
-			doLineChart();
-		} else if (Action.LINE_CHART_3D.equals(action)) {
-			doLineChart3D();
-		} else if (Action.PIE_CHART.equals(action)) {
-			doPieChart();
-		} else if (Action.PIE_CHART_3D.equals(action)) {
-			doPieChart3D();
-		} else if (Action.BAR_CHART.equals(action)) {
-			doBarChart();
-		} else if (Action.BAR_CHART_3D.equals(action)) {
-			doBarChart3D();
-		} else if (Action.AREA_CHART.equals(action)) {
-			doAreaChart();
-		} else if (Action.SCATTER_CHART.equals(action)) {
-			doScatterChart();
-		} else if (Action.DOUGHNUT_CHART.equals(action)) {
-			doDoughnutChart();
-		} else if (Action.HYPERLINK.equals(action)) {
-			doHyperlink();
-		} else if (Action.INSERT_PICTURE.equals(action)) {
-			doInsertPicture();
-		} else if (Action.CLOSE_BOOK.equals(action)) {
-			doCloseBook();
-		} else if (Action.FORMAT_CELL.equals(action)) {
-			doFormatCell();
-		} else if (Action.COLUMN_WIDTH.equals(action)) {
-			doColumnWidth();
-		} else if (Action.ROW_HEIGHT.equals(action)) {
-			doRowHeight();
-		} else if (Action.HIDE_COLUMN.equals(action)) {
-			doHideColumn();
-		} else if (Action.UNHIDE_COLUMN.equals(action)) {
-			doUnhideColumn();
-		} else if (Action.HIDE_ROW.equals(action)) {
-			doHideRow();
-		} else if (Action.UNHIDE_ROW.equals(action)) {
-			doUnhideRow();
-		} else if (Action.INSERT_FUNCTION.equals(action)) {
-			doInsertFunction();
+			return doFontSize(fontSize);
+		} else if (UserAction.FONT_BOLD.equals(action)) {
+			return doFontBold();
+		} else if (UserAction.FONT_ITALIC.equals(action)) {
+			return doFontItalic();
+		} else if (UserAction.FONT_UNDERLINE.equals(action)) {
+			return doFontUnderline();
+		} else if (UserAction.FONT_STRIKE.equals(action)) {
+			return doFontStrikeout();
+		} else if (UserAction.BORDER.equals(action)) {
+			return doBorder(getBorderColor(extraData));
+		} else if (UserAction.BORDER_BOTTOM.equals(action)) {
+			return doBorderBottom(getBorderColor(extraData));
+		} else if (UserAction.BORDER_TOP.equals(action)) {
+			return doBoderTop(getBorderColor(extraData));
+		} else if (UserAction.BORDER_LEFT.equals(action)) {
+			return doBorderLeft(getBorderColor(extraData));
+		} else if (UserAction.BORDER_RIGHT.equals(action)) {
+			return doBorderRight(getBorderColor(extraData));
+		} else if (UserAction.BORDER_NO.equals(action)) {
+			return doBorderNo(getBorderColor(extraData));
+		} else if (UserAction.BORDER_ALL.equals(action)) {
+			return doBorderAll(getBorderColor(extraData));
+		} else if (UserAction.BORDER_OUTSIDE.equals(action)) {
+			return doBorderOutside(getBorderColor(extraData));
+		} else if (UserAction.BORDER_INSIDE.equals(action)) {
+			return doBorderInside(getBorderColor(extraData));
+		} else if (UserAction.BORDER_INSIDE_HORIZONTAL.equals(action)) {
+			return doBorderInsideHorizontal(getBorderColor(extraData));
+		} else if (UserAction.BORDER_INSIDE_VERTICAL.equals(action)) {
+			return doBorderInsideVertical(getBorderColor(extraData));
+		} else if (UserAction.FONT_COLOR.equals(action)) {
+			return doFontColor(getFontColor(extraData));
+		} else if (UserAction.FILL_COLOR.equals(action)) {
+			return doFillColor(getFillColor(extraData));
+		} else if (UserAction.VERTICAL_ALIGN_TOP.equals(action)) {
+			return doVerticalAlignTop();
+		} else if (UserAction.VERTICAL_ALIGN_MIDDLE.equals(action)) {
+			return doVerticalAlignMiddle();
+		} else if (UserAction.VERTICAL_ALIGN_BOTTOM.equals(action)) {
+			return doVerticalAlignBottom();
+		} else if (UserAction.HORIZONTAL_ALIGN_LEFT.equals(action)) {
+			return doHorizontalAlignLeft();
+		} else if (UserAction.HORIZONTAL_ALIGN_CENTER.equals(action)) {
+			return doHorizontalAlignCenter();
+		} else if (UserAction.HORIZONTAL_ALIGN_RIGHT.equals(action)) {
+			return doHorizontalAlignRight();
+		} else if (UserAction.WRAP_TEXT.equals(action)) {
+			return doWrapText();
+		} else if (UserAction.MERGE_AND_CENTER.equals(action)) {
+			return doMergeAndCenter();
+		} else if (UserAction.MERGE_ACROSS.equals(action)) {
+			return doMergeAcross();
+		} else if (UserAction.MERGE_CELL.equals(action)) {
+			return doMergeCell();
+		} else if (UserAction.UNMERGE_CELL.equals(action)) {
+			return doUnmergeCell();
+		} else if (UserAction.INSERT_SHIFT_CELL_RIGHT.equals(action)) {
+			return doShiftCellRight();
+		} else if (UserAction.INSERT_SHIFT_CELL_DOWN.equals(action)) {
+			return doShiftCellDown();
+		} else if (UserAction.INSERT_SHEET_ROW.equals(action)) {
+			return doInsertSheetRow();
+		} else if (UserAction.INSERT_SHEET_COLUMN.equals(action)) {
+			return doInsertSheetColumn();
+		} else if (UserAction.DELETE_SHIFT_CELL_LEFT.equals(action)) {
+			return doShiftCellLeft();
+		} else if (UserAction.DELETE_SHIFT_CELL_UP.equals(action)) {
+			return doShiftCellUp();
+		} else if (UserAction.DELETE_SHEET_ROW.equals(action)) {
+			return doDeleteSheetRow();
+		} else if (UserAction.DELETE_SHEET_COLUMN.equals(action)) {
+			return doDeleteSheetColumn();
+		} else if (UserAction.SORT_ASCENDING.equals(action)) {
+			return doSortAscending();
+		} else if (UserAction.SORT_DESCENDING.equals(action)) {
+			return doSortDescending();
+		} else if (UserAction.CUSTOM_SORT.equals(action)) {
+			return doCustomSort();
+		} else if (UserAction.FILTER.equals(action)) {
+			return doFilter();
+		} else if (UserAction.CLEAR_FILTER.equals(action)) {
+			return doClearFilter();
+		} else if (UserAction.REAPPLY_FILTER.equals(action)) {
+			return doReapplyFilter();
+		} else if (UserAction.CLEAR_CONTENT.equals(action)) {
+			return doClearContent();
+		} else if (UserAction.CLEAR_STYLE.equals(action)) {
+			return doClearStyle();
+		} else if (UserAction.CLEAR_ALL.equals(action)) {
+			return doClearAll();
+		} else if (UserAction.COLUMN_CHART.equals(action)) {
+			return doColumnChart();
+		} else if (UserAction.COLUMN_CHART_3D.equals(action)) {
+			return doColumnChart3D();
+		} else if (UserAction.LINE_CHART.equals(action)) {
+			return doLineChart();
+		} else if (UserAction.LINE_CHART_3D.equals(action)) {
+			return doLineChart3D();
+		} else if (UserAction.PIE_CHART.equals(action)) {
+			return doPieChart();
+		} else if (UserAction.PIE_CHART_3D.equals(action)) {
+			return doPieChart3D();
+		} else if (UserAction.BAR_CHART.equals(action)) {
+			return doBarChart();
+		} else if (UserAction.BAR_CHART_3D.equals(action)) {
+			return doBarChart3D();
+		} else if (UserAction.AREA_CHART.equals(action)) {
+			return doAreaChart();
+		} else if (UserAction.SCATTER_CHART.equals(action)) {
+			return doScatterChart();
+		} else if (UserAction.DOUGHNUT_CHART.equals(action)) {
+			return doDoughnutChart();
+		} else if (UserAction.HYPERLINK.equals(action)) {
+			return doHyperlink();
+		} else if (UserAction.INSERT_PICTURE.equals(action)) {
+			return doInsertPicture();
+		} else if (UserAction.CLOSE_BOOK.equals(action)) {
+			return doCloseBook();
+		} else if (UserAction.FORMAT_CELL.equals(action)) {
+			return doFormatCell();
+		} else if (UserAction.COLUMN_WIDTH.equals(action)) {
+			return doColumnWidth();
+		} else if (UserAction.ROW_HEIGHT.equals(action)) {
+			return doRowHeight();
+		} else if (UserAction.HIDE_COLUMN.equals(action)) {
+			return doHideColumn();
+		} else if (UserAction.UNHIDE_COLUMN.equals(action)) {
+			return doUnhideColumn();
+		} else if (UserAction.HIDE_ROW.equals(action)) {
+			return doHideRow();
+		} else if (UserAction.UNHIDE_ROW.equals(action)) {
+			return doUnhideRow();
+		} else if (UserAction.INSERT_FUNCTION.equals(action)) {
+			return doInsertFunction();
 		}else{
 			showNotImplement(action);
+			return false;
 		}
 	}
 
-	protected void doMoveSheetRight() {
+	protected boolean doMoveSheetRight() {
 		Book book = getBook();
 		Sheet sheet = getSheet();
 		
@@ -271,52 +291,47 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		
 		if(i<max){
 			i ++;
-		}else{
-			//do nothing
-			return;
+			Range range = Ranges.range(sheet);
+			SheetOperationUtil.setSheetOrder(range,i);
 		}
-		
-		Range range = Ranges.range(sheet);
-		SheetOperationUtil.setSheetOrder(range,i);
+		return true;
 	}
 
-	protected void doMoveSheetLeft() {
+	protected boolean doMoveSheetLeft() {
 		Book book = getBook();
 		Sheet sheet = getSheet();
 		
-		if(book.getSheetIndex(sheet)==0){
-			//do nothing
-			return;
+		if(book.getSheetIndex(sheet)>0){
+			Range range = Ranges.range(sheet);
+			SheetOperationUtil.setSheetOrder(range,0);
 		}
-		
-		Range range = Ranges.range(sheet);
-		SheetOperationUtil.setSheetOrder(range,0);
-		
-		
+		return true;
 	}
 
-	protected void doRenameSheet(String newname) {
+	protected boolean doRenameSheet(String newname) {
 		Book book = getBook();
 		Sheet sheet = getSheet();
 
 		if(book.getSheet(newname)!=null){
 			showWarnMessage("Canot rename a sheet to the same as another.");
-			return;
+			return false;
 		}
 		
 		Range range = Ranges.range(sheet);
 		SheetOperationUtil.renameSheet(range,newname);
+		return true;
 	}
 
-	protected void doDeleteSheet() {
+	protected boolean doDeleteSheet() {
 		Book book = getBook();
 		Sheet sheet = getSheet();
 		
 		int num = book.getNumberOfSheets();
 		if(num<=1){
 			showWarnMessage("Canot delete last sheet.");
-			return;
+			return false;
 		}
+		
 		int index = book.getSheetIndex(sheet);
 		
 		Range range = Ranges.range(sheet);
@@ -327,16 +342,20 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		
 		getSpreadsheet().setSelectedSheet(book.getSheetAt(index).getSheetName());
+		
+		return true;
 	}
 
-	protected void doAddSheet() {
-		String prefix = Labels.getLabel(Action.SHEET.getLabelKey());
+	protected boolean doAddSheet() {
+		String prefix = Labels.getLabel(UserAction.SHEET.getLabelKey());
 		if (Strings.isEmpty(prefix))
 			prefix = "Sheet";
 		Sheet sheet = getSheet();
 
 		Range range = Ranges.range(sheet);
 		SheetOperationUtil.addSheet(range,prefix);
+		
+		return true;
 	}
 
 	/**
@@ -389,86 +408,60 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		return color;
 	}
 	
-	protected void doHideRow() {
+	protected boolean doHideRow() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		range = range.getRowRange();
 		CellOperationUtil.hide(range);
+		return true;
 	}
 
-	protected void doUnhideRow() {
+	protected boolean doUnhideRow() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		range = range.getRowRange();
 		CellOperationUtil.unHide(range);
+		return true;
 	}
 
-	protected void doUnhideColumn() {
+	protected boolean doUnhideColumn() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		range = range.getColumnRange();
 		CellOperationUtil.hide(range);
+		return true;
 		
 	}
 
-	protected void doHideColumn() {
+	protected boolean doHideColumn() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		range = range.getColumnRange();
 		CellOperationUtil.unHide(range);
+		return true;
 	}
-
-
-// TODO, redesign this, should consider to 
-//	public void toggleActionOnSheetSelected() {
-//		for (Action action : toggleAction) {
-//			_spreadsheet.setActionDisabled(false, action);
-//		}
-//		
-//		//TODO: read protect information from worksheet
-//		boolean protect = _spreadsheet.getSelectedXSheet().getProtect();
-//		for (Action action : _defaultDisabledActionOnSheetProtected) {
-//			_spreadsheet.setActionDisabled(protect, action);
-//		}
-//	}
-//	
-//	public void toggleActionOnBookClosed() {
-//		for (Action a : toggleAction) {
-//			_spreadsheet.setActionDisabled(true, a);
-//		}
-//	}
 	
-//	/**
-//	 * Execute when user select sheet
-//	 */
-//	protected void doSheetSelect() {
-////		syncClipboard();
-////		syncAutoFilter();
-//		
-////		toggleActionOnSheetSelected();
-//	}
-	
-	protected void doCloseBook() {
+	protected boolean doCloseBook() {
 		Spreadsheet zss = getSpreadsheet();
 		if(zss.getSrc()!=null){
 			zss.setSrc(null);
@@ -477,14 +470,12 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			zss.setBook(null);
 		}
 		
-		_clipboard = null;
-//		_insertPictureSelection = null;
-		
-//		toggleActionOnBookClosed();
+		clearClipboard();
+		return true;
 	}
 	
 	
-	protected void doInsertPicture(){
+	protected boolean doInsertPicture(){
 		final Spreadsheet spreadsheet = getSpreadsheet();
 		final Sheet sheet = getSheet();
 		final Rect selection = getSelection();
@@ -492,28 +483,29 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		
 		askUploadFile(new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				if(Events.ON_UPLOAD.equals(event.getName())){
+				if(org.zkoss.zk.ui.event.Events.ON_UPLOAD.equals(event.getName())){
 					Media media = ((UploadEvent)event).getMedia();
 					doInsertPicture(spreadsheet,sheet,selection,media);
 				}
 			}
 		});
+		return true;
 	}
 	
-	protected void doInsertPicture(Spreadsheet spreadsheet,Sheet sheet,Rect selection,Media media) {
+	protected boolean doInsertPicture(Spreadsheet spreadsheet,Sheet sheet,Rect selection,Media media) {
 		if(media==null){
 			showWarnMessage("Can't get the uploaded file");
-			return;
+			return true;
 		}
 		
 		if(!(media instanceof AImage) || SheetOperationUtil.getPictureFormat((AImage)media)==null){
 			showWarnMessage("Can't support the uploaded file");
-			return;
+			return true;
 		}
 		
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
@@ -521,187 +513,41 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		SheetOperationUtil.addPicture(range,(AImage)media);
 		
 		clearClipboard();
+		return true;
 	}
-//	protected void doInsertPicture() {
-		//TODO DENNIS, re-design this.
-//		if (_insertPictureSelection == null) {
-//			return;
-//		}
-//		
-//		XSheet sheet = _spreadsheet.getSelectedXSheet();
-//		if (sheet != null) {
-//			if (!sheet.getProtect()) {
-//				final Media media = evt.getMedia();
-//				if (media instanceof AImage) {
-//					AImage image = (AImage)media;
-//					XRanges
-//					.range(_spreadsheet.getSelectedXSheet())
-//					.addPicture(getClientAnchor(_insertPictureSelection.getTop(), _insertPictureSelection.getLeft(), 
-//							image.getWidth(), image.getHeight()), image.getByteData(), getImageFormat(image));
-//				}	
-//			} else {
-//				showProtectMessage();
-//			}
-//		}
-//	}
-	
-//	/**
-//	 * @param selection
-//	 */
-//	protected void doBeforeInsertPicture() {
-//		_insertPictureSelection = selection;
-//	}
-	
-
-	
-//	protected void syncClipboard() {
-//		//TODO, Dennis, shouldn't clipboard only care the range?
-//		//why should we check this?
-//		if (_clipboard != null) {
-//			final Book srcBook = _clipboard.book;
-//			if (!srcBook.equals(_spreadsheet.getBook())) {
-//				_clipboard = null;
-//			} else {
-//				final Sheet srcSheet = _clipboard.sourceSheet;
-//				boolean validSheet = srcBook.getSheetIndex(srcSheet) >= 0;
-//				if (!validSheet) {
-//					clearClipboard();
-//				} else if (!srcSheet.equals(_spreadsheet.getSelectedXSheet())) {
-//					_spreadsheet.setHighlight(null);
-//				} else {
-//					_spreadsheet.setHighlight(_clipboard.sourceRect);
-//				}
-//			}
-//		}
-//	}
-	
-//	protected void syncAutoFilter() {
-//		//TODO Dennis, need to check the logic here
-//		final Sheet worksheet = _spreadsheet.getTargetSheet();
-//		boolean appliedFilter = false;
-//		AutoFilter af = worksheet.getAutoFilter();
-//		if (af != null) {
-//			final CellRangeAddress afrng = af.getRangeAddress();
-//			if (afrng != null) {
-//				int rowIdx = afrng.getFirstRow() + 1;
-//				for (int i = rowIdx; i <= afrng.getLastRow(); i++) {
-//					final Row row = worksheet.getRow(i);
-//					if (row != null && row.getZeroHeight()) {
-//						appliedFilter = true;
-//						break;
-//					}
-//				}	
-//			}
-//		}
-//
-//		_spreadsheet.setActionDisabled(!appliedFilter, Action.CLEAR_FILTER);
-//		_spreadsheet.setActionDisabled(!appliedFilter, Action.REAPPLY_FILTER);
-//		
-//		if (!Objects.equals(_book, _spreadsheet.getBook())) {
-//			if (_book != null) {
-//				_book.unsubscribe(_bookListener);
-//			}
-//			_book = _spreadsheet.getXBook();
-//			_book.subscribe(_bookListener);
-//		}
-//	}
-	
-//	private void init() {
-//		_spreadsheet.addEventListener(Events.ON_SHEET_SELECT, _doSelectSheetListener);
-//		_spreadsheet.addEventListener(Events.ON_CTRL_KEY, _doCtrlKeyListener);
-//		
-//		_spreadsheet.addEventListener(Events.ON_CELL_DOUBLE_CLICK, _doClearClipboard);
-//		_spreadsheet.addEventListener(Events.ON_START_EDITING, _doClearClipboard);
-//		
-////		if (_upload == null) {
-////			_upload = new Upload();
-////			_upload.appendChild(_insertPicture = new Uploader());
-////			_insertPicture.addEventListener(org.zkoss.zk.ui.event.Events.ON_UPLOAD, new EventListener() {
-////				
-////				@Override
-////				public void onEvent(Event event) throws Exception {
-////					doInsertPicture((UploadEvent)event);
-////				}
-////			});
-////		}
-////		_upload.setParent(_spreadsheet);
-//		
-//		initToggleAction();
-//	}
-	
+		
 	/**
 	 * Execute when user press key
 	 * @param event
 	 */
-	protected void doCtrlKey(KeyEvent event) {
-		Rect selection = getSelection();
-		if (46 == event.getKeyCode()) {
-			if (event.isCtrlKey())
-				doClearStyle();
+	protected boolean doKeystroke(int keyCode,boolean ctrlKey, boolean shiftKey, boolean altKey) {
+		if (46 == keyCode) {
+			if (ctrlKey)
+				return doClearStyle();
 			else
-				doClearContent();
-			return;
+				return doClearContent();
 		}
-		if (false == event.isCtrlKey())
-			return;
+		if (!ctrlKey)
+			return false;
 		
-		char keyCode = (char) event.getKeyCode();
 		switch (keyCode) {
 		case 'X':
-			doCut();
-			break;
+			return doCut();
 		case 'C':
-			doCopy();
-			break;
+			return doCopy();
 		case 'V':
-			if (_clipboard != null){
-				//what the god-dam implementation in user customizable side here
-				//TODO
-//				_spreadsheet.smartUpdate("doPasteFromServer", true);
-			}
-			doPaste();
-			break;
+			return doPaste();
 		case 'D':
-			doClearContent();
-			break;
+			return doClearContent();
 		case 'B':
-			doFontBold();
-			break;
+			return doFontBold();
 		case 'I':
-			doFontItalic();
-			break;
+			return doFontItalic();
 		case 'U':
-			doFontUnderline();
-			break;
+			return doFontUnderline();
 		}
+		return false;
 	}
-	
-//	/**
-//	 * Bind the handler's target
-//	 * 
-//	 * @param spreadsheet
-//	 */
-//	public void bind(Spreadsheet spreadsheet) {
-//		if (_spreadsheet != spreadsheet) {
-//			_spreadsheet = spreadsheet;
-//			init();	
-//		}
-//	}
-	
-//	/**
-//	 * Unbind the handler's target
-//	 */
-//	public void unbind() {
-//		if (_spreadsheet != null) {
-////			if (_upload.getParent() == _spreadsheet) {
-////				_spreadsheet.removeChild(_upload);
-////			}
-//			
-//			_spreadsheet.removeEventListener(Events.ON_SHEET_SELECT, _doSelectSheetListener);
-//			_spreadsheet.removeEventListener(Events.ON_CTRL_KEY, _doCtrlKeyListener);
-//		}
-//	}
-	
 	
 	protected Clipboard getClipboard() {
 		return _clipboard;
@@ -709,6 +555,8 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	
 	protected void setClipboard(Clipboard clipboard){
 		_clipboard = clipboard;
+		if(_clipboard!=null)
+			getSpreadsheet().setHighlight(_clipboard.sourceRect);
 	}
 	
 	protected void clearClipboard() {
@@ -717,20 +565,17 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		//TODO: shall also clear client side clipboard if possible
 	}
 	
-	/**
-	 * Execute when user click copy
-	 */
-	protected void doCopy() {
+	protected boolean doCopy() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		setClipboard(new Clipboard(Clipboard.Type.COPY, sheet.getSheetName(), selection));
-		getSpreadsheet().setHighlight(getSelection());
+		return true;
 	}
 	
-	protected void doPaste(PasteType pasteType, PasteOperation pasteOperation, boolean skipBlank, boolean transpose) {
+	protected boolean doPaste(PasteType pasteType, PasteOperation pasteOperation, boolean skipBlank, boolean transpose) {
 		Clipboard cb = getClipboard();
 		if(cb==null)
-			return;
+			return false;
 		
 		Book book = getBook();
 		Sheet destSheet = getSheet();
@@ -738,7 +583,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		if(srcSheet==null){
 			//TODO message;
 			clearClipboard();
-			return;
+			return true;
 		}
 		Rect src = cb.sourceRect;
 		
@@ -752,10 +597,10 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		
 		if (destRange.isProtected()) {
 			showProtectMessage();
-			return;
+			return true;
 		} else if (cb.type == Type.CUT && srcRange.isProtected()) {
 			showProtectMessage();
-			return;
+			return true;
 		}
 		
 		if(cb.type==Type.CUT){
@@ -764,6 +609,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}else{
 			CellOperationUtil.pasteSpecial(srcRange, destRange, pasteType, pasteOperation, skipBlank, transpose);
 		}
+		return true;
 	}
 	
 	protected void showProtectMessage() {
@@ -778,98 +624,66 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		Messagebox.show("This action "+Labels.getLabel(action,action)+" doesn't be implemented yet", "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION);
 	}
 	
-	/**
-	 * Execute when user click paste 
-	 */
-	protected void doPaste() {
-		doPaste(PasteType.PASTE_ALL,PasteOperation.PASTEOP_NONE,false,false);
+	protected boolean doPaste() {
+		return doPaste(PasteType.PASTE_ALL,PasteOperation.PASTEOP_NONE,false,false);
 	}
 	
-	
-	/**
-	 * Execute when user click paste formula
-	 */
-	protected void doPasteFormula() {
-		doPaste(PasteType.PASTE_FORMULAS,PasteOperation.PASTEOP_NONE,false,false);
+	protected boolean doPasteFormula() {
+		return doPaste(PasteType.PASTE_FORMULAS,PasteOperation.PASTEOP_NONE,false,false);
 	}
 	
-	/**
-	 *  Execute when user click paste value
-	 */
-	protected void doPasteValue() {
-		doPaste(PasteType.PASTE_VALUES,PasteOperation.PASTEOP_NONE,false,false);
+	protected boolean doPasteValue() {
+		return doPaste(PasteType.PASTE_VALUES,PasteOperation.PASTEOP_NONE,false,false);
 	}
 	
-	/**
-	 * Execute when user click paste all except border
-	 */
-	protected void doPasteAllExceptBorder() {
-		doPaste(PasteType.PASTE_ALL_EXCEPT_BORDERS,PasteOperation.PASTEOP_NONE,false,false);
+	protected boolean doPasteAllExceptBorder() {
+		return doPaste(PasteType.PASTE_ALL_EXCEPT_BORDERS,PasteOperation.PASTEOP_NONE,false,false);
 	}
 	
-	/**
-	 * Execute when user click paste transpose
-	 */
-	protected void doPasteTranspose() {
-		doPaste(PasteType.PASTE_ALL, PasteOperation.PASTEOP_NONE, false, true);
+	protected boolean doPasteTranspose() {
+		return doPaste(PasteType.PASTE_ALL, PasteOperation.PASTEOP_NONE, false, true);
 	}
 	
-	/**
-	 * Execute when user click cut
-	 */
-	protected void doCut() {
+	protected boolean doCut() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		
 		setClipboard(new Clipboard(Clipboard.Type.CUT, sheet.getSheetName(), selection));
-		getSpreadsheet().setHighlight(getSelection());
+		return true;
 	}
 	
-	/**
-	 * Execute when user select font family
-	 * 
-	 * @param selection
-	 */
-	protected void doFontFamily(String fontFamily) {
+	protected boolean doFontFamily(String fontFamily) {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.applyFontName(range, fontFamily);
+		return true;
 	}
 	
-	/**
-	 * Execute when user select font size
-	 *  
-	 * @param selection
-	 */
-	protected void doFontSize(int fontSize) {
+	protected boolean doFontSize(int fontSize) {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.applyFontSize(range, (short)fontSize);
+		return true;
 	}
 	
-	/**
-	 * Execute when user click font bold
-	 * 
-	 * @param selection
-	 */
-	protected void doFontBold() {
+	protected boolean doFontBold() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 
 		//toggle and apply bold of first cell to dest
@@ -881,61 +695,49 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		
 		CellOperationUtil.applyFontBoldweight(range, bw);
+		return true;
 	}
 	
-	/**
-	 * Execute when user click font italic
-	 * 
-	 * @param selection
-	 */
-	protected void doFontItalic() {
+	protected boolean doFontItalic() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 
 		//toggle and apply bold of first cell to dest
 		boolean italic = !range.getCellStyle().getFont().isItalic();
-		CellOperationUtil.applyFontItalic(range, italic);	
+		CellOperationUtil.applyFontItalic(range, italic);
+		return true;
 	}
 	
-	/**
-	 * Execute when user click font strikethrough
-	 * 
-	 * @param selection
-	 */
-	protected void doFontStrikeout() {
+	protected boolean doFontStrikeout() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 
 		//toggle and apply bold of first cell to dest
 		boolean strikeout = !range.getCellStyle().getFont().isStrikeout();
 		CellOperationUtil.applyFontStrikeout(range, strikeout);
+		return true;
 	}
 	
-	/**
-	 * Execute when user click font underline
-	 * 
-	 * @param selection
-	 */
-	protected void doFontUnderline() {
+	protected boolean doFontUnderline() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 
 		//toggle and apply bold of first cell to dest
@@ -947,593 +749,465 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		
 		CellOperationUtil.applyFontUnderline(range, underline);	
-	}
-	
-	
-	protected void doBorder(ApplyBorderType type,BorderType borderTYpe, String color){
-		Sheet sheet = getSheet();
-		Rect selection = getSelection();
-		
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
-		if(range.isProtected()){
-			showProtectMessage();
-			return;
-		}
-		CellOperationUtil.applyBorder(range,type, borderTYpe, color);
-	}
-	
-	/**
-	 * Execute when user click border
-	 * 
-	 * @param selection
-	 */
-	protected void doBorder(String color) {
-		doBorder(ApplyBorderType.EDGE_BOTTOM,BorderType.MEDIUM,color);
-	}
-	
-	/**
-	 * Execute when user click bottom border
-	 * 
-	 * @param selection
-	 */
-	protected void doBorderBottom(String color) {
-		doBorder(ApplyBorderType.EDGE_BOTTOM,BorderType.MEDIUM,color);
-	}
-	
-	/**
-	 * Execute when user click top border
-	 * 
-	 * @param selection
-	 */
-	protected void doBoderTop(String color) {
-		doBorder(ApplyBorderType.EDGE_TOP,BorderType.MEDIUM,color);
-	}
-	
-	/**
-	 * Execute when user click left border
-	 * 
-	 * @param selection
-	 */
-	protected void doBorderLeft(String color) {
-		doBorder(ApplyBorderType.EDGE_LEFT,BorderType.MEDIUM,color);
-	}
-	
-	/**
-	 * Execute when user click right border
-	 * 
-	 * @param selection
-	 */
-	protected void doBorderRight(String color) {
-		doBorder(ApplyBorderType.EDGE_RIGHT,BorderType.MEDIUM,color);
-	}
-	
-	/**
-	 * Execute when user click no border
-	 * 
-	 * @param selection
-	 */
-	protected void doBorderNo(String color) {
-		doBorder(ApplyBorderType.FULL,BorderType.NONE,color);
-	}
-	
-	/**
-	 * Execute when user click all border
-	 * 
-	 * @param selection
-	 */
-	protected void doBorderAll(String color) {
-		doBorder(ApplyBorderType.FULL,BorderType.MEDIUM,color);
-	}
-	
-	/**
-	 * Execute when user click outside border
-	 * 
-	 * @param selection
-	 */
-	protected void doBorderOutside(String color) {
-		doBorder(ApplyBorderType.OUTLINE,BorderType.MEDIUM,color);
-	}
-	
-	/**
-	 * Execute when user click inside border
-	 * 
-	 * @param selection
-	 */
-	protected void doBorderInside(String color) {
-		doBorder(ApplyBorderType.INSIDE,BorderType.MEDIUM,color);
-	}
-	
-	/**
-	 * Execute when user click inside horizontal border
-	 * 
-	 * @param selection
-	 */
-	protected void doBorderInsideHorizontal(String color) {
-		doBorder(ApplyBorderType.INSIDE_HORIZONTAL,BorderType.MEDIUM,color);
-	}
-	
-	/**
-	 * Execute when user click inside vertical border
-	 * 
-	 * @param selection
-	 */
-	protected void doBorderInsideVertical(String color) {
-		doBorder(ApplyBorderType.INSIDE_VERTICAL,BorderType.MEDIUM,color);
-	}
-	
-	/**
-	 * Execute when user click font color 
-	 * 
-	 * @param color
-	 * @param selection
-	 */
-	protected void doFontColor(String color) {
-		Sheet sheet = getSheet();
-		Rect selection = getSelection();
-		
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
-		if(range.isProtected()){
-			showProtectMessage();
-			return;
-		}
-		CellOperationUtil.applyFontColor(range, color);	
-	}
-	
-	/**
-	 * Execute when user click fill color
-	 * 
-	 * @param color
-	 * @param selection
-	 */
-	protected void doFillColor(String color) {
-		Sheet sheet = getSheet();
-		Rect selection = getSelection();
-		
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
-		if(range.isProtected()){
-			showProtectMessage();
-			return;
-		}
-		CellOperationUtil.applyCellColor(range,color);
-	}
-	
-	/**
-	 * Execute when user click vertical align top
-	 * 
-	 * @param selection
-	 */
-	protected void doVerticalAlignTop() {
-		Sheet sheet = getSheet();
-		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
-		if(range.isProtected()){
-			showProtectMessage();
-			return;
-		}
-		CellOperationUtil.applyCellVerticalAlignment(range, VerticalAlignment.TOP);
-	}
-	
-	/**
-	 * Execute when user click vertical align middle
-	 * 
-	 * @param selection
-	 */
-	protected void doVerticalAlignMiddle() {
-		Sheet sheet = getSheet();
-		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
-		if(range.isProtected()){
-			showProtectMessage();
-			return;
-		}
-		CellOperationUtil.applyCellVerticalAlignment(range, VerticalAlignment.CENTER);
+		return true;
 	}
 
-	/**
-	 * Execute when user click vertical align bottom
-	 * 
-	 * @param selection
-	 */
-	protected void doVerticalAlignBottom() {
+	protected boolean doBorder(ApplyBorderType type,BorderType borderTYpe, String color){
+		Sheet sheet = getSheet();
+		Rect selection = getSelection();
+		
+		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		if(range.isProtected()){
+			showProtectMessage();
+			return true;
+		}
+		CellOperationUtil.applyBorder(range,type, borderTYpe, color);
+		return true;
+	}
+	
+	protected boolean doBorder(String color) {
+		return doBorder(ApplyBorderType.EDGE_BOTTOM,BorderType.MEDIUM,color);
+	}
+	
+	protected boolean doBorderBottom(String color) {
+		return doBorder(ApplyBorderType.EDGE_BOTTOM,BorderType.MEDIUM,color);
+	}
+	
+	protected boolean doBoderTop(String color) {
+		return doBorder(ApplyBorderType.EDGE_TOP,BorderType.MEDIUM,color);
+	}
+	
+	protected boolean doBorderLeft(String color) {
+		return doBorder(ApplyBorderType.EDGE_LEFT,BorderType.MEDIUM,color);
+	}
+	
+	protected boolean doBorderRight(String color) {
+		return doBorder(ApplyBorderType.EDGE_RIGHT,BorderType.MEDIUM,color);
+	}
+	
+	protected boolean doBorderNo(String color) {
+		return doBorder(ApplyBorderType.FULL,BorderType.NONE,color);
+	}
+	
+	protected boolean doBorderAll(String color) {
+		return doBorder(ApplyBorderType.FULL,BorderType.MEDIUM,color);
+	}
+	
+	protected boolean doBorderOutside(String color) {
+		return doBorder(ApplyBorderType.OUTLINE,BorderType.MEDIUM,color);
+	}
+	
+	protected boolean doBorderInside(String color) {
+		return doBorder(ApplyBorderType.INSIDE,BorderType.MEDIUM,color);
+	}
+	
+	protected boolean doBorderInsideHorizontal(String color) {
+		return doBorder(ApplyBorderType.INSIDE_HORIZONTAL,BorderType.MEDIUM,color);
+	}
+	
+	protected boolean doBorderInsideVertical(String color) {
+		return doBorder(ApplyBorderType.INSIDE_VERTICAL,BorderType.MEDIUM,color);
+	}
+	
+	protected boolean doFontColor(String color) {
+		Sheet sheet = getSheet();
+		Rect selection = getSelection();
+		
+		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		if(range.isProtected()){
+			showProtectMessage();
+			return true;
+		}
+		CellOperationUtil.applyFontColor(range, color);
+		return true;
+	}
+	
+	protected boolean doFillColor(String color) {
+		Sheet sheet = getSheet();
+		Rect selection = getSelection();
+		
+		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		if(range.isProtected()){
+			showProtectMessage();
+			return true;
+		}
+		CellOperationUtil.applyCellColor(range,color);
+		return true;
+	}
+	
+	protected boolean doVerticalAlignTop() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
+		}
+		CellOperationUtil.applyCellVerticalAlignment(range, VerticalAlignment.TOP);
+		return true;
+	}
+	
+	protected boolean doVerticalAlignMiddle() {
+		Sheet sheet = getSheet();
+		Rect selection = getSelection();
+		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		if(range.isProtected()){
+			showProtectMessage();
+			return true;
+		}
+		CellOperationUtil.applyCellVerticalAlignment(range, VerticalAlignment.CENTER);
+		return true;
+	}
+
+	protected boolean doVerticalAlignBottom() {
+		Sheet sheet = getSheet();
+		Rect selection = getSelection();
+		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		if(range.isProtected()){
+			showProtectMessage();
+			return true;
 		}
 		CellOperationUtil.applyCellVerticalAlignment(range, VerticalAlignment.BOTTOM);
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doHorizontalAlignLeft() {
+	protected boolean doHorizontalAlignLeft() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.applyCellAlignment(range, Alignment.LEFT);
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doHorizontalAlignCenter() {
+	protected boolean doHorizontalAlignCenter() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.applyCellAlignment(range, Alignment.CENTER);
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doHorizontalAlignRight() {
+	protected boolean doHorizontalAlignRight() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.applyCellAlignment(range, Alignment.RIGHT);
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doWrapText() {
+	protected boolean doWrapText() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		boolean wrapped = !range.getCellStyle().isWrapText();
 		CellOperationUtil.applyCellWrapText(range, wrapped);
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doMergeAndCenter() {
+	protected boolean doMergeAndCenter() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.toggleMergeCenter(range);
 		clearClipboard();
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doMergeAcross() {
+	protected boolean doMergeAcross() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.merge(range, true);
 		clearClipboard();
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doMergeCell() {
+	protected boolean doMergeCell() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.merge(range, false);
 		clearClipboard();
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doUnmergeCell() {
+	protected boolean doUnmergeCell() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.unMerge(range);
 		clearClipboard();
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doShiftCellRight() {
+	protected boolean doShiftCellRight() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.insert(range,InsertShift.RIGHT, InsertCopyOrigin.RIGHT_BELOW);
 		clearClipboard();
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doShiftCellDown() {
+	protected boolean doShiftCellDown() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.insert(range,InsertShift.DOWN, InsertCopyOrigin.LEFT_ABOVE);
 		clearClipboard();
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doInsertSheetRow() {
+	protected boolean doInsertSheetRow() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		
 		if(range.isWholeColumn()){
 			showWarnMessage("don't allow to inser row when select whole column");
-			return;
+			return true;
 		}
 		
 		range = range.getRowRange();
 		CellOperationUtil.insert(range,InsertShift.DOWN, InsertCopyOrigin.LEFT_ABOVE);
 		clearClipboard();
-		
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doInsertSheetColumn() {
+	protected boolean doInsertSheetColumn() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		
 		if(range.isWholeRow()){
 			showWarnMessage("don't allow to inser column when select whole row");
-			return;
+			return true;
 		}
 		
 		range = range.getColumnRange();
 		CellOperationUtil.insert(range,InsertShift.RIGHT, InsertCopyOrigin.RIGHT_BELOW);
 		clearClipboard();
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doShiftCellLeft() {
+	protected boolean doShiftCellLeft() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		
 		CellOperationUtil.delete(range,DeleteShift.LEFT);
 		clearClipboard();
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doShiftCellUp() {
+	protected boolean doShiftCellUp() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		
 		CellOperationUtil.delete(range,DeleteShift.UP);
 		clearClipboard();
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doDeleteSheetRow() {
+	protected boolean doDeleteSheetRow() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		
 		if(range.isWholeColumn()){
 			showWarnMessage("don't allow to delete all rows");
-			return;
+			return true;
 		}
 		
 		range = range.getRowRange();
 		CellOperationUtil.delete(range, DeleteShift.UP);
 		clearClipboard();
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doDeleteSheetColumn() {
+	protected boolean doDeleteSheetColumn() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		
 		if(range.isWholeRow()){
 			showWarnMessage("don't allow to delete all column");
-			return;
+			return true;
 		}
 		
 		range = range.getColumnRange();
 		CellOperationUtil.delete(range, DeleteShift.LEFT);
 		clearClipboard();
+		return true;
 	}
 
-	/**
-	 * Execute when user click clear style
-	 */
-	protected void doClearStyle() {
+	protected boolean doClearStyle() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.clearStyles(range);
+		return true;
 	}
 	
-	/**
-	 * Execute when user click clear content
-	 */
-	protected void doClearContent() {
+	protected boolean doClearContent() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.clearContents(range);
+		return true;
 	}
 	
-	/**
-	 * Execute when user click clear all
-	 */
-	protected void doClearAll() {
+	protected boolean doClearAll() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.clearAll(range);
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doSortAscending() {
+	protected boolean doSortAscending() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.sort(range,false);
 		clearClipboard();
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doSortDescending() {
+	protected boolean doSortDescending() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		CellOperationUtil.sort(range,true);
 		clearClipboard();
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doFilter() {
+	protected boolean doFilter() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		SheetOperationUtil.toggleAutoFilter(range);
 		clearClipboard();
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doClearFilter() {
+	protected boolean doClearFilter() {
 		Sheet sheet = getSheet();
 		
 		Range range = Ranges.range(sheet);
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		SheetOperationUtil.resetAutoFilter(range);
 		clearClipboard();
+		return true;
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doReapplyFilter() {
+	protected boolean doReapplyFilter() {
 		Sheet sheet = getSheet();
 		
 		Range range = Ranges.range(sheet);
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		SheetOperationUtil.applyAutoFilter(range);
 		clearClipboard();
+		return true;
 	}
 	
-	/**
-	 * 
-	 */
-	protected void doProtectSheet() {
+	protected boolean doProtectSheet() {
 		
 		Sheet sheet = getSheet();
 		
@@ -1552,27 +1226,28 @@ public class DefaultUserActionHandler implements UserActionHandler {
 //		for (Action action : _defaultDisabledActionOnSheetProtected) {
 //			getSpreadsheet().setActionDisabled(p, action);
 //		}
+		
+
+		return true;
 	}
 	
-	/**
-	 * 
-	 */
-	protected void doGridlines() {
+	protected boolean doGridlines() {
 		Sheet sheet = getSheet();
 		
 		Range range = Ranges.range(sheet);
 		
 		SheetOperationUtil.displaySheetGridlines(range,!range.isDisplaySheetGridlines());
+		return true;
 	}
 	
 	
-	protected void doChart(Chart.Type type, Chart.Grouping grouping, Chart.LegendPosition pos){
+	protected boolean doChart(Chart.Type type, Chart.Grouping grouping, Chart.LegendPosition pos){
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		if(range.isProtected()){
 			showProtectMessage();
-			return;
+			return true;
 		}
 		
 		SheetAnchor anchor = SheetOperationUtil.toChartAnchor(range);
@@ -1580,75 +1255,52 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		ChartData data = org.zkoss.zss.api.ChartDataUtil.getChartData(sheet,selection, type);
 		SheetOperationUtil.addChart(range,anchor,data,type,grouping,pos);
 		clearClipboard();
+		return true;
 		
 	}
-	
-	/**
-	 * @param selection
-	 */
-	protected void doColumnChart() {
-		doChart(Chart.Type.Column,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
+
+	protected boolean doColumnChart() {
+		return doChart(Chart.Type.Column,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
 	}
 	
-	/**
-	 * @param selection
-	 */
-	protected void doColumnChart3D() {
-		doChart(Chart.Type.Column3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
+	protected boolean doColumnChart3D() {
+		return doChart(Chart.Type.Column3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
 	}
-	/**
-	 * @param selection
-	 */
-	protected void doLineChart() {
-		doChart(Chart.Type.Line,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
+
+	protected boolean doLineChart() {
+		return doChart(Chart.Type.Line,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
 	}
-	/**
-	 * @param selection
-	 */
-	protected void doLineChart3D() {
-		doChart(Chart.Type.Line3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
+
+	protected boolean doLineChart3D() {
+		return doChart(Chart.Type.Line3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
 	}
-	/**
-	 * @param selection
-	 */
-	protected void doPieChart() {
-		doChart(Chart.Type.Pie,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
+
+	protected boolean doPieChart() {
+		return doChart(Chart.Type.Pie,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
 	}
-	/**
-	 * @param selection
-	 */
-	protected void doPieChart3D() {
-		doChart(Chart.Type.Pie3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
+
+	protected boolean doPieChart3D() {
+		return doChart(Chart.Type.Pie3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
 	}
-	/**
-	 * @param selection
-	 */
-	protected void doBarChart() {
-		doChart(Chart.Type.Bar,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
+
+	protected boolean doBarChart() {
+		return doChart(Chart.Type.Bar,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
 	}
-	/**
-	 * @param selection
-	 */
-	protected void doBarChart3D() {
-		doChart(Chart.Type.Bar3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
+
+	protected boolean doBarChart3D() {
+		return doChart(Chart.Type.Bar3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
 	}
-	/**
-	 * @param selection
-	 */
-	protected void doAreaChart() {
-		doChart(Chart.Type.Area,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
+
+	protected boolean doAreaChart() {
+		return doChart(Chart.Type.Area,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
 	}
-	/**
-	 * @param selection
-	 */
-	protected void doScatterChart() {
-		doChart(Chart.Type.Scatter,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
+
+	protected boolean doScatterChart() {
+		return doChart(Chart.Type.Scatter,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
 	}
-	/**
-	 * @param selection
-	 */
-	protected void doDoughnutChart() {
-		doChart(Chart.Type.Doughnut,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
+
+	protected boolean doDoughnutChart() {
+		return doChart(Chart.Type.Doughnut,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
 	}
 	
 	private static <T> T checkNotNull(String message, T t) {
@@ -1702,60 +1354,154 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	
 	// non-implemented action
 	
-	protected void doRowHeight() {
-		showNotImplement(Action.ROW_HEIGHT.toString());
+	protected boolean doRowHeight() {
+		showNotImplement(UserAction.ROW_HEIGHT.toString());
+		return true;
 	}
 
-	protected  void doColumnWidth() {
-		showNotImplement(Action.COLUMN_WIDTH.toString());
+	protected boolean doColumnWidth() {
+		showNotImplement(UserAction.COLUMN_WIDTH.toString());
+		return true;
 	}
 
-	protected  void doFormatCell() {
-		showNotImplement(Action.FORMAT_CELL.toString());
+	protected boolean doFormatCell() {
+		showNotImplement(UserAction.FORMAT_CELL.toString());
+		return true;
 	}
 
-	protected  void doHyperlink() {
-		showNotImplement(Action.HYPERLINK.toString());
+	protected boolean doHyperlink() {
+		showNotImplement(UserAction.HYPERLINK.toString());
+		return true;
 	}
 
-	protected  void doCustomSort() {
-		showNotImplement(Action.CUSTOM_SORT.toString());
+	protected boolean doCustomSort() {
+		showNotImplement(UserAction.CUSTOM_SORT.toString());
+		return true;
 	}
 
-	protected  void doPasteSpecial() {
-		showNotImplement(Action.PASTE_SPECIAL.toString());
+	protected boolean doPasteSpecial() {
+		showNotImplement(UserAction.PASTE_SPECIAL.toString());
+		return true;
 	}
 
-	protected  void doExportPDF() {
-		showNotImplement(Action.EXPORT_PDF.toString());
+	protected boolean doExportPDF() {
+		showNotImplement(UserAction.EXPORT_PDF.toString());
+		return true;
 	}
 
-	protected  void doSaveBook() {
-		showNotImplement(Action.SAVE_BOOK.toString());
+	protected boolean doSaveBook() {
+		showNotImplement(UserAction.SAVE_BOOK.toString());
+		return true;
 	}
 
-	protected void doNewBook() {
-		showNotImplement(Action.NEW_BOOK.toString());
+	protected boolean doNewBook() {
+		showNotImplement(UserAction.NEW_BOOK.toString());
+		return true;
 	}
 
-	protected void doShowFormulaPanel() {
-		showNotImplement(Action.FORMULA_PANEL.toString());
+	protected boolean doShowFormulaPanel() {
+		showNotImplement(UserAction.FORMULA_PANEL.toString());
+		return true;
 	}
 
-	protected void doShowInsertPanel() {
-		showNotImplement(Action.INSERT_PANEL.toString());
+	protected boolean doShowInsertPanel() {
+		showNotImplement(UserAction.INSERT_PANEL.toString());
+		return true;
 	}
 
-	protected  void doShowHomePanel() {
-		showNotImplement(Action.HOME_PANEL.toString());
+	protected boolean doShowHomePanel() {
+		showNotImplement(UserAction.HOME_PANEL.toString());
+		return true;
 	}
 
-	protected void doInsertFunction() {
-		showNotImplement(Action.INSERT_FUNCTION.toString());
+	protected boolean doInsertFunction() {
+		showNotImplement(UserAction.INSERT_FUNCTION.toString());
+		return true;
 	}
 	
 	protected void askUploadFile(EventListener l){
 		//TODO Need ZK's new feature support
 		
 	}
+
+
+	@Override
+	public String[] getInterestedEvents() {
+		return new String[] { Events.ON_SHEET_SELECT, Events.ON_CTRL_KEY,org.zkoss.zk.ui.event.Events.ON_CANCEL,
+				Events.ON_CELL_DOUBLE_CLICK, Events.ON_START_EDITING };
+	}
+	
+	@Override
+	public void onEvent(Event event) throws Exception {
+		Component comp = event.getTarget();
+		if(!(comp instanceof Spreadsheet)) return;
+		
+		Spreadsheet spreadsheet = (Spreadsheet)comp;
+		Rect selection;
+		if(event instanceof KeyEvent){
+			//respect zss key-even't selection 
+			//(could consider to remove this extra spec some day)
+			selection = ((KeyEvent)event).getSelection();
+		}else{
+			selection = spreadsheet.getSelection();
+		}
+		final UserActionContext ctx = new UserActionContext(spreadsheet, spreadsheet.getSelectedSheet(),"",selection,new HashMap());
+		_ctx.set(ctx);
+		try{
+			onEvent0(event);
+		}finally{
+			_ctx.set(null);
+		}
+	}
+
+	private void onEvent0(Event event) throws Exception {
+
+		String nm = event.getName();
+		if(Events.ON_SHEET_SELECT.equals(nm)){
+			
+			updateClipboardHighlightEffect();
+			//TODO
+			//syncAutoFilter();
+			
+			//TODO this should be spreadsheet's job
+			//toggleActionOnSheetSelected() 
+		}else if(Events.ON_CTRL_KEY.equals(nm)){
+			KeyEvent kevt = (KeyEvent)event;
+			boolean r = doKeystroke(kevt.getKeyCode(), kevt.isCtrlKey(), kevt.isShiftKey(), kevt.isAltKey());
+			if(r){
+				//to disable client copy/paste feature if there is any server side copy/paste
+				if(kevt.isCtrlKey() && kevt.getKeyCode()=='V'){
+					getSpreadsheet().smartUpdate("doPasteFromServer", true);
+				}
+			}
+		}else if(Events.ON_CELL_DOUBLE_CLICK.equals(nm)){//TODO check if we need it still
+			clearClipboard();
+		}else if(Events.ON_START_EDITING.equals(nm)){
+			clearClipboard();
+		}else if(org.zkoss.zk.ui.event.Events.ON_CANCEL.equals(nm)){
+			clearClipboard();
+		}
+	}
+	
+	private void updateClipboardHighlightEffect() {
+		//to sync the 
+		Clipboard cb = getClipboard();
+		if (cb != null) {
+			//TODO a way to know the book is different already?
+			
+			final Sheet current = getSheet();
+			final Book book = current.getBook();
+			final Sheet src = book.getSheet(cb.sourceSheetName);
+			if(src==null){
+				clearClipboard();
+			}else{
+				if(current.equals(src)){
+					getSpreadsheet().setHighlight(cb.sourceRect);
+				}else{
+					getSpreadsheet().setHighlight(null);
+				}
+			}
+		}
+	}
+
 }

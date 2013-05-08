@@ -29,7 +29,7 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XRanges;
 import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.ui.Action;
+import org.zkoss.zss.ui.UserAction;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
@@ -54,7 +54,7 @@ public class ActionCommand implements Command {
 		String act = (String) data.get("act");
 		if ("toolbar".equals(tag)) {
 			//toolbar's are always target on selectedSheet
-			spreadsheet.getActionHandler().handleAction(spreadsheet, spreadsheet.getSelectedSheet(), act, getSelectionIfAny(data), data);
+			spreadsheet.getUserActionHandler().handleAction(spreadsheet, spreadsheet.getSelectedSheet(), act, getSelectionIfAny(data), data);
 		} else if ("sheet".equals(tag) && spreadsheet.getXBook() != null) {
 			String sheetId = (String) data.get("sheetId");
 			XSheet xsheet = Utils.getSheetByUuid(spreadsheet.getXBook(), sheetId);
@@ -64,19 +64,19 @@ public class ActionCommand implements Command {
 				
 				//client's act doesn't follow the Action, so I have to remap it.
 				if ("add".equals(act)) {
-					act = Action.ADD_SHEET.toString();
+					act = UserAction.ADD_SHEET.toString();
 				} else if ("delete".equals(act)) {
-					act = Action.DELETE_SHEET.toString();
+					act = UserAction.DELETE_SHEET.toString();
 				} else if ("rename".equals(act)) {
-					act = Action.RENAME_SHEET.toString();
+					act = UserAction.RENAME_SHEET.toString();
 				} else if ("protect".equals(act)) {
-					act = Action.PROTECT_SHEET.toString();
+					act = UserAction.PROTECT_SHEET.toString();
 				} else if ("moveLeft".equals(act)) {
-					act = Action.MOVE_SHEET_LEFT.toString();
+					act = UserAction.MOVE_SHEET_LEFT.toString();
 				} else if ("moveRight".equals(act)) {
-					act = Action.MOVE_SHEET_RIGHT.toString();
+					act = UserAction.MOVE_SHEET_RIGHT.toString();
 				}
-				spreadsheet.getActionHandler().handleAction(spreadsheet, sheet, act, getSelectionIfAny(data), data);
+				spreadsheet.getUserActionHandler().handleAction(spreadsheet, sheet, act, getSelectionIfAny(data), data);
 			}
 		}
 	}

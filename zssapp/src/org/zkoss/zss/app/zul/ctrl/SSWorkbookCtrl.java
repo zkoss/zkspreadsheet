@@ -291,7 +291,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		spreadsheet.setSrcName(null);
 		spreadsheet.setBook(null);
 		
-		spreadsheet.getActionHandler().toggleActionOnBookClosed();
+		spreadsheet.getUserActionHandler().toggleActionOnBookClosed();
 	}
 
 	public void addBookEventListener(EventListener listener) {

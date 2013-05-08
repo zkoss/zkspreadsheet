@@ -304,9 +304,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private static Integer _defMaxRenderedCellSize;
 	
-	private Set<Action> _actionDisabled = getDefaultActiobDisabled();
+	private Set<UserAction> _actionDisabled = getDefaultActiobDisabled();
 	
-	private static Set<Action> _defToolbarActiobDisabled;
+	private static Set<UserAction> _defToolbarActiobDisabled;
 	
 	public Spreadsheet() {
 		this.addEventListener("onStartEditingImpl", new EventListener() {
@@ -324,32 +324,40 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 		});
 		
-		//EVENT for ActionHandler, code are moved from original place to here
-//		EventListener l = new EventListener() {
-//			public void onEvent(Event event) throws Exception {
-//				getActionHandler().aaaa();
-//			}
-//		};
-//		this.addEventListener(Events.ON_SHEET_SELECT, l);
-//		EventListener l = new EventListener() {
-//			public void onEvent(Event event) throws Exception {
-//				getActionHandler().aaaa();
-//			}
-//		};
-//		this.addEventListener(Events.ON_CTRL_KEY, l);
-//		
-//		//clear clipboard
-//		l = new EventListener() {
-//			public void onEvent(Event event) throws Exception {
-//				getActionHandler().aaaa();
-//			}
-//		};
-//		this.addEventListener(Events.ON_CELL_DOUBLE_CLICK, l);
-//		this.addEventListener(Events.ON_START_EDITING, l);
-		
+		reloadUserActionEventRegisteration();
 		//end for action-handler
 	}
 	
+	
+	private String[] _lastUAEvents;
+	private EventListener _uAEventDispatcher;
+	
+	private void reloadUserActionEventRegisteration() {
+		if(_uAEventDispatcher!=null && _lastUAEvents!=null){
+			for(String evt:_lastUAEvents){
+				this.removeEventListener(evt, _uAEventDispatcher);
+			}
+		}
+		UserActionHandler ua = this.getUserActionHandler();
+		_lastUAEvents = ua.getInterestedEvents();
+		if(ua instanceof EventListener && _lastUAEvents!=null && _lastUAEvents.length>0){
+			_uAEventDispatcher = new EventListener() {
+				public void onEvent(Event event) throws Exception {
+					UserActionHandler ua = getUserActionHandler();
+					if(ua instanceof EventListener){
+						((EventListener)ua).onEvent(event);
+					}
+				}
+			};
+			for(String evt:_lastUAEvents){
+				this.addEventListener(evt, _uAEventDispatcher);
+			}
+		}else{
+			_lastUAEvents = null;
+			_uAEventDispatcher = null;
+		}
+	}
+
 	private static boolean isDefaultClientCacheDisabled() {
 		if (_defClientCache == null)
 			_defClientCache = Boolean.valueOf(Library.getProperty("org.zkoss.zss.spreadsheet.clientcache.disabed", "false"));
@@ -362,10 +370,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return _defMaxRenderedCellSize;
 	}
 	
-	private static Set<Action> getDefaultActiobDisabled() {
+	private static Set<UserAction> getDefaultActiobDisabled() {
 		if (_defToolbarActiobDisabled == null) {
-			_defToolbarActiobDisabled = new HashSet<Action>();
-			HashMap<String, Action> toolbarActions = Action.getAll();
+			_defToolbarActiobDisabled = new HashSet<UserAction>();
+			HashMap<String, UserAction> toolbarActions = UserAction.getAll();
 			
 			String[] actions = Library.getProperty(TOOLBAR_DISABLED_ACTION, "").split(",");
 			for (String a : actions) {
@@ -375,7 +383,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				}
 			}
 		}
-		return new HashSet<Action>(_defToolbarActiobDisabled); 
+		return new HashSet<UserAction>(_defToolbarActiobDisabled); 
 	}
 	
 	/**
@@ -1500,7 +1508,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 */
 	private Map<String, String> getLabels() {
 		HashMap<String, String> labels = new HashMap<String, String>();
-		for (String key : Action.getLabelKeys()) {
+		for (String key : UserAction.getLabelKeys()) {
 			String value = Labels.getLabel(key);
 			if (!Strings.isEmpty(value)) {
 				labels.put(key, value);
@@ -4187,9 +4195,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //		return _actionDisabled.contains(action);
 //	}
 	
-	private static List<String> convertActionDisabledToJSON(Set<Action> disabled) {
+	private static List<String> convertActionDisabledToJSON(Set<UserAction> disabled) {
 		ArrayList<String> disd = new ArrayList<String>(disabled.size());
-		for (Action a : disabled) {
+		for (UserAction a : disabled) {
 			disd.add(a.toString());
 		}
 		return disd;
@@ -4200,8 +4208,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * 
 	 * @param actionHandler
 	 */
-	public void setActionHandler(UserActionHandler actionHandler) {
-		_actionHandler = actionHandler;
+	public void setUserActionHandler(UserActionHandler actionHandler) {
+		if(!Objects.equals(_actionHandler,actionHandler)){
+			this._actionHandler = actionHandler;
+			reloadUserActionEventRegisteration();
+		}
 	}
 	
 	/**
@@ -4209,7 +4220,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * 
 	 * @return 
 	 */
-	public UserActionHandler getActionHandler() {
+	public UserActionHandler getUserActionHandler() {
 		if (_actionHandler == null) {
 			String cls = (String) Library.getProperty(ACTION_HANDLER);
 			if (cls != null) {
