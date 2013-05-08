@@ -34,8 +34,8 @@ public class SpreadsheetAgent {
 	public void copy(int rowIndex, int columnIndex){
 		AuData auData = new AuData("onZSSAction");
 		auData.setData("sheetId", "0").setData("tag", "toolbar").setData("act", "copy")
-			.setData("tRow", 0).setData("lCol", 0)
-			.setData("bRow", 0).setData("rCol", 0);
+			.setData("tRow", rowIndex).setData("lCol", columnIndex)
+			.setData("bRow", rowIndex).setData("rCol", columnIndex);
 		zss.as(AuAgent.class).post(auData);
 	}
 }
