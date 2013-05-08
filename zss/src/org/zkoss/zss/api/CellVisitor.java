@@ -1,6 +1,11 @@
 package org.zkoss.zss.api;
 
-
+/**
+ * The visitor to help you to visit cells of a {@link Range}
+ * @author dennis
+ * @see Range#visit(CellVisitor)
+ * @since 3.0.0
+ */
 public interface CellVisitor {
 
 	/**

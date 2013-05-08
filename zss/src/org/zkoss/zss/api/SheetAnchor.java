@@ -1,9 +1,15 @@
 package org.zkoss.zss.api;
 
+import org.zkoss.zss.api.model.Chart;
+import org.zkoss.zss.api.model.Picture;
+
 /**
- * anchor of the object to attache to a sheet
+ * The anchor for the objects ( {@link Picture} , {@link Chart}) to attache to a sheet
  * @author dennis
- *
+ * @see Picture
+ * @see Range#addPicture(SheetAnchor, byte[], org.zkoss.zss.api.model.Picture.Format)
+ * @see Chart
+ * @see Range#addChart(SheetAnchor, org.zkoss.zss.api.model.ChartData, org.zkoss.zss.api.model.Chart.Type, org.zkoss.zss.api.model.Chart.Grouping, org.zkoss.zss.api.model.Chart.LegendPosition)
  */
 public class SheetAnchor {
 
