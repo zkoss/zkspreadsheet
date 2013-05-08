@@ -32,7 +32,6 @@ public class CellDataTest extends SpreadsheetTestCaseBase{
 	
 	@BeforeClass
 	public static void initialize(){
-		//sheet 0
 		desktop = Zats.newClient().connect("/display.zul");
 		
 		zss = desktop.query("spreadsheet");

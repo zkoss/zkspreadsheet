@@ -29,11 +29,11 @@ public class SpreadsheetTestCaseBase {
 		return Utils.getCell(sheet, row, col);
 	}
 
-	protected boolean isColumnHidden(Worksheet sheet, int columnIndex) {
+	protected boolean isHiddenColumn(Worksheet sheet, int columnIndex) {
 		return sheet.getColumnWidth(columnIndex)==0;
 	}
 
-	protected boolean isRowHidden(Worksheet sheet, int rowIndex) {
+	protected boolean isHiddenRow(Worksheet sheet, int rowIndex) {
 		return sheet.getRow(rowIndex).getZeroHeight();
 	}
 

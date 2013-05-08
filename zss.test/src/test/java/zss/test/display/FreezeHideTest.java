@@ -66,7 +66,7 @@ public class FreezeHideTest extends SpreadsheetTestCaseBase{
 	public void testHiddenRow(){
 		Worksheet sheet = spreadsheet.getBook().getWorksheet("row");
 	
-		assertEquals(true,isRowHidden(sheet, 5));
+		assertEquals(true,isHiddenRow(sheet, 5));
 	}
 	
 	
@@ -75,20 +75,20 @@ public class FreezeHideTest extends SpreadsheetTestCaseBase{
 	public void testHiddenColumn(){
 		Worksheet sheet = spreadsheet.getBook().getWorksheet("column");
 	
-		assertFalse(isColumnHidden(sheet, 0));
+		assertFalse(isHiddenColumn(sheet, 0));
 		//check the hidden column
-		assertTrue(isColumnHidden(sheet, 4));
+		assertTrue(isHiddenColumn(sheet, 4));
 	}
 	
 	@Test
 	public void testHiddenRowColumn(){
 		Worksheet sheet = spreadsheet.getBook().getWorksheet("rowcolumn");
 	
-		assertFalse(isRowHidden(sheet, 0));
-		assertTrue(isRowHidden(sheet, 5));
+		assertFalse(isHiddenRow(sheet, 0));
+		assertTrue(isHiddenRow(sheet, 5));
 		
-		assertFalse(isColumnHidden(sheet, 0));
-		assertTrue(isColumnHidden(sheet, 4));
+		assertFalse(isHiddenColumn(sheet, 0));
+		assertTrue(isHiddenColumn(sheet, 4));
 	}
 	
 	private int getFrozenRow(Worksheet sheet) {

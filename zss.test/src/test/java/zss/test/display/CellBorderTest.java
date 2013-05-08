@@ -27,12 +27,10 @@ public class CellBorderTest extends SpreadsheetTestCaseBase{
 
 	private static DesktopAgent desktop; 
 	private static ComponentAgent zss ;
-//	private static Spreadsheet spreadsheet ;
 	private static Worksheet sheet;
 	
 	@BeforeClass
 	public static void initialize(){
-		//sheet 0
 		desktop = Zats.newClient().connect("/display.zul");
 		
 		zss = desktop.query("spreadsheet");
