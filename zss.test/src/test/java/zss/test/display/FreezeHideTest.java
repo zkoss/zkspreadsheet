@@ -91,13 +91,6 @@ public class FreezeHideTest extends SpreadsheetTestCaseBase{
 		assertTrue(isColumnHidden(sheet, 4));
 	}
 	
-	private boolean isColumnHidden(Worksheet sheet, int columnIndex) {
-		return sheet.getColumnWidth(columnIndex)==0;
-	}	
-	
-	private boolean isRowHidden(Worksheet sheet, int rowIndex) {
-		return sheet.getRow(rowIndex).getZeroHeight();
-	}	
 	private int getFrozenRow(Worksheet sheet) {
 		return BookHelper.getRowFreeze(sheet);
 	}

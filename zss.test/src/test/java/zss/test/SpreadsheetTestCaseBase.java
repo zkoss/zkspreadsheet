@@ -29,6 +29,14 @@ public class SpreadsheetTestCaseBase {
 		return Utils.getCell(sheet, row, col);
 	}
 
+	protected boolean isColumnHidden(Worksheet sheet, int columnIndex) {
+		return sheet.getColumnWidth(columnIndex)==0;
+	}
+
+	protected boolean isRowHidden(Worksheet sheet, int rowIndex) {
+		return sheet.getRow(rowIndex).getZeroHeight();
+	}
+
 	/*
 	protected XSSFColor getCellFontColor(Spreadsheet spreadsheet, int row, int column) {
 		//FIXME do not use BookHelper

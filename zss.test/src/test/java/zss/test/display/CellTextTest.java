@@ -115,7 +115,7 @@ public class CellTextTest extends SpreadsheetTestCaseBase{
 	}
 
 	private Font getFont(Worksheet sheet, int row, int column) {
-		return sheet.getBook().getFontAt(getCell(sheet, 3, 0).getCellStyle().getFontIndex());
+		return sheet.getBook().getFontAt(getCell(sheet, row, column).getCellStyle().getFontIndex());
 	}
 
 	@Test
