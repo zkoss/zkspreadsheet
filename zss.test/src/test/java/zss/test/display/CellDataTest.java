@@ -13,6 +13,7 @@ import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
+import zss.test.SpreadsheetAgent;
 import zss.test.SpreadsheetTestCaseBase;
 
 
@@ -35,8 +36,9 @@ public class CellDataTest extends SpreadsheetTestCaseBase{
 		desktop = Zats.newClient().connect("/display.zul");
 		
 		zss = desktop.query("spreadsheet");
+		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
+		ssAgent.selectSheet("cell-data");
 		sheet = zss.as(Spreadsheet.class).getSheet(3);
-		
 	}
 	
 
