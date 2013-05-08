@@ -61,7 +61,11 @@ import org.zkoss.zss.ui.fn.UtilFns;
 		case Cell.CELL_TYPE_ERROR:
 			return CellType.ERROR;
 		case Cell.CELL_TYPE_FORMULA:
-			return CellType.FORMULA;
+			if(getValue() instanceof Byte){
+				return CellType.ERROR;
+			}else{
+				return CellType.FORMULA;
+			}
 		case Cell.CELL_TYPE_NUMERIC:
 			return CellType.NUMERIC;
 		case Cell.CELL_TYPE_STRING:
