@@ -18,9 +18,7 @@ import zss.test.SpreadsheetTestCaseBase;
 
 /**
  * Test case for the function "display Excel files".
- * Testing for the sheet "cell-border".
- * 
- * Because the specification of color is unclear, we don't test color-related feature.
+ * Testing for the sheet "cell-data".
  * 
  * @author Hawk
  *
