@@ -34,7 +34,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.JSONObj;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
@@ -103,7 +103,7 @@ public class CellFetchCommandHelper{
 		_colHelper = _ctrl.getColumnPositionHelper(sheetId);
 		
 		XSheet sheet = _spreadsheet.getSelectedXSheet();
-		if(!Utils.getSheetUuid(sheet).equals(sheetId)) return;
+		if(!XUtils.getSheetUuid(sheet).equals(sheetId)) return;
 		
 		_mergeMatrix = _ctrl.getMergeMatrixHelper(sheet);
 		

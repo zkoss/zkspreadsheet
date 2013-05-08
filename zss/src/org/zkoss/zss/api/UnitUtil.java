@@ -4,7 +4,7 @@ import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 
 public class UnitUtil {
 
@@ -19,11 +19,11 @@ public class UnitUtil {
 	
 	
 	public static int getRowHeightInPx(Sheet sheet,int row){
-		return Utils.getRowHeightInPx(((SheetImpl)sheet).getNative(), row);
+		return XUtils.getRowHeightInPx(((SheetImpl)sheet).getNative(), row);
 	}
 	
 	public static int getColumnWidthInPx(Sheet sheet,int col){
-		return Utils.getColumnWidthInPx(((SheetImpl)sheet).getNative(), col);
+		return XUtils.getColumnWidthInPx(((SheetImpl)sheet).getNative(), col);
 	}
 
 	/**
@@ -31,7 +31,7 @@ public class UnitUtil {
 	 * @return the width in pixel
 	 */
 	public static int char256ToPx(int width256, int charWidthPx) {
-		return Utils.fileChar256ToPx(width256,charWidthPx);
+		return XUtils.fileChar256ToPx(width256,charWidthPx);
 	}
 	
 	/**
@@ -39,7 +39,7 @@ public class UnitUtil {
 	 * @return the height in pixel
 	 */
 	public static int twipToPx(int twip) {
-		return Utils.twipToPx(twip);
+		return XUtils.twipToPx(twip);
 	}
 	
 	public static SheetAnchor toFilledAnchor(Sheet sheet,int row, int column, int widthPx, int heightPx){

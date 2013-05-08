@@ -33,7 +33,7 @@ import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.SelectionChangeEvent;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 /**
  * A Command (client to server) for handling cell selection
@@ -53,7 +53,7 @@ public class SelectionChangeCommand implements Command {
 		String sheetId= (String) data.get("sheetId");
 		
 		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
-		if (!Utils.getSheetUuid(sheet).equals(sheetId))
+		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
 		int action = (Integer) data.get("action");
@@ -77,6 +77,7 @@ public class SelectionChangeCommand implements Command {
 				final int nRow = top - orgitop;
 				final int nCol = left - orgileft;
 				
+				//TODO should migrate to user action handler
 				switch(evt.getSelectionType()) {
 				case CellSelectionEvent.SELECT_ROW:
 					Utils.moveRows(sheet, orgitop, orgibottom, nRow);
@@ -89,6 +90,7 @@ public class SelectionChangeCommand implements Command {
 					break;
 				}
 			} else if (xaction == SelectionChangeEvent.MODIFY) {
+				//TODO should migrate to user action handler
 				switch(evt.getSelectionType()) {
 				case CellSelectionEvent.SELECT_ROW:
 					Utils.fillRows(sheet, orgitop, orgibottom, top, bottom);

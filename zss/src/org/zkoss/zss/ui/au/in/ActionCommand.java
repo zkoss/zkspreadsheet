@@ -32,7 +32,7 @@ import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.UserAction;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * @author sam
@@ -57,7 +57,7 @@ public class ActionCommand implements Command {
 			spreadsheet.getUserActionHandler().handleAction(spreadsheet, spreadsheet.getSelectedSheet(), act, getSelectionIfAny(data), data);
 		} else if ("sheet".equals(tag) && spreadsheet.getXBook() != null) {
 			String sheetId = (String) data.get("sheetId");
-			XSheet xsheet = Utils.getSheetByUuid(spreadsheet.getXBook(), sheetId);
+			XSheet xsheet = XUtils.getSheetByUuid(spreadsheet.getXBook(), sheetId);
 			if (xsheet != null) {
 				//get back sheet by xsheet's name
 				Sheet sheet = spreadsheet.getBook().getSheet(xsheet.getSheetName());

@@ -29,7 +29,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.HeaderEvent;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
 
@@ -60,7 +60,7 @@ public class HeaderCommand implements Command {
 	private void processTopHeader(Spreadsheet spreadsheet, Map data){
 		String sheetId = (String) data.get("sheetId");
 		XSheet sheet = spreadsheet.getSelectedXSheet();
-		if(!Utils.getSheetUuid(sheet).equals(sheetId)) {
+		if(!XUtils.getSheetUuid(sheet).equals(sheetId)) {
 			return;
 		}
 		String event = (String) data.get("event");
@@ -85,7 +85,7 @@ public class HeaderCommand implements Command {
 	private void processLeftHeader(Spreadsheet spreadsheet, Map data){
 		String sheetId = (String) data.get("sheetId");
 		XSheet sheet = spreadsheet.getSelectedXSheet();
-		if(!Utils.getSheetUuid(sheet).equals(sheetId)) {
+		if(!XUtils.getSheetUuid(sheet).equals(sheetId)) {
 			return;
 		}
 		String event = (String) data.get("event");

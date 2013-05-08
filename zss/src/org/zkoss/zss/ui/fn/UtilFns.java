@@ -36,7 +36,7 @@ import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 
 
@@ -44,7 +44,7 @@ import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
  * 
  * This class is for Spreadsheet Taglib use only, don't use it as a utility .
  * @author Dennis.Chen
- *
+ * @deprecated since 3.0.0
  */
 public class UtilFns {
 
@@ -67,52 +67,16 @@ public class UtilFns {
 	 * Gets Cell text by given row and column
 	 */
 	static public String getCelltext(XSheet sheet, int row,int column){
-		/*List list = ss.getBook().getSheets();
-		if(list.size()<=ss.getSelectedIndex()){
-			throw new XelException("No such sheet :"+ss.getSelectedIndex());
-		}*/
-		final Cell cell = Utils.getCell(sheet, row, column);
-		String text = "";
-		if (cell != null) {
-			boolean wrap = cell.getCellStyle().getWrapText();
-			final XFormatText ft = Utils.getFormatText(cell);
-			if (ft != null) {
-				if (ft.isRichTextString()) {
-					final RichTextString rstr = ft.getRichTextString();
-					text = rstr == null ? "" : Utils.formatRichTextString(sheet, rstr, wrap);
-				} else if (ft.isCellFormatResult()) {
-					text = Utils.escapeCellText(ft.getCellFormatResult().text, wrap, true);
-				}
-			}
-			final Hyperlink hlink = Utils.getHyperlink(cell);
-			if (hlink != null) {
-				text = Utils.formatHyperlink(sheet, hlink, text, wrap);
-			}
-		}
-		return text;
+		return XUtils.getCellText(sheet, row, column);
 	}
 	
 	static public String getCellFormatText(XSheet sheet, int row,int column) {
-		final Cell cell = Utils.getCell(sheet, row, column);
-		String text = "";
-		if (cell != null) {
-			final XFormatText ft = Utils.getFormatText(cell);
-			if (ft != null) {
-				if (ft.isRichTextString()) {
-					final RichTextString rstr = ft.getRichTextString();
-					text = rstr == null ? "" : rstr.toString();
-				} else if (ft.isCellFormatResult()) {
-					text = ft.getCellFormatResult().text;
-				}
-			}
-		}
-		return text;
+		return XUtils.getCellFormatText(sheet, row, column);
 	}
 
 	//Gets Cell edit text by given row and column
 	static public String getEdittext(XSheet sheet, int row,int column){
-		final Cell cell = Utils.getCell(sheet, row, column);
-		return cell != null ? Utils.getEditText(cell) : "";
+		return XUtils.getEditText(sheet, row, column);
 	}
 	
 	static public Integer getRowBegin(Spreadsheet ss){

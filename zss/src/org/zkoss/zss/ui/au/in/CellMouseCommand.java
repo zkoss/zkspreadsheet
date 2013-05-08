@@ -50,7 +50,7 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellMouseEvent;
 import org.zkoss.zss.ui.event.FilterMouseEvent;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * A Command (client to server) for handling user(client) start editing a cell
@@ -86,7 +86,7 @@ public class CellMouseCommand implements Command {
 		
 		Spreadsheet spreadsheet = (Spreadsheet) comp;
 		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
-		if (!Utils.getSheetUuid(sheet).equals(sheetId))
+		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
 		if ("lc".equals(type)) {
@@ -175,7 +175,7 @@ public class CellMouseCommand implements Command {
 			if (nofilter && isHiddenRow(i, worksheet)) {
 				continue;
 			}
-			final Cell c = Utils.getCell(worksheet, i, columnIndex);
+			final Cell c = XUtils.getCell(worksheet, i, columnIndex);
 			final boolean blankcell = BookHelper.isBlankCell(c);
 			if (!blankcell) {
 				String displaytxt = BookHelper.getCellText(c);

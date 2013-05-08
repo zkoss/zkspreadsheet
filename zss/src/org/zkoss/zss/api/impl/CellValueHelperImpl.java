@@ -7,6 +7,7 @@ import org.zkoss.zss.api.Range.CellValueHelper;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.fn.UtilFns;
+import org.zkoss.zss.ui.impl.XUtils;
 
 /*package*/ class CellValueHelperImpl implements CellValueHelper{
 
@@ -82,7 +83,7 @@ import org.zkoss.zss.ui.fn.UtilFns;
 	@Override
 	public String getFormatText() {
 		//I don't create my way, use the same way from Spreadsheet implementation as possible
-		return UtilFns.getCellFormatText(range.getNative().getSheet(), getRow(), getColumn());
+		return XUtils.getCellFormatText(range.getNative().getSheet(), getRow(), getColumn());
 	}
 
 	@Override

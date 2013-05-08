@@ -32,7 +32,7 @@ import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 
 
 /**
@@ -58,7 +58,7 @@ public class StopEditingCommand implements Command {
 		String type = (String) data.get("type");
 		
 		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
-		if (!Utils.getSheetUuid(sheet).equals(sheetId))
+		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
 		

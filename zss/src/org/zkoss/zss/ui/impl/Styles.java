@@ -41,7 +41,7 @@ public class Styles {
 	}
 	
 	public static void setFontColor(XSheet sheet, int row, int col, String color){
-		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
+		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
 		final short fontIdx = cell.getCellStyle().getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
@@ -64,7 +64,7 @@ public class Styles {
 	}
 	
 	public static void setFillColor(XSheet sheet, int row, int col, String color){
-		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
+		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
 		final Color orgColor = cell.getCellStyle().getFillForegroundColorColor();
 		final Color newColor = BookHelper.HTMLToColor(book, color);
@@ -77,7 +77,7 @@ public class Styles {
 	}
 	
 	public static void setTextWrap(XSheet sheet,int row,int col,boolean wrap){
-		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
+		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final boolean textWrap = cell.getCellStyle().getWrapText();
 		if (wrap == textWrap) { //no change, skip
 			return;
@@ -88,7 +88,7 @@ public class Styles {
 	}
 	
 	public static void setFontSize(XSheet sheet,int row,int col,int fontHeight){
-		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
+		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
 		final short fontIdx = cell.getCellStyle().getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
@@ -110,7 +110,7 @@ public class Styles {
 	}
 	
 	public static void setFontStrikethrough(XSheet sheet,int row,int col, boolean strikeout){
-		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
+		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
 		final short fontIdx = cell.getCellStyle().getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
@@ -132,7 +132,7 @@ public class Styles {
 	}
 	
 	public static void setFontType(XSheet sheet,int row,int col,String name){
-		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
+		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
 		final short fontIdx = cell.getCellStyle().getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
@@ -169,7 +169,7 @@ public class Styles {
 		setBorder(sheet,row,col, BookHelper.HTMLToColor(sheet.getWorkbook(), color), linestyle, 0x2);
 	}
 	public static void setBorder(XSheet sheet,int row,int col, short color, short lineStyle, int at){
-		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
+		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final CellStyle style = cloneCellStyle(cell);
 		if((at & BookHelper.BORDER_EDGE_LEFT)!=0) {
 			style.setBorderLeft(lineStyle);
@@ -190,7 +190,7 @@ public class Styles {
 	}
 	
 	public static void setBorder(XSheet sheet,int row,int col, Color color, short lineStyle, int at){
-		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
+		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final CellStyle style = cloneCellStyle(cell);
 		if((at & BookHelper.BORDER_EDGE_LEFT)!=0) {
 			BookHelper.setLeftBorderColor(style, color);
@@ -212,7 +212,7 @@ public class Styles {
 	}
 	
 	public static void setFontBoldWeight(XSheet sheet,int row,int col,short boldWeight){
-		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
+		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
 		final short fontIdx = cell.getCellStyle().getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
@@ -234,7 +234,7 @@ public class Styles {
 	}
 	
 	public static void setFontItalic(XSheet sheet, int row, int col, boolean italic) {
-		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
+		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
 		final short fontIdx = cell.getCellStyle().getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
@@ -256,7 +256,7 @@ public class Styles {
 	}
 	
 	public static void setFontUnderline(XSheet sheet,int row,int col, byte underline){
-		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
+		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
 		final short fontIdx = cell.getCellStyle().getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
@@ -278,7 +278,7 @@ public class Styles {
 	}
 	
 	public static void setTextHAlign(XSheet sheet,int row,int col, short align){
-		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
+		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final short orgAlign = cell.getCellStyle().getAlignment();
 		if (align == orgAlign) { //no change, skip
 			return;
@@ -289,7 +289,7 @@ public class Styles {
 	}
 	
 	public static void setTextVAlign(XSheet sheet,int row,int col, short valign){
-		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
+		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final short orgValign = cell.getCellStyle().getVerticalAlignment();
 		if (valign == orgValign) { //no change, skip
 			return;

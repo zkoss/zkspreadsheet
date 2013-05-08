@@ -32,7 +32,7 @@ import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.HeaderEvent;
 import org.zkoss.zss.ui.event.HeaderMouseEvent;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * A Command (client to server) for handling user(client) start editing a cell
@@ -51,7 +51,7 @@ public class HeaderMouseCommand implements Command {
 
 		String sheetId = (String) data.get("sheetId");
 		XSheet sheet = ((Spreadsheet)comp).getSelectedXSheet();
-		if(!Utils.getSheetUuid(sheet).equals(sheetId)) {
+		if(!XUtils.getSheetUuid(sheet).equals(sheetId)) {
 			return;
 		}
 		String type = (String) data.get("type");//x offset against spreadsheet

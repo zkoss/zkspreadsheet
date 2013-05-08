@@ -29,7 +29,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.EditboxEditingEvent;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * A Command (client to server) ...means the client is editing...
@@ -51,7 +51,7 @@ public class EditboxEditingCommand implements Command {
 		String clienttxt = (String) data.get("clienttxt");
 
 		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
-		if (!Utils.getSheetUuid(sheet).equals(sheetId)) {
+		if (!XUtils.getSheetUuid(sheet).equals(sheetId)) {
 			return;
 		}
 		EditboxEditingEvent event = new EditboxEditingEvent(org.zkoss.zss.ui.event.Events.ON_EDITBOX_EDITING, comp, sheet, clienttxt);

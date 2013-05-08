@@ -23,7 +23,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.MouseEvent;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * Event when end user click on the hyperlink of a cell (used with onHyperlink event).
@@ -38,7 +38,7 @@ public class HyperlinkEvent extends CellMouseEvent{
 		final Component comp = request.getComponent();
 		String sheetId = (String) data.get("sheetId");
 		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
-		if (!Utils.getSheetUuid(sheet).equals(sheetId))
+		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return null;
 		
 		final String name = request.getCommand();

@@ -31,7 +31,7 @@ import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
 
@@ -54,7 +54,7 @@ public class CellSelectionCommand implements Command {
 		String sheetId= (String) data.get("sheetId");
 		
 		XSheet sheet = ((Spreadsheet)comp).getSelectedXSheet();
-		if(!Utils.getSheetUuid(sheet).equals(sheetId))
+		if(!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
 		//TODO request shall send back maxcol/maxrow (do it in client side)
