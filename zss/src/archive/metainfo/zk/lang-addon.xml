@@ -31,19 +31,23 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	<zscript language="Java">
 	import org.zkoss.zss.ui.*;
 	import org.zkoss.zss.api.*;
+	import org.zkoss.zss.api.model.*;
 	</zscript>
 	<zscript language="JavaScript">
 	importPackage(Packages.org.zkoss.zss.ui);
-	importPackage(Packages.org.zkoss.zss.model);
+	importPackage(Packages.org.zkoss.zss.api);
+	importPackage(Packages.org.zkoss.zss.api.model);
 	</zscript>
 	<zscript language="Groovy" each-time="true">
 	import org.zkoss.zss.ui.*
 	import org.zkoss.zss.api.*
+	import org.zkoss.zss.api.model.*
 	</zscript>
 	<zscript language="Ruby">
 	module Java
 		include_package 'org.zkoss.zss.ui'
-		include_package 'org.zkoss.zss.model'
+		include_package 'org.zkoss.zss.api'
+		include_package 'org.zkoss.zss.api.model'
 	end
 	</zscript>
 

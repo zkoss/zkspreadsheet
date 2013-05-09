@@ -24,7 +24,7 @@ import java.util.HashMap;
  * @author sam
  *
  */
-public enum UserAction {
+public enum UserActionLabel {
 	
 	SHEET("sheet"),
 	ADD_SHEET("addSheet"),
@@ -147,7 +147,7 @@ public enum UserAction {
 	SEPARATOR("separator");
 	
 	private final String action;
-	private UserAction(String key) {
+	private UserActionLabel(String key) {
 		this.action = key;
 	}
 	
@@ -165,9 +165,9 @@ public enum UserAction {
 	}
 	
 	public static Collection<String> getLabelKeys() {
-		UserAction[] enums = UserAction.class.getEnumConstants();
+		UserActionLabel[] enums = UserActionLabel.class.getEnumConstants();
 		ArrayList<String> keys = new ArrayList<String>(enums.length);
-		for (UserAction a : enums) {
+		for (UserActionLabel a : enums) {
 			keys.add(a.getLabelKey());
 		}
 		return keys;
@@ -178,10 +178,10 @@ public enum UserAction {
 	 * 
 	 * @return
 	 */
-	public static HashMap<String, UserAction> getAll() {
-		UserAction[] enums = UserAction.class.getEnumConstants();
-		HashMap<String, UserAction> actions = new HashMap<String, UserAction>(enums.length);
-		for (UserAction t : enums) {
+	public static HashMap<String, UserActionLabel> getAll() {
+		UserActionLabel[] enums = UserActionLabel.class.getEnumConstants();
+		HashMap<String, UserActionLabel> actions = new HashMap<String, UserActionLabel>(enums.length);
+		for (UserActionLabel t : enums) {
 			actions.put(t.toString(), t);
 		}
 		return actions;

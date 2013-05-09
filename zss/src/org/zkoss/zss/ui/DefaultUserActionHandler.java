@@ -32,11 +32,12 @@ import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.DefaultUserActionHandler.Clipboard.Type;
+import org.zkoss.zss.ui.event.AuxActionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zul.Messagebox;
 
-public class DefaultUserActionHandler implements UserActionHandler,EventListener<Event> {
+public class DefaultUserActionHandler implements UserActionHandler {
 	
 	private static ThreadLocal<UserActionContext> _ctx = new ThreadLocal<UserActionContext>();
 	private Clipboard _clipboard;
@@ -78,208 +79,204 @@ public class DefaultUserActionHandler implements UserActionHandler,EventListener
 		return null;
 	}
 	
-	@Override
-	public boolean handleAction(Spreadsheet spreadsheet, Sheet targetSheet,
-			String action, Rect selection, Map<String, Object> extraData) {
-		final UserActionContext ctx = new UserActionContext(spreadsheet, targetSheet,action,selection,extraData);
-		_ctx.set(ctx);
-		try{
-			return dispatchAction(spreadsheet,targetSheet,action,selection,extraData);
-		}finally{
-			_ctx.set(null);
+	protected boolean dispatchAction(String action) {
+		
+		DefaultUserAction dua = DefaultUserAction.getBy(action);
+		if(dua==null){
+			return doCustom(action);
+		}
+		
+		if (DefaultUserAction.HOME_PANEL.equals(dua)) {
+			return doShowHomePanel();
+		} else if (DefaultUserAction.INSERT_PANEL.equals(dua)) {
+			return doShowInsertPanel();
+		} else if (DefaultUserAction.FORMULA_PANEL.equals(dua)) {
+			return doShowFormulaPanel();
+		} else if (DefaultUserAction.ADD_SHEET.equals(dua)) {
+			return doAddSheet();
+		} else if (DefaultUserAction.DELETE_SHEET.equals(dua)) {
+			return doDeleteSheet();
+		} else if (DefaultUserAction.RENAME_SHEET.equals(dua)) {
+			String name = (String) getExtraData("name");
+			return doRenameSheet(name);
+		} else if (DefaultUserAction.MOVE_SHEET_LEFT.equals(dua)) {
+			return doMoveSheetLeft();
+		} else if (DefaultUserAction.MOVE_SHEET_RIGHT.equals(dua)) {
+			return doMoveSheetRight();
+		} else if (DefaultUserAction.PROTECT_SHEET.equals(dua)) {
+			return doProtectSheet();
+		} else if (DefaultUserAction.GRIDLINES.equals(dua)) {
+			return doGridlines();
+		} else if (DefaultUserAction.NEW_BOOK.equals(dua)) {
+			return doNewBook();
+		} else if (DefaultUserAction.SAVE_BOOK.equals(dua)) {
+			return doSaveBook();
+		} else if (DefaultUserAction.EXPORT_PDF.equals(dua)) {
+			return doExportPDF();
+		} else if (DefaultUserAction.PASTE.equals(dua)) {
+			return doPaste();
+		} else if (DefaultUserAction.PASTE_FORMULA.equals(dua)) {
+			return doPasteFormula();
+		} else if (DefaultUserAction.PASTE_VALUE.equals(dua)) {
+			return doPasteValue();
+		} else if (DefaultUserAction.PASTE_ALL_EXPECT_BORDERS.equals(dua)) {
+			return doPasteAllExceptBorder();
+		} else if (DefaultUserAction.PASTE_TRANSPOSE.equals(dua)) {
+			return doPasteTranspose();
+		} else if (DefaultUserAction.PASTE_SPECIAL.equals(dua)) {
+			return doPasteSpecial();
+		} else if (DefaultUserAction.CUT.equals(dua)) {
+			return doCut();	
+		} else if (DefaultUserAction.COPY.equals(dua)) {
+			return doCopy();
+		} else if (DefaultUserAction.FONT_FAMILY.equals(dua)) {
+			String name = (String) getExtraData("name");
+			return doFontFamily(name);
+		} else if (DefaultUserAction.FONT_SIZE.equals(dua)) {
+			Integer fontSize = Integer.parseInt((String)getExtraData("size"));
+			return doFontSize(fontSize);
+		} else if (DefaultUserAction.FONT_BOLD.equals(dua)) {
+			return doFontBold();
+		} else if (DefaultUserAction.FONT_ITALIC.equals(dua)) { 
+			return doFontItalic();
+		} else if (DefaultUserAction.FONT_UNDERLINE.equals(dua)) {
+			return doFontUnderline();
+		} else if (DefaultUserAction.FONT_STRIKE.equals(dua)) {
+			return doFontStrikeout();
+		} else if (DefaultUserAction.BORDER.equals(dua)) {
+			return doBorder(getBorderColor());
+		} else if (DefaultUserAction.BORDER_BOTTOM.equals(dua)) {
+			return doBorderBottom(getBorderColor());
+		} else if (DefaultUserAction.BORDER_TOP.equals(dua)) {
+			return doBoderTop(getBorderColor());
+		} else if (DefaultUserAction.BORDER_LEFT.equals(dua)) {
+			return doBorderLeft(getBorderColor());
+		} else if (DefaultUserAction.BORDER_RIGHT.equals(dua)) {
+			return doBorderRight(getBorderColor());
+		} else if (DefaultUserAction.BORDER_NO.equals(dua)) {
+			return doBorderNo(getBorderColor());
+		} else if (DefaultUserAction.BORDER_ALL.equals(dua)) {
+			return doBorderAll(getBorderColor());
+		} else if (DefaultUserAction.BORDER_OUTSIDE.equals(dua)) {
+			return doBorderOutside(getBorderColor());
+		} else if (DefaultUserAction.BORDER_INSIDE.equals(dua)) {
+			return doBorderInside(getBorderColor());
+		} else if (DefaultUserAction.BORDER_INSIDE_HORIZONTAL.equals(dua)) {
+			return doBorderInsideHorizontal(getBorderColor());
+		} else if (DefaultUserAction.BORDER_INSIDE_VERTICAL.equals(dua)) {
+			return doBorderInsideVertical(getBorderColor());
+		} else if (DefaultUserAction.FONT_COLOR.equals(dua)) {
+			return doFontColor(getFontColor());
+		} else if (DefaultUserAction.FILL_COLOR.equals(dua)) {
+			return doFillColor(getFillColor());
+		} else if (DefaultUserAction.VERTICAL_ALIGN_TOP.equals(dua)) {
+			return doVerticalAlignTop();
+		} else if (DefaultUserAction.VERTICAL_ALIGN_MIDDLE.equals(dua)) {
+			return doVerticalAlignMiddle();
+		} else if (DefaultUserAction.VERTICAL_ALIGN_BOTTOM.equals(dua)) {
+			return doVerticalAlignBottom();
+		} else if (DefaultUserAction.HORIZONTAL_ALIGN_LEFT.equals(dua)) {
+			return doHorizontalAlignLeft();
+		} else if (DefaultUserAction.HORIZONTAL_ALIGN_CENTER.equals(dua)) {
+			return doHorizontalAlignCenter();
+		} else if (DefaultUserAction.HORIZONTAL_ALIGN_RIGHT.equals(dua)) {
+			return doHorizontalAlignRight();
+		} else if (DefaultUserAction.WRAP_TEXT.equals(dua)) {
+			return doWrapText();
+		} else if (DefaultUserAction.MERGE_AND_CENTER.equals(dua)) {
+			return doMergeAndCenter();
+		} else if (DefaultUserAction.MERGE_ACROSS.equals(dua)) {
+			return doMergeAcross();
+		} else if (DefaultUserAction.MERGE_CELL.equals(dua)) {
+			return doMergeCell();
+		} else if (DefaultUserAction.UNMERGE_CELL.equals(dua)) {
+			return doUnmergeCell();
+		} else if (DefaultUserAction.INSERT_SHIFT_CELL_RIGHT.equals(dua)) {
+			return doShiftCellRight();
+		} else if (DefaultUserAction.INSERT_SHIFT_CELL_DOWN.equals(dua)) {
+			return doShiftCellDown();
+		} else if (DefaultUserAction.INSERT_SHEET_ROW.equals(dua)) {
+			return doInsertSheetRow();
+		} else if (DefaultUserAction.INSERT_SHEET_COLUMN.equals(dua)) {
+			return doInsertSheetColumn();
+		} else if (DefaultUserAction.DELETE_SHIFT_CELL_LEFT.equals(dua)) {
+			return doShiftCellLeft();
+		} else if (DefaultUserAction.DELETE_SHIFT_CELL_UP.equals(dua)) {
+			return doShiftCellUp();
+		} else if (DefaultUserAction.DELETE_SHEET_ROW.equals(dua)) {
+			return doDeleteSheetRow();
+		} else if (DefaultUserAction.DELETE_SHEET_COLUMN.equals(dua)) {
+			return doDeleteSheetColumn();
+		} else if (DefaultUserAction.SORT_ASCENDING.equals(dua)) {
+			return doSortAscending();
+		} else if (DefaultUserAction.SORT_DESCENDING.equals(dua)) {
+			return doSortDescending();
+		} else if (DefaultUserAction.CUSTOM_SORT.equals(dua)) {
+			return doCustomSort();
+		} else if (DefaultUserAction.FILTER.equals(dua)) {
+			return doFilter();
+		} else if (DefaultUserAction.CLEAR_FILTER.equals(dua)) {
+			return doClearFilter();
+		} else if (DefaultUserAction.REAPPLY_FILTER.equals(dua)) {
+			return doReapplyFilter();
+		} else if (DefaultUserAction.CLEAR_CONTENT.equals(dua)) {
+			return doClearContent();
+		} else if (DefaultUserAction.CLEAR_STYLE.equals(dua)) {
+			return doClearStyle();
+		} else if (DefaultUserAction.CLEAR_ALL.equals(dua)) {
+			return doClearAll();
+		} else if (DefaultUserAction.COLUMN_CHART.equals(dua)) {
+			return doColumnChart();
+		} else if (DefaultUserAction.COLUMN_CHART_3D.equals(dua)) {
+			return doColumnChart3D();
+		} else if (DefaultUserAction.LINE_CHART.equals(dua)) {
+			return doLineChart();
+		} else if (DefaultUserAction.LINE_CHART_3D.equals(dua)) {
+			return doLineChart3D();
+		} else if (DefaultUserAction.PIE_CHART.equals(dua)) {
+			return doPieChart();
+		} else if (DefaultUserAction.PIE_CHART_3D.equals(dua)) {
+			return doPieChart3D();
+		} else if (DefaultUserAction.BAR_CHART.equals(dua)) {
+			return doBarChart();
+		} else if (DefaultUserAction.BAR_CHART_3D.equals(dua)) {
+			return doBarChart3D();
+		} else if (DefaultUserAction.AREA_CHART.equals(dua)) {
+			return doAreaChart();
+		} else if (DefaultUserAction.SCATTER_CHART.equals(dua)) {
+			return doScatterChart();
+		} else if (DefaultUserAction.DOUGHNUT_CHART.equals(dua)) {
+			return doDoughnutChart();
+		} else if (DefaultUserAction.HYPERLINK.equals(dua)) {
+			return doHyperlink();
+		} else if (DefaultUserAction.INSERT_PICTURE.equals(dua)) {
+			return doInsertPicture();
+		} else if (DefaultUserAction.CLOSE_BOOK.equals(dua)) {
+			return doCloseBook();
+		} else if (DefaultUserAction.FORMAT_CELL.equals(dua)) {
+			return doFormatCell();
+		} else if (DefaultUserAction.COLUMN_WIDTH.equals(dua)) {
+			return doColumnWidth();
+		} else if (DefaultUserAction.ROW_HEIGHT.equals(dua)) {
+			return doRowHeight();
+		} else if (DefaultUserAction.HIDE_COLUMN.equals(dua)) {
+			return doHideColumn();
+		} else if (DefaultUserAction.UNHIDE_COLUMN.equals(dua)) {
+			return doUnhideColumn();
+		} else if (DefaultUserAction.HIDE_ROW.equals(dua)) {
+			return doHideRow();
+		} else if (DefaultUserAction.UNHIDE_ROW.equals(dua)) {
+			return doUnhideRow();
+		} else if (DefaultUserAction.INSERT_FUNCTION.equals(dua)) {
+			return doInsertFunction();
+		}else{
+			return doCustom(action);
 		}
 	}
 	
-	
-	protected boolean dispatchAction(Spreadsheet spreadsheet, Sheet targetSheet,
-			String action, Rect selection, Map<String, Object> extraData) {
-		
-		if (UserAction.HOME_PANEL.toString().equals(action)) {
-			return doShowHomePanel();
-		} else if (UserAction.INSERT_PANEL.equals(action)) {
-			return doShowInsertPanel();
-		} else if (UserAction.FORMULA_PANEL.equals(action)) {
-			return doShowFormulaPanel();
-		} else if (UserAction.ADD_SHEET.toString().equals(action)) {
-			return doAddSheet();
-		} else if (UserAction.DELETE_SHEET.equals(action)) {
-			return doDeleteSheet();
-		} else if (UserAction.RENAME_SHEET.equals(action)) {
-			String name = (String) extraData.get("name");
-			return doRenameSheet(name);
-		} else if (UserAction.MOVE_SHEET_LEFT.equals(action)) {
-			return doMoveSheetLeft();
-		} else if (UserAction.MOVE_SHEET_RIGHT.equals(action)) {
-			return doMoveSheetRight();
-		} else if (UserAction.PROTECT_SHEET.equals(action)) {
-			return doProtectSheet();
-		} else if (UserAction.GRIDLINES.equals(action)) {
-			return doGridlines();
-		} else if (UserAction.NEW_BOOK.equals(action)) {
-			return doNewBook();
-		} else if (UserAction.SAVE_BOOK.equals(action)) {
-			return doSaveBook();
-		} else if (UserAction.EXPORT_PDF.equals(action)) {
-			return doExportPDF();
-		} else if (UserAction.PASTE.equals(action)) {
-			return doPaste();
-		} else if (UserAction.PASTE_FORMULA.equals(action)) {
-			return doPasteFormula();
-		} else if (UserAction.PASTE_VALUE.equals(action)) {
-			return doPasteValue();
-		} else if (UserAction.PASTE_ALL_EXPECT_BORDERS.equals(action)) {
-			return doPasteAllExceptBorder();
-		} else if (UserAction.PASTE_TRANSPOSE.equals(action)) {
-			return doPasteTranspose();
-		} else if (UserAction.PASTE_SPECIAL.equals(action)) {
-			return doPasteSpecial();
-		} else if (UserAction.CUT.equals(action)) {
-			return doCut();	
-		} else if (UserAction.COPY.equals(action)) {
-			return doCopy();
-		} else if (UserAction.FONT_FAMILY.equals(action)) {
-			return doFontFamily((String)extraData.get("name"));
-		} else if (UserAction.FONT_SIZE.equals(action)) {
-			Integer fontSize = Integer.parseInt((String)extraData.get("size"));
-			return doFontSize(fontSize);
-		} else if (UserAction.FONT_BOLD.equals(action)) {
-			return doFontBold();
-		} else if (UserAction.FONT_ITALIC.equals(action)) {
-			return doFontItalic();
-		} else if (UserAction.FONT_UNDERLINE.equals(action)) {
-			return doFontUnderline();
-		} else if (UserAction.FONT_STRIKE.equals(action)) {
-			return doFontStrikeout();
-		} else if (UserAction.BORDER.equals(action)) {
-			return doBorder(getBorderColor(extraData));
-		} else if (UserAction.BORDER_BOTTOM.equals(action)) {
-			return doBorderBottom(getBorderColor(extraData));
-		} else if (UserAction.BORDER_TOP.equals(action)) {
-			return doBoderTop(getBorderColor(extraData));
-		} else if (UserAction.BORDER_LEFT.equals(action)) {
-			return doBorderLeft(getBorderColor(extraData));
-		} else if (UserAction.BORDER_RIGHT.equals(action)) {
-			return doBorderRight(getBorderColor(extraData));
-		} else if (UserAction.BORDER_NO.equals(action)) {
-			return doBorderNo(getBorderColor(extraData));
-		} else if (UserAction.BORDER_ALL.equals(action)) {
-			return doBorderAll(getBorderColor(extraData));
-		} else if (UserAction.BORDER_OUTSIDE.equals(action)) {
-			return doBorderOutside(getBorderColor(extraData));
-		} else if (UserAction.BORDER_INSIDE.equals(action)) {
-			return doBorderInside(getBorderColor(extraData));
-		} else if (UserAction.BORDER_INSIDE_HORIZONTAL.equals(action)) {
-			return doBorderInsideHorizontal(getBorderColor(extraData));
-		} else if (UserAction.BORDER_INSIDE_VERTICAL.equals(action)) {
-			return doBorderInsideVertical(getBorderColor(extraData));
-		} else if (UserAction.FONT_COLOR.equals(action)) {
-			return doFontColor(getFontColor(extraData));
-		} else if (UserAction.FILL_COLOR.equals(action)) {
-			return doFillColor(getFillColor(extraData));
-		} else if (UserAction.VERTICAL_ALIGN_TOP.equals(action)) {
-			return doVerticalAlignTop();
-		} else if (UserAction.VERTICAL_ALIGN_MIDDLE.equals(action)) {
-			return doVerticalAlignMiddle();
-		} else if (UserAction.VERTICAL_ALIGN_BOTTOM.equals(action)) {
-			return doVerticalAlignBottom();
-		} else if (UserAction.HORIZONTAL_ALIGN_LEFT.equals(action)) {
-			return doHorizontalAlignLeft();
-		} else if (UserAction.HORIZONTAL_ALIGN_CENTER.equals(action)) {
-			return doHorizontalAlignCenter();
-		} else if (UserAction.HORIZONTAL_ALIGN_RIGHT.equals(action)) {
-			return doHorizontalAlignRight();
-		} else if (UserAction.WRAP_TEXT.equals(action)) {
-			return doWrapText();
-		} else if (UserAction.MERGE_AND_CENTER.equals(action)) {
-			return doMergeAndCenter();
-		} else if (UserAction.MERGE_ACROSS.equals(action)) {
-			return doMergeAcross();
-		} else if (UserAction.MERGE_CELL.equals(action)) {
-			return doMergeCell();
-		} else if (UserAction.UNMERGE_CELL.equals(action)) {
-			return doUnmergeCell();
-		} else if (UserAction.INSERT_SHIFT_CELL_RIGHT.equals(action)) {
-			return doShiftCellRight();
-		} else if (UserAction.INSERT_SHIFT_CELL_DOWN.equals(action)) {
-			return doShiftCellDown();
-		} else if (UserAction.INSERT_SHEET_ROW.equals(action)) {
-			return doInsertSheetRow();
-		} else if (UserAction.INSERT_SHEET_COLUMN.equals(action)) {
-			return doInsertSheetColumn();
-		} else if (UserAction.DELETE_SHIFT_CELL_LEFT.equals(action)) {
-			return doShiftCellLeft();
-		} else if (UserAction.DELETE_SHIFT_CELL_UP.equals(action)) {
-			return doShiftCellUp();
-		} else if (UserAction.DELETE_SHEET_ROW.equals(action)) {
-			return doDeleteSheetRow();
-		} else if (UserAction.DELETE_SHEET_COLUMN.equals(action)) {
-			return doDeleteSheetColumn();
-		} else if (UserAction.SORT_ASCENDING.equals(action)) {
-			return doSortAscending();
-		} else if (UserAction.SORT_DESCENDING.equals(action)) {
-			return doSortDescending();
-		} else if (UserAction.CUSTOM_SORT.equals(action)) {
-			return doCustomSort();
-		} else if (UserAction.FILTER.equals(action)) {
-			return doFilter();
-		} else if (UserAction.CLEAR_FILTER.equals(action)) {
-			return doClearFilter();
-		} else if (UserAction.REAPPLY_FILTER.equals(action)) {
-			return doReapplyFilter();
-		} else if (UserAction.CLEAR_CONTENT.equals(action)) {
-			return doClearContent();
-		} else if (UserAction.CLEAR_STYLE.equals(action)) {
-			return doClearStyle();
-		} else if (UserAction.CLEAR_ALL.equals(action)) {
-			return doClearAll();
-		} else if (UserAction.COLUMN_CHART.equals(action)) {
-			return doColumnChart();
-		} else if (UserAction.COLUMN_CHART_3D.equals(action)) {
-			return doColumnChart3D();
-		} else if (UserAction.LINE_CHART.equals(action)) {
-			return doLineChart();
-		} else if (UserAction.LINE_CHART_3D.equals(action)) {
-			return doLineChart3D();
-		} else if (UserAction.PIE_CHART.equals(action)) {
-			return doPieChart();
-		} else if (UserAction.PIE_CHART_3D.equals(action)) {
-			return doPieChart3D();
-		} else if (UserAction.BAR_CHART.equals(action)) {
-			return doBarChart();
-		} else if (UserAction.BAR_CHART_3D.equals(action)) {
-			return doBarChart3D();
-		} else if (UserAction.AREA_CHART.equals(action)) {
-			return doAreaChart();
-		} else if (UserAction.SCATTER_CHART.equals(action)) {
-			return doScatterChart();
-		} else if (UserAction.DOUGHNUT_CHART.equals(action)) {
-			return doDoughnutChart();
-		} else if (UserAction.HYPERLINK.equals(action)) {
-			return doHyperlink();
-		} else if (UserAction.INSERT_PICTURE.equals(action)) {
-			return doInsertPicture();
-		} else if (UserAction.CLOSE_BOOK.equals(action)) {
-			return doCloseBook();
-		} else if (UserAction.FORMAT_CELL.equals(action)) {
-			return doFormatCell();
-		} else if (UserAction.COLUMN_WIDTH.equals(action)) {
-			return doColumnWidth();
-		} else if (UserAction.ROW_HEIGHT.equals(action)) {
-			return doRowHeight();
-		} else if (UserAction.HIDE_COLUMN.equals(action)) {
-			return doHideColumn();
-		} else if (UserAction.UNHIDE_COLUMN.equals(action)) {
-			return doUnhideColumn();
-		} else if (UserAction.HIDE_ROW.equals(action)) {
-			return doHideRow();
-		} else if (UserAction.UNHIDE_ROW.equals(action)) {
-			return doUnhideRow();
-		} else if (UserAction.INSERT_FUNCTION.equals(action)) {
-			return doInsertFunction();
-		}else{
-			showNotImplement(action);
-			return false;
-		}
+	protected boolean doCustom(String action){
+		showNotImplement(action);
+		return false;
 	}
 
 	protected boolean doMoveSheetRight() {
@@ -347,7 +344,7 @@ public class DefaultUserActionHandler implements UserActionHandler,EventListener
 	}
 
 	protected boolean doAddSheet() {
-		String prefix = Labels.getLabel(UserAction.SHEET.getLabelKey());
+		String prefix = Labels.getLabel("zss.newSheetPrefix");//TODO define somewhere
 		if (Strings.isEmpty(prefix))
 			prefix = "Sheet";
 		Sheet sheet = getSheet();
@@ -384,24 +381,24 @@ public class DefaultUserActionHandler implements UserActionHandler,EventListener
 		return "#FFFFFF";
 	}
 	
-	private String getBorderColor(Map extraData){
-		String color = (String)extraData.get("color");
+	private String getBorderColor(){
+		String color = (String)getExtraData("color");
 		if (Strings.isEmpty(color)) {//CE version won't provide color
 			color = getDefaultBorderColor();
 		}
 		return color;
 	}
 	
-	private String getFontColor(Map extraData){
-		String color = (String)extraData.get("color");
+	private String getFontColor(){
+		String color = (String)getExtraData("color");
 		if (Strings.isEmpty(color)) {//CE version won't provide color
 			color = getDefaultFontColor();
 		}
 		return color;
 	}
 	
-	private String getFillColor(Map extraData){
-		String color = (String)extraData.get("color");
+	private String getFillColor(){
+		String color = (String)getExtraData("color");
 		if (Strings.isEmpty(color)) {//CE version won't provide color
 			color = getDefaultFillColor();
 		}
@@ -1355,67 +1352,67 @@ public class DefaultUserActionHandler implements UserActionHandler,EventListener
 	// non-implemented action
 	
 	protected boolean doRowHeight() {
-		showNotImplement(UserAction.ROW_HEIGHT.toString());
+		showNotImplement(DefaultUserAction.ROW_HEIGHT.toString());
 		return true;
 	}
 
 	protected boolean doColumnWidth() {
-		showNotImplement(UserAction.COLUMN_WIDTH.toString());
+		showNotImplement(DefaultUserAction.COLUMN_WIDTH.toString());
 		return true;
 	}
 
 	protected boolean doFormatCell() {
-		showNotImplement(UserAction.FORMAT_CELL.toString());
+		showNotImplement(DefaultUserAction.FORMAT_CELL.toString());
 		return true;
 	}
 
 	protected boolean doHyperlink() {
-		showNotImplement(UserAction.HYPERLINK.toString());
+		showNotImplement(DefaultUserAction.HYPERLINK.toString());
 		return true;
 	}
 
 	protected boolean doCustomSort() {
-		showNotImplement(UserAction.CUSTOM_SORT.toString());
+		showNotImplement(DefaultUserAction.CUSTOM_SORT.toString());
 		return true;
 	}
 
 	protected boolean doPasteSpecial() {
-		showNotImplement(UserAction.PASTE_SPECIAL.toString());
+		showNotImplement(DefaultUserAction.PASTE_SPECIAL.toString());
 		return true;
 	}
 
 	protected boolean doExportPDF() {
-		showNotImplement(UserAction.EXPORT_PDF.toString());
+		showNotImplement(DefaultUserAction.EXPORT_PDF.toString());
 		return true;
 	}
 
 	protected boolean doSaveBook() {
-		showNotImplement(UserAction.SAVE_BOOK.toString());
+		showNotImplement(DefaultUserAction.SAVE_BOOK.toString());
 		return true;
 	}
 
 	protected boolean doNewBook() {
-		showNotImplement(UserAction.NEW_BOOK.toString());
+		showNotImplement(DefaultUserAction.NEW_BOOK.toString());
 		return true;
 	}
 
 	protected boolean doShowFormulaPanel() {
-		showNotImplement(UserAction.FORMULA_PANEL.toString());
+		showNotImplement(DefaultUserAction.FORMULA_PANEL.toString());
 		return true;
 	}
 
 	protected boolean doShowInsertPanel() {
-		showNotImplement(UserAction.INSERT_PANEL.toString());
+		showNotImplement(DefaultUserAction.INSERT_PANEL.toString());
 		return true;
 	}
 
 	protected boolean doShowHomePanel() {
-		showNotImplement(UserAction.HOME_PANEL.toString());
+		showNotImplement(DefaultUserAction.HOME_PANEL.toString());
 		return true;
 	}
 
 	protected boolean doInsertFunction() {
-		showNotImplement(UserAction.INSERT_FUNCTION.toString());
+		showNotImplement(DefaultUserAction.INSERT_FUNCTION.toString());
 		return true;
 	}
 	
@@ -1427,7 +1424,7 @@ public class DefaultUserActionHandler implements UserActionHandler,EventListener
 
 	@Override
 	public String[] getInterestedEvents() {
-		return new String[] { Events.ON_SHEET_SELECT, Events.ON_CTRL_KEY,org.zkoss.zk.ui.event.Events.ON_CANCEL,
+		return new String[] { Events.ON_AUX_ACTION,Events.ON_SHEET_SELECT, Events.ON_CTRL_KEY,org.zkoss.zk.ui.event.Events.ON_CANCEL,
 				Events.ON_CELL_DOUBLE_CLICK, Events.ON_START_EDITING };
 	}
 	
@@ -1437,24 +1434,39 @@ public class DefaultUserActionHandler implements UserActionHandler,EventListener
 		if(!(comp instanceof Spreadsheet)) return;
 		
 		Spreadsheet spreadsheet = (Spreadsheet)comp;
+		Sheet sheet = spreadsheet.getSelectedSheet();
+		String action = "";
 		Rect selection;
+		Map extraData = null;
 		if(event instanceof KeyEvent){
 			//respect zss key-even't selection 
 			//(could consider to remove this extra spec some day)
 			selection = ((KeyEvent)event).getSelection();
+//			action = "keyStroke";
+		}else if(event instanceof AuxActionEvent){
+			AuxActionEvent evt = ((AuxActionEvent)event);
+			selection = evt.getSelection();
+			//use the sheet form aux, it could be not the selected sheet
+			sheet = evt.getSheet();
+			action = evt.getAction();
+			extraData = evt.getExtraData();
 		}else{
 			selection = spreadsheet.getSelection();
 		}
-		final UserActionContext ctx = new UserActionContext(spreadsheet, spreadsheet.getSelectedSheet(),"",selection,new HashMap());
+		final UserActionContext ctx = new UserActionContext(spreadsheet, sheet,action,selection,extraData);
 		_ctx.set(ctx);
 		try{
-			onEvent0(event);
+			if(event instanceof AuxActionEvent){
+				dispatchAction(action);
+			}else{
+				onEventAnother(event);
+			}
 		}finally{
 			_ctx.set(null);
 		}
 	}
 
-	private void onEvent0(Event event) throws Exception {
+	private void onEventAnother(Event event) throws Exception {
 
 		String nm = event.getName();
 		if(Events.ON_SHEET_SELECT.equals(nm)){

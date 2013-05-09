@@ -188,7 +188,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private static final String WIDGET_HANDLER = "org.zkoss.zss.ui.sys.WidgetHandler.class";
 	private static final String WIDGET_LOADERS = "org.zkoss.zss.ui.sys.WidgetLoader.class";
 	
-	public static final String TOOLBAR_DISABLED_ACTION = "org.zkoss.zss.ui.ToolbarAction.disabled";
+//	public static final String TOOLBAR_DISABLED_ACTION = "org.zkoss.zss.ui.ToolbarAction.disabled";
 	public static final String ACTION_HANDLER = "org.zkoss.zss.ui.ActionHandler.class";
 	
 	private static final int DEFAULT_TOP_HEAD_HEIGHT = 20;
@@ -301,9 +301,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private static Integer _defMaxRenderedCellSize;
 	
-	private Set<UserAction> _actionDisabled = getDefaultActiobDisabled();
-	
-	private static Set<UserAction> _defToolbarActiobDisabled;
+//	private Set<UserAction> _actionDisabled = getDefaultActiobDisabled();
+//	
+//	private static Set<UserAction> _defToolbarActiobDisabled;
 	
 	public Spreadsheet() {
 		this.addEventListener("onStartEditingImpl", new EventListener() {
@@ -367,21 +367,21 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return _defMaxRenderedCellSize;
 	}
 	
-	private static Set<UserAction> getDefaultActiobDisabled() {
-		if (_defToolbarActiobDisabled == null) {
-			_defToolbarActiobDisabled = new HashSet<UserAction>();
-			HashMap<String, UserAction> toolbarActions = UserAction.getAll();
-			
-			String[] actions = Library.getProperty(TOOLBAR_DISABLED_ACTION, "").split(",");
-			for (String a : actions) {
-				String action = a.trim();
-				if (toolbarActions.containsKey(action)) {
-					_defToolbarActiobDisabled.add(toolbarActions.get(action));
-				}
-			}
-		}
-		return new HashSet<UserAction>(_defToolbarActiobDisabled); 
-	}
+//	private static Set<UserAction> getDefaultActiobDisabled() {
+//		if (_defToolbarActiobDisabled == null) {
+//			_defToolbarActiobDisabled = new HashSet<UserAction>();
+//			HashMap<String, UserAction> toolbarActions = UserAction.getAll();
+//			
+//			String[] actions = Library.getProperty(TOOLBAR_DISABLED_ACTION, "").split(",");
+//			for (String a : actions) {
+//				String action = a.trim();
+//				if (toolbarActions.containsKey(action)) {
+//					_defToolbarActiobDisabled.add(toolbarActions.get(action));
+//				}
+//			}
+//		}
+//		return new HashSet<UserAction>(_defToolbarActiobDisabled); 
+//	}
 	
 	/**
 	 * Sets the max rendered cell size. When rendered cell size greater then this limit, 
@@ -1499,24 +1499,24 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return Boolean.valueOf(linkToNewTab);
 	}
 	
-	/**
-	 * Returns I18N labels of spreadsheet
-	 * @return null if no I18N labels
-	 */
-	private Map<String, String> getLabels() {
-		HashMap<String, String> labels = new HashMap<String, String>();
-		for (String key : UserAction.getLabelKeys()) {
-			String value = Labels.getLabel(key);
-			if (!Strings.isEmpty(value)) {
-				labels.put(key, value);
-			}
-		}
-		
-		if (labels.size() == 0) {
-			return null;
-		}
-		return labels;
-	}
+//	/**
+//	 * Returns I18N labels of spreadsheet
+//	 * @return null if no I18N labels
+//	 */
+//	private Map<String, String> getLabels() {
+//		HashMap<String, String> labels = new HashMap<String, String>();
+//		for (String key : UserAction.getLabelKeys()) {
+//			String value = Labels.getLabel(key);
+//			if (!Strings.isEmpty(value)) {
+//				labels.put(key, value);
+//			}
+//		}
+//		
+//		if (labels.size() == 0) {
+//			return null;
+//		}
+//		return labels;
+//	}
 	
 	/**
 	 * Returns each sheet's name and sheet uuid
@@ -1545,15 +1545,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		super.renderProperties(renderer);
 		
 		//I18N labels, must set first
-		Map<String, String> labels = getLabels();
-		if (labels != null) {
-			renderer.render("labels", labels);
-		}
+		//TODO review this part 
+//		Map<String, String> labels = getLabels();
+//		if (labels != null) {
+//			renderer.render("labels", labels);
+//		}
 		
 		if (_showToolbar) {
 			//20130507,Dennis,add commnet check, no actionDisabled json will cause client error when show context menu.
 //			if (_actionDisabled.size() > 0) {
-				renderer.render("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
+				renderer.render("actionDisabled", new ArrayList()/*convertActionDisabledToJSON(_actionDisabled)*/);
 //			}
 			renderer.render("showToolbar", _showToolbar);
 		}
@@ -4192,13 +4193,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //		return _actionDisabled.contains(action);
 //	}
 	
-	private static List<String> convertActionDisabledToJSON(Set<UserAction> disabled) {
-		ArrayList<String> disd = new ArrayList<String>(disabled.size());
-		for (UserAction a : disabled) {
-			disd.add(a.toString());
-		}
-		return disd;
-	}
+//	private static List<String> convertActionDisabledToJSON(Set<UserAction> disabled) {
+//		ArrayList<String> disd = new ArrayList<String>(disabled.size());
+//		for (UserAction a : disabled) {
+//			disd.add(a.toString());
+//		}
+//		return disd;
+//	}
 	
 	/**
 	 * Sets action handler
@@ -4668,7 +4669,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_CTRL_KEY, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_BLUR,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_ACTION, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_AUX_ACTION, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_FETCH, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_FOCUSED, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_MOUSE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);

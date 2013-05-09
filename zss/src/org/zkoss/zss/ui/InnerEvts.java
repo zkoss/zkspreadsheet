@@ -19,7 +19,7 @@ package org.zkoss.zss.ui;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.zkoss.zss.ui.au.in.ActionCommand;
+import org.zkoss.zss.ui.au.in.AuxActionCommand;
 import org.zkoss.zss.ui.au.in.BlockSyncCommand;
 import org.zkoss.zss.ui.au.in.CellFetchCommand;
 import org.zkoss.zss.ui.au.in.CellFocusedCommand;
@@ -46,7 +46,8 @@ import org.zkoss.zss.ui.au.in.WidgetCtrlKeyCommand;
 /*package*/ final class InnerEvts {
 	private InnerEvts() {}
 	
-	static final String ON_ZSS_ACTION = "onZSSAction";
+	//AUXILIARY action
+	static final String ON_ZSS_AUX_ACTION = "onZSSAuxAction";/* was onZSSAction*/
 	static final String ON_ZSS_CELL_FETCH = "onZSSCellFetch";
 	static final String ON_ZSS_CELL_FOCUSED = "onZSSCellFocused";
 	static final String ON_ZSS_CELL_MOUSE = "onZSSCellMouse";
@@ -68,7 +69,7 @@ import org.zkoss.zss.ui.au.in.WidgetCtrlKeyCommand;
 	static final Map<String, Command> CMDS;
 	static{
 		CMDS = new HashMap<String, Command>();
-		CMDS.put(ON_ZSS_ACTION, new ActionCommand());
+		CMDS.put(ON_ZSS_AUX_ACTION, new AuxActionCommand());
 		CMDS.put(ON_ZSS_CELL_FETCH, new CellFetchCommand());
 		CMDS.put(ON_ZSS_CELL_FOCUSED, new CellFocusedCommand());
 		CMDS.put(ON_ZSS_CELL_MOUSE, new CellMouseCommand());

@@ -17,7 +17,6 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.impl;
 
 import org.zkoss.zk.ui.AbstractComponent;
-import org.zkoss.zss.ui.sys.XActionHandler;
 
 /**
  * Internal Use Only. for {@link XActionHandler}.

@@ -71,65 +71,45 @@ public class SelectionChangeCommand implements Command {
 				action, left, top, right, bottom, orgileft, orgitop, orgiright,
 				orgibottom);
 		
-		if (!isProtect(top, left, bottom, right, sheet)) {
-			final int xaction = evt.getAction();
-			if (xaction == SelectionChangeEvent.MOVE) {
-				final int nRow = top - orgitop;
-				final int nCol = left - orgileft;
-				
-				//TODO should migrate to user action handler
-				switch(evt.getSelectionType()) {
-				case CellSelectionEvent.SELECT_ROW:
-					Utils.moveRows(sheet, orgitop, orgibottom, nRow);
-					break;
-				case CellSelectionEvent.SELECT_COLUMN:
-					Utils.moveColumns(sheet, orgileft, orgiright, nCol);
-					break;
-				case CellSelectionEvent.SELECT_CELLS:
-					Utils.moveCells(sheet, orgitop, orgileft, orgibottom, orgiright, nRow, nCol);
-					break;
-				}
-			} else if (xaction == SelectionChangeEvent.MODIFY) {
-				//TODO should migrate to user action handler
-				switch(evt.getSelectionType()) {
-				case CellSelectionEvent.SELECT_ROW:
-					Utils.fillRows(sheet, orgitop, orgibottom, top, bottom);
-					break;
-				case CellSelectionEvent.SELECT_COLUMN:
-					Utils.fillColumns(sheet, orgileft, orgiright, left, right);
-					break;
-				case CellSelectionEvent.SELECT_CELLS:
-					Utils.fillCells(sheet, orgitop, orgileft, orgibottom, orgiright, top, left, bottom, right);
-					break;
-				}
-			}	
-		}
+		
+		//TODO should migrate to user action handler
+		
+//		if (!isProtect(top, left, bottom, right, sheet)) {
+//			final int xaction = evt.getAction();
+//			if (xaction == SelectionChangeEvent.MOVE) {
+//				final int nRow = top - orgitop;
+//				final int nCol = left - orgileft;
+//				
+//				
+//				switch(evt.getSelectionType()) {
+//				case CellSelectionEvent.SELECT_ROW:
+//					Utils.moveRows(sheet, orgitop, orgibottom, nRow);
+//					break;
+//				case CellSelectionEvent.SELECT_COLUMN:
+//					Utils.moveColumns(sheet, orgileft, orgiright, nCol);
+//					break;
+//				case CellSelectionEvent.SELECT_CELLS:
+//					Utils.moveCells(sheet, orgitop, orgileft, orgibottom, orgiright, nRow, nCol);
+//					break;
+//				}
+//			} else if (xaction == SelectionChangeEvent.MODIFY) {
+//				//TODO should migrate to user action handler
+//				switch(evt.getSelectionType()) {
+//				case CellSelectionEvent.SELECT_ROW:
+//					Utils.fillRows(sheet, orgitop, orgibottom, top, bottom);
+//					break;
+//				case CellSelectionEvent.SELECT_COLUMN:
+//					Utils.fillColumns(sheet, orgileft, orgiright, left, right);
+//					break;
+//				case CellSelectionEvent.SELECT_CELLS:
+//					Utils.fillCells(sheet, orgitop, orgileft, orgibottom, orgiright, top, left, bottom, right);
+//					break;
+//				}
+//			}	
+//		}
 		SpreadsheetInCtrl ctrl = ((SpreadsheetInCtrl)((Spreadsheet)comp).getExtraCtrl());
 		ctrl.setSelectionRect(left, top, right, bottom);	
 		
 		Events.postEvent(evt);
-	}
-	
-	private boolean isProtect(int tRow, int lCol, int bRow, int rCol, XSheet sheet) {
-		boolean shtProtect = sheet.getProtect();
-		if (!shtProtect)
-			return false;
-		
-		for (int r = tRow; r <= bRow; r++) {
-			Row row = sheet.getRow(r);
-			if (row != null) {
-				for (int c = lCol; c <= rCol; c++) {
-					Cell cell = row.getCell(c);
-					if (shtProtect && cell != null && cell.getCellStyle().getLocked()) {
-						return true;
-					} else if (shtProtect && cell == null) {
-						return true;
-					}
-				}	
-			} else if (shtProtect && row == null) {
-				return true;
-			}
-		}
-		return false;
 	}
 }
