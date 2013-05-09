@@ -2,19 +2,21 @@ package zss.test.display;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.BeforeClass;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
-import org.zkoss.zats.mimic.ComponentAgent;
-import org.zkoss.zats.mimic.DesktopAgent;
-import org.zkoss.zats.mimic.Zats;
 import org.zkoss.zss.model.Ranges;
 import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
-import zss.test.SpreadsheetTestCaseBase;
+import zss.test.SpreadsheetAgent;
 
 
 /**
@@ -27,20 +29,21 @@ import zss.test.SpreadsheetTestCaseBase;
  * @author Hawk
  *
  */
-public class CellTextTest extends SpreadsheetTestCaseBase{
 
-	private static DesktopAgent desktop; 
-	private static ComponentAgent zss ;
-	private static Worksheet sheet;
-	
-	@BeforeClass
-	public static void initialize(){
-		//sheet 0
-		desktop = Zats.newClient().connect("/display.zul");
-		
-		zss = desktop.query("spreadsheet");
+@RunWith(Parameterized.class)
+public class CellTextTest extends DisplayExcelTest{
+
+	public CellTextTest(String page){
+		super(page);
+		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
+		ssAgent.selectSheet("cell-text");
 		sheet = zss.as(Spreadsheet.class).getSheet(0);
-		
+	}
+
+	@Parameters
+	public static List<Object[]> data() {
+		Object[][] data = new Object[][] { { "/display.zul" }, { "/display2003.zul"}};
+		return Arrays.asList(data);
 	}
 	
 	/*

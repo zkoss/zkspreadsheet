@@ -2,20 +2,21 @@ package zss.test.display;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.BeforeClass;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.zats.mimic.ComponentAgent;
-import org.zkoss.zats.mimic.DesktopAgent;
-import org.zkoss.zats.mimic.Zats;
-import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
-import zss.test.SpreadsheetTestCaseBase;
+import zss.test.SpreadsheetAgent;
 
 
 /**
- * Test case for the function "display Excel files".
+ * Test case for the function "display Excel files" for 2007 and 2003
  * Testing for the sheet "cell-border".
  * 
  * Because the specification of color is unclear, we don't test color-related feature.
@@ -23,26 +24,28 @@ import zss.test.SpreadsheetTestCaseBase;
  * @author Hawk
  *
  */
-public class CellBorderTest extends SpreadsheetTestCaseBase{
+@RunWith(Parameterized.class)
+public class CellBorderTest extends DisplayExcelTest{
 
-	private static DesktopAgent desktop; 
-	private static ComponentAgent zss ;
-	private static Worksheet sheet;
-	
-	@BeforeClass
-	public static void initialize(){
-		desktop = Zats.newClient().connect("/display.zul");
-		
-		zss = desktop.query("spreadsheet");
+	public CellBorderTest(String testPage){
+		super(testPage);
+		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
+		ssAgent.selectSheet("cell-border");
 		sheet = zss.as(Spreadsheet.class).getSheet(1);
+	}
+
+	@Parameters
+	public static List<Object[]> data() {
+		Object[][] data = new Object[][] { { "/display.zul" }, { "/display2003.zul"}};
+		return Arrays.asList(data);
+	}
+
+	/*
+	@Test
+	public void testBorderColor(){
 		
 	}
-	
-
-//	@Test
-//	public void testBorderColor(){
-//		
-//	}
+	*/
 	
 	@Test
 	public void testBorderPosition(){

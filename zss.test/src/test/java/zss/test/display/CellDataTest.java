@@ -3,18 +3,18 @@ package zss.test.display;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.BeforeClass;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
-import org.zkoss.zats.mimic.ComponentAgent;
-import org.zkoss.zats.mimic.DesktopAgent;
-import org.zkoss.zats.mimic.Zats;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.zkoss.zss.model.Range;
 import org.zkoss.zss.model.Ranges;
-import org.zkoss.zss.model.Worksheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
 import zss.test.SpreadsheetAgent;
-import zss.test.SpreadsheetTestCaseBase;
 
 
 /**
@@ -24,23 +24,22 @@ import zss.test.SpreadsheetTestCaseBase;
  * @author Hawk
  *
  */
-public class CellDataTest extends SpreadsheetTestCaseBase{
+@RunWith(Parameterized.class)
+public class CellDataTest extends DisplayExcelTest{
 
-	private static DesktopAgent desktop; 
-	private static ComponentAgent zss ;
-	private static Worksheet sheet;
-	
-	@BeforeClass
-	public static void initialize(){
-		desktop = Zats.newClient().connect("/display.zul");
-		
-		zss = desktop.query("spreadsheet");
+	public CellDataTest(String page){
+		super(page);
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
 		ssAgent.selectSheet("cell-data");
 		sheet = zss.as(Spreadsheet.class).getSheet(3);
 	}
-	
 
+	@Parameters
+	public static List<Object[]> data() {
+		Object[][] data = new Object[][] { { "/display.zul" }, { "/display2003.zul"}};
+		return Arrays.asList(data);
+	}
+	
 	/*
 	 * TODO what is the difference among getText(), getFormatText(), getRichEditText(), getEditText()?
 	 */

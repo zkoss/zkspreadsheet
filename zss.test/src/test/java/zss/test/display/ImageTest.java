@@ -2,16 +2,16 @@ package zss.test.display;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.BeforeClass;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
-import org.zkoss.zats.mimic.ComponentAgent;
-import org.zkoss.zats.mimic.DesktopAgent;
-import org.zkoss.zats.mimic.Zats;
-import org.zkoss.zss.model.Worksheet;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.zkoss.zss.ui.Spreadsheet;
 
 import zss.test.SpreadsheetAgent;
-import zss.test.SpreadsheetTestCaseBase;
 
 
 /**
@@ -21,25 +21,26 @@ import zss.test.SpreadsheetTestCaseBase;
  * @author Hawk
  *
  */
-public class ImageTest extends SpreadsheetTestCaseBase{
+@RunWith(Parameterized.class)
+public class ImageTest extends DisplayExcelTest{
 
-	private static DesktopAgent desktop; 
-	private static ComponentAgent zss ;
 	private static Spreadsheet spreadsheet;
-	private static Worksheet sheet;
 	
-	
-	@BeforeClass
-	public static void initialize(){
-		desktop = Zats.newClient().connect("/display.zul");
-		zss = desktop.query("spreadsheet");
+	public ImageTest(String testPage){
+		super(testPage);
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
 		//select the sheet first or the chart won't be initialized
 		ssAgent.selectSheet("chart-image");
 		spreadsheet = zss.as(Spreadsheet.class);
 		sheet = spreadsheet.getBook().getWorksheet("chart-image");
-		
 	}
+
+	@Parameters
+	public static List<Object[]> data() {
+		Object[][] data = new Object[][] { { "/display.zul" }, { "/display2003.zul"}};
+		return Arrays.asList(data);
+	}
+	
 
 	@Test
 	public void testPicture(){
