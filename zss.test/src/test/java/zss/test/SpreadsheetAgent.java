@@ -5,12 +5,19 @@ import org.zkoss.zats.mimic.operation.AuAgent;
 import org.zkoss.zats.mimic.operation.AuData;
 import org.zkoss.zss.ui.Spreadsheet;
 
+/**
+ * By default, we perform all actions on currently selected sheet.
+ * @author Hawk
+ *
+ */
 public class SpreadsheetAgent {
 
 	private ComponentAgent zss;
+	private Spreadsheet spreadsheet;
 	
 	public SpreadsheetAgent(ComponentAgent zss) {
 		this.zss = zss;
+		spreadsheet = zss.as(Spreadsheet.class);
 	}
 	
 	public void selectSheet(int index){
@@ -31,11 +38,32 @@ public class SpreadsheetAgent {
 		}
 	}
 	
-	public void copy(int rowIndex, int columnIndex){
-		AuData auData = new AuData("onZSSAction");
-		auData.setData("sheetId", "0").setData("tag", "toolbar").setData("act", "copy")
-			.setData("tRow", rowIndex).setData("lCol", columnIndex)
-			.setData("bRow", rowIndex).setData("rCol", columnIndex);
+	public void copy(int topRow, int bottomRow, int leftColumn,  int rightColumn){
+		zss.as(AuAgent.class)
+		.post(createToolbarActionData(topRow, bottomRow,leftColumn, rightColumn).setData("act", "copy"));
+	}
+	
+	public void paste(int rowIndex, int columnIndex){
+		zss.as(AuAgent.class)
+		.post(createToolbarActionData(rowIndex, rowIndex,columnIndex, columnIndex).setData("act", "paste"));
+	}
+
+	/**
+	 * 
+	 * @param rgbCode e.g. 009999
+	 */
+	public void fillBackgroundColor(int rowIndex, int columnIndex, String rgbCode){
+		AuData auData = createToolbarActionData(rowIndex, rowIndex,columnIndex, columnIndex)
+				.setData("act", "fillColor").setData("color", "#"+rgbCode); 
 		zss.as(AuAgent.class).post(auData);
+	}
+	
+	private AuData createToolbarActionData(int topRow, int bottomRow, int leftColumn,  int rightColumn ){
+		AuData auData = new AuData("onZSSAction");
+		int sheetId = spreadsheet.getBook().getSheetIndex(spreadsheet.getSelectedSheet());
+		auData.setData("sheetId", Integer.toString(sheetId)).setData("tag", "toolbar")
+			.setData("tRow", topRow).setData("lCol", leftColumn)
+			.setData("bRow", bottomRow).setData("rCol", rightColumn);
+		return auData;
 	}
 }

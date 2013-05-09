@@ -1,0 +1,8 @@
+<zk>
+	<spreadsheet id="operationTest" src="/OperationTest2007.xlsx" maxrows="200" maxcolumns="40" width="100%"
+		height="50%" showContextMenu="true" showSheetbar="true" showToolbar="true"
+		ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"/>
+	<spreadsheet src="/ZSS-demo_sample.xlsx" maxrows="200" maxcolumns="40" width="100%"
+		height="50%" showContextMenu="true" showSheetbar="true" showToolbar="true"
+		ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"/>
+</zk>

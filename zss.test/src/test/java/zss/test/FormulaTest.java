@@ -1,7 +1,6 @@
 package zss.test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.fail;
 
 import org.hamcrest.number.IsCloseTo;
 import org.junit.BeforeClass;
