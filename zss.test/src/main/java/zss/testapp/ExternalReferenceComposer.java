@@ -1,17 +1,9 @@
 package zss.testapp;
 
-import java.io.InputStream;
-
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.BookSeries;
-import org.zkoss.zss.model.Importer;
-import org.zkoss.zss.model.Importers;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zssex.model.impl.BookSeriesImpl;
 
 @SuppressWarnings("serial")
 public class ExternalReferenceComposer extends SelectorComposer<Component>{
@@ -23,7 +15,7 @@ public class ExternalReferenceComposer extends SelectorComposer<Component>{
 	
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-
+/* FIXME wait new API to rewrite
 		//prepare excel importer
 		final Importer importer = Importers.getImporter("excel");
 
@@ -42,5 +34,6 @@ public class ExternalReferenceComposer extends SelectorComposer<Component>{
 		//associate either book to their corresponding UI spreadsheet components
 		srcSpreadsheet.setBook(srcbook);
 		dstSpreadsheet.setBook(dstbook);
+		*/
 	}
 }
