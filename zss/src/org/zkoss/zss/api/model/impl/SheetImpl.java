@@ -1,5 +1,6 @@
 package org.zkoss.zss.api.model.impl;
 
+import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.model.sys.XBook;
@@ -66,6 +67,15 @@ public class SheetImpl implements Sheet{
 
 	public String getSheetName() {
 		return getNative().getSheetName();
+	}
+
+	public boolean isRowHidden(int row) {
+		final Row r = getNative().getRow(row);
+		return r != null && r.getZeroHeight();
+	}
+
+	public boolean isColumnHidden(int column) {
+		return getNative().isColumnHidden(column);
 	}
 	
 }

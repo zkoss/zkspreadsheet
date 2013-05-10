@@ -20,7 +20,7 @@ package org.zkoss.zss.ui.event;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.MouseEvent;
-import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.api.model.Sheet;
 
 /**
  * A class from handle event which about mouse event on a cell
@@ -28,11 +28,11 @@ import org.zkoss.zss.model.sys.XSheet;
  */
 public class CellMouseEvent extends MouseEvent{
 	
-	private XSheet _sheet;
+	private Sheet _sheet;
 	private int _row;
 	private int _col;
 	
-	public CellMouseEvent(String name, Component target, int x,int y, int keys,XSheet sheet, int row ,int col,int clientx,int clienty) {
+	public CellMouseEvent(String name, Component target, int x,int y, int keys,Sheet sheet, int row ,int col,int clientx,int clienty) {
 		super(name, target, x, y, clientx, clienty, keys);
 		_sheet = sheet;
 		this._row = row;
@@ -66,7 +66,7 @@ public class CellMouseEvent extends MouseEvent{
 	 * get Sheet
 	 * @return sheet the related sheet 
 	 */
-	public XSheet getSheet(){
+	public Sheet getSheet(){
 		return _sheet;
 	}
 	

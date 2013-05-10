@@ -57,7 +57,7 @@ public class RangeImpl implements Range{
 	SyncLevel syncLevel = SyncLevel.BOOK;
 	
 	CellStyleHelper cellStyleHelper;
-	CellValueHelper cellValueHelper;
+	CellDataHelper cellDataHelper;
 	
 	public void setSyncLevel(SyncLevel syncLevel){
 		this.syncLevel = syncLevel;
@@ -82,11 +82,11 @@ public class RangeImpl implements Range{
 		return cellStyleHelper;
 	}
 	
-	public CellValueHelper getCellValueHelper(){
-		if(cellValueHelper==null){
-			cellValueHelper = new CellValueHelperImpl(this);
+	public CellDataHelper getCellDataHelper(){
+		if(cellDataHelper==null){
+			cellDataHelper = new CellDataHelperImpl(this);
 		}
-		return cellValueHelper;
+		return cellDataHelper;
 	}
 	
 	public XRange getNative(){
@@ -502,9 +502,9 @@ public class RangeImpl implements Range{
 				index3==null?null:((RangeImpl)index1).getNative()/*rng3*/, desc3/*desc3*/,
 				header?BookHelper.SORT_HEADER_YES:BookHelper.SORT_HEADER_NO/*header*/,
 				-1/*orderCustom*/, matchCase, sortByRows, -1/*sortMethod*/, 
-				dataOption1==null?-1:EnumUtil.toRangeSortDataOption(dataOption1)/*dataOption1*/,
-				dataOption2==null?-1:EnumUtil.toRangeSortDataOption(dataOption2)/*dataOption2*/,
-				dataOption3==null?-1:EnumUtil.toRangeSortDataOption(dataOption3)/*dataOption3*/);
+				EnumUtil.toRangeSortDataOption(dataOption1)/*dataOption1*/,
+				EnumUtil.toRangeSortDataOption(dataOption2)/*dataOption2*/,
+				EnumUtil.toRangeSortDataOption(dataOption3)/*dataOption3*/);
 	}
 	
 	/** check if auto filter is enable or not.**/
@@ -772,14 +772,14 @@ public class RangeImpl implements Range{
 	//api that need special object wrap
 	
 	
-	public void apiSpecialWrapObject(){
+	private void apiSpecialWrapObject(){
 
-		range.getFormatText();//FormatText
-		range.getHyperlink();//Hyperlink
-		
-		range.getRichEditText();//RichTextString
-		range.getText();//RichTextString (what is the difference of getRichEditText)
-		
+//		range.getFormatText();//FormatText
+//		range.getHyperlink();//Hyperlink
+//		
+//		range.getRichEditText();//RichTextString
+//		range.getText();//RichTextString (what is the difference of getRichEditText)
+//		
 		
 		range.validate("");//DataValidation
 		
@@ -807,4 +807,5 @@ public class RangeImpl implements Range{
 		
 		//range.pasteSpecial(pasteType, pasteOp, SkipBlanks, transpose);		
 	}
+
 }

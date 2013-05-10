@@ -2238,7 +2238,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (bottom > lastrow) {
 				bottom = lastrow;
 			}
-			org.zkoss.zk.ui.event.Events.postEvent(new CellSelectionEvent(Events.ON_CELL_CHANGE, Spreadsheet.this, sheet, CellSelectionEvent.SELECT_CELLS, left, top, right,  bottom));
+			org.zkoss.zk.ui.event.Events.postEvent(new CellSelectionEvent(
+					Events.ON_CELL_CHANGE, Spreadsheet.this, new SheetImpl(
+							new SimpleRef<XSheet>(sheet)),
+					CellSelectionEvent.SELECT_CELLS, left, top, right, bottom));
 		}
 		private void onRangeInsert(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -4316,6 +4319,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	private void processStartEditing(String token, StartEditingEvent event, String editingType) {
+		XSheet sheet = ((SheetImpl)event.getSheet()).getNative();
 		if (!event.isCancel()) {
 			Object val;
 			final boolean useEditValue = event.isEditingSet() || event.getClientValue() == null; 
@@ -4324,20 +4328,20 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			} else {
 				val = event.getClientValue();
 			}
-
-			processStartEditing0(token, event.getSheet(), event.getRow(), event
+			processStartEditing0(token,sheet, event.getRow(), event
 					.getColumn(), val, useEditValue, editingType);
 		} else {
-			processCancelEditing0(token, event.getSheet(), event.getRow(),
+			processCancelEditing0(token, sheet, event.getRow(),
 					event.getColumn(), false, editingType);
 		}
 	}
 
 	private void processStopEditing(String token, StopEditingEvent event, String editingType) {
+		XSheet sheet = ((SheetImpl)event.getSheet()).getNative();
 		if (!event.isCancel()) {
-			processStopEditing0(token, event.getSheet(), event.getRow(), event.getColumn(), event.getEditingValue(), editingType);
+			processStopEditing0(token, sheet, event.getRow(), event.getColumn(), event.getEditingValue(), editingType);
 		} else
-			processCancelEditing0(token, event.getSheet(), event.getRow(), event.getColumn(), false, editingType);
+			processCancelEditing0(token, sheet, event.getRow(), event.getColumn(), false, editingType);
 	}
 	
 	private void showFormulaError(FormulaParseException ex) {

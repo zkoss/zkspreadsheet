@@ -3,20 +3,20 @@ package org.zkoss.zss.api.impl;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.api.Range.CellType;
-import org.zkoss.zss.api.Range.CellValueHelper;
+import org.zkoss.zss.api.Range.CellDataHelper;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.fn.UtilFns;
 import org.zkoss.zss.ui.impl.XUtils;
 
-/*package*/ class CellValueHelperImpl implements CellValueHelper{
+/*package*/ class CellDataHelperImpl implements CellDataHelper{
 
 	RangeImpl range;
 	
 	Cell cell;
 	boolean cellInit;
 	
-	public CellValueHelperImpl(RangeImpl range) {
+	public CellDataHelperImpl(RangeImpl range) {
 		this.range = range;
 	}
 
@@ -46,6 +46,36 @@ import org.zkoss.zss.ui.impl.XUtils;
 		}
 	}
 	
+
+	@Override
+	public CellType getResultType() {
+		CellType type = getType();
+		
+		if(type != CellType.FORMULA){
+			return type;
+		}
+		
+		return toCellType(cell.getCachedFormulaResultType());
+	}
+	
+	private CellType toCellType(int type){
+		switch(type){
+		case Cell.CELL_TYPE_BLANK:
+			return CellType.BLANK;
+		case Cell.CELL_TYPE_BOOLEAN:
+			return CellType.BOOLEAN;
+		case Cell.CELL_TYPE_ERROR:
+			return CellType.ERROR;
+		case Cell.CELL_TYPE_FORMULA:
+			return CellType.FORMULA;
+		case Cell.CELL_TYPE_NUMERIC:
+			return CellType.NUMERIC;
+		case Cell.CELL_TYPE_STRING:
+			return CellType.STRING;
+		}
+		return CellType.BLANK;
+	}
+	
 	@Override
 	public CellType getType() {
 		initCell();
@@ -54,25 +84,14 @@ import org.zkoss.zss.ui.impl.XUtils;
 			return CellType.BLANK;
 		}
 		
-		switch(cell.getCellType()){
-		case Cell.CELL_TYPE_BLANK:
-			return CellType.BLANK;
-		case Cell.CELL_TYPE_BOOLEAN:
-			return CellType.BOOLEAN;
-		case Cell.CELL_TYPE_ERROR:
-			return CellType.ERROR;
-		case Cell.CELL_TYPE_FORMULA:
-			if(getValue() instanceof Byte){
+		CellType type = toCellType(cell.getCellType());
+		
+		if(type==CellType.FORMULA){
+			if(toCellType(cell.getCachedFormulaResultType())==CellType.ERROR){
 				return CellType.ERROR;
-			}else{
-				return CellType.FORMULA;
 			}
-		case Cell.CELL_TYPE_NUMERIC:
-			return CellType.NUMERIC;
-		case Cell.CELL_TYPE_STRING:
-			return CellType.STRING;
 		}
-		return CellType.BLANK;
+		return type;
 	}
 
 	@Override
@@ -100,5 +119,6 @@ import org.zkoss.zss.ui.impl.XUtils;
 	public void setEditText(String editText) {
 		range.setCellEditText(editText);
 	}
+
 	
 }

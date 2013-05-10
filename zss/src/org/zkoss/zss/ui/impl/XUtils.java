@@ -35,6 +35,8 @@ import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.engine.RefSheet;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XFormatText;
@@ -277,6 +279,11 @@ public class XUtils {
 	 */
 	public static String getSheetUuid(XSheet sheet){
 		return ((SheetCtrl)sheet).getUuid();
+	}
+	
+	public static String getSheetUuid(Sheet sheet){
+		
+		return ((SheetCtrl)((SheetImpl)sheet).getNative()).getUuid();
 	}
 	
 	/**

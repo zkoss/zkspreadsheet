@@ -19,7 +19,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.event;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.api.model.Sheet;
 /**
  * Event class about selection of cell
  * @author Dennis.Chen
@@ -35,7 +35,7 @@ public class SelectionChangeEvent extends CellSelectionEvent{
 	private int _origright;
 	private int _origbottom;
 
-	public SelectionChangeEvent(String name, Component target,XSheet sheet,int action, 
+	public SelectionChangeEvent(String name, Component target,Sheet sheet,int action, 
 			int left, int top,int right, int bottom,
 			int origleft, int origtop,int origright, int origbottom, Object data) {
 		super(name, target, sheet,action,left,top,right,bottom,data);
@@ -45,7 +45,7 @@ public class SelectionChangeEvent extends CellSelectionEvent{
 		_origbottom = origbottom;
 	}
 	
-	public SelectionChangeEvent(String name, Component target,XSheet sheet, int action,
+	public SelectionChangeEvent(String name, Component target,Sheet sheet, int action,
 			int left, int top,int right, int bottom,
 			int origleft, int origtop,int origright, int origbottom) {
 		this(name,target,sheet,action,left,top,right,bottom,origleft,origtop,origright,origbottom,null);

@@ -1,5 +1,6 @@
 package org.zkoss.zss.api.model.impl;
 
+import org.zkoss.poi.ss.usermodel.DataFormat;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.Font;
@@ -183,5 +184,20 @@ public class CellStyleImpl implements CellStyle{
 	}
 	public Color getBorderRightColor(){
 		return new ColorImpl(bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getRightBorderColorColor()));
+	}
+	
+	public String getDataFormat(){
+		return getNative().getDataFormatString();
+	}
+	
+	public void setDataFormat(String format){
+		if(getDataFormat().equals(format)){
+			return;
+		}
+		//this api doesn't create a new df, it just return the one in book
+		DataFormat df = bookRef.get().createDataFormat();
+
+		short index = df.getFormat(format);		
+		getNative().setDataFormat(index);
 	}
 }

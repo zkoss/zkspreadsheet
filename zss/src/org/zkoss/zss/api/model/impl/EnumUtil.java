@@ -488,6 +488,8 @@ public class EnumUtil {
 		switch(dataOption){
 		case TEXT_AS_NUMBERS:
 			return BookHelper.SORT_TEXT_AS_NUMBERS;
+		case NORMAL_DEFAULT:
+			return BookHelper.SORT_NORMAL_DEFAULT;
 		}
 		throw new IllegalArgumentException("unknow sort data option "+dataOption);
 	}

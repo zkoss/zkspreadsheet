@@ -27,6 +27,7 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellEvent;
@@ -52,7 +53,7 @@ public class CellFocusedCommand implements Command {
 		int row = (Integer) data.get("row");
 		int col = (Integer) data.get("col");
 		
-		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
+		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
 		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
 

@@ -43,6 +43,8 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XRanges;
 import org.zkoss.zss.model.sys.XSheet;
@@ -85,7 +87,7 @@ public class CellMouseCommand implements Command {
 		int my = (Integer) data.get("my");
 		
 		Spreadsheet spreadsheet = (Spreadsheet) comp;
-		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
+		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
 		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
@@ -115,7 +117,8 @@ public class CellMouseCommand implements Command {
 		}
 	}
 	
-	private void processFilter (int row, int col, int field, XSheet worksheet, Spreadsheet spreadsheet) {
+	private void processFilter (int row, int col, int field, Sheet sheet, Spreadsheet spreadsheet) {
+		XSheet worksheet = ((SheetImpl)sheet).getNative();
 		final AutoFilter autoFilter = worksheet.getAutoFilter();
 		final FilterColumn filterColumn = autoFilter.getFilterColumn(field - 1);
 		final String rangeAddr = autoFilter.getRangeAddress().formatAsString();

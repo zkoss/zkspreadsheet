@@ -6,6 +6,7 @@ import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XRanges;
 import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.ui.Rect;
 
 /**
  * The facade class provides you multiple ways to get a {@link Range}.
@@ -59,5 +60,14 @@ public class Ranges {
 	 */
 	public static Range range(Sheet sheet, int row, int col){	
 		return new RangeImpl(sheet,XRanges.range(((SheetImpl)sheet).getNative(),row,col));
+	}
+	
+	/** Returns the associated {@link Range} of the specified {@link Sheet} and cell row and column. 
+	 *  
+	 * @param sheet the {@link Sheet} the Range will refer to.
+	 * @param selection the selection of spreadsheet
+	 */
+	public static Range range(Sheet sheet, Rect selection){	
+		return range(sheet,selection.getTop(),selection.getLeft(),selection.getBottom(),selection.getRight());
 	}
 }

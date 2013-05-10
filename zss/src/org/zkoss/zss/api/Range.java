@@ -93,6 +93,7 @@ public interface Range {
 	}
 	
 	public enum SortDataOption{
+		NORMAL_DEFAULT,
 		TEXT_AS_NUMBERS
 	}
 	
@@ -142,7 +143,7 @@ public interface Range {
 	
 	public CellStyleHelper getCellStyleHelper();
 	
-	public CellValueHelper getCellValueHelper();
+	public CellDataHelper getCellDataHelper();
 	
 	public void sync(RangeRunner run);
 	/**
@@ -343,12 +344,15 @@ public interface Range {
 	/**
 	 * a cell value helper for get and set value of cell
 	 */
-	public interface CellValueHelper {
+	public interface CellDataHelper {
 		
 		public int getRow();
 		public int getColumn();
 		
 		public CellType getType();
+		
+		public CellType getResultType();
+		
 		public Object getValue();
 		public String getFormatText();
 		public String getEditText();
