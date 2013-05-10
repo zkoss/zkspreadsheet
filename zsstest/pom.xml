@@ -6,6 +6,7 @@
 	<artifactId>zsstest</artifactId>
 	<properties>
 		<zk.version>6.5.0</zk.version>
+		<zpoi.version>3.8.2</zpoi.version>
 		<junit.version>4.8.1</junit.version>
 	</properties>
 	<version>2.6.0</version>
@@ -39,9 +40,20 @@
 	</pluginRepositories>
 	<dependencies>
 		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zul</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zss</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.poi</groupId>
+			<artifactId>zpoiex</artifactId>
+			<version>${zpoi.version}</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>

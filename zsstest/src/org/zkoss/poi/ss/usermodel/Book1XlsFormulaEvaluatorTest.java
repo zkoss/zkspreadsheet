@@ -29,10 +29,10 @@ import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
 import org.zkoss.poi.ss.formula.EvaluationCell;
 import org.zkoss.poi.ss.formula.FormulaRenderer;
 import org.zkoss.util.resource.ClassLocator;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.impl.BookHelper;
-import org.zkoss.zss.model.impl.ExcelImporter;
-import org.zkoss.zss.model.impl.HSSFBookImpl;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.model.sys.impl.ExcelImporter;
+import org.zkoss.zss.model.sys.impl.HSSFBookImpl;
 
 /**
  * @author henrichen
@@ -50,10 +50,10 @@ public class Book1XlsFormulaEvaluatorTest {
 		final String filename = "Book1.xls";
 		final InputStream is = new ClassLocator().getResourceAsStream(filename);
 		_workbook = new ExcelImporter().imports(is, filename);
-		assertTrue(_workbook instanceof Book);
+		assertTrue(_workbook instanceof XBook);
 		assertTrue(_workbook instanceof HSSFBookImpl);
 		assertTrue(_workbook instanceof HSSFWorkbook);
-		assertEquals(filename, ((Book)_workbook).getBookName());
+		assertEquals(filename, ((XBook)_workbook).getBookName());
 		assertEquals("Sheet 1", _workbook.getSheetName(0));
 		assertEquals("Sheet2", _workbook.getSheetName(1));
 		assertEquals("Sheet3", _workbook.getSheetName(2));
@@ -61,7 +61,7 @@ public class Book1XlsFormulaEvaluatorTest {
 		assertEquals(1, _workbook.getSheetIndex("Sheet2"));
 		assertEquals(2, _workbook.getSheetIndex("Sheet3"));
 
-		_evaluator = ((Book)_workbook).getFormulaEvaluator();
+		_evaluator = ((XBook)_workbook).getFormulaEvaluator();
 	}
 
 	/**

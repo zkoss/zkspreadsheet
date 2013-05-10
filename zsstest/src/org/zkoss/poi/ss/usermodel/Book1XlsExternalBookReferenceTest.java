@@ -25,10 +25,10 @@ import org.junit.Test;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.util.resource.ClassLocator;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.impl.ExcelImporter;
-import org.zkoss.zss.model.impl.HSSFBookImpl;
-import org.zkoss.zss.model.impl.XSSFBookImpl;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.impl.ExcelImporter;
+import org.zkoss.zss.model.sys.impl.HSSFBookImpl;
+import org.zkoss.zss.model.sys.impl.XSSFBookImpl;
 import org.zkoss.zssex.model.impl.BookSeriesImpl;
 
 /**
@@ -48,10 +48,10 @@ public class Book1XlsExternalBookReferenceTest {
 		final String filename1 = "Book1.xls";
 		final InputStream is1 = new ClassLocator().getResourceAsStream(filename1);
 		_workbook1 = new ExcelImporter().imports(is1, filename1);
-		assertTrue(_workbook1 instanceof Book);
+		assertTrue(_workbook1 instanceof XBook);
 		assertTrue(_workbook1 instanceof HSSFBookImpl);
 		assertTrue(_workbook1 instanceof HSSFWorkbook);
-		assertEquals(filename1, ((Book)_workbook1).getBookName());
+		assertEquals(filename1, ((XBook)_workbook1).getBookName());
 		assertEquals("Sheet 1", _workbook1.getSheetName(0));
 		assertEquals("Sheet2", _workbook1.getSheetName(1));
 		assertEquals("Sheet3", _workbook1.getSheetName(2));
@@ -62,10 +62,10 @@ public class Book1XlsExternalBookReferenceTest {
 		final String filename2 = "Book1.xlsx";
 		final InputStream is2 = new ClassLocator().getResourceAsStream(filename2);
 		_workbook2 = new ExcelImporter().imports(is2, filename2);
-		assertTrue(_workbook2 instanceof Book);
+		assertTrue(_workbook2 instanceof XBook);
 		assertTrue(_workbook2 instanceof XSSFBookImpl);
 		assertTrue(_workbook2 instanceof XSSFWorkbook);
-		assertEquals(filename2, ((Book)_workbook2).getBookName());
+		assertEquals(filename2, ((XBook)_workbook2).getBookName());
 		assertEquals("Sheet 1", _workbook1.getSheetName(0));
 		assertEquals("Sheet2", _workbook1.getSheetName(1));
 		assertEquals("Sheet3", _workbook1.getSheetName(2));
@@ -73,7 +73,7 @@ public class Book1XlsExternalBookReferenceTest {
 		assertEquals(1, _workbook2.getSheetIndex("Sheet2"));
 		assertEquals(2, _workbook2.getSheetIndex("Sheet3"));
 
-		_books = new BookSeriesImpl(new Book[] {(Book)_workbook1, (Book)_workbook2});
+		_books = new BookSeriesImpl(new XBook[] {(XBook)_workbook1, (XBook)_workbook2});
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class Book1XlsExternalBookReferenceTest {
 		Sheet sheet1 = _workbook1.getSheet("Sheet 1");
 		Row row = sheet1.getRow(5);
 		Cell cell = row.getCell(3); //D6: =SUM('[Book1.xls]Sheet 1'!C1)
-		CellValue value = ((Book)_workbook1).getFormulaEvaluator().evaluate(cell);
+		CellValue value = ((XBook)_workbook1).getFormulaEvaluator().evaluate(cell);
 		assertEquals(3, value.getNumberValue(), 0.0000000000000001);
 		assertEquals(Cell.CELL_TYPE_NUMERIC, value.getCellType());
 	}
