@@ -236,10 +236,7 @@ public interface Range {
 			Range index2,boolean desc2,SortDataOption dataOption2,
 			Range index3,boolean desc3,SortDataOption dataOption3);
 	
-	/** enable sheet protection and apply a password**/
-	public void protectSheet(String password);
-	
-	public void fill(Range dest,AutoFillType fillType);
+	public void autoFill(Range dest,AutoFillType fillType);
 	
 	public void fillDown();
 	
@@ -283,6 +280,10 @@ public interface Range {
 	 * sheet relative API
 	 * ==================================================
 	 */
+	
+	
+	/** enable sheet protection and apply a password**/
+	public void protectSheet(String password);
 	
 	public void setDisplaySheetGridlines(boolean enable);
 	

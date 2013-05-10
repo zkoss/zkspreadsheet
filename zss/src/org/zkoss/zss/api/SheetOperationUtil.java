@@ -1,6 +1,7 @@
 package org.zkoss.zss.api;
 
 import org.zkoss.image.AImage;
+import org.zkoss.zss.api.Range.AutoFillType;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.ChartData;
@@ -152,5 +153,17 @@ public class SheetOperationUtil {
 			}
 		});
 
+	}
+
+	public static void shift(Range range, int rowOffset, int colOffset) {
+		if(range.isProtected())
+			return;
+		range.shift(rowOffset, colOffset);
+	}
+
+	public static void autoFill(Range src, Range dest, AutoFillType type) {
+		if(dest.isProtected())
+			return;
+		src.autoFill(dest, type);
 	}
 }

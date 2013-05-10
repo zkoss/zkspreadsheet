@@ -1,68 +1,68 @@
-///* Utils.java
-//
-//{{IS_NOTE
-//	Purpose:
-//		
-//	Description:
-//		
-//	History:
-//		Mar 20, 2008 12:40:01 PM     2008, Created by Dennis.Chen
-//}}IS_NOTE
-//
-//Copyright (C) 2007 Potix Corporation. All Rights Reserved.
-//
-//{{IS_RIGHT
-//	This program is distributed under GPL Version 2.0 in the hope that
-//	it will be useful, but WITHOUT ANY WARRANTY.
-//}}IS_RIGHT
-//*/
-//package org.zkoss.zss.ui.impl;
-//
-//import java.awt.font.FontRenderContext;
-//import java.awt.font.TextAttribute;
-//import java.awt.font.TextLayout;
-//import java.text.AttributedString;
-//import java.util.ArrayList;
-//import java.util.Date;
-//import java.util.List;
-//
-//import org.zkoss.lang.Objects;
-//import org.zkoss.poi.ss.usermodel.BorderStyle;
-//import org.zkoss.poi.ss.usermodel.Cell;
-//import org.zkoss.poi.ss.usermodel.CellStyle;
-//import org.zkoss.poi.ss.usermodel.ClientAnchor;
-//import org.zkoss.poi.ss.usermodel.Color;
-//import org.zkoss.poi.ss.usermodel.DataFormat;
-//import org.zkoss.poi.ss.usermodel.Font;
-//import org.zkoss.poi.ss.usermodel.Hyperlink;
-//import org.zkoss.poi.ss.usermodel.RichTextString;
-//import org.zkoss.poi.ss.usermodel.Row;
-//import org.zkoss.poi.ss.usermodel.Workbook;
-//import org.zkoss.poi.ss.util.CellReference;
-//import org.zkoss.util.logging.Log;
-//import org.zkoss.zk.ui.Execution;
-//import org.zkoss.zk.ui.Executions;
-//import org.zkoss.zk.ui.event.EventListener;
-//import org.zkoss.zss.engine.RefSheet;
-//import org.zkoss.zss.model.sys.XBook;
-//import org.zkoss.zss.model.sys.XFormatText;
-//import org.zkoss.zss.model.sys.XRange;
-//import org.zkoss.zss.model.sys.XRanges;
-//import org.zkoss.zss.model.sys.XSheet;
-//import org.zkoss.zss.model.sys.impl.BookHelper;
-//import org.zkoss.zss.model.sys.impl.SheetCtrl;
-//import org.zkoss.zss.ui.Rect;
-//import org.zkoss.zss.ui.Spreadsheet;
-//import org.zkoss.zss.ui.ValidationHelper;
-//import org.zkoss.zul.Messagebox;
+/* Utils.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		Mar 20, 2008 12:40:01 PM     2008, Created by Dennis.Chen
+}}IS_NOTE
+
+Copyright (C) 2007 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+	This program is distributed under GPL Version 2.0 in the hope that
+	it will be useful, but WITHOUT ANY WARRANTY.
+}}IS_RIGHT
+*/
+package org.zkoss.zss.ui.impl;
+
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
+import java.text.AttributedString;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.zkoss.lang.Objects;
+import org.zkoss.poi.ss.usermodel.BorderStyle;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.ClientAnchor;
+import org.zkoss.poi.ss.usermodel.Color;
+import org.zkoss.poi.ss.usermodel.DataFormat;
+import org.zkoss.poi.ss.usermodel.Font;
+import org.zkoss.poi.ss.usermodel.Hyperlink;
+import org.zkoss.poi.ss.usermodel.RichTextString;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.util.logging.Log;
+import org.zkoss.zk.ui.Execution;
+import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zss.engine.RefSheet;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XFormatText;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.model.sys.impl.SheetCtrl;
+import org.zkoss.zss.ui.Rect;
+import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.ValidationHelper;
+import org.zkoss.zul.Messagebox;
 //
 ///**
 // * Internal Use Only. Utility class for {@link Spreadsheet}.
 // * @author Dennis.Chen
 // *
 // */
-//public class Utils {
-//	private static final Log log = Log.lookup(Utils.class);
+public class Utils {
+	private static final Log log = Log.lookup(Utils.class);
 //
 //	public static void autoFilter(XSheet sheet, Rect selection) {
 //		int left = selection.getLeft();
@@ -1290,4 +1290,4 @@
 //		}
 //		return false;
 //	}
-//}
+}

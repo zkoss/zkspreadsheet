@@ -29,6 +29,7 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.SelectionChangeEvent;
@@ -56,57 +57,28 @@ public class SelectionChangeCommand implements Command {
 		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
+		final XBook book = (XBook) sheet.getWorkbook();
+		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
+		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
+		
 		int action = (Integer) data.get("action");
+		
+		int selectType = action & 0x0F;
+		
 		int left = (Integer) data.get("left");
 		int top = (Integer) data.get("top");
-		int right = (Integer) data.get("right");
-		int bottom = (Integer) data.get("bottom");
+		int right = selectType == CellSelectionEvent.SELECT_ROW ? maxcol : (Integer) data.get("right");
+		int bottom = selectType == CellSelectionEvent.SELECT_COLUMN ? maxrow : (Integer) data.get("bottom");
 		int orgileft = (Integer) data.get("orgileft");
 		int orgitop = (Integer) data.get("orgitop");
-		int orgiright = (Integer) data.get("orgiright");
-		int orgibottom = (Integer) data.get("orgibottom");
+		int orgiright = selectType == CellSelectionEvent.SELECT_ROW ? maxcol : (Integer) data.get("orgiright");
+		int orgibottom = selectType == CellSelectionEvent.SELECT_COLUMN ? maxrow : (Integer) data.get("orgibottom");
 		
 		final SelectionChangeEvent evt = new SelectionChangeEvent(
 				org.zkoss.zss.ui.event.Events.ON_SELECTION_CHANGE, comp, sheet,
 				action, left, top, right, bottom, orgileft, orgitop, orgiright,
 				orgibottom);
-		
-		
-		//TODO should migrate to user action handler
-		
-//		if (!isProtect(top, left, bottom, right, sheet)) {
-//			final int xaction = evt.getAction();
-//			if (xaction == SelectionChangeEvent.MOVE) {
-//				final int nRow = top - orgitop;
-//				final int nCol = left - orgileft;
-//				
-//				
-//				switch(evt.getSelectionType()) {
-//				case CellSelectionEvent.SELECT_ROW:
-//					Utils.moveRows(sheet, orgitop, orgibottom, nRow);
-//					break;
-//				case CellSelectionEvent.SELECT_COLUMN:
-//					Utils.moveColumns(sheet, orgileft, orgiright, nCol);
-//					break;
-//				case CellSelectionEvent.SELECT_CELLS:
-//					Utils.moveCells(sheet, orgitop, orgileft, orgibottom, orgiright, nRow, nCol);
-//					break;
-//				}
-//			} else if (xaction == SelectionChangeEvent.MODIFY) {
-//				//TODO should migrate to user action handler
-//				switch(evt.getSelectionType()) {
-//				case CellSelectionEvent.SELECT_ROW:
-//					Utils.fillRows(sheet, orgitop, orgibottom, top, bottom);
-//					break;
-//				case CellSelectionEvent.SELECT_COLUMN:
-//					Utils.fillColumns(sheet, orgileft, orgiright, left, right);
-//					break;
-//				case CellSelectionEvent.SELECT_CELLS:
-//					Utils.fillCells(sheet, orgitop, orgileft, orgibottom, orgiright, top, left, bottom, right);
-//					break;
-//				}
-//			}	
-//		}
+
 		SpreadsheetInCtrl ctrl = ((SpreadsheetInCtrl)((Spreadsheet)comp).getExtraCtrl());
 		ctrl.setSelectionRect(left, top, right, bottom);	
 		

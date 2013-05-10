@@ -29,12 +29,12 @@ import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.DefaultUserAction;
 import org.zkoss.zss.ui.event.AuxActionEvent;
-import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * @author sam
+ * @author dennis
  */
 public class AuxActionCommand implements Command {
 
@@ -115,44 +115,4 @@ public class AuxActionCommand implements Command {
 			return null;
 		}
 	}
-	
-//	private void processSheet(String action, Map data, XSheet sheet, Spreadsheet spreadsheet) {
-//		XBook book = spreadsheet.getXBook();
-//		if ("add".equals(action)) {
-//			String prefix = Labels.getLabel(Action.SHEET.getLabelKey());
-//			if (Strings.isEmpty(prefix))
-//				prefix = "Sheet";
-//			int numSheet = book.getNumberOfSheets();
-//			XRanges.range(sheet).createSheet(prefix + " " + (numSheet + 1));
-//		} else if ("delete".equals(action)) {
-//			int numSheet = book.getNumberOfSheets();
-//			if (numSheet > 1) {
-//				XSheet sel = null;
-//				int index = book.getSheetIndex(sheet);
-//				if (index == numSheet - 1) {//delete last sheet, move select sheet left
-//					sel = book.getWorksheetAt(index - 1);
-//				} else { //move sheet right
-//					sel = book.getWorksheetAt(index + 1);
-//				}
-//				XRanges.range(sheet).deleteSheet();
-//				spreadsheet.setSelectedSheet(sel.getSheetName());
-//			}
-//		} else if ("rename".equals(action)) {
-//			String name = (String) data.get("name");
-//			XRanges.range(sheet).setSheetName(name);
-//		} else if ("protect".equals(action)) {
-//			boolean protect = sheet.getProtect();
-//			XRanges.range(sheet).protectSheet(protect ? null : "");// toggle sheet protect
-//		} else if ("moveLeft".equals(action)) {
-//			int index = book.getSheetIndex(sheet);
-//			if (index > 0) {
-//				XRanges.range(sheet).setSheetOrder(index - 1);
-//			}
-//		} else if ("moveRight".equals(action)) {
-//			int index = book.getSheetIndex(sheet);
-//			if (index < book.getNumberOfSheets() - 1) {
-//				XRanges.range(sheet).setSheetOrder(index + 1);
-//			}
-//		}
-//	}
 }

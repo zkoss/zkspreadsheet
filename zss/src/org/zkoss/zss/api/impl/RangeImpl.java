@@ -545,7 +545,7 @@ public class RangeImpl implements Range{
 		range.protectSheet(password);
 	}
 	
-	public void fill(Range dest,AutoFillType fillType){
+	public void autoFill(Range dest,AutoFillType fillType){
 		//TODO the syncLevel
 		range.autoFill(((RangeImpl)dest).getNative(), EnumUtil.toRangeAutoFillType(fillType));
 	}

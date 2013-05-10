@@ -14,6 +14,7 @@ import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.ApplyBorderType;
+import org.zkoss.zss.api.Range.AutoFillType;
 import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
@@ -35,10 +36,12 @@ import org.zkoss.zss.ui.DefaultUserActionHandler.Clipboard.Type;
 import org.zkoss.zss.ui.event.AuxActionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
+import org.zkoss.zss.ui.event.SelectionChangeEvent;
 import org.zkoss.zul.Messagebox;
 
 public class DefaultUserActionHandler implements UserActionHandler {
 	
+	private static final long serialVersionUID = 1L;
 	private static ThreadLocal<UserActionContext> _ctx = new ThreadLocal<UserActionContext>();
 	private Clipboard _clipboard;
 
@@ -1424,7 +1427,8 @@ public class DefaultUserActionHandler implements UserActionHandler {
 
 	@Override
 	public String[] getInterestedEvents() {
-		return new String[] { Events.ON_AUX_ACTION,Events.ON_SHEET_SELECT, Events.ON_CTRL_KEY,org.zkoss.zk.ui.event.Events.ON_CANCEL,
+		return new String[] { Events.ON_AUX_ACTION,Events.ON_SHEET_SELECT, Events.ON_CTRL_KEY, Events.ON_SELECTION_CHANGE, 
+				org.zkoss.zk.ui.event.Events.ON_CANCEL,
 				Events.ON_CELL_DOUBLE_CLICK, Events.ON_START_EDITING };
 	}
 	
@@ -1450,6 +1454,9 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			sheet = evt.getSheet();
 			action = evt.getAction();
 			extraData = evt.getExtraData();
+		}else if(event instanceof SelectionChangeEvent){
+			SelectionChangeEvent evt = ((SelectionChangeEvent)event);
+			selection = new Rect(evt.getLeft(),evt.getTop(),evt.getRight(),evt.getBottom());
 		}else{
 			selection = spreadsheet.getSelection();
 		}
@@ -1486,6 +1493,10 @@ public class DefaultUserActionHandler implements UserActionHandler {
 					getSpreadsheet().smartUpdate("doPasteFromServer", true);
 				}
 			}
+		}else if(Events.ON_SELECTION_CHANGE.equals(nm)){
+			SelectionChangeEvent evt = (SelectionChangeEvent)event;
+			//last selection either get form selection or from event
+			doSelectionChange(new Rect(evt.getOrigleft(),evt.getOrigtop(),evt.getOrigright(),evt.getOrigbottom()),getSelection());
 		}else if(Events.ON_CELL_DOUBLE_CLICK.equals(nm)){//TODO check if we need it still
 			clearClipboard();
 		}else if(Events.ON_START_EDITING.equals(nm)){
@@ -1495,6 +1506,34 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 	}
 	
+	protected boolean doSelectionChange(Rect original,Rect selection) {
+		Sheet sheet = getSheet();
+		Range src = Ranges.range(sheet,original.getTop(),original.getLeft(),original.getBottom(),original.getRight());
+		Range dest = Ranges.range(sheet,selection.getTop(),selection.getLeft(),selection.getBottom(),selection.getRight());
+		
+		if(dest.isProtected()){
+			showProtectMessage();
+			return true;
+		}
+		
+		int orgW = original.getRight()-original.getLeft();
+		int orgH = original.getBottom()-original.getTop();
+		int w = selection.getRight()-selection.getLeft();
+		int h = selection.getBottom()-selection.getTop();
+		
+		
+		if (orgW==w && orgH==h) {//move
+			final int nRow = selection.getTop() - original.getTop();
+			final int nCol = selection.getLeft() - original.getLeft();
+			SheetOperationUtil.shift(src,nRow, nCol);
+		} else{//resize
+			
+			SheetOperationUtil.autoFill(src,dest, AutoFillType.DEFAULT);
+		}	
+		
+		return true;
+	}
+
 	private void updateClipboardHighlightEffect() {
 		//to sync the 
 		Clipboard cb = getClipboard();
