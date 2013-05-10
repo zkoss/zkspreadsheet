@@ -160,4 +160,7 @@ public class Events {
 	 * The ON_CTRL_KEY event (used with {@link KeyEvent})
 	 */
 	public static final String ON_CTRL_KEY = org.zkoss.zk.ui.event.Events.ON_CTRL_KEY;
+	
+	
+	public static final String ON_AUX_ACTION = "onAuxAction";
 }

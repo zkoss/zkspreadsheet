@@ -31,7 +31,7 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.zul.Dialog;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
@@ -225,7 +225,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		}
 		
 		//call utils
-		Utils.sort(ss.getSelectedSheet(), ss.getSelection(), index, algorithm, dataOption,  hasHeader.isChecked(), caseSensitive.isChecked(), sortOrientation);
+		Utils.sort(ss.getSelectedXSheet(), ss.getSelection(), index, algorithm, dataOption,  hasHeader.isChecked(), caseSensitive.isChecked(), sortOrientation);
 		_customSortDialog.fireOnClose(null);
 	}
 	
@@ -414,7 +414,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		 * @return
 		 */
 		private boolean isAllCellNumberType(int idx) {
-			Worksheet sheet = ss.getSelectedSheet();
+			XSheet sheet = ss.getSelectedXSheet();
 			Rect rect = ss.getSelection();
 			int top = sortOrientation ? idx : rect.getTop();
 			int left = sortOrientation ? rect.getLeft() : idx;

@@ -23,11 +23,11 @@ import java.io.Serializable;
 
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zss.engine.Ref;
-import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.sys.XBook;
 
 
 /**
- * Defines an event that encapsulates data changes of the spread sheet {@link Book}. 
+ * Defines an event that encapsulates data changes of the spread sheet {@link XBook}. 
  *
  * @author henrichen
  */

@@ -23,16 +23,18 @@ import java.util.Map;
 
 import org.zkoss.lang.Objects;
 import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.StartEditingEvent;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 
 
 /**
@@ -57,15 +59,25 @@ public class StartEditingCommand implements Command {
 		String clienttxt = (String) data.get("clienttxt");
 		String type = (String) data.get("type");
 
-		Worksheet sheet = ((Spreadsheet) comp).getSelectedSheet();
-		if (!Utils.getSheetUuid(sheet).equals(sheetId))
+		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
+		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
-		Cell cell = Utils.getCell(sheet, row, col);
+		Cell cell = XUtils.getCell(sheet, row, col);
 		// You can call getEditText(), setEditText(), getText().
 
-		//TODO, Utils.getRichEditText(cell)?
-		String editText = cell == null ? "" : Utils.getEditText(cell);
+		String editText;
+		if(cell==null){
+			editText = "";
+		}else{
+			RichTextString rts = BookHelper.getRichEditText(cell);
+			if(rts==null){
+				editText = "";
+			}else{
+				editText = rts.getString();
+			}
+		}
+				
 		
 		StartEditingEvent event = new StartEditingEvent(
 				org.zkoss.zss.ui.event.Events.ON_START_EDITING, comp, sheet,

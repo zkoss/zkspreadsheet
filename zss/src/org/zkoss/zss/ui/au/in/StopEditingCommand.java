@@ -28,11 +28,11 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 
 
 /**
@@ -57,8 +57,8 @@ public class StopEditingCommand implements Command {
 		String value = (String) data.get("value");
 		String type = (String) data.get("type");
 		
-		Worksheet sheet = ((Spreadsheet) comp).getSelectedSheet();
-		if (!Utils.getSheetUuid(sheet).equals(sheetId))
+		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
+		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
 		

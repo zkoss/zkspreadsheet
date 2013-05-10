@@ -21,7 +21,7 @@ package org.zkoss.zss.ui.sys;
 //import org.zkoss.zss.model.Sheet;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
@@ -49,13 +49,13 @@ public interface WidgetLoader {
 	 * indicate the selected sheet of a spreadsheet is changed.   
 	 * @param sheet
 	 */
-	public void onSheetSelected(Worksheet sheet);
+	public void onSheetSelected(XSheet sheet);
 	
 	/**
 	 * indicate the sheet is dis-selected
 	 * @param sheet
 	 */
-	public void onSheetClean(Worksheet sheet);
+	public void onSheetClean(XSheet sheet);
 	
 	/**
 	 * call when spreadsheet try to load a block of cell to client side. 
@@ -64,15 +64,15 @@ public interface WidgetLoader {
 	 */
 	//public void onLoadOnDeman(String sheetid,int left,int top,int right,int bottom);
 
-	public void addChartWidget(Worksheet sheet, ZssChartX chart);
+	public void addChartWidget(XSheet sheet, ZssChartX chart);
 	
-	public void deleteChartWidget(Worksheet sheet, org.zkoss.poi.ss.usermodel.Chart chart);
+	public void deleteChartWidget(XSheet sheet, org.zkoss.poi.ss.usermodel.Chart chart);
 	
-	public void addPictureWidget(Worksheet sheet, Picture picture);
+	public void addPictureWidget(XSheet sheet, Picture picture);
 	
-	public void deletePictureWidget(Worksheet sheet, Picture picture);
+	public void deletePictureWidget(XSheet sheet, Picture picture);
 	
-	public void updatePictureWidget(Worksheet sheet, Picture picture);
+	public void updatePictureWidget(XSheet sheet, Picture picture);
 	
-	public void updateChartWidget(Worksheet sheet, org.zkoss.poi.ss.usermodel.Chart chart);
+	public void updateChartWidget(XSheet sheet, org.zkoss.poi.ss.usermodel.Chart chart);
 }

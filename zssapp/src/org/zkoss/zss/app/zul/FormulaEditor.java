@@ -26,10 +26,10 @@ import org.zkoss.zk.ui.event.KeyEvent;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.app.zul.ctrl.WorkbookCtrl;
-import org.zkoss.zss.model.Range;
-import org.zkoss.zss.model.Ranges;
-import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.model.impl.SheetCtrl;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.EditboxEditingEvent;
@@ -71,7 +71,7 @@ public class FormulaEditor extends Textbox {
 	private String formulaEdit;
 	/*cache added focus names*/
 	private LinkedHashSet<String> addedFocusNames = new LinkedHashSet<String>();
-	private Worksheet formulaSheet;
+	private XSheet formulaSheet;
 	private String focusCellRef;
 	/**
 	 * Indicate edit existing formula.
@@ -116,9 +116,9 @@ public class FormulaEditor extends Textbox {
 				newFocus.add(name);
 				continue;
 			}
-			Range rng = null;
+			XRange rng = null;
 			try {
-				rng = Ranges.range(formulaSheet, name);
+				rng = XRanges.range(formulaSheet, name);
 			} catch (NullPointerException ex) { /*input wrong cell reference will cause NPE or IllegalArgumentException*/
 			} catch (IllegalArgumentException ex) {
 			}
@@ -213,7 +213,7 @@ public class FormulaEditor extends Textbox {
 		}  else if (currentEditcell != null) {
 			final int left = bookCtrl.getSelection().getLeft();
 			final int top = bookCtrl.getSelection().getTop();
-			final Worksheet sheet = bookCtrl.getSelectedSheet();
+			final XSheet sheet = bookCtrl.getSelectedSheet();
 			currentEditcell = Utils.getOrCreateCell(sheet, top, left);
 			bookCtrl.escapeAndUpdateText(currentEditcell, newEdit);
 		}
@@ -237,7 +237,7 @@ public class FormulaEditor extends Textbox {
 	
 	public void onFocus() {
 		WorkbookCtrl bookCtrl = getDesktopWorkbenchContext().getWorkbookCtrl();
-		Worksheet sheet = bookCtrl.getSelectedSheet();
+		XSheet sheet = bookCtrl.getSelectedSheet();
 		if (sheet == null) { //no sheet, no operation
 			return;
 		}
@@ -254,7 +254,7 @@ public class FormulaEditor extends Textbox {
 		currentEditcell = Utils.getCell(sheet, top, left);
 		
 		if (currentEditcell != null) {
-			oldEdit = Ranges.range(sheet, top, left).getEditText();
+			oldEdit = XRanges.range(sheet, top, left).getEditText();
 			oldText = Utils.getCellText(sheet, currentEditcell); //escaped HTML to show cell value
 			if (!isComposingFormula(newEdit))
 				bookCtrl.escapeAndUpdateText(currentEditcell, oldEdit);
@@ -310,7 +310,7 @@ public class FormulaEditor extends Textbox {
 		final boolean focusChanged = (row != oldrow || col != oldcol); //user click directly to a different cell
 		if (!focusChanged) {
 			if (everTab != null) { //Tab key
-				final Worksheet sheet = bookCtrl.getSelectedSheet();
+				final XSheet sheet = bookCtrl.getSelectedSheet();
 				if (everTab.booleanValue()) { //shift + Tab
 					col = col - 1;
 					if (col < 0) {
@@ -422,7 +422,7 @@ public class FormulaEditor extends Textbox {
 	private void endEditingFormula(boolean confirmChange) {
 		WorkbookCtrl bookCtrl = getDesktopWorkbenchContext().getWorkbookCtrl();
 		
-		Range range = Ranges.range(formulaSheet, formulaCell.getRowIndex(), formulaCell.getColumnIndex());
+		XRange range = XRanges.range(formulaSheet, formulaCell.getRowIndex(), formulaCell.getColumnIndex());
 		if (confirmChange) {
 			range.setEditText(newEdit);
 			bookCtrl.focusTo(formulaRow, formulaColumn, false);

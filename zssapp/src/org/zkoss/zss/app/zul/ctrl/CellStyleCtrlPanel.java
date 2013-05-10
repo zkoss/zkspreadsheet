@@ -28,7 +28,7 @@ import org.zkoss.zss.app.Dropdownbutton;
 import org.zkoss.zss.app.zul.Colorbutton;
 import org.zkoss.zss.app.zul.DisposedEventListener;
 import org.zkoss.zss.app.zul.Zssapp;
-import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Hlayout;
@@ -346,37 +346,37 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 	}
 	private static int getBorderType(String borderType) {
 		if (borderType == null) {
-			return Range.BORDER_EDGE_BOTTOM;
+			return XRange.BORDER_EDGE_BOTTOM;
 		}
 
 		if ("bottom".equals(borderType))
-			return Range.BORDER_EDGE_BOTTOM;
+			return XRange.BORDER_EDGE_BOTTOM;
 		else if ("right".equals(borderType))
-			return Range.BORDER_EDGE_RIGHT;
+			return XRange.BORDER_EDGE_RIGHT;
 		else if ("top".equals(borderType))
-			return Range.BORDER_EDGE_TOP;
+			return XRange.BORDER_EDGE_TOP;
 		else if ("left".equals(borderType))
-			return Range.BORDER_EDGE_LEFT;
+			return XRange.BORDER_EDGE_LEFT;
 		else if ("outside".equals(borderType))
-			return Range.BORDER_OUTLINE;
+			return XRange.BORDER_OUTLINE;
 		else if ("inside".equals(borderType))
-			return Range.BORDER_INSIDE;
+			return XRange.BORDER_INSIDE;
 		else if ("insideHorizontal".equals(borderType))
-			return Range.BORDER_INSIDE_HORIZONTAL;
+			return XRange.BORDER_INSIDE_HORIZONTAL;
 		else if ("insideVertical".equals(borderType))
-			return Range.BORDER_INSIDE_VERTICAL;
+			return XRange.BORDER_INSIDE_VERTICAL;
 		else if ("no".equals(borderType))
-			return Range.BORDER_FULL;
+			return XRange.BORDER_FULL;
 		else if ("full".equals(borderType))
-			return Range.BORDER_FULL;
+			return XRange.BORDER_FULL;
 		else if ("diagonalDown".equals(borderType))
-			return Range.BORDER_DIAGONAL_DOWN;
+			return XRange.BORDER_DIAGONAL_DOWN;
 		else if ("diagonalUp".equals(borderType))
-			return Range.BORDER_DIAGONAL_UP;
+			return XRange.BORDER_DIAGONAL_UP;
 		else if ("diagonal".equals(borderType))
-			return Range.BORDER_DIAGONAL;
+			return XRange.BORDER_DIAGONAL;
 
-		return Range.BORDER_EDGE_BOTTOM;
+		return XRange.BORDER_EDGE_BOTTOM;
 	}
 	
 	public void onDropdown$valignBtn() {

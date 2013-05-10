@@ -27,11 +27,11 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.model.Book;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
 
@@ -53,12 +53,12 @@ public class CellSelectionCommand implements Command {
 			
 		String sheetId= (String) data.get("sheetId");
 		
-		Worksheet sheet = ((Spreadsheet)comp).getSelectedSheet();
-		if(!Utils.getSheetUuid(sheet).equals(sheetId))
+		XSheet sheet = ((Spreadsheet)comp).getSelectedXSheet();
+		if(!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
 		//TODO request shall send back maxcol/maxrow (do it in client side)
-		final Book book = (Book) sheet.getWorkbook();
+		final XBook book = (XBook) sheet.getWorkbook();
 		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
 		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
 		int action = (Integer) data.get("action");

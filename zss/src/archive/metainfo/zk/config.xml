@@ -20,10 +20,10 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 	</version>
 	<library-property>
 		<name>org.zkoss.zss.model.default.Exporter.class</name>
-		<value>excel=org.zkoss.zss.model.impl.ExcelExporter</value>
+		<value>excel=org.zkoss.zss.model.sys.impl.ExcelExporter</value>
 	</library-property>
 	<library-property>
 		<name>org.zkoss.zss.model.default.Importer.class</name>
-		<value>excel=org.zkoss.zss.model.impl.ExcelImporter</value>
+		<value>excel=org.zkoss.zss.model.sys.impl.ExcelImporter</value>
 	</library-property>
 </config>

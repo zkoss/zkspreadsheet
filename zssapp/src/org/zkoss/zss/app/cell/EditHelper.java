@@ -14,7 +14,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.cell;
 
-import org.zkoss.zss.model.Range;
+import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
@@ -253,7 +253,7 @@ public final class EditHelper {
 	*/
 	
 	public static int getDefaultPasteType() {
-		return Range.PASTE_ALL;
+		return XRange.PASTE_ALL;
 	}
 	
 	/**

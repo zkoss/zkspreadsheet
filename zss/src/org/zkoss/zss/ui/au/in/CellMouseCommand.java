@@ -43,14 +43,14 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zss.model.Range;
-import org.zkoss.zss.model.Ranges;
-import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.model.impl.BookHelper;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellMouseEvent;
 import org.zkoss.zss.ui.event.FilterMouseEvent;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * A Command (client to server) for handling user(client) start editing a cell
@@ -85,8 +85,8 @@ public class CellMouseCommand implements Command {
 		int my = (Integer) data.get("my");
 		
 		Spreadsheet spreadsheet = (Spreadsheet) comp;
-		Worksheet sheet = ((Spreadsheet) comp).getSelectedSheet();
-		if (!Utils.getSheetUuid(sheet).equals(sheetId))
+		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
+		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
 		if ("lc".equals(type)) {
@@ -115,11 +115,11 @@ public class CellMouseCommand implements Command {
 		}
 	}
 	
-	private void processFilter (int row, int col, int field, Worksheet worksheet, Spreadsheet spreadsheet) {
+	private void processFilter (int row, int col, int field, XSheet worksheet, Spreadsheet spreadsheet) {
 		final AutoFilter autoFilter = worksheet.getAutoFilter();
 		final FilterColumn filterColumn = autoFilter.getFilterColumn(field - 1);
 		final String rangeAddr = autoFilter.getRangeAddress().formatAsString();
-		final Range range = Ranges.range(worksheet, rangeAddr);
+		final XRange range = XRanges.range(worksheet, rangeAddr);
 		
 		spreadsheet.smartUpdate("autoFilterPopup", 
 			convertFilterInfoToJSON(row, col, field, rangeAddr, scanRows(field, filterColumn, range, worksheet)));
@@ -160,7 +160,7 @@ public class CellMouseCommand implements Command {
 		return data;
 	}
 	
-	private TreeSet<FilterRowInfo> scanRows(int field, FilterColumn fc, Range range, Worksheet worksheet) {
+	private TreeSet<FilterRowInfo> scanRows(int field, FilterColumn fc, XRange range, XSheet worksheet) {
 		TreeSet<FilterRowInfo> orderedRowInfos = new TreeSet<FilterRowInfo>(new FilterRowInfoComparator());
 		
 		blankRowInfo = new FilterRowInfo(BLANK_VALUE, "(Blanks)");
@@ -175,7 +175,7 @@ public class CellMouseCommand implements Command {
 			if (nofilter && isHiddenRow(i, worksheet)) {
 				continue;
 			}
-			final Cell c = Utils.getCell(worksheet, i, columnIndex);
+			final Cell c = XUtils.getCell(worksheet, i, columnIndex);
 			final boolean blankcell = BookHelper.isBlankCell(c);
 			if (!blankcell) {
 				String displaytxt = BookHelper.getCellText(c);
@@ -204,7 +204,7 @@ public class CellMouseCommand implements Command {
 		return orderedRowInfos;
 	}
 	
-	private static boolean isHiddenRow(int rowIdx, Worksheet worksheet) {
+	private static boolean isHiddenRow(int rowIdx, XSheet worksheet) {
 		final Row r = worksheet.getRow(rowIdx);
 		return r != null && r.getZeroHeight();
 	}

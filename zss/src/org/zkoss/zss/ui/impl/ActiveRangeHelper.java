@@ -18,7 +18,7 @@ package org.zkoss.zss.ui.impl;
 
 import java.util.HashMap;
 
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Rect;
 
 /**
@@ -27,9 +27,9 @@ import org.zkoss.zss.ui.Rect;
  */
 public class ActiveRangeHelper {
 
-	private HashMap<Worksheet, Rect> activeRanges = new HashMap<Worksheet, Rect>();
+	private HashMap<XSheet, Rect> activeRanges = new HashMap<XSheet, Rect>();
 	
-	public void setActiveRange(Worksheet sheet, int tRow, int lCol, int bRow, int rCol) {
+	public void setActiveRange(XSheet sheet, int tRow, int lCol, int bRow, int rCol) {
 		Rect rect = activeRanges.get(sheet);
 		if (rect == null) {
 			activeRanges.put(sheet, rect = new Rect(lCol, tRow, rCol, bRow));
@@ -38,19 +38,19 @@ public class ActiveRangeHelper {
 		}
 	}
 	
-	public Rect getRect(Worksheet sheet) {
+	public Rect getRect(XSheet sheet) {
 		return activeRanges.get(sheet);
 	}
 	
-	public boolean containsSheet(Worksheet sheet) {
+	public boolean containsSheet(XSheet sheet) {
 		return activeRanges.containsKey(sheet);
 	}
 	
-	public boolean contains(Worksheet sheet, int row, int col) {
+	public boolean contains(XSheet sheet, int row, int col) {
 		return contains(sheet, row, col, row, col);
 	}
 	
-	public boolean contains(Worksheet sheet, int tRow, int lCol, int bRow, int rCol) {
+	public boolean contains(XSheet sheet, int tRow, int lCol, int bRow, int rCol) {
 		Rect rect = activeRanges.get(sheet);
 		if (rect == null)
 			return false;

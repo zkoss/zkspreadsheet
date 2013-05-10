@@ -28,10 +28,10 @@ import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.model.Ranges;
-import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.model.impl.DrawingManager;
-import org.zkoss.zss.model.impl.SheetCtrl;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.model.sys.impl.DrawingManager;
+import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
@@ -52,11 +52,11 @@ public class MoveWidgetCommand implements Command {
 		
 		String type = (String) data.get("type");
 		if ("onWidgetMove".equals(type) || "onWidgetSize".equals(type)) {
-			processWidgetMove(((Spreadsheet) comp).getSelectedSheet(), data);
+			processWidgetMove(((Spreadsheet) comp).getSelectedXSheet(), data);
 		}
 	}
 
-	private void processWidgetMove(Worksheet sheet, Map data) {
+	private void processWidgetMove(XSheet sheet, Map data) {
 		String widgetType = (String) data.get("wgt");
 		if ("chart".equals(widgetType)) {
 			processChartMove(sheet, data);
@@ -65,7 +65,7 @@ public class MoveWidgetCommand implements Command {
 		}
 	}
 	
-	private void processChartMove(Worksheet sheet, Map data) {
+	private void processChartMove(XSheet sheet, Map data) {
 		DrawingManager dm = ((SheetCtrl)sheet).getDrawingManager();
 		String widgetId = (String) data.get("id");
 		ZssChartX chartX = null;
@@ -88,12 +88,12 @@ public class MoveWidgetCommand implements Command {
 			int row1 = (Integer) data.get("row1");
 			int col2 = (Integer) data.get("col2");
 			int row2 = (Integer) data.get("row2");
-			Ranges.range(sheet).moveChart(chart, 
+			XRanges.range(sheet).moveChart(chart, 
 					new XSSFClientAnchor(pxToEmu(dx1), pxToEmu(dy1), pxToEmu(dx2), pxToEmu(dy2), col1, row1, col2, row2));
 		}
 	}
 	
-	private void processPictureMove(Worksheet sheet, Map data) {
+	private void processPictureMove(XSheet sheet, Map data) {
 		DrawingManager dm = ((SheetCtrl)sheet).getDrawingManager();
 		String widgetId = (String) data.get("id");
 		Picture pic = null;
@@ -113,7 +113,7 @@ public class MoveWidgetCommand implements Command {
 			int row1 = (Integer) data.get("row1");
 			int col2 = (Integer) data.get("col2");
 			int row2 = (Integer) data.get("row2");
-			Ranges.range(sheet).movePicture(pic, 
+			XRanges.range(sheet).movePicture(pic, 
 					new XSSFClientAnchor(pxToEmu(dx1), pxToEmu(dy1), pxToEmu(dx2), pxToEmu(dy2), col1, row1, col2, row2));
 		}
 	}

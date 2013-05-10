@@ -26,10 +26,10 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.HeaderEvent;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
 
@@ -59,8 +59,8 @@ public class HeaderCommand implements Command {
 	
 	private void processTopHeader(Spreadsheet spreadsheet, Map data){
 		String sheetId = (String) data.get("sheetId");
-		Worksheet sheet = spreadsheet.getSelectedSheet();
-		if(!Utils.getSheetUuid(sheet).equals(sheetId)) {
+		XSheet sheet = spreadsheet.getSelectedXSheet();
+		if(!XUtils.getSheetUuid(sheet).equals(sheetId)) {
 			return;
 		}
 		String event = (String) data.get("event");
@@ -84,8 +84,8 @@ public class HeaderCommand implements Command {
 	
 	private void processLeftHeader(Spreadsheet spreadsheet, Map data){
 		String sheetId = (String) data.get("sheetId");
-		Worksheet sheet = spreadsheet.getSelectedSheet();
-		if(!Utils.getSheetUuid(sheet).equals(sheetId)) {
+		XSheet sheet = spreadsheet.getSelectedXSheet();
+		if(!XUtils.getSheetUuid(sheet).equals(sheetId)) {
 			return;
 		}
 		String event = (String) data.get("event");

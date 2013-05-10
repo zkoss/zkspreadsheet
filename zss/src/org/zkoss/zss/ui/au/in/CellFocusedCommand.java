@@ -27,10 +27,10 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellEvent;
-import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
 /**
@@ -52,8 +52,8 @@ public class CellFocusedCommand implements Command {
 		int row = (Integer) data.get("row");
 		int col = (Integer) data.get("col");
 		
-		Worksheet sheet = ((Spreadsheet) comp).getSelectedSheet();
-		if (!Utils.getSheetUuid(sheet).equals(sheetId))
+		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
+		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
 
 		SpreadsheetInCtrl ctrl = ((SpreadsheetInCtrl) ((Spreadsheet) comp).getExtraCtrl());

@@ -22,13 +22,13 @@ import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
-import org.zkoss.zss.model.Range;
-import org.zkoss.zss.model.Ranges;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XRanges;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
-import org.zkoss.zss.ui.sys.ActionHandler.Clipboard;
+import org.zkoss.zss.ui.sys.XActionHandler.Clipboard;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Messagebox;
@@ -93,16 +93,16 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 	public void onClick$okBtn() {
 		okBtn.setDisabled(true);
 		
-		Clipboard clipboard = ss.getActionHandler().getClipboard();
+		Clipboard clipboard = ss.getUserActionHandler().getClipboard();
 		
 		if (clipboard != null) {
-			final Worksheet srcSheet = clipboard.sourceSheet;
+			final XSheet srcSheet = clipboard.sourceSheet;
 			final Rect srcRect = clipboard.sourceRect;
 			final Rect dst = ss.getSelection();
 			
-			Range rng = Utils.pasteSpecial(srcSheet, 
+			XRange rng = Utils.pasteSpecial(srcSheet, 
 					srcRect, 
-					ss.getSelectedSheet(), 
+					ss.getSelectedXSheet(), 
 					dst.getTop(),
 					dst.getLeft(),
 					dst.getBottom(),
@@ -113,16 +113,16 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 			
 			
 			if (clipboard.type == Clipboard.Type.CUT) {
-				Ranges
+				XRanges
 				.range(srcSheet, srcRect.getTop(), srcRect.getLeft(), srcRect.getBottom(), srcRect.getRight())
 				.clearContents();
 				
 				final CellStyle defaultStyle = clipboard.book.createCellStyle();
-				Ranges
+				XRanges
 				.range(srcSheet, srcRect.getTop(), srcRect.getLeft(),srcRect.getBottom(), srcRect.getRight())
 				.setStyle(defaultStyle);
 				
-				ss.getActionHandler().clearClipboard();
+				ss.getUserActionHandler().clearClipboard();
 				ss.setHighlight(null);
 			}
 			
@@ -143,17 +143,17 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 	 */
 	private static int getPasteOperation(String operation) {
 		if (operation == null || "none".equals(operation) )
-			return Range.PASTEOP_NONE;
+			return XRange.PASTEOP_NONE;
 		if ( "add".equals(operation) ) {
-			return Range.PASTEOP_ADD;
+			return XRange.PASTEOP_ADD;
 		} else if ( "sub".equals(operation) ) {
-			return Range.PASTEOP_SUB;
+			return XRange.PASTEOP_SUB;
 		} else if ( "mul".equals(operation) ) {
-			return Range.PASTEOP_MUL;
+			return XRange.PASTEOP_MUL;
 		} else if ( "divide".equals(operation) ) {
-			return Range.PASTEOP_DIV;
+			return XRange.PASTEOP_DIV;
 		}
-		return Range.PASTEOP_NONE;
+		return XRange.PASTEOP_NONE;
 	}
 	
 	/**
@@ -165,28 +165,28 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 		if (type == null 
 				|| "paste".equals(type)
 				|| "all".equals(type) )
-			return Range.PASTE_ALL;
+			return XRange.PASTE_ALL;
 		
 		if ( "allExcpetBorder".equals(type) ) {
-			return Range.PASTE_ALL_EXCEPT_BORDERS;
+			return XRange.PASTE_ALL_EXCEPT_BORDERS;
 		} else if ( "columnWidth".equals(type) ) {
-			return Range.PASTE_COLUMN_WIDTHS;
+			return XRange.PASTE_COLUMN_WIDTHS;
 		} else if ( "comment".equals(type) ) {
-			return Range.PASTE_COMMENTS;
+			return XRange.PASTE_COMMENTS;
 		} else if ( "formula".equals(type) ) {
-			return Range.PASTE_FORMULAS;
+			return XRange.PASTE_FORMULAS;
 		} else if ( "formulaWithNumFmt".equals(type) ) {
-			return Range.PASTE_FORMULAS_AND_NUMBER_FORMATS;
+			return XRange.PASTE_FORMULAS_AND_NUMBER_FORMATS;
 		} else if ( "value".equals(type) ) {
-			return Range.PASTE_VALUES;
+			return XRange.PASTE_VALUES;
 		} else if ( "valueWithNumFmt".equals(type) ) {
-			return Range.PASTE_VALUES_AND_NUMBER_FORMATS;
+			return XRange.PASTE_VALUES_AND_NUMBER_FORMATS;
 		} else if ( "format".equals(type) ) {
-			return Range.PASTE_FORMATS;
+			return XRange.PASTE_FORMATS;
 		} else if ( "validation".equals(type) ) {
-			return Range.PASTE_VALIDATAION;
+			return XRange.PASTE_VALIDATAION;
 		}
 		
-		return Range.PASTE_ALL;
+		return XRange.PASTE_ALL;
 	}
 }

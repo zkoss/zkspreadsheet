@@ -27,9 +27,9 @@ import org.zkoss.lang.Library;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Exporter;
-import org.zkoss.zss.model.Exporters;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XExporter;
+import org.zkoss.zss.model.sys.XExporters;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Messagebox;
 
@@ -155,8 +155,8 @@ public class FileHelper {
 	public static void saveSpreadsheet(Spreadsheet spreadsheet) {
 		String filename = spreadsheet.getSrc();
 		SpreadSheetMetaInfo info = SpreadSheetMetaInfo.newInstance(filename);
-		Book wb = spreadsheet.getBook();
-		Exporter c = Exporters.getExporter("excel");
+		XBook wb = spreadsheet.getXBook();
+		XExporter c = XExporters.getExporter("excel");
 		
 		String fileName = getSpreadsheetStorageFolderPath() + info.getHashFileName();
 		File file = new File(fileName);		

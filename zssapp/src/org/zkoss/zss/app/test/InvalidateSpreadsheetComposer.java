@@ -20,9 +20,9 @@ import java.io.InputStream;
 
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.model.Book;
-import org.zkoss.zss.model.Importer;
-import org.zkoss.zss.model.Importers;
+import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XImporter;
+import org.zkoss.zss.model.sys.XImporters;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 
@@ -37,10 +37,10 @@ public class InvalidateSpreadsheetComposer extends GenericForwardComposer {
 	Button setChartBook;
 	
 	public void onClick$setChartBook() {
-		Importer importer = Importers.getImporter("excel");
+		XImporter importer = XImporters.getImporter("excel");
 		final InputStream is = Sessions.getCurrent().getWebApp().getResourceAsStream("/xls/graficas.xlsx");
-		Book book = importer.imports(is, "graficas.xlsx");
-		spreadsheet.setBook(book);		
+		XBook book = importer.imports(is, "graficas.xlsx");
+		spreadsheet.setXBook(book);		
 	}
 
 	public void onClick$invalidateSpreadsheetBtn() {

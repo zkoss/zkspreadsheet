@@ -24,8 +24,8 @@ import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.model.impl.SheetCtrl;
+import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 
@@ -53,7 +53,7 @@ public class FetchActiveRangeCommand implements Command {
 		int top = (Integer) data.get("top");
 		int bottom = (Integer) data.get("bottom");
 		
-		Worksheet sheet = spreadsheet.getSelectedSheet();
+		XSheet sheet = spreadsheet.getSelectedXSheet();
 		
 		if (sheetId.equals(((SheetCtrl)sheet).getUuid())) {
 			final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) spreadsheet.getExtraCtrl());

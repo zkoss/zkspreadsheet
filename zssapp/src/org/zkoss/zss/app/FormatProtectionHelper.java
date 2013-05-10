@@ -3,7 +3,7 @@ package org.zkoss.zss.app;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.zk.ui.Path;
-import org.zkoss.zss.model.Worksheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Checkbox;
@@ -25,7 +25,7 @@ public class FormatProtectionHelper {
 			int right = spreadsheet.getSelection().getRight();
 			int top = spreadsheet.getSelection().getTop();
 			int bottom = spreadsheet.getSelection().getBottom();
-			Worksheet sheet = spreadsheet.getSelectedSheet();
+			XSheet sheet = spreadsheet.getSelectedXSheet();
 			for (int row = top; row <= bottom; row++) {
 				for (int col = left; col <= right; col++) {
 					final Cell cell = Utils.getCell(sheet, row, col);
