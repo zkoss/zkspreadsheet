@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
 import zss.test.SpreadsheetAgent;
@@ -32,7 +33,7 @@ public class ImageTest extends DisplayExcelTest{
 		//select the sheet first or the chart won't be initialized
 		ssAgent.selectSheet("chart-image");
 		spreadsheet = zss.as(Spreadsheet.class);
-		sheet = spreadsheet.getBook().getWorksheet("chart-image");
+		sheet = spreadsheet.getXBook().getWorksheet("chart-image");
 	}
 
 	@Parameters
@@ -44,6 +45,7 @@ public class ImageTest extends DisplayExcelTest{
 
 	@Test
 	public void testPicture(){
+		
 		assertEquals(1, sheet.getPictures().size());
 		assertEquals(0, sheet.getPictures().get(0).getPreferredSize().getCol1());
 		assertEquals(1, sheet.getPictures().get(0).getPreferredSize().getCol2());
