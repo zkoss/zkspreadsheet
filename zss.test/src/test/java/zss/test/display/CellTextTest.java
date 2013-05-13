@@ -10,12 +10,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Font;
+import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
 import zss.test.SpreadsheetAgent;
@@ -126,7 +125,6 @@ public class CellTextTest extends DisplayExcelTest{
 	
 	private Font getFont(Sheet sheet, int row, int column) {
 		return Ranges.range(sheet, row, column).getCellStyle().getFont();
-//		return sheet.getBook().getFontAt(getCell(sheet, row, column).getCellStyle().getFontIndex());
 	}
 
 	@Test
@@ -191,28 +189,28 @@ public class CellTextTest extends DisplayExcelTest{
 	@Test
 	public void testAlignment(){
 		//vertical alignment
-		assertEquals(CellStyle.VERTICAL_TOP, range(sheet,26,1).getCellStyle().getVerticalAlignment());
-		assertEquals(CellStyle.VERTICAL_CENTER, range(sheet,26,2).getCellStyle().getVerticalAlignment());
-		assertEquals(CellStyle.VERTICAL_BOTTOM, range(sheet,26,3).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.VerticalAlignment.TOP, range(sheet,26,1).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.VerticalAlignment.CENTER, range(sheet,26,2).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.VerticalAlignment.BOTTOM, range(sheet,26,3).getCellStyle().getVerticalAlignment());
 
 		//horizontal alignment
-		assertEquals(CellStyle.ALIGN_LEFT,range(sheet,27,1).getCellStyle().getAlignment());
-		assertEquals(CellStyle.ALIGN_CENTER,range(sheet,27,2).getCellStyle().getAlignment());
-		assertEquals(CellStyle.ALIGN_RIGHT,range(sheet,27,3).getCellStyle().getAlignment());
+		assertEquals(CellStyle.Alignment.LEFT,range(sheet,27,1).getCellStyle().getAlignment());
+		assertEquals(CellStyle.Alignment.CENTER,range(sheet,27,2).getCellStyle().getAlignment());
+		assertEquals(CellStyle.Alignment.RIGHT,range(sheet,27,3).getCellStyle().getAlignment());
 		
 		//combined alignment
-		assertEquals(CellStyle.VERTICAL_TOP,range(sheet,28,1).getCellStyle().getVerticalAlignment());
-		assertEquals(CellStyle.ALIGN_LEFT,range(sheet,28,1).getCellStyle().getAlignment());
-		assertEquals(CellStyle.VERTICAL_CENTER,range(sheet,28,2).getCellStyle().getVerticalAlignment());
-		assertEquals(CellStyle.ALIGN_CENTER,range(sheet,28,2).getCellStyle().getAlignment());
-		assertEquals(CellStyle.VERTICAL_BOTTOM,range(sheet,28,3).getCellStyle().getVerticalAlignment());
-		assertEquals(CellStyle.ALIGN_RIGHT,range(sheet,28,3).getCellStyle().getAlignment());
+		assertEquals(CellStyle.VerticalAlignment.TOP,range(sheet,28,1).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.Alignment.LEFT,range(sheet,28,1).getCellStyle().getAlignment());
+		assertEquals(CellStyle.VerticalAlignment.CENTER,range(sheet,28,2).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.Alignment.CENTER,range(sheet,28,2).getCellStyle().getAlignment());
+		assertEquals(CellStyle.VerticalAlignment.BOTTOM,range(sheet,28,3).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.Alignment.RIGHT,range(sheet,28,3).getCellStyle().getAlignment());
+		
 	}
 	
-//	@Test
-//	public void testHyperlink(){
-//		assertEquals(Hyperlink.LINK_URL, Ranges.range(sheet, 30, 1).getHyperlink().getType());
-//		assertEquals(Hyperlink.LINK_URL, Ranges.range(sheet, 30, 1).getCellValueHelper().);
-//		assertEquals("http://www.zkoss.org/", Ranges.range(sheet, 30, 1).getHyperlink().getAddress());
-//	}
+	@Test
+	public void testHyperlink(){
+		assertEquals(HyperlinkType.URL, Ranges.range(sheet, 30, 1).getCellHyperlink().getType());
+		assertEquals("http://www.zkoss.org/", Ranges.range(sheet, 30, 1).getCellHyperlink().getAddress());
+	}
 }
