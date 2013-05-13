@@ -8,7 +8,7 @@
 		<zk.version>6.5.0</zk.version>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>-0.0.1-SNAPSHOT-FL-${maven.build.timestamp}</packname>
-		<zss.version>2.5.0</zss.version>
+		<zss.version>3.0.0</zss.version>
 	</properties>
 	<packaging>war</packaging>
 	<name>The zss.testapp Project</name>
@@ -39,20 +39,15 @@
 	</pluginRepositories>
 	<dependencies>
 		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zkmax</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.zkoss.zats</groupId>
 			<artifactId>zats-mimic-ext6</artifactId>
-			<version>1.1.0-SNAPSHOT</version>
+			<version>1.1.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zssex</artifactId>
-			<version>2.6.0</version>
+			<version>${zss.version}</version>
 		</dependency>
 		<!-- 
 		<dependency>
@@ -81,6 +76,11 @@
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-library</artifactId>
 			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkmax</artifactId>
+			<version>6.5.2</version>
 		</dependency>
 	</dependencies>
 	<build>
