@@ -3,20 +3,19 @@ package org.zkoss.zss.api.impl;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.api.Range.CellType;
-import org.zkoss.zss.api.Range.CellDataHelper;
+import org.zkoss.zss.api.Range.CellData;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.ui.fn.UtilFns;
 import org.zkoss.zss.ui.impl.XUtils;
 
-/*package*/ class CellDataHelperImpl implements CellDataHelper{
+/*package*/ class CellDataImpl implements CellData{
 
 	RangeImpl range;
 	
 	Cell cell;
 	boolean cellInit;
 	
-	public CellDataHelperImpl(RangeImpl range) {
+	public CellDataImpl(RangeImpl range) {
 		this.range = range;
 	}
 

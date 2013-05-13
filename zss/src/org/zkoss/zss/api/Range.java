@@ -143,7 +143,7 @@ public interface Range {
 	
 	public CellStyleHelper getCellStyleHelper();
 	
-	public CellDataHelper getCellDataHelper();
+	public CellData getCellData();
 	
 	public void sync(RangeRunner run);
 	/**
@@ -344,7 +344,7 @@ public interface Range {
 	/**
 	 * a cell value helper for get and set value of cell
 	 */
-	public interface CellDataHelper {
+	public interface CellData {
 		
 		public int getRow();
 		public int getColumn();

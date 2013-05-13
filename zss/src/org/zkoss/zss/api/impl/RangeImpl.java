@@ -57,7 +57,7 @@ public class RangeImpl implements Range{
 	SyncLevel syncLevel = SyncLevel.BOOK;
 	
 	CellStyleHelper cellStyleHelper;
-	CellDataHelper cellDataHelper;
+	CellData cellDataHelper;
 	
 	public void setSyncLevel(SyncLevel syncLevel){
 		this.syncLevel = syncLevel;
@@ -82,9 +82,9 @@ public class RangeImpl implements Range{
 		return cellStyleHelper;
 	}
 	
-	public CellDataHelper getCellDataHelper(){
+	public CellData getCellData(){
 		if(cellDataHelper==null){
-			cellDataHelper = new CellDataHelperImpl(this);
+			cellDataHelper = new CellDataImpl(this);
 		}
 		return cellDataHelper;
 	}
