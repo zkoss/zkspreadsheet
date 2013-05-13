@@ -119,5 +119,7 @@ public class CellDataImpl implements CellData{
 		range.setCellEditText(editText);
 	}
 
-	
+	public boolean validateEditText(String editText){
+		return range.getNative().validate(editText)==null;
+	}
 }

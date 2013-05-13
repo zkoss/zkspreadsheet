@@ -790,7 +790,7 @@ public class RangeImpl implements Range{
 //		range.getText();//RichTextString (what is the difference of getRichEditText)
 //		
 		
-		range.validate("");//DataValidation
+//		range.validate("");//DataValidation
 		
 	}
 	
