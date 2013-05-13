@@ -32,7 +32,8 @@ public class SpreadsheetAgent {
 	}
 	
 	public void selectSheet(String name){
-		int sheetIndex = zss.as(Spreadsheet.class).getBook().getSheetIndex(name);
+//		int sheetIndex = zss.as(Spreadsheet.class).getBook().getSheetIndex(name);
+		int sheetIndex = zss.as(Spreadsheet.class).getXBook().getSheetIndex(name);
 		if (sheetIndex >=0){
 			selectSheet(sheetIndex);
 		}

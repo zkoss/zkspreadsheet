@@ -31,7 +31,7 @@ public class CellBorderTest extends DisplayExcelTest{
 		super(testPage);
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
 		ssAgent.selectSheet("cell-border");
-		sheet = zss.as(Spreadsheet.class).getSheet(1);
+		sheet = zss.as(Spreadsheet.class).getXBook().getWorksheetAt(1);
 	}
 
 	@Parameters
