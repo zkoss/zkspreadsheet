@@ -26,5 +26,5 @@ public interface CellData {
 	
 	public void setEditText(String editText);
 	
-	//public void setCellType(CellType type);
+	public boolean validateEditText(String editText);
 }
