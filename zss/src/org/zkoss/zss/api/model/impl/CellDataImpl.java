@@ -1,14 +1,14 @@
-package org.zkoss.zss.api.impl;
+package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.zss.api.Range.CellType;
-import org.zkoss.zss.api.Range.CellData;
+import org.zkoss.zss.api.impl.RangeImpl;
+import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.impl.XUtils;
 
-/*package*/ class CellDataImpl implements CellData{
+public class CellDataImpl implements CellData{
 
 	RangeImpl range;
 	

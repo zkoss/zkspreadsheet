@@ -7,4 +7,11 @@ public interface Hyperlink {
 	    EMAIL,
 	    FILE
 	}
+	
+	
+	public HyperlinkType getType();
+	
+	public String getAddress();
+	
+	public String getLabel();
 }
