@@ -78,4 +78,5 @@ public interface CellStyle {
 	public String getDataFormat();
 	
 	public void setDataFormat(String format);
+	
 }

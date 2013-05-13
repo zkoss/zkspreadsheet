@@ -15,7 +15,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.sheet;
 
 import org.zkoss.poi.ss.usermodel.Sheet;
-import org.zkoss.zss.model.sys.XBook;
+//import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;

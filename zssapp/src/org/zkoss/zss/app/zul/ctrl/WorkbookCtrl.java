@@ -18,12 +18,14 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import org.zkoss.image.AImage;
-import org.zkoss.poi.ss.usermodel.Cell;
+//import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XSheet;
+//import org.zkoss.zss.model.sys.XBook;
+//import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -96,7 +98,7 @@ public interface WorkbookCtrl {
 	
 	public void renameSelectedSheet(String name);
 	
-	public XSheet getSelectedSheet();
+	public Sheet getSelectedSheet();
 	
 	public void setSelectedSheet(String name);
 	
@@ -158,9 +160,9 @@ public interface WorkbookCtrl {
 	 * @param cell
 	 * @param text
 	 */
-	public void escapeAndUpdateText(Cell cell, String text);
+	public void escapeAndUpdateText(int row, int column, String text);
 	
-	public void updateText(Cell cell, String text);
+	public void updateText(int row, int column, String text);
 
 	public void setDataFormat(String format);
 	
@@ -172,7 +174,7 @@ public interface WorkbookCtrl {
 	 */
 	public void setBookSrc(String src);
 	
-	public void setBook(XBook book);
+	public void setBook(Book book);
 	
 	/**
 	 * Returns whether current sheet is protected or not
@@ -291,5 +293,5 @@ public interface WorkbookCtrl {
 
 	public Rect getVisibleRect();
 	
-	public boolean setEditTextWithValidation(XSheet sheet, int row, int col, String txt, EventListener callback);
+	public boolean setEditTextWithValidation(Sheet sheet, int row, int col, String txt, EventListener callback);
 }

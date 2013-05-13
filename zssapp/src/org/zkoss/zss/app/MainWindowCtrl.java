@@ -44,10 +44,10 @@ import org.zkoss.zss.app.zul.ctrl.SSWorkbookCtrl;
 import org.zkoss.zss.app.zul.ctrl.WorkbenchCtrl;
 import org.zkoss.zss.app.zul.ctrl.WorkbookCtrl;
 import org.zkoss.zss.engine.event.SSDataEvent;
-import org.zkoss.zss.model.sys.XRange;
-import org.zkoss.zss.model.sys.XRanges;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.BookHelper;
+//import org.zkoss.zss.model.sys.XRange;
+//import org.zkoss.zss.model.sys.XRanges;
+//import org.zkoss.zss.model.sys.XSheet;
+//import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ui.DefaultUserAction;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
@@ -56,7 +56,7 @@ import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.Utils;
-import org.zkoss.zss.ui.sys.XActionHandler;
+//import org.zkoss.zss.ui.sys.XActionHandler;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Messagebox;
@@ -252,21 +252,21 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		return Zssapp.getDesktopWorkbenchContext(self);
 	}
 	
-	private boolean isMergedCell(int tRow, int lCol, int bRow, int rCol) {
-		MergeMatrixHelper mmhelper = spreadsheet.getMergeMatrixHelper(spreadsheet.getSelectedXSheet());
-		for (final Iterator iter = mmhelper.getRanges().iterator(); iter
-				.hasNext();) {
-			MergedRect block = (MergedRect) iter.next();
-			int bt = block.getTop();
-			int bl = block.getLeft();
-			int bb = block.getBottom();
-			int br = block.getRight();
-			if (lCol <= bl && tRow <= bt && rCol >= br && bRow >= bb) {
-				return true;
-			}
-		}
-		return false;
-	}
+//	private boolean isMergedCell(int tRow, int lCol, int bRow, int rCol) {
+//		MergeMatrixHelper mmhelper = spreadsheet.getMergeMatrixHelper(spreadsheet.getSelectedXSheet());
+//		for (final Iterator iter = mmhelper.getRanges().iterator(); iter
+//				.hasNext();) {
+//			MergedRect block = (MergedRect) iter.next();
+//			int bt = block.getTop();
+//			int bl = block.getLeft();
+//			int bb = block.getBottom();
+//			int br = block.getRight();
+//			if (lCol <= bl && tRow <= bt && rCol >= br && bRow >= bb) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 
 	/**
 	 * @return

@@ -24,9 +24,10 @@ import org.zkoss.poi.ss.usermodel.DataValidationHelper;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.model.sys.XExporter;
-import org.zkoss.zss.model.sys.XExporters;
-import org.zkoss.zss.model.sys.XSheet;
+//import org.zkoss.zss.model.sys.XExporter;
+//import org.zkoss.zss.model.sys.XExporters;
+//import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Filedownload;
 
@@ -36,12 +37,12 @@ import org.zkoss.zul.Filedownload;
  */
 public class ValidationComposer extends GenericForwardComposer {
 	private Spreadsheet spreadsheet;
-	private XSheet sheet;
+	private Sheet sheet;
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		sheet = spreadsheet.getSelectedXSheet();
+		sheet = spreadsheet.getSelectedSheet();
 		initValidation();
 	}
 

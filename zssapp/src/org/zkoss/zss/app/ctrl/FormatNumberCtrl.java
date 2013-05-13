@@ -18,6 +18,8 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.api.CellOperationUtil;
+import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
 import org.zkoss.zss.ui.Rect;
@@ -96,7 +98,9 @@ public class FormatNumberCtrl extends GenericForwardComposer {
 				selection.setBottom(spreadsheet.getMaxrows() - 1);
 			if (selection.getRight() >= spreadsheet.getMaxcolumns())
 				selection.setRight(spreadsheet.getMaxcolumns() - 1);
-			Utils.setDataFormat(spreadsheet.getSelectedXSheet(), selection, formatCodes);			
+			
+			CellOperationUtil.applyCellDataFormat(Ranges.range(spreadsheet.getSelectedSheet(),selection), formatCodes);
+		
 		} else {
 			showSelectFormatDialog();
 			return;

@@ -23,13 +23,16 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.event.KeyEvent;
+import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.app.zul.ctrl.WorkbookCtrl;
-import org.zkoss.zss.model.sys.XRange;
-import org.zkoss.zss.model.sys.XRanges;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.SheetCtrl;
+//import org.zkoss.zss.model.sys.XRange;
+//import org.zkoss.zss.model.sys.XRanges;
+//import org.zkoss.zss.model.sys.XSheet;
+//import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.EditboxEditingEvent;
@@ -66,12 +69,12 @@ public class FormulaEditor extends Textbox {
 
 	private int formulaRow;
 	private int formulaColumn;
-	private Cell formulaCell;
+//	private Cell formulaCell;
 	private String formulaText;
 	private String formulaEdit;
 	/*cache added focus names*/
 	private LinkedHashSet<String> addedFocusNames = new LinkedHashSet<String>();
-	private XSheet formulaSheet;
+	private Sheet formulaSheet;
 	private String focusCellRef;
 	/**
 	 * Indicate edit existing formula.
@@ -116,9 +119,9 @@ public class FormulaEditor extends Textbox {
 				newFocus.add(name);
 				continue;
 			}
-			XRange rng = null;
+			Range rng = null;
 			try {
-				rng = XRanges.range(formulaSheet, name);
+				rng = Ranges.range(formulaSheet, name);
 			} catch (NullPointerException ex) { /*input wrong cell reference will cause NPE or IllegalArgumentException*/
 			} catch (IllegalArgumentException ex) {
 			}
@@ -186,10 +189,16 @@ public class FormulaEditor extends Textbox {
 		WorkbookCtrl bookCtrl = getDesktopWorkbenchContext().getWorkbookCtrl();
 		formulaRow = bookCtrl.getSelection().getTop();
 		formulaColumn = bookCtrl.getSelection().getLeft();
-		formulaCell = Utils.getCell(bookCtrl.getSelectedSheet(), formulaRow, formulaColumn);
+		
 		formulaSheet = bookCtrl.getSelectedSheet();
-		formulaText = Utils.getCellText(formulaSheet, formulaCell);
-		formulaEdit = Utils.getEditText(formulaCell);
+		
+//		formulaText = Utils.getCellText(formulaSheet, formulaCell);
+//		formulaEdit = Utils.getEditText(formulaCell);
+		
+		Range r = Ranges.range(formulaSheet,formulaRow,formulaColumn);
+		formulaText = r.getCellData().getFormatText();
+		formulaEdit = r.getCellEditText();
+		
 	}
 	
 	private boolean isStartEditingFormula(String edit) {

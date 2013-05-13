@@ -57,16 +57,19 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.file.FileHelper;
 import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
 import org.zkoss.zss.app.sheet.SheetHelper;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XExporter;
-import org.zkoss.zss.model.sys.XExporters;
-import org.zkoss.zss.model.sys.XRange;
-import org.zkoss.zss.model.sys.XRanges;
-import org.zkoss.zss.model.sys.XSheet;
+//import org.zkoss.zss.model.sys.XBook;
+//import org.zkoss.zss.model.sys.XExporter;
+//import org.zkoss.zss.model.sys.XExporters;
+//import org.zkoss.zss.model.sys.XRange;
+//import org.zkoss.zss.model.sys.XRanges;
+//import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -505,7 +508,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 	
 	public List<String> getSheetNames() {
-		final XBook book = spreadsheet.getXBook();
+		final Book book = spreadsheet.getBook();
 		List<String> names = new ArrayList<String>(book.getNumberOfSheets());
 		for (int i = 0; i < book.getNumberOfSheets(); i++) {
 			names.add(book.getSheetAt(i).getSheetName());
@@ -530,18 +533,18 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 	
 	public void protectSheet(String password) {
-		XRanges.range(spreadsheet.getSelectedXSheet()).protectSheet(password);
+		Ranges.range(spreadsheet.getSelectedSheet()).protectSheet(password);
 	}
 
-	public XSheet getSelectedSheet() {
-		return spreadsheet.getSelectedXSheet();
+	public Sheet getSelectedSheet() {
+		return spreadsheet.getSelectedSheet();
 	}
 
 	public String getReference(int row, int column) {
 		return (String)spreadsheet.getColumntitle(column) + spreadsheet.getRowtitle(row);
 	}
 
-	public void escapeAndUpdateText(org.zkoss.poi.ss.usermodel.Cell cell, String text) {
+	public void escapeAndUpdateText(int row, int column, String text) {
 		spreadsheet.escapeAndUpdateText(cell, text);
 	}
 
@@ -549,7 +552,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		spreadsheet.focusTo(row, column);
 		if (fireFocusEvent) {
 			org.zkoss.zk.ui.event.Events.sendEvent(
-					new CellEvent(Events.ON_CELL_FOUCSED, spreadsheet, spreadsheet.getSelectedXSheet(), row, column));
+					new CellEvent(Events.ON_CELL_FOUCSED, spreadsheet, spreadsheet.getSelectedSheet(), row, column));
 		}
 	}
 

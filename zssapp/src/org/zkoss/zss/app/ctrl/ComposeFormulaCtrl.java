@@ -25,13 +25,14 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Range.CellType;
+import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.app.formula.FormulaMetaInfo;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapp;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
-import org.zkoss.zss.model.sys.XRanges;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
-import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
@@ -72,9 +73,11 @@ public class ComposeFormulaCtrl extends GenericForwardComposer {
 	private EventListener onCellSelected = new EventListener(){
 		public void onEvent(Event event) throws Exception {
 			CellSelectionEvent evt = (CellSelectionEvent) event;
-			Cell cell = Utils.getCell(evt.getSheet(), evt.getTop(), evt.getLeft());
-			if (cell == null) {
-				XRanges.range(evt.getSheet(), evt.getTop(), evt.getLeft()).setEditText("0");
+			
+			Range c = Ranges.range(evt.getSheet(), evt.getTop(), evt.getLeft());
+//			Cell cell = Utils.getCell(evt.getSheet(), evt.getTop(), evt.getLeft());
+			if (c.getCellData().getType() == CellType.BLANK) {
+				c.setCellEditText("0");
 			}
 			if (focusComponent != null) {
 				focusComponent.setText(getDesktopWorkbenchContext().getWorkbookCtrl().getCurrentCellPosition());

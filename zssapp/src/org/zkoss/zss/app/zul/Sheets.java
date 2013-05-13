@@ -26,10 +26,12 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.MouseEvent;
+import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
-import org.zkoss.zss.model.sys.XRange;
-import org.zkoss.zss.model.sys.XRanges;
+//import org.zkoss.zss.model.sys.XRange;
+//import org.zkoss.zss.model.sys.XRanges;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
@@ -183,7 +185,7 @@ public class Sheets extends Div implements IdSpace {
 	}
 	
 	public void onClick$deleteSheet() {
-		XRange rng = XRanges.range(getDesktopWorkbenchContext().getWorkbookCtrl().getSelectedSheet());
+		Range rng = Ranges.range(getDesktopWorkbenchContext().getWorkbookCtrl().getSelectedSheet());
 		rng.deleteSheet();
 		
 /*		int newIdx = getDesktopWorkbenchContext().getWorkbookCtrl().deleteSheet();
