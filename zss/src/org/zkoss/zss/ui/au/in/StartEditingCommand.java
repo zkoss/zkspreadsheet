@@ -30,6 +30,8 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -59,25 +61,14 @@ public class StartEditingCommand implements Command {
 		String clienttxt = (String) data.get("clienttxt");
 		String type = (String) data.get("type");
 
-		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
+		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
 		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
-		Cell cell = XUtils.getCell(sheet, row, col);
-		// You can call getEditText(), setEditText(), getText().
-
-		String editText;
-		if(cell==null){
+		String editText = Ranges.range(sheet, row, col).getCellEditText();
+		if(editText==null){
 			editText = "";
-		}else{
-			RichTextString rts = BookHelper.getRichEditText(cell);
-			if(rts==null){
-				editText = "";
-			}else{
-				editText = rts.getString();
-			}
 		}
-				
 		
 		StartEditingEvent event = new StartEditingEvent(
 				org.zkoss.zss.ui.event.Events.ON_START_EDITING, comp, sheet,

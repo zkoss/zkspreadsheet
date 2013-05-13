@@ -74,4 +74,8 @@ public interface CellStyle {
 	public void setBorderRightColor(Color color);
 
 	public Color getBorderRightColor();
+	
+	public String getDataFormat();
+	
+	public void setDataFormat(String format);
 }

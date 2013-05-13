@@ -14,7 +14,7 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.event;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.api.model.Sheet;
 
 /**
  * A class from handle event which about mouse event on a filter.
@@ -23,7 +23,7 @@ import org.zkoss.zss.model.sys.XSheet;
 public class FilterMouseEvent extends CellMouseEvent {
 	private static final long serialVersionUID = 20110520114618L;
 	private final int _field;
-	public FilterMouseEvent(String name, Component target, int x,int y, int keys,XSheet sheet, int row ,int col,int clientx,int clienty, int field) {
+	public FilterMouseEvent(String name, Component target, int x,int y, int keys,Sheet sheet, int row ,int col,int clientx,int clienty, int field) {
 		super(name, target, x, y, keys, sheet, row, col, clientx, clienty);
 		_field = field;
 	}

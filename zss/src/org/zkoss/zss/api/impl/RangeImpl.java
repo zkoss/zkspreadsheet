@@ -17,6 +17,7 @@ import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Book.BookType;
+import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Chart;
@@ -24,11 +25,14 @@ import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.Chart.Type;
 import org.zkoss.zss.api.model.ChartData;
+import org.zkoss.zss.api.model.Hyperlink;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.impl.CellDataImpl;
 import org.zkoss.zss.api.model.impl.EnumUtil;
+import org.zkoss.zss.api.model.impl.HyperlinkImpl;
 import org.zkoss.zss.api.model.impl.ModelRef;
 import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.api.model.impl.CellStyleImpl;
@@ -57,7 +61,7 @@ public class RangeImpl implements Range{
 	SyncLevel syncLevel = SyncLevel.BOOK;
 	
 	CellStyleHelper cellStyleHelper;
-	CellValueHelper cellValueHelper;
+	CellData cellData;
 	
 	public void setSyncLevel(SyncLevel syncLevel){
 		this.syncLevel = syncLevel;
@@ -82,11 +86,11 @@ public class RangeImpl implements Range{
 		return cellStyleHelper;
 	}
 	
-	public CellValueHelper getCellValueHelper(){
-		if(cellValueHelper==null){
-			cellValueHelper = new CellValueHelperImpl(this);
+	public CellData getCellData(){
+		if(cellData==null){
+			cellData = new CellDataImpl(this);
 		}
-		return cellValueHelper;
+		return cellData;
 	}
 	
 	public XRange getNative(){
@@ -502,9 +506,9 @@ public class RangeImpl implements Range{
 				index3==null?null:((RangeImpl)index1).getNative()/*rng3*/, desc3/*desc3*/,
 				header?BookHelper.SORT_HEADER_YES:BookHelper.SORT_HEADER_NO/*header*/,
 				-1/*orderCustom*/, matchCase, sortByRows, -1/*sortMethod*/, 
-				dataOption1==null?-1:EnumUtil.toRangeSortDataOption(dataOption1)/*dataOption1*/,
-				dataOption2==null?-1:EnumUtil.toRangeSortDataOption(dataOption2)/*dataOption2*/,
-				dataOption3==null?-1:EnumUtil.toRangeSortDataOption(dataOption3)/*dataOption3*/);
+				EnumUtil.toRangeSortDataOption(dataOption1)/*dataOption1*/,
+				EnumUtil.toRangeSortDataOption(dataOption2)/*dataOption2*/,
+				EnumUtil.toRangeSortDataOption(dataOption3)/*dataOption3*/);
 	}
 	
 	/** check if auto filter is enable or not.**/
@@ -605,9 +609,14 @@ public class RangeImpl implements Range{
 		range.setHidden(hidden);
 	}
 	
-	public void setCellHyperlink(HyperlinkType type,String address,String displayLabel){
+	public void setCellHyperlink(HyperlinkType type,String address,String display){
 		//TODO the syncLevel
-		range.setHyperlink(EnumUtil.toHyperlinkType(type), address, displayLabel);
+		range.setHyperlink(EnumUtil.toHyperlinkType(type), address, display);
+	}
+	
+	public Hyperlink getCellHyperlink(){
+		org.zkoss.poi.ss.usermodel.Hyperlink l = range.getHyperlink();
+		return l==null?null:new HyperlinkImpl(new SimpleRef<org.zkoss.poi.ss.usermodel.Hyperlink>(l));
 	}
 	
 	public void setSheetName(String name){
@@ -772,16 +781,16 @@ public class RangeImpl implements Range{
 	//api that need special object wrap
 	
 	
-	public void apiSpecialWrapObject(){
+	private void apiSpecialWrapObject(){
 
-		range.getFormatText();//FormatText
-		range.getHyperlink();//Hyperlink
+//		range.getFormatText();//FormatText
+//		range.getHyperlink();//Hyperlink
+//		
+//		range.getRichEditText();//RichTextString
+//		range.getText();//RichTextString (what is the difference of getRichEditText)
+//		
 		
-		range.getRichEditText();//RichTextString
-		range.getText();//RichTextString (what is the difference of getRichEditText)
-		
-		
-		range.validate("");//DataValidation
+//		range.validate("");//DataValidation
 		
 	}
 	
@@ -807,4 +816,5 @@ public class RangeImpl implements Range{
 		
 		//range.pasteSpecial(pasteType, pasteOp, SkipBlanks, transpose);		
 	}
+
 }

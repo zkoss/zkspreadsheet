@@ -23,7 +23,7 @@ public class ValidationHelper {
 		this.ss = ss;
 	}
 
-	public boolean isEventThreadEnabled() {
+	private boolean isEventThreadEnabled() {
 		return Executions.getCurrent().getDesktop().getWebApp()
 				.getConfiguration().isEventThreadEnabled();
 	}
@@ -31,7 +31,7 @@ public class ValidationHelper {
 	// return true if a valid input; false otherwise and show Error Alert if
 	// required
 	public boolean validate(XSheet sheet, final int row, final int col,
-			final String txt, final EventListener callback) {
+			final String editText, final EventListener callback) {
 		final XSheet ssheet = ss.getSelectedXSheet();
 		if (ssheet == null || !ssheet.equals(sheet)) { //skip no sheet case
 			return true;
@@ -40,7 +40,7 @@ public class ValidationHelper {
 			return true;
 		}
 		final XRange rng = XRanges.range(sheet, row, col);
-		final DataValidation dv = rng.validate(txt);
+		final DataValidation dv = rng.validate(editText);
 		if (dv != null) {
 			if (dv.getShowErrorBox()) {
 				String errTitle = dv.getErrorBoxTitle();

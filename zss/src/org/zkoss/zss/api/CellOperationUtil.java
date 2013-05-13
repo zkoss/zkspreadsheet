@@ -312,6 +312,20 @@ public class CellOperationUtil {
 			}
 		});
 	}
+	
+	public static void applyCellDataFormat(Range range, final String format) {
+		applyCellStyle(range, new CellStyleApplier() {
+
+			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
+				String oformat = oldCellstyle.getDataFormat();
+				return oformat.equals(format);
+			}
+
+			public void apply(Range cellRange, CellStyle newCellstyle) {
+				newCellstyle.setDataFormat(format);
+			}
+		});
+	}
 
 	public static void applyCellAlignment(Range range,final Alignment alignment) {
 		applyCellStyle(range, new CellStyleApplier() {

@@ -18,7 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.event;
 
-import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 //import org.zkoss.zss.model.Sheet;
@@ -28,18 +28,18 @@ import org.zkoss.zk.ui.event.Event;
  */
 public class CellEvent extends Event{
 	
-	private XSheet _sheet;
+	private Sheet _sheet;
 	private int _row;
 	private int _col;
 
-	public CellEvent(String name, Component target,XSheet sheet, int row ,int col,Object data) {
+	public CellEvent(String name, Component target,Sheet sheet, int row ,int col,Object data) {
 		super(name, target, data);
 		_sheet = sheet;
 		this._row = row;
 		this._col = col;
 	}
 	
-	public CellEvent(String name, Component target,XSheet sheet, int row ,int col) {
+	public CellEvent(String name, Component target,Sheet sheet, int row ,int col) {
 		this(name,target,sheet,row,col,null);
 	}
 	
@@ -47,7 +47,7 @@ public class CellEvent extends Event{
 	 * get Sheet
 	 * @return sheet the related sheet 
 	 */
-	public XSheet getSheet(){
+	public Sheet getSheet(){
 		return _sheet;
 	}
 	

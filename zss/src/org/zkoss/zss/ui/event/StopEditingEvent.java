@@ -18,7 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.event;
 
-import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zk.ui.Component;
 //import org.zkoss.zss.model.Sheet;
 
@@ -33,7 +33,7 @@ public class StopEditingEvent extends CellEvent{
 	
 	Object _editingValue;
 
-	public StopEditingEvent(String name, Component target, XSheet sheet,	int row, int col, String editingValue) {
+	public StopEditingEvent(String name, Component target, Sheet sheet,	int row, int col, String editingValue) {
 		super(name, target, sheet, row, col, editingValue);
 		this._editingValue = editingValue;
 	}

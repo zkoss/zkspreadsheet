@@ -29,6 +29,8 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -53,11 +55,11 @@ public class SelectionChangeCommand implements Command {
 		
 		String sheetId= (String) data.get("sheetId");
 		
-		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
+		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
 		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
 		
-		final XBook book = (XBook) sheet.getWorkbook();
+		final XBook book = (XBook) ((SheetImpl)sheet).getNative().getBook();
 		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
 		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
 		

@@ -10,6 +10,10 @@ public interface Sheet {
 	public boolean isAutoFilterEnabled();
 
 	public boolean isDisplayGridlines();
+	
+	public boolean isRowHidden(int row);
+	
+	public boolean isColumnHidden(int column);
 
 	public String getSheetName();
 

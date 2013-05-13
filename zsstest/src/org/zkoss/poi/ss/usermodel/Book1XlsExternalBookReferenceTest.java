@@ -29,7 +29,7 @@ import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.impl.ExcelImporter;
 import org.zkoss.zss.model.sys.impl.HSSFBookImpl;
 import org.zkoss.zss.model.sys.impl.XSSFBookImpl;
-import org.zkoss.zssex.model.impl.BookSeriesImpl;
+import org.zkoss.zssex.model.impl.XBookSeriesImpl;
 
 /**
  * @author henrichen
@@ -38,7 +38,7 @@ import org.zkoss.zssex.model.impl.BookSeriesImpl;
 public class Book1XlsExternalBookReferenceTest {
 	private Workbook _workbook1;
 	private Workbook _workbook2;
-	private BookSeriesImpl _books;
+	private XBookSeriesImpl _books;
 
 	/**
 	 * @throws java.lang.Exception
@@ -73,7 +73,7 @@ public class Book1XlsExternalBookReferenceTest {
 		assertEquals(1, _workbook2.getSheetIndex("Sheet2"));
 		assertEquals(2, _workbook2.getSheetIndex("Sheet3"));
 
-		_books = new BookSeriesImpl(new XBook[] {(XBook)_workbook1, (XBook)_workbook2});
+		_books = new XBookSeriesImpl(new XBook[] {(XBook)_workbook1, (XBook)_workbook2});
 	}
 
 	/**
