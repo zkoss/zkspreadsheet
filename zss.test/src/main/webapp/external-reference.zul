@@ -1,8 +1,9 @@
 <zk>
-	<window apply="zss.testapp.ExternalReferenceComposer">
-		<spreadsheet id="dst" src="/TestFile2007.xlsx" maxrows="100" maxcolumns="30" width="100%"
+	<window apply="zss.testapp.ExternalReferenceComposer"   border="normal" title="${param.year}">
+		<custom-attributes year="${param.year}"/>
+		<spreadsheet id="dst" maxrows="100" maxcolumns="30" width="100%" 
 			height="400px" showContextMenu="true" showSheetbar="true" showToolbar="true" />
-		<spreadsheet id="src" src="/TestRefFile2007.xlsx" maxrows="100" maxcolumns="30" width="100%"
+		<spreadsheet id="src" maxrows="100" maxcolumns="30" width="100%"
 			height="400px" showContextMenu="true" showSheetbar="true" showToolbar="true" />
 	</window>
 </zk>
