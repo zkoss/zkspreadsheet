@@ -1,18 +1,11 @@
 package zss.test.display;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.zkoss.zss.model.Worksheet;
-import org.zkoss.zss.model.impl.BookHelper;
 import org.zkoss.zss.ui.Spreadsheet;
 
 
@@ -39,6 +32,7 @@ public class FreezeHideTest extends DisplayExcelTest{
 		return Arrays.asList(data);
 	}
 	
+	/*
 	
 	//http://books.zkoss.org/wiki/ZK_Spreadsheet_Essentials/Working_with_ZK_Spreadsheet/Configure_and_Control_ZK_Spreadsheet/Freeze_Rows_and_Columns
 	@Test
@@ -102,4 +96,5 @@ public class FreezeHideTest extends DisplayExcelTest{
 	private int getFrozenColumn(Worksheet sheet) {
 		return BookHelper.getColumnFreeze(sheet);
 	}
+	*/
 }
