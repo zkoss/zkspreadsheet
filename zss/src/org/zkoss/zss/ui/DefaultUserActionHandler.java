@@ -228,28 +228,6 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return doClearStyle();
 		} else if (DefaultUserAction.CLEAR_ALL.equals(dua)) {
 			return doClearAll();
-		} else if (DefaultUserAction.COLUMN_CHART.equals(dua)) {
-			return doColumnChart();
-		} else if (DefaultUserAction.COLUMN_CHART_3D.equals(dua)) {
-			return doColumnChart3D();
-		} else if (DefaultUserAction.LINE_CHART.equals(dua)) {
-			return doLineChart();
-		} else if (DefaultUserAction.LINE_CHART_3D.equals(dua)) {
-			return doLineChart3D();
-		} else if (DefaultUserAction.PIE_CHART.equals(dua)) {
-			return doPieChart();
-		} else if (DefaultUserAction.PIE_CHART_3D.equals(dua)) {
-			return doPieChart3D();
-		} else if (DefaultUserAction.BAR_CHART.equals(dua)) {
-			return doBarChart();
-		} else if (DefaultUserAction.BAR_CHART_3D.equals(dua)) {
-			return doBarChart3D();
-		} else if (DefaultUserAction.AREA_CHART.equals(dua)) {
-			return doAreaChart();
-		} else if (DefaultUserAction.SCATTER_CHART.equals(dua)) {
-			return doScatterChart();
-		} else if (DefaultUserAction.DOUGHNUT_CHART.equals(dua)) {
-			return doDoughnutChart();
 		} else if (DefaultUserAction.HYPERLINK.equals(dua)) {
 			return doHyperlink();
 		} else if (DefaultUserAction.INSERT_PICTURE.equals(dua)) {
@@ -1239,70 +1217,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		SheetOperationUtil.displaySheetGridlines(range,!range.isDisplaySheetGridlines());
 		return true;
 	}
-	
-	
-	protected boolean doChart(Chart.Type type, Chart.Grouping grouping, Chart.LegendPosition pos){
-		Sheet sheet = getSheet();
-		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
-		if(range.isProtected()){
-			showProtectMessage();
-			return true;
-		}
-		
-		SheetAnchor anchor = SheetOperationUtil.toChartAnchor(range);
-		
-		ChartData data = org.zkoss.zss.api.ChartDataUtil.getChartData(sheet,selection, type);
-		SheetOperationUtil.addChart(range,anchor,data,type,grouping,pos);
-		clearClipboard();
-		return true;
-		
-	}
 
-	protected boolean doColumnChart() {
-		return doChart(Chart.Type.Column,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-	
-	protected boolean doColumnChart3D() {
-		return doChart(Chart.Type.Column3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doLineChart() {
-		return doChart(Chart.Type.Line,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doLineChart3D() {
-		return doChart(Chart.Type.Line3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doPieChart() {
-		return doChart(Chart.Type.Pie,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doPieChart3D() {
-		return doChart(Chart.Type.Pie3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doBarChart() {
-		return doChart(Chart.Type.Bar,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doBarChart3D() {
-		return doChart(Chart.Type.Bar3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doAreaChart() {
-		return doChart(Chart.Type.Area,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doScatterChart() {
-		return doChart(Chart.Type.Scatter,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doDoughnutChart() {
-		return doChart(Chart.Type.Doughnut,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-	
 	private static <T> T checkNotNull(String message, T t) {
 		if (t == null) {
 			throw new NullPointerException(message);
@@ -1349,8 +1264,6 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			this.sourceRect = checkNotNull("Clipboard's sourceRect cannot be null", sourceRect);
 		}
 	}
-	
-	
 	
 	// non-implemented action
 	

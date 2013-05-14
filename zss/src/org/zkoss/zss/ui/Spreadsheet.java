@@ -189,7 +189,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private static final String WIDGET_LOADERS = "org.zkoss.zss.ui.sys.WidgetLoader.class";
 	
 //	public static final String TOOLBAR_DISABLED_ACTION = "org.zkoss.zss.ui.ToolbarAction.disabled";
-	public static final String ACTION_HANDLER = "org.zkoss.zss.ui.ActionHandler.class";
+	public static final String USER_ACTION_HANDLER = "org.zkoss.zss.ui.UserActionHandler.class";
 	
 	private static final int DEFAULT_TOP_HEAD_HEIGHT = 20;
 	private static final int DEFAULT_LEFT_HEAD_WIDTH = 36;
@@ -4228,7 +4228,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 */
 	public UserActionHandler getUserActionHandler() {
 		if (_actionHandler == null) {
-			String cls = (String) Library.getProperty(ACTION_HANDLER);
+			String cls = (String) Library.getProperty(USER_ACTION_HANDLER);
 			if (cls != null) {
 				try {
 					_actionHandler = (UserActionHandler) Classes.newInstance(cls, null, null);
