@@ -28,7 +28,7 @@ import org.zkoss.zk.ui.event.Event;
  * @author Dennis.Chen
  */
 public class HeaderEvent extends Event{
-	
+	private static final long serialVersionUID = 1L;
 	static public final int TOP_HEADER = 0;
 	static public final int LEFT_HEADER = 1;
 	
@@ -36,18 +36,20 @@ public class HeaderEvent extends Event{
 	private int _type;
 	private int _index;
 	private boolean _hidden;
+	private int _size;
 
-	public HeaderEvent(String name, Component target,Sheet sheet, int type ,int index,Object data, boolean hidden) {
-		super(name, target, data);
+	public HeaderEvent(String name, Component target,Sheet sheet, int type ,int index, int size, boolean hidden) {
+		super(name, target, size);
 		_sheet = sheet;
 		this._type = type;
 		this._index = index;
 		this._hidden = hidden;
+		this._size = size;
 	}
 	
-	public HeaderEvent(String name, Component target,Sheet sheet, int type ,int index, boolean hidden) {
-		this(name,target,sheet,type,index,null,hidden);
-	}
+//	public HeaderEvent(String name, Component target,Sheet sheet, int type ,int index, boolean hidden) {
+//		this(name,target,sheet,type,index,-1,hidden);
+//	}
 	
 	/**
 	 * get Sheet
@@ -80,6 +82,14 @@ public class HeaderEvent extends Event{
 	 */
 	public boolean isHidden() {
 		return _hidden;
+	}
+	
+	/**
+	 * Returns the new size of this header event 
+	 * @return the new size
+	 */
+	public int getSize(){
+		return _size;
 	}
 	
 	public String toString(){
