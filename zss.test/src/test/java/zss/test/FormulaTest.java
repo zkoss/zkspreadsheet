@@ -28,9 +28,6 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	private static ComponentAgent zss ;
 	private static Spreadsheet spreadsheet ;
 	
-	//tolerance delta value between correct value and expected value for a double number
-	private static final double DELTA = 1e-5;
-	
 	// after reading the number of row without a formula, the program will stop to read more rows
 	private static final int MAX_ROW_READ_FROM_LAST_FORUMULA = 30;
 	
@@ -197,6 +194,10 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	
 	//verify each formula according cell's value
 	private int testFormulaByPoiInSheet(Sheet xsheet) {
+	
+		//tolerance delta value between correct value and expected value for a double number
+		double DELTA = 1e-5;
+	
 		int nRowFromLastFormula = 0; //reset when read a formula cell
 		int nFormula = 0;
 		int row = 0 ; //current working row
