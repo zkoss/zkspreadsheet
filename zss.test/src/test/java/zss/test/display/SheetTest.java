@@ -13,7 +13,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.impl.XUtils;
 
 import zss.test.SpreadsheetAgent;
 
@@ -71,4 +74,7 @@ public class SheetTest extends DisplayExcelTest{
 		}
 	}
 	
+	private Cell getCell(XSheet sheet, int row, int col) {
+		return XUtils.getCell(sheet, row, col);
+	}
 }
