@@ -66,7 +66,7 @@ public class CellOperationTest extends SpreadsheetTestCaseBase{
 		//TODO how to check it's merged
 		
 		ssAgent.fillBackgroundColor(18, 1, "ff0000");
-//		assertEquals(1, getCell(sheet,18,1).getCellStyle().getFillBackgroundColor());
+//		assertEquals(1, getCell(xsheet,18,1).getCellStyle().getFillBackgroundColor());
 		assertEquals(CellStyle.BorderType.NONE, mergedCell.getCellStyle().getBorderBottom());
 	}
 }

@@ -30,10 +30,10 @@ public class ImageTest extends DisplayExcelTest{
 	public ImageTest(String testPage){
 		super(testPage);
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
-		//select the sheet first or the chart won't be initialized
+		//select the xsheet first or the chart won't be initialized
 		ssAgent.selectSheet("chart-image");
 		spreadsheet = zss.as(Spreadsheet.class);
-		sheet = spreadsheet.getXBook().getWorksheet("chart-image");
+		xsheet = spreadsheet.getXBook().getWorksheet("chart-image");
 	}
 
 	@Parameters
@@ -46,16 +46,16 @@ public class ImageTest extends DisplayExcelTest{
 	@Test
 	public void testPicture(){
 		
-		assertEquals(1, sheet.getPictures().size());
-		assertEquals(0, sheet.getPictures().get(0).getPreferredSize().getCol1());
-		assertEquals(1, sheet.getPictures().get(0).getPreferredSize().getCol2());
-		assertEquals(1, sheet.getPictures().get(0).getPreferredSize().getRow1());
-		assertEquals(4, sheet.getPictures().get(0).getPreferredSize().getRow2());
+		assertEquals(1, xsheet.getPictures().size());
+		assertEquals(0, xsheet.getPictures().get(0).getPreferredSize().getCol1());
+		assertEquals(1, xsheet.getPictures().get(0).getPreferredSize().getCol2());
+		assertEquals(1, xsheet.getPictures().get(0).getPreferredSize().getRow1());
+		assertEquals(4, xsheet.getPictures().get(0).getPreferredSize().getRow2());
 		
 	}
 	
 	@Test
 	public void testCharts(){
-		assertEquals(12, sheet.getCharts().size());
+		assertEquals(12, xsheet.getCharts().size());
 	}
 }

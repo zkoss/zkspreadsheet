@@ -23,7 +23,7 @@ import zss.test.SpreadsheetAgent;
 /**
  * Test cases are organized by "Testcase Class per Feature" pattern.
  * Test case for the function "display Excel files".
- * Testing for the sheet "cell-text".
+ * Testing for the xsheet "cell-text".
  * 
  * Because the specification of color is unclear, we don't test color-related feature.
  * 
@@ -56,21 +56,21 @@ public class CellTextTest extends DisplayExcelTest{
 		Color fontColor = null;
 		
 		//red
-		text = Ranges.range(sheet, 1, 0).getEditText();
+		text = Ranges.range(xsheet, 1, 0).getEditText();
 		assertEquals("ff0000", text);
-		fontColor = getCell(sheet, 1, 0).getCellStyle().getFillForegroundColorColor();
+		fontColor = getCell(xsheet, 1, 0).getCellStyle().getFillForegroundColorColor();
 		
 		XSSFColor cellFontColor = getCellFontColor(spreadsheet, 1, 0);
 		assertEquals("FFFF0000", cellFontColor.getARGBHex());
 		
 		//green
-		text = Ranges.range(sheet, 1, 1).getEditText();
+		text = Ranges.range(xsheet, 1, 1).getEditText();
 		assertEquals("00ff00", text);
 		
 		cellFontColor = getCellFontColor(spreadsheet, 1, 1);
 		assertEquals("FF00FF00", cellFontColor.getARGBHex());
 		//blue
-		text = Ranges.range(sheet, 1, 2).getEditText();
+		text = Ranges.range(xsheet, 1, 2).getEditText();
 		assertEquals("0000ff", text);
 		
 		cellFontColor = getCellFontColor(spreadsheet, 1, 2);
@@ -113,14 +113,14 @@ public class CellTextTest extends DisplayExcelTest{
 		assertEquals("Verdana", font.getFontName());
 		font = getFont(sheet, 4, 3);
 		assertEquals("Microsoft Sans Serif", font.getFontName());
-//		font = getFont(sheet, 4, 4).getCellStyle().getFontIndex());
+//		font = getFont(xsheet, 4, 4).getCellStyle().getFontIndex());
 //		assertEquals("Ms Serif", font.getFontName()); non-existed font 
 		font = getFont(sheet, 4, 5);
 		assertEquals("Book Antiqua", font.getFontName());
 	}
 
-//	private Font getFont(XSheet sheet, int row, int column) {
-//		return sheet.getBook().getFontAt(getCell(sheet, row, column).getCellStyle().getFontIndex());
+//	private Font getFont(XSheet xsheet, int row, int column) {
+//		return xsheet.getBook().getFontAt(getCell(xsheet, row, column).getCellStyle().getFontIndex());
 //	}
 	
 	private Font getFont(Sheet sheet, int row, int column) {
@@ -167,9 +167,9 @@ public class CellTextTest extends DisplayExcelTest{
 	/*
 	@Test
 	public void testCellBackgroundColor(){
-//		assertEquals("", getCell(sheet, 11, 0).getCellStyle().getFillBackgroundColor());
-		System.out.println(((XSSFColor)getCell(sheet, 11, 0).getCellStyle().getFillBackgroundColorColor()).getARGBHex());
-		assertEquals("", book.getCellStyleAt(getCell(sheet, 11, 1).getCellStyle().getIndex()).getFillBackgroundColor());
+//		assertEquals("", getCell(xsheet, 11, 0).getCellStyle().getFillBackgroundColor());
+		System.out.println(((XSSFColor)getCell(xsheet, 11, 0).getCellStyle().getFillBackgroundColorColor()).getARGBHex());
+		assertEquals("", book.getCellStyleAt(getCell(xsheet, 11, 1).getCellStyle().getIndex()).getFillBackgroundColor());
 	}
 	*/
 	

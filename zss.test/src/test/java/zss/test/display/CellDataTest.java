@@ -15,24 +15,23 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
-import zss.test.SpreadsheetAgent;
-
 
 /**
  * Test case for the function "display Excel files".
- * Testing for the sheet "cell-data".
+ * Testing for the xsheet "cell-data".
  * 
  * @author Hawk
  *
  */
 @RunWith(Parameterized.class)
 public class CellDataTest extends DisplayExcelTest{
-
+	
 	public CellDataTest(String page){
 		super(page);
-		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
-		ssAgent.selectSheet("cell-data");
-		sheet = zss.as(Spreadsheet.class).getXBook().getWorksheetAt(3);
+//		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
+//		ssAgent.selectSheet("cell-data");
+//		xsheet = zss.as(Spreadsheet.class).getXBook().getWorksheetAt(3);
+		sheet = zss.as(Spreadsheet.class).getBook().getSheetAt(3);
 	}
 
 	@Parameters
@@ -41,35 +40,29 @@ public class CellDataTest extends DisplayExcelTest{
 		return Arrays.asList(data);
 	}
 	
-	/*
-	 * TODO what is the difference among getText(), getFormatText(), getRichEditText(), getEditText()?
-	 */
 	@Test
 	public void testCellFormat(){
-		/*
 		//number
-		assertEquals("1,234.56" ,Ranges.range(sheet,1,1).getText().getString());
+		assertEquals("1,234.56" ,Ranges.range(sheet,1,1).getCellData().getFormatText());
 		//currency
-		assertEquals("NT$1,234.56" ,Ranges.range(sheet,1,2).getText().getString());
+		assertEquals("NT$1,234.56" ,Ranges.range(sheet,1,2).getCellData().getFormatText());
 
-		//getFormatText() throw nullpointerexception
-		assertEquals("¥1,234.00" ,Ranges.range(sheet,1,3).getText().getString());
+		assertEquals("¥1,234.00" ,Ranges.range(sheet,1,3).getCellData().getFormatText());
 		
-		assertEquals("2013/4/12" ,Ranges.range(sheet,1,4).getText().getString());
+		assertEquals("2013/4/12" ,Ranges.range(sheet,1,4).getCellData().getFormatText());
 		
-		assertEquals("6:12 下午" ,Ranges.range(sheet,1,5).getText().getString());
+		assertEquals("6:12 下午" ,Ranges.range(sheet,1,5).getCellData().getFormatText());
 		
-		assertEquals("12.3%" ,Ranges.range(sheet,1,6).getText().getString());
+		assertEquals("12.3%" ,Ranges.range(sheet,1,6).getCellData().getFormatText());
 		
 		
-		assertEquals("12/25" ,Ranges.range(sheet,3,1).getText().getString());
+		assertEquals("12/25" ,Ranges.range(sheet,3,1).getCellData().getFormatText());
 		
-		assertEquals("1.00E+09" ,Ranges.range(sheet,3,2).getText().getString());
+		assertEquals("1.00E+09" ,Ranges.range(sheet,3,2).getCellData().getFormatText());
 		
-		assertEquals("2013.4.12" ,Ranges.range(sheet,3,3).getText().getString());
+		assertEquals("2013.4.12" ,Ranges.range(sheet,3,3).getCellData().getFormatText());
 		
-		assertEquals("(07)350-4450" ,Ranges.range(sheet,3,4).getText().getString());
-		*/
+		assertEquals("(07)350-4450" ,Ranges.range(sheet,3,4).getCellData().getFormatText());
 	}
 	
 	@Test

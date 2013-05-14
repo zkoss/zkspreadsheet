@@ -20,7 +20,7 @@ import zss.test.SpreadsheetAgent;
 
 /**
  * Test case for the function "display Excel files".
- * Testing for the sheet "sheet-protection", "sheet-autofilter".
+ * Testing for the xsheet "xsheet-protection", "xsheet-autofilter".
  * 
  * @author Hawk
  *
@@ -43,31 +43,31 @@ public class SheetTest extends DisplayExcelTest{
 	public void testProtection(){
 		
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
-		ssAgent.selectSheet("sheet-protection");
-		sheet = zss.as(Spreadsheet.class).getXBook().getWorksheet("sheet-protection");
+		ssAgent.selectSheet("xsheet-protection");
+		xsheet = zss.as(Spreadsheet.class).getXBook().getWorksheet("xsheet-protection");
 
-		assertTrue(sheet.getProtect());
-		assertTrue(getCell(sheet, 0, 0).getCellStyle().getLocked());
+		assertTrue(xsheet.getProtect());
+		assertTrue(getCell(xsheet, 0, 0).getCellStyle().getLocked());
 		//check editable cell
-		assertFalse(getCell(sheet, 1, 0).getCellStyle().getLocked());
+		assertFalse(getCell(xsheet, 1, 0).getCellStyle().getLocked());
 	}
 	
 	@Test
 	public void testAutofilter(){
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
-		ssAgent.selectSheet("sheet-autofilter");
-		sheet = zss.as(Spreadsheet.class).getXBook().getWorksheet("sheet-autofilter");
+		ssAgent.selectSheet("xsheet-autofilter");
+		xsheet = zss.as(Spreadsheet.class).getXBook().getWorksheet("xsheet-autofilter");
 		
-		AutoFilter autoFilter = sheet.getAutoFilter(); 
+		AutoFilter autoFilter = xsheet.getAutoFilter(); 
 		assertNotNull(autoFilter);
 		assertTrue(autoFilter.getFilterColumn(1).isOn());
 		assertEquals(1, autoFilter.getFilterColumn(1).getFilters().size());
 		assertEquals("Sunday", autoFilter.getFilterColumn(1).getFilters().get(0));
 		for (int r1=1 ; r1<=6 ; r1++){
-			assertTrue(isHiddenRow(sheet, r1));
+			assertTrue(isHiddenRow(xsheet, r1));
 		}
 		for (int r2=8 ; r2<=13 ; r2++){
-			assertTrue(isHiddenRow(sheet, r2));
+			assertTrue(isHiddenRow(xsheet, r2));
 		}
 	}
 	

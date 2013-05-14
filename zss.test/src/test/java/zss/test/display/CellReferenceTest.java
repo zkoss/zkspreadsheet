@@ -16,7 +16,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 
 /**
  * Test case for the function "display Excel files".
- * Testing for the sheet "cell-reference".
+ * Testing for the xsheet "cell-reference".
  * 
  * @author Hawk
  *
