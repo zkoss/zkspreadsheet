@@ -1427,7 +1427,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 
 	@Override
 	public String[] getInterestedEvents() {
-		return new String[] { Events.ON_AUX_ACTION,Events.ON_SHEET_SELECT, Events.ON_CTRL_KEY, Events.ON_SELECTION_CHANGE, 
+		return new String[] { Events.ON_AUX_ACTION,Events.ON_SHEET_SELECTED, Events.ON_CTRL_KEY, Events.ON_SELECTION_CHANGE, 
 				org.zkoss.zk.ui.event.Events.ON_CANCEL,
 				Events.ON_CELL_DOUBLE_CLICK, Events.ON_START_EDITING };
 	}
@@ -1476,10 +1476,10 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	private void onEventAnother(Event event) throws Exception {
 
 		String nm = event.getName();
-		if(Events.ON_SHEET_SELECT.equals(nm)){
+		if(Events.ON_SHEET_SELECTED.equals(nm)){
 			
-			updateClipboardHighlightEffect();
-			//TODO
+			updateClipboardEffect(getSheet());
+			//TODO 20130513, Dennis, looks like I don't need to do this here?
 			//syncAutoFilter();
 			
 			//TODO this should be spreadsheet's job
@@ -1534,19 +1534,17 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		return true;
 	}
 
-	private void updateClipboardHighlightEffect() {
+	protected void updateClipboardEffect(Sheet sheet) {
 		//to sync the 
 		Clipboard cb = getClipboard();
 		if (cb != null) {
 			//TODO a way to know the book is different already?
-			
-			final Sheet current = getSheet();
-			final Book book = current.getBook();
+			final Book book = sheet.getBook();
 			final Sheet src = book.getSheet(cb.sourceSheetName);
 			if(src==null){
 				clearClipboard();
 			}else{
-				if(current.equals(src)){
+				if(sheet.equals(src)){
 					getSpreadsheet().setHighlight(cb.sourceRect);
 				}else{
 					getSpreadsheet().setHighlight(null);

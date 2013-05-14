@@ -117,9 +117,9 @@ import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HyperlinkEvent;
-import org.zkoss.zss.ui.event.SheetCreateEvent;
-import org.zkoss.zss.ui.event.SheetDeleteEvent;
-import org.zkoss.zss.ui.event.SheetUpdateEvent;
+//import org.zkoss.zss.ui.event.SheetCreateEvent;
+//import org.zkoss.zss.ui.event.SheetDeleteEvent;
+//import org.zkoss.zss.ui.event.SheetUpdateEvent;
 import org.zkoss.zss.ui.event.StartEditingEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
 import org.zkoss.zss.ui.impl.ActiveRangeHelper;
@@ -2128,23 +2128,27 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onSheetOrderChange(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_ORDER_CHANGE, Spreadsheet.this, name));
+			//Dennis, 20130513, should we wrap book event to component event directly? make it before we come out any spec
+//			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_ORDER_CHANGE, Spreadsheet.this, name));
 		}
 		private void onSheetNameChange(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_NAME_CHANGE, Spreadsheet.this, name));
+			//Dennis, 20130513, should we wrap book event to component event directly? make it before we come out any spec
+//			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_NAME_CHANGE, Spreadsheet.this, name));
 		}
 		private void onSheetCreate(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			org.zkoss.zk.ui.event.Events.postEvent(new SheetCreateEvent(Events.ON_SHEET_CREATE, Spreadsheet.this, name));
+			//Dennis, 20130513, should we wrap book event to component event directly? make it before we come out any spec
+//			org.zkoss.zk.ui.event.Events.postEvent(new SheetCreateEvent(Events.ON_SHEET_CREATE, Spreadsheet.this, name));
 		}
 		private void onSheetDelete(SSDataEvent event) {
 			final Object[] payload = (Object[]) event.getPayload(); 
 			final String delSheetName = (String) payload[0]; //deleted sheet name
 			final String newSheetName= (String) payload[1]; //new selected sheet name
-			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_SHEET_DELETE, Spreadsheet.this, delSheetName, newSheetName));
+			//Dennis, 20130513, should we wrap book event to component event directly? make it before we come out any spec
+//			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_SHEET_DELETE, Spreadsheet.this, delSheetName, newSheetName));
 		}
 		
 		private int _colorIndex = 0;
@@ -2238,10 +2242,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (bottom > lastrow) {
 				bottom = lastrow;
 			}
-			org.zkoss.zk.ui.event.Events.postEvent(new CellSelectionEvent(
-					Events.ON_CELL_CHANGE, Spreadsheet.this, new SheetImpl(
-							new SimpleRef<XSheet>(sheet)),
-					CellSelectionEvent.SELECT_CELLS, left, top, right, bottom));
+//			org.zkoss.zk.ui.event.Events.postEvent(new CellSelectionEvent(
+//					Events.ON_CELL_CHANGE, Spreadsheet.this, new SheetImpl(
+//							new SimpleRef<XSheet>(sheet)),
+//					CellSelectionEvent.SELECT_CELLS, left, top, right, bottom));
 		}
 		private void onRangeInsert(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -4010,7 +4014,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	private void doSheetSelected(XSheet sheet) {
-		org.zkoss.zk.ui.event.Events.postEvent(new Event(Events.ON_SHEET_SELECT, this));
+		//Dennis, shouldn't post event in component by a server side operation call
+//		org.zkoss.zk.ui.event.Events.postEvent(new Event(Events.ON_SHEET_SELECT, this));
 		
 		//load widgets
 		List list = loadWidgetLoaders();
@@ -4648,13 +4653,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		//ZSS-220 Can't get correct selection if I didn't listen to onCellSelection
 		//onCellSelection should be a important event.
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_SELECTION,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_SELECTION_CHANGE, CE_IMPORTANT | CE_DUPLICATE_IGNORE | CE_NON_DEFERRABLE);
-		
-		//mark1, dennis 2013/4/25
-		//coulde considered to remove following code, because they are post by a command handler, they are not posted from lcient side. 
-		//(on_cell_xx and on_header_xx are post by cell-mouse and header-mouse handler)
+		addClientEvent(Spreadsheet.class, Events.ON_SELECTION_CHANGE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_FOUCSED, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		
+
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_RIGHT_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_DOUBLE_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
@@ -4665,17 +4667,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		addClientEvent(Spreadsheet.class, Events.ON_START_EDITING, 0);
 		addClientEvent(Spreadsheet.class, Events.ON_EDITBOX_EDITING, 0);
 		addClientEvent(Spreadsheet.class, Events.ON_STOP_EDITING, 0);
-		//end of mark1
 		
 		addClientEvent(Spreadsheet.class, Events.ON_HYPERLINK, 0);
 		addClientEvent(Spreadsheet.class, Events.ON_FILTER, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_VALIDATE_DROP, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_CTRL_KEY, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_BLUR,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		
+		//TODO Dennis, why need this and is importnat?Review
+		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_BLUR,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);//
 
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_AUX_ACTION, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_FETCH, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_FOCUSED, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_MOUSE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_FETCH_ACTIVE_RANGE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_HEADER_MODIF, CE_IMPORTANT);

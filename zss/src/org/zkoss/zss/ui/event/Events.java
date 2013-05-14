@@ -73,10 +73,10 @@ public class Events {
 	 */
 	public static final String ON_VALIDATE_DROP = "onValidateDrop";
 	
-	/** The onCellChange event (used with {@link CellEvent}).
-	 * Sent when cell contents changed.
-	 */
-	public static final String ON_CELL_CHANGE = "onCellChange";
+//	/** The onCellChange event (used with {@link CellEvent}).
+//	 * Sent when cell contents changed.
+//	 */
+//	public static final String ON_CELL_CHANGE = "onCellChange";
 	
 	
 	/**
@@ -126,35 +126,35 @@ public class Events {
 	 * Sent when user click on the hyperlink of a cell.
 	 */
 	public static final String ON_HYPERLINK = "onHyperlink";
-	
-	/**
-	 * The onSheetDelete event.
-	 * Sent when sheet is deleted.
-	 */
-	public static final String ON_SHEET_DELETE = "onSheetDelete";
-
-	/**
-	 * The onSheetCreate event.
-	 * Sent when sheet is deleted.
-	 */
-	public static final String ON_SHEET_CREATE = "onSheetCreate";
-	
+//	
+//	/**
+//	 * The onSheetDelete event.
+//	 * Sent when sheet is deleted.
+//	 */
+//	public static final String ON_SHEET_DELETE = "onSheetDelete";
+//
+//	/**
+//	 * The onSheetCreate event.
+//	 * Sent when sheet is deleted.
+//	 */
+//	public static final String ON_SHEET_CREATE = "onSheetCreate";
+//	
 	/**
 	 * The onSheetSelect event
 	 * Sent when sheet is selected.
 	 */
-	public static final String ON_SHEET_SELECT = "onSheetSelect";
-	
-	/**
-	 * The onSheetNameChange event.
-	 * Sent when sheet is deleted.
-	 */
-	public static final String ON_SHEET_NAME_CHANGE = "onSheetNameChange";
-	/**
-	 * The onSheetOrderChange event.
-	 * Sent when sheet is deleted.
-	 */
-	public static final String ON_SHEET_ORDER_CHANGE = "onSheetOrderChange";
+	public static final String ON_SHEET_SELECTED = "onSheetSelected";
+//	
+//	/**
+//	 * The onSheetNameChange event.
+//	 * Sent when sheet is deleted.
+//	 */
+//	public static final String ON_SHEET_NAME_CHANGE = "onSheetNameChange";
+//	/**
+//	 * The onSheetOrderChange event.
+//	 * Sent when sheet is deleted.
+//	 */
+//	public static final String ON_SHEET_ORDER_CHANGE = "onSheetOrderChange";
 	
 	/**
 	 * The ON_CTRL_KEY event (used with {@link KeyEvent})

@@ -38,6 +38,7 @@ import org.zkoss.zss.ui.au.in.SelectionChangeCommand;
 import org.zkoss.zss.ui.au.in.StartEditingCommand;
 import org.zkoss.zss.ui.au.in.StopEditingCommand;
 import org.zkoss.zss.ui.au.in.WidgetCtrlKeyCommand;
+import org.zkoss.zss.ui.event.Events;
 
 /**
  * @author sam / Ian
@@ -48,12 +49,9 @@ import org.zkoss.zss.ui.au.in.WidgetCtrlKeyCommand;
 	
 	//AUXILIARY action
 	static final String ON_ZSS_AUX_ACTION = "onZSSAuxAction";/* was onZSSAction*/
+	
 	static final String ON_ZSS_CELL_FETCH = "onZSSCellFetch";
-	static final String ON_ZSS_CELL_FOCUSED = "onZSSCellFocused";
 	static final String ON_ZSS_CELL_MOUSE = "onZSSCellMouse";
-	static final String ON_ZSS_CELL_SELECTION = org.zkoss.zss.ui.event.Events.ON_CELL_SELECTION;
-	static final String ON_ZSS_CELL_SELECTION_CHANGE = org.zkoss.zss.ui.event.Events.ON_SELECTION_CHANGE;
-	static final String ON_ZSS_EDITBOX_EDITING = org.zkoss.zss.ui.event.Events.ON_EDITBOX_EDITING;
 	static final String ON_ZSS_FETCH_ACTIVE_RANGE = "onZSSFetchActiveRange";
 	static final String ON_ZSS_FILTER = "onZSSFilter";
 	static final String ON_ZSS_HEADER_MODIF = "onZSSHeaderModif";
@@ -61,32 +59,72 @@ import org.zkoss.zss.ui.au.in.WidgetCtrlKeyCommand;
 	static final String ON_ZSS_MOVE_WIDGET = "onZSSMoveWidget";
 	static final String ON_ZSS_WIDGET_CTRL_KEY = "onZSSWidgetCtrlKey";
 	static final String ON_ZSS_SELECT_SHEET = "onZSSSelectSheet";
-	static final String ON_ZSS_START_EDITING = org.zkoss.zss.ui.event.Events.ON_START_EDITING;
-	static final String ON_ZSS_STOP_EDITING = org.zkoss.zss.ui.event.Events.ON_STOP_EDITING;
 	static final String ON_ZSS_SYNC_BLOCK = "onZSSSyncBlock";
-	static final String ON_ZSS_CTRL_KEY = org.zkoss.zk.ui.event.Events.ON_CTRL_KEY;
 	
 	static final Map<String, Command> CMDS;
 	static{
 		CMDS = new HashMap<String, Command>();
+		
+		//onCellSelection, also update component selection 
+		//-> onCellSelection
+		CMDS.put(Events.ON_CELL_SELECTION, new CellSelectionCommand());
+		//onCellSelectionChange, update cell selection 
+		//-> onSelectionChange
+		CMDS.put(Events.ON_SELECTION_CHANGE, new SelectionChangeCommand());
+				
+		//onCellFocus, also update cell focus 
+		//-> onCellFocus
+		CMDS.put(Events.ON_CELL_FOUCSED, new CellFocusedCommand());
+		
+		//onEditBoxEditing 
+		//-> onEditBoxEditing
+		CMDS.put(Events.ON_EDITBOX_EDITING, new EditboxEditingCommand());
+		
+		//onCtrlKey 
+		//-> on CtrlKey
+		CMDS.put(Events.ON_CTRL_KEY, new CtrlKeyCommand());
+		
+		//onStartEditing
+		//->onStartEditing -> onStartEditingImpl(zss internal listen to)
+		CMDS.put(Events.ON_START_EDITING, new StartEditingCommand());
+		
+		//onStopEditing
+		//->onStopEditing -> onStopEditingImpl(zss internal listen to)
+		CMDS.put(Events.ON_STOP_EDITING, new StopEditingCommand());
+		
+		//onZssAuxAction -> onAuxAction
 		CMDS.put(ON_ZSS_AUX_ACTION, new AuxActionCommand());
-		CMDS.put(ON_ZSS_CELL_FETCH, new CellFetchCommand());
-		CMDS.put(ON_ZSS_CELL_FOCUSED, new CellFocusedCommand());
+		
+		// onZssCellMouse 
+		// -> ON_CELL_CLICK,ON_CELL_RIGHT_CLICK,ON_CELL_DOUBLE_CLICK
+		// or -> (default processing) - > ON_FILTER , //TODO 1.review(no-one listen to) 2. user override-able?
+		// or -> ON_VALIDATE_DROP //TODO review (no-one listen to)
 		CMDS.put(ON_ZSS_CELL_MOUSE, new CellMouseCommand());
-		CMDS.put(ON_ZSS_CELL_SELECTION, new CellSelectionCommand());
-		CMDS.put(ON_ZSS_CELL_SELECTION_CHANGE, new SelectionChangeCommand());
-		CMDS.put(ON_ZSS_EDITBOX_EDITING, new EditboxEditingCommand());
-		CMDS.put(ON_ZSS_FETCH_ACTIVE_RANGE, new FetchActiveRangeCommand());
-		CMDS.put(ON_ZSS_FILTER, new FilterCommand());
-		CMDS.put(ON_ZSS_HEADER_MODIF, new HeaderCommand());
-		CMDS.put(ON_ZSS_HEADER_MOUSE, new HeaderMouseCommand());
-		CMDS.put(ON_ZSS_MOVE_WIDGET, new MoveWidgetCommand());
-		CMDS.put(ON_ZSS_WIDGET_CTRL_KEY, new WidgetCtrlKeyCommand());
+		
+		//onZssSelectSheet , set selected sheet 
+		//-> onSheetSelected
 		CMDS.put(ON_ZSS_SELECT_SHEET, new SelectSheetCommand());
-		CMDS.put(ON_ZSS_START_EDITING, new StartEditingCommand());
-		CMDS.put(ON_ZSS_STOP_EDITING, new StopEditingCommand());
+		
+		//onZssHaderModify, set row or column size of component 
+		//-> onHeaderSize
+		CMDS.put(ON_ZSS_HEADER_MODIF, new HeaderCommand());
+		
+		//onZssHeaderMouse -> ON_HEADER_CLICK,ON_HEADER_RIGHT_CLICK,ON_HEADER_DOUBLE_CLICK
+		CMDS.put(ON_ZSS_HEADER_MOUSE, new HeaderMouseCommand());
+		
+		//onZssMoveWidget -> update book
+		CMDS.put(ON_ZSS_MOVE_WIDGET, new MoveWidgetCommand());//TODO review
+		//onZssMoveWidget -> update book
+		CMDS.put(ON_ZSS_WIDGET_CTRL_KEY, new WidgetCtrlKeyCommand());//TODO review
+		//wire event, need to review
+		CMDS.put(ON_ZSS_FILTER, new FilterCommand());//TODO review
+		
+		//internal client au
+		CMDS.put(ON_ZSS_CELL_FETCH, new CellFetchCommand());
+		CMDS.put(ON_ZSS_FETCH_ACTIVE_RANGE, new FetchActiveRangeCommand());
 		CMDS.put(ON_ZSS_SYNC_BLOCK, new BlockSyncCommand());
-		CMDS.put(ON_ZSS_CTRL_KEY, new CtrlKeyCommand());
+		
+		
 	}
 	/**
 	 * 

@@ -1521,7 +1521,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	_sendOnCellFocused: function (row, col) {
 		var wgt = this._wgt;
-		wgt.fire('onZSSCellFocused', {sheetId: this.serverSheetId, row: row, col : col}, wgt.isListen('onCellFocused') ? {toServer: true} : null);
+		wgt.fire('onCellFocused', {sheetId: this.serverSheetId, row: row, col : col});
 	},
 	_sendOnCellSelection: function (type, left, top, right, bottom) {
 		this._wgt.fire('onCellSelection',
