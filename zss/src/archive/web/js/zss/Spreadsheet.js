@@ -1106,8 +1106,23 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	_doDataPanelBlur: function (evt) {
 		var sheet = this.sheetCtrl;
 		if (sheet.innerClicking <= 0 && sheet.state == zss.SSheetCtrl.FOCUSED) {
-			//TODO: check zk.currentFocus, if child of spreadsheet, do not _doFocusLost 
+
+			// #ZSS-253: check the widget which got focus is associated with spreadsheet or not
+			// also check its parent until null
+			var w = zk.currentFocus;
+			while(w) {
+				if(w.zss) {
+					sheet.dp.gainFocus(false);
+					return;
+				}
+				w = w.parent;
+			}
+
+			// otherwise, let spreadsheet blur
 			sheet.dp._doFocusLost();
+			
+			// TODO: check zk.currentFocus, if child of spreadsheet, do not _doFocusLost
+			
 		} else if(sheet.state == zss.SSheetCtrl.FOCUSED) {
 			//retrive focus back to focustag
 			sheet.dp.gainFocus(false);//Note. no prepare copy (in safari, it trigger onFloatUp evt, cause menupopup close)
