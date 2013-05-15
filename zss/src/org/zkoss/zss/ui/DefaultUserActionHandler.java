@@ -1,6 +1,5 @@
 package org.zkoss.zss.ui;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.zkoss.image.AImage;
@@ -21,14 +20,11 @@ import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.SheetOperationUtil;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle.Alignment;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
-import org.zkoss.zss.api.model.Chart;
-import org.zkoss.zss.api.model.ChartData;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Sheet;
@@ -37,6 +33,7 @@ import org.zkoss.zss.ui.event.AuxActionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.event.SelectionChangeEvent;
+import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.Messagebox;
 
 public class DefaultUserActionHandler implements UserActionHandler {
@@ -454,7 +451,6 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	
 	
 	protected boolean doInsertPicture(){
-		final Spreadsheet spreadsheet = getSpreadsheet();
 		final Sheet sheet = getSheet();
 		final Rect selection = getSelection();
 		
@@ -464,18 +460,25 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return true;
 		}
 		
-		askUploadFile(new EventListener<Event>() {
-			public void onEvent(Event event) throws Exception {
-				if(org.zkoss.zk.ui.event.Events.ON_UPLOAD.equals(event.getName())){
-					Media media = ((UploadEvent)event).getMedia();
-					doInsertPicture(spreadsheet,sheet,selection,media);
+		
+		//keep the action context, we are doing job asynchronized.
+		final UserActionContext ctx = getContext();
+		
+		Fileupload.get(1,new EventListener<UploadEvent>() {
+			public void onEvent(UploadEvent event) throws Exception {
+				setContext(ctx);//set the action context back to continue the job
+				try{
+					Media media = event.getMedia();
+					doInsertPicture(media);
+				}finally{
+					releaseContext();
 				}
 			}
 		});
 		return true;
 	}
 	
-	protected boolean doInsertPicture(Spreadsheet spreadsheet,Sheet sheet,Rect selection,Media media) {
+	protected boolean doInsertPicture(Media media) {
 		if(media==null){
 			showWarnMessage("Can't get the uploaded file");
 			return true;
@@ -486,6 +489,8 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return true;
 		}
 		
+		final Sheet sheet = getSheet();
+		final Rect selection = getSelection();
 		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
 		
 		SheetOperationUtil.addPicture(range,(AImage)media);
@@ -1225,7 +1230,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		return t;
 	}
 
-	private static class UserActionContext {
+	protected static class UserActionContext {
 
 		final Spreadsheet spreadsheet;
 		final Sheet sheet;
@@ -1331,12 +1336,6 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		showNotImplement(DefaultUserAction.INSERT_FUNCTION.toString());
 		return true;
 	}
-	
-	protected void askUploadFile(EventListener l){
-		//TODO Need ZK's new feature support
-		
-	}
-
 
 	@Override
 	public String[] getInterestedEvents() {
@@ -1374,7 +1373,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			selection = spreadsheet.getSelection();
 		}
 		final UserActionContext ctx = new UserActionContext(spreadsheet, sheet,action,selection,extraData);
-		_ctx.set(ctx);
+		setContext(ctx);
 		try{
 			if(event instanceof AuxActionEvent){
 				dispatchAction(action);
@@ -1382,8 +1381,18 @@ public class DefaultUserActionHandler implements UserActionHandler {
 				onEventAnother(event);
 			}
 		}finally{
-			_ctx.set(null);
+			releaseContext();
 		}
+	}
+	
+	protected void setContext(UserActionContext ctx){
+		_ctx.set(ctx);
+	}
+	protected UserActionContext getContext(){
+		return _ctx.get();
+	}
+	protected void releaseContext(){
+		_ctx.set(null);
 	}
 
 	private void onEventAnother(Event event) throws Exception {
