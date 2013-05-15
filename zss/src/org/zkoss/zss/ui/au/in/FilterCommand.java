@@ -43,22 +43,13 @@ public class FilterCommand implements Command {
 		
 		final Map data = request.getData();
 		String type = (String) data.get("type");
-		if ("onApplyFilter".equals(type)) {
-			applyFilter(((Spreadsheet) comp).getSelectedXSheet(), data);
+		if ("apply".equals(type)) {
+			final boolean selectAll = (Boolean) data.get("all");
+			final String cellRangeAddr = (String) data.get("range");
+			final int field = (Integer) data.get("field");
+			final Object criteria = data.get("criteria"); 
+			new AutoFilterDefaultHandler().applyFilter(((Spreadsheet) comp),((Spreadsheet) comp).getSelectedSheet(),cellRangeAddr,selectAll,field,criteria);
 		}
 	}
-	
-	private void applyFilter (XSheet worksheet, Map data) {
-		final boolean selectAll = (Boolean) data.get("all");
-		final String cellRangeAddr = (String) data.get("range");
-		final int field = (Integer) data.get("field");
-		final XRange range = XRanges.range(worksheet, cellRangeAddr);
-		
-		if (selectAll) {
-			range.autoFilter(field, null, AutoFilter.FILTEROP_VALUES, null, null);
-		} else { //partial selection
-			JSONArray ary = (JSONArray) data.get("criteria");
-			range.autoFilter(field, ary.toArray(new String[ary.size()]), AutoFilter.FILTEROP_VALUES, null, null);
-		}
-	}
+
 }

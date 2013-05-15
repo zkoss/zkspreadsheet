@@ -97,8 +97,8 @@ import org.zkoss.zss.ui.event.Events;
 		
 		// onZssCellMouse 
 		// -> ON_CELL_CLICK,ON_CELL_RIGHT_CLICK,ON_CELL_DOUBLE_CLICK
-		// or -> (default processing) - > ON_FILTER , //TODO 1.review(no-one listen to) 2. user override-able?
-		// or -> ON_VALIDATE_DROP //TODO review (no-one listen to)
+		// or -> (default processing) - > ON_CELL_FILTER , 
+		// or -> ON_CELL_VALIDATOR
 		CMDS.put(ON_ZSS_CELL_MOUSE, new CellMouseCommand());
 		
 		//onZssSelectSheet , set selected sheet 
