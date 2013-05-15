@@ -83,6 +83,7 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
+import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
@@ -4334,7 +4335,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	private void processStartEditing(String token, StartEditingEvent event, String editingType) {
-		XSheet sheet = ((SheetImpl)event.getSheet()).getNative();
 		if (!event.isCancel()) {
 			Object val;
 			final boolean useEditValue = event.isEditingSet() || event.getClientValue() == null; 
@@ -4343,20 +4343,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			} else {
 				val = event.getClientValue();
 			}
-			processStartEditing0(token,sheet, event.getRow(), event
+			processStartEditing0(token,event.getSheet(), event.getRow(), event
 					.getColumn(), val, useEditValue, editingType);
 		} else {
-			processCancelEditing0(token, sheet, event.getRow(),
+			processCancelEditing0(token, event.getSheet(), event.getRow(),
 					event.getColumn(), false, editingType);
 		}
 	}
 
 	private void processStopEditing(String token, StopEditingEvent event, String editingType) {
-		XSheet sheet = ((SheetImpl)event.getSheet()).getNative();
 		if (!event.isCancel()) {
-			processStopEditing0(token, sheet, event.getRow(), event.getColumn(), event.getEditingValue(), editingType);
+			processStopEditing0(token, event.getSheet(), event.getRow(), event.getColumn(), event.getEditingValue(), editingType);
 		} else
-			processCancelEditing0(token, sheet, event.getRow(), event.getColumn(), false, editingType);
+			processCancelEditing0(token, event.getSheet(), event.getRow(), event.getColumn(), false, editingType);
 	}
 	
 	private void showFormulaError(FormulaParseException ex) {
@@ -4367,7 +4366,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		});
 	}
 
-	private void processStopEditing0(final String token, final XSheet sheet, final int rowIdx, final int colIdx, final Object value, final String editingType) {
+	private void processStopEditing0(final String token, final Sheet sheet, final int rowIdx, final int colIdx, final Object value, final String editingType) {
 		try {
 			
 			ValidationHelper helper = new ValidationHelper(this);
@@ -4390,8 +4389,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			)) {
 				return;
 			}else{
-				final XRange range = XRanges.range(sheet, rowIdx, colIdx);
-				range.setEditText(editText);
+				final Range range = Ranges.range(sheet, rowIdx, colIdx);
+				range.setCellEditText(editText);
 			}
 
 			//JSONObj result = new JSONObj();
@@ -4413,7 +4412,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 
-	private void processStartEditing0(String token, XSheet sheet, int row, int col, Object value, boolean useEditValue, String editingType) {
+	private void processStartEditing0(String token, Sheet sheet, int row, int col, Object value, boolean useEditValue, String editingType) {
 		try {
 			JSONObject result = new JSONObject();
 			result.put("r", row);
@@ -4431,7 +4430,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 
-	private void processCancelEditing0(String token, XSheet sheet, int row, int col, boolean skipMove, String editingType) {
+	private void processCancelEditing0(String token, Sheet sheet, int row, int col, boolean skipMove, String editingType) {
 		JSONObject result = new JSONObject();
 		result.put("r", row);
 		result.put("c", col);
@@ -4442,7 +4441,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		smartUpdate("dataUpdateCancel", new Object[] { token, XUtils.getSheetUuid(sheet), result});
 	}
 
-	private void processRetryEditing0(String token, XSheet sheet, int row, int col, Object value, String editingType) {
+	private void processRetryEditing0(String token, Sheet sheet, int row, int col, Object value, String editingType) {
 		try {
 			processCancelEditing0(token, sheet, row, col, true, editingType);
 			JSONObject result = new JSONObject();
@@ -4754,7 +4753,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	@Deprecated
 	public boolean validate(XSheet sheet, final int row, final int col, final String txt, 
 		final EventListener callback) {
-		return new ValidationHelper(this).validate(sheet, row, col, txt, callback);
+		return new ValidationHelper(this).validate(new SheetImpl(new SimpleRef<XSheet>(sheet)), row, col, txt, callback);
 	}
 ////		final XSheet ssheet = this.getSelectedXSheet();
 ////		if (ssheet == null || !ssheet.equals(sheet)) { //skip no sheet case
