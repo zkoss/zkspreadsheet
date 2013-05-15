@@ -2128,26 +2128,36 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onSheetOrderChange(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			//Dennis, 20130513, should we wrap book event to component event directly? make it before we come out any spec
+			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
 //			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_ORDER_CHANGE, Spreadsheet.this, name));
 		}
 		private void onSheetNameChange(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			//Dennis, 20130513, should we wrap book event to component event directly? make it before we come out any spec
+			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
 //			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_NAME_CHANGE, Spreadsheet.this, name));
 		}
 		private void onSheetCreate(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			//Dennis, 20130513, should we wrap book event to component event directly? make it before we come out any spec
+			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
 //			org.zkoss.zk.ui.event.Events.postEvent(new SheetCreateEvent(Events.ON_SHEET_CREATE, Spreadsheet.this, name));
 		}
 		private void onSheetDelete(SSDataEvent event) {
 			final Object[] payload = (Object[]) event.getPayload(); 
 			final String delSheetName = (String) payload[0]; //deleted sheet name
 			final String newSheetName= (String) payload[1]; //new selected sheet name
-			//Dennis, 20130513, should we wrap book event to component event directly? make it before we come out any spec
+			
+			//Dennis, 20130515, should handle it by default
+			if(getSelectedSheet().getSheetName().equals(delSheetName)){
+				//if current select sheet name, euqlas the delete sheet, we should select to suggest new sheet 
+				setSelectedSheet(newSheetName);//this will also update sheet label	
+			}else{
+				//just update sheet label
+				Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
+			}
+			
+			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
 //			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_SHEET_DELETE, Spreadsheet.this, delSheetName, newSheetName));
 		}
 		
