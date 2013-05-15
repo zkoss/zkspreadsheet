@@ -895,7 +895,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	 */
 	_isFireCellEvt: function (type) {
 		var evtnm = zss.Spreadsheet.CELL_MOUSE_EVENT_NAME[type];
-		if ('onFilter' == evtnm) { //server side prepare auto filter popup information for client side
+		if ('onCellFilter' == evtnm) { //server side prepare auto filter popup information for client side
 			return true;
 		}
 		return evtnm && this.isListen(evtnm, {asapOnly: true});
@@ -1265,7 +1265,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			//TODO LINK_DOCUMENT
 	}
 }, {
-	CELL_MOUSE_EVENT_NAME: {lc:'onCellClick', rc:'onCellRightClick', dbc:'onCellDoubleClick', af:'onFilter', dv:'onValidateDrop'},
+	CELL_MOUSE_EVENT_NAME: {lc:'onCellClick', rc:'onCellRightClick', dbc:'onCellDoubleClick', af:'onCellFilter', dv:'onCellValidator'},
 	HEADER_MOUSE_EVENT_NAME: {lc:'onHeaderClick', rc:'onHeaderRightClick', dbc:'onHeaderDoubleClick'},
 	SRC_CMD_SET_COL_WIDTH: 'setColWidth',
 	initLaterAfterCssReady: function (sheet) {

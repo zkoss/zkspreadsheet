@@ -4665,7 +4665,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		addClientEvent(Spreadsheet.class, Events.ON_SELECTION_CHANGE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_FOUCSED, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		
-
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_RIGHT_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_DOUBLE_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
@@ -4673,13 +4672,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		addClientEvent(Spreadsheet.class, Events.ON_HEADER_RIGHT_CLICK,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_HEADER_DOUBLE_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		
-		addClientEvent(Spreadsheet.class, Events.ON_START_EDITING, 0);
-		addClientEvent(Spreadsheet.class, Events.ON_EDITBOX_EDITING, 0);
-		addClientEvent(Spreadsheet.class, Events.ON_STOP_EDITING, 0);
+		addClientEvent(Spreadsheet.class, Events.ON_START_EDITING, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_EDITBOX_EDITING, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_STOP_EDITING, CE_DUPLICATE_IGNORE);
 		
-		addClientEvent(Spreadsheet.class, Events.ON_HYPERLINK, 0);
-		addClientEvent(Spreadsheet.class, Events.ON_FILTER, CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_VALIDATE_DROP, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_HYPERLINK, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_CELL_FILTER, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_CELL_VALIDATOR, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_CTRL_KEY, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		
 		//TODO Dennis, why need this and is importnat?Review

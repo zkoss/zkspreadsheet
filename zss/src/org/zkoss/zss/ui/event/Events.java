@@ -62,16 +62,16 @@ public class Events {
 	public static final String ON_CELL_DOUBLE_CLICK = "onCellDoubleClick";
 	
 	/**
-	 * The onFilter event (used with {@link CellMouseEvent}).
+	 * The onCellFilter event (used with {@link CellMouseEvent}).
 	 * Sent when user click on the filter button.
 	 */
-	public static final String ON_FILTER = "onFilter";
+	public static final String ON_CELL_FILTER = "onCellFilter";
 	
 	/**
-	 * The onValidateDrop event (used with {@link CellMouseEvent}).
+	 * The onCellValidator event (used with {@link CellMouseEvent}).
 	 * Sent when user click on the validation drop down button
 	 */
-	public static final String ON_VALIDATE_DROP = "onValidateDrop";
+	public static final String ON_CELL_VALIDATOR = "onCellValidator";
 	
 	/**
 	 * The onHeaderClick event (used with {@link HeaderMouseEvent}).

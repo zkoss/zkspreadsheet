@@ -4,7 +4,7 @@ ZK Spreadsheet 3.0.0 RC
   
 
 *Bug
-  
+  ZSS-268 get exception if I listen to onValidateDrop
   
 
 	------------

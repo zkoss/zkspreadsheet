@@ -73,9 +73,11 @@ public class CellMouseCommand implements Command {
 		final Map data = (Map) request.getData();
 		String type = (String) data.get("type");//command type
 		if (data == null 
-			|| (!"af".equals(type) && !"dv".equals(type) && data.size() != 9) 
-			|| (("af".equals(type) || "dv".equals(type)) && data.size() != 10))
+			|| (!"af".equals(type) && data.size() != 9) 
+			|| ("af".equals(type) && data.size() != 10)){
+			
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), this});
+		}
 		
 		int shx = (Integer) data.get("shx");//x offset against spreadsheet
 		int shy = (Integer) data.get("shy");
@@ -98,20 +100,23 @@ public class CellMouseCommand implements Command {
 		} else if ("dbc".equals(type)) {
 			type = org.zkoss.zss.ui.event.Events.ON_CELL_DOUBLE_CLICK;
 		} else if ("af".equals(type)) {
-			type = org.zkoss.zss.ui.event.Events.ON_FILTER;
+			type = org.zkoss.zss.ui.event.Events.ON_CELL_FILTER;
 		} else if ("dv".equals(type)) {
-			type = org.zkoss.zss.ui.event.Events.ON_VALIDATE_DROP;
+			type = org.zkoss.zss.ui.event.Events.ON_CELL_VALIDATOR;
 		} else {
 			throw new UiException("unknow type : " + type);
 		}
 
-		if (org.zkoss.zss.ui.event.Events.ON_FILTER.equals(type)) {
+		if (org.zkoss.zss.ui.event.Events.ON_CELL_FILTER.equals(type)) {
 			int field = (Integer) data.get("field");
+			//handling auto filter when user click on the auto-fitler icon on the cell
+			//TODO possible to let user override it?
 			processFilter(row, col, field, sheet, spreadsheet);
+			//consider to remove  ON_CELL_FILTER , it is useless for user if he can't override it
 			Events.postEvent(new FilterMouseEvent(type, comp, shx, shy, key, sheet, row, col, mx, my, field));
-		} else if (org.zkoss.zss.ui.event.Events.ON_VALIDATE_DROP.equals(type)) {
-			int dvindex = (Integer) data.get("field");
-			Events.postEvent(new FilterMouseEvent(type, comp, shx, shy, key, sheet, row, col, mx, my, dvindex));
+		} else if (org.zkoss.zss.ui.event.Events.ON_CELL_VALIDATOR.equals(type)) {
+			//consider to remove  ON_CELL_VALIDATOR event , it is useless for user if he can't override it
+			Events.postEvent(new CellMouseEvent(type, comp, shx, shy, key, sheet, row, col, mx, my));
 		} else {
 			Events.postEvent(new CellMouseEvent(type, comp, shx, shy, key, sheet, row, col, mx, my));
 		}
