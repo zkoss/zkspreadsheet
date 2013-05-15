@@ -1076,6 +1076,10 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		}
 		
 		zWatch.listen({onResponse: this});
+		
+		// ZSS-253: listen global event to modify focus
+		jq(document).bind('zmousedown', this.proxy(this._doPartnerBlur));
+		jq(document).bind('keyup', this.proxy(this._doPartnerBlur)); // zss still has focus when key down 
 	},
 	unbind_: function () {
 		zWatch.unlisten({onResponse: this});
@@ -1086,6 +1090,10 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		this.$supers('unbind_', arguments);
 		if (window.CollectGarbage)
 			window.CollectGarbage();
+		
+		// ZSS-253
+		jq(document).unbind('zmousedown');
+		jq(document).unbind('keyup'); 
 	},
 	onResponse: function () {
 		if (this._triggerContentsChanged != undefined) {
@@ -1103,11 +1111,44 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	domClass_: function (no) {
 		return 'zssheet';
 	},
+	/**
+	 * handle ZSS partner component blur event and let ZSS can blur correctly (ZSS-253). 
+	 */
+	_doPartnerBlur: function (event) {
+		var ssctrl = this.sheetCtrl;
+		var w = zk.currentFocus;
+		while(w) {
+			// check it's ZSS related widget or not
+			if(w.className.indexOf('zss.') == 0 || w.className.indexOf('zssex.') == 0) {
+				return;
+			} 
+			// check it's ZSS partner or not
+			if(w.zssPartner) { //if a wdiget has zssPartner flag and set to true, gain focus back
+				ssctrl.dp.gainFocus(false); // fake focus
+				return;
+			}
+			w = w.parent; // check parent widget
+		}
+		ssctrl.dp._doFocusLost(); // otherwise, let spreadsheet blur
+	}, 
 	_doDataPanelBlur: function (evt) {
 		var sheet = this.sheetCtrl;
 		if (sheet.innerClicking <= 0 && sheet.state == zss.SSheetCtrl.FOCUSED) {
-			//TODO: check zk.currentFocus, if child of spreadsheet, do not _doFocusLost 
-			sheet.dp._doFocusLost();
+
+			// #ZSS-253: check the widget which got focus is associated with spreadsheet or not
+			// also check its parent until null
+			var w = zk.currentFocus;
+			while(w) {
+				if(w.zssPartner) {	//if a wdiget has zssPartner flag and set to true, gain focus back
+					sheet.dp.gainFocus(false); // fake focus
+					return;
+				}
+				w = w.parent; // check parent widget
+			}
+			sheet.dp._doFocusLost(); // otherwise, let spreadsheet blur
+			
+			// TODO: check zk.currentFocus, if child of spreadsheet, do not _doFocusLost
+			
 		} else if(sheet.state == zss.SSheetCtrl.FOCUSED) {
 			//retrive focus back to focustag
 			sheet.dp.gainFocus(false);//Note. no prepare copy (in safari, it trigger onFloatUp evt, cause menupopup close)
