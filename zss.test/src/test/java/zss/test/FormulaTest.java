@@ -2,10 +2,16 @@ package zss.test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.zats.mimic.ComponentAgent;
 import org.zkoss.zats.mimic.DesktopAgent;
@@ -22,11 +28,12 @@ import org.zkoss.zss.ui.Spreadsheet;
  * @author Hawk
  *
  */
+@RunWith(Parameterized.class)
 public class FormulaTest extends SpreadsheetTestCaseBase{
 
-	private static DesktopAgent desktop; 
-	private static ComponentAgent zss ;
-	private static Spreadsheet spreadsheet ;
+	private DesktopAgent desktop; 
+	private ComponentAgent zss ;
+	private Spreadsheet spreadsheet ;
 	
 	// after reading the number of row without a formula, the program will stop to read more rows
 	private static final int MAX_ROW_READ_FROM_LAST_FORUMULA = 30;
@@ -34,13 +41,18 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	@Rule
     public ErrorCollector collector = new ErrorCollector();
 	
-	@BeforeClass
-	public static void initialize(){
-		desktop = Zats.newClient().connect("/formula2003.zul");
+	public FormulaTest(String testPage){
+		desktop = Zats.newClient().connect(testPage);
 		
 		zss = desktop.query("spreadsheet");
 		spreadsheet = zss.as(Spreadsheet.class);
 		
+	}
+	
+	@Parameters
+	public static List<Object[]> getTestPages() {
+		Object[][] data = new Object[][] { { "/formula.zul" }, { "/formula2003.zul"}};
+		return Arrays.asList(data);
 	}
 	
 
