@@ -4684,6 +4684,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		//TODO Dennis, why need this and is importnat?Review
 		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_BLUR,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);//
 
+		
+		addClientEvent(Spreadsheet.class, Events.ON_WIDGET_CTRL_KEY, CE_DUPLICATE_IGNORE);
+		
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_AUX_ACTION, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_FETCH, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_MOUSE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
@@ -4691,7 +4694,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_HEADER_MODIF, CE_IMPORTANT);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_HEADER_MOUSE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_MOVE_WIDGET, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_WIDGET_CTRL_KEY, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_SELECT_SHEET, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_SYNC_BLOCK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 	}

@@ -16,23 +16,23 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.au.in;
 
-import java.util.List;
 import java.util.Map;
 
 import org.zkoss.lang.Objects;
-import org.zkoss.poi.ss.usermodel.Chart;
-import org.zkoss.poi.ss.usermodel.Picture;
-import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.KeyEvent;
-import org.zkoss.zss.model.sys.XRanges;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.DrawingManager;
-import org.zkoss.zss.model.sys.impl.SheetCtrl;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.Chart;
+import org.zkoss.zss.api.model.Picture;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.event.WidgetKeyEvent;
+import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * @author sam
@@ -46,46 +46,46 @@ public class WidgetCtrlKeyCommand implements Command {
 		if (comp == null)
 			throw new UiException(MZk.ILLEGAL_REQUEST_COMPONENT_REQUIRED, this);
 		final Map data = request.getData();
-		if (data == null || data.size() != 6)
+		if (data == null || data.size() != 7)
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA,
 				new Object[] {Objects.toString(data), this});
 		
+		
+		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		
+		String sheetId= (String) data.get("sheetId");
+		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
+			return;
+		
 		String widgetType = (String) data.get("wgt");
-		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
-		if ("chart".equals(widgetType)) {
-			processChart(sheet, data);
-		} else if ("image".equals(widgetType)) {
-			processPicture(sheet, data);
-		}
-	}
-	
-	private void processChart(XSheet sheet, Map data) {
-		String widgetId = (String) data.get("id");
-		int keyCode = (Integer) data.get("keyCode");
-		DrawingManager dm = ((SheetCtrl)sheet).getDrawingManager();
-		if (KeyEvent.DELETE == keyCode) {
-			List<Chart> charts = dm.getCharts();
-			for (Chart chart : charts) {
-				if (chart != null && chart.getChartId().equals(widgetId)) {
-					XRanges.range(sheet).deleteChart(chart);
+		org.zkoss.zk.ui.event.KeyEvent evt = KeyEvent.getKeyEvent(request);
+		Object widgetData = null;
+		
+		String id = (String) data.get("id");
+		
+		if ("image".equals(widgetType)) {
+			for(Picture p:Ranges.range(sheet).getPictures()){
+				if(p.getId().equals(id)){
+					widgetData = p;
+					break;
+				}
+			}
+			
+		} else if ("chart".equals(widgetType)) {
+			for(Chart c:Ranges.range(sheet).getCharts()){
+				if(c.getId().equals(id)){
+					widgetData = c;
 					break;
 				}
 			}
 		}
-	}
-	
-	private void processPicture(XSheet sheet, Map data) {
-		String widgetId = (String) data.get("id");
-		int keyCode = (Integer) data.get("keyCode");
-		DrawingManager dm = ((SheetCtrl)sheet).getDrawingManager();
-		if (KeyEvent.DELETE == keyCode) {
-			List<Picture> pics = dm.getPictures();
-			for (Picture pic : pics) {
-				if (pic.getPictureId().equals(widgetId)) {
-					XRanges.range(sheet).deletePicture(pic);
-					break;
-				}
-			}
+		if(widgetData==null){
+			//TODO ignore it or throw exception?
+			return;
 		}
+		Event zssKeyEvt = new WidgetKeyEvent(evt.getName(), evt.getTarget(), sheet,widgetData,
+				evt.getKeyCode(), evt.isCtrlKey(), evt.isShiftKey(), evt.isAltKey());
+		Events.postEvent(zssKeyEvt);
+		
 	}
 }

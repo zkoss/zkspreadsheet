@@ -134,6 +134,8 @@ public class Events {
 	
 	public static final String ON_AUX_ACTION = "onAuxAction";
 	
+	public static final String ON_WIDGET_CTRL_KEY = "onWidgetCtrlKey";
+	
 	/* 
 	 * Following are events that fire by book SSDataEvent and delegate to Sparedsheet to provide to component user.
 	 * TODO consider to let user register listener on book directly or wrap more event 

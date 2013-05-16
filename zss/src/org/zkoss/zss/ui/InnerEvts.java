@@ -57,7 +57,7 @@ import org.zkoss.zss.ui.event.Events;
 	static final String ON_ZSS_HEADER_MODIF = "onZSSHeaderModif";
 	static final String ON_ZSS_HEADER_MOUSE = "onZSSHeaderMouse";
 	static final String ON_ZSS_MOVE_WIDGET = "onZSSMoveWidget";
-	static final String ON_ZSS_WIDGET_CTRL_KEY = "onZSSWidgetCtrlKey";
+	
 	static final String ON_ZSS_SELECT_SHEET = "onZSSSelectSheet";
 	static final String ON_ZSS_SYNC_BLOCK = "onZSSSyncBlock";
 	
@@ -115,7 +115,7 @@ import org.zkoss.zss.ui.event.Events;
 		//onZssMoveWidget -> update book
 		CMDS.put(ON_ZSS_MOVE_WIDGET, new MoveWidgetCommand());//TODO review
 		//onZssMoveWidget -> update book
-		CMDS.put(ON_ZSS_WIDGET_CTRL_KEY, new WidgetCtrlKeyCommand());//TODO review
+		CMDS.put(Events.ON_WIDGET_CTRL_KEY, new WidgetCtrlKeyCommand());//TODO review
 		//wire event, need to review
 		CMDS.put(ON_ZSS_FILTER, new FilterCommand());//TODO review
 		

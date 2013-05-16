@@ -994,7 +994,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	 * @param boolean altKey
 	 */
 	fireWidgetCtrlKeyEvt: function (wgt, id, keyCode, ctrlKey, shiftKey, altKey) {
-		this.fire('onZSSWidgetCtrlKey', {wgt: wgt, id: id, keyCode: keyCode, 
+		this.fire('onWidgetCtrlKey', {sheetId: this.getSheetId(), wgt: wgt, id: id, keyCode: keyCode, 
 			ctrlKey: ctrlKey, shiftKey: shiftKey, altKey: altKey}, {toServer: true}, 25);
 	},
 	fireToolbarAction: function (act, extra) {
@@ -1078,8 +1078,8 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		zWatch.listen({onResponse: this});
 		
 		// ZSS-253: listen global event to modify focus
-		jq(document).bind('zmousedown', this.proxy(this._doPartnerBlur));
-		jq(document).bind('keyup', this.proxy(this._doPartnerBlur)); // zss still has focus when key down 
+//		jq(document).bind('zmousedown', this.proxy(this._doPartnerBlur));
+//		jq(document).bind('keyup', this.proxy(this._doPartnerBlur)); // zss still has focus when key down 
 	},
 	unbind_: function () {
 		zWatch.unlisten({onResponse: this});

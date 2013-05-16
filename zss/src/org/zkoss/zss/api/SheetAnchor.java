@@ -15,12 +15,12 @@ public class SheetAnchor {
 
 	int row;
 	int column;
-	int lastRow;
-	int lastColumn;
+	int lastRow;//px
+	int lastColumn;//px
 	int xOffset;
 	int yOffset;
-	int lastXOffset;
-	int lastYOffset;
+	int lastXOffset;//px
+	int lastYOffset;//px
 
 	public SheetAnchor(int row, int column, int lastRow, int lastColumn) {
 		this(row, column, 0, 0, lastRow, lastColumn, 0, 0);

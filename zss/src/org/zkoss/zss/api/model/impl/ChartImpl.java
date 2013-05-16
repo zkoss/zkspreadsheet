@@ -41,4 +41,8 @@ public class ChartImpl implements Chart{
 	public org.zkoss.poi.ss.usermodel.Chart getNative() {
 		return chartRef.get();
 	}
+	
+	public String getId(){
+		return getNative().getChartId();
+	}
 }

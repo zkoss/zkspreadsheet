@@ -11,4 +11,6 @@ public interface Picture {
 	    PNG,
 	    DIB		
 	}
+	
+	public String getId();
 }
