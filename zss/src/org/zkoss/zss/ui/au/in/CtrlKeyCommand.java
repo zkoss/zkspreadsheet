@@ -85,7 +85,7 @@ public class CtrlKeyCommand implements Command {
 		String id = (String) data.get("wgtId");
 		
 		if ("image".equals(widgetType)) {
-			for(Picture p:Ranges.range(sheet).getPictures()){
+			for(Picture p:sheet.getPictures()){
 				if(p.getId().equals(id)){
 					widgetData = p;
 					break;
@@ -93,7 +93,7 @@ public class CtrlKeyCommand implements Command {
 			}
 			
 		} else if ("chart".equals(widgetType)) {
-			for(Chart c:Ranges.range(sheet).getCharts()){
+			for(Chart c:sheet.getCharts()){
 				if(c.getId().equals(id)){
 					widgetData = c;
 					break;

@@ -78,4 +78,13 @@ public interface CellStyle {
 	public String getDataFormat();
 	
 	public void setDataFormat(String format);
+	
+	public boolean isLocked();
+	
+	public void setLocked(boolean locked);
+	
+	public boolean isHidden();
+	
+	public void setHidden(boolean hidden);
+	
 }

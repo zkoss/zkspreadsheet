@@ -705,17 +705,6 @@ public class RangeImpl implements Range{
 		return new PictureImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic));
 	}
 	
-	public List<Picture> getPictures(){
-		//TODO the syncLevel
-		Book book = getSheet().getBook();
-		DrawingManager dm = ((SheetCtrl)((SheetImpl)getSheet()).getNative()).getDrawingManager();
-		List<Picture> pictures = new ArrayList<Picture>();
-		for(org.zkoss.poi.ss.usermodel.Picture pic:dm.getPictures()){
-			pictures.add(new PictureImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic)));
-		}
-		return pictures;
-	}
-	
 	public void deletePicture(Picture picture){
 		//TODO the syncLevel
 		range.deletePicture(((PictureImpl)picture).getNative());
@@ -734,17 +723,6 @@ public class RangeImpl implements Range{
 		org.zkoss.poi.ss.usermodel.charts.ChartData cdata = ((ChartDataImpl)data).getNative();
 		org.zkoss.poi.ss.usermodel.Chart chart = range.addChart(an, cdata, EnumUtil.toChartType(type), EnumUtil.toChartGrouping(grouping), EnumUtil.toLegendPosition(pos));
 		return new ChartImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart));
-	}
-	
-	public List<Chart> getCharts(){
-		//TODO the syncLevel
-		Book book = getSheet().getBook();
-		DrawingManager dm = ((SheetCtrl)((SheetImpl)getSheet()).getNative()).getDrawingManager();
-		List<Chart> charts = new ArrayList<Chart>();
-		for(org.zkoss.poi.ss.usermodel.Chart chart:dm.getCharts()){
-			charts.add(new ChartImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart)));
-		}
-		return charts;
 	}
 	
 	//currently, we only support to modify chart in XSSF
