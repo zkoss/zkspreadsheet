@@ -47,7 +47,7 @@ public class SheetTest extends DisplayExcelTest{
 		
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
 		ssAgent.selectSheet("xsheet-protection");
-		xsheet = zss.as(Spreadsheet.class).getXBook().getWorksheet("xsheet-protection");
+		xsheet = zss.as(Spreadsheet.class).getXBook().getWorksheet("sheet-protection");
 
 		assertTrue(xsheet.getProtect());
 		assertTrue(getCell(xsheet, 0, 0).getCellStyle().getLocked());
@@ -59,7 +59,7 @@ public class SheetTest extends DisplayExcelTest{
 	public void testAutofilter(){
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
 		ssAgent.selectSheet("xsheet-autofilter");
-		xsheet = zss.as(Spreadsheet.class).getXBook().getWorksheet("xsheet-autofilter");
+		xsheet = zss.as(Spreadsheet.class).getXBook().getWorksheet("sheet-autofilter");
 		
 		AutoFilter autoFilter = xsheet.getAutoFilter(); 
 		assertNotNull(autoFilter);

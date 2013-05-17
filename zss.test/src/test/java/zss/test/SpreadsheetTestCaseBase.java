@@ -27,12 +27,12 @@ public class SpreadsheetTestCaseBase {
 	
 	//encapsulate access methods for future API change
 
-	protected boolean isHiddenColumn(XSheet sheet, int columnIndex) {
-		return sheet.getColumnWidth(columnIndex)==0;
+	protected boolean isHiddenColumn(XSheet xsheet, int columnIndex) {
+		return xsheet.getColumnWidth(columnIndex)==0;
 	}
 
-	protected boolean isHiddenRow(XSheet sheet, int rowIndex) {
-		return sheet.getRow(rowIndex).getZeroHeight();
+	protected boolean isHiddenRow(XSheet xsheet, int rowIndex) {
+		return xsheet.getRow(rowIndex).getZeroHeight();
 	}
 	
 	protected CellStyle getCellStyle(Sheet sheet, int row, int col) {
