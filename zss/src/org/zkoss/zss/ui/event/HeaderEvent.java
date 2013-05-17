@@ -29,16 +29,21 @@ import org.zkoss.zk.ui.event.Event;
  */
 public class HeaderEvent extends Event{
 	private static final long serialVersionUID = 1L;
-	static public final int TOP_HEADER = 0;
-	static public final int LEFT_HEADER = 1;
+//	static public final int TOP_HEADER = 0;
+//	static public final int LEFT_HEADER = 1;
+	
+	public enum HedaerType{
+		COLUMN,
+		ROW
+	}
 	
 	private Sheet _sheet;
-	private int _type;
+	private HedaerType _type;
 	private int _index;
 	private boolean _hidden;
 	private int _size;
 
-	public HeaderEvent(String name, Component target,Sheet sheet, int type ,int index, int size, boolean hidden) {
+	public HeaderEvent(String name, Component target,Sheet sheet, HedaerType type ,int index, int size, boolean hidden) {
 		super(name, target, size);
 		_sheet = sheet;
 		this._type = type;
@@ -69,10 +74,10 @@ public class HeaderEvent extends Event{
 	
 	
 	/**
-	 * get type of this event, it will be {@link HeaderEvent#TOP_HEADER} or (@link HeaderEvent#LEFT_HEADER} 
+	 * get type of this event 
 	 * @return the type of header
 	 */
-	public int getType(){
+	public HedaerType getType(){
 		return _type;
 	}
 	

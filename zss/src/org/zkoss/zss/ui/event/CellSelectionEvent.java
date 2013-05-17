@@ -35,7 +35,7 @@ public class CellSelectionEvent extends Event{
 //	public static final int SELECT_ALL = 0x04;
 	
 	public enum SelectionType {
-		CELL, //cells
+		CELL, //cell
 		ROW, //row
 		COLUMN, //col
 		ALL //all

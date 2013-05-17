@@ -31,6 +31,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.HeaderEvent;
+import org.zkoss.zss.ui.event.HeaderEvent.HedaerType;
 import org.zkoss.zss.ui.event.HeaderMouseEvent;
 import org.zkoss.zss.ui.impl.XUtils;
 
@@ -74,7 +75,7 @@ public class HeaderMouseCommand implements Command {
 			throw new UiException("unknow type : " + type);
 		}
 		
-		int htype = (row == -1) ? HeaderEvent.TOP_HEADER : HeaderEvent.LEFT_HEADER;
+		HedaerType htype = (row == -1) ? HedaerType.COLUMN : HedaerType.ROW;
 		int index = (row == -1) ? col : row;
 				
 		Events.postEvent(new HeaderMouseEvent(type, comp, shx, shy, key, sheet, htype, index, mx, my));
