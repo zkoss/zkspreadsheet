@@ -5,14 +5,12 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.zats.mimic.ComponentAgent;
 import org.zkoss.zats.mimic.DesktopAgent;
 import org.zkoss.zats.mimic.Zats;
@@ -233,7 +231,6 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		}
 		return nFormula;
 	}
-	*/
 	
 	private Object getCellValue(Cell cell) {
 		int cellType = cell.getCellType() == Cell.CELL_TYPE_FORMULA ? cell.getCachedFormulaResultType():cell.getCellType();
@@ -251,6 +248,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		}
 	}
 	
+	 */
 
 	private boolean isFormulaRow(Range verifyCell) {
 		//skip "human check" cases

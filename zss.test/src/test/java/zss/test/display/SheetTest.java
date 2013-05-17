@@ -1,8 +1,6 @@
 package zss.test.display;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -12,7 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
@@ -81,7 +78,4 @@ public class SheetTest extends DisplayExcelTest{
 //		assertEquals("Sunday", autoFilter.getFilterColumn(1).getFilters().get(0));
 	}
 	
-	private Cell getCell(XSheet sheet, int row, int col) {
-		return XUtils.getCell(sheet, row, col);
-	}
 }
