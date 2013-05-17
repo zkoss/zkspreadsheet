@@ -227,8 +227,6 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return doClearAll();
 		} else if (DefaultUserAction.HYPERLINK.equals(dua)) {
 			return doHyperlink();
-		} else if (DefaultUserAction.INSERT_PICTURE.equals(dua)) {
-			return doInsertPicture();
 		} else if (DefaultUserAction.CLOSE_BOOK.equals(dua)) {
 			return doCloseBook();
 		} else if (DefaultUserAction.FORMAT_CELL.equals(dua)) {
@@ -449,56 +447,6 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		return true;
 	}
 	
-	
-	protected boolean doInsertPicture(){
-		final Sheet sheet = getSheet();
-		final Rect selection = getSelection();
-		
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
-		if(range.isProtected()){
-			showProtectMessage();
-			return true;
-		}
-		
-		
-		//keep the action context, we are doing job asynchronized.
-		final UserActionContext ctx = getContext();
-		
-		Fileupload.get(1,new EventListener<UploadEvent>() {
-			public void onEvent(UploadEvent event) throws Exception {
-				setContext(ctx);//set the action context back to continue the job
-				try{
-					Media media = event.getMedia();
-					doInsertPicture(media);
-				}finally{
-					releaseContext();
-				}
-			}
-		});
-		return true;
-	}
-	
-	protected boolean doInsertPicture(Media media) {
-		if(media==null){
-			showWarnMessage("Can't get the uploaded file");
-			return true;
-		}
-		
-		if(!(media instanceof AImage) || SheetOperationUtil.getPictureFormat((AImage)media)==null){
-			showWarnMessage("Can't support the uploaded file");
-			return true;
-		}
-		
-		final Sheet sheet = getSheet();
-		final Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
-		
-		SheetOperationUtil.addPicture(range,(AImage)media);
-		
-		clearClipboard();
-		return true;
-	}
-		
 	/**
 	 * Execute when user press key
 	 * @param event
