@@ -29,7 +29,7 @@ public class ImageTest extends DisplayExcelTest{
 	public ImageTest(String testPage){
 		super(testPage);
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
-		//select the xsheet first or the chart won't be initialized
+		//select the sheet first or the chart won't be initialized
 		ssAgent.selectSheet("chart-image");
 		spreadsheet = zss.as(Spreadsheet.class);
 		xsheet = spreadsheet.getXBook().getWorksheet("chart-image");

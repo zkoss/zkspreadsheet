@@ -23,7 +23,7 @@ import zss.test.SpreadsheetAgent;
 /**
  * Test cases are organized by "Testcase Class per Feature" pattern.
  * Test case for the function "display Excel files".
- * Testing for the xsheet "cell-text".
+ * Testing for the sheet "cell-text".
  * 
  * Because the specification of color is unclear, we don't test color-related feature.
  * 

@@ -17,7 +17,7 @@ import zss.test.SpreadsheetAgent;
 
 /**
  * Test case for the function "display Excel files" for 2007 and 2003
- * Testing for the xsheet "cell-border".
+ * Testing for the sheet "cell-border".
  * 
  * Because the specification of color is unclear, we don't test color-related feature.
  * 

@@ -23,7 +23,7 @@ import zss.test.SpreadsheetAgent;
 
 /**
  * Test case for the function "display Excel files".
- * Testing for the xsheet "xsheet-protection", "xsheet-autofilter".
+ * Testing for the sheet "sheet-protection", "sheet-autofilter".
  * 
  * @author Hawk
  *
@@ -46,7 +46,7 @@ public class SheetTest extends DisplayExcelTest{
 	public void testProtection(){
 		
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
-		ssAgent.selectSheet("xsheet-protection");
+		ssAgent.selectSheet("sheet-protection");
 		xsheet = zss.as(Spreadsheet.class).getXBook().getWorksheet("sheet-protection");
 
 		assertTrue(xsheet.getProtect());
@@ -58,7 +58,7 @@ public class SheetTest extends DisplayExcelTest{
 	@Test
 	public void testAutofilter(){
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
-		ssAgent.selectSheet("xsheet-autofilter");
+		ssAgent.selectSheet("sheet-autofilter");
 		xsheet = zss.as(Spreadsheet.class).getXBook().getWorksheet("sheet-autofilter");
 		
 		AutoFilter autoFilter = xsheet.getAutoFilter(); 

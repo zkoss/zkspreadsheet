@@ -6,7 +6,7 @@ import org.zkoss.zats.mimic.operation.AuData;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
- * By default, we perform all actions on currently selected xsheet.
+ * By default, we perform all actions on currently selected sheet.
  * @author Hawk
  *
  */

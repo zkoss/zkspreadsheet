@@ -17,7 +17,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 
 /**
  * For testing those user actions that can be performed on a cell, e.g. copy and paste.
- * 
+ * FIXME these test are under development
  */
 public class CellOperationTest extends SpreadsheetTestCaseBase{
 
@@ -66,7 +66,6 @@ public class CellOperationTest extends SpreadsheetTestCaseBase{
 		//TODO how to check it's merged
 		
 		ssAgent.fillBackgroundColor(18, 1, "ff0000");
-//		assertEquals(1, getCell(xsheet,18,1).getCellStyle().getFillBackgroundColor());
 		assertEquals(CellStyle.BorderType.NONE, mergedCell.getCellStyle().getBorderBottom());
 	}
 }

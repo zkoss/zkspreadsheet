@@ -18,7 +18,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 
 /**
  * Test case for the function "display Excel files".
- * Testing for the xsheet "cell-data".
+ * Testing for the sheet "cell-data".
  * 
  * @author Hawk
  *
@@ -31,9 +31,6 @@ public class CellDataTest extends DisplayExcelTest{
 	
 	public CellDataTest(String page){
 		super(page);
-//		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
-//		ssAgent.selectSheet("cell-data");
-//		xsheet = zss.as(Spreadsheet.class).getXBook().getWorksheetAt(3);
 		sheet = zss.as(Spreadsheet.class).getBook().getSheetAt(3);
 	}
 
