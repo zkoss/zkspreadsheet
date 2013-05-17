@@ -983,20 +983,6 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		this.fire('onZSSMoveWidget', {wgt: wgt, type: type, id: id, dx1: dx1, dy1: dy1, 
 			dx2: dx2, dy2: dy2, col1: col1, row1: row1, col2: col2, row2: row2}, {toServer: true}, 25);
 	},
-	/**
-	 * Fire widget control key event
-	 * 
-	 * @param string wgt the widget type
-	 * @param string id
-	 * @param int keyCode
-	 * @param boolean ctrlKey
-	 * @param boolean shiftKey
-	 * @param boolean altKey
-	 */
-	fireWidgetCtrlKeyEvt: function (wgt, id, keyCode, ctrlKey, shiftKey, altKey) {
-		this.fire('onWidgetCtrlKey', {sheetId: this.getSheetId(), wgt: wgt, id: id, keyCode: keyCode, 
-			ctrlKey: ctrlKey, shiftKey: shiftKey, altKey: altKey}, {toServer: true}, 25);
-	},
 	fireToolbarAction: function (act, extra) {
 		var data = {sheetId: this.getSheetId(), tag: 'toolbar', act: act};
 		this.fire('onAuxAction', zk.copy(data, extra), {toServer: true});
@@ -1243,6 +1229,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 				data.bRow = sel.bottom;
 				data.rCol = sel.right;
 			}
+			data.sheetId = this.getSheetId();
 			this.$supers('afterKeyDown_', arguments);
 			//feature #26: Support copy/paste value to local Excel
 			var keyCode = evt.keyCode;

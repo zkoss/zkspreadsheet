@@ -37,7 +37,6 @@ import org.zkoss.zss.ui.au.in.SelectSheetCommand;
 import org.zkoss.zss.ui.au.in.SelectionChangeCommand;
 import org.zkoss.zss.ui.au.in.StartEditingCommand;
 import org.zkoss.zss.ui.au.in.StopEditingCommand;
-import org.zkoss.zss.ui.au.in.WidgetCtrlKeyCommand;
 import org.zkoss.zss.ui.event.Events;
 
 /**
@@ -88,9 +87,6 @@ import org.zkoss.zss.ui.event.Events;
 		
 		//onAuxAction
 		CMDS.put(Events.ON_AUX_ACTION, new AuxActionCommand());
-		
-		//onWidgetCtrlKey
-		CMDS.put(Events.ON_WIDGET_CTRL_KEY, new WidgetCtrlKeyCommand());
 		
 		//onWidgetUpdate 
 		CMDS.put(Events.ON_WIDGET_UPDATE, new WidgetUpdateCommand());//TODO review
