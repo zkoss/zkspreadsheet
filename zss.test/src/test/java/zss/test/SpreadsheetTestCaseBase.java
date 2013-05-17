@@ -25,16 +25,6 @@ public class SpreadsheetTestCaseBase {
 		Zats.cleanup();
 	}
 	
-	//encapsulate access methods for future API change
-
-	protected boolean isHiddenColumn(XSheet xsheet, int columnIndex) {
-		return xsheet.getColumnWidth(columnIndex)==0;
-	}
-
-	protected boolean isHiddenRow(XSheet xsheet, int rowIndex) {
-		return xsheet.getRow(rowIndex).getZeroHeight();
-	}
-	
 	protected CellStyle getCellStyle(Sheet sheet, int row, int col) {
 		return Ranges.range(sheet, row, col).getCellStyle();
 	}

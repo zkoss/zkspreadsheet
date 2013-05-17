@@ -1,5 +1,4 @@
 <zk>
 	<spreadsheet src="/TestFile2007.xlsx" maxrows="200" maxcolumns="40" width="100%"
-		height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true"
-		apply="zss.testapp.SpreadSheetComposer" />
+		height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true" />
 </zk>

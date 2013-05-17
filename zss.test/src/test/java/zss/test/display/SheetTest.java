@@ -14,6 +14,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.XUtils;
@@ -51,7 +52,7 @@ public class SheetTest extends DisplayExcelTest{
 
 		assertTrue(xsheet.getProtect());
 		assertTrue(getCell(xsheet, 0, 0).getCellStyle().getLocked());
-		//check editable cell
+		//check editable cell FIXME 3.0 API
 		assertFalse(getCell(xsheet, 1, 0).getCellStyle().getLocked());
 	}
 	
@@ -59,19 +60,24 @@ public class SheetTest extends DisplayExcelTest{
 	public void testAutofilter(){
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
 		ssAgent.selectSheet("sheet-autofilter");
-		xsheet = zss.as(Spreadsheet.class).getXBook().getWorksheet("sheet-autofilter");
 		
-		AutoFilter autoFilter = xsheet.getAutoFilter(); 
-		assertNotNull(autoFilter);
-		assertTrue(autoFilter.getFilterColumn(1).isOn());
-		assertEquals(1, autoFilter.getFilterColumn(1).getFilters().size());
-		assertEquals("Sunday", autoFilter.getFilterColumn(1).getFilters().get(0));
+		Sheet sheet = zss.as(Spreadsheet.class).getBook().getSheet("sheet-autofilter");
+		
+		assertEquals(true, sheet.isAutoFilterEnabled());
 		for (int r1=1 ; r1<=6 ; r1++){
-			assertTrue(isHiddenRow(xsheet, r1));
+			assertTrue(sheet.isRowHidden(r1));
 		}
 		for (int r2=8 ; r2<=13 ; r2++){
-			assertTrue(isHiddenRow(xsheet, r2));
+			assertTrue(sheet.isRowHidden(r2));
 		}
+		
+		//old test FIXME need 3.0 API
+//		xsheet = zss.as(Spreadsheet.class).getXBook().getWorksheet("sheet-autofilter");
+//		AutoFilter autoFilter = xsheet.getAutoFilter(); 
+//		assertNotNull(autoFilter);
+//		assertTrue(autoFilter.getFilterColumn(1).isOn());
+//		assertEquals(1, autoFilter.getFilterColumn(1).getFilters().size());
+//		assertEquals("Sunday", autoFilter.getFilterColumn(1).getFilters().get(0));
 	}
 	
 	private Cell getCell(XSheet sheet, int row, int col) {
