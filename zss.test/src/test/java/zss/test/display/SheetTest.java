@@ -14,6 +14,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -48,12 +49,12 @@ public class SheetTest extends DisplayExcelTest{
 		
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
 		ssAgent.selectSheet("sheet-protection");
-		xsheet = zss.as(Spreadsheet.class).getXBook().getWorksheet("sheet-protection");
-
-		assertTrue(xsheet.getProtect());
-		assertTrue(getCell(xsheet, 0, 0).getCellStyle().getLocked());
-		//check editable cell FIXME 3.0 API
-		assertFalse(getCell(xsheet, 1, 0).getCellStyle().getLocked());
+		
+		sheet = zss.as(Spreadsheet.class).getBook().getSheet("sheet-protection");
+		assertEquals(true, sheet.isProtected());
+		assertEquals(true, Ranges.range(sheet, 0, 0).getCellStyle().isLocked());
+		assertEquals(false, Ranges.range(sheet, 1, 0).getCellStyle().isLocked());
+		
 	}
 	
 	@Test

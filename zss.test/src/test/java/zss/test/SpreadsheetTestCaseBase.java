@@ -7,7 +7,6 @@ import org.zkoss.zats.mimic.Zats;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.model.sys.XSheet;
 
 public class SpreadsheetTestCaseBase {
 	@BeforeClass
