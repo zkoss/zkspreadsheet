@@ -131,7 +131,7 @@ public class Events {
 	 */
 	public static final String ON_CTRL_KEY = org.zkoss.zk.ui.event.Events.ON_CTRL_KEY;
 	
-	
+	//User AUXILIARY action
 	public static final String ON_AUX_ACTION = "onAuxAction";
 	
 	public static final String ON_WIDGET_CTRL_KEY = "onWidgetCtrlKey";

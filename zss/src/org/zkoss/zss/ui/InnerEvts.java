@@ -47,9 +47,6 @@ import org.zkoss.zss.ui.event.Events;
 /*package*/ final class InnerEvts {
 	private InnerEvts() {}
 	
-	//AUXILIARY action
-	static final String ON_ZSS_AUX_ACTION = "onZSSAuxAction";/* was onZSSAction*/
-	
 	static final String ON_ZSS_CELL_FETCH = "onZSSCellFetch";
 	static final String ON_ZSS_CELL_MOUSE = "onZSSCellMouse";
 	static final String ON_ZSS_FETCH_ACTIVE_RANGE = "onZSSFetchActiveRange";
@@ -92,8 +89,11 @@ import org.zkoss.zss.ui.event.Events;
 		//->onStopEditing -> onStopEditingImpl(zss internal listen to)
 		CMDS.put(Events.ON_STOP_EDITING, new StopEditingCommand());
 		
-		//onZssAuxAction -> onAuxAction
-		CMDS.put(ON_ZSS_AUX_ACTION, new AuxActionCommand());
+		//onAuxAction
+		CMDS.put(Events.ON_AUX_ACTION, new AuxActionCommand());
+		
+		//onWidgetCtrlKey
+		CMDS.put(Events.ON_WIDGET_CTRL_KEY, new WidgetCtrlKeyCommand());//TODO review
 		
 		// onZssCellMouse 
 		// -> ON_CELL_CLICK,ON_CELL_RIGHT_CLICK,ON_CELL_DOUBLE_CLICK
@@ -114,8 +114,7 @@ import org.zkoss.zss.ui.event.Events;
 		
 		//onZssMoveWidget -> update book
 		CMDS.put(ON_ZSS_MOVE_WIDGET, new MoveWidgetCommand());//TODO review
-		//onZssMoveWidget -> update book
-		CMDS.put(Events.ON_WIDGET_CTRL_KEY, new WidgetCtrlKeyCommand());//TODO review
+
 		//wire event, need to review
 		CMDS.put(ON_ZSS_FILTER, new FilterCommand());//TODO review
 		

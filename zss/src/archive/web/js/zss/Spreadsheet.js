@@ -999,11 +999,11 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	},
 	fireToolbarAction: function (act, extra) {
 		var data = {sheetId: this.getSheetId(), tag: 'toolbar', act: act};
-		this.fire('onZSSAuxAction', zk.copy(data, extra), {toServer: true});
+		this.fire('onAuxAction', zk.copy(data, extra), {toServer: true});
 	},
 	fireSheetAction: function (act, extra) {
 		var data = {sheetId: this.getSheetId(), tag: 'sheet', act: act};
-		this.fire('onZSSAuxAction', zk.copy(data, extra), {toServer: true});
+		this.fire('onAuxAction', zk.copy(data, extra), {toServer: true});
 	},
 	/**
 	 * Fetch active range. Currently fetch north/south/west/south direction

@@ -1013,7 +1013,7 @@ zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 			fontSize = btns[1],
 			b;
 		
-		wgt.listen({onZSSAuxAction: this.proxy(this._closeStylePanel)});
+		wgt.listen({onAuxAction: this.proxy(this._closeStylePanel)});
 		fontFamily.setWidth('75px');
 		
 		fontSize.setWidth('48px');
