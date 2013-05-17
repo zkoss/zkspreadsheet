@@ -38,7 +38,7 @@ import org.zkoss.zss.ui.Spreadsheet;
  * @author sam
  *
  */
-public class MoveWidgetCommand implements Command {
+public class WidgetUpdateCommand implements Command {
 
 	@Override
 	public void process(AuRequest request) {

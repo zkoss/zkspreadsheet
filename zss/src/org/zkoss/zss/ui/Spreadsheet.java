@@ -83,6 +83,7 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
+import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
@@ -117,9 +118,9 @@ import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HyperlinkEvent;
-import org.zkoss.zss.ui.event.SheetCreateEvent;
-import org.zkoss.zss.ui.event.SheetDeleteEvent;
-import org.zkoss.zss.ui.event.SheetUpdateEvent;
+//import org.zkoss.zss.ui.event.SheetCreateEvent;
+//import org.zkoss.zss.ui.event.SheetDeleteEvent;
+//import org.zkoss.zss.ui.event.SheetUpdateEvent;
 import org.zkoss.zss.ui.event.StartEditingEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
 import org.zkoss.zss.ui.impl.ActiveRangeHelper;
@@ -189,7 +190,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private static final String WIDGET_LOADERS = "org.zkoss.zss.ui.sys.WidgetLoader.class";
 	
 //	public static final String TOOLBAR_DISABLED_ACTION = "org.zkoss.zss.ui.ToolbarAction.disabled";
-	public static final String ACTION_HANDLER = "org.zkoss.zss.ui.ActionHandler.class";
+	public static final String USER_ACTION_HANDLER = "org.zkoss.zss.ui.UserActionHandler.class";
 	
 	private static final int DEFAULT_TOP_HEAD_HEIGHT = 20;
 	private static final int DEFAULT_LEFT_HEAD_WIDTH = 36;
@@ -349,6 +350,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			for(String evt:_lastUAEvents){
 				this.addEventListener(evt, _uAEventDispatcher);
 			}
+			String ctrlKeys = ua.getCtrlKeys();
+			if(ctrlKeys!=null){//null, don't set, keep the original
+				this.setCtrlKeys(ctrlKeys);
+			}
+			
 		}else{
 			_lastUAEvents = null;
 			_uAEventDispatcher = null;
@@ -2128,23 +2134,37 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onSheetOrderChange(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_ORDER_CHANGE, Spreadsheet.this, name));
+			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
+//			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_ORDER_CHANGE, Spreadsheet.this, name));
 		}
 		private void onSheetNameChange(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_NAME_CHANGE, Spreadsheet.this, name));
+			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
+//			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_NAME_CHANGE, Spreadsheet.this, name));
 		}
 		private void onSheetCreate(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			org.zkoss.zk.ui.event.Events.postEvent(new SheetCreateEvent(Events.ON_SHEET_CREATE, Spreadsheet.this, name));
+			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
+//			org.zkoss.zk.ui.event.Events.postEvent(new SheetCreateEvent(Events.ON_SHEET_CREATE, Spreadsheet.this, name));
 		}
 		private void onSheetDelete(SSDataEvent event) {
 			final Object[] payload = (Object[]) event.getPayload(); 
 			final String delSheetName = (String) payload[0]; //deleted sheet name
 			final String newSheetName= (String) payload[1]; //new selected sheet name
-			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_SHEET_DELETE, Spreadsheet.this, delSheetName, newSheetName));
+			
+			//Dennis, 20130515, should handle it by default
+			if(getSelectedSheet().getSheetName().equals(delSheetName)){
+				//if current select sheet name, euqlas the delete sheet, we should select to suggest new sheet 
+				setSelectedSheet(newSheetName);//this will also update sheet label	
+			}else{
+				//just update sheet label
+				Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
+			}
+			
+			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
+//			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_SHEET_DELETE, Spreadsheet.this, delSheetName, newSheetName));
 		}
 		
 		private int _colorIndex = 0;
@@ -2238,10 +2258,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (bottom > lastrow) {
 				bottom = lastrow;
 			}
-			org.zkoss.zk.ui.event.Events.postEvent(new CellSelectionEvent(
-					Events.ON_CELL_CHANGE, Spreadsheet.this, new SheetImpl(
-							new SimpleRef<XSheet>(sheet)),
-					CellSelectionEvent.SELECT_CELLS, left, top, right, bottom));
+//			org.zkoss.zk.ui.event.Events.postEvent(new CellSelectionEvent(
+//					Events.ON_CELL_CHANGE, Spreadsheet.this, new SheetImpl(
+//							new SimpleRef<XSheet>(sheet)),
+//					CellSelectionEvent.SELECT_CELLS, left, top, right, bottom));
 		}
 		private void onRangeInsert(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -4010,7 +4030,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	private void doSheetSelected(XSheet sheet) {
-		org.zkoss.zk.ui.event.Events.postEvent(new Event(Events.ON_SHEET_SELECT, this));
+		//Dennis, shouldn't post event in component by a server side operation call
+//		org.zkoss.zk.ui.event.Events.postEvent(new Event(Events.ON_SHEET_SELECT, this));
 		
 		//load widgets
 		List list = loadWidgetLoaders();
@@ -4223,7 +4244,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 */
 	public UserActionHandler getUserActionHandler() {
 		if (_actionHandler == null) {
-			String cls = (String) Library.getProperty(ACTION_HANDLER);
+			String cls = (String) Library.getProperty(USER_ACTION_HANDLER);
 			if (cls != null) {
 				try {
 					_actionHandler = (UserActionHandler) Classes.newInstance(cls, null, null);
@@ -4319,7 +4340,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	private void processStartEditing(String token, StartEditingEvent event, String editingType) {
-		XSheet sheet = ((SheetImpl)event.getSheet()).getNative();
 		if (!event.isCancel()) {
 			Object val;
 			final boolean useEditValue = event.isEditingSet() || event.getClientValue() == null; 
@@ -4328,20 +4348,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			} else {
 				val = event.getClientValue();
 			}
-			processStartEditing0(token,sheet, event.getRow(), event
+			processStartEditing0(token,event.getSheet(), event.getRow(), event
 					.getColumn(), val, useEditValue, editingType);
 		} else {
-			processCancelEditing0(token, sheet, event.getRow(),
+			processCancelEditing0(token, event.getSheet(), event.getRow(),
 					event.getColumn(), false, editingType);
 		}
 	}
 
 	private void processStopEditing(String token, StopEditingEvent event, String editingType) {
-		XSheet sheet = ((SheetImpl)event.getSheet()).getNative();
 		if (!event.isCancel()) {
-			processStopEditing0(token, sheet, event.getRow(), event.getColumn(), event.getEditingValue(), editingType);
+			processStopEditing0(token, event.getSheet(), event.getRow(), event.getColumn(), event.getEditingValue(), editingType);
 		} else
-			processCancelEditing0(token, sheet, event.getRow(), event.getColumn(), false, editingType);
+			processCancelEditing0(token, event.getSheet(), event.getRow(), event.getColumn(), false, editingType);
 	}
 	
 	private void showFormulaError(FormulaParseException ex) {
@@ -4352,7 +4371,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		});
 	}
 
-	private void processStopEditing0(final String token, final XSheet sheet, final int rowIdx, final int colIdx, final Object value, final String editingType) {
+	private void processStopEditing0(final String token, final Sheet sheet, final int rowIdx, final int colIdx, final Object value, final String editingType) {
 		try {
 			
 			ValidationHelper helper = new ValidationHelper(this);
@@ -4375,8 +4394,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			)) {
 				return;
 			}else{
-				final XRange range = XRanges.range(sheet, rowIdx, colIdx);
-				range.setEditText(editText);
+				final Range range = Ranges.range(sheet, rowIdx, colIdx);
+				range.setCellEditText(editText);
 			}
 
 			//JSONObj result = new JSONObj();
@@ -4398,7 +4417,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 
-	private void processStartEditing0(String token, XSheet sheet, int row, int col, Object value, boolean useEditValue, String editingType) {
+	private void processStartEditing0(String token, Sheet sheet, int row, int col, Object value, boolean useEditValue, String editingType) {
 		try {
 			JSONObject result = new JSONObject();
 			result.put("r", row);
@@ -4416,7 +4435,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 
-	private void processCancelEditing0(String token, XSheet sheet, int row, int col, boolean skipMove, String editingType) {
+	private void processCancelEditing0(String token, Sheet sheet, int row, int col, boolean skipMove, String editingType) {
 		JSONObject result = new JSONObject();
 		result.put("r", row);
 		result.put("c", col);
@@ -4427,7 +4446,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		smartUpdate("dataUpdateCancel", new Object[] { token, XUtils.getSheetUuid(sheet), result});
 	}
 
-	private void processRetryEditing0(String token, XSheet sheet, int row, int col, Object value, String editingType) {
+	private void processRetryEditing0(String token, Sheet sheet, int row, int col, Object value, String editingType) {
 		try {
 			processCancelEditing0(token, sheet, row, col, true, editingType);
 			JSONObject result = new JSONObject();
@@ -4648,42 +4667,46 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		//ZSS-220 Can't get correct selection if I didn't listen to onCellSelection
 		//onCellSelection should be a important event.
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_SELECTION,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_SELECTION_CHANGE, CE_IMPORTANT | CE_DUPLICATE_IGNORE | CE_NON_DEFERRABLE);
-		
-		//mark1, dennis 2013/4/25
-		//coulde considered to remove following code, because they are post by a command handler, they are not posted from lcient side. 
-		//(on_cell_xx and on_header_xx are post by cell-mouse and header-mouse handler)
+		addClientEvent(Spreadsheet.class, Events.ON_SELECTION_CHANGE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_FOUCSED, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		
-		addClientEvent(Spreadsheet.class, Events.ON_CELL_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_CELL_RIGHT_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_CELL_DOUBLE_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_HEADER_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_HEADER_RIGHT_CLICK,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_HEADER_DOUBLE_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_CELL_CLICK, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_CELL_RIGHT_CLICK, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_CELL_DOUBLE_CLICK, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_HEADER_CLICK, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_HEADER_RIGHT_CLICK,	CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_HEADER_DOUBLE_CLICK, CE_DUPLICATE_IGNORE);
 		
-		addClientEvent(Spreadsheet.class, Events.ON_START_EDITING, 0);
-		addClientEvent(Spreadsheet.class, Events.ON_EDITBOX_EDITING, 0);
-		addClientEvent(Spreadsheet.class, Events.ON_STOP_EDITING, 0);
-		//end of mark1
+		addClientEvent(Spreadsheet.class, Events.ON_START_EDITING, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_EDITBOX_EDITING, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_STOP_EDITING, CE_DUPLICATE_IGNORE);
 		
-		addClientEvent(Spreadsheet.class, Events.ON_HYPERLINK, 0);
-		addClientEvent(Spreadsheet.class, Events.ON_FILTER, CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_VALIDATE_DROP, CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_CTRL_KEY, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_BLUR,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_HYPERLINK, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_CELL_FILTER, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_CELL_VALIDATOR, CE_DUPLICATE_IGNORE);
+		
+		
+		addClientEvent(Spreadsheet.class, Events.ON_CTRL_KEY, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_AUX_ACTION, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_SHEET_SELECTED, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_WIDGET_CTRL_KEY, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_WIDGET_UPDATE, CE_DUPLICATE_IGNORE);
+		
 
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_AUX_ACTION, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_FETCH, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_FOCUSED, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		
+		//Event dispatcher
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_MOUSE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_FETCH_ACTIVE_RANGE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_HEADER_MODIF, CE_IMPORTANT);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_HEADER_MOUSE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_MOVE_WIDGET, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_WIDGET_CTRL_KEY, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_SELECT_SHEET, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_HEADER_MODIFY, CE_IMPORTANT);
+		
+		//Inner
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_FETCH, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_FETCH_ACTIVE_RANGE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_SYNC_BLOCK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		
+		
+		//TODO Dennis, why need this and is importnat?Review
+//		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_BLUR,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);//
 	}
 
 
@@ -4742,7 +4765,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	@Deprecated
 	public boolean validate(XSheet sheet, final int row, final int col, final String txt, 
 		final EventListener callback) {
-		return new ValidationHelper(this).validate(sheet, row, col, txt, callback);
+		return new ValidationHelper(this).validate(new SheetImpl(new SimpleRef<XSheet>(sheet)), row, col, txt, callback);
 	}
 ////		final XSheet ssheet = this.getSelectedXSheet();
 ////		if (ssheet == null || !ssheet.equals(sheet)) { //skip no sheet case

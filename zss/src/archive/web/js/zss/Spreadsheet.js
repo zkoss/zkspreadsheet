@@ -895,7 +895,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	 */
 	_isFireCellEvt: function (type) {
 		var evtnm = zss.Spreadsheet.CELL_MOUSE_EVENT_NAME[type];
-		if ('onFilter' == evtnm) { //server side prepare auto filter popup information for client side
+		if ('onCellFilter' == evtnm) { //server side prepare auto filter popup information for client side
 			return true;
 		}
 		return evtnm && this.isListen(evtnm, {asapOnly: true});
@@ -983,27 +983,13 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		this.fire('onZSSMoveWidget', {wgt: wgt, type: type, id: id, dx1: dx1, dy1: dy1, 
 			dx2: dx2, dy2: dy2, col1: col1, row1: row1, col2: col2, row2: row2}, {toServer: true}, 25);
 	},
-	/**
-	 * Fire widget control key event
-	 * 
-	 * @param string wgt the widget type
-	 * @param string id
-	 * @param int keyCode
-	 * @param boolean ctrlKey
-	 * @param boolean shiftKey
-	 * @param boolean altKey
-	 */
-	fireWidgetCtrlKeyEvt: function (wgt, id, keyCode, ctrlKey, shiftKey, altKey) {
-		this.fire('onZSSWidgetCtrlKey', {wgt: wgt, id: id, keyCode: keyCode, 
-			ctrlKey: ctrlKey, shiftKey: shiftKey, altKey: altKey}, {toServer: true}, 25);
-	},
 	fireToolbarAction: function (act, extra) {
 		var data = {sheetId: this.getSheetId(), tag: 'toolbar', act: act};
-		this.fire('onZSSAuxAction', zk.copy(data, extra), {toServer: true});
+		this.fire('onAuxAction', zk.copy(data, extra), {toServer: true});
 	},
 	fireSheetAction: function (act, extra) {
 		var data = {sheetId: this.getSheetId(), tag: 'sheet', act: act};
-		this.fire('onZSSAuxAction', zk.copy(data, extra), {toServer: true});
+		this.fire('onAuxAction', zk.copy(data, extra), {toServer: true});
 	},
 	/**
 	 * Fetch active range. Currently fetch north/south/west/south direction
@@ -1076,6 +1062,11 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		}
 		
 		zWatch.listen({onResponse: this});
+		
+		// ZSS-253: listen global event to modify focus
+		// can't resolve the focus from partner to non-partner issue now.
+//		jq(document).bind('zmousedown', this.proxy(this._doPartnerBlur));
+//		jq(document).bind('keyup', this.proxy(this._doPartnerBlur)); // zss still has focus when key down 
 	},
 	unbind_: function () {
 		zWatch.unlisten({onResponse: this});
@@ -1086,6 +1077,11 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		this.$supers('unbind_', arguments);
 		if (window.CollectGarbage)
 			window.CollectGarbage();
+		
+		// ZSS-253
+		// can't resolve the focus from partner to non-partner issue now.
+//		jq(document).unbind('zmousedown');
+//		jq(document).unbind('keyup'); 
 	},
 	onResponse: function () {
 		if (this._triggerContentsChanged != undefined) {
@@ -1103,11 +1099,44 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	domClass_: function (no) {
 		return 'zssheet';
 	},
+	/**
+	 * handle ZSS partner component blur event and let ZSS can blur correctly (ZSS-253). 
+	 */
+	_doPartnerBlur: function (event) {
+		var ssctrl = this.sheetCtrl;
+		var w = zk.currentFocus;
+		while(w) {
+			// check it's ZSS related widget or not
+			if(w.className.indexOf('zss.') == 0 || w.className.indexOf('zssex.') == 0) {
+				return;
+			} 
+			// check it's ZSS partner or not
+			if(w.zssPartner) { //if a wdiget has zssPartner flag and set to true, gain focus back
+				ssctrl.dp.gainFocus(false); // fake focus
+				return;
+			}
+			w = w.parent; // check parent widget
+		}
+		ssctrl.dp._doFocusLost(); // otherwise, let spreadsheet blur
+	}, 
 	_doDataPanelBlur: function (evt) {
 		var sheet = this.sheetCtrl;
 		if (sheet.innerClicking <= 0 && sheet.state == zss.SSheetCtrl.FOCUSED) {
-			//TODO: check zk.currentFocus, if child of spreadsheet, do not _doFocusLost 
-			sheet.dp._doFocusLost();
+
+			// #ZSS-253: check the widget which got focus is associated with spreadsheet or not
+			// also check its parent until null
+			var w = zk.currentFocus;
+			while(w) {
+				if(w.zssPartner) {	//if a wdiget has zssPartner flag and set to true, gain focus back
+					sheet.dp.gainFocus(false); // fake focus
+					return;
+				}
+				w = w.parent; // check parent widget
+			}
+			sheet.dp._doFocusLost(); // otherwise, let spreadsheet blur
+			
+			// TODO: check zk.currentFocus, if child of spreadsheet, do not _doFocusLost
+			
 		} else if(sheet.state == zss.SSheetCtrl.FOCUSED) {
 			//retrive focus back to focustag
 			sheet.dp.gainFocus(false);//Note. no prepare copy (in safari, it trigger onFloatUp evt, cause menupopup close)
@@ -1202,6 +1231,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 				data.bRow = sel.bottom;
 				data.rCol = sel.right;
 			}
+			data.sheetId = this.getSheetId();
 			this.$supers('afterKeyDown_', arguments);
 			//feature #26: Support copy/paste value to local Excel
 			var keyCode = evt.keyCode;
@@ -1265,7 +1295,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			//TODO LINK_DOCUMENT
 	}
 }, {
-	CELL_MOUSE_EVENT_NAME: {lc:'onCellClick', rc:'onCellRightClick', dbc:'onCellDoubleClick', af:'onFilter', dv:'onValidateDrop'},
+	CELL_MOUSE_EVENT_NAME: {lc:'onCellClick', rc:'onCellRightClick', dbc:'onCellDoubleClick', af:'onCellFilter', dv:'onCellValidator'},
 	HEADER_MOUSE_EVENT_NAME: {lc:'onHeaderClick', rc:'onHeaderRightClick', dbc:'onHeaderDoubleClick'},
 	SRC_CMD_SET_COL_WIDTH: 'setColWidth',
 	initLaterAfterCssReady: function (sheet) {

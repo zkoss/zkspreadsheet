@@ -7,6 +7,11 @@ import org.zkoss.lang.Library;
 import org.zkoss.lang.Strings;
 import org.zkoss.zss.api.model.Book;
 
+/**
+ * The book series builder
+ * @author dennis
+ *
+ */
 public abstract class BookSeriesBuilder {
 	
 	static BookSeriesBuilder instance;

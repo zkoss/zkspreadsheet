@@ -333,16 +333,12 @@ public interface Range {
 	
 	public Picture addPicture(SheetAnchor anchor,byte[] image,Format format);
 	
-	public List<Picture> getPictures();
-	
 	public void deletePicture(Picture picture);
 	
 	public void movePicture(SheetAnchor anchor,Picture picture);
 	
 	//currently, we only support to modify chart in XSSF
 	public Chart addChart(SheetAnchor anchor,ChartData data,Type type, Grouping grouping, LegendPosition pos);
-	
-	public List<Chart> getCharts();
 	
 	//currently, we only support to modify chart in XSSF
 	public void deleteChart(Chart chart);

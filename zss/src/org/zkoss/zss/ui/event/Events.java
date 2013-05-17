@@ -62,22 +62,16 @@ public class Events {
 	public static final String ON_CELL_DOUBLE_CLICK = "onCellDoubleClick";
 	
 	/**
-	 * The onFilter event (used with {@link CellMouseEvent}).
-	 * Sent when user click on the filter button.
+	 * The onCellFilter event (used with {@link CellMouseEvent}).
+	 * Sent when user click on the cell filter button.
 	 */
-	public static final String ON_FILTER = "onFilter";
+	public static final String ON_CELL_FILTER = "onCellFilter";
 	
 	/**
-	 * The onValidateDrop event (used with {@link CellMouseEvent}).
-	 * Sent when user click on the validation drop down button
+	 * The onCellValidator event (used with {@link CellMouseEvent}).
+	 * Sent when user click on the cell validation drop down button
 	 */
-	public static final String ON_VALIDATE_DROP = "onValidateDrop";
-	
-	/** The onCellChange event (used with {@link CellEvent}).
-	 * Sent when cell contents changed.
-	 */
-	public static final String ON_CELL_CHANGE = "onCellChange";
-	
+	public static final String ON_CELL_VALIDATOR = "onCellValidator";
 	
 	/**
 	 * The onHeaderClick event (used with {@link HeaderMouseEvent}).
@@ -126,41 +120,68 @@ public class Events {
 	 * Sent when user click on the hyperlink of a cell.
 	 */
 	public static final String ON_HYPERLINK = "onHyperlink";
-	
-	/**
-	 * The onSheetDelete event.
-	 * Sent when sheet is deleted.
-	 */
-	public static final String ON_SHEET_DELETE = "onSheetDelete";
-
-	/**
-	 * The onSheetCreate event.
-	 * Sent when sheet is deleted.
-	 */
-	public static final String ON_SHEET_CREATE = "onSheetCreate";
-	
 	/**
 	 * The onSheetSelect event
 	 * Sent when sheet is selected.
 	 */
-	public static final String ON_SHEET_SELECT = "onSheetSelect";
+	public static final String ON_SHEET_SELECTED = "onSheetSelected";
 	
 	/**
-	 * The onSheetNameChange event.
-	 * Sent when sheet is deleted.
-	 */
-	public static final String ON_SHEET_NAME_CHANGE = "onSheetNameChange";
-	/**
-	 * The onSheetOrderChange event.
-	 * Sent when sheet is deleted.
-	 */
-	public static final String ON_SHEET_ORDER_CHANGE = "onSheetOrderChange";
-	
-	/**
-	 * The ON_CTRL_KEY event (used with {@link KeyEvent})
+	 * The onCtrlKey event (used with {@link KeyEvent})
 	 */
 	public static final String ON_CTRL_KEY = org.zkoss.zk.ui.event.Events.ON_CTRL_KEY;
 	
-	
+	/**
+	 * The onAuxAction event (used with {@link AuxActionEvent})
+	 */
 	public static final String ON_AUX_ACTION = "onAuxAction";
+	
+	
+	/**
+	 * The onWidgetCtrlKey event (used with {@link WidgetKeyEvent})
+	 */
+	public static final String ON_WIDGET_CTRL_KEY = "onWidgetCtrlKey";
+	
+	/**
+	 * The onWidgetUpdate event (used with {@link WidgetUpdateEvent})
+	 */
+	public static final String ON_WIDGET_UPDATE = "onWidgetUpdate";//"onZSSMoveWidget";
+	
+	/* 
+	 * Following are events that fire by book SSDataEvent and delegate to Sparedsheet to provide to component user.
+	 * TODO consider to let user register listener on book directly or wrap more event 
+	 */
+
+//	/**
+//	 * The onSheetNameChange event.
+//	 * Sent when sheet is deleted.
+//	 */
+//	public static final String ON_SHEET_NAME_CHANGE = "onSheetNameChange";
+//	/**
+//	 * The onSheetOrderChange event.
+//	 * Sent when sheet is deleted.
+//	 */
+//	public static final String ON_SHEET_ORDER_CHANGE = "onSheetOrderChange";
+//	
+//	/**
+//	 * The onSheetDelete event.
+//	 * Sent when sheet is deleted.
+//	 */
+//	public static final String ON_SHEET_DELETE = "onSheetDelete";
+//
+//	/**
+//	 * The onSheetCreate event.
+//	 * Sent when sheet is deleted.
+//	 */
+//	public static final String ON_SHEET_CREATE = "onSheetCreate";
+//		
+//	/** The onCellChange event (used with {@link CellEvent}).
+//	 * Sent when cell contents changed.
+//	 */
+//	public static final String ON_CELL_CHANGE = "onCellChange";
+	
+	/*
+	 * end of book delegation event  
+	 */
+	
 }

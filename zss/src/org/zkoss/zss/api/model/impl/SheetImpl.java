@@ -1,10 +1,18 @@
 package org.zkoss.zss.api.model.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Chart;
+import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.model.sys.impl.DrawingManager;
+import org.zkoss.zss.model.sys.impl.SheetCtrl;
 
 public class SheetImpl implements Sheet{
 	ModelRef<XSheet> sheetRef;
@@ -76,6 +84,36 @@ public class SheetImpl implements Sheet{
 
 	public boolean isColumnHidden(int column) {
 		return getNative().isColumnHidden(column);
+	}
+
+	
+	public List<Chart> getCharts(){
+		Book book = getBook();
+		DrawingManager dm = ((SheetCtrl)getNative()).getDrawingManager();
+		List<Chart> charts = new ArrayList<Chart>();
+		for(org.zkoss.poi.ss.usermodel.Chart chart:dm.getCharts()){
+			charts.add(new ChartImpl(((BookImpl)book).getRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart)));
+		}
+		return charts;
+	}
+
+	
+	public List<Picture> getPictures(){
+		Book book = getBook();
+		DrawingManager dm = ((SheetCtrl)getNative()).getDrawingManager();
+		List<Picture> pictures = new ArrayList<Picture>();
+		for(org.zkoss.poi.ss.usermodel.Picture pic:dm.getPictures()){
+			pictures.add(new PictureImpl(((BookImpl)book).getRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic)));
+		}
+		return pictures;
+	}
+
+	public int getRowFreeze() {
+		return BookHelper.getRowFreeze(getNative());
+	}
+
+	public int getColumnFreeze() {
+		return BookHelper.getColumnFreeze(getNative());
 	}
 	
 }

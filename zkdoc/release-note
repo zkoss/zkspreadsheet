@@ -1,10 +1,10 @@
   ------------
 ZK Spreadsheet 3.0.0 RC
 *Features:
-  
+  ZSS-253 click component away from Spreadsheet but keeps focus
 
 *Bug
-  
+  ZSS-268 get exception if I listen to onValidateDrop
   
 
 	------------

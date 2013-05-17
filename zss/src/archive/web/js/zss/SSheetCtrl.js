@@ -1521,7 +1521,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	_sendOnCellFocused: function (row, col) {
 		var wgt = this._wgt;
-		wgt.fire('onZSSCellFocused', {sheetId: this.serverSheetId, row: row, col : col}, wgt.isListen('onCellFocused') ? {toServer: true} : null);
+		wgt.fire('onCellFocused', {sheetId: this.serverSheetId, row: row, col : col});
 	},
 	_sendOnCellSelection: function (type, left, top, right, bottom) {
 		this._wgt.fire('onCellSelection',
@@ -1928,7 +1928,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this._syncColFocusAndSelection(col, col);
 
 		if (fireevent) {
-			this._wgt.fire('onZSSHeaderModif', 
+			this._wgt.fire('onZSSHeaderModify', 
 					{sheetId: this.serverSheetId, type: "top", event: "size", index: col, newsize: width, id: zsw, hidden: hidden},
 					{toServer: true, sendAhead: true}, 25);//ZSS-180
 		}
@@ -2084,7 +2084,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this.fire('onRowHeightChanged', {row: row});
 
 		if (fireevent) {
-			this._wgt.fire('onZSSHeaderModif', 
+			this._wgt.fire('onZSSHeaderModify', 
 					{sheetId: this.serverSheetId, type: "left", event: "size", index: row, newsize: height, id: zsh, hidden: hidden},
 					{toServer: true, sendAhead: true}, 25);//ZSS-180
 		}

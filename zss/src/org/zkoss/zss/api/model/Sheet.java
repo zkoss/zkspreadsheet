@@ -1,5 +1,7 @@
 package org.zkoss.zss.api.model;
 
+import java.util.List;
+
 
 public interface Sheet {
 
@@ -16,5 +18,13 @@ public interface Sheet {
 	public boolean isColumnHidden(int column);
 
 	public String getSheetName();
+	
+	public List<Chart> getCharts();
+	
+	public List<Picture> getPictures();
+	
+	public int getRowFreeze();
+	
+	public int getColumnFreeze();
 
 }

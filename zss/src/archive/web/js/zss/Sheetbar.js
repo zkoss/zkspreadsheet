@@ -339,7 +339,7 @@ zss.SheetSelector = zk.$extends(zul.tab.Tabbox, {
 				sheet.hideHighlight(true);
 			}
 			
-			wgt.fire('onZSSSelectSheet', 
+			wgt.fire('onSheetSelected', 
 				{sheetId: targetSheetId, cache: useCache, 
 				row: row, col: col, 
 				left: left, top: top, right: right, bottom: bottom,
