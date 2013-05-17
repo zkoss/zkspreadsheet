@@ -13,6 +13,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 <package name="zss" language="xul/html" depends="zul,zul.layout, zul.inp, zul.tab, zul.menu, zul.box">
 	<widget name="Spreadsheet"/>
 	<widget name="Upload"/>
+	<script src="globalDef.js"/>
 	<script src="AreaCtrl.js"/>
 	<script src="AutoScrollCtrl.js"/>
 	<script src="Button.js"/>

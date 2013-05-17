@@ -34,7 +34,7 @@ import org.zkoss.zss.ui.au.in.HeaderCommand;
 import org.zkoss.zss.ui.au.in.HeaderMouseCommand;
 import org.zkoss.zss.ui.au.in.WidgetUpdateCommand;
 import org.zkoss.zss.ui.au.in.SelectSheetCommand;
-import org.zkoss.zss.ui.au.in.SelectionChangeCommand;
+import org.zkoss.zss.ui.au.in.CellSelectionUpdateCommand;
 import org.zkoss.zss.ui.au.in.StartEditingCommand;
 import org.zkoss.zss.ui.au.in.StopEditingCommand;
 import org.zkoss.zss.ui.event.Events;
@@ -63,7 +63,7 @@ import org.zkoss.zss.ui.event.Events;
 		CMDS.put(Events.ON_CELL_SELECTION, new CellSelectionCommand());
 		//onCellSelectionChange, update cell selection 
 		//-> onSelectionChange
-		CMDS.put(Events.ON_SELECTION_CHANGE, new SelectionChangeCommand());
+		CMDS.put(Events.ON_CELL_SELECTION_UPDATE, new CellSelectionUpdateCommand());
 				
 		//onCellFocus, also update cell focus 
 		//-> onCellFocus

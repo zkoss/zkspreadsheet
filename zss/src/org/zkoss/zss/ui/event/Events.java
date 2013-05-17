@@ -104,10 +104,10 @@ public class Events {
 	public static final String ON_CELL_SELECTION = "onCellSelection";
 	
 	/**
-	 * The onSelectionChange event (used with {@link SelectionChangeEvent}).
+	 * The onCellSelectionUpdate event (used with {@link CellSelectionUpdateEvent}).
 	 * Sent when user move or modify the range of a selection
 	 */
-	public static final String ON_SELECTION_CHANGE = "onSelectionChange";
+	public static final String ON_CELL_SELECTION_UPDATE = "onCellSelectionUpdate";
 	
 	/**
 	 * The onEditboxEditing event (used with {@link EditboxEditingEvent}).

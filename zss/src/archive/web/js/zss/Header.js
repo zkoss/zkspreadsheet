@@ -52,7 +52,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				left = rng.left,
 				right = rng.right;
 			if (fw < ctrl.minHWidth) fw = ctrl.minHWidth;
-			if (type == zss.SelDrag.SELCOL && left <= idx && idx <= right) {
+			if (type == zss.SEL.COL && left <= idx && idx <= right) {
 				sheet._setColumnsWidth(left, right, fw, true, true, dg._unhide? false : undefined); //undefined means depends on fw
 			} else
 				sheet._setColumnWidth(idx, fw, true, true, dg._unhide? false : undefined); //undefined means depends on fw
@@ -62,7 +62,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 				top = rng.top,
 				bottom = rng.bottom;
 			if (fh < ctrl.minVHeight) fh = ctrl.minVHeight;
-			if (type == zss.SelDrag.SELROW && top <= idx && idx <= bottom) {
+			if (type == zss.SEL.ROW && top <= idx && idx <= bottom) {
 				sheet._setRowsHeight(top, bottom, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
 			} else
 				sheet._setRowHeight(idx, fh, true, true, dg._unhide? false : undefined); //undefined means depends on fh
