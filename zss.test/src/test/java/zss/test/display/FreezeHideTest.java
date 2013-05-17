@@ -9,9 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.ui.Spreadsheet;
 
 
@@ -42,32 +39,31 @@ public class FreezeHideTest extends DisplayExcelTest{
 	//http://books.zkoss.org/wiki/ZK_Spreadsheet_Essentials/Working_with_ZK_Spreadsheet/Configure_and_Control_ZK_Spreadsheet/Freeze_Rows_and_Columns
 	@Test
 	public void testFrozenRow(){
-		XSheet xsheet = spreadsheet.getXBook().getWorksheet("row");
 		//the number of frozen row
-		assertEquals(1, getFrozenRow(xsheet));
+		sheet = spreadsheet.getBook().getSheet("row");
+		assertEquals(1, sheet.getRowFreeze());
 	
 	}
 	
 	
 	@Test
 	public void testFrozenColumn(){
-		XSheet xsheet = spreadsheet.getXBook().getWorksheet("column");
-		
-		assertEquals(1, getFrozenColumn(xsheet));
+		sheet = spreadsheet.getBook().getSheet("column");
+		assertEquals(1, sheet.getColumnFreeze());
 	}
 	
 	@Test
 	public void testFrozenRowColumn(){
-		XSheet xsheet = spreadsheet.getXBook().getWorksheet("rowcolumn");
+		sheet = spreadsheet.getBook().getSheet("rowcolumn");
+		assertEquals(2, sheet.getRowFreeze());
+		assertEquals(2, sheet.getColumnFreeze());
 		
-		assertEquals(2, getFrozenRow(xsheet));
-		assertEquals(2, getFrozenColumn(xsheet));
 	}
 	
 	//http://books.zkoss.org/wiki/ZK_Spreadsheet_Essentials/Working_with_ZK_Spreadsheet/Configure_and_Control_ZK_Spreadsheet/Hide_Row_and_Column_Titles
 	@Test
 	public void testHiddenRow(){
-		Sheet sheet = spreadsheet.getBook().getSheet("row");
+		sheet = spreadsheet.getBook().getSheet("row");
 		assertEquals(true,sheet.isRowHidden(5));
 	}
 	
@@ -75,7 +71,7 @@ public class FreezeHideTest extends DisplayExcelTest{
 	
 	@Test
 	public void testHiddenColumn(){
-		Sheet sheet = spreadsheet.getBook().getSheet("column");
+		sheet = spreadsheet.getBook().getSheet("column");
 		assertEquals(false,sheet.isColumnHidden(0));
 		//check the hidden column
 		assertEquals(true,sheet.isColumnHidden(4));
@@ -83,7 +79,7 @@ public class FreezeHideTest extends DisplayExcelTest{
 	
 	@Test
 	public void testHiddenRowColumn(){
-		Sheet sheet = spreadsheet.getBook().getSheet("rowcolumn");
+		sheet = spreadsheet.getBook().getSheet("rowcolumn");
 		assertEquals(false,sheet.isRowHidden(0));
 		assertEquals(true,sheet.isRowHidden(5));
 		
@@ -91,11 +87,4 @@ public class FreezeHideTest extends DisplayExcelTest{
 		assertEquals(true,sheet.isColumnHidden(4));
 	}
 	
-	private int getFrozenRow(XSheet xsheet) {
-		return BookHelper.getRowFreeze(xsheet);
-	}
-
-	private int getFrozenColumn(XSheet xsheet) {
-		return BookHelper.getColumnFreeze(xsheet);
-	}
 }
