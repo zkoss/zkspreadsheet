@@ -1475,4 +1475,9 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 	}
 
+	@Override
+	public String getCtrlKeys() {
+		return "^X^C^V^B^I^U#del";
+	}
+
 }

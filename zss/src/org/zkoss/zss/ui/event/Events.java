@@ -63,13 +63,13 @@ public class Events {
 	
 	/**
 	 * The onCellFilter event (used with {@link CellMouseEvent}).
-	 * Sent when user click on the filter button.
+	 * Sent when user click on the cell filter button.
 	 */
 	public static final String ON_CELL_FILTER = "onCellFilter";
 	
 	/**
 	 * The onCellValidator event (used with {@link CellMouseEvent}).
-	 * Sent when user click on the validation drop down button
+	 * Sent when user click on the cell validation drop down button
 	 */
 	public static final String ON_CELL_VALIDATOR = "onCellValidator";
 	
@@ -127,14 +127,25 @@ public class Events {
 	public static final String ON_SHEET_SELECTED = "onSheetSelected";
 	
 	/**
-	 * The ON_CTRL_KEY event (used with {@link KeyEvent})
+	 * The onCtrlKey event (used with {@link KeyEvent})
 	 */
 	public static final String ON_CTRL_KEY = org.zkoss.zk.ui.event.Events.ON_CTRL_KEY;
 	
-	//User AUXILIARY action
+	/**
+	 * The onAuxAction event (used with {@link AuxActionEvent})
+	 */
 	public static final String ON_AUX_ACTION = "onAuxAction";
 	
+	
+	/**
+	 * The onWidgetCtrlKey event (used with {@link WidgetKeyEvent})
+	 */
 	public static final String ON_WIDGET_CTRL_KEY = "onWidgetCtrlKey";
+	
+	/**
+	 * The onWidgetUpdate event (used with {@link WidgetUpdateEvent})
+	 */
+	public static final String ON_WIDGET_UPDATE = "onWidgetUpdate";//"onZSSMoveWidget";
 	
 	/* 
 	 * Following are events that fire by book SSDataEvent and delegate to Sparedsheet to provide to component user.

@@ -350,6 +350,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			for(String evt:_lastUAEvents){
 				this.addEventListener(evt, _uAEventDispatcher);
 			}
+			String ctrlKeys = ua.getCtrlKeys();
+			if(ctrlKeys!=null){//null, don't set, keep the original
+				this.setCtrlKeys(ctrlKeys);
+			}
+			
 		}else{
 			_lastUAEvents = null;
 			_uAEventDispatcher = null;
@@ -4665,12 +4670,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		addClientEvent(Spreadsheet.class, Events.ON_SELECTION_CHANGE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_FOUCSED, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		
-		addClientEvent(Spreadsheet.class, Events.ON_CELL_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_CELL_RIGHT_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_CELL_DOUBLE_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_HEADER_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_HEADER_RIGHT_CLICK,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_HEADER_DOUBLE_CLICK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_CELL_CLICK, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_CELL_RIGHT_CLICK, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_CELL_DOUBLE_CLICK, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_HEADER_CLICK, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_HEADER_RIGHT_CLICK,	CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_HEADER_DOUBLE_CLICK, CE_DUPLICATE_IGNORE);
 		
 		addClientEvent(Spreadsheet.class, Events.ON_START_EDITING, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_EDITBOX_EDITING, CE_DUPLICATE_IGNORE);
@@ -4679,25 +4684,29 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		addClientEvent(Spreadsheet.class, Events.ON_HYPERLINK, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_FILTER, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_VALIDATOR, CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_CTRL_KEY, CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_AUX_ACTION, /*CE_DUPLICATE_IGNORE*/0);
 		
-		//TODO Dennis, why need this and is importnat?Review
-		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_BLUR,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);//
+		
+		addClientEvent(Spreadsheet.class, Events.ON_CTRL_KEY, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_AUX_ACTION, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_SHEET_SELECTED, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_WIDGET_CTRL_KEY, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_WIDGET_UPDATE, CE_DUPLICATE_IGNORE);
+		
 
 		
-		addClientEvent(Spreadsheet.class, Events.ON_WIDGET_CTRL_KEY, CE_DUPLICATE_IGNORE);
-		
-		
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_FETCH, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		//Event dispatcher
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_MOUSE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_FETCH_ACTIVE_RANGE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_HEADER_MODIF, CE_IMPORTANT);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_HEADER_MOUSE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_MOVE_WIDGET, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_HEADER_MODIFY, CE_IMPORTANT);
 		
-		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_SELECT_SHEET, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		//Inner
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_CELL_FETCH, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_FETCH_ACTIVE_RANGE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, InnerEvts.ON_ZSS_SYNC_BLOCK, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		
+		
+		//TODO Dennis, why need this and is importnat?Review
+//		addClientEvent(Spreadsheet.class, org.zkoss.zk.ui.event.Events.ON_BLUR,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);//
 	}
 
 

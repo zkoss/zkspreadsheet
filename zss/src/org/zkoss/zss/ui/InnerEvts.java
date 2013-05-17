@@ -32,7 +32,7 @@ import org.zkoss.zss.ui.au.in.FetchActiveRangeCommand;
 import org.zkoss.zss.ui.au.in.FilterCommand;
 import org.zkoss.zss.ui.au.in.HeaderCommand;
 import org.zkoss.zss.ui.au.in.HeaderMouseCommand;
-import org.zkoss.zss.ui.au.in.MoveWidgetCommand;
+import org.zkoss.zss.ui.au.in.WidgetUpdateCommand;
 import org.zkoss.zss.ui.au.in.SelectSheetCommand;
 import org.zkoss.zss.ui.au.in.SelectionChangeCommand;
 import org.zkoss.zss.ui.au.in.StartEditingCommand;
@@ -51,11 +51,8 @@ import org.zkoss.zss.ui.event.Events;
 	static final String ON_ZSS_CELL_MOUSE = "onZSSCellMouse";
 	static final String ON_ZSS_FETCH_ACTIVE_RANGE = "onZSSFetchActiveRange";
 	static final String ON_ZSS_FILTER = "onZSSFilter";
-	static final String ON_ZSS_HEADER_MODIF = "onZSSHeaderModif";
+	static final String ON_ZSS_HEADER_MODIFY = "onZSSHeaderModify";
 	static final String ON_ZSS_HEADER_MOUSE = "onZSSHeaderMouse";
-	static final String ON_ZSS_MOVE_WIDGET = "onZSSMoveWidget";
-	
-	static final String ON_ZSS_SELECT_SHEET = "onZSSSelectSheet";
 	static final String ON_ZSS_SYNC_BLOCK = "onZSSSyncBlock";
 	
 	static final Map<String, Command> CMDS;
@@ -93,7 +90,14 @@ import org.zkoss.zss.ui.event.Events;
 		CMDS.put(Events.ON_AUX_ACTION, new AuxActionCommand());
 		
 		//onWidgetCtrlKey
-		CMDS.put(Events.ON_WIDGET_CTRL_KEY, new WidgetCtrlKeyCommand());//TODO review
+		CMDS.put(Events.ON_WIDGET_CTRL_KEY, new WidgetCtrlKeyCommand());
+		
+		//onWidgetUpdate 
+		CMDS.put(Events.ON_WIDGET_UPDATE, new WidgetUpdateCommand());//TODO review
+		
+		//onSheetSelected , set selected sheet 
+		//-> onSheetSelected
+		CMDS.put(Events.ON_SHEET_SELECTED, new SelectSheetCommand());
 		
 		// onZssCellMouse 
 		// -> ON_CELL_CLICK,ON_CELL_RIGHT_CLICK,ON_CELL_DOUBLE_CLICK
@@ -101,19 +105,12 @@ import org.zkoss.zss.ui.event.Events;
 		// or -> ON_CELL_VALIDATOR
 		CMDS.put(ON_ZSS_CELL_MOUSE, new CellMouseCommand());
 		
-		//onZssSelectSheet , set selected sheet 
-		//-> onSheetSelected
-		CMDS.put(ON_ZSS_SELECT_SHEET, new SelectSheetCommand());
-		
 		//onZssHaderModify, set row or column size of component 
 		//-> onHeaderSize
-		CMDS.put(ON_ZSS_HEADER_MODIF, new HeaderCommand());
+		CMDS.put(ON_ZSS_HEADER_MODIFY, new HeaderCommand());
 		
 		//onZssHeaderMouse -> ON_HEADER_CLICK,ON_HEADER_RIGHT_CLICK,ON_HEADER_DOUBLE_CLICK
 		CMDS.put(ON_ZSS_HEADER_MOUSE, new HeaderMouseCommand());
-		
-		//onZssMoveWidget -> update book
-		CMDS.put(ON_ZSS_MOVE_WIDGET, new MoveWidgetCommand());//TODO review
 
 		//wire event, need to review
 		CMDS.put(ON_ZSS_FILTER, new FilterCommand());//TODO review
