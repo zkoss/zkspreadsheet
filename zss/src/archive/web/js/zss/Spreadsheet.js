@@ -1064,6 +1064,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		zWatch.listen({onResponse: this});
 		
 		// ZSS-253: listen global event to modify focus
+		// can't resolve the focus from partner to non-partner issue now.
 //		jq(document).bind('zmousedown', this.proxy(this._doPartnerBlur));
 //		jq(document).bind('keyup', this.proxy(this._doPartnerBlur)); // zss still has focus when key down 
 	},
@@ -1078,8 +1079,9 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			window.CollectGarbage();
 		
 		// ZSS-253
-		jq(document).unbind('zmousedown');
-		jq(document).unbind('keyup'); 
+		// can't resolve the focus from partner to non-partner issue now.
+//		jq(document).unbind('zmousedown');
+//		jq(document).unbind('keyup'); 
 	},
 	onResponse: function () {
 		if (this._triggerContentsChanged != undefined) {
