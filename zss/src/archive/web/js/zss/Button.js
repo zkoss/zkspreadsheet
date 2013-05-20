@@ -443,43 +443,6 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 });
 zk.copy(zss.Toolbarbutton.prototype, AbstractButtonHandler);
 
-zss.UploadToolbarbutton = zk.$extends(zss.Toolbarbutton, {
-	_upload: 'true',
-	$init: function (props, wgt) {
-		this.$supers(zss.UploadToolbarbutton, '$init', [props]);
-		this._wgt = wgt;
-	},
-	$define: {
-		/**
-		 * Represent button's action at server side
-		 */
-		$action: null
-	},
-	bind_: function(){
-		//jump zul.wgt.Toolbarbutton, override it.
-		this.$supers(zul.wgt.Toolbarbutton, 'bind_', arguments);
-		
-		var upload = this._wgt.getUpload();
-		if (upload) {
-			var u = upload.getUploader(this.get$action());//server side upload event listener
-			if (u) {
-				u.parasitize(this);
-				u._uplder = new zul.Upload(u, null, this._upload);
-			}
-		}
-	},
-	doClick_: function(evt) {
-		var wgt = this._wgt,
-			sheet = wgt.sheetCtrl;
-		if (sheet) {
-			var s = sheet.getLastSelection();
-			wgt.fireToolbarAction(this.get$action(), {color: '', tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});
-//			jq(this.$n().nextSibling).find('input').trigger('click');
-		}
-	}
-});
-zk.copy(zss.UploadToolbarbutton.prototype, AbstractPopupHandler);
-
 zss.CheckableToolbarButton = zk.$extends(zul.wgt.Toolbarbutton, {
 	$init: function (props, wgt) {
 		this.$supers(zss.CheckableToolbarButton, '$init', [props]);
@@ -1400,11 +1363,11 @@ zss.Buttons = zk.$extends(zk.Object, {
 });
 
 	function newActionToolbarbutton(wgt, action, image, labelOnly) {
-		var val = wgt._labelsCtrl['get' + action.charAt(0).toUpperCase() + action.substr(1)]();
+		var label = wgt._labelsCtrl['get' + action.charAt(0).toUpperCase() + action.substr(1)]();
 		return new zss.Toolbarbutton({
 			$action: action,
-			tooltiptext: labelOnly ? null : val,
-			label: labelOnly ? val : null,
+			tooltiptext: labelOnly ? null : label,
+			label: labelOnly ? label : null,
 			image: image ? zk.ajaxURI(image, {au: true}) : null,
 			onClick: function () {
 				var sheet = wgt.sheetCtrl;
@@ -1800,12 +1763,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		//TODO: format
 	},
 	insertPicture: function () {
-		var wgt = this._wgt;
-		return new zss.UploadToolbarbutton({
-			$action: 'insertPicture',
-			tooltiptext: wgt._labelsCtrl.getInsertPicture(),
-			image: zk.ajaxURI('/web/zss/img/image.png', AU)
-		}, wgt);
+		return newActionToolbarbutton(this._wgt, 'insertPicture', '/web/zss/img/image.png');
 	},
 	columnChart: function () {
 		var wgt = this._wgt,
