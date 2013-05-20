@@ -92,10 +92,10 @@ public class Events {
 	public static final String ON_HEADER_DOUBLE_CLICK = "onHeaderDoubleClick";
 	
 	/** 
-	 * The onHeaderSzie event (used with {@link HeaderEvent}).
+	 * The onHeaderSzie event (used with {@link HeaderUpdateEvent}).
 	 * Sent when user resize a header
 	 */
-	public static final String ON_HEADER_SIZE = "onHeaderSize";
+	public static final String ON_HEADER_UPDATE = "onHeaderUpdate";
 	
 	/**
 	 * The onCellSelection event (used with {@link CellSelectionEvent}).

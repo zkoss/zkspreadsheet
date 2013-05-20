@@ -22,8 +22,6 @@ package org.zkoss.zss.ui.au.in;
 import java.util.Map;
 
 import org.zkoss.lang.Objects;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
@@ -32,12 +30,10 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.event.CellSelectionAction;
+import org.zkoss.zss.ui.event.CellSelectionType;
 import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
-import org.zkoss.zss.ui.event.CellSelectionEvent;
-import org.zkoss.zss.ui.event.CellSelectionEvent.SelectionType;
-import org.zkoss.zss.ui.event.CellSelectionUpdateEvent.Action;
 import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 /**
@@ -67,38 +63,38 @@ public class CellSelectionUpdateCommand implements Command {
 		
 		
 		String t = (String) data.get("type");
-		SelectionType type = null;
+		CellSelectionType type = null;
 		if("all".equals(t)){
-			type = SelectionType.ALL;
+			type = CellSelectionType.ALL;
 		}else if("col".equals(t)){
-			type = SelectionType.COLUMN;
+			type = CellSelectionType.COLUMN;
 		}else if("row".equals(t)){
-			type = SelectionType.ROW;
+			type = CellSelectionType.ROW;
 		}else if("cell".equals(t)){
-			type = SelectionType.CELL;
+			type = CellSelectionType.CELL;
 		}else{
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), this});
 		}
 		
 		t = (String) data.get("action");
 		
-		Action action = null;
+		CellSelectionAction action = null;
 		if("move".equals(t)){
-			action = Action.MOVE;
+			action = CellSelectionAction.MOVE;
 		}else if("resize".equals(t)){
-			action = Action.RESIZE;
+			action = CellSelectionAction.RESIZE;
 		}else{
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), this});
 		}
 		
 		int left = (Integer) data.get("left");
 		int top = (Integer) data.get("top");
-		int right = (type == SelectionType.ROW || type == SelectionType.ALL) ? maxcol : (Integer) data.get("right");
-		int bottom = (type == SelectionType.COLUMN || type == SelectionType.ALL) ? maxrow : (Integer) data.get("bottom");
+		int right = (type == CellSelectionType.ROW || type == CellSelectionType.ALL) ? maxcol : (Integer) data.get("right");
+		int bottom = (type == CellSelectionType.COLUMN || type == CellSelectionType.ALL) ? maxrow : (Integer) data.get("bottom");
 		int orgileft = (Integer) data.get("orgileft");
 		int orgitop = (Integer) data.get("orgitop");
-		int orgiright = (type == SelectionType.ROW || type == SelectionType.ALL) ? maxcol : (Integer) data.get("orgiright");
-		int orgibottom = (type == SelectionType.COLUMN || type == SelectionType.ALL) ? maxrow : (Integer) data.get("orgibottom");
+		int orgiright = (type == CellSelectionType.ROW || type == CellSelectionType.ALL) ? maxcol : (Integer) data.get("orgiright");
+		int orgibottom = (type == CellSelectionType.COLUMN || type == CellSelectionType.ALL) ? maxrow : (Integer) data.get("orgibottom");
 
 		SpreadsheetInCtrl ctrl = ((SpreadsheetInCtrl)((Spreadsheet)comp).getExtraCtrl());
 		ctrl.setSelectionRect(left, top, right, bottom);		

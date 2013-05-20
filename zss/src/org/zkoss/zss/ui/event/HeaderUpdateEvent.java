@@ -27,29 +27,26 @@ import org.zkoss.zk.ui.event.Event;
  * A class from handle event which about header
  * @author Dennis.Chen
  */
-public class HeaderEvent extends Event{
+public class HeaderUpdateEvent extends Event{
 	private static final long serialVersionUID = 1L;
 //	static public final int TOP_HEADER = 0;
 //	static public final int LEFT_HEADER = 1;
 	
-	public enum HedaerType{
-		COLUMN,
-		ROW
-	}
-	
 	private Sheet _sheet;
 	private HedaerType _type;
+	private HeaderAction _action;
 	private int _index;
 	private boolean _hidden;
 	private int _size;
 
-	public HeaderEvent(String name, Component target,Sheet sheet, HedaerType type ,int index, int size, boolean hidden) {
+	public HeaderUpdateEvent(String name, Component target,Sheet sheet, HedaerType type, HeaderAction acton,int index, int size, boolean hidden) {
 		super(name, target, size);
 		_sheet = sheet;
 		this._type = type;
 		this._index = index;
 		this._hidden = hidden;
 		this._size = size;
+		this._action = acton;
 	}
 	
 //	public HeaderEvent(String name, Component target,Sheet sheet, int type ,int index, boolean hidden) {
@@ -95,6 +92,14 @@ public class HeaderEvent extends Event{
 	 */
 	public int getSize(){
 		return _size;
+	}
+	
+	/**
+	 * Returns the action 
+	 * @return
+	 */
+	public HeaderAction getAction(){
+		return _action;
 	}
 	
 	public String toString(){

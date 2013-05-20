@@ -29,18 +29,14 @@ public class CellSelectionUpdateEvent extends CellSelectionEvent{
 
 	private static final long serialVersionUID = 1L;
 
-	public enum Action {
-		MOVE, //move
-		RESIZE //resize
-	}
 	
-	private Action _action;
+	private CellSelectionAction _action;
 	private int _origleft;
 	private int _origtop;
 	private int _origright;
 	private int _origbottom;
 
-	public CellSelectionUpdateEvent(String name, Component target,Sheet sheet,SelectionType type, Action action,
+	public CellSelectionUpdateEvent(String name, Component target,Sheet sheet,CellSelectionType type, CellSelectionAction action,
 			int left, int top,int right, int bottom,
 			int origleft, int origtop,int origright, int origbottom) {
 		super(name, target, sheet,type,left,top,right,bottom);
@@ -54,7 +50,7 @@ public class CellSelectionUpdateEvent extends CellSelectionEvent{
 	/**
 	 * Returns the action of this event.
 	 */
-	public Action getAction() {
+	public CellSelectionAction getAction() {
 		return _action;
 	}
 	

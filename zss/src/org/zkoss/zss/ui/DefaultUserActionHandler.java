@@ -2,14 +2,10 @@ package org.zkoss.zss.ui;
 
 import java.util.Map;
 
-import org.zkoss.image.AImage;
 import org.zkoss.lang.Strings;
-import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.ApplyBorderType;
@@ -30,11 +26,10 @@ import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.DefaultUserActionHandler.Clipboard.Type;
 import org.zkoss.zss.ui.event.AuxActionEvent;
-import org.zkoss.zss.ui.event.CellSelectionUpdateEvent.Action;
+import org.zkoss.zss.ui.event.CellSelectionAction;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
-import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.Messagebox;
 
 public class DefaultUserActionHandler implements UserActionHandler {
@@ -1367,9 +1362,9 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}else if(Events.ON_CELL_SELECTION_UPDATE.equals(nm)){
 			CellSelectionUpdateEvent evt = (CellSelectionUpdateEvent)event;
 			//last selection either get form selection or from event
-			if(evt.getAction()==Action.MOVE){
+			if(evt.getAction()==CellSelectionAction.MOVE){
 				doMoveCellSelection(new Rect(evt.getOrigleft(),evt.getOrigtop(),evt.getOrigright(),evt.getOrigbottom()),getSelection());
-			}else if(evt.getAction()==Action.RESIZE){
+			}else if(evt.getAction()==CellSelectionAction.RESIZE){
 				doResizeCellSelection(new Rect(evt.getOrigleft(),evt.getOrigtop(),evt.getOrigright(),evt.getOrigbottom()),getSelection());
 			}
 		}else if(Events.ON_CELL_DOUBLE_CLICK.equals(nm)){//TODO check if we need it still

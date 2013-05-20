@@ -34,21 +34,14 @@ public class CellSelectionEvent extends Event{
 //	public static final int SELECT_COLUMN = 0x03;
 //	public static final int SELECT_ALL = 0x04;
 	
-	public enum SelectionType {
-		CELL, //cell
-		ROW, //row
-		COLUMN, //col
-		ALL //all
-	}
-	
 	private Sheet _sheet;
-	private SelectionType _type;
+	private CellSelectionType _type;
 	private int _left;
 	private int _top;
 	private int _right;
 	private int _bottom;
 
-	public CellSelectionEvent(String name, Component target,Sheet sheet,SelectionType type, int left, int top,int right, int bottom) {
+	public CellSelectionEvent(String name, Component target,Sheet sheet,CellSelectionType type, int left, int top,int right, int bottom) {
 		super(name, target);
 		_sheet = sheet;
 		_type = type;
@@ -70,7 +63,7 @@ public class CellSelectionEvent extends Event{
 	 * Returns the selection type
 	 * @return the selection type.
 	 */
-	public SelectionType getType(){
+	public CellSelectionType getType(){
 		return _type;
 	}
 	

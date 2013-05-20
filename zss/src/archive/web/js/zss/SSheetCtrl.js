@@ -1926,8 +1926,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this._syncColFocusAndSelection(col, col);
 
 		if (fireevent) {
-			this._wgt.fire('onZSSHeaderModify', 
-					{sheetId: this.serverSheetId, type: "top", event: "size", index: col, newsize: width, id: zsw, hidden: hidden},
+			this._wgt.fire('onHeaderUpdate', 
+					{sheetId: this.serverSheetId, type: "top", action: "resize", index: col, size: width, id: zsw, hidden: hidden},
 					{toServer: true, sendAhead: true}, 25);//ZSS-180
 		}
 		//ZSS-180
@@ -2082,8 +2082,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this.fire('onRowHeightChanged', {row: row});
 
 		if (fireevent) {
-			this._wgt.fire('onZSSHeaderModify', 
-					{sheetId: this.serverSheetId, type: "left", event: "size", index: row, newsize: height, id: zsh, hidden: hidden},
+			this._wgt.fire('onHeaderUpdate', 
+					{sheetId: this.serverSheetId, type: "left", action: "resize", index: row, size: height, id: zsh, hidden: hidden},
 					{toServer: true, sendAhead: true}, 25);//ZSS-180
 		}
 		//ZSS-180

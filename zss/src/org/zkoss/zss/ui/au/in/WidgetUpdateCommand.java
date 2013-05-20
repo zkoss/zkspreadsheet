@@ -30,7 +30,7 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.WidgetUpdateEvent;
-import org.zkoss.zss.ui.event.WidgetUpdateEvent.Action;
+import org.zkoss.zss.ui.event.WidgetAction;
 import org.zkoss.zss.ui.impl.XUtils;
 
 /**
@@ -56,11 +56,11 @@ public class WidgetUpdateCommand implements Command {
 			return;
 		
 		String act = (String) data.get("action");
-		Action action = null;
+		WidgetAction action = null;
 		if("move".equals(act)){
-			action = Action.MOVE;
+			action = WidgetAction.MOVE;
 		}else if("resize".equals(act)){
-			action = Action.RESIZE;
+			action = WidgetAction.RESIZE;
 		}else{
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA,
 					new Object[] {Objects.toString(data), this});

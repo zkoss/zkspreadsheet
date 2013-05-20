@@ -28,8 +28,9 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.event.HeaderEvent;
-import org.zkoss.zss.ui.event.HeaderEvent.HedaerType;
+import org.zkoss.zss.ui.event.HeaderUpdateEvent;
+import org.zkoss.zss.ui.event.HeaderAction;
+import org.zkoss.zss.ui.event.HedaerType;
 import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
@@ -39,7 +40,7 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
  * @author Dennis.Chen
  *
  */
-public class HeaderCommand implements Command {
+public class HeaderUpdateCommand implements Command {
 
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();
@@ -64,21 +65,24 @@ public class HeaderCommand implements Command {
 		if(!XUtils.getSheetUuid(sheet).equals(sheetId)) {
 			return;
 		}
-		String event = (String) data.get("event");
+		String action = (String) data.get("action");
 		int index = (Integer) data.get("index");
 		
-		if("size".equals(event)){
-			int newsize = (Integer) data.get("newsize");
+		if("resize".equals(action)){
+			int newsize = (Integer) data.get("size");
 			int id = (Integer) data.get("id");
 			boolean hidden = (Boolean) data.get("hidden");
 			((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setColumnSize(sheetId, index, newsize,id, hidden);
 			
-			if (Events.isListened(spreadsheet, org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, true)){
-				HeaderEvent he = new HeaderEvent(org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, spreadsheet, sheet, HedaerType.COLUMN,index, newsize, hidden);
+			if (Events.isListened(spreadsheet, org.zkoss.zss.ui.event.Events.ON_HEADER_UPDATE, true)){
+				HeaderUpdateEvent he = new HeaderUpdateEvent(
+						org.zkoss.zss.ui.event.Events.ON_HEADER_UPDATE,
+						spreadsheet, sheet, HedaerType.COLUMN, HeaderAction.RESIZE, index, newsize,
+						hidden);
 				Events.postEvent(he);
 			}
 		}else{
-			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {"Event:"+event, this});
+			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {"action:"+action, this});
 		}
 		
 	}
@@ -89,19 +93,22 @@ public class HeaderCommand implements Command {
 		if(!XUtils.getSheetUuid(sheet).equals(sheetId)) {
 			return;
 		}
-		String event = (String) data.get("event");
+		String action = (String) data.get("action");
 		int index = (Integer) data.get("index");
-		if("size".equals(event)){
-			int newsize = (Integer) data.get("newsize");
+		if("resize".equals(action)){
+			int newsize = (Integer) data.get("size");
 			int id = (Integer) data.get("id");
 			boolean hidden = (Boolean) data.get("hidden");
 			((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setRowSize(sheetId, index, newsize,id, hidden);
-			if (Events.isListened(spreadsheet,org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, true)){
-				HeaderEvent he = new HeaderEvent(org.zkoss.zss.ui.event.Events.ON_HEADER_SIZE, spreadsheet, sheet, HedaerType.ROW,index, newsize, hidden);
+			if (Events.isListened(spreadsheet,org.zkoss.zss.ui.event.Events.ON_HEADER_UPDATE, true)){
+				HeaderUpdateEvent he = new HeaderUpdateEvent(
+						org.zkoss.zss.ui.event.Events.ON_HEADER_UPDATE,
+						spreadsheet, sheet, HedaerType.ROW, HeaderAction.RESIZE,index, newsize,
+						hidden);
 				Events.postEvent(he);
 			}
 		} else {
-			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {"Event:"+event, this});
+			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {"action:"+action, this});
 		}
 	}
 }

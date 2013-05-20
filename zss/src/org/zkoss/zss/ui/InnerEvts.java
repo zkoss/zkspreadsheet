@@ -30,7 +30,7 @@ import org.zkoss.zss.ui.au.in.CtrlKeyCommand;
 import org.zkoss.zss.ui.au.in.EditboxEditingCommand;
 import org.zkoss.zss.ui.au.in.FetchActiveRangeCommand;
 import org.zkoss.zss.ui.au.in.FilterCommand;
-import org.zkoss.zss.ui.au.in.HeaderCommand;
+import org.zkoss.zss.ui.au.in.HeaderUpdateCommand;
 import org.zkoss.zss.ui.au.in.HeaderMouseCommand;
 import org.zkoss.zss.ui.au.in.WidgetUpdateCommand;
 import org.zkoss.zss.ui.au.in.SelectSheetCommand;
@@ -50,7 +50,7 @@ import org.zkoss.zss.ui.event.Events;
 	static final String ON_ZSS_CELL_MOUSE = "onZSSCellMouse";
 	static final String ON_ZSS_FETCH_ACTIVE_RANGE = "onZSSFetchActiveRange";
 	static final String ON_ZSS_FILTER = "onZSSFilter";
-	static final String ON_ZSS_HEADER_MODIFY = "onZSSHeaderModify";
+//	static final String ON_ZSS_HEADER_MODIFY = "onZSSHeaderModify";
 	static final String ON_ZSS_HEADER_MOUSE = "onZSSHeaderMouse";
 	static final String ON_ZSS_SYNC_BLOCK = "onZSSSyncBlock";
 	
@@ -61,8 +61,8 @@ import org.zkoss.zss.ui.event.Events;
 		//onCellSelection, also update component selection 
 		//-> onCellSelection
 		CMDS.put(Events.ON_CELL_SELECTION, new CellSelectionCommand());
-		//onCellSelectionChange, update cell selection 
-		//-> onSelectionChange
+		//onCellSelectionUpdate, update cell selection 
+		//-> onCellSelectionUpdate
 		CMDS.put(Events.ON_CELL_SELECTION_UPDATE, new CellSelectionUpdateCommand());
 				
 		//onCellFocus, also update cell focus 
@@ -89,7 +89,7 @@ import org.zkoss.zss.ui.event.Events;
 		CMDS.put(Events.ON_AUX_ACTION, new AuxActionCommand());
 		
 		//onWidgetUpdate 
-		CMDS.put(Events.ON_WIDGET_UPDATE, new WidgetUpdateCommand());//TODO review
+		CMDS.put(Events.ON_WIDGET_UPDATE, new WidgetUpdateCommand());
 		
 		//onSheetSelected , set selected sheet 
 		//-> onSheetSelected
@@ -103,7 +103,7 @@ import org.zkoss.zss.ui.event.Events;
 		
 		//onZssHaderModify, set row or column size of component 
 		//-> onHeaderSize
-		CMDS.put(ON_ZSS_HEADER_MODIFY, new HeaderCommand());
+		CMDS.put(Events.ON_HEADER_UPDATE, new HeaderUpdateCommand());
 		
 		//onZssHeaderMouse -> ON_HEADER_CLICK,ON_HEADER_RIGHT_CLICK,ON_HEADER_DOUBLE_CLICK
 		CMDS.put(ON_ZSS_HEADER_MOUSE, new HeaderMouseCommand());

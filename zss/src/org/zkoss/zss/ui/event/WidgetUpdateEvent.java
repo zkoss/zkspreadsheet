@@ -9,17 +9,13 @@ public class WidgetUpdateEvent extends Event{
 	private static final long serialVersionUID = 1L;
 	private Sheet _sheet;
 	
-	private Action _action;
+	private WidgetAction _action;
 	
 	private SheetAnchor _anchor;
-	
-	public enum Action {
-		MOVE,
-		RESIZE
-	}
+
 	
 
-	public WidgetUpdateEvent(String name, Component target,Sheet sheet, Action action,Object widgetData,SheetAnchor anchor) {
+	public WidgetUpdateEvent(String name, Component target,Sheet sheet, WidgetAction action,Object widgetData,SheetAnchor anchor) {
 		super(name, target, widgetData);
 		_sheet = sheet;
 		_action = action;
@@ -39,7 +35,7 @@ public class WidgetUpdateEvent extends Event{
 		return _anchor;
 	}
 	
-	public Action getAction(){
+	public WidgetAction getAction(){
 		return _action;
 	}
 	

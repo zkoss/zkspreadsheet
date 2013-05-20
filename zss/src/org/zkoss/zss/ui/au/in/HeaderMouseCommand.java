@@ -30,9 +30,8 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.event.HeaderEvent;
-import org.zkoss.zss.ui.event.HeaderEvent.HedaerType;
 import org.zkoss.zss.ui.event.HeaderMouseEvent;
+import org.zkoss.zss.ui.event.HedaerType;
 import org.zkoss.zss.ui.impl.XUtils;
 
 /**
