@@ -1,4 +1,4 @@
-/* SelectionChangeEvent.java
+/* CellSelectionUpdateEvent.java
 
 {{IS_NOTE
 	Purpose:
@@ -21,7 +21,7 @@ package org.zkoss.zss.ui.event;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zss.api.model.Sheet;
 /**
- * Event class about selection of cell
+ * Event about selection update of cells
  * @author Dennis.Chen
  * @since 3.0.0
  */
