@@ -200,20 +200,20 @@ public class CellStyleImpl implements CellStyle{
 		short index = df.getFormat(format);		
 		getNative().setDataFormat(index);
 	}
-	
-	public boolean isLocked(){
+
+	public boolean isLocked() {
 		return getNative().getLocked();
 	}
-	
-	public void setLocked(boolean locked){
+
+	public void setLocked(boolean locked) {
 		getNative().setLocked(locked);
 	}
-	
-	public boolean isHidden(){
+
+	public boolean isHidden() {
 		return getNative().getHidden();
 	}
-	
-	public void setHidden(boolean hidden){
-		getNative().setHidden(hidden);
+
+	public void setHidden(boolean hidden) {
+		getNative().setHidden(hidden);;
 	}
 }

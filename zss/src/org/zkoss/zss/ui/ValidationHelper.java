@@ -6,6 +6,8 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XRanges;
 import org.zkoss.zss.model.sys.XSheet;
@@ -23,24 +25,24 @@ public class ValidationHelper {
 		this.ss = ss;
 	}
 
-	public boolean isEventThreadEnabled() {
+	private boolean isEventThreadEnabled() {
 		return Executions.getCurrent().getDesktop().getWebApp()
 				.getConfiguration().isEventThreadEnabled();
 	}
 
 	// return true if a valid input; false otherwise and show Error Alert if
 	// required
-	public boolean validate(XSheet sheet, final int row, final int col,
-			final String txt, final EventListener callback) {
-		final XSheet ssheet = ss.getSelectedXSheet();
+	public boolean validate(Sheet sheet, final int row, final int col,
+			final String editText, final EventListener callback) {
+		final Sheet ssheet = ss.getSelectedSheet();
 		if (ssheet == null || !ssheet.equals(sheet)) { //skip no sheet case
 			return true;
 		}
 		if (_inCallback) { // skip validation check
 			return true;
 		}
-		final XRange rng = XRanges.range(sheet, row, col);
-		final DataValidation dv = rng.validate(txt);
+		final XRange rng = XRanges.range(((SheetImpl)sheet).getNative(), row, col);
+		final DataValidation dv = rng.validate(editText);
 		if (dv != null) {
 			if (dv.getShowErrorBox()) {
 				String errTitle = dv.getErrorBoxTitle();

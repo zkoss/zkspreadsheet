@@ -36,4 +36,6 @@ public interface Chart {
 		TOP,
 		TOP_RIGHT
 	}
+	
+	public String getId();
 }

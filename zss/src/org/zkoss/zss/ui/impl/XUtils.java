@@ -35,6 +35,7 @@ import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.engine.RefSheet;
@@ -302,6 +303,25 @@ public class XUtils {
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns the {@link XSheet} of the specified uuid; null if id not exists.
+	 * @param book the book the contains the {@link XSheet}
+	 * @param uuid the sheet uuid
+	 * @return the {@link XSheet} of the specified uuid; null if id not exists.
+	 */
+	public static Sheet getSheetByUuid(Book book, String uuid) {
+		int count = book.getNumberOfSheets();
+		for(int j = 0; j < count; ++j) {
+			Sheet sheet = book.getSheetAt(j);
+			if (uuid.equals(getSheetUuid(sheet))) {
+				return sheet;
+			}
+		}
+		return null;
+	}
+		
+	
 	
 	/**
 	 * Returns whether the {@link Spreadsheet} title is in index mode

@@ -30,7 +30,7 @@ import org.zkoss.zss.model.sys.XBookSeries;
 import org.zkoss.zss.model.sys.impl.ExcelImporter;
 import org.zkoss.zss.model.sys.impl.HSSFBookImpl;
 import org.zkoss.zss.model.sys.impl.XSSFBookImpl;
-import org.zkoss.zssex.model.impl.BookSeriesImpl;
+import org.zkoss.zssex.model.impl.XBookSeriesImpl;
 
 /**
  * @author henrichen
@@ -74,7 +74,7 @@ public class Book1XlsxExternalBookReferenceTest {
 		assertEquals(1, _workbook2.getSheetIndex("Sheet2"));
 		assertEquals(2, _workbook2.getSheetIndex("Sheet3"));
 		
-		_books = new BookSeriesImpl(new XBook[] {(XBook) _workbook1, (XBook) _workbook2});
+		_books = new XBookSeriesImpl(new XBook[] {(XBook) _workbook1, (XBook) _workbook2});
 	}
 
 	/**

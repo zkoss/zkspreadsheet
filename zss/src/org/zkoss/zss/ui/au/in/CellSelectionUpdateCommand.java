@@ -22,8 +22,6 @@ package org.zkoss.zss.ui.au.in;
 import java.util.Map;
 
 import org.zkoss.lang.Objects;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
@@ -32,10 +30,10 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.event.SelectionChangeEvent;
-import org.zkoss.zss.ui.event.CellSelectionEvent;
+import org.zkoss.zss.ui.event.CellSelectionAction;
+import org.zkoss.zss.ui.event.CellSelectionType;
+import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
 import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 /**
@@ -43,14 +41,14 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
  * @author Dennis.Chen
  *
  */
-public class SelectionChangeCommand implements Command {
+public class CellSelectionUpdateCommand implements Command {
 
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();
 		if (comp == null)
 			throw new UiException(MZk.ILLEGAL_REQUEST_COMPONENT_REQUIRED, this);
 		final Map data = (Map) request.getData();
-		if (data == null || data.size() != 10)
+		if (data == null || data.size() != 11)
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), this});
 		
 		String sheetId= (String) data.get("sheetId");
@@ -63,26 +61,50 @@ public class SelectionChangeCommand implements Command {
 		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
 		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
 		
-		int action = (Integer) data.get("action");
 		
-		int selectType = action & 0x0F;
+		String t = (String) data.get("type");
+		CellSelectionType type = null;
+		if("all".equals(t)){
+			type = CellSelectionType.ALL;
+		}else if("col".equals(t)){
+			type = CellSelectionType.COLUMN;
+		}else if("row".equals(t)){
+			type = CellSelectionType.ROW;
+		}else if("cell".equals(t)){
+			type = CellSelectionType.CELL;
+		}else{
+			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), this});
+		}
+		
+		t = (String) data.get("action");
+		
+		CellSelectionAction action = null;
+		if("move".equals(t)){
+			action = CellSelectionAction.MOVE;
+		}else if("resize".equals(t)){
+			action = CellSelectionAction.RESIZE;
+		}else{
+			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), this});
+		}
 		
 		int left = (Integer) data.get("left");
 		int top = (Integer) data.get("top");
-		int right = selectType == CellSelectionEvent.SELECT_ROW ? maxcol : (Integer) data.get("right");
-		int bottom = selectType == CellSelectionEvent.SELECT_COLUMN ? maxrow : (Integer) data.get("bottom");
+		int right = (type == CellSelectionType.ROW || type == CellSelectionType.ALL) ? maxcol : (Integer) data.get("right");
+		int bottom = (type == CellSelectionType.COLUMN || type == CellSelectionType.ALL) ? maxrow : (Integer) data.get("bottom");
 		int orgileft = (Integer) data.get("orgileft");
 		int orgitop = (Integer) data.get("orgitop");
-		int orgiright = selectType == CellSelectionEvent.SELECT_ROW ? maxcol : (Integer) data.get("orgiright");
-		int orgibottom = selectType == CellSelectionEvent.SELECT_COLUMN ? maxrow : (Integer) data.get("orgibottom");
+		int orgiright = (type == CellSelectionType.ROW || type == CellSelectionType.ALL) ? maxcol : (Integer) data.get("orgiright");
+		int orgibottom = (type == CellSelectionType.COLUMN || type == CellSelectionType.ALL) ? maxrow : (Integer) data.get("orgibottom");
+
+		SpreadsheetInCtrl ctrl = ((SpreadsheetInCtrl)((Spreadsheet)comp).getExtraCtrl());
+		ctrl.setSelectionRect(left, top, right, bottom);		
 		
-		final SelectionChangeEvent evt = new SelectionChangeEvent(
-				org.zkoss.zss.ui.event.Events.ON_SELECTION_CHANGE, comp, sheet,
+		final CellSelectionUpdateEvent evt = new CellSelectionUpdateEvent(
+				org.zkoss.zss.ui.event.Events.ON_CELL_SELECTION_UPDATE, comp, sheet, type,
 				action, left, top, right, bottom, orgileft, orgitop, orgiright,
 				orgibottom);
 
-		SpreadsheetInCtrl ctrl = ((SpreadsheetInCtrl)((Spreadsheet)comp).getExtraCtrl());
-		ctrl.setSelectionRect(left, top, right, bottom);	
+
 		
 		Events.postEvent(evt);
 	}

@@ -25,14 +25,19 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.Events;
+import org.zkoss.zss.ui.event.SheetSelectedEvent;
+import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
 /**
+ * Select sheet from sheet bar click
  * @author sam
  *
  */
@@ -71,15 +76,22 @@ public class SelectSheetCommand implements Command {
 		int rowfreeze = AuRequests.getInt(data, "frow", -1);
 		int colfreeze = AuRequests.getInt(data, "fcol", -1);
 		
-		XBook book = spreadsheet.getXBook();
+		Sheet currSheet = spreadsheet.getSelectedSheet();
+		
+		Book book = spreadsheet.getBook();
 		int len = book.getNumberOfSheets();
 		for (int i = 0; i < len; i++) {
-			XSheet sheet = book.getWorksheetAt(i);
-			if (sheetId.equals(((SheetCtrl)sheet).getUuid())) {
-				((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setSelectedSheetDirectly(sheet.getSheetName(), cacheInClient, row, col, 
-						left, top, right, bottom,
-						highlightLeft, highlightTop, highlightRight, highlightBottom,
-						rowfreeze, colfreeze);
+			Sheet sheet = book.getSheetAt(i);
+			if (XUtils.getSheetUuid(sheet).equals(sheetId)) {
+				if(!currSheet.equals(sheet)){
+					((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setSelectedSheetDirectly(sheet.getSheetName(), cacheInClient, row, col, 
+							left, top, right, bottom,
+							highlightLeft, highlightTop, highlightRight, highlightBottom,
+							rowfreeze, colfreeze);
+					
+					Event event = new SheetSelectedEvent(Events.ON_SHEET_SELECTED, spreadsheet, sheet, currSheet);
+					org.zkoss.zk.ui.event.Events.postEvent(event);
+				}
 				break;
 			}
 		}

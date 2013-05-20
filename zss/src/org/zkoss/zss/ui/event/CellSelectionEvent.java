@@ -28,31 +28,27 @@ import org.zkoss.zss.api.model.Sheet;
  */
 public class CellSelectionEvent extends Event{
 	
-	
-	public static final int SELECT_CELLS = 0x01;
-	public static final int SELECT_ROW = 0x02;
-	public static final int SELECT_COLUMN = 0x03;
-	public static final int SELECT_ALL = 0x04;
+//	
+//	public static final int SELECT_CELLS = 0x01;
+//	public static final int SELECT_ROW = 0x02;
+//	public static final int SELECT_COLUMN = 0x03;
+//	public static final int SELECT_ALL = 0x04;
 	
 	private Sheet _sheet;
-	private int _action;
+	private CellSelectionType _type;
 	private int _left;
 	private int _top;
 	private int _right;
 	private int _bottom;
 
-	public CellSelectionEvent(String name, Component target,Sheet sheet,int action, int left, int top,int right, int bottom, Object data) {
-		super(name, target, data);
+	public CellSelectionEvent(String name, Component target,Sheet sheet,CellSelectionType type, int left, int top,int right, int bottom) {
+		super(name, target);
 		_sheet = sheet;
-		_action = action;
+		_type = type;
 		_left = left;
 		_top = top;
 		_right = right;
 		_bottom = bottom;
-	}
-	
-	public CellSelectionEvent(String name, Component target,Sheet sheet,int action, int left, int top,int right, int bottom) {
-		this(name,target,sheet,action,left,top,right,bottom,null);
 	}
 	
 	/**
@@ -64,12 +60,11 @@ public class CellSelectionEvent extends Event{
 	}
 
 	/**
-	 * Returns the selection type; it can be either {@link #SELECT_ALL}(Select the whole sheet), 
-	 * {@link #SELECT_COLUMN}(select the whole column), {@link #SELECT_ROW}(select the whole row), {@link #SELECT_CELLS}(select a rectangle area).
+	 * Returns the selection type
 	 * @return the selection type.
 	 */
-	public int getSelectionType(){
-		return _action;
+	public CellSelectionType getType(){
+		return _type;
 	}
 	
 	public int getLeft() {

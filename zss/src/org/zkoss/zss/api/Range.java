@@ -3,6 +3,7 @@ package org.zkoss.zss.api;
 import java.util.List;
 
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.Font;
@@ -15,6 +16,7 @@ import org.zkoss.zss.api.model.ChartData;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.TypeOffset;
 import org.zkoss.zss.api.model.Font.Underline;
+import org.zkoss.zss.api.model.Hyperlink;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Picture.Format;
@@ -120,15 +122,6 @@ public interface Range {
 		GROWTH_TREND,
 		LINER_TREND
 	}
-	
-	public enum CellType{
-		NUMERIC,
-		STRING,
-		FORMULA,
-		BLANK,
-		BOOLEAN,
-		ERROR;
-	}
 
 	public void setSyncLevel(SyncLevel syncLevel);
 	
@@ -142,8 +135,6 @@ public interface Range {
 	public int getLastRow();
 	
 	public CellStyleHelper getCellStyleHelper();
-	
-	public CellData getCellData();
 	
 	public void sync(RangeRunner run);
 	/**
@@ -259,22 +250,45 @@ public interface Range {
 	
 	public void setCellStyle(CellStyle nstyle);
 	
-	public String getCellEditText();
-	
 	public void setCellEditText(String editText);
-	
-	public Object getCellValue();
 	
 	public void setCellValue(Object value);
 	
-	public void setCellHyperlink(HyperlinkType type,String address,String displayLabel);
+	public void setCellHyperlink(HyperlinkType type,String address,String display);
+	
 	
 	/**
-	 * get the first cell style of this range
+	 * Get the first cell(top-left) hyper-link object of this range.
+	 * @return
+	 */
+	public Hyperlink getCellHyperlink();
+	
+	/**
+	 * Get the first cell(top-left) style of this range
 	 * 
 	 * @return cell style if cell is exist, the check row style and column cell style if cell not found, if row and column style is not exist, then return default style of sheet
 	 */
 	public CellStyle getCellStyle();
+	
+	/**
+	 * Get the first cell(top-left) data of this range
+	 * @return
+	 */
+	public CellData getCellData();
+	
+	/**
+	 * Get the first cell(top-left) edit text of this range
+	 * @return edit text
+	 * @see CellData#getEditText()
+	 */
+	public String getCellEditText();
+	
+	/**
+	 * Get the first cell(top-left) value of this this range
+	 * @return value object
+	 * @see CellData#getValue()
+	 */
+	public Object getCellValue();
 	
 	/* 
 	 * ==================================================
@@ -319,16 +333,12 @@ public interface Range {
 	
 	public Picture addPicture(SheetAnchor anchor,byte[] image,Format format);
 	
-	public List<Picture> getPictures();
-	
 	public void deletePicture(Picture picture);
 	
 	public void movePicture(SheetAnchor anchor,Picture picture);
 	
 	//currently, we only support to modify chart in XSSF
 	public Chart addChart(SheetAnchor anchor,ChartData data,Type type, Grouping grouping, LegendPosition pos);
-	
-	public List<Chart> getCharts();
 	
 	//currently, we only support to modify chart in XSSF
 	public void deleteChart(Chart chart);
@@ -339,30 +349,6 @@ public interface Range {
 	public Sheet createSheet(String name);
 	
 	public void deleteSheet();
-	
-	
-	/**
-	 * a cell value helper for get and set value of cell
-	 */
-	public interface CellData {
-		
-		public int getRow();
-		public int getColumn();
-		
-		public CellType getType();
-		
-		public CellType getResultType();
-		
-		public Object getValue();
-		public String getFormatText();
-		public String getEditText();
-		
-		public void setValue(Object value);
-		
-		public void setEditText(String editText);
-		
-		//public void setCellType(CellType type);
-	}
 	
 	/**
 	 * a cell style helper to create style relative object for cell

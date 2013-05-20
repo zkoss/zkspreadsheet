@@ -17,6 +17,7 @@ import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Book.BookType;
+import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Chart;
@@ -24,11 +25,14 @@ import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.Chart.Type;
 import org.zkoss.zss.api.model.ChartData;
+import org.zkoss.zss.api.model.Hyperlink;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.impl.CellDataImpl;
 import org.zkoss.zss.api.model.impl.EnumUtil;
+import org.zkoss.zss.api.model.impl.HyperlinkImpl;
 import org.zkoss.zss.api.model.impl.ModelRef;
 import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.api.model.impl.CellStyleImpl;
@@ -57,7 +61,7 @@ public class RangeImpl implements Range{
 	SyncLevel syncLevel = SyncLevel.BOOK;
 	
 	CellStyleHelper cellStyleHelper;
-	CellData cellDataHelper;
+	CellData cellData;
 	
 	public void setSyncLevel(SyncLevel syncLevel){
 		this.syncLevel = syncLevel;
@@ -83,10 +87,10 @@ public class RangeImpl implements Range{
 	}
 	
 	public CellData getCellData(){
-		if(cellDataHelper==null){
-			cellDataHelper = new CellDataImpl(this);
+		if(cellData==null){
+			cellData = new CellDataImpl(this);
 		}
-		return cellDataHelper;
+		return cellData;
 	}
 	
 	public XRange getNative(){
@@ -605,9 +609,14 @@ public class RangeImpl implements Range{
 		range.setHidden(hidden);
 	}
 	
-	public void setCellHyperlink(HyperlinkType type,String address,String displayLabel){
+	public void setCellHyperlink(HyperlinkType type,String address,String display){
 		//TODO the syncLevel
-		range.setHyperlink(EnumUtil.toHyperlinkType(type), address, displayLabel);
+		range.setHyperlink(EnumUtil.toHyperlinkType(type), address, display);
+	}
+	
+	public Hyperlink getCellHyperlink(){
+		org.zkoss.poi.ss.usermodel.Hyperlink l = range.getHyperlink();
+		return l==null?null:new HyperlinkImpl(new SimpleRef<org.zkoss.poi.ss.usermodel.Hyperlink>(l));
 	}
 	
 	public void setSheetName(String name){
@@ -696,17 +705,6 @@ public class RangeImpl implements Range{
 		return new PictureImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic));
 	}
 	
-	public List<Picture> getPictures(){
-		//TODO the syncLevel
-		Book book = getSheet().getBook();
-		DrawingManager dm = ((SheetCtrl)((BookImpl)getBook()).getNative()).getDrawingManager();
-		List<Picture> pictures = new ArrayList<Picture>();
-		for(org.zkoss.poi.ss.usermodel.Picture pic:dm.getPictures()){
-			pictures.add(new PictureImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic)));
-		}
-		return pictures;
-	}
-	
 	public void deletePicture(Picture picture){
 		//TODO the syncLevel
 		range.deletePicture(((PictureImpl)picture).getNative());
@@ -725,17 +723,6 @@ public class RangeImpl implements Range{
 		org.zkoss.poi.ss.usermodel.charts.ChartData cdata = ((ChartDataImpl)data).getNative();
 		org.zkoss.poi.ss.usermodel.Chart chart = range.addChart(an, cdata, EnumUtil.toChartType(type), EnumUtil.toChartGrouping(grouping), EnumUtil.toLegendPosition(pos));
 		return new ChartImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart));
-	}
-	
-	public List<Chart> getCharts(){
-		//TODO the syncLevel
-		Book book = getSheet().getBook();
-		DrawingManager dm = ((SheetCtrl)((BookImpl)getBook()).getNative()).getDrawingManager();
-		List<Chart> charts = new ArrayList<Chart>();
-		for(org.zkoss.poi.ss.usermodel.Chart chart:dm.getCharts()){
-			charts.add(new ChartImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart)));
-		}
-		return charts;
 	}
 	
 	//currently, we only support to modify chart in XSSF
@@ -781,7 +768,7 @@ public class RangeImpl implements Range{
 //		range.getText();//RichTextString (what is the difference of getRichEditText)
 //		
 		
-		range.validate("");//DataValidation
+//		range.validate("");//DataValidation
 		
 	}
 	

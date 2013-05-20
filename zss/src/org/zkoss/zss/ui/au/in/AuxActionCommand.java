@@ -24,7 +24,6 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.DefaultUserAction;
@@ -61,14 +60,13 @@ public class AuxActionCommand implements Command {
 		//old code logic refer to ActionCommand in 2.6.0
 		if ("sheet".equals(tag) && spreadsheet.getXBook() != null) {
 			String sheetId = (String) data.get("sheetId");
-			XSheet xsheet = XUtils.getSheetByUuid(spreadsheet.getXBook(), sheetId);
+			//don't get form spreadsheet, it (should be)is possible doing on non-selected sheet
+			sheet = XUtils.getSheetByUuid(spreadsheet.getBook(), sheetId);
 			
-			if(xsheet==null){
-				throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), AuxActionCommand.class });
+			if(sheet==null){
+				//not found, it is possible been deleted.?
+				return;
 			}
-
-			// get back sheet by xsheet's name
-			sheet = spreadsheet.getBook().getSheet(xsheet.getSheetName());
 
 			// client's act doesn't follow the Action, so I have to remap it.
 			// TODO make client use correct key directly?

@@ -1,16 +1,11 @@
 package org.zkoss.zss.ui;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.zkoss.image.AImage;
 import org.zkoss.lang.Strings;
-import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.ApplyBorderType;
@@ -21,22 +16,20 @@ import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.SheetOperationUtil;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle.Alignment;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
-import org.zkoss.zss.api.model.Chart;
-import org.zkoss.zss.api.model.ChartData;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.DefaultUserActionHandler.Clipboard.Type;
 import org.zkoss.zss.ui.event.AuxActionEvent;
+import org.zkoss.zss.ui.event.CellSelectionAction;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
-import org.zkoss.zss.ui.event.SelectionChangeEvent;
+import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
 import org.zkoss.zul.Messagebox;
 
 public class DefaultUserActionHandler implements UserActionHandler {
@@ -228,32 +221,8 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return doClearStyle();
 		} else if (DefaultUserAction.CLEAR_ALL.equals(dua)) {
 			return doClearAll();
-		} else if (DefaultUserAction.COLUMN_CHART.equals(dua)) {
-			return doColumnChart();
-		} else if (DefaultUserAction.COLUMN_CHART_3D.equals(dua)) {
-			return doColumnChart3D();
-		} else if (DefaultUserAction.LINE_CHART.equals(dua)) {
-			return doLineChart();
-		} else if (DefaultUserAction.LINE_CHART_3D.equals(dua)) {
-			return doLineChart3D();
-		} else if (DefaultUserAction.PIE_CHART.equals(dua)) {
-			return doPieChart();
-		} else if (DefaultUserAction.PIE_CHART_3D.equals(dua)) {
-			return doPieChart3D();
-		} else if (DefaultUserAction.BAR_CHART.equals(dua)) {
-			return doBarChart();
-		} else if (DefaultUserAction.BAR_CHART_3D.equals(dua)) {
-			return doBarChart3D();
-		} else if (DefaultUserAction.AREA_CHART.equals(dua)) {
-			return doAreaChart();
-		} else if (DefaultUserAction.SCATTER_CHART.equals(dua)) {
-			return doScatterChart();
-		} else if (DefaultUserAction.DOUGHNUT_CHART.equals(dua)) {
-			return doDoughnutChart();
 		} else if (DefaultUserAction.HYPERLINK.equals(dua)) {
 			return doHyperlink();
-		} else if (DefaultUserAction.INSERT_PICTURE.equals(dua)) {
-			return doInsertPicture();
 		} else if (DefaultUserAction.CLOSE_BOOK.equals(dua)) {
 			return doCloseBook();
 		} else if (DefaultUserAction.FORMAT_CELL.equals(dua)) {
@@ -474,48 +443,6 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		return true;
 	}
 	
-	
-	protected boolean doInsertPicture(){
-		final Spreadsheet spreadsheet = getSpreadsheet();
-		final Sheet sheet = getSheet();
-		final Rect selection = getSelection();
-		
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
-		if(range.isProtected()){
-			showProtectMessage();
-			return true;
-		}
-		
-		askUploadFile(new EventListener<Event>() {
-			public void onEvent(Event event) throws Exception {
-				if(org.zkoss.zk.ui.event.Events.ON_UPLOAD.equals(event.getName())){
-					Media media = ((UploadEvent)event).getMedia();
-					doInsertPicture(spreadsheet,sheet,selection,media);
-				}
-			}
-		});
-		return true;
-	}
-	
-	protected boolean doInsertPicture(Spreadsheet spreadsheet,Sheet sheet,Rect selection,Media media) {
-		if(media==null){
-			showWarnMessage("Can't get the uploaded file");
-			return true;
-		}
-		
-		if(!(media instanceof AImage) || SheetOperationUtil.getPictureFormat((AImage)media)==null){
-			showWarnMessage("Can't support the uploaded file");
-			return true;
-		}
-		
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
-		
-		SheetOperationUtil.addPicture(range,(AImage)media);
-		
-		clearClipboard();
-		return true;
-	}
-		
 	/**
 	 * Execute when user press key
 	 * @param event
@@ -1239,70 +1166,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		SheetOperationUtil.displaySheetGridlines(range,!range.isDisplaySheetGridlines());
 		return true;
 	}
-	
-	
-	protected boolean doChart(Chart.Type type, Chart.Grouping grouping, Chart.LegendPosition pos){
-		Sheet sheet = getSheet();
-		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
-		if(range.isProtected()){
-			showProtectMessage();
-			return true;
-		}
-		
-		SheetAnchor anchor = SheetOperationUtil.toChartAnchor(range);
-		
-		ChartData data = org.zkoss.zss.api.ChartDataUtil.getChartData(sheet,selection, type);
-		SheetOperationUtil.addChart(range,anchor,data,type,grouping,pos);
-		clearClipboard();
-		return true;
-		
-	}
 
-	protected boolean doColumnChart() {
-		return doChart(Chart.Type.Column,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-	
-	protected boolean doColumnChart3D() {
-		return doChart(Chart.Type.Column3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doLineChart() {
-		return doChart(Chart.Type.Line,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doLineChart3D() {
-		return doChart(Chart.Type.Line3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doPieChart() {
-		return doChart(Chart.Type.Pie,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doPieChart3D() {
-		return doChart(Chart.Type.Pie3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doBarChart() {
-		return doChart(Chart.Type.Bar,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doBarChart3D() {
-		return doChart(Chart.Type.Bar3D,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doAreaChart() {
-		return doChart(Chart.Type.Area,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doScatterChart() {
-		return doChart(Chart.Type.Scatter,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-
-	protected boolean doDoughnutChart() {
-		return doChart(Chart.Type.Doughnut,Chart.Grouping.STANDARD, Chart.LegendPosition.RIGHT);
-	}
-	
 	private static <T> T checkNotNull(String message, T t) {
 		if (t == null) {
 			throw new NullPointerException(message);
@@ -1310,7 +1174,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		return t;
 	}
 
-	private static class UserActionContext {
+	protected static class UserActionContext {
 
 		final Spreadsheet spreadsheet;
 		final Sheet sheet;
@@ -1349,8 +1213,6 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			this.sourceRect = checkNotNull("Clipboard's sourceRect cannot be null", sourceRect);
 		}
 	}
-	
-	
 	
 	// non-implemented action
 	
@@ -1418,16 +1280,10 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		showNotImplement(DefaultUserAction.INSERT_FUNCTION.toString());
 		return true;
 	}
-	
-	protected void askUploadFile(EventListener l){
-		//TODO Need ZK's new feature support
-		
-	}
-
 
 	@Override
 	public String[] getInterestedEvents() {
-		return new String[] { Events.ON_AUX_ACTION,Events.ON_SHEET_SELECT, Events.ON_CTRL_KEY, Events.ON_SELECTION_CHANGE, 
+		return new String[] { Events.ON_AUX_ACTION,Events.ON_SHEET_SELECTED, Events.ON_CTRL_KEY, Events.ON_CELL_SELECTION_UPDATE, 
 				org.zkoss.zk.ui.event.Events.ON_CANCEL,
 				Events.ON_CELL_DOUBLE_CLICK, Events.ON_START_EDITING };
 	}
@@ -1454,14 +1310,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			sheet = evt.getSheet();
 			action = evt.getAction();
 			extraData = evt.getExtraData();
-		}else if(event instanceof SelectionChangeEvent){
-			SelectionChangeEvent evt = ((SelectionChangeEvent)event);
+		}else if(event instanceof CellSelectionUpdateEvent){
+			CellSelectionUpdateEvent evt = ((CellSelectionUpdateEvent)event);
 			selection = new Rect(evt.getLeft(),evt.getTop(),evt.getRight(),evt.getBottom());
 		}else{
 			selection = spreadsheet.getSelection();
 		}
 		final UserActionContext ctx = new UserActionContext(spreadsheet, sheet,action,selection,extraData);
-		_ctx.set(ctx);
+		setContext(ctx);
 		try{
 			if(event instanceof AuxActionEvent){
 				dispatchAction(action);
@@ -1469,17 +1325,27 @@ public class DefaultUserActionHandler implements UserActionHandler {
 				onEventAnother(event);
 			}
 		}finally{
-			_ctx.set(null);
+			releaseContext();
 		}
+	}
+	
+	protected void setContext(UserActionContext ctx){
+		_ctx.set(ctx);
+	}
+	protected UserActionContext getContext(){
+		return _ctx.get();
+	}
+	protected void releaseContext(){
+		_ctx.set(null);
 	}
 
 	private void onEventAnother(Event event) throws Exception {
 
 		String nm = event.getName();
-		if(Events.ON_SHEET_SELECT.equals(nm)){
+		if(Events.ON_SHEET_SELECTED.equals(nm)){
 			
-			updateClipboardHighlightEffect();
-			//TODO
+			updateClipboardEffect(getSheet());
+			//TODO 20130513, Dennis, looks like I don't need to do this here?
 			//syncAutoFilter();
 			
 			//TODO this should be spreadsheet's job
@@ -1493,10 +1359,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 					getSpreadsheet().smartUpdate("doPasteFromServer", true);
 				}
 			}
-		}else if(Events.ON_SELECTION_CHANGE.equals(nm)){
-			SelectionChangeEvent evt = (SelectionChangeEvent)event;
+		}else if(Events.ON_CELL_SELECTION_UPDATE.equals(nm)){
+			CellSelectionUpdateEvent evt = (CellSelectionUpdateEvent)event;
 			//last selection either get form selection or from event
-			doSelectionChange(new Rect(evt.getOrigleft(),evt.getOrigtop(),evt.getOrigright(),evt.getOrigbottom()),getSelection());
+			if(evt.getAction()==CellSelectionAction.MOVE){
+				doMoveCellSelection(new Rect(evt.getOrigleft(),evt.getOrigtop(),evt.getOrigright(),evt.getOrigbottom()),getSelection());
+			}else if(evt.getAction()==CellSelectionAction.RESIZE){
+				doResizeCellSelection(new Rect(evt.getOrigleft(),evt.getOrigtop(),evt.getOrigright(),evt.getOrigbottom()),getSelection());
+			}
 		}else if(Events.ON_CELL_DOUBLE_CLICK.equals(nm)){//TODO check if we need it still
 			clearClipboard();
 		}else if(Events.ON_START_EDITING.equals(nm)){
@@ -1506,7 +1376,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 	}
 	
-	protected boolean doSelectionChange(Rect original,Rect selection) {
+	protected boolean doMoveCellSelection(Rect original,Rect selection) {
 		Sheet sheet = getSheet();
 		Range src = Ranges.range(sheet,original.getTop(),original.getLeft(),original.getBottom(),original.getRight());
 		Range dest = Ranges.range(sheet,selection.getTop(),selection.getLeft(),selection.getBottom(),selection.getRight());
@@ -1516,43 +1386,50 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return true;
 		}
 		
-		int orgW = original.getRight()-original.getLeft();
-		int orgH = original.getBottom()-original.getTop();
-		int w = selection.getRight()-selection.getLeft();
-		int h = selection.getBottom()-selection.getTop();
+		final int nRow = selection.getTop() - original.getTop();
+		final int nCol = selection.getLeft() - original.getLeft();
+		SheetOperationUtil.shift(src,nRow, nCol);
 		
+		return true;
+	}
+	
+	protected boolean doResizeCellSelection(Rect original,Rect selection) {
+		Sheet sheet = getSheet();
+		Range src = Ranges.range(sheet,original.getTop(),original.getLeft(),original.getBottom(),original.getRight());
+		Range dest = Ranges.range(sheet,selection.getTop(),selection.getLeft(),selection.getBottom(),selection.getRight());
 		
-		if (orgW==w && orgH==h) {//move
-			final int nRow = selection.getTop() - original.getTop();
-			final int nCol = selection.getLeft() - original.getLeft();
-			SheetOperationUtil.shift(src,nRow, nCol);
-		} else{//resize
-			
-			SheetOperationUtil.autoFill(src,dest, AutoFillType.DEFAULT);
-		}	
+		if(dest.isProtected()){
+			showProtectMessage();
+			return true;
+		}
+		
+		SheetOperationUtil.autoFill(src,dest, AutoFillType.DEFAULT);	
 		
 		return true;
 	}
 
-	private void updateClipboardHighlightEffect() {
+	protected void updateClipboardEffect(Sheet sheet) {
 		//to sync the 
 		Clipboard cb = getClipboard();
 		if (cb != null) {
 			//TODO a way to know the book is different already?
-			
-			final Sheet current = getSheet();
-			final Book book = current.getBook();
+			final Book book = sheet.getBook();
 			final Sheet src = book.getSheet(cb.sourceSheetName);
 			if(src==null){
 				clearClipboard();
 			}else{
-				if(current.equals(src)){
+				if(sheet.equals(src)){
 					getSpreadsheet().setHighlight(cb.sourceRect);
 				}else{
 					getSpreadsheet().setHighlight(null);
 				}
 			}
 		}
+	}
+
+	@Override
+	public String getCtrlKeys() {
+		return "^X^C^V^B^I^U#del";
 	}
 
 }

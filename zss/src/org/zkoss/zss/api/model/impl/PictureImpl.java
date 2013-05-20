@@ -41,4 +41,9 @@ public class PictureImpl implements Picture{
 	public org.zkoss.poi.ss.usermodel.Picture getNative() {
 		return picRef.get();
 	}
+	
+	
+	public String getId(){
+		return getNative().getPictureId();
+	}
 }
