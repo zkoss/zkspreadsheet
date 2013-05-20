@@ -14,11 +14,11 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul.ctrl;
 
-import org.zkoss.poi.ss.usermodel.BorderStyle;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.Font;
-import org.zkoss.poi.ss.usermodel.FontUnderline;
+//import org.zkoss.poi.ss.usermodel.BorderStyle;
+//import org.zkoss.poi.ss.usermodel.Cell;
+//import org.zkoss.poi.ss.usermodel.CellStyle;
+//import org.zkoss.poi.ss.usermodel.Font;
+//import org.zkoss.poi.ss.usermodel.FontUnderline;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.sheet.SheetHelper;
 //import org.zkoss.zss.model.sys.XRanges;
@@ -28,7 +28,7 @@ import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 //import org.zkoss.zss.ui.impl.CellVisitor;
 //import org.zkoss.zss.ui.impl.CellVisitorContext;
-import org.zkoss.zss.ui.impl.Utils;
+//import org.zkoss.zss.ui.impl.Utils;
 
 /**
  * @author Ian Tsai / Sam

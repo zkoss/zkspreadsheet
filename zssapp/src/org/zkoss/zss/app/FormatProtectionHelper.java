@@ -6,7 +6,7 @@ import org.zkoss.zk.ui.Path;
 //import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
-//import org.zkoss.zss.ui.impl.Utils;
+import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Window;
 

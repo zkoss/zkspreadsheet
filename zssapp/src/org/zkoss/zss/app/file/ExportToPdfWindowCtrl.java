@@ -21,9 +21,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
-import org.zkoss.poi.ss.usermodel.PrintSetup;
-import org.zkoss.poi.ss.usermodel.Sheet;
-import org.zkoss.poi.ss.util.AreaReference;
+//import org.zkoss.poi.ss.usermodel.PrintSetup;
+//import org.zkoss.poi.ss.usermodel.Sheet;
+//import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.ForwardEvent;

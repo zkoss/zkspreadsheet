@@ -1,6 +1,6 @@
 package org.zkoss.zss.app;
 
-import org.zkoss.poi.ss.usermodel.Cell;
+//import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.ext.AfterCompose;
@@ -9,7 +9,7 @@ import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.StopEditingEvent;
-import org.zkoss.zss.ui.impl.Utils;
+//import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Window;
 
 public class MultiSpreadsheetWindow extends Window implements AfterCompose{

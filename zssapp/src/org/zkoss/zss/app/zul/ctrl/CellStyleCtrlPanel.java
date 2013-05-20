@@ -14,8 +14,8 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.zul.ctrl;
 
-import org.zkoss.poi.ss.usermodel.BorderStyle;
-import org.zkoss.web.fn.ServletFns;
+//import org.zkoss.poi.ss.usermodel.BorderStyle;
+//import org.zkoss.web.fn.ServletFns;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;

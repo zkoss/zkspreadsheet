@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.zkoss.lang.Objects;
-import org.zkoss.poi.ss.usermodel.Cell;
+//import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Components;
@@ -33,7 +33,7 @@ import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.SortDataOption;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.Range.CellType;
+//import org.zkoss.zss.api.Range.CellType;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.zul.Dialog;
 //import org.zkoss.zss.model.sys.XSheet;

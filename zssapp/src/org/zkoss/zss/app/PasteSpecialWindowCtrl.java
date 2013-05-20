@@ -18,7 +18,7 @@ import static org.zkoss.zss.app.base.Preconditions.checkNotNull;
 
 import java.util.HashMap;
 
-import org.zkoss.poi.ss.usermodel.CellStyle;
+//import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
@@ -27,8 +27,8 @@ import org.zkoss.zss.app.zul.Zssapps;
 //import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.Utils;
-import org.zkoss.zss.ui.sys.XActionHandler.Clipboard;
+//import org.zkoss.zss.ui.impl.Utils;
+//import org.zkoss.zss.ui.sys.XActionHandler.Clipboard;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Messagebox;

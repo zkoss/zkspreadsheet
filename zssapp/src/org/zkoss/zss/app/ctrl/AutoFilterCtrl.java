@@ -26,12 +26,12 @@ import java.util.TreeSet;
 
 import org.zkoss.lang.Objects;
 import org.zkoss.lang.Strings;
-import org.zkoss.poi.ss.usermodel.FilterColumn;
+//import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.AutoFilterOperation;
-import org.zkoss.zss.api.Range.CellType;
+//import org.zkoss.zss.api.Range.CellType;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;

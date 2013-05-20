@@ -17,7 +17,7 @@ package org.zkoss.zss.app.ctrl;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.zkoss.poi.ss.usermodel.Cell;
+//import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.event.Event;
@@ -26,7 +26,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.Range.CellType;
+//import org.zkoss.zss.api.Range.CellType;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.app.formula.FormulaMetaInfo;
 import org.zkoss.zss.app.zul.Dialog;
