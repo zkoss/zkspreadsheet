@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -143,7 +144,6 @@ import org.zkoss.zss.ui.sys.WidgetHandler;
 import org.zkoss.zss.ui.sys.WidgetLoader;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.impl.XulElement;
-
 
 /**
  * Spreadsheet is a rich ZK Component to handle EXCEL like behavior, it reads
@@ -302,7 +302,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private static Integer _defMaxRenderedCellSize;
 	
-//	private Set<UserAction> _actionDisabled = getDefaultActiobDisabled();
+	private Set<UserAction> _actionDisabled = new HashSet();
 //	
 //	private static Set<UserAction> _defToolbarActiobDisabled;
 	
@@ -596,6 +596,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				});
 			}
 		}
+		
+		refreshToolbarDisabled();
 	}
 	
 	private Focus newFocus() {
@@ -1560,7 +1562,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_showToolbar) {
 			//20130507,Dennis,add commnet check, no actionDisabled json will cause client error when show context menu.
 //			if (_actionDisabled.size() > 0) {
-				renderer.render("actionDisabled", new ArrayList()/*convertActionDisabledToJSON(_actionDisabled)*/);
+				renderer.render("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
 //			}
 			renderer.render("showToolbar", _showToolbar);
 		}
@@ -1876,6 +1878,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_protectSheet != protect) {
 			_protectSheet = protect;
 			smartUpdate("protect", protect);
+			
+			refreshToolbarDisabled();
 		}
 	}
 
@@ -4046,6 +4050,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		//register collaborated focus
 		moveFocus();
 		_selectedSheetName = _selectedSheet.getSheetName();
+		
+		
+		refreshToolbarDisabled();
 	}
 	
 	public String getSelectedSheetName() {
@@ -4217,13 +4224,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //		return _actionDisabled.contains(action);
 //	}
 	
-//	private static List<String> convertActionDisabledToJSON(Set<UserAction> disabled) {
-//		ArrayList<String> disd = new ArrayList<String>(disabled.size());
-//		for (UserAction a : disabled) {
-//			disd.add(a.toString());
-//		}
-//		return disd;
-//	}
+	private static List<String> convertActionDisabledToJSON(Set<UserAction> disabled) {
+		ArrayList<String> disd = new ArrayList<String>(disabled.size());
+		for (UserAction a : disabled) {
+			disd.add(a.toString());
+		}
+		return disd;
+	}
 	
 	/**
 	 * Sets action handler
@@ -4980,5 +4987,22 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 */
 	public void setMaxVisibleRows(int maxrows){
 		this.setMaxrows(maxrows);
+	}
+	
+	
+	private void refreshToolbarDisabled(){
+		_actionDisabled.clear();
+		
+		if(getBook()==null){
+			_actionDisabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4BookClosed));
+		}else{
+			if(getSelectedSheet().isProtected()){
+				_actionDisabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4SheetProtected));
+			}
+			if(!getSelectedSheet().isAutoFilterEnabled()){
+				_actionDisabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4FilterDisabled));
+			}
+		}
+		smartUpdate("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
 	}
 }

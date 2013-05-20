@@ -2011,18 +2011,20 @@ public class XRangeImpl implements XRange {
 	public AutoFilter autoFilter() {
 		synchronized (_sheet) {
 			CellRangeAddress affectedArea;
+			final Ref ref = getRefs().iterator().next();
 			if(_sheet.isAutoFilterMode()){
 				affectedArea = _sheet.removeAutoFilter();
 				XRange unhideArea = XRanges.range(_sheet,
 						affectedArea.getFirstRow(),affectedArea.getFirstColumn(),
 						affectedArea.getLastRow(),affectedArea.getLastColumn());
 				unhideArea.getRows().setHidden(false);
+				BookHelper.notifyAutoFilterChange(ref,false);
 			} else {
 				//The logic to decide the actual affected range to implement autofilter:
 				//If it's a multi cell range, it's the range intersect with largest range of the sheet.
 				//If it's a single cell range, it has to be extend to a continuous range by looking up the near 8 cells of the single cell.
 				affectedArea = new CellRangeAddress(getRow(), getLastRow(), getColumn(), getLastColumn());
-				final Ref ref = getRefs().iterator().next();
+				
 				//ZSS-199
 				if (ref.isWholeRow()) {
 					//extend to a continuous range from the top row
@@ -2064,6 +2066,7 @@ public class XRangeImpl implements XRange {
 					affectedArea = new CellRangeAddress(top, bottom, left, right);
 				}
 				_sheet.setAutoFilter(affectedArea);
+				BookHelper.notifyAutoFilterChange(ref,true);
 			}
 			 
 			//I have to know the top row area to show/remove the combo button

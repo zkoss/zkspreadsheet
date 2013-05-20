@@ -16,16 +16,15 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ui;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author sam
+ * @author dennis
  * 
  */
-public enum DefaultUserAction {
+public enum UserAction {
 
 	 ADD_SHEET("addSheet"),
 	 DELETE_SHEET("deleteSheet"),
@@ -116,16 +115,26 @@ public enum DefaultUserAction {
 	 SCATTER_CHART("scatterChart"),
 	 DOUGHNUT_CHART("doughnutChart"),
 	 HYPERLINK("hyperlink"),
-	 INSERT_FUNCTION("insertFunction");
+	 INSERT_FUNCTION("insertFunction"),
+	 
+	 
+	 /* following are fold item only, doesn't send auxevent to server*/
+	 VERTICAL_ALIGN("verticalAlign"),
+	 HORIZONTAL_ALIGN("horizontalAlign"),
+	 INSERT("insert"),
+	 DELETE("del"),
+	 CLEAR("clear"),
+	 SORT_AND_FILTER("sortAndFilter"),
+	 OTHER_CHART("otherChart");
 	 
 
 	private final String action;
 
-	private DefaultUserAction() {
+	private UserAction() {
 		this("none");
 	}
 
-	private DefaultUserAction(String action) {
+	private UserAction(String action) {
 		this.action = action;
 	}
 
@@ -142,14 +151,14 @@ public enum DefaultUserAction {
 		return action;
 	}
 	
-	public static Map<String,DefaultUserAction> actionMap;
+	public static Map<String,UserAction> actionMap;
 	
-	public static DefaultUserAction getBy(String action){
+	public static UserAction getBy(String action){
 		if(actionMap==null){
-			synchronized(DefaultUserAction.class){
+			synchronized(UserAction.class){
 				if(actionMap==null){
-					actionMap = new HashMap<String,DefaultUserAction>();
-					for(DefaultUserAction dua:DefaultUserAction.class.getEnumConstants()){
+					actionMap = new HashMap<String,UserAction>();
+					for(UserAction dua:UserAction.class.getEnumConstants()){
 						actionMap.put(dua.action, dua);
 					}
 				}
