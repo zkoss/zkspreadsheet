@@ -15,9 +15,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 <language-addon>
 	<!-- The name of this addon. It must be unique -->
 	<addon-name>zss</addon-name>
-	<!-- Specifies what other addon this depends
-	<depends></depends>
-	-->
+	<!-- Specifies what other addon this depends-->
+	<depends>zul</depends>
 
 	<!-- Which language this addon will be added to -->
 	<language-name>xul/html</language-name>
