@@ -880,7 +880,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @deprecated since 3.0.0, use {@code #getMaxVisibleRows()} 
 	 */
 	public int getMaxrows() {
-		return _maxRows;
+		return getMaxVisibleRows();
 	}
 
 	/**
@@ -893,17 +893,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @deprecated since 3.0.0, use {@code #setMaxVisibleRows(int)} 
 	 */
 	public void setMaxrows(int maxrows) {
-		if (maxrows < 1) {
-			throw new UiException("maxrow must be greater than 0: " + maxrows);
-		}
-
-		if (_maxRows != maxrows) {
-			_maxRows = maxrows;
-			if (_rowFreeze >= _maxRows) {
-				_rowFreeze = _maxRows - 1;
-			}
-			smartUpdate("maxRows", getMaxrows());
-		}
+		setMaxVisibleRows(maxrows);
 	}
 	
 	public void setPreloadRowSize(int size) {
@@ -940,7 +930,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @deprecated since 3.0.0, use {@code #getMaxVisibleColumns()} 
 	 */
 	public int getMaxcolumns() {
-		return _maxColumns;
+		return getMaxVisibleColumns();
 	}
 
 	/**
@@ -952,19 +942,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @deprecated since 3.0.0, use {@code #setMaxVisibleColumns(int)} 
 	 */
 	public void setMaxcolumns(int maxcols) {
-		if (maxcols < 1) {
-			throw new UiException("maxcolumn must be greater than 0: " + maxcols);
-		}
-
-		if (_maxColumns != maxcols) {
-			_maxColumns = maxcols;
-
-			if (_colFreeze >= _maxColumns) {
-				_colFreeze = _maxColumns - 1;
-			}
-			
-			smartUpdate("maxColumns", getMaxcolumns());
-		}
+		setMaxVisibleColumns(maxcols);
 	}
 	
 	public void setPreloadColumnSize(int size) {
@@ -4950,7 +4928,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @since 3.0.0
 	 */
 	public int getMaxVisibleColumns() {
-		return getMaxcolumns();
+		return _maxColumns;
 	}
 
 	/**
@@ -4961,7 +4939,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @since 3.0.0
 	 */
 	public int getMaxVisibleRows() {
-		return getMaxrows();
+		return _maxRows;
 	}
 	
 	/**
@@ -4973,7 +4951,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @since 3.0.0
 	 */
 	public void setMaxVisibleColumns(int maxcols){
-		this.setMaxcolumns(maxcols);
+		if (maxcols < 1) {
+			throw new UiException("maxcolumn must be greater than 0: " + maxcols);
+		}
+
+		if (_maxColumns != maxcols) {
+			_maxColumns = maxcols;
+
+			if (_colFreeze >= _maxColumns) {
+				_colFreeze = _maxColumns - 1;
+			}
+			
+			smartUpdate("maxColumns", getMaxVisibleColumns());
+		}
 	}
 	
 	/**
@@ -4986,7 +4976,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @since 3.0.0
 	 */
 	public void setMaxVisibleRows(int maxrows){
-		this.setMaxrows(maxrows);
+		if (maxrows < 1) {
+			throw new UiException("maxrow must be greater than 0: " + maxrows);
+		}
+
+		if (_maxRows != maxrows) {
+			_maxRows = maxrows;
+			if (_rowFreeze >= _maxRows) {
+				_rowFreeze = _maxRows - 1;
+			}
+			smartUpdate("maxRows", getMaxVisibleRows());
+		}
 	}
 	
 	
