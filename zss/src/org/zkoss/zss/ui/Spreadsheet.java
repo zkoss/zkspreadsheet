@@ -84,8 +84,10 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
+import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.impl.ImporterImpl;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.BookImpl;
@@ -687,25 +689,25 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 
-	/**
-	 * it will change the spreadsheet src name as src
-	 * and book name as src => will not reload the book
-	 * @param src
-	 */
-	public void setSrcName(String src) {
-		/**
-		 * TODO model integration
-		 */
-		/*
-		BookImpl book = (BookImpl) this.getBook();
-		if (book != null)
-			book.setName(src);
-		_src = src;
-		*/
-		final XBook book = (XBook) this.getXBook();
-		if (book != null)
-			_src = src;
-	}
+//	/**
+//	 * it will change the spreadsheet src name as src
+//	 * and book name as src => will not reload the book
+//	 * @param src
+//	 */
+//	public void setSrcName(String src) {
+//		/**
+//		 * TODO model integration
+//		 */
+//		/*
+//		BookImpl book = (BookImpl) this.getBook();
+//		if (book != null)
+//			book.setName(src);
+//		_src = src;
+//		*/
+//		final XBook book = (XBook) this.getXBook();
+//		if (book != null)
+//			_src = src;
+//	}
 	
 	/**
 	 * Gets the importer that import the file in the specified src (
@@ -4988,6 +4990,29 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			smartUpdate("maxRows", getMaxVisibleRows());
 		}
 	}
+	
+	/**
+	 * Gets the importer that import the file in the specified src (
+	 * {@link #getSrc}) to {@link Book} data model. The default importer is
+	 * excel importer.
+	 * 
+	 * @return the importer
+	 */
+	public Importer getImporter(){
+		return this.getXImporter()==null?null:new ImporterImpl(getXImporter());
+	}
+	
+	/**
+	 * Sets the importer for import the book data model from a specified src.
+	 * 
+	 * @param importer the importer to import a spread sheet file from a document
+	 * format (e.g. an Excel file) by the specified src (@link
+	 * #setSrc(). The default importer is excel importer
+	 */
+	public void setImporter(Importer importer){
+		setXImporter(importer==null?null:((ImporterImpl)importer).getNative());
+	}
+	
 	
 	
 	private void refreshToolbarDisabled(){

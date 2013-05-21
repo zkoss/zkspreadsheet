@@ -5,6 +5,8 @@ import java.util.List;
 
 public interface Sheet {
 
+	public org.zkoss.poi.ss.usermodel.Sheet getPoiSheet();
+	
 	public Book getBook();
 
 	public boolean isProtected();
@@ -26,5 +28,7 @@ public interface Sheet {
 	public int getRowFreeze();
 	
 	public int getColumnFreeze();
+
+	public boolean isPrintGridlines();
 
 }

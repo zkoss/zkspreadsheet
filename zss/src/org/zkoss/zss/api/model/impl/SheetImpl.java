@@ -115,5 +115,15 @@ public class SheetImpl implements Sheet{
 	public int getColumnFreeze() {
 		return BookHelper.getColumnFreeze(getNative());
 	}
+
+	@Override
+	public boolean isPrintGridlines() {
+		return getNative().isPrintGridlines();
+	}
+
+	@Override
+	public org.zkoss.poi.ss.usermodel.Sheet getPoiSheet() {
+		return getNative();
+	}
 	
 }
