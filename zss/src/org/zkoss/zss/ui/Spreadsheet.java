@@ -237,7 +237,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	//TODO undo/redo
 	//StateManager stateManager = new StateManager(this);
-	private Map<String, Focus> _focuses = new HashMap<String, Focus>(20); //id -> Focus
+	private Map<String, Focus> _editorFocuses = new HashMap<String, Focus>(20); //id -> Focus
 
 	private Rect _focusRect = new Rect(0, 0, 0, 0);
 	private Rect _selectionRect = new Rect(0, 0, 0, 0);
@@ -522,23 +522,23 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			initBook0(book);
 		}
 	}
-	private Focus _focus;
-	private void deleteFocus() {
-		if (_selectedSheet != null && _focus != null) {
+	private Focus _selfEditorFocus;
+	private void deleteSelfEditorFocus() {
+		if (_selectedSheet != null && _selfEditorFocus != null) {
 			final XRange rng = XRanges.range(_selectedSheet);
-			rng.notifyDeleteFriendFocus(_focus);
-			((BookCtrl)_book).removeFocus(_focus);
-			_focus = null;
+			rng.notifyDeleteFriendFocus(_selfEditorFocus);
+			((BookCtrl)_book).removeFocus(_selfEditorFocus);
+			_selfEditorFocus = null;
 		}
 	}
-	private void moveFocus() {
+	private void moveSelfEditorFocus() {
 		if (_selectedSheet != null) {
-			if (_focus == null) {
-				_focus = newFocus();
-				((BookCtrl)_book).addFocus(_focus);
+			if (_selfEditorFocus == null) {
+				_selfEditorFocus = newFocus();
+				((BookCtrl)_book).addFocus(_selfEditorFocus);
 			}
 			final XRange rng = XRanges.range(_selectedSheet);
-			rng.notifyMoveFriendFocus(_focus);
+			rng.notifyMoveFriendFocus(_selfEditorFocus);
 		}
 	}
 	private EventListener _focusListener = null;
@@ -550,15 +550,15 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		syncEditorFocus();
 		int row=event.getRow();
 		int col=event.getColumn();
-		_focus.row = row;
-		_focus.col = col;
-		moveFocus();
+		_selfEditorFocus.row = row;
+		_selfEditorFocus.col = col;
+		moveSelfEditorFocus();
 	}
 	private void initBook0(XBook book) {
 		if (_book != null) {
 			if (_focusListener != null)
 				removeEventListener(Events.ON_CELL_FOUCSED, _focusListener);
-			deleteFocus();
+			deleteSelfEditorFocus();
 			_book.unsubscribe(_dataListener);
 			_book.removeVariableResolver(_variableResolver);
 			_book.removeFunctionMapper(_functionMapper);
@@ -585,9 +585,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			_book.subscribe(_dataListener);
 			_book.addVariableResolver(_variableResolver);
 			_book.addFunctionMapper(_functionMapper);
-			if (_focus == null) { //focus name default to Spreadsheet id
-				_focus = newFocus();
-				((BookCtrl)_book).addFocus(_focus);
+			if (_selfEditorFocus == null) { //focus name default to Spreadsheet id
+				_selfEditorFocus = newFocus();
+				((BookCtrl)_book).addFocus(_selfEditorFocus);
 			}
 			if (EventQueues.APPLICATION.equals(_book.getShareScope()) || EventQueues.SESSION.equals(_book.getShareScope()) ) { //have to sync focus
 				this.addEventListener(Events.ON_CELL_FOUCSED, _focusListener = new EventListener() {
@@ -2167,8 +2167,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (sheet.equals(_selectedSheet)) { //same sheet
 				final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
 				final String id = focus.id;
-				if (!id.equals(_focus.id)) {
-					final Focus ofocus = _focuses.get(id);
+				if (!id.equals(_selfEditorFocus.id)) {
+					final Focus ofocus = _editorFocuses.get(id);
 					moveEditorFocus(id, focus.name, ofocus != null ? ofocus.color : nextFocusColor(), focus.row, focus.col);
 				}
 			}
@@ -3995,7 +3995,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 	private void doSheetClean(XSheet sheet) {
 		if (getXBook().getSheetIndex(sheet) != -1)
-			deleteFocus();
+			deleteSelfEditorFocus();
 		List list = loadWidgetLoaders();
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
@@ -4028,7 +4028,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		setProtectSheet(_selectedSheet.getProtect());
 		
 		//register collaborated focus
-		moveFocus();
+		moveSelfEditorFocus();
 		_selectedSheetName = _selectedSheet.getSheetName();
 		
 		
@@ -4556,25 +4556,25 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	/**
 	 * Remove editor's focus on specified name
 	 */
-	private void removeEditorFocus(String id){
+	public void removeEditorFocus(String id){
 		response("removeEditorFocus" + _focusId.next(), new AuInvoke((Component)this, "removeEditorFocus", id));
-		_focuses.remove(id);
+		_editorFocuses.remove(id);
 	}
 	
 	/**
 	 *  Add and move other editor's focus
 	 */
-	private void moveEditorFocus(String id, String name, String color, int row ,int col){
-		if (_focus != null && !_focus.id.equals(id)) {
+	public void moveEditorFocus(String id, String name, String color, int row ,int col){
+		if (_selfEditorFocus != null && !_selfEditorFocus.id.equals(id)) {
 			response("moveEditorFocus" + _focusId.next(), new AuInvoke((Component)this, "moveEditorFocus", new String[]{id, name, color,""+row,""+col}));
-			_focuses.put(id, new Focus(id, name, color, row, col, null));
+			_editorFocuses.put(id, new Focus(id, name, color, row, col, null));
 		}
 	}
 	
 	private void syncEditorFocus() {
 		if (_book != null) {
 			synchronized(_book) {
-				for(final Iterator<Focus> it = _focuses.values().iterator(); it.hasNext();) {
+				for(final Iterator<Focus> it = _editorFocuses.values().iterator(); it.hasNext();) {
 					final Focus focus = it.next();
 					if (!((BookCtrl)_book).containsFocus(focus)) { //
 						it.remove();
@@ -4590,8 +4590,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @param name focus name that show on other Spreadsheet
 	 */
 	public void setUserName(String name) {
-		if (_focus != null) {
-			_focus.name = name;
+		if (_selfEditorFocus != null) {
+			_selfEditorFocus.name = name;
+			//TODO UPDATE self and relative
 		}
 		_userName = name;
 	}
@@ -4599,7 +4600,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	//sync friend focus position
 	private void syncFriendFocusesPosition(int left, int top, int right, int bottom) {
 		int row = -1, col = -1;
-		for(Focus focus : _focuses.values()) {
+		for(Focus focus : _editorFocuses.values()) {
 			row=focus.row;
 			col=focus.col;
 			if(col>=left && col<=right && row>=top  && row<=bottom) {

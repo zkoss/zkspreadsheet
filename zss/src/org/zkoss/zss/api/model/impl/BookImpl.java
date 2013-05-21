@@ -1,6 +1,7 @@
 package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.poi.ss.usermodel.Font;
+import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.Font.Boldweight;
@@ -90,6 +91,11 @@ public class BookImpl implements Book{
 		XSheet sheet = getNative().getWorksheet(name);
 		
 		return sheet==null?null:new SheetImpl(new SimpleRef<XSheet>(sheet));
+	}
+
+	@Override
+	public Workbook getPoiBook() {
+		return getNative();
 	}
 	
 }

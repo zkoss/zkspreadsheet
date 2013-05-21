@@ -1,12 +1,14 @@
 package org.zkoss.zss.api.model;
 
+import org.zkoss.poi.ss.usermodel.Workbook;
+
 
 public interface Book {
 	public enum BookType {
 		EXCEL_2003, EXCEL_2007
 	}
 
-	public Object getNative();
+	public Workbook getPoiBook();
 	
 	public String getBookName();
 
