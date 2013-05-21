@@ -48,7 +48,7 @@ import org.zkoss.zss.engine.event.SSDataEvent;
 //import org.zkoss.zss.model.sys.XRanges;
 //import org.zkoss.zss.model.sys.XSheet;
 //import org.zkoss.zss.model.sys.impl.BookHelper;
-import org.zkoss.zss.ui.DefaultUserAction;
+import org.zkoss.zss.ui.UserAction;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -145,7 +145,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				if (!FileHelper.hasSavePermission())
 					return;
 				
-				spreadsheet.setActionDisabled(true, DefaultUserAction.SAVE_BOOK);
+				spreadsheet.setActionDisabled(true, UserAction.SAVE_BOOK);
 			}
 		});
 
@@ -155,7 +155,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 //				toolbarMask.setVisible(!isOpen);
 //				closeBtn.setVisible(isOpen);
 				
-				spreadsheet.setActionDisabled(true, DefaultUserAction.SAVE_BOOK);
+				spreadsheet.setActionDisabled(true, UserAction.SAVE_BOOK);
 
 //				gridlinesCheckbox.setChecked(isOpen && spreadsheet.getSelectedSheet().isDisplayGridlines());
 //				protectSheet.setChecked(isOpen && spreadsheet.getSelectedSheet().getProtect());
@@ -201,7 +201,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		//enable SAVE_BOOK button
 		 boolean savePermission = FileHelper.hasSavePermission();
 		 if (savePermission) {
-			 spreadsheet.setActionDisabled(false, DefaultUserAction.SAVE_BOOK);
+			 spreadsheet.setActionDisabled(false, UserAction.SAVE_BOOK);
 		 }
 		
 		XSheet seldSheet = spreadsheet.getSelectedXSheet();
@@ -744,7 +744,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			
 //			boolean savePermission = FileHelper.hasSavePermission();
 			//save button will enable onContentChange
-			getSpreadsheet().setActionDisabled(true, DefaultUserAction.SAVE_BOOK);
+			getSpreadsheet().setActionDisabled(true, UserAction.SAVE_BOOK);
 		}
 	}
 }

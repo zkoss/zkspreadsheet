@@ -15,9 +15,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 <language-addon>
 	<!-- The name of this addon. It must be unique -->
 	<addon-name>zss</addon-name>
-	<!-- Specifies what other addon this depends
-	<depends></depends>
-	-->
+	<!-- Specifies what other addon this depends-->
+	<depends>zul</depends>
 
 	<!-- Which language this addon will be added to -->
 	<language-name>xul/html</language-name>
@@ -60,16 +59,5 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 			<mold-uri>mold/spreadsheet.js</mold-uri>
 			<css-uri>css/ss.css.dsp</css-uri>
 		</mold>
-	</component>
-	
-	<component>
-		<component-name>zssupload</component-name>
-		<component-class>org.zkoss.zss.ui.impl.Upload</component-class>
-		<widget-class>zss.Upload</widget-class>
-	</component>
-	<component>
-		<component-name>zssuploader</component-name>
-		<component-class>org.zkoss.zss.ui.impl.Uploader</component-class>
-		<widget-class>zss.Uploader</widget-class>
 	</component>
 </language-addon>

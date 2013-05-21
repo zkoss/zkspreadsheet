@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -143,7 +144,6 @@ import org.zkoss.zss.ui.sys.WidgetHandler;
 import org.zkoss.zss.ui.sys.WidgetLoader;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.impl.XulElement;
-
 
 /**
  * Spreadsheet is a rich ZK Component to handle EXCEL like behavior, it reads
@@ -302,7 +302,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private static Integer _defMaxRenderedCellSize;
 	
-//	private Set<UserAction> _actionDisabled = getDefaultActiobDisabled();
+	private Set<UserAction> _actionDisabled = new HashSet();
 //	
 //	private static Set<UserAction> _defToolbarActiobDisabled;
 	
@@ -596,6 +596,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				});
 			}
 		}
+		
+		refreshToolbarDisabled();
 	}
 	
 	private Focus newFocus() {
@@ -878,7 +880,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @deprecated since 3.0.0, use {@code #getMaxVisibleRows()} 
 	 */
 	public int getMaxrows() {
-		return _maxRows;
+		return getMaxVisibleRows();
 	}
 
 	/**
@@ -891,17 +893,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @deprecated since 3.0.0, use {@code #setMaxVisibleRows(int)} 
 	 */
 	public void setMaxrows(int maxrows) {
-		if (maxrows < 1) {
-			throw new UiException("maxrow must be greater than 0: " + maxrows);
-		}
-
-		if (_maxRows != maxrows) {
-			_maxRows = maxrows;
-			if (_rowFreeze >= _maxRows) {
-				_rowFreeze = _maxRows - 1;
-			}
-			smartUpdate("maxRows", getMaxrows());
-		}
+		setMaxVisibleRows(maxrows);
 	}
 	
 	public void setPreloadRowSize(int size) {
@@ -938,7 +930,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @deprecated since 3.0.0, use {@code #getMaxVisibleColumns()} 
 	 */
 	public int getMaxcolumns() {
-		return _maxColumns;
+		return getMaxVisibleColumns();
 	}
 
 	/**
@@ -950,19 +942,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @deprecated since 3.0.0, use {@code #setMaxVisibleColumns(int)} 
 	 */
 	public void setMaxcolumns(int maxcols) {
-		if (maxcols < 1) {
-			throw new UiException("maxcolumn must be greater than 0: " + maxcols);
-		}
-
-		if (_maxColumns != maxcols) {
-			_maxColumns = maxcols;
-
-			if (_colFreeze >= _maxColumns) {
-				_colFreeze = _maxColumns - 1;
-			}
-			
-			smartUpdate("maxColumns", getMaxcolumns());
-		}
+		setMaxVisibleColumns(maxcols);
 	}
 	
 	public void setPreloadColumnSize(int size) {
@@ -1560,7 +1540,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_showToolbar) {
 			//20130507,Dennis,add commnet check, no actionDisabled json will cause client error when show context menu.
 //			if (_actionDisabled.size() > 0) {
-				renderer.render("actionDisabled", new ArrayList()/*convertActionDisabledToJSON(_actionDisabled)*/);
+				renderer.render("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
 //			}
 			renderer.render("showToolbar", _showToolbar);
 		}
@@ -1876,6 +1856,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_protectSheet != protect) {
 			_protectSheet = protect;
 			smartUpdate("protect", protect);
+			
+			refreshToolbarDisabled();
 		}
 	}
 
@@ -4046,6 +4028,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		//register collaborated focus
 		moveFocus();
 		_selectedSheetName = _selectedSheet.getSheetName();
+		
+		
+		refreshToolbarDisabled();
 	}
 	
 	public String getSelectedSheetName() {
@@ -4217,13 +4202,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //		return _actionDisabled.contains(action);
 //	}
 	
-//	private static List<String> convertActionDisabledToJSON(Set<UserAction> disabled) {
-//		ArrayList<String> disd = new ArrayList<String>(disabled.size());
-//		for (UserAction a : disabled) {
-//			disd.add(a.toString());
-//		}
-//		return disd;
-//	}
+	private static List<String> convertActionDisabledToJSON(Set<UserAction> disabled) {
+		ArrayList<String> disd = new ArrayList<String>(disabled.size());
+		for (UserAction a : disabled) {
+			disd.add(a.toString());
+		}
+		return disd;
+	}
 	
 	/**
 	 * Sets action handler
@@ -4943,7 +4928,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @since 3.0.0
 	 */
 	public int getMaxVisibleColumns() {
-		return getMaxcolumns();
+		return _maxColumns;
 	}
 
 	/**
@@ -4954,7 +4939,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @since 3.0.0
 	 */
 	public int getMaxVisibleRows() {
-		return getMaxrows();
+		return _maxRows;
 	}
 	
 	/**
@@ -4966,7 +4951,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @since 3.0.0
 	 */
 	public void setMaxVisibleColumns(int maxcols){
-		this.setMaxcolumns(maxcols);
+		if (maxcols < 1) {
+			throw new UiException("maxcolumn must be greater than 0: " + maxcols);
+		}
+
+		if (_maxColumns != maxcols) {
+			_maxColumns = maxcols;
+
+			if (_colFreeze >= _maxColumns) {
+				_colFreeze = _maxColumns - 1;
+			}
+			
+			smartUpdate("maxColumns", getMaxVisibleColumns());
+		}
 	}
 	
 	/**
@@ -4979,6 +4976,33 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @since 3.0.0
 	 */
 	public void setMaxVisibleRows(int maxrows){
-		this.setMaxrows(maxrows);
+		if (maxrows < 1) {
+			throw new UiException("maxrow must be greater than 0: " + maxrows);
+		}
+
+		if (_maxRows != maxrows) {
+			_maxRows = maxrows;
+			if (_rowFreeze >= _maxRows) {
+				_rowFreeze = _maxRows - 1;
+			}
+			smartUpdate("maxRows", getMaxVisibleRows());
+		}
+	}
+	
+	
+	private void refreshToolbarDisabled(){
+		_actionDisabled.clear();
+		
+		if(getBook()==null){
+			_actionDisabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4BookClosed));
+		}else{
+			if(getSelectedSheet().isProtected()){
+				_actionDisabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4SheetProtected));
+			}
+			if(!getSelectedSheet().isAutoFilterEnabled()){
+				_actionDisabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4FilterDisabled));
+			}
+		}
+		smartUpdate("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
 	}
 }

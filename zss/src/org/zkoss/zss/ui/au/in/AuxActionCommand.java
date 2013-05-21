@@ -26,7 +26,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.DefaultUserAction;
+import org.zkoss.zss.ui.UserAction;
 import org.zkoss.zss.ui.event.AuxActionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.impl.XUtils;
@@ -49,7 +49,7 @@ public class AuxActionCommand implements Command {
 		
 		Spreadsheet spreadsheet = ((Spreadsheet) comp);
 		String tag = (String) data.get("tag");
-		String action = (String) data.get("act");
+		String action = (String) data.get("action");
 		Rect selection = getSelectionIfAny(data);
 		Sheet sheet = null;
 		
@@ -71,17 +71,17 @@ public class AuxActionCommand implements Command {
 			// client's act doesn't follow the Action, so I have to remap it.
 			// TODO make client use correct key directly?
 			if ("add".equals(action)) {
-				action = DefaultUserAction.ADD_SHEET.toString();
+				action = UserAction.ADD_SHEET.toString();
 			} else if ("delete".equals(action)) {
-				action = DefaultUserAction.DELETE_SHEET.toString();
+				action = UserAction.DELETE_SHEET.toString();
 			} else if ("rename".equals(action)) {
-				action = DefaultUserAction.RENAME_SHEET.toString();
+				action = UserAction.RENAME_SHEET.toString();
 			} else if ("protect".equals(action)) {
-				action = DefaultUserAction.PROTECT_SHEET.toString();
+				action = UserAction.PROTECT_SHEET.toString();
 			} else if ("moveLeft".equals(action)) {
-				action = DefaultUserAction.MOVE_SHEET_LEFT.toString();
+				action = UserAction.MOVE_SHEET_LEFT.toString();
 			} else if ("moveRight".equals(action)) {
-				action = DefaultUserAction.MOVE_SHEET_RIGHT.toString();
+				action = UserAction.MOVE_SHEET_RIGHT.toString();
 			} else {
 				throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA,
 						new Object[] { Objects.toString(data),
@@ -104,9 +104,6 @@ public class AuxActionCommand implements Command {
 			int bRow = (Integer) data.get("bRow");
 			int lCol = (Integer) data.get("lCol");
 			int rCol = (Integer) data.get("rCol");
-			Integer action = (Integer) data.get("action");
-//			Rect r = action != null ? 
-//					new Rect(action, lCol, tRow, rCol, bRow) : new Rect(lCol, tRow, rCol, bRow);
 			Rect r = new Rect(lCol, tRow, rCol, bRow);
 			return r;
 		}else{

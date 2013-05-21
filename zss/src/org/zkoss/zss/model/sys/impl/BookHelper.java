@@ -384,6 +384,11 @@ public final class BookHelper {
 		}
 	}
 
+	public static void notifyAutoFilterChange(Ref ref,boolean show) {
+		final RefSheet refSheet = ref.getOwnerSheet();
+		final RefBook refBook = refSheet.getOwnerBook();
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_AUTOFILTER_CHANGE, ref, show));
+	}
 	public static void notifyBtnChanges(Set<Ref> all) {
 		if (all != null) {
 			for(Ref ref : all) {

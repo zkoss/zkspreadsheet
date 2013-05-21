@@ -589,41 +589,41 @@ public class EnumUtil {
 
 	public static ChartType toChartType(Type type) {
 		switch(type){
-		case Area3D:
+		case AREA_3D:
 			return ChartType.Area3D;
-		case Area:
+		case AREA:
 			return ChartType.Area3D;
-		case Bar3D:
+		case BAR_3D:
 			return ChartType.Bar3D;
-		case Bar:
+		case BAR:
 			return ChartType.Bar;
-		case Bubble:
+		case BUBBLE:
 			return ChartType.Bubble;
-		case Column:
+		case COLUMN:
 			return ChartType.Column;
-		case Column3D:
+		case COLUMN_3D:
 			return ChartType.Column3D;
-		case Doughnut:
+		case DOUGHNUT:
 			return ChartType.Doughnut;
-		case Line3D:
+		case LINE_3D:
 			return ChartType.Line3D;
-		case Line:
+		case LINE:
 			return ChartType.Line;
-		case OfPie:
+		case OF_PIE:
 			return ChartType.OfPie;
-		case Pie3D:
+		case PIE_3D:
 			return ChartType.Pie3D;
-		case Pie:
+		case PIE:
 			return ChartType.Pie;
-		case Radar:
+		case RADAR:
 			return ChartType.Radar;
-		case Scatter:
+		case SCATTER:
 			return ChartType.Scatter;
-		case Stock:
+		case STOCK:
 			return ChartType.Stock;
-		case Surface3D:
+		case SURFACE_3D:
 			return ChartType.Surface3D;
-		case Surface:
+		case SURFACE:
 			return ChartType.Surface;
 		}
 		throw new IllegalArgumentException("unknow chart type "+type);
