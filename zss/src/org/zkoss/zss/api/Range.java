@@ -40,24 +40,24 @@ public interface Range {
 	}
 	
 	public enum PasteType{
-		PASTE_ALL,
-		PASTE_ALL_EXCEPT_BORDERS,
-		PASTE_COLUMN_WIDTHS,
-		PASTE_COMMENTS,
-		PASTE_FORMATS/*all formats*/,
-		PASTE_FORMULAS/*include values and formulas*/,
-		PASTE_FORMULAS_AND_NUMBER_FORMATS,
-		PASTE_VALIDATAION,
-		PASTE_VALUES,
-		PASTE_VALUES_AND_NUMBER_FORMATS;
+		ALL,
+		ALL_EXCEPT_BORDERS,
+		COLUMN_WIDTHS,
+		COMMENTS,
+		FORMATS/*all formats*/,
+		FORMULAS/*include values and formulas*/,
+		FORMULAS_AND_NUMBER_FORMATS,
+		VALIDATAION,
+		VALUES,
+		VALUES_AND_NUMBER_FORMATS;
 	}
 	
 	public enum PasteOperation{
-		PASTEOP_ADD,
-		PASTEOP_SUB,
-		PASTEOP_MUL,
-		PASTEOP_DIV,
-		PASTEOP_NONE;
+		ADD,
+		SUB,
+		MUL,
+		DIV,
+		NONE;
 	}
 	
 	public enum ApplyBorderType{

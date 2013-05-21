@@ -18,6 +18,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui;
 
+import org.zkoss.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.util.CellReference;
+
 /**
  * a class to represent a rectangle range with 4 value : left, top, right, bottom
  * @author Dennis.Chen
@@ -36,11 +39,17 @@ public class Rect {
 	private int _right = -1;
 	private int _bottom = -1;
 	
+	private String areaRef;
+	
 	public Rect(){
 	}
 	
 	public Rect(int left,int top,int right,int bottom){
 		set(left,top,right,bottom);
+	}
+	public Rect(String areaReference){
+		AreaReference ar = new AreaReference(areaReference);
+		set(ar.getFirstCell().getCol(),ar.getFirstCell().getRow(),ar.getLastCell().getCol(),ar.getLastCell().getRow());
 	}
 	
 //	public Rect(int action, int left,int top,int right,int bottom){
@@ -102,6 +111,15 @@ public class Rect {
 	public boolean contains(int tRow, int lCol, int bRow, int rCol) {
 		return	tRow >= _top && lCol >= _left &&
 				bRow <= _bottom && rCol <= _right;
+	}
+	
+	public String toAreaReference(){
+		if(areaRef==null){
+			areaRef = new AreaReference(new CellReference(_top,_left),new CellReference(_bottom,_right)).toString();
+		}
+		return areaRef;
+		
+		
 	}
 
 	public int hashCode() {

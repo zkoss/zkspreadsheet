@@ -74,16 +74,16 @@ public class CellOperationUtil {
 		return src.paste(dest);
 	}
 	public static boolean pasteFormula(Range src, Range dest) {
-		return pasteSpecial(src, dest, PasteType.PASTE_FORMULAS, PasteOperation.PASTEOP_NONE, false, false);
+		return pasteSpecial(src, dest, PasteType.FORMULAS, PasteOperation.NONE, false, false);
 	}
 	public static boolean pasteValue(Range src, Range dest) {
-		return pasteSpecial(src, dest, PasteType.PASTE_VALUES, PasteOperation.PASTEOP_NONE, false, false);
+		return pasteSpecial(src, dest, PasteType.VALUES, PasteOperation.NONE, false, false);
 	}
 	public static boolean pasteAllExceptBorder(Range src, Range dest) {
-		return pasteSpecial(src, dest, PasteType.PASTE_ALL_EXCEPT_BORDERS, PasteOperation.PASTEOP_NONE, false, false);
+		return pasteSpecial(src, dest, PasteType.ALL_EXCEPT_BORDERS, PasteOperation.NONE, false, false);
 	}
 	public static boolean pasteTranspose(Range src, Range dest) {
-		return pasteSpecial(src, dest, PasteType.PASTE_ALL, PasteOperation.PASTEOP_NONE, false, true);
+		return pasteSpecial(src, dest, PasteType.ALL, PasteOperation.NONE, false, true);
 	}
 	
 	public static boolean pasteSpecial(Range src, Range dest,PasteType pasteType, PasteOperation pasteOperation, boolean skipBlank, boolean transpose){

@@ -4174,25 +4174,25 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return _widgetLoaders;
 	}
 
-//	/**
-//	 * Sets the {@link Action} disabled
-//	 * 
-//	 * @param disabled
-//	 * @param action
-//	 */
-//	public void setActionDisabled(boolean disabled, Action action) {
-//		boolean changed = false;
-//		if (disabled && !_actionDisabled.contains(action)) {
-//			_actionDisabled.add(action);
-//			changed = true;
-//		} else if (!disabled && _actionDisabled.contains(action)) {
-//			_actionDisabled.remove(action);
-//			changed = true;
-//		}
-//		if (changed) {
-//			smartUpdate("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
-//		}
-//	}
+	/**
+	 * Sets the {@link UserAction} disabled
+	 * 
+	 * @param disabled
+	 * @param action
+	 */
+	public void disableUserAction(UserAction action, boolean disabled) {
+		boolean changed = false;
+		if (disabled && !_actionDisabled.contains(action)) {
+			_actionDisabled.add(action);
+			changed = true;
+		} else if (!disabled && _actionDisabled.contains(action)) {
+			_actionDisabled.remove(action);
+			changed = true;
+		}
+		if (changed) {
+			refreshToolbarDisabled();
+		}
+	}
 	
 //	/**
 //	 * Returns whther {@link Action} disabled or not
@@ -5017,18 +5017,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	
 	private void refreshToolbarDisabled(){
-		_actionDisabled.clear();
 		
+		Set<UserAction> disabled = new HashSet<UserAction>(_actionDisabled);
+		disabled.clear();
 		if(getBook()==null){
-			_actionDisabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4BookClosed));
+			disabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4BookClosed));
 		}else{
 			if(getSelectedSheet().isProtected()){
-				_actionDisabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4SheetProtected));
+				disabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4SheetProtected));
 			}
 			if(!getSelectedSheet().isAutoFilterEnabled()){
-				_actionDisabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4FilterDisabled));
+				disabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4FilterDisabled));
 			}
 		}
-		smartUpdate("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
+		smartUpdate("disabled", convertActionDisabledToJSON(_actionDisabled));
 	}
 }

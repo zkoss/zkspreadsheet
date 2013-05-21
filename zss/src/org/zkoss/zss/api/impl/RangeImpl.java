@@ -192,7 +192,7 @@ public class RangeImpl implements Range{
 	 *         locked cell in the destination range will always cause past fail.
 	 */
 	public boolean paste(Range dest) {		
-		return pasteSpecial(dest,PasteType.PASTE_ALL,PasteOperation.PASTEOP_NONE,false,false);
+		return pasteSpecial(dest,PasteType.ALL,PasteOperation.NONE,false,false);
 	}
 	
 	/**

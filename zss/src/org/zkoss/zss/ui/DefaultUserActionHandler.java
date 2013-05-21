@@ -123,7 +123,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	UserAction.REAPPLY_FILTER
 	};	
 	
-	private void checkCtx(){
+	protected void checkCtx(){
 		if(_ctx.get()==null){
 			throw new IllegalAccessError("can't found action context");
 		}
@@ -566,13 +566,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	
 	protected void setClipboard(Clipboard clipboard){
 		_clipboard = clipboard;
-		if(_clipboard!=null)
+		if(_clipboard!=null && _ctx.get()!=null)
 			getSpreadsheet().setHighlight(_clipboard.sourceRect);
 	}
 	
 	protected void clearClipboard() {
 		_clipboard = null;
-		getSpreadsheet().setHighlight(null);
+		if(_ctx.get()!=null)
+			getSpreadsheet().setHighlight(null);
 		//TODO: shall also clear client side clipboard if possible
 	}
 	
@@ -636,23 +637,23 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	}
 	
 	protected boolean doPaste() {
-		return doPaste(PasteType.PASTE_ALL,PasteOperation.PASTEOP_NONE,false,false);
+		return doPaste(PasteType.ALL,PasteOperation.NONE,false,false);
 	}
 	
 	protected boolean doPasteFormula() {
-		return doPaste(PasteType.PASTE_FORMULAS,PasteOperation.PASTEOP_NONE,false,false);
+		return doPaste(PasteType.FORMULAS,PasteOperation.NONE,false,false);
 	}
 	
 	protected boolean doPasteValue() {
-		return doPaste(PasteType.PASTE_VALUES,PasteOperation.PASTEOP_NONE,false,false);
+		return doPaste(PasteType.VALUES,PasteOperation.NONE,false,false);
 	}
 	
 	protected boolean doPasteAllExceptBorder() {
-		return doPaste(PasteType.PASTE_ALL_EXCEPT_BORDERS,PasteOperation.PASTEOP_NONE,false,false);
+		return doPaste(PasteType.ALL_EXCEPT_BORDERS,PasteOperation.NONE,false,false);
 	}
 	
 	protected boolean doPasteTranspose() {
-		return doPaste(PasteType.PASTE_ALL, PasteOperation.PASTEOP_NONE, false, true);
+		return doPaste(PasteType.ALL, PasteOperation.NONE, false, true);
 	}
 	
 	protected boolean doCut() {
@@ -1258,7 +1259,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		return t;
 	}
 
-	protected static class UserActionContext {
+	public static class UserActionContext {
 
 		final Spreadsheet spreadsheet;
 		final Sheet sheet;

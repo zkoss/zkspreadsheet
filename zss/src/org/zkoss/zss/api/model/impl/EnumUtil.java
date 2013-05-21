@@ -43,15 +43,15 @@ public class EnumUtil {
 	public static int toRangePasteOpNative(PasteOperation op) {
 		assertArgNotNull(op,"paste operation");
 		switch(op){
-		case PASTEOP_ADD:
+		case ADD:
 			return XRange.PASTEOP_ADD;
-		case PASTEOP_SUB:
+		case SUB:
 			return XRange.PASTEOP_SUB;
-		case PASTEOP_MUL:
+		case MUL:
 			return XRange.PASTEOP_MUL;
-		case PASTEOP_DIV:
+		case DIV:
 			return XRange.PASTEOP_DIV;
-		case PASTEOP_NONE:
+		case NONE:
 			return XRange.PASTEOP_NONE;
 		}
 		throw new IllegalArgumentException("unknow paste operation "+op);
@@ -61,25 +61,25 @@ public class EnumUtil {
 	public static int toRangePasteTypeNative(PasteType type) {
 		assertArgNotNull(type,"paste type");
 		switch(type){
-		case PASTE_ALL:
+		case ALL:
 			return XRange.PASTE_ALL;
-		case PASTE_ALL_EXCEPT_BORDERS:
+		case ALL_EXCEPT_BORDERS:
 			return XRange.PASTE_ALL_EXCEPT_BORDERS;
-		case PASTE_COLUMN_WIDTHS:
+		case COLUMN_WIDTHS:
 			return XRange.PASTE_COLUMN_WIDTHS;
-		case PASTE_COMMENTS:
+		case COMMENTS:
 			return XRange.PASTE_COMMENTS;
-		case PASTE_FORMATS:
+		case FORMATS:
 			return XRange.PASTE_FORMATS;
-		case PASTE_FORMULAS:
+		case FORMULAS:
 			return XRange.PASTE_FORMULAS;
-		case PASTE_FORMULAS_AND_NUMBER_FORMATS:
+		case FORMULAS_AND_NUMBER_FORMATS:
 			return XRange.PASTE_FORMULAS_AND_NUMBER_FORMATS;
-		case PASTE_VALIDATAION:
+		case VALIDATAION:
 			return XRange.PASTE_VALIDATAION;
-		case PASTE_VALUES:
+		case VALUES:
 			return XRange.PASTE_VALUES;
-		case PASTE_VALUES_AND_NUMBER_FORMATS:
+		case VALUES_AND_NUMBER_FORMATS:
 			return XRange.PASTE_VALUES_AND_NUMBER_FORMATS;
 		}
 		throw new IllegalArgumentException("unknow paste operation "+type);
