@@ -16,23 +16,22 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.au.in;
 
-import java.util.List;
 import java.util.Map;
 
 import org.zkoss.lang.Objects;
-import org.zkoss.poi.ss.usermodel.Chart;
-import org.zkoss.poi.ss.usermodel.Picture;
-import org.zkoss.poi.ss.usermodel.ZssChartX;
-import org.zkoss.poi.xssf.usermodel.XSSFClientAnchor;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.model.sys.XRanges;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.DrawingManager;
-import org.zkoss.zss.model.sys.impl.SheetCtrl;
+import org.zkoss.zss.api.SheetAnchor;
+import org.zkoss.zss.api.model.Chart;
+import org.zkoss.zss.api.model.Picture;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.event.Events;
+import org.zkoss.zss.ui.event.WidgetUpdateEvent;
+import org.zkoss.zss.ui.event.WidgetAction;
+import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * @author sam
@@ -46,84 +45,75 @@ public class WidgetUpdateCommand implements Command {
 		if (comp == null)
 			throw new UiException(MZk.ILLEGAL_REQUEST_COMPONENT_REQUIRED, this);
 		final Map data = request.getData();
-		if (data == null || data.size() != 11)
+		if (data == null || data.size() != 12)
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA,
 				new Object[] {Objects.toString(data), this});
 		
-		String type = (String) data.get("type");
-		if ("onWidgetMove".equals(type) || "onWidgetSize".equals(type)) {
-			processWidgetMove(((Spreadsheet) comp).getSelectedXSheet(), data);
+		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		
+		String sheetId= (String) data.get("sheetId");
+		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
+			return;
+		
+		String act = (String) data.get("action");
+		WidgetAction action = null;
+		if("move".equals(act)){
+			action = WidgetAction.MOVE;
+		}else if("resize".equals(act)){
+			action = WidgetAction.RESIZE;
+		}else{
+			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA,
+					new Object[] {Objects.toString(data), this});
 		}
+		
+		
+		SheetAnchor anchor = getAnchor(data);
+		if(anchor==null){
+			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA,
+					new Object[] {Objects.toString(data), this});
+		}
+		
+		Object widgetData = getWidgetData(sheet,data);
+		if(widgetData==null){
+			//TODO ignore it or throw exception?
+			return;
+		}
+
+
+		WidgetUpdateEvent event = new WidgetUpdateEvent(Events.ON_WIDGET_UPDATE, comp, sheet, action, widgetData, anchor);
+		
+		org.zkoss.zk.ui.event.Events.postEvent(event);
 	}
 
-	private void processWidgetMove(XSheet sheet, Map data) {
-		String widgetType = (String) data.get("wgt");
-		if ("chart".equals(widgetType)) {
-			processChartMove(sheet, data);
-		} else if ("image".equals(widgetType)) {
-			processPictureMove(sheet, data);
-		}
+	private SheetAnchor getAnchor(Map data) {
+		int dx1 = (Integer) data.get("dx1");
+		int dy1 = (Integer) data.get("dy1");
+		int dx2 = (Integer) data.get("dx2");
+		int dy2 = (Integer) data.get("dy2");
+		int col1 = (Integer) data.get("col1");
+		int row1 = (Integer) data.get("row1");
+		int col2 = (Integer) data.get("col2");
+		int row2 = (Integer) data.get("row2");
+		return new SheetAnchor(row1, col1, dx1, dy1, row2, col2, dx2, dy2);
 	}
-	
-	private void processChartMove(XSheet sheet, Map data) {
-		DrawingManager dm = ((SheetCtrl)sheet).getDrawingManager();
-		String widgetId = (String) data.get("id");
-		ZssChartX chartX = null;
-		List<ZssChartX> charts = dm.getChartXs();
-		for (ZssChartX c : charts) {
-			if (c != null) {
-				if (c.getChartId().equals(widgetId)) {
-					chartX = c;
-					break;
-				}	
+
+	private Object getWidgetData(Sheet sheet,Map data) {
+		String id = (String) data.get("wgtId");
+		String widgetType = (String) data.get("wgtType");
+		if ("image".equals(widgetType)) {
+			for(Picture p:sheet.getPictures()){
+				if(p.getId().equals(id)){
+					return p;
+				}
+			}
+			
+		} else if ("chart".equals(widgetType)) {
+			for(Chart c:sheet.getCharts()){
+				if(c.getId().equals(id)){
+					return c;
+				}
 			}
 		}
-		Chart chart = chartX.getChart();
-		if (chart != null) {
-			int dx1 = (Integer) data.get("dx1");
-			int dy1 = (Integer) data.get("dy1");
-			int dx2 = (Integer) data.get("dx2");
-			int dy2 = (Integer) data.get("dy2");
-			int col1 = (Integer) data.get("col1");
-			int row1 = (Integer) data.get("row1");
-			int col2 = (Integer) data.get("col2");
-			int row2 = (Integer) data.get("row2");
-			XRanges.range(sheet).moveChart(chart, 
-					new XSSFClientAnchor(pxToEmu(dx1), pxToEmu(dy1), pxToEmu(dx2), pxToEmu(dy2), col1, row1, col2, row2));
-		}
-	}
-	
-	private void processPictureMove(XSheet sheet, Map data) {
-		DrawingManager dm = ((SheetCtrl)sheet).getDrawingManager();
-		String widgetId = (String) data.get("id");
-		Picture pic = null;
-		List<Picture> pics = dm.getPictures();
-		for (Picture p : pics) {
-			if (p.getPictureId().equals(widgetId)) {
-				pic = p;
-				break;
-			}
-		}
-		if (pic != null) {
-			int dx1 = (Integer) data.get("dx1");
-			int dy1 = (Integer) data.get("dy1");
-			int dx2 = (Integer) data.get("dx2");
-			int dy2 = (Integer) data.get("dy2");
-			int col1 = (Integer) data.get("col1");
-			int row1 = (Integer) data.get("row1");
-			int col2 = (Integer) data.get("col2");
-			int row2 = (Integer) data.get("row2");
-			XRanges.range(sheet).movePicture(pic, 
-					new XSSFClientAnchor(pxToEmu(dx1), pxToEmu(dy1), pxToEmu(dx2), pxToEmu(dy2), col1, row1, col2, row2));
-		}
-	}
-	
-	public static int emuToPx(int emu) {
-		return (int) Math.round(((double)emu) * 96 / 72 / 20 / 635); //assume 96dpi
-	}
-	
-	/** convert pixel to EMU */
-	public static int pxToEmu(int px) {
-		return (int) Math.round(((double)px) * 72 * 20 * 635 / 96); //assume 96dpi
+		return null;
 	}
 }

@@ -24,7 +24,7 @@ import org.zkoss.zss.ui.Rect;
 
 /**
  * @author dennis
- *
+ * @since 3.0.0
  */
 public class AuxActionEvent extends org.zkoss.zk.ui.event.Event {
 

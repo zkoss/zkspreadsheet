@@ -213,6 +213,7 @@ zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 			if (!this._isHyperlinkTimeout(new Date().getTime())) {//not time out yet
 				var href = elm.href,
 					type = elm.getAttribute('z.t');
+				type = parseInt(type);//it is string in attribute
 				this.sheet._wgt.linkTo(href, type, evt);
 				this.sheet._sendOnHyperlink(row, col, href, type, evt);
 			}

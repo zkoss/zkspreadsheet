@@ -2,14 +2,10 @@ package org.zkoss.zss.ui;
 
 import java.util.Map;
 
-import org.zkoss.image.AImage;
 import org.zkoss.lang.Strings;
-import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.ApplyBorderType;
@@ -30,10 +26,10 @@ import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.DefaultUserActionHandler.Clipboard.Type;
 import org.zkoss.zss.ui.event.AuxActionEvent;
+import org.zkoss.zss.ui.event.CellSelectionAction;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
-import org.zkoss.zss.ui.event.SelectionChangeEvent;
-import org.zkoss.zul.Fileupload;
+import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
 import org.zkoss.zul.Messagebox;
 
 public class DefaultUserActionHandler implements UserActionHandler {
@@ -227,8 +223,6 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return doClearAll();
 		} else if (DefaultUserAction.HYPERLINK.equals(dua)) {
 			return doHyperlink();
-		} else if (DefaultUserAction.INSERT_PICTURE.equals(dua)) {
-			return doInsertPicture();
 		} else if (DefaultUserAction.CLOSE_BOOK.equals(dua)) {
 			return doCloseBook();
 		} else if (DefaultUserAction.FORMAT_CELL.equals(dua)) {
@@ -449,56 +443,6 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		return true;
 	}
 	
-	
-	protected boolean doInsertPicture(){
-		final Sheet sheet = getSheet();
-		final Rect selection = getSelection();
-		
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
-		if(range.isProtected()){
-			showProtectMessage();
-			return true;
-		}
-		
-		
-		//keep the action context, we are doing job asynchronized.
-		final UserActionContext ctx = getContext();
-		
-		Fileupload.get(1,new EventListener<UploadEvent>() {
-			public void onEvent(UploadEvent event) throws Exception {
-				setContext(ctx);//set the action context back to continue the job
-				try{
-					Media media = event.getMedia();
-					doInsertPicture(media);
-				}finally{
-					releaseContext();
-				}
-			}
-		});
-		return true;
-	}
-	
-	protected boolean doInsertPicture(Media media) {
-		if(media==null){
-			showWarnMessage("Can't get the uploaded file");
-			return true;
-		}
-		
-		if(!(media instanceof AImage) || SheetOperationUtil.getPictureFormat((AImage)media)==null){
-			showWarnMessage("Can't support the uploaded file");
-			return true;
-		}
-		
-		final Sheet sheet = getSheet();
-		final Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
-		
-		SheetOperationUtil.addPicture(range,(AImage)media);
-		
-		clearClipboard();
-		return true;
-	}
-		
 	/**
 	 * Execute when user press key
 	 * @param event
@@ -1339,7 +1283,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 
 	@Override
 	public String[] getInterestedEvents() {
-		return new String[] { Events.ON_AUX_ACTION,Events.ON_SHEET_SELECTED, Events.ON_CTRL_KEY, Events.ON_SELECTION_CHANGE, 
+		return new String[] { Events.ON_AUX_ACTION,Events.ON_SHEET_SELECTED, Events.ON_CTRL_KEY, Events.ON_CELL_SELECTION_UPDATE, 
 				org.zkoss.zk.ui.event.Events.ON_CANCEL,
 				Events.ON_CELL_DOUBLE_CLICK, Events.ON_START_EDITING };
 	}
@@ -1366,8 +1310,8 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			sheet = evt.getSheet();
 			action = evt.getAction();
 			extraData = evt.getExtraData();
-		}else if(event instanceof SelectionChangeEvent){
-			SelectionChangeEvent evt = ((SelectionChangeEvent)event);
+		}else if(event instanceof CellSelectionUpdateEvent){
+			CellSelectionUpdateEvent evt = ((CellSelectionUpdateEvent)event);
 			selection = new Rect(evt.getLeft(),evt.getTop(),evt.getRight(),evt.getBottom());
 		}else{
 			selection = spreadsheet.getSelection();
@@ -1415,10 +1359,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 					getSpreadsheet().smartUpdate("doPasteFromServer", true);
 				}
 			}
-		}else if(Events.ON_SELECTION_CHANGE.equals(nm)){
-			SelectionChangeEvent evt = (SelectionChangeEvent)event;
+		}else if(Events.ON_CELL_SELECTION_UPDATE.equals(nm)){
+			CellSelectionUpdateEvent evt = (CellSelectionUpdateEvent)event;
 			//last selection either get form selection or from event
-			doSelectionChange(new Rect(evt.getOrigleft(),evt.getOrigtop(),evt.getOrigright(),evt.getOrigbottom()),getSelection());
+			if(evt.getAction()==CellSelectionAction.MOVE){
+				doMoveCellSelection(new Rect(evt.getOrigleft(),evt.getOrigtop(),evt.getOrigright(),evt.getOrigbottom()),getSelection());
+			}else if(evt.getAction()==CellSelectionAction.RESIZE){
+				doResizeCellSelection(new Rect(evt.getOrigleft(),evt.getOrigtop(),evt.getOrigright(),evt.getOrigbottom()),getSelection());
+			}
 		}else if(Events.ON_CELL_DOUBLE_CLICK.equals(nm)){//TODO check if we need it still
 			clearClipboard();
 		}else if(Events.ON_START_EDITING.equals(nm)){
@@ -1428,7 +1376,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 	}
 	
-	protected boolean doSelectionChange(Rect original,Rect selection) {
+	protected boolean doMoveCellSelection(Rect original,Rect selection) {
 		Sheet sheet = getSheet();
 		Range src = Ranges.range(sheet,original.getTop(),original.getLeft(),original.getBottom(),original.getRight());
 		Range dest = Ranges.range(sheet,selection.getTop(),selection.getLeft(),selection.getBottom(),selection.getRight());
@@ -1438,20 +1386,24 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return true;
 		}
 		
-		int orgW = original.getRight()-original.getLeft();
-		int orgH = original.getBottom()-original.getTop();
-		int w = selection.getRight()-selection.getLeft();
-		int h = selection.getBottom()-selection.getTop();
+		final int nRow = selection.getTop() - original.getTop();
+		final int nCol = selection.getLeft() - original.getLeft();
+		SheetOperationUtil.shift(src,nRow, nCol);
 		
+		return true;
+	}
+	
+	protected boolean doResizeCellSelection(Rect original,Rect selection) {
+		Sheet sheet = getSheet();
+		Range src = Ranges.range(sheet,original.getTop(),original.getLeft(),original.getBottom(),original.getRight());
+		Range dest = Ranges.range(sheet,selection.getTop(),selection.getLeft(),selection.getBottom(),selection.getRight());
 		
-		if (orgW==w && orgH==h) {//move
-			final int nRow = selection.getTop() - original.getTop();
-			final int nCol = selection.getLeft() - original.getLeft();
-			SheetOperationUtil.shift(src,nRow, nCol);
-		} else{//resize
-			
-			SheetOperationUtil.autoFill(src,dest, AutoFillType.DEFAULT);
-		}	
+		if(dest.isProtected()){
+			showProtectMessage();
+			return true;
+		}
+		
+		SheetOperationUtil.autoFill(src,dest, AutoFillType.DEFAULT);	
 		
 		return true;
 	}

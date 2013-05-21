@@ -1,4 +1,4 @@
-/* HeaderEvent.java
+/* AA.java
 
 {{IS_NOTE
 	Purpose:
@@ -6,14 +6,12 @@
 	Description:
 		
 	History:
-		Dec 19, 2007 2:18:10 PM     2007, Created by Dennis.Chen
+		2013/5/20 , Created by dennis
 }}IS_NOTE
 
-Copyright (C) 2007 Potix Corporation. All Rights Reserved.
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 
 {{IS_RIGHT
-	This program is distributed under GPL Version 2.0 in the hope that
-	it will be useful, but WITHOUT ANY WARRANTY.
 }}IS_RIGHT
 */
 package org.zkoss.zss.ui.event;
@@ -24,27 +22,30 @@ import org.zkoss.zk.ui.event.Event;
 //import org.zkoss.zss.model.Sheet;
 
 /**
- * A class from handle event which about header
+ * Event about header update
  * @author Dennis.Chen
+ * @since 3.0.0
  */
-public class HeaderEvent extends Event{
+public class HeaderUpdateEvent extends Event{
 	private static final long serialVersionUID = 1L;
-	static public final int TOP_HEADER = 0;
-	static public final int LEFT_HEADER = 1;
+//	static public final int TOP_HEADER = 0;
+//	static public final int LEFT_HEADER = 1;
 	
 	private Sheet _sheet;
-	private int _type;
+	private HedaerType _type;
+	private HeaderAction _action;
 	private int _index;
 	private boolean _hidden;
 	private int _size;
 
-	public HeaderEvent(String name, Component target,Sheet sheet, int type ,int index, int size, boolean hidden) {
+	public HeaderUpdateEvent(String name, Component target,Sheet sheet, HedaerType type, HeaderAction acton,int index, int size, boolean hidden) {
 		super(name, target, size);
 		_sheet = sheet;
 		this._type = type;
 		this._index = index;
 		this._hidden = hidden;
 		this._size = size;
+		this._action = acton;
 	}
 	
 //	public HeaderEvent(String name, Component target,Sheet sheet, int type ,int index, boolean hidden) {
@@ -69,10 +70,10 @@ public class HeaderEvent extends Event{
 	
 	
 	/**
-	 * get type of this event, it will be {@link HeaderEvent#TOP_HEADER} or (@link HeaderEvent#LEFT_HEADER} 
+	 * get type of this event 
 	 * @return the type of header
 	 */
-	public int getType(){
+	public HedaerType getType(){
 		return _type;
 	}
 	
@@ -90,6 +91,14 @@ public class HeaderEvent extends Event{
 	 */
 	public int getSize(){
 		return _size;
+	}
+	
+	/**
+	 * Returns the action 
+	 * @return
+	 */
+	public HeaderAction getAction(){
+		return _action;
 	}
 	
 	public String toString(){

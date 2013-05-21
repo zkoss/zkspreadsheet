@@ -959,16 +959,16 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		}
 	},
 	/**
-	 * Fire Move widget event
+	 * Fire widget update event
 	 * 
 	 * type
 	 * <ul>
-	 * 	<li>onWidgetSize</li>
-	 * 	<li>onWidgetMove</li>
+	 * 	<li>move</li>
+	 * 	<li>resize</li>
 	 * </li>
 	 * 
 	 * @param string wgt the widget type
-	 * @param string type the event type
+	 * @param string action the event type
 	 * @param string id the id of the widget
 	 * @param int dx1 the x coordinate within the first cell
 	 * @param int dy1 the y coordinate within the first cell
@@ -979,8 +979,8 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	 * @param int col2 the column (0 based) of the second cell
 	 * @param int row2 the row (0 based) of the second cell
 	 */
-	fireMoveWidgetEvt: function (wgt, type, id, dx1, dy1, dx2, dy2, col1, row1, col2, row2) {
-		this.fire('onZSSMoveWidget', {wgt: wgt, type: type, id: id, dx1: dx1, dy1: dy1, 
+	fireWidgetUpdatEvt: function (wgt, action, id, dx1, dy1, dx2, dy2, col1, row1, col2, row2) {
+		this.fire('onWidgetUpdate', {sheetId:this.getSheetId(), wgtType: wgt, action: action, wgtId: id, dx1: dx1, dy1: dy1, 
 			dx2: dx2, dy2: dy2, col1: col1, row1: row1, col2: col2, row2: row2}, {toServer: true}, 25);
 	},
 	fireToolbarAction: function (act, extra) {

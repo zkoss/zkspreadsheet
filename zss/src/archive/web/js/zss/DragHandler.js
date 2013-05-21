@@ -105,9 +105,9 @@ zss.DragHandler = zk.$extends(zk.Object, {
  * SelDrag handle mouse dragging selection
  */
 zss.SelDrag = zk.$extends(zss.DragHandler, {
-	$init: function (sheet, type, row, col, key, merr) {
+	$init: function (sheet, selType, row, col, key, merr) {
 		this.$supers('$init', arguments);
-		this.type = type;
+		this.selType = selType;
 		this.row = row;
 		this.col = col;
 		this.lastrow = row;
@@ -123,7 +123,7 @@ zss.SelDrag = zk.$extends(zss.DragHandler, {
 		var sheet = this.sheet,
 			ls = sheet.getLastSelection();
 
-		sheet._sendOnCellSelection(this.type, ls.left, ls.top, ls.right, ls.bottom);
+		sheet._sendOnCellSelection(this.selType, ls.left, ls.top, ls.right, ls.bottom);
 		this.cleanup();
 	},
 	/**
@@ -147,9 +147,9 @@ zss.SelDrag = zk.$extends(zss.DragHandler, {
 			var cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
 			row = cellpos[0];
 			col = cellpos[1];
-		} else if (this.type == zss.SelDrag.SELROW && (cmp = zkS.parentByZSType(elm, "SLheader", 1)) != null) {//move on left header
+		} else if (this.selType == zss.SEL.ROW && (cmp = zkS.parentByZSType(elm, "SLheader", 1)) != null) {//move on left header
 			row = cmp.ctrl.index;
-		} else if (this.type == zss.SelDrag.SELCOL && (cmp = zkS.parentByZSType(elm, "STheader", 1)) != null) {//move on top header
+		} else if (this.selType == zss.SEL.COL && (cmp = zkS.parentByZSType(elm, "STheader", 1)) != null) {//move on top header
 			col = cmp.ctrl.index;
 		} else if ((cmp = zkS.parentByZSType(elm, ["SSelect", "SHighlight"], 1)) != null) {//move on select
 			var cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
@@ -184,7 +184,7 @@ zss.SelDrag = zk.$extends(zss.DragHandler, {
 			}
 
 			if (dir != "" && (!this.scrollctrl || this.scrollctrl.getDir() == "")) { 
-				var dironly = (this.type == zss.SelDrag.SELROW ? zss.AutoScrollCtrl.ROWONLY: this.type == zss.SelDrag.SELCOL ? zss.AutoScrollCtrl.COLONLY: "");
+				var dironly = (this.selType == zss.SEL.ROW ? zss.AutoScrollCtrl.ROWONLY: this.selType == zss.SEL.COL ? zss.AutoScrollCtrl.COLONLY: "");
 				this.scrollctrl = new zss.AutoScrollCtrl(sheet, dir, dironly);
 			} else if (this.scrollctrl)
 				this.scrollctrl.setDir(dir);
@@ -209,17 +209,17 @@ zss.SelDrag = zk.$extends(zss.DragHandler, {
 		if (row < 0) row = 0;
 		if (col < 0) col = 0;
 		
-		if (this.type == zss.SelDrag.SELROW) {
+		if (this.selType == zss.SEL.ROW) {
 			if (this.lastrow != row && row>-1) {
 				this.lastrow = row;
 				sheet.moveRowSelection(this.row, row);
 			}
-		} else if (this.type == zss.SelDrag.SELCOL) {
+		} else if (this.selType == zss.SEL.COL) {
 			if (this.lastcol != col && col > -1) {
 				this.lastcol = col;
 				sheet.moveColumnSelection(this.col, col);
 			}
-		} else if (this.type == zss.SelDrag.SELCELLS) {
+		} else if (this.selType == zss.SEL.CELL) {
 			var update = false;
 			if (this.lastrow != row && row > -1) {
 				this.lastrow = row;
@@ -239,11 +239,6 @@ zss.SelDrag = zk.$extends(zss.DragHandler, {
 			}
 		}
 	}
-}, {
-	SELCELLS: 0x01,
-	SELROW: 0x02,
-	SELCOL: 0x03,
-	SELALL: 0x04
 });
 
 /**
@@ -253,8 +248,9 @@ zss.SelDrag = zk.$extends(zss.DragHandler, {
  * Selection change event occur when mouse down on current cell selection and drag to change it's range.  
  */ 
 zss.SelChgDrag = zk.$extends(zss.DragHandler, {
-	$init: function (sheet, action, row, col) {
+	$init: function (sheet, selType, action, row, col) {
 		this.$supers('$init', arguments);
+		this.selType = selType;
 		this.action = action;
 		var selrang = sheet.selArea.lastRange;
 		this.top = selrang.top;
@@ -266,7 +262,7 @@ zss.SelChgDrag = zk.$extends(zss.DragHandler, {
 		this.frow = pos.row;
 		this.fcol = pos.column;
 		
-		if ((action & 0xF0) == zss.SelChgDrag.MOVE) {
+		if (action == zss.SELDRAG.MOVE) {
 			this.row = row;//start on which row
 			this.col = col;//on which col
 		}
@@ -285,7 +281,7 @@ zss.SelChgDrag = zk.$extends(zss.DragHandler, {
 		var row = this.frow,
 			col = this.fcol;
 			
-		if ((this.action & 0xF0) == zss.SelChgDrag.MOVE) {
+		if (this.action == zss.SELDRAG.MOVE) {
 			var voff = range.top - this.top,//offset to orginal selection
 				hoff = range.left - this.left; 
 			//move foucs depends on offset	
@@ -305,7 +301,7 @@ zss.SelChgDrag = zk.$extends(zss.DragHandler, {
 			
 		
 		if (range.left != orgrange.left || range.top != orgrange.top || range.right != orgrange.right || range.bottom != orgrange.bottom) { 
-			sheet._sendOnSelectionChange(this.action,
+			sheet._sendOnCellSelectionUpdate(this.selType, this.action,
 				range.left, range.top, range.right, range.bottom,
 				orgrange.left, orgrange.top, orgrange.right, orgrange.bottom);
 		}
@@ -369,9 +365,9 @@ zss.SelChgDrag = zk.$extends(zss.DragHandler, {
 		}
 		this.stopAutoScroll();
 
-		if ((this.action & 0xF0) == zss.SelChgDrag.MOVE)
+		if (this.action == zss.SELDRAG.MOVE)
 			this._move(row, col);
-		else if ((this.action &0xF0) == zss.SelChgDrag.MODIFY)
+		else if (this.action == zss.SELDRAG.RESIZE)
 			this._modify(row, col);
 	},
 	_modify: function (row, col) {
@@ -451,7 +447,4 @@ zss.SelChgDrag = zk.$extends(zss.DragHandler, {
 			sheet.moveSelectionChange(left, top, right, bottom);
 		}
 	}
-}, {
-	MOVE: 0x10,
-	MODIFY: 0x20
 });

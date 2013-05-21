@@ -92,10 +92,10 @@ public class Events {
 	public static final String ON_HEADER_DOUBLE_CLICK = "onHeaderDoubleClick";
 	
 	/** 
-	 * The onHeaderSzie event (used with {@link HeaderEvent}).
+	 * The onHeaderSzie event (used with {@link HeaderUpdateEvent}).
 	 * Sent when user resize a header
 	 */
-	public static final String ON_HEADER_SIZE = "onHeaderSize";
+	public static final String ON_HEADER_UPDATE = "onHeaderUpdate";
 	
 	/**
 	 * The onCellSelection event (used with {@link CellSelectionEvent}).
@@ -104,10 +104,10 @@ public class Events {
 	public static final String ON_CELL_SELECTION = "onCellSelection";
 	
 	/**
-	 * The onSelectionChange event (used with {@link SelectionChangeEvent}).
+	 * The onCellSelectionUpdate event (used with {@link CellSelectionUpdateEvent}).
 	 * Sent when user move or modify the range of a selection
 	 */
-	public static final String ON_SELECTION_CHANGE = "onSelectionChange";
+	public static final String ON_CELL_SELECTION_UPDATE = "onCellSelectionUpdate";
 	
 	/**
 	 * The onEditboxEditing event (used with {@link EditboxEditingEvent}).

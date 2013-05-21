@@ -517,7 +517,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		if (selection) {
 			sheet.moveCellSelection(col, row, col, row);
 			var ls = sheet.getLastSelection(); 
-			if (!noslevt) sheet._sendOnCellSelection(zss.SelDrag.SELCELLS, ls.left, ls.top, ls.right, ls.bottom);
+			if (!noslevt) sheet._sendOnCellSelection(zss.SEL.CELL, ls.left, ls.top, ls.right, ls.bottom);
 		}
 		
 		var sheet = this.sheet;

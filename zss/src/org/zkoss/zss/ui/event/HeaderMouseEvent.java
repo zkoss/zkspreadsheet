@@ -27,17 +27,14 @@ import org.zkoss.zk.ui.event.MouseEvent;
  * @author Dennis.Chen
  */
 public class HeaderMouseEvent extends MouseEvent{
-	
-
-	
 	private Sheet _sheet;
 	private int _index;
-	private int _type;
+	private HedaerType _type;
 	private int _clientx;
 	private int _clienty;
-	
 
-	public HeaderMouseEvent(String name, Component target, int x,int y, int keys,Sheet sheet, int type, int index,int clientx,int clienty) {
+
+	public HeaderMouseEvent(String name, Component target, int x,int y, int keys,Sheet sheet, HedaerType type, int index,int clientx,int clienty) {
 		super(name, target, x, y, clientx, clienty, keys);
 		_sheet = sheet;
 		this._index = index;
@@ -86,10 +83,10 @@ public class HeaderMouseEvent extends MouseEvent{
 	
 	
 	/**
-	 * get type of this event, it will be {@link HeaderEvent#TOP_HEADER} or (@link HeaderEvent#LEFT_HEADER} 
+	 * get type of this event, it will be {@link HeaderUpdateEvent#TOP_HEADER} or (@link HeaderEvent#LEFT_HEADER} 
 	 * @return the type of header
 	 */
-	public int getType(){
+	public HedaerType getType(){
 		return _type;
 	}
 	

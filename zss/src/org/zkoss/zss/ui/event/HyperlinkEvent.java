@@ -15,8 +15,9 @@ package org.zkoss.zss.ui.event;
 
 import java.util.Map;
 
-import org.zkoss.poi.ss.usermodel.Hyperlink;
+import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.au.AuRequests;
@@ -31,8 +32,8 @@ import org.zkoss.zss.ui.impl.XUtils;
  * @author henrichen
  */
 public class HyperlinkEvent extends CellMouseEvent{
-	private String _href;
-	private int _type;
+	private String _address;
+	private HyperlinkType _type;
 
 	public static HyperlinkEvent getHyperlinkEvent(AuRequest request) {
 		final Map data = request.getData();
@@ -44,20 +45,21 @@ public class HyperlinkEvent extends CellMouseEvent{
 		
 		final String name = request.getCommand();
 		final int keys = AuRequests.parseKeys(data);
+		final int type = AuRequests.getInt(data, "type", 0, true);
 		return new HyperlinkEvent(name, comp, sheet,
 				AuRequests.getInt(data, "row", 0, true),
 				AuRequests.getInt(data, "col", 0, true),
 				(String) data.get("href"),
-				AuRequests.getInt(data, "type", 0, true),
+				EnumUtil.toHyperlinkType(type),
 				AuRequests.getInt(data, "x", 0, true),
 				AuRequests.getInt(data, "y", 0, true),
 				AuRequests.getInt(data, "pageX", 0, true),
 				AuRequests.getInt(data, "pageY", 0, true), keys);
 	}
-	public HyperlinkEvent(String name, Component target, Sheet sheet, int row ,int col, String href, int type, int x, int y,
+	public HyperlinkEvent(String name, Component target, Sheet sheet, int row ,int col, String address, HyperlinkType type, int x, int y,
 			int pageX, int pageY, int keys) {
 		super(name, target, x, y, keys, sheet, row, col, pageX, pageY);
-		this._href = href;
+		this._address = address;
 		this._type = type;
 	}
 
@@ -65,15 +67,15 @@ public class HyperlinkEvent extends CellMouseEvent{
 	 * LINK Reference.
 	 * @return URI reference.
 	 */
-	public String getHref() {
-		return _href;
+	public String getAddress() {
+		return _address;
 	}
 
 	/**
-	 * URL LINK type (can be 1: LINK_URL, 2: LINK_DOCUMENT, 3: LINK_EMAIL, 4: LINK_FILE); see {@link Hyperlink}}.
+	 * URL LINK type 
 	 * @return link type
 	 */
-	public int getType() {
+	public HyperlinkType getType() {
 		return _type;
 	}
 }

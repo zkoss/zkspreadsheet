@@ -961,7 +961,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this.moveCellSelection(left, top, right, bottom, true);
 		var ls = this.getLastSelection();//because of merge, selection might be change, get from last
 		if (ls.left != left || ls.right != right || ls.top != top || ls.bottom != bottom) {
-			this.selType = zss.SelDrag.SELCELLS;
+			this.selType = zss.SEL.CELL;
 			this._sendOnCellSelection(this.selType, ls.left, ls.top, ls.right, ls.bottom);
 		}
 	},
@@ -1056,13 +1056,13 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			
 			row = cellpos[0];
 			col = cellpos[1];
-			if (this._shiftMouseSelection(evt, row, col, zss.SelDrag.SELCELLS))
+			if (this._shiftMouseSelection(evt, row, col, zss.SEL.CELL))
 				return;			
 			sheet.dp.moveFocus(row, col, false, true, false, true);
 			this._lastmdstr = "c";
 
 			var ls = this.getLastSelection();//cause of merge, focus might be change, get form last
-			this.selType = zss.SelDrag.SELCELLS;
+			this.selType = zss.SEL.CELL;
 			this.setDragging(new zss.SelDrag(sheet, this.selType, ls.top, ls.left,
 					_isLeftMouseEvt(evt) ? "l" : "r", ls.right));
 			
@@ -1085,13 +1085,13 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				elm = cell.comp;
 				this._lastmdelm = elm;
 			}
-			if (this._shiftMouseSelection(evt, row, col, zss.SelDrag.SELCELLS))
+			if (this._shiftMouseSelection(evt, row, col, zss.SEL.CELL))
 				return;			
 			sheet.dp.moveFocus(row, col, false, true, false, true);
 			this._lastmdstr = "c";
 
 			var ls = this.getLastSelection();//cause of merge, focus might be change, get from last
-			this.selType = zss.SelDrag.SELCELLS;
+			this.selType = zss.SEL.CELL;
 			this.setDragging(new zss.SelDrag(sheet, this.selType, ls.top, ls.left,
 					_isLeftMouseEvt(evt) ? "l" : "r", ls.right));
 			
@@ -1102,9 +1102,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			//modify selection
 			if(_isLeftMouseEvt(evt)) {//TODO support right mouse down
 				if (!this.selType)
-					this.selType = zss.SelDrag.SELCELLS;
-				var action = this.selType | zss.SelChgDrag.MODIFY;
-				this.setDragging(new zss.SelChgDrag(sheet, action));
+					this.selType = zss.SEL.CELL;
+				this.setDragging(new zss.SelChgDrag(sheet, this.selType, zss.SELDRAG.RESIZE));
 			}
 		} else if ((cmp = zkS.parentByZSType(elm, ["SSelInner", "SFocus", "SHighlight"], 1)) != null) {
 			//Mouse down on Selection / Focus Block
@@ -1114,7 +1113,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
 			row = cellpos[0];
 			col = cellpos[1];
-			if (this._shiftMouseSelection(evt, row, col, zss.SelDrag.SELCELLS))
+			if (this._shiftMouseSelection(evt, row, col, zss.SEL.CELL))
 				return;			
 			this._lastmdstr = "c";
 
@@ -1133,7 +1132,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			else if (_isLeftMouseEvt(evt) || cmp.getAttribute('zs.t') == "SHighlight") {
 				sheet.dp.moveFocus(row, col, false, true, false, true);
 				var ls = this.getLastSelection();//cause of merge, focus might be change, get form last
-				this.selType = zss.SelDrag.SELCELLS;
+				this.selType = zss.SEL.CELL;
 				this.setDragging(new zss.SelDrag(sheet, this.selType, ls.top, ls.left,
 						_isLeftMouseEvt(evt) ? "l" : "r", ls.right));
 				
@@ -1147,7 +1146,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
 			row = cellpos[0];
 			col = cellpos[1];
-			if (this._shiftMouseSelection(evt, row, col, zss.SelDrag.SELCELLS))
+			if (this._shiftMouseSelection(evt, row, col, zss.SEL.CELL))
 				return;			
 			this._lastmdstr = "c";
 			
@@ -1166,9 +1165,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 					col = range.left;
 			
 				if (!this.selType)
-					this.selType = zss.SelDrag.SELCELLS;
-				var action = this.selType | zss.SelChgDrag.MOVE; 
-				this.setDragging(new zss.SelChgDrag(sheet, action, row, col));
+					this.selType = zss.SEL.CELL;
+				this.setDragging(new zss.SelChgDrag(sheet, this.selType, zss.SELDRAG.MOVE, row, col));
 				
 				//start hyperlink follow up
 				if (this.selArea)
@@ -1205,7 +1203,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 							fcol = fpos.column;
 						sheet.moveColumnSelection(col, fcol);
 						var ls = this.getLastSelection();
-						this.selType = zss.SelDrag.SELCOL;
+						this.selType = zss.SEL.COL;
 						this._sendOnCellSelection(this.selType, ls.left, ls.top, ls.right, ls.bottom);
 						return;
 					}
@@ -1213,14 +1211,14 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 					sheet.dp.moveFocus((fzr > -1 ? 0 : range.top), col, true, true, false, true);
 					//sheet.dp.selectCell((fzr > -1 ? 0 : range.top), col, true);//force move to first visible cell or 0 if frozenRow
 					sheet.moveColumnSelection(col);
-					seltype = zss.SelDrag.SELCOL;
+					seltype = zss.SEL.COL;
 				} else {
 					if (zkS.isEvtKey(evt, "s") && _isLeftMouseEvt(evt)) {
 						var fpos = this.getLastFocus(),
 							frow = fpos.row;
 						sheet.moveRowSelection(row, frow);
 						var ls = this.getLastSelection();
-						this.selType = zss.SelDrag.SELROW;
+						this.selType = zss.SEL.ROW;
 						this._sendOnCellSelection(this.selType, ls.left, ls.top, ls.right, ls.bottom);
 						return;
 					}
@@ -1228,7 +1226,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 					sheet.dp.moveFocus(row, (fzc > -1 ? 0 : range.left), true, true, false, true);
 					//sheet.dp.selectCell(row, (fzc > -1 ? 0 : range.left),true);//force move to first visible cell
 					sheet.moveRowSelection(row);
-					seltype = zss.SelDrag.SELROW;
+					seltype = zss.SEL.ROW;
 				}
 				sheet.selType = seltype;
 				this.setDragging(new zss.SelDrag(sheet, seltype, row, col, _isLeftMouseEvt(evt) ? "l" : "r"));
@@ -1242,7 +1240,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			
 			if (left != ls.left || top != ls.top || right != ls.right || bottom != ls.bottom) {
 				this.moveCellSelection(left, top, right, bottom);
-				this.selType = zss.SelDrag.SELALL;
+				this.selType = zss.SEL.ALL;
 				this.setDragging(new zss.SelDrag(sheet, this.selType, 0, 0, _isLeftMouseEvt(evt) ? "l" : "r"));
 			}
 		}
@@ -1525,11 +1523,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	_sendOnCellSelection: function (type, left, top, right, bottom) {
 		this._wgt.fire('onCellSelection',
-				{sheetId: this.serverSheetId, action: type, left: left, top: top, right: right, bottom: bottom});
+				{sheetId: this.serverSheetId, type: type, left: left, top: top, right: right, bottom: bottom});
 	},
-	_sendOnSelectionChange: function (action, left, top, right, bottom, orgleft, orgtop, orgright, orgbottom) {
-		this._wgt.fire('onSelectionChange',
-				{sheetId: this.serverSheetId, action: action, left: left,top: top, right: right, bottom: bottom, orgileft: orgleft, orgitop: orgtop, orgiright: orgright, orgibottom: orgbottom});
+	_sendOnCellSelectionUpdate: function (type, action, left, top, right, bottom, orgleft, orgtop, orgright, orgbottom) {
+		this._wgt.fire('onCellSelectionUpdate',
+				{sheetId: this.serverSheetId, type:type, action: action, left: left,top: top, right: right, bottom: bottom, orgileft: orgleft, orgitop: orgtop, orgiright: orgright, orgibottom: orgbottom});
 	},
 	_sendOnHyperlink: function (row, col, href, type, evt) {
 		var wgt = this._wgt,
@@ -1928,8 +1926,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this._syncColFocusAndSelection(col, col);
 
 		if (fireevent) {
-			this._wgt.fire('onZSSHeaderModify', 
-					{sheetId: this.serverSheetId, type: "top", event: "size", index: col, newsize: width, id: zsw, hidden: hidden},
+			this._wgt.fire('onHeaderUpdate', 
+					{sheetId: this.serverSheetId, type: "top", action: "resize", index: col, size: width, id: zsw, hidden: hidden},
 					{toServer: true, sendAhead: true}, 25);//ZSS-180
 		}
 		//ZSS-180
@@ -2084,8 +2082,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this.fire('onRowHeightChanged', {row: row});
 
 		if (fireevent) {
-			this._wgt.fire('onZSSHeaderModify', 
-					{sheetId: this.serverSheetId, type: "left", event: "size", index: row, newsize: height, id: zsh, hidden: hidden},
+			this._wgt.fire('onHeaderUpdate', 
+					{sheetId: this.serverSheetId, type: "left", action: "resize", index: row, size: height, id: zsh, hidden: hidden},
 					{toServer: true, sendAhead: true}, 25);//ZSS-180
 		}
 		//ZSS-180
@@ -2448,7 +2446,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			update = false,
 			custRowHeight = this.custRowHeight,
 			custColWidth = this.custColWidth, 
-			seltype = this.selType ? this.selType : zss.SelDrag.SELCELLS;
+			seltype = this.selType ? this.selType : zss.SEL.CELL;
 		
 		switch (key) {
 		case 'up':
@@ -2502,19 +2500,19 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		case 'home':
 			right = col;
 			left = custColWidth.getIncUnhidden(0, right);
-			if (seltype == zss.SelDrag.SELALL)
-				seltype = zss.SelDrag.SELCOL;
-			else if (seltype == zss.SelDrag.SELROW)
-				seltype = zss.SelDrag.SELCELLS;
+			if (seltype == zss.SEL.ALL)
+				seltype = zss.SEL.COL;
+			else if (seltype == zss.SEL.ROW)
+				seltype = zss.SEL.CELL;
 			break;
 		case 'end':
 			left = col;
 			right = custColWidth.getDecUnhidden(this.maxCols - 1, left);
 			if (left == 0) {
-				if (seltype == zss.SelDrag.SELCOL)
-					seltype = zss.SelDrag.SELALL;
-				else if (seltype == zss.SelDrag.SELCELLS)
-					seltype = zss.SelDrag.SELROW;
+				if (seltype == zss.SEL.COL)
+					seltype = zss.SEL.ALL;
+				else if (seltype == zss.SEL.CELL)
+					seltype = zss.SEL.ROW;
 			}
 			break;
 		case 'pgup':
