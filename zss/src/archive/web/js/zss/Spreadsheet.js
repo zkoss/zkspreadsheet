@@ -983,12 +983,12 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		this.fire('onWidgetUpdate', {sheetId:this.getSheetId(), wgtType: wgt, action: action, wgtId: id, dx1: dx1, dy1: dy1, 
 			dx2: dx2, dy2: dy2, col1: col1, row1: row1, col2: col2, row2: row2}, {toServer: true}, 25);
 	},
-	fireToolbarAction: function (act, extra) {
-		var data = {sheetId: this.getSheetId(), tag: 'toolbar', act: act};
+	fireToolbarAction: function (action, extra) {
+		var data = {sheetId: this.getSheetId(), tag: 'toolbar', action: action};
 		this.fire('onAuxAction', zk.copy(data, extra), {toServer: true});
 	},
-	fireSheetAction: function (act, extra) {
-		var data = {sheetId: this.getSheetId(), tag: 'sheet', act: act};
+	fireSheetAction: function (action, extra) {
+		var data = {sheetId: this.getSheetId(), tag: 'sheet', action: action};
 		this.fire('onAuxAction', zk.copy(data, extra), {toServer: true});
 	},
 	/**

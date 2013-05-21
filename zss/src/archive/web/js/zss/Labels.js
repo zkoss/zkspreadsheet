@@ -52,7 +52,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 		_borderRight: 'Right Border',
 		_borderNo: 'No Borders',
 		_borderAll: 'All Borders',
-		_borderOutside: 'Outsizde Borders',
+		_borderOutside: 'Outside Borders',
 		_borderInside: 'Inside Borders',
 		_borderInsideHorizontal: 'Inside Horizontal Borders',
 		_borderInsideVertical: 'Inside Vertical Borders',
