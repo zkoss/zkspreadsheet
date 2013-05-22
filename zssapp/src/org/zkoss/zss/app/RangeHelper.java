@@ -1,10 +1,12 @@
 package org.zkoss.zss.app;
 
-//import org.zkoss.poi.ss.usermodel.Name;
+import org.zkoss.poi.ss.usermodel.Name;
 //import org.zkoss.poi.ss.usermodel.Sheet;
 //import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zk.ui.Path;
 //import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Listbox;
@@ -12,6 +14,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+//help name range
 public class RangeHelper {
 
 	Spreadsheet spreadsheet;
@@ -50,25 +53,20 @@ public class RangeHelper {
 
 	// dummy
 	public void onRangeAdd() {
-		final XBook book = spreadsheet.getXBook();
+		final Book book = spreadsheet.getBook();
 		if (book == null) {
 			return;
 		}
-		Sheet sheet = spreadsheet.getSelectedXSheet();
+		Sheet sheet = spreadsheet.getSelectedSheet();
 		int sheetindex = book.getSheetIndex(sheet);
-		int left = spreadsheet.getSelection().getLeft();
-		int top = spreadsheet.getSelection().getTop();
-		int right = spreadsheet.getSelection().getRight();
-		int bottom = spreadsheet.getSelection().getBottom();
 		Textbox fsaw_filename = (Textbox) Path
 				.getComponent("//p1/rangeAddWin/raw_rangename");
 		String name = fsaw_filename.getValue();
 
-		Name namevar = book.createName();
+		Name namevar = book.getPoiBook().createName();
 		namevar.setNameName(name);
 		namevar.setSheetIndex(sheetindex);
-		CellRangeAddress cra = new CellRangeAddress(top, bottom, left, right);
-		namevar.setRefersToFormula(cra.formatAsString());
+		namevar.setRefersToFormula(spreadsheet.getSelection().toAreaReference());
 		
 		Window rangeAddWin = (Window) Path.getComponent("//p1/rangeAddWin");
 		rangeAddWin.detach();
@@ -76,7 +74,7 @@ public class RangeHelper {
 
 	// dummy
 	public void onRangeDelete() {
-		final XBook book = spreadsheet.getXBook();
+		final Book book = spreadsheet.getBook();
 		if (book == null) {
 			return;
 		}
@@ -87,7 +85,7 @@ public class RangeHelper {
 			Listitem st = rdw_rangeList.getSelectedItem();
 			if (st != null) {
 				String rangeName = st.getLabel();
-				book.removeName(rangeName);
+				book.getPoiBook().removeName(rangeName);
 			}
 
 			Window rangeDeleteWin = (Window) Path
@@ -101,7 +99,7 @@ public class RangeHelper {
 
 	// dummy
 	public void onRangeChoose() {
-		final XBook book = spreadsheet.getXBook();
+		final Book book = spreadsheet.getBook();
 		if (book == null) {
 			return;
 		}
@@ -114,10 +112,9 @@ public class RangeHelper {
 			Rect rect;
 			if (st != null) {
 				String rangeName = st.getLabel();
-				range = book.getName(rangeName);
-				CellRangeAddress cra = CellRangeAddress.valueOf(range.getRefersToFormula());
-				rect = new Rect(cra.getFirstColumn(), cra.getFirstRow(), 
-						cra.getLastColumn(), cra.getLastRow());
+				range = book.getPoiBook().getName(rangeName);
+//				CellRangeAddress cra = CellRangeAddress.valueOf(range.getRefersToFormula());
+				rect = new Rect(range.getRefersToFormula());
 				spreadsheet.setSelection(rect);
 			}
 
@@ -130,7 +127,7 @@ public class RangeHelper {
 	}
 
 	public void onRangeSelectChange(String type) {
-		final XBook book = spreadsheet.getXBook();
+		final Book book = spreadsheet.getBook();
 		if (book == null) {
 			return;
 		}
@@ -155,10 +152,9 @@ public class RangeHelper {
 			Rect rect;
 			if (st != null) {
 				String rangeName = st.getLabel();
-				range = book.getName(rangeName);
-				CellRangeAddress cra = CellRangeAddress.valueOf(range.getRefersToFormula());
-				rect = new Rect(cra.getFirstColumn(), cra.getFirstRow(), 
-						cra.getLastColumn(), cra.getLastRow());
+				range = book.getPoiBook().getName(rangeName);
+//				CellRangeAddress cra = CellRangeAddress.valueOf(range.getRefersToFormula());
+				rect = new Rect(range.getRefersToFormula());
 				spreadsheet.setHighlight(rect);
 			}
 

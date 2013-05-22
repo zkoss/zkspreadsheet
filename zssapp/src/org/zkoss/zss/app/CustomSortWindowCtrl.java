@@ -34,6 +34,7 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.SortDataOption;
 import org.zkoss.zss.api.Ranges;
 //import org.zkoss.zss.api.Range.CellType;
+import org.zkoss.zss.api.model.CellData.CellType;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.zul.Dialog;
 //import org.zkoss.zss.model.sys.XSheet;

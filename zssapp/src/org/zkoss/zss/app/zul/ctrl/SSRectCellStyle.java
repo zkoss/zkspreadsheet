@@ -19,6 +19,7 @@ package org.zkoss.zss.app.zul.ctrl;
 //import org.zkoss.poi.ss.usermodel.CellStyle;
 //import org.zkoss.poi.ss.usermodel.Font;
 //import org.zkoss.poi.ss.usermodel.FontUnderline;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.sheet.SheetHelper;
 //import org.zkoss.zss.model.sys.XRanges;
@@ -37,16 +38,18 @@ import org.zkoss.zss.ui.Spreadsheet;
 public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 
 	Spreadsheet spreadsheet;
-	private Font font;
-	private Cell cell;
+//	private Font font;
+//	private Cell cell;
+	int row,col;
 	
 	/**
 	 * @param cell
 	 * @param spreadsheet
 	 */
-	public SSRectCellStyle(Cell cell, Spreadsheet spreadsheet) {
+	public SSRectCellStyle(Spreadsheet spreadsheet, int row, int col) {
 		super();
-		this.cell = cell;
+		this.row = row;
+		this.col = col;
 		this.spreadsheet = spreadsheet;
 
 		resetFont();
@@ -54,11 +57,11 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 	
 	private void resetFont(){
 		short idx = cell.getCellStyle().getFontIndex();
-		font = spreadsheet.getXBook().getFontAt(idx);
+		font = spreadsheet.getBook().getFontAt(idx);
 	}
 	
 	public void setFontSize(int size) {
-		XSheet sheet = spreadsheet.getSelectedXSheet();
+		Sheet sheet = spreadsheet.getSelectedSheet();
 		Rect rect = spreadsheet.getSelection();
 
 		Utils.setFontHeight(sheet, 
@@ -86,7 +89,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 	
 	public void setFontFamily(String family) {
 		//TODO: use Utils.setFontFamily will fire many SSDataEvent 
-		Utils.setFontFamily(spreadsheet.getSelectedXSheet(), 
+		Utils.setFontFamily(spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
 				family);
 		resetFont();
@@ -94,7 +97,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 	
 	public void setBold(boolean bold) {
 		//TODO: use Utils.setFontBold will fire many SSDataEvent 
-		Utils.setFontBold(spreadsheet.getSelectedXSheet(), 
+		Utils.setFontBold(spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
 				bold);
 		resetFont();
@@ -140,7 +143,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 
 	public void setAlignment(int alignment) {
 		//TODO: Utils.setAlignment will fire many SSDataEvent 
-		Utils.setAlignment(spreadsheet.getSelectedXSheet(), 
+		Utils.setAlignment(spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
 				(short)alignment);
 		resetFont();
@@ -148,7 +151,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 	
 
 	public void setVerticalAlignment(final int alignment) {
-		Utils.visitCells(spreadsheet.getSelectedXSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), new CellVisitor(){
+		Utils.visitCells(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), new CellVisitor(){
 			@Override
 			public void handle(CellVisitorContext context) {
 				final short srcAlign = context.getVerticalAlignment();
@@ -168,7 +171,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 
 	public void setBorder(int borderPosition, BorderStyle borderStyle, String color) {
 		//TODO: Utils.setBorder will fire many SSDataEvent
-		Utils.setBorder(spreadsheet.getSelectedXSheet(), 
+		Utils.setBorder(spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
 				(short)borderPosition, borderStyle, color);
 		resetFont();
@@ -177,7 +180,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 	public void setCellColor(String color) {
 		//TODO: Utils.setBackgroundColor will fire many SSDataEvent
 		Utils.setBackgroundColor(
-				spreadsheet.getSelectedXSheet(), 
+				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
 				color);
 		resetFont();
@@ -186,7 +189,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 	public void setFontColor(String color) {
 		//TODO: Utils.setFontColor will fire many SSDataEvent
 		Utils.setFontColor(
-				spreadsheet.getSelectedXSheet(), 
+				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
 				color);
 		resetFont();
@@ -195,7 +198,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 	public void setItalic(boolean italic) {
 		//TODO: Utils.setFontItalic will fire many SSDataEvent
 		Utils.setFontItalic(
-				spreadsheet.getSelectedXSheet(), 
+				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
 				italic);
 		resetFont();
@@ -204,7 +207,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 	public void setStrikethrough(boolean strikethrough) {
 		//TODO: Utils.setFontStrikeout will fire many SSDataEvent
 		Utils.setFontStrikeout(
-				spreadsheet.getSelectedXSheet(), 
+				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
 				strikethrough);
 		resetFont();
@@ -216,7 +219,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 			underline = FontUnderline.SINGLE;
 		//TODO: Utils.setFontUnderline will fire many SSDataEvent
 		Utils.setFontUnderline(
-				spreadsheet.getSelectedXSheet(), 
+				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
 				underline.getByteValue());
 		resetFont();
@@ -227,7 +230,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 	}
 
 	public void setWrapText(boolean wrapped) {
-		Utils.setWrapText(spreadsheet.getSelectedXSheet(), 
+		Utils.setWrapText(spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), wrapped);
 		resetFont();
 	}
@@ -240,7 +243,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 	@Override
 	public void setLocked(boolean locked) {
 		Utils.setLocked(
-				spreadsheet.getSelectedXSheet(), 
+				spreadsheet.getSelectedSheet(), 
 				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), locked);
 	}
 

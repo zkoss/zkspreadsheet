@@ -31,6 +31,8 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
@@ -98,7 +100,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void init() {
-		String display = Utils.getRange(ss.getSelectedXSheet(), selection.getTop(), selection.getLeft()).getEditText();
+		String display = Ranges.range(ss.getSelectedSheet(), selection.getTop(), selection.getLeft()).getCellEditText();
 		isCellHasDisplayString = !"".equals(display);
 		if (isCellHasDisplayString)
 			displayHyperlink.setValue(display);
@@ -123,7 +125,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 			return;
 		}
 		
-		Utils.setHyperlink(ss.getSelectedXSheet(), selection.getTop(), selection.getLeft(), 
+		Utils.setHyperlink(ss.getSelectedSheet(), selection.getTop(), selection.getLeft(), 
 				getLinkTarget(), addr, getDisplay());
 
 		_insertHyperlinkDialog.fireOnClose(null);
@@ -292,7 +294,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	}
 	private void buildDocumentTree(final Tree tree, final Textbox cellRef) {
 		if (tree != null) {
-			final XBook book = ss.getXBook();
+			final Book book = ss.getBook();
 			if (book == null) {
 				return;
 			}

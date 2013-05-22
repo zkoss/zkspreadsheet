@@ -16,6 +16,7 @@ import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.ext.AfterCompose;
 //import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Listbox;
@@ -28,9 +29,10 @@ import org.zkoss.zul.Window;
 /**
  * @author kinda lu
  */
+//Dennis, I think this file is out of date, consider to revmoe it
 public class ViewWindow extends Window implements AfterCompose {
 	Spreadsheet spreadsheet;
-	XBook book;
+	Book book;
 	
 
 	public void afterCompose() {
@@ -191,9 +193,9 @@ public class ViewWindow extends Window implements AfterCompose {
 		System.out.println(s);
 	}
 	
-	public void openSpreadsheetFromStream(InputStream iStream, String src){
-		spreadsheet.setBookFromStream(iStream, src);
-	}
+//	public void openSpreadsheetFromStream(InputStream iStream, String src){
+//		spreadsheet.setBookFromStream(iStream, src);
+//	}
 }
 
 

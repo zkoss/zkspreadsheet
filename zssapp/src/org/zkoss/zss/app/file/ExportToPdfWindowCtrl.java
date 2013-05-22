@@ -101,15 +101,15 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void loadPrintSetting() {
-		noGridlines.setChecked(!ss.getSelectedXSheet().isPrintGridlines());
+		noGridlines.setChecked(!ss.getSelectedSheet().getPoiSheet().isPrintGridlines());
 		range.setSelectedItem(currSheet);
 		loadOrientationSetting();
 	}
 	
 	private void loadOrientationSetting() {
 		//TODO: move to sheet context
-		orgOrientation = ss.getSelectedXSheet().getPrintSetup().getLandscape();
-		if (ss.getSelectedXSheet().getPrintSetup().getLandscape()) {
+		orgOrientation = ss.getSelectedSheet().getPoiSheet().getPrintSetup().getLandscape();
+		if (ss.getSelectedSheet().getPoiSheet().getPrintSetup().getLandscape()) {
 			orientation.setSelectedItem(landscape);
 		}
 		else

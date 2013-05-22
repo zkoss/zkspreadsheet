@@ -204,7 +204,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		}
 		
 		//call utils
-		Utils.sort(ss.getSelectedXSheet(), ss.getSelection(), index, algorithm, dataOption,  hasHeader.isChecked(), caseSensitive.isChecked(), sortOrientation);
+		Utils.sort(ss.getSelectedSheet(), ss.getSelection(), index, algorithm, dataOption,  hasHeader.isChecked(), caseSensitive.isChecked(), sortOrientation);
 		sortWin.detach();
 	}
 	
@@ -387,7 +387,7 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		 * @return
 		 */
 		private boolean isAllCellNumberType(int idx) {
-			XSheet sheet = ss.getSelectedXSheet();
+			Sheet sheet = ss.getSelectedSheet();
 			Rect rect = ss.getSelection();
 			int top = sortOrientation ? idx : rect.getTop();
 			int left = sortOrientation ? rect.getLeft() : idx;

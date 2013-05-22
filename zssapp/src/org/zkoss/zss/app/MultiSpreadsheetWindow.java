@@ -5,6 +5,9 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.ext.AfterCompose;
 //import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.Events;
@@ -42,14 +45,16 @@ public class MultiSpreadsheetWindow extends Window implements AfterCompose{
 		int row=event.getRow();
 		int col=event.getColumn();
 		
-		XSheet targetSheet;
+		Sheet targetSheet;
 		if(event.getTarget()==ss[0])
-			targetSheet=ss[1].getSelectedXSheet();
+			targetSheet=ss[1].getSelectedSheet();
 		else
-			targetSheet=ss[0].getSelectedXSheet();
+			targetSheet=ss[0].getSelectedSheet();
 		
-		Cell tmpCell=Utils.getOrCreateCell(targetSheet, row, col);
-		Utils.setEditText(tmpCell, (String)event.getEditingValue());
+		Range r = Ranges.range(targetSheet,row,col);
+		r.setCellEditText((String)event.getEditingValue());
+//		Cell tmpCell=Utils.getOrCreateCell(targetSheet, row, col);
+//		Utils.setEditText(tmpCell, (String)event.getEditingValue());
 	}
 	
 	public void onFocusedEvent(CellEvent event){

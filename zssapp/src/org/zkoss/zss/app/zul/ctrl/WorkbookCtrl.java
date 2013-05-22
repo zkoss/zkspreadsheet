@@ -22,6 +22,7 @@ import org.zkoss.image.AImage;
 //import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
 //import org.zkoss.zss.model.sys.XBook;
@@ -285,7 +286,7 @@ public interface WorkbookCtrl {
 	 */
 	public int deleteSheet();
 	
-	public void addChart(int row, int col, ChartType type);
+	public void addChart(int row, int col, Chart.Type type);
 	
 	public String getColumnTitle(int col);
 	

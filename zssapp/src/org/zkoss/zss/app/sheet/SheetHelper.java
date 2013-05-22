@@ -16,6 +16,8 @@ package org.zkoss.zss.app.sheet;
 
 //import org.zkoss.poi.ss.usermodel.Sheet;
 //import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 //import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
@@ -33,10 +35,11 @@ public final class SheetHelper {
 	 * @return -1 if fail to shift sheet
 	 */
 	public static int shiftSheetLeft(Spreadsheet spreadsheet) {
-		final XBook book = spreadsheet.getXBook();
+		final Book book = spreadsheet.getBook();
 		if (book != null) {
-			String name = spreadsheet.getSelectedXSheet().getSheetName();
-			Sheet sheet = spreadsheet.getSelectedXSheet();
+			Sheet sheet = spreadsheet.getSelectedSheet();
+			String name = spreadsheet.getSelectedSheet().getSheetName();
+			
 			int index = book.getSheetIndex(sheet);
 			if (index > 0) {
 				int newIdx = index - 1;
@@ -53,10 +56,10 @@ public final class SheetHelper {
 	 * @return -1 if fail to shift sheet
 	 */
 	public static int shiftSheetRight(Spreadsheet spreadsheet) {
-		final XBook book = spreadsheet.getXBook();
+		final Book book = spreadsheet.getBook();
 		if (book != null) {
-			String name = spreadsheet.getSelectedXSheet().getSheetName();
-			Sheet sheet = spreadsheet.getSelectedXSheet();
+			String name = spreadsheet.getSelectedSheet().getSheetName();
+			Sheet sheet = spreadsheet.getSelectedSheet();
 			int index = book.getSheetIndex(sheet);
 			if (index < book.getNumberOfSheets() - 1) {
 				int newIdx = index + 1;
@@ -75,14 +78,14 @@ public final class SheetHelper {
 	 * @return new index, -1 if delete sheet fail
 	 */
 	public static int deleteSheet(Spreadsheet spreadsheet) {
-		final XBook book = spreadsheet.getXBook();
+		final Book book = spreadsheet.getBook();
 		if (book != null) {
 			//Note. Sheet must contain at least one sheet
 			int sheetCount = book.getNumberOfSheets();
 			if (sheetCount == 1)
 				return -1;
 			
-			int index = book.getSheetIndex(spreadsheet.getSelectedXSheet());
+			int index = book.getSheetIndex(spreadsheet.getSelectedSheet());
 			book.removeSheetAt(index);
 			sheetCount = book.getNumberOfSheets();
 			

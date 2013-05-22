@@ -84,8 +84,8 @@ public class SaveFileWindowCtrl extends GenericForwardComposer {
 
 	private void save() {
 		if (!"".equals(fileName.getText())) {
-			getDesktopWorkbenchContext().getWorkbookCtrl().setSrcName(
-					fileName.getText() + "." + fileFormat.getSelectedItem().getLabel());
+//			getDesktopWorkbenchContext().getWorkbookCtrl().setSrcName(
+//					fileName.getText() + "." + fileFormat.getSelectedItem().getLabel());
 			getDesktopWorkbenchContext().getWorkbookCtrl().save();
 			getDesktopWorkbenchContext().fireWorkbookSaved();
 			_saveFileDialog.fireOnClose(null);

@@ -26,15 +26,16 @@ import java.util.TreeSet;
 
 import org.zkoss.lang.Objects;
 import org.zkoss.lang.Strings;
-//import org.zkoss.poi.ss.usermodel.FilterColumn;
+import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.AutoFilterOperation;
-//import org.zkoss.zss.api.Range.CellType;
+
 import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.CellData.CellType;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.api.model.impl.SheetImpl;
+//import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.ListModelList;
@@ -229,7 +230,7 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 		
 		
 		//TODO, Dennis , need to wrap to model
-		final FilterColumn fc = ((SheetImpl)worksheet).getNative().getAutoFilter().getFilterColumn(fieldIndex - 1);
+		final FilterColumn fc = worksheet.getPoiSheet().getAutoFilter().getFilterColumn(fieldIndex - 1);
 		
 		final TreeSet<RowInfo> rowInfos = new TreeSet<RowInfo>(new MyComparator());
 		final Set<RowInfo> selected = new HashSet<RowInfo>();

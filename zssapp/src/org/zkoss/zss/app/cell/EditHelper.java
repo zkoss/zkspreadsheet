@@ -254,7 +254,7 @@ public final class EditHelper {
 	*/
 	
 	public static PasteType getDefaultPasteType() {
-		return Range.PasteType.PASTE_ALL;
+		return Range.PasteType.ALL;
 	}
 	
 	/**

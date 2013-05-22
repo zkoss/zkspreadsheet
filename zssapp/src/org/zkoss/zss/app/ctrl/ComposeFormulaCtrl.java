@@ -28,6 +28,7 @@ import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.api.Range;
 //import org.zkoss.zss.api.Range.CellType;
 import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.CellData.CellType;
 import org.zkoss.zss.app.formula.FormulaMetaInfo;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapp;
