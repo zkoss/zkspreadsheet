@@ -21,7 +21,6 @@ package org.zkoss.zss.ui;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.lang.Classes;
@@ -62,7 +60,6 @@ import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.ClassLocator;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.xel.Function;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
@@ -116,14 +113,9 @@ import org.zkoss.zss.ui.au.out.AuMergeCell;
 import org.zkoss.zss.ui.au.out.AuRemoveRowColumn;
 import org.zkoss.zss.ui.au.out.AuRetrieveFocus;
 import org.zkoss.zss.ui.au.out.AuSelection;
-import org.zkoss.zss.ui.au.out.AuUpdateData;
 import org.zkoss.zss.ui.event.CellEvent;
-import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HyperlinkEvent;
-//import org.zkoss.zss.ui.event.SheetCreateEvent;
-//import org.zkoss.zss.ui.event.SheetDeleteEvent;
-//import org.zkoss.zss.ui.event.SheetUpdateEvent;
 import org.zkoss.zss.ui.event.StartEditingEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
 import org.zkoss.zss.ui.impl.ActiveRangeHelper;
@@ -2962,31 +2954,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 			return attrs;
 		}
-		
 
-		/**
-		 * Returns overflow-able cell index
-		 * 
-		 * @return int return next overflow-able cell's index, return -1 for unlimited overflow with.
-		 */
-		private int getMaxOverflowableCellIndex(Cell from, Row row) {
-			int i = from.getColumnIndex();
-			int last = row.getLastCellNum();
-			if (i == last)
-				return -1;
-			
-			boolean found = false;
-			for (i += 1; i <= last; i++) {
-				Cell next = row.getCell(i);
-				if (next != null && next.getCellType() != Cell.CELL_TYPE_BLANK) {
-					found = true;
-					i--;//back to previous empty cell
-					break;
-				}
-			}
-			return found ? i : -1;//-1 means unlimited overflow with
-		}
-		
 		/**
 		 * Cell attributes
 		 * 
@@ -3056,10 +3024,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 						BookHelper.getRealAlignment(cell) == CellStyle.ALIGN_LEFT) {
 						
 						attrs.put("ovf", 1); //1 stand for true
-						int c = getMaxOverflowableCellIndex(cell, sheet.getRow(row));
-						if (c != col) {
-							attrs.put("moc", c);
-						}
 					}
 				}
 			}

@@ -160,12 +160,6 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 			 */
 			//overflow
 			/**
-			 * Max overflow-able cell column index
-			 * 
-			 * default: null
-			 */
-			//maxOverflowCol
-			/**
 			 * Cell font size in point
 			 * 
 			 * default: 11
@@ -224,9 +218,6 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 				}
 				if (upSize) {
 					this.overflow = !!v.ovf;
-					if (this.overflow) {
-						this.maxOverflowCol = v.moc;
-					}
 				}
 				if (upMerge) {
 					

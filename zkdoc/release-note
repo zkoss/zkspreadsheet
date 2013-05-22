@@ -4,6 +4,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-253 click component away from Spreadsheet but keeps focus
 
 *Bug
+  ZSS-224 text overflow doesn't work correctly
   ZSS-268 get exception if I listen to onValidateDrop
   ZSS-304 hiding columns doesn't work
   

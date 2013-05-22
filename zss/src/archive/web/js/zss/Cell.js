@@ -106,20 +106,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 	 */
 	wrap: false,
 	/**
-	 * Whether cell is shall overflow or not
-	 */
-	overflow: false,
-	/**
 	 * The font size in point
 	 */
 	fontSize: 11,
-	/**
-	 * Max overflow-able cell index
-	 * 
-	 * Default: null
-	 * If index = -1, means unlimited overflow width
-	 */
-	//maxOverflowCol: null
 	/**
 	 * Whether listen onRowHeightChanged event or not 
 	 * Currently, use only on IE6/IE7 for vertical align
@@ -172,7 +161,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 		this.wrap = data.wrap;
 		this.overflow = data.overflow;
-		this.maxOverflowCol = data.maxOverflowCol;
 		
 		this.style = data.style;
 		this.innerStyle = data.innerStyle;
@@ -257,7 +245,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 			ist = this.innerStyle = data.innerStyle,
 			n = this.comp,
 			overflow = data.overflow,
-			maxOverflowCol = data.maxOverflowCol,
 			cellType = data.cellType,
 			txt = data.text,
 			txtChd = txt != this.text,
@@ -282,18 +269,17 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.rborder = data.rightBorder;
 		this.edit = data.editText;
 		
-		this._updateListenOverflow(overflow);
+		this._updateListenOverflow(overflow); // listen do overflow event if it has overflow property
 		this.setText(txt, false, wrapChd); //when wrap changed, shall re-process overflow
-		if (this.overflow != overflow 
-			|| this.maxOverflowCol != maxOverflowCol
-			|| this.overflow && txtChd) {
+		
+		if (this.overflow != overflow // overflow changed
+			|| (this.overflow && txtChd)) { // already overflow and text changed
 			var processedOverflow = false;
-			if (this.overflow && !overflow || (this.overflow && maxOverflowCol == undefined)) {
+			if (this.overflow && !overflow) {
 				this._clearOverflow();
 				processedOverflow = true;
 			}
 			this.overflow = overflow;
-			this.maxOverflowCol = maxOverflowCol;
 			if (!processedOverflow)
 				this._processOverflow();	
 		}
@@ -335,12 +321,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 	},
 	/**
 	 * Sets the text of the cell
-	 * 
 	 * @param string text
-	 * @param boolean whether fire sheet overflow event or not
-	 * @param boolean indicate shall process overflow or not
 	 */
-	setText: function (txt, noTriggerOverflowEvt, forcedOverflow) {
+	setText: function (txt) {
 		if (!txt)
 			txt = "";
 		var oldTxt = this.getText(),
@@ -451,68 +434,57 @@ zss.Cell = zk.$extends(zk.Widget, {
 	},
 	_clearOverflow: function () {
 		jq(this.getTextNode()).css('width', '');//clear overflow
-		jq(this.$n()).removeClass("zscell-over").removeClass("zscell-over-b");
+		jq(this.$n()).removeClass("zscell-overflow").removeClass("zscell-overflow-b");
 	},
-	_processOverflow: function (fromEvt) {
-		var col = this.c,
-			max = this.maxOverflowCol;
-		if (col == max) {//no available width for overflow
-			if (fromEvt) {
-				this._clearOverflow();
-			}
-			return;
-		}
-		var	rBorder = this.rborder,
-			n = this.$n(),
+	_processOverflow: function () {
+		var col = this.c;
+		var rBorder = this.rborder,
 			$n = jq(this.$n());
-		if ($n.width() >= jq(this.getTextNode()).width()) {//text node width is smaller then cell width, no need to overflow 
-			return;
-		}
-		if (max == -1) {//unlimited overflow width
-			$n
-			.removeClass(rBorder ? "zscell-over" : "zscell-over-b")
-			.addClass(rBorder ? "zscell-over-b" : "zscell-over");
-			return;
-		}
 		
-		//Note. For IE6/IE7 need to set cave's width (set text node width won't work)
 		var cave = this.$n('cave'),
 			$cave = jq(cave),
 			tn = this.getTextNode(),
-			prevWidth = null,
 			$tn = jq(tn);
+		
+		// clean pervious width setting for measuring correctly
+		//	Note. For IE6/IE7 need to set cave's width (set text node width won't work)
 		if (zk.ie6_ || zk.ie7_) {
-			prevWidth = cave.style.width;
 			$cave.css('width', '');
 		} else {
-			prevWidth = tn.style.width;
 			$tn.css('width', '');
 		}
+
 		var sheet = this.sheet,
 			custColWidth = sheet.custColWidth,
-			wd = custColWidth.getSize(col);
+			wd = custColWidth.getSize(col), // overlap-able width, initial to current cell's width
 			sw = tn.scrollWidth,
 			cellPad = sheet.cellPad;
-		if(sw > (n.clientWidth - 2 * cellPad)) {//process overflow
-			for (var i = col + 1; i <= max; i++) {
-				if (wd > sw) {
-					break;
-				}
-				wd += custColWidth.getSize(i);
-			}
-			wd -= cellPad;
-			$n
-			.removeClass(rBorder ? "zscell-over" : "zscell-over-b")
-			.addClass(rBorder ? "zscell-over-b" : "zscell-over")
-			if (zk.ie6_ || zk.ie7_) {
-				$cave.css('width', jq.px0(wd));
-			} else
-				$tn.css('width', jq.px0(wd));
-		} else { //cell string width not cross cell width, no need to process overflow
-			if (zk.ie6_ || zk.ie7_) {
-				$cave.css('width', prevWidth);
-			} else 
-				$tn.css('width', prevWidth);
+			
+		// skip to process overflow if current cell's width is enough
+		// right grid line won't be removed if it's css has no zscell-overflow class
+		if(sw <= custColWidth.getSize(this.c) - cellPad) {
+			$n.removeClass("zscell-overflow");
+			$n.removeClass("zscell-overflow-b");
+			return;
+		}
+		
+		// process overflow
+		// count right sibling's width util width is enough or sibling isn't blank
+		var cell = this.nextSibling;
+		while(cell && cell.cellType === BLANK_CELL && wd < sw) {
+			wd += custColWidth.getSize(cell.c);
+			cell = cell.nextSibling;
+		}
+		wd -= cellPad; // celll padding
+		
+		// apply overflow css and adjust cell width
+		$n.removeClass(rBorder ? "zscell-overflow" : "zscell-overflow-b")
+			.addClass(rBorder ? "zscell-overflow-b" : "zscell-overflow");
+		//	Note. For IE6/IE7 need to set cave's width (set text node width won't work)
+		if (zk.ie6_ || zk.ie7_) {
+			$cave.css('width', jq.px0(wd));
+		} else {
+			$tn.css('width', jq.px0(wd));
 		}
 	},
 	bind_: function (desktop, skipper, after) {
@@ -531,8 +503,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 			this._updateListenRowHeightChanged(true);
 			this._updateVerticalAlign();
 		}
-		var max = this.maxOverflowCol;
-		if (this.overflow && max && max != this.c) {
+		if (this.overflow) {
 			this._processOverflow();
 		}
 		//merged cell won't change row height automatically
@@ -556,23 +527,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 	doMouseUp_: function (evt) {
 		this.sheet._doMouseup(evt);
 	},
-	_searchMaxOverflowCol: function () {
-		var row = this.parent,
-			cells = row.cells,
-			found = false;
-			i = this.c;
-		for (var j = 0, len = cells.length; j < len; j++) {
-			var cell = cells[j];
-			if (cell.c > i) {
-				i = cell.c;
-				if (cell.cellType != BLANK_CELL) {
-					found = true;
-					break;
-				}
-			}
-		}
-		this.maxOverflowCol = found ? i - 1: this.c;
-	},
 	/**
 	 * When cells after this cell changed, may effect this cell's overflow
 	 */
@@ -587,7 +541,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 				if (this.c < data.col) {
 					if ((tRow == undefined && bRow == undefined) || 
 						(tRow && bRow && row >= tRow && row <= bRow)) {
-						this._searchMaxOverflowCol();
 						this._processOverflow(true);
 					}
 				}
