@@ -241,6 +241,18 @@ public interface Range {
 	/** shift this range with a offset row and column**/
 	public void shift(int rowOffset,int colOffset);
 	
+	/**
+	 * Sets the width(in pixel) of column in this range, it effect to whole column. 
+	 * @param widthPx width in pixel
+	 * @see #getColumnRange()
+	 */
+	public void setColumnWidth(int widthPx);
+	/**
+	 * Sets the height(in pixel) of row in this range, it effect to whole row.
+	 * @param widthPx width in pixel
+	 * @see #getRowRange()
+	 */
+	public void setRowHeight(int heightPx);
 	
 	/* 
 	 * ==================================================
@@ -304,6 +316,13 @@ public interface Range {
 	
 	public boolean isDisplaySheetGridlines();
 	
+	/**
+	 * Hide the rows or columns, the range has to be a whole row range (which mean you select some columns and all rows of these columns are included),
+	 * or a whole column range. 
+	 * @param hidden
+	 * @see #getRowRange()
+	 * @see #getColumnRange()
+	 */
 	public void setHidden(boolean hidden);
 	
 	public void setSheetName(String name);
@@ -349,6 +368,7 @@ public interface Range {
 	public Sheet createSheet(String name);
 	
 	public void deleteSheet();
+	
 	
 	/**
 	 * a cell style helper to create style relative object for cell
