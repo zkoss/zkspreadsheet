@@ -22,6 +22,9 @@ public interface CellData {
 	public String getFormatText();
 	public String getEditText();
 	
+	public boolean isBlank();
+	public boolean isFormula();
+	
 	public void setValue(Object value);
 	
 	public void setEditText(String editText);

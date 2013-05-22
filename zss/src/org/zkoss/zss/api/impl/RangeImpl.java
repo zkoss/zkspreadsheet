@@ -590,6 +590,10 @@ public class RangeImpl implements Range{
 		range.setEditText(editText);
 	}
 	
+	public String getCellFormatText(){
+		//I don't create my way, use the same way from Spreadsheet implementation as possible
+		return XUtils.getCellFormatText(getNative().getSheet(), getRow(), getColumn());
+	}
 	
 	//TODO need to verify the object type
 	public Object getCellValue(){
@@ -764,7 +768,7 @@ public class RangeImpl implements Range{
 	}
 	@Override
 	public void setRowHeight(int heightPx) {
-		XRange r = range.isWholeRow()?range:range;//.getRows();
+		XRange r = range.isWholeRow()?range:range.getRows();
 		r.setRowHeight(XUtils.pxToPoint(heightPx));
 	}
 	

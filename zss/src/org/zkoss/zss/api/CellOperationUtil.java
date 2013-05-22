@@ -1,5 +1,7 @@
 package org.zkoss.zss.api;
 
+import java.util.LinkedHashMap;
+
 import org.zkoss.image.AImage;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.Range.DeleteShift;
@@ -19,6 +21,7 @@ import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Picture.Format;
+import org.zkoss.zss.api.model.Sheet;
 
 /**
  * The utility to help UI to deal with user's operation of a Range.
@@ -112,27 +115,54 @@ public class CellOperationUtil {
 		});
 	}
 
-	public static void applyFontHeight(Range range, final short height) {
-		applyFontStyle(range, new FontStyleApplier() {
-			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
-				//the font name(family) is equals, not need to set it.
-				return oldFont.getFontHeight() == height;
-			}
-			
-			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				//use the new font name to search it.
-				return cellRange.getCellStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), height, oldFont.getFontName(), 
-						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
-			}
-			
-			public void apply(Range range,CellStyle cellstyle, Font newfont) {
-				newfont.setFontHeight(height);
+	public static void applyFontHeight(Range range, final short fontHeight) {
+		//fontHeight = twip
+		final Sheet sheet = range.getSheet(); 
+		final LinkedHashMap<Integer,Integer> newRowSize = new LinkedHashMap<Integer, Integer>();
+		
+		if(range.isProtected())
+			return;
+		
+		final int fpx = UnitUtil.twipToPx(fontHeight);
+		
+		range.sync(new RangeRunner(){
+			@Override
+			public void run(Range range) {
+				applyFontStyle(range, new FontStyleApplier() {
+					public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
+						//the font name(family) is equals, not need to set it.
+						return oldFont.getFontHeight() == fontHeight;
+					}
+					
+					public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
+						int px = sheet.getRowHeight(cellRange.getRow());//rowHeight in px
+						
+						if(fpx>px){
+							Integer maxpx = newRowSize.get(cellRange.getRow());
+							if(maxpx==null || maxpx.intValue()<fpx){
+								newRowSize.put(cellRange.getRow(), fpx);
+							}
+						}
+						
+						//use the new font name to search it.
+						return cellRange.getCellStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), fontHeight, oldFont.getFontName(), 
+								oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
+					}
+					
+					public void apply(Range cellRange,CellStyle cellstyle, Font newfont) {
+						newfont.setFontHeight(fontHeight);
+					}
+				});
+				//enhancement, also adjust row height.
+				for(Integer row : newRowSize.keySet()){
+					Ranges.range(sheet,row.intValue(),0).setRowHeight(newRowSize.get(row).intValue()+4);//4 is padding
+				}
 			}
 		});
 	}
-	public static void applyFontSize(Range range, final short size) {
+	public static void applyFontSize(Range range, final short point) {
 		//fontSize = fontHeightInPoints = fontHeight/20
-		applyFontHeight(range,(short)(size*20));
+		applyFontHeight(range,(short)(point*20));
 	}
 	
 	public interface FontStyleApplier {

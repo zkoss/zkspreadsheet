@@ -296,6 +296,13 @@ public interface Range {
 	public String getCellEditText();
 	
 	/**
+	 * Get the first cell(top-left) format text of this range
+	 * @return format text
+	 * @see CellData#getFormatText()
+	 */
+	public String getCellFormatText();
+	
+	/**
 	 * Get the first cell(top-left) value of this this range
 	 * @return value object
 	 * @see CellData#getValue()

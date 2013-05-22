@@ -8,6 +8,13 @@ import org.zkoss.zss.ui.impl.XUtils;
 
 public class UnitUtil {
 
+	public static int pxToPoint(int px){
+		return XUtils.pxToPoint(px);
+	}
+	
+	public static int pointToPx(int point){
+		return XUtils.pointToPx(point);
+	}
 	
 	
 	
@@ -15,15 +22,6 @@ public class UnitUtil {
 	public static int pxToEmu(int px) {
 		//refer form ActionHandler
 		return (int) Math.round(((double)px) * 72 * 20 * 635 / 96); //assume 96dpi
-	}
-	
-	
-	public static int getRowHeightInPx(Sheet sheet,int row){
-		return XUtils.getRowHeightInPx(((SheetImpl)sheet).getNative(), row);
-	}
-	
-	public static int getColumnWidthInPx(Sheet sheet,int col){
-		return XUtils.getColumnWidthInPx(((SheetImpl)sheet).getNative(), col);
 	}
 
 	/**
@@ -42,6 +40,22 @@ public class UnitUtil {
 		return XUtils.twipToPx(twip);
 	}
 	
+	public static int pxToTwip(int px) {
+		return XUtils.pxToTwip(px);
+	}
+	
+	/**
+	 * convert row height(twip) to point(font size)
+	 * @return the height in pixel
+	 */
+	public static int twipToPoint(int twip) {
+		return XUtils.twipToPoint(twip);
+	}
+	
+	public static int pointToTwip(int point) {
+		return XUtils.pointToTwip(point);
+	}
+	
 	public static SheetAnchor toFilledAnchor(Sheet sheet,int row, int column, int widthPx, int heightPx){
 		int lRow = 0;
 		int lColumn = 0;
@@ -54,7 +68,7 @@ public class UnitUtil {
 			if(ws.isColumnHidden(i)){
 				continue;
 			}
-			int wPx = UnitUtil.getColumnWidthInPx(sheet,i);
+			int wPx = sheet.getColumnWidth(i);
 			widthPx -= wPx;
 			if(widthPx<=0){
 				lColumn = i-1;
@@ -70,7 +84,7 @@ public class UnitUtil {
 				continue;
 			}
 			
-			int hPx = UnitUtil.getRowHeightInPx(sheet, i);
+			int hPx = sheet.getRowHeight(i);
 			heightPx -= hPx;
 			if(heightPx<=0){
 				lRow = i-1;

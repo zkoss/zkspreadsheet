@@ -100,8 +100,7 @@ public class CellDataImpl implements CellData{
 
 	@Override
 	public String getFormatText() {
-		//I don't create my way, use the same way from Spreadsheet implementation as possible
-		return XUtils.getCellFormatText(range.getNative().getSheet(), getRow(), getColumn());
+		return range.getCellFormatText();
 	}
 
 	@Override
@@ -121,5 +120,15 @@ public class CellDataImpl implements CellData{
 
 	public boolean validateEditText(String editText){
 		return range.getNative().validate(editText)==null;
+	}
+
+	@Override
+	public boolean isBlank() {
+		return getType() == CellType.BLANK;
+	}
+
+	@Override
+	public boolean isFormula() {
+		return getType() == CellType.FORMULA;
 	}
 }

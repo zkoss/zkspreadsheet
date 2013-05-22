@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Picture;
@@ -13,6 +14,7 @@ import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.DrawingManager;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
+import org.zkoss.zss.ui.impl.XUtils;
 
 public class SheetImpl implements Sheet{
 	ModelRef<XSheet> sheetRef;
@@ -125,5 +127,14 @@ public class SheetImpl implements Sheet{
 	public org.zkoss.poi.ss.usermodel.Sheet getPoiSheet() {
 		return getNative();
 	}
-	
+
+	@Override
+	public int getRowHeight(int row) {
+		return XUtils.getRowHeightInPx(getNative(), row);
+	}
+
+	@Override
+	public int getColumnWidth(int column) {
+		return XUtils.getColumnWidthInPx(getNative(), column);
+	}
 }

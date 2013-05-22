@@ -30,5 +30,20 @@ public interface Sheet {
 	public int getColumnFreeze();
 
 	public boolean isPrintGridlines();
+	
+	/**
+	 * get row height in pixel
+	 * @param row
+	 * @return row height in pixel
+	 */
+	public int getRowHeight(int row);
+	
+	/**
+	 * get column width in pixel
+	 * @param column
+	 * @return column width in pixel
+	 */
+	public int getColumnWidth(int column);
+	
 
 }
