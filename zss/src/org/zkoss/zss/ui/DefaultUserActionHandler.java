@@ -843,7 +843,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyCellColor(range,color);
+		CellOperationUtil.applyBackgroundColor(range,color);
 		return true;
 	}
 	
@@ -855,7 +855,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyCellVerticalAlignment(range, VerticalAlignment.TOP);
+		CellOperationUtil.applyVerticalAlignment(range, VerticalAlignment.TOP);
 		return true;
 	}
 	
@@ -867,7 +867,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyCellVerticalAlignment(range, VerticalAlignment.CENTER);
+		CellOperationUtil.applyVerticalAlignment(range, VerticalAlignment.CENTER);
 		return true;
 	}
 
@@ -879,7 +879,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyCellVerticalAlignment(range, VerticalAlignment.BOTTOM);
+		CellOperationUtil.applyVerticalAlignment(range, VerticalAlignment.BOTTOM);
 		return true;
 	}
 	
@@ -891,7 +891,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyCellAlignment(range, Alignment.LEFT);
+		CellOperationUtil.applyAlignment(range, Alignment.LEFT);
 		return true;
 	}
 	
@@ -903,7 +903,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyCellAlignment(range, Alignment.CENTER);
+		CellOperationUtil.applyAlignment(range, Alignment.CENTER);
 		return true;
 	}
 	
@@ -915,7 +915,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyCellAlignment(range, Alignment.RIGHT);
+		CellOperationUtil.applyAlignment(range, Alignment.RIGHT);
 		return true;
 	}
 	
@@ -928,7 +928,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return true;
 		}
 		boolean wrapped = !range.getCellStyle().isWrapText();
-		CellOperationUtil.applyCellWrapText(range, wrapped);
+		CellOperationUtil.applyWrapText(range, wrapped);
 		return true;
 	}
 	

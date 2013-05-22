@@ -60,7 +60,7 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 	}
 
 	public Font findFont(Boldweight boldweight, Color color,
-			short fontHeight, String fontName, boolean italic,
+			int fontHeight, String fontName, boolean italic,
 			boolean strikeout, TypeOffset typeOffset, Underline underline) {
 		Book book = range.getBook();
 
@@ -68,7 +68,7 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 
 		font = ((BookImpl) book).getNative().findFont(
 				EnumUtil.toFontBoldweight(boldweight),
-				((ColorImpl) color).getNative(), fontHeight, fontName, italic,
+				((ColorImpl) color).getNative(), (short)fontHeight, fontName, italic,
 				strikeout, EnumUtil.toFontTypeOffset(typeOffset),
 				EnumUtil.toFontUnderline(underline));
 		return font == null ? null : new FontImpl(((BookImpl) book).getRef(),

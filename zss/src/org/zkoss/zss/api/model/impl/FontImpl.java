@@ -1,5 +1,6 @@
 package org.zkoss.zss.api.model.impl;
 
+import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.impl.EnumUtil;
@@ -55,7 +56,7 @@ public class FontImpl implements Font{
 	public Boldweight getBoldweight() {
 		return EnumUtil.toFontBoldweight(getNative().getBoldweight());
 	}
-	public short getFontHeight() {
+	public int getFontHeight() {
 		return getNative().getFontHeight();
 	}
 	public boolean isItalic() {
@@ -106,10 +107,18 @@ public class FontImpl implements Font{
 	public void setUnderline(Underline underline) {
 		getNative().setUnderline(EnumUtil.toFontUnderline(underline));
 	}
-	public void setFontHeight(short height){
-		getNative().setFontHeight(height);
+	public void setFontHeight(int height){
+		getNative().setFontHeight((short)height);
 	}
 	public void setColor(Color color) {
 		BookHelper.setFontColor(bookRef.get(), getNative(), ((ColorImpl)color).getNative());
+	}
+	@Override
+	public int getFontHeightInPoint() {
+		return UnitUtil.twipToPoint(getFontHeight());
+	}
+	@Override
+	public void setFontHeightInPoint(int point) {
+		setFontHeight(UnitUtil.pointToTwip(point));	
 	}
 }

@@ -67,7 +67,7 @@ public class UtilFns {
 	 * Gets Cell text by given row and column
 	 */
 	static public String getCelltext(XSheet sheet, int row,int column){
-		return XUtils.getCellText(sheet, row, column);
+		return XUtils.getCellHtmlText(sheet, row, column);
 	}
 	
 	static public String getCellFormatText(XSheet sheet, int row,int column) {

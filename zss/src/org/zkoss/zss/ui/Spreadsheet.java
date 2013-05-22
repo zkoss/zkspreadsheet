@@ -3089,7 +3089,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				
 				if (updateText) {
 					if (cellType != Cell.CELL_TYPE_BLANK) {
-						final String cellText = XUtils.getCellText(sheet, row, col);
+						final String cellText = XUtils.getCellHtmlText(sheet, row, col);
 						final String editText = XUtils.getEditText(sheet, row, col);
 						final String formatText = XUtils.getCellFormatText(sheet, row, col);
 						

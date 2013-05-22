@@ -25,7 +25,8 @@ public interface Font {
 	public Color getColor();
 	public String getFontName();
 	public Boldweight getBoldweight();
-	public short getFontHeight();
+	public int getFontHeight();
+	public int getFontHeightInPoint();
 	public boolean isItalic();
 	public boolean isStrikeout();
 	public TypeOffset getTypeOffset();
@@ -35,7 +36,8 @@ public interface Font {
 	public void setItalic(boolean italic);
 	public void setStrikeout(boolean strikeout);
 	public void setUnderline(Underline underline);
-	public void setFontHeight(short height);
+	public void setFontHeight(int height);
+	public void setFontHeightInPoint(int point);
 	public void setColor(Color color);
 	
 }

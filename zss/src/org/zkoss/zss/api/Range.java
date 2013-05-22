@@ -417,7 +417,7 @@ public interface Range {
 		 * @return null if not found
 		 */
 		public Font findFont(Boldweight boldweight, Color color,
-				short fontHeight, String fontName, boolean italic,
+				int fontHeight, String fontName, boolean italic,
 				boolean strikeout, TypeOffset typeOffset, Underline underline);
 	}
 

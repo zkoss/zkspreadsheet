@@ -323,7 +323,7 @@ public class CellOperationUtil {
 	/**
 	 * @param htmlColor '#rgb-hex-code'
 	 */
-	public static void applyCellColor(Range range, final String htmlColor) {
+	public static void applyBackgroundColor(Range range, final String htmlColor) {
 		final Color color = range.getCellStyleHelper().createColorFromHtmlColor(htmlColor);
 		applyCellStyle(range, new CellStyleApplier() {
 
@@ -343,7 +343,7 @@ public class CellOperationUtil {
 		});
 	}
 	
-	public static void applyCellDataFormat(Range range, final String format) {
+	public static void applyDataFormat(Range range, final String format) {
 		applyCellStyle(range, new CellStyleApplier() {
 
 			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
@@ -357,7 +357,7 @@ public class CellOperationUtil {
 		});
 	}
 
-	public static void applyCellAlignment(Range range,final Alignment alignment) {
+	public static void applyAlignment(Range range,final Alignment alignment) {
 		applyCellStyle(range, new CellStyleApplier() {
 
 			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
@@ -371,7 +371,7 @@ public class CellOperationUtil {
 		});
 	}
 
-	public static void applyCellVerticalAlignment(Range range,final VerticalAlignment alignment) {
+	public static void applyVerticalAlignment(Range range,final VerticalAlignment alignment) {
 		applyCellStyle(range, new CellStyleApplier() {
 
 			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
@@ -453,7 +453,7 @@ public class CellOperationUtil {
 				}else{
 					range.merge(false);
 					//align the left/top one
-					applyCellAlignment(range.getCellRange(0,0),Alignment.CENTER);
+					applyAlignment(range.getCellRange(0,0),Alignment.CENTER);
 				}
 			}
 		});
@@ -473,7 +473,7 @@ public class CellOperationUtil {
 	}
 	
 	
-	public static void applyCellWrapText(Range range,final boolean wraptext) {
+	public static void applyWrapText(Range range,final boolean wraptext) {
 		applyCellStyle(range, new CellStyleApplier() {
 
 			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {

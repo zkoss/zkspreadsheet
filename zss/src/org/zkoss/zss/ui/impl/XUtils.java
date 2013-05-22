@@ -57,7 +57,7 @@ public class XUtils {
 	/**
 	 * Gets Cell text by given row and column
 	 */
-	static public String getCellText(XSheet sheet, int row,int column){
+	static public String getCellHtmlText(XSheet sheet, int row,int column){
 		/*List list = ss.getBook().getSheets();
 		if(list.size()<=ss.getSelectedIndex()){
 			throw new XelException("No such sheet :"+ss.getSelectedIndex());
