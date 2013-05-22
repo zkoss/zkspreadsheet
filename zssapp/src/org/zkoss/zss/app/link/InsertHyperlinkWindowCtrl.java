@@ -33,6 +33,8 @@ import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Hyperlink;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
@@ -125,18 +127,18 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 			return;
 		}
 		
-		Utils.setHyperlink(ss.getSelectedSheet(), selection.getTop(), selection.getLeft(), 
-				getLinkTarget(), addr, getDisplay());
+		Ranges.range(ss.getSelectedSheet(), selection.getTop(), selection.getLeft())
+			.setCellHyperlink(getLinkTarget(), addr, getDisplay());
 
 		_insertHyperlinkDialog.fireOnClose(null);
 	}
 	
-	private int getLinkTarget() {
+	private Hyperlink.HyperlinkType getLinkTarget() {
 		if (docBtn == activeBtn)
-			return Hyperlink.LINK_DOCUMENT;
+			return Hyperlink.HyperlinkType.DOCUMENT;
 		else if (mailBtn == activeBtn)
-			return Hyperlink.LINK_EMAIL;
-		return Hyperlink.LINK_URL;
+			return Hyperlink.HyperlinkType.EMAIL;
+		return Hyperlink.HyperlinkType.URL;
 	}
 	/**
 	 * Returns link address
@@ -299,11 +301,18 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 				return;
 			}
 			final ArrayList<DefaultTreeNode> nodes = new ArrayList<DefaultTreeNode>();
-			Utils.visitSheets(book, new SheetVisitor(){
-				@Override
-				public void handle(Sheet sheet) {
-					nodes.add(new DefaultTreeNode(sheet.getSheetName(), Collections.EMPTY_LIST));
-				}});
+			
+			int s = book.getNumberOfSheets();
+			for(int i=0;i<s;i++){
+				Sheet sheet = book.getSheetAt(i);
+				nodes.add(new DefaultTreeNode(sheet.getSheetName(), Collections.EMPTY_LIST));
+			}
+//			
+//			Utils.visitSheets(book, new SheetVisitor(){
+//				@Override
+//				public void handle(Sheet sheet) {
+//					nodes.add(new DefaultTreeNode(sheet.getSheetName(), Collections.EMPTY_LIST));
+//				}});
 			
 			/**
 			 * TODO: use i-18n instead hardcode

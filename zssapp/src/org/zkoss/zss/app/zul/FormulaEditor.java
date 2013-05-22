@@ -64,7 +64,9 @@ public class FormulaEditor extends Textbox {
 	
 	private boolean everFocusCell = false;
 	private boolean focusOut = false;
-	private Cell currentEditcell;
+//	private Cell currentEditcell;
+	private int currRow = -1;
+	private int currCol = -1;
 	private Boolean everTab = null;
 
 	private int formulaRow;
@@ -219,7 +221,7 @@ public class FormulaEditor extends Textbox {
 			if (isStartEditingFormula(newEdit))
 				cacheFormulaEditingInfo();
 			generateCellFocus(newEdit);
-		}  else if (currentEditcell != null) {
+		}  else if (row >0) {
 			final int left = bookCtrl.getSelection().getLeft();
 			final int top = bookCtrl.getSelection().getTop();
 			final XSheet sheet = bookCtrl.getSelectedSheet();
@@ -246,7 +248,7 @@ public class FormulaEditor extends Textbox {
 	
 	public void onFocus() {
 		WorkbookCtrl bookCtrl = getDesktopWorkbenchContext().getWorkbookCtrl();
-		XSheet sheet = bookCtrl.getSelectedSheet();
+		Sheet sheet = bookCtrl.getSelectedSheet();
 		if (sheet == null) { //no sheet, no operation
 			return;
 		}
@@ -263,7 +265,7 @@ public class FormulaEditor extends Textbox {
 		currentEditcell = Utils.getCell(sheet, top, left);
 		
 		if (currentEditcell != null) {
-			oldEdit = XRanges.range(sheet, top, left).getEditText();
+			oldEdit = Ranges.range(sheet, top, left).getCellEditText();
 			oldText = Utils.getCellText(sheet, currentEditcell); //escaped HTML to show cell value
 			if (!isComposingFormula(newEdit))
 				bookCtrl.escapeAndUpdateText(currentEditcell, oldEdit);
@@ -314,8 +316,8 @@ public class FormulaEditor extends Textbox {
 		Position pos = bookCtrl.getCellFocus();
 		int row = pos.getRow();
 		int col = pos.getColumn();
-		int oldrow = currentEditcell == null ? -1 : currentEditcell.getRowIndex();
-		int oldcol = currentEditcell == null ? -1 : currentEditcell.getColumnIndex();
+		int oldrow = this.row;
+		int oldcol = this.col;
 		final boolean focusChanged = (row != oldrow || col != oldcol); //user click directly to a different cell
 		if (!focusChanged) {
 			if (everTab != null) { //Tab key

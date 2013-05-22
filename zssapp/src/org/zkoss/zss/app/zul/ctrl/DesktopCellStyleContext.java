@@ -23,9 +23,9 @@ import org.zkoss.zss.app.Consts;
  */
 public class DesktopCellStyleContext extends AbstractBaseContext implements CellStyleContext {
 	
-	CellStyle cellStyle;
+	CellStyleApplier cellStyle;
 	
-	public void doTargetChange(CellStyle aFontStyle){
+	public void doTargetChange(CellStyleApplier aFontStyle){
 		cellStyle = aFontStyle;
 		
 		CellStyleContextEvent event = new CellStyleContextEvent(
@@ -34,7 +34,7 @@ public class DesktopCellStyleContext extends AbstractBaseContext implements Cell
 		listenerStore.fire(event);
 	}
 
-	public CellStyle getCellStyle(){
+	public CellStyleApplier getCellStyle(){
 		return cellStyle;
 	}
 

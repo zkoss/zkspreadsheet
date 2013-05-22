@@ -99,7 +99,7 @@ public class FormatNumberCtrl extends GenericForwardComposer {
 			if (selection.getRight() >= spreadsheet.getMaxcolumns())
 				selection.setRight(spreadsheet.getMaxcolumns() - 1);
 			
-			CellOperationUtil.applyCellDataFormat(Ranges.range(spreadsheet.getSelectedSheet(),selection), formatCodes);
+			CellOperationUtil.applyDataFormat(Ranges.range(spreadsheet.getSelectedSheet(),selection), formatCodes);
 		
 		} else {
 			showSelectFormatDialog();

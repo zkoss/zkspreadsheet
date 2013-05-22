@@ -78,7 +78,7 @@ public final class CellHelper {
 //	}
 //
 //	public static void clearContent(Spreadsheet spreadsheet, Rect rect) {
-//		Utils.visitCells(spreadsheet.getSelectedXSheet(), 
+//		Utils.visitCells(spreadsheet.getSelectedSheet(), 
 //				rect, 
 //				new CellVisitor() {
 //					@Override
@@ -93,7 +93,7 @@ public final class CellHelper {
 //	
 //	public static void clearStyle(Spreadsheet spreadsheet, Rect rect) {
 //		XRanges.range(
-//				spreadsheet.getSelectedXSheet(), 
+//				spreadsheet.getSelectedSheet(), 
 //				rect.getTop(), rect.getLeft(),rect.getBottom(), rect.getRight()).
 //					setStyle(spreadsheet.getXBook().createCellStyle());
 //	}

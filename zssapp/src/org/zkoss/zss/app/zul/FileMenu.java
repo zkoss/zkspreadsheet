@@ -15,6 +15,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.zul;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
@@ -158,7 +159,7 @@ public class FileMenu extends Menu implements IdSpace {
 		getDesktopWorkbenchContext().getWorkbenchCtrl().openExportHtmlDialog(null);
 	}
 	
-	public void onClick$exportExcel() {
+	public void onClick$exportExcel() throws IOException {
 		WorkbookCtrl bookCtrl = getDesktopWorkbenchContext().getWorkbookCtrl();
 		ByteArrayOutputStream out = bookCtrl.exportToExcel();
 		Filedownload.save(out.toByteArray(), "application/file", bookCtrl.getBookName());

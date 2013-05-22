@@ -29,6 +29,11 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.Range.SortDataOption;
+import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.CellData.CellType;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 //import org.zkoss.zss.ui.impl.Utils;
@@ -204,8 +209,77 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 		}
 		
 		//call utils
-		Utils.sort(ss.getSelectedSheet(), ss.getSelection(), index, algorithm, dataOption,  hasHeader.isChecked(), caseSensitive.isChecked(), sortOrientation);
+		sort(ss.getSelectedSheet(), ss.getSelection(), index, algorithm, dataOption,  hasHeader.isChecked(), caseSensitive.isChecked(), sortOrientation);
 		sortWin.detach();
+	}
+	
+	private static void sort(Sheet sheet, Rect selection, int[] index, boolean[] order, int[] dataOption, boolean header, boolean matchCase, boolean sortByRows) {
+		int left = selection.getLeft();
+		int right = selection.getRight();
+		int top = selection.getTop();
+		int btm = selection.getBottom();
+		
+		Range rng = Ranges.range(sheet, top, left, btm, right);
+		Range rng1 = null;
+		Range rng2 = null;
+		Range rng3 = null;
+		boolean desc1 = false;
+		boolean desc2 = false;
+		boolean desc3 = false;
+		SortDataOption dataOption1 = SortDataOption.NORMAL_DEFAULT;
+		SortDataOption dataOption2 = SortDataOption.NORMAL_DEFAULT;
+		SortDataOption dataOption3 = SortDataOption.NORMAL_DEFAULT;
+		if (index == null || index.length == 0) {
+			rng1 = Ranges.range(sheet, 
+									top, 
+									left, 
+									sortByRows ? top : btm, 
+									sortByRows ? right : left);
+			
+		} else if (index.length > 0) {
+			switch (index.length) {
+			case 3:
+				if (sortByRows)
+					rng3 = Ranges.range(sheet, index[2], left, index[2], right);
+				else
+					rng3 = Ranges.range(sheet, top, index[2], btm, index[2]);
+				desc3 = order[2];
+			case 2:
+				if (sortByRows)
+					rng2 = Ranges.range(sheet, index[1], left, index[1], right);
+				else
+					rng2 = Ranges.range(sheet, top, index[1], btm, index[1]);
+				desc2 = order[1];
+			case 1:
+				if (sortByRows) 
+					rng1 = Ranges.range(sheet, index[0], left, index[0], right); //sort by rows, sort from left to right
+				else
+					rng1 = Ranges.range(sheet, top, index[0], btm, index[0]); // sort by columns, sort from top to bottom
+				desc1 = order[0];
+			}
+		}
+		if (order != null && order.length > 0) {
+			switch (order.length) {
+			case 3:
+				desc3 = order[2];
+			case 2:
+				desc2 = order[1];
+			case 1:
+				desc1 = order[0];
+			}
+		}
+		if (dataOption != null && dataOption.length > 0) {
+			switch (dataOption.length) {
+			case 3:
+				dataOption3 = dataOption[2]==0?SortDataOption.NORMAL_DEFAULT:SortDataOption.TEXT_AS_NUMBERS;
+			case 2:
+				dataOption2 = dataOption[1]==0?SortDataOption.NORMAL_DEFAULT:SortDataOption.TEXT_AS_NUMBERS;
+			case 1:
+				dataOption1 = dataOption[0]==0?SortDataOption.NORMAL_DEFAULT:SortDataOption.TEXT_AS_NUMBERS;
+			}
+		}
+		rng.sort(rng1, desc1, header, matchCase, sortByRows, dataOption1, rng2, desc2, dataOption2, rng3, desc3, dataOption3);
+//		rng.sort(rng1, desc1, rng2, 0, desc2, rng3, desc3, !header ? BookHelper.SORT_HEADER_NO : BookHelper.SORT_HEADER_YES, 0, matchCase, sortByRows, 0, dataOption1, dataOption2, dataOption3);
 	}
 	
 	/**
@@ -396,13 +470,17 @@ public class CustomSortWindowCtrl extends GenericForwardComposer {
 
 			for (int row = top; row <= bottom; row++) {
 				for (int col = left; col <= right; col++) {
-					Cell c = Utils.getCell(sheet, row, col);
-					if (c != null) {
-						int type = c.getCellType() != Cell.CELL_TYPE_FORMULA ?
-									c.getCellType() : c.getCachedFormulaResultType();
-						if (type != Cell.CELL_TYPE_NUMERIC)
-							return false;
+					Range r = Ranges.range(sheet, row, col);
+					if(r.getCellData().getResultType()!=CellType.NUMERIC){
+						return false;
 					}
+//					Cell c = Utils.getCell(sheet, row, col);
+//					if (c != null) {
+//						int type = c.getCellType() != Cell.CELL_TYPE_FORMULA ?
+//									c.getCellType() : c.getCachedFormulaResultType();
+//						if (type != Cell.CELL_TYPE_NUMERIC)
+//							return false;
+//					}
 				}
 			}
 			return true;

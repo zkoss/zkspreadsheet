@@ -29,13 +29,13 @@ public class CellStyleContextEvent extends Event {
 	 * @param target
 	 * @param data
 	 */
-	public CellStyleContextEvent(String eventName, CellStyle data) {
+	public CellStyleContextEvent(String eventName, CellStyleApplier data) {
 		super(eventName, null, data);
 	}
 	
 
-	public CellStyle getCellStyle() {
-		return (CellStyle) getData();
+	public CellStyleApplier getCellStyle() {
+		return (CellStyleApplier) getData();
 	}
 
 

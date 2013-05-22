@@ -19,6 +19,19 @@ package org.zkoss.zss.app.zul.ctrl;
 //import org.zkoss.poi.ss.usermodel.CellStyle;
 //import org.zkoss.poi.ss.usermodel.Font;
 //import org.zkoss.poi.ss.usermodel.FontUnderline;
+import org.zkoss.zss.api.CellOperationUtil;
+import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.CellOperationUtil.CellStyleApplier;
+import org.zkoss.zss.api.Range.ApplyBorderType;
+import org.zkoss.zss.api.UnitUtil;
+import org.zkoss.zss.api.model.CellStyle.Alignment;
+import org.zkoss.zss.api.model.CellStyle.BorderType;
+import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
+import org.zkoss.zss.api.model.Font.Boldweight;
+import org.zkoss.zss.api.model.CellStyle;
+import org.zkoss.zss.api.model.Font;
+import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.sheet.SheetHelper;
@@ -35,10 +48,11 @@ import org.zkoss.zss.ui.Spreadsheet;
  * @author Ian Tsai / Sam
  *
  */
-public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
+public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyleApplier {
 
 	Spreadsheet spreadsheet;
-//	private Font font;
+	private Font font;
+	private org.zkoss.zss.api.model.CellStyle style;
 //	private Cell cell;
 	int row,col;
 	
@@ -56,50 +70,60 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 	}
 	
 	private void resetFont(){
-		short idx = cell.getCellStyle().getFontIndex();
-		font = spreadsheet.getBook().getFontAt(idx);
+		style = Ranges.range(spreadsheet.getSelectedSheet(),row,col).getCellStyle();
+		font = style.getFont();
 	}
 	
 	public void setFontSize(int size) {
 		Sheet sheet = spreadsheet.getSelectedSheet();
-		Rect rect = spreadsheet.getSelection();
+		Rect rect = SheetHelper.getVisibleSelection(spreadsheet);
 
-		Utils.setFontHeight(sheet, 
-				rect, 
-				getFontHeight(size));	
-		setProperRowHeightByFontSize(sheet, rect, size);
+		Range r = Ranges.range(sheet,rect);
+		CellOperationUtil.applyFontSize(r, (short)size);
+		
+		
+//		Utils.setFontHeight(sheet, 
+//				rect, 
+//				getFontHeight(size));	
+//		setProperRowHeightByFontSize(sheet, rect, size);
 		resetFont();
 	}
-	private short getFontHeight(int size) {
-		return (short)(size * 20);
-	}
+//	private short getFontHeight(int size) {
+//		return (short)(size * 20);
+//	}
 	
-	private void setProperRowHeightByFontSize(XSheet sheet, Rect rect, int size) {	
-		int tRow = rect.getTop();
-		int bRow = rect.getBottom();
-		int col = rect.getLeft();
-		
-		for (int i = tRow; i <= bRow; i++) {
-			//Note. add extra padding height: 4
-			if ((size + 4) > (Utils.pxToPoint(Utils.twipToPx(BookHelper.getRowHeight(sheet, i))))) {
-				XRanges.range(sheet, i, col).setRowHeight(size + 4);
-			}
-		}
-	}
+//	private void setProperRowHeightByFontSize(Sheet sheet, Rect rect, int size) {	
+//		int tRow = rect.getTop();
+//		int bRow = rect.getBottom();
+//		int col = rect.getLeft();
+//		
+//		for (int i = tRow; i <= bRow; i++) {
+//			//Note. add extra padding height: 4
+//			if ((size + 4) > (Utils.pxToPoint(Utils.twipToPx(BookHelper.getRowHeight(sheet, i))))) {
+//				Ranges.range(sheet, i, col).setRowHeight(size + 4);
+//			}
+//		}
+//	}
 	
 	public void setFontFamily(String family) {
 		//TODO: use Utils.setFontFamily will fire many SSDataEvent 
-		Utils.setFontFamily(spreadsheet.getSelectedSheet(), 
-				SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
-				family);
+		
+		Range r = Ranges.range( spreadsheet.getSelectedSheet(),SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.applyFontName(r, family);
+//		Utils.setFontFamily(spreadsheet.getSelectedSheet(), 
+//				SheetHelper.getVisibleSelection(spreadsheet),
+//				family);
 		resetFont();
 	}
 	
 	public void setBold(boolean bold) {
 		//TODO: use Utils.setFontBold will fire many SSDataEvent 
-		Utils.setFontBold(spreadsheet.getSelectedSheet(), 
-				SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
-				bold);
+		
+		Range r = Ranges.range( spreadsheet.getSelectedSheet(),SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.applyFontBoldweight(r, bold?Boldweight.BOLD:Boldweight.NORMAL);
+//		Utils.setFontBold(spreadsheet.getSelectedSheet(), 
+//				SheetHelper.getVisibleSelection(spreadsheet),
+//				bold);
 		resetFont();
 	}
 	
@@ -108,147 +132,185 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyle {
 	}
 	
 	public boolean isBold() {
-		short bold = font.getBoldweight();
+		Boldweight bw = font.getBoldweight();
 		resetFont();
-		return  Font.BOLDWEIGHT_BOLD == bold;
+		return  bw == Boldweight.NORMAL;
 	}
 	
 	public int getFontSize() {
-		return font.getFontHeight() / 20;
+		return UnitUtil.twipToPoint(font.getFontHeight());
 	}
 
-	public int getAlignment() {
-		return (int)cell.getCellStyle().getAlignment();
+	public Alignment getAlignment() {
+		return style.getAlignment();
 	}
 
 	public String getCellColor() {
-		return CellHelper.getBackgroundHTMLColor(cell);
+		return style.getBackgroundColor().getHtmlColor();
 	}
 
 	public String getFontColor() {
-		return CellHelper.getFontHTMLColor(cell, font);
+		return font.getColor().getHtmlColor();
 	}
 
 	public boolean isItalic() {
-		return font.getItalic();
+		return font.isItalic();
 	}
 
 	public boolean isStrikethrough() {
-		return font.getStrikeout();
+		return font.isStrikeout();
 	}
 
-	public int getUnderline() {
-		return (int)font.getUnderline();
+	public Underline getUnderline() {
+		return font.getUnderline();
 	}
 
-	public void setAlignment(int alignment) {
-		//TODO: Utils.setAlignment will fire many SSDataEvent 
-		Utils.setAlignment(spreadsheet.getSelectedSheet(), 
-				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
-				(short)alignment);
+	public void setAlignment(Alignment alignment) {
+		//TODO: Utils.setAlignment will fire many SSDataEvent
+		
+		Range r = Ranges.range( spreadsheet.getSelectedSheet(),SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.applyAlignment(r, alignment);
+		
+		
+//		Utils.setAlignment(spreadsheet.getSelectedSheet(), 
+//				SheetHelper.getVisibleSelection(spreadsheet), 
+//				(short)alignment);
 		resetFont();
 	}
 	
 
-	public void setVerticalAlignment(final int alignment) {
-		Utils.visitCells(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet), new CellVisitor(){
-			@Override
-			public void handle(CellVisitorContext context) {
-				final short srcAlign = context.getVerticalAlignment();
-
-				if (srcAlign != alignment) {
-					CellStyle newStyle = context.cloneCellStyle();
-					newStyle.setVerticalAlignment((short)alignment);
-					context.getRange().setStyle(newStyle);
-				}
-			}});
+	public void setVerticalAlignment(final VerticalAlignment alignment) {
+		Range r = Ranges.range( spreadsheet.getSelectedSheet(),SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.applyVerticalAlignment(r, alignment);
+//		Utils.visitCells(spreadsheet.getSelectedSheet(), SheetHelper.getVisibleSelection(spreadsheet), new CellVisitor(){
+//			@Override
+//			public void handle(CellVisitorContext context) {
+//				final short srcAlign = context.getVerticalAlignment();
+//
+//				if (srcAlign != alignment) {
+//					CellStyle newStyle = context.cloneCellStyle();
+//					newStyle.setVerticalAlignment((short)alignment);
+//					context.getRange().setStyle(newStyle);
+//				}
+//			}});
 		resetFont();
 	}
 
-	public int getVerticalAlignment() {
-		return cell.getCellStyle().getVerticalAlignment();
+	public VerticalAlignment getVerticalAlignment() {
+		return style.getVerticalAlignment();
 	}
 
-	public void setBorder(int borderPosition, BorderStyle borderStyle, String color) {
+	public void setBorder(ApplyBorderType position, BorderType borderType, String color) {
 		//TODO: Utils.setBorder will fire many SSDataEvent
-		Utils.setBorder(spreadsheet.getSelectedSheet(), 
-				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
-				(short)borderPosition, borderStyle, color);
+		Range r = Ranges.range(spreadsheet.getSelectedSheet(),SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.applyBorder(r, position, borderType, color);
+//		Utils.setBorder(spreadsheet.getSelectedSheet(), 
+//				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
+//				(short)borderPosition, borderStyle, color);
+//		
 		resetFont();
 	}
 
 	public void setCellColor(String color) {
 		//TODO: Utils.setBackgroundColor will fire many SSDataEvent
-		Utils.setBackgroundColor(
-				spreadsheet.getSelectedSheet(), 
-				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
-				color);
+		
+		Range r = Ranges.range(spreadsheet.getSelectedSheet(),SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.applyBackgroundColor(r, color);
+		
+//		Utils.setBackgroundColor(
+//				spreadsheet.getSelectedSheet(), 
+//				SheetHelper.getVisibleSelection(spreadsheet), 
+//				color);
 		resetFont();
 	}
 
 	public void setFontColor(String color) {
 		//TODO: Utils.setFontColor will fire many SSDataEvent
-		Utils.setFontColor(
-				spreadsheet.getSelectedSheet(), 
-				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
-				color);
+		Range r = Ranges.range(spreadsheet.getSelectedSheet(),SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.applyFontColor(r, color);
+		
+//		Utils.setFontColor(
+//				spreadsheet.getSelectedSheet(), 
+//				SheetHelper.getVisibleSelection(spreadsheet), 
+//				color);
 		resetFont();
 	}
 
 	public void setItalic(boolean italic) {
 		//TODO: Utils.setFontItalic will fire many SSDataEvent
-		Utils.setFontItalic(
-				spreadsheet.getSelectedSheet(), 
-				SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
-				italic);
+		Range r = Ranges.range(spreadsheet.getSelectedSheet(),SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.applyFontItalic(r,italic);
+//		Utils.setFontItalic(
+//				spreadsheet.getSelectedSheet(), 
+//				SheetHelper.getVisibleSelection(spreadsheet),
+//				italic);
 		resetFont();
 	}
 
 	public void setStrikethrough(boolean strikethrough) {
 		//TODO: Utils.setFontStrikeout will fire many SSDataEvent
-		Utils.setFontStrikeout(
-				spreadsheet.getSelectedSheet(), 
-				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), 
-				strikethrough);
+		Range r = Ranges.range(spreadsheet.getSelectedSheet(),SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.applyFontStrikeout(r, strikethrough);
+//		Utils.setFontStrikeout(
+//				spreadsheet.getSelectedSheet(), 
+//				SheetHelper.getVisibleSelection(spreadsheet), 
+//				strikethrough);
 		resetFont();
 	}
 
-	public void setUnderline(int underlineStyle) {
-		FontUnderline underline = FontUnderline.NONE;
-		if (underlineStyle == UNDERLINE_SINGLE)
-			underline = FontUnderline.SINGLE;
-		//TODO: Utils.setFontUnderline will fire many SSDataEvent
-		Utils.setFontUnderline(
-				spreadsheet.getSelectedSheet(), 
-				SheetHelper.getSpreadsheetMaxSelection(spreadsheet),
-				underline.getByteValue());
+	public void setUnderline(Underline underlineStyle) {
+		
+		Range r = Ranges.range(spreadsheet.getSelectedSheet(),SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.applyFontUnderline(r, underlineStyle);
+//		FontUnderline underline = FontUnderline.NONE;
+//		if (underlineStyle == UNDERLINE_SINGLE)
+//			underline = FontUnderline.SINGLE;
+//		//TODO: Utils.setFontUnderline will fire many SSDataEvent
+//		Utils.setFontUnderline(
+//				spreadsheet.getSelectedSheet(), 
+//				SheetHelper.getVisibleSelection(spreadsheet),
+//				underline.getByteValue());
 		resetFont();
 	}
 	
 	public boolean isWrapText() {
-		return cell.getCellStyle().getWrapText();
+		return style.isWrapText();
 	}
 
 	public void setWrapText(boolean wrapped) {
-		Utils.setWrapText(spreadsheet.getSelectedSheet(), 
-				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), wrapped);
+		Range r = Ranges.range(spreadsheet.getSelectedSheet(),SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.applyWrapText(r, wrapped);
+//		Utils.setWrapText(spreadsheet.getSelectedSheet(), 
+//				SheetHelper.getVisibleSelection(spreadsheet), wrapped);
 		resetFont();
 	}
 	
-	public String toString(){
-		return spreadsheet.getColumntitle(cell.getColumnIndex())+ 
-		cell.getRowIndex();
-	}
+//	public String toString(){
+//		return spreadsheet.getColumntitle(column)+ 
+//		cell.getRowIndex();
+//	}
 
 	@Override
-	public void setLocked(boolean locked) {
-		Utils.setLocked(
-				spreadsheet.getSelectedSheet(), 
-				SheetHelper.getSpreadsheetMaxSelection(spreadsheet), locked);
+	public void setLocked(final boolean locked) {
+		Range r = Ranges.range(spreadsheet.getSelectedSheet(),SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.applyCellStyle(r, new CellStyleApplier() {
+			public boolean ignore(Range cellRange,CellStyle oldCellstyle) {
+				return oldCellstyle.isLocked()==locked;
+			}
+
+			public void apply(Range cellRange,
+					org.zkoss.zss.api.model.CellStyle newCellstyle) {
+				newCellstyle.setLocked(locked);
+			}
+		});
+		
+//		Utils.setLocked(
+//				spreadsheet.getSelectedSheet(), 
+//				SheetHelper.getVisibleSelection(spreadsheet), locked);
 	}
 
 	@Override
 	public boolean getLocked() {
-		return cell.getCellStyle().getLocked();
+		return style.isLocked();
 	}
 }

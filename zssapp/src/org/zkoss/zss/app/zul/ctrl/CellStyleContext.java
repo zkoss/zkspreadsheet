@@ -26,13 +26,13 @@ public interface CellStyleContext extends BaseContext{
 	 * 
 	 * @param aFontStyle
 	 */
-	public void doTargetChange(CellStyle aFontStyle);
+	public void doTargetChange(CellStyleApplier aFontStyle);
 	
 	/**
 	 * 
 	 * @return
 	 */
-	public CellStyle getCellStyle();
+	public CellStyleApplier getCellStyle();
 	
 	/**
 	 * @param styleModification

@@ -16,6 +16,7 @@ package org.zkoss.zss.app.zul.ctrl;
 
 //import org.zkoss.poi.ss.usermodel.BorderStyle;
 //import org.zkoss.web.fn.ServletFns;
+import org.zkoss.web.fn.ServletFns;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
@@ -23,6 +24,11 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zss.api.Range.ApplyBorderType;
+import org.zkoss.zss.api.model.CellStyle.Alignment;
+import org.zkoss.zss.api.model.CellStyle.BorderType;
+import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
+import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.Dropdownbutton;
 import org.zkoss.zss.app.zul.Colorbutton;
@@ -145,7 +151,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 	 * Set control panel attributes when FontTargetChangeEvent fired
 	 * @param cellStyle
 	 */
-	protected void initPanel(CellStyle cellStyle) {
+	protected void initPanel(CellStyleApplier cellStyle) {
 		fontFamily.setValue(cellStyle.getFontFamily());
 		fontSize.setValue("" + cellStyle.getFontSize());
 		
@@ -155,7 +161,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 		_isItalic = cellStyle.isItalic();
 		italicBtn.setSclass(_isItalic ? "clicked" : "");
 		
-		_isUnderline = cellStyle.getUnderline() == CellStyle.UNDERLINE_SINGLE;
+		_isUnderline = cellStyle.getUnderline() != Underline.NONE;
 		underlineBtn.setSclass(_isUnderline ? "clicked" : "");
 		
 		_isStrikethrough = cellStyle.isStrikethrough();
@@ -178,25 +184,25 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 		wrapTextBtn.setSclass(isWrapText ? "clicked" : "");
 	}
 
-	private static String getAlignImageSrc(int align) {
+	private static String getAlignImageSrc(Alignment align) {
 		switch (align) {
-		case CellStyle.ALIGN_LEFT:
+		case LEFT:
 			return ALIGN_LEFT_SRC_IMAGE;
-		case CellStyle.ALIGN_CENTER:
+		case CENTER:
 			return ALIGN_CENTER_SRC_IMAGE;
-		case CellStyle.ALIGN_RIGHT:
+		case RIGHT:
 			return ALIGN_RIGHT_SRC_IMAGE;
 		}
 		return null;
 	}
 	
-	private static String getVerticalAlignImageSrc(int align) {
+	private static String getVerticalAlignImageSrc(VerticalAlignment align) {
 		switch (align) {
-		case CellStyle.ALIGN_TOP:
+		case TOP:
 			return ALIGN_TOP_SRC_IMAGE;
-		case CellStyle.ALIGN_MIDDLE:
+		case CENTER:
 			return ALIGN_MIDDLE_SRC_IMAGE;
-		case CellStyle.ALIGN_BOTTOM:
+		case BOTTOM:
 			return ALIGN_BOTTOM_SRC_IMAGE;
 		}
 		return null;
@@ -209,7 +215,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 	 */
 	public void onSelect$fontFamily() {
 		getCellStyleContext().modifyStyle(new StyleModification(){
-			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
+			public void modify(CellStyleApplier style, CellStyleContextEvent candidteEvt) {
 				candidteEvt.setExecutor(CellStyleCtrlPanel.this);
 				style.setFontFamily(fontFamily.getValue());
 			}
@@ -232,7 +238,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 		
 		_isBold = !_isBold;
 		getCellStyleContext().modifyStyle(new StyleModification(){
-			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
+			public void modify(CellStyleApplier style, CellStyleContextEvent candidteEvt) {
 				candidteEvt.setExecutor(CellStyleCtrlPanel.this);
 				style.setBold(_isBold);
 				boldBtn.setSclass(_isBold ? "clicked" : "");
@@ -247,7 +253,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 		
 		_isItalic = !_isItalic;
 		getCellStyleContext().modifyStyle(new StyleModification(){
-			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
+			public void modify(CellStyleApplier style, CellStyleContextEvent candidteEvt) {
 				candidteEvt.setExecutor(CellStyleCtrlPanel.this);
 				style.setItalic(_isItalic);
 				italicBtn.setSclass(_isItalic ? "clicked" : "");
@@ -262,9 +268,9 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 		
 		_isUnderline = !_isUnderline;
 		getCellStyleContext().modifyStyle(new StyleModification(){
-			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
+			public void modify(CellStyleApplier style, CellStyleContextEvent candidteEvt) {
 				candidteEvt.setExecutor(CellStyleCtrlPanel.this);
-				style.setUnderline(_isUnderline ? CellStyle.UNDERLINE_SINGLE : CellStyle.UNDERLINE_NONE);
+				style.setUnderline(_isUnderline ? Underline.SINGLE : Underline.NONE);
 				underlineBtn.setSclass(_isUnderline ? "clicked" : "");
 			}
 		});
@@ -277,7 +283,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 		
 		_isStrikethrough = !_isStrikethrough;
 		getCellStyleContext().modifyStyle(new StyleModification(){
-			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
+			public void modify(CellStyleApplier style, CellStyleContextEvent candidteEvt) {
 				candidteEvt.setExecutor(CellStyleCtrlPanel.this);
 				style.setStrikethrough(_isStrikethrough);
 				strikethroughBtn.setSclass(_isStrikethrough ? "clicked" : "");
@@ -289,7 +295,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 	public void onSelect$fontSize() {
 		//getCellStyleContext().getFontStyle().setFontSize(Integer.parseInt(fontSize.getText()));
 		getCellStyleContext().modifyStyle(new StyleModification(){
-			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
+			public void modify(CellStyleApplier style, CellStyleContextEvent candidteEvt) {
 				candidteEvt.setExecutor(CellStyleCtrlPanel.this);
 				style.setFontSize(Integer.parseInt(fontSize.getText()));
 			}
@@ -303,7 +309,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 	}
 	public void onChange$fontColorBtn() {
 		getCellStyleContext().modifyStyle(new StyleModification(){
-			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
+			public void modify(CellStyleApplier style, CellStyleContextEvent candidteEvt) {
 				candidteEvt.setExecutor(CellStyleCtrlPanel.this);
 				style.setFontColor(fontColorBtn.getColor());
 			}
@@ -316,7 +322,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 	}
 	public void onChange$cellColorBtn() {
 		getCellStyleContext().modifyStyle(new StyleModification(){
-			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
+			public void modify(CellStyleApplier style, CellStyleContextEvent candidteEvt) {
 				candidteEvt.setExecutor(CellStyleCtrlPanel.this);
 				style.setCellColor(cellColorBtn.getColor());
 			}
@@ -334,49 +340,49 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 		final String param = (String)evt.getData();
 	
 		getCellStyleContext().modifyStyle(new StyleModification(){
-			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
+			public void modify(CellStyleApplier style, CellStyleContextEvent candidteEvt) {
 				candidteEvt.setExecutor(CellStyleCtrlPanel.this);
-				BorderStyle borderStyle = BorderStyle.MEDIUM;
+				BorderType borderStyle = BorderType.MEDIUM;
 				if ("no".equals(param))
-					borderStyle = BorderStyle.NONE;
+					borderStyle = BorderType.NONE;
 				style.setBorder(getBorderType(param), borderStyle, color);
 			}
 		});
 		Events.postEvent(Events.ON_CLICK, this, null);
 	}
-	private static int getBorderType(String borderType) {
+	private static ApplyBorderType getBorderType(String borderType) {
 		if (borderType == null) {
-			return XRange.BORDER_EDGE_BOTTOM;
+			return ApplyBorderType.EDGE_BOTTOM;
 		}
 
 		if ("bottom".equals(borderType))
-			return XRange.BORDER_EDGE_BOTTOM;
+			return ApplyBorderType.EDGE_BOTTOM;
 		else if ("right".equals(borderType))
-			return XRange.BORDER_EDGE_RIGHT;
+			return ApplyBorderType.EDGE_RIGHT;
 		else if ("top".equals(borderType))
-			return XRange.BORDER_EDGE_TOP;
+			return ApplyBorderType.EDGE_TOP;
 		else if ("left".equals(borderType))
-			return XRange.BORDER_EDGE_LEFT;
+			return ApplyBorderType.EDGE_LEFT;
 		else if ("outside".equals(borderType))
-			return XRange.BORDER_OUTLINE;
+			return ApplyBorderType.OUTLINE;
 		else if ("inside".equals(borderType))
-			return XRange.BORDER_INSIDE;
+			return ApplyBorderType.INSIDE;
 		else if ("insideHorizontal".equals(borderType))
-			return XRange.BORDER_INSIDE_HORIZONTAL;
+			return ApplyBorderType.INSIDE_HORIZONTAL;
 		else if ("insideVertical".equals(borderType))
-			return XRange.BORDER_INSIDE_VERTICAL;
+			return ApplyBorderType.INSIDE_VERTICAL;
 		else if ("no".equals(borderType))
-			return XRange.BORDER_FULL;
+			return ApplyBorderType.FULL;
 		else if ("full".equals(borderType))
-			return XRange.BORDER_FULL;
+			return ApplyBorderType.FULL;
 		else if ("diagonalDown".equals(borderType))
-			return XRange.BORDER_DIAGONAL_DOWN;
+			return ApplyBorderType.DIAGONAL_DOWN;
 		else if ("diagonalUp".equals(borderType))
-			return XRange.BORDER_DIAGONAL_UP;
+			return ApplyBorderType.DIAGONAL_UP;
 		else if ("diagonal".equals(borderType))
-			return XRange.BORDER_DIAGONAL;
+			return ApplyBorderType.DIAGONAL;
 
-		return XRange.BORDER_EDGE_BOTTOM;
+		return ApplyBorderType.EDGE_BOTTOM;
 	}
 	
 	public void onDropdown$valignBtn() {
@@ -393,16 +399,16 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 		
 		final String align = (String)evt.getData();
 		getCellStyleContext().modifyStyle(new StyleModification(){
-			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
+			public void modify(CellStyleApplier style, CellStyleContextEvent candidteEvt) {
 				candidteEvt.setExecutor(CellStyleCtrlPanel.this);
-				int alignment = CellStyle.ALIGN_LEFT;
+				Alignment alignment = Alignment.LEFT;
 				
 				if ("left".equals(align)) {
-					alignment = CellStyle.ALIGN_LEFT;
+					alignment = Alignment.LEFT;
 				} else if ("center".equals(align)) {
-					alignment = CellStyle.ALIGN_CENTER;
+					alignment = Alignment.CENTER;
 				} else if ("right".equals(align)) {
-					alignment = CellStyle.ALIGN_RIGHT;
+					alignment = Alignment.RIGHT;
 				}
 				halignBtn.setImage(getAlignImageSrc(alignment));
 				style.setAlignment(alignment);
@@ -415,15 +421,15 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 		getDesktopWorkbenchContext().getWorkbookCtrl().reGainFocus();
 		final String align = (String)evt.getData();
 		getCellStyleContext().modifyStyle(new StyleModification(){
-			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
+			public void modify(CellStyleApplier style, CellStyleContextEvent candidteEvt) {
 				candidteEvt.setExecutor(CellStyleCtrlPanel.this);
-				int alignment = CellStyle.ALIGN_TOP;
+				VerticalAlignment alignment = VerticalAlignment.TOP;
 				if ("top".equals(align)) {
-					alignment = CellStyle.ALIGN_TOP;
+					alignment = VerticalAlignment.TOP;
 				} else if ("middle".equals(align)) {
-					alignment = CellStyle.ALIGN_MIDDLE;
+					alignment = VerticalAlignment.CENTER;
 				} else if ("bottom".equals(align)) {
-					alignment = CellStyle.ALIGN_BOTTOM;
+					alignment = VerticalAlignment.BOTTOM;
 				}	
 				valignBtn.setImage(getVerticalAlignImageSrc(alignment));
 				style.setVerticalAlignment(alignment);
@@ -438,7 +444,7 @@ public class CellStyleCtrlPanel extends Div implements IdSpace {
 		
 		isWrapText = !isWrapText;
 		getCellStyleContext().modifyStyle(new StyleModification(){
-			public void modify(CellStyle style, CellStyleContextEvent candidteEvt) {
+			public void modify(CellStyleApplier style, CellStyleContextEvent candidteEvt) {
 				candidteEvt.setExecutor(CellStyleCtrlPanel.this);
 				style.setWrapText(isWrapText);
 				wrapTextBtn.setSclass(isWrapText ? "clicked" : "");

@@ -15,6 +15,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.zul.ctrl;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import org.zkoss.image.AImage;
@@ -156,14 +157,14 @@ public interface WorkbookCtrl {
 	 */
 	public String getReference (int row, int column);
 	
-	/**
-	 * 
-	 * @param cell
-	 * @param text
-	 */
-	public void escapeAndUpdateText(int row, int column, String text);
+//	/**
+//	 * 
+//	 * @param cell
+//	 * @param text
+//	 */
+//	public void escapeAndUpdateText(int row, int column, String text);
 	
-	public void updateText(int row, int column, String text);
+//	public void updateText(int row, int column, String text);
 
 	public void setDataFormat(String format);
 	
@@ -201,7 +202,7 @@ public interface WorkbookCtrl {
 	
 	public String getSrc();
 	
-	public void setSrcName(String src);
+//	public void setSrcName(String src);
 	
 	/**
 	 * Open a new empty work sheet of current {@link Spreadsheet}
@@ -231,7 +232,7 @@ public interface WorkbookCtrl {
 	 * Exports spreadsheet to excel file
 	 * @return
 	 */
-	public ByteArrayOutputStream exportToExcel();
+	public ByteArrayOutputStream exportToExcel()  throws IOException ;
 
 	/**
 	 * Returns {@link Spreadsheet} book name
@@ -263,7 +264,7 @@ public interface WorkbookCtrl {
 	 */
 	public void setRowHeightInPx(int height, Rect selection);
 	
-	public int getDefaultCharWidth();
+//	public int getDefaultCharWidth();
 	
 	/**
 	 * Shifts current selected sheet left, returns shifted sheet index
@@ -294,5 +295,5 @@ public interface WorkbookCtrl {
 
 	public Rect getVisibleRect();
 	
-	public boolean setEditTextWithValidation(Sheet sheet, int row, int col, String txt, EventListener callback);
+//	public boolean setEditTextWithValidation(Sheet sheet, int row, int col, String txt, EventListener callback);
 }

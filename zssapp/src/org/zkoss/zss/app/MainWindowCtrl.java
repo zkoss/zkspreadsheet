@@ -486,8 +486,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		if (headerType == WorkbookCtrl.HEADER_TYPE_ROW) {
 			for (int i = selection.getTop(); i <= selection.getBottom(); i++) {
 				if (prev < 0)
-					prev = UnitUtil.getRowHeightInPx(spreadsheet.getSelectedSheet(), i);
-				else if (prev != UnitUtil.getRowHeightInPx(spreadsheet.getSelectedSheet(), i)) {
+					prev = spreadsheet.getSelectedSheet().getRowHeight(i);
+				else if (prev != spreadsheet.getSelectedSheet().getRowHeight(i)) {
 					sameVal = false;
 					break;
 				}
@@ -495,8 +495,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 		} else {
 			for (int i = selection.getLeft(); i <= selection.getRight(); i++) {
 				if (prev < 0)
-					prev = UnitUtil.getColumnWidthInPx(spreadsheet.getSelectedSheet(), i);
-				else if (prev != UnitUtil.getColumnWidthInPx(spreadsheet.getSelectedSheet(), i)) {
+					prev = spreadsheet.getSelectedSheet().getColumnWidth(i);
+				else if (prev != spreadsheet.getSelectedSheet().getColumnWidth(i)) {
 					sameVal = false;
 					break;
 				}

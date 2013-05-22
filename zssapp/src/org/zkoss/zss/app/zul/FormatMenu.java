@@ -56,7 +56,7 @@ public class FormatMenu extends Menu implements IdSpace {
 	public void onFontFamilySelect(ForwardEvent event) {
 		final String fontFamily = (String)event.getData();
 		getDesktopCellStyleContext().modifyStyle(new StyleModification() {
-			public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style,
+			public void modify(org.zkoss.zss.app.zul.ctrl.CellStyleApplier style,
 					CellStyleContextEvent candidteEvt) {
 				style.setFontFamily(fontFamily);
 			}
@@ -87,7 +87,7 @@ public class FormatMenu extends Menu implements IdSpace {
 		InputEvent evt = (InputEvent)event.getOrigin();
 		final String color = (String)evt.getValue();
 		getDesktopCellStyleContext().modifyStyle(new StyleModification() {
-			public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style,
+			public void modify(org.zkoss.zss.app.zul.ctrl.CellStyleApplier style,
 					CellStyleContextEvent candidteEvt) {
 				style.setCellColor(color);
 			}
@@ -98,21 +98,22 @@ public class FormatMenu extends Menu implements IdSpace {
 		final String alignStr = (String) event.getData();
 
 		getDesktopCellStyleContext().modifyStyle(new StyleModification() {
-			public void modify(org.zkoss.zss.app.zul.ctrl.CellStyle style,
+			public void modify(org.zkoss.zss.app.zul.ctrl.CellStyleApplier style,
 					CellStyleContextEvent candidteEvt) {
-				short align = CellStyle.ALIGN_GENERAL;
-				if (alignStr.equals("left")) {
-					align = CellStyle.ALIGN_LEFT;
-				} 
-
-				if (alignStr.equals("center")) {
-					align = CellStyle.ALIGN_CENTER;
-				} 
-
-				if (alignStr.equals("right")) {
-					align = CellStyle.ALIGN_RIGHT;
-				}
-				style.setAlignment(align);
+				//Dennis , not worth to tune it. totally worng to edit cell style directly. 
+//				short align = CellStyle.ALIGN_GENERAL;
+//				if (alignStr.equals("left")) {
+//					align = CellStyle.ALIGN_LEFT;
+//				} 
+//
+//				if (alignStr.equals("center")) {
+//					align = CellStyle.ALIGN_CENTER;
+//				} 
+//
+//				if (alignStr.equals("right")) {
+//					align = CellStyle.ALIGN_RIGHT;
+//				}
+//				style.setAlignment(align);
 			}
 		});
 	}

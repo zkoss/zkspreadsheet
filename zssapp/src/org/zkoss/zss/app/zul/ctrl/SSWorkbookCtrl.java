@@ -15,6 +15,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.zul.ctrl;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,12 +62,16 @@ import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Range.DeleteShift;
+import org.zkoss.zss.api.Range.InsertCopyOrigin;
+import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.SheetOperationUtil;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.ChartData;
+import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.cell.CellHelper;
 import org.zkoss.zss.app.file.FileHelper;
@@ -113,23 +118,24 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		if (spreadsheet.getSelection() == null)
 			return;
 		
-		CellHelper.clearContent(spreadsheet, SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
+		Ranges.range(spreadsheet.getSelectedSheet(), SheetHelper.getVisibleSelection(spreadsheet)).clearContents();
 	}
 
 	public void clearSelectionStyle() {
 		if (spreadsheet.getSelection() == null)
 			return;
 		
-		CellHelper.clearStyle(spreadsheet, SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
+		Ranges.range(spreadsheet.getSelectedSheet(), SheetHelper.getVisibleSelection(spreadsheet)).clearStyles();
 	}
 
 	public void insertColumnLeft() {
 		if (spreadsheet.getSelection() == null)
 			return;
 		
-		Rect rect = spreadsheet.getSelection();
-		CellHelper.shiftEntireColumnRight(spreadsheet.getSelectedSheet(), 
-				rect.getLeft(), rect.getRight());
+		Range r = Ranges.range(spreadsheet.getSelectedSheet(), SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.insert(r.getColumnRange(), InsertShift.RIGHT, InsertCopyOrigin.RIGHT_BELOW);
+//		CellHelper.shiftEntireColumnRight(spreadsheet.getSelectedSheet(), 
+//				rect.getLeft(), rect.getRight());
 	}
 
 	public void deleteColumn() {
@@ -137,19 +143,29 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		if (rect == null)
 			return;
 		
-		CellHelper.shiftEntireColumnLeft(spreadsheet.getSelectedSheet(), 
-				rect.getLeft(), rect.getRight());
+		Range r = Ranges.range(spreadsheet.getSelectedSheet(), SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.delete(r.getColumnRange(), DeleteShift.LEFT);
+		
+//		CellHelper.shiftEntireColumnLeft(spreadsheet.getSelectedSheet(), 
+//				rect.getLeft(), rect.getRight());
+		
 	}
 
 	public void insertRowAbove() {
-		CellHelper.shiftEntireRowDown(spreadsheet.getSelectedSheet(), 
-				spreadsheet.getSelection().getTop(), 
-				spreadsheet.getSelection().getBottom());
+		Range r = Ranges.range(spreadsheet.getSelectedSheet(), SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.insert(r.getRowRange(), InsertShift.DOWN, InsertCopyOrigin.LEFT_ABOVE);
+		
+//		CellHelper.shiftEntireRowDown(spreadsheet.getSelectedSheet(), 
+//				spreadsheet.getSelection().getTop(), 
+//				spreadsheet.getSelection().getBottom());
 	}
 
 	public void deleteRow() {
-		Rect rect = spreadsheet.getSelection();
-		CellHelper.shiftEntireRowUp(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getBottom());
+		Range r = Ranges.range(spreadsheet.getSelectedSheet(), SheetHelper.getVisibleSelection(spreadsheet));
+		CellOperationUtil.delete(r.getRowRange(), DeleteShift.UP);
+		
+//		Rect rect = spreadsheet.getSelection();
+//		CellHelper.shiftEntireRowUp(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getBottom());
 	}
 
 	public void setSelectedSheet(String name) {
@@ -182,27 +198,27 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void addImage(int row, int col, AImage image) {
 		if (WebApps.getFeature("pe")) {
-			Ranges.range(spreadsheet.getSelectedSheet()).addPicture(getClientCenterAnchor(row, col, image.getWidth(), image.getHeight()), image.getByteData(), getImageFormat(image));
+			SheetOperationUtil.addPicture(Ranges.range(spreadsheet.getSelectedSheet(),row,col), image);
 		}
 	}
-	
-	private int getImageFormat(AImage image) {
-		String format = image.getFormat();
-		if ("dib".equalsIgnoreCase(format)) {
-			return Workbook.PICTURE_TYPE_DIB;
-		} else if ("emf".equalsIgnoreCase(format)) {
-			return Workbook.PICTURE_TYPE_EMF;
-		} else if ("wmf".equalsIgnoreCase(format)) {
-			return Workbook.PICTURE_TYPE_WMF;
-		} else if ("jpeg".equalsIgnoreCase(format)) {
-			return Workbook.PICTURE_TYPE_JPEG;
-		} else if ("pict".equalsIgnoreCase(format)) {
-			return Workbook.PICTURE_TYPE_PICT;
-		} else if ("png".equalsIgnoreCase(format)) {
-			return Workbook.PICTURE_TYPE_PNG;
-		}
-		throw new UiException("Unsupported format: " + format);
-	}
+//	
+//	private Format getImageFormat(AImage image) {
+//		String format = image.getFormat();
+//		if ("dib".equalsIgnoreCase(format)) {
+//			return Format.DIB;
+//		} else if ("emf".equalsIgnoreCase(format)) {
+//			return Format.EMF;
+//		} else if ("wmf".equalsIgnoreCase(format)) {
+//			return Format.WMF;
+//		} else if ("jpeg".equalsIgnoreCase(format)) {
+//			return Format.JPEG;
+//		} else if ("pict".equalsIgnoreCase(format)) {
+//			return Format.PICT;
+//		} else if ("png".equalsIgnoreCase(format)) {
+//			return Format.PNG;
+//		}
+//		throw new UiException("Unsupported format: " + format);
+//	}
 
 	public void insertSheet() {
 		int sheetCount = spreadsheet.getBook().getNumberOfSheets();
@@ -219,29 +235,35 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void shiftCell(int direction) {
 		Sheet sheet = spreadsheet.getSelectedSheet();
-		Rect rect = spreadsheet.getSelection();
-		
+		Range range = Ranges.range(spreadsheet.getSelectedSheet(),SheetHelper.getVisibleSelection(spreadsheet));
 		switch (direction) {
 		case DesktopWorkbenchContext.SHIFT_CELL_UP:
-			CellHelper.shiftCellUp(sheet, rect); 
+			CellOperationUtil.delete(range, DeleteShift.UP);
+//			CellHelper.shiftCellUp(sheet, rect); 
 			break;
 		case DesktopWorkbenchContext.SHIFT_CELL_RIGHT:
-			CellHelper.shiftCellRight(sheet, rect);
+			CellOperationUtil.insert(range, InsertShift.RIGHT,InsertCopyOrigin.RIGHT_BELOW);
+//			CellHelper.shiftCellRight(sheet, rect);
 			break;
 		case DesktopWorkbenchContext.SHIFT_CELL_DOWN:
-			CellHelper.shiftCellDown(sheet, rect); 
+			CellOperationUtil.insert(range, InsertShift.DOWN,InsertCopyOrigin.LEFT_ABOVE);
+//			CellHelper.shiftCellDown(sheet, rect); 
 			break;
 		case DesktopWorkbenchContext.SHIFT_CELL_LEFT:
-			CellHelper.shiftCellLeft(sheet, rect); 
+			CellOperationUtil.delete(range, DeleteShift.LEFT);
+//			CellHelper.shiftCellLeft(sheet, rect); 
 			break;
 		}
 	}
 
 	public void sort(boolean isSortDescending) {
-		if (isSortDescending)
-			CellHelper.sortDescending(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
-		else
-			CellHelper.sortAscending(spreadsheet.getSelectedSheet(), SheetHelper.getSpreadsheetMaxSelection(spreadsheet));
+		Range range = Ranges.range(spreadsheet.getSelectedSheet(),SheetHelper.getVisibleSelection(spreadsheet));
+		range.sort(isSortDescending);
+//		if (isSortDescending){
+//			CellHelper.sortDescending(spreadsheet.getSelectedSheet(), SheetHelper.getVisibleSelection(spreadsheet));
+//		}else{
+//			CellHelper.sortAscending(spreadsheet.getSelectedSheet(), SheetHelper.getVisibleSelection(spreadsheet));
+//		}
 	}
 
 	public void setColumnFreeze(int columnFreeze) {
@@ -273,7 +295,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void setDataFormat(String format) {
 		Range range = Ranges.range(spreadsheet.getSelectedSheet(),spreadsheet.getSelection());
-		CellOperationUtil.applyCellDataFormat(range, format);
+		CellOperationUtil.applyDataFormat(range, format);
 	}
 
 	public void save() {
@@ -282,7 +304,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		storeBookInDesktop(spreadsheet);
 	}
 
-	public ByteArrayOutputStream exportToExcel() {
+	public ByteArrayOutputStream exportToExcel() throws IOException {
 		Book wb = spreadsheet.getBook();
 	    Exporter c = Exporters.getExporter("excel");
 	    ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -366,10 +388,10 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void setBookSrc(String src) {
 		unsubscribeBookListeners();
-		final XBook targetBook = getBookFromDesktop(src);
+		final Book targetBook = getBookFromDesktop(src);
 		removeBookFromDesktopIfNeeded();
 		if (targetBook != null) {
-			spreadsheet.setXBook(targetBook);
+			spreadsheet.setBook(targetBook);
 //			spreadsheet.setSrcName(src);
 		}
 		else {
@@ -381,20 +403,20 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		resubscribeBookListeners();
 	}
 	
-	public void setBook(XBook book) {
+	public void setBook(Book book) {
 		unsubscribeBookListeners();
 		removeBookFromDesktopIfNeeded();
-		spreadsheet.setXBook(book);
+		spreadsheet.setBook(book);
 		storeBookInDesktop(spreadsheet);
 		resubscribeBookListeners();
 	}
 	
 	public void openBook(SpreadSheetMetaInfo info) {
 		unsubscribeBookListeners();
-		final XBook targetBook = getBookFromDesktop(info.getSrc());
+		final Book targetBook = getBookFromDesktop(info.getSrc());
 		removeBookFromDesktopIfNeeded();
 		if (targetBook != null) {
-			spreadsheet.setXBook(targetBook);
+			spreadsheet.setBook(targetBook);
 //			spreadsheet.setSrcName(info.getSrc());
 		} else {
 			FileHelper.openSpreadsheet(spreadsheet, info);
@@ -408,13 +430,13 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	 * <p> Search all books inside desktop by {@link Spreadsheet#getSrc}
 	 * @return
 	 */
-	private XBook getBookFromDesktop(String src) {
+	private Book getBookFromDesktop(String src) {
 		if (src == null)
 			return null;
 		
-		HashMap<XBook, LinkedHashSet<Spreadsheet>> books = getDesktopBooks();
+		HashMap<Book, LinkedHashSet<Spreadsheet>> books = getDesktopBooks();
 		final String srcBookName = FileHelper.removeFolderPath(src);
-		for (XBook book : books.keySet()) {
+		for (Book book : books.keySet()) {
 			if (srcBookName.equals(book.getBookName()))
 				return book;
 		}
@@ -499,20 +521,16 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void setColumnWidthInPx(int width, Rect selection) {
 //		final int char256 = Utils.pxToFileChar256(width, ((XBook)spreadsheet.getSelectedSheet().getWorkbook()).getDefaultCharWidth());
-		Ranges.range(spreadsheet.getSelectedSheet(), 0, selection.getLeft(), 0, selection.getRight()).getColumnRange().setColumnWidth(width);
+		Ranges.range(spreadsheet.getSelectedSheet(), 0, selection.getLeft(), 0, selection.getRight()).setColumnWidth(width);
 	}
 
 	public void setRowHeightInPx(int height, Rect selection) {
-		int point = Utils.pxToPoint(height);
-		XRanges
-		.range(spreadsheet.getSelectedXSheet(), selection.getTop(), 0, selection.getBottom(), 0)
-		.getRows()
-		.setRowHeight(point);
+		Ranges.range(spreadsheet.getSelectedSheet(), selection.getTop(), 0, selection.getBottom(), 0).setRowHeight(height);
 	}
 
-	public int getDefaultCharWidth() {
-		return ((XBook)spreadsheet.getSelectedXSheet().getWorkbook()).getDefaultCharWidth();
-	}
+//	public int getDefaultCharWidth() {
+//		return ((XBook)spreadsheet.getSelectedSheet().getWorkbook()).getDefaultCharWidth();
+//	}
 	
 	public List<String> getSheetNames() {
 		final Book book = spreadsheet.getBook();
@@ -536,7 +554,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	}
 
 	public boolean isSheetProtect() {
-		return spreadsheet.getSelectedXSheet().getProtect();
+		return spreadsheet.getSelectedSheet().isProtected();
 	}
 	
 	public void protectSheet(String password) {
@@ -551,9 +569,9 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		return (String)spreadsheet.getColumntitle(column) + spreadsheet.getRowtitle(row);
 	}
 
-	public void escapeAndUpdateText(int row, int column, String text) {
-		spreadsheet.escapeAndUpdateText(cell, text);
-	}
+//	public void escapeAndUpdateText(int row, int column, String text) {
+//		spreadsheet.escapeAndUpdateText(cell, text);
+//	}
 
 	public void focusTo(int row, int column, boolean fireFocusEvent) {
 		spreadsheet.focusTo(row, column);
@@ -592,9 +610,9 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 //		EditHelper.clearCutOrCopy(spreadsheet);
 	}
 
-	public void updateText(Cell cell, String text) {
-		spreadsheet.updateText(cell, text);
-	}
+//	public void updateText(Cell cell, String text) {
+//		spreadsheet.updateText(cell, text);
+//	}
 	
 	public String getColumnTitle(int col) {
 		return Labels.getLabel("column") + " " + spreadsheet.getColumntitle(col);
@@ -690,7 +708,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	
 //	private ChartData fillXYData(XYData data) {
 //		final Rect selection = spreadsheet.getSelection();
-//		final XSheet sheet = spreadsheet.getSelectedXSheet();
+//		final XSheet sheet = spreadsheet.getSelectedSheet();
 //		
 //		Rect rect = getChartDataRange(selection, sheet);
 //		int colIdx = rect.getLeft();
@@ -793,7 +811,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 	
 //	private CategoryData fillCategoryData(CategoryData data) {
 //		final Rect selection = spreadsheet.getSelection();
-//		final XSheet sheet = spreadsheet.getSelectedXSheet();
+//		final XSheet sheet = spreadsheet.getSelectedSheet();
 //		
 //		Rect rect = getChartDataRange(selection, sheet);
 //		int colIdx = rect.getLeft();
@@ -907,9 +925,9 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 //		return anchor;
 //	}
 	
-	public boolean setEditTextWithValidation(XSheet sheet, int row, int col, String txt, EventListener okCallback) {
-		return Utils.setEditTextWithValidation(spreadsheet, sheet, row, col, txt, okCallback);
-	}
+//	public boolean setEditTextWithValidation(XSheet sheet, int row, int col, String txt, EventListener okCallback) {
+//		return Utils.setEditTextWithValidation(spreadsheet, sheet, row, col, txt, okCallback);
+//	}
 	
 //	/** convert pixel to EMU */
 //	public static int pxToEmu(int px) {
