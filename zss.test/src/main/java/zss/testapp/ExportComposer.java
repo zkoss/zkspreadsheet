@@ -13,7 +13,6 @@ import static org.zkoss.zss.api.CellOperationUtil.applyFontUnderline;
 import static org.zkoss.zss.api.CellOperationUtil.applyVerticalAlignment;
 import static org.zkoss.zss.api.Ranges.range;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,6 +23,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zkmax.zul.Filedownload;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importer;
@@ -33,8 +33,8 @@ import org.zkoss.zss.api.SheetOperationUtil;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
-import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Font;
+import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
@@ -168,12 +168,12 @@ public class ExportComposer extends SelectorComposer<Component> {
         
         exportedFile.delete();
 	}
-	/*
+
 	@Listen("onClick = button[label='Export Excel']")
 	public void toExcel() throws IOException{
 		File file = new File("exported.xlsx");
 		FileOutputStream fos = new FileOutputStream(file);
-		excelExporter.export(spreadsheet.getBook(), fos);
+		excelExporter.export(srcSpreadsheet.getBook(), fos);
 		Filedownload.save(file, "application/excel");
 	}
 
@@ -182,7 +182,7 @@ public class ExportComposer extends SelectorComposer<Component> {
 
 		File file = new File("exported.pdf");
 		FileOutputStream fos = new FileOutputStream(file);
-		pdfExporter.export(spreadsheet.getBook(), fos);
+		pdfExporter.export(srcSpreadsheet.getBook(), fos);
 		Filedownload.save(file, "application/pdf");
 	}
 
@@ -190,9 +190,8 @@ public class ExportComposer extends SelectorComposer<Component> {
 	public void toHtml() throws IOException{
 		File file = new File("exported.html");
 		FileOutputStream fos = new FileOutputStream(file);
-		htmlExporter.export(spreadsheet.getBook(), fos);
+		htmlExporter.export(srcSpreadsheet.getBook(), fos);
 		Filedownload.save(file, "text/html");
 	}
-	*/
 	
 }
