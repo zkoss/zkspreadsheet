@@ -453,7 +453,7 @@ public class CellOperationUtil {
 				}else{
 					range.merge(false);
 					//align the left/top one
-					applyAlignment(range.getCellRange(0,0),Alignment.CENTER);
+					applyAlignment(range.toCellRange(0,0),Alignment.CENTER);
 				}
 			}
 		});

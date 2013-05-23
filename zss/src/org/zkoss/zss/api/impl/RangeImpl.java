@@ -407,33 +407,33 @@ public class RangeImpl implements Range{
 	}
 
 	
-	public RangeImpl getShiftedRange(int rowOffset,int colOffset){
+	public RangeImpl toShiftedRange(int rowOffset,int colOffset){
 		RangeImpl offsetRange = new RangeImpl(range.getOffset(rowOffset, colOffset),sharedCtx);
 		return offsetRange;
 	}
 	
 	
-	public RangeImpl getCellRange(int rowOffset,int colOffset){
+	public RangeImpl toCellRange(int rowOffset,int colOffset){
 		RangeImpl cellRange = new RangeImpl(XRanges.range(range.getSheet(),getRow()+rowOffset,getColumn()+colOffset),sharedCtx);
 		return cellRange;
 	}
 	
 	/** get the top-left cell range of this range**/
 	public RangeImpl getLeftTop() {
-		return getCellRange(0,0);
+		return toCellRange(0,0);
 	}
 	
 	/**
 	 *  Return a range that represents all columns and between the first-row and last-row of this range
 	 **/
-	public RangeImpl getRowRange(){
+	public RangeImpl toRowRange(){
 		return new RangeImpl(range.getRows(),sharedCtx);
 	}
 	
 	/**
 	 *  Return a range that represents all rows and between the first-column and last-column of this range
 	 **/
-	public RangeImpl getColumnRange(){
+	public RangeImpl toColumnRange(){
 		return new RangeImpl(range.getColumns(),sharedCtx);
 	}
 	

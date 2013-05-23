@@ -145,19 +145,33 @@ public interface Range {
 	 */
 	public void visit(final CellVisitor visitor);
 
-	public Range getShiftedRange(int rowOffset,int colOffset);
-	
-	public Range getCellRange(int rowOffset,int colOffset);
+	/**
+	 * Return a new range that shift it row and column according to the offset, but has same height and width of original range.
+	 * @param rowOffset row offset of the new range, zero base
+	 * @param colOffset column offset of the new range, zero base
+	 * @return the new range
+	 */
+	public Range toShiftedRange(int rowOffset,int colOffset);
 	
 	/**
-	 *  Return a range that represents all columns and between the first-row and last-row of this range
+	 * Returns a new range according the offset, but only contains one cell 
+	 * @param rowOffset row offset of the cell, zero base
+	 * @param colOffset column offset of the cell, zero base
+	 * @return the new range of the cell
+	 */
+	public Range toCellRange(int rowOffset,int colOffset);
+	
+	/**
+	 *  Return a range that represents all columns and between the first-row and last-row of this range.
+	 *  It is a useful when you want to manipulate entire row (such as delete row)
 	 **/
-	public Range getRowRange();
+	public Range toRowRange();
 	
 	/**
 	 *  Return a range that represents all rows and between the first-column and last-column of this range
+	 *  It is a useful when you want to manipulate entire column (such as delete column)
 	 **/
-	public Range getColumnRange();
+	public Range toColumnRange();
 	
 	/**
 	 * Check if this range represents a whole column, which mean all rows are included, 
@@ -244,13 +258,13 @@ public interface Range {
 	/**
 	 * Sets the width(in pixel) of column in this range, it effect to whole column. 
 	 * @param widthPx width in pixel
-	 * @see #getColumnRange()
+	 * @see #toColumnRange()
 	 */
 	public void setColumnWidth(int widthPx);
 	/**
 	 * Sets the height(in pixel) of row in this range, it effect to whole row.
 	 * @param widthPx width in pixel
-	 * @see #getRowRange()
+	 * @see #toRowRange()
 	 */
 	public void setRowHeight(int heightPx);
 	
@@ -327,8 +341,8 @@ public interface Range {
 	 * Hide the rows or columns, the range has to be a whole row range (which mean you select some columns and all rows of these columns are included),
 	 * or a whole column range. 
 	 * @param hidden
-	 * @see #getRowRange()
-	 * @see #getColumnRange()
+	 * @see #toRowRange()
+	 * @see #toColumnRange()
 	 */
 	public void setHidden(boolean hidden);
 	

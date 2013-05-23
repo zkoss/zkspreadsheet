@@ -472,7 +472,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		range = range.getRowRange();
+		range = range.toRowRange();
 		CellOperationUtil.hide(range);
 		return true;
 	}
@@ -485,7 +485,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		range = range.getRowRange();
+		range = range.toRowRange();
 		CellOperationUtil.unHide(range);
 		return true;
 	}
@@ -498,7 +498,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		range = range.getColumnRange();
+		range = range.toColumnRange();
 		CellOperationUtil.unHide(range);
 		
 		return true;
@@ -513,7 +513,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		range = range.getColumnRange();
+		range = range.toColumnRange();
 		CellOperationUtil.hide(range);
 		return true;
 	}
@@ -1028,7 +1028,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return true;
 		}
 		
-		range = range.getRowRange();
+		range = range.toRowRange();
 		CellOperationUtil.insert(range,InsertShift.DOWN, InsertCopyOrigin.LEFT_ABOVE);
 		clearClipboard();
 		return true;
@@ -1048,7 +1048,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return true;
 		}
 		
-		range = range.getColumnRange();
+		range = range.toColumnRange();
 		CellOperationUtil.insert(range,InsertShift.RIGHT, InsertCopyOrigin.RIGHT_BELOW);
 		clearClipboard();
 		return true;
@@ -1096,7 +1096,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return true;
 		}
 		
-		range = range.getRowRange();
+		range = range.toRowRange();
 		CellOperationUtil.delete(range, DeleteShift.UP);
 		clearClipboard();
 		return true;
@@ -1116,7 +1116,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return true;
 		}
 		
-		range = range.getColumnRange();
+		range = range.toColumnRange();
 		CellOperationUtil.delete(range, DeleteShift.LEFT);
 		clearClipboard();
 		return true;
