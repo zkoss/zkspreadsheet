@@ -2134,7 +2134,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final String newSheetName= (String) payload[1]; //new selected sheet name
 			
 			//Dennis, 20130515, should handle it by default
-			if(getSelectedSheet().getSheetName().equals(delSheetName)){
+			
+			//Dennis, 20130523, can't get sheet name if it was deleted.
+			String selectedName = delSheetName;
+			try{
+				selectedName = getSelectedSheet().getSheetName();
+			}catch(Exception x){
+//				>>org.apache.xmlbeans.impl.values.XmlValueDisconnectedException
+//				>>	at org.apache.xmlbeans.impl.values.XmlObjectBase.check_orphaned(XmlObjectBase.java:1213)
+//				>>	at org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTSheetImpl.getName(Unknown Source)
+				selectedName = null;
+			}
+			
+			if(selectedName == null || selectedName.equals(delSheetName)){
 				//if current select sheet name, euqlas the delete sheet, we should select to suggest new sheet 
 				setSelectedSheet(newSheetName);//this will also update sheet label	
 			}else{
