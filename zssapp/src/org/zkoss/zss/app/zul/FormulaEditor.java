@@ -221,10 +221,10 @@ public class FormulaEditor extends Textbox {
 			if (isStartEditingFormula(newEdit))
 				cacheFormulaEditingInfo();
 			generateCellFocus(newEdit);
-		}  else if (row >0) {
+		}  else if (currRow >0) {
 			final int left = bookCtrl.getSelection().getLeft();
 			final int top = bookCtrl.getSelection().getTop();
-			final XSheet sheet = bookCtrl.getSelectedSheet();
+			final Sheet sheet = bookCtrl.getSelectedSheet();
 			currentEditcell = Utils.getOrCreateCell(sheet, top, left);
 			bookCtrl.escapeAndUpdateText(currentEditcell, newEdit);
 		}
@@ -316,12 +316,12 @@ public class FormulaEditor extends Textbox {
 		Position pos = bookCtrl.getCellFocus();
 		int row = pos.getRow();
 		int col = pos.getColumn();
-		int oldrow = this.row;
-		int oldcol = this.col;
+		int oldrow = this.currRow;
+		int oldcol = this.currRow;
 		final boolean focusChanged = (row != oldrow || col != oldcol); //user click directly to a different cell
 		if (!focusChanged) {
 			if (everTab != null) { //Tab key
-				final XSheet sheet = bookCtrl.getSelectedSheet();
+				final Sheet sheet = bookCtrl.getSelectedSheet();
 				if (everTab.booleanValue()) { //shift + Tab
 					col = col - 1;
 					if (col < 0) {
@@ -433,9 +433,9 @@ public class FormulaEditor extends Textbox {
 	private void endEditingFormula(boolean confirmChange) {
 		WorkbookCtrl bookCtrl = getDesktopWorkbenchContext().getWorkbookCtrl();
 		
-		XRange range = XRanges.range(formulaSheet, formulaCell.getRowIndex(), formulaCell.getColumnIndex());
+		Range range = Ranges.range(formulaSheet, formulaCell.getRowIndex(), formulaCell.getColumnIndex());
 		if (confirmChange) {
-			range.setEditText(newEdit);
+			range.setCellEditText(newEdit);
 			bookCtrl.focusTo(formulaRow, formulaColumn, false);
 		}
 		clearCellReferenceFocus();
