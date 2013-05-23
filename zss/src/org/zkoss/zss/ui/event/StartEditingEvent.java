@@ -36,7 +36,7 @@ public class StartEditingEvent extends CellEvent{
 	Object _clientValue;
 	
 	public StartEditingEvent(String name, Component target,Sheet sheet, int row ,int col, Object editingValue,Object clientvalue) {
-		super(name,target,sheet,row,col);
+		super(name,target,sheet,row,col,null);
 		this._editingValue = editingValue;
 		this._clientValue = clientvalue;
 	}

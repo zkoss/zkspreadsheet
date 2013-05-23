@@ -1369,7 +1369,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 
 	@Override
 	public String[] getInterestedEvents() {
-		return new String[] { Events.ON_AUX_ACTION,Events.ON_SHEET_SELECTED, Events.ON_CTRL_KEY, Events.ON_CELL_SELECTION_UPDATE, 
+		return new String[] { Events.ON_AUX_ACTION,Events.ON_SHEET_SELECT, Events.ON_CTRL_KEY, Events.ON_CELL_SELECTION_UPDATE, 
 				org.zkoss.zk.ui.event.Events.ON_CANCEL,
 				Events.ON_CELL_DOUBLE_CLICK, Events.ON_START_EDITING };
 	}
@@ -1428,7 +1428,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	private void onEventAnother(Event event) throws Exception {
 
 		String nm = event.getName();
-		if(Events.ON_SHEET_SELECTED.equals(nm)){
+		if(Events.ON_SHEET_SELECT.equals(nm)){
 			
 			updateClipboardEffect(getSheet());
 			//TODO 20130513, Dennis, looks like I don't need to do this here?

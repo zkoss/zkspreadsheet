@@ -32,7 +32,7 @@ import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.Events;
-import org.zkoss.zss.ui.event.SheetSelectedEvent;
+import org.zkoss.zss.ui.event.SheetSelectEvent;
 import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
@@ -89,7 +89,7 @@ public class SelectSheetCommand implements Command {
 							highlightLeft, highlightTop, highlightRight, highlightBottom,
 							rowfreeze, colfreeze);
 					
-					Event event = new SheetSelectedEvent(Events.ON_SHEET_SELECTED, spreadsheet, sheet, currSheet);
+					Event event = new SheetSelectEvent(Events.ON_SHEET_SELECT, spreadsheet, sheet, currSheet);
 					org.zkoss.zk.ui.event.Events.postEvent(event);
 				}
 				break;

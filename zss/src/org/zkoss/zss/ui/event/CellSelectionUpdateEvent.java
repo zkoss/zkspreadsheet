@@ -31,20 +31,20 @@ public class CellSelectionUpdateEvent extends CellSelectionEvent{
 
 	
 	private CellSelectionAction _action;
-	private int _origleft;
-	private int _origtop;
-	private int _origright;
-	private int _origbottom;
+	private int _olCol;
+	private int _otRow;
+	private int _orCol;
+	private int _obRow;
 
-	public CellSelectionUpdateEvent(String name, Component target,Sheet sheet,CellSelectionType type, CellSelectionAction action,
-			int left, int top,int right, int bottom,
-			int origleft, int origtop,int origright, int origbottom) {
-		super(name, target, sheet,type,left,top,right,bottom);
+	public CellSelectionUpdateEvent(String name, Component target,Sheet sheet,
+			int tRow, int lCol, int bRow, int rCol,
+			int otRow, int olCol, int obRow, int orCol,CellSelectionType type, CellSelectionAction action) {
+		super(name, target, sheet,tRow,lCol,bRow,rCol,type);
 		_action = action;
-		_origleft = origleft;
-		_origtop = origtop;
-		_origright = origright;
-		_origbottom = origbottom;
+		_olCol = olCol;
+		_otRow = otRow;
+		_orCol = orCol;
+		_obRow = obRow;
 	}
 
 	/**
@@ -54,21 +54,53 @@ public class CellSelectionUpdateEvent extends CellSelectionEvent{
 		return _action;
 	}
 	
+	/**
+	 * @deprecated use {@link #getOrigColumn()}
+	 */
+	@Deprecated
 	public int getOrigleft() {
-		return _origleft;
+		return getOrigColumn();
 	}
 
+	/**
+	 * @deprecated use {@link #getOrigRow()}
+	 */
+	@Deprecated
 	public int getOrigtop() {
-		return _origtop;
+		return getOrigRow();
 	}
 
+	/**
+	 * @deprecated use {@link #getOrigLastColumn()}
+	 */
+	@Deprecated
 	public int getOrigright() {
-		return _origright;
+		return getOrigLastColumn();
 	}
 
+	/**
+	 * @deprecated use {@link #getOrigLastRow()}
+	 */
+	@Deprecated
 	public int getOrigbottom() {
-		return _origbottom;
+		return getOrigLastRow();
 	}
 	
+	
+	public int getOrigRow() {
+		return _otRow;
+	}
+
+	public int getOrigColumn() {
+		return _olCol;
+	}
+
+	public int getOrigLastRow() {
+		return _obRow;
+	}
+
+	public int getOrigLastColumn() {
+		return _orCol;
+	}	
 	
 }

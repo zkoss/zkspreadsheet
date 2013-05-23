@@ -39,9 +39,9 @@ public class CellEvent extends Event{
 		this._col = col;
 	}
 	
-	public CellEvent(String name, Component target,Sheet sheet, int row ,int col) {
-		this(name,target,sheet,row,col,null);
-	}
+//	public CellEvent(String name, Component target,Sheet sheet, int row ,int col) {
+//		this(name,target,sheet,row,col,null);
+//	}
 	
 	/**
 	 * get Sheet

@@ -26,39 +26,22 @@ import org.zkoss.zss.api.model.Sheet;
  * Event class about selection of cell
  * @author Dennis.Chen
  */
-public class CellSelectionEvent extends Event{
-	
+public class CellSelectionEvent extends CellAreaEvent{
+	private static final long serialVersionUID = 1L;
 //	
 //	public static final int SELECT_CELLS = 0x01;
 //	public static final int SELECT_ROW = 0x02;
 //	public static final int SELECT_COLUMN = 0x03;
 //	public static final int SELECT_ALL = 0x04;
 	
-	private Sheet _sheet;
+	
 	private CellSelectionType _type;
-	private int _left;
-	private int _top;
-	private int _right;
-	private int _bottom;
 
-	public CellSelectionEvent(String name, Component target,Sheet sheet,CellSelectionType type, int left, int top,int right, int bottom) {
-		super(name, target);
-		_sheet = sheet;
+	public CellSelectionEvent(String name, Component target,Sheet sheet,int tRow, int lCol, int bRow, int rCol,CellSelectionType type) {
+		super(name, target, sheet, tRow, lCol, bRow, rCol);
 		_type = type;
-		_left = left;
-		_top = top;
-		_right = right;
-		_bottom = bottom;
 	}
 	
-	/**
-	 * get Sheet
-	 * @return sheet the related sheet 
-	 */
-	public Sheet getSheet(){
-		return _sheet;
-	}
-
 	/**
 	 * Returns the selection type
 	 * @return the selection type.
@@ -67,22 +50,35 @@ public class CellSelectionEvent extends Event{
 		return _type;
 	}
 	
+	/**
+	 * @deprecated use {@link #getColumn()}
+	 */
+	@Deprecated 
 	public int getLeft() {
-		return _left;
+		return getColumn();
 	}
 
+	/**
+	 * @deprecated use {@link #getRow()}
+	 */
+	@Deprecated 
 	public int getTop() {
-		return _top;
+		return getRow();
 	}
 
+	/**
+	 * @deprecated use {@link #getLastColumn()}
+	 */
+	@Deprecated 
 	public int getRight() {
-		return _right;
+		return getLastColumn();
 	}
 
+	/**
+	 * @deprecated use {@link #getLastRow()}
+	 */
+	@Deprecated 
 	public int getBottom() {
-		return _bottom;
+		return getLastRow();
 	}
-	
-	
-	
 }

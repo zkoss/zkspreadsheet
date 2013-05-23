@@ -100,9 +100,10 @@ public class CellSelectionUpdateCommand implements Command {
 		ctrl.setSelectionRect(left, top, right, bottom);		
 		
 		final CellSelectionUpdateEvent evt = new CellSelectionUpdateEvent(
-				org.zkoss.zss.ui.event.Events.ON_CELL_SELECTION_UPDATE, comp, sheet, type,
-				action, left, top, right, bottom, orgileft, orgitop, orgiright,
-				orgibottom);
+				org.zkoss.zss.ui.event.Events.ON_CELL_SELECTION_UPDATE, comp, sheet, 
+				top, left, bottom, right, 
+				orgitop, orgileft, orgibottom, orgiright,
+				type, action);
 
 
 		

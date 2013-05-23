@@ -89,6 +89,6 @@ public class CellSelectionCommand implements Command {
 		
 		Events.postEvent(new CellSelectionEvent(
 				org.zkoss.zss.ui.event.Events.ON_CELL_SELECTION, comp, sheet,
-				type, left, top, right, bottom));
+				top, left, bottom, right,type));
 	}
 }

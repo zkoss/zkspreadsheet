@@ -113,9 +113,12 @@ import org.zkoss.zss.ui.au.out.AuMergeCell;
 import org.zkoss.zss.ui.au.out.AuRemoveRowColumn;
 import org.zkoss.zss.ui.au.out.AuRetrieveFocus;
 import org.zkoss.zss.ui.au.out.AuSelection;
+import org.zkoss.zss.ui.event.CellAreaEvent;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HyperlinkEvent;
+import org.zkoss.zss.ui.event.SheetDeleteEvent;
+import org.zkoss.zss.ui.event.SheetEvent;
 import org.zkoss.zss.ui.event.StartEditingEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
 import org.zkoss.zss.ui.impl.ActiveRangeHelper;
@@ -2110,20 +2113,20 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onSheetOrderChange(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
-//			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_ORDER_CHANGE, Spreadsheet.this, name));
+			Sheet sheet = getBook().getSheet(name);
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_SHEET_ORDER_CHANGE, Spreadsheet.this, sheet));
 		}
 		private void onSheetNameChange(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
-//			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_NAME_CHANGE, Spreadsheet.this, name));
+			Sheet sheet = getBook().getSheet(name);
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_SHEET_NAME_CHANGE, Spreadsheet.this, sheet));
 		}
 		private void onSheetCreate(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
-//			org.zkoss.zk.ui.event.Events.postEvent(new SheetCreateEvent(Events.ON_SHEET_CREATE, Spreadsheet.this, name));
+			Sheet sheet = getBook().getSheet(name);
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_SHEET_CREATE, Spreadsheet.this, sheet));
 		}
 		private void onSheetDelete(SSDataEvent event) {
 			final Object[] payload = (Object[]) event.getPayload(); 
@@ -2138,9 +2141,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				//just update sheet label
 				Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
 			}
-			
-			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
-//			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_SHEET_DELETE, Spreadsheet.this, delSheetName, newSheetName));
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_SHEET_DELETE, Spreadsheet.this, delSheetName));
 		}
 		
 		private int _colorIndex = 0;
@@ -2156,14 +2157,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (sheet == null) {//ZSS-209: book may removed
 				return;
 			}
-			if (sheet.equals(_selectedSheet)) { //same sheet
-				final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
-				final String id = focus.id;
-				if (!id.equals(_selfEditorFocus.id)) {
-					final Focus ofocus = _editorFocuses.get(id);
-					moveEditorFocus(id, focus.name, ofocus != null ? ofocus.color : nextFocusColor(), focus.row, focus.col);
-				}
+			if (!getSelectedXSheet().equals(sheet))
+				return;
+			
+			final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
+			final String id = focus.id;
+			if (!id.equals(_selfEditorFocus.id)) {
+				final Focus ofocus = _editorFocuses.get(id);
+				moveEditorFocus(id, focus.name, ofocus != null ? ofocus.color : nextFocusColor(), focus.row, focus.col);
 			}
+			
 		}
 		private void onFriendFocusDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -2171,50 +2174,65 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (sheet == null) {//ZSS-209: book may removed
 				return;
 			}
-			if (sheet.equals(_selectedSheet)) { //same sheet
-				final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
-				removeEditorFocus(focus.id);
-			}
+			if (!getSelectedXSheet().equals(sheet))
+				return;
+			
+			final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
+			removeEditorFocus(focus.id);
 		}
 		private void onChartAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final Object payload = event.getPayload();
 			addChartWidget(sheet, (ZssChartX) payload);
 		}
 		private void onChartDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final Object payload = event.getPayload();
 			deleteChartWidget(sheet, (Chart) payload);
 		}
 		private void onChartUpdate(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final Object payload = event.getPayload();
 			updateChartWidget(sheet, (Chart) payload);
 		}
 		private void onPictureAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final Object payload = event.getPayload();
 			addPictureWidget(sheet, (Picture) payload);
 		}
 		private void onPictureDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final Object payload = event.getPayload();
 			deletePictureWidget(sheet, (Picture) payload);
 		}
 		private void onPictureUpdate(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final Object payload = event.getPayload();
 			updatePictureWidget(sheet, (Picture) payload);
 		}
 		private void onWidgetChange(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final int left = rng.getLeftCol();
 			final int top = rng.getTopRow();
 			final int right = rng.getRightCol();
@@ -2224,6 +2242,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onContentChange(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final int left = rng.getLeftCol();
 			final int top = rng.getTopRow();
 			final int right = rng.getRightCol();
@@ -2234,10 +2254,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (bottom > lastrow) {
 				bottom = lastrow;
 			}
-//			org.zkoss.zk.ui.event.Events.postEvent(new CellSelectionEvent(
-//					Events.ON_CELL_CHANGE, Spreadsheet.this, new SheetImpl(
-//							new SimpleRef<XSheet>(sheet)),
-//					CellSelectionEvent.SELECT_CELLS, left, top, right, bottom));
+			org.zkoss.zk.ui.event.Events.postEvent(new CellAreaEvent(
+					Events.ON_CELL_CHANGE, Spreadsheet.this, getSelectedSheet(),top, left, bottom,right));
 		}
 		private void onRangeInsert(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -4623,6 +4641,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_FOUCSED, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		//can't ignore duplicate, for different header resize
 		addClientEvent(Spreadsheet.class, Events.ON_HEADER_UPDATE, CE_IMPORTANT | CE_NON_DEFERRABLE);
+		addClientEvent(Spreadsheet.class, Events.ON_SHEET_SELECT, CE_IMPORTANT | CE_DUPLICATE_IGNORE | CE_NON_DEFERRABLE);
 		
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_CLICK, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_RIGHT_CLICK, CE_DUPLICATE_IGNORE);
@@ -4642,7 +4661,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		
 		addClientEvent(Spreadsheet.class, Events.ON_CTRL_KEY, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_AUX_ACTION, CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_SHEET_SELECTED, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_WIDGET_CTRL_KEY, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_WIDGET_UPDATE, CE_DUPLICATE_IGNORE);
 
