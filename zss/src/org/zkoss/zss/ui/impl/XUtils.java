@@ -57,7 +57,7 @@ public class XUtils {
 	/**
 	 * Gets Cell text by given row and column
 	 */
-	static public String getCellText(XSheet sheet, int row,int column){
+	static public String getCellHtmlText(XSheet sheet, int row,int column){
 		/*List list = ss.getBook().getSheets();
 		if(list.size()<=ss.getSelectedIndex()){
 			throw new XelException("No such sheet :"+ss.getSelectedIndex());
@@ -511,6 +511,11 @@ public class XUtils {
 		return px * 72 / 96; //assume 96dpi
 	}
 	
+	/** convert point to pixel */
+	public static int pointToPx(int point) {
+		return point * 96 / 72; //assume 96dpi
+	}
+	
 	/** convert pixel to twip (1/20 point) */
 	public static int pxToTwip(int px) {
 		return px * 72 * 20 / 96; //assume 96dpi
@@ -519,6 +524,16 @@ public class XUtils {
 	/** convert twip (1/20 point) to pixel */
 	public static int twipToPx(int twip) {
 		return twip * 96 / 72 / 20; //assume 96dpi
+	}
+	
+	/** convert point to twip (1/20 point) */
+	public static int pointToTwip(int px) {
+		return px * 20; 
+	}
+
+	/** convert twip (1/20 point) to point */
+	public static int twipToPoint(int twip) {
+		return twip / 20; 
 	}
 
 	/** convert file 1/256 character width to pixel */

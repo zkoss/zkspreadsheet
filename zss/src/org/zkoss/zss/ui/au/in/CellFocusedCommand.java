@@ -60,6 +60,6 @@ public class CellFocusedCommand implements Command {
 		// ctrl.setSelectedCellBlock(col,row,col,row); only control foucs only
 		ctrl.setFocusRect(col, row, col, row);
 		
-		Events.postEvent(new CellEvent(org.zkoss.zss.ui.event.Events.ON_CELL_FOUCSED, comp, sheet, row, col));
+		Events.postEvent(new CellEvent(org.zkoss.zss.ui.event.Events.ON_CELL_FOUCSED, comp, sheet, row, col,null));
 	}
 }

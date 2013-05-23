@@ -16,32 +16,27 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.ctrl;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.zkoss.lang.Objects;
 import org.zkoss.lang.Strings;
-import org.zkoss.poi.ss.usermodel.AutoFilter;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.DateUtil;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
-import org.zkoss.poi.ss.usermodel.RichTextString;
-import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Range.AutoFilterOperation;
+
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.CellData.CellType;
+import org.zkoss.zss.api.model.Sheet;
+//import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.app.zul.Dialog;
-import org.zkoss.zss.model.sys.XRange;
-import org.zkoss.zss.model.sys.XRanges;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.BookHelper;
-import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
@@ -71,15 +66,14 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 
 	private int fieldIndex = 0;
 	private int columnIndex = 0;
-	private XSheet worksheet;
-	private XRange range;
+	private Sheet worksheet;
+	private Range range;
 	
-	private boolean isHiddenRow(XSheet sheet, int rowIdx) {
-		final Row r = sheet.getRow(rowIdx);
-		return r != null && r.getZeroHeight();
+	private boolean isHiddenRow(Sheet sheet, int rowIdx) {
+		return sheet.isRowHidden(rowIdx);
 	}
 	
-	private void fetchRowInfos(FilterColumn fc, XRange range, Set<RowInfo> all, Set<RowInfo> selected) {
+	private void fetchRowInfos(FilterColumn fc, Range range, Set<RowInfo> all, Set<RowInfo> selected) {
 		final Set criteria1 = fc == null ? null : fc.getCriteria1();
 		final boolean nofilter = criteria1 == null || criteria1.isEmpty(); 
 		boolean hasBlank = false;
@@ -90,16 +84,12 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 			if (nofilter && isHiddenRow(worksheet, i)) {
 				continue;
 			}
-			final Cell c = Utils.getCell(worksheet, i, columnIndex);
-			final boolean blankcell = BookHelper.isBlankCell(c);
+			Range c = Ranges.range(worksheet,i,columnIndex);
+			final boolean blankcell = c.getCellData().getType()==CellType.BLANK;
 			if (!blankcell) {
-				String displaytxt = BookHelper.getCellText(c);
-				Object val = BookHelper.getEvalCellValue(c);
-				if (val instanceof RichTextString) {
-					val = ((RichTextString)val).getString();
-				} else if (c.getCellType() == Cell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(c)) {
-					val = c.getDateCellValue();
-				}
+				String displaytxt = c.getCellData().getFormatText();
+				Object val = c.getCellValue();
+				
 				RowInfo rowInfo = new RowInfo(val, displaytxt); 
 				all.add(rowInfo);
 				if (criteria1 == null || criteria1.isEmpty() || criteria1.contains(displaytxt)) { //selected
@@ -230,16 +220,18 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 	}
 	public void onOpen$_autoFilterDialog(ForwardEvent evt) {
 		Object[] info = (Object[]) evt.getOrigin().getData();
-		range = (XRange) info[2];
-		worksheet = (XSheet) range.getSheet();
-		final AutoFilter af = worksheet.getAutoFilter();
-		if (af == null) {
+		range = (Range) info[2];
+		worksheet = (Sheet) range.getSheet(); 
+		if (!worksheet.isAutoFilterEnabled()) {
 			return;
 		}
 		fieldIndex = (Integer) info[0];
 		columnIndex = (Integer) info[1];
 		
-		final FilterColumn fc = af.getFilterColumn(fieldIndex - 1);
+		
+		//TODO, Dennis , need to wrap to model
+		final FilterColumn fc = worksheet.getPoiSheet().getAutoFilter().getFilterColumn(fieldIndex - 1);
+		
 		final TreeSet<RowInfo> rowInfos = new TreeSet<RowInfo>(new MyComparator());
 		final Set<RowInfo> selected = new HashSet<RowInfo>();
 		fetchRowInfos(fc, range, rowInfos, selected);
@@ -304,9 +296,9 @@ public class AutoFilterCtrl extends GenericForwardComposer {
 				RowInfo info = (RowInfo) it.next();
 				criteria[j++] = BLANK_ROW_INFO.equals(info) ? "=" : info.display;
 			}
-			range.autoFilter(fieldIndex, criteria, AutoFilter.FILTEROP_VALUES, null, null);
+			range.enableAutoFilter(fieldIndex, AutoFilterOperation.VALUES, criteria , null, null);
 		} else { //select all!
-			range.autoFilter(fieldIndex, null, AutoFilter.FILTEROP_VALUES, null, null);
+			range.enableAutoFilter(fieldIndex, AutoFilterOperation.VALUES, null , null, null);
 		}
 		_autoFilterDialog.fireOnClose(null);
 	}

@@ -20,10 +20,11 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Components;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.IdSpace;
+import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.ctrl.DesktopCellStyleContext;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
-import org.zkoss.zss.model.sys.XBook;
+//import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Menubar;
@@ -67,7 +68,7 @@ public class Zssapp extends Div implements IdSpace  {
 	 * Sets {@link #Book}
 	 * @param book
 	 */
-	public void setBook(XBook book) {
+	public void setBook(Book book) {
 		getDesktopWorkbenchContext().getWorkbookCtrl().setBook(book);
 	}
 	

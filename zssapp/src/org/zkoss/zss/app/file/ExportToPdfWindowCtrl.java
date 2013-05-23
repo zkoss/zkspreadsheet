@@ -22,23 +22,22 @@ import java.io.OutputStream;
 
 import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
 import org.zkoss.poi.ss.usermodel.PrintSetup;
-import org.zkoss.poi.ss.usermodel.Sheet;
-import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.api.Exporter;
+import org.zkoss.zss.api.Exporters;
+import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XExporter;
-import org.zkoss.zss.model.sys.XExporters;
-import org.zkoss.zss.model.sys.impl.Headings;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Filedownload;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Window;
@@ -102,15 +101,15 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void loadPrintSetting() {
-		noGridlines.setChecked(!ss.getSelectedXSheet().isPrintGridlines());
+		noGridlines.setChecked(!ss.getSelectedSheet().getPoiSheet().isPrintGridlines());
 		range.setSelectedItem(currSheet);
 		loadOrientationSetting();
 	}
 	
 	private void loadOrientationSetting() {
 		//TODO: move to sheet context
-		orgOrientation = ss.getSelectedXSheet().getPrintSetup().getLandscape();
-		if (ss.getSelectedXSheet().getPrintSetup().getLandscape()) {
+		orgOrientation = ss.getSelectedSheet().getPoiSheet().getPrintSetup().getLandscape();
+		if (ss.getSelectedSheet().getPoiSheet().getPrintSetup().getLandscape()) {
 			orientation.setSelectedItem(landscape);
 		}
 		else
@@ -122,30 +121,30 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 	 */
 	private void applyPrintSetting() {
 		//TODO: move to sheet context
-		ss.getSelectedXSheet().getPrintSetup().setLandscape(orientation.getSelectedItem() == landscape);
-		ss.getSelectedXSheet().setPrintGridlines(includeGridlines());
+		ss.getSelectedSheet().getPoiSheet().getPrintSetup().setLandscape(orientation.getSelectedItem() == landscape);//TODO shouldn't this go through Range API?
+		ss.getSelectedSheet().getPoiSheet().setPrintGridlines(includeGridlines());//TODO shouldn't this go through Range API?
 		boolean isLandscape = orientation.getSelectedItem() == landscape;
-		final XBook book = ss.getXBook(); 
+		final Book book = ss.getBook(); 
 		if (book == null) {
 			return;
 		}
 		int numSheet = book.getNumberOfSheets();
 		for (int i = 0; i < numSheet; i++) {
 			Sheet sheet = book.getSheetAt(i);
-			PrintSetup setup = sheet.getPrintSetup();
+			PrintSetup setup = sheet.getPoiSheet().getPrintSetup();//TODO shouldn't this go through Range API?
 			setup.setLandscape(isLandscape);
 		}
 	}
 	
 	private void revertPrintSetting() {
-		final XBook book = ss.getXBook();
+		final Book book = ss.getBook();
 		if (book == null) {
 			return;
 		}
 		int numSheet = book.getNumberOfSheets();
 		for (int i = 0; i < numSheet; i++) {
 			Sheet sheet = book.getSheetAt(i);
-			PrintSetup setup = sheet.getPrintSetup();
+			PrintSetup setup = sheet.getPoiSheet().getPrintSetup();
 			setup.setLandscape(orgOrientation);
 		}
 	}
@@ -155,9 +154,13 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 		
 		applyPrintSetting();
 		
-		XExporter c = XExporters.getExporter("pdf");
-		if (c instanceof Headings) {
-			((Headings)c).enableHeadings(includeHeadings());
+		Exporter c = Exporters.getExporter("pdf");
+		if(c==null){
+			Messagebox.show("can't find html exporter");
+			return;
+		}
+		if (c.isSupportHeadings()) {
+			c.enableHeadings(includeHeadings());
 		}
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -172,8 +175,8 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 		_exportToPdfDialog.fireOnClose(null);
 	}
 	
-	private void export(XExporter exporter, OutputStream outputStream) {
-		final XBook book = ss.getXBook();
+	private void export(Exporter exporter, OutputStream outputStream) throws IOException{
+		final Book book = ss.getBook();
 		if (book == null) {
 			return;
 		}
@@ -182,11 +185,9 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 			exporter.export(book, outputStream);
 		} else if (seld == currSelection){
 			Rect rect = selection;
-			String area = ss.getColumntitle(rect.getLeft()) + ss.getRowtitle(rect.getTop()) + ":" + 
-				ss.getColumntitle(rect.getRight()) + ss.getRowtitle(rect.getBottom());
-			exporter.exportSelection(ss.getSelectedXSheet(), new AreaReference(area), outputStream);
+			exporter.export(ss.getSelectedSheet(), rect, outputStream);
 		} else
-			exporter.export(ss.getSelectedXSheet(), outputStream);
+			exporter.export(ss.getSelectedSheet(), outputStream);
 	}
 	
 	private boolean includeHeadings () {

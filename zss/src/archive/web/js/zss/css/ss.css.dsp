@@ -117,7 +117,7 @@
 	</c:if>
 }
 
-.zscell-over {
+.zscell-overflow {
 	border-right: 1px;
 	border-right-style:hidden;
 	overflow: visible;
@@ -136,7 +136,7 @@
 	</c:if>
 }
 
-.zscell-over-b {
+.zscell-overflow-b {
 	overflow: visible;
 	position: relative;
 }

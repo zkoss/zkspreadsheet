@@ -18,17 +18,26 @@ import static org.zkoss.zss.app.base.Preconditions.checkNotNull;
 
 import java.util.HashMap;
 
-import org.zkoss.poi.ss.usermodel.CellStyle;
+//import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Range.PasteOperation;
+import org.zkoss.zss.api.Range.PasteType;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.app.MainWindowCtrl.MainActionHandler;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
-import org.zkoss.zss.model.sys.XRange;
-import org.zkoss.zss.model.sys.XRanges;
-import org.zkoss.zss.model.sys.XSheet;
+//import org.zkoss.zss.model.sys.XRange;
+//import org.zkoss.zss.model.sys.XRanges;
+//import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.ui.DefaultUserActionHandler.Clipboard;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.Utils;
-import org.zkoss.zss.ui.sys.XActionHandler.Clipboard;
+import org.zkoss.zssex.ui.DefaultExUserActionHandler;
+//import org.zkoss.zss.ui.impl.Utils;
+//import org.zkoss.zss.ui.sys.XActionHandler.Clipboard;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Messagebox;
@@ -93,42 +102,32 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 	public void onClick$okBtn() {
 		okBtn.setDisabled(true);
 		
-		Clipboard clipboard = ss.getUserActionHandler().getClipboard();
+		Clipboard clipboard = ((MainActionHandler)ss.getUserActionHandler()).getClipboard();
 		
 		if (clipboard != null) {
-			final XSheet srcSheet = clipboard.sourceSheet;
+			Book book = ss.getBook();
+			Sheet srcSheet = book.getSheet(clipboard.sourceSheetName);
+			Sheet destSheet = ss.getSelectedSheet();
 			final Rect srcRect = clipboard.sourceRect;
-			final Rect dst = ss.getSelection();
+			final Rect destRect = ss.getSelection();
 			
-			XRange rng = Utils.pasteSpecial(srcSheet, 
-					srcRect, 
-					ss.getSelectedXSheet(), 
-					dst.getTop(),
-					dst.getLeft(),
-					dst.getBottom(),
-					dst.getRight(),
-					getPasteType(pasteSelector.getSelectedItem().getValue().toString()), 
+			Range src = Ranges.range(srcSheet,srcRect);
+			Range dest = Ranges.range(destSheet,destRect);
+			src.pasteSpecial(dest, getPasteType(pasteSelector.getSelectedItem().getValue().toString()), 
 					getPasteOperation(operationSelector.getSelectedItem().getValue().toString()), 
 					skipBlanks.isChecked(), transpose.isChecked());
 			
 			
 			if (clipboard.type == Clipboard.Type.CUT) {
-				XRanges
-				.range(srcSheet, srcRect.getTop(), srcRect.getLeft(), srcRect.getBottom(), srcRect.getRight())
-				.clearContents();
+				Ranges.range(srcSheet, srcRect).clearContents();
+				Ranges.range(srcSheet, srcRect).clearStyles();
 				
-				final CellStyle defaultStyle = clipboard.book.createCellStyle();
-				XRanges
-				.range(srcSheet, srcRect.getTop(), srcRect.getLeft(),srcRect.getBottom(), srcRect.getRight())
-				.setStyle(defaultStyle);
-				
-				ss.getUserActionHandler().clearClipboard();
+				((MainActionHandler)ss.getUserActionHandler()).clearClipboard();
 				ss.setHighlight(null);
 			}
 			
-			if (rng != null) {
-				ss.setSelection(new Rect(rng.getColumn(), rng.getRow(), 
-						rng.getLastColumn(), rng.getLastRow()));	
+			if (src != null) {
+				ss.setSelection(srcRect);	
 			}
 		}
 		
@@ -141,19 +140,19 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 	 * @param operation
 	 * @return
 	 */
-	private static int getPasteOperation(String operation) {
+	private static PasteOperation getPasteOperation(String operation) {
 		if (operation == null || "none".equals(operation) )
-			return XRange.PASTEOP_NONE;
+			return PasteOperation.NONE;
 		if ( "add".equals(operation) ) {
-			return XRange.PASTEOP_ADD;
+			return PasteOperation.ADD;
 		} else if ( "sub".equals(operation) ) {
-			return XRange.PASTEOP_SUB;
+			return PasteOperation.SUB;
 		} else if ( "mul".equals(operation) ) {
-			return XRange.PASTEOP_MUL;
+			return PasteOperation.MUL;
 		} else if ( "divide".equals(operation) ) {
-			return XRange.PASTEOP_DIV;
+			return PasteOperation.DIV;
 		}
-		return XRange.PASTEOP_NONE;
+		return PasteOperation.NONE;
 	}
 	
 	/**
@@ -161,32 +160,32 @@ public class PasteSpecialWindowCtrl extends GenericForwardComposer {
 	 * <p> Default: returns {@link #Range.PASTE_ALL}, if no match
 	 * @return
 	 */
-	private static int getPasteType(String type) {
+	private static PasteType getPasteType(String type) {
 		if (type == null 
 				|| "paste".equals(type)
 				|| "all".equals(type) )
-			return XRange.PASTE_ALL;
+			return PasteType.ALL;
 		
 		if ( "allExcpetBorder".equals(type) ) {
-			return XRange.PASTE_ALL_EXCEPT_BORDERS;
+			return PasteType.ALL_EXCEPT_BORDERS;
 		} else if ( "columnWidth".equals(type) ) {
-			return XRange.PASTE_COLUMN_WIDTHS;
+			return PasteType.COLUMN_WIDTHS;
 		} else if ( "comment".equals(type) ) {
-			return XRange.PASTE_COMMENTS;
+			return PasteType.COMMENTS;
 		} else if ( "formula".equals(type) ) {
-			return XRange.PASTE_FORMULAS;
+			return PasteType.FORMULAS;
 		} else if ( "formulaWithNumFmt".equals(type) ) {
-			return XRange.PASTE_FORMULAS_AND_NUMBER_FORMATS;
+			return PasteType.FORMULAS_AND_NUMBER_FORMATS;
 		} else if ( "value".equals(type) ) {
-			return XRange.PASTE_VALUES;
+			return PasteType.VALUES;
 		} else if ( "valueWithNumFmt".equals(type) ) {
-			return XRange.PASTE_VALUES_AND_NUMBER_FORMATS;
+			return PasteType.VALUES_AND_NUMBER_FORMATS;
 		} else if ( "format".equals(type) ) {
-			return XRange.PASTE_FORMATS;
+			return PasteType.FORMATS;
 		} else if ( "validation".equals(type) ) {
-			return XRange.PASTE_VALIDATAION;
+			return PasteType.VALIDATAION;
 		}
 		
-		return XRange.PASTE_ALL;
+		return PasteType.ALL;
 	}
 }

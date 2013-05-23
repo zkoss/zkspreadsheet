@@ -439,19 +439,19 @@ public final class BookHelper {
 	/*package*/ static void notifyCreateSheet(Ref ref, String sheetName) {
 		final RefSheet refSheet = ref.getOwnerSheet();
 		final RefBook refBook = refSheet.getOwnerBook();
-		refBook.publish(new SSDataEvent(SSDataEvent.ON_SHEET_CREATE, ref, sheetName));
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_SHEET_CREATE, ref, (Object)sheetName));//as payload
 	}
 
 	/*package*/ static void notifyChangeSheetName(Ref ref, String sheetName) {
 		final RefSheet refSheet = ref.getOwnerSheet();
 		final RefBook refBook = refSheet.getOwnerBook();
-		refBook.publish(new SSDataEvent(SSDataEvent.ON_SHEET_NAME_CHANGE, ref, sheetName));
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_SHEET_NAME_CHANGE, ref, (Object)sheetName));//as payload
 	}
 	
 	/*package*/ static void notifyChangeSheetOrder(Ref ref, String sheetName) {
 		final RefSheet refSheet = ref.getOwnerSheet();
 		final RefBook refBook = refSheet.getOwnerBook();
-		refBook.publish(new SSDataEvent(SSDataEvent.ON_SHEET_ORDER_CHANGE, ref, sheetName));
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_SHEET_ORDER_CHANGE, ref, (Object)sheetName));//as payload
 	}
 	
 	public static void reevaluateAndNotify(XBook book, Set<Ref> last, Set<Ref> all) {

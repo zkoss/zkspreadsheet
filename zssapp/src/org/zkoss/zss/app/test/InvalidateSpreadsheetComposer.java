@@ -16,13 +16,17 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.test;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XImporter;
-import org.zkoss.zss.model.sys.XImporters;
+//import org.zkoss.zss.model.sys.XBook;
+//import org.zkoss.zss.model.sys.XImporter;
+//import org.zkoss.zss.model.sys.XImporters;
+import org.zkoss.zss.api.Importer;
+import org.zkoss.zss.api.Importers;
+import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 
@@ -37,10 +41,16 @@ public class InvalidateSpreadsheetComposer extends GenericForwardComposer {
 	Button setChartBook;
 	
 	public void onClick$setChartBook() {
-		XImporter importer = XImporters.getImporter("excel");
+		Importer importer = Importers.getImporter("excel");
 		final InputStream is = Sessions.getCurrent().getWebApp().getResourceAsStream("/xls/graficas.xlsx");
-		XBook book = importer.imports(is, "graficas.xlsx");
-		spreadsheet.setXBook(book);		
+		Book book;
+		try {
+			book = importer.imports(is, "graficas.xlsx");
+			spreadsheet.setBook(book);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	public void onClick$invalidateSpreadsheetBtn() {

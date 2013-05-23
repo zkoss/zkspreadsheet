@@ -123,7 +123,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	UserAction.REAPPLY_FILTER
 	};	
 	
-	private void checkCtx(){
+	protected void checkCtx(){
 		if(_ctx.get()==null){
 			throw new IllegalAccessError("can't found action context");
 		}
@@ -354,9 +354,12 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		Book book = getBook();
 		Sheet sheet = getSheet();
 		
-		if(book.getSheetIndex(sheet)>0){
+		int i = book.getSheetIndex(sheet);
+		
+		if(i>0){
+			i --;
 			Range range = Ranges.range(sheet);
-			SheetOperationUtil.setSheetOrder(range,0);
+			SheetOperationUtil.setSheetOrder(range,i);
 		}
 		return true;
 	}
@@ -464,7 +467,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doHideRow() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -477,7 +480,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doUnhideRow() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -490,13 +493,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doUnhideColumn() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
 		}
 		range = range.getColumnRange();
-		CellOperationUtil.hide(range);
+		CellOperationUtil.unHide(range);
+		
 		return true;
 		
 	}
@@ -504,13 +508,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doHideColumn() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
 		}
 		range = range.getColumnRange();
-		CellOperationUtil.unHide(range);
+		CellOperationUtil.hide(range);
 		return true;
 	}
 	
@@ -566,13 +570,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	
 	protected void setClipboard(Clipboard clipboard){
 		_clipboard = clipboard;
-		if(_clipboard!=null)
+		if(_clipboard!=null && _ctx.get()!=null)
 			getSpreadsheet().setHighlight(_clipboard.sourceRect);
 	}
 	
 	protected void clearClipboard() {
 		_clipboard = null;
-		getSpreadsheet().setHighlight(null);
+		if(_ctx.get()!=null)
+			getSpreadsheet().setHighlight(null);
 		//TODO: shall also clear client side clipboard if possible
 	}
 	
@@ -636,23 +641,23 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	}
 	
 	protected boolean doPaste() {
-		return doPaste(PasteType.PASTE_ALL,PasteOperation.PASTEOP_NONE,false,false);
+		return doPaste(PasteType.ALL,PasteOperation.NONE,false,false);
 	}
 	
 	protected boolean doPasteFormula() {
-		return doPaste(PasteType.PASTE_FORMULAS,PasteOperation.PASTEOP_NONE,false,false);
+		return doPaste(PasteType.FORMULAS,PasteOperation.NONE,false,false);
 	}
 	
 	protected boolean doPasteValue() {
-		return doPaste(PasteType.PASTE_VALUES,PasteOperation.PASTEOP_NONE,false,false);
+		return doPaste(PasteType.VALUES,PasteOperation.NONE,false,false);
 	}
 	
 	protected boolean doPasteAllExceptBorder() {
-		return doPaste(PasteType.PASTE_ALL_EXCEPT_BORDERS,PasteOperation.PASTEOP_NONE,false,false);
+		return doPaste(PasteType.ALL_EXCEPT_BORDERS,PasteOperation.NONE,false,false);
 	}
 	
 	protected boolean doPasteTranspose() {
-		return doPaste(PasteType.PASTE_ALL, PasteOperation.PASTEOP_NONE, false, true);
+		return doPaste(PasteType.ALL, PasteOperation.NONE, false, true);
 	}
 	
 	protected boolean doCut() {
@@ -666,7 +671,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doFontFamily(String fontFamily) {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -678,7 +683,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doFontSize(int fontSize) {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -691,7 +696,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -713,7 +718,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -729,7 +734,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -745,7 +750,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -767,7 +772,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -824,7 +829,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -837,104 +842,104 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyCellColor(range,color);
+		CellOperationUtil.applyBackgroundColor(range,color);
 		return true;
 	}
 	
 	protected boolean doVerticalAlignTop() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyCellVerticalAlignment(range, VerticalAlignment.TOP);
+		CellOperationUtil.applyVerticalAlignment(range, VerticalAlignment.TOP);
 		return true;
 	}
 	
 	protected boolean doVerticalAlignMiddle() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyCellVerticalAlignment(range, VerticalAlignment.CENTER);
+		CellOperationUtil.applyVerticalAlignment(range, VerticalAlignment.CENTER);
 		return true;
 	}
 
 	protected boolean doVerticalAlignBottom() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyCellVerticalAlignment(range, VerticalAlignment.BOTTOM);
+		CellOperationUtil.applyVerticalAlignment(range, VerticalAlignment.BOTTOM);
 		return true;
 	}
 	
 	protected boolean doHorizontalAlignLeft() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyCellAlignment(range, Alignment.LEFT);
+		CellOperationUtil.applyAlignment(range, Alignment.LEFT);
 		return true;
 	}
 	
 	protected boolean doHorizontalAlignCenter() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyCellAlignment(range, Alignment.CENTER);
+		CellOperationUtil.applyAlignment(range, Alignment.CENTER);
 		return true;
 	}
 	
 	protected boolean doHorizontalAlignRight() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyCellAlignment(range, Alignment.RIGHT);
+		CellOperationUtil.applyAlignment(range, Alignment.RIGHT);
 		return true;
 	}
 	
 	protected boolean doWrapText() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
 		}
 		boolean wrapped = !range.getCellStyle().isWrapText();
-		CellOperationUtil.applyCellWrapText(range, wrapped);
+		CellOperationUtil.applyWrapText(range, wrapped);
 		return true;
 	}
 	
 	protected boolean doMergeAndCenter() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -947,7 +952,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doMergeAcross() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -960,7 +965,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doMergeCell() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -973,7 +978,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doUnmergeCell() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -986,7 +991,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doShiftCellRight() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -999,7 +1004,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doShiftCellDown() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -1012,7 +1017,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doInsertSheetRow() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -1032,7 +1037,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doInsertSheetColumn() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -1052,7 +1057,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doShiftCellLeft() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -1066,7 +1071,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doShiftCellUp() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -1080,7 +1085,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doDeleteSheetRow() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -1100,7 +1105,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doDeleteSheetColumn() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -1120,7 +1125,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doClearStyle() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -1132,7 +1137,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doClearContent() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -1144,7 +1149,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doClearAll() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -1156,7 +1161,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doSortAscending() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -1169,7 +1174,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doSortDescending() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -1182,7 +1187,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doFilter() {
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
-		Range range = Ranges.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range range = Ranges.range(sheet, selection);
 		if(range.isProtected()){
 			showProtectMessage();
 			return true;
@@ -1258,7 +1263,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		return t;
 	}
 
-	protected static class UserActionContext {
+	public static class UserActionContext {
 
 		final Spreadsheet spreadsheet;
 		final Sheet sheet;
@@ -1367,7 +1372,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 
 	@Override
 	public String[] getInterestedEvents() {
-		return new String[] { Events.ON_AUX_ACTION,Events.ON_SHEET_SELECTED, Events.ON_CTRL_KEY, Events.ON_CELL_SELECTION_UPDATE, 
+		return new String[] { Events.ON_AUX_ACTION,Events.ON_SHEET_SELECT, Events.ON_CTRL_KEY, Events.ON_CELL_SELECTION_UPDATE, 
 				org.zkoss.zk.ui.event.Events.ON_CANCEL,
 				Events.ON_CELL_DOUBLE_CLICK, Events.ON_START_EDITING };
 	}
@@ -1426,7 +1431,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	private void onEventAnother(Event event) throws Exception {
 
 		String nm = event.getName();
-		if(Events.ON_SHEET_SELECTED.equals(nm)){
+		if(Events.ON_SHEET_SELECT.equals(nm)){
 			
 			updateClipboardEffect(getSheet());
 			//TODO 20130513, Dennis, looks like I don't need to do this here?

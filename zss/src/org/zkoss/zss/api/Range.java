@@ -40,24 +40,24 @@ public interface Range {
 	}
 	
 	public enum PasteType{
-		PASTE_ALL,
-		PASTE_ALL_EXCEPT_BORDERS,
-		PASTE_COLUMN_WIDTHS,
-		PASTE_COMMENTS,
-		PASTE_FORMATS/*all formats*/,
-		PASTE_FORMULAS/*include values and formulas*/,
-		PASTE_FORMULAS_AND_NUMBER_FORMATS,
-		PASTE_VALIDATAION,
-		PASTE_VALUES,
-		PASTE_VALUES_AND_NUMBER_FORMATS;
+		ALL,
+		ALL_EXCEPT_BORDERS,
+		COLUMN_WIDTHS,
+		COMMENTS,
+		FORMATS/*all formats*/,
+		FORMULAS/*include values and formulas*/,
+		FORMULAS_AND_NUMBER_FORMATS,
+		VALIDATAION,
+		VALUES,
+		VALUES_AND_NUMBER_FORMATS;
 	}
 	
 	public enum PasteOperation{
-		PASTEOP_ADD,
-		PASTEOP_SUB,
-		PASTEOP_MUL,
-		PASTEOP_DIV,
-		PASTEOP_NONE;
+		ADD,
+		SUB,
+		MUL,
+		DIV,
+		NONE;
 	}
 	
 	public enum ApplyBorderType{
@@ -241,6 +241,18 @@ public interface Range {
 	/** shift this range with a offset row and column**/
 	public void shift(int rowOffset,int colOffset);
 	
+	/**
+	 * Sets the width(in pixel) of column in this range, it effect to whole column. 
+	 * @param widthPx width in pixel
+	 * @see #getColumnRange()
+	 */
+	public void setColumnWidth(int widthPx);
+	/**
+	 * Sets the height(in pixel) of row in this range, it effect to whole row.
+	 * @param widthPx width in pixel
+	 * @see #getRowRange()
+	 */
+	public void setRowHeight(int heightPx);
 	
 	/* 
 	 * ==================================================
@@ -284,6 +296,13 @@ public interface Range {
 	public String getCellEditText();
 	
 	/**
+	 * Get the first cell(top-left) format text of this range
+	 * @return format text
+	 * @see CellData#getFormatText()
+	 */
+	public String getCellFormatText();
+	
+	/**
 	 * Get the first cell(top-left) value of this this range
 	 * @return value object
 	 * @see CellData#getValue()
@@ -304,6 +323,13 @@ public interface Range {
 	
 	public boolean isDisplaySheetGridlines();
 	
+	/**
+	 * Hide the rows or columns, the range has to be a whole row range (which mean you select some columns and all rows of these columns are included),
+	 * or a whole column range. 
+	 * @param hidden
+	 * @see #getRowRange()
+	 * @see #getColumnRange()
+	 */
 	public void setHidden(boolean hidden);
 	
 	public void setSheetName(String name);
@@ -350,6 +376,7 @@ public interface Range {
 	
 	public void deleteSheet();
 	
+	
 	/**
 	 * a cell style helper to create style relative object for cell
 	 * @author dennis
@@ -390,7 +417,7 @@ public interface Range {
 		 * @return null if not found
 		 */
 		public Font findFont(Boldweight boldweight, Color color,
-				short fontHeight, String fontName, boolean italic,
+				int fontHeight, String fontName, boolean italic,
 				boolean strikeout, TypeOffset typeOffset, Underline underline);
 	}
 

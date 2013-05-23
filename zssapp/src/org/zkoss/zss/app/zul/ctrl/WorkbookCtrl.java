@@ -15,15 +15,19 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.app.zul.ctrl;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import org.zkoss.image.AImage;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.charts.ChartType;
+//import org.zkoss.poi.ss.usermodel.Cell;
+//import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Chart;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.file.SpreadSheetMetaInfo;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XSheet;
+//import org.zkoss.zss.model.sys.XBook;
+//import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -96,7 +100,7 @@ public interface WorkbookCtrl {
 	
 	public void renameSelectedSheet(String name);
 	
-	public XSheet getSelectedSheet();
+	public Sheet getSelectedSheet();
 	
 	public void setSelectedSheet(String name);
 	
@@ -153,14 +157,14 @@ public interface WorkbookCtrl {
 	 */
 	public String getReference (int row, int column);
 	
-	/**
-	 * 
-	 * @param cell
-	 * @param text
-	 */
-	public void escapeAndUpdateText(Cell cell, String text);
+//	/**
+//	 * 
+//	 * @param cell
+//	 * @param text
+//	 */
+//	public void escapeAndUpdateText(int row, int column, String text);
 	
-	public void updateText(Cell cell, String text);
+//	public void updateText(int row, int column, String text);
 
 	public void setDataFormat(String format);
 	
@@ -172,7 +176,7 @@ public interface WorkbookCtrl {
 	 */
 	public void setBookSrc(String src);
 	
-	public void setBook(XBook book);
+	public void setBook(Book book);
 	
 	/**
 	 * Returns whether current sheet is protected or not
@@ -198,7 +202,7 @@ public interface WorkbookCtrl {
 	
 	public String getSrc();
 	
-	public void setSrcName(String src);
+//	public void setSrcName(String src);
 	
 	/**
 	 * Open a new empty work sheet of current {@link Spreadsheet}
@@ -228,7 +232,7 @@ public interface WorkbookCtrl {
 	 * Exports spreadsheet to excel file
 	 * @return
 	 */
-	public ByteArrayOutputStream exportToExcel();
+	public ByteArrayOutputStream exportToExcel()  throws IOException ;
 
 	/**
 	 * Returns {@link Spreadsheet} book name
@@ -260,7 +264,7 @@ public interface WorkbookCtrl {
 	 */
 	public void setRowHeightInPx(int height, Rect selection);
 	
-	public int getDefaultCharWidth();
+//	public int getDefaultCharWidth();
 	
 	/**
 	 * Shifts current selected sheet left, returns shifted sheet index
@@ -283,7 +287,7 @@ public interface WorkbookCtrl {
 	 */
 	public int deleteSheet();
 	
-	public void addChart(int row, int col, ChartType type);
+	public void addChart(int row, int col, Chart.Type type);
 	
 	public String getColumnTitle(int col);
 	
@@ -291,5 +295,5 @@ public interface WorkbookCtrl {
 
 	public Rect getVisibleRect();
 	
-	public boolean setEditTextWithValidation(XSheet sheet, int row, int col, String txt, EventListener callback);
+//	public boolean setEditTextWithValidation(Sheet sheet, int row, int col, String txt, EventListener callback);
 }

@@ -18,13 +18,14 @@ package org.zkoss.zss.app.ctrl;
 
 import java.util.Map;
 
-import org.zkoss.poi.ss.usermodel.charts.ChartType;
+//import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.Dropdownbutton;
 import org.zkoss.zss.app.zul.Dialog;
@@ -81,75 +82,75 @@ public class InsertChartCtrl extends GenericForwardComposer {
 	}
 
 	public void onClick$insertColumnChart() {
-		insertChart(ChartType.Column);
+		insertChart(Chart.Type.COLUMN);
 	}
 	
 	public void onClick$insertColumnChart3D() {
-		insertChart(ChartType.Column3D);
+		insertChart(Chart.Type.COLUMN_3D);
 	}
 	
 	public void onClick$insertBarChart() {
-		insertChart(ChartType.Bar);
+		insertChart(Chart.Type.BAR);
 	}
 	
 	public void onClick$insertBarChart3D() {
-		insertChart(ChartType.Bar3D);
+		insertChart(Chart.Type.BAR_3D);
 	}
 	
 	public void onClick$insertLineChart() {
-		insertChart(ChartType.Line);
+		insertChart(Chart.Type.LINE);
 	}
 	
 	public void onClick$insertLineChart3D() {
-		insertChart(ChartType.Line3D);
+		insertChart(Chart.Type.LINE_3D);
 	}
 	
 	public void onClick$insertPieChart() {
-		insertChart(ChartType.Pie);
+		insertChart(Chart.Type.PIE);
 	}
 	
 	public void onClick$insertPieChart3D() {
-		insertChart(ChartType.Pie3D);
+		insertChart(Chart.Type.PIE_3D);
 	}
 	
 	public void onClick$insertOfPieChart() {
-		insertChart(ChartType.OfPie);
+		insertChart(Chart.Type.OF_PIE);
 	}
 	
 	public void onClick$insertAreaChart() {
-		insertChart(ChartType.Area);
+		insertChart(Chart.Type.AREA);
 	}
 	
 	public void onClick$insertAreaChart3D() {
-		insertChart(ChartType.Area3D);
+		insertChart(Chart.Type.AREA_3D);
 	}
 	
 	public void onClick$insertSurfaceChart() {
-		insertChart(ChartType.Surface);
+		insertChart(Chart.Type.SURFACE);
 	}
 	
 	public void onClick$insertSurfaceChart3D() {
-		insertChart(ChartType.Surface3D);
+		insertChart(Chart.Type.SURFACE_3D);
 	}
 	
 	public void onClick$insertBubbleChart() {
-		insertChart(ChartType.Bubble);
+		insertChart(Chart.Type.BUBBLE);
 	}
 	
 	public void onClick$insertDoughnutChart() {
-		insertChart(ChartType.Doughnut);
+		insertChart(Chart.Type.DOUGHNUT);
 	}
 	
 	public void onClick$insertRadarChart() {
-		insertChart(ChartType.Radar);
+		insertChart(Chart.Type.RADAR);
 	}
 	
 	public void onClick$insertScatterChart() {
-		insertChart(ChartType.Scatter);
+		insertChart(Chart.Type.SCATTER);
 	}
 	
 	public void onClick$insertStockChart() {
-		insertChart(ChartType.Stock);
+		insertChart(Chart.Type.STOCK);
 	}
 	
 	public void onDropdown$insertChartBtn() {
@@ -164,7 +165,7 @@ public class InsertChartCtrl extends GenericForwardComposer {
 		return Zssapp.getDesktopWorkbenchContext(self);
 	}
 	
-	protected void insertChart(ChartType chartType) {
+	protected void insertChart(Chart.Type chartType) {
 		//open dialog to get insert at
 		if (insertChartAtDialog == null) {
 			insertChartAtDialog = (Dialog)Executions.createComponents(Consts._InsertWidgetAtDialog_zul, (Component)spaceOwner, null);
@@ -173,7 +174,7 @@ public class InsertChartCtrl extends GenericForwardComposer {
 				@Override
 				public void onEvent(Event event) throws Exception {
 					Map data = (Map)event.getData();
-					ChartType chartType = (ChartType) insertChartAtDialog.getAttribute("chartType");
+					Chart.Type chartType = (Chart.Type) insertChartAtDialog.getAttribute("chartType");
 					insertChartAtDialog.setAttribute("chartType", null); //clear it
 					if (data != null && chartType != null) {
 						Integer col = (Integer) data.get("column");

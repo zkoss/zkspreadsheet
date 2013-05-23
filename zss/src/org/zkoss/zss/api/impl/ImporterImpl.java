@@ -20,5 +20,10 @@ public class ImporterImpl implements Importer{
 	public Book imports(InputStream is, String bookName){
 		return new BookImpl(new SimpleRef<XBook>(importer.imports(is, bookName)));
 	}
+
+
+	public XImporter getNative() {
+		return importer;
+	}
 	
 }

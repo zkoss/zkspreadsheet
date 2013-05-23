@@ -1,5 +1,7 @@
 package org.zkoss.zss.api;
 
+import java.util.LinkedHashMap;
+
 import org.zkoss.image.AImage;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.Range.DeleteShift;
@@ -19,6 +21,7 @@ import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Picture.Format;
+import org.zkoss.zss.api.model.Sheet;
 
 /**
  * The utility to help UI to deal with user's operation of a Range.
@@ -74,16 +77,16 @@ public class CellOperationUtil {
 		return src.paste(dest);
 	}
 	public static boolean pasteFormula(Range src, Range dest) {
-		return pasteSpecial(src, dest, PasteType.PASTE_FORMULAS, PasteOperation.PASTEOP_NONE, false, false);
+		return pasteSpecial(src, dest, PasteType.FORMULAS, PasteOperation.NONE, false, false);
 	}
 	public static boolean pasteValue(Range src, Range dest) {
-		return pasteSpecial(src, dest, PasteType.PASTE_VALUES, PasteOperation.PASTEOP_NONE, false, false);
+		return pasteSpecial(src, dest, PasteType.VALUES, PasteOperation.NONE, false, false);
 	}
 	public static boolean pasteAllExceptBorder(Range src, Range dest) {
-		return pasteSpecial(src, dest, PasteType.PASTE_ALL_EXCEPT_BORDERS, PasteOperation.PASTEOP_NONE, false, false);
+		return pasteSpecial(src, dest, PasteType.ALL_EXCEPT_BORDERS, PasteOperation.NONE, false, false);
 	}
 	public static boolean pasteTranspose(Range src, Range dest) {
-		return pasteSpecial(src, dest, PasteType.PASTE_ALL, PasteOperation.PASTEOP_NONE, false, true);
+		return pasteSpecial(src, dest, PasteType.ALL, PasteOperation.NONE, false, true);
 	}
 	
 	public static boolean pasteSpecial(Range src, Range dest,PasteType pasteType, PasteOperation pasteOperation, boolean skipBlank, boolean transpose){
@@ -112,27 +115,54 @@ public class CellOperationUtil {
 		});
 	}
 
-	public static void applyFontHeight(Range range, final short height) {
-		applyFontStyle(range, new FontStyleApplier() {
-			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
-				//the font name(family) is equals, not need to set it.
-				return oldFont.getFontHeight() == height;
-			}
-			
-			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				//use the new font name to search it.
-				return cellRange.getCellStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), height, oldFont.getFontName(), 
-						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
-			}
-			
-			public void apply(Range range,CellStyle cellstyle, Font newfont) {
-				newfont.setFontHeight(height);
+	public static void applyFontHeight(Range range, final short fontHeight) {
+		//fontHeight = twip
+		final Sheet sheet = range.getSheet(); 
+		final LinkedHashMap<Integer,Integer> newRowSize = new LinkedHashMap<Integer, Integer>();
+		
+		if(range.isProtected())
+			return;
+		
+		final int fpx = UnitUtil.twipToPx(fontHeight);
+		
+		range.sync(new RangeRunner(){
+			@Override
+			public void run(Range range) {
+				applyFontStyle(range, new FontStyleApplier() {
+					public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
+						//the font name(family) is equals, not need to set it.
+						return oldFont.getFontHeight() == fontHeight;
+					}
+					
+					public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
+						int px = sheet.getRowHeight(cellRange.getRow());//rowHeight in px
+						
+						if(fpx>px){
+							Integer maxpx = newRowSize.get(cellRange.getRow());
+							if(maxpx==null || maxpx.intValue()<fpx){
+								newRowSize.put(cellRange.getRow(), fpx);
+							}
+						}
+						
+						//use the new font name to search it.
+						return cellRange.getCellStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), fontHeight, oldFont.getFontName(), 
+								oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
+					}
+					
+					public void apply(Range cellRange,CellStyle cellstyle, Font newfont) {
+						newfont.setFontHeight(fontHeight);
+					}
+				});
+				//enhancement, also adjust row height.
+				for(Integer row : newRowSize.keySet()){
+					Ranges.range(sheet,row.intValue(),0).setRowHeight(newRowSize.get(row).intValue()+4);//4 is padding
+				}
 			}
 		});
 	}
-	public static void applyFontSize(Range range, final short size) {
+	public static void applyFontSize(Range range, final short point) {
 		//fontSize = fontHeightInPoints = fontHeight/20
-		applyFontHeight(range,(short)(size*20));
+		applyFontHeight(range,(short)(point*20));
 	}
 	
 	public interface FontStyleApplier {
@@ -293,7 +323,7 @@ public class CellOperationUtil {
 	/**
 	 * @param htmlColor '#rgb-hex-code'
 	 */
-	public static void applyCellColor(Range range, final String htmlColor) {
+	public static void applyBackgroundColor(Range range, final String htmlColor) {
 		final Color color = range.getCellStyleHelper().createColorFromHtmlColor(htmlColor);
 		applyCellStyle(range, new CellStyleApplier() {
 
@@ -313,7 +343,7 @@ public class CellOperationUtil {
 		});
 	}
 	
-	public static void applyCellDataFormat(Range range, final String format) {
+	public static void applyDataFormat(Range range, final String format) {
 		applyCellStyle(range, new CellStyleApplier() {
 
 			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
@@ -327,7 +357,7 @@ public class CellOperationUtil {
 		});
 	}
 
-	public static void applyCellAlignment(Range range,final Alignment alignment) {
+	public static void applyAlignment(Range range,final Alignment alignment) {
 		applyCellStyle(range, new CellStyleApplier() {
 
 			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
@@ -341,7 +371,7 @@ public class CellOperationUtil {
 		});
 	}
 
-	public static void applyCellVerticalAlignment(Range range,final VerticalAlignment alignment) {
+	public static void applyVerticalAlignment(Range range,final VerticalAlignment alignment) {
 		applyCellStyle(range, new CellStyleApplier() {
 
 			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
@@ -423,7 +453,7 @@ public class CellOperationUtil {
 				}else{
 					range.merge(false);
 					//align the left/top one
-					applyCellAlignment(range.getCellRange(0,0),Alignment.CENTER);
+					applyAlignment(range.getCellRange(0,0),Alignment.CENTER);
 				}
 			}
 		});
@@ -443,7 +473,7 @@ public class CellOperationUtil {
 	}
 	
 	
-	public static void applyCellWrapText(Range range,final boolean wraptext) {
+	public static void applyWrapText(Range range,final boolean wraptext) {
 		applyCellStyle(range, new CellStyleApplier() {
 
 			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {

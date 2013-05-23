@@ -1,14 +1,15 @@
 package org.zkoss.zss.api.model;
 
-import org.zkoss.zss.api.model.Font.Boldweight;
-import org.zkoss.zss.api.model.Font.TypeOffset;
-import org.zkoss.zss.api.model.Font.Underline;
+import org.zkoss.poi.ss.usermodel.Workbook;
+
 
 public interface Book {
 	public enum BookType {
 		EXCEL_2003, EXCEL_2007
 	}
 
+	public Workbook getPoiBook();
+	
 	public String getBookName();
 
 	public BookType getType();

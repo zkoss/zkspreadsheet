@@ -17,27 +17,30 @@ package org.zkoss.zss.app.zul;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.util.CellRangeAddress;
+//import org.zkoss.poi.ss.usermodel.Cell;
+//import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.event.KeyEvent;
+import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.ctrl.DesktopWorkbenchContext;
 import org.zkoss.zss.app.zul.ctrl.WorkbookCtrl;
-import org.zkoss.zss.model.sys.XRange;
-import org.zkoss.zss.model.sys.XRanges;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.SheetCtrl;
+//import org.zkoss.zss.model.sys.XRange;
+//import org.zkoss.zss.model.sys.XRanges;
+//import org.zkoss.zss.model.sys.XSheet;
+//import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.EditboxEditingEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.StopEditingEvent;
-import org.zkoss.zss.ui.impl.Utils;
+//import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Textbox;
-import org.zkoss.zul.impl.XulElement;
+//import org.zkoss.zul.impl.XulElement;
 
 /**
  * @author Sam
@@ -61,17 +64,19 @@ public class FormulaEditor extends Textbox {
 	
 	private boolean everFocusCell = false;
 	private boolean focusOut = false;
-	private Cell currentEditcell;
+//	private Cell currentEditcell;
+	private int currRow = -1;
+	private int currCol = -1;
 	private Boolean everTab = null;
 
 	private int formulaRow;
 	private int formulaColumn;
-	private Cell formulaCell;
+//	private Cell formulaCell;
 	private String formulaText;
 	private String formulaEdit;
 	/*cache added focus names*/
 	private LinkedHashSet<String> addedFocusNames = new LinkedHashSet<String>();
-	private XSheet formulaSheet;
+	private Sheet formulaSheet;
 	private String focusCellRef;
 	/**
 	 * Indicate edit existing formula.
@@ -116,9 +121,9 @@ public class FormulaEditor extends Textbox {
 				newFocus.add(name);
 				continue;
 			}
-			XRange rng = null;
+			Range rng = null;
 			try {
-				rng = XRanges.range(formulaSheet, name);
+				rng = Ranges.range(formulaSheet, name);
 			} catch (NullPointerException ex) { /*input wrong cell reference will cause NPE or IllegalArgumentException*/
 			} catch (IllegalArgumentException ex) {
 			}
@@ -186,10 +191,16 @@ public class FormulaEditor extends Textbox {
 		WorkbookCtrl bookCtrl = getDesktopWorkbenchContext().getWorkbookCtrl();
 		formulaRow = bookCtrl.getSelection().getTop();
 		formulaColumn = bookCtrl.getSelection().getLeft();
-		formulaCell = Utils.getCell(bookCtrl.getSelectedSheet(), formulaRow, formulaColumn);
+		
 		formulaSheet = bookCtrl.getSelectedSheet();
-		formulaText = Utils.getCellText(formulaSheet, formulaCell);
-		formulaEdit = Utils.getEditText(formulaCell);
+		
+//		formulaText = Utils.getCellText(formulaSheet, formulaCell);
+//		formulaEdit = Utils.getEditText(formulaCell);
+		
+		Range r = Ranges.range(formulaSheet,formulaRow,formulaColumn);
+		formulaText = r.getCellData().getFormatText();
+		formulaEdit = r.getCellEditText();
+		
 	}
 	
 	private boolean isStartEditingFormula(String edit) {
@@ -210,10 +221,10 @@ public class FormulaEditor extends Textbox {
 			if (isStartEditingFormula(newEdit))
 				cacheFormulaEditingInfo();
 			generateCellFocus(newEdit);
-		}  else if (currentEditcell != null) {
+		}  else if (currRow >0) {
 			final int left = bookCtrl.getSelection().getLeft();
 			final int top = bookCtrl.getSelection().getTop();
-			final XSheet sheet = bookCtrl.getSelectedSheet();
+			final Sheet sheet = bookCtrl.getSelectedSheet();
 			currentEditcell = Utils.getOrCreateCell(sheet, top, left);
 			bookCtrl.escapeAndUpdateText(currentEditcell, newEdit);
 		}
@@ -237,7 +248,7 @@ public class FormulaEditor extends Textbox {
 	
 	public void onFocus() {
 		WorkbookCtrl bookCtrl = getDesktopWorkbenchContext().getWorkbookCtrl();
-		XSheet sheet = bookCtrl.getSelectedSheet();
+		Sheet sheet = bookCtrl.getSelectedSheet();
 		if (sheet == null) { //no sheet, no operation
 			return;
 		}
@@ -254,7 +265,7 @@ public class FormulaEditor extends Textbox {
 		currentEditcell = Utils.getCell(sheet, top, left);
 		
 		if (currentEditcell != null) {
-			oldEdit = XRanges.range(sheet, top, left).getEditText();
+			oldEdit = Ranges.range(sheet, top, left).getCellEditText();
 			oldText = Utils.getCellText(sheet, currentEditcell); //escaped HTML to show cell value
 			if (!isComposingFormula(newEdit))
 				bookCtrl.escapeAndUpdateText(currentEditcell, oldEdit);
@@ -305,12 +316,12 @@ public class FormulaEditor extends Textbox {
 		Position pos = bookCtrl.getCellFocus();
 		int row = pos.getRow();
 		int col = pos.getColumn();
-		int oldrow = currentEditcell == null ? -1 : currentEditcell.getRowIndex();
-		int oldcol = currentEditcell == null ? -1 : currentEditcell.getColumnIndex();
+		int oldrow = this.currRow;
+		int oldcol = this.currRow;
 		final boolean focusChanged = (row != oldrow || col != oldcol); //user click directly to a different cell
 		if (!focusChanged) {
 			if (everTab != null) { //Tab key
-				final XSheet sheet = bookCtrl.getSelectedSheet();
+				final Sheet sheet = bookCtrl.getSelectedSheet();
 				if (everTab.booleanValue()) { //shift + Tab
 					col = col - 1;
 					if (col < 0) {
@@ -422,9 +433,9 @@ public class FormulaEditor extends Textbox {
 	private void endEditingFormula(boolean confirmChange) {
 		WorkbookCtrl bookCtrl = getDesktopWorkbenchContext().getWorkbookCtrl();
 		
-		XRange range = XRanges.range(formulaSheet, formulaCell.getRowIndex(), formulaCell.getColumnIndex());
+		Range range = Ranges.range(formulaSheet, formulaCell.getRowIndex(), formulaCell.getColumnIndex());
 		if (confirmChange) {
-			range.setEditText(newEdit);
+			range.setCellEditText(newEdit);
 			bookCtrl.focusTo(formulaRow, formulaColumn, false);
 		}
 		clearCellReferenceFocus();

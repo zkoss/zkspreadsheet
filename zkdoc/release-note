@@ -4,8 +4,25 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-253 click component away from Spreadsheet but keeps focus
 
 *Bug
+  ZSS-224 text overflow doesn't work correctly
   ZSS-268 get exception if I listen to onValidateDrop
-  
+  ZSS-304 hiding columns doesn't work
+
+* Upgrade Notes
+  + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
+    that inside 'org.zkoss.zss.api' & 'org.zkoss.zss.api.model'
+  + Spreadsheet are use the new classes of Book & Sheet that inside 'org.zkoss.zss.api.model'
+  + Action, ActionHandler are removed, use UserAction, DefaultUserActionHandler instead.
+  + Constructor of CellSelectionEvent is changed from left,top,right,bottom to topRow,leftCol,bottomRow,rightColumn
+  + SelectionChangeEvent is renamed to CellSelectionUpdateEvent and arguments sequence is also redefined.
+  + HeaderEvent is renamed to HeaderUpdateEvent
+  + SheetCreateEvent, SheetSelectedEvent and SheetUpdateEvent are removed, use SheetEvent instead.
+  + Event name change:
+    onValidateDrop > onCellValidator
+    onFilter > onCellFilter
+    onHeaderSize > onHeaderUpdate
+    onSelectionChange > onCellSelectionChange
+
 
 	------------
 ZK Spreadsheet 2.6.0

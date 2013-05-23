@@ -48,6 +48,7 @@ import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.DrawingManager;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
+import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * 1.Range is not handling the protection issue, if you have handle it yourself before calling the api(by calling {@code #isProtected()})
@@ -192,7 +193,7 @@ public class RangeImpl implements Range{
 	 *         locked cell in the destination range will always cause past fail.
 	 */
 	public boolean paste(Range dest) {		
-		return pasteSpecial(dest,PasteType.PASTE_ALL,PasteOperation.PASTEOP_NONE,false,false);
+		return pasteSpecial(dest,PasteType.ALL,PasteOperation.NONE,false,false);
 	}
 	
 	/**
@@ -589,6 +590,10 @@ public class RangeImpl implements Range{
 		range.setEditText(editText);
 	}
 	
+	public String getCellFormatText(){
+		//I don't create my way, use the same way from Spreadsheet implementation as possible
+		return XUtils.getCellFormatText(getNative().getSheet(), getRow(), getColumn());
+	}
 	
 	//TODO need to verify the object type
 	public Object getCellValue(){
@@ -755,6 +760,17 @@ public class RangeImpl implements Range{
 		range.deleteSheet();
 	}
 	
+	
+	@Override
+	public void setColumnWidth(int widthPx) {
+		XRange r = range.isWholeColumn()?range:range.getColumns();
+		r.setColumnWidth(XUtils.pxToFileChar256(widthPx, ((XBook)range.getSheet().getWorkbook()).getDefaultCharWidth()));
+	}
+	@Override
+	public void setRowHeight(int heightPx) {
+		XRange r = range.isWholeRow()?range:range.getRows();
+		r.setRowHeight(XUtils.pxToPoint(heightPx));
+	}
 	
 	//api that need special object wrap
 	

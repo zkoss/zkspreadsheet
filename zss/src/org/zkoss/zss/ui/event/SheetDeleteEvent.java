@@ -14,24 +14,26 @@ package org.zkoss.zss.ui.event;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 
-//Dennis, 20130513, should we wrap book event to component event directly? make it before we come out any spec
-///**
-// * When a sheet is deleted. 
-// * @author henrichen
-// *
-// */
-//public class SheetDeleteEvent extends Event{
-//	private String _delSheetName;
+/**
+ * The event to notify a sheet's deleted
+ * @author henrichen
+ * @see Events#ON_SHEET_DELETE
+ *
+ */
+public class SheetDeleteEvent extends Event{
+	private static final long serialVersionUID = 1L;
+	
+	private String _sheetName;
 //	private String _newSheetName;
-//	public SheetDeleteEvent(String name, Component target, String delSheetName, String newSheetName) {
-//		super(name, target);
-//		_delSheetName = delSheetName;
+	public SheetDeleteEvent(String name, Component target, String delSheetName) {
+		super(name, target);
+		_sheetName = delSheetName;
 //		_newSheetName = newSheetName;
-//	}
-//	public String getDelSheetName() {
-//		return _delSheetName;
-//	}
+	}
+	public String getSheetName() {
+		return _sheetName;
+	}
 //	public String getNewSheetName() {
 //		return _newSheetName;
 //	}
-//}
+}

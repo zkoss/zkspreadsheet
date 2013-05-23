@@ -124,7 +124,7 @@ public class Events {
 	 * The onSheetSelect event
 	 * Sent when sheet is selected.
 	 */
-	public static final String ON_SHEET_SELECTED = "onSheetSelected";
+	public static final String ON_SHEET_SELECT = "onSheetSelect";
 	
 	/**
 	 * The onCtrlKey event (used with {@link KeyEvent})
@@ -152,33 +152,39 @@ public class Events {
 	 * TODO consider to let user register listener on book directly or wrap more event 
 	 */
 
-//	/**
-//	 * The onSheetNameChange event.
-//	 * Sent when sheet is deleted.
-//	 */
-//	public static final String ON_SHEET_NAME_CHANGE = "onSheetNameChange";
-//	/**
-//	 * The onSheetOrderChange event.
-//	 * Sent when sheet is deleted.
-//	 */
-//	public static final String ON_SHEET_ORDER_CHANGE = "onSheetOrderChange";
-//	
-//	/**
-//	 * The onSheetDelete event.
-//	 * Sent when sheet is deleted.
-//	 */
-//	public static final String ON_SHEET_DELETE = "onSheetDelete";
-//
-//	/**
-//	 * The onSheetCreate event.
-//	 * Sent when sheet is deleted.
-//	 */
-//	public static final String ON_SHEET_CREATE = "onSheetCreate";
-//		
-//	/** The onCellChange event (used with {@link CellEvent}).
-//	 * Sent when cell contents changed.
-//	 */
-//	public static final String ON_CELL_CHANGE = "onCellChange";
+	/**
+	 * The onSheetNameChange event.
+	 * Sent when sheet is deleted.
+	 * @see SheetEvent
+	 */
+	public static final String ON_SHEET_NAME_CHANGE = "onSheetNameChange";
+	/**
+	 * The onSheetOrderChange event.
+	 * Sent when sheet is deleted.
+	 * @see SheetEvent
+	 */
+	public static final String ON_SHEET_ORDER_CHANGE = "onSheetOrderChange";
+	
+	/**
+	 * The onSheetDelete event.
+	 * Sent when sheet is deleted.
+	 * @see SheetDeleteEvent
+	 */
+	public static final String ON_SHEET_DELETE = "onSheetDelete";
+
+	/**
+	 * The onSheetCreate event.
+	 * Sent when sheet is deleted.
+	 * @see SheetEvent
+	 */
+	public static final String ON_SHEET_CREATE = "onSheetCreate";
+		
+	/** 
+	 * The onCellChange event
+	 * Sent when cell contents changed.
+	 * @see CellAreaEvent
+	 */
+	public static final String ON_CELL_CHANGE = "onCellChange";
 	
 	/*
 	 * end of book delegation event  

@@ -22,8 +22,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import org.zkoss.lang.Objects;
-import org.zkoss.poi.ss.usermodel.Hyperlink;
-import org.zkoss.poi.ss.usermodel.Sheet;
+//import org.zkoss.poi.ss.usermodel.Hyperlink;
+//import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
@@ -31,14 +31,18 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Hyperlink;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.Consts;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
-import org.zkoss.zss.model.sys.XBook;
+//import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.SheetVisitor;
-import org.zkoss.zss.ui.impl.Utils;
+//import org.zkoss.zss.ui.impl.SheetVisitor;
+//import org.zkoss.zss.ui.impl.Utils;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
@@ -98,7 +102,7 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void init() {
-		String display = Utils.getRange(ss.getSelectedXSheet(), selection.getTop(), selection.getLeft()).getEditText();
+		String display = Ranges.range(ss.getSelectedSheet(), selection.getTop(), selection.getLeft()).getCellEditText();
 		isCellHasDisplayString = !"".equals(display);
 		if (isCellHasDisplayString)
 			displayHyperlink.setValue(display);
@@ -123,18 +127,18 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 			return;
 		}
 		
-		Utils.setHyperlink(ss.getSelectedXSheet(), selection.getTop(), selection.getLeft(), 
-				getLinkTarget(), addr, getDisplay());
+		Ranges.range(ss.getSelectedSheet(), selection.getTop(), selection.getLeft())
+			.setCellHyperlink(getLinkTarget(), addr, getDisplay());
 
 		_insertHyperlinkDialog.fireOnClose(null);
 	}
 	
-	private int getLinkTarget() {
+	private Hyperlink.HyperlinkType getLinkTarget() {
 		if (docBtn == activeBtn)
-			return Hyperlink.LINK_DOCUMENT;
+			return Hyperlink.HyperlinkType.DOCUMENT;
 		else if (mailBtn == activeBtn)
-			return Hyperlink.LINK_EMAIL;
-		return Hyperlink.LINK_URL;
+			return Hyperlink.HyperlinkType.EMAIL;
+		return Hyperlink.HyperlinkType.URL;
 	}
 	/**
 	 * Returns link address
@@ -292,16 +296,23 @@ public class InsertHyperlinkWindowCtrl extends GenericForwardComposer {
 	}
 	private void buildDocumentTree(final Tree tree, final Textbox cellRef) {
 		if (tree != null) {
-			final XBook book = ss.getXBook();
+			final Book book = ss.getBook();
 			if (book == null) {
 				return;
 			}
 			final ArrayList<DefaultTreeNode> nodes = new ArrayList<DefaultTreeNode>();
-			Utils.visitSheets(book, new SheetVisitor(){
-				@Override
-				public void handle(Sheet sheet) {
-					nodes.add(new DefaultTreeNode(sheet.getSheetName(), Collections.EMPTY_LIST));
-				}});
+			
+			int s = book.getNumberOfSheets();
+			for(int i=0;i<s;i++){
+				Sheet sheet = book.getSheetAt(i);
+				nodes.add(new DefaultTreeNode(sheet.getSheetName(), Collections.EMPTY_LIST));
+			}
+//			
+//			Utils.visitSheets(book, new SheetVisitor(){
+//				@Override
+//				public void handle(Sheet sheet) {
+//					nodes.add(new DefaultTreeNode(sheet.getSheetName(), Collections.EMPTY_LIST));
+//				}});
 			
 			/**
 			 * TODO: use i-18n instead hardcode

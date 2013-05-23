@@ -20,25 +20,23 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
 import org.zkoss.poi.ss.usermodel.PrintSetup;
-import org.zkoss.poi.ss.usermodel.Sheet;
-import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zss.api.Exporter;
+import org.zkoss.zss.api.Exporters;
+import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.zul.Dialog;
 import org.zkoss.zss.app.zul.Zssapps;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XExporter;
-import org.zkoss.zss.model.sys.XExporters;
-import org.zkoss.zss.model.sys.impl.Headings;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Filedownload;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Window;
@@ -98,7 +96,7 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 	}
 	
 	private void loadPrintSetting() {
-		noGridlines.setChecked(!ss.getSelectedXSheet().isPrintGridlines());
+		noGridlines.setChecked(!ss.getSelectedSheet().isPrintGridlines());
 		range.setSelectedItem(currSheet);
 	}
 	
@@ -108,38 +106,44 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 	 */
 	private void applyPrintSetting() {
 		//TODO: move to sheet context
-		ss.getSelectedXSheet().setPrintGridlines(includeGridlines());
-		final XBook book = ss.getXBook(); 
+		ss.getSelectedSheet().getPoiSheet().setPrintGridlines(includeGridlines());//TODO shouldn't this go through Range API?
+		final Book book = ss.getBook(); 
 		if (book == null) {
 			return;
 		}
 		int numSheet = book.getNumberOfSheets();
 		for (int i = 0; i < numSheet; i++) {
 			Sheet sheet = book.getSheetAt(i);
-			PrintSetup setup = sheet.getPrintSetup();
+			org.zkoss.poi.ss.usermodel.Sheet poiSheet = sheet.getPoiSheet();
+			PrintSetup setup = poiSheet.getPrintSetup();
 		}
 	}
 	
 	private void revertPrintSetting() {
-		final XBook book = ss.getXBook();
+		final Book book = ss.getBook();
 		if (book == null) {
 			return;
 		}
 		int numSheet = book.getNumberOfSheets();
 		for (int i = 0; i < numSheet; i++) {
 			Sheet sheet = book.getSheetAt(i);
-			PrintSetup setup = sheet.getPrintSetup();
+			org.zkoss.poi.ss.usermodel.Sheet poiSheet = sheet.getPoiSheet();
+			PrintSetup setup = poiSheet.getPrintSetup();
 		}
 	}
 
 	public void onClick$export() 
-		throws InvalidFormatException, IOException, InterruptedException {
+		throws IOException, InterruptedException {
 		
 		applyPrintSetting();
 		
-		XExporter c = XExporters.getExporter("html");
-		if (c instanceof Headings) {
-			((Headings)c).enableHeadings(includeHeadings());
+		Exporter c = Exporters.getExporter("html");
+		if(c==null){
+			Messagebox.show("can't find html exporter");
+			return;
+		}
+		if (c.isSupportHeadings()) {
+			c.enableHeadings(includeHeadings());
 		}
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -164,8 +168,8 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 //		Ranges.range((Worksheet) sheet,3,3).setValue(expr);
 //	}
 	
-	private void export(XExporter exporter, OutputStream outputStream) {
-		final XBook book = ss.getXBook();
+	private void export(Exporter exporter, OutputStream outputStream) throws IOException{
+		final Book book = ss.getBook();
 		if (book == null) {
 			return;
 		}
@@ -173,12 +177,10 @@ public class ExportToHtmlWindowCtrl extends GenericForwardComposer {
 		if (seld == allSheet) {
 			exporter.export(book, outputStream);
 		} else if (seld == currSelection){
-			Rect rect = ss.getSelection();
-			String area = ss.getColumntitle(rect.getLeft()) + ss.getRowtitle(rect.getTop()) + ":" + 
-				ss.getColumntitle(rect.getRight()) + ss.getRowtitle(rect.getBottom());
-			exporter.exportSelection(ss.getSelectedXSheet(), new AreaReference(area), outputStream);
+			Rect selection = ss.getSelection();
+			exporter.export(ss.getSelectedSheet(), selection, outputStream);
 		} else {
-			exporter.export(ss.getSelectedXSheet(), outputStream);
+			exporter.export(ss.getSelectedSheet(), outputStream);
 		}
 	}
 	

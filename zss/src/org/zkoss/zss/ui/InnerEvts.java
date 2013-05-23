@@ -93,7 +93,7 @@ import org.zkoss.zss.ui.event.Events;
 		
 		//onSheetSelected , set selected sheet 
 		//-> onSheetSelected
-		CMDS.put(Events.ON_SHEET_SELECTED, new SelectSheetCommand());
+		CMDS.put(Events.ON_SHEET_SELECT, new SelectSheetCommand());
 		
 		// onZssCellMouse 
 		// -> ON_CELL_CLICK,ON_CELL_RIGHT_CLICK,ON_CELL_DOUBLE_CLICK

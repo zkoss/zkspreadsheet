@@ -25,5 +25,5 @@ public interface StyleModification {
 	 * @param style
 	 * @param candidteEvt
 	 */
-	public void modify(CellStyle style, CellStyleContextEvent candidteEvt);
+	public void modify(CellStyleApplier style, CellStyleContextEvent candidteEvt);
 }

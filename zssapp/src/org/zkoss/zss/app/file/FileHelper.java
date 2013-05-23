@@ -27,9 +27,11 @@ import org.zkoss.lang.Library;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XExporter;
-import org.zkoss.zss.model.sys.XExporters;
+import org.zkoss.zss.api.Exporter;
+import org.zkoss.zss.api.Exporters;
+import org.zkoss.zss.api.Importer;
+import org.zkoss.zss.api.Importers;
+import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Messagebox;
 
@@ -118,11 +120,14 @@ public class FileHelper {
 		FileInputStream input = null;
 		try {
 			input = new FileInputStream(getSpreadsheetStorageFolderPath() + info.getHashFileName());
-			ss.setBookFromStream(input, info.getFileName());
+			
+			Importer importer = Importers.getImporter("excel");
+			Book book = importer.imports(input, info.getFileName());
+			ss.setBook(book);
 			return true;
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			Messagebox.show("Can not find file: " + info.getFileName());
-		} finally {
+		}  finally {
 			if (input != null)
 				try {
 					input.close();
@@ -138,8 +143,9 @@ public class FileHelper {
 		try {
 			ClassLoader loader = Thread.currentThread().getContextClassLoader();
 			input = loader.getResourceAsStream("web/zssapp/xls/Untitled");
-			
-			ss.setBookFromStream(input, EMPTY_FILE_NAME);
+			Importer importer = Importers.getImporter("excel");
+			Book book = importer.imports(input, EMPTY_FILE_NAME);
+			ss.setBook(book);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -155,8 +161,8 @@ public class FileHelper {
 	public static void saveSpreadsheet(Spreadsheet spreadsheet) {
 		String filename = spreadsheet.getSrc();
 		SpreadSheetMetaInfo info = SpreadSheetMetaInfo.newInstance(filename);
-		XBook wb = spreadsheet.getXBook();
-		XExporter c = XExporters.getExporter("excel");
+		Book wb = spreadsheet.getBook();
+		Exporter c = Exporters.getExporter("excel");
 		
 		String fileName = getSpreadsheetStorageFolderPath() + info.getHashFileName();
 		File file = new File(fileName);		
@@ -202,8 +208,8 @@ public class FileHelper {
 	public static void deleteSpreadsheet(Spreadsheet ss) {
 		Map<String, SpreadSheetMetaInfo> infos = SpreadSheetMetaInfo.getMetaInfos();
 		SpreadSheetMetaInfo info = null;
-		if (infos.containsKey(ss.getSrc())) {
-			info = infos.get(ss.getSrc());
+		if (infos.containsKey(ss.getBook().getBookName())) {
+			info = infos.get(ss.getBook().getBookName());
 			deleteSpreadSheet(info);
 		}
 	}

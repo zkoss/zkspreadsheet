@@ -21,7 +21,6 @@ package org.zkoss.zss.ui;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.lang.Classes;
@@ -62,7 +60,6 @@ import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.ClassLocator;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.xel.Function;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
@@ -84,8 +81,10 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
+import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.impl.ImporterImpl;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.BookImpl;
@@ -114,14 +113,12 @@ import org.zkoss.zss.ui.au.out.AuMergeCell;
 import org.zkoss.zss.ui.au.out.AuRemoveRowColumn;
 import org.zkoss.zss.ui.au.out.AuRetrieveFocus;
 import org.zkoss.zss.ui.au.out.AuSelection;
-import org.zkoss.zss.ui.au.out.AuUpdateData;
+import org.zkoss.zss.ui.event.CellAreaEvent;
 import org.zkoss.zss.ui.event.CellEvent;
-import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HyperlinkEvent;
-//import org.zkoss.zss.ui.event.SheetCreateEvent;
-//import org.zkoss.zss.ui.event.SheetDeleteEvent;
-//import org.zkoss.zss.ui.event.SheetUpdateEvent;
+import org.zkoss.zss.ui.event.SheetDeleteEvent;
+import org.zkoss.zss.ui.event.SheetEvent;
 import org.zkoss.zss.ui.event.StartEditingEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
 import org.zkoss.zss.ui.impl.ActiveRangeHelper;
@@ -235,7 +232,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	//TODO undo/redo
 	//StateManager stateManager = new StateManager(this);
-	private Map<String, Focus> _focuses = new HashMap<String, Focus>(20); //id -> Focus
+	private Map<String, Focus> _editorFocuses = new HashMap<String, Focus>(20); //id -> Focus
 
 	private Rect _focusRect = new Rect(0, 0, 0, 0);
 	private Rect _selectionRect = new Rect(0, 0, 0, 0);
@@ -520,23 +517,23 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			initBook0(book);
 		}
 	}
-	private Focus _focus;
-	private void deleteFocus() {
-		if (_selectedSheet != null && _focus != null) {
+	private Focus _selfEditorFocus;
+	private void deleteSelfEditorFocus() {
+		if (_selectedSheet != null && _selfEditorFocus != null) {
 			final XRange rng = XRanges.range(_selectedSheet);
-			rng.notifyDeleteFriendFocus(_focus);
-			((BookCtrl)_book).removeFocus(_focus);
-			_focus = null;
+			rng.notifyDeleteFriendFocus(_selfEditorFocus);
+			((BookCtrl)_book).removeFocus(_selfEditorFocus);
+			_selfEditorFocus = null;
 		}
 	}
-	private void moveFocus() {
+	private void moveSelfEditorFocus() {
 		if (_selectedSheet != null) {
-			if (_focus == null) {
-				_focus = newFocus();
-				((BookCtrl)_book).addFocus(_focus);
+			if (_selfEditorFocus == null) {
+				_selfEditorFocus = newFocus();
+				((BookCtrl)_book).addFocus(_selfEditorFocus);
 			}
 			final XRange rng = XRanges.range(_selectedSheet);
-			rng.notifyMoveFriendFocus(_focus);
+			rng.notifyMoveFriendFocus(_selfEditorFocus);
 		}
 	}
 	private EventListener _focusListener = null;
@@ -548,15 +545,15 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		syncEditorFocus();
 		int row=event.getRow();
 		int col=event.getColumn();
-		_focus.row = row;
-		_focus.col = col;
-		moveFocus();
+		_selfEditorFocus.row = row;
+		_selfEditorFocus.col = col;
+		moveSelfEditorFocus();
 	}
 	private void initBook0(XBook book) {
 		if (_book != null) {
 			if (_focusListener != null)
 				removeEventListener(Events.ON_CELL_FOUCSED, _focusListener);
-			deleteFocus();
+			deleteSelfEditorFocus();
 			_book.unsubscribe(_dataListener);
 			_book.removeVariableResolver(_variableResolver);
 			_book.removeFunctionMapper(_functionMapper);
@@ -583,9 +580,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			_book.subscribe(_dataListener);
 			_book.addVariableResolver(_variableResolver);
 			_book.addFunctionMapper(_functionMapper);
-			if (_focus == null) { //focus name default to Spreadsheet id
-				_focus = newFocus();
-				((BookCtrl)_book).addFocus(_focus);
+			if (_selfEditorFocus == null) { //focus name default to Spreadsheet id
+				_selfEditorFocus = newFocus();
+				((BookCtrl)_book).addFocus(_selfEditorFocus);
 			}
 			if (EventQueues.APPLICATION.equals(_book.getShareScope()) || EventQueues.SESSION.equals(_book.getShareScope()) ) { //have to sync focus
 				this.addEventListener(Events.ON_CELL_FOUCSED, _focusListener = new EventListener() {
@@ -687,25 +684,25 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 
-	/**
-	 * it will change the spreadsheet src name as src
-	 * and book name as src => will not reload the book
-	 * @param src
-	 */
-	public void setSrcName(String src) {
-		/**
-		 * TODO model integration
-		 */
-		/*
-		BookImpl book = (BookImpl) this.getBook();
-		if (book != null)
-			book.setName(src);
-		_src = src;
-		*/
-		final XBook book = (XBook) this.getXBook();
-		if (book != null)
-			_src = src;
-	}
+//	/**
+//	 * it will change the spreadsheet src name as src
+//	 * and book name as src => will not reload the book
+//	 * @param src
+//	 */
+//	public void setSrcName(String src) {
+//		/**
+//		 * TODO model integration
+//		 */
+//		/*
+//		BookImpl book = (BookImpl) this.getBook();
+//		if (book != null)
+//			book.setName(src);
+//		_src = src;
+//		*/
+//		final XBook book = (XBook) this.getXBook();
+//		if (book != null)
+//			_src = src;
+//	}
 	
 	/**
 	 * Gets the importer that import the file in the specified src (
@@ -2116,20 +2113,20 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onSheetOrderChange(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
-//			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_ORDER_CHANGE, Spreadsheet.this, name));
+			Sheet sheet = getBook().getSheet(name);
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_SHEET_ORDER_CHANGE, Spreadsheet.this, sheet));
 		}
 		private void onSheetNameChange(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
-//			org.zkoss.zk.ui.event.Events.postEvent(new SheetUpdateEvent(Events.ON_SHEET_NAME_CHANGE, Spreadsheet.this, name));
+			Sheet sheet = getBook().getSheet(name);
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_SHEET_NAME_CHANGE, Spreadsheet.this, sheet));
 		}
 		private void onSheetCreate(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
-			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
-//			org.zkoss.zk.ui.event.Events.postEvent(new SheetCreateEvent(Events.ON_SHEET_CREATE, Spreadsheet.this, name));
+			Sheet sheet = getBook().getSheet(name);
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_SHEET_CREATE, Spreadsheet.this, sheet));
 		}
 		private void onSheetDelete(SSDataEvent event) {
 			final Object[] payload = (Object[]) event.getPayload(); 
@@ -2144,9 +2141,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				//just update sheet label
 				Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
 			}
-			
-			//Dennis, 20130513, should we wrap book event to component event directly? disable it before we come out any spec
-//			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_SHEET_DELETE, Spreadsheet.this, delSheetName, newSheetName));
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_SHEET_DELETE, Spreadsheet.this, delSheetName));
 		}
 		
 		private int _colorIndex = 0;
@@ -2162,14 +2157,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (sheet == null) {//ZSS-209: book may removed
 				return;
 			}
-			if (sheet.equals(_selectedSheet)) { //same sheet
-				final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
-				final String id = focus.id;
-				if (!id.equals(_focus.id)) {
-					final Focus ofocus = _focuses.get(id);
-					moveEditorFocus(id, focus.name, ofocus != null ? ofocus.color : nextFocusColor(), focus.row, focus.col);
-				}
+			if (!getSelectedXSheet().equals(sheet))
+				return;
+			
+			final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
+			final String id = focus.id;
+			if (!id.equals(_selfEditorFocus.id)) {
+				final Focus ofocus = _editorFocuses.get(id);
+				moveEditorFocus(id, focus.name, ofocus != null ? ofocus.color : nextFocusColor(), focus.row, focus.col);
 			}
+			
 		}
 		private void onFriendFocusDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -2177,50 +2174,65 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (sheet == null) {//ZSS-209: book may removed
 				return;
 			}
-			if (sheet.equals(_selectedSheet)) { //same sheet
-				final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
-				removeEditorFocus(focus.id);
-			}
+			if (!getSelectedXSheet().equals(sheet))
+				return;
+			
+			final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
+			removeEditorFocus(focus.id);
 		}
 		private void onChartAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final Object payload = event.getPayload();
 			addChartWidget(sheet, (ZssChartX) payload);
 		}
 		private void onChartDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final Object payload = event.getPayload();
 			deleteChartWidget(sheet, (Chart) payload);
 		}
 		private void onChartUpdate(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final Object payload = event.getPayload();
 			updateChartWidget(sheet, (Chart) payload);
 		}
 		private void onPictureAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final Object payload = event.getPayload();
 			addPictureWidget(sheet, (Picture) payload);
 		}
 		private void onPictureDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final Object payload = event.getPayload();
 			deletePictureWidget(sheet, (Picture) payload);
 		}
 		private void onPictureUpdate(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final Object payload = event.getPayload();
 			updatePictureWidget(sheet, (Picture) payload);
 		}
 		private void onWidgetChange(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final int left = rng.getLeftCol();
 			final int top = rng.getTopRow();
 			final int right = rng.getRightCol();
@@ -2230,6 +2242,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onContentChange(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
 			final int left = rng.getLeftCol();
 			final int top = rng.getTopRow();
 			final int right = rng.getRightCol();
@@ -2240,10 +2254,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (bottom > lastrow) {
 				bottom = lastrow;
 			}
-//			org.zkoss.zk.ui.event.Events.postEvent(new CellSelectionEvent(
-//					Events.ON_CELL_CHANGE, Spreadsheet.this, new SheetImpl(
-//							new SimpleRef<XSheet>(sheet)),
-//					CellSelectionEvent.SELECT_CELLS, left, top, right, bottom));
+			org.zkoss.zk.ui.event.Events.postEvent(new CellAreaEvent(
+					Events.ON_CELL_CHANGE, Spreadsheet.this, getSelectedSheet(),top, left, bottom,right));
 		}
 		private void onRangeInsert(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -2960,31 +2972,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 			return attrs;
 		}
-		
 
-		/**
-		 * Returns overflow-able cell index
-		 * 
-		 * @return int return next overflow-able cell's index, return -1 for unlimited overflow with.
-		 */
-		private int getMaxOverflowableCellIndex(Cell from, Row row) {
-			int i = from.getColumnIndex();
-			int last = row.getLastCellNum();
-			if (i == last)
-				return -1;
-			
-			boolean found = false;
-			for (i += 1; i <= last; i++) {
-				Cell next = row.getCell(i);
-				if (next != null && next.getCellType() != Cell.CELL_TYPE_BLANK) {
-					found = true;
-					i--;//back to previous empty cell
-					break;
-				}
-			}
-			return found ? i : -1;//-1 means unlimited overflow with
-		}
-		
 		/**
 		 * Cell attributes
 		 * 
@@ -3054,10 +3042,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 						BookHelper.getRealAlignment(cell) == CellStyle.ALIGN_LEFT) {
 						
 						attrs.put("ovf", 1); //1 stand for true
-						int c = getMaxOverflowableCellIndex(cell, sheet.getRow(row));
-						if (c != col) {
-							attrs.put("moc", c);
-						}
 					}
 				}
 			}
@@ -3087,7 +3071,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				
 				if (updateText) {
 					if (cellType != Cell.CELL_TYPE_BLANK) {
-						final String cellText = XUtils.getCellText(sheet, row, col);
+						final String cellText = XUtils.getCellHtmlText(sheet, row, col);
 						final String editText = XUtils.getEditText(sheet, row, col);
 						final String formatText = XUtils.getCellFormatText(sheet, row, col);
 						
@@ -3993,7 +3977,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 	private void doSheetClean(XSheet sheet) {
 		if (getXBook().getSheetIndex(sheet) != -1)
-			deleteFocus();
+			deleteSelfEditorFocus();
 		List list = loadWidgetLoaders();
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
@@ -4026,7 +4010,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		setProtectSheet(_selectedSheet.getProtect());
 		
 		//register collaborated focus
-		moveFocus();
+		moveSelfEditorFocus();
 		_selectedSheetName = _selectedSheet.getSheetName();
 		
 		
@@ -4172,25 +4156,25 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return _widgetLoaders;
 	}
 
-//	/**
-//	 * Sets the {@link Action} disabled
-//	 * 
-//	 * @param disabled
-//	 * @param action
-//	 */
-//	public void setActionDisabled(boolean disabled, Action action) {
-//		boolean changed = false;
-//		if (disabled && !_actionDisabled.contains(action)) {
-//			_actionDisabled.add(action);
-//			changed = true;
-//		} else if (!disabled && _actionDisabled.contains(action)) {
-//			_actionDisabled.remove(action);
-//			changed = true;
-//		}
-//		if (changed) {
-//			smartUpdate("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
-//		}
-//	}
+	/**
+	 * Sets the {@link UserAction} disabled
+	 * 
+	 * @param disabled
+	 * @param action
+	 */
+	public void disableUserAction(UserAction action, boolean disabled) {
+		boolean changed = false;
+		if (disabled && !_actionDisabled.contains(action)) {
+			_actionDisabled.add(action);
+			changed = true;
+		} else if (!disabled && _actionDisabled.contains(action)) {
+			_actionDisabled.remove(action);
+			changed = true;
+		}
+		if (changed) {
+			refreshToolbarDisabled();
+		}
+	}
 	
 //	/**
 //	 * Returns whther {@link Action} disabled or not
@@ -4554,25 +4538,25 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	/**
 	 * Remove editor's focus on specified name
 	 */
-	private void removeEditorFocus(String id){
+	public void removeEditorFocus(String id){
 		response("removeEditorFocus" + _focusId.next(), new AuInvoke((Component)this, "removeEditorFocus", id));
-		_focuses.remove(id);
+		_editorFocuses.remove(id);
 	}
 	
 	/**
 	 *  Add and move other editor's focus
 	 */
-	private void moveEditorFocus(String id, String name, String color, int row ,int col){
-		if (_focus != null && !_focus.id.equals(id)) {
+	public void moveEditorFocus(String id, String name, String color, int row ,int col){
+		if (_selfEditorFocus != null && !_selfEditorFocus.id.equals(id)) {
 			response("moveEditorFocus" + _focusId.next(), new AuInvoke((Component)this, "moveEditorFocus", new String[]{id, name, color,""+row,""+col}));
-			_focuses.put(id, new Focus(id, name, color, row, col, null));
+			_editorFocuses.put(id, new Focus(id, name, color, row, col, null));
 		}
 	}
 	
 	private void syncEditorFocus() {
 		if (_book != null) {
 			synchronized(_book) {
-				for(final Iterator<Focus> it = _focuses.values().iterator(); it.hasNext();) {
+				for(final Iterator<Focus> it = _editorFocuses.values().iterator(); it.hasNext();) {
 					final Focus focus = it.next();
 					if (!((BookCtrl)_book).containsFocus(focus)) { //
 						it.remove();
@@ -4588,8 +4572,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @param name focus name that show on other Spreadsheet
 	 */
 	public void setUserName(String name) {
-		if (_focus != null) {
-			_focus.name = name;
+		if (_selfEditorFocus != null) {
+			_selfEditorFocus.name = name;
+			//TODO UPDATE self and relative
 		}
 		_userName = name;
 	}
@@ -4597,7 +4582,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	//sync friend focus position
 	private void syncFriendFocusesPosition(int left, int top, int right, int bottom) {
 		int row = -1, col = -1;
-		for(Focus focus : _focuses.values()) {
+		for(Focus focus : _editorFocuses.values()) {
 			row=focus.row;
 			col=focus.col;
 			if(col>=left && col<=right && row>=top  && row<=bottom) {
@@ -4656,6 +4641,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_FOUCSED, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		//can't ignore duplicate, for different header resize
 		addClientEvent(Spreadsheet.class, Events.ON_HEADER_UPDATE, CE_IMPORTANT | CE_NON_DEFERRABLE);
+		addClientEvent(Spreadsheet.class, Events.ON_SHEET_SELECT, CE_IMPORTANT | CE_DUPLICATE_IGNORE | CE_NON_DEFERRABLE);
 		
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_CLICK, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_RIGHT_CLICK, CE_DUPLICATE_IGNORE);
@@ -4675,7 +4661,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		
 		addClientEvent(Spreadsheet.class, Events.ON_CTRL_KEY, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_AUX_ACTION, CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_SHEET_SELECTED, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_WIDGET_CTRL_KEY, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_WIDGET_UPDATE, CE_DUPLICATE_IGNORE);
 
@@ -4989,20 +4974,44 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	
+	/**
+	 * Gets the importer that import the file in the specified src (
+	 * {@link #getSrc}) to {@link Book} data model. The default importer is
+	 * excel importer.
+	 * 
+	 * @return the importer
+	 */
+	public Importer getImporter(){
+		return this.getXImporter()==null?null:new ImporterImpl(getXImporter());
+	}
+	
+	/**
+	 * Sets the importer for import the book data model from a specified src.
+	 * 
+	 * @param importer the importer to import a spread sheet file from a document
+	 * format (e.g. an Excel file) by the specified src (@link
+	 * #setSrc(). The default importer is excel importer
+	 */
+	public void setImporter(Importer importer){
+		setXImporter(importer==null?null:((ImporterImpl)importer).getNative());
+	}
+	
+	
 	
 	private void refreshToolbarDisabled(){
-		_actionDisabled.clear();
 		
+		Set<UserAction> disabled = new HashSet<UserAction>(_actionDisabled);
+		disabled.clear();
 		if(getBook()==null){
-			_actionDisabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4BookClosed));
+			disabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4BookClosed));
 		}else{
 			if(getSelectedSheet().isProtected()){
-				_actionDisabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4SheetProtected));
+				disabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4SheetProtected));
 			}
 			if(!getSelectedSheet().isAutoFilterEnabled()){
-				_actionDisabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4FilterDisabled));
+				disabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4FilterDisabled));
 			}
 		}
-		smartUpdate("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
+		smartUpdate("disabled", convertActionDisabledToJSON(_actionDisabled));
 	}
 }
