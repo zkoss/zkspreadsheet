@@ -21,6 +21,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	<!-- Which language this addon will be added to -->
 	<language-name>xul/html</language-name>
 
+	<javascript package="zss" />
+
 	<version>
 		<version-class>org.zkoss.zss.ui.Version</version-class>
 		<version-uid>3.0.0</version-uid>
