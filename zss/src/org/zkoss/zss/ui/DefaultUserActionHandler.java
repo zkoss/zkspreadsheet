@@ -354,9 +354,12 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		Book book = getBook();
 		Sheet sheet = getSheet();
 		
-		if(book.getSheetIndex(sheet)>0){
+		int i = book.getSheetIndex(sheet);
+		
+		if(i>0){
+			i --;
 			Range range = Ranges.range(sheet);
-			SheetOperationUtil.setSheetOrder(range,0);
+			SheetOperationUtil.setSheetOrder(range,i);
 		}
 		return true;
 	}
