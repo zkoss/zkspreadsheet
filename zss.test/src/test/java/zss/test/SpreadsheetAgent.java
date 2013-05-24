@@ -21,8 +21,7 @@ public class SpreadsheetAgent {
 	}
 	
 	public void selectSheet(int index){
-		//FIXME event is under refactoring
-		AuData auData = new AuData("onZSSSelectSheet");
+		AuData auData = new AuData("onSheetSelect");
 		auData.setData("sheetId", Integer.toString(index)).setData("cache", false)
 			.setData("row", -1).setData("col", -1).setData("left", -1).setData("right", -1)
 			.setData("top", -1).setData("bottom", -1)
@@ -33,7 +32,6 @@ public class SpreadsheetAgent {
 	}
 	
 	public void selectSheet(String name){
-//		int sheetIndex = zss.as(Spreadsheet.class).getBook().getSheetIndex(name);
 		int sheetIndex = zss.as(Spreadsheet.class).getXBook().getSheetIndex(name);
 		if (sheetIndex >=0){
 			selectSheet(sheetIndex);
