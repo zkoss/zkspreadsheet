@@ -29,11 +29,11 @@ public class PictureImpl implements Picture{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ColorImpl other = (ColorImpl) obj;
+		PictureImpl other = (PictureImpl) obj;
 		if (picRef == null) {
-			if (other.colorRef != null)
+			if (other.picRef != null)
 				return false;
-		} else if (!picRef.equals(other.colorRef))
+		} else if (!picRef.equals(other.picRef))
 			return false;
 		return true;
 	}

@@ -97,5 +97,15 @@ public class BookImpl implements Book{
 	public Workbook getPoiBook() {
 		return getNative();
 	}
+
+	@Override
+	public void setShareScope(String scope) {
+		getNative().setShareScope(scope);
+	}
+
+	@Override
+	public String getShareScope() {
+		return getNative().getShareScope();
+	}
 	
 }

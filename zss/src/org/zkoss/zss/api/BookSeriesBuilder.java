@@ -1,6 +1,7 @@
 package org.zkoss.zss.api;
 
 import java.util.List;
+import java.util.Set;
 
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
@@ -31,7 +32,11 @@ public abstract class BookSeriesBuilder {
 					}else{
 						instance = new BookSeriesBuilder() {
 							@Override
-							public void buildBookSeries(List<Book> books) {
+							public void buildBookSeries(Set<Book> books) {
+								throw new RuntimeException("not implemented");
+							}
+							@Override
+							public void buildBookSeries(Book[] books) {
 								throw new RuntimeException("not implemented");
 							}
 						};
@@ -43,5 +48,6 @@ public abstract class BookSeriesBuilder {
 	}
 	
 	
-	abstract public void buildBookSeries(List<Book> books);
+	abstract public void buildBookSeries(Set<Book> books);
+	abstract public void buildBookSeries(Book[] books);
 }

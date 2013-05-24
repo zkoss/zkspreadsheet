@@ -133,7 +133,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 			return;
 		
 		Range r = Ranges.range(spreadsheet.getSelectedSheet(), SheetHelper.getVisibleSelection(spreadsheet));
-		CellOperationUtil.insert(r.getColumnRange(), InsertShift.RIGHT, InsertCopyOrigin.RIGHT_BELOW);
+		CellOperationUtil.insert(r.toColumnRange(), InsertShift.RIGHT, InsertCopyOrigin.RIGHT_BELOW);
 //		CellHelper.shiftEntireColumnRight(spreadsheet.getSelectedSheet(), 
 //				rect.getLeft(), rect.getRight());
 	}
@@ -144,7 +144,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 			return;
 		
 		Range r = Ranges.range(spreadsheet.getSelectedSheet(), SheetHelper.getVisibleSelection(spreadsheet));
-		CellOperationUtil.delete(r.getColumnRange(), DeleteShift.LEFT);
+		CellOperationUtil.delete(r.toColumnRange(), DeleteShift.LEFT);
 		
 //		CellHelper.shiftEntireColumnLeft(spreadsheet.getSelectedSheet(), 
 //				rect.getLeft(), rect.getRight());
@@ -153,7 +153,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void insertRowAbove() {
 		Range r = Ranges.range(spreadsheet.getSelectedSheet(), SheetHelper.getVisibleSelection(spreadsheet));
-		CellOperationUtil.insert(r.getRowRange(), InsertShift.DOWN, InsertCopyOrigin.LEFT_ABOVE);
+		CellOperationUtil.insert(r.toRowRange(), InsertShift.DOWN, InsertCopyOrigin.LEFT_ABOVE);
 		
 //		CellHelper.shiftEntireRowDown(spreadsheet.getSelectedSheet(), 
 //				spreadsheet.getSelection().getTop(), 
@@ -162,7 +162,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 
 	public void deleteRow() {
 		Range r = Ranges.range(spreadsheet.getSelectedSheet(), SheetHelper.getVisibleSelection(spreadsheet));
-		CellOperationUtil.delete(r.getRowRange(), DeleteShift.UP);
+		CellOperationUtil.delete(r.toRowRange(), DeleteShift.UP);
 		
 //		Rect rect = spreadsheet.getSelection();
 //		CellHelper.shiftEntireRowUp(spreadsheet.getSelectedSheet(), rect.getTop(), rect.getBottom());

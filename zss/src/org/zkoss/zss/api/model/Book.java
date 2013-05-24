@@ -22,4 +22,8 @@ public interface Book {
 
 	public Sheet getSheet(String name);
 
+	public void setShareScope(String scope);
+	
+	public String getShareScope();
+
 }
