@@ -17,7 +17,8 @@ import org.zkoss.zss.ui.Spreadsheet;
 public class ExportTest extends SpreadsheetTestCaseBase{
 
 	private DesktopAgent desktop;
-	private SpreadsheetAgent ssAgent;
+	private SpreadsheetAgent srcAgent;
+	private SpreadsheetAgent dstAgent;
 	
 	@Rule
     public ErrorCollector collector = new ErrorCollector();
@@ -26,8 +27,6 @@ public class ExportTest extends SpreadsheetTestCaseBase{
 
 		desktop = Zats.newClient().connect("/export.zul");
 		
-//		ssAgent = new SpreadsheetAgent(srcZss);
-//		sheet = srcZss.as(Spreadsheet.class).getSelectedSheet();
 	}
 	
 	@Test
@@ -35,7 +34,6 @@ public class ExportTest extends SpreadsheetTestCaseBase{
 
 		//press buttons to input data in the source spreadsheet
 		desktop.query("#inputText").click();
-		desktop.query("#inputTable").click();
 		desktop.query("#inputPicture").click();
 		
 		//export to destination spreadsheet
@@ -45,6 +43,9 @@ public class ExportTest extends SpreadsheetTestCaseBase{
 		
 		ComponentAgent srcZss = desktop.query("#source");
 		ComponentAgent dstZss = desktop.query("#destination");
+		srcAgent = new SpreadsheetAgent(srcZss);
+		dstAgent = new SpreadsheetAgent(dstZss);
+		
 		Sheet srcSheet = srcZss.as(Spreadsheet.class).getSelectedSheet();
 		Sheet dstSheet = dstZss.as(Spreadsheet.class).getSelectedSheet();
 		for (int row = 0 ; row < 16 ; row ++){
@@ -61,7 +62,7 @@ public class ExportTest extends SpreadsheetTestCaseBase{
 			}
 		}
 		
-			collector.checkThat(dstSheet.getPictures().size()
+		collector.checkThat(dstSheet.getPictures().size()
 				, CoreMatchers.equalTo(srcSheet.getPictures().size()));
 	}
 	

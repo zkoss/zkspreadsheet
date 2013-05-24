@@ -93,14 +93,8 @@ public class ExportComposer extends SelectorComposer<Component> {
 		applyVerticalAlignment(range(sheet, 0, c), CellStyle.VerticalAlignment.TOP);
 		range(sheet, 0, c).setColumnWidth(100);
 		range(sheet, 0, c).setRowHeight(80);
-	}
-	
-	/*
-	 * input a table with merged cell and borders 
-	 */
-	@Listen("onClick = #inputTable")
-	public void inputTable(){
-		Sheet sheet = srcSpreadsheet.getSelectedSheet();
+		
+		//input a table
 		applyBorder(range(sheet, 2, 0, 6 ,3), ApplyBorderType.FULL, BorderType.THIN, "#000000");
 		
 		range(sheet, 2, 0).setCellEditText("Browser Market");
@@ -126,14 +120,14 @@ public class ExportComposer extends SelectorComposer<Component> {
 		range(sheet, 6, 1).setCellEditText("31");
 		range(sheet, 6, 2).setCellEditText("28");
 		range(sheet, 6, 3).setCellEditText("22");
-		
 	}
+	
 
 	/**
 	 * insert a chart and a picture
 	 */
 	@Listen("onClick = #inputPicture")
-	public void inputtChartPicture() throws IOException{
+	public void inputChartPicture() throws IOException{
 		Sheet sheet = srcSpreadsheet.getSelectedSheet();
 		
 		
@@ -151,6 +145,22 @@ public class ExportComposer extends SelectorComposer<Component> {
 		
 	}
 	
+	@Listen("onClick = #applyAutoFilter")
+	public void applyAutoFilter(){
+		Sheet sheet = srcSpreadsheet.getSelectedSheet();
+		//FIXME API doesn't work
+		SheetOperationUtil.applyAutoFilter(range(sheet,2, 0));
+	}
+	
+	@Listen("onClick = #protect")
+	public void protectSheet(){
+		Sheet sheet = srcSpreadsheet.getSelectedSheet();
+		
+		//FIXME API doesn't work
+		SheetOperationUtil.protectSheet(range(sheet), null, null);
+		
+	}
+	
 	@Listen("onClick = #exportImport")
 	public void export2Destination() throws IOException{
 		File exportedFile = new File("exported.xlsx");
@@ -158,15 +168,15 @@ public class ExportComposer extends SelectorComposer<Component> {
 		excelExporter.export(srcSpreadsheet.getBook(), fos);
 		fos.flush();
 		fos.close();
-		
-		
+
+
 		//import
 		Importer importer = Importers.getImporter("excel");
-        Book book = importer
-                .imports(new FileInputStream(exportedFile), "exported");
-        dstSpreadsheet.setBook(book);
-        
-        exportedFile.delete();
+		Book book = importer
+				.imports(new FileInputStream(exportedFile), "exported");
+		dstSpreadsheet.setBook(book);
+
+		exportedFile.delete();
 	}
 
 	@Listen("onClick = button[label='Export Excel']")

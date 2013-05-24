@@ -1,10 +1,14 @@
 <zk>
 	<window apply="zss.testapp.ExportComposer" height="100%">
 		<button id="inputText" label="Input Styled Text"/>
-		<button id="inputTable" label="Input a table"/>
 		<button id="inputPicture" label="Input Pictures and Charts"/>
-		<button id="exportImport" label="Export to destination Spreadsheet"/>
+		<!-- FIXME API not work 
+		<button id="applyAutoFilter" label="Apply Auto Filter"/>
+		<button id="protect" label="Protect"/>
+		-->
+		
 		<separator></separator>
+		<button id="exportImport" label="Export to destination Spreadsheet"/>
 		<button label="Export Excel" />
 		<button label="Export PDF" />
 		<button label="Export HTML" />
