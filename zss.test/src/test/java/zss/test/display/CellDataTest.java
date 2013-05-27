@@ -1,12 +1,12 @@
 package zss.test.display;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.Arrays;
 import java.util.List;
 
+import org.hamcrest.CoreMatchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ErrorCollector;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -14,8 +14,6 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
-
-import zss.test.SpreadsheetAgent;
 
 
 /**
@@ -27,12 +25,13 @@ import zss.test.SpreadsheetAgent;
  */
 @RunWith(Parameterized.class)
 public class CellDataTest extends DisplayExcelTest{
-
+	
+	@Rule
+    public ErrorCollector collector = new ErrorCollector();
+	
 	public CellDataTest(String page){
 		super(page);
-		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
-		ssAgent.selectSheet("cell-data");
-		sheet = zss.as(Spreadsheet.class).getXBook().getWorksheetAt(3);
+		sheet = zss.as(Spreadsheet.class).getBook().getSheetAt(3);
 	}
 
 	@Parameters
@@ -41,50 +40,62 @@ public class CellDataTest extends DisplayExcelTest{
 		return Arrays.asList(data);
 	}
 	
-	/*
-	 * TODO what is the difference among getText(), getFormatText(), getRichEditText(), getEditText()?
-	 */
 	@Test
 	public void testCellFormat(){
-		/*
-		//number
-		assertEquals("1,234.56" ,Ranges.range(sheet,1,1).getText().getString());
-		//currency
-		assertEquals("NT$1,234.56" ,Ranges.range(sheet,1,2).getText().getString());
+		
+		String expected = null;
+		//TODO revise to a loop style
+		try{
+			//number
+			expected = "1,234.56";
+			collector.checkThat(Ranges.range(sheet,1,1).getCellData().getFormatText(), CoreMatchers.equalTo(expected));
+			
+			//currency
+			expected = "NT$1,234.56";
+			collector.checkThat(Ranges.range(sheet,1,2).getCellData().getFormatText(), CoreMatchers.equalTo(expected));
 
-		//getFormatText() throw nullpointerexception
-		assertEquals("¥1,234.00" ,Ranges.range(sheet,1,3).getText().getString());
-		
-		assertEquals("2013/4/12" ,Ranges.range(sheet,1,4).getText().getString());
-		
-		assertEquals("6:12 下午" ,Ranges.range(sheet,1,5).getText().getString());
-		
-		assertEquals("12.3%" ,Ranges.range(sheet,1,6).getText().getString());
-		
-		
-		assertEquals("12/25" ,Ranges.range(sheet,3,1).getText().getString());
-		
-		assertEquals("1.00E+09" ,Ranges.range(sheet,3,2).getText().getString());
-		
-		assertEquals("2013.4.12" ,Ranges.range(sheet,3,3).getText().getString());
-		
-		assertEquals("(07)350-4450" ,Ranges.range(sheet,3,4).getText().getString());
-		*/
+			expected = "¥1,234.00";
+			collector.checkThat(Ranges.range(sheet,1,3).getCellData().getFormatText(), CoreMatchers.equalTo(expected));
+
+			expected = "2013/4/12";
+			collector.checkThat(Ranges.range(sheet,1,4).getCellData().getFormatText(), CoreMatchers.equalTo(expected));
+
+			expected = "6:12 下午";
+			collector.checkThat(Ranges.range(sheet,1,5).getCellData().getFormatText(), CoreMatchers.equalTo(expected));
+
+			expected = "12.3%";
+			collector.checkThat(Ranges.range(sheet,1,6).getCellData().getFormatText(), CoreMatchers.equalTo(expected));
+
+			expected = " 12/25";
+			collector.checkThat(Ranges.range(sheet,3,1).getCellData().getFormatText(), CoreMatchers.equalTo(expected));
+
+			expected = "1.00E+09";
+			collector.checkThat(Ranges.range(sheet,3,2).getCellData().getFormatText(), CoreMatchers.equalTo(expected));
+
+			expected = "2013.4.12";
+
+			collector.checkThat(Ranges.range(sheet,3,3).getCellData().getFormatText(), CoreMatchers.equalTo(expected));
+
+			expected = "(07) 350-4450";
+			collector.checkThat(Ranges.range(sheet,3,4).getCellData().getFormatText(), CoreMatchers.equalTo(expected));
+		}catch (Exception e){
+			collector.checkThat(e.toString(), CoreMatchers.equalTo(expected));
+		}
 	}
 	
 	@Test
 	public void testNamedRange(){
 		Sheet sheet = zss.as(Spreadsheet.class).getBook().getSheetAt(3);
 		
-		assertEquals("10",Ranges.range(sheet,10,6).getCellValue().toString());
+		collector.checkThat(Ranges.range(sheet,10,6).getCellData().getFormatText(), CoreMatchers.equalTo("10"));
 		Range rangeMerged = Ranges.range(sheet, "RangeMerged");
 		
-		assertEquals(11,rangeMerged.getRow());
-		assertEquals("1",rangeMerged.getCellEditText());
+		collector.checkThat(rangeMerged.getRow(), CoreMatchers.equalTo(11));
+		collector.checkThat(rangeMerged.getCellEditText(), CoreMatchers.equalTo("1"));
 
-		assertEquals("21",Ranges.range(sheet,10,2).getCellValue().toString());
-		assertNotNull(Ranges.range(sheet, "TestRange1"));
-		assertEquals(11, Ranges.range(sheet, "TestRange1").getRow());
+		collector.checkThat(Ranges.range(sheet,10,2).getCellData().getFormatText(), CoreMatchers.equalTo("21"));
+		collector.checkThat(Ranges.range(sheet, "TestRange1"), CoreMatchers.notNullValue());
+		collector.checkThat(Ranges.range(sheet, "TestRange1").getRow(), CoreMatchers.equalTo(11));
 		
 	}
 }

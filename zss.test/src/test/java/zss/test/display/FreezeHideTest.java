@@ -1,8 +1,11 @@
 package zss.test.display;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -32,69 +35,56 @@ public class FreezeHideTest extends DisplayExcelTest{
 		return Arrays.asList(data);
 	}
 	
-	/*
 	
 	//http://books.zkoss.org/wiki/ZK_Spreadsheet_Essentials/Working_with_ZK_Spreadsheet/Configure_and_Control_ZK_Spreadsheet/Freeze_Rows_and_Columns
 	@Test
 	public void testFrozenRow(){
-		Worksheet sheet = spreadsheet.getBook().getWorksheet("row");
 		//the number of frozen row
-		assertEquals(1, getFrozenRow(sheet));
+		sheet = spreadsheet.getBook().getSheet("row");
+		assertEquals(1, sheet.getRowFreeze());
 	
 	}
 	
 	
 	@Test
 	public void testFrozenColumn(){
-		Worksheet sheet = spreadsheet.getBook().getWorksheet("column");
-		
-		assertEquals(1, getFrozenColumn(sheet));
+		sheet = spreadsheet.getBook().getSheet("column");
+		assertEquals(1, sheet.getColumnFreeze());
 	}
 	
 	@Test
 	public void testFrozenRowColumn(){
-		Worksheet sheet = spreadsheet.getBook().getWorksheet("rowcolumn");
+		sheet = spreadsheet.getBook().getSheet("rowcolumn");
+		assertEquals(2, sheet.getRowFreeze());
+		assertEquals(2, sheet.getColumnFreeze());
 		
-		assertEquals(2, getFrozenRow(sheet));
-		assertEquals(2, getFrozenColumn(sheet));
 	}
 	
 	//http://books.zkoss.org/wiki/ZK_Spreadsheet_Essentials/Working_with_ZK_Spreadsheet/Configure_and_Control_ZK_Spreadsheet/Hide_Row_and_Column_Titles
 	@Test
 	public void testHiddenRow(){
-		Worksheet sheet = spreadsheet.getBook().getWorksheet("row");
-	
-		assertEquals(true,isHiddenRow(sheet, 5));
+		sheet = spreadsheet.getBook().getSheet("row");
+		assertEquals(true,sheet.isRowHidden(5));
 	}
 	
 	
 	
 	@Test
 	public void testHiddenColumn(){
-		Worksheet sheet = spreadsheet.getBook().getWorksheet("column");
-	
-		assertFalse(isHiddenColumn(sheet, 0));
+		sheet = spreadsheet.getBook().getSheet("column");
+		assertEquals(false,sheet.isColumnHidden(0));
 		//check the hidden column
-		assertTrue(isHiddenColumn(sheet, 4));
+		assertEquals(true,sheet.isColumnHidden(4));
 	}
 	
 	@Test
 	public void testHiddenRowColumn(){
-		Worksheet sheet = spreadsheet.getBook().getWorksheet("rowcolumn");
-	
-		assertFalse(isHiddenRow(sheet, 0));
-		assertTrue(isHiddenRow(sheet, 5));
+		sheet = spreadsheet.getBook().getSheet("rowcolumn");
+		assertEquals(false,sheet.isRowHidden(0));
+		assertEquals(true,sheet.isRowHidden(5));
 		
-		assertFalse(isHiddenColumn(sheet, 0));
-		assertTrue(isHiddenColumn(sheet, 4));
+		assertEquals(false,sheet.isColumnHidden(0));
+		assertEquals(true,sheet.isColumnHidden(4));
 	}
 	
-	private int getFrozenRow(Worksheet sheet) {
-		return BookHelper.getRowFreeze(sheet);
-	}
-
-	private int getFrozenColumn(Worksheet sheet) {
-		return BookHelper.getColumnFreeze(sheet);
-	}
-	*/
 }

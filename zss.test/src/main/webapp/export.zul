@@ -1,0 +1,23 @@
+<zk>
+	<window apply="zss.testapp.ExportComposer" height="100%">
+		<button id="inputText" label="Input Styled Text"/>
+		<button id="inputPicture" label="Input Pictures and Charts"/>
+		<!-- FIXME API not work 
+		<button id="applyAutoFilter" label="Apply Auto Filter"/>
+		<button id="protect" label="Protect"/>
+		-->
+		
+		<separator></separator>
+		<button id="exportImport" label="Export to destination Spreadsheet"/>
+		<button label="Export Excel" />
+		<button label="Export PDF" />
+		<button label="Export HTML" />
+		
+		<spreadsheet id="source" src="/export.xlsx" maxrows="150" maxcolumns="40"
+			width="100%" height="50%" showContextMenu="true" showSheetbar="true" showToolbar="true"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" />
+		<spreadsheet id="destination" maxrows="150" maxcolumns="40"
+			width="100%" height="40%" showContextMenu="true" showSheetbar="true" showToolbar="true"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" />
+	</window>
+</zk>

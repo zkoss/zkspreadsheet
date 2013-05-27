@@ -55,7 +55,7 @@ public class ExternalReferenceComposer extends SelectorComposer<Component>{
 		List<Book> books = new LinkedList<Book>();
 		books.add(srcBook);
 		books.add(dstBook);
-		BookSeriesBuilder.getInstance().buildBookSeries(books);
+		BookSeriesBuilder.getInstance().buildBookSeries(books.toArray(new Book[0]));
 
 		//associate either book to their corresponding UI spreadsheet components
 		srcSpreadsheet.setBook(srcBook);

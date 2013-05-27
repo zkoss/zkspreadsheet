@@ -10,12 +10,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Font;
+import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
 import zss.test.SpreadsheetAgent;
@@ -57,21 +56,21 @@ public class CellTextTest extends DisplayExcelTest{
 		Color fontColor = null;
 		
 		//red
-		text = Ranges.range(sheet, 1, 0).getEditText();
+		text = Ranges.range(xsheet, 1, 0).getEditText();
 		assertEquals("ff0000", text);
-		fontColor = getCell(sheet, 1, 0).getCellStyle().getFillForegroundColorColor();
+		fontColor = getCell(xsheet, 1, 0).getCellStyle().getFillForegroundColorColor();
 		
 		XSSFColor cellFontColor = getCellFontColor(spreadsheet, 1, 0);
 		assertEquals("FFFF0000", cellFontColor.getARGBHex());
 		
 		//green
-		text = Ranges.range(sheet, 1, 1).getEditText();
+		text = Ranges.range(xsheet, 1, 1).getEditText();
 		assertEquals("00ff00", text);
 		
 		cellFontColor = getCellFontColor(spreadsheet, 1, 1);
 		assertEquals("FF00FF00", cellFontColor.getARGBHex());
 		//blue
-		text = Ranges.range(sheet, 1, 2).getEditText();
+		text = Ranges.range(xsheet, 1, 2).getEditText();
 		assertEquals("0000ff", text);
 		
 		cellFontColor = getCellFontColor(spreadsheet, 1, 2);
@@ -114,19 +113,18 @@ public class CellTextTest extends DisplayExcelTest{
 		assertEquals("Verdana", font.getFontName());
 		font = getFont(sheet, 4, 3);
 		assertEquals("Microsoft Sans Serif", font.getFontName());
-//		font = getFont(sheet, 4, 4).getCellStyle().getFontIndex());
+//		font = getFont(xsheet, 4, 4).getCellStyle().getFontIndex());
 //		assertEquals("Ms Serif", font.getFontName()); non-existed font 
 		font = getFont(sheet, 4, 5);
 		assertEquals("Book Antiqua", font.getFontName());
 	}
 
-//	private Font getFont(XSheet sheet, int row, int column) {
-//		return sheet.getBook().getFontAt(getCell(sheet, row, column).getCellStyle().getFontIndex());
+//	private Font getFont(XSheet xsheet, int row, int column) {
+//		return xsheet.getBook().getFontAt(getCell(xsheet, row, column).getCellStyle().getFontIndex());
 //	}
 	
 	private Font getFont(Sheet sheet, int row, int column) {
 		return Ranges.range(sheet, row, column).getCellStyle().getFont();
-//		return sheet.getBook().getFontAt(getCell(sheet, row, column).getCellStyle().getFontIndex());
 	}
 
 	@Test
@@ -169,9 +167,9 @@ public class CellTextTest extends DisplayExcelTest{
 	/*
 	@Test
 	public void testCellBackgroundColor(){
-//		assertEquals("", getCell(sheet, 11, 0).getCellStyle().getFillBackgroundColor());
-		System.out.println(((XSSFColor)getCell(sheet, 11, 0).getCellStyle().getFillBackgroundColorColor()).getARGBHex());
-		assertEquals("", book.getCellStyleAt(getCell(sheet, 11, 1).getCellStyle().getIndex()).getFillBackgroundColor());
+//		assertEquals("", getCell(xsheet, 11, 0).getCellStyle().getFillBackgroundColor());
+		System.out.println(((XSSFColor)getCell(xsheet, 11, 0).getCellStyle().getFillBackgroundColorColor()).getARGBHex());
+		assertEquals("", book.getCellStyleAt(getCell(xsheet, 11, 1).getCellStyle().getIndex()).getFillBackgroundColor());
 	}
 	*/
 	
@@ -191,28 +189,28 @@ public class CellTextTest extends DisplayExcelTest{
 	@Test
 	public void testAlignment(){
 		//vertical alignment
-		assertEquals(CellStyle.VERTICAL_TOP, range(sheet,26,1).getCellStyle().getVerticalAlignment());
-		assertEquals(CellStyle.VERTICAL_CENTER, range(sheet,26,2).getCellStyle().getVerticalAlignment());
-		assertEquals(CellStyle.VERTICAL_BOTTOM, range(sheet,26,3).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.VerticalAlignment.TOP, range(sheet,26,1).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.VerticalAlignment.CENTER, range(sheet,26,2).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.VerticalAlignment.BOTTOM, range(sheet,26,3).getCellStyle().getVerticalAlignment());
 
 		//horizontal alignment
-		assertEquals(CellStyle.ALIGN_LEFT,range(sheet,27,1).getCellStyle().getAlignment());
-		assertEquals(CellStyle.ALIGN_CENTER,range(sheet,27,2).getCellStyle().getAlignment());
-		assertEquals(CellStyle.ALIGN_RIGHT,range(sheet,27,3).getCellStyle().getAlignment());
+		assertEquals(CellStyle.Alignment.LEFT,range(sheet,27,1).getCellStyle().getAlignment());
+		assertEquals(CellStyle.Alignment.CENTER,range(sheet,27,2).getCellStyle().getAlignment());
+		assertEquals(CellStyle.Alignment.RIGHT,range(sheet,27,3).getCellStyle().getAlignment());
 		
 		//combined alignment
-		assertEquals(CellStyle.VERTICAL_TOP,range(sheet,28,1).getCellStyle().getVerticalAlignment());
-		assertEquals(CellStyle.ALIGN_LEFT,range(sheet,28,1).getCellStyle().getAlignment());
-		assertEquals(CellStyle.VERTICAL_CENTER,range(sheet,28,2).getCellStyle().getVerticalAlignment());
-		assertEquals(CellStyle.ALIGN_CENTER,range(sheet,28,2).getCellStyle().getAlignment());
-		assertEquals(CellStyle.VERTICAL_BOTTOM,range(sheet,28,3).getCellStyle().getVerticalAlignment());
-		assertEquals(CellStyle.ALIGN_RIGHT,range(sheet,28,3).getCellStyle().getAlignment());
+		assertEquals(CellStyle.VerticalAlignment.TOP,range(sheet,28,1).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.Alignment.LEFT,range(sheet,28,1).getCellStyle().getAlignment());
+		assertEquals(CellStyle.VerticalAlignment.CENTER,range(sheet,28,2).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.Alignment.CENTER,range(sheet,28,2).getCellStyle().getAlignment());
+		assertEquals(CellStyle.VerticalAlignment.BOTTOM,range(sheet,28,3).getCellStyle().getVerticalAlignment());
+		assertEquals(CellStyle.Alignment.RIGHT,range(sheet,28,3).getCellStyle().getAlignment());
+		
 	}
 	
-//	@Test
-//	public void testHyperlink(){
-//		assertEquals(Hyperlink.LINK_URL, Ranges.range(sheet, 30, 1).getHyperlink().getType());
-//		assertEquals(Hyperlink.LINK_URL, Ranges.range(sheet, 30, 1).getCellValueHelper().);
-//		assertEquals("http://www.zkoss.org/", Ranges.range(sheet, 30, 1).getHyperlink().getAddress());
-//	}
+	@Test
+	public void testHyperlink(){
+		assertEquals(HyperlinkType.URL, Ranges.range(sheet, 30, 1).getCellHyperlink().getType());
+		assertEquals("http://www.zkoss.org/", Ranges.range(sheet, 30, 1).getCellHyperlink().getAddress());
+	}
 }
