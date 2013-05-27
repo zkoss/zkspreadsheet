@@ -8,6 +8,9 @@ package org.zkoss.zss.api;
  * @since 3.0.0
  */
 public interface RangeRunner {
-
+	/**
+	 * main execution method
+	 * @param range the range to process
+	 */
 	void run(Range range);
 }

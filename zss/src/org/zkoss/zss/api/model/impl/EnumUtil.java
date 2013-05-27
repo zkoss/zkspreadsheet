@@ -462,11 +462,11 @@ public class EnumUtil {
 
 	public static int toRangeInsertCopyOrigin(InsertCopyOrigin copyOrigin) {
 		switch(copyOrigin){
-		case NONE:
+		case FORMAT_NONE:
 			return XRange.FORMAT_NONE;
-		case LEFT_ABOVE:
+		case FORMAT_LEFT_ABOVE:
 			return XRange.FORMAT_LEFTABOVE;
-		case RIGHT_BELOW:
+		case FORMAT_RIGHT_BELOW:
 			return XRange.FORMAT_RIGHTBELOW;
 		}
 		throw new IllegalArgumentException("unknow range insert copy origin "+copyOrigin);

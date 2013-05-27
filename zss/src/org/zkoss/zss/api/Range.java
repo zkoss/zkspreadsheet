@@ -28,6 +28,9 @@ import org.zkoss.zss.api.model.Sheet;
  * You have to use this class's API to do any operation of the {@link Sheet}, then the upload will sync to the UI automatically.<br/>
  * To get the instance of a {@link Range}, please use the {@link Ranges} API.
  * 
+ * <br/>
+ * Note : the range api will not check the sheet protection, if you care it, you have to check by calling {@link #isProtected()} before you do any operation.
+ * 
  * @author dennis
  * @see Ranges
  * @since 3.0.0
@@ -38,7 +41,7 @@ public interface Range {
 		BOOK,
 		NONE//for you just visit and do nothing
 	}
-	
+
 	public enum PasteType{
 		ALL,
 		ALL_EXCEPT_BORDERS,
@@ -75,19 +78,21 @@ public interface Range {
 		DIAGONAL_UP
 	}
 	
-	/** Shift direction of insert and delete**/
+	/** Shift direction of insert api**/
 	public enum InsertShift{
 		DEFAULT,
 		RIGHT,
 		DOWN
 	}
-	/** copy origin of insert and delete**/
+	/** 
+	 * Copy origin format of insert
+	 **/
 	public enum InsertCopyOrigin{
-		NONE,
-		LEFT_ABOVE,
-		RIGHT_BELOW,
+		FORMAT_NONE,
+		FORMAT_LEFT_ABOVE,
+		FORMAT_RIGHT_BELOW,
 	}
-	/** Shift direction of insert and delete**/
+	/** Shift direction of delete api**/
 	public enum DeleteShift{
 		DEFAULT,
 		LEFT,
@@ -123,25 +128,65 @@ public interface Range {
 		LINER_TREND
 	}
 
+	/**
+	 * Sets the synchronization level of this range
+	 * @param syncLevel
+	 */
 	public void setSyncLevel(SyncLevel syncLevel);
 	
+	/**
+	 * Gets the book of this range
+	 * @return book
+	 */
 	public Book getBook();
 	
+	/**
+	 * Gets the sheet of this range
+	 * @return sheet
+	 */
 	public Sheet getSheet();
 	
+	/**
+	 * Gets the left column of this range
+	 * @return the left column
+	 */
 	public int getColumn();
+	
+	/**
+	 * Gets the top row of this range
+	 * @return the top row
+	 */
 	public int getRow();
+	
+	/**
+	 * Gets the right/last column of this range
+	 * @return
+	 */
 	public int getLastColumn();
+	
+	/**
+	 * Gets the bottom/last row of this range
+	 * @return
+	 */
 	public int getLastRow();
 	
+	/**
+	 * Gets cell-style-helper, this helper helps you to create new style, font or color 
+	 * @return
+	 */
 	public CellStyleHelper getCellStyleHelper();
 	
+	/**
+	 * Runs runer under synchronization protection
+	 * @param run the runner
+	 * @see #setSyncLevel(SyncLevel)
+	 */
 	public void sync(RangeRunner run);
 	/**
-	 * visit all cells in this range, make sure you call this in a limited range, 
+	 * Visits all cells in this range with synchronization protection, make sure you call this in a limited range, 
 	 * don't use it for all row/column selection, it will spend much time to iterate the cell 
-	 * @param visitor the visitor 
-	 * @param create create cell if it doesn't exist, if it is true, it will also lock the sheet
+	 * @param visitor the cell visitor 
+	 * @see #setSyncLevel(SyncLevel)
 	 */
 	public void visit(final CellVisitor visitor);
 
@@ -192,45 +237,108 @@ public interface Range {
 	 * ==================================================
 	 */
 	
+	/**
+	 * Clears contents
+	 */
 	public void clearContents();
 
+	/**
+	 * Clears styles
+	 */
 	public void clearStyles();
 
 	/**
+	 * Pastes to destination
 	 * @param dest the destination 
-	 * @return true if paste successfully, past to a protected sheet with any
-	 *         locked cell in the destination range will always cause past fail.
+	 * @return true if paste successfully, paste to a protected sheet will always cause paste return false.
 	 */
 	public boolean paste(Range dest);
 	
 	/**
-	 * @param dest the destination 
-	 * @param transpose TODO
-	 * @return true if paste successfully, past to a protected sheet with any
-	 *         locked cell in the destination range will always cause past fail.
+	 * Pastes to destination
+	 * @param dest the destination
+	 * @param type the paste type
+	 * @param op the paste operation
+	 * @param skipBlanks skip blanks or not
+	 * @param transpose transpose the cell or not
+	 * @return true if paste successfully, paste to a protected sheet will always cause paste return false.
 	 */
 	public boolean pasteSpecial(Range dest,PasteType type,PasteOperation op,boolean skipBlanks,boolean transpose);
 	
+	/**
+	 * apply borders
+	 * @param type the apply type
+	 * @param borderType the border type
+	 * @param htmlColor the color (#rgb-hex-code, e.x #FF00FF)
+	 */
 	public void applyBorders(ApplyBorderType type,BorderType borderType,String htmlColor);
 
-	public boolean hasMergeCell();
+	/**
+	 * @return true if any merged cell inside this range
+	 */
+	public boolean hasMergedCell();
 	
+	/**
+	 * Merges the range
+	 * @param across true if merge horizontally only
+	 */
 	public void merge(boolean across);
 	
+	/**
+	 * Un-merges the range
+	 */
 	public void unMerge();
 	
+	/**
+	 * Insert new cells to the area of this range.<br/> 
+	 * To insert a row, you have to call {@link Range#toRowRange()} first, to insert a column, you have to call {@link Range#toColumnRange()} first.
+	 * @param shift the shift direction of original cells
+	 * @param copyOrigin copy the format from nearby cells when inserting new cells 
+	 */
 	public void insert(InsertShift shift,InsertCopyOrigin copyOrigin);
 	
+	/**
+	 * Delete cells of the range. <br/>
+	 * To delete a row, you have to call {@link Range#toRowRange()} first, to delete a column, you have to call {@link Range#toColumnRange()} first.
+	 * @param shift the shift direction when deleting.
+	 */
 	public void delete(DeleteShift shift);
 	
+	/**
+	 * Sort range 
+	 * @param desc true for descent, false for ascent
+	 */
 	public void sort(boolean desc);
 	
+	/**
+	 * Sort range
+	 * @param desc true for descent, false for ascent
+	 * @param header includes header or not
+	 * @param matchCase matches character chase of not
+	 * @param sortByRows sorts by row or not
+	 * @param dataOption data option for sort
+	 */
 	public void sort(boolean desc,
 			boolean header, 
 			boolean matchCase, 
 			boolean sortByRows, 
 			SortDataOption dataOption);
 	
+	/**
+	 * Sort range
+	 * @param index1 the sort index 1
+	 * @param desc1 true for descent, false for ascent of index 1
+	 * @param header includes header or not
+	 * @param matchCase matches character chase of not
+	 * @param sortByRows  sorts by row or not
+	 * @param dataOption1 data option 1 for sort
+	 * @param index2 the sort index 2
+	 * @param desc2 true for descent, false for ascent of index 2
+	 * @param dataOption2 data option 2 for sort
+	 * @param index3 the sort index 3
+	 * @param desc3 true for descent, false for ascent of index 3
+	 * @param dataOption3 data option31 for sort
+	 */
 	public void sort(Range index1,
 			boolean desc1,
 			boolean header, 
@@ -242,17 +350,34 @@ public interface Range {
 			Range index2,boolean desc2,SortDataOption dataOption2,
 			Range index3,boolean desc3,SortDataOption dataOption3);
 	
+	/**
+	 * According to current range, fills data to destination range automatically
+	 * @param dest the destination range
+	 * @param fillType the fill type
+	 */
 	public void autoFill(Range dest,AutoFillType fillType);
 	
+	/**
+	 * Fills cells by copy from first/top row data
+	 */
 	public void fillDown();
 	
+	/**
+	 * Fills cells by copy from last/right column data
+	 */
 	public void fillLeft();
 	
+	/**
+	 * Fills cells by copy from bottom row data
+	 */
 	public void fillUp();
 	
+	/**
+	 * Fills cells by copy from first/left column data
+	 */
 	public void fillRight();
 	
-	/** shift this range with a offset row and column**/
+	/** Shifts/moves cells with a offset row and column**/
 	public void shift(int rowOffset,int colOffset);
 	
 	/**
@@ -273,51 +398,70 @@ public interface Range {
 	 * cell relative API
 	 * ==================================================
 	 */
-	
+	/**
+	 * Sets cell style, applies it to all cells of this range 
+	 * @param nstyle new cell style
+	 * @see #getCellStyleHelper()
+	 * @see #getCellStyle()
+	 */
 	public void setCellStyle(CellStyle nstyle);
 	
+	/**
+	 * Sets cell editText, applies it to all cells of this range 
+	 * @param editText the eidtText, it could be a string, integer string, date string or a formula (start with '=')
+	 */
 	public void setCellEditText(String editText);
 	
+	/**
+	 * Sets cell data value, applies it to all cells
+	 * @param value the cell value, could be null, String, Number, Date or Boolean
+	 */
 	public void setCellValue(Object value);
 	
+	/**
+	 * Sets cell hyperlink, applies it too all cells
+	 * @param type the hyperlink type
+	 * @param address the address, e.x http://www.zkoss.org
+	 * @param display the label to display
+	 */
 	public void setCellHyperlink(HyperlinkType type,String address,String display);
 	
 	
 	/**
-	 * Get the first cell(top-left) hyper-link object of this range.
+	 * Gets the first cell(top-left) hyper-link object of this range.
 	 * @return
 	 */
 	public Hyperlink getCellHyperlink();
 	
 	/**
-	 * Get the first cell(top-left) style of this range
+	 * Gets the first cell(top-left) style of this range
 	 * 
 	 * @return cell style if cell is exist, the check row style and column cell style if cell not found, if row and column style is not exist, then return default style of sheet
 	 */
 	public CellStyle getCellStyle();
 	
 	/**
-	 * Get the first cell(top-left) data of this range
+	 * Gets the first cell(top-left) data of this range
 	 * @return
 	 */
 	public CellData getCellData();
 	
 	/**
-	 * Get the first cell(top-left) edit text of this range
+	 * Gets the first cell(top-left) edit text of this range
 	 * @return edit text
 	 * @see CellData#getEditText()
 	 */
 	public String getCellEditText();
 	
 	/**
-	 * Get the first cell(top-left) format text of this range
+	 * Gets the first cell(top-left) format text of this range
 	 * @return format text
 	 * @see CellData#getFormatText()
 	 */
 	public String getCellFormatText();
 	
 	/**
-	 * Get the first cell(top-left) value of this this range
+	 * Gets the first cell(top-left) value of this this range
 	 * @return value object
 	 * @see CellData#getValue()
 	 */
@@ -330,64 +474,150 @@ public interface Range {
 	 */
 	
 	
-	/** enable sheet protection and apply a password**/
+	/**
+	 * Enable sheet protection and apply a password, or null to disable protection
+	 **/
 	public void protectSheet(String password);
 	
+	/**
+	 * Displays sheet grid-lines or not
+	 * @param enable true to display
+	 */
 	public void setDisplaySheetGridlines(boolean enable);
 	
+	/**
+	 * @return true if display sheet grid-lines is enabled
+	 */
 	public boolean isDisplaySheetGridlines();
 	
 	/**
-	 * Hide the rows or columns, the range has to be a whole row range (which mean you select some columns and all rows of these columns are included),
+	 * Hide or un-hide rows or columns.<br/> 
+	 * To hide/un-hide a row, you have to call {@link Range#toRowRange()} first, to hide/un-hide a column, you have to call {@link Range#toColumnRange()} 
 	 * or a whole column range. 
-	 * @param hidden
-	 * @see #toRowRange()
-	 * @see #toColumnRange()
+	 * @param hidden hide or not
 	 */
 	public void setHidden(boolean hidden);
 	
+	/**
+	 * Sets the sheet name
+	 * @param name new sheet name, it must be not same as another sheet name in it's owner book.
+	 */
 	public void setSheetName(String name);
 	
+	/**
+	 * Gets the sheet name
+	 * @return sheet name
+	 */
 	public String getSheetName();
 	
+	/**
+	 * Sets the sheet order
+	 * @param pos the position
+	 */
 	public void setSheetOrder(int pos);
 	
+	/**
+	 * Gets the sheet order
+	 * @return
+	 */
 	public int getSheetOrder();
 	
-
+	/**
+	 * @return ture if sheet is protected
+	 */
 	public boolean isProtected();
 	
-	/** check if auto filter is enable or not.**/
+	/**
+	 * @return true if auto filter is enabled.
+	 */
 	public boolean isAutoFilterEnabled();
 	
-	/** enable/disable autofilter of the sheet**/
+	/**
+	 * Enable/disable autofilter of the sheet
+	 * @param enable true to enable
+	 **/
 	public void enableAutoFilter(boolean enable);
-	/** enable filter with condition **/
-	//TODO have to review this after I know more detail
+
+	/**
+	 * Enables autofilter and set extra condition
+	 * @param field the filed index (according to current range, 1 base)
+	 * @param filterOp auto filter operation
+	 * @param criteria1 criteria for autofilter
+	 * @param criteria2 criteria for autofilter
+	 * @param visibleDropDown true/false for show/hide dropdown button, null will keep the original setting.
+	 */
 	public void enableAutoFilter(int field, AutoFilterOperation filterOp, Object criteria1, Object criteria2, Boolean visibleDropDown);
 	
-	/** clear condition of filter, show all the data**/
+	/**
+	 * Clears condition of filter, show all the data
+	 **/
 	public void resetAutoFilter();
-	/** apply the filter to filter again**/
+	
+	/** 
+	 * Re-applies the filter, filter by last condition and data again. Call this if the data was change and you want to re-new the filter result.
+	 **/
 	public void applyAutoFilter();
 	
+	/**
+	 * Adds picture to sheet
+	 * @param anchor the anchor for picture
+	 * @param image the image binary array
+	 * @param format the image format
+	 * @return the new added picture
+	 */
 	public Picture addPicture(SheetAnchor anchor,byte[] image,Format format);
 	
+	/**
+	 * Deletes picture that in sheet
+	 * @param picture
+	 */
 	public void deletePicture(Picture picture);
 	
+	/**
+	 * Moves picture
+	 * @param anchor the anchor to re-allocate
+	 * @param picture the picture to re-allocate
+	 */
 	public void movePicture(SheetAnchor anchor,Picture picture);
 	
+	/**
+	 * Adds chart to sheet
+	 * @param anchor the anchor for chart
+	 * @param data the chart data
+	 * @param type the chart type
+	 * @param grouping the chart grouping
+	 * @param pos the legend position
+	 * @return the new added chart
+	 */
 	//currently, we only support to modify chart in XSSF
 	public Chart addChart(SheetAnchor anchor,ChartData data,Type type, Grouping grouping, LegendPosition pos);
 	
+	/**
+	 * Deletes chart
+	 * @param chart the chart to delete
+	 */
 	//currently, we only support to modify chart in XSSF
 	public void deleteChart(Chart chart);
 	
+	/**
+	 * Moves chart to new location
+	 * @param anchor the new location to move
+	 * @param chart the chart to move
+	 */
 	//currently, we only support to modify chart in XSSF
 	public void moveChart(SheetAnchor anchor,Chart chart);
 	
+	/**
+	 * Creates a new sheet
+	 * @param name the sheet name, it must not be same as another sheet name in book of this range
+	 * @return the new created sheet
+	 */
 	public Sheet createSheet(String name);
 	
+	/**
+	 * Deletes sheet.
+	 * Note: You couldn't delete last sheet of a book.
+	 */
 	public void deleteSheet();
 	
 	

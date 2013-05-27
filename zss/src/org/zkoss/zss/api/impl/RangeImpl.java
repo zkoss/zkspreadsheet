@@ -349,7 +349,7 @@ public class RangeImpl implements Range{
 	}
 
 	
-	public boolean hasMergeCell(){
+	public boolean hasMergedCell(){
 		final Result<Boolean> result = new Result<Boolean>(Boolean.FALSE);
 		//TODO use visitor is bad performance, I should check merge area directly
 		for(MergeArea ma:sharedCtx.getMergeAreas()){

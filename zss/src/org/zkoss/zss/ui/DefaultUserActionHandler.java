@@ -31,7 +31,12 @@ import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
 import org.zkoss.zul.Messagebox;
-
+/**
+ * The user action handler which provide default spreadsheet operation handling.
+ *  
+ * @author dennis
+ * @since 3.0.0
+ */
 public class DefaultUserActionHandler implements UserActionHandler {
 	
 	private static final long serialVersionUID = 1L;
@@ -129,22 +134,40 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 	}
 	
+	/**
+	 * Gets the spreadsheet of current action
+	 * @return
+	 */
 	protected Spreadsheet getSpreadsheet(){
 		checkCtx();
 		return _ctx.get().spreadsheet;
 	}
 	
+	/**
+	 * Gets the sheet of current action
+	 * @return
+	 */
 	protected Sheet getSheet(){
 		checkCtx();
 		return _ctx.get().sheet;
 	}
 	
+	/**
+	 * Gets the book of current action
+	 * @return
+	 */
 	protected Book getBook(){
 		checkCtx();
 		Sheet sheet = getSheet();
 		return sheet==null?null:sheet.getBook();
 	}
 	
+	  /**
+	  * Gets the selection of current action, it is always smaller than
+	  * {@link Spreadsheet#getMaxVisibleRows()} and {@link Spreadsheet#getMaxVisibleColumns()} of spreadsheet selection. <br/> 
+	  * Note: gets selection from {@link Spreadsheet#getSelection()} will get the last user
+	  * selection which might be a whole sheet/row/column selection.
+	  */
 	protected Rect getSelection(){
 		checkCtx();
 		return _ctx.get().selection;
@@ -414,28 +437,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		return true;
 	}
 
-	/**
-	 * Returns the border color
-	 * @return
-	 */
 	protected String getDefaultBorderColor() {
 		return "#000000";
 	}
 	
-	
-	/**
-	 * Returns the border color
-	 * @return
-	 */
 	protected String getDefaultFontColor() {
 		return "#000000";
 	}
 	
-	
-	/**
-	 * Returns the border color
-	 * @return
-	 */
 	protected String getDefaultFillColor() {
 		return "#FFFFFF";
 	}
@@ -531,10 +540,6 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		return true;
 	}
 	
-	/**
-	 * Execute when user press key
-	 * @param event
-	 */
 	protected boolean doKeystroke(int keyCode,boolean ctrlKey, boolean shiftKey, boolean altKey) {
 		if (46 == keyCode) {
 			if (ctrlKey)
@@ -578,7 +583,6 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		_clipboard = null;
 		if(_ctx.get()!=null)
 			getSpreadsheet().setHighlight(null);
-		//TODO: shall also clear client side clipboard if possible
 	}
 	
 	protected boolean doCopy() {
@@ -996,7 +1000,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.insert(range,InsertShift.RIGHT, InsertCopyOrigin.RIGHT_BELOW);
+		CellOperationUtil.insert(range,InsertShift.RIGHT, InsertCopyOrigin.FORMAT_RIGHT_BELOW);
 		clearClipboard();
 		return true;
 	}
@@ -1009,7 +1013,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.insert(range,InsertShift.DOWN, InsertCopyOrigin.LEFT_ABOVE);
+		CellOperationUtil.insert(range,InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
 		clearClipboard();
 		return true;
 	}
@@ -1029,7 +1033,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		
 		range = range.toRowRange();
-		CellOperationUtil.insert(range,InsertShift.DOWN, InsertCopyOrigin.LEFT_ABOVE);
+		CellOperationUtil.insert(range,InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
 		clearClipboard();
 		return true;
 	}
@@ -1049,7 +1053,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		
 		range = range.toColumnRange();
-		CellOperationUtil.insert(range,InsertShift.RIGHT, InsertCopyOrigin.RIGHT_BELOW);
+		CellOperationUtil.insert(range,InsertShift.RIGHT, InsertCopyOrigin.FORMAT_RIGHT_BELOW);
 		clearClipboard();
 		return true;
 	}
@@ -1235,15 +1239,6 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}else{
 			SheetOperationUtil.protectSheet(range,null,newpassword);
 		}
-		
-		boolean p = range.isProtected();
-		
-		//TODO re-factor action bar
-//		for (Action action : _defaultDisabledActionOnSheetProtected) {
-//			getSpreadsheet().setActionDisabled(p, action);
-//		}
-		
-
 		return true;
 	}
 	
@@ -1282,9 +1277,9 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	}
 	
 	/**
-	 * Used for copy & paste function
-	 * 
-	 * @author sam
+	 * Clipboard data object for copy/paste
+	 * @author dennis
+	 *
 	 */
 	public static class Clipboard {
 		public enum Type {
@@ -1405,7 +1400,12 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}else{
 			selection = spreadsheet.getSelection();
 		}
-		final UserActionContext ctx = new UserActionContext(spreadsheet, sheet,action,selection,extraData);
+		
+		Rect visibleSelection = new Rect(selection.getLeft(), selection.getTop(), Math.min(
+			    spreadsheet.getMaxVisibleColumns(), selection.getRight()), Math.min(
+			    spreadsheet.getMaxVisibleRows(), selection.getBottom()));
+		
+		final UserActionContext ctx = new UserActionContext(spreadsheet, sheet,action,visibleSelection,extraData);
 		setContext(ctx);
 		try{
 			if(event instanceof AuxActionEvent){
@@ -1477,7 +1477,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		
 		final int nRow = selection.getTop() - original.getTop();
 		final int nCol = selection.getLeft() - original.getLeft();
-		SheetOperationUtil.shift(src,nRow, nCol);
+		CellOperationUtil.shift(src,nRow, nCol);
 		
 		return true;
 	}

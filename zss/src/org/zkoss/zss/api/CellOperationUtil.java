@@ -2,7 +2,6 @@ package org.zkoss.zss.api;
 
 import java.util.LinkedHashMap;
 
-import org.zkoss.image.AImage;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
@@ -14,17 +13,15 @@ import org.zkoss.zss.api.model.CellStyle.Alignment;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.CellStyle.FillPattern;
 import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
-import org.zkoss.zss.api.model.Chart;
-import org.zkoss.zss.api.model.ChartData;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
-import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
 
 /**
- * The utility to help UI to deal with user's operation of a Range.
+ * The utility to help UI to deal with user's cell operation of a Range.
+ * This utility is the default implementation for handling a spreadsheet, it is also the example for calling {@link Range} APIs 
  * @author dennis
  * @since 3.0.0
  */
@@ -47,6 +44,12 @@ public class CellOperationUtil {
 		}
 	}
 	
+	/**
+	 * Cuts data and style from src to destination
+	 * @param src source range
+	 * @param dest destination range
+	 * @return false if sheet is protected
+	 */
 	public static boolean cut(Range src, final Range dest) {
 		final Result<Boolean> result = new Result<Boolean>();
 		if(src.isProtected()){
@@ -70,25 +73,67 @@ public class CellOperationUtil {
 		return result.get();
 	}
 
+	/**
+	 * Paste data and style from src to destination
+	 * @param src source range
+	 * @param dest destination range
+	 * @return false if sheet is protected
+	 */
 	public static boolean paste(Range src, Range dest) {
 		if(dest.isProtected()){
 			return false;
 		}
 		return src.paste(dest);
 	}
+	
+	/**
+	 * Paste formula only from src to destination
+	 * @param src source range
+	 * @param dest destination range
+	 * @return false if sheet is protected
+	 */
 	public static boolean pasteFormula(Range src, Range dest) {
 		return pasteSpecial(src, dest, PasteType.FORMULAS, PasteOperation.NONE, false, false);
 	}
+	/**
+	 * Paste value only from src to destination
+	 * @param src source range
+	 * @param dest destination range
+	 * @return false if sheet is protected
+	 */
 	public static boolean pasteValue(Range src, Range dest) {
 		return pasteSpecial(src, dest, PasteType.VALUES, PasteOperation.NONE, false, false);
 	}
+	/**
+	 * Paste all (except border) from src to destination
+	 * @param src source range
+	 * @param dest destination range
+	 * @return false if sheet is protected
+	 */
 	public static boolean pasteAllExceptBorder(Range src, Range dest) {
 		return pasteSpecial(src, dest, PasteType.ALL_EXCEPT_BORDERS, PasteOperation.NONE, false, false);
 	}
+	
+	/**
+	 * Paste and transpose from src to destination
+	 * @param src source range
+	 * @param dest destination range
+	 * @return false if sheet is protected
+	 */
 	public static boolean pasteTranspose(Range src, Range dest) {
 		return pasteSpecial(src, dest, PasteType.ALL, PasteOperation.NONE, false, true);
 	}
 	
+	/**
+	 * Paste according the argument from src to destination
+	 * @param src source range
+	 * @param dest destination range
+	 * @param pasteType paste type
+	 * @param pasteOperation paste operation
+	 * @param skipBlank skip blank
+	 * @param transpose transpose
+	 * @return false if sheet is protected
+	 */
 	public static boolean pasteSpecial(Range src, Range dest,PasteType pasteType, PasteOperation pasteOperation, boolean skipBlank, boolean transpose){
 		if(dest.isProtected()){
 			return false;
@@ -96,6 +141,11 @@ public class CellOperationUtil {
 		return src.pasteSpecial(dest, pasteType, pasteOperation, skipBlank, transpose);
 	}
 
+	/**
+	 * Apply font to cells in the range
+	 * @param range range to be applied
+	 * @param fontName the font name
+	 */
 	public static void applyFontName(Range range,final String fontName){
 		applyFontStyle(range, new FontStyleApplier() {
 			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
@@ -115,6 +165,11 @@ public class CellOperationUtil {
 		});
 	}
 
+	/**
+	 * Apply font height to cells in the range, it will also enlarge the row height if row height is smaller than font height 
+	 * @param range range to be applied
+	 * @param fontHeight the font height in twpi (1/20 point)
+	 */
 	public static void applyFontHeight(Range range, final short fontHeight) {
 		//fontHeight = twip
 		final Sheet sheet = range.getSheet(); 
@@ -160,20 +215,35 @@ public class CellOperationUtil {
 			}
 		});
 	}
+	
+	/**
+	 * Apply the font size to cells in the range, it will also enlarge the row height if row height is smaller than font size 
+	 * @param range range to be applied
+	 * @param point the font size in point
+	 */
 	public static void applyFontSize(Range range, final short point) {
 		//fontSize = fontHeightInPoints = fontHeight/20
 		applyFontHeight(range,(short)(point*20));
 	}
 	
+	/**
+	 * Interface for helping apply font style.
+	 * @author dennis
+	 */
 	public interface FontStyleApplier {
-		/** should ignore this cellRange**/
+		/** Should ignore this cellRange**/
 		public boolean ignore(Range cellRange,CellStyle oldCellstyle,Font oldFont);
-		/** find the font to apply to new style, return null mean not found, and will create a new font**/
+		/** Find the font to apply to new style, return null mean not found, and will create a new font**/
 		public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont);
 		/** apply style to new font, will be call when {@code #search() return null}**/
 		public void apply(Range cellRange,CellStyle newCellstyle,Font newfont);
 	}
 	
+	/**
+	 * Apply font style according to the {@link FontStyleApplier}
+	 * @param range the range to be applied
+	 * @param applyer the font style appliler
+	 */
 	public static void applyFontStyle(Range range,final FontStyleApplier applyer){
 		//use use cell visitor to visit cells respectively
 		//use BOOK level lock because we will create BOOK level Object (style, font)
@@ -223,7 +293,11 @@ public class CellOperationUtil {
 	}
 
 	
-
+	/**
+	 * Apply font bold-weight to cells in the range
+	 * @param range the range to be applied
+	 * @param boldweight the font bold-weight
+	 */
 	public static void applyFontBoldweight(Range range,final Boldweight boldweight) {
 		applyFontStyle(range, new FontStyleApplier() {
 			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
@@ -241,6 +315,11 @@ public class CellOperationUtil {
 		});
 	}
 
+	/**
+	 * Apply font italic to cells in the range
+	 * @param range the range to be applied
+	 * @param italic the font italic
+	 */
 	public static void applyFontItalic(Range range, final boolean italic) {
 		applyFontStyle(range, new FontStyleApplier() {
 			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
@@ -258,6 +337,11 @@ public class CellOperationUtil {
 		});
 	}
 
+	/**
+	 * Apply font strike-out to cells in the range 
+	 * @param range the range to be applied
+	 * @param strikeout font strike-out
+	 */
 	public static void applyFontStrikeout(Range range, final boolean strikeout) {
 		applyFontStyle(range, new FontStyleApplier() {
 			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
@@ -275,6 +359,11 @@ public class CellOperationUtil {
 		});
 	}
 	
+	/**
+	 * Apply font underline to cells in the range
+	 * @param range the range to be applied
+	 * @param underline font underline
+	 */
 	public static void applyFontUnderline(Range range,final Underline underline) {
 		applyFontStyle(range, new FontStyleApplier() {
 			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
@@ -293,7 +382,9 @@ public class CellOperationUtil {
 	}
 	
 	/**
-	 * @param htmlColor '#rgb-hex-code'
+	 * Apply font color to cells in the range
+	 * @param range the range to be applied.
+	 * @param htmlColor the color by html color syntax(#rgb-hex-code, e.x #FF00FF) 
 	 */
 	public static void applyFontColor(Range range, final String htmlColor) {
 		final Color color = range.getCellStyleHelper().createColorFromHtmlColor(htmlColor);
@@ -319,9 +410,10 @@ public class CellOperationUtil {
 		});
 	}
 	
-	
 	/**
-	 * @param htmlColor '#rgb-hex-code'
+	 * Apply backgound-color to cells in the range
+	 * @param range the range to be applied
+	 * @param htmlColor the color by html color syntax(#rgb-hex-code, e.x #FF00FF) 
 	 */
 	public static void applyBackgroundColor(Range range, final String htmlColor) {
 		final Color color = range.getCellStyleHelper().createColorFromHtmlColor(htmlColor);
@@ -343,6 +435,11 @@ public class CellOperationUtil {
 		});
 	}
 	
+	/**
+	 * Apply data-format to cells in the range
+	 * @param range the range to be applied
+	 * @param format the data format
+	 */
 	public static void applyDataFormat(Range range, final String format) {
 		applyCellStyle(range, new CellStyleApplier() {
 
@@ -357,6 +454,11 @@ public class CellOperationUtil {
 		});
 	}
 
+	/**
+	 * Apply alignment to cells in the range
+	 * @param range the range to be applied
+	 * @param alignment the alignement
+	 */
 	public static void applyAlignment(Range range,final Alignment alignment) {
 		applyCellStyle(range, new CellStyleApplier() {
 
@@ -371,6 +473,11 @@ public class CellOperationUtil {
 		});
 	}
 
+	/**
+	 * Apply vertical-alignment to cells in the range
+	 * @param range the range to be applied
+	 * @param alignment vertical alignment
+	 */
 	public static void applyVerticalAlignment(Range range,final VerticalAlignment alignment) {
 		applyCellStyle(range, new CellStyleApplier() {
 
@@ -385,7 +492,9 @@ public class CellOperationUtil {
 		});
 	}
 	
-	
+	/**
+	 * Interface for help apply cell style
+	 */
 	public interface CellStyleApplier {
 		/** should ignore this cellRange**/
 		public boolean ignore(Range cellRange,CellStyle oldCellstyle);
@@ -393,6 +502,11 @@ public class CellOperationUtil {
 		public void apply(Range cellRange,CellStyle newCellstyle);
 	}
 	
+	/**
+	 * Apply style according to the cell style applier
+	 * @param range the range to be applied
+	 * @param applyer
+	 */
 	public static void applyCellStyle(Range range,
 			final CellStyleApplier applyer) {
 		// use use cell visitor to visit cells respectively
@@ -435,6 +549,13 @@ public class CellOperationUtil {
 		});
 	}
 	
+	/**
+	 * Apply border to cells in the range
+	 * @param range the range to be applied
+	 * @param type the apply type
+	 * @param borderType the border type
+	 * @param htmlColor the color of border(#rgb-hex-code, e.x #FF00FF) 
+	 */
 	public static void applyBorder(Range range,ApplyBorderType type,BorderType borderType,String htmlColor){
 		if(range.isProtected())
 			return;
@@ -443,12 +564,16 @@ public class CellOperationUtil {
 	}
 	
 	
+	/**
+	 * Toggle merge/unMerge of the range, if merging it will also set alignment to center
+     * @param range the range to be applied
+	 */
 	public static void toggleMergeCenter(Range range){
 		if(range.isProtected())
 			return;
 		range.sync(new RangeRunner() {
 			public void run(Range range) {
-				if(range.hasMergeCell()){
+				if(range.hasMergedCell()){
 					range.unMerge();
 				}else{
 					range.merge(false);
@@ -459,6 +584,11 @@ public class CellOperationUtil {
 		});
 	}
 	
+	/**
+	 * merge the range  
+	 * @param range the range to be merge
+	 * @param across true if merge horizontally
+	 */
 	public static void merge(Range range,boolean across){
 		if(range.isProtected())
 			return;
@@ -466,13 +596,21 @@ public class CellOperationUtil {
 		range.merge(across);
 	}
 	
+	/**
+	 * Un-merge the range
+	 * @param range the range to be un-merge
+	 */
 	public static void unMerge(Range range){
 		if(range.isProtected())
 			return;
 		range.unMerge();
 	}
 	
-	
+	/**
+	 * Apply text-warp to cells in the range
+     * @param range the range to be applied
+	 * @param wraptext wrap text or not
+	 */
 	public static void applyWrapText(Range range,final boolean wraptext) {
 		applyCellStyle(range, new CellStyleApplier() {
 
@@ -487,18 +625,29 @@ public class CellOperationUtil {
 		});
 	}
 
+	/**
+	 * Clear contents
+	 * @param range the range to be cleared.
+	 */
 	public static void clearContents(Range range) {
 		if(range.isProtected())
 			return;
 		range.clearContents();
 	}
-	
+	/**
+	 * Clear style
+	 * @param range the range to be cleared
+	 */
 	public static void clearStyles(Range range) {
 		if(range.isProtected())
 			return;
 		range.clearStyles();
 	}
 	
+	/**
+	 * Clear all 
+	 * @param range the range to be cleared
+	 */
 	public static void clearAll(Range range){
 		if(range.isProtected())
 			return;
@@ -508,10 +657,17 @@ public class CellOperationUtil {
 			public void run(Range range) {
 				range.clearContents();// it removes value and formula only
 				range.clearStyles();
+				//TODO clear hyperlink
 			}
 		});
 	}
 
+	/**
+	 * Insert cells to the range. To insert a row, you have to call {@link Range#toRowRange()} first, to insert a column, you have to call {@link Range#toColumnRange()} first. 
+	 * @param range the range to insert new cells
+	 * @param shift the shift direction of original cells
+	 * @param copyOrigin copy the format from nearby cells when inserting new cells 
+	 */
 	public static void insert(Range range, InsertShift shift,
 			InsertCopyOrigin copyOrigin) {
 		if(range.isProtected())
@@ -519,26 +675,56 @@ public class CellOperationUtil {
 		range.insert(shift, copyOrigin);
 	}
 	
+	/**
+	 * Delete cells of the range. To delete a row, you have to call {@link Range#toRowRange()} first, to delete a column, you have to call {@link Range#toColumnRange()} first.
+	 * @param range the range to delete
+	 * @param shift the shift direction when deleting.
+	 */
 	public static void delete(Range range, DeleteShift shift) {
 		if(range.isProtected())
 			return;
 		range.delete(shift);
 	}
 
+	/**
+	 * Sort range
+	 * @param range the range to sort
+	 * @param desc true for descent, false for ascent
+	 */
 	public static void sort(Range range, boolean desc) {
 		if(range.isProtected())
 			return;
 		range.sort(desc);
 	}
 
+	/**
+	 * Hide the range. To hide a row, you have to call {@link Range#toRowRange()} first, to hide a column, you have to call {@link Range#toColumnRange()}
+	 * @param range the range to hide
+	 */
 	public static void hide(Range range) {
 		if (range.isProtected())
 			return;
 		range.setHidden(true);
 	}
+	/**
+	 * Unhide the range. To unhide a row, you have to call {@link Range#toRowRange()} first, to unhide a column, you have to call {@link Range#toColumnRange()}
+	 * @param range the range to un-hide
+	 */
 	public static void unHide(Range range) {
 		if (range.isProtected())
 			return;
 		range.setHidden(false);
+	}
+	
+	/**
+	 * Shifts/moves cells with a offset row and column
+	 * @param range the range to shift
+	 * @param rowOffset the row offset
+	 * @param colOffset the column offset
+	 */
+	public static void shift(Range range, int rowOffset, int colOffset) {
+		if(range.isProtected())
+			return;
+		range.shift(rowOffset, colOffset);
 	}
 }
