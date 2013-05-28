@@ -4664,9 +4664,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		addClientEvent(Spreadsheet.class, Events.ON_HEADER_RIGHT_CLICK,	CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_HEADER_DOUBLE_CLICK, CE_DUPLICATE_IGNORE);
 		
-		addClientEvent(Spreadsheet.class, Events.ON_START_EDITING, CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_EDITBOX_EDITING, CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_STOP_EDITING, CE_DUPLICATE_IGNORE);
+		
+		addClientEvent(Spreadsheet.class, Events.ON_EDITBOX_EDITING, 0);
+		
+		//ZSS-325 Cannot copy an area of cells from Excel to Spreadsheet
+		addClientEvent(Spreadsheet.class, Events.ON_START_EDITING, CE_IMPORTANT | CE_NON_DEFERRABLE);
+		addClientEvent(Spreadsheet.class, Events.ON_STOP_EDITING, CE_IMPORTANT | CE_NON_DEFERRABLE);
 		
 		addClientEvent(Spreadsheet.class, Events.ON_HYPERLINK, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_FILTER, CE_DUPLICATE_IGNORE);
