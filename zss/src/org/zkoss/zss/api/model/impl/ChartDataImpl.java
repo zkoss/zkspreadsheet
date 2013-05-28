@@ -39,5 +39,10 @@ public class ChartDataImpl implements ChartData{
 	public org.zkoss.poi.ss.usermodel.charts.ChartData getNative(){
 		return chartDataRef.get();
 	}
+	
+	
+	public org.zkoss.poi.ss.usermodel.charts.ChartData getPoiChartData(){
+		return chartDataRef.get();
+	}
 
 }
