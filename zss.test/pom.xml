@@ -5,7 +5,7 @@
 	<artifactId>zss.testapp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
-		<zk.version>6.5.0</zk.version>
+		<zk.version>6.5.3.FL.20130514</zk.version>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>-0.0.1-SNAPSHOT-FL-${maven.build.timestamp}</packname>
 		<zss.version>3.0.0</zss.version>
@@ -73,7 +73,7 @@
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkmax</artifactId>
-			<version>6.5.3.FL.20130514</version>
+			<version>${zk.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
