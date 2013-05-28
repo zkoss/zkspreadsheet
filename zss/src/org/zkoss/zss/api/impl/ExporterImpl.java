@@ -1,3 +1,19 @@
+/* ExporterImpl.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/5/1 , Created by dennis
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.api.impl;
 
 import java.io.OutputStream;
@@ -13,6 +29,11 @@ import org.zkoss.zss.model.sys.XExporter;
 import org.zkoss.zss.model.sys.impl.Headings;
 import org.zkoss.zss.ui.Rect;
 
+/**
+ * 
+ * @author dennis
+ * @since 3.0.0
+ */
 public class ExporterImpl implements Exporter {
 	XExporter exporter;
 	public ExporterImpl(XExporter exporter){

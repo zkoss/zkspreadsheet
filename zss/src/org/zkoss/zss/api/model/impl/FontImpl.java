@@ -1,3 +1,19 @@
+/* FontImpl.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/5/1 , Created by dennis
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.zss.api.UnitUtil;
@@ -6,7 +22,11 @@ import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.impl.BookHelper;
-
+/**
+ * 
+ * @author dennis
+ * @since 3.0.0
+ */
 public class FontImpl implements Font{
 	
 	ModelRef<XBook> bookRef;

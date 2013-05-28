@@ -1,11 +1,28 @@
+/* UnitUtil.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/5/1 , Created by dennis
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.api;
 
-import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.api.model.impl.SheetImpl;
-import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.impl.XUtils;
 
+/**
+ * Utility for transferring unit
+ * @author dennis
+ *
+ */
 public class UnitUtil {
 
 	public static int pxToPoint(int px){
@@ -54,44 +71,5 @@ public class UnitUtil {
 	
 	public static int pointToTwip(int point) {
 		return XUtils.pointToTwip(point);
-	}
-	
-	public static SheetAnchor toFilledAnchor(Sheet sheet,int row, int column, int widthPx, int heightPx){
-		int lRow = 0;
-		int lColumn = 0;
-		int lX = 0;
-		int lY = 0;
-		
-		XSheet ws = ((SheetImpl)sheet).getNative();
-//		Book book = ws.getBook();
-		for(int i = column;;i++){
-			if(ws.isColumnHidden(i)){
-				continue;
-			}
-			int wPx = sheet.getColumnWidth(i);
-			widthPx -= wPx;
-			if(widthPx<=0){
-				lColumn = i-1;
-				lX = wPx + widthPx;//offset
-				break;
-			}
-		}
-		
-		
-		for(int i = row;;i++){
-			Row srow = ws.getRow(i);
-			if(srow!=null && srow.getZeroHeight()){
-				continue;
-			}
-			
-			int hPx = sheet.getRowHeight(i);
-			heightPx -= hPx;
-			if(heightPx<=0){
-				lRow = i-1;
-				lY = hPx + heightPx;
-				break;
-			}
-		}
-		return new SheetAnchor(row,column,0,0,lRow,lColumn,lX,lY);
 	}
 }

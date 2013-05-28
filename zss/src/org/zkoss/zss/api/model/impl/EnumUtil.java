@@ -1,3 +1,19 @@
+/* EnumUtil.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/5/1 , Created by dennis
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.poi.common.usermodel.Hyperlink;
@@ -31,7 +47,11 @@ import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.impl.BookHelper;
-
+/**
+ * 
+ * @author dennis
+ * @since 3.0.0
+ */
 public class EnumUtil {
 	
 	private static <T> void assertArgNotNull(T obj,String name){
