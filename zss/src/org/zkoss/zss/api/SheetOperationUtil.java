@@ -1,11 +1,31 @@
+/* SheetOperationUtil.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/5/1 , Created by dennis
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.api;
 
 import org.zkoss.image.AImage;
+import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.api.Range.AutoFillType;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.ChartData;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.Picture.Format;
+import org.zkoss.zss.api.model.impl.SheetImpl;
+import org.zkoss.zss.model.sys.XSheet;
 
 /**
  * The utility to help UI to deal with user's sheet operation of a Range.
@@ -63,7 +83,7 @@ public class SheetOperationUtil {
 	 * @param heightPx the height of image to place
 	 */
 	public static void addPicture(Range range, byte[] binary, Format format,int widthPx, int heightPx){
-		SheetAnchor anchor = UnitUtil.toFilledAnchor(range.getSheet(), range.getRow(),range.getColumn(),
+		SheetAnchor anchor = toFilledAnchor(range.getSheet(), range.getRow(),range.getColumn(),
 				widthPx, heightPx);
 		addPicture(range,anchor,binary,format);
 		
@@ -264,5 +284,45 @@ public class SheetOperationUtil {
 		if(dest.isProtected())
 			return;
 		src.autoFill(dest, type);
+	}
+	
+	
+	public static SheetAnchor toFilledAnchor(Sheet sheet,int row, int column, int widthPx, int heightPx){
+		int lRow = 0;
+		int lColumn = 0;
+		int lX = 0;
+		int lY = 0;
+		
+		XSheet ws = ((SheetImpl)sheet).getNative();
+//		Book book = ws.getBook();
+		for(int i = column;;i++){
+			if(ws.isColumnHidden(i)){
+				continue;
+			}
+			int wPx = sheet.getColumnWidth(i);
+			widthPx -= wPx;
+			if(widthPx<=0){
+				lColumn = i-1;
+				lX = wPx + widthPx;//offset
+				break;
+			}
+		}
+		
+		
+		for(int i = row;;i++){
+			Row srow = ws.getRow(i);
+			if(srow!=null && srow.getZeroHeight()){
+				continue;
+			}
+			
+			int hPx = sheet.getRowHeight(i);
+			heightPx -= hPx;
+			if(heightPx<=0){
+				lRow = i-1;
+				lY = hPx + heightPx;
+				break;
+			}
+		}
+		return new SheetAnchor(row,column,0,0,lRow,lColumn,lX,lY);
 	}
 }

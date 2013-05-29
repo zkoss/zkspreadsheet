@@ -1,20 +1,33 @@
+/* BookImpl.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/5/1 , Created by dennis
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.api.model.impl;
 
-import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.Color;
-import org.zkoss.zss.api.model.Font.Boldweight;
-import org.zkoss.zss.api.model.Font.TypeOffset;
-import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.HSSFBookImpl;
 import org.zkoss.zss.model.sys.impl.XSSFBookImpl;
-
+/**
+ * 
+ * @author dennis
+ * @since 3.0.0
+ */
 public class BookImpl implements Book{
 
 	ModelRef<XBook> bookRef;

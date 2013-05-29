@@ -1445,6 +1445,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			if(r){
 				//to disable client copy/paste feature if there is any server side copy/paste
 				if(kevt.isCtrlKey() && kevt.getKeyCode()=='V'){
+					//internal only
 					getSpreadsheet().smartUpdate("doPasteFromServer", true);
 				}
 			}
