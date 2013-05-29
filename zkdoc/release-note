@@ -10,6 +10,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-229 Only the last picture can be moved
   ZSS-325 Cannot copy an area of cells from Excel to Spreadsheet
   ZSS-275 Range.getRow() return unexpected row number
+  ZSS-327 server-side paste data will be replaced by client-side paste
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
