@@ -1,11 +1,26 @@
+/* SimpleRef.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/5/1 , Created by dennis
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.api.model.impl;
 
 /**
  *
  * it simple use hard reference to a instance
  * @author dennis
- *
- * @param <T>
+ * @since 3.0.0
  */
 public class SimpleRef<T> implements ModelRef<T>{
 

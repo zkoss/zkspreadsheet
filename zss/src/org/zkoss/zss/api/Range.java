@@ -1,3 +1,19 @@
+/* Range.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/5/1 , Created by dennis
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.api;
 
 import java.util.List;
@@ -29,7 +45,7 @@ import org.zkoss.zss.api.model.Sheet;
  * To get the instance of a {@link Range}, please use the {@link Ranges} API.
  * 
  * <br/>
- * Note : the range api will not check the sheet protection, if you care it, you have to check by calling {@link #isProtected()} before you do any operation.
+ * Note : the range api doesn't check the sheet protection, if you care it, you have to check it by calling {@link #isProtected()} before you do any operation.
  * 
  * @author dennis
  * @see Ranges

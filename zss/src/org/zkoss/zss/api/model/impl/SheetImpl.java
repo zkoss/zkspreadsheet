@@ -1,10 +1,25 @@
+/* SheetImpl.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/5/1 , Created by dennis
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.api.model.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Picture;
@@ -15,7 +30,11 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.DrawingManager;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.impl.XUtils;
-
+/**
+ * 
+ * @author dennis
+ * @since 3.0.0
+ */
 public class SheetImpl implements Sheet{
 	ModelRef<XSheet> sheetRef;
 	Book nbook;
