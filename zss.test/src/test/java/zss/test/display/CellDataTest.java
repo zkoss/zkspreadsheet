@@ -23,21 +23,18 @@ import org.zkoss.zss.ui.Spreadsheet;
  * @author Hawk
  *
  */
-@RunWith(Parameterized.class)
 public class CellDataTest extends DisplayExcelTest{
 	
 	@Rule
     public ErrorCollector collector = new ErrorCollector();
 	
-	public CellDataTest(String page){
+	public CellDataTest(){
+		this("/display.zul");
+	}
+	
+	protected CellDataTest(String page){
 		super(page);
 		sheet = zss.as(Spreadsheet.class).getBook().getSheetAt(3);
-	}
-
-	@Parameters
-	public static List<Object[]> data() {
-		Object[][] data = new Object[][] { { "/display.zul" }, { "/display2003.zul"}};
-		return Arrays.asList(data);
 	}
 	
 	@Test
@@ -88,14 +85,14 @@ public class CellDataTest extends DisplayExcelTest{
 		Sheet sheet = zss.as(Spreadsheet.class).getBook().getSheetAt(3);
 		
 		collector.checkThat(Ranges.range(sheet,10,6).getCellData().getFormatText(), CoreMatchers.equalTo("10"));
-		Range rangeMerged = Ranges.range(sheet, "RangeMerged");
+		Range rangeMerged = Ranges.rangeByName(sheet, "RangeMerged");
 		
 		collector.checkThat(rangeMerged.getRow(), CoreMatchers.equalTo(11));
 		collector.checkThat(rangeMerged.getCellEditText(), CoreMatchers.equalTo("1"));
 
 		collector.checkThat(Ranges.range(sheet,10,2).getCellData().getFormatText(), CoreMatchers.equalTo("21"));
-		collector.checkThat(Ranges.range(sheet, "TestRange1"), CoreMatchers.notNullValue());
-		collector.checkThat(Ranges.range(sheet, "TestRange1").getRow(), CoreMatchers.equalTo(11));
+		collector.checkThat(Ranges.rangeByName(sheet, "TestRange1"), CoreMatchers.notNullValue());
+		collector.checkThat(Ranges.rangeByName(sheet, "TestRange1").getRow(), CoreMatchers.equalTo(11));
 		
 	}
 }
