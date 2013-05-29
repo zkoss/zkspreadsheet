@@ -1271,10 +1271,14 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			}
 		}
 		this._ctrlPasteDown = false;
-		if (this._sendAu) {//au processing, reset _doPasteFromServer on after response
-			this._onResponseCallback.push(clearFn);
-		} else {
-			clearFn();
+		
+		// #ZSS-327: only clear the flag when copy-paste (i.e "ctrl+v") 
+		if (evt.ctrlKey && evt.keyCode == 86) {
+			if (this._sendAu) {//au processing, reset _doPasteFromServer on after response
+				this._onResponseCallback.push(clearFn);
+			} else {
+				clearFn();
+			}
 		}
 	},
 	linkTo: function (href, type, evt) {
