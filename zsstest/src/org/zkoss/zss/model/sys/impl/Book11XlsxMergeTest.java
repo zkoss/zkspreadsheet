@@ -131,7 +131,7 @@ public class Book11XlsxMergeTest {
 		testToFormulaString(cellA12, "D7");
 		
 		//merge B5:D7
-		BookHelper.merge(sheet1, 4, 1, 6, 3, true);
+		BookHelper.merge(sheet1, 4, 1, 6, 3, false);
 		
 		Row row5 = sheet1.getRow(4);
 		assertEquals(Cell.CELL_TYPE_FORMULA, row5.getCell(1).getCellType()); //B5: null -> =A9 

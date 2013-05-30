@@ -18,9 +18,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
+import java.util.Locale;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zkoss.poi.ss.usermodel.ZssContext;
+import org.zkoss.util.Locales;
 import org.zkoss.zss.model.sys.impl.DateInputMask;
 
 /**
@@ -484,6 +488,9 @@ public class DateInputMaskTest {
 
 	@Test
 	public void testParseDateInput() {
+		
+		Locales.setThreadLocal(Locale.US);
+		
 		for(int j= 0; j < OK.length; ++j) {
 			Object[] result = _formater.parseDateInput(OK[j][0]);
 			assertTrue(OK[j][0]+"->"+j,  result[1] != null);

@@ -24,6 +24,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zkoss.lang.Library;
 import org.zkoss.poi.hssf.usermodel.HSSFChart;
 import org.zkoss.poi.hssf.usermodel.HSSFChartX;
 import org.zkoss.poi.hssf.usermodel.HSSFSheet;
@@ -59,6 +60,8 @@ public class PiechartXlsChartTest {
 		assertEquals(filename, ((XBook)_book).getBookName());
 		assertEquals("Sheet1", _book.getSheetName(0));
 		assertEquals(0, _book.getSheetIndex("Sheet1"));
+		Library.setProperty("org.zkoss.zss.model.EscherAggregate.class", "org.zkoss.zssex.model.impl.ZKEscherAggregate");
+		Library.setProperty("org.zkoss.zss.model.EscherAggregate.UTEST.class", "org.zkoss.zssex.model.impl.ZKEscherAggregate");		
 	}
 
 	/**
