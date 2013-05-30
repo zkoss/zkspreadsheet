@@ -5,12 +5,14 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import java.util.Arrays;
 import java.util.List;
 
+import org.hamcrest.number.IsCloseTo;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.zats.mimic.ComponentAgent;
 import org.zkoss.zats.mimic.DesktopAgent;
 import org.zkoss.zats.mimic.Zats;
@@ -18,7 +20,9 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellData.CellType;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * For testing formulas.
@@ -175,6 +179,79 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		return nFormula;
 	}	
 	
+	private boolean isFormulaRow(Range verifyCell) {
+		//skip "human check" cases
+		return verifyCell != null  && verifyCell.getCellData().getType() == CellType.FORMULA;
+	}
+
+
+	private String getFailedReason(Range cell) {
+		return cell.getCellEditText()+" failed, at row "+(cell.getRow()+1)+" in sheet: "+cell.getSheet().getSheetName();
+	}
+
+
+	private boolean isNoMoreFormula(int nRowFromLastFormula) {
+		return nRowFromLastFormula > MAX_ROW_READ_FROM_LAST_FORUMULA;
+	}
+	
+	
+	
+	//verify each formula according cell's value
+	private int testFormulaByPoiInSheet(Sheet sheet) {
+	
+		XSheet xsheet = spreadsheet.getXBook().getWorksheet(sheet.getSheetName());
+		//tolerance delta value between correct value and expected value for a double number
+		double DELTA = 1e-5;
+	
+		int nRowFromLastFormula = 0; //reset when read a formula cell
+		int nFormula = 0;
+		int row = 0 ; //current working row
+		while (!isNoMoreFormula(nRowFromLastFormula)){
+			Cell formulaCell = XUtils.getCell(xsheet, row, 1);
+			Cell expectedCell = XUtils.getCell(xsheet, row, 2);
+			Cell verifyCell = XUtils.getCell(xsheet, row, 3);
+			if (isFormulaRow(verifyCell)
+					&& formulaCell!=null && formulaCell.getCellType() == Cell.CELL_TYPE_FORMULA){ 
+				if (formulaCell.getCachedFormulaResultType() == Cell.CELL_TYPE_NUMERIC){
+					collector.checkThat(getFailedReason(formulaCell),formulaCell.getNumericCellValue()
+							, IsCloseTo.closeTo(expectedCell.getNumericCellValue(),DELTA));
+				}else{
+					collector.checkThat(getFailedReason(formulaCell),getCellValue(formulaCell), equalTo(getCellValue(expectedCell)));
+				}
+				nFormula ++;
+				nRowFromLastFormula = 0;				
+			}
+			row ++;
+			nRowFromLastFormula++;
+		}
+		return nFormula;
+	}
+	
+	private boolean isFormulaRow(Cell verifyCell) {
+		//skip "human check" cases
+		return verifyCell != null  && verifyCell.getCellType() == Cell.CELL_TYPE_FORMULA;
+	}    
+
+
+	private String getFailedReason(Cell cell) {
+		return cell.getCellFormula()+" failed, at row "+(cell.getRowIndex()+1)+" in sheet: "+cell.getSheet().getSheetName();
+	}	
+	
+	private Object getCellValue(Cell cell) {
+		int cellType = cell.getCellType() == Cell.CELL_TYPE_FORMULA ? cell.getCachedFormulaResultType():cell.getCellType();
+		switch(cellType){
+		case Cell.CELL_TYPE_NUMERIC:
+			return cell.getNumericCellValue();
+		case Cell.CELL_TYPE_STRING:
+			return cell.getStringCellValue();
+		case Cell.CELL_TYPE_BOOLEAN:
+			return cell.getBooleanCellValue();
+		case Cell.CELL_TYPE_ERROR:
+			return cell.getErrorCellValue();
+		default:
+			return "";
+		}
+	}
 	
 	/*
 	 * Some formulas that cannot pass the test by Ranges API will also failed the test by POI API only when those formulas
@@ -202,66 +279,10 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	
 	
 	
-	//verify each formula according cell's value
-	private int testFormulaByPoiInSheet(Sheet sheet) {
 	
-		//tolerance delta value between correct value and expected value for a double number
-		double DELTA = 1e-5;
-	
-		int nRowFromLastFormula = 0; //reset when read a formula cell
-		int nFormula = 0;
-		int row = 0 ; //current working row
-		while (!isNoMoreFormula(nRowFromLastFormula)){
-			Cell formulaCell = getCell(sheet, row, 1);
-			Cell expectedCell = getCell(sheet, row, 2);
-			Cell verifyCell = getCell(sheet, row, 3);
-			if (isFormulaRow(verifyCell)
-					&& formulaCell!=null && formulaCell.getCellType() == Cell.CELL_TYPE_FORMULA){ 
-				if (formulaCell.getCachedFormulaResultType() == Cell.CELL_TYPE_NUMERIC){
-					collector.checkThat(getFailedReason(formulaCell),formulaCell.getNumericCellValue()
-							, IsCloseTo.closeTo(expectedCell.getNumericCellValue(),DELTA));
-				}else{
-					collector.checkThat(getFailedReason(formulaCell),getCellValue(formulaCell), equalTo(getCellValue(expectedCell)));
-				}
-				nFormula ++;
-				nRowFromLastFormula = 0;				
-			}
-			row ++;
-			nRowFromLastFormula++;
-		}
-		return nFormula;
-	}
-	
-	private Object getCellValue(Cell cell) {
-		int cellType = cell.getCellType() == Cell.CELL_TYPE_FORMULA ? cell.getCachedFormulaResultType():cell.getCellType();
-		switch(cellType){
-		case Cell.CELL_TYPE_NUMERIC:
-			return cell.getNumericCellValue();
-		case Cell.CELL_TYPE_STRING:
-			return cell.getStringCellValue();
-		case Cell.CELL_TYPE_BOOLEAN:
-			return cell.getBooleanCellValue();
-		case Cell.CELL_TYPE_ERROR:
-			return cell.getErrorCellValue();
-		default:
-			return "";
-		}
-	}
+
 	
 	 */
 
-	private boolean isFormulaRow(Range verifyCell) {
-		//skip "human check" cases
-		return verifyCell != null  && verifyCell.getCellData().getType() == CellType.FORMULA;
-	}
 
-
-	private String getFailedReason(Range cell) {
-		return cell.getCellEditText()+" failed, at row "+(cell.getRow()+1)+" in sheet: "+cell.getSheet().getSheetName();
-	}
-
-
-	private boolean isNoMoreFormula(int nRowFromLastFormula) {
-		return nRowFromLastFormula > MAX_ROW_READ_FROM_LAST_FORUMULA;
-	}
 }
