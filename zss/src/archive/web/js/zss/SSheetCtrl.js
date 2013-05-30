@@ -2994,6 +2994,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			right = custColWidth.getCellIndex(scrollLeft + viewWidth)[0],
 			bottom = custRowHeight.getCellIndex(scrollTop + viewHeight)[0];
 
+		// ZSS-324: the left and top must not be out of range too 
+		if (left > sheet.maxCols - 1) left = sheet.maxCols - 1;
+		if (top > sheet.maxRows - 1) top = sheet.maxRows - 1; 
 		if (right > sheet.maxCols - 1) right = sheet.maxCols - 1;
 		if (bottom > sheet.maxRows - 1) bottom = sheet.maxRows - 1; 
 
