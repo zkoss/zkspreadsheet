@@ -156,7 +156,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	 * </ul>
 	 */
 	editingFormulaInfo: null,
-	lineHeight: 20,
+	lineHeight: 20, 
 	$init: function (wgt) {
 		this.$supers(zss.SSheetCtrl, '$init', []);
 		this._wgt = wgt;
@@ -1941,7 +1941,17 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 					{toServer: true, sendAhead: true}, 25);//ZSS-180
 		}
 		//ZSS-180
-		if(col < this.maxCols && loadvis) this.activeBlock.loadForVisible();
+		if(col < this.maxCols && loadvis) {
+			// ZSS-324: this is a heavy duty, so just call once when batch updating
+			if (!this._deferL4V) { //_deferL4V, a flag for defer ctrl.
+				this._deferL4V = true;
+				var that = this;
+				setTimeout(function() {
+					delete that._deferL4V;
+					that.activeBlock.loadForVisible();
+				}, 25);
+			}
+		}
 	},
 	_syncColFocusAndSelection: function(left, right) {
 		var focPos = this.getLastFocus(),
@@ -2097,7 +2107,17 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 					{toServer: true, sendAhead: true}, 25);//ZSS-180
 		}
 		//ZSS-180
-		if (row < this.maxRows && loadvis) this.activeBlock.loadForVisible();
+		if (row < this.maxRows && loadvis) {
+			// ZSS-324: this is a heavy duty, so just call once when batch updating
+			if (!this._deferL4V) {
+				this._deferL4V = true; //_deferL4V, a flag for defer ctrl.
+				var that = this;
+				setTimeout(function() {
+					delete that._deferL4V;
+					that.activeBlock.loadForVisible();
+				}, 25);
+			}
+		}
 	},
 	_updateText: function (result) {
 		var cell = this.activeBlock.getCell(result.r, result.c);
