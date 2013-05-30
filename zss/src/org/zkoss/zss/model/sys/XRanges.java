@@ -39,8 +39,9 @@ public class XRanges {
 	}
 	
 	/** Returns the associated {@link XRange} of the specified {@link XSheet} and area reference string (e.g. "A1:D4" or "Sheet2!A1:D4") or name of a NamedRange (e.g. "MyRange");
-	 * note that if reference string contains sheet name, the returned range will refer to the named sheet. 
-	 *  
+	 * note that if reference string contains sheet name, the returned range will refer to the named sheet. <br/> 
+	 * Note : since 3.0.0, you should use {@link #rangeByName(XSheet, String)} to get a namedRange.
+	 * 
 	 * @param sheet the {@link XSheet} the Range will refer to.
 	 * @param reference the area the Range will refer to (e.g. "A1:D4").
 	 * @return the associated {@link XRange} of the specified {@link XSheet} and area reference string (e.g. "A1:D4"). 
@@ -48,6 +49,7 @@ public class XRanges {
 	public static XRange range(XSheet sheet, String reference) {
 		AreaReference ref = getAreaReference(sheet, reference);
 		if (ref == null) {
+			//After fix of zss-275, for (minor) backward compatibility, I don't remove the named-range check here.
 			//try NamedRange
 			final Workbook wb = sheet.getWorkbook();
 		    final Name range = wb.getName(reference);
@@ -59,6 +61,29 @@ public class XRanges {
 		}
 		if (ref == null)
 			throw new IllegalArgumentException("Bad area reference '" + reference + "'");
+		return range(sheet, ref);
+	}
+	
+	/** 
+	 * Returns the associated {@link XRange} of the specified name of a NamedRange (e.g. "MyRange"); 
+	 *  
+	 * @param sheet the {@link XSheet} the Range will refer to.
+	 * @param name the name of NamedRange  (e.g. "MyRange"); 
+	 * @return the associated {@link XRange} of the specified name
+	 */
+	public static XRange rangeByName(XSheet sheet, String name) {
+		AreaReference ref = null;
+		// try NamedRange
+		final Workbook wb = sheet.getWorkbook();
+		final Name range = wb.getName(name);
+		if (range != null) {
+			ref = getAreaReference(sheet, range.getRefersToFormula());
+		} else {
+			throw new IllegalArgumentException("Cannot find the named range '"
+					+ name + "'");
+		}
+		if (ref == null)
+			throw new IllegalArgumentException("Bad name range '" + name + "'");
 		return range(sheet, ref);
 	}
 	

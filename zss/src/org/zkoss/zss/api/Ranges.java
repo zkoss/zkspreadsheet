@@ -43,7 +43,7 @@ public class Ranges {
 		return new RangeImpl(sheet,XRanges.range(((SheetImpl)sheet).getNative()));
 	}
 	
-	/** Returns the associated {@link Range} of the specified {@link Sheet} and area reference string (e.g. "A1:D4" or "Sheet2!A1:D4") or name of a NamedRange (e.g. "MyRange");
+	/** Returns the associated {@link Range} of the specified {@link Sheet} and area reference string (e.g. "A1:D4" or "Sheet2!A1:D4")
 	 * note that if reference string contains sheet name, the returned range will refer to the named sheet. 
 	 *  
 	 * @param sheet the {@link Sheet} the Range will refer to.
@@ -53,6 +53,16 @@ public class Ranges {
 	public static Range range(Sheet sheet, String areaReference){
 		return new RangeImpl(sheet,XRanges.range(((SheetImpl)sheet).getNative(),areaReference));
 	}
+	
+	/** Returns the associated {@link Range} of the specified name of a NamedRange (e.g. "MyRange");
+	 * 
+	 * @param sheet the {@link Sheet} the Range will refer to.
+	 * @param name the name of NamedRange  (e.g. "MyRange"); .
+	 * @return the associated {@link Range} of the specified name 
+	 */
+	public static Range rangeByName(Sheet sheet, String name){
+		return new RangeImpl(sheet,XRanges.rangeByName(((SheetImpl)sheet).getNative(),name));
+	}	
 	
 	/** Returns the associated {@link XRange} of the specified {@link XSheet} and area. 
 	 *  

@@ -390,14 +390,38 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doRenameSheet(String newname) {
 		Book book = getBook();
 		Sheet sheet = getSheet();
-
+		
+		if(sheet.getSheetName().equals(newname)){
+			return true;
+		}
+		if(!isLeaglSheetName(newname)){
+			showWarnMessage("The name :"+newname+", is not a legal sheet name");
+			return true;
+		}
 		if(book.getSheet(newname)!=null){
 			showWarnMessage("Canot rename a sheet to the same as another.");
-			return false;
+			return true;
 		}
 		
 		Range range = Ranges.range(sheet);
 		SheetOperationUtil.renameSheet(range,newname);
+		return true;
+	}
+
+	protected boolean isLeaglSheetName(String newname) {
+		if(Strings.isEmpty(newname))
+			return false;
+		
+		if(newname.length()>31){
+			return false;
+		}
+		
+		// \/?*[] are illegal
+		String regx = ".*[\\\\\\/\\?\\*\\[\\]]+.*";
+		if(newname.matches(regx)){
+			return false;
+		}
+		
 		return true;
 	}
 
@@ -408,7 +432,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		int num = book.getNumberOfSheets();
 		if(num<=1){
 			showWarnMessage("Canot delete last sheet.");
-			return false;
+			return true;
 		}
 		
 		int index = book.getSheetIndex(sheet);
