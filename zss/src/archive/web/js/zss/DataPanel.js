@@ -106,6 +106,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			
 			jq(self.comp).css({'padding-left': jq.px0(pdl), 'padding-top': jq.px0(sheet.topHeight), 'width': jq.px0(width)});
 			jq(self.comp).css({'width': jq.px0(width)});
+			jq(self.comp).css({'height': jq.px0(height)}); // ZSS-324: height must be adjusted too
 			jq(self.padcomp).css('height', jq.px0(self.paddingt));
 			sheet.tp._updateLeftPadding(pdl);
 			sheet.lp._updateTopPadding(self.paddingt);

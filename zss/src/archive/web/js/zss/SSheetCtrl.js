@@ -1910,7 +1910,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if (col < this.maxCols) {
 			//adjust datapanel size;
 			var dp = this.dp;
-			dp.updateWidth((hidden ? 0 : width) - oldw);
 		
 			//process text overflow when resize column
 			this.triggerOverflowColumn_(null, col + 1, true);
@@ -2080,7 +2079,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if (row < this.maxRows) {
 			//adjust datapanel size;
 			var dp = this.dp;
-			dp.updateHeight((hidden ? 0 : height) - oldh);
 		
 			var fzr = this.frozenRow;
 			if (fzr >= row) {
