@@ -1920,13 +1920,16 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 
 			//update datapanel padding
-			dp._fixSize(this.activeBlock);
-		
-			var self = this;
-			setTimeout(function(){
-				self._fixSize();
-				//self.triggerOverflowColumn_(null, col + 1, true);
-			}, 0);
+			// ZSS-324: column/row header must be update their size after data panel updated
+			if(!this._deferUS) { // _deferUS, a flag for defer ctrl.
+				this._deferUS = true;
+				var that = this;
+				setTimeout(function(){
+					delete that._deferUS;
+					dp._fixSize(that.activeBlock);
+					that._fixSize();
+				}, 20); // before loadForVisible()
+			}
 
 			this._wgt.syncWidgetPos(-1, col);
 		}
@@ -1947,7 +1950,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				var that = this;
 				setTimeout(function() {
 					delete that._deferL4V;
-					that.activeBlock.loadForVisible();
+					that.activeBlock.loadForVisible(); // data panel update here
+					that._fixSize(); // column/row header must be update their size after data panel updated
 				}, 25);
 			}
 		}
@@ -2085,13 +2089,17 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				this.tp._fixSize();
 				this.cp._fixSize();
 			}
-	
-			dp._fixSize(this.activeBlock);
-		
-			var local = this;
-			setTimeout(function () {
-				local._fixSize();
-			}, 0);
+
+			// ZSS-324: column/row header must be update their size after data panel updated
+			if(!this._deferUS) { // _deferUS, a flag for defer ctrl.
+				this._deferUS = true;
+				var that = this;
+				setTimeout(function(){
+					delete that._deferUS;
+					dp._fixSize(that.activeBlock);
+					that._fixSize();
+				}, 20); // before loadForVisible()
+			}
 			
 			this._wgt.syncWidgetPos(row, -1);
 		}
@@ -2112,7 +2120,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				var that = this;
 				setTimeout(function() {
 					delete that._deferL4V;
-					that.activeBlock.loadForVisible();
+					that.activeBlock.loadForVisible(); // data panel update here
+					that._fixSize(); // column/row header must be update their size after data panel updated
 				}, 25);
 			}
 		}
