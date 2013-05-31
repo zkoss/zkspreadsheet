@@ -20,6 +20,7 @@ package org.zkoss.zss.ui.event;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.ui.Rect;
 
 /**
  * Event class about selection of cell
@@ -39,10 +40,14 @@ public class CellAreaEvent extends CellEvent{
 	public int getLastColumn(){
 		return _rCol;
 	}
+	
 	public int getLastRow(){
 		return _bRow;
 	}
 	
+	public Rect getArea(){
+		return new Rect(getColumn(),getRow(),getLastColumn(),getLastRow());
+	}
 	
 	
 }

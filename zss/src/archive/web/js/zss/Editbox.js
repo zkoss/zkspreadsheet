@@ -369,7 +369,7 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
 			syncEditorHeight(n);
 			this.syncEditorPosition(end);
 			sheet.inlineEditor.setValue(v);
-			this._wgt.fire('onEditboxEditing', {token: '', sheetId: sheet.serverSheetId, clienttxt: n.value});
+			this._wgt.fire('onEditboxEditing', {token: '', sheetId: sheet.serverSheetId, row:this.row, col:this.col,  clienttxt: n.value});
 			
 			if (!v) {
 				sheet.editingFormulaInfo = null;
@@ -570,7 +570,7 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			if (formulabarEditor) {
 				formulabarEditor.setValue(value, end);
 			}
-			sheet._wgt.fire('onEditboxEditing', {token: '', sheetId: sheet.serverSheetId, clienttxt: value});
+			sheet._wgt.fire('onEditboxEditing', {token: '', sheetId: sheet.serverSheetId, row:this.row, col:this.col, clienttxt: value});
 			
 			if (!value) {
 				sheet.editingFormulaInfo = null;

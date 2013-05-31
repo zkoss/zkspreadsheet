@@ -17,6 +17,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.event;
 
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zss.api.model.Chart;
+import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Sheet;
 /**
  * Event about widget keystroke
@@ -36,15 +38,28 @@ public class WidgetKeyEvent extends org.zkoss.zk.ui.event.KeyEvent{
 	}
 	
 	/**
-	 * get Sheet
-	 * @return sheet the related sheet 
+	 * @return the sheet of this event 
 	 */
 	public Sheet getSheet(){
 		return _sheet;
 	}
 	
 	@Override
+	/**
+	 * @return widget data object of this event
+	 * @see Chart
+	 * @see Picture 
+	 */
 	public Object getData(){
+		return _data;
+	}
+	
+	/**
+	 * @return widget data object of this event
+	 * @see Chart
+	 * @see Picture 
+	 */
+	public Object getWidgetData(){
 		return _data;
 	}
 	

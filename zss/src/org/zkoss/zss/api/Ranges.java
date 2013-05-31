@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
+import org.zkoss.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.zss.api.impl.RangeImpl;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
@@ -95,5 +97,93 @@ public class Ranges {
 	 */
 	public static Range range(Sheet sheet, Rect selection){	
 		return range(sheet,selection.getTop(),selection.getLeft(),selection.getBottom(),selection.getRight());
+	}
+	
+	/**
+	 * Gets cell reference expression
+	 * @param row row
+	 * @param col column
+	 * @return the cell reference string (e.g. A1)
+	 */
+	public static String toCellReference(int row,int col){
+		return toCellReference(null,row,col);
+	}
+	
+	/**
+	 * Gets cell reference expression
+	 * @param sheet sheet
+	 * @param row row
+	 * @param col column
+	 * @return the cell reference string (e.g. Sheet1!A1)
+	 */
+	public static String toCellReference(Sheet sheet,int row,int col){
+		CellReference cf = new CellReference(sheet==null?null:sheet.getSheetName(),row, col,false,false);
+		return cf.formatAsString();
+	}
+	
+	/**
+	 * Gets area reference expression
+	 * @param tRow top row
+	 * @param lCol left column
+	 * @param bRow bottom row
+	 * @param rCol right column
+	 * @return the area reference string (e.g. A1:B2)
+	 */
+	public static String toAreaReference(int tRow, int lCol, int bRow, int rCol){
+		return toAreaReference(null,tRow, lCol, bRow, rCol);
+	}
+	
+	/**
+	 * Gets area reference expression
+	 * @param area area
+	 * @return the area reference string (e.g. A1:B2)
+	 */
+	public static String toAreaReference(Rect area){
+		return toAreaReference(area.getTop(),area.getLeft(),area.getBottom(),area.getRight());
+	}	
+	
+	/**
+	 * Gets area reference expression
+	 * @param sheet sheet
+	 * @param tRow top row
+	 * @param lCol left column
+	 * @param bRow bottom row
+	 * @param rCol right column
+	 * @return the area reference string (e.g. Sheet1!A1:B2)
+	 */
+	public static String toAreaReference(Sheet sheet, int tRow, int lCol, int bRow, int rCol){
+		String sn = sheet==null?null:sheet.getSheetName();
+		AreaReference af = new AreaReference(new CellReference(sn,tRow,lCol,false,false), new CellReference(sn,bRow,rCol,false,false));
+		return af.formatAsString();
+	}
+	
+	/**
+	 * Gets area reference expression
+	 * @param sheet sheet
+	 * @param area area
+	 * @return the area reference string (e.g. Sheet1!A1:B2)
+	 */
+	public static String toAreaReference(Sheet sheet, Rect area){
+		String sn = sheet==null?null:sheet.getSheetName();
+		return toAreaReference(sheet, area.getTop(),area.getLeft(),area.getBottom(),area.getRight());
+	}
+	
+	/**
+	 * Get column reference
+	 * @param column column
+	 * @return the column reference string (e.g A, AB)
+	 */
+	public static String toColumnReference(int column){
+		return CellReference.convertNumToColString(column);
+	}
+	
+	/**
+	 * Get row reference
+	 * @param row row
+	 * @return the column reference string (e.g 1, 12)
+	 */
+	public static String toRowReference(int row){
+		int excelRowNum = row + 1;
+		return Integer.toString(excelRowNum);
 	}
 }

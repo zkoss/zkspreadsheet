@@ -18,32 +18,27 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.event;
 
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zss.api.model.Sheet;
 //import org.zkoss.zss.model.Sheet;
 
 /**
  * @author kinda
  *
  */
-public class EditboxEditingEvent extends Event{
+public class EditboxEditingEvent extends CellEvent{
+	private static final long serialVersionUID = 1L;
 
-	private Sheet _sheet;
-	
+
 	Object _editingValue;
 	
-	public EditboxEditingEvent(String name, Component target,Sheet sheet,Object clientvalue) {
-		super(name, target, sheet);
-		_sheet = sheet;
+	public EditboxEditingEvent(String name, Component target,Sheet sheet, int row ,int col, Object clientvalue) {
+		super(name, target, sheet, row, col, clientvalue);
+
 		this._editingValue = clientvalue;
 	}
 	
 	public Object getEditingValue(){
 		return _editingValue;
-	}
-	
-	public Sheet getSheet(){
-		return _sheet;
 	}
 }

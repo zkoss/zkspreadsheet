@@ -21,6 +21,7 @@ package org.zkoss.zss.ui.au.in;
 import java.util.Map;
 
 import org.zkoss.lang.Objects;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
@@ -44,17 +45,18 @@ public class EditboxEditingCommand implements Command {
 		if (comp == null)
 			throw new UiException(MZk.ILLEGAL_REQUEST_COMPONENT_REQUIRED, this);
 		final Map data = (Map) request.getData();
-		if (data == null || data.size() != 3)
+		if (data == null || data.size() != 5)
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), this });
 		String token = (String) data.get("token");
 		String sheetId = (String) data.get("sheetId");
+		int row = (Integer) data.get("row");
+		int col = (Integer) data.get("col");
 		String clienttxt = (String) data.get("clienttxt");
 
-		XSheet sheet = ((Spreadsheet) comp).getSelectedXSheet();
-		if (!XUtils.getSheetUuid(sheet).equals(sheetId)) {
+		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
+		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
-		}
-		EditboxEditingEvent event = new EditboxEditingEvent(org.zkoss.zss.ui.event.Events.ON_EDITBOX_EDITING, comp, sheet, clienttxt);
+		EditboxEditingEvent event = new EditboxEditingEvent(org.zkoss.zss.ui.event.Events.ON_EDITBOX_EDITING, comp, sheet, row,col, clienttxt);
 		Events.postEvent(event);
 	}
 }

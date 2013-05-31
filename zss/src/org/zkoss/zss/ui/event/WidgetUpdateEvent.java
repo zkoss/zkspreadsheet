@@ -19,6 +19,8 @@ package org.zkoss.zss.ui.event;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zss.api.SheetAnchor;
+import org.zkoss.zss.api.model.Chart;
+import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Sheet;
 
 /**
@@ -45,17 +47,31 @@ public class WidgetUpdateEvent extends Event{
 	}
 	
 	/**
-	 * get Sheet
-	 * @return sheet the related sheet 
+	 * @return the sheet of this event
 	 */
 	public Sheet getSheet(){
 		return _sheet;
 	}
 	
+	/**
+	 * @return widget data object of this event
+	 * @see Chart
+	 * @see Picture 
+	 */
+	public Object getWidgetData(){
+		return getData();
+	}
+	
+	/**
+	 * @return the anchor of this event
+	 */
 	public SheetAnchor getSheetAnchor(){
 		return _anchor;
 	}
 	
+	/**
+	 * @return the action of this event
+	 */
 	public WidgetAction getAction(){
 		return _action;
 	}
