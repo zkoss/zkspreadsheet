@@ -1,3 +1,5 @@
 */assembly/
 */target/
 */.settings/
+*/.classpath
+*/.project

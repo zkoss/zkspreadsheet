@@ -15,11 +15,10 @@ import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zss.api.NRange;
-import org.zkoss.zss.api.NRanges;
-import org.zkoss.zss.api.model.NBook;
-import org.zkoss.zss.api.model.NSheet;
-import org.zkoss.zss.api.ui.NSpreadsheet;
+import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.essential.util.ClientUtil;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Menupopup;
@@ -34,7 +33,7 @@ public class SheetbarCtrl extends SelectorComposer<Component> {
 
 	String ssid;
 	String sspath;
-	NSpreadsheet nss;
+	Spreadsheet nss;
 
 	Toolbar sheetBar;
 	
@@ -89,8 +88,8 @@ public class SheetbarCtrl extends SelectorComposer<Component> {
 			throw new IllegalAddException(
 					"spreadsheet component not found with id " + ssid);
 		}
-
-		nss = new NSpreadsheet(ss);
+		
+		nss = ss;
 		ssid = null;
 
 		
@@ -99,8 +98,8 @@ public class SheetbarCtrl extends SelectorComposer<Component> {
 	}
 
 	private void refreshBar() {
-		NSheet sheet = nss.getSelectedSheet();
-		NBook book = sheet.getBook();
+		Sheet sheet = nss.getSelectedSheet();
+		Book book = sheet.getBook();
 		
 		for(Component c : new ArrayList<Component>(sheetBar.getChildren())){
 			if(c instanceof Toolbarbutton && !addSheet.equals(c)){
@@ -110,7 +109,7 @@ public class SheetbarCtrl extends SelectorComposer<Component> {
 		
 		int size = book.getNumberOfSheets();
 		for(int i=0;i<size;i++){
-			NSheet s = book.getSheetAt(i);
+			Sheet s = book.getSheetAt(i);
 			Toolbarbutton sheetBtn = new Toolbarbutton(s.getSheetName());
 			sheetBtn.setMode("toggle");
 			if(s.equals(sheet)){
@@ -149,9 +148,9 @@ public class SheetbarCtrl extends SelectorComposer<Component> {
 	// some test
 	@Listen("onClick=#addSheet")
 	public void onAddSheet() {
-		NRange dest = NRanges.range(nss.getSelectedSheet());
+		Range dest = Ranges.range(nss.getSelectedSheet());
 
-		NSheet sheet = dest.createSheet(null);
+		Sheet sheet = dest.createSheet(null);
 
 		nss.setSelectedSheet(sheet.getSheetName());
 		refreshBar();
@@ -159,13 +158,13 @@ public class SheetbarCtrl extends SelectorComposer<Component> {
 
 	@Listen("onClick=#deleteSheet")
 	public void onDeleteSheet() {
-		NSheet selectedSheet = nss.getSelectedSheet();
-		NBook book = selectedSheet.getBook();
+		Sheet selectedSheet = nss.getSelectedSheet();
+		Book book = selectedSheet.getBook();
 		
 		String name = (String)sheetPopup.getAttribute("targetSheet");
-		NSheet sheet = book.getSheet(name);
+		Sheet sheet = book.getSheet(name);
 		
-		NRange dest = NRanges.range(sheet);
+		Range dest = Ranges.range(sheet);
 		if (dest.isProtected()) {
 			showProtectionMessage();
 			return;
@@ -195,13 +194,13 @@ public class SheetbarCtrl extends SelectorComposer<Component> {
 	
 	@Listen("onClick=#renameSheet")
 	public void onReanmeSheet() {
-		NSheet selectedSheet = nss.getSelectedSheet();
-		NBook book = selectedSheet.getBook();
+		Sheet selectedSheet = nss.getSelectedSheet();
+		Book book = selectedSheet.getBook();
 		
 		String name = (String)sheetPopup.getAttribute("targetSheet");
-		NSheet sheet = book.getSheet(name);
+		Sheet sheet = book.getSheet(name);
 		
-		NRange dest = NRanges.range(sheet);
+		Range dest = Ranges.range(sheet);
 		if (dest.isProtected()) {
 			showProtectionMessage();
 			return;
@@ -229,13 +228,13 @@ public class SheetbarCtrl extends SelectorComposer<Component> {
 	
 	@Listen("onClick=#protectSheet")
 	public void onProtectSheet() {
-		NSheet selectedSheet = nss.getSelectedSheet();
-		NBook book = selectedSheet.getBook();
+		Sheet selectedSheet = nss.getSelectedSheet();
+		Book book = selectedSheet.getBook();
 		
 		String name = (String)sheetPopup.getAttribute("targetSheet");
-		NSheet sheet = book.getSheet(name);
+		Sheet sheet = book.getSheet(name);
 		
-		NRange dest = NRanges.range(sheet);
+		Range dest = Ranges.range(sheet);
 		
 		//TODO, ask password is possible ..
 //		if (dest.isProtected()) {
@@ -255,13 +254,13 @@ public class SheetbarCtrl extends SelectorComposer<Component> {
 	
 	@Listen("onClick=#moveSheetLeft")
 	public void onMoveSheetLeft() {
-		NSheet selectedSheet = nss.getSelectedSheet();
-		NBook book = selectedSheet.getBook();
+		Sheet selectedSheet = nss.getSelectedSheet();
+		Book book = selectedSheet.getBook();
 		
 		String name = (String)sheetPopup.getAttribute("targetSheet");
-		NSheet sheet = book.getSheet(name);
+		Sheet sheet = book.getSheet(name);
 		
-		NRange dest = NRanges.range(sheet);
+		Range dest = Ranges.range(sheet);
 		if (dest.isProtected()) {
 			showProtectionMessage();
 			return;
@@ -278,13 +277,13 @@ public class SheetbarCtrl extends SelectorComposer<Component> {
 	
 	@Listen("onClick=#moveSheetRight")
 	public void onMoveSheetRight() {
-		NSheet selectedSheet = nss.getSelectedSheet();
-		NBook book = selectedSheet.getBook();
+		Sheet selectedSheet = nss.getSelectedSheet();
+		Book book = selectedSheet.getBook();
 		
 		String name = (String)sheetPopup.getAttribute("targetSheet");
-		NSheet sheet = book.getSheet(name);
+		Sheet sheet = book.getSheet(name);
 		
-		NRange dest = NRanges.range(sheet);
+		Range dest = Ranges.range(sheet);
 		if (dest.isProtected()) {
 			showProtectionMessage();
 			return;

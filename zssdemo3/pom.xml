@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss.zss</groupId>
-	<artifactId>essential</artifactId>
+	<artifactId>zssdemo3</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
 		<zk.version>6.5.3.FL.20130514</zk.version>
@@ -12,8 +12,8 @@
 		<packname>-${project.version}-FL-${maven.build.timestamp}</packname>
 	</properties>
 	<packaging>war</packaging>
-	<name>The essential Project</name>
-	<description>The essential Project</description>
+	<name>The zssdemo Project</name>
+	<description>The zssdemo Project</description>
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3</name>
@@ -152,10 +152,10 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<finalName>essential${packname}</finalName>
+							<finalName>zssdemo${packname}</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
 							<descriptors>
-								<descriptor>assembly/webapp.xml</descriptor>
+								<descriptor>src/main/assembly/webapp.xml</descriptor>
 							</descriptors>
 						</configuration>
 					</execution>

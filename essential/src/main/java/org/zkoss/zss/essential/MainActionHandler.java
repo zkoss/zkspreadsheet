@@ -5,51 +5,32 @@ import java.io.IOException;
 
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
-import org.zkoss.zss.api.model.NBook;
-import org.zkoss.zss.api.ui.NSpreadsheet;
+import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.essential.util.BookUtil;
 import org.zkoss.zss.essential.util.ClientUtil;
 import org.zkoss.zss.ui.Rect;
-import org.zkoss.zss.ui.sys.ActionHandler;
+import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zssex.ui.DefaultExUserActionHandler;
 import org.zkoss.zul.Filedownload;
 
-public class MainActionHandler extends ActionHandler {
+public class MainActionHandler extends DefaultExUserActionHandler {
 	
 	private final static Log log = Log.lookup(MainActionHandler.class);
-	
-	
-	
-	public NSpreadsheet getNSpreadsheet(){
-		return new NSpreadsheet(_spreadsheet);
-	}
+
+
 
 	@Override
-	public void doInsertFunction(Rect selection) {
-		ClientUtil.showWarn("Doesn't support yet");
-
-	}
-
-	@Override
-	public void doColumnWidth(Rect selection) {
-		ClientUtil.showWarn("Doesn't support yet");
-	}
-
-	@Override
-	public void doRowHeight(Rect selection) {
-		ClientUtil.showWarn("Doesn't support yet");
-	}
-
-	@Override
-	public void doNewBook() {
+	public boolean doNewBook() {
 //		NBook book = BookUtil.newBook("newBook", NBook.BookType.EXCEL_2003);
-		NBook book = BookUtil.newBook("newBook", NBook.BookType.EXCEL_2007);
-		getNSpreadsheet().setBook(book);
+		Book book = BookUtil.newBook("newBook", Book.BookType.EXCEL_2007);
+		getSpreadsheet().setBook(book);
 		ClientUtil.showInfo("You are now using a new empty book");
+		return true;
 	}
 
 	@Override
-	public void doSaveBook() {
-		NBook book = getNSpreadsheet().getBook();
+	public boolean doSaveBook() {
+		Book book = getSpreadsheet().getBook();
 		String name = BookUtil.suggestName(book);
 		File file;
 		try {
@@ -59,37 +40,13 @@ public class MainActionHandler extends ActionHandler {
 			log.error(e.getMessage(),e);
 			ClientUtil.showError("Sorry! we can't save the book for you now!");
 		}
-		
+		return true;
 	}
 
 	@Override
-	public void doExportPDF(Rect selection) {
-		ClientUtil.showWarn("Doesn't support yet");
-	}
-
-	@Override
-	public void doPasteSpecial(Rect selection) {
-		ClientUtil.showWarn("Doesn't support yet");
-	}
-
-	@Override
-	public void doCustomSort(Rect selection) {
-		ClientUtil.showInfo("Doesn't support yet");
-	}
-
-	@Override
-	public void doHyperlink(Rect selection) {
-		ClientUtil.showWarn("Doesn't support yet");
-	}
-
-	@Override
-	public void doFormatCell(Rect selection) {
-		ClientUtil.showWarn("Doesn't support yet");
-	}
-	
-	public void doCloseBook() {
-		 getNSpreadsheet().setBook(null);
-		super.doCloseBook();
+	public boolean doCloseBook() {
+		 getSpreadsheet().setBook(null);
+		return super.doCloseBook();
 	}
 
 }

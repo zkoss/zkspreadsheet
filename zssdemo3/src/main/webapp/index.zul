@@ -1,0 +1,8 @@
+<zk>
+	<window apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm')@init('org.zkoss.zss.demo.MyViewModel')"
+		validationMessages="@id('vmsgs')">
+		<hlayout>count: <label value="@load(vm.count)" /></hlayout>
+		<button label="add" onClick="@command('cmd')"/>
+	</window>
+</zk>

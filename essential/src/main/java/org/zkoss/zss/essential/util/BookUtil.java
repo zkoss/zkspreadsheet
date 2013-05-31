@@ -7,17 +7,17 @@ import java.io.InputStream;
 
 import org.zkoss.lang.SystemException;
 import org.zkoss.zk.ui.WebApps;
-import org.zkoss.zss.api.NExporter;
-import org.zkoss.zss.api.NExporters;
-import org.zkoss.zss.api.NImporter;
-import org.zkoss.zss.api.NImporters;
-import org.zkoss.zss.api.model.NBook;
-import org.zkoss.zss.api.model.NBook.BookType;
+import org.zkoss.zss.api.Exporter;
+import org.zkoss.zss.api.Exporters;
+import org.zkoss.zss.api.Importer;
+import org.zkoss.zss.api.Importers;
+import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Book.BookType;
 
 
 public class BookUtil {
 
-	static public NBook newBook(String bookName, BookType type) {
+	static public Book newBook(String bookName, BookType type) {
 		try {
 			return newBook0(bookName, type);
 		} catch (IOException e) {
@@ -25,11 +25,13 @@ public class BookUtil {
 		}
 	}
 
-	static private NBook newBook0(String bookName, BookType type)
+	static private Book newBook0(String bookName, BookType type)
 			throws IOException {
 		
-		NImporter importer = NImporters.getImporter("excel");
-		
+		Importer importer = Importers.getImporter("excel");
+		if(importer==null){
+			throw new RuntimeException("importer for excel not found");
+		}
 		InputStream is = null;
 		switch (type) {
 		case EXCEL_2003:
@@ -68,7 +70,7 @@ public class BookUtil {
 	}
 
 	
-	static public String suggestName(NBook book) {
+	static public String suggestName(Book book) {
 		String bn = book.getBookName();
 		BookType type = book.getType();
 		
@@ -82,8 +84,8 @@ public class BookUtil {
 		return bn+ext;
 	}
 
-	static public File saveBook(NBook book) throws IOException{
-		NExporter exporter = NExporters.getExporter("excel");
+	static public File saveBook(Book book) throws IOException{
+		Exporter exporter = Exporters.getExporter("excel");
 		String bn = book.getBookName();
 		String ext = book.getType()==BookType.EXCEL_2003?".xls":".xlsx";
 		int i = bn.lastIndexOf('.');
