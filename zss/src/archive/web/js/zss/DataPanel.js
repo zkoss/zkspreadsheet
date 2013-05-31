@@ -89,27 +89,24 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			sheet = this.sheet,
 			custColWidth = sheet.custColWidth,
 			custRowHeight = sheet.custRowHeight;
-		if (this._tId) {
-			clearTimeout(this._tId);
-			this._tId = null;
-		}
+
+		// ZSS-324: remove timeout, function should be executed immediately
+		// column/row header must be update their size after data panel updated 
+		self.width = sheet.custColWidth.getStartPixel(wgt.getMaxColumns());
+		self.height = sheet.custRowHeight.getStartPixel(wgt.getMaxRows());
+		self.paddingl = custColWidth.getStartPixel(block.range.left);
+		self.paddingt = custRowHeight.getStartPixel(block.range.top);
 		
-		this._tId = setTimeout(function () {
-			self.width = sheet.custColWidth.getStartPixel(wgt.getMaxColumns());
-			self.height = sheet.custRowHeight.getStartPixel(wgt.getMaxRows());
-			self.paddingl = custColWidth.getStartPixel(block.range.left);
-			self.paddingt = custRowHeight.getStartPixel(block.range.top);
-			
-			var width = self.width - self.paddingl,
-				height = self.height,
-				pdl = self.paddingl + sheet.leftWidth;
-			
-			jq(self.comp).css({'padding-left': jq.px0(pdl), 'padding-top': jq.px0(sheet.topHeight), 'width': jq.px0(width)});
-			jq(self.comp).css({'width': jq.px0(width)});
-			jq(self.padcomp).css('height', jq.px0(self.paddingt));
-			sheet.tp._updateLeftPadding(pdl);
-			sheet.lp._updateTopPadding(self.paddingt);
-		});
+		var width = self.width - self.paddingl,
+			height = self.height,
+			pdl = self.paddingl + sheet.leftWidth;
+		
+		jq(self.comp).css({'padding-left': jq.px0(pdl), 'padding-top': jq.px0(sheet.topHeight), 'width': jq.px0(width)});
+		jq(self.comp).css({'width': jq.px0(width)});
+		jq(self.comp).css({'height': jq.px0(height)}); // ZSS-324: height must be adjusted too
+		jq(self.padcomp).css('height', jq.px0(self.paddingt));
+		sheet.tp._updateLeftPadding(pdl);
+		sheet.lp._updateTopPadding(self.paddingt);
 	},
 	/**
 	 * Returns whether is focus on frozen area or not.
