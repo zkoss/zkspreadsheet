@@ -21,12 +21,17 @@ import zss.test.SpreadsheetAgent;
  * @author Hawk
  *
  */
-@RunWith(Parameterized.class)
-public class ImageTest extends DisplayExcelTest{
+
+public class ChartImageTest extends DisplayExcelTest{
 
 	private static Spreadsheet spreadsheet;
 	
-	public ImageTest(String testPage){
+	//you can change to /display2003.zul to run single test
+	public ChartImageTest(){
+		this("/display.zul");
+	}
+
+	protected ChartImageTest(String testPage){
 		super(testPage);
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
 		//select the sheet first or the chart won't be initialized
@@ -36,11 +41,6 @@ public class ImageTest extends DisplayExcelTest{
 		sheet = spreadsheet.getBook().getSheet("chart-image");
 	}
 
-	@Parameters
-	public static List<Object[]> data() {
-		Object[][] data = new Object[][] { { "/display.zul" }, { "/display2003.zul"}};
-		return Arrays.asList(data);
-	}
 	
 
 	@Test
@@ -48,7 +48,7 @@ public class ImageTest extends DisplayExcelTest{
 		
 		assertEquals(1, sheet.getPictures().size());
 //		assertEquals(1, xsheet.getPictures().size());
-		// FIXME wait for 3.0 API
+		// TODO wait for 3.0 API supported
 //		assertEquals(0, xsheet.getPictures().get(0).getPreferredSize().getCol1());
 //		assertEquals(1, xsheet.getPictures().get(0).getPreferredSize().getCol2());
 //		assertEquals(1, xsheet.getPictures().get(0).getPreferredSize().getRow1());
@@ -58,7 +58,6 @@ public class ImageTest extends DisplayExcelTest{
 	
 	@Test
 	public void testCharts(){
-		//FIXME wait new select sheet action of spreadsheet agent
 		assertEquals(12, xsheet.getCharts().size());
 	}
 }

@@ -1,0 +1,9 @@
+<zk>
+	<window apply="zss.testapp.issue.ExportComposer195" height="100%">
+		<button label="Export PDF" />
+		<button label="Export selection to PDF"/>
+		<spreadsheet  src="/OperationTest2007.xlsx" maxrows="150" maxcolumns="40"
+			width="100%" height="50%" showContextMenu="true" showSheetbar="true" showToolbar="true"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" />
+	</window>
+</zk>

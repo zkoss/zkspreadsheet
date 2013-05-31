@@ -1511,7 +1511,17 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			mdstr = "h_" + row + "_" + col;
 			if (this._lastmdstr == mdstr) {
 				
-				this['show' + (headercmp.ctrl.type == 'V' ? 'Row' : 'Column') + 'HeaderMenu'](mx, my);
+				// #ZSS-292: only allow right click to pop-up context menu on row and column header
+				if (type === 'rc') {
+					if (headercmp.ctrl.type == 'V') {
+						this.showRowHeaderMenu(mx, my);
+					} else {
+						this.showColumnHeaderMenu(mx, my);
+					}
+					// don't use this coding style !!!
+					//	this['show' + (headercmp.ctrl.type == 'V' ? 'Row' : 'Column') + 'HeaderMenu'](mx, my);
+				}
+				
 				wgt.fireHeaderEvt(type, shx, shy, md1[2], row, col, mx, my);
 			}
 		}
