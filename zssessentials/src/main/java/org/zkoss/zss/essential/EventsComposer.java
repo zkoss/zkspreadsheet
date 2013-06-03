@@ -209,7 +209,7 @@ public class EventsComposer extends SelectorComposer<Component> {
 			String newval = event.getEditingValue()+"-Woo";
 			//we change the editing value
 			event.setEditingValue(newval);
-			addEventInfo("Editing value is change to "+newval);
+			addEventInfo("Editing value is changing to "+newval);
 		}else if(ref.equals("E3")){
 			//we don't allow edit D2
 			event.cancel();
@@ -267,8 +267,12 @@ public class EventsComposer extends SelectorComposer<Component> {
 	@Listen("onCtrlKey = #ss")
 	public void onCtrlKey(KeyEvent event){
 		StringBuilder info = new StringBuilder();
-		info.append("Keys : ").append(event.getKeyCode()).append(", ctrl:").append(event.isCtrlKey())
-		.append(", alt:").append(event.isAltKey()).append(", shift:").append(event.isShiftKey());
+		
+		info.append("Keys : ").append(event.getKeyCode())
+			.append(", Ctrl:").append(event.isCtrlKey())
+			.append(", Alt:").append(event.isAltKey())
+			.append(", Shift:").append(event.isShiftKey());
+		
 		addEventInfo(info.toString());
 	}
 	
@@ -276,6 +280,7 @@ public class EventsComposer extends SelectorComposer<Component> {
 	public void onWidgetUpdate(WidgetUpdateEvent event){
 		StringBuilder info = new StringBuilder();
 		SheetAnchor anchor = event.getSheetAnchor();
+		
 		info.append("Widget ")
 				.append(event.getWidgetData())
 				.append(" ")
@@ -284,14 +289,20 @@ public class EventsComposer extends SelectorComposer<Component> {
 				.append(Ranges.toAreaReference(anchor.getRow(),
 						anchor.getColumn(), anchor.getLastRow(),
 						anchor.getLastColumn()));
+		
 		addEventInfo(info.toString());
 	}
 	
 	@Listen("onWidgetCtrlKey = #ss")
 	public void onWidgetCtrlKey(WidgetKeyEvent event){
 		StringBuilder info = new StringBuilder();
-		info.append("Widget ").append(event.getWidgetData()).append(" Key : ").append(event.getKeyCode()).append(", ctrl:").append(event.isCtrlKey())
-		.append(", alt:").append(event.isAltKey()).append(", shift:").append(event.isShiftKey());
+		
+		info.append("Widget ").append(event.getWidgetData())
+			.append(" Key : ").append(event.getKeyCode())
+			.append(", Ctrl:").append(event.isCtrlKey())
+			.append(", Alt:").append(event.isAltKey())
+			.append(", Shift:").append(event.isShiftKey());
+		
 		addEventInfo(info.toString());
 	}
 	

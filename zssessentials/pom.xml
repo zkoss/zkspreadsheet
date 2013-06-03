@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss.zss</groupId>
-	<artifactId>zssessential</artifactId>
+	<artifactId>zssessentials</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
 		<zk.version>6.5.3.FL.20130514</zk.version>
@@ -12,7 +12,7 @@
 		<packname>-${project.version}-FL-${maven.build.timestamp}</packname>
 	</properties>
 	<packaging>war</packaging>
-	<name>The zssessential Project</name>
+	<name>The zssessentials Project</name>
 	<description>The zssessential Project</description>
 	<licenses>
 		<license>

@@ -5,7 +5,7 @@
  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"> 
 
 	<description><![CDATA[My ZK Application]]></description>
-	<display-name>zssessential</display-name>
+	<display-name>zssessentials</display-name>
 
 	<!-- //// -->
 	<!-- ZK -->
