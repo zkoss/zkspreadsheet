@@ -156,7 +156,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	 * </ul>
 	 */
 	editingFormulaInfo: null,
-	lineHeight: 20,
+	lineHeight: 20, 
 	$init: function (wgt) {
 		this.$supers(zss.SSheetCtrl, '$init', []);
 		this._wgt = wgt;
@@ -1910,7 +1910,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if (col < this.maxCols) {
 			//adjust datapanel size;
 			var dp = this.dp;
-			dp.updateWidth((hidden ? 0 : width) - oldw);
 		
 			//process text overflow when resize column
 			this.triggerOverflowColumn_(null, col + 1, true);
@@ -1921,13 +1920,16 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 
 			//update datapanel padding
-			dp._fixSize(this.activeBlock);
-		
-			var self = this;
-			setTimeout(function(){
-				self._fixSize();
-				//self.triggerOverflowColumn_(null, col + 1, true);
-			}, 0);
+			// ZSS-324: column/row header must be update their size after data panel updated
+			if(!this._deferUS) { // _deferUS, a flag for defer ctrl.
+				this._deferUS = true;
+				var that = this;
+				setTimeout(function(){
+					delete that._deferUS;
+					dp._fixSize(that.activeBlock);
+					that._fixSize();
+				}, 20); // before loadForVisible()
+			}
 
 			this._wgt.syncWidgetPos(-1, col);
 		}
@@ -1941,7 +1943,18 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 					{toServer: true, sendAhead: true}, 25);//ZSS-180
 		}
 		//ZSS-180
-		if(col < this.maxCols && loadvis) this.activeBlock.loadForVisible();
+		if(col < this.maxCols && loadvis) {
+			// ZSS-324: this is a heavy duty, so just call once when batch updating
+			if (!this._deferL4V) { //_deferL4V, a flag for defer ctrl.
+				this._deferL4V = true;
+				var that = this;
+				setTimeout(function() {
+					delete that._deferL4V;
+					that.activeBlock.loadForVisible(); // data panel update here
+					that._fixSize(); // column/row header must be update their size after data panel updated
+				}, 25);
+			}
+		}
 	},
 	_syncColFocusAndSelection: function(left, right) {
 		var focPos = this.getLastFocus(),
@@ -2070,20 +2083,23 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		if (row < this.maxRows) {
 			//adjust datapanel size;
 			var dp = this.dp;
-			dp.updateHeight((hidden ? 0 : height) - oldh);
 		
 			var fzr = this.frozenRow;
 			if (fzr >= row) {
 				this.tp._fixSize();
 				this.cp._fixSize();
 			}
-	
-			dp._fixSize(this.activeBlock);
-		
-			var local = this;
-			setTimeout(function () {
-				local._fixSize();
-			}, 0);
+
+			// ZSS-324: column/row header must be update their size after data panel updated
+			if(!this._deferUS) { // _deferUS, a flag for defer ctrl.
+				this._deferUS = true;
+				var that = this;
+				setTimeout(function(){
+					delete that._deferUS;
+					dp._fixSize(that.activeBlock);
+					that._fixSize();
+				}, 20); // before loadForVisible()
+			}
 			
 			this._wgt.syncWidgetPos(row, -1);
 		}
@@ -2097,7 +2113,18 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 					{toServer: true, sendAhead: true}, 25);//ZSS-180
 		}
 		//ZSS-180
-		if (row < this.maxRows && loadvis) this.activeBlock.loadForVisible();
+		if (row < this.maxRows && loadvis) {
+			// ZSS-324: this is a heavy duty, so just call once when batch updating
+			if (!this._deferL4V) {
+				this._deferL4V = true; //_deferL4V, a flag for defer ctrl.
+				var that = this;
+				setTimeout(function() {
+					delete that._deferL4V;
+					that.activeBlock.loadForVisible(); // data panel update here
+					that._fixSize(); // column/row header must be update their size after data panel updated
+				}, 25);
+			}
+		}
 	},
 	_updateText: function (result) {
 		var cell = this.activeBlock.getCell(result.r, result.c);
@@ -2994,6 +3021,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			right = custColWidth.getCellIndex(scrollLeft + viewWidth)[0],
 			bottom = custRowHeight.getCellIndex(scrollTop + viewHeight)[0];
 
+		// ZSS-324: the left and top must not be out of range too 
+		if (left > sheet.maxCols - 1) left = sheet.maxCols - 1;
+		if (top > sheet.maxRows - 1) top = sheet.maxRows - 1; 
 		if (right > sheet.maxCols - 1) right = sheet.maxCols - 1;
 		if (bottom > sheet.maxRows - 1) bottom = sheet.maxRows - 1; 
 
