@@ -1,6 +1,9 @@
 <zk>
 	<window hflex="1" vflex="1"
 		apply="org.zkoss.zss.essential.EventsComposer">
+		<!-- 
+		<custom-attributes org.zkoss.zss.ui.UserActionHandler.class="org.zkoss.zss.ui.NoneUserActionHandler"/>
+		 -->
 		<hlayout hflex="1" vflex="1">
 			<spreadsheet id="ss" hflex="1" vflex="1"
 				showFormulabar="true" showContextMenu="true" showToolbar="true"
@@ -9,7 +12,7 @@
 			<vlayout width="300px" vflex="1">
 				<groupbox hflex="1" height="200px">
 					<caption label="Available Books" />
-					<listbox id="booklist" vflex="1">
+					<listbox id="availableBookList" vflex="1">
 
 					</listbox>
 				</groupbox>
@@ -18,11 +21,11 @@
 					<tabbox hflex="1" vflex="1">
 						<tabs>
 							<tab label="Information" />
-							<tab label="Filter" />
+							<tab label="Filters" />
 						</tabs>
 						<tabpanels>
 							<tabpanel>
-								<grid id="infolist" vflex="1">
+								<grid id="infoList" vflex="1">
 									<template name="model">
 										<row>
 											<cell>
@@ -37,7 +40,7 @@
 							</tabpanel>
 
 							<tabpanel>
-								<listbox id="eventlist" vflex="1" checkmark="true">
+								<listbox id="eventFilterList" vflex="1" checkmark="true">
 
 								</listbox>
 								<button label="Clear all" id="clearAllFilter"/>

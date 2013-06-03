@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
@@ -15,8 +16,11 @@ import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.UserAction;
+import org.zkoss.zss.ui.event.AuxActionEvent;
 import org.zkoss.zss.ui.event.CellAreaEvent;
 import org.zkoss.zss.ui.event.CellEvent;
+import org.zkoss.zss.ui.event.CellFilterEvent;
 import org.zkoss.zss.ui.event.CellMouseEvent;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
@@ -24,6 +28,7 @@ import org.zkoss.zss.ui.event.EditboxEditingEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HeaderMouseEvent;
 import org.zkoss.zss.ui.event.HeaderUpdateEvent;
+import org.zkoss.zss.ui.event.CellHyperlinkEvent;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.event.SheetDeleteEvent;
 import org.zkoss.zss.ui.event.SheetEvent;
@@ -47,40 +52,60 @@ public class EventsComposer extends SelectorComposer<Component> {
 
 	ListModelList<String> infoModel = new ListModelList<String>();
 	
-	ListModelList<String> bookModel = new ListModelList<String>();
+	ListModelList<String> availableBookModel = new ListModelList<String>();
 	
 	ListModelList<String> eventFilterModel = new ListModelList<String>();
 	
 	@Wire
-	Grid infolist;
+	Grid infoList;
 	
 	@Wire
-	Listbox booklist;
+	Listbox availableBookList;
 	
 	@Wire
-	Listbox eventlist;
+	Listbox eventFilterList;
 	
 	@Wire
 	Spreadsheet ss;
-	
-	
-	
 	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
 		initModel();
-		booklist.setModel(bookModel);
-		infolist.setModel(infoModel);
-		eventlist.setModel(eventFilterModel);
+		
+		availableBookList.setModel(availableBookModel);
+		infoList.setModel(infoModel);
+		eventFilterList.setModel(eventFilterModel);
 		
 		addInfo("Spreadsheet initialized");
+		
+		String book = Executions.getCurrent().getParameter("book");
+		if(book!=null){
+			try{
+				loadBookFromAvailable(book);
+			}catch(Exception x){}
+		}
+		
+		String sheet = Executions.getCurrent().getParameter("sheet");
+		if(sheet!=null){
+			try{
+				Sheet ssheet = ss.getBook().getSheet(sheet);
+				if(ssheet!=null){
+					ss.setSelectedSheet(ssheet.getSheetName());
+				}
+			}catch(Exception x){}
+		} 
+		
+		//sync available book selection
+		book = ss.getBook().getBookName();
+		
+		availableBookModel.addToSelection(book);
 	}
 
 	private void initModel() {
-		bookModel.add("blank.xlsx");
-		bookModel.add("sample.xlsx");
+		availableBookModel.add("blank.xlsx");
+		availableBookModel.add("sample.xlsx");
 		
 		
 		//Available events
@@ -100,8 +125,8 @@ public class EventsComposer extends SelectorComposer<Component> {
 		addEventFilter(Events.ON_CELL_DOUBLE_CLICK,true);
 		addEventFilter(Events.ON_CELL_RIGHT_CLICK,true);
 		
-//		addEventFilter(Events.ON_CELL_FILTER);//useless
-//		addEventFilter(Events.ON_CELL_VALIDATOR);//useless
+		addEventFilter(Events.ON_CELL_FILTER,true);//useless
+		addEventFilter(Events.ON_CELL_VALIDATOR,true);//useless
 		
 		addEventFilter(Events.ON_START_EDITING,true);
 		addEventFilter(Events.ON_EDITBOX_EDITING,true);
@@ -124,7 +149,7 @@ public class EventsComposer extends SelectorComposer<Component> {
 		addEventFilter(Events.ON_SHEET_ORDER_CHANGE,true);
 		addEventFilter(Events.ON_SHEET_SELECT,true);
 		
-		addEventFilter(Events.ON_HYPERLINK,true);	
+		addEventFilter(Events.ON_CELL_HYPERLINK,true);	
 		
 		//add default show only
 		
@@ -152,10 +177,21 @@ public class EventsComposer extends SelectorComposer<Component> {
 		}
 	}
 	
-	@Listen("onSelect = #booklist")
+	@Listen("onSelect = #availableBookList")
 	public void onBookSelect(){
-		String bookname = bookModel.getSelection().iterator().next();
-		
+		String bookname = availableBookModel.getSelection().iterator().next();
+		loadBookFromAvailable(bookname);
+	}
+	
+	protected void loadBookFromAvailable(int index){
+		String bookname = availableBookModel.get(index);
+		loadBookFromAvailable(bookname);
+	}
+	
+	protected void loadBookFromAvailable(String bookname){
+		if(!availableBookModel.contains(bookname)){
+			return;
+		}
 		Importer imp = Importers.getImporter("excel");
 		try {
 			Book book = imp.imports(WebApps.getCurrent().getResource("/WEB-INF/books/"+bookname), bookname);
@@ -163,7 +199,9 @@ public class EventsComposer extends SelectorComposer<Component> {
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage(),e);
 		}
-	}
+	}	
+	
+	
 	@Listen("onClick = #clearInfo")
 	public void onClearInfo(){
 		infoModel.clear();
@@ -176,6 +214,13 @@ public class EventsComposer extends SelectorComposer<Component> {
 	public void onSelectorAll(){
 		eventFilterModel.clearSelection();
 		eventFilterModel.setSelection(new ArrayList<String>(eventFilterModel));
+	}
+	@Listen("onAuxAction = #ss")
+	public void onAuxActionHandling(AuxActionEvent event){
+		//handle extra action when book close
+		if(event.getAction().equals(UserAction.CLOSE_BOOK.toString())){
+			availableBookModel.clearSelection();
+		}
 	}
 	
 	
@@ -500,10 +545,58 @@ public class EventsComposer extends SelectorComposer<Component> {
 		}
 	}
 	
+	@Listen("onAuxAction = #ss")
+	public void onAuxAction(AuxActionEvent event){
+		StringBuilder info = new StringBuilder();
+		
+		info.append("AuxAction ").append(event.getAction())
+			.append(" on : ").append(Ranges.getAreaReference(event.getSheet(),event.getSelection()));
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
+	
+	@Listen("onCellHyperlink = #ss")
+	public void onCellHyperlink(CellHyperlinkEvent event){
+		StringBuilder info = new StringBuilder();
+		
+		info.append("Hyperlink ").append(event.getType())
+			.append(" on : ").append(Ranges.getCellReference(event.getRow(),event.getColumn()))
+			.append(", address : ").append(event.getAddress());
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}	
+	
+	@Listen("onCellFilter = #ss")
+	public void onCellFilter(CellFilterEvent event){
+		StringBuilder info = new StringBuilder();
+		
+		info.append("Filter button clicked")
+			.append(", filter area: ").append(Ranges.getAreaReference(event.getFilterArea()))
+			.append(", on field: ").append(event.getField());
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
+	
+	@Listen("onCellValidator = #ss")
+	public void onCellValidator(CellMouseEvent event){
+		StringBuilder info = new StringBuilder();
+		
+		info.append("Validation button clicked ")
+			.append(" on cell ").append(Ranges.getCellReference(event.getRow(),event.getColumn()));
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
+	
 	
 	/**
-	 * ON_AUX_ACTION
-	 * ON_HYPERLINK
 	 * ON_CELL_FILTER //useless
 	 * ON_CELL_VALIDATOR //useless
 	 */
