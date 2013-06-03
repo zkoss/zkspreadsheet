@@ -1,17 +1,56 @@
 <zk>
-	<window hflex="1" vflex="1" apply="org.zkoss.zss.essential.EventsComposer">
-		<hlayout hflex="1" vflex="1" >
-			<spreadsheet id="ss" 
-				hflex="1" vflex="1" 
-				showFormulabar="true" showContextMenu="true" showToolbar="true" showSheetbar="true"
-				maxVisibleRows="100" maxVisibleColumns="40"
-				src="/WEB-INF/xlsx/blank.xlsx"/>
-			<groupbox width="300px" vflex="1">
-				<caption label="Event Information"/>
-				<listbox id="infolist" vflex="1">
-				
-				</listbox>
-			</groupbox>
+	<window hflex="1" vflex="1"
+		apply="org.zkoss.zss.essential.EventsComposer">
+		<hlayout hflex="1" vflex="1">
+			<spreadsheet id="ss" hflex="1" vflex="1"
+				showFormulabar="true" showContextMenu="true" showToolbar="true"
+				showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"
+				src="/WEB-INF/books/blank.xlsx" />
+			<vlayout width="300px" vflex="1">
+				<groupbox hflex="1" height="200px">
+					<caption label="Available Books" />
+					<listbox id="booklist" vflex="1">
+
+					</listbox>
+				</groupbox>
+				<groupbox hflex="1" vflex="1">
+					<caption label="Event Information" />
+					<tabbox hflex="1" vflex="1">
+						<tabs>
+							<tab label="Information" />
+							<tab label="Filter" />
+						</tabs>
+						<tabpanels>
+							<tabpanel>
+								<grid id="infolist" vflex="1">
+									<template name="model">
+										<row>
+											<cell>
+												<label
+													value="${each}">
+												</label>
+											</cell>
+										</row>
+									</template>
+								</grid>
+								<button label="Clear" id="clearInfo"/>
+							</tabpanel>
+
+							<tabpanel>
+								<listbox id="eventlist" vflex="1" checkmark="true">
+
+								</listbox>
+								<button label="Clear all" id="clearAllFilter"/>
+								<button label="Select all" id="selectAllFilter"/>
+							</tabpanel>
+
+						</tabpanels>
+
+
+					</tabbox>
+
+				</groupbox>
+			</vlayout>
 		</hlayout>
 	</window>
 </zk>
