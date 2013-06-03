@@ -44,7 +44,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	private Clipboard _clipboard;
 
 	//TODO, redesign to customizable action
-	/*package*/ static final UserAction[] DisabledAction4BookClosed = new UserAction[]{
+	/*package*/ static final UserAction[] DISABLED_ACTION_WHEN_BOOK_CLOSE = new UserAction[]{
 	UserAction.SAVE_BOOK,
 	UserAction.EXPORT_PDF, 
 	UserAction.PASTE,
@@ -80,7 +80,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	UserAction.HYPERLINK
 };
 
-	/*package*/ static UserAction[] DisabledAction4SheetProtected = new UserAction[]{
+	/*package*/ static UserAction[] DISABLED_ACTION_WHEN_SHEET_PROTECTED = new UserAction[]{
 	UserAction.FONT_FAMILY,
 	UserAction.FONT_SIZE,
 	UserAction.FONT_BOLD,
@@ -123,7 +123,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	UserAction.HYPERLINK
 	};
 	
-/*package*/ static UserAction[] DisabledAction4FilterDisabled = new UserAction[]{
+/*package*/ static UserAction[] DISABLED_ACTION_WHEN_FILTER_OFF = new UserAction[]{
 	UserAction.CLEAR_FILTER,
 	UserAction.REAPPLY_FILTER
 	};	

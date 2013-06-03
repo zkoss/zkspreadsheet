@@ -1539,7 +1539,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_showToolbar) {
 			//20130507,Dennis,add commnet check, no actionDisabled json will cause client error when show context menu.
 //			if (_actionDisabled.size() > 0) {
-				renderer.render("actionDisabled", convertActionDisabledToJSON(_actionDisabled));
+				renderer.render("actionDisabled", convertActionDisabledToJSON(getDisabledUserAction()));
 //			}
 			renderer.render("showToolbar", _showToolbar);
 		}
@@ -4027,7 +4027,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		moveSelfEditorFocus();
 		_selectedSheetName = _selectedSheet.getSheetName();
 		
-		
 		refreshToolbarDisabled();
 	}
 	
@@ -5016,19 +5015,24 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	
 	private void refreshToolbarDisabled(){
-		
+		if(!isInvalidated()){
+			smartUpdate("actionDisabled", convertActionDisabledToJSON(getDisabledUserAction()));
+		}
+	}
+	
+	
+	private Set<UserAction> getDisabledUserAction(){
 		Set<UserAction> disabled = new HashSet<UserAction>(_actionDisabled);
-		disabled.clear();
 		if(getBook()==null){
-			disabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4BookClosed));
+			disabled.addAll(Arrays.asList(DefaultUserActionHandler.DISABLED_ACTION_WHEN_BOOK_CLOSE));
 		}else{
 			if(getSelectedSheet().isProtected()){
-				disabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4SheetProtected));
+				disabled.addAll(Arrays.asList(DefaultUserActionHandler.DISABLED_ACTION_WHEN_SHEET_PROTECTED));
 			}
 			if(!getSelectedSheet().isAutoFilterEnabled()){
-				disabled.addAll(Arrays.asList(DefaultUserActionHandler.DisabledAction4FilterDisabled));
+				disabled.addAll(Arrays.asList(DefaultUserActionHandler.DISABLED_ACTION_WHEN_FILTER_OFF));
 			}
 		}
-		smartUpdate("disabled", convertActionDisabledToJSON(_actionDisabled));
+		return disabled;
 	}
 }
