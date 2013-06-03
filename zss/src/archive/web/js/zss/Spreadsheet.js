@@ -641,6 +641,9 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 					shtCtrl.setActionDisabled(v);
 				}
 			}
+			var sb = this._sheetBar;
+			if (sb)
+				sb.setDisabled(v);
 		},
 		/**
 		 * Sets whether show formula bar or not

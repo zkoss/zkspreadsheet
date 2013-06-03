@@ -1,7 +1,11 @@
 package org.zkoss.zss.ui;
 
+import java.util.List;
+import java.util.Set;
+
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.SerializableEventListener;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.event.Events;
 
 /**
@@ -14,10 +18,10 @@ public interface UserActionHandler extends SerializableEventListener<Event>{
 
 	/**
 	 * Returns the interested events of the spreadsheet.  
-	 * @return event name array if you have any interested event of spreadsheet.
+	 * @return event name list if you have any interested event of spreadsheet.
 	 * @see Events
 	 */
-	String[] getInterestedEvents();
+	Set<String> getInterestedEvents();
 	
 	
 	/**
@@ -26,6 +30,14 @@ public interface UserActionHandler extends SerializableEventListener<Event>{
 	 * @see Spreadsheet#setCtrlKeys(String)
 	 */
 	String getCtrlKeys();
+	
+	
+	/**
+	 * Returns the supported user action that should be disabled 
+	 * @param sheet the sheet for cheeking
+	 * @return a disabled user action array
+	 */
+	Set<String> getSupportedUserAction(Sheet sheet);
 	
 //	/**
 //	 * the i18n label keys for client side

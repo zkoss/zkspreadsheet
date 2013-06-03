@@ -427,6 +427,9 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 			chd.redraw(out);
 		}
 		out.push('</div>');
+	},
+	setDisabled: function (actions){
+		//TODO should apply disabled action to add btn and context menu
 	}
 });
 
@@ -448,6 +451,9 @@ zss.Sheetbar = zk.$extends(zul.layout.South, {
    	},
    	getSclass: function () {
    		return 'zssheetbar';
+   	},
+   	setDisabled: function (actions){
+   		this.cave.setDisabled(actions);
    	}
 });
 })();

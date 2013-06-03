@@ -1,6 +1,25 @@
+/* DefaultUserActionHandler.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/06/03 by Dennis
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+ */
 package org.zkoss.zss.ui;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.zkoss.lang.Strings;
 import org.zkoss.util.resource.Labels;
@@ -42,91 +61,6 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	private static final long serialVersionUID = 1L;
 	private static ThreadLocal<UserActionContext> _ctx = new ThreadLocal<UserActionContext>();
 	private Clipboard _clipboard;
-
-	//TODO, redesign to customizable action
-	/*package*/ static final UserAction[] DISABLED_ACTION_WHEN_BOOK_CLOSE = new UserAction[]{
-	UserAction.SAVE_BOOK,
-	UserAction.EXPORT_PDF, 
-	UserAction.PASTE,
-	UserAction.CUT,
-	UserAction.COPY,
-	UserAction.FONT_FAMILY,
-	UserAction.FONT_SIZE,
-	UserAction.FONT_BOLD,
-	UserAction.FONT_ITALIC,
-	UserAction.FONT_UNDERLINE,
-	UserAction.FONT_STRIKE,
-	UserAction.BORDER,
-	UserAction.FONT_COLOR,
-	UserAction.FILL_COLOR,
-	UserAction.VERTICAL_ALIGN,
-	UserAction.HORIZONTAL_ALIGN,
-	UserAction.WRAP_TEXT,
-	UserAction.MERGE_AND_CENTER,
-	UserAction.INSERT,
-	UserAction.DELETE,
-	UserAction.CLEAR,
-	UserAction.SORT_AND_FILTER,
-	UserAction.PROTECT_SHEET,
-	UserAction.GRIDLINES,
-	UserAction.INSERT_PICTURE,
-	UserAction.COLUMN_CHART,
-	UserAction.LINE_CHART,
-	UserAction.PIE_CHART,
-	UserAction.BAR_CHART,
-	UserAction.AREA_CHART,
-	UserAction.SCATTER_CHART,
-	UserAction.OTHER_CHART,
-	UserAction.HYPERLINK
-};
-
-	/*package*/ static UserAction[] DISABLED_ACTION_WHEN_SHEET_PROTECTED = new UserAction[]{
-	UserAction.FONT_FAMILY,
-	UserAction.FONT_SIZE,
-	UserAction.FONT_BOLD,
-	UserAction.FONT_ITALIC,
-	UserAction.FONT_UNDERLINE,
-	UserAction.FONT_STRIKE,
-	UserAction.BORDER,
-	UserAction.FONT_COLOR,
-	UserAction.FILL_COLOR,
-	UserAction.VERTICAL_ALIGN,
-	UserAction.HORIZONTAL_ALIGN,
-	UserAction.WRAP_TEXT,
-	UserAction.MERGE_AND_CENTER,
-	UserAction.INSERT,
-	UserAction.INSERT_SHIFT_CELL_RIGHT,
-	UserAction.INSERT_SHIFT_CELL_DOWN,
-	UserAction.INSERT_SHEET_ROW,
-	UserAction.INSERT_SHEET_COLUMN,
-	UserAction.DELETE,
-	UserAction.DELETE_SHIFT_CELL_LEFT,
-	UserAction.DELETE_SHIFT_CELL_UP,
-	UserAction.DELETE_SHEET_ROW,
-	UserAction.DELETE_SHEET_COLUMN,
-	UserAction.CLEAR,
-	UserAction.CLEAR_CONTENT,
-	UserAction.FORMAT_CELL,
-	UserAction.SORT_ASCENDING,
-	UserAction.SORT_DESCENDING,
-	UserAction.CUSTOM_SORT,
-	UserAction.FILTER,
-	UserAction.SORT_AND_FILTER,
-	UserAction.INSERT_PICTURE,
-	UserAction.COLUMN_CHART,
-	UserAction.LINE_CHART,
-	UserAction.PIE_CHART,
-	UserAction.BAR_CHART,
-	UserAction.AREA_CHART,
-	UserAction.SCATTER_CHART,
-	UserAction.OTHER_CHART,
-	UserAction.HYPERLINK
-	};
-	
-/*package*/ static UserAction[] DISABLED_ACTION_WHEN_FILTER_OFF = new UserAction[]{
-	UserAction.CLEAR_FILTER,
-	UserAction.REAPPLY_FILTER
-	};	
 	
 	protected void checkCtx(){
 		if(_ctx.get()==null){
@@ -189,13 +123,15 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return doCustom(action);
 		}
 		
-		if (UserAction.HOME_PANEL.equals(dua)) {
+		/*if (UserAction.HOME_PANEL.equals(dua)) {
 			return doShowHomePanel();
 		} else if (UserAction.INSERT_PANEL.equals(dua)) {
 			return doShowInsertPanel();
 		} else if (UserAction.FORMULA_PANEL.equals(dua)) {
 			return doShowFormulaPanel();
-		} else if (UserAction.ADD_SHEET.equals(dua)) {
+		} else*/else if (UserAction.CLOSE_BOOK.equals(dua)) {
+			return doCloseBook();
+		}else if (UserAction.ADD_SHEET.equals(dua)) {
 			return doAddSheet();
 		} else if (UserAction.DELETE_SHEET.equals(dua)) {
 			return doDeleteSheet();
@@ -210,13 +146,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return doProtectSheet();
 		} else if (UserAction.GRIDLINES.equals(dua)) {
 			return doGridlines();
-		} else if (UserAction.NEW_BOOK.equals(dua)) {
+		} /*else if (UserAction.NEW_BOOK.equals(dua)) {
 			return doNewBook();
 		} else if (UserAction.SAVE_BOOK.equals(dua)) {
 			return doSaveBook();
 		} else if (UserAction.EXPORT_PDF.equals(dua)) {
 			return doExportPDF();
-		} else if (UserAction.PASTE.equals(dua)) {
+		} */else if (UserAction.PASTE.equals(dua)) {
 			return doPaste();
 		} else if (UserAction.PASTE_FORMULA.equals(dua)) {
 			return doPasteFormula();
@@ -226,9 +162,9 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return doPasteAllExceptBorder();
 		} else if (UserAction.PASTE_TRANSPOSE.equals(dua)) {
 			return doPasteTranspose();
-		} else if (UserAction.PASTE_SPECIAL.equals(dua)) {
+		} /*else if (UserAction.PASTE_SPECIAL.equals(dua)) {
 			return doPasteSpecial();
-		} else if (UserAction.CUT.equals(dua)) {
+		} */else if (UserAction.CUT.equals(dua)) {
 			return doCut();	
 		} else if (UserAction.COPY.equals(dua)) {
 			return doCopy();
@@ -314,9 +250,9 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return doSortAscending();
 		} else if (UserAction.SORT_DESCENDING.equals(dua)) {
 			return doSortDescending();
-		} else if (UserAction.CUSTOM_SORT.equals(dua)) {
+		} /*else if (UserAction.CUSTOM_SORT.equals(dua)) {
 			return doCustomSort();
-		} else if (UserAction.FILTER.equals(dua)) {
+		} */else if (UserAction.FILTER.equals(dua)) {
 			return doFilter();
 		} else if (UserAction.CLEAR_FILTER.equals(dua)) {
 			return doClearFilter();
@@ -328,17 +264,15 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return doClearStyle();
 		} else if (UserAction.CLEAR_ALL.equals(dua)) {
 			return doClearAll();
-		} else if (UserAction.HYPERLINK.equals(dua)) {
+		} /*else if (UserAction.HYPERLINK.equals(dua)) {
 			return doHyperlink();
-		} else if (UserAction.CLOSE_BOOK.equals(dua)) {
-			return doCloseBook();
 		} else if (UserAction.FORMAT_CELL.equals(dua)) {
 			return doFormatCell();
 		} else if (UserAction.COLUMN_WIDTH.equals(dua)) {
 			return doColumnWidth();
 		} else if (UserAction.ROW_HEIGHT.equals(dua)) {
 			return doRowHeight();
-		} else if (UserAction.HIDE_COLUMN.equals(dua)) {
+		} */else if (UserAction.HIDE_COLUMN.equals(dua)) {
 			return doHideColumn();
 		} else if (UserAction.UNHIDE_COLUMN.equals(dua)) {
 			return doUnhideColumn();
@@ -346,11 +280,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return doHideRow();
 		} else if (UserAction.UNHIDE_ROW.equals(dua)) {
 			return doUnhideRow();
-		} else if (UserAction.INSERT_FUNCTION.equals(dua)) {
+		} /*else if (UserAction.INSERT_FUNCTION.equals(dua)) {
 			return doInsertFunction();
-		}else{
+		} */else{
 			return doCustom(action);
 		}
+		
+		
 	}
 	
 	protected boolean doCustom(String action){
@@ -1324,76 +1260,82 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	
 	// non-implemented action
 	
-	protected boolean doRowHeight() {
-		showNotImplement(UserAction.ROW_HEIGHT.toString());
-		return true;
-	}
-
-	protected boolean doColumnWidth() {
-		showNotImplement(UserAction.COLUMN_WIDTH.toString());
-		return true;
-	}
-
-	protected boolean doFormatCell() {
-		showNotImplement(UserAction.FORMAT_CELL.toString());
-		return true;
-	}
-
-	protected boolean doHyperlink() {
-		showNotImplement(UserAction.HYPERLINK.toString());
-		return true;
-	}
-
-	protected boolean doCustomSort() {
-		showNotImplement(UserAction.CUSTOM_SORT.toString());
-		return true;
-	}
-
-	protected boolean doPasteSpecial() {
-		showNotImplement(UserAction.PASTE_SPECIAL.toString());
-		return true;
-	}
-
-	protected boolean doExportPDF() {
-		showNotImplement(UserAction.EXPORT_PDF.toString());
-		return true;
-	}
-
-	protected boolean doSaveBook() {
-		showNotImplement(UserAction.SAVE_BOOK.toString());
-		return true;
-	}
-
-	protected boolean doNewBook() {
-		showNotImplement(UserAction.NEW_BOOK.toString());
-		return true;
-	}
-
-	protected boolean doShowFormulaPanel() {
-		showNotImplement(UserAction.FORMULA_PANEL.toString());
-		return true;
-	}
-
-	protected boolean doShowInsertPanel() {
-		showNotImplement(UserAction.INSERT_PANEL.toString());
-		return true;
-	}
-
-	protected boolean doShowHomePanel() {
-		showNotImplement(UserAction.HOME_PANEL.toString());
-		return true;
-	}
-
-	protected boolean doInsertFunction() {
-		showNotImplement(UserAction.INSERT_FUNCTION.toString());
-		return true;
-	}
+//	protected boolean doRowHeight() {
+//		showNotImplement(UserAction.ROW_HEIGHT.toString());
+//		return true;
+//	}
+//
+//	protected boolean doColumnWidth() {
+//		showNotImplement(UserAction.COLUMN_WIDTH.toString());
+//		return true;
+//	}
+//
+//	protected boolean doFormatCell() {
+//		showNotImplement(UserAction.FORMAT_CELL.toString());
+//		return true;
+//	}
+//
+//	protected boolean doHyperlink() {
+//		showNotImplement(UserAction.HYPERLINK.toString());
+//		return true;
+//	}
+//
+//	protected boolean doCustomSort() {
+//		showNotImplement(UserAction.CUSTOM_SORT.toString());
+//		return true;
+//	}
+//
+//	protected boolean doPasteSpecial() {
+//		showNotImplement(UserAction.PASTE_SPECIAL.toString());
+//		return true;
+//	}
+//
+//	protected boolean doExportPDF() {
+//		showNotImplement(UserAction.EXPORT_PDF.toString());
+//		return true;
+//	}
+//
+//	protected boolean doSaveBook() {
+//		showNotImplement(UserAction.SAVE_BOOK.toString());
+//		return true;
+//	}
+//
+//	protected boolean doNewBook() {
+//		showNotImplement(UserAction.NEW_BOOK.toString());
+//		return true;
+//	}
+//
+//	protected boolean doShowFormulaPanel() {
+//		showNotImplement(UserAction.FORMULA_PANEL.toString());
+//		return true;
+//	}
+//
+//	protected boolean doShowInsertPanel() {
+//		showNotImplement(UserAction.INSERT_PANEL.toString());
+//		return true;
+//	}
+//
+//	protected boolean doShowHomePanel() {
+//		showNotImplement(UserAction.HOME_PANEL.toString());
+//		return true;
+//	}
+//
+//	protected boolean doInsertFunction() {
+//		showNotImplement(UserAction.INSERT_FUNCTION.toString());
+//		return true;
+//	}
 
 	@Override
-	public String[] getInterestedEvents() {
-		return new String[] { Events.ON_AUX_ACTION,Events.ON_SHEET_SELECT, Events.ON_CTRL_KEY, Events.ON_CELL_SELECTION_UPDATE, 
-				org.zkoss.zk.ui.event.Events.ON_CANCEL,
-				Events.ON_CELL_DOUBLE_CLICK, Events.ON_START_EDITING };
+	public Set<String> getInterestedEvents() {
+		Set<String> evts = new LinkedHashSet<String>();
+		evts.add(Events.ON_AUX_ACTION);
+		evts.add(Events.ON_SHEET_SELECT);
+		evts.add(Events.ON_CTRL_KEY);
+		evts.add(Events.ON_CELL_SELECTION_UPDATE);
+		evts.add(org.zkoss.zk.ui.event.Events.ON_CANCEL);
+//		evts.add(Events.ON_CELL_DOUBLE_CLICK);
+		evts.add(Events.ON_START_EDITING);
+		return evts;
 	}
 	
 	@Override
@@ -1481,9 +1423,9 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			}else if(evt.getAction()==CellSelectionAction.RESIZE){
 				doResizeCellSelection(new Rect(evt.getOrigleft(),evt.getOrigtop(),evt.getOrigright(),evt.getOrigbottom()),getSelection());
 			}
-		}else if(Events.ON_CELL_DOUBLE_CLICK.equals(nm)){//TODO check if we need it still
+		/*}else if(Events.ON_CELL_DOUBLE_CLICK.equals(nm)){//TODO check if we need it still
 			clearClipboard();
-		}else if(Events.ON_START_EDITING.equals(nm)){
+		*/}else if(Events.ON_START_EDITING.equals(nm)){
 			clearClipboard();
 		}else if(org.zkoss.zk.ui.event.Events.ON_CANCEL.equals(nm)){
 			clearClipboard();
@@ -1544,6 +1486,121 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	@Override
 	public String getCtrlKeys() {
 		return "^X^C^V^B^I^U#del";
+	}
+
+	@Override
+	public Set<String> getSupportedUserAction(Sheet sheet) {
+		Set<String> actions = new LinkedHashSet<String>();
+		if(sheet==null){
+			//
+			return actions;
+//			disabled.addAll(Arrays.asList(DefaultUserActionHandler.DISABLED_ACTION_WHEN_BOOK_CLOSE));
+		}else{
+			int sheetnum = sheet.getBook().getNumberOfSheets();
+//			actions.add(UserAction.HOME_PANEL.toString());
+//			actions.add(UserAction.INSERT_PANEL.toString());
+//			actions.add(UserAction.FORMULA_PANEL.toString());
+//			actions.add(UserAction.NEW_BOOK.toString());
+//			actions.add(UserAction.SAVE_BOOK.toString());
+//			actions.add(UserAction.EXPORT_PDF.toString());
+			
+			actions.add(UserAction.CLOSE_BOOK.toString());
+			
+			actions.add(UserAction.ADD_SHEET.toString());
+			if(sheetnum>1){
+				actions.add(UserAction.DELETE_SHEET.toString());
+				if(sheet.getBook().getSheetIndex(sheet)>0){
+					actions.add(UserAction.MOVE_SHEET_LEFT.toString());
+				}
+				if(sheet.getBook().getSheetIndex(sheet)<sheetnum-1){
+					actions.add(UserAction.MOVE_SHEET_RIGHT.toString());
+				}
+				
+			}
+			actions.add(UserAction.RENAME_SHEET.toString());
+			actions.add(UserAction.PROTECT_SHEET.toString());
+			actions.add(UserAction.GRIDLINES.toString());
+
+			
+			
+			if(!sheet.isProtected()){
+				actions.add(UserAction.PASTE.toString());
+				actions.add(UserAction.PASTE_FORMULA.toString());
+				actions.add(UserAction.PASTE_VALUE.toString());
+				actions.add(UserAction.PASTE_ALL_EXPECT_BORDERS.toString());
+				actions.add(UserAction.PASTE_TRANSPOSE.toString());
+//				actions.add(UserAction.PASTE_SPECIAL.toString());
+				actions.add(UserAction.CUT.toString());
+				actions.add(UserAction.COPY.toString());
+				actions.add(UserAction.FONT_FAMILY.toString());
+				actions.add(UserAction.FONT_SIZE.toString());
+				actions.add(UserAction.FONT_BOLD.toString());
+				actions.add(UserAction.FONT_ITALIC.toString());
+				actions.add(UserAction.FONT_UNDERLINE.toString());
+				actions.add(UserAction.FONT_STRIKE.toString());
+				actions.add(UserAction.BORDER.toString());
+				actions.add(UserAction.BORDER_BOTTOM.toString());
+				actions.add(UserAction.BORDER_TOP.toString());
+				actions.add(UserAction.BORDER_LEFT.toString());
+				actions.add(UserAction.BORDER_RIGHT.toString());
+				actions.add(UserAction.BORDER_NO.toString());
+				actions.add(UserAction.BORDER_ALL.toString());
+				actions.add(UserAction.BORDER_OUTSIDE.toString());
+				actions.add(UserAction.BORDER_INSIDE.toString());
+				actions.add(UserAction.BORDER_INSIDE_HORIZONTAL.toString());
+				actions.add(UserAction.BORDER_INSIDE_VERTICAL.toString());
+				actions.add(UserAction.FONT_COLOR.toString());
+				actions.add(UserAction.FILL_COLOR.toString());
+				actions.add(UserAction.VERTICAL_ALIGN.toString());//folder
+				actions.add(UserAction.VERTICAL_ALIGN_TOP.toString());
+				actions.add(UserAction.VERTICAL_ALIGN_MIDDLE.toString());
+				actions.add(UserAction.VERTICAL_ALIGN_BOTTOM.toString());
+				actions.add(UserAction.HORIZONTAL_ALIGN.toString());//folder
+				actions.add(UserAction.HORIZONTAL_ALIGN_LEFT.toString());
+				actions.add(UserAction.HORIZONTAL_ALIGN_CENTER.toString());
+				actions.add(UserAction.HORIZONTAL_ALIGN_RIGHT.toString());
+				actions.add(UserAction.WRAP_TEXT.toString());
+				actions.add(UserAction.MERGE_AND_CENTER.toString());
+				actions.add(UserAction.MERGE_ACROSS.toString());
+				actions.add(UserAction.MERGE_CELL.toString());
+				actions.add(UserAction.UNMERGE_CELL.toString());
+				actions.add(UserAction.INSERT.toString());//folder
+				actions.add(UserAction.INSERT_SHIFT_CELL_RIGHT.toString());
+				actions.add(UserAction.INSERT_SHIFT_CELL_DOWN.toString());
+				actions.add(UserAction.INSERT_SHEET_ROW.toString());
+				actions.add(UserAction.INSERT_SHEET_COLUMN.toString());
+				actions.add(UserAction.DELETE.toString());//folder
+				actions.add(UserAction.DELETE_SHIFT_CELL_LEFT.toString());
+				actions.add(UserAction.DELETE_SHIFT_CELL_UP.toString());
+				actions.add(UserAction.DELETE_SHEET_ROW.toString());
+				actions.add(UserAction.DELETE_SHEET_COLUMN.toString());
+				actions.add(UserAction.SORT_AND_FILTER.toString());//folder
+				actions.add(UserAction.SORT_ASCENDING.toString());
+				actions.add(UserAction.SORT_DESCENDING.toString());
+//				actions.add(UserAction.CUSTOM_SORT.toString());
+				actions.add(UserAction.CLEAR.toString());//folder
+				actions.add(UserAction.CLEAR_CONTENT.toString());
+				actions.add(UserAction.CLEAR_STYLE.toString());
+				actions.add(UserAction.CLEAR_ALL.toString());
+//				actions.add(UserAction.HYPERLINK.toString());
+//				actions.add(UserAction.FORMAT_CELL.toString());
+//				actions.add(UserAction.COLUMN_WIDTH.toString());
+//				actions.add(UserAction.ROW_HEIGHT.toString());
+				actions.add(UserAction.HIDE_COLUMN.toString());
+				actions.add(UserAction.UNHIDE_COLUMN.toString());
+				actions.add(UserAction.HIDE_ROW.toString());
+				actions.add(UserAction.UNHIDE_ROW.toString());
+//				actions.add(UserAction.INSERT_FUNCTION.toString());				
+			}
+			
+			actions.add(UserAction.FILTER.toString());
+			if(sheet.isAutoFilterEnabled()){
+				actions.add(UserAction.CLEAR_FILTER.toString());
+				actions.add(UserAction.REAPPLY_FILTER.toString());
+//				disabled.addAll(Arrays.asList(DefaultUserActionHandler.DISABLED_ACTION_WHEN_FILTER_OFF));
+			}
+		}
+		return actions;
 	}
 
 }

@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -187,7 +188,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private static final String WIDGET_LOADERS = "org.zkoss.zss.ui.sys.WidgetLoader.class";
 	
 //	public static final String TOOLBAR_DISABLED_ACTION = "org.zkoss.zss.ui.ToolbarAction.disabled";
-	public static final String USER_ACTION_HANDLER = "org.zkoss.zss.ui.UserActionHandler.class";
+	public static final String USER_ACTION_HANDLER_CLS = "org.zkoss.zss.ui.UserActionHandler.class";
 	
 	private static final int DEFAULT_TOP_HEAD_HEIGHT = 20;
 	private static final int DEFAULT_LEFT_HEAD_WIDTH = 36;
@@ -318,13 +319,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				processStopEditing((String) data[0], (StopEditingEvent) data[1], (String) data[2]);
 			}
 		});
-		
-		reloadUserActionEventRegisteration();
-		//end for action-handler
 	}
 	
 	
-	private String[] _lastUAEvents;
+	private Set<String> _lastUAEvents;
 	private EventListener _uAEventDispatcher;
 	
 	private void reloadUserActionEventRegisteration() {
@@ -335,7 +333,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		UserActionHandler ua = this.getUserActionHandler();
 		_lastUAEvents = ua.getInterestedEvents();
-		if(ua instanceof EventListener && _lastUAEvents!=null && _lastUAEvents.length>0){
+		if(ua instanceof EventListener && _lastUAEvents!=null && _lastUAEvents.size()>0){
 			_uAEventDispatcher = new EventListener() {
 				public void onEvent(Event event) throws Exception {
 					UserActionHandler ua = getUserActionHandler();
@@ -1539,7 +1537,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_showToolbar) {
 			//20130507,Dennis,add commnet check, no actionDisabled json will cause client error when show context menu.
 //			if (_actionDisabled.size() > 0) {
-				renderer.render("actionDisabled", convertActionDisabledToJSON(getDisabledUserAction()));
+			renderer.render("actionDisabled",
+					convertToActionDisabledToJSON(getUserActionHandler()
+							.getSupportedUserAction(getSelectedSheet())));
 //			}
 			renderer.render("showToolbar", _showToolbar);
 		}
@@ -4199,10 +4199,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //		return _actionDisabled.contains(action);
 //	}
 	
-	private static List<String> convertActionDisabledToJSON(Set<UserAction> disabled) {
-		ArrayList<String> disd = new ArrayList<String>(disabled.size());
-		for (UserAction a : disabled) {
-			disd.add(a.toString());
+	private static List<String> convertToActionDisabledToJSON(Set<String> supported) {
+		ArrayList<String> disd = new ArrayList<String>();
+		String act;
+		for(UserAction ua:UserAction.values()){
+			act = ua.toString();
+			if(supported==null || !supported.contains(act)){
+				disd.add(act);
+			}
 		}
 		return disd;
 	}
@@ -4226,7 +4230,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 */
 	public UserActionHandler getUserActionHandler() {
 		if (_actionHandler == null) {
-			String cls = (String) Library.getProperty(USER_ACTION_HANDLER);
+			String cls = (String) getAttribute(USER_ACTION_HANDLER_CLS,true);
+			
+			if(cls==null){
+				cls = (String) Library.getProperty(USER_ACTION_HANDLER_CLS);
+			}
 			if (cls != null) {
 				try {
 					_actionHandler = (UserActionHandler) Classes.newInstance(cls, null, null);
@@ -4875,6 +4883,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_showToolbar 
 		|| (ctrlKeys != null && (ctrlKeys.toLowerCase().indexOf("^c") >= 0 || ctrlKeys.indexOf("^v") >= 0))) {
 		}
+		
+		reloadUserActionEventRegisteration();
 	}
 	
 	public class HelperContainer<T> {
@@ -5016,23 +5026,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private void refreshToolbarDisabled(){
 		if(!isInvalidated()){
-			smartUpdate("actionDisabled", convertActionDisabledToJSON(getDisabledUserAction()));
+			smartUpdate("actionDisabled",
+					convertToActionDisabledToJSON(getUserActionHandler()
+							.getSupportedUserAction(getSelectedSheet())));
 		}
-	}
-	
-	
-	private Set<UserAction> getDisabledUserAction(){
-		Set<UserAction> disabled = new HashSet<UserAction>(_actionDisabled);
-		if(getBook()==null){
-			disabled.addAll(Arrays.asList(DefaultUserActionHandler.DISABLED_ACTION_WHEN_BOOK_CLOSE));
-		}else{
-			if(getSelectedSheet().isProtected()){
-				disabled.addAll(Arrays.asList(DefaultUserActionHandler.DISABLED_ACTION_WHEN_SHEET_PROTECTED));
-			}
-			if(!getSelectedSheet().isAutoFilterEnabled()){
-				disabled.addAll(Arrays.asList(DefaultUserActionHandler.DISABLED_ACTION_WHEN_FILTER_OFF));
-			}
-		}
-		return disabled;
 	}
 }
