@@ -154,34 +154,34 @@ public class Events {
 
 	/**
 	 * The onSheetNameChange event. (with {@link SheetEvent}
-	 * Sent when sheet is deleted.
+	 * This event is sent when sheet's name is changed by operating the book model.
 	 * @see SheetEvent
 	 */
 	public static final String ON_SHEET_NAME_CHANGE = "onSheetNameChange";
 	/**
 	 * The onSheetOrderChange event. (with {@link SheetEvent}
-	 * Sent when sheet is deleted.
+	 * This event is sent when sheet's order is changed by operating the book model.
 	 * @see SheetEvent
 	 */
 	public static final String ON_SHEET_ORDER_CHANGE = "onSheetOrderChange";
 	
 	/**
 	 * The onSheetDelete event. (with {@link SheetDeleteEvent}
-	 * Sent when sheet is deleted.
+	 * This event is sent when sheet is deleted by operating the book model.
 	 * @see SheetDeleteEvent
 	 */
 	public static final String ON_SHEET_DELETE = "onSheetDelete";
 
 	/**
 	 * The onSheetCreate event. (with {@link SheetEvent}
-	 * Sent when sheet is deleted.
+	 * This event is sent when sheet is created by operating the book model.
 	 * @see SheetEvent
 	 */
 	public static final String ON_SHEET_CREATE = "onSheetCreate";
 		
 	/** 
 	 * The onCellChange event (with {@link CellAreaEvent}
-	 * Sent when cell contents changed.
+	 * This event is sent when cell contents changed by operating the book model.
 	 * @see CellAreaEvent
 	 */
 	public static final String ON_CELL_CHANGE = "onCellChange";

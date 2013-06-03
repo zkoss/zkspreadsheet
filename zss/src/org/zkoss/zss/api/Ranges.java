@@ -105,8 +105,8 @@ public class Ranges {
 	 * @param col column
 	 * @return the cell reference string (e.g. A1)
 	 */
-	public static String toCellReference(int row,int col){
-		return toCellReference(null,row,col);
+	public static String getCellReference(int row,int col){
+		return getCellReference(null,row,col);
 	}
 	
 	/**
@@ -116,7 +116,7 @@ public class Ranges {
 	 * @param col column
 	 * @return the cell reference string (e.g. Sheet1!A1)
 	 */
-	public static String toCellReference(Sheet sheet,int row,int col){
+	public static String getCellReference(Sheet sheet,int row,int col){
 		CellReference cf = new CellReference(sheet==null?null:sheet.getSheetName(),row, col,false,false);
 		return cf.formatAsString();
 	}
@@ -129,8 +129,8 @@ public class Ranges {
 	 * @param rCol right column
 	 * @return the area reference string (e.g. A1:B2)
 	 */
-	public static String toAreaReference(int tRow, int lCol, int bRow, int rCol){
-		return toAreaReference(null,tRow, lCol, bRow, rCol);
+	public static String getAreaReference(int tRow, int lCol, int bRow, int rCol){
+		return getAreaReference(null,tRow, lCol, bRow, rCol);
 	}
 	
 	/**
@@ -138,8 +138,8 @@ public class Ranges {
 	 * @param area area
 	 * @return the area reference string (e.g. A1:B2)
 	 */
-	public static String toAreaReference(Rect area){
-		return toAreaReference(area.getTop(),area.getLeft(),area.getBottom(),area.getRight());
+	public static String getAreaReference(Rect area){
+		return getAreaReference(area.getTop(),area.getLeft(),area.getBottom(),area.getRight());
 	}	
 	
 	/**
@@ -151,7 +151,7 @@ public class Ranges {
 	 * @param rCol right column
 	 * @return the area reference string (e.g. Sheet1!A1:B2)
 	 */
-	public static String toAreaReference(Sheet sheet, int tRow, int lCol, int bRow, int rCol){
+	public static String getAreaReference(Sheet sheet, int tRow, int lCol, int bRow, int rCol){
 		String sn = sheet==null?null:sheet.getSheetName();
 		AreaReference af = new AreaReference(new CellReference(sn,tRow,lCol,false,false), new CellReference(sn,bRow,rCol,false,false));
 		return af.formatAsString();
@@ -163,9 +163,9 @@ public class Ranges {
 	 * @param area area
 	 * @return the area reference string (e.g. Sheet1!A1:B2)
 	 */
-	public static String toAreaReference(Sheet sheet, Rect area){
+	public static String getAreaReference(Sheet sheet, Rect area){
 		String sn = sheet==null?null:sheet.getSheetName();
-		return toAreaReference(sheet, area.getTop(),area.getLeft(),area.getBottom(),area.getRight());
+		return getAreaReference(sheet, area.getTop(),area.getLeft(),area.getBottom(),area.getRight());
 	}
 	
 	/**
@@ -173,7 +173,7 @@ public class Ranges {
 	 * @param column column
 	 * @return the column reference string (e.g A, AB)
 	 */
-	public static String toColumnReference(int column){
+	public static String getColumnReference(int column){
 		return CellReference.convertNumToColString(column);
 	}
 	

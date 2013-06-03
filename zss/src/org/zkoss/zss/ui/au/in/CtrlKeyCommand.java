@@ -66,7 +66,7 @@ public class CtrlKeyCommand implements Command {
 	private void handleSpreadsheetKeyDown(AuRequest request) {
 		Map data = request.getData();
 		org.zkoss.zk.ui.event.KeyEvent evt = KeyEvent.getKeyEvent(request);
-		Event zssKeyEvt = new KeyEvent(evt.getName(), evt.getTarget(), 
+		Event zssKeyEvt = new KeyEvent(Events.ON_CTRL_KEY, evt.getTarget(), 
 				evt.getKeyCode(), evt.isCtrlKey(), evt.isShiftKey(), evt.isAltKey(), 
 				AuRequests.getInt(data, "tRow", -1), AuRequests.getInt(data, "lCol", -1),
 				AuRequests.getInt(data, "bRow", -1), AuRequests.getInt(data, "rCol", -1));
@@ -104,7 +104,7 @@ public class CtrlKeyCommand implements Command {
 			//TODO ignore it or throw exception?
 			return;
 		}
-		Event zssKeyEvt = new WidgetKeyEvent(evt.getName(), evt.getTarget(), sheet,widgetData,
+		Event zssKeyEvt = new WidgetKeyEvent(org.zkoss.zss.ui.event.Events.ON_WIDGET_CTRL_KEY, evt.getTarget(), sheet,widgetData,
 				evt.getKeyCode(), evt.isCtrlKey(), evt.isShiftKey(), evt.isAltKey());
 		Events.postEvent(zssKeyEvt);
 	}
