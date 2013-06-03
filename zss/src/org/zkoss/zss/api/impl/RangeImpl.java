@@ -521,9 +521,9 @@ public class RangeImpl implements Range{
 				index3==null?null:((RangeImpl)index1).getNative()/*rng3*/, desc3/*desc3*/,
 				header?BookHelper.SORT_HEADER_YES:BookHelper.SORT_HEADER_NO/*header*/,
 				-1/*orderCustom*/, matchCase, sortByRows, -1/*sortMethod*/, 
-				EnumUtil.toRangeSortDataOption(dataOption1)/*dataOption1*/,
-				EnumUtil.toRangeSortDataOption(dataOption2)/*dataOption2*/,
-				EnumUtil.toRangeSortDataOption(dataOption3)/*dataOption3*/);
+				dataOption1==null?BookHelper.SORT_NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption1)/*dataOption1*/,
+				dataOption2==null?BookHelper.SORT_NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption2)/*dataOption2*/,
+				dataOption3==null?BookHelper.SORT_NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption3)/*dataOption3*/);
 	}
 	
 	/** check if auto filter is enable or not.**/

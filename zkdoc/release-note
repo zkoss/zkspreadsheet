@@ -14,6 +14,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-310 Rename a sheet to its original should not show up a error message
   ZSS-292 left click row header (or column header) appears context menu
   ZSS-324 Hiding all columns causes non-stopping AU and columns cannot be unhided
+  ZSS-291 sorting a group of number with style causes null pointer exception
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
