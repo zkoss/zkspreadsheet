@@ -116,7 +116,7 @@ import org.zkoss.zss.ui.au.out.AuSelection;
 import org.zkoss.zss.ui.event.CellAreaEvent;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.Events;
-import org.zkoss.zss.ui.event.HyperlinkEvent;
+import org.zkoss.zss.ui.event.CellHyperlinkEvent;
 import org.zkoss.zss.ui.event.SheetDeleteEvent;
 import org.zkoss.zss.ui.event.SheetEvent;
 import org.zkoss.zss.ui.event.StartEditingEvent;
@@ -4671,7 +4671,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		addClientEvent(Spreadsheet.class, Events.ON_START_EDITING, CE_IMPORTANT | CE_NON_DEFERRABLE);
 		addClientEvent(Spreadsheet.class, Events.ON_STOP_EDITING, CE_IMPORTANT | CE_NON_DEFERRABLE);
 		
-		addClientEvent(Spreadsheet.class, Events.ON_HYPERLINK, CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_CELL_HYPERLINK, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_FILTER, CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_VALIDATOR, CE_DUPLICATE_IGNORE);
 		
@@ -4708,8 +4708,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	public void service(AuRequest request, boolean everError) {
 		final String cmd = request.getCommand();
 
-		if (Events.ON_HYPERLINK.equals(cmd)) {
-			final HyperlinkEvent evt = HyperlinkEvent.getHyperlinkEvent(request);
+		if (Events.ON_CELL_HYPERLINK.equals(cmd)) {
+			final CellHyperlinkEvent evt = CellHyperlinkEvent.getHyperlinkEvent(request);
 			if (evt != null) {
 				org.zkoss.zk.ui.event.Events.postEvent(evt);
 			}

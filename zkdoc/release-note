@@ -24,6 +24,8 @@ ZK Spreadsheet 3.0.0 RC
   + SelectionChangeEvent is renamed to CellSelectionUpdateEvent and arguments sequence is also redefined.
   + HeaderEvent is renamed to HeaderUpdateEvent
   + SheetCreateEvent, SheetSelectedEvent and SheetUpdateEvent are removed, use SheetEvent instead.
+  + FilterMouseEvent is renamed to CellFilterEvent
+  + HyperlinkEvent is renamed to CellHyperlinkEvent
   + Event name change:
     onValidateDrop > onCellValidator
     onFilter > onCellFilter

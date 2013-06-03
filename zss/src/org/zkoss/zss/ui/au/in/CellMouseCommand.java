@@ -30,9 +30,10 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellMouseEvent;
-import org.zkoss.zss.ui.event.FilterMouseEvent;
+import org.zkoss.zss.ui.event.CellFilterEvent;
 import org.zkoss.zss.ui.impl.XUtils;
 
 /**
@@ -90,14 +91,15 @@ public class CellMouseCommand implements Command {
 			int field = (Integer) data.get("field");
 			//handling auto filter when user click on the auto-fitler icon on the cell
 			//TODO possible to let user override it?
-			new AutoFilterDefaultHandler().processFilter(spreadsheet, sheet, row, col, field);
+			Rect filterArea = new AutoFilterDefaultHandler().processFilter(spreadsheet, sheet, row, col, field);
 			//consider to remove  ON_CELL_FILTER , it is useless for user if he can't override it
-			Events.postEvent(new FilterMouseEvent(type, comp, shx, shy, key, sheet, row, col, mx, my, field));
+
+			Events.postEvent(new CellFilterEvent(type, comp, sheet, row, col, filterArea, field, shx, shy, key, mx, my));
 		} else if (org.zkoss.zss.ui.event.Events.ON_CELL_VALIDATOR.equals(type)) {
 			//consider to remove  ON_CELL_VALIDATOR event , it is useless for user if he can't override it
-			Events.postEvent(new CellMouseEvent(type, comp, shx, shy, key, sheet, row, col, mx, my));
+			Events.postEvent(new CellMouseEvent(type, comp, sheet, row, col, shx, shy, key, mx, my));
 		} else {
-			Events.postEvent(new CellMouseEvent(type, comp, shx, shy, key, sheet, row, col, mx, my));
+			Events.postEvent(new CellMouseEvent(type, comp, sheet, row, col, shx, shy, key, mx, my));
 		}
 	}
 }

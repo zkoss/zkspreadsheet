@@ -42,6 +42,7 @@ import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XRanges;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.XUtils;
 
@@ -55,7 +56,7 @@ import org.zkoss.zss.ui.impl.XUtils;
 
 	private FilterRowInfo blankRowInfo;
 	
-	/*package*/ void processFilter (Spreadsheet spreadsheet,Sheet sheet,int row, int col, int field) {
+	/*package*/ Rect processFilter(Spreadsheet spreadsheet,Sheet sheet,int row, int col, int field) {
 		XSheet worksheet = ((SheetImpl)sheet).getNative();
 		final AutoFilter autoFilter = worksheet.getAutoFilter();
 		final FilterColumn filterColumn = autoFilter.getFilterColumn(field - 1);
@@ -64,6 +65,9 @@ import org.zkoss.zss.ui.impl.XUtils;
 		
 		spreadsheet.smartUpdate("autoFilterPopup", 
 			convertFilterInfoToJSON(row, col, field, rangeAddr, scanRows(field, filterColumn, range, worksheet)));
+		
+		Rect filterArea = new Rect(rangeAddr);
+		return filterArea;
 	}
 	
 	private Map convertFilterInfoToJSON(int row, int col, int field, String rangeAddr, TreeSet<FilterRowInfo> orderedRowInfos) {

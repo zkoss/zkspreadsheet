@@ -28,14 +28,14 @@ import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.XUtils;
 
 /**
- * Event when end user click on the hyperlink of a cell (used with onHyperlink event).
+ * Event when end user click on the hyperlink of a cell (used with onCellHyperlink event).
  * @author henrichen
  */
-public class HyperlinkEvent extends CellMouseEvent{
+public class CellHyperlinkEvent extends CellMouseEvent{
 	private String _address;
 	private HyperlinkType _type;
 
-	public static HyperlinkEvent getHyperlinkEvent(AuRequest request) {
+	public static CellHyperlinkEvent getHyperlinkEvent(AuRequest request) {
 		final Map data = request.getData();
 		final Component comp = request.getComponent();
 		String sheetId = (String) data.get("sheetId");
@@ -46,7 +46,7 @@ public class HyperlinkEvent extends CellMouseEvent{
 		final String name = request.getCommand();
 		final int keys = AuRequests.parseKeys(data);
 		final int type = AuRequests.getInt(data, "type", 0, true);
-		return new HyperlinkEvent(name, comp, sheet,
+		return new CellHyperlinkEvent(name, comp, sheet,
 				AuRequests.getInt(data, "row", 0, true),
 				AuRequests.getInt(data, "col", 0, true),
 				(String) data.get("href"),
@@ -56,12 +56,13 @@ public class HyperlinkEvent extends CellMouseEvent{
 				AuRequests.getInt(data, "pageX", 0, true),
 				AuRequests.getInt(data, "pageY", 0, true), keys);
 	}
-	public HyperlinkEvent(String name, Component target, Sheet sheet, int row ,int col, String address, HyperlinkType type, int x, int y,
+
+	public CellHyperlinkEvent(String name, Component target, Sheet sheet, int row ,int col, String address, HyperlinkType type, int x, int y,
 			int pageX, int pageY, int keys) {
-		super(name, target, x, y, keys, sheet, row, col, pageX, pageY);
+		super(name, target, sheet, row, col, x, y, keys, pageX, pageY);
 		this._address = address;
 		this._type = type;
-	}
+	}	
 
 	/**
 	 * LINK Reference.

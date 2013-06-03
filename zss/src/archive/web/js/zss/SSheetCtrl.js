@@ -1539,10 +1539,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this._wgt.fire('onCellSelectionUpdate',
 				{sheetId: this.serverSheetId, type:type, action: action, left: left,top: top, right: right, bottom: bottom, orgileft: orgleft, orgitop: orgtop, orgiright: orgright, orgibottom: orgbottom});
 	},
-	_sendOnHyperlink: function (row, col, href, type, evt) {
+	_sendOnCellHyperlink: function (row, col, href, type, evt) {
 		var wgt = this._wgt,
 			data = zk.copy(evt.data, {sheetId: this.serverSheetId, row: row, col: col, href: href, type: type});
-		wgt.fire('onHyperlink', data, wgt.isListen('onHyperlink') ? {toServer: true} : null);
+		wgt.fire('onCellHyperlink', data, wgt.isListen('onCellHyperlink') ? {toServer: true} : null);
 	},
 	_timeoutId: null,
 	_fireOnOpenAndEdit: function (time) { //open Editbox and start editing

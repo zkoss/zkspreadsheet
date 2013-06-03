@@ -32,7 +32,18 @@ public class CellMouseEvent extends MouseEvent{
 	private int _row;
 	private int _col;
 	
+	@Deprecated
 	public CellMouseEvent(String name, Component target, int x,int y, int keys,Sheet sheet, int row ,int col,int clientx,int clienty) {
+		super(name, target, x, y, clientx, clienty, keys);
+		_sheet = sheet;
+		this._row = row;
+		this._col = col;
+	}
+	
+	/**
+	 * @since 3.0.0
+	 */
+	public CellMouseEvent(String name, Component target, Sheet sheet, int row ,int col, int x,int y, int keys,int clientx,int clienty) {
 		super(name, target, x, y, clientx, clienty, keys);
 		_sheet = sheet;
 		this._row = row;

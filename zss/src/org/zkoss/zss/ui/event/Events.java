@@ -116,10 +116,10 @@ public class Events {
 	public static final String ON_EDITBOX_EDITING = "onEditboxEditing";
 	
 	/**
-	 * The onHyperlink event (with {@link HyperlinkEvent}).
+	 * The onCellHyperlink event (with {@link CellHyperlinkEvent}).
 	 * Sent when user click on the hyperlink of a cell.
 	 */
-	public static final String ON_HYPERLINK = "onHyperlink";
+	public static final String ON_CELL_HYPERLINK = "onCellHyperlink";
 	/**
 	 * The onSheetSelect event (with {@link SheetSelectEvent}
 	 * Sent when sheet is selected.

@@ -15,24 +15,44 @@ package org.zkoss.zss.ui.event;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.ui.Rect;
 
 /**
  * A class from handle event which about mouse event on a filter.
  * @author henrichen
  */
-public class FilterMouseEvent extends CellMouseEvent {
+public class CellFilterEvent extends CellMouseEvent {
 	private static final long serialVersionUID = 20110520114618L;
 	private final int _field;
-	public FilterMouseEvent(String name, Component target, int x,int y, int keys,Sheet sheet, int row ,int col,int clientx,int clienty, int field) {
+	private final Rect _filterArea;
+	@Deprecated
+	public CellFilterEvent(String name, Component target, int x,int y, int keys,Sheet sheet, int row ,int col,int clientx,int clienty, int field) {
 		super(name, target, x, y, keys, sheet, row, col, clientx, clienty);
 		_field = field;
+		_filterArea = null;
 	}
 	/**
-	 * get Filter field; see @link{Range#autoFilter()}.
+	 * @since 3.0.0
+	 */
+	public CellFilterEvent(String name, Component target, Sheet sheet, int row ,int col, Rect filterArea, int field, int x,int y, int keys,int clientx,int clienty) {
+		super(name, target, sheet, row, col, x, y, keys, clientx, clienty);
+		_field = field;
+		_filterArea = filterArea;
+	}
+	/**
+	 * Gets Filter field; see @link{Range#autoFilter()}.
 	 * @return sheet the related sheet 
 	 */
 	public int getField(){
 		return _field;
+	}
+	
+	/**
+	 * Gets filter area of the auto filter
+	 * @return
+	 */
+	public Rect getFilterArea(){
+		return _filterArea;
 	}
 	
 	public String toString(){
