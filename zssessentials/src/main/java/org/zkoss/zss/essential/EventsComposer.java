@@ -16,7 +16,7 @@ import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.UserAction;
+import org.zkoss.zss.ui.DefaultUserAction;
 import org.zkoss.zss.ui.event.AuxActionEvent;
 import org.zkoss.zss.ui.event.CellAreaEvent;
 import org.zkoss.zss.ui.event.CellEvent;
@@ -192,7 +192,7 @@ public class EventsComposer extends SelectorComposer<Component> {
 		if(!availableBookModel.contains(bookname)){
 			return;
 		}
-		Importer imp = Importers.getImporter("excel");
+		Importer imp = Importers.getImporter();
 		try {
 			Book book = imp.imports(WebApps.getCurrent().getResource("/WEB-INF/books/"+bookname), bookname);
 			ss.setBook(book);
@@ -211,14 +211,14 @@ public class EventsComposer extends SelectorComposer<Component> {
 		eventFilterModel.clearSelection();
 	}
 	@Listen("onClick = #selectAllFilter")
-	public void onSelectorAll(){
+	public void onSelectAll(){
 		eventFilterModel.clearSelection();
 		eventFilterModel.setSelection(new ArrayList<String>(eventFilterModel));
 	}
 	@Listen("onAuxAction = #ss")
 	public void onAuxActionHandling(AuxActionEvent event){
 		//handle extra action when book close
-		if(event.getAction().equals(UserAction.CLOSE_BOOK.toString())){
+		if(event.getAction().equals(DefaultUserAction.CLOSE_BOOK.toString())){
 			availableBookModel.clearSelection();
 		}
 	}
