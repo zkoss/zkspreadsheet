@@ -945,7 +945,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	public void setPreloadColumnSize(int size) {
 		if (_preloadColumnSize != size) {
 			_preloadColumnSize = size < 0 ? 0 : size;
-			smartUpdate("preloadColSize", _preloadRowSize);
+			smartUpdate("preloadColSize", _preloadColumnSize);
 		}
 	}
 	
@@ -1664,8 +1664,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 0, 0, 
 					initColSize , initRowSize));
 		
-		renderer.render("preloadRowSize", preloadColSize);
-		renderer.render("preloadColumnSize", preloadRowSize);
+		renderer.render("preloadRowSize", preloadRowSize);
+		renderer.render("preloadColumnSize", preloadColSize);
 		
 		renderer.render("initRowSize", initRowSize);
 		renderer.render("initColumnSize", initColSize);
