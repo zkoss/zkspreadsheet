@@ -25,21 +25,24 @@
 				<groupbox hflex="1" >
 					<caption label="Pdf Exporter" />
 					<vlayout>
+						<radiogroup id="pdfRadiogroup">
+							<radio label="All" checked="true"/>
+							<radio label="Current sheet"/>
+							<radio label="Current selection"/>
+						</radiogroup>
 						<button id="exportPdf" label="Export Pdf" />
-						<button id="exportPdfSheet"
-							label="Export Pdf (Current sheet only)" />
-						<button id="exportPdfSelection"
-							label="Export Pdf (Selection only)" />
 					</vlayout>
 				</groupbox>
 				<groupbox hflex="1" >
 					<caption label="Html Exporter" />
 					<vlayout>
+						<radiogroup id="htmlRadiogroup">
+							<radio label="All" checked="true"/>
+							<radio label="Current sheet"/>
+							<radio label="Current selection"/>
+						</radiogroup>
 						<button id="exportHtml" label="Export Html" />
-						<button id="exportHtmlSheet"
-							label="Export Html (Current sheet only)" />
-						<button id="exportHtmlSelection"
-							label="Export Html (Selection only)" />
+						
 					</vlayout>
 				</groupbox>
 			</vlayout>

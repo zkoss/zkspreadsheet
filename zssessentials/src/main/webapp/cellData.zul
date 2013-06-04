@@ -1,0 +1,63 @@
+<zk>
+	<window hflex="1" vflex="1"
+		apply="org.zkoss.zss.essential.CellDataComposer">
+		<hlayout hflex="1" vflex="1">
+			<spreadsheet id="ss" hflex="1" vflex="1"
+				showFormulabar="true" showContextMenu="true" showToolbar="true"
+				showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"
+				src="/WEB-INF/books/blank.xlsx" />
+			<vlayout width="300px" vflex="1">
+				<groupbox hflex="1" height="250px">
+					<caption label="Available Books" />
+					<listbox id="availableBookList" vflex="1">
+
+					</listbox>
+				</groupbox>
+				<groupbox hflex="1" vflex="1">
+					<caption label="Cell Information" />
+
+					<grid vflex="1" hflex="1">
+						<columns>
+							<column width="100px"/>
+							<column/>
+						</columns>
+						<rows>
+							<row>
+								Cell: <label id="cellRef"/>
+							</row>
+							<row>
+								Text: <label id="cellFormatText"/>
+							</row>
+							<row>
+								Edit-text: <label id="cellEditText"/>
+							</row>
+							<row>
+								Type: <label id="cellType"/>
+							</row>
+							<row>
+								Result Type: <label id="cellResultType"/>
+							</row>
+							<row>
+								Value: <label id="cellValue"/>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+				<groupbox hflex="1" vflex="1">
+					<caption label="Editor" />
+
+					<grid hflex="1" vflex="1">
+						<rows>
+							<row>
+								Edit-text: 
+							</row>
+							<row>
+								<textbox id="cellEditTextBox" hflex="1" rows="3"/>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</vlayout>
+		</hlayout>
+	</window>
+</zk>

@@ -46,68 +46,24 @@ import org.zkoss.zul.Listbox;
  * @author dennis
  *
  */
-public class EventsComposer extends SelectorComposer<Component> {
+public class EventsComposer extends AbstractDemoComposer {
 
 	private static final long serialVersionUID = 1L;
-
-	ListModelList<String> infoModel = new ListModelList<String>();
-	
-	ListModelList<String> availableBookModel = new ListModelList<String>();
 	
 	ListModelList<String> eventFilterModel = new ListModelList<String>();
 	
 	@Wire
-	Grid infoList;
-	
-	@Wire
-	Listbox availableBookList;
-	
-	@Wire
 	Listbox eventFilterList;
-	
-	@Wire
-	Spreadsheet ss;
 	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
 		initModel();
-		
-		availableBookList.setModel(availableBookModel);
-		infoList.setModel(infoModel);
 		eventFilterList.setModel(eventFilterModel);
-		
-		addInfo("Spreadsheet initialized");
-		
-		String book = Executions.getCurrent().getParameter("book");
-		if(book!=null){
-			try{
-				loadBookFromAvailable(book);
-			}catch(Exception x){}
-		}
-		
-		String sheet = Executions.getCurrent().getParameter("sheet");
-		if(sheet!=null){
-			try{
-				Sheet ssheet = ss.getBook().getSheet(sheet);
-				if(ssheet!=null){
-					ss.setSelectedSheet(ssheet.getSheetName());
-				}
-			}catch(Exception x){}
-		} 
-		
-		//sync available book selection
-		book = ss.getBook().getBookName();
-		
-		availableBookModel.addToSelection(book);
 	}
 
 	private void initModel() {
-		availableBookModel.add("blank.xlsx");
-		availableBookModel.add("sample.xlsx");
-		
-		
 		//Available events
 		//It is just for showing message, event is always listened in this demo.
 		eventFilterModel.setMultiple(true);
@@ -170,42 +126,6 @@ public class EventsComposer extends SelectorComposer<Component> {
 		return eventFilterModel.getSelection().contains(event);
 	}
 
-	private void addInfo(String info){
-		infoModel.add(0, info);
-		while(infoModel.size()>100){
-			infoModel.remove(infoModel.size()-1);
-		}
-	}
-	
-	@Listen("onSelect = #availableBookList")
-	public void onBookSelect(){
-		String bookname = availableBookModel.getSelection().iterator().next();
-		loadBookFromAvailable(bookname);
-	}
-	
-	protected void loadBookFromAvailable(int index){
-		String bookname = availableBookModel.get(index);
-		loadBookFromAvailable(bookname);
-	}
-	
-	protected void loadBookFromAvailable(String bookname){
-		if(!availableBookModel.contains(bookname)){
-			return;
-		}
-		Importer imp = Importers.getImporter();
-		try {
-			Book book = imp.imports(WebApps.getCurrent().getResource("/WEB-INF/books/"+bookname), bookname);
-			ss.setBook(book);
-		} catch (IOException e) {
-			throw new RuntimeException(e.getMessage(),e);
-		}
-	}	
-	
-	
-	@Listen("onClick = #clearInfo")
-	public void onClearInfo(){
-		infoModel.clear();
-	}
 	@Listen("onClick = #clearAllFilter")
 	public void onClearAllFilter(){
 		eventFilterModel.clearSelection();
@@ -215,13 +135,7 @@ public class EventsComposer extends SelectorComposer<Component> {
 		eventFilterModel.clearSelection();
 		eventFilterModel.setSelection(new ArrayList<String>(eventFilterModel));
 	}
-	@Listen("onAuxAction = #ss")
-	public void onAuxActionHandling(AuxActionEvent event){
-		//handle extra action when book close
-		if(event.getAction().equals(DefaultUserAction.CLOSE_BOOK.toString())){
-			availableBookModel.clearSelection();
-		}
-	}
+
 	
 	
 	//Events

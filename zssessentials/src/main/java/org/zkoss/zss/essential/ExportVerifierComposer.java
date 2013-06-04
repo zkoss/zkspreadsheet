@@ -25,78 +25,12 @@ import org.zkoss.zul.Listbox;
  * @author dennis
  *
  */
-public class ExportVerifierComposer extends SelectorComposer<Component> {
+public class ExportVerifierComposer extends AbstractDemoComposer {
 
 	private static final long serialVersionUID = 1L;
-	ListModelList<String> availableBookModel = new ListModelList<String>();
-	@Wire
-	Listbox availableBookList;
-	
-	@Wire
-	Spreadsheet ss;
 	
 	@Wire
 	Spreadsheet ss2;
-	
-	@Override
-	public void doAfterCompose(Component comp) throws Exception {
-		super.doAfterCompose(comp);
-		
-		initModel();
-		
-		availableBookList.setModel(availableBookModel);;
-		
-		String book = Executions.getCurrent().getParameter("book");
-		if(book!=null){
-			try{
-				loadBookFromAvailable(book);
-			}catch(Exception x){}
-		}
-		
-		String sheet = Executions.getCurrent().getParameter("sheet");
-		if(sheet!=null){
-			try{
-				Sheet ssheet = ss.getBook().getSheet(sheet);
-				if(ssheet!=null){
-					ss.setSelectedSheet(ssheet.getSheetName());
-				}
-			}catch(Exception x){}
-		} 
-		
-		//sync available book selection
-		book = ss.getBook().getBookName();
-		
-		availableBookModel.addToSelection(book);
-	}
-
-	private void initModel() {
-		availableBookModel.add("blank.xlsx");
-		availableBookModel.add("sample.xlsx");
-	}
-	
-	@Listen("onSelect = #availableBookList")
-	public void onBookSelect(){
-		String bookname = availableBookModel.getSelection().iterator().next();
-		loadBookFromAvailable(bookname);
-	}
-	
-	protected void loadBookFromAvailable(int index){
-		String bookname = availableBookModel.get(index);
-		loadBookFromAvailable(bookname);
-	}
-	
-	protected void loadBookFromAvailable(String bookname){
-		if(!availableBookModel.contains(bookname)){
-			return;
-		}
-		Importer imp = Importers.getImporter();
-		try {
-			Book book = imp.imports(WebApps.getCurrent().getResource("/WEB-INF/books/"+bookname), bookname);
-			ss.setBook(book);
-		} catch (IOException e) {
-			throw new RuntimeException(e.getMessage(),e);
-		}
-	}	
 	
 	@Listen("onClick = #exportBtn")
 	public void doExport() throws IOException{
