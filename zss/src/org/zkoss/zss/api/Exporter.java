@@ -53,14 +53,16 @@ public interface Exporter {
 	 */
 	public void export(Sheet sheet,Rect selection,OutputStream fos) throws IOException;
 
-	/**
-	 * @return true if this exporter support heading configuration
-	 */
-	public boolean isSupportHeadings();
-	
-	/**
-	 * Sets heading configuration,
-	 * @param enable true to enable heading
-	 */
-	public void enableHeadings(boolean enable);
+//  even html exporter doesn't support to disable heading yet
+//	hide this before there has any implementation
+//	/**
+//	 * @return true if this exporter support heading configuration
+//	 */
+//	public boolean isSupportHeadings();
+//	
+//	/**
+//	 * Sets heading configuration,
+//	 * @param enable true to enable heading
+//	 */
+//	public void enableHeadings(boolean enable);
 }

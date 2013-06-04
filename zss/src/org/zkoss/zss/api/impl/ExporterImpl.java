@@ -55,16 +55,16 @@ public class ExporterImpl implements Exporter {
 				new CellReference(selection.getBottom(), selection.getRight()));
 		exporter.exportSelection(((SheetImpl)sheet).getNative(), af, fos);
 	}
-	@Override
-	public boolean isSupportHeadings() {
-		return exporter instanceof Headings;
-	}
-	@Override
-	public void enableHeadings(boolean enable) {
-		if(isSupportHeadings()){
-			((Headings)exporter).enableHeadings(enable);
-		}else{
-			throw new RuntimeException("this export doesn't support headings");
-		}
-	}
+//	@Override
+//	public boolean isSupportHeadings() {
+//		return exporter instanceof Headings;
+//	}
+//	@Override
+//	public void enableHeadings(boolean enable) {
+//		if(isSupportHeadings()){
+//			((Headings)exporter).enableHeadings(enable);
+//		}else{
+//			throw new RuntimeException("this export doesn't support headings");
+//		}
+//	}
 }
