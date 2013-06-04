@@ -20,6 +20,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.sys;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.zkoss.poi.ss.usermodel.Workbook;
@@ -34,18 +35,18 @@ public interface XImporter {
 	 * @param filename a filename
 	 * @return the {@link Workbook}
 	 */
-	public XBook imports(String filename);
+	public XBook imports(String filename) throws IOException;
 	/**
 	 * Imports a file into a spreadsheet book.
 	 * @param file a file
 	 * @return the {@link Workbook}
 	 */
-	public XBook imports(File file);
+	public XBook imports(File file) throws IOException;
 	/**
 	 * Imports an input stream into a spreadsheet book.
 	 * @param is inputstream
 	 * @param bookname the book name
 	 * @return the {@link Workbook}
 	 */
-	public XBook imports(InputStream is, String bookname);
+	public XBook imports(InputStream is, String bookname) throws IOException;
 }

@@ -14,6 +14,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.sys.impl;
 
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.After;
@@ -51,7 +52,7 @@ public class Book01XlsExcelImporterTest {
 	}
 
 	@Test
-	public void testImportsFromXlsInputStream() {
+	public void testImportsFromXlsInputStream() throws IOException{
 		final String filename = "Book1.xls";
 		final InputStream is = new ClassLocator().getResourceAsStream(filename);
 		Workbook wb = new ExcelImporter().imports(is, filename);
@@ -68,7 +69,7 @@ public class Book01XlsExcelImporterTest {
 	}
 	
 	@Test
-	public void testImportsFromXlsxInputStream() {
+	public void testImportsFromXlsxInputStream() throws IOException{
 		final String filename = "Book1.xlsx";
 		final InputStream is = new ClassLocator().getResourceAsStream(filename);
 		Workbook wb = new ExcelImporter().imports(is, filename);

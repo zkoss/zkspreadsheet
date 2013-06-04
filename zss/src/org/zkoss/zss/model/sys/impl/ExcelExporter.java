@@ -1,4 +1,4 @@
-/* ExcelImporter.java
+/* ExcelExporter.java
 
 	Purpose:
 		
@@ -31,22 +31,16 @@ public class ExcelExporter implements XExporter {
 	/**
 	 * Exports {@link XBook} as an Excel file to given {@link OutputStream}
 	 */
-	public void export(XBook workbook, OutputStream outputStream) {
-		try {
-			workbook.write(outputStream);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+	public void export(XBook workbook, OutputStream outputStream) throws IOException{
+		workbook.write(outputStream);
 	}
 
-	public void export(XSheet worksheet, OutputStream outputStream) {
+	public void export(XSheet worksheet, OutputStream outputStream) throws IOException{
 		throw new UnsupportedOperationException();
 	}
 
 	public void exportSelection(XSheet worksheet, AreaReference area,
-			OutputStream outputStream) {
+			OutputStream outputStream) throws IOException{
 		throw new UnsupportedOperationException();
 	}
 }

@@ -41,7 +41,7 @@ public class ImporterImpl implements Importer{
 	}
 
 	
-	public Book imports(InputStream is, String bookName){
+	public Book imports(InputStream is, String bookName)throws IOException{
 		return new BookImpl(new SimpleRef<XBook>(importer.imports(is, bookName)));
 	}
 

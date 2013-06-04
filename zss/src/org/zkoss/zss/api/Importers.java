@@ -21,7 +21,7 @@ import org.zkoss.zss.model.sys.XImporter;
 import org.zkoss.zss.model.sys.XImporters;
 
 /**
- * The main class to get system importer
+ * The main class to get an importer
  * @author dennis
  *
  */
@@ -30,12 +30,18 @@ public class Importers {
 	/**
 	 * Gets importer
 	 * @param type the importer type (e.x "excel")
-	 * @return exporter instance for the type, null if not found
+	 * @return importer instance for the type, null if not found
 	 */
 	public static Importer getImporter(String type) {
-
 		XImporter imp = XImporters.getImporter(type);
-
 		return imp == null ? null : new ImporterImpl(imp);
+	}
+	
+	/**
+	 * Gets default excel importer
+	 * @return importer instance for excel, null if not found
+	 */
+	public static Importer getImporter() {
+		return getImporter("excel");
 	}
 }

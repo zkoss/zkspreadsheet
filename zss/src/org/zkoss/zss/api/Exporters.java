@@ -21,12 +21,11 @@ import org.zkoss.zss.model.sys.XExporter;
 import org.zkoss.zss.model.sys.XExporters;
 
 /**
- * The main class to get system exporter
+ * The main class to get an exporter
  * @author dennis
  * @since 3.0.0
  */
 public class Exporters {
-
 	/**
 	 * Gets exporter
 	 * @param type the exporter type (e.x "excel")
@@ -35,6 +34,14 @@ public class Exporters {
 	public static Exporter getExporter(String type) {
 		XExporter exp = XExporters.getExporter(type);
 		return exp==null?null:new ExporterImpl(exp);
+	}
+	
+	/**
+	 * Gets default excel exporter
+	 * @return excel exporter instance, null if not found
+	 */
+	public static Exporter getExporter() {
+		return getExporter("excel");
 	}
 
 }

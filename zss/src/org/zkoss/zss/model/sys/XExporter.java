@@ -11,6 +11,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.model.sys;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 import org.zkoss.poi.ss.util.AreaReference;
@@ -31,14 +32,14 @@ public interface XExporter {
 	 * @param workbook
 	 * @param outputStream
 	 */
-	public void export(XBook workbook, OutputStream outputStream);
+	public void export(XBook workbook, OutputStream outputStream) throws IOException;
 
 	/**
 	 * Exports ZK Spreadsheet sheet into another format written to a 
 	 * @param worksheet sheet instance that contains selected area
 	 * @param outputStream outoutStream to which exported contents to be written
 	 */
-	public void export(XSheet worksheet, OutputStream outputStream);
+	public void export(XSheet worksheet, OutputStream outputStream) throws IOException;
 
 	/**
 	 * Exports selected area of ZK Spreadsheet active sheet represented by 
@@ -47,5 +48,5 @@ public interface XExporter {
 	 * @param area area representing selected area to be exported
 	 * @param outputStream outoutStream to which exported contents to be written
 	 */
-	public void exportSelection(XSheet worksheet, AreaReference area, OutputStream outputStream);
+	public void exportSelection(XSheet worksheet, AreaReference area, OutputStream outputStream) throws IOException;
 }

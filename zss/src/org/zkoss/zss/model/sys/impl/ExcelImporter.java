@@ -34,13 +34,11 @@ import org.zkoss.zss.model.sys.XModelException;
  */
 public class ExcelImporter implements XImporter {
 	@Override
-	public XBook imports(String filename) {
+	public XBook imports(String filename) throws IOException {
 		InputStream is = null;
 		try {
 			is = new FileInputStream(filename);
 			return importsFromStream(is, filename);
-		} catch (Exception e) {
-			throw XModelException.Aide.wrap(e);
 		} finally {
 			if (is != null) {
 				try {
@@ -53,14 +51,12 @@ public class ExcelImporter implements XImporter {
 	}
 
 	@Override
-	public XBook imports(File file) {
+	public XBook imports(File file) throws IOException{
 		final String name = file.getName();
 		InputStream is = null;
 		try {
 			is = new FileInputStream(file);
 			return importsFromStream(is, name);
-		} catch (Exception e) {
-			throw XModelException.Aide.wrap(e);
 		} finally {
 			if (is != null) {
 				try {
@@ -73,21 +69,15 @@ public class ExcelImporter implements XImporter {
 	}
 
 	@Override
-	public XBook imports(InputStream is, String bookname) {
-		try {
-			return importsFromStream(is, bookname);
-		} catch (Exception e) {
-			throw XModelException.Aide.wrap(e);
-		}
+	public XBook imports(InputStream is, String bookname) throws IOException{
+		return importsFromStream(is, bookname);
 	}
 	
-	public XBook importsFromURL(URL url) {
+	public XBook importsFromURL(URL url) throws IOException{
 		InputStream is = null;
 		try {
 			is = url.openStream();
 			return importsFromStream(is, url.toString());
-		} catch (Exception ex) {
-			throw XModelException.Aide.wrap(ex);
 		} finally {
 			if (is != null) {
 				try {
@@ -116,6 +106,6 @@ public class ExcelImporter implements XImporter {
 		if(POIXMLDocument.hasOOXMLHeader(is)) {
 			return new XSSFBookImpl(bookname, is);
 		}
-		throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
+		throw new IllegalArgumentException("InputStream was neither an OLE2 stream, nor an OOXML stream");
 	}
 }

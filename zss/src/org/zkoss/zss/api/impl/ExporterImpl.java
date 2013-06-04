@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.impl;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 import org.zkoss.poi.hssf.util.AreaReference;
@@ -43,13 +44,13 @@ public class ExporterImpl implements Exporter {
 		
 		this.exporter =exporter;
 	}
-	public void export(Book book, OutputStream fos) {
+	public void export(Book book, OutputStream fos) throws IOException{
 		exporter.export(((BookImpl)book).getNative(), fos);
 	}
-	public void export(Sheet sheet, OutputStream fos) {
+	public void export(Sheet sheet, OutputStream fos) throws IOException{
 		exporter.export(((SheetImpl)sheet).getNative(), fos);
 	}
-	public void export(Sheet sheet,Rect selection,OutputStream fos) {
+	public void export(Sheet sheet,Rect selection,OutputStream fos) throws IOException{
 		AreaReference af = new AreaReference(new CellReference(selection.getTop(), selection.getLeft()),
 				new CellReference(selection.getBottom(), selection.getRight()));
 		exporter.exportSelection(((SheetImpl)sheet).getNative(), af, fos);
