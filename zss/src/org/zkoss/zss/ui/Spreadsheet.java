@@ -300,7 +300,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private static Integer _defMaxRenderedCellSize;
 	
-	private Set<UserAction> _actionDisabled = new HashSet();
+	private Set<DefaultUserAction> _actionDisabled = new HashSet();
 //	
 //	private static Set<UserAction> _defToolbarActiobDisabled;
 	
@@ -1538,7 +1538,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			//20130507,Dennis,add commnet check, no actionDisabled json will cause client error when show context menu.
 //			if (_actionDisabled.size() > 0) {
 			renderer.render("actionDisabled",
-					convertToActionDisabledToJSON(getUserActionHandler()
+					convertToDisabledActionJSON(getUserActionHandler()
 							.getSupportedUserAction(getSelectedSheet())));
 //			}
 			renderer.render("showToolbar", _showToolbar);
@@ -4170,12 +4170,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	/**
-	 * Sets the {@link UserAction} disabled
+	 * Sets the {@link DefaultUserAction} disabled
 	 * 
 	 * @param disabled
 	 * @param action
 	 */
-	public void disableUserAction(UserAction action, boolean disabled) {
+	public void disableUserAction(DefaultUserAction action, boolean disabled) {
 		boolean changed = false;
 		if (disabled && !_actionDisabled.contains(action)) {
 			_actionDisabled.add(action);
@@ -4199,12 +4199,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //		return _actionDisabled.contains(action);
 //	}
 	
-	private static List<String> convertToActionDisabledToJSON(Set<String> supported) {
+	private List<String> convertToDisabledActionJSON(Set<String> supported) {
 		ArrayList<String> disd = new ArrayList<String>();
 		String act;
-		for(UserAction ua:UserAction.values()){
+		for(DefaultUserAction ua:DefaultUserAction.values()){
 			act = ua.toString();
-			if(supported==null || !supported.contains(act)){
+			if(_actionDisabled.contains(ua) 
+					|| supported==null || !supported.contains(act)){
 				disd.add(act);
 			}
 		}
@@ -5027,7 +5028,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private void refreshToolbarDisabled(){
 		if(!isInvalidated()){
 			smartUpdate("actionDisabled",
-					convertToActionDisabledToJSON(getUserActionHandler()
+					convertToDisabledActionJSON(getUserActionHandler()
 							.getSupportedUserAction(getSelectedSheet())));
 		}
 	}

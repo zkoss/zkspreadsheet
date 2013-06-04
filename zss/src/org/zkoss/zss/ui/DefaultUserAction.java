@@ -1,4 +1,4 @@
-/* UserAction.java
+/* DefaultUserAction.java
 
 {{IS_NOTE
 	Purpose:
@@ -24,7 +24,7 @@ import java.util.Map;
  * @author dennis
  * 
  */
-public enum UserAction {
+public enum DefaultUserAction {
 
 	 ADD_SHEET("addSheet"),
 	 DELETE_SHEET("deleteSheet"),
@@ -130,11 +130,11 @@ public enum UserAction {
 
 	private final String action;
 
-	private UserAction() {
+	private DefaultUserAction() {
 		this("none");
 	}
 
-	private UserAction(String action) {
+	private DefaultUserAction(String action) {
 		this.action = action;
 	}
 
@@ -145,20 +145,24 @@ public enum UserAction {
 //	public boolean equals(String action) {
 //		return this.action.equals(action);
 //	}
+	
+	public String getAction(){
+		return action;
+	}
 
 	@Override
 	public String toString() {
 		return action;
 	}
 	
-	public static Map<String,UserAction> actionMap;
+	public static Map<String,DefaultUserAction> actionMap;
 	
-	public static UserAction getBy(String action){
+	public static DefaultUserAction getBy(String action){
 		if(actionMap==null){
-			synchronized(UserAction.class){
+			synchronized(DefaultUserAction.class){
 				if(actionMap==null){
-					actionMap = new HashMap<String,UserAction>();
-					for(UserAction dua:UserAction.class.getEnumConstants()){
+					actionMap = new HashMap<String,DefaultUserAction>();
+					for(DefaultUserAction dua:DefaultUserAction.class.getEnumConstants()){
 						actionMap.put(dua.action, dua);
 					}
 				}

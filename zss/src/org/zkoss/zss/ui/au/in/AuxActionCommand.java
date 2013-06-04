@@ -26,7 +26,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.UserAction;
+import org.zkoss.zss.ui.DefaultUserAction;
 import org.zkoss.zss.ui.event.AuxActionEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.impl.XUtils;
@@ -71,17 +71,17 @@ public class AuxActionCommand implements Command {
 			// client's act doesn't follow the Action, so I have to remap it.
 			// TODO make client use correct key directly?
 			if ("add".equals(action)) {
-				action = UserAction.ADD_SHEET.toString();
+				action = DefaultUserAction.ADD_SHEET.getAction();
 			} else if ("delete".equals(action)) {
-				action = UserAction.DELETE_SHEET.toString();
+				action = DefaultUserAction.DELETE_SHEET.getAction();
 			} else if ("rename".equals(action)) {
-				action = UserAction.RENAME_SHEET.toString();
+				action = DefaultUserAction.RENAME_SHEET.getAction();
 			} else if ("protect".equals(action)) {
-				action = UserAction.PROTECT_SHEET.toString();
+				action = DefaultUserAction.PROTECT_SHEET.getAction();
 			} else if ("moveLeft".equals(action)) {
-				action = UserAction.MOVE_SHEET_LEFT.toString();
+				action = DefaultUserAction.MOVE_SHEET_LEFT.getAction();
 			} else if ("moveRight".equals(action)) {
-				action = UserAction.MOVE_SHEET_RIGHT.toString();
+				action = DefaultUserAction.MOVE_SHEET_RIGHT.getAction();
 			} else {
 				throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA,
 						new Object[] { Objects.toString(data),
