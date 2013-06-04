@@ -30,6 +30,8 @@ import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.CellStyle.FillPattern;
 import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
 import org.zkoss.zss.api.model.Color;
+import org.zkoss.zss.api.model.EditableCellStyle;
+import org.zkoss.zss.api.model.EditableFont;
 import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
@@ -175,7 +177,7 @@ public class CellOperationUtil {
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
-			public void apply(Range range,CellStyle cellstyle, Font newfont) {
+			public void apply(Range range,EditableCellStyle cellstyle, EditableFont newfont) {
 				newfont.setFontName(fontName);
 			}
 		});
@@ -220,7 +222,7 @@ public class CellOperationUtil {
 								oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 					}
 					
-					public void apply(Range cellRange,CellStyle cellstyle, Font newfont) {
+					public void apply(Range cellRange,EditableCellStyle cellstyle, EditableFont newfont) {
 						newfont.setFontHeight(fontHeight);
 					}
 				});
@@ -252,7 +254,7 @@ public class CellOperationUtil {
 		/** Find the font to apply to new style, return null mean not found, and will create a new font**/
 		public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont);
 		/** apply style to new font, will be call when {@code #search() return null}**/
-		public void apply(Range cellRange,CellStyle newCellstyle,Font newfont);
+		public void apply(Range cellRange,EditableCellStyle newCellstyle,EditableFont newfont);
 	}
 	
 	/**
@@ -276,12 +278,12 @@ public class CellOperationUtil {
 				}
 				//2.create a new style from old one, the original one is shared between cells
 				//TODO what if it is the last referenced, could I just use it? who will delete old if I use new
-				CellStyle nstyle = cellRange.getCellStyleHelper().createCellStyle(ostyle);
+				EditableCellStyle nstyle = cellRange.getCellStyleHelper().createCellStyle(ostyle);
 				
-				Font nfont = null;
+				EditableFont nfont = null;
 				//3.search if there any font already in book
-				nfont = applyer.search(cellRange,ostyle,ofont);
-				if( nfont== null){
+				Font sfont = applyer.search(cellRange,ostyle,ofont);
+				if( sfont== null){
 					//create new font base old font if not found
 					nfont = cellRange.getCellStyleHelper().createFont(ofont);
 					nstyle.setFont(nfont);
@@ -325,7 +327,7 @@ public class CellOperationUtil {
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
-			public void apply(Range range,CellStyle newCellstyle, Font newfont) {
+			public void apply(Range range,EditableCellStyle newCellstyle, EditableFont newfont) {
 				newfont.setBoldweight(boldweight);
 			}
 		});
@@ -347,7 +349,7 @@ public class CellOperationUtil {
 						italic, oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
-			public void apply(Range range,CellStyle newCellstyle, Font newfont) {
+			public void apply(Range range,EditableCellStyle newCellstyle, EditableFont newfont) {
 				newfont.setItalic(italic);
 			}
 		});
@@ -369,7 +371,7 @@ public class CellOperationUtil {
 						oldFont.isItalic(), strikeout, oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
-			public void apply(Range range,CellStyle newCellstyle, Font newfont) {
+			public void apply(Range range,EditableCellStyle newCellstyle, EditableFont newfont) {
 				newfont.setStrikeout(strikeout);
 			}
 		});
@@ -391,7 +393,7 @@ public class CellOperationUtil {
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), underline);
 			}
 			
-			public void apply(Range range,CellStyle newCellstyle, Font newfont) {
+			public void apply(Range range,EditableCellStyle newCellstyle, EditableFont newfont) {
 				newfont.setUnderline(underline);
 			}
 		});
@@ -414,7 +416,7 @@ public class CellOperationUtil {
 						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
 			}
 			
-			public void apply(Range range,CellStyle newCellstyle, Font newfont) {
+			public void apply(Range range,EditableCellStyle newCellstyle, EditableFont newfont) {
 				
 				//check it in XSSFCellStyle , it is just a delegator, but do some thing in HSSF
 				newfont.setColor(color);
@@ -440,7 +442,7 @@ public class CellOperationUtil {
 				return ocolor.equals(color);
 			}
 
-			public void apply(Range cellRange, CellStyle newCellstyle) {
+			public void apply(Range cellRange, EditableCellStyle newCellstyle) {
 				newCellstyle.setBackgroundColor(color);
 				
 				FillPattern patternType = newCellstyle.getFillPattern();
@@ -464,7 +466,7 @@ public class CellOperationUtil {
 				return oformat.equals(format);
 			}
 
-			public void apply(Range cellRange, CellStyle newCellstyle) {
+			public void apply(Range cellRange, EditableCellStyle newCellstyle) {
 				newCellstyle.setDataFormat(format);
 			}
 		});
@@ -483,7 +485,7 @@ public class CellOperationUtil {
 				return oldalign.equals(alignment);
 			}
 
-			public void apply(Range cellRange, CellStyle newCellstyle) {
+			public void apply(Range cellRange, EditableCellStyle newCellstyle) {
 				newCellstyle.setAlignment(alignment);
 			}
 		});
@@ -502,7 +504,7 @@ public class CellOperationUtil {
 				return oldalign.equals(alignment);
 			}
 
-			public void apply(Range cellRange, CellStyle newCellstyle) {
+			public void apply(Range cellRange, EditableCellStyle newCellstyle) {
 				newCellstyle.setVerticalAlignment(alignment);
 			}
 		});
@@ -515,7 +517,7 @@ public class CellOperationUtil {
 		/** should ignore this cellRange**/
 		public boolean ignore(Range cellRange,CellStyle oldCellstyle);
 		/** apply style to new cell**/
-		public void apply(Range cellRange,CellStyle newCellstyle);
+		public void apply(Range cellRange,EditableCellStyle newCellstyle);
 	}
 	
 	/**
@@ -543,7 +545,7 @@ public class CellOperationUtil {
 				// between cells
 				// TODO what if it is the last referenced, could I just use it?
 				// who will delete old if I use new
-				CellStyle nstyle = cellRange.getCellStyleHelper().createCellStyle(
+				EditableCellStyle nstyle = cellRange.getCellStyleHelper().createCellStyle(
 						ostyle);
 
 				// set the apply
@@ -635,7 +637,7 @@ public class CellOperationUtil {
 				return oldwrap==wraptext;
 			}
 
-			public void apply(Range cellRange, CellStyle newCellstyle) {
+			public void apply(Range cellRange, EditableCellStyle newCellstyle) {
 				newCellstyle.setWrapText(wraptext);
 			}
 		});

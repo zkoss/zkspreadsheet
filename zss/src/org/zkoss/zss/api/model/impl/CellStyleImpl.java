@@ -16,13 +16,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
-import org.zkoss.poi.ss.usermodel.DataFormat;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.Font;
-import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.impl.BookHelper;
 /**
  * 
  * @author dennis
@@ -79,12 +76,6 @@ public class CellStyleImpl implements CellStyle{
 		org.zkoss.poi.ss.usermodel.Font font = book.getFontAt(getNative().getFontIndex());
 		return nfont = new FontImpl(bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Font>(font));
 	}
-
-	public void setFont(Font nfont) {
-		this.nfont = (FontImpl)nfont; 
-		getNative().setFont(nfont==null?null:this.nfont.getNative());
-	}
-	
 	
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
@@ -93,115 +84,55 @@ public class CellStyleImpl implements CellStyle{
 		return sb.toString();
 	}
 
-	public void copyAttributeFrom(CellStyle src) {
-		getNative().cloneStyleFrom(((CellStyleImpl)src).getNative());
-	}
-
 	public ColorImpl getBackgroundColor() {
 		org.zkoss.poi.ss.usermodel.Color srcColor = getNative().getFillForegroundColorColor();
 		return new ColorImpl(bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(srcColor));
 	}
-	
-	public void setBackgroundColor(Color color) {
-		BookHelper.setFillForegroundColor(getNative(), ((ColorImpl)color).getNative());
-	}
-	
+
 	public FillPattern getFillPattern(){
 		return EnumUtil.toStyleFillPattern(getNative().getFillPattern());
 	}
 
-	public void setFillPattern(FillPattern pattern) {
-		getNative().setFillPattern(EnumUtil.toStyleFillPattern(pattern));	
-	}
-	
-//	public NColor getForegroundColor(){
-//		return getFont().getColor();
-//	}
-//	
-//	public void setForegroundColor(NColor color){
-//		getFont().setFontColor(color);
-//	}
-
-//	public void setFontColor(NColor color) {
-//		//set color form here will not go through BookHelper, cause set color issue of a theme color in XSSFont.
-//		//use font set color
-//		style.setFontColorColor(color.getNative());
-//	}
-
-	public void setAlignment(Alignment alignment){
-		getNative().setAlignment(EnumUtil.toStyleAlignemnt(alignment));
-	}
 	public Alignment getAlignment(){
 		return EnumUtil.toStyleAlignemnt(getNative().getAlignment());
 	}
-	public void setVerticalAlignment(VerticalAlignment alignment){
-		getNative().setVerticalAlignment(EnumUtil.toStyleVerticalAlignemnt(alignment));
-	}
+
 	public VerticalAlignment getVerticalAlignment(){
 		return EnumUtil.toStyleVerticalAlignemnt(getNative().getVerticalAlignment());
 	}
-	
 
 	public boolean isWrapText() {
 		return getNative().getWrapText();
 	}
-
-	public void setWrapText(boolean wraptext) {
-		getNative().setWrapText(wraptext);
-	}
 	
-	public void setBorderLeft(BorderType borderType){
-		getNative().setBorderLeft(EnumUtil.toStyleBorderType(borderType));
-	}
 	public BorderType getBorderLeft(){
 		return EnumUtil.toStyleBorderType(getNative().getBorderLeft());
 	}
 
-	public void setBorderTop(BorderType borderType){
-		getNative().setBorderTop(EnumUtil.toStyleBorderType(borderType));
-	}
 	public BorderType getBorderTop(){
 		return EnumUtil.toStyleBorderType(getNative().getBorderTop());
 	}
 
-	public void setBorderRight(BorderType borderType){
-		getNative().setBorderRight(EnumUtil.toStyleBorderType(borderType));
-	}
 	public BorderType getBorderRight(){
 		return EnumUtil.toStyleBorderType(getNative().getBorderRight());
 	}
 
-	public void setBorderBottom(BorderType borderType){
-		getNative().setBorderBottom(EnumUtil.toStyleBorderType(borderType));
-	}
 	public BorderType getBorderBottom(){
 		return EnumUtil.toStyleBorderType(getNative().getBorderBottom());
 	}
-	
-	public void setBorderTopColor(Color color){
-		BookHelper.setTopBorderColor(getNative(),  ((ColorImpl)color).getNative());
-	}
+
 	public Color getBorderTopColor(){
 		return new ColorImpl(bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getTopBorderColorColor()));
 	}
-	
-	public void setBorderLeftColor(Color color){
-		BookHelper.setLeftBorderColor(getNative(), ((ColorImpl)color).getNative());
-	}
+
 	public Color getBorderLeftColor(){
 		return new ColorImpl(bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getLeftBorderColorColor()));
 	}
-	
-	public void setBorderBottomColor(Color color){
-		BookHelper.setBottomBorderColor(getNative(), ((ColorImpl)color).getNative());
-	}
+
 	public Color getBorderBottomColor(){
 		return new ColorImpl(bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getBottomBorderColorColor()));
 	}
-	
-	public void setBorderRightColor(Color color){
-		BookHelper.setRightBorderColor(getNative(), ((ColorImpl)color).getNative());
-	}
+
 	public Color getBorderRightColor(){
 		return new ColorImpl(bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getRightBorderColorColor()));
 	}
@@ -209,31 +140,12 @@ public class CellStyleImpl implements CellStyle{
 	public String getDataFormat(){
 		return getNative().getDataFormatString();
 	}
-	
-	public void setDataFormat(String format){
-		if(getDataFormat().equals(format)){
-			return;
-		}
-		//this api doesn't create a new df, it just return the one in book
-		DataFormat df = bookRef.get().createDataFormat();
-
-		short index = df.getFormat(format);		
-		getNative().setDataFormat(index);
-	}
 
 	public boolean isLocked() {
 		return getNative().getLocked();
 	}
 
-	public void setLocked(boolean locked) {
-		getNative().setLocked(locked);
-	}
-
 	public boolean isHidden() {
 		return getNative().getHidden();
-	}
-
-	public void setHidden(boolean hidden) {
-		getNative().setHidden(hidden);;
 	}
 }

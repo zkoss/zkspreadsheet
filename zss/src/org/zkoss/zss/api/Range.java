@@ -22,7 +22,9 @@ import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Color;
+import org.zkoss.zss.api.model.EditableFont;
 import org.zkoss.zss.api.model.Font;
+import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Chart.Grouping;
@@ -648,14 +650,14 @@ public interface Range {
 		 * @param src the source to clone, could be null
 		 * @return the new cell style
 		 */
-		public CellStyle createCellStyle(CellStyle src);
+		public EditableCellStyle createCellStyle(CellStyle src);
 
 		/**
 		 * create a new font and clone attribute from src if it is not null
 		 * @param src the source to clone, could be null
 		 * @return the new font
 		 */
-		public Font createFont(Font src);
+		public EditableFont createFont(Font src);
 		
 		/**
 		 * create a color object from a htmlColor expression

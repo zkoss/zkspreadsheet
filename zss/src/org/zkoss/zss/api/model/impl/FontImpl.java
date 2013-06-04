@@ -19,7 +19,6 @@ package org.zkoss.zss.api.model.impl;
 import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.Font;
-import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 /**
@@ -98,47 +97,8 @@ public class FontImpl implements Font{
 		sb.append(getFontName());
 		return sb.toString();
 	}
-	public void copyAttributeFrom(Font src) {
-		org.zkoss.poi.ss.usermodel.Font sfont = ((FontImpl)src).getNative();
-		org.zkoss.poi.ss.usermodel.Font font = getNative();
-		font.setBoldweight(sfont.getBoldweight());
-		org.zkoss.poi.ss.usermodel.Color srcColor = BookHelper.getFontColor(bookRef.get(), sfont);
-		BookHelper.setFontColor(bookRef.get(), font, srcColor);
-		font.setFontHeight(sfont.getFontHeight());
-		font.setFontName(sfont.getFontName());
-		font.setItalic(sfont.getItalic());
-		font.setStrikeout(sfont.getStrikeout());
-		font.setTypeOffset(sfont.getTypeOffset());
-		font.setUnderline(sfont.getUnderline());
-	}
-	public void setFontName(String fontName) {
-		getNative().setFontName(fontName);
-	}
-	public void setBoldweight(Boldweight boldweight) {
-		getNative().setBoldweight(EnumUtil.toFontBoldweight(boldweight));
-	}
-	public void setItalic(boolean italic) {
-		getNative().setItalic(italic);		
-	}
-	
-	public void setStrikeout(boolean strikeout) {
-		getNative().setStrikeout(strikeout);	
-	}
-	public void setUnderline(Underline underline) {
-		getNative().setUnderline(EnumUtil.toFontUnderline(underline));
-	}
-	public void setFontHeight(int height){
-		getNative().setFontHeight((short)height);
-	}
-	public void setColor(Color color) {
-		BookHelper.setFontColor(bookRef.get(), getNative(), ((ColorImpl)color).getNative());
-	}
-	@Override
+
 	public int getFontHeightInPoint() {
 		return UnitUtil.twipToPoint(getFontHeight());
-	}
-	@Override
-	public void setFontHeightInPoint(int point) {
-		setFontHeight(UnitUtil.pointToTwip(point));	
 	}
 }

@@ -20,13 +20,17 @@ import org.zkoss.zss.api.Range.CellStyleHelper;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Color;
+import org.zkoss.zss.api.model.EditableFont;
 import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.TypeOffset;
 import org.zkoss.zss.api.model.Font.Underline;
+import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.api.model.impl.CellStyleImpl;
 import org.zkoss.zss.api.model.impl.ColorImpl;
+import org.zkoss.zss.api.model.impl.EditableCellStyleImpl;
+import org.zkoss.zss.api.model.impl.EditableFontImpl;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.api.model.impl.FontImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
@@ -50,25 +54,25 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 	 * @param src the source to clone, could be null
 	 * @return the new cell style
 	 */
-	public CellStyle createCellStyle(CellStyle src){
+	public EditableCellStyle createCellStyle(CellStyle src){
 		XBook book = range.getNative().getSheet().getBook();
-			CellStyle style = new CellStyleImpl(((BookImpl)range.getBook()).getRef(),new SimpleRef<org.zkoss.poi.ss.usermodel.CellStyle>(book.createCellStyle()));
-			if(src!=null){
-				((CellStyleImpl)style).copyAttributeFrom(src);
-			}
-			return style;
+		EditableCellStyle style = new EditableCellStyleImpl(((BookImpl)range.getBook()).getRef(),new SimpleRef<org.zkoss.poi.ss.usermodel.CellStyle>(book.createCellStyle()));
+		if(src!=null){
+			((EditableCellStyleImpl)style).copyAttributeFrom(src);
+		}
+		return style;
 	}
 
-	public Font createFont(Font src) {
+	public EditableFont createFont(Font src) {
 		XBook book = range.getNative().getSheet().getBook();
 		org.zkoss.poi.ss.usermodel.Font font = book.createFont();
 
-			Font nf = new FontImpl(((BookImpl)range.getBook()).getRef(),new SimpleRef<org.zkoss.poi.ss.usermodel.Font>(font));
-			if(src!=null){
-				((FontImpl)nf).copyAttributeFrom(src);
-			}
+		EditableFont nf = new EditableFontImpl(((BookImpl)range.getBook()).getRef(),new SimpleRef<org.zkoss.poi.ss.usermodel.Font>(font));
+		if(src!=null){
+			((EditableFontImpl)nf).copyAttributeFrom(src);
+		}
 			
-			return nf;
+		return nf;
 	}
 
 	public Color createColorFromHtmlColor(String htmlColor) {

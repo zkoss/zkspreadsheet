@@ -51,13 +51,5 @@ public interface Font {
 	public boolean isStrikeout();
 	public TypeOffset getTypeOffset();
 	public Underline getUnderline();
-	public void setFontName(String fontName);
-	public void setBoldweight(Boldweight boldweight);
-	public void setItalic(boolean italic);
-	public void setStrikeout(boolean strikeout);
-	public void setUnderline(Underline underline);
-	public void setFontHeight(int height);
-	public void setFontHeightInPoint(int point);
-	public void setColor(Color color);
 	
 }

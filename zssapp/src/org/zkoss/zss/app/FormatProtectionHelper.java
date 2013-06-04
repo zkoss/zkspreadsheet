@@ -37,7 +37,7 @@ public class FormatProtectionHelper {
 			Range range = Ranges.range(spreadsheet.getSelectedSheet(),spreadsheet.getSelection());
 			
 			
-			CellOperationUtil.applyCellStyle(range, new CellStyleApplier() {
+			CellOperationUtil.applyCellStyle(range, new EditableCellStyle() {
 				public boolean ignore(Range cellRange,CellStyle oldCellstyle) {
 					return oldCellstyle.isHidden()==mfp_hidden.isChecked() && oldCellstyle.isLocked()==mfp_locked.isChecked();
 				}

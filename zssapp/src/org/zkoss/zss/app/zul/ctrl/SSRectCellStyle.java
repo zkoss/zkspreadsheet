@@ -299,7 +299,7 @@ public class SSRectCellStyle implements org.zkoss.zss.app.zul.ctrl.CellStyleAppl
 			}
 
 			public void apply(Range cellRange,
-					org.zkoss.zss.api.model.CellStyle newCellstyle) {
+					org.zkoss.zss.api.model.EditableCellStyle newCellstyle) {
 				newCellstyle.setLocked(locked);
 			}
 		});
