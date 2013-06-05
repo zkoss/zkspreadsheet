@@ -59,11 +59,11 @@ public class EventsComposer extends AbstractDemoComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
-		initModel();
+		initMyModel();
 		eventFilterList.setModel(eventFilterModel);
 	}
 
-	private void initModel() {
+	private void initMyModel() {
 		//Available events
 		//It is just for showing message, event is always listened in this demo.
 		eventFilterModel.setMultiple(true);

@@ -1,6 +1,7 @@
 package org.zkoss.zss.essential;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -72,9 +73,17 @@ public class AbstractDemoComposer extends SelectorComposer<Component>{
 		availableBookModel.addToSelection(book);
 	}
 
-	private void initModel() {
+	protected void initModel() {
 		availableBookModel.add("blank.xlsx");
 		availableBookModel.add("sample.xlsx");
+		List<String> c = contirbuteAvailableBooks();
+		if(c!=null){
+			availableBookModel.addAll(c);
+		}
+	}
+	
+	protected List<String> contirbuteAvailableBooks(){
+		return null;
 	}
 	
 	protected void addInfo(String info){
