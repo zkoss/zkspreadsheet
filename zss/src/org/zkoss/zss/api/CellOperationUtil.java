@@ -291,7 +291,7 @@ public class CellOperationUtil {
 					//set the apply
 					applyer.apply(cellRange,nstyle, nfont);
 				}else{
-					nstyle.setFont(nfont);
+					nstyle.setFont(sfont);
 				}
 				
 				
