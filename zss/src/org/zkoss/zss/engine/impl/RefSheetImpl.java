@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -100,7 +101,7 @@ public class RefSheetImpl implements RefSheet {
 		//add the new Ref into the RefIndex
 		final Ref candidateRef = tRow == bRow && lCol == rCol ?
 			new CellRefImpl(tRow, lCol, this) : new AreaRefImpl(tRow, lCol, bRow, rCol, this);
-
+		
 		//update the ltrb index
 		_ltrbIndex.put(addr, candidateRef);
 		
@@ -226,7 +227,6 @@ public class RefSheetImpl implements RefSheet {
 		final Ref ref = _ltrbIndex.get(addr);
 		if (ref == null)
 			return null;
-		
 		removeRefDirectly(ref);
 		
 		return ref;
@@ -330,6 +330,7 @@ public class RefSheetImpl implements RefSheet {
 		final CellRefImpl srcRef = (CellRefImpl) getRef(srcRow, srcCol, srcRow, srcCol);
 		if (srcRef != null) {
 			final Ref precedent = srcRef.removePrecedent(name);
+			
 			if (precedent.getDependents().isEmpty() && precedent.getPrecedents().isEmpty()) {
 				_ownerBook.removeVariableRef(name);
 			}
@@ -1419,5 +1420,14 @@ public class RefSheetImpl implements RefSheet {
 				.append("]").append(getSheetName());
 		
 		return sb.toString();
+	}
+	
+	@Override
+	public Set<Ref> removeExternalRef() {
+		Set<Ref> set = new HashSet<Ref>();
+		for(Ref ref:new LinkedHashSet<Ref>(_ltrbIndex.values())){//prevent ConcurrentModificationException
+			set.addAll(ref.removeExternalRef());
+		}
+		return set;
 	}
 }

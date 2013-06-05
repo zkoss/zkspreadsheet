@@ -228,10 +228,26 @@ public final class BookHelper {
 	}
 	
 	public static void setBookSeries(XBook book, XBookSeries books) {
-		if (book instanceof HSSFBookImpl) 
+		Set<Ref> refs = null;
+		if (book instanceof HSSFBookImpl){
+			XBookSeries bs = ((HSSFBookImpl)book).getBookSeries();
+			if(bs==books) return;
+			else if(bs!=null) {
+				refs = bs.clear();
+			}
 			((HSSFBookImpl)book).setBookSeries(books);
-		else
+		}else{
+			XBookSeries bs = ((XSSFBookImpl)book).getBookSeries();
+			if(bs==books) return;
+			else if(bs!=null) {
+				refs = bs.clear();
+			}
 			((XSSFBookImpl)book).setBookSeries(books);
+		}
+		//shouldn't notify, it will cause the same issue as zss-334
+//		if(refs!=null && refs.size()>0){
+//			reevaluateAndNotify(book, refs,refs);
+//		}
 	}
 	
 	public static XBook getBook(XBook book, String bookname) {
@@ -299,7 +315,7 @@ public final class BookHelper {
 				//locate the model book and sheet of the refSheet
 				final XBook bookTarget = BookHelper.getBook(book, refSheet);
 				final Cell cell = getCell(book, ref.getTopRow(), ref.getLeftCol(), refSheet);
-				if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+				if (cell!=null && cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
 					evaluate(bookTarget, cell);
 				}
 			}
@@ -1159,6 +1175,11 @@ public final class BookHelper {
 		default:
 			throw new UiException("Unknown cell type:"+cellType);
 		}
+	}
+	
+	public static Set<Ref> clearExternalBookRef(XBook book) {
+		final RefBook refBook = getRefBook(book);
+		return refBook.removeExternalRef();
 	}
 	
 	public static Set<Ref>[] removeCell(XSheet sheet, int rowIndex, int colIndex) {

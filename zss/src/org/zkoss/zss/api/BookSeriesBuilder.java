@@ -65,5 +65,5 @@ public abstract class BookSeriesBuilder {
 	
 	
 	abstract public void buildBookSeries(Set<Book> books);
-	abstract public void buildBookSeries(Book[] books);
+	abstract public void buildBookSeries(Book... books);
 }

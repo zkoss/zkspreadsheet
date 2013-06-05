@@ -244,4 +244,7 @@ public interface RefSheet {
 	 * @param withIndirectPrecedent whether the reference contains indirect precedents.
 	 */
 	public void setRefWithIndirectPrecedent(int row, int col, boolean withIndirectPrecedent);
+	
+	
+	public Set<Ref> removeExternalRef();
 }

@@ -124,4 +124,7 @@ public interface Ref {
 	 * @param withIndirectPrecedent whether this reference contains Indirect precedent.
 	 */ 
 	public void setWithIndirectPrecedent(boolean withIndirectPrecedent);
+	
+	
+	public Set<Ref> removeExternalRef();
 }

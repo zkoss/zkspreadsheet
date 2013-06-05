@@ -71,6 +71,73 @@ public abstract class AbstractRefImpl implements Ref {
 	}
 	
 	@Override
+	public Set<Ref> removeExternalRef() {
+		HashSet<Ref> refs = new HashSet<Ref>();
+		boolean hitSelfDirty = false;
+		
+		if(_precedents!=null){
+			final Set<Ref> precedents = new HashSet<Ref>(_precedents); //avoid comodification
+			for(Ref precedent : precedents) {
+				
+				if(!isExternalBook(precedent)){
+					continue;
+				}
+				
+				this.getPrecedents().remove(precedent);
+				precedent.getDependents().remove(this);
+				hitSelfDirty = true;
+			}
+			
+			//clear orphan references
+			for(Ref precedent : precedents) {
+				if(clearIfOrphanRef(precedent)){
+					refs.add(precedent);
+				}
+			}
+		}
+		
+		if(_dependents!=null){
+			final Set<Ref> dependents = new HashSet<Ref>(_dependents); //avoid comodification
+			for(Ref dependent : dependents) {
+				
+				if(!isExternalBook(dependent)){
+					continue;
+				}
+				
+				this.getDependents().remove(dependent);
+				dependent.getPrecedents().remove(this);
+				refs.add(dependent);
+			}
+
+			//clear orphan references
+			for(Ref dependent : _dependents) {
+				if(clearIfOrphanRef(dependent)){
+					refs.add(dependent);
+				}
+			}
+		}
+
+		if(clearIfOrphanRef(this)){
+			hitSelfDirty = true;
+		}
+		
+		if(hitSelfDirty){
+			refs.add(this);
+		}
+		
+		return refs;
+	}	
+	
+	private boolean isExternalBook(Ref precedent) {
+		if(precedent instanceof VarRefImpl){
+			return false;//true? not sure the spec
+		}
+		String pname = precedent.getOwnerSheet().getOwnerBook().getBookName();
+		String name = getOwnerSheet().getOwnerBook().getBookName();
+		return !name.equals(pname);
+	}
+
+	@Override
 	public boolean isWithIndirectPrecedent() {
 		return false;
 	}

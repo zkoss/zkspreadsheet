@@ -172,4 +172,13 @@ public class RefBookImpl implements RefBook {
 	public String getShareScope() {
 		return _scope;
 	}
+
+	@Override
+	public Set<Ref> removeExternalRef() {
+		Set<Ref> set = new HashSet<Ref>();
+		for(RefSheet sheetRef:_sheetRefs.values()){
+			set.addAll(sheetRef.removeExternalRef());
+		}
+		return set;
+	}
 }

@@ -107,6 +107,13 @@ public interface RefBook {
 	 */
 	public Ref removeVariableRef(String name);
 	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Set<Ref> removeExternalRef();
+	
 	/**
 	 * Returns both all and last dependent cell references that are affected by the specified variable.
 	 * @param name the variable name
