@@ -35,44 +35,56 @@ import org.zkoss.zss.engine.RefSheet;
  */
 public class RefBookImpl implements RefBook {
 	private final String _bookname;
-	private final Map<String, RefSheet> _sheets;
+	private final Map<String, RefSheet> _sheetRefs;
 	private final int _maxrow;
 	private final int _maxcol;
 	private final ConcurrentMap<String, Ref> _variableRefs;
 	private final EventQueue _queue;
+	private final String _queueName;
+	private static int _lastQueueId = -1;
 	
 	/**
 	 * Internal use only.
 	 */
 	public RefBookImpl(String bookname, int maxrow, int maxcol) {
 		_bookname = bookname;
-		_sheets = new HashMap<String, RefSheet>(3);
+		_sheetRefs = new HashMap<String, RefSheet>(3);
 		_variableRefs = new ConcurrentHashMap<String, Ref>(4);
 		_maxrow = maxrow;
 		_maxcol = maxcol;
+		_queueName = new StringBuilder().append("zss.").append(nextQueueId())
+				.append(".").append(_bookname).toString();//_bookname is optional
 		EventQueue tmp = null;
 		try {
-			tmp = EventQueues.lookup(bookname);
+			tmp = EventQueues.lookup(getQueueName());
 		} catch(IllegalStateException ex) {
 			//ignore for zsstest case(No execution)
 		}
 		_queue = tmp;
 	}
 	
+	private static synchronized int nextQueueId(){
+		return ++_lastQueueId;
+	}
+	
+	protected String getQueueName(){
+		return _queueName;
+	}
+
 	
 	@Override
 	public RefSheet getOrCreateRefSheet(String sheetname) {
-		RefSheet sheet = _sheets.get(sheetname);
+		RefSheet sheet = _sheetRefs.get(sheetname);
 		if (sheet == null) {
 			sheet = new RefSheetImpl(this, sheetname);
-			_sheets.put(sheetname, sheet);
+			_sheetRefs.put(sheetname, sheet);
 		}
 		return sheet;
 	}
 
 	@Override
 	public RefSheet getRefSheet(String sheetname) {
-		return _sheets.get(sheetname);
+		return _sheetRefs.get(sheetname);
 	}
 	
 	@Override
@@ -104,15 +116,15 @@ public class RefBookImpl implements RefBook {
 
 	@Override
 	public RefSheet removeRefSheet(String sheetname) {
-		return _sheets.remove(sheetname);
+		return _sheetRefs.remove(sheetname);
 	}
 
 	@Override
 	public void setSheetName(String oldsheetname, String newsheetname) {
-		final RefSheet sheet = _sheets.remove(oldsheetname);
+		final RefSheet sheet = _sheetRefs.remove(oldsheetname);
 		if (sheet != null) {
 			((RefSheetImpl)sheet).setSheetName(newsheetname);
-			_sheets.put(newsheetname, sheet);
+			_sheetRefs.put(newsheetname, sheet);
 		}
 	}
 	@Override

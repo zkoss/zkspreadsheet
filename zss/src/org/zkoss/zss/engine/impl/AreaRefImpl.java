@@ -13,6 +13,8 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.engine.impl;
 
+import org.zkoss.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.RefSheet;
 
@@ -76,5 +78,19 @@ public class AreaRefImpl extends CellRefImpl {
 	@Override
 	public int getRowCount() {
 		return _bRow - getTopRow() + 1;
+	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("AreaRef:[")
+				.append(getOwnerSheet().getOwnerBook().getBookName())
+				.append("]")
+				.append(getOwnerSheet().getSheetName())
+				.append("!")
+				.append(new AreaReference(new CellReference(getTopRow(),
+						getLeftCol()), new CellReference(getBottomRow(),
+						getRightCol())).formatAsString());
+
+		return sb.toString();
 	}
 }

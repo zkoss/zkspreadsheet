@@ -16,6 +16,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-324 Hiding all columns causes non-stopping AU and columns cannot be unhided
   ZSS-291 sorting a group of number with style causes null pointer exception
   ZSS-333 Preload bug
+  ZSS-332 Chart was moved if I move another chart in different book in different sparesheet in same desktop
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api

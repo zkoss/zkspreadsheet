@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
@@ -1410,5 +1411,13 @@ public class RefSheetImpl implements RefSheet {
 			}
 			ref0.setWithIndirectPrecedent(withIndirectPrecedent);
 		}
+	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("RefSheet:[").append(getOwnerBook().getBookName())
+				.append("]").append(getSheetName());
+		
+		return sb.toString();
 	}
 }

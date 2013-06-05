@@ -113,4 +113,16 @@ public class VarRefImpl extends AbstractRefImpl implements Ref {
 		final VarRefImpl ref = (VarRefImpl) o;
 		return _name == null ? _name == ref._name : _name.equals(ref._name);
 	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("VarRef:[")
+				.append(getOwnerSheet().getOwnerBook().getBookName())
+				.append("]")
+				.append(getOwnerSheet().getSheetName())
+				.append("!var[")
+				.append(_name).append("]");
+
+		return sb.toString();
+	}
 }

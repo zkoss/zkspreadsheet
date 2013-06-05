@@ -221,13 +221,13 @@ public final class BookHelper {
 		return refBook.getOrCreateRefSheet(sheet.getSheetName());
 	}
 	
-	public static XBookSeries getBooks(XBook book) {
+	public static XBookSeries getBookSeries(XBook book) {
 		return book instanceof HSSFBookImpl ? 
 				((HSSFBookImpl)book).getBookSeries():
 				((XSSFBookImpl)book).getBookSeries();
 	}
 	
-	public static void setBooks(XBook book, XBookSeries books) {
+	public static void setBookSeries(XBook book, XBookSeries books) {
 		if (book instanceof HSSFBookImpl) 
 			((HSSFBookImpl)book).setBookSeries(books);
 		else
@@ -235,7 +235,7 @@ public final class BookHelper {
 	}
 	
 	public static XBook getBook(XBook book, String bookname) {
-		final XBookSeries books = BookHelper.getBooks(book);
+		final XBookSeries books = BookHelper.getBookSeries(book);
 		return bookname == null || book.getBookName().equals(bookname) ? book : books != null ? books.getBook(bookname) : null;
 	}
 	

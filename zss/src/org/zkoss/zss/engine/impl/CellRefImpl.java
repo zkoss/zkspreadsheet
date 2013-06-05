@@ -13,6 +13,8 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.engine.impl;
 
+import org.zkoss.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefSheet;
 
@@ -116,5 +118,15 @@ public class CellRefImpl extends AbstractRefImpl implements Ref {
 	@Override
 	protected void removeSelf() {
 		getOwnerSheet().removeRef(_tRow, _lCol, _tRow, _lCol);
+	}
+	
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("CellRef:[").append(getOwnerSheet().getOwnerBook().getBookName())
+				.append("]").append(getOwnerSheet().getSheetName()).append("!")
+				.append(new CellReference(_tRow, _lCol).formatAsString());
+		
+		return sb.toString();
 	}
 }
