@@ -37,8 +37,10 @@ import org.zkoss.zss.ui.impl.XUtils;
  */
 public class SheetImpl implements Sheet{
 	ModelRef<XSheet> sheetRef;
+	ModelRef<XBook> bookRef;
 	Book nbook;
-	public SheetImpl(ModelRef<XSheet> sheet){
+	public SheetImpl(ModelRef<XBook> book,ModelRef<XSheet> sheet){
+		this.bookRef = book;
 		this.sheetRef = sheet;
 	}
 	
@@ -77,7 +79,7 @@ public class SheetImpl implements Sheet{
 		if(nbook!=null){
 			return nbook;
 		}
-		nbook = new BookImpl(new SimpleRef<XBook>(getNative().getBook()));
+		nbook = new BookImpl(bookRef);
 		return nbook;
 	}
 	
@@ -155,5 +157,10 @@ public class SheetImpl implements Sheet{
 	@Override
 	public int getColumnWidth(int column) {
 		return XUtils.getColumnWidthInPx(getNative(), column);
+	}
+
+	@Override
+	public Object getSync() {
+		return getNative();
 	}
 }

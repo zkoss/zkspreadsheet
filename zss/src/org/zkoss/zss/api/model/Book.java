@@ -35,6 +35,13 @@ public interface Book {
 	public Workbook getPoiBook();
 	
 	/**
+	 * Gets the object for synchronized a book.
+	 * Note: you shouldn't synchronize a book directly, you have to get the sync object to synchronize it
+	 * @return
+	 */
+	public Object getSync();
+	
+	/**
 	 * Gets the book name
 	 * @return tge book name
 	 */

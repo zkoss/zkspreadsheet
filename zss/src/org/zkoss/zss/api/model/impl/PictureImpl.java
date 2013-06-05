@@ -28,7 +28,7 @@ public class PictureImpl implements Picture{
 	ModelRef<XBook> bookRef;
 	ModelRef<org.zkoss.poi.ss.usermodel.Picture> picRef;
 	
-	public PictureImpl(ModelRef<XBook> bookRef, SimpleRef<org.zkoss.poi.ss.usermodel.Picture> picRef) {
+	public PictureImpl(ModelRef<XBook> bookRef, ModelRef<org.zkoss.poi.ss.usermodel.Picture> picRef) {
 		this.bookRef = bookRef;
 		this.picRef = picRef;
 	}

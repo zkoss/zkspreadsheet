@@ -84,9 +84,9 @@ public class RangeImpl implements Range{
 	
 	private SharedContext sharedCtx;
 	
-	public RangeImpl(Sheet sheet,XRange range) {
+	public RangeImpl(XRange range,Sheet sheet) {
 		this.range = range;
-		sharedCtx = new SharedContext((SheetImpl)sheet);
+		sharedCtx = new SharedContext(sheet);
 	}
 	private RangeImpl(XRange range,SharedContext ctx) {
 		this.range = range;
@@ -113,16 +113,15 @@ public class RangeImpl implements Range{
 	}
 	
 	static class SharedContext{
-		SheetImpl nsheet;
+		Sheet sheet;
 		List<MergeArea> mergeAreas;
 		
-		private SharedContext(SheetImpl nsheet){
-			this.nsheet = nsheet;
-			
+		private SharedContext(Sheet sheet){
+			this.sheet = sheet;
 		}
 		
 		public Sheet getSheet(){
-			return nsheet;
+			return sheet;
 		}
 		
 		
@@ -131,14 +130,17 @@ public class RangeImpl implements Range{
 			return mergeAreas;
 		}
 		
+		public Book getBook(){
+			return sheet.getBook();
+		}
 		
 		private void initMergeRangesCache(){
 			if(mergeAreas==null){//TODO a better way to cache(index) this.(I this MergeMatrixHelper is not good enough now)
-				XSheet sheet = nsheet.getNative();
-				int sz = sheet.getNumMergedRegions();
+				XSheet xsheet = ((SheetImpl)sheet).getNative();
+				int sz = xsheet.getNumMergedRegions();
 				mergeAreas = new ArrayList<MergeArea>(sz);
 				for(int j = sz - 1; j >= 0; --j) {
-					final CellRangeAddress addr = sheet.getMergedRegion(j);
+					final CellRangeAddress addr = xsheet.getMergedRegion(j);
 					mergeAreas.add(new MergeArea(addr.getFirstRow(),addr.getFirstColumn(), addr.getLastRow(),addr.getLastColumn()));
 				}
 			}
@@ -264,7 +266,7 @@ public class RangeImpl implements Range{
 			run.run(this);
 			return;
 		case BOOK:
-			synchronized(range.getSheet().getBook()){//it just show concept, we have a betterway to do read-write lock
+			synchronized(sharedCtx.getBook().getSync()){//it just show concept, we have to has a betterway to do read-write lock
 				run.run(this);
 			}
 			return;
@@ -301,7 +303,7 @@ public class RangeImpl implements Range{
 			run.run();
 			return;
 		case BOOK:
-			synchronized(range.getSheet().getBook()){
+			synchronized(sharedCtx.getBook().getSync()){
 				run.run();
 			}
 			return;
@@ -765,7 +767,7 @@ public class RangeImpl implements Range{
 		range.createSheet(name);
 		
 		XSheet sheet = book.getWorksheetAt(n);
-		return new SheetImpl(new SimpleRef<XSheet>(sheet));
+		return new SheetImpl(((BookImpl)sharedCtx.sheet.getBook()).getRef(),new SimpleRef<XSheet>(sheet));
 		
 	}
 	

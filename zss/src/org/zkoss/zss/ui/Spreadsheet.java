@@ -4759,7 +4759,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	@Deprecated
 	public boolean validate(XSheet sheet, final int row, final int col, final String txt, 
 		final EventListener callback) {
-		return new ValidationHelper(this).validate(new SheetImpl(new SimpleRef<XSheet>(sheet)), row, col, txt, callback);
+		return new ValidationHelper(this).validate(new SheetImpl(new SimpleRef<XBook>(sheet.getBook()),new SimpleRef<XSheet>(sheet)), row, col, txt, callback);
 	}
 ////		final XSheet ssheet = this.getSelectedXSheet();
 ////		if (ssheet == null || !ssheet.equals(sheet)) { //skip no sheet case
@@ -4929,7 +4929,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 */
 	public Sheet getSelectedSheet(){
 		XSheet sheet = getSelectedXSheet();
-		return sheet==null?null:new SheetImpl(new SimpleRef<XSheet>(sheet));
+		return sheet==null?null:new SheetImpl(new SimpleRef<XBook>(sheet.getBook()),new SimpleRef<XSheet>(sheet));
 	}
 	
 	/**

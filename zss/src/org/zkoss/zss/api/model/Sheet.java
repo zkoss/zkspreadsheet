@@ -28,6 +28,13 @@ public interface Sheet {
 	public org.zkoss.poi.ss.usermodel.Sheet getPoiSheet();
 	
 	public Book getBook();
+	
+	/**
+	 * Gets the object for synchronized a sheet.
+	 * Note: you shouldn't synchronize a sheet directly, you have to get the sync object to synchronize it
+	 * @return
+	 */
+	public Object getSync();
 
 	public boolean isProtected();
 

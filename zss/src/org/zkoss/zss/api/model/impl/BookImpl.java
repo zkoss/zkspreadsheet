@@ -97,13 +97,13 @@ public class BookImpl implements Book{
 	
 	public SheetImpl getSheetAt(int index){
 		XSheet sheet = getNative().getWorksheetAt(index);
-		return new SheetImpl(new SimpleRef<XSheet>(sheet));
+		return new SheetImpl(bookRef,new SimpleRef<XSheet>(sheet));
 	}
 	
 	public SheetImpl getSheet(String name){
 		XSheet sheet = getNative().getWorksheet(name);
 		
-		return sheet==null?null:new SheetImpl(new SimpleRef<XSheet>(sheet));
+		return sheet==null?null:new SheetImpl(bookRef,new SimpleRef<XSheet>(sheet));
 	}
 
 	@Override
@@ -119,6 +119,11 @@ public class BookImpl implements Book{
 	@Override
 	public String getShareScope() {
 		return getNative().getShareScope();
+	}
+
+	@Override
+	public Object getSync() {
+		return getNative();
 	}
 	
 }
