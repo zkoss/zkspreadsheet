@@ -28,7 +28,7 @@ public class BookUtil {
 	static private Book newBook0(String bookName, BookType type)
 			throws IOException {
 		
-		Importer importer = Importers.getImporter("excel");
+		Importer importer = Importers.getImporter();
 		if(importer==null){
 			throw new RuntimeException("importer for excel not found");
 		}

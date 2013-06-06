@@ -2,12 +2,15 @@ package org.zkoss.zss.essential;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.essential.util.BookUtil;
 import org.zkoss.zss.essential.util.ClientUtil;
+import org.zkoss.zss.ui.DefaultUserAction;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zssex.ui.DefaultExUserActionHandler;
@@ -18,8 +21,35 @@ public class MainActionHandler extends DefaultExUserActionHandler {
 	private final static Log log = Log.lookup(MainActionHandler.class);
 
 
+	@Override
+	public Set<String> getSupportedUserAction(Sheet sheet) {
+		Set<String> actions = super.getSupportedUserAction(sheet);
+		actions.add(DefaultUserAction.NEW_BOOK.getAction());
+		if(sheet==null){
+			
+			return actions;
+		}
+		actions.add(DefaultUserAction.SAVE_BOOK.getAction());
+		
+		return actions;
+	}
+	
+	
+	
 
 	@Override
+	protected boolean dispatchAction(String action) {
+		if(DefaultUserAction.NEW_BOOK.getAction().equals(action)){
+			return doNewBook();
+		}else if(DefaultUserAction.SAVE_BOOK.getAction().equals(action)){
+			return doSaveBook();
+		}
+		return super.dispatchAction(action);
+	}
+
+
+
+
 	public boolean doNewBook() {
 //		NBook book = BookUtil.newBook("newBook", NBook.BookType.EXCEL_2003);
 		Book book = BookUtil.newBook("newBook", Book.BookType.EXCEL_2007);
@@ -28,7 +58,6 @@ public class MainActionHandler extends DefaultExUserActionHandler {
 		return true;
 	}
 
-	@Override
 	public boolean doSaveBook() {
 		Book book = getSpreadsheet().getBook();
 		String name = BookUtil.suggestName(book);
