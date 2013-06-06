@@ -434,4 +434,9 @@ public class XSSFBookImpl extends XSSFWorkbook implements XBook, BookCtrl {
 	public boolean containsFocus(Object focus) {
 		return getBookCtrl().containsFocus(focus);
 	}
+	
+	@Override
+	public Set<Object> getAllFocus(){
+		return getBookCtrl().getAllFocus();
+	}
 }

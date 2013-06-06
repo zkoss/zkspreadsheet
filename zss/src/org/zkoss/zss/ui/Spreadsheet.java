@@ -129,6 +129,7 @@ import org.zkoss.zss.ui.impl.HeaderPositionHelper.HeaderPositionInfo;
 import org.zkoss.zss.ui.impl.JSONObj;
 import org.zkoss.zss.ui.impl.MergeAggregation;
 import org.zkoss.zss.ui.impl.MergeAggregation.MergeIndex;
+import org.zkoss.zss.ui.impl.Focus;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.SequenceId;
@@ -214,9 +215,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private int _preloadRowSize = -1; //the number of row to load when receiving the rendering request
 	private int _preloadColumnSize = -1; //the number of column to load when receiving the rendering request
 	
-	private String _selectedSheetId;
 	transient private XSheet _selectedSheet;
-	transient private String _selectedSheetName;
 
 	private int _rowFreeze = DEFAULT_ROW_FREEZE; // how many fixed rows
 	private boolean _rowFreezeset = false;
@@ -233,7 +232,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	//TODO undo/redo
 	//StateManager stateManager = new StateManager(this);
+	
+	// editor focus is a public focus api to let developer assign and control focus manually
 	private Map<String, Focus> _editorFocuses = new HashMap<String, Focus>(20); //id -> Focus
+	
+	// friend focus is a private api to control focus between share book;
+	private Map<String, Focus> _friendFocuses = new HashMap<String, Focus>(20); //id -> Focus
+	private Map<String, String> _friendColors = new HashMap<String, String>(20); //id -> Focus
+	private String _selfFocusId;
 
 	private Rect _focusRect = new Rect(0, 0, 0, 0);
 	private Rect _selectionRect = new Rect(0, 0, 0, 0);
@@ -524,15 +530,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			_selfEditorFocus = null;
 		}
 	}
-	private void moveSelfEditorFocus() {
+	private void moveSelfEditorFocus(String sheetId,int row, int column) {
 		if (_selectedSheet != null) {
 			if (_selfEditorFocus == null) {
-				_selfEditorFocus = newFocus();
+				_selfEditorFocus = newSelfFocus(sheetId,row,column);
 				((BookCtrl)_book).addFocus(_selfEditorFocus);
+			}else{
+				_selfEditorFocus.setSheetId(sheetId);
+				_selfEditorFocus.setPosition(row, column);
 			}
 			final XRange rng = XRanges.range(_selectedSheet);
 			rng.notifyMoveFriendFocus(_selfEditorFocus);
 		}
+		syncEditorFocus();
 	}
 	private EventListener _focusListener = null;
 
@@ -540,12 +550,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 	private boolean _showContextMenu;
 	private void doMoveSelfFocus(CellEvent event){
-		syncEditorFocus();
-		int row=event.getRow();
-		int col=event.getColumn();
-		_selfEditorFocus.row = row;
-		_selfEditorFocus.col = col;
-		moveSelfEditorFocus();
+		moveSelfEditorFocus(getSelectedSheetId(),event.getRow(),event.getColumn());
 	}
 	private void initBook0(XBook book) {
 		if (_book != null) {
@@ -560,28 +565,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		
 		 //Shall clean selected sheet before set new book (ZSS-75: set book null, cause NPE)
-		if (_selectedSheet != null) {
-			doSheetClean(_selectedSheet);
-		}
-		if (!Objects.equals(_book, book)) {
-			removeAttribute(MERGE_MATRIX_KEY);
-			clearHeaderSizeHelper(true, true);
-			_custColId = new SequenceId(-1, 2);
-			_custRowId = new SequenceId(-1, 2);
-		}
-		_selectedSheet = null;
-		_selectedSheetId = null;
-		_selectedSheetName = null;
+		cleanSelectedSheet();
+		
+		removeAttribute(MERGE_MATRIX_KEY);
+		clearHeaderSizeHelper(true, true);
+		_custColId = new SequenceId(-1, 2);
+		_custRowId = new SequenceId(-1, 2);
+		
 		
 		_book = book;
 		if (_book != null) {
 			_book.subscribe(_dataListener);
 			_book.addVariableResolver(_variableResolver);
 			_book.addFunctionMapper(_functionMapper);
-			if (_selfEditorFocus == null) { //focus name default to Spreadsheet id
-				_selfEditorFocus = newFocus();
-				((BookCtrl)_book).addFocus(_selfEditorFocus);
-			}
 			
 			//20130523, dennis, if share-scope is not empty, then should always sync the  focus, not only application and session
 			if (!Strings.isEmpty(_book.getShareScope())) { //have to sync focus
@@ -593,13 +589,15 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				});
 			}
 		}
-		
+		_selfFocusId = null;//clean
 		refreshToolbarDisabled();
 	}
 	
-	private Focus newFocus() {
+	private Focus newSelfFocus(String sheetId, int row, int column) {
 		final String focusName = _userName == null ? ""+ (getId() == null ? getUuid() : getId()) : _userName;
-		return new Focus(((BookCtrl)_book).nextFocusId(), focusName, "#000", 0, 0, this);
+		_selfFocusId = _selfFocusId==null?((BookCtrl)_book).nextFocusId():_selfFocusId;
+		Focus focus = new Focus(_selfFocusId, focusName, "#000", sheetId,row,column, this);
+		return focus;
 	}
 	
 //	/**
@@ -635,27 +633,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			return null;
 		}
 		if (_selectedSheet == null) {
-			if (_selectedSheetId == null) {
-				if (book.getNumberOfSheets() == 0)
-					throw new UiException("sheet size of given book is zero");
-				_selectedSheet = (XSheet) book.getSheetAt(0);
-				_selectedSheetId = XUtils.getSheetUuid(_selectedSheet);
-			} else {
-				_selectedSheet = XUtils.getSheetByUuid(_book, _selectedSheetId);
-				if (_selectedSheet == null) {
-					throw new UiException("can not find sheet by id : "	+ _selectedSheetId);
-				}
-			}
-			doSheetSelected(_selectedSheet);
+			if (book.getNumberOfSheets() == 0)
+				throw new UiException("sheet size of given book is zero");
+			_selectedSheet = (XSheet) book.getSheetAt(0);
+			afterSheetSelected();
 		}
 		return _selectedSheet;
 	}
 	
 	private String getSelectedSheetId() {
-		if (_selectedSheetId == null) {
-			getSelectedXSheet();
-		}
-		return _selectedSheetId;
+		XSheet sheet = getSelectedXSheet();
+		return sheet==null?null:XUtils.getSheetUuid(sheet);
 	}
 
 	/**
@@ -734,16 +722,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @param name	the name of spreadsheet to be selected.
 	 */
 	public void setSelectedSheet(String name) {
-		setSelectedSheetImpl(name);
+		setSelectedSheet0(name);
 		
 		//TODO: think if this is correct or not
 		// the call of onSheetSelected must after invalidate,
 		// because i must let invalidate clean lastcellblock first
-		doSheetSelected(_selectedSheet);
+		afterSheetSelected();
 		invalidate();
 	}
 	
-	private void setSelectedSheetImpl(String name) {
+	private void setSelectedSheet0(String name) {
 		final XBook book = getXBook();
 		if (book == null) {
 			return;
@@ -751,10 +739,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		
 		//Note. check whether if the sheet has remove or not
 		if (_selectedSheet != null && book.getSheetIndex(_selectedSheet) == -1) {
-			doSheetClean(_selectedSheet);
-			_selectedSheet = null;
-			_selectedSheetId = null;
-			_selectedSheetName = null;
+			cleanSelectedSheet();
 		}
 
 		if (_selectedSheet == null || !_selectedSheet.getSheetName().equals(name)) {
@@ -762,12 +747,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (sheet == null) {
 				throw new UiException("No such sheet : " + name);
 			}
-
-			if (_selectedSheet != null)
-				doSheetClean(_selectedSheet);
-			_selectedSheet = sheet;
+			cleanSelectedSheet();
 			
-			_selectedSheetId = XUtils.getSheetUuid(_selectedSheet);
+			_selectedSheet = sheet;
 		}
 	}
 	
@@ -775,7 +757,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			int left, int top, int right, int bottom,
 			int highlightLeft, int highlightTop, int highlightRight, int highlightBottom,
 			int rowfreeze, int colfreeze) {
-		setSelectedSheetImpl(name);
+		setSelectedSheet0(name);
 		if (row >= 0 && col >= 0) {
 			this.setCellFocusDirectly(new Position(row, col));
 		} else {
@@ -791,7 +773,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		} else {
 			this.setHighlightDirectly(null);//hide highlight
 		}
-		doSheetSelected(_selectedSheet);
+		afterSheetSelected();
 		
 		updateSheetAttributes(cacheInClient, rowfreeze, colfreeze);
 	}
@@ -1968,6 +1950,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					"#4F81BD","#F29436","#9BBB59","#8064A2","#4BACC6","#F79646","#C00000","#FF0000",
 					"#0000FF","#008000","#9900CC","#800080","#800000","#FF6600","#CC0099","#00FFFF"};
 	
+	private int _colorIndex = 0;
+	private String nextFriendFocusColor() {
+		String color = FOCUS_COLORS[_colorIndex++ % FOCUS_COLORS.length];
+		return color;
+	}
+	
 	/* DataListener to handle sheet data event */
 	private class InnerDataListener extends EventDispatchListener implements Serializable {
 		private static final long serialVersionUID = 20100330164021L;
@@ -2158,29 +2146,27 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_SHEET_DELETE, Spreadsheet.this, delSheetName));
 		}
 		
-		private int _colorIndex = 0;
 		private XSheet getSheet(Ref rng) {
 			return XUtils.getSheetByRefSheet(_book, rng.getOwnerSheet()); 
 		}
-		private String nextFocusColor() {
-			return FOCUS_COLORS[_colorIndex++ % FOCUS_COLORS.length]; 
-		}
+
 		private void onFriendFocusMove(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			XSheet sheet = getSheet(rng);
 			if (sheet == null) {//ZSS-209: book may removed
 				return;
 			}
-			if (!getSelectedXSheet().equals(sheet))
-				return;
-			
 			final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
-			final String id = focus.id;
-			if (!id.equals(_selfEditorFocus.id)) {
-				final Focus ofocus = _editorFocuses.get(id);
-				moveEditorFocus(id, focus.name, ofocus != null ? ofocus.color : nextFocusColor(), focus.row, focus.col);
+			final String id = focus.getId();
+			if (_selfEditorFocus!=null && !id.equals(_selfEditorFocus.getId())) {
+				String color = _friendColors.get(id);
+				if(color==null){
+					_friendColors.put(id,color = nextFriendFocusColor());
+					//TODO current we dont' have a way to remove friend color cache
+				}
+				moveFriendFocus(id, focus.getName(), color, focus.getSheetId(),focus.getRow(), focus.getColumn());
 			}
-			
+			syncFriendFocus();
 		}
 		private void onFriendFocusDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -2188,11 +2174,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (sheet == null) {//ZSS-209: book may removed
 				return;
 			}
-			if (!getSelectedXSheet().equals(sheet))
-				return;
-			
 			final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
-			removeEditorFocus(focus.id);
+			final String id = focus.getId();
+			if (_selfEditorFocus!=null && !id.equals(_selfEditorFocus.getId())) {
+				//NOTE should remove friend color, the firend is possible back (sheet switch back)
+				//TODO current we dont' have a way to remove friend color cache
+				removeFriendFocus(focus.getId());
+			}
+			syncFriendFocus();
 		}
 		private void onChartAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -2344,7 +2333,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					updateColWidth(sheet, c);
 				}
 				final Rect rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleRect();
-				syncFriendFocusesPosition(left, rect.getTop(), rect.getRight(), rect.getBottom());
+				syncFriendFocusPosition(left, rect.getTop(), rect.getRight(), rect.getBottom());
 			} else if (rng.isWholeRow()) {
 				final int top = rng.getTopRow();
 				final int bottom = rng.getBottomRow();
@@ -2352,7 +2341,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					updateRowHeight(sheet, r);
 				}
 				final Rect rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleRect();
-				syncFriendFocusesPosition(rect.getLeft(), top, rect.getRight(), rect.getBottom());
+				syncFriendFocusPosition(rect.getLeft(), top, rect.getRight(), rect.getBottom());
 			}
 		}
 		private void onBtnChange(SSDataEvent event) {
@@ -3989,13 +3978,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		// encoded
 	}
 
-	private void doSheetClean(XSheet sheet) {
-		if (getXBook().getSheetIndex(sheet) != -1)
-			deleteSelfEditorFocus();
+	private void cleanSelectedSheet() {
+		if(_selectedSheet==null){
+			return;
+		}
+		deleteSelfEditorFocus();
+		
 		List list = loadWidgetLoaders();
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
-			((WidgetLoader) list.get(i)).onSheetClean(sheet);
+			((WidgetLoader) list.get(i)).onSheetClean(_selectedSheet);
 		}
 		
 //		_loadedRect.set(-1, -1, -1, -1);
@@ -4007,9 +3999,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		_colFreezeset = false;
 		_rowFreeze = -1;
 		_rowFreezeset = false;
+		
+		_selectedSheet = null;
 	}
 
-	private void doSheetSelected(XSheet sheet) {
+	private void afterSheetSelected() {
 		//Dennis, shouldn't post event in component by a server side operation call
 //		org.zkoss.zk.ui.event.Events.postEvent(new Event(Events.ON_SHEET_SELECT, this));
 		
@@ -4017,21 +4011,22 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		List list = loadWidgetLoaders();
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
-			((WidgetLoader) list.get(i)).onSheetSelected(sheet);
+			((WidgetLoader) list.get(i)).onSheetSelected(_selectedSheet);
 		}
 		//setup gridline
 		setDisplayGridlines(_selectedSheet.isDisplayGridlines());
 		setProtectSheet(_selectedSheet.getProtect());
 		
 		//register collaborated focus
-		moveSelfEditorFocus();
-		_selectedSheetName = _selectedSheet.getSheetName();
+		Position cf = getCellFocus();
+		moveSelfEditorFocus(getSelectedSheetId(),cf.getRow(),cf.getColumn());
 		
 		refreshToolbarDisabled();
 	}
 	
 	public String getSelectedSheetName() {
-		return _selectedSheet != null ? _selectedSheetName : null;
+		XSheet sheet = getSelectedXSheet();
+		return sheet==null?null:sheet.getSheetName();
 	}
 	
 	private void addChartWidget(XSheet sheet, ZssChartX chart) {
@@ -4565,15 +4560,36 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		_editorFocuses.remove(id);
 	}
 	
+	private void removeFriendFocus(String id){
+		//use same au response. in client side there is always editor focus
+		if(_friendFocuses.remove(id)!=null){
+			response("removeEditorFocus" + _focusId.next(), new AuInvoke((Component)this, "removeEditorFocus", id));
+			//don't remove firendFocuses color cache, it might be back when switch sheet, only remove when sync firend focus 
+		}
+		
+		
+	}
+	
 	/**
 	 *  Add and move other editor's focus
 	 */
 	public void moveEditorFocus(String id, String name, String color, int row ,int col){
-		if (_selfEditorFocus != null && !_selfEditorFocus.id.equals(id)) {
+		if (_selfEditorFocus != null && !_selfEditorFocus.getId().equals(id)) {
 			response("moveEditorFocus" + _focusId.next(), new AuInvoke((Component)this, "moveEditorFocus", new String[]{id, name, color,""+row,""+col}));
-			_editorFocuses.put(id, new Focus(id, name, color, row, col, null));
+			_editorFocuses.put(id, new Focus(id, name, color, getSelectedSheetName(), row, col, null));
 		}
 	}
+	
+	private void moveFriendFocus(String id, String name, String color, String sheetId, int row ,int col){
+		if (_selfEditorFocus != null && !_selfEditorFocus.getId().equals(id) && getSelectedXSheet()!=null) {
+			if(sheetId!=null && sheetId.equals(getSelectedSheetId())){
+				response("moveEditorFocus" + _focusId.next(), new AuInvoke((Component)this, "moveEditorFocus", new String[]{id, name, color,""+row,""+col}));
+				_friendFocuses.put(id, new Focus(id, name, color, sheetId, row, col, null));
+			}else{
+				removeFriendFocus(id);
+			}
+		}
+	}	
 	
 	private void syncEditorFocus() {
 		if (_book != null) {
@@ -4582,9 +4598,56 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					final Focus focus = it.next();
 					if (!((BookCtrl)_book).containsFocus(focus)) { //
 						it.remove();
-						removeEditorFocus(focus.id); //remove from the client
+						removeEditorFocus(focus.getId()); //remove from the client
 					}
 				}
+			}
+		}
+	}
+	
+	private void syncFriendFocus() {
+		if (_book != null) {
+			Set<Object> bookFocuses;
+			Set<String> keep = new HashSet<String>();
+			Set<String> inbook = new HashSet<String>();
+//			Set<String> myFriend = new HashSet<String>(_friendFocuses.keySet());
+			
+			synchronized(_book) {
+				bookFocuses = ((BookCtrl)_book).getAllFocus();
+			}
+			
+			String sheetid = getSelectedSheetId();
+			for(Object f:bookFocuses){
+				if(!(f instanceof Focus) || f.equals(_selfEditorFocus)){
+					continue;
+				}
+				Focus focus = (Focus)f;
+				String id = focus.getId();
+				inbook.add(id);
+				if(focus.getSheetId().equals(sheetid)){
+					if(!_friendFocuses.containsKey(id)){
+						//same sheet, but not in friend focus, add back
+						String color = _friendColors.get(id);
+						if(color==null){
+							_friendColors.put(id,color = nextFriendFocusColor());
+						}
+						//same sheet, and not exist, add to friend
+						moveFriendFocus(id, focus.getName(), color, focus.getSheetId(), focus.getRow(), focus.getColumn());
+					}
+					keep.add(id);//same sheet, keep it in friend focus 
+				}else if(_friendFocuses.containsKey(id)){
+					//different sheet and contains in firend, remove it
+					removeFriendFocus(id);
+				}
+			}
+			//remove other friend focus that not in book focus
+			for(String fid:new HashSet<String>(_friendFocuses.keySet())){
+				if(keep.contains(fid)) continue;
+				if(!inbook.contains(fid)){
+					//not in book already, remove the color cache
+					_friendColors.remove(fid);
+				}
+				removeFriendFocus(fid);				
 			}
 		}
 	}
@@ -4594,21 +4657,24 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @param name focus name that show on other Spreadsheet
 	 */
 	public void setUserName(String name) {
-		if (_selfEditorFocus != null) {
-			_selfEditorFocus.name = name;
-			//TODO UPDATE self and relative
+		if(!Objects.equals(_userName, name)){
+			_userName = name;
+			if (_selfEditorFocus != null) {
+				_selfEditorFocus.setName(name);
+				//TODO UPDATE self and relative
+				moveSelfEditorFocus(_selfEditorFocus.getSheetId(), _selfEditorFocus.getRow(), _selfEditorFocus.getColumn());
+			}	
 		}
-		_userName = name;
 	}
 
-	//sync friend focus position
-	private void syncFriendFocusesPosition(int left, int top, int right, int bottom) {
+	//sync friend focus position after some size change
+	private void syncFriendFocusPosition(int left, int top, int right, int bottom) {
 		int row = -1, col = -1;
-		for(Focus focus : _editorFocuses.values()) {
-			row=focus.row;
-			col=focus.col;
+		for(Focus focus : new ArrayList<Focus>(_friendFocuses.values())) {//avoid co-modify-exception
+			row=focus.getRow();
+			col=focus.getColumn();
 			if(col>=left && col<=right && row>=top  && row<=bottom) {
-				this.moveEditorFocus(focus.id, focus.name, focus.color, row, col);
+				this.moveFriendFocus(focus.getId(), focus.getName(), focus.getColor(), focus.getSheetId(),row, col);
 			}
 		}
 	}

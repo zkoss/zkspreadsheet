@@ -357,4 +357,10 @@ public class HSSFBookImpl extends HSSFWorkbook implements XBook, BookCtrl {
 	public boolean containsFocus(Object focus) {
 		return getBookCtrl().containsFocus(focus);
 	}
+	
+	@Override
+	public Set<Object> getAllFocus(){
+		return getBookCtrl().getAllFocus();
+	}
+	
 }

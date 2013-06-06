@@ -13,8 +13,10 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.sys.impl;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.zkoss.poi.ss.usermodel.PivotCache;
@@ -22,7 +24,7 @@ import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.impl.RefBookImpl;
 import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.ui.Focus;
+import org.zkoss.zss.ui.impl.Focus;
 
 /**
  * Implementation of {@link BookCtrl}.
@@ -64,13 +66,20 @@ public class BookCtrlImpl implements BookCtrl {
 		return _focusMap.containsKey(focus);
 	}
 	
+	public Set<Object> getAllFocus(){
+		syncFocus();
+		return new HashSet<Object>(_focusMap.keySet()); 
+	}
+	
 	//if browser is closed directly
 	private void syncFocus() { 
 		for (final Iterator<Object> it = _focusMap.keySet().iterator(); it.hasNext(); ) {
-			final Focus focus = (Focus) it.next();
-			if (focus.isDetached()) {
-				it.remove();
-			}
+			Object focus = it.next();
+			if(focus instanceof Focus){
+				if (((Focus)focus).isDetached()) {
+					it.remove();
+				}
+			} 
 		}
 	}
 }

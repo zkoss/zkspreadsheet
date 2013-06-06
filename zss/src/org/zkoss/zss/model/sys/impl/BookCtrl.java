@@ -13,6 +13,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.model.sys.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.zkoss.poi.ss.usermodel.PivotCache;
 import org.zkoss.poi.ss.util.AreaReference;
@@ -49,4 +50,6 @@ public interface BookCtrl {
 	public void removeFocus(Object focus);
 	
 	public boolean containsFocus(Object focus);
+	
+	public Set<Object> getAllFocus();
 }
