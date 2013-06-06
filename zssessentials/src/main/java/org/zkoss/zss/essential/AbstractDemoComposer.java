@@ -68,9 +68,10 @@ public class AbstractDemoComposer extends SelectorComposer<Component>{
 		} 
 		
 		//sync available book selection
-		book = ss.getBook().getBookName();
-		
-		availableBookModel.addToSelection(book);
+		if(ss.getBook()!=null){
+			book = ss.getBook().getBookName();
+			availableBookModel.addToSelection(book);
+		}
 	}
 
 	protected void initModel() {
@@ -111,10 +112,13 @@ public class AbstractDemoComposer extends SelectorComposer<Component>{
 		Importer imp = Importers.getImporter();
 		try {
 			Book book = imp.imports(WebApps.getCurrent().getResource("/WEB-INF/books/"+bookname), bookname);
-			ss.setBook(book);
+			loadBook(book);
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage(),e);
 		}
+	}
+	protected void loadBook(Book book){
+		ss.setBook(book);
 	}	
 	
 	

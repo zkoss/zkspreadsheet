@@ -1,0 +1,30 @@
+<zk>
+	<window hflex="1" vflex="1"
+		apply="org.zkoss.zss.essential.AppCoeditComposer">
+
+		<hlayout hflex="1" vflex="1">
+			<vlayout hflex="1" vflex="1">
+				<groupbox hflex="1" vflex="1" mold="3d">
+					<caption id="book1Cap" />
+					<spreadsheet id="ss" hflex="1" vflex="1"
+						showFormulabar="true" showContextMenu="true" showToolbar="true"
+						showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"/>
+					</groupbox>
+				<groupbox hflex="1" vflex="1" mold="3d">
+					<caption id="book2Cap" />
+					<spreadsheet id="ss2" hflex="1" vflex="1"
+						showFormulabar="true" showContextMenu="true" showToolbar="true"
+						showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"/>
+				</groupbox>
+			</vlayout>
+			<vlayout width="300px" vflex="1">
+				<groupbox hflex="1" height="200px">
+					<caption label="Available Books" />
+					<listbox id="availableBookList" vflex="1">
+
+					</listbox>
+				</groupbox>
+			</vlayout>
+		</hlayout>
+	</window>
+</zk>
