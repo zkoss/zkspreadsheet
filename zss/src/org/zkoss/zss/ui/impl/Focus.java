@@ -87,4 +87,7 @@ public class Focus {
 		
 		return sb.toString();
 	}
+	public void setColor(String color) {
+		this.color = color;
+	}
 }

@@ -238,7 +238,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	// friend focus is a private api to control focus between share book;
 	private Map<String, Focus> _friendFocuses = new HashMap<String, Focus>(20); //id -> Focus
-	private Map<String, String> _friendColors = new HashMap<String, String>(20); //id -> Focus
 	private String _selfFocusId;
 
 	private Rect _focusRect = new Rect(0, 0, 0, 0);
@@ -542,7 +541,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final XRange rng = XRanges.range(_selectedSheet);
 			rng.notifyMoveFriendFocus(_selfEditorFocus);
 		}
-		syncEditorFocus();
+		syncFriendFocus();
 	}
 	private EventListener _focusListener = null;
 
@@ -580,6 +579,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			_book.addFunctionMapper(_functionMapper);
 			
 			//20130523, dennis, if share-scope is not empty, then should always sync the  focus, not only application and session
+			//TODO use a configuration to config this.
 			if (!Strings.isEmpty(_book.getShareScope())) { //have to sync focus
 				this.addEventListener(Events.ON_CELL_FOUCSED, _focusListener = new EventListener() {
 					@Override
@@ -1945,16 +1945,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 	}
 
-	private final static String[] FOCUS_COLORS = 
-		new String[]{"#FFC000","#FFFF00","#92D050","#00B050","#00B0F0","#0070C0","#002060","#7030A0",
-					"#4F81BD","#F29436","#9BBB59","#8064A2","#4BACC6","#F79646","#C00000","#FF0000",
-					"#0000FF","#008000","#9900CC","#800080","#800000","#FF6600","#CC0099","#00FFFF"};
-	
-	private int _colorIndex = 0;
-	private String nextFriendFocusColor() {
-		String color = FOCUS_COLORS[_colorIndex++ % FOCUS_COLORS.length];
-		return color;
-	}
 	
 	/* DataListener to handle sheet data event */
 	private class InnerDataListener extends EventDispatchListener implements Serializable {
@@ -2159,14 +2149,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final Focus focus = (Focus) event.getPayload(); //other's spreadsheet's focus
 			final String id = focus.getId();
 			if (_selfEditorFocus!=null && !id.equals(_selfEditorFocus.getId())) {
-				String color = _friendColors.get(id);
-				if(color==null){
-					_friendColors.put(id,color = nextFriendFocusColor());
-					//TODO current we dont' have a way to remove friend color cache
-				}
-				moveFriendFocus(id, focus.getName(), color, focus.getSheetId(),focus.getRow(), focus.getColumn());
+				addOrMoveFriendFocus(id, focus.getName(), focus.getColor(), focus.getSheetId(),focus.getRow(), focus.getColumn());
+				syncFriendFocus();
 			}
-			syncFriendFocus();
 		}
 		private void onFriendFocusDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -2180,8 +2165,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				//NOTE should remove friend color, the firend is possible back (sheet switch back)
 				//TODO current we dont' have a way to remove friend color cache
 				removeFriendFocus(focus.getId());
+				syncFriendFocus();
 			}
-			syncFriendFocus();
+			
 		}
 		private void onChartAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -4566,8 +4552,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			response("removeEditorFocus" + _focusId.next(), new AuInvoke((Component)this, "removeEditorFocus", id));
 			//don't remove firendFocuses color cache, it might be back when switch sheet, only remove when sync firend focus 
 		}
-		
-		
 	}
 	
 	/**
@@ -4580,41 +4564,31 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	
-	private void moveFriendFocus(String id, String name, String color, String sheetId, int row ,int col){
+	private void addOrMoveFriendFocus(String id, String name, String color, String sheetId, int row ,int col){
 		if (_selfEditorFocus != null && !_selfEditorFocus.getId().equals(id) && getSelectedXSheet()!=null) {
 			if(sheetId!=null && sheetId.equals(getSelectedSheetId())){
 				response("moveEditorFocus" + _focusId.next(), new AuInvoke((Component)this, "moveEditorFocus", new String[]{id, name, color,""+row,""+col}));
-				_friendFocuses.put(id, new Focus(id, name, color, sheetId, row, col, null));
+				_friendFocuses.put(id, new FriendFocus(id, name, color, sheetId, row, col));
 			}else{
 				removeFriendFocus(id);
 			}
 		}
 	}	
 	
-	private void syncEditorFocus() {
-		if (_book != null) {
-			synchronized(_book) {
-				for(final Iterator<Focus> it = _editorFocuses.values().iterator(); it.hasNext();) {
-					final Focus focus = it.next();
-					if (!((BookCtrl)_book).containsFocus(focus)) { //
-						it.remove();
-						removeEditorFocus(focus.getId()); //remove from the client
-					}
-				}
-			}
+	private static class FriendFocus extends Focus{
+		public FriendFocus(String id, String name, String color,
+				String sheetId, int row, int col) {
+			super(id, name, color, sheetId, row, col,null);
 		}
 	}
 	
 	private void syncFriendFocus() {
 		if (_book != null) {
-			Set<Object> bookFocuses;
-			Set<String> keep = new HashSet<String>();
-			Set<String> inbook = new HashSet<String>();
-//			Set<String> myFriend = new HashSet<String>(_friendFocuses.keySet());
+			final Set<Object> bookFocuses;
+			final Set<String> keep = new HashSet<String>();
+			final Set<String> inbook = new HashSet<String>();
 			
-			synchronized(_book) {
-				bookFocuses = ((BookCtrl)_book).getAllFocus();
-			}
+			bookFocuses = ((BookCtrl)_book).getAllFocus();
 			
 			String sheetid = getSelectedSheetId();
 			for(Object f:bookFocuses){
@@ -4627,26 +4601,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				if(focus.getSheetId().equals(sheetid)){
 					if(!_friendFocuses.containsKey(id)){
 						//same sheet, but not in friend focus, add back
-						String color = _friendColors.get(id);
-						if(color==null){
-							_friendColors.put(id,color = nextFriendFocusColor());
-						}
-						//same sheet, and not exist, add to friend
-						moveFriendFocus(id, focus.getName(), color, focus.getSheetId(), focus.getRow(), focus.getColumn());
+						addOrMoveFriendFocus(id, focus.getName(), focus.getColor(), focus.getSheetId(), focus.getRow(), focus.getColumn());
 					}
 					keep.add(id);//same sheet, keep it in friend focus 
 				}else if(_friendFocuses.containsKey(id)){
-					//different sheet and contains in firend, remove it
+					//different sheet and in firend, remove it
 					removeFriendFocus(id);
 				}
 			}
 			//remove other friend focus that not in book focus
 			for(String fid:new HashSet<String>(_friendFocuses.keySet())){
 				if(keep.contains(fid)) continue;
-				if(!inbook.contains(fid)){
-					//not in book already, remove the color cache
-					_friendColors.remove(fid);
-				}
 				removeFriendFocus(fid);				
 			}
 		}
@@ -4674,7 +4639,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			row=focus.getRow();
 			col=focus.getColumn();
 			if(col>=left && col<=right && row>=top  && row<=bottom) {
-				this.moveFriendFocus(focus.getId(), focus.getName(), focus.getColor(), focus.getSheetId(),row, col);
+				this.addOrMoveFriendFocus(focus.getId(), focus.getName(), focus.getColor(), focus.getSheetId(),row, col);
 			}
 		}
 	}

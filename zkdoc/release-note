@@ -18,6 +18,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-333 Preload bug
   ZSS-332 Chart was moved if I move another chart in different book in different spareadsheet in same desktop
   ZSS-334 A book can't reset to another book-series
+  ZSS-335 When share book, the friend focus color was always change when I switch tab
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api

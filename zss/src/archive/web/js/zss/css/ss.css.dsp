@@ -357,10 +357,11 @@
 .zsscrollinfoinner{
 	background-color:#E3ECF7;
 	font-family: Tahoma, Arial, Helvetica, sans-serif;
-	font-size:small;
+	font-size:x-small;
 	padding-left:5px;
 	padding-right:5px;
-	border:1px outset #555555;
+	color:#333333;
+	border:1px outset #5F7D99;
 }
 
 .zsinfo{
@@ -429,6 +430,19 @@
 		filter: alpha(opacity=0);
 		background: #FFFFFF;
 	</c:if>
+}
+.zsfocmarkl{
+	position: relative;
+	font-size: x-small;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	padding: 1px 3px;
+	top:-1px;
+}
+.zsfocmarkl-lite{
+	color: #EEE;
+}
+.zsfocmarkl-dark{
+	color: #222;
 }
 .zsselect {
 	position: absolute;

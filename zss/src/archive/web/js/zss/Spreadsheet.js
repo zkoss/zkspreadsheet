@@ -829,13 +829,6 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		return jq.isAncestor(this.$n(), document.activeElement);
 	},
 	/**
-	 * Add editor focus
-	 */
-	addEditorFocus: function (id, name, color, row, col) {
-		if (this.sheetCtrl)
-			this.sheetCtrl.addEditorFocus(id, name, color);
-	},
-	/**
 	 * Move the editor focus 
 	 */
 	moveEditorFocus: function (id, name, color, row, col) {
@@ -845,7 +838,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	/**
 	 * Remove the editor focus
 	 */
-	removeEditorFocus: function (id, name, color, row, col) {
+	removeEditorFocus: function (id) {
 		if (this.sheetCtrl)
 			this.sheetCtrl.removeEditorFocus(id);
 	},

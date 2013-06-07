@@ -520,10 +520,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			h.relocate();
 		}
 	},
-	addEditorFocus : function(id, name, color){
+	_addEditorFocus : function(id, name){
 		var x = this.focusmarkcmp,
 			div = x.cloneNode(true);
-		div.style.borderColor = color;
 		div.style.borderWidth = "3px";
 		x.parentNode.appendChild(div);
 		if(!this.editorFocusMark)
@@ -542,10 +541,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	moveEditorFocus : function(id, name, color, row, col){
 		if(!this.editorFocusMark || !this.editorFocusMark[id]){
-			this.addEditorFocus(id, name, color);
+			this._addEditorFocus(id, name);
 		}
 		this.editorFocusMark[id].relocate(row, col);
-		this.editorFocusMark[id].showMark();
+		this.editorFocusMark[id].showMark(color, name); //new color/oldcolor with label
 	},
 	_resize: function () {
 		if (this.invalid) return;
