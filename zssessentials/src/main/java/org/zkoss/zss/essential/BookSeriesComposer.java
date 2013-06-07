@@ -1,20 +1,12 @@
 package org.zkoss.zss.essential;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.BookSeriesBuilder;
-import org.zkoss.zss.api.Exporter;
-import org.zkoss.zss.api.Exporters;
-import org.zkoss.zss.api.Importer;
-import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Caption;
@@ -40,15 +32,14 @@ public class BookSeriesComposer extends AbstractDemoComposer {
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-
-		buildBookSeries();
+		buildBookSeries(ss.getBook());
 	}
 	
 	protected List<String> contirbuteAvailableBooks(){
 		return Arrays.asList("book1.xlsx");
 	}
 	
-	protected void buildBookSeries(){
+	protected void buildBookSeries(Book book){
 		Book book1 = ss.getBook();
 		Book book2 = ss2.getBook();
 		
@@ -59,9 +50,9 @@ public class BookSeriesComposer extends AbstractDemoComposer {
 	}
 	
 	@Override
-	protected void loadBookFromAvailable(String bookname){
-		super.loadBookFromAvailable(bookname);
-		buildBookSeries();
+	protected void applyBook(Book book){
+		ss.setBook(book);
+		buildBookSeries(book);
 	}
 	
 	

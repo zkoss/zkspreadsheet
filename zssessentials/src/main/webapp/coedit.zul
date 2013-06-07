@@ -4,10 +4,10 @@
 
 		<hlayout hflex="1" vflex="1">
 			<vlayout hflex="1" vflex="1">
-				<spreadsheet id="ss" hflex="1" vflex="1"
+				<spreadsheet id="ss" hflex="1" vflex="1" userName="user1"
 					showFormulabar="true" showContextMenu="true" showToolbar="true"
 					showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40" />
-				<spreadsheet id="ss2" hflex="1" vflex="1"
+				<spreadsheet id="ss2" hflex="1" vflex="1" userName="user2"
 					showFormulabar="true" showContextMenu="true" showToolbar="true"
 					showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40" />
 			</vlayout>
@@ -18,6 +18,10 @@
 
 					</listbox>
 				</groupbox>
+				<hlayout>
+					<button label="detach sparedsheet1" id="detach1"/>
+					<button label="detach spreadsheet2" id="detach2"/>
+				</hlayout>
 			</vlayout>
 		</hlayout>
 	</window>

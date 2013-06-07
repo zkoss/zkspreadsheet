@@ -50,17 +50,19 @@ public class AbstractDemoComposer extends SelectorComposer<Component>{
 		
 		addInfo("Spreadsheet initialized");
 		
-		String book = Executions.getCurrent().getParameter("book");
-		if(book!=null){
+		String bookname = Executions.getCurrent().getParameter("book");
+		if(bookname!=null){
 			try{
-				loadBookFromAvailable(book);
+				Book book = loadBookFromAvailable(bookname);
+				if(book!=null)
+					applyBook(book);
 			}catch(Exception x){}
 		}
 		
-		String sheet = Executions.getCurrent().getParameter("sheet");
-		if(sheet!=null){
+		String sheetname = Executions.getCurrent().getParameter("sheet");
+		if(sheetname!=null){
 			try{
-				Sheet ssheet = ss.getBook().getSheet(sheet);
+				Sheet ssheet = ss.getBook().getSheet(sheetname);
 				if(ssheet!=null){
 					ss.setSelectedSheet(ssheet.getSheetName());
 				}
@@ -69,8 +71,8 @@ public class AbstractDemoComposer extends SelectorComposer<Component>{
 		
 		//sync available book selection
 		if(ss.getBook()!=null){
-			book = ss.getBook().getBookName();
-			availableBookModel.addToSelection(book);
+			bookname = ss.getBook().getBookName();
+			availableBookModel.addToSelection(bookname);
 		}
 	}
 
@@ -97,27 +99,25 @@ public class AbstractDemoComposer extends SelectorComposer<Component>{
 	@Listen("onSelect = #availableBookList")
 	public void onBookSelect(){
 		String bookname = availableBookModel.getSelection().iterator().next();
-		loadBookFromAvailable(bookname);
+		Book book = loadBookFromAvailable(bookname);
+		if(book!=null){
+			applyBook(book);
+		}
 	}
 	
-	protected void loadBookFromAvailable(int index){
-		String bookname = availableBookModel.get(index);
-		loadBookFromAvailable(bookname);
-	}
-	
-	protected void loadBookFromAvailable(String bookname){
+	protected Book loadBookFromAvailable(String bookname){
 		if(!availableBookModel.contains(bookname)){
-			return;
+			return null;
 		}
 		Importer imp = Importers.getImporter();
 		try {
 			Book book = imp.imports(WebApps.getCurrent().getResource("/WEB-INF/books/"+bookname), bookname);
-			loadBook(book);
+			return book;
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage(),e);
 		}
 	}
-	protected void loadBook(Book book){
+	protected void applyBook(Book book){
 		ss.setBook(book);
 	}	
 	
