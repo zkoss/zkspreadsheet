@@ -1,8 +1,11 @@
 package org.zkoss.zss.essential;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.zkoss.zk.ui.WebApps;
+import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.Importers;
@@ -14,26 +17,27 @@ import org.zkoss.zss.ui.Spreadsheet;
  * @author dennis
  *
  */
-public class AppCoeditComposer extends AbstractDemoComposer {
+public class AppCoeditComposer extends CoeditComposer {
 
 	private static final long serialVersionUID = 1L;
 	
-	@Wire
-	Spreadsheet ss2;
-	
-	protected Book loadBookFromAvailable(String bookname){
-		Book book = null;
-		
-		
-		return book;
-	}
+	static final Map<String,Book> sharedBook = new HashMap<String,Book>();
 	
 	@Override
-	protected void applyBook(Book book){
-		book.setShareScope("desktop");
-		ss.setBook(book);
-		ss2.setBook(book);
-	}	
+	protected Book loadBookFromAvailable(String bookname){
+		Book book;
+		synchronized (sharedBook){
+			book = sharedBook.get(bookname);
+			if(book==null){
+				book = super.loadBookFromAvailable(bookname);
+				if(book!=null){
+					book.setShareScope("application");
+					sharedBook.put(bookname, book);
+				}
+			}
+		}
+		return book;
+	}
 }
 
 

@@ -2,6 +2,7 @@ package org.zkoss.zss.essential;
 
 import java.io.IOException;
 
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -9,6 +10,7 @@ import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zul.Textbox;
 
 /**
  * This class shows all the public ZK Spreadsheet you can listen to
@@ -22,6 +24,15 @@ public class CoeditComposer extends AbstractDemoComposer {
 	@Wire
 	Spreadsheet ss2;
 	
+	@Wire
+	Textbox userName1;
+	@Wire
+	Textbox userName2;
+	
+	public void doAfterCompose(Component comp) throws Exception {
+		super.doAfterCompose(comp);
+		comp.getDesktop().enableServerPush(true);
+	}
 	protected Book loadBookFromAvailable(String bookname){
 		Book book = super.loadBookFromAvailable(bookname);
 		if(book!=null){
@@ -48,6 +59,16 @@ public class CoeditComposer extends AbstractDemoComposer {
 		ss2.setBook(null);//clean the book registration
 		ss2.detach();
 		ss2 = null;//clean the reference
+	}
+	
+	@Listen("onClick=#setUserName1")
+	public void doSetUserName1(){
+		ss.setUserName(userName1.getValue());
+	}
+	
+	@Listen("onClick=#setUserName2")
+	public void doSetUserName2(){
+		ss2.setUserName(userName2.getValue());
 	}
 }
 

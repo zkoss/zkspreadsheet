@@ -19,6 +19,14 @@
 					</listbox>
 				</groupbox>
 				<hlayout>
+					<textbox id="userName1" value="Dennis"/>
+					<button label="Set sheet1 user name" id="setUserName1"/>
+				</hlayout>
+				<hlayout>
+					<textbox id="userName2" value="Alice"/>
+					<button label="Set sheet2 user name" id="setUserName2"/>
+				</hlayout>
+				<hlayout>
 					<button label="detach sparedsheet1" id="detach1"/>
 					<button label="detach spreadsheet2" id="detach2"/>
 				</hlayout>

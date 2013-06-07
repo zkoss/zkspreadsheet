@@ -3,14 +3,14 @@
 		apply="org.zkoss.zss.essential.AppCoeditComposer">
 
 		<hlayout hflex="1" vflex="1">
-			<vlayout hflex="1" vflex="1">
+			<hlayout hflex="1" vflex="1">
 				<spreadsheet id="ss" hflex="1" vflex="1" userName="user1"
 					showFormulabar="true" showContextMenu="true" showToolbar="true"
 					showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40" />
 				<spreadsheet id="ss2" hflex="1" vflex="1" userName="user2"
 					showFormulabar="true" showContextMenu="true" showToolbar="true"
 					showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40" />
-			</vlayout>
+			</hlayout>
 			<vlayout width="300px" vflex="1">
 				<groupbox hflex="1" height="200px">
 					<caption label="Available Books" />
@@ -18,6 +18,14 @@
 
 					</listbox>
 				</groupbox>
+				<hlayout>
+					<textbox id="userName1" value="Dennis"/>
+					<button label="Set sheet1 user name" id="setUserName1"/>
+				</hlayout>
+				<hlayout>
+					<textbox id="userName2" value="Alice"/>
+					<button label="Set sheet2 user name" id="setUserName2"/>
+				</hlayout>				
 				<hlayout>
 					<button label="detach sparedsheet1" id="detach1"/>
 					<button label="detach spreadsheet2" id="detach2"/>

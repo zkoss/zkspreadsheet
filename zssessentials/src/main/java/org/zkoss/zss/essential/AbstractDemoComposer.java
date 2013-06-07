@@ -23,12 +23,12 @@ import org.zkoss.zul.Listbox;
 public class AbstractDemoComposer extends SelectorComposer<Component>{
 	private static final long serialVersionUID = 1L;
 
-	private ListModelList<String> infoModel = new ListModelList<String>();
+	protected ListModelList<String> infoModel = new ListModelList<String>();
 	
-	private ListModelList<String> availableBookModel = new ListModelList<String>();
+	protected ListModelList<String> availableBookModel = new ListModelList<String>();
 	
 	@Wire
-	private Grid infoList;
+	protected Grid infoList;
 	
 	@Wire
 	private Listbox availableBookList;
