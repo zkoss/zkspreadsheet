@@ -2,16 +2,10 @@ package zss.test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.hamcrest.number.IsCloseTo;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.zats.mimic.ComponentAgent;
 import org.zkoss.zats.mimic.DesktopAgent;
@@ -30,7 +24,6 @@ import org.zkoss.zss.ui.impl.XUtils;
  * @author Hawk
  *
  */
-@RunWith(Parameterized.class)
 public class FormulaTest extends SpreadsheetTestCaseBase{
 
 	private DesktopAgent desktop; 
@@ -43,7 +36,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	@Rule
     public ErrorCollector collector = new ErrorCollector();
 	
-	public FormulaTest(String testPage){
+	protected FormulaTest(String testPage){
 		desktop = Zats.newClient().connect(testPage);
 		
 		zss = desktop.query("spreadsheet");
@@ -51,10 +44,8 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		
 	}
 	
-	@Parameters
-	public static List<Object[]> getTestPages() {
-		Object[][] data = new Object[][] { { "/formula.zul" }, { "/formula2003.zul"}};
-		return Arrays.asList(data);
+	public FormulaTest(){
+		this("/formula.zul");
 	}
 	
 
