@@ -437,6 +437,12 @@ zss.Cell = zk.$extends(zk.Widget, {
 		jq(this.$n()).removeClass("zscell-overflow").removeClass("zscell-overflow-b");
 	},
 	_processOverflow: function () {
+		//avoid uncessary overflow check if this cell has sibling with data.
+		var scell = this.nextSibling;
+		if(scell && scell.cellType != BLANK_CELL ) {
+			return;
+		}
+		
 		var col = this.c;
 		var rBorder = this.rborder,
 			$n = jq(this.$n());
