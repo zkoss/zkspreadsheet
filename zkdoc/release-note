@@ -1,7 +1,7 @@
   ------------
 ZK Spreadsheet 3.0.0 RC
 *Features:
-  ZSS-253 click component away from Spreadsheet but keeps focus
+  ZSS-338 When share book, could the friend focus shows user name of another editor
 
 *Bug
   ZSS-224 text overflow doesn't work correctly
