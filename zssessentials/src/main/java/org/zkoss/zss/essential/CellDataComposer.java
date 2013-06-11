@@ -1,10 +1,16 @@
 package org.zkoss.zss.essential;
 
+import java.util.Arrays;
+import java.util.List;
+import org.zkoss.zel.impl.util.Objects;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.RangeRunner;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellData;
+import org.zkoss.zss.api.model.CellStyle;
+import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.essential.util.ClientUtil;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zul.Label;
@@ -31,7 +37,12 @@ public class CellDataComposer extends AbstractDemoComposer {
 	Label cellRef;
 	@Wire
 	Textbox cellEditTextBox;
+	@Wire
+	Textbox cellFormatTextBox;
 	
+	protected List<String> contirbuteAvailableBooks(){
+		return Arrays.asList("data_format.xlsx");
+	}
 	
 	@Listen("onCellFocused = #ss")
 	public void onCellFocused(){
@@ -55,6 +66,8 @@ public class CellDataComposer extends AbstractDemoComposer {
 		cellResultType.setValue(data.getResultType().toString());
 		
 		cellEditTextBox.setValue(data.getEditText());
+		
+		cellFormatTextBox.setValue(range.getCellStyle().getDataFormat());
 	}
 	
 	@Listen("onChange = #cellEditTextBox")
@@ -67,6 +80,28 @@ public class CellDataComposer extends AbstractDemoComposer {
 		}else{
 			ClientUtil.showWarn("not a valid value");
 		}
+		refreshCellInfo(pos.getRow(),pos.getColumn());
+		
+	}
+	
+	@Listen("onChange = #cellFormatTextBox")
+	public void onFromatboxChange(){
+		Position pos = ss.getCellFocus();
+		Range range = Ranges.range(ss.getSelectedSheet(),pos.getRow(),pos.getColumn());
+		range.sync(new RangeRunner() {
+			public void run(Range range) {
+				CellStyle oldstyle = range.getCellStyle();
+				String format = cellFormatTextBox.getValue();
+				if(Objects.equals(oldstyle, format)){
+					return;
+				}
+				//don't edit old style directly, if it is shared with other cell
+				EditableCellStyle newstyle = range.getCellStyleHelper().createCellStyle(oldstyle);
+				newstyle.setDataFormat(format);
+				range.setCellStyle(newstyle);
+			}
+		});
+		
 		refreshCellInfo(pos.getRow(),pos.getColumn());
 		
 	}

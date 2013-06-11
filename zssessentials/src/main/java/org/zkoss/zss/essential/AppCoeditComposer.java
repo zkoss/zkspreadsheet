@@ -1,7 +1,9 @@
 package org.zkoss.zss.essential;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.zkoss.zk.ui.WebApps;
@@ -22,6 +24,10 @@ public class AppCoeditComposer extends CoeditComposer {
 	private static final long serialVersionUID = 1L;
 	
 	static final Map<String,Book> sharedBook = new HashMap<String,Book>();
+	
+	protected List<String> contirbuteAvailableBooks(){
+		return Arrays.asList("full.xlsx");
+	}
 	
 	@Override
 	protected Book loadBookFromAvailable(String bookname){

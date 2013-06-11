@@ -54,6 +54,12 @@
 							<row>
 								<textbox id="cellEditTextBox" hflex="1" rows="3"/>
 							</row>
+							<row>
+								Edit-format: 
+							</row>
+							<row>
+								<textbox id="cellFormatTextBox" hflex="1" />
+							</row>
 						</rows>
 					</grid>
 				</groupbox>

@@ -138,7 +138,7 @@ public class InsertDeleteComposer extends AbstractDemoComposer {
 
 		Range range = Ranges.range(ss.getSelectedSheet(), selection);
 		
-		//shift exist row up 
+		//move exist (bottom) cells up 
 		range.delete(DeleteShift.UP);
 	}
 	
@@ -148,7 +148,7 @@ public class InsertDeleteComposer extends AbstractDemoComposer {
 
 		Range range = Ranges.range(ss.getSelectedSheet(), selection);
 		
-		//shift exist left
+		//move exist (right) cells left
 		range.delete(DeleteShift.LEFT);
 	}
 }
