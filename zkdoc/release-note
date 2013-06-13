@@ -1,4 +1,4 @@
-  ------------
+ ------------
 ZK Spreadsheet 3.0.0 RC
 *Features:
   ZSS-338 When share book, could the friend focus shows user name of another editor
@@ -19,6 +19,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-332 Chart was moved if I move another chart in different book in different spareadsheet in same desktop
   ZSS-334 A book can't reset to another book-series
   ZSS-335 When share book, the friend focus color was always change when I switch tab
+  ZSS-343 ActiveRangeHelper caches sheet object and doesn't release after reload a book
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api

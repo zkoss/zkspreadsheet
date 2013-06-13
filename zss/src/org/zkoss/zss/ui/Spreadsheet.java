@@ -184,7 +184,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private static final String ROW_SIZE_HELPER_KEY = "_rowCellSize";
 	private static final String COLUMN_SIZE_HELPER_KEY = "_colCellSize";
 	private static final String MERGE_MATRIX_KEY = "_mergeRange";
-	private static final String ACTIVE_RANGE_HELPER = "org.zkoss.zss.ui.impl.ActiveRangeHelper.class";
+	private static final String ACTIVE_RANGE_KEY = "_activeRange";
 	private static final String WIDGET_HANDLER = "org.zkoss.zss.ui.sys.WidgetHandler.class";
 	private static final String WIDGET_LOADERS = "org.zkoss.zss.ui.sys.WidgetLoader.class";
 	
@@ -568,6 +568,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		
 		removeAttribute(MERGE_MATRIX_KEY);
 		clearHeaderSizeHelper(true, true);
+		//ZSS-343 ActiveRangeHelper caches sheet object and doesn't release after reload a book
+		removeAttribute(ACTIVE_RANGE_KEY);
+		
 		_custColId = new SequenceId(-1, 2);
 		_custRowId = new SequenceId(-1, 2);
 		
@@ -2379,9 +2382,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	private ActiveRangeHelper getActiveRangeHelper() {
-		ActiveRangeHelper activeRangeHelper = (ActiveRangeHelper) getAttribute(ACTIVE_RANGE_HELPER);
+		ActiveRangeHelper activeRangeHelper = (ActiveRangeHelper) getAttribute(ACTIVE_RANGE_KEY);
 		if (activeRangeHelper == null) {
-			setAttribute(ACTIVE_RANGE_HELPER, activeRangeHelper = new ActiveRangeHelper());
+			setAttribute(ACTIVE_RANGE_KEY, activeRangeHelper = new ActiveRangeHelper());
 			return activeRangeHelper;
 		}
 		return activeRangeHelper;
