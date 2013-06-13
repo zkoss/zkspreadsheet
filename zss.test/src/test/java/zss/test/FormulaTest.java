@@ -53,7 +53,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	public void testMath() {
 		Sheet sheet = spreadsheet.getBook().getSheetAt(2);
 		
-		int nFormula = testFormulaByRangesInSheet(sheet);
+		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
@@ -62,7 +62,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	public void testLogical() {
 		Sheet sheet = spreadsheet.getBook().getSheetAt(3); 
 		
-		int nFormula = testFormulaByRangesInSheet(sheet);
+		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
@@ -71,7 +71,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	public void testText() {
 		Sheet sheet = spreadsheet.getBook().getSheetAt(4); 
 		
-		int nFormula = testFormulaByRangesInSheet(sheet);
+		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
@@ -80,7 +80,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	public void testInfo() {
 		Sheet sheet = spreadsheet.getBook().getSheetAt(5); 
 		
-		int nFormula = testFormulaByRangesInSheet(sheet);
+		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
@@ -89,7 +89,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	public void testDateTime() {
 		Sheet sheet = spreadsheet.getBook().getSheetAt(6); 
 		
-		int nFormula = testFormulaByRangesInSheet(sheet);
+		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
@@ -98,7 +98,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	public void testFinancial() {
 		Sheet sheet = spreadsheet.getBook().getSheetAt(7); 
 		
-		int nFormula = testFormulaByRangesInSheet(sheet);
+		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
@@ -107,7 +107,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	public void testStatistical() {
 		Sheet sheet = spreadsheet.getBook().getSheetAt(8); 
 		
-		int nFormula = testFormulaByRangesInSheet(sheet);
+		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}	
@@ -116,7 +116,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	public void testEngineering() {
 		Sheet sheet = spreadsheet.getBook().getSheetAt(9); 
 		
-		int nFormula = testFormulaByRangesInSheet(sheet);
+		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}	
@@ -125,7 +125,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	public void testUnsupported() {
 		Sheet sheet = spreadsheet.getBook().getSheetAt(10); 
 		
-		int nFormula = testFormulaByRangesInSheet(sheet);
+		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}	
@@ -134,7 +134,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	public void testCustom() {
 		Sheet sheet = spreadsheet.getBook().getSheetAt(11); 
 		
-		int nFormula = testFormulaByRangesInSheet(sheet);
+		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}	
@@ -142,7 +142,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	
 
 	//verify in text
-	private int testFormulaByRangesInSheet(Sheet sheet) {
+	private int verifyFormulaResult(Sheet sheet) {
 		int nRowFromLastFormula = 0; //reset when read a formula cell
 		int nFormula = 0;
 		int row = 0 ; //current working row
@@ -158,9 +158,15 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 				}catch (Exception e) {
 					formulaResult = e.getMessage();
 				}
-				String expected = Ranges.range(sheet, row, 2).getCellData().getFormatText();
+				//determine expected formula result upon supported or not
+				if (verifyCell.getCellEditText().equals("unsupported")){
+					collector.checkThat(getFailedReason(formulaCell),formulaResult
+							, equalTo("#NAME!"));
+				}else{
+					collector.checkThat(getFailedReason(formulaCell),formulaResult
+							, equalTo(Ranges.range(sheet, row, 2).getCellData().getFormatText()));
+				}
 				
-				collector.checkThat(getFailedReason(formulaCell),formulaResult, equalTo(expected));
 				nFormula ++;
 				nRowFromLastFormula = 0;
 			}
@@ -168,7 +174,8 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 			nRowFromLastFormula++;
 		}
 		return nFormula;
-	}	
+	}
+	
 	
 	private boolean isFormulaRow(Range verifyCell) {
 		//skip "human check" cases
