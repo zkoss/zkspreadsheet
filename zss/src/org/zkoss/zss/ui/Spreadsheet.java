@@ -24,13 +24,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -78,7 +76,6 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WebApp;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
@@ -116,20 +113,20 @@ import org.zkoss.zss.ui.au.out.AuRetrieveFocus;
 import org.zkoss.zss.ui.au.out.AuSelection;
 import org.zkoss.zss.ui.event.CellAreaEvent;
 import org.zkoss.zss.ui.event.CellEvent;
-import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.CellHyperlinkEvent;
+import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.SheetDeleteEvent;
 import org.zkoss.zss.ui.event.SheetEvent;
 import org.zkoss.zss.ui.event.StartEditingEvent;
 import org.zkoss.zss.ui.event.StopEditingEvent;
 import org.zkoss.zss.ui.impl.ActiveRangeHelper;
 import org.zkoss.zss.ui.impl.CellFormatHelper;
+import org.zkoss.zss.ui.impl.Focus;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper.HeaderPositionInfo;
 import org.zkoss.zss.ui.impl.JSONObj;
 import org.zkoss.zss.ui.impl.MergeAggregation;
 import org.zkoss.zss.ui.impl.MergeAggregation.MergeIndex;
-import org.zkoss.zss.ui.impl.Focus;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.SequenceId;
@@ -3032,8 +3029,23 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					if (cell.getCellType() == Cell.CELL_TYPE_STRING && 
 						mergeIndex == null && !cellStyle.getWrapText() &&
 						BookHelper.getRealAlignment(cell) == CellStyle.ALIGN_LEFT) {
+
+						// ZSS-224: modify overflow flag spec. to carry more status in bitswise format
+						// 1: needs overflow
+						// 2: skip overflow when initializing
+						// 4: [undefined now]
+						// 8: ...
+						int overflowOptions = 1; // needs overflow
 						
-						attrs.put("ovf", 1); //1 stand for true
+						// ZSS-224: pre-check sibling cell's status and give current cell a hint 
+						// to process overflow or not when initializing. 
+						Cell sibling = XUtils.getCell(sheet, row, col + 1);
+						if(sibling != null && sibling.getCellType() != Cell.CELL_TYPE_BLANK) {
+							overflowOptions |= 2; // skip overflow when initializing
+						}
+						
+						// appy to response
+						attrs.put("ovf", overflowOptions); 
 					}
 				}
 			}

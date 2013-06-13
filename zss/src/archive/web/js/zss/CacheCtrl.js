@@ -217,7 +217,10 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 						this.fontSize = fontSize;
 				}
 				if (upSize) {
-					this.overflow = !!v.ovf;
+					// ZSS-224: modify overflow flag spec. to carry more status in bitswise format
+					// refer to Spreadsheet.java -> getCellAttr()
+					this.overflow = !!v.ovf; // backward compatibility (ovf flag is either undefined or greater than 0)
+					this.overflowOpt = v.ovf ? v.ovf : 0; // if flag is undefined, the options flag should be zero
 				}
 				if (upMerge) {
 					

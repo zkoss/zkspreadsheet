@@ -161,6 +161,9 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 		this.wrap = data.wrap;
 		this.overflow = data.overflow;
+		// ZSS-224: a overflow options for indicating more status in bitwise format
+		// refer to Spreadsheet.java -> getCellAttr()
+		this.overflowOpt = data.overflowOpt;  
 		
 		this.style = data.style;
 		this.innerStyle = data.innerStyle;
@@ -437,12 +440,6 @@ zss.Cell = zk.$extends(zk.Widget, {
 		jq(this.$n()).removeClass("zscell-overflow").removeClass("zscell-overflow-b");
 	},
 	_processOverflow: function () {
-		//avoid uncessary overflow check if this cell has sibling with data.
-		var scell = this.nextSibling;
-		if(scell && scell.cellType != BLANK_CELL ) {
-			return;
-		}
-		
 		var col = this.c;
 		var rBorder = this.rborder,
 			$n = jq(this.$n());
@@ -459,12 +456,12 @@ zss.Cell = zk.$extends(zk.Widget, {
 		} else {
 			$tn.css('width', '');
 		}
-
-		var sheet = this.sheet,
-			custColWidth = sheet.custColWidth,
-			wd = custColWidth.getSize(col), // overlap-able width, initial to current cell's width
-			sw = tn.scrollWidth,
-			cellPad = sheet.cellPad;
+		
+		var sheet = this.sheet;
+		var custColWidth = sheet.custColWidth;
+		var wd = custColWidth.getSize(col); // overlap-able width, initial to current cell's width
+		var sw = tn.scrollWidth; // heavy duty (it's actually a function call from ZK widget)
+		var cellPad = sheet.cellPad;
 			
 		// skip to process overflow if current cell's width is enough
 		// right grid line won't be removed if it's css has no zscell-overflow class
@@ -500,6 +497,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 			sheet = this.sheet;
 		n.ctrl = this;
 		this.cave = n.firstChild;
+
+
 		if (this.cellType == BLANK_CELL) {//no need to process overflow and wrap
 			return;
 		}
@@ -509,9 +508,14 @@ zss.Cell = zk.$extends(zk.Widget, {
 			this._updateListenRowHeightChanged(true);
 			this._updateVerticalAlign();
 		}
-		if (this.overflow) {
-			this._processOverflow();
+
+		// ZSS-224: skip process overflow according to the hint from server
+		// it indicates that this cell's silbing isn't blank
+		var skipOverflowOnBinding = (this.overflowOpt & 2) != 0; // skip overflow when initializing
+		if (this.overflow && !skipOverflowOnBinding) {
+			this._processOverflow(); // heavy duty
 		}
+		
 		//merged cell won't change row height automatically
 		if (this.cellType == STR_CELL && !this.merid && this.wrap) {
 			//true indicate delay calcuate wrap height after CSS ready	
