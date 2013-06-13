@@ -2,32 +2,37 @@
 ZK Spreadsheet 2.6.0
 *Features:
 	ZSS-187 Better support for CellStyles while setBorders
+	ZSS-251 Support to override the default formula implementation
 
 *Bug
 	ZSS-171 Input "=" on cell shall not append cell reference
 	ZSS-177 Resizing the browser wraps the toolbar but the overflow goes under the formula bar
 	ZSS-179 spreadsheet exception :XmlValueDisconnectedException
+	ZSS-180 Resize column width not work
 	ZSS-181 on_ctrl_keys (#up#down$#home$#down^#up^#down^#right^#leftt) not works with zk spreadsheet
 	ZSS-183 Cannot enable save button when using collaboration Edit
 	ZSS-184 Merge and Center in Demo Site (as well as ours) is sporadically unclickable
 	ZSS-188 onHeaderClick not work
-  ZSS-189 PDF export throws Color 'auto_color' not found exception
-  ZSS-196 Data validation list source cannot refer to different sheet's value
-  ZSS-197 Data Validation shall not show dropdown button when data source is not list
-  ZSS-198 Data validation's message shall auto-disappear when focus on other cell
-  ZSS-199 Select a row and apply filter doesn't work well
-  ZSS-204 cell context menu covers text formatting menu for cells in lower part of the screen
-  ZSS-207 Date validation button not show on first focus
-  ZSS-209 NullPointerException when set spreadsheet book in a loop
-  ZSS-210 CellStyle.cloneStyleFrom not work when copy cell style from different book
-  ZSS-213 Protection doesn't work with drag fill & copy-paste
-  ZSS-212 Missing characters when export to PDF
-  ZSS-216 Disable button cause the button expand
-  ZSS-217 Javascript error with ZK 6.5.1.1 version
-  ZSS-218 get NotImplementedException exception  
-  ZSS-220 Can't get correct selection if I didn't listen to onCellSelection
-  ZSS-292 left click row header (or column header) appears context menu
-  ZSS-333 Preload bug
+	ZSS-189 PDF export throws Color 'auto_color' not found exception
+	ZSS-191 Cell content in italics are loose italics style in exported PDF
+	ZSS-196 Data validation list source cannot refer to different sheet's value
+	ZSS-197 Data Validation shall not show dropdown button when data source is not list
+	ZSS-198 Data validation's message shall auto-disappear when focus on other cell
+	ZSS-199 Select a row and apply filter doesn't work well
+	ZSS-200 The Vlookup formula shall be listed in "Insert Function" dialog
+	ZSS-204 cell context menu covers text formatting menu for cells in lower part of the screen
+	ZSS-207 Date validation button not show on first focus
+	ZSS-209 NullPointerException when set spreadsheet book in a loop
+	ZSS-210 CellStyle.cloneStyleFrom not work when copy cell style from different book
+	ZSS-212 Missing characters when export to PDF
+	ZSS-213 Protection doesn't work with drag fill & copy-paste
+	ZSS-216 Disable button cause the button expand
+	ZSS-217 Javascript error with ZK 6.5.1.1 version
+	ZSS-218 get NotImplementedException exception  
+	ZSS-220 Can't get correct selection if I didn't listen to onCellSelection
+	ZSS-226  When sheet is protected, I can still merge cell or change style
+	ZSS-292 left click row header (or column header) appears context menu
+	ZSS-333 Preload bug
 
 ZK Spreadsheet 2.5.0
 *Features:   
