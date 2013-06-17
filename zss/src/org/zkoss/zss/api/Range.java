@@ -103,7 +103,7 @@ public interface Range {
 		DOWN
 	}
 	/** 
-	 * Copy origin format of insert
+	 * Copy origin format/style of insert
 	 **/
 	public enum InsertCopyOrigin{
 		FORMAT_NONE,

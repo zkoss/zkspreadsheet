@@ -5,6 +5,7 @@ import org.zkoss.poi.ss.usermodel.Name;
 //import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zk.ui.Path;
 //import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Rect;
@@ -66,7 +67,7 @@ public class RangeHelper {
 		Name namevar = book.getPoiBook().createName();
 		namevar.setNameName(name);
 		namevar.setSheetIndex(sheetindex);
-		namevar.setRefersToFormula(spreadsheet.getSelection().toAreaReference());
+		namevar.setRefersToFormula(Ranges.getAreaReference(spreadsheet.getSelection()));
 		
 		Window rangeAddWin = (Window) Path.getComponent("//p1/rangeAddWin");
 		rangeAddWin.detach();

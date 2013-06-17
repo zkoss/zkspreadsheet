@@ -66,6 +66,7 @@ public class Rect {
 		_top = top;
 		_right = right;
 		_bottom = bottom;
+		areaRef = null;
 	}
 	
 	public int getLeft() {
@@ -74,6 +75,7 @@ public class Rect {
 
 	public void setLeft(int left) {
 		this._left = left;
+		areaRef = null;
 	}
 
 	public int getTop() {
@@ -82,6 +84,7 @@ public class Rect {
 
 	public void setTop(int top) {
 		this._top = top;
+		areaRef = null;
 	}
 
 	public int getRight() {
@@ -90,6 +93,7 @@ public class Rect {
 
 	public void setRight(int right) {
 		this._right = right;
+		areaRef = null;
 	}
 
 	public int getBottom() {
@@ -98,6 +102,7 @@ public class Rect {
 
 	public void setBottom(int bottom) {
 		this._bottom = bottom;
+		areaRef = null;
 	}
 	
 	public Object cloneSelf(){
@@ -113,13 +118,15 @@ public class Rect {
 				bRow <= _bottom && rCol <= _right;
 	}
 	
+	/**
+	 * @return Area reference of this selection
+	 * @since 3.0.0
+	 */
 	public String toAreaReference(){
 		if(areaRef==null){
 			areaRef = new AreaReference(new CellReference(_top,_left),new CellReference(_bottom,_right)).toString();
 		}
 		return areaRef;
-		
-		
 	}
 
 	public int hashCode() {
@@ -133,4 +140,36 @@ public class Rect {
 					&& ((Rect)obj)._top == _top && ((Rect)obj)._bottom == _bottom);
 	}
 	
+	
+	/**
+	 * @return get first row, same as {@link #getTop()}
+	 * @since 3.0.0
+	 */
+	public int getRow(){
+		return _top;
+	}
+	
+	/**
+	 * @return get last row, same as {@link #getBottom()}
+	 * @since 3.0.0
+	 */
+	public int getLastRow(){
+		return _bottom;
+	}
+	
+	/**
+	 * @return get first column, same as {@link #getLeft()}
+	 * @since 3.0.0
+	 */
+	public int getColumn(){
+		return _left;
+	}
+	
+	/**
+	 * @return get last row, same as {@link #getRight()}
+	 * @since 3.0.0
+	 */
+	public int getLastColumn(){
+		return _right;
+	}
 }
