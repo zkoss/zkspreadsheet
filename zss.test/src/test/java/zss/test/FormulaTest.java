@@ -148,8 +148,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		Sheet sheet = spreadsheet.getBook().getSheetAt(0); 
 
 		//required arguments
-		String MISSING_ARGUMENT_POI_UDF = "=ISEVEN()"; 
-		ssAgent.edit(0,1, MISSING_ARGUMENT_POI_UDF);
+		ssAgent.edit(0,1, "=ISEVEN()");
 		assertEquals("#VALUE!", Ranges.range(sheet, 0, 1).getCellData().getFormatText());
 		
 		//missing all
@@ -169,12 +168,12 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		
 
 		//optional arguments
-		String MISSING_MIDDLE_ARGUMENT_BASIC_FORMULA = "=PV(0.08/12,20*12,500, ,0)"; //missing an optional argument in the middle
-		ssAgent.edit(0, 0, MISSING_MIDDLE_ARGUMENT_BASIC_FORMULA);
+		//missing an optional argument in the middle
+		ssAgent.edit(0, 0, "=PV(0.08/12,20*12,500, ,0)");
 		assertEquals("#VALUE!", Ranges.range(sheet, 0, 0).getCellData().getFormatText());
 		
 	}
-
+	
 	//verify in text
 	private int verifyFormulaResult(Sheet sheet) {
 		int nRowFromLastFormula = 0; //reset when read a formula cell
@@ -204,6 +203,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 				nFormula ++;
 				nRowFromLastFormula = 0;
 			}
+			//TODO verify total tested formula count
 			row ++;
 			nRowFromLastFormula++;
 		}
