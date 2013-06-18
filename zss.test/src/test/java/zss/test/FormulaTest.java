@@ -1,7 +1,9 @@
 package zss.test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertEquals;
 
+import org.apache.poi.hssf.record.formula.eval.ErrorEval;
 import org.hamcrest.number.IsCloseTo;
 import org.junit.Rule;
 import org.junit.Test;
@@ -139,7 +141,39 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}	
 	
-	
+
+	@Test
+	public void testMissingArguments(){
+		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
+		Sheet sheet = spreadsheet.getBook().getSheetAt(0); 
+
+		//required arguments
+		String MISSING_ARGUMENT_POI_UDF = "=ISEVEN()"; 
+		ssAgent.edit(0,1, MISSING_ARGUMENT_POI_UDF);
+		assertEquals("#VALUE!", Ranges.range(sheet, 0, 1).getCellData().getFormatText());
+		
+		//missing all
+		ssAgent.edit(0,2, "=OCT2BIN()");
+		assertEquals("#VALUE!", Ranges.range(sheet, 0, 2).getCellData().getFormatText());
+		
+		//missing one
+		ssAgent.edit(0,2, "=OCT2BIN(,3)");
+		assertEquals("#VALUE!", Ranges.range(sheet, 0, 2).getCellData().getFormatText());
+		
+		ssAgent.edit(0,2, "=OCT2BIN(3,)");
+		assertEquals("#VALUE!", Ranges.range(sheet, 0, 2).getCellData().getFormatText());
+		
+		//missing with comma
+		ssAgent.edit(0,2, "=OCT2BIN(,)");
+		assertEquals("#VALUE!", Ranges.range(sheet, 0, 2).getCellData().getFormatText());
+		
+
+		//optional arguments
+		String MISSING_MIDDLE_ARGUMENT_BASIC_FORMULA = "=PV(0.08/12,20*12,500, ,0)"; //missing an optional argument in the middle
+		ssAgent.edit(0, 0, MISSING_MIDDLE_ARGUMENT_BASIC_FORMULA);
+		assertEquals("#VALUE!", Ranges.range(sheet, 0, 0).getCellData().getFormatText());
+		
+	}
 
 	//verify in text
 	private int verifyFormulaResult(Sheet sheet) {
@@ -161,7 +195,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 				//determine expected formula result upon supported or not
 				if (verifyCell.getCellEditText().equals("unsupported")){
 					collector.checkThat(getFailedReason(formulaCell),formulaResult
-							, equalTo("#NAME!"));
+							, equalTo("#NAME?"));
 				}else{
 					collector.checkThat(getFailedReason(formulaCell),formulaResult
 							, equalTo(Ranges.range(sheet, row, 2).getCellData().getFormatText()));
@@ -179,7 +213,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	
 	private boolean isFormulaRow(Range verifyCell) {
 		//skip "human check" cases
-		return verifyCell != null  && verifyCell.getCellData().getType() == CellType.FORMULA;
+		return verifyCell != null  && (verifyCell.getCellData().getType() == CellType.FORMULA || "unsupported".equals(verifyCell.getCellEditText()));
 	}
 
 

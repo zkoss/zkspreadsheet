@@ -40,30 +40,57 @@ public class SpreadsheetAgent {
 	
 	public void copy(int topRow, int bottomRow, int leftColumn,  int rightColumn){
 		zss.as(AuAgent.class)
-		.post(createToolbarActionData(topRow, bottomRow,leftColumn, rightColumn).setData("act", "copy"));
+		.post(buildToolbarActionAuData(topRow, bottomRow,leftColumn, rightColumn).setData("act", "copy"));
 	}
 	
 	public void paste(int rowIndex, int columnIndex){
 		zss.as(AuAgent.class)
-		.post(createToolbarActionData(rowIndex, rowIndex,columnIndex, columnIndex).setData("act", "paste"));
+		.post(buildToolbarActionAuData(rowIndex, rowIndex,columnIndex, columnIndex).setData("act", "paste"));
 	}
 
+	public void edit(int rowIndex, int columnIndex, String text){
+		if (text != null && text.length() > 0){
+			zss.as(AuAgent.class)
+			.post(buildStartEditingAuData(rowIndex, columnIndex, text));
+			zss.as(AuAgent.class)
+			.post(buildStopEditingAuData(rowIndex, columnIndex, text));
+		}
+	}
 	/**
 	 * 
 	 * @param rgbCode e.g. 009999
 	 */
 	public void fillBackgroundColor(int rowIndex, int columnIndex, String rgbCode){
-		AuData auData = createToolbarActionData(rowIndex, rowIndex,columnIndex, columnIndex)
+		AuData auData = buildToolbarActionAuData(rowIndex, rowIndex,columnIndex, columnIndex)
 				.setData("act", "fillColor").setData("color", "#"+rgbCode); 
 		zss.as(AuAgent.class).post(auData);
 	}
 	
-	private AuData createToolbarActionData(int topRow, int bottomRow, int leftColumn,  int rightColumn ){
+	private AuData buildToolbarActionAuData(int topRow, int bottomRow, int leftColumn,  int rightColumn ){
 		AuData auData = new AuData("onZSSAction");
-		int sheetId = spreadsheet.getBook().getSheetIndex(spreadsheet.getSelectedSheet());
-		auData.setData("sheetId", Integer.toString(sheetId)).setData("tag", "toolbar")
+		auData.setData("sheetId", getSelectedSheetId()).setData("tag", "toolbar")
 			.setData("tRow", topRow).setData("lCol", leftColumn)
 			.setData("bRow", bottomRow).setData("rCol", rightColumn);
 		return auData;
+	}
+	
+	private AuData buildStartEditingAuData(int rowIndex, int columnIndex, String text){
+		AuData auData = new AuData("onStartEditing");
+		auData.setData("sheetId", getSelectedSheetId()).setData("token", "")
+		.setData("clienttxt", text.substring(0, 1)).setData("type", "inlineEditing")
+		.setData("row", rowIndex).setData("col", columnIndex);
+		return auData;
+	}
+	
+	private AuData buildStopEditingAuData(int rowIndex, int columnIndex, String text){
+		AuData auData = new AuData("onStopEditing");
+		auData.setData("sheetId", getSelectedSheetId()).setData("token", "")
+		.setData("value", text).setData("type", "inlineEditing")
+		.setData("row", rowIndex).setData("col", columnIndex);
+		return auData;
+	}
+	
+	private String getSelectedSheetId(){
+		return Integer.toString(spreadsheet.getBook().getSheetIndex(spreadsheet.getSelectedSheet()));
 	}
 }
