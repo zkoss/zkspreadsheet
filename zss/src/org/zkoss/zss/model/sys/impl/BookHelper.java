@@ -31,7 +31,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
@@ -99,7 +98,6 @@ import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.poi.ss.usermodel.ZssContext;
@@ -4949,8 +4947,10 @@ public final class BookHelper {
 					int rowIndex = r + top; 
 					for (int c = 0; c < cols; ++c) {
 						int colIndex = c + left;
+						//ZSS-255: according to POI spec. the return value might be null
+						// i.e it's a totally empty cell and isn't existed in file
 						final Cell cell = BookHelper.getCell(worksheet, rowIndex, colIndex);
-						xlist[j++] = BookHelper.getCellText(cell);
+						xlist[j++] = cell != null ? BookHelper.getCellText(cell) : "";
 					}
 				}
 				return xlist;
