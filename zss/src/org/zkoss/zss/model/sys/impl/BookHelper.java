@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,6 +69,7 @@ import org.zkoss.poi.ss.formula.LazyAreaEval;
 import org.zkoss.poi.ss.formula.PtgShifter;
 import org.zkoss.poi.ss.formula.eval.AreaEval;
 import org.zkoss.poi.ss.formula.eval.ArrayEval;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaPtgBase;
@@ -99,7 +101,6 @@ import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.poi.ss.usermodel.ZssContext;
@@ -125,6 +126,7 @@ import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelContext;
 import org.zkoss.xel.util.SimpleXelContext;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.RefSheet;
@@ -203,6 +205,8 @@ public final class BookHelper {
 	public final static int FILL_GROWTH_TREND = 0x100; //multiplicative relation
 	public final static int FILL_LINER_TREND = 0x200; //additive relation
 	public final static int FILL_SERIES = FILL_LINER_TREND;
+	
+	private static final Logger logger = Logger.getLogger(BookHelper.class.getName());
 	
 	public static RefBook getRefBook(XBook book) {
 		return book instanceof HSSFBookImpl ? 
@@ -493,7 +497,11 @@ public final class BookHelper {
 			//set back into Cell formula record(update value and cachedFormulaResultType)
 			setCellValue(cell, cv);
 			return cv;
-		} finally {
+		} catch(Exception e){ //handle all runtime exceptions happened in evaluating formulas, hawk
+			logger.severe("error evaluating formula for "+e.getMessage() +" at "+Ranges.getCellReference(cell.getRowIndex(),cell.getColumnIndex()));
+			setCellValue(cell, CellValue.getError(ErrorEval.VALUE_INVALID.getErrorCode()));
+			return CellValue.getError(ErrorEval.VALUE_INVALID.getErrorCode());
+		}finally{
 			XelContextHolder.setXelContext(old);
 		}
 	}
