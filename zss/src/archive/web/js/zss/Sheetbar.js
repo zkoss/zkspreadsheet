@@ -124,17 +124,16 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 	$init: function (arg, wgt) {
 		this.$supers(zss.SheetTab, '$init', [arg]);
 		this._wgt = wgt;
-		
 		this.appendChild(this.textbox = new zul.inp.Textbox({
 			visible: false,
-			onOK: this.proxy(this.onStopEditing),
-			onCancel: this.proxy(this.onCancelEditing),
+			onBlur: this.proxy(this.onStopEditing), // ZSS-308: spec. changed > do rename process when blurring 
+			onOK: this.proxy(this.onStopEditing), // send by afterKeyDown_(), no matter event propagation is stopped
+			onCancel: this.proxy(this.onCancelEditing), // send by afterKeyDown_(), no matter event propagation is stopped
 			sclass: 'zssheettab-rename-textbox'
 		}));
 	},
 	$define: {
-		sheetUuid: null,
-		sheetName: this.getLabel
+		sheetUuid: null
 	},
 	domContent_: function () {
 		var uid = this.uuid,
@@ -144,7 +143,14 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 		return html;
 	},
 	onStopEditing: function () {
-		var name = this.getSheetName(),
+		// ZSS-308: if it's not in editing status, don't rename.
+		// this prevents rename at non-editing statues
+		// e.g: if server is slow enough, press Enter make ZK fire onOK and onBlur sequentially
+		if (!this.editing) {
+			return;
+		}
+		
+		var name = this.getLabel(),
 			text = this.textbox.getText();
 		if (!text)
 			return;
@@ -156,10 +162,12 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 		this.stopEditing();
 	},
 	onCancelEditing: function () {
+		this.textbox.setText(this.getLabel());
 		this.stopEditing();
 	},
 	stopEditing: function () {
 		this.textbox.setVisible(false);
+		this.editing = false;
 		jq(this.getTextNode()).css('display', 'block');
 	},
 	startEditing: function () {
@@ -170,9 +178,10 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 		tb.setVisible(true);
 		tb.focus_();
 		tb.select(0, val.length);
+		this.editing = true;
 	},
 	isEditing: function () {
-		return this.textbox.isVisible();
+		return !!this.editing;
 	},
 	doDoubleClick_: function () {
 		var editing = this.isEditing();
@@ -191,16 +200,16 @@ zss.SheetTab = zk.$extends(zul.tab.Tab, {
 		//eat event
 	},
 	doKeyDown_: function () {
-		//eat event
+		//eat event, or zss.SSheetCtrl might stop the event propagation and make Textbox no input 
 	},
 	afterKeyDown_: function () {
-		//eat event
+		//eat event, or zss.SSheetCtrl might stop the event propagation and make Textbox no input 
 	},
 	doKeyUp_: function () {
-		//eat event
+		//eat event, or zss.SSheetCtrl might stop the event propagation and make Textbox no input 
 	},
 	doKeyPress_: function () {
-		//eat event
+		//eat event, or zss.SSheetCtrl might stop the event propagation and make Textbox no input 
 	},
 	getTextNode: function () {
 		return this.$n('text');
