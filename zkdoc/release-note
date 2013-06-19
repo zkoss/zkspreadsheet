@@ -20,6 +20,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-334 A book can't reset to another book-series
   ZSS-335 When share book, the friend focus color was always change when I switch tab
   ZSS-343 ActiveRangeHelper caches sheet object and doesn't release after reload a book
+  ZSS-308 when renaming a sheet, if you click another sheet, the original sheet won't be renamed
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
