@@ -306,6 +306,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //	
 //	private static Set<UserAction> _defToolbarActiobDisabled;
 	
+	private ValidationHelper _validationHelper = new ValidationHelper(this); // ZSS-351: validation helper has status to support force changed case 
+	
 	public Spreadsheet() {
 		this.addEventListener("onStartEditingImpl", new EventListener() {
 			public void onEvent(Event event) throws Exception {
@@ -4361,9 +4363,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private void processStopEditing0(final String token, final Sheet sheet, final int rowIdx, final int colIdx, final Object value, final String editingType) {
 		try {
 			
-			ValidationHelper helper = new ValidationHelper(this);
 			String editText = value == null ? "" : value.toString();
-			if (!helper.validate(sheet, rowIdx, colIdx, editText,
+			if (!_validationHelper.validate(sheet, rowIdx, colIdx, editText,
 				//callback
 				new EventListener() {
 					@Override
@@ -4805,7 +4806,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	@Deprecated
 	public boolean validate(XSheet sheet, final int row, final int col, final String txt, 
 		final EventListener callback) {
-		return new ValidationHelper(this).validate(new SheetImpl(new SimpleRef<XBook>(sheet.getBook()),new SimpleRef<XSheet>(sheet)), row, col, txt, callback);
+		return _validationHelper.validate(new SheetImpl(new SimpleRef<XBook>(sheet.getBook()),new SimpleRef<XSheet>(sheet)), row, col, txt, callback);
 	}
 ////		final XSheet ssheet = this.getSelectedXSheet();
 ////		if (ssheet == null || !ssheet.equals(sheet)) { //skip no sheet case

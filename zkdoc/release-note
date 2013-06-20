@@ -22,6 +22,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-343 ActiveRangeHelper caches sheet object and doesn't release after reload a book
   ZSS-308 when renaming a sheet, if you click another sheet, the original sheet won't be renamed
   ZSS-255 "data validation" setting causes null pointer exception
+  ZSS-351 The validation dialog can't press "yes" button to force input a invalid text when using list validation
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
