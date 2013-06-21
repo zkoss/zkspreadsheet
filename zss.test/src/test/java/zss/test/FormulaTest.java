@@ -176,44 +176,55 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	
 	//verify in text
 	private int verifyFormulaResult(Sheet sheet) {
-		int nRowFromLastFormula = 0; //reset when read a formula cell
+		int readRowFromLastFormula = 0; //reset after verifying a formula
 		int nFormula = 0;
 		int row = 0 ; //current working row
-		while (!isNoMoreFormula(nRowFromLastFormula)){
+		while (!isNoMoreFormula(readRowFromLastFormula)){
 			Range formulaCell = Ranges.range(sheet, row, 1);
 			Range verifyCell = Ranges.range(sheet, row, 3);
-			if (isFormulaRow(verifyCell)
-					&& formulaCell!=null && formulaCell.getCellData().getType() == CellType.FORMULA){ 
-				String formulaResult = null;
+			if (isFormulaRow(verifyCell, formulaCell)){ 
+				String evaluationResult = getEvaluationResult(formulaCell);
 				
-				try{
-					formulaResult = Ranges.range(sheet, row, 1).getCellData().getFormatText();
-				}catch (Exception e) {
-					formulaResult = e.getMessage();
-				}
-				//determine expected formula result upon supported or not
+				//verify evaluation result upon supported or not
 				if (verifyCell.getCellEditText().equals("unsupported")){
-					collector.checkThat(getFailedReason(formulaCell),formulaResult
+					if (!"#NAME?".equals(evaluationResult) && !"#VALUE!".equals(evaluationResult)){
+						collector.checkThat(getFailedReason(formulaCell),evaluationResult
 							, equalTo("#NAME?"));
+					}
 				}else{
-					collector.checkThat(getFailedReason(formulaCell),formulaResult
-							, equalTo(Ranges.range(sheet, row, 2).getCellData().getFormatText()));
+					collector.checkThat(getFailedReason(formulaCell),evaluationResult
+							, equalTo(getExpectedResult(sheet, row)));
 				}
 				
 				nFormula ++;
-				nRowFromLastFormula = 0;
+				readRowFromLastFormula = 0;
 			}
 			//TODO verify total tested formula count
 			row ++;
-			nRowFromLastFormula++;
+			readRowFromLastFormula++;
 		}
 		return nFormula;
 	}
+
+	private String getEvaluationResult(Range formulaCell) {
+		try{
+			return formulaCell.getCellData().getFormatText();
+		}catch (Exception e) {
+			return e.getMessage();
+		}
+	}
+
+	private String getExpectedResult(Sheet sheet, int row) {
+		return Ranges.range(sheet, row, 2).getCellData().getFormatText();
+	}
 	
-	
-	private boolean isFormulaRow(Range verifyCell) {
+	/*
+	 * Determine this row has a formula to verify or not
+	 */
+	private boolean isFormulaRow(Range verifyCell, Range formulaCell) {
 		//skip "human check" cases
-		return verifyCell != null  && (verifyCell.getCellData().getType() == CellType.FORMULA || "unsupported".equals(verifyCell.getCellEditText()));
+		return verifyCell != null  && (verifyCell.getCellData().getType() == CellType.FORMULA || "unsupported".equals(verifyCell.getCellEditText()))
+				&& formulaCell!=null && formulaCell.getCellData().getType() == CellType.FORMULA;
 	}
 
 
