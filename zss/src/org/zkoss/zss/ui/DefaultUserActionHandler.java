@@ -327,16 +327,15 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	protected boolean doRenameSheet(String newname) {
 		Book book = getBook();
 		Sheet sheet = getSheet();
-		
 		if(sheet.getSheetName().equals(newname)){
 			return true;
 		}
 		if(!isLeaglSheetName(newname)){
-			showWarnMessage("The name :"+newname+", is not a legal sheet name");
+			showWarnMessage("The name: " + newname + ", is not a legal sheet name");
 			return true;
 		}
 		if(book.getSheet(newname)!=null){
-			showWarnMessage("Canot rename a sheet to the same as another.");
+			showWarnMessage("Can not rename a sheet to the same as another.");
 			return true;
 		}
 		
@@ -368,7 +367,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		
 		int num = book.getNumberOfSheets();
 		if(num<=1){
-			showWarnMessage("Canot delete last sheet.");
+			showWarnMessage("Can not delete last sheet.");
 			return true;
 		}
 		
