@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -498,7 +499,7 @@ public final class BookHelper {
 			setCellValue(cell, cv);
 			return cv;
 		} catch(Exception e){ //handle all runtime exceptions happened in evaluating formulas, hawk
-			logger.severe("error evaluating formula for "+e.getMessage() +" at "+Ranges.getCellReference(cell.getRowIndex(),cell.getColumnIndex()));
+			logger.log(Level.SEVERE, "error evaluating formula: "+cell.getCellFormula()+" at "+Ranges.getCellReference(cell.getRowIndex(),cell.getColumnIndex()), e);
 			setCellValue(cell, CellValue.getError(ErrorEval.VALUE_INVALID.getErrorCode()));
 			return CellValue.getError(ErrorEval.VALUE_INVALID.getErrorCode());
 		}finally{
