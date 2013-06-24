@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
 import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
@@ -43,9 +42,7 @@ import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
-import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
@@ -53,8 +50,6 @@ import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFChartX;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.RefSheet;
@@ -2006,6 +2001,52 @@ public class XRangeImpl implements XRange {
 		return new CellRangeAddress(minr, maxr, minc, maxc);
 	}
 
+	// ZSS-246: give an API for user checking the auto-filtering range before applying it.
+	public CellRangeAddress findAutoFilterRange() {
+		
+		//The logic to decide the actual affected range to implement autofilter:
+		//If it's a multiple cell range, it's the range intersect with largest range of the sheet.
+		//If it's a single cell range, it has to be extend to a continuous range by looking up the near 8 cells of the single cell.
+		CellRangeAddress currentArea = new CellRangeAddress(getRow(), getLastRow(), getColumn(), getLastColumn());
+		final Ref ref = getRefs().iterator().next();
+		
+		//ZSS-199
+		if (ref.isWholeRow()) {
+			//extend to a continuous range from the top row
+			return getRowCurrentRegion(_sheet, ref.getTopRow(), ref.getBottomRow());
+			
+		} else if (BookHelper.isOneCell(_sheet, currentArea)) {
+			//only one cell selected(include merged one), try to look the max range surround by blank cells 
+			return getCurrentRegion(_sheet, getRow(), getColumn());
+			
+		} else {
+			CellRangeAddress largeRange = getLargestRange(_sheet); //get the largest range that contains non-blank cells
+			if (largeRange == null) {
+				return null;
+			}
+			int left = largeRange.getFirstColumn();
+			int top = largeRange.getFirstRow();
+			int right = largeRange.getLastColumn();
+			int bottom = largeRange.getLastRow();
+			if (left < getColumn()) {
+				left = getColumn();
+			}
+			if (right > getLastColumn()) {
+				right = getLastColumn();
+			}
+			if (top < getRow()) {
+				top = getRow();
+			}
+			if (bottom > getLastRow()) {
+				bottom = getLastRow();
+			}
+			if (top > bottom || left > right) {
+				return null;
+			}
+			return new CellRangeAddress(top, bottom, left, right);
+		}
+	}
+	
 	//TODO:
 	private static final String ALL_BLANK_MSG = "Cannot find the range. Please select a cell within the range and try again!";
 	@Override
@@ -2021,53 +2062,13 @@ public class XRangeImpl implements XRange {
 				unhideArea.getRows().setHidden(false);
 				BookHelper.notifyAutoFilterChange(ref,false);
 			} else {
-				//The logic to decide the actual affected range to implement autofilter:
-				//If it's a multi cell range, it's the range intersect with largest range of the sheet.
-				//If it's a single cell range, it has to be extend to a continuous range by looking up the near 8 cells of the single cell.
-				affectedArea = new CellRangeAddress(getRow(), getLastRow(), getColumn(), getLastColumn());
-				
-				//ZSS-199
-				if (ref.isWholeRow()) {
-					//extend to a continuous range from the top row
-					CellRangeAddress maxRange = getRowCurrentRegion(_sheet, ref.getTopRow(), ref.getBottomRow());
-					if (maxRange == null) {
-						throw new RuntimeException(ALL_BLANK_MSG);
-					}
-					affectedArea = maxRange;
-				} else if (BookHelper.isOneCell(_sheet, affectedArea)) { //only one cell selected(include merged one), try to look the max range surround by blank cells 
-					CellRangeAddress maxRange = getCurrentRegion(_sheet, getRow(), getColumn());
-					if (maxRange == null) {
-						throw new RuntimeException(ALL_BLANK_MSG);
-					}
-					affectedArea = maxRange;
+				affectedArea = findAutoFilterRange(); 	// ZSS-246: move the original code to a new API for checking 
+				if(affectedArea != null) {
+					_sheet.setAutoFilter(affectedArea);
+					BookHelper.notifyAutoFilterChange(ref,true);
 				} else {
-					CellRangeAddress largeRange = getLargestRange(_sheet); //get the largest range that contains non-blank cells
-					if (largeRange == null) {
-						throw new RuntimeException(ALL_BLANK_MSG);
-					}
-					int left = largeRange.getFirstColumn();
-					int top = largeRange.getFirstRow();
-					int right = largeRange.getLastColumn();
-					int bottom = largeRange.getLastRow();
-					if (left < getColumn()) {
-						left = getColumn();
-					}
-					if (right > getLastColumn()) {
-						right = getLastColumn();
-					}
-					if (top < getRow()) {
-						top = getRow();
-					}
-					if (bottom > getLastRow()) {
-						bottom = getLastRow();
-					}
-					if (top > bottom || left > right) {
-						throw new RuntimeException(ALL_BLANK_MSG);
-					}
-					affectedArea = new CellRangeAddress(top, bottom, left, right);
+					throw new RuntimeException(ALL_BLANK_MSG);
 				}
-				_sheet.setAutoFilter(affectedArea);
-				BookHelper.notifyAutoFilterChange(ref,true);
 			}
 			 
 			//I have to know the top row area to show/remove the combo button
