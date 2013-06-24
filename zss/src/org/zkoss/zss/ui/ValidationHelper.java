@@ -10,7 +10,6 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XRanges;
-import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zul.Messagebox;
 
 /**
@@ -36,9 +35,6 @@ public class ValidationHelper {
 			final String editText, final EventListener callback) {
 		final Sheet ssheet = ss.getSelectedSheet();
 		if (ssheet == null || !ssheet.equals(sheet)) { //skip no sheet case
-			return true;
-		}
-		if (_inCallback) { // skip validation check
 			return true;
 		}
 		final XRange rng = XRanges.range(((SheetImpl)sheet).getNative(), row, col);
@@ -126,17 +122,12 @@ public class ValidationHelper {
 		return true;
 	}
 
-	private boolean _inCallback = false;
-
 	private void errorBoxCallback(EventListener callback, String eventname) {
 		if (!isEventThreadEnabled() && callback != null) {
 			try {
-				_inCallback = true;
 				callback.onEvent(new Event(eventname, ss));
 			} catch (Exception e) {
 				throw UiException.Aide.wrap(e);
-			} finally {
-				_inCallback = false;
 			}
 		}
 	}

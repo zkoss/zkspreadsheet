@@ -4358,12 +4358,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		});
 	}
 
+	// a local flag indicates that skip the validation and force this editing (ZSS-351) 
+	private boolean forceStopEditing0 = false; 
+	
 	private void processStopEditing0(final String token, final Sheet sheet, final int rowIdx, final int colIdx, final Object value, final String editingType) {
 		try {
 			
-			ValidationHelper helper = new ValidationHelper(this);
+			ValidationHelper validationHelper = new ValidationHelper(this);
 			String editText = value == null ? "" : value.toString();
-			if (!helper.validate(sheet, rowIdx, colIdx, editText,
+			// ZSS-351: use force flag to skip the validation when user want force this editing
+			if (!forceStopEditing0 && !validationHelper.validate(sheet, rowIdx, colIdx, editText,
 				//callback
 				new EventListener() {
 					@Override
@@ -4372,7 +4376,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 						if (Messagebox.ON_CANCEL.equals(eventname)) { //cancel
 							Spreadsheet.this.processCancelEditing0(token, sheet, rowIdx, colIdx, true, editingType); //skipMove
 						} else if (Messagebox.ON_OK.equals(eventname)) { //ok
-							Spreadsheet.this.processStopEditing0(token, sheet, rowIdx, colIdx, value, editingType);
+							try {
+								forceStopEditing0 = true;
+								Spreadsheet.this.processStopEditing0(token, sheet, rowIdx, colIdx, value, editingType);
+							} finally {
+								forceStopEditing0 = false;
+							}
 						} else { //retry
 							Spreadsheet.this.processRetryEditing0(token, sheet, rowIdx, colIdx, value, editingType);
 						}
