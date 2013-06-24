@@ -10,4 +10,8 @@
 	</preference>
 	-->
 	
+	<client-config>
+		<debug-js>true</debug-js>
+	</client-config>
+	
 </zk>

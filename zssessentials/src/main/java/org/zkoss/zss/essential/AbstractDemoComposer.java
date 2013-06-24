@@ -79,9 +79,15 @@ public class AbstractDemoComposer extends SelectorComposer<Component>{
 	protected void initModel() {
 		availableBookModel.add("blank.xlsx");
 		availableBookModel.add("sample.xlsx");
+		availableBookModel.add("full.xlsx");
 		List<String> c = contirbuteAvailableBooks();
 		if(c!=null){
-			availableBookModel.addAll(c);
+			for(String s:c){
+				if(!availableBookModel.contains(s)){
+					availableBookModel.add(s);
+				}
+			}
+			
 		}
 	}
 	

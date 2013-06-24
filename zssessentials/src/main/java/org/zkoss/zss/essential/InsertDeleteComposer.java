@@ -26,11 +26,6 @@ public class InsertDeleteComposer extends AbstractDemoComposer {
 	@Wire
 	Label selectionLab;
 	
-	protected List<String> contirbuteAvailableBooks(){
-		return Arrays.asList("full.xlsx");
-	}
-	
-	
 	@Listen("onCellSelection = #ss")
 	public void onCellSelection(){
 		selectionLab.setValue(Ranges.getAreaReference(ss.getSelection()));
