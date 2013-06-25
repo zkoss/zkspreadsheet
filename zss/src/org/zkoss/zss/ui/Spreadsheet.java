@@ -519,7 +519,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	private Focus _selfEditorFocus;
 	private void deleteSelfEditorFocus() {
-		if (_selectedSheet != null && _selfEditorFocus != null) {
+		if (_selectedSheet != null && getXBook().getSheetIndex(_selectedSheet) != -1  && _selfEditorFocus != null) {
 			final XRange rng = XRanges.range(_selectedSheet);
 			rng.notifyDeleteFriendFocus(_selfEditorFocus);
 			((BookCtrl)_book).removeFocus(_selfEditorFocus);

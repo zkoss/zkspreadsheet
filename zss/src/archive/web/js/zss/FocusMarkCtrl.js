@@ -85,9 +85,12 @@ zss.FocusMarkCtrl = zk.$extends(zk.Object, {
 		if(color){
 			comp.css({'border-color':color});
 			var rgb = comp.css('border-color');
-			rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-			if(rgb.length==4){
-				bright = 1 - (0.299*rgb[1]+0.587*rgb[2]+0.114*rgb[3])/255;
+			var rgbarr = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+			if(!rgbarr || rgbarr.length!=4){
+				rgbarr = rgb.match(/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*(\d+)\)$/);
+			}
+			if(rgbarr && rgbarr.length>=4){
+				bright = 1 - (0.299*rgbarr[1]+0.587*rgbarr[2]+0.114*rgbarr[3])/255;
 			}
 		}
 		if(color && label){
@@ -97,7 +100,6 @@ zss.FocusMarkCtrl = zk.$extends(zk.Object, {
 			var lab = jq("<span class='zsfocmarkl'/>"); 
 			lab.text(label).css({'background-color':color,'left':left}).appendTo(comp);
 			lab.fadeOut(1800,function(){lab.detach()});
-			console.log('brightness '+color+":"+bright)
 			if(bright>0.5){
 				lab.addClass('zsfocmarkl-lite');
 				lab.removeClass('zsfocmarkl-dark');
