@@ -2002,7 +2002,7 @@ public class XRangeImpl implements XRange {
 	}
 
 	// ZSS-246: give an API for user checking the auto-filtering range before applying it.
-	public CellRangeAddress findAutoFilterRange() {
+	public XRange findAutoFilterRange() {
 		
 		//The logic to decide the actual affected range to implement autofilter:
 		//If it's a multiple cell range, it's the range intersect with largest range of the sheet.
@@ -2013,11 +2013,13 @@ public class XRangeImpl implements XRange {
 		//ZSS-199
 		if (ref.isWholeRow()) {
 			//extend to a continuous range from the top row
-			return getRowCurrentRegion(_sheet, ref.getTopRow(), ref.getBottomRow());
+			CellRangeAddress cra = getRowCurrentRegion(_sheet, ref.getTopRow(), ref.getBottomRow());
+			return cra != null ? XRanges.range(_sheet, cra.getFirstRow(), cra.getFirstColumn(), cra.getLastRow(), cra.getLastColumn()) : null; 
 			
 		} else if (BookHelper.isOneCell(_sheet, currentArea)) {
 			//only one cell selected(include merged one), try to look the max range surround by blank cells 
-			return getCurrentRegion(_sheet, getRow(), getColumn());
+			CellRangeAddress cra = getCurrentRegion(_sheet, getRow(), getColumn());
+			return cra != null ? XRanges.range(_sheet, cra.getFirstRow(), cra.getFirstColumn(), cra.getLastRow(), cra.getLastColumn()) : null; 
 			
 		} else {
 			CellRangeAddress largeRange = getLargestRange(_sheet); //get the largest range that contains non-blank cells
@@ -2043,7 +2045,7 @@ public class XRangeImpl implements XRange {
 			if (top > bottom || left > right) {
 				return null;
 			}
-			return new CellRangeAddress(top, bottom, left, right);
+			return XRanges.range(_sheet, top, left, bottom, right); 
 		}
 	}
 	
@@ -2062,8 +2064,9 @@ public class XRangeImpl implements XRange {
 				unhideArea.getRows().setHidden(false);
 				BookHelper.notifyAutoFilterChange(ref,false);
 			} else {
-				affectedArea = findAutoFilterRange(); 	// ZSS-246: move the original code to a new API for checking 
-				if(affectedArea != null) {
+				XRange r = findAutoFilterRange(); // ZSS-246: move the original code to a new API for checking
+				if(r != null) {
+					affectedArea = new CellRangeAddress(r.getRow(), r.getLastRow(), r.getColumn(), r.getLastColumn());
 					_sheet.setAutoFilter(affectedArea);
 					BookHelper.notifyAutoFilterChange(ref,true);
 				} else {

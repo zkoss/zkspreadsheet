@@ -594,6 +594,10 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		Messagebox.show("The cell that you are trying to change is protected and locked.", "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION);
 	}
 	
+	protected void showInfoMessage(String message) {
+		Messagebox.show(message, "ZK Spreadsheet", Messagebox.OK, Messagebox.INFORMATION);
+	}
+	
 	protected void showWarnMessage(String message) {
 		Messagebox.show(message, "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION);
 	}
@@ -1157,7 +1161,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		// ZSS-246: check range available before "enabling" auto filter
 		Range filterRange = range.findAutoFilterRange();
 		if(!range.isAutoFilterEnabled() &&  filterRange == null) { 
-			Messagebox.show("Cannot find the range. Please select a cell within the range and try again!", "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION);
+			showInfoMessage("Cannot find the range. Please select a cell within the range and try again!");
 			return true;
 		}
 			

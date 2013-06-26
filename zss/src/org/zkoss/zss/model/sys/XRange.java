@@ -27,7 +27,6 @@ import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
-import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 
 /**
@@ -356,7 +355,7 @@ public interface XRange {
 	 * @since 3.0.0
 	 */
 	// Refer to ZSS-246.
-	CellRangeAddress findAutoFilterRange();
+	XRange findAutoFilterRange();
 	
 	/**
 	 * Filters a list specified by this Range and returns an AutoFilter object.

@@ -534,9 +534,9 @@ public class RangeImpl implements Range{
 	
 	// ZSS-246: give an API for user checking the auto-filtering range before applying it.
 	public Range findAutoFilterRange() {
-		CellRangeAddress addr = range.findAutoFilterRange();
-		if(addr != null) {
-			return Ranges.range(getSheet(), addr.getFirstRow(), addr.getFirstColumn(), addr.getLastRow(), addr.getLastColumn());
+		XRange r = range.findAutoFilterRange();
+		if(r != null) {
+			return Ranges.range(getSheet(), r.getRow(), r.getColumn(), r.getLastRow(), r.getLastColumn());
 		} else {
 			return null;
 		}

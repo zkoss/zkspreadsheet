@@ -25,7 +25,6 @@ import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
 import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
-import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.model.sys.XAreas;
 import org.zkoss.zss.model.sys.XFormatText;
 import org.zkoss.zss.model.sys.XRange;
@@ -383,7 +382,7 @@ public class EmptyRange implements XRange {
 	}
 
 	@Override
-	public CellRangeAddress findAutoFilterRange() {
+	public XRange findAutoFilterRange() {
 		return null;
 	}
 }
