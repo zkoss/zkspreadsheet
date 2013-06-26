@@ -50,6 +50,7 @@ import org.zkoss.poi.hssf.usermodel.HSSFCellHelper;
 import org.zkoss.poi.hssf.usermodel.HSSFCellStyle;
 import org.zkoss.poi.hssf.usermodel.HSSFDataFormat;
 import org.zkoss.poi.hssf.usermodel.HSSFDataValidation;
+import org.zkoss.poi.hssf.usermodel.HSSFDateUtil;
 import org.zkoss.poi.hssf.usermodel.HSSFFont;
 import org.zkoss.poi.hssf.usermodel.HSSFPalette;
 import org.zkoss.poi.hssf.usermodel.HSSFRichTextString;
@@ -5145,5 +5146,16 @@ public final class BookHelper {
 				throw new UnsupportedOperationException("Custom Validation is not supported yet!");
 		}
 		return success ? null : dv;
+	}
+	
+	public static Date numberToDate(Workbook book,double number){
+		if(book instanceof XSSFBookImpl){
+			boolean date1904 = ((XSSFBookImpl)book).isDate1904();
+	        return DateUtil.getJavaDate(number, date1904);
+		}else if(book instanceof HSSFBookImpl){
+			boolean date1904 = ((XSSFBookImpl)book).isDate1904();
+	        return HSSFDateUtil.getJavaDate(number, date1904);
+		}
+		return null;
 	}
 }

@@ -444,6 +444,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * will create a new model depends on src;
 	 * 
 	 * @return the book model of this spread sheet.
+	 * @deprecated since 3.0.0 , use {@link #getBook()}
 	 */
 	public XBook getXBook() {
 		if (_book == null) {
@@ -504,6 +505,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * Sets the book data model of this spread sheet.
 	 * 
 	 * @param book the book data model.
+	 * @deprecated since 3.0.0 , use {@link #setBook(Book)}
 	 */
 	public void setXBook(XBook book) {
 		if (!Objects.equals(book, _book)) {
@@ -594,7 +596,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	private Focus newSelfFocus(String sheetId, int row, int column) {
-		final String focusName = _userName == null ? ""+ (getId() == null ? getUuid() : getId()) : _userName;
+		//show id/uuid is useless for co-edit and ugly
+		final String focusName = _userName == null ? ""/*+ (getId() == null ? getUuid() : getId()) */: _userName;
 		_selfFocusId = _selfFocusId==null?((BookCtrl)_book).nextFocusId():_selfFocusId;
 		Focus focus = new Focus(_selfFocusId, focusName, "#000", sheetId,row,column, this);
 		return focus;
@@ -626,6 +629,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	/**
 	 * Gets the selected sheet, the default selected sheet is first sheet.
 	 * @return #{@link XSheet}
+	 * @deprecated since 3.0.0 , use {@link #getSelectedSheet()}
 	 */
 	public XSheet getSelectedXSheet() {
 		final XBook book = getXBook();
@@ -698,6 +702,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * {@link ExcelImporter}.
 	 * 
 	 * @return the importer
+	 * @deprecated since 3.0.0 , use {@link #getImporter()}
 	 */
 	public XImporter getXImporter() {
 		return _importer;
@@ -709,6 +714,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @param importer the importer to import a spread sheet file from a document
 	 * format (e.g. an Excel file) by the specified src (@link
 	 * #setSrc(). The default importer is {@link ExcelImporter}.
+	 * @deprecated since 3.0.0 , use {@link #setImporter(Importer)}
 	 */
 	public void setXImporter(XImporter importer) {
 		if (!Objects.equals(importer, _importer)) {
@@ -4809,7 +4815,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	//return true if a valid input; false otherwise and show Error Alert if required
 	//TODO think another way to provide this feature.
 	/**
-	 * @deprecated since 3.0.0 please use {@link ValidationHelper}
+	 * @deprecated since 3.0.0 , use {@link ValidationHelper}
 	 */
 	@Deprecated
 	public boolean validate(XSheet sheet, final int row, final int col, final String txt, 
