@@ -16,21 +16,19 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
-import java.util.List;
-
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.CellStyle;
-import org.zkoss.zss.api.model.Color;
-import org.zkoss.zss.api.model.EditableFont;
-import org.zkoss.zss.api.model.Font;
-import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.Chart.Type;
 import org.zkoss.zss.api.model.ChartData;
+import org.zkoss.zss.api.model.Color;
+import org.zkoss.zss.api.model.EditableCellStyle;
+import org.zkoss.zss.api.model.EditableFont;
+import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.TypeOffset;
 import org.zkoss.zss.api.model.Font.Underline;
@@ -549,6 +547,15 @@ public interface Range {
 	 * @return true if auto filter is enabled.
 	 */
 	public boolean isAutoFilterEnabled();
+	
+	/**
+	 * To find a range of cells for applying auto filter according to this range.
+	 * Usually, these two ranges are different.
+	 * This method searches the filtering range through a specific rules. 
+	 * @return a range of cells for applying auto filter or null if can't find one from this Range. 
+	 */
+	// Refer to ZSS-246.
+	public Range findAutoFilterRange();
 	
 	/**
 	 * Enable/disable autofilter of the sheet
