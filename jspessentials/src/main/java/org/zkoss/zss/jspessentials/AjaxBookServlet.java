@@ -1,5 +1,7 @@
 package org.zkoss.zss.jspessentials;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Date;
@@ -11,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.zkoss.json.JSONObject;
 import org.zkoss.zk.ui.Desktop;
+import org.zkoss.zss.api.Exporter;
+import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
@@ -88,19 +92,22 @@ public class AjaxBookServlet extends HttpServlet{
 	
 
 	private void handleReset(Sheet sheet, JSONObject result) {
+		final String dateFormat =  "yyyy/MM/dd";
 		//reset sample data
 		//you can use a cell reference to get a range
-		Range from = Ranges.range(sheet,"D4");//Ranges.range(sheet,"From");
+		Range from = Ranges.range(sheet,"E5");//Ranges.range(sheet,"From");
 		//or you can use a name to get a range (the named rnage has to be set in book);
 		Range to = Ranges.rangeByName(sheet,"To");
 		Range reason = Ranges.rangeByName(sheet,"Reason");
 		Range applicant = Ranges.rangeByName(sheet,"Applicant");
+		Range requestDate = Ranges.rangeByName(sheet,"RequestDate");
 		
 		//use range api to set the cell data
-		from.setCellEditText(DateUtil.tomorrow(0,"yyyy/MM/dd"));
-		to.setCellEditText(DateUtil.tomorrow(0,"yyyy/MM/dd"));
+		from.setCellEditText(DateUtil.tomorrow(0,dateFormat));
+		to.setCellEditText(DateUtil.tomorrow(0,dateFormat));
 		reason.setCellEditText("");
 		applicant.setCellEditText("");
+		requestDate.setCellEditText(DateUtil.today(dateFormat));
 	}
 	
 	private void handleCheck(Sheet sheet, JSONObject result) {
@@ -110,6 +117,7 @@ public class AjaxBookServlet extends HttpServlet{
 		String reason = Ranges.rangeByName(sheet,"Reason").getCellData().getStringValue();
 		Double total = Ranges.rangeByName(sheet,"Total").getCellData().getDoubleValue();
 		String applicant = Ranges.rangeByName(sheet,"Applicant").getCellData().getStringValue();
+		Date requestDate = Ranges.rangeByName(sheet,"RequestDate").getCellData().getDateValue();
 		
 		if(from == null){
 			result.put("message", "FROM is empty");
@@ -121,6 +129,8 @@ public class AjaxBookServlet extends HttpServlet{
 			result.put("message", "REASON is empty");
 		}else if(applicant == null){
 			result.put("message", "APPLICANT is empty");
+		}else if(requestDate == null){
+			result.put("message", "REQUEST DATE is empty");
 		}else{
 			//Option 1
 			//You can handle your business logic here and return a final result for user directly
@@ -137,7 +147,27 @@ public class AjaxBookServlet extends HttpServlet{
 			form.put("to", to.getTime());//can't pass as data, use long for time
 			form.put("reason", reason);
 			form.put("total", total.intValue());//we just need int
-			form.put("applicant", applicant);							
+			form.put("applicant", applicant);
+			form.put("requestDate", requestDate.getTime());
+			
+			//You can also store the book, and load it back later by export it to a file
+			Exporter exporter = Exporters.getExporter();
+			FileOutputStream fos = null;
+			try {
+				File temp = File.createTempFile("app4leave_", ".xlsx");
+				fos = new FileOutputStream(temp); 
+				exporter.export(sheet.getBook(), fos);
+				System.out.println("file save at "+temp.getAbsolutePath());
+				form.put("archive", temp.getName());
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally{
+				if(fos!=null)
+					try {
+						fos.close();
+					} catch (IOException e) {//eat
+					}
+			}
 		}
 	}
 }

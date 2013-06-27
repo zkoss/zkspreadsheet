@@ -1,11 +1,3 @@
-<%@page import="java.net.URL"%>
-<%@page import="org.zkoss.zk.ui.Execution"%>
-<%@page import="org.zkoss.zss.api.*"%>
-<%@page import="org.zkoss.zss.api.model.*"%>
-<%@page import="org.zkoss.zssex.ui.ExecutionBridge"%>
-<%@page import="org.zkoss.zkjsp.ui.JSPBookProvider"%>
-<%@page import="org.zkoss.zss.jspessentials.DateUtil"%>
-<%@page import="org.zkoss.zss.jspessentials.DemoBookProvider"%>
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="zss" uri="http://www.zkoss.org/jsp/zss"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -19,51 +11,11 @@
 	//prevent page cache in browser side
 	response.setHeader("Pragma", "no-cache"); 
 	response.setHeader("Cache-Control", "no-store, no-cache"); 
-
-	/*
-	ExecutionBridge eb;
-	new ExecutionBridge(getServletContext(),request,response){
-		protected void process(Execution execution) throws Exception{
-			String dateFormat =  "yyyy/MM/dd";
-			URL bookUrl = _servletContext.getResource("/WEB-INF/books/application_for_leave.xlsx");
-			Book book = Importers.getImporter().imports(bookUrl, "app4leave");
-			
-			Sheet sheet = book.getSheetAt(0);
-			
-			//reset sample data
-			//you can use a cell reference to get a range
-			Range from = Ranges.range(sheet,"E5");//Ranges.range(sheet,"From");
-			//or you can use a name to get a range (the named rnage has to be set in book);
-			Range to = Ranges.rangeByName(sheet,"To");
-			Range reason = Ranges.rangeByName(sheet,"Reason");
-			Range applicant = Ranges.rangeByName(sheet,"Applicant");
-			Range requestDate = Ranges.rangeByName(sheet,"RequestDate");
-			
-			//use range api to set the cell data
-			from.setCellEditText(DateUtil.tomorrow(0,dateFormat));
-			to.setCellEditText(DateUtil.tomorrow(0,dateFormat));
-			reason.setCellEditText("");
-			applicant.setCellEditText("");
-			requestDate.setCellEditText(DateUtil.today(dateFormat));
-			
-			_request.setAttribute("book",book);	
-		}
-	}.process();
-	*/
-	/*
-	JSPBookProvider provider = new DemoBookProvider();
-	*/
 %>
 <body>
 	<button id="resetBtn">Reset</button>
 	<button id="checkBtn">OK</button>
 	<div>
-		<!-- 
-		2 way to initial a book, by book attribute or booProvider attribute
-		book="${book}" or
-		bookProvider="< %=provider%>" or
-		bookProvider="org.zkoss.zss.jspessentials.DemoBookProvider"
-		 -->
 		<zss:spreadsheet id="myzss" 
 			bookProvider="org.zkoss.zss.jspessentials.DemoBookProvider"
 			width="800px" height="600px" 

@@ -14,11 +14,15 @@
 	String reason = request.getParameter("reason");
 	
 	String applicant = request.getParameter("applicant");
+	Date requestDate = new Date(Long.parseLong(request.getParameter("requestDate")));
+	String archive = request.getParameter("archive");
 %>
 <body>
 	<table>
 		<tr>
 			<td colspan="2">Processed Data</td>
+		</tr><tr>
+			<td>Request Date:</td><td><%=requestDate%></td>
 		</tr><tr>
 			<td>From:</td><td><%=from%></td>
 		</tr><tr>
@@ -29,6 +33,8 @@
 			<td>Reason:</td><td><%=reason%></td>
 		</tr><tr>
 			<td>Applicant:</td><td><%=applicant%></td>
+		</tr><tr>
+			<td>Archive:</td><td><%=archive%></td>
 		</tr>
 	</table>
 	

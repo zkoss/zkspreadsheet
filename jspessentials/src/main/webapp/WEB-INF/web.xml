@@ -143,7 +143,7 @@
 	<jsp-config>
 		<taglib>
 			<taglib-uri>http://www.zkoss.org/jsp/zss</taglib-uri>
-			<taglib-location>/WEB-INF/zssjsp.tld</taglib-location>
+			<taglib-location>/WEB-INF/zssjsptld/zssjsp.tld</taglib-location>
 		</taglib>
 	</jsp-config>
 	
