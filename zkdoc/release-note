@@ -26,6 +26,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-254 some "accounting" data format causes NullPointerException
   ZSS-317 When importing a xlsx file with images exported from Spreadsheet 2nd time, an exception is thrown
   ZSS-246 Exception when toggle auto filter
+  ZSS-259 merges cells have missing bottom border when displaying a excel file
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api

@@ -109,21 +109,35 @@ public class CellFormatHelper {
 	private boolean processBottomBorder(StringBuffer sb) {
 
 		boolean hitBottom = false;
+		MergedRect rect = null;
+		boolean hitMerge = false;
 
 		if (_cell != null) {
-			CellStyle style = _cell.getCellStyle();
-			
-			
-			if (style != null){
-				int bb = style.getBorderBottom();
-				//String color = BookHelper.indexToRGB(_book, style.getBottomBorderColor());
-				String color = BookHelper.colorToHTML(_book, style.getBottomBorderColorColor());
-				hitBottom = appendBorderStyle(sb, "bottom", bb, color);
+			// ZSS-259: should apply the bottom border from the cell of merged range's bottom
+			// as processRightBorder() does.
+			Cell bottom = _cell;
+			rect = _mmHelper.getMergeRange(_row, _col);
+			if(rect != null) {
+				hitMerge = true;
+				bottom = XUtils.getCell(_sheet, rect.getBottom(), _col);
+			}
+			if(bottom != null) {
+				CellStyle style = bottom.getCellStyle();
+				if (style != null){
+					int bb = style.getBorderBottom();
+					//String color = BookHelper.indexToRGB(_book, style.getBottomBorderColor());
+					String color = BookHelper.colorToHTML(_book, style.getBottomBorderColorColor());
+					hitBottom = appendBorderStyle(sb, "bottom", bb, color);
+				}
 			}
 		}
+
+		// ZSS-259: should check and apply the top border from the bottom cell
+		// of merged range's bottom as processRightBorder() does.
 		Cell next = null;
 		if (!hitBottom) {
-			next = XUtils.getCell(_sheet, _row + 1, _col);
+			int c = hitMerge ? rect.getBottom() + 1 : _row + 1; 
+			next = XUtils.getCell(_sheet, c, _col);
 			/*if(next == null){ // don't search into merge ranges
 				//check is _row+1,_col in merge range
 				MergedRect rect = _mmHelper.getMergeRange(_row+1, _col);
