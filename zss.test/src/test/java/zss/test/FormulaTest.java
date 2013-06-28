@@ -182,15 +182,16 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		while (!isNoMoreFormula(readRowFromLastFormula)){
 			Range formulaCell = Ranges.range(sheet, row, 1);
 			Range verifyCell = Ranges.range(sheet, row, 3);
-			if (isFormulaRow(verifyCell, formulaCell)){ 
+			if (existFormula2Verify(verifyCell, formulaCell)){ 
 				String evaluationResult = getEvaluationResult(formulaCell);
 				
 				//verify evaluation result upon supported or not
 				if (verifyCell.getCellEditText().equals("unsupported")){
-					if (!"#NAME?".equals(evaluationResult) && !"#VALUE!".equals(evaluationResult)){
-						collector.checkThat(getFailedReason(formulaCell),evaluationResult
+					collector.checkThat(getFailedReason(formulaCell),evaluationResult
 							, equalTo("#NAME?"));
-					}
+				}else if (verifyCell.getCellEditText().equals("invalid")){
+					collector.checkThat(getFailedReason(formulaCell),evaluationResult
+							, equalTo("#VALUE!"));
 				}else{
 					collector.checkThat(getFailedReason(formulaCell),evaluationResult
 							, equalTo(getExpectedResult(sheet, row)));
@@ -221,7 +222,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	/*
 	 * Determine this row has a formula to verify or not
 	 */
-	private boolean isFormulaRow(Range verifyCell, Range formulaCell) {
+	private boolean existFormula2Verify(Range verifyCell, Range formulaCell) {
 		//skip "human check" cases
 		return verifyCell != null  && (verifyCell.getCellData().getType() == CellType.FORMULA || "unsupported".equals(verifyCell.getCellEditText()))
 				&& formulaCell!=null && formulaCell.getCellData().getType() == CellType.FORMULA;
