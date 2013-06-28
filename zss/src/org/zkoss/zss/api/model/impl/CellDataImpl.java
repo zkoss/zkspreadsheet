@@ -16,12 +16,15 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
+import java.util.Date;
+
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.api.impl.RangeImpl;
 import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.model.sys.impl.BookHelper;
 /**
  * 
  * @author dennis
@@ -149,5 +152,38 @@ public class CellDataImpl implements CellData{
 	@Override
 	public boolean isFormula() {
 		return getType() == CellType.FORMULA;
+	}
+
+	@Override
+	public Double getDoubleValue() {
+		Object val = getValue();
+		if(val instanceof Double){
+			return (Double)val;
+		}
+		return null;
+	}
+
+	@Override
+	public Date getDateValue() {
+		Double val = getDoubleValue();
+		return val==null?null:BookHelper.numberToDate(range.getBook().getPoiBook(), val);
+	}
+
+	@Override
+	public String getStringValue() {
+		Object val = getValue();
+		if(val instanceof String){
+			return (String)val;
+		}
+		return null;
+	}
+
+	@Override
+	public Boolean getBooleanValue() {
+		Object val = getValue();
+		if(val instanceof Boolean){
+			return (Boolean)val;
+		}
+		return null;
 	}
 }

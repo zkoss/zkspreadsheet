@@ -42,6 +42,12 @@ public class ImporterImpl implements Importer{
 
 	
 	public Book imports(InputStream is, String bookName)throws IOException{
+		if(is == null){
+			throw new IllegalArgumentException("null inputstream");
+		}
+		if(bookName == null){
+			throw new IllegalArgumentException("null book name");
+		}
 		return new BookImpl(new SimpleRef<XBook>(importer.imports(is, bookName)));
 	}
 
@@ -53,6 +59,12 @@ public class ImporterImpl implements Importer{
 
 	@Override
 	public Book imports(File file, String bookName) throws IOException {
+		if(file == null){
+			throw new IllegalArgumentException("null file");
+		}
+		if(bookName == null){
+			throw new IllegalArgumentException("null book name");
+		}
 		FileInputStream is = null;
 		try{
 			is = new FileInputStream(file);
@@ -69,6 +81,12 @@ public class ImporterImpl implements Importer{
 
 	@Override
 	public Book imports(URL url, String bookName) throws IOException {
+		if(url == null){
+			throw new IllegalArgumentException("null url");
+		}
+		if(bookName == null){
+			throw new IllegalArgumentException("null book name");
+		}
 		InputStream is = null;
 		try{
 			is = url.openStream();

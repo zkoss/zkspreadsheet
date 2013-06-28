@@ -16,11 +16,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ui;
 
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-
 import org.zkoss.lang.Strings;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -46,9 +44,9 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.DefaultUserActionHandler.Clipboard.Type;
 import org.zkoss.zss.ui.event.AuxActionEvent;
 import org.zkoss.zss.ui.event.CellSelectionAction;
+import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
-import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
 import org.zkoss.zul.Messagebox;
 /**
  * The user action handler which provide default spreadsheet operation handling.
@@ -594,6 +592,10 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	
 	protected void showProtectMessage() {
 		Messagebox.show("The cell that you are trying to change is protected and locked.", "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION);
+	}
+	
+	protected void showInfoMessage(String message) {
+		Messagebox.show(message, "ZK Spreadsheet", Messagebox.OK, Messagebox.INFORMATION);
 	}
 	
 	protected void showWarnMessage(String message) {
@@ -1156,6 +1158,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
+		// ZSS-246: check range available before "enabling" auto filter
+		Range filterRange = range.findAutoFilterRange();
+		if(!range.isAutoFilterEnabled() &&  filterRange == null) { 
+			showInfoMessage("Cannot find the range. Please select a cell within the range and try again!");
+			return true;
+		}
+			
 		SheetOperationUtil.toggleAutoFilter(range);
 		clearClipboard();
 		return true;

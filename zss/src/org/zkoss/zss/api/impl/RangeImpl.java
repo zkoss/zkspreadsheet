@@ -18,15 +18,14 @@ package org.zkoss.zss.api.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.zkoss.poi.hssf.usermodel.HSSFClientAnchor;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFClientAnchor;
-import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.CellVisitor;
+import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.RangeRunner;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.SheetAnchor;
@@ -46,14 +45,14 @@ import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.api.model.impl.CellDataImpl;
-import org.zkoss.zss.api.model.impl.EnumUtil;
-import org.zkoss.zss.api.model.impl.HyperlinkImpl;
-import org.zkoss.zss.api.model.impl.ModelRef;
 import org.zkoss.zss.api.model.impl.BookImpl;
+import org.zkoss.zss.api.model.impl.CellDataImpl;
 import org.zkoss.zss.api.model.impl.CellStyleImpl;
 import org.zkoss.zss.api.model.impl.ChartDataImpl;
 import org.zkoss.zss.api.model.impl.ChartImpl;
+import org.zkoss.zss.api.model.impl.EnumUtil;
+import org.zkoss.zss.api.model.impl.HyperlinkImpl;
+import org.zkoss.zss.api.model.impl.ModelRef;
 import org.zkoss.zss.api.model.impl.PictureImpl;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
@@ -533,6 +532,16 @@ public class RangeImpl implements Range{
 		return getSheet().isAutoFilterEnabled();
 	}
 	
+	// ZSS-246: give an API for user checking the auto-filtering range before applying it.
+	public Range findAutoFilterRange() {
+		XRange r = range.findAutoFilterRange();
+		if(r != null) {
+			return Ranges.range(getSheet(), r.getRow(), r.getColumn(), r.getLastRow(), r.getLastColumn());
+		} else {
+			return null;
+		}
+	}
+
 	/** enable/disable autofilter of the sheet**/
 	public void enableAutoFilter(boolean enable){
 		//TODO the syncLevel

@@ -70,6 +70,7 @@ public class XRanges {
 	 * @param sheet the {@link XSheet} the Range will refer to.
 	 * @param name the name of NamedRange  (e.g. "MyRange"); 
 	 * @return the associated {@link XRange} of the specified name
+	 * @since 3.0.0
 	 */
 	public static XRange rangeByName(XSheet sheet, String name) {
 		AreaReference ref = null;

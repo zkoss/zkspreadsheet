@@ -125,5 +125,10 @@ public class BookImpl implements Book{
 	public Object getSync() {
 		return getNative();
 	}
+
+	@Override
+	public boolean hasName(String name) {
+		return getPoiBook().getName(name)!=null;
+	}
 	
 }

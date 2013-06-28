@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model;
 
+import java.util.Date;
+
 /**
  * The cell data object
  * @author dennis
@@ -61,9 +63,33 @@ public interface CellData {
 	public CellType getResultType();
 	
 	/**
-	 * @return the data object, it is String, Number, Date, Boolean
+	 * @return the data object, it is String, Number, Boolean
 	 */
 	public Object getValue();
+	
+	/**
+	 * 
+	 * @return the double data object of this cell
+	 */
+	public Double getDoubleValue();
+	
+	/**
+	 * 
+	 * @return the date data object of this cell
+	 */
+	public Date getDateValue();
+	
+	/**
+	 * 
+	 * @return the string object of this cell
+	 */
+	public String getStringValue();
+	
+	/**
+	 * 
+	 * @return the boolean object of this cell
+	 */
+	public Boolean getBooleanValue();
 	
 	/**
 	 * @return the formatted text string

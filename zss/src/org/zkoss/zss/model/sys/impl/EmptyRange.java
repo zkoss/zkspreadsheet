@@ -21,7 +21,6 @@ import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
@@ -380,5 +379,10 @@ public class EmptyRange implements XRange {
 	@Override
 	public boolean isWholeSheet() {
 		return false;
+	}
+
+	@Override
+	public XRange findAutoFilterRange() {
+		return null;
 	}
 }

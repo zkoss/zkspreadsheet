@@ -91,5 +91,13 @@ public interface Book {
 	 * @return
 	 */
 	public String getShareScope();
+	
+	
+	/**
+	 * check if this book has named range
+	 * @param name the name to check
+	 * @return true if it has a range of the name
+	 */
+	public boolean hasName(String name);
 
 }

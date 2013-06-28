@@ -22,7 +22,6 @@ import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
@@ -346,6 +345,17 @@ public interface XRange {
 	 * Fills up from the bottom cells of this Range to the rest of this Range.
 	 */
 	public void fillUp();
+	
+	/**
+	 * To find a range of cells for applying auto filter according to this range.
+	 * Usually, these two ranges are different.
+	 * This method searches the filtering range through a specific rules. 
+	 * @see org.zkoss.zss.api.Range#findAutoFilterRange()
+	 * @return a range of cells for applying auto filter or null if can't find one from this Range. 
+	 * @since 3.0.0
+	 */
+	// Refer to ZSS-246.
+	XRange findAutoFilterRange();
 	
 	/**
 	 * Filters a list specified by this Range and returns an AutoFilter object.
