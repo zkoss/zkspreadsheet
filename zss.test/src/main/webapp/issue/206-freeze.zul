@@ -2,7 +2,7 @@
 	<div apply="zss.testapp.issue.FreezeComposer206" vflex="1">
 	Row Count <intbox  id="row" value="2"></intbox>
 	<button label="Freeze"></button>
-	<spreadsheet src="/TestFile2007.xlsx" maxrows="80" maxcolumns="40" vflex="1" width="100%"
+	<spreadsheet src="/TestFile2007.xlsx" maxVisibleRows="80" maxVisibleColumns="40" vflex="1" width="100%"
  	showContextMenu="true" showSheetbar="true" showToolbar="true" showFormulabar="true"/>
 	</div>
 </zk>
