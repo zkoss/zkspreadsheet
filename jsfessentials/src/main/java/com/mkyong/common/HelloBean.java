@@ -1,7 +1,10 @@
 package com.mkyong.common;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+
 import java.io.Serializable;
 
 @ManagedBean
@@ -27,5 +30,9 @@ public class HelloBean implements Serializable {
 		} else {
 			return "Ajax message : Welcome " + name;
 		}
+	}
+	
+	public void doHello(){
+		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Hello "+name));
 	}
 }
