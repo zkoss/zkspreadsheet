@@ -30,7 +30,8 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-246 Exception when toggle auto filter
   ZSS-259 merges cells have missing bottom border when displaying a excel file
   ZSS-245 Exception when delete columns
-
+  ZSS-326 Insert a chart after deleting first chart causes an exception
+  
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
     that inside 'org.zkoss.zss.api' & 'org.zkoss.zss.api.model'
