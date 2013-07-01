@@ -2,6 +2,7 @@
 ZK Spreadsheet 3.0.0 RC
 *Features:
   ZSS-338 When share book, could the friend focus shows user name of another editor
+  ZSS-353 Support zkhead tag in JSP/JSF
 
 *Bug
   ZSS-224 text overflow doesn't work correctly
