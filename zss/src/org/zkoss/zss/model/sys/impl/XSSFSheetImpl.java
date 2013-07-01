@@ -742,27 +742,30 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
     			return;
     		}
     	}
+    	
         final List<int[]> removePairs = new ArrayList<int[]>(); //column spans to be removed 
         final Set<XSSFCell> rowCells = new HashSet<XSSFCell>();
         int expectColnum = startCol; //handle sparse columns which might override destination column
-    	for (Iterator<XSSFCell> it = row.getCells().subMap(startCol, endCol+1).values().iterator(); it.hasNext(); ) {
-    		XSSFCell cell = it.next();
-    		int colnum = cell.getColumnIndex();
-    		
-    		final int newColnum = colnum + n;
-    		if (colnum > expectColnum) { //sparse column between expectColnum(inclusive) and current column(exclusive), to be removed
-    			addRemovePair(removePairs, row, expectColnum + n, newColnum);
-    		}
-    		expectColnum = colnum + 1;
-    		
-			it.remove(); //remove cell from this row
-    		final boolean inbound = 0 <= newColnum && newColnum <= maxcol;
-    		if (!inbound) {
-    			notifyCellShifting(cell);
-    			continue;
-    		}
-    		rowCells.add(cell);
-    	}
+        if(endCol >= startCol) { // ZSS-245: some row's last cell might be inside the columns that will be removed
+        	for (Iterator<XSSFCell> it = row.getCells().subMap(startCol, endCol+1).values().iterator(); it.hasNext(); ) {
+        		XSSFCell cell = it.next();
+        		int colnum = cell.getColumnIndex();
+        		
+        		final int newColnum = colnum + n;
+        		if (colnum > expectColnum) { //sparse column between expectColnum(inclusive) and current column(exclusive), to be removed
+        			addRemovePair(removePairs, row, expectColnum + n, newColnum);
+        		}
+        		expectColnum = colnum + 1;
+        		
+        		it.remove(); //remove cell from this row
+        		final boolean inbound = 0 <= newColnum && newColnum <= maxcol;
+        		if (!inbound) {
+        			notifyCellShifting(cell);
+        			continue;
+        		}
+        		rowCells.add(cell);
+        	}
+        }
     	
     	addRemovePair(removePairs, row, expectColnum + n, endCol + 1 + n);
     	
