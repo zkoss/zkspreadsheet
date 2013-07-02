@@ -6,12 +6,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.zkoss.zkjsp.ui.JSPBookProvider;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zssjsp.JSPBookProvider;
 
 public class DemoBookProvider implements JSPBookProvider{
 
