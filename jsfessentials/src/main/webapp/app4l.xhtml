@@ -10,15 +10,15 @@
 	<zss:head/>
 </h:head>
 <h:body>
-	<h:form>
+	<h:form id="form">
 		<div>
 			<h:panelGrid columns="3">
 				<h:commandButton value="Reset" action="#{applicationForLeave.doReset}" >
-					<f:ajax execute="@all" render="msg zkupdate" />
+					<f:ajax execute="@all" render="msg :zkupdate" />
 				</h:commandButton>
 				
 				<h:commandButton value="Ok" action="#{applicationForLeave.doOk}" >
-					<f:ajax execute="@all" render="msg zkupdate" />
+					<f:ajax execute="@all" render="msg :zkupdate" />
 				</h:commandButton>
 				<h:messages id="msg"/>
 			</h:panelGrid>
@@ -27,9 +27,10 @@
 				width="800px" height="600px" 
 				maxrows="100" maxcolumns="20"
 				showToolbar="true" showFormulabar="true" showContextMenu="true" showSheetbar="true"/>
-			<zss:update id="zkupdate" binding="#{applicationForLeave.zkUpdate}"/>
+			
 		</div>
 	</h:form>
-
+	<zss:update id="zkupdate" binding="#{applicationForLeave.zkUpdate}" for="form:myzss"/>
+	
 </h:body>
 </html>

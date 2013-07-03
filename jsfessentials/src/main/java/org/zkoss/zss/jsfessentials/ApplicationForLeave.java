@@ -10,6 +10,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.context.PartialResponseWriter;
 
 import org.zkoss.json.JSONObject;
 import org.zkoss.zkjsf.ui.Action;
@@ -86,7 +87,7 @@ public class ApplicationForLeave {
 		
 		//use zkupdate to execute the action inside zk context
 		//so the sparedsheet can get the update of book automatically
-		zkupdate.executeAction(new Action() {
+		zkupdate.execute(new Action() {
 			public void execute() {
 				Sheet sheet = book.getSheetAt(0);
 
@@ -109,6 +110,21 @@ public class ApplicationForLeave {
 			}
 		});
 		addMessage("Reset book");
+		
+//		PartialResponseWriter responseWriter = FacesContext.getCurrentInstance().getPartialViewContext().getPartialResponseWriter();
+//        try {
+//			responseWriter.startDocument();
+//		
+//	        responseWriter.startEval();
+//	        responseWriter.write("alert('abc')");
+//	        responseWriter.endEval();
+//	        responseWriter.endDocument();
+//	        responseWriter.flush();
+//	        responseWriter.close();
+//        } catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	private void addMessage(String message){
@@ -117,7 +133,7 @@ public class ApplicationForLeave {
 
 	public void doOk() {
 		//access cell data
-		zkupdate.executeAction(new Action() {
+		zkupdate.execute(new Action() {
 			public void execute() {
 				Sheet sheet = book.getSheetAt(0);
 

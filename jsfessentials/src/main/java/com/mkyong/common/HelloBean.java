@@ -35,4 +35,6 @@ public class HelloBean implements Serializable {
 	public void doHello(){
 		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Hello "+name));
 	}
+	
+	
 }
