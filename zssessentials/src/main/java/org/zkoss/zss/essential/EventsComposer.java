@@ -1,26 +1,19 @@
 package org.zkoss.zss.essential;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zss.api.Importer;
-import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.SheetAnchor;
-import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.DefaultUserAction;
 import org.zkoss.zss.ui.event.AuxActionEvent;
 import org.zkoss.zss.ui.event.CellAreaEvent;
 import org.zkoss.zss.ui.event.CellEvent;
 import org.zkoss.zss.ui.event.CellFilterEvent;
+import org.zkoss.zss.ui.event.CellHyperlinkEvent;
 import org.zkoss.zss.ui.event.CellMouseEvent;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
@@ -28,7 +21,6 @@ import org.zkoss.zss.ui.event.EditboxEditingEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.HeaderMouseEvent;
 import org.zkoss.zss.ui.event.HeaderUpdateEvent;
-import org.zkoss.zss.ui.event.CellHyperlinkEvent;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.event.SheetDeleteEvent;
 import org.zkoss.zss.ui.event.SheetEvent;
@@ -46,21 +38,24 @@ import org.zkoss.zul.Listbox;
  * @author dennis
  *
  */
-public class EventsComposer extends AbstractDemoComposer {
+public class EventsComposer extends SelectorComposer<Component>{
 
 	private static final long serialVersionUID = 1L;
 	
-	ListModelList<String> eventFilterModel = new ListModelList<String>();
+	private ListModelList<String> eventFilterModel = new ListModelList<String>();
+	private ListModelList<String> infoModel = new ListModelList<String>();
 	
 	@Wire
-	Listbox eventFilterList;
+	private Listbox eventFilterList;
+	@Wire
+	private Grid infoList;
 	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
 		initMyModel();
-		eventFilterList.setModel(eventFilterModel);
+		
 	}
 
 	private void initMyModel() {
@@ -107,8 +102,11 @@ public class EventsComposer extends AbstractDemoComposer {
 		
 		addEventFilter(Events.ON_CELL_HYPERLINK,true);	
 		
+		eventFilterList.setModel(eventFilterModel);
+
 		//add default show only
-		
+		infoList.setModel(infoModel);
+		addInfo("Spreadsheet initialized");		
 	}
 	
 	private void addEventFilter(String event,boolean showinfo){
@@ -140,7 +138,7 @@ public class EventsComposer extends AbstractDemoComposer {
 	
 	//Events
 	
-	@Listen("onCellFocused = #ss")
+	@Listen("onCellFocused = spreadsheet")
 	public void onCellFocused(CellEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Focus on[").append(Ranges.getCellReference(event.getRow(),event.getColumn())).append("]");
@@ -150,7 +148,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onCellSelection = #ss")
+	@Listen("onCellSelection = spreadsheet")
 	public void onCellSelection(CellSelectionEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Select on[").append(Ranges.getAreaReference(event.getArea())).append("]");
@@ -160,7 +158,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onCellSelectionUpdate = #ss")
+	@Listen("onCellSelectionUpdate = spreadsheet")
 	public void onCellSelectionUpdate(CellSelectionUpdateEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Selection update from[")
@@ -172,7 +170,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 
-	@Listen("onHeaderUpdate = #ss")
+	@Listen("onHeaderUpdate = spreadsheet")
 	public void onHeaderUpdate(HeaderUpdateEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Header ").append(event.getAction())
@@ -202,7 +200,7 @@ public class EventsComposer extends AbstractDemoComposer {
 	}
 	
 	
-	@Listen("onHeaderClick = #ss")
+	@Listen("onHeaderClick = spreadsheet")
 	public void onHeaderClick(HeaderMouseEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Click on ").append(event.getType()).append(" ");
@@ -220,7 +218,7 @@ public class EventsComposer extends AbstractDemoComposer {
 			addInfo(info.toString());
 		}
 	}
-	@Listen("onHeaderRightClick = #ss")
+	@Listen("onHeaderRightClick = spreadsheet")
 	public void onHeaderRightClick(HeaderMouseEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Right-click on ").append(event.getType()).append(" ");
@@ -238,7 +236,7 @@ public class EventsComposer extends AbstractDemoComposer {
 			addInfo(info.toString());
 		}
 	}
-	@Listen("onHeaderDoubleClick = #ss")
+	@Listen("onHeaderDoubleClick = spreadsheet")
 	public void onHeaderDoubleClick(HeaderMouseEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Double-click on ").append(event.getType()).append(" ");
@@ -257,7 +255,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onCellClick = #ss")
+	@Listen("onCellClick = spreadsheet")
 	public void onCellClick(CellMouseEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Click on cell ").append(Ranges.getCellReference(event.getRow(),event.getColumn()));
@@ -266,7 +264,7 @@ public class EventsComposer extends AbstractDemoComposer {
 			addInfo(info.toString());
 		}
 	}
-	@Listen("onCellRightClick = #ss")
+	@Listen("onCellRightClick = spreadsheet")
 	public void onCellRightClick(CellMouseEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Right-click on cell ").append(Ranges.getCellReference(event.getRow(),event.getColumn()));
@@ -275,7 +273,7 @@ public class EventsComposer extends AbstractDemoComposer {
 			addInfo(info.toString());
 		}
 	}
-	@Listen("onCellDoubleClick = #ss")
+	@Listen("onCellDoubleClick = spreadsheet")
 	public void onCellDoubleClick(CellMouseEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Double-click on cell ").append(Ranges.getCellReference(event.getRow(),event.getColumn()));
@@ -285,24 +283,24 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onStartEditing = #ss")
+	@Listen("onStartEditing = spreadsheet")
 	public void onStartEditing(StartEditingEvent event){
 		StringBuilder info = new StringBuilder();
 		String ref = Ranges.getCellReference(event.getRow(),event.getColumn());
 		info.append("Start to edit ").append(ref)
-		.append(", editing-value is ").append(event.getEditingValue()).append(" client-value is ").append(event.getClientValue());
+		.append(", editing-value is ").append("\""+event.getEditingValue()+"\"").append(" client-value is ").append(event.getClientValue());
 		
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
 		}
 		
 		if(ref.equals("D1")){
-			String newval = "Supprise!!";
+			String newValue = "Surprise!!";
 			//we change the editing value
-			event.setEditingValue(newval);
-			addInfo("Editing value is change to "+newval);
+			event.setEditingValue(newValue);
+			addInfo("Editing value is change to "+newValue);
 		}else if(ref.equals("E1")){
-			//we don't allow edit D2
+			//don't allow edit this cell
 			event.cancel();
 			addInfo("Editing is canceled");
 		}else{
@@ -310,7 +308,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onStopEditing = #ss")
+	@Listen("onStopEditing = spreadsheet")
 	public void onStopEditing(StopEditingEvent event){
 		StringBuilder info = new StringBuilder();
 		String ref = Ranges.getCellReference(event.getRow(),event.getColumn());
@@ -335,7 +333,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onEditboxEditing = #ss")
+	@Listen("onEditboxEditing = spreadsheet")
 	public void onEditboxEditing(EditboxEditingEvent event){
 		StringBuilder info = new StringBuilder();
 		String ref = Ranges.getCellReference(event.getRow(),event.getColumn());
@@ -347,7 +345,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onSheetSelect = #ss")
+	@Listen("onSheetSelect = spreadsheet")
 	public void onSheetSelect(SheetSelectEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Select sheet : ").append(event.getSheetName());
@@ -357,7 +355,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onSheetNameChange = #ss")
+	@Listen("onSheetNameChange = spreadsheet")
 	public void onSheetNameChange(SheetEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Rename sheet to ").append(event.getSheetName());
@@ -368,7 +366,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onSheetOrderChange = #ss")
+	@Listen("onSheetOrderChange = spreadsheet")
 	public void onSheetOrderChange(SheetEvent event){
 		StringBuilder info = new StringBuilder();
 		Sheet sheet = event.getSheet();
@@ -379,7 +377,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onSheetCreate = #ss")
+	@Listen("onSheetCreate = spreadsheet")
 	public void onSheetCreate(SheetEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Create sheet : ").append(event.getSheetName());
@@ -389,7 +387,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onSheetDelete = #ss")
+	@Listen("onSheetDelete = spreadsheet")
 	public void onSheetDelete(SheetDeleteEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Delete sheet : ").append(event.getSheetName());
@@ -399,7 +397,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onCellChange = #ss")
+	@Listen("onCellChange = spreadsheet")
 	public void onCellChange(CellAreaEvent event){
 		StringBuilder info = new StringBuilder();
 		
@@ -411,7 +409,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onCtrlKey = #ss")
+	@Listen("onCtrlKey = spreadsheet")
 	public void onCtrlKey(KeyEvent event){
 		StringBuilder info = new StringBuilder();
 		
@@ -425,7 +423,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onWidgetUpdate = #ss")
+	@Listen("onWidgetUpdate = spreadsheet")
 	public void onWidgetUpdate(WidgetUpdateEvent event){
 		StringBuilder info = new StringBuilder();
 		SheetAnchor anchor = event.getSheetAnchor();
@@ -444,7 +442,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onWidgetCtrlKey = #ss")
+	@Listen("onWidgetCtrlKey = spreadsheet")
 	public void onWidgetCtrlKey(WidgetKeyEvent event){
 		StringBuilder info = new StringBuilder();
 		
@@ -459,7 +457,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onAuxAction = #ss")
+	@Listen("onAuxAction = spreadsheet")
 	public void onAuxAction(AuxActionEvent event){
 		StringBuilder info = new StringBuilder();
 		
@@ -471,7 +469,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onCellHyperlink = #ss")
+	@Listen("onCellHyperlink = spreadsheet")
 	public void onCellHyperlink(CellHyperlinkEvent event){
 		StringBuilder info = new StringBuilder();
 		
@@ -484,7 +482,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}	
 	
-	@Listen("onCellFilter = #ss")
+	@Listen("onCellFilter = spreadsheet")
 	public void onCellFilter(CellFilterEvent event){
 		StringBuilder info = new StringBuilder();
 		
@@ -497,7 +495,7 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	@Listen("onCellValidator = #ss")
+	@Listen("onCellValidator = spreadsheet")
 	public void onCellValidator(CellMouseEvent event){
 		StringBuilder info = new StringBuilder();
 		
@@ -509,7 +507,17 @@ public class EventsComposer extends AbstractDemoComposer {
 		}
 	}
 	
-	
+	private void addInfo(String info){
+		infoModel.add(0, info);
+		while(infoModel.size()>100){
+			infoModel.remove(infoModel.size()-1);
+		}
+	}
+
+	@Listen("onClick = #clearInfo")
+	public void onClearInfo(){
+		infoModel.clear();
+	}
 	/**
 	 * ON_CELL_FILTER //useless
 	 * ON_CELL_VALIDATOR //useless
