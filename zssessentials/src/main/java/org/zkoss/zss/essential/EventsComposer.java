@@ -9,6 +9,7 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.AuxActionEvent;
 import org.zkoss.zss.ui.event.CellAreaEvent;
 import org.zkoss.zss.ui.event.CellEvent;
@@ -34,8 +35,8 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 
 /**
- * This class shows all the public ZK Spreadsheet you can listen to
- * @author dennis
+ * This controller listens all Spreadsheet's events and show related messages.
+ * @author dennis, Hawk
  *
  */
 public class EventsComposer extends SelectorComposer<Component>{
@@ -45,6 +46,8 @@ public class EventsComposer extends SelectorComposer<Component>{
 	private ListModelList<String> eventFilterModel = new ListModelList<String>();
 	private ListModelList<String> infoModel = new ListModelList<String>();
 	
+	@Wire("spreadsheet")
+	Spreadsheet spreadsheet;
 	@Wire
 	private Listbox eventFilterList;
 	@Wire
@@ -54,89 +57,81 @@ public class EventsComposer extends SelectorComposer<Component>{
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
-		initMyModel();
-		
+		initModel();
 	}
 
-	private void initMyModel() {
-		//Available events
-		//It is just for showing message, event is always listened in this demo.
-		eventFilterModel.setMultiple(true);
-		
-		addEventFilter(Events.ON_AUX_ACTION,true);
-		
-		addEventFilter(Events.ON_CELL_CHANGE,true);
-		addEventFilter(Events.ON_CELL_FOUCSED,false);
-		addEventFilter(Events.ON_CELL_SELECTION,false);
-		addEventFilter(Events.ON_CELL_SELECTION_UPDATE,true);
-		
-		
-		
-		addEventFilter(Events.ON_CELL_CLICK,false);
-		addEventFilter(Events.ON_CELL_DOUBLE_CLICK,true);
-		addEventFilter(Events.ON_CELL_RIGHT_CLICK,true);
-		
-		addEventFilter(Events.ON_CELL_FILTER,true);//useless
-		addEventFilter(Events.ON_CELL_VALIDATOR,true);//useless
-		
-		addEventFilter(Events.ON_START_EDITING,true);
-		addEventFilter(Events.ON_EDITBOX_EDITING,true);
-		addEventFilter(Events.ON_STOP_EDITING,true);
-		
-		
-		addEventFilter(Events.ON_HEADER_UPDATE,true);
-		addEventFilter(Events.ON_HEADER_CLICK,true);
-		addEventFilter(Events.ON_HEADER_RIGHT_CLICK,true);
-		addEventFilter(Events.ON_HEADER_DOUBLE_CLICK,true);
-		
-		addEventFilter(Events.ON_CTRL_KEY,true);
-		
-		addEventFilter(Events.ON_WIDGET_UPDATE,true);
-		addEventFilter(Events.ON_WIDGET_CTRL_KEY,true);
-		
-		addEventFilter(Events.ON_SHEET_CREATE,true);
-		addEventFilter(Events.ON_SHEET_DELETE,true);
-		addEventFilter(Events.ON_SHEET_NAME_CHANGE,true);
-		addEventFilter(Events.ON_SHEET_ORDER_CHANGE,true);
-		addEventFilter(Events.ON_SHEET_SELECT,true);
-		
-		addEventFilter(Events.ON_CELL_HYPERLINK,true);	
-		
-		eventFilterList.setModel(eventFilterModel);
-
-		//add default show only
-		infoList.setModel(infoModel);
-		addInfo("Spreadsheet initialized");		
-	}
-	
-	private void addEventFilter(String event,boolean showinfo){
-		if(!eventFilterModel.contains(eventFilterModel)){
-			eventFilterModel.add(event);
-		}
-		if(showinfo){
-			eventFilterModel.addToSelection(event);
-		}else{
-			eventFilterModel.removeFromSelection(event);
-		}
-	}
-	
-	private boolean isShowEventInfo(String event){
-		return eventFilterModel.getSelection().contains(event);
-	}
-
-	@Listen("onClick = #clearAllFilter")
-	public void onClearAllFilter(){
-		eventFilterModel.clearSelection();
-	}
-	@Listen("onClick = #selectAllFilter")
-	public void onSelectAll(){
-		eventFilterModel.clearSelection();
-		eventFilterModel.setSelection(new ArrayList<String>(eventFilterModel));
-	}
-
-	
-	
 	//Events
+
+	@Listen("onStartEditing = spreadsheet")
+	public void onStartEditing(StartEditingEvent event){
+		StringBuilder info = new StringBuilder();
+		String ref = Ranges.getCellReference(event.getRow(),event.getColumn());
+		info.append("Start editing ").append(ref)
+		.append(", editing-value is ").append("\""+event.getEditingValue()+"\"")
+		.append(" client-value is ").append("\""+event.getClientValue()+"\"");
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+		
+		if(ref.equals("D1")){
+			String newValue = "Surprise!!";
+			//we change the editing value
+			event.setEditingValue(newValue);
+			addInfo("Editing value is change to "+newValue);
+		}else if(ref.equals("E1")){
+			//forbid editing
+			event.cancel();
+			addInfo("Editing E1 is canceled");
+		}
+	}
+
+	@Listen("onEditboxEditing = spreadsheet")
+	public void onEditboxEditing(EditboxEditingEvent event){
+		StringBuilder info = new StringBuilder();
+		String ref = Ranges.getCellReference(event.getRow(),event.getColumn());
+		info.append("Editing ").append(ref)
+		.append(", value is ").append("\""+event.getEditingValue()+"\"");
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}	
+	
+	@Listen("onStopEditing = spreadsheet")
+	public void onStopEditing(StopEditingEvent event){
+		StringBuilder info = new StringBuilder();
+		String ref = Ranges.getCellReference(event.getRow(),event.getColumn());
+		info.append("Stop editing ").append(ref)
+		.append(", editing-value is ").append("\""+event.getEditingValue()+"\"");
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+		
+		if(ref.equals("D3")){
+			String newValue = event.getEditingValue()+"-Woo";
+			//we change the editing value
+			event.setEditingValue(newValue);
+			addInfo("Editing value is changed to \""+newValue+"\"");
+		}else if(ref.equals("E3")){
+			//forbid editing
+			event.cancel();
+			addInfo("Editing E3 is canceled");
+		}
+	}
+	
+	@Listen("onCellChange = spreadsheet")
+	public void onCellChange(CellAreaEvent event){
+		StringBuilder info = new StringBuilder();
+		
+		info.append("Cell changes on ").append(Ranges.getAreaReference(event.getArea()));
+		info.append(", first value is \""+Ranges.range(event.getSheet(),event.getArea()).getCellFormatText()+"\"");
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
 	
 	@Listen("onCellFocused = spreadsheet")
 	public void onCellFocused(CellEvent event){
@@ -283,68 +278,6 @@ public class EventsComposer extends SelectorComposer<Component>{
 		}
 	}
 	
-	@Listen("onStartEditing = spreadsheet")
-	public void onStartEditing(StartEditingEvent event){
-		StringBuilder info = new StringBuilder();
-		String ref = Ranges.getCellReference(event.getRow(),event.getColumn());
-		info.append("Start to edit ").append(ref)
-		.append(", editing-value is ").append("\""+event.getEditingValue()+"\"").append(" client-value is ").append(event.getClientValue());
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-		
-		if(ref.equals("D1")){
-			String newValue = "Surprise!!";
-			//we change the editing value
-			event.setEditingValue(newValue);
-			addInfo("Editing value is change to "+newValue);
-		}else if(ref.equals("E1")){
-			//don't allow edit this cell
-			event.cancel();
-			addInfo("Editing is canceled");
-		}else{
-			addInfo("Try to edit D1 or E1");
-		}
-	}
-	
-	@Listen("onStopEditing = spreadsheet")
-	public void onStopEditing(StopEditingEvent event){
-		StringBuilder info = new StringBuilder();
-		String ref = Ranges.getCellReference(event.getRow(),event.getColumn());
-		info.append("Stop editing ").append(ref)
-		.append(", value is ").append(event.getEditingValue());
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-		
-		if(ref.equals("D3")){
-			String newval = event.getEditingValue()+"-Woo";
-			//we change the editing value
-			event.setEditingValue(newval);
-			addInfo("Editing value is changing to "+newval);
-		}else if(ref.equals("E3")){
-			//we don't allow edit D2
-			event.cancel();
-			addInfo("Editing is canceled");
-		}else{
-			addInfo("Try to edit D3 or E3");
-		}
-	}
-	
-	@Listen("onEditboxEditing = spreadsheet")
-	public void onEditboxEditing(EditboxEditingEvent event){
-		StringBuilder info = new StringBuilder();
-		String ref = Ranges.getCellReference(event.getRow(),event.getColumn());
-		info.append("Editing ").append(ref)
-		.append(", value is ").append(event.getEditingValue());
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}
-	
 	@Listen("onSheetSelect = spreadsheet")
 	public void onSheetSelect(SheetSelectEvent event){
 		StringBuilder info = new StringBuilder();
@@ -391,18 +324,6 @@ public class EventsComposer extends SelectorComposer<Component>{
 	public void onSheetDelete(SheetDeleteEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Delete sheet : ").append(event.getSheetName());
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}
-	
-	@Listen("onCellChange = spreadsheet")
-	public void onCellChange(CellAreaEvent event){
-		StringBuilder info = new StringBuilder();
-		
-		info.append("Cell changes on ").append(Ranges.getAreaReference(event.getArea()));
-		info.append(", first value is :"+Ranges.range(event.getSheet(),event.getArea()).getCellFormatText());
 		
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
@@ -505,6 +426,93 @@ public class EventsComposer extends SelectorComposer<Component>{
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
 		}
+	}
+	
+
+	private void initModel() {
+		//Available events
+		//It is just for showing message, event is always listened in this demo.
+		eventFilterModel.setMultiple(true);
+		
+		addEventFilter(Events.ON_AUX_ACTION,true);
+		
+		addEventFilter(Events.ON_CELL_CHANGE,true);
+		addEventFilter(Events.ON_CELL_FOUCSED,false);
+		addEventFilter(Events.ON_CELL_SELECTION,false);
+		addEventFilter(Events.ON_CELL_SELECTION_UPDATE,true);
+		
+		
+		
+		addEventFilter(Events.ON_CELL_CLICK,false);
+		addEventFilter(Events.ON_CELL_DOUBLE_CLICK,true);
+		addEventFilter(Events.ON_CELL_RIGHT_CLICK,true);
+		
+		addEventFilter(Events.ON_CELL_FILTER,true);//useless
+		addEventFilter(Events.ON_CELL_VALIDATOR,true);//useless
+		
+		addEventFilter(Events.ON_START_EDITING,true);
+		addEventFilter(Events.ON_EDITBOX_EDITING,true);
+		addEventFilter(Events.ON_STOP_EDITING,true);
+		
+		
+		addEventFilter(Events.ON_HEADER_UPDATE,true);
+		addEventFilter(Events.ON_HEADER_CLICK,true);
+		addEventFilter(Events.ON_HEADER_RIGHT_CLICK,true);
+		addEventFilter(Events.ON_HEADER_DOUBLE_CLICK,true);
+		
+		addEventFilter(Events.ON_CTRL_KEY,true);
+		
+		addEventFilter(Events.ON_WIDGET_UPDATE,true);
+		addEventFilter(Events.ON_WIDGET_CTRL_KEY,true);
+		
+		addEventFilter(Events.ON_SHEET_CREATE,true);
+		addEventFilter(Events.ON_SHEET_DELETE,true);
+		addEventFilter(Events.ON_SHEET_NAME_CHANGE,true);
+		addEventFilter(Events.ON_SHEET_ORDER_CHANGE,true);
+		addEventFilter(Events.ON_SHEET_SELECT,true);
+		
+		addEventFilter(Events.ON_CELL_HYPERLINK,true);	
+		
+		eventFilterList.setModel(eventFilterModel);
+
+		//add default show only
+		infoList.setModel(infoModel);
+		addInfo("Spreadsheet initialized");		
+		
+		//hint for special cells
+		//D1
+		Ranges.range(spreadsheet.getSelectedSheet(), 0, 3).setCellEditText("Edit Me");
+		//E1
+		Ranges.range(spreadsheet.getSelectedSheet(), 0, 4).setCellEditText("Edit Me");
+		//D3
+		Ranges.range(spreadsheet.getSelectedSheet(), 2, 3).setCellEditText("Edit Me");
+		//E3
+		Ranges.range(spreadsheet.getSelectedSheet(), 2, 4).setCellEditText("Edit Me");
+	}
+	
+	private void addEventFilter(String event,boolean showinfo){
+		if(!eventFilterModel.contains(eventFilterModel)){
+			eventFilterModel.add(event);
+		}
+		if(showinfo){
+			eventFilterModel.addToSelection(event);
+		}else{
+			eventFilterModel.removeFromSelection(event);
+		}
+	}
+	
+	private boolean isShowEventInfo(String event){
+		return eventFilterModel.getSelection().contains(event);
+	}
+
+	@Listen("onClick = #clearAllFilter")
+	public void onClearAllFilter(){
+		eventFilterModel.clearSelection();
+	}
+	@Listen("onClick = #selectAllFilter")
+	public void onSelectAll(){
+		eventFilterModel.clearSelection();
+		eventFilterModel.setSelection(new ArrayList<String>(eventFilterModel));
 	}
 	
 	private void addInfo(String info){
