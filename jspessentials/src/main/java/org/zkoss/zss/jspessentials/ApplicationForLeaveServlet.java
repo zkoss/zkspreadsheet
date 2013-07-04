@@ -19,8 +19,8 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.jsp.JsonUpdateBridge;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zssex.ui.AjaxUpdateBridge;
 /**
  * a servlet to handle ajax request and return the result
  * @author dennis
@@ -55,7 +55,7 @@ public class ApplicationForLeaveServlet extends HttpServlet{
 		result.put("action", action);//set back for client to check action result, it depends on your logic.
 		
 		//use bridge utility abstract class to wrap zk in servlet request and get access and response result
-		AjaxUpdateBridge bridge = new AjaxUpdateBridge(getServletContext(), req, resp, desktopId) {
+		JsonUpdateBridge bridge = new JsonUpdateBridge(getServletContext(), req, resp, desktopId) {
 			@Override
 			protected void process(Desktop desktop) {
 				Spreadsheet ss = (Spreadsheet)desktop.getComponentByUuidIfAny(zssUuid);
