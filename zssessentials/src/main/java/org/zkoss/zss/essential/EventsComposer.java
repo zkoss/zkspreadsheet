@@ -134,38 +134,51 @@ public class EventsComposer extends SelectorComposer<Component>{
 		}
 	}
 	
-	@Listen("onCellFocused = spreadsheet")
-	public void onCellFocused(CellEvent event){
+	@Listen("onCtrlKey = spreadsheet")
+	public void onCtrlKey(KeyEvent event){
 		StringBuilder info = new StringBuilder();
-		info.append("Focus on[").append(Ranges.getCellReference(event.getRow(),event.getColumn())).append("]");
+		
+		info.append("Keys : ").append(event.getKeyCode())
+			.append(", Ctrl:").append(event.isCtrlKey())
+			.append(", Alt:").append(event.isAltKey())
+			.append(", Shift:").append(event.isShiftKey());
 		
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
 		}
 	}
 	
-	@Listen("onCellSelection = spreadsheet")
-	public void onCellSelection(CellSelectionEvent event){
+	@Listen("onCellClick = spreadsheet")
+	public void onCellClick(CellMouseEvent event){
 		StringBuilder info = new StringBuilder();
-		info.append("Select on[").append(Ranges.getAreaReference(event.getArea())).append("]");
+		info.append("Click on cell ")
+		.append(Ranges.getCellReference(event.getRow(),event.getColumn()));
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
+	@Listen("onCellRightClick = spreadsheet")
+	public void onCellRightClick(CellMouseEvent event){
+		StringBuilder info = new StringBuilder();
+		info.append("Right-click on cell ").append(Ranges.getCellReference(event.getRow(),event.getColumn()));
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
+	@Listen("onCellDoubleClick = spreadsheet")
+	public void onCellDoubleClick(CellMouseEvent event){
+		StringBuilder info = new StringBuilder();
+		info.append("Double-click on cell ").append(Ranges.getCellReference(event.getRow(),event.getColumn()));
 		
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
 		}
 	}
 	
-	@Listen("onCellSelectionUpdate = spreadsheet")
-	public void onCellSelectionUpdate(CellSelectionUpdateEvent event){
-		StringBuilder info = new StringBuilder();
-		info.append("Selection update from[")
-				.append(Ranges.getAreaReference(event.getOrigRow(),event.getOrigColumn(), event.getOrigLastRow(),event.getOrigLastColumn())).append("] to [")
-				.append(Ranges.getAreaReference(event.getArea())).append("]");
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}
-
+	
+	
 	@Listen("onHeaderUpdate = spreadsheet")
 	public void onHeaderUpdate(HeaderUpdateEvent event){
 		StringBuilder info = new StringBuilder();
@@ -251,33 +264,42 @@ public class EventsComposer extends SelectorComposer<Component>{
 		}
 	}
 	
-	@Listen("onCellClick = spreadsheet")
-	public void onCellClick(CellMouseEvent event){
+	
+	@Listen("onCellFocused = spreadsheet")
+	public void onCellFocused(CellEvent event){
 		StringBuilder info = new StringBuilder();
-		info.append("Click on cell ").append(Ranges.getCellReference(event.getRow(),event.getColumn()));
+		info.append("Focus on[").append(Ranges.getCellReference(event.getRow(),event.getColumn())).append("]");
 		
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
 		}
 	}
-	@Listen("onCellRightClick = spreadsheet")
-	public void onCellRightClick(CellMouseEvent event){
+	
+	@Listen("onCellSelection = spreadsheet")
+	public void onCellSelection(CellSelectionEvent event){
 		StringBuilder info = new StringBuilder();
-		info.append("Right-click on cell ").append(Ranges.getCellReference(event.getRow(),event.getColumn()));
+		info.append("Select on[").append(Ranges.getAreaReference(event.getArea())).append("]");
 		
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
 		}
 	}
-	@Listen("onCellDoubleClick = spreadsheet")
-	public void onCellDoubleClick(CellMouseEvent event){
+	
+	@Listen("onCellSelectionUpdate = spreadsheet")
+	public void onCellSelectionUpdate(CellSelectionUpdateEvent event){
 		StringBuilder info = new StringBuilder();
-		info.append("Double-click on cell ").append(Ranges.getCellReference(event.getRow(),event.getColumn()));
+		info.append("Selection update from[")
+				.append(Ranges.getAreaReference(event.getOrigRow(),event.getOrigColumn(), event.getOrigLastRow(),event.getOrigLastColumn())).append("] to [")
+				.append(Ranges.getAreaReference(event.getArea())).append("]");
 		
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
 		}
 	}
+
+
+	
+
 	
 	@Listen("onSheetSelect = spreadsheet")
 	public void onSheetSelect(SheetSelectEvent event){
@@ -331,19 +353,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 		}
 	}
 	
-	@Listen("onCtrlKey = spreadsheet")
-	public void onCtrlKey(KeyEvent event){
-		StringBuilder info = new StringBuilder();
-		
-		info.append("Keys : ").append(event.getKeyCode())
-			.append(", Ctrl:").append(event.isCtrlKey())
-			.append(", Alt:").append(event.isAltKey())
-			.append(", Shift:").append(event.isShiftKey());
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}
+
 	
 	@Listen("onWidgetUpdate = spreadsheet")
 	public void onWidgetUpdate(WidgetUpdateEvent event){
@@ -435,33 +445,30 @@ public class EventsComposer extends SelectorComposer<Component>{
 		//It is just for showing message, event is always listened in this demo.
 		eventFilterModel.setMultiple(true);
 		
-		addEventFilter(Events.ON_AUX_ACTION,true);
-		
+		addEventFilter(Events.ON_START_EDITING,true);
+		addEventFilter(Events.ON_EDITBOX_EDITING,true);
+		addEventFilter(Events.ON_STOP_EDITING,true);
 		addEventFilter(Events.ON_CELL_CHANGE,true);
-		addEventFilter(Events.ON_CELL_FOUCSED,false);
-		addEventFilter(Events.ON_CELL_SELECTION,false);
-		addEventFilter(Events.ON_CELL_SELECTION_UPDATE,true);
 		
-		
+		addEventFilter(Events.ON_CTRL_KEY,true);
 		
 		addEventFilter(Events.ON_CELL_CLICK,false);
 		addEventFilter(Events.ON_CELL_DOUBLE_CLICK,true);
 		addEventFilter(Events.ON_CELL_RIGHT_CLICK,true);
-		
-		addEventFilter(Events.ON_CELL_FILTER,true);//useless
-		addEventFilter(Events.ON_CELL_VALIDATOR,true);//useless
-		
-		addEventFilter(Events.ON_START_EDITING,true);
-		addEventFilter(Events.ON_EDITBOX_EDITING,true);
-		addEventFilter(Events.ON_STOP_EDITING,true);
-		
 		
 		addEventFilter(Events.ON_HEADER_UPDATE,true);
 		addEventFilter(Events.ON_HEADER_CLICK,true);
 		addEventFilter(Events.ON_HEADER_RIGHT_CLICK,true);
 		addEventFilter(Events.ON_HEADER_DOUBLE_CLICK,true);
 		
-		addEventFilter(Events.ON_CTRL_KEY,true);
+		addEventFilter(Events.ON_AUX_ACTION,true);
+		
+		addEventFilter(Events.ON_CELL_FOUCSED,false);
+		addEventFilter(Events.ON_CELL_SELECTION,false);
+		addEventFilter(Events.ON_CELL_SELECTION_UPDATE,true);
+		
+		addEventFilter(Events.ON_CELL_FILTER,true);//useless
+		addEventFilter(Events.ON_CELL_VALIDATOR,true);//useless
 		
 		addEventFilter(Events.ON_WIDGET_UPDATE,true);
 		addEventFilter(Events.ON_WIDGET_CTRL_KEY,true);
