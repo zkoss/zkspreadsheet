@@ -614,14 +614,14 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 //			return _lastActionContext;
 //		}
 		
-		@Override
+//		@Override
 		public boolean doNewBook() {
 			getDesktopWorkbenchContext().getWorkbookCtrl().newBook();
 			getDesktopWorkbenchContext().fireWorkbookChanged();
 			return true;
 		}
 
-		@Override
+//		@Override
 		public boolean doSaveBook() {
 			if (FileHelper.hasSavePermission() && spreadsheet.getBook() != null) {
 				DesktopWorkbenchContext workbench = getDesktopWorkbenchContext();
@@ -652,7 +652,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			return true;
 		}
 
-		@Override
+//		@Override
 		public boolean doExportPDF() {
 			Rect selection = getSelection();
 			if (spreadsheet.getBook() != null) {
@@ -662,7 +662,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			return true;
 		}
 
-		@Override
+//		@Override
 		public boolean doPasteSpecial() {
 			Rect selection = getSelection();
 			Clipboard copyFrom = getClipboard();
@@ -731,7 +731,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 //			}
 //		}
 
-		@Override
+//		@Override
 		public boolean doCustomSort() {
 			if (spreadsheet.getSelectedSheet() != null) {
 				openCustomSortDialog(getSelection());
@@ -739,7 +739,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			return true;
 		}
 
-		@Override
+//		@Override
 		public boolean doHyperlink() {
 			if (spreadsheet.getSelectedSheet() != null) {
 				openHyperlinkDialog(getSelection());
@@ -747,7 +747,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			return true;
 		}
 
-		@Override
+//		@Override
 		public boolean doFormatCell() {
 			if (spreadsheet.getSelectedSheet() != null) {
 				openFormatNumberDialog(getSelection());	
@@ -755,7 +755,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			return true;
 		}
 
-		@Override
+//		@Override
 		public boolean doColumnWidth() {
 			if (spreadsheet.getSelectedSheet() != null) {
 				openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_COLUMN, getSelection());	
@@ -763,7 +763,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			return true;
 		}
 
-		@Override
+//		@Override
 		public boolean doRowHeight() {
 			if (spreadsheet.getSelectedSheet() != null) {
 				openModifyHeaderSizeDialog(WorkbookCtrl.HEADER_TYPE_ROW, getSelection());	
@@ -771,7 +771,7 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			return true;
 		}
 
-		@Override
+//		@Override
 		public boolean doInsertFunction() {
 			openInsertFormulaDialog(getSelection());
 			return true;

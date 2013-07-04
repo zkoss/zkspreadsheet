@@ -159,9 +159,9 @@ public class ExportToPdfWindowCtrl extends GenericForwardComposer {
 			Messagebox.show("can't find html exporter");
 			return;
 		}
-		if (c.isSupportHeadings()) {
-			c.enableHeadings(includeHeadings());
-		}
+//		if (c.isSupportHeadings()) {
+//			c.enableHeadings(includeHeadings());
+//		}
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		export(c, baos);
