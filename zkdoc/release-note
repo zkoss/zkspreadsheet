@@ -49,6 +49,10 @@ ZK Spreadsheet 3.0.0 RC
     onFilter > onCellFilter
     onHeaderSize > onHeaderUpdate
     onSelectionChange > onCellSelectionChange
+  + JSF
+    Main package is renamed to org.zkoss.zss.jsf, Component is renamed to JSFSpreadsheet
+  + JSP
+    Main package is renamed to org.zkoss.zss.jsp
 
 
 	------------
