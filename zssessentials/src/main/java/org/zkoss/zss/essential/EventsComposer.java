@@ -124,10 +124,11 @@ public class EventsComposer extends SelectorComposer<Component>{
 	@Listen("onCellChange = spreadsheet")
 	public void onCellChange(CellAreaEvent event){
 		StringBuilder info = new StringBuilder();
-		
+
 		info.append("Cell changes on ").append(Ranges.getAreaReference(event.getArea()));
-		info.append(", first value is \""+Ranges.range(event.getSheet(),event.getArea()).getCellFormatText()+"\"");
-		
+		info.append(", first value is \""
+		+Ranges.range(event.getSheet(),event.getArea()).getCellFormatText()+"\"");
+
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
 		}
