@@ -3,7 +3,7 @@
 <%@page import="org.zkoss.zss.api.*"%>
 <%@page import="org.zkoss.zss.api.model.*"%>
 <%@page import="org.zkoss.zssex.ui.ExecutionBridge"%>
-<%@page import="org.zkoss.zkjsp.ui.JSPBookProvider"%>
+<%@page import="org.zkoss.zssjsp.JSPBookProvider"%>
 <%@page import="org.zkoss.zss.jspessentials.DateUtil"%>
 <%@page import="org.zkoss.zss.jspessentials.DemoBookProvider"%>
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>

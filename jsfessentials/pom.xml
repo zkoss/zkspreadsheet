@@ -40,6 +40,12 @@
       		<name>ZK Evaluation Repository</name>
 			<url>http://mavensync.zkoss.org/eval</url>
 		</repository>
+		<repository>  
+		    <id>prime-repo</id>  
+		    <name>PrimeFaces Maven Repository</name>  
+		    <url>http://repository.primefaces.org</url>  
+		    <layout>default</layout>  
+		</repository>  
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -102,6 +108,12 @@
 			<artifactId>jsf-impl</artifactId>
 			<version>${jsf-api.version}</version>
 		</dependency>
+		
+		<dependency>  
+		    <groupId>org.primefaces</groupId>  
+		    <artifactId>primefaces</artifactId>  
+		    <version>3.5</version>  
+		</dependency>  
 	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>

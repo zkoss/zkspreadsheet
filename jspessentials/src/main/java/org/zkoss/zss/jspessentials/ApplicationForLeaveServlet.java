@@ -26,7 +26,7 @@ import org.zkoss.zssex.ui.AjaxUpdateBridge;
  * @author dennis
  *
  */
-public class AjaxBookServlet extends HttpServlet{
+public class ApplicationForLeaveServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 
 	@Override
@@ -41,51 +41,41 @@ public class AjaxBookServlet extends HttpServlet{
 		//set encoding
 		req.setCharacterEncoding("UTF-8");
 		resp.setCharacterEncoding("UTF-8");
+		//json content type
+		resp.setContentType("application/json");
 		
 		//parameter from ajax request, you have to pass it in ajax request
-		final String dtid = req.getParameter("dtid");//necessary parameter to get zk server side desktop
-		final String ssuuid = req.getParameter("ssuuid");//necessary parameter to get zk server side spreadsheet
+		final String desktopId = req.getParameter("desktopId");//necessary parameter to get zk server side desktop
+		final String zssUuid = req.getParameter("zssUuid");//necessary parameter to get zk server side spreadsheet
 		
 		final String action = req.getParameter("action");
 		
 		//prepare a json result object, it can contain your ajax result and also the necessary zk component update result
-		JSONObject result = new JSONObject();
+		final JSONObject result = new JSONObject();
 		result.put("action", action);//set back for client to check action result, it depends on your logic.
 		
 		//use bridge utility abstract class to wrap zk in servlet request and get access and response result
-		AjaxUpdateBridge sb = new AjaxUpdateBridge(getServletContext(), req, resp, dtid) {
+		AjaxUpdateBridge bridge = new AjaxUpdateBridge(getServletContext(), req, resp, desktopId) {
 			@Override
-			protected void process(JSONObject result, Desktop desktop) {
-				Spreadsheet ss = (Spreadsheet)desktop.getComponentByUuidIfAny(ssuuid);
-				if(ss!=null){
-					Book book = ss.getBook();
-					Sheet sheet = book.getSheetAt(0);
-					
-					if("reset".equals(action)){
-						handleReset(sheet,result);
-						
-					}else if("check".equals(action)){
-						handleCheck(sheet,result);
-					}else{
-						result.put("error", "unknow action");
-					}
-				}else{
-					result.put("error", "can't find any zk sparedsheet with uuid "+ssuuid);
+			protected void process(Desktop desktop) {
+				Spreadsheet ss = (Spreadsheet)desktop.getComponentByUuidIfAny(zssUuid);
+				Book book = ss.getBook();
+				Sheet sheet = book.getSheetAt(0);
+				
+				if("reset".equals(action)){
+					handleReset(sheet,result);
+				}else if("check".equals(action)){
+					handleCheck(sheet,result);
 				}
 			}
 		};
 		
-		if(sb.hasDesktop()){
-			/**
-			 * zk update result will put in given json object, the default field zk puts in is 'zkjs'.
-			 * then in your ajax response handler, it should 'eval' this to get correct zk ui update 
-			 */
-			sb.process(result);
-			
-		}else{
-			result.put("error", "can't find any zk desktop with dtid "+dtid);//your ajax handling logic
-		}
-		
+		/**
+		 * zk update result will put in given json object, the default field zk puts in is 'zkjs'.
+		 * then in your ajax response handler, it should 'eval' this to get correct zk ui update 
+		 */
+		bridge.process(result);
+
 		Writer w = resp.getWriter();
 		w.append(result.toJSONString());	
 	}

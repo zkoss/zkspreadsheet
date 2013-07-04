@@ -1,11 +1,11 @@
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@taglib prefix="zss" uri="http://www.zkoss.org/jsp/zss"%>
+<%@taglib prefix="zssjsp" uri="http://www.zkoss.org/jsp/zss"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<title>Application for Leave</title>
-		<zss:zkhead/>
+		<zssjsp:head/>
 	</head>
 <%
 	//prevent page cache in browser side
@@ -16,7 +16,7 @@
 	<button id="resetBtn">Reset</button>
 	<button id="checkBtn">OK</button>
 	<div>
-		<zss:spreadsheet id="myzss" 
+		<zssjsp:spreadsheet id="myzss" 
 			bookProvider="org.zkoss.zss.jspessentials.DemoBookProvider"
 			width="800px" height="600px" 
 			maxrows="100" maxcolumns="20"
@@ -35,23 +35,23 @@
 	});
 	
 	function postAjax(action){
-		//use zk client side api to get client side sparedsheet and desktop object 
-		var zss = zk.Widget.$("$myzss");
-		var desktop = zss.desktop;
+		//get the necessary zk ids form zssjsp[component_id] 
+		//'myzss' is the sparedhseet id that you gaved in sparedsheet tag 
+		var desktopId = zssjsp['myzss'].desktopId; 
+		var zssUuid = zssjsp['myzss'].uuid;
+		
 		
 		//use jquery api to post ajax to your servlet (in this demo, it is AjaxBookServlet),
 		//provide desktop id and spreadsheet uuid to access zk component data in your servlet 
-		jq.ajax({url:"ajaxBook",//the servlet url to handle ajax request 
-			data:{dtid:desktop.id,ssuuid:zss.uuid,action:action},
-			dataType:'json'}).done(handleAjaxResult);
+		jq.ajax({url:"app4l",//the servlet url to handle ajax request 
+			data:{desktopId:desktopId,zssUuid:zssUuid,action:action},
+			type:'POST',dataType:'json'}).done(handleAjaxResult);
 	}
 	
 	//the method to handle ajax result from your servlet 
 	function handleAjaxResult(result){
-		//eval any zkjs for updating zk ui 
-		if(result.zkjs){
-			eval(result.zkjs);
-		}
+		//process the json result that contains zk client update information 
+		zssjsp.process(result);
 		
 		//use your way to hanlde you ajax message or error 
 		if(result.message){
