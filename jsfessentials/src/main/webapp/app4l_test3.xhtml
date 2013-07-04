@@ -24,20 +24,23 @@
 			</h:commandButton>
 			
 			<h:commandButton value="Ajax Postback (rerender myzss)"  action="#{testBean.doAjaxZss}">
-				<f:ajax execute="@all" render="output zkupdate myzss" />
+				<f:ajax execute="@all" render="output myzss zkupdate" />
 			</h:commandButton>
 			
 			<h:commandButton value="Ajax Postback (rerender myzss parent)"  action="#{testBean.doAjaxZssParent}">
-				<f:ajax execute="@all" render="output zkupdate panel" />
+				<f:ajax execute="@all" render="output panel zkupdate" />
 			</h:commandButton>
 			
-			<zss:update id="zkupdate" binding="#{testBean.update}" for="myzss"/>
+			
 			
 			<h:panelGrid columns="1" id="panel" style="padding-left:200px">
-			<zss:spreadsheet id="myzss" book="#{testBean.book}"
-				width="800px" height="600px" 
-				maxrows="100" maxcolumns="20"
-				showToolbar="true" showFormulabar="true" showContextMenu="true" showSheetbar="true"/>
+				<zss:update id="zkupdate"/>
+				<zss:spreadsheet id="myzss" 
+					book="#{testBean.book}"
+					update="#{testBean.update}"
+					width="800px" height="600px" 
+					maxrows="100" maxcolumns="20"
+					showToolbar="true" showFormulabar="true" showContextMenu="true" showSheetbar="true"/>
 			</h:panelGrid>
 			
 		</div>

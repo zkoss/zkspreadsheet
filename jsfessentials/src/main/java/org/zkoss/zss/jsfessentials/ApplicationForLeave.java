@@ -13,8 +13,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.PartialResponseWriter;
 
 import org.zkoss.json.JSONObject;
-import org.zkoss.zkjsf.ui.Action;
-import org.zkoss.zkjsf.ui.Update;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
@@ -22,6 +20,9 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.jsf.Action;
+import org.zkoss.zss.jsf.Update;
+import org.zkoss.zss.jsf.ui.JSFUpdate;
 
 @ManagedBean
 @RequestScoped
@@ -73,21 +74,21 @@ public class ApplicationForLeave {
 		this.book = book;
 	}
 
-	Update zkupdate;
+	Update update;
 
-	public void setZkUpdate(Update zkupdate) {
-		this.zkupdate = zkupdate;
+	public void setUpdate(Update zkupdate) {
+		this.update = zkupdate;
 	}
 	
-	public Update getZkUpdate(){
-		return zkupdate;
+	public Update getUpdate(){
+		return update;
 	}
 
 	public void doReset() {
 		
 		//use zkupdate to execute the action inside zk context
 		//so the sparedsheet can get the update of book automatically
-		zkupdate.execute(new Action() {
+		update.execute(new Action() {
 			public void execute() {
 				Sheet sheet = book.getSheetAt(0);
 
@@ -133,7 +134,7 @@ public class ApplicationForLeave {
 
 	public void doOk() {
 		//access cell data
-		zkupdate.execute(new Action() {
+		update.execute(new Action() {
 			public void execute() {
 				Sheet sheet = book.getSheetAt(0);
 

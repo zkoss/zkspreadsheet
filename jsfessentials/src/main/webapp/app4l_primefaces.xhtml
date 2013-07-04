@@ -34,11 +34,13 @@
 				action="#{testBean.doAjaxZssParent}">
 				<f:ajax execute="@all" render="output tabView zkupdate" />
 			</h:commandButton>
-
+			Tab, dynamic="true" cache="true"
 			<p:tabView id="tabView" dynamic="true" cache="true">
 
-				<p:tab id="tba1" title="Godfather Part I">
-					<zss:spreadsheet id="myzss" book="#{testBean.book}"
+				<p:tab id="tba1" title="Spreadsheet">
+					<zss:spreadsheet id="myzss" 
+						book="#{testBean.book}"
+						update="#{testBean.update}" 
 						width="800px" height="600px" 
 						maxrows="100" maxcolumns="20"
 						showToolbar="true" showFormulabar="true" showContextMenu="true" showSheetbar="true"/>
@@ -53,7 +55,7 @@
 					</h:panelGrid>
 				</p:tab>
 
-				<p:tab id="tab3" title="Spreadsheet">
+				<p:tab id="tab3" title="Godfather Part III">
 
 					<h:panelGrid columns="1" cellpadding="10">
 						<h:outputText
@@ -67,7 +69,7 @@
 
 			</p:tabView>
 
-			<zss:update id="zkupdate" binding="#{testBean.update}" for="myzss" />
+			<zss:update id="zkupdate"/>
 		</div>
 	</h:form>
 

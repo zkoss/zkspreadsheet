@@ -32,12 +32,14 @@
 			</h:commandButton>
 			
 			<h:panelGrid columns="1" id="panel" style="padding-left:200px">
-			<zss:spreadsheet id="myzss" book="#{testBean.book}"
+			<zss:spreadsheet id="myzss" 
+				book="#{testBean.book}"
+				update="#{testBean.update}" 
 				width="800px" height="600px" 
 				maxrows="100" maxcolumns="20"
 				showToolbar="true" showFormulabar="true" showContextMenu="true" showSheetbar="true"/>
 			</h:panelGrid>
-			<zss:update id="zkupdate" binding="#{testBean.update}" for="myzss"/>
+			<zss:update id="zkupdate"/>
 		</div>
 	</h:form>
 
