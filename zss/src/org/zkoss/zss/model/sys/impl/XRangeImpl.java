@@ -1152,26 +1152,178 @@ public class XRangeImpl implements XRange {
 		final Set<Ref> affected = info.getAffected();
 		final List<MergeChange> mergeChanges = info.getMergeChanges();
 		if (!transpose) {
-			int dstRow = dstRef.getTopRow();
+			/**
+			 * Issue: ZS-300
+			 * Problem: Overlapping copy get wrong result
+			 * Root Cause: Copy dirty from source to destination
+			 * Solution: Copy overlapping data first.
+			 * Steps: 1. Decide start cells of source & destination
+			 *		  2. Decide which direction should be run (row & col)
+			 * Future: transpose copy
+			 */	
+			
+//			int dstRow = dstRef.getTopRow();
+//			for(int rr = rowRepeat; rr > 0; --rr) {
+//				for(int srcRow = tRow; srcRow <= bRow; ++srcRow, ++dstRow) {
+//					int dstCol= dstRef.getLeftCol();
+//					for (int cr = colRepeat; cr > 0; --cr) {
+//						for (int srcCol = lCol; srcCol <= rCol; ++srcCol, ++dstCol) {
+//							final Cell cell = BookHelper.getCell(srcSheet, srcRow, srcCol);
+//							if (cell != null) {
+//								if (!skipBlanks || cell.getCellType() != Cell.CELL_TYPE_BLANK) {
+//									final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, dstSheet, dstRow, dstCol, pasteType, pasteOp, transpose);
+//									BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
+//								}
+//							} else if (!skipBlanks) {
+//								final Set<Ref>[] refs = BookHelper.removeCell(dstSheet, dstRow, dstCol);
+//								BookHelper.assignRefs(toEval, affected, refs);
+//							}
+//						}
+//					}
+//				}
+//			}
+			
+			// For merge issue (pending)
+//			for (int i = 0; i < srcSheet.getNumMergedRegions(); i++) {
+//				CellRangeAddress cra = srcSheet.getMergedRegion(i);
+//				System.out.println(cra.getFirstRow());
+//				System.out.println(cra.getFirstColumn());
+//				System.out.println(cra.getLastRow());
+//				System.out.println(cra.getLastColumn());
+//			}
+			
+			// Default case - dst on the left hand side up of src
+			int srcRowPointer = srcRef.getTopRow();
+			int srcColPointer = srcRef.getLeftCol();
+			int dstRowPointer = dstRef.getTopRow();
+			int dstColPointer = dstRef.getLeftCol();
+			int rowStep = 1;
+			int colStep = 1;
+			
+			// Decide start position of pointers
+			if(srcRef.getTopRow() < dstRef.getTopRow()) {
+				srcRowPointer = srcRef.getBottomRow();
+				dstRowPointer = dstRef.getTopRow() + srcRowCount - 1;
+				rowStep = -1;
+			}
+			if(srcRef.getLeftCol() < dstRef.getLeftCol()) {
+				srcColPointer = srcRef.getRightCol();
+				dstColPointer = dstRef.getLeftCol() + srcColCount - 1;
+				colStep = -1;
+			}
+			
+			int rowOffset = srcRef.getRowCount();
+			int colOffset = srcRef.getColumnCount();
+			
+			System.out.println("srcRowCount: " + srcRef.getRowCount());
+			System.out.println("srcColCount: " + srcRef.getColumnCount());
+			System.out.println("dstRowCount: " + dstRef.getRowCount());
+			System.out.println("dstColCount: " + dstRef.getColumnCount());
+			System.out.println("srcRowPointer: " + srcRowPointer);
+			System.out.println("srcColPointer: " + srcColPointer);		
+			System.out.println("dstRowPointer: " + dstRowPointer);
+			System.out.println("dstColPointer: " + dstColPointer);
+			
+			System.out.println("Change Size: " + mergeChanges.size());
+			
+			System.out.println("rowOffset: " + rowOffset);
+			System.out.println("colOffset: " + colOffset);
+			System.out.println("rowRepeat: " + rowRepeat);
+			System.out.println("colRepeat: " + colRepeat);
+			
 			for(int rr = rowRepeat; rr > 0; --rr) {
-				for(int srcRow = tRow; srcRow <= bRow; ++srcRow, ++dstRow) {
-					int dstCol= dstRef.getLeftCol();
+				
+				// Go through row
+				while(rowOffset-- > 0) {
+					
+					System.out.println("Go Thorugh Row");
+					System.out.println("src start from (" + srcRowPointer + "," + srcColPointer + ")");
+					System.out.println("dst start from (" + dstRowPointer + "," + dstColPointer + ")");
+					
 					for (int cr = colRepeat; cr > 0; --cr) {
-						for (int srcCol = lCol; srcCol <= rCol; ++srcCol, ++dstCol) {
-							final Cell cell = BookHelper.getCell(srcSheet, srcRow, srcCol);
+						
+						// Go through column
+						while(colOffset-- > 0) {
+							
+							System.out.println("Retrieve Source Cell (" + srcRowPointer + "," + srcColPointer + ")");
+							// Copy Cell
+							final Cell cell = BookHelper.getCell(srcSheet, srcRowPointer, srcColPointer);
+							
 							if (cell != null) {
 								if (!skipBlanks || cell.getCellType() != Cell.CELL_TYPE_BLANK) {
-									final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, dstSheet, dstRow, dstCol, pasteType, pasteOp, transpose);
+									
+									System.out.println("Copy From (" + srcRowPointer + "," + srcColPointer + ") To ("  + dstRowPointer + "," + dstColPointer + ")");
+									
+									final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, dstSheet, dstRowPointer, dstColPointer, pasteType, pasteOp, transpose);
 									BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 								}
 							} else if (!skipBlanks) {
-								final Set<Ref>[] refs = BookHelper.removeCell(dstSheet, dstRow, dstCol);
+								final Set<Ref>[] refs = BookHelper.removeCell(dstSheet, dstRowPointer, dstColPointer);
 								BookHelper.assignRefs(toEval, affected, refs);
 							}
+							
+							// col step
+							srcColPointer += colStep; dstColPointer += colStep;
+							
 						}
+						// end go through column
+						
+						// reset offset for future using (if any)
+						colOffset = srcRef.getColumnCount();
+						
+						// for column repeating purpose:
+						// move destination column pointer to new destination. ex: (origin destination) + srcColCount  
+						// reset source column pointer 
+						// because source always the same, but destination change
+						if(colRepeat > 1) {
+							// handle with direction problem
+							if(lCol < dstRef.getLeftCol()) {
+								srcColPointer = srcRef.getRightCol();
+								dstColPointer = dstRef.getRightCol() - (srcColCount * (colRepeat - cr));
+							} else {
+								srcColPointer = srcRef.getLeftCol();
+								dstColPointer = dstRef.getLeftCol() + (srcColCount * ((colRepeat - cr) + 1)) ;
+							}						
+						}
+						
+					} // End column repeat 
+					
+					// After all columns in a row are processed
+					
+					// reset column pointer to origin
+					if(srcRef.getLeftCol() < dstRef.getLeftCol()) {
+						srcColPointer = srcRef.getRightCol();
+						// handle size not match problem (destination width bigger than source width)
+						// rather than use dstRef.getRightCol() directly, we should use dstRef.getLeftCol() as baseline
+						dstColPointer = dstRef.getLeftCol() + srcColCount - 1;
+					} else {
+						srcColPointer = srcRef.getLeftCol();
+						dstColPointer = dstRef.getLeftCol();
+					}
+					
+					// row step (prepare for next row)
+					srcRowPointer += rowStep; dstRowPointer += rowStep;
+					
+				} // end go through row
+				
+				// reset offset for future using (if any)
+				rowOffset = srcRef.getRowCount();
+				
+				// for row repeating purpose:
+				// move destination row pointer to new destination. ex: (destination + srcRowCount)
+				// reset source pointer (always references to the same source area)
+				if(rowRepeat > 1) {
+					if(tRow < dstRef.getTopRow()) {
+						srcRowPointer = srcRef.getBottomRow();
+						dstRowPointer = dstRef.getBottomRow() - (srcRef.getRowCount() * (rowRepeat - rr));
+					} else {
+						srcRowPointer = srcRef.getTopRow();
+						dstRowPointer = dstRef.getTopRow() + (srcRef.getRowCount() * (rowRepeat - rr));
 					}
 				}
-			}
+				
+			} // end row repeat
+			
 		} else { //row -> column, column -> row
 			int dstCol = dstRef.getLeftCol(); 
 			for(int rr = rowRepeat; rr > 0; --rr) {
