@@ -187,7 +187,9 @@ public interface XRange {
 	 * @param SkipBlanks true to not have blank cells in the ranage on the Clipboard pasted into this range; default false.
 	 * @param transpose true to transpose rows and columns when pasting to this range; default false.
 	 * @return real destination range that was pasted into.
+	 * @deprecated since 3.0.0
 	 */
+	@Deprecated
 	public XRange pasteSpecial(int pasteType, int pasteOp, boolean SkipBlanks, boolean transpose);
 	
 	/**
@@ -195,7 +197,7 @@ public interface XRange {
 	 * @param dstRange the destination range to be pasted into.
 	 * @param pasteType the part of the range to be pasted.
 	 * @param pasteOp the paste operation
-	 * @param skipBlanks true to not have blank cells in the ranage on the Clipboard pasted into this range; default false.
+	 * @param skipBlanks true to not have blank cells in the ranage to paste into destination Range; default false.
 	 * @param transpose true to transpose rows and columns when pasting to this range; default false.
 	 * @return real destination range that was pasted into.
 	 */
