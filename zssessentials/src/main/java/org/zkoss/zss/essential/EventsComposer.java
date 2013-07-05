@@ -179,36 +179,6 @@ public class EventsComposer extends SelectorComposer<Component>{
 	
 	
 	
-	@Listen("onHeaderUpdate = spreadsheet")
-	public void onHeaderUpdate(HeaderUpdateEvent event){
-		StringBuilder info = new StringBuilder();
-		info.append("Header ").append(event.getAction())
-			.append(" on ").append(event.getType());
-		switch(event.getType()){
-		case COLUMN:
-			info.append(" ").append(Ranges.getColumnReference(event.getIndex()));
-			break;
-		case ROW:
-			info.append(" ").append(Ranges.toRowReference(event.getIndex()));
-			break;
-		}
-
-		switch(event.getAction()){
-		case RESIZE:
-			if(event.isHidden()){
-				info.append(" hides ");
-			}else{
-				info.append(" changes to ").append(event.getSize());
-			}
-			break;
-		}
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}
-	
-	
 	@Listen("onHeaderClick = spreadsheet")
 	public void onHeaderClick(HeaderMouseEvent event){
 		StringBuilder info = new StringBuilder();
@@ -219,7 +189,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 			info.append(Ranges.getColumnReference(event.getIndex()));
 			break;
 		case ROW:
-			info.append(Ranges.toRowReference(event.getIndex()));
+			info.append(Ranges.getRowReference(event.getIndex()));
 			break;
 		}
 		
@@ -237,7 +207,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 			info.append(Ranges.getColumnReference(event.getIndex()));
 			break;
 		case ROW:
-			info.append(Ranges.toRowReference(event.getIndex()));
+			info.append(Ranges.getRowReference(event.getIndex()));
 			break;
 		}
 		
@@ -255,7 +225,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 			info.append(Ranges.getColumnReference(event.getIndex()));
 			break;
 		case ROW:
-			info.append(Ranges.toRowReference(event.getIndex()));
+			info.append(Ranges.getRowReference(event.getIndex()));
 			break;
 		}
 		
@@ -263,7 +233,35 @@ public class EventsComposer extends SelectorComposer<Component>{
 			addInfo(info.toString());
 		}
 	}
-	
+
+	@Listen("onHeaderUpdate = spreadsheet")
+	public void onHeaderUpdate(HeaderUpdateEvent event){
+		StringBuilder info = new StringBuilder();
+		info.append("Header ").append(event.getAction())
+			.append(" on ").append(event.getType());
+		switch(event.getType()){
+		case COLUMN:
+			info.append(" ").append(Ranges.getColumnReference(event.getIndex()));
+			break;
+		case ROW:
+			info.append(" ").append(Ranges.getRowReference(event.getIndex()));
+			break;
+		}
+
+		switch(event.getAction()){
+		case RESIZE:
+			if(event.isHidden()){
+				info.append(" hides ");
+			}else{
+				info.append(" changes to ").append(event.getSize());
+			}
+			break;
+		}
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
 	
 	@Listen("onCellFocused = spreadsheet")
 	public void onCellFocused(CellEvent event){
@@ -289,14 +287,28 @@ public class EventsComposer extends SelectorComposer<Component>{
 	public void onCellSelectionUpdate(CellSelectionUpdateEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Selection update from[")
-				.append(Ranges.getAreaReference(event.getOrigRow(),event.getOrigColumn(), event.getOrigLastRow(),event.getOrigLastColumn())).append("] to [")
-				.append(Ranges.getAreaReference(event.getArea())).append("]");
-		
+		.append(Ranges.getAreaReference(event.getOrigRow(),event.getOrigColumn()
+				, event.getOrigLastRow(),event.getOrigLastColumn()))
+		.append("] to [")
+		.append(Ranges.getAreaReference(event.getArea())).append("]");
+
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
 		}
 	}
 
+	@Listen("onCellHyperlink = spreadsheet")
+	public void onCellHyperlink(CellHyperlinkEvent event){
+		StringBuilder info = new StringBuilder();
+		
+		info.append("Hyperlink ").append(event.getType())
+			.append(" on : ").append(Ranges.getCellReference(event.getRow(),event.getColumn()))
+			.append(", address : ").append(event.getAddress());
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}		
 
 	
 
@@ -401,18 +413,6 @@ public class EventsComposer extends SelectorComposer<Component>{
 		}
 	}
 	
-	@Listen("onCellHyperlink = spreadsheet")
-	public void onCellHyperlink(CellHyperlinkEvent event){
-		StringBuilder info = new StringBuilder();
-		
-		info.append("Hyperlink ").append(event.getType())
-			.append(" on : ").append(Ranges.getCellReference(event.getRow(),event.getColumn()))
-			.append(", address : ").append(event.getAddress());
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}	
 	
 	@Listen("onCellFilter = spreadsheet")
 	public void onCellFilter(CellFilterEvent event){
