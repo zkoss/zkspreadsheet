@@ -325,6 +325,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	
 	private Set<String> _lastUAEvents;
+	private boolean _ctrlKeysSet;
 	private EventListener _uAEventDispatcher;
 	
 	private void reloadUserActionEventRegisteration() {
@@ -347,15 +348,24 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			for(String evt:_lastUAEvents){
 				this.addEventListener(evt, _uAEventDispatcher);
 			}
-			String ctrlKeys = ua.getCtrlKeys();
-			if(ctrlKeys!=null){//null, don't set, keep the original
-				this.setCtrlKeys(ctrlKeys);
-			}
 			
+			if(!_ctrlKeysSet){
+				String ctrlKeys = ua.getCtrlKeys();
+				if(ctrlKeys!=null){//null, don't set, keep the original
+					super.setCtrlKeys(ctrlKeys);
+				}
+			}
 		}else{
 			_lastUAEvents = null;
 			_uAEventDispatcher = null;
 		}
+	}
+	
+	public void setCtrlKeys(String ctrlKeys){
+		if(!_ctrlKeysSet && !Objects.equals(getCtrlKeys(),ctrlKeys)){
+			_ctrlKeysSet = true;	
+		}
+		super.setCtrlKeys(ctrlKeys);
 	}
 
 	private static boolean isDefaultClientCacheDisabled() {
