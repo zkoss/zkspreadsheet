@@ -18,7 +18,7 @@
 	<div>
 		<zssjsp:spreadsheet id="myzss" 
 			bookProvider="org.zkoss.zss.jspessentials.DemoBookProvider"
-			width="800px" height="600px" 
+			width="1024px" height="768px" 
 			maxrows="100" maxcolumns="20"
 			showToolbar="true" showFormulabar="true" showContextMenu="true" showSheetbar="true"/>
 	</div>
@@ -51,14 +51,11 @@
 	//the method to handle ajax result from your servlet 
 	function handleAjaxResult(result){
 		//process the json result that contains zk client update information 
-		zssjsp.process(result);
+		zssjsp.processJson(result);
 		
 		//use your way to hanlde you ajax message or error 
 		if(result.message){
 			alert(result.message);
-		};
-		if(result.error){
-			alert(result.error);
 		};
 		
 		//use your way handle your ajax action result 

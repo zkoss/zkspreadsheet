@@ -2,12 +2,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:zss="http://www.zkoss.org/jsf/zss"
+	xmlns:zssjsf="http://www.zkoss.org/jsf/zss"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 <h:head>
 	<title>Application for Leave</title>
-	<zss:head/>
+	<zssjsf:head/>
 </h:head>
 <h:body>
 	<h:form id="form">
@@ -23,15 +23,15 @@
 				<h:messages id="msg"/>
 			</h:panelGrid>
 			
-			<zss:spreadsheet id="myzss" 
+			<zssjsf:spreadsheet id="myzss" 
 				book="#{applicationForLeave.book}"
-				update="#{applicationForLeave.update}" 
-				width="800px" height="600px" 
-				maxrows="100" maxcolumns="20"
+				actionBridge="#{applicationForLeave.actionBridge}" 
+				width="1024px" height="768px" 
+				maxrows="50" maxcolumns="20"
 				showToolbar="true" showFormulabar="true" showContextMenu="true" showSheetbar="true"/>
 			
 		</div>
-		<zss:update id="zkupdate"/>
+		<zssjsf:update id="zkupdate"/>
 	</h:form>
 	
 	
