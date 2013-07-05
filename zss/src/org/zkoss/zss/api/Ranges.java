@@ -182,7 +182,7 @@ public class Ranges {
 	 * @param row row
 	 * @return the column reference string (e.g 1, 12)
 	 */
-	public static String toRowReference(int row){
+	public static String getRowReference(int row){
 		int excelRowNum = row + 1;
 		return Integer.toString(excelRowNum);
 	}
