@@ -1,0 +1,129 @@
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+	<menubar id="menubar" width="100%"
+		style="border-bottom:0;border-right:1px solid #D8D8D8;border-left:1px solid #D8D8D8;">
+		<!-- filemenu id="fileMenu" label="${c:l('file')}" ></filemenu-->
+		<menu id="fileMenu" label="${c:l('file')}">
+			<menupopup id="fileMenupopup">
+				<menuitem id="newFile" label="${c:l('file.new')}" />
+				<menuitem id="openFile" label="${c:l('file.open')}" />
+				<menuitem id="saveFile" label="${c:l('file.save')}" />
+				<menuitem id="saveFileAndClose"
+					label="${c:l('file.saveClose')}" />
+				<menuseparator />
+				<menuitem id="deleteFile" label="${c:l('file.delete')}" />
+				<menuitem id="importFile" label="${c:l('file.import')}" />
+				<menu id="exportFile" label="${c:l('file.export')}">
+					<menupopup>
+						<menuitem id="exportPdf"
+							label="${c:l('export.pdf')}" />
+						<menuitem id="exportHtml"
+							label="${c:l('export.html')}" />
+						<menuitem id="exportExcel"
+							label="${c:l('export.excel')}" />
+					</menupopup>
+				</menu>
+			</menupopup>
+		</menu>
+		<!-- viewmenu id="viewMenu" label="${c:l('view')}"></viewmenu-->
+		<menu id="viewMenu" label="${c:l('view')}">
+			<menupopup id="viewMenupopup">
+				<menuitem id="viewFormulaBar"
+					label="${c:l('view.formulaBar')}" forward="onViewFormulaBar"
+					autocheck="true" checked="true" />
+				<menu id="freezeRows"
+					label="${c:l('view.freezeRows')}">
+					<menupopup id="freezeRowsMenupopup">
+						<menuitem id="unfreezeRows"
+							label="${c:l('view.unfreezeRows')}" />
+						<menuseparator />
+						<menuitem id="freezeRow1"
+							label="${c:l('view.freezeRows')} 1"
+							forward="onViewFreezeRows(1)" />
+						<menuitem id="freezeRow2"
+							label="${c:l('view.freezeRows')} 2"
+							forward="onViewFreezeRows(2)" />
+						<menuitem id="freezeRow3"
+							label="${c:l('view.freezeRows')} 3"
+							forward="onViewFreezeRows(3)" />
+						<menuitem id="freezeRow4"
+							label="${c:l('view.freezeRows')} 4"
+							forward="onViewFreezeRows(4)" />
+						<menuitem id="freezeRow5"
+							label="${c:l('view.freezeRows')} 5"
+							forward="onViewFreezeRows(5)" />
+						<menuitem id="freezeRow6"
+							label="${c:l('view.freezeRows')} 6"
+							forward="onViewFreezeRows(6)" />
+						<menuitem id="freezeRow7"
+							label="${c:l('view.freezeRows')} 7"
+							forward="onViewFreezeRows(7)" />
+						<menuitem id="freezeRow8"
+							label="${c:l('view.freezeRows')} 8"
+							forward="onViewFreezeRows(8)" />
+						<menuitem id="freezeRow9"
+							label="${c:l('view.freezeRows')} 9"
+							forward="onViewFreezeRows(9)" />
+						<menuitem id="freezeRow10"
+							label="${c:l('view.freezeRows')} 10"
+							forward="onViewFreezeRows(10)" />
+					</menupopup>
+				</menu>
+				<menu id="freezeCols"
+					label="${c:l('view.freezeCols')}">
+					<menupopup id="freezeColsMenupopup">
+						<menuitem id="unfreezeCols"
+							label="${c:l('view.unfreezeCols')}" />
+						<menuseparator />
+						<menuitem id="freezeCol1"
+							label="${c:l('view.freezeCols')} A"
+							forward="onViewFreezeCols(1)" />
+						<menuitem id="freezeCol2"
+							label="${c:l('view.freezeCols')} B"
+							forward="onViewFreezeCols(2)" />
+						<menuitem id="freezeCol3"
+							label="${c:l('view.freezeCols')} C"
+							forward="onViewFreezeCols(3)" />
+						<menuitem id="freezeCol4"
+							label="${c:l('view.freezeCols')} D"
+							forward="onViewFreezeCols(4)" />
+						<menuitem id="freezeCol5"
+							label="${c:l('view.freezeCols')} E"
+							forward="onViewFreezeCols(5)" />
+						<menuitem id="freezeCol6"
+							label="${c:l('view.freezeCols')} F"
+							forward="onViewFreezeCols(6)" />
+						<menuitem id="freezeCol7"
+							label="${c:l('view.freezeCols')} G"
+							forward="onViewFreezeCols(7)" />
+						<menuitem id="freezeCol8"
+							label="${c:l('view.freezeCols')} H"
+							forward="onViewFreezeCols(8)" />
+						<menuitem id="freezeCol9"
+							label="${c:l('view.freezeCols')} I"
+							forward="onViewFreezeCols(9)" />
+						<menuitem id="freezeCol10"
+							label="${c:l('view.freezeCols')} J"
+							forward="onViewFreezeCols(10)" />
+					</menupopup>
+				</menu>
+			</menupopup>
+		</menu>
+		<menu id="helpMenu" label="${c:l('help')}">
+			<menupopup>
+				<attribute w:name="onOpen">
+					this.$f('spreadsheet', true).focus(false);
+				</attribute>
+				<menuitem id="openCheatsheet"
+					label="${c:l('help.cheatsheet')}" forward="onHelpCheatsheet" />
+				<menuitem id="forum" label="${c:l('help.forum')}"
+					href="http://www.zkoss.org/forum/" target="_blank" />
+				<menuitem id="book" label="Book"
+					href="http://books.zkoss.org/wiki/ZK_Spreadsheet_Essentials"
+					target="_blank" />
+				<menuitem id="smalltalk"
+					label="${c:l('help.smalltalk')}" href="http://zssdemo.zkoss.org/"
+					target="_blank" />
+			</menupopup>
+		</menu>
+	</menubar>
+</zk>

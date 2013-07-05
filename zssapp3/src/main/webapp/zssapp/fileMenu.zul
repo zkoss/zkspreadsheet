@@ -1,0 +1,37 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<menupopup id="fileMenupopup">
+		<menuitem id="newFile" label="${c:l('file.new')}" />
+		<menuitem id="openFile" label="${c:l('file.open')}" />
+		<menuitem id="saveFile" label="${c:l('file.save')}" />
+<!-- 		NotImplement -->
+<!-- 		<menuitem id="saveFileAs" label="${c:l('file.saveas')}" -->
+<!-- 			disabled="true" /> -->
+		<menuitem id="saveFileAndClose" label="${c:l('file.saveClose')}"
+			disabled="true" />
+		<menuseparator />
+		<menuitem id="deleteFile" label="${c:l('file.delete')}"
+			disabled="true" />
+		<menuitem id="importFile" label="${c:l('file.import')}"
+			disabled="true" />
+		<menu id="exportFile" label="${c:l('file.export')}">
+			<menupopup>
+				<menuitem id="exportPdf" label="${c:l('export.pdf')}"/>
+				<menuitem id="exportHtml" label="${c:l('export.html')}"/>
+				<menuitem id="exportExcel" label="${c:l('export.excel')}"/>
+<!-- 				<menu label="${c:l('export.excel')}"> -->
+<!-- 					<menupopup> -->
+<!-- 						<menuitem id="exportExcel" label="${c:l('export.excel')}"/> -->
+<!-- 						<menuitem id="exportCurrentSheet" label="Export Current Sheet"/> -->
+<!-- 					</menupopup> -->
+<!-- 				</menu> -->
+			</menupopup>
+		</menu>
+		<!-- NotImplement -->
+<!-- 		<menuitem id="fileReversion" label="${c:l('file.reversion')}" -->
+<!-- 			forward="onRevision" disabled="true" /> -->
+		<!-- <menuitem label="${c:l('file.setting')}" src="/img/hi.gif"
+			forward="onNotImplement()" />-->
+<!-- 		<menuitem id="print" label="${c:l('file.print')}" disabled="true" /> -->
+	</menupopup>
+</zk>

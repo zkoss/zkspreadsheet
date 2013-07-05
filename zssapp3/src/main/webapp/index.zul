@@ -1,5 +1,5 @@
 <zk>
-	<window apply="org.zkoss.zss.app.ui.MainCtrl">
-		<button label="Test" id="test"/>
-	</window>
+	<include src="zssapp/zssapp.zul">
+	
+	</include>
 </zk>
