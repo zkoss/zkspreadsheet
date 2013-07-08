@@ -10,6 +10,7 @@ import org.zkoss.zss.api.CellVisitor;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellStyle;
+import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.Utils;
@@ -37,13 +38,15 @@ public class FormatProtectionHelper {
 			Range range = Ranges.range(spreadsheet.getSelectedSheet(),spreadsheet.getSelection());
 			
 			
-			CellOperationUtil.applyCellStyle(range, new EditableCellStyle() {
-				public boolean ignore(Range cellRange,CellStyle oldCellstyle) {
+			CellOperationUtil.applyCellStyle(range, new CellStyleApplier() {
+				
+				@Override
+				public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
 					return oldCellstyle.isHidden()==mfp_hidden.isChecked() && oldCellstyle.isLocked()==mfp_locked.isChecked();
 				}
-
-				public void apply(Range cellRange,
-						org.zkoss.zss.api.model.CellStyle newCellstyle) {
+				
+				@Override
+				public void apply(Range cellRange, EditableCellStyle newCellstyle) {
 					newCellstyle.setHidden(mfp_hidden.isChecked());
 					newCellstyle.setLocked(mfp_hidden.isChecked());
 				}

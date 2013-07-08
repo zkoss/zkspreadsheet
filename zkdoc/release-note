@@ -2,7 +2,7 @@
 ZK Spreadsheet 3.0.0 RC
 *Features:
   ZSS-338 When share book, could the friend focus shows user name of another editor
-  ZSS-353 Support zkhead tag in JSP/JSF
+  ZSS-353 Support head tag in JSP/JSF
 
 *Bug
   ZSS-224 text overflow doesn't work correctly
@@ -32,6 +32,10 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-245 Exception when delete columns
   ZSS-326 Insert a chart after deleting first chart causes an exception
   ZSS-349 When adding a chart, if selected cells contains errors, spreadsheet throw a runtime exception
+  ZSS-367 Attribute "ctrlKeys" doesn't work
+  ZSS-257 unsupported charts cause spreadsheet crash
+  ZSS-140 Sheet with XYModel chart throw NullPointerException (xls format)
+  ZSS-137 Sheet with chart throw NullPointerException (xls format)
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api

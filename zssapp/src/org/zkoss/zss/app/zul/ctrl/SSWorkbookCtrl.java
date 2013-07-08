@@ -577,7 +577,7 @@ public class SSWorkbookCtrl implements WorkbookCtrl {
 		spreadsheet.focusTo(row, column);
 		if (fireFocusEvent) {
 			org.zkoss.zk.ui.event.Events.sendEvent(
-					new CellEvent(Events.ON_CELL_FOUCSED, spreadsheet, spreadsheet.getSelectedSheet(), row, column));
+					new CellEvent(Events.ON_CELL_FOUCSED, spreadsheet, spreadsheet.getSelectedSheet(), row, column,null));
 		}
 	}
 
