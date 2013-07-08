@@ -1,4 +1,4 @@
-package org.zkoss.zss.essential;
+package org.zkoss.zss.essential.events;
 
 import java.util.ArrayList;
 
