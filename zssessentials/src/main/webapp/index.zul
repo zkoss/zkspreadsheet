@@ -2,7 +2,7 @@
 <zk>
 	<window title="My First ZK Spreadsheet Application" apply="org.zkoss.zss.essential.MyComposer"
 		border="normal" vflex="1" width="100%">
-		<spreadsheet src="/WEB-INF/book/startzss.xlsx" vflex="1" width="100%"
+		<spreadsheet src="/WEB-INF/books/startzss.xlsx" vflex="1" width="100%"
 		maxVisibleRows="150" maxVisibleColumns="40"
 		 showToolbar="true" showSheetbar="true" showFormulabar="true"/>
 	</window>
