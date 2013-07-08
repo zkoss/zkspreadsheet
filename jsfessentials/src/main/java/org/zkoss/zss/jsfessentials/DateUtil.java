@@ -1,3 +1,14 @@
+/* DateUtil.java
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/6/27, Dennis
+
+Copyright (C) 2010 Potix Corporation. All Rights Reserved.
+*/
 package org.zkoss.zss.jsfessentials;
 
 import java.text.SimpleDateFormat;

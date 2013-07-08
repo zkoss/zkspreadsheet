@@ -1,19 +1,29 @@
+/* TestBean.java
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/6/27, Dennis
+
+Copyright (C) 2010 Potix Corporation. All Rights Reserved.
+*/
 package org.zkoss.zss.jsfessentials;
 
 import java.net.URL;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
-import org.zkoss.zkjsf.ui.Action;
-import org.zkoss.zkjsf.ui.Update;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.jsf.Action;
+import org.zkoss.zss.jsf.ActionBridge;
 
 @ManagedBean
 @RequestScoped
@@ -29,16 +39,16 @@ public class TestBean {
 		this.message = message;
 	}
 	
-	Update update;
+	ActionBridge actionBridge;
 	
-	public Update getUpdate() {
-		return update;
+	public ActionBridge getActionBridge() {
+		return actionBridge;
 	}
 
-	public void setUpdate(Update update) {
-		this.update = update;
+	public void setActionBridge(ActionBridge actionBridge) {
+		this.actionBridge = actionBridge;
 	}
-	
+
 	Book book;
 
 	public Book getBook() {
@@ -88,7 +98,7 @@ public class TestBean {
 	}
 
 	private void updateBookMessage(final String message){
-		update.execute(new Action() {
+		actionBridge.execute(new Action() {
 			public void execute() {
 				Sheet sheet = book.getSheetAt(0);
 				Range reason = Ranges.rangeByName(sheet, "Reason");

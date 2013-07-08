@@ -2,13 +2,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:zss="http://www.zkoss.org/jsf/zss"
+	xmlns:zssjsf="http://www.zkoss.org/jsf/zss"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 <h:head>
 	<title>Application for Leave</title>
-	<zss:head />
+	<zssjsf:head />
 </h:head>
 <h:body>
 	<h:form>
@@ -34,17 +34,10 @@
 				action="#{testBean.doAjaxZssParent}">
 				<f:ajax execute="@all" render="output tabView zkupdate" />
 			</h:commandButton>
+			Tab, dynamic="true" cache="false"
+			<p:tabView id="tabView" dynamic="true" cache="false">
 
-			<p:tabView id="tabView" dynamic="true" cache="true">
-
-				<p:tab id="tba1" title="Godfather Part I">
-					<zss:spreadsheet id="myzss" book="#{testBean.book}"
-						width="800px" height="600px" 
-						maxrows="100" maxcolumns="20"
-						showToolbar="true" showFormulabar="true" showContextMenu="true" showSheetbar="true"/>
-				</p:tab>
-
-				<p:tab id="tab2" title="Godfather Part II">
+				<p:tab id="tab1" title="Godfather Part I">
 					<h:panelGrid columns="1" cellpadding="10">
 						<h:outputText
 							value="Francis Ford Coppola's legendary continuation and sequel to his landmark 1972 film, The_Godfather, parallels the young Vito Corleone's rise with his son Michael's spiritual fall, deepening The_Godfather's depiction of the dark side of the American dream.  
@@ -53,7 +46,17 @@
 					</h:panelGrid>
 				</p:tab>
 
-				<p:tab id="tab3" title="Spreadsheet">
+				<p:tab id="tab2" title="Spreadsheet">
+					
+					<zssjsf:spreadsheet id="myzss" 
+						book="#{testBean.book}"
+						actionBridge="#{testBean.actionBridge}" 
+						width="800px" height="600px" 
+						maxrows="100" maxcolumns="20"
+						showToolbar="true" showFormulabar="true" showContextMenu="true" showSheetbar="true"/>
+				</p:tab>
+
+				<p:tab id="tab3" title="Godfather Part III">
 
 					<h:panelGrid columns="1" cellpadding="10">
 						<h:outputText
@@ -67,7 +70,7 @@
 
 			</p:tabView>
 
-			<zss:update id="zkupdate" binding="#{testBean.update}" for="myzss" />
+			<zssjsf:update id="zkupdate" />
 		</div>
 	</h:form>
 

@@ -1,3 +1,14 @@
+/* ApplicationForLeave.java
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/6/27, Dennis
+
+Copyright (C) 2010 Potix Corporation. All Rights Reserved.
+*/
 package org.zkoss.zss.jsfessentials;
 
 import java.io.File;
@@ -10,11 +21,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.context.PartialResponseWriter;
 
-import org.zkoss.json.JSONObject;
-import org.zkoss.zkjsf.ui.Action;
-import org.zkoss.zkjsf.ui.Update;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
@@ -22,15 +29,23 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.jsf.Action;
+import org.zkoss.zss.jsf.ActionBridge;
 
 @ManagedBean
 @RequestScoped
 public class ApplicationForLeave {
 
+	/*
+	 * the book of spreadsheet
+	 */
 	Book book;
+	
+	/*
+	 * the bridge to execute action in zk context
+	 */
+	ActionBridge actionBridge;
 
-	public ApplicationForLeave() {
-	}
 
 	String dateFormat = "yyyy/MM/dd";
 
@@ -72,22 +87,20 @@ public class ApplicationForLeave {
 	public void setBook(Book book) {
 		this.book = book;
 	}
-
-	Update zkupdate;
-
-	public void setZkUpdate(Update zkupdate) {
-		this.zkupdate = zkupdate;
-	}
 	
-	public Update getZkUpdate(){
-		return zkupdate;
+	public ActionBridge getActionBridge() {
+		return actionBridge;
+	}
+
+	public void setActionBridge(ActionBridge actionBridge) {
+		this.actionBridge = actionBridge;
 	}
 
 	public void doReset() {
 		
-		//use zkupdate to execute the action inside zk context
-		//so the sparedsheet can get the update of book automatically
-		zkupdate.execute(new Action() {
+		//use actionBridge to execute the action inside zk context
+		//so the spreadsheet can get the update of book automatically
+		actionBridge.execute(new Action() {
 			public void execute() {
 				Sheet sheet = book.getSheetAt(0);
 
@@ -110,21 +123,6 @@ public class ApplicationForLeave {
 			}
 		});
 		addMessage("Reset book");
-		
-//		PartialResponseWriter responseWriter = FacesContext.getCurrentInstance().getPartialViewContext().getPartialResponseWriter();
-//        try {
-//			responseWriter.startDocument();
-//		
-//	        responseWriter.startEval();
-//	        responseWriter.write("alert('abc')");
-//	        responseWriter.endEval();
-//	        responseWriter.endDocument();
-//	        responseWriter.flush();
-//	        responseWriter.close();
-//        } catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 	}
 	
 	private void addMessage(String message){
@@ -133,7 +131,7 @@ public class ApplicationForLeave {
 
 	public void doOk() {
 		//access cell data
-		zkupdate.execute(new Action() {
+		actionBridge.execute(new Action() {
 			public void execute() {
 				Sheet sheet = book.getSheetAt(0);
 

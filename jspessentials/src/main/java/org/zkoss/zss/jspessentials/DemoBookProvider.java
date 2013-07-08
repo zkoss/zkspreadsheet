@@ -11,9 +11,9 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zssjsp.JSPBookProvider;
+import org.zkoss.zss.jsp.BookProvider;
 
-public class DemoBookProvider implements JSPBookProvider{
+public class DemoBookProvider implements BookProvider{
 
 	String dateFormat =  "yyyy/MM/dd";
 	
