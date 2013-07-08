@@ -27,6 +27,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.Book.BookType;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Sheet;
@@ -93,6 +94,11 @@ public class CtrlKeyCommand implements Command {
 			}
 			
 		} else if ("chart".equals(widgetType)) {
+			// ZSS-113: chart modification only support Excel 2007 format
+			 if(sheet.getBook().getType() != BookType.EXCEL_2007) {
+				 return;
+			 }
+			
 			for(Chart c:sheet.getCharts()){
 				if(c.getId().equals(id)){
 					widgetData = c;
