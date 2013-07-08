@@ -747,14 +747,14 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			}
 		}
 	},
-	getUpload: function () {
-		return this._$upload;
-	},
-	onChildAdded_: function (child) {
-		if (child.$instanceof(zss.Upload)) {
-			this._$upload = child;
-		}
-	},
+//	getUpload: function () {
+//		return this._$upload;
+//	},
+//	onChildAdded_: function (child) {
+//		if (child.$instanceof(zss.Upload)) {
+//			this._$upload = child;
+//		}
+//	},
 	/**
 	 * Synchronize widgets position to cell
 	 * @param int row row index
