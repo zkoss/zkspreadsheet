@@ -11,8 +11,12 @@
 		<zss.version>3.0.0</zss.version>
 	</properties>
 	<packaging>war</packaging>
-	<name>The zss.testapp Project</name>
-	<description>The zss.testapp Project is created to test ZSS component.</description>
+	<name>The ZK Spreadsheet Test Project</name>
+	<description>Purpose:
+This project is created to test ZSS component automatically (with ZATS) and manually. 
+
+History:
+We also merge lots of POI test cases from a previous project &quot;zsstest&quot;.</description>
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3</name>
