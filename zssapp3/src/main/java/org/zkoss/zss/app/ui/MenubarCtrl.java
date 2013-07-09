@@ -1,5 +1,7 @@
 package org.zkoss.zss.app.ui;
 
-public class MenubarCtrl {
+import org.zkoss.zk.ui.Component;
+
+public class MenubarCtrl extends CtrlBase<Component>{
 
 }

@@ -1,5 +1,8 @@
 package org.zkoss.zss.app.ui;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
@@ -39,6 +42,29 @@ public class CtrlBase<T extends Component> extends SelectorComposer<T>{
 		eq.subscribe(desktopEventDispatcher);
 	}
 	
+	
+	
+	static protected class Entry {
+		final String name;
+		final Object value;
+		public Entry(String name,Object value){
+			this.name = name;
+			this.value = value;
+		}
+	}
+	
+	static protected Entry newEntry(String name,Object value){
+		Entry arg = new Entry(name,value);
+		return arg;
+	}
+	
+	static protected Map<String,Object> newMap(Entry... args){
+		Map<String,Object> argm = new HashMap<String,Object>();
+		for(Entry arg:args){
+			argm.put(arg.name,arg.value);
+		}
+		return argm;
+	}
 	
 	protected void pushDesktopEvent(String event,boolean ignoreSelf,Object data){
 		EventQueue eq = EventQueues.lookup(QUEUE_NAME, "desktop", true);

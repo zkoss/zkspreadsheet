@@ -15,6 +15,6 @@ public class FileUtil {
 		if (i > 0) {
 		    return filename.substring(0,i);
 		}
-		return "";
+		return filename;
 	}
 }

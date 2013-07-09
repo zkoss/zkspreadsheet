@@ -57,10 +57,9 @@ public class SimpleRepository implements BookRepository{
 		return info;
 	}
 	
-	public synchronized BookInfo save(Book book) throws IOException {
+	public synchronized BookInfo save(String bookname,Book book) throws IOException {
 		
-		String bookname = book.getBookName();
-		String name = FileUtil.getName(bookname).toLowerCase();
+		String name = FileUtil.getName(bookname);
 		String ext = "";
 		switch(book.getType()){
 		case EXCEL_2003:
@@ -75,9 +74,9 @@ public class SimpleRepository implements BookRepository{
 		File f = new File(root,name+ext);
 		int c = 0;
 		if(f.exists()){
-			f = new File(root,name+(++c)+ext);
+			f = new File(root,name+"("+(++c)+")"+ext);
 		}
-		SimpleBookInfo info = new SimpleBookInfo(f,bookname,new Date());
+		SimpleBookInfo info = new SimpleBookInfo(f,f.getName(),new Date());
 		return save(info,book);
 	}
 }
