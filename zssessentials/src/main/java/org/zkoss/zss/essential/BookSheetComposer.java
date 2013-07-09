@@ -22,9 +22,9 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zkplus.databind.BindingListModelList;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.ListModelList;
 
 /**
  * Demonstrate how to change different sheet
@@ -48,8 +48,7 @@ public class BookSheetComposer extends SelectorComposer<Component>{
 			sheetNames.add(spreadsheet.getBook().getSheetAt(i).getSheetName());
 		}
 		
-		BindingListModelList model = new BindingListModelList(sheetNames, true);
-		sheetBox.setModel(model);
+		sheetBox.setModel(new ListModelList<String>(sheetNames));
 	}
 	
 	@Listen("onSelect = #sheetBox")

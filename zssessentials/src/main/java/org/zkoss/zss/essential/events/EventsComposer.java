@@ -1,4 +1,4 @@
-package org.zkoss.zss.essential;
+package org.zkoss.zss.essential.events;
 
 import java.util.ArrayList;
 
@@ -124,9 +124,139 @@ public class EventsComposer extends SelectorComposer<Component>{
 	@Listen("onCellChange = spreadsheet")
 	public void onCellChange(CellAreaEvent event){
 		StringBuilder info = new StringBuilder();
-		
+
 		info.append("Cell changes on ").append(Ranges.getAreaReference(event.getArea()));
-		info.append(", first value is \""+Ranges.range(event.getSheet(),event.getArea()).getCellFormatText()+"\"");
+		info.append(", first value is \""
+		+Ranges.range(event.getSheet(),event.getArea()).getCellFormatText()+"\"");
+
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
+	
+	@Listen("onCtrlKey = spreadsheet")
+	public void onCtrlKey(KeyEvent event){
+		StringBuilder info = new StringBuilder();
+		
+		info.append("Keys : ").append(event.getKeyCode())
+			.append(", Ctrl:").append(event.isCtrlKey())
+			.append(", Alt:").append(event.isAltKey())
+			.append(", Shift:").append(event.isShiftKey());
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
+	
+	@Listen("onCellClick = spreadsheet")
+	public void onCellClick(CellMouseEvent event){
+		StringBuilder info = new StringBuilder();
+		info.append("Click on cell ")
+		.append(Ranges.getCellReference(event.getRow(),event.getColumn()));
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
+	@Listen("onCellRightClick = spreadsheet")
+	public void onCellRightClick(CellMouseEvent event){
+		StringBuilder info = new StringBuilder();
+		info.append("Right-click on cell ").append(Ranges.getCellReference(event.getRow(),event.getColumn()));
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
+	@Listen("onCellDoubleClick = spreadsheet")
+	public void onCellDoubleClick(CellMouseEvent event){
+		StringBuilder info = new StringBuilder();
+		info.append("Double-click on cell ").append(Ranges.getCellReference(event.getRow(),event.getColumn()));
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
+	
+	
+	
+	@Listen("onHeaderClick = spreadsheet")
+	public void onHeaderClick(HeaderMouseEvent event){
+		StringBuilder info = new StringBuilder();
+		info.append("Click on ").append(event.getType()).append(" ");
+		
+		switch(event.getType()){
+		case COLUMN:
+			info.append(Ranges.getColumnReference(event.getIndex()));
+			break;
+		case ROW:
+			info.append(Ranges.getRowReference(event.getIndex()));
+			break;
+		}
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
+	@Listen("onHeaderRightClick = spreadsheet")
+	public void onHeaderRightClick(HeaderMouseEvent event){
+		StringBuilder info = new StringBuilder();
+		info.append("Right-click on ").append(event.getType()).append(" ");
+		
+		switch(event.getType()){
+		case COLUMN:
+			info.append(Ranges.getColumnReference(event.getIndex()));
+			break;
+		case ROW:
+			info.append(Ranges.getRowReference(event.getIndex()));
+			break;
+		}
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
+	@Listen("onHeaderDoubleClick = spreadsheet")
+	public void onHeaderDoubleClick(HeaderMouseEvent event){
+		StringBuilder info = new StringBuilder();
+		info.append("Double-click on ").append(event.getType()).append(" ");
+		
+		switch(event.getType()){
+		case COLUMN:
+			info.append(Ranges.getColumnReference(event.getIndex()));
+			break;
+		case ROW:
+			info.append(Ranges.getRowReference(event.getIndex()));
+			break;
+		}
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
+
+	@Listen("onHeaderUpdate = spreadsheet")
+	public void onHeaderUpdate(HeaderUpdateEvent event){
+		StringBuilder info = new StringBuilder();
+		info.append("Header ").append(event.getAction())
+			.append(" on ").append(event.getType());
+		switch(event.getType()){
+		case COLUMN:
+			info.append(" ").append(Ranges.getColumnReference(event.getIndex()));
+			break;
+		case ROW:
+			info.append(" ").append(Ranges.getRowReference(event.getIndex()));
+			break;
+		}
+
+		switch(event.getAction()){
+		case RESIZE:
+			if(event.isHidden()){
+				info.append(" hides ");
+			}else{
+				info.append(" changes to ").append(event.getSize());
+			}
+			break;
+		}
 		
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
@@ -157,126 +287,31 @@ public class EventsComposer extends SelectorComposer<Component>{
 	public void onCellSelectionUpdate(CellSelectionUpdateEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Selection update from[")
-				.append(Ranges.getAreaReference(event.getOrigRow(),event.getOrigColumn(), event.getOrigLastRow(),event.getOrigLastColumn())).append("] to [")
-				.append(Ranges.getAreaReference(event.getArea())).append("]");
-		
+		.append(Ranges.getAreaReference(event.getOrigRow(),event.getOrigColumn()
+				, event.getOrigLastRow(),event.getOrigLastColumn()))
+		.append("] to [")
+		.append(Ranges.getAreaReference(event.getArea())).append("]");
+
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
 		}
 	}
 
-	@Listen("onHeaderUpdate = spreadsheet")
-	public void onHeaderUpdate(HeaderUpdateEvent event){
+	@Listen("onCellHyperlink = spreadsheet")
+	public void onCellHyperlink(CellHyperlinkEvent event){
 		StringBuilder info = new StringBuilder();
-		info.append("Header ").append(event.getAction())
-			.append(" on ").append(event.getType());
-		switch(event.getType()){
-		case COLUMN:
-			info.append(" ").append(Ranges.getColumnReference(event.getIndex()));
-			break;
-		case ROW:
-			info.append(" ").append(Ranges.toRowReference(event.getIndex()));
-			break;
+		
+		info.append("Hyperlink ").append(event.getType())
+			.append(" on : ").append(Ranges.getCellReference(event.getRow(),event.getColumn()))
+			.append(", address : ").append(event.getAddress());
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
 		}
+	}		
 
-		switch(event.getAction()){
-		case RESIZE:
-			if(event.isHidden()){
-				info.append(" hides ");
-			}else{
-				info.append(" changes to ").append(event.getSize());
-			}
-			break;
-		}
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}
 	
-	
-	@Listen("onHeaderClick = spreadsheet")
-	public void onHeaderClick(HeaderMouseEvent event){
-		StringBuilder info = new StringBuilder();
-		info.append("Click on ").append(event.getType()).append(" ");
-		
-		switch(event.getType()){
-		case COLUMN:
-			info.append(Ranges.getColumnReference(event.getIndex()));
-			break;
-		case ROW:
-			info.append(Ranges.toRowReference(event.getIndex()));
-			break;
-		}
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}
-	@Listen("onHeaderRightClick = spreadsheet")
-	public void onHeaderRightClick(HeaderMouseEvent event){
-		StringBuilder info = new StringBuilder();
-		info.append("Right-click on ").append(event.getType()).append(" ");
-		
-		switch(event.getType()){
-		case COLUMN:
-			info.append(Ranges.getColumnReference(event.getIndex()));
-			break;
-		case ROW:
-			info.append(Ranges.toRowReference(event.getIndex()));
-			break;
-		}
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}
-	@Listen("onHeaderDoubleClick = spreadsheet")
-	public void onHeaderDoubleClick(HeaderMouseEvent event){
-		StringBuilder info = new StringBuilder();
-		info.append("Double-click on ").append(event.getType()).append(" ");
-		
-		switch(event.getType()){
-		case COLUMN:
-			info.append(Ranges.getColumnReference(event.getIndex()));
-			break;
-		case ROW:
-			info.append(Ranges.toRowReference(event.getIndex()));
-			break;
-		}
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}
-	
-	@Listen("onCellClick = spreadsheet")
-	public void onCellClick(CellMouseEvent event){
-		StringBuilder info = new StringBuilder();
-		info.append("Click on cell ").append(Ranges.getCellReference(event.getRow(),event.getColumn()));
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}
-	@Listen("onCellRightClick = spreadsheet")
-	public void onCellRightClick(CellMouseEvent event){
-		StringBuilder info = new StringBuilder();
-		info.append("Right-click on cell ").append(Ranges.getCellReference(event.getRow(),event.getColumn()));
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}
-	@Listen("onCellDoubleClick = spreadsheet")
-	public void onCellDoubleClick(CellMouseEvent event){
-		StringBuilder info = new StringBuilder();
-		info.append("Double-click on cell ").append(Ranges.getCellReference(event.getRow(),event.getColumn()));
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}
+
 	
 	@Listen("onSheetSelect = spreadsheet")
 	public void onSheetSelect(SheetSelectEvent event){
@@ -330,19 +365,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 		}
 	}
 	
-	@Listen("onCtrlKey = spreadsheet")
-	public void onCtrlKey(KeyEvent event){
-		StringBuilder info = new StringBuilder();
-		
-		info.append("Keys : ").append(event.getKeyCode())
-			.append(", Ctrl:").append(event.isCtrlKey())
-			.append(", Alt:").append(event.isAltKey())
-			.append(", Shift:").append(event.isShiftKey());
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}
+
 	
 	@Listen("onWidgetUpdate = spreadsheet")
 	public void onWidgetUpdate(WidgetUpdateEvent event){
@@ -390,18 +413,6 @@ public class EventsComposer extends SelectorComposer<Component>{
 		}
 	}
 	
-	@Listen("onCellHyperlink = spreadsheet")
-	public void onCellHyperlink(CellHyperlinkEvent event){
-		StringBuilder info = new StringBuilder();
-		
-		info.append("Hyperlink ").append(event.getType())
-			.append(" on : ").append(Ranges.getCellReference(event.getRow(),event.getColumn()))
-			.append(", address : ").append(event.getAddress());
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}	
 	
 	@Listen("onCellFilter = spreadsheet")
 	public void onCellFilter(CellFilterEvent event){
@@ -434,33 +445,30 @@ public class EventsComposer extends SelectorComposer<Component>{
 		//It is just for showing message, event is always listened in this demo.
 		eventFilterModel.setMultiple(true);
 		
-		addEventFilter(Events.ON_AUX_ACTION,true);
-		
+		addEventFilter(Events.ON_START_EDITING,true);
+		addEventFilter(Events.ON_EDITBOX_EDITING,true);
+		addEventFilter(Events.ON_STOP_EDITING,true);
 		addEventFilter(Events.ON_CELL_CHANGE,true);
-		addEventFilter(Events.ON_CELL_FOUCSED,false);
-		addEventFilter(Events.ON_CELL_SELECTION,false);
-		addEventFilter(Events.ON_CELL_SELECTION_UPDATE,true);
 		
-		
+		addEventFilter(Events.ON_CTRL_KEY,true);
 		
 		addEventFilter(Events.ON_CELL_CLICK,false);
 		addEventFilter(Events.ON_CELL_DOUBLE_CLICK,true);
 		addEventFilter(Events.ON_CELL_RIGHT_CLICK,true);
-		
-		addEventFilter(Events.ON_CELL_FILTER,true);//useless
-		addEventFilter(Events.ON_CELL_VALIDATOR,true);//useless
-		
-		addEventFilter(Events.ON_START_EDITING,true);
-		addEventFilter(Events.ON_EDITBOX_EDITING,true);
-		addEventFilter(Events.ON_STOP_EDITING,true);
-		
 		
 		addEventFilter(Events.ON_HEADER_UPDATE,true);
 		addEventFilter(Events.ON_HEADER_CLICK,true);
 		addEventFilter(Events.ON_HEADER_RIGHT_CLICK,true);
 		addEventFilter(Events.ON_HEADER_DOUBLE_CLICK,true);
 		
-		addEventFilter(Events.ON_CTRL_KEY,true);
+		addEventFilter(Events.ON_AUX_ACTION,true);
+		
+		addEventFilter(Events.ON_CELL_FOUCSED,false);
+		addEventFilter(Events.ON_CELL_SELECTION,false);
+		addEventFilter(Events.ON_CELL_SELECTION_UPDATE,true);
+		
+		addEventFilter(Events.ON_CELL_FILTER,true);//useless
+		addEventFilter(Events.ON_CELL_VALIDATOR,true);//useless
 		
 		addEventFilter(Events.ON_WIDGET_UPDATE,true);
 		addEventFilter(Events.ON_WIDGET_CTRL_KEY,true);
