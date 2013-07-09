@@ -53,6 +53,11 @@ public class NilUserActionHandler implements UserActionHandler {
 	public Set<String> getSupportedUserAction(Sheet sheet) {
 		return null;
 	}
+
+	@Override
+	public void bind(Spreadsheet sparedsheet) {
+		
+	}
 	
 
 }

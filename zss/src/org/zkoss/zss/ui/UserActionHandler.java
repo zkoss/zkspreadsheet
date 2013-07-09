@@ -39,6 +39,13 @@ public interface UserActionHandler extends SerializableEventListener<Event>{
 	 */
 	Set<String> getSupportedUserAction(Sheet sheet);
 	
+	
+	/**
+	 * Sets the spreadsheet this handler relates to. this method is called when it assign to a spreadsheet 
+	 * @param sparedsheet
+	 */
+	void bind(Spreadsheet sparedsheet);
+	
 //	/**
 //	 * the i18n label keys for client side
 //	 * @return

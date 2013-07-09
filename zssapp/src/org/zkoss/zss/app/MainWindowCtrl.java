@@ -600,7 +600,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 	public class MainActionHandler extends DefaultExUserActionHandler {
 
 		//keep the last action context, so we can use it's info in async dialog
-		UserActionContext _lastActionContext;
 		
 		public Clipboard getClipboard(){
 			return super.getClipboard();
@@ -628,10 +627,8 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 				if (workbench.getWorkbookCtrl().hasFileExtentionName()) {
 					workbench.getWorkbookCtrl().save();
 					workbench.fireWorkbookSaved();
-					_lastActionContext = getContext();
 				} else{
 					workbench.getWorkbenchCtrl().openSaveFileDialog();	
-					_lastActionContext = getContext();
 				}
 			}
 			return true;
@@ -657,7 +654,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			Rect selection = getSelection();
 			if (spreadsheet.getBook() != null) {
 				openExportPdfDialog(selection);	
-				_lastActionContext = getContext();
 			}
 			return true;
 		}
@@ -674,7 +670,6 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 			if (spreadsheet.getSelectedSheet() != null) {
 				spreadsheet.setSelection(selection);
 				openPasteSpecialDialog();	
-				_lastActionContext = getContext();
 			}
 			return true;
 		}
@@ -696,13 +691,11 @@ public class MainWindowCtrl extends GenericForwardComposer implements WorkbenchC
 							workbench.fireWorkbookSaved();
 						} else{
 							workbench.getWorkbenchCtrl().openSaveFileDialog();
-							_lastActionContext = getContext();
 						}
 					}
 					break;
 				case 'O':
 					openOpenFileDialog();
-					_lastActionContext = getContext();
 					break;
 				}
 			}

@@ -328,7 +328,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private boolean _ctrlKeysSet;
 	private EventListener _uAEventDispatcher;
 	
-	private void reloadUserActionEventRegisteration() {
+	private void initUserActionHandler() {
 		if(_uAEventDispatcher!=null && _lastUAEvents!=null){
 			for(String evt:_lastUAEvents){
 				this.removeEventListener(evt, _uAEventDispatcher);
@@ -336,7 +336,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		UserActionHandler ua = this.getUserActionHandler();
 		_lastUAEvents = ua.getInterestedEvents();
-		if(ua instanceof EventListener && _lastUAEvents!=null && _lastUAEvents.size()>0){
+		if(_lastUAEvents!=null && _lastUAEvents.size()>0){
 			_uAEventDispatcher = new EventListener() {
 				public void onEvent(Event event) throws Exception {
 					UserActionHandler ua = getUserActionHandler();
@@ -348,16 +348,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			for(String evt:_lastUAEvents){
 				this.addEventListener(evt, _uAEventDispatcher);
 			}
-			
-			if(!_ctrlKeysSet){
-				String ctrlKeys = ua.getCtrlKeys();
-				if(ctrlKeys!=null){//null, don't set, keep the original
-					super.setCtrlKeys(ctrlKeys);
-				}
-			}
 		}else{
 			_lastUAEvents = null;
 			_uAEventDispatcher = null;
+		}
+		
+		if(!_ctrlKeysSet){
+			String ctrlKeys = ua.getCtrlKeys();
+			if(ctrlKeys!=null){//null, don't set, keep the original
+				super.setCtrlKeys(ctrlKeys);
+			}
 		}
 	}
 	
@@ -4232,7 +4232,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	public void setUserActionHandler(UserActionHandler actionHandler) {
 		if(!Objects.equals(_actionHandler,actionHandler)){
 			this._actionHandler = actionHandler;
-			reloadUserActionEventRegisteration();
+			this._actionHandler.bind(this);
+			initUserActionHandler();
 		}
 	}
 	
@@ -4257,6 +4258,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			} else {
 				_actionHandler = new DefaultUserActionHandler();
 			}
+			_actionHandler.bind(this);
 		}
 		return _actionHandler;
 	}
@@ -4949,14 +4951,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 ////	}
 
 	@Override
-	public void afterCompose() {
-		String ctrlKeys = getCtrlKeys();
-		//ZSS-127: bind event on afterCompose
-		if (_showToolbar 
-		|| (ctrlKeys != null && (ctrlKeys.toLowerCase().indexOf("^c") >= 0 || ctrlKeys.indexOf("^v") >= 0))) {
-		}
-		
-		reloadUserActionEventRegisteration();
+	public void afterCompose() {		
+		initUserActionHandler();
 	}
 	
 	public class HelperContainer<T> {

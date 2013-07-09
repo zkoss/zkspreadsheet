@@ -57,39 +57,46 @@ import org.zkoss.zul.Messagebox;
 public class DefaultUserActionHandler implements UserActionHandler {
 	
 	private static final long serialVersionUID = 1L;
-	private static ThreadLocal<UserActionContext> _ctx = new ThreadLocal<UserActionContext>();
+//	private static ThreadLocal<UserActionContext> _ctx = new ThreadLocal<UserActionContext>();
 	private Clipboard _clipboard;
 	
-	protected void checkCtx(){
-		if(_ctx.get()==null){
-			throw new IllegalAccessError("can't found action context");
-		}
+//	protected void checkCtx(){
+//		if(_ctx.get()==null){
+//			throw new IllegalAccessError("can't found action context");
+//		}
+//	}
+	
+	Spreadsheet _sparedsheet;//the binded spreadhseet;
+	Sheet _lastSheet;
+	Rect _lastSelection;
+	Map _lastExtraData;
+	
+	public void bind(Spreadsheet sparedsheet){
+		this._sparedsheet = sparedsheet;
 	}
 	
+	
 	/**
-	 * Gets the spreadsheet of current action
+	 * Gets the spreadsheet of current/last action
 	 * @return
 	 */
 	protected Spreadsheet getSpreadsheet(){
-		checkCtx();
-		return _ctx.get().spreadsheet;
+		return _sparedsheet;
 	}
 	
 	/**
-	 * Gets the sheet of current action
+	 * Gets the sheet of current/last action
 	 * @return
 	 */
 	protected Sheet getSheet(){
-		checkCtx();
-		return _ctx.get().sheet;
+		return _lastSheet;
 	}
 	
 	/**
-	 * Gets the book of current action
+	 * Gets the book of current/last action
 	 * @return
 	 */
 	protected Book getBook(){
-		checkCtx();
 		Sheet sheet = getSheet();
 		return sheet==null?null:sheet.getBook();
 	}
@@ -101,13 +108,17 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	  * selection which might be a whole sheet/row/column selection.
 	  */
 	protected Rect getSelection(){
-		checkCtx();
-		return _ctx.get().selection;
+		if(_lastSelection!=null)
+			return _lastSelection;
+		Spreadsheet ss = getSpreadsheet();
+		_lastSelection = ss.getSelection();
+		_lastSelection = new Rect(_lastSelection.getLeft(),_lastSelection.getTop(),Math.min(_lastSelection.getRight(),ss.getMaxVisibleColumns()),
+				Math.min(_lastSelection.getBottom(),ss.getMaxVisibleRows()));
+		return _lastSelection;
 	}
 	
 	protected Object getExtraData(String key){
-		checkCtx();
-		Map data = _ctx.get().extraData;
+		Map data = _lastExtraData;
 		if(data!=null){
 			return data.get(key);
 		}
@@ -533,14 +544,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	
 	protected void setClipboard(Clipboard clipboard){
 		_clipboard = clipboard;
-		if(_clipboard!=null && _ctx.get()!=null)
+		if(_clipboard!=null)
 			getSpreadsheet().setHighlight(_clipboard.sourceRect);
 	}
 	
 	protected void clearClipboard() {
 		_clipboard = null;
-		if(_ctx.get()!=null)
-			getSpreadsheet().setHighlight(null);
+		getSpreadsheet().setHighlight(null);
 	}
 	
 	protected boolean doCopy() {
@@ -1380,27 +1390,19 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			    spreadsheet.getMaxVisibleColumns(), selection.getRight()), Math.min(
 			    spreadsheet.getMaxVisibleRows(), selection.getBottom()));
 		
-		final UserActionContext ctx = new UserActionContext(spreadsheet, sheet,action,visibleSelection,extraData);
-		setContext(ctx);
-		try{
-			if(event instanceof AuxActionEvent){
-				dispatchAction(action);
-			}else{
-				onEventAnother(event);
-			}
-		}finally{
-			releaseContext();
+		setLastActionData(sheet,visibleSelection,extraData);
+		
+		if(event instanceof AuxActionEvent){
+			dispatchAction(action);//aux action
+		}else{
+			onEventAnother(event);
 		}
 	}
 	
-	protected void setContext(UserActionContext ctx){
-		_ctx.set(ctx);
-	}
-	protected UserActionContext getContext(){
-		return _ctx.get();
-	}
-	protected void releaseContext(){
-		_ctx.set(null);
+	protected void setLastActionData(Sheet sheet,Rect selection,Map extraData){
+		this._lastSheet = sheet;
+		this._lastSelection = selection;
+		this._lastExtraData = extraData;
 	}
 
 	private void onEventAnother(Event event) throws Exception {
