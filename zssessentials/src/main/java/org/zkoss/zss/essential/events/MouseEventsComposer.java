@@ -10,9 +10,9 @@ import org.zkoss.zul.Menupopup;
 public class MouseEventsComposer extends SelectorComposer<Component> {
 
 	@Wire
-	private transient Menupopup topHeaderMenu;
+	private Menupopup topHeaderMenu;
 	@Wire
-	private transient Menupopup leftHeaderMenu;
+	private Menupopup leftHeaderMenu;
 	
 	@Listen("onHeaderRightClick = spreadsheet")
 	public void onHeaderRightClick(HeaderMouseEvent event) {
