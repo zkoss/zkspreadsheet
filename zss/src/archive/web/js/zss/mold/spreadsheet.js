@@ -1,7 +1,7 @@
 function (out) {
-	var topPanel = this._topPanel;
+	var tbp = this._toolbarPanel;
 	
-	out.push('<div ', this.domAttrs_(), '>', topPanel ? topPanel.redrawHTML_() : '');
+	out.push('<div ', this.domAttrs_(), '>', tbp ? tbp.redrawHTML_() : '');
 	out.push(this.cave.redraw(out));//sheet
 	
 	

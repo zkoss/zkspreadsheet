@@ -221,7 +221,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	/**
 	 * Contains spreadsheet's toolbar
 	 */
-	//_topPanel: null
+	//_toolbarPanel: null
 	/**
 	 * Contains zss.Formulabar, zss.SSheetCtrl
 	 */
@@ -619,14 +619,14 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			var w = this._toolbar;
 			if (!w && show) {
 				var tb = this._toolbar = new zss.Toolbar(this),
-					topPanel = this.getTopPanel();
-				topPanel.appendChild(tb);
-				topPanel.setHeight(tb.getSize());
+					tbp = this.getToolbarPanel();
+				tbp.appendChild(tb);
+				tbp.setHeight(tb.getSize());
 			} else if (w) {
 				var v = w.isVisible();
 				if (v != show) {
 					w.setVisible(show);
-					this.getTopPanel().setVisible(show);
+					this.getToolbarPanel().setVisible(show);
 					zUtl.fireSized(this, -1);
 				}
 			}
@@ -700,17 +700,17 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		doPasteFromServer: null
 	},
 	clearCachedSize_: function () {
-		this.getTopPanel().clearCachedSize_();
+		this.getToolbarPanel().clearCachedSize_();
 		this.cave.clearCachedSize_();
 		this.$supers(zss.Spreadsheet, 'clearCachedSize_', arguments);
 	},
-	getTopPanel: function () {
-		var tp = this._topPanel;
-		if (!tp) {
-			tp = this._topPanel = new zul.layout.Borderlayout({vflex: 'min'});
-			this.insertBefore(tp, this.firstChild);
+	getToolbarPanel: function () {
+		var tbp = this._toolbarPanel;
+		if (!tbp) {
+			tbp = this._toolbarPanel = new zul.layout.Borderlayout({vflex: 'min'});
+			this.insertBefore(tbp, this.firstChild);
 		}
-		return tp;
+		return tbp;
 	},
 	getSheetCSSId: function () {
 		return this.uuid + '-sheet';
