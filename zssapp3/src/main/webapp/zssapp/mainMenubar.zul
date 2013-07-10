@@ -5,14 +5,12 @@
 		<menu id="fileMenu" label="${c:l('file')}">
 			<menupopup id="fileMenupopup">
 				<menuitem id="newFile" label="${c:l('file.new')}"/>
-				<menuitem id="openFile" label="${c:l('file.open')}" />
+				<menuitem id="openManageFile" label="${c:l('file.openManage')}" />
 				<menuitem id="saveFile" label="${c:l('file.save')}" />
 				<menuitem id="saveFileAs" label="${c:l('file.saveas')}" />
 				<menuitem id="saveFileAndClose" label="${c:l('file.saveClose')}" />
 				<menuitem id="closeFile" label="${c:l('file.close')}" />
 				<menuseparator />
-				<menuitem id="deleteFile" label="${c:l('file.delete')}" />
-				<menuitem id="importFile" label="${c:l('file.import')}" />
 				<menuitem id="exportFile" label="${c:l('file.export')}" />
 			</menupopup>
 		</menu>
@@ -102,10 +100,6 @@
 		</menu>
 		<menu id="helpMenu" label="${c:l('help')}">
 			<menupopup>
-				<!-- 
-				<menuitem id="openCheatsheet"
-					label="${c:l('help.cheatsheet')}" forward="onHelpCheatsheet" />
-				 -->
 				<menuitem id="forum" label="${c:l('help.forum')}"
 					href="http://www.zkoss.org/forum/" target="_blank" />
 				<menuitem id="book" label="Book"

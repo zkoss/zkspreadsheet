@@ -79,4 +79,13 @@ public class SimpleRepository implements BookRepository{
 		SimpleBookInfo info = new SimpleBookInfo(f,f.getName(),new Date());
 		return save(info,book);
 	}
+
+
+	public boolean delete(BookInfo info) throws IOException {
+		File f = ((SimpleBookInfo)info).getFile();
+		if(!f.exists()){
+			return false;
+		}
+		return f.delete();
+	}
 }

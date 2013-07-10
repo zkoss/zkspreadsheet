@@ -1,9 +1,16 @@
 package org.zkoss.zss.app.ui;
 
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.ext.Selectable;
 
-public class MessageUtil {
+public class UiUtil {
+
+	public static Object getSingleSelection(Selectable selection){
+		if(selection!=null && selection.getSelection().size()>0){
+			return selection.getSelection().iterator().next();
+		}
+		return null;
+	}
 	
 	public static void showInfoMessage(String message) {
 		

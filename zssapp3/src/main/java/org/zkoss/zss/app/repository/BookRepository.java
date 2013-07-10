@@ -34,4 +34,6 @@ public interface BookRepository {
 	BookInfo save(BookInfo info,Book book) throws IOException;
 	
 	BookInfo saveAs(String name,Book book) throws IOException;
+	
+	boolean delete(BookInfo info) throws IOException;
 }

@@ -19,7 +19,7 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	@Wire
 	Menuitem newFile;
 	@Wire
-	Menuitem openFile;
+	Menuitem openManageFile;
 	@Wire
 	Menuitem saveFile;
 	@Wire
@@ -28,10 +28,6 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	Menuitem saveFileAndClose;
 	@Wire
 	Menuitem closeFile;
-	@Wire
-	Menuitem deleteFile;
-	@Wire
-	Menuitem importFile;
 	@Wire
 	Menuitem exportFile;
 	
@@ -54,17 +50,15 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	}
 	
 	private void doUpdateMenu(boolean hasBook) {
-		//new and import are always on
+		//new and open are always on
 		newFile.setDisabled(false);
-		importFile.setDisabled(false);
+		openManageFile.setDisabled(false);
 		
 		boolean disabled = !hasBook;
-		openFile.setDisabled(disabled);
 		saveFile.setDisabled(disabled);
 		saveFileAs.setDisabled(disabled);
 		saveFileAndClose.setDisabled(disabled);
 		closeFile.setDisabled(disabled);
-		deleteFile.setDisabled(disabled);
 		exportFile.setDisabled(disabled);
 		
 		
@@ -82,6 +76,10 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	public void onNew(){
 		pushDesktopEvent(DesktopEvts.ON_NEW_BOOK, null);
 	}
+	@Listen("onClick=#openManageFile")
+	public void onOpen(){
+		pushDesktopEvent(DesktopEvts.ON_OPEN_MANAGE_BOOK, null);
+	}
 	@Listen("onClick=#saveFile")
 	public void onSave(){
 		pushDesktopEvent(DesktopEvts.ON_SAVE_BOOK, null);
@@ -97,14 +95,6 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	@Listen("onClick=#closeFile")
 	public void onClose(){
 		pushDesktopEvent(DesktopEvts.ON_CLOSE_BOOK, null);
-	}
-	@Listen("onClick=#deleteFile")
-	public void onDelete(){
-		pushDesktopEvent(DesktopEvts.ON_DELETE_BOOK, null);
-	}
-	@Listen("onClick=#importFile")
-	public void onImport(){
-		pushDesktopEvent(DesktopEvts.ON_IMPORT_BOOK, null);
 	}
 	@Listen("onClick=#exportFile")
 	public void onExport(){

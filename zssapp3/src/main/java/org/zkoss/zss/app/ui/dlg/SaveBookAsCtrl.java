@@ -11,17 +11,17 @@ public class SaveBookAsCtrl extends DlgCtrlBase{
 	@Wire
 	Textbox bookName;
 	
-	@Listen("onClick=#save")
+	@Listen("onClick=#save; onOK=#saveAsDlg")
 	public void onSave(){
 		if(Strings.isBlank(bookName.getValue())){
 			bookName.setErrorMessage("empty name is not allowed");
 			return;
 		}
-		postCallback(Dlgs.ON_SAVE, newMap(newEntry("name", bookName.getValue())));
+		postCallback(DlgEvts.ON_SAVE, newMap(newEntry("name", bookName.getValue())));
 		detach();
 	}
 	
-	@Listen("onClick=#cancel")
+	@Listen("onClick=#cancel; onCancel=#saveAsDlg")
 	public void onCancel(){
 		detach();
 	}

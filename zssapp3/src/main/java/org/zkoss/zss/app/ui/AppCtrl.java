@@ -18,7 +18,7 @@ import org.zkoss.zss.app.repository.BookRepository;
 import org.zkoss.zss.app.repository.BookRepositoryFactory;
 import org.zkoss.zss.app.repository.BookUtil;
 import org.zkoss.zss.app.ui.dlg.DlgCallbackEvent;
-import org.zkoss.zss.app.ui.dlg.Dlgs;
+import org.zkoss.zss.app.ui.dlg.DlgEvts;
 import org.zkoss.zss.ui.DefaultUserAction;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zssex.ui.DefaultExUserActionHandler;
@@ -99,22 +99,22 @@ public class AppCtrl extends CtrlBase<Component>{
 		
 		try {
 			loadedBook = importer.imports(WebApps.getCurrent().getResource("/WEB-INF/blank.xlsx"), "blank");
-			MessageUtil.showInfoMessage("Loaded a new blank book");
-			pushDesktopEvent(DesktopEvts.ON_LOADED_BOOK,loadedBook);
+			UiUtil.showInfoMessage("Loaded a new blank book");
 		} catch (IOException e) {
 			e.printStackTrace();
-			MessageUtil.showWarnMessage("Can't load a new book");
+			UiUtil.showWarnMessage("Can't load a new book");
 			return;
 		}
-		
 		ss.setBook(loadedBook);
-		syncPageInfo();
+		pushDesktopEvent(DesktopEvts.ON_LOADED_BOOK,loadedBook);
+		updatePageInfo();
+		
 	}
 	
-	private void syncPageInfo(){
+	private void updatePageInfo(){
 		
 		String name = selectedBookInfo!=null?selectedBookInfo.getName():loadedBook!=null?loadedBook.getBookName():null;
-		getPage().setTitle(name!=null?"Book:"+name:"");
+		getPage().setTitle(name!=null?"Book : "+name:"");
 		
 	}
 	
@@ -122,12 +122,12 @@ public class AppCtrl extends CtrlBase<Component>{
 		ss.setBook(loadedBook = null);
 		selectedBookInfo = null;
 		pushDesktopEvent(DesktopEvts.ON_CLOSED_BOOK,null);
-		syncPageInfo();
+		updatePageInfo();
 	}
 	
 	private void doSaveBook(boolean close){
 		if(loadedBook==null){
-			MessageUtil.showWarnMessage("Please load a book first before save it");
+			UiUtil.showWarnMessage("Please load a book first before save it");
 			return;
 		}
 		if(selectedBookInfo==null){
@@ -137,16 +137,16 @@ public class AppCtrl extends CtrlBase<Component>{
 		BookRepository rep = getRepository();
 		try {
 			rep.save(selectedBookInfo, loadedBook);
-			MessageUtil.showInfoMessage("Saved book "+selectedBookInfo.getName());
+			UiUtil.showInfoMessage("Saved book "+selectedBookInfo.getName());
 			pushDesktopEvent(DesktopEvts.ON_SAVED_BOOK,loadedBook);
 			if(close){
 				doCloseBook();
 			}else{
-				syncPageInfo();
+				updatePageInfo();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			MessageUtil.showWarnMessage("Can't save book");
+			UiUtil.showWarnMessage("Can't save book");
 			return;
 		}
 	}
@@ -155,7 +155,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	
 	private void doSaveBookAs(final boolean close){
 		if(loadedBook==null){
-			MessageUtil.showWarnMessage("Please load a book first before save it");
+			UiUtil.showWarnMessage("Please load a book first before save it");
 			return;
 		}
 		String name = "New Book";
@@ -166,26 +166,54 @@ public class AppCtrl extends CtrlBase<Component>{
 		
 		Map<String,Object> args = newMap(newEntry("name",name),newEntry("callback",new EventListener<DlgCallbackEvent>(){
 			public void onEvent(DlgCallbackEvent event) throws Exception {
-				if(Dlgs.ON_SAVE.equals(event.getName())){
+				if(DlgEvts.ON_SAVE.equals(event.getName())){
 					String name = (String)event.getData("name");
 					BookRepository rep = getRepository();
 					try {
 						selectedBookInfo = rep.saveAs(name, loadedBook);
-						MessageUtil.showInfoMessage("Saved book "+selectedBookInfo.getName());
+						UiUtil.showInfoMessage("Saved book "+selectedBookInfo.getName());
 						pushDesktopEvent(DesktopEvts.ON_SAVED_BOOK,loadedBook);
 						if(close){
 							doCloseBook();
 						}else{
-							syncPageInfo();
+							updatePageInfo();
 						}
 					} catch (IOException e) {
 						e.printStackTrace();
-						MessageUtil.showWarnMessage("Can't save book");
+						UiUtil.showWarnMessage("Can't save book");
 						return;
 					}
 				}
 			}}));
 		Executions.createComponents("/zssapp/dlg/saveBookAs.zul", getSelf(), args);
+	}
+	
+	
+	private void doOpenManageBook(){
+		Map<String,Object> args = newMap(newEntry("callback",new EventListener<DlgCallbackEvent>(){
+			public void onEvent(DlgCallbackEvent event) throws Exception {
+				if(DlgEvts.ON_OPEN.equals(event.getName())){
+					BookInfo info = (BookInfo)event.getData("bookinfo");
+					Book book = (Book)event.getData("book");
+					if(book==null){
+						BookRepository rep = getRepository();
+						try {
+							book = rep.load(info);
+						}catch (IOException e) {
+							e.printStackTrace();
+							UiUtil.showWarnMessage("Can't load book");
+							return;
+						}
+					}
+					
+					selectedBookInfo = info;
+					loadedBook = book;
+					
+					ss.setBook(loadedBook);
+					pushDesktopEvent(DesktopEvts.ON_LOADED_BOOK,loadedBook);
+				}
+			}}));
+		Executions.createComponents("/zssapp/dlg/openBook.zul", getSelf(), args);
 	}
 	
 	@Override
@@ -203,12 +231,8 @@ public class AppCtrl extends CtrlBase<Component>{
 			doSaveBook(true);
 		}else if(DesktopEvts.ON_CLOSE_BOOK.equals(event)){
 			doCloseBook();
-		}else if(DesktopEvts.ON_OPEN_BOOK.equals(event)){
-			
-		}else if(DesktopEvts.ON_DELETE_BOOK.equals(event)){
-			
-		}else if(DesktopEvts.ON_IMPORT_BOOK.equals(event)){
-			
+		}else if(DesktopEvts.ON_OPEN_MANAGE_BOOK.equals(event)){
+			doOpenManageBook();
 		}else if(DesktopEvts.ON_EXPORT_BOOK.equals(event)){
 			
 		}
