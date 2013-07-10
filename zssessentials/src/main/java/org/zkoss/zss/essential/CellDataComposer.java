@@ -1,48 +1,44 @@
 package org.zkoss.zss.essential;
 
-import java.util.Arrays;
-import java.util.List;
-import org.zkoss.zel.impl.util.Objects;
+import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.RangeRunner;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellData;
-import org.zkoss.zss.api.model.CellStyle;
-import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.essential.util.ClientUtil;
 import org.zkoss.zss.ui.Position;
+import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 
 /**
- * This class shows all the public ZK Spreadsheet you can listen to
+ * Demonstrate cell data API usage
  * @author dennis
  *
  */
-public class CellDataComposer extends AbstractDemoComposer {
+public class CellDataComposer extends SelectorComposer {
 
 	@Wire
-	Label cellType;
+	private Label cellType;
 	@Wire
-	Label cellFormatText;
+	private Label cellFormatText;
 	@Wire
-	Label cellEditText;
+	private Label cellEditText;
 	@Wire
-	Label cellValue;
+	private Label cellValue;
 	@Wire
-	Label cellResultType;
+	private Label cellResultType;
 	@Wire
-	Label cellRef;
+	private Label cellRef;
 	@Wire
-	Textbox cellEditTextBox;
+	private Textbox cellEditTextBox;
 	@Wire
-	Textbox cellFormatTextBox;
+	private Spreadsheet ss;
 	
-	protected List<String> contirbuteAvailableBooks(){
-		return Arrays.asList("data_format.xlsx");
-	}
+//	@Wire
+//	Textbox cellFormatTextBox;
+	
 	
 	@Listen("onCellFocused = #ss")
 	public void onCellFocused(){
@@ -55,6 +51,7 @@ public class CellDataComposer extends AbstractDemoComposer {
 		Range range = Ranges.range(ss.getSelectedSheet(),row,col);
 		
 		cellRef.setValue(Ranges.getCellReference(row, col));
+		Ranges.getCellReference(ss.getSelectedSheet(), row, col);
 		
 		CellData data = range.getCellData();
 		cellFormatText.setValue(data.getFormatText());
@@ -67,7 +64,7 @@ public class CellDataComposer extends AbstractDemoComposer {
 		
 		cellEditTextBox.setValue(data.getEditText());
 		
-		cellFormatTextBox.setValue(range.getCellStyle().getDataFormat());
+//		cellFormatTextBox.setValue(range.getCellStyle().getDataFormat());
 	}
 	
 	@Listen("onChange = #cellEditTextBox")
@@ -84,6 +81,7 @@ public class CellDataComposer extends AbstractDemoComposer {
 		
 	}
 	
+	/*
 	@Listen("onChange = #cellFormatTextBox")
 	public void onFromatboxChange(){
 		Position pos = ss.getCellFocus();
@@ -105,6 +103,7 @@ public class CellDataComposer extends AbstractDemoComposer {
 		refreshCellInfo(pos.getRow(),pos.getColumn());
 		
 	}
+	*/
 }
 
 
