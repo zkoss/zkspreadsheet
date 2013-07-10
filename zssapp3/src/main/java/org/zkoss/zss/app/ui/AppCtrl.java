@@ -23,6 +23,7 @@ import org.zkoss.zss.app.repository.BookUtil;
 import org.zkoss.zss.app.ui.dlg.DlgCallbackEvent;
 import org.zkoss.zss.app.ui.dlg.DlgEvts;
 import org.zkoss.zss.ui.DefaultUserAction;
+import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zssex.ui.DefaultExUserActionHandler;
 import org.zkoss.zul.Filedownload;
@@ -52,6 +53,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		//TODO load default open book from parameter
 		
 		doOpenNewBook();
+		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
 	}
 	
 	
@@ -111,6 +113,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		}
 		ss.setBook(loadedBook);
 		pushDesktopEvent(DesktopEvts.ON_LOADED_BOOK,loadedBook);
+		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
 		updatePageInfo();
 		
 	}
@@ -126,6 +129,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		ss.setBook(loadedBook = null);
 		selectedBookInfo = null;
 		pushDesktopEvent(DesktopEvts.ON_CLOSED_BOOK,null);
+		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
 		updatePageInfo();
 	}
 	
@@ -215,6 +219,7 @@ public class AppCtrl extends CtrlBase<Component>{
 					
 					ss.setBook(loadedBook);
 					pushDesktopEvent(DesktopEvts.ON_LOADED_BOOK,loadedBook);
+					pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
 				}
 			}}));
 		Executions.createComponents("/zssapp/dlg/openBook.zul", getSelf(), args);
@@ -255,8 +260,41 @@ public class AppCtrl extends CtrlBase<Component>{
 			doOpenManageBook();
 		}else if(DesktopEvts.ON_EXPORT_BOOK.equals(event)){
 			doExportBook();
+		}else if(DesktopEvts.ON_TOGGLE_FORMULA_BAR.equals(event)){
+			doToggleFormulabar();
+		}else if(DesktopEvts.ON_FREEZE_PNAEL.equals(event)){
+			Rect sel = ss.getSelection();
+			doFreeze(sel.getRow()-1,sel.getColumn()-1);
+		}else if(DesktopEvts.ON_UNFREEZE_PANEL.equals(event)){
+			doFreeze(-1,-1);
+		}else if(DesktopEvts.ON_FREEZE_ROW.equals(event)){
+			doFreeze((Integer)data,-1);
+		}else if(DesktopEvts.ON_FREEZE_COLUMN.equals(event)){
+			doFreeze(-1,(Integer)data);
 		}
 	}
+
+	private void doFreeze(int row, int column) {
+		if(row==-1 && column==-1){
+			//clear all
+			ss.setRowfreeze(-1);
+			ss.setColumnfreeze(-1);
+		}
+		if(row>=0){
+			ss.setRowfreeze(row);
+		}
+		if(column>=0){
+			ss.setColumnfreeze(column);
+		}
+		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
+	}
+
+	private void doToggleFormulabar() {
+		ss.setShowFormulabar(!ss.isShowFormulabar());
+		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
+	}
+	
+	
 	
 	
 }

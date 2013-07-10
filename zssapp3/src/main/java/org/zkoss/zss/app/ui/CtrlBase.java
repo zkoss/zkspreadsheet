@@ -75,7 +75,9 @@ public class CtrlBase<T extends Component> extends SelectorComposer<T>{
 		}
 		return argm;
 	}
-	
+	protected void pushDesktopEvent(String event){
+		pushDesktopEvent(event,true,null);
+	}
 	protected void pushDesktopEvent(String event,Object data){
 		pushDesktopEvent(event,true,data);
 	}
