@@ -57,7 +57,7 @@ public class SimpleRepository implements BookRepository{
 		return info;
 	}
 	
-	public synchronized BookInfo save(String bookname,Book book) throws IOException {
+	public synchronized BookInfo saveAs(String bookname,Book book) throws IOException {
 		
 		String name = FileUtil.getName(bookname);
 		String ext = "";

@@ -12,7 +12,7 @@ public class SaveBookAsCtrl extends DlgCtrlBase{
 	Textbox bookName;
 	
 	@Listen("onClick=#save")
-	public void doSave(){
+	public void onSave(){
 		if(Strings.isBlank(bookName.getValue())){
 			bookName.setErrorMessage("empty name is not allowed");
 			return;
@@ -22,7 +22,7 @@ public class SaveBookAsCtrl extends DlgCtrlBase{
 	}
 	
 	@Listen("onClick=#cancel")
-	public void doCancel(){
+	public void onCancel(){
 		detach();
 	}
 }

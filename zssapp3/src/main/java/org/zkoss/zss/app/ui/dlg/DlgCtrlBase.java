@@ -12,6 +12,10 @@ import org.zkoss.zul.Window;
 
 public class DlgCtrlBase extends CtrlBase<Window>{
 
+	public DlgCtrlBase() {
+		super(false);
+	}
+
 	protected EventListener callback;
 	
 	@Override

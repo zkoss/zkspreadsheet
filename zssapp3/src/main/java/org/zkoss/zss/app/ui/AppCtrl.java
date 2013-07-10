@@ -1,15 +1,12 @@
 package org.zkoss.zss.app.ui;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WebApps;
-import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.Importer;
@@ -24,11 +21,12 @@ import org.zkoss.zss.app.ui.dlg.DlgCallbackEvent;
 import org.zkoss.zss.app.ui.dlg.Dlgs;
 import org.zkoss.zss.ui.DefaultUserAction;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.UserActionHandler;
 import org.zkoss.zssex.ui.DefaultExUserActionHandler;
-import org.zkoss.zul.Messagebox;
 
 public class AppCtrl extends CtrlBase<Component>{
+
+	private static final long serialVersionUID = 1L;
+
 
 	@Wire
 	Spreadsheet ss;
@@ -37,6 +35,10 @@ public class AppCtrl extends CtrlBase<Component>{
 	BookInfo selectedBookInfo;
 	Book loadedBook;
 
+	public AppCtrl() {
+		super(true);
+	}
+	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -75,28 +77,30 @@ public class AppCtrl extends CtrlBase<Component>{
 				doOpenNewBook();
 				return true;
 			} else if (DefaultUserAction.SAVE_BOOK.equals(dua)) {
-				doSaveBook();
+				doSaveBook(false);
 				return true;
 			} 
 
 			return super.dispatchAction(action);
 		}
 		
+		@Override
+		protected boolean doCloseBook(){
+			super.doCloseBook();
+			AppCtrl.this.doCloseBook();
+			return true;
+		}
 	}
-
-	
-	public void doLoadBook(){
-		
-	}
 	
 	
-	public void doOpenNewBook(){
+	private void doOpenNewBook(){
 		selectedBookInfo = null;
 		Importer importer = Importers.getImporter();
 		
 		try {
 			loadedBook = importer.imports(WebApps.getCurrent().getResource("/WEB-INF/blank.xlsx"), "blank");
 			MessageUtil.showInfoMessage("Loaded a new blank book");
+			pushDesktopEvent(DesktopEvts.ON_LOADED_BOOK,loadedBook);
 		} catch (IOException e) {
 			e.printStackTrace();
 			MessageUtil.showWarnMessage("Can't load a new book");
@@ -114,24 +118,32 @@ public class AppCtrl extends CtrlBase<Component>{
 		
 	}
 	
-	public void doOpenBook(){
-		
-		
-		
-		
-		ss.setBook(loadedBook);
+	private void doCloseBook(){
+		ss.setBook(loadedBook = null);
+		selectedBookInfo = null;
+		pushDesktopEvent(DesktopEvts.ON_CLOSED_BOOK,null);
+		syncPageInfo();
 	}
 	
-	public void doSaveBook(){
+	private void doSaveBook(boolean close){
+		if(loadedBook==null){
+			MessageUtil.showWarnMessage("Please load a book first before save it");
+			return;
+		}
 		if(selectedBookInfo==null){
-			doSaveBookAs();
+			doSaveBookAs(close);
 			return;
 		}
 		BookRepository rep = getRepository();
 		try {
 			rep.save(selectedBookInfo, loadedBook);
 			MessageUtil.showInfoMessage("Saved book "+selectedBookInfo.getName());
-			syncPageInfo();
+			pushDesktopEvent(DesktopEvts.ON_SAVED_BOOK,loadedBook);
+			if(close){
+				doCloseBook();
+			}else{
+				syncPageInfo();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			MessageUtil.showWarnMessage("Can't save book");
@@ -141,7 +153,11 @@ public class AppCtrl extends CtrlBase<Component>{
 
 
 	
-	public void doSaveBookAs(){
+	private void doSaveBookAs(final boolean close){
+		if(loadedBook==null){
+			MessageUtil.showWarnMessage("Please load a book first before save it");
+			return;
+		}
 		String name = "New Book";
 		if(selectedBookInfo!=null){
 			name = "Copy Of "+selectedBookInfo.getName();
@@ -154,9 +170,14 @@ public class AppCtrl extends CtrlBase<Component>{
 					String name = (String)event.getData("name");
 					BookRepository rep = getRepository();
 					try {
-						selectedBookInfo = rep.save(name, loadedBook);
+						selectedBookInfo = rep.saveAs(name, loadedBook);
 						MessageUtil.showInfoMessage("Saved book "+selectedBookInfo.getName());
-						syncPageInfo();
+						pushDesktopEvent(DesktopEvts.ON_SAVED_BOOK,loadedBook);
+						if(close){
+							doCloseBook();
+						}else{
+							syncPageInfo();
+						}
 					} catch (IOException e) {
 						e.printStackTrace();
 						MessageUtil.showWarnMessage("Can't save book");
@@ -167,6 +188,31 @@ public class AppCtrl extends CtrlBase<Component>{
 		Executions.createComponents("/zssapp/dlg/saveBookAs.zul", getSelf(), args);
 	}
 	
+	@Override
+	protected void onDesktopEvent(String event,Object data){
+		System.out.println(">>>>>onDesktop "+event+","+data);
+		
+		//menu
+		if(DesktopEvts.ON_NEW_BOOK.equals(event)){
+			doOpenNewBook();
+		}else if(DesktopEvts.ON_SAVE_BOOK.equals(event)){
+			doSaveBook(false);
+		}else if(DesktopEvts.ON_SAVE_BOOK_AS.equals(event)){
+			doSaveBookAs(false);
+		}else if(DesktopEvts.ON_SAVE_CLOSE_BOOK.equals(event)){
+			doSaveBook(true);
+		}else if(DesktopEvts.ON_CLOSE_BOOK.equals(event)){
+			doCloseBook();
+		}else if(DesktopEvts.ON_OPEN_BOOK.equals(event)){
+			
+		}else if(DesktopEvts.ON_DELETE_BOOK.equals(event)){
+			
+		}else if(DesktopEvts.ON_IMPORT_BOOK.equals(event)){
+			
+		}else if(DesktopEvts.ON_EXPORT_BOOK.equals(event)){
+			
+		}
+	}
 	
 	
 }
