@@ -1,5 +1,20 @@
-package org.zkoss.zss.app.repository.impl;
+/* 
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/7/10, Created by dennis
 
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+*/
+package org.zkoss.zss.app.repository.impl;
+/**
+ * 
+ * @author dennis
+ *
+ */
 public class FileUtil {
 
 	public static String getNameExtension(String filename){

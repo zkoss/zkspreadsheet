@@ -1,19 +1,36 @@
+/* 
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/7/10, Created by dennis
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+*/
 package org.zkoss.zss.app.repository.impl;
 
 import java.io.File;
 import java.util.Date;
 
 import org.zkoss.zss.app.repository.BookInfo;
-
+/**
+ * 
+ * @author dennis
+ *
+ */
 public class SimpleBookInfo implements BookInfo{
 	private String name;
 	private Date lastModify;
 	private File file;
+	private String id;
 	public SimpleBookInfo(File file,String name, Date lastModify){
 		this.file = file;
 		this.name = name;
 		this.lastModify = lastModify;		
 	}
+	
 	public String getName() {
 		return name;
 	}
@@ -26,9 +43,9 @@ public class SimpleBookInfo implements BookInfo{
 	public File getFile() {
 		return file;
 	}
-	public void setFile(File file) {
-		this.file = file;
-	}
+//	public void setFile(File file) {
+//		this.file = file;
+//	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -1,3 +1,14 @@
+/* 
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/7/10, Created by dennis
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+*/
 package org.zkoss.zss.app.ui.menu;
 
 import org.zkoss.zk.ui.Component;
@@ -11,7 +22,11 @@ import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menubar;
 import org.zkoss.zul.Menuitem;
-
+/**
+ * 
+ * @author dennis
+ *
+ */
 public class MainMenubarCtrl extends CtrlBase<Menubar> {
 
 	public MainMenubarCtrl() {

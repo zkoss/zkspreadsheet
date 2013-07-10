@@ -1,3 +1,14 @@
+/* 
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/7/10, Created by dennis
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+*/
 package org.zkoss.zss.app.repository.impl;
 
 import java.io.File;
@@ -13,7 +24,11 @@ import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.app.repository.BookInfo;
 import org.zkoss.zss.app.repository.BookRepository;
-
+/**
+ * 
+ * @author dennis
+ *
+ */
 public class SimpleRepository implements BookRepository{
 	File root;
 	public SimpleRepository(File root){

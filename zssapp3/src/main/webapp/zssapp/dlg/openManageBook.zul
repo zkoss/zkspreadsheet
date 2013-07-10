@@ -1,6 +1,6 @@
 <zk>
 	<window title="Book list" border="normal" id="openBookDlg"
-		apply="org.zkoss.zss.app.ui.dlg.OpenBookCtrl" mode="modal" hflex="min" vflex="min">
+		apply="org.zkoss.zss.app.ui.dlg.OpenManageBookCtrl" mode="modal" hflex="min" vflex="min">
 		<vlayout spacing="5" hflex="min" vflex="min">
 			<listbox id="bookList" rows="8" width="400px">
 				<listhead>

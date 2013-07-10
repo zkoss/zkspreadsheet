@@ -1,3 +1,14 @@
+/* 
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/7/10, Created by dennis
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+*/
 package org.zkoss.zss.app.ui.dlg;
 
 import java.util.Map;
@@ -9,7 +20,11 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.app.ui.CtrlBase;
 import org.zkoss.zul.Window;
-
+/**
+ * 
+ * @author dennis
+ *
+ */
 public class DlgCtrlBase extends CtrlBase<Window>{
 
 	public DlgCtrlBase() {

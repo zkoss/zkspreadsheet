@@ -1,3 +1,14 @@
+/* 
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/7/10, Created by dennis
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+*/
 package org.zkoss.zss.app.ui;
 
 import java.io.File;
@@ -19,7 +30,7 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.repository.BookInfo;
 import org.zkoss.zss.app.repository.BookRepository;
 import org.zkoss.zss.app.repository.BookRepositoryFactory;
-import org.zkoss.zss.app.repository.BookUtil;
+import org.zkoss.zss.app.repository.impl.BookUtil;
 import org.zkoss.zss.app.ui.dlg.DlgCallbackEvent;
 import org.zkoss.zss.app.ui.dlg.DlgEvts;
 import org.zkoss.zss.ui.DefaultUserAction;
@@ -28,6 +39,11 @@ import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zssex.ui.DefaultExUserActionHandler;
 import org.zkoss.zul.Filedownload;
 
+/**
+ * 
+ * @author dennis
+ *
+ */
 public class AppCtrl extends CtrlBase<Component>{
 	private static final Log log = Log.lookup(AppCtrl.class); 
 	private static final long serialVersionUID = 1L;
@@ -222,7 +238,7 @@ public class AppCtrl extends CtrlBase<Component>{
 					pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
 				}
 			}}));
-		Executions.createComponents("/zssapp/dlg/openBook.zul", getSelf(), args);
+		Executions.createComponents("/zssapp/dlg/openManageBook.zul", getSelf(), args);
 	}
 	
 	private void doExportBook(){
@@ -243,8 +259,6 @@ public class AppCtrl extends CtrlBase<Component>{
 	
 	@Override
 	protected void onDesktopEvent(String event,Object data){
-		System.out.println(">>>>>onDesktop "+event+","+data);
-		
 		//menu
 		if(DesktopEvts.ON_NEW_BOOK.equals(event)){
 			doOpenNewBook();

@@ -1,4 +1,15 @@
-package org.zkoss.zss.app.repository;
+/* 
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/7/10, Created by dennis
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+*/
+package org.zkoss.zss.app.repository.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,11 +23,18 @@ import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Book.BookType;
-import org.zkoss.zss.app.repository.impl.FileUtil;
-
+import org.zkoss.zss.app.repository.BookInfo;
+import org.zkoss.zss.app.repository.BookRepository;
+/**
+ * 
+ * @author dennis
+ *
+ */
 public class BookUtil {
 
-	
+	/**
+	 * Gets suggested file name of a book
+	 */
 	static public String suggestFileName(String name,BookRepository rep){
 		int i = 0;
 		name = FileUtil.getName(name);
@@ -34,6 +52,9 @@ public class BookUtil {
 		return sname;
 	}
 	
+	/**
+	 * Gets suggested file name of a book
+	 */
 	static public String suggestFileName(Book book) {
 		String bn = book.getBookName();
 		BookType type = book.getType();

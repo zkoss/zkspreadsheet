@@ -1,9 +1,24 @@
+/* 
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/7/10, Created by dennis
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+*/
 package org.zkoss.zss.app.ui.dlg;
 
 import java.util.Map;
 
 import org.zkoss.zk.ui.event.Event;
-
+/**
+ * 
+ * @author dennis
+ *
+ */
 public class DlgCallbackEvent extends Event{
 
 	public DlgCallbackEvent(String name, Map<String,Object> data) {

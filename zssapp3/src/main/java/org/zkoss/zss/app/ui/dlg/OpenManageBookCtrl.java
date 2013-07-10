@@ -1,3 +1,14 @@
+/* 
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/7/10, Created by dennis
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+*/
 package org.zkoss.zss.app.ui.dlg;
 
 import java.io.IOException;
@@ -25,10 +36,14 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Window;
 
-
-public class OpenBookCtrl extends DlgCtrlBase{
+/**
+ * 
+ * @author dennis
+ *
+ */
+public class OpenManageBookCtrl extends DlgCtrlBase{
 	private static final long serialVersionUID = 1L;
-	private static final Log log = Log.lookup(OpenBookCtrl.class); 
+	private static final Log log = Log.lookup(OpenManageBookCtrl.class); 
 	@Wire
 	Listbox bookList;
 	@Wire
@@ -143,7 +158,7 @@ public class OpenBookCtrl extends DlgCtrlBase{
 				}else if(count>0){
 					reloadBookModel();
 				}else{
-					UiUtil.showInfoMessage("Doesn't get any supported files");
+					UiUtil.showInfoMessage("Can't get any supported files");
 				}
 			}
 		});

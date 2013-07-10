@@ -1,3 +1,14 @@
+/* 
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/7/10, Created by dennis
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+*/
 package org.zkoss.zss.app.ui;
 
 import java.util.HashMap;
@@ -10,6 +21,12 @@ import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.select.SelectorComposer;
 
+/**
+ * 
+ * @author dennis
+ *
+ * @param <T>
+ */
 public class CtrlBase<T extends Component> extends SelectorComposer<T>{
 
 	private static final long serialVersionUID = 1L;
