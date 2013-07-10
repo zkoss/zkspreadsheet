@@ -1,9 +1,12 @@
 package org.zkoss.zss.app.ui;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
+import org.zkoss.util.logging.Log;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WebApps;
@@ -22,9 +25,10 @@ import org.zkoss.zss.app.ui.dlg.DlgEvts;
 import org.zkoss.zss.ui.DefaultUserAction;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zssex.ui.DefaultExUserActionHandler;
+import org.zkoss.zul.Filedownload;
 
 public class AppCtrl extends CtrlBase<Component>{
-
+	private static final Log log = Log.lookup(AppCtrl.class); 
 	private static final long serialVersionUID = 1L;
 
 
@@ -98,10 +102,10 @@ public class AppCtrl extends CtrlBase<Component>{
 		Importer importer = Importers.getImporter();
 		
 		try {
-			loadedBook = importer.imports(WebApps.getCurrent().getResource("/WEB-INF/blank.xlsx"), "blank");
+			loadedBook = importer.imports(WebApps.getCurrent().getResource("/WEB-INF/blank.xlsx"), "blank.xlsx");
 			UiUtil.showInfoMessage("Loaded a new blank book");
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 			UiUtil.showWarnMessage("Can't load a new book");
 			return;
 		}
@@ -145,7 +149,7 @@ public class AppCtrl extends CtrlBase<Component>{
 				updatePageInfo();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 			UiUtil.showWarnMessage("Can't save book");
 			return;
 		}
@@ -162,7 +166,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		if(selectedBookInfo!=null){
 			name = "Copy Of "+selectedBookInfo.getName();
 		}
-		name = BookUtil.suggestBookName(name);
+		name = BookUtil.suggestFileName(name,getRepository());
 		
 		Map<String,Object> args = newMap(newEntry("name",name),newEntry("callback",new EventListener<DlgCallbackEvent>(){
 			public void onEvent(DlgCallbackEvent event) throws Exception {
@@ -179,7 +183,7 @@ public class AppCtrl extends CtrlBase<Component>{
 							updatePageInfo();
 						}
 					} catch (IOException e) {
-						e.printStackTrace();
+						log.error(e.getMessage(),e);
 						UiUtil.showWarnMessage("Can't save book");
 						return;
 					}
@@ -200,7 +204,7 @@ public class AppCtrl extends CtrlBase<Component>{
 						try {
 							book = rep.load(info);
 						}catch (IOException e) {
-							e.printStackTrace();
+							log.error(e.getMessage(),e);
 							UiUtil.showWarnMessage("Can't load book");
 							return;
 						}
@@ -214,6 +218,22 @@ public class AppCtrl extends CtrlBase<Component>{
 				}
 			}}));
 		Executions.createComponents("/zssapp/dlg/openBook.zul", getSelf(), args);
+	}
+	
+	private void doExportBook(){
+		if(loadedBook==null){
+			UiUtil.showWarnMessage("Please load a book first before save it");
+			return;
+		}
+		String name = BookUtil.suggestFileName(loadedBook);
+		File file;
+		try {
+			file = BookUtil.saveBookToWorkingFolder(loadedBook);
+			Filedownload.save(new AMedia(name, null, "application/vnd.ms-excel", file, true));
+		} catch (IOException e) {
+			log.error(e.getMessage(),e);
+			UiUtil.showWarnMessage("Can't export the book");
+		}
 	}
 	
 	@Override
@@ -234,7 +254,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		}else if(DesktopEvts.ON_OPEN_MANAGE_BOOK.equals(event)){
 			doOpenManageBook();
 		}else if(DesktopEvts.ON_EXPORT_BOOK.equals(event)){
-			
+			doExportBook();
 		}
 	}
 	

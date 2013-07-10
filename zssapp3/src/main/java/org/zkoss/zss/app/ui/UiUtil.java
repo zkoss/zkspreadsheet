@@ -12,12 +12,17 @@ public class UiUtil {
 		return null;
 	}
 	
+	public static void showInfoMessage(String message,long time) {
+		Clients.showNotification(message,"info",null,null,2000,true);
+	}
 	public static void showInfoMessage(String message) {
-		
-		Clients.showNotification(message,"info",null,null,3000,true);
+		showInfoMessage(message,2000);
 	}
 	
+	public static void showWarnMessage(String message,long time) {
+		Clients.showNotification(message,"warn",null,null,2000,true);
+	}
 	public static void showWarnMessage(String message) {
-		Clients.showNotification(message,"warn",null,null,3000,true);
+		showWarnMessage(message, 2000);
 	}
 }

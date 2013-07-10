@@ -3,11 +3,9 @@ package org.zkoss.zss.app.ui.dlg;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.zkoss.lang.Strings;
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.event.EventListener;
@@ -25,7 +23,6 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 
@@ -103,7 +100,7 @@ public class OpenBookCtrl extends DlgCtrlBase{
 			rep.delete(bookinfo);
 			reloadBookModel();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 			UiUtil.showInfoMessage("Can't delete book "+bookinfo.getName());
 		}
 	}
