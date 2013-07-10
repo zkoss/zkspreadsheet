@@ -50,6 +50,8 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 	Button open;
 	@Wire
 	Button delete;
+	@Wire
+	Button upload;
 	
 	ListModelList<Map<String,Object>> bookListModel = new ListModelList<Map<String,Object>>();
 	
@@ -57,6 +59,7 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
+
 		reloadBookModel();
 	}
 	
@@ -96,13 +99,20 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 	}
 	
 	private void updateButtonState(){
-		boolean selected = bookListModel.getSelection().size()>0; 
+		boolean selected = bookListModel.getSelection().size()>0;
+		
+		boolean readonly = UiUtil.isRepositoryReadonly();
+
 		open.setDisabled(!selected);
-		delete.setDisabled(!selected);
+		delete.setDisabled(!selected || readonly);
+		upload.setDisabled(readonly);
 	}
 	
 	@Listen("onClick=#delete")
 	public void onDelete(){
+		if(UiUtil.isRepositoryReadonly()){
+			return;
+		}
 		Map<String,Object> selection = (Map<String,Object>)UiUtil.getSingleSelection(bookListModel);
 		if(selection==null){
 			UiUtil.showInfoMessage("Please select a book first");
@@ -127,6 +137,9 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 	
 	@Listen("onClick=#upload")
 	public void onUpload(){
+		if(UiUtil.isRepositoryReadonly()){
+			return;
+		}
 		Fileupload.get(5,new EventListener<UploadEvent>() {
 			public void onEvent(UploadEvent event) throws Exception {
 				BookInfo bookInfo = null;

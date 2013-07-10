@@ -9,5 +9,8 @@
 		<value>zssdemo</value>
 	</preference>
 	-->
-	
+	<library-property>
+		<name>zssapp.bookrepostory.readonly</name>
+		<value>false</value>
+	</library-property>
 </zk>

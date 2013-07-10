@@ -18,6 +18,7 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.app.ui.CtrlBase;
 import org.zkoss.zss.app.ui.DesktopEvts;
+import org.zkoss.zss.app.ui.UiUtil;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menubar;
@@ -74,11 +75,11 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 		//new and open are always on
 		newFile.setDisabled(false);
 		openManageFile.setDisabled(false);
-				
+		boolean readonly = UiUtil.isRepositoryReadonly();
 		boolean disabled = !hasBook;
-		saveFile.setDisabled(disabled);
-		saveFileAs.setDisabled(disabled);
-		saveFileAndClose.setDisabled(disabled);
+		saveFile.setDisabled(disabled || readonly);
+		saveFileAs.setDisabled(disabled || readonly);
+		saveFileAndClose.setDisabled(disabled || readonly);
 		closeFile.setDisabled(disabled);
 		exportFile.setDisabled(disabled);
 				

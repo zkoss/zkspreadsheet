@@ -24,6 +24,7 @@ import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.app.repository.BookInfo;
 import org.zkoss.zss.app.repository.BookRepository;
+import org.zkoss.zss.app.ui.UiUtil;
 /**
  * 
  * @author dennis
@@ -60,6 +61,9 @@ public class SimpleRepository implements BookRepository{
 	}
 
 	public synchronized BookInfo save(BookInfo info, Book book) throws IOException {
+		if(UiUtil.isRepositoryReadonly()){
+			return null;
+		}
 		FileOutputStream fos = null;
 		try{
 			File f = ((SimpleBookInfo)info).getFile();
@@ -73,7 +77,9 @@ public class SimpleRepository implements BookRepository{
 	}
 	
 	public synchronized BookInfo saveAs(String bookname,Book book) throws IOException {
-		
+		if(UiUtil.isRepositoryReadonly()){
+			return null;
+		}
 		String name = FileUtil.getName(bookname);
 		String ext = "";
 		switch(book.getType()){
@@ -97,6 +103,9 @@ public class SimpleRepository implements BookRepository{
 
 
 	public boolean delete(BookInfo info) throws IOException {
+		if(UiUtil.isRepositoryReadonly()){
+			return false;
+		}
 		File f = ((SimpleBookInfo)info).getFile();
 		if(!f.exists()){
 			return false;

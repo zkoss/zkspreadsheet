@@ -150,6 +150,9 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	private void doSaveBook(boolean close){
+		if(UiUtil.isRepositoryReadonly()){
+			return;
+		}
 		if(loadedBook==null){
 			UiUtil.showWarnMessage("Please load a book first before save it");
 			return;
@@ -178,6 +181,9 @@ public class AppCtrl extends CtrlBase<Component>{
 
 	
 	private void doSaveBookAs(final boolean close){
+		if(UiUtil.isRepositoryReadonly()){
+			return;
+		}
 		if(loadedBook==null){
 			UiUtil.showWarnMessage("Please load a book first before save it");
 			return;
@@ -307,8 +313,6 @@ public class AppCtrl extends CtrlBase<Component>{
 		ss.setShowFormulabar(!ss.isShowFormulabar());
 		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
 	}
-	
-	
 	
 	
 }
