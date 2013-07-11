@@ -438,9 +438,9 @@ public interface Range {
 	 * Sets cell hyperlink, applies it too all cells
 	 * @param type the hyperlink type
 	 * @param address the address, e.x http://www.zkoss.org
-	 * @param display the label to display
+	 * @param label the label to display
 	 */
-	public void setCellHyperlink(HyperlinkType type,String address,String display);
+	public void setCellHyperlink(HyperlinkType type,String address,String label);
 	
 	
 	/**

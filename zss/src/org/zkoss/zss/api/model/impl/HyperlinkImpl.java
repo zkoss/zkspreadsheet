@@ -26,9 +26,11 @@ import org.zkoss.zss.api.model.Hyperlink;
 public class HyperlinkImpl implements Hyperlink{
 
 	ModelRef<org.zkoss.poi.ss.usermodel.Hyperlink> linkRef;
+	String label;
 
-	public HyperlinkImpl(ModelRef<org.zkoss.poi.ss.usermodel.Hyperlink> linkRef) {
+	public HyperlinkImpl(ModelRef<org.zkoss.poi.ss.usermodel.Hyperlink> linkRef,String label) {
 		this.linkRef = linkRef;
+		this.label = label;
 	}
 	
 	@Override
@@ -72,6 +74,6 @@ public class HyperlinkImpl implements Hyperlink{
 
 	@Override
 	public String getLabel() {
-		return getNative().getLabel();
+		return label;
 	}
 }

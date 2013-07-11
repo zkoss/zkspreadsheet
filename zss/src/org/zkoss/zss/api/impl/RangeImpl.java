@@ -646,7 +646,8 @@ public class RangeImpl implements Range{
 	
 	public Hyperlink getCellHyperlink(){
 		org.zkoss.poi.ss.usermodel.Hyperlink l = range.getHyperlink();
-		return l==null?null:new HyperlinkImpl(new SimpleRef<org.zkoss.poi.ss.usermodel.Hyperlink>(l));
+		//NOTE current hyperlink implementation can't provide correct label, so I get it form cell text directly 
+		return l==null?null:new HyperlinkImpl(new SimpleRef<org.zkoss.poi.ss.usermodel.Hyperlink>(l),getCellEditText());
 	}
 	
 	public void setSheetName(String name){
