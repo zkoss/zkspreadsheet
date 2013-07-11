@@ -30,23 +30,20 @@ import zss.test.SpreadsheetAgent;
  * @author Hawk
  *
  */
-
-@RunWith(Parameterized.class)
 public class CellTextTest extends DisplayExcelTest{
 	Sheet sheet;
 
-	public CellTextTest(String page){
+	public CellTextTest(){
+		this("/display.zul");
+	}
+	
+	protected CellTextTest(String page){
 		super(page);
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
 		ssAgent.selectSheet("cell-text");
 		sheet = zss.as(Spreadsheet.class).getBook().getSheetAt(0);
 	}
 
-	@Parameters
-	public static List<Object[]> data() {
-		Object[][] data = new Object[][] { { "/display.zul" }, { "/display2003.zul"}};
-		return Arrays.asList(data);
-	}
 	
 	/*
 	@Test
@@ -131,6 +128,7 @@ public class CellTextTest extends DisplayExcelTest{
 	public void testFontSize(){
 		Font font =getFont(sheet, 6, 0);
 		assertEquals(8, font.getFontHeight()/20);
+		assertEquals(8, font.getFontHeightInPoint());
 		
 		font =getFont(sheet, 6, 1);
 		assertEquals(12, font.getFontHeight()/20);
