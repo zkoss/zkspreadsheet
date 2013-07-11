@@ -36,6 +36,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-257 unsupported charts cause spreadsheet crash
   ZSS-140 Sheet with XYModel chart throw NullPointerException (xls format)
   ZSS-137 Sheet with chart throw NullPointerException (xls format)
+  ZSS-300 When pasting range overlaps copying range, pasting works incorrectly
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
