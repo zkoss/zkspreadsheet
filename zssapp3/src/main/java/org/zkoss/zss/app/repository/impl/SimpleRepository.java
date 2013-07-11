@@ -1,3 +1,14 @@
+/* 
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/7/10, Created by dennis
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+*/
 package org.zkoss.zss.app.repository.impl;
 
 import java.io.File;
@@ -13,7 +24,11 @@ import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.app.repository.BookInfo;
 import org.zkoss.zss.app.repository.BookRepository;
-
+/**
+ * 
+ * @author dennis
+ *
+ */
 public class SimpleRepository implements BookRepository{
 	File root;
 	public SimpleRepository(File root){
@@ -57,10 +72,9 @@ public class SimpleRepository implements BookRepository{
 		return info;
 	}
 	
-	public synchronized BookInfo save(Book book) throws IOException {
+	public synchronized BookInfo saveAs(String bookname,Book book) throws IOException {
 		
-		String bookname = book.getBookName();
-		String name = FileUtil.getName(bookname).toLowerCase();
+		String name = FileUtil.getName(bookname);
 		String ext = "";
 		switch(book.getType()){
 		case EXCEL_2003:
@@ -75,9 +89,18 @@ public class SimpleRepository implements BookRepository{
 		File f = new File(root,name+ext);
 		int c = 0;
 		if(f.exists()){
-			f = new File(root,name+(++c)+ext);
+			f = new File(root,name+"("+(++c)+")"+ext);
 		}
-		SimpleBookInfo info = new SimpleBookInfo(f,bookname,new Date());
+		SimpleBookInfo info = new SimpleBookInfo(f,f.getName(),new Date());
 		return save(info,book);
+	}
+
+
+	public boolean delete(BookInfo info) throws IOException {
+		File f = ((SimpleBookInfo)info).getFile();
+		if(!f.exists()){
+			return false;
+		}
+		return f.delete();
 	}
 }

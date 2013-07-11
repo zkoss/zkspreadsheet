@@ -73,7 +73,13 @@
 			<version>${zss.version}</version>
 		</dependency>
 		<!-- 
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zss3</artifactId>
+			<version>${zss.version}</version>
+		</dependency>
 		 -->
+		
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zssex</artifactId>

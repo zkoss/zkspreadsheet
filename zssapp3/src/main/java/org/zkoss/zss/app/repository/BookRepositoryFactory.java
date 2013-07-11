@@ -1,3 +1,14 @@
+/* 
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/7/10, Created by dennis
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+*/
 package org.zkoss.zss.app.repository;
 
 import java.io.File;
@@ -6,11 +17,19 @@ import org.zkoss.lang.Library;
 import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zss.app.repository.impl.SimpleRepository;
 
+/**
+ * The book repository
+ * @author dennis
+ *
+ */
 public class BookRepositoryFactory {
 
 	static BookRepositoryFactory instance;
 	
-	
+	/**
+	 * Gets the default instance of {@link BookRepositoryFactory}
+	 * @return
+	 */
 	public static BookRepositoryFactory getInstance(){
 		if(instance==null){
 			synchronized(BookRepositoryFactory.class){
@@ -24,6 +43,10 @@ public class BookRepositoryFactory {
 	}
 	
 	BookRepository repository;
+	/**
+	 * Gets the {@link BookRepository}
+	 * @return
+	 */
 	public BookRepository getRepository(){
 		if(repository==null){
 			synchronized(BookRepositoryFactory.class){
