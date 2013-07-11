@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
+import org.zkoss.lang.Strings;
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
@@ -67,9 +68,22 @@ public class AppCtrl extends CtrlBase<Component>{
 		ss.setUserActionHandler(new AppUserActionHandler());
 		
 		//TODO load default open book from parameter
-		
-		doOpenNewBook();
-		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
+		String bookName = Executions.getCurrent().getParameter("book");
+		BookInfo bookinfo = null;
+		if(!Strings.isBlank(bookName)){
+			bookName = bookName.trim();
+			for(BookInfo info:getRepository().list()){
+				if(bookName.equals(info.getName())){
+					bookinfo = info;
+					break;
+				}
+			}
+		}
+		if(bookinfo!=null){
+			doLoadBook(bookinfo,null);
+		}else{
+			doOpenNewBook();
+		}
 	}
 	
 	
@@ -121,7 +135,6 @@ public class AppCtrl extends CtrlBase<Component>{
 		
 		try {
 			loadedBook = importer.imports(WebApps.getCurrent().getResource("/WEB-INF/blank.xlsx"), "blank.xlsx");
-			UiUtil.showInfoMessage("Loaded a new blank book");
 		} catch (IOException e) {
 			log.error(e.getMessage(),e);
 			UiUtil.showWarnMessage("Can't load a new book");
@@ -131,6 +144,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		pushDesktopEvent(DesktopEvts.ON_LOADED_BOOK,loadedBook);
 		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
 		updatePageInfo();
+		UiUtil.showInfoMessage("Loaded a new blank book");
 		
 	}
 	
@@ -219,29 +233,36 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	
+	private void doLoadBook(BookInfo info,Book book){
+		if(book==null){
+			BookRepository rep = getRepository();
+			try {
+				book = rep.load(info);
+			}catch (IOException e) {
+				log.error(e.getMessage(),e);
+				UiUtil.showWarnMessage("Can't load book");
+				return;
+			}
+		}
+		
+		selectedBookInfo = info;
+		loadedBook = book;
+		
+		ss.setBook(loadedBook);
+		pushDesktopEvent(DesktopEvts.ON_LOADED_BOOK,loadedBook);
+		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
+		updatePageInfo();
+		
+		UiUtil.showInfoMessage("Loaded book "+selectedBookInfo.getName());
+	}
+	
 	private void doOpenManageBook(){
 		Map<String,Object> args = newMap(newEntry("callback",new EventListener<DlgCallbackEvent>(){
 			public void onEvent(DlgCallbackEvent event) throws Exception {
 				if(DlgEvts.ON_OPEN.equals(event.getName())){
 					BookInfo info = (BookInfo)event.getData("bookinfo");
 					Book book = (Book)event.getData("book");
-					if(book==null){
-						BookRepository rep = getRepository();
-						try {
-							book = rep.load(info);
-						}catch (IOException e) {
-							log.error(e.getMessage(),e);
-							UiUtil.showWarnMessage("Can't load book");
-							return;
-						}
-					}
-					
-					selectedBookInfo = info;
-					loadedBook = book;
-					
-					ss.setBook(loadedBook);
-					pushDesktopEvent(DesktopEvts.ON_LOADED_BOOK,loadedBook);
-					pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
+					doLoadBook(info,book);
 				}
 			}}));
 		Executions.createComponents("/zssapp/dlg/openManageBook.zul", getSelf(), args);
