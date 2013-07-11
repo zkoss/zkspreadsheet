@@ -2,13 +2,7 @@ package zss.test.display;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.ui.Spreadsheet;
 
@@ -24,29 +18,20 @@ import zss.test.SpreadsheetAgent;
  * @author Hawk
  *
  */
-@RunWith(Parameterized.class)
 public class CellBorderTest extends DisplayExcelTest{
-
-	public CellBorderTest(String testPage){
+	
+	public CellBorderTest(){
+		this("/display.zul");
+	}
+	
+	protected CellBorderTest(String testPage){
 		super(testPage);
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
 		ssAgent.selectSheet("cell-border");
 		sheet = zss.as(Spreadsheet.class).getBook().getSheet("cell-border");
 	}
 
-	@Parameters
-	public static List<Object[]> data() {
-		Object[][] data = new Object[][] { { "/display.zul" }, { "/display2003.zul"}};
-		return Arrays.asList(data);
-	}
 
-	/*
-	@Test
-	public void testBorderColor(){
-		
-	}
-	*/
-	
 	@Test
 	public void testBorderPosition(){
 		//bottom
