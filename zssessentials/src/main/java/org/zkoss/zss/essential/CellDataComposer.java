@@ -51,8 +51,7 @@ public class CellDataComposer extends SelectorComposer {
 		Range range = Ranges.range(ss.getSelectedSheet(),row,col);
 		
 		cellRef.setValue(Ranges.getCellReference(row, col));
-		Ranges.getCellReference(ss.getSelectedSheet(), row, col);
-		
+		//show a cell's data
 		CellData data = range.getCellData();
 		cellFormatText.setValue(data.getFormatText());
 		cellEditText.setValue(data.getEditText());
