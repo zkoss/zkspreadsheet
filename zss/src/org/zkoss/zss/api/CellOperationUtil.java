@@ -18,6 +18,7 @@ package org.zkoss.zss.api;
 
 import java.util.LinkedHashMap;
 
+import org.zkoss.lang.Objects;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
@@ -35,6 +36,7 @@ import org.zkoss.zss.api.model.EditableFont;
 import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
+import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Sheet;
 
 /**
@@ -641,6 +643,28 @@ public class CellOperationUtil {
 				newCellstyle.setWrapText(wraptext);
 			}
 		});
+	}
+	
+	public static void applyFormat(Range range,final String format) {
+		applyCellStyle(range, new CellStyleApplier() {
+
+			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
+				String oformat = oldCellstyle.getDataFormat();
+				return Objects.equals(format, oformat);
+			}
+
+			public void apply(Range cellRange, EditableCellStyle newCellstyle) {
+				newCellstyle.setDataFormat(format);
+			}
+		});
+	}
+	
+	
+	public static void applyHyperlink(Range range,HyperlinkType type,String address,String label) {
+		if(range.isProtected())
+			return;
+		
+		range.setCellHyperlink(type, address, label);
 	}
 
 	/**
