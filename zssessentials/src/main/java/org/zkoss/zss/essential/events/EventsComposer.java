@@ -62,78 +62,6 @@ public class EventsComposer extends SelectorComposer<Component>{
 
 	//Events
 
-	@Listen("onStartEditing = spreadsheet")
-	public void onStartEditing(StartEditingEvent event){
-		StringBuilder info = new StringBuilder();
-		String ref = Ranges.getCellReference(event.getRow(),event.getColumn());
-		info.append("Start editing ").append(ref)
-		.append(", editing-value is ").append("\""+event.getEditingValue()+"\"")
-		.append(" client-value is ").append("\""+event.getClientValue()+"\"");
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-		
-		if(ref.equals("D1")){
-			String newValue = "Surprise!!";
-			//we change the editing value
-			event.setEditingValue(newValue);
-			addInfo("Editing value is change to "+newValue);
-		}else if(ref.equals("E1")){
-			//forbid editing
-			event.cancel();
-			addInfo("Editing E1 is canceled");
-		}
-	}
-
-	@Listen("onEditboxEditing = spreadsheet")
-	public void onEditboxEditing(EditboxEditingEvent event){
-		StringBuilder info = new StringBuilder();
-		String ref = Ranges.getCellReference(event.getRow(),event.getColumn());
-		info.append("Editing ").append(ref)
-		.append(", value is ").append("\""+event.getEditingValue()+"\"");
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}	
-	
-	@Listen("onStopEditing = spreadsheet")
-	public void onStopEditing(StopEditingEvent event){
-		StringBuilder info = new StringBuilder();
-		String ref = Ranges.getCellReference(event.getRow(),event.getColumn());
-		info.append("Stop editing ").append(ref)
-		.append(", editing-value is ").append("\""+event.getEditingValue()+"\"");
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-		
-		if(ref.equals("D3")){
-			String newValue = event.getEditingValue()+"-Woo";
-			//we change the editing value
-			event.setEditingValue(newValue);
-			addInfo("Editing value is changed to \""+newValue+"\"");
-		}else if(ref.equals("E3")){
-			//forbid editing
-			event.cancel();
-			addInfo("Editing E3 is canceled");
-		}
-	}
-	
-	@Listen("onCellChange = spreadsheet")
-	public void onCellChange(CellAreaEvent event){
-		StringBuilder info = new StringBuilder();
-
-		info.append("Cell changes on ").append(Ranges.getAreaReference(event.getArea()));
-		info.append(", first value is \""
-		+Ranges.range(event.getSheet(),event.getArea()).getCellFormatText()+"\"");
-
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}
-	
 	@Listen("onCtrlKey = spreadsheet")
 	public void onCtrlKey(KeyEvent event){
 		StringBuilder info = new StringBuilder();
@@ -297,12 +225,85 @@ public class EventsComposer extends SelectorComposer<Component>{
 		}
 	}
 
+	@Listen("onStartEditing = spreadsheet")
+	public void onStartEditing(StartEditingEvent event){
+		StringBuilder info = new StringBuilder();
+		String ref = Ranges.getCellReference(event.getRow(),event.getColumn());
+		info.append("Start editing ").append(ref)
+		.append(", editing-value is ").append("\""+event.getEditingValue()+"\"")
+		.append(" client-value is ").append("\""+event.getClientValue()+"\"");
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+		
+		if(ref.equals("D1")){
+			String newValue = "Surprise!!";
+			//we change the editing value
+			event.setEditingValue(newValue);
+			addInfo("Editing value is change to "+newValue);
+		}else if(ref.equals("E1")){
+			//forbid editing
+			event.cancel();
+			addInfo("Editing E1 is canceled");
+		}
+	}
+
+	@Listen("onEditboxEditing = spreadsheet")
+	public void onEditboxEditing(EditboxEditingEvent event){
+		StringBuilder info = new StringBuilder();
+		String ref = Ranges.getCellReference(event.getRow(),event.getColumn());
+		info.append("Editing ").append(ref)
+		.append(", value is ").append("\""+event.getEditingValue()+"\"");
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}	
+	
+	@Listen("onStopEditing = spreadsheet")
+	public void onStopEditing(StopEditingEvent event){
+		StringBuilder info = new StringBuilder();
+		String ref = Ranges.getCellReference(event.getRow(),event.getColumn());
+		info.append("Stop editing ").append(ref)
+		.append(", editing-value is ").append("\""+event.getEditingValue()+"\"");
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+		
+		if(ref.equals("D3")){
+			String newValue = event.getEditingValue()+"-Woo";
+			//we change the editing value
+			event.setEditingValue(newValue);
+			addInfo("Editing value is changed to \""+newValue+"\"");
+		}else if(ref.equals("E3")){
+			//forbid editing
+			event.cancel();
+			addInfo("Editing E3 is canceled");
+		}
+	}
+	
+	@Listen("onCellChange = spreadsheet")
+	public void onCellChange(CellAreaEvent event){
+		StringBuilder info = new StringBuilder();
+
+		info.append("Cell changes on ").append(Ranges.getAreaReference(event.getArea()));
+		info.append(", first value is \""
+		+Ranges.range(event.getSheet(),event.getArea()).getCellFormatText()+"\"");
+
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}	
+	
 	@Listen("onCellHyperlink = spreadsheet")
 	public void onCellHyperlink(CellHyperlinkEvent event){
 		StringBuilder info = new StringBuilder();
 		
 		info.append("Hyperlink ").append(event.getType())
-			.append(" on : ").append(Ranges.getCellReference(event.getRow(),event.getColumn()))
+			.append(" on : ")
+			.append(Ranges.getCellReference(event.getRow(),event.getColumn()))
 			.append(", address : ").append(event.getAddress());
 		
 		if(isShowEventInfo(event.getName())){
@@ -312,6 +313,16 @@ public class EventsComposer extends SelectorComposer<Component>{
 
 	
 
+	
+	@Listen("onSheetCreate = spreadsheet")
+	public void onSheetCreate(SheetEvent event){
+		StringBuilder info = new StringBuilder();
+		info.append("Create sheet : ").append(event.getSheetName());
+		
+		if(isShowEventInfo(event.getName())){
+			addInfo(info.toString());
+		}
+	}
 	
 	@Listen("onSheetSelect = spreadsheet")
 	public void onSheetSelect(SheetSelectEvent event){
@@ -338,22 +349,14 @@ public class EventsComposer extends SelectorComposer<Component>{
 	public void onSheetOrderChange(SheetEvent event){
 		StringBuilder info = new StringBuilder();
 		Sheet sheet = event.getSheet();
-		info.append("Reorder sheet : ").append(event.getSheetName()).append(" to ").append(sheet.getBook().getSheetIndex(sheet));
+		info.append("Reorder sheet : ").append(event.getSheetName())
+		.append(" to ").append(sheet.getBook().getSheetIndex(sheet));
 		
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
 		}
 	}
 	
-	@Listen("onSheetCreate = spreadsheet")
-	public void onSheetCreate(SheetEvent event){
-		StringBuilder info = new StringBuilder();
-		info.append("Create sheet : ").append(event.getSheetName());
-		
-		if(isShowEventInfo(event.getName())){
-			addInfo(info.toString());
-		}
-	}
 	
 	@Listen("onSheetDelete = spreadsheet")
 	public void onSheetDelete(SheetDeleteEvent event){
@@ -405,8 +408,12 @@ public class EventsComposer extends SelectorComposer<Component>{
 	public void onAuxAction(AuxActionEvent event){
 		StringBuilder info = new StringBuilder();
 		
-		info.append("AuxAction ").append(event.getAction())
-			.append(" on : ").append(Ranges.getAreaReference(event.getSheet(),event.getSelection()));
+		info.append("AuxAction ").append(event.getAction());
+		
+		if (!"deleteSheet".equals(event.getAction())){
+			//deleted sheet is unable to access at this moment
+			info.append(" on : ").append(Ranges.getAreaReference(event.getSheet(),event.getSelection()));
+		}
 		
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());

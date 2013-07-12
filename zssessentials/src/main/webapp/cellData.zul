@@ -5,14 +5,8 @@
 			<spreadsheet id="ss" hflex="1" vflex="1"
 				showFormulabar="true" showContextMenu="true" showToolbar="true"
 				showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"
-				src="/WEB-INF/books/blank.xlsx" />
+				src="/WEB-INF/books/sample.xlsx" selectedSheet="CellValue"/>
 			<vlayout width="300px" vflex="1">
-				<groupbox hflex="1" height="250px">
-					<caption label="Available Books" />
-					<listbox id="availableBookList" vflex="1">
-
-					</listbox>
-				</groupbox>
 				<groupbox hflex="1" vflex="1">
 					<caption label="Cell Information" />
 
@@ -26,7 +20,7 @@
 								Cell: <label id="cellRef"/>
 							</row>
 							<row>
-								Text: <label id="cellFormatText"/>
+								Formatted Text: <label id="cellFormatText"/>
 							</row>
 							<row>
 								Edit-text: <label id="cellEditText"/>
@@ -54,12 +48,14 @@
 							<row>
 								<textbox id="cellEditTextBox" hflex="1" rows="3"/>
 							</row>
+							<!-- 
 							<row>
 								Edit-format: 
 							</row>
 							<row>
 								<textbox id="cellFormatTextBox" hflex="1" />
 							</row>
+							 -->
 						</rows>
 					</grid>
 				</groupbox>

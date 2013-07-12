@@ -1,0 +1,61 @@
+<zk>
+	<window hflex="1" vflex="1"
+		apply="org.zkoss.zss.essential.CellStyleComposer">
+		<hlayout hflex="1" vflex="1">
+			<spreadsheet id="ss" hflex="1" vflex="1"
+				showFormulabar="true" showContextMenu="true" showToolbar="true"
+				showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"
+				src="/WEB-INF/books/cellStyle.xlsx" />
+			<vlayout width="300px" vflex="1">
+				<groupbox hflex="1" >
+					<caption label="Style" />
+					<grid vflex="1" hflex="1">
+						<columns>
+							<column width="100px"/>
+							<column/>
+						</columns>
+						<rows>
+							<row>
+								Cell: <label id="cellRef"/>
+							</row>
+							<row>
+								Horizontal Alignment: <label id="hAlign"/>
+							</row>
+							<row>
+								Vertical Alignment: <label id="vAlign"/>
+							</row>
+							<row>
+								Top Border: <label id="tBorder"/>
+							</row>
+							<row>
+								Bottom Border: <label id="bBorder"/>
+							</row>
+							<row>
+								Left Border: <label id="lBorder"/>
+							</row>
+							<row>
+								Right Border: <label id="rBorder"/>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+				<groupbox hflex="1" vflex="1">
+					<caption label="Editor" />
+
+					<grid hflex="1" vflex="1">
+						<rows>
+							<row>
+								Horizontal Alignment:  
+								<listbox id="hAlignBox" mold="select"  />
+							</row>
+							<row>
+								Vertical Alignment:  
+								<listbox id="vAlignBox" mold="select"  />
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</vlayout>
+		</hlayout>
+	</window>
+</zk>

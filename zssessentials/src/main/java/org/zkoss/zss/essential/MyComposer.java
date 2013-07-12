@@ -3,12 +3,9 @@ package org.zkoss.zss.essential;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WebApps;
-import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.select.SelectorComposer;
-import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.Importers;
@@ -22,20 +19,20 @@ public class MyComposer extends SelectorComposer<Component> {
 	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
-		super.doAfterCompose(comp);
-		//initialize stuff here
+		super.doAfterCompose(comp);  //wire variables and event listeners
+		//access components after calling super.doAfterCompose()
 		//spreadsheet.setSrc("/WEB-INF/books/startzss.xlsx");
+		loadBook();
 	}
 	
+	public void loadBook() throws IOException{
+		Importer importer = Importers.getImporter();
+		Book book = importer.imports(getFile(), "sample");
+		spreadsheet.setBook(book);
+	}
 	
-	@Listen("onUpload = button")
-	public void showBook(UploadEvent event) throws IOException{
-		Media media = event.getMedia();
-		if (media.isBinary()) {
-			Importer importer = Importers.getImporter();
-			InputStream inputStream = WebApps.getCurrent().getResourceAsStream("/WEB-INF/books/startzss.xlsx");
-			Book book = importer.imports(inputStream, "startzss");
-			spreadsheet.setBook(book);
-		}
+	private InputStream getFile(){
+		//get a file 
+		return WebApps.getCurrent().getResourceAsStream("/WEB-INF/books/startzss.xlsx");
 	}
 }
