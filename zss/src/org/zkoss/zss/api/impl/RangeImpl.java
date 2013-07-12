@@ -498,28 +498,28 @@ public class RangeImpl implements Range{
 		
 		index = Ranges.range(this.getSheet(),r,c,sortByRows?r:lr,sortByRows?lc:c);
 		
-		sort(index,desc,header,matchCase,sortByRows,dataOption,
-				null,false,null,null,false,null);
+		sort(index,desc,dataOption,
+			null,false,null,
+			null,false,null,
+			header,matchCase,sortByRows);
 	}
 	
-	public void sort(Range index1,
-			boolean desc1,
+	public void sort(Range index1,boolean desc1,SortDataOption dataOption1,
+			Range index2,boolean desc2,SortDataOption dataOption2,
+			Range index3,boolean desc3,SortDataOption dataOption3,
 			boolean header, 
 			/*int orderCustom, //not implement*/
 			boolean matchCase, 
-			boolean sortByRows, 
-			/*int sortMethod, //not implement*/
-			SortDataOption dataOption1,
-			Range index2,boolean desc2,SortDataOption dataOption2,
-			Range index3,boolean desc3,SortDataOption dataOption3){
+			boolean sortByRows
+			/*int sortMethod, //not implement*/){
 		
 		//TODO the syncLevel
 		
 		//TODO review the full impl for range1,range2,range3
 		
 		range.sort(index1==null?null:((RangeImpl)index1).getNative(), desc1, 
-				index2==null?null:((RangeImpl)index1).getNative()/*rng2*/, -1 /*type*/, desc2/*desc2*/, 
-				index3==null?null:((RangeImpl)index1).getNative()/*rng3*/, desc3/*desc3*/,
+				index2==null?null:((RangeImpl)index2).getNative()/*rng2*/, -1 /*type*/, desc2/*desc2*/, 
+				index3==null?null:((RangeImpl)index3).getNative()/*rng3*/, desc3/*desc3*/,
 				header?BookHelper.SORT_HEADER_YES:BookHelper.SORT_HEADER_NO/*header*/,
 				-1/*orderCustom*/, matchCase, sortByRows, -1/*sortMethod*/, 
 				dataOption1==null?BookHelper.SORT_NORMAL_DEFAULT:EnumUtil.toRangeSortDataOption(dataOption1)/*dataOption1*/,
@@ -815,7 +815,7 @@ public class RangeImpl implements Range{
 	}
 	
 	
-	public void api4Internal(){
+	private void api4Internal(){
 		range.notifyDeleteFriendFocus(null);//by Spreadsheet
 		range.notifyMoveFriendFocus(null);//
 	}
@@ -824,7 +824,7 @@ public class RangeImpl implements Range{
 	//API of range that n-oone use it.
 	
 	
-	public void apiNoOneUse(){
+	private void apiNoOneUse(){
 		
 		range.getCount();
 		range.getCurrentRegion();
@@ -835,6 +835,10 @@ public class RangeImpl implements Range{
 		range.isCustomHeight();
 		
 		//range.pasteSpecial(pasteType, pasteOp, SkipBlanks, transpose);		
+	}
+	
+	public String toString(){
+		return Ranges.getAreaReference(getSheet(), getRow(),getColumn(),getLastRow(),getLastColumn());
 	}
 
 }

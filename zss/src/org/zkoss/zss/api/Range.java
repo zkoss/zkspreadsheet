@@ -355,16 +355,15 @@ public interface Range {
 	 * @param desc3 true for descent, false for ascent of index 3
 	 * @param dataOption3 data option31 for sort
 	 */
-	public void sort(Range index1,
-			boolean desc1,
-			boolean header, 
+	public void sort(Range index1,boolean desc1,SortDataOption dataOption1,
+			Range index2,boolean desc2,SortDataOption dataOption2,
+			Range index3,boolean desc3,SortDataOption dataOption3,
+			boolean header,
 			/*int orderCustom, //not implement*/
 			boolean matchCase, 
-			boolean sortByRows, 
+			boolean sortByRows 
 			/*int sortMethod, //not implement*/
-			SortDataOption dataOption1,
-			Range index2,boolean desc2,SortDataOption dataOption2,
-			Range index3,boolean desc3,SortDataOption dataOption3);
+			);
 	
 	/**
 	 * According to current range, fills data to destination range automatically
