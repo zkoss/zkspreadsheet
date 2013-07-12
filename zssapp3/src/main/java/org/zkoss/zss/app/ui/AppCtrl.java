@@ -79,8 +79,9 @@ public class AppCtrl extends CtrlBase<Component>{
 				}
 			}
 		}
+		String sheetName = Executions.getCurrent().getParameter("sheet");
 		if(bookinfo!=null){
-			doLoadBook(bookinfo,null);
+			doLoadBook(bookinfo,null,sheetName);
 		}else{
 			doOpenNewBook();
 		}
@@ -101,6 +102,7 @@ public class AppCtrl extends CtrlBase<Component>{
 			actions.add(DefaultUserAction.NEW_BOOK.getAction());
 			if(sheet!=null){
 				actions.add(DefaultUserAction.SAVE_BOOK.getAction());
+				actions.add(DefaultUserAction.EXPORT_PDF.getAction());
 			}
 			return actions;
 		}
@@ -114,6 +116,9 @@ public class AppCtrl extends CtrlBase<Component>{
 				return true;
 			} else if (DefaultUserAction.SAVE_BOOK.equals(dua)) {
 				doSaveBook(false);
+				return true;
+			} else if (DefaultUserAction.EXPORT_PDF.equals(dua)) {
+				doExportPdf();
 				return true;
 			} 
 
@@ -144,7 +149,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		pushDesktopEvent(DesktopEvts.ON_LOADED_BOOK,loadedBook);
 		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
 		updatePageInfo();
-		UiUtil.showInfoMessage("Loaded a new blank book");
+//		UiUtil.showInfoMessage("Loaded a new blank book");
 		
 	}
 	
@@ -178,7 +183,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		BookRepository rep = getRepository();
 		try {
 			rep.save(selectedBookInfo, loadedBook);
-			UiUtil.showInfoMessage("Saved book "+selectedBookInfo.getName());
+//			UiUtil.showInfoMessage("Saved book "+selectedBookInfo.getName());
 			pushDesktopEvent(DesktopEvts.ON_SAVED_BOOK,loadedBook);
 			if(close){
 				doCloseBook();
@@ -215,7 +220,7 @@ public class AppCtrl extends CtrlBase<Component>{
 					BookRepository rep = getRepository();
 					try {
 						selectedBookInfo = rep.saveAs(name, loadedBook);
-						UiUtil.showInfoMessage("Saved book "+selectedBookInfo.getName());
+//						UiUtil.showInfoMessage("Saved book "+selectedBookInfo.getName());
 						pushDesktopEvent(DesktopEvts.ON_SAVED_BOOK,loadedBook);
 						if(close){
 							doCloseBook();
@@ -233,7 +238,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	
-	private void doLoadBook(BookInfo info,Book book){
+	private void doLoadBook(BookInfo info,Book book,String sheetName){
 		if(book==null){
 			BookRepository rep = getRepository();
 			try {
@@ -249,11 +254,17 @@ public class AppCtrl extends CtrlBase<Component>{
 		loadedBook = book;
 		
 		ss.setBook(loadedBook);
+		if(!Strings.isBlank(sheetName)){
+			if(loadedBook.getSheet(sheetName)!=null){
+				ss.setSelectedSheet(sheetName);
+			}
+		}
+		
 		pushDesktopEvent(DesktopEvts.ON_LOADED_BOOK,loadedBook);
 		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
 		updatePageInfo();
 		
-		UiUtil.showInfoMessage("Loaded book "+selectedBookInfo.getName());
+//		UiUtil.showInfoMessage("Loaded book "+selectedBookInfo.getName());
 	}
 	
 	private void doOpenManageBook(){
@@ -262,7 +273,7 @@ public class AppCtrl extends CtrlBase<Component>{
 				if(DlgEvts.ON_OPEN.equals(event.getName())){
 					BookInfo info = (BookInfo)event.getData("bookinfo");
 					Book book = (Book)event.getData("book");
-					doLoadBook(info,book);
+					doLoadBook(info,book,null);
 				}
 			}}));
 		Executions.createComponents("/zssapp/dlg/openManageBook.zul", getSelf(), args);
@@ -270,7 +281,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	
 	private void doExportBook(){
 		if(loadedBook==null){
-			UiUtil.showWarnMessage("Please load a book first before save it");
+			UiUtil.showWarnMessage("Please load a book first before export it");
 			return;
 		}
 		String name = BookUtil.suggestFileName(loadedBook);
@@ -278,6 +289,22 @@ public class AppCtrl extends CtrlBase<Component>{
 		try {
 			file = BookUtil.saveBookToWorkingFolder(loadedBook);
 			Filedownload.save(new AMedia(name, null, "application/vnd.ms-excel", file, true));
+		} catch (IOException e) {
+			log.error(e.getMessage(),e);
+			UiUtil.showWarnMessage("Can't export the book");
+		}
+	}
+	
+	private void doExportPdf(){
+		if(loadedBook==null){
+			UiUtil.showWarnMessage("Please load a book first before export it");
+			return;
+		}
+		String name = BookUtil.suggestPdfName(loadedBook);
+		File file;
+		try {
+			file = BookUtil.saveBookToWorkingFolder(loadedBook,"pdf");
+			Filedownload.save(new AMedia(name, null, "application/pdf", file, true));
 		} catch (IOException e) {
 			log.error(e.getMessage(),e);
 			UiUtil.showWarnMessage("Can't export the book");
@@ -301,6 +328,8 @@ public class AppCtrl extends CtrlBase<Component>{
 			doOpenManageBook();
 		}else if(DesktopEvts.ON_EXPORT_BOOK.equals(event)){
 			doExportBook();
+		}else if(DesktopEvts.ON_EXPORT_BOOK_PDF.equals(event)){
+			doExportPdf();
 		}else if(DesktopEvts.ON_TOGGLE_FORMULA_BAR.equals(event)){
 			doToggleFormulabar();
 		}else if(DesktopEvts.ON_FREEZE_PNAEL.equals(event)){

@@ -69,6 +69,18 @@ public class BookUtil {
 		return bn+ext;
 	}
 	
+	static public String suggestPdfName(Book book) {
+		String bn = book.getBookName();
+		String ext = ".pdf";
+		int i = bn.lastIndexOf('.');
+		if(i==0){
+			bn = "book";
+		}else if(i>0){
+			bn = bn.substring(0,i);
+		}
+		return bn+ext;
+	}
+	
 	static File workingFolder;
 	
 	static public File getWorkingFolder() {
@@ -89,9 +101,14 @@ public class BookUtil {
 		}
 		return workingFolder;
 	}
-	
 	static public File saveBookToWorkingFolder(Book book) throws IOException{
-		Exporter exporter = Exporters.getExporter();
+		return saveBookToWorkingFolder(book,null);
+	}
+	static public File saveBookToWorkingFolder(Book book,String exporterType) throws IOException{
+		Exporter exporter= exporterType==null?Exporters.getExporter():Exporters.getExporter(exporterType);
+		if(exporter==null){
+			throw new IOException("can't find exporter "+exporterType);
+		}
 		String bn = suggestFileName(book);
 		
 		String name = FileUtil.getName(bn);
@@ -114,4 +131,5 @@ public class BookUtil {
 		}
 		return f;
 	}
+	
 }

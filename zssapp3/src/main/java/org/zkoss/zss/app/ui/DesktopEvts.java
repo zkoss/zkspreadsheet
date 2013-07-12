@@ -31,6 +31,7 @@ public class DesktopEvts {
 	public static String ON_SAVE_CLOSE_BOOK= "onSaveCloseBook";
 	public static String ON_CLOSE_BOOK= "onCloseBook";
 	public static String ON_EXPORT_BOOK = "onExportBook";
+	public static String ON_EXPORT_BOOK_PDF = "onExportBookPdf";
 	
 	public static String ON_TOGGLE_FORMULA_BAR = "onToggleFormulaBar";
 	public static String ON_FREEZE_PNAEL = "onFreezePanel";

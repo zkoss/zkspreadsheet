@@ -11,6 +11,7 @@
 				<menuitem id="closeFile" label="${c:l('zssapp.mainMenu.file.close')}" />
 				<menuseparator />
 				<menuitem id="exportFile" label="${c:l('zssapp.mainMenu.file.export')}" />
+				<menuitem id="exportPdf" label="${c:l('zssapp.mainMenu.file.exportPdf')}" />
 			</menupopup>
 		</menu>
 		<menu id="viewMenu" label="${c:l('zssapp.mainMenu.view')}">

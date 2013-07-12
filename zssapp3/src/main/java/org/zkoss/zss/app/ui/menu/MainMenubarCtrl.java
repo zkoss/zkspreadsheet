@@ -125,6 +125,10 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	public void onExport(){
 		pushDesktopEvent(DesktopEvts.ON_EXPORT_BOOK);
 	}
+	@Listen("onClick=#exportPdf")
+	public void onExportPdf(){
+		pushDesktopEvent(DesktopEvts.ON_EXPORT_BOOK_PDF);
+	}
 	
 	@Listen("onToggleFormulaBar=#mainMenubar")
 	public void onToggleFormulaBar(){
