@@ -425,6 +425,7 @@
 	position: absolute;
 	width:100%;
 	height:100%;
+	opacity: 0; /* ZSS-286: it's for modern browser (including IE 9+) */ 
 	<c:if test="${c:browser('ie')}">
 		font-size: 0;
 		filter: alpha(opacity=0);
@@ -462,6 +463,7 @@
 	cursor: default;
 	width:100%;
 	height:100%;
+	opacity: 0; /* ZSS-286: it's for modern browser (including IE 9+) */ 
 	<c:if test="${c:browser('ie')}">
 		font-size: 0;
 		filter: alpha(opacity=0);

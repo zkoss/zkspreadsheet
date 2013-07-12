@@ -1,0 +1,4 @@
+<window id="mainwin" apply="zss.testapp.CoeditComposer" width="100%" vflex="1">
+	<spreadsheet id="ss" maxrows="200" maxcolumns="40" vflex="1" width="100%">
+	</spreadsheet>
+</window>
