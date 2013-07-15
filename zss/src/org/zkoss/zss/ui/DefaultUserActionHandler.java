@@ -1470,7 +1470,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return true;
 		}
 		
-		SheetOperationUtil.autoFill(src,dest, AutoFillType.DEFAULT);	
+		CellOperationUtil.autoFill(src,dest, AutoFillType.DEFAULT);	
 		
 		return true;
 	}

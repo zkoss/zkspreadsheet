@@ -274,19 +274,6 @@ public class SheetOperationUtil {
 
 	}
 
-	/**
-	 * According to source range, fills data to destination range automatically
-	 * @param src the source range
-	 * @param dest the destination range
-	 * @param type the fill type
-	 */
-	public static void autoFill(Range src, Range dest, AutoFillType type) {
-		if(dest.isProtected())
-			return;
-		src.autoFill(dest, type);
-	}
-	
-	
 	public static SheetAnchor toFilledAnchor(Sheet sheet,int row, int column, int widthPx, int heightPx){
 		int lRow = 0;
 		int lColumn = 0;

@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 
 import org.zkoss.lang.Objects;
 import org.zkoss.zss.api.Range.ApplyBorderType;
+import org.zkoss.zss.api.Range.AutoFillType;
 import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
@@ -585,7 +586,7 @@ public class CellOperationUtil {
 	
 	
 	/**
-	 * Toggle merge/unMerge of the range, if merging it will also set alignment to center
+	 * Toggle merge/unmerge of the range, if merging it will also set alignment to center
      * @param range the range to be applied
 	 */
 	public static void toggleMergeCenter(Range range){
@@ -769,4 +770,16 @@ public class CellOperationUtil {
 			return;
 		range.shift(rowOffset, colOffset);
 	}
+	
+	/**
+	 * Fills data from source range to destination range automatically upon auto fill type
+	 * @param src the source range
+	 * @param dest the destination range
+	 * @param type the fill type, currently only support AutoFillType.DEFAULT, AutoFillType.COPY, AutoFillType.FORMAT, AutoFillType.VALUES
+	 */
+	public static void autoFill(Range src, Range dest, AutoFillType type) {
+		if(dest.isProtected())
+			return;
+		src.autoFill(dest, type);
+	}	
 }
