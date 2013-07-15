@@ -27,10 +27,10 @@ package org.zkoss.zss.ui.event;
  */
 public class Events {
 	
-	/** The onCellFocused event (with {@link CellEvent}).
+	/** The onCellFocus event (with {@link CellEvent}).
 	 * Sent when cell get focus from client.
 	 */
-	public static final String ON_CELL_FOUCSED = "onCellFocused";
+	public static final String ON_CELL_FOUCS = "onCellFocus";
 	
 	/** The onStartEditing event (with {@link StartEditingEvent}).
 	 * Sent when cell start editing.
@@ -38,7 +38,7 @@ public class Events {
 	public static final String ON_START_EDITING = "onStartEditing";
 	
 	
-	/** The onCellFocused event (with {@link StopEditingEvent}).
+	/** The onStopEditing event (with {@link StopEditingEvent}).
 	 * Sent when cell stop editing
 	 */
 	public static final String ON_STOP_EDITING = "onStopEditing";

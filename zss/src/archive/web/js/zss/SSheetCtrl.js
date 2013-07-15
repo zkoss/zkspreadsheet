@@ -972,7 +972,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			this.moveCellFocus(row, column);
 			var pos = this.getLastFocus();
 			if (pos.row != row || pos.column != column) //update server to new focus position
-				this._sendOnCellFocused(pos.row, pos.column);
+				this._sendOnCellFocus(pos.row, pos.column);
 		}
 	},
 	_cmdRetriveFocus: function (result) {
@@ -1526,9 +1526,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}
 		this.doAfterMouseClick();
 	},
-	_sendOnCellFocused: function (row, col) {
+	_sendOnCellFocus: function (row, col) {
 		var wgt = this._wgt;
-		wgt.fire('onCellFocused', {sheetId: this.serverSheetId, row: row, col : col});
+		wgt.fire('onCellFocus', {sheetId: this.serverSheetId, row: row, col : col});
 	},
 	_sendOnCellSelection: function (type, left, top, right, bottom) {
 		this._wgt.fire('onCellSelection',

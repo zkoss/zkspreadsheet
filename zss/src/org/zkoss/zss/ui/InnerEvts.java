@@ -67,7 +67,7 @@ import org.zkoss.zss.ui.event.Events;
 				
 		//onCellFocus, also update cell focus 
 		//-> onCellFocus
-		CMDS.put(Events.ON_CELL_FOUCSED, new CellFocusedCommand());
+		CMDS.put(Events.ON_CELL_FOUCS, new CellFocusedCommand());
 		
 		//onEditBoxEditing 
 		//-> onEditBoxEditing

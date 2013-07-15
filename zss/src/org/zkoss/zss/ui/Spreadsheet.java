@@ -563,13 +563,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private void initBook0(XBook book) {
 		if (_book != null) {
 			if (_focusListener != null)
-				removeEventListener(Events.ON_CELL_FOUCSED, _focusListener);
+				removeEventListener(Events.ON_CELL_FOUCS, _focusListener);
 			deleteSelfEditorFocus();
 			_book.unsubscribe(_dataListener);
 			_book.removeVariableResolver(_variableResolver);
 			_book.removeFunctionMapper(_functionMapper);
 			if (_focusListener != null)
-				removeEventListener(Events.ON_CELL_FOUCSED, _focusListener);
+				removeEventListener(Events.ON_CELL_FOUCS, _focusListener);
 		}
 		
 		 //Shall clean selected sheet before set new book (ZSS-75: set book null, cause NPE)
@@ -593,7 +593,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			//20130523, dennis, if share-scope is not empty, then should always sync the  focus, not only application and session
 			//TODO use a configuration to config this.
 			if (!Strings.isEmpty(_book.getShareScope())) { //have to sync focus
-				this.addEventListener(Events.ON_CELL_FOUCSED, _focusListener = new EventListener() {
+				this.addEventListener(Events.ON_CELL_FOUCS, _focusListener = new EventListener() {
 					@Override
 					public void onEvent(Event event) throws Exception {
 						doMoveSelfFocus((CellEvent) event);
@@ -4733,7 +4733,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		//onCellSelection should be a important event.
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_SELECTION,	CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Spreadsheet.class, Events.ON_CELL_SELECTION_UPDATE, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Spreadsheet.class, Events.ON_CELL_FOUCSED, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Spreadsheet.class, Events.ON_CELL_FOUCS, CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		//can't ignore duplicate, for different header resize
 		addClientEvent(Spreadsheet.class, Events.ON_HEADER_UPDATE, CE_IMPORTANT | CE_NON_DEFERRABLE);
 		addClientEvent(Spreadsheet.class, Events.ON_SHEET_SELECT, CE_IMPORTANT | CE_DUPLICATE_IGNORE | CE_NON_DEFERRABLE);

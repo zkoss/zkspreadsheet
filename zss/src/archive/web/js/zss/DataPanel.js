@@ -462,7 +462,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	* @param {int} col
 	* @param {bollean} scroll scroll the cell in view after loading
 	* @param {boolean} selection move selection to focus cell, (the selection will change)
-	* @param {boolean} noevt don't send onCellFocused Event to server side
+	* @param {boolean} noevt don't send onCellFocus Event to server side
 	* @param {boolean} noslevt don't send onCellSelection Event to server side
 	*/
 	moveFocus: function(row, col, scroll, selection, noevt, noslevt) {
@@ -510,7 +510,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			return this._moveFocus(mt, ml, scroll, selection, noevt, noslevt);
 				
 		sheet.moveCellFocus(row, col);
-		if (!noevt) sheet._sendOnCellFocused(row, col); 
+		if (!noevt) sheet._sendOnCellFocus(row, col); 
 		if (selection) {
 			sheet.moveCellSelection(col, row, col, row);
 			var ls = sheet.getLastSelection(); 
@@ -545,7 +545,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			col = pos.column;
 
 		if (sheet.state == zss.SSheetCtrl.NOFOCUS && !noevt)
-			sheet._sendOnCellFocused(row, col); 
+			sheet._sendOnCellFocus(row, col); 
 		
 		if (sheet.state < zss.SSheetCtrl.FOCUSED)
 			sheet.state = zss.SSheetCtrl.FOCUSED;
