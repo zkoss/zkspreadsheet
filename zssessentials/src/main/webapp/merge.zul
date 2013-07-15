@@ -1,0 +1,39 @@
+<zk>
+	<window hflex="1" vflex="1"
+		apply="org.zkoss.zss.essential.MergeComposer">
+		<hlayout hflex="1" vflex="1">
+			<spreadsheet id="ss" hflex="1" vflex="1"
+				showFormulabar="true" showContextMenu="true" showToolbar="true"
+				showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"
+				src="/WEB-INF/books/blank.xlsx" />
+			<vlayout width="300px" vflex="1">
+				<groupbox hflex="1" >
+					<caption label="Merge and Unmerge" />
+					<grid vflex="1" hflex="1">
+						<columns>
+							<column width="90px"/>
+							<column/>
+						</columns>
+						<rows>
+							<row>
+								Selection: <label id="cellRef" />
+							</row>
+							<row spans="2" align="right">
+								<button id="mergeCenterButton" label="Toogle Merge and Center" width="120px" />
+							</row>
+							<row spans="2" align="right">
+								<button id="mergeAcrossButton" label="Merge Across" width="120px"/>
+							</row>
+							<row spans="2" align="right">
+								<button id="mergeButton" label="Merge" width="120px"/>
+							</row>
+							<row spans="2" align="right">
+								<button id="unmergeButton" label="Unmerge" width="120px"/>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</vlayout>
+		</hlayout>
+	</window>
+</zk>
