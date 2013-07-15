@@ -23,32 +23,31 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 		this._wgt = wgt;
 		
 		var sheet = this.sheet = wgt.sheetCtrl,
-			labels = wgt._labelsCtrl,
 			del = this.deleteSheet = new zss.Menuitem({
 				$action: 'deleteSheet',
-				label: labels.getDeleteSheet(), 
+				label: msgzss.action.deleteSheet, 
 				onClick: 
 				this.proxy(this.onClickDeleteSheet)
 			}, wgt),
 			rename = this.renameSheet = new zss.Menuitem({
 				$action: 'renameSheet',
-				label: labels.getRenameSheet(), 
+				label: msgzss.action.renameSheet, 
 				onClick: this.proxy(this.onClickRenameSheet)
 			}, wgt),
 			protect = this.protectSheet = new zss.Menuitem({
 				$action: 'protectSheet',
-				label: labels.getProtectSheet(), 
+				label: msgzss.action.protectSheet, 
 				checkmark: true, 
 				onClick: this.proxy(this.onClickProtectSheet)
 			}, wgt),
 			moveLeft = this.moveLeft = new zss.Menuitem({
 				$action: 'moveSheetLeft',
-				label: labels.getMoveSheetLeft(), 
+				label: msgzss.action.moveSheetLeft, 
 				onClick: this.proxy(this.onClickMoveSheetLeft)
 			}),
 			moveRight = this.moveRight = new zss.Menuitem({
 				$action: 'moveSheetRight',
-				label: labels.getMoveSheetRight(), 
+				label: msgzss.action.moveSheetRight, 
 				onClick: this.proxy(this.onClickMoveSheetRight)
 			}, wgt);
 		
@@ -404,7 +403,7 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 		var menu = new zss.SheetMenupopup(wgt),
 			addSheetBtn = this.addSheetButton = new zss.Toolbarbutton({
 				$action: 'addSheet',
-				tooltiptext: wgt._labelsCtrl.getAddSheet(),
+				tooltiptext: msgzss.action.addSheet,
 				image: zk.ajaxURI('/web/zss/img/plus.png', {au: true}),
 				onClick: this.proxy(this.onClickAddSheet)
 			}),

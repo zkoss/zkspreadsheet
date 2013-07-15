@@ -21,6 +21,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	<!-- Which language this addon will be added to -->
 	<language-name>xul/html</language-name>
 
+	<message-loader-class>org.zkoss.zss.ui.impl.ZssMessageLoader</message-loader-class>
+
 	<javascript package="zss" />
 
 	<version>

@@ -15,7 +15,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 }}IS_RIGHT
 */
 (function () {
-
+/*
 	var US = {
 		_sheet: 'Sheet',
 		_addSheet: 'Add sheet',
@@ -261,4 +261,5 @@ zss.Labels = zk.$extends(zk.Object, {
 		gridlines: null
 	}
 });
+*/
 })();

@@ -928,7 +928,7 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 		return new zss.Menuitem({
 			$action: action,
 			image: image ? zk.ajaxURI(image, {au: true}) : null,
-			label: wgt._labelsCtrl['get' + action.charAt(0).toUpperCase() + action.substr(1)](),
+			label: msgzss.action[action],
 			onClick: function () {
 				var sheet = wgt.sheetCtrl;
 				if (sheet) {
@@ -948,7 +948,7 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 		return new zss.Menuitem({
 			$action: action,
 			image: image ? zk.ajaxURI(image, {au: true}) : null,
-			label: wgt._labelsCtrl['get' + action.charAt(0).toUpperCase() + action.substr(1)](),
+			label: msgzss.action[action],
 			onClick: function () {
 				var sheet = wgt.sheetCtrl;
 				if (sheet) {
@@ -1064,7 +1064,7 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 			p = new zss.Menupopup(),
 			colorMenu = zk.feature.pe ? new zss.Menu({
 				$action: 'borderColor',
-				label: wgt._labelsCtrl.getBorderColor(),
+				label: msgzss.action.borderColor,
 				content: '#color=#000000'
 			}) : null;
 			
@@ -1125,7 +1125,7 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 		var wgt = this._wgt,
 			p = new zss.Menupopup(),
 			insertCellMenu = new zss.Menu({
-				label: wgt._labelsCtrl.getInsertCell(),
+				label: msgzss.action.insertCell,
 				sclass: 'insertCell'
 			}),
 			insertCellMP = new zss.Menupopup();
@@ -1143,7 +1143,7 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 		var wgt = this._wgt,
 			p = new zss.Menupopup(),
 			deleteCellMenu = new zss.Menu({
-				label: wgt._labelsCtrl.getDeleteCell(),
+				label: msgzss.action.deleteCell,
 				sclass: 'deleteCell'
 			}),
 			deleteCellMP = new zss.Menupopup();
@@ -1277,22 +1277,22 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 		var wgt = this._wgt,
 			p = new zss.Menupopup(wgt),
 			insertMenu = new zss.Menu({
-				label: wgt._labelsCtrl.getInsert(),
+				label: msgzss.action.insert,
 				sclass: 'insert'
 			}),
 			insertMP = new zss.Menupopup(),
 			deleteMenu = new zss.Menu({
-				label: wgt._labelsCtrl.getDel(),
+				label: msgzss.action.del,
 				sclass: 'del'
 			}),
 			deleteMP = new zss.Menupopup(),
 			filterMenu = new zss.Menu({
-				label: wgt._labelsCtrl.getFilter(),
+				label: msgzss.action.filter,
 				sclass: 'filter'
 			}),
 			filterMP = new zss.Menupopup(),
 			sortMenu = new zss.Menu({
-				label: wgt._labelsCtrl.getSort(),
+				label: msgzss.action.sort,
 				sclass: 'sort'
 			}),
 			sortMP = new zss.Menupopup();
@@ -1362,7 +1362,7 @@ zss.Buttons = zk.$extends(zk.Object, {
 });
 
 	function newActionToolbarbutton(wgt, action, image, labelOnly) {
-		var label = wgt._labelsCtrl['get' + action.charAt(0).toUpperCase() + action.substr(1)]();
+		var label = msgzss.action[action];
 		return new zss.Toolbarbutton({
 			$action: action,
 			tooltiptext: labelOnly ? null : label,
@@ -1589,7 +1589,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 			pp = new zss.MenupopupFactory(wgt).border(),
 			b = new zss.Toolbarbutton({
 				$action: 'border',
-				tooltiptext: wgt._labelsCtrl.getBorder(),
+				tooltiptext: msgzss.action.border,
 				image: zk.ajaxURI('/web/zss/img/border-bottom.png', AU),
 				onClick: function () {
 					var sht = wgt.sheetCtrl;
@@ -1608,7 +1608,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		return new zss.Colorbutton({
 			$action: 'fillColor',
 			color: '#FFFFFF',
-			tooltiptext: wgt._labelsCtrl.getFillColor(),
+			tooltiptext: msgzss.action.fillColor,
 			image: zk.ajaxURI('/web/zss/img/paint-can-color.png', AU),
 			onClick: function () {
 				var sht = wgt.sheetCtrl;
@@ -1624,7 +1624,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		return new zss.Colorbutton({
 			$action: 'fontColor',
 			color: '#000000',
-			tooltiptext: wgt._labelsCtrl.getFontColor(),
+			tooltiptext: msgzss.action.fontColor,
 			image: zk.ajaxURI('/web/zss/img/edit-color.png', AU),
 			onClick: function () {
 				var sht = wgt.sheetCtrl;
@@ -1828,7 +1828,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 //		var wgt = this._wgt,
 //			b = new zss.Toolbarbutton({
 //				$action: 'autoSum',
-//				tooltiptext: wgt._labelsCtrl.getAutoSum(),
+//				tooltiptext: msgzss.action.autoSum,
 //				image: zk.ajaxURI('/web/zss/img/sum.png', AU)
 //			}, wgt);
 //		b.setPopup(new zss.MenupopupFactory(wgt).autoSum());
@@ -1862,7 +1862,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		var wgt = this._wgt,
 			b = new zss.ProtectSheetCheckbutton({
 				checked: wgt.isProtect(),
-				tooltiptext: wgt._labelsCtrl.getProtectSheet(),
+				tooltiptext: msgzss.action.protectSheet,
 				image: zk.ajaxURI('/web/zss/img/lock.png', AU),
 				onClick: function () {
 					wgt.fireToolbarAction('protectSheet');
@@ -1874,7 +1874,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 		var wgt = this._wgt,
 			b = new zss.DisplayGridlinesCheckbutton({
 			checked: wgt.isDisplayGridlines(),
-			tooltiptext: wgt._labelsCtrl.getGridlines(),
+			tooltiptext: msgzss.action.gridlines,
 			image: zk.ajaxURI('/web/zss/img/grid.png', AU),
 			onClick: function () {
 				wgt.fireToolbarAction('gridlines');

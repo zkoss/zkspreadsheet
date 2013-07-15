@@ -229,8 +229,6 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	$init: function () {
 		this.$supers(Spreadsheet, '$init', arguments);
 		
-		this._labelsCtrl = new zss.Labels();//for I18N
-		
 		this.appendChild(this.cave = new zul.layout.Borderlayout({
 			vflex: true, sclass: 'zscave'
 		}));//contains zss.SSheetCtrl
@@ -242,19 +240,6 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		 * Indicate cache data at client, won't prune data while scrolling sheet
 		 */
 		clientCacheDisabled: null,
-		/**
-		 * Sets labels
-		 */
-		labels: function (v) {
-			var labelCtrl = this._labelsCtrl;
-			for (var key in v) {
-				//key.substr(4): remove prefix 'zss.';
-				var val = v[key],
-					postfix = key.substr(4),
-					fn = 'set' + postfix.charAt(0).toUpperCase() + postfix.substr(1);
-				labelCtrl[fn].call(labelCtrl, val);
-			}
-		},
 		/**
 		 * synchronized update data
 		 * @param array

@@ -103,19 +103,18 @@ zss.ToolbarTabbox = zk.$extends(zul.tab.Tabbox, {
 		this._wgt = wgt;
 		this.setVflex('min');
 		
-		var labels = wgt._labelsCtrl,
-			tbs = new zul.tab.Tabs(),
+		var tbs = new zul.tab.Tabs(),
 			homeTab = new zul.tab.Tab({
-				label: labels.getHomePanel(),
+				label: msgzss.action.homePanel,
 				sclass: 'zstab-homePanel'
 			}),
 			insertTab = new zul.tab.Tab({
-				label: labels.getInsertPanel(),
+				label: msgzss.action.insertPanel,
 				onClick: this.proxy(this.onClickInsertTab),
 				sclass: 'zstab-insertPanel'
 			}),
 			//TODO: formulaTab = new zul.tab.Tab({
-			//	label: labels.getFormulaPanel(),
+			//	label: msgzss.action.formulaPanel,
 			//	onClick: this.proxy(this.onClickFormulaTab)
 			//}),
 			panels = new zul.tab.Tabpanels(),
@@ -145,7 +144,7 @@ zss.ToolbarTabbox = zk.$extends(zul.tab.Tabbox, {
 			});
 		tb.appendChild(new zss.Toolbarbutton({
 			$action: 'closeBook',
-			tooltiptext: wgt._labelsCtrl.getCloseBook(),
+			tooltiptext: msgzss.action.closeBook,
 			image: zk.ajaxURI('/web/zss/img/gray-cross.png', {au: true}),
 			onClick: function () {
 				wgt.fireToolbarAction('closeBook');
