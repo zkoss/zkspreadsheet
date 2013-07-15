@@ -303,7 +303,7 @@ public interface Range {
 	/**
 	 * Un-merges the range
 	 */
-	public void unMerge();
+	public void unmerge();
 	
 	/**
 	 * Insert new cells to the area of this range.<br/> 

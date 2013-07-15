@@ -959,7 +959,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.unMerge(range);
+		CellOperationUtil.unmerge(range);
 		clearClipboard();
 		return true;
 	}

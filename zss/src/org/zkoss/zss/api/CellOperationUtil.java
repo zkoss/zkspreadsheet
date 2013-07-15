@@ -595,7 +595,7 @@ public class CellOperationUtil {
 		range.sync(new RangeRunner() {
 			public void run(Range range) {
 				if(range.hasMergedCell()){
-					range.unMerge();
+					range.unmerge();
 				}else{
 					range.merge(false);
 					//align the left/top one
@@ -618,13 +618,13 @@ public class CellOperationUtil {
 	}
 	
 	/**
-	 * Un-merge the range
-	 * @param range the range to be un-merge
+	 * Unmerge the range
+	 * @param range the range to be unmerge
 	 */
-	public static void unMerge(Range range){
+	public static void unmerge(Range range){
 		if(range.isProtected())
 			return;
-		range.unMerge();
+		range.unmerge();
 	}
 	
 	/**

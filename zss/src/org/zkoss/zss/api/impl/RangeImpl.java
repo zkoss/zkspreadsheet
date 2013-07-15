@@ -416,7 +416,7 @@ public class RangeImpl implements Range{
 		range.merge(across);
 	}
 	
-	public void unMerge(){
+	public void unmerge(){
 		//TODO the syncLevel
 		range.unMerge();
 	}
