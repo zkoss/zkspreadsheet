@@ -8,7 +8,7 @@
 				src="/WEB-INF/books/blank.xlsx" />
 			<vlayout width="300px" vflex="1">
 				<groupbox hflex="1" >
-					<caption label="Copy, Cut" />
+					<caption label="Auto Fill" />
 					<grid vflex="1" hflex="1">
 						<columns>
 							<column width="100px"/>

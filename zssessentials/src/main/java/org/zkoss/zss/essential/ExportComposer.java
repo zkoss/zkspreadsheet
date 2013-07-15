@@ -67,9 +67,9 @@ public class ExportComposer extends AbstractDemoComposer {
 			fos = new FileOutputStream(file);
 			
 			if(pdfRadiogroup.getSelectedIndex()==1){
-				exporter.export(ss.getSelectedSheet(), fos);
+//				exporter.export(ss.getSelectedSheet(), fos);
 			}else if(pdfRadiogroup.getSelectedIndex()==2){
-				exporter.export(ss.getSelectedSheet(),ss.getSelection(), fos);
+//				exporter.export(ss.getSelectedSheet(),ss.getSelection(), fos);
 			}else{
 				exporter.export(book, fos);
 			}
@@ -98,9 +98,9 @@ public class ExportComposer extends AbstractDemoComposer {
 			fos = new FileOutputStream(file);
 			
 			if(htmlRadiogroup.getSelectedIndex()==1){
-				exporter.export(ss.getSelectedSheet(), fos);
+//				exporter.export(ss.getSelectedSheet(), fos);
 			}else if(htmlRadiogroup.getSelectedIndex()==2){
-				exporter.export(ss.getSelectedSheet(),ss.getSelection(), fos);
+//				exporter.export(ss.getSelectedSheet(),ss.getSelection(), fos);
 			}else{
 				exporter.export(book, fos);
 			}

@@ -1,7 +1,6 @@
 package org.zkoss.zss.essential;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WebApps;
@@ -22,17 +21,14 @@ public class MyComposer extends SelectorComposer<Component> {
 		super.doAfterCompose(comp);  //wire variables and event listeners
 		//access components after calling super.doAfterCompose()
 		//spreadsheet.setSrc("/WEB-INF/books/startzss.xlsx");
-		loadBook();
-	}
-	
-	public void loadBook() throws IOException{
 		Importer importer = Importers.getImporter();
 		Book book = importer.imports(getFile(), "sample");
 		spreadsheet.setBook(book);
 	}
 	
-	private InputStream getFile(){
+	
+	private File getFile() {
 		//get a file 
-		return WebApps.getCurrent().getResourceAsStream("/WEB-INF/books/startzss.xlsx");
+		return new File(WebApps.getCurrent().getRealPath("/WEB-INF/books/startzss.xlsx"));
 	}
 }

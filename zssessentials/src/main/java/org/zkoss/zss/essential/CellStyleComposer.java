@@ -57,8 +57,8 @@ public class CellStyleComposer extends SelectorComposer<Component> {
 		vAlignBox.setModel(getVertocalAlignmentList());
 	}
 
-	@Listen("onCellFocused = #ss")
-	public void onCellFocused() {
+	@Listen("onCellFocus = #ss")
+	public void onCellFocus() {
 		Position pos = ss.getCellFocus();
 		refreshCellStyle(pos.getRow(), pos.getColumn());
 	}

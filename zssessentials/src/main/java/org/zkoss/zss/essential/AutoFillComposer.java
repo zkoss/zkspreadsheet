@@ -4,10 +4,10 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.AutoFillType;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.SheetOperationUtil;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Intbox;
@@ -45,7 +45,7 @@ public class AutoFillComposer extends SelectorComposer<Component> {
 		Range dest = Ranges.range(ss.getSelectedSheet(), selection.getRow(),
 				selection.getColumn(), selection.getLastRow(),
 				selection.getLastColumn() + cellCountBox.getValue());
-		SheetOperationUtil.autoFill(src, dest, 
+		CellOperationUtil.autoFill(src, dest, 
 				(AutoFillType) fillTypeBox.getSelectedItem().getValue());
 	}
 	

@@ -40,8 +40,8 @@ public class CellDataComposer extends SelectorComposer {
 //	Textbox cellFormatTextBox;
 	
 	
-	@Listen("onCellFocused = #ss")
-	public void onCellFocused(){
+	@Listen("onCellFocus = #ss")
+	public void onCellFocus(){
 		Position pos = ss.getCellFocus();
 		
 		refreshCellInfo(pos.getRow(),pos.getColumn());		

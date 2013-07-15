@@ -191,8 +191,8 @@ public class EventsComposer extends SelectorComposer<Component>{
 		}
 	}
 	
-	@Listen("onCellFocused = spreadsheet")
-	public void onCellFocused(CellEvent event){
+	@Listen("onCellFocus = spreadsheet")
+	public void onCellFocus(CellEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Focus on[").append(Ranges.getCellReference(event.getRow(),event.getColumn())).append("]");
 		
@@ -470,7 +470,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 		
 		addEventFilter(Events.ON_AUX_ACTION,true);
 		
-		addEventFilter(Events.ON_CELL_FOUCSED,false);
+		addEventFilter(Events.ON_CELL_FOUCS,false);
 		addEventFilter(Events.ON_CELL_SELECTION,false);
 		addEventFilter(Events.ON_CELL_SELECTION_UPDATE,true);
 		
