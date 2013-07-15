@@ -27,6 +27,7 @@ import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.Book.BookType;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.WidgetUpdateEvent;
@@ -54,6 +55,12 @@ public class WidgetUpdateCommand implements Command {
 		String sheetId= (String) data.get("sheetId");
 		if (!XUtils.getSheetUuid(sheet).equals(sheetId))
 			return;
+		
+		// ZSS-113: chart modification only support Excel 2007 format
+		String widgetType = (String)data.get("wgtType");
+		if("chart".equals(widgetType) && sheet.getBook().getType() != BookType.EXCEL_2007) {
+			return;
+		}
 		
 		String act = (String) data.get("action");
 		WidgetAction action = null;

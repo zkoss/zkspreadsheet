@@ -49,11 +49,11 @@ public class ChartImpl implements Chart{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ColorImpl other = (ColorImpl) obj;
+		ChartImpl other = (ChartImpl) obj;
 		if (chartRef == null) {
-			if (other.colorRef != null)
+			if (other.chartRef != null)
 				return false;
-		} else if (!chartRef.equals(other.colorRef))
+		} else if (!chartRef.equals(other.chartRef))
 			return false;
 		return true;
 	}
