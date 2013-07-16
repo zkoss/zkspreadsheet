@@ -1,6 +1,6 @@
 <?page title="My First ZK Spreadsheet application" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<window title="My First ZK Spreadsheet Application" 
+	<window id="ss" title="My First ZK Spreadsheet Application" 
 	apply="org.zkoss.zss.essential.MyComposer"
 		border="normal" height="100%" width="100%">
 		<spreadsheet  height="100%" width="100%"

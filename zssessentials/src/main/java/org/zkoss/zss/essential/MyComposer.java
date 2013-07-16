@@ -13,17 +13,17 @@ import org.zkoss.zss.ui.Spreadsheet;
 
 public class MyComposer extends SelectorComposer<Component> {
 
-	@Wire("spreadsheet")
-	Spreadsheet spreadsheet;
+	@Wire
+	Spreadsheet ss;
 	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);  //wire variables and event listeners
 		//access components after calling super.doAfterCompose()
-		//spreadsheet.setSrc("/WEB-INF/books/startzss.xlsx");
+		//ss.setSrc("/WEB-INF/books/startzss.xlsx");
 		Importer importer = Importers.getImporter();
 		Book book = importer.imports(getFile(), "sample");
-		spreadsheet.setBook(book);
+		ss.setBook(book);
 	}
 	
 	
