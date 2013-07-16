@@ -1,0 +1,11 @@
+<?xel-method prefix="zss" name="toTWD"
+    class="org.zkoss.zss.essential.advanced.CurrencyFormulas"  
+    signature="double usd2Twd(double,double)"?>
+<?taglib uri="/WEB-INF/tld/formula.tld" prefix="zss" ?>    
+<zk>
+	<window title="ZK Spreadsheet" border="normal" height="100%">
+		<spreadsheet src="/WEB-INF/books/formula.xlsx" 
+		maxVisibleRows="250" maxVisibleColumns="40" width="100%" height="100%" 
+		showContextMenu="true" showSheetbar="true" showToolbar="true" />
+	</window>
+</zk>
