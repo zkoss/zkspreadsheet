@@ -12,8 +12,7 @@ Copyright (C) 2005 Potix Corporation. All Rights Reserved.
 	This program is distributed under LGPL Version 2.1 in the hope that
 	it will be useful, but WITHOUT ANY WARRANTY.
 */
-msgzss{
-	
+msgzss = {
 };
 msgzss.action = {
 	sheet: 'Sheet',
@@ -133,4 +132,4 @@ msgzss.action = {
 	moreFunction: 'More Functions',
 	protectSheet: 'Protect Sheet',
 	gridlines: 'Gridlines'
-}
+};

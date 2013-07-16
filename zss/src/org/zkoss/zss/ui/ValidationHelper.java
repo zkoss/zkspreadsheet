@@ -2,6 +2,7 @@ package org.zkoss.zss.ui;
 
 import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.DataValidation.ErrorStyle;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
@@ -44,10 +45,10 @@ public class ValidationHelper {
 				String errTitle = dv.getErrorBoxTitle();
 				String errText = dv.getErrorBoxText();
 				if (errTitle == null) {
-					errTitle = "ZK Spreadsheet";
+					errTitle = Labels.getLabel("zss.validation.warn_title");
 				}
 				if (errText == null) {
-					errText = "The value you entered is not valid.\n\nA user has restricted values that can be entered into this cell.";
+					errText = Labels.getLabel("zss.validation.msg.invalid_value");
 				}
 				final int errStyle = dv.getErrorStyle();
 				switch (errStyle) {

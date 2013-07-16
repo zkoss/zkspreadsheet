@@ -300,7 +300,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	}
 	
 	protected boolean doCustom(String action){
-		showNotImplement(action);
+		showNotSupportMessage(action);
 		return false;
 	}
 
@@ -340,11 +340,11 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return true;
 		}
 		if(!isLeaglSheetName(newname)){
-			showWarnMessage("The name: " + newname + ", is not a legal sheet name");
+			showWarnMessage(Labels.getLabel("zss.actionhandler.msg.illegal_sheet_name", new Object[]{newname}));
 			return true;
 		}
 		if(book.getSheet(newname)!=null){
-			showWarnMessage("Can not rename a sheet to the same as another.");
+			showWarnMessage(Labels.getLabel("zss.actionhandler.msg.duplicated_sheet_name"));
 			return true;
 		}
 		
@@ -376,7 +376,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		
 		int num = book.getNumberOfSheets();
 		if(num<=1){
-			showWarnMessage("Can not delete last sheet.");
+			showWarnMessage(Labels.getLabel("zss.actionhandler.msg.cant_delete_last_sheet"));
 			return true;
 		}
 		
@@ -395,9 +395,10 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	}
 
 	protected boolean doAddSheet() {
-		String prefix = Labels.getLabel("zss.newSheetPrefix");//TODO define somewhere
+		String prefix = Labels.getLabel("zss.newSheetPrefix","Sheet");
 		if (Strings.isEmpty(prefix))
 			prefix = "Sheet";
+		
 		Sheet sheet = getSheet();
 
 		Range range = Ranges.range(sheet);
@@ -562,14 +563,16 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	
 	protected boolean doPaste(PasteType pasteType, PasteOperation pasteOperation, boolean skipBlank, boolean transpose) {
 		Clipboard cb = getClipboard();
-		if(cb==null)
+		if(cb==null){
+			//don't handle it , so give a chance to do client paste
 			return false;
+		}
 		
 		Book book = getBook();
 		Sheet destSheet = getSheet();
 		Sheet srcSheet = book.getSheet(cb.sourceSheetName);
 		if(srcSheet==null){
-			//TODO message;
+			showInfoMessage(Labels.getLabel("zss.actionhandler.msg.cant_find_sheet_to_paste"));
 			clearClipboard();
 			return true;
 		}
@@ -601,19 +604,23 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	}
 	
 	protected void showProtectMessage() {
-		Messagebox.show("The cell that you are trying to change is protected and locked.", "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION);
+		String message = Labels.getLabel("zss.actionhandler.msg.sheet_protected");
+		showWarnMessage(message);
 	}
 	
 	protected void showInfoMessage(String message) {
-		Messagebox.show(message, "ZK Spreadsheet", Messagebox.OK, Messagebox.INFORMATION);
+		String title = Labels.getLabel("zss.actionhandler.msg.info_titile");
+		Messagebox.show(message, title, Messagebox.OK, Messagebox.INFORMATION);
 	}
 	
 	protected void showWarnMessage(String message) {
-		Messagebox.show(message, "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION);
+		String title = Labels.getLabel("zss.actionhandler.msg.warn_titile");
+		Messagebox.show(message, title, Messagebox.OK, Messagebox.EXCLAMATION);
 	}
 	
-	protected void showNotImplement(String action) {
-		Messagebox.show("This action "+Labels.getLabel(action,action)+" doesn't be implemented yet", "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION);
+	protected void showNotSupportMessage(String action) {
+		String message = Labels.getLabel("zss.actionhandler.msg.not_support",new Object[]{action});
+		showWarnMessage(message);
 	}
 	
 	protected boolean doPaste() {
@@ -1000,7 +1007,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		
 		if(range.isWholeColumn()){
-			showWarnMessage("don't allow to inser row when select whole column");
+			showWarnMessage(Labels.getLabel("zss.actionhanlder.msg.cant_insert_all"));
 			return true;
 		}
 		
@@ -1020,7 +1027,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		
 		if(range.isWholeRow()){
-			showWarnMessage("don't allow to inser column when select whole row");
+			showWarnMessage(Labels.getLabel("zss.actionhanlder.msg.cant_insert_all"));
 			return true;
 		}
 		
@@ -1068,7 +1075,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		
 		if(range.isWholeColumn()){
-			showWarnMessage("don't allow to delete all rows");
+			showWarnMessage(Labels.getLabel("zss.actionhandler.msg.cant_delete_all"));
 			return true;
 		}
 		
@@ -1088,7 +1095,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		
 		if(range.isWholeRow()){
-			showWarnMessage("don't allow to delete all column");
+			showWarnMessage(Labels.getLabel("zss.actionhandler.msg.cant_delete_all"));
 			return true;
 		}
 		
@@ -1171,7 +1178,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		// ZSS-246: check range available before "enabling" auto filter
 		Range filterRange = range.findAutoFilterRange();
 		if(!range.isAutoFilterEnabled() &&  filterRange == null) { 
-			showInfoMessage("Cannot find the range. Please select a cell within the range and try again!");
+			showInfoMessage(Labels.getLabel("zss.actionhandler.msg.cant_find_filter_range"));
 			return true;
 		}
 			

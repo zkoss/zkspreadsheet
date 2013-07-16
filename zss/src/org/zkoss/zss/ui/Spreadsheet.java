@@ -59,6 +59,7 @@ import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.ClassLocator;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.xel.Function;
 import org.zkoss.xel.FunctionMapper;
 import org.zkoss.xel.VariableResolver;
@@ -4369,7 +4370,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	private void showFormulaError(FormulaParseException ex) {
-		Messagebox.show(ex.getMessage(), "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION, new EventListener() {
+		String title = Labels.getLabel("zss.msg.warn_title");
+		String msg = Labels.getLabel("zss.msg.formula_error",new Object[]{ex.getMessage()});
+		Messagebox.show(msg, title, Messagebox.OK, Messagebox.EXCLAMATION, new EventListener() {
 			public void onEvent(Event evt) {
 				Spreadsheet.this.focus();
 			}
@@ -4818,14 +4821,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		super.response(key, response);
 	}
 	
-	private final static Map<Integer, String> iconMap = new HashMap<Integer, String>(3);
-	static {
-		iconMap.put(ErrorStyle.INFO, Messagebox.INFORMATION);
-		iconMap.put(ErrorStyle.STOP, Messagebox.ERROR);
-		iconMap.put(ErrorStyle.WARNING, Messagebox.EXCLAMATION);
-	}
-	//return true if a valid input; false otherwise and show Error Alert if required
-	//TODO think another way to provide this feature.
 	/**
 	 * @deprecated since 3.0.0 , use {@link ValidationHelper}
 	 */
@@ -4834,121 +4829,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		final EventListener callback) {
 		return new ValidationHelper(this).validate(new SheetImpl(new SimpleRef<XBook>(sheet.getBook()),new SimpleRef<XSheet>(sheet)), row, col, txt, callback);
 	}
-////		final XSheet ssheet = this.getSelectedXSheet();
-////		if (ssheet == null || !ssheet.equals(sheet)) { //skip no sheet case
-////			return true;
-////		}
-////		if (_inCallback) { //skip validation check
-////			return true;
-////		}
-////		final XRange rng = XRanges.range(sheet, row, col);
-////		final DataValidation dv = rng.validate(txt);
-////		if (dv != null) {
-////			if (dv.getShowErrorBox()) {
-////				String errTitle = dv.getErrorBoxTitle();
-////				String errText = dv.getErrorBoxText();
-////				if (errTitle == null) {
-////					errTitle = "ZK Spreadsheet";
-////				}
-////				if (errText == null) {
-////					errText = "The value you entered is not valid.\n\nA user has restricted values that can be entered into this cell.";
-////				}
-////				final int errStyle = dv.getErrorStyle();
-////				switch(errStyle) {
-////					case ErrorStyle.STOP:
-////					{
-////						final int btn = Messagebox.show(
-////							errText, errTitle, Messagebox.RETRY|Messagebox.CANCEL, 
-////							Messagebox.ERROR, Messagebox.RETRY, new EventListener() {
-////							@Override
-////							public void onEvent(Event event) throws Exception {
-////								final String evtname = event.getName();
-////								if (Messagebox.ON_RETRY.equals(evtname)) {
-////									retry(callback);
-////								} else if (Messagebox.ON_CANCEL.equals(evtname)) {
-////									cancel(callback);
-////								}
-////							}
-////						});
-////					}
-////					break;
-////					case ErrorStyle.WARNING:
-////					{
-////						errText += "\n\nContinue?";
-////						final int btn = Messagebox.show(
-////							errText, errTitle, Messagebox.YES|Messagebox.NO|Messagebox.CANCEL, 
-////							Messagebox.EXCLAMATION, Messagebox.NO, new EventListener() {
-////							@Override
-////							public void onEvent(Event event) throws Exception {
-////								final String evtname = event.getName();
-////								if (Messagebox.ON_NO.equals(evtname)) {
-////									retry(callback);
-////								} else if (Messagebox.ON_CANCEL.equals(evtname)) {
-////									cancel(callback);
-////								} else if (Messagebox.ON_YES.equals(evtname)) {
-////									ok(callback);
-////								}
-////							}
-////						});
-////						if (getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && btn == Messagebox.YES) {
-////							return true;
-////						}
-////					}
-////					break;
-////					case ErrorStyle.INFO:
-////					{
-////						final int btn = Messagebox.show(
-////							errText, errTitle, Messagebox.OK|Messagebox.CANCEL, 
-////							Messagebox.INFORMATION, Messagebox.OK, new EventListener() {
-////							@Override
-////							public void onEvent(Event event) throws Exception {
-////								final String evtname = event.getName();
-////								if (Messagebox.ON_CANCEL.equals(evtname)) {
-////									cancel(callback);
-////								} else if (Messagebox.ON_OK.equals(evtname)) {
-////									ok(callback);
-////								}
-////							}
-////						});
-////						if (getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && btn == Messagebox.OK) {
-////							return true;
-////						}
-////					}
-////					break;
-////				}
-////			}
-////			return false;
-////		}
-////		return true;
-////	}
-//	
-////	private boolean _inCallback = false;
-////	private void errorBoxCallback(EventListener callback, String eventname) {
-////		if (!getDesktop().getWebApp().getConfiguration().isEventThreadEnabled() && callback != null) {
-////			try {
-////				_inCallback = true;
-////				callback.onEvent(new Event(eventname, this));
-////			} catch (Exception e) {
-////				throw UiException.Aide.wrap(e);
-////			} finally {
-////				_inCallback = false;
-////			}
-////		}
-////	}
-////	//when user press OK/YES button of the validation ErrorBox, have to call back to resend the setEditText() operation 
-////	private void ok(EventListener callback) {
-////		errorBoxCallback(callback, Messagebox.ON_OK);
-////	}
-////	//when user press RETRY/NO button of the validation ErrorBox, have to call back to handle UI operation 
-////	private void retry(EventListener callback) {
-////		//TODO: shall set focus back to cell at (row, col), select the text, enter edit mode
-////		errorBoxCallback(callback, Messagebox.ON_RETRY);
-////	}
-////	//when user press CANCEL button of the validation ErrorBox, have to call back to handle UI operation 
-////	private void cancel(EventListener callback) {
-////		//TODO: shall set focus back to cell at (row, col) and restore cell value
-////		errorBoxCallback(callback, Messagebox.ON_CANCEL);
-////	}
 
 	@Override
 	public void afterCompose() {		
