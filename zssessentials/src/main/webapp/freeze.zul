@@ -1,0 +1,36 @@
+<zk>
+	<window hflex="1" vflex="1"
+		apply="org.zkoss.zss.essential.FreezeComposer">
+		<hlayout hflex="1" vflex="1">
+			<spreadsheet id="ss" hflex="1" vflex="1"
+				showFormulabar="true" showContextMenu="true" showToolbar="true"
+				showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"
+				src="/WEB-INF/books/blank.xlsx" />
+			<vlayout width="200px" vflex="1">
+				<groupbox hflex="1" >
+					<caption label="Freeze" />
+					<grid vflex="1" hflex="1">
+						<columns>
+							<column width="100px"/>
+							<column/>
+						</columns>
+						<rows>
+							<row>
+								Freeze Row: <intbox id="fRowBox" value="0"/>
+							</row>
+							<row>
+								Freeze Column: <intbox id="fColumnBox" value="0"/>
+							</row>
+							<row spans="2" align="right">
+								<hlayout>
+								<button id="unfreezeButton" label="Unfreeze"/>
+								<button id="freezeButton" label="Freeze"/>
+								</hlayout>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</vlayout>
+		</hlayout>
+	</window>
+</zk>

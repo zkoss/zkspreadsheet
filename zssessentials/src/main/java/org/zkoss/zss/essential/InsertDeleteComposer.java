@@ -1,34 +1,37 @@
 package org.zkoss.zss.essential;
 
-import java.util.Arrays;
-import java.util.List;
-
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
-import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.Range.InsertShift;
+import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.ui.Rect;
+import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Label;
 
 
 /**
- * This class shows all the public ZK Spreadsheet you can listen to
- * @author dennis
+ * This class demonstrates insertion and deletion API usage
+ * @author dennis, Hawk
  *
  */
-public class InsertDeleteComposer extends AbstractDemoComposer {
+public class InsertDeleteComposer extends SelectorComposer<Component> {
 
 	private static final long serialVersionUID = 1L;
 	
 	@Wire
-	Label selectionLab;
+	private Label selectionLabel;
+	@Wire
+	private Spreadsheet ss;
 	
 	@Listen("onCellSelection = #ss")
 	public void onCellSelection(){
-		selectionLab.setValue(Ranges.getAreaReference(ss.getSelection()));
+		selectionLabel.setValue(Ranges.getAreaReference(ss.getSelection()));
 	}
 	
 	@Listen("onClick = #insertRow")
@@ -36,10 +39,10 @@ public class InsertDeleteComposer extends AbstractDemoComposer {
 		Rect selection = ss.getSelection();
 		Range range = Ranges.range(ss.getSelectedSheet(),selection.getRow(),selection.getColumn());
 
-		//to effect all columns
+		//to affect all columns
 		range = range.toRowRange(); 
-		//shift exist row down and copy style from above cell 
-		range.insert(InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		//shift existing row down and copy style from above cell 
+		CellOperationUtil.insert(range, InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
 		
 	}
 	
@@ -51,10 +54,10 @@ public class InsertDeleteComposer extends AbstractDemoComposer {
 				selection.getColumn(), selection.getRow() + 9,
 				selection.getColumn());
 
-		//to effect all columns
+		//to affect all columns
 		range = range.toRowRange(); 
-		//shift exist row down and copy style from above cell 
-		range.insert(InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		//shift existing row down and copy style from above cell 
+		CellOperationUtil.insert(range ,InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
 	}
 	
 	@Listen("onClick = #deleteRows")
@@ -62,10 +65,10 @@ public class InsertDeleteComposer extends AbstractDemoComposer {
 		Rect selection = ss.getSelection();
 		Range range = Ranges.range(ss.getSelectedSheet(), selection);
 
-		//to effect all columns
+		//to affect all columns
 		range = range.toRowRange(); 
-		//shift exist row up 
-		range.delete(DeleteShift.UP);
+		//shift existing row up 
+		CellOperationUtil.delete(range, DeleteShift.UP);
 	}	
 	
 	
@@ -74,25 +77,25 @@ public class InsertDeleteComposer extends AbstractDemoComposer {
 		Rect selection = ss.getSelection();
 		Range range = Ranges.range(ss.getSelectedSheet(),selection.getRow(),selection.getColumn());
 
-		//to effect all rows
+		//to affect all rows
 		range = range.toColumnRange(); 
-		//shift exist row right and copy style from left cell 
-		range.insert(InsertShift.RIGHT, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		//shift existing row right and copy style from left cell 
+		CellOperationUtil.insert(range, InsertShift.RIGHT, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
 		
 	}
 	
-	@Listen("onClick = #insertColumn3")
-	public void onInsertColumn3(){
+	@Listen("onClick = #insert3Columns")
+	public void onInsert3Columns(){
 		Rect selection = ss.getSelection();
-		//mark to insert to the range that contains 3 column
+		//select the range that contains 3 column
 		Range range = Ranges.range(ss.getSelectedSheet(), selection.getRow(),
 				selection.getColumn(), selection.getRow() ,
 				selection.getColumn()+2);
 
-		//to effect all rows
+		//select all columns
 		range = range.toColumnRange(); 
-		//shift exist row right and copy style from left cell 
-		range.insert(InsertShift.RIGHT, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		//shift existing row right and copy style from left cells 
+		CellOperationUtil.insert(range, InsertShift.RIGHT, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
 	}
 	
 	@Listen("onClick = #deleteColumns")
@@ -101,10 +104,10 @@ public class InsertDeleteComposer extends AbstractDemoComposer {
 		//mark to insert to the range that contains 10 row
 		Range range = Ranges.range(ss.getSelectedSheet(), selection);
 
-		//to effect all rows
+		//to affect all rows
 		range = range.toColumnRange(); 
-		//shift exist row left 
-		range.delete(DeleteShift.LEFT);
+		//shift existing row left 
+		CellOperationUtil.delete(range, DeleteShift.LEFT);
 	}
 	
 	@Listen("onClick = #insertCellDown")
@@ -113,8 +116,8 @@ public class InsertDeleteComposer extends AbstractDemoComposer {
 
 		Range range = Ranges.range(ss.getSelectedSheet(), selection);
 		
-		//shift exist row down and copy style from above cell 
-		range.insert(InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		//shift existing row down and copy style from above cell 
+		CellOperationUtil.insert(range, InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
 	}
 	
 	@Listen("onClick = #insertCellRight")
@@ -123,8 +126,8 @@ public class InsertDeleteComposer extends AbstractDemoComposer {
 
 		Range range = Ranges.range(ss.getSelectedSheet(), selection);
 		
-		//shift exist row right and copy style from left cell 
-		range.insert(InsertShift.RIGHT, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		//shift existing row right and copy style from left cell 
+		CellOperationUtil.insert(range, InsertShift.RIGHT, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
 	}
 	
 	@Listen("onClick = #deleteCellUp")
@@ -133,8 +136,8 @@ public class InsertDeleteComposer extends AbstractDemoComposer {
 
 		Range range = Ranges.range(ss.getSelectedSheet(), selection);
 		
-		//move exist (bottom) cells up 
-		range.delete(DeleteShift.UP);
+		//move existing (bottom) cells up 
+		CellOperationUtil.delete(range, DeleteShift.UP);
 	}
 	
 	@Listen("onClick = #deleteCellLeft")
@@ -143,8 +146,8 @@ public class InsertDeleteComposer extends AbstractDemoComposer {
 
 		Range range = Ranges.range(ss.getSelectedSheet(), selection);
 		
-		//move exist (right) cells left
-		range.delete(DeleteShift.LEFT);
+		//move existing (right) cells left
+		CellOperationUtil.delete(range, DeleteShift.LEFT);
 	}
 }
 

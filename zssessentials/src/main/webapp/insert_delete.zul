@@ -6,42 +6,34 @@
 				showFormulabar="true" showContextMenu="true" showToolbar="true"
 				showSheetbar="true" maxVisibleRows="300" maxVisibleColumns="50"
 				src="/WEB-INF/books/full.xlsx" />
-			<vlayout width="300px" vflex="1">
-				<groupbox hflex="1" height="200px">
-					<caption label="Available Books" />
-					<listbox id="availableBookList" vflex="1">
-
-					</listbox>
-				</groupbox>
-				<groupbox hflex="1" vflex="1">
-					<caption label="Range Operations" />
-					<vlayout>
-						<hlayout>
-							Selection:
-							<label id="selectionLab"/>
-						</hlayout>
-						<groupbox hflex="1" vflex="1">
-							<caption label="Rows operations" />
-							<button id="insertRow" label="Insert 1 row"/>
-							<button id="insertRow10" label="Insert 10 rows"/>
-							<button id="deleteRows" label="Delete rows"/>
-						</groupbox>
-						<groupbox hflex="1" vflex="1">
-							<caption label="Columns operation" />
-							<button id="insertColumn" label="Insert 1 column"/>
-							<button id="insertColumn3" label="Insert 3 columns"/>
-							<button id="deleteColumns" label="Delete columns"/>
-						</groupbox>
-						<groupbox hflex="1" vflex="1">
-							<caption label="Cells operations" />
-							<button id="insertCellDown" label="Insert cells down"/>
-							<button id="insertCellRight" label="Insert cells right"/>
-							<button id="deleteCellUp" label="Delete cells up"/>
-							<button id="deleteCellLeft" label="Delete cells left"/>
-						</groupbox>
-					</vlayout>
-				</groupbox>
-			</vlayout>
+			<groupbox  width="300px" vflex="1">
+				<caption label="Range Operations" />
+				<vlayout hflex="1" vflex="1">
+					<hlayout>
+						Selection:
+						<label id="selectionLabel"/>
+					</hlayout>
+					<groupbox hflex="1" vflex="1">
+						<caption label="Rows operations" />
+						<button id="insertRow" label="Insert 1 row" width="120px"/>
+						<button id="insertRow10" label="Insert 10 rows" width="120px"/>
+						<button id="deleteRows" label="Delete rows" width="120px"/>
+					</groupbox>
+					<groupbox hflex="1" vflex="1">
+						<caption label="Columns operation" />
+						<button id="insertColumn" label="Insert 1 column" width="120px"/>
+						<button id="insert3Columns" label="Insert 3 columns" width="120px"/>
+						<button id="deleteColumns" label="Delete columns" width="120px"/>
+					</groupbox>
+					<groupbox hflex="1" vflex="1">
+						<caption label="Cells operations" />
+						<button id="insertCellDown" label="Insert cells down" width="120px"/>
+						<button id="insertCellRight" label="Insert cells right" width="120px"/>
+						<button id="deleteCellUp" label="Delete cells up" width="120px"/>
+						<button id="deleteCellLeft" label="Delete cells left" width="120px"/>
+					</groupbox>
+				</vlayout>
+			</groupbox>
 		</hlayout>
 	</window>
 </zk>
