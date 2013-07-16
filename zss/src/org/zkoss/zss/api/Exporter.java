@@ -38,21 +38,25 @@ public interface Exporter {
 	 */
 	public void export(Book book, OutputStream fos) throws IOException;
 //	doesn't support to export sheet, selection until we find a good way in poi/html/pdf
-//	/**
-//	 * Export sheet
-//	 * @param sheet the sheet to export
-//	 * @param fos the output stream to store data
-//	 * @throws IOException
-//	 */
-//	public void export(Sheet sheet, OutputStream fos) throws IOException;
-//	/**
-//	 * Export selection of sheet
-//	 * @param sheet the sheet to export
-//	 * @param selection the selection to export
-//	 * @param fos the output stream to store data
-//	 * @throws IOException
-//	 */
-//	public void export(Sheet sheet,Rect selection,OutputStream fos) throws IOException;
+	/**
+	 * Export the sheet.
+	 * 
+	 * Note : Not all exporter supports this api.
+	 * @param sheet the sheet to export
+	 * @param fos the output stream to store data
+	 * @throws IOException
+	 */
+	public void export(Sheet sheet, OutputStream fos) throws IOException;
+	/**
+	 * Export selection of sheet
+	 * 
+	 * Note : Not all exporter supports this api.
+	 * @param sheet the sheet to export
+	 * @param selection the selection to export
+	 * @param fos the output stream to store data
+	 * @throws IOException
+	 */
+	public void export(Sheet sheet,Rect selection,OutputStream fos) throws IOException;
 
 //  even html exporter doesn't support to disable heading yet
 //	hide this before there has any implementation
