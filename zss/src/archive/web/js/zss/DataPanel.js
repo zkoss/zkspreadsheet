@@ -139,7 +139,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			type = type || 'inlineEditing',
 			cell = sheet.getCell(row, col);
 		if (this._wgt.isProtect() && cell && cell.isLocked()) {
-			sheet.showInfo("Can not edit on a protected cell.", true);
+			sheet.showInfo(msgzss.cannotEditProtected, true);
 			return false;
 		}
 		
@@ -210,7 +210,7 @@ zss.DataPanel = zk.$extends(zk.Object, {
 				--bottom;
 		}
 		if (this._isProtect(top, left, bottom, right)) {
-			sheet.showInfo("Can not edit on a protected cell.", true);
+			sheet.showInfo(msgzss.cannotEditProtected, true);
 			sheet._doCellSelection(left, top, right, bottom);
 			return;
 		}

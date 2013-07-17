@@ -13,7 +13,9 @@ Copyright (C) 2005 Potix Corporation. All Rights Reserved.
 	it will be useful, but WITHOUT ANY WARRANTY.
 */
 msgzss = {
+	cannotEditProtected: "Can not edit on a protected cell."
 };
+
 msgzss.action = {
 	sheet: 'Sheet',
 	addSheet: 'Add sheet',
