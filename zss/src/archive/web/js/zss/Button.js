@@ -1033,6 +1033,10 @@ zss.StylePanel = zk.$extends(zul.wgt.Popup, {
 	},
 	getSclass: function () {
 		return 'zsstylepanel';
+	},
+	// ZSS-383: turn off stack-up
+	shallStackup_: function () {
+		return false;
 	}
 });
 	
