@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.Media;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zk.ui.select.annotation.Listen;
@@ -30,6 +31,7 @@ import org.zkoss.zss.app.repository.BookInfo;
 import org.zkoss.zss.app.repository.BookRepository;
 import org.zkoss.zss.app.repository.BookRepositoryFactory;
 import org.zkoss.zss.app.ui.UiUtil;
+import org.zkoss.zssex.ui.dialog.impl.DialogCallbackEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.ListModelList;
@@ -43,6 +45,14 @@ import org.zkoss.zul.Window;
  */
 public class OpenManageBookCtrl extends DlgCtrlBase{
 	private static final long serialVersionUID = 1L;
+	
+	public final static String ARG_BOOKINFO = "bookinfo";
+	public final static String ARG_BOOK = "book";
+	
+	private final static String URI = "~./zssapp/dlg/openManageBook.zul";
+	
+	public static final String ON_OPEN = "onOpen";
+	
 	private static final Log log = Log.lookup(OpenManageBookCtrl.class); 
 	@Wire
 	Listbox bookList;
@@ -55,6 +65,13 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 	
 	ListModelList<Map<String,Object>> bookListModel = new ListModelList<Map<String,Object>>();
 	
+	public static void show(EventListener<DlgCallbackEvent> callback) {
+		Map arg = newArg(callback);
+		
+		Window comp = (Window)Executions.createComponents(URI, null, arg);
+		comp.doModal();
+		return;
+	}
 	
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
@@ -89,7 +106,7 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 			UiUtil.showInfoMessage("Please select a book first");
 			return;
 		}
-		postCallback(DlgEvts.ON_OPEN, newMap(newEntry("bookinfo", selection.get("bookinfo"))));
+		postCallback(ON_OPEN, newMap(newEntry(ARG_BOOKINFO, selection.get("bookinfo"))));
 		detach();
 	}
 	
@@ -147,6 +164,9 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 				int count = 0;
 				Importer importer = Importers.getImporter();
 				BookRepository rep = getRepository();
+				Media[] medias = event.getMedias();
+				if(medias==null)
+					return;
 				for(Media m:event.getMedias()){
 					if(m.isBinary()){
 						InputStream is = null;
@@ -166,7 +186,7 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 					}
 				}
 				if(count==1){//open book directly if only one book
-					postCallback(DlgEvts.ON_OPEN, newMap(newEntry("bookinfo", bookInfo),newEntry("book", book)));
+					postCallback(ON_OPEN, newMap(newEntry(ARG_BOOKINFO, bookInfo),newEntry(ARG_BOOK, book)));
 					detach();
 				}else if(count>0){
 					reloadBookModel();

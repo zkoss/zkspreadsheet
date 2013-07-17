@@ -16,7 +16,7 @@ package org.zkoss.zss.app.ui;
  * @author dennis
  *
  */
-public class DesktopEvts {
+public class AppEvts {
 	
 	public static String ON_LOADED_BOOK = "onLoadedBook";
 	public static String ON_CLOSED_BOOK = "onClosedBook";

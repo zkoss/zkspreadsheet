@@ -53,8 +53,11 @@ public class BookRepositoryFactory {
 				if(repository==null){
 					String path = Library.getProperty("zssapp.repository.root",WebApps.getCurrent().getRealPath("/WEB-INF/books/"));
 					File root = new File(path);
+					if(!root.exists()){
+						root.mkdirs();
+					}
 					if(!root.exists()||root.isFile()){
-						throw new RuntimeException("root is not a directory or doesn't not exist");
+						throw new RuntimeException("root folder "+path+" is not a directory or doesn't not exist");
 					}
 					repository = new SimpleRepository(root);
 				}

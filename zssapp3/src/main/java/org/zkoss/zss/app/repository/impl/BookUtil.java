@@ -35,19 +35,25 @@ public class BookUtil {
 	/**
 	 * Gets suggested file name of a book
 	 */
-	static public String suggestFileName(String name,BookRepository rep){
+	static public String suggestFileName(String fileName,BookRepository rep){
 		int i = 0;
-		name = FileUtil.getName(name);
-		String ext = FileUtil.getNameExtension(name);
+		String name = FileUtil.getName(fileName);
+		String dotext = FileUtil.getNameExtension(fileName);
+		
+		if(!Strings.isBlank(dotext)){
+			dotext = "."+dotext;
+		}else{
+			dotext="";
+		}
 		
 		Set<String> names = new HashSet<String>();
 
 		for(BookInfo info:rep.list()){
 			names.add(info.getName());
 		}
-		String sname = name+"."+ext;
+		String sname = name+dotext;
 		while(names.contains(sname)){
-			sname = name+"("+ ++i +")."+ext;
+			sname = name+"("+ ++i +")"+dotext;
 		}
 		return sname;
 	}

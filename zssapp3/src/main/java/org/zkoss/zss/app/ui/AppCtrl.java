@@ -20,6 +20,7 @@ import org.zkoss.lang.Strings;
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.event.EventListener;
@@ -33,7 +34,8 @@ import org.zkoss.zss.app.repository.BookRepository;
 import org.zkoss.zss.app.repository.BookRepositoryFactory;
 import org.zkoss.zss.app.repository.impl.BookUtil;
 import org.zkoss.zss.app.ui.dlg.DlgCallbackEvent;
-import org.zkoss.zss.app.ui.dlg.DlgEvts;
+import org.zkoss.zss.app.ui.dlg.OpenManageBookCtrl;
+import org.zkoss.zss.app.ui.dlg.SaveBookAsCtrl;
 import org.zkoss.zss.ui.DefaultUserAction;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -60,15 +62,26 @@ public class AppCtrl extends CtrlBase<Component>{
 	public AppCtrl() {
 		super(true);
 	}
+	public void doBeforeComposeChildren(Component comp) throws Exception {
+		super.doBeforeComposeChildren(comp);
+		comp.setAttribute(APPCOMP, comp);
+	}
 	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
+		
 		ss.setUserActionHandler(new AppUserActionHandler());
 		
-		//TODO load default open book from parameter
-		String bookName = Executions.getCurrent().getParameter("book");
+		//load default open book from parameter
+		String bookName = null ;
+		Execution exec = Executions.getCurrent();
+		bookName = (String)exec.getArg().get("book");
+		if(bookName==null){
+			bookName = exec.getParameter("book");
+		}
+		
 		BookInfo bookinfo = null;
 		if(!Strings.isBlank(bookName)){
 			bookName = bookName.trim();
@@ -139,15 +152,15 @@ public class AppCtrl extends CtrlBase<Component>{
 		Importer importer = Importers.getImporter();
 		
 		try {
-			loadedBook = importer.imports(WebApps.getCurrent().getResource("/WEB-INF/blank.xlsx"), "blank.xlsx");
+			loadedBook = importer.imports(getClass().getResourceAsStream("/web/zssapp/blank.xlsx"), "blank.xlsx");
 		} catch (IOException e) {
 			log.error(e.getMessage(),e);
 			UiUtil.showWarnMessage("Can't load a new book");
 			return;
 		}
 		ss.setBook(loadedBook);
-		pushDesktopEvent(DesktopEvts.ON_LOADED_BOOK,loadedBook);
-		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
+		pushAppEvent(AppEvts.ON_LOADED_BOOK,loadedBook);
+		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 		updatePageInfo();
 //		UiUtil.showInfoMessage("Loaded a new blank book");
 		
@@ -163,8 +176,8 @@ public class AppCtrl extends CtrlBase<Component>{
 	private void doCloseBook(){
 		ss.setBook(loadedBook = null);
 		selectedBookInfo = null;
-		pushDesktopEvent(DesktopEvts.ON_CLOSED_BOOK,null);
-		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
+		pushAppEvent(AppEvts.ON_CLOSED_BOOK,null);
+		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 		updatePageInfo();
 	}
 	
@@ -184,7 +197,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		try {
 			rep.save(selectedBookInfo, loadedBook);
 //			UiUtil.showInfoMessage("Saved book "+selectedBookInfo.getName());
-			pushDesktopEvent(DesktopEvts.ON_SAVED_BOOK,loadedBook);
+			pushAppEvent(AppEvts.ON_SAVED_BOOK,loadedBook);
 			if(close){
 				doCloseBook();
 			}else{
@@ -213,15 +226,15 @@ public class AppCtrl extends CtrlBase<Component>{
 		}
 		name = BookUtil.suggestFileName(name,getRepository());
 		
-		Map<String,Object> args = newMap(newEntry("name",name),newEntry("callback",new EventListener<DlgCallbackEvent>(){
+		SaveBookAsCtrl.show(new EventListener<DlgCallbackEvent>(){
 			public void onEvent(DlgCallbackEvent event) throws Exception {
-				if(DlgEvts.ON_SAVE.equals(event.getName())){
-					String name = (String)event.getData("name");
+				if(SaveBookAsCtrl.ON_SAVE.equals(event.getName())){
+					String name = (String)event.getData(SaveBookAsCtrl.ARG_NAME);
 					BookRepository rep = getRepository();
 					try {
 						selectedBookInfo = rep.saveAs(name, loadedBook);
 //						UiUtil.showInfoMessage("Saved book "+selectedBookInfo.getName());
-						pushDesktopEvent(DesktopEvts.ON_SAVED_BOOK,loadedBook);
+						pushAppEvent(AppEvts.ON_SAVED_BOOK,loadedBook);
 						if(close){
 							doCloseBook();
 						}else{
@@ -233,8 +246,7 @@ public class AppCtrl extends CtrlBase<Component>{
 						return;
 					}
 				}
-			}}));
-		Executions.createComponents("/zssapp/dlg/saveBookAs.zul", getSelf(), args);
+			}},name);
 	}
 	
 	
@@ -260,23 +272,22 @@ public class AppCtrl extends CtrlBase<Component>{
 			}
 		}
 		
-		pushDesktopEvent(DesktopEvts.ON_LOADED_BOOK,loadedBook);
-		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
+		pushAppEvent(AppEvts.ON_LOADED_BOOK,loadedBook);
+		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 		updatePageInfo();
 		
 //		UiUtil.showInfoMessage("Loaded book "+selectedBookInfo.getName());
 	}
 	
 	private void doOpenManageBook(){
-		Map<String,Object> args = newMap(newEntry("callback",new EventListener<DlgCallbackEvent>(){
+		OpenManageBookCtrl.show(new EventListener<DlgCallbackEvent>(){
 			public void onEvent(DlgCallbackEvent event) throws Exception {
-				if(DlgEvts.ON_OPEN.equals(event.getName())){
-					BookInfo info = (BookInfo)event.getData("bookinfo");
-					Book book = (Book)event.getData("book");
+				if(OpenManageBookCtrl.ON_OPEN.equals(event.getName())){
+					BookInfo info = (BookInfo)event.getData(OpenManageBookCtrl.ARG_BOOKINFO);
+					Book book = (Book)event.getData(OpenManageBookCtrl.ARG_BOOK);
 					doLoadBook(info,book,null);
 				}
-			}}));
-		Executions.createComponents("/zssapp/dlg/openManageBook.zul", getSelf(), args);
+			}});
 	}
 	
 	private void doExportBook(){
@@ -312,34 +323,34 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	@Override
-	protected void onDesktopEvent(String event,Object data){
+	protected void onAppEvent(String event,Object data){
 		//menu
-		if(DesktopEvts.ON_NEW_BOOK.equals(event)){
+		if(AppEvts.ON_NEW_BOOK.equals(event)){
 			doOpenNewBook();
-		}else if(DesktopEvts.ON_SAVE_BOOK.equals(event)){
+		}else if(AppEvts.ON_SAVE_BOOK.equals(event)){
 			doSaveBook(false);
-		}else if(DesktopEvts.ON_SAVE_BOOK_AS.equals(event)){
+		}else if(AppEvts.ON_SAVE_BOOK_AS.equals(event)){
 			doSaveBookAs(false);
-		}else if(DesktopEvts.ON_SAVE_CLOSE_BOOK.equals(event)){
+		}else if(AppEvts.ON_SAVE_CLOSE_BOOK.equals(event)){
 			doSaveBook(true);
-		}else if(DesktopEvts.ON_CLOSE_BOOK.equals(event)){
+		}else if(AppEvts.ON_CLOSE_BOOK.equals(event)){
 			doCloseBook();
-		}else if(DesktopEvts.ON_OPEN_MANAGE_BOOK.equals(event)){
+		}else if(AppEvts.ON_OPEN_MANAGE_BOOK.equals(event)){
 			doOpenManageBook();
-		}else if(DesktopEvts.ON_EXPORT_BOOK.equals(event)){
+		}else if(AppEvts.ON_EXPORT_BOOK.equals(event)){
 			doExportBook();
-		}else if(DesktopEvts.ON_EXPORT_BOOK_PDF.equals(event)){
+		}else if(AppEvts.ON_EXPORT_BOOK_PDF.equals(event)){
 			doExportPdf();
-		}else if(DesktopEvts.ON_TOGGLE_FORMULA_BAR.equals(event)){
+		}else if(AppEvts.ON_TOGGLE_FORMULA_BAR.equals(event)){
 			doToggleFormulabar();
-		}else if(DesktopEvts.ON_FREEZE_PNAEL.equals(event)){
+		}else if(AppEvts.ON_FREEZE_PNAEL.equals(event)){
 			Rect sel = ss.getSelection();
 			doFreeze(sel.getRow()-1,sel.getColumn()-1);
-		}else if(DesktopEvts.ON_UNFREEZE_PANEL.equals(event)){
+		}else if(AppEvts.ON_UNFREEZE_PANEL.equals(event)){
 			doFreeze(-1,-1);
-		}else if(DesktopEvts.ON_FREEZE_ROW.equals(event)){
+		}else if(AppEvts.ON_FREEZE_ROW.equals(event)){
 			doFreeze((Integer)data,-1);
-		}else if(DesktopEvts.ON_FREEZE_COLUMN.equals(event)){
+		}else if(AppEvts.ON_FREEZE_COLUMN.equals(event)){
 			doFreeze(-1,(Integer)data);
 		}
 	}
@@ -356,12 +367,12 @@ public class AppCtrl extends CtrlBase<Component>{
 		if(column>=0){
 			ss.setColumnfreeze(column);
 		}
-		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
+		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 	}
 
 	private void doToggleFormulabar() {
 		ss.setShowFormulabar(!ss.isShowFormulabar());
-		pushDesktopEvent(DesktopEvts.ON_CHANGED_SPREADSHEET,ss);
+		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 	}
 	
 	

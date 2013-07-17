@@ -11,6 +11,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.ui.dlg;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.zkoss.zk.ui.Executions;
@@ -27,17 +28,24 @@ import org.zkoss.zul.Window;
  */
 public class DlgCtrlBase extends CtrlBase<Window>{
 
+	private final static String ARG_CALLBACK = "callback";
+	protected EventListener callback;
+	
 	public DlgCtrlBase() {
 		super(false);
 	}
-
-	protected EventListener callback;
+	
+	protected static Map newArg(EventListener<DlgCallbackEvent> callback) {
+		Map arg = new HashMap();
+		arg.put(ARG_CALLBACK, callback);
+		return arg;
+	}
 	
 	@Override
 	public void doAfterCompose(Window comp) throws Exception {
 		super.doAfterCompose(comp);
 		
-		callback = (EventListener)Executions.getCurrent().getArg().get("callback");
+		callback = (EventListener)Executions.getCurrent().getArg().get(ARG_CALLBACK);
 		if(callback==null){
 			throw new UiException("callback for dialog not found");
 		}
@@ -61,6 +69,5 @@ public class DlgCtrlBase extends CtrlBase<Window>{
 	
 	protected void detach(){
 		getSelf().detach();
-		destroy();
 	}
 }

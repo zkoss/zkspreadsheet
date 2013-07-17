@@ -17,8 +17,7 @@ import java.util.Map;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 
 /**
@@ -30,22 +29,22 @@ import org.zkoss.zk.ui.select.SelectorComposer;
 public class CtrlBase<T extends Component> extends SelectorComposer<T>{
 
 	private static final long serialVersionUID = 1L;
-	private static final String QUEUE_NAME = "$ZSSAPP$";
+	protected static final String APPCOMP = "$ZSSAPP$";
 	
-	private boolean listenDesktopEvent;
+	private boolean listenZssAppEvent;
 	
-	public CtrlBase(boolean listenDesktopEvent){
-		this.listenDesktopEvent = listenDesktopEvent;
+	public CtrlBase(boolean listenZssAppEvent){
+		this.listenZssAppEvent = listenZssAppEvent;
 	}
 	
-	EventListener<DesktopEvent> desktopEventDispatcher;
+	EventListener<Event> desktopEventDispatcher;
 	
-	static class DesktopEvent extends Event{
+	static class AppEvent extends Event{
 		private static final long serialVersionUID = 1L;
 		Object from;
 		boolean ignoreSelf;
 		
-		public DesktopEvent(String name, Object from, boolean ignoreSelf, Object data) {
+		public AppEvent(String name, Object from, boolean ignoreSelf, Object data) {
 			super(name, null, data);
 			this.from = from;
 			this.ignoreSelf = ignoreSelf;
@@ -55,17 +54,18 @@ public class CtrlBase<T extends Component> extends SelectorComposer<T>{
 	public void doAfterCompose(T comp) throws Exception {
 		super.doAfterCompose(comp);	
 		
-		if(listenDesktopEvent){
-			desktopEventDispatcher = new EventListener<DesktopEvent>(){
-					public void onEvent(DesktopEvent event) throws Exception {
-						if(event.ignoreSelf && event.from==CtrlBase.this){
+		if(listenZssAppEvent){
+			desktopEventDispatcher = new EventListener<Event>(){
+					public void onEvent(Event event) throws Exception {
+						AppEvent appevt = (AppEvent)event.getData();
+						if(appevt.ignoreSelf && appevt.from==CtrlBase.this){
 							return;
 						}
-						onDesktopEvent(event.getName(),event.getData());
+						onAppEvent(appevt.getName(),appevt.getData());
 					}
 				};
-			EventQueue eq = EventQueues.lookup(QUEUE_NAME, "desktop", true);
-			eq.subscribe(desktopEventDispatcher);
+			
+			getAppComp().addEventListener("onAppEvent", desktopEventDispatcher);
 		}
 	}
 	
@@ -92,30 +92,29 @@ public class CtrlBase<T extends Component> extends SelectorComposer<T>{
 		}
 		return argm;
 	}
-	protected void pushDesktopEvent(String event){
-		pushDesktopEvent(event,true,null);
+	protected void pushAppEvent(String event){
+		pushAppEvent(event,true,null);
 	}
-	protected void pushDesktopEvent(String event,Object data){
-		pushDesktopEvent(event,true,data);
+	protected void pushAppEvent(String event,Object data){
+		pushAppEvent(event,true,data);
 	}
-	protected void pushDesktopEvent(String event,boolean ignoreSelf,Object data){
-		EventQueue eq = EventQueues.lookup(QUEUE_NAME, "desktop", true);
-		eq.publish(new DesktopEvent(event,this,ignoreSelf, data));
+	protected void pushAppEvent(String event,boolean ignoreSelf,Object data){
+		
+		Component comp = getAppComp();
+		Event evt = new Event("onAppEvent",comp,new AppEvent(event, this, ignoreSelf, data));
+		Events.postEvent(evt);
+	}
+	
+	protected Component getAppComp(){
+		Component comp = (Component)getSelf().getAttribute(APPCOMP, true);
+		if(comp==null){
+			throw new NullPointerException("zssapp component not found");
+		}
+		return comp;
 	}
 	
 	//subclass should override this if it cares desktop event
-	protected void onDesktopEvent(String event,Object data){
+	protected void onAppEvent(String event,Object data){
 		//default do nothing.
-	}
-	
-	
-	protected void destroy(){
-		if(desktopEventDispatcher!=null){
-			EventQueue eq = EventQueues.lookup(QUEUE_NAME, "desktop", false);
-			if(eq!=null){
-				eq.unsubscribe(desktopEventDispatcher);
-			}
-			desktopEventDispatcher = null;
-		}
 	}
 }

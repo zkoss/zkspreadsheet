@@ -112,6 +112,7 @@
 	<!-- DSP (optional) 
 	Uncomment it if you want to use DSP
 	However, it is turned on since zksandbox uses DSP to generate CSS.
+	-->
 	<servlet>
 		<servlet-name>dspLoader</servlet-name>
 		<servlet-class>org.zkoss.web.servlet.dsp.InterpreterServlet</servlet-class>
@@ -124,7 +125,6 @@
 		<servlet-name>dspLoader</servlet-name>
 		<url-pattern>*.dsp</url-pattern>
 	</servlet-mapping>
-	-->
 	
 	<!-- /////////// -->
 	<!-- [Optional] Session timeout -->

@@ -17,7 +17,7 @@ import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.app.ui.CtrlBase;
-import org.zkoss.zss.app.ui.DesktopEvts;
+import org.zkoss.zss.app.ui.AppEvts;
 import org.zkoss.zss.app.ui.UiUtil;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Menu;
@@ -62,8 +62,8 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	Menu freezeCols;
 	
 	
-	protected void onDesktopEvent(String event,Object data){
-		if(DesktopEvts.ON_CHANGED_SPREADSHEET.equals(event)){
+	protected void onAppEvent(String event,Object data){
+		if(AppEvts.ON_CHANGED_SPREADSHEET.equals(event)){
 			doUpdateMenu((Spreadsheet)data);
 		}
 	}
@@ -99,61 +99,61 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 
 	@Listen("onClick=#newFile")
 	public void onNew(){
-		pushDesktopEvent(DesktopEvts.ON_NEW_BOOK);
+		pushAppEvent(AppEvts.ON_NEW_BOOK);
 	}
 	@Listen("onClick=#openManageFile")
 	public void onOpen(){
-		pushDesktopEvent(DesktopEvts.ON_OPEN_MANAGE_BOOK);
+		pushAppEvent(AppEvts.ON_OPEN_MANAGE_BOOK);
 	}
 	@Listen("onClick=#saveFile")
 	public void onSave(){
-		pushDesktopEvent(DesktopEvts.ON_SAVE_BOOK);
+		pushAppEvent(AppEvts.ON_SAVE_BOOK);
 	}
 	@Listen("onClick=#saveFileAs")
 	public void onSaveAs(){
-		pushDesktopEvent(DesktopEvts.ON_SAVE_BOOK_AS);
+		pushAppEvent(AppEvts.ON_SAVE_BOOK_AS);
 	}
 	@Listen("onClick=#saveFileAndClose")
 	public void onSaveClose(){
-		pushDesktopEvent(DesktopEvts.ON_SAVE_CLOSE_BOOK);
+		pushAppEvent(AppEvts.ON_SAVE_CLOSE_BOOK);
 	}
 	@Listen("onClick=#closeFile")
 	public void onClose(){
-		pushDesktopEvent(DesktopEvts.ON_CLOSE_BOOK);
+		pushAppEvent(AppEvts.ON_CLOSE_BOOK);
 	}
 	@Listen("onClick=#exportFile")
 	public void onExport(){
-		pushDesktopEvent(DesktopEvts.ON_EXPORT_BOOK);
+		pushAppEvent(AppEvts.ON_EXPORT_BOOK);
 	}
 	@Listen("onClick=#exportPdf")
 	public void onExportPdf(){
-		pushDesktopEvent(DesktopEvts.ON_EXPORT_BOOK_PDF);
+		pushAppEvent(AppEvts.ON_EXPORT_BOOK_PDF);
 	}
 	
 	@Listen("onToggleFormulaBar=#mainMenubar")
 	public void onToggleFormulaBar(){
-		pushDesktopEvent(DesktopEvts.ON_TOGGLE_FORMULA_BAR);
+		pushAppEvent(AppEvts.ON_TOGGLE_FORMULA_BAR);
 	}
 	
 	@Listen("onFreezePanel=#mainMenubar")
 	public void onFreezePanel(){
-		pushDesktopEvent(DesktopEvts.ON_FREEZE_PNAEL);
+		pushAppEvent(AppEvts.ON_FREEZE_PNAEL);
 	}
 	
 	@Listen("onUnfreezePanel=#mainMenubar")
 	public void onUnfreezePanel(){
-		pushDesktopEvent(DesktopEvts.ON_UNFREEZE_PANEL);
+		pushAppEvent(AppEvts.ON_UNFREEZE_PANEL);
 	}
 	
 	@Listen("onViewFreezeRows=#mainMenubar")
 	public void onViewFreezeRows(ForwardEvent event) {
 		int index = Integer.parseInt((String) event.getData());
-		pushDesktopEvent(DesktopEvts.ON_FREEZE_ROW,index);
+		pushAppEvent(AppEvts.ON_FREEZE_ROW,index);
 	}
 	
 	@Listen("onViewFreezeCols=#mainMenubar")
 	public void onViewFreezeCols(ForwardEvent event) {
 		int index = Integer.parseInt((String) event.getData());
-		pushDesktopEvent(DesktopEvts.ON_FREEZE_COLUMN,index);
+		pushAppEvent(AppEvts.ON_FREEZE_COLUMN,index);
 	}
 }

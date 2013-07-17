@@ -1,3 +1,3 @@
 <zk>
-	<include src="zssapp/zssapp.zul"/>
+	<include src="~./zssapp/index.zul"/>
 </zk>
