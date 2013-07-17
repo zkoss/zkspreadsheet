@@ -840,5 +840,13 @@ public class RangeImpl implements Range{
 	public String toString(){
 		return Ranges.getAreaReference(getSheet(), getRow(),getColumn(),getLastRow(),getLastColumn());
 	}
+	
+	/**
+	 * Notify this range has been changed.
+	 */
+	public void notifyChange(){
+		range.notifyChange();
+	}
+		
 
 }

@@ -646,6 +646,12 @@ public interface Range {
 	
 	
 	/**
+	 * Notify this range has been changed.
+	 */
+	public void notifyChange();
+	
+	
+	/**
 	 * a cell style helper to create style relative object for cell
 	 * @author dennis
 	 */

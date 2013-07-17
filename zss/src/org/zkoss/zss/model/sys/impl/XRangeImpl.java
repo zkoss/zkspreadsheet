@@ -383,6 +383,16 @@ public class XRangeImpl implements XRange {
 		}
 	}
 	
+	@Override
+	public void notifyChange() {
+		synchronized (_sheet) {
+			if (_refs != null && !_refs.isEmpty()) {
+				final XBook book = (XBook) _sheet.getWorkbook();
+				BookHelper.notifyCellChanges(book, _refs);
+			}
+		}
+	}
+	
 	private void setDateFormat(String formatString) {
 		for(Ref ref : _refs) {
 			final int tRow = ref.getTopRow();

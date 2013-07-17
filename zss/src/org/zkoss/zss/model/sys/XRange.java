@@ -636,4 +636,10 @@ public interface XRange {
 	 * Check if this range cover an entire sheet 
 	 */
 	public boolean isWholeSheet();
+	
+	
+	/**
+	 * Notify this range has been changed.
+	 */
+	public void notifyChange();
 }

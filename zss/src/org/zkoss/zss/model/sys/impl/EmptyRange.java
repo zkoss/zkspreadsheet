@@ -385,4 +385,8 @@ public class EmptyRange implements XRange {
 	public XRange findAutoFilterRange() {
 		return null;
 	}
+
+	@Override
+	public void notifyChange() {		
+	}
 }
