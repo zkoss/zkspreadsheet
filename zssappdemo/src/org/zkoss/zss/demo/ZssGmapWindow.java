@@ -77,7 +77,7 @@ public class ZssGmapWindow extends GenericForwardComposer {
 		myChart.setModel(new SimplePieModel());
 		updateChart();
 
-		fluSpreadsheet.addEventListener(Events.ON_CELL_FOUCSED,
+		fluSpreadsheet.addEventListener(Events.ON_CELL_FOUCS,
 				new EventListener() {
 					public void onEvent(Event event) throws Exception {
 						FocusedEvent((CellEvent) event);
