@@ -156,7 +156,14 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
-            if(rownum < startRow) continue;
+            
+            if(rownum < startRow) {
+                // ZSS-302: before skipping, must remove rows of destination that don't be replaced   
+                if (canRemoveRow(startRow, endRow, n, rownum)) {
+                    it.remove();
+                } 
+            	continue;
+            }
             
             final int newrownum = rownum + n;
             final boolean inbound = 0 <= newrownum && newrownum <= maxrow;
