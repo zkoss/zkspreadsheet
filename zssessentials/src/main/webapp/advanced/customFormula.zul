@@ -1,15 +1,13 @@
-<?xel-method prefix="zss" name="USD2TWD"
-    class="org.zkoss.zss.essential.advanced.CurrencyFormulas"  
-    signature="double usd2Twd(double,double)"?>
+<?xel-method prefix="zss" name="EXCHANGE"
+    class="org.zkoss.zss.essential.advanced.MyCustomFormulas"  
+    signature="double exchange(double,double)"?>
 <?xel-method prefix="zss" name="MYSUBTOTAL"
-    class="org.zkoss.zss.essential.advanced.MyMultiOperandFormulas"  
+    class="org.zkoss.zss.essential.advanced.MyCustomFormulas"  
     signature="org.zkoss.poi.ss.formula.eval.ValueEval mySubtotal(org.zkoss.poi.ss.formula.eval.ValueEval[], int, int)"?>
 <?xel-method prefix="zss" name="CHAIN"
-    class="org.zkoss.zss.essential.advanced.MyMultiOperandFormulas"  
+    class="org.zkoss.zss.essential.advanced.MyCustomFormulas"  
     signature="org.zkoss.poi.ss.formula.eval.ValueEval chain(org.zkoss.poi.ss.formula.eval.ValueEval[], int, int)"?> 
-<!-- 
 <?taglib uri="/WEB-INF/tld/formula.tld" prefix="zss" ?>    
--->
 <zk>
 	<window title="ZK Spreadsheet" border="normal" height="100%">
 		<spreadsheet src="/WEB-INF/books/customFormula.xlsx" 

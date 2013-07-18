@@ -1,9 +1,9 @@
 <?page title="My First ZK Spreadsheet application" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<window id="ss" title="My First ZK Spreadsheet Application" 
+	<window title="My First ZK Spreadsheet Application" 
 	apply="org.zkoss.zss.essential.MyComposer"
 		border="normal" height="100%" width="100%">
-		<spreadsheet  height="100%" width="100%"
+		<spreadsheet id="ss" height="100%" width="100%"
 		maxVisibleRows="150" maxVisibleColumns="40"
 		 showToolbar="true" showSheetbar="true" showFormulabar="true"/>
 	</window>
