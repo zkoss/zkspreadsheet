@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.zkoss.zss</groupId>
-  <artifactId>zssappdemo</artifactId>
+  <artifactId>zssdemo</artifactId>
   <properties>
   	<zk.version>6.5.4.FL.20130717</zk.version>
   	<gmapsz.version>3.0.1</gmapsz.version>
@@ -120,7 +120,7 @@
 			<artifactId>maven-war-plugin</artifactId>
 			<configuration>
 				<warSourceDirectory>WebContent</warSourceDirectory>
-				<warName>zssappdemo</warName>
+				<warName>zssdemo</warName>
 				<webXml>WebContent/WEB-INF/web.xml</webXml>
 			</configuration>
 		</plugin>
