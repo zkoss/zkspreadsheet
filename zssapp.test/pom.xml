@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.zkoss.zss</groupId>
-  <artifactId>test</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <artifactId>zssapp.test</artifactId>
+  <version>3.0.0-RC-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>test</name>

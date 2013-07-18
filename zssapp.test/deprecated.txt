@@ -1,0 +1,2 @@
+This project(zssapp.test) is deprecated and not under maintain since version 3.0.0, 
+The reason we keep it here is maybe someday we will re-build it and make it workable
