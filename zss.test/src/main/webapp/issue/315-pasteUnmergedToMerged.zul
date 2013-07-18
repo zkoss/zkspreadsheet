@@ -1,0 +1,56 @@
+<zk>
+	<spreadsheet id="spreadsheet" 
+		src="/issue/ZSS-315.xlsx"
+		maxVisibleRows="200" maxVisibleColumns="40" width="100%" height="600px"
+		showContextMenu="true" showSheetbar="true" showToolbar="true"
+		showFormulabar="true" />
+	<zscript><![CDATA[
+	    // src="/EmptySheetForTesting.xlsx"
+	    // src="/issue/ZSS-300.xlsx"
+		import org.zkoss.zss.ui.Spreadsheet;
+		import org.zkoss.zss.ui.Rect;	
+	]]></zscript>
+
+	<button label="Copy" width="100px" height="30px">
+		<attribute name="onClick"><![CDATA[
+			Rect selectedRect = spreadsheet.getSelection();
+			Range range = Ranges.range(spreadsheet.getSelectedSheet(),
+					selectedRect.getTop(), selectedRect.getLeft(),
+					selectedRect.getBottom(), selectedRect.getRight());
+			//save user selection range
+			spreadsheet.setAttribute("KEY_SOURCE_RANGE", range);
+			spreadsheet.setAttribute("KEY_SOURCE_RECT", selectedRect);
+			
+			spreadsheet.setHighlight(spreadsheet.getSelection());
+		]]></attribute>
+	</button>
+	
+	<button label="Special Paste (SkipBlanks)" width="100px" height="30px">
+		<attribute name="onClick"><![CDATA[
+			Range srcRange = (Range)spreadsheet.getAttribute("KEY_SOURCE_RANGE");
+			Rect srcRect = (Rect)spreadsheet.getAttribute("KEY_SOURCE_RECT");
+			
+			if (srcRange != null && srcRect != null) {
+
+				Rect dstRect = spreadsheet.getSelection();
+				int rowIndex = dstRect.getTop();
+				int columnIndex = dstRect.getLeft();
+				int rowCount = dstRect.getBottom() - rowIndex;
+				int columnCount = dstRect.getRight() - columnIndex;
+				
+				Range dst = Ranges.range(spreadsheet.getSelectedSheet(),
+						rowIndex, 
+						columnIndex, 
+						rowIndex + rowCount, 
+						columnIndex + columnCount);
+				
+				// srcRange.paste(dst);
+				boolean skipBlanks = true;
+				srcRange.pasteSpecial(dst, Range.PasteType.ALL, Range.PasteOperation.NONE, skipBlanks, false);
+				
+				spreadsheet.setHighlight(null);
+			};
+		]]></attribute>
+	</button>	
+
+</zk>
