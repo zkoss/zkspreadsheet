@@ -1152,8 +1152,37 @@ public class XRangeImpl implements XRange {
 		final Set<Ref> affected = info.getAffected();
 		final List<MergeChange> mergeChanges = info.getMergeChanges();
 		if (!transpose) {
+			
 			/**
-			 * Issue: ZS-300
+			 * ZSS-315
+			 * handle a special case: source is a single cell and destination is a single merged cell, 
+			 * copy source to destination then merge it.
+			 */
+			// source is a single cell
+			if(srcRef.getRowCount() == 1 && srcRef.getColumnCount() == 1) {
+				
+				int dstTopRow = dstRef.getTopRow();
+				int dstBottomRow = dstRef.getBottomRow();
+				int dstLeftCol = dstRef.getLeftCol();
+				int dstRightCol = dstRef.getRightCol();				
+				final CellRangeAddress dstaddr = ((SheetCtrl)dstSheet).getMerged(dstTopRow, dstLeftCol);
+			
+				// Check whether destination is a single merged cell?
+				if(dstaddr != null && dstBottomRow == dstaddr.getLastRow() && dstRightCol == dstaddr.getLastColumn()) {
+					// copy source to merged cell
+					final Cell cell = BookHelper.getCell(srcSheet, srcRef.getTopRow(), srcRef.getLeftCol()); // retrieve cell
+					final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, dstSheet, dstTopRow, dstLeftCol, pasteType, pasteOp, transpose);
+					BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
+					// merge cell (because cell always unmerge in BookHelper.copyCell)
+					final ChangeInfo changeInfo1 = BookHelper.merge(dstSheet, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol, false);
+					BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo1);
+
+					return pasteRef;		
+				}
+			}
+			
+			/**
+			 * Issue: ZSS-300
 			 * Problem: Overlapping copy get wrong result
 			 * Root Cause: Copy dirty from source to destination
 			 */
@@ -1223,7 +1252,7 @@ public class XRangeImpl implements XRange {
 					dstColPointer -= (colStep * srcColCount); // pointer add (colStep * srcColCount) times so minus them back
 					
 				} // End go through row
-			}
+			} // end repeat area
 			
 		} else { //row -> column, column -> row
 			int dstCol = dstRef.getLeftCol(); 
