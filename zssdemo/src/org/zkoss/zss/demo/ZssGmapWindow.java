@@ -80,7 +80,7 @@ public class ZssGmapWindow extends GenericForwardComposer {
 		fluSpreadsheet.addEventListener(Events.ON_CELL_FOUCS,
 				new EventListener() {
 					public void onEvent(Event event) throws Exception {
-						FocusedEvent((CellEvent) event);
+						onFocus((CellEvent) event);
 					}
 				});
 
@@ -175,7 +175,7 @@ public class ZssGmapWindow extends GenericForwardComposer {
 				final Integer rowIdx = Integer.valueOf(row);
 				final Integer colIdx = Integer.valueOf(col);
 				final String prevValue = prevCellValue;
-				Messagebox.show("Cell value need to be number format", "Error", 
+				Messagebox.show("Cell value has to be number format", "Error", 
 						Messagebox.OK, Messagebox.ERROR, new EventListener() {
 							public void onEvent(Event event) throws Exception {
 								Ranges.range(sheet, rowIdx, colIdx).setCellEditText(prevValue);
@@ -188,12 +188,12 @@ public class ZssGmapWindow extends GenericForwardComposer {
 		}
 		if (row != 0) {// the header row
 			updateRow(row, true);
-//			if (col == 1 || col == 2)
-//				updateChart();
+			if ((col == 1 || col == 2) && (row>=45 && row < 53))
+				updateChart();
 		}
 	}
 	
-	public void FocusedEvent(CellEvent event) throws ParseException {
+	public void onFocus(CellEvent event) throws ParseException {
 		if (mymap == null || sheet == null)
 			return;
 
@@ -231,7 +231,7 @@ public class ZssGmapWindow extends GenericForwardComposer {
 			CellData cd = Ranges.range(sheet,row,1).getCellData();
 //			Cell cellValue = Utils.getCell(sheet, row, 1);
 			Double value;
-			if(cd.getType()==CellType.NUMERIC){
+			if(cd.getResultType()==CellType.NUMERIC){
 				value = (Double)cd.getValue();
 			}else{
 				value = 0D;

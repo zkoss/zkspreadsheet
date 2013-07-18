@@ -6,7 +6,9 @@
   <properties>
   	<zk.version>6.5.4.FL.20130717</zk.version>
   	<gmapsz.version>3.0.1</gmapsz.version>
-  	<jfreechart.version>1.0.13</jfreechart.version>
+	<commons-io>1.3.1</commons-io>
+	<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+	<packname>-${project.version}-FL-${maven.build.timestamp}</packname>
   </properties>
   <version>3.0.0-RC-SNAPSHOT</version>
   <packaging>war</packaging>
@@ -25,94 +27,78 @@
 			<url>http://mavensync.zkoss.org/zk/ee-eval</url>
 		</repository>
 	</repositories>
-  <dependencies>
-  	<!-- log -->
-  	<dependency>
-		<groupId>org.slf4j</groupId>
-		<artifactId>slf4j-api</artifactId>
-		<version>1.7.2</version>
-	</dependency>
-	<dependency>
-		<groupId>ch.qos.logback</groupId>
-		<artifactId>logback-classic</artifactId>
-		<version>1.0.7</version>
-	</dependency>
-	<dependency>
-		<groupId>org.zkoss.poi</groupId>
-		<artifactId>zpoiex</artifactId>
-		<version>3.8.2</version>
-	</dependency>
-    <dependency>
-      <groupId>org.zkoss.zss</groupId>
-      <artifactId>zss</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.zkoss.zss</groupId>
-      <artifactId>zssapp</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.zkoss.zss</groupId>
-      <artifactId>zssex</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.zkoss.zss</groupId>
-      <artifactId>zsspdf</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.zkoss.zss</groupId>
-      <artifactId>zsshtml</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.zkoss.common</groupId>
-      <artifactId>zcommon</artifactId>
-      <version>${zk.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.zkoss.common</groupId>
-      <artifactId>zweb</artifactId>
-      <version>${zk.version}</version>
-    </dependency>
-    <dependency>
-	  <groupId>org.zkoss.zk</groupId>
-	  <artifactId>zk</artifactId>
-	  <version>${zk.version}</version>
-	</dependency>
-	<dependency>
-	  <groupId>org.zkoss.zk</groupId>
-	  <artifactId>zkex</artifactId>
-	  <version>${zk.version}</version>
-	</dependency>
-    <dependency>
-	  <groupId>org.zkoss.zk</groupId>
-	  <artifactId>zul</artifactId>
-	  <version>${zk.version}</version>
-	</dependency>
-	<dependency>
-	  <groupId>org.zkoss.zk</groupId>
-	  <artifactId>zkplus</artifactId>
-	  <version>${zk.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>jfree</groupId>
-		<artifactId>jfreechart</artifactId>
-		<version>${jfreechart.version}</version>
-	</dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-math</artifactId>
-      <version>2.1</version>
-    </dependency>
-	<dependency>
-		<groupId>org.zkoss.zkforge</groupId>
-		<artifactId>gmapsz</artifactId>
-		<version>${gmapsz.version}</version>
-	</dependency>
-  </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>org.zkoss.common</groupId>
+			<artifactId>zcommon</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkbind</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zul</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkplus</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkmax</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zss</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- -->
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zssex</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zsspdf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zsshtml</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zssapp</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- dependency for gmapsz -->
+		<dependency>
+			<groupId>org.zkoss.zkforge</groupId>
+			<artifactId>gmapsz</artifactId>
+			<version>${gmapsz.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>zweb</artifactId>
+					<groupId>org.zkoss.common</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
   <build>
   	<sourceDirectory>${project.basedir}/src/</sourceDirectory>
 	<plugins>

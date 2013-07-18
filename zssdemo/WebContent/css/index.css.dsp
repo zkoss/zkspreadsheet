@@ -8,7 +8,7 @@
 	left: 50px;
 	overflow: visible;
 	z-index: 30;
-	background: url('${c:encodeURL('/zssdemo/img/top_zk_logo.png')}') no-repeat transparent scroll left top;
+	background: url('${c:encodeURL('/img/top_zk_logo.png')}') no-repeat transparent scroll left top;
 }
 
 #p-logo, #p-logo a, #p-logo a:hover {
@@ -30,7 +30,7 @@
 }
 
 #header-download {
-	background: url('${c:encodeURL('/zssdemo/img/download-btn.png')}') no-repeat scroll 0 0 transparent;
+	background: url('${c:encodeURL('/img/download-btn.png')}') no-repeat scroll 0 0 transparent;
 	display: block;
 	position: absolute;
 	width: 178px;
