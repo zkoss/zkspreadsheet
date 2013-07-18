@@ -9,7 +9,7 @@
 		<zpoi.version>3.8.2</zpoi.version>
 		<commons-math.version>1.2</commons-math.version>
 	</properties>
-	<version>3.0.0</version>
+	<version>3.0.0-RC-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>ZK Spreadsheet</name>
 	<url>http://www.zkoss.org/zss</url>
