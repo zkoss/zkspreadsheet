@@ -5,7 +5,7 @@
 	<artifactId>zss.test</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
-		<zk.version>6.5.3.FL.20130514</zk.version>
+		<zk.version>6.5.4.FL.20130717</zk.version>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>-0.0.1-SNAPSHOT-FL-${maven.build.timestamp}</packname>
 		<zss.version>3.0.0</zss.version>

@@ -4,7 +4,7 @@
   <groupId>org.zkoss.zss</groupId>
   <artifactId>zssappdemo</artifactId>
   <properties>
-  	<zk.version>6.5.3.FL.20130514</zk.version>
+  	<zk.version>6.5.4.FL.20130717</zk.version>
   	<gmapsz.version>3.0.1</gmapsz.version>
   	<jfreechart.version>1.0.13</jfreechart.version>
   </properties>

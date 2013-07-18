@@ -4,7 +4,7 @@
 	<groupId>org.zkoss.zss</groupId>
 	<artifactId>zssapp</artifactId>
 	<properties>
-		<zk.version>6.5.3.FL.20130514</zk.version>
+		<zk.version>6.5.4.FL.20130717</zk.version>
 		<zkel.version>1.1.0</zkel.version>
 		<commons-lang.version>2.4</commons-lang.version>
 		<bsh.version>2.0b4</bsh.version>
