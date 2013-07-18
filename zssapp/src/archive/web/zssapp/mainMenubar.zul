@@ -1,0 +1,82 @@
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client">
+	<menubar id="mainMenubar" width="100%" apply="org.zkoss.zss.app.ui.menu.MainMenubarCtrl"
+		style="border-bottom:0;border-right:1px solid #D8D8D8;border-left:1px solid #D8D8D8;" w:zssPartner="true">
+		<menu id="fileMenu" label="${c:l('zssapp.mainMenu.file')}">
+			<menupopup id="fileMenupopup">
+				<menuitem id="newFile" label="${c:l('zssapp.mainMenu.file.new')}"/>
+				<menuitem id="openManageFile" label="${c:l('zssapp.mainMenu.file.openManage')}" />
+				<menuitem id="saveFile" label="${c:l('zssapp.mainMenu.file.save')}" />
+				<menuitem id="saveFileAs" label="${c:l('zssapp.mainMenu.file.saveas')}" />
+				<menuitem id="saveFileAndClose" label="${c:l('zssapp.mainMenu.file.saveClose')}" />
+				<menuitem id="closeFile" label="${c:l('zssapp.mainMenu.file.close')}" />
+				<menuseparator />
+				<menuitem id="exportFile" label="${c:l('zssapp.mainMenu.file.export')}" />
+				<menuitem id="exportPdf" label="${c:l('zssapp.mainMenu.file.exportPdf')}" />
+			</menupopup>
+		</menu>
+		<menu id="viewMenu" label="${c:l('zssapp.mainMenu.view')}">
+			<menupopup id="viewMenupopup">
+				<menuitem id="toggleFormulaBar"
+					label="${c:l('zssapp.mainMenu.view.formulaBar')}" forward="mainMenubar.onToggleFormulaBar"
+					autocheck="true" checked="true" />
+				<menuseparator />
+				<menuitem id="freezePanel"
+					label="${c:l('zssapp.mainMenu.view.freeze')}" forward="mainMenubar.onFreezePanel" />
+				<menuitem id="unfreezePanel"
+					label="${c:l('zssapp.mainMenu.view.unfreeze')}" forward="mainMenubar.onUnfreezePanel"/>	
+				<menu id="freezeRows"
+					label="${c:l('zssapp.mainMenu.view.freezeRows')}">
+					<menupopup id="freezeRowsMenupopup">
+						<menuitem id="freezeRow1"
+							label="${c:l('zssapp.mainMenu.view.freezeRows')} 1"
+							forward="mainMenubar.onViewFreezeRows(0)" />
+						<menuitem id="freezeRow2"
+							label="${c:l('zssapp.mainMenu.view.freezeRows')} 2"
+							forward="mainMenubar.onViewFreezeRows(1)" />
+						<menuitem id="freezeRow3"
+							label="${c:l('zssapp.mainMenu.view.freezeRows')} 3"
+							forward="mainMenubar.onViewFreezeRows(2)" />
+						<menuitem id="freezeRow4"
+							label="${c:l('zssapp.mainMenu.view.freezeRows')} 4"
+							forward="mainMenubar.onViewFreezeRows(3)" />
+						<menuitem id="freezeRow5"
+							label="${c:l('zssapp.mainMenu.view.freezeRows')} 5"
+							forward="mainMenubar.onViewFreezeRows(4)" />
+					</menupopup>
+				</menu>
+				<menu id="freezeCols"
+					label="${c:l('zssapp.mainMenu.view.freezeCols')}">
+					<menupopup id="freezeColsMenupopup">
+						<menuitem id="freezeCol1"
+							label="${c:l('zssapp.mainMenu.view.freezeCols')} A"
+							forward="mainMenubar.onViewFreezeCols(0)" />
+						<menuitem id="freezeCol2"
+							label="${c:l('zssapp.mainMenu.view.freezeCols')} B"
+							forward="mainMenubar.onViewFreezeCols(1)" />
+						<menuitem id="freezeCol3"
+							label="${c:l('zssapp.mainMenu.view.freezeCols')} C"
+							forward="mainMenubar.onViewFreezeCols(2)" />
+						<menuitem id="freezeCol4"
+							label="${c:l('zssapp.mainMenu.view.freezeCols')} D"
+							forward="mainMenubar.onViewFreezeCols(3)" />
+						<menuitem id="freezeCol5"
+							label="${c:l('zssapp.mainMenu.view.freezeCols')} E"
+							forward="mainMenubar.onViewFreezeCols(4)" />
+					</menupopup>
+				</menu>
+			</menupopup>
+		</menu>
+		<menu id="helpMenu" label="${c:l('zssapp.mainMenu.help')}">
+			<menupopup>
+				<menuitem id="forum" label="${c:l('zssapp.mainMenu.help.forum')}"
+					href="http://www.zkoss.org/forum/" target="_blank" />
+				<menuitem id="book" label="${c:l('zssapp.mainMenu.help.document')}"
+					href="http://books.zkoss.org/wiki/ZK_Spreadsheet_Essentials"
+					target="_blank" />
+				<menuitem id="livedemo"
+					label="${c:l('zssapp.mainMenu.help.livedemo')}" href="http://zssdemo.zkoss.org/"
+					target="_blank" />
+			</menupopup>
+		</menu>
+	</menubar>
+</zk>
