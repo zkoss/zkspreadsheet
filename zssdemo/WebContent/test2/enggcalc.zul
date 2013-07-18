@@ -1,6 +1,0 @@
-<?page title="ZK Spreadsheet Engineering Functions" contentType="text/html;charset=UTF-8"?>
-<zk>
-<window title="ZSS" border="normal" width="100%" height="100%">
-<spreadsheet width="780px" height="700px" src="/test2/xls/engineeringcalc.xls" maxrows="40" maxcolumns="10"></spreadsheet>
-</window>
-</zk>

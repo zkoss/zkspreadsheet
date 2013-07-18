@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<zk>
-	<window border="normal">
-		<button label="insertRows/Columns"
-			onClick="ss1.getSelectedSheet().insertRows(0,0);ss1.getSelectedSheet().insertColumns(0,0);" />
-		<spreadsheet id="ss1" src="/test2/xls/B-192679.xls"
-			width="400px" height="400px" maxrows="30" />
-	</window>
-</zk>

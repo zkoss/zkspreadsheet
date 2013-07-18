@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<zk>
-	<window title="Travel Expense Calculator" 
-		border="normal" style="heigth:660px;width:100%">
-		<spreadsheet id="ss1" url="/WEB-INF/xls/demo/travelexpense.xls" maxrow="45" maxcolumn="20" width="98%" height="650px" />
-	</window>
-</zk>

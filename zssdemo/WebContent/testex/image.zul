@@ -1,6 +1,0 @@
-<window title="Image Wgt" border="normal" style="heigth:400px">
-	<button label="print" onClick='org.zkoss.zss.demo.ComponentPrinter.print(ss1)'/>
-	<button label="ss1.invalidate" onClick="ss1.invalidate()"/>
-	<spreadsheet id="ss1" url="/WEB-INF/xls/testex/image.xls" maxrow="500" maxcolumn="150" height="500px" width="90%" style="border:1px solid #8AA3C1;" >
-	</spreadsheet>
-</window>
