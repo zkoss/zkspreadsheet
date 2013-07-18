@@ -6,7 +6,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
 		<zk.version>6.5.4.FL.20130712</zk.version>
-		<zss.version>3.0.0</zss.version>
+		<zss.version>3.0.0-RC-SNAPSHOT</zss.version>
 		<commons-io>1.3.1</commons-io>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>-${project.version}-FL-${maven.build.timestamp}</packname>
