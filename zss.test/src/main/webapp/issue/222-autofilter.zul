@@ -1,0 +1,38 @@
+<window title="ZSS Selection Events" border="normal" width="100%"
+	height="100%">
+	<label multiline="true">
+	0. click clear filter
+	1. select  A1:A12 and delete all data
+	2. input "Header" into A5; input "444" into A6; input "555" into A7 
+	3. select A5:A10
+	4. click applyFitler, you should see a filter on A5, and have 444,555 to filter
+	5. change value of A6 to 888, you should see the filter condition become 555,888
+	6. set value of A8 to 999, you should see the filter condition become 555,888,999 (but still 555,888 if the bug doesn't be fix)
+	</label>
+	<zscript><![CDATA[
+		void applyFitler(){
+			Sheet sheet = ss.getSelectedSheet();
+			Rect r = ss.getSelection();
+			System.out.println("apply fitler on "+r);
+			Ranges.range(sheet,r.getTop(),r.getLeft(),r.getBottom(),r.getRight()).enableAutoFilter(true);
+			
+		}
+		
+		void clearFilter(){
+			Sheet sheet = ss.getSelectedSheet();
+			if(sheet.isAutoFilterEnabled()){
+				//toggle clear
+				Ranges.range(sheet).enableAutoFilter(false);
+			}
+		}
+	]]>
+	</zscript>
+	<hlayout>
+		<button label="clearFitler" onClick="clearFilter()"/>
+		<button label="applyFilter" onClick="applyFitler()"/>
+		
+	</hlayout>
+	<spreadsheet id="ss" width="300px" height="600px" maxrows="35" onCellSelection="/*for bug of cell selection*/"
+		maxcolumns="10" src="/issue/280-autofilter.xlsx">
+	</spreadsheet>
+</window>
