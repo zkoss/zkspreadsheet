@@ -604,6 +604,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		_selfFocusId = null;//clean
 		refreshToolbarDisabled();
+		getUserActionHandler().doAfterLoadBook(getBook());
 	}
 	
 	private Focus newSelfFocus(String sheetId, int row, int column) {

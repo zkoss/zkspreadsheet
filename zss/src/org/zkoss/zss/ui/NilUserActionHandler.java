@@ -22,6 +22,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 /**
  * The user action handler which provide zero spreadsheet operation handling. <br/>
@@ -57,6 +58,10 @@ public class NilUserActionHandler implements UserActionHandler {
 	@Override
 	public void bind(Spreadsheet sparedsheet) {
 		
+	}
+
+	@Override
+	public void doAfterLoadBook(Book book) {		
 	}
 	
 

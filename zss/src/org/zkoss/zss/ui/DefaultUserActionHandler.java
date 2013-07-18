@@ -1621,4 +1621,12 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		return actions;
 	}
 
+
+	@Override
+	public void doAfterLoadBook(Book book) {
+		clearClipboard();
+	}
+	
+	
+
 }

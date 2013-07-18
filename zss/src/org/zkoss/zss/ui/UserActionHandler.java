@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.SerializableEventListener;
+import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.event.Events;
 
@@ -41,10 +42,17 @@ public interface UserActionHandler extends SerializableEventListener<Event>{
 	
 	
 	/**
-	 * Sets the spreadsheet this handler relates to. this method is called when it assign to a spreadsheet 
+	 * Will be called when a handler assign to spreadsheet. 
 	 * @param sparedsheet
 	 */
 	void bind(Spreadsheet sparedsheet);
+	
+	
+	/**
+	 * Will be called when a book set to sparedshet
+	 * @param book the book to load or null if close a book
+	 */
+	void doAfterLoadBook(Book book);
 	
 //	/**
 //	 * the i18n label keys for client side
