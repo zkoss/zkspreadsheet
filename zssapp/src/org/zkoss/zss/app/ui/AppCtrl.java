@@ -114,7 +114,10 @@ public class AppCtrl extends CtrlBase<Component>{
 			Set<String> actions = super.getSupportedUserAction(sheet);
 			actions.add(DefaultUserAction.NEW_BOOK.getAction());
 			if(sheet!=null){
-				actions.add(DefaultUserAction.SAVE_BOOK.getAction());
+				boolean readonly = UiUtil.isRepositoryReadonly();
+				if(!readonly){
+					actions.add(DefaultUserAction.SAVE_BOOK.getAction());
+				}
 				actions.add(DefaultUserAction.EXPORT_PDF.getAction());
 			}
 			return actions;
