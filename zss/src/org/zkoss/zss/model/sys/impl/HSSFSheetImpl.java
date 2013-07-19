@@ -47,6 +47,7 @@ import org.zkoss.poi.hssf.usermodel.HSSFSheetHelper;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbookHelper;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.PtgShifter;
+import org.zkoss.poi.ss.formula.SharedFormula;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Chart;
@@ -1169,11 +1170,28 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, XSheet {
 			final int operatorType = dvRecord.getConditionOperator();
 			final int validationType = dvRecord.getDataType();
 			final boolean isExplicitValues = !dvRecord.getListExplicitFormula(); //whether list is given by excplicit values?
-			final Ptg[] formulaPtgs1 = dvRecord.getFormula1();
-			final Ptg[] formulaPtgs2 = dvRecord.getFormula2();
+			Ptg[] formulaPtgs1 = dvRecord.getFormula1();
+			Ptg[] formulaPtgs2 = dvRecord.getFormula2();
+			
+			// ZSS-260 According to Excel 97-2003 spec., the cell reference might be related to a base cell
+			// We need to convert to absolute reference before resolving formula
+			CellRangeAddress ca = dvRecord.getCellRangeAddress().getCellRangeAddress(0);
+			SharedFormula sf = new SharedFormula(SpreadsheetVersion.EXCEL97);
+			formulaPtgs1 = sf.convertSharedFormulas(formulaPtgs1, ca.getFirstRow(), ca.getFirstColumn());
+			formulaPtgs2 = formulaPtgs2 != null ? sf.convertSharedFormulas(formulaPtgs2, ca.getFirstRow(), ca.getFirstColumn()) : null;
+			
 			String formula1 = HSSFFormulaParser.toFormulaString(_workbook, formulaPtgs1);
 			//bug #64: pasteSpecial copy Validation cause Null pointer exception (Ptgs must not be null)   	
-			String formula2 = formulaPtgs2 != null && formulaPtgs2.length > 0 ? HSSFFormulaParser.toFormulaString(_workbook, formulaPtgs2) : null; 
+			String formula2 = formulaPtgs2 != null && formulaPtgs2.length > 0 ? HSSFFormulaParser.toFormulaString(_workbook, formulaPtgs2) : null;
+			
+			// ZSS-260 formula1 and 2 from file don't has equal sign as front of itself
+			if(validationType != ValidationType.LIST) {
+				formula1 = formula1.startsWith("=") ? formula1 : "=" + formula1;
+			}
+			if(formula2 != null) { // if it's a list validation type, there isn't a formula2.
+				formula2 = formula2.startsWith("=") ? formula2 : "=" + formula2;
+			}
+			
 			switch(validationType) {
 				case ValidationType.ANY:
 					return _helper.createNumericConstraint(validationType, operatorType, formula1, formula2);

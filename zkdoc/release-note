@@ -41,6 +41,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-286 Focused Cell is getting completely white in IE10
   ZSS-383 In IE browser, pop-up format dialog (right click on cell) can't be operated.
   ZSS-302 some rows can only be deleted with twice deletion
+  ZSS-260 Data validation doesn't work correctly
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api

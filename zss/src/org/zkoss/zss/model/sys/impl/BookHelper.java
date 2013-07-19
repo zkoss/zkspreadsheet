@@ -5024,6 +5024,7 @@ public final class BookHelper {
 			return false;
 		}
 		String f1 = constraint.getFormula1();
+		f1 = f1.startsWith("=") ? f1 : "=" + f1; // ZSS-260: formula1 and 2 from file don't has equal sign as front of itself
 		CellValue cv1 = getEvalValue(sheet, f1);
 		if (cv1 == null) {
 			return true;
@@ -5036,7 +5037,8 @@ public final class BookHelper {
 		switch(constraint.getOperator()) {
 			case OperatorType.BETWEEN:
 			{
-				final String f2 = constraint.getFormula2();
+				String f2 = constraint.getFormula2();
+				f2 = f2.startsWith("=") ? f2 : "=" + f2; // ZSS-260: formula1 and 2 from file don't has equal sign as front of itself
 				final CellValue cv2 = getEvalValue(sheet, f2);
 				if (cv2.getCellType() != Cell.CELL_TYPE_NUMERIC) { //type does not match
 					return false;
@@ -5046,7 +5048,8 @@ public final class BookHelper {
 			}
 			case OperatorType.NOT_BETWEEN:
 			{
-				final String f2 = constraint.getFormula2();
+				String f2 = constraint.getFormula2();
+				f2 = f2.startsWith("=") ? f2 : "=" + f2; // ZSS-260: formula1 and 2 from file don't has equal sign as front of itself
 				final CellValue cv2 = getEvalValue(sheet, f2);
 				if (cv2.getCellType() != Cell.CELL_TYPE_NUMERIC) { //type does not match
 					return false;
@@ -5122,13 +5125,16 @@ public final class BookHelper {
 				break;
 			// Decimal type
 			case ValidationType.DECIMAL:
-			// Date type
-			case ValidationType.DATE:
-				// Time type
-			case ValidationType.TIME:
 				if (!isDecimal(value) || !validateOperation(sheet, constraint, (Number)value)) {
 					success = false;
 				}
+				break;
+			// ZSS-260: the input value is a Date object, must convert it to Excel date type (a double number) before validating
+			// Date type
+			case ValidationType.DATE:
+			// Time type
+			case ValidationType.TIME:
+				success = (value instanceof Date) && validateOperation(sheet, constraint, DateUtil.getExcelDate((Date)value, sheet.getBook().isDate1904()));
 				break;
 			// List type ( combo box type )
 			case ValidationType.LIST:

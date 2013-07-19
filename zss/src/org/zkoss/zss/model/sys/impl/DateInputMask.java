@@ -966,7 +966,9 @@ public class DateInputMask { //ZSS-67
 			if (format == null) { //pure time pattern
 				year = 1900;
 				month = 1 - 1; //0 based index
-				day = 1;
+				// ZSS-260: when input value is a pure time pattern, the day should be 0 not 1 according to Excel.
+				// it will be 1900/1/0 time
+				day = 0;	  
 				if (msecond >= 0) {
 					format = "mm:ss.0";
 				} else if (ampm != null) {
