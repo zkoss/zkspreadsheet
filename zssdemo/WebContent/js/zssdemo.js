@@ -128,6 +128,14 @@
 			}
 			return auBfSend(uri, req, dt);
 		};
+		//alert
+		var zAuAlert = zAu.cmd0.alert;
+		zAu.cmd0.alert = function(msg){
+			try {
+				trackerEvent('alert',msg,0);
+			}catch(e){}
+			return zAuAlert(arguments);
+		};
 	};
 	
 	zk.afterLoad('zss', function() {

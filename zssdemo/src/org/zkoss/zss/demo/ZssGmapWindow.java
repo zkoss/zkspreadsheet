@@ -32,6 +32,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 //import org.zkoss.zss.model.sys.XRanges;
 //import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.CellData.CellType;
@@ -105,17 +106,13 @@ public class ZssGmapWindow extends GenericForwardComposer {
 			String state = Ranges.range(sheet, row, 0).getCellEditText();
 			// String division = sheet.getCell(row, 1).getCellEditText();
 
-			int numOfCase = (int) format.parse(Ranges.range(sheet, row, 1).getCellEditText()).intValue();
+			int numOfCase = parseInt(Ranges.range(sheet, row, 1).getCellEditText());
 
-			int numOfDeath = 0;
-			try {
-				numOfDeath = format.parse(Ranges.range(sheet, row, 2).getCellEditText()).intValue();
-			} catch (Exception e) {
-			}
+			int numOfDeath = parseInt(Ranges.range(sheet, row, 2).getCellEditText());
 
 			String description = Ranges.range(sheet, row, 3).getCellEditText();
-			double lat = format.parse(Ranges.range(sheet, row, 4).getCellEditText()).doubleValue();
-			double lng = format.parse(Ranges.range(sheet, row, 5).getCellEditText()).doubleValue();
+			double lat = parseDouble(Ranges.range(sheet, row, 4).getCellEditText());
+			double lng = parseDouble(Ranges.range(sheet, row, 5).getCellEditText());
 			String content = "<span style=\"color:#346b93;font-weight:bold\">"
 					+ state	+ "</span><br/><span style=\"color:red\">"
 					+ numOfCase	+ "</span> cases<br/><span style=\"color:red\">"
@@ -154,8 +151,9 @@ public class ZssGmapWindow extends GenericForwardComposer {
 			return;
 
 		String str = (String) event.getEditingValue();
-		if (col != 1 && col != 2)
-			Ranges.range(sheet, row, col).setCellEditText(str);
+		if (col != 1 && col != 2){
+			setCellEditText(sheet, row, col,str);
+		}
 		if (row != 0)// the header row
 			updateRow(row, false);
 	}
@@ -163,6 +161,7 @@ public class ZssGmapWindow extends GenericForwardComposer {
 	public void onStopEditingEvent(StopEditingEvent event) throws ParseException {
 		if (sheet == null || myChart == null)
 			return;
+		event.cancel();//set data manually;
 		row = event.getRow();
 		col = event.getColumn();
 		String str = (String) event.getEditingValue();
@@ -170,27 +169,33 @@ public class ZssGmapWindow extends GenericForwardComposer {
 			Double val = null;
 			try {
 				val = format.parse(str).doubleValue();
-				Ranges.range(sheet, row, col).setCellEditText(str);
+				setCellEditText(sheet, row, col,str);
 			} catch (ParseException e) {
 				final Integer rowIdx = Integer.valueOf(row);
 				final Integer colIdx = Integer.valueOf(col);
 				final String prevValue = prevCellValue;
 				Messagebox.show("Cell value has to be number format", "Error", 
-						Messagebox.OK, Messagebox.ERROR, new EventListener() {
+						Messagebox.OK, Messagebox.EXCLAMATION, new EventListener() {
 							public void onEvent(Event event) throws Exception {
-								Ranges.range(sheet, rowIdx, colIdx).setCellEditText(prevValue);
+								setCellEditText(sheet, rowIdx, colIdx,prevValue);
 							}
 						});
 				return;
 			}
 		} else {
-			Ranges.range(sheet, row, col).setCellEditText(str);
+			setCellEditText(sheet, row, col,str);
 		}
 		if (row != 0) {// the header row
 			updateRow(row, true);
 			if ((col == 1 || col == 2) && (row>=45 && row < 53))
 				updateChart();
 		}
+	}
+	
+	private void setCellEditText(Sheet sheet,int row, int col,String text){
+		try{
+			Ranges.range(sheet, row, col).setCellEditText(text);
+		}catch(IllegalFormulaException x){}
 	}
 	
 	public void onFocus(CellEvent event) throws ParseException {
@@ -204,8 +209,8 @@ public class ZssGmapWindow extends GenericForwardComposer {
 		if (row < 2 || row > 41)// the header row
 			return;
 
-		double lat = format.parse(Ranges.range(sheet, row, 4).getCellEditText()).doubleValue();
-		double lng = format.parse(Ranges.range(sheet, row, 5).getCellEditText()).doubleValue();
+		double lat = parseDouble(Ranges.range(sheet, row, 4).getCellEditText());
+		double lng = parseDouble(Ranges.range(sheet, row, 5).getCellEditText());
 
 		mymap.setLat(lat);
 		mymap.setLng(lng);
@@ -258,28 +263,13 @@ public class ZssGmapWindow extends GenericForwardComposer {
 
 		String state = Ranges.range(sheet, row, 0).getCellEditText();
 		// String division = sheet.getCell(row, 1).getCellEditText();
-		int numOfCase = 0;
-		try {
-			numOfCase = (int) format.parse(Ranges.range(sheet, row, 1).getCellEditText()).intValue();
-		} catch (ParseException e) {
-			if (evalValue)
-				throw new UiException("Cell value need to be number format");
-			else
-				return;
-		}
-		int numOfDeath = 0;
-		try {
-			numOfDeath = (int) format.parse(Ranges.range(sheet, row, 2).getCellEditText()).intValue();
-		} catch (ParseException e) {
-			if (evalValue)
-				throw new UiException("Cell value need to be number format");
-			else
-				return;
-		}
+		int numOfCase = parseInt(Ranges.range(sheet, row, 1).getCellEditText());
+		int numOfDeath = parseInt(Ranges.range(sheet, row, 2).getCellEditText());
+		
 		String description = Ranges.range(sheet, row, 3).getCellEditText();
 
-		double lat = format.parse(Ranges.range(sheet, row, 4).getCellEditText()).doubleValue();
-		double lng = format.parse(Ranges.range(sheet, row, 5).getCellEditText()).doubleValue();
+		double lat = parseDouble(Ranges.range(sheet, row, 4).getCellEditText());
+		double lng = parseDouble(Ranges.range(sheet, row, 5).getCellEditText());
 		String content = "<span style=\"color:#346b93;font-weight:bold\">"
 				+ state	+ "</span><br/><span style=\"color:red\">"
 				+ numOfCase	+ "</span> cases<br/><span style=\"color:red\">"
@@ -290,5 +280,21 @@ public class ZssGmapWindow extends GenericForwardComposer {
 		mymap.setLat(lat);
 		mymap.setLng(lng);
 		gmarkerArray[row].setOpen(true);
+	}
+	
+	double parseDouble(String text){
+		try {
+			return format.parse(text).doubleValue();
+		} catch (ParseException e) {
+			return 0D;
+		}
+	}
+	
+	int parseInt(String text){
+		try {
+			return format.parse(text).intValue();
+		} catch (ParseException e) {
+			return 0;
+		}
 	}
 }
