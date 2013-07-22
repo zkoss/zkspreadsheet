@@ -59,67 +59,69 @@
 	
 	var trackerEvent = function(action,label,value){
 		if(window.pageTracker){
-			zk.log("trackerEvent:"+gaCategory+","+action+","+label+","+value);
+//			zk.log("trackerEvent:"+gaCategory+","+action+","+label+","+value);
 			pageTracker._trackEvent(gaCategory, action, label, value);
 		}
-		
+	};
+	
+	var trackerInfo = function(id){
+		var info = ACTION_INFOS[id];
+		if(info){
+			var interval = getInterval();
+			resetInterval();
+			var action = info.action;
+			var label = info.label;
+			if(!!!label){
+				label = id;
+			}
+			trackerEvent(action,label,interval);
+			
+		}
 	};
 	
 	var init = function() {
+		//demo tab
+		jq('.demotab').each(function(i,d){
+			var w = zk.Widget.$(d);
+			w.listen({onClick:function(){
+				trackerInfo(w.id);
+			}});
+			
+		});
+		
+		//spreadsheet au
 		var auBfSend = zAu.beforeSend;
 		zAu.beforeSend = function(uri, req, dt) {
 			try {
 				var evtnm = req.name;
 				var widget = req.target;
 				var data = req.data;
-				if(widget){
-					if(widget.widgetName=='spreadsheet'){
-						var action = null;
-						var label;
-						var interval = getInterval();
-						if(evtnm=='onAuxAction'){
-							action= "zssAuxEvent-"+data.tag;//sheet, toolbar
-							label = data.action;//zss action
-						}else if(evtnm=='onCtrlKey'){//only care some other
-							action="zssEvent";
-							if(data.wgt){
-								label = evtnm+"/"+data.wgtType;
-							}else{
-								label = evtnm;
-							}
-							
-						}else if(SS_EVENTS[evtnm]){//only care some other
-							action="zssEvent";
+				if(widget && widget.widgetName=='spreadsheet'){
+					var action = null;
+					var label;
+					var interval = getInterval();
+					if(evtnm=='onAuxAction'){
+						action= "zssAuxEvent-"+data.tag;//sheet, toolbar
+						label = data.action;//zss action
+					}else if(evtnm=='onCtrlKey'){//only care some other
+						action="zssEvent";
+						if(data.wgt){
+							label = evtnm+"/"+data.wgtType;
+						}else{
 							label = evtnm;
 						}
-						if(action){
-							trackerEvent(action,label,interval);
-							resetInterval();
-						}
-					}else if(evtnm=='onClick'){
-						var id = widget.id;
-						var extrainfo = null;
-						if(widget.label){
-							extrainfo = ",label="+widget.label;
-						}
-						var info = ACTION_INFOS[id];
-						if(info){
-							var action = info.action;
-							var label = info.label;
-							if(!!!label){
-								label = id;
-							}
-							if(!!extrainfo){
-								label += extrainfo;
-							}
-							
-							var interval = getInterval();
-							if(interval>1000){//skip continue events
-								resetInterval();
-								trackerEvent(action,label,interval);								
-							}
-
-						}
+						
+					}else if(SS_EVENTS[evtnm]){//only care some other
+						action="zssEvent";
+						label = evtnm;
+					}
+					if(action){
+						trackerEvent(action,label,interval);
+						resetInterval();
+					}
+				}else if(widget && widget.widgetName=='menuitem'){//app menu
+					if(jq(widget.$n()).hasClass('appmenu')){
+						trackerInfo(widget.id);
 					}
 				}
 			} catch (e) {
@@ -127,6 +129,7 @@
 			return auBfSend(uri, req, dt);
 		};
 	};
+	
 	zk.afterLoad('zss', function() {
 		var count = 0;
 		var checkGa = function() {

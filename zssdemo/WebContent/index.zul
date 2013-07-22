@@ -1,18 +1,16 @@
 <?page title="Demo | ZK Spreadsheet | Product | ZK" contentType="text/html;charset=UTF-8"?>
-<zk xmlns:w="http://www.zkoss.org/2005/zk/client" xmlns:n="native">
-<zscript><![CDATA[
-		final Execution exec = Executions.getCurrent();
-		final String sn = exec.getServerName();
-		final int sp = exec.getServerPort();
-		final String time = "" + new java.util.Date().getTime();
-		final String gaURL = "http://www.zkoss.org/resource/js/page/gaz.js?" + time;
-
-		String buildVersion = "?v=" + org.zkoss.zk.ui.http.WebManager.getWebManager((javax.servlet.ServletContext)Sessions.getCurrent().getWebApp().getNativeContext()).getWebApp().getBuild();
-		String cssHref = "/css/index.css.dsp" + buildVersion;
-]]></zscript>
+<?init class="org.zkoss.zss.demo.PageInit"?>
 <?link rel="shortcut icon" type="image/x-icon" href="http://www.zkoss.org/img/favicon.ico" ?>
-<script src='/js/zssactions.js?ts=${time}' type="text/javascript"></script>
-<style src="${cssHref}"></style>
+
+<?script src="http://www.google-analytics.com/ga.js"?>
+<?script src="http://www.zkoss.org/resource/js/page/gaz.js?ts=${timestamp}"?>
+<?script src="/js/zssdemo.js?ts=${starttime}"?>
+<?style src="/css/index.css.dsp?ts=${starttime}"?>
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client" xmlns:n="native">
+<script type="text/javascript"><![CDATA[
+	var z_n = "null", 
+		z_i = '${execution.remoteAddr}'; 
+]]></script>
 
 <window id="main" width="100%" height="100%" apply="org.zkoss.zss.demo.MainLayout" >
 <borderlayout width="100%">
@@ -29,10 +27,10 @@
 	<center flex="true" >
 		<tabbox id="tabbox">
 			<tabs>
-				<tab id="app0" label="Demo 1"></tab>
-				<tab id="app0Src" label="Demo 1 Source"></tab>
-				<tab id="app2" label="Demo 2"></tab>
-				<tab id="app2Src" label="Demo 2 Source"></tab>
+				<tab id="app0" sclass='demotab' label="Demo 1"></tab>
+				<tab id="app0Src" sclass='demotab' label="Demo 1 Source"></tab>
+				<tab id="app2" sclass='demotab' label="Demo 2"></tab>
+				<tab id="app2Src" sclass='demotab' label="Demo 2 Source"></tab>
 			</tabs>
 			<tabpanels hflex="true">
 				<tabpanel>
@@ -76,21 +74,4 @@
 	</center>
 </borderlayout>
 </window>
-	<script type="text/javascript"><![CDATA[
-		var z_n = "null", 
-			z_i = "<%=request.getRemoteAddr() %>" ; 
-		var	gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-		document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-		
-		var gaFn = function () {
-			if (window._gat && jq) {
-				var url = '<script src=\'${gaURL}\' type=\'text/javascript\' script>';
-				jq(document).append(url);
-			} else {
-				setTimeout(gaFn, 1000);
-			}
-		}
-		gaFn();
-	]]></script>
-
 </zk>
