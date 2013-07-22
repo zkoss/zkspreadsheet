@@ -42,7 +42,7 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
  * @author Dennis.Chen
  *
  */
-public class CellSelectionCommand implements Command {
+public class CellSelectionCommand extends AbstractCommand implements Command {
 
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();

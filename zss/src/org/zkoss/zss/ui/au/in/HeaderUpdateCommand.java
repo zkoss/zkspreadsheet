@@ -40,7 +40,7 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
  * @author Dennis.Chen
  *
  */
-public class HeaderUpdateCommand implements Command {
+public class HeaderUpdateCommand extends AbstractCommand implements Command {
 
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();

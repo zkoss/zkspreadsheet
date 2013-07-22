@@ -33,7 +33,7 @@ import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
  * @author sam
  *
  */
-public class FetchActiveRangeCommand implements Command {
+public class FetchActiveRangeCommand extends AbstractCommand implements Command {
 
 	@Override
 	public void process(AuRequest request) {

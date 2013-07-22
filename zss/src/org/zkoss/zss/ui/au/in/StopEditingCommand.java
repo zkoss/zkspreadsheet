@@ -41,7 +41,7 @@ import org.zkoss.zss.ui.impl.XUtils;
  * @author Dennis.Chen
  *
  */
-public class StopEditingCommand implements Command {
+public class StopEditingCommand extends AbstractCommand implements Command {
 	
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();

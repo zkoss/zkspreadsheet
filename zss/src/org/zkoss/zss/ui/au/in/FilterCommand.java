@@ -28,7 +28,7 @@ import org.zkoss.zss.ui.Spreadsheet;
  * @author sam
  *
  */
-public class FilterCommand implements Command {
+public class FilterCommand extends AbstractCommand implements Command {
 
 	@Override
 	public void process(AuRequest request) {

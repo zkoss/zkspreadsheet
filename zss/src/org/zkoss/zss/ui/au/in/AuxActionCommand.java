@@ -35,7 +35,7 @@ import org.zkoss.zss.ui.impl.XUtils;
  * @author sam
  * @author dennis
  */
-public class AuxActionCommand implements Command {
+public class AuxActionCommand extends AbstractCommand implements Command {
 
 	@Override
 	public void process(AuRequest request) {

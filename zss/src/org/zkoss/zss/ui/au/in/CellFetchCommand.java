@@ -26,7 +26,7 @@ import org.zkoss.zk.au.AuRequest;
  * @author Dennis.Chen
  *
  */
-public class CellFetchCommand implements Command {
+public class CellFetchCommand extends AbstractCommand implements Command {
 	public final static String Command = "onZSSCellFetch";
 
 	//-- super --//

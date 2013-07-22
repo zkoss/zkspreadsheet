@@ -34,7 +34,7 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
  * @author Dennis.Chen
  *
  */
-public class BlockSyncCommand implements Command{
+public class BlockSyncCommand extends AbstractCommand implements Command{
 
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();

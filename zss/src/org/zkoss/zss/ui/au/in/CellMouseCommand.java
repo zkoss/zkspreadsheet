@@ -41,7 +41,7 @@ import org.zkoss.zss.ui.impl.XUtils;
  * @author Dennis.Chen
  *
  */
-public class CellMouseCommand implements Command {
+public class CellMouseCommand extends AbstractCommand implements Command {
 	
 	//-- super --//
 	public void process(AuRequest request) {

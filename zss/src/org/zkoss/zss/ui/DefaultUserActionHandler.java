@@ -609,12 +609,12 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	}
 	
 	protected void showInfoMessage(String message) {
-		String title = Labels.getLabel("zss.actionhandler.msg.info_titile");
+		String title = Labels.getLabel("zss.actionhandler.msg.info_title");
 		Messagebox.show(message, title, Messagebox.OK, Messagebox.INFORMATION);
 	}
 	
 	protected void showWarnMessage(String message) {
-		String title = Labels.getLabel("zss.actionhandler.msg.warn_titile");
+		String title = Labels.getLabel("zss.actionhandler.msg.warn_title");
 		Messagebox.show(message, title, Messagebox.OK, Messagebox.EXCLAMATION);
 	}
 	

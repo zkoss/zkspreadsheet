@@ -19,6 +19,7 @@ package org.zkoss.zss.ui.au.in;
 import java.util.Map;
 
 import org.zkoss.lang.Objects;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
@@ -38,7 +39,7 @@ import org.zkoss.zss.ui.impl.XUtils;
  * @author sam
  *
  */
-public class WidgetUpdateCommand implements Command {
+public class WidgetUpdateCommand extends AbstractCommand implements Command {
 
 	@Override
 	public void process(AuRequest request) {
@@ -59,6 +60,7 @@ public class WidgetUpdateCommand implements Command {
 		// ZSS-113: chart modification only support Excel 2007 format
 		String widgetType = (String)data.get("wgtType");
 		if("chart".equals(widgetType) && sheet.getBook().getType() != BookType.EXCEL_2007) {
+			showInfoMessage(Labels.getLabel("zss.command.msg.chart_not_support_with_2003"));
 			return;
 		}
 		

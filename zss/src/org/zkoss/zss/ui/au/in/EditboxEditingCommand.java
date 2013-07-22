@@ -38,7 +38,7 @@ import org.zkoss.zss.ui.impl.XUtils;
  * @author kinda lu
  * 
  */
-public class EditboxEditingCommand implements Command {
+public class EditboxEditingCommand extends AbstractCommand implements Command {
 	
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();

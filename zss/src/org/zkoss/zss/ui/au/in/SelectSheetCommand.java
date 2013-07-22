@@ -41,7 +41,7 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
  * @author sam
  *
  */
-public class SelectSheetCommand implements Command {
+public class SelectSheetCommand extends AbstractCommand implements Command {
 
 	@Override
 	public void process(AuRequest request) {

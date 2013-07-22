@@ -41,7 +41,7 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
  * @author Dennis.Chen
  *
  */
-public class CellSelectionUpdateCommand implements Command {
+public class CellSelectionUpdateCommand extends AbstractCommand implements Command {
 
 	public void process(AuRequest request) {
 		final Component comp = request.getComponent();
