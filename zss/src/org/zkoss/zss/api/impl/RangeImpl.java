@@ -23,6 +23,7 @@ import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFClientAnchor;
 import org.zkoss.zss.api.CellVisitor;
@@ -63,6 +64,7 @@ import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XRanges;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.model.sys.impl.HSSFBookImpl;
 import org.zkoss.zss.ui.impl.XUtils;
 
 /**
@@ -717,10 +719,12 @@ public class RangeImpl implements Range{
 		return new CellStyleImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.CellStyle>(style));		
 	}
 	
-	private ClientAnchor toClientAnchor(SheetAnchor anchor){
-		Book book = getSheet().getBook();
+	/**
+	 * Internal use only
+	 */
+	public static ClientAnchor toClientAnchor(Workbook book,SheetAnchor anchor){
 		ClientAnchor can = null;
-		if(book.getType()==BookType.EXCEL_2003){
+		if(book instanceof HSSFBookImpl){//2003
 			//it looks like not correct, need to double check this
 			can = new HSSFClientAnchor(anchor.getXOffset(),anchor.getYOffset(),anchor.getLastXOffset(),anchor.getLastYOffset(),
 					(short)anchor.getColumn(),(short)anchor.getRow(),(short)anchor.getLastColumn(),(short)anchor.getLastRow());
@@ -736,8 +740,23 @@ public class RangeImpl implements Range{
 		return can;
 	}
 	
+	/**
+	 * Internal use only
+	 */
+	public static SheetAnchor toSheetAnchor(Workbook book,ClientAnchor anchor){
+		SheetAnchor san = null;
+		if(book instanceof HSSFBookImpl){
+			san = new SheetAnchor(anchor.getRow1(),anchor.getCol1(),anchor.getDx1(),anchor.getDy1(),
+					anchor.getRow2(),anchor.getCol2(),anchor.getDx2(),anchor.getDy2());
+		}else{
+			san = new SheetAnchor(anchor.getRow1(),anchor.getCol1(),UnitUtil.emuToPx(anchor.getDx1()),UnitUtil.emuToPx(anchor.getDy1()),
+					anchor.getRow2(),anchor.getCol2(),UnitUtil.emuToPx(anchor.getDx2()),UnitUtil.emuToPx(anchor.getDy2()));
+		}
+		return san;
+	}
+	
 	public Picture addPicture(SheetAnchor anchor,byte[] image,Format format){
-		ClientAnchor an = toClientAnchor(anchor);
+		ClientAnchor an = toClientAnchor(getBook().getPoiBook(),anchor);
 		org.zkoss.poi.ss.usermodel.Picture pic = range.addPicture(an, image, EnumUtil.toPictureFormat(format));
 		return new PictureImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic));
 	}
@@ -749,14 +768,14 @@ public class RangeImpl implements Range{
 	
 	public void movePicture(SheetAnchor anchor,Picture picture){
 		//TODO the syncLevel
-		ClientAnchor an = toClientAnchor(anchor);
+		ClientAnchor an = toClientAnchor(getBook().getPoiBook(),anchor);
 		range.movePicture(((PictureImpl)picture).getNative(), an);
 	}
 	
 	//currently, we only support to modify chart in XSSF
 	public Chart addChart(SheetAnchor anchor,ChartData data,Type type, Grouping grouping, LegendPosition pos){
 		//TODO the syncLevel
-		ClientAnchor an = toClientAnchor(anchor);
+		ClientAnchor an = toClientAnchor(getBook().getPoiBook(),anchor);
 		org.zkoss.poi.ss.usermodel.charts.ChartData cdata = ((ChartDataImpl)data).getNative();
 		org.zkoss.poi.ss.usermodel.Chart chart = range.addChart(an, cdata, EnumUtil.toChartType(type), EnumUtil.toChartGrouping(grouping), EnumUtil.toLegendPosition(pos));
 		return new ChartImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart));
@@ -771,7 +790,7 @@ public class RangeImpl implements Range{
 	//currently, we only support to modify chart in XSSF
 	public void moveChart(SheetAnchor anchor,Chart chart){
 		//TODO the syncLevel
-		ClientAnchor an = toClientAnchor(anchor);
+		ClientAnchor an = toClientAnchor(getBook().getPoiBook(),anchor);
 		range.moveChart(((ChartImpl)chart).getNative(), an);
 	}
 	

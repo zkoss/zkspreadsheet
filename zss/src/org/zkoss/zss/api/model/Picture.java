@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model;
 
+import org.zkoss.zss.api.SheetAnchor;
+
 /**
  * 
  * @author dennis
@@ -33,4 +35,6 @@ public interface Picture {
 	}
 	
 	public String getId();
+	
+	public SheetAnchor getAnchor();
 }

@@ -37,8 +37,14 @@ public class UnitUtil {
 	
 	/** convert pixel to EMU */
 	public static int pxToEmu(int px) {
-		//refer form ActionHandler
+		//refer form ActionHandler,ChartHelper
 		return (int) Math.round(((double)px) * 72 * 20 * 635 / 96); //assume 96dpi
+	}
+	
+	/** convert EMU to pixel, 1 twip == 635 emu */
+	public static int emuToPx(int emu) {
+		//refer form ChartHelper
+		return (int) Math.round(((double)emu) * 96 / 72 / 20 / 635); //assume 96dpi
 	}
 
 	/**

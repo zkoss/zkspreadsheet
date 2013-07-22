@@ -16,6 +16,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
+import org.zkoss.poi.ss.usermodel.ClientAnchor;
+import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.SheetAnchor;
+import org.zkoss.zss.api.impl.RangeImpl;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.model.sys.XBook;
 /**
@@ -65,5 +69,11 @@ public class PictureImpl implements Picture{
 	
 	public String getId(){
 		return getNative().getPictureId();
+	}
+
+	@Override
+	public SheetAnchor getAnchor() {
+		ClientAnchor anchor = getNative().getClientAnchor();
+		return anchor==null?null:RangeImpl.toSheetAnchor(bookRef.get(), anchor);
 	}
 }
