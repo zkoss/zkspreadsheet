@@ -22,6 +22,7 @@ import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.impl.RangeImpl;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XSheet;
 /**
  * 
  * @author dennis
@@ -29,11 +30,11 @@ import org.zkoss.zss.model.sys.XBook;
  */
 public class PictureImpl implements Picture{
 	
-	ModelRef<XBook> bookRef;
+	ModelRef<XSheet> sheetRef;
 	ModelRef<org.zkoss.poi.ss.usermodel.Picture> picRef;
 	
-	public PictureImpl(ModelRef<XBook> bookRef, ModelRef<org.zkoss.poi.ss.usermodel.Picture> picRef) {
-		this.bookRef = bookRef;
+	public PictureImpl(ModelRef<XSheet> sheetRef, ModelRef<org.zkoss.poi.ss.usermodel.Picture> picRef) {
+		this.sheetRef = sheetRef;
 		this.picRef = picRef;
 	}
 
@@ -73,7 +74,7 @@ public class PictureImpl implements Picture{
 
 	@Override
 	public SheetAnchor getAnchor() {
-		ClientAnchor anchor = getNative().getClientAnchor();
-		return anchor==null?null:RangeImpl.toSheetAnchor(bookRef.get(), anchor);
+		ClientAnchor anchor = getNative().getPreferredSize();
+		return anchor==null?null:SheetImpl.toSheetAnchor(sheetRef.get(), anchor);
 	}
 }

@@ -685,6 +685,10 @@ public class RangeImpl implements Range{
 		return ((BookImpl)getBook()).getRef();
 	}
 	
+	private ModelRef<XSheet> getSheetRef(){
+		return ((SheetImpl)getSheet()).getRef();
+	}
+	
 
 	/**
 	 * get the first cell style of this range
@@ -718,47 +722,12 @@ public class RangeImpl implements Range{
 		
 		return new CellStyleImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.CellStyle>(style));		
 	}
-	
-	/**
-	 * Internal use only
-	 */
-	public static ClientAnchor toClientAnchor(Workbook book,SheetAnchor anchor){
-		ClientAnchor can = null;
-		if(book instanceof HSSFBookImpl){//2003
-			//it looks like not correct, need to double check this
-			can = new HSSFClientAnchor(anchor.getXOffset(),anchor.getYOffset(),anchor.getLastXOffset(),anchor.getLastYOffset(),
-					(short)anchor.getColumn(),(short)anchor.getRow(),(short)anchor.getLastColumn(),(short)anchor.getLastRow());
-		}else{
-			//code refer from ActionHandler.getClientAngent
-			//but it looks like not correct, need to double check this
-			can = new XSSFClientAnchor(UnitUtil.pxToEmu(anchor.getXOffset()),UnitUtil.pxToEmu(anchor.getYOffset()),
-					UnitUtil.pxToEmu(anchor.getLastXOffset()),UnitUtil.pxToEmu(anchor.getLastYOffset()),
-					(short)anchor.getColumn(),(short)anchor.getRow(),(short)anchor.getLastColumn(),(short)anchor.getLastRow());
-//			can = new XSSFClientAnchor(anchor.getXOffset(),anchor.getYOffset(),anchor.getLastXOffset(),anchor.getLastYOffset(),
-//					(short)anchor.getColumn(),(short)anchor.getRow(),(short)anchor.getLastColumn(),(short)anchor.getLastRow());
-		}
-		return can;
-	}
-	
-	/**
-	 * Internal use only
-	 */
-	public static SheetAnchor toSheetAnchor(Workbook book,ClientAnchor anchor){
-		SheetAnchor san = null;
-		if(book instanceof HSSFBookImpl){
-			san = new SheetAnchor(anchor.getRow1(),anchor.getCol1(),anchor.getDx1(),anchor.getDy1(),
-					anchor.getRow2(),anchor.getCol2(),anchor.getDx2(),anchor.getDy2());
-		}else{
-			san = new SheetAnchor(anchor.getRow1(),anchor.getCol1(),UnitUtil.emuToPx(anchor.getDx1()),UnitUtil.emuToPx(anchor.getDy1()),
-					anchor.getRow2(),anchor.getCol2(),UnitUtil.emuToPx(anchor.getDx2()),UnitUtil.emuToPx(anchor.getDy2()));
-		}
-		return san;
-	}
+
 	
 	public Picture addPicture(SheetAnchor anchor,byte[] image,Format format){
-		ClientAnchor an = toClientAnchor(getBook().getPoiBook(),anchor);
+		ClientAnchor an = SheetImpl.toClientAnchor(getSheet().getPoiSheet(),anchor);
 		org.zkoss.poi.ss.usermodel.Picture pic = range.addPicture(an, image, EnumUtil.toPictureFormat(format));
-		return new PictureImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic));
+		return new PictureImpl(getSheetRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic));
 	}
 	
 	public void deletePicture(Picture picture){
@@ -768,17 +737,17 @@ public class RangeImpl implements Range{
 	
 	public void movePicture(SheetAnchor anchor,Picture picture){
 		//TODO the syncLevel
-		ClientAnchor an = toClientAnchor(getBook().getPoiBook(),anchor);
+		ClientAnchor an = SheetImpl.toClientAnchor(getSheet().getPoiSheet(),anchor);
 		range.movePicture(((PictureImpl)picture).getNative(), an);
 	}
 	
 	//currently, we only support to modify chart in XSSF
 	public Chart addChart(SheetAnchor anchor,ChartData data,Type type, Grouping grouping, LegendPosition pos){
 		//TODO the syncLevel
-		ClientAnchor an = toClientAnchor(getBook().getPoiBook(),anchor);
+		ClientAnchor an = SheetImpl.toClientAnchor(getSheet().getPoiSheet(),anchor);
 		org.zkoss.poi.ss.usermodel.charts.ChartData cdata = ((ChartDataImpl)data).getNative();
 		org.zkoss.poi.ss.usermodel.Chart chart = range.addChart(an, cdata, EnumUtil.toChartType(type), EnumUtil.toChartGrouping(grouping), EnumUtil.toLegendPosition(pos));
-		return new ChartImpl(getBookRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart));
+		return new ChartImpl(getSheetRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart));
 	}
 	
 	//currently, we only support to modify chart in XSSF
@@ -790,7 +759,7 @@ public class RangeImpl implements Range{
 	//currently, we only support to modify chart in XSSF
 	public void moveChart(SheetAnchor anchor,Chart chart){
 		//TODO the syncLevel
-		ClientAnchor an = toClientAnchor(getBook().getPoiBook(),anchor);
+		ClientAnchor an = SheetImpl.toClientAnchor(getSheet().getPoiSheet(),anchor);
 		range.moveChart(((ChartImpl)chart).getNative(), an);
 	}
 	

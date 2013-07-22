@@ -21,6 +21,7 @@ import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.impl.RangeImpl;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.XSheet;
 /**
  * 
  * @author dennis
@@ -28,11 +29,11 @@ import org.zkoss.zss.model.sys.XBook;
  */
 public class ChartImpl implements Chart{
 	
-	ModelRef<XBook> bookRef;
+	ModelRef<XSheet> sheetRef;
 	ModelRef<org.zkoss.poi.ss.usermodel.Chart> chartRef;
 	
-	public ChartImpl(ModelRef<XBook> bookRef, ModelRef<org.zkoss.poi.ss.usermodel.Chart> chartRef) {
-		this.bookRef = bookRef;
+	public ChartImpl(ModelRef<XSheet> sheetRef, ModelRef<org.zkoss.poi.ss.usermodel.Chart> chartRef) {
+		this.sheetRef = sheetRef;
 		this.chartRef = chartRef;
 	}
 
@@ -72,6 +73,6 @@ public class ChartImpl implements Chart{
 	@Override
 	public SheetAnchor getAnchor() {
 		ClientAnchor anchor = getNative().getPreferredSize();
-		return anchor==null?null:RangeImpl.toSheetAnchor(bookRef.get(), anchor);
+		return anchor==null?null:SheetImpl.toSheetAnchor(sheetRef.get(), anchor);
 	}
 }

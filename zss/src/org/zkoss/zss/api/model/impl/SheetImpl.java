@@ -19,7 +19,12 @@ package org.zkoss.zss.api.model.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zkoss.poi.hssf.usermodel.HSSFClientAnchor;
+import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.xssf.usermodel.XSSFClientAnchor;
+import org.zkoss.zss.api.SheetAnchor;
+import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Picture;
@@ -28,6 +33,7 @@ import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.DrawingManager;
+import org.zkoss.zss.model.sys.impl.HSSFSheetImpl;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.impl.XUtils;
 /**
@@ -115,7 +121,7 @@ public class SheetImpl implements Sheet{
 		DrawingManager dm = ((SheetCtrl)getNative()).getDrawingManager();
 		List<Chart> charts = new ArrayList<Chart>();
 		for(org.zkoss.poi.ss.usermodel.Chart chart:dm.getCharts()){
-			charts.add(new ChartImpl(((BookImpl)book).getRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart)));
+			charts.add(new ChartImpl(sheetRef, new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart)));
 		}
 		return charts;
 	}
@@ -126,7 +132,7 @@ public class SheetImpl implements Sheet{
 		DrawingManager dm = ((SheetCtrl)getNative()).getDrawingManager();
 		List<Picture> pictures = new ArrayList<Picture>();
 		for(org.zkoss.poi.ss.usermodel.Picture pic:dm.getPictures()){
-			pictures.add(new PictureImpl(((BookImpl)book).getRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic)));
+			pictures.add(new PictureImpl(sheetRef, new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic)));
 		}
 		return pictures;
 	}
@@ -162,5 +168,42 @@ public class SheetImpl implements Sheet{
 	@Override
 	public Object getSync() {
 		return getNative();
+	}
+	
+	
+	/**
+	 * Utility method, internal use only
+	 */
+	public static ClientAnchor toClientAnchor(org.zkoss.poi.ss.usermodel.Sheet sheet,SheetAnchor anchor){
+		ClientAnchor can = null;
+		if(sheet instanceof HSSFSheetImpl){//2003
+			//it looks like not correct, need to double check this
+			can = new HSSFClientAnchor(anchor.getXOffset(),anchor.getYOffset(),anchor.getLastXOffset(),anchor.getLastYOffset(),
+					(short)anchor.getColumn(),(short)anchor.getRow(),(short)anchor.getLastColumn(),(short)anchor.getLastRow());
+		}else{
+			//code refer from ActionHandler.getClientAngent
+			//but it looks like not correct, need to double check this
+			can = new XSSFClientAnchor(UnitUtil.pxToEmu(anchor.getXOffset()),UnitUtil.pxToEmu(anchor.getYOffset()),
+					UnitUtil.pxToEmu(anchor.getLastXOffset()),UnitUtil.pxToEmu(anchor.getLastYOffset()),
+					(short)anchor.getColumn(),(short)anchor.getRow(),(short)anchor.getLastColumn(),(short)anchor.getLastRow());
+//			can = new XSSFClientAnchor(anchor.getXOffset(),anchor.getYOffset(),anchor.getLastXOffset(),anchor.getLastYOffset(),
+//					(short)anchor.getColumn(),(short)anchor.getRow(),(short)anchor.getLastColumn(),(short)anchor.getLastRow());
+		}
+		return can;
+	}
+	
+	/**
+	 * Utility method, internal use only
+	 */
+	public static SheetAnchor toSheetAnchor(org.zkoss.poi.ss.usermodel.Sheet sheet,ClientAnchor anchor){
+		SheetAnchor san = null;
+		if(sheet instanceof HSSFSheetImpl){
+			san = new SheetAnchor(anchor.getRow1(),anchor.getCol1(),anchor.getDx1(),anchor.getDy1(),
+					anchor.getRow2(),anchor.getCol2(),anchor.getDx2(),anchor.getDy2());
+		}else{
+			san = new SheetAnchor(anchor.getRow1(),anchor.getCol1(),UnitUtil.emuToPx(anchor.getDx1()),UnitUtil.emuToPx(anchor.getDy1()),
+					anchor.getRow2(),anchor.getCol2(),UnitUtil.emuToPx(anchor.getDx2()),UnitUtil.emuToPx(anchor.getDy2()));
+		}
+		return san;
 	}
 }
