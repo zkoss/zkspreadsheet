@@ -80,6 +80,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
+import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
@@ -4370,7 +4371,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			processCancelEditing0(token, event.getSheet(), event.getRow(), event.getColumn(), false, editingType);
 	}
 	
-	private void showFormulaError(FormulaParseException ex) {
+	private void showFormulaError(IllegalFormulaException ex) {
 		String title = Labels.getLabel("zss.msg.warn_title");
 		String msg = Labels.getLabel("zss.msg.formula_error",new Object[]{ex.getMessage()});
 		Messagebox.show(msg, title, Messagebox.OK, Messagebox.EXCLAMATION, new EventListener() {
@@ -4427,8 +4428,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			smartUpdate("dataUpdateStop", new Object[] { token,	XUtils.getSheetUuid(sheet), result});
 		} catch (RuntimeException x) {
 			processCancelEditing0(token, sheet, rowIdx, colIdx, false, editingType);
-			if (x instanceof FormulaParseException) {
-				showFormulaError((FormulaParseException)x);
+			if (x instanceof IllegalFormulaException) {
+				showFormulaError((IllegalFormulaException)x);
 			} else {
 				throw x;
 			}

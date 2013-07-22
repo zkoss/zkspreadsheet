@@ -18,6 +18,8 @@ package org.zkoss.zss.api.model;
 
 import java.util.Date;
 
+import org.zkoss.zss.api.IllegalFormulaException;
+
 /**
  * The cell data object
  * @author dennis
@@ -120,6 +122,7 @@ public interface CellData {
 	/**
 	 * Sets the edit text, for example, "123" is number, "2012/1/1" is date, "=SUM(A1:B1)" is formula
 	 * @param editText
+	 * @throws IllegalFormulaException
 	 */
 	public void setEditText(String editText);
 	

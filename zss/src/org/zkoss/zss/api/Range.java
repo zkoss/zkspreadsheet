@@ -424,6 +424,7 @@ public interface Range {
 	/**
 	 * Sets cell editText, applies it to all cells of this range 
 	 * @param editText the eidtText, it could be a string, integer string, date string or a formula (start with '=')
+	 * @throws IllegalFormulaException
 	 */
 	public void setCellEditText(String editText);
 	

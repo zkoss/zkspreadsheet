@@ -19,12 +19,14 @@ package org.zkoss.zss.api.impl;
 import java.util.ArrayList;
 import java.util.List;
 import org.zkoss.poi.hssf.usermodel.HSSFClientAnchor;
+import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFClientAnchor;
 import org.zkoss.zss.api.CellVisitor;
+import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.RangeRunner;
 import org.zkoss.zss.api.Ranges;
@@ -612,7 +614,11 @@ public class RangeImpl implements Range{
 	
 	public void setCellEditText(String editText){
 		//TODO the syncLevel
-		range.setEditText(editText);
+		try{
+			range.setEditText(editText);
+		}catch(FormulaParseException x){
+			throw new IllegalFormulaException(x.getMessage(),x);
+		}
 	}
 	
 	public String getCellFormatText(){
