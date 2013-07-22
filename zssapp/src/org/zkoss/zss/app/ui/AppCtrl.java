@@ -39,7 +39,7 @@ import org.zkoss.zss.app.ui.dlg.SaveBookAsCtrl;
 import org.zkoss.zss.ui.DefaultUserAction;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zssex.ui.DefaultExUserActionHandler;
+import org.zkoss.zssex.ui.DefaultUserActionHandlerEx;
 import org.zkoss.zul.Filedownload;
 
 /**
@@ -106,7 +106,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	}
 	
 	
-	public class AppUserActionHandler extends DefaultExUserActionHandler  {
+	public class AppUserActionHandler extends DefaultUserActionHandlerEx  {
 		private static final long serialVersionUID = 1L;
 		
 		@Override
