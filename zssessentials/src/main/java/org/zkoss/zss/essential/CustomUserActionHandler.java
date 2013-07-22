@@ -11,10 +11,10 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.essential.util.BookUtil;
 import org.zkoss.zss.essential.util.ClientUtil;
 import org.zkoss.zss.ui.DefaultUserAction;
-import org.zkoss.zssex.ui.DefaultExUserActionHandler;
+import org.zkoss.zssex.ui.DefaultUserActionHandlerEx;
 import org.zkoss.zul.Filedownload;
 
-public class CustomUserActionHandler extends DefaultExUserActionHandler {
+public class CustomUserActionHandler extends DefaultUserActionHandlerEx {
 	private static final long serialVersionUID = 1L;
 	private final static Log log = Log.lookup(CustomUserActionHandler.class);
 
