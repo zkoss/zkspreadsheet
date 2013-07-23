@@ -1,21 +1,6 @@
 <zk>
-	<window hflex="1" vflex="1"
-		apply="org.zkoss.zss.essential.BookSeriesComposer">
-			<vlayout hflex="1" vflex="1">
-				<groupbox hflex="1"  vflex="3" mold="3d">
-					<caption id="book1Caption" />
-					<spreadsheet id="ss" hflex="1" vflex="1"
-						showFormulabar="true" showContextMenu="true" showToolbar="true"
-						showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"
-						src="/WEB-INF/books/resume.xlsx" />
-				</groupbox>
-				<groupbox hflex="1" vflex="2" mold="3d">
-					<caption id="book2Caption" />
-					<spreadsheet id="ss2" hflex="1" vflex="1"
-						showFormulabar="true" showContextMenu="true" showToolbar="true"
-						showSheetbar="true" maxVisibleRows="20" maxVisibleColumns="10" 
-						src="/WEB-INF/books/profile.xlsx"/>
-				</groupbox>
-			</vlayout>
+	<window hflex="1" vflex="1" apply="org.zkoss.zss.essential.advanced.BookSeriesComposer">
+		<spreadsheet id="ss" hflex="1" vflex="1" showFormulabar="true" showContextMenu="true"
+			showToolbar="true" showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"/>
 	</window>
 </zk>
