@@ -1,25 +1,63 @@
 <zk>
-	<window hflex="1" vflex="1"
-		apply="org.zkoss.zss.essential.ExportVerifierComposer">
+	<window hflex="1" vflex="1" apply="org.zkoss.zss.essential.PictureComposer">
 
 		<hlayout hflex="1" vflex="1">
-			<vlayout hflex="1" vflex="1">
-				<spreadsheet id="ss" hflex="1" vflex="1"
-					showFormulabar="true" showContextMenu="true" showToolbar="true"
-					showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"
-					src="/WEB-INF/books/sample.xlsx" />
-				<spreadsheet id="ss2" hflex="1" vflex="1"
-					showFormulabar="true" showContextMenu="true" showToolbar="true"
-					showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40" />
-			</vlayout>
-			<vlayout width="300px" vflex="1">
-				<groupbox hflex="1" height="200px">
-					<caption label="Available Books" />
-					<listbox id="availableBookList" vflex="1">
-
+			<spreadsheet id="ss" hflex="1" vflex="1" showFormulabar="true" showContextMenu="true"
+				showToolbar="true" showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"
+				src="/WEB-INF/books/blank.xlsx" />
+			<vlayout width="350px" vflex="1">
+				<groupbox hflex="1">
+					<caption label="Picture" />
+					<listbox id="pictureListbox">
+						<listhead>
+							<listheader label="ID" width="50px"/>
+							<listheader label="Row" width="50px" />
+							<listheader label="Column" width="50px"/>
+							<listheader label="Last Row" />
+							<listheader label="Last Column" />
+						</listhead>
+						<template name="model">
+							<listitem>
+								<listcell label="${each.id}"></listcell>
+								<listcell label="${each.anchor.row}"></listcell>
+								<listcell label="${each.anchor.column}"></listcell>
+								<listcell label="${each.anchor.lastRow}"></listcell>
+								<listcell label="${each.anchor.lastColumn}"></listcell>
+							</listitem>
+						</template>
 					</listbox>
 				</groupbox>
-				<button id="exportBtn" label="Export &amp; Load to 2nd spreadsheet"/>
+				<groupbox hflex="1">
+					<caption label="Control" />
+					<grid vflex="1" hflex="1">
+						<columns>
+						</columns>
+						<rows>
+							<row spans="2">
+								<hlayout >
+								To Row:
+								<intbox id="toRowBox" value="0"  width="30px"/>
+								To Column:
+								<intbox id="toColumnBox" value="0" width="30px" />
+								<button id="moveButton" label="Move" />
+								</hlayout>
+							</row>
+							<row>
+							</row>
+							<row spans="2" align="right">
+							</row>
+							<row spans="2" align="right">
+								<hlayout>
+									<button id="addButton" label="Add" />
+									<button id="deleteButton" label="Delete" />
+								</hlayout>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+				<!-- 
+				<button id="exportButton" label="Export" />
+				 -->
 			</vlayout>
 		</hlayout>
 	</window>
