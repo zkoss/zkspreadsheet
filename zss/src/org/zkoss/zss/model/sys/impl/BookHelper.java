@@ -475,6 +475,12 @@ public final class BookHelper {
 		refBook.publish(new SSDataEvent(SSDataEvent.ON_SHEET_ORDER_CHANGE, ref, (Object)sheetName));//as payload
 	}
 	
+	/*package*/ static void notifyFreezeSheet(Ref ref, Object[] freezeInfo) {
+		final RefSheet refSheet = ref.getOwnerSheet();
+		final RefBook refBook = refSheet.getOwnerBook();
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_SHEET_FREEZE, ref, freezeInfo));
+	}
+	
 	public static void reevaluateAndNotify(XBook book, Set<Ref> last, Set<Ref> all) {
 		//clear cached formula value
 		clearFormulaCache(book, all);
@@ -2065,7 +2071,7 @@ public final class BookHelper {
 		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
 		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
 		shiftFormulas(all, sheet, startRow, maxrow, num, 0, maxcol, 0);
-		
+		shiftRowFreezePanel(sheet,startRow,num);
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	
@@ -2084,9 +2090,41 @@ public final class BookHelper {
 		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
 		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
 		shiftFormulas(all, sheet, startRow, maxrow, num, 0, maxcol, 0);
-		
+		shiftRowFreezePanel(sheet,startRow,num);
 		return new ChangeInfo(last, all, changeMerges);
 	}
+	private static void shiftRowFreezePanel(XSheet sheet, int startRow, int num) {
+		if(!isFreezePane(sheet) || num==0)
+			return;
+		
+		int rowFreeze = getRowFreeze(sheet);
+		
+		if(rowFreeze>startRow){
+			int colFreeze = getColumnFreeze(sheet);
+			rowFreeze += num;
+			if(rowFreeze<startRow){
+				rowFreeze = startRow;
+			}
+			setFreezePanel(sheet, rowFreeze, colFreeze);
+		}
+	}
+	
+	private static void shiftColumnFreezePanel(XSheet sheet, int startCol, int num) {
+		if(!isFreezePane(sheet) || num==0)
+			return;
+		
+		int colFreeze = getColumnFreeze(sheet);
+		
+		if(colFreeze>startCol){
+			int rowFreeze = getRowFreeze(sheet);
+			colFreeze+=num;
+			if(colFreeze<startCol){
+				colFreeze = startCol;
+			}
+			setFreezePanel(sheet, rowFreeze, colFreeze);
+		}
+	}
+
 	//TODO interface for SheetCtrl?
 	public static ChangeInfo deleteRows(XSheet sheet, int startRow, int num) {
 		if (sheet instanceof HSSFSheet) {
@@ -2111,7 +2149,7 @@ public final class BookHelper {
 		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
 		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
 		shiftFormulas(all, sheet, startRow0, maxrow, -num, 0, maxcol, 0);
-		
+		shiftRowFreezePanel(sheet,startRow,-num);
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	private static ChangeInfo deleteXSSFRows(XSheet sheet, int startRow, int num) {
@@ -2130,7 +2168,7 @@ public final class BookHelper {
 		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
 		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
 		shiftFormulas(all, sheet, startRow0, maxrow, -num, 0, maxcol, 0);
-		
+		shiftRowFreezePanel(sheet,startRow,-num);
 		return new ChangeInfo(last, all, changeMerges);
 	}
 
@@ -2154,7 +2192,7 @@ public final class BookHelper {
 		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
 		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
 		shiftFormulas(all, sheet, 0, maxrow, 0, startCol, maxcol, num);
-		
+		shiftColumnFreezePanel(sheet,startCol,num);
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	
@@ -2169,7 +2207,7 @@ public final class BookHelper {
 		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
 		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
 		shiftFormulas(all, sheet, 0, maxrow, 0, startCol, maxcol, num);
-		
+		shiftColumnFreezePanel(sheet,startCol,num);
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	
@@ -2194,7 +2232,7 @@ public final class BookHelper {
 		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
 		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
 		shiftFormulas(all, sheet, 0, maxrow, 0, startCol0, maxcol, -num);
-		
+		shiftColumnFreezePanel(sheet,startCol,-num);
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	
@@ -2210,7 +2248,7 @@ public final class BookHelper {
 		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
 		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
 		shiftFormulas(all, sheet, 0, maxrow, 0, startCol0, maxcol, -num);
-		
+		shiftColumnFreezePanel(sheet,startCol,-num);
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	
@@ -4664,13 +4702,25 @@ public final class BookHelper {
 			((HSSFSheetImpl)sheet).isFreezePanes() : ((XSSFSheetImpl)sheet).isFreezePanes();
 	}
 	
+	/**
+	 * gets the row freeze, 1 base
+	 */
 	public static int getRowFreeze(XSheet sheet) {
 		final PaneInformation pi = sheet.getPaneInformation();
 		return pi != null ? pi.getHorizontalSplitPosition() : 0;
 	}
+	/**
+	 * gets the column freeze, 1 base
+	 */
 	public static int getColumnFreeze(XSheet sheet) {
 		final PaneInformation pi = sheet.getPaneInformation();
 		return pi != null ? pi.getVerticalSplitPosition() : 0;
+	}
+	/**
+	 * sets the freeze panel, 1 base
+	 */
+	public static void setFreezePanel(XSheet sheet,int rowFreeze,int colFreeze){
+		sheet.createFreezePane(colFreeze<=0?0:colFreeze, rowFreeze<=0?0:rowFreeze);
 	}
 	
 	/*package*/ static void setDataFormat(Workbook book, CellStyle style, String formatString) {

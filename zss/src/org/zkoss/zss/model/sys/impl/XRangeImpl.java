@@ -2520,4 +2520,14 @@ public class XRangeImpl implements XRange {
 		Ref ref = _refs.iterator().next();
 		return ref.isWholeSheet();
 	}
+	
+	public void setFreezePanel(int rowfreeze, int columnfreeze){
+		synchronized (_sheet.getBook()) {
+			Ref ref = _refs != null && !_refs.isEmpty() ? _refs.iterator().next() : null;
+			if (ref != null) {
+				BookHelper.setFreezePanel(_sheet, rowfreeze, columnfreeze);
+				BookHelper.notifyFreezeSheet(ref, new Object[] {rowfreeze, columnfreeze});
+			}
+		}
+	}
 }

@@ -642,4 +642,11 @@ public interface XRange {
 	 * Notify this range has been changed.
 	 */
 	public void notifyChange();
+	
+	/**
+	 * Set the freeze panel
+	 * @param rowfreeze the freeze index of row, 0 means no freeze
+	 * @param columnfreeze the freeze index of column, 0 means no freeze
+	 */
+	public void setFreezePanel(int rowfreeze, int columnfreeze);
 }

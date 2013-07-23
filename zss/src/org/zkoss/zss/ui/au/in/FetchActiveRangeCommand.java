@@ -59,11 +59,11 @@ public class FetchActiveRangeCommand extends AbstractCommand implements Command 
 			final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) spreadsheet.getExtraCtrl());
 			
 			JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, left, top, right, bottom);
-			if (spreadsheet.getColumnfreeze() >= 0) {
+			if (spreadsheet.getColumnfreeze() > -1) {
 				mainBlock.put("leftFrozen", 
 						spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 0, top, spreadsheet.getColumnfreeze(), bottom));
 			}
-			if (spreadsheet.getRowfreeze() >= 0) {
+			if (spreadsheet.getRowfreeze() > -1) {
 				mainBlock.put("topFrozen", 
 						spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, left, 0, right, spreadsheet.getRowfreeze()));
 			}

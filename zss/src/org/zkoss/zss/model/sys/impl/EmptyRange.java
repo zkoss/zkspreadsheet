@@ -389,4 +389,8 @@ public class EmptyRange implements XRange {
 	@Override
 	public void notifyChange() {		
 	}
+
+	@Override
+	public void setFreezePanel(int rowfreeze, int columnfreeze) {		
+	}
 }

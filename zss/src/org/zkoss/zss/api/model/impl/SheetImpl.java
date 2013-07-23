@@ -128,7 +128,6 @@ public class SheetImpl implements Sheet{
 
 	
 	public List<Picture> getPictures(){
-		Book book = getBook();
 		DrawingManager dm = ((SheetCtrl)getNative()).getDrawingManager();
 		List<Picture> pictures = new ArrayList<Picture>();
 		for(org.zkoss.poi.ss.usermodel.Picture pic:dm.getPictures()){
@@ -138,11 +137,21 @@ public class SheetImpl implements Sheet{
 	}
 
 	public int getRowFreeze() {
-		return BookHelper.getRowFreeze(getNative());
+		if (BookHelper.isFreezePane((XSheet)getPoiSheet())) { //issue #103: Freeze row/column is not correctly interpreted
+			int f = BookHelper.getRowFreeze(getNative())-1;//poi 1 base -> sparedsheet 0 base
+			return f>-1?f:-1;
+		}else{
+			return -1;
+		}
 	}
 
 	public int getColumnFreeze() {
-		return BookHelper.getColumnFreeze(getNative());
+		if (BookHelper.isFreezePane((XSheet)getPoiSheet())) { //issue #103: Freeze row/column is not correctly interpreted
+			int f = BookHelper.getColumnFreeze(getNative())-1;//poi 1 base -> sparedsheet 0 base
+			return f>-1?f:-1;
+		}else{
+			return -1;
+		}
 	}
 
 	@Override

@@ -841,6 +841,12 @@ public class RangeImpl implements Range{
 	public void notifyChange(){
 		range.notifyChange();
 	}
+	@Override
+	public void setFreezePanel(int rowfreeze, int columnfreeze) {
+		rowfreeze++;//spreadsheet 0 base -> poi 1 base
+		columnfreeze++;//spreadsheet 0 base -> poi 1 base
+		range.setFreezePanel(rowfreeze, columnfreeze);
+	}
 		
 
 }

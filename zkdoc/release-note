@@ -3,6 +3,7 @@ ZK Spreadsheet 3.0.0 RC
 *Features:
   ZSS-338 When share book, could the friend focus shows user name of another editor
   ZSS-353 Support head tag in JSP/JSF
+  ZSS-388 Support to freeze row of column of sheet
 
 *Bug
   ZSS-224 text overflow doesn't work correctly
@@ -47,7 +48,7 @@ ZK Spreadsheet 3.0.0 RC
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
     that inside 'org.zkoss.zss.api' & 'org.zkoss.zss.api.model'
-  + Spreadsheet are use the new classes of Book & Sheet that inside 'org.zkoss.zss.api.model'
+  + Spreadsheet get/set Book/Sheet API use the new classes of Book & Sheet that inside 'org.zkoss.zss.api.model'
   + Action, ActionHandler are removed, use DefaultUserAction, DefaultUserActionHandler instead.
   + Constructor of CellSelectionEvent is changed from left,top,right,bottom to topRow,leftCol,bottomRow,rightColumn
   + SelectionChangeEvent is renamed to CellSelectionUpdateEvent and arguments sequence is also redefined.

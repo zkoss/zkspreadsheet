@@ -27,6 +27,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.Importers;
+import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.repository.BookInfo;
@@ -147,6 +148,12 @@ public class AppCtrl extends CtrlBase<Component>{
 			AppCtrl.this.doCloseBook();
 			return true;
 		}
+		
+		protected boolean doSheetSelect() {
+			super.doSheetSelect();
+			AppCtrl.this.doSheetSelect();
+			return true;
+		}
 	}
 	
 	
@@ -184,6 +191,10 @@ public class AppCtrl extends CtrlBase<Component>{
 		updatePageInfo();
 	}
 	
+	private void doSheetSelect(){
+		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
+	}
+	
 	private void doSaveBook(boolean close){
 		if(UiUtil.isRepositoryReadonly()){
 			return;
@@ -199,7 +210,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		BookRepository rep = getRepository();
 		try {
 			rep.save(selectedBookInfo, loadedBook);
-//			UiUtil.showInfoMessage("Saved book "+selectedBookInfo.getName());
+			UiUtil.showInfoMessage("Save book to"+selectedBookInfo.getName());
 			pushAppEvent(AppEvts.ON_SAVED_BOOK,loadedBook);
 			if(close){
 				doCloseBook();
@@ -236,13 +247,13 @@ public class AppCtrl extends CtrlBase<Component>{
 					BookRepository rep = getRepository();
 					try {
 						selectedBookInfo = rep.saveAs(name, loadedBook);
-//						UiUtil.showInfoMessage("Saved book "+selectedBookInfo.getName());
 						pushAppEvent(AppEvts.ON_SAVED_BOOK,loadedBook);
 						if(close){
 							doCloseBook();
 						}else{
 							updatePageInfo();
 						}
+						UiUtil.showInfoMessage("Save book to"+selectedBookInfo.getName());
 					} catch (IOException e) {
 						log.error(e.getMessage(),e);
 						UiUtil.showWarnMessage("Can't save book");
@@ -279,7 +290,6 @@ public class AppCtrl extends CtrlBase<Component>{
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 		updatePageInfo();
 		
-//		UiUtil.showInfoMessage("Loaded book "+selectedBookInfo.getName());
 	}
 	
 	private void doOpenManageBook(){
@@ -352,25 +362,21 @@ public class AppCtrl extends CtrlBase<Component>{
 		}else if(AppEvts.ON_UNFREEZE_PANEL.equals(event)){
 			doFreeze(-1,-1);
 		}else if(AppEvts.ON_FREEZE_ROW.equals(event)){
-			doFreeze((Integer)data,-1);
+			doFreeze(((Integer)data),ss.getSelectedSheet().getColumnFreeze());
 		}else if(AppEvts.ON_FREEZE_COLUMN.equals(event)){
-			doFreeze(-1,(Integer)data);
+			doFreeze(ss.getSelectedSheet().getRowFreeze(),((Integer)data));
 		}
 	}
 
 	private void doFreeze(int row, int column) {
-		if(row==-1 && column==-1){
-			//clear all
-			ss.setRowfreeze(-1);
-			ss.setColumnfreeze(-1);
-		}
-		if(row>=0){
-			ss.setRowfreeze(row);
-		}
-		if(column>=0){
-			ss.setColumnfreeze(column);
-		}
+		Ranges.range(ss.getSelectedSheet()).setFreezePanel(row, column);
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
+		
+		//workaround before http://tracker.zkoss.org/browse/ZSS-390 fix
+		Rect sel = ss.getSelection();
+		row = row<=0?sel.getRow():row+1;
+		column = column<=0?sel.getColumn():column+1;
+		ss.setSelection(new Rect(column,row,column,row));
 	}
 
 	private void doToggleFormulabar() {

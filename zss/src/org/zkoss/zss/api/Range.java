@@ -640,6 +640,14 @@ public interface Range {
 	public Sheet createSheet(String name);
 	
 	/**
+	 * Set the freeze panel
+	 * @param rowfreeze the freeze index of row, -1 means no freeze
+	 * @param columnfreeze the freeze index of column, -1 means no freeze
+	 */
+	public void setFreezePanel(int rowfreeze,int columnfreeze);
+
+	
+	/**
 	 * Deletes sheet.
 	 * Note: You couldn't delete last sheet of a book.
 	 */

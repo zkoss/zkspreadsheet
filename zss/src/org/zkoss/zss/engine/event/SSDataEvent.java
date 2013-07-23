@@ -89,6 +89,8 @@ public class SSDataEvent extends Event implements Serializable {
 	public static final String ON_SHEET_NAME_CHANGE = "onSheetNameChange";
 	/** Identifies the sheet position change */
 	public static final String ON_SHEET_ORDER_CHANGE = "onSheetPosChange";
+	/** Identifies the deletion of a sheet. */
+	public static final String ON_SHEET_FREEZE = "onSheetFreeze";
 	
 	/** Identifies no move direction when add or remove a range. */
 	public static final int MOVE_NO = 1000;

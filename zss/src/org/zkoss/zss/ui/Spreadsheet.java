@@ -39,7 +39,6 @@ import org.zkoss.lang.Library;
 import org.zkoss.lang.Objects;
 import org.zkoss.lang.Strings;
 import org.zkoss.poi.ss.SpreadsheetVersion;
-import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
@@ -195,8 +194,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private static final int DEFAULT_CELL_PADDING = 2;
 	private static final int DEFAULT_MAX_ROWS = 20;
 	private static final int DEFAULT_MAX_COLUMNS = 10;
-	private static final int DEFAULT_ROW_FREEZE = -1;
-	private static final int DEFAULT_COLUMN_FREEZE = -1;
+	
 	private static final int DEFAULT_ROW_HEIGHT = 20;
 	
 	//For IE8: after 15000 cells, browser become unstable
@@ -216,10 +214,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	transient private XSheet _selectedSheet;
 
-	private int _rowFreeze = DEFAULT_ROW_FREEZE; // how many fixed rows
-	private boolean _rowFreezeset = false;
-	private int _colFreeze = DEFAULT_COLUMN_FREEZE; // how many fixed columns
-	private boolean _colFreezeset = false;
+	/*
+	 * < -1 : (-2) depends on sheet
+	 * = -1 : no freeze
+	 * > -1 : freeze on index (0 base)
+	 */
+	private int _rowFreeze = -2; // how many fixed rows
+	private int _colFreeze = -2; // how many fixed columns
+	
 	private boolean _hideRowhead; // hide row head
 	private boolean _hideColhead; // hide column head*/
 	
@@ -774,8 +776,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private void setSelectedSheetDirectly(String name, boolean cacheInClient, int row, int col, 
 			int left, int top, int right, int bottom,
-			int highlightLeft, int highlightTop, int highlightRight, int highlightBottom,
-			int rowfreeze, int colfreeze) {
+			int highlightLeft, int highlightTop, int highlightRight, int highlightBottom/*,
+			int rowfreeze, int colfreeze*/) {
 		setSelectedSheet0(name);
 		if (row >= 0 && col >= 0) {
 			this.setCellFocusDirectly(new Position(row, col));
@@ -794,16 +796,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		afterSheetSelected();
 		
-		updateSheetAttributes(cacheInClient, rowfreeze, colfreeze);
+		updateSheetAttributes(cacheInClient/*, rowfreeze, colfreeze*/);
 	}
 	
-	private void updateSheetAttributes(boolean cacheInClient, int rowfreeze, int colfreeze) {
-		if (cacheInClient && (rowfreeze >= 0 || colfreeze >= 0)) {
-			//Need _rowFreeze/_colFreeze for CSS
-			//Note when use cache, do not use setRowfreeze/setColumnfreeze (cause invalidate)
-			_rowFreeze = rowfreeze;
-			_colFreeze = colfreeze;
-		}
+	private void updateSheetAttributes(boolean cacheInClient/*, int rowfreeze, int colfreeze*/) {
 		
 		XSheet sheet = _selectedSheet;
 		
@@ -968,86 +964,79 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		return colSize;
 	}
-
+	
 	/**
-	 * Returns the row freeze index of this spreadsheet, zero base. A minus
-	 * value means don't freeze row. If you setRowfreeze by
-	 * {@link #setRowfreeze(int)}, then it always return the value that you set.
-	 * Else if there is a selected sheet, it get row freeze from selected sheet
-	 * and keep it(which means, it will always return this value if you does set
-	 * it again), then return it. Default : -1
+	 * Returns the row freeze index of this of spreadsheet or selected sheet.
+	 * If the {@link #setRowfreeze(int)} was never called, it return the selected sheet's row freeze index by default.
+	 * Otherwise it use the value that gave in {@link #setRowfreeze(int)}.
+	 * To revert the mode back to depends on selected sheet, you can just call {@link #setRowfreeze(int)} and give the value small than -1 (e.g -2) 
 	 * 
-	 * @return the row freeze of this spreadsheet or selected sheet.
+	 * @return the row freeze of spreadsheet or selected sheet, -1 if no selected sheet or no row freeze panel, otherwise the row freeze index
 	 */
 	public int getRowfreeze() {
-		if (_rowFreezeset)
+		if(_rowFreeze>=-1){
 			return _rowFreeze;
-		final XSheet sheet = getSelectedXSheet();
-		if (sheet != null) {
-			 if (BookHelper.isFreezePane(sheet)) { //issue #103: Freeze row/column is not correctly interpreted
-				 _rowFreeze = BookHelper.getRowFreeze(sheet) - 1;
-			 }
-			_rowFreezeset = true;
 		}
-		return _rowFreeze;
+		final Sheet sheet = getSelectedSheet();
+		if (sheet != null) {
+			 return sheet.getRowFreeze();
+		}
+		return -1;
 	}
-
+	
 	/**
-	 * Sets the row freeze of this spreadsheet, sets row freeze on this
-	 * component has higher priority then row freeze on sheet
-	 * 
-	 * @param rowfreeze row index
+	 * Sets the row freeze of this spreadsheet.
+	 * After set row freeze by this api, sparedsheet's row freeze will not depends on selected sheet.
+	 * To let spreadsheet depends on selected sheet again, you can set the argument to -2.
+	 * To set sheet's row freeze, please use {@link Range#setFreezePanel(int, int)}.
+	 * @param rowfreeze row index, value < -1 : depends on selected sheet, value == -1:no row freeze, otherwise freeze on the given row.
 	 */
 	public void setRowfreeze(int rowfreeze) {
-		_rowFreezeset = true;
-		if (rowfreeze < 0) {
-			rowfreeze = -1;
+		if (rowfreeze < -2) {
+			rowfreeze = -2;
 		}
-		if (_rowFreeze != rowfreeze) {
+		if(_rowFreeze != rowfreeze){
 			_rowFreeze = rowfreeze;
 			invalidate();
 		}
 	}
 
 	/**
-	 * Returns the column freeze index of this spreadsheet, zero base. A minus
-	 * value means don't freeze column. If you set column freeze by
-	 * {@link #setColumnfreeze(int)}, then it always return the value that you
-	 * set. Else if there is a selected sheet, it get column freeze from
-	 * selected sheet and keep it(which means, it will always return this value
-	 * if you does set it again), then return it. Default : -1
+	 * Returns the column freeze index of this of spreadsheet or selected sheet.
+	 * If the {@link #setColumnfreeze(int)} was never called, it return the selected sheet's column freeze index by default.
+	 * Otherwise it use the value that gave in {@link #setColumnfreeze(int)}.
+	 * To revert the mode back to depends on selected sheet, you can just call {@link #setColumnfreeze(int)} and give the value small than -1 (e.g -2) 
 	 * 
-	 * @return the column freeze of this spreadsheet or selected sheet.
+	 * @return the column freeze of spreadsheet or selected sheet, -1 if no selected sheet or no column freeze panel, otherwise the column freeze index
 	 */
 	public int getColumnfreeze() {
-		if (_colFreezeset)
+		if(_colFreeze>=-1){
 			return _colFreeze;
-		XSheet sheet = getSelectedXSheet();
+		}
+		final Sheet sheet = getSelectedSheet();
 		if (sheet != null) {
-			 if (BookHelper.isFreezePane(sheet)) {//issue #103: Freeze row/column is not correctly interpreted
-				 _colFreeze = BookHelper.getColumnFreeze(sheet) - 1;
-			 }
-			_colFreezeset = true;
+			 return sheet.getColumnFreeze();
 		}
-		return _colFreeze;
+		return -1;
 	}
-
+	
 	/**
-	 * Sets the column freeze of this spreadsheet, sets row freeze on this
-	 * component has higher priority then row freeze on sheet
-	 * 
-	 * @param columnfreeze  column index
+	 * Sets the column freeze of this spreadsheet.
+	 * After set column freeze by this api, sparedsheet's column freeze will not depends on selected sheet.
+	 * To let spreadsheet depends on selected sheet again, you can set the argument to -2.
+	 * To set sheet's column freeze, please use {@link Range#setFreezePanel(int, int)}.
+	 * @param columnfreeze column index, value < -1 : depends on selected sheet, value == -1:no column freeze, otherwise freeze on the given column.
 	 */
-	public void setColumnfreeze(int columnfreeze) {
-		_colFreezeset = true;
-		if (columnfreeze < 0) {
-			columnfreeze = -1;
+	public void setColumnfreeze(int colfreeze) {
+		if (colfreeze < -2) {
+			colfreeze = -2;
 		}
-		if (_colFreeze != columnfreeze) {
-			_colFreeze = columnfreeze;
+		if(_colFreeze != colfreeze){
+			_colFreeze = colfreeze;
 			invalidate();
 		}
 	}
+	
 
 	/**
 	 * Returns true if hide row head of this spread sheet; default to false.
@@ -1613,11 +1602,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			renderer.render("maxColumns", maxCols);
 		}
 		int rowFreeze = getRowfreeze();
-		if (rowFreeze != DEFAULT_ROW_FREEZE) {
+		if (rowFreeze > -1) {
 			renderer.render("rowFreeze", rowFreeze);
 		}
 		int colFreeze = getColumnfreeze();
-		if (colFreeze != DEFAULT_COLUMN_FREEZE) {
+		if (colFreeze > -1) {
 			renderer.render("columnFreeze", colFreeze);
 		}
 		
@@ -2108,6 +2097,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onWidgetChange((SSDataEvent)event);
 				}
 			});
+			addEventListener(SSDataEvent.ON_SHEET_FREEZE, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onSheetFreeze((SSDataEvent)event);
+				}
+			});
 		}
 		private void onSheetOrderChange(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
@@ -2369,6 +2364,15 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (!getSelectedXSheet().equals(sheet))
 				return;
 			setProtectSheet(event.getProtect());
+		}
+		private void onSheetFreeze(SSDataEvent event) {
+			final Ref rng = event.getRef();
+			final XSheet sheet = getSheet(rng);
+			if (!getSelectedXSheet().equals(sheet))
+				return;
+			if(_rowFreeze<-1 || _colFreeze<-1){//only if depends on sheet
+				Spreadsheet.this.invalidate();
+			}
 		}
 	}
 	
@@ -3180,13 +3184,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("hs", getColumnHeaderAttrs(_selectedSheet, col, right));
 
 			//_maxColumns += size;
-			int cf = getColumnfreeze();
-			if (cf >= col) {
-				_colFreeze += size;
-			}
+//			int cf = getColumnfreeze();
+//			if (cf >= col) {
+//				_colFreeze += size;
+//			}
 
 			result.put("maxcol", _maxColumns);
-			result.put("colfreeze", _colFreeze);
+			result.put("colfreeze", getColumnfreeze());
 
 			response("insertRowColumn" + XUtils.nextUpdateId(), new AuInsertRowColumn(Spreadsheet.this, "", XUtils.getSheetUuid(sheet), result));
 
@@ -3246,13 +3250,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("hs", getRowHeaderAttrs(_selectedSheet, row, bottom));
 			
 			//_maxRows += size;
-			int rf = getRowfreeze();
-			if (rf >= row) {
-				_rowFreeze += size;
-			}
 
 			result.put("maxrow", _maxRows);
-			result.put("rowfreeze", _rowFreeze);
+			result.put("rowfreeze", getRowfreeze());
 
 			response("insertRowColumn" + XUtils.nextUpdateId(), new AuInsertRowColumn(Spreadsheet.this, "", XUtils.getSheetUuid(sheet), result));
 
@@ -3308,17 +3308,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		
 
 			//_maxColumns -= size;
-			int cf = getColumnfreeze();
-			if (cf > -1 && col <= cf) {
-				if (col + size > cf) {
-					_colFreeze = col - 1;
-				} else {
-					_colFreeze -= size;
-				}
-			}
 
 			result.put("maxcol", _maxColumns);
-			result.put("colfreeze", _colFreeze);
+			result.put("colfreeze", getColumnfreeze());
 
 			response("removeRowColumn" + XUtils.nextUpdateId(), new AuRemoveRowColumn(Spreadsheet.this, "", XUtils.getSheetUuid(sheet), result));
 			rect.setRight(right);
@@ -3368,17 +3360,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("hs", getRowHeaderAttrs(_selectedSheet, row, bottom));
 
 //			_maxRows -= size;
-			int rf = getRowfreeze();
-			if (rf > -1 && row <= rf) {
-				if (row + size > rf) {
-					_rowFreeze = row - 1;
-				} else {
-					_rowFreeze -= size;
-				}
-			}
 
 			result.put("maxrow", _maxRows);
-			result.put("rowfreeze", _rowFreeze);
+			result.put("rowfreeze", getRowfreeze());
 
 			response("removeRowColumn" + XUtils.nextUpdateId(), new AuRemoveRowColumn(Spreadsheet.this, "", XUtils.getSheetUuid(sheet), result));
 			rect.setBottom(bottom);
@@ -3528,7 +3512,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				int colfreeze) {
 			Spreadsheet.this.setSelectedSheetDirectly(name, cacheInClient, row, col, left,
 					top, right, bottom, highlightLeft, highlightTop,
-					highlightRight, highlightBottom, rowfreeze, colfreeze);
+					highlightRight, highlightBottom/*, rowfreeze, colfreeze*/);
 		}
 	}
 
@@ -4013,12 +3997,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //		_loadedRect.set(-1, -1, -1, -1);
 		_selectionRect.set(0, 0, 0, 0);
 		_focusRect.set(0, 0, 0, 0);
-		
-		//issue #99: freeze column and freeze row is not reset. 
-		_colFreeze = -1;
-		_colFreezeset = false;
-		_rowFreeze = -1;
-		_rowFreezeset = false;
 		
 		_selectedSheet = null;
 	}
@@ -4918,10 +4896,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		if (_maxColumns != maxcols) {
 			_maxColumns = maxcols;
-
-			if (_colFreeze >= _maxColumns) {
-				_colFreeze = _maxColumns - 1;
-			}
+//
+//			if (_colFreeze >= _maxColumns) {
+//				_colFreeze = _maxColumns - 1;
+//			}
 			
 			smartUpdate("maxColumns", getMaxVisibleColumns());
 		}
@@ -4943,9 +4921,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		if (_maxRows != maxrows) {
 			_maxRows = maxrows;
-			if (_rowFreeze >= _maxRows) {
-				_rowFreeze = _maxRows - 1;
-			}
+//			if (_rowFreeze >= _maxRows) {
+//				_rowFreeze = _maxRows - 1;
+//			}
 			smartUpdate("maxRows", getMaxVisibleRows());
 		}
 	}

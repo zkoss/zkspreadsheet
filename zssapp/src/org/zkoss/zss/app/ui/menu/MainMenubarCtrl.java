@@ -88,7 +88,7 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 		toggleFormulaBar.setChecked(sparedsheet.isShowFormulabar());
 		
 		freezePanel.setDisabled(disabled);
-		unfreezePanel.setDisabled(disabled || !(sparedsheet.getRowfreeze()>=0||sparedsheet.getColumnfreeze()>=0));
+		unfreezePanel.setDisabled(disabled || !(sparedsheet.getRowfreeze()>-1||sparedsheet.getColumnfreeze()>-1));
 		for(Component comp:Selectors.find(freezeRows, "menuitem")){
 			((Menuitem)comp).setDisabled(disabled);
 		}

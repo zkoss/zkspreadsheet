@@ -47,6 +47,7 @@ import org.zkoss.zss.ui.event.CellSelectionAction;
 import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
+import org.zkoss.zss.ui.event.SheetSelectEvent;
 import org.zkoss.zul.Messagebox;
 /**
  * The user action handler which provide default spreadsheet operation handling.
@@ -1417,7 +1418,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		String nm = event.getName();
 		if(Events.ON_SHEET_SELECT.equals(nm)){
 			
-			updateClipboardEffect(getSheet());
+			doSheetSelect();
 			//TODO 20130513, Dennis, looks like I don't need to do this here?
 			//syncAutoFilter();
 			
@@ -1450,6 +1451,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 	}
 	
+	protected boolean doSheetSelect() {
+		updateClipboardEffect(getSheet());
+		
+		return true;
+	}
+
+
 	protected boolean doMoveCellSelection(Rect original,Rect selection) {
 		Sheet sheet = getSheet();
 		Range src = Ranges.range(sheet,original.getTop(),original.getLeft(),original.getBottom(),original.getRight());

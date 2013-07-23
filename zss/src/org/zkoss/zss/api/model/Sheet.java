@@ -52,8 +52,16 @@ public interface Sheet {
 	
 	public List<Picture> getPictures();
 	
+	/**
+	 * Get row freeze of this sheet, -1 means no row freeze
+	 * @return
+	 */
 	public int getRowFreeze();
 	
+	/**
+	 * Get column freeze of this sheet, -1 means no column freeze
+	 * @return
+	 */
 	public int getColumnFreeze();
 
 	public boolean isPrintGridlines();
