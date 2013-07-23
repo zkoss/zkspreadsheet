@@ -966,12 +966,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	/**
-	 * Returns the row freeze index of this of spreadsheet or selected sheet.
+	 * Returns the index of row freeze of this of spreadsheet or selected sheet.
 	 * If the {@link #setRowfreeze(int)} was never called, it return the selected sheet's row freeze index by default.
 	 * Otherwise it use the value that gave in {@link #setRowfreeze(int)}.
 	 * To revert the mode back to depends on selected sheet, you can just call {@link #setRowfreeze(int)} and give the value small than -1 (e.g -2) 
 	 * 
 	 * @return the row freeze of spreadsheet or selected sheet, -1 if no selected sheet or no row freeze panel, otherwise the row freeze index
+	 * @deprecated since 3.0.0, use {@link Sheet#getRowFreeze()} instead.
 	 */
 	public int getRowfreeze() {
 		if(_rowFreeze>=-1){
@@ -979,17 +980,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		final Sheet sheet = getSelectedSheet();
 		if (sheet != null) {
-			 return sheet.getRowFreeze();
+			 return sheet.getRowFreeze()-1;//1 base to old ui 0 base
 		}
 		return -1;
 	}
 	
 	/**
-	 * Sets the row freeze of this spreadsheet.
+	 * Sets the index of row freeze of this spreadsheet.
 	 * After set row freeze by this api, sparedsheet's row freeze will not depends on selected sheet.
 	 * To let spreadsheet depends on selected sheet again, you can set the argument to -2.
-	 * To set sheet's row freeze, please use {@link Range#setFreezePanel(int, int)}.
 	 * @param rowfreeze row index, value < -1 : depends on selected sheet, value == -1:no row freeze, otherwise freeze on the given row.
+	 * @deprecated since 3.0.0, use {@link Range#setFreezePanel(int, int)} instead.
 	 */
 	public void setRowfreeze(int rowfreeze) {
 		if (rowfreeze < -2) {
@@ -1002,12 +1003,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	/**
-	 * Returns the column freeze index of this of spreadsheet or selected sheet.
+	 * Returns the index of column freeze of this of spreadsheet or selected sheet.
 	 * If the {@link #setColumnfreeze(int)} was never called, it return the selected sheet's column freeze index by default.
 	 * Otherwise it use the value that gave in {@link #setColumnfreeze(int)}.
 	 * To revert the mode back to depends on selected sheet, you can just call {@link #setColumnfreeze(int)} and give the value small than -1 (e.g -2) 
 	 * 
 	 * @return the column freeze of spreadsheet or selected sheet, -1 if no selected sheet or no column freeze panel, otherwise the column freeze index
+	 * @deprecated since 3.0.0, use {@link Sheet#getColumnFreeze()} instead.
 	 */
 	public int getColumnfreeze() {
 		if(_colFreeze>=-1){
@@ -1015,17 +1017,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		final Sheet sheet = getSelectedSheet();
 		if (sheet != null) {
-			 return sheet.getColumnFreeze();
+			 return sheet.getColumnFreeze()-1;//1 base to old ui 0 base
 		}
 		return -1;
 	}
 	
 	/**
-	 * Sets the column freeze of this spreadsheet.
+	 * Sets the index of column freeze of this spreadsheet.
 	 * After set column freeze by this api, sparedsheet's column freeze will not depends on selected sheet.
 	 * To let spreadsheet depends on selected sheet again, you can set the argument to -2.
-	 * To set sheet's column freeze, please use {@link Range#setFreezePanel(int, int)}.
 	 * @param columnfreeze column index, value < -1 : depends on selected sheet, value == -1:no column freeze, otherwise freeze on the given column.
+	 * @deprecated since 3.0.0, use {@link Range#setFreezePanel(int, int)} instead.
 	 */
 	public void setColumnfreeze(int colfreeze) {
 		if (colfreeze < -2) {

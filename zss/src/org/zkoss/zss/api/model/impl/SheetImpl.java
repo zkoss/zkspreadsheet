@@ -138,19 +138,19 @@ public class SheetImpl implements Sheet{
 
 	public int getRowFreeze() {
 		if (BookHelper.isFreezePane((XSheet)getPoiSheet())) { //issue #103: Freeze row/column is not correctly interpreted
-			int f = BookHelper.getRowFreeze(getNative())-1;//poi 1 base -> sparedsheet 0 base
-			return f>-1?f:-1;
+			int f = BookHelper.getRowFreeze(getNative());
+			return f>0?f:0;
 		}else{
-			return -1;
+			return 0;
 		}
 	}
 
 	public int getColumnFreeze() {
 		if (BookHelper.isFreezePane((XSheet)getPoiSheet())) { //issue #103: Freeze row/column is not correctly interpreted
-			int f = BookHelper.getColumnFreeze(getNative())-1;//poi 1 base -> sparedsheet 0 base
-			return f>-1?f:-1;
+			int f = BookHelper.getColumnFreeze(getNative());
+			return f>0?f:0;
 		}else{
-			return -1;
+			return 0;
 		}
 	}
 

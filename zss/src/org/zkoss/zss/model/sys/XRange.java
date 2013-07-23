@@ -645,8 +645,8 @@ public interface XRange {
 	
 	/**
 	 * Set the freeze panel
-	 * @param rowfreeze the freeze index of row, 0 means no freeze
-	 * @param columnfreeze the freeze index of column, 0 means no freeze
+	 * @param rowfreeze the number of row to freeze, 0 means no freeze
+	 * @param columnfreeze the number of column to freeze, 0 means no freeze
 	 */
 	public void setFreezePanel(int rowfreeze, int columnfreeze);
 }

@@ -358,9 +358,9 @@ public class AppCtrl extends CtrlBase<Component>{
 			doToggleFormulabar();
 		}else if(AppEvts.ON_FREEZE_PNAEL.equals(event)){
 			Rect sel = ss.getSelection();
-			doFreeze(sel.getRow()-1,sel.getColumn()-1);
+			doFreeze(sel.getRow(),sel.getColumn());
 		}else if(AppEvts.ON_UNFREEZE_PANEL.equals(event)){
-			doFreeze(-1,-1);
+			doFreeze(0,0);
 		}else if(AppEvts.ON_FREEZE_ROW.equals(event)){
 			doFreeze(((Integer)data),ss.getSelectedSheet().getColumnFreeze());
 		}else if(AppEvts.ON_FREEZE_COLUMN.equals(event)){
@@ -374,8 +374,8 @@ public class AppCtrl extends CtrlBase<Component>{
 		
 		//workaround before http://tracker.zkoss.org/browse/ZSS-390 fix
 		Rect sel = ss.getSelection();
-		row = row<=0?sel.getRow():row+1;
-		column = column<=0?sel.getColumn():column+1;
+		row = row<0?sel.getRow():row;
+		column = column<0?sel.getColumn():column;
 		ss.setSelection(new Rect(column,row,column,row));
 	}
 

@@ -53,13 +53,13 @@ public interface Sheet {
 	public List<Picture> getPictures();
 	
 	/**
-	 * Get row freeze of this sheet, -1 means no row freeze
+	 * Get number of row freeze of this sheet, 0 means no row freeze
 	 * @return
 	 */
 	public int getRowFreeze();
 	
 	/**
-	 * Get column freeze of this sheet, -1 means no column freeze
+	 * Get number of column freeze of this sheet, 0 means no column freeze
 	 * @return
 	 */
 	public int getColumnFreeze();

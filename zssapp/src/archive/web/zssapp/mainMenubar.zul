@@ -29,19 +29,19 @@
 					<menupopup id="freezeRowsMenupopup">
 						<menuitem id="freezeRow1"
 							label="${c:l('zssapp.mainMenu.view.freezeRows')} 1"
-							forward="mainMenubar.onViewFreezeRows(0)" sclass="appmenu" />
+							forward="mainMenubar.onViewFreezeRows(1)" sclass="appmenu" />
 						<menuitem id="freezeRow2"
 							label="${c:l('zssapp.mainMenu.view.freezeRows')} 2"
-							forward="mainMenubar.onViewFreezeRows(1)" sclass="appmenu" />
+							forward="mainMenubar.onViewFreezeRows(2)" sclass="appmenu" />
 						<menuitem id="freezeRow3"
 							label="${c:l('zssapp.mainMenu.view.freezeRows')} 3"
-							forward="mainMenubar.onViewFreezeRows(2)" sclass="appmenu" />
+							forward="mainMenubar.onViewFreezeRows(3)" sclass="appmenu" />
 						<menuitem id="freezeRow4"
 							label="${c:l('zssapp.mainMenu.view.freezeRows')} 4"
-							forward="mainMenubar.onViewFreezeRows(3)" sclass="appmenu" />
+							forward="mainMenubar.onViewFreezeRows(4)" sclass="appmenu" />
 						<menuitem id="freezeRow5"
 							label="${c:l('zssapp.mainMenu.view.freezeRows')} 5"
-							forward="mainMenubar.onViewFreezeRows(4)" sclass="appmenu" />
+							forward="mainMenubar.onViewFreezeRows(5)" sclass="appmenu" />
 					</menupopup>
 				</menu>
 				<menu id="freezeCols"
@@ -49,19 +49,19 @@
 					<menupopup id="freezeColsMenupopup">
 						<menuitem id="freezeCol1"
 							label="${c:l('zssapp.mainMenu.view.freezeCols')} A"
-							forward="mainMenubar.onViewFreezeCols(0)" sclass="appmenu" />
+							forward="mainMenubar.onViewFreezeCols(1)" sclass="appmenu" />
 						<menuitem id="freezeCol2"
 							label="${c:l('zssapp.mainMenu.view.freezeCols')} B"
-							forward="mainMenubar.onViewFreezeCols(1)" sclass="appmenu" />
+							forward="mainMenubar.onViewFreezeCols(2)" sclass="appmenu" />
 						<menuitem id="freezeCol3"
 							label="${c:l('zssapp.mainMenu.view.freezeCols')} C"
-							forward="mainMenubar.onViewFreezeCols(2)" sclass="appmenu" />
+							forward="mainMenubar.onViewFreezeCols(3)" sclass="appmenu" />
 						<menuitem id="freezeCol4"
 							label="${c:l('zssapp.mainMenu.view.freezeCols')} D"
-							forward="mainMenubar.onViewFreezeCols(3)" sclass="appmenu" />
+							forward="mainMenubar.onViewFreezeCols(4)" sclass="appmenu" />
 						<menuitem id="freezeCol5"
 							label="${c:l('zssapp.mainMenu.view.freezeCols')} E"
-							forward="mainMenubar.onViewFreezeCols(4)" sclass="appmenu" />
+							forward="mainMenubar.onViewFreezeCols(5)" sclass="appmenu" />
 					</menupopup>
 				</menu>
 			</menupopup>
