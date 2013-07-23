@@ -13,6 +13,7 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zkmax.zul.Filedownload;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
+import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.SheetAnchor;
 import org.zkoss.zss.api.SheetOperationUtil;
@@ -50,10 +51,8 @@ public class PictureComposer extends SelectorComposer<Component> {
 			SheetAnchor anchor = SheetOperationUtil.toFilledAnchor(ss.getSelectedSheet(),
 					ss.getSelection().getRow(), ss.getSelection().getColumn(), 
 					image.getWidth(), image.getHeight());
-			Ranges.range(ss.getSelectedSheet()).addPicture(anchor, image.getByteData(), Format.PNG);
-//			Range selection = Ranges.range(ss.getSelectedSheet(), ss.getSelection());
-//			SheetOperationUtil.addPicture(selection,
-//					new AImage(WebApps.getCurrent().getResource("/zklogo.png")));
+			Ranges.range(ss.getSelectedSheet())
+				.addPicture(anchor, image.getByteData(), Format.PNG);
 			refreshPictureList();
 		}catch(IOException e){
 			System.out.println("cannot add a picture for "+ e);
@@ -78,14 +77,14 @@ public class PictureComposer extends SelectorComposer<Component> {
 					.getValue()).getAnchor();
 			int rowOffset = fromAnchor.getLastRow() - fromAnchor.getRow();
 			int columnOffset = fromAnchor.getLastColumn() - fromAnchor.getColumn();
-			SheetAnchor toAnchor = new SheetAnchor(toRowBox.getValue(), toColumnBox.getValue(),
+			SheetAnchor toAnchor = new SheetAnchor(toRowBox.getValue(), 
+					toColumnBox.getValue(),
 					fromAnchor.getXOffset(), fromAnchor.getYOffset(),
 					toRowBox.getValue()+rowOffset, toColumnBox.getValue()+columnOffset,
 					fromAnchor.getLastXOffset(), fromAnchor.getLastYOffset());
 			
 			Ranges.range(ss.getSelectedSheet())
 				.movePicture(toAnchor, (Picture)pictureListbox.getSelectedItem().getValue());
-//			SheetOperationUtil.movePicture(Ranges.range(ss.getSelectedSheet()),
 			refreshPictureList();
 		}
 	}
@@ -96,6 +95,16 @@ public class PictureComposer extends SelectorComposer<Component> {
 		pictureListbox.setModel(pictureList);
 	}
 	
+	
+	public void addWithUtil() {
+		Range selection = Ranges.range(ss.getSelectedSheet(), ss.getSelection());
+		try{
+			SheetOperationUtil.addPicture(selection,
+				new AImage(WebApps.getCurrent().getResource("/zklogo.png")));
+		}catch(IOException e){
+			System.out.println("cannot add a picture for "+ e);
+		}
+	}
 	
 	@Listen("onClick = #exportButton")
 	public void export() throws IOException {

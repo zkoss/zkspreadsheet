@@ -23,6 +23,12 @@
 								<listcell label="${each.anchor.column}"></listcell>
 								<listcell label="${each.anchor.lastRow}"></listcell>
 								<listcell label="${each.anchor.lastColumn}"></listcell>
+								<!-- 
+								<listcell label="${each.anchor.XOffset}"></listcell>
+								<listcell label="${each.anchor.YOffset}"></listcell>
+								<listcell label="${each.anchor.lastXOffset}"></listcell>
+								<listcell label="${each.anchor.lastYOffset}"></listcell>
+								 -->
 							</listitem>
 						</template>
 					</listbox>
@@ -30,21 +36,15 @@
 				<groupbox hflex="1">
 					<caption label="Control" />
 					<grid vflex="1" hflex="1">
-						<columns>
-						</columns>
 						<rows>
-							<row spans="2">
+							<row spans="2" align="right">
 								<hlayout >
 								To Row:
-								<intbox id="toRowBox" value="0"  width="30px"/>
+								<intbox id="toRowBox" value="0"  width="70px"/>
 								To Column:
-								<intbox id="toColumnBox" value="0" width="30px" />
+								<intbox id="toColumnBox" value="0" width="70px"/>
 								<button id="moveButton" label="Move" />
 								</hlayout>
-							</row>
-							<row>
-							</row>
-							<row spans="2" align="right">
 							</row>
 							<row spans="2" align="right">
 								<hlayout>
