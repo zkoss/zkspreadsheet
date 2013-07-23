@@ -42,6 +42,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-383 In IE browser, pop-up format dialog (right click on cell) can't be operated.
   ZSS-302 some rows can only be deleted with twice deletion
   ZSS-260 Data validation doesn't work correctly
+  ZSS-387 get js error when resize row height with row freeze
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
