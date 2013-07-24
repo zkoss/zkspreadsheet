@@ -4,6 +4,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellData;
@@ -74,7 +75,11 @@ public class CellDataComposer extends SelectorComposer<Component> {
 		Range range = Ranges.range(ss.getSelectedSheet(),pos.getRow(),pos.getColumn());
 		CellData data = range.getCellData();
 		if(data.validateEditText(cellEditTextBox.getValue())){
-			data.setEditText(cellEditTextBox.getValue());
+			try{
+				data.setEditText(cellEditTextBox.getValue());
+			}catch (IllegalFormulaException e){
+				//handle illegal formula input
+			}
 		}else{
 			ClientUtil.showWarn("not a valid value");
 		}
