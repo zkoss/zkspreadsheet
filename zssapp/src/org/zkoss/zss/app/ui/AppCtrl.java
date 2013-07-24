@@ -13,9 +13,11 @@ package org.zkoss.zss.app.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Set;
 
+import org.zkoss.lang.Classes;
 import org.zkoss.lang.Strings;
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
@@ -40,7 +42,8 @@ import org.zkoss.zss.app.ui.dlg.SaveBookAsCtrl;
 import org.zkoss.zss.ui.DefaultUserAction;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zssex.ui.DefaultUserActionHandlerEx;
+import org.zkoss.zss.ui.UserActionHandler;
+import org.zkoss.zss.ui.Version;
 import org.zkoss.zul.Filedownload;
 
 /**
@@ -68,12 +71,23 @@ public class AppCtrl extends CtrlBase<Component>{
 		comp.setAttribute(APPCOMP, comp);
 	}
 	
+	UserActionHandler createHandler(){
+		if("EE".equals(Version.getEdition())){
+			try {
+				return (UserActionHandler) Classes.newInstanceByThread("org.zkoss.zss.app.ui.AppUserActionHandlerEx", new Class<?>[]{AppCtrl.class}, new Object[]{this});
+			} catch (Exception e) {
+				log.warning(e.getMessage(),e);
+			}
+		}
+		return new AppUserActionHandler(this);
+	}
+	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
 		
-		ss.setUserActionHandler(new AppUserActionHandler());
+		ss.setUserActionHandler(createHandler());
 		
 		//load default open book from parameter
 		String bookName = null ;
@@ -106,58 +120,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		return BookRepositoryFactory.getInstance().getRepository();
 	}
 	
-	
-	public class AppUserActionHandler extends DefaultUserActionHandlerEx  {
-		private static final long serialVersionUID = 1L;
-		
-		@Override
-		public Set<String> getSupportedUserAction(Sheet sheet) {
-			Set<String> actions = super.getSupportedUserAction(sheet);
-			actions.add(DefaultUserAction.NEW_BOOK.getAction());
-			if(sheet!=null){
-				boolean readonly = UiUtil.isRepositoryReadonly();
-				if(!readonly){
-					actions.add(DefaultUserAction.SAVE_BOOK.getAction());
-				}
-				actions.add(DefaultUserAction.EXPORT_PDF.getAction());
-			}
-			return actions;
-		}
-		
-		@Override
-		protected boolean dispatchAction(String action) {
-			DefaultUserAction dua = DefaultUserAction.getBy(action);
-
-			if (DefaultUserAction.NEW_BOOK.equals(dua)) {
-				doOpenNewBook();
-				return true;
-			} else if (DefaultUserAction.SAVE_BOOK.equals(dua)) {
-				doSaveBook(false);
-				return true;
-			} else if (DefaultUserAction.EXPORT_PDF.equals(dua)) {
-				doExportPdf();
-				return true;
-			} 
-
-			return super.dispatchAction(action);
-		}
-		
-		@Override
-		protected boolean doCloseBook(){
-			super.doCloseBook();
-			AppCtrl.this.doCloseBook();
-			return true;
-		}
-		
-		protected boolean doSheetSelect() {
-			super.doSheetSelect();
-			AppCtrl.this.doSheetSelect();
-			return true;
-		}
-	}
-	
-	
-	private void doOpenNewBook(){
+	/*package*/ void doOpenNewBook(){
 		selectedBookInfo = null;
 		Importer importer = Importers.getImporter();
 		
@@ -183,7 +146,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		
 	}
 	
-	private void doCloseBook(){
+	/*package*/ void doCloseBook(){
 		ss.setBook(loadedBook = null);
 		selectedBookInfo = null;
 		pushAppEvent(AppEvts.ON_CLOSED_BOOK,null);
@@ -191,11 +154,11 @@ public class AppCtrl extends CtrlBase<Component>{
 		updatePageInfo();
 	}
 	
-	private void doSheetSelect(){
+	/*package*/ void doSheetSelect(){
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 	}
 	
-	private void doSaveBook(boolean close){
+	/*package*/ void doSaveBook(boolean close){
 		if(UiUtil.isRepositoryReadonly()){
 			return;
 		}
@@ -319,7 +282,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		}
 	}
 	
-	private void doExportPdf(){
+	/*package*/ void doExportPdf(){
 		if(loadedBook==null){
 			UiUtil.showWarnMessage("Please load a book first before export it");
 			return;

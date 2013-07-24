@@ -142,6 +142,8 @@
 			<artifactId>zss</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<!-- ZSS EE dependence 
+		 -->
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zsspdf</artifactId>

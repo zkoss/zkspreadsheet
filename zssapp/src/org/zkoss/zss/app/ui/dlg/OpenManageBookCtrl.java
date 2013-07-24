@@ -31,7 +31,6 @@ import org.zkoss.zss.app.repository.BookInfo;
 import org.zkoss.zss.app.repository.BookRepository;
 import org.zkoss.zss.app.repository.BookRepositoryFactory;
 import org.zkoss.zss.app.ui.UiUtil;
-import org.zkoss.zssex.ui.dialog.impl.DialogCallbackEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.ListModelList;
