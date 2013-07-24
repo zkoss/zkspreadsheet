@@ -1,6 +1,6 @@
 <zk>
 	<spreadsheet id="spreadsheet" 
-		src="/issue/ZSS-300.xlsx"
+		src="/issue/ZSS-315.xlsx"
 		maxVisibleRows="200" maxVisibleColumns="40" width="100%" height="600px"
 		showContextMenu="true" showSheetbar="true" showToolbar="true"
 		showFormulabar="true" />
@@ -46,8 +46,7 @@
 				
 				// srcRange.paste(dst);
 				boolean skipBlanks = true;
-				boolean transpose = true;
-				srcRange.pasteSpecial(dst, Range.PasteType.ALL, Range.PasteOperation.NONE, skipBlanks, transpose);
+				srcRange.pasteSpecial(dst, Range.PasteType.ALL, Range.PasteOperation.NONE, skipBlanks, false);
 				
 				spreadsheet.setHighlight(null);
 			};

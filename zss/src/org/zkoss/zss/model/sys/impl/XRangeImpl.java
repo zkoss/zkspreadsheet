@@ -1163,7 +1163,35 @@ public class XRangeImpl implements XRange {
 		final List<MergeChange> mergeChanges = info.getMergeChanges();
 		if (!transpose) {
 			/**
-			 * Issue: ZS-300
+			 * ZSS-315
+			 * handle a special case: source is a single cell and destination is a single merged cell, 
+			 * copy source to destination then merge it.
+			 */
+			// source is a single cell
+			if(srcRef.getRowCount() == 1 && srcRef.getColumnCount() == 1) {
+				
+				int dstTopRow = dstRef.getTopRow();
+				int dstBottomRow = dstRef.getBottomRow();
+				int dstLeftCol = dstRef.getLeftCol();
+				int dstRightCol = dstRef.getRightCol();				
+				final CellRangeAddress dstaddr = ((SheetCtrl)dstSheet).getMerged(dstTopRow, dstLeftCol);
+			
+				// Check whether destination is a single merged cell?
+				if(dstaddr != null && dstBottomRow == dstaddr.getLastRow() && dstRightCol == dstaddr.getLastColumn()) {
+					// copy source to merged cell
+					final Cell cell = BookHelper.getCell(srcSheet, srcRef.getTopRow(), srcRef.getLeftCol()); // retrieve cell
+					final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, dstSheet, dstTopRow, dstLeftCol, pasteType, pasteOp, transpose);
+					BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
+					// merge cell (because cell always unmerge in BookHelper.copyCell)
+					final ChangeInfo changeInfo1 = BookHelper.merge(dstSheet, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol, false);
+					BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo1);
+
+					return pasteRef;		
+				}
+			}
+			
+			/**
+			 * Issue: ZSS-300
 			 * Problem: Overlapping copy get wrong result
 			 * Root Cause: Copy dirty from source to destination
 			 */
@@ -1214,19 +1242,27 @@ public class XRangeImpl implements XRange {
 						String hitBlankKey = Math.abs(srcRowPointer - srcTopRow) + "," + Math.abs(srcColPointer - srcLeftCol);
 						boolean hitBlank = (blankMap.contains(hitBlankKey));
 					
-						if (!hitBlank && (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK)) { // cell is not blank
-							final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, dstSheet, dstRowPointer, dstColPointer, pasteType, pasteOp, transpose);
-							BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
-						} else { // map hit blank or cell is blank
-							if(!hitBlank) { // create blank mapping
-								blankMap.add(hitBlankKey);
+						// origin cell is not blank and current source cell is not null
+						// although the current source cell is not a null cell, but it may be a blank cell
+						// so we must check the skipBlanks configuration and whether the cell is blank
+						if (!hitBlank && cell != null) {
+							// if not skip blanks, we need to copy blank too!
+							// if check whether the cell is blank			
+							if(!(skipBlanks && cell.getCellType() == Cell.CELL_TYPE_BLANK)) { 
+								final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, dstSheet, dstRowPointer, dstColPointer, pasteType, pasteOp, transpose);
+								BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 							}
-							if (!skipBlanks) {	// blank, don't skip
-								final Set<Ref>[] refs = BookHelper.removeCell(dstSheet, dstRowPointer, dstColPointer);
-								BookHelper.assignRefs(toEval, affected, refs);
-							}
+						} else if (!skipBlanks) { // map hit blank or source cell is null, clear the destination
+							final Set<Ref>[] refs = BookHelper.removeCell(dstSheet, dstRowPointer, dstColPointer);
+							BookHelper.assignRefs(toEval, affected, refs);
 						}
-
+						
+						// update blank map
+						if(!hitBlank && cell != null && cell.getCellType() == Cell.CELL_TYPE_BLANK) { // cell is blank
+							blankMap.add(hitBlankKey);
+						}
+						
+						
 					} // End go through column
 					
 					srcColPointer -= (colStep * srcColCount); // reset column pointer to origin
