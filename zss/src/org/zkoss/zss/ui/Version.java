@@ -18,6 +18,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui;
 
+import org.zkoss.lang.Classes;
+
 /**
  * Defines the version of ZK Spreadsheet.
  * It must be the same as the version defined in metainfo/zk/lang-addon.xml
@@ -28,4 +30,13 @@ public class Version {
 	/** Returns the version UID.
 	 */
 	public static final String UID = "3.0.0";
+	
+	/** Features. */
+	private static final boolean
+		_ee = Classes.existsByThread("org.zkoss.zssex.Version");
+	
+	public static String getEdition() {
+		return _ee ? "EE": "OSE";
+	}
+	
 }
