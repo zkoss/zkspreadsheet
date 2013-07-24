@@ -1,0 +1,6 @@
+<zk>
+<!-- Just for displaying profile.xlsx -->
+	<spreadsheet id="ss2" hflex="1" vflex="1" showFormulabar="true" showContextMenu="true"
+		showToolbar="true" showSheetbar="true" maxVisibleRows="20" maxVisibleColumns="10"
+		src="/WEB-INF/books/profile.xlsx" />
+</zk>
