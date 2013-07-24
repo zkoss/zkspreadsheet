@@ -38,26 +38,14 @@ public class MyCustomFormulas {
 	 * The second parameter determines whether to evaluate blank value. 
 	 * Blank value will be evaluated to 0.
 	 */
-	private static Function MY_SUBTOTAL = 
-			new MultiOperandNumericFunction(false, false) {
-		
-		@Override
-		protected double evaluate(double[] values) throws EvaluationException {
-			double sum = 0;
-			for (int i = 0 ; i < values.length ; i++){
-				sum += values[i];
-			}
-			return sum;
-		}
-	}; 
+	private static Function MY_SUBTOTAL = new MySubtotal();
 	
 	/**
-	 * This formula depends on MultiOperandNumericFunction that evaluates all arguments to double.
-	 * This formula sums all double values in cells.
-	 * @param args
+	 * This method delegates calling to MySubtotal which implements the formula.
+	 * @param args evaluation of all arguments
 	 * @param srcCellRow row index of the cell containing the formula under evaluation
 	 * @param srcCellCol column index of the cell containing the formula under evaluation
-	 * @return
+	 * @return formula result
 	 */
 	public static ValueEval mySubtotal(ValueEval[] args, int srcCellRow, int srcCellCol){
 		return MY_SUBTOTAL.evaluate(args, srcCellRow, srcCellCol); 
