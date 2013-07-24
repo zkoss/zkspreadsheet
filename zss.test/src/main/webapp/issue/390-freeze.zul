@@ -1,6 +1,15 @@
 <zk>
 	<window width="100%" height="100%">
-		<spreadsheet id="ss" src="/issue/223-autofilter-2003.xls" width="1500px" height="800px"
+		<button label="freeze">
+			<attribute name="onClick">
+			<![CDATA[
+				Rect s = ss.getSelection();
+				Range r = Ranges.range(ss.getSelectedSheet());
+				r.setFreezePanel(s.getRow(), s.getColumn());
+			]]>
+			</attribute>
+		</button>
+		<spreadsheet id="ss" src="/OperationTest2007.xlsx" width="1500px" height="800px"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
