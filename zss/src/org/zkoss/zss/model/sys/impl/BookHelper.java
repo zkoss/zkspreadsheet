@@ -1685,8 +1685,9 @@ public final class BookHelper {
 				final int srccol2 = srcaddr.getLastColumn();
 				final int tRow = dstrow;
 				final int lCol = dstcol;
-				final int bRow = tRow + srcrow2 - srcrow;
-				final int rCol = lCol + srccol2 - srccol;
+				// ZSS-277 handle transpose case, merge dst cell reversely
+				final int bRow = (transpose) ? (tRow + srccol2 - srccol) : (tRow + srcrow2 - srcrow);
+				final int rCol = (transpose) ? (lCol + srcrow2 - srcrow) : (lCol + srccol2 - srccol);
 				final ChangeInfo changeInfo0 = merge(dstSheet, tRow, lCol, bRow, rCol, false);
 				assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 			}
