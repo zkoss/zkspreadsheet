@@ -19,6 +19,7 @@ package org.zkoss.zss.ui;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
 import org.zkoss.lang.Strings;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -34,6 +35,7 @@ import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.SheetOperationUtil;
+import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle.Alignment;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
@@ -48,6 +50,9 @@ import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.event.SheetSelectEvent;
+import org.zkoss.zss.undo.CellStyleAction;
+import org.zkoss.zss.undo.FontStyleAction;
+import org.zkoss.zss.undo.UndoableActionManager;
 import org.zkoss.zul.Messagebox;
 /**
  * The user action handler which provide default spreadsheet operation handling.
@@ -536,9 +541,37 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return doFontItalic();
 		case 'U':
 			return doFontUnderline();
+		case 'Z':
+			return doUndo();
+		case 'Y':
+			return doRedo();
 		}
 		return false;
 	}
+	
+	protected boolean doUndo(){
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null && uam.isUndoable()){
+			uam.undoAction();
+		}
+		return true;
+	}
+	
+	protected boolean doRedo(){
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null && uam.isRedoable()){
+			uam.redoAction();
+		}
+		return true;
+	}
+	
+	protected void clearUndoable(){
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.clear();
+		}
+	}
+	
 	
 	protected Clipboard getClipboard() {
 		return _clipboard;
@@ -660,7 +693,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyFontName(range, fontFamily);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new FontStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					CellOperationUtil.getFontNameApplier(fontFamily)));
+		}else{
+			CellOperationUtil.applyFontName(range, fontFamily);
+		}
 		return true;
 	}
 	
@@ -672,7 +712,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyFontSize(range, (short)fontSize);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new FontStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					CellOperationUtil.getFontHeightApplier((short)UnitUtil.pointToTwip(fontSize))));
+		}else{
+			CellOperationUtil.applyFontSize(range, (short)fontSize);
+		}
 		return true;
 	}
 	
@@ -694,7 +741,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			bw = Boldweight.BOLD;
 		}
 		
-		CellOperationUtil.applyFontBoldweight(range, bw);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new FontStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					CellOperationUtil.getFontBoldweightApplier(bw)));
+		}else{
+			CellOperationUtil.applyFontBoldweight(range, bw);
+		}
 		return true;
 	}
 	
@@ -710,7 +764,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 
 		//toggle and apply bold of first cell to dest
 		boolean italic = !range.getCellStyle().getFont().isItalic();
-		CellOperationUtil.applyFontItalic(range, italic);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new FontStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					CellOperationUtil.getFontItalicApplier(italic)));
+		}else{
+			CellOperationUtil.applyFontItalic(range, italic);
+		}
 		return true;
 	}
 	
@@ -726,7 +787,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 
 		//toggle and apply bold of first cell to dest
 		boolean strikeout = !range.getCellStyle().getFont().isStrikeout();
-		CellOperationUtil.applyFontStrikeout(range, strikeout);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new FontStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					CellOperationUtil.getFontStrikeoutApplier(strikeout)));
+		}else{
+			CellOperationUtil.applyFontStrikeout(range, strikeout);
+		}
 		return true;
 	}
 	
@@ -747,8 +815,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}else{
 			underline = Underline.NONE;
 		}
-		
-		CellOperationUtil.applyFontUnderline(range, underline);	
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new FontStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					CellOperationUtil.getFontUnderlineApplier(underline)));
+		}else{
+			CellOperationUtil.applyFontUnderline(range, underline);
+		}
 		return true;
 	}
 
@@ -818,7 +892,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyFontColor(range, color);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new FontStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					CellOperationUtil.getFontColorApplier(range.getCellStyleHelper().createColorFromHtmlColor(color))));
+		}else{
+			CellOperationUtil.applyFontColor(range, color);
+		}
 		return true;
 	}
 	
@@ -831,7 +912,15 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyBackgroundColor(range,color);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					CellOperationUtil.getBackgroundColorApplier(range
+						.getCellStyleHelper().createColorFromHtmlColor(color))));
+		}else{
+			CellOperationUtil.applyBackgroundColor(range,color);
+		}
 		return true;
 	}
 	
@@ -843,7 +932,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyVerticalAlignment(range, VerticalAlignment.TOP);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					CellOperationUtil.getVerticalAligmentApplier(VerticalAlignment.TOP)));
+		}else{
+			CellOperationUtil.applyVerticalAlignment(range, VerticalAlignment.TOP);
+		}
 		return true;
 	}
 	
@@ -855,7 +951,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyVerticalAlignment(range, VerticalAlignment.CENTER);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					CellOperationUtil.getVerticalAligmentApplier(VerticalAlignment.CENTER)));
+		}else{
+			CellOperationUtil.applyVerticalAlignment(range, VerticalAlignment.CENTER);
+		}
 		return true;
 	}
 
@@ -867,7 +970,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyVerticalAlignment(range, VerticalAlignment.BOTTOM);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					CellOperationUtil.getVerticalAligmentApplier(VerticalAlignment.BOTTOM)));
+		}else{
+			CellOperationUtil.applyVerticalAlignment(range, VerticalAlignment.BOTTOM);
+		}
 		return true;
 	}
 	
@@ -879,7 +989,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyAlignment(range, Alignment.LEFT);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					CellOperationUtil.getAligmentApplier(Alignment.LEFT)));
+		}else{
+			CellOperationUtil.applyAlignment(range, Alignment.LEFT);
+		}
 		return true;
 	}
 	
@@ -891,7 +1008,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyAlignment(range, Alignment.CENTER);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					CellOperationUtil.getAligmentApplier(Alignment.CENTER)));
+		}else{
+			CellOperationUtil.applyAlignment(range, Alignment.CENTER);
+		}
 		return true;
 	}
 	
@@ -903,7 +1027,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyAlignment(range, Alignment.RIGHT);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					CellOperationUtil.getAligmentApplier(Alignment.RIGHT)));
+		}else{
+			CellOperationUtil.applyAlignment(range, Alignment.RIGHT);
+		}
 		return true;
 	}
 	
@@ -916,7 +1047,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return true;
 		}
 		boolean wrapped = !range.getCellStyle().isWrapText();
-		CellOperationUtil.applyWrapText(range, wrapped);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					CellOperationUtil.getWrapTextApplier(wrapped)));
+		}else{
+			CellOperationUtil.applyWrapText(range, wrapped);
+		}
 		return true;
 	}
 	
@@ -1511,7 +1649,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 
 	@Override
 	public String getCtrlKeys() {
-		return "^X^C^V^D^B^I^U#del";
+		return "^Z^Y^X^C^V^D^B^I^U#del";
 	}
 
 	@Override

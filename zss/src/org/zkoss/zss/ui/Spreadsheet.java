@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.lang.Classes;
@@ -139,6 +140,9 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
 import org.zkoss.zss.ui.sys.WidgetHandler;
 import org.zkoss.zss.ui.sys.WidgetLoader;
+import org.zkoss.zss.undo.CellEditTextAction;
+import org.zkoss.zss.undo.UndoableActionManager;
+import org.zkoss.zss.undo.imple.DefaultUndoableActionManager;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.impl.XulElement;
 
@@ -309,6 +313,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private Set<DefaultUserAction> _actionDisabled = new HashSet();
 //	
 //	private static Set<UserAction> _defToolbarActiobDisabled;
+	
+	private UndoableActionManager _undoableActionManager = null;
 	
 	public Spreadsheet() {
 		this.addEventListener("onStartEditingImpl", new EventListener() {
@@ -4393,8 +4399,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			)) {
 				return;
 			}else{
-				final Range range = Ranges.range(sheet, rowIdx, colIdx);
-				range.setCellEditText(editText);
+				UndoableActionManager uam = getUndoableActionManager();
+				if(uam!=null){
+					uam.doAction(new CellEditTextAction(sheet,rowIdx,colIdx,rowIdx,colIdx,editText));
+				}else{
+					final Range range = Ranges.range(sheet, rowIdx, colIdx);
+					range.setCellEditText(editText);
+				}
 			}
 
 			//JSONObj result = new JSONObj();
@@ -4960,5 +4971,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					convertToDisabledActionJSON(getUserActionHandler()
 							.getSupportedUserAction(getSelectedSheet())));
 		}
+	}
+	
+	public UndoableActionManager getUndoableActionManager(){
+		if(_undoableActionManager==null){
+			_undoableActionManager = new DefaultUndoableActionManager(this);
+		}
+		return _undoableActionManager;
 	}
 }
