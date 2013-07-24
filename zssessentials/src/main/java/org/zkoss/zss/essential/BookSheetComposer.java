@@ -31,6 +31,7 @@ import org.zkoss.zul.ListModelList;
  * @author Hawk
  *
  */
+@SuppressWarnings("serial")
 public class BookSheetComposer extends SelectorComposer<Component>{
 	
 	@Wire

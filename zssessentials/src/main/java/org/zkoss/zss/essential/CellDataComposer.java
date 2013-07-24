@@ -1,5 +1,6 @@
 package org.zkoss.zss.essential;
 
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -17,7 +18,8 @@ import org.zkoss.zul.Textbox;
  * @author dennis
  *
  */
-public class CellDataComposer extends SelectorComposer {
+@SuppressWarnings("serial")
+public class CellDataComposer extends SelectorComposer<Component> {
 
 	@Wire
 	private Label cellType;

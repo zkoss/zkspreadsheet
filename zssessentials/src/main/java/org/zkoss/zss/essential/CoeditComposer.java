@@ -1,13 +1,8 @@
 package org.zkoss.zss.essential;
 
-import java.io.IOException;
-
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zss.api.Importer;
-import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Textbox;

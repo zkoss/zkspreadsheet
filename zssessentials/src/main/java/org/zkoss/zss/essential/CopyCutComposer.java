@@ -16,6 +16,7 @@ import org.zkoss.zss.ui.Spreadsheet;
  * @author Hawk
  * 
  */
+@SuppressWarnings("serial")
 public class CopyCutComposer extends SelectorComposer<Component> {
 
 	@Wire

@@ -13,6 +13,8 @@ import org.zkoss.zul.Intbox;
  * @author Hawk
  * 
  */
+
+@SuppressWarnings("serial")
 public class FreezeComposer extends SelectorComposer<Component> {
 
 	@Wire

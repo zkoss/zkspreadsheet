@@ -4,12 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.zkoss.poi.ss.formula.TwoDEval;
-import org.zkoss.poi.ss.formula.eval.EvaluationException;
 import org.zkoss.poi.ss.formula.eval.RefEval;
 import org.zkoss.poi.ss.formula.eval.StringEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.functions.Function;
-import org.zkoss.poi.ss.formula.functions.MultiOperandNumericFunction;
 
 /**
  * Example of custom formulas. From basic to advanced one.

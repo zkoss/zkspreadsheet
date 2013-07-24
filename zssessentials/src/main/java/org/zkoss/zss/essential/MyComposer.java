@@ -11,6 +11,7 @@ import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.ui.Spreadsheet;
 
+@SuppressWarnings("serial")
 public class MyComposer extends SelectorComposer<Component> {
 
 	@Wire

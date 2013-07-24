@@ -27,6 +27,7 @@ import org.zkoss.zul.ext.Selectable;
  * @author Hawk
  * 
  */
+@SuppressWarnings("serial")
 public class CellStyleComposer extends SelectorComposer<Component> {
 
 	@Wire
