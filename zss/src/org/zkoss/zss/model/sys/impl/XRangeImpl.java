@@ -50,6 +50,7 @@ import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFChartX;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.RefSheet;
@@ -848,14 +849,19 @@ public class XRangeImpl implements XRange {
 			//check if follow the copy rule
 			//destination range allow only one contiguous reference
 			if (((XRangeImpl)dstRange).getRefs().size() > 1) {
-				throw new UiException("Command cannot be used on multiple selections");
+				throw new IllegalOpArgumentException("Command cannot be used on multiple selections");
 			}
 			//source range can handle only same rows/columns multiple references
 			Iterator<Ref> it = _refs.iterator();
 			Ref ref1 = it.next();
 			int srcRowCount = ref1.getRowCount();
 			int srcColCount = ref1.getColumnCount();
-			final Ref dstRef = ((XRangeImpl)dstRange).getRefs().iterator().next();
+			final Ref dstRef = ((XRangeImpl)dstRange).getRefs().iterator().next();	// destination reference
+
+			if(transpose && isOverlapping(ref1, dstRef)) { // transpose paste when cell is overlap
+				throw new IllegalOpArgumentException("Cannot transpose paste to overlapped range");
+			}
+			
 			final Set<Ref> toEval = new HashSet<Ref>();
 			final Set<Ref> affected = new HashSet<Ref>();
 			final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
@@ -873,7 +879,7 @@ public class XRangeImpl implements XRange {
 					final Ref ref = it.next();
 					if (lCol == ref.getLeftCol() && rCol == ref.getRightCol()) { //same column
 						if (sameRow) { //cannot be both sameRow and sameColumn
-							throw new UiException("Command cannot be used on multiple selections");
+							throw new IllegalOpArgumentException("Command cannot be used on multiple selections");
 						}
 						if (srcRefs.isEmpty()) {
 							srcRefs.put(new Integer(tRow), ref1); //sorted on Row
@@ -883,7 +889,7 @@ public class XRangeImpl implements XRange {
 						srcRowCount += ref.getRowCount();
 					} else if (tRow == ref.getTopRow() && bRow == ref.getBottomRow()) { //same row
 						if (sameCol) { //cannot be both sameRow and sameColumn
-							throw new UiException("Command cannot be used on multiple selections");
+							throw new IllegalOpArgumentException("Command cannot be used on multiple selections");
 						}
 						if (srcRefs.isEmpty()) {
 							srcRefs.put(Integer.valueOf(lCol), ref1); //sorted on column
@@ -892,7 +898,7 @@ public class XRangeImpl implements XRange {
 						sameRow = true;
 						srcColCount += ref.getColumnCount();
 					} else { //not the same column or same row
-						throw new UiException("Command cannot be used on multiple selections");
+						throw new IllegalOpArgumentException("Command cannot be used on multiple selections");
 					}
 				}
 				pasteType = pasteType + XRange.PASTE_VALUES; //no formula 
@@ -906,6 +912,34 @@ public class XRangeImpl implements XRange {
 			return pasteRef;
 		}
 		return null;
+	}
+	
+	private boolean isOverlapping(Ref ref1, Ref ref2) {
+		
+		final int ref1_LeftCol = ref1.getLeftCol();
+		final int ref1_RightCol = ref1.getRightCol();
+		final int ref1_TopRow = ref1.getTopRow();
+		final int ref1_BottomRow = ref1.getBottomRow();
+		
+		final int ref2_LeftCol = ref2.getLeftCol();
+		final int ref2_RightCol = ref2_LeftCol + ref1.getColumnCount() - 1;
+		final int ref2_TopRow = ref2.getTopRow();
+		final int ref2_BottomRow = ref2_TopRow + ref1.getRowCount() - 1;
+		
+		// row check:
+		// 1. ref2 top row is between ref1 top row and bottom row
+		// 2. ref2 bottom row is between ref1 top row and bottom row
+		if((ref2_TopRow >= ref1_TopRow && ref2_TopRow <= ref1_BottomRow ) || (ref2_BottomRow >= ref1_TopRow && ref2_BottomRow <= ref1_BottomRow)) {
+			// col check:
+			// 1. ref2 left col is between ref1 left col and right col
+			// 2. ref2 right col is between ref1 left col and right col
+			if((ref2_LeftCol >= ref1_LeftCol && ref2_LeftCol <= ref1_RightCol) || (ref2_RightCol >= ref1_LeftCol && ref2_RightCol <= ref1_RightCol)) {
+				return true;
+			}
+		}
+		
+		return false;
+		
 	}
 
 	@Override
