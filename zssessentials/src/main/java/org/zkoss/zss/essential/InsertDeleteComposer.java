@@ -43,7 +43,7 @@ public class InsertDeleteComposer extends SelectorComposer<Component> {
 		range = range.toRowRange(); 
 		//shift existing row down and copy style from above cell 
 		CellOperationUtil.insert(range, InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
-		
+		ss.setMaxVisibleRows(ss.getMaxVisibleRows()+1);
 	}
 	
 	@Listen("onClick = #insertRow10")
@@ -58,6 +58,7 @@ public class InsertDeleteComposer extends SelectorComposer<Component> {
 		range = range.toRowRange(); 
 		//shift existing row down and copy style from above cell 
 		CellOperationUtil.insert(range ,InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		ss.setMaxVisibleRows(ss.getMaxVisibleRows()+10);
 	}
 	
 	@Listen("onClick = #deleteRows")
@@ -81,6 +82,7 @@ public class InsertDeleteComposer extends SelectorComposer<Component> {
 		range = range.toColumnRange(); 
 		//shift existing row right and copy style from left cell 
 		CellOperationUtil.insert(range, InsertShift.RIGHT, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		ss.setMaxVisibleColumns(ss.getMaxVisibleColumns()+1);
 		
 	}
 	
@@ -96,6 +98,7 @@ public class InsertDeleteComposer extends SelectorComposer<Component> {
 		range = range.toColumnRange(); 
 		//shift existing row right and copy style from left cells 
 		CellOperationUtil.insert(range, InsertShift.RIGHT, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		ss.setMaxVisibleColumns(ss.getMaxVisibleColumns()+3);
 	}
 	
 	@Listen("onClick = #deleteColumns")

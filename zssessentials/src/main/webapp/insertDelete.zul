@@ -4,7 +4,7 @@
 		<hlayout hflex="1" vflex="1">
 			<spreadsheet id="ss" hflex="1" vflex="1"
 				showFormulabar="true" showContextMenu="true" showToolbar="true"
-				showSheetbar="true" maxVisibleRows="300" maxVisibleColumns="50"
+				showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="20"
 				src="/WEB-INF/books/full.xlsx" />
 			<groupbox  width="300px" vflex="1">
 				<caption label="Range Operations" />
