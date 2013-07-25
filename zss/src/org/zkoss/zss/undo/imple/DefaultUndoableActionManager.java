@@ -1,3 +1,21 @@
+/* DefaultUndoableActionManager.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/7/25, Created by Dennis.Chen
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+	This program is distributed under GPL Version 2.0 in the hope that
+	it will be useful, but WITHOUT ANY WARRANTY.
+}}IS_RIGHT
+*/
 package org.zkoss.zss.undo.imple;
 
 import java.util.LinkedList;
@@ -33,7 +51,7 @@ public class DefaultUndoableActionManager implements UndoableActionManager {
 		while(_actionHisotry.size()>_index+1){
 			_actionHisotry.removeLast();
 		}
-		if(_maxHistory==_actionHisotry.size()){
+		while(_actionHisotry.size()>=_maxHistory){
 			_actionHisotry.remove(0);
 		}
 		_actionHisotry.add(action);
@@ -65,6 +83,7 @@ public class DefaultUndoableActionManager implements UndoableActionManager {
 		UndoableAction action = current();
 		if(action!=null){
 			if(action.isUndoable()){
+				System.out.println(">>>>>>>>>undo "+action);
 				action.undoAction();
 				_index--;
 				
@@ -97,6 +116,7 @@ public class DefaultUndoableActionManager implements UndoableActionManager {
 		UndoableAction action = next();
 		if(action!=null){
 			if(action.isRedoable()){
+				System.out.println(">>>>>>>>>do "+action);
 				action.doAction();
 				_index++;
 				
@@ -114,7 +134,17 @@ public class DefaultUndoableActionManager implements UndoableActionManager {
 	@Override
 	public void clear() {
 		_index = -1;
-		_actionHisotry = new LinkedList<UndoableAction>();
+		_actionHisotry.clear();
+		System.out.println(">>>>>>>>>clear "+this);
+	}
+	@Override
+	public void setMaxHsitorySize(int size) {
+		if(size < 1){
+			throw new IllegalArgumentException("must large than 1");
+		}
+		//i simply reset it
+		clear();
+		_maxHistory = size;
 	}
 
 }

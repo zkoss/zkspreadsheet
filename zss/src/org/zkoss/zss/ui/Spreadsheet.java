@@ -593,6 +593,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		_custColId = new SequenceId(-1, 2);
 		_custRowId = new SequenceId(-1, 2);
 		
+		//clear undo history
+		clearUndoableActionManager();
 		
 		_book = book;
 		if (_book != null) {
@@ -4401,7 +4403,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}else{
 				UndoableActionManager uam = getUndoableActionManager();
 				if(uam!=null){
-					uam.doAction(new CellEditTextAction(sheet,rowIdx,colIdx,rowIdx,colIdx,editText));
+					uam.doAction(new CellEditTextAction(Labels.getLabel("zss.undo.editText"),sheet,rowIdx,colIdx,rowIdx,colIdx,editText));
 				}else{
 					final Range range = Ranges.range(sheet, rowIdx, colIdx);
 					range.setCellEditText(editText);
@@ -4979,4 +4981,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		return _undoableActionManager;
 	}
+	
+	private void clearUndoableActionManager(){
+		if(_undoableActionManager!=null){
+			_undoableActionManager.clear();
+		}
+	}
+	
 }

@@ -1,83 +1,104 @@
+/* FontStyleAction.java
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/7/25, Created by Dennis.Chen
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+	This program is distributed under GPL Version 2.0 in the hope that
+	it will be useful, but WITHOUT ANY WARRANTY.
+}}IS_RIGHT
+*/
 package org.zkoss.zss.undo;
 
 
 import org.zkoss.zss.api.CellOperationUtil;
-import org.zkoss.zss.api.CellOperationUtil.CellStyleApplier;
 import org.zkoss.zss.api.CellOperationUtil.FontStyleApplier;
-import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.undo.imple.AbstractUndoableAction;
-
+/**
+ * 
+ * @author dennis
+ *
+ */
 public class FontStyleAction extends AbstractUndoableAction {
 
-	private CellStyle[][] oldStyles = null;
+	private CellStyle[][] _oldStyles = null;
+	private CellStyle[][] _newStyles = null;
 	
-	private final FontStyleApplier fontStyleApplier;
+	private final FontStyleApplier _fontStyleApplier;
 	
 	
-	public FontStyleAction(Sheet sheet,int row, int column, int lastRow,int lastColumn,FontStyleApplier fontStyleApplier){
-		super(sheet,row,column,lastRow,lastColumn);
-		this.fontStyleApplier = fontStyleApplier;
-	}
-	
-	@Override
-	public String getLabel() {
-		return "Edit Cell Style";
+	public FontStyleAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,FontStyleApplier styleApplier){
+		super(label,sheet,row,column,lastRow,lastColumn);
+		this._fontStyleApplier = styleApplier;
 	}
 
 	@Override
 	public void doAction() {
 		if(isSheetProtected()) return;
-		//keep old text
-		oldStyles = new CellStyle[lastRow-row+1][lastColumn-column+1];
-		for(int i=row;i<=lastRow;i++){
-			for(int j=column;j<=lastColumn;j++){
-				Range r = Ranges.range(sheet,i,j);
-				oldStyles[i-row][j-column] = r.getCellStyle();
+		//keep old style
+		_oldStyles = new CellStyle[_lastRow-_row+1][_lastColumn-_column+1];
+		for(int i=_row;i<=_lastRow;i++){
+			for(int j=_column;j<=_lastColumn;j++){
+				Range r = Ranges.range(_sheet,i,j);
+				_oldStyles[i-_row][j-_column] = r.getCellStyle();
 			}
 		}
-		Range r = Ranges.range(sheet,row,column,lastRow,lastColumn);
-		try{
-			CellOperationUtil.applyFontStyle(r, fontStyleApplier);
-		}catch(IllegalFormulaException x){};//eat in this mode
+		
+		if(_newStyles!=null){//reuse the style
+			for(int i=_row;i<=_lastRow;i++){
+				for(int j=_column;j<=_lastColumn;j++){
+					Range r = Ranges.range(_sheet,i,j);
+					r.setCellStyle(_newStyles[i-_row][j-_column]);
+				}
+			}
+			_newStyles = null;
+		}else{
+			Range r = Ranges.range(_sheet,_row,_column,_lastRow,_lastColumn);
+			CellOperationUtil.applyFontStyle(r, _fontStyleApplier);
+		}
 	}
 
 	@Override
 	public boolean isUndoable() {
-		return oldStyles!=null && isSheetAvailable() && !isSheetProtected();
+		return _oldStyles!=null && isSheetAvailable() && !isSheetProtected();
 	}
 
 	@Override
 	public boolean isRedoable() {
-		return oldStyles==null && isSheetAvailable() && !isSheetProtected();
+		return _oldStyles==null && isSheetAvailable() && !isSheetProtected();
 	}
 
 	@Override
 	public void undoAction() {
 		if(isSheetProtected()) return;
-		if(oldStyles!=null){
-			for(int i=row;i<=lastRow;i++){
-				for(int j=column;j<=lastColumn;j++){
-					Range r = Ranges.range(sheet,i,j);
-					r.setCellStyle(oldStyles[i-row][j-column]);
-				}
+		
+		//keep last new style, so if redo-again, we will reuse it.
+		_newStyles = new CellStyle[_lastRow-_row+1][_lastColumn-_column+1];
+		for(int i=_row;i<=_lastRow;i++){
+			for(int j=_column;j<=_lastColumn;j++){
+				Range r = Ranges.range(_sheet,i,j);
+				_newStyles[i-_row][j-_column] = r.getCellStyle();
 			}
-			oldStyles = null;
 		}
+		
+		for(int i=_row;i<=_lastRow;i++){
+			for(int j=_column;j<=_lastColumn;j++){
+				Range r = Ranges.range(_sheet,i,j);
+				r.setCellStyle(_oldStyles[i-_row][j-_column]);
+			}
+		}
+		_oldStyles = null;
 	}
-	
-	public String toString(){
-		StringBuilder sb = new StringBuilder();
-		sb.append(getLabel()+"["+row+","+column+","+lastRow+","+lastColumn+"]").append(super.toString());
-		return sb.toString();
-	}
-	
-	public Rect getSelection(){
-		return new Rect(column,row,lastColumn,lastRow);
-	}
-
 }

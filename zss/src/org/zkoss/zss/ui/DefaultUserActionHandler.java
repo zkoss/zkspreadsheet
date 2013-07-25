@@ -695,7 +695,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new FontStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new FontStyleAction(Labels.getLabel("zss.undo.fontStyle"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
 					CellOperationUtil.getFontNameApplier(fontFamily)));
 		}else{
@@ -714,7 +714,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new FontStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new FontStyleAction(Labels.getLabel("zss.undo.fontStyle"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
 					CellOperationUtil.getFontHeightApplier((short)UnitUtil.pointToTwip(fontSize))));
 		}else{
@@ -743,7 +743,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new FontStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new FontStyleAction(Labels.getLabel("zss.undo.fontStyle"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
 					CellOperationUtil.getFontBoldweightApplier(bw)));
 		}else{
@@ -766,7 +766,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		boolean italic = !range.getCellStyle().getFont().isItalic();
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new FontStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new FontStyleAction(Labels.getLabel("zss.undo.fontStyle"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
 					CellOperationUtil.getFontItalicApplier(italic)));
 		}else{
@@ -789,7 +789,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		boolean strikeout = !range.getCellStyle().getFont().isStrikeout();
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new FontStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new FontStyleAction(Labels.getLabel("zss.undo.fontStyle"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
 					CellOperationUtil.getFontStrikeoutApplier(strikeout)));
 		}else{
@@ -817,7 +817,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new FontStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new FontStyleAction(Labels.getLabel("zss.undo.fontStyle"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
 					CellOperationUtil.getFontUnderlineApplier(underline)));
 		}else{
@@ -894,7 +894,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new FontStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new FontStyleAction(Labels.getLabel("zss.undo.fontStyle"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
 					CellOperationUtil.getFontColorApplier(range.getCellStyleHelper().createColorFromHtmlColor(color))));
 		}else{
@@ -914,7 +914,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new CellStyleAction(Labels.getLabel("zss.undo.cellStyle"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
 					CellOperationUtil.getBackgroundColorApplier(range
 						.getCellStyleHelper().createColorFromHtmlColor(color))));
@@ -934,7 +934,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new CellStyleAction(Labels.getLabel("zss.undo.cellStyle"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
 					CellOperationUtil.getVerticalAligmentApplier(VerticalAlignment.TOP)));
 		}else{
@@ -953,7 +953,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new CellStyleAction(Labels.getLabel("zss.undo.cellStyle"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
 					CellOperationUtil.getVerticalAligmentApplier(VerticalAlignment.CENTER)));
 		}else{
@@ -972,7 +972,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new CellStyleAction(Labels.getLabel("zss.undo.cellStyle"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
 					CellOperationUtil.getVerticalAligmentApplier(VerticalAlignment.BOTTOM)));
 		}else{
@@ -991,7 +991,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new CellStyleAction(Labels.getLabel("zss.undo.cellStyle"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
 					CellOperationUtil.getAligmentApplier(Alignment.LEFT)));
 		}else{
@@ -1010,7 +1010,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new CellStyleAction(Labels.getLabel("zss.undo.cellStyle"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
 					CellOperationUtil.getAligmentApplier(Alignment.CENTER)));
 		}else{
@@ -1029,7 +1029,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new CellStyleAction(Labels.getLabel("zss.undo.cellStyle"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
 					CellOperationUtil.getAligmentApplier(Alignment.RIGHT)));
 		}else{
@@ -1049,7 +1049,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		boolean wrapped = !range.getCellStyle().isWrapText();
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new CellStyleAction(sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new CellStyleAction(Labels.getLabel("zss.undo.cellStyle"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
 					CellOperationUtil.getWrapTextApplier(wrapped)));
 		}else{
