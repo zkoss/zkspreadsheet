@@ -48,6 +48,7 @@ public class DefaultUndoableActionManager implements UndoableActionManager {
 	@Override
 	public void doAction(UndoableAction action) {
 		action.doAction();
+		System.out.println(">>>>>>>>>doAction "+action);
 		while(_actionHisotry.size()>_index+1){
 			_actionHisotry.removeLast();
 		}

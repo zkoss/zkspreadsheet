@@ -140,7 +140,11 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
 import org.zkoss.zss.ui.sys.WidgetHandler;
 import org.zkoss.zss.ui.sys.WidgetLoader;
+import org.zkoss.zss.undo.AggregatedAction;
 import org.zkoss.zss.undo.CellEditTextAction;
+import org.zkoss.zss.undo.HeaderHiddenAction;
+import org.zkoss.zss.undo.HeaderSizeAction;
+import org.zkoss.zss.undo.UndoableAction;
 import org.zkoss.zss.undo.UndoableActionManager;
 import org.zkoss.zss.undo.imple.DefaultUndoableActionManager;
 import org.zkoss.zul.Messagebox;
@@ -2672,39 +2676,72 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 
 		public void setColumnSize(String sheetId, int column, int newsize, int id, boolean hidden) {
-			XSheet sheet;
+			XSheet xsheet;
 			if (getSelectedSheetId().equals(sheetId)) {
-				sheet = getSelectedXSheet();
+				xsheet = getSelectedXSheet();
 			} else {
-				sheet = XUtils.getSheetByUuid(_book, sheetId);
+				xsheet = XUtils.getSheetByUuid(_book, sheetId);
 			}
 			// update helper size first before sheet.setColumnWidth, or it will fire a SSDataEvent
-			HeaderPositionHelper helper = Spreadsheet.this.getColumnPositionHelper(sheet);
+			HeaderPositionHelper helper = Spreadsheet.this.getColumnPositionHelper(xsheet);
 			helper.setInfoValues(column, newsize, id, hidden);
 
-			final XRange rng = XRanges.range(sheet, -1, column).getColumns();
-			rng.setHidden(hidden);
-			if (!hidden) {
-				rng.setColumnWidth(XUtils.pxToFileChar256(newsize, ((XBook)sheet.getWorkbook()).getDefaultCharWidth()));
+			
+			UndoableActionManager uam = getUndoableActionManager();
+			Sheet sheet = new SheetImpl(new SimpleRef<XBook>(xsheet.getBook()),new SimpleRef<XSheet>(xsheet));
+			if(uam!=null){
+				if(hidden){
+					uam.doAction(new HeaderHiddenAction(Labels.getLabel("zss.undo.hideColumn"), 
+							sheet, 0, column, 0, column, HeaderHiddenAction.Type.COLUMN, hidden));
+				}else{
+					uam.doAction(
+						new AggregatedAction(Labels.getLabel("zss.undo.columnSize"),
+							new UndoableAction[]{
+								new HeaderHiddenAction(null,sheet, 0, column, 0, column, HeaderHiddenAction.Type.COLUMN, hidden),
+								new HeaderSizeAction(null,sheet, 0, column, 0, column, HeaderSizeAction.Type.COLUMN, newsize)}
+						));
+				}
+			}else{
+				final Range rng = Ranges.range(sheet, 0, column).toColumnRange();
+				rng.setHidden(hidden);
+				if(!hidden){
+					rng.setColumnWidth(newsize);
+				}
 			}
 		}
 
-		public void setRowSize(String sheetId, int rownum, int newsize, int id, boolean hidden) {
-			XSheet sheet;
+		public void setRowSize(String sheetId, int row, int newsize, int id, boolean hidden) {
+			XSheet xsheet;
 			if (getSelectedSheetId().equals(sheetId)) {
-				sheet = getSelectedXSheet();
+				xsheet = getSelectedXSheet();
 			} else {
-				sheet = XUtils.getSheetByUuid(_book, sheetId);
+				xsheet = XUtils.getSheetByUuid(_book, sheetId);
 			}
+
+			HeaderPositionHelper helper = Spreadsheet.this.getRowPositionHelper(xsheet);
+			helper.setInfoValues(row, newsize, id, hidden);
 			
-			final XRange rng = XRanges.range(sheet, rownum, -1).getRows();
-			rng.setHidden(hidden);
-			if (!hidden) {
-				rng.setRowHeight(XUtils.pxToPoint(newsize));
+			UndoableActionManager uam = getUndoableActionManager();
+			Sheet sheet = new SheetImpl(new SimpleRef<XBook>(xsheet.getBook()),new SimpleRef<XSheet>(xsheet));
+			if(uam!=null){
+				if(hidden){
+					uam.doAction(new HeaderHiddenAction(Labels.getLabel("zss.undo.hideRow"), 
+							sheet, row,0, row, 0, HeaderHiddenAction.Type.ROW, hidden));
+				}else{
+					uam.doAction(
+						new AggregatedAction(Labels.getLabel("zss.undo.rowSize"),
+							new UndoableAction[]{
+								new HeaderHiddenAction(null,sheet,  row,0, row, 0, HeaderHiddenAction.Type.ROW, hidden),
+								new HeaderSizeAction(null,sheet,  row,0, row, 0, HeaderSizeAction.Type.ROW, newsize)}
+						));
+				}
+			}else{
+				final Range rng = Ranges.range(sheet, row, 0).toRowRange();
+				rng.setHidden(hidden);
+				if(!hidden){
+					rng.setRowHeight(newsize);
+				}
 			}
-			//row.setHeight((short)XUtils.pxToTwip(newsize));
-			HeaderPositionHelper helper = Spreadsheet.this.getRowPositionHelper(sheet);
-			helper.setInfoValues(rownum, newsize, id, hidden);
 		}
 
 		public HeaderPositionHelper getColumnPositionHelper(String sheetId) {
