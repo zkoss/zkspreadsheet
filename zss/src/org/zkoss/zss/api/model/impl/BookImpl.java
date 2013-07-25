@@ -127,8 +127,18 @@ public class BookImpl implements Book{
 	}
 
 	@Override
-	public boolean hasName(String name) {
+	public boolean hasNameRange(String name) {
 		return getPoiBook().getName(name)!=null;
+	}
+
+	@Override
+	public int getMaxRows() {
+		return ((XBook)getPoiBook()).getSpreadsheetVersion().getMaxRows();
+	}
+
+	@Override
+	public int getMaxColumns() {
+		return ((XBook)getPoiBook()).getSpreadsheetVersion().getMaxColumns();
 	}
 	
 }

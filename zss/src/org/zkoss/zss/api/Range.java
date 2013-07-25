@@ -283,11 +283,11 @@ public interface Range {
 	
 	/**
 	 * apply borders
-	 * @param type the apply type
+	 * @param applyType the apply type
 	 * @param borderType the border type
 	 * @param htmlColor the color (#rgb-hex-code, e.x #FF00FF)
 	 */
-	public void applyBorders(ApplyBorderType type,BorderType borderType,String htmlColor);
+	public void applyBorders(ApplyBorderType applyType,BorderType borderType,String htmlColor);
 
 	/**
 	 * @return true if any merged cell inside this range

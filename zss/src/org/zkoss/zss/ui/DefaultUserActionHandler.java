@@ -50,6 +50,7 @@ import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.event.SheetSelectEvent;
+import org.zkoss.zss.undo.CellBorderAction;
 import org.zkoss.zss.undo.CellStyleAction;
 import org.zkoss.zss.undo.FontStyleAction;
 import org.zkoss.zss.undo.UndoableActionManager;
@@ -826,7 +827,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		return true;
 	}
 
-	protected boolean doBorder(ApplyBorderType type,BorderType borderTYpe, String color){
+	protected boolean doBorder(ApplyBorderType applyType,BorderType borderType, String color){
 		Sheet sheet = getSheet();
 		Rect selection = getSelection();
 		
@@ -835,7 +836,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.applyBorder(range,type, borderTYpe, color);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new CellBorderAction(Labels.getLabel("zss.undo.cellBorder"),sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					applyType, borderType, color));
+		}else{
+			CellOperationUtil.applyBorder(range,applyType, borderType, color);
+		}
 		return true;
 	}
 	

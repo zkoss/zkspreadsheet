@@ -602,15 +602,15 @@ public class CellOperationUtil {
 	/**
 	 * Apply border to cells in the range
 	 * @param range the range to be applied
-	 * @param type the apply type
+	 * @param applyType the apply type
 	 * @param borderType the border type
 	 * @param htmlColor the color of border(#rgb-hex-code, e.x #FF00FF) 
 	 */
-	public static void applyBorder(Range range,ApplyBorderType type,BorderType borderType,String htmlColor){
+	public static void applyBorder(Range range,ApplyBorderType applyType,BorderType borderType,String htmlColor){
 		if(range.isProtected())
 			return;
 		//use range api directly,
-		range.applyBorders(type, borderType, htmlColor);
+		range.applyBorders(applyType, borderType, htmlColor);
 	}
 	
 	

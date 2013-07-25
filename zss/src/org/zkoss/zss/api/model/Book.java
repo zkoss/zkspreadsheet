@@ -98,6 +98,16 @@ public interface Book {
 	 * @param name the name to check
 	 * @return true if it has a range of the name
 	 */
-	public boolean hasName(String name);
+	public boolean hasNameRange(String name);
+	
+	/**
+	 * @return the maximum number of usable rows in each sheet
+	 */
+	public int getMaxRows();
+	
+	/**
+	 * @return the maximum number of usable column in each sheet
+	 */
+	public int getMaxColumns();
 
 }
