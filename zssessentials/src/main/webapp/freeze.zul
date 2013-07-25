@@ -12,20 +12,11 @@
 					<grid vflex="1" hflex="1">
 						<columns>
 							<column width="100px"/>
-							<column/>
 						</columns>
 						<rows>
-							<row>
-								Freeze Row: <intbox id="fRowBox" value="0"/>
-							</row>
-							<row>
-								Freeze Column: <intbox id="fColumnBox" value="0"/>
-							</row>
-							<row spans="2" align="right">
-								<hlayout>
+							<row  align="right">
 								<button id="unfreezeButton" label="Unfreeze"/>
 								<button id="freezeButton" label="Freeze"/>
-								</hlayout>
 							</row>
 						</rows>
 					</grid>

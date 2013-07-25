@@ -11,7 +11,7 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
- * Demonstrate CellStyle, CellOperationUtil API usage
+ * Demonstrate copy & cut , CellOperationUtil API usage
  * 
  * @author Hawk
  * 
@@ -24,22 +24,28 @@ public class CopyCutComposer extends SelectorComposer<Component> {
 
 
 	@Listen("onClick = #copyButton")
-	public void copy() {
+	public void copyByUtil() {
 		Range src = Ranges.range(ss.getSelectedSheet(), ss.getSelection());
-		Range dest = Ranges.range(getResultSheet(), ss.getSelection());
+		Range dest = Ranges.range(getDestinationSheet(), ss.getSelection());
 		CellOperationUtil.pasteFormula(src, dest);
 	}
 
 
 	@Listen("onClick = #cutButton")
-	public void cut() {
+	public void cutByUtil() {
 		Range src = Ranges.range(ss.getSelectedSheet(), ss.getSelection());
-		Range dest = Ranges.range(getResultSheet(), ss.getSelection());
+		Range dest = Ranges.range(getDestinationSheet(), ss.getSelection());
 		CellOperationUtil.cut(src, dest);
 	}
 
-	private Sheet getResultSheet(){
+	private Sheet getDestinationSheet(){
 		return ss.getBook().getSheetAt(1);
 	}
 
+	//demonstrate Range API usage
+	public void copy(){
+		Range src = Ranges.range(ss.getSelectedSheet(), ss.getSelection());
+		Range destination = Ranges.range(getDestinationSheet(), ss.getSelection());
+		src.paste(destination);
+	}
 }
