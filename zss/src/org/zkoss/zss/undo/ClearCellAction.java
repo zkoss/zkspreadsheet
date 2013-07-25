@@ -113,7 +113,7 @@ public class ClearCellAction extends AbstractUndoableAction {
 				for(int j=_column;j<=_lastColumn;j++){
 					Range r = Ranges.range(_sheet,i,j);
 					if(oldEditTexts[i-_row][j-_column]==null){
-						r.clearContents();
+//						r.clearContents(); //no need to do anything, it is clear
 					}else{
 						r.setCellEditText(oldEditTexts[i-_row][j-_column]);
 					}
