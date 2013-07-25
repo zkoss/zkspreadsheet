@@ -790,7 +790,7 @@ public class CellOperationUtil {
 	 * Unhide the range. To unhide a row, you have to call {@link Range#toRowRange()} first, to unhide a column, you have to call {@link Range#toColumnRange()}
 	 * @param range the range to un-hide
 	 */
-	public static void unHide(Range range) {
+	public static void unhide(Range range) {
 		if (range.isProtected())
 			return;
 		range.setHidden(false);
@@ -818,5 +818,13 @@ public class CellOperationUtil {
 		if(dest.isProtected())
 			return;
 		src.autoFill(dest, type);
-	}	
+	}
+	
+	public static void setRowHeight(Range range, int heightPx) {
+		range.setRowHeight(heightPx);
+	}
+	
+	public static void setColumnWidth(Range range, int widthPx) {
+		range.setColumnWidth(widthPx);
+	}
 }
