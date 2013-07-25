@@ -1,4 +1,4 @@
-package org.zkoss.zss.essential;
+package org.zkoss.zss.essential.advanced;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,6 +11,7 @@ import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.essential.AbstractDemoComposer;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**

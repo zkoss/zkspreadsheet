@@ -1,6 +1,6 @@
 <zk>
 	<window hflex="1" vflex="1"
-		apply="org.zkoss.zss.essential.ExportVerifierComposer">
+		apply="org.zkoss.zss.essential.advanced.ExportVerifierComposer">
 
 		<hlayout hflex="1" vflex="1">
 			<vlayout hflex="1" vflex="1">

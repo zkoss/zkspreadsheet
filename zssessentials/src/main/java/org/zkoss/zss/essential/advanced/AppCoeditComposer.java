@@ -1,4 +1,4 @@
-package org.zkoss.zss.essential;
+package org.zkoss.zss.essential.advanced;
 
 import java.util.Arrays;
 import java.util.HashMap;

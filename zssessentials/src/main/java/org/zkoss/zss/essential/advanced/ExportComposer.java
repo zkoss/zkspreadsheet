@@ -1,4 +1,4 @@
-package org.zkoss.zss.essential;
+package org.zkoss.zss.essential.advanced;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,6 +10,7 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.essential.AbstractDemoComposer;
 import org.zkoss.zss.essential.util.BookUtil;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Radiogroup;
