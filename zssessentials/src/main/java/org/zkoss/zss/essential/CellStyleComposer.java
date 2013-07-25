@@ -14,6 +14,7 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.CellStyle.Alignment;
 import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
+import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Label;
@@ -90,7 +91,7 @@ public class CellStyleComposer extends SelectorComposer<Component> {
 	}
 
 	@Listen("onSelect = #hAlignBox")
-	public void applyAlignment() {
+	public void applyAlignmentByUtil() {
 
 		Range selection = Ranges.range(ss.getSelectedSheet(), ss.getSelection());
 		CellOperationUtil.applyAlignment(selection
@@ -98,7 +99,7 @@ public class CellStyleComposer extends SelectorComposer<Component> {
 	}
 
 	@Listen("onSelect = #vAlignBox")
-	public void applyVerticalAlignment() {
+	public void applyVerticalAlignmentByUtil() {
 
 		Range selection = Ranges.range(ss.getSelectedSheet(), ss.getSelection());
 		CellOperationUtil.applyVerticalAlignment(selection
@@ -120,4 +121,12 @@ public class CellStyleComposer extends SelectorComposer<Component> {
 				.values()));
 	}
 
+	//demonstrate API usage
+	public void applyAlignment() {
+		Range selection = Ranges.range(ss.getSelectedSheet(), ss.getSelection());
+		CellStyle oldStyle = selection.getCellStyle();
+		EditableCellStyle newStyle = selection.getCellStyleHelper().createCellStyle(oldStyle);
+		newStyle.setAlignment( (Alignment)hAlignBox.getSelectedItem().getValue());
+		selection.setCellStyle(newStyle);
+	}
 }
