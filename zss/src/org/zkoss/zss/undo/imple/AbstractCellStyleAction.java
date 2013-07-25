@@ -63,7 +63,6 @@ public abstract class AbstractCellStyleAction extends AbstractUndoableAction {
 		int column = getReservedColumn();
 		int lastRow = getReservedLastRow();
 		int lastColumn = getReservedLastColumn();
-		System.out.println("1>>>> "+row+","+column+","+lastRow+","+lastColumn);
 		oldStyles = new CellStyle[lastRow-row+1][lastColumn-column+1];
 		for(int i=row;i<=lastRow;i++){
 			for(int j=column;j<=lastColumn;j++){
@@ -81,7 +80,6 @@ public abstract class AbstractCellStyleAction extends AbstractUndoableAction {
 			}
 			newStyles = null;
 		}else{
-			System.out.println("2>>>> "+_row+","+_column+","+_lastRow+","+_lastColumn);
 			applyAction();
 		}
 	}
@@ -107,8 +105,6 @@ public abstract class AbstractCellStyleAction extends AbstractUndoableAction {
 		int column = getReservedColumn();
 		int lastRow = getReservedLastRow();
 		int lastColumn = getReservedLastColumn();
-		
-		System.out.println("3>>>> "+row+","+column+","+lastRow+","+lastColumn);
 		//keep last new style, so if redo-again, we will reuse it.
 		newStyles = new CellStyle[lastRow-row+1][lastColumn-column+1];
 		for(int i=row;i<=lastRow;i++){

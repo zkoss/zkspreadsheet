@@ -18,6 +18,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.undo;
 
+import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
@@ -29,27 +30,21 @@ import org.zkoss.zss.undo.imple.AbstractUndoableAction;
  * @author dennis
  *
  */
-public class CellEditTextAction extends AbstractUndoableAction {
+public class ClearContentAction extends AbstractUndoableAction {
 
 	private String[][] oldEditTexts = null;
 	
-	private final String editText;
-	private final String[][] editTexts;
 	
-	public CellEditTextAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,String editText){
+	public ClearContentAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn){
 		super(label,sheet,row,column,lastRow,lastColumn);
-		this.editText = editText;
-		editTexts = null;
-	}
-	public CellEditTextAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,String[][] editTexts){
-		super(label,sheet,row,column,lastRow,lastColumn);
-		this.editTexts = editTexts;
-		editText = null;
 	}
 
 	@Override
 	public void doAction() {
 		if(isSheetProtected()) return;
+		/*
+		 * Refer to BookHelper#clearCell. it only clear the formula and set the value to string null
+		 */
 		//keep old text
 		oldEditTexts = new String[_lastRow-_row+1][_lastColumn-_column+1];
 		for(int i=_row;i<=_lastRow;i++){
@@ -62,21 +57,10 @@ public class CellEditTextAction extends AbstractUndoableAction {
 				}else{
 					oldEditTexts[i-_row][j-_column] = r.getCellEditText();
 				}
-				
-				if(editTexts!=null){
-					try{
-						r.setCellEditText(editTexts[i][j]);
-					}catch(IllegalFormulaException x){};//eat in this mode
-				}
 			}
 		}
-		if(editText!=null){
-			Range r = Ranges.range(_sheet,_row,_column,_lastRow,_lastColumn);
-			try{
-				r.setCellEditText(editText);
-			}catch(IllegalFormulaException x){};//eat in this mode
-		}
-		
+		Range r = Ranges.range(_sheet,_row,_column,_lastRow,_lastColumn);
+		CellOperationUtil.clearContents(r);
 	}
 
 	@Override

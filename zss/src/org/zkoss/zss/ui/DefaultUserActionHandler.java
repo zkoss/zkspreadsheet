@@ -52,6 +52,7 @@ import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.event.SheetSelectEvent;
 import org.zkoss.zss.undo.CellBorderAction;
 import org.zkoss.zss.undo.CellStyleAction;
+import org.zkoss.zss.undo.ClearContentAction;
 import org.zkoss.zss.undo.FontStyleAction;
 import org.zkoss.zss.undo.UndoableActionManager;
 import org.zkoss.zul.Messagebox;
@@ -518,12 +519,12 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	}
 	
 	protected boolean doKeystroke(int keyCode,boolean ctrlKey, boolean shiftKey, boolean altKey) {
+		
 		if (46 == keyCode) {
-			if (ctrlKey)
-				return doClearStyle();
-			else
-				return doClearContent();
+			return doClearContent();
 		}
+		
+		
 		if (!ctrlKey)
 			return false;
 		
@@ -534,6 +535,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return doCopy();
 		case 'V':
 			return doPaste();
+		
 		case 'D':
 			return doClearContent();
 		case 'B':
@@ -1272,7 +1274,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.clearContents(range);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new ClearContentAction(Labels.getLabel("zss.undo.clearContent"),sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn()));
+		}else{
+			CellOperationUtil.clearContents(range);
+		}
 		return true;
 	}
 	
