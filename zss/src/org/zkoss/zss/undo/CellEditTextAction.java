@@ -31,49 +31,49 @@ import org.zkoss.zss.undo.imple.AbstractUndoableAction;
  */
 public class CellEditTextAction extends AbstractUndoableAction {
 
-	private String[][] oldEditTexts = null;
+	private String[][] _oldEditTexts = null;
 	
-	private final String editText;
-	private final String[][] editTexts;
+	private final String _editText;
+	private final String[][] _editTexts;
 	
 	public CellEditTextAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,String editText){
 		super(label,sheet,row,column,lastRow,lastColumn);
-		this.editText = editText;
-		editTexts = null;
+		this._editText = editText;
+		_editTexts = null;
 	}
 	public CellEditTextAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,String[][] editTexts){
 		super(label,sheet,row,column,lastRow,lastColumn);
-		this.editTexts = editTexts;
-		editText = null;
+		this._editTexts = editTexts;
+		_editText = null;
 	}
 
 	@Override
 	public void doAction() {
 		if(isSheetProtected()) return;
 		//keep old text
-		oldEditTexts = new String[_lastRow-_row+1][_lastColumn-_column+1];
+		_oldEditTexts = new String[_lastRow-_row+1][_lastColumn-_column+1];
 		for(int i=_row;i<=_lastRow;i++){
 			for(int j=_column;j<=_lastColumn;j++){
 				Range r = Ranges.range(_sheet,i,j);
 				
 				CellData data = r.getCellData();
 				if(data.isBlank()){
-					oldEditTexts[i-_row][j-_column] = null;
+					_oldEditTexts[i-_row][j-_column] = null;
 				}else{
-					oldEditTexts[i-_row][j-_column] = r.getCellEditText();
+					_oldEditTexts[i-_row][j-_column] = r.getCellEditText();
 				}
 				
-				if(editTexts!=null){
+				if(_editTexts!=null){
 					try{
-						r.setCellEditText(editTexts[i][j]);
+						r.setCellEditText(_editTexts[i][j]);
 					}catch(IllegalFormulaException x){};//eat in this mode
 				}
 			}
 		}
-		if(editText!=null){
+		if(_editText!=null){
 			Range r = Ranges.range(_sheet,_row,_column,_lastRow,_lastColumn);
 			try{
-				r.setCellEditText(editText);
+				r.setCellEditText(_editText);
 			}catch(IllegalFormulaException x){};//eat in this mode
 		}
 		
@@ -81,29 +81,29 @@ public class CellEditTextAction extends AbstractUndoableAction {
 
 	@Override
 	public boolean isUndoable() {
-		return oldEditTexts!=null && isSheetAvailable() && !isSheetProtected();
+		return _oldEditTexts!=null && isSheetAvailable() && !isSheetProtected();
 	}
 
 	@Override
 	public boolean isRedoable() {
-		return oldEditTexts==null && isSheetAvailable() && !isSheetProtected();
+		return _oldEditTexts==null && isSheetAvailable() && !isSheetProtected();
 	}
 
 	@Override
 	public void undoAction() {
 		if(isSheetProtected()) return;
-		if(oldEditTexts!=null){
+		if(_oldEditTexts!=null){
 			for(int i=_row;i<=_lastRow;i++){
 				for(int j=_column;j<=_lastColumn;j++){
 					Range r = Ranges.range(_sheet,i,j);
-					if(oldEditTexts[i-_row][j-_column]==null){
+					if(_oldEditTexts[i-_row][j-_column]==null){
 						r.clearContents();
 					}else{
-						r.setCellEditText(oldEditTexts[i-_row][j-_column]);
+						r.setCellEditText(_oldEditTexts[i-_row][j-_column]);
 					}
 				}
 			}
-			oldEditTexts = null;
+			_oldEditTexts = null;
 		}
 	}
 }

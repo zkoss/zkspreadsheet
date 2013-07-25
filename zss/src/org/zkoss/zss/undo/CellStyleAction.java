@@ -32,15 +32,15 @@ import org.zkoss.zss.undo.imple.AbstractCellStyleAction;
  */
 public class CellStyleAction extends AbstractCellStyleAction {
 	
-	private final CellStyleApplier styleApplier;
+	private final CellStyleApplier _styleApplier;
 	
 	
 	public CellStyleAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,CellStyleApplier styleApplier){
 		super(label,sheet,row,column,lastRow,lastColumn);
-		this.styleApplier = styleApplier;
+		this._styleApplier = styleApplier;
 	}
 	protected void applyAction(){
 		Range r = Ranges.range(_sheet,_row,_column,_lastRow,_lastColumn);
-		CellOperationUtil.applyCellStyle(r, styleApplier);
+		CellOperationUtil.applyCellStyle(r, _styleApplier);
 	}
 }

@@ -52,7 +52,7 @@ import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.event.SheetSelectEvent;
 import org.zkoss.zss.undo.CellBorderAction;
 import org.zkoss.zss.undo.CellStyleAction;
-import org.zkoss.zss.undo.ClearContentAction;
+import org.zkoss.zss.undo.ClearCellAction;
 import org.zkoss.zss.undo.FontStyleAction;
 import org.zkoss.zss.undo.UndoableActionManager;
 import org.zkoss.zul.Messagebox;
@@ -1262,7 +1262,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.clearStyles(range);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new ClearCellAction(Labels.getLabel("zss.undo.clearStyles"),sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(),ClearCellAction.Type.STYLE));
+		}else{
+			CellOperationUtil.clearStyles(range);
+		}
 		return true;
 	}
 	
@@ -1276,8 +1282,8 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new ClearContentAction(Labels.getLabel("zss.undo.clearContent"),sheet, selection.getRow(), selection.getColumn(), 
-					selection.getLastRow(), selection.getLastColumn()));
+			uam.doAction(new ClearCellAction(Labels.getLabel("zss.undo.clearContents"),sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(),ClearCellAction.Type.CONTENT));
 		}else{
 			CellOperationUtil.clearContents(range);
 		}
@@ -1292,7 +1298,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.clearAll(range);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new ClearCellAction(Labels.getLabel("zss.undo.clearAll"),sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(),ClearCellAction.Type.ALL));
+		}else{
+			CellOperationUtil.clearAll(range);
+		}
 		return true;
 	}
 	
