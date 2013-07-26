@@ -215,4 +215,14 @@ public class SheetImpl implements Sheet{
 		}
 		return san;
 	}
+
+	@Override
+	public int getFirstRow() {
+		return getPoiSheet().getFirstRowNum();
+	}
+
+	@Override
+	public int getLastRow() {
+		return getPoiSheet().getLastRowNum();
+	}
 }

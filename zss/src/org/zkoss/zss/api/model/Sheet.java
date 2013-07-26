@@ -80,5 +80,17 @@ public interface Sheet {
 	 */
 	public int getColumnWidth(int column);
 	
+	/**
+	 * get first row which contains data of this sheet
+	 * @return
+	 */
+	public int getFirstRow();
+	
+	/**
+	 * get last row which contains data of this sheet
+	 * @return
+	 */
+	public int getLastRow();
+	
 
 }
