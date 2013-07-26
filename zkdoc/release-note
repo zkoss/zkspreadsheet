@@ -34,6 +34,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-292 left click row header (or column header) appears context menu
 	ZSS-333 Preload bug
 	ZSS-245 Exception when delete columns
+	ZSS-391 Filter popup menu is hidden by freeze column
 
 ZK Spreadsheet 2.5.0
 *Features:   
