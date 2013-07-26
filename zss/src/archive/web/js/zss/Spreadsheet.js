@@ -218,6 +218,9 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	_maxRenderedCellSize: 8000,
 	_displayGridlines: true,
 	_showContextMenu: false,
+	_selectionRect: null,
+	_focusRect: null,
+	_highLightRect: null,
 	/**
 	 * Contains spreadsheet's toolbar
 	 */
@@ -553,9 +556,6 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 				});
 			}
 		},
-		focusRect: null,
-		selectionRect: null,
-		highLightRect: null,
 		mergeRange: null,
 		autoFilter: null,
 		csc: null,
@@ -683,6 +683,41 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		//flag that indicate server has done paste operation, no need to do paste at client,
 		//Note. this flag will clear by doKeyUp()
 		doPasteFromServer: null
+	},
+	// ZSS-390: the selected range should not large than max rows/columns
+	// It will be significant poor performance.
+	setSelectionRect : function(rect) {
+		this._selectionRect = this._narrowRect(rect);
+	},
+	getSelectionRect : function() {
+		return this._selectionRect;
+	},
+	setFocusRect : function(rect) {
+		this._focusRect = this._narrowRect(rect);
+	},
+	getFocusRect : function() {
+		return this._focusRect;
+	},
+	setHighLightRect : function(rect) {
+		this._highLightRect = this._narrowRect(rect);
+	},
+	getHighLightRect : function() {
+		return this._highLightRect;
+	},
+	/** narrow rectangle and make sure its range won't exceed max rows/columns. */
+	_narrowRect: function (rect) {
+		var r = rect.split(",");
+		var left = zk.parseInt(r[0]); 
+		var top= zk.parseInt(r[1]); 
+		var right = zk.parseInt(r[2]); 
+		var bottom = zk.parseInt(r[3]);
+		if(right > this._maxColumns - 1) {
+			right = this._maxColumns - 1;
+		}  
+		if(bottom > this._maxRows - 1) {
+			bottom = this._maxRows - 1;
+		}
+		return left + "," + top + "," + right + "," + bottom;
 	},
 	clearCachedSize_: function () {
 		this.getToolbarPanel().clearCachedSize_();

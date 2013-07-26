@@ -25,7 +25,7 @@ import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Rect;
-import org.zkoss.zss.undo.imple.AbstractCellDataStyleAction;
+import org.zkoss.zss.undo.impl.AbstractCellDataStyleAction;
 
 /**
  * This undoable action doesn't handle merge cell when undo redo

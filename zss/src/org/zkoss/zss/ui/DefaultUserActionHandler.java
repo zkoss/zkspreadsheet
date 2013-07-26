@@ -25,6 +25,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zss.api.CellOperationUtil;
+import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.Range.AutoFillType;
@@ -676,7 +677,11 @@ public class DefaultUserActionHandler implements UserActionHandler {
 						destSheet, selection.getRow(), selection.getColumn(),selection.getLastRow(), selection.getLastColumn(),
 						pasteType, pasteOperation, skipBlank, transpose));
 			}else{
-				CellOperationUtil.pasteSpecial(srcRange, destRange, pasteType, pasteOperation, skipBlank, transpose);
+				try {
+					CellOperationUtil.pasteSpecial(srcRange, destRange, pasteType, pasteOperation, skipBlank, transpose);
+				} catch(IllegalOpArgumentException e) {
+					showInfoMessage(Labels.getLabel("zss.actionhandler.msg.illegal_range_operation"));
+				}
 			}
 		}
 		return true;

@@ -359,7 +359,13 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) { //TODO use submap between startRow and endRow
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
-            if (rownum < startRow) continue;
+            if (rownum < startRow) {
+				// ZSS-389: before skipping. must remove cells of current row if current row will be deleted.
+				if(canRemoveRow(startRow, endRow, n, rownum)) {
+					row.getCells().subMap(lCol, rCol + 1).clear();
+				}
+            	continue;
+            }
             if (rownum > endRow) break; //no more
             
             final int newRownum = rownum + n;

@@ -146,7 +146,7 @@ import org.zkoss.zss.undo.HideHeaderAction;
 import org.zkoss.zss.undo.ResizeHeaderAction;
 import org.zkoss.zss.undo.UndoableAction;
 import org.zkoss.zss.undo.UndoableActionManager;
-import org.zkoss.zss.undo.imple.DefaultUndoableActionManager;
+import org.zkoss.zss.undo.impl.DefaultUndoableActionManager;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.impl.XulElement;
 

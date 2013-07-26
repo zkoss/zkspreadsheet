@@ -50,6 +50,7 @@ import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.xssf.usermodel.XSSFChartX;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.engine.Ref;
 import org.zkoss.zss.engine.RefBook;
 import org.zkoss.zss.engine.RefSheet;
@@ -848,14 +849,19 @@ public class XRangeImpl implements XRange {
 			//check if follow the copy rule
 			//destination range allow only one contiguous reference
 			if (((XRangeImpl)dstRange).getRefs().size() > 1) {
-				throw new UiException("Command cannot be used on multiple selections");
+				throw new IllegalOpArgumentException("Command cannot be used on multiple selections");
 			}
 			//source range can handle only same rows/columns multiple references
 			Iterator<Ref> it = _refs.iterator();
 			Ref ref1 = it.next();
 			int srcRowCount = ref1.getRowCount();
 			int srcColCount = ref1.getColumnCount();
-			final Ref dstRef = ((XRangeImpl)dstRange).getRefs().iterator().next();
+			final Ref dstRef = ((XRangeImpl)dstRange).getRefs().iterator().next();	// destination reference
+
+			if(transpose && isOverlapping(ref1, dstRef)) { // transpose paste when cell is overlap
+				throw new IllegalOpArgumentException("Cannot transpose paste to overlapped range");
+			}
+			
 			final Set<Ref> toEval = new HashSet<Ref>();
 			final Set<Ref> affected = new HashSet<Ref>();
 			final List<MergeChange> mergeChanges = new ArrayList<MergeChange>();
@@ -873,7 +879,7 @@ public class XRangeImpl implements XRange {
 					final Ref ref = it.next();
 					if (lCol == ref.getLeftCol() && rCol == ref.getRightCol()) { //same column
 						if (sameRow) { //cannot be both sameRow and sameColumn
-							throw new UiException("Command cannot be used on multiple selections");
+							throw new IllegalOpArgumentException("Command cannot be used on multiple selections");
 						}
 						if (srcRefs.isEmpty()) {
 							srcRefs.put(new Integer(tRow), ref1); //sorted on Row
@@ -883,7 +889,7 @@ public class XRangeImpl implements XRange {
 						srcRowCount += ref.getRowCount();
 					} else if (tRow == ref.getTopRow() && bRow == ref.getBottomRow()) { //same row
 						if (sameCol) { //cannot be both sameRow and sameColumn
-							throw new UiException("Command cannot be used on multiple selections");
+							throw new IllegalOpArgumentException("Command cannot be used on multiple selections");
 						}
 						if (srcRefs.isEmpty()) {
 							srcRefs.put(Integer.valueOf(lCol), ref1); //sorted on column
@@ -892,7 +898,7 @@ public class XRangeImpl implements XRange {
 						sameRow = true;
 						srcColCount += ref.getColumnCount();
 					} else { //not the same column or same row
-						throw new UiException("Command cannot be used on multiple selections");
+						throw new IllegalOpArgumentException("Command cannot be used on multiple selections");
 					}
 				}
 				pasteType = pasteType + XRange.PASTE_VALUES; //no formula 
@@ -906,6 +912,34 @@ public class XRangeImpl implements XRange {
 			return pasteRef;
 		}
 		return null;
+	}
+	
+	private boolean isOverlapping(Ref ref1, Ref ref2) {
+		
+		final int ref1_LeftCol = ref1.getLeftCol();
+		final int ref1_RightCol = ref1.getRightCol();
+		final int ref1_TopRow = ref1.getTopRow();
+		final int ref1_BottomRow = ref1.getBottomRow();
+		
+		final int ref2_LeftCol = ref2.getLeftCol();
+		final int ref2_RightCol = ref2_LeftCol + ref1.getColumnCount() - 1;
+		final int ref2_TopRow = ref2.getTopRow();
+		final int ref2_BottomRow = ref2_TopRow + ref1.getRowCount() - 1;
+		
+		// row check:
+		// 1. ref2 top row is between ref1 top row and bottom row
+		// 2. ref2 bottom row is between ref1 top row and bottom row
+		if((ref2_TopRow >= ref1_TopRow && ref2_TopRow <= ref1_BottomRow ) || (ref2_BottomRow >= ref1_TopRow && ref2_BottomRow <= ref1_BottomRow)) {
+			// col check:
+			// 1. ref2 left col is between ref1 left col and right col
+			// 2. ref2 right col is between ref1 left col and right col
+			if((ref2_LeftCol >= ref1_LeftCol && ref2_LeftCol <= ref1_RightCol) || (ref2_RightCol >= ref1_LeftCol && ref2_RightCol <= ref1_RightCol)) {
+				return true;
+			}
+		}
+		
+		return false;
+		
 	}
 
 	@Override
@@ -1163,7 +1197,35 @@ public class XRangeImpl implements XRange {
 		final List<MergeChange> mergeChanges = info.getMergeChanges();
 		if (!transpose) {
 			/**
-			 * Issue: ZS-300
+			 * ZSS-315
+			 * handle a special case: source is a single cell and destination is a single merged cell, 
+			 * copy source to destination then merge it.
+			 */
+			// source is a single cell
+			if(srcRef.getRowCount() == 1 && srcRef.getColumnCount() == 1) {
+				
+				int dstTopRow = dstRef.getTopRow();
+				int dstBottomRow = dstRef.getBottomRow();
+				int dstLeftCol = dstRef.getLeftCol();
+				int dstRightCol = dstRef.getRightCol();				
+				final CellRangeAddress dstaddr = ((SheetCtrl)dstSheet).getMerged(dstTopRow, dstLeftCol);
+			
+				// Check whether destination is a single merged cell?
+				if(dstaddr != null && dstBottomRow == dstaddr.getLastRow() && dstRightCol == dstaddr.getLastColumn()) {
+					// copy source to merged cell
+					final Cell cell = BookHelper.getCell(srcSheet, srcRef.getTopRow(), srcRef.getLeftCol()); // retrieve cell
+					final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, dstSheet, dstTopRow, dstLeftCol, pasteType, pasteOp, transpose);
+					BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
+					// merge cell (because cell always unmerge in BookHelper.copyCell)
+					final ChangeInfo changeInfo1 = BookHelper.merge(dstSheet, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol, false);
+					BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo1);
+
+					return pasteRef;		
+				}
+			}
+			
+			/**
+			 * Issue: ZSS-300
 			 * Problem: Overlapping copy get wrong result
 			 * Root Cause: Copy dirty from source to destination
 			 */
@@ -1214,19 +1276,27 @@ public class XRangeImpl implements XRange {
 						String hitBlankKey = Math.abs(srcRowPointer - srcTopRow) + "," + Math.abs(srcColPointer - srcLeftCol);
 						boolean hitBlank = (blankMap.contains(hitBlankKey));
 					
-						if (!hitBlank && (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK)) { // cell is not blank
-							final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, dstSheet, dstRowPointer, dstColPointer, pasteType, pasteOp, transpose);
-							BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
-						} else { // map hit blank or cell is blank
-							if(!hitBlank) { // create blank mapping
-								blankMap.add(hitBlankKey);
+						// origin cell is not blank and current source cell is not null
+						// although the current source cell is not a null cell, but it may be a blank cell
+						// so we must check the skipBlanks configuration and whether the cell is blank
+						if (!hitBlank && cell != null) {
+							// if not skip blanks, we need to copy blank too!
+							// if check whether the cell is blank			
+							if(!(skipBlanks && cell.getCellType() == Cell.CELL_TYPE_BLANK)) { 
+								final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, dstSheet, dstRowPointer, dstColPointer, pasteType, pasteOp, transpose);
+								BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 							}
-							if (!skipBlanks) {	// blank, don't skip
-								final Set<Ref>[] refs = BookHelper.removeCell(dstSheet, dstRowPointer, dstColPointer);
-								BookHelper.assignRefs(toEval, affected, refs);
-							}
+						} else if (!skipBlanks) { // map hit blank or source cell is null, clear the destination
+							final Set<Ref>[] refs = BookHelper.removeCell(dstSheet, dstRowPointer, dstColPointer);
+							BookHelper.assignRefs(toEval, affected, refs);
 						}
-
+						
+						// update blank map
+						if(!hitBlank && cell != null && cell.getCellType() == Cell.CELL_TYPE_BLANK) { // cell is blank
+							blankMap.add(hitBlankKey);
+						}
+						
+						
 					} // End go through column
 					
 					srcColPointer -= (colStep * srcColCount); // reset column pointer to origin

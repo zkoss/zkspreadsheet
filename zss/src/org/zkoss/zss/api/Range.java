@@ -661,6 +661,13 @@ public interface Range {
 	
 	
 	/**
+	 * Notify the whole book of specified variables change. Then spreadsheet will re-evaluate those cells that reference to these variables.
+	 * @param variables changed variables 
+	 */
+	public void notifyChange(String[] variables);
+	
+	
+	/**
 	 * a cell style helper to create style relative object for cell
 	 * @author dennis
 	 */

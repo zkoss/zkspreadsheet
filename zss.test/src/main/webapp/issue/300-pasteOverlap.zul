@@ -46,7 +46,8 @@
 				
 				// srcRange.paste(dst);
 				boolean skipBlanks = true;
-				srcRange.pasteSpecial(dst, Range.PasteType.ALL, Range.PasteOperation.NONE, skipBlanks, false);
+				boolean transpose = true;
+				srcRange.pasteSpecial(dst, Range.PasteType.ALL, Range.PasteOperation.NONE, skipBlanks, transpose);
 				
 				spreadsheet.setHighlight(null);
 			};

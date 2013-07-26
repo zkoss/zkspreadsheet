@@ -24,7 +24,7 @@ import org.zkoss.zss.api.CellOperationUtil.CellStyleApplier;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.undo.imple.AbstractCellDataStyleAction;
+import org.zkoss.zss.undo.impl.AbstractCellDataStyleAction;
 /**
  * 
  * @author dennis

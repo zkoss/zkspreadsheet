@@ -44,6 +44,12 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-302 some rows can only be deleted with twice deletion
   ZSS-260 Data validation doesn't work correctly
   ZSS-387 get js error when resize row height with row freeze
+  ZSS-315 paste a text on a merged cell will make the cell unmerged
+  ZSS-277 paste a horizontal merged cell in transpose doesn't become a vertical merged cell
+  ZSS-390 browser took long time without response if I use freeze panel when select whole row or whole column
+  ZSS-389 Shift cell up doesn't work correctly
+  ZSS-386 Inserting a picture after deleting first picture causes an exception
+  ZSS-331 select all cell has poor performance even not many cells
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
@@ -849,4 +855,3 @@ ZK Spreadsheet 0.1.0
 * Formula parser
 * Formula evaluator
 * Excel Importer (without format)
-  

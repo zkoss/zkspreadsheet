@@ -329,14 +329,15 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			initparm.hlrange = new zss.Range(zk.parseInt(hl[0]), zk.parseInt(hl[1]), zk.parseInt(hl[2]), zk.parseInt(hl[3]));
 			
 			this.addSSInitLater(function() {
-				var range = local.initparm.hlrange;
+				var range = self.initparm.hlrange;
 				self.hlArea.show = true;
 				self.moveHighlight(range.left, range.top, range.right, range.bottom);
 				delete self.initparm;
 			});
 			
-		} else
+		} else {
 			initparm.hlrange = new zss.Range(-1, -1, -1, -1);
+		}
 
 		this.custColWidth = new zss.PositionHelper(this.colWidth, newPositionArray(wgt.getCsc()));
 		this.custColWidth.ids = new zss.Id(0, 2);
@@ -2270,9 +2271,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		var range =  this._wgt._cacheCtrl.getSelectedSheet(),
 			ls = this.getLastSelection(),
 			top = ls.top,
-			btm = ls.bottom,
+			btm = Math.min(ls.bottom, ls.top + zss.clientCopy.maxRowCount - 1), // ZSS-331: limited cells for copying at once. refer to globalDef.js
 			left = ls.left,
-			right = ls.right,
+			right = Math.min(ls.right, ls.left + zss.clientCopy.maxColumnCount - 1), // ZSS-331: limited cells for copying at once. refer to globalDef.js
 			result = '';
 		if (range) {
 			var rows = range.rows;
@@ -2287,7 +2288,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 						}
 					}
 					result += val;
-					if (c < ls.right)
+					if (c < right)
 						result+='\t';
 					
 				}
