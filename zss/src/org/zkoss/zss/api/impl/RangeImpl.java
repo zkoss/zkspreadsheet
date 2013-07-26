@@ -815,7 +815,7 @@ public class RangeImpl implements Range{
 	}
 	
 	
-	//API of range that n-oone use it.
+	//API of range that no one use it.
 	
 	
 	private void apiNoOneUse(){
@@ -841,6 +841,11 @@ public class RangeImpl implements Range{
 	public void notifyChange(){
 		range.notifyChange();
 	}
+	
+	public void notifyChange(String[] variables){
+		((XBook)getBook().getPoiBook()).notifyChange(variables);
+	}
+	
 	@Override
 	public void setFreezePanel(int rowfreeze, int columnfreeze) {
 		range.setFreezePanel(rowfreeze, columnfreeze);
