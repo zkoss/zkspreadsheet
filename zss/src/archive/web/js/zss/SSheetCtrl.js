@@ -2271,9 +2271,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		var range =  this._wgt._cacheCtrl.getSelectedSheet(),
 			ls = this.getLastSelection(),
 			top = ls.top,
-			btm = ls.bottom,
+			btm = Math.min(ls.bottom, ls.top + zss.clientCopy.maxRowCount - 1), // ZSS-331: limited cells for copying at once. refer to globalDef.js
 			left = ls.left,
-			right = ls.right,
+			right = Math.min(ls.right, ls.left + zss.clientCopy.maxColumnCount - 1), // ZSS-331: limited cells for copying at once. refer to globalDef.js
 			result = '';
 		if (range) {
 			var rows = range.rows;
@@ -2288,7 +2288,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 						}
 					}
 					result += val;
-					if (c < ls.right)
+					if (c < right)
 						result+='\t';
 					
 				}

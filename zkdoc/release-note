@@ -49,6 +49,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-390 browser took long time without response if I use freeze panel when select whole row or whole column
   ZSS-389 Shift cell up doesn't work correctly
   ZSS-386 Inserting a picture after deleting first picture causes an exception
+  ZSS-331 select all cell has poor performance even not many cells
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api

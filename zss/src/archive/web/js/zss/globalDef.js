@@ -12,5 +12,9 @@
 		MOVE: "move",
 		RESIZE: "resize"
 	};
+	zss.clientCopy = {
+			maxRowCount: 400,
+			maxColumnCount: 40
+	};
 })();
 
