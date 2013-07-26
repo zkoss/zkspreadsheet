@@ -1,10 +1,13 @@
 package org.zkoss.zss.essential.advanced;
 
+import org.springframework.stereotype.Component;
+
 /**
- * A simple data bean that might contain data from a database.
+ * A simple data bean.
  * @author Hawk
  *
  */
+@Component
 public class AssetsBean {
     private double liquidAssets = 146504221;
     private double fundInvestment = 23181709;

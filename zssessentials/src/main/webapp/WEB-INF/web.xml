@@ -12,6 +12,19 @@
 		<description>ZK listener for session cleanup</description>
 		<listener-class>org.zkoss.zk.ui.http.HttpSessionListener</listener-class>
 	</listener>
+	
+	<!-- The master configuration file for this Spring web application -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			/WEB-INF/applicationContext.xml
+		</param-value>
+	</context-param>
+	<!-- Loads the Spring application context configuration -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+		
 	<servlet>
 		<description>ZK loader for ZUML pages</description>
 		<servlet-name>zkLoader</servlet-name>

@@ -3,20 +3,23 @@ package org.zkoss.zss.essential.advanced;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
+import org.zkoss.zk.ui.select.annotation.VariableResolver;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Doublebox;
 
 /**
- * Reference Java bean example.
+ * Reference Spring bean example.
  * 
  * @author Hawk
  * 
  */
 
 @SuppressWarnings("serial")
-public class RefBeanComposer extends SelectorComposer<Component> {
+@VariableResolver(org.zkoss.zkplus.spring.DelegatingVariableResolver.class)
+public class RefSpringBeanComposer extends SelectorComposer<Component> {
 	
 	@Wire
 	private Spreadsheet ss;
@@ -30,6 +33,9 @@ public class RefBeanComposer extends SelectorComposer<Component> {
 	private Doublebox intangibleBox;
 	@Wire
 	private Doublebox otherBox;
+	
+	@WireVariable
+	private AssetsBean assetsBean;
 	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -48,18 +54,11 @@ public class RefBeanComposer extends SelectorComposer<Component> {
 	 * load user input to the bean.
 	 */
 	private void updateAssetsBean() {
-		AssetsBean assetsBean = getAssetsBean();
 		assetsBean.setLiquidAssets(liquidBox.getValue());
 		assetsBean.setFundInvestment(fundBox.getValue());
 		assetsBean.setFixedAssets(fixedBox.getValue());
 		assetsBean.setIntangibleAsset(intangibleBox.getValue());
 		assetsBean.setOtherAssets(otherBox.getValue());
 		
-	}
-	
-	private AssetsBean getAssetsBean(){
-		AssetsBean assetsBean = (AssetsBean)getPage().getXelVariable("assetsBean");
-
-		return assetsBean;
 	}
 }
