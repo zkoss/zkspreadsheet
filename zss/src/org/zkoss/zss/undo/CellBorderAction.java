@@ -25,14 +25,14 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.undo.imple.AbstractCellStyleAction;
+import org.zkoss.zss.undo.imple.AbstractCellDataStyleAction;
 
 /**
  * 
  * @author dennis
  * 
  */
-public class CellBorderAction extends AbstractCellStyleAction {
+public class CellBorderAction extends AbstractCellDataStyleAction {
 
 	private final ApplyBorderType _applyType;
 	private final BorderType _borderType;
@@ -43,7 +43,7 @@ public class CellBorderAction extends AbstractCellStyleAction {
 	
 	public CellBorderAction(String label, Sheet sheet, int row, int column,
 			int lastRow, int lastColumn, ApplyBorderType applyType,BorderType borderType,String htmlColor) {
-		super(label, sheet, row, column, lastRow, lastColumn);
+		super(label, sheet, row, column, lastRow, lastColumn,ReserveType.STYLE);
 		this._applyType = applyType;
 		this._borderType = borderType;
 		this._htmlColor = htmlColor;

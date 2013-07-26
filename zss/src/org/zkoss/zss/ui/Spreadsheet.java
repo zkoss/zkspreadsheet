@@ -142,8 +142,8 @@ import org.zkoss.zss.ui.sys.WidgetHandler;
 import org.zkoss.zss.ui.sys.WidgetLoader;
 import org.zkoss.zss.undo.AggregatedAction;
 import org.zkoss.zss.undo.CellEditTextAction;
-import org.zkoss.zss.undo.HeaderHiddenAction;
-import org.zkoss.zss.undo.HeaderSizeAction;
+import org.zkoss.zss.undo.HideHeaderAction;
+import org.zkoss.zss.undo.ResizeHeaderAction;
 import org.zkoss.zss.undo.UndoableAction;
 import org.zkoss.zss.undo.UndoableActionManager;
 import org.zkoss.zss.undo.imple.DefaultUndoableActionManager;
@@ -2691,14 +2691,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			Sheet sheet = new SheetImpl(new SimpleRef<XBook>(xsheet.getBook()),new SimpleRef<XSheet>(xsheet));
 			if(uam!=null){
 				if(hidden){
-					uam.doAction(new HeaderHiddenAction(Labels.getLabel("zss.undo.hideColumn"), 
-							sheet, 0, column, 0, column, HeaderHiddenAction.Type.COLUMN, hidden));
+					uam.doAction(new HideHeaderAction(Labels.getLabel("zss.undo.hideColumn"), 
+							sheet, 0, column, 0, column, HideHeaderAction.Type.COLUMN, hidden));
 				}else{
 					uam.doAction(
 						new AggregatedAction(Labels.getLabel("zss.undo.columnSize"),
 							new UndoableAction[]{
-								new HeaderHiddenAction(null,sheet, 0, column, 0, column, HeaderHiddenAction.Type.COLUMN, hidden),
-								new HeaderSizeAction(null,sheet, 0, column, 0, column, HeaderSizeAction.Type.COLUMN, newsize)}
+								new HideHeaderAction(null,sheet, 0, column, 0, column, HideHeaderAction.Type.COLUMN, hidden),
+								new ResizeHeaderAction(null,sheet, 0, column, 0, column, ResizeHeaderAction.Type.COLUMN, newsize)}
 						));
 				}
 			}else{
@@ -2725,14 +2725,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			Sheet sheet = new SheetImpl(new SimpleRef<XBook>(xsheet.getBook()),new SimpleRef<XSheet>(xsheet));
 			if(uam!=null){
 				if(hidden){
-					uam.doAction(new HeaderHiddenAction(Labels.getLabel("zss.undo.hideRow"), 
-							sheet, row,0, row, 0, HeaderHiddenAction.Type.ROW, hidden));
+					uam.doAction(new HideHeaderAction(Labels.getLabel("zss.undo.hideRow"), 
+							sheet, row,0, row, 0, HideHeaderAction.Type.ROW, hidden));
 				}else{
 					uam.doAction(
 						new AggregatedAction(Labels.getLabel("zss.undo.rowSize"),
 							new UndoableAction[]{
-								new HeaderHiddenAction(null,sheet,  row,0, row, 0, HeaderHiddenAction.Type.ROW, hidden),
-								new HeaderSizeAction(null,sheet,  row,0, row, 0, HeaderSizeAction.Type.ROW, newsize)}
+								new HideHeaderAction(null,sheet,  row,0, row, 0, HideHeaderAction.Type.ROW, hidden),
+								new ResizeHeaderAction(null,sheet,  row,0, row, 0, ResizeHeaderAction.Type.ROW, newsize)}
 						));
 				}
 			}else{

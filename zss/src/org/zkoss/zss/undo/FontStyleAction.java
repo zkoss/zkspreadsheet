@@ -24,19 +24,19 @@ import org.zkoss.zss.api.CellOperationUtil.FontStyleApplier;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.undo.imple.AbstractCellStyleAction;
+import org.zkoss.zss.undo.imple.AbstractCellDataStyleAction;
 /**
  * 
  * @author dennis
  *
  */
-public class FontStyleAction extends AbstractCellStyleAction {
+public class FontStyleAction extends AbstractCellDataStyleAction {
 	
 	private final FontStyleApplier _fontStyleApplier;
 	
 	
 	public FontStyleAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,FontStyleApplier styleApplier){
-		super(label,sheet,row,column,lastRow,lastColumn);
+		super(label,sheet,row,column,lastRow,lastColumn,ReserveType.STYLE);
 		this._fontStyleApplier = styleApplier;
 	}
 	

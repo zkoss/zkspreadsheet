@@ -28,7 +28,7 @@ import org.zkoss.zss.undo.imple.AbstractUndoableAction;
  * @author dennis
  *
  */
-public class HeaderHiddenAction extends AbstractUndoableAction {
+public class HideHeaderAction extends AbstractUndoableAction {
 
 	public enum Type{
 		ROW,COLUMN
@@ -41,7 +41,7 @@ public class HeaderHiddenAction extends AbstractUndoableAction {
 	
 	
 	
-	public HeaderHiddenAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,Type type,boolean hidden){
+	public HideHeaderAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,Type type,boolean hidden){
 		super(label,sheet,row,column,lastRow,lastColumn);
 		this._type = type;
 		this._hidden = hidden;

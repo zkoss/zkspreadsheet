@@ -30,7 +30,7 @@ import org.zkoss.zss.undo.imple.AbstractUndoableAction;
  * @author dennis
  *
  */
-public class HeaderSizeAction extends AbstractUndoableAction {
+public class ResizeHeaderAction extends AbstractUndoableAction {
 
 	public enum Type{
 		ROW,COLUMN
@@ -43,7 +43,7 @@ public class HeaderSizeAction extends AbstractUndoableAction {
 	
 	
 	
-	public HeaderSizeAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,Type type,int size){
+	public ResizeHeaderAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,Type type,int size){
 		super(label,sheet,row,column,lastRow,lastColumn);
 		this._type = type;
 		this._size = size;

@@ -55,7 +55,7 @@ import org.zkoss.zss.undo.CellSortAction;
 import org.zkoss.zss.undo.CellStyleAction;
 import org.zkoss.zss.undo.ClearCellAction;
 import org.zkoss.zss.undo.FontStyleAction;
-import org.zkoss.zss.undo.HeaderHiddenAction;
+import org.zkoss.zss.undo.HideHeaderAction;
 import org.zkoss.zss.undo.UndoableActionManager;
 import org.zkoss.zul.Messagebox;
 /**
@@ -463,9 +463,9 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new HeaderHiddenAction(Labels.getLabel("zss.undo.hideRow"),sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new HideHeaderAction(Labels.getLabel("zss.undo.hideRow"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
-					HeaderHiddenAction.Type.ROW,true));
+					HideHeaderAction.Type.ROW,true));
 		}else{
 			range = range.toRowRange();
 			CellOperationUtil.hide(range);
@@ -483,9 +483,9 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new HeaderHiddenAction(Labels.getLabel("zss.undo.unhideRow"),sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new HideHeaderAction(Labels.getLabel("zss.undo.unhideRow"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
-					HeaderHiddenAction.Type.ROW,false));
+					HideHeaderAction.Type.ROW,false));
 		}else{
 			range = range.toRowRange();
 			CellOperationUtil.unhide(range);
@@ -503,9 +503,9 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new HeaderHiddenAction(Labels.getLabel("zss.undo.unhideColumn"),sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new HideHeaderAction(Labels.getLabel("zss.undo.unhideColumn"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
-					HeaderHiddenAction.Type.COLUMN,false));
+					HideHeaderAction.Type.COLUMN,false));
 		}else{
 			range = range.toColumnRange();
 			CellOperationUtil.unhide(range);
@@ -525,9 +525,9 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new HeaderHiddenAction(Labels.getLabel("zss.undo.hideColumn"),sheet, selection.getRow(), selection.getColumn(), 
+			uam.doAction(new HideHeaderAction(Labels.getLabel("zss.undo.hideColumn"),sheet, selection.getRow(), selection.getColumn(), 
 					selection.getLastRow(), selection.getLastColumn(), 
-					HeaderHiddenAction.Type.COLUMN,true));
+					HideHeaderAction.Type.COLUMN,true));
 		}else{
 			range = range.toColumnRange();
 			CellOperationUtil.hide(range);
