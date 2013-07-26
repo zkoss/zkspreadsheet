@@ -32,7 +32,7 @@ import org.zkoss.zss.undo.imple.AbstractCellDataStyleAction;
  * @author dennis
  * 
  */
-public class CellPasteAction extends AbstractCellDataStyleAction {
+public class PasteCellAction extends AbstractCellDataStyleAction {
 
 	protected final int _toRow,_toColumn,_toLastRow,_toLastColumn;
 	protected final Sheet _toSheet;
@@ -40,12 +40,13 @@ public class CellPasteAction extends AbstractCellDataStyleAction {
 	protected final PasteOperation _pasteOperation;
 	protected final boolean _skipBlank;
 	protected final boolean _transpose;
-	public CellPasteAction(String label, 
+	public PasteCellAction(String label, 
 			Sheet sheet, int row, int column,int lastRow, int lastColumn, 
 			Sheet toSheet, int toRow, int toColumn,int toLastRow, int toLastColumn, 
 			PasteType pasteType, PasteOperation pasteOperation, boolean skipBlank, boolean transpose) {
 		super(label, sheet, row, column, lastRow, lastColumn,ReserveType.ALL);
 		
+		//enlarge the size if the destination is small than source
 		this._toRow = toRow;
 		if(toLastRow-toRow < lastRow-row){
 			//enlarge the last to same size

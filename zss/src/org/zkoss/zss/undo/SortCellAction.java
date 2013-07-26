@@ -29,7 +29,7 @@ import org.zkoss.zss.undo.imple.AbstractCellDataAction;
  * @author dennis
  *
  */
-public class CellSortAction extends AbstractCellDataAction {
+public class SortCellAction extends AbstractCellDataAction {
 	
 	private boolean _simpleMode;
 	private final boolean _desc;
@@ -48,7 +48,7 @@ public class CellSortAction extends AbstractCellDataAction {
 	boolean _sortByRows; 
 	
 	
-	public CellSortAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,boolean desc){
+	public SortCellAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,boolean desc){
 		super(label,sheet,row,column,lastRow,lastColumn);
 		_simpleMode = true;
 		this._desc = desc;
@@ -67,7 +67,7 @@ public class CellSortAction extends AbstractCellDataAction {
 		_sortByRows = false;
 		
 	}
-	public CellSortAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,
+	public SortCellAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,
 			Range index1,boolean desc1,SortDataOption dataOption1,
 			Range index2,boolean desc2,SortDataOption dataOption2,
 			Range index3,boolean desc3,SortDataOption dataOption3,

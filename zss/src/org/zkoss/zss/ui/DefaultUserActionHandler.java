@@ -51,8 +51,9 @@ import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.event.SheetSelectEvent;
 import org.zkoss.zss.undo.CellBorderAction;
-import org.zkoss.zss.undo.CellPasteAction;
-import org.zkoss.zss.undo.CellSortAction;
+import org.zkoss.zss.undo.InsertCellAction;
+import org.zkoss.zss.undo.PasteCellAction;
+import org.zkoss.zss.undo.SortCellAction;
 import org.zkoss.zss.undo.CellStyleAction;
 import org.zkoss.zss.undo.ClearCellAction;
 import org.zkoss.zss.undo.FontStyleAction;
@@ -670,7 +671,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}else{
 			UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 			if(uam!=null){
-				uam.doAction(new CellPasteAction(Labels.getLabel("zss.undo.paste"),
+				uam.doAction(new PasteCellAction(Labels.getLabel("zss.undo.paste"),
 						srcSheet, src.getRow(), src.getColumn(),src.getLastRow(), src.getLastColumn(), 
 						destSheet, selection.getRow(), selection.getColumn(),selection.getLastRow(), selection.getLastColumn(),
 						pasteType, pasteOperation, skipBlank, transpose));
@@ -1169,7 +1170,15 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.insert(range,InsertShift.RIGHT, InsertCopyOrigin.FORMAT_RIGHT_BELOW);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new InsertCellAction(Labels.getLabel("zss.undo.shiftCell"),sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					InsertShift.RIGHT, InsertCopyOrigin.FORMAT_RIGHT_BELOW));
+			
+		}else{
+			CellOperationUtil.insert(range,InsertShift.RIGHT, InsertCopyOrigin.FORMAT_RIGHT_BELOW);
+		}
 		clearClipboard();
 		return true;
 	}
@@ -1182,7 +1191,15 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.insert(range,InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new InsertCellAction(Labels.getLabel("zss.undo.shiftCell"),sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(), 
+					InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE));
+			
+		}else{
+			CellOperationUtil.insert(range,InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		}
 		clearClipboard();
 		return true;
 	}
@@ -1202,7 +1219,16 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		
 		range = range.toRowRange();
-		CellOperationUtil.insert(range,InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new InsertCellAction(Labels.getLabel("zss.undo.insertRow"),sheet, range.getRow(), range.getColumn(), 
+					range.getLastRow(), range.getLastColumn(), 
+					InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE));
+			
+		}else{
+			CellOperationUtil.insert(range,InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		}
 		clearClipboard();
 		return true;
 	}
@@ -1222,7 +1248,16 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		
 		range = range.toColumnRange();
-		CellOperationUtil.insert(range,InsertShift.RIGHT, InsertCopyOrigin.FORMAT_RIGHT_BELOW);
+		
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new InsertCellAction(Labels.getLabel("zss.undo.insertColumn"),sheet, range.getRow(), range.getColumn(), 
+					range.getLastRow(), range.getLastColumn(), 
+					InsertShift.RIGHT, InsertCopyOrigin.FORMAT_RIGHT_BELOW));
+			
+		}else{
+			CellOperationUtil.insert(range,InsertShift.RIGHT, InsertCopyOrigin.FORMAT_RIGHT_BELOW);
+		}
 		clearClipboard();
 		return true;
 	}
@@ -1359,7 +1394,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new CellSortAction(Labels.getLabel("zss.undo.sortAsc"),sheet, selection.getRow(), selection.getColumn(),
+			uam.doAction(new SortCellAction(Labels.getLabel("zss.undo.sortAsc"),sheet, selection.getRow(), selection.getColumn(),
 					selection.getLastRow(), selection.getLastColumn(),false));
 		}else{
 			CellOperationUtil.sort(range,false);
@@ -1378,7 +1413,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
 		if(uam!=null){
-			uam.doAction(new CellSortAction(Labels.getLabel("zss.undo.sortDesc"),sheet, selection.getRow(), selection.getColumn(),
+			uam.doAction(new SortCellAction(Labels.getLabel("zss.undo.sortDesc"),sheet, selection.getRow(), selection.getColumn(),
 					selection.getLastRow(), selection.getLastColumn(),true));
 		}else{
 			CellOperationUtil.sort(range,true);
