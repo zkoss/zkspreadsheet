@@ -77,8 +77,10 @@ abstract public class AbstractUndoableAction implements UndoableAction {
 	}
 	
 	
-	public Rect getSelection(){
+	public Rect getUndoSelection(){
 		return new Rect(_column,_row,_lastColumn,_lastRow);
 	}
-
+	public Rect getRedoSelection(){
+		return new Rect(_column,_row,_lastColumn,_lastRow);
+	}
 }

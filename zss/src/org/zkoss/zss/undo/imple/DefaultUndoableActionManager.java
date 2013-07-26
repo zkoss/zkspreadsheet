@@ -88,7 +88,7 @@ public class DefaultUndoableActionManager implements UndoableActionManager {
 				action.undoAction();
 				_index--;
 				
-				Rect selection = action.getSelection();
+				Rect selection = action.getUndoSelection();
 				if(_spreadsheet!=null && selection!=null){
 					_spreadsheet.setSelection(selection);
 					_spreadsheet.setCellFocus(new Position(selection.getRow(),selection.getColumn()));
@@ -117,11 +117,11 @@ public class DefaultUndoableActionManager implements UndoableActionManager {
 		UndoableAction action = next();
 		if(action!=null){
 			if(action.isRedoable()){
-				System.out.println(">>>>>>>>>do "+action);
+				System.out.println(">>>>>>>>>redo "+action);
 				action.doAction();
 				_index++;
 				
-				Rect selection = action.getSelection();
+				Rect selection = action.getRedoSelection();
 				if(_spreadsheet!=null && selection!=null){
 					_spreadsheet.setSelection(selection);
 					_spreadsheet.setCellFocus(new Position(selection.getRow(),selection.getColumn()));

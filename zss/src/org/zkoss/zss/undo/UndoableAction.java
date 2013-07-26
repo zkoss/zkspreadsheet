@@ -56,7 +56,13 @@ public interface UndoableAction{
 	
 	/**
 	 * 
-	 * @return Selection of this action, null if doesn't provided;
+	 * @return Selection after undo of this action, null if doesn't provided;
 	 */
-	public Rect getSelection();
+	public Rect getUndoSelection();
+	
+	/**
+	 * 
+	 * @return Selection after redo of this action, null if doesn't provided;
+	 */
+	public Rect getRedoSelection();
 }

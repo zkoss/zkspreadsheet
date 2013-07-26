@@ -38,6 +38,10 @@ public abstract class AbstractCellDataAction extends AbstractUndoableAction {
 		super(label,sheet,row,column,lastRow,lastColumn);
 	}
 	
+	protected Sheet getReservedSheet(){
+		return _sheet;
+	}
+	
 	protected int getReservedRow(){
 		return _row;
 	}
@@ -60,10 +64,11 @@ public abstract class AbstractCellDataAction extends AbstractUndoableAction {
 		int column = getReservedColumn();
 		int lastRow = getReservedLastRow();
 		int lastColumn = getReservedLastColumn();
+		Sheet sheet = getReservedSheet();
 		oldTexts = new String[lastRow-row+1][lastColumn-column+1];
 		for(int i=row;i<=lastRow;i++){
 			for(int j=column;j<=lastColumn;j++){
-				Range r = Ranges.range(_sheet,i,j);
+				Range r = Ranges.range(sheet,i,j);
 				CellData d = r.getCellData();
 				if(d.isBlank()){
 					oldTexts[i-row][j-column] = null;
@@ -97,10 +102,10 @@ public abstract class AbstractCellDataAction extends AbstractUndoableAction {
 		int column = getReservedColumn();
 		int lastRow = getReservedLastRow();
 		int lastColumn = getReservedLastColumn();
-		
+		Sheet sheet = getReservedSheet();
 		for(int i=row;i<=lastRow;i++){
 			for(int j=column;j<=lastColumn;j++){
-				Range r = Ranges.range(_sheet,i,j);
+				Range r = Ranges.range(sheet,i,j);
 				try{
 					r.setCellEditText(oldTexts[i-row][j-column]);
 				}catch(IllegalFormulaException x){};//eat in this mode

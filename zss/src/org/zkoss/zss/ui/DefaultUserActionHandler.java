@@ -51,6 +51,7 @@ import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.event.SheetSelectEvent;
 import org.zkoss.zss.undo.CellBorderAction;
+import org.zkoss.zss.undo.CellPasteAction;
 import org.zkoss.zss.undo.CellSortAction;
 import org.zkoss.zss.undo.CellStyleAction;
 import org.zkoss.zss.undo.ClearCellAction;
@@ -667,7 +668,15 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			CellOperationUtil.cut(srcRange,destRange);
 			clearClipboard();
 		}else{
-			CellOperationUtil.pasteSpecial(srcRange, destRange, pasteType, pasteOperation, skipBlank, transpose);
+			UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+			if(uam!=null){
+				uam.doAction(new CellPasteAction(Labels.getLabel("zss.undo.paste"),
+						srcSheet, src.getRow(), src.getColumn(),src.getLastRow(), src.getLastColumn(), 
+						destSheet, selection.getRow(), selection.getColumn(),selection.getLastRow(), selection.getLastColumn(),
+						pasteType, pasteOperation, skipBlank, transpose));
+			}else{
+				CellOperationUtil.pasteSpecial(srcRange, destRange, pasteType, pasteOperation, skipBlank, transpose);
+			}
 		}
 		return true;
 	}

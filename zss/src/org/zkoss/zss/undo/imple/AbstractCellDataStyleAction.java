@@ -63,6 +63,9 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 	protected int getReservedLastColumn(){
 		return _lastColumn;
 	}
+	protected Sheet getReservedSheet(){
+		return _sheet;
+	}
 
 	@Override
 	public void doAction() {
@@ -73,6 +76,7 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 		int column = getReservedColumn();
 		int lastRow = getReservedLastRow();
 		int lastColumn = getReservedLastColumn();
+		Sheet sheet = getReservedSheet();
 		
 		switch(_reserveType){
 		case DATA:
@@ -88,7 +92,7 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 		
 		for(int i=row;i<=lastRow;i++){
 			for(int j=column;j<=lastColumn;j++){
-				Range r = Ranges.range(_sheet,i,j);
+				Range r = Ranges.range(sheet,i,j);
 				if(_oldStyles!=null){
 					_oldStyles[i-row][j-column] = r.getCellStyle();
 				}
@@ -106,7 +110,7 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 		if(_newStyles!=null || _newTexts!=null){//reuse the style
 			for(int i=row;i<=lastRow;i++){
 				for(int j=column;j<=lastColumn;j++){
-					Range r = Ranges.range(_sheet,i,j);
+					Range r = Ranges.range(sheet,i,j);
 					if(_newStyles!=null){
 						r.setCellStyle(_newStyles[i-row][j-column]);
 					}
@@ -146,6 +150,7 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 		int column = getReservedColumn();
 		int lastRow = getReservedLastRow();
 		int lastColumn = getReservedLastColumn();
+		Sheet sheet = getReservedSheet();
 		//keep last new style, so if redo-again, we will reuse it.
 		
 		switch(_reserveType){
@@ -162,7 +167,7 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 		
 		for(int i=row;i<=lastRow;i++){
 			for(int j=column;j<=lastColumn;j++){
-				Range r = Ranges.range(_sheet,i,j);
+				Range r = Ranges.range(sheet,i,j);
 				if(_newStyles!=null){
 					_newStyles[i-row][j-column] = r.getCellStyle();
 				}
@@ -180,7 +185,7 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 		
 		for(int i=row;i<=lastRow;i++){
 			for(int j=column;j<=lastColumn;j++){
-				Range r = Ranges.range(_sheet,i,j);
+				Range r = Ranges.range(sheet,i,j);
 				if(_oldStyles!=null){
 					r.setCellStyle(_oldStyles[i-row][j-column]);
 				}

@@ -79,9 +79,19 @@ public class AggregatedAction implements UndoableAction {
 	}
 
 	@Override
-	public Rect getSelection() {
-		for(UndoableAction a:_actions){
-			Rect sel = a.getSelection();
+	public Rect getUndoSelection() {
+		for(int i=0;i<_actions.length;i++){
+			Rect sel = _actions[i].getUndoSelection();
+			if(sel!=null){
+				return sel;
+			}
+		}
+		return null;
+	}
+	@Override
+	public Rect getRedoSelection() {
+		for(int i=_actions.length-1;i>=0;i--){
+			Rect sel = _actions[i].getRedoSelection();
 			if(sel!=null){
 				return sel;
 			}
