@@ -50,6 +50,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-389 Shift cell up doesn't work correctly
   ZSS-386 Inserting a picture after deleting first picture causes an exception
   ZSS-331 select all cell has poor performance even not many cells
+  ZSS-391 Filter popup menu is hidden by freeze column
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
