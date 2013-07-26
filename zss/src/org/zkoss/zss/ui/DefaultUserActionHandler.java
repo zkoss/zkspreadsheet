@@ -51,6 +51,7 @@ import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.event.SheetSelectEvent;
 import org.zkoss.zss.undo.CellBorderAction;
+import org.zkoss.zss.undo.CellSortAction;
 import org.zkoss.zss.undo.CellStyleAction;
 import org.zkoss.zss.undo.ClearCellAction;
 import org.zkoss.zss.undo.FontStyleAction;
@@ -586,6 +587,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		if(uam!=null && uam.isUndoable()){
 			uam.undoAction();
 		}
+		clearClipboard();
 		return true;
 	}
 	
@@ -594,6 +596,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		if(uam!=null && uam.isRedoable()){
 			uam.redoAction();
 		}
+		clearClipboard();
 		return true;
 	}
 	
@@ -1345,7 +1348,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.sort(range,false);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new CellSortAction(Labels.getLabel("zss.undo.sortAsc"),sheet, selection.getRow(), selection.getColumn(),
+					selection.getLastRow(), selection.getLastColumn(),false));
+		}else{
+			CellOperationUtil.sort(range,false);
+		}
 		clearClipboard();
 		return true;
 	}
@@ -1358,7 +1367,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.sort(range,true);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new CellSortAction(Labels.getLabel("zss.undo.sortDesc"),sheet, selection.getRow(), selection.getColumn(),
+					selection.getLastRow(), selection.getLastColumn(),true));
+		}else{
+			CellOperationUtil.sort(range,true);
+		}
 		clearClipboard();
 		return true;
 	}

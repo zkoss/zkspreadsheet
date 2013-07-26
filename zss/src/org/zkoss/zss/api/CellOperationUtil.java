@@ -26,6 +26,7 @@ import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
+import org.zkoss.zss.api.Range.SortDataOption;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.CellStyle.Alignment;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
@@ -775,6 +776,23 @@ public class CellOperationUtil {
 		if(range.isProtected())
 			return;
 		range.sort(desc);
+	}
+	
+	/**
+	 * Sort range
+	 * @param range the range to sort
+	 * @param desc true for descent, false for ascent
+	 */
+	public static void sort(Range range,Range index1,boolean desc1,SortDataOption dataOption1,
+			Range index2,boolean desc2,SortDataOption dataOption2,
+			Range index3,boolean desc3,SortDataOption dataOption3,
+			boolean header,
+			boolean matchCase, 
+			boolean sortByRows 
+			) {
+		if(range.isProtected())
+			return;
+		range.sort(index1,desc1,dataOption1,index2,desc2,dataOption2,index3,desc3,dataOption3,header,matchCase,sortByRows);
 	}
 
 	/**

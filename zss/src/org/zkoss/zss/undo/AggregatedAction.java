@@ -43,7 +43,11 @@ public class AggregatedAction implements UndoableAction {
 	@Override
 	public void doAction() {
 		for(int i=0;i<_actions.length;i++){
-			_actions[i].doAction();
+			try{
+				_actions[i].doAction();
+			}catch(RuntimeException x){
+				//TODO, how to keep atomic?
+			}
 		}
 	}
 
