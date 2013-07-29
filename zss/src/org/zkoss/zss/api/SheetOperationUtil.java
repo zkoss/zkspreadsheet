@@ -18,12 +18,12 @@ package org.zkoss.zss.api;
 
 import org.zkoss.image.AImage;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.zss.api.Range.AutoFillType;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.ChartData;
-import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Picture.Format;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XSheet;
 
@@ -126,6 +126,55 @@ public class SheetOperationUtil {
 	}
 	
 	/**
+	 * Move a picture to specified row and column.
+	 * @param range a range represented the sheet that contains the picture
+	 * @param picture the picture to move
+	 * @param rowIndex destination row index, 0-based
+	 * @param columnIndex destination column index, 0-based
+	 */
+	public static void movePicture(Range range, Picture picture, int rowIndex, int columnIndex){
+		if(range.isProtected())
+			return;
+		if (hasPicture(range, picture)){
+			SheetAnchor fromAnchor = picture.getAnchor();
+			int rowOffset = fromAnchor.getLastRow() - fromAnchor.getRow();
+			int columnOffset = fromAnchor.getLastColumn() - fromAnchor.getColumn();
+			
+			rowIndex = rowIndex < 0? 0 : rowIndex;
+			columnIndex = columnIndex < 0? 0 : columnIndex;
+			SheetAnchor toAnchor = new SheetAnchor(rowIndex, columnIndex,
+					fromAnchor.getXOffset(), fromAnchor.getYOffset(),
+					rowIndex+rowOffset, columnIndex+columnOffset,
+					fromAnchor.getLastXOffset(), fromAnchor.getLastYOffset());
+			
+			range.movePicture(toAnchor, picture);
+		}
+	}
+	
+	/**
+	 * Delete a picture
+	 * @param range a range that represents the sheet that contains the picture
+	 * @param picture the picture to delete
+	 */
+	public static void deletePicture(Range range, Picture picture){
+		
+		if(range.isProtected())
+			return;
+		if (hasPicture(range, picture)){
+			range.deletePicture(picture);
+		}
+	}
+	
+	public static boolean hasPicture(Range range, Picture picture){
+		for (Picture p : range.getSheet().getPictures()){
+			if (p.getId().equals(picture.getId())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Adds chart to range
 	 * @param range the range to add chart
 	 * @param data the chart data
@@ -170,7 +219,56 @@ public class SheetOperationUtil {
 		return new SheetAnchor(row, lCol+2, 
 				row==lRow?row+7:lRow+1, col==lCol?lCol+7+w:lCol+2+w);
 	}
+	
+	/**
+	 * Move a chart to specified row and column.
+	 * @param range the range that represents the sheet contains the chart to move.  
+	 * @param chart the chart to move
+	 * @param rowIndex destination row index, 0-based.
+	 * @param columnIndex destination column index, 0-based.
+	 */
+	public static void moveChart(Range range, Chart chart, int rowIndex, int columnIndex){
+		if(range.isProtected())
+			return;
+		if (hasChart(range, chart)){
+			SheetAnchor fromAnchor = chart.getAnchor();
+			int rowOffset = fromAnchor.getLastRow() - fromAnchor.getRow();
+			int columnOffset = fromAnchor.getLastColumn() - fromAnchor.getColumn();
+			
+			rowIndex = rowIndex < 0? 0 : rowIndex;
+			columnIndex = columnIndex < 0? 0 : columnIndex;
+			SheetAnchor toAnchor = new SheetAnchor(rowIndex, columnIndex,
+					fromAnchor.getXOffset(), fromAnchor.getYOffset(),
+					rowIndex+rowOffset, columnIndex+columnOffset,
+					fromAnchor.getLastXOffset(), fromAnchor.getLastYOffset());
+			
+			range.moveChart(toAnchor, chart);
+		}
+	}
+	
+	/**
+	 * Delete a chart.
+	 * @param range the range that represents the sheet contains the chart to delete.
+	 * @param chart the chart to delete.
+	 */
+	public static void deleteChart(Range range, Chart chart){
+		if(range.isProtected())
+			return;
+		if (hasChart(range, chart)){
+			range.deleteChart(chart);
+		}
+	}
 
+
+	public static boolean hasChart(Range range, Chart chart){
+		for (Chart c : range.getSheet().getCharts()){
+			if (c.getId().equals(chart.getId())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static void protectSheet(Range range, String password,String newpasswrod) {
 		//TODO the spec?
 //		if (range.isProtected())
