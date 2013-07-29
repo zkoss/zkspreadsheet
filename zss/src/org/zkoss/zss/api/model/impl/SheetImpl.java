@@ -215,4 +215,26 @@ public class SheetImpl implements Sheet{
 		}
 		return san;
 	}
+
+	@Override
+	public int getFirstRow() {
+		return getPoiSheet().getFirstRowNum();
+	}
+
+	@Override
+	public int getLastRow() {
+		return getPoiSheet().getLastRowNum();
+	}
+
+	@Override
+	public int getFirstColumn(int row) {
+		Row r = getPoiSheet().getRow(row);
+		return r==null?-1:r.getFirstCellNum();
+	}
+
+	@Override
+	public int getLastColumn(int row) {
+		Row r = getPoiSheet().getRow(row);
+		return r==null?-1:r.getLastCellNum();
+	}
 }

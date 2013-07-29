@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.lang.Classes;
@@ -139,6 +140,13 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
 import org.zkoss.zss.ui.sys.WidgetHandler;
 import org.zkoss.zss.ui.sys.WidgetLoader;
+import org.zkoss.zss.undo.AggregatedAction;
+import org.zkoss.zss.undo.CellEditTextAction;
+import org.zkoss.zss.undo.HideHeaderAction;
+import org.zkoss.zss.undo.ResizeHeaderAction;
+import org.zkoss.zss.undo.UndoableAction;
+import org.zkoss.zss.undo.UndoableActionManager;
+import org.zkoss.zss.undo.impl.DefaultUndoableActionManager;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.impl.XulElement;
 
@@ -309,6 +317,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private Set<DefaultUserAction> _actionDisabled = new HashSet();
 //	
 //	private static Set<UserAction> _defToolbarActiobDisabled;
+	
+	private UndoableActionManager _undoableActionManager = null;
 	
 	public Spreadsheet() {
 		this.addEventListener("onStartEditingImpl", new EventListener() {
@@ -587,6 +597,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		_custColId = new SequenceId(-1, 2);
 		_custRowId = new SequenceId(-1, 2);
 		
+		//clear undo history
+		clearUndoableActionManager();
 		
 		_book = book;
 		if (_book != null) {
@@ -2664,39 +2676,72 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 
 		public void setColumnSize(String sheetId, int column, int newsize, int id, boolean hidden) {
-			XSheet sheet;
+			XSheet xsheet;
 			if (getSelectedSheetId().equals(sheetId)) {
-				sheet = getSelectedXSheet();
+				xsheet = getSelectedXSheet();
 			} else {
-				sheet = XUtils.getSheetByUuid(_book, sheetId);
+				xsheet = XUtils.getSheetByUuid(_book, sheetId);
 			}
 			// update helper size first before sheet.setColumnWidth, or it will fire a SSDataEvent
-			HeaderPositionHelper helper = Spreadsheet.this.getColumnPositionHelper(sheet);
+			HeaderPositionHelper helper = Spreadsheet.this.getColumnPositionHelper(xsheet);
 			helper.setInfoValues(column, newsize, id, hidden);
 
-			final XRange rng = XRanges.range(sheet, -1, column).getColumns();
-			rng.setHidden(hidden);
-			if (!hidden) {
-				rng.setColumnWidth(XUtils.pxToFileChar256(newsize, ((XBook)sheet.getWorkbook()).getDefaultCharWidth()));
+			
+			UndoableActionManager uam = getUndoableActionManager();
+			Sheet sheet = new SheetImpl(new SimpleRef<XBook>(xsheet.getBook()),new SimpleRef<XSheet>(xsheet));
+			if(uam!=null){
+				if(hidden){
+					uam.doAction(new HideHeaderAction(Labels.getLabel("zss.undo.hideColumn"), 
+							sheet, 0, column, 0, column, HideHeaderAction.Type.COLUMN, hidden));
+				}else{
+					uam.doAction(
+						new AggregatedAction(Labels.getLabel("zss.undo.columnSize"),
+							new UndoableAction[]{
+								new HideHeaderAction(null,sheet, 0, column, 0, column, HideHeaderAction.Type.COLUMN, hidden),
+								new ResizeHeaderAction(null,sheet, 0, column, 0, column, ResizeHeaderAction.Type.COLUMN, newsize)}
+						));
+				}
+			}else{
+				final Range rng = Ranges.range(sheet, 0, column).toColumnRange();
+				rng.setHidden(hidden);
+				if(!hidden){
+					rng.setColumnWidth(newsize);
+				}
 			}
 		}
 
-		public void setRowSize(String sheetId, int rownum, int newsize, int id, boolean hidden) {
-			XSheet sheet;
+		public void setRowSize(String sheetId, int row, int newsize, int id, boolean hidden) {
+			XSheet xsheet;
 			if (getSelectedSheetId().equals(sheetId)) {
-				sheet = getSelectedXSheet();
+				xsheet = getSelectedXSheet();
 			} else {
-				sheet = XUtils.getSheetByUuid(_book, sheetId);
+				xsheet = XUtils.getSheetByUuid(_book, sheetId);
 			}
+
+			HeaderPositionHelper helper = Spreadsheet.this.getRowPositionHelper(xsheet);
+			helper.setInfoValues(row, newsize, id, hidden);
 			
-			final XRange rng = XRanges.range(sheet, rownum, -1).getRows();
-			rng.setHidden(hidden);
-			if (!hidden) {
-				rng.setRowHeight(XUtils.pxToPoint(newsize));
+			UndoableActionManager uam = getUndoableActionManager();
+			Sheet sheet = new SheetImpl(new SimpleRef<XBook>(xsheet.getBook()),new SimpleRef<XSheet>(xsheet));
+			if(uam!=null){
+				if(hidden){
+					uam.doAction(new HideHeaderAction(Labels.getLabel("zss.undo.hideRow"), 
+							sheet, row,0, row, 0, HideHeaderAction.Type.ROW, hidden));
+				}else{
+					uam.doAction(
+						new AggregatedAction(Labels.getLabel("zss.undo.rowSize"),
+							new UndoableAction[]{
+								new HideHeaderAction(null,sheet,  row,0, row, 0, HideHeaderAction.Type.ROW, hidden),
+								new ResizeHeaderAction(null,sheet,  row,0, row, 0, ResizeHeaderAction.Type.ROW, newsize)}
+						));
+				}
+			}else{
+				final Range rng = Ranges.range(sheet, row, 0).toRowRange();
+				rng.setHidden(hidden);
+				if(!hidden){
+					rng.setRowHeight(newsize);
+				}
 			}
-			//row.setHeight((short)XUtils.pxToTwip(newsize));
-			HeaderPositionHelper helper = Spreadsheet.this.getRowPositionHelper(sheet);
-			helper.setInfoValues(rownum, newsize, id, hidden);
 		}
 
 		public HeaderPositionHelper getColumnPositionHelper(String sheetId) {
@@ -4393,8 +4438,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			)) {
 				return;
 			}else{
-				final Range range = Ranges.range(sheet, rowIdx, colIdx);
-				range.setCellEditText(editText);
+				UndoableActionManager uam = getUndoableActionManager();
+				if(uam!=null){
+					uam.doAction(new CellEditTextAction(Labels.getLabel("zss.undo.editText"),sheet,rowIdx,colIdx,rowIdx,colIdx,editText));
+				}else{
+					final Range range = Ranges.range(sheet, rowIdx, colIdx);
+					range.setCellEditText(editText);
+				}
 			}
 
 			//JSONObj result = new JSONObj();
@@ -4961,4 +5011,18 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 							.getSupportedUserAction(getSelectedSheet())));
 		}
 	}
+	
+	public UndoableActionManager getUndoableActionManager(){
+		if(_undoableActionManager==null){
+			_undoableActionManager = new DefaultUndoableActionManager(this);
+		}
+		return _undoableActionManager;
+	}
+	
+	private void clearUndoableActionManager(){
+		if(_undoableActionManager!=null){
+			_undoableActionManager.clear();
+		}
+	}
+	
 }

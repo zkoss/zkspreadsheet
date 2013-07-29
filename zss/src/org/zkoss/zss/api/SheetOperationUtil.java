@@ -22,6 +22,7 @@ import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.ChartData;
 import org.zkoss.zss.api.model.Picture;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
@@ -82,10 +83,10 @@ public class SheetOperationUtil {
 	 * @param widthPx the width of image to place
 	 * @param heightPx the height of image to place
 	 */
-	public static void addPicture(Range range, byte[] binary, Format format,int widthPx, int heightPx){
+	public static Picture addPicture(Range range, byte[] binary, Format format,int widthPx, int heightPx){
 		SheetAnchor anchor = toFilledAnchor(range.getSheet(), range.getRow(),range.getColumn(),
 				widthPx, heightPx);
-		addPicture(range,anchor,binary,format);
+		return addPicture(range,anchor,binary,format);
 		
 	}
 	
@@ -96,10 +97,10 @@ public class SheetOperationUtil {
 	 * @param binary the image binary data
 	 * @param format the image format
 	 */
-	public static void addPicture(Range range, SheetAnchor anchor, byte[] binary, Format format){
+	public static Picture addPicture(Range range, SheetAnchor anchor, byte[] binary, Format format){
 		if(range.isProtected())
-			return;
-		range.addPicture(anchor, binary, format);
+			return null;
+		return range.addPicture(anchor, binary, format);
 	}
 	
 	/**
@@ -182,10 +183,10 @@ public class SheetOperationUtil {
 	 * @param grouping the grouping type
 	 * @param pos the legend position type
 	 */
-	public static void addChart(Range range, ChartData data, Chart.Type type, Chart.Grouping grouping,
+	public static Chart addChart(Range range, ChartData data, Chart.Type type, Chart.Grouping grouping,
 			Chart.LegendPosition pos) {
 		SheetAnchor anchor = toChartAnchor(range);
-		addChart(range,anchor, data, type, grouping, pos);
+		return addChart(range,anchor, data, type, grouping, pos);
 	}
 	
 	/**
@@ -197,11 +198,11 @@ public class SheetOperationUtil {
 	 * @param grouping the grouping type
 	 * @param pos the legend position type
 	 */
-	public static void addChart(Range range, SheetAnchor anchor, ChartData data, Chart.Type type, Chart.Grouping grouping,
+	public static Chart addChart(Range range, SheetAnchor anchor, ChartData data, Chart.Type type, Chart.Grouping grouping,
 			Chart.LegendPosition pos) {
 		if (range.isProtected())
-			return;
-		range.addChart(anchor, data, type, grouping, pos);
+			return null;
+		return range.addChart(anchor, data, type, grouping, pos);
 	}
 	
 	/**
