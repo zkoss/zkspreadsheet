@@ -8,7 +8,7 @@
 		<zk.version>6.5.0</zk.version>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>-0.0.1-SNAPSHOT-FL-${maven.build.timestamp}</packname>
-		<zss.version>2.5.0</zss.version>
+		<zss.version>2.6.0</zss.version>
 	</properties>
 	<packaging>war</packaging>
 	<name>The zss.testapp Project</name>
