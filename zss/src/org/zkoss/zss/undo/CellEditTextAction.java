@@ -23,14 +23,14 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.undo.impl.AbstractCellDataAction;
+import org.zkoss.zss.undo.impl.AbstractEditTextAction;
 import org.zkoss.zss.undo.impl.AbstractUndoableAction;
 /**
  * 
  * @author dennis
  *
  */
-public class CellEditTextAction extends AbstractCellDataAction {
+public class CellEditTextAction extends AbstractEditTextAction {
 	
 	private final String _editText;
 	private final String[][] _editTexts;

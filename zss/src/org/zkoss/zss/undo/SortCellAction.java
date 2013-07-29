@@ -23,13 +23,14 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.Range.SortDataOption;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.undo.impl.AbstractCellDataAction;
+import org.zkoss.zss.undo.impl.AbstractCellDataStyleAction;
+import org.zkoss.zss.undo.impl.AbstractEditTextAction;
 /**
  * 
  * @author dennis
  *
  */
-public class SortCellAction extends AbstractCellDataAction {
+public class SortCellAction extends AbstractCellDataStyleAction {
 	
 	private boolean _simpleMode;
 	private final boolean _desc;
@@ -49,7 +50,7 @@ public class SortCellAction extends AbstractCellDataAction {
 	
 	
 	public SortCellAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,boolean desc){
-		super(label,sheet,row,column,lastRow,lastColumn);
+		super(label,sheet,row,column,lastRow,lastColumn,ReserveType.ALL);
 		_simpleMode = true;
 		this._desc = desc;
 		
@@ -75,7 +76,7 @@ public class SortCellAction extends AbstractCellDataAction {
 			boolean matchCase, 
 			boolean sortByRows 
 			){
-		super(label,sheet,row,column,lastRow,lastColumn);
+		super(label,sheet,row,column,lastRow,lastColumn,ReserveType.ALL);
 		_simpleMode = false;
 		_desc = false;
 		

@@ -19,15 +19,11 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.undo.impl;
 
 
-import org.zkoss.zss.api.CellOperationUtil;
-import org.zkoss.zss.api.CellOperationUtil.CellStyleApplier;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.undo.impl.AbstractUndoableAction;
 /**
  * 
  * @author dennis
@@ -37,8 +33,8 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 
 	private CellStyle[][] _oldStyles = null;
 	private CellStyle[][] _newStyles = null;
-	private String[][] _oldTexts = null;
-	private String[][] _newTexts = null;
+	private ReservedCellData[][] _oldData = null;
+	private ReservedCellData[][] _newData = null;
 	
 	
 	private final ReserveType _reserveType;
@@ -80,13 +76,13 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 		
 		switch(_reserveType){
 		case DATA:
-			_oldTexts = new String[lastRow-row+1][lastColumn-column+1];
+			_oldData = new ReservedCellData[lastRow-row+1][lastColumn-column+1];
 			break;
 		case STYLE:
 			_oldStyles = new CellStyle[lastRow-row+1][lastColumn-column+1];
 			break;
 		case ALL:
-			_oldTexts = new String[lastRow-row+1][lastColumn-column+1];
+			_oldData = new ReservedCellData[lastRow-row+1][lastColumn-column+1];
 			_oldStyles = new CellStyle[lastRow-row+1][lastColumn-column+1];
 		}
 		
@@ -96,33 +92,28 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 				if(_oldStyles!=null){
 					_oldStyles[i-row][j-column] = r.getCellStyle();
 				}
-				if(_oldTexts!=null){
-					CellData d = r.getCellData();
-					if(d.isBlank()){
-						_oldTexts[i-row][j-column] = null;
-					}else{
-						_oldTexts[i-row][j-column] = d.getEditText();
-					}
+				if(_oldData!=null){
+					_oldData[i-row][j-column] = ReservedCellData.reserve(r);
 				}
 			}
 		}
 		
-		if(_newStyles!=null || _newTexts!=null){//reuse the style
+		if(_newStyles!=null || _newData!=null){//reuse the style
 			for(int i=row;i<=lastRow;i++){
 				for(int j=column;j<=lastColumn;j++){
 					Range r = Ranges.range(sheet,i,j);
 					if(_newStyles!=null){
 						r.setCellStyle(_newStyles[i-row][j-column]);
 					}
-					if(_newTexts!=null){
+					if(_newData!=null){
 						try{
-							r.setCellEditText(_newTexts[i-row][j-column]);
+							_newData[i-row][j-column].apply(r);
 						}catch(IllegalFormulaException x){};//eat in this mode
 					}
 				}
 			}
 			_newStyles = null;
-			_newTexts = null;
+			_newData = null;
 		}else{
 			//first time
 			applyAction();
@@ -155,13 +146,13 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 		
 		switch(_reserveType){
 		case DATA:
-			_newTexts = new String[lastRow-row+1][lastColumn-column+1];
+			_newData = new ReservedCellData[lastRow-row+1][lastColumn-column+1];
 			break;
 		case STYLE:
 			_newStyles = new CellStyle[lastRow-row+1][lastColumn-column+1];
 			break;
 		case ALL:
-			_newTexts = new String[lastRow-row+1][lastColumn-column+1];
+			_newData = new ReservedCellData[lastRow-row+1][lastColumn-column+1];
 			_newStyles = new CellStyle[lastRow-row+1][lastColumn-column+1];
 		}
 		
@@ -172,13 +163,8 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 					_newStyles[i-row][j-column] = r.getCellStyle();
 				}
 				
-				if(_newTexts!=null){
-					CellData d = r.getCellData();
-					if(d.isBlank()){
-						_newTexts[i-row][j-column] = null;
-					}else{
-						_newTexts[i-row][j-column] = d.getEditText();
-					}
+				if(_newData!=null){
+					_newData[i-row][j-column] = ReservedCellData.reserve(r);
 				}
 			}
 		}
@@ -189,15 +175,12 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 				if(_oldStyles!=null){
 					r.setCellStyle(_oldStyles[i-row][j-column]);
 				}
-				
-				if(_oldTexts!=null){
-					try{
-						r.setCellEditText(_oldTexts[i-row][j-column]);
-					}catch(IllegalFormulaException x){};//eat in this mode
+				if(_oldData!=null){
+					_oldData[i-row][j-column].apply(r);
 				}
 			}
 		}
-		_oldTexts = null;
+		_oldData = null;
 		_oldStyles = null;
 	}
 

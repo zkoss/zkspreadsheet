@@ -29,12 +29,12 @@ import org.zkoss.zss.api.model.Sheet;
  * @author dennis
  *
  */
-public abstract class AbstractCellDataAction extends AbstractUndoableAction {
+public abstract class AbstractEditTextAction extends AbstractUndoableAction {
 
-	private ReservedCellData[][] oldData = null;
+	private String[][] oldTexts = null;
 	
 	
-	public AbstractCellDataAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn){
+	public AbstractEditTextAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn){
 		super(label,sheet,row,column,lastRow,lastColumn);
 	}
 	
@@ -65,11 +65,16 @@ public abstract class AbstractCellDataAction extends AbstractUndoableAction {
 		int lastRow = getReservedLastRow();
 		int lastColumn = getReservedLastColumn();
 		Sheet sheet = getReservedSheet();
-		oldData = new ReservedCellData[lastRow-row+1][lastColumn-column+1];
+		oldTexts = new String[lastRow-row+1][lastColumn-column+1];
 		for(int i=row;i<=lastRow;i++){
 			for(int j=column;j<=lastColumn;j++){
 				Range r = Ranges.range(sheet,i,j);
-				oldData[i-row][j-column] = ReservedCellData.reserve(r);
+				CellData d = r.getCellData();
+				if(d.isBlank()){
+					oldTexts[i-row][j-column] = null;
+				}else{
+					oldTexts[i-row][j-column] = d.getEditText();
+				}
 			}
 		}
 		
@@ -81,12 +86,12 @@ public abstract class AbstractCellDataAction extends AbstractUndoableAction {
 	
 	@Override
 	public boolean isUndoable() {
-		return oldData!=null && isSheetAvailable() && !isSheetProtected();
+		return oldTexts!=null && isSheetAvailable() && !isSheetProtected();
 	}
 
 	@Override
 	public boolean isRedoable() {
-		return oldData==null && isSheetAvailable() && !isSheetProtected();
+		return oldTexts==null && isSheetAvailable() && !isSheetProtected();
 	}
 
 	@Override
@@ -101,10 +106,12 @@ public abstract class AbstractCellDataAction extends AbstractUndoableAction {
 		for(int i=row;i<=lastRow;i++){
 			for(int j=column;j<=lastColumn;j++){
 				Range r = Ranges.range(sheet,i,j);
-				oldData[i-row][j-column].apply(r);
+				try{
+					r.setCellEditText(oldTexts[i-row][j-column]);
+				}catch(IllegalFormulaException x){};//eat in this mode
 			}
 		}
-		oldData = null;
+		oldTexts = null;
 	}
 
 }
