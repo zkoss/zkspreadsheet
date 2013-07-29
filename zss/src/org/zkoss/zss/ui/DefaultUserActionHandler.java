@@ -52,6 +52,7 @@ import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.event.SheetSelectEvent;
 import org.zkoss.zss.undo.CellBorderAction;
+import org.zkoss.zss.undo.DeleteCellAction;
 import org.zkoss.zss.undo.InsertCellAction;
 import org.zkoss.zss.undo.PasteCellAction;
 import org.zkoss.zss.undo.SortCellAction;
@@ -1275,8 +1276,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		
-		CellOperationUtil.delete(range,DeleteShift.LEFT);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new DeleteCellAction(Labels.getLabel("zss.undo.shiftCell"),sheet, range.getRow(), range.getColumn(), 
+					range.getLastRow(), range.getLastColumn(), 
+					DeleteShift.LEFT));
+		}else{
+			CellOperationUtil.delete(range,DeleteShift.LEFT);
+		}
 		clearClipboard();
 		return true;
 	}
@@ -1290,7 +1297,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return true;
 		}
 		
-		CellOperationUtil.delete(range,DeleteShift.UP);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new DeleteCellAction(Labels.getLabel("zss.undo.shiftCell"),sheet, range.getRow(), range.getColumn(), 
+					range.getLastRow(), range.getLastColumn(), 
+					DeleteShift.UP));
+		}else{
+			CellOperationUtil.delete(range,DeleteShift.UP);
+		}
 		clearClipboard();
 		return true;
 	}
@@ -1310,7 +1324,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		
 		range = range.toRowRange();
-		CellOperationUtil.delete(range, DeleteShift.UP);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new DeleteCellAction(Labels.getLabel("zss.undo.deleteRow"),sheet, range.getRow(), range.getColumn(), 
+					range.getLastRow(), range.getLastColumn(), 
+					DeleteShift.UP));
+		}else{
+			CellOperationUtil.delete(range, DeleteShift.UP);
+		}
 		clearClipboard();
 		return true;
 	}
@@ -1330,7 +1351,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 		
 		range = range.toColumnRange();
-		CellOperationUtil.delete(range, DeleteShift.LEFT);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new DeleteCellAction(Labels.getLabel("zss.undo.deleteColumn"),sheet, range.getRow(), range.getColumn(), 
+					range.getLastRow(), range.getLastColumn(), 
+					DeleteShift.LEFT));
+		}else{
+			CellOperationUtil.delete(range, DeleteShift.LEFT);
+		}
 		clearClipboard();
 		return true;
 	}

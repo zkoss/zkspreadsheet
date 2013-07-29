@@ -225,4 +225,16 @@ public class SheetImpl implements Sheet{
 	public int getLastRow() {
 		return getPoiSheet().getLastRowNum();
 	}
+
+	@Override
+	public int getFirstColumn(int row) {
+		Row r = getPoiSheet().getRow(row);
+		return r==null?-1:r.getFirstCellNum();
+	}
+
+	@Override
+	public int getLastColumn(int row) {
+		Row r = getPoiSheet().getRow(row);
+		return r==null?-1:r.getLastCellNum();
+	}
 }

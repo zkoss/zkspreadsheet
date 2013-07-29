@@ -133,8 +133,8 @@ public class DefaultUndoableActionManager implements UndoableActionManager {
 	}
 	
 	private Rect getVisibleRect(Rect rect){
-		return new Rect(rect.getLeft(),rect.getTop(),Math.min(rect.getRight(), _spreadsheet.getMaxVisibleRows()),
-				Math.min(rect.getBottom(), _spreadsheet.getMaxVisibleColumns()));
+		return new Rect(rect.getLeft(),rect.getTop(),Math.min(rect.getRight(), _spreadsheet.getMaxVisibleColumns()),
+				Math.min(rect.getBottom(), _spreadsheet.getMaxVisibleRows()));
 	}
 
 	@Override
