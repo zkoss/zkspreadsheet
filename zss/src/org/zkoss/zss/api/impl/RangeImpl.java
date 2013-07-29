@@ -206,26 +206,15 @@ public class RangeImpl implements Range{
 //	}
 
 	/* short-cut for pasteSpecial, it is original Range.copy*/
-	/**
-	 * @param dest the destination 
-	 * @return true if paste successfully, past to a protected sheet with any
-	 *         locked cell in the destination range will always cause past fail.
-	 */
-	public boolean paste(Range dest) {		
+	public Range paste(Range dest) {		
 		return pasteSpecial(dest,PasteType.ALL,PasteOperation.NONE,false,false);
 	}
 	
-	/**
-	 * @param dest the destination 
-	 * @param transpose TODO
-	 * @return true if paste successfully, past to a protected sheet with any
-	 *         locked cell in the destination range will always cause past fail.
-	 */
-	public boolean pasteSpecial(Range dest,PasteType type,PasteOperation op,boolean skipBlanks,boolean transpose) {
+	public Range pasteSpecial(Range dest,PasteType type,PasteOperation op,boolean skipBlanks,boolean transpose) {
 //		if(!isAnyCellProtected()){ // ranges seems this in copy/paste already
 		//TODO the syncLevel
 		XRange r = range.pasteSpecial(((RangeImpl)dest).getNative(), EnumUtil.toRangePasteTypeNative(type), EnumUtil.toRangePasteOpNative(op), skipBlanks, transpose);
-		return r!=null;
+		return new RangeImpl(r, dest.getSheet());
 //		}
 	}
 

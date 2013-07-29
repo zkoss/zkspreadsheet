@@ -591,7 +591,8 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		if(uam!=null && uam.isUndoable()){
 			uam.undoAction();
 		}
-		clearClipboard();
+		//do we need to clear clipboard? clear clipboard will cause undo/redo misunderstanding when doing copy past with client clipboard 
+//		clearClipboard();
 		return true;
 	}
 	
@@ -600,7 +601,8 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		if(uam!=null && uam.isRedoable()){
 			uam.redoAction();
 		}
-		clearClipboard();
+		//do we need to clear clipboard? clear clipboard will cause undo/redo misunderstanding when doing copy past with client clipboard
+//		clearClipboard();
 		return true;
 	}
 	

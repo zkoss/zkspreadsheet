@@ -266,9 +266,9 @@ public interface Range {
 	/**
 	 * Pastes to destination
 	 * @param dest the destination 
-	 * @return true if paste successfully, paste to a protected sheet will always cause paste return false.
+	 * @return a Range contains the final pasted range. paste to a protected sheet will always cause paste return null.
 	 */
-	public boolean paste(Range dest);
+	public Range paste(Range dest);
 	
 	/**
 	 * Pastes to destination
@@ -277,9 +277,10 @@ public interface Range {
 	 * @param op the paste operation
 	 * @param skipBlanks skip blanks or not
 	 * @param transpose transpose the cell or not
-	 * @return true if paste successfully, paste to a protected sheet will always cause paste return false.
+	 * @return a Range contains the final pasted range. paste to a protected sheet will always cause paste return null.
+	 * @throws IllegalOpArgumentException 
 	 */
-	public boolean pasteSpecial(Range dest,PasteType type,PasteOperation op,boolean skipBlanks,boolean transpose);
+	public Range pasteSpecial(Range dest,PasteType type,PasteOperation op,boolean skipBlanks,boolean transpose);
 	
 	/**
 	 * apply borders

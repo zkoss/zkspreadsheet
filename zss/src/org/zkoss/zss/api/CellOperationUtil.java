@@ -16,7 +16,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.zkoss.lang.Objects;
 import org.zkoss.zss.api.Range.ApplyBorderType;
@@ -70,23 +72,27 @@ public class CellOperationUtil {
 	 * Cuts data and style from src to destination
 	 * @param src source range
 	 * @param dest destination range
-	 * @return false if sheet is protected
+	 * @return a Range contains the final pasted range. paste to a protected sheet will always cause paste return null.
 	 */
-	public static boolean cut(Range src, final Range dest) {
-		final Result<Boolean> result = new Result<Boolean>();
+	public static Range cut(Range src, final Range dest) {
+		final Result<Range> result = new Result<Range>();
 		if(src.isProtected()){
-			return false;
+			return null;
 		}
 		if(dest.isProtected()){
-			return false;
+			return null;
 		}
 		//use batch-runner to run multiple range operation
 		src.sync(new RangeRunner() {
 			public void run(Range range) {
-				boolean r = range.paste(dest);
-				if(r){
-					range.clearContents();// it removes value and formula only
-					range.clearStyles();
+				Range r = range.paste(dest);
+				if(r!=null){
+					
+					Range[] diffs = clip(range,r);
+					for(Range dif:diffs){
+						range.clearContents();// it removes value and formula only
+						range.clearStyles();
+					}
 				}
 				result.set(r);
 			}
@@ -94,16 +100,45 @@ public class CellOperationUtil {
 
 		return result.get();
 	}
+	private static Range[] clip(Range src, Range dest) {
+		List<Range> rs = new ArrayList<Range>(2);
+		Sheet sheet = src.getSheet();
+//		int sx1 = src.getColumn();
+//		int sy1 = src.getRow();
+//		int sx2 = src.getLastColumn();
+//		int sy2 = src.getLastRow();
+//		
+//		int dx1 = src.getColumn();
+//		int dy1 = src.getRow();
+//		int dx2 = src.getLastColumn();
+//		int dy2 = src.getLastRow();
+//		
+//		if(sy1>dy2 || sy2<dy1 || sx1 > dx1 || sx2<dx1){
+//			//not overlap
+//			rs.add(src);
+//		}else if((sy1>dy1 && sx1>dy1) && (sy2<dy1 && sx2<dx2)){
+//			//fully contains
+//			//not thing
+//		}else{
+//			if(sy1>dy1){
+//				rs.add(Ranges.range(src.getSheet(),sy1,sx1,dy1-1,sx2));
+//			}
+//			
+//		}
+		//TODO algorithm to do clip the rect
+		rs.add(src);
+		return rs.toArray(new Range[rs.size()]);
+	}
 
 	/**
 	 * Paste data and style from src to destination
 	 * @param src source range
 	 * @param dest destination range
-	 * @return false if sheet is protected
+	 * @return a Range contains the final pasted range. paste to a protected sheet will always cause paste return null.
 	 */
-	public static boolean paste(Range src, Range dest) {
+	public static Range paste(Range src, Range dest) {
 		if(dest.isProtected()){
-			return false;
+			return null;
 		}
 		return src.paste(dest);
 	}
@@ -112,27 +147,27 @@ public class CellOperationUtil {
 	 * Paste formula only from src to destination
 	 * @param src source range
 	 * @param dest destination range
-	 * @return false if sheet is protected
+	 * @return a Range contains the final pasted range. paste to a protected sheet will always cause paste return null.
 	 */
-	public static boolean pasteFormula(Range src, Range dest) {
+	public static Range pasteFormula(Range src, Range dest) {
 		return pasteSpecial(src, dest, PasteType.FORMULAS, PasteOperation.NONE, false, false);
 	}
 	/**
 	 * Paste value only from src to destination
 	 * @param src source range
 	 * @param dest destination range
-	 * @return false if sheet is protected
+	 * @return a Range contains the final pasted range. paste to a protected sheet will always cause paste return null.
 	 */
-	public static boolean pasteValue(Range src, Range dest) {
+	public static Range pasteValue(Range src, Range dest) {
 		return pasteSpecial(src, dest, PasteType.VALUES, PasteOperation.NONE, false, false);
 	}
 	/**
 	 * Paste all (except border) from src to destination
 	 * @param src source range
 	 * @param dest destination range
-	 * @return false if sheet is protected
+	 * @return a Range contains the final pasted range. paste to a protected sheet will always cause paste return null.
 	 */
-	public static boolean pasteAllExceptBorder(Range src, Range dest) {
+	public static Range pasteAllExceptBorder(Range src, Range dest) {
 		return pasteSpecial(src, dest, PasteType.ALL_EXCEPT_BORDERS, PasteOperation.NONE, false, false);
 	}
 	
@@ -140,9 +175,9 @@ public class CellOperationUtil {
 	 * Paste and transpose from src to destination
 	 * @param src source range
 	 * @param dest destination range
-	 * @return false if sheet is protected
+	 * @return a Range contains the final pasted range. paste to a protected sheet will always cause paste return null.
 	 */
-	public static boolean pasteTranspose(Range src, Range dest) {
+	public static Range pasteTranspose(Range src, Range dest) {
 		return pasteSpecial(src, dest, PasteType.ALL, PasteOperation.NONE, false, true);
 	}
 	
@@ -154,11 +189,11 @@ public class CellOperationUtil {
 	 * @param pasteOperation paste operation
 	 * @param skipBlank skip blank
 	 * @param transpose transpose
-	 * @return false if sheet is protected
+	 *@return a Range contains the final pasted range. paste to a protected sheet will always cause paste return null.
 	 */
-	public static boolean pasteSpecial(Range src, Range dest,PasteType pasteType, PasteOperation pasteOperation, boolean skipBlank, boolean transpose){
+	public static Range pasteSpecial(Range src, Range dest,PasteType pasteType, PasteOperation pasteOperation, boolean skipBlank, boolean transpose){
 		if(dest.isProtected()){
-			return false;
+			return null;
 		}
 		return src.pasteSpecial(dest, pasteType, pasteOperation, skipBlank, transpose);
 	}

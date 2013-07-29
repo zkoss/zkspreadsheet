@@ -35,70 +35,81 @@ import org.zkoss.zss.undo.impl.AbstractCellDataStyleAction;
 public class PasteCellAction extends AbstractCellDataStyleAction {
 
 	protected final int _toRow,_toColumn,_toLastRow,_toLastColumn;
+	protected final int _reservedLastRow,_reservedLastColumn;
 	protected final Sheet _toSheet;
 	protected final PasteType _pasteType;
 	protected final PasteOperation _pasteOperation;
 	protected final boolean _skipBlank;
 	protected final boolean _transpose;
+	
+	private Range _pastedRange;
+	
+//	private final int rlastRow;
+//	private final int rlastColumn;
+	
 	public PasteCellAction(String label, 
 			Sheet sheet, int row, int column,int lastRow, int lastColumn, 
 			Sheet toSheet, int toRow, int toColumn,int toLastRow, int toLastColumn, 
 			PasteType pasteType, PasteOperation pasteOperation, boolean skipBlank, boolean transpose) {
 		super(label, sheet, row, column, lastRow, lastColumn,ReserveType.ALL);
+		this._transpose = transpose;
 		
-		//enlarge the size if the destination is small than source
 		this._toRow = toRow;
-		if(toLastRow-toRow < lastRow-row){
-			//enlarge the last to same size
-			this._toLastRow = _toRow+lastRow-row;
-		}else{
-			this._toLastRow = toLastRow;
-		}
 		this._toColumn = toColumn;
-		if(toLastColumn-toColumn < lastColumn-column){
-			//enlarge the last to same size
-			this._toLastColumn = _toColumn+lastColumn-column;
-		}else{
-			this._toLastColumn = toLastColumn;
-		}
+		this._toLastRow = toLastRow;
+		this._toLastColumn = toLastColumn;
+		
+		int srcColNum = lastColumn-column;
+		int srcRowNum = lastRow-row;
+
+		int destWidth = Math.max(toLastColumn-toColumn, transpose?srcRowNum:srcColNum);
+		int destHeight = Math.max(toLastRow-toRow, transpose?srcColNum:srcRowNum);
+		
+		_reservedLastRow = _toRow + destHeight;
+		_reservedLastColumn = _toColumn + destWidth;
+		
 		this._toSheet = toSheet;
 		this._pasteType = pasteType;
 		this._pasteOperation = pasteOperation;
 		this._skipBlank = skipBlank;
-		this._transpose = transpose;
 		
-		
-
 	}
 
+	@Override
 	protected int getReservedRow(){
 		return _toRow;
 	}
+	@Override
 	protected int getReservedColumn(){
 		return _toColumn;
 	}
+	@Override
 	protected int getReservedLastRow(){
-		return _toLastRow;
+		return _reservedLastRow;
 	}
+	@Override
 	protected int getReservedLastColumn(){
-		return _toLastColumn;
+		return _reservedLastColumn;
 	}
 	protected Sheet getReservedSheet(){
 		return _toSheet;
 	}
-	
+	@Override
 	public Rect getUndoSelection(){
-		return new Rect(_toColumn,_toRow,_toLastColumn,_toLastRow);
+		return _pastedRange==null?new Rect(_toColumn,_toRow,_toLastColumn,_toLastRow):
+			new Rect(_pastedRange.getColumn(),_pastedRange.getRow(),_pastedRange.getLastColumn(),_pastedRange.getLastRow());
 	}
+	@Override
 	public Rect getRedoSelection(){
-		return new Rect(_toColumn,_toRow,_toLastColumn,_toLastRow);
+		return _pastedRange==null?new Rect(_toColumn,_toRow,_toLastColumn,_toLastRow):
+			new Rect(_pastedRange.getColumn(),_pastedRange.getRow(),_pastedRange.getLastColumn(),_pastedRange.getLastRow());
 	}
 	
 	//TODO handle merge, unmerge
 	protected void applyAction() {
 		Range src = Ranges.range(_sheet, _row, _column, _lastRow, _lastColumn);
 		Range dest = Ranges.range(_toSheet, _toRow, _toColumn, _toLastRow, _toLastColumn);
-		CellOperationUtil.pasteSpecial(src, dest, _pasteType, _pasteOperation, _skipBlank, _transpose);
+		_pastedRange = CellOperationUtil.pasteSpecial(src, dest, _pasteType, _pasteOperation, _skipBlank, _transpose);
 	}
 
 }
