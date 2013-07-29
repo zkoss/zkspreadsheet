@@ -44,7 +44,7 @@ public class PictureComposer extends SelectorComposer<Component> {
 	
 	private ListModelList<Picture> pictureList = new ListModelList<Picture>();
 
-	@Listen("onClick = #addButton")
+
 	public void add() {
 		try{ 
 			AImage image = new AImage(WebApps.getCurrent().getResource("/zklogo.png"));
@@ -60,7 +60,7 @@ public class PictureComposer extends SelectorComposer<Component> {
 	}
 	
 	
-	@Listen("onClick = #deleteButton")
+
 	public void delete() {
 		if (pictureListbox.getSelectedItem() != null){
 			Ranges.range(ss.getSelectedSheet()).deletePicture(
@@ -69,7 +69,7 @@ public class PictureComposer extends SelectorComposer<Component> {
 		}
 	}
 	
-	@Listen("onClick = #moveButton")
+	
 	public void move() {
 		if (pictureListbox.getSelectedItem() != null){
 			//calculate destination anchor
@@ -95,14 +95,34 @@ public class PictureComposer extends SelectorComposer<Component> {
 		pictureListbox.setModel(pictureList);
 	}
 	
-	
-	public void addWithUtil() {
+	@Listen("onClick = #addButton")
+	public void addByUtil() {
 		Range selection = Ranges.range(ss.getSelectedSheet(), ss.getSelection());
 		try{
 			SheetOperationUtil.addPicture(selection,
 				new AImage(WebApps.getCurrent().getResource("/zklogo.png")));
+			refreshPictureList();
 		}catch(IOException e){
 			System.out.println("cannot add a picture for "+ e);
+		}
+	}
+	
+	@Listen("onClick = #deleteButton")
+	public void deleteByUtil() {
+		if (pictureListbox.getSelectedItem() != null){
+			SheetOperationUtil.deletePicture(Ranges.range(ss.getSelectedSheet()),
+					(Picture)pictureListbox.getSelectedItem().getValue());
+			refreshPictureList();
+		}
+	}
+	
+	@Listen("onClick = #moveButton")
+	public void moveByUtil(){
+		if (pictureListbox.getSelectedItem() != null){
+			SheetOperationUtil.movePicture(Ranges.range(ss.getSelectedSheet()),
+					(Picture)pictureListbox.getSelectedItem().getValue(),
+					toRowBox.getValue(), toColumnBox.getValue());
+			refreshPictureList();
 		}
 	}
 	

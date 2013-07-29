@@ -40,7 +40,7 @@ public class ChartComposer extends SelectorComposer<Component> {
 
 	private ListModelList<Chart> chartList = new ListModelList<Chart>();
 
-	@Listen("onClick = #addButton")
+	
 	public void add() {
 		Range selection = Ranges.range(ss.getSelectedSheet(),ss.getSelection());
 		SheetAnchor selectionAnchor = SheetOperationUtil.toChartAnchor(selection);
@@ -51,7 +51,6 @@ public class ChartComposer extends SelectorComposer<Component> {
 	}
 
 
-	@Listen("onClick = #deleteButton")
 	public void delete() {
 		if (chartListbox.getSelectedItem() != null){
 			Ranges.range(ss.getSelectedSheet())
@@ -60,7 +59,6 @@ public class ChartComposer extends SelectorComposer<Component> {
 		}
 	}
 
-	@Listen("onClick = #moveButton")
 	public void move() {
 		if (chartListbox.getSelectedItem() != null){
 			//calculate destination anchor
@@ -86,9 +84,31 @@ public class ChartComposer extends SelectorComposer<Component> {
 		chartListbox.setModel(chartList);
 	}
 	
-	public void addWithUtil(){
-		ChartData chartData = ChartDataUtil.getChartData(ss.getSelectedSheet(),ss.getSelection(), Type.PIE);
+	@Listen("onClick = #addButton")
+	public void addByUtil(){
+		ChartData chartData = ChartDataUtil.getChartData(ss.getSelectedSheet(),
+				new Rect("A1:B6"), Type.PIE);
 		SheetOperationUtil.addChart(Ranges.range(ss.getSelectedSheet(),ss.getSelection()),
 		chartData, Type.PIE, Grouping.STANDARD, LegendPosition.RIGHT);
+		refreshChartList();
+	}
+	
+	@Listen("onClick = #moveButton")
+	public void moveByUtil(){
+		if (chartListbox.getSelectedItem() != null){
+			SheetOperationUtil.moveChart(Ranges.range(ss.getSelectedSheet()),
+					(Chart)chartListbox.getSelectedItem().getValue(),
+					toRowBox.getValue(), toColumnBox.getValue());
+			refreshChartList();
+		}
+	}
+	
+	@Listen("onClick = #deleteButton")
+	public void deleteByUtil(){
+		if (chartListbox.getSelectedItem() != null){
+			SheetOperationUtil.deleteChart(Ranges.range(ss.getSelectedSheet()), 
+					(Chart)chartListbox.getSelectedItem().getValue());
+			refreshChartList();
+		}
 	}
 }
