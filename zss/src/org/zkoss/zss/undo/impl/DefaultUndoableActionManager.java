@@ -48,7 +48,7 @@ public class DefaultUndoableActionManager implements UndoableActionManager {
 	@Override
 	public void doAction(UndoableAction action) {
 		action.doAction();
-		System.out.println(">>>>>>>>>doAction "+action);
+//		System.out.println(">>>>>>>>>doAction "+action);
 		while(_actionHisotry.size()>_index+1){
 			_actionHisotry.removeLast();
 		}
@@ -84,7 +84,7 @@ public class DefaultUndoableActionManager implements UndoableActionManager {
 		UndoableAction action = current();
 		if(action!=null){
 			if(action.isUndoable()){
-				System.out.println(">>>>>>>>>undo "+action);
+//				System.out.println(">>>>>>>>>undo "+action);
 				action.undoAction();
 				_index--;
 				//to solve performance when select all
@@ -117,7 +117,7 @@ public class DefaultUndoableActionManager implements UndoableActionManager {
 		UndoableAction action = next();
 		if(action!=null){
 			if(action.isRedoable()){
-				System.out.println(">>>>>>>>>redo "+action);
+//				System.out.println(">>>>>>>>>redo "+action);
 				action.doAction();
 				_index++;
 				//to solve performance when select all
@@ -141,7 +141,7 @@ public class DefaultUndoableActionManager implements UndoableActionManager {
 	public void clear() {
 		_index = -1;
 		_actionHisotry.clear();
-		System.out.println(">>>>>>>>>clear "+this);
+//		System.out.println(">>>>>>>>>clear "+this);
 	}
 	@Override
 	public void setMaxHsitorySize(int size) {
