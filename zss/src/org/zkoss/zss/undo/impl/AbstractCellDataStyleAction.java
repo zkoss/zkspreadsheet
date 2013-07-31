@@ -26,7 +26,7 @@ import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.undo.impl.ReserveUtil.ReservedResult;
 /**
- * 
+ * abstract class handle src content/style reservation
  * @author dennis
  *
  */

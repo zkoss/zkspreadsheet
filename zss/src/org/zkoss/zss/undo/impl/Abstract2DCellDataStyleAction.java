@@ -28,7 +28,7 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.undo.impl.ReserveUtil.ReservedResult;
 /**
- * 
+ * abstract class handle src and destination content/style reservation
  * @author dennis
  *
  */
@@ -49,6 +49,8 @@ public abstract class Abstract2DCellDataStyleAction extends AbstractUndoableActi
 	
 	private ReservedResult _destOldReserve = null;
 	private ReservedResult _srcOldReserve = null;
+	
+	//doesn't reserve in 2d
 	
 	protected final Sheet _destSheet;
 	protected final int _destRow,_destColumn,_destLastRow,_destLastColumn;
