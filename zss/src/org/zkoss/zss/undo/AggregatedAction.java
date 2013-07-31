@@ -18,6 +18,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.undo;
 
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Rect;
 /**
  * 
@@ -94,6 +95,28 @@ public class AggregatedAction implements UndoableAction {
 			Rect sel = _actions[i].getRedoSelection();
 			if(sel!=null){
 				return sel;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Sheet getUndoSheet() {
+		for(int i=0;i<_actions.length;i++){
+			Sheet sheet = _actions[i].getUndoSheet();
+			if(sheet!=null){
+				return sheet;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Sheet getRedoSheet() {
+		for(int i=_actions.length-1;i>=0;i--){
+			Sheet sheet = _actions[i].getRedoSheet();
+			if(sheet!=null){
+				return sheet;
 			}
 		}
 		return null;

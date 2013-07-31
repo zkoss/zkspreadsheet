@@ -158,4 +158,9 @@ public abstract class Abstract2DCellDataStyleAction extends AbstractUndoableActi
 		return new Rect(_destColumn,_destRow,_destLastColumn,_destLastRow);
 	}
 
+	@Override
+	public Sheet getRedoSheet(){
+		return _destSheet;
+	}
+
 }

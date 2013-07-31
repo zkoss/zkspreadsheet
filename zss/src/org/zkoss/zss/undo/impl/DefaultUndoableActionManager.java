@@ -21,6 +21,8 @@ package org.zkoss.zss.undo.impl;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.zkoss.zel.impl.util.Objects;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -84,6 +86,13 @@ public class DefaultUndoableActionManager implements UndoableActionManager {
 		UndoableAction action = current();
 		if(action!=null){
 			if(action.isUndoable()){
+				//to prevent undo on different sheet
+				Sheet sheet = action.getUndoSheet();
+				if(_spreadsheet!=null && sheet!=null && !sheetEquals(_spreadsheet.getSelectedSheet(),sheet)){
+					_spreadsheet.setSelectedSheet(sheet.getSheetName());
+					_spreadsheet.focus();
+					return;
+				}
 //				System.out.println(">>>>>>>>>undo "+action);
 				action.undoAction();
 				_index--;
@@ -117,6 +126,14 @@ public class DefaultUndoableActionManager implements UndoableActionManager {
 		UndoableAction action = next();
 		if(action!=null){
 			if(action.isRedoable()){
+				Sheet sheet = action.getRedoSheet();
+				if(_spreadsheet!=null && sheet!=null && !sheetEquals(_spreadsheet.getSelectedSheet(),sheet)){
+					_spreadsheet.setSelectedSheet(sheet.getSheetName());
+					_spreadsheet.focus();
+					return;
+				}
+				
+				
 //				System.out.println(">>>>>>>>>redo "+action);
 				action.doAction();
 				_index++;
@@ -132,8 +149,17 @@ public class DefaultUndoableActionManager implements UndoableActionManager {
 		}
 	}
 	
-	private Rect getVisibleRect(Rect rect){
-		return new Rect(rect.getLeft(),rect.getTop(),Math.min(rect.getRight(), _spreadsheet.getMaxVisibleColumns()),
+	private boolean sheetEquals(Sheet sheet1,Sheet sheet2){
+		try{
+			return Objects.equals(sheet1, sheet2);
+		}catch(Exception x){
+			return false;
+		}
+	}
+	
+	private Rect getVisibleRect(Rect rect) {
+		return rect == null ? null : new Rect(rect.getLeft(), rect.getTop(),
+				Math.min(rect.getRight(), _spreadsheet.getMaxVisibleColumns()),
 				Math.min(rect.getBottom(), _spreadsheet.getMaxVisibleRows()));
 	}
 

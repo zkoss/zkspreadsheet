@@ -69,18 +69,27 @@ abstract public class AbstractUndoableAction implements UndoableAction {
 		return true;
 	}
 	
-	
+	@Override
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		sb.append(getLabel()+": ["+_row+","+_column+","+_lastRow+","+_lastColumn+"]").append(super.toString());
 		return sb.toString();
 	}
 	
-	
+	@Override
 	public Rect getUndoSelection(){
 		return new Rect(_column,_row,_lastColumn,_lastRow);
 	}
+	@Override
 	public Rect getRedoSelection(){
 		return new Rect(_column,_row,_lastColumn,_lastRow);
+	}
+	@Override
+	public Sheet getUndoSheet(){
+		return _sheet;
+	}
+	@Override
+	public Sheet getRedoSheet(){
+		return _sheet;
 	}
 }

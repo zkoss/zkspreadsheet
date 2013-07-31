@@ -18,6 +18,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.undo;
 
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Rect;
 /**
  * 
@@ -65,4 +66,16 @@ public interface UndoableAction{
 	 * @return Selection after redo of this action, null if doesn't provided;
 	 */
 	public Rect getRedoSelection();
+	
+	/**
+	 * @return target sheet of undo action, null if doesn't provided
+	 * @return
+	 */
+	public Sheet getUndoSheet();
+	
+	/**
+	 * @return target sheet of redo action, null if doesn't provided
+	 * @return
+	 */
+	public Sheet getRedoSheet();
 }
