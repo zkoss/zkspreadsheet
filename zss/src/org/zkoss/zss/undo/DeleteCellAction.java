@@ -31,7 +31,7 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.undo.impl.AbstractUndoableAction;
-import org.zkoss.zss.undo.impl.ReservedCellData;
+import org.zkoss.zss.undo.impl.ReserveUtil.ReservedCellData;
 /**
  * 
  * @author dennis

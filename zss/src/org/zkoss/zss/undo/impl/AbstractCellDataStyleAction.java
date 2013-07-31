@@ -24,6 +24,8 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.undo.impl.ReserveUtil.ReserveType;
+import org.zkoss.zss.undo.impl.ReserveUtil.ReservedResult;
 /**
  * 
  * @author dennis
@@ -31,16 +33,19 @@ import org.zkoss.zss.api.model.Sheet;
  */
 public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction {
 
-	private CellStyle[][] _oldStyles = null;
-	private CellStyle[][] _newStyles = null;
-	private ReservedCellData[][] _oldData = null;
-	private ReservedCellData[][] _newData = null;
+//	private CellStyle[][] _oldStyles = null;
+//	private CellStyle[][] _newStyles = null;
+//	private ReservedCellData[][] _oldData = null;
+//	private ReservedCellData[][] _newData = null;
 	
 	
 	private final ReserveType _reserveType;
-	public enum ReserveType {
-		DATA,STYLE,ALL
-	}
+//	public enum ReserveType {
+//		DATA,STYLE,ALL
+//	}
+	
+	ReservedResult _oldReserve;
+	ReservedResult _newReserve;
 	
 	public AbstractCellDataStyleAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,ReserveType reserveType){
 		super(label,sheet,row,column,lastRow,lastColumn);
@@ -74,46 +79,11 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 		int lastColumn = getReservedLastColumn();
 		Sheet sheet = getReservedSheet();
 		
-		switch(_reserveType){
-		case DATA:
-			_oldData = new ReservedCellData[lastRow-row+1][lastColumn-column+1];
-			break;
-		case STYLE:
-			_oldStyles = new CellStyle[lastRow-row+1][lastColumn-column+1];
-			break;
-		case ALL:
-			_oldData = new ReservedCellData[lastRow-row+1][lastColumn-column+1];
-			_oldStyles = new CellStyle[lastRow-row+1][lastColumn-column+1];
-		}
+		_oldReserve = ReserveUtil.reserve(sheet, row, column, lastRow, lastColumn, _reserveType);
 		
-		for(int i=row;i<=lastRow;i++){
-			for(int j=column;j<=lastColumn;j++){
-				Range r = Ranges.range(sheet,i,j);
-				if(_oldStyles!=null){
-					_oldStyles[i-row][j-column] = r.getCellStyle();
-				}
-				if(_oldData!=null){
-					_oldData[i-row][j-column] = ReservedCellData.reserve(r);
-				}
-			}
-		}
-		
-		if(_newStyles!=null || _newData!=null){//reuse the style
-			for(int i=row;i<=lastRow;i++){
-				for(int j=column;j<=lastColumn;j++){
-					Range r = Ranges.range(sheet,i,j);
-					if(_newStyles!=null){
-						r.setCellStyle(_newStyles[i-row][j-column]);
-					}
-					if(_newData!=null){
-						try{
-							_newData[i-row][j-column].apply(r);
-						}catch(IllegalFormulaException x){};//eat in this mode
-					}
-				}
-			}
-			_newStyles = null;
-			_newData = null;
+		if(_newReserve!=null){//reuse the style
+			_newReserve.restore();
+			_newReserve = null;
 		}else{
 			//first time
 			applyAction();
@@ -125,12 +95,12 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 	
 	@Override
 	public boolean isUndoable() {
-		return _oldStyles!=null && isSheetAvailable() && !isSheetProtected();
+		return _oldReserve!=null && isSheetAvailable() && !isSheetProtected();
 	}
 
 	@Override
 	public boolean isRedoable() {
-		return _oldStyles==null && isSheetAvailable() && !isSheetProtected();
+		return _oldReserve==null && isSheetAvailable() && !isSheetProtected();
 	}
 
 	@Override
@@ -144,44 +114,10 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 		Sheet sheet = getReservedSheet();
 		//keep last new style, so if redo-again, we will reuse it.
 		
-		switch(_reserveType){
-		case DATA:
-			_newData = new ReservedCellData[lastRow-row+1][lastColumn-column+1];
-			break;
-		case STYLE:
-			_newStyles = new CellStyle[lastRow-row+1][lastColumn-column+1];
-			break;
-		case ALL:
-			_newData = new ReservedCellData[lastRow-row+1][lastColumn-column+1];
-			_newStyles = new CellStyle[lastRow-row+1][lastColumn-column+1];
-		}
+		_newReserve = ReserveUtil.reserve(sheet, row, column, lastRow, lastColumn, _reserveType);
 		
-		for(int i=row;i<=lastRow;i++){
-			for(int j=column;j<=lastColumn;j++){
-				Range r = Ranges.range(sheet,i,j);
-				if(_newStyles!=null){
-					_newStyles[i-row][j-column] = r.getCellStyle();
-				}
-				
-				if(_newData!=null){
-					_newData[i-row][j-column] = ReservedCellData.reserve(r);
-				}
-			}
-		}
-		
-		for(int i=row;i<=lastRow;i++){
-			for(int j=column;j<=lastColumn;j++){
-				Range r = Ranges.range(sheet,i,j);
-				if(_oldStyles!=null){
-					r.setCellStyle(_oldStyles[i-row][j-column]);
-				}
-				if(_oldData!=null){
-					_oldData[i-row][j-column].apply(r);
-				}
-			}
-		}
-		_oldData = null;
-		_oldStyles = null;
+		_oldReserve.restore();
+		_oldReserve = null;
 	}
 
 }

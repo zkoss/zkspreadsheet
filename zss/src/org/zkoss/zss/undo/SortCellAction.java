@@ -25,6 +25,7 @@ import org.zkoss.zss.api.Range.SortDataOption;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.undo.impl.AbstractCellDataStyleAction;
 import org.zkoss.zss.undo.impl.AbstractEditTextAction;
+import org.zkoss.zss.undo.impl.ReserveUtil.ReserveType;
 /**
  * 
  * @author dennis

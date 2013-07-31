@@ -90,8 +90,8 @@ public class CutCellAction extends AbstractUndoableAction {
 	public void undoAction() {
 		if(isSheetProtected()) return;
 		
-		ReserveUtil.restore(_destOldReserve);
-		ReserveUtil.restore(_srcOldReserve);
+		_destOldReserve.restore();
+		_srcOldReserve.restore();
 		_srcOldReserve = null;
 		_destOldReserve = null;
 	}

@@ -26,6 +26,7 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.undo.impl.AbstractCellDataStyleAction;
+import org.zkoss.zss.undo.impl.ReserveUtil.ReserveType;
 
 /**
  * This undoable action doesn't handle merge cell when undo redo
@@ -34,9 +35,9 @@ import org.zkoss.zss.undo.impl.AbstractCellDataStyleAction;
  */
 public class PasteCellAction extends AbstractCellDataStyleAction {
 
-	protected final int _toRow,_toColumn,_toLastRow,_toLastColumn;
-	protected final int _reservedLastRow,_reservedLastColumn;
-	protected final Sheet _toSheet;
+	protected final int _destRow,_destColumn,_destLastRow,_destLastColumn;
+	protected final int _reservedDestLastRow,_reservedDestLastColumn;
+	protected final Sheet _destSheet;
 	protected final PasteType _pasteType;
 	protected final PasteOperation _pasteOperation;
 	protected final boolean _skipBlank;
@@ -48,27 +49,27 @@ public class PasteCellAction extends AbstractCellDataStyleAction {
 //	private final int rlastColumn;
 	
 	public PasteCellAction(String label, 
-			Sheet sheet, int row, int column,int lastRow, int lastColumn, 
-			Sheet toSheet, int toRow, int toColumn,int toLastRow, int toLastColumn, 
+			Sheet sheet, int srcRow, int srcColumn,int srcLastRow, int srcLastColumn, 
+			Sheet destSheet, int destRow, int destColumn,int destLastRow, int destLastColumn, 
 			PasteType pasteType, PasteOperation pasteOperation, boolean skipBlank, boolean transpose) {
-		super(label, sheet, row, column, lastRow, lastColumn,ReserveType.ALL);
+		super(label, sheet, srcRow, srcColumn, srcLastRow, srcLastColumn,ReserveType.ALL);
 		this._transpose = transpose;
 		
-		this._toRow = toRow;
-		this._toColumn = toColumn;
-		this._toLastRow = toLastRow;
-		this._toLastColumn = toLastColumn;
+		this._destRow = destRow;
+		this._destColumn = destColumn;
+		this._destLastRow = destLastRow;
+		this._destLastColumn = destLastColumn;
 		
-		int srcColNum = lastColumn-column;
-		int srcRowNum = lastRow-row;
+		int srcColNum = srcLastColumn-srcColumn;
+		int srcRowNum = srcLastRow-srcRow;
 
-		int destWidth = Math.max(toLastColumn-toColumn, transpose?srcRowNum:srcColNum);
-		int destHeight = Math.max(toLastRow-toRow, transpose?srcColNum:srcRowNum);
+		int destWidth = Math.max(destLastColumn-destColumn, transpose?srcRowNum:srcColNum);
+		int destHeight = Math.max(destLastRow-destRow, transpose?srcColNum:srcRowNum);
 		
-		_reservedLastRow = _toRow + destHeight;
-		_reservedLastColumn = _toColumn + destWidth;
+		_reservedDestLastRow = _destRow + destHeight;
+		_reservedDestLastColumn = _destColumn + destWidth;
 		
-		this._toSheet = toSheet;
+		this._destSheet = destSheet;
 		this._pasteType = pasteType;
 		this._pasteOperation = pasteOperation;
 		this._skipBlank = skipBlank;
@@ -77,38 +78,38 @@ public class PasteCellAction extends AbstractCellDataStyleAction {
 
 	@Override
 	protected int getReservedRow(){
-		return _toRow;
+		return _destRow;
 	}
 	@Override
 	protected int getReservedColumn(){
-		return _toColumn;
+		return _destColumn;
 	}
 	@Override
 	protected int getReservedLastRow(){
-		return _reservedLastRow;
+		return _reservedDestLastRow;
 	}
 	@Override
 	protected int getReservedLastColumn(){
-		return _reservedLastColumn;
+		return _reservedDestLastColumn;
 	}
 	protected Sheet getReservedSheet(){
-		return _toSheet;
+		return _destSheet;
 	}
 	@Override
 	public Rect getUndoSelection(){
-		return _pastedRange==null?new Rect(_toColumn,_toRow,_toLastColumn,_toLastRow):
+		return _pastedRange==null?new Rect(_destColumn,_destRow,_destLastColumn,_destLastRow):
 			new Rect(_pastedRange.getColumn(),_pastedRange.getRow(),_pastedRange.getLastColumn(),_pastedRange.getLastRow());
 	}
 	@Override
 	public Rect getRedoSelection(){
-		return _pastedRange==null?new Rect(_toColumn,_toRow,_toLastColumn,_toLastRow):
+		return _pastedRange==null?new Rect(_destColumn,_destRow,_destLastColumn,_destLastRow):
 			new Rect(_pastedRange.getColumn(),_pastedRange.getRow(),_pastedRange.getLastColumn(),_pastedRange.getLastRow());
 	}
 	
 	//TODO handle merge, unmerge
 	protected void applyAction() {
 		Range src = Ranges.range(_sheet, _row, _column, _lastRow, _lastColumn);
-		Range dest = Ranges.range(_toSheet, _toRow, _toColumn, _toLastRow, _toLastColumn);
+		Range dest = Ranges.range(_destSheet, _destRow, _destColumn, _destLastRow, _destLastColumn);
 		_pastedRange = CellOperationUtil.pasteSpecial(src, dest, _pasteType, _pasteOperation, _skipBlank, _transpose);
 	}
 

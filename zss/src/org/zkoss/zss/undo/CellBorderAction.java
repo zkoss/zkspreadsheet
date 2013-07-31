@@ -26,6 +26,7 @@ import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.undo.impl.AbstractCellDataStyleAction;
+import org.zkoss.zss.undo.impl.ReserveUtil.ReserveType;
 
 /**
  * 
