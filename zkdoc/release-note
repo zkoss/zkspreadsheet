@@ -51,6 +51,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-386 Inserting a picture after deleting first picture causes an exception
   ZSS-331 select all cell has poor performance even not many cells
   ZSS-391 Filter popup menu is hidden by freeze column
+  ZSS-354 delete the first column of merged cell and alignment of cells will be chaos
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
