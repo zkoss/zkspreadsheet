@@ -25,7 +25,7 @@ import org.zkoss.zss.api.Range.SortDataOption;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.undo.impl.AbstractCellDataStyleAction;
 import org.zkoss.zss.undo.impl.AbstractEditTextAction;
-import org.zkoss.zss.undo.impl.ReserveUtil.ReserveType;
+import org.zkoss.zss.undo.impl.ReserveUtil;
 /**
  * 
  * @author dennis
@@ -51,7 +51,7 @@ public class SortCellAction extends AbstractCellDataStyleAction {
 	
 	
 	public SortCellAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,boolean desc){
-		super(label,sheet,row,column,lastRow,lastColumn,ReserveType.ALL);
+		super(label,sheet,row,column,lastRow,lastColumn,ReserveUtil.RESERVE_ALL);
 		_simpleMode = true;
 		this._desc = desc;
 		
@@ -77,7 +77,7 @@ public class SortCellAction extends AbstractCellDataStyleAction {
 			boolean matchCase, 
 			boolean sortByRows 
 			){
-		super(label,sheet,row,column,lastRow,lastColumn,ReserveType.ALL);
+		super(label,sheet,row,column,lastRow,lastColumn,ReserveUtil.RESERVE_ALL);
 		_simpleMode = false;
 		_desc = false;
 		

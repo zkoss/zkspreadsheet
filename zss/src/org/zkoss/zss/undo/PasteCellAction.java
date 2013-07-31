@@ -26,7 +26,7 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.undo.impl.AbstractCellDataStyleAction;
-import org.zkoss.zss.undo.impl.ReserveUtil.ReserveType;
+import org.zkoss.zss.undo.impl.ReserveUtil;
 
 /**
  * This undoable action doesn't handle merge cell when undo redo
@@ -52,7 +52,7 @@ public class PasteCellAction extends AbstractCellDataStyleAction {
 			Sheet sheet, int srcRow, int srcColumn,int srcLastRow, int srcLastColumn, 
 			Sheet destSheet, int destRow, int destColumn,int destLastRow, int destLastColumn, 
 			PasteType pasteType, PasteOperation pasteOperation, boolean skipBlank, boolean transpose) {
-		super(label, sheet, srcRow, srcColumn, srcLastRow, srcLastColumn,ReserveType.ALL);
+		super(label, sheet, srcRow, srcColumn, srcLastRow, srcLastColumn,ReserveUtil.RESERVE_ALL);
 		this._transpose = transpose;
 		
 		this._destRow = destRow;

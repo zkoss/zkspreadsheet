@@ -63,8 +63,8 @@ public class CutCellAction extends AbstractUndoableAction {
 		if(isSheetProtected()) return;
 		//keep old style/data of src and dest
 		
-		_srcOldReserve = ReserveUtil.reserve(_sheet, _row, _column, _lastRow, _lastColumn, ReserveUtil.ReserveType.ALL);
-		_destOldReserve = ReserveUtil.reserve(_destSheet, _destRow, _destColumn, _reservedDestLastRow, _reservedDestLastColumn, ReserveUtil.ReserveType.ALL);
+		_srcOldReserve = ReserveUtil.reserve(_sheet, _row, _column, _lastRow, _lastColumn, ReserveUtil.RESERVE_ALL);
+		_destOldReserve = ReserveUtil.reserve(_destSheet, _destRow, _destColumn, _reservedDestLastRow, _reservedDestLastColumn, ReserveUtil.RESERVE_ALL);
 		
 		applyAction();
 	}

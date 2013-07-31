@@ -25,7 +25,7 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.undo.impl.AbstractCellDataStyleAction;
-import org.zkoss.zss.undo.impl.ReserveUtil.ReserveType;
+import org.zkoss.zss.undo.impl.ReserveUtil;
 /**
  * 
  * @author dennis
@@ -37,7 +37,7 @@ public class FontStyleAction extends AbstractCellDataStyleAction {
 	
 	
 	public FontStyleAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,FontStyleApplier styleApplier){
-		super(label,sheet,row,column,lastRow,lastColumn,ReserveType.STYLE);
+		super(label,sheet,row,column,lastRow,lastColumn,ReserveUtil.RESERVE_STYLE);
 		this._fontStyleApplier = styleApplier;
 	}
 	

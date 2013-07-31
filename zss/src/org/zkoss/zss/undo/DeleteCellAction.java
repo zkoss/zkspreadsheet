@@ -31,7 +31,7 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.undo.impl.AbstractUndoableAction;
-import org.zkoss.zss.undo.impl.ReserveUtil.ReservedCellData;
+import org.zkoss.zss.undo.impl.ReserveUtil.ReservedCellContent;
 /**
  * 
  * @author dennis
@@ -105,7 +105,7 @@ public class DeleteCellAction extends AbstractUndoableAction {
 						}
 						Range range = Ranges.range(_sheet,i,j);
 						CellStyle style = range.getCellStyle();
-						ReservedCellData data = ReservedCellData.reserve(range);
+						ReservedCellContent data = ReservedCellContent.reserve(range);
 						ReservedCell cell = new ReservedCell(/*i, j*/);
 						cell.setStyle(style);
 						cell.setData(data);
@@ -168,7 +168,7 @@ public class DeleteCellAction extends AbstractUndoableAction {
 						ReservedCell rcell = row.getCell(j);
 						Range range = Ranges.range(_sheet,i,j);
 						CellStyle style = rcell.getStyle();
-						ReservedCellData data = rcell.getData();
+						ReservedCellContent data = rcell.getData();
 						
 						range.setCellStyle(style);
 						data.apply(range);
@@ -219,15 +219,15 @@ public class DeleteCellAction extends AbstractUndoableAction {
 //		private int _row;
 //		private int _column;
 		private CellStyle _style;
-		private ReservedCellData _data;
+		private ReservedCellContent _data;
 		public ReservedCell(/*int row,int column*/){
 //			this._row = row;
 //			this._column = column;
 		}
-		public ReservedCellData getData() {
+		public ReservedCellContent getData() {
 			return _data;
 		}
-		public void setData(ReservedCellData data) {
+		public void setData(ReservedCellContent data) {
 			this._data = data;
 		}
 		public CellStyle getStyle() {

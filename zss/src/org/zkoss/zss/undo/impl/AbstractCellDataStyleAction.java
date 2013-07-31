@@ -24,7 +24,6 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.undo.impl.ReserveUtil.ReserveType;
 import org.zkoss.zss.undo.impl.ReserveUtil.ReservedResult;
 /**
  * 
@@ -39,7 +38,7 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 //	private ReservedCellData[][] _newData = null;
 	
 	
-	private final ReserveType _reserveType;
+	private final int _reserveType;
 //	public enum ReserveType {
 //		DATA,STYLE,ALL
 //	}
@@ -47,7 +46,7 @@ public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction
 	ReservedResult _oldReserve;
 	ReservedResult _newReserve;
 	
-	public AbstractCellDataStyleAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,ReserveType reserveType){
+	public AbstractCellDataStyleAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,int reserveType){
 		super(label,sheet,row,column,lastRow,lastColumn);
 		this._reserveType=reserveType;
 	}
