@@ -1207,7 +1207,7 @@ public final class BookHelper {
 		return clearCell(cell);
 	}
 	
-	private static Set<Ref>[] clearCell(Cell cell) {
+	public static Set<Ref>[] clearCell(Cell cell) {
 		if (cell != null) {
 			//remove formula cell and create a blank one
 			removeFormula(cell, true);
@@ -3253,10 +3253,30 @@ public final class BookHelper {
 	}
 	
 	public static Set<Ref> setCellStyle(XSheet sheet, int tRow, int lCol, int bRow, int rCol, CellStyle style) {
-		for(int r = tRow; r <= bRow; ++r) {
-			for (int c = lCol; c <= rCol; ++c) {
-				final Cell cell = BookHelper.getOrCreateCell(sheet, r, c);
-				cell.setCellStyle(style);
+		if(style==null){
+			//special case for style == null, 
+			//it should just look the existed cell and set it to null
+			int firstRow = Math.max(tRow,sheet.getFirstRowNum());
+			int lastRow = Math.min(bRow,sheet.getLastRowNum());
+			for(int r = firstRow; r <= lastRow; ++r) {
+				Row row = sheet.getRow(r);
+				if(row==null)
+					continue;
+				int firstCol = Math.max(lCol,row.getFirstCellNum());
+				int lastCol = Math.min(rCol, row.getLastCellNum());
+				for (int c = firstCol; c <= lastCol; ++c) {
+					final Cell cell = row.getCell(c);
+					if(cell!=null){
+						cell.setCellStyle(null);
+					}
+				}
+			}
+		}else{
+			for(int r = tRow; r <= bRow; ++r) {
+				for (int c = lCol; c <= rCol; ++c) {
+					final Cell cell = BookHelper.getOrCreateCell(sheet, r, c);
+					cell.setCellStyle(style);
+				}
 			}
 		}
 		final Set<Ref> all = new HashSet<Ref>(1);

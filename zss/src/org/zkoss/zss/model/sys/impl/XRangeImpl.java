@@ -1467,9 +1467,21 @@ public class XRangeImpl implements XRange {
 	private void clearContents(XSheet sheet, int tRow, int lCol, int bRow, int rCol) {
 		final Set<Ref> last = new HashSet<Ref>();
 		final Set<Ref> all = new HashSet<Ref>();
-		for(int r = tRow; r <= bRow; ++r) {
-			for(int c = lCol; c <= rCol; ++c) {
-				final Set<Ref>[] refs = BookHelper.clearCell(sheet, r, c);
+		
+		//in clear case, should just look the existed cell
+		int firstRow = Math.max(tRow,sheet.getFirstRowNum());
+		int lastRow = Math.min(bRow,sheet.getLastRowNum());
+		for(int r = firstRow; r <= lastRow; ++r) {
+			Row row = sheet.getRow(r);
+			if(row==null)
+				continue;
+			int firstCol = Math.max(lCol,row.getFirstCellNum());
+			int lastCol = Math.min(rCol, row.getLastCellNum());
+			for (int c = firstCol; c <= lastCol; ++c) {
+				final Cell cell = row.getCell(c);
+				if(cell==null)
+					continue;
+				final Set<Ref>[] refs = BookHelper.clearCell(cell);
 				if (refs != null) {
 					last.addAll(refs[0]);
 					all.addAll(refs[1]);
