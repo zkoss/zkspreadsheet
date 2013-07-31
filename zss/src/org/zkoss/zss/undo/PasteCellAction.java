@@ -1,4 +1,4 @@
-/* CellStyleAction.java
+/* PasteCellAction.java
 
 {{IS_NOTE
 	Purpose:
@@ -52,7 +52,7 @@ public class PasteCellAction extends AbstractCellDataStyleAction {
 			Sheet sheet, int srcRow, int srcColumn,int srcLastRow, int srcLastColumn, 
 			Sheet destSheet, int destRow, int destColumn,int destLastRow, int destLastColumn, 
 			PasteType pasteType, PasteOperation pasteOperation, boolean skipBlank, boolean transpose) {
-		super(label, sheet, srcRow, srcColumn, srcLastRow, srcLastColumn,ReserveUtil.RESERVE_ALL);
+		super(label, sheet, srcRow, srcColumn, srcLastRow, srcLastColumn,RESERVE_ALL);
 		this._transpose = transpose;
 		
 		this._destRow = destRow;

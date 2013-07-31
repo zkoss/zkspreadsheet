@@ -1,4 +1,4 @@
-/* CellStyleAction.java
+/* MergeCellAction.java
 
 {{IS_NOTE
 	Purpose:
@@ -23,55 +23,24 @@ import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.undo.impl.AbstractUndoableAction;
-import org.zkoss.zss.undo.impl.ReserveUtil;
-import org.zkoss.zss.undo.impl.ReserveUtil.ReservedResult;
+import org.zkoss.zss.undo.impl.AbstractCellDataStyleAction;
 /**
  * 
  * @author dennis
  *
  */
-public class MergeCellAction extends AbstractUndoableAction {
+public class MergeCellAction extends AbstractCellDataStyleAction {
 	
 	private final boolean _accross;
-	ReservedResult _oldReserve;
-//	ReservedResult _newReserve;
-	
 	
 	public MergeCellAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,boolean accross){
-		super(label,sheet,row,column,lastRow,lastColumn);
+		super(label,sheet,row,column,lastRow,lastColumn,RESERVE_ALL);
 		this._accross = accross;
 	}
 	
+	@Override
 	protected void applyAction(){
 		Range r = Ranges.range(_sheet,_row,_column,_lastRow,_lastColumn);
 		CellOperationUtil.merge(r, _accross);
-	}
-
-	@Override
-	public void doAction() {
-		if(isSheetProtected()) return;
-		//keep old style
-		
-		_oldReserve = ReserveUtil.reserve(_sheet, _row, _column, _lastRow, _lastColumn, ReserveUtil.RESERVE_ALL);
-		
-		applyAction();
-	}
-	
-	@Override
-	public boolean isUndoable() {
-		return _oldReserve!=null && isSheetAvailable() && !isSheetProtected();
-	}
-
-	@Override
-	public boolean isRedoable() {
-		return _oldReserve==null && isSheetAvailable() && !isSheetProtected();
-	}
-
-	@Override
-	public void undoAction() {
-		if(isSheetProtected()) return;
-		_oldReserve.restore();
-		_oldReserve = null;
 	}
 }

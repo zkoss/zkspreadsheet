@@ -55,13 +55,16 @@ import org.zkoss.zss.undo.CellBorderAction;
 import org.zkoss.zss.undo.CutCellAction;
 import org.zkoss.zss.undo.DeleteCellAction;
 import org.zkoss.zss.undo.InsertCellAction;
+import org.zkoss.zss.undo.MergeCellAction;
 import org.zkoss.zss.undo.PasteCellAction;
 import org.zkoss.zss.undo.SortCellAction;
 import org.zkoss.zss.undo.CellStyleAction;
 import org.zkoss.zss.undo.ClearCellAction;
 import org.zkoss.zss.undo.FontStyleAction;
 import org.zkoss.zss.undo.HideHeaderAction;
+import org.zkoss.zss.undo.ToggleMergeCellAction;
 import org.zkoss.zss.undo.UndoableActionManager;
+import org.zkoss.zss.undo.UnmergeCellAction;
 import org.zkoss.zul.Messagebox;
 /**
  * The user action handler which provide default spreadsheet operation handling.
@@ -1135,7 +1138,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.toggleMergeCenter(range);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new ToggleMergeCellAction(Labels.getLabel("zss.undo.toggleMerge"),sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn()));
+		}else{
+			CellOperationUtil.toggleMergeCenter(range);
+		}
 		clearClipboard();
 		return true;
 	}
@@ -1148,7 +1157,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.merge(range, true);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new MergeCellAction(Labels.getLabel("zss.undo.merge"),sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(),true));
+		}else{
+			CellOperationUtil.merge(range, true);
+		}
 		clearClipboard();
 		return true;
 	}
@@ -1161,7 +1176,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.merge(range, false);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new MergeCellAction(Labels.getLabel("zss.undo.merge"),sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn(),false));
+		}else{
+			CellOperationUtil.merge(range, false);
+		}
 		clearClipboard();
 		return true;
 	}
@@ -1174,7 +1195,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		CellOperationUtil.unmerge(range);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new UnmergeCellAction(Labels.getLabel("zss.undo.merge"),sheet, selection.getRow(), selection.getColumn(), 
+					selection.getLastRow(), selection.getLastColumn()));
+		}else{
+			CellOperationUtil.unmerge(range);
+		}
 		clearClipboard();
 		return true;
 	}

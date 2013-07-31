@@ -51,7 +51,7 @@ public class SortCellAction extends AbstractCellDataStyleAction {
 	
 	
 	public SortCellAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,boolean desc){
-		super(label,sheet,row,column,lastRow,lastColumn,ReserveUtil.RESERVE_ALL);
+		super(label,sheet,row,column,lastRow,lastColumn,RESERVE_ALL);
 		_simpleMode = true;
 		this._desc = desc;
 		
@@ -77,7 +77,7 @@ public class SortCellAction extends AbstractCellDataStyleAction {
 			boolean matchCase, 
 			boolean sortByRows 
 			){
-		super(label,sheet,row,column,lastRow,lastColumn,ReserveUtil.RESERVE_ALL);
+		super(label,sheet,row,column,lastRow,lastColumn,RESERVE_ALL);
 		_simpleMode = false;
 		_desc = false;
 		

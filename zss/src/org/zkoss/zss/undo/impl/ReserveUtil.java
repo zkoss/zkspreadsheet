@@ -18,6 +18,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.undo.impl;
 
+import java.util.ArrayList;
+
+import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
@@ -32,32 +35,28 @@ import org.zkoss.zss.ui.Rect;
  * 
  */
 public class ReserveUtil {
-//	public enum ReserveType {
-//		ALL, STYLE, DATA
-//	}
-	public static final int RESERVE_DATA = 1;
+	public static final int RESERVE_CONTENT = 1;
 	public static final int RESERVE_STYLE = 2;
 	public static final int RESERVE_MERGE = 4;
-	public static final int RESERVE_ALL = RESERVE_DATA|RESERVE_STYLE|RESERVE_MERGE;
+	public static final int RESERVE_ALL = RESERVE_CONTENT|RESERVE_STYLE|RESERVE_MERGE;
 	public static ReservedResult reserve(Sheet sheet, int row, int column,
 			int lastRow, int lastColumn, int reserveType) {
 
-		ReservedResult result = new ReservedResult(sheet,row,column,lastRow,lastColumn);
+		ReservedResult result = new ReservedResult(sheet,row,column,lastRow,lastColumn,reserveType);
 
 		ReservedCellContent[][] data = null;
 		CellStyle[][] styles = null;
 		Rect[] mergeInfo = null;
-		if((reserveType & RESERVE_DATA)!=0){
-			result.setContent(data = new ReservedCellContent[lastRow - row + 1][lastColumn
-			                                          					- column + 1]);
+		if((reserveType & RESERVE_CONTENT)!=0){
+			result.setContent(data = 
+					new ReservedCellContent[lastRow - row + 1][lastColumn - column + 1]);
 		}
 		if((reserveType & RESERVE_STYLE)!=0){
-			result.setStyles(styles = new CellStyle[lastRow - row + 1][lastColumn
-			                                       					- column + 1]);
+			result.setStyles(styles = 
+					new CellStyle[lastRow - row + 1][lastColumn - column + 1]);
 		}
 		if((reserveType & RESERVE_MERGE)!=0){
-			
-			
+			result.setMergeInfo(mergeInfo = reserveMergeInfo(sheet,row,column,lastRow,lastColumn));
 		}
 		
 
@@ -75,8 +74,31 @@ public class ReserveUtil {
 
 		return result;
 	}
+	
+	/**
+	 * reserve the merge information that in the given range.
+	 */
+	public static Rect[] reserveMergeInfo(Sheet sheet, int row, int column,
+			int lastRow, int lastColumn){
+		org.zkoss.poi.ss.usermodel.Sheet poiSheet = sheet.getPoiSheet();
+		int size = poiSheet.getNumMergedRegions();
+		ArrayList<Rect> array = new ArrayList<Rect>();
+		Rect cur = new Rect(column,row,lastColumn,lastRow);
+		for(int i=0;i<size;i++){
+			CellRangeAddress cra = poiSheet.getMergedRegion(i);
+			int r = cra.getFirstRow();
+			int c = cra.getFirstColumn();
+			int lr = cra.getLastRow();
+			int lc = cra.getLastColumn();
+			if(cur.contains(r, c, lr, lc)){
+				array.add(new Rect(c,r,lc,lr));
+			}
+		}
+		return array.size()==0?null:array.toArray(new Rect[array.size()]);
+	}
 
 	public static class ReservedResult {
+		final int _reserveType;
 		final Sheet _sheet;
 		ReservedCellContent[][] _content = null;
 		CellStyle[][] _styles = null;
@@ -84,12 +106,13 @@ public class ReserveUtil {
 		final int _row, _column, _lastRow, _lastColumn;
 
 		public ReservedResult(Sheet sheet, int row, int column, int lastRow,
-				int lastColumn) {
+				int lastColumn, int reserveType) {
 			_sheet = sheet;
 			_row = row;
 			_column = column;
 			_lastRow = lastRow;
 			_lastColumn = lastColumn;
+			_reserveType = reserveType;
 		}
 
 		public ReservedCellContent[][] getContent() {
@@ -145,14 +168,25 @@ public class ReserveUtil {
 			
 			ReservedCellContent[][] data = getContent();
 			CellStyle[][] styles = getStyles();
+			
 			Rect[] mergeInfo = getMergeInfo(); 
 			
-			
-			if(mergeInfo!=null){
-				for(Rect rect:mergeInfo){
-					//re merge back
-					Range r = Ranges.range(sheet,rect);
-					r.merge(false);
+			//
+			if((_reserveType & RESERVE_MERGE)!=0){//cann't just count on mergeInfo
+				//clear the merge first
+				Rect[] curMergeInfo = reserveMergeInfo(sheet,row,column,lastRow,lastColumn);
+				if(curMergeInfo!=null){
+					for(Rect rect:curMergeInfo){
+						Range r = Ranges.range(sheet,rect);
+						r.unmerge();
+					}
+				}
+				//restore merge
+				if(mergeInfo!=null){				
+					for(Rect rect:mergeInfo){
+						Range r = Ranges.range(sheet,rect);
+						r.merge(false);
+					}
 				}
 			}
 			

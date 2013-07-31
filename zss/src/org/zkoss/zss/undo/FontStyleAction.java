@@ -37,7 +37,7 @@ public class FontStyleAction extends AbstractCellDataStyleAction {
 	
 	
 	public FontStyleAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,FontStyleApplier styleApplier){
-		super(label,sheet,row,column,lastRow,lastColumn,ReserveUtil.RESERVE_STYLE);
+		super(label,sheet,row,column,lastRow,lastColumn,RESERVE_STYLE);
 		this._fontStyleApplier = styleApplier;
 	}
 	

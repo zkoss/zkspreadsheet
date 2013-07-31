@@ -30,7 +30,9 @@ import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.undo.impl.AbstractUndoableAction;
+import org.zkoss.zss.undo.impl.ReserveUtil;
 import org.zkoss.zss.undo.impl.ReserveUtil.ReservedCellContent;
 /**
  * 
@@ -45,6 +47,7 @@ public class DeleteCellAction extends AbstractUndoableAction {
 	Map<Integer,ReservedRow> _rows;
 	Map<Integer,Integer> _rowHeights;
 	Map<Integer,Integer> _colWidths;
+	Rect[] _mergeInfo;
 	boolean _doFlag;
 	
 	
@@ -114,8 +117,9 @@ public class DeleteCellAction extends AbstractUndoableAction {
 				}
 			}
 		}
-		//TODO keep merge info in range
-		
+		//keep merge info
+		_mergeInfo = ReserveUtil.reserveMergeInfo(_sheet, _row, _column, _lastRow, _lastColumn);
+
 		CellOperationUtil.delete(r,_shift);
 	}
 
@@ -143,6 +147,14 @@ public class DeleteCellAction extends AbstractUndoableAction {
 			case DEFAULT:
 				CellOperationUtil.insert(r,InsertShift.DEFAULT,InsertCopyOrigin.FORMAT_NONE);
 				break;
+		}
+		
+		if(_mergeInfo!=null && _mergeInfo.length>0){
+			for(Rect rect:_mergeInfo){
+				//restore back
+				Range mergeRange = Ranges.range(_sheet,rect);
+				mergeRange.merge(false);
+			}
 		}
 		
 		if(_rowStart>=0 && _rowEnd>=0){

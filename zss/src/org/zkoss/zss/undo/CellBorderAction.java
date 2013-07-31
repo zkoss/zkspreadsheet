@@ -44,7 +44,7 @@ public class CellBorderAction extends AbstractCellDataStyleAction {
 	
 	public CellBorderAction(String label, Sheet sheet, int row, int column,
 			int lastRow, int lastColumn, ApplyBorderType applyType,BorderType borderType,String htmlColor) {
-		super(label, sheet, row, column, lastRow, lastColumn,ReserveUtil.RESERVE_STYLE);
+		super(label, sheet, row, column, lastRow, lastColumn,RESERVE_STYLE);
 		this._applyType = applyType;
 		this._borderType = borderType;
 		this._htmlColor = htmlColor;

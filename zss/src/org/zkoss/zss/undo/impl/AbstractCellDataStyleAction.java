@@ -32,16 +32,19 @@ import org.zkoss.zss.undo.impl.ReserveUtil.ReservedResult;
  */
 public abstract class AbstractCellDataStyleAction extends AbstractUndoableAction {
 
-//	private CellStyle[][] _oldStyles = null;
-//	private CellStyle[][] _newStyles = null;
-//	private ReservedCellData[][] _oldData = null;
-//	private ReservedCellData[][] _newData = null;
+	public static final int RESERVE_CONTENT = ReserveUtil.RESERVE_CONTENT;
+	public static final int RESERVE_STYLE = ReserveUtil.RESERVE_STYLE;
+	public static final int RESERVE_MERGE = ReserveUtil.RESERVE_MERGE;
+	public static final int RESERVE_ALL = ReserveUtil.RESERVE_ALL;
 	
-	
+	/**
+	 * 
+	 * @see #RESERVE_ALL
+	 * @see #RESERVE_STYLE
+	 * @see #RESERVE_CONTENT
+	 * @see #RESERVE_MERGE
+	 */
 	private final int _reserveType;
-//	public enum ReserveType {
-//		DATA,STYLE,ALL
-//	}
 	
 	ReservedResult _oldReserve;
 	ReservedResult _newReserve;
