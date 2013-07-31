@@ -57,6 +57,7 @@ import org.zkoss.zss.undo.DeleteCellAction;
 import org.zkoss.zss.undo.InsertCellAction;
 import org.zkoss.zss.undo.MergeCellAction;
 import org.zkoss.zss.undo.PasteCellAction;
+import org.zkoss.zss.undo.ShiftCellAction;
 import org.zkoss.zss.undo.SortCellAction;
 import org.zkoss.zss.undo.CellStyleAction;
 import org.zkoss.zss.undo.ClearCellAction;
@@ -1610,72 +1611,6 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		}
 	}
 	
-	// non-implemented action
-	
-//	protected boolean doRowHeight() {
-//		showNotImplement(UserAction.ROW_HEIGHT.getAction());
-//		return true;
-//	}
-//
-//	protected boolean doColumnWidth() {
-//		showNotImplement(UserAction.COLUMN_WIDTH.getAction());
-//		return true;
-//	}
-//
-//	protected boolean doFormatCell() {
-//		showNotImplement(UserAction.FORMAT_CELL.getAction());
-//		return true;
-//	}
-//
-//	protected boolean doHyperlink() {
-//		showNotImplement(UserAction.HYPERLINK.getAction());
-//		return true;
-//	}
-//
-//	protected boolean doCustomSort() {
-//		showNotImplement(UserAction.CUSTOM_SORT.getAction());
-//		return true;
-//	}
-//
-//	protected boolean doPasteSpecial() {
-//		showNotImplement(UserAction.PASTE_SPECIAL.getAction());
-//		return true;
-//	}
-//
-//	protected boolean doExportPDF() {
-//		showNotImplement(UserAction.EXPORT_PDF.getAction());
-//		return true;
-//	}
-//
-//	protected boolean doSaveBook() {
-//		showNotImplement(UserAction.SAVE_BOOK.getAction());
-//		return true;
-//	}
-//
-//	protected boolean doNewBook() {
-//		showNotImplement(UserAction.NEW_BOOK.getAction());
-//		return true;
-//	}
-//
-//	protected boolean doShowFormulaPanel() {
-//		showNotImplement(UserAction.FORMULA_PANEL.getAction());
-//		return true;
-//	}
-//
-//	protected boolean doShowInsertPanel() {
-//		showNotImplement(UserAction.INSERT_PANEL.getAction());
-//		return true;
-//	}
-//
-//	protected boolean doShowHomePanel() {
-//		showNotImplement(UserAction.HOME_PANEL.getAction());
-//		return true;
-//	}
-//
-//	protected boolean doInsertFunction() {
-//		showNotImplement(UserAction.INSERT_FUNCTION.getAction());
-//		return true;
-//	}
 
 	@Override
 	public Set<String> getInterestedEvents() {
@@ -1795,7 +1730,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 		
 		final int nRow = selection.getTop() - original.getTop();
 		final int nCol = selection.getLeft() - original.getLeft();
-		CellOperationUtil.shift(src,nRow, nCol);
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new ShiftCellAction(Labels.getLabel("zss.undo.moveCell"),sheet, original.getRow(), original.getColumn(),
+					original.getLastRow(), original.getLastColumn(),nRow,nCol));
+		}else{
+			CellOperationUtil.shift(src,nRow, nCol);
+		}
 		
 		return true;
 	}

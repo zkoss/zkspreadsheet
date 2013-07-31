@@ -23,6 +23,7 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Rect;
+import org.zkoss.zss.undo.impl.Abstract2DCellDataStyleAction;
 import org.zkoss.zss.undo.impl.AbstractUndoableAction;
 import org.zkoss.zss.undo.impl.ReserveUtil;
 import org.zkoss.zss.undo.impl.ReserveUtil.ReservedResult;
@@ -32,78 +33,40 @@ import org.zkoss.zss.undo.impl.ReserveUtil.ReservedResult;
  * @author dennis
  * 
  */
-public class CutCellAction extends AbstractUndoableAction {
+public class CutCellAction extends Abstract2DCellDataStyleAction {
 
-	
-//	private CellStyle[][] _destNewStyles = null;
-//	private ReservedCellData[][] _destNewData = null;
-	private ReservedResult _destOldReserve = null;
-
-	private ReservedResult _srcOldReserve = null;
-	
-	protected final Sheet _destSheet;
-	protected final int _destRow,_destColumn,_destLastRow,_destLastColumn;
 	protected final int _reservedDestLastRow,_reservedDestLastColumn;
 	private Range _pastedRange;
 	public CutCellAction(String label,Sheet sheet,int srcRow, int srcColumn, int srcLastRow,int srcLastColumn,
 			Sheet destSheet,int destRow, int destColumn, int destLastRow,int destLastColumn){
-		super(label,sheet,srcRow,srcColumn,srcLastRow,srcLastColumn);
-		_destSheet = destSheet;
-		_destRow = destRow;
-		_destColumn = destColumn;
-		_destLastRow = destLastRow;
-		_destLastColumn = destLastColumn;
+		super(label,sheet,srcRow,srcColumn,srcLastRow,srcLastColumn,destSheet,destRow,destColumn,destLastRow,destLastColumn,RESERVE_ALL);
 		
+		//enlarge it, since xrange did
 		_reservedDestLastRow = _destRow + Math.max(destLastRow-destRow, srcLastRow-srcRow);
 		_reservedDestLastColumn = _destColumn + Math.max(destLastColumn-destColumn, srcLastColumn-srcColumn);
 	}
 
-	@Override
-	public void doAction() {
-		if(isSheetProtected()) return;
-		//keep old style/data of src and dest
-		
-		_srcOldReserve = ReserveUtil.reserve(_sheet, _row, _column, _lastRow, _lastColumn, ReserveUtil.RESERVE_ALL);
-		_destOldReserve = ReserveUtil.reserve(_destSheet, _destRow, _destColumn, _reservedDestLastRow, _reservedDestLastColumn, ReserveUtil.RESERVE_ALL);
-		
-		applyAction();
+	protected int getReservedDestLastRow(){
+		return _reservedDestLastRow;
 	}
-
+	protected int getReservedDestLastColumn(){
+		return _reservedDestLastColumn;
+	}
 	
 	protected void applyAction(){
 		Range src = Ranges.range(_sheet,_row,_column,_lastRow,_lastColumn);
 		Range dest = Ranges.range(_destSheet,_destRow,_destColumn,_destLastRow,_destLastColumn);
 		_pastedRange = CellOperationUtil.cut(src, dest);
 	}
-	
-	@Override
-	public boolean isUndoable() {
-		return _destOldReserve!=null && isSheetAvailable() && !isSheetProtected();
-	}
-
-	@Override
-	public boolean isRedoable() {
-		return _destOldReserve==null && isSheetAvailable() && !isSheetProtected();
-	}
-
-	@Override
-	public void undoAction() {
-		if(isSheetProtected()) return;
 		
-		_destOldReserve.restore();
-		_srcOldReserve.restore();
-		_srcOldReserve = null;
-		_destOldReserve = null;
-	}
-	
 	@Override
 	public Rect getUndoSelection(){
-		return _pastedRange==null?new Rect(_destColumn,_destRow,_destLastColumn,_destLastRow):
+		return _pastedRange==null?super.getUndoSelection():
 			new Rect(_pastedRange.getColumn(),_pastedRange.getRow(),_pastedRange.getLastColumn(),_pastedRange.getLastRow());
 	}
 	@Override
 	public Rect getRedoSelection(){
-		return _pastedRange==null?new Rect(_destColumn,_destRow,_destLastColumn,_destLastRow):
+		return _pastedRange==null?super.getRedoSelection():
 			new Rect(_pastedRange.getColumn(),_pastedRange.getRow(),_pastedRange.getLastColumn(),_pastedRange.getLastRow());
 	}
 

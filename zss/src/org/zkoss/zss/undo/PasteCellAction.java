@@ -62,7 +62,7 @@ public class PasteCellAction extends AbstractCellDataStyleAction {
 		
 		int srcColNum = srcLastColumn-srcColumn;
 		int srcRowNum = srcLastRow-srcRow;
-
+		//enlarge and transpose
 		int destWidth = Math.max(destLastColumn-destColumn, transpose?srcRowNum:srcColNum);
 		int destHeight = Math.max(destLastRow-destRow, transpose?srcColNum:srcRowNum);
 		
