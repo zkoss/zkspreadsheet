@@ -759,15 +759,16 @@ public class XRangeImpl implements XRange {
 		}
 		final Set<Ref> last = info.getToEval();
 		final Set<Ref> all = info.getAffected();
-		if (event != null && ref != null) {
-			refBook.publish(new SSDataEvent(event, ref, orient));
-		}
 		//must delete and add in batch, or merge ranges can interfere to each other
 		for(MergeChange change : info.getMergeChanges()) {
 			final Ref orgMerge = change.getOrgMerge();
 			if (orgMerge != null) {
 				refBook.publish(new SSDataEvent(SSDataEvent.ON_MERGE_DELETE, orgMerge, orient));
 			}
+		}
+		// ZSS-354: delete merge before cell update, because of this merge range is based on original cell range
+		if (event != null && ref != null) {
+			refBook.publish(new SSDataEvent(event, ref, orient));
 		}
 		for(MergeChange change : info.getMergeChanges()) {
 			final Ref merge = change.getMerge();
