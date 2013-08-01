@@ -2531,13 +2531,27 @@ public final class BookHelper {
         	final int lastCol = merged.getLastColumn();
         	final int firstRow = merged.getFirstRow();
         	final int lastRow = merged.getLastRow();
-        	if (firstCol >= lCol && lastCol <= rCol 
-        		&& firstRow >= tRow && lastRow <= bRow) { //total cover
+        	
+        	// ZSS-395 unmerge when any cell overlap with merged region
+        	if(overlap(firstRow, firstCol, lastRow, lastCol, tRow, lCol, bRow, rCol)) {
 				changes.add(new MergeChange(new AreaRefImpl(firstRow, firstCol, lastRow, lastCol, refSheet), null));
 				sheet.removeMergedRegion(j);
         	}
 		}
 		return new ChangeInfo(null, null, changes);
+	}
+	
+	private static boolean overlap(int aTopRow, int aLeftCol, int aBottomRow, int aRightCol,
+			int bTopRow, int bLeftCol, int bBottomRow, int bRightCol) {
+		
+		boolean xOverlap = isBetween(aLeftCol, bLeftCol, bRightCol) || isBetween(bLeftCol, aLeftCol, aRightCol);
+		boolean yOverlap = isBetween(aTopRow, bTopRow, bBottomRow) || isBetween(bTopRow, aTopRow, aBottomRow);
+		
+		return xOverlap && yOverlap;
+	}
+	
+	private static boolean isBetween(int value, int min, int max) {
+		return (value >= min) && (value <= max);
 	}
 	
 	/*

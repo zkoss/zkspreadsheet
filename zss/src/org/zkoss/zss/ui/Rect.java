@@ -118,6 +118,18 @@ public class Rect {
 				bRow <= _bottom && rCol <= _right;
 	}
 	
+	public boolean overlap(int bTopRow, int bLeftCol, int bBottomRow, int bRightCol) {
+		
+		boolean xOverlap = isBetween(_left, bLeftCol, bRightCol) || isBetween(bLeftCol, _left, _right);
+		boolean yOverlap = isBetween(_top, bTopRow, bBottomRow) || isBetween(bTopRow, _top, _bottom);
+		
+		return xOverlap && yOverlap;
+	}
+	
+	private boolean isBetween(int value, int min, int max) {
+		return (value >= min) && (value <= max);
+	}
+	
 	/**
 	 * @return Area reference of this selection
 	 * @since 3.0.0
