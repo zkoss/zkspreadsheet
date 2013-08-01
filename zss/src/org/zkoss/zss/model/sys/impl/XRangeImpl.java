@@ -1127,6 +1127,9 @@ public class XRangeImpl implements XRange {
 	
 	@Override
 	public void merge(boolean across) {
+		// ZSS-290: unmerge before merging, or there will be multiple merged cell at same range
+		unMerge();
+		
 		synchronized (_sheet) {
 			if (_refs != null && !_refs.isEmpty()) {
 				final Ref ref = _refs.iterator().next();

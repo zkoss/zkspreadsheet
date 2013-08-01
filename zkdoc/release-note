@@ -54,6 +54,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-391 Filter popup menu is hidden by freeze column
   ZSS-354 delete the first column of merged cell and alignment of cells will be chaos
   ZSS-393 Sheet out of sync after cut to different sheet
+  ZSS-290 after merging and unmerging cells, input and style both work incorrect
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
