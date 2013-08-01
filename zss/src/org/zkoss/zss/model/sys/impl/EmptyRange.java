@@ -393,4 +393,10 @@ public class EmptyRange implements XRange {
 	@Override
 	public void setFreezePanel(int rowfreeze, int columnfreeze) {		
 	}
+	
+	@Override
+	public XRange copy(XRange dstRange, boolean cut) {
+		return null;
+	}
+
 }

@@ -16,11 +16,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import org.zkoss.lang.Objects;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.Range.AutoFillType;
 import org.zkoss.zss.api.Range.DeleteShift;
@@ -41,7 +36,6 @@ import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
-import org.zkoss.zss.api.model.Sheet;
 
 /**
  * The utility to help UI to deal with user's cell operation of a Range.
@@ -50,23 +44,6 @@ import org.zkoss.zss.api.model.Sheet;
  * @since 3.0.0
  */
 public class CellOperationUtil {
-
-	
-	static private class Result<T> {
-		T r;
-		private Result(){}
-		private Result(T r){
-			this.r = r;
-		}
-		
-		public T get(){
-			return r;
-		}
-		
-		public void set(T r){
-			this.r = r;
-		}
-	}
 	
 	/**
 	 * Cuts data and style from src to destination
@@ -75,60 +52,16 @@ public class CellOperationUtil {
 	 * @return a Range contains the final pasted range. paste to a protected sheet will always cause paste return null.
 	 */
 	public static Range cut(Range src, final Range dest) {
-		final Result<Range> result = new Result<Range>();
 		if(src.isProtected()){
 			return null;
 		}
 		if(dest.isProtected()){
 			return null;
 		}
-		//use batch-runner to run multiple range operation
-		src.sync(new RangeRunner() {
-			public void run(Range range) {
-				Range r = range.paste(dest);
-				if(r!=null){
-					
-					Range[] diffs = clip(range,r);
-					for(Range dif:diffs){
-						range.clearContents();// it removes value and formula only
-						range.clearStyles();
-					}
-				}
-				result.set(r);
-			}
-		});
-
-		return result.get();
+		return src.paste(dest, true);
 	}
-	private static Range[] clip(Range src, Range dest) {
-		List<Range> rs = new ArrayList<Range>(2);
-		Sheet sheet = src.getSheet();
-//		int sx1 = src.getColumn();
-//		int sy1 = src.getRow();
-//		int sx2 = src.getLastColumn();
-//		int sy2 = src.getLastRow();
-//		
-//		int dx1 = src.getColumn();
-//		int dy1 = src.getRow();
-//		int dx2 = src.getLastColumn();
-//		int dy2 = src.getLastRow();
-//		
-//		if(sy1>dy2 || sy2<dy1 || sx1 > dx1 || sx2<dx1){
-//			//not overlap
-//			rs.add(src);
-//		}else if((sy1>dy1 && sx1>dy1) && (sy2<dy1 && sx2<dx2)){
-//			//fully contains
-//			//not thing
-//		}else{
-//			if(sy1>dy1){
-//				rs.add(Ranges.range(src.getSheet(),sy1,sx1,dy1-1,sx2));
-//			}
-//			
-//		}
-		//TODO algorithm to do clip the rect
-		rs.add(src);
-		return rs.toArray(new Range[rs.size()]);
-	}
+	
+	
 
 	/**
 	 * Paste data and style from src to destination

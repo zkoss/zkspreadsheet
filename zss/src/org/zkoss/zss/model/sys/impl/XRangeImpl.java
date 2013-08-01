@@ -835,16 +835,53 @@ public class XRangeImpl implements XRange {
 			}
 		}
 	}
+	
 	@Override
 	public XRange copy(XRange dstRange) {
+		return copy(dstRange,false);
+	}
+	
+	@Override
+	public XRange copy(XRange dstRange, boolean cut) {
 		final XSheet[] sheets = getLockSheets(dstRange); //enforce lock sequence
 		synchronized(sheets[0]) { //enforce lock sequence
 			synchronized(sheets[1]) {
-				final Ref ref = paste0(dstRange, XRange.PASTE_ALL, XRange.PASTEOP_NONE, false, false);
-				return ref == null ? null : new XRangeImpl(ref, BookHelper.getSheet(_sheet, ref.getOwnerSheet()));
+				XRange pasteRange = copy0(dstRange);
+				if(!cut) {
+					return pasteRange;
+				}
+				
+				Ref srcRef = _refs.iterator().next();
+				final Ref dstRef = ((XRangeImpl)pasteRange).getRefs().iterator().next();
+				OverlapState state = getOverlapState(dstRef, srcRef);
+				
+				if(state == OverlapState.INCLUDED_OUTSIDE || state == OverlapState.INCLUDED_INSIDE) {
+					return pasteRange;
+				}
+				
+				List<Ref> areas = removeIntersect(dstRef, srcRef);
+				if(areas.isEmpty()) { // no overlap, clear all source
+					clearContents();
+					setStyle(null);
+					unMerge();
+				} else { // clear area contents
+					for(Ref area : areas) {
+						XRange range = new XRangeImpl(area, BookHelper.getSheet(_sheet, area.getOwnerSheet()));
+						range.clearContents();
+						range.setStyle(null);
+						range.unMerge();
+					}
+				}
+				return pasteRange;
 			}
 		}
 	}
+
+	private XRange copy0(XRange dstRange) {
+		final Ref ref = paste0(dstRange, XRange.PASTE_ALL, XRange.PASTEOP_NONE, false, false);
+		return ref == null ? null : new XRangeImpl(ref, BookHelper.getSheet(_sheet, ref.getOwnerSheet()));
+	}
+	
 	private Ref paste0(XRange dstRange, int pasteType, int pasteOp, boolean skipBlanks, boolean transpose) {
 		if (_refs != null && !_refs.isEmpty() && !((XRangeImpl)dstRange).getRefs().isEmpty()) {
 			//check if follow the copy rule
@@ -858,9 +895,14 @@ public class XRangeImpl implements XRange {
 			int srcRowCount = ref1.getRowCount();
 			int srcColCount = ref1.getColumnCount();
 			final Ref dstRef = ((XRangeImpl)dstRange).getRefs().iterator().next();	// destination reference
-
-			if(transpose && isOverlapping(ref1, dstRef)) { // transpose paste when cell is overlap
-				throw new IllegalOpArgumentException("Cannot transpose paste to overlapped range");
+			
+			if(transpose) { // transpose paste on overlap area is a illegal operation
+				final int dstRightCol = srcColCount > dstRef.getColumnCount() ? dstRef.getLeftCol() + srcColCount - 1 : dstRef.getRightCol();
+				final int dstBottomRow = srcRowCount > dstRef.getRowCount() ? dstRef.getBottomRow() + srcRowCount - 1 : dstRef.getBottomRow();
+				final Ref extendedDstRef = ((XRangeImpl) XRanges.range(dstRange.getSheet(), dstRef.getTopRow(), dstRef.getLeftCol(), dstBottomRow, dstRightCol)).getRefs().iterator().next();
+				if(getOverlapState(ref1, extendedDstRef) != OverlapState.NOT_OVERLAP) {
+					throw new IllegalOpArgumentException("Cannot transpose paste to overlapped range");
+				}
 			}
 			
 			final Set<Ref> toEval = new HashSet<Ref>();
@@ -915,33 +957,168 @@ public class XRangeImpl implements XRange {
 		return null;
 	}
 	
-	private boolean isOverlapping(Ref ref1, Ref ref2) {
+	public static enum OverlapState {
+		NOT_OVERLAP,ON_RIGHT_BOTTOM, ON_LEFT_BOTTOM, ON_LEFT_TOP, ON_RIGHT_TOP, INCLUDED_INSIDE, INCLUDED_OUTSIDE,
+		ON_TOP, ON_BOTTOM, ON_RIGHT, ON_LEFT;
+	}
+	
+	// is cell (row,col) is inside the ref area?
+	private boolean isInside(Ref ref, int row, int col) {
+		return row >= ref.getTopRow() && row <= ref.getBottomRow() && col >= ref.getLeftCol() && col <= ref.getRightCol();
+	}
+
+	public OverlapState getOverlapState(Ref ref1, Ref ref2) {
 		
-		final int ref1_LeftCol = ref1.getLeftCol();
-		final int ref1_RightCol = ref1.getRightCol();
-		final int ref1_TopRow = ref1.getTopRow();
-		final int ref1_BottomRow = ref1.getBottomRow();
+		if(ref1.getOwnerSheet() != ref2.getOwnerSheet()) {
+			return OverlapState.NOT_OVERLAP; // not the same sheet
+		}
 		
-		final int ref2_LeftCol = ref2.getLeftCol();
-		final int ref2_RightCol = ref2_LeftCol + ref1.getColumnCount() - 1;
-		final int ref2_TopRow = ref2.getTopRow();
-		final int ref2_BottomRow = ref2_TopRow + ref1.getRowCount() - 1;
+		final int ref1_Height = ref1.getRowCount();
+		final int ref1_Width = ref1.getColumnCount();
+		final int ref2_Height = ref2.getRowCount();
+		final int ref2_Width = ref2.getColumnCount();
 		
-		// row check:
-		// 1. ref2 top row is between ref1 top row and bottom row
-		// 2. ref2 bottom row is between ref1 top row and bottom row
-		if((ref2_TopRow >= ref1_TopRow && ref2_TopRow <= ref1_BottomRow ) || (ref2_BottomRow >= ref1_TopRow && ref2_BottomRow <= ref1_BottomRow)) {
-			// col check:
-			// 1. ref2 left col is between ref1 left col and right col
-			// 2. ref2 right col is between ref1 left col and right col
-			if((ref2_LeftCol >= ref1_LeftCol && ref2_LeftCol <= ref1_RightCol) || (ref2_RightCol >= ref1_LeftCol && ref2_RightCol <= ref1_RightCol)) {
-				return true;
+		// if ref2 is bigger than ref1, pass ref argument reversely.
+		if(ref2_Height > ref1_Height && ref2_Width > ref1_Width) {
+			if(getOverlapState(ref2, ref1) == OverlapState.INCLUDED_INSIDE) {
+				return OverlapState.INCLUDED_OUTSIDE;
+			}
+		} else {
+			
+			final boolean topLeftInRef = isInside(ref1, ref2.getTopRow(), ref2.getLeftCol());
+			final boolean topRightInRef = isInside(ref1, ref2.getTopRow(), ref2.getRightCol());
+			final boolean bottomLeftInRef = isInside(ref1, ref2.getBottomRow(), ref2.getLeftCol());
+			final boolean bottomRightInRef = isInside(ref1, ref2.getBottomRow(), ref2.getRightCol());
+			
+			// if the diagonal are inside, it will be the included case.
+			if(topLeftInRef && bottomRightInRef) {
+				return OverlapState.INCLUDED_INSIDE;
+			}
+			
+			// if two points inside, they will be first four case.
+			// then only one point inside, they will be last four case. 
+			if(bottomRightInRef && topRightInRef) {
+				return OverlapState.ON_LEFT; 
+			} else if(bottomLeftInRef && topLeftInRef) {
+				return OverlapState.ON_RIGHT;
+			} else if(topRightInRef && topLeftInRef) {
+				return OverlapState.ON_BOTTOM;
+			} else if(bottomRightInRef && bottomLeftInRef) {
+				return OverlapState.ON_TOP;
+			} else if (topLeftInRef) {
+				return OverlapState.ON_RIGHT_BOTTOM; // right bottom
+			} else if(topRightInRef) {
+				return OverlapState.ON_LEFT_BOTTOM; // left bottom
+			} else if(bottomLeftInRef) {
+				return OverlapState.ON_RIGHT_TOP; // right top
+			} else if(bottomRightInRef) {
+				return OverlapState.ON_LEFT_TOP; // left top
 			}
 		}
 		
-		return false;
+		return OverlapState.NOT_OVERLAP; // default is not overlap
 		
 	}
+	
+	/**
+	 * get the intersection of a & b
+	 * assume a and b are in the same sheet
+	 * @return a intersection ref area (null if not overlap or unsupported case)
+	 */
+	public Ref intersect(Ref a, Ref b) {
+		
+		// get overlap state
+		final OverlapState result = getOverlapState(a, b);
+		
+		final int aLeftCol = a.getLeftCol();
+		final int aRightCol = a.getRightCol();
+		final int aTopRow = a.getTopRow();
+		final int aBottomRow = a.getBottomRow();
+		
+		final int bLeftCol = b.getLeftCol();
+		final int bRightCol = b.getRightCol();
+		final int bTopRow = b.getTopRow();
+		final int bBottomRow = b.getBottomRow();
+		
+		switch(result) {
+			case ON_RIGHT_BOTTOM: // right bottom
+				return new AreaRefImpl(bTopRow, bLeftCol, aBottomRow, aRightCol, a.getOwnerSheet());
+			case ON_LEFT_BOTTOM: // left bottom
+				return new AreaRefImpl(bTopRow, aLeftCol, aBottomRow, bRightCol, a.getOwnerSheet());
+			case ON_LEFT_TOP: // left top
+				return new AreaRefImpl(aTopRow, aLeftCol, bBottomRow, bRightCol, a.getOwnerSheet());
+			case ON_RIGHT_TOP: // right top
+				return new AreaRefImpl(aTopRow, bLeftCol, bBottomRow, aRightCol, a.getOwnerSheet());
+			case INCLUDED_INSIDE: // ref2 inside ref1
+				return b;
+			case INCLUDED_OUTSIDE: // ref1 inside ref2
+				return a;
+			default: // not overlap, right, bottom, left..other case
+				return null;
+		}
+	}
+	
+	/**
+	 * remove "a intersect b" from "b" and split "b" into areas list  .
+	 * assume a and b are in the same sheet.
+	 * ignore "included" case.
+	 * @return a list of complement areas
+	 */
+	public List<Ref> removeIntersect(Ref a, Ref b) {
+		
+		final OverlapState result = getOverlapState(a, b);
+		
+		final int aLeftCol = a.getLeftCol();
+		final int aRightCol = a.getRightCol();
+		final int aTopRow = a.getTopRow();
+		final int aBottomRow = a.getBottomRow();
+		
+		final int bLeftCol = b.getLeftCol();
+		final int bRightCol = b.getRightCol();
+		final int bTopRow = b.getTopRow();
+		final int bBottomRow = b.getBottomRow();
+		
+		List<Ref> resultSet = new ArrayList<Ref>(); // add ref in counter-clockwise
+		
+		switch(result) {
+			case ON_RIGHT_BOTTOM: // right bottom
+				resultSet.add(new AreaRefImpl(bTopRow, aRightCol+1, aBottomRow, bRightCol, b.getOwnerSheet())); // Q1
+				resultSet.add(new AreaRefImpl(aBottomRow+1, bLeftCol, bBottomRow, aRightCol, b.getOwnerSheet())); // Q3
+				resultSet.add(new AreaRefImpl(aBottomRow+1, aRightCol+1, bBottomRow, bRightCol, b.getOwnerSheet())); // Q4
+				break;
+			case ON_LEFT_BOTTOM: // left bottom
+				resultSet.add(new AreaRefImpl(bTopRow, bLeftCol, aBottomRow, aLeftCol-1, b.getOwnerSheet())); // Q2
+				resultSet.add(new AreaRefImpl(aBottomRow+1, bLeftCol, bBottomRow, aLeftCol-1, b.getOwnerSheet())); // Q3 
+				resultSet.add(new AreaRefImpl(aBottomRow+1, aLeftCol, bBottomRow, bRightCol, b.getOwnerSheet())); // Q4
+				break;
+			case ON_LEFT_TOP: // left top
+				resultSet.add(new AreaRefImpl(bTopRow, aLeftCol, aTopRow-1, bRightCol, b.getOwnerSheet())); // Q1
+				resultSet.add(new AreaRefImpl(bTopRow, bLeftCol, aTopRow-1, aLeftCol-1, b.getOwnerSheet())); // Q2
+				resultSet.add(new AreaRefImpl(aTopRow, bLeftCol, bBottomRow, aLeftCol-1, b.getOwnerSheet())); // Q3
+				break;
+			case ON_RIGHT_TOP: // right top
+				resultSet.add(new AreaRefImpl(bTopRow, bRightCol, aTopRow-1, bRightCol, b.getOwnerSheet())); // Q1
+				resultSet.add(new AreaRefImpl(bTopRow, bLeftCol, aTopRow-1, aRightCol, b.getOwnerSheet())); // Q2
+				resultSet.add(new AreaRefImpl(aTopRow, aRightCol+1, bBottomRow, bRightCol, b.getOwnerSheet())); // Q4
+				break;
+			case ON_RIGHT:
+				resultSet.add(new AreaRefImpl(aTopRow, aRightCol+1, aBottomRow, bRightCol, b.getOwnerSheet()));
+				break;
+			case ON_LEFT:
+				resultSet.add(new AreaRefImpl(aTopRow, bLeftCol, aBottomRow, aLeftCol-1, b.getOwnerSheet()));
+				break;
+			case ON_TOP:
+				resultSet.add(new AreaRefImpl(bTopRow, bLeftCol, aTopRow-1, bRightCol, b.getOwnerSheet()));
+				break;
+			case ON_BOTTOM:
+				resultSet.add(new AreaRefImpl(aBottomRow+1, aLeftCol, bBottomRow, aRightCol, b.getOwnerSheet()));
+				break;
+			default:
+				break; // do nothing
+		}
+		
+		return resultSet;
+	}	
 
 	@Override
 	public void borderAround(BorderStyle lineStyle, String color) {
@@ -1190,41 +1367,38 @@ public class XRangeImpl implements XRange {
 		final int lCol = srcRef.getLeftCol();
 		final int bRow = srcRef.getBottomRow();
 		final int rCol = srcRef.getRightCol();
+		final int dstTopRow = dstRef.getTopRow();
+		final int dstBottomRow = dstRef.getBottomRow();
+		final int dstLeftCol = dstRef.getLeftCol();
+		final int dstRightCol = dstRef.getRightCol();
 		final RefSheet dstRefsheet = dstRef.getOwnerSheet();
 		final XSheet srcSheet = BookHelper.getSheet(_sheet, srcRef.getOwnerSheet());
 		final XSheet dstSheet = BookHelper.getSheet(_sheet, dstRefsheet);
 		final Set<Ref> toEval = info.getToEval();
 		final Set<Ref> affected = info.getAffected();
 		final List<MergeChange> mergeChanges = info.getMergeChanges();
-		if (!transpose) {
-			/**
-			 * ZSS-315
-			 * handle a special case: source is a single cell and destination is a single merged cell, 
-			 * copy source to destination then merge it.
-			 */
-			// source is a single cell
-			if(srcRef.getRowCount() == 1 && srcRef.getColumnCount() == 1) {
-				
-				int dstTopRow = dstRef.getTopRow();
-				int dstBottomRow = dstRef.getBottomRow();
-				int dstLeftCol = dstRef.getLeftCol();
-				int dstRightCol = dstRef.getRightCol();				
-				final CellRangeAddress dstaddr = ((SheetCtrl)dstSheet).getMerged(dstTopRow, dstLeftCol);
-			
-				// Check whether destination is a single merged cell?
-				if(dstaddr != null && dstBottomRow == dstaddr.getLastRow() && dstRightCol == dstaddr.getLastColumn()) {
-					// copy source to merged cell
-					final Cell cell = BookHelper.getCell(srcSheet, srcRef.getTopRow(), srcRef.getLeftCol()); // retrieve cell
-					final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, dstSheet, dstTopRow, dstLeftCol, pasteType, pasteOp, transpose);
-					BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
-					// merge cell (because cell always unmerge in BookHelper.copyCell)
-					final ChangeInfo changeInfo1 = BookHelper.merge(dstSheet, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol, false);
-					BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo1);
-
-					return pasteRef;		
-				}
+		
+		/**
+		 * ZSS-315
+		 * handle a special case: source is a single cell and destination is a single merged cell, 
+		 * copy source to destination then merge it.
+		 */
+		if(srcRef.getRowCount() == 1 && srcRef.getColumnCount() == 1) { // source is a single cell
+			final CellRangeAddress dstaddr = ((SheetCtrl)dstSheet).getMerged(dstTopRow, dstLeftCol);
+			// Check whether destination is a single merged cell?
+			if(dstaddr != null && dstBottomRow == dstaddr.getLastRow() && dstRightCol == dstaddr.getLastColumn()) {
+				// copy source to merged cell
+				final Cell cell = BookHelper.getCell(srcSheet, srcRef.getTopRow(), srcRef.getLeftCol()); // retrieve cell
+				final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, dstSheet, dstTopRow, dstLeftCol, pasteType, pasteOp, transpose);
+				BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
+				// merge cell (because cell always unmerge in BookHelper.copyCell)
+				final ChangeInfo changeInfo1 = BookHelper.merge(dstSheet, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol, false);
+				BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo1);
+				return pasteRef;
 			}
-			
+		}
+		
+		if (!transpose) {
 			/**
 			 * Issue: ZSS-300
 			 * Problem: Overlapping copy get wrong result

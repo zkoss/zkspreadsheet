@@ -271,6 +271,11 @@ public interface Range {
 	public Range paste(Range dest);
 	
 	/**
+	 * Cut and paste to destination
+	 */
+	public Range paste(Range dstRange, boolean cut);	
+	
+	/**
 	 * Pastes to destination
 	 * @param dest the destination
 	 * @param type the paste type

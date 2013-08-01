@@ -172,6 +172,13 @@ public interface XRange {
 	 * @param txt the string input by the end user.
 	 */
 	public void setEditText(String txt);
+	
+	/**
+	 * cut the selected range and paste to destination range.
+	 * @param dstRange
+	 * @return the real destination range.
+	 */
+	public XRange copy(XRange dstRange, boolean cut);
 
 	/**
 	 * Copy data from this range to the specified destination range.

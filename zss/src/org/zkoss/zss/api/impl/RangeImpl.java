@@ -204,10 +204,16 @@ public class RangeImpl implements Range{
 //	public boolean isAnyCellProtected(){
 //		return range.isAnyCellProtected();
 //	}
+	
+	public Range paste(Range dest, boolean cut) {
+		XRange r = range.copy(((RangeImpl)dest).getNative(), cut);
+		return new RangeImpl(r, dest.getSheet());
+	}
 
 	/* short-cut for pasteSpecial, it is original Range.copy*/
-	public Range paste(Range dest) {		
-		return pasteSpecial(dest,PasteType.ALL,PasteOperation.NONE,false,false);
+	public Range paste(Range dest) {
+		XRange r = range.copy(((RangeImpl)dest).getNative());
+		return new RangeImpl(r, dest.getSheet());
 	}
 	
 	public Range pasteSpecial(Range dest,PasteType type,PasteOperation op,boolean skipBlanks,boolean transpose) {
