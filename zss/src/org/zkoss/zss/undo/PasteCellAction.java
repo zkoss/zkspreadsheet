@@ -106,7 +106,6 @@ public class PasteCellAction extends AbstractCellDataStyleAction {
 			new Rect(_pastedRange.getColumn(),_pastedRange.getRow(),_pastedRange.getLastColumn(),_pastedRange.getLastRow());
 	}
 	
-	//TODO handle merge, unmerge
 	protected void applyAction() {
 		Range src = Ranges.range(_sheet, _row, _column, _lastRow, _lastColumn);
 		Range dest = Ranges.range(_destSheet, _destRow, _destColumn, _destLastRow, _destLastColumn);

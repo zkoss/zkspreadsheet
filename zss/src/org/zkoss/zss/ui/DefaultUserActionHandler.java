@@ -51,6 +51,7 @@ import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.event.SheetSelectEvent;
+import org.zkoss.zss.undo.AutoFillCellAction;
 import org.zkoss.zss.undo.CellBorderAction;
 import org.zkoss.zss.undo.CutCellAction;
 import org.zkoss.zss.undo.DeleteCellAction;
@@ -1750,8 +1751,14 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			showProtectMessage();
 			return true;
 		}
-		
-		CellOperationUtil.autoFill(src,dest, AutoFillType.DEFAULT);	
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.doAction(new AutoFillCellAction(Labels.getLabel("zss.undo.fillCell"),
+					sheet, original.getTop(),original.getLeft(),original.getBottom(),original.getRight(), 
+					sheet, selection.getTop(),selection.getLeft(),selection.getBottom(),selection.getRight(),AutoFillType.DEFAULT));
+		}else{
+			CellOperationUtil.autoFill(src,dest, AutoFillType.DEFAULT);
+		}
 		
 		return true;
 	}

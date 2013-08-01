@@ -4,6 +4,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-338 When share book, could the friend focus shows user name of another editor
   ZSS-353 Support head tag in JSP/JSF
   ZSS-388 Support to freeze row of column of sheet
+  ZSS-394 Support undo/redo of cell operation
 
 *Bug
   ZSS-224 text overflow doesn't work correctly

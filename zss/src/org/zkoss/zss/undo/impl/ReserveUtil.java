@@ -60,14 +60,15 @@ public class ReserveUtil {
 		
 		Rect[] mergeInfo = null;
 		
-		int rowStart=-1;
-		int rowEnd=-1;
+		int rowStart,rowEnd;
+		rowStart=rowEnd=-1;
+		
 		Map<Integer,ReservedRow> reservedRows = null;
 		
-		Range r = Ranges.range(sheet, row, column, lastRow, lastColumn);
-		if(r.isWholeRow() && r.isWholeColumn()){
-			throw new IllegalOpArgumentException("doesn't support to do this when select all");
-		}
+//		Range r = Ranges.range(sheet, row, column, lastRow, lastColumn);
+//		if(r.isWholeRow() && r.isWholeColumn()){
+//			throw new IllegalOpArgumentException("doesn't support to reserve data when select all");
+//		}
 		
 		rowStart = sheet.getFirstRow();
 		rowEnd = sheet.getLastRow();
@@ -83,22 +84,22 @@ public class ReserveUtil {
 			reservedRows = new HashMap<Integer, ReservedRow>(rowEnd-rowStart+1);
 			for(int i=rowStart;i<=rowEnd;i++){
 				
-				int colStart,colEnd;
-				colStart = sheet.getFirstColumn(i);//Math.max(_sheet.getFirstColumn(i),r.getColumn());
-				colEnd = sheet.getLastColumn(i);//Math.min(_sheet.getLastColumn(i),r.getLastColumn());//-1 if no such col
+				int first,last;
+				first = sheet.getFirstColumn(i);//Math.max(_sheet.getFirstColumn(i),r.getColumn());
+				last = sheet.getLastColumn(i);//Math.min(_sheet.getLastColumn(i),r.getLastColumn());//-1 if no such col
 				
-				if(lastColumn<colStart || column>colEnd){
+				if(lastColumn<first || column>last){
 					//not overlap
-					colStart = colEnd = -1;
+					first = last = -1;
 				}else{
-					colStart = Math.max(colStart,column);
-					colEnd = Math.min(colEnd,lastColumn);
+					first = Math.max(first,column);
+					last = Math.min(last,lastColumn);
 				}
 				
-				ReservedRow reservedRow = new ReservedRow(/*i,*/colStart,colEnd);
+				ReservedRow reservedRow = new ReservedRow(/*i,*/first,last);
 				reservedRows.put(i, reservedRow);
-				if(colStart>=0 && colEnd>=0){
-					for(int j=colStart;j<=colEnd;j++){
+				if(first>=0 && last>=0){
+					for(int j=first;j<=last;j++){
 
 						Range range = Ranges.range(sheet,i,j);
 						ReservedCell cell = new ReservedCell(/*i, j*/);
@@ -119,7 +120,7 @@ public class ReserveUtil {
 			}
 		}
 		ReservedResult result = new ReservedResult(sheet,row,column,lastRow,lastColumn,reserveType);
-		result.setRowInfo(reservedRows, rowStart, rowEnd);
+		result.setRowsInfo(reservedRows, rowStart, rowEnd);
 		
 		if(reserveMerge){
 			result.setMergeInfo(mergeInfo = reserveMergeInfo(sheet,row,column,lastRow,lastColumn));
@@ -195,7 +196,7 @@ public class ReserveUtil {
 		public void setMergeInfo(Rect[] mergeInfo) {
 			this._mergeInfo = mergeInfo;
 		}
-		public void setRowInfo(Map<Integer,ReservedRow> rows, int rowStart, int rowEnd){
+		public void setRowsInfo(Map<Integer,ReservedRow> rows, int rowStart,int rowEnd){
 			_rows = rows;
 			_rowStart = rowStart;
 			_rowEnd = rowEnd;
@@ -212,11 +213,7 @@ public class ReserveUtil {
 		}
 
 		public void restore(){
-			int row = getRow();
-			int column = getColumn();
-			int lastRow = getLastRow();
-			int lastColumn = getLastColumn();
-			Sheet sheet = getSheet();
+			Range r;
 			boolean reserveContent = false;
 			boolean reserveStyle = false;
 			boolean reserveMerge = false;
@@ -232,20 +229,21 @@ public class ReserveUtil {
 			
 			Rect[] mergeInfo = getMergeInfo(); 
 			
-			//
+			//clear current merge info, we will restore it later
 			if(reserveMerge){
 				//clear the merge first
-				Rect[] curMergeInfo = reserveMergeInfo(sheet,row,column,lastRow,lastColumn);
+				Rect[] curMergeInfo = reserveMergeInfo(_sheet,_row,_column,_lastRow,_lastColumn);
 				if(curMergeInfo!=null){
 					for(Rect rect:curMergeInfo){
-						Range r = Ranges.range(sheet,rect);
+						r = Ranges.range(_sheet,rect);
 						r.unmerge();
 					}
 				}
 			}
 			
-			//clear content before store back
-			Range r = Ranges.range(sheet,row,column,lastRow,lastColumn);
+			//clear content, and we will restore it back later.
+			//following, it just clear whole area , it waste time because of reservation area will fill back. 
+			r = Ranges.range(_sheet,_row,_column,_lastRow,_lastColumn);
 			if(reserveContent){
 				r.clearContents();
 			}
@@ -253,6 +251,8 @@ public class ReserveUtil {
 				r.clearStyles();
 			}
 			
+			
+			//start to restore
 			if(_rowStart>=0 && _rowEnd>=0 && (reserveContent || reserveStyle)){
 				for(int i=_rowStart;i<=_rowEnd;i++){
 					ReservedRow reservedRow = _rows.get(i);
@@ -261,30 +261,26 @@ public class ReserveUtil {
 					if(colStart>=0 && colEnd>=0){
 						for(int j=colStart;j<=colEnd;j++){
 							ReservedCell reservedCell = reservedRow.getCell(j);
-							Range range = Ranges.range(_sheet,i,j);
+							r = Ranges.range(_sheet,i,j);
 							if(reserveContent){
 								ReservedCellContent data = reservedCell.getContent();
-								data.apply(range);
+								data.apply(r);
 							}
 							if(reserveStyle){
 								CellStyle style = reservedCell.getStyle();
-								range.setCellStyle(style);
+								r.setCellStyle(style);
 							}
 						}
 					}
 				}
-				
-				//clear content not in reserved range
 			}
 
-			
-			
-			
+			//restore merge area
 			if(reserveMerge){
 				//restore merge
 				if(mergeInfo!=null){				
 					for(Rect rect:mergeInfo){
-						r = Ranges.range(sheet,rect);
+						r = Ranges.range(_sheet,rect);
 						r.merge(false);
 					}
 				}

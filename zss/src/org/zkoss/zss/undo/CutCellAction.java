@@ -24,12 +24,9 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.undo.impl.Abstract2DCellDataStyleAction;
-import org.zkoss.zss.undo.impl.AbstractUndoableAction;
-import org.zkoss.zss.undo.impl.ReserveUtil;
-import org.zkoss.zss.undo.impl.ReserveUtil.ReservedResult;
 
 /**
- * This undoable action doesn't handle merge cell when undo redo yet
+ * 
  * @author dennis
  * 
  */

@@ -150,10 +150,6 @@ public abstract class Abstract2DCellDataStyleAction extends AbstractUndoableActi
 	}
 	
 	@Override
-	public Rect getUndoSelection(){
-		return new Rect(_column,_row,_lastColumn,_lastRow);
-	}
-	@Override
 	public Rect getRedoSelection(){
 		return new Rect(_destColumn,_destRow,_destLastColumn,_destLastRow);
 	}
