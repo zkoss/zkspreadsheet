@@ -1067,7 +1067,7 @@ public class XRangeImpl implements XRange {
 	public List<Ref> removeIntersect(Ref a, Ref b) {
 		
 		final OverlapState result = getOverlapState(a, b);
-		
+
 		final int aLeftCol = a.getLeftCol();
 		final int aRightCol = a.getRightCol();
 		final int aTopRow = a.getTopRow();
@@ -1102,16 +1102,16 @@ public class XRangeImpl implements XRange {
 				resultSet.add(new AreaRefImpl(aTopRow, aRightCol+1, bBottomRow, bRightCol, b.getOwnerSheet())); // Q4
 				break;
 			case ON_RIGHT:
-				resultSet.add(new AreaRefImpl(aTopRow, aRightCol+1, aBottomRow, bRightCol, b.getOwnerSheet()));
+				resultSet.add(new AreaRefImpl(bTopRow, aRightCol+1, bBottomRow, bRightCol, b.getOwnerSheet()));
 				break;
 			case ON_LEFT:
-				resultSet.add(new AreaRefImpl(aTopRow, bLeftCol, aBottomRow, aLeftCol-1, b.getOwnerSheet()));
+				resultSet.add(new AreaRefImpl(bTopRow, bLeftCol, bBottomRow, aLeftCol-1, b.getOwnerSheet()));
 				break;
 			case ON_TOP:
 				resultSet.add(new AreaRefImpl(bTopRow, bLeftCol, aTopRow-1, bRightCol, b.getOwnerSheet()));
 				break;
 			case ON_BOTTOM:
-				resultSet.add(new AreaRefImpl(aBottomRow+1, aLeftCol, bBottomRow, aRightCol, b.getOwnerSheet()));
+				resultSet.add(new AreaRefImpl(aBottomRow+1, bLeftCol, bBottomRow, bRightCol, b.getOwnerSheet()));
 				break;
 			default:
 				break; // do nothing
