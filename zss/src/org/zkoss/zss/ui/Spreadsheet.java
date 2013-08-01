@@ -2259,8 +2259,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onContentChange(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
+			
+			// ZSS-393: update cell could be not the current selected sheet.
+			// e.g. co-editing, cut from other sheet... etc.
+			if(sheet == null) { // if the specific sheet isn't existed in this book, just skip.
 				return;
+			}
+			
 			final int left = rng.getLeftCol();
 			final int top = rng.getTopRow();
 			final int right = rng.getRightCol();
