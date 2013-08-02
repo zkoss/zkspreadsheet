@@ -47,6 +47,7 @@ import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Chart;
+import org.zkoss.poi.ss.usermodel.Drawing;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.PivotTable;
 import org.zkoss.poi.ss.usermodel.Row;
@@ -1253,5 +1254,12 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
 				}
 			}
 		}
+	}
+	
+	// ZSS-358: remove drawing part
+	@Override
+	public void removeDrawingPatriarch(Drawing drawing) {
+		removeRelation((XSSFDrawing)drawing, true);
+		worksheet.unsetDrawing();
 	}
 }	

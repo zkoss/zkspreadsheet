@@ -381,11 +381,11 @@ public final class BookHelper {
 		}
 	}
 
-	public static void notifyPictureDelete(Ref ref, Picture picture) {
+	public static void notifyPictureDelete(Ref ref, String pictureId) {
 		if (ref != null) {
 			final RefSheet refSheet = ref.getOwnerSheet();
 			final RefBook refBook = refSheet.getOwnerBook();
-			refBook.publish(new SSDataEvent(SSDataEvent.ON_PICTURE_DELETE, ref, picture));
+			refBook.publish(new SSDataEvent(SSDataEvent.ON_PICTURE_DELETE, ref, (Object)pictureId));
 		}
 	}
 
