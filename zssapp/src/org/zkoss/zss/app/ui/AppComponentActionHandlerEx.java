@@ -14,18 +14,18 @@ package org.zkoss.zss.app.ui;
 import java.util.Set;
 
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ui.DefaultUserAction;
-import org.zkoss.zss.ui.DefaultUserActionHandler;
+import org.zkoss.zss.ui.sys.DefaultComponentAction;
+import org.zkoss.zssex.ui.sys.DefaultComponentActionManager;
 /**
- * Application handler for ose
+ * Application handler for EE
  * @author dennis
  *
  */
-public class AppUserActionHandler extends DefaultUserActionHandler  {
+public class AppComponentActionHandlerEx extends DefaultComponentActionManager  {
 		private static final long serialVersionUID = 1L;
 		AppCtrl appCtrl;
 		
-		public AppUserActionHandler(AppCtrl appCtrl){
+		public AppComponentActionHandlerEx(AppCtrl appCtrl){
 			this.appCtrl = appCtrl;
 		}
 		
@@ -33,28 +33,28 @@ public class AppUserActionHandler extends DefaultUserActionHandler  {
 		@Override
 		public Set<String> getSupportedUserAction(Sheet sheet) {
 			Set<String> actions = super.getSupportedUserAction(sheet);
-			actions.add(DefaultUserAction.NEW_BOOK.getAction());
+			actions.add(DefaultComponentAction.NEW_BOOK.getAction());
 			if(sheet!=null){
 				boolean readonly = UiUtil.isRepositoryReadonly();
 				if(!readonly){
-					actions.add(DefaultUserAction.SAVE_BOOK.getAction());
+					actions.add(DefaultComponentAction.SAVE_BOOK.getAction());
 				}
-				actions.add(DefaultUserAction.EXPORT_PDF.getAction());
+				actions.add(DefaultComponentAction.EXPORT_PDF.getAction());
 			}
 			return actions;
 		}
 		
 		@Override
 		protected boolean dispatchAction(String action) {
-			DefaultUserAction dua = DefaultUserAction.getBy(action);
+			DefaultComponentAction dua = DefaultComponentAction.getBy(action);
 
-			if (DefaultUserAction.NEW_BOOK.equals(dua)) {
+			if (DefaultComponentAction.NEW_BOOK.equals(dua)) {
 				appCtrl.doOpenNewBook();
 				return true;
-			} else if (DefaultUserAction.SAVE_BOOK.equals(dua)) {
+			} else if (DefaultComponentAction.SAVE_BOOK.equals(dua)) {
 				appCtrl.doSaveBook(false);
 				return true;
-			} else if (DefaultUserAction.EXPORT_PDF.equals(dua)) {
+			} else if (DefaultComponentAction.EXPORT_PDF.equals(dua)) {
 				appCtrl.doExportPdf();
 				return true;
 			} 

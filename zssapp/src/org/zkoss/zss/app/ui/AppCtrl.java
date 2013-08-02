@@ -39,11 +39,12 @@ import org.zkoss.zss.app.repository.impl.BookUtil;
 import org.zkoss.zss.app.ui.dlg.DlgCallbackEvent;
 import org.zkoss.zss.app.ui.dlg.OpenManageBookCtrl;
 import org.zkoss.zss.app.ui.dlg.SaveBookAsCtrl;
-import org.zkoss.zss.ui.DefaultUserAction;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.UserActionHandler;
 import org.zkoss.zss.ui.Version;
+import org.zkoss.zss.ui.sys.ComponentActionManager;
+import org.zkoss.zss.ui.sys.DefaultComponentAction;
+import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zul.Filedownload;
 
 /**
@@ -71,23 +72,23 @@ public class AppCtrl extends CtrlBase<Component>{
 		comp.setAttribute(APPCOMP, comp);
 	}
 	
-	UserActionHandler createHandler(){
+	ComponentActionManager createHandler(){
 		if("EE".equals(Version.getEdition())){
 			try {
-				return (UserActionHandler) Classes.newInstanceByThread("org.zkoss.zss.app.ui.AppUserActionHandlerEx", new Class<?>[]{AppCtrl.class}, new Object[]{this});
+				return (ComponentActionManager) Classes.newInstanceByThread("org.zkoss.zss.app.ui.AppComponentActionHandlerEx", new Class<?>[]{AppCtrl.class}, new Object[]{this});
 			} catch (Exception e) {
 				log.warning(e.getMessage(),e);
 			}
 		}
-		return new AppUserActionHandler(this);
+		return new AppComponentActionManager(this);
 	}
 	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
-		
-		ss.setUserActionHandler(createHandler());
+		//TODO
+		((SpreadsheetCtrl)ss.getExtraCtrl()).setComponentActionHandler(createHandler());
 		
 		//load default open book from parameter
 		String bookName = null ;

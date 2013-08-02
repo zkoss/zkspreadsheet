@@ -1,4 +1,4 @@
-/* DefaultUserActionHandler.java
+/* DefaultComponentActionHandler.java
 
 {{IS_NOTE
 	Purpose:
@@ -14,7 +14,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
  */
-package org.zkoss.zss.ui;
+package org.zkoss.zss.ui.sys;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -44,13 +44,15 @@ import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ui.DefaultUserActionHandler.Clipboard.Type;
+import org.zkoss.zss.ui.Rect;
+import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.AuxActionEvent;
 import org.zkoss.zss.ui.event.CellSelectionAction;
 import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
 import org.zkoss.zss.ui.event.SheetSelectEvent;
+import org.zkoss.zss.ui.sys.DefaultComponentActionManager.Clipboard.Type;
 import org.zkoss.zss.undo.AutoFillCellAction;
 import org.zkoss.zss.undo.CellBorderAction;
 import org.zkoss.zss.undo.CutCellAction;
@@ -74,7 +76,7 @@ import org.zkoss.zul.Messagebox;
  * @author dennis
  * @since 3.0.0
  */
-public class DefaultUserActionHandler implements UserActionHandler {
+public class DefaultComponentActionManager implements ComponentActionManager {
 	
 	private static final long serialVersionUID = 1L;
 //	private static ThreadLocal<UserActionContext> _ctx = new ThreadLocal<UserActionContext>();
@@ -147,7 +149,7 @@ public class DefaultUserActionHandler implements UserActionHandler {
 	
 	protected boolean dispatchAction(String action) {
 		
-		DefaultUserAction dua = DefaultUserAction.getBy(action);
+		DefaultComponentAction dua = DefaultComponentAction.getBy(action);
 		if(dua==null){
 			return doCustom(action);
 		}
@@ -159,22 +161,22 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return doShowInsertPanel();
 		} else if (UserAction.FORMULA_PANEL.equals(dua)) {
 			return doShowFormulaPanel();
-		} else*/if (DefaultUserAction.CLOSE_BOOK.equals(dua)) {
+		} else*/if (DefaultComponentAction.CLOSE_BOOK.equals(dua)) {
 			return doCloseBook();
-		}else if (DefaultUserAction.ADD_SHEET.equals(dua)) {
+		}else if (DefaultComponentAction.ADD_SHEET.equals(dua)) {
 			return doAddSheet();
-		} else if (DefaultUserAction.DELETE_SHEET.equals(dua)) {
+		} else if (DefaultComponentAction.DELETE_SHEET.equals(dua)) {
 			return doDeleteSheet();
-		} else if (DefaultUserAction.RENAME_SHEET.equals(dua)) {
+		} else if (DefaultComponentAction.RENAME_SHEET.equals(dua)) {
 			String name = (String) getExtraData("name");
 			return doRenameSheet(name);
-		} else if (DefaultUserAction.MOVE_SHEET_LEFT.equals(dua)) {
+		} else if (DefaultComponentAction.MOVE_SHEET_LEFT.equals(dua)) {
 			return doMoveSheetLeft();
-		} else if (DefaultUserAction.MOVE_SHEET_RIGHT.equals(dua)) {
+		} else if (DefaultComponentAction.MOVE_SHEET_RIGHT.equals(dua)) {
 			return doMoveSheetRight();
-		} else if (DefaultUserAction.PROTECT_SHEET.equals(dua)) {
+		} else if (DefaultComponentAction.PROTECT_SHEET.equals(dua)) {
 			return doProtectSheet();
-		} else if (DefaultUserAction.GRIDLINES.equals(dua)) {
+		} else if (DefaultComponentAction.GRIDLINES.equals(dua)) {
 			return doGridlines();
 		} /*else if (UserAction.NEW_BOOK.equals(dua)) {
 			return doNewBook();
@@ -182,117 +184,117 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return doSaveBook();
 		} else if (UserAction.EXPORT_PDF.equals(dua)) {
 			return doExportPDF();
-		} */else if (DefaultUserAction.PASTE.equals(dua)) {
+		} */else if (DefaultComponentAction.PASTE.equals(dua)) {
 			return doPaste();
-		} else if (DefaultUserAction.PASTE_FORMULA.equals(dua)) {
+		} else if (DefaultComponentAction.PASTE_FORMULA.equals(dua)) {
 			return doPasteFormula();
-		} else if (DefaultUserAction.PASTE_VALUE.equals(dua)) {
+		} else if (DefaultComponentAction.PASTE_VALUE.equals(dua)) {
 			return doPasteValue();
-		} else if (DefaultUserAction.PASTE_ALL_EXPECT_BORDERS.equals(dua)) {
+		} else if (DefaultComponentAction.PASTE_ALL_EXPECT_BORDERS.equals(dua)) {
 			return doPasteAllExceptBorder();
-		} else if (DefaultUserAction.PASTE_TRANSPOSE.equals(dua)) {
+		} else if (DefaultComponentAction.PASTE_TRANSPOSE.equals(dua)) {
 			return doPasteTranspose();
 		} /*else if (UserAction.PASTE_SPECIAL.equals(dua)) {
 			return doPasteSpecial();
-		} */else if (DefaultUserAction.CUT.equals(dua)) {
+		} */else if (DefaultComponentAction.CUT.equals(dua)) {
 			return doCut();	
-		} else if (DefaultUserAction.COPY.equals(dua)) {
+		} else if (DefaultComponentAction.COPY.equals(dua)) {
 			return doCopy();
-		} else if (DefaultUserAction.FONT_FAMILY.equals(dua)) {
+		} else if (DefaultComponentAction.FONT_FAMILY.equals(dua)) {
 			String name = (String) getExtraData("name");
 			return doFontFamily(name);
-		} else if (DefaultUserAction.FONT_SIZE.equals(dua)) {
+		} else if (DefaultComponentAction.FONT_SIZE.equals(dua)) {
 			Integer fontSize = Integer.parseInt((String)getExtraData("size"));
 			return doFontSize(fontSize);
-		} else if (DefaultUserAction.FONT_BOLD.equals(dua)) {
+		} else if (DefaultComponentAction.FONT_BOLD.equals(dua)) {
 			return doFontBold();
-		} else if (DefaultUserAction.FONT_ITALIC.equals(dua)) { 
+		} else if (DefaultComponentAction.FONT_ITALIC.equals(dua)) { 
 			return doFontItalic();
-		} else if (DefaultUserAction.FONT_UNDERLINE.equals(dua)) {
+		} else if (DefaultComponentAction.FONT_UNDERLINE.equals(dua)) {
 			return doFontUnderline();
-		} else if (DefaultUserAction.FONT_STRIKE.equals(dua)) {
+		} else if (DefaultComponentAction.FONT_STRIKE.equals(dua)) {
 			return doFontStrikeout();
-		} else if (DefaultUserAction.BORDER.equals(dua)) {
+		} else if (DefaultComponentAction.BORDER.equals(dua)) {
 			return doBorder(getBorderColor());
-		} else if (DefaultUserAction.BORDER_BOTTOM.equals(dua)) {
+		} else if (DefaultComponentAction.BORDER_BOTTOM.equals(dua)) {
 			return doBorderBottom(getBorderColor());
-		} else if (DefaultUserAction.BORDER_TOP.equals(dua)) {
+		} else if (DefaultComponentAction.BORDER_TOP.equals(dua)) {
 			return doBoderTop(getBorderColor());
-		} else if (DefaultUserAction.BORDER_LEFT.equals(dua)) {
+		} else if (DefaultComponentAction.BORDER_LEFT.equals(dua)) {
 			return doBorderLeft(getBorderColor());
-		} else if (DefaultUserAction.BORDER_RIGHT.equals(dua)) {
+		} else if (DefaultComponentAction.BORDER_RIGHT.equals(dua)) {
 			return doBorderRight(getBorderColor());
-		} else if (DefaultUserAction.BORDER_NO.equals(dua)) {
+		} else if (DefaultComponentAction.BORDER_NO.equals(dua)) {
 			return doBorderNo(getBorderColor());
-		} else if (DefaultUserAction.BORDER_ALL.equals(dua)) {
+		} else if (DefaultComponentAction.BORDER_ALL.equals(dua)) {
 			return doBorderAll(getBorderColor());
-		} else if (DefaultUserAction.BORDER_OUTSIDE.equals(dua)) {
+		} else if (DefaultComponentAction.BORDER_OUTSIDE.equals(dua)) {
 			return doBorderOutside(getBorderColor());
-		} else if (DefaultUserAction.BORDER_INSIDE.equals(dua)) {
+		} else if (DefaultComponentAction.BORDER_INSIDE.equals(dua)) {
 			return doBorderInside(getBorderColor());
-		} else if (DefaultUserAction.BORDER_INSIDE_HORIZONTAL.equals(dua)) {
+		} else if (DefaultComponentAction.BORDER_INSIDE_HORIZONTAL.equals(dua)) {
 			return doBorderInsideHorizontal(getBorderColor());
-		} else if (DefaultUserAction.BORDER_INSIDE_VERTICAL.equals(dua)) {
+		} else if (DefaultComponentAction.BORDER_INSIDE_VERTICAL.equals(dua)) {
 			return doBorderInsideVertical(getBorderColor());
-		} else if (DefaultUserAction.FONT_COLOR.equals(dua)) {
+		} else if (DefaultComponentAction.FONT_COLOR.equals(dua)) {
 			return doFontColor(getFontColor());
-		} else if (DefaultUserAction.FILL_COLOR.equals(dua)) {
+		} else if (DefaultComponentAction.FILL_COLOR.equals(dua)) {
 			return doFillColor(getFillColor());
-		} else if (DefaultUserAction.VERTICAL_ALIGN_TOP.equals(dua)) {
+		} else if (DefaultComponentAction.VERTICAL_ALIGN_TOP.equals(dua)) {
 			return doVerticalAlignTop();
-		} else if (DefaultUserAction.VERTICAL_ALIGN_MIDDLE.equals(dua)) {
+		} else if (DefaultComponentAction.VERTICAL_ALIGN_MIDDLE.equals(dua)) {
 			return doVerticalAlignMiddle();
-		} else if (DefaultUserAction.VERTICAL_ALIGN_BOTTOM.equals(dua)) {
+		} else if (DefaultComponentAction.VERTICAL_ALIGN_BOTTOM.equals(dua)) {
 			return doVerticalAlignBottom();
-		} else if (DefaultUserAction.HORIZONTAL_ALIGN_LEFT.equals(dua)) {
+		} else if (DefaultComponentAction.HORIZONTAL_ALIGN_LEFT.equals(dua)) {
 			return doHorizontalAlignLeft();
-		} else if (DefaultUserAction.HORIZONTAL_ALIGN_CENTER.equals(dua)) {
+		} else if (DefaultComponentAction.HORIZONTAL_ALIGN_CENTER.equals(dua)) {
 			return doHorizontalAlignCenter();
-		} else if (DefaultUserAction.HORIZONTAL_ALIGN_RIGHT.equals(dua)) {
+		} else if (DefaultComponentAction.HORIZONTAL_ALIGN_RIGHT.equals(dua)) {
 			return doHorizontalAlignRight();
-		} else if (DefaultUserAction.WRAP_TEXT.equals(dua)) {
+		} else if (DefaultComponentAction.WRAP_TEXT.equals(dua)) {
 			return doWrapText();
-		} else if (DefaultUserAction.MERGE_AND_CENTER.equals(dua)) {
+		} else if (DefaultComponentAction.MERGE_AND_CENTER.equals(dua)) {
 			return doMergeAndCenter();
-		} else if (DefaultUserAction.MERGE_ACROSS.equals(dua)) {
+		} else if (DefaultComponentAction.MERGE_ACROSS.equals(dua)) {
 			return doMergeAcross();
-		} else if (DefaultUserAction.MERGE_CELL.equals(dua)) {
+		} else if (DefaultComponentAction.MERGE_CELL.equals(dua)) {
 			return doMergeCell();
-		} else if (DefaultUserAction.UNMERGE_CELL.equals(dua)) {
+		} else if (DefaultComponentAction.UNMERGE_CELL.equals(dua)) {
 			return doUnmergeCell();
-		} else if (DefaultUserAction.INSERT_SHIFT_CELL_RIGHT.equals(dua)) {
+		} else if (DefaultComponentAction.INSERT_SHIFT_CELL_RIGHT.equals(dua)) {
 			return doShiftCellRight();
-		} else if (DefaultUserAction.INSERT_SHIFT_CELL_DOWN.equals(dua)) {
+		} else if (DefaultComponentAction.INSERT_SHIFT_CELL_DOWN.equals(dua)) {
 			return doShiftCellDown();
-		} else if (DefaultUserAction.INSERT_SHEET_ROW.equals(dua)) {
+		} else if (DefaultComponentAction.INSERT_SHEET_ROW.equals(dua)) {
 			return doInsertSheetRow();
-		} else if (DefaultUserAction.INSERT_SHEET_COLUMN.equals(dua)) {
+		} else if (DefaultComponentAction.INSERT_SHEET_COLUMN.equals(dua)) {
 			return doInsertSheetColumn();
-		} else if (DefaultUserAction.DELETE_SHIFT_CELL_LEFT.equals(dua)) {
+		} else if (DefaultComponentAction.DELETE_SHIFT_CELL_LEFT.equals(dua)) {
 			return doShiftCellLeft();
-		} else if (DefaultUserAction.DELETE_SHIFT_CELL_UP.equals(dua)) {
+		} else if (DefaultComponentAction.DELETE_SHIFT_CELL_UP.equals(dua)) {
 			return doShiftCellUp();
-		} else if (DefaultUserAction.DELETE_SHEET_ROW.equals(dua)) {
+		} else if (DefaultComponentAction.DELETE_SHEET_ROW.equals(dua)) {
 			return doDeleteSheetRow();
-		} else if (DefaultUserAction.DELETE_SHEET_COLUMN.equals(dua)) {
+		} else if (DefaultComponentAction.DELETE_SHEET_COLUMN.equals(dua)) {
 			return doDeleteSheetColumn();
-		} else if (DefaultUserAction.SORT_ASCENDING.equals(dua)) {
+		} else if (DefaultComponentAction.SORT_ASCENDING.equals(dua)) {
 			return doSortAscending();
-		} else if (DefaultUserAction.SORT_DESCENDING.equals(dua)) {
+		} else if (DefaultComponentAction.SORT_DESCENDING.equals(dua)) {
 			return doSortDescending();
 		} /*else if (UserAction.CUSTOM_SORT.equals(dua)) {
 			return doCustomSort();
-		} */else if (DefaultUserAction.FILTER.equals(dua)) {
+		} */else if (DefaultComponentAction.FILTER.equals(dua)) {
 			return doFilter();
-		} else if (DefaultUserAction.CLEAR_FILTER.equals(dua)) {
+		} else if (DefaultComponentAction.CLEAR_FILTER.equals(dua)) {
 			return doClearFilter();
-		} else if (DefaultUserAction.REAPPLY_FILTER.equals(dua)) {
+		} else if (DefaultComponentAction.REAPPLY_FILTER.equals(dua)) {
 			return doReapplyFilter();
-		} else if (DefaultUserAction.CLEAR_CONTENT.equals(dua)) {
+		} else if (DefaultComponentAction.CLEAR_CONTENT.equals(dua)) {
 			return doClearContent();
-		} else if (DefaultUserAction.CLEAR_STYLE.equals(dua)) {
+		} else if (DefaultComponentAction.CLEAR_STYLE.equals(dua)) {
 			return doClearStyle();
-		} else if (DefaultUserAction.CLEAR_ALL.equals(dua)) {
+		} else if (DefaultComponentAction.CLEAR_ALL.equals(dua)) {
 			return doClearAll();
 		} /*else if (UserAction.HYPERLINK.equals(dua)) {
 			return doHyperlink();
@@ -302,13 +304,13 @@ public class DefaultUserActionHandler implements UserActionHandler {
 			return doColumnWidth();
 		} else if (UserAction.ROW_HEIGHT.equals(dua)) {
 			return doRowHeight();
-		} */else if (DefaultUserAction.HIDE_COLUMN.equals(dua)) {
+		} */else if (DefaultComponentAction.HIDE_COLUMN.equals(dua)) {
 			return doHideColumn();
-		} else if (DefaultUserAction.UNHIDE_COLUMN.equals(dua)) {
+		} else if (DefaultComponentAction.UNHIDE_COLUMN.equals(dua)) {
 			return doUnhideColumn();
-		} else if (DefaultUserAction.HIDE_ROW.equals(dua)) {
+		} else if (DefaultComponentAction.HIDE_ROW.equals(dua)) {
 			return doHideRow();
-		} else if (DefaultUserAction.UNHIDE_ROW.equals(dua)) {
+		} else if (DefaultComponentAction.UNHIDE_ROW.equals(dua)) {
 			return doUnhideRow();
 		} /*else if (UserAction.INSERT_FUNCTION.equals(dua)) {
 			return doInsertFunction();
@@ -1803,99 +1805,99 @@ public class DefaultUserActionHandler implements UserActionHandler {
 //			actions.add(UserAction.SAVE_BOOK.getAction());
 //			actions.add(UserAction.EXPORT_PDF.getAction());
 			
-			actions.add(DefaultUserAction.CLOSE_BOOK.getAction());
+			actions.add(DefaultComponentAction.CLOSE_BOOK.getAction());
 			
-			actions.add(DefaultUserAction.ADD_SHEET.getAction());
+			actions.add(DefaultComponentAction.ADD_SHEET.getAction());
 			if(sheetnum>1){
-				actions.add(DefaultUserAction.DELETE_SHEET.getAction());
+				actions.add(DefaultComponentAction.DELETE_SHEET.getAction());
 				if(sheet.getBook().getSheetIndex(sheet)>0){
-					actions.add(DefaultUserAction.MOVE_SHEET_LEFT.getAction());
+					actions.add(DefaultComponentAction.MOVE_SHEET_LEFT.getAction());
 				}
 				if(sheet.getBook().getSheetIndex(sheet)<sheetnum-1){
-					actions.add(DefaultUserAction.MOVE_SHEET_RIGHT.getAction());
+					actions.add(DefaultComponentAction.MOVE_SHEET_RIGHT.getAction());
 				}
 				
 			}
-			actions.add(DefaultUserAction.RENAME_SHEET.getAction());
-			actions.add(DefaultUserAction.PROTECT_SHEET.getAction());
-			actions.add(DefaultUserAction.GRIDLINES.getAction());
+			actions.add(DefaultComponentAction.RENAME_SHEET.getAction());
+			actions.add(DefaultComponentAction.PROTECT_SHEET.getAction());
+			actions.add(DefaultComponentAction.GRIDLINES.getAction());
 
 			
 			
 			if(!sheet.isProtected()){
-				actions.add(DefaultUserAction.PASTE.getAction());
-				actions.add(DefaultUserAction.PASTE_FORMULA.getAction());
-				actions.add(DefaultUserAction.PASTE_VALUE.getAction());
-				actions.add(DefaultUserAction.PASTE_ALL_EXPECT_BORDERS.getAction());
-				actions.add(DefaultUserAction.PASTE_TRANSPOSE.getAction());
+				actions.add(DefaultComponentAction.PASTE.getAction());
+				actions.add(DefaultComponentAction.PASTE_FORMULA.getAction());
+				actions.add(DefaultComponentAction.PASTE_VALUE.getAction());
+				actions.add(DefaultComponentAction.PASTE_ALL_EXPECT_BORDERS.getAction());
+				actions.add(DefaultComponentAction.PASTE_TRANSPOSE.getAction());
 //				actions.add(UserAction.PASTE_SPECIAL.getAction());
-				actions.add(DefaultUserAction.CUT.getAction());
-				actions.add(DefaultUserAction.COPY.getAction());
-				actions.add(DefaultUserAction.FONT_FAMILY.getAction());
-				actions.add(DefaultUserAction.FONT_SIZE.getAction());
-				actions.add(DefaultUserAction.FONT_BOLD.getAction());
-				actions.add(DefaultUserAction.FONT_ITALIC.getAction());
-				actions.add(DefaultUserAction.FONT_UNDERLINE.getAction());
-				actions.add(DefaultUserAction.FONT_STRIKE.getAction());
-				actions.add(DefaultUserAction.BORDER.getAction());
-				actions.add(DefaultUserAction.BORDER_BOTTOM.getAction());
-				actions.add(DefaultUserAction.BORDER_TOP.getAction());
-				actions.add(DefaultUserAction.BORDER_LEFT.getAction());
-				actions.add(DefaultUserAction.BORDER_RIGHT.getAction());
-				actions.add(DefaultUserAction.BORDER_NO.getAction());
-				actions.add(DefaultUserAction.BORDER_ALL.getAction());
-				actions.add(DefaultUserAction.BORDER_OUTSIDE.getAction());
-				actions.add(DefaultUserAction.BORDER_INSIDE.getAction());
-				actions.add(DefaultUserAction.BORDER_INSIDE_HORIZONTAL.getAction());
-				actions.add(DefaultUserAction.BORDER_INSIDE_VERTICAL.getAction());
-				actions.add(DefaultUserAction.FONT_COLOR.getAction());
-				actions.add(DefaultUserAction.FILL_COLOR.getAction());
-				actions.add(DefaultUserAction.VERTICAL_ALIGN.getAction());//folder
-				actions.add(DefaultUserAction.VERTICAL_ALIGN_TOP.getAction());
-				actions.add(DefaultUserAction.VERTICAL_ALIGN_MIDDLE.getAction());
-				actions.add(DefaultUserAction.VERTICAL_ALIGN_BOTTOM.getAction());
-				actions.add(DefaultUserAction.HORIZONTAL_ALIGN.getAction());//folder
-				actions.add(DefaultUserAction.HORIZONTAL_ALIGN_LEFT.getAction());
-				actions.add(DefaultUserAction.HORIZONTAL_ALIGN_CENTER.getAction());
-				actions.add(DefaultUserAction.HORIZONTAL_ALIGN_RIGHT.getAction());
-				actions.add(DefaultUserAction.WRAP_TEXT.getAction());
-				actions.add(DefaultUserAction.MERGE_AND_CENTER.getAction());
-				actions.add(DefaultUserAction.MERGE_ACROSS.getAction());
-				actions.add(DefaultUserAction.MERGE_CELL.getAction());
-				actions.add(DefaultUserAction.UNMERGE_CELL.getAction());
-				actions.add(DefaultUserAction.INSERT.getAction());//folder
-				actions.add(DefaultUserAction.INSERT_SHIFT_CELL_RIGHT.getAction());
-				actions.add(DefaultUserAction.INSERT_SHIFT_CELL_DOWN.getAction());
-				actions.add(DefaultUserAction.INSERT_SHEET_ROW.getAction());
-				actions.add(DefaultUserAction.INSERT_SHEET_COLUMN.getAction());
-				actions.add(DefaultUserAction.DELETE.getAction());//folder
-				actions.add(DefaultUserAction.DELETE_SHIFT_CELL_LEFT.getAction());
-				actions.add(DefaultUserAction.DELETE_SHIFT_CELL_UP.getAction());
-				actions.add(DefaultUserAction.DELETE_SHEET_ROW.getAction());
-				actions.add(DefaultUserAction.DELETE_SHEET_COLUMN.getAction());
-				actions.add(DefaultUserAction.SORT_AND_FILTER.getAction());//folder
-				actions.add(DefaultUserAction.SORT_ASCENDING.getAction());
-				actions.add(DefaultUserAction.SORT_DESCENDING.getAction());
+				actions.add(DefaultComponentAction.CUT.getAction());
+				actions.add(DefaultComponentAction.COPY.getAction());
+				actions.add(DefaultComponentAction.FONT_FAMILY.getAction());
+				actions.add(DefaultComponentAction.FONT_SIZE.getAction());
+				actions.add(DefaultComponentAction.FONT_BOLD.getAction());
+				actions.add(DefaultComponentAction.FONT_ITALIC.getAction());
+				actions.add(DefaultComponentAction.FONT_UNDERLINE.getAction());
+				actions.add(DefaultComponentAction.FONT_STRIKE.getAction());
+				actions.add(DefaultComponentAction.BORDER.getAction());
+				actions.add(DefaultComponentAction.BORDER_BOTTOM.getAction());
+				actions.add(DefaultComponentAction.BORDER_TOP.getAction());
+				actions.add(DefaultComponentAction.BORDER_LEFT.getAction());
+				actions.add(DefaultComponentAction.BORDER_RIGHT.getAction());
+				actions.add(DefaultComponentAction.BORDER_NO.getAction());
+				actions.add(DefaultComponentAction.BORDER_ALL.getAction());
+				actions.add(DefaultComponentAction.BORDER_OUTSIDE.getAction());
+				actions.add(DefaultComponentAction.BORDER_INSIDE.getAction());
+				actions.add(DefaultComponentAction.BORDER_INSIDE_HORIZONTAL.getAction());
+				actions.add(DefaultComponentAction.BORDER_INSIDE_VERTICAL.getAction());
+				actions.add(DefaultComponentAction.FONT_COLOR.getAction());
+				actions.add(DefaultComponentAction.FILL_COLOR.getAction());
+				actions.add(DefaultComponentAction.VERTICAL_ALIGN.getAction());//folder
+				actions.add(DefaultComponentAction.VERTICAL_ALIGN_TOP.getAction());
+				actions.add(DefaultComponentAction.VERTICAL_ALIGN_MIDDLE.getAction());
+				actions.add(DefaultComponentAction.VERTICAL_ALIGN_BOTTOM.getAction());
+				actions.add(DefaultComponentAction.HORIZONTAL_ALIGN.getAction());//folder
+				actions.add(DefaultComponentAction.HORIZONTAL_ALIGN_LEFT.getAction());
+				actions.add(DefaultComponentAction.HORIZONTAL_ALIGN_CENTER.getAction());
+				actions.add(DefaultComponentAction.HORIZONTAL_ALIGN_RIGHT.getAction());
+				actions.add(DefaultComponentAction.WRAP_TEXT.getAction());
+				actions.add(DefaultComponentAction.MERGE_AND_CENTER.getAction());
+				actions.add(DefaultComponentAction.MERGE_ACROSS.getAction());
+				actions.add(DefaultComponentAction.MERGE_CELL.getAction());
+				actions.add(DefaultComponentAction.UNMERGE_CELL.getAction());
+				actions.add(DefaultComponentAction.INSERT.getAction());//folder
+				actions.add(DefaultComponentAction.INSERT_SHIFT_CELL_RIGHT.getAction());
+				actions.add(DefaultComponentAction.INSERT_SHIFT_CELL_DOWN.getAction());
+				actions.add(DefaultComponentAction.INSERT_SHEET_ROW.getAction());
+				actions.add(DefaultComponentAction.INSERT_SHEET_COLUMN.getAction());
+				actions.add(DefaultComponentAction.DELETE.getAction());//folder
+				actions.add(DefaultComponentAction.DELETE_SHIFT_CELL_LEFT.getAction());
+				actions.add(DefaultComponentAction.DELETE_SHIFT_CELL_UP.getAction());
+				actions.add(DefaultComponentAction.DELETE_SHEET_ROW.getAction());
+				actions.add(DefaultComponentAction.DELETE_SHEET_COLUMN.getAction());
+				actions.add(DefaultComponentAction.SORT_AND_FILTER.getAction());//folder
+				actions.add(DefaultComponentAction.SORT_ASCENDING.getAction());
+				actions.add(DefaultComponentAction.SORT_DESCENDING.getAction());
 //				actions.add(UserAction.CUSTOM_SORT.getAction());
-				actions.add(DefaultUserAction.CLEAR.getAction());//folder
-				actions.add(DefaultUserAction.CLEAR_CONTENT.getAction());
-				actions.add(DefaultUserAction.CLEAR_STYLE.getAction());
-				actions.add(DefaultUserAction.CLEAR_ALL.getAction());
+				actions.add(DefaultComponentAction.CLEAR.getAction());//folder
+				actions.add(DefaultComponentAction.CLEAR_CONTENT.getAction());
+				actions.add(DefaultComponentAction.CLEAR_STYLE.getAction());
+				actions.add(DefaultComponentAction.CLEAR_ALL.getAction());
 //				actions.add(UserAction.HYPERLINK.getAction());
 //				actions.add(UserAction.FORMAT_CELL.getAction());
 //				actions.add(UserAction.COLUMN_WIDTH.getAction());
 //				actions.add(UserAction.ROW_HEIGHT.getAction());
-				actions.add(DefaultUserAction.HIDE_COLUMN.getAction());
-				actions.add(DefaultUserAction.UNHIDE_COLUMN.getAction());
-				actions.add(DefaultUserAction.HIDE_ROW.getAction());
-				actions.add(DefaultUserAction.UNHIDE_ROW.getAction());
+				actions.add(DefaultComponentAction.HIDE_COLUMN.getAction());
+				actions.add(DefaultComponentAction.UNHIDE_COLUMN.getAction());
+				actions.add(DefaultComponentAction.HIDE_ROW.getAction());
+				actions.add(DefaultComponentAction.UNHIDE_ROW.getAction());
 //				actions.add(UserAction.INSERT_FUNCTION.getAction());				
 			}
 			
-			actions.add(DefaultUserAction.FILTER.getAction());
+			actions.add(DefaultComponentAction.FILTER.getAction());
 			if(sheet.isAutoFilterEnabled()){
-				actions.add(DefaultUserAction.CLEAR_FILTER.getAction());
-				actions.add(DefaultUserAction.REAPPLY_FILTER.getAction());
+				actions.add(DefaultComponentAction.CLEAR_FILTER.getAction());
+				actions.add(DefaultComponentAction.REAPPLY_FILTER.getAction());
 //				disabled.addAll(Arrays.asList(DefaultUserActionHandler.DISABLED_ACTION_WHEN_FILTER_OFF));
 			}
 		}

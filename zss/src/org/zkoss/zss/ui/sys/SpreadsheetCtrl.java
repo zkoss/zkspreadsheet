@@ -21,6 +21,7 @@ package org.zkoss.zss.ui.sys;
 
 //import org.zkoss.zss.model.Sheet;
 import org.zkoss.json.JSONObject;
+import org.zkoss.lang.Objects;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Widget;
@@ -97,4 +98,15 @@ public interface SpreadsheetCtrl {
 	public Boolean getTopHeaderHiddens(int col);
 	
 	public Boolean getLeftHeaderHiddens(int row);
+	
+	
+	/**
+	 * Sets component action handler
+	 */
+	public void setComponentActionHandler(ComponentActionManager actionHandler);
+	
+	/**
+	 * @return component action handler
+	 */
+	public ComponentActionManager getComponentActionHandler();
 }

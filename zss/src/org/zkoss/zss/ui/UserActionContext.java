@@ -1,4 +1,4 @@
-/* UserActionHandler.java
+/* UserActionContext.java
 
 {{IS_NOTE
 	Purpose:
@@ -16,17 +16,20 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui;
 
-import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.Sheet;
-
 /**
  * 
  * @author dennis
  *
  */
-public interface UserActionHandler {
+public interface UserActionContext {
 
-	public boolean isEnabled(Book book,Sheet sheet);
+	public Spreadsheet getSpreadsheet();
 	
-	public void process(UserActionContext context);
+	public Rect getSelection();
+	
+	public Object getData(String key);
+	
+	public String getCategory();
+	
+	public String getAction();
 }
