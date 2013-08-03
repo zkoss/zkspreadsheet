@@ -24,7 +24,7 @@ import java.util.Map;
  * @author dennis
  * 
  */
-public enum DefaultComponentAction {
+public enum DefaultAuxAction {
 
 	 ADD_SHEET("addSheet"),
 	 DELETE_SHEET("deleteSheet"),
@@ -130,11 +130,11 @@ public enum DefaultComponentAction {
 
 	private final String action;
 
-	private DefaultComponentAction() {
+	private DefaultAuxAction() {
 		this("none");
 	}
 
-	private DefaultComponentAction(String action) {
+	private DefaultAuxAction(String action) {
 		this.action = action;
 	}
 
@@ -155,14 +155,14 @@ public enum DefaultComponentAction {
 		return action;
 	}
 	
-	public static Map<String,DefaultComponentAction> actionMap;
+	public static Map<String,DefaultAuxAction> actionMap;
 	
-	public static DefaultComponentAction getBy(String action){
+	public static DefaultAuxAction getBy(String action){
 		if(actionMap==null){
-			synchronized(DefaultComponentAction.class){
+			synchronized(DefaultAuxAction.class){
 				if(actionMap==null){
-					actionMap = new HashMap<String,DefaultComponentAction>();
-					for(DefaultComponentAction dua:DefaultComponentAction.class.getEnumConstants()){
+					actionMap = new HashMap<String,DefaultAuxAction>();
+					for(DefaultAuxAction dua:DefaultAuxAction.class.getEnumConstants()){
 						actionMap.put(dua.action, dua);
 					}
 				}

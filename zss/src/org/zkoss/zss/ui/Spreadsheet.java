@@ -134,10 +134,11 @@ import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.SequenceId;
 import org.zkoss.zss.ui.impl.StringAggregation;
 import org.zkoss.zss.ui.impl.XUtils;
+import org.zkoss.zss.ui.sys.DefaultComponentActionManagerX;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl.CellAttribute;
 import org.zkoss.zss.ui.sys.ComponentActionManager;
-import org.zkoss.zss.ui.sys.DefaultComponentAction;
+import org.zkoss.zss.ui.sys.DefaultAuxAction;
 import org.zkoss.zss.ui.sys.DefaultComponentActionManager;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
@@ -317,7 +318,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private static Integer _defMaxRenderedCellSize;
 	
-	private Set<DefaultComponentAction> _actionDisabled = new HashSet();
+	private Set<DefaultAuxAction> _actionDisabled = new HashSet();
 //	
 //	private static Set<UserAction> _defToolbarActiobDisabled;
 	
@@ -340,6 +341,18 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		});
 	}
 	
+	/**
+	 * Gets the userAction manager, then you can register/override your custom action by call {@link UserActionManager#registerHandler(String, String, UserActionHandler)}
+	 * @retrun {@link UserActionManager} or null if doesn't support to override 
+	 * @since 3.0.0
+	 */
+	public UserActionManager getUserActionManager(){
+		ComponentActionManager cam = getComponentActionHandler();
+		if(cam instanceof UserActionManager){
+			return (UserActionManager)cam;
+		}
+		return null;
+	}
 	
 	private Set<String> _lastUAEvents;
 	private boolean _ctrlKeysSet;
@@ -400,7 +413,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					throw new UiException(x);
 				}
 			} else {
-				_actionManager = new DefaultComponentActionManager();
+//				_actionManager = new DefaultComponentActionManager();
+				_actionManager = new DefaultComponentActionManagerX();
 			}
 			_actionManager.bind(this);
 		}
@@ -4255,12 +4269,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	/**
-	 * Sets the {@link DefaultComponentAction} disabled
+	 * Sets the {@link DefaultAuxAction} disabled
 	 * 
 	 * @param disabled
 	 * @param action
 	 */
-	public void disableUserAction(DefaultComponentAction action, boolean disabled) {
+	public void disableUserAction(DefaultAuxAction action, boolean disabled) {
 		boolean changed = false;
 		if (disabled && !_actionDisabled.contains(action)) {
 			_actionDisabled.add(action);
@@ -4287,7 +4301,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private List<String> convertToDisabledActionJSON(Set<String> supported) {
 		ArrayList<String> disd = new ArrayList<String>();
 		String act;
-		for(DefaultComponentAction ua:DefaultComponentAction.values()){
+		for(DefaultAuxAction ua:DefaultAuxAction.values()){
 			act = ua.toString();
 			if(_actionDisabled.contains(ua) 
 					|| supported==null || !supported.contains(act)){

@@ -26,7 +26,25 @@ import org.zkoss.zss.api.model.Sheet;
  */
 public interface UserActionHandler {
 
+	/**
+	 * get the enabled state of this action
+	 * @param book current book, null if no book selected
+	 * @param sheet current sheet, null if no sheet selected 
+	 * @return
+	 */
 	public boolean isEnabled(Book book,Sheet sheet);
 	
-	public void process(UserActionContext context);
+//	/**
+//	 * get Ctrl keys of this action, a action handler should never change its ctrl key value after register to manager
+//	 * @return ctrlKey if supported, or null if doesn't support
+//	 */
+//	public String getCtrlKey();
+	
+	
+	/**
+	 * Handle the action. 
+	 * @param ctx
+	 * @return true if the handler had processed and should ignore post process
+	 */
+	public boolean process(UserActionContext ctx);
 }

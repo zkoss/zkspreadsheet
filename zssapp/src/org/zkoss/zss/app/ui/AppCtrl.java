@@ -25,6 +25,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WebApps;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.Importer;
@@ -41,9 +42,14 @@ import org.zkoss.zss.app.ui.dlg.OpenManageBookCtrl;
 import org.zkoss.zss.app.ui.dlg.SaveBookAsCtrl;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.UserActionContext;
+import org.zkoss.zss.ui.UserActionHandler;
+import org.zkoss.zss.ui.UserActionManager;
 import org.zkoss.zss.ui.Version;
+import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.sys.ComponentActionManager;
-import org.zkoss.zss.ui.sys.DefaultComponentAction;
+import org.zkoss.zss.ui.sys.DefaultAuxAction;
+import org.zkoss.zss.ui.sys.DefaultComponentActionManagerX;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zul.Filedownload;
 
@@ -72,23 +78,85 @@ public class AppCtrl extends CtrlBase<Component>{
 		comp.setAttribute(APPCOMP, comp);
 	}
 	
-	ComponentActionManager createHandler(){
-		if("EE".equals(Version.getEdition())){
-			try {
-				return (ComponentActionManager) Classes.newInstanceByThread("org.zkoss.zss.app.ui.AppComponentActionHandlerEx", new Class<?>[]{AppCtrl.class}, new Object[]{this});
-			} catch (Exception e) {
-				log.warning(e.getMessage(),e);
-			}
-		}
-		return new AppComponentActionManager(this);
-	}
+//	ComponentActionManager createHandler(){
+//		if("EE".equals(Version.getEdition())){
+//			try {
+//				return (ComponentActionManager) Classes.newInstanceByThread("org.zkoss.zss.app.ui.AppComponentActionHandlerEx", new Class<?>[]{AppCtrl.class}, new Object[]{this});
+//			} catch (Exception e) {
+//				log.warning(e.getMessage(),e);
+//			}
+//		}
+//		return new AppComponentActionManager(this);
+//	}
 	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
 		//TODO
-		((SpreadsheetCtrl)ss.getExtraCtrl()).setComponentActionHandler(createHandler());
+//		((SpreadsheetCtrl)ss.getExtraCtrl()).setComponentActionHandler(createHandler());
+		
+		UserActionManager uam = ss.getUserActionManager();
+		uam.registerHandler(DefaultComponentActionManagerX.Category.AUXACTION.toString(), DefaultAuxAction.NEW_BOOK.getAction(), new UserActionHandler() {
+			
+			@Override
+			public boolean process(UserActionContext ctx) {
+				doOpenNewBook();
+				return true;
+			}
+			
+			@Override
+			public boolean isEnabled(Book book, Sheet sheet) {
+				return true;
+			}
+		});
+		uam.setHandler(DefaultComponentActionManagerX.Category.AUXACTION.toString(), DefaultAuxAction.SAVE_BOOK.getAction(), new UserActionHandler() {
+			
+			@Override
+			public boolean process(UserActionContext ctx) {
+				doSaveBook(false);
+				return true;
+			}
+			
+			@Override
+			public boolean isEnabled(Book book, Sheet sheet) {
+				return book!=null;
+			}
+		});
+		uam.setHandler(DefaultComponentActionManagerX.Category.AUXACTION.toString(), DefaultAuxAction.EXPORT_PDF.getAction(), new UserActionHandler() {
+			
+			@Override
+			public boolean process(UserActionContext ctx) {
+				doExportBook();
+				return true;
+			}
+			
+			@Override
+			public boolean isEnabled(Book book, Sheet sheet) {
+				return book!=null;
+			}
+		});
+		uam.registerHandler(DefaultComponentActionManagerX.Category.AUXACTION.toString(), DefaultAuxAction.CLOSE_BOOK.getAction(), new UserActionHandler() {
+			
+			@Override
+			public boolean process(UserActionContext ctx) {
+				doCloseBook();
+				return true;
+			}
+			
+			@Override
+			public boolean isEnabled(Book book, Sheet sheet) {
+				return book!=null;
+			}
+		});
+		
+		ss.addEventListener(Events.ON_SHEET_SELECT, new EventListener<Event>() {
+			@Override
+			public void onEvent(Event event) throws Exception {
+				onSheetSelect();
+			}
+		});
+		
 		
 		//load default open book from parameter
 		String bookName = null ;
@@ -155,7 +223,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		updatePageInfo();
 	}
 	
-	/*package*/ void doSheetSelect(){
+	/*package*/ void onSheetSelect(){
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 	}
 	
