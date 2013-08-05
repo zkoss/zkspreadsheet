@@ -56,6 +56,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-393 Sheet out of sync after cut to different sheet
   ZSS-290 after merging and unmerging cells, input and style both work incorrect
   ZSS-395 Unmerge cell operation doesn't work when the selected range overlap part of merged range.
+  ZSS-396 provide an API to cut and paste cells at once
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api

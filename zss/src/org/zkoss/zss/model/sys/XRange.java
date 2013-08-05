@@ -177,6 +177,7 @@ public interface XRange {
 	 * cut the selected range and paste to destination range.
 	 * @param dstRange
 	 * @return the real destination range.
+	 * @since 3.0.0
 	 */
 	public XRange copy(XRange dstRange, boolean cut);
 
