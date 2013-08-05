@@ -134,11 +134,10 @@ import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.SequenceId;
 import org.zkoss.zss.ui.impl.StringAggregation;
 import org.zkoss.zss.ui.impl.XUtils;
-import org.zkoss.zss.ui.sys.DefaultComponentActionManagerX;
+import org.zkoss.zss.ui.sys.DefaultUserActionManagerCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl.CellAttribute;
-import org.zkoss.zss.ui.sys.ComponentActionManager;
-import org.zkoss.zss.ui.sys.DefaultAuxAction;
+import org.zkoss.zss.ui.sys.UserActionManagerCtrl;
 import org.zkoss.zss.ui.sys.DefaultComponentActionManager;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
@@ -199,7 +198,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private static final String WIDGET_LOADERS = "org.zkoss.zss.ui.sys.WidgetLoader.class";
 	
 //	public static final String TOOLBAR_DISABLED_ACTION = "org.zkoss.zss.ui.ToolbarAction.disabled";
-	private static final String COMPONENT_ACTION_MANAGER_CLS = "org.zkoss.zss.ui.ComponentActionManager.class";
+	private static final String USER_ACTION_MANAGER_CTRL_CLS = "org.zkoss.zss.ui.UserActionManagerCtrl.class";
 	
 	private static final int DEFAULT_TOP_HEAD_HEIGHT = 20;
 	private static final int DEFAULT_LEFT_HEAD_WIDTH = 36;
@@ -318,7 +317,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	private static Integer _defMaxRenderedCellSize;
 	
-	private Set<DefaultAuxAction> _actionDisabled = new HashSet();
+	private Set<AuxAction> _actionDisabled = new HashSet();
 //	
 //	private static Set<UserAction> _defToolbarActiobDisabled;
 	
@@ -342,14 +341,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	/**
-	 * Gets the userAction manager, then you can register/override your custom action by call {@link UserActionManager#registerHandler(String, String, UserActionHandler)}
-	 * @retrun {@link UserActionManager} or null if doesn't support to override 
+	 * Gets the user action manager, then you can register/override your custom action by call {@link UserActionManager#registerHandler(String, String, UserActionHandler)}
+	 * @return {@link UserActionManager} or null if doesn't support to override 
 	 * @since 3.0.0
 	 */
 	public UserActionManager getUserActionManager(){
-		ComponentActionManager cam = getComponentActionHandler();
-		if(cam instanceof UserActionManager){
-			return (UserActionManager)cam;
+		UserActionManagerCtrl uamc = getUserActionManagerCtrl();
+		if(uamc instanceof UserActionManager){
+			return (UserActionManager)uamc;
 		}
 		return null;
 	}
@@ -364,12 +363,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				this.removeEventListener(evt, _uAEventDispatcher);
 			}
 		}
-		ComponentActionManager ua = this.getComponentActionHandler();
+		UserActionManagerCtrl ua = this.getUserActionManagerCtrl();
 		_lastUAEvents = ua.getInterestedEvents();
 		if(_lastUAEvents!=null && _lastUAEvents.size()>0){
 			_uAEventDispatcher = new EventListener() {
 				public void onEvent(Event event) throws Exception {
-					ComponentActionManager ua = getComponentActionHandler();
+					UserActionManagerCtrl ua = getUserActionManagerCtrl();
 					if(ua instanceof EventListener){
 						((EventListener)ua).onEvent(event);
 					}
@@ -391,34 +390,33 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	
-	private void setComponentActionHandler(ComponentActionManager actionHandler) {
-		if(!Objects.equals(_actionManager,actionHandler)){
-			_actionManager = actionHandler;
-			_actionManager.bind(this);
+	private void setUserActionManagerCtrl(UserActionManagerCtrl actionManagerCtrl) {
+		if(!Objects.equals(_actionManagerCtrl,actionManagerCtrl)){
+			_actionManagerCtrl = actionManagerCtrl;
+			_actionManagerCtrl.bind(this);
 			initComponentActionHandler();
 		}
 	}
 	
-	private ComponentActionManager getComponentActionHandler() {
-		if (_actionManager == null) {
-			String cls = (String) getAttribute(COMPONENT_ACTION_MANAGER_CLS,true);
+	private UserActionManagerCtrl getUserActionManagerCtrl() {
+		if (_actionManagerCtrl == null) {
+			String cls = (String) getAttribute(USER_ACTION_MANAGER_CTRL_CLS,true);
 			
 			if(cls==null){
-				cls = (String) Library.getProperty(COMPONENT_ACTION_MANAGER_CLS);
+				cls = (String) Library.getProperty(USER_ACTION_MANAGER_CTRL_CLS);
 			}
 			if (cls != null) {
 				try {
-					_actionManager = (ComponentActionManager) Classes.newInstance(cls, null, null);
+					_actionManagerCtrl = (UserActionManagerCtrl) Classes.newInstance(cls, null, null);
 				} catch (Exception x) {
 					throw new UiException(x);
 				}
 			} else {
-//				_actionManager = new DefaultComponentActionManager();
-				_actionManager = new DefaultComponentActionManagerX();
+				_actionManagerCtrl = new DefaultUserActionManagerCtrl();
 			}
-			_actionManager.bind(this);
+			_actionManagerCtrl.bind(this);
 		}
-		return _actionManager;
+		return _actionManagerCtrl;
 	}
 	
 	public void setCtrlKeys(String ctrlKeys){
@@ -614,7 +612,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	private EventListener _focusListener = null;
 
-	private ComponentActionManager _actionManager;
+	private UserActionManagerCtrl _actionManagerCtrl;
 
 	private boolean _showContextMenu;
 	private void doMoveSelfFocus(CellEvent event){
@@ -665,7 +663,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		_selfFocusId = null;//clean
 		refreshToolbarDisabled();
-		getComponentActionHandler().doAfterLoadBook(getBook());
+		getUserActionManagerCtrl().doAfterLoadBook(getBook());
 	}
 	
 	private Focus newSelfFocus(String sheetId, int row, int column) {
@@ -1588,7 +1586,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			//20130507,Dennis,add commnet check, no actionDisabled json will cause client error when show context menu.
 //			if (_actionDisabled.size() > 0) {
 			renderer.render("actionDisabled",
-					convertToDisabledActionJSON(getComponentActionHandler()
+					convertToDisabledActionJSON(getUserActionManagerCtrl()
 							.getSupportedUserAction(getSelectedSheet())));
 //			}
 			renderer.render("showToolbar", _showToolbar);
@@ -2721,12 +2719,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private class ExtraCtrl implements SpreadsheetCtrl, SpreadsheetInCtrl,
 			SpreadsheetOutCtrl, DynamicMedia {
 		
-		public void setComponentActionHandler(ComponentActionManager actionHandler) {
-			Spreadsheet.this.setComponentActionHandler(actionHandler);
+		public void setUserActionManagerCtrl(UserActionManagerCtrl actionHandler) {
+			Spreadsheet.this.setUserActionManagerCtrl(actionHandler);
 		}
 		
-		public ComponentActionManager getComponentActionHandler() {
-			return Spreadsheet.this.getComponentActionHandler();
+		public UserActionManagerCtrl getUserActionManagerCtrl() {
+			return Spreadsheet.this.getUserActionManagerCtrl();
 		}
 		
 		public Media getMedia(String pathInfo) {
@@ -4269,12 +4267,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	/**
-	 * Sets the {@link DefaultAuxAction} disabled
+	 * Sets the {@link AuxAction} disabled
 	 * 
 	 * @param disabled
 	 * @param action
 	 */
-	public void disableUserAction(DefaultAuxAction action, boolean disabled) {
+	public void disableUserAction(AuxAction action, boolean disabled) {
 		boolean changed = false;
 		if (disabled && !_actionDisabled.contains(action)) {
 			_actionDisabled.add(action);
@@ -4301,7 +4299,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private List<String> convertToDisabledActionJSON(Set<String> supported) {
 		ArrayList<String> disd = new ArrayList<String>();
 		String act;
-		for(DefaultAuxAction ua:DefaultAuxAction.values()){
+		for(AuxAction ua:AuxAction.values()){
 			act = ua.toString();
 			if(_actionDisabled.contains(ua) 
 					|| supported==null || !supported.contains(act)){
@@ -5027,7 +5025,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private void refreshToolbarDisabled(){
 		if(!isInvalidated()){
 			smartUpdate("actionDisabled",
-					convertToDisabledActionJSON(getComponentActionHandler()
+					convertToDisabledActionJSON(getUserActionManagerCtrl()
 							.getSupportedUserAction(getSelectedSheet())));
 		}
 	}

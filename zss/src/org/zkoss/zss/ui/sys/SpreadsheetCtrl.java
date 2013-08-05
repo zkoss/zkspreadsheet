@@ -101,12 +101,14 @@ public interface SpreadsheetCtrl {
 	
 	
 	/**
-	 * Sets component action handler
+	 * Sets user action manager ctrl
+	 * @since 3.0.0
 	 */
-	public void setComponentActionHandler(ComponentActionManager actionHandler);
+	public void setUserActionManagerCtrl(UserActionManagerCtrl actionHandler);
 	
 	/**
-	 * @return component action handler
+	 * @return user action manager ctrl
+	 * @since 3.0.0
 	 */
-	public ComponentActionManager getComponentActionHandler();
+	public UserActionManagerCtrl getUserActionManagerCtrl();
 }

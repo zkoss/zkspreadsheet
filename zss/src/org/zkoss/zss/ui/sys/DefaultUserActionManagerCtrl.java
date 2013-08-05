@@ -25,14 +25,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.zkoss.lang.Strings;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.SheetOperationUtil;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.ui.AuxAction;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.UserActionContext;
@@ -44,35 +41,35 @@ import org.zkoss.zss.ui.event.CellSelectionAction;
 import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
-import org.zkoss.zss.ui.ua.AbstractBookAwareHandler;
-import org.zkoss.zss.ui.ua.AbstractUserHandler;
-import org.zkoss.zss.ui.ua.AbstractSheetAwareHandler;
 import org.zkoss.zss.ui.ua.AddSheetHandler;
 import org.zkoss.zss.ui.ua.CloseBookHandler;
 import org.zkoss.zss.ui.ua.DeleteSheetHandler;
 import org.zkoss.zss.ui.ua.MoveSheetHandler;
 import org.zkoss.zss.ui.ua.NilHandler;
 import org.zkoss.zss.ui.ua.RenameSheetHandler;
-import org.zkoss.zul.Messagebox;
 /**
  * The user action handler which provide default spreadsheet operation handling.
  *  
  * @author dennis
  * @since 3.0.0
  */
-public class DefaultComponentActionManagerX implements ComponentActionManager,UserActionManager {
+public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserActionManager {
 	private static final long serialVersionUID = 1L;
 	
 	public enum Category{
 		AUXACTION("aux"),KEYSTROKE("key"),EVENT("event");
 
-		private final String cat;
-		private Category(String cat) {
-			this.cat = cat;
+		private final String name;
+		private Category(String name) {
+			this.name = name;
+		}
+		
+		public String getName(){
+			return name;
 		}
 		
 		public String toString(){
-			return cat;
+			return getName();
 		}
 	}
 	
@@ -82,128 +79,117 @@ public class DefaultComponentActionManagerX implements ComponentActionManager,Us
 	}
 	
 	private static final String CLIPBOARD_KEY = "$zss.clipboard$";
-	
-	
-	
+
 	private Map<String,List<UserActionHandler>> _handlerMap = new HashMap<String,List<UserActionHandler>>();
 	protected static final char SPLIT_CHAR = '/';
 	
-//	protected void checkCtx(){
-//		if(_ctx.get()==null){
-//			throw new IllegalAccessError("can't found action context");
-//		}
-//	}
-	
 	Spreadsheet _sparedsheet;//the binded spreadhseet;
-//	Sheet _lastSheet;
-//	Rect _lastSelection;
-//	Map _lastExtraData;
 	
 	public void bind(Spreadsheet sparedsheet){
 		this._sparedsheet = sparedsheet;
 	}
 	
 	
-	public DefaultComponentActionManagerX(){
+	public DefaultUserActionManagerCtrl(){
 		initDefaultAuxHandlers();
 	}
 	
 	private void initDefaultAuxHandlers() {
-		String category =  Category.AUXACTION.toString();
+		String category =  Category.AUXACTION.getName();
 		UserActionHandler uah;
 		
 		//book
-		registerHandler(category, DefaultAuxAction.CLOSE_BOOK.getAction(), new CloseBookHandler());
+		registerHandler(category, AuxAction.CLOSE_BOOK.getAction(), new CloseBookHandler());
 		
 		//sheet
-		registerHandler(category, DefaultAuxAction.ADD_SHEET.getAction(), new AddSheetHandler());
-		registerHandler(category, DefaultAuxAction.DELETE_SHEET.getAction(), new DeleteSheetHandler());	
-		registerHandler(category, DefaultAuxAction.RENAME_SHEET.getAction(), new RenameSheetHandler());
-		registerHandler(category, DefaultAuxAction.MOVE_SHEET_LEFT.getAction(), new MoveSheetHandler(true));
-		registerHandler(category, DefaultAuxAction.MOVE_SHEET_RIGHT.getAction(), new MoveSheetHandler(false));
+		registerHandler(category, AuxAction.ADD_SHEET.getAction(), new AddSheetHandler());
+		registerHandler(category, AuxAction.DELETE_SHEET.getAction(), new DeleteSheetHandler());	
+		registerHandler(category, AuxAction.RENAME_SHEET.getAction(), new RenameSheetHandler());
+		registerHandler(category, AuxAction.MOVE_SHEET_LEFT.getAction(), new MoveSheetHandler(true));
+		registerHandler(category, AuxAction.MOVE_SHEET_RIGHT.getAction(), new MoveSheetHandler(false));
 
-		registerHandler(category, DefaultAuxAction.PROTECT_SHEET.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.GRIDLINES.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.PROTECT_SHEET.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.GRIDLINES.getAction(), new NilHandler());
 		
 		
-		registerHandler(category, DefaultAuxAction.PASTE.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.PASTE_FORMULA.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.PASTE_VALUE.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.PASTE_ALL_EXPECT_BORDERS.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.PASTE_TRANSPOSE.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.CUT.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.COPY.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.PASTE.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.PASTE_FORMULA.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.PASTE_VALUE.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.PASTE_ALL_EXPECT_BORDERS.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.PASTE_TRANSPOSE.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.CUT.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.COPY.getAction(), new NilHandler());
 		
 		
-		registerHandler(category, DefaultAuxAction.FONT_FAMILY.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.FONT_SIZE.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.FONT_BOLD.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.FONT_ITALIC.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.FONT_UNDERLINE.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.FONT_STRIKE.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.FONT_FAMILY.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.FONT_SIZE.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.FONT_BOLD.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.FONT_ITALIC.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.FONT_UNDERLINE.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.FONT_STRIKE.getAction(), new NilHandler());
 		
 		
-		registerHandler(category, DefaultAuxAction.BORDER.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.BORDER_BOTTOM.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.BORDER_TOP.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.BORDER_LEFT.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.BORDER_RIGHT.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.BORDER_NO.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.BORDER_ALL.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.BORDER_OUTSIDE.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.BORDER_INSIDE.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.BORDER_INSIDE_HORIZONTAL.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.BORDER_INSIDE_VERTICAL.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.BORDER.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.BORDER_BOTTOM.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.BORDER_TOP.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.BORDER_LEFT.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.BORDER_RIGHT.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.BORDER_NO.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.BORDER_ALL.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.BORDER_OUTSIDE.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.BORDER_INSIDE.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.BORDER_INSIDE_HORIZONTAL.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.BORDER_INSIDE_VERTICAL.getAction(), new NilHandler());
 		
 		
-		registerHandler(category, DefaultAuxAction.FONT_COLOR.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.FILL_COLOR.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.FONT_COLOR.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.FILL_COLOR.getAction(), new NilHandler());
 		
 		
-		registerHandler(category, DefaultAuxAction.VERTICAL_ALIGN_TOP.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.VERTICAL_ALIGN_MIDDLE.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.VERTICAL_ALIGN_BOTTOM.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.HORIZONTAL_ALIGN_LEFT.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.HORIZONTAL_ALIGN_CENTER.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.HORIZONTAL_ALIGN_RIGHT.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.VERTICAL_ALIGN_TOP.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.VERTICAL_ALIGN_MIDDLE.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.VERTICAL_ALIGN_BOTTOM.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.HORIZONTAL_ALIGN_LEFT.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.HORIZONTAL_ALIGN_CENTER.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.HORIZONTAL_ALIGN_RIGHT.getAction(), new NilHandler());
 		
-		registerHandler(category, DefaultAuxAction.WRAP_TEXT.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.WRAP_TEXT.getAction(), new NilHandler());
 		
-		registerHandler(category, DefaultAuxAction.MERGE_AND_CENTER.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.MERGE_ACROSS.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.MERGE_CELL.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.UNMERGE_CELL.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.MERGE_AND_CENTER.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.MERGE_ACROSS.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.MERGE_CELL.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.UNMERGE_CELL.getAction(), new NilHandler());
 		
-		registerHandler(category, DefaultAuxAction.INSERT_SHIFT_CELL_RIGHT.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.INSERT_SHIFT_CELL_DOWN.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.INSERT_SHEET_ROW.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.INSERT_SHEET_COLUMN.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.INSERT_SHIFT_CELL_RIGHT.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.INSERT_SHIFT_CELL_DOWN.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.INSERT_SHEET_ROW.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.INSERT_SHEET_COLUMN.getAction(), new NilHandler());
 		
-		registerHandler(category, DefaultAuxAction.DELETE_SHIFT_CELL_LEFT.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.DELETE_SHIFT_CELL_UP.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.DELETE_SHEET_ROW.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.DELETE_SHEET_COLUMN.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.DELETE_SHIFT_CELL_LEFT.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.DELETE_SHIFT_CELL_UP.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.DELETE_SHEET_ROW.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.DELETE_SHEET_COLUMN.getAction(), new NilHandler());
 		
-		registerHandler(category, DefaultAuxAction.SORT_ASCENDING.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.SORT_DESCENDING.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.SORT_ASCENDING.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.SORT_DESCENDING.getAction(), new NilHandler());
 		
-		registerHandler(category, DefaultAuxAction.FILTER.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.CLEAR_FILTER.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.REAPPLY_FILTER.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.FILTER.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.CLEAR_FILTER.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.REAPPLY_FILTER.getAction(), new NilHandler());
 		
-		registerHandler(category, DefaultAuxAction.CLEAR_CONTENT.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.CLEAR_STYLE.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.CLEAR_ALL.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.CLEAR_CONTENT.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.CLEAR_STYLE.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.CLEAR_ALL.getAction(), new NilHandler());
 		
-		registerHandler(category, DefaultAuxAction.HIDE_COLUMN.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.UNHIDE_COLUMN.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.HIDE_ROW.getAction(), new NilHandler());
-		registerHandler(category, DefaultAuxAction.UNHIDE_ROW.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.HIDE_COLUMN.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.UNHIDE_COLUMN.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.HIDE_ROW.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.UNHIDE_ROW.getAction(), new NilHandler());
 		
 		
 		
 		//key
-		category =  Category.KEYSTROKE.toString();
+		category =  Category.KEYSTROKE.getName();
 		registerHandler(category, "^Z", new NilHandler());
 		registerHandler(category, "^Y", new NilHandler());
 		registerHandler(category, "^X", new NilHandler());
@@ -216,7 +202,7 @@ public class DefaultComponentActionManagerX implements ComponentActionManager,Us
 		
 		
 		//event
-		category =  Category.EVENT.toString();
+		category =  Category.EVENT.getName();
 		registerHandler(category, Events.ON_CELL_SELECTION_UPDATE+SPLIT_CHAR+"move", new NilHandler());
 		registerHandler(category, Events.ON_CELL_SELECTION_UPDATE+SPLIT_CHAR+"resize", new NilHandler());
 
@@ -240,7 +226,7 @@ public class DefaultComponentActionManagerX implements ComponentActionManager,Us
 		return "^Z^Y^X^C^V^D^B^I^U#del";
 	}
 	
-	protected String toAction(KeyEvent event){
+	protected String getAction(KeyEvent event){
 		StringBuilder sb = new StringBuilder();
 		int keyCode = event.getKeyCode();
 		boolean ctrlKey = event.isCtrlKey();
@@ -271,7 +257,7 @@ public class DefaultComponentActionManagerX implements ComponentActionManager,Us
 		KeyEvent event = (KeyEvent)ctx.getEvent();
 		String action = ctx.getAction();
 		if(event!=null){
-			action = toAction(event);
+			action = getAction(event);
 			if(Strings.isBlank(action))
 				return false;
 			((UserActionContextImpl)ctx).setAction(action);
@@ -319,7 +305,7 @@ public class DefaultComponentActionManagerX implements ComponentActionManager,Us
 		Set<String> actions = new LinkedHashSet<String>();
 		
 		Book book = sheet == null? null:sheet.getBook();
-		String auxkey = Category.AUXACTION.toString()+SPLIT_CHAR;
+		String auxkey = Category.AUXACTION.getName()+SPLIT_CHAR;
 		for(Entry<String, List<UserActionHandler>> entry:_handlerMap.entrySet()){
 			String key = entry.getKey();
 			if(key.startsWith(auxkey)){
@@ -391,7 +377,7 @@ public class DefaultComponentActionManagerX implements ComponentActionManager,Us
 		
 		String nm = event.getName();
 		if(event instanceof AuxActionEvent){
-			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,extraData,Category.AUXACTION.toString(),action);
+			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,extraData,Category.AUXACTION.getName(),action);
 			dispatchAuxAction(ctx);//aux action
 		}else if(Events.ON_SHEET_SELECT.equals(nm)){
 			
@@ -404,7 +390,7 @@ public class DefaultComponentActionManagerX implements ComponentActionManager,Us
 		}else if(Events.ON_CTRL_KEY.equals(nm)){
 			KeyEvent kevt = (KeyEvent)event;
 			
-			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,extraData,Category.KEYSTROKE.toString(),action);
+			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,extraData,Category.KEYSTROKE.getName(),action);
 			
 			boolean r = dispatchKeyAction(ctx);
 			if(r){
@@ -416,7 +402,7 @@ public class DefaultComponentActionManagerX implements ComponentActionManager,Us
 			}
 		}else if(Events.ON_CELL_SELECTION_UPDATE.equals(nm)){
 			
-			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,extraData,Category.EVENT.toString(),action);
+			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,extraData,Category.EVENT.getName(),action);
 			
 			dispatchCellSelectionUpdateAction(ctx);
 		/*}else if(Events.ON_CELL_DOUBLE_CLICK.equals(nm)){//TODO check if we need it still
@@ -463,7 +449,7 @@ public class DefaultComponentActionManagerX implements ComponentActionManager,Us
 	}
 
 	
-	private String toKey(String category, String action){
+	private String getKey(String category, String action){
 		return new StringBuilder(category).append(SPLIT_CHAR).append(action).toString();
 	}
 
@@ -474,7 +460,7 @@ public class DefaultComponentActionManagerX implements ComponentActionManager,Us
 		}
 		System.out.println(">>>> registerHandler "+category+","+action+":"+handler);
 		
-		String key = toKey(category,action);
+		String key = getKey(category,action);
 		List<UserActionHandler> handlers = _handlerMap.get(key);
 		if(handlers==null){
 			_handlerMap.put(key, handlers=new LinkedList<UserActionHandler>());
@@ -498,7 +484,7 @@ public class DefaultComponentActionManagerX implements ComponentActionManager,Us
 	
 	protected List<UserActionHandler> getHandlerList(String category, String action){
 		
-		List<UserActionHandler> list= _handlerMap.get(toKey(category,action));
+		List<UserActionHandler> list= _handlerMap.get(getKey(category,action));
 		System.out.println(">>>> getHandler "+category+","+action+":"+list);
 		return list;
 	}

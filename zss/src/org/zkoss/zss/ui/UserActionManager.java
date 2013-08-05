@@ -23,12 +23,18 @@ package org.zkoss.zss.ui;
 public interface UserActionManager {
 
 	/**
-	 * register a handler to the handler list of category/action
+	 * Register a handler to the handler list of category/action, append to the last handler of same category/action.
+	 * @param category the category of the handler
+	 * @param action the action of the handler
+	 * @param handler the handler
 	 */
 	public void registerHandler(String category,String action, UserActionHandler handler);
 	
 	/**
-	 * set a handler to the handler list of category/action, it will remove other handler in same category/action
+	 * set a handler to the handler list of category/action, it will remove all other handlers in same category/action
+	 * @param category the category of the handler
+	 * @param action the action of the handler
+	 * @param handler the handler
 	 */
 	public void setHandler(String category,String action, UserActionHandler handler);
 }

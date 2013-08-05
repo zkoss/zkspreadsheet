@@ -23,10 +23,10 @@ import org.zkoss.zss.api.model.Sheet;
  * @author dennis
  * @since 3.0.0
  */
-public abstract class AbstractBookAwareHandler extends AbstractUserHandler{
+public abstract class AbstractProtectedAwareHandler extends AbstractUserHandler{
 
 	@Override
 	public boolean isEnabled(Book book, Sheet sheet) {
-		return book!=null;
+		return book!=null && sheet!=null && !sheet.isProtected();
 	}
 }

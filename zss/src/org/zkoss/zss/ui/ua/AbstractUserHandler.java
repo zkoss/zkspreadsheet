@@ -24,7 +24,7 @@ import org.zkoss.zul.Messagebox;
 
 /**
  * @author dennis
- *
+ * @since 3.0.0
  */
 public abstract class AbstractUserHandler implements UserActionHandler{
 

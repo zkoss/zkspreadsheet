@@ -1,4 +1,4 @@
-/* DefaultUserAction.java
+/* AuxAction.java
 
 {{IS_NOTE
 	Purpose:
@@ -14,7 +14,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
  */
-package org.zkoss.zss.ui.sys;
+package org.zkoss.zss.ui;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,7 @@ import java.util.Map;
  * @author dennis
  * 
  */
-public enum DefaultAuxAction {
+public enum AuxAction {
 
 	 ADD_SHEET("addSheet"),
 	 DELETE_SHEET("deleteSheet"),
@@ -130,11 +130,11 @@ public enum DefaultAuxAction {
 
 	private final String action;
 
-	private DefaultAuxAction() {
+	private AuxAction() {
 		this("none");
 	}
 
-	private DefaultAuxAction(String action) {
+	private AuxAction(String action) {
 		this.action = action;
 	}
 
@@ -155,14 +155,14 @@ public enum DefaultAuxAction {
 		return action;
 	}
 	
-	public static Map<String,DefaultAuxAction> actionMap;
+	public static Map<String,AuxAction> actionMap;
 	
-	public static DefaultAuxAction getBy(String action){
+	public static AuxAction getBy(String action){
 		if(actionMap==null){
-			synchronized(DefaultAuxAction.class){
+			synchronized(AuxAction.class){
 				if(actionMap==null){
-					actionMap = new HashMap<String,DefaultAuxAction>();
-					for(DefaultAuxAction dua:DefaultAuxAction.class.getEnumConstants()){
+					actionMap = new HashMap<String,AuxAction>();
+					for(AuxAction dua:AuxAction.class.getEnumConstants()){
 						actionMap.put(dua.action, dua);
 					}
 				}

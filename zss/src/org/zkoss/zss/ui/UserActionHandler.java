@@ -34,17 +34,11 @@ public interface UserActionHandler {
 	 */
 	public boolean isEnabled(Book book,Sheet sheet);
 	
-//	/**
-//	 * get Ctrl keys of this action, a action handler should never change its ctrl key value after register to manager
-//	 * @return ctrlKey if supported, or null if doesn't support
-//	 */
-//	public String getCtrlKey();
-	
-	
+
 	/**
 	 * Handle the action. 
 	 * @param ctx
-	 * @return true if the handler had processed and should ignore post process
+	 * @return true if the handler has processed and manager should ignore post process (if there is) 
 	 */
 	public boolean process(UserActionContext ctx);
 }

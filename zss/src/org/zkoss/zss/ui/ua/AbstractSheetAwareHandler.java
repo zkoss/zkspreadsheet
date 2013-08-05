@@ -21,7 +21,7 @@ import org.zkoss.zss.api.model.Sheet;
 
 /**
  * @author dennis
- *
+ * @since 3.0.0
  */
 public abstract class AbstractSheetAwareHandler extends AbstractUserHandler{
 

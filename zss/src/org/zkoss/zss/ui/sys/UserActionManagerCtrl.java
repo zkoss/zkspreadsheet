@@ -15,7 +15,7 @@ import org.zkoss.zss.ui.event.Events;
  * @author dennis
  * 
  */
-public interface ComponentActionManager extends SerializableEventListener<Event>{
+public interface UserActionManagerCtrl extends SerializableEventListener<Event>{
 
 	/**
 	 * Returns the interested events of the spreadsheet.  

@@ -40,6 +40,7 @@ import org.zkoss.zss.app.repository.impl.BookUtil;
 import org.zkoss.zss.app.ui.dlg.DlgCallbackEvent;
 import org.zkoss.zss.app.ui.dlg.OpenManageBookCtrl;
 import org.zkoss.zss.app.ui.dlg.SaveBookAsCtrl;
+import org.zkoss.zss.ui.AuxAction;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.UserActionContext;
@@ -47,9 +48,8 @@ import org.zkoss.zss.ui.UserActionHandler;
 import org.zkoss.zss.ui.UserActionManager;
 import org.zkoss.zss.ui.Version;
 import org.zkoss.zss.ui.event.Events;
-import org.zkoss.zss.ui.sys.ComponentActionManager;
-import org.zkoss.zss.ui.sys.DefaultAuxAction;
-import org.zkoss.zss.ui.sys.DefaultComponentActionManagerX;
+import org.zkoss.zss.ui.sys.UserActionManagerCtrl;
+import org.zkoss.zss.ui.sys.DefaultUserActionManagerCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zul.Filedownload;
 
@@ -97,7 +97,7 @@ public class AppCtrl extends CtrlBase<Component>{
 //		((SpreadsheetCtrl)ss.getExtraCtrl()).setComponentActionHandler(createHandler());
 		
 		UserActionManager uam = ss.getUserActionManager();
-		uam.registerHandler(DefaultComponentActionManagerX.Category.AUXACTION.toString(), DefaultAuxAction.NEW_BOOK.getAction(), new UserActionHandler() {
+		uam.registerHandler(DefaultUserActionManagerCtrl.Category.AUXACTION.getName(), AuxAction.NEW_BOOK.getAction(), new UserActionHandler() {
 			
 			@Override
 			public boolean process(UserActionContext ctx) {
@@ -110,7 +110,7 @@ public class AppCtrl extends CtrlBase<Component>{
 				return true;
 			}
 		});
-		uam.setHandler(DefaultComponentActionManagerX.Category.AUXACTION.toString(), DefaultAuxAction.SAVE_BOOK.getAction(), new UserActionHandler() {
+		uam.setHandler(DefaultUserActionManagerCtrl.Category.AUXACTION.getName(), AuxAction.SAVE_BOOK.getAction(), new UserActionHandler() {
 			
 			@Override
 			public boolean process(UserActionContext ctx) {
@@ -123,7 +123,7 @@ public class AppCtrl extends CtrlBase<Component>{
 				return book!=null;
 			}
 		});
-		uam.setHandler(DefaultComponentActionManagerX.Category.AUXACTION.toString(), DefaultAuxAction.EXPORT_PDF.getAction(), new UserActionHandler() {
+		uam.setHandler(DefaultUserActionManagerCtrl.Category.AUXACTION.getName(), AuxAction.EXPORT_PDF.getAction(), new UserActionHandler() {
 			
 			@Override
 			public boolean process(UserActionContext ctx) {
@@ -136,7 +136,7 @@ public class AppCtrl extends CtrlBase<Component>{
 				return book!=null;
 			}
 		});
-		uam.registerHandler(DefaultComponentActionManagerX.Category.AUXACTION.toString(), DefaultAuxAction.CLOSE_BOOK.getAction(), new UserActionHandler() {
+		uam.registerHandler(DefaultUserActionManagerCtrl.Category.AUXACTION.getName(), AuxAction.CLOSE_BOOK.getAction(), new UserActionHandler() {
 			
 			@Override
 			public boolean process(UserActionContext ctx) {

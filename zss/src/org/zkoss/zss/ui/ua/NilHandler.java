@@ -5,6 +5,11 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.UserActionContext;
 import org.zkoss.zss.ui.UserActionHandler;
 
+/**
+ * always disable and do nothing
+ * @author dennis
+ * @since 3.0.0
+ */
 public class NilHandler implements UserActionHandler{
 
 	@Override
