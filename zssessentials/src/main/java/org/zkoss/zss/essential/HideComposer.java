@@ -8,7 +8,7 @@ import org.zkoss.zss.api.*;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
- * Demonstrate freeze API usage
+ * Demonstrate hide API usage
  * 
  * @author Hawk
  * 

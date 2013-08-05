@@ -4,48 +4,16 @@
 
 		<hlayout hflex="1" vflex="1">
 			<vlayout hflex="1" vflex="1">
-				<spreadsheet id="ss" hflex="1" vflex="1"
-					showFormulabar="true" showContextMenu="true" showToolbar="true"
-					showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"
-					src="/WEB-INF/books/sample.xlsx" />
+				<spreadsheet id="ss" hflex="1" vflex="1" showFormulabar="true"
+					showContextMenu="true" showToolbar="true" showSheetbar="true" maxVisibleRows="100"
+					maxVisibleColumns="40" src="/WEB-INF/books/sample.xlsx" />
 			</vlayout>
-			<vlayout width="300px" vflex="1">
-				<groupbox hflex="1" height="200px">
-					<caption label="Available Books" />
-					<listbox id="availableBookList" vflex="1">
-
-					</listbox>
-				</groupbox>
-				<groupbox hflex="1" >
-					<caption label="Excel exporter" />
-					<vlayout>
-						<button id="exportExcel" label="Export Excel" />
-					</vlayout>
-				</groupbox>
-				<groupbox hflex="1" >
-					<caption label="Pdf Exporter" />
-					<vlayout>
-						<radiogroup id="pdfRadiogroup">
-							<radio label="All" checked="true"/>
-							<radio label="Current sheet"/>
-							<radio label="Current selection"/>
-						</radiogroup>
-						<button id="exportPdf" label="Export Pdf" />
-					</vlayout>
-				</groupbox>
-				<groupbox hflex="1" >
-					<caption label="Html Exporter" />
-					<vlayout>
-						<radiogroup id="htmlRadiogroup">
-							<radio label="All" checked="true"/>
-							<radio label="Current sheet"/>
-							<radio label="Current selection"/>
-						</radiogroup>
-						<button id="exportHtml" label="Export Html" />
-						
-					</vlayout>
-				</groupbox>
-			</vlayout>
+			<groupbox hflex="1">
+				<caption label="Excel exporter" />
+				<vlayout>
+					<button id="exportExcel" label="Export Excel" />
+				</vlayout>
+			</groupbox>
 		</hlayout>
 	</window>
 </zk>
