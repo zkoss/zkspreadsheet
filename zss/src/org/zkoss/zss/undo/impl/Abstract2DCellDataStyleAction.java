@@ -66,6 +66,23 @@ public abstract class Abstract2DCellDataStyleAction extends AbstractUndoableActi
 		_reserveType = reserveType;
 	}
 	
+	@Override
+	protected boolean isSheetProtected(){
+		try{
+			return _destSheet.isProtected();
+		}catch(Exception x){}
+		return true;
+	}
+	
+	@Override
+	public Sheet getUndoSheet(){
+		return _destSheet;
+	}
+	@Override
+	public Sheet getRedoSheet(){
+		return _destSheet;
+	}
+	
 	protected int getReservedSrcRow(){
 		return _row;
 	}
@@ -153,10 +170,4 @@ public abstract class Abstract2DCellDataStyleAction extends AbstractUndoableActi
 	public Rect getRedoSelection(){
 		return new Rect(_destColumn,_destRow,_destLastColumn,_destLastRow);
 	}
-
-	@Override
-	public Sheet getRedoSheet(){
-		return _destSheet;
-	}
-
 }

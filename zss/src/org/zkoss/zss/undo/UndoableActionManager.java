@@ -18,6 +18,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.undo;
 
+import org.zkoss.zss.ui.Spreadsheet;
+
 /**
  * the manager to control undoable action
  * 
@@ -76,4 +78,11 @@ public interface UndoableActionManager {
 	 * @param size
 	 */
 	public void setMaxHsitorySize(int size);
+	
+	
+	/**
+	 * Will be called when a manager create 
+	 * @param sparedsheet
+	 */
+	void bind(Spreadsheet spreadsheet);
 }

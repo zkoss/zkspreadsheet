@@ -64,7 +64,7 @@ ZK Spreadsheet 3.0.0 RC
   + Spreadsheet Api changes:
     + get/set Book/Sheet API use the new classes of Book & Sheet that inside 'org.zkoss.zss.api.model'
     + get/set rowfreeze and columnfreeze are deprecated, use Sheet#getColumnFreeze(),Sheet#getRowFreeze() and Range#setFreezePanel(int, int)
-  + Action, ActionHandler are removed, use DefaultUserAction, DefaultUserActionHandler instead.
+  + Action, ActionHandler are removed. To override a default action, use AuxAction, UserActionManager instead.
   + Constructor of CellSelectionEvent is changed from left,top,right,bottom to topRow,leftCol,bottomRow,rightColumn
   + SelectionChangeEvent is renamed to CellSelectionUpdateEvent and arguments sequence is also redefined.
   + HeaderEvent is renamed to HeaderUpdateEvent
@@ -76,7 +76,7 @@ ZK Spreadsheet 3.0.0 RC
     onFilter > onCellFilter
     onHeaderSize > onHeaderUpdate
     onSelectionChange > onCellSelectionChange
-	onCellFocused > onCellFocus
+	  onCellFocused > onCellFocus
   + JSF
     Main package is renamed to org.zkoss.zss.jsf, Component is renamed to JSFSpreadsheet
   + JSP

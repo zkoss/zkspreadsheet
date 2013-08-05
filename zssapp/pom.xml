@@ -94,16 +94,6 @@
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zul</artifactId>
 			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zhtml</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zkex</artifactId>
-			<version>${zk.version}</version>
 		</dependency>		
 		<dependency>
 			<groupId>org.zkoss.common</groupId>
@@ -132,11 +122,7 @@
 			<version>${bsh.version}</version>
 			<scope>runtime</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.zkoss.poi</groupId>
-			<artifactId>zpoiex</artifactId>
-			<version>3.8.2</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zss</artifactId>
@@ -144,6 +130,16 @@
 		</dependency>
 		<!-- ZSS EE dependence 
 		 -->
+		<dependency>
+			<groupId>org.zkoss.poi</groupId>
+			<artifactId>zpoiex</artifactId>
+			<version>3.8.2</version>
+		</dependency>		
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkex</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zsspdf</artifactId>

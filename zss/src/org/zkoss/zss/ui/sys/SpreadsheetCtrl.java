@@ -21,6 +21,7 @@ package org.zkoss.zss.ui.sys;
 
 //import org.zkoss.zss.model.Sheet;
 import org.zkoss.json.JSONObject;
+import org.zkoss.lang.Objects;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Widget;
@@ -97,4 +98,17 @@ public interface SpreadsheetCtrl {
 	public Boolean getTopHeaderHiddens(int col);
 	
 	public Boolean getLeftHeaderHiddens(int row);
+	
+	
+	/**
+	 * Sets user action manager ctrl
+	 * @since 3.0.0
+	 */
+	public void setUserActionManagerCtrl(UserActionManagerCtrl actionHandler);
+	
+	/**
+	 * @return user action manager ctrl
+	 * @since 3.0.0
+	 */
+	public UserActionManagerCtrl getUserActionManagerCtrl();
 }

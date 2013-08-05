@@ -25,6 +25,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WebApps;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.Importer;
@@ -39,11 +40,17 @@ import org.zkoss.zss.app.repository.impl.BookUtil;
 import org.zkoss.zss.app.ui.dlg.DlgCallbackEvent;
 import org.zkoss.zss.app.ui.dlg.OpenManageBookCtrl;
 import org.zkoss.zss.app.ui.dlg.SaveBookAsCtrl;
-import org.zkoss.zss.ui.DefaultUserAction;
+import org.zkoss.zss.ui.AuxAction;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.UserActionContext;
 import org.zkoss.zss.ui.UserActionHandler;
+import org.zkoss.zss.ui.UserActionManager;
 import org.zkoss.zss.ui.Version;
+import org.zkoss.zss.ui.event.Events;
+import org.zkoss.zss.ui.sys.UserActionManagerCtrl;
+import org.zkoss.zss.ui.sys.DefaultUserActionManagerCtrl;
+import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zul.Filedownload;
 
 /**
@@ -71,23 +78,73 @@ public class AppCtrl extends CtrlBase<Component>{
 		comp.setAttribute(APPCOMP, comp);
 	}
 	
-	UserActionHandler createHandler(){
-		if("EE".equals(Version.getEdition())){
-			try {
-				return (UserActionHandler) Classes.newInstanceByThread("org.zkoss.zss.app.ui.AppUserActionHandlerEx", new Class<?>[]{AppCtrl.class}, new Object[]{this});
-			} catch (Exception e) {
-				log.warning(e.getMessage(),e);
-			}
-		}
-		return new AppUserActionHandler(this);
-	}
-	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
+		UserActionManager uam = ss.getUserActionManager();
+		uam.registerHandler(DefaultUserActionManagerCtrl.Category.AUXACTION.getName(), AuxAction.NEW_BOOK.getAction(), new UserActionHandler() {
+			
+			@Override
+			public boolean process(UserActionContext ctx) {
+				doOpenNewBook();
+				return true;
+			}
+			
+			@Override
+			public boolean isEnabled(Book book, Sheet sheet) {
+				return true;
+			}
+		});
+		uam.setHandler(DefaultUserActionManagerCtrl.Category.AUXACTION.getName(), AuxAction.SAVE_BOOK.getAction(), new UserActionHandler() {
+			
+			@Override
+			public boolean process(UserActionContext ctx) {
+				doSaveBook(false);
+				return true;
+			}
+			
+			@Override
+			public boolean isEnabled(Book book, Sheet sheet) {
+				return book!=null;
+			}
+		});
+		uam.setHandler(DefaultUserActionManagerCtrl.Category.AUXACTION.getName(), AuxAction.EXPORT_PDF.getAction(), new UserActionHandler() {
+			
+			@Override
+			public boolean process(UserActionContext ctx) {
+				doExportBook();
+				return true;
+			}
+			
+			@Override
+			public boolean isEnabled(Book book, Sheet sheet) {
+				return book!=null;
+			}
+		});
 		
-		ss.setUserActionHandler(createHandler());
+		//do after default
+		uam.registerHandler(DefaultUserActionManagerCtrl.Category.AUXACTION.getName(), AuxAction.CLOSE_BOOK.getAction(), new UserActionHandler() {
+			
+			@Override
+			public boolean process(UserActionContext ctx) {
+				doCloseBook();
+				return true;
+			}
+			
+			@Override
+			public boolean isEnabled(Book book, Sheet sheet) {
+				return book!=null;
+			}
+		});
+		
+		ss.addEventListener(Events.ON_SHEET_SELECT, new EventListener<Event>() {
+			@Override
+			public void onEvent(Event event) throws Exception {
+				onSheetSelect();
+			}
+		});
+		
 		
 		//load default open book from parameter
 		String bookName = null ;
@@ -154,7 +211,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		updatePageInfo();
 	}
 	
-	/*package*/ void doSheetSelect(){
+	/*package*/ void onSheetSelect(){
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 	}
 	
