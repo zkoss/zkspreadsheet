@@ -14,11 +14,13 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
 */
-package org.zkoss.zss.ui.ua;
+package org.zkoss.zss.ui.sys.ua.impl;
 
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.ui.UserActionContext;
 import org.zkoss.zss.ui.UserActionHandler;
 import org.zkoss.zul.Messagebox;
 
@@ -26,7 +28,7 @@ import org.zkoss.zul.Messagebox;
  * @author dennis
  * @since 3.0.0
  */
-public abstract class AbstractUserHandler implements UserActionHandler{
+public abstract class AbstractHandler implements UserActionHandler{
 
 	@Override
 	public boolean isEnabled(Book book, Sheet sheet) {
@@ -48,4 +50,15 @@ public abstract class AbstractUserHandler implements UserActionHandler{
 		String title = Labels.getLabel("zss.actionhandler.msg.warn_title");
 		Messagebox.show(message, title, Messagebox.OK, Messagebox.EXCLAMATION);
 	}
+	
+	public boolean process(UserActionContext ctx){
+		try{
+			return processAction(ctx);
+		}catch(IllegalOpArgumentException x){
+			showInfoMessage(Labels.getLabel("zss.actionhandler.msg.illegal_range_operation")+" : "+x.getMessage());
+			return true;
+		}
+	}
+	
+	protected abstract boolean processAction(UserActionContext ctx);
 }

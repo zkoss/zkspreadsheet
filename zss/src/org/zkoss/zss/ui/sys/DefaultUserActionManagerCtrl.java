@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ui.sys;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -27,8 +28,10 @@ import java.util.Set;
 import org.zkoss.lang.Strings;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.ui.AuxAction;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -41,12 +44,28 @@ import org.zkoss.zss.ui.event.CellSelectionAction;
 import org.zkoss.zss.ui.event.CellSelectionUpdateEvent;
 import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.event.KeyEvent;
-import org.zkoss.zss.ui.ua.AddSheetHandler;
-import org.zkoss.zss.ui.ua.CloseBookHandler;
-import org.zkoss.zss.ui.ua.DeleteSheetHandler;
-import org.zkoss.zss.ui.ua.MoveSheetHandler;
-import org.zkoss.zss.ui.ua.NilHandler;
-import org.zkoss.zss.ui.ua.RenameSheetHandler;
+import org.zkoss.zss.ui.sys.ua.impl.AbstractBookHandler;
+import org.zkoss.zss.ui.sys.ua.impl.AbstractProtectedHandler;
+import org.zkoss.zss.ui.sys.ua.impl.AddSheetHandler;
+import org.zkoss.zss.ui.sys.ua.impl.ApplyBorderHandler;
+import org.zkoss.zss.ui.sys.ua.impl.ClearContentHandler;
+import org.zkoss.zss.ui.sys.ua.impl.CloseBookHandler;
+import org.zkoss.zss.ui.sys.ua.impl.CopyHandler;
+import org.zkoss.zss.ui.sys.ua.impl.CutHandler;
+import org.zkoss.zss.ui.sys.ua.impl.DeleteSheetHandler;
+import org.zkoss.zss.ui.sys.ua.impl.FillColorHandler;
+import org.zkoss.zss.ui.sys.ua.impl.FontBoldHandler;
+import org.zkoss.zss.ui.sys.ua.impl.FontColorHandler;
+import org.zkoss.zss.ui.sys.ua.impl.FontFamilyHandler;
+import org.zkoss.zss.ui.sys.ua.impl.FontItalicHandler;
+import org.zkoss.zss.ui.sys.ua.impl.FontSizeHandler;
+import org.zkoss.zss.ui.sys.ua.impl.FontStrikeoutHandler;
+import org.zkoss.zss.ui.sys.ua.impl.FontUnderlineHandler;
+import org.zkoss.zss.ui.sys.ua.impl.MoveSheetHandler;
+import org.zkoss.zss.ui.sys.ua.impl.NilHandler;
+import org.zkoss.zss.ui.sys.ua.impl.PasteHandler;
+import org.zkoss.zss.ui.sys.ua.impl.RenameSheetHandler;
+import org.zkoss.zss.undo.UndoableActionManager;
 /**
  * The user action handler which provide default spreadsheet operation handling.
  *  
@@ -73,11 +92,6 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		}
 	}
 	
-	public enum PasteType {
-		COPY,
-		CUT
-	}
-	
 	private static final String CLIPBOARD_KEY = "$zss.clipboard$";
 
 	private Map<String,List<UserActionHandler>> _handlerMap = new HashMap<String,List<UserActionHandler>>();
@@ -96,7 +110,6 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 	
 	private void initDefaultAuxHandlers() {
 		String category =  Category.AUXACTION.getName();
-		UserActionHandler uah;
 		
 		//book
 		registerHandler(category, AuxAction.CLOSE_BOOK.getAction(), new CloseBookHandler());
@@ -108,42 +121,38 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		registerHandler(category, AuxAction.MOVE_SHEET_LEFT.getAction(), new MoveSheetHandler(true));
 		registerHandler(category, AuxAction.MOVE_SHEET_RIGHT.getAction(), new MoveSheetHandler(false));
 
-		registerHandler(category, AuxAction.PROTECT_SHEET.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.GRIDLINES.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.PROTECT_SHEET.getAction(), new ProtectSheetAction());
+		registerHandler(category, AuxAction.GRIDLINES.getAction(), new DisplayGridlinesAction());
 		
 		
-		registerHandler(category, AuxAction.PASTE.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.PASTE_FORMULA.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.PASTE_VALUE.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.PASTE_ALL_EXPECT_BORDERS.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.PASTE_TRANSPOSE.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.CUT.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.COPY.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.PASTE.getAction(), new PasteHandler());
+		registerHandler(category, AuxAction.CUT.getAction(), new CutHandler());
+		registerHandler(category, AuxAction.COPY.getAction(), new CopyHandler());
 		
 		
-		registerHandler(category, AuxAction.FONT_FAMILY.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.FONT_SIZE.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.FONT_BOLD.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.FONT_ITALIC.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.FONT_UNDERLINE.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.FONT_STRIKE.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.FONT_FAMILY.getAction(), new FontFamilyHandler());
+		registerHandler(category, AuxAction.FONT_SIZE.getAction(), new FontSizeHandler());
+		registerHandler(category, AuxAction.FONT_BOLD.getAction(), new FontBoldHandler());
+		registerHandler(category, AuxAction.FONT_ITALIC.getAction(), new FontItalicHandler());
+		registerHandler(category, AuxAction.FONT_UNDERLINE.getAction(), new FontUnderlineHandler());
+		registerHandler(category, AuxAction.FONT_STRIKE.getAction(), new FontStrikeoutHandler());
 		
 		
-		registerHandler(category, AuxAction.BORDER.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.BORDER_BOTTOM.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.BORDER_TOP.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.BORDER_LEFT.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.BORDER_RIGHT.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.BORDER_NO.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.BORDER_ALL.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.BORDER_OUTSIDE.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.BORDER_INSIDE.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.BORDER_INSIDE_HORIZONTAL.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.BORDER_INSIDE_VERTICAL.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.BORDER.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_BOTTOM,BorderType.MEDIUM));
+		registerHandler(category, AuxAction.BORDER_BOTTOM.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_BOTTOM,BorderType.MEDIUM));
+		registerHandler(category, AuxAction.BORDER_TOP.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_TOP,BorderType.MEDIUM));
+		registerHandler(category, AuxAction.BORDER_LEFT.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_LEFT,BorderType.MEDIUM));
+		registerHandler(category, AuxAction.BORDER_RIGHT.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_RIGHT,BorderType.MEDIUM));
+		registerHandler(category, AuxAction.BORDER_NO.getAction(), new ApplyBorderHandler(ApplyBorderType.FULL,BorderType.NONE));
+		registerHandler(category, AuxAction.BORDER_ALL.getAction(), new ApplyBorderHandler(ApplyBorderType.FULL,BorderType.MEDIUM));
+		registerHandler(category, AuxAction.BORDER_OUTSIDE.getAction(), new ApplyBorderHandler(ApplyBorderType.OUTLINE,BorderType.MEDIUM));
+		registerHandler(category, AuxAction.BORDER_INSIDE.getAction(), new ApplyBorderHandler(ApplyBorderType.INSIDE,BorderType.MEDIUM));
+		registerHandler(category, AuxAction.BORDER_INSIDE_HORIZONTAL.getAction(), new ApplyBorderHandler(ApplyBorderType.INSIDE_HORIZONTAL,BorderType.MEDIUM));
+		registerHandler(category, AuxAction.BORDER_INSIDE_VERTICAL.getAction(), new ApplyBorderHandler(ApplyBorderType.INSIDE_VERTICAL,BorderType.MEDIUM));
 		
 		
-		registerHandler(category, AuxAction.FONT_COLOR.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.FILL_COLOR.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.FONT_COLOR.getAction(), new FontColorHandler());
+		registerHandler(category, AuxAction.FILL_COLOR.getAction(), new FillColorHandler());
 		
 		
 		registerHandler(category, AuxAction.VERTICAL_ALIGN_TOP.getAction(), new NilHandler());
@@ -188,23 +197,50 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		
 		
 		
+		//for enable some menu folder, do nothing
+		UserActionHandler folderhandler = new AbstractProtectedHandler() {
+			@Override
+			protected boolean processAction(UserActionContext ctx) {
+				return false;
+			}
+		};
+		registerHandler(category, AuxAction.VERTICAL_ALIGN.getAction(), folderhandler);
+		registerHandler(category, AuxAction.HORIZONTAL_ALIGN.getAction(), folderhandler);
+		registerHandler(category, AuxAction.INSERT.getAction(), folderhandler);
+		registerHandler(category, AuxAction.DELETE.getAction(), folderhandler);
+		registerHandler(category, AuxAction.SORT_AND_FILTER.getAction(), folderhandler);
+		registerHandler(category, AuxAction.CLEAR.getAction(), folderhandler);
+		
+		
 		//key
 		category =  Category.KEYSTROKE.getName();
-		registerHandler(category, "^Z", new NilHandler());
-		registerHandler(category, "^Y", new NilHandler());
-		registerHandler(category, "^X", new NilHandler());
-		registerHandler(category, "^C", new NilHandler());
-		registerHandler(category, "^V", new NilHandler());
-		registerHandler(category, "^D", new NilHandler());
-		registerHandler(category, "^B", new NilHandler());
-		registerHandler(category, "^I", new NilHandler());
-		registerHandler(category, "#del", new NilHandler());
+		registerHandler(category, "^Z", new AbstractBookHandler() {
+			@Override
+			protected boolean processAction(UserActionContext ctx) {
+				doUndo();
+				return true;
+			}
+		});
+		registerHandler(category, "^Y", new AbstractBookHandler() {
+			@Override
+			protected boolean processAction(UserActionContext ctx) {
+				doRedo();
+				return true;
+			}
+		});
+		
+		registerHandler(category, "^X", new CutHandler());
+		registerHandler(category, "^C", new CopyHandler());
+		registerHandler(category, "^V", new PasteHandler());
+		
+		
+		registerHandler(category, "^B", new FontBoldHandler());
+		registerHandler(category, "^I", new FontItalicHandler());
+		registerHandler(category, "#del", new ClearContentHandler());
 		
 		
 		//event
 		category =  Category.EVENT.getName();
-		registerHandler(category, Events.ON_CELL_SELECTION_UPDATE+SPLIT_CHAR+"move", new NilHandler());
-		registerHandler(category, Events.ON_CELL_SELECTION_UPDATE+SPLIT_CHAR+"resize", new NilHandler());
 
 		
 	}
@@ -219,14 +255,13 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		}
 		return r;
 	}
-	
 
 	@Override
 	public String getCtrlKeys() {
-		return "^Z^Y^X^C^V^D^B^I^U#del";
+		return "^Z^Y^X^C^V^B^I^U#del";
 	}
 	
-	protected String getAction(KeyEvent event){
+	protected String getAction(org.zkoss.zk.ui.event.KeyEvent event){
 		StringBuilder sb = new StringBuilder();
 		int keyCode = event.getKeyCode();
 		boolean ctrlKey = event.isCtrlKey();
@@ -485,8 +520,34 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 	protected List<UserActionHandler> getHandlerList(String category, String action){
 		
 		List<UserActionHandler> list= _handlerMap.get(getKey(category,action));
-		System.out.println(">>>> getHandler "+category+","+action+":"+list);
-		return list;
+		return list==null?Collections.EMPTY_LIST:list;
+	}
+	
+	protected boolean doUndo(){
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null && uam.isUndoable()){
+			uam.undoAction();
+		}
+		//do we need to clear clipboard? clear clipboard will cause undo/redo misunderstanding when doing copy past with client clipboard 
+//		clearClipboard();
+		return true;
+	}
+	
+	protected boolean doRedo(){
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null && uam.isRedoable()){
+			uam.redoAction();
+		}
+		//do we need to clear clipboard? clear clipboard will cause undo/redo misunderstanding when doing copy past with client clipboard
+//		clearClipboard();
+		return true;
+	}
+	
+	protected void clearUndoable(){
+		UndoableActionManager uam = _sparedsheet.getUndoableActionManager();
+		if(uam!=null){
+			uam.clear();
+		}
 	}
 	
 	/**
@@ -580,8 +641,8 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		}
 
 		@Override
-		public void setClipboard(Sheet sheet, Rect selection, Object info) {
-			getSpreadsheet().setAttribute(CLIPBOARD_KEY,new ClipboardImpl(sheet, selection, info));
+		public void setClipboard(Sheet sheet, Rect selection, boolean cutMode,Object info) {
+			getSpreadsheet().setAttribute(CLIPBOARD_KEY,new ClipboardImpl(sheet, selection,cutMode, info));
 			if(sheet.equals(getSpreadsheet().getSelectedSheet())){
 				getSpreadsheet().setHighlight(selection);
 			}
@@ -596,11 +657,12 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 	 */
 	public static class ClipboardImpl implements Clipboard{
 
-		public final Rect _selection;
-		public final Sheet _sheet;
-		public final Object _info;
+		final Rect _selection;
+		final Sheet _sheet;
+		final boolean _cutMode;
+		final Object _info;
 		
-		public ClipboardImpl(Sheet sheet,Rect selection,Object info) {
+		public ClipboardImpl(Sheet sheet,Rect selection, boolean cutMode,Object info) {
 			if(sheet==null){
 				throw new IllegalArgumentException("Sheet is null");
 			}
@@ -609,6 +671,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 			}
 			this._sheet = sheet;
 			this._selection = selection;
+			this._cutMode = cutMode;
 			this._info = info;
 		}
 
@@ -625,6 +688,10 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		@Override
 		public Object getInfo() {
 			return _info;
+		}
+		
+		public boolean isCutMode(){
+			return _cutMode;
 		}
 	}
 

@@ -60,7 +60,7 @@ import org.zkoss.zss.undo.CutCellAction;
 import org.zkoss.zss.undo.DeleteCellAction;
 import org.zkoss.zss.undo.InsertCellAction;
 import org.zkoss.zss.undo.MergeCellAction;
-import org.zkoss.zss.undo.PasteCellAction;
+import org.zkoss.zss.undo.PasteSpecialCellAction;
 import org.zkoss.zss.undo.ShiftCellAction;
 import org.zkoss.zss.undo.SortCellAction;
 import org.zkoss.zss.undo.CellStyleAction;
@@ -692,7 +692,7 @@ public class DefaultComponentActionManager implements UserActionManagerCtrl {
 		}else{
 			
 			if(uam!=null){
-				uam.doAction(new PasteCellAction(Labels.getLabel("zss.undo.paste"),
+				uam.doAction(new PasteSpecialCellAction(Labels.getLabel("zss.undo.paste"),
 						srcSheet, src.getRow(), src.getColumn(),src.getLastRow(), src.getLastColumn(), 
 						destSheet, selection.getRow(), selection.getColumn(),selection.getLastRow(), selection.getLastColumn(),
 						pasteType, pasteOperation, skipBlank, transpose));

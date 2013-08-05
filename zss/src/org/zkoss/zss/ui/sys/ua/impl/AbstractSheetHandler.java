@@ -14,7 +14,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
 */
-package org.zkoss.zss.ui.ua;
+package org.zkoss.zss.ui.sys.ua.impl;
 
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
@@ -23,10 +23,10 @@ import org.zkoss.zss.api.model.Sheet;
  * @author dennis
  * @since 3.0.0
  */
-public abstract class AbstractProtectedAwareHandler extends AbstractUserHandler{
+public abstract class AbstractSheetHandler extends AbstractHandler{
 
 	@Override
 	public boolean isEnabled(Book book, Sheet sheet) {
-		return book!=null && sheet!=null && !sheet.isProtected();
+		return book!=null && sheet!=null;
 	}
 }

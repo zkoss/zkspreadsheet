@@ -14,7 +14,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
 */
-package org.zkoss.zss.ui.ua;
+package org.zkoss.zss.ui.sys.ua.impl;
 
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
@@ -27,7 +27,7 @@ import org.zkoss.zss.ui.UserActionContext;
  * @author dennis
  * @since 3.0.0
  */
-public class MoveSheetHandler extends AbstractSheetAwareHandler{
+public class MoveSheetHandler extends AbstractSheetHandler{
 
 	boolean _left;
 	
@@ -52,7 +52,7 @@ public class MoveSheetHandler extends AbstractSheetAwareHandler{
 	}
 	
 	@Override
-	public boolean process(UserActionContext ctx) {
+	protected boolean processAction(UserActionContext ctx) {
 		Book book = ctx.getBook();
 		Sheet sheet = ctx.getSheet();
 		

@@ -14,7 +14,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
 */
-package org.zkoss.zss.ui.ua;
+package org.zkoss.zss.ui.sys.ua.impl;
 
 import org.zkoss.lang.Strings;
 import org.zkoss.util.resource.Labels;
@@ -29,10 +29,10 @@ import org.zkoss.zss.ui.UserActionContext;
  * @author dennis
  * @since 3.0.0
  */
-public class RenameSheetHandler extends AbstractSheetAwareHandler{
+public class RenameSheetHandler extends AbstractSheetHandler{
 
 	@Override
-	public boolean process(UserActionContext ctx) {
+	protected boolean processAction(UserActionContext ctx) {
 		Book book = ctx.getBook();
 		Sheet sheet = ctx.getSheet();
 		String newname = (String) ctx.getData("name");

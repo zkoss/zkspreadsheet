@@ -48,10 +48,9 @@ public interface UserActionContext {
 		
 		public Sheet getSheet();
 		public Rect getSelection();
-		
 		public Object getInfo();
 		
-		
+		public boolean isCutMode();
 		
 	}
 	
@@ -59,7 +58,7 @@ public interface UserActionContext {
 	
 	public void clearClipboard();
 	
-	public void setClipboard(Sheet sheet,Rect selection,Object info);
+	public void setClipboard(Sheet sheet,Rect selection,boolean cutMode,Object info);
 
 	
 	

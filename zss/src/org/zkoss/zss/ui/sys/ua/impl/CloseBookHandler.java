@@ -14,7 +14,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
 */
-package org.zkoss.zss.ui.ua;
+package org.zkoss.zss.ui.sys.ua.impl;
 
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.UserActionContext;
@@ -23,9 +23,9 @@ import org.zkoss.zss.ui.UserActionContext;
  * @author dennis
  * @since 3.0.0
  */
-public class CloseBookHandler extends AbstractBookAwareHandler{
+public class CloseBookHandler extends AbstractBookHandler{
 	@Override
-	public boolean process(UserActionContext ctx) {
+	protected boolean processAction(UserActionContext ctx) {
 		Spreadsheet zss = ctx.getSpreadsheet();
 		if(zss.getSrc()!=null){
 			zss.setSrc(null);

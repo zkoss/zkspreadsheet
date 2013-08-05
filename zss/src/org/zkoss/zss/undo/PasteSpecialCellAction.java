@@ -33,21 +33,27 @@ import org.zkoss.zss.undo.impl.ReserveUtil;
  * @author dennis
  * 
  */
-public class PasteCellAction extends AbstractCellDataStyleAction {
+public class PasteSpecialCellAction extends AbstractCellDataStyleAction {
 
 	protected final int _destRow,_destColumn,_destLastRow,_destLastColumn;
 	protected final int _reservedDestLastRow,_reservedDestLastColumn;
 	protected final Sheet _destSheet;
+	protected final PasteType _pasteType;
+	protected final PasteOperation _pasteOperation;
+	protected final boolean _skipBlank;
+	protected final boolean _transpose;
 	
 	private Range _pastedRange;
 	
 //	private final int rlastRow;
 //	private final int rlastColumn;
 	
-	public PasteCellAction(String label, 
+	public PasteSpecialCellAction(String label, 
 			Sheet sheet, int srcRow, int srcColumn,int srcLastRow, int srcLastColumn, 
-			Sheet destSheet, int destRow, int destColumn,int destLastRow, int destLastColumn) {
+			Sheet destSheet, int destRow, int destColumn,int destLastRow, int destLastColumn, 
+			PasteType pasteType, PasteOperation pasteOperation, boolean skipBlank, boolean transpose) {
 		super(label, sheet, srcRow, srcColumn, srcLastRow, srcLastColumn,RESERVE_ALL);
+		this._transpose = transpose;
 		
 		this._destRow = destRow;
 		this._destColumn = destColumn;
@@ -57,13 +63,17 @@ public class PasteCellAction extends AbstractCellDataStyleAction {
 		int srcColNum = srcLastColumn-srcColumn;
 		int srcRowNum = srcLastRow-srcRow;
 		//enlarge and transpose
-		int destWidth = Math.max(destLastColumn-destColumn, srcColNum);
-		int destHeight = Math.max(destLastRow-destRow, srcRowNum);
+		int destWidth = Math.max(destLastColumn-destColumn, transpose?srcRowNum:srcColNum);
+		int destHeight = Math.max(destLastRow-destRow, transpose?srcColNum:srcRowNum);
 		
 		_reservedDestLastRow = _destRow + destHeight;
 		_reservedDestLastColumn = _destColumn + destWidth;
 		
 		this._destSheet = destSheet;
+		this._pasteType = pasteType;
+		this._pasteOperation = pasteOperation;
+		this._skipBlank = skipBlank;
+		
 	}
 	
 	@Override
@@ -82,6 +92,7 @@ public class PasteCellAction extends AbstractCellDataStyleAction {
 	public Sheet getRedoSheet(){
 		return _destSheet;
 	}
+	
 
 	@Override
 	protected int getReservedRow(){
@@ -116,7 +127,7 @@ public class PasteCellAction extends AbstractCellDataStyleAction {
 	protected void applyAction() {
 		Range src = Ranges.range(_sheet, _row, _column, _lastRow, _lastColumn);
 		Range dest = Ranges.range(_destSheet, _destRow, _destColumn, _destLastRow, _destLastColumn);
-		_pastedRange = CellOperationUtil.paste(src, dest);
+		_pastedRange = CellOperationUtil.pasteSpecial(src, dest, _pasteType, _pasteOperation, _skipBlank, _transpose);
 	}
 
 }
