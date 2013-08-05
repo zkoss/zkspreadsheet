@@ -138,7 +138,6 @@ import org.zkoss.zss.ui.sys.DefaultUserActionManagerCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl.CellAttribute;
 import org.zkoss.zss.ui.sys.UserActionManagerCtrl;
-import org.zkoss.zss.ui.sys.DefaultComponentActionManager;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
 import org.zkoss.zss.ui.sys.WidgetHandler;
@@ -149,7 +148,7 @@ import org.zkoss.zss.undo.HideHeaderAction;
 import org.zkoss.zss.undo.ResizeHeaderAction;
 import org.zkoss.zss.undo.UndoableAction;
 import org.zkoss.zss.undo.UndoableActionManager;
-import org.zkoss.zss.undo.impl.DefaultUndoableActionManager;
+import org.zkoss.zss.undo.impl.DummyUndoableActionManager;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.impl.XulElement;
 
@@ -199,6 +198,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 //	public static final String TOOLBAR_DISABLED_ACTION = "org.zkoss.zss.ui.ToolbarAction.disabled";
 	private static final String USER_ACTION_MANAGER_CTRL_CLS = "org.zkoss.zss.ui.UserActionManagerCtrl.class";
+	private static final String UNDOABLE_ACTION_MANAGER_CLS = "org.zkoss.zss.ui.UndoableActionManager.class";
 	
 	private static final int DEFAULT_TOP_HEAD_HEIGHT = 20;
 	private static final int DEFAULT_LEFT_HEAD_WIDTH = 36;
@@ -5032,7 +5032,21 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	public UndoableActionManager getUndoableActionManager(){
 		if(_undoableActionManager==null){
-			_undoableActionManager = new DefaultUndoableActionManager(this);
+			String cls = (String) getAttribute(UNDOABLE_ACTION_MANAGER_CLS,true);
+			
+			if(cls==null){
+				cls = (String) Library.getProperty(UNDOABLE_ACTION_MANAGER_CLS);
+			}
+			if (cls != null) {
+				try {
+					_undoableActionManager = (UndoableActionManager) Classes.newInstance(cls, null, null);
+				} catch (Exception x) {
+					throw new UiException(x);
+				}
+			} else {
+				_undoableActionManager = new DummyUndoableActionManager();
+			}
+			_undoableActionManager.bind(this);
 		}
 		return _undoableActionManager;
 	}

@@ -1,4 +1,4 @@
-/* FontFamilyAction.java
+/* VerticalAlignHandler.java
 
 {{IS_NOTE
 	Purpose:
@@ -20,34 +20,43 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.UnitUtil;
+import org.zkoss.zss.api.model.CellStyle.Alignment;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.UserActionContext;
-import org.zkoss.zss.undo.ClearCellAction;
-import org.zkoss.zss.undo.FontStyleAction;
+import org.zkoss.zss.undo.CellStyleAction;
 import org.zkoss.zss.undo.UndoableActionManager;
 
 /**
  * @author dennis
  *
  */
-public class ClearContentHandler extends AbstractProtectedHandler {
+public class HorizontalAlignHandler extends AbstractProtectedHandler {
+
+	Alignment _type;
+	
+	
+	public HorizontalAlignHandler(Alignment type) {
+		this._type = type;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.zkoss.zss.ui.sys.ua.impl.AbstractHandler#processAction(org.zkoss.zss.ui.UserActionContext)
 	 */
 	@Override
 	protected boolean processAction(UserActionContext ctx) {
-		Integer fontSize = Integer.parseInt((String)ctx.getData("size"));
-		
 		Sheet sheet = ctx.getSheet();
 		Rect selection = ctx.getSelection();
 		Range range = Ranges.range(sheet, selection);
-		
+		if(range.isProtected()){
+			showProtectMessage();
+			return true;
+		}
 		UndoableActionManager uam = ctx.getSpreadsheet().getUndoableActionManager();
-		uam.doAction(new ClearCellAction(Labels.getLabel("zss.undo.clearContents"),sheet, selection.getRow(), selection.getColumn(), 
-				selection.getLastRow(), selection.getLastColumn(),ClearCellAction.Type.CONTENT));
+		uam.doAction(new CellStyleAction(Labels.getLabel("zss.undo.cellStyle"),sheet, selection.getRow(), selection.getColumn(), 
+			selection.getLastRow(), selection.getLastColumn(), 
+			CellOperationUtil.getAligmentApplier(_type)));
 		return true;
 	}
 

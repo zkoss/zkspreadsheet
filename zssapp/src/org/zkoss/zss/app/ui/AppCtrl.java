@@ -78,23 +78,9 @@ public class AppCtrl extends CtrlBase<Component>{
 		comp.setAttribute(APPCOMP, comp);
 	}
 	
-//	ComponentActionManager createHandler(){
-//		if("EE".equals(Version.getEdition())){
-//			try {
-//				return (ComponentActionManager) Classes.newInstanceByThread("org.zkoss.zss.app.ui.AppComponentActionHandlerEx", new Class<?>[]{AppCtrl.class}, new Object[]{this});
-//			} catch (Exception e) {
-//				log.warning(e.getMessage(),e);
-//			}
-//		}
-//		return new AppComponentActionManager(this);
-//	}
-	
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		
-		//TODO
-//		((SpreadsheetCtrl)ss.getExtraCtrl()).setComponentActionHandler(createHandler());
 		
 		UserActionManager uam = ss.getUserActionManager();
 		uam.registerHandler(DefaultUserActionManagerCtrl.Category.AUXACTION.getName(), AuxAction.NEW_BOOK.getAction(), new UserActionHandler() {
@@ -136,6 +122,8 @@ public class AppCtrl extends CtrlBase<Component>{
 				return book!=null;
 			}
 		});
+		
+		//do after default
 		uam.registerHandler(DefaultUserActionManagerCtrl.Category.AUXACTION.getName(), AuxAction.CLOSE_BOOK.getAction(), new UserActionHandler() {
 			
 			@Override

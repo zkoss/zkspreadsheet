@@ -30,6 +30,8 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.CellStyle.Alignment;
+import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.ui.AuxAction;
@@ -48,10 +50,14 @@ import org.zkoss.zss.ui.sys.ua.impl.AbstractBookHandler;
 import org.zkoss.zss.ui.sys.ua.impl.AbstractProtectedHandler;
 import org.zkoss.zss.ui.sys.ua.impl.AddSheetHandler;
 import org.zkoss.zss.ui.sys.ua.impl.ApplyBorderHandler;
-import org.zkoss.zss.ui.sys.ua.impl.ClearContentHandler;
+import org.zkoss.zss.ui.sys.ua.impl.ClearCellHandler;
 import org.zkoss.zss.ui.sys.ua.impl.CloseBookHandler;
 import org.zkoss.zss.ui.sys.ua.impl.CopyHandler;
 import org.zkoss.zss.ui.sys.ua.impl.CutHandler;
+import org.zkoss.zss.ui.sys.ua.impl.DeleteCellLeftHandler;
+import org.zkoss.zss.ui.sys.ua.impl.DeleteCellUpHandler;
+import org.zkoss.zss.ui.sys.ua.impl.DeleteColumnHandler;
+import org.zkoss.zss.ui.sys.ua.impl.DeleteRowHandler;
 import org.zkoss.zss.ui.sys.ua.impl.DeleteSheetHandler;
 import org.zkoss.zss.ui.sys.ua.impl.FillColorHandler;
 import org.zkoss.zss.ui.sys.ua.impl.FontBoldHandler;
@@ -61,10 +67,22 @@ import org.zkoss.zss.ui.sys.ua.impl.FontItalicHandler;
 import org.zkoss.zss.ui.sys.ua.impl.FontSizeHandler;
 import org.zkoss.zss.ui.sys.ua.impl.FontStrikeoutHandler;
 import org.zkoss.zss.ui.sys.ua.impl.FontUnderlineHandler;
+import org.zkoss.zss.ui.sys.ua.impl.HideHeaderHandler;
+import org.zkoss.zss.ui.sys.ua.impl.HorizontalAlignHandler;
+import org.zkoss.zss.ui.sys.ua.impl.InsertCellDownHandler;
+import org.zkoss.zss.ui.sys.ua.impl.InsertCellRightHandler;
+import org.zkoss.zss.ui.sys.ua.impl.InsertColumnHandler;
+import org.zkoss.zss.ui.sys.ua.impl.InsertRowHandler;
+import org.zkoss.zss.ui.sys.ua.impl.MergeCenterHandler;
+import org.zkoss.zss.ui.sys.ua.impl.MergeHandler;
 import org.zkoss.zss.ui.sys.ua.impl.MoveSheetHandler;
-import org.zkoss.zss.ui.sys.ua.impl.NilHandler;
 import org.zkoss.zss.ui.sys.ua.impl.PasteHandler;
 import org.zkoss.zss.ui.sys.ua.impl.RenameSheetHandler;
+import org.zkoss.zss.ui.sys.ua.impl.UnmergeHandler;
+import org.zkoss.zss.ui.sys.ua.impl.VerticalAlignHandler;
+import org.zkoss.zss.ui.sys.ua.impl.WrapTextHandler;
+import org.zkoss.zss.undo.ClearCellAction;
+import org.zkoss.zss.undo.HideHeaderAction;
 import org.zkoss.zss.undo.UndoableActionManager;
 /**
  * The user action handler which provide default spreadsheet operation handling.
@@ -155,45 +173,41 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		registerHandler(category, AuxAction.FILL_COLOR.getAction(), new FillColorHandler());
 		
 		
-		registerHandler(category, AuxAction.VERTICAL_ALIGN_TOP.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.VERTICAL_ALIGN_MIDDLE.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.VERTICAL_ALIGN_BOTTOM.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.HORIZONTAL_ALIGN_LEFT.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.HORIZONTAL_ALIGN_CENTER.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.HORIZONTAL_ALIGN_RIGHT.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.VERTICAL_ALIGN_TOP.getAction(), new VerticalAlignHandler(VerticalAlignment.TOP));
+		registerHandler(category, AuxAction.VERTICAL_ALIGN_MIDDLE.getAction(), new VerticalAlignHandler(VerticalAlignment.CENTER));
+		registerHandler(category, AuxAction.VERTICAL_ALIGN_BOTTOM.getAction(), new VerticalAlignHandler(VerticalAlignment.BOTTOM));
+		registerHandler(category, AuxAction.HORIZONTAL_ALIGN_LEFT.getAction(), new HorizontalAlignHandler(Alignment.LEFT));
+		registerHandler(category, AuxAction.HORIZONTAL_ALIGN_CENTER.getAction(), new HorizontalAlignHandler(Alignment.CENTER));
+		registerHandler(category, AuxAction.HORIZONTAL_ALIGN_RIGHT.getAction(), new HorizontalAlignHandler(Alignment.RIGHT));
 		
-		registerHandler(category, AuxAction.WRAP_TEXT.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.WRAP_TEXT.getAction(), new WrapTextHandler());
 		
-		registerHandler(category, AuxAction.MERGE_AND_CENTER.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.MERGE_ACROSS.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.MERGE_CELL.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.UNMERGE_CELL.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.MERGE_AND_CENTER.getAction(), new MergeCenterHandler());
+		registerHandler(category, AuxAction.MERGE_ACROSS.getAction(), new MergeHandler(true));
+		registerHandler(category, AuxAction.MERGE_CELL.getAction(), new MergeHandler(false));
+		registerHandler(category, AuxAction.UNMERGE_CELL.getAction(), new UnmergeHandler());
 		
-		registerHandler(category, AuxAction.INSERT_SHIFT_CELL_RIGHT.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.INSERT_SHIFT_CELL_DOWN.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.INSERT_SHEET_ROW.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.INSERT_SHEET_COLUMN.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.INSERT_SHIFT_CELL_RIGHT.getAction(), new InsertCellRightHandler());
+		registerHandler(category, AuxAction.INSERT_SHIFT_CELL_DOWN.getAction(), new InsertCellDownHandler());
+		registerHandler(category, AuxAction.INSERT_SHEET_ROW.getAction(), new InsertRowHandler());
+		registerHandler(category, AuxAction.INSERT_SHEET_COLUMN.getAction(), new InsertColumnHandler());
 		
-		registerHandler(category, AuxAction.DELETE_SHIFT_CELL_LEFT.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.DELETE_SHIFT_CELL_UP.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.DELETE_SHEET_ROW.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.DELETE_SHEET_COLUMN.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.DELETE_SHIFT_CELL_LEFT.getAction(), new DeleteCellLeftHandler());
+		registerHandler(category, AuxAction.DELETE_SHIFT_CELL_UP.getAction(), new DeleteCellUpHandler());
+		registerHandler(category, AuxAction.DELETE_SHEET_ROW.getAction(), new DeleteRowHandler());
+		registerHandler(category, AuxAction.DELETE_SHEET_COLUMN.getAction(), new DeleteColumnHandler());
 		
-		registerHandler(category, AuxAction.SORT_ASCENDING.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.SORT_DESCENDING.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.SORT_ASCENDING.getAction(), new SortHandler(false));
+		registerHandler(category, AuxAction.SORT_DESCENDING.getAction(), new SortHandler(true));
 		
-		registerHandler(category, AuxAction.FILTER.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.CLEAR_FILTER.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.REAPPLY_FILTER.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.CLEAR_CONTENT.getAction(), new ClearCellHandler(ClearCellAction.Type.CONTENT));
+		registerHandler(category, AuxAction.CLEAR_STYLE.getAction(), new ClearCellHandler(ClearCellAction.Type.STYLE));
+		registerHandler(category, AuxAction.CLEAR_ALL.getAction(), new ClearCellHandler(ClearCellAction.Type.ALL));
 		
-		registerHandler(category, AuxAction.CLEAR_CONTENT.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.CLEAR_STYLE.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.CLEAR_ALL.getAction(), new NilHandler());
-		
-		registerHandler(category, AuxAction.HIDE_COLUMN.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.UNHIDE_COLUMN.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.HIDE_ROW.getAction(), new NilHandler());
-		registerHandler(category, AuxAction.UNHIDE_ROW.getAction(), new NilHandler());
+		registerHandler(category, AuxAction.HIDE_COLUMN.getAction(), new HideHeaderHandler(HideHeaderAction.Type.COLUMN,true));
+		registerHandler(category, AuxAction.UNHIDE_COLUMN.getAction(), new HideHeaderHandler(HideHeaderAction.Type.COLUMN,false));
+		registerHandler(category, AuxAction.HIDE_ROW.getAction(), new HideHeaderHandler(HideHeaderAction.Type.ROW,true));
+		registerHandler(category, AuxAction.UNHIDE_ROW.getAction(), new HideHeaderHandler(HideHeaderAction.Type.ROW,false));
 		
 		
 		
@@ -236,7 +250,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		
 		registerHandler(category, "^B", new FontBoldHandler());
 		registerHandler(category, "^I", new FontItalicHandler());
-		registerHandler(category, "#del", new ClearContentHandler());
+		registerHandler(category, "#del", new ClearCellHandler(ClearCellAction.Type.CONTENT));
 		
 		
 		//event
@@ -307,32 +321,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		}
 		return r;
 	}
-	
-	
-	protected boolean dispatchCellSelectionUpdateAction(UserActionContext ctx) {
-		CellSelectionUpdateEvent evt = (CellSelectionUpdateEvent)ctx.getEvent();
-		//last selection either get form selection or from event
-		String action;
-		if(evt.getAction()==CellSelectionAction.MOVE){
-			action = Events.ON_CELL_SELECTION_UPDATE+SPLIT_CHAR+"move";
-		}else if(evt.getAction()==CellSelectionAction.RESIZE){
-			action = Events.ON_CELL_SELECTION_UPDATE+SPLIT_CHAR+"resize";
-		}else{
-			return false;
-		}
-		
-//		doResizeCellSelection(new Rect(evt.getOrigleft(),evt.getOrigtop(),evt.getOrigright(),evt.getOrigbottom()),ctx.getSelection());
-//		doMoveCellSelection(new Rect(evt.getOrigleft(),evt.getOrigtop(),evt.getOrigright(),evt.getOrigbottom()),ctx.getSelection());
-		
-		boolean r = false;
-		for(UserActionHandler uac :getHandlerList(ctx.getCategory(), ctx.getAction())){
-			if(uac!=null && uac.isEnabled(ctx.getBook(), ctx.getSheet())){
-				r |= uac.process(ctx);
-			}
-		}
-		return r;
-		
-	}
+
 
 	//aux
 	@Override
@@ -435,11 +424,6 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 					_sparedsheet.smartUpdate("doPasteFromServer", true);
 				}
 			}
-		}else if(Events.ON_CELL_SELECTION_UPDATE.equals(nm)){
-			
-			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,extraData,Category.EVENT.getName(),action);
-			
-			dispatchCellSelectionUpdateAction(ctx);
 		/*}else if(Events.ON_CELL_DOUBLE_CLICK.equals(nm)){//TODO check if we need it still
 			clearClipboard();
 		*/}else if(Events.ON_START_EDITING.equals(nm)){
@@ -493,8 +477,6 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		if(category.indexOf(SPLIT_CHAR)>=0){
 			throw new IllegalArgumentException("category can't contain "+SPLIT_CHAR+", "+category+","+action);
 		}
-		System.out.println(">>>> registerHandler "+category+","+action+":"+handler);
-		
 		String key = getKey(category,action);
 		List<UserActionHandler> handlers = _handlerMap.get(key);
 		if(handlers==null){
