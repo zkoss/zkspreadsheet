@@ -136,7 +136,7 @@ public class Rect {
 	 */
 	public String toAreaReference(){
 		if(areaRef==null){
-			areaRef = new AreaReference(new CellReference(_top,_left),new CellReference(_bottom,_right)).toString();
+			areaRef = new AreaReference(new CellReference(_top,_left),new CellReference(_bottom,_right)).formatAsString();
 		}
 		return areaRef;
 	}
