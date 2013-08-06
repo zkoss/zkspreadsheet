@@ -51,6 +51,7 @@ import org.zkoss.zss.ui.event.Events;
 import org.zkoss.zss.ui.sys.UserActionManagerCtrl;
 import org.zkoss.zss.ui.sys.DefaultUserActionManagerCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
+import org.zkoss.zss.undo.UndoableActionManager;
 import org.zkoss.zul.Filedownload;
 
 /**
@@ -145,6 +146,13 @@ public class AppCtrl extends CtrlBase<Component>{
 			}
 		});
 		
+		ss.addEventListener(Events.ON_AFTER_UNDOABLE_ACTION, new EventListener<Event>() {
+			@Override
+			public void onEvent(Event event) throws Exception {
+				onAfterUndoableAction();
+			}
+		});
+		
 		
 		//load default open book from parameter
 		String bookName = null ;
@@ -213,6 +221,10 @@ public class AppCtrl extends CtrlBase<Component>{
 	
 	/*package*/ void onSheetSelect(){
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
+	}
+	
+	/*package*/ void onAfterUndoableAction(){
+		pushAppEvent(AppEvts.ON_UPDATE_UNDO_REDO,ss);
 	}
 	
 	/*package*/ void doSaveBook(boolean close){
@@ -385,9 +397,26 @@ public class AppCtrl extends CtrlBase<Component>{
 			doFreeze(((Integer)data),ss.getSelectedSheet().getColumnFreeze());
 		}else if(AppEvts.ON_FREEZE_COLUMN.equals(event)){
 			doFreeze(ss.getSelectedSheet().getRowFreeze(),((Integer)data));
+		}else if(AppEvts.ON_UNDO.equals(event)){
+			doUndo();
+		}else if(AppEvts.ON_REDO.equals(event)){
+			doRedo();
 		}
 	}
 
+	private void doUndo() {
+		UndoableActionManager uam = ss.getUndoableActionManager();
+		if(uam.isUndoable()){
+			uam.undoAction();
+		}
+	}
+	private void doRedo() {
+		UndoableActionManager uam = ss.getUndoableActionManager();
+		if(uam.isRedoable()){
+			uam.redoAction();
+		}
+	} 
+	
 	private void doFreeze(int row, int column) {
 		Ranges.range(ss.getSelectedSheet()).setFreezePanel(row, column);
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);

@@ -17,6 +17,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.undo.impl;
 
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.event.Events;
+import org.zkoss.zss.ui.event.UndoableActionEvent;
 import org.zkoss.zss.undo.UndoableAction;
 import org.zkoss.zss.undo.UndoableActionManager;
 
@@ -27,9 +29,13 @@ import org.zkoss.zss.undo.UndoableActionManager;
  */
 public class DummyUndoableActionManager implements UndoableActionManager {
 
+	
+	private Spreadsheet _spreadsheet;
+	
 	@Override
 	public void doAction(UndoableAction action) {
 		action.doAction();
+		org.zkoss.zk.ui.event.Events.postEvent(new UndoableActionEvent(Events.ON_AFTER_UNDOABLE_ACTION, _spreadsheet, UndoableActionEvent.Type.DO,action));
 	}
 
 	@Override
@@ -69,7 +75,8 @@ public class DummyUndoableActionManager implements UndoableActionManager {
 	}
 
 	@Override
-	public void bind(Spreadsheet sparedsheet) {
+	public void bind(Spreadsheet spreadsheet) {
+		_spreadsheet = spreadsheet;
 	}
 
 }

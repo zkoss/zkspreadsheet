@@ -22,6 +22,7 @@ public class AppEvts {
 	public static String ON_CLOSED_BOOK = "onClosedBook";
 	public static String ON_SAVED_BOOK = "onSavedBook";
 	public static String ON_CHANGED_SPREADSHEET = "onChangedSpreadsheet";
+	public static String ON_UPDATE_UNDO_REDO = "onUpdateUndoRedo";
 	
 	//memu
 	public static String ON_NEW_BOOK = "onNewBook";
@@ -38,5 +39,8 @@ public class AppEvts {
 	public static String ON_UNFREEZE_PANEL = "onUnFreezePanel";
 	public static String ON_FREEZE_ROW = "onFreezeRow";
 	public static String ON_FREEZE_COLUMN = "onFreezeColumn";
+	
+	public static String ON_UNDO = "onUndo";
+	public static String ON_REDO = "onRedo";
 
 }

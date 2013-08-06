@@ -77,6 +77,12 @@ ZK Spreadsheet 3.0.0 RC
     onHeaderSize > onHeaderUpdate
     onSelectionChange > onCellSelectionChange
 	  onCellFocused > onCellFocus
+  + Event name change:
+    onSheetNameChange > onAfterSheetNameChange
+    onSheetOrderChange > onAfterSheetOrderChange
+    onSheetDelete > onAfterSheetDelete
+    onSheetCreate > onAfterSheetCreate
+    onCellChange > onAfterCellChange
   + JSF
     Main package is renamed to org.zkoss.zss.jsf, Component is renamed to JSFSpreadsheet
   + JSP

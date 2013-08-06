@@ -147,44 +147,52 @@ public class Events {
 	 */
 	public static final String ON_WIDGET_UPDATE = "onWidgetUpdate";//"onZSSMoveWidget";
 	
+	
+	/**
+	 * This is event is sent after do/undo/redo a undoable action by a undoable action manager
+	 * @see UndoableActionEvent
+	 * @since 3.0.0
+	 */
+	public static final String ON_AFTER_UNDOABLE_ACTION = "onAfterUndoableAction";
+	
 	/* 
 	 * Following are events that fire by book SSDataEvent and delegate to Sparedsheet to provide to component user.
 	 * TODO consider to let user register listener on book directly or wrap more event 
 	 */
 
 	/**
-	 * The onSheetNameChange event. (with {@link SheetEvent}
-	 * This event is sent when sheet's name is changed by operating the book model.
+	 * This event is sent after sheet's name is changed by operating the book model.
 	 * @see SheetEvent
+	 * @since 3.0.0
 	 */
-	public static final String ON_SHEET_NAME_CHANGE = "onSheetNameChange";
+	public static final String ON_AFTER_SHEET_NAME_CHANGE = "onAfterSheetNameChange";
 	/**
-	 * The onSheetOrderChange event. (with {@link SheetEvent}
-	 * This event is sent when sheet's order is changed by operating the book model.
+	 * This event is sent after sheet's order is changed by operating the book model.
 	 * @see SheetEvent
+	 * @since 3.0.0
 	 */
-	public static final String ON_SHEET_ORDER_CHANGE = "onSheetOrderChange";
+	public static final String ON_AFTER_SHEET_ORDER_CHANGE = "onAfterSheetOrderChange";
 	
 	/**
-	 * The onSheetDelete event. (with {@link SheetDeleteEvent}
-	 * This event is sent when sheet is deleted by operating the book model.
+	 * This event is sent after sheet is deleted by operating the book model.
 	 * @see SheetDeleteEvent
+	 * @since 3.0.0
 	 */
-	public static final String ON_SHEET_DELETE = "onSheetDelete";
+	public static final String ON_AFTER_SHEET_DELETE = "onAfterSheetDelete";
 
 	/**
-	 * The onSheetCreate event. (with {@link SheetEvent}
-	 * This event is sent when sheet is created by operating the book model.
+	 * This event is sent after sheet is created by operating the book model.
 	 * @see SheetEvent
+	 * @since 3.0.0
 	 */
-	public static final String ON_SHEET_CREATE = "onSheetCreate";
+	public static final String ON_AFTER_SHEET_CREATE = "onAfterSheetCreate";
 		
 	/** 
-	 * The onCellChange event (with {@link CellAreaEvent}
-	 * This event is sent when cell contents changed by operating the book model.
+	 * This event is sent after cell contents changed by operating the book model.
 	 * @see CellAreaEvent
+	 * @since 3.0.0
 	 */
-	public static final String ON_CELL_CHANGE = "onCellChange";
+	public static final String ON_AFTER_CELL_CHANGE = "onAfterCellChange";
 	
 	/*
 	 * end of book delegation event  

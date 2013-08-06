@@ -11,6 +11,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.app.ui.menu;
 
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.select.Selectors;
@@ -20,6 +21,7 @@ import org.zkoss.zss.app.ui.CtrlBase;
 import org.zkoss.zss.app.ui.AppEvts;
 import org.zkoss.zss.app.ui.UiUtil;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.undo.UndoableActionManager;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menubar;
 import org.zkoss.zul.Menuitem;
@@ -49,6 +51,11 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	@Wire
 	Menuitem exportFile;
 	
+	@Wire
+	Menuitem undo;
+	@Wire
+	Menuitem redo;
+	
 	
 	@Wire
 	Menuitem toggleFormulaBar;
@@ -65,7 +72,10 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	protected void onAppEvent(String event,Object data){
 		if(AppEvts.ON_CHANGED_SPREADSHEET.equals(event)){
 			doUpdateMenu((Spreadsheet)data);
+		}else if(AppEvts.ON_UPDATE_UNDO_REDO.equals(event)){
+			doUpdateMenu((Spreadsheet)data);
 		}
+		
 	}
 	
 	private void doUpdateMenu(Spreadsheet sparedsheet){
@@ -82,7 +92,28 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 		saveFileAndClose.setDisabled(disabled || readonly);
 		closeFile.setDisabled(disabled);
 		exportFile.setDisabled(disabled);
-				
+		
+		
+		UndoableActionManager uam = sparedsheet.getUndoableActionManager();
+		
+		
+		String label = Labels.getLabel("zssapp.mainMenu.edit.undo");
+		if(uam.isUndoable()){
+			undo.setDisabled(false);
+			label = label+":"+uam.getUndoLabel();	
+		}else{
+			undo.setDisabled(true);
+		}
+		undo.setLabel(label);
+		
+		label = Labels.getLabel("zssapp.mainMenu.edit.redo");
+		if(uam.isRedoable()){
+			redo.setDisabled(false);
+			label = label+":"+uam.getRedoLabel();	
+		}else{
+			redo.setDisabled(true);
+		}
+		redo.setLabel(label);
 				
 //		toggleFormulaBar.setDisabled(disabled); //don't need to care the book load or not.
 		toggleFormulaBar.setChecked(sparedsheet.isShowFormulabar());
@@ -155,5 +186,15 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	public void onViewFreezeCols(ForwardEvent event) {
 		int index = Integer.parseInt((String) event.getData());
 		pushAppEvent(AppEvts.ON_FREEZE_COLUMN,index);
+	}
+	
+	@Listen("onUndo=#mainMenubar")
+	public void onUndo(ForwardEvent event) {
+		pushAppEvent(AppEvts.ON_UNDO);
+	}
+	
+	@Listen("onRedo=#mainMenubar")
+	public void onRedo(ForwardEvent event) {
+		pushAppEvent(AppEvts.ON_REDO);
 	}
 }

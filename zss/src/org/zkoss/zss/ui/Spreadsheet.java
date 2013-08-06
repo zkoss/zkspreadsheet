@@ -2166,19 +2166,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
 			Sheet sheet = getBook().getSheet(name);
-			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_SHEET_ORDER_CHANGE, Spreadsheet.this, sheet));
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_AFTER_SHEET_ORDER_CHANGE, Spreadsheet.this, sheet));
 		}
 		private void onSheetNameChange(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
 			Sheet sheet = getBook().getSheet(name);
-			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_SHEET_NAME_CHANGE, Spreadsheet.this, sheet));
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_AFTER_SHEET_NAME_CHANGE, Spreadsheet.this, sheet));
 		}
 		private void onSheetCreate(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
 			Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
 			Sheet sheet = getBook().getSheet(name);
-			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_SHEET_CREATE, Spreadsheet.this, sheet));
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetEvent(Events.ON_AFTER_SHEET_CREATE, Spreadsheet.this, sheet));
 		}
 		private void onSheetDelete(SSDataEvent event) {
 			final Object[] payload = (Object[]) event.getPayload(); 
@@ -2205,7 +2205,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				//just update sheet label
 				Spreadsheet.this.smartUpdate("sheetLabels", getSheetLabels());
 			}
-			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_SHEET_DELETE, Spreadsheet.this, delSheetName));
+			org.zkoss.zk.ui.event.Events.postEvent(new SheetDeleteEvent(Events.ON_AFTER_SHEET_DELETE, Spreadsheet.this, delSheetName));
 		}
 		
 		private XSheet getSheet(Ref rng) {
@@ -2321,7 +2321,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				bottom = lastrow;
 			}
 			org.zkoss.zk.ui.event.Events.postEvent(new CellAreaEvent(
-					Events.ON_CELL_CHANGE, Spreadsheet.this, getSelectedSheet(),top, left, bottom,right));
+					Events.ON_AFTER_CELL_CHANGE, Spreadsheet.this, getSelectedSheet(),top, left, bottom,right));
 		}
 		private void onRangeInsert(SSDataEvent event) {
 			final Ref rng = event.getRef();

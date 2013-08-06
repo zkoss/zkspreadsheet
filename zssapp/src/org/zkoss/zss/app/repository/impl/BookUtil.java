@@ -21,6 +21,7 @@ import org.zkoss.lang.Strings;
 import org.zkoss.lang.SystemException;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
+import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Book.BookType;
 import org.zkoss.zss.app.repository.BookInfo;
@@ -113,7 +114,7 @@ public class BookUtil {
 	static public File saveBookToWorkingFolder(Book book,String exporterType) throws IOException{
 		Exporter exporter= exporterType==null?Exporters.getExporter():Exporters.getExporter(exporterType);
 		if(exporter==null){
-			throw new IOException("can't find exporter "+exporterType);
+			throw new IllegalOpArgumentException("can't find exporter "+exporterType);
 		}
 		String bn = suggestFileName(book);
 		
