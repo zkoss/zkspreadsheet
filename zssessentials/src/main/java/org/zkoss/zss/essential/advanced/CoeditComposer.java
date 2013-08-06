@@ -1,71 +1,97 @@
 package org.zkoss.zss.essential.advanced;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.WebApps;
+import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zss.api.Importer;
+import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.essential.AbstractDemoComposer;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Textbox;
 
 /**
- * This class shows all the public ZK Spreadsheet you can listen to
- * @author dennis
+ * This class shows how to enable collaboration edit.
+ * @author dennis, Hawk
  *
  */
-public class CoeditComposer extends AbstractDemoComposer {
+public class CoeditComposer extends SelectorComposer<Component> {
 
 	private static final long serialVersionUID = 1L;
 	
 	@Wire
-	Spreadsheet ss2;
+	private Spreadsheet ss;
+	@Wire
+	private Listbox availableBookList;
+	@Wire
+	private Textbox userName;
 	
-	@Wire
-	Textbox userName1;
-	@Wire
-	Textbox userName2;
+	private ListModelList<String> availableBookModel = new ListModelList<String>();
+	
+	static private final Map<String,Book> sharedBook = new HashMap<String,Book>();
+	static private int userCount = 0;
 	
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		comp.getDesktop().enableServerPush(true);
+		initModel();
+		availableBookList.setModel(availableBookModel);
+		
+		userCount++;
+		ss.setUserName("user"+userCount);
 	}
-	protected Book loadBookFromAvailable(String bookname){
-		Book book = super.loadBookFromAvailable(bookname);
-		if(book!=null){
-			book.setShareScope("desktop");
+	
+	private void initModel() {
+		availableBookModel.add("blank.xlsx");
+		availableBookModel.add("sample.xlsx");
+		availableBookModel.add("startzss.xlsx");
+	}
+	
+	@Listen("onSelect = #availableBookList")
+	public void onBookSelect(){
+		String bookName = availableBookList.getSelectedItem().getValue();
+		Book book = loadBookFromAvailable(bookName);
+		ss.setBook(book);
+	}
+	
+	private Book loadBookFromAvailable(String bookname){
+		Book book;
+		synchronized (sharedBook){
+			book = sharedBook.get(bookname);
+			if(book==null){
+				book = importBook(bookname);
+				book.setShareScope("application");
+				sharedBook.put(bookname, book);
+			}
 		}
 		return book;
 	}
 	
-	@Override
-	protected void applyBook(Book book){
-		super.applyBook(book);
-		ss2.setBook(book);
+	@Listen("onClick=#setUserName")
+	public void setUserName(){
+		ss.setUserName(userName.getValue());
 	}
 	
-	@Listen("onClick=#detach1")
-	public void deatch1(){
-		ss.setBook(null);//clean the book registration
-		ss.detach();
-		ss = null;//clean the reference
+	
+	private Book importBook(String bookname){
+		if(!availableBookModel.contains(bookname)){
+			return null;
+		}
+		Importer imp = Importers.getImporter();
+		try {
+			Book book = imp.imports(WebApps.getCurrent().getResource("/WEB-INF/books/"+bookname), bookname);
+			return book;
+		} catch (IOException e) {
+			throw new RuntimeException(e.getMessage(),e);
+		}
 	}
 	
-	@Listen("onClick=#detach2")
-	public void detach2(){
-		ss2.setBook(null);//clean the book registration
-		ss2.detach();
-		ss2 = null;//clean the reference
-	}
-	
-	@Listen("onClick=#setUserName1")
-	public void doSetUserName1(){
-		ss.setUserName(userName1.getValue());
-	}
-	
-	@Listen("onClick=#setUserName2")
-	public void doSetUserName2(){
-		ss2.setUserName(userName2.getValue());
-	}
 }
 
 
