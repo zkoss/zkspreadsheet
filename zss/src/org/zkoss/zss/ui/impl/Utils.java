@@ -53,7 +53,6 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.ValidationHelper;
 import org.zkoss.zul.Messagebox;
 //
 ///**

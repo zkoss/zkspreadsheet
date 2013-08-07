@@ -135,8 +135,12 @@ import org.zkoss.zss.ui.impl.SequenceId;
 import org.zkoss.zss.ui.impl.StringAggregation;
 import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.DefaultUserActionManagerCtrl;
+import org.zkoss.zss.ui.sys.CellDisplayLoader;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl.CellAttribute;
+import org.zkoss.zss.ui.sys.impl.DummyDataValidationHandler;
+import org.zkoss.zss.ui.sys.impl.SimpleCellDisplayLoader;
+import org.zkoss.zss.ui.sys.DataValidationHandler;
 import org.zkoss.zss.ui.sys.UserActionManagerCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
@@ -193,12 +197,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private static final String COLUMN_SIZE_HELPER_KEY = "_colCellSize";
 	private static final String MERGE_MATRIX_KEY = "_mergeRange";
 	private static final String ACTIVE_RANGE_KEY = "_activeRange";
-	private static final String WIDGET_HANDLER = "org.zkoss.zss.ui.sys.WidgetHandler.class";
+	private static final String WIDGET_HANDLER_CLS = "org.zkoss.zss.ui.sys.WidgetHandler.class";
 	private static final String WIDGET_LOADERS = "org.zkoss.zss.ui.sys.WidgetLoader.class";
 	
 //	public static final String TOOLBAR_DISABLED_ACTION = "org.zkoss.zss.ui.ToolbarAction.disabled";
 	private static final String USER_ACTION_MANAGER_CTRL_CLS = "org.zkoss.zss.ui.UserActionManagerCtrl.class";
 	private static final String UNDOABLE_ACTION_MANAGER_CLS = "org.zkoss.zss.ui.UndoableActionManager.class";
+	private static final String CELL_DISPLAY_LOADER_CLS = "org.zkoss.zss.ui.CellDisplayLoader.class";
+	private static final String DATA_VALIDATION_HANDLER_CLS = "org.zkoss.zss.ui.DataValidationHandler.class";
 	
 	private static final int DEFAULT_TOP_HEAD_HEIGHT = 20;
 	private static final int DEFAULT_LEFT_HEAD_WIDTH = 36;
@@ -322,6 +328,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //	private static Set<UserAction> _defToolbarActiobDisabled;
 	
 	private UndoableActionManager _undoableActionManager = null;
+	
+	private CellDisplayLoader _cellDisplayLoader = null;
+	
+	private DataValidationHandler _dataValidationHandler = null;
 	
 	public Spreadsheet() {
 		this.addEventListener("onStartEditingImpl", new EventListener() {
@@ -911,7 +921,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 							getInitColumnSize() , getInitRowSize()));
 			
 			//handle Validation, must after render("activeRange"
-			List<Map> dvs = convertDataValidationToJSON(sheet.getDataValidations());
+			List<Map> dvs = getDataValidationHandler().loadDataValidtionJASON(getSelectedSheet());
 			if (dvs != null) {
 				smartUpdate("dataValidations", dvs);
 			} else {
@@ -1475,54 +1485,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return null;
 	}
 
-	private List<Map> convertDataValidationToJSON(List<DataValidation> dvs) {
-		if (dvs != null && !dvs.isEmpty()) {
-			List<Map> results = new ArrayList<Map>(dvs.size());
-			for(DataValidation dv : dvs) {
-				results.add(convertDataValidationToJSON(dv));
-			}
-			return results;
-		}
-		return null;
-	}
 	
-	private Map convertDataValidationToJSON(DataValidation dv) {
-		final CellRangeAddressList addrList = dv.getRegions();
-		final int addrCount = addrList.countRanges();
-		final List<Map> addrmapary = new ArrayList<Map>(addrCount);
-		for (int j = 0; j < addrCount; ++j) {
-			final CellRangeAddress addr = addrList.getCellRangeAddress(j); 
-			final int left = addr.getFirstColumn();
-			final int right = addr.getLastColumn();
-			final int top = addr.getFirstRow();
-			final int bottom = addr.getLastRow();
-			final XSheet sheet = this.getSelectedXSheet();
-			final Map<String, Integer> addrmap = new HashMap<String, Integer>();
-			addrmap.put("left", left);
-			addrmap.put("top", top);
-			addrmap.put("right", right);
-			addrmap.put("bottom", bottom);
-			addrmapary.add(addrmap);
-		}
-		final Map validMap = new HashMap();
-		validMap.put("rangeList", addrmapary); //range list
-		validMap.put("showPrompt", dv.getShowPromptBox()); //whether show prompt box
-		validMap.put("promptTitle", dv.getPromptBoxTitle()); //the prompt box title
-		validMap.put("promptText", dv.getPromptBoxText()); //the prompt box text
-		String[] validationList = BookHelper.getValidationList(getSelectedXSheet(), dv);
-		if (validationList != null) {
-			//ZSS-197: the method is useful only list validation objects
-			validMap.put("showButton", dv.getSuppressDropDownArrow()); //whether show dropdown button
-			
-			JSONArray jsonAry = new JSONArray();
-			for (String v : validationList) {
-				jsonAry.add(v);
-			}
-			validMap.put("validationList", jsonAry);
-		}
-		
-		return validMap;
-	}
 
 	//ZSS-13: Support Open hyperlink in a separate browser tab window
 	private boolean getLinkToNewTab() {
@@ -1722,7 +1685,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		renderer.render("rowHeadHidden", _hideRowhead);
 		
 		//handle Validation, must after render("activeRange" ...)
-		List<Map> dvs = convertDataValidationToJSON(sheet.getDataValidations());
+		List<Map> dvs = getDataValidationHandler().loadDataValidtionJASON(getSelectedSheet());
 		if (dvs != null) {
 			renderer.render("dataValidations", dvs);
 		} else {
@@ -3202,7 +3165,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				
 				if (updateText) {
 					if (cellType != Cell.CELL_TYPE_BLANK) {
-						final String cellText = XUtils.getCellHtmlText(sheet, row, col);
+						String cellText = getCellDisplayLoader().getCellHtmlText(sheet, row, col);
+						
 						final String editText = XUtils.getEditText(sheet, row, col);
 						final String formatText = XUtils.getCellFormatText(sheet, row, col);
 						
@@ -4325,7 +4289,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @return
 	 */
 	private WidgetHandler newWidgetHandler() {
-		final String handlerclz = (String) Library.getProperty(WIDGET_HANDLER);
+		final String handlerclz = (String) Library.getProperty(WIDGET_HANDLER_CLS);
 		if (handlerclz != null) {
 			try {
 				_widgetHandler = (WidgetHandler) Classes.newInstance(handlerclz, null, null);
@@ -4430,10 +4394,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private void processStopEditing0(final String token, final Sheet sheet, final int rowIdx, final int colIdx, final Object value, final String editingType) {
 		try {
 			
-			ValidationHelper validationHelper = new ValidationHelper(this);
 			String editText = value == null ? "" : value.toString();
 			// ZSS-351: use force flag to skip the validation when user want force this editing
-			if (!forceStopEditing0 && !validationHelper.validate(sheet, rowIdx, colIdx, editText,
+			if (!forceStopEditing0 && !getDataValidationHandler().validate(sheet, rowIdx, colIdx, editText,
 				//callback
 				new EventListener() {
 					@Override
@@ -4877,7 +4840,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	@Deprecated
 	public boolean validate(XSheet sheet, final int row, final int col, final String txt, 
 		final EventListener callback) {
-		return new ValidationHelper(this).validate(new SheetImpl(new SimpleRef<XBook>(sheet.getBook()),new SimpleRef<XSheet>(sheet)), row, col, txt, callback);
+//		return new ValidationHelper(this).validate(new SheetImpl(
+//				new SimpleRef<XBook>(sheet.getBook()), new SimpleRef<XSheet>(
+//						sheet)), row, col, txt, callback);
+		return false;
 	}
 
 	@Override
@@ -5028,6 +4994,39 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					convertToDisabledActionJSON(getUserActionManagerCtrl()
 							.getSupportedUserAction(getSelectedSheet())));
 		}
+	}
+	
+
+	private CellDisplayLoader getCellDisplayLoader() {
+		if(_cellDisplayLoader==null){
+			String cls = (String) Library.getProperty(CELL_DISPLAY_LOADER_CLS);
+			if (cls != null) {
+				try {
+					_cellDisplayLoader = (CellDisplayLoader) Classes.newInstance(cls, null, null);
+				} catch (Exception x) {
+					throw new UiException(x);
+				}
+			} else {
+				_cellDisplayLoader = new SimpleCellDisplayLoader();
+			}
+		}
+		return _cellDisplayLoader;
+	}
+	
+	private DataValidationHandler getDataValidationHandler() {
+		if(_dataValidationHandler==null){
+			String cls = (String) Library.getProperty(DATA_VALIDATION_HANDLER_CLS);
+			if (cls != null) {
+				try {
+					_dataValidationHandler = (DataValidationHandler) Classes.newInstance(cls, null, null);
+				} catch (Exception x) {
+					throw new UiException(x);
+				}
+			} else {
+				_dataValidationHandler = new DummyDataValidationHandler();
+			}
+		}
+		return _dataValidationHandler;
 	}
 	
 	public UndoableActionManager getUndoableActionManager(){

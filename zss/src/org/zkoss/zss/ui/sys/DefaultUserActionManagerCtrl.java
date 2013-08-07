@@ -73,12 +73,9 @@ import org.zkoss.zss.ui.sys.ua.impl.InsertCellDownHandler;
 import org.zkoss.zss.ui.sys.ua.impl.InsertCellRightHandler;
 import org.zkoss.zss.ui.sys.ua.impl.InsertColumnHandler;
 import org.zkoss.zss.ui.sys.ua.impl.InsertRowHandler;
-import org.zkoss.zss.ui.sys.ua.impl.MergeCenterHandler;
-import org.zkoss.zss.ui.sys.ua.impl.MergeHandler;
 import org.zkoss.zss.ui.sys.ua.impl.MoveSheetHandler;
 import org.zkoss.zss.ui.sys.ua.impl.PasteHandler;
 import org.zkoss.zss.ui.sys.ua.impl.RenameSheetHandler;
-import org.zkoss.zss.ui.sys.ua.impl.UnmergeHandler;
 import org.zkoss.zss.ui.sys.ua.impl.VerticalAlignHandler;
 import org.zkoss.zss.ui.sys.ua.impl.WrapTextHandler;
 import org.zkoss.zss.undo.ClearCellAction;
@@ -139,7 +136,6 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		registerHandler(category, AuxAction.MOVE_SHEET_LEFT.getAction(), new MoveSheetHandler(true));
 		registerHandler(category, AuxAction.MOVE_SHEET_RIGHT.getAction(), new MoveSheetHandler(false));
 
-		registerHandler(category, AuxAction.PROTECT_SHEET.getAction(), new ProtectSheetAction());
 		registerHandler(category, AuxAction.GRIDLINES.getAction(), new DisplayGridlinesAction());
 		
 		
@@ -181,11 +177,6 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		registerHandler(category, AuxAction.HORIZONTAL_ALIGN_RIGHT.getAction(), new HorizontalAlignHandler(Alignment.RIGHT));
 		
 		registerHandler(category, AuxAction.WRAP_TEXT.getAction(), new WrapTextHandler());
-		
-		registerHandler(category, AuxAction.MERGE_AND_CENTER.getAction(), new MergeCenterHandler());
-		registerHandler(category, AuxAction.MERGE_ACROSS.getAction(), new MergeHandler(true));
-		registerHandler(category, AuxAction.MERGE_CELL.getAction(), new MergeHandler(false));
-		registerHandler(category, AuxAction.UNMERGE_CELL.getAction(), new UnmergeHandler());
 		
 		registerHandler(category, AuxAction.INSERT_SHIFT_CELL_RIGHT.getAction(), new InsertCellRightHandler());
 		registerHandler(category, AuxAction.INSERT_SHIFT_CELL_DOWN.getAction(), new InsertCellDownHandler());
