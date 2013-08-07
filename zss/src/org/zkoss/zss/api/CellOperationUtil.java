@@ -691,6 +691,7 @@ public class CellOperationUtil {
 		if(range.isProtected())
 			return;
 		range.clearStyles();
+		range.unmerge(); // don't forge to unmerge the cell as well (ZSS-298)
 	}
 	
 	/**
