@@ -1,6 +1,6 @@
 <zk>
 	<window hflex="1" vflex="1"
-		apply="org.zkoss.zss.essential.advanced.ExportComposer">
+		apply="org.zkoss.zss.essential.ExportComposer">
 
 		<hlayout hflex="1" vflex="1">
 			<vlayout hflex="1" vflex="1">
