@@ -112,8 +112,20 @@ zss.SheetMenupopup = zk.$extends(zul.menu.Menupopup, {
 		this.moveLeft.setDisabled(i == 0);//the first sheet not allow move left
 		this.moveRight.setDisabled(i == len - 1);//the last sheet not allow move right
 		
+		this.protectSheet.setChecked(wgt.isProtect());
+		
 		position = 'before_start';
 		this.$supers(zss.SheetMenupopup, 'open', arguments);
+	},
+	setDisabled: function (actions){
+		var chd = this.firstChild;
+		for (;chd; chd = chd.nextSibling) {
+			if (!chd.setDisabled) {//Menuseparator
+				continue;
+			}
+			
+			chd.setDisabled(actions);
+		}
 	}
 });
 
@@ -400,7 +412,7 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 		this.setHeight("100%");
 		this._wgt = wgt;
 		
-		var menu = new zss.SheetMenupopup(wgt),
+		var menu = this.menu = new zss.SheetMenupopup(wgt),
 			addSheetBtn = this.addSheetButton = new zss.Toolbarbutton({
 				$action: 'addSheet',
 				tooltiptext: msgzss.action.addSheet,
@@ -438,6 +450,7 @@ zss.SheetpanelCave = zk.$extends(zk.Widget, {
 	},
 	setDisabled: function (actions){
 		//TODO should apply disabled action to add btn and context menu
+		this.menu.setDisabled(actions);
 	}
 });
 
@@ -450,6 +463,8 @@ zss.Sheetbar = zk.$extends(zul.layout.South, {
 		this.setSize('24px');
 		
 		this.appendChild(this.cave = new zss.SheetpanelCave(wgt));
+		
+		this.setDisabled(wgt.getActionDisabled());
 	},
 	getSheetSelector: function () {
 		return this.cave.sheetSelector;
