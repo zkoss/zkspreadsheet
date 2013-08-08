@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<zk>
-	<library-property>
-		<name>zssapp.bookrepostory.readonly</name>
-		<value>false</value>
-	</library-property>
-</zk>
