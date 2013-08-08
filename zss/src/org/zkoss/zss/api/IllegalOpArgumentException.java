@@ -20,10 +20,11 @@ package org.zkoss.zss.api;
  * Indicate a illegal operation & argument exception, 
  * usually, we catch this exception and show corresponding message for user 
  * @author kuro
- *
+ * @since 3.0.0
  */
 public class IllegalOpArgumentException extends RuntimeException {
-
+	private static final long serialVersionUID = 1L;
+	
 	public IllegalOpArgumentException() {
 		super();
 	}
@@ -39,7 +40,4 @@ public class IllegalOpArgumentException extends RuntimeException {
 	public IllegalOpArgumentException(Throwable cause) {
 		super(cause);
 	}
-
-	private static final long serialVersionUID = 1L;
-
 }

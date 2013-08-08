@@ -18,7 +18,6 @@ package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Color;
-import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.model.sys.XBook;
 /**
  * 
@@ -27,28 +26,28 @@ import org.zkoss.zss.model.sys.XBook;
  */
 public class CellStyleImpl implements CellStyle{
 	
-	ModelRef<XBook> bookRef;
-	ModelRef<org.zkoss.poi.ss.usermodel.CellStyle> styleRef;
+	protected ModelRef<XBook> _bookRef;
+	protected ModelRef<org.zkoss.poi.ss.usermodel.CellStyle> _styleRef;
 	
-	FontImpl nfont;
+	protected FontImpl _font;
 	
 	public CellStyleImpl(ModelRef<XBook> book,ModelRef<org.zkoss.poi.ss.usermodel.CellStyle> style) {
-		this.bookRef = book;
-		this.styleRef = style;
+		this._bookRef = book;
+		this._styleRef = style;
 	}
 	
 	public org.zkoss.poi.ss.usermodel.CellStyle getNative(){
-		return styleRef.get();
+		return _styleRef.get();
 	}
 	public ModelRef<org.zkoss.poi.ss.usermodel.CellStyle> getRef(){
-		return styleRef;
+		return _styleRef;
 	}
 	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((styleRef == null) ? 0 : styleRef.hashCode());
+		result = prime * result + ((_styleRef == null) ? 0 : _styleRef.hashCode());
 		return result;
 	}
 	@Override
@@ -60,21 +59,21 @@ public class CellStyleImpl implements CellStyle{
 		if (getClass() != obj.getClass())
 			return false;
 		CellStyleImpl other = (CellStyleImpl) obj;
-		if (styleRef == null) {
-			if (other.styleRef != null)
+		if (_styleRef == null) {
+			if (other._styleRef != null)
 				return false;
-		} else if (!styleRef.equals(other.styleRef))
+		} else if (!_styleRef.equals(other._styleRef))
 			return false;
 		return true;
 	}
 
 	public FontImpl getFont() {
-		if(nfont!=null){
-			return nfont;
+		if(_font!=null){
+			return _font;
 		}
-		XBook book = bookRef.get();
+		XBook book = _bookRef.get();
 		org.zkoss.poi.ss.usermodel.Font font = book.getFontAt(getNative().getFontIndex());
-		return nfont = new FontImpl(bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Font>(font));
+		return _font = new FontImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Font>(font));
 	}
 	
 	public String toString(){
@@ -86,7 +85,7 @@ public class CellStyleImpl implements CellStyle{
 
 	public ColorImpl getBackgroundColor() {
 		org.zkoss.poi.ss.usermodel.Color srcColor = getNative().getFillForegroundColorColor();
-		return new ColorImpl(bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(srcColor));
+		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(srcColor));
 	}
 
 	public FillPattern getFillPattern(){
@@ -122,19 +121,19 @@ public class CellStyleImpl implements CellStyle{
 	}
 
 	public Color getBorderTopColor(){
-		return new ColorImpl(bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getTopBorderColorColor()));
+		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getTopBorderColorColor()));
 	}
 
 	public Color getBorderLeftColor(){
-		return new ColorImpl(bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getLeftBorderColorColor()));
+		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getLeftBorderColorColor()));
 	}
 
 	public Color getBorderBottomColor(){
-		return new ColorImpl(bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getBottomBorderColorColor()));
+		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getBottomBorderColorColor()));
 	}
 
 	public Color getBorderRightColor(){
-		return new ColorImpl(bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getRightBorderColorColor()));
+		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getRightBorderColorColor()));
 	}
 	
 	public String getDataFormat(){

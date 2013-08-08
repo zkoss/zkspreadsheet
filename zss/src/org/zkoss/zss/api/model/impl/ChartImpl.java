@@ -18,9 +18,7 @@ package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.zss.api.SheetAnchor;
-import org.zkoss.zss.api.impl.RangeImpl;
 import org.zkoss.zss.api.model.Chart;
-import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XSheet;
 /**
  * 
@@ -29,19 +27,19 @@ import org.zkoss.zss.model.sys.XSheet;
  */
 public class ChartImpl implements Chart{
 	
-	ModelRef<XSheet> sheetRef;
-	ModelRef<org.zkoss.poi.ss.usermodel.Chart> chartRef;
+	private ModelRef<XSheet> _sheetRef;
+	private ModelRef<org.zkoss.poi.ss.usermodel.Chart> _chartRef;
 	
 	public ChartImpl(ModelRef<XSheet> sheetRef, ModelRef<org.zkoss.poi.ss.usermodel.Chart> chartRef) {
-		this.sheetRef = sheetRef;
-		this.chartRef = chartRef;
+		this._sheetRef = sheetRef;
+		this._chartRef = chartRef;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((chartRef == null) ? 0 : chartRef.hashCode());
+		result = prime * result + ((_chartRef == null) ? 0 : _chartRef.hashCode());
 		return result;
 	}
 
@@ -54,16 +52,16 @@ public class ChartImpl implements Chart{
 		if (getClass() != obj.getClass())
 			return false;
 		ChartImpl other = (ChartImpl) obj;
-		if (chartRef == null) {
-			if (other.chartRef != null)
+		if (_chartRef == null) {
+			if (other._chartRef != null)
 				return false;
-		} else if (!chartRef.equals(other.chartRef))
+		} else if (!_chartRef.equals(other._chartRef))
 			return false;
 		return true;
 	}
 	
 	public org.zkoss.poi.ss.usermodel.Chart getNative() {
-		return chartRef.get();
+		return _chartRef.get();
 	}
 	
 	public String getId(){
@@ -73,6 +71,6 @@ public class ChartImpl implements Chart{
 	@Override
 	public SheetAnchor getAnchor() {
 		ClientAnchor anchor = getNative().getPreferredSize();
-		return anchor==null?null:SheetImpl.toSheetAnchor(sheetRef.get(), anchor);
+		return anchor==null?null:SheetImpl.toSheetAnchor(_sheetRef.get(), anchor);
 	}
 }

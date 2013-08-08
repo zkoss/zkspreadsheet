@@ -24,14 +24,14 @@ package org.zkoss.zss.api.model.impl;
  */
 public class SimpleRef<T> implements ModelRef<T>{
 
-	T instance;
+	T _instance;
 	
 	public SimpleRef(T instance){
-		this.instance = instance;
+		this._instance = instance;
 	}
 	
 	public T get() {
-		return instance;
+		return _instance;
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class SimpleRef<T> implements ModelRef<T>{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((instance == null) ? 0 : instance.hashCode());
+				+ ((_instance == null) ? 0 : _instance.hashCode());
 		return result;
 	}
 
@@ -53,10 +53,10 @@ public class SimpleRef<T> implements ModelRef<T>{
 		if (getClass() != obj.getClass())
 			return false;
 		SimpleRef other = (SimpleRef) obj;
-		if (instance == null) {
-			if (other.instance != null)
+		if (_instance == null) {
+			if (other._instance != null)
 				return false;
-		} else if (!instance.equals(other.instance))
+		} else if (!_instance.equals(other._instance))
 			return false;
 		return true;
 	}

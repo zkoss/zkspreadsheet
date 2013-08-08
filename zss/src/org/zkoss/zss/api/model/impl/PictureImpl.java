@@ -17,11 +17,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
-import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.SheetAnchor;
-import org.zkoss.zss.api.impl.RangeImpl;
 import org.zkoss.zss.api.model.Picture;
-import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XSheet;
 /**
  * 
@@ -30,19 +27,19 @@ import org.zkoss.zss.model.sys.XSheet;
  */
 public class PictureImpl implements Picture{
 	
-	ModelRef<XSheet> sheetRef;
-	ModelRef<org.zkoss.poi.ss.usermodel.Picture> picRef;
+	private ModelRef<XSheet> _sheetRef;
+	private ModelRef<org.zkoss.poi.ss.usermodel.Picture> _picRef;
 	
 	public PictureImpl(ModelRef<XSheet> sheetRef, ModelRef<org.zkoss.poi.ss.usermodel.Picture> picRef) {
-		this.sheetRef = sheetRef;
-		this.picRef = picRef;
+		this._sheetRef = sheetRef;
+		this._picRef = picRef;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((picRef == null) ? 0 : picRef.hashCode());
+		result = prime * result + ((_picRef == null) ? 0 : _picRef.hashCode());
 		return result;
 	}
 
@@ -55,16 +52,16 @@ public class PictureImpl implements Picture{
 		if (getClass() != obj.getClass())
 			return false;
 		PictureImpl other = (PictureImpl) obj;
-		if (picRef == null) {
-			if (other.picRef != null)
+		if (_picRef == null) {
+			if (other._picRef != null)
 				return false;
-		} else if (!picRef.equals(other.picRef))
+		} else if (!_picRef.equals(other._picRef))
 			return false;
 		return true;
 	}
 	
 	public org.zkoss.poi.ss.usermodel.Picture getNative() {
-		return picRef.get();
+		return _picRef.get();
 	}
 	
 	
@@ -75,6 +72,6 @@ public class PictureImpl implements Picture{
 	@Override
 	public SheetAnchor getAnchor() {
 		ClientAnchor anchor = getNative().getPreferredSize();
-		return anchor==null?null:SheetImpl.toSheetAnchor(sheetRef.get(), anchor);
+		return anchor==null?null:SheetImpl.toSheetAnchor(_sheetRef.get(), anchor);
 	}
 }

@@ -39,7 +39,7 @@ public class EditableFontImpl extends FontImpl implements EditableFont{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((fontRef == null) ? 0 : fontRef.hashCode());
+		result = prime * result + ((_fontRef == null) ? 0 : _fontRef.hashCode());
 		return result;
 	}
 	@Override
@@ -51,10 +51,10 @@ public class EditableFontImpl extends FontImpl implements EditableFont{
 		if (getClass() != obj.getClass())
 			return false;
 		EditableFontImpl other = (EditableFontImpl) obj;
-		if (fontRef == null) {
-			if (other.fontRef != null)
+		if (_fontRef == null) {
+			if (other._fontRef != null)
 				return false;
-		} else if (!fontRef.equals(other.fontRef))
+		} else if (!_fontRef.equals(other._fontRef))
 			return false;
 		return true;
 	}
@@ -63,8 +63,8 @@ public class EditableFontImpl extends FontImpl implements EditableFont{
 		org.zkoss.poi.ss.usermodel.Font sfont = ((FontImpl)src).getNative();
 		org.zkoss.poi.ss.usermodel.Font font = getNative();
 		font.setBoldweight(sfont.getBoldweight());
-		org.zkoss.poi.ss.usermodel.Color srcColor = BookHelper.getFontColor(bookRef.get(), sfont);
-		BookHelper.setFontColor(bookRef.get(), font, srcColor);
+		org.zkoss.poi.ss.usermodel.Color srcColor = BookHelper.getFontColor(_bookRef.get(), sfont);
+		BookHelper.setFontColor(_bookRef.get(), font, srcColor);
 		font.setFontHeight(sfont.getFontHeight());
 		font.setFontName(sfont.getFontName());
 		font.setItalic(sfont.getItalic());
@@ -92,7 +92,7 @@ public class EditableFontImpl extends FontImpl implements EditableFont{
 		getNative().setFontHeight((short)height);
 	}
 	public void setColor(Color color) {
-		BookHelper.setFontColor(bookRef.get(), getNative(), ((ColorImpl)color).getNative());
+		BookHelper.setFontColor(_bookRef.get(), getNative(), ((ColorImpl)color).getNative());
 	}
 	public void setFontHeightInPoint(int point) {
 		setFontHeight(UnitUtil.pointToTwip(point));	

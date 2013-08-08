@@ -24,10 +24,10 @@ import org.zkoss.zss.api.model.ChartData;
  */
 public class ChartDataImpl implements ChartData{
 
-	ModelRef<org.zkoss.poi.ss.usermodel.charts.ChartData> chartDataRef;
+	private ModelRef<org.zkoss.poi.ss.usermodel.charts.ChartData> _chartDataRef;
 	
 	public ChartDataImpl(ModelRef<org.zkoss.poi.ss.usermodel.charts.ChartData> chartDataRef) {
-		this.chartDataRef = chartDataRef;
+		this._chartDataRef = chartDataRef;
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class ChartDataImpl implements ChartData{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((chartDataRef == null) ? 0 : chartDataRef.hashCode());
+				+ ((_chartDataRef == null) ? 0 : _chartDataRef.hashCode());
 		return result;
 	}
 
@@ -48,21 +48,21 @@ public class ChartDataImpl implements ChartData{
 		if (getClass() != obj.getClass())
 			return false;
 		ChartDataImpl other = (ChartDataImpl) obj;
-		if (chartDataRef == null) {
-			if (other.chartDataRef != null)
+		if (_chartDataRef == null) {
+			if (other._chartDataRef != null)
 				return false;
-		} else if (!chartDataRef.equals(other.chartDataRef))
+		} else if (!_chartDataRef.equals(other._chartDataRef))
 			return false;
 		return true;
 	}
 	
 	public org.zkoss.poi.ss.usermodel.charts.ChartData getNative(){
-		return chartDataRef.get();
+		return _chartDataRef.get();
 	}
 	
 	
 	public org.zkoss.poi.ss.usermodel.charts.ChartData getPoiChartData(){
-		return chartDataRef.get();
+		return _chartDataRef.get();
 	}
 
 }

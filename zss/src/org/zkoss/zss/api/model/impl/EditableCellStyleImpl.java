@@ -39,7 +39,7 @@ public class EditableCellStyleImpl extends CellStyleImpl implements EditableCell
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((styleRef == null) ? 0 : styleRef.hashCode());
+		result = prime * result + ((_styleRef == null) ? 0 : _styleRef.hashCode());
 		return result;
 	}
 	@Override
@@ -51,16 +51,16 @@ public class EditableCellStyleImpl extends CellStyleImpl implements EditableCell
 		if (getClass() != obj.getClass())
 			return false;
 		EditableCellStyleImpl other = (EditableCellStyleImpl) obj;
-		if (styleRef == null) {
-			if (other.styleRef != null)
+		if (_styleRef == null) {
+			if (other._styleRef != null)
 				return false;
-		} else if (!styleRef.equals(other.styleRef))
+		} else if (!_styleRef.equals(other._styleRef))
 			return false;
 		return true;
 	}
-	public void setFont(Font nfont) {
-		this.nfont = (FontImpl)nfont; 
-		getNative().setFont(nfont==null?null:this.nfont.getNative());
+	public void setFont(Font font) {
+		this._font = (FontImpl)font; 
+		getNative().setFont(font==null?null:this._font.getNative());
 	}
 
 	public void copyAttributeFrom(CellStyle src) {
@@ -124,7 +124,7 @@ public class EditableCellStyleImpl extends CellStyleImpl implements EditableCell
 			return;
 		}
 		//this api doesn't create a new df, it just return the one in book
-		DataFormat df = bookRef.get().createDataFormat();
+		DataFormat df = _bookRef.get().createDataFormat();
 
 		short index = df.getFormat(format);		
 		getNative().setDataFormat(index);

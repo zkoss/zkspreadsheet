@@ -19,10 +19,10 @@ package org.zkoss.zss.api;
 /**
  * Indicate a illegal formula exception
  * @author dennis
- *
+ * @since 3.0.0
  */
 public class IllegalFormulaException extends RuntimeException{
-
+	private static final long serialVersionUID = 1L;
 	public IllegalFormulaException() {
 		super();
 	}
@@ -38,7 +38,4 @@ public class IllegalFormulaException extends RuntimeException{
 	public IllegalFormulaException(Throwable cause) {
 		super(cause);
 	}
-
-	private static final long serialVersionUID = 1L;
-
 }

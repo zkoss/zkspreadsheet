@@ -26,17 +26,18 @@ import org.zkoss.zss.api.model.Picture;
  * @see Range#addPicture(SheetAnchor, byte[], org.zkoss.zss.api.model.Picture.Format)
  * @see Chart
  * @see Range#addChart(SheetAnchor, org.zkoss.zss.api.model.ChartData, org.zkoss.zss.api.model.Chart.Type, org.zkoss.zss.api.model.Chart.Grouping, org.zkoss.zss.api.model.Chart.LegendPosition)
+ * @since 3.0.0
  */
 public class SheetAnchor {
 
-	int row;
-	int column;
-	int lastRow;//px
-	int lastColumn;//px
-	int xOffset;
-	int yOffset;
-	int lastXOffset;//px
-	int lastYOffset;//px
+	private int _row;
+	private int _column;
+	private int _lastRow;
+	private int _lastColumn;
+	private int _xOffset;//px
+	private int _yOffset;//px
+	private int _lastXOffset;//px
+	private int _lastYOffset;//px
 
 	public SheetAnchor(int row, int column, int lastRow, int lastColumn) {
 		this(row, column, 0, 0, lastRow, lastColumn, 0, 0);
@@ -44,46 +45,46 @@ public class SheetAnchor {
 
 	public SheetAnchor(int row, int column, int xOffset, int yOffset, int lastRow,
 			int lastColumn, int lastXOffset, int lastYOffset) {
-		this.row = row;
-		this.column = column;
-		this.xOffset = xOffset;
-		this.yOffset = yOffset;
-		this.lastRow = lastRow;
-		this.lastColumn = lastColumn;
-		this.lastXOffset = lastXOffset;
-		this.lastYOffset = lastYOffset;
+		this._row = row;
+		this._column = column;
+		this._xOffset = xOffset;
+		this._yOffset = yOffset;
+		this._lastRow = lastRow;
+		this._lastColumn = lastColumn;
+		this._lastXOffset = lastXOffset;
+		this._lastYOffset = lastYOffset;
 	}
 
 	public int getRow() {
-		return row;
+		return _row;
 	}
 
 	public int getColumn() {
-		return column;
+		return _column;
 	}
 
 	public int getXOffset() {
-		return xOffset;
+		return _xOffset;
 	}
 
 	public int getYOffset() {
-		return yOffset;
+		return _yOffset;
 	}
 
 	public int getLastRow() {
-		return lastRow;
+		return _lastRow;
 	}
 
 	public int getLastColumn() {
-		return lastColumn;
+		return _lastColumn;
 	}
 
 	public int getLastXOffset() {
-		return lastXOffset;
+		return _lastXOffset;
 	}
 
 	public int getLastYOffset() {
-		return lastYOffset;
+		return _lastYOffset;
 	}
 
 }

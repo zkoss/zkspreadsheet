@@ -30,34 +30,34 @@ import org.zkoss.zss.model.sys.impl.XSSFBookImpl;
  */
 public class BookImpl implements Book{
 
-	ModelRef<XBook> bookRef;
-	BookType type;
+	private ModelRef<XBook> _bookRef;
+	private BookType _type;
 	
 	public BookImpl(ModelRef<XBook> ref){
-		this.bookRef = ref;
+		this._bookRef = ref;
 		XBook book = ref.get();
 		if (book instanceof HSSFBookImpl) {
-			type = BookType.EXCEL_2003;
+			_type = BookType.EXCEL_2003;
 		} else if (book instanceof XSSFBookImpl) {
-			type = BookType.EXCEL_2007;
+			_type = BookType.EXCEL_2007;
 		} else {
 			throw new IllegalArgumentException("unknow book type "+book);
 		}
 	}
 
 	public XBook getNative() {
-		return bookRef.get();
+		return _bookRef.get();
 	}
 	
 	public ModelRef<XBook> getRef(){
-		return bookRef;
+		return _bookRef;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((bookRef == null) ? 0 : bookRef.hashCode());
+		result = prime * result + ((_bookRef == null) ? 0 : _bookRef.hashCode());
 		return result;
 	}
 
@@ -70,10 +70,10 @@ public class BookImpl implements Book{
 		if (getClass() != obj.getClass())
 			return false;
 		BookImpl other = (BookImpl) obj;
-		if (bookRef == null) {
-			if (other.bookRef != null)
+		if (_bookRef == null) {
+			if (other._bookRef != null)
 				return false;
-		} else if (!bookRef.equals(other.bookRef))
+		} else if (!_bookRef.equals(other._bookRef))
 			return false;
 		return true;
 	}
@@ -83,7 +83,7 @@ public class BookImpl implements Book{
 	}
 	
 	public BookType getType(){
-		return type; 
+		return _type; 
 	}
 
 	public int getSheetIndex(Sheet sheet) {
@@ -97,13 +97,13 @@ public class BookImpl implements Book{
 	
 	public SheetImpl getSheetAt(int index){
 		XSheet sheet = getNative().getWorksheetAt(index);
-		return new SheetImpl(bookRef,new SimpleRef<XSheet>(sheet));
+		return new SheetImpl(_bookRef,new SimpleRef<XSheet>(sheet));
 	}
 	
 	public SheetImpl getSheet(String name){
 		XSheet sheet = getNative().getWorksheet(name);
 		
-		return sheet==null?null:new SheetImpl(bookRef,new SimpleRef<XSheet>(sheet));
+		return sheet==null?null:new SheetImpl(_bookRef,new SimpleRef<XSheet>(sheet));
 	}
 
 	@Override

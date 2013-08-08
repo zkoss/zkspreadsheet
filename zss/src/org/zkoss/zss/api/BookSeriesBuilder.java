@@ -27,26 +27,26 @@ import org.zkoss.zss.api.model.Book;
 /**
  * The book series builder
  * @author dennis
- *
+ * @since 3.0.0
  */
 public abstract class BookSeriesBuilder {
 	
-	static BookSeriesBuilder instance;
+	private static BookSeriesBuilder _instance;
 	
 	public static BookSeriesBuilder getInstance(){
 		
-		if(instance==null){
+		if(_instance==null){
 			synchronized(BookSeriesBuilder.class){
-				if(instance==null){
+				if(_instance==null){
 					String clz = Library.getProperty("org.zkoss.zss.api.BookSeriesBuilder.class");
 					if (!Strings.isEmpty(clz)) {
 						try {
-							instance = (BookSeriesBuilder) Classes.forNameByThread(clz).newInstance();
+							_instance = (BookSeriesBuilder) Classes.forNameByThread(clz).newInstance();
 						} catch (Exception e) {
 							throw new RuntimeException(e.getMessage(),e);
 						}
 					}else{
-						instance = new BookSeriesBuilder() {
+						_instance = new BookSeriesBuilder() {
 							@Override
 							public void buildBookSeries(Set<Book> books) {
 								throw new RuntimeException("not implemented");
@@ -60,7 +60,7 @@ public abstract class BookSeriesBuilder {
 				}
 			}
 		}
-		return instance;
+		return _instance;
 	}
 	
 	

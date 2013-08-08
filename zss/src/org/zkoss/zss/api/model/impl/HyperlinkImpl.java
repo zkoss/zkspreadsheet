@@ -25,19 +25,19 @@ import org.zkoss.zss.api.model.Hyperlink;
  */
 public class HyperlinkImpl implements Hyperlink{
 
-	ModelRef<org.zkoss.poi.ss.usermodel.Hyperlink> linkRef;
-	String label;
+	private ModelRef<org.zkoss.poi.ss.usermodel.Hyperlink> _linkRef;
+	private String _label;
 
 	public HyperlinkImpl(ModelRef<org.zkoss.poi.ss.usermodel.Hyperlink> linkRef,String label) {
-		this.linkRef = linkRef;
-		this.label = label;
+		this._linkRef = linkRef;
+		this._label = label;
 	}
 	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((linkRef == null) ? 0 : linkRef.hashCode());
+		result = prime * result + ((_linkRef == null) ? 0 : _linkRef.hashCode());
 		return result;
 	}
 
@@ -49,17 +49,17 @@ public class HyperlinkImpl implements Hyperlink{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ColorImpl other = (ColorImpl) obj;
-		if (linkRef == null) {
-			if (other.colorRef != null)
+		HyperlinkImpl other = (HyperlinkImpl) obj;
+		if (_linkRef == null) {
+			if (other._linkRef != null)
 				return false;
-		} else if (!linkRef.equals(other.colorRef))
+		} else if (!_linkRef.equals(other._linkRef))
 			return false;
 		return true;
 	}
 
 	public org.zkoss.poi.ss.usermodel.Hyperlink getNative() {
-		return linkRef.get();
+		return _linkRef.get();
 	}
 	
 	@Override
@@ -74,6 +74,6 @@ public class HyperlinkImpl implements Hyperlink{
 
 	@Override
 	public String getLabel() {
-		return label;
+		return _label;
 	}
 }

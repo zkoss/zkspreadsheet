@@ -28,32 +28,32 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
  */
 public class FontImpl implements Font{
 	
-	ModelRef<XBook> bookRef;
-	ModelRef<org.zkoss.poi.ss.usermodel.Font> fontRef;
+	protected ModelRef<XBook> _bookRef;
+	protected ModelRef<org.zkoss.poi.ss.usermodel.Font> _fontRef;
 	
 	public FontImpl(ModelRef<XBook> book, ModelRef<org.zkoss.poi.ss.usermodel.Font> font) {
-		this.bookRef = book;
-		this.fontRef = font;
+		this._bookRef = book;
+		this._fontRef = font;
 	}
 	public String getFontName() {
 		return getNative().getFontName();
 	}
 	public org.zkoss.poi.ss.usermodel.Font getNative() {
-		return fontRef.get();
+		return _fontRef.get();
 	}
 	public ModelRef<org.zkoss.poi.ss.usermodel.Font> getRef(){
-		return fontRef;
+		return _fontRef;
 	}
 	
 	public Color getColor(){
-		org.zkoss.poi.ss.usermodel.Color c = BookHelper.getFontColor(bookRef.get(), fontRef.get());
-		return new ColorImpl(bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(c));
+		org.zkoss.poi.ss.usermodel.Color c = BookHelper.getFontColor(_bookRef.get(), _fontRef.get());
+		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(c));
 	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((fontRef == null) ? 0 : fontRef.hashCode());
+		result = prime * result + ((_fontRef == null) ? 0 : _fontRef.hashCode());
 		return result;
 	}
 	@Override
@@ -65,10 +65,10 @@ public class FontImpl implements Font{
 		if (getClass() != obj.getClass())
 			return false;
 		FontImpl other = (FontImpl) obj;
-		if (fontRef == null) {
-			if (other.fontRef != null)
+		if (_fontRef == null) {
+			if (other._fontRef != null)
 				return false;
-		} else if (!fontRef.equals(other.fontRef))
+		} else if (!_fontRef.equals(other._fontRef))
 			return false;
 		return true;
 	}

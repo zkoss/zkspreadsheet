@@ -42,26 +42,26 @@ import org.zkoss.zss.ui.impl.XUtils;
  * @since 3.0.0
  */
 public class SheetImpl implements Sheet{
-	ModelRef<XSheet> sheetRef;
-	ModelRef<XBook> bookRef;
-	Book nbook;
+	private ModelRef<XSheet> _sheetRef;
+	private ModelRef<XBook> _bookRef;
+	private Book _book;
 	public SheetImpl(ModelRef<XBook> book,ModelRef<XSheet> sheet){
-		this.bookRef = book;
-		this.sheetRef = sheet;
+		this._bookRef = book;
+		this._sheetRef = sheet;
 	}
 	
 	public XSheet getNative(){
-		return sheetRef.get();
+		return _sheetRef.get();
 	}
 	public ModelRef<XSheet> getRef(){
-		return sheetRef;
+		return _sheetRef;
 	}
 	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((sheetRef == null) ? 0 : sheetRef.hashCode());
+		result = prime * result + ((_sheetRef == null) ? 0 : _sheetRef.hashCode());
 		return result;
 	}
 	@Override
@@ -73,20 +73,20 @@ public class SheetImpl implements Sheet{
 		if (getClass() != obj.getClass())
 			return false;
 		SheetImpl other = (SheetImpl) obj;
-		if (sheetRef == null) {
-			if (other.sheetRef != null)
+		if (_sheetRef == null) {
+			if (other._sheetRef != null)
 				return false;
-		} else if (!sheetRef.equals(other.sheetRef))
+		} else if (!_sheetRef.equals(other._sheetRef))
 			return false;
 		return true;
 	}
 
 	public Book getBook() {
-		if(nbook!=null){
-			return nbook;
+		if(_book!=null){
+			return _book;
 		}
-		nbook = new BookImpl(bookRef);
-		return nbook;
+		_book = new BookImpl(_bookRef);
+		return _book;
 	}
 	
 
@@ -121,7 +121,7 @@ public class SheetImpl implements Sheet{
 		DrawingManager dm = ((SheetCtrl)getNative()).getDrawingManager();
 		List<Chart> charts = new ArrayList<Chart>();
 		for(org.zkoss.poi.ss.usermodel.Chart chart:dm.getCharts()){
-			charts.add(new ChartImpl(sheetRef, new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart)));
+			charts.add(new ChartImpl(_sheetRef, new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart)));
 		}
 		return charts;
 	}
@@ -131,7 +131,7 @@ public class SheetImpl implements Sheet{
 		DrawingManager dm = ((SheetCtrl)getNative()).getDrawingManager();
 		List<Picture> pictures = new ArrayList<Picture>();
 		for(org.zkoss.poi.ss.usermodel.Picture pic:dm.getPictures()){
-			pictures.add(new PictureImpl(sheetRef, new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic)));
+			pictures.add(new PictureImpl(_sheetRef, new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic)));
 		}
 		return pictures;
 	}

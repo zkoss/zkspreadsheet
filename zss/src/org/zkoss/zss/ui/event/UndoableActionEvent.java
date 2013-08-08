@@ -18,7 +18,7 @@ package org.zkoss.zss.ui.event;
 
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zss.undo.UndoableAction;
+import org.zkoss.zss.ui.sys.UndoableAction;
 
 /**
  * @author dennis

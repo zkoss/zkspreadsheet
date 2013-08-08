@@ -36,24 +36,24 @@ import org.zkoss.zss.ui.Rect;
  * @since 3.0.0
  */
 public class ExporterImpl implements Exporter {
-	XExporter exporter;
+	private XExporter _exporter;
 	public ExporterImpl(XExporter exporter){
 		if(exporter==null){
 			throw new IllegalAccessError("exporter not found");
 		}
 		
-		this.exporter =exporter;
+		this._exporter =exporter;
 	}
 	public void export(Book book, OutputStream fos) throws IOException{
-		exporter.export(((BookImpl)book).getNative(), fos);
+		_exporter.export(((BookImpl)book).getNative(), fos);
 	}
 	public void export(Sheet sheet, OutputStream fos) throws IOException{
-		exporter.export(((SheetImpl)sheet).getNative(), fos);
+		_exporter.export(((SheetImpl)sheet).getNative(), fos);
 	}
 	public void export(Sheet sheet,Rect selection,OutputStream fos) throws IOException{
 		AreaReference af = new AreaReference(new CellReference(selection.getTop(), selection.getLeft()),
 				new CellReference(selection.getBottom(), selection.getRight()));
-		exporter.exportSelection(((SheetImpl)sheet).getNative(), af, fos);
+		_exporter.exportSelection(((SheetImpl)sheet).getNative(), af, fos);
 	}
 //	@Override
 //	public boolean isSupportHeadings() {

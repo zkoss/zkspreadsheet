@@ -18,23 +18,19 @@ package org.zkoss.zss.api.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.zkoss.poi.hssf.usermodel.HSSFClientAnchor;
+
 import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.util.CellRangeAddress;
-import org.zkoss.poi.xssf.usermodel.XSSFClientAnchor;
 import org.zkoss.zss.api.CellVisitor;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.RangeRunner;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.SheetAnchor;
-import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.Book.BookType;
 import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
@@ -64,7 +60,6 @@ import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XRanges;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
-import org.zkoss.zss.model.sys.impl.HSSFBookImpl;
 import org.zkoss.zss.ui.impl.XUtils;
 
 /**
@@ -74,45 +69,45 @@ import org.zkoss.zss.ui.impl.XUtils;
  */
 public class RangeImpl implements Range{
 	
-	XRange range;
+	private XRange _range;
 	
-	SyncLevel syncLevel = SyncLevel.BOOK;
+	private SyncLevel _syncLevel = SyncLevel.BOOK;
 	
-	CellStyleHelper cellStyleHelper;
-	CellData cellData;
+	private CellStyleHelper _cellStyleHelper;
+	private CellData _cellData;
 	
 	public void setSyncLevel(SyncLevel syncLevel){
-		this.syncLevel = syncLevel;
+		this._syncLevel = syncLevel;
 	}
 	
 	private SharedContext sharedCtx;
 	
 	public RangeImpl(XRange range,Sheet sheet) {
-		this.range = range;
+		this._range = range;
 		sharedCtx = new SharedContext(sheet);
 	}
 	private RangeImpl(XRange range,SharedContext ctx) {
-		this.range = range;
+		this._range = range;
 		sharedCtx = ctx;
 	}
 	
 	
 	public CellStyleHelper getCellStyleHelper(){
-		if(cellStyleHelper==null){
-			cellStyleHelper = new CellStyleHelperImpl(this);
+		if(_cellStyleHelper==null){
+			_cellStyleHelper = new CellStyleHelperImpl(this);
 		}
-		return cellStyleHelper;
+		return _cellStyleHelper;
 	}
 	
 	public CellData getCellData(){
-		if(cellData==null){
-			cellData = new CellDataImpl(this);
+		if(_cellData==null){
+			_cellData = new CellDataImpl(this);
 		}
-		return cellData;
+		return _cellData;
 	}
 	
 	public XRange getNative(){
-		return range;
+		return _range;
 	}
 	
 	static class SharedContext{
@@ -177,7 +172,7 @@ public class RangeImpl implements Range{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((range == null) ? 0 : range.hashCode());
+		result = prime * result + ((_range == null) ? 0 : _range.hashCode());
 		return result;
 	}
 	@Override
@@ -189,10 +184,10 @@ public class RangeImpl implements Range{
 		if (getClass() != obj.getClass())
 			return false;
 		RangeImpl other = (RangeImpl) obj;
-		if (range == null) {
-			if (other.range != null)
+		if (_range == null) {
+			if (other._range != null)
 				return false;
-		} else if (!range.equals(other.range))
+		} else if (!_range.equals(other._range))
 			return false;
 		return true;
 	}
@@ -206,20 +201,20 @@ public class RangeImpl implements Range{
 //	}
 	
 	public Range paste(Range dest, boolean cut) {
-		XRange r = range.copy(((RangeImpl)dest).getNative(), cut);
+		XRange r = _range.copy(((RangeImpl)dest).getNative(), cut);
 		return new RangeImpl(r, dest.getSheet());
 	}
 
 	/* short-cut for pasteSpecial, it is original Range.copy*/
 	public Range paste(Range dest) {
-		XRange r = range.copy(((RangeImpl)dest).getNative());
+		XRange r = _range.copy(((RangeImpl)dest).getNative());
 		return new RangeImpl(r, dest.getSheet());
 	}
 	
 	public Range pasteSpecial(Range dest,PasteType type,PasteOperation op,boolean skipBlanks,boolean transpose) {
 //		if(!isAnyCellProtected()){ // ranges seems this in copy/paste already
 		//TODO the syncLevel
-		XRange r = range.pasteSpecial(((RangeImpl)dest).getNative(), EnumUtil.toRangePasteTypeNative(type), EnumUtil.toRangePasteOpNative(op), skipBlanks, transpose);
+		XRange r = _range.pasteSpecial(((RangeImpl)dest).getNative(), EnumUtil.toRangePasteTypeNative(type), EnumUtil.toRangePasteOpNative(op), skipBlanks, transpose);
 		return new RangeImpl(r, dest.getSheet());
 //		}
 	}
@@ -227,7 +222,7 @@ public class RangeImpl implements Range{
 
 	public void clearContents() {
 		//TODO the syncLevel
-		range.clearContents();		
+		_range.clearContents();		
 	}
 	
 	public Sheet getSheet(){
@@ -241,25 +236,25 @@ public class RangeImpl implements Range{
 
 	public void setCellStyle(final CellStyle nstyle) {
 		//TODO the syncLevel
-		range.setStyle(nstyle==null?null:((CellStyleImpl)nstyle).getNative());
+		_range.setStyle(nstyle==null?null:((CellStyleImpl)nstyle).getNative());
 	}
 
 
 	public int getColumn() {
-		return range.getColumn();
+		return _range.getColumn();
 	}
 	public int getRow() {
-		return range.getRow();
+		return _range.getRow();
 	}
 	public int getLastColumn() {
-		return range.getLastColumn();
+		return _range.getLastColumn();
 	}
 	public int getLastRow() {
-		return range.getLastRow();
+		return _range.getLastRow();
 	}
 	
 	public void sync(RangeRunner run){
-		switch(syncLevel){
+		switch(_syncLevel){
 		case NONE:
 			run.run(this);
 			return;
@@ -277,7 +272,7 @@ public class RangeImpl implements Range{
 	 * @param create create cell if it doesn't exist, if it is true, it will also lock the sheet
 	 */
 	public void visit(CellVisitor visitor){
-		visit0(visitor,syncLevel);
+		visit0(visitor,_syncLevel);
 	}
 	private void visit0(final CellVisitor visitor,SyncLevel sync){
 		final int r=getRow();
@@ -313,7 +308,7 @@ public class RangeImpl implements Range{
 		boolean ignoreSet = false;
 		boolean create = false;
 		boolean createSet = false;
-		XSheet sheet = range.getSheet();
+		XSheet sheet = _range.getSheet();
 		Row row = sheet.getRow(r);
 		if(row==null){
 			ignore = visitor.ignoreIfNotExist(r,c);
@@ -346,7 +341,7 @@ public class RangeImpl implements Range{
 				return true;
 			}
 		}
-		return visitor.visit(new RangeImpl(XRanges.range(range.getSheet(),r,c),sharedCtx));
+		return visitor.visit(new RangeImpl(XRanges.range(_range.getSheet(),r,c),sharedCtx));
 	}
 
 	public Book getBook() {
@@ -359,7 +354,7 @@ public class RangeImpl implements Range{
 	
 	public void applyBorders(ApplyBorderType type,BorderType borderType,String htmlColor){
 		//TODO the syncLevel
-		range.setBorders(EnumUtil.toRangeApplyBorderType(type), EnumUtil.toRangeBorderType(borderType), htmlColor);
+		_range.setBorders(EnumUtil.toRangeApplyBorderType(type), EnumUtil.toRangeBorderType(borderType), htmlColor);
 	}
 
 	
@@ -412,23 +407,23 @@ public class RangeImpl implements Range{
 
 	public void merge(boolean across){
 		//TODO the syncLevel
-		range.merge(across);
+		_range.merge(across);
 	}
 	
 	public void unmerge(){
 		//TODO the syncLevel
-		range.unMerge();
+		_range.unMerge();
 	}
 
 	
 	public RangeImpl toShiftedRange(int rowOffset,int colOffset){
-		RangeImpl offsetRange = new RangeImpl(range.getOffset(rowOffset, colOffset),sharedCtx);
+		RangeImpl offsetRange = new RangeImpl(_range.getOffset(rowOffset, colOffset),sharedCtx);
 		return offsetRange;
 	}
 	
 	
 	public RangeImpl toCellRange(int rowOffset,int colOffset){
-		RangeImpl cellRange = new RangeImpl(XRanges.range(range.getSheet(),getRow()+rowOffset,getColumn()+colOffset),sharedCtx);
+		RangeImpl cellRange = new RangeImpl(XRanges.range(_range.getSheet(),getRow()+rowOffset,getColumn()+colOffset),sharedCtx);
 		return cellRange;
 	}
 	
@@ -441,43 +436,43 @@ public class RangeImpl implements Range{
 	 *  Return a range that represents all columns and between the first-row and last-row of this range
 	 **/
 	public RangeImpl toRowRange(){
-		return new RangeImpl(range.getRows(),sharedCtx);
+		return new RangeImpl(_range.getRows(),sharedCtx);
 	}
 	
 	/**
 	 *  Return a range that represents all rows and between the first-column and last-column of this range
 	 **/
 	public RangeImpl toColumnRange(){
-		return new RangeImpl(range.getColumns(),sharedCtx);
+		return new RangeImpl(_range.getColumns(),sharedCtx);
 	}
 	
 	/**
 	 * Check if this range represents a whole column, which mean all rows are included, 
 	 */
 	public boolean isWholeColumn(){
-		return range.isWholeColumn();
+		return _range.isWholeColumn();
 	}
 	/**
 	 * Check if this range represents a whole row, which mean all column are included, 
 	 */
 	public boolean isWholeRow(){
-		return range.isWholeRow();
+		return _range.isWholeRow();
 	}
 	/**
 	 * Check if this range represents a whole sheet, which mean all column and row are included, 
 	 */
 	public boolean isWholeSheet(){
-		return range.isWholeSheet();
+		return _range.isWholeSheet();
 	}
 	
 	public void insert(InsertShift shift,InsertCopyOrigin copyOrigin){
 		//TODO the syncLevel
-		range.insert(EnumUtil.toRangeInsertShift(shift), EnumUtil.toRangeInsertCopyOrigin(copyOrigin));
+		_range.insert(EnumUtil.toRangeInsertShift(shift), EnumUtil.toRangeInsertCopyOrigin(copyOrigin));
 	}
 	
 	public void delete(DeleteShift shift){
 		//TODO the syncLevel
-		range.delete(EnumUtil.toRangeDeleteShift(shift));
+		_range.delete(EnumUtil.toRangeDeleteShift(shift));
 	}
 	
 	public void sort(boolean desc){	
@@ -516,7 +511,7 @@ public class RangeImpl implements Range{
 		
 		//TODO review the full impl for range1,range2,range3
 		
-		range.sort(index1==null?null:((RangeImpl)index1).getNative(), desc1, 
+		_range.sort(index1==null?null:((RangeImpl)index1).getNative(), desc1, 
 				index2==null?null:((RangeImpl)index2).getNative()/*rng2*/, -1 /*type*/, desc2/*desc2*/, 
 				index3==null?null:((RangeImpl)index3).getNative()/*rng3*/, desc3/*desc3*/,
 				header?BookHelper.SORT_HEADER_YES:BookHelper.SORT_HEADER_NO/*header*/,
@@ -533,7 +528,7 @@ public class RangeImpl implements Range{
 	
 	// ZSS-246: give an API for user checking the auto-filtering range before applying it.
 	public Range findAutoFilterRange() {
-		XRange r = range.findAutoFilterRange();
+		XRange r = _range.findAutoFilterRange();
 		if(r != null) {
 			return Ranges.range(getSheet(), r.getRow(), r.getColumn(), r.getLastRow(), r.getLastColumn());
 		} else {
@@ -548,71 +543,71 @@ public class RangeImpl implements Range{
 			return ;
 		}
 		
-		range.autoFilter();//toggle on/off automatically
+		_range.autoFilter();//toggle on/off automatically
 	}
 	/** enable filter with condition **/
 	//TODO have to review this after I know more detail
 	public void enableAutoFilter(int field, AutoFilterOperation filterOp, Object criteria1, Object criteria2, Boolean visibleDropDown){
 		//TODO the syncLevel
-		range.autoFilter(field,criteria1,EnumUtil.toRangeAutoFilterOperation(filterOp),criteria2,visibleDropDown);
+		_range.autoFilter(field,criteria1,EnumUtil.toRangeAutoFilterOperation(filterOp),criteria2,visibleDropDown);
 	}
 	
 	/** clear condition of filter, show all the data**/
 	public void resetAutoFilter(){
 		//TODO the syncLevel
-		range.showAllData();
+		_range.showAllData();
 	}
 	/** apply the filter to filter again**/
 	public void applyAutoFilter(){
 		//TODO the syncLevel
-		range.applyFilter();
+		_range.applyFilter();
 	}
 	
 	/** enable sheet protection and apply a password**/
 	public void protectSheet(String password){
 		//TODO the syncLevel
-		range.protectSheet(password);
+		_range.protectSheet(password);
 	}
 	
 	public void autoFill(Range dest,AutoFillType fillType){
 		//TODO the syncLevel
-		range.autoFill(((RangeImpl)dest).getNative(), EnumUtil.toRangeAutoFillType(fillType));
+		_range.autoFill(((RangeImpl)dest).getNative(), EnumUtil.toRangeAutoFillType(fillType));
 	}
 	
 	public void fillDown(){
 		//TODO the syncLevel
-		range.fillDown();
+		_range.fillDown();
 	}
 	
 	public void fillLeft(){
 		//TODO the syncLevel
-		range.fillLeft();
+		_range.fillLeft();
 	}
 	
 	public void fillUp(){
 		//TODO the syncLevel
-		range.fillUp();
+		_range.fillUp();
 	}
 	
 	public void fillRight(){
 		//TODO the syncLevel
-		range.fillRight();
+		_range.fillRight();
 	}
 	
 	/** shift this range with a offset row and column**/
 	public void shift(int rowOffset,int colOffset){
 		//TODO the syncLevel
-		range.move(rowOffset, colOffset);
+		_range.move(rowOffset, colOffset);
 	}
 	
 	public String getCellEditText(){
-		return range.getEditText();
+		return _range.getEditText();
 	}
 	
 	public void setCellEditText(String editText){
 		//TODO the syncLevel
 		try{
-			range.setEditText(editText);
+			_range.setEditText(editText);
 		}catch(FormulaParseException x){
 			throw new IllegalFormulaException(x.getMessage(),x);
 		}
@@ -625,12 +620,12 @@ public class RangeImpl implements Range{
 	
 	//TODO need to verify the object type
 	public Object getCellValue(){
-		return range.getValue();
+		return _range.getValue();
 	}
 	
 	public void setDisplaySheetGridlines(boolean enable){
 		//TODO the syncLevel
-		range.setDisplayGridlines(enable);
+		_range.setDisplayGridlines(enable);
 	}
 	
 	public boolean isDisplaySheetGridlines(){
@@ -639,23 +634,23 @@ public class RangeImpl implements Range{
 	
 	public void setHidden(boolean hidden){
 		//TODO the syncLevel
-		range.setHidden(hidden);
+		_range.setHidden(hidden);
 	}
 	
 	public void setCellHyperlink(HyperlinkType type,String address,String display){
 		//TODO the syncLevel
-		range.setHyperlink(EnumUtil.toHyperlinkType(type), address, display);
+		_range.setHyperlink(EnumUtil.toHyperlinkType(type), address, display);
 	}
 	
 	public Hyperlink getCellHyperlink(){
-		org.zkoss.poi.ss.usermodel.Hyperlink l = range.getHyperlink();
+		org.zkoss.poi.ss.usermodel.Hyperlink l = _range.getHyperlink();
 		//NOTE current hyperlink implementation can't provide correct label, so I get it form cell text directly 
 		return l==null?null:new HyperlinkImpl(new SimpleRef<org.zkoss.poi.ss.usermodel.Hyperlink>(l),getCellEditText());
 	}
 	
 	public void setSheetName(String name){
 		//TODO the syncLevel
-		range.setSheetName(name);
+		_range.setSheetName(name);
 	}
 	
 	public String getSheetName(){
@@ -664,7 +659,7 @@ public class RangeImpl implements Range{
 	
 	public void setSheetOrder(int pos){
 		//TODO the syncLevel
-		range.setSheetOrder(pos);
+		_range.setSheetOrder(pos);
 	}
 	
 	public int getSheetOrder(){
@@ -673,7 +668,7 @@ public class RangeImpl implements Range{
 	
 	public void setCellValue(Object value){
 		//TODO the syncLevel
-		range.setValue(value);
+		_range.setValue(value);
 	}
 	
 	private ModelRef<XBook> getBookRef(){
@@ -691,11 +686,11 @@ public class RangeImpl implements Range{
 	 * @return cell style if cell is exist, the check row style and column cell style if cell not found, if row and column style is not exist, then return default style of sheet
 	 */
 	public CellStyle getCellStyle() {
-		XSheet sheet = range.getSheet();
+		XSheet sheet = _range.getSheet();
 		XBook book = sheet.getBook();
 		
-		int r = range.getRow();
-		int c = range.getColumn();
+		int r = _range.getRow();
+		int c = _range.getColumn();
 		org.zkoss.poi.ss.usermodel.CellStyle style = null;
 		Row row = sheet.getRow(r);
 		if (row != null){
@@ -721,19 +716,19 @@ public class RangeImpl implements Range{
 	
 	public Picture addPicture(SheetAnchor anchor,byte[] image,Format format){
 		ClientAnchor an = SheetImpl.toClientAnchor(getSheet().getPoiSheet(),anchor);
-		org.zkoss.poi.ss.usermodel.Picture pic = range.addPicture(an, image, EnumUtil.toPictureFormat(format));
+		org.zkoss.poi.ss.usermodel.Picture pic = _range.addPicture(an, image, EnumUtil.toPictureFormat(format));
 		return new PictureImpl(getSheetRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic));
 	}
 	
 	public void deletePicture(Picture picture){
 		//TODO the syncLevel
-		range.deletePicture(((PictureImpl)picture).getNative());
+		_range.deletePicture(((PictureImpl)picture).getNative());
 	}
 	
 	public void movePicture(SheetAnchor anchor,Picture picture){
 		//TODO the syncLevel
 		ClientAnchor an = SheetImpl.toClientAnchor(getSheet().getPoiSheet(),anchor);
-		range.movePicture(((PictureImpl)picture).getNative(), an);
+		_range.movePicture(((PictureImpl)picture).getNative(), an);
 	}
 	
 	//currently, we only support to modify chart in XSSF
@@ -741,21 +736,21 @@ public class RangeImpl implements Range{
 		//TODO the syncLevel
 		ClientAnchor an = SheetImpl.toClientAnchor(getSheet().getPoiSheet(),anchor);
 		org.zkoss.poi.ss.usermodel.charts.ChartData cdata = ((ChartDataImpl)data).getNative();
-		org.zkoss.poi.ss.usermodel.Chart chart = range.addChart(an, cdata, EnumUtil.toChartType(type), EnumUtil.toChartGrouping(grouping), EnumUtil.toLegendPosition(pos));
+		org.zkoss.poi.ss.usermodel.Chart chart = _range.addChart(an, cdata, EnumUtil.toChartType(type), EnumUtil.toChartGrouping(grouping), EnumUtil.toLegendPosition(pos));
 		return new ChartImpl(getSheetRef(), new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart));
 	}
 	
 	//currently, we only support to modify chart in XSSF
 	public void deleteChart(Chart chart){
 		//TODO the syncLevel
-		range.deleteChart(((ChartImpl)chart).getNative());
+		_range.deleteChart(((ChartImpl)chart).getNative());
 	}
 	
 	//currently, we only support to modify chart in XSSF
 	public void moveChart(SheetAnchor anchor,Chart chart){
 		//TODO the syncLevel
 		ClientAnchor an = SheetImpl.toClientAnchor(getSheet().getPoiSheet(),anchor);
-		range.moveChart(((ChartImpl)chart).getNative(), an);
+		_range.moveChart(((ChartImpl)chart).getNative(), an);
 	}
 	
 	
@@ -763,7 +758,7 @@ public class RangeImpl implements Range{
 		//TODO the syncLevel
 		XBook book = ((BookImpl)getBook()).getNative();
 		int n = book.getNumberOfSheets();
-		range.createSheet(name);
+		_range.createSheet(name);
 		
 		XSheet sheet = book.getWorksheetAt(n);
 		return new SheetImpl(((BookImpl)sharedCtx.sheet.getBook()).getRef(),new SimpleRef<XSheet>(sheet));
@@ -772,18 +767,18 @@ public class RangeImpl implements Range{
 	
 	public void deleteSheet(){
 		//TODO the syncLevel
-		range.deleteSheet();
+		_range.deleteSheet();
 	}
 	
 	
 	@Override
 	public void setColumnWidth(int widthPx) {
-		XRange r = range.isWholeColumn()?range:range.getColumns();
-		r.setColumnWidth(XUtils.pxToFileChar256(widthPx, ((XBook)range.getSheet().getWorkbook()).getDefaultCharWidth()));
+		XRange r = _range.isWholeColumn()?_range:_range.getColumns();
+		r.setColumnWidth(XUtils.pxToFileChar256(widthPx, ((XBook)_range.getSheet().getWorkbook()).getDefaultCharWidth()));
 	}
 	@Override
 	public void setRowHeight(int heightPx) {
-		XRange r = range.isWholeRow()?range:range.getRows();
+		XRange r = _range.isWholeRow()?_range:_range.getRows();
 		r.setRowHeight(XUtils.pxToPoint(heightPx));
 	}
 	
@@ -805,8 +800,8 @@ public class RangeImpl implements Range{
 	
 	
 	private void api4Internal(){
-		range.notifyDeleteFriendFocus(null);//by Spreadsheet
-		range.notifyMoveFriendFocus(null);//
+		_range.notifyDeleteFriendFocus(null);//by Spreadsheet
+		_range.notifyMoveFriendFocus(null);//
 	}
 	
 	
@@ -815,13 +810,13 @@ public class RangeImpl implements Range{
 	
 	private void apiNoOneUse(){
 		
-		range.getCount();
-		range.getCurrentRegion();
-		range.getDependents();
-		range.getDirectDependents();
-		range.getPrecedents();
+		_range.getCount();
+		_range.getCurrentRegion();
+		_range.getDependents();
+		_range.getDirectDependents();
+		_range.getPrecedents();
 		
-		range.isCustomHeight();
+		_range.isCustomHeight();
 		
 		//range.pasteSpecial(pasteType, pasteOp, SkipBlanks, transpose);		
 	}
@@ -834,7 +829,7 @@ public class RangeImpl implements Range{
 	 * Notify this range has been changed.
 	 */
 	public void notifyChange(){
-		range.notifyChange();
+		_range.notifyChange();
 	}
 	
 	public void notifyChange(String[] variables){
@@ -843,15 +838,15 @@ public class RangeImpl implements Range{
 	
 	@Override
 	public void setFreezePanel(int rowfreeze, int columnfreeze) {
-		range.setFreezePanel(rowfreeze, columnfreeze);
+		_range.setFreezePanel(rowfreeze, columnfreeze);
 	}
 	@Override
 	public int getRowCount() {
-		return range.getLastRow()-range.getRow()+1;
+		return _range.getLastRow()-_range.getRow()+1;
 	}
 	@Override
 	public int getColumnCount() {
-		return range.getLastColumn()-range.getColumn()+1;
+		return _range.getLastColumn()-_range.getColumn()+1;
 	}
 		
 

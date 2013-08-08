@@ -32,37 +32,37 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
  */
 public class CellDataImpl implements CellData{
 
-	RangeImpl range;
+	private RangeImpl _range;
 	
-	Cell cell;
-	boolean cellInit;
+	private Cell _cell;
+	private boolean _cellInit;
 	
 	public CellDataImpl(RangeImpl range) {
-		this.range = range;
+		this._range = range;
 	}
 
 	@Override
 	public int getRow() {
-		return range.getRow();
+		return _range.getRow();
 	}
 
 	@Override
 	public int getColumn() {
-		return range.getColumn();
+		return _range.getColumn();
 	}
 
 	private void initCell(){
-		if(cellInit){
+		if(_cellInit){
 			return;
 		}
-		cellInit = true;
-		XRange x = range.getNative();
+		_cellInit = true;
+		XRange x = _range.getNative();
 		XSheet sheet = x.getSheet();
 		
-		if(cell==null){
-			Row row = sheet.getRow(range.getRow());
+		if(_cell==null){
+			Row row = sheet.getRow(_range.getRow());
 			if(row!=null){
-				cell = row.getCell(range.getColumn());
+				_cell = row.getCell(_range.getColumn());
 			}
 		}
 	}
@@ -76,7 +76,7 @@ public class CellDataImpl implements CellData{
 			return type;
 		}
 		
-		return toCellType(cell.getCachedFormulaResultType());
+		return toCellType(_cell.getCachedFormulaResultType());
 	}
 	
 	private CellType toCellType(int type){
@@ -101,14 +101,14 @@ public class CellDataImpl implements CellData{
 	public CellType getType() {
 		initCell();
 		
-		if(cell==null){
+		if(_cell==null){
 			return CellType.BLANK;
 		}
 		
-		CellType type = toCellType(cell.getCellType());
+		CellType type = toCellType(_cell.getCellType());
 		
 		if(type==CellType.FORMULA){
-			if(toCellType(cell.getCachedFormulaResultType())==CellType.ERROR){
+			if(toCellType(_cell.getCachedFormulaResultType())==CellType.ERROR){
 				return CellType.ERROR;
 			}
 		}
@@ -117,31 +117,31 @@ public class CellDataImpl implements CellData{
 
 	@Override
 	public Object getValue() {
-		return range.getCellValue();
+		return _range.getCellValue();
 	}
 
 	@Override
 	public String getFormatText() {
-		return range.getCellFormatText();
+		return _range.getCellFormatText();
 	}
 
 	@Override
 	public String getEditText() {
-		return range.getCellEditText();
+		return _range.getCellEditText();
 	}
 
 	@Override
 	public void setValue(Object value) {
-		range.setCellValue(value);
+		_range.setCellValue(value);
 	}
 
 	@Override
 	public void setEditText(String editText) {
-		range.setCellEditText(editText);
+		_range.setCellEditText(editText);
 	}
 
 	public boolean validateEditText(String editText){
-		return range.getNative().validate(editText)==null;
+		return _range.getNative().validate(editText)==null;
 	}
 
 	@Override
@@ -166,7 +166,7 @@ public class CellDataImpl implements CellData{
 	@Override
 	public Date getDateValue() {
 		Double val = getDoubleValue();
-		return val==null?null:BookHelper.numberToDate(range.getBook().getPoiBook(), val);
+		return val==null?null:BookHelper.numberToDate(_range.getBook().getPoiBook(), val);
 	}
 
 	@Override

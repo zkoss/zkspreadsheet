@@ -43,10 +43,10 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
  */
 /*package*/ class CellStyleHelperImpl implements CellStyleHelper{
 
-	RangeImpl range;
+	private RangeImpl _range;
 	
 	public CellStyleHelperImpl(RangeImpl range) {
-		this.range = range;
+		this._range = range;
 	}
 	
 	/**
@@ -55,8 +55,8 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 	 * @return the new cell style
 	 */
 	public EditableCellStyle createCellStyle(CellStyle src){
-		XBook book = range.getNative().getSheet().getBook();
-		EditableCellStyle style = new EditableCellStyleImpl(((BookImpl)range.getBook()).getRef(),new SimpleRef<org.zkoss.poi.ss.usermodel.CellStyle>(book.createCellStyle()));
+		XBook book = _range.getNative().getSheet().getBook();
+		EditableCellStyle style = new EditableCellStyleImpl(((BookImpl)_range.getBook()).getRef(),new SimpleRef<org.zkoss.poi.ss.usermodel.CellStyle>(book.createCellStyle()));
 		if(src!=null){
 			((EditableCellStyleImpl)style).copyAttributeFrom(src);
 		}
@@ -64,10 +64,10 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 	}
 
 	public EditableFont createFont(Font src) {
-		XBook book = range.getNative().getSheet().getBook();
+		XBook book = _range.getNative().getSheet().getBook();
 		org.zkoss.poi.ss.usermodel.Font font = book.createFont();
 
-		EditableFont nf = new EditableFontImpl(((BookImpl)range.getBook()).getRef(),new SimpleRef<org.zkoss.poi.ss.usermodel.Font>(font));
+		EditableFont nf = new EditableFontImpl(((BookImpl)_range.getBook()).getRef(),new SimpleRef<org.zkoss.poi.ss.usermodel.Font>(font));
 		if(src!=null){
 			((EditableFontImpl)nf).copyAttributeFrom(src);
 		}
@@ -76,7 +76,7 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 	}
 
 	public Color createColorFromHtmlColor(String htmlColor) {
-		Book book = range.getBook();
+		Book book = _range.getBook();
 		org.zkoss.poi.ss.usermodel.Color color = BookHelper.HTMLToColor(
 				((BookImpl) book).getNative(), htmlColor);// never null
 		return new ColorImpl(((BookImpl) book).getRef(),
@@ -86,7 +86,7 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 	public Font findFont(Boldweight boldweight, Color color,
 			int fontHeight, String fontName, boolean italic,
 			boolean strikeout, TypeOffset typeOffset, Underline underline) {
-		Book book = range.getBook();
+		Book book = _range.getBook();
 
 		org.zkoss.poi.ss.usermodel.Font font;
 

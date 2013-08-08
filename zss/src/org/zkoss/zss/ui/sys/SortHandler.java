@@ -23,9 +23,8 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.UserActionContext;
-import org.zkoss.zss.ui.sys.ua.impl.AbstractProtectedHandler;
-import org.zkoss.zss.undo.SortCellAction;
-import org.zkoss.zss.undo.UndoableActionManager;
+import org.zkoss.zss.ui.impl.ua.AbstractProtectedHandler;
+import org.zkoss.zss.ui.impl.undo.SortCellAction;
 
 /**
  * @author dennis

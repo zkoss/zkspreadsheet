@@ -35,9 +35,9 @@ import org.zkoss.zss.model.sys.XImporter;
  * @since 3.0.0
  */
 public class ImporterImpl implements Importer{
-	XImporter importer;
+	private XImporter _importer;
 	public ImporterImpl(XImporter importer) {
-		this.importer = importer;
+		this._importer = importer;
 	}
 
 	
@@ -48,12 +48,12 @@ public class ImporterImpl implements Importer{
 		if(bookName == null){
 			throw new IllegalArgumentException("null book name");
 		}
-		return new BookImpl(new SimpleRef<XBook>(importer.imports(is, bookName)));
+		return new BookImpl(new SimpleRef<XBook>(_importer.imports(is, bookName)));
 	}
 
 
 	public XImporter getNative() {
-		return importer;
+		return _importer;
 	}
 
 
