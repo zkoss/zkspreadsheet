@@ -511,7 +511,7 @@ zss.DisplayGridlinesCheckbutton = zk.$extends(zss.CheckableToolbarButton, {
 		if (sheet) {
 			sheet.listen({'onDisplayGridlines': this.proxy(this.onDisplayGridlines)});
 		}
-		this.$supers(zss.ProtectSheetCheckbutton, 'bind_', arguments);
+		this.$supers(zss.DisplayGridlinesCheckbutton, 'bind_', arguments);
 	},
 	onDisplayGridlines: function (evt) {
 		this.setChecked(evt.data.show);

@@ -58,10 +58,6 @@ public class XUtils {
 	 * Gets Cell text by given row and column
 	 */
 	static public String getCellHtmlText(XSheet sheet, int row,int column){
-		/*List list = ss.getBook().getSheets();
-		if(list.size()<=ss.getSelectedIndex()){
-			throw new XelException("No such sheet :"+ss.getSelectedIndex());
-		}*/
 		final Cell cell = XUtils.getCell(sheet, row, column);
 		String text = "";
 		if (cell != null) {
@@ -70,15 +66,11 @@ public class XUtils {
 			if (ft != null) {
 				if (ft.isRichTextString()) {
 					final RichTextString rstr = ft.getRichTextString();
-					text = rstr == null ? "" : XUtils.formatRichTextString(sheet, rstr, wrap);
+					text = rstr == null ? "" : rstr.getString();
 				} else if (ft.isCellFormatResult()) {
-					text = XUtils.escapeCellText(ft.getCellFormatResult().text, wrap, true);
+					text = ft.getCellFormatResult().text;
 				}
-			}
-			//TODO no else here for ft!=null?
-			final Hyperlink hlink = XUtils.getHyperlink(cell);
-			if (hlink != null) {
-				text = XUtils.formatHyperlink(sheet, hlink, text, wrap);
+				text = XUtils.escapeCellText(text, wrap, true);
 			}
 		}
 		return text;
@@ -122,18 +114,6 @@ public class XUtils {
 				XUtils.escapeCellText(linkLabel == null ? hlink.getAddress() : linkLabel, wrap, false);
 		return BookHelper.formatHyperlink((XBook)sheet.getWorkbook(), hlink.getType(), address, label);
 	}
-	/**
-	 * Format and escape a {@link RichTextString} to HTML &lt;span> string.
-	 * @param sheet the sheet with the RichTextString 
-	 * @param rstr the RichTextString
-	 * @param wrap whether wrap the string if see "\n".
-	 * @return the HTML &lt;span> format string
-	 */
-	public static String formatRichTextString(XSheet sheet, RichTextString rstr, boolean wrap) {
-		final List<int[]> indexes = new ArrayList<int[]>(rstr.numFormattingRuns()+1);
-		String text = BookHelper.formatRichText((XBook)sheet.getWorkbook(), rstr, indexes);
-		return XUtils.escapeCellText(text, wrap, true, indexes);
-	}
 
 	/**
 	 * Escape character that has special meaning in HTML such as &lt;, &amp;, etc..
@@ -165,7 +145,7 @@ public class XUtils {
 	
 	//escape character that has special meaning in HTML such as &lt;, &amp;, etc..
 	//runs is a index pair to the text string that needs to be escaped
-	private static String escapeCellText(String text,boolean wrap,boolean multiline, List<int[]> runs){
+	protected static String escapeCellText(String text,boolean wrap,boolean multiline, List<int[]> runs){
 		StringBuffer out = new StringBuffer();
 		if (text!=null){
 			int j = 0;

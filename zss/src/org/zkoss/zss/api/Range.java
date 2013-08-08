@@ -186,6 +186,19 @@ public interface Range {
 	 */
 	public int getLastRow();
 	
+	
+	/**
+	 * Gets the row count of this range
+	 * @return count of row of this range
+	 */
+	public int getRowCount();
+	
+	/**
+	 * Gets the column count of this range
+	 * @return count of column of this range
+	 */
+	public int getColumnCount();
+	
 	/**
 	 * Gets cell-style-helper, this helper helps you to create new style, font or color 
 	 * @return
