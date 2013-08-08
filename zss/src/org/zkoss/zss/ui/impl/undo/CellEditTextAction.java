@@ -45,15 +45,20 @@ public class CellEditTextAction extends AbstractEditTextAction {
 	}
 
 	protected void applyAction(){
-		if(_editText!=null){
+		boolean protect = isSheetProtected();
+		if(_editText!=null && !protect){
 			Range r = Ranges.range(_sheet,_row,_column,_lastRow,_lastColumn);
 			r.setCellEditText(_editText);
 		}else{
 			for(int i=_row;i<=_lastRow;i++){
 				for(int j=_column;j<=_lastColumn;j++){
 					Range r = Ranges.range(_sheet,i,j);
+					boolean lock = r.getCellStyle().isLocked();
+					if(protect && lock)
+						continue;
+					
 					try{
-						r.setCellEditText(_editTexts[i][j]);
+						r.setCellEditText(_editText!=null?_editText:_editTexts[i][j]);
 					}catch(IllegalFormulaException x){};//eat in this mode
 				}
 			}

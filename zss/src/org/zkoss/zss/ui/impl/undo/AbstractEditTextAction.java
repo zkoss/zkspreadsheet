@@ -57,7 +57,8 @@ public abstract class AbstractEditTextAction extends AbstractUndoableAction {
 
 	@Override
 	public void doAction() {
-		if(isSheetProtected()) return;
+		//don't check protection here, a cell is possible unlocked
+//		if(isSheetProtected()) return;
 		//keep old style
 
 		int row = getReservedRow();
@@ -86,17 +87,18 @@ public abstract class AbstractEditTextAction extends AbstractUndoableAction {
 	
 	@Override
 	public boolean isUndoable() {
-		return oldTexts!=null && isSheetAvailable() && !isSheetProtected();
+		return oldTexts!=null && isSheetAvailable() /*&& !isSheetProtected()*/;
 	}
 
 	@Override
 	public boolean isRedoable() {
-		return oldTexts==null && isSheetAvailable() && !isSheetProtected();
+		return oldTexts==null && isSheetAvailable()  /*&& !isSheetProtected()*/;
 	}
 
 	@Override
 	public void undoAction() {
-		if(isSheetProtected()) return;
+		//don't check protection here, a cell is possible unlocked
+//		if(isSheetProtected()) return;
 		
 		int row = getReservedRow();
 		int column = getReservedColumn();
