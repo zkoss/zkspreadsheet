@@ -672,6 +672,10 @@ public class CellOperationUtil {
 			return;
 		
 		range.setCellHyperlink(type, address, label);
+		
+		//make excel show link color style. 
+		applyFontUnderline(range, Underline.SINGLE);
+		applyFontColor(range, "#0000FF");
 	}
 
 	/**

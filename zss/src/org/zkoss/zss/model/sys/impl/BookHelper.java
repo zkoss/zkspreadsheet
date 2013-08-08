@@ -102,6 +102,7 @@ import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.poi.ss.usermodel.ZssContext;
@@ -1214,9 +1215,20 @@ public final class BookHelper {
 			//return the affected dependents [0]: last, [1]: all
 			final Set<Ref>[] refs = getBothDependents(cell);
 			//clear the cell
-			//TODO has to clear hyperlink, too
 			if (cell != null) {
 				cell.setCellValue((String)null);
+				
+				//ZSS-322 Cannot remove a hyperlink
+				Sheet sheet = cell.getSheet();
+				if(cell instanceof XSSFCell){
+					((XSSFCell)cell).setEvalHyperlink(null);
+					((XSSFCell)cell).getSheet().removeHyperlink(cell.getRowIndex(), cell.getColumnIndex());
+				}else if(cell instanceof HSSFCell){
+					//TODO has to clear hyperlink, too
+//					((HSSFCell)cell).setEvalHyperlink(null);
+//					((HSSFCell)cell).getSheet().removeHyperlink(cell.getRowIndex(), cell.getColumnIndex());
+				}
+				
 			}
 			return refs;
 		}
