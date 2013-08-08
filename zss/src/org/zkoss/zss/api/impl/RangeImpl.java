@@ -845,6 +845,14 @@ public class RangeImpl implements Range{
 	public void setFreezePanel(int rowfreeze, int columnfreeze) {
 		range.setFreezePanel(rowfreeze, columnfreeze);
 	}
+	@Override
+	public int getRowCount() {
+		return range.getLastRow()-range.getRow()+1;
+	}
+	@Override
+	public int getColumnCount() {
+		return range.getLastColumn()-range.getColumn()+1;
+	}
 		
 
 }
