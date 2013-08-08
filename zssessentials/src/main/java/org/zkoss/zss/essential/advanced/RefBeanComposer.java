@@ -48,18 +48,12 @@ public class RefBeanComposer extends SelectorComposer<Component> {
 	 * load user input to the bean.
 	 */
 	private void updateAssetsBean() {
-		AssetsBean assetsBean = getAssetsBean();
+		AssetsBean assetsBean = (AssetsBean)MyBeanService.getMyBeanService().get("assetsBean");
 		assetsBean.setLiquidAssets(liquidBox.getValue());
 		assetsBean.setFundInvestment(fundBox.getValue());
 		assetsBean.setFixedAssets(fixedBox.getValue());
 		assetsBean.setIntangibleAsset(intangibleBox.getValue());
 		assetsBean.setOtherAssets(otherBox.getValue());
 		
-	}
-	
-	private AssetsBean getAssetsBean(){
-		AssetsBean assetsBean = (AssetsBean)getPage().getXelVariable("assetsBean");
-
-		return assetsBean;
-	}
+	}	
 }

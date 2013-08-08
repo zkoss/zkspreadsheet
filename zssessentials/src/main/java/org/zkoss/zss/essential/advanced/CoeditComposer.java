@@ -85,7 +85,9 @@ public class CoeditComposer extends SelectorComposer<Component> {
 		}
 		Importer imp = Importers.getImporter();
 		try {
-			Book book = imp.imports(WebApps.getCurrent().getResource("/WEB-INF/books/"+bookname), bookname);
+			Book book = imp.imports(
+					WebApps.getCurrent().getResource("/WEB-INF/books/" + bookname),
+					bookname);
 			return book;
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage(),e);
