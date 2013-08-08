@@ -1067,6 +1067,12 @@ public class XRangeImpl implements XRange {
 	public List<Ref> removeIntersect(Ref a, Ref b) {
 		
 		final OverlapState result = getOverlapState(a, b);
+		
+		List<Ref> resultSet = new ArrayList<Ref>(); // add ref in counter-clockwise
+		
+		if(result == OverlapState.NOT_OVERLAP) {
+			return resultSet;
+		}
 
 		final int aLeftCol = a.getLeftCol();
 		final int aRightCol = a.getRightCol();
@@ -1077,8 +1083,6 @@ public class XRangeImpl implements XRange {
 		final int bRightCol = b.getRightCol();
 		final int bTopRow = b.getTopRow();
 		final int bBottomRow = b.getBottomRow();
-		
-		List<Ref> resultSet = new ArrayList<Ref>(); // add ref in counter-clockwise
 		
 		switch(result) {
 			case ON_RIGHT_BOTTOM: // right bottom

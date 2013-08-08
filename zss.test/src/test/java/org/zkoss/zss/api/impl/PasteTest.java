@@ -18,9 +18,21 @@ import org.zkoss.zss.api.model.CellData.CellType;
 
 /**
  * paste overlap test
+ * summary:
+ * 0: simple paste.
+ * 1: paste to a single cell.
+ * 2: paste to a single cell with overlap.
+ * 3: repeat paste.
+ * 4: repeat paste with overlap.
+ * 5: paste with skip blank.
+ * 6: paste to another sheet.
+ * 7: paste with destination is bigger than source and overlap all the source.
+ * 8: paste with transpose. (undone)
+ * 9: paste with merge. (undone)
+ * 10: paste with merge and transpose. (undone)
  * @author kuro
  */
-public class PasteOverlapTest {
+public class PasteTest {
 	private static Book _workbook;
 	// 3 x 3, 1-9 matrix (source)
 	// Source Range (H11, J13)
@@ -35,13 +47,28 @@ public class PasteOverlapTest {
 	public void setUp() throws Exception {
 		Setup.touch();
 		final String filename = "book/overlappingPaste.xlsx";
-		final InputStream is = PasteOverlapTest.class.getResourceAsStream(filename);
+		final InputStream is = PasteTest.class.getResourceAsStream(filename);
 		_workbook = Importers.getImporter().imports(is, filename);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
 		_workbook = null;
+	}
+	
+	@Test 
+	public void testPasteTranspose() {
+		
+	}
+	
+	@Test
+	public void testPasteMerge() {
+		
+	}
+	
+	@Test
+	public void testPasteMergeTranspose() {
+		
 	}
 	
 	@Test
@@ -62,6 +89,10 @@ public class PasteOverlapTest {
 		
 		int realDstRowCount = pasteRange.getRowCount();
 		int realDstColCount = pasteRange.getColumnCount();
+		
+		// paste size validation
+		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
+		assertEquals(1, realDstColCount / SRC_COL_COUNT);
 		
 		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
 	}
@@ -85,6 +116,10 @@ public class PasteOverlapTest {
 		int realDstRowCount = pasteRange.getRowCount();
 		int realDstColCount = pasteRange.getColumnCount();
 		
+		// paste size validation
+		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
+		assertEquals(1, realDstColCount / SRC_COL_COUNT);		
+		
 		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
 	}
 	
@@ -107,17 +142,21 @@ public class PasteOverlapTest {
 		int realDstRowCount = pasteRange.getRowCount();
 		int realDstColCount = pasteRange.getColumnCount();
 		
+		// paste size validation
+		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
+		assertEquals(1, realDstColCount / SRC_COL_COUNT);		
+		
 		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
 	}
 	
 	@Test
 	public void testPasteRepeat() {
-		// source (H11, J13)
-		// destination (L11, Q13)
+		// source (H11, J13) 3 x 3
+		// destination (L11, Q13) 6 x 6
 		int dstTopRow = 10;
 		int dstLeftCol = 11;
-		int dstBottomRow = 16;
-		int dstRightCol = 12;
+		int dstBottomRow = 15;
+		int dstRightCol = 16;
 		
 		// operation
 		Sheet sheet1 = _workbook.getSheet("Sheet1");
@@ -128,14 +167,21 @@ public class PasteOverlapTest {
 		int realDstRowCount = pasteRange.getRowCount();
 		int realDstColCount = pasteRange.getColumnCount();
 		
+		// paste size validation
+		assertEquals(2, realDstRowCount / SRC_ROW_COUNT);
+		assertEquals(2, realDstColCount / SRC_COL_COUNT);		
+		
 		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
 	}
 	
+	/**
+	 * paste repeat overlap, left cover
+	 * source (H11, J13) 3 x 3
+	 * dst (H7, J12) 6 x 3
+	 */
 	@Test 
 	public void testPasteRepeatOverlap() {
-		// source (H11, J13)
-		// 1 x 1, blank destination
-		// dst (H7, J12), left cover
+
 		int dstTopRow = 6;
 		int dstLeftCol = 7;
 		int dstBottomRow = 11;
@@ -150,17 +196,22 @@ public class PasteOverlapTest {
 		int realDstRowCount = pasteRange.getRowCount();
 		int realDstColCount = pasteRange.getColumnCount();
 		
+		// paste size validation
+		assertEquals(2, realDstRowCount / SRC_ROW_COUNT);
+		assertEquals(1, realDstColCount / SRC_COL_COUNT);			
+		
 		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
 	}
 	
 	/**
 	 * paste source to destination which at different sheet and repeat.
+	 * source (H11, J13) sheet1, 3 x 3
+	 * dst (G9, L14) sheet2, 6 x 6
+	 * 
 	 */
 	@Test
 	public void testPasteRepeatToAnotherSheet() {
-		// source (H11, J13) sheet1
-		// 1 x 1, blank destination
-		// dst (G9, L14) sheet2
+
 		int dstTopRow = 8;
 		int dstLeftCol = 6;
 		int dstBottomRow = 13;
@@ -176,6 +227,9 @@ public class PasteOverlapTest {
 		int realDstRowCount = pasteRange.getRowCount();
 		int realDstColCount = pasteRange.getColumnCount();
 		
+		// paste size validation
+		assertEquals(2, realDstRowCount / SRC_ROW_COUNT);
+		assertEquals(2, realDstColCount / SRC_COL_COUNT);		
 		
 		validate(dstSheet, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);		
 	}	
@@ -201,6 +255,7 @@ public class PasteOverlapTest {
 		int realDstRowCount = pasteRange.getRowCount();
 		int realDstColCount = pasteRange.getColumnCount();
 		
+		// paste size validation
 		assertEquals(2, realDstRowCount / SRC_ROW_COUNT);
 		assertEquals(2, realDstColCount / SRC_COL_COUNT);
 		
@@ -242,11 +297,15 @@ public class PasteOverlapTest {
 		int realDstRowCount = pasteRange.getRowCount();
 		int realDstColCount = pasteRange.getColumnCount();
 		
+		// paste size validation
+		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
+		assertEquals(2, realDstColCount / SRC_COL_COUNT);
+		
 		// validation
 		// is K11 = 1?
 		assertEquals(1, cellK11.getCellData().getDoubleValue(), 1E-8);
 		// is N11 blank?
-		Range cellN11 = Ranges.range(sheet1, 13, 10);
+		Range cellN11 = Ranges.range(sheet1, 10, 13);
 		assertEquals(CellType.BLANK.ordinal(), cellN11.getCellData().getType().ordinal(), 1E-8);
 		// fill N11 as 1
 		cellN11.setCellValue(1);
@@ -266,7 +325,6 @@ public class PasteOverlapTest {
 		// validation
 		for(int rr = rowRepeat, row = dstTopRow; rr > 0; rr--) {
 			for(int cc = colRepeat, col = dstLeftCol; cc > 0; cc--) {
-				
 				assertEquals(1, Ranges.range(sheet1, row, col).getCellData().getDoubleValue(), 1E-8);
 				assertEquals(2, Ranges.range(sheet1, row, col+1).getCellData().getDoubleValue(), 1E-8);
 				assertEquals(3, Ranges.range(sheet1, row, col+2).getCellData().getDoubleValue(), 1E-8);
