@@ -1375,7 +1375,7 @@ public class XRangeImpl implements XRange {
 		final int dstLeftCol = dstRef.getLeftCol();
 		final int dstRightCol = dstRef.getRightCol();
 		final RefSheet dstRefsheet = dstRef.getOwnerSheet();
-		final XSheet srcSheet = BookHelper.getSheet(_sheet, srcRef.getOwnerSheet());
+		XSheet srcSheet = BookHelper.getSheet(_sheet, srcRef.getOwnerSheet()); // source may change when overlap issue!
 		final XSheet dstSheet = BookHelper.getSheet(_sheet, dstRefsheet);
 		final Set<Ref> toEval = info.getToEval();
 		final Set<Ref> affected = info.getAffected();
@@ -1424,10 +1424,12 @@ public class XRangeImpl implements XRange {
 				
 				// Decide start position of pointers
 				// Default case
-				int srcRowPointer = areaCount <= 0 ? srcRef.getTopRow() : repeatArea[0][0]; // reference the source to first copied area
+				// reference the source to first pasted area
+				int srcRowPointer = areaCount <= 0 ? srcRef.getTopRow() : repeatArea[0][0];
 				int srcColPointer = areaCount <= 0 ? srcRef.getLeftCol() : repeatArea[0][1];
 				int dstRowPointer = areaCount <= 0 ? dstRef.getTopRow() : repeatArea[areaCount][0];
 				int dstColPointer = areaCount <= 0 ? dstRef.getLeftCol() : repeatArea[areaCount][1];
+				srcSheet = areaCount <= 0 ? srcSheet : dstSheet; // sheet should be replace too
 				int rowStep = 1;
 				int colStep = 1;
 				

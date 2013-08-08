@@ -57,6 +57,8 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-393 Sheet out of sync after cut to different sheet
   ZSS-290 after merging and unmerging cells, input and style both work incorrect
   ZSS-395 Unmerge cell operation doesn't work when the selected range overlap part of merged range.
+  ZSS-298 perform "clear style" on a merged cell doesn't split it back to original unmerged cells.
+  ZSS-301 cut a merged cell and paste to another cell, the original cell doesn't become unmerged cells.
   ZSS-398 Sheetbar protectSheet menuitem check state is not correct
 
 * Upgrade Notes
