@@ -1,5 +1,7 @@
 package org.zkoss.zss.essential.advanced;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 /**
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
+@Scope(value="session",  proxyMode=ScopedProxyMode.TARGET_CLASS)
 public class AssetsBean {
     private double liquidAssets = 146504221;
     private double fundInvestment = 23181709;

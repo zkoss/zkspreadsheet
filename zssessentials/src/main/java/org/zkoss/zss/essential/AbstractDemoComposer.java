@@ -13,7 +13,7 @@ import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ui.DefaultUserAction;
+import org.zkoss.zss.ui.AuxAction;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.AuxActionEvent;
 import org.zkoss.zul.Grid;
@@ -136,7 +136,7 @@ public class AbstractDemoComposer extends SelectorComposer<Component>{
 	@Listen("onAuxAction = #ss")
 	public void onAuxActionHandling(AuxActionEvent event){
 		//handle extra action when book close
-		if(event.getAction().equals(DefaultUserAction.CLOSE_BOOK.toString())){
+		if(event.getAction().equals(AuxAction.CLOSE_BOOK.toString())){
 			availableBookModel.clearSelection();
 		}
 	}

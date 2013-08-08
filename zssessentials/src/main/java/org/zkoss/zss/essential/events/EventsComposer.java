@@ -284,8 +284,8 @@ public class EventsComposer extends SelectorComposer<Component>{
 		}
 	}
 	
-	@Listen("onCellChange = #ss")
-	public void onCellChange(CellAreaEvent event){
+	@Listen("onAfterCellChange = #ss")
+	public void onAfterCellChange(CellAreaEvent event){
 		StringBuilder info = new StringBuilder();
 
 		info.append("Cell changes on ").append(Ranges.getAreaReference(event.getArea()));
@@ -314,7 +314,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 	
 
 	
-	@Listen("onSheetCreate = #ss")
+	@Listen("onAfterSheetCreate = #ss")
 	public void onSheetCreate(SheetEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Create sheet : ").append(event.getSheetName());
@@ -334,7 +334,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 		}
 	}
 	
-	@Listen("onSheetNameChange = #ss")
+	@Listen("onAfterSheetNameChange = #ss")
 	public void onSheetNameChange(SheetEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Rename sheet to ").append(event.getSheetName());
@@ -345,7 +345,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 		}
 	}
 	
-	@Listen("onSheetOrderChange = #ss")
+	@Listen("onAfterSheetOrderChange = #ss")
 	public void onSheetOrderChange(SheetEvent event){
 		StringBuilder info = new StringBuilder();
 		Sheet sheet = event.getSheet();
@@ -358,7 +358,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 	}
 	
 	
-	@Listen("onSheetDelete = #ss")
+	@Listen("onAfterSheetDelete = #ss")
 	public void onSheetDelete(SheetDeleteEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Delete sheet : ").append(event.getSheetName());
@@ -455,7 +455,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 		addEventFilter(Events.ON_START_EDITING,true);
 		addEventFilter(Events.ON_EDITBOX_EDITING,true);
 		addEventFilter(Events.ON_STOP_EDITING,true);
-		addEventFilter(Events.ON_CELL_CHANGE,true);
+		addEventFilter(Events.ON_AFTER_CELL_CHANGE,true);
 		
 		addEventFilter(Events.ON_CTRL_KEY,true);
 		
@@ -480,10 +480,10 @@ public class EventsComposer extends SelectorComposer<Component>{
 		addEventFilter(Events.ON_WIDGET_UPDATE,true);
 		addEventFilter(Events.ON_WIDGET_CTRL_KEY,true);
 		
-		addEventFilter(Events.ON_SHEET_CREATE,true);
-		addEventFilter(Events.ON_SHEET_DELETE,true);
-		addEventFilter(Events.ON_SHEET_NAME_CHANGE,true);
-		addEventFilter(Events.ON_SHEET_ORDER_CHANGE,true);
+		addEventFilter(Events.ON_AFTER_SHEET_CREATE,true);
+		addEventFilter(Events.ON_AFTER_SHEET_DELETE,true);
+		addEventFilter(Events.ON_AFTER_SHEET_NAME_CHANGE,true);
+		addEventFilter(Events.ON_AFTER_SHEET_ORDER_CHANGE,true);
 		addEventFilter(Events.ON_SHEET_SELECT,true);
 		
 		addEventFilter(Events.ON_CELL_HYPERLINK,true);	
