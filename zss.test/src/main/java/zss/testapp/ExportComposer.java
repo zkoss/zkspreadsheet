@@ -12,12 +12,10 @@ import static org.zkoss.zss.api.CellOperationUtil.applyFontStrikeout;
 import static org.zkoss.zss.api.CellOperationUtil.applyFontUnderline;
 import static org.zkoss.zss.api.CellOperationUtil.applyVerticalAlignment;
 import static org.zkoss.zss.api.Ranges.range;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
@@ -33,10 +31,16 @@ import org.zkoss.zss.api.SheetOperationUtil;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
+import org.zkoss.zss.api.model.Chart.Grouping;
+import org.zkoss.zss.api.model.Chart.LegendPosition;
+import org.zkoss.zss.api.model.Chart.Type;
+import org.zkoss.zss.api.model.ChartData;
 import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zssex.api.ChartDataUtil;
 
 public class ExportComposer extends SelectorComposer<Component> {
 
@@ -143,6 +147,38 @@ public class ExportComposer extends SelectorComposer<Component> {
 				Format.PNG, 300, 100);
 
 		
+	}
+	
+	@Listen("onClick = #insertChart")
+	public void insertChart() {
+		Sheet sheet = srcSpreadsheet.getSelectedSheet();
+		range(sheet, 0, 0).setCellEditText("series 1");
+		range(sheet, 0, 1).setCellEditText("series 2");
+		for(int i = 0; i < 10; ++i) {
+			range(sheet, i + 1, 0).setCellEditText( i + 3 + "");
+			range(sheet, i + 1, 1).setCellEditText( i + 10 + "");
+		}
+		
+		Type[][] types = new Type[][]{{Type.AREA, Type.AREA_3D, Type.BAR, Type.BAR_3D},
+				{Type.LINE, Type.LINE_3D, Type.SCATTER}};
+		for(int r = 0; r < types.length; ++r) {
+			Type[] tt = types[r];
+			for(int c = 0; c < tt.length; ++c) {
+				Type t = tt[c];
+				ChartData cd = ChartDataUtil.getChartData(sheet, new Rect(0, 0, 1, 10), t);
+				SheetOperationUtil.addChart(range(sheet, r * 8, c * 7), cd, t, Grouping.STANDARD, LegendPosition.TOP);
+			}
+		}
+		
+		types = new Type[][]{{Type.DOUGHNUT, Type.PIE, Type.PIE_3D}};
+		for(int r = 0; r < types.length; ++r) {
+			Type[] tt = types[r];
+			for(int c = 0; c < tt.length; ++c) {
+				Type t = tt[c];
+				ChartData cd = ChartDataUtil.getChartData(sheet, new Rect(0, 0, 0, 10), t);
+				SheetOperationUtil.addChart(range(sheet, r * 8 + 16, c * 7), cd, t, Grouping.STANDARD, LegendPosition.TOP);
+			}
+		}
 	}
 	
 	@Listen("onClick = #applyAutoFilter")

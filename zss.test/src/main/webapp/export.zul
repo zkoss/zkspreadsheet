@@ -2,6 +2,7 @@
 	<window apply="zss.testapp.ExportComposer" height="100%">
 		<button id="inputText" label="Input Styled Text"/>
 		<button id="inputPicture" label="Input Pictures and Charts"/>
+		<button id="insertChart" label="generate and insert chart"/>
 		<!-- FIXME API not work 
 		<button id="applyAutoFilter" label="Apply Auto Filter"/>
 		<button id="protect" label="Protect"/>
