@@ -111,4 +111,10 @@ public interface SpreadsheetCtrl {
 	 * @since 3.0.0
 	 */
 	public UserActionManagerCtrl getUserActionManagerCtrl();
+	
+	/**
+	 * @return
+	 * @since 3.0.0
+	 */
+	public FreezeInfoLoader getFreezeInfoLoader();
 }

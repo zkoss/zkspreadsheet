@@ -35,6 +35,7 @@ import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.JSONObj;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.XUtils;
+import org.zkoss.zss.ui.sys.FreezeInfoLoader;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 
@@ -459,15 +460,16 @@ public class CellFetchCommandHelper{
 		_loadedTop = rangeTop;
 		_loadedRight = rangeBtm;
 		
+		FreezeInfoLoader freezeInfo = spreadsheetCtrl.getFreezeInfoLoader();
 		// prepare top frozen cell
-		int fzr = _spreadsheet.getRowfreeze();
+		int fzr = freezeInfo.getRowFreeze(sheet);
 		if (fzr > -1) {
 			mainBlock.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, 
 					header, SpreadsheetCtrl.CellAttribute.ALL, rangeLeft, 0, rangeRight, fzr));
 		}
 
 		//prepare left frozen cell
-		int fzc = _spreadsheet.getColumnfreeze();
+		int fzc = freezeInfo.getColumnFreeze(sheet);
 		if (fzc > -1) {
 			mainBlock.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, 
 					header, SpreadsheetCtrl.CellAttribute.ALL, 0, rangeTop, fzc, rangeBtm));
@@ -562,7 +564,7 @@ public class CellFetchCommandHelper{
 		_lastbottom = blockBottom;
 
 		//process frozen row data
-		int fzr = _spreadsheet.getRowfreeze();
+		int fzr = spreadsheetCtrl.getFreezeInfoLoader().getRowFreeze(sheet);
 		if (fzr > -1) {
 			mainBlock.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hiderowhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 
 					cs, 0, rangeRight, fzr));
@@ -602,7 +604,7 @@ public class CellFetchCommandHelper{
 		_lastbottom = blockBottom;
 		
 		// process frozen row data
-		int fzr = _spreadsheet.getRowfreeze();
+		int fzr = spreadsheetCtrl.getFreezeInfoLoader().getRowFreeze(sheet);
 		if (fzr > -1) {
 			mainBlock.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hiderowhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 
 					rangeLeft, 0, cs, fzr));
@@ -638,7 +640,7 @@ public class CellFetchCommandHelper{
 		_lastbottom = re-1;
 		
 		// process frozen left
-		int fzc = _spreadsheet.getColumnfreeze();
+		int fzc = spreadsheetCtrl.getFreezeInfoLoader().getColumnFreeze(sheet);
 		if (fzc > -1) {
 			mainBlock.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL,
 					0, rs, fzc, rangeBottom));
@@ -676,7 +678,7 @@ public class CellFetchCommandHelper{
 		_lastbottom = blockBottom;
 		
 		// process frozen left
-		int frc = _spreadsheet.getColumnfreeze();
+		int frc = spreadsheetCtrl.getFreezeInfoLoader().getColumnFreeze(sheet);
 		if (frc > -1) {
 			mainBlock.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, _hidecolhead ? SpreadsheetCtrl.Header.NONE : SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL,
 					0, rangeTop, frc, rs));

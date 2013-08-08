@@ -17,6 +17,7 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.ui.CtrlBase;
 import org.zkoss.zss.app.ui.AppEvts;
 import org.zkoss.zss.app.ui.UiUtil;
@@ -119,7 +120,9 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 		toggleFormulaBar.setChecked(sparedsheet.isShowFormulabar());
 		
 		freezePanel.setDisabled(disabled);
-		unfreezePanel.setDisabled(disabled || !(sparedsheet.getRowfreeze()>-1||sparedsheet.getColumnfreeze()>-1));
+		Sheet sheet = sparedsheet.getSelectedSheet();
+		unfreezePanel.setDisabled(disabled || !(sheet.getRowFreeze()>0||sheet.getColumnFreeze()>0));
+		
 		for(Component comp:Selectors.find(freezeRows, "menuitem")){
 			((Menuitem)comp).setDisabled(disabled);
 		}

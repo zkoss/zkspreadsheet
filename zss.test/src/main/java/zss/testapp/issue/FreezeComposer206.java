@@ -21,7 +21,8 @@ public class FreezeComposer206 extends SelectorComposer<Component>{
 	
 	@Listen("onClick = button")
 	public void freeze(){
-		spreadsheet.setRowfreeze(rowBox.getValue());
+		//no more available since 3.0.0 2013/8/8, freeze move to model
+//		spreadsheet.setRowfreeze(rowBox.getValue());
 	}
 
 }

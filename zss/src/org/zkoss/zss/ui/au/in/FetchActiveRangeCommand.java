@@ -27,6 +27,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.sys.FreezeInfoLoader;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
 
 /**
@@ -58,14 +59,21 @@ public class FetchActiveRangeCommand extends AbstractCommand implements Command 
 		if (sheetId.equals(((SheetCtrl)sheet).getUuid())) {
 			final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) spreadsheet.getExtraCtrl());
 			
-			JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, left, top, right, bottom);
-			if (spreadsheet.getColumnfreeze() > -1) {
+			FreezeInfoLoader freezeInfo = spreadsheetCtrl.getFreezeInfoLoader();
+			
+			JSONObject mainBlock = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL,
+					left, top, right, bottom);
+			int fzc = freezeInfo.getColumnFreeze(sheet);
+			int fzr = freezeInfo.getRowFreeze(sheet);
+			if (fzc > -1) {
 				mainBlock.put("leftFrozen", 
-						spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 0, top, spreadsheet.getColumnfreeze(), bottom));
+						spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 
+								0, top, fzc, bottom));
 			}
-			if (spreadsheet.getRowfreeze() > -1) {
+			if (fzr > -1) {
 				mainBlock.put("topFrozen", 
-						spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, left, 0, right, spreadsheet.getRowfreeze()));
+						spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, left, 
+								0, right, fzr));
 			}
 			spreadsheet.smartUpdate("activeRangeUpdate", mainBlock);
 		}
