@@ -70,7 +70,7 @@ public interface WidgetLoader {
 	
 	public void addPictureWidget(XSheet sheet, Picture picture);
 	
-	// ZSS-358: picture data is gone after deleting
+	// ZSS-397: picture data is gone after deleting
 	public void deletePictureWidget(XSheet sheet, String pictureID);
 	
 	public void updatePictureWidget(XSheet sheet, Picture picture);

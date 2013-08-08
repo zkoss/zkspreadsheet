@@ -56,7 +56,7 @@ public interface XSheet extends org.zkoss.poi.ss.usermodel.Sheet {
      */
     public List<PivotTable> getPivotTables();
     
-	// ZSS-358: remove drawing part
+	// ZSS-397: remove drawing part
 	void removeDrawingPatriarch(Drawing drawing);
 
 }

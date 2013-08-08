@@ -1256,7 +1256,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
 		}
 	}
 	
-	// ZSS-358: remove drawing part
+	// ZSS-397: remove drawing part
 	@Override
 	public void removeDrawingPatriarch(Drawing drawing) {
 		removeRelation((XSSFDrawing)drawing, true);

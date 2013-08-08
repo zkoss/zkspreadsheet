@@ -2609,7 +2609,7 @@ public class XRangeImpl implements XRange {
 			ClientAnchor anchor = picture.getPreferredSize();
 			final XRangeImpl rng = (XRangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
 			final Collection<Ref> refs = rng.getRefs();
-			// ZSS-358: keep picture ID for notifying
+			// ZSS-397: keep picture ID for notifying
 			// the picture data including ID will be gone after deleting
 			final String id = picture.getPictureId();
 			dm.deletePicture(_sheet, picture); //must after getPreferredSize() or anchor is gone!

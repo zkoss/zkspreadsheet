@@ -1335,7 +1335,7 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, XSheet {
 		getSheetCtrl().whenRenameSheet(oldname, newname);
 	}
 	
-	// ZSS-358: remove drawing part
+	// ZSS-397: remove drawing part
 	@Override
 	public void removeDrawingPatriarch(Drawing drawing) {
 		// TODO not supported yet, according to ZSS-9
