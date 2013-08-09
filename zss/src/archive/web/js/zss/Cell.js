@@ -440,55 +440,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		jq(this.$n()).removeClass("zscell-overflow").removeClass("zscell-overflow-b");
 	},
 	_processOverflow: function () {
-		var col = this.c;
-		var rBorder = this.rborder,
-			$n = jq(this.$n());
-		
-		var cave = this.$n('cave'),
-			$cave = jq(cave),
-			tn = this.getTextNode(),
-			$tn = jq(tn);
-		
-		// clean pervious width setting for measuring correctly
-		//	Note. For IE6/IE7 need to set cave's width (set text node width won't work)
-		if (zk.ie6_ || zk.ie7_) {
-			$cave.css('width', '');
-		} else {
-			$tn.css('width', '');
-		}
-		
-		var sheet = this.sheet;
-		var custColWidth = sheet.custColWidth;
-		var wd = custColWidth.getSize(col); // overlap-able width, initial to current cell's width
-		var sw = tn.scrollWidth; // heavy duty (it's actually a function call from ZK widget)
-		var cellPad = sheet.cellPad;
-			
-		// skip to process overflow if current cell's width is enough
-		// right grid line won't be removed if it's css has no zscell-overflow class
-		if(sw <= custColWidth.getSize(this.c) - cellPad) {
-			$n.removeClass("zscell-overflow");
-			$n.removeClass("zscell-overflow-b");
-			return;
-		}
-		
-		// process overflow
-		// count right sibling's width util width is enough or sibling isn't blank
-		var cell = this.nextSibling;
-		while(cell && cell.cellType === BLANK_CELL && wd < sw) {
-			wd += custColWidth.getSize(cell.c);
-			cell = cell.nextSibling;
-		}
-		wd -= cellPad; // celll padding
-		
-		// apply overflow css and adjust cell width
-		$n.removeClass(rBorder ? "zscell-overflow" : "zscell-overflow-b")
-			.addClass(rBorder ? "zscell-overflow-b" : "zscell-overflow");
-		//	Note. For IE6/IE7 need to set cave's width (set text node width won't work)
-		if (zk.ie6_ || zk.ie7_) {
-			$cave.css('width', jq.px0(wd));
-		} else {
-			$tn.css('width', jq.px0(wd));
-		}
+		// not implement in OSE
 	},
 	bind_: function (desktop, skipper, after) {
 		this.$supers(zss.Cell, 'bind_', arguments);
