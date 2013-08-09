@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.impl.ua;
 
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Ranges;
@@ -41,6 +42,10 @@ public class DeleteColumnHandler extends AbstractProtectedHandler {
 		Rect selection = ctx.getSelection();
 		Range range = Ranges.range(sheet, selection);
 		range = range.toColumnRange();
+		//work around for ZSS-404 JS Error after insert column when freeze
+		if(checkInFreezePanel(range)){
+			throw new IllegalOpArgumentException(Labels.getLabel("zss.msg.operation_not_supported_with_freeze_panel"));
+		}
 		UndoableActionManager uam = ctx.getSpreadsheet().getUndoableActionManager();
 		uam.doAction(new DeleteCellAction(Labels.getLabel("zss.undo.deleteColumn"),sheet, range.getRow(), range.getColumn(), 
 				range.getLastRow(), range.getLastColumn(), 

@@ -18,8 +18,10 @@ package org.zkoss.zss.ui.impl.ua;
 
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zss.api.IllegalOpArgumentException;
+import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.UserActionContext;
 import org.zkoss.zss.ui.UserActionHandler;
 import org.zkoss.zul.Messagebox;
@@ -59,6 +61,16 @@ public abstract class AbstractHandler implements UserActionHandler{
 			return true;
 		}
 	}
-	
+
+	protected boolean checkInFreezePanel(Range range) {
+		Sheet sheet = range.getSheet();
+		int fzr = sheet.getRowFreeze();//to index
+		int fzc = sheet.getColumnFreeze();
+		
+		if(fzr>range.getRow() || fzc > range.getColumn()){
+			return true;
+		}
+		return false;
+	}
 	protected abstract boolean processAction(UserActionContext ctx);
 }
