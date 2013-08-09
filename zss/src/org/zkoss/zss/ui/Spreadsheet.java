@@ -80,6 +80,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.ext.AfterCompose;
 import org.zkoss.zk.ui.ext.render.DynamicMedia;
 import org.zkoss.zk.ui.sys.ContentRenderer;
+import org.zkoss.zk.ui.util.DesktopCleanup;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.Range;
@@ -233,14 +234,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private int _preloadColumnSize = -1; //the number of column to load when receiving the rendering request
 	
 	transient private XSheet _selectedSheet;
-
-//	/*
-//	 * < -1 : (-2) depends on sheet
-//	 * = -1 : no freeze
-//	 * > -1 : freeze on index (0 base)
-//	 */
-//	private int _rowFreeze = -2; // how many fixed rows
-//	private int _colFreeze = -2; // how many fixed columns
 	
 	private boolean _hideRowhead; // hide row head
 	private boolean _hideColhead; // hide column head*/
@@ -269,6 +262,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private WidgetHandler _widgetHandler;
 
 	private List<WidgetLoader> _widgetLoaders;
+	
+	
+	//a cleaner to clean book when detach or desktop cleanup
+	private BookCleaner _bookCleaner;
 	
 	/**
 	 * default row height when a sheet is empty
@@ -635,14 +632,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	private void initBook0(XBook book) {
 		if (_book != null) {
-			if (_focusListener != null)
-				removeEventListener(Events.ON_CELL_FOUCS, _focusListener);
 			deleteSelfEditorFocus();
 			_book.unsubscribe(_dataListener);
 			_book.removeVariableResolver(_variableResolver);
 			_book.removeFunctionMapper(_functionMapper);
-			if (_focusListener != null)
+			if (_focusListener != null){
 				removeEventListener(Events.ON_CELL_FOUCS, _focusListener);
+				_focusListener = null;
+			}
 		}
 		
 		 //Shall clean selected sheet before set new book (ZSS-75: set book null, cause NPE)
@@ -4824,6 +4821,42 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		initComponentActionHandler();
 	}
 	
+	@Override
+	public void onPageAttached(Page newpage, Page oldpage){
+		super.onPageAttached(newpage, oldpage);
+		String uuid = getUuid();
+		Desktop desktop = Executions.getCurrent().getDesktop();
+		if(_bookCleaner==null){
+			_bookCleaner = new BookCleaner(uuid);
+			desktop.addListener(_bookCleaner);
+		}
+	}
+	
+	@Override
+	public void onPageDetached(Page page){
+		super.onPageDetached(page);
+		Book book = getBook();
+		if(book!=null){
+			String scope = book.getShareScope();
+			if(isCleanBookAutomatically() && !Strings.isEmpty(scope)){
+				setBook(null);
+			}
+		}
+		Desktop desktop = Executions.getCurrent().getDesktop();
+		if(_bookCleaner!=null){
+			desktop.removeListener(_bookCleaner);
+			_bookCleaner = null;
+		}
+	}
+	
+	/**
+	 * @return true if should clean book automatically when component detached
+	 * @since 3.0.0
+	 */
+	protected boolean isCleanBookAutomatically(){
+		return true;
+	}
+	
 	public class HelperContainer<T> {
 		HashMap<String, T> helpers = new HashMap<String, T>();
 		
@@ -5042,6 +5075,28 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private void clearUndoableActionManager(){
 		if(_undoableActionManager!=null){
 			_undoableActionManager.clear();
+		}
+	}
+	
+	/**
+	 * clear book after desktop cleanup, to clean listener that register to a
+	 * book
+	 **/
+	private static class BookCleaner implements DesktopCleanup,Serializable{
+		
+		private String _ssid;
+		public BookCleaner(String ssid){
+			this._ssid = ssid;
+		}
+		
+		@Override
+		public void cleanup(Desktop desktop) throws Exception {
+			Component comp = desktop.getComponentByUuid(_ssid);
+			if(comp instanceof Spreadsheet){
+				try{
+					((Spreadsheet)comp).setBook(null);
+				}catch(Exception x){}//eat
+			}
 		}
 	}
 	
