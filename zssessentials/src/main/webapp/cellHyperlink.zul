@@ -1,0 +1,40 @@
+<zk>
+	<window hflex="1" vflex="1"
+		apply="org.zkoss.zss.essential.CellHyperlinkComposer">
+		<hlayout hflex="1" vflex="1">
+			<spreadsheet id="ss" hflex="1" vflex="1"
+				showFormulabar="true" showContextMenu="true" showToolbar="true"
+				showSheetbar="true" maxVisibleRows="100" maxVisibleColumns="40"
+				src="/WEB-INF/books/sample.xlsx" selectedSheet="CellValue"/>
+			<vlayout width="300px" vflex="1">
+				<groupbox hflex="1" vflex="1">
+					<caption label="Cell Information" />
+
+					<grid vflex="1" hflex="1">
+						<columns>
+							<column width="100px"/>
+							<column/>
+						</columns>
+						<rows>
+							<row>
+								Cell: <label id="cellRef"/>
+							</row>
+							<row>
+								Formatted Text: <label id="cellFormatText"/>
+							</row>
+							<row>
+								Type: <label id="hyperlinkType"/>
+							</row>
+							<row>
+								Label: <label id="hyperlinkLabel"/>
+							</row>
+							<row>
+								Address: <label id="hyperlinkAddress"/>
+							</row>
+						</rows>
+					</grid>
+				</groupbox>
+			</vlayout>
+		</hlayout>
+	</window>
+</zk>
