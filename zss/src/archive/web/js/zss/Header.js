@@ -429,6 +429,11 @@ zss.Header = zk.$extends(zk.Widget, {
 			delete this.drag;
 		}
 		
+		//ZSS-407 Shouldn't allow to drag row/column size in protected sheet
+		if(this.sheet._wgt.isProtect()){
+			return;//don't drag when protection
+		}
+		
 		var ibcmp = unhide ? this.ibcomp2 : this.ibcomp,
 			ibcmpcls = this.type == zss.Header.HOR ? 
 				(unhide ? "zshbounw-over" : "zshbouni-over") : (unhide ? "zsvbounw-over" : "zsvbouni-over");

@@ -2671,27 +2671,22 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			HeaderPositionHelper helper = Spreadsheet.this.getColumnPositionHelper(xsheet);
 			helper.setInfoValues(column, newsize, id, hidden);
 
-			
-			UndoableActionManager uam = getUndoableActionManager();
 			Sheet sheet = new SheetImpl(new SimpleRef<XBook>(xsheet.getBook()),new SimpleRef<XSheet>(xsheet));
-			if(uam!=null){
-				if(hidden){
-					uam.doAction(new HideHeaderAction(Labels.getLabel("zss.undo.hideColumn"), 
-							sheet, 0, column, 0, column, HideHeaderAction.Type.COLUMN, hidden));
-				}else{
-					uam.doAction(
-						new AggregatedAction(Labels.getLabel("zss.undo.columnSize"),
-							new UndoableAction[]{
-								new HideHeaderAction(null,sheet, 0, column, 0, column, HideHeaderAction.Type.COLUMN, hidden),
-								new ResizeHeaderAction(null,sheet, 0, column, 0, column, ResizeHeaderAction.Type.COLUMN, newsize)}
-						));
-				}
+			if(sheet.isProtected()){
+				return;
+			}
+			UndoableActionManager uam = getUndoableActionManager();
+			
+			if(hidden){
+				uam.doAction(new HideHeaderAction(Labels.getLabel("zss.undo.hideColumn"), 
+						sheet, 0, column, 0, column, HideHeaderAction.Type.COLUMN, hidden));
 			}else{
-				final Range rng = Ranges.range(sheet, 0, column).toColumnRange();
-				rng.setHidden(hidden);
-				if(!hidden){
-					rng.setColumnWidth(newsize);
-				}
+				uam.doAction(
+					new AggregatedAction(Labels.getLabel("zss.undo.columnSize"),
+						new UndoableAction[]{
+							new HideHeaderAction(null,sheet, 0, column, 0, column, HideHeaderAction.Type.COLUMN, hidden),
+							new ResizeHeaderAction(null,sheet, 0, column, 0, column, ResizeHeaderAction.Type.COLUMN, newsize)}
+					));
 			}
 		}
 
@@ -2706,26 +2701,23 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			HeaderPositionHelper helper = Spreadsheet.this.getRowPositionHelper(xsheet);
 			helper.setInfoValues(row, newsize, id, hidden);
 			
-			UndoableActionManager uam = getUndoableActionManager();
 			Sheet sheet = new SheetImpl(new SimpleRef<XBook>(xsheet.getBook()),new SimpleRef<XSheet>(xsheet));
-			if(uam!=null){
-				if(hidden){
-					uam.doAction(new HideHeaderAction(Labels.getLabel("zss.undo.hideRow"), 
-							sheet, row,0, row, 0, HideHeaderAction.Type.ROW, hidden));
-				}else{
-					uam.doAction(
-						new AggregatedAction(Labels.getLabel("zss.undo.rowSize"),
-							new UndoableAction[]{
-								new HideHeaderAction(null,sheet,  row,0, row, 0, HideHeaderAction.Type.ROW, hidden),
-								new ResizeHeaderAction(null,sheet,  row,0, row, 0, ResizeHeaderAction.Type.ROW, newsize)}
-						));
-				}
+			if(sheet.isProtected()){
+				return;
+			}
+			
+			UndoableActionManager uam = getUndoableActionManager();
+			
+			if(hidden){
+				uam.doAction(new HideHeaderAction(Labels.getLabel("zss.undo.hideRow"), 
+						sheet, row,0, row, 0, HideHeaderAction.Type.ROW, hidden));
 			}else{
-				final Range rng = Ranges.range(sheet, row, 0).toRowRange();
-				rng.setHidden(hidden);
-				if(!hidden){
-					rng.setRowHeight(newsize);
-				}
+				uam.doAction(
+					new AggregatedAction(Labels.getLabel("zss.undo.rowSize"),
+						new UndoableAction[]{
+							new HideHeaderAction(null,sheet,  row,0, row, 0, HideHeaderAction.Type.ROW, hidden),
+							new ResizeHeaderAction(null,sheet,  row,0, row, 0, ResizeHeaderAction.Type.ROW, newsize)}
+					));
 			}
 		}
 

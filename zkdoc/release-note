@@ -63,6 +63,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-397 Once deleting a picture on xlsx format, the exported xlsx file cannot be load by Excel or pictures are incorrect.
   ZSS-358 Exported Excel 2007 file with charts cannot be read by Excel 2007
   ZSS-406 Spreadsheet doesn't be release when use application share scope
+  ZSS-407 Shouldn't allow to drag row/column size in protected sheet
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
