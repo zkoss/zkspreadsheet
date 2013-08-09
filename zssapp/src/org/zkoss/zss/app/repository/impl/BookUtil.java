@@ -125,8 +125,8 @@ public class BookUtil {
 			name = "book";
 		}
 		
-		
-		File f = File.createTempFile(name,"."+ext,getWorkingFolder());
+		//prefix has > 3
+		File f = File.createTempFile("temp_"+name,"."+ext,getWorkingFolder());
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(f);

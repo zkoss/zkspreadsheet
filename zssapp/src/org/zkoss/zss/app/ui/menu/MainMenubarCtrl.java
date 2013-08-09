@@ -22,6 +22,7 @@ import org.zkoss.zss.app.ui.CtrlBase;
 import org.zkoss.zss.app.ui.AppEvts;
 import org.zkoss.zss.app.ui.UiUtil;
 import org.zkoss.zss.ui.Spreadsheet;
+import org.zkoss.zss.ui.Version;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menubar;
@@ -51,6 +52,9 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	Menuitem closeFile;
 	@Wire
 	Menuitem exportFile;
+	@Wire
+	Menuitem exportPdf;
+	
 	
 	@Wire
 	Menuitem undo;
@@ -82,7 +86,7 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 	private void doUpdateMenu(Spreadsheet sparedsheet){
 
 		boolean hasBook = sparedsheet.getBook()!=null;
-		
+		boolean isEE = "EE".equals(Version.getEdition());
 		//new and open are always on
 		newFile.setDisabled(false);
 		openManageFile.setDisabled(false);
@@ -93,13 +97,15 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 		saveFileAndClose.setDisabled(disabled || readonly);
 		closeFile.setDisabled(disabled);
 		exportFile.setDisabled(disabled);
+		exportPdf.setDisabled(!isEE || disabled);
+		
 		
 		
 		UndoableActionManager uam = sparedsheet.getUndoableActionManager();
 		
 		
 		String label = Labels.getLabel("zssapp.mainMenu.edit.undo");
-		if(uam.isUndoable()){
+		if(isEE && uam.isUndoable()){
 			undo.setDisabled(false);
 			label = label+":"+uam.getUndoLabel();	
 		}else{
@@ -108,7 +114,7 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 		undo.setLabel(label);
 		
 		label = Labels.getLabel("zssapp.mainMenu.edit.redo");
-		if(uam.isRedoable()){
+		if(isEE && uam.isRedoable()){
 			redo.setDisabled(false);
 			label = label+":"+uam.getRedoLabel();	
 		}else{
@@ -119,15 +125,17 @@ public class MainMenubarCtrl extends CtrlBase<Menubar> {
 //		toggleFormulaBar.setDisabled(disabled); //don't need to care the book load or not.
 		toggleFormulaBar.setChecked(sparedsheet.isShowFormulabar());
 		
-		freezePanel.setDisabled(disabled);
+		
+		
+		freezePanel.setDisabled(!isEE || disabled);
 		Sheet sheet = sparedsheet.getSelectedSheet();
-		unfreezePanel.setDisabled(disabled || !(sheet.getRowFreeze()>0||sheet.getColumnFreeze()>0));
+		unfreezePanel.setDisabled(!isEE || disabled || !(sheet.getRowFreeze()>0||sheet.getColumnFreeze()>0));
 		
 		for(Component comp:Selectors.find(freezeRows, "menuitem")){
-			((Menuitem)comp).setDisabled(disabled);
+			((Menuitem)comp).setDisabled(!isEE || disabled);
 		}
 		for(Component comp:Selectors.find(freezeCols, "menuitem")){
-			((Menuitem)comp).setDisabled(disabled);
+			((Menuitem)comp).setDisabled(!isEE || disabled);
 		}
 	}
 
