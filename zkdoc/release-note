@@ -61,6 +61,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-301 cut a merged cell and paste to another cell, the original cell doesn't become unmerged cells.
   ZSS-398 Sheetbar protectSheet menuitem check state is not correct
   ZSS-397 Once deleting a picture on xlsx format, the exported xlsx file cannot be load by Excel or pictures are incorrect.
+  ZSS-358 Exported Excel 2007 file with charts cannot be read by Excel 2007
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
