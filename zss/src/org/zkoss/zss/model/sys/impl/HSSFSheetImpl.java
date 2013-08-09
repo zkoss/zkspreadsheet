@@ -54,6 +54,7 @@ import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.DataValidationConstraint;
 import org.zkoss.poi.ss.usermodel.DataValidationHelper;
+import org.zkoss.poi.ss.usermodel.Drawing;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.PivotTable;
 import org.zkoss.poi.ss.usermodel.Row;
@@ -1333,4 +1334,11 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, XSheet {
 	public void whenRenameSheet(String oldname, String newname) {
 		getSheetCtrl().whenRenameSheet(oldname, newname);
 	}
+	
+	// ZSS-397: remove drawing part
+	@Override
+	public void removeDrawingPatriarch(Drawing drawing) {
+		// TODO not supported yet, according to ZSS-9
+	}
+
 }

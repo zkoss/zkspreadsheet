@@ -2613,10 +2613,13 @@ public class XRangeImpl implements XRange {
 			ClientAnchor anchor = picture.getPreferredSize();
 			final XRangeImpl rng = (XRangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
 			final Collection<Ref> refs = rng.getRefs();
+			// ZSS-397: keep picture ID for notifying
+			// the picture data including ID will be gone after deleting
+			final String id = picture.getPictureId();
 			dm.deletePicture(_sheet, picture); //must after getPreferredSize() or anchor is gone!
 			if (refs != null && !refs.isEmpty()) {
 				final Ref ref = refs.iterator().next();
-				BookHelper.notifyPictureDelete(ref, picture);
+				BookHelper.notifyPictureDelete(ref, id);
 			}
 		}
 	}
@@ -2656,10 +2659,12 @@ public class XRangeImpl implements XRange {
 			ClientAnchor anchor = chart.getPreferredSize();
 			final XRangeImpl rng = (XRangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
 			final Collection<Ref> refs = rng.getRefs();
+			// ZSS-358: keep chart ID for notifying; must assume that chart data was gone.
+			final String id = chart.getChartId();
 			dm.deleteChart(_sheet, chart); //must after getPreferredSize() or anchor is gone!
 			if (refs != null && !refs.isEmpty()) {
 				final Ref ref = refs.iterator().next();
-				BookHelper.notifyChartDelete(ref, chart);
+				BookHelper.notifyChartDelete(ref, id);
 			}
 		}
 	}

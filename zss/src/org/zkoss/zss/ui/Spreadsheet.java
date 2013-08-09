@@ -2184,7 +2184,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (!getSelectedXSheet().equals(sheet))
 				return;
 			final Object payload = event.getPayload();
-			deleteChartWidget(sheet, (Chart) payload);
+			deleteChartWidget(sheet, (String) payload);
 		}
 		private void onChartUpdate(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -2208,7 +2208,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (!getSelectedXSheet().equals(sheet))
 				return;
 			final Object payload = event.getPayload();
-			deletePictureWidget(sheet, (Picture) payload);
+			deletePictureWidget(sheet, (String) payload);
 		}
 		private void onPictureUpdate(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -4083,12 +4083,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 
-	private void deletePictureWidget(XSheet sheet, Picture picture) {
+	private void deletePictureWidget(XSheet sheet, String pictureId) {
 		//load widgets
 		List list = loadWidgetLoaders();
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
-			((WidgetLoader) list.get(i)).deletePictureWidget(sheet, picture);
+			((WidgetLoader) list.get(i)).deletePictureWidget(sheet, pictureId);
 		}
 	}
 	
@@ -4101,12 +4101,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 
-	private void deleteChartWidget(XSheet sheet, Chart chart) {
+	private void deleteChartWidget(XSheet sheet, String chartId) {
 		//load widgets
 		List list = loadWidgetLoaders();
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
-			((WidgetLoader) list.get(i)).deleteChartWidget(sheet, chart);
+			((WidgetLoader) list.get(i)).deleteChartWidget(sheet, chartId);
 		}
 	}
 
