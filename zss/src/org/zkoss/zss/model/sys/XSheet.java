@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.DataValidation;
+import org.zkoss.poi.ss.usermodel.Drawing;
 import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.PivotTable;
 
@@ -54,4 +55,8 @@ public interface XSheet extends org.zkoss.poi.ss.usermodel.Sheet {
      * @return
      */
     public List<PivotTable> getPivotTables();
+    
+	// ZSS-397: remove drawing part
+	void removeDrawingPatriarch(Drawing drawing);
+
 }

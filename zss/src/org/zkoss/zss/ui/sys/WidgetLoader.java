@@ -65,14 +65,12 @@ public interface WidgetLoader {
 	//public void onLoadOnDeman(String sheetid,int left,int top,int right,int bottom);
 
 	public void addChartWidget(XSheet sheet, ZssChartX chart);
-	
-	public void deleteChartWidget(XSheet sheet, org.zkoss.poi.ss.usermodel.Chart chart);
+	public void deleteChartWidget(XSheet sheet, String chartId); // ZSS-358: keep chart ID for notifying; must assume that chart data was gone.
+	public void updateChartWidget(XSheet sheet, org.zkoss.poi.ss.usermodel.Chart chart);
 	
 	public void addPictureWidget(XSheet sheet, Picture picture);
-	
-	public void deletePictureWidget(XSheet sheet, Picture picture);
-	
+	public void deletePictureWidget(XSheet sheet, String pictureId); // ZSS-397: picture data is gone after deleting
 	public void updatePictureWidget(XSheet sheet, Picture picture);
 	
-	public void updateChartWidget(XSheet sheet, org.zkoss.poi.ss.usermodel.Chart chart);
+	
 }
