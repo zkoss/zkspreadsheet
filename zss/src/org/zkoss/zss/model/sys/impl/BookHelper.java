@@ -33,6 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
@@ -62,6 +63,7 @@ import org.zkoss.poi.hssf.util.PaneInformation;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.format.CellFormat;
 import org.zkoss.poi.ss.format.Formatters;
+import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaParsingWorkbook;
 import org.zkoss.poi.ss.formula.FormulaRenderer;
@@ -506,9 +508,14 @@ public final class BookHelper {
 			setCellValue(cell, cv);
 			return cv;
 		} catch(Exception e){ //handle all runtime exceptions happened in evaluating formulas, hawk
-			logger.log(Level.SEVERE, "error evaluating formula: "+cell.getCellFormula()+" at "+Ranges.getCellReference(cell.getRowIndex(),cell.getColumnIndex()), e);
-			setCellValue(cell, CellValue.getError(ErrorEval.VALUE_INVALID.getErrorCode()));
-			return CellValue.getError(ErrorEval.VALUE_INVALID.getErrorCode());
+			if(e instanceof FormulaParseException){
+				setCellValue(cell, CellValue.getError(ErrorEval.REF_INVALID.getErrorCode()));
+				return CellValue.getError(ErrorEval.REF_INVALID.getErrorCode());
+			}else{
+				logger.log(Level.SEVERE, "error evaluating formula: "+cell.getCellFormula()+" at "+Ranges.getCellReference(cell.getRowIndex(),cell.getColumnIndex()), e);
+				setCellValue(cell, CellValue.getError(ErrorEval.VALUE_INVALID.getErrorCode()));
+				return CellValue.getError(ErrorEval.VALUE_INVALID.getErrorCode());
+			}
 		}finally{
 			XelContextHolder.setXelContext(old);
 		}
@@ -1156,8 +1163,14 @@ public final class BookHelper {
 
         int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(sheet.getWorkbook());
-        Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex);
-        return FormulaRenderer.toFormulaString(fpb, ptgs);
+        
+        //ZSS-357 if a file contains #REF! cells, it will throw a exception and can't be rendered when importing such file
+        try{
+        	Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex);        
+        	return FormulaRenderer.toFormulaString(fpb, ptgs);
+        }catch(FormulaParseException x){
+        	return formula;
+        }
     }
 	public static RichTextString getRichEditText(Cell cell) {
 		final int cellType = cell.getCellType();
