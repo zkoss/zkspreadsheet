@@ -67,8 +67,17 @@ public class SimpleRepository implements BookRepository{
 		FileOutputStream fos = null;
 		try{
 			File f = ((SimpleBookInfo)info).getFile();
-			fos = new FileOutputStream(f);
+			//write to temp file first to avoid write error damage original file 
+			File temp = File.createTempFile("temp", f.getName());
+			fos = new FileOutputStream(temp);
 			Exporters.getExporter().export(book, fos);
+			
+			fos.close();
+			fos = null;
+			
+			FileUtil.copy(temp,f);
+			temp.delete();
+			
 		}finally{
 			if(fos!=null)
 				fos.close();
