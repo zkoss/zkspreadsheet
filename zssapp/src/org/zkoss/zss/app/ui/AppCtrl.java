@@ -115,7 +115,7 @@ public class AppCtrl extends CtrlBase<Component>{
 				
 				@Override
 				public boolean process(UserActionContext ctx) {
-					doExportBook();
+					doExportPdf();
 					return true;
 				}
 				
