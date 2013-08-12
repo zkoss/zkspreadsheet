@@ -3306,7 +3306,9 @@ public final class BookHelper {
 				for (int c = firstCol; c <= lastCol; ++c) {
 					final Cell cell = row.getCell(c);
 					if(cell!=null){
-						cell.setCellStyle(null);
+						//ZSS-410 get NPE in 2003, should set to default, don't set null
+						CellStyle defstyle = sheet.getBook().getCellStyleAt((short)0);
+						cell.setCellStyle(defstyle);
 					}
 				}
 			}
