@@ -1,0 +1,30 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<zscript><![CDATA[
+	    String book = Executions.getCurrent().getParameter("book");
+	    if(book == null) {
+	    	book = "/issue/392-freeze-render.xlsx";
+	    }
+	]]></zscript>
+	<spreadsheet id="ss" src="${book }" showToolbar="true" showFormulabar="true" preloadRowSize="10" preloadColumnSize="5"  width="100%" height="100%" showSheetbar="true" maxrows="100" maxcolumns="60">
+	</spreadsheet>
+	<!-- 
+		before testing, you should avoid cache missed issue.
+		Note that it's just a workaround.
+		
+		== Cell.js ==
+		$init: function (sheet, block, row, col, src) {
+			...
+			var	data = src.getRow(row).getCell(col),
+			colHeader = src.columnHeaders[col],
+			rowHeader = src.rowHeaders[row];
+			
+			// append these
+			if(data == undefined) {
+				data = {};
+			}
+			
+			...
+		}
+	 -->
+</zk>
