@@ -154,6 +154,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, startRow, 0, endRow, maxcol, n, false);
     	
     	//shift the rows (actually change the row number only)
+        List<Row> rowsToRemove = new ArrayList<Row>(); // ZSS-419: queue row for removing later, remove can't be perform in this loop 
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
@@ -161,7 +162,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
             if(rownum < startRow) {
                 // ZSS-302: before skipping, must remove rows of destination that don't be replaced   
                 if (canRemoveRow(startRow, endRow, n, rownum)) {
-                    it.remove();
+                    rowsToRemove.add(row);
                 } 
             	continue;
             }
@@ -169,8 +170,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
             final int newrownum = rownum + n;
             final boolean inbound = 0 <= newrownum && newrownum <= maxrow;
             if (!inbound) {
-            	row.removeAllCells();
-            	it.remove();
+            	rowsToRemove.add(row); 
             	continue;
             }
             
@@ -179,7 +179,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
             }
 
             if (canRemoveRow(startRow, endRow, n, rownum)) {
-                it.remove();
+            	rowsToRemove.add(row);
             } else if (rownum >= startRow && rownum <= endRow) {
                 new XSSFRowHelper(row).shift(n);
             }
@@ -198,6 +198,11 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
 	            }
             }
         }
+        
+		// ZSS-419: remove a row not only remove it from map but also from real sheet XML
+		for(Row row : rowsToRemove) {
+			removeRow(row);
+		}
         
         //rebuild the _rows map ASAP or getRow(rownum) will be incorrect
         TreeMap<Integer, XSSFRow> rows = getRows();
@@ -354,6 +359,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, startRow, lCol, endRow, rCol, n, false);
         final boolean wholeRow = lCol == 0 && rCol == maxcol; 
     	
+        List<Row> rowsToRemove = new ArrayList<Row>(); // ZSS-419: queue row for removing later, remove can't be perform in this loop 
         final List<int[]> removePairs = new ArrayList<int[]>(); //row spans to be removed 
         final TreeMap<Integer, TreeMap<Integer, XSSFCell>> rowCells = new TreeMap<Integer, TreeMap<Integer, XSSFCell>>();
         int expectRownum = startRow; //handle sparse rows which might override destination row
@@ -377,8 +383,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
             
             final boolean inbound = 0 <= newRownum && newRownum <= maxrow;
             if (!inbound) {
-            	row.removeAllCells();
-            	it.remove();
+            	rowsToRemove.add(row);
             	continue;
             }
             
@@ -387,7 +392,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
 	                row.setHeight((short)-1);
 	            }
 	            if (canRemoveRow(startRow, endRow, n, rownum)) {
-	                it.remove();
+	                rowsToRemove.add(row);
 	            }
 	            else if (rownum >= startRow && rownum <= endRow) {
 	                new XSSFRowHelper(row).shift(n);
@@ -419,6 +424,11 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
 	            }
             }
         }
+        
+		// ZSS-419: remove a row not only remove it from map but also from real sheet XML
+		for(Row row : rowsToRemove) {
+			removeRow(row);
+		}
 
         //rebuild rows ASAP or the getRow(rownum) will be incorrect
         if (wholeRow) {

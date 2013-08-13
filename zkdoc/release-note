@@ -70,6 +70,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-408 Cannot save 2003 format if the file contains auto filter configuration.
   ZSS-414 get NPE when paste from client text
   ZSS-409 Set font color doesn't work in 2003
+  ZSS-419 if delete two or more rows at once, the exported file will make Excel error when loading
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
