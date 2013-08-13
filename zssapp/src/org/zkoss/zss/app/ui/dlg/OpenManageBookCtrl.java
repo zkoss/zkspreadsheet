@@ -14,6 +14,7 @@ package org.zkoss.zss.app.ui.dlg;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,7 +83,7 @@ public class OpenManageBookCtrl extends DlgCtrlBase{
 	private void reloadBookModel(){
 		bookListModel = new ListModelList<Map<String,Object>>();
 		BookRepository rep = getRepository();
-		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG);
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		for(BookInfo info : rep.list()){
 			Map<String,Object> data = new HashMap<String,Object>();
 			data.put("name", info.getName());
