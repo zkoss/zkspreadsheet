@@ -26,7 +26,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
 import org.zkoss.lang.Strings;
+import org.zkoss.poi.hssf.usermodel.HSSFSheet;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
@@ -2382,6 +2384,11 @@ public class XRangeImpl implements XRange {
 	private static final String ALL_BLANK_MSG = "Cannot find the range. Please select a cell within the range and try again!";
 	@Override
 	public AutoFilter autoFilter() {
+		//we didn't support autofilter in 2003 since 3.0.0
+		//and it cause ZSS-408 Cannot save 2003 format if the file contains auto filter configuration.
+		if(_sheet instanceof HSSFSheet){
+			throw new UnsupportedOperationException("filter in HSSF(2003) is not supported yet");
+		}
 		synchronized (_sheet) {
 			CellRangeAddress affectedArea;
 			final Ref ref = getRefs().iterator().next();
@@ -2527,6 +2534,11 @@ public class XRangeImpl implements XRange {
 
 	@Override
 	public AutoFilter autoFilter(int field, Object criteria1, int filterOp, Object criteria2, Boolean visibleDropDown) {
+		//we didn't support autofilter in 2003 since 3.0.0
+		//and it cause ZSS-408 Cannot save 2003 format if the file contains auto filter configuration.
+		if(_sheet instanceof HSSFSheet){
+			throw new UnsupportedOperationException("filter in HSSF(2003) is not supported yet");
+		}		
 		synchronized (_sheet) {
 			AutoFilter af = _sheet.getAutoFilter();
 			if (af == null) {
