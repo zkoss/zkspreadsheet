@@ -67,6 +67,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-357 if a file contains #REF! cells, it will throw a exception and can't be rendered when importing such file
   ZSS-410 Undo style action get NPE in 2003
   ZSS-415 Get Exception after save and load a sheet that has comment in 2003
+  ZSS-408 Cannot save 2003 format if the file contains auto filter configuration.
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
