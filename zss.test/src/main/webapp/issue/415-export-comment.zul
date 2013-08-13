@@ -1,4 +1,3 @@
-<?page title="new page title" contentType="text/html;charset=UTF-8"?>
 <zk>
 	<zscript><![CDATA[
 	    void export(){
@@ -6,12 +5,17 @@
 	    	java.io.File temp = java.io.File.createTempFile("test",".xls");
 	    	java.io.FileOutputStream fos = new java.io.FileOutputStream(temp);
 	    	exporter.export(ss.getBook(),fos);
-	    	System.out.println("save at "+temp.getAbsolutePath());
 	    	
 	    	Book book = Importers.getImporter().imports(temp,"test");
 	    	ss.setBook(book);;
+	    	
+	    	org.zkoss.zul.Filedownload.save(temp,null);
 	    }
 	]]></zscript>
+	<label multiline="true">
+	1.shouln't get error after click export button.
+	</label>
+	
 	<button label="export" onClick="export()"/>
 	<spreadsheet id="ss" 
 		src="/issue/415-export-comment.xls"
