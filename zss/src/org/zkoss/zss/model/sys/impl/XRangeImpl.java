@@ -347,6 +347,14 @@ public class XRangeImpl implements XRange {
 				final RefSheet refSheet = ref.getOwnerSheet();
 				final Cell cell = getCell(tRow, lCol, refSheet);
 				
+				//ZSS-414 get NPE when paste from client text
+				//in bookhelper, public static Set<Ref>[] setCellValue(Cell cell, String value) {
+				//it ignore to set a new create cell value (but type String), cause this error in 2003
+				//however, we should ignore to create a cell if text is empty
+				if(cell==null && (txt==null || txt.length()==0)){
+					return;
+				}
+				
 				final Object[] values = BookHelper.editTextToValue(txt, cell);
 				final XSheet sheet = BookHelper.getSheet(_sheet, refSheet);
 				

@@ -4382,12 +4382,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				return;
 			}else{
 				UndoableActionManager uam = getUndoableActionManager();
-				if(uam!=null){
-					uam.doAction(new CellEditTextAction(Labels.getLabel("zss.undo.editText"),sheet,rowIdx,colIdx,rowIdx,colIdx,editText));
-				}else{
-					final Range range = Ranges.range(sheet, rowIdx, colIdx);
-					range.setCellEditText(editText);
-				}
+				uam.doAction(new CellEditTextAction(Labels.getLabel("zss.undo.editText"),sheet,rowIdx,colIdx,rowIdx,colIdx,editText));
 			}
 
 			//JSONObj result = new JSONObj();
