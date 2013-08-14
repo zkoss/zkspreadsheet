@@ -1,0 +1,24 @@
+<zk>
+	<zscript><![CDATA[
+	    void export(){
+	    	Exporter exporter = Exporters.getExporter();
+	    	java.io.File temp = java.io.File.createTempFile("test",".xls");
+	    	java.io.FileOutputStream fos = new java.io.FileOutputStream(temp);
+	    	exporter.export(ss.getBook(),fos);
+	    	
+	    	Book book = Importers.getImporter().imports(temp,"test");
+	    	ss.setBook(book);;
+	    	
+	    	org.zkoss.zul.Filedownload.save(temp,null);
+	    }
+	]]></zscript>
+	<label multiline="true">
+	1.shouln't get error after click export button.
+	</label>
+	
+	<button label="export" onClick="export()"/>
+	<spreadsheet id="ss" 
+		src="/issue/408-save-autofilter.xls"
+		showToolbar="true" showFormulabar="true" width="100%" height="100%" showSheetbar="true" maxrows="100" maxcolumns="60">
+	</spreadsheet>
+</zk>
