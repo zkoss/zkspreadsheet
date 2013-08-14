@@ -790,30 +790,21 @@ public final class BookHelper {
 		
 	}
 
-	//TODO see if we can remove this function to use getFontHTMLColor(Cell, Font);
-	public static String getFontHTMLColor(XBook book, Font font) {
+	public static String getFontHTMLColor(Workbook book, Font font) {
 		if (font instanceof XSSFFont) {
 			final XSSFFont f = (XSSFFont) font;
 			final XSSFColor color = f.getXSSFColor();
 			return BookHelper.colorToHTML(book, color);
 		} else {
-			return indexToHSSFRGB((HSSFWorkbook)book, font.getColor());
+			//ZSS-409 Set font color doesn't work in 2003
+			//api to get font color is chaos here, i remove and use the reliable one to 
+			final HSSFColor color = getHSSFFontColor((HSSFWorkbook)book, (HSSFFont) font);
+			return BookHelper.colorToHTML(book, color);
 		}
 	}
 
 	public static String getFontHTMLColor(Cell cell, Font font) {
-		if (font instanceof XSSFFont) {
-			final XSSFFont f = (XSSFFont) font;
-			final XSSFColor color = f.getXSSFColor();
-			return BookHelper.colorToHTML(cell.getSheet().getWorkbook(), color);
-		} else {
-			return getHSSFRGBString((HSSFCell)cell, font.getColor());
-		}
-	}
-	
-	private static String getHSSFRGBString(HSSFCell cell, short index) {
-		final HSSFColor color = ((HSSFCellStyle)cell.getCellStyle()).getFontColorColor();
-		return HSSFColorToHTML((HSSFWorkbook) cell.getSheet().getWorkbook(), color);
+		return getFontHTMLColor(cell.getSheet().getWorkbook(),font);
 	}
 	
 	/*
@@ -4736,7 +4727,7 @@ public final class BookHelper {
 		}
 	}
 	
-	private static Color getHSSFFontColor(HSSFWorkbook book, HSSFFont font) {
+	private static HSSFColor getHSSFFontColor(HSSFWorkbook book, HSSFFont font) {
 		final short index = font.getColor() == Font.COLOR_NORMAL ? HSSFColor.AUTOMATIC.index : font.getColor();
 		HSSFPalette palette = book.getCustomPalette();
 		if (palette != null) {

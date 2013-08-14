@@ -1,0 +1,21 @@
+<zk>
+	<label multiline="true">
+	1.click button shouldn't get any error
+	</label>
+	<zscript><![CDATA[
+	void setColor(){
+		Range r = Ranges.range(ss.getSelectedSheet(),"C1");
+		r.setCellEditText("Bule #0000FF");
+		
+		CellOperationUtil.applyFontColor(r,"#0000FF");
+		
+		Ranges.range(ss.getSelectedSheet(),"C2").setCellEditText(r.getCellStyle().getFont().getColor().getHtmlColor());
+	}
+	
+	]]></zscript>
+	<button label="set Color" onClick="setColor()"/>
+	<spreadsheet id="ss" 
+		src="/issue/blank.xls"
+		showToolbar="true" showFormulabar="true" width="100%" height="100%" showSheetbar="true" maxrows="100" maxcolumns="60">
+	</spreadsheet>
+</zk>

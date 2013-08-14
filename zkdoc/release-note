@@ -69,6 +69,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-415 Get Exception after save and load a sheet that has comment in 2003
   ZSS-408 Cannot save 2003 format if the file contains auto filter configuration.
   ZSS-414 get NPE when paste from client text
+  ZSS-409 Set font color doesn't work in 2003
 
 * Upgrade Notes
   + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
