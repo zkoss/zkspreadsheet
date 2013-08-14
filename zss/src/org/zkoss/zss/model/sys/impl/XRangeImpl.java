@@ -1395,13 +1395,13 @@ public class XRangeImpl implements XRange {
 		if(srcRef.getRowCount() == 1 && srcRef.getColumnCount() == 1) { // source is a single cell
 			final CellRangeAddress dstaddr = ((SheetCtrl)dstSheet).getMerged(dstTopRow, dstLeftCol);
 			// Check whether destination is a single merged cell?
-			if(dstaddr != null && dstBottomRow == dstaddr.getLastRow() && dstRightCol == dstaddr.getLastColumn()) {
+			if(dstaddr != null) {
 				// copy source to merged cell
 				final Cell cell = BookHelper.getCell(srcSheet, srcRef.getTopRow(), srcRef.getLeftCol()); // retrieve cell
 				final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, dstSheet, dstTopRow, dstLeftCol, pasteType, pasteOp, transpose);
 				BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 				// merge cell (because cell always unmerge in BookHelper.copyCell)
-				final ChangeInfo changeInfo1 = BookHelper.merge(dstSheet, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol, false);
+				final ChangeInfo changeInfo1 = BookHelper.merge(dstSheet, dstTopRow, dstLeftCol, dstaddr.getLastRow(), dstaddr.getLastColumn(), false);
 				BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo1);
 				return pasteRef;
 			}
