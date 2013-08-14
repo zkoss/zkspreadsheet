@@ -85,6 +85,7 @@ import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.Rect;
 import org.zkoss.zss.api.impl.ImporterImpl;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;

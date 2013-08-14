@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.zkoss.zss.ui.Rect;
+import org.zkoss.zss.api.Rect;
 
 
 /**

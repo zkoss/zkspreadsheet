@@ -16,24 +16,18 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 	it will be useful, but WITHOUT ANY WARRANTY.
 }}IS_RIGHT
 */
-package org.zkoss.zss.ui;
+package org.zkoss.zss.api;
 
 import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.CellReference;
 
 /**
- * a class to represent a rectangle range with 4 value : left, top, right, bottom
+ * A class to represent a rectangle range with 4 value : left, top, right, bottom.
+ * This class is moved form org.zkoss.zss.ui (since 3.0.0) because it is more like a api util class (and we use it in this way).
  * @author Dennis.Chen
- *
  */
 public class Rect {
 
-//	public static final int SELECT_CELLS = 0x01;
-//	public static final int SELECT_ROW = 0x02;
-//	public static final int SELECT_COLUMN = 0x03;
-//	public static final int SELECT_ALL = 0x04;
-	
-//	private int _action = SELECT_CELLS;//default
 	private int _left = -1;
 	private int _top = -1;
 	private int _right = -1;
@@ -51,15 +45,6 @@ public class Rect {
 		AreaReference ar = new AreaReference(areaReference);
 		set(ar.getFirstCell().getCol(),ar.getFirstCell().getRow(),ar.getLastCell().getCol(),ar.getLastCell().getRow());
 	}
-	
-//	public Rect(int action, int left,int top,int right,int bottom){
-//		set(left,top,right,bottom);
-//		_action = action;
-//	}
-	
-//	public int getSelectionType(){
-//		return _action;
-//	}
 
 	public void set(int left,int top,int right,int bottom){
 		_left = left;

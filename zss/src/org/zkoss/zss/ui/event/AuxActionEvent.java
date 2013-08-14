@@ -19,8 +19,8 @@ package org.zkoss.zss.ui.event;
 import java.util.Map;
 
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zss.api.Rect;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ui.Rect;
 
 /**
  * @author dennis

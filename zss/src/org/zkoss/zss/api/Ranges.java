@@ -24,7 +24,6 @@ import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XRanges;
 import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.ui.Rect;
 
 /**
  * The facade class provides you multiple ways to get a {@link Range}.

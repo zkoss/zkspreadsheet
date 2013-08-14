@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui;
 
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zss.api.Rect;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 

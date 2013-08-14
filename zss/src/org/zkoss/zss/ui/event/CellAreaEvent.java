@@ -19,8 +19,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.event;
 
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zss.api.Rect;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ui.Rect;
 
 /**
  * Event class about selection of cell

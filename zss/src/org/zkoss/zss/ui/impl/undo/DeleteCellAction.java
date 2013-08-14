@@ -24,13 +24,13 @@ import java.util.Map;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Rect;
 import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.impl.undo.ReserveUtil.ReservedCellContent;
 /**
  * 

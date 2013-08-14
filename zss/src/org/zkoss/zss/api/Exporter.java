@@ -21,7 +21,6 @@ import java.io.OutputStream;
 
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ui.Rect;
 
 /**
  * Exporter for book, sheet

@@ -16,8 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl.ua;
 
+import org.zkoss.zss.api.Rect;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.UserActionContext;
 
 public class CopyHandler extends AbstractSheetHandler {

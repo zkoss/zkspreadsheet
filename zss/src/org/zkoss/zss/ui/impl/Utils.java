@@ -43,6 +43,7 @@ import org.zkoss.util.logging.Log;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zss.api.Rect;
 import org.zkoss.zss.engine.RefSheet;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XFormatText;
@@ -51,7 +52,6 @@ import org.zkoss.zss.model.sys.XRanges;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
-import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Messagebox;
 //

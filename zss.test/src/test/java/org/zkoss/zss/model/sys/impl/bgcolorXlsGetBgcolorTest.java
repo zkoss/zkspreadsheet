@@ -24,6 +24,7 @@ import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.zss.api.Rect;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.xssf.usermodel.XSSFColor;
@@ -35,7 +36,6 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.ExcelImporter;
 import org.zkoss.zss.model.sys.impl.HSSFBookImpl;
 import org.zkoss.zss.model.sys.impl.XSSFBookImpl;
-import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.impl.Utils;
 
 /**

@@ -22,13 +22,13 @@ import java.io.OutputStream;
 import org.zkoss.poi.hssf.util.AreaReference;
 import org.zkoss.poi.hssf.util.CellReference;
 import org.zkoss.zss.api.Exporter;
+import org.zkoss.zss.api.Rect;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XExporter;
 import org.zkoss.zss.model.sys.impl.Headings;
-import org.zkoss.zss.ui.Rect;
 
 /**
  * 

@@ -14,8 +14,8 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.event;
 
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zss.api.Rect;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ui.Rect;
 
 /**
  * A class from handle event which about mouse event on a filter.

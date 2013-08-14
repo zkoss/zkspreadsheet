@@ -18,7 +18,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
-import org.zkoss.zss.ui.Rect;
+import org.zkoss.zss.api.Rect;
 
 /**
  * @author Dennis.Chen

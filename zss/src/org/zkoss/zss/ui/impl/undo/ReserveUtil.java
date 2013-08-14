@@ -27,10 +27,10 @@ import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.Rect;
 import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ui.Rect;
 
 /**
  * 

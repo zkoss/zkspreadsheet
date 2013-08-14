@@ -12,10 +12,12 @@ import static org.zkoss.zss.api.CellOperationUtil.applyFontStrikeout;
 import static org.zkoss.zss.api.CellOperationUtil.applyFontUnderline;
 import static org.zkoss.zss.api.CellOperationUtil.applyVerticalAlignment;
 import static org.zkoss.zss.api.Ranges.range;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
@@ -26,6 +28,7 @@ import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.Importers;
+import org.zkoss.zss.api.Rect;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.SheetOperationUtil;
 import org.zkoss.zss.api.model.Book;
@@ -38,7 +41,6 @@ import org.zkoss.zss.api.model.ChartData;
 import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zssex.api.ChartDataUtil;
 

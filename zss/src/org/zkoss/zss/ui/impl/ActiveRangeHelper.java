@@ -18,8 +18,8 @@ package org.zkoss.zss.ui.impl;
 
 import java.util.HashMap;
 
+import org.zkoss.zss.api.Rect;
 import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.ui.Rect;
 
 /**
  * @author sam

@@ -8,7 +8,7 @@
 	    // src="/EmptySheetForTesting.xlsx"
 	    // src="/issue/ZSS-300.xlsx"
 		import org.zkoss.zss.ui.Spreadsheet;
-		import org.zkoss.zss.ui.Rect;	
+		import org.zkoss.zss.api.Rect;	
 	]]></zscript>
 
 	<button label="Copy" width="100px" height="30px">
