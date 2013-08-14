@@ -1,13 +1,30 @@
 package org.zkoss.zss.api.impl;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Properties;
+
 import org.zkoss.lang.Library;
 
 public class Setup {
-
-	static{
-		Library.setProperty("org.zkoss.zss.model.default.Exporter.class", "excel=org.zkoss.zss.model.sys.impl.ExcelExporter");
-		Library.setProperty("org.zkoss.zss.model.default.Importer.class", "excel=org.zkoss.zss.model.sys.impl.ExcelImporter");
+	
+	static {
+		Properties props = new Properties();
+		try {
+			props.load(new FileInputStream("zss.test.properties"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		for(Iterator<?> it = props.keySet().iterator(); it.hasNext();) {
+			String key = (String) it.next();
+			Library.setProperty(key, props.getProperty(key));
+		}
 	}
 	
-	static void touch(){}
+	static void touch() {};
 }

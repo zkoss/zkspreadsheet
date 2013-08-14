@@ -2,6 +2,11 @@ package org.zkoss.zss.api.impl;
 
 import org.zkoss.zss.api.Range;
 
+/**
+ * a helper for testing
+ * @author kuro
+ *
+ */
 public class Util {
 	
 	public static boolean isAMergedRange(Range range) {

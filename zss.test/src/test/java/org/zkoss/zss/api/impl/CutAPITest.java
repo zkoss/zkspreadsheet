@@ -25,7 +25,7 @@ import org.zkoss.zss.api.model.Sheet;
  * 1. cut with overlap - 11 overlap state.
  * 2. cut with merge.
  * 3. cut with merge overlap.
- * 4. cut paste to another sheet (undone)
+ * 4. cut paste to another sheet (issue ZSS-401)
  * @author kuro
  *
  */
@@ -44,8 +44,8 @@ public class CutAPITest {
 	@Before
 	public void setUp() throws Exception {
 		Setup.touch();
-		final String filename = "overlappingPaste.xlsx";
-		final InputStream is = new ClassLocator().getResourceAsStream(filename);
+		final String filename = "book/pasteTest.xlsx";
+		final InputStream is = PasteTest.class.getResourceAsStream(filename);
 		_workbook = Importers.getImporter().imports(is, filename);
 	}
 	
@@ -159,6 +159,10 @@ public class CutAPITest {
 		Range range_I12I13 = Ranges.range(sheet1, 11, 8, 12, 8);
 		range_I12I13.merge(false);
 		
+		// should be merged region
+		assertTrue(Util.isAMergedRange(range_H11J11));
+		assertTrue(Util.isAMergedRange(range_I12I13));
+		
 		int dstTopRow = 11;
 		int dstLeftCol = 8;
 		
@@ -224,6 +228,10 @@ public class CutAPITest {
 		// Merge (I12, I13), vertical merge, cell value is 5
 		Range range_I12I13 = Ranges.range(sheet1, 11, 8, 12, 8);
 		range_I12I13.merge(false);
+		
+		// should be merged region
+		assertTrue(Util.isAMergedRange(range_H11J11));
+		assertTrue(Util.isAMergedRange(range_I12I13));
 		
 		int dstTopRow = 4;
 		int dstLeftCol = 2;

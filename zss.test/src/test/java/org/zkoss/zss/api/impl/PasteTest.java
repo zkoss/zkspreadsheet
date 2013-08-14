@@ -1,12 +1,16 @@
 package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.PasteOperation;
@@ -17,7 +21,7 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.CellData.CellType;
 
 /**
- * paste overlap test
+ * paste test
  * summary:
  * 0: simple paste.
  * 1: paste to a single cell.
@@ -27,9 +31,9 @@ import org.zkoss.zss.api.model.CellData.CellType;
  * 5: paste with skip blank.
  * 6: paste to another sheet.
  * 7: paste with destination is bigger than source and overlap all the source.
- * 8: paste with transpose. (undone)
- * 9: paste with merge. (undone)
- * 10: paste with merge and transpose. (undone)
+ * 8: paste with transpose.
+ * 9: paste with merge.
+ * 10: paste with merge and transpose.
  * @author kuro
  */
 public class PasteTest {
@@ -43,10 +47,14 @@ public class PasteTest {
 	private static int SRC_ROW_COUNT = SRC_BOTTOM_ROW - SRC_TOP_ROW + 1;
 	private static int SRC_COL_COUNT = SRC_RIGHT_COL - SRC_LEFT_COL + 1;
 	
+	@BeforeClass
+	public static void setUpLibrary() throws Exception {
+		Setup.touch();
+	}
+	
 	@Before
 	public void setUp() throws Exception {
-		Setup.touch();
-		final String filename = "book/overlappingPaste.xlsx";
+		final String filename = "book/pasteTest.xlsx";
 		final InputStream is = PasteTest.class.getResourceAsStream(filename);
 		_workbook = Importers.getImporter().imports(is, filename);
 	}
@@ -56,19 +64,150 @@ public class PasteTest {
 		_workbook = null;
 	}
 	
-	@Test 
-	public void testPasteTranspose() {
+	/**
+	 * Should throw exception IllegalOpArgumentException("Cannot transpose paste to overlapped range");
+	 */
+	@Test(expected = IllegalOpArgumentException.class)
+	public void testTransposePasteOverlap() {
+		int dstTopRow = 11;
+		int dstLeftCol = 8;
 		
+		// operation
+		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		// Ranges.range(, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
+		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol);
+		srcRange.pasteSpecial(dstRange, PasteType.ALL, PasteOperation.NONE, false, true);
 	}
 	
+	/**
+	 * ¢x   1    ¢x
+	 * ¢x¢w¢w¢w¢w¢w¢w¢w¢w¢x
+	 * ¢x 4¢x 5 ¢x6¢x
+	 * ¢x 7¢x   ¢x9¢x
+	 * 
+	 * 1 is a horizontal merged cell 1 x 3.
+	 * 4 is a vertical merged cell 2 x 1.
+	 * transpose paste.
+	 * source (H11,J13) to destination (C5, E7).
+	 */
+	@Test 
+	public void testPasteMergeTranspose() {
+		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		
+		// preparation
+		// Merge (H11, J11), horizontal merge, cell value is 1
+		Range range_H11J11 = Ranges.range(sheet1, 10, 7, 10, 9);
+		range_H11J11.merge(false);
+		
+		// Merge (I12, I13), vertical merge, cell value is 5
+		Range range_I12I13 = Ranges.range(sheet1, 11, 8, 12, 8);
+		range_I12I13.merge(false);
+		
+		// should be merged region
+		assertTrue(Util.isAMergedRange(range_H11J11));
+		assertTrue(Util.isAMergedRange(range_I12I13));
+		
+		int dstTopRow = 4;
+		int dstLeftCol = 2;
+		int dstBottomRow = 6;
+		int dstRightCol = 4;
+		
+		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
+		Range pasteRange = srcRange.pasteSpecial(dstRange, PasteType.ALL, PasteOperation.NONE, false, true);
+		
+		int realDstRowCount = pasteRange.getRowCount();;
+		int realDstColCount = pasteRange.getColumnCount();
+		
+		// paste size validation
+		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
+		assertEquals(1, realDstColCount / SRC_COL_COUNT);
+		
+		// validate destination
+		
+		// this should be a merged cell
+		// origin is horizontal, but now vertical
+		Range horizontalMergedRange = Ranges.range(sheet1, 4, 2, 6, 2);
+		
+		assertEquals(1, horizontalMergedRange.getCellData().getDoubleValue(), 1E-8);
+		assertTrue(Util.isAMergedRange(horizontalMergedRange));
+		
+		// this should be a merged cell
+		// origin is vertical, but now horizontal
+		Range verticalMergedRange = Ranges.range(sheet1, 5, 3, 5, 4);
+		assertEquals(5, verticalMergedRange.getCellData().getDoubleValue(), 1E-8);
+		assertTrue(Util.isAMergedRange(verticalMergedRange));
+		
+		assertEquals(4, Ranges.range(sheet1, dstTopRow, dstLeftCol+1).getCellData().getDoubleValue(), 1E-8);
+		assertEquals(7, Ranges.range(sheet1, dstTopRow, dstLeftCol+2).getCellData().getDoubleValue(), 1E-8);
+
+		assertEquals(6, Ranges.range(sheet1, dstTopRow+2, dstLeftCol+1).getCellData().getDoubleValue(), 1E-8);
+		assertEquals(9, Ranges.range(sheet1, dstTopRow+2, dstLeftCol+2).getCellData().getDoubleValue(), 1E-8);		
+	}
+	
+	/**
+	 * ¢x   1    ¢x
+	 * ¢x¢w¢w¢w¢w¢w¢w¢w¢w¢x
+	 * ¢x 4¢x 5 ¢x6¢x
+	 * ¢x 7¢x   ¢x9¢x
+	 * 
+	 * 1 is a horizontal merged cell 1 x 3.
+	 * 4 is a vertical merged cell 2 x 1.
+	 * source (H11,J13) to destination (C5, E7)
+	 */
 	@Test
 	public void testPasteMerge() {
+		Sheet sheet1 = _workbook.getSheet("Sheet1");
 		
-	}
-	
-	@Test
-	public void testPasteMergeTranspose() {
+		// preparation
+		// Merge (H11, J11), horizontal merge, cell value is 1
+		Range range_H11J11 = Ranges.range(sheet1, 10, 7, 10, 9);
+		range_H11J11.merge(false);
 		
+		// Merge (I12, I13), vertical merge, cell value is 5
+		Range range_I12I13 = Ranges.range(sheet1, 11, 8, 12, 8);
+		range_I12I13.merge(false);
+		
+		// should be merged region
+		assertTrue(Util.isAMergedRange(range_H11J11));
+		assertTrue(Util.isAMergedRange(range_I12I13));
+		
+		int dstTopRow = 4;
+		int dstLeftCol = 2;
+		int dstBottomRow = 6;
+		int dstRightCol = 4;
+		
+		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
+		Range pasteRange = srcRange.paste(dstRange);
+		
+		int realDstRowCount = pasteRange.getRowCount();;
+		int realDstColCount = pasteRange.getColumnCount();
+		
+		// paste size validation
+		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
+		assertEquals(1, realDstColCount / SRC_COL_COUNT);
+		
+		// validate destination
+		
+		// this should be a merged cell
+		Range horizontalMergedRange = Ranges.range(sheet1, 4, 2, 4, 4);
+		
+		assertEquals(1, horizontalMergedRange.getCellData().getDoubleValue(), 1E-8);
+		assertTrue(Util.isAMergedRange(horizontalMergedRange));
+		
+		// this should be a merged cell
+		Range verticalMergedRange = Ranges.range(sheet1, 5, 3, 6, 3);
+		assertEquals(5, verticalMergedRange.getCellData().getDoubleValue(), 1E-8);
+		assertTrue(Util.isAMergedRange(verticalMergedRange));
+		
+		assertEquals(4, Ranges.range(sheet1, dstTopRow+1, dstLeftCol).getCellData().getDoubleValue(), 1E-8);
+		assertEquals(7, Ranges.range(sheet1, dstTopRow+2, dstLeftCol).getCellData().getDoubleValue(), 1E-8);
+
+		assertEquals(6, Ranges.range(sheet1, dstTopRow+1, dstRightCol).getCellData().getDoubleValue(), 1E-8);
+		assertEquals(9, Ranges.range(sheet1, dstTopRow+2, dstRightCol).getCellData().getDoubleValue(), 1E-8);		
 	}
 	
 	@Test
@@ -123,11 +262,13 @@ public class PasteTest {
 		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
 	}
 	
+	/**
+	 * source (H11, J13) 
+	 * destination I12 (on the number 5)
+	 * paste to 5
+	 */
 	@Test 
 	public void testPasteToI12() {
-		// source (H11, J13)
-		// 1 x 1, blank destination
-		// dst I12 (on the number 5)
 		int dstTopRow = 11;
 		int dstLeftCol = 8;
 		
@@ -232,7 +373,7 @@ public class PasteTest {
 		assertEquals(2, realDstColCount / SRC_COL_COUNT);		
 		
 		validate(dstSheet, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);		
-	}	
+	}
 	
 	/**
 	 * source (H11, J13) - 3 x 3 block
