@@ -18,13 +18,13 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui;
 
-import org.zkoss.zss.api.CellRefence;
+import org.zkoss.zss.api.CellRef;
 
 /**
  * @author dennis
- * @deprecated since 3.0.0, use {@link CellRefence}
+ * @deprecated since 3.0.0, use {@link CellRef}
  */
-public class Position extends CellRefence{
+public class Position extends CellRef{
 
 	public Position() {
 		super();

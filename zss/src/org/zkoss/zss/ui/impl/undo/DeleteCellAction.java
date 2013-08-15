@@ -24,7 +24,7 @@ import java.util.Map;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
@@ -45,7 +45,7 @@ public class DeleteCellAction extends AbstractUndoableAction {
 	Map<Integer,ReservedRow> _rows;
 	Map<Integer,Integer> _rowHeights;
 	Map<Integer,Integer> _colWidths;
-	Rect[] _mergeInfo;
+	AreaRef[] _mergeInfo;
 	boolean _doFlag;
 	
 	
@@ -148,7 +148,7 @@ public class DeleteCellAction extends AbstractUndoableAction {
 		}
 		
 		if(_mergeInfo!=null && _mergeInfo.length>0){
-			for(Rect rect:_mergeInfo){
+			for(AreaRef rect:_mergeInfo){
 				//restore back
 				Range mergeRange = Ranges.range(_sheet,rect);
 				mergeRange.merge(false);

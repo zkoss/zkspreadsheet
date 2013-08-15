@@ -66,7 +66,7 @@ public class MergeAggregation {
 			boolean isLeftTop = _helper.isMergeRangeLeftTop(row, col);
 			if (isLeftTop) {
 				css = "zsmerge" + id;
-			} else if (block.getTop() == row) {
+			} else if (block.getRow() == row) {
 				css = "zsmergee";
 			} else {
 				css = "zsmergeeu";
@@ -132,10 +132,10 @@ public class MergeAggregation {
 	private HashMap<String, Integer> newMergeAttributes(MergedRect rect) {
 		HashMap<String, Integer> attrs = new HashMap<String, Integer>(5); //id, left, right, top and bottom attributes
 		attrs.put("i", rect.getId());
-		attrs.put("l", rect.getLeft());
-		attrs.put("t", rect.getTop());
-		attrs.put("r", rect.getRight());
-		attrs.put("b", rect.getBottom());
+		attrs.put("l", rect.getColumn());
+		attrs.put("t", rect.getRow());
+		attrs.put("r", rect.getLastColumn());
+		attrs.put("b", rect.getLastRow());
 		return attrs;
 	}
 	

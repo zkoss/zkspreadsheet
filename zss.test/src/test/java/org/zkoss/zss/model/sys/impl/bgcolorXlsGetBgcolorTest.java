@@ -24,7 +24,7 @@ import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.xssf.usermodel.XSSFColor;

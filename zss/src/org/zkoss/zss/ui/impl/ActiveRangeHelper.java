@@ -18,7 +18,7 @@ package org.zkoss.zss.ui.impl;
 
 import java.util.HashMap;
 
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.model.sys.XSheet;
 
 /**
@@ -27,18 +27,18 @@ import org.zkoss.zss.model.sys.XSheet;
  */
 public class ActiveRangeHelper {
 
-	private HashMap<XSheet, Rect> activeRanges = new HashMap<XSheet, Rect>();
+	private HashMap<XSheet, AreaRef> activeRanges = new HashMap<XSheet, AreaRef>();
 	
 	public void setActiveRange(XSheet sheet, int tRow, int lCol, int bRow, int rCol) {
-		Rect rect = activeRanges.get(sheet);
+		AreaRef rect = activeRanges.get(sheet);
 		if (rect == null) {
-			activeRanges.put(sheet, rect = new Rect(lCol, tRow, rCol, bRow));
+			activeRanges.put(sheet, rect = new AreaRef(tRow, lCol, bRow, rCol));
 		} else {
-			rect.set(lCol, tRow, rCol, bRow);
+			rect.setArea(tRow, lCol, bRow, rCol);
 		}
 	}
 	
-	public Rect getRect(XSheet sheet) {
+	public AreaRef getArea(XSheet sheet) {
 		return activeRanges.get(sheet);
 	}
 	
@@ -51,7 +51,7 @@ public class ActiveRangeHelper {
 	}
 	
 	public boolean contains(XSheet sheet, int tRow, int lCol, int bRow, int rCol) {
-		Rect rect = activeRanges.get(sheet);
+		AreaRef rect = activeRanges.get(sheet);
 		if (rect == null)
 			return false;
 		return rect.contains(tRow, lCol, bRow, rCol);

@@ -1,4 +1,4 @@
-/* CellRefence.java
+/* CellRef.java
 
 {{IS_NOTE
 	Purpose:
@@ -23,15 +23,15 @@ package org.zkoss.zss.api;
  * @author Dennis.Chen
  * @since 3.0.0
  */
-public class CellRefence {
+public class CellRef {
 
 	private int _row;
 	private int _column;
 	
-	public CellRefence(){
+	public CellRef(){
 	}
 	
-	public CellRefence(int row, int column){
+	public CellRef(int row, int column){
 		_row = row;
 		_column = column;
 	}
@@ -57,6 +57,13 @@ public class CellRefence {
 	@Override
 	public boolean equals(Object obj){
 		return (this == obj)
-			|| (obj instanceof CellRefence && ((CellRefence)obj)._row == _row && ((CellRefence)obj)._column == _column);
+			|| (obj instanceof CellRef && ((CellRef)obj)._row == _row && ((CellRef)obj)._column == _column);
+	}
+	
+	/**
+	 * @return reference string, e.x A1
+	 */
+	public String asString(){
+		return new org.zkoss.poi.ss.util.CellReference(_row,_column).formatAsString();
 	}
 }

@@ -23,7 +23,7 @@ import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.AuxAction;
 import org.zkoss.zss.ui.Spreadsheet;
@@ -50,7 +50,7 @@ public class AuxActionCommand extends AbstractCommand implements Command {
 		Spreadsheet spreadsheet = ((Spreadsheet) comp);
 		String tag = (String) data.get("tag");
 		String action = (String) data.get("action");
-		Rect selection = getSelectionIfAny(data);
+		AreaRef selection = getSelectionIfAny(data);
 		Sheet sheet = null;
 		
 		if(selection==null){
@@ -98,13 +98,13 @@ public class AuxActionCommand extends AbstractCommand implements Command {
 		org.zkoss.zk.ui.event.Events.postEvent(evt);
 	}
 	
-	private Rect getSelectionIfAny(Map data) {
+	private AreaRef getSelectionIfAny(Map data) {
 		if(data.containsKey("tRow") && data.containsKey("tRow") && data.containsKey("tRow") && data.containsKey("tRow")){
 			int tRow = (Integer) data.get("tRow");
 			int bRow = (Integer) data.get("bRow");
 			int lCol = (Integer) data.get("lCol");
 			int rCol = (Integer) data.get("rCol");
-			Rect r = new Rect(lCol, tRow, rCol, bRow);
+			AreaRef r = new AreaRef(tRow, lCol, bRow, rCol);
 			return r;
 		}else{
 			return null;

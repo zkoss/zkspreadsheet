@@ -20,7 +20,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.UserActionContext;
@@ -41,7 +41,7 @@ public class FontSizeHandler extends AbstractProtectedHandler {
 		Integer fontSize = Integer.parseInt((String)ctx.getData("size"));
 		
 		Sheet sheet = ctx.getSheet();
-		Rect selection = ctx.getSelection();
+		AreaRef selection = ctx.getSelection();
 		Range range = Ranges.range(sheet, selection);
 		
 		UndoableActionManager uam = ctx.getSpreadsheet().getUndoableActionManager();

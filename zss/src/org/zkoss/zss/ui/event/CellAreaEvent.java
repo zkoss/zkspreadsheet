@@ -19,7 +19,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.event;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 
 /**
@@ -45,8 +45,8 @@ public class CellAreaEvent extends CellEvent{
 		return _bRow;
 	}
 	
-	public Rect getArea(){
-		return new Rect(getColumn(),getRow(),getLastColumn(),getLastRow());
+	public AreaRef getArea(){
+		return new AreaRef(getRow(),getColumn(),getLastRow(),getLastColumn());
 	}
 	
 	

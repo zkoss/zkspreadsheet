@@ -28,7 +28,7 @@ import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.Importers;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.SheetOperationUtil;
 import org.zkoss.zss.api.model.Book;
@@ -167,7 +167,7 @@ public class ExportComposer extends SelectorComposer<Component> {
 			Type[] tt = types[r];
 			for(int c = 0; c < tt.length; ++c) {
 				Type t = tt[c];
-				ChartData cd = ChartDataUtil.getChartData(sheet, new Rect(0, 0, 1, 10), t);
+				ChartData cd = ChartDataUtil.getChartData(sheet, new AreaRef(0, 0, 10, 1), t);
 				SheetOperationUtil.addChart(range(sheet, r * 8, c * 7), cd, t, Grouping.STANDARD, LegendPosition.TOP);
 			}
 		}
@@ -177,7 +177,7 @@ public class ExportComposer extends SelectorComposer<Component> {
 			Type[] tt = types[r];
 			for(int c = 0; c < tt.length; ++c) {
 				Type t = tt[c];
-				ChartData cd = ChartDataUtil.getChartData(sheet, new Rect(0, 0, 0, 10), t);
+				ChartData cd = ChartDataUtil.getChartData(sheet, new AreaRef(0, 0, 10, 0), t);
 				SheetOperationUtil.addChart(range(sheet, r * 8 + 16, c * 7), cd, t, Grouping.STANDARD, LegendPosition.TOP);
 			}
 		}

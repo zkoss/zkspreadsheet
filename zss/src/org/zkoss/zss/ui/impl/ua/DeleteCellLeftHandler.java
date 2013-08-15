@@ -19,7 +19,7 @@ package org.zkoss.zss.ui.impl.ua;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
@@ -39,7 +39,7 @@ public class DeleteCellLeftHandler extends AbstractProtectedHandler {
 	@Override
 	protected boolean processAction(UserActionContext ctx) {
 		Sheet sheet = ctx.getSheet();
-		Rect selection = ctx.getSelection();
+		AreaRef selection = ctx.getSelection();
 		Range range = Ranges.range(sheet, selection);
 		//work around for ZSS-404 JS Error after insert column when freeze
 		if(checkInFreezePanel(range)){

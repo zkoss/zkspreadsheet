@@ -82,10 +82,10 @@ import org.zkoss.zk.ui.sys.ContentRenderer;
 import org.zkoss.zk.ui.util.DesktopCleanup;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Importer;
-import org.zkoss.zss.api.CellRefence;
+import org.zkoss.zss.api.CellRef;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.impl.ImporterImpl;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
@@ -255,10 +255,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private Map<String, Focus> _friendFocuses = new HashMap<String, Focus>(20); //id -> Focus
 	private String _selfFocusId;
 
-	private Rect _focusRect = new Rect(0, 0, 0, 0);
-	private Rect _selectionRect = new Rect(0, 0, 0, 0);
-	private Rect _visibleRect = new Rect();
-	private Rect _highlightRect = null;
+	private AreaRef _focusArea = new AreaRef(0, 0, 0, 0);
+	private AreaRef _selectionArea = new AreaRef(0, 0, 0, 0);
+	private AreaRef _visibleArea = new AreaRef();
+	private AreaRef _highlightArea = null;
 
 	private WidgetHandler _widgetHandler;
 
@@ -849,17 +849,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			int rowfreeze, int colfreeze*/) {
 		setSelectedSheet0(name);
 		if (row >= 0 && col >= 0) {
-			this.setCellFocusDirectly(new CellRefence(row, col));
+			this.setCellFocusDirectly(new CellRef(row, col));
 		} else {
-			this.setCellFocusDirectly(new CellRefence(0, 0));
+			this.setCellFocusDirectly(new CellRef(0, 0));
 		}
 		if (top >= 0 && right >= 0 && bottom >= 0 && left >=0) {
-			this.setSelectionDirectly(new Rect(left, top, right, bottom));
+			this.setSelectionDirectly(new AreaRef(top, left, bottom, right));
 		} else {
-			this.setSelectionDirectly(new Rect(0, 0, 0, 0));
+			this.setSelectionDirectly(new AreaRef(0, 0, 0, 0));
 		}
 		if (highlightLeft >= 0 && highlightTop >= 0 && highlightRight >= 0 && highlightBottom >= 0) {
-			this.setHighlightDirectly(new Rect(highlightLeft, highlightTop, highlightRight, highlightBottom));
+			this.setHighlightDirectly(new AreaRef(highlightTop, highlightLeft, highlightBottom, highlightRight));
 		} else {
 			this.setHighlightDirectly(null);//hide highlight
 		}
@@ -905,10 +905,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			StringBuffer merr = new StringBuffer();
 			while (iter.hasNext()) {
 				MergedRect block = (MergedRect) iter.next();
-				int left = block.getLeft();
-				int top = block.getTop();
-				int right = block.getRight();
-				int bottom = block.getBottom();
+				int left = block.getColumn();
+				int top = block.getRow();
+				int right = block.getLastColumn();
+				int bottom = block.getLastRow();
 				int id = block.getId();
 				merr.append(left).append(",").append(top).append(",").append(right).append(",").append(bottom).append(",").append(id);
 				if (iter.hasNext()) {
@@ -1599,10 +1599,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		
 		renderer.render("sheetId", getSelectedSheetId());
-		renderer.render("focusRect", getRectStr(_focusRect));
-		renderer.render("selectionRect", getRectStr(_selectionRect));
-		if (_highlightRect != null) {
-			renderer.render("highLightRect", getRectStr(_highlightRect));
+		renderer.render("focusRect", getRectStr(_focusArea));
+		renderer.render("selectionRect", getRectStr(_selectionArea));
+		if (_highlightArea != null) {
+			renderer.render("highLightRect", getRectStr(_highlightArea));
 		}
 
 		// generate customized row & column information
@@ -1618,10 +1618,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		StringBuffer merr = new StringBuffer();
 		while (iter.hasNext()) {
 			MergedRect block = (MergedRect) iter.next();
-			int left = block.getLeft();
-			int top = block.getTop();
-			int right = block.getRight();
-			int bottom = block.getBottom();
+			int left = block.getColumn();
+			int top = block.getRow();
+			int right = block.getLastColumn();
+			int bottom = block.getLastRow();
 			int id = block.getId();
 			merr.append(left).append(",").append(top).append(",").append(right).append(",").append(bottom).append(",").append(id);
 			if (iter.hasNext()) {
@@ -1718,41 +1718,41 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * Default Value:(0,0,0,0)
 	 * @return current selection
 	 */
-	public Rect getSelection() {
-		return (Rect) _selectionRect.cloneSelf();
+	public AreaRef getSelection() {
+		return (AreaRef) _selectionArea.cloneSelf();
 	}
 
 	/**
 	 * Sets the selection rectangle. In general, if you set a selection, you must
-	 * also set the focus by {@link #setCellFocus(CellRefence)};. And, if you want
+	 * also set the focus by {@link #setCellFocus(CellRef)};. And, if you want
 	 * to get the focus back to spreadsheet, call {@link #focus()} after set
 	 * selection.
 	 * 
 	 * @param sel the selection rect
 	 */
-	public void setSelection(Rect sel) {
-		if (!Objects.equals(_selectionRect, sel)) {
+	public void setSelection(AreaRef sel) {
+		if (!Objects.equals(_selectionArea, sel)) {
 			final SpreadsheetVersion ver = _book.getSpreadsheetVersion();
-			if (sel.getLeft() < 0 || sel.getTop() < 0
-					|| sel.getRight() > ver.getLastColumnIndex()
-					|| sel.getBottom() > ver.getLastRowIndex()
-					|| sel.getLeft() > sel.getRight()
-					|| sel.getTop() > sel.getBottom()) {
+			if (sel.getColumn() < 0 || sel.getRow() < 0
+					|| sel.getLastColumn() > ver.getLastColumnIndex()
+					|| sel.getLastRow() > ver.getLastRowIndex()
+					|| sel.getColumn() > sel.getLastColumn()
+					|| sel.getRow() > sel.getLastRow()) {
 				throw new UiException("illegal selection : " + sel.toString());
 			}
 			setSelectionDirectly(sel);
 		}
 	}
 	
-	private void setSelectionDirectly(Rect sel) {
-		_selectionRect.set(sel.getLeft(), sel.getTop(), sel.getRight(), sel.getBottom());
+	private void setSelectionDirectly(AreaRef sel) {
+		_selectionArea.setArea(sel.getRow(), sel.getColumn(), sel.getLastRow(), sel.getLastColumn());
 
 		HashMap args = new HashMap();
 		args.put("type", "move");
-		args.put("left", sel.getLeft());
-		args.put("top", sel.getTop());
-		args.put("right", sel.getRight());
-		args.put("bottom", sel.getBottom());
+		args.put("left", sel.getColumn());
+		args.put("top", sel.getRow());
+		args.put("right", sel.getLastColumn());
+		args.put("bottom", sel.getLastRow());
 		
 		response("selection" + this.getUuid(), new AuSelection(this, args));
 	}
@@ -1763,10 +1763,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * 
 	 * @return current highlight
 	 */
-	public Rect getHighlight() {
-		if (_highlightRect == null)
+	public AreaRef getHighlight() {
+		if (_highlightArea == null)
 			return null;
-		return (Rect) _highlightRect.cloneSelf();
+		return (AreaRef) _highlightArea.cloneSelf();
 	}
 
 	/**
@@ -1774,28 +1774,28 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * 
 	 * @param highlight the highlight rect
 	 */
-	public void setHighlight(Rect highlight) {
-		if (!Objects.equals(_highlightRect, highlight)) {
+	public void setHighlight(AreaRef highlight) {
+		if (!Objects.equals(_highlightArea, highlight)) {
 			setHighlightDirectly(highlight);
 		}
 	}
 	
-	private void setHighlightDirectly(Rect highlight) {
+	private void setHighlightDirectly(AreaRef highlight) {
 		HashMap args = new HashMap();
 		
 		if (highlight == null) {
-			_highlightRect = null;
+			_highlightArea = null;
 			args.put("type", "hide");
 		} else {
-			final int left = Math.max(highlight.getLeft(), 0);
-			final int right = Math.min(highlight.getRight(), this.getMaxcolumns()-1);
-			final int top = Math.max(highlight.getTop(), 0);
-			final int bottom = Math.min(highlight.getBottom(), this.getMaxrows()-1);
+			final int left = Math.max(highlight.getColumn(), 0);
+			final int right = Math.min(highlight.getLastColumn(), this.getMaxcolumns()-1);
+			final int top = Math.max(highlight.getRow(), 0);
+			final int bottom = Math.min(highlight.getLastRow(), this.getMaxrows()-1);
 			if (left > right || top > bottom) {
-				_highlightRect = null;
+				_highlightArea = null;
 				args.put("type", "hide");
 			} else {
-				_highlightRect = new Rect(left, top, right, bottom);
+				_highlightArea = new AreaRef(top, left, bottom, right);
 				args.put("type", "show");
 				args.put("left", left);
 				args.put("top", top);
@@ -1840,27 +1840,27 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 	/**
 	 * Return current cell(row,column) focus position. you can get the row by
-	 * {@link CellRefence#getRow()}, get the column by {@link CellRefence#getColumn()}
+	 * {@link CellRef#getRow()}, get the column by {@link CellRef#getColumn()}
 	 * . The returned value is a copy of current focus status. Default
 	 * Value:(0,0)
 	 * 
 	 * @return current focus
 	 */
-	public CellRefence getCellFocus() {
-		return new CellRefence(_focusRect.getTop(), _focusRect.getLeft());
+	public CellRef getCellFocus() {
+		return new CellRef(_focusArea.getRow(), _focusArea.getColumn());
 	}
 
 	/**
 	 * Sets the cell focus position.(this method doesn't focus the spreadsheet.)
 	 * In general, if you set a cell focus, you also set the selection by
-	 * {@link #setSelection(Rect)}; And if you want to get the focus back to
+	 * {@link #setSelection(AreaRef)}; And if you want to get the focus back to
 	 * spreadsheet, call {@link #focus()} to retrieve focus.
 	 * 
 	 * @param focus the cell focus position
 	 */
-	public void setCellFocus(CellRefence focus) {
-		if (_focusRect.getLeft() != focus.getColumn()
-				|| _focusRect.getTop() != focus.getRow()) {
+	public void setCellFocus(CellRef focus) {
+		if (_focusArea.getColumn() != focus.getColumn()
+				|| _focusArea.getRow() != focus.getRow()) {
 			if (focus.getColumn() < 0 || focus.getRow() < 0
 					|| focus.getColumn() >= this.getMaxcolumns()
 					|| focus.getRow() >= this.getMaxrows()) {
@@ -1870,9 +1870,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	
-	private void setCellFocusDirectly(CellRefence focus) {
-		_focusRect.set(focus.getColumn(), focus.getRow(),
-				focus.getColumn(), focus.getRow());
+	private void setCellFocusDirectly(CellRef focus) {
+		_focusArea.setArea(focus.getRow(), focus.getColumn(),
+				focus.getRow(), focus.getColumn());
 		Map args = new HashMap();
 		args.put("type", "move");
 		args.put("row", focus.getRow());
@@ -2325,16 +2325,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				for (int c = left; c <= right; ++c) {
 					updateColWidth(sheet, c);
 				}
-				final Rect rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleRect();
-				syncFriendFocusPosition(left, rect.getTop(), rect.getRight(), rect.getBottom());
+				final AreaRef rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleRect();
+				syncFriendFocusPosition(left, rect.getRow(), rect.getLastColumn(), rect.getLastRow());
 			} else if (rng.isWholeRow()) {
 				final int top = rng.getTopRow();
 				final int bottom = rng.getBottomRow();
 				for (int r = top; r <= bottom; ++r) {
 					updateRowHeight(sheet, r);
 				}
-				final Rect rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleRect();
-				syncFriendFocusPosition(rect.getLeft(), top, rect.getRight(), rect.getBottom());
+				final AreaRef rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleRect();
+				syncFriendFocusPosition(rect.getColumn(), top, rect.getLastColumn(), rect.getLastRow());
 			}
 		}
 		private void onBtnChange(SSDataEvent event) {
@@ -2505,12 +2505,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		// should also update the left - 1, top - 1 part
 		top = top > 0 ? top - 1 : 0;
 		
-		final Rect rect = getActiveRangeHelper().getRect(_selectedSheet);
+		final AreaRef rect = getActiveRangeHelper().getArea(_selectedSheet);
 		
-		final int loadLeft = rect.getLeft();
-		final int loadTop = rect.getTop();
-		final int loadRight = rect.getRight();
-		final int loadBottom = rect.getBottom();
+		final int loadLeft = rect.getColumn();
+		final int loadTop = rect.getRow();
+		final int loadRight = rect.getLastColumn();
+		final int loadBottom = rect.getLastRow();
 		
 		final int frRow = getSelectedSheetRowfreeze();
 		final int frCol = getSelectedSheetColumnfreeze();
@@ -2749,27 +2749,27 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			return Spreadsheet.this.getMergeMatrixHelper(sheet);
 		}
 
-		public Rect getSelectionRect() {
-			return (Rect) _selectionRect.cloneSelf();
+		public AreaRef getSelectionRect() {
+			return (AreaRef) _selectionArea.cloneSelf();
 		}
 
-		public Rect getFocusRect() {
-			return (Rect) _focusRect.cloneSelf();
+		public AreaRef getFocusRect() {
+			return (AreaRef) _focusArea.cloneSelf();
 		}
 
 		public void setSelectionRect(int left, int top, int right, int bottom) {
-			_selectionRect.set(left, top, right, bottom);
+			_selectionArea.setArea(top, left, bottom, right);
 		}
 
 		public void setFocusRect(int left, int top, int right, int bottom) {
-			_focusRect.set(left, top, right, bottom);
+			_focusArea.setArea(top, left, bottom, right);
 		}
 
-		public Rect getLoadedRect() {
-			Rect rect = getActiveRangeHelper().getRect(_selectedSheet);
+		public AreaRef getLoadedRect() {
+			AreaRef rect = getActiveRangeHelper().getArea(_selectedSheet);
 			if (rect == null)
 				return null;
-			return (Rect)rect.cloneSelf();
+			return (AreaRef)rect.cloneSelf();
 		}
 
 		public void setLoadedRect(int left, int top, int right, int bottom) {
@@ -2778,12 +2778,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		
 		public void setVisibleRect(int left, int top, int right, int bottom) {
-			_visibleRect.set(left, top, right, bottom);
+			_visibleArea.setArea(top, left, bottom, right);
 			getWidgetHandler().onLoadOnDemand(getSelectedXSheet(), left, top, right, bottom);
 		}
 
-		public Rect getVisibleRect() {
-			return (Rect) _visibleRect.cloneSelf();
+		public AreaRef getVisibleRect() {
+			return (AreaRef) _visibleArea.cloneSelf();
 		}
 
 		public boolean addWidget(Widget widget) {
@@ -3202,8 +3202,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("col", col);
 			result.put("size", size);
 
-			final Rect rect = getActiveRangeHelper().getRect(_selectedSheet);
-			int right = size + rect.getRight();
+			final AreaRef rect = getActiveRangeHelper().getArea(_selectedSheet);
+			int right = size + rect.getLastColumn();
 			
 			HeaderPositionHelper colHelper = Spreadsheet.this.getColumnPositionHelper(sheet);
 			colHelper.shiftMeta(col, size);
@@ -3220,14 +3220,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 			response("insertRowColumn" + XUtils.nextUpdateId(), new AuInsertRowColumn(Spreadsheet.this, "", XUtils.getSheetUuid(sheet), result));
 
-			rect.setRight(right);
+			rect.setLastColumn(right);
 
 			// update surround cell
 			int left = col;
 			right = left + size - 1;
 			right = right >= _maxColumns - 1 ? _maxColumns - 1 : right;
-			int top = rect.getTop();
-			int bottom = rect.getBottom();
+			int top = rect.getRow();
+			int bottom = rect.getLastRow();
 			
 			log.debug("update cells when insert column " + col + ",size:" + size + ":" + left + "," + top + "," + right + "," + bottom);
 			updateCell(sheet, left, top, right, bottom);
@@ -3267,8 +3267,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("row", row);
 			result.put("size", size);
 
-			final Rect rect = getActiveRangeHelper().getRect(_selectedSheet);
-			int bottom = size + rect.getBottom();
+			final AreaRef rect = getActiveRangeHelper().getArea(_selectedSheet);
+			int bottom = size + rect.getLastRow();
 
 			HeaderPositionHelper rowHelper = Spreadsheet.this.getRowPositionHelper(sheet);
 			rowHelper.shiftMeta(row, size);
@@ -3282,13 +3282,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 			response("insertRowColumn" + XUtils.nextUpdateId(), new AuInsertRowColumn(Spreadsheet.this, "", XUtils.getSheetUuid(sheet), result));
 
-			rect.setBottom(bottom);
+			rect.setLastRow(bottom);
 
 			// update surround cell
 			int top = row;
 			bottom = bottom + size - 1;
 			bottom = bottom >= _maxRows - 1 ? _maxRows - 1 : bottom;
-			updateCell(sheet, rect.getLeft(), top, rect.getRight(), bottom);
+			updateCell(sheet, rect.getColumn(), top, rect.getLastColumn(), bottom);
 			
 			// update the inserted row height
 			updateRowHeights(sheet, row, size); //update row height
@@ -3321,8 +3321,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("col", col);
 			result.put("size", size);
 
-			final Rect rect = getActiveRangeHelper().getRect(_selectedSheet);
-			int right = rect.getRight() - size;
+			final AreaRef rect = getActiveRangeHelper().getArea(_selectedSheet);
+			int right = rect.getLastColumn() - size;
 			if (right < col) {
 				right = col - 1;
 			}
@@ -3339,13 +3339,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("colfreeze", getSelectedSheetColumnfreeze());
 
 			response("removeRowColumn" + XUtils.nextUpdateId(), new AuRemoveRowColumn(Spreadsheet.this, "", XUtils.getSheetUuid(sheet), result));
-			rect.setRight(right);
+			rect.setLastColumn(right);
 
 			// update surround cell
 			int left = col;
 			right = left;
 			
-			updateCell(sheet, left, rect.getTop(), right, rect.getBottom());
+			updateCell(sheet, left, rect.getRow(), right, rect.getLastRow());
 		}
 
 		public void removeRows(XSheet sheet, int row, int size) {
@@ -3374,8 +3374,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("row", row);
 			result.put("size", size);
 			
-			final Rect rect = getActiveRangeHelper().getRect(_selectedSheet);
-			int bottom = rect.getBottom() - size;
+			final AreaRef rect = getActiveRangeHelper().getArea(_selectedSheet);
+			int bottom = rect.getLastRow() - size;
 			if (bottom < row) {
 				bottom = row - 1;
 			}
@@ -3391,13 +3391,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("rowfreeze", getSelectedSheetRowfreeze());
 
 			response("removeRowColumn" + XUtils.nextUpdateId(), new AuRemoveRowColumn(Spreadsheet.this, "", XUtils.getSheetUuid(sheet), result));
-			rect.setBottom(bottom);
+			rect.setLastRow(bottom);
 
 			// update surround cell
 			int top = row;
 			bottom = top;
 			
-			updateCell(sheet, rect.getLeft(), top, rect.getRight(), bottom);
+			updateCell(sheet, rect.getColumn(), top, rect.getLastColumn(), bottom);
 		}
 
 		private void removeAffectedMergeRange(XSheet sheet, int type, int index) {
@@ -3441,10 +3441,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			JSONObj result = new JSONObj();
 			result.setData("type", type);
 			result.setData("id", block.getId());
-			int left = block.getLeft();
-			int top = block.getTop();
-			int right = block.getRight();
-			int bottom = block.getBottom();
+			int left = block.getColumn();
+			int top = block.getRow();
+			int right = block.getLastColumn();
+			int bottom = block.getLastRow();
 
 			// don't check range to ignore update case,
 			// because I still need to sync merge cell data to client side
@@ -3456,12 +3456,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 			HeaderPositionHelper helper = Spreadsheet.this
 					.getColumnPositionHelper(sheet);
-			final int w = helper.getStartPixel(block.getRight() + 1) - helper.getStartPixel(block.getLeft());
+			final int w = helper.getStartPixel(block.getLastColumn() + 1) - helper.getStartPixel(block.getColumn());
 			result.setData("width", w);
 
 			HeaderPositionHelper rhelper = Spreadsheet.this
 					.getRowPositionHelper(sheet);
-			final int h = rhelper.getStartPixel(block.getBottom() + 1) - rhelper.getStartPixel(block.getTop());
+			final int h = rhelper.getStartPixel(block.getLastRow() + 1) - rhelper.getStartPixel(block.getRow());
 			result.setData("height", h);
 
 			/**
@@ -3585,14 +3585,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		
 		response("cellFocusTo" + this.getUuid(), new AuCellFocusTo(this, args));
 
-		_focusRect.setLeft(column);
-		_focusRect.setRight(column);
-		_focusRect.setTop(row);
-		_focusRect.setBottom(row);
-		_selectionRect.setLeft(column);
-		_selectionRect.setRight(column);
-		_selectionRect.setTop(row);
-		_selectionRect.setBottom(row);
+		_focusArea.setColumn(column);
+		_focusArea.setLastColumn(column);
+		_focusArea.setRow(row);
+		_focusArea.setLastRow(row);
+		_selectionArea.setColumn(column);
+		_selectionArea.setLastColumn(column);
+		_selectionArea.setRow(row);
+		_selectionArea.setLastRow(row);
 	}
 
 	private String getSheetDefaultRules() {
@@ -3914,8 +3914,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		while (iter.hasNext()) {
 			MergedRect block = (MergedRect) iter.next();
-			int left = block.getLeft();
-			int right = block.getRight();
+			int left = block.getColumn();
+			int right = block.getLastColumn();
 			int width = 0;
 			for (int i = left; i <= right; i++) {
 				final HeaderPositionInfo info = colHelper.getInfo(i);
@@ -3927,8 +3927,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					width += defaultSize ;
 				}
 			}
-			int top = block.getTop();
-			int bottom = block.getBottom();
+			int top = block.getRow();
+			int bottom = block.getLastRow();
 			int height = 0;
 			for (int i = top; i <= bottom; i++) {
 				final HeaderPositionInfo info = rowHelper.getInfo(i);
@@ -4026,8 +4026,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		
 //		_loadedRect.set(-1, -1, -1, -1);
-		_selectionRect.set(0, 0, 0, 0);
-		_focusRect.set(0, 0, 0, 0);
+		_selectionArea.setArea(0, 0, 0, 0);
+		_focusArea.setArea(0, 0, 0, 0);
 		
 		_selectedSheet = null;
 	}
@@ -4047,7 +4047,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		setProtectSheet(_selectedSheet.getProtect());
 		
 		//register collaborated focus
-		CellRefence cf = getCellFocus();
+		CellRef cf = getCellFocus();
 		moveSelfEditorFocus(getSelectedSheetId(),cf.getRow(),cf.getColumn());
 		
 		refreshToolbarDisabled();
@@ -4133,10 +4133,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		return csc.toString();
 	}
 
-	static private String getRectStr(Rect rect) {
+	static private String getRectStr(AreaRef rect) {
 		StringBuffer sb = new StringBuffer();
-		sb.append(rect.getLeft()).append(",").append(rect.getTop()).append(",")
-				.append(rect.getRight()).append(",").append(rect.getBottom());
+		sb.append(rect.getColumn()).append(",").append(rect.getRow()).append(",")
+				.append(rect.getLastColumn()).append(",").append(rect.getLastRow());
 		return sb.toString();
 	}
 

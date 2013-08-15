@@ -18,7 +18,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl.undo;
 
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.sys.UndoableAction;
 /**
@@ -81,9 +81,9 @@ public class AggregatedAction implements UndoableAction {
 	}
 
 	@Override
-	public Rect getUndoSelection() {
+	public AreaRef getUndoSelection() {
 		for(int i=0;i<_actions.length;i++){
-			Rect sel = _actions[i].getUndoSelection();
+			AreaRef sel = _actions[i].getUndoSelection();
 			if(sel!=null){
 				return sel;
 			}
@@ -91,9 +91,9 @@ public class AggregatedAction implements UndoableAction {
 		return null;
 	}
 	@Override
-	public Rect getRedoSelection() {
+	public AreaRef getRedoSelection() {
 		for(int i=_actions.length-1;i>=0;i--){
-			Rect sel = _actions[i].getRedoSelection();
+			AreaRef sel = _actions[i].getRedoSelection();
 			if(sel!=null){
 				return sel;
 			}

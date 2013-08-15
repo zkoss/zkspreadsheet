@@ -29,7 +29,7 @@ import java.util.Set;
 import org.zkoss.lang.Strings;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle.Alignment;
@@ -166,17 +166,17 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		registerHandler(category, AuxAction.FONT_STRIKE.getAction(), new FontStrikeoutHandler());
 		
 		
-		registerHandler(category, AuxAction.BORDER.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_BOTTOM,BorderType.MEDIUM));
-		registerHandler(category, AuxAction.BORDER_BOTTOM.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_BOTTOM,BorderType.MEDIUM));
-		registerHandler(category, AuxAction.BORDER_TOP.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_TOP,BorderType.MEDIUM));
-		registerHandler(category, AuxAction.BORDER_LEFT.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_LEFT,BorderType.MEDIUM));
-		registerHandler(category, AuxAction.BORDER_RIGHT.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_RIGHT,BorderType.MEDIUM));
-		registerHandler(category, AuxAction.BORDER_NO.getAction(), new ApplyBorderHandler(ApplyBorderType.FULL,BorderType.NONE));
-		registerHandler(category, AuxAction.BORDER_ALL.getAction(), new ApplyBorderHandler(ApplyBorderType.FULL,BorderType.MEDIUM));
-		registerHandler(category, AuxAction.BORDER_OUTSIDE.getAction(), new ApplyBorderHandler(ApplyBorderType.OUTLINE,BorderType.MEDIUM));
-		registerHandler(category, AuxAction.BORDER_INSIDE.getAction(), new ApplyBorderHandler(ApplyBorderType.INSIDE,BorderType.MEDIUM));
-		registerHandler(category, AuxAction.BORDER_INSIDE_HORIZONTAL.getAction(), new ApplyBorderHandler(ApplyBorderType.INSIDE_HORIZONTAL,BorderType.MEDIUM));
-		registerHandler(category, AuxAction.BORDER_INSIDE_VERTICAL.getAction(), new ApplyBorderHandler(ApplyBorderType.INSIDE_VERTICAL,BorderType.MEDIUM));
+		registerHandler(category, AuxAction.BORDER.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_BOTTOM,BorderType.THIN));
+		registerHandler(category, AuxAction.BORDER_BOTTOM.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_BOTTOM,BorderType.THIN));
+		registerHandler(category, AuxAction.BORDER_TOP.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_TOP,BorderType.THIN));
+		registerHandler(category, AuxAction.BORDER_LEFT.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_LEFT,BorderType.THIN));
+		registerHandler(category, AuxAction.BORDER_RIGHT.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_RIGHT,BorderType.THIN));
+		registerHandler(category, AuxAction.BORDER_NO.getAction(), new ApplyBorderHandler(ApplyBorderType.FULL,BorderType.THIN));
+		registerHandler(category, AuxAction.BORDER_ALL.getAction(), new ApplyBorderHandler(ApplyBorderType.FULL,BorderType.THIN));
+		registerHandler(category, AuxAction.BORDER_OUTSIDE.getAction(), new ApplyBorderHandler(ApplyBorderType.OUTLINE,BorderType.THIN));
+		registerHandler(category, AuxAction.BORDER_INSIDE.getAction(), new ApplyBorderHandler(ApplyBorderType.INSIDE,BorderType.THIN));
+		registerHandler(category, AuxAction.BORDER_INSIDE_HORIZONTAL.getAction(), new ApplyBorderHandler(ApplyBorderType.INSIDE_HORIZONTAL,BorderType.THIN));
+		registerHandler(category, AuxAction.BORDER_INSIDE_VERTICAL.getAction(), new ApplyBorderHandler(ApplyBorderType.INSIDE_VERTICAL,BorderType.THIN));
 		
 		
 		registerHandler(category, AuxAction.FONT_COLOR.getAction(), new FontColorHandler());
@@ -364,7 +364,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		Book book = spreadsheet.getBook();
 		Sheet sheet = spreadsheet.getSelectedSheet();
 		String action = "";
-		Rect selection;
+		AreaRef selection;
 		Map extraData = null;
 		if(Events.ON_CTRL_KEY.equals(nm)){
 			//respect zss key-even't selection 
@@ -386,9 +386,9 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 			extraData = new HashMap();
 		}
 		
-		Rect visibleSelection = new Rect(selection.getLeft(), selection.getTop(), Math.min(
-			    spreadsheet.getMaxVisibleColumns(), selection.getRight()), Math.min(
-			    spreadsheet.getMaxVisibleRows(), selection.getBottom()));
+		AreaRef visibleSelection = new AreaRef(selection.getRow(), selection.getColumn(), Math.min(
+		spreadsheet.getMaxVisibleRows(), selection.getLastRow()), Math.min(
+					    spreadsheet.getMaxVisibleColumns(), selection.getLastColumn()));
 		
 		if(Events.ON_AUX_ACTION.equals(nm)){
 			UserActionContextImpl ctx = new UserActionContextImpl(_sparedsheet,event,book,sheet,visibleSelection,extraData,Category.AUXACTION.getName(),action);
@@ -533,12 +533,12 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		Spreadsheet _spreadsheet;
 		Book _book;
 		Sheet _sheet;
-		Rect _selection;
+		AreaRef _selection;
 		Map<String,Object> _data;
 		String _category;
 		String _action;
 		Event _event;
-		public UserActionContextImpl(Spreadsheet ss,Event event,Book book,Sheet sheet,Rect selection,Map<String,Object> data,
+		public UserActionContextImpl(Spreadsheet ss,Event event,Book book,Sheet sheet,AreaRef selection,Map<String,Object> data,
 				String category,String action){
 			this._spreadsheet = ss;
 			this._sheet = sheet;
@@ -569,7 +569,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		}
 
 		@Override
-		public Rect getSelection() {
+		public AreaRef getSelection() {
 			return _selection;
 		}
 
@@ -614,7 +614,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		}
 
 		@Override
-		public void setClipboard(Sheet sheet, Rect selection, boolean cutMode,Object info) {
+		public void setClipboard(Sheet sheet, AreaRef selection, boolean cutMode,Object info) {
 			getSpreadsheet().setAttribute(CLIPBOARD_KEY,new ClipboardImpl(sheet, selection,cutMode, info));
 			if(sheet.equals(getSpreadsheet().getSelectedSheet())){
 				getSpreadsheet().setHighlight(selection);
@@ -630,12 +630,12 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 	 */
 	public static class ClipboardImpl implements Clipboard{
 
-		final Rect _selection;
+		final AreaRef _selection;
 		final Sheet _sheet;
 		final boolean _cutMode;
 		final Object _info;
 		
-		public ClipboardImpl(Sheet sheet,Rect selection, boolean cutMode,Object info) {
+		public ClipboardImpl(Sheet sheet,AreaRef selection, boolean cutMode,Object info) {
 			if(sheet==null){
 				throw new IllegalArgumentException("Sheet is null");
 			}
@@ -654,7 +654,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		}
 
 		@Override
-		public Rect getSelection() {
+		public AreaRef getSelection() {
 			return _selection;
 		}
 

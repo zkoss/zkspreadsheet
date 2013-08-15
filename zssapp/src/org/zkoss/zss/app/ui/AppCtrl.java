@@ -31,7 +31,7 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.app.repository.BookInfo;
@@ -391,7 +391,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		}else if(AppEvts.ON_TOGGLE_FORMULA_BAR.equals(event)){
 			doToggleFormulabar();
 		}else if(AppEvts.ON_FREEZE_PNAEL.equals(event)){
-			Rect sel = ss.getSelection();
+			AreaRef sel = ss.getSelection();
 			doFreeze(sel.getRow(),sel.getColumn());
 		}else if(AppEvts.ON_UNFREEZE_PANEL.equals(event)){
 			doFreeze(0,0);
@@ -424,10 +424,10 @@ public class AppCtrl extends CtrlBase<Component>{
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 		
 		//workaround before http://tracker.zkoss.org/browse/ZSS-390 fix
-		Rect sel = ss.getSelection();
+		AreaRef sel = ss.getSelection();
 		row = row<0?sel.getRow():row;
 		column = column<0?sel.getColumn():column;
-		ss.setSelection(new Rect(column,row,column,row));
+		ss.setSelection(new AreaRef(row,column,row,column));
 	}
 
 	private void doToggleFormulabar() {

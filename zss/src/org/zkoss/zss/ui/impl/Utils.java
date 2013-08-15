@@ -43,7 +43,7 @@ import org.zkoss.util.logging.Log;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.engine.RefSheet;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XFormatText;

@@ -36,7 +36,7 @@ import org.zkoss.poi.ss.usermodel.DateUtil;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XRange;
@@ -56,7 +56,7 @@ import org.zkoss.zss.ui.impl.XUtils;
 
 	private FilterRowInfo blankRowInfo;
 	
-	/*package*/ Rect processFilter(Spreadsheet spreadsheet,Sheet sheet,int row, int col, int field) {
+	/*package*/ AreaRef processFilter(Spreadsheet spreadsheet,Sheet sheet,int row, int col, int field) {
 		XSheet worksheet = ((SheetImpl)sheet).getNative();
 		final AutoFilter autoFilter = worksheet.getAutoFilter();
 		final FilterColumn filterColumn = autoFilter.getFilterColumn(field - 1);
@@ -66,7 +66,7 @@ import org.zkoss.zss.ui.impl.XUtils;
 		spreadsheet.smartUpdate("autoFilterPopup", 
 			convertFilterInfoToJSON(row, col, field, rangeAddr, scanRows(field, filterColumn, range, worksheet)));
 		
-		Rect filterArea = new Rect(rangeAddr);
+		AreaRef filterArea = new AreaRef(rangeAddr);
 		return filterArea;
 	}
 	

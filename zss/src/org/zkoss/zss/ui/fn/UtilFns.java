@@ -28,7 +28,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.zk.ui.UiException;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 //import org.zkoss.zss.model.Cell;
 //import org.zkoss.zss.model.Format;
 import org.zkoss.zss.model.sys.XFormatText;
@@ -103,10 +103,10 @@ public class UtilFns {
 		Set blocks = mmhelper.getRangesByColumn(max);
 		Iterator iter = blocks.iterator();
 		while(iter.hasNext()){
-			Rect rect = (Rect)iter.next();
-			int top = rect.getTop();
+			AreaRef rect = (AreaRef)iter.next();
+			int top = rect.getRow();
 			//int left = rect.getLeft();
-			int right = rect.getRight();
+			int right = rect.getLastColumn();
 			//int bottom = rect.getBottom();
 			if(top<row_top || top<row_bottom){
 				continue;

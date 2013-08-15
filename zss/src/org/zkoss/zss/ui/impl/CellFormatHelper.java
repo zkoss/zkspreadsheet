@@ -119,7 +119,7 @@ public class CellFormatHelper {
 			rect = _mmHelper.getMergeRange(_row, _col);
 			if(rect != null) {
 				hitMerge = true;
-				bottom = XUtils.getCell(_sheet, rect.getBottom(), _col);
+				bottom = XUtils.getCell(_sheet, rect.getLastRow(), _col);
 			}
 			if(bottom != null) {
 				CellStyle style = bottom.getCellStyle();
@@ -136,7 +136,7 @@ public class CellFormatHelper {
 		// of merged range's bottom as processRightBorder() does.
 		Cell next = null;
 		if (!hitBottom) {
-			int c = hitMerge ? rect.getBottom() + 1 : _row + 1; 
+			int c = hitMerge ? rect.getLastRow() + 1 : _row + 1; 
 			next = XUtils.getCell(_sheet, c, _col);
 			/*if(next == null){ // don't search into merge ranges
 				//check is _row+1,_col in merge range
@@ -205,7 +205,7 @@ public class CellFormatHelper {
 			rect = _mmHelper.getMergeRange(_row, _col);
 			if(rect!=null){
 				hitMerge = true;
-				right = XUtils.getCell(_sheet, _row, rect.getRight());
+				right = XUtils.getCell(_sheet, _row, rect.getLastColumn());
 			}
 			if (right != null) {
 				CellStyle style = right.getCellStyle();
@@ -223,7 +223,7 @@ public class CellFormatHelper {
 		//if(true) then try to get next cell after this merge range
 		//else get next cell of this cell
 		if(!hitRight){
-			int c = hitMerge?rect.getRight()+1:_col+1;
+			int c = hitMerge?rect.getLastColumn()+1:_col+1;
 			next = XUtils.getCell(_sheet, _row, c);
 			//find the right cell of merge range.
 			if(next!=null){

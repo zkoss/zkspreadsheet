@@ -20,7 +20,7 @@ package org.zkoss.zss.ui.impl.undo;
 
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.Ranges;
@@ -112,14 +112,14 @@ public class PasteSpecialCellAction extends AbstractCellDataStyleAction {
 		return _destSheet;
 	}
 	@Override
-	public Rect getUndoSelection(){
-		return _pastedRange==null?new Rect(_destColumn,_destRow,_destLastColumn,_destLastRow):
-			new Rect(_pastedRange.getColumn(),_pastedRange.getRow(),_pastedRange.getLastColumn(),_pastedRange.getLastRow());
+	public AreaRef getUndoSelection(){
+		return _pastedRange==null?new AreaRef(_destRow,_destColumn,_destLastRow,_destLastColumn):
+			new AreaRef(_pastedRange.getRow(),_pastedRange.getColumn(),_pastedRange.getLastRow(),_pastedRange.getLastColumn());
 	}
 	@Override
-	public Rect getRedoSelection(){
-		return _pastedRange==null?new Rect(_destColumn,_destRow,_destLastColumn,_destLastRow):
-			new Rect(_pastedRange.getColumn(),_pastedRange.getRow(),_pastedRange.getLastColumn(),_pastedRange.getLastRow());
+	public AreaRef getRedoSelection(){
+		return _pastedRange==null?new AreaRef(_destRow,_destColumn,_destLastRow,_destLastColumn):
+			new AreaRef(_pastedRange.getRow(),_pastedRange.getColumn(),_pastedRange.getLastRow(),_pastedRange.getLastColumn());
 	}
 	
 	protected void applyAction() {

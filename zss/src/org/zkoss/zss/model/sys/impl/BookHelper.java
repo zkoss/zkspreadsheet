@@ -512,7 +512,7 @@ public final class BookHelper {
 				setCellValue(cell, CellValue.getError(ErrorEval.REF_INVALID.getErrorCode()));
 				return CellValue.getError(ErrorEval.REF_INVALID.getErrorCode());
 			}else{
-				logger.log(Level.SEVERE, "error evaluating formula: "+cell.getCellFormula()+" at "+Ranges.getCellReference(cell.getRowIndex(),cell.getColumnIndex()), e);
+				logger.log(Level.SEVERE, "error evaluating formula: "+cell.getCellFormula()+" at "+Ranges.getCellReferenceString(cell.getRowIndex(),cell.getColumnIndex()), e);
 				setCellValue(cell, CellValue.getError(ErrorEval.VALUE_INVALID.getErrorCode()));
 				return CellValue.getError(ErrorEval.VALUE_INVALID.getErrorCode());
 			}

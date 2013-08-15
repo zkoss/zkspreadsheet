@@ -16,8 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
-import org.zkoss.poi.ss.util.AreaReference;
-import org.zkoss.poi.ss.util.CellReference;
+//import org.zkoss.poi.ss.util.AreaReference;
+//import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.zss.api.impl.RangeImpl;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
@@ -94,8 +94,8 @@ public class Ranges {
 	 * @param sheet the {@link Sheet} the Range will refer to.
 	 * @param selection the selection of spreadsheet
 	 */
-	public static Range range(Sheet sheet, Rect selection){	
-		return range(sheet,selection.getTop(),selection.getLeft(),selection.getBottom(),selection.getRight());
+	public static Range range(Sheet sheet, AreaRef selection){	
+		return range(sheet,selection.getRow(),selection.getColumn(),selection.getLastRow(),selection.getLastColumn());
 	}
 	
 	/**
@@ -104,8 +104,8 @@ public class Ranges {
 	 * @param col column
 	 * @return the cell reference string (e.g. A1)
 	 */
-	public static String getCellReference(int row,int col){
-		return getCellReference(null,row,col);
+	public static String getCellReferenceString(int row,int col){
+		return getCellReferenceString(null,row,col);
 	}
 	
 	/**
@@ -115,8 +115,8 @@ public class Ranges {
 	 * @param col column
 	 * @return the cell reference string (e.g. Sheet1!A1)
 	 */
-	public static String getCellReference(Sheet sheet,int row,int col){
-		CellReference cf = new CellReference(sheet==null?null:sheet.getSheetName(),row, col,false,false);
+	public static String getCellReferenceString(Sheet sheet,int row,int col){
+		org.zkoss.poi.ss.util.CellReference cf = new org.zkoss.poi.ss.util.CellReference(sheet==null?null:sheet.getSheetName(),row, col,false,false);
 		return cf.formatAsString();
 	}
 	
@@ -124,22 +124,22 @@ public class Ranges {
 	 * Gets area reference expression
 	 * @param tRow top row
 	 * @param lCol left column
-	 * @param bRow bottom row
-	 * @param rCol right column
+	 * @param bRow bottom/last row
+	 * @param rCol right/last column
 	 * @return the area reference string (e.g. A1:B2)
 	 */
-	public static String getAreaReference(int tRow, int lCol, int bRow, int rCol){
-		return getAreaReference(null,tRow, lCol, bRow, rCol);
+	public static String getAreaReferenceString(int tRow, int lCol, int bRow, int rCol){
+		return getAreaReferenceString(null,tRow, lCol, bRow, rCol);
 	}
 	
-	/**
-	 * Gets area reference expression
-	 * @param area area
-	 * @return the area reference string (e.g. A1:B2)
-	 */
-	public static String getAreaReference(Rect area){
-		return getAreaReference(area.getTop(),area.getLeft(),area.getBottom(),area.getRight());
-	}	
+//	/**
+//	 * Gets area reference expression
+//	 * @param area area
+//	 * @return the area reference string (e.g. A1:B2)
+//	 */
+//	public static String getAreaReference(Rect area){
+//		return getAreaReference(area.getTop(),area.getLeft(),area.getBottom(),area.getRight());
+//	}	
 	
 	/**
 	 * Gets area reference expression
@@ -150,9 +150,9 @@ public class Ranges {
 	 * @param rCol right column
 	 * @return the area reference string (e.g. Sheet1!A1:B2)
 	 */
-	public static String getAreaReference(Sheet sheet, int tRow, int lCol, int bRow, int rCol){
+	public static String getAreaReferenceString(Sheet sheet, int tRow, int lCol, int bRow, int rCol){
 		String sn = sheet==null?null:sheet.getSheetName();
-		AreaReference af = new AreaReference(new CellReference(sn,tRow,lCol,false,false), new CellReference(sn,bRow,rCol,false,false));
+		org.zkoss.poi.ss.util.AreaReference af = new org.zkoss.poi.ss.util.AreaReference(new org.zkoss.poi.ss.util.CellReference(sn,tRow,lCol,false,false), new org.zkoss.poi.ss.util.CellReference(sn,bRow,rCol,false,false));
 		return af.formatAsString();
 	}
 	
@@ -162,9 +162,8 @@ public class Ranges {
 	 * @param area area
 	 * @return the area reference string (e.g. Sheet1!A1:B2)
 	 */
-	public static String getAreaReference(Sheet sheet, Rect area){
-		String sn = sheet==null?null:sheet.getSheetName();
-		return getAreaReference(sheet, area.getTop(),area.getLeft(),area.getBottom(),area.getRight());
+	public static String getAreaReferenceString(Sheet sheet, AreaRef area){
+		return getAreaReferenceString(sheet, area.getRow(),area.getColumn(),area.getLastRow(),area.getLastColumn());
 	}
 	
 	/**
@@ -172,8 +171,8 @@ public class Ranges {
 	 * @param column column
 	 * @return the column reference string (e.g A, AB)
 	 */
-	public static String getColumnReference(int column){
-		return CellReference.convertNumToColString(column);
+	public static String getColumnReferenceString(int column){
+		return org.zkoss.poi.ss.util.CellReference.convertNumToColString(column);
 	}
 	
 	/**
@@ -181,7 +180,7 @@ public class Ranges {
 	 * @param row row
 	 * @return the column reference string (e.g 1, 12)
 	 */
-	public static String getRowReference(int row){
+	public static String getRowReferenceString(int row){
 		int excelRowNum = row + 1;
 		return Integer.toString(excelRowNum);
 	}

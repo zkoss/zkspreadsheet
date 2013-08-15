@@ -17,7 +17,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.event;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 
 /**
  * @author sam
@@ -25,17 +25,17 @@ import org.zkoss.zss.api.Rect;
  */
 public class KeyEvent extends org.zkoss.zk.ui.event.KeyEvent {
 
-	final Rect selection;
+	final AreaRef selection;
 	
 	public KeyEvent(String name, Component target, int keyCode,
 			boolean ctrlKey, boolean shiftKey, boolean altKey,
 			int tRow, int lCol, int bRow, int rCol) {
 		super(name, target, keyCode, ctrlKey, shiftKey, altKey);
 		
-		selection = new Rect(lCol, tRow, rCol, bRow);
+		selection = new AreaRef(tRow, lCol, bRow, rCol);
 	}
 	
-	public Rect getSelection() {
+	public AreaRef getSelection() {
 		return selection;
 	}
 

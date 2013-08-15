@@ -22,7 +22,7 @@ package org.zkoss.zss.ui.sys;
 //import org.zkoss.zss.model.Sheet;
 import org.zkoss.json.JSONObject;
 import org.zkoss.lang.Objects;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Widget;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
@@ -67,10 +67,10 @@ public interface SpreadsheetCtrl {
 	public MergeMatrixHelper getMergeMatrixHelper(XSheet sheet);
 	
 	
-	public Rect getSelectionRect();
-	public Rect getFocusRect();
-	public Rect getLoadedRect();
-	public Rect getVisibleRect();
+	public AreaRef getSelectionRect();
+	public AreaRef getFocusRect();
+	public AreaRef getLoadedRect();
+	public AreaRef getVisibleRect();
 	
 	public WidgetHandler getWidgetHandler();
 	

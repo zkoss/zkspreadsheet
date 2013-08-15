@@ -20,7 +20,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.UserActionContext;
 import org.zkoss.zss.ui.impl.undo.FontStyleAction;
@@ -35,7 +35,7 @@ public class FontStrikeoutHandler extends AbstractProtectedHandler {
 	@Override
 	protected boolean processAction(UserActionContext ctx) {
 		Sheet sheet = ctx.getSheet();
-		Rect selection = ctx.getSelection();
+		AreaRef selection = ctx.getSelection();
 		Range range = Ranges.range(sheet, selection);
 		
 		boolean strikeout = !range.getCellStyle().getFont().isStrikeout();

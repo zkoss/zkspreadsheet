@@ -23,7 +23,7 @@ import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.impl.undo.ReserveUtil.ReservedResult;
@@ -167,7 +167,7 @@ public abstract class Abstract2DCellDataStyleAction extends AbstractUndoableActi
 	}
 	
 	@Override
-	public Rect getRedoSelection(){
-		return new Rect(_destColumn,_destRow,_destLastColumn,_destLastRow);
+	public AreaRef getRedoSelection(){
+		return new AreaRef(_destRow,_destColumn,_destLastRow,_destLastColumn);
 	}
 }

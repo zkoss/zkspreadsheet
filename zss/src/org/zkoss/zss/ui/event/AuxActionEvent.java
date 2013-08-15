@@ -19,7 +19,7 @@ package org.zkoss.zss.ui.event;
 import java.util.Map;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 
 /**
@@ -31,9 +31,9 @@ public class AuxActionEvent extends org.zkoss.zk.ui.event.Event {
 	private static final long serialVersionUID = 1L;
 	final Sheet sheet;
 	final String action;
-	final Rect selection;
+	final AreaRef selection;
 	
-	public AuxActionEvent(String name, Component target, Sheet sheet, String action,Rect selection, Map data) {
+	public AuxActionEvent(String name, Component target, Sheet sheet, String action,AreaRef selection, Map data) {
 		super(name, target, data);
 		this.sheet = sheet;
 		this.action = action;
@@ -48,7 +48,7 @@ public class AuxActionEvent extends org.zkoss.zk.ui.event.Event {
 		return action;
 	}
 
-	public Rect getSelection() {
+	public AreaRef getSelection() {
 		return selection;
 	}
 

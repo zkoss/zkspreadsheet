@@ -27,7 +27,7 @@ import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Sheet;
@@ -58,7 +58,7 @@ public class ReserveUtil {
 			reserveMerge = true;
 		}
 		
-		Rect[] mergeInfo = null;
+		AreaRef[] mergeInfo = null;
 		
 		int rowStart,rowEnd;
 		rowStart=rowEnd=-1;
@@ -131,12 +131,12 @@ public class ReserveUtil {
 	/**
 	 * reserve the merge information that in the given range.
 	 */
-	public static Rect[] reserveMergeInfo(Sheet sheet, int row, int column,
+	public static AreaRef[] reserveMergeInfo(Sheet sheet, int row, int column,
 			int lastRow, int lastColumn){
 		org.zkoss.poi.ss.usermodel.Sheet poiSheet = sheet.getPoiSheet();
 		int size = poiSheet.getNumMergedRegions();
-		ArrayList<Rect> array = new ArrayList<Rect>();
-		Rect cur = new Rect(column,row,lastColumn,lastRow);
+		ArrayList<AreaRef> array = new ArrayList<AreaRef>();
+		AreaRef cur = new AreaRef(row,column,lastRow,lastColumn);
 		for(int i=0;i<size;i++){
 			CellRangeAddress cra = poiSheet.getMergedRegion(i);
 			int r = cra.getFirstRow();
@@ -144,10 +144,10 @@ public class ReserveUtil {
 			int lr = cra.getLastRow();
 			int lc = cra.getLastColumn();
 			if(cur.contains(r, c, lr, lc)){
-				array.add(new Rect(c,r,lc,lr));
+				array.add(new AreaRef(r,c,lr,lc));
 			}
 		}
-		return array.size()==0?null:array.toArray(new Rect[array.size()]);
+		return array.size()==0?null:array.toArray(new AreaRef[array.size()]);
 	}
 
 	public static class ReservedResult {
@@ -155,7 +155,7 @@ public class ReserveUtil {
 		final Sheet _sheet;
 		Map<Integer,ReservedRow> _rows = null;
 		int _rowStart,_rowEnd;
-		Rect[] _mergeInfo;
+		AreaRef[] _mergeInfo;
 		final int _row, _column, _lastRow, _lastColumn;
 
 		public ReservedResult(Sheet sheet, int row, int column, int lastRow,
@@ -189,11 +189,11 @@ public class ReserveUtil {
 			return _lastColumn;
 		}
 		
-		public Rect[] getMergeInfo() {
+		public AreaRef[] getMergeInfo() {
 			return _mergeInfo;
 		}
 
-		public void setMergeInfo(Rect[] mergeInfo) {
+		public void setMergeInfo(AreaRef[] mergeInfo) {
 			this._mergeInfo = mergeInfo;
 		}
 		public void setRowsInfo(Map<Integer,ReservedRow> rows, int rowStart,int rowEnd){
@@ -227,14 +227,14 @@ public class ReserveUtil {
 				reserveMerge = true;
 			}
 			
-			Rect[] mergeInfo = getMergeInfo(); 
+			AreaRef[] mergeInfo = getMergeInfo(); 
 			
 			//clear current merge info, we will restore it later
 			if(reserveMerge){
 				//clear the merge first
-				Rect[] curMergeInfo = reserveMergeInfo(_sheet,_row,_column,_lastRow,_lastColumn);
+				AreaRef[] curMergeInfo = reserveMergeInfo(_sheet,_row,_column,_lastRow,_lastColumn);
 				if(curMergeInfo!=null){
-					for(Rect rect:curMergeInfo){
+					for(AreaRef rect:curMergeInfo){
 						r = Ranges.range(_sheet,rect);
 						r.unmerge();
 					}
@@ -279,7 +279,7 @@ public class ReserveUtil {
 			if(reserveMerge){
 				//restore merge
 				if(mergeInfo!=null){				
-					for(Rect rect:mergeInfo){
+					for(AreaRef rect:mergeInfo){
 						r = Ranges.range(_sheet,rect);
 						r.merge(false);
 					}

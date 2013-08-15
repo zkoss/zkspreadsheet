@@ -17,7 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui;
 
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 
@@ -36,7 +36,7 @@ public interface UserActionContext {
 	
 	public Event getEvent();
 	
-	public Rect getSelection();
+	public AreaRef getSelection();
 	
 	public Object getData(String key);
 	
@@ -48,7 +48,7 @@ public interface UserActionContext {
 	public interface Clipboard {
 		
 		public Sheet getSheet();
-		public Rect getSelection();
+		public AreaRef getSelection();
 		public Object getInfo();
 		
 		public boolean isCutMode();
@@ -59,7 +59,7 @@ public interface UserActionContext {
 	
 	public void clearClipboard();
 	
-	public void setClipboard(Sheet sheet,Rect selection,boolean cutMode,Object info);
+	public void setClipboard(Sheet sheet,AreaRef selection,boolean cutMode,Object info);
 
 	
 	

@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 
 
 /**
@@ -77,10 +77,10 @@ public class MergeMatrixHelper {
 		Iterator iter = _mergeRanges.iterator();
 		while(iter.hasNext()){
 			final MergedRect block= (MergedRect)iter.next();
-			final int left = block.getLeft();
-			final int top = block.getTop();
-			final int right = block.getRight();
-			final int bottom = block.getBottom();
+			final int left = block.getColumn();
+			final int top = block.getRow();
+			final int right = block.getLastColumn();
+			final int bottom = block.getLastRow();
 			_leftTopIndex.put(top+"_"+left,block);
 			for(int r = top; r <= bottom; ++r) {
 				for(int c = left; c <= right; ++c) {
@@ -143,9 +143,9 @@ public class MergeMatrixHelper {
 		Iterator iter = _mergeRanges.iterator();
 		Set result = new HashSet();
 		while(iter.hasNext()){
-			Rect rect = (Rect)iter.next();
-			int left = rect.getLeft();
-			int right = rect.getRight();
+			AreaRef rect = (AreaRef)iter.next();
+			int left = rect.getColumn();
+			int right = rect.getLastColumn();
 			if(left<=col && right>=col){
 				result.add(rect);
 			}
@@ -156,10 +156,10 @@ public class MergeMatrixHelper {
 	public int getRightConnectedColumn(int col, int top, int bottom) {
 		int size = _mergeRanges.size();
 		List result = new ArrayList();
-		Rect rect;
+		AreaRef rect;
 		for(int i=0;i<size;i++){
 			rect = (MergedRect)_mergeRanges.get(i);
-			if(rect.getTop()>_frozenRow && (rect.getTop()<top || rect.getBottom()>bottom)){
+			if(rect.getRow()>_frozenRow && (rect.getRow()<top || rect.getLastRow()>bottom)){
 				continue;
 			}
 			result.add(rect);
@@ -171,8 +171,8 @@ public class MergeMatrixHelper {
 			size = result.size();
 			for(int i=0;i<size;i++){
 				rect = (MergedRect)result.get(i);
-				if(rect.getRight()>col && rect.getLeft()<=col){
-					col = rect.getRight();
+				if(rect.getLastColumn()>col && rect.getColumn()<=col){
+					col = rect.getLastColumn();
 					conti = true;
 					result.remove(i);
 					break;
@@ -185,10 +185,10 @@ public class MergeMatrixHelper {
 	public int getLeftConnectedColumn(int col, int top, int bottom) {
 		int size = _mergeRanges.size();
 		List result = new ArrayList();
-		Rect rect;
+		AreaRef rect;
 		for(int i=0;i<size;i++){
 			rect = (MergedRect)_mergeRanges.get(i);
-			if(rect.getTop()>_frozenRow && (rect.getTop()<top || rect.getBottom()>bottom)){
+			if(rect.getRow()>_frozenRow && (rect.getRow()<top || rect.getLastRow()>bottom)){
 				continue;
 			}
 			result.add(rect);
@@ -200,8 +200,8 @@ public class MergeMatrixHelper {
 			size = result.size();
 			for(int i=0;i<size;i++){
 				rect = (MergedRect)result.get(i);
-				if(rect.getLeft()<col && rect.getRight()>=col){
-					col = rect.getLeft();
+				if(rect.getColumn()<col && rect.getLastColumn()>=col){
+					col = rect.getColumn();
 					conti = true;
 					result.remove(i);
 					break;
@@ -214,10 +214,10 @@ public class MergeMatrixHelper {
 	public int getBottomConnectedRow(int row, int left, int right) {
 		int size = _mergeRanges.size();
 		List result = new ArrayList();
-		Rect rect;
+		AreaRef rect;
 		for(int i=0;i<size;i++){
 			rect = (MergedRect)_mergeRanges.get(i);
-			if(rect.getLeft()>_frozenCol && (rect.getLeft()<left || rect.getRight()>right)){
+			if(rect.getColumn()>_frozenCol && (rect.getColumn()<left || rect.getLastColumn()>right)){
 				continue;
 			}
 			result.add(rect);
@@ -229,8 +229,8 @@ public class MergeMatrixHelper {
 			size = result.size();
 			for(int i=0;i<size;i++){
 				rect = (MergedRect)result.get(i);
-				if(rect.getBottom()>row && rect.getTop()<=row){
-					row = rect.getBottom();
+				if(rect.getLastRow()>row && rect.getRow()<=row){
+					row = rect.getLastRow();
 					conti = true;
 					result.remove(i);
 					break;
@@ -243,10 +243,10 @@ public class MergeMatrixHelper {
 	public int getTopConnectedRow(int row, int left, int right) {
 		int size = _mergeRanges.size();
 		List result = new ArrayList();
-		Rect rect;
+		AreaRef rect;
 		for(int i=0;i<size;i++){
 			rect = (MergedRect)_mergeRanges.get(i);
-			if(rect.getLeft()>_frozenCol && (rect.getLeft()<left || rect.getRight()>right)){
+			if(rect.getColumn()>_frozenCol && (rect.getColumn()<left || rect.getLastColumn()>right)){
 				continue;
 			}
 			result.add(rect);
@@ -258,8 +258,8 @@ public class MergeMatrixHelper {
 			size = result.size();
 			for(int i=0;i<size;i++){
 				rect = (MergedRect)result.get(i);
-				if(rect.getTop()<row && rect.getBottom()>=row){
-					row = rect.getTop();
+				if(rect.getRow()<row && rect.getLastRow()>=row){
+					row = rect.getRow();
 					conti = true;
 					result.remove(i);
 					break;
@@ -312,7 +312,7 @@ public class MergeMatrixHelper {
 	public void deleteAffectedMergeRangeByColumn(int col,Set removed) {
 		for(Iterator iter = _mergeRanges.iterator();iter.hasNext();){
 			MergedRect block = (MergedRect)iter.next();
-			int right = block.getRight();
+			int right = block.getLastColumn();
 			if(right<col) continue;
 			removed.add(block);
 		}
@@ -326,7 +326,7 @@ public class MergeMatrixHelper {
 	public void deleteAffectedMergeRangeByRow(int row,Set removed) {
 		for(Iterator iter = _mergeRanges.iterator();iter.hasNext();){
 			MergedRect block = (MergedRect)iter.next();
-			int bottom = block.getBottom();
+			int bottom = block.getLastRow();
 			if(bottom<row) continue;
 			removed.add(block);
 		}

@@ -21,7 +21,7 @@ import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.model.Sheet;
@@ -41,7 +41,7 @@ public class InsertCellDownHandler extends AbstractProtectedHandler {
 	@Override
 	protected boolean processAction(UserActionContext ctx) {
 		Sheet sheet = ctx.getSheet();
-		Rect selection = ctx.getSelection();
+		AreaRef selection = ctx.getSelection();
 		Range range = Ranges.range(sheet, selection);
 		//work around for ZSS-404 JS Error after insert column when freeze
 		if(checkInFreezePanel(range)){

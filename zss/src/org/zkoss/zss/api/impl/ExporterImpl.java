@@ -19,10 +19,10 @@ package org.zkoss.zss.api.impl;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.zkoss.poi.hssf.util.AreaReference;
-import org.zkoss.poi.hssf.util.CellReference;
+//import org.zkoss.poi.hssf.util.AreaReference;
+//import org.zkoss.poi.hssf.util.CellReference;
 import org.zkoss.zss.api.Exporter;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.BookImpl;
@@ -50,9 +50,9 @@ public class ExporterImpl implements Exporter {
 	public void export(Sheet sheet, OutputStream fos) throws IOException{
 		_exporter.export(((SheetImpl)sheet).getNative(), fos);
 	}
-	public void export(Sheet sheet,Rect selection,OutputStream fos) throws IOException{
-		AreaReference af = new AreaReference(new CellReference(selection.getTop(), selection.getLeft()),
-				new CellReference(selection.getBottom(), selection.getRight()));
+	public void export(Sheet sheet,AreaRef selection,OutputStream fos) throws IOException{
+		org.zkoss.poi.ss.util.AreaReference af = new org.zkoss.poi.ss.util.AreaReference(new org.zkoss.poi.ss.util.CellReference(selection.getRow(), selection.getColumn()),
+				new org.zkoss.poi.ss.util.CellReference(selection.getLastRow(), selection.getLastColumn()));
 		_exporter.exportSelection(((SheetImpl)sheet).getNative(), af, fos);
 	}
 //	@Override

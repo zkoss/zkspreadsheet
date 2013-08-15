@@ -55,7 +55,7 @@ public interface Exporter {
 	 * @param fos the output stream to store data
 	 * @throws IOException
 	 */
-	public void export(Sheet sheet,Rect selection,OutputStream fos) throws IOException;
+	public void export(Sheet sheet,AreaRef selection,OutputStream fos) throws IOException;
 
 //  even html exporter doesn't support to disable heading yet
 //	hide this before there has any implementation

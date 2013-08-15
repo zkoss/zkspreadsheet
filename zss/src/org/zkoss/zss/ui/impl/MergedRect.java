@@ -18,20 +18,20 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 
 /**
  * @author Dennis.Chen
  *
  */
-public class MergedRect extends Rect{
+public class MergedRect extends AreaRef{
 
 	private int _id;
 	public MergedRect(){
 		this(-1,-1,-1,-1,-1);
 	}
 	public MergedRect(int id,int left,int top,int right,int bottom){
-		super(left,top,right,bottom);
+		super(top,left,bottom,right);
 		this._id = id;
 	}
 	
@@ -45,12 +45,12 @@ public class MergedRect extends Rect{
 
 	@Override
 	public Object cloneSelf(){
-		return new MergedRect(_id,getLeft(),getTop(),getRight(),getBottom());
+		return new MergedRect(_id,getColumn(),getRow(),getLastColumn(),getLastRow());
 	}
 	
 	@Override
 	public String toString(){
-		return "id:"+getId()+",left:"+getLeft()+",top:"+getTop()+",right:"+getRight()+",bottom:"+getBottom();
+		return "id:"+getId()+",left:"+getColumn()+",top:"+getRow()+",right:"+getLastColumn()+",bottom:"+getLastRow();
 	}
 	
 	@Override

@@ -21,7 +21,7 @@ package org.zkoss.zss.ui.impl.undo;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Sheet;
 
 /**
@@ -56,14 +56,14 @@ public class CutCellAction extends Abstract2DCellDataStyleAction {
 	}
 		
 	@Override
-	public Rect getUndoSelection(){
+	public AreaRef getUndoSelection(){
 		return _pastedRange==null?super.getUndoSelection():
-			new Rect(_pastedRange.getColumn(),_pastedRange.getRow(),_pastedRange.getLastColumn(),_pastedRange.getLastRow());
+			new AreaRef(_pastedRange.getRow(),_pastedRange.getColumn(),_pastedRange.getLastRow(),_pastedRange.getLastColumn());
 	}
 	@Override
-	public Rect getRedoSelection(){
+	public AreaRef getRedoSelection(){
 		return _pastedRange==null?super.getRedoSelection():
-			new Rect(_pastedRange.getColumn(),_pastedRange.getRow(),_pastedRange.getLastColumn(),_pastedRange.getLastRow());
+			new AreaRef(_pastedRange.getRow(),_pastedRange.getColumn(),_pastedRange.getLastRow(),_pastedRange.getLastColumn());
 	}
 
 }

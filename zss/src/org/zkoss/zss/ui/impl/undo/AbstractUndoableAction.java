@@ -18,7 +18,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl.undo;
 
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.sys.UndoableAction;
@@ -77,12 +77,12 @@ abstract public class AbstractUndoableAction implements UndoableAction {
 	}
 	
 	@Override
-	public Rect getUndoSelection(){
-		return new Rect(_column,_row,_lastColumn,_lastRow);
+	public AreaRef getUndoSelection(){
+		return new AreaRef(_row,_column,_lastRow,_lastColumn);
 	}
 	@Override
-	public Rect getRedoSelection(){
-		return new Rect(_column,_row,_lastColumn,_lastRow);
+	public AreaRef getRedoSelection(){
+		return new AreaRef(_row,_column,_lastRow,_lastColumn);
 	}
 	@Override
 	public Sheet getUndoSheet(){

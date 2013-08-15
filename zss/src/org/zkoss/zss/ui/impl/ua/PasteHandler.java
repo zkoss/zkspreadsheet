@@ -19,7 +19,7 @@ package org.zkoss.zss.ui.impl.ua;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.api.Rect;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.UserActionContext;
@@ -46,15 +46,15 @@ public class PasteHandler extends AbstractProtectedHandler {
 			ctx.clearClipboard();
 			return true;
 		}
-		Rect src = cb.getSelection();
+		AreaRef src = cb.getSelection();
 		
-		Rect selection = ctx.getSelection();
+		AreaRef selection = ctx.getSelection();
 		
-		Range srcRange = Ranges.range(srcSheet, src.getTop(),
-				src.getLeft(), src.getBottom(),src.getRight());
+		Range srcRange = Ranges.range(srcSheet, src.getRow(),
+				src.getColumn(), src.getLastRow(),src.getLastColumn());
 
-		Range destRange = Ranges.range(destSheet, selection.getTop(),
-				selection.getLeft(), selection.getBottom(), selection.getRight());
+		Range destRange = Ranges.range(destSheet, selection.getRow(),
+				selection.getColumn(), selection.getLastRow(), selection.getLastColumn());
 		
 		if (destRange.isProtected()) {
 			showProtectMessage();
