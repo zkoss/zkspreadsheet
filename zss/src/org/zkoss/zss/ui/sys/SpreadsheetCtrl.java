@@ -67,10 +67,10 @@ public interface SpreadsheetCtrl {
 	public MergeMatrixHelper getMergeMatrixHelper(XSheet sheet);
 	
 	
-	public AreaRef getSelectionRect();
-	public AreaRef getFocusRect();
-	public AreaRef getLoadedRect();
-	public AreaRef getVisibleRect();
+	public AreaRef getSelectionArea();
+	public AreaRef getFocusArea();
+	public AreaRef getLoadedArea();
+	public AreaRef getVisibleArea();
 	
 	public WidgetHandler getWidgetHandler();
 	

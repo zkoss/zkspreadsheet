@@ -2325,7 +2325,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				for (int c = left; c <= right; ++c) {
 					updateColWidth(sheet, c);
 				}
-				final AreaRef rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleRect();
+				final AreaRef rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleArea();
 				syncFriendFocusPosition(left, rect.getRow(), rect.getLastColumn(), rect.getLastRow());
 			} else if (rng.isWholeRow()) {
 				final int top = rng.getTopRow();
@@ -2333,7 +2333,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				for (int r = top; r <= bottom; ++r) {
 					updateRowHeight(sheet, r);
 				}
-				final AreaRef rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleRect();
+				final AreaRef rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleArea();
 				syncFriendFocusPosition(rect.getColumn(), top, rect.getLastColumn(), rect.getLastRow());
 			}
 		}
@@ -2749,11 +2749,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			return Spreadsheet.this.getMergeMatrixHelper(sheet);
 		}
 
-		public AreaRef getSelectionRect() {
+		public AreaRef getSelectionArea() {
 			return (AreaRef) _selectionArea.cloneSelf();
 		}
 
-		public AreaRef getFocusRect() {
+		public AreaRef getFocusArea() {
 			return (AreaRef) _focusArea.cloneSelf();
 		}
 
@@ -2765,7 +2765,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			_focusArea.setArea(top, left, bottom, right);
 		}
 
-		public AreaRef getLoadedRect() {
+		public AreaRef getLoadedArea() {
 			AreaRef rect = getActiveRangeHelper().getArea(_selectedSheet);
 			if (rect == null)
 				return null;
@@ -2782,7 +2782,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			getWidgetHandler().onLoadOnDemand(getSelectedXSheet(), left, top, right, bottom);
 		}
 
-		public AreaRef getVisibleRect() {
+		public AreaRef getVisibleArea() {
 			return (AreaRef) _visibleArea.cloneSelf();
 		}
 
