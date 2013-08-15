@@ -6,9 +6,9 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.Range.AutoFillType;
 import org.zkoss.zss.api.Ranges;
-import org.zkoss.zss.ui.Rect;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.ListModelList;
@@ -39,7 +39,7 @@ public class AutoFillComposer extends SelectorComposer<Component> {
 
 	@Listen("onClick = #fillButton")
 	public void autoFill() {
-		Rect selection = ss.getSelection();
+		AreaRef selection = ss.getSelection();
 		Range src = Ranges.range(ss.getSelectedSheet(), selection.getRow(),
 				selection.getColumn(), selection.getLastRow(), selection.getLastColumn());
 		Range dest = Ranges.range(ss.getSelectedSheet(), selection.getRow(),

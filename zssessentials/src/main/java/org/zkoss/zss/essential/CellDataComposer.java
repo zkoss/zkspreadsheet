@@ -5,11 +5,11 @@ import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zss.api.IllegalFormulaException;
+import org.zkoss.zss.api.CellRef;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.essential.util.ClientUtil;
-import org.zkoss.zss.ui.Position;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
@@ -45,7 +45,7 @@ public class CellDataComposer extends SelectorComposer<Component> {
 	
 	@Listen("onCellFocus = #ss")
 	public void onCellFocus(){
-		Position pos = ss.getCellFocus();
+		CellRef pos = ss.getCellFocus();
 		
 		refreshCellInfo(pos.getRow(),pos.getColumn());		
 	}
@@ -53,7 +53,7 @@ public class CellDataComposer extends SelectorComposer<Component> {
 	private void refreshCellInfo(int row, int col){
 		Range range = Ranges.range(ss.getSelectedSheet(),row,col);
 		
-		cellRef.setValue(Ranges.getCellReference(row, col));
+		cellRef.setValue(Ranges.getCellReferenceString(row, col));
 		//show a cell's data
 		CellData data = range.getCellData();
 		cellFormatText.setValue(data.getFormatText());
@@ -71,7 +71,7 @@ public class CellDataComposer extends SelectorComposer<Component> {
 	
 	@Listen("onChange = #cellEditTextBox")
 	public void onEditboxChange(){
-		Position pos = ss.getCellFocus();
+		CellRef pos = ss.getCellFocus();
 		Range range = Ranges.range(ss.getSelectedSheet(),pos.getRow(),pos.getColumn());
 		CellData data = range.getCellData();
 		if(data.validateEditText(cellEditTextBox.getValue())){

@@ -52,6 +52,6 @@ public class MergeComposer extends SelectorComposer<Component> {
 	@Listen("onCellSelection = #ss")
 	public void updateCellReference(CellSelectionEvent event){
 		
-		cellRef.setValue(Ranges.getAreaReference(ss.getSelection()));
+		cellRef.setValue(ss.getSelection().asString());
 	}
 }
