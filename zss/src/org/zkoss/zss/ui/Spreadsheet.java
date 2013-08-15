@@ -53,7 +53,6 @@ import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
-import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.poi.xssf.usermodel.XSSFFont;
 import org.zkoss.util.logging.Log;
 import org.zkoss.util.media.AMedia;
@@ -83,6 +82,7 @@ import org.zkoss.zk.ui.sys.ContentRenderer;
 import org.zkoss.zk.ui.util.DesktopCleanup;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Importer;
+import org.zkoss.zss.api.CellRefence;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.Rect;
@@ -849,9 +849,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			int rowfreeze, int colfreeze*/) {
 		setSelectedSheet0(name);
 		if (row >= 0 && col >= 0) {
-			this.setCellFocusDirectly(new Position(row, col));
+			this.setCellFocusDirectly(new CellRefence(row, col));
 		} else {
-			this.setCellFocusDirectly(new Position(0, 0));
+			this.setCellFocusDirectly(new CellRefence(0, 0));
 		}
 		if (top >= 0 && right >= 0 && bottom >= 0 && left >=0) {
 			this.setSelectionDirectly(new Rect(left, top, right, bottom));
@@ -1682,7 +1682,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				&& (cname = (String) _columnTitles.get(Integer.valueOf(index))) != null) {
 			return cname;
 		}
-		return CellReference.convertNumToColString(index);
+		return org.zkoss.poi.ss.util.CellReference.convertNumToColString(index);
 	}
 
 	/**
@@ -1724,7 +1724,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 	/**
 	 * Sets the selection rectangle. In general, if you set a selection, you must
-	 * also set the focus by {@link #setCellFocus(Position)};. And, if you want
+	 * also set the focus by {@link #setCellFocus(CellRefence)};. And, if you want
 	 * to get the focus back to spreadsheet, call {@link #focus()} after set
 	 * selection.
 	 * 
@@ -1840,14 +1840,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 	/**
 	 * Return current cell(row,column) focus position. you can get the row by
-	 * {@link Position#getRow()}, get the column by {@link Position#getColumn()}
+	 * {@link CellRefence#getRow()}, get the column by {@link CellRefence#getColumn()}
 	 * . The returned value is a copy of current focus status. Default
 	 * Value:(0,0)
 	 * 
 	 * @return current focus
 	 */
-	public Position getCellFocus() {
-		return new Position(_focusRect.getTop(), _focusRect.getLeft());
+	public CellRefence getCellFocus() {
+		return new CellRefence(_focusRect.getTop(), _focusRect.getLeft());
 	}
 
 	/**
@@ -1858,7 +1858,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * 
 	 * @param focus the cell focus position
 	 */
-	public void setCellFocus(Position focus) {
+	public void setCellFocus(CellRefence focus) {
 		if (_focusRect.getLeft() != focus.getColumn()
 				|| _focusRect.getTop() != focus.getRow()) {
 			if (focus.getColumn() < 0 || focus.getRow() < 0
@@ -1870,7 +1870,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	
-	private void setCellFocusDirectly(Position focus) {
+	private void setCellFocusDirectly(CellRefence focus) {
 		_focusRect.set(focus.getColumn(), focus.getRow(),
 				focus.getColumn(), focus.getRow());
 		Map args = new HashMap();
@@ -4047,7 +4047,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		setProtectSheet(_selectedSheet.getProtect());
 		
 		//register collaborated focus
-		Position cf = getCellFocus();
+		CellRefence cf = getCellFocus();
 		moveSelfEditorFocus(getSelectedSheetId(),cf.getRow(),cf.getColumn());
 		
 		refreshToolbarDisabled();
