@@ -3,7 +3,7 @@
 		<button label="freeze">
 			<attribute name="onClick">
 			<![CDATA[
-				Rect s = ss.getSelection();
+				AreaRef s = ss.getSelection();
 				Range r = Ranges.range(ss.getSelectedSheet());
 				r.setFreezePanel(s.getRow(), s.getColumn());
 			]]>

@@ -8,15 +8,15 @@
 	    // src="/EmptySheetForTesting.xlsx"
 	    // src="/issue/ZSS-300.xlsx"
 		import org.zkoss.zss.ui.Spreadsheet;
-		import org.zkoss.zss.api.Rect;	
+		import org.zkoss.zss.api.AreaRef;	
 	]]></zscript>
 
 	<button label="Copy" width="100px" height="30px">
 		<attribute name="onClick"><![CDATA[
-			Rect selectedRect = spreadsheet.getSelection();
+			AreaRef selectedRect = spreadsheet.getSelection();
 			Range range = Ranges.range(spreadsheet.getSelectedSheet(),
-					selectedRect.getTop(), selectedRect.getLeft(),
-					selectedRect.getBottom(), selectedRect.getRight());
+					selectedRect.getRow(), selectedRect.getColumn(),
+					selectedRect.getLastRow(), selectedRect.getLastColumn());
 			//save user selection range
 			spreadsheet.setAttribute("KEY_SOURCE_RANGE", range);
 			spreadsheet.setAttribute("KEY_SOURCE_RECT", selectedRect);
@@ -28,15 +28,15 @@
 	<button label="Special Paste (SkipBlanks)" width="100px" height="30px">
 		<attribute name="onClick"><![CDATA[
 			Range srcRange = (Range)spreadsheet.getAttribute("KEY_SOURCE_RANGE");
-			Rect srcRect = (Rect)spreadsheet.getAttribute("KEY_SOURCE_RECT");
+			AreaRef srcRect = (AreaRef)spreadsheet.getAttribute("KEY_SOURCE_RECT");
 			
 			if (srcRange != null && srcRect != null) {
 
-				Rect dstRect = spreadsheet.getSelection();
-				int rowIndex = dstRect.getTop();
-				int columnIndex = dstRect.getLeft();
-				int rowCount = dstRect.getBottom() - rowIndex;
-				int columnCount = dstRect.getRight() - columnIndex;
+				AreaRef dstRect = spreadsheet.getSelection();
+				int rowIndex = dstRect.getRow();
+				int columnIndex = dstRect.getColumn();
+				int rowCount = dstRect.getLastRow() - rowIndex;
+				int columnCount = dstRect.getLastColumn() - columnIndex;
 				
 				Range dst = Ranges.range(spreadsheet.getSelectedSheet(),
 						rowIndex, 

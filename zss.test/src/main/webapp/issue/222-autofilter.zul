@@ -12,9 +12,9 @@
 	<zscript><![CDATA[
 		void applyFitler(){
 			Sheet sheet = ss.getSelectedSheet();
-			Rect r = ss.getSelection();
+			AreaRef r = ss.getSelection();
 			System.out.println("apply fitler on "+r);
-			Ranges.range(sheet,r.getTop(),r.getLeft(),r.getBottom(),r.getRight()).enableAutoFilter(true);
+			Ranges.range(sheet,r.getRow(),r.getColumn(),r.getLastRow(),r.getLastColumn()).enableAutoFilter(true);
 			
 		}
 		
