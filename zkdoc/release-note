@@ -77,6 +77,7 @@ ZK Spreadsheet 3.0.0 RC
   + Spreadsheet Api changes:
     + get/set Book/Sheet API use the new classes of Book & Sheet that inside 'org.zkoss.zss.api.model'
     + get/set rowfreeze and columnfreeze are deprecated, use Sheet#getColumnFreeze(),Sheet#getRowFreeze() and Range#setFreezePanel(int, int)
+  + Rect and Position (in org.zkoss.zss.ui) are deprecated, please use CellRef and AreaRef instead (in org.zkoss.zss.api) 
   + Action, ActionHandler are removed. To override a default action, use AuxAction, UserActionManager instead.
   + Constructor of CellSelectionEvent is changed from left,top,right,bottom to topRow,leftCol,bottomRow,rightColumn
   + SelectionChangeEvent is renamed to CellSelectionUpdateEvent and arguments sequence is also redefined.
