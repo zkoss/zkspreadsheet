@@ -631,9 +631,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private void doMoveSelfFocus(CellEvent event){
 		moveSelfEditorFocus(getSelectedSheetId(),event.getRow(),event.getColumn());
 	}
+	
+	//ZSS-406 Spreadsheet doesn't be release when use application share scope
+	private void releaseBook(){
+		if (_book != null) {
+			_book.unsubscribe(_dataListener);
+			_book.removeVariableResolver(_variableResolver);
+			_book.removeFunctionMapper(_functionMapper);
+			_book = null;
+		}
+	}
+	
 	private void initBook0(XBook book) {
 		if (_book != null) {
-			deleteSelfEditorFocus();
 			_book.unsubscribe(_dataListener);
 			_book.removeVariableResolver(_variableResolver);
 			_book.removeFunctionMapper(_functionMapper);
@@ -641,6 +651,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				removeEventListener(Events.ON_CELL_FOUCS, _focusListener);
 				_focusListener = null;
 			}
+			deleteSelfEditorFocus();
 		}
 		
 		 //Shall clean selected sheet before set new book (ZSS-75: set book null, cause NPE)
@@ -5082,7 +5093,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			Component comp = desktop.getComponentByUuid(_ssid);
 			if(comp instanceof Spreadsheet){
 				try{
-					((Spreadsheet)comp).setBook(null);
+					((Spreadsheet)comp).releaseBook();
 				}catch(Exception x){}//eat
 			}
 		}
