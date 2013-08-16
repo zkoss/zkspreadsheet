@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,10 +15,14 @@ import org.zkoss.poi.ss.formula.eval.NotImplementedException;
 import org.zkoss.poi.ss.usermodel.ErrorConstants;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.CellOperationUtil;
+import org.zkoss.zss.api.Exporter;
+import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.Range.DeleteShift;
+import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.model.Book;
@@ -648,6 +653,43 @@ public class Issue200Test {
 			// move row pointer whenever row repeat
 			row += 3;
 		}
+	}
+	
+	
+	//not fix yet
+	@Test
+	public void testZSS179() throws IOException {
+
+		final String filename = "book/179-insertexception-simple.xlsx";//should also test non-simple one
+		final InputStream is = getClass().getResourceAsStream(filename);
+		Book book = Importers.getImporter().imports(is, filename);
+
+		
+		Range r = Ranges.range(book.getSheetAt(0), "A1");
+    	Assert.assertEquals("A", r.getCellEditText());
+    	r = Ranges.range(book.getSheetAt(0), "B1");
+    	Assert.assertEquals("", r.getCellEditText());
+    	r = Ranges.range(book.getSheetAt(0), "C1");
+    	Assert.assertEquals("B", r.getCellEditText());
+		
+		r = Ranges.range(book.getSheetAt(0), "B1");
+		r.insert(InsertShift.RIGHT, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		
+		// export work book
+    	Exporter exporter = Exporters.getExporter();
+		java.io.File temp = java.io.File.createTempFile("test",".xlsx");
+    	java.io.FileOutputStream fos = new java.io.FileOutputStream(temp);
+    	//export first time
+    	exporter.export(book, fos);
+    	r = Ranges.range(book.getSheetAt(0), "A1");
+    	Assert.assertEquals("A", r.getCellEditText());
+    	r = Ranges.range(book.getSheetAt(0), "B1");
+    	Assert.assertEquals("", r.getCellEditText());
+    	r = Ranges.range(book.getSheetAt(0), "C1");
+    	Assert.assertEquals("", r.getCellEditText());
+    	r = Ranges.range(book.getSheetAt(0), "D1");
+    	Assert.assertEquals("B", r.getCellEditText());
+		
 	}
 	
 }

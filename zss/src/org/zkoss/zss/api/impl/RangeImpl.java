@@ -601,7 +601,8 @@ public class RangeImpl implements Range{
 	}
 	
 	public String getCellEditText(){
-		return _range.getEditText();
+		String txt = _range.getEditText();
+		return txt==null?"":txt;
 	}
 	
 	public void setCellEditText(String editText){
@@ -615,7 +616,8 @@ public class RangeImpl implements Range{
 	
 	public String getCellFormatText(){
 		//I don't create my way, use the same way from Spreadsheet implementation as possible
-		return XUtils.getCellFormatText(getNative().getSheet(), getRow(), getColumn());
+		String txt = XUtils.getCellFormatText(getNative().getSheet(), getRow(), getColumn());
+		return txt==null?"":txt;
 	}
 	
 	//TODO need to verify the object type

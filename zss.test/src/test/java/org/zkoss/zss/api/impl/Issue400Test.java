@@ -96,8 +96,8 @@ public class Issue400Test {
     	Importers.getImporter().imports(temp, "test");
 	}
 	
-	
-//	@Test //not fix yet
+	//not fix yet
+	@Test
 	public void testZSS425() throws IOException {
 		
 		final String filename = "book/425-updateStyle.xlsx";
@@ -106,33 +106,33 @@ public class Issue400Test {
 		
 		Range r = Ranges.range(book.getSheetAt(0),0,0);
 		
-		CellOperationUtil.applyBackgroundColor(r, "#FF0000");
+		CellOperationUtil.applyBackgroundColor(r, "#f0f000");
 		r = Ranges.range(book.getSheetAt(0),0,0);
-		Assert.assertEquals("#ff0000", r.getCellStyle().getBackgroundColor().getHtmlColor());
+		Assert.assertEquals("#f0f000", r.getCellStyle().getBackgroundColor().getHtmlColor());
 		
 		
 		// export work book
     	Exporter exporter = Exporters.getExporter();
     	
-    	java.io.File temp = java.io.File.createTempFile("test",".xls");
+    	java.io.File temp = java.io.File.createTempFile("test",".xlsx");
     	java.io.FileOutputStream fos = new java.io.FileOutputStream(temp);
     	//export first time
     	exporter.export(book, fos);
     	
-		CellOperationUtil.applyBackgroundColor(r, "#0000FF");
+		CellOperationUtil.applyBackgroundColor(r, "#00ff00");
 		r = Ranges.range(book.getSheetAt(0),0,0);
 		//change again
-		Assert.assertEquals("#0000ff", r.getCellStyle().getBackgroundColor().getHtmlColor());
+		Assert.assertEquals("#00ff00", r.getCellStyle().getBackgroundColor().getHtmlColor());
 		
     	fos = new java.io.FileOutputStream(temp);
     	//export 2nd time
     	exporter.export(book, fos);
-    	
+    	System.out.println(">>>write "+temp);
     	// import book again
     	book = Importers.getImporter().imports(temp, "test");
     	r = Ranges.range(book.getSheetAt(0),0,0);
     	//get #ff0000 if bug is not fixed
-		Assert.assertEquals("#0000ff", r.getCellStyle().getBackgroundColor().getHtmlColor());
+		Assert.assertEquals("#00ff00", r.getCellStyle().getBackgroundColor().getHtmlColor());
 	}
 
 
