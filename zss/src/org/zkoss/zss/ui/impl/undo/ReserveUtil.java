@@ -24,12 +24,13 @@ import java.util.Map;
 
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.api.IllegalFormulaException;
-import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Range.CellStyleHelper;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.CellStyle;
+import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Sheet;
 
 /**
@@ -111,8 +112,7 @@ public class ReserveUtil {
 						}
 						
 						if(reserveStyle){
-							CellStyle style = range.getCellStyle();
-							
+							ReservedCellStyle style = ReservedCellStyle.reserve(range);
 							cell.setStyle(style);
 						}
 					}
@@ -251,7 +251,6 @@ public class ReserveUtil {
 				r.clearStyles();
 			}
 			
-			
 			//start to restore
 			if(_rowStart>=0 && _rowEnd>=0 && (reserveContent || reserveStyle)){
 				for(int i=_rowStart;i<=_rowEnd;i++){
@@ -267,8 +266,8 @@ public class ReserveUtil {
 								data.apply(r);
 							}
 							if(reserveStyle){
-								CellStyle style = reservedCell.getStyle();
-								r.setCellStyle(style);
+								ReservedCellStyle style = reservedCell.getStyle();
+								style.apply(r);
 							}
 						}
 					}
@@ -326,7 +325,7 @@ public class ReserveUtil {
 	public static class ReservedCell {
 //		private int _row;
 //		private int _column;
-		private CellStyle _style;
+		private ReservedCellStyle _style;
 		private ReservedCellContent _content;
 		public ReservedCell(/*int row,int column*/){
 //			this._row = row;
@@ -338,10 +337,10 @@ public class ReserveUtil {
 		public void setContent(ReservedCellContent content) {
 			this._content = content;
 		}
-		public CellStyle getStyle() {
+		public ReservedCellStyle getStyle() {
 			return _style;
 		}
-		public void setStyle(CellStyle style) {
+		public void setStyle(ReservedCellStyle style) {
 			this._style = style;
 		}
 		
@@ -382,5 +381,30 @@ public class ReserveUtil {
 			return new ReservedCellContent(editText);
 		}
 	}
+	
+	public static class ReservedCellStyle {
 
+		Font _font;
+		CellStyle _style;
+		
+		public ReservedCellStyle(CellStyle style){
+			this._style = style;
+			this._font = style.getFont();
+		}
+		
+		public void apply(Range range){
+			CellStyleHelper helper = range.getCellStyleHelper();
+			
+			
+			if(helper.isAvailable(_style)){
+				range.setCellStyle(_style);
+			}else{
+				//TODO fix ZSS-424 get exception when undo after save
+			}
+		}
+		
+		public static ReservedCellStyle reserve(Range range){
+			return new ReservedCellStyle(range.getCellStyle());
+		}
+	}
 }

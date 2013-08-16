@@ -686,6 +686,13 @@ public interface Range {
 	public void notifyChange(String[] variables);
 	
 	
+	
+	/**
+	 * get formatted string of this range
+	 * @return
+	 */
+	public String asString();
+	
 	/**
 	 * a cell style helper to create style relative object for cell
 	 * @author dennis
@@ -728,6 +735,11 @@ public interface Range {
 		public Font findFont(Boldweight boldweight, Color color,
 				int fontHeight, String fontName, boolean italic,
 				boolean strikeout, TypeOffset typeOffset, Underline underline);
+
+		/**
+		 * Check if this style still available
+		 */
+		public boolean isAvailable(CellStyle style);
 	}
 
 }

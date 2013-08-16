@@ -129,6 +129,7 @@
 			<version>${project.version}</version>
 		</dependency>
 		<!-- ZSS EE dependence 
+		 -->
 		<dependency>
 			<groupId>org.zkoss.poi</groupId>
 			<artifactId>zpoiex</artifactId>
@@ -154,7 +155,6 @@
 			<artifactId>zssex</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		 -->
  	</dependencies>
   <build>
 		<sourceDirectory>${project.basedir}/src/</sourceDirectory>

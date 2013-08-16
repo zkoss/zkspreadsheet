@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.impl;
 
+import org.zkoss.poi.hssf.usermodel.HSSFCellStyle;
+import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
 import org.zkoss.zss.api.Range.CellStyleHelper;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellStyle;
@@ -43,10 +45,10 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
  */
 /*package*/ class CellStyleHelperImpl implements CellStyleHelper{
 
-	private RangeImpl _range;
+	private Book _book;
 	
-	public CellStyleHelperImpl(RangeImpl range) {
-		this._range = range;
+	public CellStyleHelperImpl(Book book) {
+		this._book = book;
 	}
 	
 	/**
@@ -55,8 +57,8 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 	 * @return the new cell style
 	 */
 	public EditableCellStyle createCellStyle(CellStyle src){
-		XBook book = _range.getNative().getSheet().getBook();
-		EditableCellStyle style = new EditableCellStyleImpl(((BookImpl)_range.getBook()).getRef(),new SimpleRef<org.zkoss.poi.ss.usermodel.CellStyle>(book.createCellStyle()));
+		XBook book = (XBook)_book.getPoiBook();
+		EditableCellStyle style = new EditableCellStyleImpl(((BookImpl)_book).getRef(),new SimpleRef<org.zkoss.poi.ss.usermodel.CellStyle>(book.createCellStyle()));
 		if(src!=null){
 			((EditableCellStyleImpl)style).copyAttributeFrom(src);
 		}
@@ -64,10 +66,10 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 	}
 
 	public EditableFont createFont(Font src) {
-		XBook book = _range.getNative().getSheet().getBook();
+		XBook book = (XBook)_book.getPoiBook();
 		org.zkoss.poi.ss.usermodel.Font font = book.createFont();
 
-		EditableFont nf = new EditableFontImpl(((BookImpl)_range.getBook()).getRef(),new SimpleRef<org.zkoss.poi.ss.usermodel.Font>(font));
+		EditableFont nf = new EditableFontImpl(((BookImpl)_book).getRef(),new SimpleRef<org.zkoss.poi.ss.usermodel.Font>(font));
 		if(src!=null){
 			((EditableFontImpl)nf).copyAttributeFrom(src);
 		}
@@ -76,7 +78,7 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 	}
 
 	public Color createColorFromHtmlColor(String htmlColor) {
-		Book book = _range.getBook();
+		Book book = _book;
 		org.zkoss.poi.ss.usermodel.Color color = BookHelper.HTMLToColor(
 				((BookImpl) book).getNative(), htmlColor);// never null
 		return new ColorImpl(((BookImpl) book).getRef(),
@@ -86,7 +88,7 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 	public Font findFont(Boldweight boldweight, Color color,
 			int fontHeight, String fontName, boolean italic,
 			boolean strikeout, TypeOffset typeOffset, Underline underline) {
-		Book book = _range.getBook();
+		Book book = _book;
 
 		org.zkoss.poi.ss.usermodel.Font font;
 
@@ -97,5 +99,25 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 				EnumUtil.toFontUnderline(underline));
 		return font == null ? null : new FontImpl(((BookImpl) book).getRef(),
 				new SimpleRef<org.zkoss.poi.ss.usermodel.Font>(font));
+	}
+
+	
+	//TODO ZSS-424 get exception when undo after save
+	@Override
+	public boolean isAvailable(CellStyle style) {
+		XBook book = (XBook)_book.getPoiBook();
+		org.zkoss.poi.ss.usermodel.CellStyle cs = ((CellStyleImpl)style).getRef().get();
+		org.zkoss.poi.ss.usermodel.CellStyle csidx;
+		if(cs instanceof HSSFCellStyle){
+			//no zss-424 in hssf, return directly
+			return true;
+		}else if(cs instanceof XSSFCellStyle){
+			try{
+				((XSSFCellStyle)cs).getCoreXf().getXfId();
+			}catch(org.apache.xmlbeans.impl.values.XmlValueDisconnectedException x){
+				return false;
+			}
+		}
+		return true;
 	}
 }

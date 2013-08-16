@@ -94,7 +94,7 @@ public class RangeImpl implements Range{
 	
 	public CellStyleHelper getCellStyleHelper(){
 		if(_cellStyleHelper==null){
-			_cellStyleHelper = new CellStyleHelperImpl(this);
+			_cellStyleHelper = new CellStyleHelperImpl(getBook());
 		}
 		return _cellStyleHelper;
 	}
@@ -847,6 +847,10 @@ public class RangeImpl implements Range{
 	@Override
 	public int getColumnCount() {
 		return _range.getLastColumn()-_range.getColumn()+1;
+	}
+	@Override
+	public String asString() {
+		return Ranges.getAreaReferenceString(getSheet(), getRow(),getColumn(),getLastRow(),getLastColumn());
 	}
 		
 
