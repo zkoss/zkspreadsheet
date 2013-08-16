@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.poi.ss.formula.eval.NotImplementedException;
 import org.zkoss.poi.ss.usermodel.ErrorConstants;
+import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
@@ -39,7 +40,7 @@ import org.zkoss.zss.model.sys.XBook;
  * ZSS-389.
  * ZSS-395.
  */
-public class Issue200To400 {
+public class Issue200Test {
 	
 	private static Book _workbook;
 	
@@ -148,10 +149,10 @@ public class Issue200To400 {
 	
 	/**
 	 * cut a merged cell and paste to another cell, the original cell doesn't become unmerged cells
-	 * ¢x   1    ¢x
-	 * ¢x¢w¢w¢w¢w¢w¢w¢w¢w¢x
-	 * ¢x 4¢x 5 ¢x6¢x
-	 * ¢x 7¢x   ¢x9¢x
+	 * ï¿½x   1    ï¿½x
+	 * ï¿½xï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½x
+	 * ï¿½x 4ï¿½x 5 ï¿½x6ï¿½x
+	 * ï¿½x 7ï¿½x   ï¿½x9ï¿½x
 	 * 
 	 * 1 is a horizontal merged cell 1 x 3.
 	 * 4 is a vertical merged cell 2 x 1.
@@ -317,10 +318,10 @@ public class Issue200To400 {
 	}
 	
 	/**
-	 * ¢x   1    ¢x
-	 * ¢x¢w¢w¢w¢w¢w¢w¢w¢w¢x
-	 * ¢x 4¢x 5 ¢x6¢x
-	 * ¢x 7¢x   ¢x9¢x
+	 * ï¿½x   1    ï¿½x
+	 * ï¿½xï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½x
+	 * ï¿½x 4ï¿½x 5 ï¿½x6ï¿½x
+	 * ï¿½x 7ï¿½x   ï¿½x9ï¿½x
 	 * 
 	 * 1 is a horizontal merged cell 1 x 3.
 	 * 4 is a vertical merged cell 2 x 1.
@@ -479,11 +480,11 @@ public class Issue200To400 {
 	}
 	
 	/**
-	 * ¢x 1 2  3 ¢x
-	 * ¢x¢w¢w¢w¢w¢w¢w¢w¢w¢x
-	 * ¢x   4    |
-	 * |¢w¢w¢w¢w¢w¢w¢w¢w¢x 
-	 * ¢x 7 8  9 ¢x
+	 * ï¿½x 1 2  3 ï¿½x
+	 * ï¿½xï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½x
+	 * ï¿½x   4    |
+	 * |ï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½x 
+	 * ï¿½x 7 8  9 ï¿½x
 	 * 
 	 * 4 is a horizontal merged cell 1 x 3.
 	 * paste 1 to 4.
@@ -532,11 +533,11 @@ public class Issue200To400 {
 	}
 	
 	/**
-	 * ¢x   1    ¢x
-	 * ¢x¢w¢w¢w¢w¢w¢w¢w¢w¢x
-	 * ¢x 4 5 6  |
-	 * |¢w¢w¢w¢w¢w¢w¢w¢w¢x 
-	 * ¢x 7 8  9 ¢x
+	 * ï¿½x   1    ï¿½x
+	 * ï¿½xï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½x
+	 * ï¿½x 4 5 6  |
+	 * |ï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½x 
+	 * ï¿½x 7 8  9 ï¿½x
 	 * 
 	 * 1 is a horizontal merged cell 1 x 3.
 	 * paste 1 to 4.

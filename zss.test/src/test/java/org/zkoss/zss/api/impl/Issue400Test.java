@@ -7,6 +7,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
@@ -22,7 +23,7 @@ import org.zkoss.zss.api.model.Sheet;
  * @author kuro
  *
  */
-public class Issue400To600 {
+public class Issue400Test {
 	
 	private static Book _workbook;
 	

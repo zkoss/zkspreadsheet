@@ -2,12 +2,14 @@ package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
 import java.io.InputStream;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.zkoss.util.resource.ClassLocator;
+import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
@@ -59,10 +61,10 @@ public class CutAPITest {
 	 * Cut from one sheet then paste to another sheet will not unmerge source cell on UI.
 	 * Server side is clean.
 	 * 
-	 * ¢x   1    ¢x
-	 * ¢x¢w¢w¢w¢w¢w¢w¢w¢w¢x
-	 * ¢x 4¢x 5 ¢x6¢x
-	 * ¢x 7¢x   ¢x9¢x
+	 * ï¿½x   1    ï¿½x
+	 * ï¿½xï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½x
+	 * ï¿½x 4ï¿½x 5 ï¿½x6ï¿½x
+	 * ï¿½x 7ï¿½x   ï¿½x9ï¿½x
 	 * 
 	 * 1 is a horizontal merged cell 1 x 3.
 	 * 4 is a vertical merged cell 2 x 1.
@@ -136,10 +138,10 @@ public class CutAPITest {
 	}
 	
 	/**
-	 * ¢x   1    ¢x
-	 * ¢x¢w¢w¢w¢w¢w¢w¢w¢w¢x
-	 * ¢x 4¢x 5 ¢x6¢x
-	 * ¢x 7¢x   ¢x9¢x
+	 * ï¿½x   1    ï¿½x
+	 * ï¿½xï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½x
+	 * ï¿½x 4ï¿½x 5 ï¿½x6ï¿½x
+	 * ï¿½x 7ï¿½x   ï¿½x9ï¿½x
 	 * 
 	 * 1 is a horizontal merged cell 1 x 3.
 	 * 4 is a vertical merged cell 2 x 1.
@@ -207,10 +209,10 @@ public class CutAPITest {
 	}
 	
 	/**
-	 * ¢x   1    ¢x
-	 * ¢x¢w¢w¢w¢w¢w¢w¢w¢w¢x
-	 * ¢x 4¢x 5 ¢x6¢x
-	 * ¢x 7¢x   ¢x9¢x
+	 * ï¿½x   1    ï¿½x
+	 * ï¿½xï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½x
+	 * ï¿½x 4ï¿½x 5 ï¿½x6ï¿½x
+	 * ï¿½x 7ï¿½x   ï¿½x9ï¿½x
 	 * 
 	 * 1 is a horizontal merged cell 1 x 3.
 	 * 4 is a vertical merged cell 2 x 1.

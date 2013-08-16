@@ -1,4 +1,4 @@
-package org.zkoss.zss.api.impl;
+package org.zkoss.zss;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,5 +26,5 @@ public class Setup {
 		}
 	}
 	
-	static void touch() {};
+	public static void touch() {};
 }

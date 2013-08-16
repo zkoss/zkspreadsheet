@@ -33,6 +33,7 @@ import org.zkoss.poi.hssf.usermodel.HSSFChart.HSSFSeries;
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.util.resource.ClassLocator;
+import org.zkoss.zss.Setup;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.impl.ExcelImporter;
 import org.zkoss.zss.model.sys.impl.HSSFBookImpl;
@@ -51,6 +52,8 @@ public class PiechartXlsChartTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		Setup.touch();
+		
 		final String filename = "piechart.xls";
 		final InputStream is = new ClassLocator().getResourceAsStream(filename);
 		_book = (XBook) new ExcelImporter().imports(is, filename);
@@ -60,8 +63,6 @@ public class PiechartXlsChartTest {
 		assertEquals(filename, ((XBook)_book).getBookName());
 		assertEquals("Sheet1", _book.getSheetName(0));
 		assertEquals(0, _book.getSheetIndex("Sheet1"));
-		Library.setProperty("org.zkoss.zss.model.EscherAggregate.class", "org.zkoss.zssex.model.impl.ZKEscherAggregate");
-		Library.setProperty("org.zkoss.zss.model.EscherAggregate.UTEST.class", "org.zkoss.zssex.model.impl.ZKEscherAggregate");		
 	}
 
 	/**

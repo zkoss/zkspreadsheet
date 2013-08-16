@@ -5,6 +5,7 @@ import java.io.InputStream;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;

@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
@@ -82,10 +83,10 @@ public class PasteTest {
 	}
 	
 	/**
-	 * ¢x   1    ¢x
-	 * ¢x¢w¢w¢w¢w¢w¢w¢w¢w¢x
-	 * ¢x 4¢x 5 ¢x6¢x
-	 * ¢x 7¢x   ¢x9¢x
+	 * ï¿½x   1    ï¿½x
+	 * ï¿½xï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½x
+	 * ï¿½x 4ï¿½x 5 ï¿½x6ï¿½x
+	 * ï¿½x 7ï¿½x   ï¿½x9ï¿½x
 	 * 
 	 * 1 is a horizontal merged cell 1 x 3.
 	 * 4 is a vertical merged cell 2 x 1.
@@ -148,10 +149,10 @@ public class PasteTest {
 	}
 	
 	/**
-	 * ¢x   1    ¢x
-	 * ¢x¢w¢w¢w¢w¢w¢w¢w¢w¢x
-	 * ¢x 4¢x 5 ¢x6¢x
-	 * ¢x 7¢x   ¢x9¢x
+	 * ï¿½x   1    ï¿½x
+	 * ï¿½xï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½wï¿½x
+	 * ï¿½x 4ï¿½x 5 ï¿½x6ï¿½x
+	 * ï¿½x 7ï¿½x   ï¿½x9ï¿½x
 	 * 
 	 * 1 is a horizontal merged cell 1 x 3.
 	 * 4 is a vertical merged cell 2 x 1.
