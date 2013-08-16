@@ -1431,8 +1431,6 @@
 	padding: 0;
 }
 
-<%-- TODO zss powered
 .z-initing {
 	background-image: url('http://www.zkoss.org/zk/img/${s:encodeWithZSS("zsspowered.png")}');
 }
- --%>
