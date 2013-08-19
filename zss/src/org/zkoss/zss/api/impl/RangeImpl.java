@@ -824,7 +824,7 @@ public class RangeImpl implements Range{
 	}
 	
 	public String toString(){
-		return Ranges.getAreaReferenceString(getSheet(), getRow(),getColumn(),getLastRow(),getLastColumn());
+		return Ranges.getAreaRefString(getSheet(), getRow(),getColumn(),getLastRow(),getLastColumn());
 	}
 	
 	/**
@@ -852,7 +852,7 @@ public class RangeImpl implements Range{
 	}
 	@Override
 	public String asString() {
-		return Ranges.getAreaReferenceString(getSheet(), getRow(),getColumn(),getLastRow(),getLastColumn());
+		return Ranges.getAreaRefString(getSheet(), getRow(),getColumn(),getLastRow(),getLastColumn());
 	}
 		
 

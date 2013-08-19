@@ -45,11 +45,6 @@ public class CellRef {
 	}
 	
 	@Override
-	public String toString(){
-		return "row:"+_row+",column:"+_column;
-	}
-	
-	@Override
 	public int hashCode() {
 		return _row << 14 + _column;
 	}

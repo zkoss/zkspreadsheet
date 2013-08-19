@@ -99,23 +99,23 @@ public class Ranges {
 	}
 	
 	/**
-	 * Gets cell reference expression
+	 * Gets cell reference expression string
 	 * @param row row
 	 * @param col column
 	 * @return the cell reference string (e.g. A1)
 	 */
-	public static String getCellReferenceString(int row,int col){
-		return getCellReferenceString(null,row,col);
+	public static String getCellRefString(int row,int col){
+		return getCellRefString(null,row,col);
 	}
 	
 	/**
-	 * Gets cell reference expression
+	 * Gets cell reference expression string
 	 * @param sheet sheet
 	 * @param row row
 	 * @param col column
 	 * @return the cell reference string (e.g. Sheet1!A1)
 	 */
-	public static String getCellReferenceString(Sheet sheet,int row,int col){
+	public static String getCellRefString(Sheet sheet,int row,int col){
 		org.zkoss.poi.ss.util.CellReference cf = new org.zkoss.poi.ss.util.CellReference(sheet==null?null:sheet.getSheetName(),row, col,false,false);
 		return cf.formatAsString();
 	}
@@ -128,18 +128,9 @@ public class Ranges {
 	 * @param rCol right/last column
 	 * @return the area reference string (e.g. A1:B2)
 	 */
-	public static String getAreaReferenceString(int tRow, int lCol, int bRow, int rCol){
-		return getAreaReferenceString(null,tRow, lCol, bRow, rCol);
+	public static String getAreaRefString(int tRow, int lCol, int bRow, int rCol){
+		return getAreaRefString(null,tRow, lCol, bRow, rCol);
 	}
-	
-//	/**
-//	 * Gets area reference expression
-//	 * @param area area
-//	 * @return the area reference string (e.g. A1:B2)
-//	 */
-//	public static String getAreaReference(Rect area){
-//		return getAreaReference(area.getTop(),area.getLeft(),area.getBottom(),area.getRight());
-//	}	
 	
 	/**
 	 * Gets area reference expression
@@ -150,7 +141,7 @@ public class Ranges {
 	 * @param rCol right column
 	 * @return the area reference string (e.g. Sheet1!A1:B2)
 	 */
-	public static String getAreaReferenceString(Sheet sheet, int tRow, int lCol, int bRow, int rCol){
+	public static String getAreaRefString(Sheet sheet, int tRow, int lCol, int bRow, int rCol){
 		String sn = sheet==null?null:sheet.getSheetName();
 		org.zkoss.poi.ss.util.AreaReference af = new org.zkoss.poi.ss.util.AreaReference(new org.zkoss.poi.ss.util.CellReference(sn,tRow,lCol,false,false), new org.zkoss.poi.ss.util.CellReference(sn,bRow,rCol,false,false));
 		return af.formatAsString();
@@ -162,25 +153,25 @@ public class Ranges {
 	 * @param area area
 	 * @return the area reference string (e.g. Sheet1!A1:B2)
 	 */
-	public static String getAreaReferenceString(Sheet sheet, AreaRef area){
-		return getAreaReferenceString(sheet, area.getRow(),area.getColumn(),area.getLastRow(),area.getLastColumn());
+	public static String getAreaRefString(Sheet sheet, AreaRef area){
+		return getAreaRefString(sheet, area.getRow(),area.getColumn(),area.getLastRow(),area.getLastColumn());
 	}
 	
 	/**
-	 * Get column reference
+	 * Gets column reference string
 	 * @param column column
 	 * @return the column reference string (e.g A, AB)
 	 */
-	public static String getColumnReferenceString(int column){
+	public static String getColumnRefString(int column){
 		return org.zkoss.poi.ss.util.CellReference.convertNumToColString(column);
 	}
 	
 	/**
-	 * Get row reference
+	 * Gets row reference string
 	 * @param row row
 	 * @return the column reference string (e.g 1, 12)
 	 */
-	public static String getRowReferenceString(int row){
+	public static String getRowRefString(int row){
 		int excelRowNum = row + 1;
 		return Integer.toString(excelRowNum);
 	}

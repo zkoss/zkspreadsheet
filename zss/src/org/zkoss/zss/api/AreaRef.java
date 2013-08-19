@@ -20,7 +20,7 @@ package org.zkoss.zss.api;
 
 
 /**
- * A class to represent a area reaference with 4 value : row(top row), column(left column), last row(bottom row) and last column(right column) 
+ * A class to represent a area reference with 4 value : row(top row), column(left column), last row(bottom row) and last column(right column) 
 
  * @author Dennis.Chen
  * @since 3.0.0
@@ -84,10 +84,6 @@ public class AreaRef {
 	
 	public Object cloneSelf(){
 		return (AreaRef)new AreaRef(_row,_column,_lastRow,_lastColumn);
-	}
-	
-	public String toString(){
-		return "left:"+_column+",top:"+_row+",right:"+_lastColumn+",bottom:"+_lastRow;
 	}
 	
 	public boolean contains(int tRow, int lCol, int bRow, int rCol) {
