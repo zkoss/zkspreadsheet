@@ -1,9 +1,9 @@
 $ZSS/dist/lib/zcommon.jar
 $ZSS/dist/lib/ext/commons-logging.jar
-$ZSS/dist/lib/ext/log4j-1.2.13.jar
-$ZSS/dist/lib/ext/dom4j-1.6.1.jar
-$ZSS/dist/lib/ext/xmlbeans-2.3.0.jar
-$ZSS/dist/lib/ext/stax-api-1.0.1.jar
-$ZSS/dist/lib/ext/junit-4.8.1.jar
-$ZSS/dist/lib/ext/ooxml-schemas-1.1.jar
-$ZSS/dist/lib/ext/commons-codec-1.4.jar
+$ZSS/dist/lib/ext/log4j.jar
+$ZSS/dist/lib/ext/dom4j.jar
+$ZSS/dist/lib/ext/xmlbeans.jar
+$ZSS/dist/lib/ext/stax-api.jar
+$ZSS/dist/lib/ext/junit.jar
+$ZSS/dist/lib/ext/ooxml-schemas.jar
+$ZSS/dist/lib/ext/commons-codec.jar
