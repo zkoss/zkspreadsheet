@@ -1,105 +1,121 @@
  ------------
 ZK Spreadsheet 3.0.0 RC
-*Features:
-  ZSS-338 When share book, could the friend focus shows user name of another editor
-  ZSS-353 Support head tag in JSP/JSF
-  ZSS-388 Support to freeze row of column of sheet
-  ZSS-394 Support undo/redo of cell operation
-  ZSS-396 provide an API to cut and paste cells at once
+** New Feature
+    * [ZSS-253] - click component away from Spreadsheet but keeps focus
+    * [ZSS-338] - When share book, could the friend focus shows user name of another editor
+    * [ZSS-353] - Support zkhead tag in JSP
+    * [ZSS-388] - Support to freeze row of column of sheet
+    * [ZSS-394] - Support undo/redo of cell operation
+    * [ZSS-396] - provide an API to cut and paste cells at once
 
-*Bug
-  ZSS-224 text overflow doesn't work correctly
-  ZSS-268 get exception if I listen to onValidateDrop
-  ZSS-304 hiding columns doesn't work
-  ZSS-229 Only the last picture can be moved
-  ZSS-325 Cannot copy an area of cells from Excel to Spreadsheet
-  ZSS-275 Range.getRow() return unexpected row number
-  ZSS-327 server-side paste data will be replaced by client-side paste
-  ZSS-310 Rename a sheet to its original should not show up a error message
-  ZSS-292 left click row header (or column header) appears context menu
-  ZSS-324 Hiding all columns causes non-stopping AU and columns cannot be unhided
-  ZSS-291 sorting a group of number with style causes null pointer exception
-  ZSS-333 Preload bug
-  ZSS-332 Chart was moved if I move another chart in different book in different spareadsheet in same desktop
-  ZSS-334 A book can't reset to another book-series
-  ZSS-335 When share book, the friend focus color was always change when I switch tab
-  ZSS-343 ActiveRangeHelper caches sheet object and doesn't release after reload a book
-  ZSS-308 when renaming a sheet, if you click another sheet, the original sheet won't be renamed
-  ZSS-255 "data validation" setting causes null pointer exception
-  ZSS-351 The validation dialog can't press "yes" button to force input a invalid text when using list validation
-  ZSS-254 some "accounting" data format causes NullPointerException
-  ZSS-352 Can't set share scope of a book if it is not in zk execution.
-  ZSS-317 When importing a xlsx file with images exported from Spreadsheet 2nd time, an exception is thrown
-  ZSS-246 Exception when toggle auto filter
-  ZSS-259 merges cells have missing bottom border when displaying a excel file
-  ZSS-245 Exception when delete columns
-  ZSS-326 Insert a chart after deleting first chart causes an exception
-  ZSS-349 When adding a chart, if selected cells contains errors, spreadsheet throw a runtime exception
-  ZSS-367 Attribute "ctrlKeys" doesn't work
-  ZSS-257 unsupported charts cause spreadsheet crash
-  ZSS-140 Sheet with XYModel chart throw NullPointerException (xls format)
-  ZSS-137 Sheet with chart throw NullPointerException (xls format)
-  ZSS-300 When pasting range overlaps copying range, pasting works incorrectly
-  ZSS-113 delete sheet's chart cause NPE, xls format only
-  ZSS-286 Focused Cell is getting completely white in IE10
-  ZSS-383 In IE browser, pop-up format dialog (right click on cell) can't be operated.
-  ZSS-302 some rows can only be deleted with twice deletion
-  ZSS-260 Data validation doesn't work correctly
-  ZSS-387 get js error when resize row height with row freeze
-  ZSS-315 paste a text on a merged cell will make the cell unmerged
-  ZSS-277 paste a horizontal merged cell in transpose doesn't become a vertical merged cell
-  ZSS-390 browser took long time without response if I use freeze panel when select whole row or whole column
-  ZSS-389 Shift cell up doesn't work correctly
-  ZSS-386 Inserting a picture after deleting first picture causes an exception
-  ZSS-331 select all cell has poor performance even not many cells
-  ZSS-391 Filter popup menu is hidden by freeze column
-  ZSS-354 delete the first column of merged cell and alignment of cells will be chaos
-  ZSS-393 Sheet out of sync after cut to different sheet
-  ZSS-290 after merging and unmerging cells, input and style both work incorrect
-  ZSS-395 Unmerge cell operation doesn't work when the selected range overlap part of merged range.
-  ZSS-298 perform "clear style" on a merged cell doesn't split it back to original unmerged cells.
-  ZSS-301 cut a merged cell and paste to another cell, the original cell doesn't become unmerged cells.
-  ZSS-398 Sheetbar protectSheet menuitem check state is not correct
-  ZSS-397 Once deleting a picture on xlsx format, the exported xlsx file cannot be load by Excel or pictures are incorrect.
-  ZSS-358 Exported Excel 2007 file with charts cannot be read by Excel 2007
-  ZSS-406 Spreadsheet doesn't be release when use application share scope
-  ZSS-407 Shouldn't allow to drag row/column size in protected sheet
-  ZSS-357 if a file contains #REF! cells, it will throw a exception and can't be rendered when importing such file
-  ZSS-410 Undo style action get NPE in 2003
-  ZSS-415 Get Exception after save and load a sheet that has comment in 2003
-  ZSS-408 Cannot save 2003 format if the file contains auto filter configuration.
-  ZSS-414 get NPE when paste from client text
-  ZSS-409 Set font color doesn't work in 2003
+** Bug
+    * [ZSS-113] - delete sheet's chart cause NPE, xls format only
+    * [ZSS-137] - Sheet with chart throw NullPointerException (xls format)
+    * [ZSS-140] - Sheet with XYModel chart throw NullPointerException (xls format)
+    * [ZSS-224] - text overflow doesn't work correctly
+    * [ZSS-229] - Only the last picture can be moved
+    * [ZSS-235] - Typo, in toolbar there is 'Outsizde Borders'
+    * [ZSS-237] - Exception if rename to same sheet name.
+    * [ZSS-245] - Exception when delete columns
+    * [ZSS-246] - Exception when toggle auto filter
+    * [ZSS-254] - some "accounting" data format causes NullPointerException
+    * [ZSS-255] - "data validation" setting causes null pointer exception
+    * [ZSS-257] - unsupported charts cause spreadsheet crash.
+    * [ZSS-259] - merges cells have missing bottom border when displaying a excel file
+    * [ZSS-260] - Data validation doesn't work correctly
+    * [ZSS-261] - Math formula SERIESSUM evaluating error
+    * [ZSS-264] - Some text formula are not found
+    * [ZSS-265] - some Info formulas are not found
+    * [ZSS-266] - Info formula "ISERR" is evaluated to a wrong result
+    * [ZSS-267] - error evaluating some date formulas
+    * [ZSS-268] - get exception if I listen to onValidateDrop
+    * [ZSS-269] - error evaluating some financial formulas
+    * [ZSS-275] - Range.getRow() return unexpected row number
+    * [ZSS-277] - paste a horizontal merged cell in transpose doesn't become a vertical merged cell
+    * [ZSS-286] - Focused Cell is getting completely white in IE10
+    * [ZSS-290] - after merging and unmerging cells, input and style both work incorrect 
+    * [ZSS-291] - sorting a group of number with style causes null pointer exception
+    * [ZSS-292] - left click row header (or column header) appears context menu
+    * [ZSS-293] - vertical merged cells must be selected by clicking first cell
+    * [ZSS-296] - "Protect Sheet" doesn't prevents cells from using auto filter
+    * [ZSS-298] - perform "clear style" on a merged cell doesn't split it back to original unmerged cells
+    * [ZSS-300] - when pasting range overlaps copying range, pasting works incorrectly
+    * [ZSS-301] - cut a merged cell and paste to another cell, the original cell doesn't become unmerged cells
+    * [ZSS-302] - some rows can only be deleted with twice deletion
+    * [ZSS-304] - hiding columns doesn't work
+    * [ZSS-307] - move sheet left should not move to first sheet
+    * [ZSS-308] - when renaming a sheet, if you click another sheet, the original sheet won't be renamed
+    * [ZSS-314] - The dependency "commons-io" is not configured in ZSS
+    * [ZSS-315] - paste a text on a merged cell will make the cell unmerged
+    * [ZSS-317] - When importing a xlsx file with images exported from Spreadsheet 2nd time, an exception is thrown
+    * [ZSS-318] - A Zsshtml project's resource file (excelStyle.css) is not included in compiled result
+    * [ZSS-321] - Unsupported formulas cause an exception and crashed
+    * [ZSS-324] - Hiding all columns causes non-stopping AU and columns cannot be unhided
+    * [ZSS-325] - Cannot copy an area of cells from Excel to Spreadsheet
+    * [ZSS-326] - Insert a chart after deleting first chart causes an exception
+    * [ZSS-327] - server-side paste data will be replaced by client-side paste
+    * [ZSS-331] - select all cell has poor performance even not many cells
+    * [ZSS-332] - Chart was moved if I move another chart in different book in different sparesheet in same desktop
+    * [ZSS-333] - Preload bug
+    * [ZSS-334] - A book can't reset to another book-series
+    * [ZSS-335] - When share book, the friend focus color was always change when I switch tab
+    * [ZSS-341] - 2 statistical formulas throw NotImplementedException
+    * [ZSS-342] - When a ZK defined formula has missing required arguments, it throws NotImplementedException
+    * [ZSS-343] - ActiveRangeHelper caches sheet object and doesn't release after reload a book
+    * [ZSS-349] - When adding a chart, if selected cells contains errors, spreadsheet throw a runtime exception
+    * [ZSS-351] - The validation dialog can't press "yes" button to force input a invalid text when using list validation
+    * [ZSS-352] - Can't set share scope of a book if it is not in zk execution.
+    * [ZSS-354] - delete the first column of merged cell and alignment of cells will be chaos
+    * [ZSS-355] - When given start date is later than end date In NETWORKDAYS(), it returns #NAME?
+    * [ZSS-357] - if a file contains #REF! cells, it will throw a exception and can't be rendered when importing such file
+    * [ZSS-358] - Exported Excel 2007 file with charts cannot be read by Excel 2007
+    * [ZSS-367] - Attribute "ctrlKeys" doesn't work
+    * [ZSS-383] - In IE browser, pop-up format dialog (right click on cell) can't be operated.
+    * [ZSS-386] - Inserting a picture after deleting first picture causes an exception
+    * [ZSS-387] - get js error when resize row height with row freeze
+    * [ZSS-389] - Shift cell up doesn't work correctly
+    * [ZSS-390] - browser took long time without response if I use freeze panel when select whole row or whole column
+    * [ZSS-391] - Filter popup menu is hidden by freeze column
+    * [ZSS-393] - Sheet out of sync after cut to different sheet
+    * [ZSS-395] - Unmerge cell operation doesn't work when the selected range overlap part of merged range.
+    * [ZSS-397] - Once deleting a picture on xlsx format, the exported xlsx file cannot be load by Excel or pictures are incorrect.
+    * [ZSS-398] - Sheetbar protectSheet menuitem check state is not correct
+    * [ZSS-406] - Spreadsheet doesn't be release when use application share scope
+    * [ZSS-407] - Shouldn't allow to drag row/column size in protected sheet
+    * [ZSS-408] - Cannot save 2003 format if the file contains auto filter configuration.
+    * [ZSS-410] - Undo style action get NPE in 2003
+    * [ZSS-415] - Get Exception after save and load a sheet that has comment in 2003
+    * [ZSS-419] - if delete two or more rows at once, the exported file will make Excel error when loading
 
-* Upgrade Notes
-  + Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
+** Upgrade Notes
+  * Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
     that inside 'org.zkoss.zss.api' & 'org.zkoss.zss.api.model'
-  + Spreadsheet Api changes:
-    + get/set Book/Sheet API use the new classes of Book & Sheet that inside 'org.zkoss.zss.api.model'
-    + get/set rowfreeze and columnfreeze are deprecated, use Sheet#getColumnFreeze(),Sheet#getRowFreeze() and Range#setFreezePanel(int, int)
-  + Rect and Position (in org.zkoss.zss.ui) are deprecated, please use CellRef and AreaRef instead (in org.zkoss.zss.api) 
-  + Action, ActionHandler are removed. To override a default action, use AuxAction, UserActionManager instead.
-  + Constructor of CellSelectionEvent is changed from left,top,right,bottom to topRow,leftCol,bottomRow,rightColumn
-  + SelectionChangeEvent is renamed to CellSelectionUpdateEvent and arguments sequence is also redefined.
-  + HeaderEvent is renamed to HeaderUpdateEvent
-  + SheetCreateEvent, SheetSelectedEvent and SheetUpdateEvent are removed, use SheetEvent instead.
-  + FilterMouseEvent is renamed to CellFilterEvent
-  + HyperlinkEvent is renamed to CellHyperlinkEvent
-  + Event name change:
+  * Spreadsheet Api changes:
+    * get/set Book/Sheet API use the new classes of Book & Sheet that inside 'org.zkoss.zss.api.model'
+    * get/set rowfreeze and columnfreeze are deprecated, use Sheet#getColumnFreeze(),Sheet#getRowFreeze() and Range#setFreezePanel(int, int)
+  * Rect and Position (in org.zkoss.zss.ui) are deprecated, please use CellRef and AreaRef instead (in org.zkoss.zss.api) 
+  * Action, ActionHandler are removed. To override a default action, use AuxAction, UserActionManager instead.
+  * Constructor of CellSelectionEvent is changed from left,top,right,bottom to topRow,leftCol,bottomRow,rightColumn
+  * SelectionChangeEvent is renamed to CellSelectionUpdateEvent and arguments sequence is also redefined.
+  * HeaderEvent is renamed to HeaderUpdateEvent
+  * SheetCreateEvent, SheetSelectedEvent and SheetUpdateEvent are removed, use SheetEvent instead.
+  * FilterMouseEvent is renamed to CellFilterEvent
+  * HyperlinkEvent is renamed to CellHyperlinkEvent
+  * Event name change:
     onValidateDrop > onCellValidator
     onFilter > onCellFilter
     onHeaderSize > onHeaderUpdate
     onSelectionChange > onCellSelectionChange
 	  onCellFocused > onCellFocus
-  + Event name change:
+  * Event name change:
     onSheetNameChange > onAfterSheetNameChange
     onSheetOrderChange > onAfterSheetOrderChange
     onSheetDelete > onAfterSheetDelete
     onSheetCreate > onAfterSheetCreate
     onCellChange > onAfterCellChange
-  + JSF
+  * JSF
     Main package is renamed to org.zkoss.zss.jsf, Component is renamed to JSFSpreadsheet
-  + JSP
+  * JSP
     Main package is renamed to org.zkoss.zss.jsp
 
 
