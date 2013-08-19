@@ -26,8 +26,6 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
@@ -53,7 +51,6 @@ import org.zkoss.poi.ss.usermodel.PivotTable;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellReference;
-import org.zkoss.poi.xssf.model.CommentsTable;
 import org.zkoss.poi.xssf.usermodel.XSSFCell;
 import org.zkoss.poi.xssf.usermodel.XSSFCellHelper;
 import org.zkoss.poi.xssf.usermodel.XSSFDrawing;
@@ -154,6 +151,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, startRow, 0, endRow, maxcol, n, false);
     	
     	//shift the rows (actually change the row number only)
+        List<Row> rowsToRemove = new ArrayList<Row>(); // ZSS-419: queue row for removing later, remove can't be perform in this loop 
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
@@ -161,7 +159,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
             if(rownum < startRow) {
                 // ZSS-302: before skipping, must remove rows of destination that don't be replaced   
                 if (canRemoveRow(startRow, endRow, n, rownum)) {
-                    it.remove();
+                    rowsToRemove.add(row);
                 } 
             	continue;
             }
@@ -169,8 +167,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
             final int newrownum = rownum + n;
             final boolean inbound = 0 <= newrownum && newrownum <= maxrow;
             if (!inbound) {
-            	row.removeAllCells();
-            	it.remove();
+            	rowsToRemove.add(row); 
             	continue;
             }
             
@@ -179,25 +176,31 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
             }
 
             if (canRemoveRow(startRow, endRow, n, rownum)) {
-                it.remove();
+            	rowsToRemove.add(row);
             } else if (rownum >= startRow && rownum <= endRow) {
                 new XSSFRowHelper(row).shift(n);
             }
-            if (moveComments) {
-	            final CommentsTable sheetComments = getCommentsTable(false);
-	            if(sheetComments != null){
-	                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
-	                CTCommentList lst = sheetComments.getCTComments().getCommentList();
-	                for (CTComment comment : lst.getCommentArray()) {
-	                    CellReference ref = new CellReference(comment.getRef());
-	                    if(ref.getRow() == rownum){
-	                        ref = new CellReference(rownum + n, ref.getCol());
-	                        comment.setRef(ref.formatAsString());
-	                    }
-	                }
-	            }
-            }
+    		// TODO ZSS-418: workaround, will fix it later
+//            if (moveComments) {
+//	            final CommentsTable sheetComments = getCommentsTable(false);
+//	            if(sheetComments != null){
+//	                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
+//	                CTCommentList lst = sheetComments.getCTComments().getCommentList();
+//	                for (CTComment comment : lst.getCommentArray()) {
+//	                    CellReference ref = new CellReference(comment.getRef());
+//	                    if(ref.getRow() == rownum){
+//	                        ref = new CellReference(rownum + n, ref.getCol());
+//	                        comment.setRef(ref.formatAsString());
+//	                    }
+//	                }
+//	            }
+//            }
         }
+        
+		// ZSS-419: remove a row not only remove it from map but also from real sheet XML
+		for(Row row : rowsToRemove) {
+			removeRow(row);
+		}
         
         //rebuild the _rows map ASAP or getRow(rownum) will be incorrect
         TreeMap<Integer, XSSFRow> rows = getRows();
@@ -354,6 +357,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, startRow, lCol, endRow, rCol, n, false);
         final boolean wholeRow = lCol == 0 && rCol == maxcol; 
     	
+        List<Row> rowsToRemove = new ArrayList<Row>(); // ZSS-419: queue row for removing later, remove can't be perform in this loop 
         final List<int[]> removePairs = new ArrayList<int[]>(); //row spans to be removed 
         final TreeMap<Integer, TreeMap<Integer, XSSFCell>> rowCells = new TreeMap<Integer, TreeMap<Integer, XSSFCell>>();
         int expectRownum = startRow; //handle sparse rows which might override destination row
@@ -377,8 +381,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
             
             final boolean inbound = 0 <= newRownum && newRownum <= maxrow;
             if (!inbound) {
-            	row.removeAllCells();
-            	it.remove();
+            	rowsToRemove.add(row);
             	continue;
             }
             
@@ -387,7 +390,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
 	                row.setHeight((short)-1);
 	            }
 	            if (canRemoveRow(startRow, endRow, n, rownum)) {
-	                it.remove();
+	                rowsToRemove.add(row);
 	            }
 	            else if (rownum >= startRow && rownum <= endRow) {
 	                new XSSFRowHelper(row).shift(n);
@@ -403,22 +406,28 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
             	}
             }
             
-            if (moveComments) {
-	            final CommentsTable sheetComments = getCommentsTable(false);
-	            if(sheetComments != null){
-	                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
-	                CTCommentList lst = sheetComments.getCTComments().getCommentList();
-	                for (CTComment comment : lst.getCommentArray()) {
-	                    CellReference ref = new CellReference(comment.getRef());
-	                    final int colnum = ref.getCol();
-	                    if(ref.getRow() == rownum && lCol <= colnum && colnum <= rCol){
-	                        ref = new CellReference(rownum + n, colnum);
-	                        comment.setRef(ref.formatAsString());
-	                    }
-	                }
-	            }
-            }
+            // TODO ZSS-418: workaround, will fix it later
+//            if (moveComments) {
+//	            final CommentsTable sheetComments = getCommentsTable(false);
+//	            if(sheetComments != null){
+//	                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
+//	                CTCommentList lst = sheetComments.getCTComments().getCommentList();
+//	                for (CTComment comment : lst.getCommentArray()) {
+//	                    CellReference ref = new CellReference(comment.getRef());
+//	                    final int colnum = ref.getCol();
+//	                    if(ref.getRow() == rownum && lCol <= colnum && colnum <= rCol){
+//	                        ref = new CellReference(rownum + n, colnum);
+//	                        comment.setRef(ref.formatAsString());
+//	                    }
+//	                }
+//	            }
+//            }
         }
+        
+		// ZSS-419: remove a row not only remove it from map but also from real sheet XML
+		for(Row row : rowsToRemove) {
+			removeRow(row);
+		}
 
         //rebuild rows ASAP or the getRow(rownum) will be incorrect
         if (wholeRow) {
@@ -628,30 +637,31 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         //TODO handle the page breaks
         //?
 
+		// TODO ZSS-418: workaround, will fix it later
         // Move comments from the source column to the
         //  destination column. Note that comments can
         //  exist for cells which are null
-        if (moveComments) {
-            final CommentsTable sheetComments = getCommentsTable(false);
-            if(sheetComments != null){
-                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
-                CTCommentList lst = sheetComments.getCTComments().getCommentList();
-                for (final Iterator<CTComment> it = lst.getCommentList().iterator(); it.hasNext();) {
-                	CTComment comment = it.next();
-                    CellReference ref = new CellReference(comment.getRef());
-                    final int colnum = ref.getCol();
-                    if(startCol <= colnum && colnum <= endCol){
-                    	int newColNum = colnum + n;
-                    	if (newColNum < 0 || newColNum > maxcol) { //out of bound, shall remove it
-                    		it.remove(); 
-                    	} else {
-	                        ref = new CellReference(ref.getRow(), newColNum);
-	                        comment.setRef(ref.formatAsString());
-                    	}
-                    }
-                }
-            }
-        }
+//        if (moveComments) {
+//            final CommentsTable sheetComments = getCommentsTable(false);
+//            if(sheetComments != null){
+//                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
+//                CTCommentList lst = sheetComments.getCTComments().getCommentList();
+//                for (final Iterator<CTComment> it = lst.getCommentList().iterator(); it.hasNext();) {
+//                	CTComment comment = it.next();
+//                    CellReference ref = new CellReference(comment.getRef());
+//                    final int colnum = ref.getCol();
+//                    if(startCol <= colnum && colnum <= endCol){
+//                    	int newColNum = colnum + n;
+//                    	if (newColNum < 0 || newColNum > maxcol) { //out of bound, shall remove it
+//                    		it.remove(); 
+//                    	} else {
+//	                        ref = new CellReference(ref.getRow(), newColNum);
+//	                        comment.setRef(ref.formatAsString());
+//                    	}
+//                    }
+//                }
+//            }
+//        }
         
         // Fix up column width if required
         int s, inc;
@@ -923,31 +933,32 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
 	        //?
         }
 
+		// TODO ZSS-418: workaround, will fix it later
         // Move comments from the source column to the
         //  destination column. Note that comments can
         //  exist for cells which are null
-        if (moveComments) {
-            final CommentsTable sheetComments = getCommentsTable(false);
-            if(sheetComments != null){
-                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
-                CTCommentList lst = sheetComments.getCTComments().getCommentList();
-                for (final Iterator<CTComment> it = lst.getCommentList().iterator(); it.hasNext();) {
-                	CTComment comment = it.next();
-                    CellReference ref = new CellReference(comment.getRef());
-                    final int colnum = ref.getCol();
-                    final int rownum = ref.getRow();
-                    if(startCol <= colnum && colnum <= endCol && tRow <= rownum && rownum <= bRow){
-                    	int newColNum = colnum + n;
-                    	if (newColNum < 0 || newColNum > maxcol) { //out of bound, shall remove it
-                    		it.remove(); 
-                    	} else {
-	                        ref = new CellReference(ref.getRow(), newColNum);
-	                        comment.setRef(ref.formatAsString());
-                    	}
-                    }
-                }
-            }
-        }
+//        if (moveComments) {
+//            final CommentsTable sheetComments = getCommentsTable(false);
+//            if(sheetComments != null){
+//                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
+//                CTCommentList lst = sheetComments.getCTComments().getCommentList();
+//                for (final Iterator<CTComment> it = lst.getCommentList().iterator(); it.hasNext();) {
+//                	CTComment comment = it.next();
+//                    CellReference ref = new CellReference(comment.getRef());
+//                    final int colnum = ref.getCol();
+//                    final int rownum = ref.getRow();
+//                    if(startCol <= colnum && colnum <= endCol && tRow <= rownum && rownum <= bRow){
+//                    	int newColNum = colnum + n;
+//                    	if (newColNum < 0 || newColNum > maxcol) { //out of bound, shall remove it
+//                    		it.remove(); 
+//                    	} else {
+//	                        ref = new CellReference(ref.getRow(), newColNum);
+//	                        comment.setRef(ref.formatAsString());
+//                    	}
+//                    }
+//                }
+//            }
+//        }
         
         // Fix up column width if required
         int s, inc;
@@ -1115,33 +1126,34 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         	}
         }
     	
+		// TODO ZSS-418: workaround, will fix it later
         // Move comments from the source column to the
         //  destination column. Note that comments can
         //  exist for cells which are null
-        if (moveComments) {
-            final CommentsTable sheetComments = getCommentsTable(false);
-            if(sheetComments != null){
-                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
-                CTCommentList lst = sheetComments.getCTComments().getCommentList();
-                for (final Iterator<CTComment> it = lst.getCommentList().iterator(); it.hasNext();) {
-                	CTComment comment = it.next();
-                    CellReference ref = new CellReference(comment.getRef());
-                    final int colnum = ref.getCol();
-                    final int rownum = ref.getRow();
-                    if(lCol <= colnum && colnum <= rCol && tRow <= rownum && rownum <= bRow){
-                    	int newColNum = colnum + nCol;
-                    	int newRowNum = rownum + nRow;
-                    	if (newColNum < 0 || newColNum > maxcol 
-                    		|| newRowNum < 0 || newRowNum > maxrow) { //out of bound, shall remove it 
-                    		it.remove(); 
-                    	} else {
-	                        ref = new CellReference(newRowNum, newColNum);
-	                        comment.setRef(ref.formatAsString());
-                    	}
-                    }
-                }
-            }
-        }
+//        if (moveComments) {
+//            final CommentsTable sheetComments = getCommentsTable(false);
+//            if(sheetComments != null){
+//                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
+//                CTCommentList lst = sheetComments.getCTComments().getCommentList();
+//                for (final Iterator<CTComment> it = lst.getCommentList().iterator(); it.hasNext();) {
+//                	CTComment comment = it.next();
+//                    CellReference ref = new CellReference(comment.getRef());
+//                    final int colnum = ref.getCol();
+//                    final int rownum = ref.getRow();
+//                    if(lCol <= colnum && colnum <= rCol && tRow <= rownum && rownum <= bRow){
+//                    	int newColNum = colnum + nCol;
+//                    	int newRowNum = rownum + nRow;
+//                    	if (newColNum < 0 || newColNum > maxcol 
+//                    		|| newRowNum < 0 || newRowNum > maxrow) { //out of bound, shall remove it 
+//                    		it.remove(); 
+//                    	} else {
+//	                        ref = new CellReference(newRowNum, newColNum);
+//	                        comment.setRef(ref.formatAsString());
+//                    	}
+//                    }
+//                }
+//            }
+//        }
         
         // Shift Hyperlinks which have been moved
         shiftHyperlinks(tRow, bRow, nRow, lCol, rCol, nCol);

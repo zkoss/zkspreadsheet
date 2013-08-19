@@ -85,9 +85,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.CellValue;
 import org.zkoss.poi.ss.usermodel.Chart;
-import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Color;
-import org.zkoss.poi.ss.usermodel.Comment;
 import org.zkoss.poi.ss.usermodel.CreationHelper;
 import org.zkoss.poi.ss.usermodel.DataFormatter;
 import org.zkoss.poi.ss.usermodel.DataValidation;
@@ -96,7 +94,6 @@ import org.zkoss.poi.ss.usermodel.DataValidationConstraint.OperatorType;
 import org.zkoss.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.zkoss.poi.ss.usermodel.DataValidationHelper;
 import org.zkoss.poi.ss.usermodel.DateUtil;
-import org.zkoss.poi.ss.usermodel.Drawing;
 import org.zkoss.poi.ss.usermodel.ErrorConstants;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Font;
@@ -1555,26 +1552,27 @@ public final class BookHelper {
 	}
 	
 	private static void copyComment(Cell srcCell, Cell dstCell) {
-		final Comment srcComment = srcCell.getCellComment();
-		Comment dstComment = dstCell.getCellComment();
-		if (srcComment != null) {
-			if (dstComment == null) {
-				final XSheet dstSheet = (XSheet)dstCell.getSheet();
-				final Workbook dstBook = dstSheet.getWorkbook();
-				final CreationHelper dstFactory = dstBook.getCreationHelper();
-				final Drawing drawing = dstSheet.createDrawingPatriarch();
-				final ClientAnchor anchor = dstFactory.createClientAnchor();
-				dstComment = drawing.createCellComment(anchor);
-			}
-			dstComment.setString(srcComment.getString());
-			dstComment.setAuthor(srcComment.getAuthor());
-			dstComment.setVisible(srcComment.isVisible());
-			dstCell.setCellComment(dstComment);
-		} else { //srcComment is null
-			if (dstComment != null) {
-				dstCell.removeCellComment();
-			}
-		}
+		// TODO ZSS-418: workaround, will fix it later
+//		final Comment srcComment = srcCell.getCellComment();
+//		Comment dstComment = dstCell.getCellComment();
+//		if (srcComment != null) {
+//			if (dstComment == null) {
+//				final XSheet dstSheet = (XSheet)dstCell.getSheet();
+//				final Workbook dstBook = dstSheet.getWorkbook();
+//				final CreationHelper dstFactory = dstBook.getCreationHelper();
+//				final Drawing drawing = dstSheet.createDrawingPatriarch();
+//				final ClientAnchor anchor = dstFactory.createClientAnchor();
+//				dstComment = drawing.createCellComment(anchor);
+//			}
+//			dstComment.setString(srcComment.getString());
+//			dstComment.setAuthor(srcComment.getAuthor());
+//			dstComment.setVisible(srcComment.isVisible());
+//			dstCell.setCellComment(dstComment);
+//		} else { //srcComment is null
+//			if (dstComment != null) {
+//				dstCell.removeCellComment();
+//			}
+//		}
 	}
 	
 	private static void copyValidation(Cell srcCell, Cell dstCell) {
@@ -1717,7 +1715,8 @@ public final class BookHelper {
 		
 		//paste comment
 		if ((pasteType & BookHelper.INNERPASTE_COMMENTS) != 0) {
-			copyComment(srcCell, dstCell);
+			// TODO ZSS-418: workaround, will fix it later
+//			copyComment(srcCell, dstCell);
 		}
 		
 		//paste validation
@@ -4593,8 +4592,9 @@ public final class BookHelper {
 		//assign cell formats
 		dstCell.setCellStyle(srcCell.getCellStyle());
 		
+		// TODO ZSS-418: workaround, will fix it later
 		//assign comment
-		dstCell.setCellComment(srcCell.getCellComment());
+//		dstCell.setCellComment(srcCell.getCellComment());
 		
 		//assign validation
 		// TODO assign validation, refer copyValidation(srcCell, dstCell);

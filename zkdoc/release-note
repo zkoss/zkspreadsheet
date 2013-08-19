@@ -3,7 +3,7 @@ ZK Spreadsheet 3.0.0 RC
 ** New Feature
     * [ZSS-253] - click component away from Spreadsheet but keeps focus
     * [ZSS-338] - When share book, could the friend focus shows user name of another editor
-    * [ZSS-353] - Support zkhead tag in JSP
+    * [ZSS-353] - Support zkhead tag in JSP/JSF
     * [ZSS-388] - Support to freeze row of column of sheet
     * [ZSS-394] - Support undo/redo of cell operation
     * [ZSS-396] - provide an API to cut and paste cells at once
