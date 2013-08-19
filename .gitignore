@@ -4,3 +4,5 @@
 target/
 .settings/
 /zss.test/zss.test.properties
+~$*.xlsx
+
