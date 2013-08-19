@@ -68,7 +68,7 @@ public class CellStyleComposer extends SelectorComposer<Component> {
 	private void refreshCellStyle(int row, int col) {
 		Range range = Ranges.range(ss.getSelectedSheet(), row, col);
 
-		cellRef.setValue(Ranges.getCellReferenceString(row, col));
+		cellRef.setValue(Ranges.getCellRefString(row, col));
 
 		CellStyle style = range.getCellStyle();
 

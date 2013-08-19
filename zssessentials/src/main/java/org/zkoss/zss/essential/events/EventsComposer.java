@@ -80,7 +80,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 	public void onCellClick(CellMouseEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Click on cell ")
-		.append(Ranges.getCellReferenceString(event.getRow(),event.getColumn()));
+		.append(Ranges.getCellRefString(event.getRow(),event.getColumn()));
 		
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
@@ -89,7 +89,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 	@Listen("onCellRightClick = #ss")
 	public void onCellRightClick(CellMouseEvent event){
 		StringBuilder info = new StringBuilder();
-		info.append("Right-click on cell ").append(Ranges.getCellReferenceString(event.getRow(),event.getColumn()));
+		info.append("Right-click on cell ").append(Ranges.getCellRefString(event.getRow(),event.getColumn()));
 		
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
@@ -98,7 +98,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 	@Listen("onCellDoubleClick = #ss")
 	public void onCellDoubleClick(CellMouseEvent event){
 		StringBuilder info = new StringBuilder();
-		info.append("Double-click on cell ").append(Ranges.getCellReferenceString(event.getRow(),event.getColumn()));
+		info.append("Double-click on cell ").append(Ranges.getCellRefString(event.getRow(),event.getColumn()));
 		
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
@@ -114,10 +114,10 @@ public class EventsComposer extends SelectorComposer<Component>{
 		
 		switch(event.getType()){
 		case COLUMN:
-			info.append(Ranges.getColumnReferenceString(event.getIndex()));
+			info.append(Ranges.getColumnRefString(event.getIndex()));
 			break;
 		case ROW:
-			info.append(Ranges.getRowReferenceString(event.getIndex()));
+			info.append(Ranges.getRowRefString(event.getIndex()));
 			break;
 		}
 		
@@ -132,10 +132,10 @@ public class EventsComposer extends SelectorComposer<Component>{
 		
 		switch(event.getType()){
 		case COLUMN:
-			info.append(Ranges.getColumnReferenceString(event.getIndex()));
+			info.append(Ranges.getColumnRefString(event.getIndex()));
 			break;
 		case ROW:
-			info.append(Ranges.getRowReferenceString(event.getIndex()));
+			info.append(Ranges.getRowRefString(event.getIndex()));
 			break;
 		}
 		
@@ -150,10 +150,10 @@ public class EventsComposer extends SelectorComposer<Component>{
 		
 		switch(event.getType()){
 		case COLUMN:
-			info.append(Ranges.getColumnReferenceString(event.getIndex()));
+			info.append(Ranges.getColumnRefString(event.getIndex()));
 			break;
 		case ROW:
-			info.append(Ranges.getRowReferenceString(event.getIndex()));
+			info.append(Ranges.getRowRefString(event.getIndex()));
 			break;
 		}
 		
@@ -169,10 +169,10 @@ public class EventsComposer extends SelectorComposer<Component>{
 			.append(" on ").append(event.getType());
 		switch(event.getType()){
 		case COLUMN:
-			info.append(" ").append(Ranges.getColumnReferenceString(event.getIndex()));
+			info.append(" ").append(Ranges.getColumnRefString(event.getIndex()));
 			break;
 		case ROW:
-			info.append(" ").append(Ranges.getRowReferenceString(event.getIndex()));
+			info.append(" ").append(Ranges.getRowRefString(event.getIndex()));
 			break;
 		}
 
@@ -194,7 +194,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 	@Listen("onCellFocus = #ss")
 	public void onCellFocus(CellEvent event){
 		StringBuilder info = new StringBuilder();
-		info.append("Focus on[").append(Ranges.getCellReferenceString(event.getRow(),event.getColumn())).append("]");
+		info.append("Focus on[").append(Ranges.getCellRefString(event.getRow(),event.getColumn())).append("]");
 		
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
@@ -215,7 +215,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 	public void onCellSelectionUpdate(CellSelectionUpdateEvent event){
 		StringBuilder info = new StringBuilder();
 		info.append("Selection update from[")
-		.append(Ranges.getAreaReferenceString(event.getOrigRow(),event.getOrigColumn()
+		.append(Ranges.getAreaRefString(event.getOrigRow(),event.getOrigColumn()
 				, event.getOrigLastRow(),event.getOrigLastColumn()))
 		.append("] to [")
 		.append(event.getArea().asString()).append("]");
@@ -228,7 +228,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 	@Listen("onStartEditing = #ss")
 	public void onStartEditing(StartEditingEvent event){
 		StringBuilder info = new StringBuilder();
-		String ref = Ranges.getCellReferenceString(event.getRow(),event.getColumn());
+		String ref = Ranges.getCellRefString(event.getRow(),event.getColumn());
 		info.append("Start editing ").append(ref)
 		.append(", editing-value is ").append("\""+event.getEditingValue()+"\"")
 		.append(" client-value is ").append("\""+event.getClientValue()+"\"");
@@ -252,7 +252,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 	@Listen("onEditboxEditing = #ss")
 	public void onEditboxEditing(EditboxEditingEvent event){
 		StringBuilder info = new StringBuilder();
-		String ref = Ranges.getCellReferenceString(event.getRow(),event.getColumn());
+		String ref = Ranges.getCellRefString(event.getRow(),event.getColumn());
 		info.append("Editing ").append(ref)
 		.append(", value is ").append("\""+event.getEditingValue()+"\"");
 		
@@ -264,7 +264,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 	@Listen("onStopEditing = #ss")
 	public void onStopEditing(StopEditingEvent event){
 		StringBuilder info = new StringBuilder();
-		String ref = Ranges.getCellReferenceString(event.getRow(),event.getColumn());
+		String ref = Ranges.getCellRefString(event.getRow(),event.getColumn());
 		info.append("Stop editing ").append(ref)
 		.append(", editing-value is ").append("\""+event.getEditingValue()+"\"");
 		
@@ -303,7 +303,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 		
 		info.append("Hyperlink ").append(event.getType())
 			.append(" on : ")
-			.append(Ranges.getCellReferenceString(event.getRow(),event.getColumn()))
+			.append(Ranges.getCellRefString(event.getRow(),event.getColumn()))
 			.append(", address : ").append(event.getAddress());
 		
 		if(isShowEventInfo(event.getName())){
@@ -380,7 +380,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 				.append(" ")
 				.append(event.getAction())
 				.append(" to ")
-				.append(Ranges.getAreaReferenceString(anchor.getRow(),
+				.append(Ranges.getAreaRefString(anchor.getRow(),
 						anchor.getColumn(), anchor.getLastRow(),
 						anchor.getLastColumn()));
 		
@@ -412,7 +412,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 		
 		if (!"deleteSheet".equals(event.getAction())){
 			//deleted sheet is unable to access at this moment
-			info.append(" on : ").append(Ranges.getAreaReferenceString(event.getSheet(),event.getSelection()));
+			info.append(" on : ").append(Ranges.getAreaRefString(event.getSheet(),event.getSelection()));
 		}
 		
 		if(isShowEventInfo(event.getName())){
@@ -439,7 +439,7 @@ public class EventsComposer extends SelectorComposer<Component>{
 		StringBuilder info = new StringBuilder();
 		
 		info.append("Validation button clicked ")
-			.append(" on cell ").append(Ranges.getCellReferenceString(event.getRow(),event.getColumn()));
+			.append(" on cell ").append(Ranges.getCellRefString(event.getRow(),event.getColumn()));
 		
 		if(isShowEventInfo(event.getName())){
 			addInfo(info.toString());
