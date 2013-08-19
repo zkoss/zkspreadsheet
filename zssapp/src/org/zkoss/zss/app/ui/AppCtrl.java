@@ -83,6 +83,7 @@ public class AppCtrl extends CtrlBase<Component>{
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		boolean isEE = "EE".equals(Version.getEdition());
+		boolean readonly = UiUtil.isRepositoryReadonly();
 		UserActionManager uam = ss.getUserActionManager();
 		uam.registerHandler(DefaultUserActionManagerCtrl.Category.AUXACTION.getName(), AuxAction.NEW_BOOK.getAction(), new UserActionHandler() {
 			
@@ -97,19 +98,21 @@ public class AppCtrl extends CtrlBase<Component>{
 				return true;
 			}
 		});
-		uam.setHandler(DefaultUserActionManagerCtrl.Category.AUXACTION.getName(), AuxAction.SAVE_BOOK.getAction(), new UserActionHandler() {
-			
-			@Override
-			public boolean process(UserActionContext ctx) {
-				doSaveBook(false);
-				return true;
-			}
-			
-			@Override
-			public boolean isEnabled(Book book, Sheet sheet) {
-				return book!=null;
-			}
-		});
+		if(!readonly){
+			uam.setHandler(DefaultUserActionManagerCtrl.Category.AUXACTION.getName(), AuxAction.SAVE_BOOK.getAction(), new UserActionHandler() {
+				
+				@Override
+				public boolean process(UserActionContext ctx) {
+					doSaveBook(false);
+					return true;
+				}
+				
+				@Override
+				public boolean isEnabled(Book book, Sheet sheet) {
+					return book!=null;
+				}
+			});
+		}
 		if(isEE){
 			uam.setHandler(DefaultUserActionManagerCtrl.Category.AUXACTION.getName(), AuxAction.EXPORT_PDF.getAction(), new UserActionHandler() {
 				
