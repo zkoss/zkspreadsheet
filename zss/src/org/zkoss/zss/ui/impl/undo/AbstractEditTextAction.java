@@ -81,24 +81,36 @@ public abstract class AbstractEditTextAction extends AbstractUndoableAction {
 		
 		applyAction();
 	}
+	
+	protected boolean isRangeProtected(){
+		boolean protect = isSheetProtected();
+		if(!protect) return false;
+		for(int i=_row;i<=_lastRow;i++){
+			for(int j=_column;j<=_lastColumn;j++){
+				Range r = Ranges.range(_sheet,i,j);
+				boolean lock = r.getCellStyle().isLocked();
+				if(lock) return true;
+			}
+		}
+		return false;
+	}
 
 	
 	protected abstract void applyAction();
 	
 	@Override
 	public boolean isUndoable() {
-		return oldTexts!=null && isSheetAvailable() /*&& !isSheetProtected()*/;
+		return oldTexts!=null && isSheetAvailable() && !isRangeProtected();
 	}
 
 	@Override
 	public boolean isRedoable() {
-		return oldTexts==null && isSheetAvailable()  /*&& !isSheetProtected()*/;
+		return oldTexts==null && isSheetAvailable()  && !isRangeProtected();
 	}
 
 	@Override
 	public void undoAction() {
-		//don't check protection here, a cell is possible unlocked
-//		if(isSheetProtected()) return;
+		if(isRangeProtected()) return;
 		
 		int row = getReservedRow();
 		int column = getReservedColumn();
