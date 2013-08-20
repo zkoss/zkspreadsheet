@@ -2,6 +2,7 @@ zcommon.jar
 zel.jar
 zweb.jar
 zk.jar
+zkbind.jar
 zkex.jar
 zul.jar
 zhtml.jar
