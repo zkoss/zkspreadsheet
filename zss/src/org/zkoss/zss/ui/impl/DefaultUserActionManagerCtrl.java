@@ -171,7 +171,7 @@ public class DefaultUserActionManagerCtrl implements UserActionManagerCtrl,UserA
 		registerHandler(category, AuxAction.BORDER_TOP.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_TOP,BorderType.THIN));
 		registerHandler(category, AuxAction.BORDER_LEFT.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_LEFT,BorderType.THIN));
 		registerHandler(category, AuxAction.BORDER_RIGHT.getAction(), new ApplyBorderHandler(ApplyBorderType.EDGE_RIGHT,BorderType.THIN));
-		registerHandler(category, AuxAction.BORDER_NO.getAction(), new ApplyBorderHandler(ApplyBorderType.FULL,BorderType.THIN));
+		registerHandler(category, AuxAction.BORDER_NO.getAction(), new ApplyBorderHandler(ApplyBorderType.FULL,BorderType.NONE));
 		registerHandler(category, AuxAction.BORDER_ALL.getAction(), new ApplyBorderHandler(ApplyBorderType.FULL,BorderType.THIN));
 		registerHandler(category, AuxAction.BORDER_OUTSIDE.getAction(), new ApplyBorderHandler(ApplyBorderType.OUTLINE,BorderType.THIN));
 		registerHandler(category, AuxAction.BORDER_INSIDE.getAction(), new ApplyBorderHandler(ApplyBorderType.INSIDE,BorderType.THIN));
