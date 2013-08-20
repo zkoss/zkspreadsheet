@@ -93,6 +93,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-414 get NPE when paste from client text
   ZSS-253 click component away from Spreadsheet but keeps focus
   ZSS-425 Can't update style when save twice
+  ZSS-424 get exception when undo after save
 
 ** Upgrade Notes
   * Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api

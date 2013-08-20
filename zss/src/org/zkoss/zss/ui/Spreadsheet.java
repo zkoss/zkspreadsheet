@@ -2102,6 +2102,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					onSheetFreeze((SSDataEvent)event);
 				}
 			});
+			addEventListener(SSDataEvent.ON_BOOK_EXPORT, new EventListener() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					onBookExport((SSDataEvent)event);
+				}
+			});
 		}
 		private void onSheetOrderChange(SSDataEvent event) {
 			final String name = (String) event.getPayload(); 
@@ -2376,6 +2382,15 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				return;
 			//TODO
 			Spreadsheet.this.invalidate();
+		}
+		private void onBookExport(SSDataEvent event) {
+			//
+			String type = (String)event.getPayload();
+			if("excel".equals(type)){
+				//ZSS-424 get exception when undo after save
+				//POI mis handle it's model with ctmodel after export. i have to aovid undo after export a excel.
+				getUndoableActionManager().clear();
+			}
 		}
 	}
 	

@@ -24,16 +24,16 @@ import org.zkoss.zss.ui.sys.UndoableAction;
  * @author dennis
  *
  */
-public class UndoableActionEvent extends Event {
+public class UndoableActionManagerEvent extends Event {
 	private static final long serialVersionUID = 1L;
 
 	public enum Type{
-		DO,UNDO,REDO
+		DO,UNDO,REDO,CLEAR
 	}
 	
 	private Type _type;
 	
-	public UndoableActionEvent(String name, Component target, Type type,UndoableAction action) {
+	public UndoableActionManagerEvent(String name, Component target, Type type,UndoableAction action) {
 		super(name, target, action);
 		this._type = type;
 	}

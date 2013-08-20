@@ -33,6 +33,7 @@ public class ExcelExporter implements XExporter {
 	 */
 	public void export(XBook workbook, OutputStream outputStream) throws IOException{
 		workbook.write(outputStream);
+		BookHelper.notifyBookExport(workbook, "excel");
 	}
 
 	public void export(XSheet worksheet, OutputStream outputStream) throws IOException{

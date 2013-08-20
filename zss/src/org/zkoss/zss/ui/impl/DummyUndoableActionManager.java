@@ -18,7 +18,7 @@ package org.zkoss.zss.ui.impl;
 
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.Events;
-import org.zkoss.zss.ui.event.UndoableActionEvent;
+import org.zkoss.zss.ui.event.UndoableActionManagerEvent;
 import org.zkoss.zss.ui.sys.UndoableAction;
 import org.zkoss.zss.ui.sys.UndoableActionManager;
 
@@ -35,7 +35,9 @@ public class DummyUndoableActionManager implements UndoableActionManager {
 	@Override
 	public void doAction(UndoableAction action) {
 		action.doAction();
-		org.zkoss.zk.ui.event.Events.postEvent(new UndoableActionEvent(Events.ON_AFTER_UNDOABLE_ACTION, _spreadsheet, UndoableActionEvent.Type.DO,action));
+		org.zkoss.zk.ui.event.Events.postEvent(new UndoableActionManagerEvent(
+				Events.ON_AFTER_UNDOABLE_MANAGER_ACTION, _spreadsheet,
+				UndoableActionManagerEvent.Type.DO, action));
 	}
 
 	@Override

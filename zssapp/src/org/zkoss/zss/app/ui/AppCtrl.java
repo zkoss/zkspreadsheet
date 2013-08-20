@@ -151,10 +151,10 @@ public class AppCtrl extends CtrlBase<Component>{
 			}
 		});
 		
-		ss.addEventListener(Events.ON_AFTER_UNDOABLE_ACTION, new EventListener<Event>() {
+		ss.addEventListener(Events.ON_AFTER_UNDOABLE_MANAGER_ACTION, new EventListener<Event>() {
 			@Override
 			public void onEvent(Event event) throws Exception {
-				onAfterUndoableAction();
+				onAfterUndoableManagerAction();
 			}
 		});
 		
@@ -228,7 +228,7 @@ public class AppCtrl extends CtrlBase<Component>{
 		pushAppEvent(AppEvts.ON_CHANGED_SPREADSHEET,ss);
 	}
 	
-	/*package*/ void onAfterUndoableAction(){
+	/*package*/ void onAfterUndoableManagerAction(){
 		pushAppEvent(AppEvts.ON_UPDATE_UNDO_REDO,ss);
 	}
 	

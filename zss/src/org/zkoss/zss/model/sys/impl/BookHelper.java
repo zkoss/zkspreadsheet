@@ -327,6 +327,11 @@ public final class BookHelper {
 		}
 	}
 	
+	public static void notifyBookExport(XBook book, String type) {
+		RefBook refBook = BookHelper.getOrCreateRefBook(book);
+		refBook.publish(new SSDataEvent(SSDataEvent.ON_BOOK_EXPORT, null, (Object)type));
+	}
+	
 	public static void notifyCellChanges(XBook book, Set<Ref> all) {
 		if (all != null) {
 			for(Ref ref : all) {

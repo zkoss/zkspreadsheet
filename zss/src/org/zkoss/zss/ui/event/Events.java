@@ -149,11 +149,11 @@ public class Events {
 	
 	
 	/**
-	 * This is event is sent after do/undo/redo a undoable action by a undoable action manager
-	 * @see UndoableActionEvent
+	 * This is event is sent after do/undo/redo a undoable action by a undoable action manager, or clear undo manager
+	 * @see UndoableActionManagerEvent
 	 * @since 3.0.0
 	 */
-	public static final String ON_AFTER_UNDOABLE_ACTION = "onAfterUndoableAction";
+	public static final String ON_AFTER_UNDOABLE_MANAGER_ACTION = "onAfterUndoableManagerAction";
 	
 	/* 
 	 * Following are events that fire by book SSDataEvent and delegate to Sparedsheet to provide to component user.
