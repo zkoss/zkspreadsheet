@@ -767,6 +767,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
     		}
     	}
     	
+    	List<XSSFCell> cellsToRemove = new ArrayList<XSSFCell>(); // ZSS-179: queue cells for removing later
         final List<int[]> removePairs = new ArrayList<int[]>(); //column spans to be removed 
         final Set<XSSFCell> rowCells = new HashSet<XSSFCell>();
         int expectColnum = startCol; //handle sparse columns which might override destination column
@@ -781,7 +782,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         		}
         		expectColnum = colnum + 1;
         		
-        		it.remove(); //remove cell from this row
+        		cellsToRemove.add(cell);
         		final boolean inbound = 0 <= newColnum && newColnum <= maxcol;
         		if (!inbound) {
         			notifyCellShifting(cell);
@@ -789,6 +790,9 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         		}
         		rowCells.add(cell);
         	}
+        }
+        for(XSSFCell c : cellsToRemove) {
+        	row.removeCell(c);
         }
     	
     	addRemovePair(removePairs, row, expectColnum + n, endCol + 1 + n);

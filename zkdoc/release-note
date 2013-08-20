@@ -86,6 +86,7 @@ ZK Spreadsheet 3.0.0 RC
     * [ZSS-410] - Undo style action get NPE in 2003
     * [ZSS-415] - Get Exception after save and load a sheet that has comment in 2003
     * [ZSS-419] - if delete two or more rows at once, the exported file will make Excel error when loading
+    * [ZSS-425] - Can't update style when save twice
 
 ** Upgrade Notes
   * Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
