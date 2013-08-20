@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss</groupId>
 	<artifactId>zss.test</artifactId>
-	<version>3.0.0-RC-SNAPSHOT</version>
+	<version>3.0.0.RC-SNAPSHOT</version>
 	<properties>
 		<zk.version>6.5.4.FL.20130717</zk.version>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>-0.0.1-SNAPSHOT-FL-${maven.build.timestamp}</packname>
-		<zss.version>3.0.0-RC-SNAPSHOT</zss.version>
+		<zss.version>3.0.0.RC-SNAPSHOT</zss.version>
 	</properties>
 	<packaging>war</packaging>
 	<name>The ZK Spreadsheet Test Project</name>
@@ -57,6 +57,7 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.poi</groupId>
@@ -73,6 +74,7 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-library</artifactId>
 			<version>1.1</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -103,29 +105,9 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 				</configuration>
 			</plugin>
 			<plugin>
-				<artifactId>maven-war-plugin</artifactId>
 				<groupId>org.apache.maven.plugins</groupId>
-				<version>2.1.1</version>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2</version>
-				<executions>
-					<execution>
-						<id>demo</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<finalName>zss.test${packname}</finalName>
-							<appendAssemblyId>false</appendAssemblyId>
-							<descriptors>
-								<descriptor>assembly/demo.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
 			</plugin>
 		</plugins>
 	</build>
