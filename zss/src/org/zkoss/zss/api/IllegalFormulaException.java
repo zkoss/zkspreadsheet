@@ -17,7 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api;
 
 /**
- * Indicate a illegal formula exception
+ * Indicate an illegal formula exception
  * @author dennis
  * @since 3.0.0
  */

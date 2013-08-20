@@ -166,6 +166,12 @@ public class SheetOperationUtil {
 		}
 	}
 	
+	/**
+	 * Determine whether the range of sheet has the picture
+	 * @param range
+	 * @param picture
+	 * @return true if the range has, otherwise false
+	 */
 	public static boolean hasPicture(Range range, Picture picture){
 		for (Picture p : range.getSheet().getPictures()){
 			if (p.getId().equals(picture.getId())){
@@ -260,7 +266,12 @@ public class SheetOperationUtil {
 		}
 	}
 
-
+	/**
+	 * Determine whether the range of sheet has the chart.
+	 * @param range
+	 * @param chart
+	 * @return true if the range has, otherwise false
+	 */
 	public static boolean hasChart(Range range, Chart chart){
 		for (Chart c : range.getSheet().getCharts()){
 			if (c.getId().equals(chart.getId())){
@@ -356,7 +367,7 @@ public class SheetOperationUtil {
 	}
 
 	/**
-	 * Deletes the sheet, Note you can't delete last sheet
+	 * Deletes the sheet, notice that it prevents you from deleting the last sheet
 	 * @param range the range to be applied
 	 */
 	public static void deleteSheet(Range range) {
@@ -373,6 +384,15 @@ public class SheetOperationUtil {
 
 	}
 
+	/**
+	 * return a {@link SheetAnchor} based on a cell and a picture width and height
+	 * @param sheet target sheet where the anchor locates
+	 * @param row 0-based row index
+	 * @param column 0-base column index
+	 * @param widthPx a picture's width in pixel
+	 * @param heightPx a picture's height in pixel
+	 * @return a {@link SheetAnchor}
+	 */
 	public static SheetAnchor toFilledAnchor(Sheet sheet,int row, int column, int widthPx, int heightPx){
 		int lRow = 0;
 		int lColumn = 0;

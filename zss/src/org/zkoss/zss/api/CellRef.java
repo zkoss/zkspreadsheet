@@ -19,7 +19,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api;
 
 /**
- * a class to represent a cell position with 2 value : row,column
+ * A class that represents a cell position with 2 value : row and column
  * @author Dennis.Chen
  * @since 3.0.0
  */

@@ -38,8 +38,8 @@ import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 
 /**
- * The utility to help UI to deal with user's cell operation of a Range.
- * This utility is the default implementation for handling a spreadsheet, it is also the example for calling {@link Range} APIs 
+ * The utility to help UI to deal with user's cell operation of a {@link Range}.
+ * This utility is the default implementation for handling user operations for cells, it is also the example for calling {@link Range} APIs 
  * @author dennis
  * @since 3.0.0
  */

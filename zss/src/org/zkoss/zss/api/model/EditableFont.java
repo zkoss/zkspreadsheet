@@ -17,12 +17,16 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api.model;
 
 /**
- * The editable font
+ * This interface allows you to change a cell's font.
  * @author dennis
  * @since 3.0.0
  */
 public interface EditableFont extends Font{
 
+	/**
+	 * Set the font name of cells.
+	 * @param fontName font's name, ,e.g "Calibri"
+	 */
 	public void setFontName(String fontName);
 	public void setBoldweight(Boldweight boldweight);
 	public void setItalic(boolean italic);

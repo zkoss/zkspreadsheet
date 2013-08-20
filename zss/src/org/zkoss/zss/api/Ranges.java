@@ -99,9 +99,9 @@ public class Ranges {
 	}
 	
 	/**
-	 * Gets cell reference expression string
-	 * @param row row
-	 * @param col column
+	 * Gets cell reference expression
+	 * @param row 0-based row index 
+	 * @param col 0-based column index 
 	 * @return the cell reference string (e.g. A1)
 	 */
 	public static String getCellRefString(int row,int col){
@@ -111,8 +111,8 @@ public class Ranges {
 	/**
 	 * Gets cell reference expression string
 	 * @param sheet sheet
-	 * @param row row
-	 * @param col column
+	 * @param row 0-based row index
+	 * @param col 0-based column index
 	 * @return the cell reference string (e.g. Sheet1!A1)
 	 */
 	public static String getCellRefString(Sheet sheet,int row,int col){
@@ -158,8 +158,8 @@ public class Ranges {
 	}
 	
 	/**
-	 * Gets column reference string
-	 * @param column column
+	 * Get column reference string
+	 * @param column 0-based column index
 	 * @return the column reference string (e.g A, AB)
 	 */
 	public static String getColumnRefString(int column){
@@ -167,8 +167,8 @@ public class Ranges {
 	}
 	
 	/**
-	 * Gets row reference string
-	 * @param row row
+	 * Get row reference
+	 * @param row 0-based row index
 	 * @return the column reference string (e.g 1, 12)
 	 */
 	public static String getRowRefString(int row){

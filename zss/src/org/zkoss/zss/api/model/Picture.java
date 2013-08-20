@@ -19,7 +19,7 @@ package org.zkoss.zss.api.model;
 import org.zkoss.zss.api.SheetAnchor;
 
 /**
- * 
+ * This interface provides the access to a picture of a sheet.
  * @author dennis
  * @since 3.0.0
  */

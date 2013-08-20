@@ -17,7 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api.model;
 
 /**
- * 
+ * This interface provides the access to the underlying data object ({@link org.zkoss.poi.ss.usermodel.charts.ChartData}) of a chart.
  * @author dennis
  * @since 3.0.0
  */

@@ -24,7 +24,7 @@ import java.net.URL;
 import org.zkoss.zss.api.model.Book;
 
 /**
- * Importer for book
+ * Importer that loads an Excel file and returns a {@link Book}.
  * @author dennis
  * @since 3.0.0
  */

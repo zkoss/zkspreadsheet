@@ -39,13 +39,13 @@ import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
 
 /**
- * Range that represents a cell, a row, a column, or selection of cells containing one or 
+ * Range can represent a cell, a row, a column, a selection of cells containing one or 
  * more contiguous blocks of cells, or a 3-D blocks of cells. <br/>
  * You have to use this class's API to do any operation of the {@link Sheet}, then the upload will sync to the UI automatically.<br/>
  * To get the instance of a {@link Range}, please use the {@link Ranges} API.
  * 
  * <br/>
- * Note : the range api doesn't check the sheet protection, if you care it, you have to check it by calling {@link #isProtected()} before you do any operation.
+ * Note : the range API doesn't check the sheet protection, if you care it, you have to check it by calling {@link #isProtected()} before you do any operation.
  * 
  * @author dennis
  * @see Ranges
@@ -228,7 +228,7 @@ public interface Range {
 	public Range toShiftedRange(int rowOffset,int colOffset);
 	
 	/**
-	 * Returns a new range according the offset, but only contains one cell 
+	 * Returns a new range having on cell according to the offset 
 	 * @param rowOffset row offset of the cell, zero base
 	 * @param colOffset column offset of the cell, zero base
 	 * @return the new range of the cell
@@ -320,7 +320,7 @@ public interface Range {
 	public void merge(boolean across);
 	
 	/**
-	 * Un-merges the range
+	 * Unmerge the range
 	 */
 	public void unmerge();
 	
@@ -392,22 +392,22 @@ public interface Range {
 	public void autoFill(Range dest,AutoFillType fillType);
 	
 	/**
-	 * Fills cells by copy from first/top row data
+	 * Fills cells by copying from first/top row data
 	 */
 	public void fillDown();
 	
 	/**
-	 * Fills cells by copy from last/right column data
+	 * Fills cells by copying from last/right column data
 	 */
 	public void fillLeft();
 	
 	/**
-	 * Fills cells by copy from bottom row data
+	 * Fills cells by copying from bottom row data
 	 */
 	public void fillUp();
 	
 	/**
-	 * Fills cells by copy from first/left column data
+	 * Fills cells by copying from first/left column data
 	 */
 	public void fillRight();
 	
@@ -463,7 +463,7 @@ public interface Range {
 	
 	
 	/**
-	 * Gets the first cell(top-left) hyper-link object of this range.
+	 * Gets the first cell(top-left) {@link Hyperlink} object of this range.
 	 * @return
 	 */
 	public Hyperlink getCellHyperlink();
@@ -526,8 +526,8 @@ public interface Range {
 	public boolean isDisplaySheetGridlines();
 	
 	/**
-	 * Hide or un-hide rows or columns.<br/> 
-	 * To hide/un-hide a row, you have to call {@link Range#toRowRange()} first, to hide/un-hide a column, you have to call {@link Range#toColumnRange()} 
+	 * Hide or unhide rows or columns.<br/> 
+	 * To hide/unhide a row, you have to call {@link Range#toRowRange()} first, to hide/un-hide a column, you have to call {@link Range#toColumnRange()} 
 	 * or a whole column range. 
 	 * @param hidden hide or not
 	 */

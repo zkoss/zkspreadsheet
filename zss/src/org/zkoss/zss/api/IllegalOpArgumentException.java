@@ -17,8 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api;
 
 /**
- * Indicate a illegal operation & argument exception, 
- * usually, we catch this exception and show corresponding message for user 
+ * Indicate an illegal operation & argument exception. We usually catch this exception and show corresponding message for users. 
  * @author kuro
  * @since 3.0.0
  */

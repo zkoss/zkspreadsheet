@@ -21,7 +21,7 @@ import java.util.Date;
 import org.zkoss.zss.api.IllegalFormulaException;
 
 /**
- * The cell data object
+ * This interface provides access to "data" part of a cell including type, text, and value.
  * @author dennis
  * @since 3.0.0
  */

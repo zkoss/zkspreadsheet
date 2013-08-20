@@ -20,7 +20,8 @@ package org.zkoss.zss.api;
 
 
 /**
- * A class to represent a area reference with 4 value : row(top row), column(left column), last row(bottom row) and last column(right column) 
+ * A class that represents an area reference with 4 value : 
+ * 		row(top row), column(left column), last row(bottom row) and last column(right column) 
 
  * @author Dennis.Chen
  * @since 3.0.0

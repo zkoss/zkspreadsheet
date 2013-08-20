@@ -19,7 +19,7 @@ package org.zkoss.zss.api.model;
 import java.util.List;
 
 /**
- * 
+ * This interface provides the access to a sheet of a {@link Book}.
  * @author dennis
  * @since 3.0.0
  */

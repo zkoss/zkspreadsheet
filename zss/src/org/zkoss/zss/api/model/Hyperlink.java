@@ -17,7 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api.model;
 
 /**
- * 
+ * This interface allows you to get a cell's hyperlink data.
  * @author dennis
  * @since 3.0.0
  */

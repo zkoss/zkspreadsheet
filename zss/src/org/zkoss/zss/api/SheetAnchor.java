@@ -20,7 +20,7 @@ import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Picture;
 
 /**
- * The anchor for the objects ( {@link Picture} , {@link Chart}) to attache to a sheet
+ * The anchor for the objects ( {@link Picture} , {@link Chart}) of a sheet
  * @author dennis
  * @see Picture
  * @see Range#addPicture(SheetAnchor, byte[], org.zkoss.zss.api.model.Picture.Format)

@@ -19,7 +19,7 @@ package org.zkoss.zss.api.model;
 import org.zkoss.poi.ss.usermodel.Workbook;
 
 /**
- * The book object
+ * This interface provides entry to access Spreadsheet's data model.  
  * @author dennis
  * @since 3.0.0
  */

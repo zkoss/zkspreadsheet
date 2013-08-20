@@ -17,7 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api.model;
 
 /**
- * 
+ * This interface allows you to get font style of a cell.
  * @author dennis
  * @since 3.0.0
  */
@@ -41,15 +41,53 @@ public interface Font {
 		BOLD
 	}
 	
-	
+	/**
+	 * 
+	 * @return a font's color
+	 */
 	public Color getColor();
+	
+	/**
+	 * 
+	 * @return a font's name like "Calibri".
+	 */
 	public String getFontName();
+	
+	/**
+	 * 
+	 * @return a font's bold style.
+	 */
 	public Boldweight getBoldweight();
+	
+	/**
+	 * 
+	 * @return a font's height in twentieth of a point
+	 */
 	public int getFontHeight();
+	
+	/**
+	 * 
+	 * @return a fon't height in pixel
+	 */
 	public int getFontHeightInPoint();
+	
+	/**
+	 * 
+	 * @return true if the font is italic
+	 */
 	public boolean isItalic();
+	
+	/**
+	 * 
+	 * @return true if the font is strike-out.
+	 */
 	public boolean isStrikeout();
 	public TypeOffset getTypeOffset();
+	
+	/**
+	 * 
+	 * @return the style of a font's underline
+	 */
 	public Underline getUnderline();
 	
 }

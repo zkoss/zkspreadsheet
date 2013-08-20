@@ -21,7 +21,7 @@ import org.zkoss.zss.model.sys.XExporter;
 import org.zkoss.zss.model.sys.XExporters;
 
 /**
- * The main class to get an exporter
+ * The main class to get an exporter.
  * @author dennis
  * @since 3.0.0
  */

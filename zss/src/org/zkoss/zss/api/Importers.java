@@ -21,7 +21,7 @@ import org.zkoss.zss.model.sys.XImporter;
 import org.zkoss.zss.model.sys.XImporters;
 
 /**
- * The main class to get an importer
+ * The main class to get an importer.
  * @author dennis
  *
  */

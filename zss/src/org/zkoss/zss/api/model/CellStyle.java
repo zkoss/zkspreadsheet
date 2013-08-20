@@ -16,10 +16,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model;
 
-import org.zkoss.zss.api.Range.CellStyleHelper;
 
 /**
- * The cell style object.
+ * This interface provides access to "style" part of a cell including alignment, border, font, formant, and color.
  * @author dennis
  * @since 3.0.0
  */

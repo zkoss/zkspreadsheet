@@ -19,7 +19,7 @@ package org.zkoss.zss.api.model;
 import org.zkoss.zss.api.Range.CellStyleHelper;
 
 /**
- * The editable cell style object.
+ * This interface allows you to change a cell's style.
  * @author dennis
  * @since 3.0.0
  */

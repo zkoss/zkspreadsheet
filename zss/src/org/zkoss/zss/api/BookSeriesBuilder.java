@@ -16,7 +16,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
-import java.util.List;
 import java.util.Set;
 
 import org.zkoss.lang.Classes;
@@ -25,7 +24,7 @@ import org.zkoss.lang.Strings;
 import org.zkoss.zss.api.model.Book;
 
 /**
- * The book series builder
+ * The book series builder which accepts multiple {@link Book} objects makes each of them can reference cells from other books.
  * @author dennis
  * @since 3.0.0
  */

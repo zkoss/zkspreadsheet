@@ -23,7 +23,7 @@ import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 
 /**
- * Exporter for book, sheet
+ * Exporter for a book or a sheet.
  * @author dennis
  * @since 3.0.0
  */
