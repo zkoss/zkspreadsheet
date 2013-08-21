@@ -7,8 +7,8 @@ import java.io.InputStream;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.zkoss.util.resource.ClassLocator;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
@@ -43,9 +43,13 @@ public class CutAPITest {
 	private static int SRC_ROW_COUNT = SRC_BOTTOM_ROW - SRC_TOP_ROW + 1;
 	private static int SRC_COL_COUNT = SRC_RIGHT_COL - SRC_LEFT_COL + 1;
 	
+	@BeforeClass
+	public static void setUpLibrary() throws Exception {
+		Setup.touch();
+	}
+	
 	@Before
 	public void setUp() throws Exception {
-		Setup.touch();
 		final String filename = "book/pasteTest.xlsx";
 		final InputStream is = PasteTest.class.getResourceAsStream(filename);
 		_workbook = Importers.getImporter().imports(is, filename);
@@ -61,13 +65,11 @@ public class CutAPITest {
 	 * Cut from one sheet then paste to another sheet will not unmerge source cell on UI.
 	 * Server side is clean.
 	 * 
-	 * �x   1    �x
-	 * �x�w�w�w�w�w�w�w�w�x
-	 * �x 4�x 5 �x6�x
-	 * �x 7�x   �x9�x
-	 * 
+	 *    1
+	 * 4  5  6
+	 * 7     9
 	 * 1 is a horizontal merged cell 1 x 3.
-	 * 4 is a vertical merged cell 2 x 1.
+	 * 5 is a vertical merged cell 2 x 1.
 	 * source (H11,J13) sheet1.
 	 * destination (I12) sheet2.
 	 */
@@ -138,13 +140,12 @@ public class CutAPITest {
 	}
 	
 	/**
-	 * �x   1    �x
-	 * �x�w�w�w�w�w�w�w�w�x
-	 * �x 4�x 5 �x6�x
-	 * �x 7�x   �x9�x
+	 *    1
+	 * 4  5  6
+	 * 7     9
 	 * 
 	 * 1 is a horizontal merged cell 1 x 3.
-	 * 4 is a vertical merged cell 2 x 1.
+	 * 5 is a vertical merged cell 2 x 1.
 	 * cut and paste to 5.
 	 * source (H11,J13) to destination (I12)
 	 */
@@ -209,13 +210,12 @@ public class CutAPITest {
 	}
 	
 	/**
-	 * �x   1    �x
-	 * �x�w�w�w�w�w�w�w�w�x
-	 * �x 4�x 5 �x6�x
-	 * �x 7�x   �x9�x
+	 *    1
+	 * 4  5  6
+	 * 7     9
 	 * 
 	 * 1 is a horizontal merged cell 1 x 3.
-	 * 4 is a vertical merged cell 2 x 1.
+	 * 5 is a vertical merged cell 2 x 1.
 	 * source (H11,J13) to destination (C5, E7)
 	 */
 	@Test

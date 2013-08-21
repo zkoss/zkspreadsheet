@@ -1,5 +1,7 @@
 package org.zkoss.zss.api.impl;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -7,6 +9,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.CellOperationUtil;
@@ -14,14 +17,18 @@ import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Sheet;
 
 /**
  * ZSS-408.
  * ZSS-414.
  * ZSS-415.
+ * ZSS-435. (OPEN)
  * @author kuro
  *
  */
@@ -37,6 +44,28 @@ public class Issue400Test {
 	@After
 	public void tearDown() throws Exception {
 		_workbook = null;
+	}
+	
+	/**
+	 * insert whole row or column when overlap merge cell with border style will cause unexpected result
+	 */
+	@Ignore
+	@Test
+	public void testZSS435() throws IOException {
+		final String filename = "book/blank.xlsx";
+		final InputStream is =  getClass().getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		
+		Sheet sheet = _workbook.getSheet("Sheet1");
+		
+		Range range = Ranges.range(sheet, "B2:D4");
+		range.merge(false);
+		
+		Range columnC = Ranges.range(sheet, "C1");
+		columnC.toColumnRange().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_NONE);
+		
+		assertEquals(BorderType.THIN, columnC.getCellStyle().getBorderBottom());
+		
 	}
 	
 	/**

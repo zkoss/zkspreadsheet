@@ -2,21 +2,20 @@ package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.zkoss.poi.ss.formula.eval.NotImplementedException;
-import org.zkoss.poi.ss.usermodel.ErrorConstants;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
+import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.InsertShift;
@@ -28,9 +27,9 @@ import org.zkoss.zss.api.Range.PasteType;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.CellData.CellType;
-import org.zkoss.zss.model.sys.XBook;
 
 /**
+ * ZSS-260.
  * ZSS-261.
  * ZSS-266.
  * ZSS-275.
@@ -42,6 +41,7 @@ import org.zkoss.zss.model.sys.XBook;
  * ZSS-303.
  * ZSS-315.
  * ZSS-326. (UNDONE)
+ * ZSS-342. (Seems not fix yet?)
  * ZSS-389.
  * ZSS-395.
  */
@@ -68,7 +68,7 @@ public class Issue200Test {
 		_workbook = Importers.getImporter().imports(is, filename);
 		Sheet sheet1 = _workbook.getSheet("formula-math");
 		Range B104 = Ranges.range(sheet1, "B104");
-		assertEquals(ErrorConstants.ERROR_NAME, B104.getCellData().getDoubleValue(), 1E-8);
+		assertEquals("#NAME?", B104.getCellData().getFormatText());
 	}
 	
 	@Test
@@ -82,6 +82,40 @@ public class Issue200Test {
 	}
 	
 	/**
+	 * test POI function without argument
+	 */
+	@Test
+	public void testZSS342_1() throws IOException {
+		final String filename = "book/blank.xlsx";
+		final InputStream is = PasteTest.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Range A1 = Ranges.range(sheet1, "A1");
+		A1.setCellEditText("=ACCRINT()");
+		assertEquals("#VALUE!", A1.getCellData().getFormatText());
+	}
+	
+	/**
+	 * test ZK function without argument
+	 */
+	@Test
+	public void testZSS342_2() throws IOException {
+		final String filename = "book/blank.xlsx";
+		final InputStream is = PasteTest.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		
+		try {
+			Range A1 = Ranges.range(sheet1, "A1");
+			A1.setCellEditText("=ISERR()");
+			assertEquals("#VALUE!", A1.getCellData().getFormatText());
+		} catch(IllegalFormulaException e) {
+			return;
+		}
+		fail(); // fail if no catch
+	}
+	
+	/**
 	 * if a sheet contains "data validation" configuration with empty criteria, 
 	 * it causes null pointer exception when displaying it, then crashed.
 	 */
@@ -92,6 +126,9 @@ public class Issue200Test {
 		_workbook = Importers.getImporter().imports(is, filename);
 	}
 	
+	/**
+	 * validation cell
+	 */
 	@Test
 	public void testZSS260() throws IOException {
 		final String filename = "book/260-validation.xlsx";
@@ -154,13 +191,11 @@ public class Issue200Test {
 	
 	/**
 	 * cut a merged cell and paste to another cell, the original cell doesn't become unmerged cells
-	 * �x   1    �x
-	 * �x�w�w�w�w�w�w�w�w�x
-	 * �x 4�x 5 �x6�x
-	 * �x 7�x   �x9�x
-	 * 
+	 *     1
+	 *  2  5  7
+	 *  4     9
 	 * 1 is a horizontal merged cell 1 x 3.
-	 * 4 is a vertical merged cell 2 x 1.
+	 * 5 is a vertical merged cell 2 x 1.
 	 * source (H11,J13) to destination (C5, E7)
 	 */
 	@Test
@@ -323,13 +358,11 @@ public class Issue200Test {
 	}
 	
 	/**
-	 * �x   1    �x
-	 * �x�w�w�w�w�w�w�w�w�x
-	 * �x 4�x 5 �x6�x
-	 * �x 7�x   �x9�x
-	 * 
+	 *     1
+	 *  2  5  7
+	 *  4     9
 	 * 1 is a horizontal merged cell 1 x 3.
-	 * 4 is a vertical merged cell 2 x 1.
+	 * 5 is a vertical merged cell 2 x 1.
 	 * transpose paste.
 	 * source (H11,J13) to destination (C5, E7).
 	 */
@@ -485,11 +518,9 @@ public class Issue200Test {
 	}
 	
 	/**
-	 * �x 1 2  3 �x
-	 * �x�w�w�w�w�w�w�w�w�x
-	 * �x   4    |
-	 * |�w�w�w�w�w�w�w�w�x 
-	 * �x 7 8  9 �x
+	 * 1 2 3
+	 *   4
+	 * 5 6 7
 	 * 
 	 * 4 is a horizontal merged cell 1 x 3.
 	 * paste 1 to 4.
@@ -538,12 +569,9 @@ public class Issue200Test {
 	}
 	
 	/**
-	 * �x   1    �x
-	 * �x�w�w�w�w�w�w�w�w�x
-	 * �x 4 5 6  |
-	 * |�w�w�w�w�w�w�w�w�x 
-	 * �x 7 8  9 �x
-	 * 
+	 *   1
+	 * 4 5 6
+	 * 7 8 9
 	 * 1 is a horizontal merged cell 1 x 3.
 	 * paste 1 to 4.
 	 * source (H11) to destination (H12).

@@ -83,13 +83,12 @@ public class PasteTest {
 	}
 	
 	/**
-	 * �x   1    �x
-	 * �x�w�w�w�w�w�w�w�w�x
-	 * �x 4�x 5 �x6�x
-	 * �x 7�x   �x9�x
+	 *    1
+	 * 4  5  6
+	 * 7     9
 	 * 
 	 * 1 is a horizontal merged cell 1 x 3.
-	 * 4 is a vertical merged cell 2 x 1.
+	 * 5 is a vertical merged cell 2 x 1.
 	 * transpose paste.
 	 * source (H11,J13) to destination (C5, E7).
 	 */
@@ -149,13 +148,12 @@ public class PasteTest {
 	}
 	
 	/**
-	 * �x   1    �x
-	 * �x�w�w�w�w�w�w�w�w�x
-	 * �x 4�x 5 �x6�x
-	 * �x 7�x   �x9�x
+	 *    1
+	 * 4  5  6
+	 * 7     9
 	 * 
 	 * 1 is a horizontal merged cell 1 x 3.
-	 * 4 is a vertical merged cell 2 x 1.
+	 * 5 is a vertical merged cell 2 x 1.
 	 * source (H11,J13) to destination (C5, E7)
 	 */
 	@Test
@@ -407,11 +405,12 @@ public class PasteTest {
 	/**
 	 * check skip blank is work, blank don't replace the value when paste
 	 * in following case: blank doesn't replace the value "1" in K11
-	 *   2 3       1
-	 * 4 5 6 paste 
-	 * 7 8 9
+	 * B is blank
+	 * B 2 3          1 B B
+	 * 4 5 6 paste to B B B repeat
+	 * 7 8 9          B B B  
 	 * result
-	 * 1 2 3   2 3
+	 * 1 2 3 B 2 3
 	 * 4 5 6 4 5 6
 	 * 7 8 9 7 8 9
 	 */

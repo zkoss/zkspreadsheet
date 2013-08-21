@@ -1,7 +1,11 @@
 package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.After;
@@ -9,6 +13,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
+import org.zkoss.zss.api.Exporter;
+import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
@@ -39,13 +45,187 @@ public class ShiftTest {
 	@Before
 	public void setUp() throws Exception {
 		final String filename = "book/shiftTest.xlsx";
-		final InputStream is = PasteTest.class.getResourceAsStream(filename);
-		_workbook = Importers.getImporter().imports(is, filename);
+		loadBook(filename);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
 		_workbook = null;
+	}
+	
+	private void loadBook(String filename) throws IOException {
+		final InputStream is = ShiftTest.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+	}
+	
+	private void export() throws IOException {
+		Exporter excelExporter = Exporters.getExporter("excel");
+		FileOutputStream fos = new FileOutputStream(new File(ShiftTest.class.getResource("").getPath() + "book/test.xlsx"));
+		excelExporter.export(_workbook, fos);
+	}
+	
+	@Test
+	public void testDeleteAndInsertRowMerge() throws IOException {
+		Sheet sheet = _workbook.getSheet("Sheet1");
+		
+		Range rE3G5 = Ranges.range(sheet, "E3:G5");
+		rE3G5.merge(false);
+		
+		Range rA4 = Ranges.range(sheet, "A4"); // E4, whole row cross merge area
+		rA4.toRowRange().delete(DeleteShift.DEFAULT);
+		
+		assertTrue(!Util.isAMergedRange(rE3G5)); // should not be merge area anymore
+		Range rE3G4 = Ranges.range(sheet, "E3:G4" );
+		assertTrue(Util.isAMergedRange(rE3G4)); // should be merge area
+	}
+	
+	@Test
+	public void testDeleteAndInsertRow() throws IOException {
+		Sheet sheet = _workbook.getSheet("Sheet1");
+		// delete row 3
+		Range row3 = Ranges.range(sheet, "A3");
+		row3.toRowRange().delete(DeleteShift.DEFAULT);
+		
+		// validate
+		assertEquals("E1", Ranges.range(sheet, "E1").getCellData().getEditText());
+		assertEquals("E2", Ranges.range(sheet, "E2").getCellData().getEditText());
+		assertEquals("E4", Ranges.range(sheet, "E3").getCellData().getEditText());
+		assertEquals("E5", Ranges.range(sheet, "E4").getCellData().getEditText());
+		assertEquals("E6", Ranges.range(sheet, "E5").getCellData().getEditText());
+		assertEquals("E7", Ranges.range(sheet, "E6").getCellData().getEditText());
+		assertEquals("E8", Ranges.range(sheet, "E7").getCellData().getEditText());
+		assertEquals("C8", Ranges.range(sheet, "C7").getCellData().getEditText());
+		assertEquals("G8", Ranges.range(sheet, "G7").getCellData().getEditText());
+		assertEquals("G4", Ranges.range(sheet, "G3").getCellData().getEditText());
+		assertEquals("G5", Ranges.range(sheet, "G4").getCellData().getEditText());
+		
+		export();
+		
+		_workbook = null; 		// clean work book
+		sheet = null;			// clean sheet
+		row3 = null;			// clean range
+		loadBook("book/test.xlsx");  // Import
+		sheet = _workbook.getSheet("Sheet1"); // get sheet
+		
+		// validate
+		assertEquals("E1", Ranges.range(sheet, "E1").getCellData().getEditText());
+		assertEquals("E2", Ranges.range(sheet, "E2").getCellData().getEditText());
+		assertEquals("E4", Ranges.range(sheet, "E3").getCellData().getEditText());
+		assertEquals("E5", Ranges.range(sheet, "E4").getCellData().getEditText());
+		assertEquals("E6", Ranges.range(sheet, "E5").getCellData().getEditText());
+		assertEquals("E7", Ranges.range(sheet, "E6").getCellData().getEditText());
+		assertEquals("E8", Ranges.range(sheet, "E7").getCellData().getEditText());
+		assertEquals("C8", Ranges.range(sheet, "C7").getCellData().getEditText());
+		assertEquals("G8", Ranges.range(sheet, "G7").getCellData().getEditText());
+		assertEquals("G4", Ranges.range(sheet, "G3").getCellData().getEditText());
+		assertEquals("G5", Ranges.range(sheet, "G4").getCellData().getEditText());
+		
+		// insert row 6
+		Range row6 = Ranges.range(sheet, "A6");
+		row6.toRowRange().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_NONE);
+		
+		// validate
+		assertEquals("E1", Ranges.range(sheet, "E1").getCellData().getEditText());
+		assertEquals("E2", Ranges.range(sheet, "E2").getCellData().getEditText());
+		assertEquals("E4", Ranges.range(sheet, "E3").getCellData().getEditText());
+		assertEquals("E5", Ranges.range(sheet, "E4").getCellData().getEditText());
+		assertEquals("E6", Ranges.range(sheet, "E5").getCellData().getEditText());
+		assertEquals(CellType.BLANK, Ranges.range(sheet, "E6").getCellData().getType());
+		assertEquals("E7", Ranges.range(sheet, "E7").getCellData().getEditText());
+		assertEquals("E8", Ranges.range(sheet, "E8").getCellData().getEditText());
+		assertEquals("C8", Ranges.range(sheet, "C8").getCellData().getEditText());
+		assertEquals("G8", Ranges.range(sheet, "G8").getCellData().getEditText());
+		assertEquals("G4", Ranges.range(sheet, "G3").getCellData().getEditText());
+		assertEquals("G5", Ranges.range(sheet, "G4").getCellData().getEditText());
+		
+		export();
+	}
+	
+	/**
+	 * test case step
+	 * 1. Import shiftText.xlsx
+	 * 2. Delete Column D
+	 * 3. Validate
+	 * 4. Export to test.xlsx
+	 * 5. Import test.xlsx
+	 * 6. Validate
+	 * 7. InsertColumn D
+	 * 8. Validate
+	 * 9. Export to test.xlsx
+	 * 10. Import
+	 * 11. Validate
+	 */
+	@Test
+	public void testDeleteAndInsertColumn() throws IOException {
+		Sheet sheet = _workbook.getSheet("Sheet1");
+		
+		// 2. Delete column D
+		Range columnD = Ranges.range(sheet, "D1");
+		columnD.toColumnRange().delete(DeleteShift.DEFAULT);
+		
+		// 3. Validate
+		assertEquals("E1", Ranges.range(sheet, "D1").getCellData().getEditText());
+		assertEquals("E2", Ranges.range(sheet, "D2").getCellData().getEditText());
+		assertEquals("E3", Ranges.range(sheet, "D3").getCellData().getEditText());
+		assertEquals("E4", Ranges.range(sheet, "D4").getCellData().getEditText());
+		assertEquals("E5", Ranges.range(sheet, "D5").getCellData().getEditText());
+		assertEquals("E6", Ranges.range(sheet, "D6").getCellData().getEditText());
+		assertEquals("E7", Ranges.range(sheet, "D7").getCellData().getEditText());
+		assertEquals("E8", Ranges.range(sheet, "D8").getCellData().getEditText());
+		
+		// 4. Export to test.xlsx
+		export();
+		
+		// 5. import
+		_workbook = null; 		// clean work book
+		sheet = null;			// clean sheet
+		columnD = null;			// clean range
+		loadBook("book/test.xlsx");  // Import
+		sheet = _workbook.getSheet("Sheet1"); // get sheet
+		
+		// 6. Validate
+		assertEquals("E1", Ranges.range(sheet, "D1").getCellData().getEditText());
+		assertEquals("E2", Ranges.range(sheet, "D2").getCellData().getEditText());
+		assertEquals("E3", Ranges.range(sheet, "D3").getCellData().getEditText());
+		assertEquals("E4", Ranges.range(sheet, "D4").getCellData().getEditText());
+		assertEquals("E5", Ranges.range(sheet, "D5").getCellData().getEditText());
+		assertEquals("E6", Ranges.range(sheet, "D6").getCellData().getEditText());
+		assertEquals("E7", Ranges.range(sheet, "D7").getCellData().getEditText());
+		assertEquals("E8", Ranges.range(sheet, "D8").getCellData().getEditText());
+		
+		// 7. Insert column D
+		columnD = Ranges.range(sheet, "D1");
+		columnD.toColumnRange().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_NONE);
+		
+		// 8. Validate
+		assertEquals("E1", Ranges.range(sheet, "E1").getCellData().getEditText());
+		assertEquals("E2", Ranges.range(sheet, "E2").getCellData().getEditText());
+		assertEquals("E3", Ranges.range(sheet, "E3").getCellData().getEditText());
+		assertEquals("E4", Ranges.range(sheet, "E4").getCellData().getEditText());
+		assertEquals("E5", Ranges.range(sheet, "E5").getCellData().getEditText());
+		assertEquals("E6", Ranges.range(sheet, "E6").getCellData().getEditText());
+		assertEquals("E7", Ranges.range(sheet, "E7").getCellData().getEditText());
+		assertEquals("E8", Ranges.range(sheet, "E8").getCellData().getEditText());
+		
+		// 9. export
+		export();	
+		
+		// 10. import
+		_workbook = null; 		// clean work book
+		sheet = null;			// clean sheet
+		columnD = null;			// clean range
+		loadBook("book/test.xlsx");  // Import
+		sheet = _workbook.getSheet("Sheet1"); // get sheet
+		
+		// 11. validate
+		assertEquals("E1", Ranges.range(sheet, "E1").getCellData().getEditText());
+		assertEquals("E2", Ranges.range(sheet, "E2").getCellData().getEditText());
+		assertEquals("E3", Ranges.range(sheet, "E3").getCellData().getEditText());
+		assertEquals("E4", Ranges.range(sheet, "E4").getCellData().getEditText());
+		assertEquals("E5", Ranges.range(sheet, "E5").getCellData().getEditText());
+		assertEquals("E6", Ranges.range(sheet, "E6").getCellData().getEditText());
+		assertEquals("E7", Ranges.range(sheet, "E7").getCellData().getEditText());
+		assertEquals("E8", Ranges.range(sheet, "E8").getCellData().getEditText());
 	}
 	
 	@Test

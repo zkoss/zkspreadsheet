@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.Importers;
@@ -18,9 +19,13 @@ public class SortTest {
 	
 	private static Book _workbook;
 	
+	@BeforeClass
+	public static void setUpLibrary() throws Exception {
+		Setup.touch();
+	}
+	
 	@Before
 	public void setUp() throws Exception {
-		Setup.touch();
 		final String filename = "book/blank.xlsx";
 		final InputStream is = PasteTest.class.getResourceAsStream(filename);
 		_workbook = Importers.getImporter().imports(is, filename);
