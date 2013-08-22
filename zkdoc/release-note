@@ -1,4 +1,15 @@
  ------------
+ZK Spreadsheet 3.0.0
+*Features:
+
+*Bugs:
+  ZSS-399 export to PDF - no gridlines
+  
+** Upgrade Notes
+
+
+
+ ------------
 ZK Spreadsheet 3.0.0 RC
 *Features:
   ZSS-338 When share book, could the friend focus shows user name of another editor

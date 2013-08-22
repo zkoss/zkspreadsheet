@@ -3,12 +3,12 @@ package org.zkoss.zss.api.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
+import java.awt.Desktop;
+import java.awt.Desktop.Action;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -26,20 +26,20 @@ import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.Range.InsertShift;
-import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
+import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
+import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.SheetOperationUtil;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.CellData.CellType;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.ChartData;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.api.model.CellData.CellType;
 import org.zkoss.zssex.api.ChartDataUtil;
 
 /**
@@ -55,6 +55,7 @@ import org.zkoss.zssex.api.ChartDataUtil;
  * ZSS-355.
  * ZSS-389.
  * ZSS-395.
+ * ZSS-399.
  */
 public class Issue200Test {
 	
@@ -1294,5 +1295,57 @@ public class Issue200Test {
 		FileOutputStream fos = new FileOutputStream(new File(ShiftTest.class.getResource("").getPath() + "book/test.xlsx"));
 		excelExporter.export(_workbook, fos);
 	}
-	
+
+	@Test
+	public void testZSS399() throws Exception {
+		// load book
+		final String filename = "book/399-pdf-gridline.xlsx";
+		final InputStream is = getClass().getResourceAsStream(filename);
+		Book book = Importers.getImporter().imports(is, filename);
+		
+
+		// print setting >> with grid lines 
+		Sheet sheet = book.getSheetAt(0);
+		sheet.getPoiSheet().setPrintGridlines(true);
+		
+		// export to PDF
+		File temp = File.createTempFile("zss-", ".pdf");
+		FileOutputStream fos = new FileOutputStream(temp);
+		Exporter pdfExporter = Exporters.getExporter("pdf");
+		pdfExporter.export(book, fos);
+		fos.close();
+		System.out.println("xlsx with grid lines export to " + temp);
+		
+		// open PDF
+		// Check list:
+		// 1. correct content
+		// 2. must have grid lines 
+		if(Desktop.isDesktopSupported()) {
+			if(Desktop.getDesktop().isSupported(Action.OPEN)) {
+				Desktop.getDesktop().open(temp);
+			}
+		}
+		
+		// print setting >> without grid lines 
+		sheet = book.getSheetAt(0);
+		sheet.getPoiSheet().setPrintGridlines(false);
+		
+		// export to PDF
+		temp = File.createTempFile("zss-", ".pdf");
+		fos = new FileOutputStream(temp);
+		pdfExporter = Exporters.getExporter("pdf");
+		pdfExporter.export(book, fos);
+		fos.close();
+		System.out.println("xlsx without grid lines export to " + temp);
+
+		// open PDF
+		// Check list:
+		// 1. correct content
+		// 2. NO grid lines 
+		if(Desktop.isDesktopSupported()) {
+			if(Desktop.getDesktop().isSupported(Action.OPEN)) {
+				Desktop.getDesktop().open(temp);
+			}
+		}
+	}
 }
