@@ -49,11 +49,6 @@
 			<version>1.1.0</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zss</groupId>
-			<artifactId>zssex</artifactId>
-			<version>2.6.0</version>
-		</dependency>
 		<!-- 
 		<dependency>
 			<groupId>org.zkoss.poi</groupId>
@@ -81,6 +76,21 @@
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-library</artifactId>
 			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zssex</artifactId>
+			<version>${zss.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zsspdf</artifactId>
+			<version>${zss.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zsshtml</artifactId>
+			<version>${zss.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

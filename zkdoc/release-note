@@ -35,6 +35,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-292 left click row header (or column header) appears context menu
 	ZSS-333 Preload bug
 	ZSS-391 Filter popup menu is hidden by freeze column
+	ZSS-399 export to PDF - no gridlines
 
 ZK Spreadsheet 2.5.0
 *Features:   

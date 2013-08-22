@@ -1,0 +1,33 @@
+<zk>
+	<window width="100%" height="100%" style="padding: 20px">
+		<hbox align="center">
+			Export to PDF: 
+			<button label="grid lines" onClick="exportToPDF(true);"/>
+			<button label="no grid lines" onClick="exportToPDF(false);"/>
+		</hbox>
+		<separator />
+		<zscript><![CDATA[
+			public void exportToPDF(boolean gridlines) throws Exception {
+				// print setting
+				Worksheet sheet = ss.getSelectedSheet();
+				sheet.setPrintGridlines(gridlines);
+				// export to PDF
+				java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+				Exporter exporter = Exporters.getExporter("pdf");
+				if(exporter == null) {
+					Clients.showNotification("no exporter");
+				} else {
+					exporter.export(ss.getBook(), baos);
+					baos.close();
+					// download the PDF
+					org.zkoss.zul.Filedownload.save(baos.toByteArray(), "application/pdf", gridlines ? "gridlines.pdf" : "no-gridlines.pdf");
+				}
+			}
+		]]></zscript>
+		
+		<spreadsheet id="ss" src="/issue/399-pdf-gridline.xlsx" width="1500px" height="800px"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+	</window>
+</zk>
