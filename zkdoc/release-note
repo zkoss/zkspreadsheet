@@ -36,6 +36,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-333 Preload bug
 	ZSS-391 Filter popup menu is hidden by freeze column
 	ZSS-399 export to PDF - no gridlines
+	ZSS-420 Cannot focus on cell when set rowfreeze="0" or columnfreeze="0"
 
 ZK Spreadsheet 2.5.0
 *Features:   

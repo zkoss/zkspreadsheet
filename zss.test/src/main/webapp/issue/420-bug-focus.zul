@@ -1,0 +1,46 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<label pre="true">
+		<attribute name="value"><![CDATA[
+			focus bug when set rowfreeze="0" or columnfreeze="0"
+			1. scroll to the most bottom & right area
+			2. cannot focus on row frozen area (ex: CV1) & cannot focus on column frozen area (ex: A1000)
+		]]></attribute>
+	</label>
+	<!-- workaround -->
+	<script type="text/javascript"><![CDATA[
+/*
+		zk.afterLoad('zss', function () {
+			var _shtCtrl = {};
+			zk.override(zss.SSheetCtrl.prototype, _shtCtrl, {
+					getCell: function (row, col) {
+						var fzr = this.frozenRow,
+							fzc = this.frozenCol,
+							cell = null;
+						
+						if (row <= fzr && col <= fzc) { //corner
+							var cp = this.cp;
+							cell = cp && cp.block ? cp.block.getCell(row, col) : null
+						}
+						//bug fix  (was: fzr > 0 && row <= fzr)
+						else if(fzr >= 0 && row <= fzr) {
+							var tp = this.tp;
+							cell = tp && tp.block ? tp.block.getCell(row, col) : null; //top panel
+						}
+						//bug fix (was: fzc > 0 && col <= fzc)
+						else if(fzc >= 0 && col <= fzc)  {
+							var lp = this.lp;
+							cell = lp && lp.block ? lp.block.getCell(row, col) : null; //left panel.
+						} else {
+							cell = this.activeBlock.getCell(row, col); //data panel
+						} 
+						return cell;
+					}
+			});
+		});
+*/
+	]]></script>
+	<spreadsheet src="/issue/420-bug-focus.xlsx" maxrows="1000" maxcolumns="100" vflex="true" width="100%" 
+		rowfreeze="0" columnfreeze="0"
+		showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true"></spreadsheet>
+</zk>
