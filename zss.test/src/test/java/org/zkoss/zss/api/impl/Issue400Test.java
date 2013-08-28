@@ -26,9 +26,9 @@ import org.zkoss.zss.api.model.Sheet;
 
 /**
  * ZSS-408.
- * ZSS-414.
- * ZSS-415.
- * ZSS-435. (OPEN)
+ * ZSS-414. ZSS-415.
+ * ZSS-425. ZSS-426.
+ * ZSS-435.
  * @author kuro
  *
  */
@@ -44,6 +44,27 @@ public class Issue400Test {
 	@After
 	public void tearDown() throws Exception {
 		_workbook = null;
+	}
+	
+	/**
+	 * Endless loop when export demo swineFlu.xls pdf
+	 */
+	@Test
+	public void testZSS426() throws IOException {
+		
+		final String filename = "book/426-swineFlu.xls";
+		final InputStream is =  getClass().getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		
+		// export work book
+    	Exporter exporter = Exporters.getExporter();
+    	java.io.File temp = java.io.File.createTempFile("test",".xls");
+    	java.io.FileOutputStream fos = new java.io.FileOutputStream(temp);
+    	exporter.export(_workbook,fos);
+    	
+    	// import book again
+    	Importers.getImporter().imports(temp,"test");
+
 	}
 	
 	/**

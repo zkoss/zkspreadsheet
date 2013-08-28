@@ -4,14 +4,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.zkoss.image.AImage;
+import org.zkoss.poi.ss.usermodel.AutoFilter;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.Setup;
+import org.zkoss.zss.api.AreaRef;
+import org.zkoss.zss.api.BookSeriesBuilder;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
@@ -24,24 +32,27 @@ import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
+import org.zkoss.zss.api.SheetOperationUtil;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Chart;
+import org.zkoss.zss.api.model.Chart.Grouping;
+import org.zkoss.zss.api.model.Chart.LegendPosition;
+import org.zkoss.zss.api.model.ChartData;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.CellData.CellType;
+import org.zkoss.zssex.api.ChartDataUtil;
 
 /**
- * ZSS-260.
- * ZSS-261.
- * ZSS-266.
- * ZSS-275.
- * ZSS-277.
- * ZSS-290.
- * ZSS-298.
- * ZSS-300.
- * ZSS-301.
- * ZSS-303.
- * ZSS-315.
- * ZSS-326. (UNDONE)
- * ZSS-342. (Seems not fix yet?)
+ * ZSS-245.
+ * ZSS-255.
+ * ZSS-260. ZSS-261. ZSS-262. ZSS-263. ZSS-264. ZSS-265. ZSS-266. ZSS-267.
+ * ZSS-275. ZSS-277. ZSS-280.
+ * ZSS-290. ZSS-298.
+ * ZSS-300. ZSS-301. ZSS-303. 
+ * ZSS-315. ZSS-317. 
+ * ZSS-326. 
+ * ZSS-334. ZSS-341. ZSS-342.
+ * ZSS-355.
  * ZSS-389.
  * ZSS-395.
  */
@@ -59,22 +70,568 @@ public class Issue200Test {
 		_workbook = null;
 	}
 	
+	@Test
+	public void testZSS291() throws IOException {
+		final String filename = "book/291-sort.xlsx";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet = _workbook.getSheet("cell");
+		Ranges.range(sheet, "B4:B8").sort(false);
+
+		assertEquals(1, Ranges.range(sheet, "B4").getCellData().getDoubleValue(), 1E-8);
+		assertEquals(2, Ranges.range(sheet, "B5").getCellData().getDoubleValue(), 1E-8);
+		assertEquals(3, Ranges.range(sheet, "B6").getCellData().getDoubleValue(), 1E-8);
+		assertEquals(4, Ranges.range(sheet, "B7").getCellData().getDoubleValue(), 1E-8);
+		assertEquals(5, Ranges.range(sheet, "B8").getCellData().getDoubleValue(), 1E-8);
+	}
+	
+	@Ignore("ZSS-280")
+	@Test
+	public void testZSS280() throws IOException {
+		final String filename = "book/280-autofilter.xlsx";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet = _workbook.getSheet("cell-data");
+		Ranges.range(sheet, "A13").setCellEditText("1");
+		Ranges.range(sheet, "A14").setCellEditText("2");
+		Ranges.range(sheet, "A15").setCellEditText("3");
+		Ranges.range(sheet, "A16").setCellEditText("4");
+		Ranges.range(sheet, "A17").setCellEditText("5");
+		SheetOperationUtil.applyAutoFilter(Ranges.range(sheet, "A1:A17"));
+		
+		AutoFilter af = sheet.getPoiSheet().getAutoFilter();
+		if (af == null) { //no AutoFilter to apply 
+			return;
+		}
+		final CellRangeAddress affectedArea = af.getRangeAddress();
+		final int row1 = affectedArea.getFirstRow();
+		final int col1 = affectedArea.getFirstColumn(); 
+		final int row2 = affectedArea.getLastRow();
+		final int col2 = affectedArea.getLastColumn();
+		
+		assertEquals(row1, 0);
+		assertEquals(col1, 0);
+		assertEquals(row2, 17);
+		assertEquals(col2, 0);
+	}
+	
+	@Ignore("ZSS-271")
+	@Test
+	public void testZSS271() throws IOException {
+		final String filename = "book/271-engineering.xlsx";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet = _workbook.getSheet("formula-engineering");
+		assertEquals("0.98", Ranges.range(sheet, "B3").getCellFormatText());
+		assertEquals("0.33", Ranges.range(sheet, "B5").getCellFormatText());
+		assertEquals("0.28", Ranges.range(sheet, "B7").getCellFormatText());
+		assertEquals("0.15", Ranges.range(sheet, "B9").getCellFormatText());
+		assertEquals("100", Ranges.range(sheet, "B11").getCellFormatText());
+		assertEquals("00FB", Ranges.range(sheet, "B13").getCellFormatText());
+		assertEquals("011", Ranges.range(sheet, "B15").getCellFormatText());
+		assertEquals("3+4i", Ranges.range(sheet, "B17").getCellFormatText());
+		assertEquals("1001", Ranges.range(sheet, "B19").getCellFormatText());
+		assertEquals("0064", Ranges.range(sheet, "B21").getCellFormatText());
+		assertEquals("072", Ranges.range(sheet, "B23").getCellFormatText());
+		assertEquals("0", Ranges.range(sheet, "B25").getCellFormatText());
+		assertEquals("0.71", Ranges.range(sheet, "B27").getCellFormatText());
+		assertEquals("0.16", Ranges.range(sheet, "B29").getCellFormatText());
+		assertEquals("1", Ranges.range(sheet, "B31").getCellFormatText());
+		assertEquals("00001111", Ranges.range(sheet, "B33").getCellFormatText());
+		assertEquals("165", Ranges.range(sheet, "B35").getCellFormatText());
+		assertEquals("017", Ranges.range(sheet, "B37").getCellFormatText());
+		assertEquals("13", Ranges.range(sheet, "B39").getCellFormatText());
+		assertEquals("4", Ranges.range(sheet, "B41").getCellFormatText());
+		assertEquals("0.93", Ranges.range(sheet, "B43").getCellFormatText());
+		assertEquals("3-4i", Ranges.range(sheet, "B45").getCellFormatText());
+		assertEquals("0.833730025131149-0.988897705762865i", Ranges.range(sheet, "B47").getCellFormatText());
+		assertEquals("5+12i", Ranges.range(sheet, "B49").getCellFormatText());
+		assertEquals("1.46869393991589+2.28735528717884i", Ranges.range(sheet, "B51").getCellFormatText());
+		assertEquals("1.6094379124341+0.927295218001612i", Ranges.range(sheet, "B53").getCellFormatText());
+		assertEquals("0.698970004336019+0.402719196273373i", Ranges.range(sheet, "B55").getCellFormatText());
+		assertEquals("2.32192809506607+1.33780421255394i", Ranges.range(sheet, "B57").getCellFormatText());
+		assertEquals("-46+9.00000000000001i", Ranges.range(sheet, "B59").getCellFormatText());
+		assertEquals("27+11i", Ranges.range(sheet, "B61").getCellFormatText());
+		assertEquals("6", Ranges.range(sheet, "B63").getCellFormatText());
+		assertEquals("3.85373803791938-27.0168132580039i", Ranges.range(sheet, "B65").getCellFormatText());
+		assertEquals("1.09868411346781+0.455089860562227i", Ranges.range(sheet, "B67").getCellFormatText());
+		assertEquals("8+i", Ranges.range(sheet, "B69").getCellFormatText());
+		assertEquals("8+i", Ranges.range(sheet, "B71").getCellFormatText());
+		assertEquals("011", Ranges.range(sheet, "B73").getCellFormatText());
+		assertEquals("44", Ranges.range(sheet, "B75").getCellFormatText());
+		assertEquals("0040", Ranges.range(sheet, "B77").getCellFormatText());
+	}
+	
+	
+	@Ignore("ZSS-272")
+	@Test
+	public void testZSS272() throws IOException {
+		final String filename = "book/272-conditionalFormatting.xls";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+	}
+	
+	@Ignore("ZSS-270")
+	@Test
+	public void testZSS270() throws IOException {
+		final String filename = "book/270-statistical.xlsx";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet = _workbook.getSheet("formula-statistical");
+		 // AVEDEV
+		assertEquals("1.02", Ranges.range(sheet, "B3").getCellFormatText());
+		// AVERAGE
+		assertEquals("11", Ranges.range(sheet, "B6").getCellFormatText());
+		// AVERAGEA
+		assertEquals("5.6", Ranges.range(sheet, "B8").getCellFormatText());
+		// AVERAGEIF
+		assertEquals("14000", Ranges.range(sheet, "B11").getCellFormatText());
+		// AVERAGEIFS
+		assertEquals("87.5", Ranges.range(sheet, "B14").getCellFormatText());
+		// BETADIST
+		assertEquals("0.69", Ranges.range(sheet, "B17").getCellFormatText());
+		// BETAINV
+		assertEquals("2", Ranges.range(sheet, "B19").getCellFormatText());
+		// BIOMDIST
+		assertEquals("0.21", Ranges.range(sheet, "B21").getCellFormatText());
+		// CHIDIST
+		assertEquals("0.05", Ranges.range(sheet, "B23").getCellFormatText());
+		// CHIINV
+		assertEquals("18.31", Ranges.range(sheet, "B25").getCellFormatText());
+		// CHITEST
+		assertEquals("0.000308", Ranges.range(sheet, "B27").getCellFormatText());
+		// CONFIDENCE
+		assertEquals("0.69", Ranges.range(sheet, "B35").getCellFormatText());
+		// CORREL
+		assertEquals("0.9971", Ranges.range(sheet, "B37").getCellFormatText());
+		// COUNT
+		assertEquals("3", Ranges.range(sheet, "B41").getCellFormatText());
+		// COUNTA
+		assertEquals("6", Ranges.range(sheet, "B43").getCellFormatText());
+		// COUNTBLANK
+		assertEquals("2", Ranges.range(sheet, "B45").getCellFormatText());
+		// COUNTIF
+		assertEquals("2", Ranges.range(sheet, "B47").getCellFormatText());
+		// COVAR
+		assertEquals("5.2", Ranges.range(sheet, "B50").getCellFormatText());
+		// CRITBINOM
+		assertEquals("4", Ranges.range(sheet, "B53").getCellFormatText());
+		// DEVSQ
+		assertEquals("48", Ranges.range(sheet, "B55").getCellFormatText());
+		// EXPONDIST
+		assertEquals("0.86", Ranges.range(sheet, "B57").getCellFormatText());
+		// FDIST
+		assertEquals("0.01", Ranges.range(sheet, "B59").getCellFormatText());
+		// FINV
+		assertEquals("15.21", Ranges.range(sheet, "B61").getCellFormatText());
+		// FISHER
+		assertEquals("0.97", Ranges.range(sheet, "B63").getCellFormatText());
+		// FISHERINV
+		assertEquals("0.75", Ranges.range(sheet, "B65").getCellFormatText());
+		// FORECAST
+		assertEquals("10.61", Ranges.range(sheet, "B67").getCellFormatText());
+		// FREQUENCY
+		assertEquals("1", Ranges.range(sheet, "B70").getCellFormatText());
+		// FTEST
+		assertEquals("0.65", Ranges.range(sheet, "B73").getCellFormatText());
+		// GAMMADIST
+		assertEquals("0.03", Ranges.range(sheet, "B76").getCellFormatText());
+		// GAMMAINV
+		assertEquals("10.00", Ranges.range(sheet, "B78").getCellFormatText());
+		// GAMMALN
+		assertEquals("1.79", Ranges.range(sheet, "B80").getCellFormatText());
+		// GEOMEAN
+		assertEquals("5.48", Ranges.range(sheet, "B82").getCellFormatText());
+		// GROWTH
+		assertEquals("320196.72", Ranges.range(sheet, "B85").getCellFormatText());
+		// HARMEAN
+		assertEquals("5.03", Ranges.range(sheet, "B89").getCellFormatText());
+		// HYPGEOMDIST
+		assertEquals("0.36", Ranges.range(sheet, "B92").getCellFormatText());
+		// INTERCEPT
+		assertEquals("0.05", Ranges.range(sheet, "B94").getCellFormatText());
+		// KURT
+		assertEquals("-0.15", Ranges.range(sheet, "B97").getCellFormatText());
+		// LARGE
+		assertEquals("5", Ranges.range(sheet, "B100").getCellFormatText());
+		// LINEST
+		assertEquals("2", Ranges.range(sheet, "B103").getCellFormatText());
+		// LOGINV
+		assertEquals("4.00", Ranges.range(sheet, "B106").getCellFormatText());
+		// LOGNORMDIST
+		assertEquals("0.04", Ranges.range(sheet, "B108").getCellFormatText());
+		// MAX
+		assertEquals("27", Ranges.range(sheet, "B110").getCellFormatText());
+		// MAXA
+		assertEquals("0.5", Ranges.range(sheet, "B112").getCellFormatText());
+		// MEDIAN
+		assertEquals("3", Ranges.range(sheet, "B114").getCellFormatText());
+		// MIN
+		assertEquals("2", Ranges.range(sheet, "B116").getCellFormatText());
+		// MINA
+		assertEquals("0", Ranges.range(sheet, "B118").getCellFormatText());
+		// MODE
+		assertEquals("4", Ranges.range(sheet, "B121").getCellFormatText());
+		// NEGBINOMDIST
+		assertEquals("0.06", Ranges.range(sheet, "B123").getCellFormatText());
+		// NORMDIST
+		assertEquals("0.91", Ranges.range(sheet, "B125").getCellFormatText());
+		// MORMINV
+		assertEquals("42.00", Ranges.range(sheet, "B127").getCellFormatText());
+		// NORMSDIST
+		assertEquals("0.91", Ranges.range(sheet, "B129").getCellFormatText());
+		// NORMSINV
+		assertEquals("1.33", Ranges.range(sheet, "B131").getCellFormatText());
+		// PEARSON
+		assertEquals("0.70", Ranges.range(sheet, "B133").getCellFormatText());
+		// PERCENTILE
+		assertEquals("1.9", Ranges.range(sheet, "B136").getCellFormatText());
+		// PERCENTRANK
+		assertEquals("0.33", Ranges.range(sheet, "B138").getCellFormatText());
+		// PERMUT
+		assertEquals("970200", Ranges.range(sheet, "B140").getCellFormatText());
+		// POISSON
+		assertEquals("0.12", Ranges.range(sheet, "B142").getCellFormatText());
+		// PROB
+		assertEquals("0.1", Ranges.range(sheet, "B144").getCellFormatText());
+		// QUARTILE
+		assertEquals("3.5", Ranges.range(sheet, "B147").getCellFormatText());
+		// RANK
+		assertEquals("3", Ranges.range(sheet, "B149").getCellFormatText());
+		// RSQ
+		assertEquals("0.061", Ranges.range(sheet, "B151").getCellFormatText());
+		// SKEW
+		assertEquals("0.36", Ranges.range(sheet, "B154").getCellFormatText());
+		// SLOPE
+		assertEquals("0.31", Ranges.range(sheet, "B156").getCellFormatText());
+		// SMALL
+		assertEquals("4", Ranges.range(sheet, "B159").getCellFormatText());
+		// STANDARDIZE
+		assertEquals("1.33", Ranges.range(sheet, "B162").getCellFormatText());
+		// STDEV
+		assertEquals("27.46", Ranges.range(sheet, "B164").getCellFormatText());
+		// STDEVA
+		assertEquals("27.46", Ranges.range(sheet, "B166").getCellFormatText());
+		// STDEVP
+		assertEquals("26.05", Ranges.range(sheet, "B168").getCellFormatText());
+		// STDEVPA
+		assertEquals("26.05", Ranges.range(sheet, "B170").getCellFormatText());
+		// STEYX
+		assertEquals("3.31", Ranges.range(sheet, "B172").getCellFormatText());
+		// TDIST
+		assertEquals("0.05", Ranges.range(sheet, "B175").getCellFormatText());
+		// TINV
+		assertEquals("1.96", Ranges.range(sheet, "B177").getCellFormatText());
+		// TREND
+		assertEquals("133953.33", Ranges.range(sheet, "B179").getCellFormatText());
+		// TRIMMEAN
+		assertEquals("3.78", Ranges.range(sheet, "B183").getCellFormatText());
+		// TTEST
+		assertEquals("0.20", Ranges.range(sheet, "B186").getCellFormatText());
+		// VAR
+		assertEquals("754.27", Ranges.range(sheet, "B189").getCellFormatText());
+		// VARA
+		assertEquals("754.27", Ranges.range(sheet, "B191").getCellFormatText());
+		// VARP
+		assertEquals("678.84", Ranges.range(sheet, "B193").getCellFormatText());
+		// VARPA
+		assertEquals("678.84", Ranges.range(sheet, "B195").getCellFormatText());
+		// WEIBULL
+		assertEquals("0.93", Ranges.range(sheet, "B197").getCellFormatText());
+		// ZTEST
+		assertEquals("0.09", Ranges.range(sheet, "B199").getCellFormatText());
+	}
+	
+	@Ignore("ZSS-262")
+	@Test
+	public void testZSS262() throws IOException {
+		final String filename = "book/blank.xlsx";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet = _workbook.getSheet("Sheet1");
+		Ranges.range(sheet, "A1").setCellEditText("1234.567");
+		Ranges.range(sheet, "B1").setCellEditText("DOLLAR(A1,2)");
+		assertEquals("NT$1,234.57", Ranges.range(sheet, "B1").getCellFormatText());
+	}
+	
+	@Ignore("ZSS-263")
+	@Test
+	public void testZSS263() throws IOException {
+		final String filename = "book/blank.xlsx";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet = _workbook.getSheet("Sheet1");
+		Ranges.range(sheet, "A1").setCellEditText("VALUE(\"16:48:00\")");
+		assertEquals("0.7", Ranges.range(sheet, "A1").getCellFormatText());
+	}
+	
+	@Ignore("ZSS-264")
+	@Test
+	public void testZSS264() throws IOException {
+		final String filename = "book/264-text-formula.xlsx";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet = _workbook.getSheet("formula-text");
+		assertEquals("EXCEL", Ranges.range(sheet, "B3").getCellFormatText());
+		assertEquals("A", Ranges.range(sheet, "B5").getCellFormatText());
+		assertEquals("text", Ranges.range(sheet, "B7").getCellFormatText());
+		assertEquals("CODE", Ranges.range(sheet, "B10").getCellFormatText());
+		assertEquals("ZK", Ranges.range(sheet, "B12").getCellFormatText());
+		assertEquals("$1,234.57", Ranges.range(sheet, "B14").getCellFormatText());
+		assertEquals("TRUE", Ranges.range(sheet, "B16").getCellFormatText());
+		assertEquals("1", Ranges.range(sheet, "B20").getCellFormatText());
+		assertEquals("1", Ranges.range(sheet, "B22").getCellFormatText());
+		assertEquals("1,234.6", Ranges.range(sheet, "B24").getCellFormatText());
+		assertEquals("\u6771 \u4EAC", Ranges.range(sheet, "B27").getCellFormatText());
+		assertEquals("\u6771", Ranges.range(sheet, "B29").getCellFormatText());
+		assertEquals("11", Ranges.range(sheet, "B31").getCellFormatText());
+		assertEquals("11", Ranges.range(sheet, "B33").getCellFormatText());
+		assertEquals("e. e. cummings", Ranges.range(sheet, "B36").getCellFormatText());
+		assertEquals("Fluid", Ranges.range(sheet, "B38").getCellFormatText());
+		assertEquals("Fluid", Ranges.range(sheet, "B40").getCellFormatText());
+		assertEquals("This Is A Title", Ranges.range(sheet, "B42").getCellFormatText());
+		assertEquals("abcde*k", Ranges.range(sheet, "B45").getCellFormatText());
+		assertEquals("abcde*k", Ranges.range(sheet, "B47").getCellFormatText());
+		assertEquals("*-*-*-", Ranges.range(sheet, "B49").getCellFormatText());
+		assertEquals("Price", Ranges.range(sheet, "B51").getCellFormatText());
+		assertEquals("Price", Ranges.range(sheet, "B53").getCellFormatText());
+		assertEquals("6", Ranges.range(sheet, "B55").getCellFormatText());
+		assertEquals("6", Ranges.range(sheet, "B57").getCellFormatText());
+		assertEquals("Quarter 2, 2008", Ranges.range(sheet, "B59").getCellFormatText());
+		assertEquals("Sale Price", Ranges.range(sheet, "B62").getCellFormatText());
+		assertEquals("Date: 2007-08-06", Ranges.range(sheet, "B65").getCellFormatText());
+		assertEquals("revenue in quarter 1", Ranges.range(sheet, "B68").getCellFormatText());
+		assertEquals("TOTAL", Ranges.range(sheet, "B70").getCellFormatText());
+		assertEquals("0.7", Ranges.range(sheet, "B73").getCellFormatText());
+	}
+	
+	/**
+	 * some "accounting" data format causes NullPointerException
+	 */
+	@Ignore("format text is wrong")
+	@Test
+	public void testZSS254() throws IOException {
+		final String filename = "book/254-accounting.xlsx";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet = _workbook.getSheet("cell-data");
+		assertEquals("NT$1,234.56", Ranges.range(sheet, "C2").getCellFormatText());
+		
+		// FIXME
+		assertEquals("¥1,234.00", Ranges.range(sheet, "D2").getCellFormatText());
+		// Excel display 06:12:00 PM in function field
+		// ZSS display 0.75833333333 in function field
+		assertEquals("06:12 PM", Ranges.range(sheet, "F2").getCellFormatText());
+	}
+	
+	@Test
+	public void testZSS334() throws IOException {
+		// FIXME
+		String bookName1 = "book/334-book1.xlsx";
+		Book book1 = Importers.getImporter().imports(Issue200Test.class.getResourceAsStream(bookName1), bookName1);
+		Sheet sheet1 = book1.getSheet("Sheet1");
+		Ranges.range(sheet1, "A1").setCellValue("123");
+		
+		String bookName2 = "book/334-book2.xlsx";
+		Book book2 = Importers.getImporter().imports(Issue200Test.class.getResourceAsStream(bookName2), bookName2);
+		Sheet sheet2 = book2.getSheet("Sheet1");
+		
+		BookSeriesBuilder.getInstance().buildBookSeries(book1,book2);
+		
+		String bookName3 = "book/334-book3.xlsx";
+		Book book3 = Importers.getImporter().imports(Issue200Test.class.getResourceAsStream(bookName3), bookName3);
+		Sheet sheet3 = book2.getSheet("Sheet1");
+
+	}
+	
+	/**
+	 * When importing a xlsx file with images exported from Spreadsheet 2nd time, an exception is thrown
+	 */
+	@Test
+	public void testZSS317() throws IOException {
+		final String filename = "book/317-exportImage.xlsx";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet = _workbook.getSheet("export1");
+		SheetOperationUtil.addPicture(Ranges.range(sheet,"A1"), new AImage(new File(ShiftTest.class.getResource("").getPath() + "book/zklogo.png")));
+		export();
+		export();
+	}
+	
+	/**
+	 * Exception when delete columns
+	 */
+	@Test
+	public void testZSS245() throws IOException {
+		final String filename = "book/blank.xlsx";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet = _workbook.getSheet("Sheet1");
+		Ranges.range(sheet, "A1").toRowRange().delete(DeleteShift.LEFT);
+	}
+	
+	/**
+	 * When given start date is later than end date In NETWORKDAYS(), it returns #NAME?
+	 */
+	@Test
+	public void testZSS355() throws IOException {
+		final String filename = "book/blank.xlsx";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet = _workbook.getSheet("Sheet1");
+		Ranges.range(sheet, "A1").setCellEditText("=NETWORKDAYS(DATE(2013,6,2),DATE(2013,6,1))");
+		assertEquals("#VALUE!", Ranges.range(sheet, "A1").getCellData().getFormatText());
+	}
+	
+	/**
+	 * AVERAGEIF, AVERAGEEIFS -> #NAME?
+	 */
+	@Test
+	public void testZSS341() throws IOException {
+		final String filename = "book/blank.xlsx";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet = _workbook.getSheet("Sheet1");
+		
+		Ranges.range(sheet, "B11").setCellEditText("=AVERAGEIF(B12:E12,\"<23000\")");
+		Ranges.range(sheet, "B12").setCellEditText("7000");
+		Ranges.range(sheet, "C12").setCellEditText("14000");
+		Ranges.range(sheet, "D12").setCellEditText("21000");
+		Ranges.range(sheet, "E12").setCellEditText("28000");
+		assertEquals("#NAME?", Ranges.range(sheet, "B11").getCellData().getFormatText());
+		Ranges.range(sheet, "C11").setCellEditText("=AVERAGEIFS(B12:E12,B12:E12,\"<23000\",B12:E12,\">13000\")");
+		assertEquals("#NAME?", Ranges.range(sheet, "C11").getCellData().getFormatText());
+		
+	}
+	
+	/**
+	 * May need to check
+	 * 1. HOUR, SECOND, MINUTE -> #VALUE!
+	 * 2. TIMEVALUE -> #NAME?
+	 * 3. YEARFRAC tolerance 0.005
+	 */
+	@Test
+	public void testZSS267() throws IOException {
+		final String filename = "book/blank.xlsx";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet = _workbook.getSheet("Sheet1");
+		
+		// DATE
+		Ranges.range(sheet, "B4").setCellEditText("2008");
+		Ranges.range(sheet, "C4").setCellEditText("1");
+		Ranges.range(sheet, "D4").setCellEditText("1");
+		Ranges.range(sheet, "B3").setCellEditText("=DATE(B4,C4,D4)");
+		CellOperationUtil.applyDataFormat(Ranges.range(sheet, "B3"), "Y/M/D");
+		assertEquals("2008/1/1", Ranges.range(sheet, "B3").getCellData().getFormatText());
+		
+		// DATEVALUE
+		Ranges.range(sheet, "B6").setCellEditText("=DATEVALUE(\"2008/1/1\")");
+		assertEquals("39448", Ranges.range(sheet, "B6").getCellData().getFormatText());
+		
+		// DAY
+		Ranges.range(sheet, "B9").setCellEditText("2008/4/15");
+		Ranges.range(sheet, "B8").setCellEditText("=DAY(B9)");
+		assertEquals("15", Ranges.range(sheet, "B8").getCellData().getFormatText());
+		
+		// DAYS360
+		Ranges.range(sheet, "B11").setCellEditText("2008/1/30");
+		Ranges.range(sheet, "C11").setCellEditText("2008/2/1");
+		Ranges.range(sheet, "B10").setCellEditText("=DAYS360(B11,C11)");
+		assertEquals("1", Ranges.range(sheet, "B10").getCellData().getFormatText());
+		
+		// HOUR
+		Ranges.range(sheet, "B13").setCellEditText("=HOUR(\"15:30\")");
+		assertEquals("#VALUE!", Ranges.range(sheet, "B13").getCellData().getFormatText());
+		
+		// MINUTE
+		Ranges.range(sheet, "B15").setCellEditText("=MINUTE(\"4:48:00 PM\")");
+		assertEquals("#VALUE!", Ranges.range(sheet, "B15").getCellData().getFormatText());
+		
+		// MONTH
+		Ranges.range(sheet, "B17").setCellEditText("=MONTH(DATE(2008,4,15))");
+		assertEquals("4", Ranges.range(sheet, "B17").getCellData().getFormatText());
+		
+		// NETWORKDAYS
+		Ranges.range(sheet, "B19").setCellEditText("=NETWORKDAYS(DATE(2013,4,1),DATE(2013,4,30))");
+		assertEquals("22", Ranges.range(sheet, "B19").getCellData().getFormatText());
+		
+		// SECOND
+		Ranges.range(sheet, "B23").setCellEditText("=SECOND(\"4:48 PM\")");
+		assertEquals("#VALUE!", Ranges.range(sheet, "B23").getCellData().getFormatText());
+		
+		// TIME
+		Ranges.range(sheet, "B25").setCellEditText("=TIME(12,0,0)");
+		assertEquals("0.5", Ranges.range(sheet, "B25").getCellData().getFormatText());
+		
+		// TIMEVALUE
+		Ranges.range(sheet, "B27").setCellEditText("=TIMEVALUE(\"2:24 AM\")");
+		assertEquals("#NAME?", Ranges.range(sheet, "B27").getCellData().getFormatText());
+		
+		// WEEKDAY
+		Ranges.range(sheet, "B31").setCellEditText("=WEEKDAY(DATE(2008,2,14))");
+		assertEquals("5", Ranges.range(sheet, "B31").getCellData().getFormatText());
+		
+		// WORKDAY
+		Ranges.range(sheet, "B33").setCellEditText("=WORKDAY(DATE(2013,4,1),5)");
+		assertEquals("41372", Ranges.range(sheet, "B33").getCellData().getFormatText());
+		
+		// YEAR
+		Ranges.range(sheet, "B35").setCellEditText("=YEAR(DATE(2008,1,1))");
+		assertEquals("2008", Ranges.range(sheet, "B35").getCellData().getFormatText());
+		
+		// YEARFRAC
+		Ranges.range(sheet, "B37").setCellEditText("=YEARFRAC(DATE(2012,1,1),DATE(2012,7,30))");
+		assertEquals(0.58, Ranges.range(sheet, "B37").getCellData().getDoubleValue(), 0.005);
+		
+	}
+	
 	/**
 	 * SERIESSUM(B105,0,2,B106:B109) is a unsupported function, cell value should be ERROR_NAME
 	 */
+	@Test
 	public void testZSS261() throws IOException {
 		final String filename = "book/math.xlsx";
-		final InputStream is = PasteTest.class.getResourceAsStream(filename);
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
 		_workbook = Importers.getImporter().imports(is, filename);
 		Sheet sheet1 = _workbook.getSheet("formula-math");
 		Range B104 = Ranges.range(sheet1, "B104");
 		assertEquals("#NAME?", B104.getCellData().getFormatText());
 	}
 	
+	@Ignore("ZSS-265")
+	@Test
+	public void testZSS265() throws IOException {
+		final String filename = "book/266-info-formula.xlsx";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet = _workbook.getSheet("formula-info");
+		assertEquals("3", Ranges.range(sheet, "B3").getCellFormatText());
+		assertEquals("1", Ranges.range(sheet, "B5").getCellFormatText());
+		assertEquals("12.0", Ranges.range(sheet, "B8").getCellFormatText());
+		assertEquals("FALSE", Ranges.range(sheet, "B10").getCellFormatText());
+		assertEquals("TRUE", Ranges.range(sheet, "B12").getCellFormatText());
+		assertEquals("TRUE", Ranges.range(sheet, "B15").getCellFormatText());
+		assertEquals("TRUE", Ranges.range(sheet, "B18").getCellFormatText());
+		assertEquals("FALSE", Ranges.range(sheet, "B21").getCellFormatText());
+		assertEquals("FALSE", Ranges.range(sheet, "B23").getCellFormatText());
+		assertEquals("TRUE", Ranges.range(sheet, "B26").getCellFormatText());
+		assertEquals("TRUE", Ranges.range(sheet, "B29").getCellFormatText());
+		assertEquals("FALSE", Ranges.range(sheet, "B31").getCellFormatText());
+		assertEquals("FALSE", Ranges.range(sheet, "B33").getCellFormatText());
+		assertEquals("TRUE", Ranges.range(sheet, "B35").getCellFormatText());
+		assertEquals("7", Ranges.range(sheet, "B38").getCellFormatText());
+		assertEquals("#N/A", Ranges.range(sheet, "B41").getCellFormatText());
+		assertEquals("2", Ranges.range(sheet, "B43").getCellFormatText());
+	}
+	
+	/**
+	 * ISERR
+	 */
 	@Test
 	public void testZSS266() throws IOException {
 		final String filename = "book/266-info-formula.xlsx";
-		final InputStream is = PasteTest.class.getResourceAsStream(filename);
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
 		_workbook = Importers.getImporter().imports(is, filename);
 		Sheet sheet1 = _workbook.getSheet("formula-info");
 		Range B12 = Ranges.range(sheet1, "B12");
@@ -87,7 +644,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS342_1() throws IOException {
 		final String filename = "book/blank.xlsx";
-		final InputStream is = PasteTest.class.getResourceAsStream(filename);
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
 		_workbook = Importers.getImporter().imports(is, filename);
 		Sheet sheet1 = _workbook.getSheet("Sheet1");
 		Range A1 = Ranges.range(sheet1, "A1");
@@ -101,7 +658,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS342_2() throws IOException {
 		final String filename = "book/blank.xlsx";
-		final InputStream is = PasteTest.class.getResourceAsStream(filename);
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
 		_workbook = Importers.getImporter().imports(is, filename);
 		Sheet sheet1 = _workbook.getSheet("Sheet1");
 		
@@ -122,7 +679,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS255() throws IOException {
 		final String filename = "book/255-cell-data.xlsx";
-		final InputStream is = PasteTest.class.getResourceAsStream(filename);
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
 		_workbook = Importers.getImporter().imports(is, filename);
 	}
 	
@@ -132,7 +689,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS260() throws IOException {
 		final String filename = "book/260-validation.xlsx";
-		final InputStream is = PasteTest.class.getResourceAsStream(filename);
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
 		_workbook = Importers.getImporter().imports(is, filename);
 		Sheet sheet1 = _workbook.getSheet("Validation");
 		Range C3 = Ranges.range(sheet1, "C3");
@@ -322,16 +879,28 @@ public class Issue200Test {
 		assertTrue(!Util.isAMergedRange(range)); // is it unmerged?
 	}
 	
+	/**
+	 * Insert a chart after deleting first chart causes an exception
+	 */
 	@Test
-	public void testZSS326() {
-		// @FIXME
-		/*
-		loadZSS326();
+	public void testZSS326() throws IOException {
+		final String filename = "book/insert-charts.xlsx";
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
 		Sheet sheet = _workbook.getSheet("chart-image");
-		Range range = Ranges.range(sheet, "B5:B19");
-		ChartData cd = ChartDataUtil.getChartData(sheet, new Rect(range.getRow(), range.getColumn(), range.getLastRow(), range.getLastColumn()), Chart.Type.LINE);
-		SheetOperationUtil.addChart(range, cd, Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
-		*/
+		// Insert chart 1, 2
+		ChartData cd1 = ChartDataUtil.getChartData(sheet, new AreaRef(4,1,14,1), Chart.Type.LINE);
+		Chart chart1 = SheetOperationUtil.addChart(Ranges.range(sheet, "A1"), cd1, Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
+		ChartData cd2 = ChartDataUtil.getChartData(sheet, new AreaRef(4,2,14,2), Chart.Type.LINE);
+		SheetOperationUtil.addChart(Ranges.range(sheet, "I1"), cd2, Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
+		
+		// Delete chart 1
+		SheetOperationUtil.deleteChart(Ranges.range(sheet, "A1"), chart1);
+		
+		// Insert chart 3
+		ChartData cd3 = ChartDataUtil.getChartData(sheet, new AreaRef(4,3,14,3), Chart.Type.LINE);
+		SheetOperationUtil.addChart(Ranges.range(sheet, "Q1"), cd3, Chart.Type.LINE, Grouping.STANDARD, LegendPosition.TOP);
+		
 	}
 	
 	/**
@@ -622,7 +1191,7 @@ public class Issue200Test {
 	
 	private void loadPasteTest() {
 		final String filename = "book/pasteTest.xlsx";
-		final InputStream is = PasteTest.class.getResourceAsStream(filename);
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
 		try {
 			_workbook = Importers.getImporter().imports(is, filename);
 		} catch (IOException e) {
@@ -632,7 +1201,7 @@ public class Issue200Test {
 	
 	private void loadShiftTest() {
 		final String filename = "book/shiftTest.xlsx";
-		final InputStream is = PasteTest.class.getResourceAsStream(filename);
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
 		try {
 			_workbook = Importers.getImporter().imports(is, filename);
 		} catch (IOException e) {
@@ -642,7 +1211,7 @@ public class Issue200Test {
 	
 	private void loadZSS290() {
 		final String filename = "book/290-merge.xls";
-		final InputStream is = PasteTest.class.getResourceAsStream(filename);
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
 		try {
 			_workbook = Importers.getImporter().imports(is, filename);
 		} catch (IOException e) {
@@ -652,7 +1221,7 @@ public class Issue200Test {
 	
 	private void loadZSS326() {
 		final String filename = "book/insert-charts.xlsx";
-		final InputStream is = PasteTest.class.getResourceAsStream(filename);
+		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
 		try {
 			_workbook = Importers.getImporter().imports(is, filename);
 		} catch (IOException e) {
@@ -718,6 +1287,12 @@ public class Issue200Test {
     	r = Ranges.range(book.getSheetAt(0), "D1");
     	Assert.assertEquals("B", r.getCellEditText());
 		
+	}
+	
+	private void export() throws IOException {
+		Exporter excelExporter = Exporters.getExporter("excel");
+		FileOutputStream fos = new FileOutputStream(new File(ShiftTest.class.getResource("").getPath() + "book/test.xlsx"));
+		excelExporter.export(_workbook, fos);
 	}
 	
 }

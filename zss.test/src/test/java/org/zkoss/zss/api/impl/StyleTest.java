@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -69,7 +68,23 @@ public class StyleTest {
 		excelExporter.export(_workbook, fos);
 	}
 	
-	@Ignore
+	@Ignore("ZSS-429") // FIXME
+	@Test
+	public void testStyleExport_1() throws IOException {
+		final String filename = "book/blank.xlsx";
+		final InputStream is =  getClass().getResourceAsStream(filename);
+		_workbook = Importers.getImporter().imports(is, filename);
+		export();
+		
+		Sheet sheet = _workbook.getSheet("Sheet1");
+		
+		Range rA1 = range(sheet, "A1");
+		rA1.setCellEditText("Bold");
+		applyFontBoldweight(rA1, Font.Boldweight.BOLD);
+		rA1.setColumnWidth(100);
+	}
+	
+	@Ignore("ZSS-435") // FIXME
 	@Test
 	public void testStyleAfterExport() throws IOException {
 		final String filename = "book/blank.xlsx";
