@@ -222,6 +222,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private boolean _rowFreezeset = false;
 	private int _colFreeze = DEFAULT_COLUMN_FREEZE; // how many fixed columns
 	private boolean _colFreezeset = false;
+	
+	//FIXME listen to sheet name change, sheet deletion
+	private Map<String, Integer> frozenRow = new HashMap<String, Integer>(); //sheet name, row index
+	private Map<String, Integer> frozenColumn = new HashMap<String, Integer>(); //sheet name, column index
+	
 	private boolean _hideRowhead; // hide row head
 	private boolean _hideColhead; // hide column head*/
 	
@@ -767,6 +772,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	private void updateSheetAttributes(boolean cacheInClient, int rowfreeze, int colfreeze) {
+		//FIXME ignore freeze info from client
 		if (cacheInClient && (rowfreeze >= 0 || colfreeze >= 0)) {
 			//Need _rowFreeze/_colFreeze for CSS
 			//Note when use cache, do not use setRowfreeze/setColumnfreeze (cause invalidate)
@@ -967,31 +973,35 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @return the row freeze of this spreadsheet or selected sheet.
 	 */
 	public int getRowfreeze() {
-		if (_rowFreezeset)
-			return _rowFreeze;
-		final Worksheet sheet = getSelectedSheet();
-		if (sheet != null) {
-			 if (BookHelper.isFreezePane(sheet)) { //issue #103: Freeze row/column is not correctly interpreted
-				 _rowFreeze = BookHelper.getRowFreeze(sheet) - 1;
-			 }
-			_rowFreezeset = true;
+		int rowFreeze = -1 ;
+		if (frozenRow.containsKey(getSelectedSheetName())){ //has set before
+			rowFreeze = frozenRow.get(getSelectedSheetName());
+		}else{ //load from the book
+			final Worksheet sheet = getSelectedSheet();
+			if (sheet != null) {
+				if (BookHelper.isFreezePane(sheet)) { //issue #103: Freeze row/column is not correctly interpreted
+					rowFreeze = BookHelper.getRowFreeze(sheet) - 1;
+				}
+			}
 		}
-		return _rowFreeze;
+		return rowFreeze;
 	}
 
 	/**
-	 * Sets the row freeze of this spreadsheet, sets row freeze on this
+	 * Sets the row freeze of current sheet, sets row freeze on this
 	 * component has higher priority then row freeze on sheet
 	 * 
-	 * @param rowfreeze row index
+	 * @param rowfreeze row index, 0-based, -1 means to unfreeze
 	 */
 	public void setRowfreeze(int rowfreeze) {
-		_rowFreezeset = true;
+//		_rowFreezeset = true;
 		if (rowfreeze < 0) {
 			rowfreeze = -1;
 		}
-		if (_rowFreeze != rowfreeze) {
-			_rowFreeze = rowfreeze;
+		//store it if it's changed
+		if (!frozenRow.containsKey(getSelectedSheetName()) 
+				|| frozenRow.get(getSelectedSheetName())!= rowfreeze) {
+			frozenRow.put(getSelectedSheetName(), rowfreeze);
 			invalidate();
 		}
 	}
@@ -1007,31 +1017,33 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @return the column freeze of this spreadsheet or selected sheet.
 	 */
 	public int getColumnfreeze() {
-		if (_colFreezeset)
-			return _colFreeze;
-		Worksheet sheet = getSelectedSheet();
-		if (sheet != null) {
-			 if (BookHelper.isFreezePane(sheet)) {//issue #103: Freeze row/column is not correctly interpreted
-				 _colFreeze = BookHelper.getColumnFreeze(sheet) - 1;
-			 }
-			_colFreezeset = true;
+		int columnFreeze = -1 ;
+		if (frozenColumn.containsKey(getSelectedSheetName())){ //has set before
+			columnFreeze = frozenColumn.get(getSelectedSheetName());
+		}else{ //load from the book
+			final Worksheet sheet = getSelectedSheet();
+			if (sheet != null) {
+				if (BookHelper.isFreezePane(sheet)) { //issue #103: Freeze row/column is not correctly interpreted
+					columnFreeze = BookHelper.getColumnFreeze(sheet) - 1;
+				}
+			}
 		}
-		return _colFreeze;
+		return columnFreeze;
 	}
 
 	/**
 	 * Sets the column freeze of this spreadsheet, sets row freeze on this
 	 * component has higher priority then row freeze on sheet
 	 * 
-	 * @param columnfreeze  column index
+	 * @param columnfreeze  column index, 0-based
 	 */
 	public void setColumnfreeze(int columnfreeze) {
-		_colFreezeset = true;
 		if (columnfreeze < 0) {
 			columnfreeze = -1;
 		}
-		if (_colFreeze != columnfreeze) {
-			_colFreeze = columnfreeze;
+		if (!frozenColumn.containsKey(getSelectedSheetName()) 
+				|| frozenColumn.get(getSelectedSheetName())!= columnfreeze) {
+			frozenColumn.put(getSelectedSheetName(), columnfreeze);
 			invalidate();
 		}
 	}
