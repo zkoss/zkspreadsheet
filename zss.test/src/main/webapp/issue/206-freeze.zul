@@ -3,8 +3,10 @@
 		<button label="Freeze Rows" />
 		<button label="Freeze Columns" />
 		<button label="Unfreeze" />
-		<button label="max visible 5 rows"/>
+		<button label="max visible 5 rows"/>		
 		<button label="max visible 25 rows"/>
+		<button label="max visible 5 columns"/>
+		<button label="max visible 25 columns"/>
 		<spreadsheet id="ss" src="/issue/206-freeze.xlsx" width="800px" height="500px"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="100" maxcolumns="20" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">

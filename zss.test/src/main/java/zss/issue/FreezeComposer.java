@@ -37,19 +37,14 @@ public class FreezeComposer extends SelectorComposer<Component>{
 	public void setMaxVisible25Row(){
 		ss.setMaxrows(25);
 	}
-	public void insertFrozenRows(){
-		
+	
+	@Listen("onClick = button[label='max visible 5 columns']")
+	public void setMaxVisibleColumn(){
+		ss.setMaxcolumns(5);
 	}
 
-	public void removeFrozenRows(){
-
-	}
-
-	public void inserFrozenColumns(){
-
-	}
-
-	public void removeFrozenColumns(){
-
+	@Listen("onClick = button[label='max visible 25 columns']")
+	public void setMaxVisible25Column(){
+		ss.setMaxcolumns(25);
 	}
 }
