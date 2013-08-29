@@ -750,8 +750,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	
 	public void setSelectedSheetDirectly(String name, boolean cacheInClient, int row, int col, 
 			int left, int top, int right, int bottom,
-			int highlightLeft, int highlightTop, int highlightRight, int highlightBottom,
-			int rowfreeze, int colfreeze) {
+			int highlightLeft, int highlightTop, int highlightRight, int highlightBottom
+			/*,int rowfreeze, int colfreeze*/) {
 		setSelectedSheetImpl(name);
 		if (row >= 0 && col >= 0) {
 			this.setCellFocusDirectly(new Position(row, col));
@@ -770,17 +770,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		doSheetSelected(_selectedSheet);
 		
-		updateSheetAttributes(cacheInClient, rowfreeze, colfreeze);
+		updateSheetAttributes(cacheInClient);
 	}
 	
-	private void updateSheetAttributes(boolean cacheInClient, int rowfreeze, int colfreeze) {
-		//FIXME ignore freeze info from client
-		if (cacheInClient && (rowfreeze >= 0 || colfreeze >= 0)) {
-			//Need _rowFreeze/_colFreeze for CSS
-			//Note when use cache, do not use setRowfreeze/setColumnfreeze (cause invalidate)
-			_rowFreeze = rowfreeze;
-			_colFreeze = colfreeze;
-		}
+	private void updateSheetAttributes(boolean cacheInClient) {
+	
 		
 		Worksheet sheet = _selectedSheet;
 		

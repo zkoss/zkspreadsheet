@@ -67,8 +67,8 @@ public class SelectSheetCommand implements Command {
 		int highlightBottom = (Integer)data.get("hbottom");
 		
 		//freeze
-		int rowfreeze = AuRequests.getInt(data, "frow", -1);
-		int colfreeze = AuRequests.getInt(data, "fcol", -1);
+//		int rowfreeze = AuRequests.getInt(data, "frow", -1);
+//		int colfreeze = AuRequests.getInt(data, "fcol", -1);
 		
 		Book book = spreadsheet.getBook();
 		int len = book.getNumberOfSheets();
@@ -77,8 +77,8 @@ public class SelectSheetCommand implements Command {
 			if (sheetId.equals(((SheetCtrl)sheet).getUuid())) {
 				spreadsheet.setSelectedSheetDirectly(sheet.getSheetName(), cacheInClient, row, col, 
 						left, top, right, bottom,
-						highlightLeft, highlightTop, highlightRight, highlightBottom,
-						rowfreeze, colfreeze);
+						highlightLeft, highlightTop, highlightRight, highlightBottom
+						/*,rowfreeze, colfreeze*/);
 				break;
 			}
 		}
