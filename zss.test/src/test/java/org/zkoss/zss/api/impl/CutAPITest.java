@@ -3,14 +3,11 @@ package org.zkoss.zss.api.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.InputStream;
+import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
-import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
@@ -33,35 +30,121 @@ import org.zkoss.zss.api.model.Sheet;
  */
 public class CutAPITest {
 	
-	private static Book _workbook;
-	// 3 x 3, 1-9 matrix (source)
-	// Source Range (H11, J13)
-	private static int SRC_TOP_ROW = 10;
-	private static int SRC_LEFT_COL = 7;
-	private static int SRC_BOTTOM_ROW = 12;
-	private static int SRC_RIGHT_COL = 9;
-	private static int SRC_ROW_COUNT = SRC_BOTTOM_ROW - SRC_TOP_ROW + 1;
-	private static int SRC_COL_COUNT = SRC_RIGHT_COL - SRC_LEFT_COL + 1;
-	
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
 		Setup.touch();
 	}
 	
-	@Before
-	public void setUp() throws Exception {
-		final String filename = "book/pasteTest.xlsx";
-		final InputStream is = PasteTest.class.getResourceAsStream(filename);
-		_workbook = Importers.getImporter().imports(is, filename);
+	@Test
+	public void testCutPasteRepeatWithMergeIntoAnotherSheet2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testCutPasteRepeatWithMergeIntoAnotherSheet0(book);
 	}
 	
-	@After
-	public void tearDown() throws Exception {
-		_workbook = null;
+	@Test
+	public void testCutPasteRepeatWithMergeIntoAnotherSheet2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testCutPasteRepeatWithMergeIntoAnotherSheet0(book);
+	}
+	
+	@Test
+	public void testCutPasteWithMergeOverlap2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testCutPasteWithMergeOverlap0(book);
+	}
+	
+	@Test
+	public void testCutPasteWithMergeOverlap2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testCutPasteWithMergeOverlap0(book);
+	}
+	
+	@Test
+	public void testCutPasteWithMerge2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testCutPasteWithMerge0(book);
+	}
+	
+	@Test
+	public void testCutPasteWithMerge2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testCutPasteWithMerge0(book);
+	}
+	
+	@Test
+	public void testCutPasteToLeftTop2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testCutPasteToLeftTop0(book);
+	}
+	
+	@Test
+	public void testCutPasteToLeftTop2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testCutPasteToLeftTop0(book);
+	}
+	
+	@Test
+	public void testCutPasteToRightBottom2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testCutPasteToRightBottom0(book);
+	}
+	
+	@Test
+	public void testCutPasteToRightBottom2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testCutPasteToRightBottom0(book);
+	}
+	
+	@Test
+	public void testCutPasteToLeft2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testCutPasteToLeft0(book);
+	}
+	
+	@Test
+	public void testCutPasteToLeft2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testCutPasteToLeft0(book);
+	}
+	
+	@Test
+	public void testCutPasteToTop2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testCutPasteToTop0(book);
+	}
+	
+	@Test
+	public void testCutPasteToTop2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testCutPasteToTop0(book);
+	}
+	
+	@Test
+	public void testCutPasteToOutsideInclude2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testCutPasteToOutsideInclude0(book);
+	}
+	
+	@Test
+	public void testCutPasteToOutsideInclude2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testCutPasteToOutsideInclude0(book);
+	}
+	
+	@Test
+	public void testCutPasteToAnotherSheet2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testCutPasteToAnotherSheet0(book);
+	}
+	
+	@Test
+	public void testCutPasteToAnotherSheet2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testCutPasteToAnotherSheet0(book);
 	}
 	
 	/**
-	 * issue ZSS-401
+	 * relate to issue ZSS-401
 	 * Cut from one sheet then paste to another sheet will not unmerge source cell on UI.
 	 * Server side is clean.
 	 * 
@@ -73,11 +156,17 @@ public class CutAPITest {
 	 * source (H11,J13) sheet1.
 	 * destination (I12) sheet2.
 	 */
-	@Test
-	public void testCutPasteRepeatWithMergeIntoAnotherSheet() {
+	private void testCutPasteRepeatWithMergeIntoAnotherSheet0(Book workbook) {
 		
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
-		Sheet sheet2 = _workbook.getSheet("Sheet2");
+		// 3 x 3, 1-9 matrix (source) 
+		// Source Range (H11, J13) Sheet1
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
 		
 		// preparation
 		// Merge (H11, J11), horizontal merge, cell value is 1
@@ -92,10 +181,12 @@ public class CutAPITest {
 		assertTrue(Util.isAMergedRange(range_H11J11));
 		assertTrue(Util.isAMergedRange(range_I12I13));
 		
+		// destination (I12) sheet2.
+		Sheet sheet2 = workbook.getSheet("Sheet2");
 		int dstTopRow = 11;
 		int dstLeftCol = 8;
 		
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet2, dstTopRow, dstLeftCol);
 		Range pasteRange = srcRange.paste(dstRange, true);
 		
@@ -103,8 +194,8 @@ public class CutAPITest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(1, realDstColCount / SRC_COL_COUNT);
+		assertEquals(1, realDstRowCount / srcRowCount);
+		assertEquals(1, realDstColCount / srcColCount);
 		
 		// validate destination
 		
@@ -149,9 +240,15 @@ public class CutAPITest {
 	 * cut and paste to 5.
 	 * source (H11,J13) to destination (I12)
 	 */
-	@Test
-	public void testCutPasteWithMergeOverlap() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+	private void testCutPasteWithMergeOverlap0(Book workbook) {
+		
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
 		
 		// preparation
 		// Merge (H11, J11), horizontal merge, cell value is 1
@@ -169,7 +266,7 @@ public class CutAPITest {
 		int dstTopRow = 11;
 		int dstLeftCol = 8;
 		
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol);
 		Range pasteRange = srcRange.paste(dstRange, true);
 		
@@ -177,8 +274,8 @@ public class CutAPITest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(1, realDstColCount / SRC_COL_COUNT);
+		assertEquals(1, realDstRowCount / srcRowCount);
+		assertEquals(1, realDstColCount / srcColCount);
 		
 		// validate destination
 		
@@ -218,9 +315,16 @@ public class CutAPITest {
 	 * 5 is a vertical merged cell 2 x 1.
 	 * source (H11,J13) to destination (C5, E7)
 	 */
-	@Test
-	public void testCutPasteWithMerge() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+	private void testCutPasteWithMerge0(Book workbook) {
+		
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
+		
 		
 		// preparation
 		// Merge (H11, J11), horizontal merge, cell value is 1
@@ -240,7 +344,7 @@ public class CutAPITest {
 		int dstBottomRow = 6;
 		int dstRightCol = 4;
 		
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
 		Range pasteRange = srcRange.paste(dstRange, true);
 		
@@ -248,8 +352,8 @@ public class CutAPITest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(1, realDstColCount / SRC_COL_COUNT);
+		assertEquals(1, realDstRowCount / srcRowCount);
+		assertEquals(1, realDstColCount / srcColCount);
 		
 		// validate destination
 		
@@ -269,15 +373,15 @@ public class CutAPITest {
 		assertEquals(9, Ranges.range(sheet1, 6, 4).getCellData().getDoubleValue(), 1E-8);
 		
 		// validate source
-		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL).getCellData().getType().ordinal(), 1E-8);
-		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL+1).getCellData().getType().ordinal(), 1E-8);
-		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL+2).getCellData().getType().ordinal(), 1E-8);
-		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, SRC_TOP_ROW+1, SRC_LEFT_COL).getCellData().getType().ordinal(), 1E-8);
-		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, SRC_TOP_ROW+1, SRC_LEFT_COL+1).getCellData().getType().ordinal(), 1E-8);
-		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, SRC_TOP_ROW+1, SRC_LEFT_COL+2).getCellData().getType().ordinal(), 1E-8);
-		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, SRC_TOP_ROW+2, SRC_LEFT_COL).getCellData().getType().ordinal(), 1E-8);
-		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, SRC_TOP_ROW+2, SRC_LEFT_COL+1).getCellData().getType().ordinal(), 1E-8);
-		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, SRC_TOP_ROW+2, SRC_LEFT_COL+2).getCellData().getType().ordinal(), 1E-8);
+		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, srcTopRow, srcLeftCol).getCellData().getType().ordinal(), 1E-8);
+		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, srcTopRow, srcLeftCol+1).getCellData().getType().ordinal(), 1E-8);
+		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, srcTopRow, srcLeftCol+2).getCellData().getType().ordinal(), 1E-8);
+		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, srcTopRow+1, srcLeftCol).getCellData().getType().ordinal(), 1E-8);
+		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, srcTopRow+1, srcLeftCol+1).getCellData().getType().ordinal(), 1E-8);
+		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, srcTopRow+1, srcLeftCol+2).getCellData().getType().ordinal(), 1E-8);
+		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, srcTopRow+2, srcLeftCol).getCellData().getType().ordinal(), 1E-8);
+		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, srcTopRow+2, srcLeftCol+1).getCellData().getType().ordinal(), 1E-8);
+		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, srcTopRow+2, srcLeftCol+2).getCellData().getType().ordinal(), 1E-8);
 
 		// should not be merged region anymore
 		assertTrue(!Util.isAMergedRange(range_H11J11));
@@ -287,16 +391,23 @@ public class CutAPITest {
 	/**
 	 * source (H11,J13) to destination (G10, I12)
 	 */
-	@Test
-	public void testCutPasteToLeftTop() {
+	private void testCutPasteToLeftTop0(Book workbook) {
 
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
+		
 		int dstTopRow = 9;
 		int dstLeftCol = 6;
 		int dstBottomRow = 11;
 		int dstRightCol = 8;
 		
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
 		Range pasteRange = srcRange.paste(dstRange, true);
 		
@@ -304,11 +415,11 @@ public class CutAPITest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(1, realDstColCount / SRC_COL_COUNT);		
+		assertEquals(1, realDstRowCount / srcRowCount);
+		assertEquals(1, realDstColCount / srcColCount);		
 		
 		// validate destination
-		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
+		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / srcRowCount, realDstColCount / srcColCount);
 		
 		// validate source (is clean?)
 		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, 10, 9).getCellData().getType().ordinal(), 1E-8);
@@ -321,16 +432,23 @@ public class CutAPITest {
 	/**
 	 * source (H11,J13) to destination (J13, L15)
 	 */
-	@Test
-	public void testCutPasteToRightBottom() {
+	private void testCutPasteToRightBottom0(Book workbook) {
 
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
+		
 		int dstTopRow = 12;
 		int dstLeftCol = 9;
 		int dstBottomRow = 14;
 		int dstRightCol = 11;
 		
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
 		Range pasteRange = srcRange.paste(dstRange, true);
 		
@@ -338,11 +456,11 @@ public class CutAPITest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(1, realDstColCount / SRC_COL_COUNT);
+		assertEquals(1, realDstRowCount / srcRowCount);
+		assertEquals(1, realDstColCount / srcColCount);
 		
 		// validate destination
-		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
+		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / srcRowCount, realDstColCount / srcColCount);
 		
 		// validate source (is clean?)
 		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, 10, 7).getCellData().getType().ordinal(), 1E-8);
@@ -361,16 +479,23 @@ public class CutAPITest {
 	/**
 	 * source (H11,J13) to destination (G9, I14)
 	 */
-	@Test
-	public void testCutPasteToLeft() {
+	private void testCutPasteToLeft0(Book workbook) {
 		
 		int dstTopRow = 8;
 		int dstLeftCol = 6;
 		int dstBottomRow = 13;
 		int dstRightCol = 8;
 		
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
+		
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
 		Range pasteRange = srcRange.paste(dstRange, true);
 		
@@ -378,11 +503,11 @@ public class CutAPITest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(2, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(1, realDstColCount / SRC_COL_COUNT);
+		assertEquals(2, realDstRowCount / srcRowCount);
+		assertEquals(1, realDstColCount / srcColCount);
 		
 		// validate destination
-		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
+		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / srcRowCount, realDstColCount / srcColCount);
 		
 		// validate source (is clean?)
 		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, 10, 9).getCellData().getType().ordinal(), 1E-8);
@@ -393,16 +518,24 @@ public class CutAPITest {
 	/**
 	 * source (H11,J13) to destination (G10, L12)
 	 */
-	@Test
-	public void testCutPasteToTop() {
+	private void testCutPasteToTop0(Book workbook) {
+		
+		// 3 x 3, 1-9 matrix (source) 
+		// Source Range (H11, J13) Sheet1
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
 		
 		int dstTopRow = 9;
 		int dstLeftCol = 6;
 		int dstBottomRow = 11;
 		int dstRightCol = 11;
 		
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
 		Range pasteRange = srcRange.paste(dstRange, true);
 		
@@ -410,11 +543,11 @@ public class CutAPITest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(2, realDstColCount / SRC_COL_COUNT);
+		assertEquals(1, realDstRowCount / srcRowCount);
+		assertEquals(2, realDstColCount / srcColCount);
 		
 		// validate destination
-		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
+		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / srcRowCount, realDstColCount / srcColCount);
 		
 		// validate source (is clean?)
 		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, 12, 7).getCellData().getType().ordinal(), 1E-8);
@@ -425,16 +558,23 @@ public class CutAPITest {
 	/**
 	 * source (H11,J13) to destination (G10, L15)
 	 */
-	@Test
-	public void testCutPasteToOutsideInclude() {
+	private void testCutPasteToOutsideInclude0(Book workbook) {
+		
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
 		
 		int dstTopRow = 9;
 		int dstLeftCol = 6;
 		int dstBottomRow = 14;
 		int dstRightCol = 11;
 		
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
 		Range pasteRange = srcRange.paste(dstRange, true);
 		
@@ -442,25 +582,33 @@ public class CutAPITest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(2, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(2, realDstColCount / SRC_COL_COUNT);
+		assertEquals(2, realDstRowCount / srcRowCount);
+		assertEquals(2, realDstColCount / srcColCount);
 		
 		// validate destination
-		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
+		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / srcRowCount, realDstColCount / srcColCount);
 		
 		// don't need to validate source. (overlap)
 	}
 	
-	@Test
-	public void testCutPasteToAnotherSheet() {
+	private void testCutPasteToAnotherSheet0(Book workbook) {
+		
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
+		
 		int dstTopRow = 9;
 		int dstLeftCol = 6;
 		int dstBottomRow = 11;
 		int dstRightCol = 11;
 		
-		Sheet srcSheet = _workbook.getSheet("Sheet1");
-		Sheet dstSheet = _workbook.getSheet("Sheet2");
-		Range srcRange = Ranges.range(srcSheet, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Sheet srcSheet = workbook.getSheet("Sheet1");
+		Sheet dstSheet = workbook.getSheet("Sheet2");
+		
+		Range srcRange = Ranges.range(srcSheet, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(dstSheet, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
 		Range pasteRange = srcRange.paste(dstRange, true);
 		
@@ -468,15 +616,15 @@ public class CutAPITest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// validate destination
-		validate(dstSheet, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
+		validate(dstSheet, dstTopRow, dstLeftCol, realDstRowCount / srcRowCount, realDstColCount / srcColCount);
 		
 		// paste size validation
-		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(2, realDstColCount / SRC_COL_COUNT);
+		assertEquals(1, realDstRowCount / srcRowCount);
+		assertEquals(2, realDstColCount / srcColCount);
 		
 		// validate source (is clean?)
-		for(int i = SRC_TOP_ROW; i <= SRC_BOTTOM_ROW; i++) {
-			for(int j = SRC_LEFT_COL; j <= SRC_RIGHT_COL; j++) {
+		for(int i = srcTopRow; i <= srcBottomRow; i++) {
+			for(int j = srcLeftCol; j <= srcRightCol; j++) {
 				assertEquals(CellType.BLANK.ordinal(), Ranges.range(srcSheet, i, j).getCellData().getType().ordinal(), 1E-8);
 			}
 		}

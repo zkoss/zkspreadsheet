@@ -1,6 +1,15 @@
 package org.zkoss.zss.api.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.zkoss.zss.api.Exporter;
+import org.zkoss.zss.api.Exporters;
+import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.model.Book;
 
 /**
  * a helper for testing
@@ -23,4 +32,14 @@ public class Util {
 		return false; // doesn't match any region
 	}
 
+	public static Book loadBook(String filename) throws IOException {
+		final InputStream is = Util.class.getResourceAsStream(filename);
+		return Importers.getImporter().imports(is, filename);
+	}
+	
+	public static void export(Book workbook, String filename) throws IOException {
+		Exporter excelExporter = Exporters.getExporter("excel");
+		FileOutputStream fos = new FileOutputStream(new File(ShiftTest.class.getResource("").getPath() + filename));
+		excelExporter.export(workbook, fos);
+	}
 }

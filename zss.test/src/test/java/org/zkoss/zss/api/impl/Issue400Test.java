@@ -1,13 +1,14 @@
 package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.zkoss.zss.api.CellOperationUtil.applyFontBoldweight;
+import static org.zkoss.zss.api.Ranges.range;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -21,6 +22,7 @@ import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Sheet;
 
@@ -34,16 +36,25 @@ import org.zkoss.zss.api.model.Sheet;
  */
 public class Issue400Test {
 	
-	private static Book _workbook;
-	
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
 		Setup.touch();
 	}
-	
-	@After
-	public void tearDown() throws Exception {
-		_workbook = null;
+
+	@Ignore("ZSS-437")
+	@Test
+	public void testZSS437() throws IOException {
+		final String filename = "book/blank.xlsx";
+		final InputStream is =  getClass().getResourceAsStream(filename);
+		Book workbook = Importers.getImporter().imports(is, filename);
+		Util.export(workbook, "book/test.xlsx");
+		
+		Sheet sheet = workbook.getSheet("Sheet1");
+		
+		Range rA1 = range(sheet, "A1");
+		rA1.setCellEditText("Bold");
+		applyFontBoldweight(rA1, Font.Boldweight.BOLD);
+		rA1.setColumnWidth(100);
 	}
 	
 	/**
@@ -54,13 +65,13 @@ public class Issue400Test {
 		
 		final String filename = "book/426-swineFlu.xls";
 		final InputStream is =  getClass().getResourceAsStream(filename);
-		_workbook = Importers.getImporter().imports(is, filename);
+		Book workbook = Importers.getImporter().imports(is, filename);
 		
 		// export work book
     	Exporter exporter = Exporters.getExporter();
     	java.io.File temp = java.io.File.createTempFile("test",".xls");
     	java.io.FileOutputStream fos = new java.io.FileOutputStream(temp);
-    	exporter.export(_workbook,fos);
+    	exporter.export(workbook,fos);
     	
     	// import book again
     	Importers.getImporter().imports(temp,"test");
@@ -75,9 +86,9 @@ public class Issue400Test {
 	public void testZSS435() throws IOException {
 		final String filename = "book/blank.xlsx";
 		final InputStream is =  getClass().getResourceAsStream(filename);
-		_workbook = Importers.getImporter().imports(is, filename);
+		Book workbook = Importers.getImporter().imports(is, filename);
 		
-		Sheet sheet = _workbook.getSheet("Sheet1");
+		Sheet sheet = workbook.getSheet("Sheet1");
 		
 		Range range = Ranges.range(sheet, "B2:D4");
 		range.merge(false);
@@ -97,13 +108,13 @@ public class Issue400Test {
 		
 		final String filename = "book/408-save-autofilter.xls";
 		final InputStream is =  getClass().getResourceAsStream(filename);
-		_workbook = Importers.getImporter().imports(is, filename);
+		Book workbook = Importers.getImporter().imports(is, filename);
 		
 		// export work book
     	Exporter exporter = Exporters.getExporter();
     	java.io.File temp = java.io.File.createTempFile("test",".xls");
     	java.io.FileOutputStream fos = new java.io.FileOutputStream(temp);
-    	exporter.export(_workbook,fos);
+    	exporter.export(workbook,fos);
     	
     	// import book again
     	Importers.getImporter().imports(temp,"test");
@@ -118,8 +129,8 @@ public class Issue400Test {
 	public void testZSS414() throws IOException {
 		final String filename = "book/blank.xls";
 		final InputStream is =  getClass().getResourceAsStream(filename);
-		_workbook = Importers.getImporter().imports(is, filename);
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Book workbook = Importers.getImporter().imports(is, filename);
+		Sheet sheet1 = workbook.getSheet("Sheet1");
 		Range r = Ranges.range(sheet1, "C1");
 		r.setCellEditText("");
 	}
@@ -134,13 +145,13 @@ public class Issue400Test {
 		
 		final String filename = "book/415-commentUnsupport.xls";
 		final InputStream is =  getClass().getResourceAsStream(filename);
-		_workbook = Importers.getImporter().imports(is, filename);
+		Book workbook = Importers.getImporter().imports(is, filename);
 		
 		// export work book
     	Exporter exporter = Exporters.getExporter();
     	java.io.File temp = java.io.File.createTempFile("test",".xls");
     	java.io.FileOutputStream fos = new java.io.FileOutputStream(temp);
-    	exporter.export(_workbook, fos);
+    	exporter.export(workbook, fos);
     	
     	// import book again
     	Importers.getImporter().imports(temp, "test");

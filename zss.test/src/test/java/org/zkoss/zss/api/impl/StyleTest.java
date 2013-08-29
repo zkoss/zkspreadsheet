@@ -14,19 +14,12 @@ import static org.zkoss.zss.api.CellOperationUtil.applyFontUnderline;
 import static org.zkoss.zss.api.CellOperationUtil.applyVerticalAlignment;
 import static org.zkoss.zss.api.Ranges.range;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
-import org.zkoss.zss.api.Exporter;
-import org.zkoss.zss.api.Exporters;
-import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
@@ -44,54 +37,29 @@ import org.zkoss.zss.api.model.CellStyle.BorderType;
  *
  */
 public class StyleTest {
-
-	private static Book _workbook;
 	
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
 		Setup.touch();
 	}
 	
-	@After
-	public void tearDown() throws Exception {
-		_workbook = null;
-	}
-	
-	private void loadBook(String filename) throws IOException {
-		final InputStream is = ShiftTest.class.getResourceAsStream(filename);
-		_workbook = Importers.getImporter().imports(is, filename);
-	}
-	
-	private void export() throws IOException {
-		Exporter excelExporter = Exporters.getExporter("excel");
-		FileOutputStream fos = new FileOutputStream(new File(ShiftTest.class.getResource("").getPath() + "book/test.xlsx"));
-		excelExporter.export(_workbook, fos);
-	}
-	
-	@Ignore("ZSS-429") // FIXME
 	@Test
-	public void testStyleExport_1() throws IOException {
-		final String filename = "book/blank.xlsx";
-		final InputStream is =  getClass().getResourceAsStream(filename);
-		_workbook = Importers.getImporter().imports(is, filename);
-		export();
-		
-		Sheet sheet = _workbook.getSheet("Sheet1");
-		
-		Range rA1 = range(sheet, "A1");
-		rA1.setCellEditText("Bold");
-		applyFontBoldweight(rA1, Font.Boldweight.BOLD);
-		rA1.setColumnWidth(100);
+	public void testStyleExport2007(Book workbook) throws IOException {
+		Book book = Util.loadBook("book/blank.xlsx");
+		testStyleExport(book, "book/test.xlsx");
+	}
+	
+	@Test
+	public void testStyleExport2003(Book workbook) throws IOException {
+		Book book = Util.loadBook("book/blank.xls");
+		testStyleExport(book, "book/test.xls");
 	}
 	
 	@Ignore("ZSS-435") // FIXME
 	@Test
-	public void testStyleAfterExport() throws IOException {
-		final String filename = "book/blank.xlsx";
-		final InputStream is =  getClass().getResourceAsStream(filename);
-		_workbook = Importers.getImporter().imports(is, filename);
+	public void testStyleExport(Book workbook, String outFileName) throws IOException {
 		
-		Sheet sheet = _workbook.getSheet("Sheet1");
+		Sheet sheet = workbook.getSheet("Sheet1");
 		
 		Range rA1 = range(sheet, "A1");
 		rA1.setCellEditText("Bold");
@@ -153,12 +121,10 @@ public class StyleTest {
 		range(sheet, 6, 2).setCellEditText("28");
 		range(sheet, 6, 3).setCellEditText("22");
 		
-		export();
+		Util.export(workbook, outFileName);
 		
-		_workbook = null; 		// clean work book
-		sheet = null;			// clean sheet
-		loadBook("book/test.xlsx");  // Import
-		sheet = _workbook.getSheet("Sheet1"); // get sheet	
+		workbook = Util.loadBook(outFileName);  // Import
+		sheet = workbook.getSheet("Sheet1"); // get sheet	
 		
 		rA1 = range(sheet, "A1");
 		assertEquals(Font.Boldweight.BOLD, rA1.getCellStyle().getFont().getBoldweight());
