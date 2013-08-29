@@ -1,0 +1,13 @@
+<zk>
+	<window width="100%" height="100%" style="padding: 20px" apply="zss.issue.FreezeComposer">
+		<button label="Freeze Rows" />
+		<button label="Freeze Columns" />
+		<button label="Unfreeze" />
+		<button label="max visible 5 rows"/>
+		<button label="max visible 25 rows"/>
+		<spreadsheet id="ss" src="/issue/206-freeze.xlsx" width="800px" height="500px"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="100" maxcolumns="20" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+	</window>
+</zk>
