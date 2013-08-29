@@ -139,6 +139,7 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
 import org.zkoss.zss.ui.sys.WidgetHandler;
 import org.zkoss.zss.ui.sys.WidgetLoader;
+import org.zkoss.zul.Frozen;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.impl.XulElement;
 
@@ -219,13 +220,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	transient private String _selectedSheetName;
 
 	private int _rowFreeze = DEFAULT_ROW_FREEZE; // how many fixed rows
-	private boolean _rowFreezeset = false;
 	private int _colFreeze = DEFAULT_COLUMN_FREEZE; // how many fixed columns
-	private boolean _colFreezeset = false;
 	
-	//FIXME listen to sheet name change, sheet deletion
-	private Map<String, Integer> frozenRow = new HashMap<String, Integer>(); //sheet name, row index
-	private Map<String, Integer> frozenColumn = new HashMap<String, Integer>(); //sheet name, column index
+	//FIXME listen sheet deletion
+	private Map<String, Integer> _sheetFrozenRow = new HashMap<String, Integer>(); //sheet ID, row index
+	private Map<String, Integer> _sheetFrozenColumn = new HashMap<String, Integer>(); //sheet ID, column index
 	
 	private boolean _hideRowhead; // hide row head
 	private boolean _hideColhead; // hide column head*/
@@ -541,6 +540,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		_selectedSheet = null;
 		_selectedSheetId = null;
 		_selectedSheetName = null;
+		
+		_sheetFrozenColumn.clear();
+		_sheetFrozenRow.clear();
 		
 		_book = book;
 		if (_book != null) {
@@ -870,8 +872,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		if (_maxRows != maxrows) {
 			_maxRows = maxrows;
-			if (_rowFreeze >= _maxRows) {
-				_rowFreeze = _maxRows - 1;
+			if (getRowfreeze() >= _maxRows) {
+				_sheetFrozenRow.put(getSelectedSheetId(), _maxRows - 1);
 			}
 			smartUpdate("maxRows", getMaxrows());
 		}
@@ -928,8 +930,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		if (_maxColumns != maxcols) {
 			_maxColumns = maxcols;
 
-			if (_colFreeze >= _maxColumns) {
-				_colFreeze = _maxColumns - 1;
+			if (getColumnfreeze() >= _maxColumns) {
+				_sheetFrozenColumn.put(getSelectedSheetId(), _maxColumns - 1);
 			}
 			
 			smartUpdate("maxColumns", getMaxcolumns());
@@ -973,14 +975,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @return the row freeze of this spreadsheet or selected sheet.
 	 */
 	public int getRowfreeze() {
-		int rowFreeze = -1 ;
-		if (frozenRow.containsKey(getSelectedSheetName())){ //has set before
-			rowFreeze = frozenRow.get(getSelectedSheetName());
+		int rowFreeze = DEFAULT_ROW_FREEZE ;
+		String seletedSheetId = getSelectedSheetId();
+		if (_sheetFrozenRow.containsKey(seletedSheetId)){ //has set before
+			rowFreeze = _sheetFrozenRow.get(seletedSheetId);
 		}else{ //load from the book
 			final Worksheet sheet = getSelectedSheet();
 			if (sheet != null) {
 				if (BookHelper.isFreezePane(sheet)) { //issue #103: Freeze row/column is not correctly interpreted
 					rowFreeze = BookHelper.getRowFreeze(sheet) - 1;
+					_sheetFrozenRow.put(seletedSheetId, rowFreeze);
 				}
 			}
 		}
@@ -996,12 +1000,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	public void setRowfreeze(int rowfreeze) {
 //		_rowFreezeset = true;
 		if (rowfreeze < 0) {
-			rowfreeze = -1;
+			rowfreeze = DEFAULT_ROW_FREEZE;
 		}
 		//store it if it's changed
-		if (!frozenRow.containsKey(getSelectedSheetName()) 
-				|| frozenRow.get(getSelectedSheetName())!= rowfreeze) {
-			frozenRow.put(getSelectedSheetName(), rowfreeze);
+		String selectedSheetId = getSelectedSheetId();
+		if (!_sheetFrozenRow.containsKey(selectedSheetId) 
+				|| _sheetFrozenRow.get(selectedSheetId)!= rowfreeze) {
+			_sheetFrozenRow.put(selectedSheetId, rowfreeze);
 			invalidate();
 		}
 	}
@@ -1017,9 +1022,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * @return the column freeze of this spreadsheet or selected sheet.
 	 */
 	public int getColumnfreeze() {
-		int columnFreeze = -1 ;
-		if (frozenColumn.containsKey(getSelectedSheetName())){ //has set before
-			columnFreeze = frozenColumn.get(getSelectedSheetName());
+		int columnFreeze = DEFAULT_COLUMN_FREEZE;
+		if (_sheetFrozenColumn.containsKey(getSelectedSheetId())){ //has set before
+			columnFreeze = _sheetFrozenColumn.get(getSelectedSheetId());
 		}else{ //load from the book
 			final Worksheet sheet = getSelectedSheet();
 			if (sheet != null) {
@@ -1039,11 +1044,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 */
 	public void setColumnfreeze(int columnfreeze) {
 		if (columnfreeze < 0) {
-			columnfreeze = -1;
+			columnfreeze = DEFAULT_COLUMN_FREEZE;
 		}
-		if (!frozenColumn.containsKey(getSelectedSheetName()) 
-				|| frozenColumn.get(getSelectedSheetName())!= columnfreeze) {
-			frozenColumn.put(getSelectedSheetName(), columnfreeze);
+		String selectedSheetId = getSelectedSheetId();
+		if (!_sheetFrozenColumn.containsKey(selectedSheetId) 
+				|| _sheetFrozenColumn.get(selectedSheetId)!= columnfreeze) {
+			_sheetFrozenColumn.put(selectedSheetId, columnfreeze);
 			invalidate();
 		}
 	}
@@ -3149,13 +3155,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("hs", getColumnHeaderAttrs(_selectedSheet, col, right));
 
 			//_maxColumns += size;
-			int cf = getColumnfreeze();
-			if (cf >= col) {
-				_colFreeze += size;
+			int frozenColumn = getColumnfreeze();
+			if (frozenColumn >= col) {
+				frozenColumn += size;
+				_sheetFrozenColumn.put(getSelectedSheetId(), frozenColumn);
 			}
 
 			result.put("maxcol", _maxColumns);
-			result.put("colfreeze", _colFreeze);
+			result.put("colfreeze", frozenColumn);
 
 			response("insertRowColumn" + Utils.nextUpdateId(), new AuInsertRowColumn(Spreadsheet.this, "", Utils.getSheetUuid(sheet), result));
 
@@ -3215,13 +3222,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("hs", getRowHeaderAttrs(_selectedSheet, row, bottom));
 			
 			//_maxRows += size;
-			int rf = getRowfreeze();
-			if (rf >= row) {
-				_rowFreeze += size;
+			int frozenRow = getRowfreeze();
+			if (frozenRow >= row) {
+				frozenRow += size;
+				_sheetFrozenRow.put(getSelectedSheetId(), frozenRow);
 			}
 
 			result.put("maxrow", _maxRows);
-			result.put("rowfreeze", _rowFreeze);
+			result.put("rowfreeze", frozenRow);
 
 			response("insertRowColumn" + Utils.nextUpdateId(), new AuInsertRowColumn(Spreadsheet.this, "", Utils.getSheetUuid(sheet), result));
 
@@ -3277,17 +3285,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		
 
 			//_maxColumns -= size;
-			int cf = getColumnfreeze();
-			if (cf > -1 && col <= cf) {
-				if (col + size > cf) {
-					_colFreeze = col - 1;
+			int frozenColumn = getColumnfreeze();
+			if (frozenColumn > -1 && col <= frozenColumn) {
+				if (col + size > frozenColumn) {
+					frozenColumn = col -1;
+					_sheetFrozenColumn.put(getSelectedSheetId(), frozenColumn);
 				} else {
-					_colFreeze -= size;
+					frozenColumn -= size;
+					_sheetFrozenColumn.put(getSelectedSheetId(), frozenColumn);
 				}
 			}
 
 			result.put("maxcol", _maxColumns);
-			result.put("colfreeze", _colFreeze);
+			result.put("colfreeze", frozenColumn);
 
 			response("removeRowColumn" + Utils.nextUpdateId(), new AuRemoveRowColumn(Spreadsheet.this, "", Utils.getSheetUuid(sheet), result));
 			rect.setRight(right);
@@ -3337,17 +3347,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			result.put("hs", getRowHeaderAttrs(_selectedSheet, row, bottom));
 
 //			_maxRows -= size;
-			int rf = getRowfreeze();
-			if (rf > -1 && row <= rf) {
-				if (row + size > rf) {
-					_rowFreeze = row - 1;
+			int frozenRow = getRowfreeze();
+			if (frozenRow > DEFAULT_ROW_FREEZE && row <= frozenRow) {
+				if (row + size > frozenRow) {
+					frozenRow = row -1;
+					_sheetFrozenRow.put(getSelectedSheetId(), frozenRow);
 				} else {
-					_rowFreeze -= size;
+					frozenRow -= size;
+					_sheetFrozenRow.put(getSelectedSheetId(), frozenRow);
 				}
 			}
 
 			result.put("maxrow", _maxRows);
-			result.put("rowfreeze", _rowFreeze);
+			result.put("rowfreeze", frozenRow);
 
 			response("removeRowColumn" + Utils.nextUpdateId(), new AuRemoveRowColumn(Spreadsheet.this, "", Utils.getSheetUuid(sheet), result));
 			rect.setBottom(bottom);
@@ -3969,11 +3981,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		_selectionRect.set(0, 0, 0, 0);
 		_focusRect.set(0, 0, 0, 0);
 		
-		//issue #99: freeze column and freeze row is not reset. 
-		_colFreeze = -1;
-		_colFreezeset = false;
-		_rowFreeze = -1;
-		_rowFreezeset = false;
+		//no more reset frozen rows (columns) here, for they are stored separately for each sheet
 	}
 
 	private void doSheetSelected(Worksheet sheet) {
