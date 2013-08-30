@@ -646,54 +646,52 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 		}
 	},
 	update: function (v, dir) {
-		var attrType = v.at,
-			top = v.t,
-			left = v.l,
-			btm = v.b,
-			right = v.r,
-			src = v.rs,
-			textAggregation = v.s,
-			styleAggregation = v.st,
-			mergeAggregation = v.m,
-			rowHeaderObj = v.rhs,
-			colHeaderObj = v.chs,
-			i = top, 
-			s = 0,
-			dir = dir || v.dir,
-			oldRows = {},
-			oldRowHeaders = {};
+
+		// ZSS-392: multiple ActiveRange for different panels
+		// just delegate to corresponding freeze active ranges 
+		if(v.leftFrozen) { // left frozen data
+			if(this.leftFrozen) {
+				this.leftFrozen.update(v.leftFrozen, dir);
+			} else {
+				this.leftFrozen = new zss.FreezeActiveRange(v.leftFrozen);
+			}
+		}
+		if(v.topFrozen) { // top frozen data
+			if(this.topFrozen) {
+				this.topFrozen.update(v.topFrozen, dir);
+			} else {
+				this.topFrozen = new zss.FreezeActiveRange(v.topFrozen);
+			}
+		}
+		if(v.cornerFrozen) { // corner frozen data
+			if(this.cornerFrozen) {
+				this.cornerFrozen.update(v.cornerFrozen, dir);
+			} else {
+				this.cornerFrozen = new zss.FreezeActiveRange(v.cornerFrozen);
+			}
+		}
 		
-		//left frozen
-		var lfd = v.leftFrozen,//left frozen data
-			tfd = v.topFrozen;//top frozen data
-		if (lfd) {
-			if (!this.leftFrozen) {//init left frozen, clone data from main block first
-				var sRect = this.rect,
-					st = sRect.top,
-					sb = sRect.bottom;
-				this.leftFrozen = new zss.ActiveRange(lfd);
-				this.leftFrozen.clone(st, 0, sb, lfd.r, this);
-				var lr = this.leftFrozen.rect;
-				lr.top = Math.min(st, lfd.t);
-				lr.bottom = Math.max(sb, lfd.b);
-			} else {
-				this.leftFrozen.update(lfd, dir);
-			}
-		}
-		if (tfd) {
-			if (!this.topFrozen) {
-				var sRect = this.rect,
-					sl = sRect.left,
-					sr = sRect.right;
-				this.topFrozen = new zss.ActiveRange(tfd);
-				this.topFrozen.clone(0, sl, tfd.b, sr, this);
-				var tr = this.topFrozen.rect;
-				tr.left = Math.min(sl, tfd.l);
-				tr.right = Math.max(sr, tfd.r);
-			} else {
-				this.topFrozen.update(tfd, dir);
-			}
-		}
+		// real update cells
+		this.updateCells(v, dir);
+	},
+	updateCells: function (v, dir) {
+		var attrType = v.at;
+		var top = v.t;
+		var left = v.l;
+		var btm = v.b;
+		var right = v.r;
+		var src = v.rs;
+		var textAggregation = v.s;
+		var styleAggregation = v.st;
+		var mergeAggregation = v.m;
+		var rowHeaderObj = v.rhs;
+		var colHeaderObj = v.chs;
+		var i = top; 
+		var s = 0;
+		var dir = dir || v.dir;
+		var oldRow;
+		var oldRows = {};
+		var oldRowHeaders = {};
 		
 		if ('jump' == dir) {
 			//row contains wrap cell may have height Id on client side
@@ -701,6 +699,7 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 			oldRowHeaders = this.oldRowHeaders = this.rowHeaders;
 		}
 		this.updateBoundary(dir, top, left, btm, right);
+		
 		var rows = this.rows;
 		for (; i <= btm; i++) {
 			var row = rows[i];
@@ -708,7 +707,7 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 				row = rows[i] = newRow(src[s++], attrType, left, right, textAggregation, styleAggregation, mergeAggregation);
 				//row contains wrap cell may have height Id on client side
 				if ('jump' == dir) {
-					var oldRow = oldRows[i];
+					oldRow = oldRows[i];
 					if (oldRow && oldRow.heightId && !row.heightId) {
 						row.updateRowHeightId(oldRow.heightId);
 					}
@@ -732,9 +731,11 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 				}
 			}
 		}
+		
 		if (colHeaderObj) {
 			updateHeaders(this.columnHeaders, colHeaderObj);
 		}
+		
 		//row contains wrap cell may have height Id on client side
 		if ('jump' == dir) {
 			delete this.oldRows;
@@ -950,4 +951,20 @@ zss.CacheCtrl = zk.$extends(zk.Object, {
 		return this.selected;
 	}
 });
+
+// ZSS-392: update freeze panels' activeRange individually
+zss.FreezeActiveRange = zk.$extends(zss.ActiveRange, {
+
+	$init: function (data) {
+		this.$supers(zss.FreezeActiveRange, '$init', [data]); 
+	},
+	
+	// override
+	update: function (v, dir) {
+		// just update cells
+		this.updateCells(v, dir);
+	}
+	
+}); // end of zss.FreezeActiveRange
+
 })();

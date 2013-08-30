@@ -1,0 +1,341 @@
+
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<vbox width="100%" height="100%">
+		<button label="export">
+			<attribute name="onClick"><![CDATA[
+				Exporter exporter = Exporters.getExporter("excel");
+				java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+				exporter.export(ss.getBook(), os);
+				os.close();
+				org.zkoss.zul.Filedownload.save(os.toByteArray(),
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "exported.xlsx");
+			]]></attribute>
+		</button>
+		<spreadsheet id="ss" src="/issue/392-freeze-render.xlsx"  hflex="1" vflex="1"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			maxrows="1000" maxcolumns="400"
+	 		preloadRowSize="5" preloadColumnSize="5"
+	 		rowfreeze="10" columnfreeze="10"
+			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+		</spreadsheet>
+		<!-- NO preload setting -->
+		<!-- 
+		<spreadsheet id="ss2" src="/issue/392-freeze-render.xlsx"  vflex="true" width="100%"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			maxrows="210" maxcolumns="210"
+	 		rowfreeze="10" columnfreeze="10"
+			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+		</spreadsheet>
+		 -->	
+		
+		<script defer="true"><![CDATA[
+			(function() {
+				window.debug = {};
+				window.debug.ss = zk.Widget.$('$ss');
+				window.debug.ssc = debug.ss.sheetCtrl;
+				window.debug.dp = debug.ssc.dp;
+			})();
+		]]></script>
+		
+		<!-- workaround -->
+			<script type="text/javascript"><![CDATA[ /*
+			zk.afterLoad('zss', function () {
+					var ATTR_ALL = 1,
+						ATTR_TEXT = 2,
+						ATTR_STYLE = 3,
+						ATTR_SIZE = 4,
+						ATTR_MERGE = 5;
+	
+					function newRect(tRow, lCol, bRow, rCol) {
+						return {
+							top: tRow,
+							left: lCol,
+							bottom: bRow,
+							right: rCol
+						}
+					}
+					
+					function updateHeaders(dest, src) {
+						var headers = src.hs,
+							i = src.s,
+							end = src.e,
+							j = 0;
+						for (; i <= end; i++) {
+							var h = dest[i] = headers[j++];
+							h.i = i;//header index
+						}
+					}
+		
+					function newCell(v, type, heightId, texts, styles, mergeInfos) {
+						var c = {
+							update: function (v, type, heightId, texts, styles, mergeInfos) {
+								var upAll = type == ATTR_ALL,
+									upText = (upAll || type == ATTR_TEXT),
+									upStyle = (upAll || type == ATTR_STYLE),
+									upSize = (upAll || type == ATTR_SIZE),
+									upMerge = (upAll || type == ATTR_MERGE),
+									cellType = v.ct;
+								this.cellType = cellType != undefined ? cellType : 3;//default is BLANK_CELL
+								if (upText) {
+									var mergedTextId = v.meft;
+									if (mergedTextId != undefined) {//index start from 0
+										this.text = this.editText = this.formatText = texts[mergedTextId] || '';
+									} else {
+										var tId = v.t,
+											eId = v.et
+											fId = v.ft;
+										this.text = tId != undefined ? texts[tId] : '';
+										this.editText = eId != undefined ? texts[eId] : '';
+										this.formatText = fId != undefined ? texts[fId] : '';
+									}
+								}
+								if (upStyle) {
+									var sId = v.s,
+										isId = v.is,
+										wrap = v.wp,
+										rbo = v.rb,
+										lock = v.l,
+										halign = v.ha,
+										valign = v.va,
+										fontSize = v.fs;
+									this.style = sId != undefined ? styles[sId] : '';
+									this.innerStyle = isId != undefined ? styles[isId] : '';
+									this.wrap = wrap != undefined;
+									//bug ZSS-56: Unlock a cell, protect sheet, cannot double click to edit the cell
+									this.lock = lock != undefined ? lock != 'f' : true;
+									this.halign = halign || 'l'; //horizontal align: default left
+									this.valign = valign || 'b'; //vertical align: default bottom 
+									this.rightBorder = rbo != undefined;
+									if (fontSize)
+										this.fontSize = fontSize;
+								}
+								if (upSize) {
+									this.overflow = !!v.ovf;
+									if (this.overflow) {
+										this.maxOverflowCol = v.moc;
+									}
+								}
+								if (upMerge) {
+									
+									var idx = v.mi,
+										cssIdx = v.mc;
+									if (idx != undefined) {
+										var info = mergeInfos.r[idx],
+											css = mergeInfos.cs[cssIdx];
+										this.mergeId = info.i;
+										this.mergeCls = css;
+										if (this.mergeId) {
+											this.merge = newRect(info.t, info.l, info.b, info.r);
+										}
+									} else if (this.mergeId) {//remove merge
+										delete this.mergeId;
+										delete this.mergeCls;
+										delete this.merge;
+									}
+								}
+							}
+						}
+						c.update(v, type, heightId, texts, styles, mergeInfos);
+						return c;
+					}
+		
+				function newRow(v, type, left, right, texts, styles, mergeInfos) {
+					var row = {
+						r: v.r,
+						heightId: v.h,
+						cells: {},
+						//TODO: rm this
+						updateRowHeightId: function (id) {
+							this.heightId = id;
+							var cells = this.cells;
+							for (var p in cells) {
+								cells[p].heightId = id;
+							}
+						},
+						update: function (attr, type, left, right, texts, styles, mergeInfos) {
+							var src = attr.cs,
+								i = left,
+								j = 0,
+								cell,
+								r = this.r,
+								cs = this.cells,
+								hId = this.heightId;
+							for (; i <= right; i++) {
+								var c = cs[i];
+								if (!c) {
+									c = cs[i] = newCell(src[j++], type, hId, texts, styles, mergeInfos);
+									c.r = r;
+									c.c = i;
+								} else {
+									c.update(src[j++], type, hId, texts, styles, mergeInfos);
+								}
+								//row contains wrap cell may have height Id on client side
+								if (!c.heightId && hId) {
+									c.heightId = hId;
+								}
+							}
+						},
+						removeColumns: function (col, size, rCol) {
+							var cs = this.cells,
+								i = size,
+								lCol = col;
+							for (var c = col; c <= rCol; c++) {
+								var cell = cs[c];
+								if (cell) {
+									if (i > 0) {
+										delete cs[c];
+										i--;
+									} else {
+										delete cs[c];
+										cell.c -= size; //re-index
+										cs[cell.c] = cell;
+									}
+								}
+							}
+						},
+						getCell: function (num) {
+							return this.cells[num];
+						}
+					}
+					row.update(v, type, left, right, texts, styles, mergeInfos);
+					return row;
+				}
+				
+				zss.ActiveRange.copyRow = function (lCol, rCol, srcRow, dstRow) {
+					// ZSS-392: must check source
+					if(srcRow == null) {
+						return;
+					}
+					var row = dstRow != null ? dstRow : {
+						r: srcRow.r,
+						heightId: srcRow.heightId,
+						cells: {},
+						update: srcRow.update,
+						getCell: srcRow.getCell,
+						updateRowHeightId: srcRow.updateRowHeightId,
+						removeColumns: srcRow.removeColumns
+					};
+					zss.ActiveRange.copyCells(lCol, rCol, srcRow, row);
+					return row;
+				}
+				
+				
+				var _activeRange = {};
+				zk.override(zss.ActiveRange.prototype, _activeRange, {
+					clone: function (tRow, lCol, bRow, rCol, src) {
+						var rows = this.rows,
+							rhs = this.rowHeaders,
+							chs = this.columnHeaders,
+							srcRowHeaders = src.rowHeaders,
+							srcColHeaders = src.columnHeaders,
+							cpRowsFn = zss.ActiveRange.copyRow,
+							cfn = zss.ActiveRange.clone;
+						for (var r = tRow; r <= bRow; r++) {
+							var sRow = src.getRow(r);
+							rows[r] = cpRowsFn(lCol, rCol, sRow, rows[r]);
+							rhs[r] = cfn(srcRowHeaders[r]);//clone row headers
+						}
+						
+						for (var c = lCol; c <= rCol; c++) {
+							chs[c] = cfn(srcColHeaders[c]);
+						}
+					},
+					update: function (v, dir) {
+						var attrType = v.at,
+							top = v.t,
+							left = v.l,
+							btm = v.b,
+							right = v.r,
+							src = v.rs,
+							textAggregation = v.s,
+							styleAggregation = v.st,
+							mergeAggregation = v.m,
+							rowHeaderObj = v.rhs,
+							colHeaderObj = v.chs,
+							i = top, 
+							s = 0,
+							dir = dir || v.dir,
+							oldRows = {},
+							oldRowHeaders = {};
+						
+						//left frozen
+						var lfd = v.leftFrozen,//left frozen data
+							tfd = v.topFrozen;//top frozen data
+						if (lfd && !this.leftFrozen) {
+							var sRect = this.rect,
+								st = sRect.top,
+								sb = sRect.bottom;
+							this.leftFrozen = new zss.ActiveRange(lfd);
+							this.leftFrozen.clone(st, 0, sb, lfd.r, this);
+							var lr = this.leftFrozen.rect;
+							lr.top = Math.min(st, lfd.t);
+							lr.bottom = Math.max(sb, lfd.b);
+						} else if (this.leftFrozen) {
+							this.leftFrozen.update(v, dir);
+						}
+						
+						if (tfd && !this.topFrozen) {
+							var sRect = this.rect,
+								sl = sRect.left,
+								sr = sRect.right;
+							this.topFrozen = new zss.ActiveRange(tfd);
+							this.topFrozen.clone(0, sl, tfd.b, sr, this);
+							var tr = this.topFrozen.rect;
+							tr.left = Math.min(sl, tfd.l);
+							tr.right = Math.max(sr, tfd.r);
+						} else if (this.topFrozen) {
+							this.topFrozen.update(v, dir);
+						}
+						
+						if ('jump' == dir) {
+							//row contains wrap cell may have height Id on client side
+							oldRows = this.oldRows = this.rows,
+							oldRowHeaders = this.oldRowHeaders = this.rowHeaders;
+						}
+						this.updateBoundary(dir, top, left, btm, right);
+						var rows = this.rows;
+						for (; i <= btm; i++) {
+							var row = rows[i];
+							if (!row) {
+								row = rows[i] = newRow(src[s++], attrType, left, right, textAggregation, styleAggregation, mergeAggregation);
+								//row contains wrap cell may have height Id on client side
+								if ('jump' == dir) {
+									var oldRow = oldRows[i];
+									if (oldRow && oldRow.heightId && !row.heightId) {
+										row.updateRowHeightId(oldRow.heightId);
+									}
+								}
+							} else {
+								row.update(src[s++], attrType, left, right, textAggregation, styleAggregation, mergeAggregation);
+							}
+						}
+						
+						if (rowHeaderObj) {
+							updateHeaders(this.rowHeaders, rowHeaderObj);
+							//row contains wrap cell may have height Id on client side
+							if ('jump' == dir) {
+								var headers = this.rowHeaders;
+								for (var i in headers) {
+									var h = headers[i],
+										oldHeader = oldRowHeaders[i];
+									if (!h.p && oldHeader && oldHeader.p) {
+										h.p = oldHeader.p; //position id
+									}
+								}
+							}
+						}
+						if (colHeaderObj) {
+							updateHeaders(this.columnHeaders, colHeaderObj);
+						}
+						//row contains wrap cell may have height Id on client side
+						if ('jump' == dir) {
+							delete this.oldRows;
+							delete this.oldRowHeaders;
+						}
+					}
+				});
+			});
+			*/]]></script>
+	</vbox>
+</zk>

@@ -1031,7 +1031,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	_initFrozenArea: function () {
 		var rowFreeze = this.getRowFreeze(),
 			colFreeze = this.getColumnFreeze();
-		if ((rowFreeze && rowFreeze > -1) || (colFreeze && colFreeze > -1)) {
+		if ((rowFreeze != undefined && rowFreeze > -1) || (colFreeze != undefined && colFreeze > -1)) { // ZSS-392: minor issue
 			var sheet = this.sheetCtrl;
 			if (!sheet) return;
 			

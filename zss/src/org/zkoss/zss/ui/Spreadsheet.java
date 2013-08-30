@@ -139,7 +139,6 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
 import org.zkoss.zss.ui.sys.WidgetHandler;
 import org.zkoss.zss.ui.sys.WidgetLoader;
-import org.zkoss.zul.Frozen;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.impl.XulElement;
 
@@ -820,11 +819,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 			smartUpdate("mergeRange", merr.toString());
 			
-			
+			// ZSS-423: create multiple "active range" data for every panel
 			final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) this.getExtraCtrl());
-			smartUpdate("activeRange", 
-					spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 0, 0, 
-							getInitColumnSize() , getInitRowSize()));
+			JSONObject activeRange = createActiveRange(spreadsheetCtrl, sheet, getInitColumnSize(), getInitRowSize());
+			smartUpdate("activeRange", activeRange);
 			
 			//handle Validation, must after render("activeRange"
 			List<Map> dvs = convertDataValidationToJSON(sheet.getDataValidations());
@@ -1650,15 +1648,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) this.getExtraCtrl());
 		
 		int initColSize = getInitColumnSize();
-		int preloadColSize = getPreloadColumnSize();
 		int initRowSize = getInitRowSize();
-		int preloadRowSize = getPreloadRowSize();
-		renderer.render("activeRange", 
-			spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 0, 0, 
-					initColSize , initRowSize));
 		
-		renderer.render("preloadRowSize", preloadRowSize);
-		renderer.render("preloadColumnSize", preloadColSize);
+		JSONObject activeRange = createActiveRange(spreadsheetCtrl, sheet, initColSize, initRowSize); // ZSS-423: create multiple "active range" data for every panel
+		renderer.render("activeRange", activeRange);
+		
+		renderer.render("preloadRowSize", getPreloadRowSize());
+		renderer.render("preloadColumnSize", getPreloadColumnSize());
 		
 		renderer.render("initRowSize", initRowSize);
 		renderer.render("initColumnSize", initColSize);
@@ -1673,6 +1669,36 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		} else {
 			renderer.render("dataValidations", (String) null);
 		}
+	}
+	
+	/**
+	 * create active range from coordination (0, 0) to specific size.
+	 */
+	private JSONObject createActiveRange(SpreadsheetCtrl spreadsheetCtrl, Worksheet sheet, int columnCount, int rowCount) {
+
+		// ZSS-423: create multiple "active range" data for every panel
+		JSONObject activeRange = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH,
+				SpreadsheetCtrl.CellAttribute.ALL, 0, 0, columnCount, rowCount);
+		
+		int rowFreeze = getRowfreeze();
+		int colFreeze = getColumnfreeze();
+		
+		if(rowFreeze >= 0) {
+			activeRange.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH,
+					SpreadsheetCtrl.CellAttribute.ALL, 0, 0, columnCount, rowFreeze));
+		}
+		
+		if(colFreeze >= 0) {
+			activeRange.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH,
+					SpreadsheetCtrl.CellAttribute.ALL, 0, 0, colFreeze, rowCount));
+		}
+		
+		if(rowFreeze >= 0 && colFreeze >= 0) {
+			activeRange.put("cornerFrozen", spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH,
+					SpreadsheetCtrl.CellAttribute.ALL, 0, 0, colFreeze, rowFreeze));
+		}
+
+		return activeRange;
 	}
 
 	/**
@@ -2491,18 +2517,46 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 		
 		//TODO: update freeze range
-		//row freeze part
-		if (frTop >= 0 && frTop <= frBottom && left >= 0 && left <= right) { 
-			responseUpdateCell(sheet, sheetId, left, frTop, right, frBottom);
-		}
-		//column freeze part
-		if (frLeft >= 0 && frLeft <= frRight && top >= 0 && top <= bottom) {
-			responseUpdateCell(sheet, sheetId, frLeft, top, frRight, bottom);
-		}
-		//loaded rect
+		
+		// ZSS-393: update every panel separately
+		SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) this.getExtraCtrl());
+		JSONObject activeRange = null;
+		//	data panel 
 		if (top >= 0 && top <= bottom && left >= 0 && left <= right) {
-			responseUpdateCell(sheet, sheetId, left, top, right, bottom);
+			activeRange = responseUpdateCell(sheet, sheetId, left, top, right, bottom);
 		}
+		// top freeze panel
+		if (frTop >= 0 && frTop <= frBottom && left >= 0 && left <= right) { 
+			if(activeRange == null) { // freeze panel needs payloader
+				activeRange = responseUpdateCell(sheet, sheetId, loadLeft, loadTop, loadLeft, loadTop); 
+			}
+			activeRange.put("topFrozen", responseUpdateCell(sheet, sheetId, left, frTop, right, frBottom));
+		}
+		// left freeze panel
+		if (frLeft >= 0 && frLeft <= frRight && top >= 0 && top <= bottom) {
+			if(activeRange == null) { // freeze panel needs payloader
+				activeRange = responseUpdateCell(sheet, sheetId, loadLeft, loadTop, loadLeft, loadTop); 
+			}
+			activeRange.put("leftFrozen", responseUpdateCell(sheet, sheetId, frLeft, top, frRight, bottom));
+		}
+		// corner freeze panel
+		if (frTop >= 0 && frTop <= frBottom && frLeft >= 0 && frLeft <= frRight) {
+			if(activeRange == null) { // freeze panel needs payloader
+				activeRange = responseUpdateCell(sheet, sheetId, loadLeft, loadTop, loadLeft, loadTop);
+			}
+			activeRange.put("cornerFrozen", responseUpdateCell(sheet, sheetId, frLeft, frTop, frRight, frBottom));
+		}
+		
+		if(activeRange != null) {
+			response(top + "_" + left + "_" + _updateCellId.next(), new AuDataUpdate(this, "", sheetId, activeRange));
+		}
+	}
+	
+	private JSONObject responseUpdateCell(Worksheet sheet, String sheetId, int left, int top, int right, int bottom) {
+		SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) this.getExtraCtrl());
+		JSONObject result = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.NONE, CellAttribute.ALL, left, top, right, bottom);
+		result.put("type", "udcell");
+		return result;
 	}
 	
 	/**
@@ -2549,14 +2603,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		result.setData("val", text);
 		final String sheetId = Utils.getSheetUuid((Worksheet) cell.getSheet());
 		response(row + "_" + col + "_" + _updateCellId.next(), new AuDataUpdate(this, "", sheetId, result));
-	}
-	
-	private void responseUpdateCell(Worksheet sheet, String sheetId, int left, int top, int right, int bottom) {
-		SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) this.getExtraCtrl());
-		JSONObject result = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.NONE, CellAttribute.ALL, left, top, right, bottom);
-		result.put("type", "udcell");
-		response(top + "_" + left + "_" + _updateCellId.next(), 
-				new AuDataUpdate(this, "", sheetId, result));
 	}
 	
 	private HeaderPositionHelper myGetColumnPositionHelper(Worksheet sheet, int maxcol) {

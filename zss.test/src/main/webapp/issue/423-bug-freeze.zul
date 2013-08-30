@@ -1,0 +1,380 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<!-- js error when rowfreeze > preloadRowSize or columnfreeze > preloadColumnSize -->
+	
+	<!-- workaround:-->
+	<!-- step 1. Spreadsheet.java at line 1647 -->
+	<!-- 
+	protected void renderProperties(ContentRenderer renderer) {
+		...
+		JSONObject activeRange = spreadsheetCtrl.getRangeAttrs(sheet, SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 0, 0, 
+				initColSize , initRowSize);
+		if (rowFreeze >= 0) {
+			activeRange.put("topFrozen", spreadsheetCtrl.getRangeAttrs(sheet, 
+					SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 0, 0, initColSize, rowFreeze));
+		}
+		if (colFreeze >= 0) {
+			activeRange.put("leftFrozen", spreadsheetCtrl.getRangeAttrs(sheet, 
+					SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 0, 0, colFreeze, initRowSize));
+		}
+		if (rowFreeze >= 0 && colFreeze >= 0) {
+			activeRange.put("cornerFrozen", spreadsheetCtrl.getRangeAttrs(sheet, 
+					SpreadsheetCtrl.Header.BOTH, SpreadsheetCtrl.CellAttribute.ALL, 0, 0, colFreeze, rowFreeze));
+		}
+		renderer.render("activeRange", activeRange);
+		...
+	}
+	 -->
+	<!-- step 2. SSheetCtrl.js -->
+	<script type="text/javascript"><![CDATA[ /*
+	zk.afterLoad('zss', function () {
+		function syncAttributes(dst, src, fields) {
+			for (var key in fields) {
+				var f = fields[key];
+				dst[f] = src[f];
+			}
+		}
+		function newPositionArray(str) {
+			var array = [];
+			if (str) {
+				str = str.split(",");
+				var size  = str.length;
+				for (var i = 0; i < size; i = i + 4)
+					array.push([zk.parseInt(str[i]), zk.parseInt(str[i + 1]), zk.parseInt(str[i + 2]), 'true' == str[i+3]]);
+			}
+			return array;
+		}
+		
+		function newMergeMatrixArray(str) {
+			var array = [];
+			if (str && str != "") {
+				str = str.split(";");
+				var size = str.length,
+					r;
+				for (var i = 0; i < size; i++) {
+					r = str[i].split(",");
+					var range = new zss.Range(zk.parseInt(r[0]), zk.parseInt(r[1]), zk.parseInt(r[2]), zk.parseInt(r[3]));
+					range.id = zk.parseInt(r[4]);
+					array.push(range);
+				}
+			}
+			return array;
+		}
+		function doAfterCSSReady(sheet) {
+			var wgt = sheet._wgt;
+			if (wgt.isSheetCSSReady()) {
+				sheet.activeBlock.setVisible(true); //show cells
+				sheet._doSSInitLater(); //may show focus, process wrap height
+				wgt.focus();
+			} else {
+				setTimeout(function () {
+					doAfterCSSReady(sheet);
+				}, 1);
+			}
+		}
+		var _shtCtrl = {};
+		zk.override(zss.SSheetCtrl.prototype, _shtCtrl, {
+			doSheetSelected: function (visRng) {
+				if (this.bindLevel < 0) {//this method shall invoke after bind
+					return;
+				}
+				var	wgt = this._wgt,
+					sheet = this,
+					cacheCtrl = wgt._cacheCtrl,
+					dp = this.dp,
+					sp = this.sp,
+					tp = this.tp,
+					lp = this.lp,
+					snapshop = cacheCtrl.getSnapshot(wgt.getSheetId());
+				if (snapshop) {
+					syncAttributes(wgt, snapshop, 
+						['_displayGridlines', '_rowFreeze', '_columnFreeze', '_rowHeight', '_columnWidth', '_protect']);
+					var d = snapshop.getDataPanelSize(),
+						s = snapshop.getScrollPanelPos();
+					
+					dp.reset(d.width, d.height);
+					sp.reset(s.scrollTop, s.scrollLeft);
+					lp._updateTopPos(snapshop.getLeftPanelPos());
+					tp._updateLeftPos(snapshop.getTopPanelPos());
+				} else { //switch to new sheet focus on [0, 0]
+					sp.reset(0, 0);
+					lp._updateTopPos(0);
+					tp._updateLeftPos(0);
+				}
+				
+				this.serverSheetId = wgt.getSheetId();
+				this.topHeight = wgt.getTopPanelHeight(); //default top panel height 20
+				this.leftWidth = wgt.getLeftPanelWidth(); //default left panel width 28
+				this.rowHeight = wgt.getRowHeight(); //default row height 20
+				this.colWidth = wgt.getColumnWidth(); //default column width 80
+				this.frozenRow = wgt.getRowFreeze();
+				this.frozenCol = wgt.getColumnFreeze();
+		
+				this.custColWidth = new zss.PositionHelper(this.colWidth, snapshop ? snapshop.getCustColWidth() : newPositionArray(wgt.getCsc()));
+				this.custColWidth.ids = new zss.Id(0, 2);
+				
+				this.custRowHeight = new zss.PositionHelper(this.rowHeight, snapshop ? snapshop.getCustRowHeight() : newPositionArray(wgt.getCsr()));
+				this.custRowHeight.ids = new zss.Id(0, 2);
+				
+				//merge range
+				this.mergeMatrix = new zss.MergeMatrix(snapshop ? snapshop.getMergeMatrix() : newMergeMatrixArray(wgt.getMergeRange()), this);
+		
+				var data = wgt._cacheCtrl.getSelectedSheet(),
+					sheetCSSReady = wgt.isSheetCSSReady();
+				visRng = visRng || zss.SSheetCtrl._getVisibleRange(this);
+				if (data) {			
+					var oldBlock = this.activeBlock,
+						oldTopPanel = this.tp,
+						oldLeftPanel = this.lp,
+						oldCornerPanel = this.cp,
+						rows = data.rows,
+						rect = data.rect,
+						tRow = visRng.top,
+						bRow = visRng.bottom,
+						lCol = visRng.left,
+						rCol = visRng.right,
+						rowHeadHidden = wgt._rowHeadHidden,
+						colHeadHidden = wgt._columnHeadHidden;
+					if (bRow > rect.bottom)
+						bRow = rect.bottom;
+					if (rCol > rect.right)
+						rCol = rect.right;
+					//bug fix for topPanel, leftPanel and cornerPanel
+					//was: topPanel = new zss.TopPanel(sheet, rowHeadHidden, lCol, rCol, data),
+					//was: leftPanel = new zss.LeftPanel(sheet, colHeadHidden, tRow, bRow, data),
+					var	activeBlock = new zss.MainBlockCtrl(sheet, tRow, lCol, bRow, rCol, data),
+						topPanel = new zss.TopPanel(sheet, rowHeadHidden, lCol, rCol, data.topFrozen ? data.topFrozen : data),
+						leftPanel = new zss.LeftPanel(sheet, colHeadHidden, tRow, bRow, data.leftFrozen ? data.leftFrozen : data),
+						cornerPanel = new zss.CornerPanel(sheet, rowHeadHidden, colHeadHidden, lCol, tRow, rCol, bRow, data);
+		
+					if (!sheetCSSReady) {//set visible after CSS loaded
+						activeBlock.setVisible(false);
+					}
+					if (oldTopPanel) {
+						oldTopPanel.replaceWidget(this.tp = topPanel);
+					} else {
+						this.appendChild(this.tp = topPanel, true);
+					}
+					
+					if (oldLeftPanel) {
+						oldLeftPanel.replaceWidget(this.lp = leftPanel);
+					} else {
+						this.appendChild(this.lp = leftPanel, true);
+					}
+					
+					if (oldCornerPanel) {
+						oldCornerPanel.replaceWidget(this.cp = cornerPanel);
+					} else {
+						this.appendChild(this.cp = cornerPanel, true);
+					}
+					if (oldBlock) {
+						//Note. do not use MainBlockCtrl.replaceWidget (for row/column freeze)
+						activeBlock.replaceHTML(oldBlock.$n(), this.desktop, null, true);
+						this.activeBlock = activeBlock;
+					} else {
+						this.appendChild(this.activeBlock = activeBlock, true);
+					}
+		
+					this.fireProtectSheet(wgt.isProtect());
+					this.fireDisplayGridlines(wgt.isDisplayGridlines());
+					
+					dp._fixSize(this.activeBlock);
+					this._fixSize();
+				}
+				if (!sheetCSSReady) {
+					this.addSSInitLater(function () {
+						sheet._resize();
+					});
+				} else {
+					this._resize();
+				}
+				doAfterCSSReady(this);
+			},
+			afterParentChanged_: function () { //all attributes set when afterParentChanged_
+				var self = this,
+					wgt = this._wgt;
+				
+				this.sheetid = wgt.uuid;
+				
+				//current server sheet index
+				this.serverSheetId = wgt.getSheetId();
+				
+				var rowHeight = wgt.getRowHeight(),
+					colWidth = wgt.getColumnWidth();
+			
+				this.maxCols = wgt.getMaxColumns();
+				this.maxRows = wgt.getMaxRows();
+				this.topHeight = wgt.getTopPanelHeight(); //default top panel height 20
+				this.leftWidth = wgt.getLeftPanelWidth(); //default left panel width 28
+				this.cellPad = wgt.getCellPadding();
+				this.rowHeight = wgt.getRowHeight(); //default row height 20
+				this.colWidth = wgt.getColumnWidth(); //default column width 80
+				
+				//initial time parameter
+				var initparm = this.initparm = {},
+					fs = wgt.getFocusRect();
+				fs = fs.split(",");
+				initparm.focus = new zss.Pos(zk.parseInt(fs[1]), zk.parseInt(fs[0]));//[row,col]
+				
+				var sel = wgt.getSelectionRect();
+				sel = sel.split(",");
+				initparm.selrange = new zss.Range(zk.parseInt(sel[0]), zk.parseInt(sel[1]),zk.parseInt(sel[2]),zk.parseInt(sel[3]));
+				
+				var hl = wgt.getHighLightRect();
+				if (hl) {
+					hl = hl.split(",");
+					initparm.hlrange = new zss.Range(zk.parseInt(hl[0]), zk.parseInt(hl[1]), zk.parseInt(hl[2]), zk.parseInt(hl[3]));
+					
+					this.addSSInitLater(function() {
+						var range = local.initparm.hlrange;
+						self.hlArea.show = true;
+						self.moveHighlight(range.left, range.top, range.right, range.bottom);
+						delete self.initparm;
+					});
+					
+				} else
+					initparm.hlrange = new zss.Range(-1, -1, -1, -1);
+		
+				this.custColWidth = new zss.PositionHelper(this.colWidth, newPositionArray(wgt.getCsc()));
+				this.custColWidth.ids = new zss.Id(0, 2);
+				
+				this.custRowHeight = new zss.PositionHelper(this.rowHeight, newPositionArray(wgt.getCsr()));
+				this.custRowHeight.ids = new zss.Id(0, 2);
+				
+				this.mergeMatrix = new zss.MergeMatrix(newMergeMatrixArray(wgt.getMergeRange()), this);
+				
+				//frozen row & column
+				this.frozenRow = wgt.getRowFreeze();
+				this.frozenCol = wgt.getColumnFreeze();
+				
+				var sheet = this,
+					cacheCtrl = wgt._cacheCtrl,
+					ar = cacheCtrl.getSelectedSheet();
+				
+				this.appendChild(this.inlineEditor = new zss.Editbox(sheet));
+				if (ar) {
+					var	rows = ar.rows,
+						rect = ar.rect,
+						tRow = rect.top,
+						lCol = rect.left,
+						rCol = rect.right,
+						rowHeadHidden = wgt._rowHeadHidden,
+						colHeadHidden = wgt._columnHeadHidden;
+					//TODO: measure best init size
+					bRow = tRow + 20; //load row size
+					rCol = lCol + 20; //load column size
+					if (bRow > rect.bottom)
+						bRow = rect.bottom;
+					if (rCol > rect.right)
+						rCol = rect.right;
+					this.appendChild(this.activeBlock = new zss.MainBlockCtrl(sheet, tRow, lCol, bRow, rCol, ar), true);
+					//bug fix
+					//was: this.appendChild(this.tp = new zss.TopPanel(sheet, rowHeadHidden, lCol, rCol, ar), true);
+					//was: this.appendChild(this.lp = new zss.LeftPanel(sheet, colHeadHidden, tRow, bRow, ar), true);
+					this.appendChild(this.tp = new zss.TopPanel(sheet, rowHeadHidden, lCol, rCol, ar.topFrozen ? ar.topFrozen : ar), true);
+					this.appendChild(this.lp = new zss.LeftPanel(sheet, colHeadHidden, tRow, bRow, ar.leftFrozen ? ar.leftFrozen : ar), true);
+					this.appendChild(this.cp = new zss.CornerPanel(sheet, rowHeadHidden, colHeadHidden, lCol, tRow, rCol, bRow, ar), true);
+				}
+				
+				this.innerClicking = 0;// mouse down counter to check that is focus rellay lost.
+			},
+			_cmdCellUpdate: function (shtId, result) {
+				var type = result.type,
+					row = result.r,
+					col = result.c,
+					value = result.val,
+					server = result.server; //use editValue from server
+				switch(type){
+				case "udtext" :
+					this._updateText(result);
+					break;
+				case "udcell":
+					var wgt = this._wgt,
+						data = result,
+						cCtl = this._wgt._cacheCtrl,
+						cacheSheet = cCtl.getSheetBy(shtId),
+						selSheet = cCtl.getSelectedSheet();
+					if (cacheSheet) {
+						//bug fix
+						cacheSheet.updateCell(data);
+						
+						if (cacheSheet.id == selSheet.id) {//update current sheet
+							this.update_(data.t, data.l, data.b, data.r);
+							wgt._triggerContentsChanged = true;
+						}
+					}
+					break;
+				case "startedit":
+					var editType = result.et,
+						dp = this.dp;
+					//ZSS 171
+					this._skipInsertCellRef = true;
+					if ('inlineEditing' == editType) {
+						if (!dp._moveFocus(row, col, true, true)) {
+							//TODO, if cell not initial, i should skip or put to delay batch? 
+							break;
+						}
+					}
+					dp._startEditing(value, server, editType);
+					break;
+				case "stopedit":
+					this.dp._stopEditing();
+					break;
+				case "canceledit":
+					this.dp.cancelEditing(result.et);
+					break;
+				case "retryedit":
+					this.dp.retryEditing(value);
+					break;
+				}
+			}
+		});
+	});
+	*/ ]]></script>
+	<!-- step 3. Corner.js -->
+	<script type="text/javascript"><![CDATA[ /*
+		zk.afterLoad('zss', function () {
+			var _cornerPanel = {};
+			zk.override(zss.CornerPanel.prototype, _cornerPanel, {
+					$init: function (sheet, rowHeadHidden, columnHeadHidden, lCol, tRow, rCol, bRow, data) {
+						this.$supers(zss.CornerPanel, '$init', []);
+						
+						this.sheet = sheet;
+						
+						var wgt = sheet._wgt,
+							r = wgt.getRowFreeze(),
+							c = wgt.getColumnFreeze(),
+							tp, lp;
+						if (c > -1 && r > -1) {
+							//bug fix: get data from cornerFrozen
+							if (data.cornerFrozen) {
+								data = data.cornerFrozen; 
+							}
+							this.appendChild(tp = this.tp = new zss.TopPanel(sheet, columnHeadHidden, 0, c, data, true), true);
+							this.appendChild(lp = this.lp = new zss.LeftPanel(sheet, rowHeadHidden, 0, r, data, true), true);
+							rCol = c,
+							bRow = r;
+							this.appendChild(this.block = new zss.CellBlockCtrl(sheet, 0, 0, bRow, rCol, data, 'corner'), true);
+						} else if (c > -1) {
+							//bug fix: get header data from left frozen (for left frozen's column header)
+							this.appendChild(tp = this.tp = new zss.TopPanel(sheet, columnHeadHidden, 0, c, data.leftFrozen ? data.leftFrozen : data, true), true);
+						} else if (r > -1) {
+							//bug fix: get header from top frozen (for top frozen's row header)
+							this.appendChild(lp = this.lp = new zss.LeftPanel(sheet, rowHeadHidden, 0, r, data.topFrozen ? data.topFrozen : data, true), true);
+						}
+					}
+			});
+		});
+*/	]]></script>
+	<!-- step 4. CacheCtrl.js (for this bug & cell at freeze area doesn't update bug (ZSS-392))-->
+	<!-- 
+	<script type="text/javascript" src="/issue/423-zss.js"></script>
+	 -->
+	<spreadsheet src="/issue/blank.xlsx" 
+		preloadRowSize="5" preloadColumnSize="5"
+		rowfreeze="10" columnfreeze="10"
+		showSheetbar="true"
+		maxrows="1000" height="100%" width="100%"
+		maxcolumns="100">
+	</spreadsheet>
+</zk>
