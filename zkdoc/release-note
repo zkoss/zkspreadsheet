@@ -4,6 +4,7 @@ ZK Spreadsheet 3.0.0
 
 *Bugs:
   ZSS-399 export to PDF - no gridlines
+  ZSS-420 Cannot focus on cell when set rowfreeze="0" or columnfreeze="0"
   
 ** Upgrade Notes
 

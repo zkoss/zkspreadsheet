@@ -2752,15 +2752,14 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			fzc = this.frozenCol,
 			cell = null;
 		
+		// get cell from one of 4 areas according to the gived location 
 		if (row <= fzr && col <= fzc) { //corner
 			var cp = this.cp;
 			cell = cp && cp.block ? cp.block.getCell(row, col) : null
-		}
-		else if(fzr > 0 && row <= fzr) {
+		} else if(fzr >= 0 && row <= fzr) { // ZSS-420: it should be index not number
 			var tp = this.tp;
 			cell = tp && tp.block ? tp.block.getCell(row, col) : null; //top panel
-		}
-		else if(fzc > 0 && col <= fzc)  {
+		} else if(fzc >= 0 && col <= fzc)  { // ZSS-420: it should be index not number
 			var lp = this.lp;
 			cell = lp && lp.block ? lp.block.getCell(row, col) : null; //left panel.
 		} else {
