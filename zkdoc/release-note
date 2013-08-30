@@ -38,7 +38,8 @@ ZK Spreadsheet 2.6.0
 	ZSS-399 export to PDF - no gridlines
 	ZSS-420 Cannot focus on cell when set rowfreeze="0" or columnfreeze="0"
 	ZSS-421 Cannot open inline editor when use rowfreeze or columnfreeze
-  ZSS-206 Row/Column freezing remains for a sheet until you freeze rows/columns on another sheet
+	ZSS-206 Row/Column freezing remains for a sheet until you freeze rows/columns on another sheet
+	ZSS-419 if delete two or more rows at once, the exported file will make Excel error when loading
 
 ZK Spreadsheet 2.5.0
 *Features:   
