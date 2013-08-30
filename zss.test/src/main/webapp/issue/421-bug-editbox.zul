@@ -1,0 +1,129 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<label pre="true">
+		<attribute name="value"><![CDATA[
+			inline editbox bug with rowfreeze or columnfreeze
+			1. scroll to the most bottom & right area
+			2. cannot open inline editbox when double click top frozen area (ex: CV1) or left frozen area (ex: A1000)
+		]]></attribute>
+	</label>
+	
+	<spreadsheet id="ss" src="/issue/blank.xlsx"  vflex="true" width="100%"
+		maxrows="1000" maxcolumns="100" 
+		showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+	</spreadsheet>
+	<zscript>
+		<![CDATA[
+			Range r = Ranges.range(ss.getSelectedSheet());
+			r.setFreezePanel(1, 1);
+		]]>
+	</zscript>
+	
+	<!-- workaround for focus bug (ZSS-420)-->
+	<script type="text/javascript"><![CDATA[
+/*		zk.afterLoad('zss', function () {
+			var _shtCtrl = {};
+			zk.override(zss.SSheetCtrl.prototype, _shtCtrl, {
+					getCell: function (row, col) {
+						var fzr = this.frozenRow,
+							fzc = this.frozenCol,
+							cell = null;
+						
+						if (row <= fzr && col <= fzc) { //corner
+							var cp = this.cp;
+							cell = cp && cp.block ? cp.block.getCell(row, col) : null
+						}
+						//bug fix  (was: fzr > 0 && row <= fzr)
+						else if(fzr >= 0 && row <= fzr) {
+							var tp = this.tp;
+							cell = tp && tp.block ? tp.block.getCell(row, col) : null; //top panel
+						}
+						//bug fix (was: fzc > 0 && col <= fzc)
+						else if(fzc >= 0 && col <= fzc)  {
+							var lp = this.lp;
+							cell = lp && lp.block ? lp.block.getCell(row, col) : null; //left panel.
+						} else {
+							cell = this.activeBlock.getCell(row, col); //data panel
+						} 
+						return cell;
+					}
+			});
+		});*/
+	]]></script>
+	<!-- workaround for inline editor bug-->
+	<script type="text/javascript"><![CDATA[
+/*		zk.afterLoad('zss', function () {
+			var _editbox = {};
+			
+			zk.override(zss.Editbox.prototype, _editbox, {
+				edit: function (cellcmp, row, col, value, noFocus) {
+					this.disable(false);
+					this.row = row;
+					this.col = col;
+					this.sw = 0;//width to show
+					this.sh = 0;//height to show
+					var sheet = this.sheet,
+						txtcmp = cellcmp.lastChild,
+						editorcmp = this.comp,
+						$edit = jq(editorcmp);
+			
+					//bug fix was: sheet.custColWidth.getStartPixel($cell.c) + sheet.leftWidth - scrollPanel.currentLeft
+					//bug fix was: sheet.custRowHeight.getStartPixel($cell.r) + sheet.topHeight - scrollPanel.currentTop
+					editorcmp.value = value;
+					var w = cellcmp.ctrl.overflowed ? (cellcmp.firstChild.offsetWidth + this.sheet.cellPad) : (cellcmp.offsetWidth),
+						h = cellcmp.offsetHeight,
+						$cell = cellcmp.ctrl,
+						scrollPanel = sheet.sp,
+						l = sheet.custColWidth.getStartPixel($cell.c) + sheet.leftWidth - (sheet.frozenCol >= 0 && col <= sheet.frozenCol ? 0 : scrollPanel.currentLeft),
+						t = sheet.custRowHeight.getStartPixel($cell.r) + sheet.topHeight - (sheet.frozenRow >= 0 && row <= sheet.frozenRow ? 0 : scrollPanel.currentTop);
+					
+					t -= 1;//position adjust
+					w -= 1;
+					h -= 1;
+					
+					if (zk.ie || zk.safari || zk.opera)
+						//the display in different browser. 
+						w -= 2;
+			
+					this.editingWidth = w;
+					this.editingHeight = h;
+					
+					//issue 228: firefox need set display block, but IE can not set this.
+					$edit.css({'width': jq.px0(w), 'height': jq.px0(h), 'left': jq.px(l), 'top': jq.px(t), 'line-height': jq.px0(sheet.lineHeight)});
+					if (!zk.ie)
+						$edit.css('display', 'block');
+					zcss.copyStyle(txtcmp, editorcmp, ["font-family","font-size","font-weight","font-style","color","text-decoration","text-align"],true);
+					zcss.copyStyle(cellcmp, editorcmp, ["background-color"], true);
+			
+					this._startEditing(noFocus);
+			   			
+					//move text cursor position to last
+					fun = function () {
+						var pos = editorcmp.value.length;
+						if (editorcmp.setSelectionRange) {
+							editorcmp.setSelectionRange(pos,pos);
+						} else if (editorcmp.createTextRange) {
+							var range = editorcmp.createTextRange();
+							range.move('character', pos);
+							range.select();
+						}
+					};
+			
+					if (!zk.safari && !zk.ie) fun();//safari must run after timeout
+					setTimeout(function(){
+						//issue 228: ie focus event need after show
+						if (zk.ie) {
+							$edit.show();
+						}
+						if (!noFocus) {
+							$edit.focus();
+							//issue 230: IE cursor position is not at the text end when press F2
+							if (zk.safari || zk.ie) fun();
+						}
+					}, 25);	
+					this.autoAdjust(true);
+				}
+			});
+		});*/
+	]]></script>
+</zk>

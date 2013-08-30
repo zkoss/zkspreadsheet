@@ -650,12 +650,13 @@ zss.Editbox = zk.$extends(zul.inp.InputWidget, {
 			$edit = jq(editorcmp);
 
 		editorcmp.value = value;
-		var w = cellcmp.ctrl.overflowed ? (cellcmp.firstChild.offsetWidth + this.sheet.cellPad) : (cellcmp.offsetWidth),
-			h = cellcmp.offsetHeight,
-			$cell = cellcmp.ctrl,
-			scrollPanel = sheet.sp,
-			l = sheet.custColWidth.getStartPixel($cell.c) + sheet.leftWidth - scrollPanel.currentLeft,
-			t = sheet.custRowHeight.getStartPixel($cell.r) + sheet.topHeight - scrollPanel.currentTop;
+		var w = cellcmp.ctrl.overflowed ? (cellcmp.firstChild.offsetWidth + this.sheet.cellPad) : (cellcmp.offsetWidth);
+		var h = cellcmp.offsetHeight;
+		var $cell = cellcmp.ctrl;
+		var scrollPanel = sheet.sp;
+		// ZSS-421: calculate editor position must consider freeze panel
+		var l = sheet.custColWidth.getStartPixel($cell.c) + sheet.leftWidth - (sheet.frozenCol >= 0 && col <= sheet.frozenCol ? 0 : scrollPanel.currentLeft);
+		var t = sheet.custRowHeight.getStartPixel($cell.r) + sheet.topHeight - (sheet.frozenRow >= 0 && row <= sheet.frozenRow ? 0 : scrollPanel.currentTop);
 		
 		t -= 1;//position adjust
 		w -= 1;
