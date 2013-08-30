@@ -219,12 +219,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	transient private Worksheet _selectedSheet;
 	transient private String _selectedSheetName;
 
-	private int _rowFreeze = DEFAULT_ROW_FREEZE; // how many fixed rows
-	private int _colFreeze = DEFAULT_COLUMN_FREEZE; // how many fixed columns
-	
-	//FIXME listen sheet deletion
-	private Map<String, Integer> _sheetFrozenRow = new HashMap<String, Integer>(); //sheet ID, row index
-	private Map<String, Integer> _sheetFrozenColumn = new HashMap<String, Integer>(); //sheet ID, column index
+	//clear only when book changes
+	private Map<String, Integer> _sheetFrozenRow = new HashMap<String, Integer>(); //<sheet ID, frozen row index>
+	private Map<String, Integer> _sheetFrozenColumn = new HashMap<String, Integer>(); //<sheet ID, frozen column index>
 	
 	private boolean _hideRowhead; // hide row head
 	private boolean _hideColhead; // hide column head*/
@@ -964,7 +961,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * {@link #setRowfreeze(int)}, then it always return the value that you set.
 	 * Else if there is a selected sheet, it get row freeze from selected sheet
 	 * and keep it(which means, it will always return this value if you does set
-	 * it again), then return it. Default : -1
+	 * it again), then return it. No frozen rows return -1.
 	 * 
 	 * @return the row freeze of this spreadsheet or selected sheet.
 	 */
@@ -1011,7 +1008,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * {@link #setColumnfreeze(int)}, then it always return the value that you
 	 * set. Else if there is a selected sheet, it get column freeze from
 	 * selected sheet and keep it(which means, it will always return this value
-	 * if you does set it again), then return it. Default : -1
+	 * if you does set it again), then return it. No frozen columns return -1.
 	 * 
 	 * @return the column freeze of this spreadsheet or selected sheet.
 	 */
@@ -1034,7 +1031,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	 * Sets the column freeze of this spreadsheet, sets row freeze on this
 	 * component has higher priority then row freeze on sheet
 	 * 
-	 * @param columnfreeze  column index, 0-based
+	 * @param columnfreeze  column index, 0-based. -1 means to unfreeze.
 	 */
 	public void setColumnfreeze(int columnfreeze) {
 		if (columnfreeze < 0) {
@@ -3975,7 +3972,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		_selectionRect.set(0, 0, 0, 0);
 		_focusRect.set(0, 0, 0, 0);
 		
-		//no more reset frozen rows (columns) here, for they are stored separately for each sheet
 	}
 
 	private void doSheetSelected(Worksheet sheet) {
