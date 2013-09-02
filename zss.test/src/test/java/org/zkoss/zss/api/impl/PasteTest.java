@@ -2,17 +2,12 @@ package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.io.InputStream;
-
-import org.junit.After;
-import org.junit.Before;
+import java.io.IOException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.IllegalOpArgumentException;
-import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.PasteOperation;
 import org.zkoss.zss.api.Range.PasteType;
@@ -38,46 +33,163 @@ import org.zkoss.zss.api.model.CellData.CellType;
  * @author kuro
  */
 public class PasteTest {
-	private static Book _workbook;
-	// 3 x 3, 1-9 matrix (source)
-	// Source Range (H11, J13)
-	private static 	int SRC_TOP_ROW = 10;
-	private static int SRC_LEFT_COL = 7;
-	private static int SRC_BOTTOM_ROW = 12;
-	private static int SRC_RIGHT_COL = 9;
-	private static int SRC_ROW_COUNT = SRC_BOTTOM_ROW - SRC_TOP_ROW + 1;
-	private static int SRC_COL_COUNT = SRC_RIGHT_COL - SRC_LEFT_COL + 1;
 	
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
 		Setup.touch();
 	}
 	
-	@Before
-	public void setUp() throws Exception {
-		final String filename = "book/pasteTest.xlsx";
-		final InputStream is = PasteTest.class.getResourceAsStream(filename);
-		_workbook = Importers.getImporter().imports(is, filename);
+	@Test(expected = IllegalOpArgumentException.class)
+	public void testTransposePasteOverlap2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testTransposePasteOverlap0(book);
 	}
 	
-	@After
-	public void tearDown() throws Exception {
-		_workbook = null;
+	@Test(expected = IllegalOpArgumentException.class)
+	public void testTransposePasteOverlap2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testTransposePasteOverlap0(book);
 	}
+	
+	@Test 
+	public void testPasteMergeTranspose2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testPasteMergeTranspose0(book);
+	}
+	
+	@Test 
+	public void testPasteMergeTranspose2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testPasteMergeTranspose0(book);
+	}
+	
+	@Test
+	public void testPasteMerge2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testPasteMerge0(book);
+	}
+	
+	@Test
+	public void testPasteMerge2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testPasteMerge0(book);
+	}
+	
+	@Test
+	public void testPasteToG10_2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testPasteToG10(book);
+	}
+	
+	@Test
+	public void testPasteToG10_2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testPasteToG10(book);
+	}
+	
+	@Test
+	public void testPasteToG12_2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testPasteToG12(book);
+	}
+	
+	@Test
+	public void testPasteToG12_2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testPasteToG12(book);
+	}
+	
+	@Test 
+	public void testPasteToI12_2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testPasteToI12(book);
+	}
+	
+	@Test 
+	public void testPasteToI12_2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testPasteToI12(book);
+	}
+	
+	@Test
+	public void testPasteRepeat2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testPasteRepeat(book);
+	}
+	
+	@Test
+	public void testPasteRepeat2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testPasteRepeat(book);
+	}
+	
+	@Test 
+	public void testPasteRepeatOverlap2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testPasteRepeatOverlap(book);
+	}
+	
+	@Test 
+	public void testPasteRepeatOverlap2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testPasteRepeatOverlap(book);
+	}
+	
+	@Test
+	public void testPasteRepeatToAnotherSheet2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testPasteRepeatToAnotherSheet(book);
+	}
+	
+	@Test
+	public void testPasteRepeatToAnotherSheet2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testPasteRepeatToAnotherSheet(book);
+	}
+	
+	@Test 
+	public void testPasteRepeatOverlapInclude2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		testPasteRepeatOverlapInclude(book);
+	}
+	
+	@Test 
+	public void testPasteRepeatOverlapInclude2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		testPasteRepeatOverlapInclude(book);
+	}
+	
+	@Test
+	public void pasteRepeatWithSkipBlankTrue2003() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xls");
+		pasteRepeatWithSkipBlankTrue(book);
+	}
+	
+	@Test
+	public void pasteRepeatWithSkipBlankTrue2007() throws IOException {
+		Book book = Util.loadBook("book/pasteTest.xlsx");
+		pasteRepeatWithSkipBlankTrue(book);
+	}
+	
 	
 	/**
 	 * Should throw exception IllegalOpArgumentException("Cannot transpose paste to overlapped range");
 	 */
-	@Test(expected = IllegalOpArgumentException.class)
-	public void testTransposePasteOverlap() {
+	private void testTransposePasteOverlap0(Book workbook) {
+		
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		
 		int dstTopRow = 11;
 		int dstLeftCol = 8;
 		
 		// operation
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
-		Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		// Ranges.range(, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol);
 		srcRange.pasteSpecial(dstRange, PasteType.ALL, PasteOperation.NONE, false, true);
 	}
@@ -92,9 +204,14 @@ public class PasteTest {
 	 * transpose paste.
 	 * source (H11,J13) to destination (C5, E7).
 	 */
-	@Test 
-	public void testPasteMergeTranspose() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+	private void testPasteMergeTranspose0(Book workbook) {
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
 		
 		// preparation
 		// Merge (H11, J11), horizontal merge, cell value is 1
@@ -114,7 +231,7 @@ public class PasteTest {
 		int dstBottomRow = 6;
 		int dstRightCol = 4;
 		
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
 		Range pasteRange = srcRange.pasteSpecial(dstRange, PasteType.ALL, PasteOperation.NONE, false, true);
 		
@@ -122,8 +239,8 @@ public class PasteTest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(1, realDstColCount / SRC_COL_COUNT);
+		assertEquals(1, realDstRowCount / srcRowCount);
+		assertEquals(1, realDstColCount / srcColCount);
 		
 		// validate destination
 		
@@ -156,9 +273,14 @@ public class PasteTest {
 	 * 5 is a vertical merged cell 2 x 1.
 	 * source (H11,J13) to destination (C5, E7)
 	 */
-	@Test
-	public void testPasteMerge() {
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+	private void testPasteMerge0(Book workbook) {
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
 		
 		// preparation
 		// Merge (H11, J11), horizontal merge, cell value is 1
@@ -178,7 +300,7 @@ public class PasteTest {
 		int dstBottomRow = 6;
 		int dstRightCol = 4;
 		
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
 		Range pasteRange = srcRange.paste(dstRange);
 		
@@ -186,8 +308,8 @@ public class PasteTest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(1, realDstColCount / SRC_COL_COUNT);
+		assertEquals(1, realDstRowCount / srcRowCount);
+		assertEquals(1, realDstColCount / srcColCount);
 		
 		// validate destination
 		
@@ -209,19 +331,25 @@ public class PasteTest {
 		assertEquals(9, Ranges.range(sheet1, dstTopRow+2, dstRightCol).getCellData().getDoubleValue(), 1E-8);		
 	}
 	
-	@Test
-	public void testPasteToG10() {
+	private void testPasteToG10(Book workbook) {
 		// source (H11, J13)
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
+		
 		// 1 x 1, blank destination
 		// dst G10 (on the left top of 1)
 		int dstTopRow = 9;
 		int dstLeftCol = 6;
 		
 		// operation
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
-		Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		// Ranges.range(, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol);
 		Range pasteRange = srcRange.paste(dstRange); // copy src to dst
 		
@@ -229,25 +357,31 @@ public class PasteTest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(1, realDstColCount / SRC_COL_COUNT);
+		assertEquals(1, realDstRowCount / srcRowCount);
+		assertEquals(1, realDstColCount / srcColCount);
 		
-		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
+		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / srcRowCount, realDstColCount / srcColCount);
 	}
 	
-	@Test
-	public void testPasteToG12() {
+	private void testPasteToG12(Book workbook) {
 		// source (H11, J13)
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
+		
 		// 1 x 1, blank destination
 		// dst G12 (on the left of 4)
 		int dstTopRow = 12;
 		int dstLeftCol = 6;
 		
 		// operation
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
-		Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		// Ranges.range(, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol);
 		Range pasteRange = srcRange.paste(dstRange); // copy src to dst
 		
@@ -255,10 +389,10 @@ public class PasteTest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(1, realDstColCount / SRC_COL_COUNT);		
+		assertEquals(1, realDstRowCount / srcRowCount);
+		assertEquals(1, realDstColCount / srcColCount);		
 		
-		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
+		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / srcRowCount, realDstColCount / srcColCount);
 	}
 	
 	/**
@@ -266,16 +400,22 @@ public class PasteTest {
 	 * destination I12 (on the number 5)
 	 * paste to 5
 	 */
-	@Test 
-	public void testPasteToI12() {
+	private void testPasteToI12(Book workbook) {
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
+		
 		int dstTopRow = 11;
 		int dstLeftCol = 8;
 		
 		// operation
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
-		Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		// Ranges.range(, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol);
 		Range pasteRange = srcRange.paste(dstRange); // copy src to dst
 		
@@ -283,14 +423,20 @@ public class PasteTest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(1, realDstColCount / SRC_COL_COUNT);		
+		assertEquals(1, realDstRowCount / srcRowCount);
+		assertEquals(1, realDstColCount / srcColCount);		
 		
-		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
+		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / srcRowCount, realDstColCount / srcColCount);
 	}
 	
-	@Test
-	public void testPasteRepeat() {
+	private void testPasteRepeat(Book workbook) {
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
+		
 		// source (H11, J13) 3 x 3
 		// destination (L11, Q13) 6 x 6
 		int dstTopRow = 10;
@@ -299,8 +445,8 @@ public class PasteTest {
 		int dstRightCol = 16;
 		
 		// operation
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
 		Range pasteRange = srcRange.paste(dstRange); // copy src to dst
 		
@@ -308,10 +454,10 @@ public class PasteTest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(2, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(2, realDstColCount / SRC_COL_COUNT);		
+		assertEquals(2, realDstRowCount / srcRowCount);
+		assertEquals(2, realDstColCount / srcColCount);		
 		
-		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
+		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / srcRowCount, realDstColCount / srcColCount);
 	}
 	
 	/**
@@ -319,8 +465,13 @@ public class PasteTest {
 	 * source (H11, J13) 3 x 3
 	 * dst (H7, J12) 6 x 3
 	 */
-	@Test 
-	public void testPasteRepeatOverlap() {
+	private void testPasteRepeatOverlap(Book workbook) {
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
 
 		int dstTopRow = 6;
 		int dstLeftCol = 7;
@@ -328,8 +479,8 @@ public class PasteTest {
 		int dstRightCol = 9;
 		
 		// operation
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
 		Range pasteRange = srcRange.paste(dstRange); // copy src to dst
 		
@@ -337,10 +488,10 @@ public class PasteTest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(2, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(1, realDstColCount / SRC_COL_COUNT);			
+		assertEquals(2, realDstRowCount / srcRowCount);
+		assertEquals(1, realDstColCount / srcColCount);			
 		
-		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
+		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / srcRowCount, realDstColCount / srcColCount);
 	}
 	
 	/**
@@ -349,8 +500,14 @@ public class PasteTest {
 	 * dst (G9, L14) sheet2, 6 x 6
 	 * 
 	 */
-	@Test
-	public void testPasteRepeatToAnotherSheet() {
+	private void testPasteRepeatToAnotherSheet(Book workbook) {
+		
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
 
 		int dstTopRow = 8;
 		int dstLeftCol = 6;
@@ -358,9 +515,9 @@ public class PasteTest {
 		int dstRightCol = 11;
 		
 		// operation
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
-		Sheet dstSheet = _workbook.getSheet("Sheet2");
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		Sheet dstSheet = workbook.getSheet("Sheet2");
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(dstSheet, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
 		Range pasteRange = srcRange.paste(dstRange); // copy src to dst
 		
@@ -368,10 +525,10 @@ public class PasteTest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(2, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(2, realDstColCount / SRC_COL_COUNT);		
+		assertEquals(2, realDstRowCount / srcRowCount);
+		assertEquals(2, realDstColCount / srcColCount);		
 		
-		validate(dstSheet, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);		
+		validate(dstSheet, dstTopRow, dstLeftCol, realDstRowCount / srcRowCount, realDstColCount / srcColCount);		
 	}
 	
 	/**
@@ -379,16 +536,22 @@ public class PasteTest {
 	 * dst (G9, L14) - 6 x 6 block
 	 * destination is bigger than source and include the source inside.
 	 */
-	@Test 
-	public void testPasteRepeatOverlapInclude() {
+	private void testPasteRepeatOverlapInclude(Book workbook) {
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
+		
 		int dstTopRow = 8;
 		int dstLeftCol = 6;
 		int dstBottomRow = 13;
 		int dstRightCol = 11;
 		
 		// operation
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Sheet sheet1 = workbook.getSheet("Sheet1");
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
 		Range pasteRange = srcRange.paste(dstRange); // copy src to dst
 		
@@ -396,10 +559,10 @@ public class PasteTest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(2, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(2, realDstColCount / SRC_COL_COUNT);
+		assertEquals(2, realDstRowCount / srcRowCount);
+		assertEquals(2, realDstColCount / srcColCount);
 		
-		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
+		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / srcRowCount, realDstColCount / srcColCount);
 	}
 	
 	/**
@@ -414,11 +577,16 @@ public class PasteTest {
 	 * 4 5 6 4 5 6
 	 * 7 8 9 7 8 9
 	 */
-	@Test
-	public void pasteRepeatWithSkipBlankTrue() {
+	private void pasteRepeatWithSkipBlankTrue(Book workbook) {
+		int srcTopRow = 10;
+		int srcLeftCol = 7;
+		int srcBottomRow = 12;
+		int srcRightCol = 9;
+		int srcRowCount = srcBottomRow - srcTopRow + 1;
+		int srcColCount = srcRightCol - srcLeftCol + 1;
 		
 		// preparation
-		Sheet sheet1 = _workbook.getSheet("Sheet1");
+		Sheet sheet1 = workbook.getSheet("Sheet1");
 		// let H11 = Blank
 		Range cellH11 = Ranges.range(sheet1, 10, 7);
 		cellH11.clearContents();
@@ -431,7 +599,7 @@ public class PasteTest {
 		int dstLeftCol = 10;
 		int dstBottomRow = 12;
 		int dstRightCol = 15;		
-		Range srcRange = Ranges.range(sheet1, SRC_TOP_ROW, SRC_LEFT_COL, SRC_BOTTOM_ROW, SRC_RIGHT_COL);
+		Range srcRange = Ranges.range(sheet1, srcTopRow, srcLeftCol, srcBottomRow, srcRightCol);
 		Range dstRange = Ranges.range(sheet1, dstTopRow, dstLeftCol, dstBottomRow, dstRightCol);
 		Range pasteRange = srcRange.pasteSpecial(dstRange, PasteType.ALL, PasteOperation.NONE, true, false);
 		
@@ -439,8 +607,8 @@ public class PasteTest {
 		int realDstColCount = pasteRange.getColumnCount();
 		
 		// paste size validation
-		assertEquals(1, realDstRowCount / SRC_ROW_COUNT);
-		assertEquals(2, realDstColCount / SRC_COL_COUNT);
+		assertEquals(1, realDstRowCount / srcRowCount);
+		assertEquals(2, realDstColCount / srcColCount);
 		
 		// validation
 		// is K11 = 1?
@@ -451,7 +619,7 @@ public class PasteTest {
 		// fill N11 as 1
 		cellN11.setCellValue(1);
 		// validate rest
-		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / SRC_ROW_COUNT, realDstColCount / SRC_COL_COUNT);
+		validate(sheet1, dstTopRow, dstLeftCol, realDstRowCount / srcRowCount, realDstColCount / srcColCount);
 		
 	}
 	

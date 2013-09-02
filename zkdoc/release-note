@@ -1,4 +1,17 @@
  ------------
+ZK Spreadsheet 3.0.0
+*Features:
+
+*Bugs:
+  ZSS-399 export to PDF - no gridlines
+  ZSS-420 Cannot focus on cell when set rowfreeze="0" or columnfreeze="0"
+  ZSS-421 Cannot open inline editor when use rowfreeze or columnfreeze
+  
+** Upgrade Notes
+
+
+
+ ------------
 ZK Spreadsheet 3.0.0 RC
 *Features:
   ZSS-338 When share book, could the friend focus shows user name of another editor
