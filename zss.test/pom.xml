@@ -60,17 +60,6 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.zkoss.poi</groupId>
-			<artifactId>zpoiex</artifactId>
-			<version>3.8.1</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>zpoi</artifactId>
-					<groupId>org.zkoss.poi</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-library</artifactId>
 			<version>1.1</version>
@@ -90,6 +79,13 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zsshtml</artifactId>
 			<version>${zss.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cpsuite</groupId>
+			<artifactId>cpsuite</artifactId>
+			<version>1.6.2</version>
+			<scope>system</scope>
+    		<systemPath>${project.basedir}/lib/cpsuite-1.2.6.jar</systemPath>
 		</dependency>
 	</dependencies>
 	<build>
