@@ -27,12 +27,12 @@ zss.Row = zk.$extends(zk.Widget, {
 	$init: function (sheet, block, row, src) {
 		this.$supers(zss.Row, '$init', []); //DO NOT pass "arguments" or all fields will be copied into this Object. 
 		
-		this.sheet = sheet;
+		this.sheet = sheet; //an object of zss.SSheetCtrl
 		this.block = block;
 		this.src = src;
 		this.r = row;
 		
-		this.zsh = src.getRowHeightId(row);
+		this.zsh = src.getRowHeightId(row); // an ID to retrieve the row's custom height from the pool (this.sheet.custRowHeight)
 		this.cells = [];
 		this.wrapedCells = [];
 	},
@@ -80,50 +80,20 @@ zss.Row = zk.$extends(zk.Widget, {
 		}
 	},
 	_updateWrapRowHeight: function () {
-		var row = this.r,
-			custRowHeight = this.sheet.custRowHeight,
-			meta = custRowHeight.getMeta(row),
-			orgHgh = custRowHeight._getCustomizedSize(row),
-			hgh = orgHgh,
-			cells = this.wrapedCells,
-			i = cells.length;
+		var largestHeight = this.sheet.custRowHeight._getCustomizedSize(this.r);
+		var i = this.wrapedCells.length;
+		
 		while (i--) {
-			var c = cells[i];
+			var c = this.wrapedCells[i];
 			if (c) {
-				hgh = Math.max(hgh, c.getTextHeight());
+				largestHeight = Math.max(largestHeight, c.getTextHeight());
 			}
 		}
 		
-		if (jq(this.$n()).height() == hgh)
+		if (jq(this.$n()).height() == largestHeight)
 			return;//correct row height, no need to set CSS row height
 		
-		var sheet = this.sheet,
-			wgt = sheet._wgt,
-			zsh = this.zsh,
-			cssId = wgt.getSheetCSSId(),
-			pf = wgt.getSelectorPrefix(),
-			h2 = (hgh > 0) ? hgh - 1 : 0;
-		if (!zsh) {
-			zsh = meta ? meta[2] : custRowHeight.ids.next();
-			custRowHeight.setCustomizedSize(row, hgh, zsh, false, true);
-			sheet._appendZSH(row, zsh); //this doesn't work correctly ?? seems works, TEST it
-			sheet._wgt._cacheCtrl.getSelectedSheet().updateRowHeightId(row, zsh);
-		} else {
-			custRowHeight.setCustomizedSize(row, hgh, zsh, false, true);
-		}
-		
-		zcss.setRule(pf + " .zsh" + zsh, "height", hgh + "px", true, cssId);
-		zcss.setRule(pf + " .zshi" + zsh, "height", h2 + "px", true, cssId);
-		zcss.setRule(pf + " .zslh" + zsh, ["display", "height", "line-height"], ["", h2 + "px", h2 + "px"], true, cssId);
-		
-		//TODO: update focus shall handle by FocusMarkCtrl by listen onRowHeightChanged evt
-		var fPos = sheet.getLastFocus(),
-			sPos = sheet.getLastSelection();
-		if (fPos && sPos) {
-			sheet.moveCellFocus(fPos.row, fPos.column, true);
-			sheet.moveCellSelection(sPos.left, sPos.top, sPos.right, sPos.bottom, false, true);	
-		}
-		sheet.fire('onRowHeightChanged', {row: row});
+		this.sheet._setRowHeight(this.r, largestHeight, true, false, false, this.zsh);
 	},
 	processWrapCell: function (cell, ignoreUpdateNow) {
 		if (this.sheet.custRowHeight.isDefaultSize(cell.r)) {
