@@ -1,0 +1,41 @@
+<zk>
+	<window width="100%" height="100%" style="padding: 20px" apply="zss.issue.WrapComposer">
+		<spreadsheet id="ss" src="/issue/241-wrap.xlsx" width="800px" height="500px"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="100" maxcolumns="20" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+		Row's Height Change Message:
+		<vlayout id="msgArea">
+		</vlayout>
+	</window>
+</zk>
+<!--
+Original Specs
+1. The "wrap text" only takes effect on cells with white space
+2. enable "wrap text" then text in cells are wrapped according to cell's width. 
+     2-1. if the cell's height is default size,  spreadsheet will increase the height automatically.
+     2-2. Spreadsheet won't increase row's height for cells that contain merged cell or has custom height (set by users before).
+3. if users disable "wrap text" then text in cells are unwrapped. 
+     3-1. spreadsheet shrinks the cell's height if original height is default size.
+4. Read imported Excel file and keep its "wrap text" setting.
+5. if wrapping text causes height of rows change, it doesn't send event "onZSSHeaderModif" to the server
+
+New Specs (Only list changed):
+1. The "wrap text" takes effect on cells with string.
+3-1. The cell's height is not shrinked back after disable "wrap text".
+5. if wrapping text causes height of rows change, it should send event "onZSSHeaderModif" to the server
+
+
+Implementation:
+     1. IE 7 ~ 10 one support "word-wrap" instead of overflow-wrap (ref: http://www.quirksmode.org/css/text/#t41)
+
+	
+Test Case:
+1. read a excel with wrapping text
+2. enable and disable wrapping
+3. enable and disable wrapping in a merge cell
+4. enable and disable cells mixed with wrapped and non-wrapped ones
+5. enable and disable "wrap text" in custom height cells
+6. height change will send an event to server
+
+-->
