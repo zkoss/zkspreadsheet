@@ -1,5 +1,6 @@
 package org.zkoss.zss;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,4 +28,18 @@ public class Setup {
 	}
 	
 	public static void touch() {};
+	
+	static private File temp; 
+	
+	public static synchronized File getTempFile(){
+		if(temp==null){
+			try {
+				temp = File.createTempFile("zsstest", ".tmp");
+			} catch (IOException e) {
+				throw new RuntimeException();
+			}
+		}
+		return temp;
+		
+	}
 }

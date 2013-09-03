@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -46,6 +48,19 @@ public class ExporterImpl implements Exporter {
 	}
 	public void export(Book book, OutputStream fos) throws IOException{
 		_exporter.export(((BookImpl)book).getNative(), fos);
+	}
+	public void export(Book book, File file) throws IOException{
+		FileOutputStream fos = null;
+		try{
+			fos = new FileOutputStream(file);
+			_exporter.export(((BookImpl)book).getNative(), fos);
+		}finally{
+			if(fos!=null){
+				try{
+					fos.close();
+				}catch(Exception x){}//eat
+			}
+		}
 	}
 	public void export(Sheet sheet, OutputStream fos) throws IOException{
 		_exporter.export(((SheetImpl)sheet).getNative(), fos);

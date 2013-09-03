@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -36,6 +37,15 @@ public interface Exporter {
 	 * @throws IOException
 	 */
 	public void export(Book book, OutputStream fos) throws IOException;
+	
+	/**
+	 * Export book
+	 * @param book the book to export
+	 * @param fos the output file to store data
+	 * @throws IOException
+	 */
+	public void export(Book book, File file) throws IOException;
+	
 //	doesn't support to export sheet, selection until we find a good way in poi/html/pdf
 	/**
 	 * Export the sheet.
