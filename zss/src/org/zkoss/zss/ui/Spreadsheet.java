@@ -3959,6 +3959,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		// encoded
 	}
 
+	/*
+	 * Clean variables for selected sheet because they only have one copy.
+	 */
 	private void doSheetClean(Worksheet sheet) {
 		if (getBook().getSheetIndex(sheet) != -1)
 			deleteFocus();
