@@ -4,11 +4,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Locale;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Ranges;
@@ -26,6 +28,7 @@ public class SortTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		ZssContext.setThreadLocal(new ZssContext(Locale.TAIWAN,-1));
 		final String filename = "book/blank.xlsx";
 		final InputStream is = PasteTest.class.getResourceAsStream(filename);
 		_workbook = Importers.getImporter().imports(is, filename);
@@ -34,6 +37,7 @@ public class SortTest {
 	@After
 	public void tearDown() throws Exception {
 		_workbook = null;
+		ZssContext.setThreadLocal(null);
 	}
 	
 	/**

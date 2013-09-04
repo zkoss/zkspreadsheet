@@ -6,10 +6,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
@@ -23,16 +26,21 @@ import org.zkoss.zss.api.model.Sheet;
  * @author kuro
  */
 public class IssueTest {
-	private static Book _workbook;
+	private Book _workbook;
 	
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
 		Setup.touch();
 	}
 	
+	@Before
+	public void startUp() throws Exception {
+		ZssContext.setThreadLocal(new ZssContext(Locale.TAIWAN,-1));
+	}
+	
 	@After
 	public void tearDown() throws Exception {
-		_workbook = null;
+		ZssContext.setThreadLocal(null);
 	}
 	
 	/**

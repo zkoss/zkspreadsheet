@@ -4,8 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.Locale;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
@@ -37,6 +42,16 @@ public class PasteTest {
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
 		Setup.touch();
+	}
+	
+	@Before
+	public void startUp() throws Exception {
+		ZssContext.setThreadLocal(new ZssContext(Locale.TAIWAN,-1));
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		ZssContext.setThreadLocal(null);
 	}
 	
 	@Test(expected = IllegalOpArgumentException.class)

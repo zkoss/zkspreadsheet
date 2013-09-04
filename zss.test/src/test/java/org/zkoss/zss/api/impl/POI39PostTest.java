@@ -6,10 +6,14 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.Locale;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.BookSeriesBuilder;
 import org.zkoss.zss.api.CellOperationUtil;
@@ -23,11 +27,26 @@ import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
 
+/**
+ * Test case for poi 3.9 migration
+ * @author dennis
+ *
+ */
 public class POI39PostTest {
 
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
 		Setup.touch();
+	}
+	
+	@Before
+	public void startUp() throws Exception {
+		ZssContext.setThreadLocal(new ZssContext(Locale.TAIWAN,-1));
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		ZssContext.setThreadLocal(null);
 	}
 	
 	@Test
@@ -86,7 +105,7 @@ public class POI39PostTest {
 		Book book1 = Util.loadBook("book/blank.xlsx");
 		//don't know the 2007 limitation yet, however it has performanec issue when set large among of styles.
 //		testStyleLimitation(book1,200,40,3968);
-		testStyleLimitation(book1,200,40,400);//don't know the 2007 limitation yet
+		testStyleLimitation(book1,200,40,200);//don't know the 2007 limitation yet
 	}
 	
 	public void testStyleLimitation(Book book,int rows,int columns,int maxCells) throws Exception{
@@ -98,7 +117,7 @@ public class POI39PostTest {
 		for(int r=0;r<rows;r++){
 			for (int c=0;c<columns;c++){
 				CellOperationUtil.applyBackgroundColor(Ranges.range(sheet1,r,c),toTestColor(r,c));
-				System.out.println(">>>set "+r+","+c+" "+toTestColor(r,c));
+//				System.out.println(">>>set "+r+","+c+" "+toTestColor(r,c));
 				totalSet++;
 				if(totalSet>=maxCells)
 					break loop;
