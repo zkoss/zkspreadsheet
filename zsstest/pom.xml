@@ -6,7 +6,7 @@
 	<artifactId>zsstest</artifactId>
 	<properties>
 		<zk.version>6.5.0</zk.version>
-		<zpoi.version>3.8.2</zpoi.version>
+		<zpoi.version>3.9.0-SNAPSHOT</zpoi.version>
 		<junit.version>4.8.1</junit.version>
 	</properties>
 	<version>2.6.0</version>
