@@ -1,0 +1,59 @@
+<zk>
+	<window width="100%" height="100%" style="padding: 20px">
+		<button label="delete" >
+			<attribute name="onClick"><![CDATA[
+				Worksheet sheet = ss.getSelectedSheet();
+				Ranges.range(sheet, "A1:A3").setEditText("test");
+				Ranges.range(sheet, "A1:A3").setStyle(createBoldStyle(sheet.getBook()));
+				Ranges.range(sheet, "1:2").getRows().delete(Range.SHIFT_UP);
+			]]></attribute>
+		</button>
+		<button label="export" onClick="export();"></button>
+		Click the "delete" button will input text, apply style and remove rows. It should be no exception if bug was fixed.
+		
+		<spreadsheet id="ss" src="/issue/blank.xlsx" width="1500px" height="800px"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+		<!-- 
+		<spreadsheet id="ss" src="/ZSS-demo_sample.xlsx" width="1500px" height="800px"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+		 -->
+		<zscript><![CDATA[
+		import org.zkoss.poi.ss.usermodel.*;
+		import java.io.*;
+		
+		CellStyle createBoldStyle(Book book) {
+			Font font = book.createFont();
+			font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+			CellStyle style = book.createCellStyle();
+			style.setFont(font);
+			return style;
+		}
+		
+		void export() throws Exception {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			Exporter exporter = Exporters.getExporter("excel");
+			if(exporter == null) {
+				Clients.showNotification("no exporter");
+			} else {
+				exporter.export(ss.getBook(), baos);
+				baos.close();
+				org.zkoss.zul.Filedownload.save(baos.toByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "export.xlsx");
+			}
+		}
+		
+		]]></zscript>
+	</window>
+	<!-- for debug -->
+	<script defer="true"><![CDATA[
+		(function() {
+			window.debug = {};
+			window.debug.ss = zk.Widget.$('$ss');
+			window.debug.ssc = debug.ss.sheetCtrl;
+			window.debug.dp = debug.ssc.dp;
+		})();
+	]]></script>
+</zk>
