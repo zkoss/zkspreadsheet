@@ -39,11 +39,6 @@
 	</pluginRepositories>
 	<dependencies>
 		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zkmax</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.zkoss.zats</groupId>
 			<artifactId>zats-mimic-ext6</artifactId>
 			<version>1.1.0</version>
@@ -89,6 +84,11 @@
 			<groupId>org.zkoss.zss</groupId>
 			<artifactId>zsshtml</artifactId>
 			<version>${zss.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkex</artifactId>
+			<version>${zk.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
