@@ -71,8 +71,8 @@ public class SheetOperationUtil {
 	 * @param range the range to add picture to
 	 * @param image the image
 	 */
-	public static void addPicture(Range range, AImage image){
-		addPicture(range,image.getByteData(),getPictureFormat(image),image.getWidth(),image.getHeight());
+	public static Picture addPicture(Range range, AImage image){
+		return addPicture(range,image.getByteData(),getPictureFormat(image),image.getWidth(),image.getHeight());
 	}
 	
 	/**

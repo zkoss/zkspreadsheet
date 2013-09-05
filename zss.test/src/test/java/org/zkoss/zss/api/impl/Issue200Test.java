@@ -387,7 +387,7 @@ public class Issue200Test {
 		assertEquals("EXCEL", Ranges.range(sheet, "B3").getCellFormatText());
 		assertEquals("A", Ranges.range(sheet, "B5").getCellFormatText());
 		assertEquals("text", Ranges.range(sheet, "B7").getCellFormatText());
-		assertEquals("CODE", Ranges.range(sheet, "B10").getCellFormatText());
+		assertEquals("65", Ranges.range(sheet, "B10").getCellFormatText());
 		assertEquals("ZK", Ranges.range(sheet, "B12").getCellFormatText());
 		assertEquals("$1,234.57", Ranges.range(sheet, "B14").getCellFormatText());
 		assertEquals("TRUE", Ranges.range(sheet, "B16").getCellFormatText());
@@ -398,7 +398,7 @@ public class Issue200Test {
 		assertEquals("\u6771", Ranges.range(sheet, "B29").getCellFormatText());
 		assertEquals("11", Ranges.range(sheet, "B31").getCellFormatText());
 		assertEquals("11", Ranges.range(sheet, "B33").getCellFormatText());
-		assertEquals("e. e. cummings", Ranges.range(sheet, "B36").getCellFormatText());
+		assertEquals("e. e. cummings", Ranges.range(sheet, "B35").getCellFormatText());
 		assertEquals("Fluid", Ranges.range(sheet, "B38").getCellFormatText());
 		assertEquals("Fluid", Ranges.range(sheet, "B40").getCellFormatText());
 		assertEquals("This Is A Title", Ranges.range(sheet, "B42").getCellFormatText());
@@ -465,7 +465,7 @@ public class Issue200Test {
 		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
 		_workbook = Importers.getImporter().imports(is, filename);
 		Sheet sheet = _workbook.getSheet("export1");
-		SheetOperationUtil.addPicture(Ranges.range(sheet,"A1"), new AImage(new File(ShiftTest.class.getResource("").getPath() + "book/zklogo.png")));
+		SheetOperationUtil.addPicture(Ranges.range(sheet), new AImage(new File(ShiftTest.class.getResource("").getPath() + "book/zklogo.png")));
 		export();
 		export();
 	}
