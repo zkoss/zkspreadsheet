@@ -71,6 +71,17 @@ public class StyleTest {
 		testStyleExport(book, "book/test.xls");
 	}
 	
+	@Test
+	public void testClearFontStyle() throws IOException {
+		Book book = Util.loadBook("book/blank.xlsx");
+		Sheet sheet = book.getSheet("Sheet1");
+		Range rA1 = range(sheet, "A1");
+		rA1.setCellEditText("Bold");
+		applyFontBoldweight(rA1, Font.Boldweight.BOLD);
+		assertEquals(Font.Boldweight.BOLD, rA1.getCellStyle().getFont().getBoldweight());
+		rA1.clearStyles();
+		assertEquals(Font.Boldweight.NORMAL, rA1.getCellStyle().getFont().getBoldweight());
+	}
 	
 	private void testStyleExport(Book workbook, String outFileName) throws IOException {
 		
