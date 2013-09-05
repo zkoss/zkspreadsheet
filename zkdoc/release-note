@@ -108,6 +108,7 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-425 Can't update style when save twice
   ZSS-424 get exception when undo after save
   ZSS-426 Endless loop when export demo swineFlu.xls pdf
+  ZSS-241 wrap text does not wrap text like excel
 
 ** Upgrade Notes
   * Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
