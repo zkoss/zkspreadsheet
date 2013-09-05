@@ -17,7 +17,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 }}IS_RIGHT
 */
 (function () {
-
+var WRAP_TEXT_CLASS = 'zscelltxt-wrap';
 var NUM_CELL = 0,
 	STR_CELL = 1,
 	FORMULA_CELL = 2,
@@ -261,8 +261,8 @@ zss.Cell = zk.$extends(zk.Widget, {
 			cellType = data.cellType,
 			txt = data.text,
 			txtChd = txt != this.text,
-			wrapChd = this.wrap != data.wrap,
-			processWrap = data.wrap || wrapChd || (this.wrap && this.getText() != data.text),
+			wrapChanged = this.wrap != data.wrap,
+			processWrap = data.wrap || wrapChanged || (this.wrap && this.getText() != data.text),
 			cave = this.$n('cave'),
 			prevWidth = cave.style.width,
 			fontSize = data.fontSize;
@@ -283,7 +283,16 @@ zss.Cell = zk.$extends(zk.Widget, {
 		this.edit = data.editText;
 		
 		this._updateListenOverflow(overflow);
-		this.setText(txt, false, wrapChd); //when wrap changed, shall re-process overflow
+		this.setText(txt, false, wrapChanged); //when wrap changed, shall re-process overflow
+		
+		if (wrapChanged) {
+			if (this.wrap) {
+				jq(this.getTextNode()).addClass(WRAP_TEXT_CLASS);
+			} else {
+				jq(this.getTextNode()).removeClass(WRAP_TEXT_CLASS);
+			}
+		}
+		
 		if (this.overflow != overflow 
 			|| this.maxOverflowCol != maxOverflowCol
 			|| this.overflow && txtChd) {
@@ -428,7 +437,7 @@ zss.Cell = zk.$extends(zk.Widget, {
 		return '<div id="' + uid + '" class="' + this.getZclass() + '" zs.t="SCell" '
 			+ (style ? 'style="' +  style + '"' : '') + '><div id="' + uid + '-cave" class="' +
 			this._getInnerClass() + '" ' + (innerStyle ? 'style="' + innerStyle + '"' : '') + 
-			'>' + '<div id="' + uid + '-real" class="zscelltxt-real">' + text + '</div>' + '</div></div>';
+			'>' + '<div id="' + uid + '-real" class="zscelltxt-real '+(this.wrap?WRAP_TEXT_CLASS:'')+'">' + text + '</div>' + '</div></div>';
 	},
 	getZIndex: function () {
 		if (zk.ie6_ || zk.ie7_)

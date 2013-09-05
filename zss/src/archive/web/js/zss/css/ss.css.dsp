@@ -161,6 +161,11 @@
 	</c:if>
 }
 
+.zscelltxt-wrap{
+	word-wrap:break-word;
+	width:inherit;
+}
+
 .zstop {
 	position: absolute;
 	z-index: 2;
