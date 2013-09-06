@@ -21,10 +21,13 @@ import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.EditableCellStyle;
+import org.zkoss.zss.api.model.EditableFont;
 import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Sheet;
@@ -34,6 +37,7 @@ import org.zkoss.zss.api.model.Sheet;
  * ZSS-414. ZSS-415.
  * ZSS-425. ZSS-426.
  * ZSS-435.
+ * ZSS-439.
  * @author kuro
  *
  */
@@ -209,5 +213,29 @@ public class Issue400Test {
 		Assert.assertEquals("#00ff00", r.getCellStyle().getBackgroundColor().getHtmlColor());
 	}
 
-
+	@Test
+	public void testZSS439() throws IOException {
+		
+		final String filename = "book/439-rows.xlsx";
+		final InputStream is = getClass().getResourceAsStream(filename);
+		Book book = Importers.getImporter().imports(is, filename);
+		
+		// fill text on 3 rows
+		Sheet sheet = book.getSheetAt(0);
+		Ranges.range(sheet, "A1:A3").setCellEditText("test");
+		
+		// apply bold style on such rows
+		Range r = Ranges.range(sheet, "A1:A3");
+		EditableFont f = r.getCellStyleHelper().createFont(null);
+		f.setBoldweight(org.zkoss.zss.api.model.Font.Boldweight.BOLD);
+		EditableCellStyle s = r.getCellStyleHelper().createCellStyle(null);
+		s.setFont(f);
+		r.setCellStyle(s);
+		
+		// remove two rows
+		Ranges.range(sheet, "1:2").toRowRange().delete(DeleteShift.UP);
+		
+		// read the style, it should not occur exception.
+		Ranges.range(sheet, "A1").getCellStyle();
+	}
 }

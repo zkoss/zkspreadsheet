@@ -6,6 +6,7 @@ ZK Spreadsheet 3.0.0
   ZSS-399 export to PDF - no gridlines
   ZSS-420 Cannot focus on cell when set rowfreeze="0" or columnfreeze="0"
   ZSS-421 Cannot open inline editor when use rowfreeze or columnfreeze
+  ZSS-439 Delete rows cause XmlValueDisconnectedException
   
 ** Upgrade Notes
 
