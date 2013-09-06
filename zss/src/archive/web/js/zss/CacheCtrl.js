@@ -384,7 +384,7 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 		if (header)
 			header.p = id;
 		if (this.topFrozen) {
-			this.leftFrozen.updateRowHeightId(row, id);
+			this.topFrozen.updateRowHeightId(row, id);
 		}
 	},
 	getRowHeightId: function (row) {
