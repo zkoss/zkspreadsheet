@@ -53,30 +53,6 @@ public class RangeAPITest extends RangeAPITestBase {
 	}
 	
 	@Test
-	public void testUnMerge2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
-		testUnMerge(book, "book/test.xls");
-	}
-	
-	@Test
-	public void testUnMerge2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
-		testUnMerge(book, "book/test.xlsx");
-	}
-	
-	@Test
-	public void testMerge2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
-		testMerge(book, "book/test.xls");
-	}
-	
-	@Test
-	public void testMerge2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
-		testMerge(book, "book/test.xlsx");
-	}
-	
-	@Test
 	public void testGetColumn2003() throws IOException {
 		Book book = Util.loadBook("book/blank.xls");
 		testGetColumn(book);
@@ -218,78 +194,6 @@ public class RangeAPITest extends RangeAPITestBase {
 	public void testHyperLink2007() throws IOException {
 		Book book = Util.loadBook("book/blank.xlsx");
 		testHyperLink(book, "book/test.xlsx");
-	}
-	
-	@Test
-	public void testAutoFill2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
-		testAutoFill(book);
-	}
-	
-	@Test
-	public void testAutoFill2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
-		testAutoFill(book);
-	}
-	
-	@Test
-	public void testAutoFillMultiDim2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
-		testAutoFillMultiDim(book);
-	}
-	
-	@Test
-	public void testAutoFillMultiDim2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
-		testAutoFillMultiDim(book);
-	}
-	
-	@Test
-	public void testFillLeft2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
-		testFillLeft(book);
-	}
-	
-	@Test
-	public void testFillLeft2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
-		testFillLeft(book);
-	}
-	
-	@Test
-	public void testFillRight2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
-		testFillRight(book);
-	}
-	
-	@Test
-	public void testFillRight2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
-		testFillRight(book);
-	}
-	
-	@Test
-	public void testFillUp2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
-		testFillUp(book);
-	}
-	
-	@Test
-	public void testFillUp2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
-		testFillUp(book);
-	}
-	
-	@Test
-	public void testFillDown2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
-		testFillDown(book);
-	}
-	
-	@Test
-	public void testFillDown2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
-		testFillDown(book);
 	}
 	
 	@Test

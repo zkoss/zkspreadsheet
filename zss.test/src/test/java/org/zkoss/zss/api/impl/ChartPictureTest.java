@@ -35,22 +35,11 @@ public class ChartPictureTest extends ChartPictureTestBase {
 	}
 	
 	@Test
-	public void testMovePicture2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
-		testMovePicture(book);
-	}
-	
-	@Test
 	public void testDeletePicture2007() throws IOException {
 		Book book = Util.loadBook("book/blank.xlsx");
 		testDeletePicture(book);
 	}
-	
-	@Test
-	public void testDeletePicture2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
-		testDeletePicture(book);
-	}
+
 	
 	@Test
 	public void testAddPicture2007() throws IOException {

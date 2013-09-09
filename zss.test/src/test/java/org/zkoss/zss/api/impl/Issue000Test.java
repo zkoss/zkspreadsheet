@@ -25,7 +25,7 @@ import org.zkoss.zss.api.model.Sheet;
  * ZSS-36
  * @author kuro
  */
-public class IssueTest {
+public class Issue000Test {
 	private Book _workbook;
 	
 	@BeforeClass
@@ -49,7 +49,7 @@ public class IssueTest {
 	@Test
 	public void testZSS36() throws IOException {
 		final String filename = "book/blank.xlsx";
-		final InputStream is = IssueTest.class.getResourceAsStream(filename);
+		final InputStream is = Issue000Test.class.getResourceAsStream(filename);
 		_workbook = Importers.getImporter().imports(is, filename);
 		export();
 		export();

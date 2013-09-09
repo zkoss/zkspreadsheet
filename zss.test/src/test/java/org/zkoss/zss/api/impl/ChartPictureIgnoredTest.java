@@ -32,7 +32,7 @@ public class ChartPictureIgnoredTest extends ChartPictureTestBase {
 	
 	// Not support chart operation in 2003
 	@Test
-	public void tesetDeleteChart2003() throws IOException {
+	public void testDeleteChart2003() throws IOException {
 		Book book = Util.loadBook("book/insert-charts.xls");
 		testDeleteChart(book);
 	}
@@ -147,6 +147,20 @@ public class ChartPictureIgnoredTest extends ChartPictureTestBase {
 	public void testAddSurfaceChart2003() throws IOException {
 		Book book = Util.loadBook("book/insert-charts.xls");
 		testAddSurfaceChart(book);
+	}
+	
+	
+	@Test
+	public void testDeletePicture2003() throws IOException {
+		Book book = Util.loadBook("book/blank.xls");
+		testDeletePicture(book);
+	}
+	
+	
+	@Test
+	public void testMovePicture2003() throws IOException {
+		Book book = Util.loadBook("book/blank.xls");
+		testMovePicture(book);
 	}
 
 }

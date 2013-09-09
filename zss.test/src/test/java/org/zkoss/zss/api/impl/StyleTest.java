@@ -57,14 +57,14 @@ public class StyleTest {
 		ZssContext.setThreadLocal(null);
 	}
 	
-	@Ignore("ZSS-435") // FIXME
+	@Ignore("Border spec for test is not confirm yet") // FIXME
 	@Test
 	public void testStyleExport2007() throws IOException {
 		Book book = Util.loadBook("book/blank.xlsx");
 		testStyleExport(book, "book/test.xlsx");
 	}
 	
-	@Ignore("ZSS-435") // FIXME
+	@Ignore("Border spec for test is not confirm yet") // FIXME
 	@Test
 	public void testStyleExport2003() throws IOException {
 		Book book = Util.loadBook("book/blank.xls");
