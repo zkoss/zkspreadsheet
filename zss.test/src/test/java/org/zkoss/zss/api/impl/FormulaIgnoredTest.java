@@ -553,6 +553,15 @@ public class FormulaIgnoredTest {
 		assertEquals("0.70", Ranges.range(sheet, "B133").getCellFormatText());
 	}
 	
+	// #NAME?
+	@Test
+	public void testTIMEVALUE() throws IOException {
+		Book book = Util.loadBook("book/blank.xlsx");
+		Sheet sheet = book.getSheet("Sheet1");
+		Ranges.range(sheet, "B27").setCellEditText("=TIMEVALUE(\"2:24 AM\")");
+		assertEquals("0.1", Ranges.range(sheet, "B27").getCellData().getFormatText());
+	}
+	
 	// Little different
 	@Test
 	public void testIMCOS() throws IOException {

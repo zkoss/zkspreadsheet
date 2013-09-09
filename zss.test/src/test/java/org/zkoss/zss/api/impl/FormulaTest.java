@@ -33,6 +33,8 @@ public class FormulaTest {
 		ZssContext.setThreadLocal(null);
 	}
 
+	
+	// Date & Time --------------------------------------------------------------------------------
 	@Test
 	public void testDATE() throws IOException {
 		Book book = Util.loadBook("book/blank.xlsx");
@@ -97,14 +99,6 @@ public class FormulaTest {
 	}
 
 	@Test
-	public void testSECOND() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
-		Sheet sheet = book.getSheet("Sheet1");
-		Ranges.range(sheet, "B23").setCellEditText("=SECOND(\"4:48 PM\")");
-		assertEquals("#VALUE!", Ranges.range(sheet, "B23").getCellData().getFormatText());
-	}
-
-	@Test
 	public void testNETWORKDAYS() throws IOException {
 		Book book = Util.loadBook("book/blank.xlsx");
 		Sheet sheet = book.getSheet("Sheet1");
@@ -113,19 +107,19 @@ public class FormulaTest {
 	}
 
 	@Test
+	public void testSECOND() throws IOException {
+		Book book = Util.loadBook("book/blank.xlsx");
+		Sheet sheet = book.getSheet("Sheet1");
+		Ranges.range(sheet, "B23").setCellEditText("=SECOND(\"4:48 PM\")");
+		assertEquals("#VALUE!", Ranges.range(sheet, "B23").getCellData().getFormatText());
+	}
+
+	@Test
 	public void testTIME() throws IOException {
 		Book book = Util.loadBook("book/blank.xlsx");
 		Sheet sheet = book.getSheet("Sheet1");
 		Ranges.range(sheet, "B25").setCellEditText("=TIME(12,0,0)");
 		assertEquals("0.5", Ranges.range(sheet, "B25").getCellData().getFormatText());
-	}
-
-	@Test
-	public void testTIMEVALUE() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
-		Sheet sheet = book.getSheet("Sheet1");
-		Ranges.range(sheet, "B27").setCellEditText("=TIMEVALUE(\"2:24 AM\")");
-		assertEquals("#NAME?", Ranges.range(sheet, "B27").getCellData().getFormatText());
 	}
 
 	@Test
@@ -160,11 +154,20 @@ public class FormulaTest {
 		assertEquals(0.58, Ranges.range(sheet, "B37").getCellData().getDoubleValue(), 0.005);
 	}
 
+	
+	// Text ---------------------------------------------------------------------------------------
 	@Test
 	public void testCHAR() throws IOException {
 		Book book = Util.loadBook("book/264-text-formula.xlsx");
 		Sheet sheet = book.getSheet("formula-text");
 		assertEquals("A", Ranges.range(sheet, "B5").getCellFormatText());
+	}
+
+	@Test
+	public void testCLEAN() throws IOException {
+		Book book = Util.loadBook("book/264-text-formula.xlsx");
+		Sheet sheet = book.getSheet("formula-text");
+		assertEquals("text", Ranges.range(sheet, "B7").getCellFormatText());
 	}
 
 	@Test
@@ -179,13 +182,6 @@ public class FormulaTest {
 		Book book = Util.loadBook("book/264-text-formula.xlsx");
 		Sheet sheet = book.getSheet("formula-text");
 		assertEquals("65", Ranges.range(sheet, "B10").getCellFormatText());
-	}
-
-	@Test
-	public void testCLEAN() throws IOException {
-		Book book = Util.loadBook("book/264-text-formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("text", Ranges.range(sheet, "B7").getCellFormatText());
 	}
 
 	@Test
@@ -307,22 +303,8 @@ public class FormulaTest {
 		assertEquals("TOTAL", Ranges.range(sheet, "B70").getCellFormatText());
 	}
 
-	@Test
-	public void testAVEDEV() throws IOException {
-		Book book = Util.loadBook("book/270-statistical.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
 
-		assertEquals("1.02", Ranges.range(sheet, "B3").getCellFormatText());
-	}
-
-	@Test
-	public void testAVERAGE() throws IOException {
-		Book book = Util.loadBook("book/270-statistical.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("11", Ranges.range(sheet, "B6").getCellFormatText());
-	}
-
+	//Info ----------------------------------------------------------------------------------------
 	@Test
 	public void testERRORTYPE() throws IOException {
 		Book book = Util.loadBook("book/266-info-formula.xlsx");
@@ -428,6 +410,26 @@ public class FormulaTest {
 		assertEquals("2", Ranges.range(sheet, "B43").getCellFormatText());
 	}
 
+	
+	
+	//Statistical  --------------------------------------------------------------------------------
+
+	@Test
+	public void testAVEDEV() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("1.02", Ranges.range(sheet, "B3").getCellFormatText());
+	}
+
+	@Test
+	public void testAVERAGE() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("11", Ranges.range(sheet, "B6").getCellFormatText());
+	}
+	
 	@Test
 	public void testAVERAGEA() throws IOException {
 		Book book = Util.loadBook("book/270-statistical.xlsx");
@@ -683,7 +685,10 @@ public class FormulaTest {
 
 		assertEquals("0.93", Ranges.range(sheet, "B197").getCellFormatText());
 	}
-
+	
+	
+	
+	//Engineering ---------------------------------------------------------------------------------
 	@Test
 	public void testBESSELI() throws IOException {
 		Book book = Util.loadBook("book/271-engineering.xlsx");
