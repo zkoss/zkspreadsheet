@@ -53,7 +53,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 
 	@Test
 	public void testMath() {
-		Sheet sheet = spreadsheet.getBook().getSheetAt(2);
+		Sheet sheet = spreadsheet.getBook().getSheet("formula-math");
 		
 		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
@@ -62,7 +62,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	
 	@Test
 	public void testLogical() {
-		Sheet sheet = spreadsheet.getBook().getSheetAt(3); 
+		Sheet sheet = spreadsheet.getBook().getSheet("formula-logical"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
@@ -71,7 +71,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	
 	@Test
 	public void testText() {
-		Sheet sheet = spreadsheet.getBook().getSheetAt(4); 
+		Sheet sheet = spreadsheet.getBook().getSheet("formula-text"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
@@ -80,7 +80,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	
 	@Test
 	public void testInfo() {
-		Sheet sheet = spreadsheet.getBook().getSheetAt(5); 
+		Sheet sheet = spreadsheet.getBook().getSheet("formula-info"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
@@ -89,7 +89,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 
 	@Test
 	public void testDateTime() {
-		Sheet sheet = spreadsheet.getBook().getSheetAt(6); 
+		Sheet sheet = spreadsheet.getBook().getSheet("formula-datetime"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
@@ -98,7 +98,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	
 	@Test
 	public void testFinancial() {
-		Sheet sheet = spreadsheet.getBook().getSheetAt(7); 
+		Sheet sheet = spreadsheet.getBook().getSheet("formula-financial"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
@@ -107,7 +107,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	
 	@Test
 	public void testStatistical() {
-		Sheet sheet = spreadsheet.getBook().getSheetAt(8); 
+		Sheet sheet = spreadsheet.getBook().getSheet("formula-statistical"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
@@ -116,7 +116,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 
 	@Test
 	public void testEngineering() {
-		Sheet sheet = spreadsheet.getBook().getSheetAt(9); 
+		Sheet sheet = spreadsheet.getBook().getSheet("formula-engineering"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
@@ -125,7 +125,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	
 	@Test
 	public void testUnsupported() {
-		Sheet sheet = spreadsheet.getBook().getSheetAt(10); 
+		Sheet sheet = spreadsheet.getBook().getSheet("formula-notsupported"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
@@ -134,7 +134,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	
 	@Test
 	public void testCustom() {
-		Sheet sheet = spreadsheet.getBook().getSheetAt(11); 
+		Sheet sheet = spreadsheet.getBook().getSheet("formula-custom"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
 //		int nFormula = testFormulaByPoiInSheet(sheet);
@@ -145,7 +145,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	@Test
 	public void testMissingArguments(){
 		SpreadsheetAgent ssAgent = new SpreadsheetAgent(zss);
-		Sheet sheet = spreadsheet.getBook().getSheetAt(0); 
+		Sheet sheet = spreadsheet.getBook().getSheet("first-error"); 
 
 		//required arguments
 		ssAgent.edit(0,1, "=ISEVEN()");
