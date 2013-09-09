@@ -1,0 +1,15 @@
+<zk>
+	<window width="100%" height="100%">
+	<label multiline="true">
+1.merge cells in a row (e.g. A5:C5) (or D1:G1 )
+2.select two or more columns and the first column has overlap a merged cell (e.g. A:B)(or D:E)
+3.hide these columns
+4.resize column (e.g. B)(or E) to unhide one column by mouse (not by context menu)
+4.1.the cells' size will be chaos until unhide all columns
+	</label>
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
+			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+	</window>
+</zk>

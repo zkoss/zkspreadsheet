@@ -1,0 +1,13 @@
+<zk>
+	<window width="100%" height="100%">
+	<label multiline="true">
+1.enable cell B54 to wrapped text (through toolbar button)
+2.merge range B54 to D56 (total 9 cells)
+2.1.the merged cell's background is small than cell size	
+	</label>
+		<spreadsheet id="ss" src="/issue3/book/381-merge-wrap.xlsx" hflex="1" vflex="1" selectedSheet="cell"
+			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+	</window>
+</zk>

@@ -1,0 +1,17 @@
+<zk>
+	<window width="100%" height="100%">
+	<label multiline="true">
+1.merge B2: D4
+2.key in some text into such merged cell ex. "Hello"
+3.hide column B
+4.the text is gone	
+	</label>
+	
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" width="1500px" height="800px"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+		<zscript><![CDATA[
+		]]></zscript>
+	</window>
+</zk>

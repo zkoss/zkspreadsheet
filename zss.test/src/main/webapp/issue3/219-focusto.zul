@@ -1,0 +1,12 @@
+<zk>
+	<window width="100%" height="100%">
+		<button label="focus G43 (fail currently)" onClick='ss.focusTo(42,6)'/>
+		<button label="focus A900" onClick='ss.focusTo(899,0)'/>
+		<button label="focus OJ900" onClick='ss.focusTo(899,399)'/>
+		<button label="focus J10" onClick='ss.focusTo(9,9)'/>
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
+			maxVisibleRows="2000" maxVisibleColumns="400" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+	</window>
+</zk>

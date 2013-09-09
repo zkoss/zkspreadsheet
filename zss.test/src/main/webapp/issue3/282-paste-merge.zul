@@ -1,0 +1,14 @@
+<zk>
+	<window width="100%" height="100%">
+	<label multiline="true">
+1. copy ""drag move"" and a merged cell (A7:B7) from ""cell-text"" sheet to ""blank"" sheet A1
+2. select ""cell-text"" sheet and select back to ""blank"" sheet
+3. increase a A1 row's height with mouse dragging.
+4. copy/paste again at A6, you will see the display mess
+	</label>
+		<spreadsheet id="ss" src="/issue3/book/282-paste-merge.xlsx" hflex="1" vflex="1"
+			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+	</window>
+</zk>

@@ -18,6 +18,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.image.AImage;
+import org.zkoss.poi.hssf.usermodel.HSSFSheet;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.ss.util.CellRangeAddress;
@@ -181,6 +182,9 @@ public class Issue200Test {
 		final String filename = "book/272-conditionalFormatting.xls";
 		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
 		_workbook = Importers.getImporter().imports(is, filename);
+		
+		//shouldn't throw any exception
+		((HSSFSheet)_workbook.getSheetAt(0).getPoiSheet()).getDataValidations();
 	}
 	
 	@Ignore("ZSS-270")
@@ -1358,5 +1362,13 @@ public class Issue200Test {
 				Desktop.getDesktop().open(temp);
 			}
 		}
+	}
+	
+	@Ignore("ZSS-356")
+	@Test
+	public void testZSS356() throws Exception {
+		Book book = Util.loadBook("book/356-enable-autofilter.xlsx");
+		//shouldn't throw exception
+		Ranges.range(book.getSheetAt(0),"D18").enableAutoFilter(true);
 	}
 }

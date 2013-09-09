@@ -1,0 +1,8 @@
+<zk>
+	<window width="100%" height="100%">
+		<spreadsheet id="ss" src="/issue3/book/428-chart.xlsx" width="800px" height="600px" selectedSheet="cell-border"
+			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+	</window>
+</zk>

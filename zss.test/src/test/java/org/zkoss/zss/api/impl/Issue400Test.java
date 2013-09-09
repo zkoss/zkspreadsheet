@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.zkoss.zss.api.CellOperationUtil.applyFontBoldweight;
 import static org.zkoss.zss.api.Ranges.range;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
@@ -174,7 +175,6 @@ public class Issue400Test {
     	Importers.getImporter().imports(temp, "test");
 	}
 	
-	//not fix yet
 	@Test
 	public void testZSS425() throws IOException {
 		
@@ -211,6 +211,56 @@ public class Issue400Test {
     	r = Ranges.range(book.getSheetAt(0),0,0);
     	//get #ff0000 if bug is not fixed
 		Assert.assertEquals("#00ff00", r.getCellStyle().getBackgroundColor().getHtmlColor());
+	}
+	
+	@Ignore("ZSS-432")
+	@Test
+	public void testZSS432() throws IOException {
+		
+		Book book = Util.loadBook("book/432.xlsx");
+		
+		Sheet sheet = Ranges.range(book.getSheetAt(0)).createSheet("newone");
+		
+		File temp = Setup.getTempFile();
+		//export first time
+		Exporters.getExporter().export(book, temp);
+		
+		sheet = book.getSheet("newone");
+		
+		//edit the new sheet
+		Ranges.range(sheet,"A1").setCellEditText("ABC");
+		
+		//export again
+		Exporters.getExporter().export(book, temp);
+		
+		//import, should't get any error
+		Importers.getImporter().imports(temp, "test");
+		
+		sheet = book.getSheet("newone");
+		
+		//verify the value
+		Assert.assertEquals("ABC", Ranges.range(sheet,"A1").getCellEditText());
+	}
+	
+	
+		@Test
+	public void testZSS430() throws IOException {
+		
+		Book book = Util.loadBook("book/430-export-formula.xlsx");
+		Sheet sheet = book.getSheet("formula-math");
+		Assert.assertEquals("2.09", Ranges.range(sheet,"C7").getCellFormatText());
+		
+		
+		File temp = Setup.getTempFile();
+		//export first time
+		Exporters.getExporter().export(book, temp);
+
+		//import, should't get any error
+		Importers.getImporter().imports(temp, "test");
+		
+		sheet = book.getSheet("formula-math");
+		Assert.assertEquals("2.09", Ranges.range(sheet,"C7").getCellFormatText());
+		
 	}
 
 	@Test
