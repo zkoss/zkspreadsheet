@@ -31,25 +31,27 @@ zss.CornerPanel = zk.$extends(zk.Widget, {
 		this.$supers(zss.CornerPanel, '$init', []);
 		
 		this.sheet = sheet;
-		
-		var wgt = sheet._wgt,
-			r = wgt.getRowFreeze(),
-			c = wgt.getColumnFreeze(),
-			tp, lp;
-		if (c > -1) {
+		var wgt = sheet._wgt;
+		var r = wgt.getRowFreeze();
+		var c = wgt.getColumnFreeze();
+
+		if (c > -1 && r > -1) {
+			// ZSS-423: get data from cornerFrozen
+			if (data.cornerFrozen) {
+				data = data.cornerFrozen; 
+			}
+			// ZSS-423: get header data from corner frozen
 			this.appendChild(tp = this.tp = new zss.TopPanel(sheet, columnHeadHidden, 0, c, data, true), true);
-		}
-		if (r > -1) {
 			this.appendChild(lp = this.lp = new zss.LeftPanel(sheet, rowHeadHidden, 0, r, data, true), true);
-		}
-		if (tp && lp) {
-			if (c > -1) {
-				rCol = c;
-			}
-			if (r > -1) {
-				bRow = r;
-			}
-			this.appendChild(this.block = new zss.CellBlockCtrl(sheet, tRow, lCol, bRow, rCol, data, 'corner'), true);
+			rCol = c;
+			bRow = r;
+			this.appendChild(this.block = new zss.CellBlockCtrl(sheet, 0, 0, bRow, rCol, data, 'corner'), true);
+		} else if (c > -1) {
+			// ZSS-423: get header data from left frozen (for left frozen's column header)
+			this.appendChild(tp = this.tp = new zss.TopPanel(sheet, columnHeadHidden, 0, c, (data.leftFrozen ? data.leftFrozen : data), true), true);
+		} else if (r > -1) {
+			// ZSS-423: get header data from top frozen (for top frozen's row header)
+			this.appendChild(lp = this.lp = new zss.LeftPanel(sheet, rowHeadHidden, 0, r, (data.topFrozen ? data.topFrozen : data), true), true);
 		}
 	},
 	redraw: function (out) {

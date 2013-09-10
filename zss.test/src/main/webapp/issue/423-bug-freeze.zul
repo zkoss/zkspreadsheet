@@ -1,0 +1,11 @@
+<zk>
+	<spreadsheet id="ss" src="/issue/blank.xlsx" 
+		preloadRowSize="5" preloadColumnSize="5"
+		showSheetbar="true"
+		maxrows="1000" height="100%" width="100%"
+		maxcolumns="100">
+	</spreadsheet>
+	<zscript><![CDATA[
+		Ranges.range(ss.getSelectedSheet()).setFreezePanel(10, 10);
+	]]></zscript>
+</zk>

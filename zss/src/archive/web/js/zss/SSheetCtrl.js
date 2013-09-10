@@ -245,10 +245,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				bRow = rect.bottom;
 			if (rCol > rect.right)
 				rCol = rect.right;
-			var	activeBlock = new zss.MainBlockCtrl(sheet, tRow, lCol, bRow, rCol, data),
-				topPanel = new zss.TopPanel(sheet, rowHeadHidden, lCol, rCol, data),
-				leftPanel = new zss.LeftPanel(sheet, colHeadHidden, tRow, bRow, data),
-				cornerPanel = new zss.CornerPanel(sheet, rowHeadHidden, colHeadHidden, lCol, tRow, rCol, bRow, data);
+			// ZSS-392: every panel use it's owned ActiveRange data
+			var activeBlock = new zss.MainBlockCtrl(sheet, tRow, lCol, bRow, rCol, data);
+			var topPanel = new zss.TopPanel(sheet, rowHeadHidden, lCol, rCol, (data.topFrozen ? data.topFrozen : data));
+			var leftPanel = new zss.LeftPanel(sheet, colHeadHidden, tRow, bRow, (data.leftFrozen ? data.leftFrozen : data));
+			var cornerPanel = new zss.CornerPanel(sheet, rowHeadHidden, colHeadHidden, lCol, tRow, rCol, bRow, data); // corner needs other two freeze panels' data for header
 
 			if (!sheetCSSReady) {//set visible after CSS loaded
 				activeBlock.setVisible(false);
@@ -371,10 +372,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				bRow = rect.bottom;
 			if (rCol > rect.right)
 				rCol = rect.right;
+			
+			// ZSS-392: every panel use it's owned ActiveRange data
 			this.appendChild(this.activeBlock = new zss.MainBlockCtrl(sheet, tRow, lCol, bRow, rCol, ar), true);
-			this.appendChild(this.tp = new zss.TopPanel(sheet, rowHeadHidden, lCol, rCol, ar), true);
-			this.appendChild(this.lp = new zss.LeftPanel(sheet, colHeadHidden, tRow, bRow, ar), true);
-			this.appendChild(this.cp = new zss.CornerPanel(sheet, rowHeadHidden, colHeadHidden, lCol, tRow, rCol, bRow, ar), true);
+			this.appendChild(this.tp = new zss.TopPanel(sheet, rowHeadHidden, lCol, rCol, (ar.topFrozen ? ar.topFrozen : ar)), true);
+			this.appendChild(this.lp = new zss.LeftPanel(sheet, colHeadHidden, tRow, bRow, (ar.leftFrozen ? ar.leftFrozen : ar)), true);
+			this.appendChild(this.cp = new zss.CornerPanel(sheet, rowHeadHidden, colHeadHidden, lCol, tRow, rCol, bRow, ar), true); // corner needs other two freeze panels' data for header
 		}
 		
 		this.innerClicking = 0;// mouse down counter to check that is focus rellay lost.
@@ -647,9 +650,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				cacheSheet = cCtl.getSheetBy(shtId),
 				selSheet = cCtl.getSelectedSheet();
 			if (cacheSheet) {
-				cacheSheet.update(data);
+				cacheSheet.update(data); // update cell model 
 				if (cacheSheet.id == selSheet.id) {//update current sheet
-					this.update_(data.t, data.l, data.b, data.r);
+					// ZSS-392: update every panel separately 
+					this.update_(data); // update cell DOM
 					wgt._triggerContentsChanged = true;
 				}
 			}
@@ -2134,17 +2138,26 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	/**
 	 * Update cells
 	 */
-	update_: function (tRow, lCol, bRow, rCol) {
-		var cb = this.cp.block,
-			tb = this.tp.block,
-			lb = this.lp.block;
-		this.activeBlock.update_(tRow, lCol, bRow, rCol);
-		if (cb)
-			cb.update_(tRow, lCol, bRow, rCol);
-		if (tb)
-			tb.update_(tRow, lCol, bRow, rCol);
-		if (lb)
-			lb.update_(tRow, lCol, bRow, rCol);
+	update_: function (data) {
+		var cb = this.cp.block;
+		var tb = this.tp.block;
+		var lb = this.lp.block;
+		var d;
+
+		// ZSS-392: update cells separately (data panel and freeze panels)
+		this.activeBlock.update_(data.t, data.l, data.b, data.r);
+		if (cb && data.cornerFrozen) {
+			d = data.cornerFrozen;
+			cb.update_(d.t, d.l, d.b, d.r);
+		}
+		if (tb && data.topFrozen) {
+			d = data.topFrozen;
+			tb.update_(d.t, d.l, d.b, d.r);
+		}
+		if (lb && data.leftFrozen) {
+			d = data.leftFrozen;
+			lb.update_(d.t, d.l, d.b, d.r);
+		}
 		
 		/* ZSS-169: prepare client side paste src when user set selection by drag cells 
 		//feature #26: Support copy/paste value to local Excel		
