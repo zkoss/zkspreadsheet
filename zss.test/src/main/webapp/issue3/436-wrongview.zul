@@ -1,0 +1,11 @@
+<zk>
+	<window width="100%" height="100%">
+		<label multiline="true" >
+		1.select sheet 'TEST_SHEET_2', it should display well and no javascript error.
+		</label>
+		<spreadsheet id="ss" src="/issue3/book/436-wrongview.xlsx" hflex="1" vflex="1" 
+			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+	</window>
+</zk>

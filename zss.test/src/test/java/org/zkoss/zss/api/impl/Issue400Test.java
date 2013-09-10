@@ -243,7 +243,7 @@ public class Issue400Test {
 	}
 	
 	
-		@Test
+	@Test
 	public void testZSS430() throws IOException {
 		
 		Book book = Util.loadBook("book/430-export-formula.xlsx");
@@ -260,6 +260,68 @@ public class Issue400Test {
 		
 		sheet = book.getSheet("formula-math");
 		Assert.assertEquals("2.09", Ranges.range(sheet,"C7").getCellFormatText());
+		
+		System.out.println(">>>>"+temp);
+		//can't be opened by excel
+		//how to 
+	}
+	
+	@Test
+	public void testZSS429() throws IOException {
+		
+		Book book = Util.loadBook("book/429-autofilter.xlsx");
+		Sheet sheet = book.getSheetAt(0);
+		Assert.assertEquals("A", Ranges.range(sheet,"C4").getCellFormatText());
+		
+		File temp = Setup.getTempFile();
+		//export first time
+		Exporters.getExporter().export(book, temp);
+		
+		//shouln't cause exception
+		Ranges.range(sheet,"C4").toColumnRange().insert(InsertShift.RIGHT, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		
+		Assert.assertEquals("A", Ranges.range(sheet,"D4").getCellFormatText());
+		
+		Exporters.getExporter().export(book, temp);
+		
+		
+		//import, should't get any error
+		Importers.getImporter().imports(temp, "test");
+				
+		sheet = book.getSheetAt(0);
+		Assert.assertEquals("A", Ranges.range(sheet,"D4").getCellFormatText());
+		
+	}
+	
+	@Test
+	public void testZSS431() throws IOException {
+		testZSS431_0(Util.loadBook("book/blank.xlsx"));
+		testZSS431_0(Util.loadBook("book/blank.xls"));
+		testZSS431_0(Util.loadBook("book/431-freezepanel.xlsx"));
+	}
+	
+	public void testZSS431_0(Book book) throws IOException {
+		Sheet sheet = book.getSheetAt(0);
+		Assert.assertEquals(0, sheet.getRowFreeze());
+		Assert.assertEquals(0, sheet.getColumnFreeze());
+		
+		Ranges.range(sheet).setFreezePanel(7, 5);
+		Assert.assertEquals(7, sheet.getRowFreeze());
+		Assert.assertEquals(5, sheet.getColumnFreeze());
+		
+		File temp = Setup.getTempFile();
+		//export first time
+		Exporters.getExporter().export(book, temp);
+		
+
+		book = Importers.getImporter().imports(temp, "test");
+		sheet = book.getSheetAt(0);
+		
+		Assert.assertEquals(7, sheet.getRowFreeze());
+		Assert.assertEquals(5, sheet.getColumnFreeze());
+		
+		//TODO how to verify it in Excel?
+		
 		
 	}
 

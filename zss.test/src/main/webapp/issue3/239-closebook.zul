@@ -1,0 +1,13 @@
+<zk>
+	<window width="100%" height="100%">
+		<spreadsheet id="ss" hflex="1" vflex="1"
+			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+		<zscript><![CDATA[
+		    java.io.File f = new java.io.File(WebApps.getCurrent().getRealPath("/issue3/book/blank.xlsx"));              
+			Book book = Importers.getImporter().imports(f,"test");
+			ss.setBook(book);
+		]]></zscript>
+	</window>
+</zk>

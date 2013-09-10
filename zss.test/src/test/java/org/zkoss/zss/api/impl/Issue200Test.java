@@ -40,10 +40,12 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.SheetOperationUtil;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellData.CellType;
+import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.ChartData;
+import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zssex.api.ChartDataUtil;
 
@@ -1370,5 +1372,60 @@ public class Issue200Test {
 		Book book = Util.loadBook("book/356-enable-autofilter.xlsx");
 		//shouldn't throw exception
 		Ranges.range(book.getSheetAt(0),"D18").enableAutoFilter(true);
+	}
+	
+	@Ignore("ZSS-276")
+	@Test
+	public void testZSS276() throws Exception {
+		Book book = Util.loadBook("book/276-format.xls");
+		//shouldn't throw exception
+		Range r = Ranges.range(book.getSheetAt(0),"E2");
+		
+		Assert.assertEquals("2013/4/12", r.getCellFormatText());
+		
+	}
+	
+	@Ignore("ZSS-214")
+	@Test
+	public void testZSS214() throws Exception {
+		Book book = Util.loadBook("book/214-npe-rename.xlsx");
+		//shouldn't throw exception
+		Range r = Ranges.range(book.getSheet("sheet1"),"A1");
+		
+		Assert.assertEquals("Dennis", r.getCellFormatText());
+		
+		//shound't throw exception
+		r.setSheetName("sheet1x");
+		
+		File temp = Setup.getTempFile();
+		//export first time
+		Exporters.getExporter().export(book, temp);
+		
+		book = Importers.getImporter().imports(temp, "test");
+		
+		Assert.assertNull(book.getSheet("sheet1"));
+		
+		r = Ranges.range(book.getSheet("sheet1x"),"A1");
+		Assert.assertEquals("Dennis", r.getCellFormatText());
+	}
+	
+	@Test
+	public void testZSS323() throws Exception {
+		Book book = Util.loadBook("book/blank.xlsx");
+		//shouldn't throw exception
+		Range r = Ranges.range(book.getSheetAt(0),"A1:D5");
+		
+		//shoun't throw exception
+		r.sort(true);
+		r.sort(false);
+		
+		
+		book = Util.loadBook("book/blank.xls");
+		//shouldn't throw exception
+		r = Ranges.range(book.getSheetAt(0),"A1:D5");
+		
+		//shoun't throw exception
+		r.sort(true);
+		r.sort(false);
 	}
 }

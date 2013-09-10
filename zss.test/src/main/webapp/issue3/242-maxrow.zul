@@ -1,0 +1,16 @@
+<zk>
+	<window width="100%" height="100%">
+		<label multiline="true"></label>
+		<hbox>
+			<button label="max row 20" onClick='ss.setMaxVisibleRows(20)'/>
+			<button label="max row 30" onClick='ss.setMaxVisibleRows(20)'/>
+			
+			<button label="max column 10" onClick='ss.setMaxVisibleColumns(10)'/>
+			<button label="max column 15" onClick='ss.setMaxVisibleColumns(15)'/>
+		</hbox>
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
+			maxVisibleRows="10" maxVisibleColumns="5" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+	</window>
+</zk>
