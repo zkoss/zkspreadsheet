@@ -3,12 +3,9 @@ package zss.test;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.hamcrest.number.IsCloseTo;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.zats.mimic.ComponentAgent;
 import org.zkoss.zats.mimic.DesktopAgent;
 import org.zkoss.zats.mimic.Zats;
@@ -16,9 +13,7 @@ import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellData.CellType;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.ui.Spreadsheet;
-import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * For testing formulas.
@@ -56,7 +51,6 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		Sheet sheet = spreadsheet.getBook().getSheet("formula-math");
 		
 		int nFormula = verifyFormulaResult(sheet);
-//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
 	
@@ -65,7 +59,6 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		Sheet sheet = spreadsheet.getBook().getSheet("formula-logical"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
-//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
 	
@@ -74,7 +67,6 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		Sheet sheet = spreadsheet.getBook().getSheet("formula-text"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
-//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
 	
@@ -83,7 +75,6 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		Sheet sheet = spreadsheet.getBook().getSheet("formula-info"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
-//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
 
@@ -92,7 +83,6 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		Sheet sheet = spreadsheet.getBook().getSheet("formula-datetime"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
-//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
 	
@@ -101,7 +91,6 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		Sheet sheet = spreadsheet.getBook().getSheet("formula-financial"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
-//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
 	
@@ -110,7 +99,6 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		Sheet sheet = spreadsheet.getBook().getSheet("formula-statistical"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
-//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}	
 
@@ -119,7 +107,6 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		Sheet sheet = spreadsheet.getBook().getSheet("formula-engineering"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
-//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}	
 	
@@ -128,7 +115,6 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		Sheet sheet = spreadsheet.getBook().getSheet("formula-notsupported"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
-//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}	
 	
@@ -137,7 +123,6 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		Sheet sheet = spreadsheet.getBook().getSheet("formula-custom"); 
 		
 		int nFormula = verifyFormulaResult(sheet);
-//		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}	
 	
@@ -240,63 +225,6 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	
 	
 	
-	//verify each formula according cell's value
-	private int testFormulaByPoiInSheet(Sheet sheet) {
-	
-		XSheet xsheet = spreadsheet.getXBook().getWorksheet(sheet.getSheetName());
-		//tolerance delta value between correct value and expected value for a double number
-		double DELTA = 1e-5;
-	
-		int nRowFromLastFormula = 0; //reset when read a formula cell
-		int nFormula = 0;
-		int row = 0 ; //current working row
-		while (!isNoMoreFormula(nRowFromLastFormula)){
-			Cell formulaCell = XUtils.getCell(xsheet, row, 1);
-			Cell expectedCell = XUtils.getCell(xsheet, row, 2);
-			Cell verifyCell = XUtils.getCell(xsheet, row, 3);
-			if (isFormulaRow(verifyCell)
-					&& formulaCell!=null && formulaCell.getCellType() == Cell.CELL_TYPE_FORMULA){ 
-				if (formulaCell.getCachedFormulaResultType() == Cell.CELL_TYPE_NUMERIC){
-					collector.checkThat(getFailedReason(formulaCell),formulaCell.getNumericCellValue()
-							, IsCloseTo.closeTo(expectedCell.getNumericCellValue(),DELTA));
-				}else{
-					collector.checkThat(getFailedReason(formulaCell),getCellValue(formulaCell), equalTo(getCellValue(expectedCell)));
-				}
-				nFormula ++;
-				nRowFromLastFormula = 0;				
-			}
-			row ++;
-			nRowFromLastFormula++;
-		}
-		return nFormula;
-	}
-	
-	private boolean isFormulaRow(Cell verifyCell) {
-		//skip "human check" cases
-		return verifyCell != null  && verifyCell.getCellType() == Cell.CELL_TYPE_FORMULA;
-	}    
-
-
-	private String getFailedReason(Cell cell) {
-		return cell.getCellFormula()+" failed, at row "+(cell.getRowIndex()+1)+" in sheet: "+cell.getSheet().getSheetName();
-	}	
-	
-	private Object getCellValue(Cell cell) {
-		int cellType = cell.getCellType() == Cell.CELL_TYPE_FORMULA ? cell.getCachedFormulaResultType():cell.getCellType();
-		switch(cellType){
-		case Cell.CELL_TYPE_NUMERIC:
-			return cell.getNumericCellValue();
-		case Cell.CELL_TYPE_STRING:
-			return cell.getStringCellValue();
-		case Cell.CELL_TYPE_BOOLEAN:
-			return cell.getBooleanCellValue();
-		case Cell.CELL_TYPE_ERROR:
-			return cell.getErrorCellValue();
-		default:
-			return "";
-		}
-	}
-	
 	/*
 	 * Some formulas that cannot pass the test by Ranges API will also failed the test by POI API only when those formulas
 	 * are put in the "first" sheet.  If they are not in the "first" sheet, the error won't occur.
@@ -320,11 +248,6 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		int nFormula = testFormulaByPoiInSheet(sheet);
 		System.out.println("tested "+nFormula+ " formulas in sheet: "+sheet.getSheetName());
 	}
-	
-	
-	
-	
-
 	
 	 */
 

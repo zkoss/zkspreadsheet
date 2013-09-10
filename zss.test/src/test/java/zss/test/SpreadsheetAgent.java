@@ -3,6 +3,7 @@ package zss.test;
 import org.zkoss.zats.mimic.ComponentAgent;
 import org.zkoss.zats.mimic.operation.AuAgent;
 import org.zkoss.zats.mimic.operation.AuData;
+import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
 /**
@@ -32,7 +33,8 @@ public class SpreadsheetAgent {
 	}
 	
 	public void selectSheet(String name){
-		int sheetIndex = zss.as(Spreadsheet.class).getXBook().getSheetIndex(name);
+		Sheet sheet = zss.as(Spreadsheet.class).getBook().getSheet(name);
+		int sheetIndex = zss.as(Spreadsheet.class).getBook().getSheetIndex(sheet);
 		if (sheetIndex >=0){
 			selectSheet(sheetIndex);
 		}
@@ -94,3 +96,4 @@ public class SpreadsheetAgent {
 		return Integer.toString(spreadsheet.getBook().getSheetIndex(spreadsheet.getSelectedSheet()));
 	}
 }
+

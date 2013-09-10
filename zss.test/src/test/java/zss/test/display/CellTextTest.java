@@ -3,13 +3,7 @@ package zss.test.display;
 import static org.junit.Assert.assertEquals;
 import static org.zkoss.zss.api.Ranges.range;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Font;

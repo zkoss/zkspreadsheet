@@ -17,8 +17,6 @@ import org.zkoss.zss.ui.Spreadsheet;
 public class ExportTest extends SpreadsheetTestCaseBase{
 
 	private DesktopAgent desktop;
-	private SpreadsheetAgent srcAgent;
-	private SpreadsheetAgent dstAgent;
 	
 	@Rule
     public ErrorCollector collector = new ErrorCollector();
@@ -43,8 +41,6 @@ public class ExportTest extends SpreadsheetTestCaseBase{
 		
 		ComponentAgent srcZss = desktop.query("#source");
 		ComponentAgent dstZss = desktop.query("#destination");
-		srcAgent = new SpreadsheetAgent(srcZss);
-		dstAgent = new SpreadsheetAgent(dstZss);
 		
 		Sheet srcSheet = srcZss.as(Spreadsheet.class).getSelectedSheet();
 		Sheet dstSheet = dstZss.as(Spreadsheet.class).getSelectedSheet();
