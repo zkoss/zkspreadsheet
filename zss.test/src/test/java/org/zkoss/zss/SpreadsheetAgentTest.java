@@ -1,4 +1,4 @@
-package zss.test;
+package org.zkoss.zss;
 
 import static org.junit.Assert.assertEquals;
 

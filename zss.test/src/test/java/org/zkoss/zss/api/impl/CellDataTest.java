@@ -1,4 +1,4 @@
-package zss.test.display;
+package org.zkoss.zss.api.impl;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Rule;

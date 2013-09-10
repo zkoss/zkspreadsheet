@@ -1,4 +1,4 @@
-package zss.test;
+package org.zkoss.zss.api.impl;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
@@ -9,6 +9,8 @@ import org.junit.rules.ErrorCollector;
 import org.zkoss.zats.mimic.ComponentAgent;
 import org.zkoss.zats.mimic.DesktopAgent;
 import org.zkoss.zats.mimic.Zats;
+import org.zkoss.zss.SpreadsheetAgent;
+import org.zkoss.zss.SpreadsheetTestCaseBase;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellData.CellType;
@@ -21,7 +23,7 @@ import org.zkoss.zss.ui.Spreadsheet;
  * @author Hawk
  *
  */
-public class FormulaTest extends SpreadsheetTestCaseBase{
+public class FormulaByCategoryTest extends SpreadsheetTestCaseBase{
 
 	private DesktopAgent desktop; 
 	private ComponentAgent zss ;
@@ -33,7 +35,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 	@Rule
     public ErrorCollector collector = new ErrorCollector();
 	
-	protected FormulaTest(String testPage){
+	protected FormulaByCategoryTest(String testPage){
 		desktop = Zats.newClient().connect(testPage);
 		
 		zss = desktop.query("spreadsheet");
@@ -41,7 +43,7 @@ public class FormulaTest extends SpreadsheetTestCaseBase{
 		
 	}
 	
-	public FormulaTest(){
+	public FormulaByCategoryTest(){
 		this("/formula.zul");
 	}
 	

@@ -1,9 +1,10 @@
-package zss.test.display;
+package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.zkoss.zss.api.Ranges.range;
 
 import org.junit.Test;
+import org.zkoss.zss.SpreadsheetAgent;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Font;
@@ -11,7 +12,6 @@ import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.Spreadsheet;
 
-import zss.test.SpreadsheetAgent;
 
 
 /**

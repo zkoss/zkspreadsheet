@@ -1,4 +1,4 @@
-package zss.test;
+package org.zkoss.zss;
 
 import org.junit.After;
 import org.junit.AfterClass;

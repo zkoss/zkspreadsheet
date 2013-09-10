@@ -1,4 +1,4 @@
-package zss.test;
+package org.zkoss.zss;
 
 import org.zkoss.zats.mimic.ComponentAgent;
 import org.zkoss.zats.mimic.operation.AuAgent;

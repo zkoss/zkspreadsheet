@@ -1,4 +1,4 @@
-package zss.test.display;
+package org.zkoss.zss.api.impl;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,15 +9,15 @@ import org.junit.runners.Parameterized.Parameters;
 
 
 /**
- * Test case for the function "display Excel files".
+ * Run test cases of the function "display Excel files" with multiple pages. 
  * 
  * @author Hawk
  *
  */
 @RunWith(Parameterized.class)
-public class CellTextAllTest extends CellTextTest{
+public class CellBorderAllTest extends CellBorderTest{
 	
-	public CellTextAllTest(String page){
+	public CellBorderAllTest(String page){
 		super(page);
 	}
 
