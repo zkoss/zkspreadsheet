@@ -16,6 +16,12 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 
+/**
+ * TODO the test case Not included categories:
+ * Math, Financial, Lookup, Logical
+ * @author kuro, Hawk
+ *
+ */
 public class FormulaTest {
 
 	@BeforeClass
@@ -78,16 +84,20 @@ public class FormulaTest {
 	public void testHOUR() throws IOException {
 		Book book = Util.loadBook("book/blank.xlsx");
 		Sheet sheet = book.getSheet("Sheet1");
-		Ranges.range(sheet, "B13").setCellEditText("=HOUR(\"15:30\")");
-		assertEquals("#VALUE!", Ranges.range(sheet, "B13").getCellData().getFormatText());
+		Ranges.range(sheet, "C13").setCellEditText("03:30:30");
+		//must accept a cell reference to a time instead of a time string
+		Ranges.range(sheet, "B13").setCellEditText("=HOUR(C13)");
+		assertEquals("3", Ranges.range(sheet, "B13").getCellData().getFormatText());
 	}
 
 	@Test
 	public void testMINUTE() throws IOException {
 		Book book = Util.loadBook("book/blank.xlsx");
 		Sheet sheet = book.getSheet("Sheet1");
-		Ranges.range(sheet, "B15").setCellEditText("=MINUTE(\"4:48:00 PM\")");
-		assertEquals("#VALUE!", Ranges.range(sheet, "B15").getCellData().getFormatText());
+		Ranges.range(sheet, "C15").setCellEditText("4:48:00 PM");
+		//must accept a cell reference to a time instead of a time string
+		Ranges.range(sheet, "B15").setCellEditText("=MINUTE(C15)");
+		assertEquals("48", Ranges.range(sheet, "B15").getCellData().getFormatText());
 	}
 
 	@Test
@@ -303,6 +313,12 @@ public class FormulaTest {
 		assertEquals("TOTAL", Ranges.range(sheet, "B70").getCellFormatText());
 	}
 
+	@Test
+	public void testVALUE() throws IOException {
+		Book book = Util.loadBook("book/264-text-formula.xlsx");
+		Sheet sheet = book.getSheet("formula-text");
+		assertEquals("0.7", Ranges.range(sheet, "B73").getCellFormatText());
+	}
 
 	//Info ----------------------------------------------------------------------------------------
 	@Test

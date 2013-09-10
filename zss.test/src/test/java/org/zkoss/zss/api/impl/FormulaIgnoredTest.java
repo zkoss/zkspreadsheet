@@ -16,6 +16,11 @@ import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 
+/**
+ * 
+ * @author kuro, Hawk
+ *
+ */
 @Ignore
 public class FormulaIgnoredTest {
 	
@@ -34,6 +39,7 @@ public class FormulaIgnoredTest {
 		ZssContext.setThreadLocal(null);
 	}
 	
+	// Incorrect result ---------------------------------------------------------------------------	
 	// expected:<[0.03]> but was:<[-1.00]>
 	@Test
 	public void testGAMMADIST() throws IOException {
@@ -79,15 +85,11 @@ public class FormulaIgnoredTest {
 		assertEquals("1.96", Ranges.range(sheet, "B177").getCellFormatText());
 	}
 	
-	// #NUM!
-	@Test
-	public void testSTDEVP() throws IOException {
-		Book book = Util.loadBook("book/270-statistical.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("26.05", Ranges.range(sheet, "B168").getCellFormatText());
-	}
 	
+
+	
+
+	// Minor differences --------------------------------------------------------------------------------
 	// expected:<[$1,234.5]7> but was:<[1234.56]7>
 	@Test
 	public void testDOLLAR() throws IOException {
@@ -95,13 +97,90 @@ public class FormulaIgnoredTest {
 		Sheet sheet = book.getSheet("formula-text");
 		assertEquals("$1,234.57", Ranges.range(sheet, "B14").getCellFormatText());
 	}
+
+	// Little different
 	
-	// #VALUE!
 	@Test
-	public void testVALUE() throws IOException {
-		Book book = Util.loadBook("book/264-text-formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("0.7", Ranges.range(sheet, "B73").getCellFormatText());
+	public void testIMCOS() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("0.833730025131149 - 0.988897705762865i", Ranges.range(sheet, "B47").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMLN() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("1.6094379124341 + 0.927295218001612i", Ranges.range(sheet, "B53").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMLOG10() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("0.698970004336019+0.402719196273373i", Ranges.range(sheet, "B55").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMLOG2() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("2.32192809506607+1.33780421255394i", Ranges.range(sheet, "B57").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMPOWER() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("-46 + 9.00000000000001i", Ranges.range(sheet, "B59").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMSIN() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("3.85373803791938 - 27.0168132580039i", Ranges.range(sheet, "B65").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMSQRT() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("1.09868411346781 + 0.455089860562227i", Ranges.range(sheet, "B67").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMSUB() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("8 + i", Ranges.range(sheet, "B69").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMSUM() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("8 + i", Ranges.range(sheet, "B71").getCellFormatText());
+	}
+	
+	
+	
+	// Unsupported --------------------------------------------------------------------------------
+	// #NAME?
+	@Test
+	public void testSTDEVP() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+		
+		assertEquals("26.05", Ranges.range(sheet, "B168").getCellFormatText());
 	}
 	
 	// #NAME?
@@ -560,77 +639,5 @@ public class FormulaIgnoredTest {
 		Sheet sheet = book.getSheet("Sheet1");
 		Ranges.range(sheet, "B27").setCellEditText("=TIMEVALUE(\"2:24 AM\")");
 		assertEquals("0.1", Ranges.range(sheet, "B27").getCellData().getFormatText());
-	}
-	
-	// Little different
-	@Test
-	public void testIMCOS() throws IOException {
-		Book book = Util.loadBook("book/271-engineering.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("0.833730025131149 - 0.988897705762865i", Ranges.range(sheet, "B47").getCellFormatText());
-	}
-	
-	// Little different
-	@Test
-	public void testIMLN() throws IOException {
-		Book book = Util.loadBook("book/271-engineering.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("1.6094379124341 + 0.927295218001612i", Ranges.range(sheet, "B53").getCellFormatText());
-	}
-	
-	// Little different
-	@Test
-	public void testIMSQRT() throws IOException {
-		Book book = Util.loadBook("book/271-engineering.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("1.09868411346781 + 0.455089860562227i", Ranges.range(sheet, "B67").getCellFormatText());
-	}
-	
-	// Little different
-	@Test
-	public void testIMLOG10() throws IOException {
-		Book book = Util.loadBook("book/271-engineering.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("0.698970004336019+0.402719196273373i", Ranges.range(sheet, "B55").getCellFormatText());
-	}
-	
-	// Little different
-	@Test
-	public void testIMSUM() throws IOException {
-		Book book = Util.loadBook("book/271-engineering.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("8 + i", Ranges.range(sheet, "B71").getCellFormatText());
-	}
-	
-	// Little different
-	@Test
-	public void testIMSIN() throws IOException {
-		Book book = Util.loadBook("book/271-engineering.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("3.85373803791938 - 27.0168132580039i", Ranges.range(sheet, "B65").getCellFormatText());
-	}
-	
-	// Little different
-	@Test
-	public void testIMSUB() throws IOException {
-		Book book = Util.loadBook("book/271-engineering.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("8 + i", Ranges.range(sheet, "B69").getCellFormatText());
-	}
-	
-	// Little different
-	@Test
-	public void testIMLOG2() throws IOException {
-		Book book = Util.loadBook("book/271-engineering.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("2.32192809506607+1.33780421255394i", Ranges.range(sheet, "B57").getCellFormatText());
-	}
-	
-	// Little different
-	@Test
-	public void testIMPOWER() throws IOException {
-		Book book = Util.loadBook("book/271-engineering.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("-46 + 9.00000000000001i", Ranges.range(sheet, "B59").getCellFormatText());
 	}
 }
