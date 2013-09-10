@@ -12,10 +12,9 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.sys.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -25,7 +24,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
@@ -47,12 +46,13 @@ import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.Drawing;
 import org.zkoss.poi.ss.usermodel.Picture;
-import org.zkoss.poi.ss.usermodel.PivotTable;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.xssf.model.CommentsTable;
 import org.zkoss.poi.xssf.usermodel.XSSFCell;
 import org.zkoss.poi.xssf.usermodel.XSSFCellHelper;
+import org.zkoss.poi.xssf.usermodel.XSSFComment;
 import org.zkoss.poi.xssf.usermodel.XSSFDrawing;
 import org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.zkoss.poi.xssf.usermodel.XSSFName;
@@ -139,6 +139,16 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
      */
     public List<CellRangeAddress[]>  shiftRowsOnly(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight,
     		boolean moveComments, boolean clearRest, int copyOrigin) {
+    	
+    	final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
+    	final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+    	
+	    // ZSS-418: moving a comment must move both comment and shape positions
+	    // Otherwise, Excel will fail to load such file
+        if(moveComments) {
+            shiftComments(startRow, maxrow, 0, maxcol, n, 0);
+        }
+    	
     	//prepare source format row
     	final int srcRownum = n <= 0 ? -1 : copyOrigin == XRange.FORMAT_RIGHTBELOW ? startRow : copyOrigin == XRange.FORMAT_LEFTABOVE ? startRow - 1 : -1;
     	final XSSFRow srcRow = srcRownum >= 0 ? getRow(srcRownum) : null;
@@ -146,8 +156,6 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
     	final short srcHeight = srcRow != null ? srcRow.getHeight() : -1;
 //    	final XSSFCellStyle srcStyle = srcRow != null ? srcRow.getRowStyle() : null;
     	
-        final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
-        final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
         final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, startRow, 0, endRow, maxcol, n, false);
     	
     	//shift the rows (actually change the row number only)
@@ -180,21 +188,6 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
             } else if (rownum >= startRow && rownum <= endRow) {
                 new XSSFRowHelper(row).shift(n);
             }
-    		// TODO ZSS-418: workaround, will fix it later
-//            if (moveComments) {
-//	            final CommentsTable sheetComments = getCommentsTable(false);
-//	            if(sheetComments != null){
-//	                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
-//	                CTCommentList lst = sheetComments.getCTComments().getCommentList();
-//	                for (CTComment comment : lst.getCommentArray()) {
-//	                    CellReference ref = new CellReference(comment.getRef());
-//	                    if(ref.getRow() == rownum){
-//	                        ref = new CellReference(rownum + n, ref.getCol());
-//	                        comment.setRef(ref.formatAsString());
-//	                    }
-//	                }
-//	            }
-//            }
         }
         
 		// ZSS-419: remove a row not only remove it from map but also from real sheet XML
@@ -342,6 +335,16 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
      */
     public List<CellRangeAddress[]> shiftRowsRange(int startRow, int endRow, int n, int lCol, int rCol,
             boolean copyRowHeight, boolean resetOriginalRowHeight, boolean moveComments, boolean clearRest, int copyOrigin) {
+
+        final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
+        final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+        
+	    // ZSS-418: moving a comment must move both comment and shape positions
+	    // Otherwise, Excel will fail to load such file
+        if(moveComments) {
+            shiftComments(startRow, maxrow, lCol, rCol, n, 0); // take care: insert, delete and drag move
+        }
+
     	//prepare source format row
     	final int srcRownum = n <= 0 ? -1 : copyOrigin == XRange.FORMAT_RIGHTBELOW ? startRow : copyOrigin == XRange.FORMAT_LEFTABOVE ? startRow - 1 : -1;
     	final XSSFRow srcRow = srcRownum >= 0 ? getRow(srcRownum) : null;
@@ -349,8 +352,6 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
     	final short srcHeight = srcRow != null ? srcRow.getHeight() : -1;
 //    	final XSSFCellStyle srcStyle = srcRow != null ? srcRow.getRowStyle() : null;
     	
-        final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
-        final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
         if (endRow < 0) {
         	endRow = maxrow;
         }
@@ -405,23 +406,6 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
             		}
             	}
             }
-            
-            // TODO ZSS-418: workaround, will fix it later
-//            if (moveComments) {
-//	            final CommentsTable sheetComments = getCommentsTable(false);
-//	            if(sheetComments != null){
-//	                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
-//	                CTCommentList lst = sheetComments.getCTComments().getCommentList();
-//	                for (CTComment comment : lst.getCommentArray()) {
-//	                    CellReference ref = new CellReference(comment.getRef());
-//	                    final int colnum = ref.getCol();
-//	                    if(ref.getRow() == rownum && lCol <= colnum && colnum <= rCol){
-//	                        ref = new CellReference(rownum + n, colnum);
-//	                        comment.setRef(ref.formatAsString());
-//	                    }
-//	                }
-//	            }
-//            }
         }
         
 		// ZSS-419: remove a row not only remove it from map but also from real sheet XML
@@ -590,6 +574,19 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
      */
     public List<CellRangeAddress[]> shiftColumnsOnly(int startCol, int endCol, int n,
             boolean copyColWidth, boolean resetOriginalColWidth, boolean moveComments, boolean clearRest, int copyOrigin) {
+
+        final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
+        final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+
+        // Move comments from the source column to the
+        // destination column. Note that comments can
+		// exist for cells which are null
+		if(moveComments) {
+		    // ZSS-418: moving a comment must move both comment and shape positions
+		    // Otherwise, Excel will fail to load such file
+            shiftComments(0, maxrow, startCol, maxcol, 0, n);
+		}
+    	
     	//prepared inserting column format
     	final int srcCol = n <= 0 ? -1 : copyOrigin == XRange.FORMAT_RIGHTBELOW ? startCol : copyOrigin == XRange.FORMAT_LEFTABOVE ? startCol - 1 : -1; 
     	final CellStyle colStyle = srcCol >= 0 ? getColumnStyle(srcCol) : null;
@@ -630,38 +627,10 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         	}
         }
         
-        final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
-        final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
         final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, 0, startCol, maxrow, endCol, n, true);
         
         //TODO handle the page breaks
         //?
-
-		// TODO ZSS-418: workaround, will fix it later
-        // Move comments from the source column to the
-        //  destination column. Note that comments can
-        //  exist for cells which are null
-//        if (moveComments) {
-//            final CommentsTable sheetComments = getCommentsTable(false);
-//            if(sheetComments != null){
-//                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
-//                CTCommentList lst = sheetComments.getCTComments().getCommentList();
-//                for (final Iterator<CTComment> it = lst.getCommentList().iterator(); it.hasNext();) {
-//                	CTComment comment = it.next();
-//                    CellReference ref = new CellReference(comment.getRef());
-//                    final int colnum = ref.getCol();
-//                    if(startCol <= colnum && colnum <= endCol){
-//                    	int newColNum = colnum + n;
-//                    	if (newColNum < 0 || newColNum > maxcol) { //out of bound, shall remove it
-//                    		it.remove(); 
-//                    	} else {
-//	                        ref = new CellReference(ref.getRow(), newColNum);
-//	                        comment.setRef(ref.formatAsString());
-//                    	}
-//                    }
-//                }
-//            }
-//        }
         
         // Fix up column width if required
         int s, inc;
@@ -752,7 +721,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
      * @param n the number of columns to shift
      * @param clearRest whether clear the rest cells after the shifted endCol
      */
-    public void shiftCells(XSSFRow row, int startCol, int endCol, int n, boolean clearRest) {
+    private void shiftCells(XSSFRow row, int startCol, int endCol, int n, boolean clearRest) {
         final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
     	if (endCol < 0) {
     		endCol = row.getLastCellNum() - 1;
@@ -884,6 +853,19 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
      */
     public List<CellRangeAddress[]> shiftColumnsRange(int startCol, int endCol, int n, int tRow, int bRow,
             boolean copyColWidth, boolean resetOriginalColWidth, boolean moveComments, boolean clearRest, int copyOrigin) {
+
+        final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
+        final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+
+        // Move comments from the source column to the
+        //  destination column. Note that comments can
+        //  exist for cells which are null
+        if (moveComments) {
+		    // ZSS-418: moving a comment must move both comment and shape positions
+		    // Otherwise, Excel will fail to load such file
+            shiftComments(tRow, bRow, startCol, maxcol, 0, n); // take care: insert, delete and drag move
+        }
+        
     	//prepared inserting column format
     	final int srcCol = n <= 0 ? -1 : copyOrigin == XRange.FORMAT_RIGHTBELOW ? startCol : copyOrigin == XRange.FORMAT_LEFTABOVE ? startCol - 1 : -1; 
     	final CellStyle colStyle = srcCol >= 0 ? getColumnStyle(srcCol) : null;
@@ -928,41 +910,12 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         	}
         }
         
-        final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
-        final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
         final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, tRow, startCol, bRow, endCol, n, true);
         final boolean wholeColumn = tRow == 0 && bRow == maxrow; 
         if (wholeColumn) {
 	        //TODO handle the page breaks
 	        //?
         }
-
-		// TODO ZSS-418: workaround, will fix it later
-        // Move comments from the source column to the
-        //  destination column. Note that comments can
-        //  exist for cells which are null
-//        if (moveComments) {
-//            final CommentsTable sheetComments = getCommentsTable(false);
-//            if(sheetComments != null){
-//                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
-//                CTCommentList lst = sheetComments.getCTComments().getCommentList();
-//                for (final Iterator<CTComment> it = lst.getCommentList().iterator(); it.hasNext();) {
-//                	CTComment comment = it.next();
-//                    CellReference ref = new CellReference(comment.getRef());
-//                    final int colnum = ref.getCol();
-//                    final int rownum = ref.getRow();
-//                    if(startCol <= colnum && colnum <= endCol && tRow <= rownum && rownum <= bRow){
-//                    	int newColNum = colnum + n;
-//                    	if (newColNum < 0 || newColNum > maxcol) { //out of bound, shall remove it
-//                    		it.remove(); 
-//                    	} else {
-//	                        ref = new CellReference(ref.getRow(), newColNum);
-//	                        comment.setRef(ref.formatAsString());
-//                    	}
-//                    }
-//                }
-//            }
-//        }
         
         // Fix up column width if required
         int s, inc;
@@ -1045,6 +998,16 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
     }
     
     public List<CellRangeAddress[]> shiftBothRange(int tRow, int bRow, int nRow, int lCol, int rCol, int nCol, boolean moveComments) {
+
+        // Move comments from the source column to the
+        //  destination column. Note that comments can
+        //  exist for cells which are null
+		if(moveComments) {
+		    // ZSS-418: moving a comment must move both comment and shape positions
+		    // Otherwise, Excel will fail to load such file
+			shiftComments(tRow, bRow, lCol, rCol, nRow, nCol);
+		}
+    	
     	int startRow = Math.max(tRow, getFirstRowNum());
     	int endRow = Math.min(bRow, getLastRowNum());
         if (nRow > 0) {
@@ -1130,35 +1093,6 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         	}
         }
     	
-		// TODO ZSS-418: workaround, will fix it later
-        // Move comments from the source column to the
-        //  destination column. Note that comments can
-        //  exist for cells which are null
-//        if (moveComments) {
-//            final CommentsTable sheetComments = getCommentsTable(false);
-//            if(sheetComments != null){
-//                //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
-//                CTCommentList lst = sheetComments.getCTComments().getCommentList();
-//                for (final Iterator<CTComment> it = lst.getCommentList().iterator(); it.hasNext();) {
-//                	CTComment comment = it.next();
-//                    CellReference ref = new CellReference(comment.getRef());
-//                    final int colnum = ref.getCol();
-//                    final int rownum = ref.getRow();
-//                    if(lCol <= colnum && colnum <= rCol && tRow <= rownum && rownum <= bRow){
-//                    	int newColNum = colnum + nCol;
-//                    	int newRowNum = rownum + nRow;
-//                    	if (newColNum < 0 || newColNum > maxcol 
-//                    		|| newRowNum < 0 || newRowNum > maxrow) { //out of bound, shall remove it 
-//                    		it.remove(); 
-//                    	} else {
-//	                        ref = new CellReference(newRowNum, newColNum);
-//	                        comment.setRef(ref.formatAsString());
-//                    	}
-//                    }
-//                }
-//            }
-//        }
-        
         // Shift Hyperlinks which have been moved
         shiftHyperlinks(tRow, bRow, nRow, lCol, rCol, nCol);
         
@@ -1277,5 +1211,102 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
 	public void removeDrawingPatriarch(Drawing drawing) {
 		removeRelation((XSSFDrawing)drawing, true);
 		worksheet.unsetDrawing();
+	}
+	
+	
+	// ZSS-418: move comments completely 
+	/**
+	 * To move comments according to specific range.
+	 * All comments in destination will be removed.
+	 * @param nRow move n rows, negative number means inverse direction.
+	 * @param nCol move n columns, negative number means inverse direction.
+	 */
+	private void shiftComments(int row, int lastRow, int col, int lastCol, int nRow, int nCol) {
+
+		if(nRow == 0 && nCol == 0) { // just in case
+			return;
+		}
+		CommentsTable sheetComments = getCommentsTable(false);
+		if(sheetComments == null) {
+			return;
+		}
+
+		// collect comments in source range. we need get XSSFComment from XML beans and move comment through it
+		Map<String, XSSFComment> src = getComments(sheetComments, row, lastRow, col, lastCol);
+
+		// collect comments in destination range
+		Map<String, XSSFComment> dest = getComments(sheetComments, row + nRow, lastRow + nRow, col + nCol,
+				lastCol + nCol);
+
+		// filter comments are also in source range (source overlaps destination range)
+		Iterator<Entry<String, XSSFComment>> iter = dest.entrySet().iterator();
+		while(iter.hasNext()) {
+			if(src.containsKey(iter.next().getKey())) {
+				iter.remove();
+			}
+		}
+
+		// remove comments in destination
+		for(XSSFComment c : dest.values()) {
+			removeCellComment(c.getRow(), c.getColumn());
+		}
+
+		// when moving comments, the position CAN'T be duplicated.
+		// So, we must sort them first.
+		List<XSSFComment> ordered = new ArrayList<XSSFComment>(src.values());
+		Collections.sort(ordered, new Comparator<XSSFComment>() {
+			@Override
+			public int compare(XSSFComment a, XSSFComment b) {
+				if(a.getRow() != b.getRow()) {
+					return a.getRow() - b.getRow();
+				} else {
+					return a.getColumn() - b.getColumn();
+				}
+			}
+		});
+		
+		// move source comments to destination (they are just points)
+		if(nRow != 0) {
+			// decide forward or backward
+			int index = nRow < 0 ? 0 : ordered.size() -1;
+			int step = nRow < 0 ? 1 : -1;
+			for(int count = 0 ; count < ordered.size() ; ++count, index = index + step) {
+				XSSFComment comment = ordered.get(index);
+				comment.setRow(comment.getRow() + nRow);
+			}
+		}
+		if(nCol != 0) {
+			// decide forward or backward
+			int index = nCol < 0 ? 0 : ordered.size() -1;
+			int step = nCol < 0 ? 1 : -1;
+			for(int count = 0 ; count < ordered.size() ; ++count, index = index + step) {
+				XSSFComment comment = ordered.get(index);
+				comment.setColumn(comment.getColumn() + nCol);
+			}
+		}
+
+		// remove comments that are out of bounds
+		int maxRow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
+		int maxCol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+		for(XSSFComment c : src.values()) {
+			if(!isInside(0, maxRow, 0, maxCol, c.getRow(), c.getColumn())) {
+				removeCellComment(c.getRow(), c.getColumn());
+			}
+		}
+	}
+	
+	private Map<String, XSSFComment> getComments(CommentsTable commentsTable, int row, int lastRow, int col, int lastCol) {
+		Map<String, XSSFComment> comments = new HashMap<String, XSSFComment>();
+		for(CTComment ctc : commentsTable.getCTComments().getCommentList().getCommentList()) {
+			CellReference ref = new CellReference(ctc.getRef());
+			if(isInside(row, lastRow, col, lastCol, ref.getRow(), ref.getCol())) {
+				comments.put(ctc.getRef(), getCellComment(ref.getRow(), ref.getCol()));
+			}
+		}
+		return comments;
+	}
+
+	private boolean isInside(int row, int lastRow, int col, int lastCol, int r, int c) {
+		return row <= r && r <= lastRow && col <= c && c <= lastCol;
 	}
 }	

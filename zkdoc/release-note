@@ -15,6 +15,7 @@ ZK Spreadsheet 3.0.0
   ZSS-433 adjust column width and javascript errors showed
   ZSS-432 after insert new sheet and export it, then input some data into this new sheet and export again. such file can't load by ZSS and Excel
   ZSS-431 if freeze the specific xlsx file and export it, its freeze position is wrong in Excel
+  ZSS-418 if two or more cell with comment in a row and shift them, the exported file will make Excel occur error when loading
 
 ** Upgrade Notes
 

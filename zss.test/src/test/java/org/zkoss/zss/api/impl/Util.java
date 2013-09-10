@@ -8,12 +8,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.text.ParseException;
-
-import junit.framework.Assert;
-
-import org.apache.commons.math.complex.Complex;
-import org.zkoss.poi.ss.formula.functions.ComplexFormat;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.xssf.usermodel.XSSFComment;
+import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
@@ -95,6 +92,14 @@ public class Util {
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * @return the comment if there is a comment at given position; null, otherwise.
+	 */
+	public static XSSFComment getComment(XSSFSheet sheet, String ref) {
+		CellReference cr = new CellReference(ref);
+		return sheet.getCellComment(cr.getRow(), cr.getCol());
 	}
 
 }

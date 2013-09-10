@@ -4607,10 +4607,6 @@ public final class BookHelper {
 		//assign cell formats
 		dstCell.setCellStyle(srcCell.getCellStyle());
 		
-		// TODO ZSS-418: workaround, will fix it later
-		//assign comment
-//		dstCell.setCellComment(srcCell.getCellComment());
-		
 		//assign validation
 		// TODO assign validation, refer copyValidation(srcCell, dstCell);
 		

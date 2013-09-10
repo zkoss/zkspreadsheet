@@ -1,25 +1,47 @@
 <zk>
 	<window width="100%" height="100%">
-		press F5 can load 418-comment.xlsx again. 
-		<button label="save and load 418-comment-2.xlsx">
-			<attribute name="onClick">
-			<![CDATA[
-				Exporter excelExporter = Exporters.getExporter("excel");
-				java.io.File file = new java.io.File(application.getRealPath("/issue/418-comment-2.xlsx"));
-				java.io.FileOutputStream fos = new java.io.FileOutputStream(file);
-				excelExporter.export(ss.getBook(), fos);
-				fos.close();
-				ss.setSrc("/issue/" + file.getName());
-				org.zkoss.zul.Filedownload.save(file, "application/excel");
-			]]>
-			</attribute>
-		</button>
+		<vlayout>
+			<zscript><![CDATA[
+				import java.io.*;
+				import org.zkoss.zul.*;
+				import org.zkoss.zss.api.Range.DeleteShift;
+				import org.zkoss.zss.api.Range.InsertShift;
+				import org.zkoss.zss.api.Range.InsertCopyOrigin;
+			    public void export() {
+					Exporter excelExporter = Exporters.getExporter("excel");
+					File file = new File(application.getRealPath("/issue/418-comment-2.xlsx"));
+					FileOutputStream fos = new FileOutputStream(file);
+					excelExporter.export(ss.getBook(), fos);
+					fos.close();
+					ss.setSrc("/issue/" + file.getName());
+					Filedownload.save(file, "application/excel");
+			    }
+			]]></zscript>
+			<hlayout>
+				Manual steps (there is another issue cause manual): 
+				<button label="1" onClick='Ranges.range(ss.getSelectedSheet(), "G3").delete(DeleteShift.LEFT);' />
+				<button label="2" onClick='Ranges.range(ss.getSelectedSheet(), "C7").delete(DeleteShift.UP);' />
+				<button label="3" onClick='Ranges.range(ss.getSelectedSheet(), "F3").insert(InsertShift.RIGHT, InsertCopyOrigin.FORMAT_RIGHT_BELOW);' />
+				<button label="4" onClick='Ranges.range(ss.getSelectedSheet(), "C6").insert(InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);' />
+				<button label="5" onClick='Ranges.range(ss.getSelectedSheet(), "F").toColumnRange().delete(DeleteShift.LEFT);' />
+				<button label="6" onClick='Ranges.range(ss.getSelectedSheet(), "6").toRowRange().delete(DeleteShift.UP);' />
+				<button label="7" onClick='Ranges.range(ss.getSelectedSheet(), "G").toColumnRange().insert(InsertShift.RIGHT, InsertCopyOrigin.FORMAT_RIGHT_BELOW);' />
+				<button label="8" onClick='Ranges.range(ss.getSelectedSheet(), "7").toRowRange().insert(InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);' />
+				<button label="9" onClick='Ranges.range(ss.getSelectedSheet(), "H3:I3").shift(0, -2);' />
+				<button label="10" onClick='Ranges.range(ss.getSelectedSheet(), "C8:C9").shift(-2, 0);' />
+				<button label="11" onClick='Ranges.range(ss.getSelectedSheet(), "C3:G7").shift(-1, -1);' />
+				<button label="12" onClick='Ranges.range(ss.getSelectedSheet(), "B2:F6").shift(2, 2);' />
+				Remained comments: c0, c1, c2, c4, c5, c6, c7, c9, c10 (c3 and c8 were replaced)
+			</hlayout>
+			<hlayout>
+				<button label="save and load 418-comment-2.xlsx" onClick="export();" />
+				press F5 can load 418-comment.xlsx again. 
+			</hlayout>
+		</vlayout>
 		<spreadsheet id="ss" src="/issue/418-comment.xlsx" width="1500px" height="800px"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
-		<zscript><![CDATA[
-		]]></zscript>
 	</window>
 	<!-- for debug -->
 	<script defer="true"><![CDATA[

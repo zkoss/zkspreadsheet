@@ -18,6 +18,8 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.ZssContext;
+import org.zkoss.poi.xssf.usermodel.XSSFComment;
+import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Exporter;
@@ -38,6 +40,7 @@ import org.zkoss.zss.api.model.Sheet;
 /**
  * ZSS-408.
  * ZSS-414. ZSS-415.
+ * ZSS-418.
  * ZSS-425. ZSS-426.
  * ZSS-435.
  * ZSS-439.
@@ -419,5 +422,97 @@ public class Issue400Test {
 		rangeB = Ranges.range(sheet, "H12"); // a whole row cross the merged cell
 		rangeB.toColumnRange().unmerge(); // perform unmerge operation
 		Assert.assertEquals(0, sheet.getPoiSheet().getNumMergedRegions());
-	}	
+	}
+	
+	@Test
+	public void testZSS418() throws IOException {
+		Book book = Util.loadBook("book/418-comment.xlsx");
+		Sheet sheet = book.getSheetAt(0);
+		XSSFSheet ps = (XSSFSheet)sheet.getPoiSheet();
+		
+		// check original comments
+		String[] refs = {"C3", "D3", "E3", "F3", "H3", "I3", "C4", "C5", "C6", "C8", "C9"};
+		String[] txts = {"c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10"}; // null indicates test comment not existed
+		testZSS418_0(ps, refs, txts);
+
+		Ranges.range(sheet, "G3").delete(DeleteShift.LEFT);
+		refs = new String[]{"C3", "D3", "E3", "F3", "G3", "H3", "C4", "C5", "C6", "C8", "C9", "I3"};
+		txts = new String[]{"c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", null};
+		testZSS418_0(ps, refs, txts);
+
+		Ranges.range(sheet, "C7").delete(DeleteShift.UP);
+		refs = new String[]{"C3", "D3", "E3", "F3", "G3", "H3", "C4", "C5", "C6", "C7", "C8", "C9"};
+		txts = new String[]{"c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", null};
+		testZSS418_0(ps, refs, txts);
+
+		Ranges.range(sheet, "F3").insert(InsertShift.RIGHT, InsertCopyOrigin.FORMAT_RIGHT_BELOW);
+		refs = new String[]{"C3", "D3", "E3", "G3", "H3", "I3", "C4", "C5", "C6", "C7", "C8", "F3"};
+		txts = new String[]{"c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", null};
+		testZSS418_0(ps, refs, txts);
+		
+		Ranges.range(sheet, "C6").insert(InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		refs = new String[]{"C3", "D3", "E3", "G3", "H3", "I3", "C4", "C5", "C7", "C8", "C9", "C6"};
+		txts = new String[]{"c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", null};
+		testZSS418_0(ps, refs, txts);
+		
+		Ranges.range(sheet, "F").toColumnRange().delete(DeleteShift.LEFT);
+		refs = new String[]{"C3", "D3", "E3", "F3", "G3", "H3", "C4", "C5", "C7", "C8", "C9", "I3"};
+		txts = new String[]{"c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", null};
+		testZSS418_0(ps, refs, txts);
+
+		Ranges.range(sheet, "6").toRowRange().delete(DeleteShift.UP);
+		refs = new String[]{"C3", "D3", "E3", "F3", "G3", "H3", "C4", "C5", "C6", "C7", "C8", "C9"};
+		txts = new String[]{"c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", null};
+		testZSS418_0(ps, refs, txts);
+
+		Ranges.range(sheet, "G").toColumnRange().insert(InsertShift.RIGHT, InsertCopyOrigin.FORMAT_RIGHT_BELOW);
+		refs = new String[]{"C3", "D3", "E3", "F3", "H3", "I3", "C4", "C5", "C6", "C7", "C8", "G3"};
+		txts = new String[]{"c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", null};
+		testZSS418_0(ps, refs, txts);
+
+		Ranges.range(sheet, "7").toRowRange().insert(InsertShift.DOWN, InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		refs = new String[]{"C3", "D3", "E3", "F3", "H3", "I3", "C4", "C5", "C6", "C8", "C9", "C7"};
+		txts = new String[]{"c0", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", null};
+		testZSS418_0(ps, refs, txts);
+
+		Ranges.range(sheet, "H3:I3").shift(0, -2);
+		refs = new String[]{"C3", "D3", "E3", "F3", "G3", "C4", "C5", "C6", "C8", "C9", "H3", "I3"};
+		txts = new String[]{"c0", "c1", "c2", "c4", "c5", "c6", "c7", "c8", "c9", "c10", null, null};
+		testZSS418_0(ps, refs, txts);
+
+		Ranges.range(sheet, "C8:C9").shift(-2, 0);
+		refs = new String[]{"C3", "D3", "E3", "F3", "G3", "C4", "C5", "C6", "C7", "C8", "C9"};
+		txts = new String[]{"c0", "c1", "c2", "c4", "c5", "c6", "c7", "c9", "c10", null, null};
+		testZSS418_0(ps, refs, txts);
+
+		Ranges.range(sheet, "C3:G7").shift(-1, -1);
+		refs = new String[]{"C3", "D3", "E3", "F3", "G3", "C4", "C5", "C6", "C7"};
+		txts = new String[]{null, null, null, null, null, null, null, null, null};
+		testZSS418_0(ps, refs, txts);
+		refs = new String[]{"B2", "C2", "D2", "E2", "F2", "B3", "B4", "B5", "B6"};
+		txts = new String[]{"c0", "c1", "c2", "c4", "c5", "c6", "c7", "c9", "c10"};
+		testZSS418_0(ps, refs, txts);
+		
+		Ranges.range(sheet, "B2:F6").shift(2, 2);
+		refs = new String[]{"B2", "C2", "D2", "E2", "F2", "B3", "B4", "B5", "B6"};
+		txts = new String[]{null, null, null, null, null, null, null, null, null};
+		testZSS418_0(ps, refs, txts);
+		refs = new String[]{"D4", "E4", "F4", "G4", "H4", "D5", "D6", "D7", "D8"};
+		txts = new String[]{"c0", "c1", "c2", "c4", "c5", "c6", "c7", "c9", "c10"};
+		testZSS418_0(ps, refs, txts);
+	}
+	
+	public void testZSS418_0(XSSFSheet sheet, String[] refs, String[] texts) {
+		for(int i = 0; i < refs.length; ++i) {
+			XSSFComment comment = Util.getComment(sheet, refs[i]);
+			String text = texts[i];
+			if(text != null) {
+				Assert.assertNotNull(comment);
+				Assert.assertEquals(texts[i], comment.getString().getString());
+			} else {
+				Assert.assertNull(comment);
+			}
+		}
+	}
+	
 }
