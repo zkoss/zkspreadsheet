@@ -1,9 +1,8 @@
-package org.zkoss.zss.api.impl;
+package org.zkoss.zss.zats;
 
 import org.zkoss.zats.mimic.ComponentAgent;
 import org.zkoss.zats.mimic.DesktopAgent;
 import org.zkoss.zats.mimic.Zats;
-import org.zkoss.zss.SpreadsheetTestCaseBase;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.model.sys.XSheet;
 

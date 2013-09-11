@@ -1,9 +1,8 @@
-package org.zkoss.zss.api.impl;
+package org.zkoss.zss.zats;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.zkoss.zss.SpreadsheetAgent;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.ui.Spreadsheet;
 

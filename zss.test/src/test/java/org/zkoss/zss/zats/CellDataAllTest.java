@@ -1,4 +1,4 @@
-package org.zkoss.zss.api.impl;
+package org.zkoss.zss.zats;
 
 import java.util.Arrays;
 import java.util.List;

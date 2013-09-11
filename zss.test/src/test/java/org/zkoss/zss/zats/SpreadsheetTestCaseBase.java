@@ -1,4 +1,4 @@
-package org.zkoss.zss;
+package org.zkoss.zss.zats;
 
 import org.junit.After;
 import org.junit.AfterClass;
