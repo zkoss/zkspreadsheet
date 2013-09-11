@@ -7,6 +7,7 @@ import static org.zkoss.zss.api.Ranges.range;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.Locale;
 
 import org.junit.After;
@@ -59,20 +60,29 @@ public class Issue400Test {
 		ZssContext.setThreadLocal(null);
 	}
 
-	@Ignore("ZSS-437")
 	@Test
-	public void testZSS437() throws IOException {
-		final String filename = "book/blank.xlsx";
-		final InputStream is =  getClass().getResourceAsStream(filename);
-		Book workbook = Importers.getImporter().imports(is, filename);
-		Util.export(workbook, "book/test.xlsx");
+	public void testZSS437() throws IOException, URISyntaxException {
 		
+		String EXPORT_FILE = "book/zss437.xlsx";
+		
+		Book workbook = Util.loadBook("book/blank.xlsx");
 		Sheet sheet = workbook.getSheet("Sheet1");
+		Range column0 = range(sheet, "A1");
+		Util.export(workbook, EXPORT_FILE);
 		
-		Range rA1 = range(sheet, "A1");
-		rA1.setCellEditText("Bold");
-		applyFontBoldweight(rA1, Font.Boldweight.BOLD);
-		rA1.setColumnWidth(100);
+		column0.setCellEditText("Bold");
+		applyFontBoldweight(column0, Font.Boldweight.BOLD);
+		column0.setColumnWidth(100);
+		assertEquals(100, sheet.getColumnWidth(0));
+		
+		//load saved file to validate width is saved
+		Util.export(workbook, EXPORT_FILE);
+		workbook = Util.loadBook(EXPORT_FILE);
+		sheet = workbook.getSheet("Sheet1");
+		assertEquals(100, sheet.getColumnWidth(0));
+		//for human eye checking
+		Util.open(EXPORT_FILE);
+		
 	}
 	
 	/**
