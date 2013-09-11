@@ -276,7 +276,6 @@ public class Issue400Test {
 		//how to 
 	}
 	
-	@Ignore("ZSS-429")
 	@Test
 	public void testZSS429() throws IOException {
 		
@@ -304,7 +303,6 @@ public class Issue400Test {
 		
 	}
 	
-	@Ignore("ZSS-431")
 	@Test
 	public void testZSS431() throws IOException {
 		testZSS431_0(Util.loadBook("book/blank.xlsx"));
