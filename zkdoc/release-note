@@ -9,6 +9,7 @@ ZK Spreadsheet 3.0.0
   ZSS-439 Delete rows cause XmlValueDisconnectedException
   ZSS-392 Freezing panes with preload attribute cause cell data not render
   ZSS-423 JS error when rowfreeze > preloadRowSize or columnfreeze > preloadColumnSize
+  ZSS-376 throw exception when drawing unsupported chart in xls format
   
 ** Upgrade Notes
 
