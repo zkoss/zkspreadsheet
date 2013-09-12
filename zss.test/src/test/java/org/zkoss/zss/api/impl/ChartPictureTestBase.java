@@ -16,6 +16,10 @@ import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zssex.api.ChartDataUtil;
 
+/**
+ * all method implementation to test chart & picture operation
+ * @author kuro
+ */
 public class ChartPictureTestBase {
 	
 	protected void testDeletePicture(Book workbook) throws IOException {

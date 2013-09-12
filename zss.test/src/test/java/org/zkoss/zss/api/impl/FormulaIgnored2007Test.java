@@ -59,6 +59,15 @@ public class FormulaIgnored2007Test {
 		assertEquals("1.00", Ranges.range(sheet, "B5").getCellFormatText());
 	}
 	
+	//must accept a cell reference to a time instead of a time string
+	@Test
+	public void testMINUTE() throws IOException {
+		Book book = Util.loadBook("book/blank.xlsx");
+		Sheet sheet = book.getSheet("Sheet1");
+		Ranges.range(sheet, "C15").setCellEditText("4:48:00 PM");
+		assertEquals("48", Ranges.range(sheet, "C15").getCellData().getFormatText());
+	}
+	
 	// 1990/1/1 is Monday, but Excel think it is not work day.
 	@Test
 	public void test19900101IsNotWorkDayInExcel() throws IOException {
