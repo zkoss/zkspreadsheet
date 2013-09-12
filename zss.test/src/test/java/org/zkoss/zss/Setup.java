@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.Properties;
 
@@ -33,11 +34,10 @@ public class Setup {
 	
 	public static synchronized File getTempFile(){
 		if(temp==null){
-			try {
-				temp = File.createTempFile("zsstest", ".tmp");
-			} catch (IOException e) {
-				throw new RuntimeException();
-			}
+			File tempFolder = new File(System.getProperty("java.io.tmpdir"));
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+			temp = new File(tempFolder,"zsstest-"+sdf.format(new java.util.Date()));
+			
 		}
 		return temp;
 		

@@ -224,10 +224,10 @@ public class Issue400Test {
 		Assert.assertEquals("#00ff00", r.getCellStyle().getBackgroundColor().getHtmlColor());
 	}
 	
-	@Ignore("ZSS-432")
 	@Test
 	public void testZSS432() throws IOException {
 		
+//		Book book = Util.loadBook("book/blank.xlsx");
 		Book book = Util.loadBook("book/432.xlsx");
 		
 		Sheet sheet = Ranges.range(book.getSheetAt(0)).createSheet("newone");
