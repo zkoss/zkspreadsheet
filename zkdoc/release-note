@@ -12,6 +12,7 @@ ZK Spreadsheet 3.0.0
   ZSS-376 throw exception when drawing unsupported chart in xls format
   ZSS-369 throw exception when rendering line chart with non-contiguous series data in xls format
   ZSS-412 Cell layout crash after cut overlap on merge cell after undo
+  ZSS-433 adjust column width and javascript errors showed
 
 ** Upgrade Notes
 
