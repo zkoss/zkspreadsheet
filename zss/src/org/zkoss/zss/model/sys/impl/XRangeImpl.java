@@ -2272,72 +2272,74 @@ public class XRangeImpl implements XRange {
 	
 	//given a cell return the maximum range
 	private CellRangeAddress getCurrentRegion(XSheet sheet, int row, int col) {
-		int minc = col;
-		int maxc = col;
-		int minr = Integer.MAX_VALUE;
-		int maxr = -1;
+		int minNonBlankColumn = col;
+		int maxNonBlankColumn = col;
+		int minNonBlankRow = Integer.MAX_VALUE;
+		int maxNonBlankRow = -1;
 		final Row roworg = sheet.getRow(row);
-		final int[] ltrb = getRowMinMax(sheet, roworg, minc, maxc);
-		if (ltrb != null) {
-			minc = ltrb[0];
-			minr = ltrb[1];
-			maxc = ltrb[2];
-			maxr = ltrb[3];
+		final int[] leftTopRightBottom = getRowMinMax(sheet, roworg, minNonBlankColumn, maxNonBlankColumn);
+		if (leftTopRightBottom != null) {
+			minNonBlankColumn = leftTopRightBottom[0];
+			minNonBlankRow = leftTopRightBottom[1];
+			maxNonBlankColumn = leftTopRightBottom[2];
+			maxNonBlankRow = leftTopRightBottom[3];
 		}
 		
-		int ru = row > 0 ? row - 1 : row;
-		int rd = row + 1;
+		int rowUp = row > 0 ? row - 1 : row;
+		int rowDown = row + 1;
 		
-		boolean stopu = ru == row;
-		boolean stopd = false;
+		boolean stopFindingUp = rowUp == row;
+		boolean stopFindingDown = false;
 		do {
 			//for row above
-			if (!stopu) {
-				final Row rowu = sheet.getRow(ru);
-				final int[] ltrbu = getRowMinMax(sheet, rowu, minc, maxc);
-				if (ltrbu != null) {
-					if (minc != ltrbu[0] || maxc != ltrbu[2]) {  //minc or maxc changed!
-						stopd = false;
-						minc = ltrbu[0];
-						maxc = ltrbu[2];
+			if (!stopFindingUp) {
+				final Row rowu = sheet.getRow(rowUp);
+				final int[] upperRowLeftTopRightBottom = getRowMinMax(sheet, rowu, minNonBlankColumn, maxNonBlankColumn);
+				if (upperRowLeftTopRightBottom != null) {
+					if (minNonBlankColumn != upperRowLeftTopRightBottom[0] || maxNonBlankColumn != upperRowLeftTopRightBottom[2]) {  //minc or maxc changed!
+						stopFindingDown = false;
+						minNonBlankColumn = upperRowLeftTopRightBottom[0];
+						maxNonBlankColumn = upperRowLeftTopRightBottom[2];
 					}
-					if (minr > ltrbu[1]) {
-						minr = ltrbu[1];
+					if (minNonBlankRow > upperRowLeftTopRightBottom[1]) {
+						minNonBlankRow = upperRowLeftTopRightBottom[1];
 					}
-					if (ru > 0) {
-						--ru;
+					if (rowUp > 0) {
+						--rowUp;
 					} else {
-						stopu = true; //no more row above!
+						stopFindingUp = true; //no more row above!
 					}
 				} else { //blank row
-					stopu = true;
+					stopFindingUp = true;
 				}
 			}
 
 			//for row below
-			if (!stopd) {
-				final Row rowd = sheet.getRow(rd);
-				final int[] ltrbd = getRowMinMax(sheet, rowd, minc, maxc);
-				if (ltrbd != null) {
-					if (minc != ltrbd[0] || maxc != ltrbd[2]) { //minc and maxc changed
-						stopu = false;
-						minc = ltrbd[0];
-						maxc = ltrbd[2];
+			if (!stopFindingDown) {
+				final Row rowd = sheet.getRow(rowDown);
+				final int[] downRowLeftTopRightBottom = getRowMinMax(sheet, rowd, minNonBlankColumn, maxNonBlankColumn);
+				if (downRowLeftTopRightBottom != null) {
+					if (minNonBlankColumn != downRowLeftTopRightBottom[0] || maxNonBlankColumn != downRowLeftTopRightBottom[2]) { //minc and maxc changed
+						stopFindingUp = false;
+						minNonBlankColumn = downRowLeftTopRightBottom[0];
+						maxNonBlankColumn = downRowLeftTopRightBottom[2];
 					}
-					if (maxr < ltrbd[3]) {
-						maxr = ltrbd[3];
+					if (maxNonBlankRow < downRowLeftTopRightBottom[3]) {
+						maxNonBlankRow = downRowLeftTopRightBottom[3];
 					}
-					++rd;
+					++rowDown;
 				} else { //blank row
-					stopd = true;
+					stopFindingDown = true;
 				}
 			}
-		} while(!stopu || !stopd);
+		} while(!stopFindingUp || !stopFindingDown);
 		
-		if (minr == Integer.MAX_VALUE && maxr < 0) { //all blanks in 9 cells!
+		if (minNonBlankRow == Integer.MAX_VALUE && maxNonBlankRow < 0) { //all blanks in 9 cells!
 			return null;
 		}
-		return new CellRangeAddress(minr, maxr, minc, maxc);
+		minNonBlankRow = (minNonBlankRow == Integer.MAX_VALUE)? row: minNonBlankRow;
+		maxNonBlankRow = (maxNonBlankRow == -1)? row: maxNonBlankRow;
+		return new CellRangeAddress(minNonBlankRow, maxNonBlankRow, minNonBlankColumn, maxNonBlankColumn);
 	}
 
 	// ZSS-246: give an API for user checking the auto-filtering range before applying it.
@@ -2402,11 +2404,13 @@ public class XRangeImpl implements XRange {
 			final Ref ref = getRefs().iterator().next();
 			if(_sheet.isAutoFilterMode()){
 				affectedArea = _sheet.removeAutoFilter();
-				XRange unhideArea = XRanges.range(_sheet,
-						affectedArea.getFirstRow(),affectedArea.getFirstColumn(),
-						affectedArea.getLastRow(),affectedArea.getLastColumn());
-				unhideArea.getRows().setHidden(false);
-				BookHelper.notifyAutoFilterChange(ref,false);
+				if (affectedArea !=null){
+					XRange unhideArea = XRanges.range(_sheet,
+							affectedArea.getFirstRow(),affectedArea.getFirstColumn(),
+							affectedArea.getLastRow(),affectedArea.getLastColumn());
+					unhideArea.getRows().setHidden(false);
+					BookHelper.notifyAutoFilterChange(ref,false);
+				}
 			} else {
 				XRange r = findAutoFilterRange(); // ZSS-246: move the original code to a new API for checking
 				if(r != null) {
@@ -2418,14 +2422,16 @@ public class XRangeImpl implements XRange {
 				}
 			}
 			 
-			//I have to know the top row area to show/remove the combo button
-			//changed by this autofilter action, it's not the same area
-			//and then send ON_CONTENTS_CHANGE event
-			XRangeImpl buttonChange = (XRangeImpl) XRanges.range(_sheet, 
-					affectedArea.getFirstRow(),affectedArea.getFirstColumn(),
-					affectedArea.getFirstRow(),affectedArea.getLastColumn());
-			
-			BookHelper.notifyBtnChanges(new HashSet<Ref>(buttonChange.getRefs()));
+			if (affectedArea !=null){
+				//I have to know the top row area to show/remove the combo button
+				//changed by this autofilter action, it's not the same area
+				//and then send ON_CONTENTS_CHANGE event
+				XRangeImpl buttonChange = (XRangeImpl) XRanges.range(_sheet, 
+						affectedArea.getFirstRow(),affectedArea.getFirstColumn(),
+						affectedArea.getFirstRow(),affectedArea.getLastColumn());
+
+				BookHelper.notifyBtnChanges(new HashSet<Ref>(buttonChange.getRefs()));
+			}
 			
 			return _sheet.getAutoFilter();
 		}
