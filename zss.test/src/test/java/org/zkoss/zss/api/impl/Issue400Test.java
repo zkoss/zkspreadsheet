@@ -304,7 +304,7 @@ public class Issue400Test {
 		
 	}
 	
-	@Test
+	@Test @Ignore("cannot reproduce")
 	public void testZSS431() throws IOException {
 		testZSS431_0(Util.loadBook("book/blank.xlsx"));
 		testZSS431_0(Util.loadBook("book/blank.xls"));
