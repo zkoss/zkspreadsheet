@@ -1823,35 +1823,6 @@ public class Formula2007Test {
 	}
 
 	@Test
-	public void testIMCONJUNGATE() throws IOException {
-		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("3 - 4i", Ranges.range(sheet, "B45").getCellFormatText());
-	}
-
-	@Test
-	public void testIMEXP() throws IOException {
-		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("1.46869393991589 + 2.28735528717884i",
-				Ranges.range(sheet, "B51").getCellFormatText());
-	}
-
-	@Test
-	public void testIMDIV() throws IOException {
-		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("5 + 12i", Ranges.range(sheet, "B49").getCellFormatText());
-	}
-
-	@Test
-	public void testIMPRODUCT() throws IOException {
-		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("27 + 11i", Ranges.range(sheet, "B61").getCellFormatText());
-	}
-
-	@Test
 	public void testIMREAL() throws IOException {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
 		Sheet sheet = book.getSheet("formula-engineering");
@@ -1878,7 +1849,78 @@ public class Formula2007Test {
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("0040", Ranges.range(sheet, "B77").getCellFormatText());
 	}
+	
+	@Test
+	public void testIMCOS() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		AssertUtil.assertComplexEquals("0.833730025131149-0.988897705762865i", Ranges.range(sheet, "B47").getCellFormatText());
+	}
 
+	@Test
+	public void testIMLN() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		AssertUtil.assertComplexEquals("1.6094379124341+0.927295218001612i", Ranges.range(sheet, "B53").getCellFormatText());
+		
+	}
+
+	@Test
+	public void testIMSQRT() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		AssertUtil.assertComplexEquals("1.09868411346781+0.455089860562227i", Ranges.range(sheet, "B67").getCellFormatText());
+		
+	}
+
+	@Test
+	public void testIMLOG10() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		AssertUtil.assertComplexEquals("0.698970004336019+0.402719196273373i", Ranges.range(sheet, "B55").getCellFormatText());
+		
+	}
+
+	@Test
+	public void testIMSUM() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		AssertUtil.assertComplexEquals("8+i", Ranges.range(sheet, "B71").getCellFormatText());
+		
+	}
+
+	@Test
+	public void testIMSIN() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		AssertUtil.assertComplexEquals("3.85373803791938-27.0168132580039i", Ranges.range(sheet, "B65").getCellFormatText());
+		
+	}
+
+	@Test
+	public void testIMSUB() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		AssertUtil.assertComplexEquals("8+i", Ranges.range(sheet, "B69").getCellFormatText());
+		
+	}
+
+	@Test
+	public void testIMLOG2() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		AssertUtil.assertComplexEquals("2.32192809506607+1.33780421255394i", Ranges.range(sheet, "B57").getCellFormatText());
+		
+	}
+
+	@Test
+	public void testIMPOWER() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		AssertUtil.assertComplexEquals("-46+9.00000000000001i", Ranges.range(sheet, "B59").getCellFormatText());
+	}
+
+	// lookup  ----------------------------------------------------------------------------------------
 	@Test
 	public void testADDRESS() throws IOException {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
@@ -1886,7 +1928,6 @@ public class Formula2007Test {
 		assertEquals("$C$2", Ranges.range(sheet, "B3").getCellFormatText());
 	}
 	
-	// lookup  ----------------------------------------------------------------------------------------
 	@Test
 	public void testCHOOSE() throws IOException {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
