@@ -303,22 +303,28 @@ public class Issue400Test {
 		Assert.assertEquals("A", Ranges.range(sheet,"D4").getCellFormatText());
 		
 	}
-	
-	@Test @Ignore("cannot reproduce")
+//	@Ignore("cannot reproduce")
+	@Test 
 	public void testZSS431() throws IOException {
-		testZSS431_0(Util.loadBook("book/blank.xlsx"));
-		testZSS431_0(Util.loadBook("book/blank.xls"));
-		testZSS431_0(Util.loadBook("book/431-freezepanel.xlsx"));
+		testZSS431_0(Util.loadBook("book/431-freezepanel.xlsx"),7,4);
+		testZSS431_0(Util.loadBook("book/431-freezepanel.xlsx"),7,0);
+		testZSS431_0(Util.loadBook("book/431-freezepanel.xlsx"),0,4);
+		testZSS431_0(Util.loadBook("book/431-freezepanel.xls"),7,4);
+		testZSS431_0(Util.loadBook("book/431-freezepanel.xls"),7,0);
+		testZSS431_0(Util.loadBook("book/431-freezepanel.xls"),0,4);
 	}
 	
-	public void testZSS431_0(Book book) throws IOException {
+	public void testZSS431_0(Book book,int row, int column) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		Assert.assertEquals(0, sheet.getRowFreeze());
 		Assert.assertEquals(0, sheet.getColumnFreeze());
 		
-		Ranges.range(sheet).setFreezePanel(7, 5);
-		Assert.assertEquals(7, sheet.getRowFreeze());
-		Assert.assertEquals(5, sheet.getColumnFreeze());
+		Ranges.range(sheet).setFreezePanel(row, column);
+		Assert.assertEquals(row, sheet.getRowFreeze());
+		Assert.assertEquals(column, sheet.getColumnFreeze());
+		
+		Assert.assertEquals(0, sheet.getPoiSheet().getTopRow());
+		Assert.assertEquals(0, sheet.getPoiSheet().getLeftCol());
 		
 		File temp = Setup.getTempFile();
 		//export first time
@@ -328,12 +334,12 @@ public class Issue400Test {
 		book = Importers.getImporter().imports(temp, "test");
 		sheet = book.getSheetAt(0);
 		
-		Assert.assertEquals(7, sheet.getRowFreeze());
-		Assert.assertEquals(5, sheet.getColumnFreeze());
+		Assert.assertEquals(row, sheet.getRowFreeze());
+		Assert.assertEquals(column, sheet.getColumnFreeze());
+		Assert.assertEquals(0, sheet.getPoiSheet().getTopRow());
+		Assert.assertEquals(0, sheet.getPoiSheet().getLeftCol());
 		
 		//TODO how to verify it in Excel?
-		
-		
 	}
 
 	@Test
