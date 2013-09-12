@@ -11,6 +11,7 @@ ZK Spreadsheet 3.0.0
   ZSS-423 JS error when rowfreeze > preloadRowSize or columnfreeze > preloadColumnSize
   ZSS-376 throw exception when drawing unsupported chart in xls format
   ZSS-369 throw exception when rendering line chart with non-contiguous series data in xls format
+  ZSS-412 Cell layout crash after cut overlap on merge cell after undo
 
 ** Upgrade Notes
 

@@ -1172,7 +1172,7 @@ public class XRangeImpl implements XRange {
 				final int bRow = ref.getBottomRow();
 				final int rCol = ref.getRightCol();
 				final XSheet sheet = BookHelper.getSheet(_sheet, refSheet);
-				final ChangeInfo info = BookHelper.unMerge(sheet, tRow, lCol, bRow, rCol);
+				final ChangeInfo info = BookHelper.unMerge(sheet, tRow, lCol, bRow, rCol,true);
 				notifyMergeChange(refBook, info, ref, SSDataEvent.ON_CONTENTS_CHANGE, SSDataEvent.MOVE_NO);
 			}
 		}

@@ -1,0 +1,15 @@
+<zk>
+	<window width="100%" height="100%">
+	<label multiline="true">
+1.select A1:A3, ctrl+X to cut
+2.select on A2 (merged cell)
+3.ctrl+V to paste 
+4.ctrl+Z to undo
+5.select A2 and unmerge
+	</label>
+		<spreadsheet id="ss" src="/issue3/book/412-overlap-undo.xls" hflex="1" vflex="1"
+			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+	</window>
+</zk>

@@ -1,6 +1,7 @@
 package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.zkoss.zss.api.CellOperationUtil.applyFontBoldweight;
 import static org.zkoss.zss.api.Ranges.range;
 
@@ -360,4 +361,57 @@ public class Issue400Test {
 		// read the style, it should not occur exception.
 		Ranges.range(sheet, "A1").getCellStyle();
 	}
+	
+	@Test
+	public void testZSS412() throws IOException {
+		
+		Book book = Util.loadBook("book/412-overlap-undo.xls");
+		Sheet sheet = book.getSheetAt(0);
+		
+		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals("A2:A3", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		
+		Range r1 = Ranges.range(sheet,"A1:A3");
+		Range r2 = Ranges.range(sheet,"A2");
+		r1.paste(r2);	
+		
+		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals("A3:A4", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		
+		Range r3 = Ranges.range(sheet,"A2:A3");
+		r3.merge(false);
+		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals("A2:A3", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		
+		r3 = Ranges.range(sheet,"A2:B3");
+		r3.merge(true);
+		Assert.assertEquals(2, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals("A2:B2", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		Assert.assertEquals("A3:B3", sheet.getPoiSheet().getMergedRegion(1).formatAsString());
+	}
+	@Test
+	public void testZSS412_395_1() throws IOException {
+		Book book = Util.loadBook("book/blank.xls");
+		Sheet sheet = book.getSheetAt(0);
+		Range rangeA = Ranges.range(sheet, "H11:J13");
+		rangeA.merge(false); // merge a 3 x 3
+		
+		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals("H11:J13", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		
+		Range rangeB = Ranges.range(sheet, "H12"); // a whole row cross the merged cell
+		rangeB.toRowRange().unmerge(); // perform unmerge operation
+	
+		Assert.assertEquals(0, sheet.getPoiSheet().getNumMergedRegions());
+		
+		//again on column
+		rangeA = Ranges.range(sheet, "H11:J13");
+		rangeA.merge(false); // merge a 3 x 3
+		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
+		Assert.assertEquals("H11:J13", sheet.getPoiSheet().getMergedRegion(0).formatAsString());
+		
+		rangeB = Ranges.range(sheet, "H12"); // a whole row cross the merged cell
+		rangeB.toColumnRange().unmerge(); // perform unmerge operation
+		Assert.assertEquals(0, sheet.getPoiSheet().getNumMergedRegions());
+	}	
 }

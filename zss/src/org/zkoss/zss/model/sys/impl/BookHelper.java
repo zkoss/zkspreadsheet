@@ -1699,7 +1699,7 @@ public final class BookHelper {
 			if (dstaddr != null) { //shall un-merge the destination merge range
 				final int dstrow2 = dstaddr.getLastRow();
 				final int dstcol2 = dstaddr.getLastColumn();
-				final ChangeInfo changeInfo0 = unMerge(dstSheet, dstrow, dstcol, dstrow2, dstcol2);
+				final ChangeInfo changeInfo0 = unMerge(dstSheet, dstrow, dstcol, dstrow2, dstcol2,false);
 				assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 			}
 			final int srcrow = srcCell.getRowIndex();
@@ -2541,7 +2541,7 @@ public final class BookHelper {
         return shiftedFmla;
 	}
 	
-	public static ChangeInfo unMerge(XSheet sheet, int tRow, int lCol, int bRow, int rCol) {
+	public static ChangeInfo unMerge(XSheet sheet, int tRow, int lCol, int bRow, int rCol,boolean overlapped) {
 		final RefSheet refSheet = BookHelper.getRefSheet((XBook)sheet.getWorkbook(), sheet);
 		final List<MergeChange> changes = new ArrayList<MergeChange>(); 
 		for(int j = sheet.getNumMergedRegions() - 1; j >= 0; --j) {
@@ -2553,7 +2553,9 @@ public final class BookHelper {
         	final int lastRow = merged.getLastRow();
         	
         	// ZSS-395 unmerge when any cell overlap with merged region
-        	if(overlap(firstRow, firstCol, lastRow, lastCol, tRow, lCol, bRow, rCol)) {
+        	// ZSS-412 use a flag to decide to check overlap or not.
+        	if( (overlapped && overlap(firstRow, firstCol, lastRow, lastCol, tRow, lCol, bRow, rCol)) || 
+        			(!overlapped && contain(tRow, lCol, bRow, rCol,firstRow, firstCol, lastRow, lastCol)) ) {
 				changes.add(new MergeChange(new AreaRefImpl(firstRow, firstCol, lastRow, lastCol, refSheet), null));
 				sheet.removeMergedRegion(j);
         	}
@@ -2561,16 +2563,24 @@ public final class BookHelper {
 		return new ChangeInfo(null, null, changes);
 	}
 	
+	//a b are overlapped.
 	private static boolean overlap(int aTopRow, int aLeftCol, int aBottomRow, int aRightCol,
 			int bTopRow, int bLeftCol, int bBottomRow, int bRightCol) {
 		
-		boolean xOverlap = isBetween(aLeftCol, bLeftCol, bRightCol) || isBetween(bLeftCol, aLeftCol, aRightCol);
-		boolean yOverlap = isBetween(aTopRow, bTopRow, bBottomRow) || isBetween(bTopRow, aTopRow, aBottomRow);
+		boolean xOverlap = between(aLeftCol, bLeftCol, bRightCol) || between(bLeftCol, aLeftCol, aRightCol);
+		boolean yOverlap = between(aTopRow, bTopRow, bBottomRow) || between(bTopRow, aTopRow, aBottomRow);
 		
 		return xOverlap && yOverlap;
 	}
 	
-	private static boolean isBetween(int value, int min, int max) {
+	//a contains b
+	private static boolean contain(int aTopRow, int aLeftCol, int aBottomRow, int aRightCol,
+			int bTopRow, int bLeftCol, int bBottomRow, int bRightCol){
+		return aLeftCol <= bLeftCol && aRightCol >= bRightCol 
+        		&& aTopRow <= bTopRow && aBottomRow >= bBottomRow;
+	}
+	
+	private static boolean between(int value, int min, int max) {
 		return (value >= min) && (value <= max);
 	}
 	
