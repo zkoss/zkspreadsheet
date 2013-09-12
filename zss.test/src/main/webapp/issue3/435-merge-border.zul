@@ -1,0 +1,21 @@
+<zk>
+	<window width="100%" height="100%">
+		<hlayout>
+			<label pre="true">
+Steps:
+	1. merge B2:D4
+	2. apply outside border at such merge range (B2:D4)
+	2. insert column at column C
+	3. C1 should have a bottom border but not
+			</label>
+		</hlayout>
+
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" width="1500px" height="800px"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+
+		<zscript><![CDATA[
+		]]></zscript>
+	</window>
+</zk>

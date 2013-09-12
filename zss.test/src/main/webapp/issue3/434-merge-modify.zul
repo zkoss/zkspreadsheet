@@ -1,0 +1,30 @@
+<zk>
+	<window width="100%" height="100%">
+		<hlayout>
+			<label pre="true">
+Issue 1:
+	1. merge B2:D4
+	2. insert/remove row at row 2 or 3
+	3. nothing happen
+		* if row 2 or 3 has non-blank cell, this will be correct.
+		* row 1 won't happen this issue 
+			</label>
+			<label pre="true">
+Issue 2:
+	1. merge B2:D4
+	2. insert/delete column C or D
+	3. cells become chaos
+		* if column C or D has non-blank cell, this will be correct.
+		* column B won't happen this issue
+			</label>
+		</hlayout>
+
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" width="1500px" height="800px"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+
+		<zscript><![CDATA[
+		]]></zscript>
+	</window>
+</zk>
