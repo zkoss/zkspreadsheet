@@ -3,6 +3,7 @@ package org.zkoss.zss.api.impl;
 import java.awt.Desktop;
 import java.awt.Desktop.Action;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +17,7 @@ import org.zkoss.zss.api.model.Book;
 
 /**
  * a helper for testing
- * @author kuro
+ * @author kuro, Hawk
  *
  */
 public class Util {
@@ -35,15 +36,33 @@ public class Util {
 		return false; // doesn't match any region
 	}
 
-	public static Book loadBook(String filename) throws IOException {
+	public static Book loadBook(String filename) {
 		final InputStream is = Util.class.getResourceAsStream(filename);
-		return Importers.getImporter().imports(is, filename);
+		try {
+			return Importers.getImporter().imports(is, filename);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if(is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {}			
+			}
+		}
+		return null;
 	}
 	
-	public static void export(Book workbook, String filename) throws IOException {
+	public static void export(Book workbook, String filename) {
 		Exporter excelExporter = Exporters.getExporter("excel");
-		FileOutputStream fos = new FileOutputStream(new File(ShiftTest.class.getResource("").getPath() + filename));
-		excelExporter.export(workbook, fos);
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(new File(ShiftTest.class.getResource("").getPath() + filename));
+			excelExporter.export(workbook, fos);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -51,15 +70,23 @@ public class Util {
 	 * @param file
 	 * @throws IOException
 	 */
-	public static void open(File file) throws IOException {
+	public static void open(File file) {
 		if(Desktop.isDesktopSupported()) {
 			if(Desktop.getDesktop().isSupported(Action.OPEN)) {
-				Desktop.getDesktop().open(file);
+				try {
+					Desktop.getDesktop().open(file);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 	
-	public static void open(String filePath) throws IOException, URISyntaxException {
-		open(new File(Util.class.getResource(filePath).toURI()));
+	public static void open(String filePath) {
+		try {
+			open(new File(Util.class.getResource(filePath).toURI()));
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
 	}
 }

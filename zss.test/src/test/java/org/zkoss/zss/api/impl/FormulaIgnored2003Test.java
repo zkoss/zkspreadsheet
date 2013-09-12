@@ -1,0 +1,882 @@
+package org.zkoss.zss.api.impl;
+
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.util.Locale;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.zkoss.poi.ss.usermodel.ZssContext;
+import org.zkoss.zss.Setup;
+import org.zkoss.zss.api.Ranges;
+import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Sheet;
+
+/**
+ * @author kuro, Hawk
+ */
+@Ignore
+public class FormulaIgnored2003Test {
+	
+	@BeforeClass
+	public static void setUpLibrary() throws Exception {
+		Setup.touch();
+	}
+	
+	@Before
+	public void startUp() throws Exception {
+		ZssContext.setThreadLocal(new ZssContext(Locale.TAIWAN,-1));
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		ZssContext.setThreadLocal(null);
+	}
+
+	
+	// unsupported
+	@Test
+	public void testTRANSPOSE() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-lookup");
+	}
+	
+	// unsupported
+	@Test
+	public void testRTD() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-lookup");
+	}
+	
+	// DATE FORMAT ============================
+	// expected:<[2013/3/29]> but was:<[3/29/2013]>
+	@Test
+	public void testNegativeWorkdayEndDateIsHolday() throws IOException {
+		Book book = Util.loadBook("book/TestFile2003-Formula.xls");
+		Sheet sheet = book.getSheet("formula-datetime");
+		assertEquals("2013/3/29", Ranges.range(sheet, "B52").getCellData()
+				.getFormatText()); // =WORKDAY(DATE(2013,4,1),-1)
+		assertEquals("2013/5/31", Ranges.range(sheet, "B53").getCellData()
+				.getFormatText()); // =WORKDAY(DATE(2013,6,7),-5)
+	}
+	
+	// expected:<[2006/11/15]> but was:<[11/15/2006]>
+	@Test
+	public void testCOUPPCD() throws IOException {
+		Book book = Util.loadBook("book/TestFile2003-Formula.xls");
+		Sheet sheet = book.getSheet("formula-financial");
+		assertEquals("2006/11/15", Ranges.range(sheet, "B30").getCellData()
+				.getFormatText());
+	}
+	
+	@Test
+	public void testWORKDAY() throws IOException {
+		Book book = Util.loadBook("book/TestFile2003-Formula.xls");
+		Sheet sheet = book.getSheet("formula-datetime");
+		assertEquals("2013/4/5", Ranges.range(sheet, "B46").getCellData()
+				.getFormatText()); // =WORKDAY(DATE(2013,4,1),4)
+		assertEquals("2009/4/30", Ranges.range(sheet, "B47").getCellData()
+				.getFormatText()); // =WORKDAY(DATE(2008,10,1),151)
+	}
+	
+	@Test
+	public void testWorkdaySpecifiedholiday() throws IOException {
+		Book book = Util.loadBook("book/TestFile2003-Formula.xls");
+		Sheet sheet = book.getSheet("formula-datetime");
+		assertEquals("2013/4/5", Ranges.range(sheet, "B56").getCellData()
+				.getFormatText()); // =WORKDAY(DATE(2013,4,1),3, DATE(2013,4,2))
+		assertEquals("2013/4/3", Ranges.range(sheet, "B57").getCellData()
+				.getFormatText()); // =WORKDAY(DATE(2013,4,7),
+									// -3,DATE(2013,4,2))
+		assertEquals("2013/4/1", Ranges.range(sheet, "B58").getCellData()
+				.getFormatText()); // =WORKDAY(DATE(2013,4,3),
+									// -1,DATE(2013,4,2))
+	}
+	
+	// expected:<[2011/5/15]> but was:<[5/15/2011]>
+	@Test
+	public void testCOUPNCD() throws IOException {
+		Book book = Util.loadBook("book/TestFile2003-Formula.xls");
+		Sheet sheet = book.getSheet("formula-financial");
+		assertEquals("2011/5/15", Ranges.range(sheet, "B24").getCellData()
+				.getFormatText());
+	}
+	
+	@Test
+	public void testEndDateIsHoliday() throws IOException {
+		Book book = Util.loadBook("book/TestFile2003-Formula.xls");
+		Sheet sheet = book.getSheet("formula-datetime");
+		assertEquals("2013/4/8", Ranges.range(sheet, "B50").getCellData()
+				.getFormatText()); // =WORKDAY(DATE(2013,4,1),5)
+		assertEquals("2013/4/8", Ranges.range(sheet, "B51").getCellData()
+				.getFormatText()); // =WORKDAY(DATE(2013,4,5),1)
+	}
+	
+	@Test
+	public void testStartDateIsHoliday() throws IOException {
+		Book book = Util.loadBook("book/TestFile2003-Formula.xls");
+		Sheet sheet = book.getSheet("formula-datetime");
+		assertEquals("2013/6/3", Ranges.range(sheet, "B48").getCellData()
+				.getFormatText()); // =WORKDAY(DATE(2013,6,1),1)
+		assertEquals("2013/5/31", Ranges.range(sheet, "B49").getCellData()
+				.getFormatText()); // =WORKDAY(DATE(2013,6,1), -1)
+	}
+
+	@Test
+	public void testWorkdayBoundary() throws IOException {
+		Book book = Util.loadBook("book/TestFile2003-Formula.xls");
+		Sheet sheet = book.getSheet("formula-datetime");
+		assertEquals("2013/4/1", Ranges.range(sheet, "B54").getCellData()
+				.getFormatText()); // =WORKDAY(DATE(2013,4,1),0)
+		assertEquals("2013/6/1", Ranges.range(sheet, "B55").getCellData()
+				.getFormatText()); // =WORKDAY(DATE(2013,6,1),0)
+	}	
+	
+	// DATE FORMAT ============================
+	
+	@Test
+	public void testAREAS() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-lookup");
+		assertEquals("1.00", Ranges.range(sheet, "B5").getCellFormatText());
+	}
+	
+	// 1990/1/1 is Monday, but Excel think it is not work day.
+	@Test
+	public void test19900101IsNotWorkDayInExcel() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-datetime");
+		assertEquals("0", Ranges.range(sheet, "B32").getCellData()
+				.getFormatText()); // =NETWORKDAYS(DATE(1900,1,1),DATE(1900,1,1))
+	}
+	
+	
+	// slightly different because of space
+	@Test
+	public void testCOMPLEX() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("3 + 4i", Ranges.range(sheet, "B17").getCellFormatText());
+	}
+	
+	// slightly different because of space
+	@Test
+	public void testINDEX() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-lookup");
+		assertEquals("pears", Ranges.range(sheet, "B22").getCellFormatText());
+	}
+	
+	// expected:<[1]> but was:<[2]>
+	// different specification
+	@Test
+	public void testStartDateEmpty() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-datetime");
+		assertEquals("1", Ranges.range(sheet, "B29").getCellData()
+				.getFormatText()); // =NETWORKDAYS(B30,C30)
+		// B30 : blank
+		// C30 : 1990/1/2
+	}
+	
+	// This should be check by human
+	@Test
+	public void testRANDBETWEEN() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-math");
+		assertEquals("88", Ranges.range(sheet, "B94").getCellData().getFormatText());
+	}
+	
+	// This should be check by human
+	@Test
+	public void testRAND() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-math");
+		assertEquals("84", Ranges.range(sheet, "B92").getCellData().getFormatText());
+	}
+	
+	// expected:<[0.03]> but was:<[-1.00]>
+	@Test
+	public void testGAMMADIST() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.03", Ranges.range(sheet, "B76").getCellFormatText());
+	}
+	
+	// expected:<0.0[5]> but was:<0.0[3]>
+	@Test
+	public void testTDIST() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.05", Ranges.range(sheet, "B175").getCellFormatText());
+	}
+	
+	// expected:<[15.2]1> but was:<[0.1]1>
+	@Test
+	public void testFINV() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("15.21", Ranges.range(sheet, "B61").getCellFormatText());
+	}
+	
+	// expected:<[5.03]> but was:<[0.39]>
+	@Test
+	public void testHARMEAN() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("5.03", Ranges.range(sheet, "B89").getCellFormatText());
+	}
+	
+	// expected:<1.[96]> but was:<1.[63]>
+	@Test
+	public void testTINV() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("1.96", Ranges.range(sheet, "B177").getCellFormatText());
+	}
+	
+	// #NUM!
+	@Test
+	public void testSTDEVP() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("26.05", Ranges.range(sheet, "B168").getCellFormatText());
+	}
+	
+	// expected:<[$1,234.5]7> but was:<[1234.56]7>
+	@Test
+	public void testDOLLAR() throws IOException {
+		Book book = Util.loadBook("book/264-text-formula.xlsx");
+		Sheet sheet = book.getSheet("formula-text");
+		assertEquals("$1,234.57", Ranges.range(sheet, "B14").getCellFormatText());
+	}
+	
+	// #VALUE!
+	@Test
+	public void testHOUR() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-datetime");
+		Ranges.range(sheet, "B13").setCellEditText("=HOUR(\"15:30\")");
+		assertEquals("3", Ranges.range(sheet, "B13").getCellData()
+				.getFormatText());
+	}
+	
+	// #VALUE!
+	@Test
+	public void testVALUE() throws IOException {
+		Book book = Util.loadBook("book/264-text-formula.xlsx");
+		Sheet sheet = book.getSheet("formula-text");
+		assertEquals("0.7", Ranges.range(sheet, "B73").getCellFormatText());
+	}
+	
+	// #VALUE!
+	@Test
+	public void testEndDateEmpty() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-datetime");
+		assertEquals("-1", Ranges.range(sheet, "B31").getCellData()
+				.getFormatText()); // =NETWORKDAYS(C30, B30)
+		// B30 : blank
+		// C30 : 1990/1/2
+	}
+	
+	// #NAME?
+	@Test
+	public void testTOUSD2NTD() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-custom");
+		assertEquals("150", Ranges.range(sheet, "B6").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testTOTWD() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-custom");
+		assertEquals("300", Ranges.range(sheet, "B3").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testLOGEST() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-financial");
+		assertEquals("1.46", Ranges.range(sheet, "B73").getCellData()
+				.getFormatText());	
+	}
+	
+	// #NAME?
+	@Test
+	public void testMIRR() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-financial");
+		assertEquals("13%", Ranges.range(sheet, "B78").getCellData()
+				.getFormatText());	
+	}
+	
+	// #NAME?
+	@Test
+	public void testISPMT() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-financial");
+		assertEquals("-64814.81", Ranges.range(sheet, "B70").getCellData()
+				.getFormatText());	
+	}
+	
+	// #NAME?
+	@Test
+	public void testVDB() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-financial");
+		assertEquals("1.32", Ranges.range(sheet, "B117").getCellData()
+				.getFormatText());	
+	}
+	
+	// #NAME?
+	@Test
+	public void testTIMEVALUE() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-datetime");
+		assertEquals("0.1", Ranges.range(sheet, "B40").getCellData()
+				.getFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testSERIESSUM() throws IOException {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		Sheet sheet = book.getSheet("formula-math");
+		assertEquals("0.7071", Ranges.range(sheet, "B104").getCellData().getFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testCELL() throws IOException {
+		Book book = Util.loadBook("book/266-info-formula.xlsx");
+		Sheet sheet = book.getSheet("formula-info");
+		assertEquals("3", Ranges.range(sheet, "B3").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testINFO() throws IOException {
+		Book book = Util.loadBook("book/266-info-formula.xlsx");
+		Sheet sheet = book.getSheet("formula-info");
+		assertEquals("12.0", Ranges.range(sheet, "B8").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testASC() throws IOException {
+		Book book = Util.loadBook("book/264-text-formula.xlsx");
+		Sheet sheet = book.getSheet("formula-text");
+		assertEquals("EXCEL", Ranges.range(sheet, "B3").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testFINDB() throws IOException {
+		Book book = Util.loadBook("book/264-text-formula.xlsx");
+		Sheet sheet = book.getSheet("formula-text");
+		assertEquals("1", Ranges.range(sheet, "B22").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testLEFTB() throws IOException {
+		Book book = Util.loadBook("book/264-text-formula.xlsx");
+		Sheet sheet = book.getSheet("formula-text");
+		assertEquals("\u6771", Ranges.range(sheet, "B29").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testLENB() throws IOException {
+		Book book = Util.loadBook("book/264-text-formula.xlsx");
+		Sheet sheet = book.getSheet("formula-text");
+		assertEquals("11", Ranges.range(sheet, "B33").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testMIDB() throws IOException {
+		Book book = Util.loadBook("book/264-text-formula.xlsx");
+		Sheet sheet = book.getSheet("formula-text");
+		assertEquals("Fluid", Ranges.range(sheet, "B40").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testSEARCHB() throws IOException {
+		Book book = Util.loadBook("book/264-text-formula.xlsx");
+		Sheet sheet = book.getSheet("formula-text");
+		assertEquals("6", Ranges.range(sheet, "B57").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testREPLACEB() throws IOException {
+		Book book = Util.loadBook("book/264-text-formula.xlsx");
+		Sheet sheet = book.getSheet("formula-text");
+		assertEquals("abcde*k", Ranges.range(sheet, "B47").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testRIGHTB() throws IOException {
+		Book book = Util.loadBook("book/264-text-formula.xlsx");
+		Sheet sheet = book.getSheet("formula-text");
+		assertEquals("Price", Ranges.range(sheet, "B53").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testFORECAST() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("10.61", Ranges.range(sheet, "B67").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testNORMSDIST() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.91", Ranges.range(sheet, "B129").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testCRITBINOM() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("4", Ranges.range(sheet, "B53").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testINTERCEPT() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.05", Ranges.range(sheet, "B94").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testFISHERINV() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.75", Ranges.range(sheet, "B65").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testSTDEVA() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("27.46", Ranges.range(sheet, "B166").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testPERMUT() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("970200", Ranges.range(sheet, "B140").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testLOGINV() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("4.00", Ranges.range(sheet, "B106").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testLINEST() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("2", Ranges.range(sheet, "B103").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testFREQUENCY() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("1", Ranges.range(sheet, "B70").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testGROWTH() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("320196.72", Ranges.range(sheet, "B85").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testFISHER() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.97", Ranges.range(sheet, "B63").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testPERCENTRANK() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.33", Ranges.range(sheet, "B138").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testCORREL() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.9971", Ranges.range(sheet, "B37").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testPERCENTILE() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("1.9", Ranges.range(sheet, "B136").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testSTDEVPA() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("26.05", Ranges.range(sheet, "B170").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testAVERAGEIF() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("14000", Ranges.range(sheet, "B11").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testQUARTILE() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("3.5", Ranges.range(sheet, "B147").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testMORMINV() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("42.00", Ranges.range(sheet, "B127").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testNEGBINOMDIST() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.06", Ranges.range(sheet, "B123").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testCHITEST() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.000308", Ranges.range(sheet, "B27").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testBETADIST() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.69", Ranges.range(sheet, "B17").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testVARA() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("754.27", Ranges.range(sheet, "B191").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testPROB() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.1", Ranges.range(sheet, "B144").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testZTEST() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.09", Ranges.range(sheet, "B199").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testVARPA() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("678.84", Ranges.range(sheet, "B195").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testTTEST() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.20", Ranges.range(sheet, "B186").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testTREND() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("133953.33", Ranges.range(sheet, "B179").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testSTEYX() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("3.31", Ranges.range(sheet, "B172").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testFTEST() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.65", Ranges.range(sheet, "B73").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testFDIST() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.01", Ranges.range(sheet, "B59").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testCOVAR() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("5.2", Ranges.range(sheet, "B50").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testLOGNORMDIST() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.04", Ranges.range(sheet, "B108").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testNORMSINV() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("1.33", Ranges.range(sheet, "B131").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testSTANDARDIZE() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("1.33", Ranges.range(sheet, "B162").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testTRIMMEAN() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("3.78", Ranges.range(sheet, "B183").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testCONFIDENCE() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.69", Ranges.range(sheet, "B35").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testRSQ() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.061", Ranges.range(sheet, "B151").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testBETAINV() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("2", Ranges.range(sheet, "B19").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testAVERAGEIFS() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("87.5", Ranges.range(sheet, "B14").getCellFormatText());
+	}
+	
+	// #NAME?
+	@Test
+	public void testPEARSON() throws IOException {
+		Book book = Util.loadBook("book/270-statistical.xlsx");
+		Sheet sheet = book.getSheet("formula-statistical");
+
+		assertEquals("0.70", Ranges.range(sheet, "B133").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMCOS() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("0.833730025131149 - 0.988897705762865i", Ranges.range(sheet, "B47").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMLN() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("1.6094379124341 + 0.927295218001612i", Ranges.range(sheet, "B53").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMSQRT() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("1.09868411346781 + 0.455089860562227i", Ranges.range(sheet, "B67").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMLOG10() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("0.698970004336019+0.402719196273373i", Ranges.range(sheet, "B55").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMSUM() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("8 + i", Ranges.range(sheet, "B71").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMSIN() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("3.85373803791938 - 27.0168132580039i", Ranges.range(sheet, "B65").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMSUB() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("8 + i", Ranges.range(sheet, "B69").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMLOG2() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("2.32192809506607+1.33780421255394i", Ranges.range(sheet, "B57").getCellFormatText());
+	}
+	
+	// Little different
+	@Test
+	public void testIMPOWER() throws IOException {
+		Book book = Util.loadBook("book/271-engineering.xlsx");
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("-46 + 9.00000000000001i", Ranges.range(sheet, "B59").getCellFormatText());
+	}
+}

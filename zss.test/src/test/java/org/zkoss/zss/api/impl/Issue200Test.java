@@ -182,8 +182,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS272() throws IOException {
 		final String filename = "book/272-conditionalFormatting.xls";
-		final InputStream is = Issue200Test.class.getResourceAsStream(filename);
-		_workbook = Importers.getImporter().imports(is, filename);
+		Util.loadBook(filename);
 		
 		//shouldn't throw any exception
 		((HSSFSheet)_workbook.getSheetAt(0).getPoiSheet()).getDataValidations();
