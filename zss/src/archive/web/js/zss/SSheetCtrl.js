@@ -1651,6 +1651,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			this.dp.moveDown(evt);
 			//evt.stop(); //ZSS-181
 			break;
+		case 229: //ZSS-378 Chinese Input keyCode is always 229 in chrome/IE(8-10) (no spec.)
+			if(this.state == zss.SSheetCtrl.FOCUSED){//enter editing mode only when focused
+				this._enterEditing(evt);
+			}
+			break;
 		case 113: //F2
 			if(this.state == zss.SSheetCtrl.FOCUSED)
 				this._enterEditing(evt);
