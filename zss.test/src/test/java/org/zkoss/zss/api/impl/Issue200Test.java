@@ -1306,7 +1306,6 @@ public class Issue200Test {
 		}
 	}
 	
-	@Ignore("ZSS-356")
 	@Test
 	public void testZSS356() throws Exception {
 		Book book = Util.loadBook("book/356-enable-autofilter.xlsx");
