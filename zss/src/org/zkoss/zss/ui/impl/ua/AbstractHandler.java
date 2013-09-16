@@ -19,7 +19,6 @@ package org.zkoss.zss.ui.impl.ua;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
-import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.ui.UserActionContext;
@@ -62,15 +61,20 @@ public abstract class AbstractHandler implements UserActionHandler{
 		}
 	}
 
-	protected boolean checkInFreezePanel(Range range) {
+	// ZSS-404: corner panel can't be modified 
+	protected boolean checkInCornerFreezePanel(Range range) {
 		Sheet sheet = range.getSheet();
-		int fzr = sheet.getRowFreeze();//to index
+		int fzr = sheet.getRowFreeze();	// it's number
 		int fzc = sheet.getColumnFreeze();
-		
-		if(fzr>range.getRow() || fzc > range.getColumn()){
-			return true;
+		// check there is corner freeze panel first
+		if(fzr > 0 && fzc > 0) {
+			// check range
+			if(range.getRow() < fzr && range.getColumn() < fzc) {
+				return true;
+			}
 		}
 		return false;
 	}
+	
 	protected abstract boolean processAction(UserActionContext ctx);
 }

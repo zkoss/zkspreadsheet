@@ -45,13 +45,13 @@ public class InsertColumnHandler extends AbstractProtectedHandler {
 		Range range = Ranges.range(sheet, selection);
 		range = range.toColumnRange();
 		//work around for ZSS-404 JS Error after insert column when freeze
-		if(checkInFreezePanel(range)){
+		if(checkInCornerFreezePanel(range)){
 			throw new IllegalOpArgumentException(Labels.getLabel("zss.msg.operation_not_supported_with_freeze_panel"));
 		}
 		UndoableActionManager uam = ctx.getSpreadsheet().getUndoableActionManager();
 		uam.doAction(new InsertCellAction(Labels.getLabel("zss.undo.insertColumn"),sheet, range.getRow(), range.getColumn(), 
 				range.getLastRow(), range.getLastColumn(), 
-				InsertShift.RIGHT, InsertCopyOrigin.FORMAT_RIGHT_BELOW));
+				InsertShift.RIGHT, InsertCopyOrigin.FORMAT_LEFT_ABOVE)); // ZSS-404, Excel default behavior is left or above
 		ctx.clearClipboard();
 		return true;
 	}

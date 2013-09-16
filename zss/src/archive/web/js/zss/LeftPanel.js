@@ -330,7 +330,7 @@ zss.LeftPanel = zk.$extends(zss.Panel, {
 		var createFrozen = frozenColStart >= 0 && forzenColEnd >= 0;
 		if ('jump' == dir && createFrozen) {
 			var oldBlock = this.block;
-			this.block = new zss.CellBlockCtrl(sheet, rowStart, frozenColStart, rowEnd, forzenColEnd, this.getFrozenData_(), 'left');
+			this.block = new zss.CellBlockCtrl(this.sheet, rowStart, frozenColStart, rowEnd, forzenColEnd, this.getFrozenData_(), 'left'); // ZSS-404: fixed missed sheet
 			oldBlock ? oldBlock.replaceWidget(this.block) : this.appendChild(this.block);
 		} else if (this.block && createFrozen) {
 			this.block.create_(dir, rowStart, frozenColStart, rowEnd, forzenColEnd, this.getFrozenData_());
@@ -346,7 +346,12 @@ zss.LeftPanel = zk.$extends(zss.Panel, {
 		return null;
 	},
 	getHeaderData_: function () {
-		return this.sheet._wgt._cacheCtrl.getSelectedSheet().rowHeaders;
+		// ZSS-404: if this is for corner panel's header, the header data must be fetched from top freeze panel
+		if(this.isCorner) {
+			return this.sheet._wgt._cacheCtrl.getSelectedSheet().topFrozen.rowHeaders;
+		} else {
+			return this.sheet._wgt._cacheCtrl.getSelectedSheet().rowHeaders;
+		}
 	},
 	getFrozenData_: function () {
 		var a = this.sheet._wgt._cacheCtrl.getSelectedSheet(),

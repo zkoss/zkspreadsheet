@@ -509,17 +509,80 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 					bRow <= rect.bottom && rCol <= rect.right;
 	},
 	insertNewColumn: function (colIdx, size, headers) {
+		this.insertNewColumn_(colIdx, size, headers);
+		
+		// ZSS-404: freeze panels should also update row/column
+		if(this.cornerFrozen) {
+			this.cornerFrozen.insertNewColumn(colIdx, size, headers);
+		}
+		if(this.topFrozen) {
+			this.topFrozen.insertNewColumn(colIdx, size, headers);
+		}
+		if(this.leftFrozen) {
+			this.leftFrozen.insertNewColumn(colIdx, size, headers);
+		}
+	},
+	removeColumns: function (col, size, headers) {
+		this.removeColumns_(col, size, headers);
+		
+		// ZSS-404: freeze panels should also update row/column
+		if(this.cornerFrozen) {
+			this.cornerFrozen.removeColumns(col, size, headers);
+		}
+		if(this.topFrozen) {
+			this.topFrozen.removeColumns(col, size, headers);
+		}
+		if(this.leftFrozen) {
+			this.leftFrozen.removeColumns(col, size, headers);
+		}
+	},
+	insertNewRow: function (rowIdx, size, headers) {
+		this.insertNewRow_(rowIdx, size, headers);
+		
+		// ZSS-404: freeze panels should also update row/column
+		if(this.cornerFrozen) {
+			this.cornerFrozen.insertNewRow(rowIdx, size, headers);
+		}
+		if(this.topFrozen) {
+			this.topFrozen.insertNewRow(rowIdx, size, headers);
+		}
+		if(this.leftFrozen) {
+			this.leftFrozen.insertNewRow(rowIdx, size, headers);
+		}
+	},
+	removeRows: function (row, size, headers) {
+		this.removeRows_(row, size, headers);
+		
+		// ZSS-404: freeze panels should also update row/column
+		if(this.cornerFrozen) {
+			this.cornerFrozen.removeRows(row, size, headers);
+		}
+		if(this.topFrozen) {
+			this.topFrozen.removeRows(row, size, headers);
+		}
+		if(this.leftFrozen) {
+			this.leftFrozen.removeRows(row, size, headers);
+		}
+	},
+	insertNewColumn_: function (colIdx, size, headers) {
+		// ZSS-404: only update cells in this cache's range
+		var rng = this.rect;
+		if(colIdx < rng.left || rng.right < colIdx) {
+			return;
+		}
+		
 		updateHeaders(this.columnHeaders, headers);
 		var rows = this.rows;
-			rng = this.rect,
-			rCol = rng.right;
+		var rCol = rng.right;
 		for (var r = rng.top; r <= rng.bottom; r++) {
-			var cs = rows[r].cells,
-				c = colIdx,
-				cb = colIdx + size,//column index boundary 
-				ccs = [],//clone cells
-				cfn = zss.ActiveRange.clone;
-			//clone cells for insert later (after shift)
+			var cs = rows[r].cells;
+			var c = colIdx;
+			var cb = colIdx + size; //column index boundary 
+			var ccs = []; //clone cells
+			var cfn = zss.ActiveRange.clone;
+			
+			// clone cells to be new inserting column (after shift)
+			// but, these columns will be replace by fetching cell block later
 			for (; c < cb; c++) {
 				ccs.push(cfn(cs[c]));
 			}
@@ -527,16 +590,16 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 			//shift cells right
 			cb = colIdx - 1;
 			c = rCol;
-			while (c != cb) {
-				var cell = cs[c--],
-					oIdx = cell.c,//old index
-					nIdx = oIdx + size;//new index
+			while (c > cb) {
+				var cell = cs[c--];
+				var oIdx = cell.c;	//old index
+				var nIdx = oIdx + size;//new index
 				cell.c = nIdx;
 				cs[nIdx] = cell;
 				cs[oIdx] = null;
 			}
 			
-			//insert cells form clone
+			// insert new cells from clone
 			var cc;
 			c = colIdx;
 			while (cc = ccs.shift()) {
@@ -545,13 +608,18 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 		}
 		this.rect.right += size;
 	},
-	removeColumns: function (col, size, headers) {
+	removeColumns_: function (col, size, headers) {
+		// ZSS-404: only update cells in this cache's range
+		var rng = this.rect;
+		if(col < rng.left || rng.right < col) {
+			return;
+		}
+		
 		updateHeaders(this.columnHeaders, headers);
-		var r = this.rect,
-			rows = this.rows,
-			rCol = r.right,
-			tRow = r.top,
-			bRow = r.bottom;
+		var rows = this.rows;
+		var rCol = rng.right;
+		var tRow = rng.top;
+		var bRow = rng.bottom;
 		for (var r = tRow; r <= bRow; r++) {
 			var row = rows[r];
 			if (row) {
@@ -560,19 +628,24 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 		}
 		this.rect.right -= size;
 	},
-	insertNewRow: function (rowIdx, size, headers) {
-		updateHeaders(this.rowHeaders, headers);
+	insertNewRow_: function (rowIdx, size, headers) {
+		// ZSS-404: only update cells in this cache's range
+		var rng = this.rect;
+		if(rowIdx < rng.top || rng.bottom < rowIdx) {
+			return;
+		}
 		
+		updateHeaders(this.rowHeaders, headers);
 		var rows = this.rows;
-			rng = this.rect,
-			lCol = rng.left,
-			rCol = rng.right,
-			r = rowIdx,
-			rb = rowIdx + size,
-			crs = [], //clone rows
-			cfn = zss.ActiveRange.copyRow;
+		var lCol = rng.left;
+		var rCol = rng.right;
+		var r = rowIdx;
+		var rb = rowIdx + size;
+		var crs = []; //clone rows
+		var cfn = zss.ActiveRange.copyRow;
 
-		//cloned rows for insert later (after shift row)
+		// clone rows to be new inserting rows (after shift row)
+		// but, these rows will be replace by fetching cell block later
 		for (;r < rb; r++) {
 			crs.push(cfn(lCol, rCol, rows[r]));
 		}
@@ -580,16 +653,16 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 		//shift rows
 		rb = rowIdx - 1;
 		r = rng.bottom;
-		while (r != rb) {
-			var row = rows[r--],
-				oIdx = row.r,//old index
-				nIdx = oIdx + size;//new index
+		while (r > rb) {		// cached range might be smaller
+			var row = rows[r--];
+			var oIdx = row.r; //old index
+			var nIdx = oIdx + size;	//new index
 			row.r = nIdx;
 			rows[nIdx] = row;
 			rows[oIdx] = null;
 		}
 		
-		//insert rows from clone
+		// insert new rows from clone
 		var ro;
 		r = rowIdx;
 		while (ro = crs.shift()) {
@@ -598,11 +671,17 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 			
 		this.rect.bottom += size; 
 	},
-	removeRows: function (row, size, headers) {
+	removeRows_: function (row, size, headers) {
+		// ZSS-404: only update cells in this cache's range
+		var rng = this.rect;
+		if(row < rng.top || rng.bottom < row) {
+			return;
+		}
+		
 		updateHeaders(this.rowHeaders, headers);
-		var rows = this.rows,
-			bRow = this.rect.bottom,
-			i = size;
+		var rows = this.rows;
+		var bRow = this.rect.bottom;
+		var i = size;
 		for (var r = row; r <= bRow; r++) {
 			var row = rows[r];
 			if (row) {
@@ -626,20 +705,29 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 			right = v.r,
 			rect = this.rect;
 		if (rect.top == btm + 1) { //update north
-			v.dir = 'north';
-			this.update(v);
+			this.update(v, 'north');
 		} else if (rect.left == right + 1) {//update left
-			v.dir = 'west';
-			this.update(v);
+			this.update(v, 'west');
 		} else if (rect.right == left - 1) {//update right
-			v.dir = 'east';
-			this.update(v);
+			this.update(v, 'east');
 		} else if (rect.bottom == top - 1) {//update south
-			v.dir = 'south';
-			this.update(v);
+			this.update(v, 'south');
 		}
 	},
 	update: function (v, dir) {
+		
+		// ZSS-404: server doesn't give direction for freeze panels
+		// this cause freeze panels' range property isn't sync. with real cached cells
+		// so, apply direction to freeze panels from main active range
+		if(v.leftFrozen) {
+			v.leftFrozen.dir = v.dir;
+		}
+		if(v.topFrozen) {
+			v.topFrozen.dir = v.dir;
+		}
+		if(v.cornerFrozen) {
+			v.cornerFrozen.dir = v.dir;
+		}
 
 		// ZSS-392: multiple ActiveRange for different panels
 		// just delegate to corresponding freeze active ranges 
@@ -967,6 +1055,21 @@ zss.FreezeActiveRange = zk.$extends(zss.ActiveRange, {
 	update: function (v, dir) {
 		// just update cells
 		this.updateCells(v, dir);
+	},
+	
+	// ZSS-404: freeze panels should also update row/column
+	// override
+	insertNewColumn: function (colIdx, size, headers) {
+		this.insertNewColumn_(colIdx, size, headers); // just update row/column
+	},
+	removeColumns: function (col, size, headers) {
+		this.removeColumns_(col, size, headers);
+	},
+	insertNewRow: function (rowIdx, size, headers) {
+		this.insertNewRow_(rowIdx, size, headers);
+	},
+	removeRows: function (row, size, headers) {
+		this.removeRows_(row, size, headers);
 	}
 	
 }); // end of zss.FreezeActiveRange

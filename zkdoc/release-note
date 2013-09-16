@@ -29,6 +29,7 @@ ZK Spreadsheet 3.0.0
   ZSS-428 occur exception when switching sheet with specific xlsx file
   ZSS-440 IE10 resizing column (java.lang.Double cannot be cast to java.lang.Integer)
   ZSS-441: Wrong sum results
+  ZSS-404 JS Error after insert column when freeze
   
 ** Upgrade Notes
 

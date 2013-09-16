@@ -44,7 +44,7 @@ public class InsertCellDownHandler extends AbstractProtectedHandler {
 		AreaRef selection = ctx.getSelection();
 		Range range = Ranges.range(sheet, selection);
 		//work around for ZSS-404 JS Error after insert column when freeze
-		if(checkInFreezePanel(range)){
+		if(checkInCornerFreezePanel(range)){
 			throw new IllegalOpArgumentException(Labels.getLabel("zss.msg.operation_not_supported_with_freeze_panel"));
 		}
 		UndoableActionManager uam = ctx.getSpreadsheet().getUndoableActionManager();
