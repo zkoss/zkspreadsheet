@@ -137,7 +137,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
      * @param copyRowHeight whether to copy the row height during the shift
      * @param resetOriginalRowHeight whether to set the original row's height to the default
      */
-    public List<CellRangeAddress[]>  shiftRowsOnly(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight,
+    public List<CellRangeAddress[]> shiftRowsOnly(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight,
     		boolean moveComments, boolean clearRest, int copyOrigin) {
     	
     	final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
@@ -156,7 +156,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
     	final short srcHeight = srcRow != null ? srcRow.getHeight() : -1;
 //    	final XSSFCellStyle srcStyle = srcRow != null ? srcRow.getRowStyle() : null;
     	
-        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, startRow, 0, endRow, maxcol, n, false);
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, startRow, 0, maxrow, maxcol, n, false);
     	
     	//shift the rows (actually change the row number only)
         List<Row> rowsToRemove = new ArrayList<Row>(); // ZSS-419: queue row for removing later, remove can't be perform in this loop 
@@ -352,10 +352,11 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
     	final short srcHeight = srcRow != null ? srcRow.getHeight() : -1;
 //    	final XSSFCellStyle srcStyle = srcRow != null ? srcRow.getRowStyle() : null;
     	
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, startRow, lCol, maxrow, rCol, n, false);
+        
         if (endRow < 0) {
         	endRow = maxrow;
         }
-        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, startRow, lCol, endRow, rCol, n, false);
         final boolean wholeRow = lCol == 0 && rCol == maxcol; 
     	
         List<Row> rowsToRemove = new ArrayList<Row>(); // ZSS-419: queue row for removing later, remove can't be perform in this loop 
@@ -614,20 +615,20 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
             shiftCells(row, startCol, endCol, n, clearRest);
         }
         
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, 0, startCol, maxrow, maxcol, n, true);
+        
         if (endCol < 0) {
         	endCol = maxColNum;
         }
         if (n > 0) {
 	        if (startCol > endCol) { //nothing to do
-	        	return Collections.emptyList();
+	        	return shiftedRanges;
 	        }
         } else {
         	if ((startCol + n) > endCol) { //nothing to do
-	        	return Collections.emptyList();
+	        	return shiftedRanges;
         	}
         }
-        
-        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, 0, startCol, maxrow, endCol, n, true);
         
         //TODO handle the page breaks
         //?
@@ -897,20 +898,21 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
 	        }
     	}
         
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, tRow, startCol, bRow, maxcol, n, true);
+    	
         if (endCol < 0) {
         	endCol = maxColNum;
         }
         if (n > 0) {
 	        if (startCol > endCol) { //nothing to do
-	        	return Collections.emptyList();
+	        	return shiftedRanges;
 	        }
         } else {
         	if ((startCol + n) > endCol) { //nothing to do
-	        	return Collections.emptyList();
+	        	return shiftedRanges;
         	}
         }
         
-        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, tRow, startCol, bRow, endCol, n, true);
         final boolean wholeColumn = tRow == 0 && bRow == maxrow; 
         if (wholeColumn) {
 	        //TODO handle the page breaks
@@ -1008,21 +1010,22 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
 			shiftComments(tRow, bRow, lCol, rCol, nRow, nCol);
 		}
     	
+        final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
+        final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftBothMergedRegion(this, tRow, lCol, bRow, rCol, nRow, nCol);
+		
     	int startRow = Math.max(tRow, getFirstRowNum());
     	int endRow = Math.min(bRow, getLastRowNum());
         if (nRow > 0) {
 	        if (tRow > endRow ) { //nothing to do
-	        	return Collections.emptyList();
+	        	return shiftedRanges;
 	        }
         } else {
         	if ((tRow + nRow) > endRow) { //nothing to do
-	        	return Collections.emptyList();
+	        	return shiftedRanges;
         	}
         }
         
-        final int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
-        final int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
-        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftBothMergedRegion(this, tRow, lCol, bRow, rCol, nRow, nCol);
         
         final List<int[]> removePairs = new ArrayList<int[]>(); //row spans to be removed 
         final TreeMap<Integer, TreeMap<Integer, XSSFCell>> rowCells = new TreeMap<Integer, TreeMap<Integer, XSSFCell>>();

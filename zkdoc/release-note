@@ -17,6 +17,7 @@ ZK Spreadsheet 3.0.0
   ZSS-431 if freeze the specific xlsx file and export it, its freeze position is wrong in Excel
   ZSS-418 if two or more cell with comment in a row and shift them, the exported file will make Excel occur error when loading
   ZSS-378 ZK spreadsheet selected cell can type in English but can not input Chinese
+  ZSS-434 insert,delete whole column or row when overlap merge cell will cause unexpect result
 
 ** Upgrade Notes
 

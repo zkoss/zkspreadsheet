@@ -2082,9 +2082,7 @@ public final class BookHelper {
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.insertRows(startRow, num);
 		final int lastRowNum = sheet.getLastRowNum();
-		if (startRow > lastRowNum) {
-			return null;
-		}
+
 		final List<CellRangeAddress[]> shiftedRanges = ((XSSFSheetImpl)sheet).shiftRowsOnly(startRow, lastRowNum, num, true, false, true, false, copyOrigin);
 		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
 		final Set<Ref> last = refs[0];
@@ -2101,9 +2099,7 @@ public final class BookHelper {
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.insertRows(startRow, num);
 		final int lastRowNum = sheet.getLastRowNum();
-		if (startRow > lastRowNum) {
-			return null;
-		}
+
 		final List<CellRangeAddress[]> shiftedRanges = ((HSSFSheetImpl)sheet).shiftRowsOnly(startRow, lastRowNum, num, true, false, true, false, copyOrigin);
 		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
 		final Set<Ref> last = refs[0];
@@ -2160,9 +2156,7 @@ public final class BookHelper {
 		final Set<Ref>[] refs = refSheet.deleteRows(startRow, num);
 		final int lastRowNum = sheet.getLastRowNum();
 		final int startRow0 = startRow + num;
-		if (startRow > lastRowNum) {
-			return null;
-		}
+
 		final List<CellRangeAddress[]> shiftedRanges = ((HSSFSheetImpl)sheet).shiftRowsOnly(startRow0, lastRowNum, -num, true, false, true, true, XRange.FORMAT_NONE);
 		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
 		final Set<Ref> last = refs[0];
@@ -2179,9 +2173,7 @@ public final class BookHelper {
 		final Set<Ref>[] refs = refSheet.deleteRows(startRow, num);
 		final int lastRowNum = sheet.getLastRowNum();
 		final int startRow0 = startRow + num;
-		if (startRow > lastRowNum) {
-			return null;
-		}
+
 		final List<CellRangeAddress[]> shiftedRanges = ((XSSFSheetImpl)sheet).shiftRowsOnly(startRow0, lastRowNum, -num, true, false, true, true, XRange.FORMAT_NONE);
 		final List<MergeChange> changeMerges = prepareChangeMerges(refSheet, shiftedRanges);
 		final Set<Ref> last = refs[0];
@@ -2241,7 +2233,7 @@ public final class BookHelper {
 		}
 	}
 	
-	public static ChangeInfo deleteHSSFColumns(XSheet sheet, int startCol, int num) {
+	private static ChangeInfo deleteHSSFColumns(XSheet sheet, int startCol, int num) {
 		final XBook book = (XBook) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.deleteColumns(startCol, num);
@@ -2257,7 +2249,7 @@ public final class BookHelper {
 		return new ChangeInfo(last, all, changeMerges);
 	}
 	
-	public static ChangeInfo deleteXSSFColumns(XSheet sheet, int startCol, int num) {
+	private static ChangeInfo deleteXSSFColumns(XSheet sheet, int startCol, int num) {
 		final XBook book = (XBook) sheet.getWorkbook();
 		final RefSheet refSheet = getRefSheet(book, sheet);
 		final Set<Ref>[] refs = refSheet.deleteColumns(startCol, num);

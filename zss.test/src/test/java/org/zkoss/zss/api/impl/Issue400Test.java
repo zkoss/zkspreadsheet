@@ -306,7 +306,7 @@ public class Issue400Test {
 		Assert.assertEquals("A", Ranges.range(sheet,"D4").getCellFormatText());
 		
 	}
-//	@Ignore("cannot reproduce")
+
 	@Test 
 	public void testZSS431() throws IOException {
 		testZSS431_0(Util.loadBook("book/431-freezepanel.xlsx"),7,4);
@@ -513,6 +513,5 @@ public class Issue400Test {
 				Assert.assertNull(comment);
 			}
 		}
-	}
-	
+	}	
 }

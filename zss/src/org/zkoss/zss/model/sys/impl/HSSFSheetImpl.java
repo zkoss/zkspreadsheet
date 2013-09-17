@@ -137,7 +137,7 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, XSheet {
 
         final int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
         final int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
-        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, startRow, 0, endRow, maxcol, n, false);
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, startRow, 0, maxrow, maxcol, n, false);
         _helper.getInternalSheet().getPageSettings().shiftRowBreaks(startRow, endRow, n);
         
         for ( int rowNum = s; rowNum >= startRow && rowNum <= endRow && rowNum >= 0 && rowNum <= maxrow; rowNum += inc ) {
@@ -341,16 +341,20 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, XSheet {
             row.shiftCells(startCol, endCol, n, clearRest);
         }
         
+        final int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
+        final int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, 0, startCol, maxrow, maxcol, n, true);
+        
         if (endCol < 0) {
         	endCol = maxColNum;
         }
         if (n > 0) {
 	        if (startCol > endCol) { //nothing to do
-	        	return Collections.emptyList();
+	        	return shiftedRanges;
 	        }
         } else {
         	if ((startCol + n) > endCol) { //nothing to do
-	        	return Collections.emptyList();
+	        	return shiftedRanges;
         	}
         }
         
@@ -370,9 +374,6 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, XSheet {
             noteRecs = NoteRecord.EMPTY_ARRAY;
         }
 
-        final int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
-        final int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
-        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, 0, startCol, maxrow, endCol, n, true);
         _helper.getInternalSheet().getPageSettings().shiftColumnBreaks((short)startCol, (short)endCol, (short)n);
 
         // Fix up column width and comment if required
@@ -514,16 +515,20 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, XSheet {
             row.shiftCells(startCol, endCol, n, clearRest);
         }
         
+        final int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
+        final int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, tRow, startCol, bRow, maxcol, n, true);
+        
         if (endCol < 0) {
         	endCol = maxColNum;
         }
         if (n > 0) {
 	        if (startCol > endCol) { //nothing to do
-	        	return Collections.emptyList();
+	        	return shiftedRanges;
 	        }
         } else {
         	if ((startCol + n) > endCol) { //nothing to do
-	        	return Collections.emptyList();
+	        	return shiftedRanges;
         	}
         }
         
@@ -543,9 +548,6 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, XSheet {
             noteRecs = NoteRecord.EMPTY_ARRAY;
         }
 
-        final int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
-        final int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
-        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, tRow, startCol, bRow, endCol, n, true);
         final boolean wholeColumn = tRow == 0 && bRow == maxrow; 
         if (wholeColumn) { 
         	_helper.getInternalSheet().getPageSettings().shiftColumnBreaks((short)startCol, (short)endCol, (short)n);
@@ -671,16 +673,19 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, XSheet {
     	final HSSFCellStyle srcStyle = srcRow != null ? srcRow.getRowStyle() : null;
     	
         final int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
+        final int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, startRow, lCol, maxrow, rCol, n, false);
+        
         if (endRow < 0) {
         	endRow = maxrow;
         }
         if (n > 0) {
 	        if (startRow > endRow ) { //nothing to do
-	        	return Collections.emptyList();
+	        	return shiftedRanges;
 	        }
         } else {
         	if ((startRow + n) > endRow) { //nothing to do
-	        	return Collections.emptyList();
+	        	return shiftedRanges;
         	}
         }
         
@@ -699,8 +704,6 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, XSheet {
             noteRecs = NoteRecord.EMPTY_ARRAY;
         }
 
-        final int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
-        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftMergedRegion(this, startRow, lCol, endRow, rCol, n, false);
         final boolean wholeRow = lCol == 0 && rCol == maxcol; 
         if (wholeRow) { 
         	_helper.getInternalSheet().getPageSettings().shiftRowBreaks(startRow, endRow, n);
@@ -910,13 +913,18 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, XSheet {
 
     public List<CellRangeAddress[]> shiftBothRange(int tRow, int bRow, int nRow, int lCol, int rCol, int nCol,
         boolean moveComments) {
+    	
+        final int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
+        final int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
+        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftBothMergedRegion(this, tRow, lCol, bRow, rCol, nRow, nCol);
+    	
         if (nRow > 0) {
 	        if (tRow > bRow ) { //nothing to do
-	        	return Collections.emptyList();
+	        	return shiftedRanges;
 	        }
         } else {
         	if ((tRow + nRow) > bRow) { //nothing to do
-	        	return Collections.emptyList();
+	        	return shiftedRanges;
         	}
         }
         
@@ -935,9 +943,6 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, XSheet {
             noteRecs = NoteRecord.EMPTY_ARRAY;
         }
 
-        final int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
-        final int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
-        final List<CellRangeAddress[]> shiftedRanges = BookHelper.shiftBothMergedRegion(this, tRow, lCol, bRow, rCol, nRow, nCol);
         for ( int rowNum = s; rowNum >= tRow && rowNum <= bRow && rowNum >= 0 && rowNum <= maxrow; rowNum += inc ) {
             HSSFRow row = getRow( rowNum );
             // notify all cells in this row that we are going to shift them,
