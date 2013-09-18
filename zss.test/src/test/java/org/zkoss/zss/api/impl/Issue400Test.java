@@ -513,5 +513,24 @@ public class Issue400Test {
 				Assert.assertNull(comment);
 			}
 		}
-	}	
+	}
+	
+	@Test
+	public void testZSS399() throws Exception {
+		// load book
+		Book book = Util.loadBook("book/446-border.xlsx");
+		
+
+		// print setting >> with grid lines 
+		Sheet sheet = book.getSheetAt(0);
+		sheet.getPoiSheet().setPrintGridlines(true);
+		
+		File temp = Setup.getTempFile("zss-446","pdf");
+		
+		Exporter pdfExporter = Exporters.getExporter("pdf");
+		pdfExporter.export(book, temp);
+
+		System.out.println(">>export pdf to "+temp);
+		Util.open(temp);
+	}
 }

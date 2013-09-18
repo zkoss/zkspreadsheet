@@ -33,13 +33,11 @@ public class Setup {
 	static private File temp; 
 	
 	public static synchronized File getTempFile(){
-		if(temp==null){
-			File tempFolder = new File(System.getProperty("java.io.tmpdir"));
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-			temp = new File(tempFolder,"zsstest-"+sdf.format(new java.util.Date()));
-			
-		}
-		return temp;
-		
+		return getTempFile("zsstest-","");
+	}
+	public static synchronized File getTempFile(String prefix,String postfix){
+		File tempFolder = new File(System.getProperty("java.io.tmpdir"));
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		return new File(tempFolder,prefix+sdf.format(new java.util.Date())+postfix);
 	}
 }
