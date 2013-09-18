@@ -44,6 +44,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-392 Freezing panes with preload attribute cause cell data not render
 	ZSS-423 JS error when rowfreeze > preloadRowSize or columnfreeze > preloadColumnSize
 	ZSS-439 Delete rows cause XmlValueDisconnectedException
+  ZSS-446 border patterns around a cell it is not showing in the exported pdf file
 
 ZK Spreadsheet 2.5.0
 *Features:   
