@@ -532,6 +532,7 @@ public class Issue400Test {
 
 		System.out.println(">>export pdf to "+temp);
 		Util.open(temp);
+	}
 
 	/**
 	 * reference to a JavaBean is not evaluated to a cell reference even the value is "=B2".
