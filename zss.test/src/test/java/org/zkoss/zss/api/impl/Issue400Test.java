@@ -1,7 +1,6 @@
 package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.zkoss.zss.api.CellOperationUtil.applyFontBoldweight;
 import static org.zkoss.zss.api.Ranges.range;
 
@@ -21,6 +20,7 @@ import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.xssf.usermodel.XSSFComment;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.zss.Setup;
+import org.zkoss.zss.api.BookSeriesBuilder;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
@@ -28,13 +28,13 @@ import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
-import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.Range.InsertShift;
+import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.EditableFont;
 import org.zkoss.zss.api.model.Font;
-import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Sheet;
 
 /**
@@ -532,5 +532,80 @@ public class Issue400Test {
 
 		System.out.println(">>export pdf to "+temp);
 		Util.open(temp);
+
+	/**
+	 * reference to a JavaBean is not evaluated to a cell reference even the value is "=B2".
+	 * So it's not related to this issue.
+	 */
+	@Test
+	public void testZSS441(){
+		Book workbook = Util.loadBook("book/441-sum.xls");
+		Sheet sheet = workbook.getSheet("issue");
+		//sum an array row reference
+		Range sumResult = Ranges.range(sheet, "B3");
+		assertEquals(11, sumResult.getCellData().getDoubleValue().intValue());
+		sumResult = Ranges.range(sheet, "C3");
+		assertEquals(22, sumResult.getCellData().getDoubleValue().intValue());
+		sumResult = Ranges.range(sheet, "D3");
+		assertEquals(33, sumResult.getCellData().getDoubleValue().intValue());
+	}
+	
+	/**
+	 * "array formula" is the feature related to ZSS-441
+	 * http://office.microsoft.com/en-us/excel-help/guidelines-and-examples-of-array-formulas-HA010228458.aspx
+	 */
+	@Test
+	public void testZSS441ArrayFormula(){
+		Book workbook = Util.loadBook("book/441-sum.xls");
+		Sheet sheet = workbook.getSheet("array");
+		//array formula
+		Range multiplyResult = Ranges.range(sheet, "C3");
+		assertEquals(4, multiplyResult.getCellData().getDoubleValue().intValue());
+
+		multiplyResult = Ranges.range(sheet, "C4");
+		assertEquals(10, multiplyResult.getCellData().getDoubleValue().intValue());
+		
+		multiplyResult = Ranges.range(sheet, "C5");
+		assertEquals(18, multiplyResult.getCellData().getDoubleValue().intValue());
+		
+		//array formula - column
+		Range arrayColumn = Ranges.range(sheet, "B8");
+		assertEquals(8, arrayColumn.getCellData().getDoubleValue().intValue());
+		arrayColumn = Ranges.range(sheet, "B9");
+		assertEquals(9, arrayColumn.getCellData().getDoubleValue().intValue());
+		arrayColumn = Ranges.range(sheet, "B10");
+		assertEquals(10, arrayColumn.getCellData().getDoubleValue().intValue());
+		
+		sheet = workbook.getSheet("issue");
+		//array formula - row
+		Range arrayRow = Ranges.range(sheet, "B2");
+		assertEquals(1, arrayRow.getCellData().getDoubleValue().intValue());
+		arrayRow = Ranges.range(sheet, "C2");
+		assertEquals(2, arrayRow.getCellData().getDoubleValue().intValue());
+		arrayRow = Ranges.range(sheet, "D2");
+		assertEquals(3, arrayRow.getCellData().getDoubleValue().intValue());
+	}
+	
+	@Test
+	public void testZSS441ThreeDimensionalReference(){
+		Book workbook = Util.loadBook("book/441-sum.xls");
+		Sheet sheet = workbook.getSheet("3D");
+		Range sumResult = Ranges.range(sheet, "B1");
+		assertEquals(11, sumResult.getCellData().getDoubleValue().intValue());
+		sumResult = Ranges.range(sheet, "C1");
+		assertEquals(22, sumResult.getCellData().getDoubleValue().intValue());
+		sumResult = Ranges.range(sheet, "D1");
+		assertEquals(33, sumResult.getCellData().getDoubleValue().intValue());
+	}
+	
+	@Test
+	public void testZSS441ExternalBook(){
+		Book workbook = Util.loadBook("book/441-sum.xls");
+		Book anotherWorkbook = Util.loadBook("book/441-another.xls");
+		BookSeriesBuilder.getInstance().buildBookSeries(new Book[]{workbook, anotherWorkbook});
+		
+		Sheet sheet = workbook.getSheet("external");
+		Range sumResult = Ranges.range(sheet, "A1");
+		assertEquals(60, sumResult.getCellData().getDoubleValue().intValue());
 	}
 }
