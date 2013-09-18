@@ -21,6 +21,7 @@ import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.zss.POIUtil;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
+import org.zkoss.zss.api.BookSeriesBuilder;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
@@ -533,7 +534,7 @@ public class Issue400Test {
 	 */
 	@Test
 	public void testZSS441(){
-		Book workbook = Util.loadBook("book/441-sum.xls");
+		Book workbook = Util.loadBook(this,"book/441-sum.xls");
 		Sheet sheet = workbook.getSheet("issue");
 		//sum an array row reference
 		Range sumResult = Ranges.range(sheet, "B3");
@@ -550,7 +551,7 @@ public class Issue400Test {
 	 */
 	@Test
 	public void testZSS441ArrayFormula(){
-		Book workbook = Util.loadBook("book/441-sum.xls");
+		Book workbook = Util.loadBook(this,"book/441-sum.xls");
 		Sheet sheet = workbook.getSheet("array");
 		//array formula
 		Range multiplyResult = Ranges.range(sheet, "C3");
@@ -582,7 +583,7 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS441ThreeDimensionalReference(){
-		Book workbook = Util.loadBook("book/441-sum.xls");
+		Book workbook = Util.loadBook(this,"book/441-sum.xls");
 		Sheet sheet = workbook.getSheet("3D");
 		Range sumResult = Ranges.range(sheet, "B1");
 		assertEquals(11, sumResult.getCellData().getDoubleValue().intValue());
@@ -594,8 +595,8 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS441ExternalBook(){
-		Book workbook = Util.loadBook("book/441-sum.xls");
-		Book anotherWorkbook = Util.loadBook("book/441-another.xls");
+		Book workbook = Util.loadBook(this,"book/441-sum.xls");
+		Book anotherWorkbook = Util.loadBook(this,"book/441-another.xls");
 		BookSeriesBuilder.getInstance().buildBookSeries(new Book[]{workbook, anotherWorkbook});
 		
 		Sheet sheet = workbook.getSheet("external");
