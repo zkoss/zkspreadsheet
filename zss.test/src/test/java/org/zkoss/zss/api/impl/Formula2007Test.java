@@ -1,8 +1,5 @@
 package org.zkoss.zss.api.impl;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
 import java.util.Locale;
 
 import org.junit.After;
@@ -11,15 +8,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.Setup;
-import org.zkoss.zss.api.CellOperationUtil;
-import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
-import org.zkoss.zss.api.model.Sheet;
 
 /**
  * @author kuro, Hawk
  */
-public class Formula2007Test {
+public class Formula2007Test extends FormulaTestBase {
 
 	@BeforeClass
 	public static void setUpLibrary() throws Exception {
@@ -38,7 +32,7 @@ public class Formula2007Test {
 
 	// FIXME
 	// @Test
-	// public void testNOW() throws IOException {
+	// public void testNOW() {
 	// Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
 	// Sheet sheet = book.getSheet("formula-datetime");
 	// assertEquals("2013/9/11 16:00", Ranges.range(sheet, "B34").getCellData()
@@ -46,1970 +40,1509 @@ public class Formula2007Test {
 
 	// }
 	// @Test
-	// public void testToday() throws IOException {
+	// public void testToday() {
 	// Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
 	// Sheet sheet = book.getSheet("formula-datetime");
 	// assertEquals("2013/9/11", Ranges.range(sheet, "B42").getCellData()
 	// .getFormatText());
 	// }
 
-	// Financial --------------------------------------------------------------------------------
 	@Test
-	public void testACCRINT() throws IOException {
+	public void testCOUPNCD() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("16.67", Ranges.range(sheet, "B3").getCellData()
-				.getFormatText());
+		testCOUPNCD(book);
 	}
 
 	@Test
-	public void testACCRINTM() throws IOException {
+	public void testCOUPPCD() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("20.55", Ranges.range(sheet, "B6").getCellData()
-				.getFormatText());
+		testCOUPPCD(book);
 	}
 
 	@Test
-	public void testAMORDEGRC() throws IOException {
+	public void testWORKDAY() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("776", Ranges.range(sheet, "B9").getCellData()
-				.getFormatText());
+		testWORKDAY(book);
 	}
 
 	@Test
-	public void testAMORLINC() throws IOException {
+	public void testStartDateIsHoliday() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("360", Ranges.range(sheet, "B12").getCellData()
-				.getFormatText());
+		testStartDateIsHoliday(book);
 	}
 
 	@Test
-	public void testCOUPDAYBS() throws IOException {
+	public void testEndDateIsHoliday() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("71", Ranges.range(sheet, "B15").getCellData()
-				.getFormatText());
+		testEndDateIsHoliday(book);
 	}
 
 	@Test
-	public void testCOUPDAYS() throws IOException {
+	public void testNegativeWorkdayEndDateIsHolday() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("181", Ranges.range(sheet, "B18").getCellData()
-				.getFormatText());
+		testNegativeWorkdayEndDateIsHolday(book);
 	}
 
 	@Test
-	public void testCOUPDAYSNC() throws IOException {
+	public void testWorkdayBoundary() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("110", Ranges.range(sheet, "B21").getCellData()
-				.getFormatText());
+		testWorkdayBoundary(book);
 	}
 
 	@Test
-	public void testCOUPNCD() throws IOException {
+	public void testWorkdaySpecifiedholiday() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("2011/5/15", Ranges.range(sheet, "B24").getCellData()
-				.getFormatText());
+		testWorkdaySpecifiedholiday(book);
 	}
 
 	@Test
-	public void testCOUPNUM() throws IOException {
+	public void testIMREAL() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("4", Ranges.range(sheet, "B27").getCellData()
-				.getFormatText());
+		testIMREAL(book);
 	}
 
 	@Test
-	public void testCOUPPCD() throws IOException {
+	public void testACCRINT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("2006/11/15", Ranges.range(sheet, "B30").getCellData()
-				.getFormatText());
+		testACCRINT(book);
 	}
 
 	@Test
-	public void testCUMIPMT() throws IOException {
+	public void testACCRINTM() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("-11135.23", Ranges.range(sheet, "B33").getCellData()
-				.getFormatText());
+		testACCRINTM(book);
 	}
 
 	@Test
-	public void testCUMPRINC() throws IOException {
+	public void testAMORDEGRC() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("-934.11", Ranges.range(sheet, "B36").getCellData()
-				.getFormatText());
+		testAMORDEGRC(book);
 	}
 
 	@Test
-	public void testDB() throws IOException {
+	public void testAMORLINC() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("186083.33", Ranges.range(sheet, "B39").getCellData()
-				.getFormatText());
+		testAMORLINC(book);
 	}
 
 	@Test
-	public void testDDB() throws IOException {
+	public void testCOUPDAYBS() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("1.32", Ranges.range(sheet, "B42").getCellData()
-				.getFormatText());
+		testCOUPDAYBS(book);
 	}
 
 	@Test
-	public void testDISC() throws IOException {
+	public void testCOUPDAYS() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("0.05", Ranges.range(sheet, "B45").getCellData()
-				.getFormatText());
+		testCOUPDAYS(book);
 	}
 
 	@Test
-	public void testDOLLARDE() throws IOException {
+	public void testCOUPDAYSNC() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("1.125", Ranges.range(sheet, "B47").getCellData()
-				.getFormatText());
+		testCOUPDAYSNC(book);
 	}
 
 	@Test
-	public void testDOLLARFR() throws IOException {
+	public void testCOUPNUM() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("1.02", Ranges.range(sheet, "B49").getCellData()
-				.getFormatText());
+		testCOUPNUM(book);
 	}
 
 	@Test
-	public void testDURATION() throws IOException {
+	public void testCUMIPMT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("5.99", Ranges.range(sheet, "B51").getCellData()
-				.getFormatText());
+		testCUMIPMT(book);
 	}
 
 	@Test
-	public void testEFFECT() throws IOException {
+	public void testCUMPRINC() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("0.05", Ranges.range(sheet, "B54").getCellData()
-				.getFormatText());
+		testCUMPRINC(book);
 	}
 
 	@Test
-	public void testFV() throws IOException {
+	public void testDB() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("2581.40", Ranges.range(sheet, "B57").getCellData()
-				.getFormatText());
+		testDB(book);
 	}
 
 	@Test
-	public void testFVSCHEDULE() throws IOException {
+	public void testDDB() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("1.33", Ranges.range(sheet, "B59").getCellData()
-				.getFormatText());
+		testDDB(book);
 	}
 
 	@Test
-	public void testINTRATE() throws IOException {
+	public void testDISC() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("0.06", Ranges.range(sheet, "B62").getCellData()
-				.getFormatText());
+		testDISC(book);
 	}
 
 	@Test
-	public void testIPMT() throws IOException {
+	public void testDOLLARDE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("-292.45", Ranges.range(sheet, "B64").getCellData()
-				.getFormatText());
+		testDOLLARDE(book);
 	}
 
 	@Test
-	public void testIRR() throws IOException {
+	public void testDOLLARFR() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("-2.1%", Ranges.range(sheet, "B67").getCellData()
-				.getFormatText());
+		testDOLLARFR(book);
 	}
 
 	@Test
-	public void testNOMINAL() throws IOException {
+	public void testDURATION() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("0.05", Ranges.range(sheet, "B81").getCellData()
-				.getFormatText());
+		testDURATION(book);
 	}
 
 	@Test
-	public void testNPER() throws IOException {
+	public void testEFFECT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("59.67", Ranges.range(sheet, "B84").getCellData()
-				.getFormatText());
+		testEFFECT(book);
 	}
 
 	@Test
-	public void testNPV() throws IOException {
+	public void testFV() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("41922.06", Ranges.range(sheet, "B87").getCellData()
-				.getFormatText());
+		testFV(book);
 	}
 
 	@Test
-	public void testPMT() throws IOException {
+	public void testFVSCHEDULE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("-1037.03", Ranges.range(sheet, "B89").getCellData()
-				.getFormatText());
+		testFVSCHEDULE(book);
 	}
 
 	@Test
-	public void testPPMT() throws IOException {
+	public void testINTRATE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("-75.62", Ranges.range(sheet, "B91").getCellData()
-				.getFormatText());
+		testINTRATE(book);
 	}
 
 	@Test
-	public void testPRICE() throws IOException {
+	public void testIPMT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("94.63", Ranges.range(sheet, "B93").getCellData()
-				.getFormatText());
-
+		testIPMT(book);
 	}
 
 	@Test
-	public void testPRICEDISC() throws IOException {
+	public void testIRR() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("99.80", Ranges.range(sheet, "B95").getCellData()
-				.getFormatText());
+		testIRR(book);
 	}
 
 	@Test
-	public void testPRICEMAT() throws IOException {
+	public void testNOMINAL() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("99.98", Ranges.range(sheet, "B97").getCellData()
-				.getFormatText());
+		testNOMINAL(book);
 	}
 
 	@Test
-	public void testPV() throws IOException {
+	public void testNPER() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("-59777.15", Ranges.range(sheet, "B99").getCellData()
-				.getFormatText());
+		testNPER(book);
 	}
 
 	@Test
-	public void testRATE() throws IOException {
+	public void testNPV() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("1%", Ranges.range(sheet, "B102").getCellData()
-				.getFormatText());
+		testNPV(book);
 	}
 
 	@Test
-	public void testRECEIVED() throws IOException {
+	public void testPMT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("1014584.65", Ranges.range(sheet, "B104").getCellData()
-				.getFormatText());
+		testPMT(book);
 	}
 
 	@Test
-	public void testSLN() throws IOException {
+	public void testPPMT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("2250", Ranges.range(sheet, "B106").getCellData()
-				.getFormatText());
+		testPPMT(book);
 	}
 
 	@Test
-	public void testSYD() throws IOException {
+	public void testPRICE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("4090.91", Ranges.range(sheet, "B108").getCellData()
-				.getFormatText());
+		testPRICE(book);
 	}
 
 	@Test
-	public void testTBILLEQ() throws IOException {
+	public void testPRICEDISC() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("0.09", Ranges.range(sheet, "B110").getCellData()
-				.getFormatText());
+		testPRICEDISC(book);
 	}
 
 	@Test
-	public void testTBILLPRICE() throws IOException {
+	public void testPRICEMAT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("98.45", Ranges.range(sheet, "B112").getCellData()
-				.getFormatText());
+		testPRICEMAT(book);
 	}
 
 	@Test
-	public void testTBILLYIELD() throws IOException {
+	public void testPV() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("0.09", Ranges.range(sheet, "B115").getCellData()
-				.getFormatText());
+		testPV(book);
 	}
 
 	@Test
-	public void testXNPV() throws IOException {
+	public void testRATE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("2086.65", Ranges.range(sheet, "B119").getCellData()
-				.getFormatText());
+		testRATE(book);
 	}
 
 	@Test
-	public void testYIELD() throws IOException {
+	public void testRECEIVED() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("0.06", Ranges.range(sheet, "B123").getCellData()
-				.getFormatText());
+		testRECEIVED(book);
 	}
 
 	@Test
-	public void testYIELDDISC() throws IOException {
+	public void testSLN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("0.05", Ranges.range(sheet, "B125").getCellData()
-				.getFormatText());
+		testSLN(book);
 	}
 
 	@Test
-	public void testYIELDMAT() throws IOException {
+	public void testSYD() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("0.06", Ranges.range(sheet, "B127").getCellData()
-				.getFormatText());
+		testSYD(book);
 	}
 
-	// Logical --------------------------------------------------------------------------------
 	@Test
-	public void testAND() throws IOException {
+	public void testTBILLEQ() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-logical");
-		assertEquals("TRUE", Ranges.range(sheet, "B4").getCellData()
-				.getFormatText());
+		testTBILLEQ(book);
 	}
 
 	@Test
-	public void testFALSE() throws IOException {
+	public void testTBILLPRICE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-logical");
-		assertEquals("FALSE", Ranges.range(sheet, "B6").getCellData()
-				.getFormatText());
+		testTBILLPRICE(book);
 	}
 
 	@Test
-	public void testIF() throws IOException {
+	public void testTBILLYIELD() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-logical");
-		assertEquals("over 10", Ranges.range(sheet, "B8").getCellData()
-				.getFormatText());
+		testTBILLYIELD(book);
 	}
 
 	@Test
-	public void testIFERROR() throws IOException {
+	public void testXNPV() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-logical");
-		assertEquals("6", Ranges.range(sheet, "B11").getCellData()
-				.getFormatText());
+		testXNPV(book);
 	}
 
 	@Test
-	public void testNOT() throws IOException {
+	public void testYIELD() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-logical");
-		assertEquals("TRUE", Ranges.range(sheet, "B14").getCellData()
-				.getFormatText());
+		testYIELD(book);
 	}
 
 	@Test
-	public void testOR() throws IOException {
+	public void testYIELDDISC() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-logical");
-		assertEquals("FALSE", Ranges.range(sheet, "B16").getCellData()
-				.getFormatText());
+		testYIELDDISC(book);
 	}
 
 	@Test
-	public void testTRUE() throws IOException {
+	public void testYIELDMAT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-logical");
-		assertEquals("TRUE", Ranges.range(sheet, "B18").getCellData()
-				.getFormatText());
+		testYIELDMAT(book);
 	}
 
-	// Math --------------------------------------------------------------------------------
 	@Test
-	public void testABS() throws IOException {
+	public void testAND() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("4", Ranges.range(sheet, "B4").getCellData()
-				.getFormatText());
+		testAND(book);
 	}
 
 	@Test
-	public void testACOS() throws IOException {
+	public void testFALSE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("2.09", Ranges.range(sheet, "B7").getCellData()
-				.getFormatText());
+		testFALSE(book);
 	}
 
 	@Test
-	public void testACOSH() throws IOException {
+	public void testIF() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("0", Ranges.range(sheet, "B9").getCellData()
-				.getFormatText());
+		testIF(book);
 	}
 
 	@Test
-	public void testASIN() throws IOException {
+	public void testIFERROR() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("-0.5236", Ranges.range(sheet, "B11").getCellData()
-				.getFormatText());
+		testIFERROR(book);
 	}
 
 	@Test
-	public void testASINH() throws IOException {
+	public void testNOT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("-1.65", Ranges.range(sheet, "B13").getCellData()
-				.getFormatText());
+		testNOT(book);
 	}
 
 	@Test
-	public void testATAN() throws IOException {
+	public void testOR() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("0.79", Ranges.range(sheet, "B15").getCellData()
-				.getFormatText());
+		testOR(book);
 	}
 
 	@Test
-	public void testATAN2() throws IOException {
+	public void testTRUE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("0.79", Ranges.range(sheet, "B17").getCellData()
-				.getFormatText());
+		testTRUE(book);
 	}
 
 	@Test
-	public void testATANH() throws IOException {
+	public void testABS() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("1.00", Ranges.range(sheet, "B19").getCellData()
-				.getFormatText());
+		testABS(book);
 	}
 
 	@Test
-	public void testCEILING() throws IOException {
+	public void testACOS() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("3", Ranges.range(sheet, "B21").getCellData()
-				.getFormatText());
+		testACOS(book);
 	}
 
 	@Test
-	public void testCOMBIN() throws IOException {
+	public void testACOSH() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("28", Ranges.range(sheet, "B23").getCellData()
-				.getFormatText());
+		testACOSH(book);
 	}
 
 	@Test
-	public void testCOS() throws IOException {
+	public void testASIN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("0.50", Ranges.range(sheet, "B25").getCellData()
-				.getFormatText());
+		testASIN(book);
 	}
 
 	@Test
-	public void testCOSH() throws IOException {
+	public void testASINH() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("27.31", Ranges.range(sheet, "B27").getCellData()
-				.getFormatText());
+		testASINH(book);
 	}
 
 	@Test
-	public void testDEGREES() throws IOException {
+	public void testATAN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("180", Ranges.range(sheet, "B29").getCellData()
-				.getFormatText());
+		testATAN(book);
 	}
 
 	@Test
-	public void testEVEN() throws IOException {
+	public void testATAN2() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("2", Ranges.range(sheet, "B31").getCellData()
-				.getFormatText());
+		testATAN2(book);
 	}
 
 	@Test
-	public void testEXP() throws IOException {
+	public void testATANH() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("2.72", Ranges.range(sheet, "B33").getCellData()
-				.getFormatText());
+		testATANH(book);
 	}
 
 	@Test
-	public void testFACT() throws IOException {
+	public void testCEILING() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("120", Ranges.range(sheet, "B35").getCellData()
-				.getFormatText());
+		testCEILING(book);
 	}
 
 	@Test
-	public void testFACTDOUBLE() throws IOException {
+	public void testCOMBIN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("48", Ranges.range(sheet, "B37").getCellData()
-				.getFormatText());
+		testCOMBIN(book);
 	}
 
 	@Test
-	public void testFLOOR() throws IOException {
+	public void testCOS() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("2", Ranges.range(sheet, "B39").getCellData()
-				.getFormatText());
+		testCOS(book);
 	}
 
 	@Test
-	public void testGCD() throws IOException {
+	public void testCOSH() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("1", Ranges.range(sheet, "B41").getCellData()
-				.getFormatText());
+		testCOSH(book);
 	}
 
 	@Test
-	public void testINT() throws IOException {
+	public void testDEGREES() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("8", Ranges.range(sheet, "B43").getCellData()
-				.getFormatText());
+		testDEGREES(book);
 	}
 
 	@Test
-	public void testLCM() throws IOException {
+	public void testEVEN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("10", Ranges.range(sheet, "B45").getCellData()
-				.getFormatText());
+		testEVEN(book);
 	}
 
 	@Test
-	public void testLN() throws IOException {
+	public void testEXP() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("4.4543", Ranges.range(sheet, "B47").getCellData()
-				.getFormatText());
+		testEXP(book);
 	}
 
 	@Test
-	public void testLOG() throws IOException {
+	public void testFACT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("3", Ranges.range(sheet, "B49").getCellData()
-				.getFormatText());
+		testFACT(book);
 	}
 
 	@Test
-	public void testLOG10() throws IOException {
+	public void testFACTDOUBLE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("1", Ranges.range(sheet, "B51").getCellData()
-				.getFormatText());
+		testFACTDOUBLE(book);
 	}
 
 	@Test
-	public void testMDETERM() throws IOException {
+	public void testFLOOR() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("88", Ranges.range(sheet, "B53").getCellData()
-				.getFormatText());
+		testFLOOR(book);
 	}
 
 	@Test
-	public void testMINVERSE() throws IOException {
+	public void testGCD() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("0", Ranges.range(sheet, "B59").getCellData()
-				.getFormatText());
+		testGCD(book);
 	}
 
 	@Test
-	public void testMMULT() throws IOException {
+	public void testINT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("2", Ranges.range(sheet, "B63").getCellData()
-				.getFormatText());
+		testINT(book);
 	}
 
 	@Test
-	public void testMOD() throws IOException {
+	public void testLCM() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("1", Ranges.range(sheet, "B71").getCellData()
-				.getFormatText());
+		testLCM(book);
 	}
 
 	@Test
-	public void testMROUND() throws IOException {
+	public void testLN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("9", Ranges.range(sheet, "B73").getCellData()
-				.getFormatText());
+		testLN(book);
 	}
 
 	@Test
-	public void testMULTINOMIA() throws IOException {
+	public void testLOG() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("1260", Ranges.range(sheet, "B75").getCellData()
-				.getFormatText());
+		testLOG(book);
 	}
 
 	@Test
-	public void testODD() throws IOException {
+	public void testLOG10() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("3", Ranges.range(sheet, "B77").getCellData()
-				.getFormatText());
+		testLOG10(book);
 	}
 
 	@Test
-	public void testPI() throws IOException {
+	public void testMDETERM() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("3.1416", Ranges.range(sheet, "B79").getCellData()
-				.getFormatText());
+		testMDETERM(book);
 	}
 
 	@Test
-	public void testPOWER() throws IOException {
+	public void testMINVERSE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("25", Ranges.range(sheet, "B81").getCellData()
-				.getFormatText());
+		testMINVERSE(book);
 	}
 
 	@Test
-	public void testPRODUCT() throws IOException {
+	public void testMMULT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("2250", Ranges.range(sheet, "B83").getCellData()
-				.getFormatText());
+		testMMULT(book);
 	}
 
 	@Test
-	public void testQUOTIENT() throws IOException {
+	public void testMOD() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("2", Ranges.range(sheet, "B88").getCellData()
-				.getFormatText());
+		testMOD(book);
 	}
 
 	@Test
-	public void testRADIANS() throws IOException {
+	public void testMROUND() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("4.7124", Ranges.range(sheet, "B90").getCellData()
-				.getFormatText());
+		testMROUND(book);
 	}
 
 	@Test
-	public void testROMAN() throws IOException {
+	public void testMULTINOMIA() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("CDXCIX", Ranges.range(sheet, "B96").getCellData()
-				.getFormatText());
+		testMULTINOMIA(book);
 	}
 
 	@Test
-	public void testROUND() throws IOException {
+	public void testODD() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("2.2", Ranges.range(sheet, "B98").getCellData()
-				.getFormatText());
+		testODD(book);
 	}
 
 	@Test
-	public void testROUNDDOWN() throws IOException {
+	public void testPI() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("3", Ranges.range(sheet, "B100").getCellData()
-				.getFormatText());
+		testPI(book);
 	}
 
 	@Test
-	public void testROUNDUP() throws IOException {
+	public void testPOWER() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("4", Ranges.range(sheet, "B102").getCellData()
-				.getFormatText());
+		testPOWER(book);
 	}
 
 	@Test
-	public void testSIGN() throws IOException {
+	public void testPRODUCT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("1", Ranges.range(sheet, "B111").getCellData()
-				.getFormatText());
+		testPRODUCT(book);
 	}
 
 	@Test
-	public void testSIN() throws IOException {
+	public void testQUOTIENT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("0.00", Ranges.range(sheet, "B113").getCellData()
-				.getFormatText());
+		testQUOTIENT(book);
 	}
 
 	@Test
-	public void testSINH() throws IOException {
+	public void testRADIANS() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("1.1752", Ranges.range(sheet, "B115").getCellData()
-				.getFormatText());
+		testRADIANS(book);
 	}
 
 	@Test
-	public void testSQRT() throws IOException {
+	public void testROMAN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("4", Ranges.range(sheet, "B117").getCellData()
-				.getFormatText());
+		testROMAN(book);
 	}
 
 	@Test
-	public void testSQRTPI() throws IOException {
+	public void testROUND() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("1.7725", Ranges.range(sheet, "B119").getCellData()
-				.getFormatText());
+		testROUND(book);
 	}
 
 	@Test
-	public void testSUBTOTAL() throws IOException {
+	public void testROUNDDOWN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("303", Ranges.range(sheet, "B121").getCellData()
-				.getFormatText());
+		testROUNDDOWN(book);
 	}
 
 	@Test
-	public void testSUM() throws IOException {
+	public void testROUNDUP() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("5", Ranges.range(sheet, "B127").getCellData()
-				.getFormatText());
+		testROUNDUP(book);
 	}
 
 	@Test
-	public void testSUMIF() throws IOException {
+	public void testSIGN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("63000", Ranges.range(sheet, "B129").getCellData()
-				.getFormatText());
+		testSIGN(book);
 	}
 
 	@Test
-	public void testSUMIFS() throws IOException {
+	public void testSIN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("20", Ranges.range(sheet, "B135").getCellData()
-				.getFormatText());
+		testSIN(book);
 	}
 
 	@Test
-	public void testSUMPRODUCT() throws IOException {
+	public void testSINH() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("156", Ranges.range(sheet, "B145").getCellData()
-				.getFormatText());
+		testSINH(book);
 	}
 
 	@Test
-	public void testSUMSQ() throws IOException {
+	public void testSQRT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("25", Ranges.range(sheet, "B150").getCellData()
-				.getFormatText());
+		testSQRT(book);
 	}
 
 	@Test
-	public void testSUMX2MY2() throws IOException {
+	public void testSQRTPI() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("-55", Ranges.range(sheet, "B153").getCellData()
-				.getFormatText());
+		testSQRTPI(book);
 	}
 
 	@Test
-	public void testSUMX2PY2() throws IOException {
+	public void testSUBTOTAL() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("521", Ranges.range(sheet, "B162").getCellData()
-				.getFormatText());
+		testSUBTOTAL(book);
 	}
 
 	@Test
-	public void testSUMXMY2() throws IOException {
+	public void testSUM() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("79", Ranges.range(sheet, "B171").getCellData()
-				.getFormatText());
+		testSUM(book);
 	}
 
 	@Test
-	public void testTAN() throws IOException {
+	public void testSUMIF() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("0.9992", Ranges.range(sheet, "B180").getCellData()
-				.getFormatText());
+		testSUMIF(book);
 	}
 
 	@Test
-	public void testTANH() throws IOException {
+	public void testSUMIFS() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("-0.96", Ranges.range(sheet, "B182").getCellData()
-				.getFormatText());
+		testSUMIFS(book);
 	}
 
 	@Test
-	public void testTRUNC() throws IOException {
+	public void testSUMPRODUCT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-math");
-		assertEquals("8", Ranges.range(sheet, "B184").getCellData()
-				.getFormatText());
+		testSUMPRODUCT(book);
 	}
 
-	// Date & Time --------------------------------------------------------------------------------
 	@Test
-	public void testDATE() throws IOException {
+	public void testSUMSQ() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		CellOperationUtil.applyDataFormat(Ranges.range(sheet, "B3"), "Y/M/D");
-		assertEquals("08/1/1", Ranges.range(sheet, "B3").getCellData()
-				.getFormatText());// '08/01/01'// is correct and fixed in zpoi
-									// 3.9
+		testSUMSQ(book);
 	}
 
 	@Test
-	public void testDATEVALUE() throws IOException {
+	public void testSUMX2MY2() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("39448", Ranges.range(sheet, "B6").getCellData()
-				.getFormatText());
+		testSUMX2MY2(book);
 	}
 
 	@Test
-	public void testDAY() throws IOException {
+	public void testSUMX2PY2() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("15", Ranges.range(sheet, "B8").getCellData()
-				.getFormatText());
+		testSUMX2PY2(book);
 	}
 
 	@Test
-	public void testDAY360() throws IOException {
+	public void testSUMXMY2() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("1", Ranges.range(sheet, "B10").getCellData()
-				.getFormatText());
+		testSUMXMY2(book);
 	}
 
 	@Test
-	public void testMINUTE() throws IOException {
+	public void testTAN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("48", Ranges.range(sheet, "B15").getCellData()
-				.getFormatText());
+		testTAN(book);
 	}
 
 	@Test
-	public void testMONTH() throws IOException {
+	public void testTANH() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("4", Ranges.range(sheet, "B17").getCellData()
-				.getFormatText());
+		testTANH(book);
 	}
 
 	@Test
-	public void testNETWORKDAYS() throws IOException {
+	public void testTRUNC() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("22", Ranges.range(sheet, "B19").getCellData()
-				.getFormatText()); // =NETWORKDAYS(DATE(2013,4,1),DATE(2013,4,30))
-		assertEquals("108", Ranges.range(sheet, "B20").getCellData()
-				.getFormatText()); // =NETWORKDAYS(DATE(2008,10,1),
-									// DATE(2009,3,1))
+		testTRUNC(book);
 	}
 
 	@Test
-	public void testNetworkDaysStartDateIsHoliday() throws IOException {
+	public void testDATE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("5", Ranges.range(sheet, "B21").getCellData()
-				.getFormatText()); // =NETWORKDAYS(DATE(2013,6,1),
-									// DATE(2013,6,9))
+		testDATE(book);
 	}
 
 	@Test
-	public void testNetworkDaysAllHoliday() throws IOException {
+	public void testDATEVALUE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("0", Ranges.range(sheet, "B22").getCellData()
-				.getFormatText()); // =NETWORKDAYS(DATE(2013,6,1),
-									// DATE(2013,6,1))
-		assertEquals("0", Ranges.range(sheet, "B23").getCellData()
-				.getFormatText()); // =NETWORKDAYS(DATE(2013,6,1),
-									// DATE(2013,6,2))
+		testDATEVALUE(book);
 	}
 
 	@Test
-	public void testNetworkDaysSpecificHoliday() throws IOException {
+	public void testDAY() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("107", Ranges.range(sheet, "B24").getCellData()
-				.getFormatText()); // =NETWORKDAYS(DATE(2008,10,1),
-									// DATE(2009,3,1), DATE(2008,11,26))
-		assertEquals("1", Ranges.range(sheet, "B25").getCellData()
-				.getFormatText()); // =NETWORKDAYS(DATE(2013,6,1),
-									// DATE(2013,6,4), DATE(2013,6,3))
+		testDAY(book);
 	}
 
 	@Test
-	public void testStartDateEqualsEndDate() throws IOException {
+	public void testDAY360() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("1", Ranges.range(sheet, "B26").getCellData()
-				.getFormatText()); // =NETWORKDAYS(DATE(2013,6,28),
-									// DATE(2013,6,28))
+		testDAY360(book);
 	}
 
 	@Test
-	public void testStartDateLaterThanEndDate() throws IOException {
+	public void testHOUR() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("#VALUE!", Ranges.range(sheet, "B27").getCellData()
-				.getFormatText()); // =NETWORKDAYS(DATE(2013,6,2),
-									// DATE(2013,6,1))
+		testHOUR(book);
 	}
 
 	@Test
-	public void testEmptyDate() throws IOException {
+	public void testMINUTE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("0", Ranges.range(sheet, "B28").getCellData()
-				.getFormatText()); // =NETWORKDAYS(E28,F28)
-		// E28 and F28 are blank
+		testMINUTE(book);
 	}
 
 	@Test
-	public void testSECOND() throws IOException {
+	public void testMONTH() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("18", Ranges.range(sheet, "B36").getCellData()
-				.getFormatText());
+		testMONTH(book);
 	}
 
 	@Test
-	public void testTIME() throws IOException {
+	public void testNETWORKDAYS() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("0.5", Ranges.range(sheet, "B38").getCellData()
-				.getFormatText());
+		testNETWORKDAYS(book);
 	}
 
 	@Test
-	public void testWEEKDAY() throws IOException {
+	public void testNetworkDaysStartDateIsHoliday() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("5", Ranges.range(sheet, "B44").getCellData()
-				.getFormatText());
+		testNetworkDaysStartDateIsHoliday(book);
 	}
 
 	@Test
-	public void testWORKDAY() throws IOException {
+	public void testNetworkDaysAllHoliday() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("2013/4/5", Ranges.range(sheet, "B46").getCellData()
-				.getFormatText()); // =WORKDAY(DATE(2013,4,1),4)
-		assertEquals("2009/4/30", Ranges.range(sheet, "B47").getCellData()
-				.getFormatText()); // =WORKDAY(DATE(2008,10,1),151)
+		testNetworkDaysAllHoliday(book);
 	}
 
 	@Test
-	public void testStartDateIsHoliday() throws IOException {
+	public void testNetworkDaysSpecificHoliday() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("2013/6/3", Ranges.range(sheet, "B48").getCellData()
-				.getFormatText()); // =WORKDAY(DATE(2013,6,1),1)
-		assertEquals("2013/5/31", Ranges.range(sheet, "B49").getCellData()
-				.getFormatText()); // =WORKDAY(DATE(2013,6,1), -1)
+		testNetworkDaysSpecificHoliday(book);
 	}
 
 	@Test
-	public void testEndDateIsHoliday() throws IOException {
+	public void testStartDateEqualsEndDate() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("2013/4/8", Ranges.range(sheet, "B50").getCellData()
-				.getFormatText()); // =WORKDAY(DATE(2013,4,1),5)
-		assertEquals("2013/4/8", Ranges.range(sheet, "B51").getCellData()
-				.getFormatText()); // =WORKDAY(DATE(2013,4,5),1)
+		testStartDateEqualsEndDate(book);
 	}
 
 	@Test
-	public void testNegativeWorkdayEndDateIsHolday() throws IOException {
+	public void testStartDateLaterThanEndDate() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("2013/3/29", Ranges.range(sheet, "B52").getCellData()
-				.getFormatText()); // =WORKDAY(DATE(2013,4,1),-1)
-		assertEquals("2013/5/31", Ranges.range(sheet, "B53").getCellData()
-				.getFormatText()); // =WORKDAY(DATE(2013,6,7),-5)
+		testStartDateLaterThanEndDate(book);
 	}
 
 	@Test
-	public void testWorkdayBoundary() throws IOException {
+	public void testEmptyDate() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("2013/4/1", Ranges.range(sheet, "B54").getCellData()
-				.getFormatText()); // =WORKDAY(DATE(2013,4,1),0)
-		assertEquals("2013/6/1", Ranges.range(sheet, "B55").getCellData()
-				.getFormatText()); // =WORKDAY(DATE(2013,6,1),0)
+		testEmptyDate(book);
 	}
 
 	@Test
-	public void testWorkdaySpecifiedholiday() throws IOException {
+	public void testSECOND() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("2013/4/5", Ranges.range(sheet, "B56").getCellData()
-				.getFormatText()); // =WORKDAY(DATE(2013,4,1),3, DATE(2013,4,2))
-		assertEquals("2013/4/3", Ranges.range(sheet, "B57").getCellData()
-				.getFormatText()); // =WORKDAY(DATE(2013,4,7),
-									// -3,DATE(2013,4,2))
-		assertEquals("2013/4/1", Ranges.range(sheet, "B58").getCellData()
-				.getFormatText()); // =WORKDAY(DATE(2013,4,3),
-									// -1,DATE(2013,4,2))
+		testSECOND(book);
 	}
 
 	@Test
-	public void testYEAR() throws IOException {
+	public void testTIME() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("2008", Ranges.range(sheet, "B61").getCellData()
-				.getFormatText()); // =YEAR(DATE(2008,1,1))
+		testTIME(book);
 	}
 
 	@Test
-	public void testYEARFRAC() throws IOException {
+	public void testWEEKDAY() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals(0.58, Ranges.range(sheet, "B63").getCellData()
-				.getDoubleValue(), 0.005); // =YEARFRAC(DATE(2012,1,1),DATE(2012,7,30))
+		testWEEKDAY(book);
 	}
-	
-	// Text ---------------------------------------------------------------------------------------
+
 	@Test
-	public void testCHAR() throws IOException {
+	public void testYEAR() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("A", Ranges.range(sheet, "B4").getCellFormatText());
+		testYEAR(book);
 	}
 
 	@Test
-	public void testLOWER() throws IOException {
+	public void testYEARFRAC() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("e. e. cummings", Ranges.range(sheet, "B34")
-				.getCellFormatText());
+		testYEARFRAC(book);
 	}
 
 	@Test
-	public void testCODE() throws IOException {
+	public void testCHAR() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("65", Ranges.range(sheet, "B9").getCellFormatText());
+		testCHAR(book);
 	}
 
 	@Test
-	public void testCLEAN() throws IOException {
+	public void testLOWER() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("text", Ranges.range(sheet, "B6").getCellFormatText());
+		testLOWER(book);
 	}
 
 	@Test
-	public void testCONCATENATE() throws IOException {
+	public void testCODE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("ZK", Ranges.range(sheet, "B11").getCellFormatText());
+		testCODE(book);
 	}
 
 	@Test
-	public void testEXACT() throws IOException {
+	public void testCLEAN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("TRUE", Ranges.range(sheet, "B15").getCellFormatText());
+		testCLEAN(book);
 	}
 
 	@Test
-	public void testFIND() throws IOException {
+	public void testCONCATENATE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("1", Ranges.range(sheet, "B19").getCellFormatText());
+		testCONCATENATE(book);
 	}
 
 	@Test
-	public void testFIXED() throws IOException {
+	public void testEXACT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("1,234.6", Ranges.range(sheet, "B23").getCellFormatText());
+		testEXACT(book);
 	}
 
 	@Test
-	public void testLEFT() throws IOException {
+	public void testFIND() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("\u6771 \u4EAC ", Ranges.range(sheet, "B26")
-				.getCellFormatText());
+		testFIND(book);
 	}
 
 	@Test
-	public void testLEN() throws IOException {
+	public void testFIXED() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("11", Ranges.range(sheet, "B30").getCellFormatText());
+		testFIXED(book);
 	}
 
 	@Test
-	public void testMID() throws IOException {
+	public void testLEFT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("Fluid", Ranges.range(sheet, "B37").getCellFormatText());
+		testLEFT(book);
 	}
 
 	@Test
-	public void testPROPER() throws IOException {
+	public void testLEN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("This Is A Title", Ranges.range(sheet, "B41")
-				.getCellFormatText());
+		testLEN(book);
 	}
 
 	@Test
-	public void testREPLACE() throws IOException {
+	public void testMID() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("abcde*k", Ranges.range(sheet, "B44").getCellFormatText());
+		testMID(book);
 	}
 
 	@Test
-	public void testREPT() throws IOException {
+	public void testPROPER() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("*-*-*-", Ranges.range(sheet, "B48").getCellFormatText());
+		testPROPER(book);
 	}
 
 	@Test
-	public void testRIGHT() throws IOException {
+	public void testREPLACE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("Price", Ranges.range(sheet, "B50").getCellFormatText());
+		testREPLACE(book);
 	}
 
 	@Test
-	public void testSEARCH() throws IOException {
+	public void testREPT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("6", Ranges.range(sheet, "B54").getCellFormatText());
+		testREPT(book);
 	}
 
 	@Test
-	public void testSUBSTITUTE() throws IOException {
+	public void testRIGHT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("Quarter 2, 2008", Ranges.range(sheet, "B58")
-				.getCellFormatText());
+		testRIGHT(book);
 	}
 
 	@Test
-	public void testT() throws IOException {
+	public void testSEARCH() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("Sale Price", Ranges.range(sheet, "B62")
-				.getCellFormatText());
+		testSEARCH(book);
 	}
 
 	@Test
-	public void testTEXT() throws IOException {
+	public void testSUBSTITUTE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("Date: 2007-08-06", Ranges.range(sheet, "B64")
-				.getCellFormatText());
+		testSUBSTITUTE(book);
 	}
 
 	@Test
-	public void testTRIM() throws IOException {
+	public void testT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("revenue in quarter 1", Ranges.range(sheet, "B67")
-				.getCellFormatText());
+		testT(book);
 	}
 
 	@Test
-	public void testUPPER() throws IOException {
+	public void testTEXT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("TOTAL", Ranges.range(sheet, "B69").getCellFormatText());
+		testTEXT(book);
 	}
 
-	//Info ----------------------------------------------------------------------------------------
 	@Test
-	public void testERRORTYPE() throws IOException {
+	public void testTRIM() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-info");
-		assertEquals("1", Ranges.range(sheet, "B3").getCellFormatText());
+		testTRIM(book);
 	}
 
 	@Test
-	public void testISBLANK() throws IOException {
+	public void testUPPER() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-info");
-		assertEquals("TRUE", Ranges.range(sheet, "B10").getCellFormatText());
+		testUPPER(book);
 	}
 
 	@Test
-	public void testISERR() throws IOException {
+	public void testAVEDEV() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-info");
-		assertEquals("TRUE", Ranges.range(sheet, "B12").getCellFormatText());
+		testAVEDEV(book);
 	}
 
 	@Test
-	public void testISERROR() throws IOException {
+	public void testAVERAGE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-info");
-		assertEquals("TRUE", Ranges.range(sheet, "B15").getCellFormatText());
+		testAVERAGE(book);
 	}
 
 	@Test
-	public void testISEVEN() throws IOException {
+	public void testERRORTYPE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-info");
-		assertEquals("TRUE", Ranges.range(sheet, "B18").getCellFormatText());
+		testERRORTYPE(book);
 	}
 
 	@Test
-	public void testISLOGICAL() throws IOException {
+	public void testISBLANK() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-info");
-		assertEquals("FALSE", Ranges.range(sheet, "B21").getCellFormatText());
+		testISBLANK(book);
 	}
 
 	@Test
-	public void testISNA() throws IOException {
+	public void testISERR() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-info");
-		assertEquals("FALSE", Ranges.range(sheet, "B23").getCellFormatText());
+		testISERR(book);
 	}
 
 	@Test
-	public void testISNONTEXT() throws IOException {
+	public void testISERROR() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-info");
-		assertEquals("TRUE", Ranges.range(sheet, "B26").getCellFormatText());
+		testISERROR(book);
 	}
 
 	@Test
-	public void testISNUMBER() throws IOException {
+	public void testISEVEN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-info");
-		assertEquals("TRUE", Ranges.range(sheet, "B29").getCellFormatText());
+		testISEVEN(book);
 	}
 
 	@Test
-	public void testISODD() throws IOException {
+	public void testISLOGICAL() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-info");
-		assertEquals("FALSE", Ranges.range(sheet, "B31").getCellFormatText());
+		testISLOGICAL(book);
 	}
 
 	@Test
-	public void testISREF() throws IOException {
+	public void testISNA() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-info");
-		assertEquals("FALSE", Ranges.range(sheet, "B33").getCellFormatText());
+		testISNA(book);
 	}
 
 	@Test
-	public void testISTEXT() throws IOException {
+	public void testISNONTEXT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-info");
-		assertEquals("TRUE", Ranges.range(sheet, "B35").getCellFormatText());
+		testISNONTEXT(book);
 	}
 
 	@Test
-	public void testN() throws IOException {
+	public void testISNUMBER() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-info");
-		assertEquals("7", Ranges.range(sheet, "B38").getCellFormatText());
+		testISNUMBER(book);
 	}
 
 	@Test
-	public void testNA() throws IOException {
+	public void testISODD() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-info");
-		assertEquals("#N/A", Ranges.range(sheet, "B41").getCellFormatText());
+		testISODD(book);
 	}
 
 	@Test
-	public void testTYPE() throws IOException {
+	public void testISREF() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-info");
-		assertEquals("2", Ranges.range(sheet, "B43").getCellFormatText());
+		testISREF(book);
 	}
 
-	// statistical ----------------------------------------------------------------------------------------
 	@Test
-	public void testAVEDEV() throws IOException {
+	public void testISTEXT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("1.02", Ranges.range(sheet, "B3").getCellFormatText());
+		testISTEXT(book);
 	}
 
 	@Test
-	public void testAVERAGE() throws IOException {
+	public void testN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("11", Ranges.range(sheet, "B6").getCellFormatText());
-	}	
+		testN(book);
+	}
 
 	@Test
-	public void testAVERAGEA() throws IOException {
+	public void testNA() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("5.6", Ranges.range(sheet, "B8").getCellFormatText());
+		testNA(book);
 	}
 
 	@Test
-	public void testBIOMDIST() throws IOException {
+	public void testTYPE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("0.21", Ranges.range(sheet, "B21").getCellFormatText());
+		testTYPE(book);
 	}
 
 	@Test
-	public void testCHIDIST() throws IOException {
+	public void testAVERAGEA() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("0.05", Ranges.range(sheet, "B23").getCellFormatText());
+		testAVERAGEA(book);
 	}
 
 	@Test
-	public void testCHIINV() throws IOException {
+	public void testBIOMDIST() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("18.31", Ranges.range(sheet, "B25").getCellFormatText());
+		testBIOMDIST(book);
 	}
 
 	@Test
-	public void testCOUNT() throws IOException {
+	public void testCHIDIST() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("3", Ranges.range(sheet, "B41").getCellFormatText());
+		testCHIDIST(book);
 	}
 
 	@Test
-	public void testCOUNTA() throws IOException {
+	public void testCHIINV() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("6", Ranges.range(sheet, "B43").getCellFormatText());
+		testCHIINV(book);
 	}
 
 	@Test
-	public void testCOUNTBLANK() throws IOException {
+	public void testCOUNT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("2", Ranges.range(sheet, "B45").getCellFormatText());
+		testCOUNT(book);
 	}
 
 	@Test
-	public void testCOUNTIF() throws IOException {
+	public void testCOUNTA() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("2", Ranges.range(sheet, "B47").getCellFormatText());
+		testCOUNTA(book);
 	}
 
 	@Test
-	public void testDEVSQ() throws IOException {
+	public void testCOUNTBLANK() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("48", Ranges.range(sheet, "B55").getCellFormatText());
+		testCOUNTBLANK(book);
 	}
 
 	@Test
-	public void testEXPONDIST() throws IOException {
+	public void testCOUNTIF() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("0.86", Ranges.range(sheet, "B57").getCellFormatText());
+		testCOUNTIF(book);
 	}
 
 	@Test
-	public void testGAMMAINV() throws IOException {
+	public void testDEVSQ() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("10.00", Ranges.range(sheet, "B78").getCellFormatText());
+		testDEVSQ(book);
 	}
 
 	@Test
-	public void testGAMMALN() throws IOException {
+	public void testEXPONDIST() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("1.79", Ranges.range(sheet, "B80").getCellFormatText());
+		testEXPONDIST(book);
 	}
 
 	@Test
-	public void testGEOMEAN() throws IOException {
+	public void testGAMMAINV() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("5.48", Ranges.range(sheet, "B82").getCellFormatText());
+		testGAMMAINV(book);
 	}
 
 	@Test
-	public void testHYPGEOMDIST() throws IOException {
+	public void testGAMMALN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("0.36", Ranges.range(sheet, "B92").getCellFormatText());
+		testGAMMALN(book);
 	}
 
 	@Test
-	public void testKURT() throws IOException {
+	public void testGEOMEAN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("-0.15", Ranges.range(sheet, "B97").getCellFormatText());
+		testGEOMEAN(book);
 	}
 
 	@Test
-	public void testLARGE() throws IOException {
+	public void testHYPGEOMDIST() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("5", Ranges.range(sheet, "B100").getCellFormatText());
+		testHYPGEOMDIST(book);
 	}
 
 	@Test
-	public void testMAX() throws IOException {
+	public void testKURT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("27", Ranges.range(sheet, "B110").getCellFormatText());
+		testKURT(book);
 	}
 
 	@Test
-	public void testMAXA() throws IOException {
+	public void testLARGE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("0.5", Ranges.range(sheet, "B112").getCellFormatText());
+		testLARGE(book);
 	}
 
 	@Test
-	public void testMEDIAN() throws IOException {
+	public void testMAX() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("3", Ranges.range(sheet, "B114").getCellFormatText());
+		testMAX(book);
 	}
 
 	@Test
-	public void testMIN() throws IOException {
+	public void testMAXA() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("2", Ranges.range(sheet, "B116").getCellFormatText());
+		testMAXA(book);
 	}
 
 	@Test
-	public void testMINA() throws IOException {
+	public void testMEDIAN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("0", Ranges.range(sheet, "B118").getCellFormatText());
+		testMEDIAN(book);
 	}
 
 	@Test
-	public void testMODE() throws IOException {
+	public void testMIN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("4", Ranges.range(sheet, "B121").getCellFormatText());
+		testMIN(book);
 	}
 
 	@Test
-	public void testNORMDIST() throws IOException {
+	public void testMINA() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("0.91", Ranges.range(sheet, "B125").getCellFormatText());
+		testMINA(book);
 	}
 
 	@Test
-	public void testPOISSON() throws IOException {
+	public void testMODE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("0.12", Ranges.range(sheet, "B142").getCellFormatText());
+		testMODE(book);
 	}
 
 	@Test
-	public void testRANK() throws IOException {
+	public void testNORMDIST() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("3", Ranges.range(sheet, "B149").getCellFormatText());
+		testNORMDIST(book);
 	}
 
 	@Test
-	public void testSKEW() throws IOException {
+	public void testPOISSON() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("0.36", Ranges.range(sheet, "B154").getCellFormatText());
+		testPOISSON(book);
 	}
 
 	@Test
-	public void testSLOPE() throws IOException {
+	public void testRANK() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("0.31", Ranges.range(sheet, "B156").getCellFormatText());
+		testRANK(book);
 	}
 
 	@Test
-	public void testSMALL() throws IOException {
+	public void testSKEW() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("4", Ranges.range(sheet, "B159").getCellFormatText());
+		testSKEW(book);
 	}
 
 	@Test
-	public void testSTDEV() throws IOException {
+	public void testSLOPE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("27.46", Ranges.range(sheet, "B164").getCellFormatText());
+		testSLOPE(book);
 	}
 
 	@Test
-	public void testVAR() throws IOException {
+	public void testSMALL() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("754.27", Ranges.range(sheet, "B189").getCellFormatText());
+		testSMALL(book);
 	}
 
 	@Test
-	public void testVARP() throws IOException {
+	public void testSTDEV() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
-
-		assertEquals("678.84", Ranges.range(sheet, "B193").getCellFormatText());
+		testSTDEV(book);
 	}
 
 	@Test
-	public void testWEIBULL() throws IOException {
+	public void testVAR() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-statistical");
+		testVAR(book);
+	}
 
-		assertEquals("0.93", Ranges.range(sheet, "B197").getCellFormatText());
+	@Test
+	public void testVARP() {
+		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
+		testVARP(book);
 	}
 
-	// engineering  ----------------------------------------------------------------------------------------
 	@Test
-	public void testBESSELI() throws IOException {
+	public void testWEIBULL() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("0.98", Ranges.range(sheet, "B3").getCellFormatText());
+		testWEIBULL(book);
 	}
 
 	@Test
-	public void testBESSELJ() throws IOException {
+	public void testBESSELI() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("0.33", Ranges.range(sheet, "B5").getCellFormatText());
+		testBESSELI(book);
 	}
 
 	@Test
-	public void testBESSELK() throws IOException {
+	public void testBESSELJ() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("0.28", Ranges.range(sheet, "B7").getCellFormatText());
+		testBESSELJ(book);
 	}
 
 	@Test
-	public void testBESSELY() throws IOException {
+	public void testBESSELK() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("0.15", Ranges.range(sheet, "B9").getCellFormatText());
+		testBESSELK(book);
 	}
 
 	@Test
-	public void testBIN2DEC() throws IOException {
+	public void testBESSELY() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("100", Ranges.range(sheet, "B11").getCellFormatText());
+		testBESSELY(book);
 	}
 
 	@Test
-	public void testBIN2HEX() throws IOException {
+	public void testBIN2DEC() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("00FB", Ranges.range(sheet, "B13").getCellFormatText());
+		testBIN2DEC(book);
 	}
 
 	@Test
-	public void testBIN2OCT() throws IOException {
+	public void testBIN2HEX() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("011", Ranges.range(sheet, "B15").getCellFormatText());
+		testBIN2HEX(book);
 	}
 
 	@Test
-	public void testDEC2BIN() throws IOException {
+	public void testBIN2OCT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("1001", Ranges.range(sheet, "B19").getCellFormatText());
+		testBIN2OCT(book);
 	}
 
 	@Test
-	public void testDEC2HEX() throws IOException {
+	public void testDEC2BIN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("0064", Ranges.range(sheet, "B21").getCellFormatText());
+		testDEC2BIN(book);
 	}
 
 	@Test
-	public void testDEC2OCT() throws IOException {
+	public void testDEC2HEX() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("072", Ranges.range(sheet, "B23").getCellFormatText());
+		testDEC2HEX(book);
 	}
 
 	@Test
-	public void testDELTA() throws IOException {
+	public void testDEC2OCT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("0", Ranges.range(sheet, "B25").getCellFormatText());
+		testDEC2OCT(book);
 	}
 
 	@Test
-	public void testERF() throws IOException {
+	public void testDELTA() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("0.71", Ranges.range(sheet, "B27").getCellFormatText());
+		testDELTA(book);
 	}
 
 	@Test
-	public void testERFC() throws IOException {
+	public void testERF() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("0.16", Ranges.range(sheet, "B29").getCellFormatText());
+		testERF(book);
 	}
 
 	@Test
-	public void testGESTEP() throws IOException {
+	public void testERFC() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("1", Ranges.range(sheet, "B31").getCellFormatText());
+		testERFC(book);
 	}
 
 	@Test
-	public void testHEX2BIN() throws IOException {
+	public void testGESTEP() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("00001111", Ranges.range(sheet, "B33").getCellFormatText());
+		testGESTEP(book);
 	}
 
 	@Test
-	public void testHEX2DEC() throws IOException {
+	public void testHEX2BIN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("165", Ranges.range(sheet, "B35").getCellFormatText());
+		testHEX2BIN(book);
 	}
 
 	@Test
-	public void testHEX2OCT() throws IOException {
+	public void testHEX2DEC() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("017", Ranges.range(sheet, "B37").getCellFormatText());
+		testHEX2DEC(book);
 	}
 
 	@Test
-	public void testIMABS() throws IOException {
+	public void testHEX2OCT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("13", Ranges.range(sheet, "B39").getCellFormatText());
+		testHEX2OCT(book);
 	}
 
 	@Test
-	public void testIMAGINARY() throws IOException {
+	public void testIMABS() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("4", Ranges.range(sheet, "B41").getCellFormatText());
+		testIMABS(book);
 	}
 
 	@Test
-	public void testIMARGUMENT() throws IOException {
+	public void testIMAGINARY() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("0.93", Ranges.range(sheet, "B43").getCellFormatText());
+		testIMAGINARY(book);
 	}
 
 	@Test
-	public void testIMREAL() throws IOException {
+	public void testIMARGUMENT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("6", Ranges.range(sheet, "B63").getCellFormatText());
+		testIMARGUMENT(book);
 	}
 
 	@Test
-	public void testOCT2BIN() throws IOException {
+	public void testIMCOS() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("011", Ranges.range(sheet, "B73").getCellFormatText());
+		testIMCOS(book);
 	}
 
 	@Test
-	public void testOCT2DEC() throws IOException {
+	public void testIMLN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("44", Ranges.range(sheet, "B75").getCellFormatText());
+		testIMLN(book);
+
 	}
 
 	@Test
-	public void testOCT2HEX() throws IOException {
+	public void testIMSQRT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("0040", Ranges.range(sheet, "B77").getCellFormatText());
+		testIMSQRT(book);
+
 	}
-	
+
 	@Test
-	public void testIMCOS() throws IOException {
+	public void testIMLOG10() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		AssertUtil.assertComplexEquals("0.833730025131149-0.988897705762865i", Ranges.range(sheet, "B47").getCellFormatText());
+		testIMLOG10(book);
+
 	}
 
 	@Test
-	public void testIMLN() throws IOException {
+	public void testIMSUM() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		AssertUtil.assertComplexEquals("1.6094379124341+0.927295218001612i", Ranges.range(sheet, "B53").getCellFormatText());
-		
+		testIMSUM(book);
+
 	}
 
 	@Test
-	public void testIMSQRT() throws IOException {
+	public void testIMSIN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		AssertUtil.assertComplexEquals("1.09868411346781+0.455089860562227i", Ranges.range(sheet, "B67").getCellFormatText());
-		
+		testIMSIN(book);
 	}
 
 	@Test
-	public void testIMLOG10() throws IOException {
+	public void testIMSUB() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		AssertUtil.assertComplexEquals("0.698970004336019+0.402719196273373i", Ranges.range(sheet, "B55").getCellFormatText());
-		
+		testIMSUB(book);
 	}
 
 	@Test
-	public void testIMSUM() throws IOException {
+	public void testIMLOG2() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		AssertUtil.assertComplexEquals("8+i", Ranges.range(sheet, "B71").getCellFormatText());
-		
+		testIMLOG2(book);
 	}
 
 	@Test
-	public void testIMSIN() throws IOException {
+	public void testIMPOWER() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		AssertUtil.assertComplexEquals("3.85373803791938-27.0168132580039i", Ranges.range(sheet, "B65").getCellFormatText());
-		
+		testIMPOWER(book);
 	}
 
 	@Test
-	public void testIMSUB() throws IOException {
+	public void testOCT2BIN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		AssertUtil.assertComplexEquals("8+i", Ranges.range(sheet, "B69").getCellFormatText());
-		
+		testOCT2BIN(book);
 	}
 
 	@Test
-	public void testIMLOG2() throws IOException {
+	public void testOCT2DEC() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		AssertUtil.assertComplexEquals("2.32192809506607+1.33780421255394i", Ranges.range(sheet, "B57").getCellFormatText());
-		
+		testOCT2DEC(book);
 	}
 
 	@Test
-	public void testIMPOWER() throws IOException {
+	public void testOCT2HEX() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-engineering");
-		AssertUtil.assertComplexEquals("-46+9.00000000000001i", Ranges.range(sheet, "B59").getCellFormatText());
+		testOCT2HEX(book);
 	}
 
-	// lookup  ----------------------------------------------------------------------------------------
 	@Test
-	public void testADDRESS() throws IOException {
+	public void testADDRESS() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-lookup");
-		assertEquals("$C$2", Ranges.range(sheet, "B3").getCellFormatText());
+		testADDRESS(book);
 	}
-	
+
 	@Test
-	public void testCHOOSE() throws IOException {
+	public void testCHOOSE() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-lookup");
-		assertEquals("2nd", Ranges.range(sheet, "B7").getCellFormatText());
+		testCHOOSE(book);
 	}
-	
+
 	@Test
-	public void testCOLUMN() throws IOException {
+	public void testCOLUMN() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-lookup");
-		assertEquals("2", Ranges.range(sheet, "B10").getCellFormatText());
+		testCOLUMN(book);
 	}
-	
+
 	@Test
-	public void testCOLUMNS() throws IOException {
+	public void testCOLUMNS() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-lookup");
-		assertEquals("3", Ranges.range(sheet, "B12").getCellFormatText());
+		testCOLUMNS(book);
 	}
-	
+
 	@Test
-	public void testHLOOKUP() throws IOException {
+	public void testHLOOKUP() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-lookup");
-		assertEquals("4", Ranges.range(sheet, "B14").getCellFormatText());
+		testHLOOKUP(book);
 	}
-	
+
 	@Test
-	public void testHyperLink() throws IOException {
+	public void testHyperLink() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-lookup");
-		assertEquals("ZK", Ranges.range(sheet, "B20").getCellFormatText());
+		testHyperLink(book);
 	}
 
 	@Test
-	public void testINDIRECT() throws IOException {
+	public void testINDIRECT() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-lookup");
-		assertEquals("1.333", Ranges.range(sheet, "B26").getCellFormatText());
+		testINDIRECT(book);
 	}
 
 	@Test
-	public void testLOOKUP() throws IOException {
+	public void testLOOKUP() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-lookup");
-		assertEquals("orange", Ranges.range(sheet, "B29").getCellFormatText());
+		testLOOKUP(book);
 	}
 
 	@Test
-	public void testMATCH() throws IOException {
+	public void testMATCH() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-lookup");
-		assertEquals("2", Ranges.range(sheet, "B36").getCellFormatText());
+		testMATCH(book);
 	}
 
 	@Test
-	public void testOFFSET() throws IOException {
+	public void testOFFSET() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-lookup");
-		assertEquals("offset input", Ranges.range(sheet, "B42").getCellFormatText());
+		testOFFSET(book);
 	}
 
 	@Test
-	public void testROW() throws IOException {
+	public void testROW() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-lookup");
-		assertEquals("45", Ranges.range(sheet, "B45").getCellFormatText());
+		testROW(book);
 	}
 
 	@Test
-	public void testROWS() throws IOException {
+	public void testROWS() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-lookup");
-		assertEquals("4", Ranges.range(sheet, "B48").getCellFormatText());
+		testROWS(book);
 	}
 
 	@Test
-	public void testVLOOKUP() throws IOException {
+	public void testVLOOKUP() {
 		Book book = Util.loadBook("book/TestFile2007-Formula.xlsx");
-		Sheet sheet = book.getSheet("formula-lookup");
-		assertEquals("2.93", Ranges.range(sheet, "B56").getCellFormatText());
+		testVLOOKUP(book);
 	}
 
 }
