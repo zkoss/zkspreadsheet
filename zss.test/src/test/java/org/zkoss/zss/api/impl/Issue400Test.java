@@ -6,7 +6,6 @@ import static org.zkoss.zss.api.Ranges.range;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Locale;
 
@@ -19,8 +18,9 @@ import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.xssf.usermodel.XSSFComment;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
+import org.zkoss.zss.POIUtil;
 import org.zkoss.zss.Setup;
-import org.zkoss.zss.api.BookSeriesBuilder;
+import org.zkoss.zss.Util;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
@@ -67,12 +67,12 @@ public class Issue400Test {
 	@Test
 	public void testZSS437() throws IOException, URISyntaxException {
 		
-		String EXPORT_FILE = "book/zss437.xlsx";
+		File target = Setup.getTempFile("zss437",".xlsx");
 		
-		Book workbook = Util.loadBook("book/blank.xlsx");
+		Book workbook = Util.loadBook(this,"book/blank.xlsx");
 		Sheet sheet = workbook.getSheet("Sheet1");
 		Range column0 = range(sheet, "A1");
-		Util.export(workbook, EXPORT_FILE);
+		Util.export(workbook, target);
 		
 		column0.setCellEditText("Bold");
 		applyFontBoldweight(column0, Font.Boldweight.BOLD);
@@ -80,12 +80,12 @@ public class Issue400Test {
 		assertEquals(100, sheet.getColumnWidth(0));
 		
 		//load saved file to validate width is saved
-		Util.export(workbook, EXPORT_FILE);
-		workbook = Util.loadBook(EXPORT_FILE);
+		Util.export(workbook, target);
+		workbook = Util.loadBook(target);
 		sheet = workbook.getSheet("Sheet1");
 		assertEquals(100, sheet.getColumnWidth(0));
 		//for human eye checking
-		Util.open(EXPORT_FILE);
+		Util.open(target);
 		
 	}
 	
@@ -96,14 +96,13 @@ public class Issue400Test {
 	public void testZSS426() throws IOException {
 		
 		final String filename = "book/426-swineFlu.xls";
-		final InputStream is =  getClass().getResourceAsStream(filename);
-		Book workbook = Importers.getImporter().imports(is, filename);
+		Book book = Util.loadBook(this, filename);
 		
 		// export work book
     	Exporter exporter = Exporters.getExporter();
     	java.io.File temp = java.io.File.createTempFile("test",".xls");
     	java.io.FileOutputStream fos = new java.io.FileOutputStream(temp);
-    	exporter.export(workbook,fos);
+    	exporter.export(book,fos);
     	
     	// import book again
     	Importers.getImporter().imports(temp,"test");
@@ -117,10 +116,9 @@ public class Issue400Test {
 	@Test
 	public void testZSS435() throws IOException {
 		final String filename = "book/blank.xlsx";
-		final InputStream is =  getClass().getResourceAsStream(filename);
-		Book workbook = Importers.getImporter().imports(is, filename);
+		Book book = Util.loadBook(this, filename);
 		
-		Sheet sheet = workbook.getSheet("Sheet1");
+		Sheet sheet = book.getSheet("Sheet1");
 		
 		Range range = Ranges.range(sheet, "B2:D4");
 		range.merge(false);
@@ -139,14 +137,13 @@ public class Issue400Test {
 	public void testZSS408() throws IOException {
 		
 		final String filename = "book/408-save-autofilter.xls";
-		final InputStream is =  getClass().getResourceAsStream(filename);
-		Book workbook = Importers.getImporter().imports(is, filename);
+		Book book = Util.loadBook(this, filename);
 		
 		// export work book
     	Exporter exporter = Exporters.getExporter();
     	java.io.File temp = java.io.File.createTempFile("test",".xls");
     	java.io.FileOutputStream fos = new java.io.FileOutputStream(temp);
-    	exporter.export(workbook,fos);
+    	exporter.export(book,fos);
     	
     	// import book again
     	Importers.getImporter().imports(temp,"test");
@@ -160,9 +157,8 @@ public class Issue400Test {
 	@Test
 	public void testZSS414() throws IOException {
 		final String filename = "book/blank.xls";
-		final InputStream is =  getClass().getResourceAsStream(filename);
-		Book workbook = Importers.getImporter().imports(is, filename);
-		Sheet sheet1 = workbook.getSheet("Sheet1");
+		Book book = Util.loadBook(this, filename);
+		Sheet sheet1 = book.getSheet("Sheet1");
 		Range r = Ranges.range(sheet1, "C1");
 		r.setCellEditText("");
 	}
@@ -176,14 +172,13 @@ public class Issue400Test {
 	public void testZSS415() throws IOException {
 		
 		final String filename = "book/415-commentUnsupport.xls";
-		final InputStream is =  getClass().getResourceAsStream(filename);
-		Book workbook = Importers.getImporter().imports(is, filename);
+		Book book = Util.loadBook(this, filename);
 		
 		// export work book
     	Exporter exporter = Exporters.getExporter();
     	java.io.File temp = java.io.File.createTempFile("test",".xls");
     	java.io.FileOutputStream fos = new java.io.FileOutputStream(temp);
-    	exporter.export(workbook, fos);
+    	exporter.export(book, fos);
     	
     	// import book again
     	Importers.getImporter().imports(temp, "test");
@@ -193,8 +188,7 @@ public class Issue400Test {
 	public void testZSS425() throws IOException {
 		
 		final String filename = "book/425-updateStyle.xlsx";
-		final InputStream is = getClass().getResourceAsStream(filename);
-		Book book = Importers.getImporter().imports(is, filename);
+		Book book = Util.loadBook(this, filename);
 		
 		Range r = Ranges.range(book.getSheetAt(0),0,0);
 		
@@ -230,8 +224,8 @@ public class Issue400Test {
 	@Test
 	public void testZSS432() throws IOException {
 		
-//		Book book = Util.loadBook("book/blank.xlsx");
-		Book book = Util.loadBook("book/432.xlsx");
+//		Book book = Util.loadBook(this,"book/blank.xlsx");
+		Book book = Util.loadBook(this,"book/432.xlsx");
 		
 		Sheet sheet = Ranges.range(book.getSheetAt(0)).createSheet("newone");
 		
@@ -260,7 +254,7 @@ public class Issue400Test {
 	@Test
 	public void testZSS430() throws IOException {
 		
-		Book book = Util.loadBook("book/430-export-formula.xlsx");
+		Book book = Util.loadBook(this,"book/430-export-formula.xlsx");
 		Sheet sheet = book.getSheet("formula-math");
 		Assert.assertEquals("2.09", Ranges.range(sheet,"C7").getCellFormatText());
 		
@@ -283,7 +277,7 @@ public class Issue400Test {
 	@Test
 	public void testZSS429() throws IOException {
 		
-		Book book = Util.loadBook("book/429-autofilter.xlsx");
+		Book book = Util.loadBook(this,"book/429-autofilter.xlsx");
 		Sheet sheet = book.getSheetAt(0);
 		Assert.assertEquals("A", Ranges.range(sheet,"C4").getCellFormatText());
 		
@@ -309,12 +303,12 @@ public class Issue400Test {
 
 	@Test 
 	public void testZSS431() throws IOException {
-		testZSS431_0(Util.loadBook("book/431-freezepanel.xlsx"),7,4);
-		testZSS431_0(Util.loadBook("book/431-freezepanel.xlsx"),7,0);
-		testZSS431_0(Util.loadBook("book/431-freezepanel.xlsx"),0,4);
-		testZSS431_0(Util.loadBook("book/431-freezepanel.xls"),7,4);
-		testZSS431_0(Util.loadBook("book/431-freezepanel.xls"),7,0);
-		testZSS431_0(Util.loadBook("book/431-freezepanel.xls"),0,4);
+		testZSS431_0(Util.loadBook(this,"book/431-freezepanel.xlsx"),7,4);
+		testZSS431_0(Util.loadBook(this,"book/431-freezepanel.xlsx"),7,0);
+		testZSS431_0(Util.loadBook(this,"book/431-freezepanel.xlsx"),0,4);
+		testZSS431_0(Util.loadBook(this,"book/431-freezepanel.xls"),7,4);
+		testZSS431_0(Util.loadBook(this,"book/431-freezepanel.xls"),7,0);
+		testZSS431_0(Util.loadBook(this,"book/431-freezepanel.xls"),0,4);
 	}
 	
 	public void testZSS431_0(Book book,int row, int column) throws IOException {
@@ -349,8 +343,7 @@ public class Issue400Test {
 	public void testZSS439() throws IOException {
 		
 		final String filename = "book/439-rows.xlsx";
-		final InputStream is = getClass().getResourceAsStream(filename);
-		Book book = Importers.getImporter().imports(is, filename);
+		Book book = Util.loadBook(this, filename);
 		
 		// fill text on 3 rows
 		Sheet sheet = book.getSheetAt(0);
@@ -374,7 +367,7 @@ public class Issue400Test {
 	@Test
 	public void testZSS412() throws IOException {
 		
-		Book book = Util.loadBook("book/412-overlap-undo.xls");
+		Book book = Util.loadBook(this,"book/412-overlap-undo.xls");
 		Sheet sheet = book.getSheetAt(0);
 		
 		Assert.assertEquals(1, sheet.getPoiSheet().getNumMergedRegions());
@@ -400,7 +393,7 @@ public class Issue400Test {
 	}
 	@Test
 	public void testZSS412_395_1() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
+		Book book = Util.loadBook(this,"book/blank.xls");
 		Sheet sheet = book.getSheetAt(0);
 		Range rangeA = Ranges.range(sheet, "H11:J13");
 		rangeA.merge(false); // merge a 3 x 3
@@ -426,7 +419,7 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS418() throws IOException {
-		Book book = Util.loadBook("book/418-comment.xlsx");
+		Book book = Util.loadBook(this,"book/418-comment.xlsx");
 		Sheet sheet = book.getSheetAt(0);
 		XSSFSheet ps = (XSSFSheet)sheet.getPoiSheet();
 		
@@ -504,7 +497,7 @@ public class Issue400Test {
 	
 	public void testZSS418_0(XSSFSheet sheet, String[] refs, String[] texts) {
 		for(int i = 0; i < refs.length; ++i) {
-			XSSFComment comment = Util.getComment(sheet, refs[i]);
+			XSSFComment comment = POIUtil.getComment(sheet, refs[i]);
 			String text = texts[i];
 			if(text != null) {
 				Assert.assertNotNull(comment);
@@ -516,16 +509,16 @@ public class Issue400Test {
 	}
 	
 	@Test
-	public void testZSS399() throws Exception {
+	public void testZSS446() throws Exception {
 		// load book
-		Book book = Util.loadBook("book/446-border.xlsx");
+		Book book = Util.loadBook(this,"book/446-border.xlsx");
 		
 
 		// print setting >> with grid lines 
 		Sheet sheet = book.getSheetAt(0);
 		sheet.getPoiSheet().setPrintGridlines(true);
 		
-		File temp = Setup.getTempFile("zss-446","pdf");
+		File temp = Setup.getTempFile("zss446","pdf");
 		
 		Exporter pdfExporter = Exporters.getExporter("pdf");
 		pdfExporter.export(book, temp);

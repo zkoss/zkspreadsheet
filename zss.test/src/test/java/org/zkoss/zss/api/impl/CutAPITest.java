@@ -11,7 +11,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.ZssContext;
+import org.zkoss.zss.AssertUtil;
 import org.zkoss.zss.Setup;
+import org.zkoss.zss.Util;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
@@ -51,109 +53,109 @@ public class CutAPITest {
 	
 	@Test
 	public void testCutPasteRepeatWithMergeIntoAnotherSheet2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testCutPasteRepeatWithMergeIntoAnotherSheet0(book);
 	}
 	
 	@Test
 	public void testCutPasteRepeatWithMergeIntoAnotherSheet2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testCutPasteRepeatWithMergeIntoAnotherSheet0(book);
 	}
 	
 	@Test
 	public void testCutPasteWithMergeOverlap2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testCutPasteWithMergeOverlap0(book);
 	}
 	
 	@Test
 	public void testCutPasteWithMergeOverlap2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testCutPasteWithMergeOverlap0(book);
 	}
 	
 	@Test
 	public void testCutPasteWithMerge2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testCutPasteWithMerge0(book);
 	}
 	
 	@Test
 	public void testCutPasteWithMerge2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testCutPasteWithMerge0(book);
 	}
 	
 	@Test
 	public void testCutPasteToLeftTop2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testCutPasteToLeftTop0(book);
 	}
 	
 	@Test
 	public void testCutPasteToLeftTop2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testCutPasteToLeftTop0(book);
 	}
 	
 	@Test
 	public void testCutPasteToRightBottom2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testCutPasteToRightBottom0(book);
 	}
 	
 	@Test
 	public void testCutPasteToRightBottom2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testCutPasteToRightBottom0(book);
 	}
 	
 	@Test
 	public void testCutPasteToLeft2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testCutPasteToLeft0(book);
 	}
 	
 	@Test
 	public void testCutPasteToLeft2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testCutPasteToLeft0(book);
 	}
 	
 	@Test
 	public void testCutPasteToTop2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testCutPasteToTop0(book);
 	}
 	
 	@Test
 	public void testCutPasteToTop2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testCutPasteToTop0(book);
 	}
 	
 	@Test
 	public void testCutPasteToOutsideInclude2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testCutPasteToOutsideInclude0(book);
 	}
 	
 	@Test
 	public void testCutPasteToOutsideInclude2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testCutPasteToOutsideInclude0(book);
 	}
 	
 	@Test
 	public void testCutPasteToAnotherSheet2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testCutPasteToAnotherSheet0(book);
 	}
 	
 	@Test
 	public void testCutPasteToAnotherSheet2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testCutPasteToAnotherSheet0(book);
 	}
 	
@@ -192,8 +194,8 @@ public class CutAPITest {
 		range_I12I13.merge(false);
 		
 		// should be merged region
-		assertTrue(Util.isAMergedRange(range_H11J11));
-		assertTrue(Util.isAMergedRange(range_I12I13));
+		AssertUtil.assertMergedRange(range_H11J11);
+		AssertUtil.assertMergedRange(range_I12I13);
 		
 		// destination (I12) sheet2.
 		Sheet sheet2 = workbook.getSheet("Sheet2");
@@ -216,12 +218,12 @@ public class CutAPITest {
 		// this should be a merged cell
 		Range horizontalMergedRange = Ranges.range(sheet2, 11, 8, 11, 10);
 		assertEquals(1, horizontalMergedRange.getCellData().getDoubleValue(), 1E-8);
-		assertTrue(Util.isAMergedRange(horizontalMergedRange));
+		AssertUtil.assertMergedRange(horizontalMergedRange);
 		
 		// this should be a merged cell
 		Range verticalMergedRange = Ranges.range(sheet2, 12, 9, 13, 9);
 		assertEquals(5, verticalMergedRange.getCellData().getDoubleValue(), 1E-8);
-		assertTrue(Util.isAMergedRange(verticalMergedRange));
+		AssertUtil.assertMergedRange(verticalMergedRange);
 		
 		assertEquals(4, Ranges.range(sheet2, 12, 8).getCellData().getDoubleValue(), 1E-8);
 		assertEquals(7, Ranges.range(sheet2, 13, 8).getCellData().getDoubleValue(), 1E-8);
@@ -240,8 +242,8 @@ public class CutAPITest {
 		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, 12, 9).getCellData().getType().ordinal(), 1E-8);
 
 		// should not be merged region anymore
-		assertTrue(!Util.isAMergedRange(range_H11J11));
-		assertTrue(!Util.isAMergedRange(range_I12I13));
+		AssertUtil.assertNotMergedRange(range_H11J11);
+		AssertUtil.assertNotMergedRange(range_I12I13);
 	}
 	
 	/**
@@ -274,8 +276,8 @@ public class CutAPITest {
 		range_I12I13.merge(false);
 		
 		// should be merged region
-		assertTrue(Util.isAMergedRange(range_H11J11));
-		assertTrue(Util.isAMergedRange(range_I12I13));
+		AssertUtil.assertMergedRange(range_H11J11);
+		AssertUtil.assertMergedRange(range_I12I13);
 		
 		int dstTopRow = 11;
 		int dstLeftCol = 8;
@@ -296,12 +298,12 @@ public class CutAPITest {
 		// this should be a merged cell
 		Range horizontalMergedRange = Ranges.range(sheet1, 11, 8, 11, 10);
 		assertEquals(1, horizontalMergedRange.getCellData().getDoubleValue(), 1E-8);
-		assertTrue(Util.isAMergedRange(horizontalMergedRange));
+		AssertUtil.assertMergedRange(horizontalMergedRange);
 		
 		// this should be a merged cell
 		Range verticalMergedRange = Ranges.range(sheet1, 12, 9, 13, 9);
 		assertEquals(5, verticalMergedRange.getCellData().getDoubleValue(), 1E-8);
-		assertTrue(Util.isAMergedRange(verticalMergedRange));
+		AssertUtil.assertMergedRange(verticalMergedRange);
 		
 		assertEquals(4, Ranges.range(sheet1, 12, 8).getCellData().getDoubleValue(), 1E-8);
 		assertEquals(7, Ranges.range(sheet1, 13, 8).getCellData().getDoubleValue(), 1E-8);
@@ -316,8 +318,8 @@ public class CutAPITest {
 		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, 12, 7).getCellData().getType().ordinal(), 1E-8);
 
 		// should not be merged region anymore
-		assertTrue(!Util.isAMergedRange(range_H11J11));
-		assertTrue(!Util.isAMergedRange(range_I12I13));
+		AssertUtil.assertNotMergedRange(range_H11J11);
+		AssertUtil.assertNotMergedRange(range_I12I13);
 	}
 	
 	/**
@@ -350,8 +352,8 @@ public class CutAPITest {
 		range_I12I13.merge(false);
 		
 		// should be merged region
-		assertTrue(Util.isAMergedRange(range_H11J11));
-		assertTrue(Util.isAMergedRange(range_I12I13));
+		AssertUtil.assertMergedRange(range_H11J11);
+		AssertUtil.assertMergedRange(range_I12I13);
 		
 		int dstTopRow = 4;
 		int dstLeftCol = 2;
@@ -374,12 +376,12 @@ public class CutAPITest {
 		// this should be a merged cell
 		Range horizontalMergedRange = Ranges.range(sheet1, 4, 2, 4, 4);
 		assertEquals(1, horizontalMergedRange.getCellData().getDoubleValue(), 1E-8);
-		assertTrue(Util.isAMergedRange(horizontalMergedRange));
+		AssertUtil.assertMergedRange(horizontalMergedRange);
 		
 		// this should be a merged cell
 		Range verticalMergedRange = Ranges.range(sheet1, 5, 3, 6, 3);
 		assertEquals(5, verticalMergedRange.getCellData().getDoubleValue(), 1E-8);
-		assertTrue(Util.isAMergedRange(verticalMergedRange));
+		AssertUtil.assertMergedRange(verticalMergedRange);
 		
 		assertEquals(4, Ranges.range(sheet1, 5, 2).getCellData().getDoubleValue(), 1E-8);
 		assertEquals(7, Ranges.range(sheet1, 6, 2).getCellData().getDoubleValue(), 1E-8);
@@ -398,8 +400,8 @@ public class CutAPITest {
 		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, srcTopRow+2, srcLeftCol+2).getCellData().getType().ordinal(), 1E-8);
 
 		// should not be merged region anymore
-		assertTrue(!Util.isAMergedRange(range_H11J11));
-		assertTrue(!Util.isAMergedRange(range_I12I13));
+		AssertUtil.assertNotMergedRange(range_H11J11);
+		AssertUtil.assertNotMergedRange(range_I12I13);
 	}
 	
 	/**

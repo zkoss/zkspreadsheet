@@ -1,6 +1,8 @@
 package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
+
+import org.zkoss.zss.AssertUtil;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;

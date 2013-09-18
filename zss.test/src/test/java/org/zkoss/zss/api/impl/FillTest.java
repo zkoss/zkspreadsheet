@@ -11,6 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.Setup;
+import org.zkoss.zss.Util;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.Range.AutoFillType;
@@ -36,73 +37,73 @@ public class FillTest {
 	
 	@Test
 	public void testAutoFill2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
+		Book book = Util.loadBook(this,"book/blank.xls");
 		testAutoFill(book);
 	}
 	
 	@Test
 	public void testAutoFill2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
+		Book book = Util.loadBook(this,"book/blank.xlsx");
 		testAutoFill(book);
 	}
 	
 	@Test
 	public void testAutoFillMultiDim2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
+		Book book = Util.loadBook(this,"book/blank.xls");
 		testAutoFillMultiDim(book);
 	}
 	
 	@Test
 	public void testAutoFillMultiDim2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
+		Book book = Util.loadBook(this,"book/blank.xlsx");
 		testAutoFillMultiDim(book);
 	}
 	
 	@Test
 	public void testFillLeft2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
+		Book book = Util.loadBook(this,"book/blank.xls");
 		testFillLeft(book);
 	}
 	
 	@Test
 	public void testFillLeft2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
+		Book book = Util.loadBook(this,"book/blank.xlsx");
 		testFillLeft(book);
 	}
 	
 	@Test
 	public void testFillRight2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
+		Book book = Util.loadBook(this,"book/blank.xls");
 		testFillRight(book);
 	}
 	
 	@Test
 	public void testFillRight2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
+		Book book = Util.loadBook(this,"book/blank.xlsx");
 		testFillRight(book);
 	}
 	
 	@Test
 	public void testFillUp2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
+		Book book = Util.loadBook(this,"book/blank.xls");
 		testFillUp(book);
 	}
 	
 	@Test
 	public void testFillUp2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
+		Book book = Util.loadBook(this,"book/blank.xlsx");
 		testFillUp(book);
 	}
 	
 	@Test
 	public void testFillDown2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
+		Book book = Util.loadBook(this,"book/blank.xls");
 		testFillDown(book);
 	}
 	
 	@Test
 	public void testFillDown2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
+		Book book = Util.loadBook(this,"book/blank.xlsx");
 		testFillDown(book);
 	}
 	

@@ -15,6 +15,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.Setup;
+import org.zkoss.zss.Util;
 import org.zkoss.zss.api.BookSeriesBuilder;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Exporter;
@@ -53,16 +54,16 @@ public class POI39PostTest {
 	public void testReadWriteChartPicutreNumber() throws Exception{
 		//only picture/chart
 		//chart first
-		testReadWriteChartPicutreNumber(Util.loadBook("book/poi39_shape1.xls"),0,1,2);
+		testReadWriteChartPicutreNumber(Util.loadBook(this,"book/poi39_shape1.xls"),0,1,2);
 		//picture fisrt
-		testReadWriteChartPicutreNumber(Util.loadBook("book/poi39_shape1.xls"),1,2,1);
+		testReadWriteChartPicutreNumber(Util.loadBook(this,"book/poi39_shape1.xls"),1,2,1);
 		
 //		//has another shape at the begin
-		testReadWriteChartPicutreNumber(Util.loadBook("book/poi39_shape2.xls"),0,1,2);
+		testReadWriteChartPicutreNumber(Util.loadBook(this,"book/poi39_shape2.xls"),0,1,2);
 //		//has another shape at the middle		
-		testReadWriteChartPicutreNumber(Util.loadBook("book/poi39_shape2.xls"),1,2,1);
+		testReadWriteChartPicutreNumber(Util.loadBook(this,"book/poi39_shape2.xls"),1,2,1);
 //		//mixed
-		testReadWriteChartPicutreNumber(Util.loadBook("book/poi39_shape2.xls"),2,2,2);
+		testReadWriteChartPicutreNumber(Util.loadBook(this,"book/poi39_shape2.xls"),2,2,2);
 		
 	}
 	
@@ -87,22 +88,22 @@ public class POI39PostTest {
 	
 	@Test
 	public void testBookSheetReference() throws Exception{
-		Book book1 = Util.loadBook("book/poi39_ref_book1.xls");
-		Book book2 = Util.loadBook("book/poi39_ref_book2.xls");
+		Book book1 = Util.loadBook(this,"book/poi39_ref_book1.xls");
+		Book book2 = Util.loadBook(this,"book/poi39_ref_book2.xls");
 		BookSeriesBuilder.getInstance().buildBookSeries(book1,book2);
 		assertEquals("6",Ranges.range(book1.getSheetAt(0),"B2").getCellFormatText());
 	}
 	
 	@Test
 	public void testStyleLimitation2003() throws Exception{
-		Book book1 = Util.loadBook("book/blank.xls");
+		Book book1 = Util.loadBook(this,"book/blank.xls");
 		testStyleLimitation(book1,200,40,3968);//after large than 3968, some style start to be cleaned up
 	}
 	
 //	@Ignore("performance issue")
 	@Test
 	public void testStyleLimitation2007() throws Exception{
-		Book book1 = Util.loadBook("book/blank.xlsx");
+		Book book1 = Util.loadBook(this,"book/blank.xlsx");
 		//don't know the 2007 limitation yet, however it has performanec issue when set large among of styles.
 //		testStyleLimitation(book1,200,40,3968);
 		testStyleLimitation(book1,200,40,200);//don't know the 2007 limitation yet

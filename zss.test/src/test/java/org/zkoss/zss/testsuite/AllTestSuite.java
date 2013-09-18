@@ -1,4 +1,4 @@
-package org.zkoss.zss;
+package org.zkoss.zss.testsuite;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

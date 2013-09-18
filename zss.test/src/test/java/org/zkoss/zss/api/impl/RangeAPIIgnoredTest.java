@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.zkoss.zss.Util;
 import org.zkoss.zss.api.model.Book;
 
 @Ignore
@@ -13,7 +14,7 @@ public class RangeAPIIgnoredTest extends RangeAPITestBase {
 	// API shouldn't bind to UI directly
 	@Test
 	public void testDeleteAllSheet2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
+		Book book = Util.loadBook(this,"book/blank.xls");
 		testDeleteAllSheet(book);
 	}
 	
@@ -21,7 +22,7 @@ public class RangeAPIIgnoredTest extends RangeAPITestBase {
 	// API shouldn't bind to UI directly
 	@Test
 	public void testDeleteAllSheet2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
+		Book book = Util.loadBook(this,"book/blank.xlsx");
 		testDeleteAllSheet(book);
 	}
 

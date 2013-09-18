@@ -11,7 +11,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.ZssContext;
+import org.zkoss.zss.AssertUtil;
 import org.zkoss.zss.Setup;
+import org.zkoss.zss.Util;
 import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.PasteOperation;
@@ -56,133 +58,133 @@ public class PasteTest {
 	
 	@Test(expected = IllegalOpArgumentException.class)
 	public void testTransposePasteOverlap2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testTransposePasteOverlap0(book);
 	}
 	
 	@Test(expected = IllegalOpArgumentException.class)
 	public void testTransposePasteOverlap2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testTransposePasteOverlap0(book);
 	}
 	
 	@Test 
 	public void testPasteMergeTranspose2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testPasteMergeTranspose0(book);
 	}
 	
 	@Test 
 	public void testPasteMergeTranspose2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testPasteMergeTranspose0(book);
 	}
 	
 	@Test
 	public void testPasteMerge2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testPasteMerge0(book);
 	}
 	
 	@Test
 	public void testPasteMerge2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testPasteMerge0(book);
 	}
 	
 	@Test
 	public void testPasteToG10_2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testPasteToG10(book);
 	}
 	
 	@Test
 	public void testPasteToG10_2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testPasteToG10(book);
 	}
 	
 	@Test
 	public void testPasteToG12_2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testPasteToG12(book);
 	}
 	
 	@Test
 	public void testPasteToG12_2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testPasteToG12(book);
 	}
 	
 	@Test 
 	public void testPasteToI12_2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testPasteToI12(book);
 	}
 	
 	@Test 
 	public void testPasteToI12_2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testPasteToI12(book);
 	}
 	
 	@Test
 	public void testPasteRepeat2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testPasteRepeat(book);
 	}
 	
 	@Test
 	public void testPasteRepeat2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testPasteRepeat(book);
 	}
 	
 	@Test 
 	public void testPasteRepeatOverlap2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testPasteRepeatOverlap(book);
 	}
 	
 	@Test 
 	public void testPasteRepeatOverlap2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testPasteRepeatOverlap(book);
 	}
 	
 	@Test
 	public void testPasteRepeatToAnotherSheet2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testPasteRepeatToAnotherSheet(book);
 	}
 	
 	@Test
 	public void testPasteRepeatToAnotherSheet2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testPasteRepeatToAnotherSheet(book);
 	}
 	
 	@Test 
 	public void testPasteRepeatOverlapInclude2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		testPasteRepeatOverlapInclude(book);
 	}
 	
 	@Test 
 	public void testPasteRepeatOverlapInclude2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		testPasteRepeatOverlapInclude(book);
 	}
 	
 	@Test
 	public void pasteRepeatWithSkipBlankTrue2003() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xls");
+		Book book = Util.loadBook(this,"book/pasteTest.xls");
 		pasteRepeatWithSkipBlankTrue(book);
 	}
 	
 	@Test
 	public void pasteRepeatWithSkipBlankTrue2007() throws IOException {
-		Book book = Util.loadBook("book/pasteTest.xlsx");
+		Book book = Util.loadBook(this,"book/pasteTest.xlsx");
 		pasteRepeatWithSkipBlankTrue(book);
 	}
 	
@@ -238,8 +240,8 @@ public class PasteTest {
 		range_I12I13.merge(false);
 		
 		// should be merged region
-		assertTrue(Util.isAMergedRange(range_H11J11));
-		assertTrue(Util.isAMergedRange(range_I12I13));
+		AssertUtil.assertMergedRange(range_H11J11);
+		AssertUtil.assertMergedRange(range_I12I13);
 		
 		int dstTopRow = 4;
 		int dstLeftCol = 2;
@@ -264,13 +266,13 @@ public class PasteTest {
 		Range horizontalMergedRange = Ranges.range(sheet1, 4, 2, 6, 2);
 		
 		assertEquals(1, horizontalMergedRange.getCellData().getDoubleValue(), 1E-8);
-		assertTrue(Util.isAMergedRange(horizontalMergedRange));
+		AssertUtil.assertMergedRange(horizontalMergedRange);
 		
 		// this should be a merged cell
 		// origin is vertical, but now horizontal
 		Range verticalMergedRange = Ranges.range(sheet1, 5, 3, 5, 4);
 		assertEquals(5, verticalMergedRange.getCellData().getDoubleValue(), 1E-8);
-		assertTrue(Util.isAMergedRange(verticalMergedRange));
+		AssertUtil.assertMergedRange(verticalMergedRange);
 		
 		assertEquals(4, Ranges.range(sheet1, dstTopRow, dstLeftCol+1).getCellData().getDoubleValue(), 1E-8);
 		assertEquals(7, Ranges.range(sheet1, dstTopRow, dstLeftCol+2).getCellData().getDoubleValue(), 1E-8);
@@ -307,8 +309,8 @@ public class PasteTest {
 		range_I12I13.merge(false);
 		
 		// should be merged region
-		assertTrue(Util.isAMergedRange(range_H11J11));
-		assertTrue(Util.isAMergedRange(range_I12I13));
+		AssertUtil.assertMergedRange(range_H11J11);
+		AssertUtil.assertMergedRange(range_I12I13);
 		
 		int dstTopRow = 4;
 		int dstLeftCol = 2;
@@ -332,12 +334,12 @@ public class PasteTest {
 		Range horizontalMergedRange = Ranges.range(sheet1, 4, 2, 4, 4);
 		
 		assertEquals(1, horizontalMergedRange.getCellData().getDoubleValue(), 1E-8);
-		assertTrue(Util.isAMergedRange(horizontalMergedRange));
+		AssertUtil.assertMergedRange(horizontalMergedRange);
 		
 		// this should be a merged cell
 		Range verticalMergedRange = Ranges.range(sheet1, 5, 3, 6, 3);
 		assertEquals(5, verticalMergedRange.getCellData().getDoubleValue(), 1E-8);
-		assertTrue(Util.isAMergedRange(verticalMergedRange));
+		AssertUtil.assertMergedRange(verticalMergedRange);
 		
 		assertEquals(4, Ranges.range(sheet1, dstTopRow+1, dstLeftCol).getCellData().getDoubleValue(), 1E-8);
 		assertEquals(7, Ranges.range(sheet1, dstTopRow+2, dstLeftCol).getCellData().getDoubleValue(), 1E-8);

@@ -3,10 +3,12 @@ package org.zkoss.zss.api.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zkoss.zss.Util;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
@@ -163,7 +165,7 @@ public class RangeAPITestBase {
 	}
 	
 	// FIXME
-	protected void testHyperLink(Book workbook, String outFileName) throws IOException {
+	protected void testHyperLink(Book workbook, File outFile) throws IOException {
 
 		Sheet sheet = workbook.getSheet("Sheet1");
 		Range rA1 = Ranges.range(sheet, "A1");
@@ -186,10 +188,10 @@ public class RangeAPITestBase {
 		Range rA4 = Ranges.range(sheet, "A4");
 		rA4.setCellHyperlink(HyperlinkType.DOCUMENT, "test.xlsx", "ZK");
 		
-		Util.export(workbook, outFileName);
+		Util.export(workbook, outFile);
 		
 		// reload
-		workbook = Util.loadBook(outFileName);
+		workbook = Util.loadBook(outFile);
 		sheet = workbook.getSheet("Sheet1");
 		
 		rA1 = Ranges.range(sheet, "A1");
@@ -216,7 +218,7 @@ public class RangeAPITestBase {
 		assertEquals("test.xlsx", linkDoc.getAddress());
 		assertEquals(HyperlinkType.DOCUMENT, linkDoc.getType());
 		
-		Util.export(workbook, outFileName);
+		Util.export(workbook, outFile);
 		
 		rA1.setCellEditText("URL");
 		//assertTrue(rA1.getCellHyperlink() == null);
@@ -234,7 +236,7 @@ public class RangeAPITestBase {
 		//assertTrue(rA4.getCellHyperlink() == null);
 		assertEquals("Document", rA4.getCellEditText());
 		
-		Util.export(workbook, outFileName);
+		Util.export(workbook, outFile);
 		
 	}
 }

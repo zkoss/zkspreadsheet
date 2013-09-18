@@ -9,6 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.Setup;
+import org.zkoss.zss.Util;
 import org.zkoss.zss.api.model.Book;
 
 /**
@@ -38,9 +39,9 @@ public class Issue000Test {
 	@Test
 	public void testZSS36() throws IOException {
 		final String filename = "book/blank.xlsx";
-		Book workbook = Util.loadBook(filename);
-		Util.export(workbook, Setup.getTempFile().getName());
-		Util.export(workbook, Setup.getTempFile().getName());
+		Book workbook = Util.loadBook(this,filename);
+		Util.export(workbook, Setup.getTempFile());
+		Util.export(workbook, Setup.getTempFile());
 	}
 	
 }

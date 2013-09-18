@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.Setup;
+import org.zkoss.zss.Util;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
@@ -36,61 +37,61 @@ public class SortTest {
 	
 	@Test
 	public void testSortWithHeaderByID2003() throws IOException {
-		Book book = Util.loadBook("book/excelsortsample.xls");
+		Book book = Util.loadBook(this,"book/excelsortsample.xls");
 		testSortWithHeaderByID(book);
 	}
 	
 	@Test
 	public void testSortWithHeaderByID2007() throws IOException {
-		Book book = Util.loadBook("book/excelsortsample.xlsx");
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		testSortWithHeaderByID(book);
 	}
 	
 	@Test
 	public void testSortWithHeaderByBirthYr_ZipCode_ID_2003() throws IOException {
-		Book book = Util.loadBook("book/excelsortsample.xls");
+		Book book = Util.loadBook(this,"book/excelsortsample.xls");
 		testSortWithHeaderByBirthYr_ZipCode_ID(book);
 	}
 	
 	@Test
 	public void testSortWithHeaderByBirthYr_ZipCode_ID_2007() throws IOException {
-		Book book = Util.loadBook("book/excelsortsample.xlsx");
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		testSortWithHeaderByBirthYr_ZipCode_ID(book);
 	}
 	
 	@Test
 	public void testSimpleSortWithNumberAndCharacterAndFormula2003() throws IOException {
-		Book book = Util.loadBook("book/excelsortsample.xls");
+		Book book = Util.loadBook(this,"book/excelsortsample.xls");
 		testSimpleSortWithNumberAndCharacterAndFormula(book);
 	}
 	
 	@Test
 	public void testSimpleSortWithNumberAndCharacterAndFormula2007() throws IOException {
-		Book book = Util.loadBook("book/excelsortsample.xlsx");
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		testSimpleSortWithNumberAndCharacterAndFormula(book);
 	}
 	
 	@Test
 	public void testSortWithHeader2003() throws IOException {
-		Book book = Util.loadBook("book/excelsortsample.xls");
+		Book book = Util.loadBook(this,"book/excelsortsample.xls");
 		testSortWithHeader(book);
 	}
 	
 	@Test
 	public void testSortWithHeader2007() throws IOException {
-		Book book = Util.loadBook("book/excelsortsample.xlsx");
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		testSortWithHeader(book);
 	}
 	
 	@Test
 	public void testSortByRowWithHeader2003() throws IOException {
-		Book book = Util.loadBook("book/excelsortsample.xls");
+		Book book = Util.loadBook(this,"book/excelsortsample.xls");
 		testSortByRowWithHeader(book);
 	}
 	
 	@Test
 	public void testSortByRowWithHeader2007() throws IOException {
-		Book book = Util.loadBook("book/excelsortsample.xlsx");
+		Book book = Util.loadBook(this,"book/excelsortsample.xlsx");
 		testSortByRowWithHeader(book);
 	}
 	
@@ -470,7 +471,7 @@ public class SortTest {
 	 */
 	@Test
 	public void simpleSort() throws IOException {
-		Book workbook = Util.loadBook("book/blank.xlsx");
+		Book workbook = Util.loadBook(this,"book/blank.xlsx");
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		int[] rands = new int[100];
 		for(int i = 0; i < 100; i++) {

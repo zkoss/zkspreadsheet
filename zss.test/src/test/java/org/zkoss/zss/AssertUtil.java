@@ -1,9 +1,16 @@
-package org.zkoss.zss.api.impl;
+package org.zkoss.zss;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.math.complex.Complex;
+import org.junit.Assert;
 import org.zkoss.poi.ss.formula.functions.ComplexFormat;
+import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.model.Sheet;
 
 public class AssertUtil {
 	
@@ -82,6 +89,45 @@ public class AssertUtil {
 		}
 		
 		return complex;
+	}
+	
+	
+	public static void assertMeregedRegion(String[] regions,Sheet sheet){
+		Assert.assertEquals(regions.length, sheet.getPoiSheet().getNumMergedRegions());
+		List<String> expect = new ArrayList<String>(Arrays.asList(regions));
+		List<String> result = new ArrayList<String>();
+		for(int i=0;i<regions.length;i++){
+			String fm = sheet.getPoiSheet().getMergedRegion(i).formatAsString();
+			result.add(fm);
+		}
+		Collections.sort(expect);
+		Collections.sort(result);
+		Assert.assertEquals(expect.toString(), result.toString());
+	}
+	
+	public static void assertMergedRange(Range range) {
+		if(!isMergedRange(range)){
+			Assert.fail(range.asString() + " is not a merged range");
+		}
+	}
+	
+	public static void assertNotMergedRange(Range range) {
+		if(isMergedRange(range)){
+			Assert.fail(range.asString() + " is a merged range");
+		}
+	}
+	
+	private static boolean isMergedRange(Range range){
+		org.zkoss.poi.ss.usermodel.Sheet sheet = range.getSheet().getPoiSheet();
+		// go through all region
+		for (int number = sheet.getNumMergedRegions(); number > 0; number--) {
+			org.zkoss.poi.ss.util.CellRangeAddress addr = sheet.getMergedRegion(number - 1);
+			// match four corner
+			if (addr.getFirstRow() == range.getRow() && addr.getLastRow() == range.getLastRow() && addr.getFirstColumn() == range.getColumn() && addr.getLastColumn() == range.getLastColumn()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

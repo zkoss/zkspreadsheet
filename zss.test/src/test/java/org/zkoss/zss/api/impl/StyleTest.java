@@ -14,6 +14,7 @@ import static org.zkoss.zss.api.CellOperationUtil.applyFontUnderline;
 import static org.zkoss.zss.api.CellOperationUtil.applyVerticalAlignment;
 import static org.zkoss.zss.api.Ranges.range;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
@@ -24,6 +25,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.Setup;
+import org.zkoss.zss.Util;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
@@ -60,20 +62,20 @@ public class StyleTest {
 	@Ignore("Border spec for test is not confirm yet") // FIXME
 	@Test
 	public void testStyleExport2007() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
-		testStyleExport(book, "book/test.xlsx");
+		Book book = Util.loadBook(this,"book/blank.xlsx");
+		testStyleExport(book, Setup.getTempFile());
 	}
 	
 	@Ignore("Border spec for test is not confirm yet") // FIXME
 	@Test
 	public void testStyleExport2003() throws IOException {
-		Book book = Util.loadBook("book/blank.xls");
-		testStyleExport(book, "book/test.xls");
+		Book book = Util.loadBook(this,"book/blank.xls");
+		testStyleExport(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testClearFontStyle() throws IOException {
-		Book book = Util.loadBook("book/blank.xlsx");
+		Book book = Util.loadBook(this,"book/blank.xlsx");
 		Sheet sheet = book.getSheet("Sheet1");
 		Range rA1 = range(sheet, "A1");
 		rA1.setCellEditText("Bold");
@@ -83,7 +85,7 @@ public class StyleTest {
 		assertEquals(Font.Boldweight.NORMAL, rA1.getCellStyle().getFont().getBoldweight());
 	}
 	
-	private void testStyleExport(Book workbook, String outFileName) throws IOException {
+	private void testStyleExport(Book workbook, File outFile) throws IOException {
 		
 		Sheet sheet = workbook.getSheet("Sheet1");
 		
@@ -147,9 +149,9 @@ public class StyleTest {
 		range(sheet, 6, 2).setCellEditText("28");
 		range(sheet, 6, 3).setCellEditText("22");
 		
-		Util.export(workbook, outFileName);
+		Util.export(workbook, outFile);
 		
-		workbook = Util.loadBook(outFileName);  // Import
+		workbook = Util.loadBook(outFile);  // Import
 		sheet = workbook.getSheet("Sheet1"); // get sheet	
 		
 		rA1 = range(sheet, "A1");

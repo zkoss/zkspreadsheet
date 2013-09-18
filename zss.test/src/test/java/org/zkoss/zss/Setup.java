@@ -32,12 +32,31 @@ public class Setup {
 	
 	static private File temp; 
 	
+	/**
+	 * get the temp file, it is always the same one in same testing vm and will be deleted after testing.
+	 * @return
+	 */
 	public static synchronized File getTempFile(){
-		return getTempFile("zsstest-","");
+		if(temp!=null){
+			return temp;
+		}
+		temp = getTempFile("zsstest","");
+		temp.deleteOnExit();
+		return temp;
 	}
+	/**
+	 * get a temp file, with a prefix aod postfix, the provided file will not be deleted after test.
+	 */
 	public static synchronized File getTempFile(String prefix,String postfix){
 		File tempFolder = new File(System.getProperty("java.io.tmpdir"));
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-		return new File(tempFolder,prefix+sdf.format(new java.util.Date())+postfix);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		File file = null;
+		do{
+			file = new File(tempFolder,prefix+"-"+sdf.format(new java.util.Date())+postfix);
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {}
+		}while(file.exists());
+		return file;
 	}
 }

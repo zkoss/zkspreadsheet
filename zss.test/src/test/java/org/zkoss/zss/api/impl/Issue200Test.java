@@ -3,12 +3,10 @@ package org.zkoss.zss.api.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import java.awt.Desktop;
-import java.awt.Desktop.Action;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Locale;
 
 import org.junit.After;
@@ -22,7 +20,9 @@ import org.zkoss.poi.hssf.usermodel.HSSFSheet;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
 import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.zss.AssertUtil;
 import org.zkoss.zss.Setup;
+import org.zkoss.zss.Util;
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.BookSeriesBuilder;
 import org.zkoss.zss.api.CellOperationUtil;
@@ -82,7 +82,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS291() throws IOException {
 		final String filename = "book/291-sort.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("cell");
 		Ranges.range(sheet, "B4:B8").sort(false);
 
@@ -97,7 +97,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS280() throws IOException {
 		final String filename = "book/280-autofilter.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("cell-data");
 		Ranges.range(sheet, "A13").setCellEditText("1");
 		Ranges.range(sheet, "A14").setCellEditText("2");
@@ -126,7 +126,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS271() throws IOException {
 		final String filename = "book/271-engineering.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("formula-engineering");
 		assertEquals("0.98", Ranges.range(sheet, "B3").getCellFormatText());
 		assertEquals("0.33", Ranges.range(sheet, "B5").getCellFormatText());
@@ -173,7 +173,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS272() throws IOException {
 		final String filename = "book/272-conditionalFormatting.xls";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		
 		//shouldn't throw any exception
 		((HSSFSheet)workbook.getSheetAt(0).getPoiSheet()).getDataValidations();
@@ -183,7 +183,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS270() throws IOException {
 		final String filename = "book/270-statistical.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("formula-statistical");
 		 // AVEDEV
 		assertEquals("1.02", Ranges.range(sheet, "B3").getCellFormatText());
@@ -353,7 +353,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS262() throws IOException {
 		final String filename = "book/blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("Sheet1");
 		Ranges.range(sheet, "A1").setCellEditText("1234.567");
 		Ranges.range(sheet, "B1").setCellEditText("DOLLAR(A1,2)");
@@ -364,7 +364,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS263() throws IOException {
 		final String filename = "book/blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("Sheet1");
 		Ranges.range(sheet, "A1").setCellEditText("VALUE(\"16:48:00\")");
 		assertEquals("0.7", Ranges.range(sheet, "A1").getCellFormatText());
@@ -374,7 +374,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS264() throws IOException {
 		final String filename = "book/264-text-formula.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("formula-text");
 		assertEquals("EXCEL", Ranges.range(sheet, "B3").getCellFormatText());
 		assertEquals("A", Ranges.range(sheet, "B5").getCellFormatText());
@@ -416,7 +416,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS254() throws IOException {
 		final String filename = "book/254-accounting.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("cell-data");
 		assertEquals("NT$1,234.56", Ranges.range(sheet, "C2").getCellFormatText());
 		
@@ -453,11 +453,11 @@ public class Issue200Test {
 	@Test
 	public void testZSS317() throws IOException {
 		final String filename = "book/317-exportImage.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("export1");
 		SheetOperationUtil.addPicture(Ranges.range(sheet), new AImage(new File(ShiftTest.class.getResource("").getPath() + "book/zklogo.png")));
-		Util.export(workbook, Setup.getTempFile().getName());
-		Util.export(workbook, Setup.getTempFile().getName());
+		Util.export(workbook, Setup.getTempFile());
+		Util.export(workbook, Setup.getTempFile());
 	}
 	
 	/**
@@ -466,7 +466,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS245() throws IOException {
 		final String filename = "book/blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("Sheet1");
 		Ranges.range(sheet, "A1").toRowRange().delete(DeleteShift.LEFT);
 	}
@@ -477,7 +477,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS355() throws IOException {
 		final String filename = "book/blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("Sheet1");
 		Ranges.range(sheet, "A1").setCellEditText("=NETWORKDAYS(DATE(2013,6,2),DATE(2013,6,1))");
 		assertEquals("#VALUE!", Ranges.range(sheet, "A1").getCellData().getFormatText());
@@ -489,7 +489,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS341() throws IOException {
 		final String filename = "book/blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("Sheet1");
 		
 		Ranges.range(sheet, "B11").setCellEditText("=AVERAGEIF(B12:E12,\"<23000\")");
@@ -512,7 +512,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS267() throws IOException {
 		final String filename = "book/blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("Sheet1");
 		
 		// DATE
@@ -590,7 +590,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS261() throws IOException {
 		final String filename = "book/math.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet1 = workbook.getSheet("formula-math");
 		Range B104 = Ranges.range(sheet1, "B104");
 		assertEquals("#NAME?", B104.getCellData().getFormatText());
@@ -600,7 +600,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS265() throws IOException {
 		final String filename = "book/266-info-formula.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("formula-info");
 		assertEquals("3", Ranges.range(sheet, "B3").getCellFormatText());
 		assertEquals("1", Ranges.range(sheet, "B5").getCellFormatText());
@@ -627,7 +627,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS266() throws IOException {
 		final String filename = "book/266-info-formula.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet1 = workbook.getSheet("formula-info");
 		Range B12 = Ranges.range(sheet1, "B12");
 		assertTrue(B12.getCellData().getBooleanValue());
@@ -639,7 +639,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS342_1() throws IOException {
 		final String filename = "book/blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		Range A1 = Ranges.range(sheet1, "A1");
 		A1.setCellEditText("=ACCRINT()");
@@ -652,7 +652,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS342_2() throws IOException {
 		final String filename = "book/blank.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		
 		try {
@@ -672,7 +672,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS255() throws IOException {
 		final String filename = "book/255-cell-data.xlsx";
-		Util.loadBook(filename);
+		Util.loadBook(this,filename);
 	}
 	
 	/**
@@ -681,7 +681,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS260() throws IOException {
 		final String filename = "book/260-validation.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet1 = workbook.getSheet("Validation");
 		Range C3 = Ranges.range(sheet1, "C3");
 		C3.setCellEditText("2");
@@ -696,7 +696,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS275() {
 		final String filename = "book/pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		Range rangeA = Ranges.range(sheet1, "H11:J13");
 		assertEquals(10, rangeA.getRow());
@@ -711,14 +711,14 @@ public class Issue200Test {
 	@Test
 	public void testZSS395_1() {
 		final String filename = "book/pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		Range rangeA = Ranges.range(sheet1, "H11:J13");
 		rangeA.merge(false); // merge a 3 x 3
-		assertTrue(Util.isAMergedRange(rangeA)); // it should be merged
+		AssertUtil.assertMergedRange(rangeA); // it should be merged
 		Range rangeB = Ranges.range(sheet1, "H12"); // a whole row cross the merged cell
 		rangeB.toRowRange().unmerge(); // perform unmerge operation
-		assertTrue(!Util.isAMergedRange(rangeA)); // should be unmerged now
+		AssertUtil.assertNotMergedRange(rangeA); // should be unmerged now
 	}
 	
 	/**
@@ -730,14 +730,14 @@ public class Issue200Test {
 	@Test
 	public void testZSS395_2() {
 		final String filename = "book/pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		Range rangeA = Ranges.range(sheet1, "H11:J13");
 		rangeA.merge(false); // merge a 3 x 3
-		assertTrue(Util.isAMergedRange(rangeA)); // it should be merged
+		AssertUtil.assertMergedRange(rangeA); // it should be merged
 		Range rangeB = Ranges.range(sheet1, "H12"); // a whole row cross the merged cell
 		rangeB.toColumnRange().unmerge(); // perform unmerge operation
-		assertTrue(!Util.isAMergedRange(rangeA)); // should be unmerged now
+		AssertUtil.assertNotMergedRange(rangeA); // should be unmerged now
 	}
 	
 	/**
@@ -753,7 +753,7 @@ public class Issue200Test {
 	public void testZSS301() {
 		
 		final String filename = "book/pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		
 		int SRC_TOP_ROW = 10;
 		int SRC_LEFT_COL = 7;
@@ -774,8 +774,8 @@ public class Issue200Test {
 		range_I12I13.merge(false);
 		
 		// should be merged region
-		assertTrue(Util.isAMergedRange(range_H11J11));
-		assertTrue(Util.isAMergedRange(range_I12I13));
+		AssertUtil.assertMergedRange(range_H11J11);
+		AssertUtil.assertMergedRange(range_I12I13);
 		
 		int dstTopRow = 4;
 		int dstLeftCol = 2;
@@ -798,12 +798,12 @@ public class Issue200Test {
 		// this should be a merged cell
 		Range horizontalMergedRange = Ranges.range(sheet1, 4, 2, 4, 4);
 		assertEquals(1, horizontalMergedRange.getCellData().getDoubleValue(), 1E-8);
-		assertTrue(Util.isAMergedRange(horizontalMergedRange));
+		AssertUtil.assertMergedRange(horizontalMergedRange);
 		
 		// this should be a merged cell
 		Range verticalMergedRange = Ranges.range(sheet1, 5, 3, 6, 3);
 		assertEquals(5, verticalMergedRange.getCellData().getDoubleValue(), 1E-8);
-		assertTrue(Util.isAMergedRange(verticalMergedRange));
+		AssertUtil.assertMergedRange(verticalMergedRange);
 		
 		assertEquals(4, Ranges.range(sheet1, 5, 2).getCellData().getDoubleValue(), 1E-8);
 		assertEquals(7, Ranges.range(sheet1, 6, 2).getCellData().getDoubleValue(), 1E-8);
@@ -822,8 +822,8 @@ public class Issue200Test {
 		assertEquals(CellType.BLANK.ordinal(), Ranges.range(sheet1, SRC_TOP_ROW+2, SRC_LEFT_COL+2).getCellData().getType().ordinal(), 1E-8);
 
 		// should not be merged region anymore
-		assertTrue(!Util.isAMergedRange(range_H11J11));
-		assertTrue(!Util.isAMergedRange(range_I12I13));
+		AssertUtil.assertNotMergedRange(range_H11J11);
+		AssertUtil.assertNotMergedRange(range_I12I13);
 	}
 	
 	/**
@@ -834,7 +834,7 @@ public class Issue200Test {
 	public void testZSS303() {
 		
 		final String filename = "book/shiftTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		Range range_E = Ranges.range(sheet1, "E3:F3");
@@ -867,13 +867,13 @@ public class Issue200Test {
 	@Test
 	public void testZSS298() {
 		final String filename = "book/pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("Sheet1");
 		Range range = Ranges.range(sheet, "H11:J13");
 		range.merge(false); // 1. merge
-		assertTrue(Util.isAMergedRange(range)); // is it merged?
+		AssertUtil.assertMergedRange(range); // is it merged?
 		CellOperationUtil.clearStyles(range);
-		assertTrue(!Util.isAMergedRange(range)); // is it unmerged?
+		AssertUtil.assertNotMergedRange(range); // is it unmerged?
 	}
 	
 	/**
@@ -882,7 +882,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS326() throws IOException {
 		final String filename = "book/insert-charts.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("chart-image");
 		// Insert chart 1, 2
 		ChartData cd1 = ChartDataUtil.getChartData(sheet, new AreaRef(4,1,14,1), Chart.Type.LINE);
@@ -905,7 +905,7 @@ public class Issue200Test {
 	@Test
 	public void testZSS290() {
 		final String filename = "book/290-merge.xls";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("cell");
 		Range range = Ranges.range(sheet, "B5:D7");
 		range.merge(true);
@@ -936,7 +936,7 @@ public class Issue200Test {
 	public void testZSS277() {
 		
 		final String filename = "book/pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		
 		int SRC_TOP_ROW = 10;
 		int SRC_LEFT_COL = 7;
@@ -957,8 +957,8 @@ public class Issue200Test {
 		range_I12I13.merge(false);
 		
 		// should be merged region
-		assertTrue(Util.isAMergedRange(range_H11J11));
-		assertTrue(Util.isAMergedRange(range_I12I13));
+		AssertUtil.assertMergedRange(range_H11J11);
+		AssertUtil.assertMergedRange(range_I12I13);
 		
 		int dstTopRow = 4;
 		int dstLeftCol = 2;
@@ -983,13 +983,13 @@ public class Issue200Test {
 		Range horizontalMergedRange = Ranges.range(sheet1, 4, 2, 6, 2);
 		
 		assertEquals(1, horizontalMergedRange.getCellData().getDoubleValue(), 1E-8);
-		assertTrue(Util.isAMergedRange(horizontalMergedRange));
+		AssertUtil.assertMergedRange(horizontalMergedRange);
 		
 		// this should be a merged cell
 		// origin is vertical, but now horizontal
 		Range verticalMergedRange = Ranges.range(sheet1, 5, 3, 5, 4);
 		assertEquals(5, verticalMergedRange.getCellData().getDoubleValue(), 1E-8);
-		assertTrue(Util.isAMergedRange(verticalMergedRange));
+		AssertUtil.assertMergedRange(verticalMergedRange);
 		
 		assertEquals(4, Ranges.range(sheet1, dstTopRow, dstLeftCol+1).getCellData().getDoubleValue(), 1E-8);
 		assertEquals(7, Ranges.range(sheet1, dstTopRow, dstLeftCol+2).getCellData().getDoubleValue(), 1E-8);
@@ -1008,7 +1008,7 @@ public class Issue200Test {
 		
 		
 		final String filename = "book/pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 
 		int SRC_TOP_ROW = 10;
 		int SRC_LEFT_COL = 7;
@@ -1044,7 +1044,7 @@ public class Issue200Test {
 	public void testZSS389_1() {
 
 		final String filename = "book/shiftTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		Range range_E3E5 = Ranges.range(sheet1, "E3:E5");
@@ -1072,7 +1072,7 @@ public class Issue200Test {
 	public void testZSS389_2() {
 		
 		final String filename = "book/shiftTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		
 		Sheet sheet1 = workbook.getSheet("Sheet1");
 		Range range_G3G5 = Ranges.range(sheet1, "G3:G5");
@@ -1102,7 +1102,7 @@ public class Issue200Test {
 	public void testZSS315_1() {
 		
 		final String filename = "book/pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 		
 		int SRC_TOP_ROW = 10;
 		int SRC_LEFT_COL = 7;
@@ -1117,7 +1117,7 @@ public class Issue200Test {
 		assertEquals(4, range_H12J12.getCellData().getDoubleValue(), 1E-8);
 		
 		// should be merged region
-		assertTrue(Util.isAMergedRange(range_H12J12));
+		AssertUtil.assertMergedRange(range_H12J12);
 		
 		int dstTopRow = 11;
 		int dstLeftCol = 7;
@@ -1134,7 +1134,7 @@ public class Issue200Test {
 		assertEquals(1, realDstColCount / 1);
 		
 		// this should still be a merged cell
-		assertTrue(Util.isAMergedRange(range_H12J12));
+		AssertUtil.assertMergedRange(range_H12J12);
 		
 		// value validation
 		assertEquals(1, pasteRange.getCellData().getDoubleValue(), 1E-8);		
@@ -1153,7 +1153,7 @@ public class Issue200Test {
 	public void testZSS315_2() {
 		
 		final String filename = "book/pasteTest.xlsx";
-		Book workbook = Util.loadBook(filename);
+		Book workbook = Util.loadBook(this,filename);
 
 		int SRC_TOP_ROW = 10;
 		int SRC_LEFT_COL = 7;
@@ -1169,7 +1169,7 @@ public class Issue200Test {
 		assertEquals(1, range_H11J11.getCellData().getDoubleValue(), 1E-8);
 		
 		// should be merged region
-		assertTrue(Util.isAMergedRange(range_H11J11));
+		AssertUtil.assertMergedRange(range_H11J11);
 		
 		int dstTopRow = 11;
 		int dstLeftCol = 7;
@@ -1186,7 +1186,7 @@ public class Issue200Test {
 		assertEquals(1, realDstColCount / 3);
 		
 		// this should be a merged cell
-		assertTrue(Util.isAMergedRange(pasteRange));
+		AssertUtil.assertMergedRange(pasteRange);
 		
 		// value validation
 		assertEquals(1, pasteRange.getCellData().getDoubleValue(), 1E-8);
@@ -1222,8 +1222,7 @@ public class Issue200Test {
 	public void testZSS179() throws IOException {
 
 		final String filename = "book/179-insertexception-simple.xlsx";//should also test non-simple one
-		final InputStream is = getClass().getResourceAsStream(filename);
-		Book book = Importers.getImporter().imports(is, filename);
+		Book book = Util.loadBook(this, filename);
 
 		
 		Range r = Ranges.range(book.getSheetAt(0), "A1");
@@ -1257,8 +1256,7 @@ public class Issue200Test {
 	public void testZSS399() throws Exception {
 		// load book
 		final String filename = "book/399-pdf-gridline.xlsx";
-		final InputStream is = getClass().getResourceAsStream(filename);
-		Book book = Importers.getImporter().imports(is, filename);
+		Book book = Util.loadBook(this, filename);
 		
 
 		// print setting >> with grid lines 
@@ -1266,7 +1264,7 @@ public class Issue200Test {
 		sheet.getPoiSheet().setPrintGridlines(true);
 		
 		// export to PDF
-		File temp = File.createTempFile("zss-", ".pdf");
+		File temp = Setup.getTempFile("zss399-1", ".pdf");
 		FileOutputStream fos = new FileOutputStream(temp);
 		Exporter pdfExporter = Exporters.getExporter("pdf");
 		pdfExporter.export(book, fos);
@@ -1277,18 +1275,14 @@ public class Issue200Test {
 		// Check list:
 		// 1. correct content
 		// 2. must have grid lines 
-		if(Desktop.isDesktopSupported()) {
-			if(Desktop.getDesktop().isSupported(Action.OPEN)) {
-				Desktop.getDesktop().open(temp);
-			}
-		}
+		Util.open(temp);
 		
 		// print setting >> without grid lines 
 		sheet = book.getSheetAt(0);
 		sheet.getPoiSheet().setPrintGridlines(false);
 		
 		// export to PDF
-		temp = File.createTempFile("zss-", ".pdf");
+		temp = Setup.getTempFile("zss399-2", ".pdf");
 		fos = new FileOutputStream(temp);
 		pdfExporter = Exporters.getExporter("pdf");
 		pdfExporter.export(book, fos);
@@ -1299,16 +1293,12 @@ public class Issue200Test {
 		// Check list:
 		// 1. correct content
 		// 2. NO grid lines 
-		if(Desktop.isDesktopSupported()) {
-			if(Desktop.getDesktop().isSupported(Action.OPEN)) {
-				Desktop.getDesktop().open(temp);
-			}
-		}
+		Util.open(temp);
 	}
 	
 	@Test
 	public void testZSS356() throws Exception {
-		Book book = Util.loadBook("book/356-enable-autofilter.xlsx");
+		Book book = Util.loadBook(this,"book/356-enable-autofilter.xlsx");
 		//shouldn't throw exception
 		Ranges.range(book.getSheetAt(0),"D18").enableAutoFilter(true);
 	}
@@ -1316,7 +1306,7 @@ public class Issue200Test {
 	@Ignore("ZSS-276")
 	@Test
 	public void testZSS276() throws Exception {
-		Book book = Util.loadBook("book/276-format.xls");
+		Book book = Util.loadBook(this,"book/276-format.xls");
 		//shouldn't throw exception
 		Range r = Ranges.range(book.getSheetAt(0),"E2");
 		
@@ -1327,7 +1317,7 @@ public class Issue200Test {
 	@Ignore("ZSS-214")
 	@Test
 	public void testZSS214() throws Exception {
-		Book book = Util.loadBook("book/214-npe-rename.xlsx");
+		Book book = Util.loadBook(this,"book/214-npe-rename.xlsx");
 		//shouldn't throw exception
 		Range r = Ranges.range(book.getSheet("sheet1"),"A1");
 		
@@ -1350,7 +1340,7 @@ public class Issue200Test {
 	
 	@Test
 	public void testZSS323() throws Exception {
-		Book book = Util.loadBook("book/blank.xlsx");
+		Book book = Util.loadBook(this,"book/blank.xlsx");
 		//shouldn't throw exception
 		Range r = Ranges.range(book.getSheetAt(0),"A1:D5");
 		
@@ -1359,7 +1349,7 @@ public class Issue200Test {
 		r.sort(false);
 		
 		
-		book = Util.loadBook("book/blank.xls");
+		book = Util.loadBook(this,"book/blank.xls");
 		//shouldn't throw exception
 		r = Ranges.range(book.getSheetAt(0),"A1:D5");
 		

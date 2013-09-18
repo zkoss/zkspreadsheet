@@ -3,6 +3,7 @@ package org.zkoss.zss.api.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
@@ -11,7 +12,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.poi.ss.usermodel.ZssContext;
+import org.zkoss.zss.AssertUtil;
 import org.zkoss.zss.Setup;
+import org.zkoss.zss.Util;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
@@ -48,145 +51,145 @@ public class ShiftTest {
 	
 	@Test
 	public void testDeleteAndInsertRowMerge2003() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xls");
+		Book book = Util.loadBook(this,"book/shiftTest.xls");
 		testDeleteAndInsertRowMerge0(book);
 	}
 	
 	@Test
 	public void testDeleteAndInsertRowMerge2007() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xlsx");
+		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
 		testDeleteAndInsertRowMerge0(book);
 	}
 	
 	@Test
 	public void testDeleteAndInsertRow2003() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xls");
-		testDeleteAndInsertRow0(book, "book/test.xls");
+		Book book = Util.loadBook(this,"book/shiftTest.xls");
+		testDeleteAndInsertRow0(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testDeleteAndInsertRow2007() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xlsx");
-		testDeleteAndInsertRow0(book, "book/test.xlsx");
+		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		testDeleteAndInsertRow0(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testDeleteAndInsertColumnBeforeAndAfterExport2003() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xls");
-		testDeleteAndInsertColumnBeforeAndAfterExport0(book, "book/test.xls");
+		Book book = Util.loadBook(this,"book/shiftTest.xls");
+		testDeleteAndInsertColumnBeforeAndAfterExport0(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testDeleteAndInsertColumnBeforeAndAfterExport2007() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xlsx");
-		testDeleteAndInsertColumnBeforeAndAfterExport0(book, "book/test.xlsx");
+		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		testDeleteAndInsertColumnBeforeAndAfterExport0(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testDeleteAndInsertColumnBefore2003() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xls");
-		testDeleteAndInsertColumnBefore0(book, "book/test.xls");
+		Book book = Util.loadBook(this,"book/shiftTest.xls");
+		testDeleteAndInsertColumnBefore0(book, Setup.getTempFile());
 	}
 	
 	@Test
 	public void testDeleteAndInsertColumnBefore2007() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xlsx");
-		testDeleteAndInsertColumnBefore0(book, "book/test.xlsx");
+		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
+		testDeleteAndInsertColumnBefore0(book, Setup.getTempFile());
 	}
 
 	@Test
 	public void testShiftUpG4G6_2003() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xls");
+		Book book = Util.loadBook(this,"book/shiftTest.xls");
 		testShiftUpG4G6(book);
 	}
 	
 	@Test
 	public void testShiftUpG4G6_2007() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xlsx");
+		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
 		testShiftUpG4G6(book);
 	}
 	
 	@Test
 	public void testShiftDownE4E5_2003() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xlsx");
+		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
 		testShiftDownE4E5(book);
 	}
 	
 	@Test
 	public void testShiftDownE4E5_2007() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xlsx");
+		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
 		testShiftDownE4E5(book);
 	}
 	
 	@Test
 	public void testShiftDownG3G5_2003() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xls");
+		Book book = Util.loadBook(this,"book/shiftTest.xls");
 		testShiftDownG3G5(book);
 	}
 	
 	@Test
 	public void testShiftDownG3G5_2007() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xlsx");
+		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
 		testShiftDownG3G5(book);
 	}
 	
 	@Test
 	public void testShiftLeftE3E5_2003() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xls");
+		Book book = Util.loadBook(this,"book/shiftTest.xls");
 		testShiftLeftE3E5(book);
 	}
 	
 	@Test
 	public void testShiftLeftE3E5_2007() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xlsx");
+		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
 		testShiftLeftE3E5(book);
 	}
 	
 	@Test
 	public void testShiftRightE3E5_2003() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xls");
+		Book book = Util.loadBook(this,"book/shiftTest.xls");
 		testShiftRightE3E5(book);
 	}
 	
 	@Test
 	public void testShiftRightE3E5_2007() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xlsx");
+		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
 		testShiftRightE3E5(book);	
 	}
 	
 	@Test
 	public void testDeleteColumnE_2003() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xls");
+		Book book = Util.loadBook(this,"book/shiftTest.xls");
 		testDeleteColumnE(book);
 	}
 	
 	@Test
 	public void testDeleteColumnE_2007() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xlsx");
+		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
 		testDeleteColumnE(book);
 	}
 	
 	@Test
 	public void testDeleteRow345_2003() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xls");
+		Book book = Util.loadBook(this,"book/shiftTest.xls");
 		testDeleteRow345(book);
 	}
 	
 	@Test
 	public void testDeleteRow345_2007() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xlsx");
+		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
 		testDeleteRow345(book);
 	}
 	
 	@Test
 	public void testE3G5ShiftRow3Col3_2003() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xls");
+		Book book = Util.loadBook(this,"book/shiftTest.xls");
 		testE3G5ShiftRow3Col3(book);
 	}
 
 	@Test
 	public void testE3G5ShiftRow3Col3_2007() throws IOException {
-		Book book = Util.loadBook("book/shiftTest.xlsx");
+		Book book = Util.loadBook(this,"book/shiftTest.xlsx");
 		testE3G5ShiftRow3Col3(book);
 	}
 	
@@ -199,9 +202,9 @@ public class ShiftTest {
 		Range rA4 = Ranges.range(sheet, "A4"); // E4, whole row cross merge area
 		rA4.toRowRange().delete(DeleteShift.DEFAULT);
 		
-		assertTrue(!Util.isAMergedRange(rE3G5)); // should not be merge area anymore
+		AssertUtil.assertNotMergedRange(rE3G5); // should not be merge area anymore
 		Range rE3G4 = Ranges.range(sheet, "E3:G4" );
-		assertTrue(Util.isAMergedRange(rE3G4)); // should be merge area
+		AssertUtil.assertMergedRange(rE3G4); // should be merge area
 	}
 	
 	/**
@@ -216,7 +219,7 @@ public class ShiftTest {
 	 * 6. export
 	 * 7. import & validate
 	 */
-	private void testDeleteAndInsertRow0(Book workbook, String outFileName) throws IOException {
+	private void testDeleteAndInsertRow0(Book workbook, File outFile) throws IOException {
 		Sheet sheet = workbook.getSheet("Sheet1");
 		// delete row 3
 		Range row3 = Ranges.range(sheet, "A3");
@@ -235,11 +238,11 @@ public class ShiftTest {
 		assertEquals("G4", Ranges.range(sheet, "G3").getCellData().getEditText());
 		assertEquals("G5", Ranges.range(sheet, "G4").getCellData().getEditText());
 		
-		Util.export(workbook, outFileName);
+		Util.export(workbook, outFile);
 		
 		sheet = null;			// clean sheet
 		row3 = null;			// clean range
-		workbook = Util.loadBook(outFileName);  // Import
+		workbook = Util.loadBook(outFile);  // Import
 		sheet = workbook.getSheet("Sheet1"); // get sheet
 		
 		// validate
@@ -276,14 +279,14 @@ public class ShiftTest {
 		// Merge C4:E6
 		Range rC4E6 = Ranges.range(sheet, "C4:E6");
 		rC4E6.merge(false);
-		assertTrue(Util.isAMergedRange(rC4E6));
+		AssertUtil.assertMergedRange(rC4E6);
 		
 		// delete row 5
 		Range row5 = Ranges.range(sheet, "A5");
 		row5.toRowRange().delete(DeleteShift.DEFAULT);
 		
 		// validate
-		assertTrue(!Util.isAMergedRange(rC4E6));
+		AssertUtil.assertNotMergedRange(rC4E6);
 		
 		assertEquals("E1", Ranges.range(sheet, "E1").getCellData().getEditText());
 		assertEquals("E2", Ranges.range(sheet, "E2").getCellData().getEditText());
@@ -297,19 +300,19 @@ public class ShiftTest {
 		assertEquals("G5", Ranges.range(sheet, "G4").getCellData().getEditText());		
 		
 		Range rC4E5 = Ranges.range(sheet, "C4:E5");
-		assertTrue(Util.isAMergedRange(rC4E5));
+		AssertUtil.assertMergedRange(rC4E5);
 		
-		Util.export(workbook, outFileName);
+		Util.export(workbook, outFile);
 		
 		// import
 		workbook = null; 		// clean work book
 		sheet = null;			// clean sheet
 		row3 = null;			// clean range
-		workbook = Util.loadBook(outFileName);  // Import
+		workbook = Util.loadBook(outFile);  // Import
 		sheet = workbook.getSheet("Sheet1"); // get sheet
 		
 		// validate
-		assertTrue(!Util.isAMergedRange(rC4E6));
+		AssertUtil.assertNotMergedRange(rC4E6);
 		
 		assertEquals("E1", Ranges.range(sheet, "E1").getCellData().getEditText());
 		assertEquals("E2", Ranges.range(sheet, "E2").getCellData().getEditText());
@@ -323,7 +326,7 @@ public class ShiftTest {
 		assertEquals("G5", Ranges.range(sheet, "G4").getCellData().getEditText());		
 		
 		rC4E5 = Ranges.range(sheet, "C4:E5");
-		assertTrue(Util.isAMergedRange(rC4E5));
+		AssertUtil.assertMergedRange(rC4E5);
 	}
 	
 	/**
@@ -342,7 +345,7 @@ public class ShiftTest {
 	 * 13. export
 	 * 14. import & validate
 	 */
-	private void testDeleteAndInsertColumnBeforeAndAfterExport0(Book workbook, String outFileName) throws IOException {
+	private void testDeleteAndInsertColumnBeforeAndAfterExport0(Book workbook, File outFile) throws IOException {
 		
 		Sheet sheet = workbook.getSheet("Sheet1");
 		
@@ -360,7 +363,7 @@ public class ShiftTest {
 		assertEquals("E8", Ranges.range(sheet, "D8").getCellData().getEditText());
 		
 		// 2. export & validate
-		Util.export(workbook, outFileName);
+		Util.export(workbook, outFile);
 		
 		assertEquals("E1", Ranges.range(sheet, "D1").getCellData().getEditText());
 		assertEquals("E2", Ranges.range(sheet, "D2").getCellData().getEditText());
@@ -396,7 +399,7 @@ public class ShiftTest {
 		assertEquals("G5", Ranges.range(sheet, "F6").getCellData().getEditText());
 		
 		// 6. export & validate
-		Util.export(workbook, outFileName);
+		Util.export(workbook, outFile);
 		
 		assertEquals("A", Ranges.range(sheet, "E3").getCellEditText());
 		assertEquals("B", Ranges.range(sheet, "D8").getCellEditText());
@@ -416,7 +419,7 @@ public class ShiftTest {
 		// 7. import & validate
 		workbook = null; 		// clean work book
 		sheet = null;			// clean sheet
-		workbook = Util.loadBook(outFileName);  // Import
+		workbook = Util.loadBook(outFile);  // Import
 		sheet = workbook.getSheet("Sheet1"); // get sheet
 		
 		assertEquals("A", Ranges.range(sheet, "E3").getCellEditText());
@@ -445,7 +448,7 @@ public class ShiftTest {
 		assertEquals("G8", Ranges.range(sheet, "F7").getCellEditText());
 		
 		// 10. export
-		Util.export(workbook, outFileName);
+		Util.export(workbook, outFile);
 		
 		assertEquals("A", Ranges.range(sheet, "E3").getCellEditText());
 		assertEquals("C", Ranges.range(sheet, "B6").getCellEditText());
@@ -483,12 +486,12 @@ public class ShiftTest {
 		assertEquals("C", Ranges.range(sheet, "B6").getCellData().getEditText());
 		
 		// 13. export
-		Util.export(workbook, outFileName);
+		Util.export(workbook, outFile);
 		
 		// 14. import & validate
 		workbook = null; 		// clean work book
 		sheet = null;			// clean sheet
-		workbook = Util.loadBook(outFileName);  // Import
+		workbook = Util.loadBook(outFile);  // Import
 		sheet = workbook.getSheet("Sheet1"); // get sheet
 		
 		assertEquals("D", Ranges.range(sheet, "E4").getCellEditText());
@@ -520,7 +523,7 @@ public class ShiftTest {
 	 * 10. Import
 	 * 11. Validate
 	 */
-	private void testDeleteAndInsertColumnBefore0(Book workbook, String outFileName) throws IOException {
+	private void testDeleteAndInsertColumnBefore0(Book workbook, File outFile) throws IOException {
 		Sheet sheet = workbook.getSheet("Sheet1");
 		
 		// 2. Delete column D
@@ -538,13 +541,13 @@ public class ShiftTest {
 		assertEquals("E8", Ranges.range(sheet, "D8").getCellData().getEditText());
 		
 		// 4. Export to book/test.xlsx
-		Util.export(workbook, outFileName);
+		Util.export(workbook, outFile);
 		
 		// 5. import
 		workbook = null; 		// clean work book
 		sheet = null;			// clean sheet
 		columnD = null;			// clean range
-		workbook = Util.loadBook(outFileName);  // Import
+		workbook = Util.loadBook(outFile);  // Import
 		sheet = workbook.getSheet("Sheet1"); // get sheet
 		
 		// 6. Validate
@@ -572,13 +575,13 @@ public class ShiftTest {
 		assertEquals("E8", Ranges.range(sheet, "E8").getCellData().getEditText());
 		
 		// 9. export
-		Util.export(workbook, outFileName);
+		Util.export(workbook, outFile);
 		
 		// 10. import
 
 		sheet = null;			// clean sheet
 		columnD = null;			// clean range
-		workbook = Util.loadBook(outFileName);  // Import
+		workbook = Util.loadBook(outFile);  // Import
 		sheet = workbook.getSheet("Sheet1"); // get sheet
 		
 		// 11. validate

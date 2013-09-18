@@ -1,4 +1,4 @@
-package org.zkoss.zss;
+package org.zkoss.zss.testsuite;
 import org.junit.extensions.cpsuite.ClasspathSuite;
 import org.junit.extensions.cpsuite.ClasspathSuite.ClassnameFilters;
 import org.junit.runner.RunWith;
