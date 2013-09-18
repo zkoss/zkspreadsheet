@@ -64,6 +64,47 @@ public class Issue400Test {
 	public void tearDown() throws Exception {
 		ZssContext.setThreadLocal(null);
 	}
+	
+	/**
+	 * Date format and display doesn't match
+	 */
+	@Ignore
+	@Test
+	public void testZSS447Load2003() throws IOException {
+		
+		final String filename = "book/447-dateFormatDisplay.xls";
+		Book book = Util.loadBook(this, filename);
+		
+		Sheet sheet = book.getSheetAt(0);
+		Range r = Ranges.range(sheet, "A1");
+		
+		org.junit.Assert.assertEquals("2013/12/24", r.getCellFormatText()); // wrong in 2003
+		
+		// set format to m/d/yyyy
+		CellOperationUtil.applyCellStyle(r, CellOperationUtil.getDataFormatApplier("m/d/yyyy"));
+		
+		org.junit.Assert.assertEquals("12/24/2013", r.getCellFormatText()); // correct in 2003
+
+	}
+	
+	@Ignore
+	@Test
+	public void testZSS447Load2007() throws IOException {
+		
+		final String filename = "book/447-dateFormatDisplay.xlsx";
+		Book book = Util.loadBook(this, filename);
+		
+		Sheet sheet = book.getSheetAt(0);
+		Range r = Ranges.range(sheet, "A1");
+		
+		org.junit.Assert.assertEquals("2013/12/24", r.getCellFormatText()); // correct in 2007
+		
+		// set format to m/d/yyyy
+		CellOperationUtil.applyCellStyle(r, CellOperationUtil.getDataFormatApplier("m/d/yyyy"));
+		
+		org.junit.Assert.assertEquals("12/24/2013", r.getCellFormatText()); // wrong in 2007
+
+	}
 
 	@Test
 	public void testZSS437() throws IOException, URISyntaxException {
