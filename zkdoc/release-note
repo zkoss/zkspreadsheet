@@ -19,7 +19,7 @@ ZK Spreadsheet 3.0.0
   ZSS-378 ZK spreadsheet selected cell can type in English but can not input Chinese
   ZSS-434 insert,delete whole column or row when overlap merge cell will cause unexpect result
   ZSS-446 border patterns around a cell it is not showing in the exported pdf file
-  
+  ZSS-219 Problem with org.zkoss.zss.ui.Spreadsheet.focusTo
 ** Upgrade Notes
 
 

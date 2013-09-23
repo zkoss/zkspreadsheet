@@ -484,8 +484,15 @@ zss.DataPanel = zk.$extends(zk.Object, {
 			fzc = sheet.frozenCol,
 			local = this,
 			fn = function () {
-				//TODO, cell not initial, what sholud i do?
-				local._moveFocus(row, col, scroll, selection, noevt, noslevt);
+				//zss-219, if the cell dom is not exsited, scroll to it first, and then focus it. 
+				if(!!!sheet.getCell(row, col)){
+					sheet.sp.scrollToVisible(row,col);
+					setTimeout(function(){
+						local._moveFocus(row, col, scroll, selection, noevt, noslevt);	
+					},25);
+				}else{
+					local._moveFocus(row, col, scroll, selection, noevt, noslevt);
+				}
 			},
 			block = sheet.activeBlock,
 		//if target cell is on frozon row and col

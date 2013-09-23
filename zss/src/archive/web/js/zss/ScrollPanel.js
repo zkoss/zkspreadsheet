@@ -183,28 +183,21 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 	 * @param {Object} cell cell ctrl
 	 */
 	scrollToVisible: function (row, col, cell) {
-		if (!cell) return;
+		//zss-219, scrollToVisible should able to not depends on cell dom instance
 		
 		var sheet = this.sheet;
 		if (cell) {
 			row = cell.r;
 		    col = cell.c;
-		} else {
-			if (zkS.t(row) && zkS.t(col))
-				cell = sheet.getCell(row, col);
-			else if(zkS.t(row))
-				cell = sheet.getCell(row, sheet.activeBlock.range.left);
-			else if(zkS.t(col))
-				cell = sheet.getCell(sheet.activeBlock.range.top, col);
 		}
+		var cellLoc = this._getCellLocation(sheet,row,col);
 		
-		var cellcmp = cell.comp,
-			spcmp = this.comp,
+		var spcmp = this.comp,
 			block = sheet.activeBlock,
-			w = cellcmp.offsetWidth, // component width
-			h = cellcmp.offsetHeight, // component height
-			l = cellcmp.offsetLeft + block.comp.offsetLeft,//cell left in row + block left in datapanel = cell left in scroll panel 
-			t = cellcmp.parentNode.offsetTop + block.comp.offsetTop,//Row top in block + block top in datapanel = cell top in scroll panel.
+			w = cellLoc.width,//cellcmp.offsetWidth, // component width
+			h = cellLoc.height,//cellcmp.offsetHeight, // component height
+			l = cellLoc.left + sheet.leftWidth,//cellcmp.offsetLeft + block.comp.offsetLeft,//cell left in row + block left in datapanel = cell left in scroll panel 
+			t = cellLoc.top + sheet.topHeight,//cellcmp.parentNode.offsetTop + block.comp.offsetTop,//Row top in block + block top in datapanel = cell top in scroll panel.
 			sl = spcmp.scrollLeft,//current scroll left
 			st = spcmp.scrollTop,//current scroll top
 			sw = spcmp.clientWidth,//scroll panel width(no scroll bar)
@@ -276,5 +269,13 @@ zss.ScrollPanel = zk.$extends(zk.Object, {
 			spcmp.scrollTop = lst;
 			//after this , onScroll will be fired.
 		}
+	},
+	_getCellLocation : function(sheet, row, column){
+		var loc = {};
+		loc.left = sheet.custColWidth.getStartPixel(column);
+		loc.width = sheet.custColWidth.getSize(column);
+		loc.top = sheet.custRowHeight.getStartPixel(row);
+		loc.height = sheet.custRowHeight.getSize(row);
+		return loc;
 	}
 });
