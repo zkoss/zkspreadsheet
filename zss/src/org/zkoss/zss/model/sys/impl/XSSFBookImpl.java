@@ -266,6 +266,10 @@ public class XSSFBookImpl extends XSSFWorkbook implements XBook, BookCtrl {
 
 		CTProperties ext = properties.getExtendedProperties().getUnderlyingProperties();
 		CTVectorVariant vectorv = ext.getHeadingPairs();
+		if(vectorv == null){
+			vectorv = ext.addNewHeadingPairs();
+			vectorv.addNewVector();
+		}
 		CTVector vector = vectorv.getVector();
 		CTVariant[] variants = vector.getVariantArray();
 		int sheetCount = -1;
@@ -287,6 +291,10 @@ public class XSSFBookImpl extends XSSFWorkbook implements XBook, BookCtrl {
 			nameCount += sheetCount;
 		}
 		CTVectorLpstr vectorv2 = ext.getTitlesOfParts();
+		if(vectorv2==null){
+			vectorv2 = ext.addNewTitlesOfParts();
+			vectorv2.addNewVector();
+		}
 		CTVector vector2 = vectorv2.getVector();
 		String[] lpstrs = vector2.getLpstrArray();
 		int j = 0;

@@ -1303,7 +1303,6 @@ public class Issue200Test {
 		Ranges.range(book.getSheetAt(0),"D18").enableAutoFilter(true);
 	}
 	
-	@Ignore("ZSS-276")
 	@Test
 	public void testZSS276() throws Exception {
 		Book book = Util.loadBook(this,"book/276-format.xls");
@@ -1314,7 +1313,6 @@ public class Issue200Test {
 		
 	}
 	
-	@Ignore("ZSS-214")
 	@Test
 	public void testZSS214() throws Exception {
 		Book book = Util.loadBook(this,"book/214-npe-rename.xlsx");

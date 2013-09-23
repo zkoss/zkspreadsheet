@@ -21,6 +21,8 @@ ZK Spreadsheet 3.0.0
   ZSS-446 border patterns around a cell it is not showing in the exported pdf file
   ZSS-219 Problem with org.zkoss.zss.ui.Spreadsheet.focusTo
   ZSS-447 Date format and display doesn't match
+  ZSS-214 NPE when I try to rename sheet
+  
 ** Upgrade Notes
 
 
