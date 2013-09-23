@@ -26,12 +26,12 @@ public class SortTest {
 	
 	@Before
 	public void startUp() throws Exception {
-		ZssContext.setThreadLocal(new ZssContext(Locale.TAIWAN,-1));
+		Setup.pushZssContextLocale(Locale.TAIWAN);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		ZssContext.setThreadLocal(null);
+		Setup.popZssContextLocale();
 	}
 	
 	
@@ -96,7 +96,8 @@ public class SortTest {
 	}
 	
 	private void testSortByRowWithHeader(Book workbook) throws IOException {
-		ZssContext.setThreadLocal(new ZssContext(Locale.US,-1));
+		Setup.pushZssContextLocale(Locale.US);
+		try{
 		Sheet sheet = workbook.getSheet("MonthData");
 		Ranges.range(sheet, "A1:G5").sort(false, true, false, true, null);
 		
@@ -142,13 +143,16 @@ public class SortTest {
 		assertEquals("1372", Ranges.range(sheet, "G3").getCellFormatText());
 		assertEquals("747", Ranges.range(sheet, "G4").getCellFormatText());
 		assertEquals("769", Ranges.range(sheet, "G5").getCellFormatText());
+		}finally{
+			Setup.popZssContextLocale();
+		}
 		
 	}
 	
 	private void testSortWithHeader(Book workbook) throws IOException {
 		
-		ZssContext.setThreadLocal(new ZssContext(Locale.US,-1));
-		
+		Setup.pushZssContextLocale(Locale.US);
+		try{
 		Sheet sheet = workbook.getSheet("WeekdaySort");
 		Ranges.range(sheet, "A1:D20").sort(true, true, false, false, null);
 		
@@ -207,13 +211,15 @@ public class SortTest {
 		assertEquals("Fri", Ranges.range(sheet, "B11").getCellFormatText());
 		assertEquals("244", Ranges.range(sheet, "C11").getCellFormatText());
 		assertEquals("$437", Ranges.range(sheet, "D11").getCellFormatText().trim());
-		
+		}finally{
+			Setup.popZssContextLocale();
+		}
 	}
 	
 	private void testSimpleSortWithNumberAndCharacterAndFormula(Book workbook) throws IOException {
 		
-		ZssContext.setThreadLocal(new ZssContext(Locale.US,-1));
-		
+		Setup.pushZssContextLocale(Locale.US);
+		try{
 		Sheet sheet = workbook.getSheet("WeekdaySort");
 		Ranges.range(sheet, "A2:D20").sort(true);
 		
@@ -266,7 +272,9 @@ public class SortTest {
 		assertEquals("Fri", Ranges.range(sheet, "B11").getCellFormatText());
 		assertEquals("244", Ranges.range(sheet, "C11").getCellFormatText());
 		assertEquals("$437", Ranges.range(sheet, "D11").getCellFormatText().trim());
-		
+		}finally{
+			Setup.popZssContextLocale();
+		}
 	}
 	
 	private void testSortWithHeaderByBirthYr_ZipCode_ID(Book workbook) throws IOException {

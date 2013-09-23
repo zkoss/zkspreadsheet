@@ -32,6 +32,7 @@ import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.CellData.CellType;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.EditableFont;
@@ -57,52 +58,98 @@ public class Issue400Test {
 	
 	@Before
 	public void startUp() throws Exception {
-		ZssContext.setThreadLocal(new ZssContext(Locale.TAIWAN,-1));
+		Setup.pushZssContextLocale(Locale.TAIWAN);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		ZssContext.setThreadLocal(null);
+		Setup.popZssContextLocale();
 	}
 	
-	/**
-	 * Date format and display doesn't match
-	 */
-	@Ignore
 	@Test
-	public void testZSS447Load2003() throws IOException {
-		
-		final String filename = "book/447-dateFormatDisplay.xls";
-		Book book = Util.loadBook(this, filename);
-		
-		Sheet sheet = book.getSheetAt(0);
-		Range r = Ranges.range(sheet, "A1");
-		
-		org.junit.Assert.assertEquals("2013/12/24", r.getCellFormatText()); // wrong in 2003
-		
-		// set format to m/d/yyyy
-		CellOperationUtil.applyCellStyle(r, CellOperationUtil.getDataFormatApplier("m/d/yyyy"));
-		
-		org.junit.Assert.assertEquals("12/24/2013", r.getCellFormatText()); // correct in 2003
-
+	public void testZSS447_2003() throws IOException {
+		testZSS447(Util.loadBook(this, "book/447-dateFormatDisplay.xls"));
 	}
 	
-	@Ignore
 	@Test
-	public void testZSS447Load2007() throws IOException {
-		
-		final String filename = "book/447-dateFormatDisplay.xlsx";
-		Book book = Util.loadBook(this, filename);
-		
+	public void testZSS447_2007() throws IOException {
+		testZSS447(Util.loadBook(this, "book/447-dateFormatDisplay.xlsx"));
+	}
+	
+	public void testZSS447(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
-		Range r = Ranges.range(sheet, "A1");
+		Range a1 = Ranges.range(sheet, "A1");
+		Range a2 = Ranges.range(sheet, "A2");
+		Range a3 = Ranges.range(sheet, "A3");
+		Range a4 = Ranges.range(sheet, "A4");
 		
-		org.junit.Assert.assertEquals("2013/12/24", r.getCellFormatText()); // correct in 2007
+		Setup.pushZssContextLocale(Locale.TAIWAN);
+		try{
+			org.junit.Assert.assertEquals("yyyy/m/d", a1.getCellStyle().getDataFormat()); //default format will depends on LOCAL
+			org.junit.Assert.assertEquals("2013/12/24", a1.getCellFormatText());
+			
+			org.junit.Assert.assertEquals("yyyy/m/d", a2.getCellStyle().getDataFormat());
+			org.junit.Assert.assertEquals("2013/12/24", a2.getCellFormatText());
+			
+			org.junit.Assert.assertEquals("m/d/yyyy", a3.getCellStyle().getDataFormat()); // PASS is POI
+			org.junit.Assert.assertEquals("12/24/2013", a3.getCellFormatText());// PASS is POI
+		}finally{
+			Setup.popZssContextLocale();
+		}
+		Setup.pushZssContextLocale(Locale.US);
+		try{
+			org.junit.Assert.assertEquals("m/d/yyyy", a1.getCellStyle().getDataFormat()); //this cell contains default format, it should depends on locale
+			org.junit.Assert.assertEquals("12/24/2013", a1.getCellFormatText());
+			
+			org.junit.Assert.assertEquals("m/d/yyyy", a2.getCellStyle().getDataFormat()); //this cell contains default format, it should depends on locale
+			org.junit.Assert.assertEquals("12/24/2013", a2.getCellFormatText());
+			
+			org.junit.Assert.assertEquals("m/d/yyyy", a3.getCellStyle().getDataFormat()); //this is custom format, it regardless locale.
+			org.junit.Assert.assertEquals("12/24/2013", a3.getCellFormatText());
+		}finally{
+			Setup.popZssContextLocale();
+		}
 		
-		// set format to m/d/yyyy
-		CellOperationUtil.applyCellStyle(r, CellOperationUtil.getDataFormatApplier("m/d/yyyy"));
+		//test input, depends on locale
+		Range a5 = Ranges.range(sheet, "A5");
+		Range a6 = Ranges.range(sheet, "A6");
+		Setup.pushZssContextLocale(Locale.TAIWAN);
+		try{
+			org.junit.Assert.assertEquals("General", a5.getCellStyle().getDataFormat());
+			org.junit.Assert.assertEquals("General", a6.getCellStyle().getDataFormat());
+			
+			a5.setCellEditText("2013/2/1");
+			org.junit.Assert.assertEquals(CellType.NUMERIC, a5.getCellData().getType());
+			org.junit.Assert.assertEquals("yyyy/m/d", a5.getCellStyle().getDataFormat()); //default format will depends on LOCAL
+			org.junit.Assert.assertEquals("2013/2/1", a5.getCellFormatText());
+			
+			a6.setCellEditText("2/1/2013");
+			org.junit.Assert.assertEquals(CellType.STRING, a6.getCellData().getType());
+			org.junit.Assert.assertEquals("General", a6.getCellStyle().getDataFormat());
+			org.junit.Assert.assertEquals("2/1/2013", a6.getCellFormatText());
+		}finally{
+			Setup.popZssContextLocale();
+		}
 		
-		org.junit.Assert.assertEquals("12/24/2013", r.getCellFormatText()); // wrong in 2007
+		Range a7 = Ranges.range(sheet, "A7");
+		Range a8 = Ranges.range(sheet, "A8");
+		Setup.pushZssContextLocale(Locale.US);
+		try{
+			org.junit.Assert.assertEquals("General", a7.getCellStyle().getDataFormat());
+			org.junit.Assert.assertEquals("General", a8.getCellStyle().getDataFormat());
+			
+			a7.setCellEditText("2/1/2013");
+			org.junit.Assert.assertEquals(CellType.NUMERIC, a7.getCellData().getType());
+			org.junit.Assert.assertEquals("m/d/yyyy", a7.getCellStyle().getDataFormat());
+			org.junit.Assert.assertEquals("2/1/2013", a7.getCellFormatText());
+			
+			a8.setCellEditText("2013/2/1");
+			org.junit.Assert.assertEquals(CellType.STRING, a8.getCellData().getType());
+			org.junit.Assert.assertEquals("General", a8.getCellStyle().getDataFormat()); //default format will depends on LOCAL
+			org.junit.Assert.assertEquals("2013/2/1", a8.getCellFormatText());
+		}finally{
+			Setup.popZssContextLocale();
+		}
 
 	}
 

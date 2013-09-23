@@ -6,9 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.Stack;
 
 import org.zkoss.lang.Library;
+import org.zkoss.poi.ss.usermodel.ZssContext;
 
 public class Setup {
 	
@@ -28,7 +31,13 @@ public class Setup {
 		}
 	}
 	
-	public static void touch() {};
+	public static void touch() {
+		if(ZssContext.getCurrent()==null){
+			Locale def = Locale.TAIWAN; //TODO read local from config
+			ZssContext.setThreadLocal(new ZssContext(def,-1));
+		}
+		
+	};
 	
 	static private File temp; 
 	
@@ -58,5 +67,27 @@ public class Setup {
 			} catch (InterruptedException e) {}
 		}while(file.exists());
 		return file;
+	}
+	
+	static ThreadLocal<Stack<ZssContext>> zssCtx = new ThreadLocal<Stack<ZssContext>>();
+	static{
+		zssCtx.set(new Stack<ZssContext>());
+	}
+	
+	public static void pushZssContextLocale(Locale l){
+		ZssContext old = ZssContext.getCurrent();
+		if(old!=null){
+			zssCtx.get().push(old);
+		}
+		ZssContext.setThreadLocal(new ZssContext(l,-1));
+	}
+	
+	public static void popZssContextLocale(){
+		if(zssCtx.get().isEmpty()){
+			System.out.print("WARN: No zss context to pop, please check your call stack");
+			return;
+		}
+		ZssContext old = zssCtx.get().pop();
+		ZssContext.setThreadLocal(old);
 	}
 }

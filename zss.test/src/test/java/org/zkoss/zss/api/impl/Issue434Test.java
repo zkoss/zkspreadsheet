@@ -41,12 +41,12 @@ public class Issue434Test {
 	
 	@Before
 	public void startUp() throws Exception {
-		ZssContext.setThreadLocal(new ZssContext(Locale.TAIWAN,-1));
+		Setup.pushZssContextLocale(Locale.TAIWAN);
 	}
 	
 	@After
 	public void tearDown() throws Exception {
-		ZssContext.setThreadLocal(null);
+		Setup.popZssContextLocale();
 	}
 	
 	@Test
