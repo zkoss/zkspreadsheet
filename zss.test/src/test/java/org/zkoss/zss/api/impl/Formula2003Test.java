@@ -8,7 +8,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
 import org.zkoss.zss.api.Ranges;
@@ -33,6 +32,12 @@ public class Formula2003Test extends FormulaTestBase {
 	@After
 	public void tearDown() throws Exception {
 		Setup.popZssContextLocale();
+	}
+	
+	@Test
+	public void testCOMPLEX()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testCOMPLEX(book);
 	}
 
 	@Test
@@ -676,6 +681,54 @@ public class Formula2003Test extends FormulaTestBase {
 	public void testDATE() {
 		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
 		testDATE(book);
+	}
+	
+	@Test
+	public void testCOUPPCD()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testCOUPPCD(book);
+	}
+	
+	@Test
+	public void testCOUPNCD()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testCOUPNCD(book);
+	}
+	
+	@Test
+	public void testNegativeWorkdayEndDateIsHolday()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testNegativeWorkdayEndDateIsHolday(book);
+	}
+	
+	@Test
+	public void testWorkdaySpecifiedholiday()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testWorkdaySpecifiedholiday(book);
+	}
+	
+	@Test
+	public void testStartDateIsHoliday()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testStartDateIsHoliday(book);
+	}
+	
+	@Test
+	public void testWorkdayBoundary()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testWorkdayBoundary(book);
+	}
+	
+	@Test
+	public void testEndDateIsHoliday()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testEndDateIsHoliday(book);
+	}
+	
+	@Test
+	public void testWORKDAY()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testWORKDAY(book);
 	}
 
 	@Test

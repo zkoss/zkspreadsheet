@@ -66,14 +66,6 @@ public class FormulaIgnored2007Test extends FormulaTestBase {
 		test19900101IsNotWorkDayInExcel(book);
 	}
 	
-	
-	// slightly different because of space
-	@Test
-	public void testCOMPLEX()  {
-		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
-		testCOMPLEX(book);
-	}
-	
 	// slightly different because of space
 	@Test
 	public void testINDEX()  {

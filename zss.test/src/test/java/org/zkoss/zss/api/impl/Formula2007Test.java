@@ -47,6 +47,12 @@ public class Formula2007Test extends FormulaTestBase {
 	// assertEquals("2013/9/11", Ranges.range(sheet, "B42").getCellData()
 	// .getFormatText());
 	// }
+	
+	@Test
+	public void testCOMPLEX()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testCOMPLEX(book);
+	}
 
 	@Test
 	public void testCOUPNCD() {

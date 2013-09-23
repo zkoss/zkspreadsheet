@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
 import org.zkoss.zss.api.Ranges;
@@ -54,59 +53,6 @@ public class FormulaIgnored2003Test extends FormulaTestBase {
 		// testRTD(book);
 	}
 	*/
-	// DATE FORMAT ============================
-	// expected:<[2013/3/29]> but was:<[3/29/2013]>
-	@Test
-	public void testNegativeWorkdayEndDateIsHolday()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testNegativeWorkdayEndDateIsHolday(book);
-	}
-	
-	// expected:<[2006/11/15]> but was:<[11/15/2006]>
-	@Test
-	public void testCOUPPCD()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testCOUPPCD(book);
-	}
-	
-	@Test
-	public void testWORKDAY()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testWORKDAY(book);
-	}
-	
-	@Test
-	public void testWorkdaySpecifiedholiday()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testWorkdaySpecifiedholiday(book);
-	}
-	
-	// expected:<[2011/5/15]> but was:<[5/15/2011]>
-	@Test
-	public void testCOUPNCD()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testCOUPNCD(book);
-	}
-	
-	@Test
-	public void testEndDateIsHoliday()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testEndDateIsHoliday(book);
-	}
-	
-	@Test
-	public void testStartDateIsHoliday()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testStartDateIsHoliday(book);
-	}
-
-	@Test
-	public void testWorkdayBoundary()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testWorkdayBoundary(book);
-	}	
-	
-	// DATE FORMAT ============================
 	
 	@Test
 	public void testAREAS()  {
@@ -114,26 +60,18 @@ public class FormulaIgnored2003Test extends FormulaTestBase {
 		testAREAS(book);
 	}
 	
+	// slightly diffrent because of space
+	@Test
+	public void testINDEX()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testINDEX(book);
+	}
+	
 	// 1990/1/1 is Monday, but Excel think it is not work day.
 	@Test
 	public void test19900101IsNotWorkDayInExcel()  {
 		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
 		test19900101IsNotWorkDayInExcel(book);
-	}
-	
-	
-	// slightly different because of space
-	@Test
-	public void testCOMPLEX()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testCOMPLEX(book);
-	}
-	
-	// slightly different because of space
-	@Test
-	public void testINDEX()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testINDEX(book);
 	}
 	
 	// expected:<[1]> but was:<[2]>

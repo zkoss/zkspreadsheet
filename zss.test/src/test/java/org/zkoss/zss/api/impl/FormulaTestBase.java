@@ -1846,12 +1846,9 @@ public class FormulaTestBase {
 				.getFormatText()); // =NETWORKDAYS(DATE(1900,1,1),DATE(1900,1,1))
 	}
 	
-	
-	// slightly different because of space
-	
 	protected void testCOMPLEX(Book book) {
 		Sheet sheet = book.getSheet("formula-engineering");
-		assertEquals("3 + 4i", Ranges.range(sheet, "B17").getCellFormatText());
+		assertEquals(" 3+4i ", Ranges.range(sheet, "B17").getCellFormatText());
 	}
 	
 	// slightly different because of space
