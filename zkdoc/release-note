@@ -23,6 +23,8 @@ ZK Spreadsheet 3.0.0
   ZSS-447 Date format and display doesn't match
   ZSS-214 NPE when I try to rename sheet
   ZSS-256 hidden column is not hiding when displaying a excel file
+  ZSS-313 after several switching sheets and resize row height, cells frame become a mess
+
   
 ** Upgrade Notes
 

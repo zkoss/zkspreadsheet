@@ -217,10 +217,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		this.frozenCol = wgt.getColumnFreeze();
 
 		this.custColWidth = new zss.PositionHelper(this.colWidth, snapshop ? snapshop.getCustColWidth() : newPositionArray(wgt.getCsc()));
-		this.custColWidth.ids = new zss.Id(0, 2);
+		this.custColWidth.ids = new zss.Id(snapshop?snapshop.getCustColLastId():0, 2);
 		
 		this.custRowHeight = new zss.PositionHelper(this.rowHeight, snapshop ? snapshop.getCustRowHeight() : newPositionArray(wgt.getCsr()));
-		this.custRowHeight.ids = new zss.Id(0, 2);
+		this.custRowHeight.ids = new zss.Id(snapshop?snapshop.getCustRowLastId():0, 2);
 		
 		//merge range
 		this.mergeMatrix = new zss.MergeMatrix(snapshop ? snapshop.getMergeMatrix() : newMergeMatrixArray(wgt.getMergeRange()), this);

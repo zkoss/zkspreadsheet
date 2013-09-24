@@ -6,8 +6,10 @@ select "cell-border" sheet, select row 9 and increase it's height
 select "cell", do nothing
 select "cell-border" sheet again, select row 8 and increase it's height	
 	</label>
-	
-		<spreadsheet id="ss" src="/issue3/book/313-cell-mess.xlsx" hflex="1" vflex="1"
+		<hbox>
+		<button label="invalidate" onClick='ss.invalidate()'/>
+		</hbox>
+		<spreadsheet id="ss" src="/issue3/book/313-simple-cell-mess.xlsx" hflex="1" vflex="1" selectedSheet="Sheet2"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
