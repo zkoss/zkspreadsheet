@@ -24,6 +24,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
@@ -1311,5 +1314,20 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
 
 	private boolean isInside(int row, int lastRow, int col, int lastCol, int r, int c) {
 		return row <= r && r <= lastRow && col <= c && c <= lastCol;
+	}
+	
+	//ZSS-256, add api to get correct configuraed column index
+	public int getMaxConfiguredColumn() {
+		int max = -1;
+		CTWorksheet worksheet = getCTWorksheet();
+		CTCols[] colsArrays = worksheet.getColsArray(); // might be null sometimes
+		if (colsArrays.length == 0)
+			return max;
+		CTCols colsArray = colsArrays[0];
+		for (int i = 0; i < colsArray.sizeOfColArray(); i++) {
+			CTCol colArray = colsArray.getColArray(i);
+			max = Math.max(max, (int) colArray.getMax()-1);//in CT col it is 1base, -1 to 0base.
+		}
+		return max;
 	}
 }	

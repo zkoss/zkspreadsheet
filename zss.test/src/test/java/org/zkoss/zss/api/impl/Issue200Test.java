@@ -45,6 +45,8 @@ import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.ChartData;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zssex.api.ChartDataUtil;
 
 /**
@@ -1354,5 +1356,27 @@ public class Issue200Test {
 		//shoun't throw exception
 		r.sort(true);
 		r.sort(false);
+	}
+	
+	@Test
+	public void testZSS256() throws Exception {
+		testZSS256(Util.loadBook(this,"book/256-rowcolumn.xlsx"));
+		testZSS256(Util.loadBook(this,"book/256-rowcolumn.xls"));
+	}
+	
+	
+	private void testZSS256(Book book) throws Exception {
+	
+		//shouldn't throw exception
+		Sheet sheet = book.getSheet("rowcolumn");
+
+		Assert.assertFalse(sheet.isRowHidden(4));
+		Assert.assertTrue(sheet.isRowHidden(5));
+		Assert.assertFalse(sheet.isRowHidden(6));
+		
+		Assert.assertEquals(10, BookHelper.getMaxConfiguredColumn((XSheet)sheet.getPoiSheet()));
+		Assert.assertFalse(sheet.isColumnHidden(3));
+		Assert.assertTrue(sheet.isColumnHidden(4));
+		Assert.assertFalse(sheet.isColumnHidden(5));
 	}
 }

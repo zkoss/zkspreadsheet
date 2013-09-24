@@ -1345,5 +1345,11 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, XSheet {
 	public void removeDrawingPatriarch(Drawing drawing) {
 		// TODO not supported yet, according to ZSS-9
 	}
+	
+	
+	//ZSS-256, add api to get correct configuraed column index
+    public int getMaxConfiguredColumn(){
+    	return getSheet().getMaxConfiguredColumn();
+    }
 
 }

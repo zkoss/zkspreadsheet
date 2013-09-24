@@ -2503,7 +2503,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		final String sheetId = ((SheetCtrl)sheet).getUuid();
 		HeaderPositionHelper helper = helpers.getHelper(sheetId);
 				
-		int maxcol = 0;
 		if (helper == null) {
 			int defaultSize = this.getRowheight();
 			
@@ -2511,19 +2510,16 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			
 			for(Row row: sheet) {
 				final boolean hidden = row.getZeroHeight();
+				
 				final int height = XUtils.getRowHeightInPx(sheet, row);
 				if (height != defaultSize || hidden) { //special height or hidden
 					infos.add(new HeaderPositionInfo(row.getRowNum(), height, _custRowId.next(), hidden));
-				}
-				final int colnum = row.getLastCellNum() - 1;
-				if (colnum > maxcol) {
-					maxcol = colnum;
 				}
 			}
 			
 			helpers.putHelper(sheetId, helper = new HeaderPositionHelper(defaultSize, infos));
 		}
-		return new HeaderPositionHelper[] {helper, myGetColumnPositionHelper(sheet, maxcol)};
+		return new HeaderPositionHelper[] {helper, myGetColumnPositionHelper(sheet)};
 	}
 
 	/**
@@ -2676,7 +2672,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //	}
 //	
 
-	private HeaderPositionHelper myGetColumnPositionHelper(XSheet sheet, int maxcol) {
+	private HeaderPositionHelper myGetColumnPositionHelper(XSheet sheet) {
 		HelperContainer<HeaderPositionHelper> helpers = (HelperContainer) getAttribute(COLUMN_SIZE_HELPER_KEY);
 		if (helpers == null) {
 			setAttribute(COLUMN_SIZE_HELPER_KEY, helpers = new HelperContainer<HeaderPositionHelper>());
@@ -2690,6 +2686,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final int charWidth = getDefaultCharWidth();
 			final int defaultColSizeInPx = XUtils.defaultColumnWidthToPx(defaultColSize, charWidth);
 			List<HeaderPositionInfo> infos = new ArrayList<HeaderPositionInfo>();
+			int maxcol = BookHelper.getMaxConfiguredColumn(sheet);
 			for(int j=0; j <= maxcol; ++j) {
 				final boolean hidden = sheet.isColumnHidden(j); //whether this column is hidden
 				final int fileColumnWidth = sheet.getColumnWidth(j); //file column width

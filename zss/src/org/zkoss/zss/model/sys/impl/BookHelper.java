@@ -5270,4 +5270,14 @@ public final class BookHelper {
 		}
 		return null;
 	}
+	
+	//ZSS-256, add api to get correct configuraed column index
+	public static int getMaxConfiguredColumn(XSheet sheet){
+		if(sheet instanceof XSSFSheetImpl){
+			return ((XSSFSheetImpl)sheet).getMaxConfiguredColumn();
+		}else if(sheet instanceof HSSFSheetImpl){
+			return ((HSSFSheetImpl)sheet).getMaxConfiguredColumn();
+		}
+		return -1;
+	}
 }
