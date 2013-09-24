@@ -830,7 +830,9 @@ zss.Snapshot = zk.$extends(zk.Object, {
 			['_scss', '_displayGridlines', '_rowFreeze', '_columnFreeze', '_rowHeight', '_columnWidth', '_protect']);
 		
 		this.setCustRowHeight(sheet.custRowHeight.custom);
+		this.setCustRowLastId(sheet.custRowHeight.ids.last);
 		this.setCustColWidth(sheet.custColWidth.custom);
+		this.setCustColLastId(sheet.custColWidth.ids.last);
 		this.setMergeMatrix(sheet.mergeMatrix.mergeMatrix);
 		this.setVisibleRange(visRng);
 		this.setFocus(sheet.getLastFocus());
@@ -870,9 +872,17 @@ zss.Snapshot = zk.$extends(zk.Object, {
 		 */
 		custRowHeight: null,
 		/**
+		 * @param int
+		 */
+		custRowLastId:null,
+		/**
 		 * @param array
 		 */
 		custColWidth: null,
+		/**
+		 * @param int
+		 */
+		custColLastId:null,
 		/**
 		 * @param array
 		 */
