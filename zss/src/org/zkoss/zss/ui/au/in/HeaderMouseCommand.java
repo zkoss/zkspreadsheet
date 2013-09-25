@@ -54,14 +54,15 @@ public class HeaderMouseCommand extends AbstractCommand implements Command {
 		if(!XUtils.getSheetUuid(sheet).equals(sheetId)) {
 			return;
 		}
-		String type = (String) data.get("type");//x offset against spreadsheet
-		int shx = (Integer) data.get("shx");//x offset against spreadsheet
-		int shy = (Integer) data.get("shy");
+		String type = (String) data.get("type");
+		//ZSS-440, might get double in IE 10 when room
+		int shx = AuDataUtil.getInt(data,"shx");//x offset against spreadsheet
+		int shy = AuDataUtil.getInt(data,"shy");
 		int key = parseKeys((String) data.get("key"));
 		int row = (Integer) data.get("row");
 		int col = (Integer) data.get("col");
-		int mx = (Integer) data.get("mx");//x offset against body
-		int my = (Integer) data.get("my");
+		int mx = AuDataUtil.getInt(data,"mx");//x offset against body
+		int my = AuDataUtil.getInt(data,"my");
 		
 		
 		if ("lc".equals(type)) {

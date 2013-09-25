@@ -69,7 +69,7 @@ public class HeaderUpdateCommand extends AbstractCommand implements Command {
 		int index = (Integer) data.get("index");
 		
 		if("resize".equals(action)){
-			int newsize = (Integer) data.get("size");
+			int newsize = AuDataUtil.getInt(data,"size");
 			int id = (Integer) data.get("id");
 			boolean hidden = (Boolean) data.get("hidden");
 			((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setColumnSize(sheetId, index, newsize,id, hidden);
@@ -96,7 +96,8 @@ public class HeaderUpdateCommand extends AbstractCommand implements Command {
 		String action = (String) data.get("action");
 		int index = (Integer) data.get("index");
 		if("resize".equals(action)){
-			int newsize = (Integer) data.get("size");
+			//ZSS-440, might get double in IE 10 when room
+			int newsize = AuDataUtil.getInt(data,"size");
 			int id = (Integer) data.get("id");
 			boolean hidden = (Boolean) data.get("hidden");
 			((SpreadsheetInCtrl)spreadsheet.getExtraCtrl()).setRowSize(sheetId, index, newsize,id, hidden);

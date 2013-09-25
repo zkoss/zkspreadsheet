@@ -95,10 +95,10 @@ public class WidgetUpdateCommand extends AbstractCommand implements Command {
 	}
 
 	private SheetAnchor getAnchor(Map data) {
-		int dx1 = (Integer) data.get("dx1");
-		int dy1 = (Integer) data.get("dy1");
-		int dx2 = (Integer) data.get("dx2");
-		int dy2 = (Integer) data.get("dy2");
+		int dx1 = AuDataUtil.getInt(data,"dx1");
+		int dy1 = AuDataUtil.getInt(data,"dy1");
+		int dx2 = AuDataUtil.getInt(data,"dx2");
+		int dy2 = AuDataUtil.getInt(data,"dy2");
 		int col1 = (Integer) data.get("col1");
 		int row1 = (Integer) data.get("row1");
 		int col2 = (Integer) data.get("col2");

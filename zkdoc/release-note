@@ -24,7 +24,7 @@ ZK Spreadsheet 3.0.0
   ZSS-214 NPE when I try to rename sheet
   ZSS-256 hidden column is not hiding when displaying a excel file
   ZSS-313 after several switching sheets and resize row height, cells frame become a mess
-
+  ZSS-440 IE10 resizing column (java.lang.Double cannot be cast to java.lang.Integer)
   
 ** Upgrade Notes
 

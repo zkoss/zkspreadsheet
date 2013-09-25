@@ -111,11 +111,11 @@ public class CellFetchCommandHelper{
 		String type = (String) data.get("type"); 
 		String direction = (String) data.get("direction");
 		
-		
-		int dpWidth = (Integer)data.get("dpWidth");//pixel value of data panel width
-		int dpHeight = (Integer)data.get("dpHeight");//pixel value of data panel height
-		int viewWidth = (Integer)data.get("viewWidth");//pixel value of view width(scrollpanel.clientWidth)
-		int viewHeight = (Integer)data.get("viewHeight");//pixel value of value height
+		//ZSS-440, might get double in IE 10 when room
+		int dpWidth = AuDataUtil.getInt(data,"dpWidth");//pixel value of data panel width
+		int dpHeight = AuDataUtil.getInt(data,"dpHeight");//pixel value of data panel height
+		int viewWidth = AuDataUtil.getInt(data,"viewWidth");//pixel value of view width(scrollpanel.clientWidth)
+		int viewHeight = AuDataUtil.getInt(data,"viewHeight");//pixel value of value height
 		
 		//current rendered block range
 		int blockLeft = (Integer)data.get("blockLeft");
