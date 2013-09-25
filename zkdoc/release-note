@@ -31,6 +31,7 @@ ZK Spreadsheet 3.0.0
   ZSS-441 Wrong sum results
   ZSS-404 JS Error after insert column when freeze
   ZSS-443 change width of columns in corner freeze panel will cause Javascript exception
+  ZSS-449 Freeze panels and change row/column size, then switch to other sheet and back, freeze panel's headers will be chaos.
   
 ** Upgrade Notes
 

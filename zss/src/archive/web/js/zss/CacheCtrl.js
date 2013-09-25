@@ -362,8 +362,14 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 		if (header)
 			header.p = id;
 
+		if (this.topFrozen) {
+			this.topFrozen.updateColumnWidthId(col, id);
+		}
 		if (this.leftFrozen) {
 			this.leftFrozen.updateColumnWidthId(col, id);
+		}
+		if (this.cornerFrozen) {
+			this.cornerFrozen.updateColumnWidthId(col, id);
 		}
 	},
 	getColumnWidthId: function (col) {
@@ -379,6 +385,12 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 			header.p = id;
 		if (this.topFrozen) {
 			this.topFrozen.updateRowHeightId(row, id);
+		}
+		if (this.leftFrozen) {
+			this.leftFrozen.updateRowHeightId(row, id);
+		}
+		if (this.cornerFrozen) {
+			this.cornerFrozen.updateRowHeightId(row, id);
 		}
 	},
 	getRowHeightId: function (row) {
