@@ -65,8 +65,10 @@ public class CellMouseCommand extends AbstractCommand implements Command {
 		String sheetId = (String) data.get("sheetId");
 		int row = (Integer) data.get("row");
 		int col = (Integer) data.get("col");
-		int mx = (Integer) data.get("mx");//x offset against body
-		int my = (Integer) data.get("my");
+		
+		//ZSS-440, might get double in IE 10 when room
+		int mx = AuDataUtil.getInt(data,"mx");//x offset against body
+		int my = AuDataUtil.getInt(data,"my");
 		
 		Spreadsheet spreadsheet = (Spreadsheet) comp;
 		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
