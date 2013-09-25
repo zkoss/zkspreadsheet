@@ -30,6 +30,12 @@ public class FormulaTestBase {
 	// assertEquals("2013/9/11", Ranges.range(sheet, "B42").getCellData()
 	// .getFormatText());
 	// }
+	
+	// spreadsheet doesn't change format into currency automatically.
+	protected void testDOLLAR(Book book) {
+		Sheet sheet = book.getSheet("formula-text");
+		assertEquals("$1,234.57", Ranges.range(sheet, "B13").getCellFormatText());
+	}
 
 	protected void testACCRINT(Book book) {
 		Sheet sheet = book.getSheet("formula-financial");
@@ -38,103 +44,87 @@ public class FormulaTestBase {
 
 	
 	protected void testACCRINTM(Book book) {
-
 		Sheet sheet = book.getSheet("formula-financial");
 		assertEquals("20.55", Ranges.range(sheet, "B6").getCellData().getFormatText());
 	}
 
 	
 	protected void testAMORDEGRC(Book book) {
-
 		Sheet sheet = book.getSheet("formula-financial");
 		assertEquals("776", Ranges.range(sheet, "B9").getCellData().getFormatText());
 	}
 
 	
 	protected void testAMORLINC(Book book) {
-
 		Sheet sheet = book.getSheet("formula-financial");
 		assertEquals("360", Ranges.range(sheet, "B12").getCellData().getFormatText());
 	}
 
 	
 	protected void testCOUPDAYBS(Book book) {
-
 		Sheet sheet = book.getSheet("formula-financial");
 		assertEquals("71", Ranges.range(sheet, "B15").getCellData().getFormatText());
 	}
 
 	
 	protected void testCOUPDAYS(Book book) {
-
 		Sheet sheet = book.getSheet("formula-financial");
 		assertEquals("181", Ranges.range(sheet, "B18").getCellData().getFormatText());
 	}
 
 	
 	protected void testCOUPDAYSNC(Book book) {
-
 		Sheet sheet = book.getSheet("formula-financial");
 		assertEquals("110", Ranges.range(sheet, "B21").getCellData().getFormatText());
 	}
 	
 	protected void testCOUPNCD(Book book) {
 		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("2011/5/15", Ranges.range(sheet, "B24").getCellData()
-				.getFormatText());
+		assertEquals("2011/5/15", Ranges.range(sheet, "B24").getCellData().getFormatText());
 	}
 
 	protected void testCOUPPCD(Book book) {
 		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("2006/11/15", Ranges.range(sheet, "B30").getCellData()
-				.getFormatText());
+		assertEquals("2006/11/15", Ranges.range(sheet, "B30").getCellData().getFormatText());
 	}
 
 	
 	protected void testCOUPNUM(Book book) {
-
 		Sheet sheet = book.getSheet("formula-financial");
 		assertEquals("4", Ranges.range(sheet, "B27").getCellData().getFormatText());
 	}
 
 	
 	protected void testCUMIPMT(Book book) {
-
 		Sheet sheet = book.getSheet("formula-financial");
 		assertEquals("-11135.23", Ranges.range(sheet, "B33").getCellData().getFormatText());
 	}
 
 	
 	protected void testCUMPRINC(Book book) {
-
 		Sheet sheet = book.getSheet("formula-financial");
 		assertEquals("-934.11", Ranges.range(sheet, "B36").getCellData().getFormatText());
 	}
 
 	
 	protected void testDB(Book book) {
-
 		Sheet sheet = book.getSheet("formula-financial");
 		assertEquals("186083.33", Ranges.range(sheet, "B39").getCellData().getFormatText());
 	}
 
 	
 	protected void testDDB(Book book) {
-
 		Sheet sheet = book.getSheet("formula-financial");
 		assertEquals("1.32", Ranges.range(sheet, "B42").getCellData().getFormatText());
 	}
 
-	
 	protected void testDISC(Book book) {
-
 		Sheet sheet = book.getSheet("formula-financial");
 		assertEquals("0.05", Ranges.range(sheet, "B45").getCellData().getFormatText());
 	}
 
 	
 	protected void testDOLLARDE(Book book) {
-
 		Sheet sheet = book.getSheet("formula-financial");
 		assertEquals("1.125", Ranges.range(sheet, "B47").getCellData().getFormatText());
 	}
@@ -1851,16 +1841,14 @@ public class FormulaTestBase {
 		assertEquals(" 3+4i ", Ranges.range(sheet, "B17").getCellFormatText());
 	}
 	
-	// slightly different because of space
-	
 	protected void testINDEX(Book book) {
 		Sheet sheet = book.getSheet("formula-lookup");
-		assertEquals("pears", Ranges.range(sheet, "B22").getCellFormatText());
+		assertEquals(" pears ", Ranges.range(sheet, "B22").getCellFormatText());
+		// "accounting format" has space in the front and back.
 	}
 	
 	// expected:<[1]> but was:<[2]>
 	// different specification
-	
 	protected void testStartDateEmpty(Book book) {
 		Sheet sheet = book.getSheet("formula-datetime");
 		assertEquals("1", Ranges.range(sheet, "B29").getCellData()
@@ -1886,21 +1874,24 @@ public class FormulaTestBase {
 	}
 	
 	// expected:<[0.03]> but was:<[-1.00]>
-	
 	protected void testGAMMADIST(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("0.03", Ranges.range(sheet, "B76").getCellFormatText());
 	}
 	
-	// expected:<0.0[5]> but was:<0.0[3]>
-	
-	protected void testTDIST(Book book) {
-		
+	protected void testGAMMADISTWithCumulative(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
-
+		assertEquals("0.07", Ranges.range(sheet, "B202").getCellFormatText());
+	}
+	
+	protected void testTDISTWithTwoTail(Book book) {
+		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("0.05", Ranges.range(sheet, "B175").getCellFormatText());
+	}
+	
+	protected void testTDISTWithOneTail(Book book) {
+		Sheet sheet = book.getSheet("formula-statistical");
+		assertEquals("0.03", Ranges.range(sheet, "B204").getCellFormatText());
 	}
 	
 	// expected:<[15.2]1> but was:<[0.1]1>
@@ -1924,33 +1915,27 @@ public class FormulaTestBase {
 		assertEquals("1.96", Ranges.range(sheet, "B177").getCellFormatText());
 	}
 	
-	// #NUM!
-	
+	// #NAME?
 	protected void testSTDEVP(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("26.05", Ranges.range(sheet, "B168").getCellFormatText());
 	}
 	
-	// expected:<[$1,234.5]7> but was:<[1234.56]7>
-	
-	protected void testDOLLAR(Book book) {
-		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("$1,234.57", Ranges.range(sheet, "B13").getCellFormatText());
-	}
-	
-	// FIXME
 	// #VALUE!
 	protected void testHOURWithString(Book book) {
 		Sheet sheet = book.getSheet("formula-datetime");
 		Ranges.range(sheet, "B13").setCellEditText("=HOUR(\"15:30\")");
-		assertEquals("3", Ranges.range(sheet, "B13").getCellData()
-				.getFormatText());
+		assertEquals("3", Ranges.range(sheet, "B13").getCellData().getFormatText());
 	}
 	
-	// #VALUE!
 	protected void testVALUE(Book book) {
 		Sheet sheet = book.getSheet("formula-text");
 		assertEquals("1000", Ranges.range(sheet, "B72").getCellFormatText());
+	}
+	
+	// #VALUE!
+	protected void testVALUEWithTimeString(Book book) {
+		Sheet sheet = book.getSheet("formula-text");
 		assertEquals("0.7", Ranges.range(sheet, "B73").getCellFormatText());
 	}
 	
@@ -2029,7 +2014,7 @@ public class FormulaTestBase {
 	// #NAME?
 	protected void testASC(Book book) {
 		Sheet sheet = book.getSheet("formula-text");
-		assertEquals("EXCEL", Ranges.range(sheet, "B3").getCellFormatText());
+		assertEquals("EXCEL", Ranges.range(sheet, "B2").getCellFormatText());
 	}
 	
 	// #NAME?
@@ -2323,8 +2308,6 @@ public class FormulaTestBase {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("0.65", Ranges.range(sheet, "B73").getCellFormatText());
 	}
-	
-	// #NAME?
 	
 	protected void testFDIST(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");

@@ -35,6 +35,72 @@ public class Formula2003Test extends FormulaTestBase {
 	}
 	
 	@Test
+	public void testFDIST()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testFDIST(book);
+	}
+	
+	@Test
+	public void testFINV()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testFINV(book);
+	}
+	
+	@Test
+	public void testHARMEAN()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testHARMEAN(book);
+	}
+	
+	@Test
+	public void testTINV()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testTINV(book);
+	}
+	
+	@Test
+	public void testGAMMADIST()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testGAMMADIST(book);
+	}
+	
+	@Test
+	public void testGAMMADISTWithCumulative()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testGAMMADISTWithCumulative(book);
+	}
+
+	@Test
+	public void testVALUE()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testVALUE(book);
+	}
+	
+	@Test
+	public void testDOLLAR()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testDOLLAR(book);
+	}
+	
+	@Test
+	public void testINDEX()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testINDEX(book);
+	}
+	
+	@Test
+	public void testTDISTWithTwoTail()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testTDISTWithTwoTail(book);
+	}
+	
+	@Test
+	public void testTDISTWithOneTail()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testTDISTWithOneTail(book);
+	}
+	
+	@Test
 	public void testCOMPLEX()  {
 		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
 		testCOMPLEX(book);

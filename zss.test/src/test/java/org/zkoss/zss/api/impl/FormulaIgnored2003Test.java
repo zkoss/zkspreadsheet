@@ -54,17 +54,11 @@ public class FormulaIgnored2003Test extends FormulaTestBase {
 	}
 	*/
 	
+	// unsupported
 	@Test
 	public void testAREAS()  {
 		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
 		testAREAS(book);
-	}
-	
-	// slightly diffrent because of space
-	@Test
-	public void testINDEX()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testINDEX(book);
 	}
 	
 	// 1990/1/1 is Monday, but Excel think it is not work day.
@@ -96,53 +90,11 @@ public class FormulaIgnored2003Test extends FormulaTestBase {
 		testRAND(book);
 	}
 	
-	// expected:<[0.03]> but was:<[-1.00]>
-	@Test
-	public void testGAMMADIST()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testGAMMADIST(book);
-	}
-	
-	// expected:<0.0[5]> but was:<0.0[3]>
-	@Test
-	public void testTDIST()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testTDIST(book);
-	}
-	
-	// expected:<[15.2]1> but was:<[0.1]1>
-	@Test
-	public void testFINV()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testFINV(book);
-	}
-	
-	// expected:<[5.03]> but was:<[0.39]>
-	@Test
-	public void testHARMEAN()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testHARMEAN(book);
-	}
-	
-	// expected:<1.[96]> but was:<1.[63]>
-	@Test
-	public void testTINV()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testTINV(book);
-	}
-	
 	// #NUM!
 	@Test
 	public void testSTDEVP()  {
 		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
 		testSTDEVP(book);
-	}
-	
-	// expected:<[$1,234.5]7> but was:<[1234.56]7>
-	@Test
-	public void testDOLLAR()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testDOLLAR(book);
 	}
 	
 	// #VALUE!
@@ -154,9 +106,9 @@ public class FormulaIgnored2003Test extends FormulaTestBase {
 	
 	// #VALUE!
 	@Test
-	public void testVALUE()  {
+	public void testVALUEWithTimeString()  {
 		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testVALUE(book);
+		testVALUEWithTimeString(book);
 	}
 	
 	// #VALUE!
@@ -502,13 +454,6 @@ public class FormulaIgnored2003Test extends FormulaTestBase {
 	public void testFTEST()  {
 		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
 		testFTEST(book);
-	}
-	
-	// #NAME?
-	@Test
-	public void testFDIST()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testFDIST(book);
 	}
 	
 	// #NAME?

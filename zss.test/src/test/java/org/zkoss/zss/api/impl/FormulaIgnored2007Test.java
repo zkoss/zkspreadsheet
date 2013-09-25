@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
 import org.zkoss.zss.api.Ranges;
@@ -53,24 +52,11 @@ public class FormulaIgnored2007Test extends FormulaTestBase {
 	}
 	*/
 	
-	@Test
-	public void testAREAS()  {
-		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
-		testAREAS(book);
-	}
-	
 	// 1990/1/1 is Monday, but Excel think it is not work day.
 	@Test
 	public void test19900101IsNotWorkDayInExcel()  {
 		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
 		test19900101IsNotWorkDayInExcel(book);
-	}
-	
-	// slightly different because of space
-	@Test
-	public void testINDEX()  {
-		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
-		testINDEX(book);
 	}
 	
 	// expected:<[1]> but was:<[2]>
@@ -79,6 +65,41 @@ public class FormulaIgnored2007Test extends FormulaTestBase {
 	public void testStartDateEmpty()  {
 		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
 		testStartDateEmpty(book);
+	}
+	
+	// unsupported
+	@Test
+	public void testAREAS()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testAREAS(book);
+	}
+	
+	// #NAME?
+	@Test
+	public void testASC()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testASC(book);
+	}
+	
+	// #NAME?
+	@Test
+	public void testSTDEVP()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testSTDEVP(book);
+	}
+	
+	// #VALUE!
+	@Test
+	public void testHOURWithString()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testHOURWithString(book);
+	}
+	
+	// #VALUE!
+	@Test
+	public void testVALUEWithTimeString()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testVALUEWithTimeString(book);
 	}
 	
 	// This should be check by human
@@ -93,69 +114,6 @@ public class FormulaIgnored2007Test extends FormulaTestBase {
 	public void testRAND()  {
 		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
 		testRAND(book);
-	}
-	
-	// expected:<[0.03]> but was:<[-1.00]>
-	@Test
-	public void testGAMMADIST()  {
-		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
-		testGAMMADIST(book);
-	}
-	
-	// expected:<0.0[5]> but was:<0.0[3]>
-	@Test
-	public void testTDIST()  {
-		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
-		testTDIST(book);
-	}
-	
-	// expected:<[15.2]1> but was:<[0.1]1>
-	@Test
-	public void testFINV()  {
-		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
-		testFINV(book);
-	}
-	
-	// expected:<[5.03]> but was:<[0.39]>
-	@Test
-	public void testHARMEAN()  {
-		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
-		testHARMEAN(book);
-	}
-	
-	// expected:<1.[96]> but was:<1.[63]>
-	@Test
-	public void testTINV()  {
-		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
-		testTINV(book);
-	}
-	
-	// #NUM!
-	@Test
-	public void testSTDEVP()  {
-		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
-		testSTDEVP(book);
-	}
-	
-	// expected:<[$1,234.5]7> but was:<[1234.56]7>
-	@Test
-	public void testDOLLAR()  {
-		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
-		testDOLLAR(book);
-	}
-	
-	// #VALUE!
-	@Test
-	public void testHOURWithString()  {
-		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
-		testHOURWithString(book);
-	}
-	
-	// #VALUE!
-	@Test
-	public void testVALUE()  {
-		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
-		testVALUE(book);
 	}
 	
 	// #VALUE!
@@ -235,13 +193,6 @@ public class FormulaIgnored2007Test extends FormulaTestBase {
 	public void testINFO()  {
 		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
 		testINFO(book);
-	}
-	
-	// #NAME?
-	@Test
-	public void testASC()  {
-		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
-		testASC(book);
 	}
 	
 	// #NAME?
@@ -501,13 +452,6 @@ public class FormulaIgnored2007Test extends FormulaTestBase {
 	public void testFTEST()  {
 		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
 		testFTEST(book);
-	}
-	
-	// #NAME?
-	@Test
-	public void testFDIST()  {
-		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
-		testFDIST(book);
 	}
 	
 	// #NAME?

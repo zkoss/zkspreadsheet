@@ -48,6 +48,74 @@ public class Formula2007Test extends FormulaTestBase {
 	// .getFormatText());
 	// }
 	
+	// expected:<[15.2]1> but was:<[0.1]1>
+	@Test
+	public void testFINV()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testFINV(book);
+	}
+	
+	// expected:<1.[96]> but was:<1.[63]>
+	@Test
+	public void testTINV()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testTINV(book);
+	}
+
+	@Test
+	public void testFDIST()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testFDIST(book);
+	}
+	
+	@Test
+	public void testHARMEAN()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testHARMEAN(book);
+	}
+	
+	@Test
+	public void testTDISTWithTwoTail()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testTDISTWithTwoTail(book);
+	}
+	
+	@Test
+	public void testTDISTWithOneTail()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testTDISTWithOneTail(book);
+	}
+	
+	@Test
+	public void testGAMMADIST()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testGAMMADIST(book);
+	}
+	
+	@Test
+	public void testGAMMADISTWithCumulative()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testGAMMADISTWithCumulative(book);
+	}
+	
+	@Test
+	public void testVALUE()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testVALUE(book);
+	}
+	
+	@Test
+	public void testDOLLAR()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testDOLLAR(book);
+	}
+	
+	@Test
+	public void testINDEX()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testINDEX(book);
+	}
+	
 	@Test
 	public void testCOMPLEX()  {
 		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");

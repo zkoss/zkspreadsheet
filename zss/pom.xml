@@ -7,7 +7,7 @@
 	<properties>
 		<zk.version>6.5.4.FL.20130717</zk.version>
 		<zpoi.version>3.9.0-SNAPSHOT</zpoi.version>
-		<commons-math.version>1.2</commons-math.version>
+		<commons-math.version>2.2</commons-math.version>
 	</properties>
 	<version>3.0.0.RC-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -64,10 +64,10 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>commons-math</groupId>
+			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math</artifactId>
 			<version>${commons-math.version}</version>
-		</dependency>
+		</dependency>	
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
