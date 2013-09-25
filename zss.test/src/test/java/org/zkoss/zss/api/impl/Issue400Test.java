@@ -691,4 +691,24 @@ public class Issue400Test {
 		Range sumResult = Ranges.range(sheet, "A1");
 		assertEquals(60, sumResult.getCellData().getDoubleValue().intValue());
 	}
+	
+	@Test
+	public void testZSS441FormulaInValidation(){
+		Book workbook = Util.loadBook(this,"book/441-validation.xlsx");
+		Sheet sheet = workbook.getSheet("validation");
+		//A ~ D
+		Range validationCell = Ranges.range(sheet, "B3");
+		assertEquals(true,validationCell.getCellData().validateEditText("B"));
+		assertEquals(false,validationCell.getCellData().validateEditText("E"));
+		
+		// only A
+		validationCell = Ranges.range(sheet, "B4");
+		assertEquals(true, validationCell.getCellData().validateEditText("A"));
+		assertEquals(false, validationCell.getCellData().validateEditText("E"));
+		
+		// 2nd reference, only B
+		validationCell = Ranges.range(sheet, "B5");
+		assertEquals(true, validationCell.getCellData().validateEditText("B"));
+		assertEquals(false,validationCell.getCellData().validateEditText("E"));
+	}
 }
