@@ -1,7 +1,8 @@
  ------------
 ZK Spreadsheet 3.0.0
 *Features:
-
+  ZSS-438 Support view with different zoom level
+  
 *Bugs:
   ZSS-399 export to PDF - no gridlines
   ZSS-420 Cannot focus on cell when set rowfreeze="0" or columnfreeze="0"

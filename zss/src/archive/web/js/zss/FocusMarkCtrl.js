@@ -73,7 +73,7 @@ zss.FocusMarkCtrl = zk.$extends(zk.Object, {
 		
 		l += sheet.leftWidth;//adjust to block position.
 		t += sheet.topHeight;//adjust to block position.
-		jq(this.comp).css({'width': jq.px0(w - 3), 'height': jq.px0(h - 3), 'left': jq.px(l - 2), 'top': jq.px(t - 2)});
+		jq(this.comp).css({'width': jq.px0(w + 3), 'height': jq.px0(h + 3), 'left': jq.px(l - 2), 'top': jq.px(t - 2)});
 	},
 	/**
 	 * Display focus mark
@@ -133,7 +133,7 @@ zss.FocusMarkCtrlLeft = zk.$extends(zss.FocusMarkCtrl, {
 		if (sheet.lp.toppad) {
 			t -= sheet.lp.toppad;
 		}
-		jq(this.comp).css({'width': jq.px0(w - 3), 'height': jq.px0(h - 3), 'left': jq.px(l - 2), 'top': jq.px(t - 2)});
+		jq(this.comp).css({'width': jq.px0(w + 3), 'height': jq.px0(h + 3), 'left': jq.px(l - 2), 'top': jq.px(t - 2)});
 	}
 });
 
@@ -145,6 +145,6 @@ zss.FocusMarkCtrlTop = zk.$extends(zss.FocusMarkCtrl, {
   	relocate_: function(l, t, w, h) {
 		var sheet = this.sheet;
 		t += sheet.topHeight - 1;//adjust to block position.
-		jq(this.comp).css({'width': jq.px0(w - 3), 'height': jq.px0(h - 3), 'left': jq.px(l - 2),'top': jq.px(t - 2)});
+		jq(this.comp).css({'width': jq.px0(w + 3), 'height': jq.px0(h + 3), 'left': jq.px(l - 2),'top': jq.px(t - 2)});
 	}
 });

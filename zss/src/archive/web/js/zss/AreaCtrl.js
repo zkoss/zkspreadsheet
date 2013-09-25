@@ -94,8 +94,8 @@ zss.AreaCtrl = zk.$extends(zk.Object, {
 		t += sheet.topHeight;//adjust to block position.
 		l = l - 2;
 		t = t - 2;
-		w = w - 3;
-		h = h - 3;
+		w = w + 3;
+		h = h + 3;
 		if (this.mode == "inner") {
 			l = l + 1;
 			t = t + 1;
@@ -300,8 +300,8 @@ zss.AreaCtrlLeft = zk.$extends(zss.AreaCtrl, {
 		
 		l = l - 2;
 		t = t - 2;
-		w = w - 3;
-		h = h - 3;
+		w = w + 3;
+		h = h + 3;
 		if (this.mode == "inner") {
 			l = l + 1;
 			t = t + 1;
@@ -339,8 +339,8 @@ zss.AreaCtrlTop = zk.$extends(zss.AreaCtrl, {
 
 		l = l - 2;
 		t = t - 2;
-		w = w - 3;
-		h = h - 3;
+		w = w + 3;
+		h = h + 3;
 		if (this.mode == "inner") {
 			l = l + 1;
 			t = t + 1;

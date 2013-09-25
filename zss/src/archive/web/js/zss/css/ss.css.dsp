@@ -92,11 +92,12 @@
 .zscell {
 	display: -moz-inline-box;
 	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 	border-right: 1px solid #D0D7E9;
 	border-bottom: 1px solid #D0D7E9;
 	padding: 0px 2px 0px 2px; /* cellPadding */
 	height: 20px; /*rowHeight*/
-	width: 60px; /*colWidth*/
+	width: 64px; /*colWidth*/
 	overflow: hidden;
 	vertical-align: top;
 	/*font-size: smaller;*/
@@ -124,18 +125,6 @@
 	border-right-style:hidden;
 	overflow: visible;
 	position: relative;
-	<c:if test="${c:browser('ie')}">
-		border-right: 0px;
-		margin-right: 1px;
-	</c:if>
-	<c:if test="${c:isSafari()}">
-		border-right: 0px;
-		margin-right: 1px;
-	</c:if>
-	<c:if test="${c:isOpera()}">
-		border-right: 0px;
-		margin-right: 1px;
-	</c:if>
 }
 
 .zscell-overflow-b {
@@ -231,11 +220,12 @@
 .zstopcell {
 	display: -moz-inline-box;
 	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 	border-right: 1px solid #DAE7F6;
 	border-bottom: 1px solid #7F9DB9;
 	padding: 0px 2px 0px 2px; /*cellPadding*/
 	height: 19px; /*topHeigth*/
-	width: 60px; /*cellWidth*/
+	width: 64px; /*cellWidth*/
 	overflow: hidden;
 	vertical-align: top;
 	/*line-height: 20px; lineHeigth*/
@@ -330,6 +320,8 @@
 }
 
 .zsleftcell {
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 	border-right: 1px solid #7F9DB9;
 	/*line-height: 20px;*/
 	height: 19px; /* rowHeight - 1, 1 is border */
@@ -420,6 +412,8 @@
 }
 
 .zsfocmark {
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 	position: absolute;
 	z-index: 2;
 	display: none;
@@ -453,6 +447,8 @@
 	color: #222;
 }
 .zsselect {
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 	position: absolute;
 	z-index: 3;
 	display: none;
@@ -501,6 +497,8 @@
 }
 
 .zsselchg {
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 	position: absolute;
 	z-index: 4;
 	display: none;
@@ -521,6 +519,8 @@
 }
 
 .zshighlight {
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 	position: absolute;
 	z-index: 2;
 	display: none;
@@ -653,18 +653,18 @@
 	cursor: url(${c:encodeURL('~./zss/img/v_resize.cur')}), n-resize;
 }
 .zsfztop{
-	border-bottom : 1px #5F5FFF;
+	border-bottom : 2px #5F5FFF;
 	border-bottom-style:none;
 }
 
 .zsfzleft{
-	border-right : 1px #5F5FFF;
+	border-right : 2px #5F5FFF;
 	border-right-style:none;
 }
 
 .zsfzcorner{
-	border-right : 1px #5F5FFF;
-	border-bottom : 1px #5F5FFF;
+	border-right : 2px #5F5FFF;
+	border-bottom : 2px #5F5FFF;
 	border-right-style:none;
 	border-bottom-style:none;
 }

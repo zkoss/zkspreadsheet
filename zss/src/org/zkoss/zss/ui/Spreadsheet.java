@@ -3697,18 +3697,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		Execution exe = Executions.getCurrent();
 
 		boolean isGecko = exe.isGecko();
-		boolean isIE = exe.isExplorer();
-		// boolean isIE7 = exe.isExplorer7();
+		//boolean isIE = exe.isExplorer();
+		//boolean isIE7 = exe.isExplorer7();
 
-		if (isGecko) {// firefox
-			cellwidth = cw;
-			cellheight = rh;
-		} else {
-			cellwidth = cw - 2 * cp - 1;// 1 is border width
-			cellheight = rh - 1;// 1 is border width
-		}
+		cellwidth = cw;
+		cellheight = rh;
 
-		int celltextwidth = cw - 2 * cp - 1;// 1 is border width
+		int celltextwidth = cw - 2 * cp;
 
 		StringBuffer sb = new StringBuffer();
 
@@ -3830,8 +3825,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		// zcss.setRule(name+" .zsleftcell",["height","line-height"],[(rh-1)+"px",(rh)+"px"],true,sid);//for
 		// middle the text, i use row leight instead of lh
 		sb.append(name).append(" .zsleftcell{");
-		sb.append("height:").append(rh - 1).append("px;");
-		sb.append("line-height:").append(rh - 1).append("px;");
+		sb.append("height:").append(rh).append("px;");
+		sb.append("line-height:").append(rh).append("px;");
 		sb.append("}");
 
 		// zcss.setRule(name+" .zscorner",["width","height"],[(lw-2)+"px",(th-2)+"px"],true,sid);
@@ -3891,12 +3886,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			sb.append(name).append(" .zscell {");
 			sb.append("border-right-color: transparent;");
 			sb.append("border-bottom-color: transparent;");
-			if (isIE) {
-				/** for IE6 **/
-				String color_to_transparent = "tomato";
-				sb.append("_border-color:" + color_to_transparent + ";");
-				sb.append("_filter:chroma(color=" + color_to_transparent + ");");
-			}
+//			if (isIE) {
+//				/** for IE6 **/
+//				String color_to_transparent = "tomato";
+//				sb.append("_border-color:" + color_to_transparent + ";");
+//				sb.append("_filter:chroma(color=" + color_to_transparent + ");");
+//			}
 			sb.append("}");
 		}
 
@@ -3907,17 +3902,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			int width = hidden ? 0 : info.size;
 			int cid = info.id;
 
-			celltextwidth = width - 2 * cp - 1;// 1 is border width
+			celltextwidth = width - 2 * cp;
 
 			// bug 1989680
 			if (celltextwidth < 0)
 				celltextwidth = 0;
 
-			if (!isGecko) {
-				cellwidth = celltextwidth;
-			} else {
-				cellwidth = width;
-			}
+			cellwidth = width;
 
 			if (width <= 0) {
 				sb.append(name).append(" .zsw").append(cid).append("{");
@@ -3942,9 +3933,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			int height = hidden ? 0 : info.size;
 			int cid = info.id;
 			cellheight = height;
-			if (!isGecko) {
-				cellheight = height - 1;// 1 is border width
-			}
 
 			if (height <= 0) {
 
@@ -3965,11 +3953,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				sb.append("height:").append(cellheight).append("px;");
 				sb.append("}");
 
-				int h2 = (height < 1) ? 0 : height - 1;
-
 				sb.append(name).append(" .zslh").append(cid).append("{");
-				sb.append("height:").append(h2).append("px;");
-				sb.append("line-height:").append(h2).append("px;");
+				sb.append("height:").append(height).append("px;");
+				sb.append("line-height:").append(height).append("px;");
 				sb.append("}");
 
 			}
@@ -4022,22 +4008,17 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				sb.append("display:none;");
 				sb.append("}");
 			} else {
-				celltextwidth = width - 2 * cp - 1;// 1 is border width
-				int celltextheight = height - 1; //1 is border height
+				celltextwidth = width - 2 * cp;
+				int celltextheight = height;
 	
-				if (!isGecko) {
-					cellwidth = celltextwidth;
-					cellheight = celltextheight;
-				} else {
-					cellwidth = width;
-					cellheight = height;
-				}
+				cellwidth = width;
+				cellheight = height;
 				
 				sb.append(name).append(" .zsmerge").append(block.getId()).append("{");
 				sb.append("width:").append(cellwidth).append("px;");
 				sb.append("height:").append(cellheight).append("px;");
 				sb.append("}");
-	
+
 				sb.append(name).append(" .zsmerge").append(block.getId());
 				sb.append(" .zscelltxt").append("{");
 				sb.append("width:").append(celltextwidth).append("px;");

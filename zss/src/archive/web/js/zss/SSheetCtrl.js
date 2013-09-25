@@ -1841,15 +1841,15 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		//adjust cell width, check also:_updateCustomDefaultStyle
 		var cp = this.cellPad,
 			cellwidth,
-			celltextwidth = width - 2 * cp - 1;// 1 is border width//zk.revisedSize(colcmp,width);//
+			celltextwidth = width - 2 * cp;
 		
 		//bug 1989680
 		var fixpadding = false;
 		if (celltextwidth < 0) {
 			fixpadding = true;
-			celltextwidth = width - 1;
+			celltextwidth = width;
 		}
-		cellwidth = zk.ie || zk.safari || zk.opera ? celltextwidth : width;
+		cellwidth = width;
 		
 		var name = wgt.getSelectorPrefix(),
 			cssId = wgt.getSheetCSSId(),
@@ -1890,13 +1890,13 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var w = custColWidth.getStartPixel(range.right + 1);
 			w -= custColWidth.getStartPixel(range.left);
 
-			celltextwidth = w - 2 * cp - 1;// 1 is border width//zk.revisedSize(colcmp,width);//
+			celltextwidth = w - 2 * cp;
 			fixpadding = false;
 			if (celltextwidth < 0) {
 				fixpadding = true;
-				celltextwidth = w - 1;
+				celltextwidth = w;
 			}
-			cellwidth = zk.ie || zk.safari || zk.opera ? celltextwidth : w;
+			cellwidth = w;
 
 			if (w < 0)
 				zcss.setRule(name+" .zsmerge"+range.id,"display","none",true, cssId);
@@ -2031,7 +2031,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		
 		if(zk.ie || zk.safari || zk.opera)
 			//1989680
-			cellheight = height > 0 ? height - 1 : 0;
+			cellheight = height > 0 ? height : 0;
 		else
 			cellheight = height;
 
@@ -2058,8 +2058,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		} else {
 			zcss.setRule(name + " .zsh" + zsh, ["display", "height"],["", height + "px"], createbefor, cssId);
 			zcss.setRule(name + " .zshi" + zsh, "height", cellheight + "px", createbefor, cssId);//both zscell and zscelltxt
-			var h2 = (height > 0) ? height - 1 : 0;
-			zcss.setRule(name + " .zslh" + zsh, ["display", "height", "line-height"], ["", h2 + "px", h2 + "px"], createbefor, cssId);
+			zcss.setRule(name + " .zslh" + zsh, ["display", "height", "line-height"], ["", height + "px", height + "px"], createbefor, cssId);
 		}
 		
 		//set merged cell height;
@@ -2072,7 +2071,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var h = custRowHeight.getStartPixel(range.bottom + 1);
 			h -= custRowHeight.getStartPixel(range.top);
 
-			celltextheight = h - 1;// 1 is border width//zk.revisedSize(colcmp,height);//
+			celltextheight = h;
 			cellheight = zk.ie || zk.safari || zk.opera ? celltextheight : h;
 
 			if (h < 0)
@@ -2907,10 +2906,10 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			width = result.width,
 			height = result.height,
 			cp = this.cellPad,
-			celltextwidth = width - 2 * cp - 1,
-			cellwidth = zk.ie || zk.safari || zk.opera ? celltextwidth : width,
-			celltextheight = height - 1,
-			cellheight = zk.ie || zk.safari || zk.opera ? celltextheight : height,
+			celltextwidth = width - 2 * cp,
+			cellwidth = width,
+			celltextheight = height,
+			cellheight = height,
 			wgt = this._wgt,
 			cssId = wgt.getSheetCSSId(),
 			name = wgt.getSelectorPrefix(),
