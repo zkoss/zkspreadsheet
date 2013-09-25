@@ -73,6 +73,8 @@ import org.zkoss.poi.ss.formula.PtgShifter;
 import org.zkoss.poi.ss.formula.eval.AreaEval;
 import org.zkoss.poi.ss.formula.eval.ArrayEval;
 import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.formula.eval.EvaluationException;
+import org.zkoss.poi.ss.formula.eval.OperandResolver;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaPtgBase;
@@ -5098,9 +5100,16 @@ public final class BookHelper {
 			}
 			return false;
 		} else {
-			String txt = constraint.getFormula1();
+			String formula = constraint.getFormula1();
 			XBook book = sheet.getBook();
-			final ValueEval ve = BookHelper.evaluateFormulaValueEval(book, book.getSheetIndex(sheet), txt, false);
+			//do not dereference during normal evaluation because evaluation formula of validation has different requirement 
+			ValueEval ve = BookHelper.evaluateFormulaValueEval(book, book.getSheetIndex(sheet), formula, true);
+			try{ //evaluate LazyAreaRef to multiple values 
+				ve = OperandResolver.getMultipleValue(ve, 0, 0);
+			}catch (EvaluationException e){
+				logger.warning("cannot evaluate validation criteria: "+formula);
+				return false;
+			}
 			if (ve instanceof ArrayEval) {
 				final ArrayEval ae = (ArrayEval) ve;
 				if (ae.isColumn() || ae.isRow()) {
