@@ -73,8 +73,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 		if (cousin) {
 			cousin.comp.removeAttribute('style');
 			cousin.icomp.removeAttribute('style');
-			cp.comp.removeAttribute('style');
 		}
+		cp.comp.removeAttribute('style');
 
 		//gain focus and reallocate mark , then show it, 
 		//don't move the focus because the cell maybe doens't exist in block anymore.		
@@ -154,8 +154,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					}
 					jq(cousin.comp).css('width', jq.px0(w));
 					jq(cousin.icomp).css('width', jq.px0(wi));
-					jq(cp.comp).css('width', jq.px0(cp._cornerWidth() + w - ctrl.orgsize + (!zk.gecko ? ow >= 5 ? 5 : ow > 0 ? 1 : 0 : 0)));
 				}
+				//update corner panel szie cause ugly display when freeze in both directly
+				//jq(cp.comp).css('width', jq.px0(cp._cornerWidth() + w - ctrl.orgsize));
 			}
 		} else {
 			if (ctrl.orgsize == null)
@@ -192,8 +193,9 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 					}
 					jq(cousin.comp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
 					jq(cousin.icomp).css({'height': jq.px0(h - 1), 'line-height': jq.px0(h - 1)});
-					jq(cp.comp).css('height', jq.px0(cp._cornerHeight() + h - ctrl.orgsize));
 				}
+				//update corner panel szie cause ugly display when freeze in both directly
+				//jq(cp.comp).css('height', jq.px0(cp._cornerHeight() + h - ctrl.orgsize));
 			}
 		}
 		return last;
