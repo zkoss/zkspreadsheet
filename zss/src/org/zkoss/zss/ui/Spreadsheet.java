@@ -3791,7 +3791,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		// zcss.setRule(name+" .zsleft",["top","width"],[th+"px",(lw-2)+"px"],true,sid);
 
-		int leftw = lw - 1;
+		int leftw = isGecko ? lw : lw - 1;
 		int leftheadw = leftw;
 		int leftblockleft = leftw;
 
