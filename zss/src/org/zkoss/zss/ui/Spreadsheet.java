@@ -3708,7 +3708,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		int cellheight;// default
 		Execution exe = Executions.getCurrent();
 
-		boolean isGecko = exe.isGecko();
+//		boolean isGecko = exe.isGecko();
 		//boolean isIE = exe.isExplorer();
 		//boolean isIE7 = exe.isExplorer7();
 
@@ -3750,9 +3750,9 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		// zcss.setRule(name+" .zstop",["left","height","line-height"],[lw+"px",(th-2)+"px",lh+"px"],true,sid);
 
-		int toph = th - 1;
-		int topheadh = (isGecko) ? toph : toph - 1;
-		int cornertoph = th - 1;
+		int toph = th;
+		int topheadh = toph;
+		int cornertoph = th;
 		// int topblocktop = toph;
 		int fzr = getSelectedSheetRowfreeze();
 		int fzc = getSelectedSheetColumnfreeze();
@@ -3803,7 +3803,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		// zcss.setRule(name+" .zsleft",["top","width"],[th+"px",(lw-2)+"px"],true,sid);
 
-		int leftw = isGecko ? lw : lw - 1;
+		int leftw = lw-1;//isGecko ? lw : lw - 1;
 		int leftheadw = leftw;
 		int leftblockleft = leftw;
 
@@ -3830,7 +3830,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		sb.append("}");
 
 		sb.append(name).append(" .zscornerleft{");
-		sb.append("top:").append(th).append("px;");
+		sb.append("top:").append(th+1).append("px;");
 		sb.append("width:").append(leftheadw).append("px;");
 		sb.append("}");
 
@@ -3851,12 +3851,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		sb.append(name).append(" .zscorneri{");
 		sb.append("width:").append(lw - 2).append("px;");
-		sb.append("height:").append(th - 2).append("px;");
+		sb.append("height:").append(th - 1).append("px;");
 		sb.append("}");
 
 		sb.append(name).append(" .zscornerblock{");
 		sb.append("left:").append(lw).append("px;");
-		sb.append("top:").append(th).append("px;");
+		sb.append("top:").append(th+1).append("px;");
 		sb.append("}");
 
 		// zcss.setRule(name+" .zshboun","height",th+"px",true,sid);

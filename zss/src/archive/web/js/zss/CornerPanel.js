@@ -118,7 +118,7 @@ zss.CornerPanel = zk.$extends(zk.Widget, {
 			th = sheet.topHeight,
 			fzr = sheet.frozenRow;
 		return (fzr > -1) ?
-			(th - 1 + sheet.custRowHeight.getStartPixel(fzr + 1)) :	th;
+			(th + sheet.custRowHeight.getStartPixel(fzr + 1)) :	th + 1;
 	},
 	_cornerWidth: function () {
 		var sheet = this.sheet,

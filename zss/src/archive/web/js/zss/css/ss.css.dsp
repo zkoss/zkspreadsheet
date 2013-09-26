@@ -203,18 +203,6 @@
 	position: relative;
 	overflow: visible;
 	background-color:#FFFFFF;
-	<c:if test="${c:isExplorer7()}">
-		top: 1px;
-	</c:if>
-	<c:if test="${c:isExplorer() && !c:isExplorer7()}">
-		top: -1px;
-	</c:if>
-	<c:if test="${c:isSafari()}">
-		top: 1px;
-	</c:if>
-	<c:if test="${c:isOpera()}">
-		top: 1px;
-	</c:if>
 }
 
 .zstopcell {
@@ -653,18 +641,18 @@
 	cursor: url(${c:encodeURL('~./zss/img/v_resize.cur')}), n-resize;
 }
 .zsfztop{
-	border-bottom : 1px #5F5FFF;
+	border-bottom : 2px #5F5FFF;
 	border-bottom-style:none;
 }
 
 .zsfzleft{
-	border-right : 1px #5F5FFF;
+	border-right : 2px #5F5FFF;
 	border-right-style:none;
 }
 
 .zsfzcorner{
-	border-right : 1px #5F5FFF;
-	border-bottom : 1px #5F5FFF;
+	border-right : 2px #5F5FFF;
+	border-bottom : 2px #5F5FFF;
 	border-right-style:none;
 	border-bottom-style:none;
 }
