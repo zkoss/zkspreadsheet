@@ -50,7 +50,7 @@ public class InsertCellRightHandler extends AbstractProtectedHandler {
 		UndoableActionManager uam = ctx.getSpreadsheet().getUndoableActionManager();
 		uam.doAction(new InsertCellAction(Labels.getLabel("zss.undo.shiftCell"),sheet, selection.getRow(), selection.getColumn(), 
 			selection.getLastRow(), selection.getLastColumn(), 
-			InsertShift.RIGHT, InsertCopyOrigin.FORMAT_RIGHT_BELOW));
+			InsertShift.RIGHT, InsertCopyOrigin.FORMAT_LEFT_ABOVE)); // ZSS-404, Excel default behavior is left or above 
 		ctx.clearClipboard();
 		return true;
 	}
