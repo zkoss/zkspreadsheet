@@ -249,7 +249,6 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var activeBlock = new zss.MainBlockCtrl(sheet, tRow, lCol, bRow, rCol, data);
 			var topPanel = new zss.TopPanel(sheet, rowHeadHidden, lCol, rCol, (data.topFrozen ? data.topFrozen : data));
 			var leftPanel = new zss.LeftPanel(sheet, colHeadHidden, tRow, bRow, (data.leftFrozen ? data.leftFrozen : data));
-			var cornerPanel = new zss.CornerPanel(sheet, rowHeadHidden, colHeadHidden, lCol, tRow, rCol, bRow, data); // corner needs other two freeze panels' data for header
 
 			if (!sheetCSSReady) {//set visible after CSS loaded
 				activeBlock.setVisible(false);
@@ -265,6 +264,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			} else {
 				this.appendChild(this.lp = leftPanel, true);
 			}
+			
+			var cornerPanel = new zss.CornerPanel(sheet, rowHeadHidden, colHeadHidden, lCol, tRow, rCol, bRow, data); // corner needs other two freeze panels' data for header
 			
 			if (oldCornerPanel) {
 				oldCornerPanel.replaceWidget(this.cp = cornerPanel);

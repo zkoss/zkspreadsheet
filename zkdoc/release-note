@@ -49,6 +49,7 @@ ZK Spreadsheet 2.6.0
  	ZSS-441 Wrong sum results
 	ZSS-428 occur exception when switching sheet with specific xlsx file
   ZSS-313 after several switching sheets and resize row height, cells frame become a mess
+  ZSS-443 change width of columns in corner freeze panel will cause Javascript exception
 
 ZK Spreadsheet 2.5.0
 *Features:   
