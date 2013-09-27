@@ -723,62 +723,75 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		}, 0);
 	},
 	_cmdInsertRC: function (result) {
+
+		// ZSS-404: should update freeze size in spreadsheet widget
+		if('colfreeze' in result) {
+			this._wgt.setColumnFreeze(result.colfreeze);
+		}
+		if('rowfreeze' in result) {
+			this._wgt.setRowFreeze(result.rowfreeze);
+		}
+		
 		if (result.type == "column") {
-			var col = result.col,
-				size = result.size,
-				headers = result.hs,
-				ar = this._wgt._cacheCtrl.getSelectedSheet();
-			ar.insertNewColumn(col, size, headers);
-			this._insertNewColumn(col, size, toHeaderTitleArray(headers.hs));
+			var col = result.col;
+			var size = result.size;
+			var headers = result.hs;
+			var ar = this._wgt._cacheCtrl.getSelectedSheet();
+			ar.insertNewColumn(col, size, headers);	// update cache
+			this._insertNewColumn(col, size, toHeaderTitleArray(headers.hs));	// update DOM
+
 			//update positionHelper
 			this.custColWidth.shiftMeta(col, size);
+			
 			// adjust data panel size;
-			var dp = this.dp;
-			dp.updateWidth(this.colWidth * size);
+			this.dp.updateWidth(this.colWidth * size);
 			
 			//update maxCol
 			this.maxCols = result.maxcol;
 
-			//fix frozenCol size
+			// fix freeze panels' sizes
 			var fzc = this.frozenCol = result.colfreeze;
 			if (fzc > -1) {
 				this.lp._fixSize();
 				this.cp._fixSize();
 			}
+			
 			var block = this.activeBlock;
 			if (col < block.range.left)// insert before current block, then jump
 				block.reloadBlock("east");
 			else
 				this.triggerOverflowColumn_(null, col);
-		} else if (result.type == "row") {//jump to another bolck, not a neighbor
-			var row = result.row,
-				size = result.size,
-				headers = result.hs,
-				ar = this._wgt._cacheCtrl.getSelectedSheet();
-			ar.insertNewRow(row, size, headers);
-			this._insertNewRow(row, size, toHeaderTitleArray(headers.hs));
+			
+		} else if (result.type == "row") {	//jump to another bolck, not a neighbor
+			var row = result.row;
+			var size = result.size;
+			var headers = result.hs;
+			var ar = this._wgt._cacheCtrl.getSelectedSheet();
+			ar.insertNewRow(row, size, headers);	// update cache
+			this._insertNewRow(row, size, toHeaderTitleArray(headers.hs)); // update DOM
 			
 			//update positionHelper
 			this.custRowHeight.shiftMeta(row, size);
+			
 			// adjust datapanel size;
-			var dp = this.dp;
-			dp.updateHeight(this.rowHeight * size);
+			this.dp.updateHeight(this.rowHeight * size);
 			
 			//update maxRow
 			this.maxRows = result.maxrow;
 
-			//fix frozen size
+			// fix freeze panels' sizes
 			var fzr = this.frozenRow = result.rowfreeze;;
 			if (fzr > -1) {
 				this.tp._fixSize();
 				this.cp._fixSize();
 			}
+			
 			var block = this.activeBlock;
 			if (row < block.range.top)// insert before current block, then jump
 				block.reloadBlock("south");
 		}
 		
-		dp._fixSize(this.activeBlock);
+		this.dp._fixSize(this.activeBlock);
 		this._fixSize();
 		this.sendSyncblock();
 		
@@ -796,6 +809,15 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		},0);
 	},
 	_cmdRemoveRC: function (result, shfitsize) {
+
+		// ZSS-404: should update freeze size in spreadsheet widget
+		if('colfreeze' in result) {
+			this._wgt.setColumnFreeze(result.colfreeze);
+		}
+		if('rowfreeze' in result) {
+			this._wgt.setRowFreeze(result.rowfreeze);
+		}
+		
 		var lfv = true;
 		if (result.type == "column") {
 			var col = result.col,

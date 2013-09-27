@@ -89,6 +89,7 @@ import org.zkoss.zul.Messagebox;
  *
  */
 public abstract class ActionHandler {
+	private static final String NOT_SUPPORTED_IN_FREEZE = "Cannot perform this operation on current selection: This operation is not supported in freeze panel";
 	
 	protected Spreadsheet _spreadsheet;
 	protected Uploader _insertPicture;
@@ -961,6 +962,23 @@ public abstract class ActionHandler {
 		Messagebox.show("The cell that you are trying to change is protected and locked.", "ZK Spreadsheet", Messagebox.OK, Messagebox.EXCLAMATION);
 	}
 	
+	protected boolean checkInCornerFreezePanel(Worksheet sheet, Rect rect) {
+		int fzr = _spreadsheet.getRowfreeze();	// it is index
+		int fzc = _spreadsheet.getColumnfreeze();
+		// check there is corner freeze panel first
+		if(fzr >= 0 && fzc >= 0) {
+			// check range
+			if(rect.getTop() <= fzr && rect.getLeft() <= fzc) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	protected void showInfoMessage(String message) {
+		Messagebox.show(message, "ZK Spreadsheet", Messagebox.OK, Messagebox.INFORMATION);
+	}
+	
 	/**
 	 * Execute when user click paste 
 	 */
@@ -1589,11 +1607,15 @@ public abstract class ActionHandler {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
-				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-				.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
-				
-				clearClipboard();	
+				if(checkInCornerFreezePanel(sheet, selection)) {
+					showInfoMessage(NOT_SUPPORTED_IN_FREEZE);
+				} else {
+					Ranges
+					.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+					.insert(Range.SHIFT_RIGHT, Range.FORMAT_LEFTABOVE); // ZSS-404, Excel default behavior is left or above
+					
+					clearClipboard();	
+				}
 			} else {
 				showProtectMessage();
 			}
@@ -1607,11 +1629,15 @@ public abstract class ActionHandler {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
-				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-				.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
-				
-				clearClipboard();	
+				if(checkInCornerFreezePanel(sheet, selection)) {
+					showInfoMessage(NOT_SUPPORTED_IN_FREEZE);
+				} else {
+					Ranges
+					.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+					.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE); // ZSS-404, Excel default behavior is left or above
+					
+					clearClipboard();	
+				}
 			} else {
 				showProtectMessage();
 			}
@@ -1625,12 +1651,16 @@ public abstract class ActionHandler {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
-				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-				.getRows()
-				.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE);
-				
-				clearClipboard();	
+				if(checkInCornerFreezePanel(sheet, selection)) {
+					showInfoMessage(NOT_SUPPORTED_IN_FREEZE);
+				} else {
+					Ranges
+					.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+					.getRows()
+					.insert(Range.SHIFT_DOWN, Range.FORMAT_LEFTABOVE); // ZSS-404, Excel default behavior is left or above
+					
+					clearClipboard();	
+				}
 			} else {
 				showProtectMessage();
 			}
@@ -1644,12 +1674,16 @@ public abstract class ActionHandler {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
-				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-				.getColumns()
-				.insert(Range.SHIFT_RIGHT, Range.FORMAT_RIGHTBELOW);
-				
-				clearClipboard();	
+				if(checkInCornerFreezePanel(sheet, selection)) {
+					showInfoMessage(NOT_SUPPORTED_IN_FREEZE);
+				} else {
+					Ranges
+					.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+					.getColumns()
+					.insert(Range.SHIFT_RIGHT, Range.FORMAT_LEFTABOVE); // ZSS-404, Excel default behavior is left or above
+					
+					clearClipboard();	
+				}
 			} else {
 				showProtectMessage();
 			}
@@ -1663,11 +1697,15 @@ public abstract class ActionHandler {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
-				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-				.delete(Range.SHIFT_LEFT);
-				
-				clearClipboard();	
+				if(checkInCornerFreezePanel(sheet, selection)) {
+					showInfoMessage(NOT_SUPPORTED_IN_FREEZE);
+				} else {
+					Ranges
+					.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+					.delete(Range.SHIFT_LEFT);
+					
+					clearClipboard();	
+				}
 			} else {
 				showProtectMessage();
 			}
@@ -1681,11 +1719,15 @@ public abstract class ActionHandler {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
-				.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
-				.delete(Range.SHIFT_UP);
-				
-				clearClipboard();	
+				if(checkInCornerFreezePanel(sheet, selection)) {
+					showInfoMessage(NOT_SUPPORTED_IN_FREEZE);
+				} else {
+					Ranges
+					.range(sheet, selection.getTop(), selection.getLeft(), selection.getBottom(), selection.getRight())
+					.delete(Range.SHIFT_UP);
+					
+					clearClipboard();	
+				}
 			} else {
 				showProtectMessage();
 			}
@@ -1699,12 +1741,16 @@ public abstract class ActionHandler {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
-				.range(sheet, selection.getTop(), 0, selection.getBottom(), 0)
-				.getRows()
-				.delete(Range.SHIFT_UP);
-				
-				clearClipboard();	
+				if(checkInCornerFreezePanel(sheet, selection)) {
+					showInfoMessage(NOT_SUPPORTED_IN_FREEZE);
+				} else {
+					Ranges
+					.range(sheet, selection.getTop(), 0, selection.getBottom(), 0)
+					.getRows()
+					.delete(Range.SHIFT_UP);
+					
+					clearClipboard();	
+				}
 			} else {
 				showProtectMessage();
 			}
@@ -1718,12 +1764,16 @@ public abstract class ActionHandler {
 		Worksheet sheet = _spreadsheet.getSelectedSheet();
 		if (sheet != null && isValidSelection(selection)) {
 			if (!sheet.getProtect()) {
-				Ranges
-				.range(sheet, 0, selection.getLeft(), 0, selection.getRight())
-				.getColumns()
-				.delete(Range.SHIFT_LEFT);
-				
-				clearClipboard();	
+				if(checkInCornerFreezePanel(sheet, selection)) {
+					showInfoMessage(NOT_SUPPORTED_IN_FREEZE);
+				} else {
+					Ranges
+					.range(sheet, 0, selection.getLeft(), 0, selection.getRight())
+					.getColumns()
+					.delete(Range.SHIFT_LEFT);
+					
+					clearClipboard();	
+				}
 			} else {
 				showProtectMessage();
 			}

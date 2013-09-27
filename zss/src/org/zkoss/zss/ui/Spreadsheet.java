@@ -3214,7 +3214,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			
 			log.debug("update cells when insert column " + col + ",size:" + size + ":" + left + "," + top + "," + right + "," + bottom);
 			updateCell(sheet, left, top, right, bottom);
-			
+
+			// ZSS-404: must update cell in freeze panels (previous range is only for data block)
+			int rowFreeze = getRowfreeze();
+			if(rowFreeze >= 0) {
+				updateCell(sheet, left, 0, right, rowFreeze); // top freeze panel
+			}
+
 			//update inserted column widths
 			updateColWidths(sheet, col, size); 
 		}
@@ -3277,6 +3283,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			bottom = bottom + size - 1;
 			bottom = bottom >= _maxRows - 1 ? _maxRows - 1 : bottom;
 			updateCell(sheet, rect.getLeft(), top, rect.getRight(), bottom);
+			
+			// ZSS-404: must update cell in freeze panels (previous range is only for data block)
+			int colFreeze = getColumnfreeze();
+			if(colFreeze >= 0) {
+				updateCell(sheet, 0, top, colFreeze, bottom); // left freeze panel
+			}
 			
 			// update the inserted row height
 			updateRowHeights(sheet, row, size); //update row height
