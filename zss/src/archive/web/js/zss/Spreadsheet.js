@@ -1343,6 +1343,11 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 			//force IE to update CSS
 			if (zk.ie6_ || zk.ie7_)
 				jq(sheet.activeBlock.comp).toggleClass('zssnosuch');
+			
+			//fix the IE sometime doesn't load bottom/right block after init/switch sheet/invalidate
+			setTimeout(function(){
+				sheet.activeBlock.loadForVisible();
+			},25);
 		} else {
 			setTimeout(function () {
 				zss.Spreadsheet.initLaterAfterCssReady(sheet);
