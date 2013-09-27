@@ -1,0 +1,43 @@
+<zk>
+	<vbox width="100%" height="100%">
+		<label pre="true">
+1. scroll to most-right slowly
+2. scroll to most-bottom slowly
+3. delete any column
+4. scroll up slowly, it will throw JavaScript error
+		</label>
+		<button label="export" onClick="export();"></button>
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx"  hflex="1" vflex="1"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			maxrows="200" maxcolumns="50"
+			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+		</spreadsheet>
+		
+		<zscript><![CDATA[
+		                  
+			Sheet sheet = ss.getSelectedSheet();
+			Ranges.range(sheet, "AO1").setCellEditText("AO1");
+			Ranges.range(sheet, "AO190").setCellEditText("AO190");
+			Ranges.range(sheet, "A190").setCellEditText("A190");
+
+			public void export() {
+				Exporter exporter = Exporters.getExporter();
+				java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+				exporter.export(ss.getBook(), os);
+				os.close();
+				org.zkoss.zul.Filedownload.save(os.toByteArray(),
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "exported.xlsx");
+			}
+		]]></zscript>
+		
+		<script defer="true"><![CDATA[
+			(function() {
+				window.debug = {};
+				window.debug.ss = zk.Widget.$('$ss');
+				window.debug.ssc = debug.ss.sheetCtrl;
+				window.debug.dp = debug.ssc.dp;
+				window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
+			})();
+		]]></script>
+	</vbox>
+</zk>
