@@ -1276,9 +1276,9 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	_doMouseup: function (evt) {
 		if (this.isAsync())//wait async event, skip mouse click;
 			return;
-
-		//bug#1974069, leftkey & has last mouse down element, bug#zss-30 Cannot trigger hyperlink in Cell
-		if (_isLeftMouseEvt(evt) && this._lastmdelm && zkS.parentByZSType(this._lastmdelm, zk.ie8 ? ["SCell", "SHighlight", "SSelInner"] : ["SCell", "SHighlight"], this._lastmdelm.tagName.toLowerCase() == 'a' ? 4 : 1) != null) {
+		//bug#1974069, leftkey & has last mouse down element 
+		//ZSS233,348 add SHyperlink and remove the fix of zss-30 
+		if (_isLeftMouseEvt(evt) && this._lastmdelm && zkS.parentByZSType(this._lastmdelm, ["SCell", "SHighlight", "SSelInner", "SHyperlink"], 1) != null) {
 			this._doMouseclick(evt, "lc", this._lastmdelm);
 		}
 		this._lastmdelm = null;

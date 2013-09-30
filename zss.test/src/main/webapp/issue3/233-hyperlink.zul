@@ -1,0 +1,40 @@
+<zk>
+	<window width="100%" height="100%">
+	<vbox>
+		<label multiline="true">
+	1.load a click zkoss.org link directly, it should not link to it.
+	2.focus on A1, click on zkoss.org or google.com, it should link to it with new tab and msg1 should be update to corresponding url
+	3.the on cell click should always be updated.
+		</label>
+		<label id="msg1"/>
+		<label id="msg2"/>
+	</vbox>
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1" onCellHyperlink="onCellHyperLink(event)"
+			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true" onCellClick="onCellClick(event)"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+		<zscript><![CDATA[
+		void onCellHyperLink(Event event){
+			org.zkoss.zss.ui.event.CellHyperlinkEvent evt = event;
+			int row = evt.getRow();
+			int col = evt.getColumn();
+			String msg = ">>"+Ranges.getCellRefString(row,col)+":"+evt.getType()+","+evt.getAddress();
+			msg1.setValue(msg);
+			System.out.println(msg);
+		}
+		void onCellClick(Event event){
+			org.zkoss.zss.ui.event.CellMouseEvent evt = event;
+			int row = evt.getRow();
+			int col = evt.getColumn();
+			String msg = ">>Click on "+Ranges.getCellRefString(row,col);
+			msg2.setValue(msg);
+			System.out.println(msg);
+		}
+		
+        
+		Ranges.range(ss.getSelectedSheet(),"A1").setCellHyperlink(org.zkoss.zss.api.model.Hyperlink.HyperlinkType.URL,"http://www.zkoss.org","zkoss.org");
+		
+		Ranges.range(ss.getSelectedSheet(),"A2").setCellHyperlink(org.zkoss.zss.api.model.Hyperlink.HyperlinkType.URL,"http://www.google.com","google.com");
+		]]></zscript>
+	</window>
+</zk>

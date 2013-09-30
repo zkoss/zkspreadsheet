@@ -589,9 +589,9 @@ public final class BookHelper {
 			label = address;
 		}
 		final StringBuffer sb  = new StringBuffer(address.length() + label.length() + 128);
-		sb.append("<a z.t=\"").append(type).append("\" href=\"")
-			.append(address)
-			.append("\">")
+		//ZSS-233, don't use href directly to avoid direct click on spreadsheet at the beginning.
+		sb.append("<a zs.t=\"SHyperlink\" z.t=\"").append(type).append("\" href=\"javascript:\" z.href=\"")
+			.append(address).append("\">")
 			.append(label)
 			.append("</a>");
 		return sb.toString();
