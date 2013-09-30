@@ -102,8 +102,8 @@ public class Book10XlsHyperlinkTest {
 		String stringA5 = XUtils.formatHyperlink(sheet1, hlinkA5, "", true);
 		String stringA6 = XUtils.formatHyperlink(sheet1, hlinkA6, "", true);
 		
-		String head = "<a z.t=\"";
-		String href = "\" href=\"";
+		String head = "<a zs.t=\"SHyperlink\" z.t=\"";
+		String href = "\" href=\"javascript:\" z.href=\"";
 		String mid = "\">";
 		String tail = "</a>";
 		
