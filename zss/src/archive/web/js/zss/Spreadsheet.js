@@ -394,7 +394,12 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		 * 
 		 * @return the maximum visible number of rows.
 		 */
-		maxRows: null,
+		maxRows: function(maxrows) {
+			// ZSS-242: update range after change
+			if(this.sheetCtrl) {
+				this.sheetCtrl._cmdMaxrow(maxrows);
+			}
+		},
 		/**
 		 * Sets the maximum column number of this spreadsheet.
 		 * for example, if you set to 40, which means it allow column 0 to 39. 
@@ -409,7 +414,12 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		 * 
 		 * @return the maximum visible number of columns 
 		 */
-		maxColumns: null,
+		maxColumns: function(maxcols) {
+			// ZSS-242: update range after change
+			if(this.sheetCtrl) {
+				this.sheetCtrl._cmdMaxcolumn(maxcols);
+			}
+		},
 		/**
 		 * Sets the row freeze of this spreadsheet
 		 * 

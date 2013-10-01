@@ -913,59 +913,86 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			self._doSSInitLater();//after creating cell need to invoke init later
 		}, 0);
 	},
-	_cmdMaxcolumn: function (result) {
-		var maxcol = result.maxcol,
-			colfreeze = result.colfreeze;
-		if (maxcol > this.maxCols) {
-			// adjust datapanel size;
-			var dp = this.dp,
-				w = this.custColWidth.getStartPixel(this.maxCols);
-			w = this.custColWidth.getStartPixel(maxcol) - w;
-			dp.updateWidth(w);
-			
-			//update maxCol
-			this.maxCols = maxcol;
-			
-			dp._fixSize(this.activeBlock);
-			this._fixSize();
-			
-			this.activeBlock.loadForVisible();
-		} else if (maxcol < this.maxCols) {
-			var result = {};
-			result.type = "column";
-			result.col = maxcol;
-			result.size = this.maxCols - maxcol;
-			result.maxcol = maxcol;
-			result.colfreeze = colfreeze;
-			this._cmdRemoveRC(result, false);
+	_cmdMaxcolumn: function (maxcols) { // ZSS-242, modify range update function
+		if(maxcols == this.maxCols) { // early return
+			return;
 		}
-	},
-	_cmdMaxrow: function (result) {
-		var maxrow = result.maxrow,
-			rowfreeze = result.rowfreeze;
 
-		if (maxrow > this.maxRows) {
-			// adjust datapanel size;
-			var dp = this.dp,
-				h = this.custRowHeight.getStartPixel(this.maxRows);
-			h = this.custRowHeight.getStartPixel(maxrow)-h;
-			dp.updateHeight(h);
-			
-			//update maxRow
-			this.maxRows = maxrow;
-			
-			dp._fixSize(this.activeBlock);
-			this._fixSize();
-			
+		var r, c, fpos, spos;
+		var delta = maxcols - this.maxCols;
+		var isIncreased = delta > 0;
+		
+		// update data panel's width
+		var w = this.custColWidth.getStartPixel(this.maxCols);
+		w = this.custColWidth.getStartPixel(maxcols) - w;
+		var dp = this.dp;
+		dp.updateWidth(w);
+		
+		// fix all panel's size
+		this.maxCols = maxcols; //update max columns first
+		dp._fixSize(this.activeBlock);
+		this._fixSize(); // this will fix every panel's size
+		
+		if(isIncreased) { // increase columns
 			this.activeBlock.loadForVisible();
-		} else if (maxrow < this.maxRows) {
-			var result = {};
-			result.type = "row";
-			result.row = maxrow;
-			result.size = this.maxRows - maxrow;
-			result.maxrow = maxrow;
-			result.rowfreeze = rowfreeze;
-			this._cmdRemoveRC(result, false);
+		} else { // reduce columns
+			
+			// update focus and selection
+			fpos = this.getLastFocus(); // {row, column}
+			if(fpos && (fpos.column > maxcols - 1)) {
+				this.moveCellFocus(fpos.row, maxcols - 1);	// this will send AU
+			}
+			spos = this.getLastSelection(); // {left, top, right, bottom}
+			if(spos && (spos.right > maxcols - 1)) { // intersected or out of bound, make selection to focus
+				this.moveCellSelection(maxcols - 1, fpos.row, maxcols - 1, fpos.row, true);
+				// reload and send AU
+				spos = this.getLastSelection();
+				this._sendOnCellSelection(this.selType, spos.left, spos.top, spos.right, spos.bottom);
+			}
+			
+			// prune block, cache will auto-pruned by scrolling
+			this._removeColumn(maxcols, -delta);
+		}		
+	},
+	_cmdMaxrow: function (maxrows) { 	// ZSS-242, modify range update function
+		if(maxrows == this.maxRows) { // early return
+			return;
+		}
+
+		var r, c, fpos, spos;
+		var delta = maxrows - this.maxRows;
+		var isIncreased = delta > 0;
+		
+		// update data panel's height
+		var h = this.custRowHeight.getStartPixel(this.maxRows);
+		h = this.custRowHeight.getStartPixel(maxrows) - h;
+		var dp = this.dp;
+		dp.updateHeight(h);
+		
+		// fix all panel's size
+		this.maxRows = maxrows; //update max rows first
+		dp._fixSize(this.activeBlock);
+		this._fixSize(); // this will fix every panel's size
+		
+		if(isIncreased) { // increase rows
+			this.activeBlock.loadForVisible();
+		} else { // reduce rows
+			
+			// update focus and selection
+			fpos = this.getLastFocus();
+			if(fpos && (fpos.row > maxrows - 1)) { // {row, column}
+				this.moveCellFocus(maxrows - 1, fpos.column);	// this will send AU
+			}
+			spos = this.getLastSelection(); // {left, top, right, bottom}
+			if(spos && (spos.bottom > maxrows - 1)) { // intersected or out of bound, make selection to focus
+				this.moveCellSelection(fpos.column, maxrows - 1, fpos.column, maxrows - 1, true);
+				// reload and send AU
+				spos = this.getLastSelection();
+				this._sendOnCellSelection(this.selType, spos.left, spos.top, spos.right, spos.bottom);
+			}
+			
+			// prune block, cache will auto-pruned by scrolling
+			this._removeRow(maxrows, -delta);
 		}
 	},
 	_cmdMerge: function (result){

@@ -36,6 +36,7 @@ ZK Spreadsheet 3.0.0
   ZSS-348 onHyperlink event of Spreadsheet isn't fired
   ZSS-400 Hyperlink doesn't be shift after insert or delete
   ZSS-451 delete one column at most right and bottom position and scroll up will cause JavaScript exception
+  ZSS-242 set max rows dynamically doesn't work
   
 ** Upgrade Notes
 

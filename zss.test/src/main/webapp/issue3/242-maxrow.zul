@@ -3,14 +3,52 @@
 		<label multiline="true"></label>
 		<hbox>
 			<button label="max row 20" onClick='ss.setMaxVisibleRows(20)'/>
-			<button label="max row 30" onClick='ss.setMaxVisibleRows(20)'/>
+			<button label="max row 30" onClick='ss.setMaxVisibleRows(30)'/>
+			<button label="max row 40" onClick='ss.setMaxVisibleRows(40)'/>
+			<button label="max row 500" onClick='ss.setMaxVisibleRows(500)'/>
 			
 			<button label="max column 10" onClick='ss.setMaxVisibleColumns(10)'/>
 			<button label="max column 15" onClick='ss.setMaxVisibleColumns(15)'/>
+			<button label="max column 20" onClick='ss.setMaxVisibleColumns(20)'/>
+			<button label="max column 100" onClick='ss.setMaxVisibleColumns(100)'/>
+			
+			<button label="add text" onClick="addText();" />
 		</hbox>
-		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="true" vflex="true"
 			maxVisibleRows="10" maxVisibleColumns="5" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
+		
+		<zscript><![CDATA[
+		                  
+			Ranges.range(ss.getBook().getSheetAt(1)).setFreezePanel(3, 3);
+			Ranges.range(ss.getBook().getSheetAt(2)).setFreezePanel(23, 13);
+			
+			public void addText() {
+				Ranges.range(ss.getSelectedSheet(), "C5").setCellEditText("C5");
+				Ranges.range(ss.getSelectedSheet(), "G5").setCellEditText("G5");
+				Ranges.range(ss.getSelectedSheet(), "K5").setCellEditText("K5");
+				Ranges.range(ss.getSelectedSheet(), "O5").setCellEditText("O5");
+				Ranges.range(ss.getSelectedSheet(), "C15").setCellEditText("C15");
+				Ranges.range(ss.getSelectedSheet(), "G15").setCellEditText("G15");
+				Ranges.range(ss.getSelectedSheet(), "K15").setCellEditText("K15");
+				Ranges.range(ss.getSelectedSheet(), "O15").setCellEditText("O15");
+				Ranges.range(ss.getSelectedSheet(), "C25").setCellEditText("C25");
+				Ranges.range(ss.getSelectedSheet(), "G25").setCellEditText("G25");
+				Ranges.range(ss.getSelectedSheet(), "K25").setCellEditText("K25");
+				Ranges.range(ss.getSelectedSheet(), "O25").setCellEditText("O25");
+			}
+		]]></zscript>
+		
+		<script defer="true"><![CDATA[
+			(function() {
+				window.debug = {};
+				window.debug.ss = zk.Widget.$('$ss');
+				window.debug.ssc = debug.ss.sheetCtrl;
+				window.debug.dp = debug.ssc.dp;
+				window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
+			})();
+		]]></script>
+		
 	</window>
 </zk>
