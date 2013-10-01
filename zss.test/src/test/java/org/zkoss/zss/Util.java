@@ -19,6 +19,17 @@ import org.zkoss.zss.api.model.Book;
  * 
  */
 public class Util {
+	
+	public static Book swap(Book book){
+		try{
+			File t = Setup.getTempFile();
+			Exporters.getExporter().export(book, t);
+			book = Importers.getImporter().imports(t, book.getBookName());
+			return book;
+		}catch(Exception x){
+			throw new RuntimeException(x.getMessage(),x);
+		}
+	}
 
 	public static Book loadBook(File file) {
 		try {

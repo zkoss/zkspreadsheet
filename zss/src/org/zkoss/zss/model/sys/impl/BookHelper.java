@@ -1230,7 +1230,7 @@ public final class BookHelper {
 				Sheet sheet = cell.getSheet();
 				if(cell instanceof XSSFCell){
 					((XSSFCell)cell).setEvalHyperlink(null);
-					((XSSFCell)cell).getSheet().removeHyperlink(cell.getRowIndex(), cell.getColumnIndex());
+					((XSSFSheetImpl)((XSSFCell)cell).getSheet()).removeHyperlink(cell.getRowIndex(), cell.getColumnIndex());
 				}else if(cell instanceof HSSFCell){
 					//TODO has to clear hyperlink, too
 //					((HSSFCell)cell).setEvalHyperlink(null);

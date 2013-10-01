@@ -34,6 +34,7 @@ ZK Spreadsheet 3.0.0
   ZSS-449 Freeze panels and change row/column size, then switch to other sheet and back, freeze panel's headers will be chaos.
   ZSS-233 hyperlink event doesn't work
   ZSS-348 onHyperlink event of Spreadsheet isn't fired
+  ZSS-400 Hyperlink doesn't be shift after insert or delete
   
 ** Upgrade Notes
 

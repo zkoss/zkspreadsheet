@@ -58,6 +58,7 @@ import org.zkoss.poi.xssf.usermodel.XSSFCellHelper;
 import org.zkoss.poi.xssf.usermodel.XSSFComment;
 import org.zkoss.poi.xssf.usermodel.XSSFDrawing;
 import org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook;
+import org.zkoss.poi.xssf.usermodel.XSSFHyperlink;
 import org.zkoss.poi.xssf.usermodel.XSSFName;
 import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFRowHelper;
@@ -234,7 +235,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         }
         
         // Shift Hyperlinks which have been moved
-        shiftHyperlinks(startRow, endRow, n, 0, maxcol, 0);
+        shiftHyperlinks(startRow, maxrow, n, 0, maxcol, 0);
         
         //special case1: endRow < startRow
         //special case2: (endRow - startRow + 1) < ABS(n)
@@ -302,17 +303,69 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         }
         return false;
     }
-    
+
     /**
      * Shift Hyperlink of the specified range.
      */
-    private void shiftHyperlinks(int tRow, int bRow, int nRow, int lCol, int rCol, int nCol) {
-    	//TODO shift hyperlinks of the specified Range.
+    //20130808 dennis remove hyperlink
+    public void removeHyperlink(int row,int column){
+    	String ref = new CellReference(row, column).formatAsString();
+    	HashSet remove = new HashSet();
+        for(XSSFHyperlink hyperlink : hyperlinks) {
+            if(hyperlink.getCellRef().equals(ref)) {
+                remove.add(hyperlink);
+            }
+        }
+        hyperlinks.removeAll(remove);
     }
+	
+    //20130930 dennis remove hyperlinks
+    private void shiftHyperlinks(int tRow, int bRow, int nRow, int lCol, int rCol, int nCol) {   	
+    	Set<XSSFHyperlink> move = new HashSet<XSSFHyperlink>();
+    	Set<XSSFHyperlink> remove = new HashSet<XSSFHyperlink>();
+    	
+    	//target area
+    	int tRow2 = tRow+nRow;
+    	int bRow2 = bRow+nRow;
+    	int lCol2 = lCol+nCol;
+    	int rCol2 = rCol+nCol;
+    	
+    	for(XSSFHyperlink hyperlink : hyperlinks) {
+    		int r = hyperlink.getFirstRow();
+    		int c = hyperlink.getFirstColumn();
+            if(r>=tRow && r<=bRow && c>=lCol && c<=rCol) {
+            	move.add(hyperlink);
+            }
+            if(r>=tRow2 && r<=bRow2 && c>=lCol2 && c<=rCol2) {
+            	remove.add(hyperlink);
+            }
+        }
+    	remove.removeAll(move);
+    	
+    	//remove the link in the destination area
+    	hyperlinks.removeAll(remove);
+    	
+    	//move the link from src to destination area
+    	for(XSSFHyperlink hyperlink : move) {
+    		int row = hyperlink.getFirstRow()+nRow;
+    		int col = hyperlink.getFirstColumn()+nCol;
+    		hyperlink.setFirstRow(row);
+    		hyperlink.setFirstColumn(col);
+    	}
+    }
+    //20130930 dennis remove hyperlinks
     private void removeHyperlinks(int tRow, int bRow, int lCol, int rCol) {
-    	//TODO remove hyperlinks within the Range
+    	HashSet remove = new HashSet();
+    	for(XSSFHyperlink hyperlink : hyperlinks) {
+    		int r = hyperlink.getFirstRow();
+    		int c = hyperlink.getFirstColumn();
+            if(r>=tRow && r<=bRow && c>=lCol && c<=rCol) {
+                remove.add(hyperlink);
+            }
+        }
+    	hyperlinks.removeAll(remove);
     }
-
+    
     //20100520, henrichen@zkoss.org: Shift rows of a range
     /**
      * Shifts rows of a range between startRow and endRow n number of rows in the boundary of left column(lCol) and right column(rCol).
@@ -500,7 +553,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         }
         
         // Shift Hyperlinks which have been moved
-        shiftHyperlinks(startRow, endRow, n, 0, maxcol, 0);
+        shiftHyperlinks(startRow, maxrow, n, lCol, rCol, 0);
         
         //special case1: endRow < startRow
         //special case2: (endRow - startRow + 1) < ABS(n)
@@ -686,7 +739,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         }
         
         // Shift Hyperlinks which have been moved
-        shiftHyperlinks(0, maxrow, 0, startCol, endCol, n);
+        shiftHyperlinks(0, maxrow, 0, startCol, maxcol, n);
         
         //special case1: endCol < startCol
         //special case2: (endCol - startCol + 1) < ABS(n)
@@ -974,7 +1027,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
         }
         
         // Shift Hyperlinks which have been moved
-        shiftHyperlinks(0, maxrow, 0, startCol, endCol, n);
+        shiftHyperlinks(tRow, bRow, 0, startCol, maxcol, n);
         
         //special case1: endCol < startCol
         //special case2: (endCol - startCol + 1) < ABS(n)

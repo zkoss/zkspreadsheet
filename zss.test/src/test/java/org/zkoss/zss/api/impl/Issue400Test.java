@@ -37,6 +37,7 @@ import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.EditableFont;
 import org.zkoss.zss.api.model.Font;
+import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Sheet;
 
 /**
@@ -64,6 +65,240 @@ public class Issue400Test {
 	@After
 	public void tearDown() throws Exception {
 		Setup.popZssContextLocale();
+	}
+	
+	@Test
+	public void testZSS400_2007() throws IOException {
+		testZSS400HyperlinkShift0(Util.loadBook(this, "book/blank.xlsx"));
+		testZSS400HyperlinkShiftColumn(Util.loadBook(this, "book/400-shift.xlsx"));
+		testZSS400HyperlinkShiftRow(Util.loadBook(this, "book/400-shift.xlsx"));
+		testZSS400HyperlinkShiftBoth(Util.loadBook(this, "book/400-shift.xlsx"));
+		
+	}
+	
+	public void testZSS400HyperlinkShift0(Book book) throws IOException {
+		Sheet sheet = book.getSheetAt(0);
+		Range r1 = Ranges.range(sheet, "A1");
+		Range r2 = Ranges.range(sheet, "B1");
+		Range r3 = Ranges.range(sheet, "C1");
+		
+		r1.setCellEditText("AAA");
+		r2.setCellHyperlink(HyperlinkType.URL, "http://www.zkoss.org", "www.zkoss.org");
+		
+		Assert.assertEquals("AAA", r1.getCellFormatText());
+		Assert.assertEquals("www.zkoss.org", r2.getCellFormatText());
+		Assert.assertEquals("http://www.zkoss.org", r2.getCellHyperlink().getAddress());
+		Assert.assertEquals("www.zkoss.org", r2.getCellHyperlink().getLabel());
+		Assert.assertEquals(HyperlinkType.URL, r2.getCellHyperlink().getType());
+		
+		r2.toColumnRange().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_NONE);
+		
+		
+		Assert.assertEquals("AAA", r1.getCellFormatText());
+		Assert.assertEquals("", r2.getCellFormatText());
+		Assert.assertEquals(null, r2.getCellHyperlink());
+		
+		r2.setCellEditText("BBB");
+		Assert.assertEquals("BBB", r2.getCellFormatText());
+		Assert.assertNull(r2.getCellHyperlink());
+		
+		Assert.assertEquals("www.zkoss.org", r3.getCellFormatText());
+		Assert.assertEquals("www.zkoss.org", r3.getCellHyperlink().getLabel());
+		Assert.assertEquals("http://www.zkoss.org", r3.getCellHyperlink().getAddress());
+		Assert.assertEquals(HyperlinkType.URL, r3.getCellHyperlink().getType());
+		
+		
+		r3.setCellEditText("CCC");
+		Assert.assertEquals("CCC", r3.getCellFormatText());
+		Assert.assertEquals("CCC", r3.getCellHyperlink().getLabel());
+		Assert.assertEquals("http://www.zkoss.org", r3.getCellHyperlink().getAddress());
+		Assert.assertEquals(HyperlinkType.URL, r3.getCellHyperlink().getType());
+		
+		
+		r2.toColumnRange().delete(DeleteShift.DEFAULT);
+		Assert.assertEquals("CCC", r2.getCellFormatText());
+		Assert.assertEquals("CCC", r2.getCellHyperlink().getLabel());
+		Assert.assertEquals("http://www.zkoss.org", r2.getCellHyperlink().getAddress());
+		Assert.assertEquals(HyperlinkType.URL, r2.getCellHyperlink().getType());
+		
+		
+		r2.toColumnRange().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_NONE);
+		Assert.assertEquals("AAA", r1.getCellFormatText());
+		Assert.assertEquals("", r2.getCellFormatText());
+		Assert.assertEquals(null, r2.getCellHyperlink());
+		
+		r2.setCellEditText("DDD");
+		Assert.assertEquals("DDD", r2.getCellFormatText());
+		Assert.assertNull(r2.getCellHyperlink());
+		
+		Assert.assertEquals("CCC", r3.getCellFormatText());
+		Assert.assertEquals("CCC", r3.getCellHyperlink().getLabel());
+		Assert.assertEquals("http://www.zkoss.org", r3.getCellHyperlink().getAddress());
+		Assert.assertEquals(HyperlinkType.URL, r3.getCellHyperlink().getType());
+		
+		book = Util.swap(book);
+		
+		sheet = book.getSheetAt(0);
+		r1 = Ranges.range(sheet, "A1");
+		r2 = Ranges.range(sheet, "B1");
+		r3 = Ranges.range(sheet, "C1");
+		
+		Assert.assertEquals("AAA", r1.getCellFormatText());
+		Assert.assertEquals("DDD", r2.getCellFormatText());
+		Assert.assertNull(r2.getCellHyperlink());
+		Assert.assertEquals("CCC", r3.getCellFormatText());
+		Assert.assertEquals("CCC", r3.getCellHyperlink().getLabel());
+		Assert.assertEquals("http://www.zkoss.org", r3.getCellHyperlink().getAddress());
+		Assert.assertEquals(HyperlinkType.URL, r3.getCellHyperlink().getType());
+		
+	}
+	
+	public void testZSS400HyperlinkShiftColumn(Book book) throws IOException {
+		Sheet sheet = book.getSheetAt(0);
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"B2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/B7", Ranges.range(sheet,"B7").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"H2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"H7").getCellHyperlink().getAddress());
+		
+		Ranges.range(sheet,"D1:E1").toColumnRange().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_NONE);
+		
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"B2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/B7", Ranges.range(sheet,"B7").getCellHyperlink().getAddress());
+		Assert.assertNull(Ranges.range(sheet,"H2").getCellHyperlink());
+		Assert.assertNull(Ranges.range(sheet,"H7").getCellHyperlink());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"J2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"J7").getCellHyperlink().getAddress());
+		
+		Ranges.range(sheet,"D1:E3").insert(InsertShift.RIGHT, InsertCopyOrigin.FORMAT_NONE);
+		
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"B2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/B7", Ranges.range(sheet,"B7").getCellHyperlink().getAddress());
+		Assert.assertNull(Ranges.range(sheet,"J2").getCellHyperlink());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"J7").getCellHyperlink().getAddress());
+		
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"L2").getCellHyperlink().getAddress());
+		
+		
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"B2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/B7", Ranges.range(sheet,"B7").getCellHyperlink().getAddress());
+		Assert.assertNull(Ranges.range(sheet,"J2").getCellHyperlink());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"J7").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"L2").getCellHyperlink().getAddress());
+		
+		
+		
+		Ranges.range(sheet,"E1:F3").delete(DeleteShift.LEFT);
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"B2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/B7", Ranges.range(sheet,"B7").getCellHyperlink().getAddress());
+		Assert.assertNull(Ranges.range(sheet,"L2").getCellHyperlink());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"J2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"J7").getCellHyperlink().getAddress());
+		
+		
+		Ranges.range(sheet,"E1:F1").toColumnRange().delete(DeleteShift.LEFT);
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"B2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/B7", Ranges.range(sheet,"B7").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"H2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"H7").getCellHyperlink().getAddress());
+		Assert.assertNull(Ranges.range(sheet,"J2").getCellHyperlink());
+		Assert.assertNull(Ranges.range(sheet,"J7").getCellHyperlink());
+		
+		
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"B2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/B7", Ranges.range(sheet,"B7").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"H2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"H7").getCellHyperlink().getAddress());
+		Assert.assertNull(Ranges.range(sheet,"J2").getCellHyperlink());
+		Assert.assertNull(Ranges.range(sheet,"J7").getCellHyperlink());
+	}
+	
+	public void testZSS400HyperlinkShiftRow(Book book) throws IOException {
+		Sheet sheet = book.getSheetAt(0);
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"B2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/B7", Ranges.range(sheet,"B7").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"H2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"H7").getCellHyperlink().getAddress());
+		
+		Ranges.range(sheet,"A3:A4").toRowRange().insert(InsertShift.DEFAULT, InsertCopyOrigin.FORMAT_NONE);
+		
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"B2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"H2").getCellHyperlink().getAddress());
+		Assert.assertNull(Ranges.range(sheet,"A7").getCellHyperlink());
+		Assert.assertNull(Ranges.range(sheet,"H7").getCellHyperlink());
+		Assert.assertEquals("http://sheet.test/B7", Ranges.range(sheet,"B9").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"H9").getCellHyperlink().getAddress());
+		
+		Ranges.range(sheet,"A3:C4").insert(InsertShift.DOWN, InsertCopyOrigin.FORMAT_NONE);
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"B2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"H2").getCellHyperlink().getAddress());
+		Assert.assertNull(Ranges.range(sheet,"B9").getCellHyperlink());
+		Assert.assertEquals("http://sheet.test/B7", Ranges.range(sheet,"B11").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"H9").getCellHyperlink().getAddress());
+		
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"B2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"H2").getCellHyperlink().getAddress());
+		Assert.assertNull(Ranges.range(sheet,"B9").getCellHyperlink());
+		Assert.assertEquals("http://sheet.test/B7", Ranges.range(sheet,"B11").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"H9").getCellHyperlink().getAddress());
+		
+		
+		Ranges.range(sheet,"A3:C4").delete(DeleteShift.UP);
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"B2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"H2").getCellHyperlink().getAddress());
+		Assert.assertNull(Ranges.range(sheet,"B11").getCellHyperlink());
+		Assert.assertEquals("http://sheet.test/B7", Ranges.range(sheet,"B9").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"H9").getCellHyperlink().getAddress());
+		
+		Ranges.range(sheet,"A3:C4").toRowRange().delete(DeleteShift.UP);
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"B2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/B7", Ranges.range(sheet,"B7").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"H2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"H7").getCellHyperlink().getAddress());
+		Assert.assertNull(Ranges.range(sheet,"B9").getCellHyperlink());
+		Assert.assertNull(Ranges.range(sheet,"H9").getCellHyperlink());
+		
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"B2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/B7", Ranges.range(sheet,"B7").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"H2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"H7").getCellHyperlink().getAddress());
+		Assert.assertNull(Ranges.range(sheet,"B9").getCellHyperlink());
+		Assert.assertNull(Ranges.range(sheet,"H9").getCellHyperlink());
+		
+	}
+	
+	public void testZSS400HyperlinkShiftBoth(Book book) throws IOException {
+		Sheet sheet = book.getSheetAt(0);
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"B2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/B7", Ranges.range(sheet,"B7").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"H2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"H7").getCellHyperlink().getAddress());
+		
+		Ranges.range(sheet,"A1:C3").shift(4, 1);
+		Assert.assertNull(Ranges.range(sheet,"B2").getCellHyperlink());
+		Assert.assertNull(Ranges.range(sheet,"B7").getCellHyperlink());
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"C6").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"H2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"H7").getCellHyperlink().getAddress());
+		
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		Assert.assertNull(Ranges.range(sheet,"B2").getCellHyperlink());
+		Assert.assertNull(Ranges.range(sheet,"B7").getCellHyperlink());
+		Assert.assertEquals("http://sheet.test/B2", Ranges.range(sheet,"C6").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H2", Ranges.range(sheet,"H2").getCellHyperlink().getAddress());
+		Assert.assertEquals("http://sheet.test/H7", Ranges.range(sheet,"H7").getCellHyperlink().getAddress());
 	}
 	
 	@Test
