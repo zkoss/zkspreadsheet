@@ -1,0 +1,34 @@
+<zk>
+	<hlayout width="70%" height="100%">
+		<spreadsheet id="ss" src="/issue3/book/452-insertAtAnotherSheet.xlsx" hflex="1" vflex="1"
+			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+		<vlayout>
+			<label multiline="true">
+				Insert rows at non-selected sheet:
+
+
+				1. Select Sheet2
+				2. Click the button to insert a row in Sheet1
+			</label>
+			<button label="Insert above row 2 in Sheet1" onClick="insert()" />
+			<label multiline="true">
+				3. select Sheet1 to verify 
+				
+				Expected:
+				one row inserted above row 2
+				
+				Actual:
+				nothing changed.
+			</label>
+		</vlayout>
+	</hlayout>
+	<zscript><![CDATA[
+	public void insert() {
+		Range row2 = Ranges.range(ss.getBook().getSheetAt(0), "A2").toRowRange();
+		CellOperationUtil.insert(row2, Range.InsertShift.DEFAULT,
+				Range.InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+	}
+]]></zscript>
+</zk>
