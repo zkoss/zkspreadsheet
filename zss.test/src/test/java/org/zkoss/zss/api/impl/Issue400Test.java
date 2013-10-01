@@ -946,4 +946,26 @@ public class Issue400Test {
 		assertEquals(true, validationCell.getCellData().validateEditText("B"));
 		assertEquals(false,validationCell.getCellData().validateEditText("E"));
 	}
+
+	@Test
+	public void testZSS401(){
+		Book workbook = Util.loadBook(Issue400Test.class, "book/401-cut-merged.xlsx");
+		Range srcRange = Ranges.range(workbook.getSheet("source"), "A1:C1");
+		Range destRange = Ranges.range(workbook.getSheet("destination"),"A2:C2");
+		
+		CellOperationUtil.cut(srcRange, destRange);
+		assertEquals(false, srcRange.hasMergedCell());
+	}	
+	
+	@Test
+	public void testZSS401CutInSameSheet(){
+		Book workbook = Util.loadBook(Issue400Test.class, "book/401-cut-merged.xlsx");
+		Range srcRange = Ranges.range(workbook.getSheet("source"), "A1:C1");
+		Range destRange = Ranges.range(workbook.getSheet("source"),"A2:C2");
+		//pre-condition
+		assertEquals(true, srcRange.hasMergedCell());
+		
+		CellOperationUtil.cut(srcRange, destRange);
+		assertEquals(false, srcRange.hasMergedCell());
+	}
 }

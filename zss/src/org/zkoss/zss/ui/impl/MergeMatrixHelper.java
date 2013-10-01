@@ -31,8 +31,9 @@ import org.zkoss.zss.api.AreaRef;
 
 
 /**
+ * Each sheet has its own MergeMatrixHelper and it manages merged cells.
  * Because current implementation of spreadsheet only support horizontal merged cell,
- * So, use this helper to help speradsheet control merged cell in horizontal only
+ * So, use this helper to help Spreadsheet control merged cell in horizontal only
  * @author Dennis.Chen
  *
  */
