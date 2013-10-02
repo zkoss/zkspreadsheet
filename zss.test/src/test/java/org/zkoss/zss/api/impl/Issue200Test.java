@@ -542,11 +542,11 @@ public class Issue200Test {
 		
 		// HOUR
 		Ranges.range(sheet, "B13").setCellEditText("=HOUR(\"15:30\")");
-		assertEquals("#VALUE!", Ranges.range(sheet, "B13").getCellData().getFormatText());
+		assertEquals("15", Ranges.range(sheet, "B13").getCellData().getFormatText());
 		
 		// MINUTE
 		Ranges.range(sheet, "B15").setCellEditText("=MINUTE(\"4:48:00 PM\")");
-		assertEquals("#VALUE!", Ranges.range(sheet, "B15").getCellData().getFormatText());
+		assertEquals("48", Ranges.range(sheet, "B15").getCellData().getFormatText());
 		
 		// MONTH
 		Ranges.range(sheet, "B17").setCellEditText("=MONTH(DATE(2008,4,15))");
@@ -558,7 +558,7 @@ public class Issue200Test {
 		
 		// SECOND
 		Ranges.range(sheet, "B23").setCellEditText("=SECOND(\"4:48 PM\")");
-		assertEquals("#VALUE!", Ranges.range(sheet, "B23").getCellData().getFormatText());
+		assertEquals("0", Ranges.range(sheet, "B23").getCellData().getFormatText());
 		
 		// TIME
 		Ranges.range(sheet, "B25").setCellEditText("=TIME(12,0,0)");
