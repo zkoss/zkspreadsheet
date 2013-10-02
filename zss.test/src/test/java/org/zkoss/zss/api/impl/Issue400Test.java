@@ -1,6 +1,7 @@
 package org.zkoss.zss.api.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.zkoss.zss.api.CellOperationUtil.applyFontBoldweight;
 import static org.zkoss.zss.api.Ranges.range;
 
@@ -15,7 +16,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.xssf.usermodel.XSSFComment;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.zss.POIUtil;
@@ -39,6 +39,8 @@ import org.zkoss.zss.api.model.EditableFont;
 import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zssex.ui.impl.XUtils;
 
 /**
  * ZSS-408.
@@ -967,5 +969,17 @@ public class Issue400Test {
 		
 		CellOperationUtil.cut(srcRange, destRange);
 		assertEquals(false, srcRange.hasMergedCell());
+	}
+	
+	@Test
+	public void testZSS453(){
+		Book workbook = Util.loadBook(Issue400Test.class, "book/453-emptyHyperlink.xlsx");
+		String correctHyperlink = "<a zs.t=\"SHyperlink\" z.t=\"1\" href=\"javascript:\" z.href=\"http://www.zkoss.org/\">zkoss</a>";
+		assertEquals(correctHyperlink, XUtils.getRichCellHtmlText((XSheet)workbook.getPoiBook().getSheetAt(0),0,0));
+		try{
+			XUtils.getRichCellHtmlText((XSheet)workbook.getPoiBook().getSheetAt(0),1,1);
+		}catch(NullPointerException npe){
+			fail("empty hyperlink shouldn't throw an exception.");
+		}
 	}
 }
