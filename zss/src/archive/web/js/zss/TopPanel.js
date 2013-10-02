@@ -143,6 +143,7 @@ zss.TopPanel = zk.$extends(zss.Panel, {
 	},
 	_updateLeftPos: function (pos) {
 		jq(this.icomp).css('left', jq.px(pos));
+		jq(this.wpcomp).css('left', jq.px(pos-this.sheet.leftWidth));
 		this.leftpos = pos;
 		this._updateBlockWidth();
 	},

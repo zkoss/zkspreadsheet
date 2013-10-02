@@ -198,10 +198,11 @@ zss.Panel = zk.$extends(zk.Widget, {
 		var n = this.comp = this.$n();
 		n.ctrl = this;
 		zk(n).disableSelection();//disable selectable
-		
+
 		this.padcomp = this.$n('pad'),
 		this.icomp = this.$n('real'),
-		this.hcomp = this.icomp.firstChild;
+		this.hcomp = this.icomp.firstChild,
+		this.wpcomp = this.$n(this.type+'wp');
 		
 		if (this.block) {
 			this.bindFrozenCtrl_();
@@ -234,7 +235,7 @@ zss.Panel = zk.$extends(zk.Widget, {
 			this.headers.splice(0, this.headers.length);
 		}
 		this.unbindFrozenCtrl_();
-		this.comp = this.comp.ctrl = this.padcomp = this.icomp = 
+		this.comp = this.comp.ctrl = this.padcomp = this.wpcomp = this.icomp = 
 		this.hcomp = this.headers = this.block = this.sheet = null;
 		this.$supers(zss.Panel, 'unbind_', arguments);
 	},
@@ -296,10 +297,12 @@ zss.Panel = zk.$extends(zk.Widget, {
 					'<div class="zsselecti" zs.t="SSelInner"></div><div class="zsseldot" zs.t="SSelDot"></div></div>',
 					'<div id="', uid, '-selchg" class="zsselchg" zs.t="SSelChg"><div class="zsselchgi"></div></div>',
 					'<div id="', uid, '-focmark" class="zsfocmark" zs.t="SFocus"><div class="zsfocmarki"></div></div>',
-					'<div id="', uid, '-highlight" class="zshighlight" zs.t="SHighlight"><div class="zshighlighti"></div></div>',
-					'<div id="', uid, '-',type,'wp" class="zswidgetpanel" zs.t="SWidgetpanel"></div>');
+					'<div id="', uid, '-highlight" class="zshighlight" zs.t="SHighlight"><div class="zshighlighti"></div></div>');
+					
 		}
-		out.push('</div></div>');
+		out.push('</div>');
+		out.push('<div id="', uid, '-',type,'wp" class="zswidgetpanel" zs.t="SWidgetpanel"></div>');
+		out.push('</div>');
 	}
 });
 /**
@@ -406,6 +409,7 @@ zss.LeftPanel = zk.$extends(zss.Panel, {
 	},	
 	_updateTopPos: function (toppos) {
 		jq(this.icomp).css('top', jq.px(toppos));
+		jq(this.wpcomp).css('top', jq.px(toppos-this.sheet.topHeight));
 		this.toppos = toppos;
 		this._updateBlockHeight();
 	},
