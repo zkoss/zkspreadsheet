@@ -99,13 +99,6 @@ public class FormulaIgnored2003Test extends FormulaTestBase {
 	
 	// #VALUE!
 	@Test
-	public void testHOURWithString()  {
-		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
-		testHOURWithString(book);
-	}
-	
-	// #VALUE!
-	@Test
 	public void testVALUEWithTimeString()  {
 		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
 		testVALUEWithTimeString(book);

@@ -35,6 +35,24 @@ public class Formula2003Test extends FormulaTestBase {
 	}
 	
 	@Test
+	public void testHOURWithTimeString()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testHOURWithString(book);
+	}
+	
+	@Test
+	public void testMINUTEWithTimeString()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testMINUTEWithString(book);
+	}
+	
+	@Test
+	public void testSECONDWithTimeString()  {
+		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
+		testSECONDWithString(book);
+	}
+	
+	@Test
 	public void testFDIST()  {
 		Book book = Util.loadBook(this,"book/TestFile2003-Formula.xls");
 		testFDIST(book);
