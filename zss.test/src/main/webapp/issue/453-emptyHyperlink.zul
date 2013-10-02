@@ -1,0 +1,7 @@
+<zk>
+	<spreadsheet id="ss" src="/issue/453-emptyHyperlink.xlsx" hflex="1" vflex="1"
+		ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="100" maxcolumns="10" 
+		showFormulabar="true" showContextMenu="true" showSheetbar="true"
+		showToolbar="true">
+	</spreadsheet>
+</zk>

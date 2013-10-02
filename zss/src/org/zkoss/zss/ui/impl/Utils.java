@@ -588,20 +588,28 @@ public class Utils {
 	}
 	
 	/**
-	 * Format and escape a {@link Hyperlink} to HTML &lt;a> string.
+	 * Wrap cell text with &lt;a> according to {@link Hyperlink}
 	 * @param sheet the sheet with the RichTextString 
-	 * @param hlink the Hyperlink
-	 * @return the HTML &lt;a> format string
+	 * @param hlink the Hyperlink, its address might be null
+	 * @return HTML &lt;a> with specified hyperlink or originally passed-in cell text
 	 */
 	public static String formatHyperlink(Worksheet sheet, Hyperlink hlink, String cellText, boolean wrap) {
 		if (hlink == null) {
 			return cellText;
 		}
-		final String address = Utils.escapeCellText(hlink.getAddress(), true, false);
-		final String linkLabel = hlink.getLabel();
-		final String label = !"".equals(cellText) ? cellText :  
-				Utils.escapeCellText(linkLabel == null ? hlink.getAddress() : linkLabel, wrap, false);
-		return BookHelper.formatHyperlink((Book)sheet.getWorkbook(), hlink.getType(), address, label);
+		//ZSS-453
+		final String hyperlinkAddress = hlink.getAddress() == null?"":hlink.getAddress();
+		final String escapedAddress = Utils.escapeCellText(hyperlinkAddress, true, false);
+		String linkText = "";
+
+		if (!"".equals(cellText)){
+			linkText = cellText;
+		}else if (hlink.getLabel()!=null ){
+			linkText = Utils.escapeCellText(hlink.getLabel(), wrap, false);
+		}else{
+			linkText = escapedAddress;
+		}
+		return BookHelper.formatHyperlink((Book)sheet.getWorkbook(), hlink.getType(), escapedAddress, linkText);
 	}
 	/**
 	 * Format and escape a {@link RichTextString} to HTML &lt;span> string.
