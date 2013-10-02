@@ -181,6 +181,11 @@ public class SheetCtrlImpl implements SheetCtrl {
 			@Override
 			public void deleteChart(XSheet sheet, Chart chart) {
 			}
+
+			@Override
+			public ZssChartX getChartX(Chart chart) {
+				return null;
+			}
 		};
 	}
 }

@@ -100,4 +100,10 @@ public interface Widget {
 	 */
 	//public Component getComponent();
 	
+	/**
+	 * the panel to stay. available value is corner,top,left or default
+	 * @return
+	 */
+	public String getPanel();
+	
 }

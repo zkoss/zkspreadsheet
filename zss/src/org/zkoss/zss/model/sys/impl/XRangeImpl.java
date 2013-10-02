@@ -45,6 +45,7 @@ import org.zkoss.poi.ss.usermodel.Picture;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.usermodel.ZssChartX;
 import org.zkoss.poi.ss.usermodel.charts.ChartData;
 import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
@@ -2668,12 +2669,15 @@ public class XRangeImpl implements XRange {
 	public void moveChart(Chart chart, ClientAnchor anchor) {
 		synchronized (_sheet) {
 			DrawingManager dm = ((SheetCtrl)_sheet).getDrawingManager();
+			ZssChartX chartX = dm.getChartX(chart);
+			if(chartX==null) return;
+			
 			dm.moveChart(_sheet, chart, anchor);
 			final XRangeImpl rng = (XRangeImpl) XRanges.range(_sheet, anchor.getRow1(), anchor.getCol1(), anchor.getRow2(), anchor.getCol2());
 			final Collection<Ref> refs = rng.getRefs();
 			if (refs != null && !refs.isEmpty()) {
 				final Ref ref = refs.iterator().next();
-				BookHelper.notifyChartUpdate(ref, chart);
+				BookHelper.notifyChartUpdate(ref, chartX);
 			}
 		}
 	}

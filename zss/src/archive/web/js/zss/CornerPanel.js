@@ -72,7 +72,8 @@ zss.CornerPanel = zk.$extends(zk.Widget, {
 					'<div class="zsselecti" zs.t="SSelInner"></div><div class="zsseldot" zs.t="SSelDot"></div></div>',
 					'<div id="', uid, '-selchg" class="zsselchg" zs.t="SSelChg"><div class="zsselchgi"></div></div>',
 					'<div id="', uid, '-focmark" class="zsfocmark" zs.t="SFocus"><div class="zsfocmarki"></div></div>',
-					'<div id="', uid, '-highlight" class="zshighlight" zs.t="SHighlight"><div class="zshighlighti"></div></div>');
+					'<div id="', uid, '-highlight" class="zshighlight" zs.t="SHighlight"><div class="zshighlighti"></div></div>',
+					'<div id="', uid, '-cornerwp" class="zswidgetpanel" zs.t="SWidgetpanel"></div>');
 		}
 		out.push('<div class="zscorneri" ></div></div>');
 	},

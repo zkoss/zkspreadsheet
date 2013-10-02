@@ -137,21 +137,11 @@ public class SheetImpl implements Sheet{
 	}
 
 	public int getRowFreeze() {
-		if (BookHelper.isFreezePane((XSheet)getPoiSheet())) { //issue #103: Freeze row/column is not correctly interpreted
-			int f = BookHelper.getRowFreeze(getNative());
-			return f>0?f:0;
-		}else{
-			return 0;
-		}
+		return BookHelper.getRowFreeze(getNative());
 	}
 
 	public int getColumnFreeze() {
-		if (BookHelper.isFreezePane((XSheet)getPoiSheet())) { //issue #103: Freeze row/column is not correctly interpreted
-			int f = BookHelper.getColumnFreeze(getNative());
-			return f>0?f:0;
-		}else{
-			return 0;
-		}
+		return BookHelper.getColumnFreeze(getNative());
 	}
 
 	@Override

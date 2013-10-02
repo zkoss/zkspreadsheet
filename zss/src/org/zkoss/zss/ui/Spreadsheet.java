@@ -2237,7 +2237,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (!getSelectedXSheet().equals(sheet))
 				return;
 			final Object payload = event.getPayload();
-			updateChartWidget(sheet, (Chart) payload);
+			updateChartWidget(sheet, (ZssChartX) payload);
 		}
 		private void onPictureAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
@@ -2369,6 +2369,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				for (int c = left; c <= right; ++c) {
 					updateColWidth(sheet, c);
 				}
+				
+				List<WidgetLoader> list = loadWidgetLoaders();
+				for(WidgetLoader loader:list){
+					loader.onColumnSizeChange(sheet,left,right);
+				}
+				
 				final AreaRef rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleArea();
 				syncFriendFocusPosition(left, rect.getRow(), rect.getLastColumn(), rect.getLastRow());
 			} else if (rng.isWholeRow()) {
@@ -2377,6 +2383,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				for (int r = top; r <= bottom; ++r) {
 					updateRowHeight(sheet, r);
 				}
+				
+				List<WidgetLoader> list = loadWidgetLoaders();
+				for(WidgetLoader loader:list){
+					loader.onRowSizeChange(sheet,top,bottom);
+				}
+				
 				final AreaRef rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleArea();
 				syncFriendFocusPosition(rect.getColumn(), top, rect.getLastColumn(), rect.getLastRow());
 			}
@@ -2409,6 +2421,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				return;
 			//TODO
 			Spreadsheet.this.invalidate();
+			
+			List<WidgetLoader> list = loadWidgetLoaders();
+			for(WidgetLoader loader:list){
+				loader.onSheetFreeze(sheet);
+			}
 		}
 		private void onBookExport(SSDataEvent event) {
 			//
@@ -3875,18 +3892,27 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		sb.append("}");
 
 		sb.append(name).append(" .zsfztop{");
-		sb.append("border-bottom-style:").append(fzr > -1 ? "solid" : "none")
-				.append(";");
+		sb.append("border-bottom-style:").append(fzr > -1 ? "solid" : "none").append(";");
 		sb.append("}");
+		sb.append(name).append(" .zsfztop .zswidgetpanel{");
+		sb.append("left:").append(-lw).append("px;");
+		sb.append("}");
+		
 		sb.append(name).append(" .zsfzcorner{");
-		sb.append("border-bottom-style:").append(fzr > -1 ? "solid" : "none")
-				.append(";");
+		sb.append("border-bottom-style:").append(fzr > -1 ? "solid" : "none").append(";");
+		sb.append("}");
+		sb.append(name).append(" .zsfzcorner .zswidgetpanel{");
+		sb.append("left:1px;");
+		sb.append("top:1px;");
 		sb.append("}");
 
 		sb.append(name).append(" .zsfzleft{");
-		sb.append("border-right-style:").append(fzc > -1 ? "solid" : "none")
-				.append(";");
+		sb.append("border-right-style:").append(fzc > -1 ? "solid" : "none").append(";");
 		sb.append("}");
+		sb.append(name).append(" .zsfzleft .zswidgetpanel{");
+		sb.append("top:").append(-th).append("px;");
+		sb.append("}");
+		
 		sb.append(name).append(" .zsfzcorner{");
 		sb.append("border-right-style:").append(fzc > -1 ? "solid" : "none")
 				.append(";");
@@ -4167,7 +4193,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 
-	private void updateChartWidget(XSheet sheet, Chart chart) {
+	private void updateChartWidget(XSheet sheet, ZssChartX chart) {
 		//load widgets
 		List list = loadWidgetLoaders();
 		int size = list.size();

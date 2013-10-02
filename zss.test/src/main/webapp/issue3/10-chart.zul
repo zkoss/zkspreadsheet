@@ -1,8 +1,15 @@
 <zk>
 	<window width="100%" height="100%">
+		<hbox>
+		<button label="freeze E0" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(0,5)'/>
+		<button label="freeze A5" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(5,0)'/>
+		<button label="freeze E5" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(5,5)'/>
+		<button label="unfreeze " onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(0,0)'/>
+		<button label="invalidate" onClick='ss.invalidate()'/>
+		</hbox>
 		<spreadsheet id="ss" src="/issue3/book/10-chart.xlsx" hflex="1" vflex="1"
-			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
-			showSheetbar="true" showContextMenu="true">
+			maxVisibleRows="500" maxVisibleColumns="200" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true" >
 		</spreadsheet>
 	</window>
 </zk>

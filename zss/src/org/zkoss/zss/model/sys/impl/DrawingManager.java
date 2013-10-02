@@ -50,4 +50,6 @@ public interface DrawingManager {
 	public List<Chart> getCharts();
 	
 	public void deleteChart(XSheet sheet, Chart chart);
+	
+	public ZssChartX getChartX(Chart chart);
 }

@@ -58,6 +58,12 @@ public interface WidgetLoader {
 	public void onSheetClean(XSheet sheet);
 	
 	/**
+	 * indicate the sheet's freeze panel is changed.
+	 * @param sheet
+	 */
+	public void onSheetFreeze(XSheet sheet);
+	
+	/**
 	 * call when spreadsheet try to load a block of cell to client side. 
 	 * handler should take care this method and load corresponding widgets, which in the block , to client side.
 	 * this method will be invoked by spreadsheet, you should not call this method directly.
@@ -66,11 +72,15 @@ public interface WidgetLoader {
 
 	public void addChartWidget(XSheet sheet, ZssChartX chart);
 	public void deleteChartWidget(XSheet sheet, String chartId); // ZSS-358: keep chart ID for notifying; must assume that chart data was gone.
-	public void updateChartWidget(XSheet sheet, org.zkoss.poi.ss.usermodel.Chart chart);
+	public void updateChartWidget(XSheet sheet, ZssChartX chart);
 	
 	public void addPictureWidget(XSheet sheet, Picture picture);
 	public void deletePictureWidget(XSheet sheet, String pictureId); // ZSS-397: picture data is gone after deleting
 	public void updatePictureWidget(XSheet sheet, Picture picture);
+
+	//ZSS-455 Chart/Image doesn't move location after change column/row width/height
+	public void onColumnSizeChange(XSheet sheet, int left, int right);
+	public void onRowSizeChange(XSheet sheet, int top, int bottom);
 	
 	
 }

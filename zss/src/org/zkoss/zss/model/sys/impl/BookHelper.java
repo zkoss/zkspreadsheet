@@ -404,11 +404,11 @@ public final class BookHelper {
 		}
 	}
 
-	public static void notifyChartUpdate(Ref ref, Chart chart) {
+	public static void notifyChartUpdate(Ref ref, ZssChartX chartx) {
 		if (ref != null) {
 			final RefSheet refSheet = ref.getOwnerSheet();
 			final RefBook refBook = refSheet.getOwnerBook();
-			refBook.publish(new SSDataEvent(SSDataEvent.ON_CHART_UPDATE, ref, chart));
+			refBook.publish(new SSDataEvent(SSDataEvent.ON_CHART_UPDATE, ref, chartx));
 		}
 	}
 
@@ -4764,15 +4764,27 @@ public final class BookHelper {
 	 * gets the row freeze, 1 base
 	 */
 	public static int getRowFreeze(XSheet sheet) {
-		final PaneInformation pi = sheet.getPaneInformation();
-		return pi != null ? pi.getHorizontalSplitPosition() : 0;
+		if (isFreezePane(sheet)) { //issue #103: Freeze row/column is not correctly interpreted
+			final PaneInformation pi = sheet.getPaneInformation();
+			int fr = pi != null ? pi.getHorizontalSplitPosition() : 0;
+			return fr>0?fr:0;
+		}else{
+			return 0;
+		}
+		
 	}
 	/**
 	 * gets the column freeze, 1 base
 	 */
 	public static int getColumnFreeze(XSheet sheet) {
-		final PaneInformation pi = sheet.getPaneInformation();
-		return pi != null ? pi.getVerticalSplitPosition() : 0;
+		if (isFreezePane(sheet)) { //issue #103: Freeze row/column is not correctly interpreted
+			final PaneInformation pi = sheet.getPaneInformation();
+			int fc = pi != null ? pi.getVerticalSplitPosition() : 0;
+			return fc>0?fc:0;
+		}else{
+			return 0;
+		}
+		
 	}
 	/**
 	 * sets the freeze panel, 1 base
