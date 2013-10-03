@@ -730,8 +730,11 @@
 	border: 5px solid #E8FDFD;
 }
 
-.chartborder img {
+.zswidget-chart img,.zswidget-img {
 	border: 1px solid #868686;
+}
+.zswidget-img {
+	border: 1px solid transparent;
 }
 
 .zsbtn {
