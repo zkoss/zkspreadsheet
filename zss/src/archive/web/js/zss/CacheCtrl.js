@@ -404,6 +404,7 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 	},
 	updateBoundary: function (dir, top, left, btm, right) {
 		var rect = this.rect;
+		var newRange;
 		if (!rect) {
 			this.rect = newRect(top, left, btm, right);
 			return;
@@ -429,18 +430,72 @@ zss.ActiveRange = zk.$extends(zk.Object, {
 				this.rowHeaders = {};
 				this.columnHeaders = {};
 				break;
+			// ZSS-451: fetched block from server might make cache be non-rectangle range
 			case 'east':
-				rect.right = right;
-				break;
 			case 'west':
-				rect.left = left;
+				if(top == rect.top && btm == rect.bottom) { // normal case
+					if(dir == 'east') {
+						rect.right = right;
+					} else if(dir == 'west'){
+						rect.left = left;
+					}
+				} else {
+					if(top > rect.bottom || btm < rect.top) { // fetched block is totally outside of cached range
+						newRange = newRect(top, left, btm, right);
+					} else { // fetched block intersects cached range
+						top = Math.max(top, rect.top);
+						btm = Math.min(btm, rect.bottom);
+						left = (dir == 'west' ? left : rect.left);
+						right = (dir == 'east' ? right : rect.right);
+						newRange = newRect(top, left, btm, right);
+					}
+					// prune cached range first and replace cached range
+					this.pruneOutside(newRange);  
+					this.rect = newRange;
+				}
 				break;
 			case 'south':
-				rect.bottom = btm;
-				break;
 			case 'north':
-				rect.top = top;
+				if(left == rect.left && right == rect.right) { // normal case
+					if(dir == 'south') {
+						rect.bottom = btm;
+					} else if(dir == 'north'){
+						rect.top = top;
+					}
+				} else {
+					if(left > rect.right || right < rect.left) { // fetched block is totally outside of cached range 
+						newRange = newRect(top, left, btm, right);
+					} else { // fetched block intersects cached range
+						top = (dir == 'north' ? top : rect.top);
+						btm = (dir == 'south' ? btm : rect.bottom);
+						left = Math.max(left, rect.left);
+						right = Math.min(right, rect.right);
+						newRange = newRect(top, left, btm, right);
+					}
+					// prune cached range first and replace cached range
+					this.pruneOutside(newRange);  
+					this.rect = newRange;
+				}
 				break;
+			}
+		}
+	},
+	pruneOutside: function(range) { 	// ZSS-451: add a method to prune cached cells and remain cells in specific range, let cache stay be a rectangle range
+		// reduce cells to match specific range
+		var rows = this.rows;
+		var r, c;
+		for(r = this.rect.top ; r <= this.rect.bottom ; ++r) {
+			if(range.top <= r && r <= range.bottom) { // row is inside new range
+				for(c = this.rect.left ; c <= this.rect.right ; ++c) {
+					// delete cell outside new range
+					if( !(range.left <= c && c <= range.right)) {  
+						if(rows[r] && rows[r].cells[c]) { // just in case
+							delete rows[r].cells[c];
+						}
+					}
+				}
+			} else {  // delete whole row outside new range
+				delete rows[r];
 			}
 		}
 	},
