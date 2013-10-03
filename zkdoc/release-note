@@ -49,6 +49,7 @@ ZK Spreadsheet 3.0.0
   ZSS-452 Inserting a row at non-selected sheet with API doesn't work
   ZSS-252 A Javascript error thrown when right clicking spreadsheet without showing toolbar
   ZSS-280 reapply autofilter doesn't filter newly added the data
+  ZSS-299 after applying 2nd filter, the second one should only contain non-filtered data for selection
   
 ** Upgrade Notes
 

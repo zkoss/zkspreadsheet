@@ -110,19 +110,14 @@ import org.zkoss.zss.ui.impl.XUtils;
 		
 		blankRowInfo = new FilterRowInfo(BLANK_VALUE, "(Blanks)");
 		final Set criteria1 = fc == null ? null : fc.getCriteria1();
-		final boolean nofilter = criteria1 == null || criteria1.isEmpty(); 
 		boolean hasBlank = false;
 		boolean selectedBlank = false;
 		final int top = range.getRow() + 1;
 		final int bottom = range.getLastRow();
 		final int columnIndex = range.getColumn() + field - 1;
 		for (int i = top; i <= bottom; i++) {
-			if (nofilter && isHiddenRow(i, worksheet)) {
-				continue;
-			}
 			final Cell c = XUtils.getCell(worksheet, i, columnIndex);
-			final boolean blankcell = BookHelper.isBlankCell(c);
-			if (!blankcell) {
+			if (!BookHelper.isBlankCell(c)) {
 				String displaytxt = BookHelper.getCellText(c);
 				Object val = BookHelper.getEvalCellValue(c);
 				if (val instanceof RichTextString) {
@@ -130,14 +125,16 @@ import org.zkoss.zss.ui.impl.XUtils;
 				} else if (c.getCellType() == Cell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(c)) {
 					val = c.getDateCellValue();
 				}
-				FilterRowInfo rowInfo = new FilterRowInfo(val, displaytxt); 
+				FilterRowInfo rowInfo = new FilterRowInfo(val, displaytxt);
+				//ZSS-299
 				orderedRowInfos.add(rowInfo);
 				if (criteria1 == null || criteria1.isEmpty() || criteria1.contains(displaytxt)) { //selected
 					rowInfo.setSelected(true);
 				}
 			} else {
 				hasBlank = true;
-				if (!selectedBlank && (nofilter || criteria1.contains("="))) { //selected
+				boolean noFilterApplied = criteria1 == null || criteria1.isEmpty(); 
+				if (selectedBlank && (noFilterApplied || criteria1.contains("="))) { //"=" means blank is selected
 					blankRowInfo.setSelected(true);
 				}
 			}
