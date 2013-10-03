@@ -79,8 +79,9 @@ public interface WidgetLoader {
 	public void updatePictureWidget(XSheet sheet, Picture picture);
 
 	//ZSS-455 Chart/Image doesn't move location after change column/row width/height
-	public void onColumnSizeChange(XSheet sheet, int left, int right);
-	public void onRowSizeChange(XSheet sheet, int top, int bottom);
+	//ZSS-306 a chart doesn't shrink its size when deleting rows or columns it overlaps
+	public void onColumnChange(XSheet sheet, int left, int right);
+	public void onRowChange(XSheet sheet, int top, int bottom);
 	
 	
 }

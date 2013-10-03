@@ -2307,10 +2307,23 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				final int left = rng.getLeftCol();
 				final int right = rng.getRightCol();
 				((ExtraCtrl) getExtraCtrl()).insertColumns(sheet, left, right - left + 1);
+				
+				//ZSS-306 a chart doesn't shrink its size when deleting rows or columns it overlaps
+				List<WidgetLoader> list = loadWidgetLoaders();
+				for(WidgetLoader loader:list){
+					loader.onColumnChange(sheet,left,right+(right-left));
+				}
+				
 			} else if (rng.isWholeRow()) {
 				final int top = rng.getTopRow();
 				final int bottom = rng.getBottomRow();
 				((ExtraCtrl) getExtraCtrl()).insertRows(sheet, top, bottom - top + 1);
+				
+				//ZSS-306 a chart doesn't shrink its size when deleting rows or columns it overlaps
+				List<WidgetLoader> list = loadWidgetLoaders();
+				for(WidgetLoader loader:list){
+					loader.onRowChange(sheet,top,bottom+(bottom-top));
+				}
 			}
 		}
 		private void onRangeDelete(SSDataEvent event) {
@@ -2324,10 +2337,22 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				final int right = rng.getRightCol();
 				((ExtraCtrl) getExtraCtrl()).removeColumns(sheet, left,
 						right - left + 1);
+				
+				//ZSS-306 a chart doesn't shrink its size when deleting rows or columns it overlaps
+				List<WidgetLoader> list = loadWidgetLoaders();
+				for(WidgetLoader loader:list){
+					loader.onColumnChange(sheet,left,right);
+				}
 			} else if (rng.isWholeRow()) {
 				final int top = rng.getTopRow();
 				final int bottom = rng.getBottomRow();
 				((ExtraCtrl) getExtraCtrl()).removeRows(sheet, top, bottom - top + 1);
+				
+				//ZSS-306 a chart doesn't shrink its size when deleting rows or columns it overlaps
+				List<WidgetLoader> list = loadWidgetLoaders();
+				for(WidgetLoader loader:list){
+					loader.onRowChange(sheet,top,bottom);
+				}
 			}
 		}
 		private void onMergeChange(SSDataEvent event) {
@@ -2370,9 +2395,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					updateColWidth(sheet, c);
 				}
 				
+				//ZSS-455 Chart/Image doesn't move location after change column/row width/height
 				List<WidgetLoader> list = loadWidgetLoaders();
 				for(WidgetLoader loader:list){
-					loader.onColumnSizeChange(sheet,left,right);
+					loader.onColumnChange(sheet,left,right);
 				}
 				
 				final AreaRef rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleArea();
@@ -2384,9 +2410,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					updateRowHeight(sheet, r);
 				}
 				
+				//ZSS-455 Chart/Image doesn't move location after change column/row width/height
 				List<WidgetLoader> list = loadWidgetLoaders();
 				for(WidgetLoader loader:list){
-					loader.onRowSizeChange(sheet,top,bottom);
+					loader.onRowChange(sheet,top,bottom);
 				}
 				
 				final AreaRef rect = ((SpreadsheetCtrl) getExtraCtrl()).getVisibleArea();
