@@ -2,6 +2,7 @@
 ZK Spreadsheet 3.0.0
 *Features:
   ZSS-438 Support view with different zoom level
+  ZSS-251 Support to override the default formula implementation
   
 *Bugs:
   ZSS-399 export to PDF - no gridlines
