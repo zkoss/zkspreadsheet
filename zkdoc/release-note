@@ -53,6 +53,7 @@ ZK Spreadsheet 2.6.0
 	ZSS-449 Freeze panels and change row/column size, then switch to other sheet and back, freeze panel's headers will be chaos.
 	ZSS-404 JS Error after insert column when freeze
 	ZSS-451 delete one column at most right and bottom position and scroll up will cause JavaScript exception
+  ZSS-453 NullPointerException when the sheet has hyperlinks
 
 ZK Spreadsheet 2.5.0
 *Features:   
