@@ -1765,8 +1765,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 		var sheetcmp = this.comp,
 			spcmp = this.sp.comp,
 			$n = zk(sheetcmp),
-			w = $n.offsetWidth() - 2,//2 is border width
-			h = $n.offsetHeight() - 2;//2 is border width
+			w = $n.offsetWidth(),
+			h = $n.offsetHeight();
 		if (h <= 0)
 			//if user doesn't set the height of style sheet set height on it's parent, 
 			//then we will get a zero height, so , i assign a default height here
