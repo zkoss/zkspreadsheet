@@ -1520,7 +1520,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 //			renderer.render("labels", labels);
 //		}
 		
-		if (_showToolbar) {
+		if (_showToolbar || _showContextMenu || _showSheetbar) { // ZSS-417, _showContextMenu and _showSheetbar need actionDsiabled information in client-side.
 			//20130507,Dennis,add commnet check, no actionDisabled json will cause client error when show context menu.
 //			if (_actionDisabled.size() > 0) {
 			renderer.render("actionDisabled",
