@@ -47,6 +47,7 @@ ZK Spreadsheet 3.0.0
   ZSS-458 Strange behavior when re-sizing North or West of chart/image in scrolling
   ZSS-311 When you move a chart, it should become selected  
   ZSS-452 Inserting a row at non-selected sheet with API doesn't work
+  ZSS-252 A Javascript error thrown when right clicking spreadsheet without showing toolbar
   
 ** Upgrade Notes
 
