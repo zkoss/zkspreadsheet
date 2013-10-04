@@ -1094,6 +1094,14 @@ zss.CacheCtrl = zk.$extends(zk.Object, {
 	isCached: function (sheetId) {
 		return !!this.sheets[sheetId];
 	},
+	releaseCache: function (sheetId) {
+		if(this.sheets[sheetId] && this.sheets[sheetId] != this.selected){
+			delete this.sheets[sheetId];
+		}
+		if(this.snapshots[sheetId]){
+			delete this.snapshots[sheetId];
+		}
+	},
 	setSelectedSheetBy: function (sheetId) {
 		this.selected = this.sheets[sheetId];
 	},

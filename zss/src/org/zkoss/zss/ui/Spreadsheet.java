@@ -2216,56 +2216,42 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onChartAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
-				return;
 			final Object payload = event.getPayload();
 			addChartWidget(sheet, (ZssChartX) payload);
 		}
 		private void onChartDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
-				return;
 			final Object payload = event.getPayload();
 			deleteChartWidget(sheet, (String) payload);
 		}
 		private void onChartUpdate(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
-				return;
 			final Object payload = event.getPayload();
 			updateChartWidget(sheet, (ZssChartX) payload);
 		}
 		private void onPictureAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
-				return;
 			final Object payload = event.getPayload();
 			addPictureWidget(sheet, (Picture) payload);
 		}
 		private void onPictureDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
-				return;
 			final Object payload = event.getPayload();
 			deletePictureWidget(sheet, (String) payload);
 		}
 		private void onPictureUpdate(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
-				return;
 			final Object payload = event.getPayload();
 			updatePictureWidget(sheet, (Picture) payload);
 		}
 		private void onWidgetChange(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
-				return;
 			final int left = rng.getLeftCol();
 			final int top = rng.getTopRow();
 			final int right = rng.getRightCol();
@@ -2298,8 +2284,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onRangeInsert(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
-				return;
 			_updateCellId.next();
 			if (rng.isWholeColumn()) {
 				final int left = rng.getLeftCol();
@@ -2327,8 +2311,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onRangeDelete(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
-				return;
 			_updateCellId.next();
 			if (rng.isWholeColumn()) {
 				final int left = rng.getLeftCol();
@@ -2357,8 +2339,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			final Ref rng = event.getRef();
 			final Ref orng = event.getOriginalRef();
 			final XSheet sheet = getSheet(orng);
-			if (!getSelectedXSheet().equals(sheet))
-				return;
 			((ExtraCtrl) getExtraCtrl()).updateMergeCell(sheet, 
 					rng.getLeftCol(), rng.getTopRow(), rng.getRightCol(), rng.getBottomRow(),
 					orng.getLeftCol(), orng.getTopRow(), orng.getRightCol(), orng.getBottomRow());
@@ -2366,8 +2346,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onMergeAdd(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
-				return;
 			((ExtraCtrl) getExtraCtrl()).addMergeCell(sheet, 
 					rng.getLeftCol(), rng.getTopRow(), rng.getRightCol(), rng.getBottomRow());
 
@@ -2375,8 +2353,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onMergeDelete(SSDataEvent event) {
 			final Ref orng = event.getRef();
 			final XSheet sheet = getSheet(orng);
-			if (!getSelectedXSheet().equals(sheet))
-				return;
 			((ExtraCtrl) getExtraCtrl()).deleteMergeCell(sheet, orng.getLeftCol(),
 					orng.getTopRow(), orng.getRightCol(), orng.getBottomRow());
 		}
@@ -2384,8 +2360,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			//TODO shall pass the range over to the client side and let client side do it; rather than iterate each column and send multiple command
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
-				return;
 			if (rng.isWholeColumn()) {
 				final int left = rng.getLeftCol();
 				final int right = rng.getRightCol();
@@ -2421,29 +2395,37 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		private void onBtnChange(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
+			if (!getSelectedXSheet().equals(sheet)){
+				releaseClientCache(XUtils.getSheetUuid(sheet));
 				return;
+			}
 			updateAutoFilter(sheet.getAutoFilter());
 		}
 		private void onDisplayGridlines(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
+			if (!getSelectedXSheet().equals(sheet)){
+				releaseClientCache(XUtils.getSheetUuid(sheet));
 				return;
+			}
 			setDisplayGridlines(event.isShow());
 		}
 		private void onProtectSheet(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
+			if (!getSelectedXSheet().equals(sheet)){
+				releaseClientCache(XUtils.getSheetUuid(sheet));
 				return;
+			}
 			setProtectSheet(event.getProtect());
 		}
 		private void onSheetFreeze(SSDataEvent event) {
 			final Ref rng = event.getRef();
 			final XSheet sheet = getSheet(rng);
-			if (!getSelectedXSheet().equals(sheet))
+			if (!getSelectedXSheet().equals(sheet)){
+				releaseClientCache(XUtils.getSheetUuid(sheet));
 				return;
+			}
 			//TODO
 			Spreadsheet.this.invalidate();
 			
@@ -2461,6 +2443,14 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				getUndoableActionManager().clear();
 			}
 		}
+	}
+	
+	//ZSS-452, release client cache when it is about to out of sync.
+	private void releaseClientCache(String sheetUuid){
+		if(getSelectedSheetId().equals(sheetUuid)){
+			return;
+		}
+		response(new AuInvoke(this, "_releaseClientCache",sheetUuid));
 	}
 	
 	private void updateColWidth(XSheet sheet, int col) {
@@ -2578,6 +2568,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	private void updateWidget(XSheet sheet, int left, int top, int right, int bottom) {
+		if (!getSelectedXSheet().equals(sheet)){
+			releaseClientCache(XUtils.getSheetUuid(sheet));
+			return;
+		}
 		if (this.isInvalidated())
 			return;// since it is invalidate, we don't need to do anymore
 		//update widgets per the content change of the range.
@@ -3295,7 +3289,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 
 		public void insertColumns(XSheet sheet, int col, int size) {
-
+			if (!getSelectedXSheet().equals(sheet)){
+				releaseClientCache(XUtils.getSheetUuid(sheet));
+				return;
+			}
 			if (size <= 0) {
 				throw new UiException("size must > 0 : " + size);
 			}
@@ -3306,9 +3303,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			// don't avoid insert behavior here, always send required data to
 			// client,
 			// let client handle it
-
-			// remove merge before a new column or row
-			removeAffectedMergeRange(sheet, 0, col);
 
 			HashMap result = new HashMap();
 			result.put("type", "column");
@@ -3367,6 +3361,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			}
 		}
 		public void insertRows(XSheet sheet, int row, int size) {
+			if (!getSelectedXSheet().equals(sheet)){
+				releaseClientCache(XUtils.getSheetUuid(sheet));
+				return;
+			}
 			if (size <= 0) {
 				throw new UiException("size must > 0 : " + size);
 			}
@@ -3377,9 +3375,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			// don't avoid insert behavior here, always send required data to
 			// client,
 			// let client handle it
-
-			// remove merge before a new column or row
-			removeAffectedMergeRange(sheet, 1, row);
 
 			HashMap result = new HashMap();
 			result.put("type", "row");
@@ -3420,6 +3415,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 
 		public void removeColumns(XSheet sheet, int col, int size) {
+			if (!getSelectedXSheet().equals(sheet)){
+				releaseClientCache(XUtils.getSheetUuid(sheet));
+				return;
+			}
 			if (size <= 0) {
 				throw new UiException("size must > 0 : " + size);
 			} else if (col < 0) {
@@ -3438,8 +3437,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			// client,
 			// let client handle it
 
-			// remove merge before a new column or row
-			removeAffectedMergeRange(sheet, 0, col);
 
 			HashMap result = new HashMap();
 			result.put("type", "column");
@@ -3474,6 +3471,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 
 		public void removeRows(XSheet sheet, int row, int size) {
+			if (!getSelectedXSheet().equals(sheet)){
+				releaseClientCache(XUtils.getSheetUuid(sheet));
+				return;
+			}
 			if (size <= 0) {
 				throw new UiException("size must > 0 : " + size);
 			} else if (row < 0) {
@@ -3490,9 +3491,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			// don't avoid insert behavior here, always send required data to
 			// client,
 			// let client handle it
-
-			// remove merge before a new column or row
-			removeAffectedMergeRange(sheet, 1, row);
 
 			HashMap result = new HashMap();
 			result.put("type", "row");
@@ -3525,24 +3523,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			updateCell(sheet, rect.getColumn(), top, rect.getLastColumn(), bottom);
 		}
 
-		private void removeAffectedMergeRange(XSheet sheet, int type, int index) {
-//handled by onMergeChange... 			
-/*			
-			MergeMatrixHelper mmhelper = this.getMergeMatrixHelper(sheet);
-			List toremove = new ArrayList();
-			if (type == 0) {// column
-				mmhelper.deleteAffectedMergeRangeByColumn(index, toremove);
-			} else if (type == 1) {
-				mmhelper.deleteAffectedMergeRangeByRow(index, toremove);
-			} else {
-				return;
-			}
-			for (Iterator iter = toremove.iterator(); iter.hasNext();) {
-				MergedRect block = (MergedRect) iter.next();
-				updateMergeCell0(sheet, block, "remove");
-			}
-*/		}
-
 		public void updateMergeCell(XSheet sheet, int left, int top, int right,
 				int bottom, int oleft, int otop, int oright, int obottom) {
 			deleteMergeCell(sheet, oleft, otop, oright, obottom);
@@ -3553,6 +3533,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			MergeMatrixHelper mmhelper = this.getMergeMatrixHelper(sheet);
 			Set torem = new HashSet();
 			mmhelper.deleteMergeRange(left, top, right, bottom, torem);
+			if (!getSelectedXSheet().equals(sheet)){
+				releaseClientCache(XUtils.getSheetUuid(sheet));
+				return;
+			}
 			for (Iterator iter = torem.iterator(); iter.hasNext();) {
 				MergedRect rect = (MergedRect) iter.next();
 
@@ -3595,12 +3579,18 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			response("mergeCell" + XUtils.nextUpdateId(), new AuMergeCell(Spreadsheet.this, "", XUtils.getSheetUuid(sheet), result.toString()));
 		}
 
-		public void addMergeCell(XSheet sheet, int left, int top, int right,	int bottom) {
+		public void addMergeCell(XSheet sheet, int left, int top, int right, int bottom) {
 			MergeMatrixHelper mmhelper = this.getMergeMatrixHelper(sheet);
 
 			Set toadd = new HashSet();
 			Set torem = new HashSet();
 			mmhelper.addMergeRange(left, top, right, bottom, toadd, torem);
+			
+			if (!getSelectedXSheet().equals(sheet)){
+				releaseClientCache(XUtils.getSheetUuid(sheet));
+				return;
+			}
+			
 			for (Iterator iter = torem.iterator(); iter.hasNext();) {
 				MergedRect rect = (MergedRect) iter.next();
 				log.debug("(A)remove merge:" + rect);
@@ -3617,6 +3607,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		//in pixel
 		public void setColumnWidth(XSheet sheet, int col, int width, int id, boolean hidden) {
+			if (!getSelectedXSheet().equals(sheet)){
+				releaseClientCache(XUtils.getSheetUuid(sheet));
+				return;
+			}
 			JSONObject result = new JSONObject();
 			result.put("type", "column");
 			result.put("column", col);
@@ -3628,6 +3622,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 		//in pixels
 		public void setRowHeight(XSheet sheet, int row, int height, int id, boolean hidden) {
+			if (!getSelectedXSheet().equals(sheet)){
+				releaseClientCache(XUtils.getSheetUuid(sheet));
+				return;
+			}
 			JSONObject result = new JSONObject();
 			result.put("type", "row");
 			result.put("row", row);
@@ -4174,6 +4172,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	private void addChartWidget(XSheet sheet, ZssChartX chart) {
+		if (!getSelectedXSheet().equals(sheet)){
+			releaseClientCache(XUtils.getSheetUuid(sheet));
+			return;
+		}
 		//load widgets
 		List list = loadWidgetLoaders();
 		int size = list.size();
@@ -4183,6 +4185,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	private void addPictureWidget(XSheet sheet, Picture picture) {
+		if (!getSelectedXSheet().equals(sheet)){
+			releaseClientCache(XUtils.getSheetUuid(sheet));
+			return;
+		}
 		//load widgets
 		List list = loadWidgetLoaders();
 		int size = list.size();
@@ -4192,6 +4198,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	private void deletePictureWidget(XSheet sheet, String pictureId) {
+		if (!getSelectedXSheet().equals(sheet)){
+			releaseClientCache(XUtils.getSheetUuid(sheet));
+			return;
+		}
 		//load widgets
 		List list = loadWidgetLoaders();
 		int size = list.size();
@@ -4201,6 +4211,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 	
 	private void updatePictureWidget(XSheet sheet, Picture picture) {
+		if (!getSelectedXSheet().equals(sheet)){
+			releaseClientCache(XUtils.getSheetUuid(sheet));
+			return;
+		}
 		//load widgets
 		List list = loadWidgetLoaders();
 		int size = list.size();
@@ -4210,6 +4224,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	private void deleteChartWidget(XSheet sheet, String chartId) {
+		if (!getSelectedXSheet().equals(sheet)){
+			releaseClientCache(XUtils.getSheetUuid(sheet));
+			return;
+		}
 		//load widgets
 		List list = loadWidgetLoaders();
 		int size = list.size();
@@ -4219,6 +4237,10 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	}
 
 	private void updateChartWidget(XSheet sheet, ZssChartX chart) {
+		if (!getSelectedXSheet().equals(sheet)){
+			releaseClientCache(XUtils.getSheetUuid(sheet));
+			return;
+		}
 		//load widgets
 		List list = loadWidgetLoaders();
 		int size = list.size();

@@ -46,6 +46,7 @@ ZK Spreadsheet 3.0.0
   ZSS-312 A picture (or chart) should not be allowed to move out of the cell area's top and bottom border
   ZSS-458 Strange behavior when re-sizing North or West of chart/image in scrolling
   ZSS-311 When you move a chart, it should become selected  
+  ZSS-452 Inserting a row at non-selected sheet with API doesn't work
   
 ** Upgrade Notes
 

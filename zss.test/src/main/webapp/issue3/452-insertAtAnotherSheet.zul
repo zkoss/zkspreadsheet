@@ -8,11 +8,38 @@
 			<label multiline="true">
 				Insert rows at non-selected sheet:
 
-
 				1. Select Sheet2
 				2. Click the button to insert a row in Sheet1
 			</label>
-			<button label="Insert above row 2 in Sheet1" onClick="insert()" />
+			<hbox>
+				<button label="Invalidate" onClick='ss.invalidate()' />
+				<button label="reset book" onClick='resetBook()' />
+			</hbox>
+			<hbox>
+				<button label="Insert row 2" onClick='insertRow("A2")' />
+				<button label="Insert column 2" onClick='insertColumn("B1")' />
+				<button label="Delete row 2" onClick='deleteRow("A2")' />
+				<button label="Delete column 2" onClick='deleteColumn("B1")' />
+			</hbox>
+			<hbox>
+				<button label="Merge B1:C3" onClick='merge("B1:C3")' />
+				<button label="Unmerge B1:C3" onClick='unmerge("B1:C3")' />
+			</hbox>
+			<hbox>
+				<button label="delete chart" onClick='deleteChart()' />
+				<button label="delete picture" onClick='deletePicture()' />
+				<button label="move chart" onClick='moveChart()' />
+				<button label="move picture" onClick='movePicture()' />
+			</hbox>
+			<hbox>
+				<button label="set column B width" onClick='enlargeColumn("B1",100)' />
+				<button label="set Row 2 height" onClick='enlargeRow("A2",50)' />
+			</hbox>
+			<hbox>
+				<button label="set sheet 1" onClick='ss.setSelectedSheet("Sheet1")' />
+			
+			</hbox>
+
 			<label multiline="true">
 				3. select Sheet1 to verify 
 				
@@ -25,10 +52,72 @@
 		</vlayout>
 	</hlayout>
 	<zscript><![CDATA[
-	public void insert() {
-		Range row2 = Ranges.range(ss.getBook().getSheetAt(0), "A2").toRowRange();
-		CellOperationUtil.insert(row2, Range.InsertShift.DEFAULT,
-				Range.InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+	public void resetBook(){
+		Book book = ss.getBook();
+		ss.setBook(null);
+		ss.setBook(book);
+	}
+	public void insertRow(String ref) {
+		Range range = Ranges.range(ss.getBook().getSheetAt(0), ref);
+		CellOperationUtil.insertRow(range);
+	}
+	public void insertColumn(String ref) {
+		Range range = Ranges.range(ss.getBook().getSheetAt(0), ref);
+		CellOperationUtil.insertColumn(range);
+	}
+	public void deleteRow(String ref) {
+		Range range = Ranges.range(ss.getBook().getSheetAt(0), ref);
+		CellOperationUtil.deleteRow(range);
+	}
+	public void deleteColumn(String ref) {
+		Range range = Ranges.range(ss.getBook().getSheetAt(0), ref);
+		CellOperationUtil.deleteColumn(range);
+	}
+	public void merge(String ref) {
+		Range range = Ranges.range(ss.getBook().getSheetAt(0), ref);
+		CellOperationUtil.merge(range,false);
+	}
+	public void unmerge(String ref) {
+		Range range = Ranges.range(ss.getBook().getSheetAt(0), ref);
+		CellOperationUtil.unmerge(range);
+	}
+	public void deleteChart(){
+		Sheet sheet = ss.getBook().getSheetAt(0);
+		for(org.zkoss.zss.api.model.Chart c:sheet.getCharts()){
+			Ranges.range(sheet).deleteChart(c);
+			break;
+		}
+	}
+	public void deletePicture(){
+		Sheet sheet = ss.getBook().getSheetAt(0);
+		for(Picture p:sheet.getPictures()){
+			Ranges.range(sheet).deletePicture(p);
+			break;
+		}
+	}
+	public void moveChart(){
+		Sheet sheet = ss.getBook().getSheetAt(0);
+		for(org.zkoss.zss.api.model.Chart c:sheet.getCharts()){
+			SheetAnchor sa = c.getAnchor();
+			Ranges.range(sheet).moveChart(new SheetAnchor(sa.getRow(),sa.getColumn()+2,sa.getLastRow(),sa.getLastColumn()+2),c);
+			break;
+		}
+	}
+	public void movePicture(){
+		Sheet sheet = ss.getBook().getSheetAt(0);
+		for(Picture p:sheet.getPictures()){
+			SheetAnchor sa = p.getAnchor();
+			Ranges.range(sheet).movePicture(new SheetAnchor(sa.getRow(),sa.getColumn()+2,sa.getLastRow(),sa.getLastColumn()+2),p);
+			break;
+		}
+	}
+	public void enlargeColumn(String ref,int size){
+		Range range = Ranges.range(ss.getBook().getSheetAt(0), ref);
+		range.setColumnWidth(range.getSheet().getColumnWidth(range.getColumn())+size);
+	}
+	public void enlargeRow(String ref,int size){
+		Range range = Ranges.range(ss.getBook().getSheetAt(0), ref);
+		range.setRowHeight(range.getSheet().getRowHeight(range.getRow())+size);
 	}
 ]]></zscript>
 </zk>

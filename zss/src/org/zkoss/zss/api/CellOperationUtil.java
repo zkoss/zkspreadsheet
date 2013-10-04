@@ -730,6 +730,22 @@ public class CellOperationUtil {
 	}
 	
 	/**
+	 * Insert rows to the range. 
+	 * @param range the range to insert new rows 
+	 */
+	public static void insertRow(Range range) {
+		insert(range.toRowRange(),InsertShift.DOWN,InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+	}
+	
+	/**
+	 * Insert columns to the range. 
+	 * @param range the range to insert new rows 
+	 */
+	public static void insertColumn(Range range) {
+		insert(range.toColumnRange(),InsertShift.RIGHT,InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+	}
+	
+	/**
 	 * Delete cells of the range. To delete a row, you have to call {@link Range#toRowRange()} first, to delete a column, you have to call {@link Range#toColumnRange()} first.
 	 * @param range the range to delete
 	 * @param shift the shift direction when deleting.
@@ -738,6 +754,22 @@ public class CellOperationUtil {
 		if(range.isProtected())
 			return;
 		range.delete(shift);
+	}
+	
+	/**
+	 * Delete rows of the range. 
+	 * @param range the range to delete rows 
+	 */
+	public static void deleteRow(Range range) {
+		delete(range.toRowRange(),DeleteShift.UP);
+	}
+	
+	/**
+	 * Delete columns to the range. 
+	 * @param range the range to delete columns 
+	 */
+	public static void deleteColumn(Range range) {
+		delete(range.toColumnRange(),DeleteShift.LEFT);
 	}
 
 	/**
