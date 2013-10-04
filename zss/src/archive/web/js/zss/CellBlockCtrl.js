@@ -311,7 +311,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 			ctrl.zsh = null;
 			html += ctrl.getHtmlPrologHalf();
 			html += zss.Row.copyCells(temprow, ctrl);
-			this.insertRow(r, ctrl, html);
+			this.insertRow(index, ctrl, html); // ZSS-450: it should be row array index not row number, see also insertNewColumn()
 		}
 		this.shiftRowInfo(index + size, row + size);
 		this.range.extendBottom(size);

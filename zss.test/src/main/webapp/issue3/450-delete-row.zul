@@ -1,0 +1,47 @@
+<zk>
+	<vbox width="600px" height="100%">
+		<label pre="true">
+1. scroll to bottom of sheet quickly (make a jump fetching)
+2. select row 140 and insert one row by right-click
+3. select row 140 again and delete this row by right-click
+4. the last row's text will be same as the row 140
+		</label>
+		<hlayout>
+			<button label="freeze" onClick="Ranges.range(ss.getSelectedSheet()).setFreezePanel(2,2);"></button>
+			<button label="export" onClick="export();"></button>
+		</hlayout>
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx"  hflex="1" vflex="1"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			maxrows="150" maxcolumns="50"
+			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+		</spreadsheet>
+		
+		<zscript><![CDATA[
+		                  
+			Sheet sheet = ss.getSelectedSheet();
+			Ranges.range(sheet, "A10").setCellEditText("A10");
+			Ranges.range(sheet, "D10").setCellEditText("D10");
+			Ranges.range(sheet, "A140").setCellEditText("A140");
+			Ranges.range(sheet, "D140").setCellEditText("D140");
+
+			public void export() {
+				Exporter exporter = Exporters.getExporter();
+				java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+				exporter.export(ss.getBook(), os);
+				os.close();
+				org.zkoss.zul.Filedownload.save(os.toByteArray(),
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "exported.xlsx");
+			}
+		]]></zscript>
+		
+		<script defer="true"><![CDATA[
+			(function() {
+				window.debug = {};
+				window.debug.ss = zk.Widget.$('$ss');
+				window.debug.ssc = debug.ss.sheetCtrl;
+				window.debug.dp = debug.ssc.dp;
+				window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
+			})();
+		]]></script>
+	</vbox>
+</zk>

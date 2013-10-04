@@ -739,6 +739,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var ar = this._wgt._cacheCtrl.getSelectedSheet();
 			ar.insertNewColumn(col, size, headers);	// update cache
 			this._insertNewColumn(col, size, toHeaderTitleArray(headers.hs));	// update DOM
+			this._removeColumn(this.maxCols, size); // ZSS-450: remove excess columns (DOM) 
 
 			//update positionHelper
 			this.custColWidth.shiftMeta(col, size);
@@ -769,6 +770,7 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var ar = this._wgt._cacheCtrl.getSelectedSheet();
 			ar.insertNewRow(row, size, headers);	// update cache
 			this._insertNewRow(row, size, toHeaderTitleArray(headers.hs)); // update DOM
+			this._removeRow(this.maxRows, size); // ZSS-450: remove excess rows (DOM) 
 			
 			//update positionHelper
 			this.custRowHeight.shiftMeta(row, size);
