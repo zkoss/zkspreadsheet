@@ -35,6 +35,11 @@ ZK Spreadsheet 3.0.0
   ZSS-233 hyperlink event doesn't work
   ZSS-348 onHyperlink event of Spreadsheet isn't fired
   ZSS-400 Hyperlink doesn't be shift after insert or delete
+  ZSS-10 Freeze row causes chart disappear
+  ZSS-455 Chart/Image doesn't move location after change column/row width/height
+  ZSS-312 A picture (or chart) should not be allowed to move out of the cell area's top and bottom border
+  ZSS-458 Strange behavior when re-sizing North or West of chart/image in scrolling
+  ZSS-311 When you move a chart, it should become selected
   
 ** Upgrade Notes
 
