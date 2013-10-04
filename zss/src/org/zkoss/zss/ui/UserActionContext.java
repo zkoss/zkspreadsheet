@@ -36,7 +36,7 @@ public interface UserActionContext {
 	
 	public Event getEvent();
 	
-	public AreaRef getSelection();
+	public AreaRef getSelection(); //may be highlight area
 	
 	public Object getData(String key);
 	

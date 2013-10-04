@@ -88,12 +88,6 @@ public class FormulaIgnored2007Test extends FormulaTestBase {
 		testSTDEVP(book);
 	}
 	
-	// #VALUE!
-	@Test
-	public void testHOURWithString()  {
-		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
-		testHOURWithString(book);
-	}
 	
 	// #VALUE!
 	@Test

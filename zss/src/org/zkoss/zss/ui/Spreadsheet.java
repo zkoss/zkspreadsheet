@@ -854,9 +854,12 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		}
 	}
 	
+	/*
+	 * DefaultUserActionManagerCtrl will update highlight area when selecting a sheet.
+	 */
 	private void setSelectedSheetDirectly(String name, boolean cacheInClient, int row, int col, 
-			int left, int top, int right, int bottom,
-			int highlightLeft, int highlightTop, int highlightRight, int highlightBottom/*,
+			int left, int top, int right, int bottom
+			/*, int highlightLeft, int highlightTop, int highlightRight, int highlightBottom,
 			int rowfreeze, int colfreeze*/) {
 		setSelectedSheet0(name);
 		if (row >= 0 && col >= 0) {
@@ -868,11 +871,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			this.setSelectionDirectly(new AreaRef(top, left, bottom, right));
 		} else {
 			this.setSelectionDirectly(new AreaRef(0, 0, 0, 0));
-		}
-		if (highlightLeft >= 0 && highlightTop >= 0 && highlightRight >= 0 && highlightBottom >= 0) {
-			this.setHighlightDirectly(new AreaRef(highlightTop, highlightLeft, highlightBottom, highlightRight));
-		} else {
-			this.setHighlightDirectly(null);//hide highlight
 		}
 		afterSheetSelected();
 		
@@ -3664,8 +3662,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				int highlightRight, int highlightBottom, int rowfreeze,
 				int colfreeze) {
 			Spreadsheet.this.setSelectedSheetDirectly(name, cacheInClient, row, col, left,
-					top, right, bottom, highlightLeft, highlightTop,
-					highlightRight, highlightBottom/*, rowfreeze, colfreeze*/);
+					top, right, bottom/*, highlightLeft, highlightTop,
+					highlightRight, highlightBottom, rowfreeze, colfreeze*/);
 		}
 
 		@Override

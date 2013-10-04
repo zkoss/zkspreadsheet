@@ -48,14 +48,30 @@ public class Formula2007Test extends FormulaTestBase {
 	// .getFormatText());
 	// }
 	
-	// expected:<[15.2]1> but was:<[0.1]1>
+	@Test
+	public void testHOURWithTimeString()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testHOURWithString(book);
+	}
+	
+	@Test
+	public void testMINUTEWithTimeString()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testMINUTEWithString(book);
+	}
+	
+	@Test
+	public void testSECONDWithTimeString()  {
+		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
+		testSECONDWithString(book);
+	}
+	
 	@Test
 	public void testFINV()  {
 		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");
 		testFINV(book);
 	}
 	
-	// expected:<1.[96]> but was:<1.[63]>
 	@Test
 	public void testTINV()  {
 		Book book = Util.loadBook(this,"book/TestFile2007-Formula.xlsx");

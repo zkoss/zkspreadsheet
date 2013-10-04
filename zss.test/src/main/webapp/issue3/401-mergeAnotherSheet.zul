@@ -1,0 +1,30 @@
+<zk>
+		<hlayout width="70%" height="100%" > 
+			<spreadsheet id="ss" src="/issue3/book/401-mergeAnotherSheet.xlsx" hflex="1" vflex="1"
+				maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
+				showSheetbar="true" showContextMenu="true">
+			</spreadsheet>
+			<vlayout>
+			<label multiline="true" >
+			Merge another sheet's cells
+			
+			1. select Sheet2
+			2. Click the button to merge
+			</label>
+			<button label="Merge A1 ~ C1 in Sheet1" onClick="merge()"/>
+			<zscript><![CDATA[
+			public void merge(){
+				Ranges.range(ss.getBook().getSheetAt(0), "A1:C1").merge(false);
+			}
+		]]></zscript>
+			3. verify Sheet1
+			<label multiline="true">
+			Expected:
+			A1~C1 is merged.
+			
+			Actual:
+			no merged cell, but B1, C1's text disappear.
+			</label>
+			</vlayout>
+		</hlayout>
+</zk>

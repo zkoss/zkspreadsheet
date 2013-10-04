@@ -1873,7 +1873,6 @@ public class FormulaTestBase {
 		assertEquals("84", Ranges.range(sheet, "B92").getCellData().getFormatText());
 	}
 	
-	// expected:<[0.03]> but was:<[-1.00]>
 	protected void testGAMMADIST(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("0.03", Ranges.range(sheet, "B76").getCellFormatText());
@@ -1893,23 +1892,17 @@ public class FormulaTestBase {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("0.03", Ranges.range(sheet, "B204").getCellFormatText());
 	}
-	
-	// expected:<[15.2]1> but was:<[0.1]1>
-	
+
 	protected void testFINV(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("15.21", Ranges.range(sheet, "B61").getCellFormatText());
 	}
 	
-	// expected:<[5.03]> but was:<[0.39]>
-	
 	protected void testHARMEAN(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("5.03", Ranges.range(sheet, "B89").getCellFormatText());
 	}
-	
-	// expected:<1.[96]> but was:<1.[63]>
-	
+
 	protected void testTINV(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("1.96", Ranges.range(sheet, "B177").getCellFormatText());
@@ -1921,11 +1914,22 @@ public class FormulaTestBase {
 		assertEquals("26.05", Ranges.range(sheet, "B168").getCellFormatText());
 	}
 	
-	// #VALUE!
 	protected void testHOURWithString(Book book) {
 		Sheet sheet = book.getSheet("formula-datetime");
 		Ranges.range(sheet, "B13").setCellEditText("=HOUR(\"15:30\")");
-		assertEquals("3", Ranges.range(sheet, "B13").getCellData().getFormatText());
+		assertEquals("15", Ranges.range(sheet, "B13").getCellData().getFormatText());
+	}
+	
+	protected void testMINUTEWithString(Book book) {
+		Sheet sheet = book.getSheet("formula-datetime");
+		Ranges.range(sheet, "B13").setCellEditText("=MINUTE(\"15:30\")");
+		assertEquals("30", Ranges.range(sheet, "B13").getCellData().getFormatText());
+	}
+	
+	protected void testSECONDWithString(Book book) {
+		Sheet sheet = book.getSheet("formula-datetime");
+		Ranges.range(sheet, "B13").setCellEditText("=SECOND(\"15:30:55\")");
+		assertEquals("55", Ranges.range(sheet, "B13").getCellData().getFormatText());
 	}
 	
 	protected void testVALUE(Book book) {
