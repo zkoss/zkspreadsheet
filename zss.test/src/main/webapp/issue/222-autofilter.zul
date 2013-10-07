@@ -32,7 +32,8 @@
 		<button label="applyFilter" onClick="applyFitler()"/>
 		
 	</hlayout>
-	<spreadsheet id="ss" width="300px" height="600px" maxrows="35" onCellSelection="/*for bug of cell selection*/"
-		maxcolumns="10" src="/issue/280-autofilter.xlsx">
+	<spreadsheet id="ss" width="800px" height="600px" maxrows="35" onCellSelection="/*for bug of cell selection*/"
+	showToolbar="true" 
+		maxcolumns="20" src="/issue/222-autofilter.xlsx">
 	</spreadsheet>
 </window>
