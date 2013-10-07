@@ -552,12 +552,13 @@ public class RangeImpl implements Range{
 		_range.autoFilter(field,criteria1,EnumUtil.toRangeAutoFilterOperation(filterOp),criteria2,visibleDropDown);
 	}
 	
-	/** clear condition of filter, show all the data**/
+	/** clear criteria of all filters, show all the data**/
 	public void resetAutoFilter(){
 		//TODO the syncLevel
 		_range.showAllData();
 	}
-	/** apply the filter to filter again**/
+	
+	/** re-apply existing criteria of filters **/
 	public void applyAutoFilter(){
 		//TODO the syncLevel
 		_range.applyFilter();

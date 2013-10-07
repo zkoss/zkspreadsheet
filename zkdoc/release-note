@@ -48,6 +48,7 @@ ZK Spreadsheet 3.0.0
   ZSS-311 When you move a chart, it should become selected  
   ZSS-452 Inserting a row at non-selected sheet with API doesn't work
   ZSS-252 A Javascript error thrown when right clicking spreadsheet without showing toolbar
+  ZSS-280 reapply autofilter doesn't filter newly added the data
   
 ** Upgrade Notes
 

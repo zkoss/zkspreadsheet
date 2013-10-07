@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.zkoss.image.AImage;
 import org.zkoss.poi.hssf.usermodel.HSSFSheet;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
-import org.zkoss.poi.ss.usermodel.ZssContext;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.AssertUtil;
 import org.zkoss.zss.Setup;
@@ -31,6 +30,7 @@ import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Range.AutoFilterOperation;
 import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
@@ -45,6 +45,9 @@ import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.ChartData;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.impl.SheetImpl;
+import org.zkoss.zss.model.sys.XRange;
+import org.zkoss.zss.model.sys.XRanges;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zssex.api.ChartDataUtil;
@@ -95,35 +98,218 @@ public class Issue200Test {
 		assertEquals(5, Ranges.range(sheet, "B8").getCellData().getDoubleValue(), 1E-8);
 	}
 	
-	@Ignore("ZSS-280")
-	@Test
-	public void testZSS280() throws IOException {
-		final String filename = "book/280-autofilter.xlsx";
+	@Test 
+	public void testZSS280AddReapply(){
+		final String filename = "book/280-reapply.xlsx";
 		Book workbook = Util.loadBook(this,filename);
 		Sheet sheet = workbook.getSheet("cell-data");
+		
+		String filteredAreaReference = "A1";
+		//enable auto filter
+		SheetOperationUtil.toggleAutoFilter(Ranges.range(sheet, filteredAreaReference));
+		
+		//apply the criteria on 1st field
+		Range filterRange = Ranges.range(sheet, filteredAreaReference); ;
+		String[] criteria = {"1"};
+		filterRange.enableAutoFilter(1, AutoFilterOperation.VALUES, criteria, null, null);
+		assertEquals(false, sheet.isRowHidden(1)); //1
+		assertEquals(true, sheet.isRowHidden(2)); //2
+		assertEquals(true, sheet.isRowHidden(3)); //3
+		assertEquals(true, sheet.isRowHidden(4)); //4
+		
+		//add more data
 		Ranges.range(sheet, "A13").setCellEditText("1");
 		Ranges.range(sheet, "A14").setCellEditText("2");
 		Ranges.range(sheet, "A15").setCellEditText("3");
 		Ranges.range(sheet, "A16").setCellEditText("4");
-		Ranges.range(sheet, "A17").setCellEditText("5");
-		SheetOperationUtil.applyAutoFilter(Ranges.range(sheet, "A1:A17"));
-		
-		AutoFilter af = sheet.getPoiSheet().getAutoFilter();
-		if (af == null) { //no AutoFilter to apply 
-			return;
-		}
-		final CellRangeAddress affectedArea = af.getRangeAddress();
-		final int row1 = affectedArea.getFirstRow();
-		final int col1 = affectedArea.getFirstColumn(); 
-		final int row2 = affectedArea.getLastRow();
-		final int col2 = affectedArea.getLastColumn();
-		
-		assertEquals(row1, 0);
-		assertEquals(col1, 0);
-		assertEquals(row2, 17);
-		assertEquals(col2, 0);
+		//re-apply the same criteria
+		filterRange.applyAutoFilter();
+		assertEquals(false, sheet.isRowHidden(12)); //1
+		assertEquals(true, sheet.isRowHidden(13)); //2
+		assertEquals(true, sheet.isRowHidden(14)); //3
+		assertEquals(true, sheet.isRowHidden(15)); //4
 	}
 	
+	@Test 
+	public void testZSS280ModifyReapply(){
+		final String filename = "book/280-reapply.xlsx";
+		Book workbook = Util.loadBook(this,filename);
+		Sheet sheet = workbook.getSheet("cell-data");
+		
+		String filteredAreaReference = "A1";
+		//enable auto filter
+		SheetOperationUtil.toggleAutoFilter(Ranges.range(sheet, filteredAreaReference));
+		
+		//apply the criteria on 1st field
+		Range filterRange = Ranges.range(sheet, filteredAreaReference); ;
+		String[] criteria = {"1", "2", "3"};
+		filterRange.enableAutoFilter(1, AutoFilterOperation.VALUES, criteria, null, null);
+		assertEquals(false, sheet.isRowHidden(1)); //1
+		assertEquals(false, sheet.isRowHidden(2)); //2
+		assertEquals(false, sheet.isRowHidden(3)); //3
+		assertEquals(true, sheet.isRowHidden(4)); //4
+		
+		//modify data
+		Ranges.range(sheet, "A2").setCellEditText("1");
+		Ranges.range(sheet, "A3").setCellEditText("4");
+		Ranges.range(sheet, "A4").setCellEditText("4");
+		filterRange.applyAutoFilter();
+		assertEquals(false, sheet.isRowHidden(1)); 
+		assertEquals(true, sheet.isRowHidden(2)); 
+		assertEquals(true, sheet.isRowHidden(3)); 
+	}
+	
+	@Test
+	public void testZSS280Reapply2Filters(){
+		final String filename = "book/280-reapply.xlsx";
+		Book workbook = Util.loadBook(this,filename);
+		Sheet sheet = workbook.getSheet("cell-data");
+		
+		String selectedCell = "A1";
+		//enable auto filter
+		SheetOperationUtil.toggleAutoFilter(Ranges.range(sheet, selectedCell));
+
+		//apply the criteria on 1st field
+		Range filterRange = Ranges.range(sheet, selectedCell); ;
+		String[] criteria = {"1","2","3"};
+		filterRange.enableAutoFilter(1, AutoFilterOperation.VALUES, criteria, null, null);
+		
+		//2nd filter
+		criteria[0] = "a";
+		filterRange.enableAutoFilter(2, AutoFilterOperation.VALUES, criteria, null, null);
+	
+		//add more data
+		Ranges.range(sheet, "A13").setCellEditText("1");
+		Ranges.range(sheet, "A14").setCellEditText("2");
+		Ranges.range(sheet, "A15").setCellEditText("3");
+		Ranges.range(sheet, "A16").setCellEditText("4");
+		Ranges.range(sheet, "B13").setCellEditText("a");
+		Ranges.range(sheet, "B14").setCellEditText("a");
+		Ranges.range(sheet, "B15").setCellEditText("b");
+		Ranges.range(sheet, "B16").setCellEditText("b");
+		//re-apply the same criteria
+		filterRange.applyAutoFilter();
+		assertEquals(false, sheet.isRowHidden(12)); //1
+		assertEquals(false, sheet.isRowHidden(13)); //2
+		assertEquals(true, sheet.isRowHidden(14)); //3
+		assertEquals(true, sheet.isRowHidden(15)); //4
+	}
+
+	@Test 
+	public void testZSS280SelectBlankReapply(){
+		final String filename = "book/280-reapply.xlsx";
+		Book workbook = Util.loadBook(this,filename);
+		Sheet sheet = workbook.getSheet("cell-data");
+		
+		String selectedCell = "A1";
+		//enable auto filter
+		SheetOperationUtil.toggleAutoFilter(Ranges.range(sheet, selectedCell));
+		
+		//apply the criteria on 1st field
+		Range filterRange = Ranges.range(sheet, selectedCell); ;
+		String[] criteria = {"1", "2", "3"};
+		filterRange.enableAutoFilter(1, AutoFilterOperation.VALUES, criteria, null, null);
+		assertEquals(false, sheet.isRowHidden(1)); //1
+		assertEquals(false, sheet.isRowHidden(2)); //2
+		assertEquals(false, sheet.isRowHidden(3)); //3
+		assertEquals(true, sheet.isRowHidden(4)); //4
+		Ranges.range(sheet, "A13").setCellEditText("1");
+		Ranges.range(sheet, "A14").setCellEditText("2");
+		Ranges.range(sheet, "A15").setCellEditText("3");
+		Ranges.range(sheet, "A16").setCellEditText("4");
+		
+		//select a blank cell and re-apply
+		Ranges.range(sheet, "A50").applyAutoFilter();
+		
+		assertEquals(false, sheet.isRowHidden(12)); //1
+		assertEquals(false, sheet.isRowHidden(13)); //2
+		assertEquals(false, sheet.isRowHidden(14)); //3
+		assertEquals(true, sheet.isRowHidden(15)); //4
+	}
+	
+	@Test
+	public void testZSS280EnableDisable(){
+		final String filename = "book/280-reapply.xlsx";
+		Book workbook = Util.loadBook(this,filename);
+		Sheet sheet = workbook.getSheet("cell-data");
+		
+		String selectedCell = "A1";
+		//enable auto filter
+		SheetOperationUtil.toggleAutoFilter(Ranges.range(sheet, selectedCell));
+
+		//apply the criteria on 1st field
+		Range filterRange = Ranges.range(sheet, selectedCell); ;
+		String[] criteria = {"1"};
+		filterRange.enableAutoFilter(1, AutoFilterOperation.VALUES, criteria, null, null);
+		assertEquals(false, sheet.isRowHidden(1)); //1
+		assertEquals(true, sheet.isRowHidden(2)); //2
+		assertEquals(true, sheet.isRowHidden(3)); //3
+		assertEquals(true, sheet.isRowHidden(4)); //4
+		
+		SheetOperationUtil.toggleAutoFilter(Ranges.range(sheet, selectedCell));
+		assertEquals(false, sheet.isRowHidden(1)); //1
+		assertEquals(false, sheet.isRowHidden(2)); //2
+		assertEquals(false, sheet.isRowHidden(3)); //3
+		assertEquals(false, sheet.isRowHidden(4)); //4
+	}
+	
+	@Test
+	public void testZSS280Apply2Filters(){
+		final String filename = "book/280-reapply.xlsx";
+		Book workbook = Util.loadBook(this,filename);
+		Sheet sheet = workbook.getSheet("cell-data");
+		
+		String selectedCell = "A1";
+		//enable auto filter
+		SheetOperationUtil.toggleAutoFilter(Ranges.range(sheet, selectedCell));
+
+		//apply the criteria on 1st field
+		Range filterRange = Ranges.range(sheet, selectedCell); ;
+		String[] criteria = {"1","2","3"};
+		filterRange.enableAutoFilter(1, AutoFilterOperation.VALUES, criteria, null, null);
+		assertEquals(false, sheet.isRowHidden(1)); //1
+		assertEquals(false, sheet.isRowHidden(2)); //2
+		assertEquals(false, sheet.isRowHidden(3)); //3
+		assertEquals(true, sheet.isRowHidden(4)); //4
+		
+		//2nd filter
+		criteria[0] = "a";
+		filterRange.enableAutoFilter(2, AutoFilterOperation.VALUES, criteria, null, null);
+		assertEquals(false, sheet.isRowHidden(1)); //1
+		assertEquals(true, sheet.isRowHidden(2)); //2
+		assertEquals(true, sheet.isRowHidden(3)); //3
+		assertEquals(true, sheet.isRowHidden(4)); //4
+	}
+	
+	@Test
+	public void testZSS280ChangeCriteria(){
+		final String filename = "book/280-reapply.xlsx";
+		Book workbook = Util.loadBook(this,filename);
+		Sheet sheet = workbook.getSheet("cell-data");
+		
+		String selectedCell = "A1";
+		//enable auto filter
+		SheetOperationUtil.toggleAutoFilter(Ranges.range(sheet, selectedCell));
+
+		//apply the criteria on 1st field
+		Range filterRange = Ranges.range(sheet, selectedCell); ;
+		String[] criteria = {"1","2","3"};
+		filterRange.enableAutoFilter(1, AutoFilterOperation.VALUES, criteria, null, null);
+		assertEquals(false, sheet.isRowHidden(1)); //1
+		assertEquals(false, sheet.isRowHidden(2)); //2
+		assertEquals(false, sheet.isRowHidden(3)); //3
+		assertEquals(true, sheet.isRowHidden(4)); //4
+		
+		//2nd filter
+		String[] criteria2 = {"1"};
+		filterRange.enableAutoFilter(1, AutoFilterOperation.VALUES, criteria2, null, null);
+		assertEquals(false, sheet.isRowHidden(1)); //1
+		assertEquals(true, sheet.isRowHidden(2)); //2
+		assertEquals(true, sheet.isRowHidden(3)); //3
+		assertEquals(true, sheet.isRowHidden(4)); //4
+	}
+		
+		
 	@Ignore("ZSS-271")
 	@Test
 	public void testZSS271() throws IOException {

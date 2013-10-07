@@ -2271,7 +2271,14 @@ public class XRangeImpl implements XRange {
 		return new CellRangeAddress(minr, maxr, minc, maxc);
 	}
 	
-	//given a cell return the maximum range
+	/**
+	 * Search adjacent cells and return a range with non-blank cells based on a given cell.
+	 * It searches row by row to find minimal and maximal non-blank columns. 
+	 * @param sheet target searching sheet
+	 * @param row starting cell's row index
+	 * @param col starting cell's column index
+	 * @return
+	 */
 	private CellRangeAddress getCurrentRegion(XSheet sheet, int row, int col) {
 		int minNonBlankColumn = col;
 		int maxNonBlankColumn = col;
@@ -2497,56 +2504,62 @@ public class XRangeImpl implements XRange {
 		}
 	}
 	
+	/**
+	 * Reapply filters with their existing criteria. It also re-define filtering
+	 * range based on original one. If all blanks cells are found
+	 * after finding, it just disables auto filter (Reference Excel's behavior). 
+	 */
 	@Override
 	public void applyFilter() {
 		synchronized (_sheet) {
-			AutoFilter af = _sheet.getAutoFilter();
-			if (af == null) { //no AutoFilter to apply 
+			//ZSS-280
+			AutoFilter oldFilter = _sheet.getAutoFilter();
+			
+			if (!_sheet.isAutoFilterMode()) { //no criteria is applied
 				return;
 			}
-			final CellRangeAddress affectedArea = af.getRangeAddress();
-			final int row1 = affectedArea.getFirstRow();
-			final int col1 = affectedArea.getFirstColumn(); 
-			final int row = row1 + 1;
-			final int row2 = affectedArea.getLastRow();
-			final int col2 = affectedArea.getLastColumn();
-			
-			final Set<Ref> all = new HashSet<Ref>();
-			for (int r = row; r <= row2; ++r) {
-				boolean hidden = false;
-				final List<FilterColumn> fcs = af.getFilterColumns();
-				if (fcs == null)
-					return;
-				for(FilterColumn fc : fcs) {
-					if (shallHide(fc, r, col1)) {
-						hidden = true;
-						break;
-					}
-				}
-				if (hidden) { //to be hidden
-					final Row rowobj = _sheet.getRow(r);
-					if (rowobj == null || !rowobj.getZeroHeight()) { //a non-hidden row
-						new XRangeImpl(r, col1, _sheet, _sheet).getRows().setHidden(true);
-					}
-				} else { //to be shown
-					final Row rowobj = _sheet.getRow(r);
-					if (rowobj != null && rowobj.getZeroHeight()) { //a hidden row
-						final int left = rowobj.getFirstCellNum();
-						final int right = rowobj.getLastCellNum() - 1;
-						final XRangeImpl rng = (XRangeImpl) new XRangeImpl(r, left, r, right, _sheet, _sheet); 
-						all.addAll(rng.getRefs());
-						rng.getRows().setHidden(false); //unhide
-					}
+			//copy filtering criteria
+			int firstRow = oldFilter.getRangeAddress().getFirstRow(); //first row is header
+			int firstColumn = oldFilter.getRangeAddress().getFirstColumn();
+			//backup column data because getting from removed auto filter will cause XmlValueDisconnectedException
+			List<Object[]> originalFilteringColumns = new ArrayList<Object[]>();
+			if (oldFilter.getFilterColumns() != null){ //has applied some criteria
+				for (FilterColumn filterColumn : oldFilter.getFilterColumns()){
+					Object[] filterColumnData = new Object[4];
+					filterColumnData[0] = filterColumn.getColId()+1;
+					filterColumnData[1] = filterColumn.getCriteria1().toArray(new String[0]);
+					filterColumnData[2] = filterColumn.getOperator();
+					filterColumnData[3] = filterColumn.getCriteria2();
+					originalFilteringColumns.add(filterColumnData);
 				}
 			}
-			BookHelper.notifyCellChanges(_sheet.getBook(), all); //unhidden row must reevaluate
 			
-			//update button
-			final XRangeImpl buttonChange = (XRangeImpl) XRanges.range(_sheet, row1, col1, row1, col2);
-			BookHelper.notifyBtnChanges(new HashSet<Ref>(buttonChange.getRefs()));
+			autoFilter(); //disable existing filter
+			
+			//re-define filtering range 
+			CellRangeAddress filteringRange = getCurrentRegion(_sheet, firstRow, firstColumn);
+			if (filteringRange == null){ //Don't enable auto filter if there are all blank cells
+				return;
+			}else{
+				//enable auto filter
+				_sheet.setAutoFilter(filteringRange);
+				BookHelper.notifyAutoFilterChange(getRefs().iterator().next(),true);
+
+				//apply original criteria
+				for (int nCol = 0 ; nCol < originalFilteringColumns.size(); nCol ++){
+					Object[] oldFilterColumn =  originalFilteringColumns.get(nCol);
+					autoFilter((Integer)oldFilterColumn[0], oldFilterColumn[1], (Integer)oldFilterColumn[2], oldFilterColumn[3], null);
+				}
+			}
 		}
 	}
 
+	/**
+	 * Add a filter with criteria and apply to the column.
+	 * Not supported for Excel 2003 format.
+	 * @param field n-th column of all filtering columns, 1-based, e.g. 2nd column is 2 
+	 * @param criteria1 string array of selected data, e.g. ["a", "d", "e"]
+	 */
 	@Override
 	public AutoFilter autoFilter(int field, Object criteria1, int filterOp, Object criteria2, Boolean visibleDropDown) {
 		//we didn't support autofilter in 2003 since 3.0.0
