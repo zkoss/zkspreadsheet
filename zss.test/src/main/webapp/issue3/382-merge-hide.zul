@@ -1,15 +1,58 @@
 <zk>
 	<window width="100%" height="100%">
-	<label multiline="true">
-1.merge cells in a row (e.g. A5:C5) (or D1:G1 )
-2.select two or more columns and the first column has overlap a merged cell (e.g. A:B)(or D:E)
-3.hide these columns
-4.resize column (e.g. B)(or E) to unhide one column by mouse (not by context menu)
-4.1.the cells' size will be chaos until unhide all columns
-	</label>
-		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
+		<label multiline="true">
+		1. resize column C
+		2. merge B3:E3
+		3. select column B and hide such column
+		  * the cells' size will be chaos until unhide column B
+		
+		Note that if you input some text into A3, the text will be disappear after hide and also reproduce issue ZSS-330. 
+		</label>
+		<hlayout  width="100%">
+			<button label="reproduce">
+				<attribute name="onClick"><![CDATA[
+					process(ss.getBook().getSheetAt(0));
+					process(ss.getBook().getSheetAt(1));
+					process(ss.getBook().getSheetAt(2));
+				]]></attribute>
+			</button>
+			<button label="unhide" onClick='unhide(ss.getSelectedSheet());' />
+		</hlayout>
+		
+		<spreadsheet id="ss" src="/issue3/book/382-merge-hide.xlsx" width="1500px" vflex="true"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
+		
+		<zscript><![CDATA[
+			public void process(Sheet sheet) {
+				// 1st block
+				Ranges.range(sheet, "C").toColumnRange().setColumnWidth(150);
+				Ranges.range(sheet, "B3:E5").merge(false);
+				Ranges.range(sheet, "B").toColumnRange().setHidden(true);
+				Ranges.range(sheet, "3").toRowRange().setHidden(true);
+				// 2rd block
+				Ranges.range(sheet, "M").toColumnRange().setColumnWidth(150);
+				Ranges.range(sheet, "L52:O54").merge(false);
+				Ranges.range(sheet, "L").toColumnRange().setHidden(true);
+				Ranges.range(sheet, "52").toRowRange().setHidden(true);
+			}
+			public void unhide(Sheet sheet) {
+				Ranges.range(sheet, "A:Z").toColumnRange().setHidden(false);				
+				Ranges.range(sheet, "1:100").toRowRange().setHidden(false);				
+			}
+			Ranges.range(ss.getBook().getSheetAt(2)).setFreezePanel(3, 3);
+		]]></zscript>
+		
+		<script defer="true"><![CDATA[
+			(function() {
+				window.debug = {};
+				window.debug.ss = zk.Widget.$('$ss');
+				window.debug.ssc = debug.ss.sheetCtrl;
+				window.debug.dp = debug.ssc.dp;
+				window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
+			})();
+		]]></script>
+		
 	</window>
 </zk>

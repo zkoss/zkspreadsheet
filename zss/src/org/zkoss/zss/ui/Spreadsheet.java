@@ -3996,13 +3996,21 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			cellheight = height;
 
 			if (height <= 0) {
+				
+				// ZSS-330, ZSS-382: using "height: 0" and don't use "display: none", latter one cause merge cell to chaos  
+				sb.append(name).append(" .zsh").append(cid).append("{");
+				sb.append("height:0px;");
+				sb.append("}");
 
-				sb.append(name).append(" .zsh").append(cid).append("{\n");
-				sb.append("display:none;");
+				sb.append(name).append(" .zshi").append(cid).append("{");
+				sb.append("height:0px;");
+				sb.append("border-bottom-width:0px");
 				sb.append("}");
 
 				sb.append(name).append(" .zslh").append(cid).append("{");
-				sb.append("display:none;");
+				sb.append("height:0px;");
+				sb.append("line-height:0px;");
+				sb.append("border-bottom-width:0px");
 				sb.append("}");
 
 			} else {
@@ -4012,11 +4020,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 				sb.append(name).append(" .zshi").append(cid).append("{");
 				sb.append("height:").append(cellheight).append("px;");
+				sb.append("border-bottom-width:1px");
 				sb.append("}");
 
 				sb.append(name).append(" .zslh").append(cid).append("{");
 				sb.append("height:").append(height).append("px;");
 				sb.append("line-height:").append(height).append("px;");
+				sb.append("border-bottom-width:1px");
 				sb.append("}");
 
 			}
@@ -4078,6 +4088,8 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				sb.append(name).append(" .zsmerge").append(block.getId()).append("{");
 				sb.append("width:").append(cellwidth).append("px;");
 				sb.append("height:").append(cellheight).append("px;");
+				sb.append("display:inline-block;"); // ZSS-330, ZSS-382:  the left-top cell must display
+				sb.append("border-bottom-width: 1px;"); // re-apply bottom border for grid line; Or grid line will be missed if row was hidden
 				sb.append("}");
 
 				sb.append(name).append(" .zsmerge").append(block.getId());

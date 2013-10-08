@@ -1977,9 +1977,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			}
 			cellwidth = w;
 
-			if (w < 0)
+			if (w <= 0) 
 				zcss.setRule(name+" .zsmerge"+range.id,"display","none",true, cssId);
 			else {
+				// ZSS-330, ZSS-382: when column was hidden, the left-top cell of merge is also hidden by column style.  
+				// But, the left-top cell must display, its position and size should be adjusted automatically
+				zcss.setRule(name+" .zsmerge"+range.id,"display","inline-block",true, cssId);
 				zcss.setRule(name+" .zsmerge"+range.id,"width", jq.px0(cellwidth), true, cssId);
 				zcss.setRule(name+" .zsmerge"+range.id+" .zscelltxt","width", jq.px0(celltextwidth), true, cssId);
 				if (fixpadding)
@@ -2132,12 +2135,14 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			createbefor = true;
 
 		if (height <= 0 || hidden) {
-			zcss.setRule(name + " .zslh" + zsh, "display", "none", createbefor, cssId);
-			zcss.setRule(name + " .zsh" + zsh, "display", "none", createbefor, cssId);
+			// ZSS-330, ZSS-382: using "height: 0" and don't use "display: none", latter one cause merge cell to chaos  
+			zcss.setRule(name + " .zsh" + zsh, "height", "0px", createbefor, cssId);
+			zcss.setRule(name + " .zshi" + zsh, ["height", "border-bottom-width"], ["0px", "0px"], createbefor, cssId);//both zscell and zscelltxt
+			zcss.setRule(name + " .zslh" + zsh, ["height", "line-height", "border-bottom-width"], ["0px", "0px", "0px"], createbefor, cssId); // header has 1px border
 		} else {
-			zcss.setRule(name + " .zsh" + zsh, ["display", "height"],["", height + "px"], createbefor, cssId);
-			zcss.setRule(name + " .zshi" + zsh, "height", cellheight + "px", createbefor, cssId);//both zscell and zscelltxt
-			zcss.setRule(name + " .zslh" + zsh, ["display", "height", "line-height"], ["", height + "px", height + "px"], createbefor, cssId);
+			zcss.setRule(name + " .zsh" + zsh, "height", height + "px", createbefor, cssId);
+			zcss.setRule(name + " .zshi" + zsh, ["height", "border-bottom-width"], [cellheight + "px", "1px"], createbefor, cssId);//both zscell and zscelltxt
+			zcss.setRule(name + " .zslh" + zsh, ["height", "line-height", "border-bottom-width"], [height + "px", height + "px", "1px"], createbefor, cssId);
 		}
 		
 		//set merged cell height;
@@ -2153,11 +2158,15 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			celltextheight = h;
 			cellheight = zk.ie || zk.safari || zk.opera ? celltextheight : h;
 
-			if (h < 0)
+			if (h <= 0) {
 				zcss.setRule(name+" .zsmerge"+range.id,"display","none",true, cssId);
-			else {
+			} else {
+				// ZSS-330, ZSS-382: when row was hidden, the left-top cell of merge is also hidden by row style.  
+				// But, the left-top cell must display, its position and size should be adjusted automatically
+				zcss.setRule(name+" .zsmerge"+range.id,"display","inline-block",true, cssId);
 				zcss.setRule(name+" .zsmerge"+range.id,"height", jq.px0(cellheight), true, cssId);
 				zcss.setRule(name+" .zsmerge"+range.id+" .zscelltxt","height", jq.px0(celltextheight),true, cssId);
+				zcss.setRule(name+" .zsmerge"+range.id,"border-bottom-width","1px",true, cssId); // re-apply bottom border for grid line; Or grid line will be missed if row was hidden  
 			}
 		}
 		

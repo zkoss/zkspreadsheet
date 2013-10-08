@@ -56,6 +56,8 @@ ZK Spreadsheet 3.0.0
   ZSS-231 get wrong row,column in onCellClick if I click on merged cells
   ZSS-222 AutoFitler doesn't work correctly when selecting have some empty cell
   ZSS-427 occur exception when exporting specific xlsx file to PDF
+  ZSS-330 hide merged cell's left-top column/row will cause text disappear
+  ZSS-382 If hide columns and overlap partial merged cell, cells' alignment will be chaos
   
 ** Upgrade Notes
 
