@@ -1,0 +1,47 @@
+<?page title="ZSS" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window title="ZSS Selection Events" border="normal" width="100%"
+		height="100%">
+		<label multiline="true">
+		1.select on C13 (Header2) then click on applyFilter button
+		
+		Expected:
+		filter on A1 should be cleared and C13 has filter now.
+		Actual:
+		filters displayed a A1 (Header1), C13(Header2) 
+		
+		click clear filter button, A1 filter still exists.
+		if you click on it, you get error
+		
+		()excel only allow one filter)
+		</label>
+		<zscript><![CDATA[
+			void applyFitler(){
+				
+				clearFilter(); //Notice!!
+				Sheet sheet = ss.getSelectedSheet();
+				AreaRef r = ss.getSelection();
+				System.out.println("apply fitler on "+r.asString());
+				Ranges.range(sheet,r.getRow(),r.getColumn(),r.getLastRow(),r.getLastColumn()).enableAutoFilter(true);
+				
+			}
+			
+			void clearFilter(){
+				Sheet sheet = ss.getSelectedSheet();
+				if(sheet.isAutoFilterEnabled()){
+					//toggle clear
+					Ranges.range(sheet).enableAutoFilter(false);
+				}
+			}
+		]]>
+		</zscript>
+		<hlayout>
+			<button label="applyFilter" onClick="applyFitler()"/>
+			<button label="clearFitler" onClick="clearFilter()"/>
+		</hlayout>
+		<spreadsheet id="ss" width="800px" height="600px" maxrows="35" onCellSelection="/*for bug of cell selection*/"
+		showToolbar="true"
+			maxcolumns="10" src="/issue3/221-autoFilter.xlsx">
+		</spreadsheet>
+	</window>
+</zk>
