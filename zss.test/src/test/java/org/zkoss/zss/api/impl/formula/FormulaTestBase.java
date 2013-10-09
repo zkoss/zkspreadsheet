@@ -1,4 +1,4 @@
-package org.zkoss.zss.api.impl;
+package org.zkoss.zss.api.impl.formula;
 
 import static org.junit.Assert.assertEquals;
 
@@ -1249,7 +1249,7 @@ public class FormulaTestBase {
 	}
 
 	
-	protected void testBIOMDIST(Book book) {
+	protected void testBINOMDIST(Book book) {
 
 		Sheet sheet = book.getSheet("formula-statistical");
 
@@ -1386,274 +1386,241 @@ public class FormulaTestBase {
 
 	
 	protected void testMEDIAN(Book book) {
-
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("3", Ranges.range(sheet, "B114").getCellFormatText());
 	}
 
 	
 	protected void testMIN(Book book) {
-
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("2", Ranges.range(sheet, "B116").getCellFormatText());
 	}
 
 	
 	protected void testMINA(Book book) {
-
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("0", Ranges.range(sheet, "B118").getCellFormatText());
 	}
 
 	
 	protected void testMODE(Book book) {
-
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("4", Ranges.range(sheet, "B121").getCellFormatText());
 	}
 
 	
 	protected void testNORMDIST(Book book) {
-
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("0.91", Ranges.range(sheet, "B125").getCellFormatText());
 	}
 
 	
 	protected void testPOISSON(Book book) {
-
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("0.12", Ranges.range(sheet, "B142").getCellFormatText());
 	}
 
 	
 	protected void testRANK(Book book) {
-
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("3", Ranges.range(sheet, "B149").getCellFormatText());
 	}
 
 	
 	protected void testSKEW(Book book) {
-
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("0.36", Ranges.range(sheet, "B154").getCellFormatText());
 	}
 
 	
 	protected void testSLOPE(Book book) {
-
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("0.31", Ranges.range(sheet, "B156").getCellFormatText());
 	}
 
 	
 	protected void testSMALL(Book book) {
-
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("4", Ranges.range(sheet, "B159").getCellFormatText());
 	}
 
 	
 	protected void testSTDEV(Book book) {
-
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("27.46", Ranges.range(sheet, "B164").getCellFormatText());
 	}
 
 	
 	protected void testVAR(Book book) {
-
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("754.27", Ranges.range(sheet, "B189").getCellFormatText());
 	}
 
 	
 	protected void testVARP(Book book) {
-
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("678.84", Ranges.range(sheet, "B193").getCellFormatText());
 	}
 
 	
 	protected void testWEIBULL(Book book) {
-
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("0.93", Ranges.range(sheet, "B197").getCellFormatText());
 	}
 
+	protected void testIMCONJUGATE(Book book) {
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("3-4i", Ranges.range(sheet, "B45").getCellFormatText());
+	}
+	
 	
 	protected void testBESSELI(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("0.98", Ranges.range(sheet, "B3").getCellFormatText());
 	}
 
 	
 	protected void testBESSELJ(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("0.33", Ranges.range(sheet, "B5").getCellFormatText());
 	}
 
 	
 	protected void testBESSELK(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("0.28", Ranges.range(sheet, "B7").getCellFormatText());
 	}
 
 	
 	protected void testBESSELY(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("0.15", Ranges.range(sheet, "B9").getCellFormatText());
 	}
 
 	
 	protected void testBIN2DEC(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("100", Ranges.range(sheet, "B11").getCellFormatText());
 	}
 
 	
 	protected void testBIN2HEX(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("00FB", Ranges.range(sheet, "B13").getCellFormatText());
 	}
 
 	
 	protected void testBIN2OCT(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("011", Ranges.range(sheet, "B15").getCellFormatText());
 	}
 
 	
 	protected void testDEC2BIN(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("1001", Ranges.range(sheet, "B19").getCellFormatText());
 	}
 
 	
 	protected void testDEC2HEX(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("0064", Ranges.range(sheet, "B21").getCellFormatText());
 	}
 
 	
 	protected void testDEC2OCT(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("072", Ranges.range(sheet, "B23").getCellFormatText());
 	}
 
 	
 	protected void testDELTA(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("0", Ranges.range(sheet, "B25").getCellFormatText());
 	}
 
 	
 	protected void testERF(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("0.71", Ranges.range(sheet, "B27").getCellFormatText());
 	}
 
 	
 	protected void testERFC(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("0.16", Ranges.range(sheet, "B29").getCellFormatText());
 	}
 
 	
 	protected void testGESTEP(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("1", Ranges.range(sheet, "B31").getCellFormatText());
 	}
 
 	
 	protected void testHEX2BIN(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("00001111", Ranges.range(sheet, "B33").getCellFormatText());
 	}
 
 	
 	protected void testHEX2DEC(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("165", Ranges.range(sheet, "B35").getCellFormatText());
 	}
 
 	
 	protected void testHEX2OCT(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("017", Ranges.range(sheet, "B37").getCellFormatText());
 	}
 
 	
 	protected void testIMABS(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("13", Ranges.range(sheet, "B39").getCellFormatText());
 	}
 
 	
 	protected void testIMAGINARY(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("4", Ranges.range(sheet, "B41").getCellFormatText());
 	}
 
 	
 	protected void testIMARGUMENT(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		assertEquals("0.93", Ranges.range(sheet, "B43").getCellFormatText());
 	}
-
 	
-	protected void testIMCOS(Book book) {
+	protected void testIMDIV(Book book) {
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("5+12i", Ranges.range(sheet, "B49").getCellFormatText());
+	}
+	
+	protected void testIMEXP(Book book) {
+		Sheet sheet = book.getSheet("formula-engineering");
+		AssertUtil.assertComplexEquals("1.46869393991589+2.28735528717884i", Ranges.range(sheet, "B51").getCellFormatText());
+	}
 
+	protected void testIMCOS(Book book) {
 		Sheet sheet = book.getSheet("formula-engineering");
 		AssertUtil.assertComplexEquals("0.833730025131149-0.988897705762865i", Ranges.range(sheet, "B47").getCellFormatText());
 	}
 
 	
 	protected void testIMLN(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		AssertUtil.assertComplexEquals("1.6094379124341+0.927295218001612i", Ranges.range(sheet, "B53").getCellFormatText());
-
+	}
+	
+	protected void testIMPRODUCT(Book book) {
+		Sheet sheet = book.getSheet("formula-engineering");
+		assertEquals("27+11i", Ranges.range(sheet, "B61").getCellFormatText());
 	}
 
 	
 	protected void testIMSQRT(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		AssertUtil.assertComplexEquals("1.09868411346781+0.455089860562227i", Ranges.range(sheet, "B67").getCellFormatText());
 
@@ -1661,7 +1628,6 @@ public class FormulaTestBase {
 
 	
 	protected void testIMLOG10(Book book) {
-
 		Sheet sheet = book.getSheet("formula-engineering");
 		AssertUtil.assertComplexEquals("0.698970004336019+0.402719196273373i", Ranges.range(sheet, "B55").getCellFormatText());
 
@@ -1832,8 +1798,7 @@ public class FormulaTestBase {
 	
 	protected void test19900101IsNotWorkDayInExcel(Book book) {
 		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("0", Ranges.range(sheet, "B32").getCellData()
-				.getFormatText()); // =NETWORKDAYS(DATE(1900,1,1),DATE(1900,1,1))
+		assertEquals("0", Ranges.range(sheet, "B32").getCellData().getFormatText()); // =NETWORKDAYS(DATE(1900,1,1),DATE(1900,1,1))
 	}
 	
 	protected void testCOMPLEX(Book book) {
@@ -1851,8 +1816,7 @@ public class FormulaTestBase {
 	// different specification
 	protected void testStartDateEmpty(Book book) {
 		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("1", Ranges.range(sheet, "B29").getCellData()
-				.getFormatText()); // =NETWORKDAYS(B30,C30)
+		assertEquals("1", Ranges.range(sheet, "B29").getCellData().getFormatText()); // =NETWORKDAYS(B30,C30)
 		// B30 : blank
 		// C30 : 1990/1/2
 	}
@@ -1860,13 +1824,11 @@ public class FormulaTestBase {
 	// This should be check by human
 	
 	protected void testRANDBETWEEN(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-math");
 		assertEquals("88", Ranges.range(sheet, "B94").getCellData().getFormatText());
 	}
 	
 	// This should be check by human
-	
 	protected void testRAND(Book book) {
 		
 		Sheet sheet = book.getSheet("formula-math");
@@ -1964,35 +1926,28 @@ public class FormulaTestBase {
 
 	protected void testLOGEST(Book book) {
 		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("1.46", Ranges.range(sheet, "B73").getCellData()
-				.getFormatText());	
+		assertEquals("1.46", Ranges.range(sheet, "B73").getCellData().getFormatText());	
 	}
 	
 	protected void testMIRR(Book book) {
 		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("13%", Ranges.range(sheet, "B78").getCellData()
-				.getFormatText());	
+		assertEquals("13%", Ranges.range(sheet, "B78").getCellData().getFormatText());	
 	}
 	
 	// #NAME?
-	
 	protected void testISPMT(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("-64814.81", Ranges.range(sheet, "B70").getCellData()
-				.getFormatText());	
+		assertEquals("-64814.81", Ranges.range(sheet, "B70").getCellData().getFormatText());	
 	}
 	
 	protected void testVDB(Book book) {
 		Sheet sheet = book.getSheet("formula-financial");
-		assertEquals("1.32", Ranges.range(sheet, "B117").getCellData()
-				.getFormatText());	
+		assertEquals("1.32", Ranges.range(sheet, "B117").getCellData().getFormatText());	
 	}
 
 	protected void testTIMEVALUE(Book book) {
 		Sheet sheet = book.getSheet("formula-datetime");
-		assertEquals("0.1", Ranges.range(sheet, "B40").getCellData()
-				.getFormatText());
+		assertEquals("0.1", Ranges.range(sheet, "B40").getCellData().getFormatText());
 	}
 	
 	protected void testSERIESSUM(Book book) {
@@ -2000,16 +1955,13 @@ public class FormulaTestBase {
 		assertEquals("0.7071", Ranges.range(sheet, "B104").getCellData().getFormatText());
 	}
 
-	// FIXME
 	// #NAME?
-	
 	protected void testCELL(Book book) {
 		Sheet sheet = book.getSheet("formula-info");
 		assertEquals("48", Ranges.range(sheet, "B48").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testINFO(Book book) {
 		Sheet sheet = book.getSheet("formula-info");
 		assertEquals("12.0", Ranges.range(sheet, "B46").getCellFormatText());
@@ -2064,250 +2016,181 @@ public class FormulaTestBase {
 	}
 	
 	// #NAME?
-	
 	protected void testFORECAST(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("10.61", Ranges.range(sheet, "B67").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testNORMSDIST(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("0.91", Ranges.range(sheet, "B129").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testCRITBINOM(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("4", Ranges.range(sheet, "B53").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testINTERCEPT(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("0.05", Ranges.range(sheet, "B94").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testFISHERINV(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("0.75", Ranges.range(sheet, "B65").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testSTDEVA(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("27.46", Ranges.range(sheet, "B166").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testPERMUT(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("970200", Ranges.range(sheet, "B140").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testLOGINV(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("4.00", Ranges.range(sheet, "B106").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testLINEST(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("2", Ranges.range(sheet, "B103").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testFREQUENCY(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("1", Ranges.range(sheet, "B70").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testGROWTH(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("320196.72", Ranges.range(sheet, "B85").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testFISHER(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("0.97", Ranges.range(sheet, "B63").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testPERCENTRANK(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("0.33", Ranges.range(sheet, "B138").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testCORREL(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("0.9971", Ranges.range(sheet, "B37").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testPERCENTILE(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("1.9", Ranges.range(sheet, "B136").getCellFormatText());
 	}
 	
 	// #NAME?
 	
 	protected void testSTDEVPA(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("26.05", Ranges.range(sheet, "B170").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testAVERAGEIF(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("14000", Ranges.range(sheet, "B11").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testQUARTILE(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("3.5", Ranges.range(sheet, "B147").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testMORMINV(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("42.00", Ranges.range(sheet, "B127").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testNEGBINOMDIST(Book book) {
-		
 		Sheet sheet = book.getSheet("formula-statistical");
-
 		assertEquals("0.06", Ranges.range(sheet, "B123").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testCHITEST(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("0.000308", Ranges.range(sheet, "B27").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testBETADIST(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("0.69", Ranges.range(sheet, "B17").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testVARA(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("754.27", Ranges.range(sheet, "B191").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testPROB(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("0.1", Ranges.range(sheet, "B144").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testZTEST(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("0.09", Ranges.range(sheet, "B199").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testVARPA(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("678.84", Ranges.range(sheet, "B195").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testTTEST(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("0.20", Ranges.range(sheet, "B186").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testTREND(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("133953.33", Ranges.range(sheet, "B179").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testSTEYX(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("3.31", Ranges.range(sheet, "B172").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testFTEST(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("0.65", Ranges.range(sheet, "B73").getCellFormatText());
@@ -2319,70 +2202,60 @@ public class FormulaTestBase {
 	}
 	
 	// #NAME?
-	
 	protected void testCOVAR(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("5.2", Ranges.range(sheet, "B50").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testLOGNORMDIST(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("0.04", Ranges.range(sheet, "B108").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testNORMSINV(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("1.33", Ranges.range(sheet, "B131").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testSTANDARDIZE(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("1.33", Ranges.range(sheet, "B162").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testTRIMMEAN(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("3.78", Ranges.range(sheet, "B183").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testCONFIDENCE(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("0.69", Ranges.range(sheet, "B35").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testRSQ(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("0.061", Ranges.range(sheet, "B151").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testBETAINV(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("2", Ranges.range(sheet, "B19").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testAVERAGEIFS(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("87.5", Ranges.range(sheet, "B14").getCellFormatText());
 	}
 	
 	// #NAME?
-	
 	protected void testPEARSON(Book book) {
 		Sheet sheet = book.getSheet("formula-statistical");
 		assertEquals("0.70", Ranges.range(sheet, "B133").getCellFormatText());
