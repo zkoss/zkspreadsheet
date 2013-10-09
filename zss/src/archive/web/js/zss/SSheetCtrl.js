@@ -636,8 +636,8 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 	},
 	_cmdCellUpdate: function (shtId, result) {
 		var type = result.type,
-			row = result.r,
-			col = result.c,
+			row = result.r, // be careful r does not always mean "row" in certain update type.
+			col = result.c, // for example, in type udcell, r means "right" and no c attribute. 
 			value = result.val,
 			server = result.server; //use editValue from server
 		switch(type){
