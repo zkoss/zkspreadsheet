@@ -1,0 +1,40 @@
+<zk>
+	<vbox width="600px" height="100%">
+		<label pre="true">
+		</label>
+		<hlayout>
+			<button label="build case" onClick="buildCase()"></button>
+			<button label="export" onClick="export();"></button>
+		</hlayout>
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx"  hflex="1" vflex="1"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			maxrows="150" maxcolumns="50"
+			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+		</spreadsheet>
+		
+		<zscript><![CDATA[//@DECLARATION
+		                  
+			public void buildCase(){
+				Range r = Ranges.range(ss.getSelectedSheet(),"A1");
+				r.setCellEditText("http://www.zkoss.org/test1");
+				r = Ranges.range(ss.getSelectedSheet(),"A1:C3");
+				r.merge(false);
+				r = Ranges.range(ss.getSelectedSheet(),"A4");
+				r.setCellEditText("http://www.zkoss.org/test2");
+				r.setRowHeight(100);
+				
+				r = Ranges.range(ss.getSelectedSheet(),"A14");
+				r.setCellEditText("http://www.zkoss.org/test3");
+			}
+
+			public void export() {
+				Exporter exporter = Exporters.getExporter();
+				java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+				exporter.export(ss.getBook(), os);
+				os.close();
+				org.zkoss.zul.Filedownload.save(os.toByteArray(),
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "exported.xlsx");
+			}
+		]]></zscript>
+	</vbox>
+</zk>

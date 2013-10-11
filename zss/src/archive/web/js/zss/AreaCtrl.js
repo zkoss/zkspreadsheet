@@ -159,30 +159,23 @@ zss.SelAreaCtrl = zk.$extends(zss.AreaCtrl, {
 			row = cellpos[0],
 			col = cellpos[1],
 			cell = sheet.getCell(row, col);
+		//ZSS-454 Cannot click on hyperlink in the merge cell.
+		if (cell && cell.hasOwnProperty('mert') && cell.hasOwnProperty('merl')) {
+			cell = sheet.getCell(cell.mert,cell.merl);
+		}
 		if (cell) {
-			var cx = cellpos[4], //x relative to cell
-				cy = cellpos[5], //y relative to cell
-				jqa = jq(cell.comp).find('a');
-			if (jqa) {
+			var jqa = jq(cell.comp).find('a');
+			if (jqa.length>0) {
 				var aelm = jqa[0];
-				if (aelm) {
-					var top = aelm.offsetTop,
-						left = aelm.offsetLeft,
-						apar = aelm.parentNode,
-						aparleft = apar.offsetLeft,
-						apartop = apar.offsetTop,
-						asameoffp = aelm.offsetParent == apar.offsetParent,
-						celm = cell.comp,
-						csameoffp = celm.offsetParent == apar.offsetParent,
-						xmin = (asameoffp ? left - aparleft : left) + (csameoffp ? aparleft - celm.offsetLeft : aparleft); //relative to cell
-						xmax = xmin + aelm.offsetWidth,
-						ymin = (asameoffp ? top - apartop : top) + (csameoffp ? apartop - celm.offsetTop : apartop); //relative to cell
-						ymax = ymin + aelm.offsetHeight;
-					if (xmin < cx && cx < xmax && ymin < cy && cy < ymax) {
-						jq(this.icomp).css('cursor', 'pointer');
-						this._setHyperlinkElment(aelm);
-						return;
-					}
+				var aoff = zk(aelm).revisedOffset();
+				var x1 = aoff[0],
+					y1 = aoff[1],
+					x2 = x1+aelm.offsetWidth,
+					y2 = y1+aelm.offsetHeight;
+				if (mx>=x1 && mx<=y2 && my>=y1 && my<=y2) {
+					jq(this.icomp).css('cursor', 'pointer');
+					this._setHyperlinkElment(aelm);
+					return;
 				}
 			}
 			this._resetHyperlink();
