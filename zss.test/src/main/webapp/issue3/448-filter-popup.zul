@@ -1,0 +1,45 @@
+<zk>
+	<window width="100%" height="100%">
+		<hlayout width="100%">
+			<label pre="true">
+Reproduces:			
+  1. open a empty file
+  2. freeze the first row
+  3. input some text at A1:A5
+  4. select A1 and apply filter by toolbar
+  5. scroll down few rows (2~3 rows)
+  6. click the filter button at A1 to show filter popup menu
+    the popup menu doesn't apper at correct position, it has been clipped.
+			</label>
+			<label pre="true">
+Additional test:			
+  1. switch to second sheet
+  2. freeze any row or column
+  3. click any button to show filter popup menu
+  4. check popup menu position
+			</label>
+		</hlayout>
+		<button label="freeze" onClick="Ranges.range(ss.getSelectedSheet()).setFreezePanel(ss.getSelection().getRow(), ss.getSelection().getColumn());" /> 
+		<spreadsheet id="ss" src="/issue3/book/448-filter-popup.xlsx"  width="1000px" vflex="true"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			maxrows="500" maxcolumns="50"
+			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+		</spreadsheet>
+		
+		<zscript><![CDATA[
+			Ranges.range(ss.getBook().getSheetAt(0)).setFreezePanel(1, 0);
+			Ranges.range(ss.getBook().getSheetAt(0), "A1").enableAutoFilter(true);
+			Ranges.range(ss.getBook().getSheetAt(1), "C10").enableAutoFilter(true);
+		]]></zscript>
+		
+		<script defer="true"><![CDATA[
+			(function() {
+				window.debug = {};
+				window.debug.ss = zk.Widget.$('$ss');
+				window.debug.ssc = debug.ss.sheetCtrl;
+				window.debug.dp = debug.ssc.dp;
+				window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
+			})();
+		]]></script>
+	</window>
+</zk>
