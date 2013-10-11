@@ -3,11 +3,9 @@
 		<label pre="true">
 		</label>
 		<hlayout>
-			<button label="build case" onClick="buildCase()"></button>
 			<button label="export" onClick="export();"></button>
 		</hlayout>
 		<spreadsheet id="ss" src="/issue3/book/blank.xlsx"  hflex="1" vflex="1"
-			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			maxrows="150" maxcolumns="50"
 			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
 		</spreadsheet>
@@ -35,6 +33,9 @@
 				org.zkoss.zul.Filedownload.save(os.toByteArray(),
 						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "exported.xlsx");
 			}
+		]]></zscript>
+		<zscript><![CDATA[
+		buildCase();
 		]]></zscript>
 	</vbox>
 </zk>

@@ -1,0 +1,43 @@
+<zk>
+	<vbox width="600px" height="100%">
+		<label pre="true">
+		</label>
+		<hlayout>
+			<label id="msg" value="no msg"></label>
+			
+		</hlayout>
+		
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx"  hflex="1" vflex="1"
+			maxrows="150" maxcolumns="50"
+			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true"
+			onCellClick='onCellClick("click",event)' onCellRightClick='onCellClick("right",event)'
+			onHeaderClick='onHeaderClick("click",event)' onHeaderRightClick='onHeaderClick("right",event)'>
+		</spreadsheet>
+		
+		<zscript><![CDATA[//@DECLARATION
+		                  
+			public void buildCase(){
+				Range r = Ranges.range(ss.getSelectedSheet(),"B2:C3");
+				r.merge(false);
+				r.setCellEditText("B2:C3");
+				
+				r = Ranges.range(ss.getSelectedSheet(),"D5:D8");
+				r.merge(false);
+				r.setCellEditText("D5:D8");
+			}
+		
+			public void onCellClick(String type,Event event){
+				org.zkoss.zss.ui.event.CellMouseEvent evt = (org.zkoss.zss.ui.event.CellMouseEvent) event;
+				msg.setValue("onCellClick "+type+" "+Ranges.getCellRefString(evt.getRow(),evt.getColumn())+":"+System.currentTimeMillis());
+			}
+			public void onHeaderClick(String type,Event event){
+				org.zkoss.zss.ui.event.HeaderMouseEvent evt = (org.zkoss.zss.ui.event.HeaderMouseEvent) event;
+				msg.setValue("onHeaderClick "+type+" "+evt.getType()+" "+evt.getIndex()+":"+System.currentTimeMillis());
+			}
+			
+		]]></zscript>
+		<zscript><![CDATA[
+		buildCase();
+		]]></zscript>
+	</vbox>
+</zk>

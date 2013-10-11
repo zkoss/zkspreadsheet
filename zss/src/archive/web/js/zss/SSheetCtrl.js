@@ -1112,6 +1112,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			
 			row = cellpos[0];
 			col = cellpos[1];
+			var cell = this.getCell(row, col);
+			if (cell != null && cell.merr) {
+				row = cell.mert;
+				col = cell.merl;
+			}
+			
 			if (this._shiftMouseSelection(evt, row, col, zss.SEL.CELL))
 				return;			
 			sheet.dp.moveFocus(row, col, false, true, false, true);
@@ -1169,6 +1175,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
 			row = cellpos[0];
 			col = cellpos[1];
+			var cell = this.getCell(row, col);
+			if (cell != null && cell.merr) {
+				row = cell.mert;
+				col = cell.merl;
+			}
 			if (this._shiftMouseSelection(evt, row, col, zss.SEL.CELL))
 				return;			
 			this._lastmdstr = "c";
@@ -1202,6 +1213,11 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			var cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
 			row = cellpos[0];
 			col = cellpos[1];
+			var cell = this.getCell(row, col);
+			if (cell != null && cell.merr) {
+				row = cell.mert;
+				col = cell.merl;
+			}
 			if (this._shiftMouseSelection(evt, row, col, zss.SEL.CELL))
 				return;			
 			this._lastmdstr = "c";
@@ -1476,6 +1492,12 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				cellpos = zss.SSheetCtrl._calCellPos(sheet, mx, my, false);
 			row = cellpos[0];
 			col = cellpos[1];
+			var cell = this.getCell(row, col);
+			if (cell != null && cell.merr) {
+				row = cell.mert;
+				col = cell.merl;
+			}
+			
 			mdstr = "c_" + row + "_" + col;
 
 			if (this._lastmdstr == mdstr) {
@@ -1532,12 +1554,17 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 				cx = cellpos[4]; //x relative to cell 
 			row = cellpos[0];
 			col = cellpos[1];
+			var cell = this.getCell(row, col);
+			if (cell != null && cell.merr) {
+				row = cell.mert;
+				col = cell.merl;
+			}
 			
 			//try hyperlink, ZSS-21: Right click on hyperlink should not jump to the link
 			if (type == 'lc' && this.selArea) {
 				this.selArea._tryAndEndHyperlink(row, col, evt);
 			}
-			mdstr = "c_" + row + "_" + col;
+			mdstr = "c_" + row + "_" + col;			
 			if (this._lastmdstr == mdstr) {
 				if (type == 'rc') {
 					this.showCellContextMenu(mx, my);
