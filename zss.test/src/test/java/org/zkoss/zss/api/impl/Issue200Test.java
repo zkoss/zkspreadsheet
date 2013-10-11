@@ -1565,4 +1565,46 @@ public class Issue200Test {
 		Assert.assertTrue(sheet.isColumnHidden(4));
 		Assert.assertFalse(sheet.isColumnHidden(5));
 	}
+	
+	@Ignore
+	@Test
+	public void testZSS379() throws Exception {
+		Book book = Util.loadBook(this,"book/blank.xlsx");
+		Range r = Ranges.range(book.getSheetAt(0),"A1");
+		
+		r.setCellEditText("0.7583333333333333");
+		CellOperationUtil.applyDataFormat(r, "h:mm AM/PM");
+
+		// TAIWAN Locale
+		Setup.pushZssContextLocale(Locale.TAIWAN);
+		try{
+			Assert.assertEquals("6:12 \u4E0B\u5348", r.getCellFormatText());
+		}finally{
+			Setup.popZssContextLocale();
+		}
+		
+		// US Locale
+		Setup.pushZssContextLocale(Locale.US);
+		try{
+			Assert.assertEquals("6:12 PM", r.getCellFormatText());
+		}finally{
+			Setup.popZssContextLocale();
+		}
+		
+		// KOERAN
+		Setup.pushZssContextLocale(Locale.KOREAN);
+		try{
+			Assert.assertEquals("6:12 \uC624\uD6C4", r.getCellFormatText());
+		}finally{
+			Setup.popZssContextLocale();
+		}
+		
+		// Japanese
+		Setup.pushZssContextLocale(Locale.JAPANESE);
+		try{
+			Assert.assertEquals("6:12 \u5348\u5F8C", r.getCellFormatText());
+		}finally{
+			Setup.popZssContextLocale();
+		}
+	}
 }
