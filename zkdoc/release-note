@@ -51,6 +51,7 @@ ZK Spreadsheet 3.0.0
   ZSS-280 reapply autofilter doesn't filter newly added the data
   ZSS-299 after applying 2nd filter, the second one should only contain non-filtered data for selection
   ZSS-450 After scrolling down to bottom of sheet quickly, insert a row on a row with data and delete a row, the last row's cells will have data and same as selected row
+  ZSS-456 hasMergedCell API doesn't work correctly
   
 ** Upgrade Notes
 

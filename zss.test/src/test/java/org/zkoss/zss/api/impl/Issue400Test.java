@@ -980,4 +980,20 @@ public class Issue400Test {
 			fail("empty hyperlink shouldn't throw an exception.");
 		}
 	}
+	
+	@Test
+	public void testZSS456(){
+		Book workbook = Util.loadBook(Issue400Test.class, "book/blank.xlsx");
+		Sheet sheet = workbook.getSheetAt(0);
+		Range target1 = Ranges.range(sheet, "B2:C3");
+		Range target2 = Ranges.range(sheet, "A1:D4");
+		target1.merge(false);
+		Assert.assertTrue(target1.isMergedCell());
+		Assert.assertFalse(target2.isMergedCell());
+		Assert.assertTrue(target2.hasMergedCell());
+		target1.unmerge();
+		Assert.assertFalse(target1.isMergedCell());
+		Assert.assertFalse(target2.hasMergedCell());
+		Assert.assertFalse(target2.hasMergedCell());
+	}
 }

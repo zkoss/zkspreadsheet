@@ -309,9 +309,14 @@ public interface Range {
 	public void applyBorders(ApplyBorderType applyType,BorderType borderType,String htmlColor);
 
 	/**
-	 * @return true if any merged cell inside this range
+	 * @return true if any merged cell inside (fully contains or overlaps) this range
 	 */
 	public boolean hasMergedCell();
+	
+	/**
+	 * @return true if entire range is a merged cell.
+	 */
+	public boolean isMergedCell();
 	
 	/**
 	 * Merges the range

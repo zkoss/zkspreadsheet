@@ -80,15 +80,15 @@ public class RangeImpl implements Range{
 		this._syncLevel = syncLevel;
 	}
 	
-	private SharedContext sharedCtx;
+	private SharedContext _sharedCtx;
 	
 	public RangeImpl(XRange range,Sheet sheet) {
 		this._range = range;
-		sharedCtx = new SharedContext(sheet);
+		_sharedCtx = new SharedContext(sheet);
 	}
 	private RangeImpl(XRange range,SharedContext ctx) {
 		this._range = range;
-		sharedCtx = ctx;
+		_sharedCtx = ctx;
 	}
 	
 	
@@ -110,60 +110,57 @@ public class RangeImpl implements Range{
 		return _range;
 	}
 	
-	static class SharedContext{
-		Sheet sheet;
-		List<MergeArea> mergeAreas;
+	
+	
+	private List<MergeArea> getMergeAreas(){
+		XSheet xsheet = ((SheetImpl)_sharedCtx.getSheet()).getNative();
+		int sz = xsheet.getNumMergedRegions();
+		List<MergeArea> mergeAreas = new ArrayList<MergeArea>(sz);
+		for(int j = sz - 1; j >= 0; --j) {
+			final CellRangeAddress addr = xsheet.getMergedRegion(j);
+			mergeAreas.add(new MergeArea(addr.getFirstRow(),addr.getFirstColumn(), addr.getLastRow(),addr.getLastColumn()));
+		}
+		return mergeAreas;
+	}
+	
+	private static class SharedContext{
+		Sheet _sheet;
 		
 		private SharedContext(Sheet sheet){
-			this.sheet = sheet;
+			this._sheet = sheet;
 		}
 		
 		public Sheet getSheet(){
-			return sheet;
-		}
-		
-		
-		public List<MergeArea> getMergeAreas(){
-			initMergeRangesCache();
-			return mergeAreas;
+			return _sheet;
 		}
 		
 		public Book getBook(){
-			return sheet.getBook();
-		}
-		
-		private void initMergeRangesCache(){
-			if(mergeAreas==null){//TODO a better way to cache(index) this.(I this MergeMatrixHelper is not good enough now)
-				XSheet xsheet = ((SheetImpl)sheet).getNative();
-				int sz = xsheet.getNumMergedRegions();
-				mergeAreas = new ArrayList<MergeArea>(sz);
-				for(int j = sz - 1; j >= 0; --j) {
-					final CellRangeAddress addr = xsheet.getMergedRegion(j);
-					mergeAreas.add(new MergeArea(addr.getFirstRow(),addr.getFirstColumn(), addr.getLastRow(),addr.getLastColumn()));
-				}
-			}
-		}
-		
-		public void resetMergeAreas(){
-			mergeAreas = null;
+			return _sheet.getBook();
 		}
 	}
 	private static class MergeArea{
-		int r,lr,c,lc;
+		int _row,_lastRow,_column,_lastColumn;
 		public MergeArea(int r,int c,int lr,int lc){
-			this.c = c;
-			this.r = r;
-			this.lc = lc;
-			this.lr = lr;
+			this._column = c;
+			this._row = r;
+			this._lastColumn = lc;
+			this._lastRow = lr;
 		}
 
 		public boolean contains(int row,int col) {
-			return col >= this.c && col <= this.lc && row >= this.r && row <= this.lr;
+			return col >= this._column && col <= this._lastColumn && row >= this._row && row <= this._lastRow;
+		}
+		
+		public boolean equals(int row, int column, int lastRow, int lastColumn){
+			return _row == row && _column==column && _lastRow==lastRow && _lastColumn == lastColumn;
 		}
 
-		public boolean isUnion(int row, int column, int lastRow, int lastColumn) {
+		public boolean contains(int row, int column, int lastRow, int lastColumn) {
 			return contains(row, column) || contains(lastRow, lastColumn)
 					|| contains(row, lastColumn) || contains(lastRow, column);
+		}
+		public boolean contains(MergeArea ma) {
+			return contains(ma._row,ma._column,ma._lastRow,ma._lastColumn);
 		}
 	}
 	
@@ -226,7 +223,7 @@ public class RangeImpl implements Range{
 	}
 	
 	public Sheet getSheet(){
-		return sharedCtx.getSheet();
+		return _sharedCtx.getSheet();
 	}
 
  
@@ -259,7 +256,7 @@ public class RangeImpl implements Range{
 			run.run(this);
 			return;
 		case BOOK:
-			synchronized(sharedCtx.getBook().getSync()){//it just show concept, we have to has a betterway to do read-write lock
+			synchronized(_sharedCtx.getBook().getSync()){//it just show concept, we have to has a betterway to do read-write lock
 				run.run(this);
 			}
 			return;
@@ -296,7 +293,7 @@ public class RangeImpl implements Range{
 			run.run();
 			return;
 		case BOOK:
-			synchronized(sharedCtx.getBook().getSync()){
+			synchronized(_sharedCtx.getBook().getSync()){
 				run.run();
 			}
 			return;
@@ -341,7 +338,7 @@ public class RangeImpl implements Range{
 				return true;
 			}
 		}
-		return visitor.visit(new RangeImpl(XRanges.range(_range.getSheet(),r,c),sharedCtx));
+		return visitor.visit(new RangeImpl(XRanges.range(_range.getSheet(),r,c),_sharedCtx));
 	}
 
 	public Book getBook() {
@@ -359,33 +356,22 @@ public class RangeImpl implements Range{
 
 	
 	public boolean hasMergedCell(){
-		final Result<Boolean> result = new Result<Boolean>(Boolean.FALSE);
-		//TODO use visitor is bad performance, I should check merge area directly
-		for(MergeArea ma:sharedCtx.getMergeAreas()){
-			if(ma.isUnion(getRow(),getColumn(),getLastRow(),getLastColumn())){
+		MergeArea curr = new MergeArea(getRow(),getColumn(),getLastRow(),getLastColumn());
+		for(MergeArea ma:getMergeAreas()){
+			if(curr.contains(ma)){
 				return true;
 			}
 		}
 		return false;
-		
-		
-//		visit0(new CellVisitor(){
-//			public boolean ignoreIfNotExist(int row, int column) {
-//				return true;
-//			}
-//			@Override
-//			public boolean visit(Range cellRange) {
-//				int c = cellRange.getColumn();
-//				int r = cellRange.getRow();
-//				for(MergeArea ma:sharedCtx.getMergeAreas()){//TODO index, not loop
-//					if(ma.contains(c, r)){
-//						result.set(Boolean.TRUE);
-//						return false;//break visit
-//					}
-//				}
-//				return true;
-//			}},SyncLevel.NONE);
-//		return result.get();
+	}
+	
+	public boolean isMergedCell(){
+		for(MergeArea ma:getMergeAreas()){
+			if(ma.equals(getRow(),getColumn(),getLastRow(),getLastColumn())){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	
@@ -417,13 +403,13 @@ public class RangeImpl implements Range{
 
 	
 	public RangeImpl toShiftedRange(int rowOffset,int colOffset){
-		RangeImpl offsetRange = new RangeImpl(_range.getOffset(rowOffset, colOffset),sharedCtx);
+		RangeImpl offsetRange = new RangeImpl(_range.getOffset(rowOffset, colOffset),_sharedCtx);
 		return offsetRange;
 	}
 	
 	
 	public RangeImpl toCellRange(int rowOffset,int colOffset){
-		RangeImpl cellRange = new RangeImpl(XRanges.range(_range.getSheet(),getRow()+rowOffset,getColumn()+colOffset),sharedCtx);
+		RangeImpl cellRange = new RangeImpl(XRanges.range(_range.getSheet(),getRow()+rowOffset,getColumn()+colOffset),_sharedCtx);
 		return cellRange;
 	}
 	
@@ -436,14 +422,14 @@ public class RangeImpl implements Range{
 	 *  Return a range that represents all columns and between the first-row and last-row of this range
 	 **/
 	public RangeImpl toRowRange(){
-		return new RangeImpl(_range.getRows(),sharedCtx);
+		return new RangeImpl(_range.getRows(),_sharedCtx);
 	}
 	
 	/**
 	 *  Return a range that represents all rows and between the first-column and last-column of this range
 	 **/
 	public RangeImpl toColumnRange(){
-		return new RangeImpl(_range.getColumns(),sharedCtx);
+		return new RangeImpl(_range.getColumns(),_sharedCtx);
 	}
 	
 	/**
@@ -764,7 +750,7 @@ public class RangeImpl implements Range{
 		_range.createSheet(name);
 		
 		XSheet sheet = book.getWorksheetAt(n);
-		return new SheetImpl(((BookImpl)sharedCtx.sheet.getBook()).getRef(),new SimpleRef<XSheet>(sheet));
+		return new SheetImpl(((BookImpl)_sharedCtx._sheet.getBook()).getRef(),new SimpleRef<XSheet>(sheet));
 		
 	}
 	
