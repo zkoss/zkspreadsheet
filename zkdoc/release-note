@@ -63,6 +63,7 @@ ZK Spreadsheet 3.0.0
   ZSS-322 Cannot remove a hyperlink
   ZSS-457 Insert a hyperlink on a cell with empty hyperlink doesn't work as expected
   ZSS-296 "Protect Sheet" doesn't prevents cells from using auto filter
+  ZSS-202 Cannot display chart title correctly
   
 ** Upgrade Notes
 

@@ -1,0 +1,5 @@
+<zk>
+	<spreadsheet id="source" src="/issue3/book/202-chartTitle.xlsx" maxVisibleRows="150"
+		maxVisibleColumns="40" width="100%" height="80%" showContextMenu="true" showSheetbar="true"
+		showToolbar="true" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" />
+</zk>

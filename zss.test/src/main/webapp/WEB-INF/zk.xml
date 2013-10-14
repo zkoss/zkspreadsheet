@@ -25,6 +25,26 @@ Copyright (C) 2006 Potix Corporation. All Rights Reserved.
 		<debug-js>true</debug-js>
 	</client-config>
 	
+	<!-- To change fonts in charts of Spreadsheet  
+	<library-property>
+		<name>org.zkoss.zss.chart.title.font</name>
+		<value>SansSerif, Italic, 30</value>
+	</library-property>
+	<library-property>
+		<name>org.zkoss.zss.chart.legend.font</name>
+		<value>SansSerif, plain, 18</value>
+	</library-property>
+	<library-property>
+		<name>org.zkoss.zss.chart.xAxisTick.font</name>
+		<value>SansSerif, bold, 16</value>
+	</library-property>
+	<library-property>
+		<name>org.zkoss.zss.chart.xAxis.font</name>
+		<value>SansSerif, bold, 18</value>
+	</library-property>
+	 -->
+	
+	
 	<!-- Uncomment if you turn off the caching of resources loaded from
 		the class path (aka., class Web resources).
 		By default, class Web resources are cached by the browser until
