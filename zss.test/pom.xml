@@ -33,10 +33,6 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 			<id>ZK EE Evaluation</id>
 			<url>http://mavensync.zkoss.org/zk/ee-eval</url>
 		</repository>
-		<repository>
-			<id>http://maven.xwiki.org</id>
-			<url>http://maven.xwiki.org/externals</url>
-		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -87,7 +83,9 @@ We also merge lots of POI test cases from a previous project &quot;zsstest&quot;
 		<dependency>
 			<groupId>cpsuite</groupId>
 			<artifactId>cpsuite</artifactId>
-			<version>1.2.5</version>
+			<version>1.2.6</version>
+			<scope>system</scope>
+    		<systemPath>${project.basedir}/lib/cpsuite-1.2.6.jar</systemPath>
 		</dependency>
 	</dependencies>
 	<build>
