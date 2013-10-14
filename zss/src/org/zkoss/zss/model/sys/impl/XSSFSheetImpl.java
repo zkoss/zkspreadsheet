@@ -28,6 +28,7 @@ import java.util.TreeMap;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
@@ -36,8 +37,11 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
 import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
 import org.zkoss.poi.openxml4j.opc.PackagePart;
 import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaRenderer;
@@ -60,6 +64,7 @@ import org.zkoss.poi.xssf.usermodel.XSSFDrawing;
 import org.zkoss.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.zkoss.poi.xssf.usermodel.XSSFHyperlink;
 import org.zkoss.poi.xssf.usermodel.XSSFName;
+import org.zkoss.poi.xssf.usermodel.XSSFRelation;
 import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFRowHelper;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
@@ -309,14 +314,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
      */
     //20130808 dennis remove hyperlink
     public void removeHyperlink(int row,int column){
-    	String ref = new CellReference(row, column).formatAsString();
-    	HashSet remove = new HashSet();
-        for(XSSFHyperlink hyperlink : hyperlinks) {
-            if(hyperlink.getCellRef().equals(ref)) {
-                remove.add(hyperlink);
-            }
-        }
-        hyperlinks.removeAll(remove);
+    	removeHyperlinks(row,row,column,column);
     }
 	
     //20130930 dennis remove hyperlinks
@@ -355,7 +353,7 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
     }
     //20130930 dennis remove hyperlinks
     private void removeHyperlinks(int tRow, int bRow, int lCol, int rCol) {
-    	HashSet remove = new HashSet();
+    	HashSet<XSSFHyperlink> remove = new HashSet<XSSFHyperlink>();
     	for(XSSFHyperlink hyperlink : hyperlinks) {
     		int r = hyperlink.getFirstRow();
     		int c = hyperlink.getFirstColumn();
@@ -363,7 +361,24 @@ public class XSSFSheetImpl extends XSSFSheet implements SheetCtrl, XSheet {
                 remove.add(hyperlink);
             }
         }
-    	hyperlinks.removeAll(remove);
+    	
+    	if(remove.size()>0){
+    		try{
+    			//has also remove the relation 
+            	PackageRelationshipCollection hyperRels =
+                         getPackagePart().getRelationshipsByType(XSSFRelation.SHEET_HYPERLINKS.getRelation());
+            	for(XSSFHyperlink hyperlink : remove) {
+            		CTHyperlink cth = hyperlink.getCTHyperlink(); 
+            		if(cth.isSetId()){//it is possible no ref id(e.g. DOC type)
+            			String rid = cth.getId();
+            			getPackagePart().removeRelationship(rid);
+                    }
+            	}
+        	} catch (InvalidFormatException e){
+                throw new POIXMLException(e);
+            }    		
+    		hyperlinks.removeAll(remove);
+    	}
     }
     
     //20100520, henrichen@zkoss.org: Shift rows of a range

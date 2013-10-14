@@ -1225,22 +1225,24 @@ public final class BookHelper {
 			//clear the cell
 			if (cell != null) {
 				cell.setCellValue((String)null);
-				
-				//ZSS-322 Cannot remove a hyperlink
-				Sheet sheet = cell.getSheet();
-				if(cell instanceof XSSFCell){
-					((XSSFCell)cell).setEvalHyperlink(null);
-					((XSSFSheetImpl)((XSSFCell)cell).getSheet()).removeHyperlink(cell.getRowIndex(), cell.getColumnIndex());
-				}else if(cell instanceof HSSFCell){
-					//TODO has to clear hyperlink, too
-//					((HSSFCell)cell).setEvalHyperlink(null);
-//					((HSSFCell)cell).getSheet().removeHyperlink(cell.getRowIndex(), cell.getColumnIndex());
-				}
-				
+				clearHyperlink(cell);
 			}
 			return refs;
 		}
 		return null;
+	}
+	
+	private static void clearHyperlink(Cell cell){
+		//ZSS-322 Cannot remove a hyperlink
+		Sheet sheet = cell.getSheet();
+		if(cell instanceof XSSFCell){
+			((XSSFCell)cell).setEvalHyperlink(null);
+			((XSSFSheetImpl)((XSSFCell)cell).getSheet()).removeHyperlink(cell.getRowIndex(), cell.getColumnIndex());
+		}else if(cell instanceof HSSFCell){
+			//TODO has to clear hyperlink, too
+			((HSSFCell)cell).setEvalHyperlink(null);
+			((HSSFSheetImpl)((HSSFCell)cell).getSheet()).removeHyperlink(cell.getRowIndex(), cell.getColumnIndex());
+		}
 	}
 	
 	private static Set<Ref>[] removeCell(Cell cell, boolean clearPtgs) {
@@ -1318,20 +1320,20 @@ public final class BookHelper {
 	
 	public static Set<Ref>[] setCellHyperlink(Cell cell, int linkTarget, String address) {
 		Hyperlink hlink = cell.getHyperlink();
-		if (hlink == null) {
-			Workbook wb = cell.getSheet().getWorkbook();
-			CreationHelper createHelper = wb.getCreationHelper();
-			Hyperlink link = createHelper.createHyperlink(linkTarget);
-			link.setAddress(address);
-			
-			cell.setHyperlink(link);
-		} else {
-			
+		
+		if(hlink!=null){
 			if (sameHyperlink(cell, hlink, linkTarget, address))
 				return null;
-
-			hlink.setAddress(address);
+			//ZSS-457, no way to change a hyperlink type, so I delete it if it's exsit.
+			clearHyperlink(cell);
 		}
+		
+		Workbook wb = cell.getSheet().getWorkbook();
+		CreationHelper createHelper = wb.getCreationHelper();
+		Hyperlink link = createHelper.createHyperlink(linkTarget);
+		link.setAddress(address);
+		
+		cell.setHyperlink(link);
 		//notify to update cache
 		return getBothDependents(cell); 
 	}

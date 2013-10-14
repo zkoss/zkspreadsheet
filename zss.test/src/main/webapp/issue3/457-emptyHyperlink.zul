@@ -1,0 +1,32 @@
+<zk>
+	<vbox width="600px" height="100%">
+		<label pre="true">
+		</label>
+		<hlayout>
+			<button label="export" onClick="export();"></button>
+			<button label="setHyperlink" onClick="setHyperlink()"></button>
+			
+		</hlayout>
+		<spreadsheet id="ss" src="/issue3/book/457-emptyHyperlink.xlsx"  hflex="1" vflex="1"
+			maxrows="150" maxcolumns="50"
+			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+		</spreadsheet>
+				
+		<zscript><![CDATA[//@DECLARATION
+		                  
+			public void setHyperlink(){
+				Range r = Ranges.range(ss.getSelectedSheet(),"B2");
+				r.setCellHyperlink(org.zkoss.zss.api.model.Hyperlink.HyperlinkType.URL,"http://www.google.com","New Link");
+			}
+
+			public void export() {
+				Exporter exporter = Exporters.getExporter();
+				java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+				exporter.export(ss.getBook(), os);
+				os.close();
+				org.zkoss.zul.Filedownload.save(os.toByteArray(),
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "exported.xlsx");
+			}
+		]]></zscript>
+	</vbox>
+</zk>

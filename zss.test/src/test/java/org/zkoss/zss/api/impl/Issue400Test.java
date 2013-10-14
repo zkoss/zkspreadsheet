@@ -1017,7 +1017,11 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS461(){
-		Book book = Util.loadBook(Issue400Test.class, "book/blank.xlsx");
+		testZSS461(Util.loadBook(Issue400Test.class, "book/blank.xlsx"));
+		testZSS461(Util.loadBook(Issue400Test.class, "book/blank.xls"));
+	}
+
+	private void testZSS461(Book book){
 		Sheet sheet = book.getSheetAt(0);
 		Ranges.range(sheet, "A1").setCellEditText("http://www.google.com");
 		Ranges.range(sheet, "A2").setCellEditText("http://www.zkoss.org");
@@ -1062,6 +1066,38 @@ public class Issue400Test {
 		Assert.assertEquals(link.getAddress(), "http://www.zkoss.org");
 		Assert.assertEquals(link.getLabel(), "http://www.zkoss.org");
 		
+	}
+
+	@Test
+	public void testZSS457(){
+		testZSS457(Util.loadBook(Issue400Test.class, "book/457-emptyHyperlink.xlsx"));
+	}
+	private void testZSS457(Book book){
+		Sheet sheet = book.getSheetAt(0);
+		Range r = Ranges.range(sheet, "B2");
+		Hyperlink link = r.getCellHyperlink();
+		Assert.assertNotNull(link);
+		Assert.assertEquals("248.371.5093", link.getLabel());
+		Assert.assertEquals(null, link.getAddress());
+		Assert.assertEquals(HyperlinkType.DOCUMENT, link.getType());
+		
+		r.setCellHyperlink(HyperlinkType.EMAIL, "mailto:xyz@a.b.c", "a mail");
+		link = r.getCellHyperlink();
+		Assert.assertNotNull(link);
+		Assert.assertEquals("a mail", link.getLabel());
+		Assert.assertEquals("mailto:xyz@a.b.c", link.getAddress());
+		Assert.assertEquals(HyperlinkType.EMAIL, link.getType());
+		
+		
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		
+		r = Ranges.range(sheet, "B2");
+		link = r.getCellHyperlink();
+		Assert.assertNotNull(link);
+		Assert.assertEquals("a mail", link.getLabel());
+		Assert.assertEquals("mailto:xyz@a.b.c", link.getAddress());
+		Assert.assertEquals(HyperlinkType.EMAIL, link.getType());
 	}
 
 }

@@ -1094,6 +1094,11 @@ public class HSSFSheetImpl extends HSSFSheet implements SheetCtrl, XSheet {
         }
     }
     
+    //20131011 dennischen@zkoss.org remove hyperlink
+    public void removeHyperlink(int row,int column){
+    	removeHyperlinks(row,row,column,column);
+    }
+    
     private void removeHyperlinks(int tRow, int bRow, int lCol, int rCol) {
         for (Iterator<RecordBase> it = _helper.getInternalSheet().getRecords().iterator(); it.hasNext(); ) {
             RecordBase rec = it.next();

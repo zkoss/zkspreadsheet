@@ -44,6 +44,8 @@ import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Chart.Grouping;
 import org.zkoss.zss.api.model.Chart.LegendPosition;
 import org.zkoss.zss.api.model.ChartData;
+import org.zkoss.zss.api.model.Hyperlink;
+import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XRange;
@@ -1606,5 +1608,106 @@ public class Issue200Test {
 		}finally{
 			Setup.popZssContextLocale();
 		}
+	}
+
+	@Test
+	public void testZSS322(){
+		testZSS322(Util.loadBook(Issue400Test.class, "book/blank.xlsx"));
+		testZSS322(Util.loadBook(Issue400Test.class, "book/blank.xls"));
+	}
+	private void testZSS322(Book book){
+		Sheet sheet = book.getSheetAt(0);
+		Range r = Ranges.range(sheet, "A1");
+		Hyperlink link = r.getCellHyperlink();
+		Assert.assertNull(link);
+		r.setCellEditText("http://www.google.com");
+		link = r.getCellHyperlink();
+		Assert.assertNotNull(link);
+		Assert.assertEquals("http://www.google.com", link.getLabel());
+		Assert.assertEquals("http://www.google.com", link.getAddress());
+		Assert.assertEquals(HyperlinkType.URL, link.getType());
+		
+		r = Ranges.range(sheet, "A2");
+		link = r.getCellHyperlink();
+		Assert.assertNull(link);
+		r.setCellHyperlink(HyperlinkType.EMAIL, "mailto:xyz@a.b.c", "a mail");
+		link = r.getCellHyperlink();
+		Assert.assertNotNull(link);
+		Assert.assertEquals("a mail", link.getLabel());
+		Assert.assertEquals("mailto:xyz@a.b.c", link.getAddress());
+		Assert.assertEquals(HyperlinkType.EMAIL, link.getType());
+		
+		r = Ranges.range(sheet, "A3");
+		link = r.getCellHyperlink();
+		Assert.assertNull(link);
+		r.setCellHyperlink(HyperlinkType.DOCUMENT, "some where", "A doc");
+		link = r.getCellHyperlink();
+		Assert.assertNotNull(link);
+		Assert.assertEquals("A doc", link.getLabel());
+		Assert.assertEquals("some where", link.getAddress());
+		Assert.assertEquals(HyperlinkType.DOCUMENT, link.getType());
+		
+		File f = Setup.getTempFile("ZSS322-3link", book.getBookName().endsWith(".xlsx")?".xlsx":".xls");
+		Util.export(book, f);
+		System.out.println("Write to "+f);
+		
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		
+		r = Ranges.range(sheet, "A1");
+		link = r.getCellHyperlink();
+		Assert.assertNotNull(link);
+		Assert.assertEquals("http://www.google.com", link.getLabel());
+		Assert.assertEquals("http://www.google.com", link.getAddress());
+		Assert.assertEquals(HyperlinkType.URL, link.getType());
+		r.clearContents();
+		link = r.getCellHyperlink();
+		Assert.assertNull(link);
+		
+		f = Setup.getTempFile("ZSS322-2link", book.getBookName().endsWith(".xlsx")?".xlsx":".xls");
+		Util.export(book, f);
+		System.out.println("Write to "+f);
+		
+		r = Ranges.range(sheet, "A2");
+		link = r.getCellHyperlink();
+		Assert.assertNotNull(link);
+		Assert.assertEquals("a mail", link.getLabel());
+		Assert.assertEquals("mailto:xyz@a.b.c", link.getAddress());
+		Assert.assertEquals(HyperlinkType.EMAIL, link.getType());
+		
+		r.clearContents();
+		link = r.getCellHyperlink();
+		Assert.assertNull(link);
+		
+		r = Ranges.range(sheet, "A3");
+		link = r.getCellHyperlink();
+		Assert.assertNotNull(link);
+		Assert.assertEquals("A doc", link.getLabel());
+		Assert.assertEquals("some where", link.getAddress());
+		Assert.assertEquals(HyperlinkType.DOCUMENT, link.getType());
+		
+		r.clearContents();
+		link = r.getCellHyperlink();
+		Assert.assertNull(link);
+		
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		
+		
+		r = Ranges.range(sheet, "A1");
+		link = r.getCellHyperlink();
+		Assert.assertNull(link);
+		
+		r = Ranges.range(sheet, "A2");
+		link = r.getCellHyperlink();
+		Assert.assertNull(link);
+		
+		r = Ranges.range(sheet, "A3");
+		link = r.getCellHyperlink();
+		Assert.assertNull(link);
+		
+		f = Setup.getTempFile("ZSS322-empty", book.getBookName().endsWith(".xlsx")?".xlsx":".xls");
+		Util.export(book, f);
+		System.out.println("Write to "+f);
 	}
 }
