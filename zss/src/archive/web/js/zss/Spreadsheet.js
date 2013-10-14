@@ -965,6 +965,10 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	 * @param string type
 	 */
 	fireCellEvt: function (type, shx, shy, mousemeta, row, col, mx, my, field) {
+		if ('af'==type && this.sheetCtrl._wgt._protect){ //forbid using filter under protection
+			return;
+		}
+		
 		var sheetId = this.getSheetId(),
 			prop = {type: type, shx: shx, shy: shy, key: mousemeta, sheetId: sheetId, row: row, col: col, mx: mx, my: my};
 		if (field)

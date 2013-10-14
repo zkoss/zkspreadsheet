@@ -62,6 +62,7 @@ ZK Spreadsheet 3.0.0
   ZSS-461 Get exception when evaluating hyperlink after export & clear cell
   ZSS-322 Cannot remove a hyperlink
   ZSS-457 Insert a hyperlink on a cell with empty hyperlink doesn't work as expected
+  ZSS-296 "Protect Sheet" doesn't prevents cells from using auto filter
   
 ** Upgrade Notes
 
