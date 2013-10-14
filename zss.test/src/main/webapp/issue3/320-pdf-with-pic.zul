@@ -1,0 +1,52 @@
+<zk>
+	<vlayout width="100%" height="100%">
+		<label pre="true">
+Reproduce:
+  1. export this file to PDF.
+  2. the pictures/charts are repeated at every pages, some pictures/charts are chaos and some pictures/charts are missed.
+		</label>
+		<hlayout>
+			<button label="export book" onClick="export(0);"></button>
+			<button label="export sheet" onClick="export(1);"></button>
+			<button label="export selection" onClick="export(2);"></button>
+		</hlayout>
+		<spreadsheet id="ss" src="/issue3/book/320-pdf-with-pic.xlsx" hflex="1" vflex="1"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			maxrows="150" maxcolumns="50"
+			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+		</spreadsheet>
+		
+		<zscript><![CDATA[
+			public void export(int mode) {
+				Exporter exporter = Exporters.getExporter("pdf");
+				java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+				if(mode == 0) {
+					exporter.export(ss.getBook(), os);
+				} else if(mode == 1) {
+					exporter.export(ss.getSelectedSheet(), os);
+				} else if(mode == 2) {
+					exporter.export(ss.getSelectedSheet(), ss.getSelection(), os);
+				}
+				switch(mode) {
+					case 0:
+						break;
+					case 1:
+						break;
+				}
+				os.close();
+				org.zkoss.zul.Filedownload.save(os.toByteArray(),
+						"application/pdf", "exported.pdf");
+			}
+		]]></zscript>
+		
+		<script defer="true"><![CDATA[
+			(function() {
+				window.debug = {};
+				window.debug.ss = zk.Widget.$('$ss');
+				window.debug.ssc = debug.ss.sheetCtrl;
+				window.debug.dp = debug.ssc.dp;
+				window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
+			})();
+		]]></script>
+	</vlayout>
+</zk>
