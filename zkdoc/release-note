@@ -54,6 +54,8 @@ ZK Spreadsheet 3.0.0
   ZSS-456 hasMergedCell API doesn't work correctly
   ZSS-454 Cannot click on hyperlink in the merge cell.
   ZSS-231 get wrong row,column in onCellClick if I click on merged cells
+  ZSS-222 AutoFitler doesn't work correctly when selecting have some empty cell
+  ZSS-427 occur exception when exporting specific xlsx file to PDF
   
 ** Upgrade Notes
 

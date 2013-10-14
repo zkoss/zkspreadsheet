@@ -6,6 +6,7 @@ import static org.zkoss.zss.api.CellOperationUtil.applyFontBoldweight;
 import static org.zkoss.zss.api.Ranges.range;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Locale;
@@ -995,5 +996,21 @@ public class Issue400Test {
 		Assert.assertFalse(target1.isMergedCell());
 		Assert.assertFalse(target2.hasMergedCell());
 		Assert.assertFalse(target2.hasMergedCell());
+	}
+	
+	@Test
+	public void testZSS427(){
+		Book workbook = Util.loadBook(Issue400Test.class, "book/427-export.xlsx");
+		File file = Setup.getTempFile("zss427",".pdf");
+		try{
+			FileOutputStream fos = new FileOutputStream(file);
+			Exporter pdfExporter = Exporters.getExporter("pdf");
+			pdfExporter.export(workbook, fos);
+		}catch(NullPointerException e){
+			e.printStackTrace();
+			fail("export failed for ZSS-427");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 }
