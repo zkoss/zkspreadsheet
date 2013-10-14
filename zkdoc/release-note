@@ -59,6 +59,7 @@ ZK Spreadsheet 3.0.0
   ZSS-330 hide merged cell's left-top column/row will cause text disappear
   ZSS-382 If hide columns and overlap partial merged cell, cells' alignment will be chaos
   ZSS-448 Filter popup menu is scrolled if setFreezePanel() and unfrozen region is also scrolled
+  ZSS-461 Get exception when evaluating hyperlink after export & clear cell
   
 ** Upgrade Notes
 

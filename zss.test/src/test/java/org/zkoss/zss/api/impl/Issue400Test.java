@@ -38,6 +38,7 @@ import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.EditableFont;
 import org.zkoss.zss.api.model.Font;
+import org.zkoss.zss.api.model.Hyperlink;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.model.sys.XSheet;
@@ -1013,4 +1014,54 @@ public class Issue400Test {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void testZSS461(){
+		Book book = Util.loadBook(Issue400Test.class, "book/blank.xlsx");
+		Sheet sheet = book.getSheetAt(0);
+		Ranges.range(sheet, "A1").setCellEditText("http://www.google.com");
+		Ranges.range(sheet, "A2").setCellEditText("http://www.zkoss.org");
+		
+		Hyperlink link = Ranges.range(sheet, "A1").getCellHyperlink();
+		Assert.assertNotNull(link);
+		Assert.assertEquals(Hyperlink.HyperlinkType.URL,link.getType());
+		Assert.assertEquals(link.getAddress(), "http://www.google.com");
+		Assert.assertEquals(link.getLabel(), "http://www.google.com");
+		
+		link = Ranges.range(sheet, "A2").getCellHyperlink();
+		Assert.assertNotNull(link);
+		Assert.assertEquals(Hyperlink.HyperlinkType.URL,link.getType());
+		Assert.assertEquals(link.getAddress(), "http://www.zkoss.org");
+		Assert.assertEquals(link.getLabel(), "http://www.zkoss.org");
+		
+		book = Util.swap(book);
+		
+		sheet = book.getSheetAt(0);
+		link = Ranges.range(sheet, "A1").getCellHyperlink();
+		Assert.assertNotNull(link);
+		Assert.assertEquals(Hyperlink.HyperlinkType.URL,link.getType());
+		Assert.assertEquals(link.getAddress(), "http://www.google.com");
+		Assert.assertEquals(link.getLabel(), "http://www.google.com");
+		
+		link = Ranges.range(sheet, "A2").getCellHyperlink();
+		Assert.assertNotNull(link);
+		Assert.assertEquals(Hyperlink.HyperlinkType.URL,link.getType());
+		Assert.assertEquals(link.getAddress(), "http://www.zkoss.org");
+		Assert.assertEquals(link.getLabel(), "http://www.zkoss.org");
+		
+		Ranges.range(sheet, "A1").clearContents();
+		
+		Util.export(book, Setup.getTempFile());//get error if has this line
+		
+		link = Ranges.range(sheet, "A1").getCellHyperlink();
+		Assert.assertNull(link);
+		
+		link = Ranges.range(sheet, "A2").getCellHyperlink();
+		Assert.assertNotNull(link);
+		Assert.assertEquals(Hyperlink.HyperlinkType.URL,link.getType());
+		Assert.assertEquals(link.getAddress(), "http://www.zkoss.org");
+		Assert.assertEquals(link.getLabel(), "http://www.zkoss.org");
+		
+	}
+
 }
