@@ -467,8 +467,12 @@ zss.DataPanel = zk.$extends(zk.Object, {
 	*/
 	moveFocus: function(row, col, scroll, selection, noevt, noslevt) {
 		var sheet = this.sheet;
+		var lastFocus = sheet.getLastFocus();
 		if (sheet && !sheet.editingFormulaInfo) {
-			this.stopEditing("refocus");
+			// ZSS-370: don't stop editing if target position is same as current focus cell 
+			if(lastFocus.row != row || lastFocus.column != col) {
+				this.stopEditing("refocus");
+			}
 		} else { //when editing formula, always set focus back to editor
 			
 			var sf = this;
