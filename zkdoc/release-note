@@ -167,6 +167,8 @@ ZK Spreadsheet 3.0.0 RC
   ZSS-424 get exception when undo after save
   ZSS-426 Endless loop when export demo swineFlu.xls pdf
   ZSS-241 wrap text does not wrap text like excel
+  ZSS-416 No all border color could apply to cell in 2003
+  ZSS-379 The cell's has weird text when using time format in Chinese environment
 
 ** Upgrade Notes
   * Classes inside 'org.zkoss.zss.model' is duplicated and removed, please use the new classes & api
