@@ -1,0 +1,31 @@
+<zk>
+	<vbox width="90%" height="90%">
+		<label pre="true">
+		</label>
+		<hlayout>
+			<button label="export" onClick="export();"></button>
+			<button label="test1" onClick="test1()"></button>
+		</hlayout>
+		<spreadsheet id="ss" src="/issue3/book/464-manystyle.xls"  hflex="1" vflex="1"
+			maxrows="100" maxcolumns="50"
+			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+		</spreadsheet>
+				
+		<zscript><![CDATA[//@DECLARATION
+		                  
+			public void test1(){
+				Range r = Ranges.range(ss.getSelectedSheet(),"B2");
+				
+			}
+
+			public void export() {
+				Exporter exporter = Exporters.getExporter();
+				java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+				exporter.export(ss.getBook(), os);
+				os.close();
+				org.zkoss.zul.Filedownload.save(os.toByteArray(),
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "exported.xlsx");
+			}
+		]]></zscript>
+	</vbox>
+</zk>

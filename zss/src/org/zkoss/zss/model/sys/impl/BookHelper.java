@@ -822,6 +822,27 @@ public final class BookHelper {
 			return XSSFColorToHTML((XSSFWorkbook) book, (XSSFColor) color);
 		}
 	}
+	public static String colorToBorderHTML(Workbook book, Color color) {
+		String htmlColor = colorToHTML(book,color);
+		if(AUTO_COLOR.equals(htmlColor)){
+			return "#000000";
+		}
+		return htmlColor;
+	}
+	public static String colorToBackgroundHTML(Workbook book, Color color) {
+		String htmlColor = colorToHTML(book,color);
+		if(AUTO_COLOR.equals(htmlColor)){
+			return "#ffffff";
+		}
+		return htmlColor;
+	}
+	public static String colorToForegroundHTML(Workbook book, Color color) {
+		String htmlColor = colorToHTML(book,color);
+		if(AUTO_COLOR.equals(htmlColor)){
+			return "#000000";
+		}
+		return htmlColor;
+	}
 	private static byte[] getRgbWithTint(byte[] rgb, double tint) {
 		int k = rgb.length > 3 ? 1 : 0; 
 		final byte red = rgb[k++];
@@ -936,7 +957,7 @@ public final class BookHelper {
 	
 	private static String HSSFColorToHTML(HSSFWorkbook book, HSSFColor color) {
 		return color == null || HSSFColor.AUTOMATIC.getInstance().equals(color) ? AUTO_COLOR : 
-			color.isIndex() ? indexToHSSFRGB(book, color.getIndex()) : HSSFColorToHTML((HSSFColorExt)color); 
+			color.isIndex() ? HSSFColorIndexToHTML(book, color.getIndex()) : HSSFColorToHTML((HSSFColorExt)color); 
 	}
 	private static String HSSFColorToHTML(HSSFColorExt color) {
 		short[] triplet = color.getTriplet();
@@ -949,7 +970,8 @@ public final class BookHelper {
 		}
 		return 	"#"+ toHex(argb[0])+ toHex(argb[1])+ toHex(argb[2]); 
 	}
-	private static String indexToHSSFRGB(HSSFWorkbook book, int index) {
+	
+	private static String HSSFColorIndexToHTML(HSSFWorkbook book, int index) {
 		HSSFPalette palette = book.getCustomPalette();
 		HSSFColor color = null;
 		if (palette != null) {

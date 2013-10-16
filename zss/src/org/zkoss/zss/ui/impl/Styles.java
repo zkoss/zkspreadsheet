@@ -22,10 +22,12 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
+import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.model.sys.impl.CellStyleMatcher;
 /**
  * A utility class to help spreadsheet set style of a cell
  * @author Dennis.Chen
@@ -191,25 +193,75 @@ public class Styles {
 	
 	public static void setBorder(XSheet sheet,int row,int col, Color color, short lineStyle, int at){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
-		final CellStyle style = cloneCellStyle(cell);
-		if((at & BookHelper.BORDER_EDGE_LEFT)!=0) {
-			BookHelper.setLeftBorderColor(style, color);
-			style.setBorderLeft(lineStyle);
+		final XBook book = sheet.getBook();
+		//ZSS-464 try to search existed matched style
+		String colorHtml = BookHelper.colorToBorderHTML(book, color);
+		CellStyle style = null;
+		boolean hasBorder = lineStyle != CellStyle.BORDER_NONE;
+		if(colorHtml!=null){
+			final CellStyle oldstyle = cell.getCellStyle();
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),oldstyle);
+			if((at & BookHelper.BORDER_EDGE_LEFT)!=0) {
+				if(hasBorder)
+					matcher.setLeftBorderColor(colorHtml);
+				matcher.setBorderLeft(lineStyle);
+			}
+			if((at & BookHelper.BORDER_EDGE_TOP)!=0){
+				if(hasBorder) 
+					matcher.setTopBorderColor(colorHtml);
+				matcher.setBorderTop(lineStyle);
+			}
+			if((at & BookHelper.BORDER_EDGE_RIGHT)!=0){
+				if(hasBorder)
+					matcher.setRightBorderColor(colorHtml);
+				matcher.setBorderRight(lineStyle);
+			}
+			if((at & BookHelper.BORDER_EDGE_BOTTOM)!=0){
+				if(hasBorder)
+					matcher.setBottomBorderColor(colorHtml);
+				matcher.setBorderBottom(lineStyle);
+			}
+			style = findStyle(book, matcher);
+//			System.out.println(">>>>> match style of "+row+","+col+":"+style +":"+sheet.getBook().getNumCellStyles()+":"+colorHtml);
 		}
-		if((at & BookHelper.BORDER_EDGE_TOP)!=0){
-			BookHelper.setTopBorderColor(style, color);
-			style.setBorderTop(lineStyle);
+		
+		if(style==null){
+			style = cloneCellStyle(cell);
+			if((at & BookHelper.BORDER_EDGE_LEFT)!=0) {
+				BookHelper.setLeftBorderColor(style, color);
+				style.setBorderLeft(lineStyle);
+			}
+			if((at & BookHelper.BORDER_EDGE_TOP)!=0){
+				BookHelper.setTopBorderColor(style, color);
+				style.setBorderTop(lineStyle);
+			}
+			if((at & BookHelper.BORDER_EDGE_RIGHT)!=0){
+				BookHelper.setRightBorderColor(style, color);
+				style.setBorderRight(lineStyle);
+			}
+			if((at & BookHelper.BORDER_EDGE_BOTTOM)!=0){
+				BookHelper.setBottomBorderColor(style, color);
+				style.setBorderBottom(lineStyle);
+			}
+//			System.out.println(">>>>> new style of "+row+","+col+":"+style +":"+sheet.getBook().getNumCellStyles());
+		}else{
+//			System.out.println(">>>>>>>>> Hit in set border of "+row+","+col+":"+style+":"+sheet.getBook().getNumCellStyles());
 		}
-		if((at & BookHelper.BORDER_EDGE_RIGHT)!=0){
-			BookHelper.setRightBorderColor(style, color);
-			style.setBorderRight(lineStyle);
-		}
-		if((at & BookHelper.BORDER_EDGE_BOTTOM)!=0){
-			BookHelper.setBottomBorderColor(style, color);
-			style.setBorderBottom(lineStyle);
-		}
+		
 		cell.setCellStyle(style);
 	}
+	
+	
+	public static CellStyle findStyle(Workbook book,CellStyleMatcher matcher){
+    	short size = book.getNumCellStyles();
+    	for(short i=0; i<size;i++){
+    		CellStyle style = book.getCellStyleAt(i);
+    		if(matcher.match(book,style)){
+    			return style;
+    		}
+    	}
+    	return null;
+    }
 	
 	public static void setFontBoldWeight(XSheet sheet,int row,int col,short boldWeight){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
