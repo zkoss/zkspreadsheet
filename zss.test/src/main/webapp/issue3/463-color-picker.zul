@@ -1,0 +1,22 @@
+<zk>
+	CE color picker:
+	<spreadsheet src="/issue3/book/blank.xlsx" maxVisibleRows="20" maxVisibleColumns="10" width="50%"
+		height="40%" showToolbar="true">
+			<custom-attributes org.zkoss.zss.colorPickerExUsed="false"/>
+	</spreadsheet>
+	<separator height="20px"/>
+	
+	Depends on zk.xml:
+	<spreadsheet src="/issue3/book/blank.xlsx" maxVisibleRows="20" maxVisibleColumns="10" width="50%"
+		height="40%" showToolbar="true"/>
+		
+	<separator height="20px"/>		
+	<window height="600px">
+		both CE color picker:
+		<custom-attributes org.zkoss.zss.colorPickerExUsed="false"/>
+		<spreadsheet src="/issue3/book/blank.xlsx" maxVisibleRows="20" maxVisibleColumns="10" width="50%"
+		height="40%" showToolbar="true" />
+		<spreadsheet src="/issue3/book/blank.xlsx" maxVisibleRows="20" maxVisibleColumns="10" width="50%"
+		height="40%" showToolbar="true" />
+	</window>
+</zk>

@@ -25,6 +25,13 @@ Copyright (C) 2006 Potix Corporation. All Rights Reserved.
 		<debug-js>true</debug-js>
 	</client-config>
 	
+	<!-- To specify which color picker (CE & PE) Spreadsheet uses  
+	<library-property>
+		<name>org.zkoss.zss.colorPickerExUsed</name>
+		<value>false</value>
+	</library-property>
+	-->
+	
 	<!-- To change fonts in charts of Spreadsheet  
 	<library-property>
 		<name>org.zkoss.zss.chart.title.font</name>

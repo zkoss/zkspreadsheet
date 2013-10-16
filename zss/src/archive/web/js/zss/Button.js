@@ -520,12 +520,12 @@ zss.DisplayGridlinesCheckbutton = zk.$extends(zss.CheckableToolbarButton, {
 
 if (zk.feature.pe) {
 	zk.load('zkex.inp', null, function () { 
-		zss.Colorbutton = zk.$extends(zss.Toolbarbutton, {
+		zss.ColorbuttonEx = zk.$extends(zss.Toolbarbutton, {
 			_color: '#000000', /*default color*/
 			$init: function (props, wgt) {
-				this.$supers(zss.Colorbutton, '$init', [props]);
+				this.$supers(zss.ColorbuttonEx, '$init', [props]);
 				
-				var thispt = zss.Colorbutton.prototype,
+				var thispt = zss.ColorbuttonEx.prototype,
 					superpt = zkex.inp.Colorbox.prototype;
 				
 				if (!superpt.openPalette && superpt.$class.$copyf) {//ZSS-217
@@ -599,7 +599,7 @@ if (zk.feature.pe) {
 				jq(this.$n()).removeClass('z-toolbarbutton-over');
 			},
 			bind_: function () {
-				this.$supers(zss.Colorbutton, 'bind_', arguments);
+				this.$supers(zss.ColorbuttonEx, 'bind_', arguments);
 				
 				var paletteBtn = this.$n('palette-btn'),
 					pickerBtn = this.$n('picker-btn'),
@@ -626,7 +626,7 @@ if (zk.feature.pe) {
 				}
 				jq(this.$n('picker-btn')).unbind();
 				zWatch.unlisten({onFloatUp: this});
-				this.$supers(zss.Colorbutton, 'unbind_', arguments);
+				this.$supers(zss.ColorbuttonEx, 'unbind_', arguments);
 			},
 			onFloatUp: function (ctl) {
 				if (this._open) {
@@ -682,7 +682,7 @@ if (zk.feature.pe) {
 			},
 			domContent_: function () {
 				var uid = this.uuid,
-					cnt = this.$supers(zss.Colorbutton, 'domContent_', arguments),
+					cnt = this.$supers(zss.ColorbuttonEx, 'domContent_', arguments),
 					color = this.getColor();
 				cnt = cnt + '<div id="' + uid + '-color" class="zstbtn-color" style="background:' 
 					+ this.getColor() + ';"></div><div id="' + uid + '-pp" style="display:none;" class="z-colorbtn-pp">' +
@@ -696,7 +696,9 @@ if (zk.feature.pe) {
 			}
 		});
 	})
-} else {//ZK CE version
+}
+//ZSS-463, define CE & PE ColorPicker at the same time on purpose
+if(true){//ZK CE version
 	zss.Colorbutton = zk.$extends(zss.Toolbarbutton, {
 		_open: false,
 		_color: '#000000', /*default color*/
@@ -1389,6 +1391,13 @@ zss.Buttons = zk.$extends(zk.Object, {
 		}, wgt);
 	}
 	
+	/**
+	 * return ColorPicker's construction function upon user configurations under PE
+	 */
+	function getColorPickerConstructor(spreadsheet){
+		return (!!zss.ColorbuttonEx && spreadsheet.getColorPickerExUsed()) ? zss.ColorbuttonEx : zss.Colorbutton;
+	}
+	
 zss.ButtonBuilder = zk.$extends(zk.Object, {
 	/**
 	 * @param zss.Spreadsheet
@@ -1609,7 +1618,8 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	},
 	fillColor: function () {
 		var wgt = this._wgt;
-		return new zss.Colorbutton({
+		var colorButtonConstructor = getColorPickerConstructor(wgt);
+		return new colorButtonConstructor({
 			$action: 'fillColor',
 			color: '#FFFFFF',
 			tooltiptext: msgzss.action.fillColor,
@@ -1625,7 +1635,8 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	},
 	fontColor: function () {
 		var wgt = this._wgt;
-		return new zss.Colorbutton({
+		var colorButtonConstructor = getColorPickerConstructor(wgt);
+		return new colorButtonConstructor({
 			$action: 'fontColor',
 			color: '#000000',
 			tooltiptext: msgzss.action.fontColor,

@@ -157,6 +157,7 @@ import org.zkoss.zss.ui.sys.SpreadsheetInCtrl;
 import org.zkoss.zss.ui.sys.SpreadsheetOutCtrl;
 import org.zkoss.zss.ui.sys.WidgetHandler;
 import org.zkoss.zss.ui.sys.WidgetLoader;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.impl.XulElement;
 
@@ -210,6 +211,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 	private static final String CELL_DISPLAY_LOADER_CLS = "org.zkoss.zss.ui.CellDisplayLoader.class";
 	private static final String DATA_VALIDATION_HANDLER_CLS = "org.zkoss.zss.ui.DataValidationHandler.class";
 	private static final String FREEZE_INFO_LOCADER_CLS = "org.zkoss.zss.ui.FreezeInfoLoader.class";
+	private static final String COLOR_PICKER_EX_USED_KEY= "org.zkoss.zss.colorPickerExUsed";
 	
 	private static final int DEFAULT_TOP_HEAD_HEIGHT = 20;
 	private static final int DEFAULT_LEFT_HEAD_WIDTH = 36;
@@ -1527,6 +1529,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					convertToDisabledActionJSON(getUserActionManagerCtrl()
 							.getSupportedUserAction(getSelectedSheet())));
 //			}
+			renderer.render("colorPickerExUsed", isColorPickerExUsed()); //must before rendering showToolbar for the property used in creating toolbar buttons
 			renderer.render("showToolbar", _showToolbar);
 		}
 			
@@ -1664,6 +1667,19 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 		} else {
 			renderer.render("dataValidations", (String) null);
 		}
+
+	}
+	
+	private Boolean isColorPickerExUsed() {
+		
+		Object value = getAttribute(COLOR_PICKER_EX_USED_KEY, true);
+		if(value == null){
+			value = Library.getProperty(COLOR_PICKER_EX_USED_KEY, "false");
+		}
+		if(value != null){
+			return Boolean.parseBoolean(value.toString());
+		}
+		return false;
 	}
 	
 	/**

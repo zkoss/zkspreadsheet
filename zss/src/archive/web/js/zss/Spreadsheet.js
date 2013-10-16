@@ -221,6 +221,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	_selectionRect: null,
 	_focusRect: null,
 	_highLightRect: null,
+	_colorPickerExUsed: false,
 	/**
 	 * Contains spreadsheet's toolbar
 	 */
@@ -692,7 +693,8 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		copysrc: null, //flag to show whether a copy source has set
 		//flag that indicate server has done paste operation, no need to do paste at client,
 		//Note. this flag will clear by doKeyUp()
-		doPasteFromServer: null
+		doPasteFromServer: null,
+		colorPickerExUsed: null
 	},
 	// ZSS-390: the selected range should not large than max rows/columns
 	// It will be significant poor performance.
