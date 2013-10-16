@@ -1568,7 +1568,6 @@ public class Issue200Test {
 		Assert.assertFalse(sheet.isColumnHidden(5));
 	}
 	
-	@Ignore
 	@Test
 	public void testZSS379() throws Exception {
 		Book book = Util.loadBook(this,"book/blank.xlsx");
