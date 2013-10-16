@@ -4700,32 +4700,33 @@ public final class BookHelper {
 	
 	public static void setLeftBorderColor(CellStyle style, Color color) {
 		if (style instanceof HSSFCellStyle) {
-			style.setLeftBorderColor(((HSSFColor)color).getIndex());
+			((HSSFCellStyle)style).setLeftBorderColor(((HSSFColor)color));
 		} else {
 			((XSSFCellStyle)style).setLeftBorderColor((XSSFColor)color);
 		}
 	}
 	public static void setRightBorderColor(CellStyle style, Color color) {
 		if (style instanceof HSSFCellStyle) {
-			style.setRightBorderColor(((HSSFColor)color).getIndex());
+			((HSSFCellStyle)style).setRightBorderColor(((HSSFColor)color));
 		} else {
 			((XSSFCellStyle)style).setRightBorderColor((XSSFColor)color);
 		}
 	}
 	public static void setTopBorderColor(CellStyle style, Color color) {
 		if (style instanceof HSSFCellStyle) {
-			style.setTopBorderColor(((HSSFColor)color).getIndex());
+			((HSSFCellStyle)style).setTopBorderColor(((HSSFColor)color));
 		} else {
 			((XSSFCellStyle)style).setTopBorderColor((XSSFColor)color);
 		}
 	}
 	public static void setBottomBorderColor(CellStyle style, Color color) {
 		if (style instanceof HSSFCellStyle) {
-			style.setBottomBorderColor(((HSSFColor)color).getIndex());
+			((HSSFCellStyle)style).setBottomBorderColor(((HSSFColor)color));
 		} else {
 			((XSSFCellStyle)style).setBottomBorderColor((XSSFColor)color);
 		}
 	}
+	
 	public static Color getFontColor(Workbook book, Font font) {
 		if (book instanceof XSSFWorkbook) {
 			return ((XSSFFont) font).getXSSFColor();
