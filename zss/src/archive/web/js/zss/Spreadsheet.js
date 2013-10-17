@@ -967,7 +967,7 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 	 * @param string type
 	 */
 	fireCellEvt: function (type, shx, shy, mousemeta, row, col, mx, my, field) {
-		if ('af'==type && this.sheetCtrl._wgt._protect){ //forbid using filter under protection
+		if ('af'==type && this.sheetCtrl._wgt.isProtect()){ //forbid using filter under protection
 			return;
 		}
 		
