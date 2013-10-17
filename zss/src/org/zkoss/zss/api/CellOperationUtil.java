@@ -36,6 +36,9 @@ import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
+import org.zkoss.zss.api.model.impl.EnumUtil;
+import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.ui.impl.Styles;
 
 /**
  * The utility to help UI to deal with user's cell operation of a {@link Range}.
@@ -413,20 +416,18 @@ public class CellOperationUtil {
 		applyFontStyle(range, getFontColorApplier(color));
 	}
 	
+
 	public static CellStyleApplier getBackgroundColorApplier(final Color color) {
 		return new CellStyleApplier() {
 				public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
-					Color ocolor = oldCellstyle.getBackgroundColor();
-					return ocolor.equals(color);
+					//ZSS 464, efficient implement
+					Styles.setFillColor((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),color.getHtmlColor());
+					cellRange.notifyChange();
+					return true;
 				}
 
 				public void apply(Range cellRange, EditableCellStyle newCellstyle) {
-					newCellstyle.setBackgroundColor(color);
-					
-					FillPattern patternType = newCellstyle.getFillPattern();
-					if (patternType == FillPattern.NO_FILL) {
-						newCellstyle.setFillPattern(FillPattern.SOLID_FOREGROUND);
-					}
+					//ZSS 464, efficient implementation in ignore.
 				}
 		};
 	}
@@ -446,12 +447,14 @@ public class CellOperationUtil {
 		return new CellStyleApplier() {
 
 			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
-				String oformat = oldCellstyle.getDataFormat();
-				return oformat.equals(format);
+				//ZSS 464, efficient implement
+				Styles.setDataFormat((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),format);
+				cellRange.notifyChange();
+				return true;
 			}
 
 			public void apply(Range cellRange, EditableCellStyle newCellstyle) {
-				newCellstyle.setDataFormat(format);
+				//ZSS 464, efficient implementation in ignore().
 			}
 		};
 	}
@@ -469,12 +472,14 @@ public class CellOperationUtil {
 		return new CellStyleApplier() {
 
 			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
-				Alignment oldalign = oldCellstyle.getAlignment();
-				return oldalign.equals(alignment);
+				//ZSS 464, efficient implement
+				Styles.setTextHAlign((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),EnumUtil.toStyleAlignemnt(alignment));
+				cellRange.notifyChange();
+				return true;
 			}
 
 			public void apply(Range cellRange, EditableCellStyle newCellstyle) {
-				newCellstyle.setAlignment(alignment);
+				//ZSS 464, efficient implementation in ignore().
 			}
 		};
 	}
@@ -492,12 +497,14 @@ public class CellOperationUtil {
 		return new CellStyleApplier() {
 
 			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
-				VerticalAlignment oldalign = oldCellstyle.getVerticalAlignment();
-				return oldalign.equals(alignment);
+				//ZSS 464, efficient implement
+				Styles.setTextVAlign((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),EnumUtil.toStyleVerticalAlignemnt(alignment));
+				cellRange.notifyChange();
+				return true;
 			}
 
 			public void apply(Range cellRange, EditableCellStyle newCellstyle) {
-				newCellstyle.setVerticalAlignment(alignment);
+				//ZSS 464, efficient implementation in ignore().
 			}
 		};
 	}

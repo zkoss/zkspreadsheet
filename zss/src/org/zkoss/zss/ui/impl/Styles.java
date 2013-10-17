@@ -65,16 +65,24 @@ public class Styles {
 		cell.setCellStyle(style);
 	}
 	
-	public static void setFillColor(XSheet sheet, int row, int col, String color){
+	public static void setFillColor(XSheet sheet, int row, int col, String htmlColor){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
 		final Color orgColor = cell.getCellStyle().getFillForegroundColorColor();
-		final Color newColor = BookHelper.HTMLToColor(book, color);
+		final Color newColor = BookHelper.HTMLToColor(book, htmlColor);
 		if (orgColor == newColor || orgColor != null  && orgColor.equals(newColor)) { //no change, skip
 			return;
 		}
-		final CellStyle style = cloneCellStyle(cell);
-		BookHelper.setFillForegroundColor(style, newColor);
+		
+		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
+		matcher.setFillForegroundColor(htmlColor);
+		matcher.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		CellStyle style = findStyle(sheet.getBook(), matcher);
+		if(style==null){
+			style  = cloneCellStyle(cell);
+			style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			BookHelper.setFillForegroundColor(style, newColor);
+		}
 		cell.setCellStyle(style);
 	}
 	
@@ -347,8 +355,13 @@ public class Styles {
 		if (align == orgAlign) { //no change, skip
 			return;
 		}
-		final CellStyle style = cloneCellStyle(cell);
-		style.setAlignment(align);
+		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
+		matcher.setAlignment(align);
+		CellStyle style = findStyle(sheet.getBook(), matcher);
+		if(style==null){
+			style = cloneCellStyle(cell);
+			style.setAlignment(align);
+		}
 		cell.setCellStyle(style);
 	}
 	
@@ -358,9 +371,34 @@ public class Styles {
 		if (valign == orgValign) { //no change, skip
 			return;
 		}
-		final CellStyle style = cloneCellStyle(cell);
-		style.setAlignment(valign);
+		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
+		matcher.setVerticalAlignment(valign);
+		CellStyle style = findStyle(sheet.getBook(), matcher);
+		if(style==null){
+			style = cloneCellStyle(cell);
+			style.setVerticalAlignment(valign);
+		}
 		cell.setCellStyle(style);
+	}
+
+	public static void setDataFormat(XSheet sheet, int row, int col, String format) {
+		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
+		final String orgFormat = cell.getCellStyle().getDataFormatString();
+		if (format == orgFormat || (format!=null && format.equals(orgFormat))) { //no change, skip
+			return;
+		}
+		
+		short idx = sheet.getBook().createDataFormat().getFormat(format);
+		
+		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
+		matcher.setDataFormat(idx);
+		CellStyle style = findStyle(sheet.getBook(), matcher);
+		if(style==null){
+			style = cloneCellStyle(cell);
+			style.setDataFormat(idx);
+		}
+		cell.setCellStyle(style);
+		
 	}
 	
 }
