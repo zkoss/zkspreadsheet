@@ -13,6 +13,7 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 
 package org.zkoss.zss.model.sys.impl;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -180,11 +181,14 @@ public class XRangeImpl implements XRange {
 		}
 	}
 
-	private int getHyperlinkType(String addr) {
-		if (addr != null && !isDirectHyperlink()) {
-			if (addr.toUpperCase().startsWith("HTTP://")) {
-				return Hyperlink.LINK_URL;
-			}
+	private int getHyperlinkType(String address) {
+		if (address != null && !isDirectHyperlink()) {
+			final String addr = address.toLowerCase(); // ZSS-288: support more scheme according to POI code, see  org.zkoss.poi.ss.formula.functions.Hyperlink
+			if (addr.startsWith("http://") || addr.startsWith("https://")) {
+				return org.zkoss.poi.ss.usermodel.Hyperlink.LINK_URL;
+			} else if (addr.startsWith("mailto:")) {
+				return org.zkoss.poi.ss.usermodel.Hyperlink.LINK_EMAIL;
+			} // ZSS-288: don't support auto-create hyperlink for DOCUMENT and FILE type
 		}
 		return -1;
 	}
