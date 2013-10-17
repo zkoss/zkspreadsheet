@@ -204,48 +204,60 @@ public class Styles {
 			if((at & BookHelper.BORDER_EDGE_LEFT)!=0) {
 				if(hasBorder)
 					matcher.setLeftBorderColor(colorHtml);
+				else
+					matcher.removeLeftBorderColor();
+				
 				matcher.setBorderLeft(lineStyle);
 			}
 			if((at & BookHelper.BORDER_EDGE_TOP)!=0){
 				if(hasBorder) 
 					matcher.setTopBorderColor(colorHtml);
+				else
+					matcher.removeTopBorderColor();
+				
 				matcher.setBorderTop(lineStyle);
 			}
 			if((at & BookHelper.BORDER_EDGE_RIGHT)!=0){
 				if(hasBorder)
 					matcher.setRightBorderColor(colorHtml);
+				else
+					matcher.removeRightBorderColor();
+				
 				matcher.setBorderRight(lineStyle);
 			}
 			if((at & BookHelper.BORDER_EDGE_BOTTOM)!=0){
 				if(hasBorder)
 					matcher.setBottomBorderColor(colorHtml);
+				else
+					matcher.removeBottomBorderColor();
+				
 				matcher.setBorderBottom(lineStyle);
 			}
 			style = findStyle(book, matcher);
-//			System.out.println(">>>>> match style of "+row+","+col+":"+style +":"+sheet.getBook().getNumCellStyles()+":"+colorHtml);
 		}
 		
 		if(style==null){
 			style = cloneCellStyle(cell);
 			if((at & BookHelper.BORDER_EDGE_LEFT)!=0) {
-				BookHelper.setLeftBorderColor(style, color);
+				if(hasBorder)
+					BookHelper.setLeftBorderColor(style, color);
 				style.setBorderLeft(lineStyle);
 			}
 			if((at & BookHelper.BORDER_EDGE_TOP)!=0){
-				BookHelper.setTopBorderColor(style, color);
+				if(hasBorder)
+					BookHelper.setTopBorderColor(style, color);
 				style.setBorderTop(lineStyle);
 			}
 			if((at & BookHelper.BORDER_EDGE_RIGHT)!=0){
-				BookHelper.setRightBorderColor(style, color);
+				if(hasBorder)
+					BookHelper.setRightBorderColor(style, color);
 				style.setBorderRight(lineStyle);
 			}
 			if((at & BookHelper.BORDER_EDGE_BOTTOM)!=0){
-				BookHelper.setBottomBorderColor(style, color);
+				if(hasBorder)
+					BookHelper.setBottomBorderColor(style, color);
 				style.setBorderBottom(lineStyle);
 			}
-//			System.out.println(">>>>> new style of "+row+","+col+":"+style +":"+sheet.getBook().getNumCellStyles());
-		}else{
-//			System.out.println(">>>>>>>>> Hit in set border of "+row+","+col+":"+style+":"+sheet.getBook().getNumCellStyles());
 		}
 		
 		cell.setCellStyle(style);

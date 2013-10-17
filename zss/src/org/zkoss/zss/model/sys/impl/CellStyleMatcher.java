@@ -66,16 +66,23 @@ public class CellStyleMatcher {
 	public CellStyleMatcher(Workbook book,CellStyle criteria){
 		setAlignment(criteria.getAlignment());
 		setVerticalAlignment(criteria.getVerticalAlignment());
-		
-		setBorderBottom(criteria.getBorderBottom());
-		setBorderLeft(criteria.getBorderLeft());
-		setBorderRight(criteria.getBorderRight());
-		setBorderTop(criteria.getBorderTop());
-		
-		setBottomBorderColor(BookHelper.colorToBorderHTML(book,criteria.getBottomBorderColorColor()));
-		setLeftBorderColor(BookHelper.colorToBorderHTML(book,criteria.getLeftBorderColorColor()));
-		setRightBorderColor(BookHelper.colorToBorderHTML(book,criteria.getRightBorderColorColor()));
-		setTopBorderColor(BookHelper.colorToBorderHTML(book,criteria.getTopBorderColorColor()));
+		short btype;
+		setBorderBottom(btype=criteria.getBorderBottom());
+		if(btype!=CellStyle.BORDER_NONE){//only compare color when the border is not none
+			setBottomBorderColor(BookHelper.colorToBorderHTML(book,criteria.getBottomBorderColorColor()));
+		}
+		setBorderLeft(btype=criteria.getBorderLeft());
+		if(btype!=CellStyle.BORDER_NONE){
+			setLeftBorderColor(BookHelper.colorToBorderHTML(book,criteria.getLeftBorderColorColor()));
+		}
+		setBorderRight(btype=criteria.getBorderRight());
+		if(btype!=CellStyle.BORDER_NONE){
+			setRightBorderColor(BookHelper.colorToBorderHTML(book,criteria.getRightBorderColorColor()));
+		}
+		setBorderTop(btype=criteria.getBorderTop());
+		if(btype!=CellStyle.BORDER_NONE){
+			setTopBorderColor(BookHelper.colorToBorderHTML(book,criteria.getTopBorderColorColor()));
+		}
 		
 		setDataFormat(criteria.getDataFormat());
 		
@@ -251,7 +258,6 @@ public class CellStyleMatcher {
 	public void removeFillForegroundColor(){
 		criteria.remove(Property.FillForegroundColor);
 	}
-	
 	public boolean match(Workbook book,CellStyle style){
 		for(Entry<Property,Object> e:criteria.entrySet()){
 			switch(e.getKey()){
@@ -363,10 +369,6 @@ public class CellStyleMatcher {
 	public boolean equals(Object o1,Object o2){
 		if(o1==o2)
 			return true;
-		boolean r= o1!=null?o1.equals(o2):false;
-//		if(!r){
-//			System.out.println(">>euqlas>"+o1+" != "+o2);
-//		}
-		return r;
+		return o1!=null?o1.equals(o2):false;
 	}
 }
