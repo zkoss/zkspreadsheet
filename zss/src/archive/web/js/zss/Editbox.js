@@ -276,6 +276,13 @@ zss.FormulabarEditor = zk.$extends(zul.inp.InputWidget, {
 				sheet.moveCellFocus(p.row, p.column);
 				sheet.moveCellSelection(ls.left, ls.top, ls.right, ls.bottom, false, true);
    			}
+   			// ZSS-380: if server reject a formula, server tells client stop editing and show message.
+   			// when closing the message dialog, ZK will re-focus the last focused widget and it is the formula bar.
+   			// But formula bar only gains focus when editing a cell, these states are conflict.
+   			// So we must blur formula bar's focus if it isn't editing any cell. 
+   			if(sheet.state != zss.SSheetCtrl.EDITING) {
+   				sheet._wgt.focus(100);
+   			}
    		}
    	},
    	doBlur_: function () {
