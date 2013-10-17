@@ -31,6 +31,8 @@ import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.CellStyle.Alignment;
 import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.CellStyle.VerticalAlignment;
+import org.zkoss.zss.api.model.Font.Boldweight;
+import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Sheet;
 
 /**
@@ -62,7 +64,7 @@ public class Issue464Test {
 		
 	}
 	
-	public void testApplyBorder(Book book) throws IOException {
+	private void testApplyBorder(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
@@ -263,7 +265,7 @@ public class Issue464Test {
 		testApplyBackgroundColor(Util.loadBook(this,"book/blank.xlsx"));
 	}
 	
-	public void testApplyBackgroundColor(Book book) throws IOException {
+	private void testApplyBackgroundColor(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
@@ -315,7 +317,7 @@ public class Issue464Test {
 		testApplyAlignment(Util.loadBook(this,"book/blank.xlsx"));
 	}
 	
-	public void testApplyAlignment(Book book) throws IOException {
+	private void testApplyAlignment(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
@@ -368,7 +370,7 @@ public class Issue464Test {
 		testApplyVerticalAlignment(Util.loadBook(this,"book/blank.xlsx"));
 	}
 	
-	public void testApplyVerticalAlignment(Book book) throws IOException {
+	private void testApplyVerticalAlignment(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
@@ -421,7 +423,7 @@ public class Issue464Test {
 		testApplyFormat(Util.loadBook(this,"book/blank.xlsx"));
 	}
 	
-	public void testApplyFormat(Book book) throws IOException {
+	private void testApplyFormat(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
@@ -467,6 +469,57 @@ public class Issue464Test {
 		}
 	}
 	
+	@Test
+	public void testApplyTextwrap() throws IOException {
+		testApplyTextwrap(Util.loadBook(this,"book/blank.xls"));
+		testApplyTextwrap(Util.loadBook(this,"book/blank.xlsx"));	
+	}
+	private void testApplyTextwrap(Book book) throws IOException {
+		Sheet sheet = book.getSheetAt(0);
+		int row = 100;
+		int column = 50;
+		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+		Range r = Ranges.range(sheet,0,0,row,column);
+		CellOperationUtil.applyWrapText(r, true);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +" Row:"+i+", Column:"+j;
+				Assert.assertEquals(location, true, style.isWrapText());
+			}
+		}
+		r = Ranges.range(sheet,1,1,row-1,column-1);
+		CellOperationUtil.applyWrapText(r, false);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, false, style.isWrapText());
+				}else{
+					Assert.assertEquals(location, true, style.isWrapText());
+				}
+			}
+		}
+		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, false, style.isWrapText());
+				}else{
+					Assert.assertEquals(location, true, style.isWrapText());
+				}
+			}
+		}
+	}
+	
 	//FONT
 	
 	@Test
@@ -476,22 +529,360 @@ public class Issue464Test {
 		
 	}
 	
-	public void testApplyFontName(Book book) throws IOException {
+	private void testApplyFontName(Book book) throws IOException {
 		Sheet sheet = book.getSheetAt(0);
 		int row = 100;
 		int column = 50;
+		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
 		Range r = Ranges.range(sheet,0,0,row,column);
-		System.out.println("A>>"+book.getPoiBook().getNumCellStyles());
-		CellOperationUtil.applyFontName(r,"Arial");
-		System.out.println("B>>"+book.getPoiBook().getNumCellStyles());
+		CellOperationUtil.applyFontName(r, "Georgia");
 		for(int i=0;i<=row;i++){
 			for(int j=0;j<=column;j++){
 				r = Ranges.range(sheet,i,j);
 				CellStyle style = r.getCellStyle();
 				String location = "At "+Ranges.getCellRefString(i, j) +" Row:"+i+", Column:"+j;
-				Assert.assertEquals(location, "Arial", style.getFont().getFontName());
+				Assert.assertEquals(location, "Georgia", style.getFont().getFontName());
+			}
+		}
+		r = Ranges.range(sheet,1,1,row-1,column-1);
+		CellOperationUtil.applyFontName(r, "Tahoma");
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, "Tahoma", style.getFont().getFontName());
+				}else{
+					Assert.assertEquals(location, "Georgia", style.getFont().getFontName());
+				}
+			}
+		}
+		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, "Tahoma", style.getFont().getFontName());
+				}else{
+					Assert.assertEquals(location, "Georgia", style.getFont().getFontName());
+				}
 			}
 		}
 	}
 	
+	@Test
+	public void testApplyFontSize() throws IOException {
+		testApplyFontSize(Util.loadBook(this,"book/blank.xls"));
+		testApplyFontSize(Util.loadBook(this,"book/blank.xlsx"));	
+	}
+	private void testApplyFontSize(Book book) throws IOException {
+		Sheet sheet = book.getSheetAt(0);
+		int row = 100;
+		int column = 50;
+		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+		Range r = Ranges.range(sheet,0,0,row,column);
+		CellOperationUtil.applyFontHeight(r, 20);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +" Row:"+i+", Column:"+j;
+				Assert.assertEquals(location, 20, style.getFont().getFontHeight());
+			}
+		}
+		r = Ranges.range(sheet,1,1,row-1,column-1);
+		CellOperationUtil.applyFontHeight(r, 40);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, 40, style.getFont().getFontHeight());
+				}else{
+					Assert.assertEquals(location, 20, style.getFont().getFontHeight());
+				}
+			}
+		}
+		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, 40, style.getFont().getFontHeight());
+				}else{
+					Assert.assertEquals(location, 20, style.getFont().getFontHeight());
+				}
+			}
+		}
+	}
+	
+	
+	@Test
+	public void testApplyFontColor() throws IOException {
+		testApplyFontColor(Util.loadBook(this,"book/blank.xls"));
+		testApplyFontColor(Util.loadBook(this,"book/blank.xlsx"));	
+	}
+	private void testApplyFontColor(Book book) throws IOException {
+		Sheet sheet = book.getSheetAt(0);
+		int row = 100;
+		int column = 50;
+		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+		Range r = Ranges.range(sheet,0,0,row,column);
+		CellOperationUtil.applyFontColor(r, "#0000ff");
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +" Row:"+i+", Column:"+j;
+				Assert.assertEquals(location, "#0000ff", style.getFont().getColor().getHtmlColor());
+			}
+		}
+		r = Ranges.range(sheet,1,1,row-1,column-1);
+		CellOperationUtil.applyFontColor(r, "#ff00ff");
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, "#ff00ff", style.getFont().getColor().getHtmlColor());
+				}else{
+					Assert.assertEquals(location, "#0000ff", style.getFont().getColor().getHtmlColor());
+				}
+			}
+		}
+		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, "#ff00ff", style.getFont().getColor().getHtmlColor());
+				}else{
+					Assert.assertEquals(location, "#0000ff", style.getFont().getColor().getHtmlColor());
+				}
+			}
+		}
+	}
+	
+	
+	@Test
+	public void testApplyFontBold() throws IOException {
+		testApplyFontBold(Util.loadBook(this,"book/blank.xls"));
+		testApplyFontBold(Util.loadBook(this,"book/blank.xlsx"));	
+	}
+	private void testApplyFontBold(Book book) throws IOException {
+		Sheet sheet = book.getSheetAt(0);
+		int row = 100;
+		int column = 50;
+		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+		Range r = Ranges.range(sheet,0,0,row,column);
+		CellOperationUtil.applyFontBoldweight(r, Boldweight.BOLD);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +" Row:"+i+", Column:"+j;
+				Assert.assertEquals(location, Boldweight.BOLD, style.getFont().getBoldweight());
+			}
+		}
+		r = Ranges.range(sheet,1,1,row-1,column-1);
+		CellOperationUtil.applyFontBoldweight(r, Boldweight.NORMAL);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, Boldweight.NORMAL, style.getFont().getBoldweight());
+				}else{
+					Assert.assertEquals(location, Boldweight.BOLD, style.getFont().getBoldweight());
+				}
+			}
+		}
+		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, Boldweight.NORMAL, style.getFont().getBoldweight());
+				}else{
+					Assert.assertEquals(location, Boldweight.BOLD, style.getFont().getBoldweight());
+				}
+			}
+		}
+	}
+	
+	
+	@Test
+	public void testApplyFontItalic() throws IOException {
+		testApplyFontItalic(Util.loadBook(this,"book/blank.xls"));
+		testApplyFontItalic(Util.loadBook(this,"book/blank.xlsx"));	
+	}
+	private void testApplyFontItalic(Book book) throws IOException {
+		Sheet sheet = book.getSheetAt(0);
+		int row = 100;
+		int column = 50;
+		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+		Range r = Ranges.range(sheet,0,0,row,column);
+		CellOperationUtil.applyFontItalic(r, true);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +" Row:"+i+", Column:"+j;
+				Assert.assertEquals(location, true, style.getFont().isItalic());
+			}
+		}
+		r = Ranges.range(sheet,1,1,row-1,column-1);
+		CellOperationUtil.applyFontItalic(r, false);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, false, style.getFont().isItalic());
+				}else{
+					Assert.assertEquals(location, true, style.getFont().isItalic());
+				}
+			}
+		}
+		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, false, style.getFont().isItalic());
+				}else{
+					Assert.assertEquals(location, true, style.getFont().isItalic());
+				}
+			}
+		}
+	}
+	
+	
+	@Test
+	public void testApplyFontStrike() throws IOException {
+		testApplyFontStrike(Util.loadBook(this,"book/blank.xls"));
+		testApplyFontStrike(Util.loadBook(this,"book/blank.xlsx"));	
+	}
+	private void testApplyFontStrike(Book book) throws IOException {
+		Sheet sheet = book.getSheetAt(0);
+		int row = 100;
+		int column = 50;
+		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+		Range r = Ranges.range(sheet,0,0,row,column);
+		CellOperationUtil.applyFontStrikeout(r, true);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +" Row:"+i+", Column:"+j;
+				Assert.assertEquals(location, true, style.getFont().isStrikeout());
+			}
+		}
+		r = Ranges.range(sheet,1,1,row-1,column-1);
+		CellOperationUtil.applyFontStrikeout(r, false);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, false, style.getFont().isStrikeout());
+				}else{
+					Assert.assertEquals(location, true, style.getFont().isStrikeout());
+				}
+			}
+		}
+		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, false, style.getFont().isStrikeout());
+				}else{
+					Assert.assertEquals(location, true, style.getFont().isStrikeout());
+				}
+			}
+		}
+	}
+	
+	
+	@Test
+	public void testApplyFontUnderline() throws IOException {
+		testApplyFontUnderline(Util.loadBook(this,"book/blank.xls"));
+		testApplyFontUnderline(Util.loadBook(this,"book/blank.xlsx"));	
+	}
+	private void testApplyFontUnderline(Book book) throws IOException {
+		Sheet sheet = book.getSheetAt(0);
+		int row = 100;
+		int column = 50;
+		System.out.println("cell style number before "+book.getPoiBook().getNumCellStyles());
+		Range r = Ranges.range(sheet,0,0,row,column);
+		CellOperationUtil.applyFontUnderline(r, Underline.SINGLE);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +" Row:"+i+", Column:"+j;
+				Assert.assertEquals(location, Underline.SINGLE, style.getFont().getUnderline());
+			}
+		}
+		r = Ranges.range(sheet,1,1,row-1,column-1);
+		CellOperationUtil.applyFontUnderline(r, Underline.NONE);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, Underline.NONE, style.getFont().getUnderline());
+				}else{
+					Assert.assertEquals(location, Underline.SINGLE, style.getFont().getUnderline());
+				}
+			}
+		}
+		System.out.println("cell style number after "+book.getPoiBook().getNumCellStyles());
+		book = Util.swap(book);
+		sheet = book.getSheetAt(0);
+		for(int i=0;i<=row;i++){
+			for(int j=0;j<=column;j++){
+				r = Ranges.range(sheet,i,j);
+				CellStyle style = r.getCellStyle();
+				String location = "At "+Ranges.getCellRefString(i, j) +"(Row:"+i+", Column:"+j+")";
+				if(i>0 && j>0 && i< row && j<column){
+					Assert.assertEquals(location, Underline.NONE, style.getFont().getUnderline());
+				}else{
+					Assert.assertEquals(location, Underline.SINGLE, style.getFont().getUnderline());
+				}
+			}
+		}
+	}
 }

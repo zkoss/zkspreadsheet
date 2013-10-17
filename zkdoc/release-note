@@ -69,6 +69,7 @@ ZK Spreadsheet 3.0.0
   ZSS-379 The cell's has weird text when using time format in Chinese environment
   ZSS-370 Click cell multiple times, cell turn into gray and cannot edit the cell
   ZSS-380 When input wrong formula, the formula bar will change to below cell and "Enter" key can't blur it
+  ZSS-464 Other styles are changed (background color, font size) when just changing cell border
   
 ** Upgrade Notes
 

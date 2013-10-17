@@ -137,18 +137,17 @@ public class CellOperationUtil {
 	public static FontStyleApplier getFontNameApplier(final String fontName){
 		return new FontStyleApplier() {
 			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
-				//the font name(family) is equals, not need to set it.
-				return oldFont.getFontName().equals(fontName);
+				Styles.setFontName((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),fontName);
+				range.notifyChange();
+				return true;
 			}
 			
 			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				//use the new font name to search it.
-				return cellRange.getCellStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), fontName, 
-						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
+				return null;
 			}
 			
 			public void apply(Range range,EditableCellStyle cellstyle, EditableFont newfont) {
-				newfont.setFontName(fontName);
+				//ZSS 464, efficient implementation in ignore.
 			}
 		};
 	}
@@ -161,35 +160,46 @@ public class CellOperationUtil {
 		applyFontStyle(range, getFontNameApplier(fontName));
 	}
 	
-	public static FontStyleApplier getFontHeightApplier(final short fontHeight) {
+	public static FontStyleApplier getFontHeightApplier(final int fontHeight) {
 		//fontHeight = twip
 		final int fpx = UnitUtil.twipToPx(fontHeight);
 		return new FontStyleApplier() {
 			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
-				//the font name(family) is equals, not need to set it.
-				return oldFont.getFontHeight() == fontHeight;
+				Styles.setFontHeight((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),fontHeight);
+				range.notifyChange();
+				int px = range.getSheet().getRowHeight(range.getRow());//rowHeight in px
+				if(fpx>px){
+					range.setRowHeight(fpx+4);//4 is padding
+				}
+				return true;
+//				//the font name(family) is equals, not need to set it.
+//				return oldFont.getFontHeight() == fontHeight;
 			}
 			
 			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				//use the new font name to search it.
-				Font f = cellRange.getCellStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), fontHeight, oldFont.getFontName(), 
-						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
-				if(f!=null){
-					//if font was found, the apply will be skip, so i enlarge here
-					int px = cellRange.getSheet().getRowHeight(cellRange.getRow());//rowHeight in px
-					if(fpx>px){
-						cellRange.setRowHeight(fpx+4);//4 is padding
-					}
-				}
-				return f;
+				return null;
+//				//use the new font name to search it.
+//				Font f = cellRange.getCellStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), fontHeight, oldFont.getFontName(), 
+//						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
+//				if(f!=null){
+//					//if font was found, the apply will be skip, so i enlarge here
+//					int px = cellRange.getSheet().getRowHeight(cellRange.getRow());//rowHeight in px
+//					if(fpx>px){
+//						cellRange.setRowHeight(fpx+4);//4 is padding
+//					}
+//				}
+//				return f;
 			}
 			
 			public void apply(Range cellRange,EditableCellStyle cellstyle, EditableFont newfont) {
-				int px = cellRange.getSheet().getRowHeight(cellRange.getRow());//rowHeight in px
-				newfont.setFontHeight(fontHeight);
-				if(fpx>px){//enlarge the row height
-					cellRange.setRowHeight(fpx+4);//4 is padding
-				}
+				//ZSS 464, efficient implementation in ignore.
+				
+//				int px = cellRange.getSheet().getRowHeight(cellRange.getRow());//rowHeight in px
+//				newfont.setFontHeight(fontHeight);
+//				if(fpx>px){//enlarge the row height
+//					cellRange.setRowHeight(fpx+4);//4 is padding
+//				}
+				
 			}
 		};
 	}
@@ -199,7 +209,7 @@ public class CellOperationUtil {
 	 * @param range range to be applied
 	 * @param fontHeight the font height in twpi (1/20 point)
 	 */
-	public static void applyFontHeight(Range range, final short fontHeight) {
+	public static void applyFontHeight(Range range, final int fontHeight) {
 		applyFontStyle(range, getFontHeightApplier(fontHeight));
 	}
 	
@@ -208,9 +218,9 @@ public class CellOperationUtil {
 	 * @param range range to be applied
 	 * @param point the font size in point
 	 */
-	public static void applyFontSize(Range range, final short point) {
+	public static void applyFontSize(Range range, final int point) {
 		//fontSize = fontHeightInPoints = fontHeight/20
-		applyFontHeight(range,(short)UnitUtil.pointToTwip(point));
+		applyFontHeight(range,UnitUtil.pointToTwip(point));
 	}
 	
 	/**
@@ -282,16 +292,18 @@ public class CellOperationUtil {
 	public static FontStyleApplier getFontBoldweightApplier(final Boldweight boldweight) {
 		return  new FontStyleApplier() {
 			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
-				return oldFont.getBoldweight().equals(boldweight);
+				//ZSS 464, efficient implement
+				Styles.setFontBoldWeight((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),EnumUtil.toFontBoldweight(boldweight));
+				range.notifyChange();
+				return true;
 			}
 			
 			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return cellRange.getCellStyleHelper().findFont(boldweight, oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
-						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
+				return null;
 			}
 			
 			public void apply(Range range,EditableCellStyle newCellstyle, EditableFont newfont) {
-				newfont.setBoldweight(boldweight);
+				//ZSS 464, efficient implementation in ignore.
 			}
 		};
 	}
@@ -308,16 +320,18 @@ public class CellOperationUtil {
 	public static FontStyleApplier getFontItalicApplier(final boolean italic) {
 		return new FontStyleApplier() {
 			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
-				return oldFont.isItalic()==italic;
+				//ZSS 464, efficient implement
+				Styles.setFontItalic((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),italic);
+				range.notifyChange();
+				return true;
 			}
 			
 			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return cellRange.getCellStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
-						italic, oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
+				return null;
 			}
 			
 			public void apply(Range range,EditableCellStyle newCellstyle, EditableFont newfont) {
-				newfont.setItalic(italic);
+				//ZSS 464, efficient implementation in ignore.
 			}
 		};
 	}
@@ -334,16 +348,18 @@ public class CellOperationUtil {
 	public static FontStyleApplier getFontStrikeoutApplier(final boolean strikeout) {
 		return new FontStyleApplier() {
 			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
-				return oldFont.isStrikeout()==strikeout;
+				//ZSS 464, efficient implement
+				Styles.setFontStrikethrough((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),strikeout);
+				range.notifyChange();
+				return true;
 			}
 			
 			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return cellRange.getCellStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
-						oldFont.isItalic(), strikeout, oldFont.getTypeOffset(), oldFont.getUnderline());
+				return null;
 			}
 			
 			public void apply(Range range,EditableCellStyle newCellstyle, EditableFont newfont) {
-				newfont.setStrikeout(strikeout);
+				//ZSS 464, efficient implementation in ignore.
 			}
 		};
 	}
@@ -360,16 +376,18 @@ public class CellOperationUtil {
 	public static FontStyleApplier getFontUnderlineApplier(final Underline underline) {
 		return new FontStyleApplier() {
 			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
-				return oldFont.getUnderline().equals(underline);
+				//ZSS 464, efficient implement
+				Styles.setFontUnderline((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),EnumUtil.toFontUnderline(underline));
+				range.notifyChange();
+				return true;
 			}
 			
 			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return cellRange.getCellStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), oldFont.getFontHeight(), oldFont.getFontName(), 
-						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), underline);
+				return null;
 			}
 			
 			public void apply(Range range,EditableCellStyle newCellstyle, EditableFont newfont) {
-				newfont.setUnderline(underline);
+				//ZSS 464, efficient implementation in ignore.
 			}
 		};
 	}
@@ -386,22 +404,18 @@ public class CellOperationUtil {
 	public static FontStyleApplier getFontColorApplier(final Color color) {
 		return new FontStyleApplier() {
 			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
-				return oldFont.getColor().getHtmlColor().equals(color.getHtmlColor());
+				//ZSS 464, efficient implement
+				Styles.setFontColor((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),color.getHtmlColor());
+				range.notifyChange();
+				return true;
 			}
 			
 			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return cellRange.getCellStyleHelper().findFont(oldFont.getBoldweight(), color, oldFont.getFontHeight(), oldFont.getFontName(), 
-						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
+				return null;
 			}
 			
 			public void apply(Range range,EditableCellStyle newCellstyle, EditableFont newfont) {
-				
-				//check it in XSSFCellStyle , it is just a delegator, but do some thing in HSSF
-				newfont.setColor(color);
-				
-				//TODO need to check with Henri, and Sam, why current implementation doesn't call set font color directly
-				//TODO call style's set font color will cause set color after set a theme color issue(after clone form default)
-//				newCellstyle.setFontColor(color); 
+				//ZSS 464, efficient implementation in ignore.
 			}
 		};
 	}
@@ -636,12 +650,14 @@ public class CellOperationUtil {
 		return new CellStyleApplier() {
 
 			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
-				boolean oldwrap = oldCellstyle.isWrapText();
-				return oldwrap==wraptext;
+				//ZSS 464, efficient implement
+				Styles.setTextWrap((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),wraptext);
+				cellRange.notifyChange();
+				return true;
 			}
 
 			public void apply(Range cellRange, EditableCellStyle newCellstyle) {
-				newCellstyle.setWrapText(wraptext);
+				//ZSS 464, efficient implementation in ignore().
 			}
 		};
 	}

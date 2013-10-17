@@ -3064,6 +3064,28 @@ public final class BookHelper {
 		return font;
 	}
 	
+	/**
+	 * 
+	 * @return a array, 1st element is the font. 2nd element is boolean indicates the font is new created or not (TRUE is new created) 
+	 */
+	public static Object[] findOrCreateFont(XBook book, short boldWeight, Color color, short fontHeight, java.lang.String name, 
+			boolean italic, boolean strikeout, short typeOffset, byte underline) {
+		Font font = book.findFont(boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
+		if (font == null) {
+			font = book.createFont();
+			font.setBoldweight(boldWeight);
+			BookHelper.setFontColor(book, font, color);
+			font.setFontHeight(fontHeight);
+			font.setFontName(name);
+			font.setItalic(italic);
+			font.setStrikeout(strikeout);
+			font.setTypeOffset(typeOffset);
+			font.setUnderline(underline);
+			return new Object[]{font,Boolean.TRUE};
+		}
+		return new Object[]{font,Boolean.FALSE};
+	}
+	
 	public static Font getFont(Cell cell) {
 		final CellStyle style = cell.getCellStyle();
 		final short fontIdx = style.getFontIndex();
