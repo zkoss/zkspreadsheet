@@ -73,6 +73,7 @@ ZK Spreadsheet 3.0.0
   ZSS-288 email address, https://, ftp:// don't convert to a hyperlink automatically
   ZSS-472 Formula result doesn't change after named-range updated
   ZSS-470 "Blanks" in Autofilter drop-down list never shows checked
+  ZSS-471 Multiple filters doesn't work correctly
   
 ** Upgrade Notes
 
