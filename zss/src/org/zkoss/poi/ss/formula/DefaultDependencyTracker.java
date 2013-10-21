@@ -24,6 +24,7 @@ import org.zkoss.poi.ss.formula.eval.NotImplementedException;
 import org.zkoss.poi.ss.formula.function.FunctionMetadataRegistry;
 import org.zkoss.poi.ss.formula.ptg.AreaPtgBase;
 import org.zkoss.poi.ss.formula.ptg.FuncPtg;
+import org.zkoss.poi.ss.formula.ptg.NamePtg;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.ptg.RefPtgBase;
 import org.zkoss.poi.ss.util.CellReference;
@@ -122,7 +123,9 @@ public class DefaultDependencyTracker implements DependencyTracker {
 					withIndirect = true;
 					break;
 				}
-			} else if (ptg instanceof AreaPtgBase || ptg instanceof RefPtgBase) {
+			} else if (ptg instanceof AreaPtgBase || ptg instanceof RefPtgBase
+					//ZSS-472 Formula result doesn't change after named-range updated
+					|| ptg instanceof NamePtg) {
 				precedents.add(ptg);
 			}
 		}

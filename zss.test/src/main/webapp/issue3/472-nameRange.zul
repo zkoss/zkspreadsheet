@@ -1,0 +1,17 @@
+<zk>
+	<vbox width="90%" height="90%">
+		<label pre="true">
+			1.set D4 to 2, C2 should become 22
+		</label>
+		<hbox  hflex="1" vflex="1">
+		<spreadsheet id="ss1" src="/issue3/book/472-nameRange.xlsx"  hflex="1" vflex="1"
+			maxrows="100" maxcolumns="50"
+			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+		</spreadsheet>
+		<spreadsheet id="ss2" src="/issue3/book/472-nameRange.xls"  hflex="1" vflex="1"
+			maxrows="100" maxcolumns="50"
+			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+		</spreadsheet>
+		</hbox>
+	</vbox>
+</zk>

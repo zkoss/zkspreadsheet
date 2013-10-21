@@ -1100,4 +1100,13 @@ public class Issue400Test {
 		Assert.assertEquals(HyperlinkType.EMAIL, link.getType());
 	}
 
+	@Test
+	public void testZSS465(){
+		Book book = Util.loadBook(Issue400Test.class, "book/465-exception.xls");
+		for(int i=0;i<book.getNumberOfSheets();i++){
+			Sheet sheet = book.getSheetAt(0);
+			sheet.getPoiSheet().getDataValidations();
+		}
+	}
+	
 }

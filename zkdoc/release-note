@@ -71,6 +71,7 @@ ZK Spreadsheet 3.0.0
   ZSS-380 When input wrong formula, the formula bar will change to below cell and "Enter" key can't blur it
   ZSS-464 Other styles are changed (background color, font size) when just changing cell border
   ZSS-288 email address, https://, ftp:// don't convert to a hyperlink automatically
+  ZSS-472 Formula result doesn't change after named-range updated
   
 ** Upgrade Notes
 
