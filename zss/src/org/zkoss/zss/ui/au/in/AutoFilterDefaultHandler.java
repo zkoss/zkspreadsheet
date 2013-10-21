@@ -111,7 +111,7 @@ import org.zkoss.zss.ui.impl.XUtils;
 		blankRowInfo = new FilterRowInfo(BLANK_VALUE, "(Blanks)");
 		final Set criteria1 = fc == null ? null : fc.getCriteria1();
 		boolean hasBlank = false;
-		boolean selectedBlank = false;
+		boolean hasSelectedBlank = false;
 		final int top = range.getRow() + 1;
 		final int bottom = range.getLastRow();
 		final int columnIndex = range.getColumn() + field - 1;
@@ -134,8 +134,9 @@ import org.zkoss.zss.ui.impl.XUtils;
 			} else {
 				hasBlank = true;
 				boolean noFilterApplied = criteria1 == null || criteria1.isEmpty(); 
-				if (selectedBlank && (noFilterApplied || criteria1.contains("="))) { //"=" means blank is selected
+				if (!hasSelectedBlank && (noFilterApplied || criteria1.contains("="))) { //"=" means blank is selected
 					blankRowInfo.setSelected(true);
+					hasSelectedBlank = true;
 				}
 			}
 		}
