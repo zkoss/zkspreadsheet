@@ -1109,4 +1109,100 @@ public class Issue400Test {
 		}
 	}
 	
+	@Test
+	public void testZSS473(){
+		testZSS473(Util.loadBook(Issue400Test.class, "book/473-sheetname.xlsx"));
+		testZSS473(Util.loadBook(Issue400Test.class, "book/473-sheetname.xls"));
+	}
+	public void testZSS473(Book book){
+			
+		
+		for(int i=0;i<5;i++){
+			Sheet sheet = book.getSheetAt(i);
+			Range a1 = Ranges.range(sheet,"A1");
+			Range b1 = Ranges.range(sheet,"B1");
+			Range c1 = Ranges.range(sheet,"C1");
+			Range b3 = Ranges.range(sheet,"B3");
+			Range b4 = Ranges.range(sheet,"B4");
+			
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),a1.getCellFormatText());
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),b1.getCellFormatText());
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),c1.getCellFormatText());
+			
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),b3.getCellFormatText());
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+((i+1)*3),b4.getCellFormatText());
+		}
+		
+		for(int i=0;i<5;i++){
+			Sheet sheet = book.getSheetAt(i);
+			Ranges.range(sheet).setSheetName("(K"+i);
+			
+			Range a1 = Ranges.range(sheet,"A1");
+			Range b1 = Ranges.range(sheet,"B1");
+			Range c1 = Ranges.range(sheet,"C1");
+			Range b3 = Ranges.range(sheet,"B3");
+			Range b4 = Ranges.range(sheet,"B4");
+			
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),a1.getCellFormatText());
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),b1.getCellFormatText());
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),c1.getCellFormatText());
+			
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),b3.getCellFormatText());
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+((i+1)*3),b4.getCellFormatText());
+		}
+		
+		for(int i=0;i<5;i++){
+			Sheet sheet = book.getSheetAt(i);
+			Ranges.range(sheet).setSheetName("K"+i+")");
+			
+			Range a1 = Ranges.range(sheet,"A1");
+			Range b1 = Ranges.range(sheet,"B1");
+			Range c1 = Ranges.range(sheet,"C1");
+			Range b3 = Ranges.range(sheet,"B3");
+			Range b4 = Ranges.range(sheet,"B4");
+			
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),a1.getCellFormatText());
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),b1.getCellFormatText());
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),c1.getCellFormatText());
+			
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),b3.getCellFormatText());
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+((i+1)*3),b4.getCellFormatText());
+		}
+		for(int i=0;i<5;i++){
+			Sheet sheet = book.getSheetAt(i);
+			Ranges.range(sheet).setSheetName("{K"+i);
+			
+			Range a1 = Ranges.range(sheet,"A1");
+			Range b1 = Ranges.range(sheet,"B1");
+			Range c1 = Ranges.range(sheet,"C1");
+			Range b3 = Ranges.range(sheet,"B3");
+			Range b4 = Ranges.range(sheet,"B4");
+			
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),a1.getCellFormatText());
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),b1.getCellFormatText());
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),c1.getCellFormatText());
+			
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),b3.getCellFormatText());
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+((i+1)*3),b4.getCellFormatText());
+		}
+		
+		for(int i=0;i<5;i++){
+			Sheet sheet = book.getSheetAt(i);
+			Ranges.range(sheet).setSheetName("K"+i+"}");
+			
+			Range a1 = Ranges.range(sheet,"A1");
+			Range b1 = Ranges.range(sheet,"B1");
+			Range c1 = Ranges.range(sheet,"C1");
+			Range b3 = Ranges.range(sheet,"B3");
+			Range b4 = Ranges.range(sheet,"B4");
+			
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),a1.getCellFormatText());
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),b1.getCellFormatText());
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),c1.getCellFormatText());
+			
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),b3.getCellFormatText());
+			Assert.assertEquals("at "+ sheet.getSheetName(),""+((i+1)*3),b4.getCellFormatText());
+		}
+//		
+	}
 }
