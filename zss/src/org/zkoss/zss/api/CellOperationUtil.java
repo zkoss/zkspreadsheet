@@ -134,20 +134,12 @@ public class CellOperationUtil {
 		return src.pasteSpecial(dest, pasteType, pasteOperation, skipBlank, transpose);
 	}
 
-	public static FontStyleApplier getFontNameApplier(final String fontName){
-		return new FontStyleApplier() {
-			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
+	public static CellStyleApplier getFontNameApplier(final String fontName){
+		return new CellStyleApplier() {
+			public void apply(Range range) {
+				//ZSS 464, efficient implementation
 				Styles.setFontName((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),fontName);
 				range.notifyChange();
-				return true;
-			}
-			
-			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return null;
-			}
-			
-			public void apply(Range range,EditableCellStyle cellstyle, EditableFont newfont) {
-				//ZSS 464, efficient implementation in ignore.
 			}
 		};
 	}
@@ -157,49 +149,20 @@ public class CellOperationUtil {
 	 * @param fontName the font name
 	 */
 	public static void applyFontName(Range range,final String fontName){
-		applyFontStyle(range, getFontNameApplier(fontName));
+		applyCellStyle(range, getFontNameApplier(fontName));
 	}
 	
-	public static FontStyleApplier getFontHeightApplier(final int fontHeight) {
+	public static CellStyleApplier getFontHeightApplier(final int fontHeight) {
 		//fontHeight = twip
 		final int fpx = UnitUtil.twipToPx(fontHeight);
-		return new FontStyleApplier() {
-			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
-				Styles.setFontHeight((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),fontHeight);
-				range.notifyChange();
-				int px = range.getSheet().getRowHeight(range.getRow());//rowHeight in px
+		return new CellStyleApplier() {
+			public void apply(Range cellRange) {
+				Styles.setFontHeight((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),fontHeight);
+				cellRange.notifyChange();
+				int px = cellRange.getSheet().getRowHeight(cellRange.getRow());//rowHeight in px
 				if(fpx>px){
-					range.setRowHeight(fpx+4);//4 is padding
+					cellRange.setRowHeight(fpx+4);//4 is padding
 				}
-				return true;
-//				//the font name(family) is equals, not need to set it.
-//				return oldFont.getFontHeight() == fontHeight;
-			}
-			
-			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return null;
-//				//use the new font name to search it.
-//				Font f = cellRange.getCellStyleHelper().findFont(oldFont.getBoldweight(), oldFont.getColor(), fontHeight, oldFont.getFontName(), 
-//						oldFont.isItalic(), oldFont.isStrikeout(), oldFont.getTypeOffset(), oldFont.getUnderline());
-//				if(f!=null){
-//					//if font was found, the apply will be skip, so i enlarge here
-//					int px = cellRange.getSheet().getRowHeight(cellRange.getRow());//rowHeight in px
-//					if(fpx>px){
-//						cellRange.setRowHeight(fpx+4);//4 is padding
-//					}
-//				}
-//				return f;
-			}
-			
-			public void apply(Range cellRange,EditableCellStyle cellstyle, EditableFont newfont) {
-				//ZSS 464, efficient implementation in ignore.
-				
-//				int px = cellRange.getSheet().getRowHeight(cellRange.getRow());//rowHeight in px
-//				newfont.setFontHeight(fontHeight);
-//				if(fpx>px){//enlarge the row height
-//					cellRange.setRowHeight(fpx+4);//4 is padding
-//				}
-				
 			}
 		};
 	}
@@ -210,7 +173,7 @@ public class CellOperationUtil {
 	 * @param fontHeight the font height in twpi (1/20 point)
 	 */
 	public static void applyFontHeight(Range range, final int fontHeight) {
-		applyFontStyle(range, getFontHeightApplier(fontHeight));
+		applyCellStyle(range, getFontHeightApplier(fontHeight));
 	}
 	
 	/**
@@ -222,88 +185,13 @@ public class CellOperationUtil {
 		//fontSize = fontHeightInPoints = fontHeight/20
 		applyFontHeight(range,UnitUtil.pointToTwip(point));
 	}
-	
-	/**
-	 * Interface for helping apply font style.
-	 * @author dennis
-	 */
-	public interface FontStyleApplier {
-		/** Should ignore this cellRange**/
-		public boolean ignore(Range cellRange,CellStyle oldCellstyle,Font oldFont);
-		/** Find the font to apply to new style, return null mean not found, and will create a new font**/
-		public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont);
-		/** apply style to new font, will be call when {@code #search() return null}**/
-		public void apply(Range cellRange,EditableCellStyle newCellstyle,EditableFont newfont);
-	}
-	
-	/**
-	 * Apply font style according to the {@link FontStyleApplier}
-	 * @param range the range to be applied
-	 * @param applyer the font style appliler
-	 */
-	public static void applyFontStyle(Range range,final FontStyleApplier applyer){
-		//use use cell visitor to visit cells respectively
-		//use BOOK level lock because we will create BOOK level Object (style, font)
-		if(range.isProtected())
-			return;
-		range.visit(new CellVisitor(){
-			@Override
-			public boolean visit(Range cellRange) {
-				CellStyle ostyle = cellRange.getCellStyle();
-				Font ofont = ostyle.getFont();
-				//ignore or not, to prevent unnecessary creation
-				if(applyer.ignore(cellRange,ostyle,ofont)){
-					return true;//continue visit
-				}
-				//2.create a new style from old one, the original one is shared between cells
-				//TODO what if it is the last referenced, could I just use it? who will delete old if I use new
-				EditableCellStyle nstyle = cellRange.getCellStyleHelper().createCellStyle(ostyle);
-				
-				EditableFont nfont = null;
-				//3.search if there any font already in book
-				Font sfont = applyer.search(cellRange,ostyle,ofont);
-				if( sfont== null){
-					//create new font base old font if not found
-					nfont = cellRange.getCellStyleHelper().createFont(ofont);
-					nstyle.setFont(nfont);
-					
-					//set the apply
-					applyer.apply(cellRange,nstyle, nfont);
-				}else{
-					nstyle.setFont(sfont);
-				}
-				
-				
-				cellRange.setCellStyle(nstyle);
-				return true;
-			}
 
-			@Override
-			public boolean ignoreIfNotExist(int row, int column) {
-				return false;
-			}
-
-			@Override
-			public boolean createIfNotExist(int row, int column) {
-				return true;
-			}});
-	}
-
-	public static FontStyleApplier getFontBoldweightApplier(final Boldweight boldweight) {
-		return  new FontStyleApplier() {
-			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
+	public static CellStyleApplier getFontBoldweightApplier(final Boldweight boldweight) {
+		return  new CellStyleApplier() {
+			public void apply(Range range) {
 				//ZSS 464, efficient implement
 				Styles.setFontBoldWeight((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),EnumUtil.toFontBoldweight(boldweight));
 				range.notifyChange();
-				return true;
-			}
-			
-			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return null;
-			}
-			
-			public void apply(Range range,EditableCellStyle newCellstyle, EditableFont newfont) {
-				//ZSS 464, efficient implementation in ignore.
 			}
 		};
 	}
@@ -314,24 +202,15 @@ public class CellOperationUtil {
 	 * @param boldweight the font bold-weight
 	 */
 	public static void applyFontBoldweight(Range range,final Boldweight boldweight) {
-		applyFontStyle(range,getFontBoldweightApplier(boldweight));
+		applyCellStyle(range,getFontBoldweightApplier(boldweight));
 	}
 
-	public static FontStyleApplier getFontItalicApplier(final boolean italic) {
-		return new FontStyleApplier() {
-			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
+	public static CellStyleApplier getFontItalicApplier(final boolean italic) {
+		return new CellStyleApplier() {
+			public void apply(Range range) {
 				//ZSS 464, efficient implement
 				Styles.setFontItalic((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),italic);
 				range.notifyChange();
-				return true;
-			}
-			
-			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return null;
-			}
-			
-			public void apply(Range range,EditableCellStyle newCellstyle, EditableFont newfont) {
-				//ZSS 464, efficient implementation in ignore.
 			}
 		};
 	}
@@ -341,25 +220,16 @@ public class CellOperationUtil {
 	 * @param italic the font italic
 	 */
 	public static void applyFontItalic(Range range, final boolean italic) {
-		applyFontStyle(range, getFontItalicApplier(italic));
+		applyCellStyle(range, getFontItalicApplier(italic));
 	}
 
 	
-	public static FontStyleApplier getFontStrikeoutApplier(final boolean strikeout) {
-		return new FontStyleApplier() {
-			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
+	public static CellStyleApplier getFontStrikeoutApplier(final boolean strikeout) {
+		return new CellStyleApplier() {
+			public void apply(Range range) {
 				//ZSS 464, efficient implement
 				Styles.setFontStrikethrough((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),strikeout);
 				range.notifyChange();
-				return true;
-			}
-			
-			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return null;
-			}
-			
-			public void apply(Range range,EditableCellStyle newCellstyle, EditableFont newfont) {
-				//ZSS 464, efficient implementation in ignore.
 			}
 		};
 	}
@@ -369,25 +239,16 @@ public class CellOperationUtil {
 	 * @param strikeout font strike-out
 	 */
 	public static void applyFontStrikeout(Range range, final boolean strikeout) {
-		applyFontStyle(range, getFontStrikeoutApplier(strikeout));
+		applyCellStyle(range, getFontStrikeoutApplier(strikeout));
 	}
 	
 	
-	public static FontStyleApplier getFontUnderlineApplier(final Underline underline) {
-		return new FontStyleApplier() {
-			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
+	public static CellStyleApplier getFontUnderlineApplier(final Underline underline) {
+		return new CellStyleApplier() {
+			public void apply(Range range) {
 				//ZSS 464, efficient implement
 				Styles.setFontUnderline((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),EnumUtil.toFontUnderline(underline));
 				range.notifyChange();
-				return true;
-			}
-			
-			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return null;
-			}
-			
-			public void apply(Range range,EditableCellStyle newCellstyle, EditableFont newfont) {
-				//ZSS 464, efficient implementation in ignore.
 			}
 		};
 	}
@@ -398,24 +259,15 @@ public class CellOperationUtil {
 	 * @param underline font underline
 	 */
 	public static void applyFontUnderline(Range range,final Underline underline) {
-		applyFontStyle(range, getFontUnderlineApplier(underline));
+		applyCellStyle(range, getFontUnderlineApplier(underline));
 	}
 	
-	public static FontStyleApplier getFontColorApplier(final Color color) {
-		return new FontStyleApplier() {
-			public boolean ignore(Range range,CellStyle oldCellstyle, Font oldFont) {
+	public static CellStyleApplier getFontColorApplier(final Color color) {
+		return new CellStyleApplier() {
+			public void apply(Range range) {
 				//ZSS 464, efficient implement
 				Styles.setFontColor((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),color.getHtmlColor());
 				range.notifyChange();
-				return true;
-			}
-			
-			public Font search(Range cellRange,CellStyle oldCellstyle, Font oldFont){
-				return null;
-			}
-			
-			public void apply(Range range,EditableCellStyle newCellstyle, EditableFont newfont) {
-				//ZSS 464, efficient implementation in ignore.
 			}
 		};
 	}
@@ -427,21 +279,15 @@ public class CellOperationUtil {
 	 */
 	public static void applyFontColor(Range range, final String htmlColor) {
 		final Color color = range.getCellStyleHelper().createColorFromHtmlColor(htmlColor);
-		applyFontStyle(range, getFontColorApplier(color));
+		applyCellStyle(range, getFontColorApplier(color));
 	}
 	
 
 	public static CellStyleApplier getBackgroundColorApplier(final Color color) {
 		return new CellStyleApplier() {
-				public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
-					//ZSS 464, efficient implement
+				public void apply(Range cellRange) {
 					Styles.setFillColor((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),color.getHtmlColor());
 					cellRange.notifyChange();
-					return true;
-				}
-
-				public void apply(Range cellRange, EditableCellStyle newCellstyle) {
-					//ZSS 464, efficient implementation in ignore.
 				}
 		};
 	}
@@ -459,16 +305,10 @@ public class CellOperationUtil {
 	
 	public static CellStyleApplier getDataFormatApplier(final String format) {
 		return new CellStyleApplier() {
-
-			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
+			public void apply(Range cellRange) {
 				//ZSS 464, efficient implement
 				Styles.setDataFormat((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),format);
 				cellRange.notifyChange();
-				return true;
-			}
-
-			public void apply(Range cellRange, EditableCellStyle newCellstyle) {
-				//ZSS 464, efficient implementation in ignore().
 			}
 		};
 	}
@@ -484,16 +324,10 @@ public class CellOperationUtil {
 
 	public static CellStyleApplier getAligmentApplier(final Alignment alignment){
 		return new CellStyleApplier() {
-
-			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
+			public void apply(Range cellRange) {
 				//ZSS 464, efficient implement
 				Styles.setTextHAlign((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),EnumUtil.toStyleAlignemnt(alignment));
 				cellRange.notifyChange();
-				return true;
-			}
-
-			public void apply(Range cellRange, EditableCellStyle newCellstyle) {
-				//ZSS 464, efficient implementation in ignore().
 			}
 		};
 	}
@@ -509,16 +343,10 @@ public class CellOperationUtil {
 
 	public static CellStyleApplier getVerticalAligmentApplier(final VerticalAlignment alignment){
 		return new CellStyleApplier() {
-
-			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
+			public void apply(Range cellRange) {
 				//ZSS 464, efficient implement
 				Styles.setTextVAlign((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),EnumUtil.toStyleVerticalAlignemnt(alignment));
 				cellRange.notifyChange();
-				return true;
-			}
-
-			public void apply(Range cellRange, EditableCellStyle newCellstyle) {
-				//ZSS 464, efficient implementation in ignore().
 			}
 		};
 	}
@@ -536,10 +364,8 @@ public class CellOperationUtil {
 	 * Interface for help apply cell style
 	 */
 	public interface CellStyleApplier {
-		/** should ignore this cellRange**/
-		public boolean ignore(Range cellRange,CellStyle oldCellstyle);
 		/** apply style to new cell**/
-		public void apply(Range cellRange,EditableCellStyle newCellstyle);
+		public void apply(Range cellRange);
 	}
 	
 	/**
@@ -557,23 +383,8 @@ public class CellOperationUtil {
 		range.visit(new CellVisitor() {
 			@Override
 			public boolean visit(Range cellRange) {
-				CellStyle ostyle = cellRange.getCellStyle();
-				
-				// ignore or not, to prevent unnecessary creation
-				if (applyer.ignore(cellRange, ostyle)) {
-					return true;//continue visit
-				}
-				// 2.create a new style from old one, the original one is shared
-				// between cells
-				// TODO what if it is the last referenced, could I just use it?
-				// who will delete old if I use new
-				EditableCellStyle nstyle = cellRange.getCellStyleHelper().createCellStyle(
-						ostyle);
-
 				// set the apply
-				applyer.apply(cellRange, nstyle);
-
-				cellRange.setCellStyle(nstyle);
+				applyer.apply(cellRange);
 				return true;
 			}
 
@@ -648,16 +459,9 @@ public class CellOperationUtil {
 	
 	public static CellStyleApplier getWrapTextApplier(final boolean wraptext) {
 		return new CellStyleApplier() {
-
-			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
-				//ZSS 464, efficient implement
+			public void apply(Range cellRange) {
 				Styles.setTextWrap((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),wraptext);
 				cellRange.notifyChange();
-				return true;
-			}
-
-			public void apply(Range cellRange, EditableCellStyle newCellstyle) {
-				//ZSS 464, efficient implementation in ignore().
 			}
 		};
 	}

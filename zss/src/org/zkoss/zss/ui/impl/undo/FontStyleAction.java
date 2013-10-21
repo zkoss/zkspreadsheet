@@ -20,7 +20,7 @@ package org.zkoss.zss.ui.impl.undo;
 
 
 import org.zkoss.zss.api.CellOperationUtil;
-import org.zkoss.zss.api.CellOperationUtil.FontStyleApplier;
+import org.zkoss.zss.api.CellOperationUtil.CellStyleApplier;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Sheet;
@@ -31,16 +31,16 @@ import org.zkoss.zss.api.model.Sheet;
  */
 public class FontStyleAction extends AbstractCellDataStyleAction {
 	
-	private final FontStyleApplier _fontStyleApplier;
+	private final CellStyleApplier _fontStyleApplier;
 	
 	
-	public FontStyleAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,FontStyleApplier styleApplier){
+	public FontStyleAction(String label,Sheet sheet,int row, int column, int lastRow,int lastColumn,CellStyleApplier styleApplier){
 		super(label,sheet,row,column,lastRow,lastColumn,RESERVE_STYLE);
 		this._fontStyleApplier = styleApplier;
 	}
 	
 	protected void applyAction(){
 		Range r = Ranges.range(_sheet,_row,_column,_lastRow,_lastColumn);
-		CellOperationUtil.applyFontStyle(r, _fontStyleApplier);
+		CellOperationUtil.applyCellStyle(r, _fontStyleApplier);
 	}
 }
