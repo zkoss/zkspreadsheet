@@ -597,6 +597,10 @@ if (zk.feature.pe) {
 			onHide: function () {
 				this._$onHide();
 				jq(this.$n()).removeClass('z-toolbarbutton-over');
+				// ZSS-468: when clicking outside of popup, it will fire hide event.
+				// But hide function of Colorbox won't close its own popup, popup is only closed when closed palette.
+				// In result, the Colorbox's popup will cover the toolbar button, so we needs to close palette manually.
+				this.closePalette(true);
 			},
 			bind_: function () {
 				this.$supers(zss.ColorbuttonEx, 'bind_', arguments);
