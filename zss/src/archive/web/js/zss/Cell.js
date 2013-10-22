@@ -189,7 +189,11 @@ zss.Cell = zk.$extends(zk.Widget, {
 		}
 	},
 	getFontName: function () {
-		return jq(this.getTextNode()).css('font-family');
+		var fn = jq(this.getTextNode()).css('font-family');
+		if(fn){
+			fn = fn.replace(/'/g,"");//replace "'" in some font that has Space
+		}
+		return fn;
 	},
 	/**
 	 * Return cell font size in point
