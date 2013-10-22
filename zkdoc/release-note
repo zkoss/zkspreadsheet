@@ -75,6 +75,7 @@ ZK Spreadsheet 3.0.0
   ZSS-471 Multiple filters doesn't work correctly
   ZSS-473 get exception if renamed sheet contains '(' or ')'
   ZSS-468 The color picker in context(popup) menu disappeared if didn't select any color and re-open context menu
+  ZSS-462 Can't copy all selected cells to other application when using Chrome
   
 ** Upgrade Notes
   * For the fix of ZSS-464, interface of CellStyleApplier(of CellOperationUtil) was simplified and FontStyleApplier was removed (replace by CellStyleApplier directly). If you still need the visit logic of this utility, please refer to original implementation at github (https://github.com/zkoss/zkspreadsheet/blob/e7b51d029fbc6462b1b071603531efb64b26b1c4/zss/src/org/zkoss/zss/api/CellOperationUtil.java).
