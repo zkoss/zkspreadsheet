@@ -231,10 +231,9 @@ public class CellFormatHelper {
 				if (style != null){
 					int bb = style.getBorderLeft();//get left here
 					//String color = BookHelper.indexToRGB(_book, style.getLeftBorderColor());
-					//ZSS-34 cell background color does not show in excel
-					String color = style.getFillPattern() != CellStyle.NO_FILL ? 
-							BookHelper.colorToHTML(_book, style.getLeftBorderColorColor()) : null;
-						hitRight = appendBorderStyle(sb, "right", bb, color);
+					// ZSS-34 cell background color does not show in excel
+					String color = BookHelper.colorToHTML(_book, style.getLeftBorderColorColor());
+					hitRight = appendBorderStyle(sb, "right", bb, color);
 				}
 			}
 		}
