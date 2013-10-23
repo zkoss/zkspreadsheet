@@ -58,6 +58,19 @@ var AU = {au: true},
 			}
 		}
 	};
+
+if(!zss.defaultColors){
+	zss.defaultColors = ["#000000","#993300","#333300","#003300","#000080",
+	                 	"#003366","#660066","#333333","#800000","#FF8080",
+	                 	"#808000","#008000","#008080","#0000FF","#800080",
+	                 	"#969696","#FF0000","#FF6600","#FFFF66","#99CC00",
+	                 	"#33CCCC","#0066CC","#6666FD","#808080","#FF00FF",
+	                 	"#FF9900","#FFFF00","#00FF00","#00FFFF","#00CCFF",
+	                 	"#CC99FF","#C0C0C0","#FF99CC","#FFCB90","#FFFF99",
+	                 	"#CCFFCC","#CCFFFF","#99CCFF","#9999FF","#FFFFFF"];	
+}
+
+
 zss.FontSizeCombobox = zk.$extends(zul.inp.Combobox, {
 	$init: function (props, wgt) {
 		this.$supers(zss.FontSizeCombobox, '$init', [props]);
@@ -548,13 +561,8 @@ if (zk.feature.pe) {
 				this._wgt = wgt;
 				this._currColor = new zkex.inp.Color();
 				
-				if (zkex.inp.PickerPop) {//ZK 5
-					this._picker = new zkex.inp.PickerPop({_wgt: this});
-					this._palette = new zkex.inp.PalettePop({_wgt: this});
-				} else {//ZK 6.5
-					this._picker = new zkex.inp.Colorpicker({_wgt: this});
-					this._palette = new zkex.inp.Colorpalette({_wgt: this});
-				}
+				this._picker = new zkex.inp.Colorpicker({_wgt: this});
+				this._palette = new zkex.inp.Colorpalette({_wgt: this});
 				this._palette.open = this.proxy(this.openPopup);
 					
 				this.setPopup(this._palette);//default open color palette
@@ -690,8 +698,8 @@ if (zk.feature.pe) {
 					color = this.getColor();
 				cnt = cnt + '<div id="' + uid + '-color" class="zstbtn-color" style="background:' 
 					+ this.getColor() + ';"></div><div id="' + uid + '-pp" style="display:none;" class="z-colorbtn-pp">' +
-					'<div id="' + uid + '-palette-btn" class="z-colorbtn-palette-btn"></div><div id="' + 
-					uid + '-picker-btn" class="z-colorbtn-picker-btn"></div>';//Note. use Colorbox's "z-colorbtn-pp"
+					'<div id="' + uid + '-palette-btn" class="z-colorbox-palette-btn"></div><div id="' + 
+					uid + '-picker-btn" class="z-colorbox-picker-btn"></div>';//Note. use Colorbox's "z-colorbtn-pp"
 				for (var w = this.firstChild; w; w = w.nextSibling) {
 					cnt += w.redrawHTML_();
 				}
@@ -709,15 +717,6 @@ if(true){//ZK CE version
 		$init: function (props, wgt) {
 			this.$supers(zss.Colorbutton, '$init', [props]);
 			this._wgt = wgt;
-			
-			this._colors = ["#000000","#993300","#333300","#003300","#000080",
-			              "#003366","#660066","#333333","#800000","#FF8080",
-			              "#808000","#008000","#008080","#0000FF","#800080",
-			              "#969696","#FF0000","#FF6600","#FFFF66","#99CC00",
-			              "#33CCCC","#0066CC","#6666FD","#808080","#FF00FF",
-			              "#FF9900","#FFFF00","#00FF00","#00FFFF","#00CCFF",
-			              "#CC99FF","#C0C0C0","#FF99CC","#FFCB90","#FFFF99",
-			              "#CCFFCC","#CCFFFF","#99CCFF","#9999FF","#FFFFFF"];
 		},
 		$define: {
 			/** Sets the image URI.
@@ -819,7 +818,7 @@ if(true){//ZK CE version
 		domContent_: function () {
 			var uid = this.uuid,
 				cnt = this.$supers(zss.Colorbutton, 'domContent_', arguments),
-				cols = this._colors,
+				cols = zss.defaultColors,
 				colSize = cols.length,
 				scls = this.getSclass(),
 				color = this.getColor();
@@ -838,33 +837,14 @@ if(true){//ZK CE version
 
 
 zss.Menu = zk.$extends(zul.menu.Menu, {
-	bind_: function () {
-		if (zk.feature.pe && this.getContent()) {//color menu
-			this.listen({'onChange': this});
-		}
-		this.$supers(zss.Menu, 'bind_', arguments);
-	},
-	unbind_: function () {
-		if (zk.feature.pe && this.getContent()) {//color menu
-			this.unlisten({'onChange': this});
-		}
-		this.$supers(zss.Menu, 'unbind_', arguments);
-	},
 	setDisabled: function (actions) {
 		var pp = this.menupopup;
 		if (pp && pp.setDisabled) {
 			pp.setDisabled(actions);
 		}
 	},
-	getColor: function () {
-		return this.color;
-	},
-	onChange: function (evt) {
-		this.color = evt.data.color;
-	},
 	getSclass: function () {
-		return zk.feature.pe && this.getContent() ? 
-				'zscolormenu' : 'zsmenu-' + this._sclass;
+		return 'zsmenu-' + this._sclass;
 	}
 });
 
@@ -897,6 +877,198 @@ zss.Menuitem = zk.$extends(zul.menu.Menuitem, {
 	}
 });
 zk.copy(zss.Menuitem.prototype, AbstractPopupHandler);
+
+if (zk.feature.pe) {
+	zss.ColorMenuEx = zk.$extends(zss.Menu, {
+		bind_: function () {
+			this.$supers(zss.ColorMenuEx, 'bind_', arguments);
+			this.listen({'onChange': this});
+			
+		},
+		unbind_: function () {
+			this.unlisten({'onChange': this});
+			this.$supers(zss.ColorMenuEx, 'unbind_', arguments);
+		},
+		getColor: function () {
+			return this.color;
+		},
+		onChange: function (evt) {
+			this.color = evt.data.color;
+		},
+		getSclass: function () {
+			return 'zscolormenu';
+		}
+	});
+}
+
+zss.ColorMenu = zk.$extends(zss.Menu, {
+	_open: false,
+	_color: null,
+	$define: {
+		content: _zkf = function (content) {
+			if (!content || content.length == 0) return;
+			
+			var c = this.$n('img');
+			if (c)
+				c.style.backgroundColor = content;
+			
+			if (!this._contentHandler) {
+				this._contentHandler = new zss.ColorMenuContentHandler(this, content);
+			} else
+				this._contentHandler.setContent(content);
+		},
+		color: _zkf
+	},
+	bind_: function () {
+		this.$supers(zss.ColorMenu, 'bind_', arguments);
+		var c = this.$n('img');//can't find img becuase of doesn't has this.desktop
+		if (c)
+			c.style.backgroundColor = this._color;
+		
+	},
+	unbind_: function () {
+		
+		this.$supers(zss.ColorMenu, 'unbind_', arguments);
+	},
+	getSclass: function () {
+		return 'zscolormenu';
+	},
+	getColor: function(){
+		return this._color;
+	}
+});
+zk.copy(zss.ColorMenu.prototype, AbstractPopupHandler);
+
+zss.ColorMenuContentHandler = zk.$extends(zk.Object, {
+	$init: function(wgt, content) {
+		this._wgt = wgt;
+		this._content = content;
+	 },
+	 setContent: function (content) {
+	 	if (this._content != content || !this._pp) {
+			this._content = content;
+			this._wgt.rerender();	
+		}
+	 },
+	 redraw: function (out) {	 
+		var wgt = this._wgt,
+			uid = wgt.uuid,
+			cols = zss.defaultColors,
+			colSize = cols.length,
+			scls = wgt.getSclass(),
+			color = this._content;
+		var cnt = '<div id="' + uid + '-cnt-pp" style="display:none;" class="' + scls + '-cnt-pp">';
+			
+		for (var i = 0; i < colSize; i++) {
+			cnt += '<div class="' + scls + '-cell"><div style="background: ' + cols[i] + 
+				';" class="' + scls + '-cell-cnt"><i style="display: none">' + cols[i] + '</i></div></div>';
+		}	
+		cnt += '</div>';//Note. use Colorbox's "z-colorbtn-pp"
+		
+		out.push(cnt);
+		 
+	 },
+	 bind: function () {
+	 	var wgt = this._wgt;
+	 	if (!wgt.menupopup) {
+			wgt.domListen_(wgt.$n(), 'onClick', 'onShow');
+			zWatch.listen({onFloatUp: wgt, onHide: wgt});
+		}
+		
+	 	this._pp = jq('#' + wgt.uuid + '-' + 'cnt-pp')[0];
+	 	wgt.domListen_(this._pp, 'onClick', this.proxy(this._onPaletteClick));
+	 },
+	 unbind: function () {
+	 	var wgt = this._wgt;
+	 	if (!wgt.menupopup) {
+			if (this._shadow) {
+				this._shadow.destroy();
+				this._shadow = null;
+			}
+			wgt.domUnlisten_(wgt.$n(), 'onClick', 'onShow');
+			zWatch.unlisten({onFloatUp: wgt, onHide: wgt});
+		}
+	 	
+	 	wgt.domUnlisten_(this._pp, 'onClick', this.proxy(this._onPaletteClick));
+	 	
+		this._pp = null;
+	 },
+	 isOpen: function () {
+		 var pp = this._pp;
+		 return (pp && zk(pp).isVisible());
+	 },
+	 onShow: function () {
+	 	var wgt = this._wgt,
+			pp = this._pp;
+		if (!pp) return;
+			
+		pp.style.position = "absolute";
+		pp.style.overflow = "auto";
+		pp.style.display = "block";
+		pp.style.zIndex = "88000";
+			
+		jq(pp).zk.makeVParent();
+		zWatch.fireDown("onVParent", this);
+			zk(pp).position(wgt.$n(), this.getPosition());
+		this.syncShadow();
+	 },
+	 onHide: function () {
+		var pp = this._pp;
+		if (!pp || !zk(pp).isVisible()) return;
+			pp.style.display = "none";
+		jq(pp).zk.undoVParent();
+		zWatch.fireDown("onVParent", this);
+		this.hideShadow();
+	 },
+	 onFloatUp: function (ctl) {
+		if (!zUtl.isAncestor(this._wgt, ctl.origin))
+			this.onHide();
+	 },
+	 syncShadow: function () {
+	 	if (!this._shadow)
+			this._shadow = new zk.eff.Shadow(this._wgt.$n("cnt-pp"), {stackup:(zk.useStackup === undefined ? zk.ie6_: zk.useStackup)});
+		this._shadow.sync();
+	 },
+	 hideShadow: function () {
+	 	this._shadow.hide();
+	 },
+	 destroy: function () {
+	 	this._wgt.rerender();
+	 },
+	 getPosition: function () {
+	 	var wgt = this._wgt;
+		if (wgt.isTopmost()) {
+			var bar = wgt.getMenubar();
+			if (bar)
+				return 'vertical' == bar.getOrient() ? 'end_before' : 'after_start';
+		}
+		return 'end_before';
+	},
+	closePalette: function (close) {
+	 	var pp = this._pp;
+		if (!pp || !zk(pp).isVisible()) return;
+
+		pp.style.display = "none";
+		if (close)
+			zWatch.fire('onFloatUp', null);
+	},
+	_onPaletteClick : function(evt){
+		var t = evt.domTarget,
+			wgt = this._wgt,
+			p = this._pp,
+			$t = jq(evt.domTarget),
+			scls = wgt.getSclass();
+
+		if (jq.isAncestor(p, t)) {
+			if ($t.attr('class').indexOf(scls + '-cell-cnt') >= 0) {
+				var hex = $t.children('i').text();
+				this.closePalette(true);
+				this._wgt.setColor(hex);
+				evt.stop();
+			}
+		}
+	}
+});
 
 zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 	$init: function (wgt) {
@@ -947,10 +1119,10 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 					wgt.fireToolbarAction(action, {tRow: tRow, lCol: lCol, bRow: bRow, rCol: rCol});
 				}
 			}
-		});
+		},wgt);
 	}
 	
-	function newColorActionMenuitem(wgt, colorWidget, action, image) {
+	function newBorderActionMenuitem(wgt, colorWidget, action, image) {
 		return new zss.Menuitem({
 			$action: action,
 			image: image ? zk.ajaxURI(image, {au: true}) : null,
@@ -963,7 +1135,19 @@ zss.Menupopup = zk.$extends(zul.menu.Menupopup, {
 					wgt.fireToolbarAction(action, {color: color, tRow: s.top, lCol: s.left, bRow: s.bottom, rCol: s.right});
 				}
 			}
-		});
+		},wgt);
+	}
+	
+	function newBorderColorMenu(spreadsheet){
+		return (!!zss.ColorMenuEx && spreadsheet.getColorPickerExUsed()) ? new zss.ColorMenuEx({
+			$action: 'borderColor',
+			label: msgzss.action.borderColor,
+			content: '#color=#000000'
+		},spreadsheet) : new zss.ColorMenu({
+			$action: 'borderColor',
+			label: msgzss.action.borderColor,
+			color: '#000000'
+		},spreadsheet);
 	}
 	
 zss.StylePanel = zk.$extends(zul.wgt.Popup, {
@@ -1072,30 +1256,26 @@ zss.MenupopupFactory = zk.$extends(zk.Object, {
 	border: function () {
 		var wgt = this._wgt,
 			p = new zss.Menupopup(),
-			colorMenu = zk.feature.pe ? new zss.Menu({
-				$action: 'borderColor',
-				label: msgzss.action.borderColor,
-				content: '#color=#000000'
-			}) : null;
+			colorMenu = newBorderColorMenu(wgt);
 			
 		if (colorMenu) {//for toolbarbutton to get color
 			p.colorMenu = colorMenu;
 		}
 
-		p.appendChild(newColorActionMenuitem(wgt, colorMenu, 'borderBottom', '/web/zss/img/border-bottom.png'));
-		p.appendChild(newColorActionMenuitem(wgt, colorMenu, 'borderTop', '/web/zss/img/border-top.png'));
-		p.appendChild(newColorActionMenuitem(wgt, colorMenu, 'borderLeft', '/web/zss/img/border-left.png'));
-		p.appendChild(newColorActionMenuitem(wgt, colorMenu, 'borderRight', '/web/zss/img/border-right.png'));
+		p.appendChild(newBorderActionMenuitem(wgt, colorMenu, 'borderBottom', '/web/zss/img/border-bottom.png'));
+		p.appendChild(newBorderActionMenuitem(wgt, colorMenu, 'borderTop', '/web/zss/img/border-top.png'));
+		p.appendChild(newBorderActionMenuitem(wgt, colorMenu, 'borderLeft', '/web/zss/img/border-left.png'));
+		p.appendChild(newBorderActionMenuitem(wgt, colorMenu, 'borderRight', '/web/zss/img/border-right.png'));
 		p.appendChild(new zul.menu.Menuseparator());
 		
-		p.appendChild(newColorActionMenuitem(wgt, colorMenu, 'borderNo', '/web/zss/img/border.png'));
-		p.appendChild(newColorActionMenuitem(wgt, colorMenu, 'borderAll', '/web/zss/img/border-all.png'));
-		p.appendChild(newColorActionMenuitem(wgt, colorMenu, 'borderOutside', '/web/zss/img/border-outside.png'));
-		p.appendChild(newColorActionMenuitem(wgt, colorMenu, 'borderInside', '/web/zss/img/border-inside.png'));
+		p.appendChild(newBorderActionMenuitem(wgt, colorMenu, 'borderNo', '/web/zss/img/border.png'));
+		p.appendChild(newBorderActionMenuitem(wgt, colorMenu, 'borderAll', '/web/zss/img/border-all.png'));
+		p.appendChild(newBorderActionMenuitem(wgt, colorMenu, 'borderOutside', '/web/zss/img/border-outside.png'));
+		p.appendChild(newBorderActionMenuitem(wgt, colorMenu, 'borderInside', '/web/zss/img/border-inside.png'));
 		p.appendChild(new zul.menu.Menuseparator());
 		
-		p.appendChild(newColorActionMenuitem(wgt, colorMenu, 'borderInsideHorizontal', '/web/zss/img/border-horizontal.png'));
-		p.appendChild(newColorActionMenuitem(wgt, colorMenu, 'borderInsideVertical', '/web/zss/img/border-vertical.png'));
+		p.appendChild(newBorderActionMenuitem(wgt, colorMenu, 'borderInsideHorizontal', '/web/zss/img/border-horizontal.png'));
+		p.appendChild(newBorderActionMenuitem(wgt, colorMenu, 'borderInsideVertical', '/web/zss/img/border-vertical.png'));
 		
 		if (colorMenu) {
 			p.appendChild(new zul.menu.Menuseparator());
@@ -1398,7 +1578,7 @@ zss.Buttons = zk.$extends(zk.Object, {
 	/**
 	 * return ColorPicker's construction function upon user configurations under PE
 	 */
-	function getColorPickerConstructor(spreadsheet){
+	function getColorButtonConstructor(spreadsheet){
 		return (!!zss.ColorbuttonEx && spreadsheet.getColorPickerExUsed()) ? zss.ColorbuttonEx : zss.Colorbutton;
 	}
 	
@@ -1622,7 +1802,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	},
 	fillColor: function () {
 		var wgt = this._wgt;
-		var colorButtonConstructor = getColorPickerConstructor(wgt);
+		var colorButtonConstructor = getColorButtonConstructor(wgt);
 		return new colorButtonConstructor({
 			$action: 'fillColor',
 			color: '#FFFFFF',
@@ -1639,7 +1819,7 @@ zss.ButtonBuilder = zk.$extends(zk.Object, {
 	},
 	fontColor: function () {
 		var wgt = this._wgt;
-		var colorButtonConstructor = getColorPickerConstructor(wgt);
+		var colorButtonConstructor = getColorButtonConstructor(wgt);
 		return new colorButtonConstructor({
 			$action: 'fontColor',
 			color: '#000000',

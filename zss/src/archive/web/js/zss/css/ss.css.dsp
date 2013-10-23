@@ -1393,14 +1393,14 @@
 }
 
 <%-- Colorbutton --%>
-.zstbtn-pp {
+.zstbtn-pp, .zscolormenu-cnt-pp {
 	border: 1px solid #86A4BE;
 	background: #FFF;
 	position: absolute;
 	width: 180px;
 	height: 120px;
 }
-.zstbtn-pp .zstbtn-cell {
+.zstbtn-pp .zstbtn-cell, .zscolormenu-cnt-pp .zscolormenu-cell {
 	display: inline;
 	float: left;
 	height: 18px;
@@ -1409,12 +1409,12 @@
 	width: 18px;
 }
 
-.zstbtn-pp .zstbtn-cell-over {
+.zstbtn-pp .zstbtn-cell-over, .zscolormenu-cnt-pp .zscolormenu-cell-over {
 	padding: 1px;
 	border: 1px solid #666666;
 }
 
-.zstbtn-pp .zstbtn-cell-cnt {
+.zstbtn-pp .zstbtn-cell-cnt, .zscolormenu-cnt-pp .zscolormenu-cell-cnt {
 	border: 1px solid #808080;
 	height: 10px;
 	overflow: hidden;

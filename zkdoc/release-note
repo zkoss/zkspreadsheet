@@ -3,7 +3,8 @@ ZK Spreadsheet 3.0.0
 *Features:
   ZSS-438 Support view with different zoom level
   ZSS-251 Support to override the default formula implementation
-  ZSS-10 Support to display chart/picture in freeze panel 
+  ZSS-10 Support to display chart/picture in freeze panel
+  ZSS-463 support configurable font color popup
   
 *Bugs:
   ZSS-399 export to PDF - no gridlines
