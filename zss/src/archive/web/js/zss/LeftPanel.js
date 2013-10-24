@@ -178,18 +178,16 @@ zss.Panel = zk.$extends(zk.Widget, {
 		
 		if (index > headers.length) return;
 		
-		if (index == 0)
-			this.removeChildFromStart_(size);
-		else {
-			var rem = headers.slice(index, index + size),
-				tail = headers.slice(index + size, headers.length);
-			headers.length = index;
-			headers.push.apply(headers, tail);
-			
-			var header = rem.pop();
-			for (; header; header = rem.pop()) {
-				header.detach();
-			}
+
+		// ZSS-488: these code can cover every situation, we don't need to consider "first index" situation separately
+		var rem = headers.slice(index, index + size);
+		var tail = headers.slice(index + size, headers.length);
+		headers.length = index;
+		headers.push.apply(headers, tail);
+		
+		var header = rem.pop();
+		for (; header; header = rem.pop()) {
+			header.detach();
 		}
 	},
 	bind_: function () {

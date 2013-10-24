@@ -1,0 +1,51 @@
+<zk>
+	<window width="100%" height="100%">
+		<hlayout width="100%">
+			<label pre="true">
+Reproduce 1:
+  1. freeze 1 row (select A2 and click "freeze")
+  2. select column A and remove such column
+        * "B1" is also gone 
+        * can't select A1 and get no focus
+        * if focus on B1, formula bar will show "C1"
+			</label>
+			<label pre="true">
+Reproduce 2:
+  1. freeze 1 column (select B1 and click "freeze")
+  2. select row 1 and remove such row
+        * "A2" is also gone 
+        * can't select A1 and get no focus
+        * if focus on A2, formula bar will show "A3"
+			</label>
+		</hlayout>
+		<hlayout>
+			<button label="freeze" onClick="freeze();" />
+		</hlayout>
+		
+		<spreadsheet id="ss" src="/issue/488-delete-first-column.xlsx"  width="1000px" vflex="true"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			maxrows="500" maxcolumns="100"
+			rowfreeze="0" columnfreeze="-1"
+			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+		</spreadsheet>
+		
+		<zscript><![CDATA[
+            public void freeze() {
+            	Rect area = ss.getSelection();
+            	ss.setRowfreeze(area.getTop() - 1);
+            	ss.setColumnfreeze(area.getLeft() - 1);
+            }
+		]]></zscript>
+		
+		<script defer="true"><![CDATA[
+			(function() {
+				window.debug = {};
+				window.debug.ss = zk.Widget.$('$ss');
+				window.debug.ssc = debug.ss.sheetCtrl;
+				window.debug.dp = debug.ssc.dp;
+				window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
+			})();
+		]]></script>
+		
+	</window>
+</zk>
