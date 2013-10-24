@@ -24,6 +24,7 @@ import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.util.logging.Log;
+import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
@@ -315,6 +316,16 @@ public class Styles {
 		}
 		
 		cell.setCellStyle(style);
+	}
+	
+	private static void debugStyle(String msg,int row, int col, Workbook book, CellStyle style){
+		StringBuilder sb = new StringBuilder(msg);
+		sb.append("[").append(Ranges.getCellRefString(row, col)).append("]");
+		sb.append("Top:[").append(style.getBorderTop()).append(":").append(BookHelper.colorToBorderHTML(book,style.getTopBorderColorColor())).append("]");
+		sb.append("Left:[").append(style.getBorderLeft()).append(":").append(BookHelper.colorToBorderHTML(book,style.getLeftBorderColorColor())).append("]");
+		sb.append("Bottom:[").append(style.getBorderBottom()).append(":").append(BookHelper.colorToBorderHTML(book,style.getBottomBorderColorColor())).append("]");
+		sb.append("Right:[").append(style.getBorderRight()).append(":").append(BookHelper.colorToBorderHTML(book,style.getRightBorderColorColor())).append("]");
+		System.out.println(">>"+sb.toString());
 	}
 	
 	

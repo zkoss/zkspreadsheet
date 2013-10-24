@@ -1,0 +1,34 @@
+<zk>
+	<vbox hflex="1" vflex="1">
+		<hbox>
+		<button label="set A31 border" onClick='test1("A31","#0000FF")'/>
+		<button label="set A31 border(shoult's effect D30 bottom)" onClick='test1("A31","#CC0000")'/>
+		<button label="set E31 border" onClick='test1("E31","#0000FF")'/>
+		<button label="set E31 border(shoult's effect D30 bottom)" onClick='test1("E31","#CC0000")'/>
+		</hbox>
+		<zscript><![CDATA[//@DECREATION
+			public void test1(String ref,String color){
+				test1(ss1.getSelectedSheet(),ref,color);
+				test1(ss2.getSelectedSheet(),ref,color);
+			}
+			public void test1(Sheet sheet,String ref,String color){
+				Range r = Ranges.range(sheet,ref);
+				CellOperationUtil.applyBorder(r,org.zkoss.zss.api.Range.ApplyBorderType.OUTLINE,
+						org.zkoss.zss.api.model.CellStyle.BorderType.MEDIUM,color);
+				
+			}
+		]]></zscript>
+	
+		<hbox hflex="1" vflex="1">
+
+			<spreadsheet src="/issue3/book/477-bordercolor.xls" id="ss1"
+				maxVisibleRows="100" maxVisibleColumns="10" hflex="1" vflex="1" 
+				showToolbar="true" showContextMenu="true">
+			</spreadsheet>
+			<spreadsheet src="/issue3/book/477-bordercolor.xlsx" id="ss2"
+				maxVisibleRows="100" maxVisibleColumns="10"  hflex="1" vflex="1"
+				showToolbar="true" showContextMenu="true" />
+			<separator height="20px" />
+		</hbox>
+	</vbox>
+</zk>
