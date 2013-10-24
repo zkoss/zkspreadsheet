@@ -291,20 +291,22 @@ zss.Toolbarbutton = zk.$extends(zul.wgt.Toolbarbutton, {
 	},
 	setDisabled: function (actions) {
 		if (actions) {
-			var d = this.isDisabled();
+			var disable = this.isDisabled();
 			if (actions.$contains(this.get$action())) {
-				if (!d)
+				if (!disable){
 					this.$supers(zss.Toolbarbutton, 'setDisabled', [true]);
-			} else if (d) {//clear disabled
+				}
+			} else if (disable) {//clear disabled
 				this.$supers(zss.Toolbarbutton, 'setDisabled', [false]);
 			}
 			
-			var pp = this._pp;
-			if (pp && pp.setDisabled) {
-				pp.setDisabled(actions);
-			}
 		} else {
 			this.$supers(zss.Toolbarbutton, 'setDisabled', arguments);
+		}
+		if (this._pp) {
+			//ZSS-483, the menupopup's DOM elemets don't exist after re-rendering.
+			//remove the popup from children to avoid errors thrown during "unbind" phase
+			this.removeChild(this._pp);
 		}
 	},
 	setImage: function (v) {
