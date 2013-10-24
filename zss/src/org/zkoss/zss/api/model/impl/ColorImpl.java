@@ -65,6 +65,9 @@ public class ColorImpl implements Color{
 	public ModelRef<org.zkoss.poi.ss.usermodel.Color> getRef(){
 		return _colorRef;
 	}
+	public ModelRef<XBook> getBookRef(){
+		return _bookRef;
+	}
 
 	public String getHtmlColor() {
 		return BookHelper.colorToHTML(_bookRef.get(),_colorRef.get());

@@ -19,6 +19,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.poi.xssf.usermodel.XSSFComment;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
+import org.zkoss.zss.AssertUtil;
 import org.zkoss.zss.POIUtil;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
@@ -28,6 +29,7 @@ import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.Range.ApplyBorderType;
 import org.zkoss.zss.api.Range.DeleteShift;
 import org.zkoss.zss.api.Range.InsertCopyOrigin;
 import org.zkoss.zss.api.Range.InsertShift;
@@ -1244,5 +1246,135 @@ public class Issue400Test {
 		Ranges.range(sheet).setSheetName(".");
 		Ranges.range(sheet).setSheetName("a");
 		Ranges.range(sheet).setSheetName("b");	
+	}
+	
+	@Test
+	public void testZSS477(){
+		testZSS477_1(Util.loadBook(Issue400Test.class, "book/477-bordercolor.xlsx"));
+		testZSS477_1(Util.loadBook(Issue400Test.class, "book/477-bordercolor.xls"));
+		testZSS477_2(Util.loadBook(Issue400Test.class, "book/477-bordercolor.xlsx"));
+		testZSS477_2(Util.loadBook(Issue400Test.class, "book/477-bordercolor.xls"));
+	}
+	
+	public void testZSS477_1(Book book){
+		Sheet sheet = book.getSheetAt(0);
+		
+		Range a31 = Ranges.range(sheet,"A31");
+		
+		AssertUtil.assertTopBorder(a31, BorderType.NONE,null);
+		AssertUtil.assertLeftBorder(a31, BorderType.NONE,null);
+		AssertUtil.assertBottomBorder(a31, BorderType.NONE,null);
+		AssertUtil.assertRightBorder(a31, BorderType.THIN,"#000000");
+		
+		Range b30 = Ranges.range(sheet,"B30");
+		
+		AssertUtil.assertTopBorder(b30, BorderType.NONE,null);
+		AssertUtil.assertLeftBorder(b30, BorderType.NONE,null);
+		AssertUtil.assertBottomBorder(b30, BorderType.THIN,"#000000");
+		AssertUtil.assertRightBorder(b30, BorderType.NONE,null);
+		
+		
+		Range b31 = Ranges.range(sheet,"B31");
+		
+		AssertUtil.assertTopBorder(b31, BorderType.THIN,"#000000");
+		AssertUtil.assertLeftBorder(b31, BorderType.THIN,"#000000");
+		AssertUtil.assertBottomBorder(b31, BorderType.NONE,null);
+		AssertUtil.assertRightBorder(b31, BorderType.THIN,"#000000");
+		
+		
+		CellOperationUtil.applyBorder(a31, ApplyBorderType.OUTLINE, BorderType.THIN, "#0000ff");
+		
+		AssertUtil.assertTopBorder(a31, BorderType.THIN,"#0000ff");
+		AssertUtil.assertLeftBorder(a31, BorderType.THIN,"#0000ff");
+		AssertUtil.assertBottomBorder(a31, BorderType.THIN,"#0000ff");
+		AssertUtil.assertRightBorder(a31, BorderType.THIN,"#0000ff");
+		
+		AssertUtil.assertTopBorder(b30, BorderType.NONE,null);
+		AssertUtil.assertLeftBorder(b30, BorderType.NONE,null);
+		AssertUtil.assertBottomBorder(b30, BorderType.THIN,"#000000");
+		AssertUtil.assertRightBorder(b30, BorderType.NONE,null);
+		
+		AssertUtil.assertTopBorder(b31, BorderType.THIN,"#000000");
+		AssertUtil.assertLeftBorder(b31, BorderType.THIN,"#0000ff");
+		AssertUtil.assertBottomBorder(b31, BorderType.NONE,null);
+		AssertUtil.assertRightBorder(b31, BorderType.THIN,"#000000");
+		
+		CellOperationUtil.applyBorder(a31, ApplyBorderType.OUTLINE, BorderType.THIN, "#cc0000");
+		
+		AssertUtil.assertTopBorder(a31, BorderType.THIN,"#cc0000");
+		AssertUtil.assertLeftBorder(a31, BorderType.THIN,"#cc0000");
+		AssertUtil.assertBottomBorder(a31, BorderType.THIN,"#cc0000");
+		AssertUtil.assertRightBorder(a31, BorderType.THIN,"#cc0000");
+		
+		AssertUtil.assertTopBorder(b30, BorderType.NONE,null);
+		AssertUtil.assertLeftBorder(b30, BorderType.NONE,null);
+		AssertUtil.assertBottomBorder(b30, BorderType.THIN,"#000000");
+		AssertUtil.assertRightBorder(b30, BorderType.NONE,null);
+		
+		AssertUtil.assertTopBorder(b31, BorderType.THIN,"#000000");
+		AssertUtil.assertLeftBorder(b31, BorderType.THIN,"#cc0000");
+		AssertUtil.assertBottomBorder(b31, BorderType.NONE,null);
+		AssertUtil.assertRightBorder(b31, BorderType.THIN,"#000000");
+	}
+	
+	public void testZSS477_2(Book book){
+		Sheet sheet = book.getSheetAt(0);
+		
+		Range e31 = Ranges.range(sheet,"E31");
+		
+		AssertUtil.assertTopBorder(e31, BorderType.NONE,null);
+		AssertUtil.assertLeftBorder(e31, BorderType.THIN,"#000000");
+		AssertUtil.assertBottomBorder(e31, BorderType.NONE,null);
+		AssertUtil.assertRightBorder(e31, BorderType.NONE,null);
+		
+		Range d30 = Ranges.range(sheet,"D30");
+		
+		AssertUtil.assertTopBorder(d30, BorderType.NONE,null);
+		AssertUtil.assertLeftBorder(d30, BorderType.NONE,null);
+		AssertUtil.assertBottomBorder(d30, BorderType.THIN,"#000000");
+		AssertUtil.assertRightBorder(d30, BorderType.NONE,null);
+		
+		
+		Range d31 = Ranges.range(sheet,"D31");
+		
+		AssertUtil.assertTopBorder(d31, BorderType.THIN,"#000000");
+		AssertUtil.assertLeftBorder(d31, BorderType.NONE,null);
+		AssertUtil.assertBottomBorder(d31, BorderType.NONE,null);
+		AssertUtil.assertRightBorder(d31, BorderType.THIN,"#000000");
+		
+		
+		CellOperationUtil.applyBorder(e31, ApplyBorderType.OUTLINE, BorderType.THIN, "#0000ff");
+		
+		AssertUtil.assertTopBorder(e31, BorderType.THIN,"#0000ff");
+		AssertUtil.assertLeftBorder(e31, BorderType.THIN,"#0000ff");
+		AssertUtil.assertBottomBorder(e31, BorderType.THIN,"#0000ff");
+		AssertUtil.assertRightBorder(e31, BorderType.THIN,"#0000ff");
+		
+		AssertUtil.assertTopBorder(d30, BorderType.NONE,null);
+		AssertUtil.assertLeftBorder(d30, BorderType.NONE,null);
+		AssertUtil.assertBottomBorder(d30, BorderType.THIN,"#000000");
+		AssertUtil.assertRightBorder(d30, BorderType.NONE,null);
+		
+		AssertUtil.assertTopBorder(d31, BorderType.THIN,"#000000");
+		AssertUtil.assertLeftBorder(d31, BorderType.NONE,null);
+		AssertUtil.assertBottomBorder(d31, BorderType.NONE,null);
+		AssertUtil.assertRightBorder(d31, BorderType.THIN,"#0000ff");
+		
+		CellOperationUtil.applyBorder(e31, ApplyBorderType.OUTLINE, BorderType.THIN, "#cc0000");
+		
+		AssertUtil.assertTopBorder(e31, BorderType.THIN,"#cc0000");
+		AssertUtil.assertLeftBorder(e31, BorderType.THIN,"#cc0000");
+		AssertUtil.assertBottomBorder(e31, BorderType.THIN,"#cc0000");
+		AssertUtil.assertRightBorder(e31, BorderType.THIN,"#cc0000");
+		
+		AssertUtil.assertTopBorder(d30, BorderType.NONE,null);
+		AssertUtil.assertLeftBorder(d30, BorderType.NONE,null);
+		AssertUtil.assertBottomBorder(d30, BorderType.THIN,"#000000");
+		AssertUtil.assertRightBorder(d30, BorderType.NONE,null);
+		
+		AssertUtil.assertTopBorder(d31, BorderType.THIN,"#000000");
+		AssertUtil.assertLeftBorder(d31, BorderType.NONE,null);
+		AssertUtil.assertBottomBorder(d31, BorderType.NONE,null);
+		AssertUtil.assertRightBorder(d31, BorderType.THIN,"#cc0000");
 	}
 }

@@ -19,6 +19,7 @@ package org.zkoss.zss.api.model.impl;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.model.sys.impl.BookHelper;
 /**
  * 
  * @author dennis
@@ -85,7 +86,12 @@ public class CellStyleImpl implements CellStyle{
 
 	public ColorImpl getBackgroundColor() {
 		org.zkoss.poi.ss.usermodel.Color srcColor = getNative().getFillForegroundColorColor();
-		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(srcColor));
+		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(srcColor)){
+			@Override
+			public String getHtmlColor() {
+				return BookHelper.colorToBackgroundHTML(getBookRef().get(),getRef().get());
+			}
+		};
 	}
 
 	public FillPattern getFillPattern(){
@@ -121,19 +127,39 @@ public class CellStyleImpl implements CellStyle{
 	}
 
 	public Color getBorderTopColor(){
-		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getTopBorderColorColor()));
+		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getTopBorderColorColor())){
+			@Override
+			public String getHtmlColor() {
+				return BookHelper.colorToBorderHTML(getBookRef().get(),getRef().get());
+			}
+		};
 	}
 
 	public Color getBorderLeftColor(){
-		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getLeftBorderColorColor()));
+		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getLeftBorderColorColor())){
+			@Override
+			public String getHtmlColor() {
+				return BookHelper.colorToBorderHTML(getBookRef().get(),getRef().get());
+			}
+		};
 	}
 
 	public Color getBorderBottomColor(){
-		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getBottomBorderColorColor()));
+		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getBottomBorderColorColor())){
+			@Override
+			public String getHtmlColor() {
+				return BookHelper.colorToBorderHTML(getBookRef().get(),getRef().get());
+			}
+		};
 	}
 
 	public Color getBorderRightColor(){
-		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getRightBorderColorColor()));
+		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(getNative().getRightBorderColorColor())){
+			@Override
+			public String getHtmlColor() {
+				return BookHelper.colorToBorderHTML(getBookRef().get(),getRef().get());
+			}
+		};
 	}
 	
 	public String getDataFormat(){

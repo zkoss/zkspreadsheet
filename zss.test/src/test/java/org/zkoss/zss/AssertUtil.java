@@ -10,6 +10,8 @@ import org.apache.commons.math.complex.Complex;
 import org.junit.Assert;
 import org.zkoss.poi.ss.formula.functions.ComplexFormat;
 import org.zkoss.zss.api.Range;
+import org.zkoss.zss.api.model.CellStyle;
+import org.zkoss.zss.api.model.CellStyle.BorderType;
 import org.zkoss.zss.api.model.Sheet;
 
 public class AssertUtil {
@@ -128,6 +130,76 @@ public class AssertUtil {
 			}
 		}
 		return false;
+	}
+
+	public static void assertLeftBorder(Range range,BorderType type,String color) {
+		CellStyle style = range.getCellStyle();
+		String msg = "at "+range.toCellRange(0, 0).asString()+" left";
+		BorderType tbt = style.getBorderLeft();
+		String tcolor = style.getBorderLeftColor().getHtmlColor();
+		if(!type.equals(BorderType.NONE)){
+			if(tbt.equals(BorderType.NONE)){
+				style = range.toCellRange(0, -1).getCellStyle(); 
+				tbt = style.getBorderRight();
+				tcolor = style.getBorderRightColor().getHtmlColor();
+			}
+		}
+		Assert.assertEquals(msg, type, tbt);
+		if(color!=null){
+			Assert.assertEquals(msg, color, tcolor);
+		}
+	}
+	public static void assertRightBorder(Range range,BorderType type,String color) {
+		CellStyle style = range.getCellStyle();
+		String msg = "at "+range.toCellRange(0, 0).asString()+" right";
+		BorderType tbt = style.getBorderRight();
+		String tcolor = style.getBorderRightColor().getHtmlColor();
+		if(!type.equals(BorderType.NONE)){
+			if(tbt.equals(BorderType.NONE)){
+				style = range.toCellRange(0, 1).getCellStyle(); 
+				tbt = style.getBorderLeft();
+				tcolor = style.getBorderLeftColor().getHtmlColor();
+			}
+		}
+		Assert.assertEquals(msg, type, tbt);
+		if(color!=null){
+			Assert.assertEquals(msg, color, tcolor);
+		}
+		
+	}
+	public static void assertTopBorder(Range range,BorderType type,String color) {
+		CellStyle style = range.getCellStyle();
+		String msg = "at "+range.toCellRange(0, 0).asString()+" top";
+		BorderType tbt = style.getBorderTop();
+		String tcolor = style.getBorderTopColor().getHtmlColor();
+		if(!type.equals(BorderType.NONE)){
+			if(tbt.equals(BorderType.NONE)){
+				style = range.toCellRange(-1, 0).getCellStyle(); 
+				tbt = style.getBorderBottom();
+				tcolor = style.getBorderBottomColor().getHtmlColor();
+			}
+		}
+		Assert.assertEquals(msg, type, tbt);
+		if(color!=null){
+			Assert.assertEquals(msg, color, tcolor);
+		}
+	}
+	public static void assertBottomBorder(Range range,BorderType type,String color) {
+		CellStyle style = range.getCellStyle();
+		String msg = "at "+range.toCellRange(0, 0).asString()+" bottom";
+		BorderType tbt = style.getBorderBottom();
+		String tcolor = style.getBorderBottomColor().getHtmlColor();
+		if(!type.equals(BorderType.NONE)){
+			if(tbt.equals(BorderType.NONE)){
+				style = range.toCellRange(1, 0).getCellStyle(); 
+				tbt = style.getBorderTop();
+				tcolor = style.getBorderTopColor().getHtmlColor();
+			}
+		}
+		Assert.assertEquals(msg, type, tbt);
+		if(color!=null){
+			Assert.assertEquals(msg, color, tcolor);
+		}
 	}
 
 }

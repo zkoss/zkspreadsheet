@@ -47,7 +47,12 @@ public class FontImpl implements Font{
 	
 	public Color getColor(){
 		org.zkoss.poi.ss.usermodel.Color c = BookHelper.getFontColor(_bookRef.get(), _fontRef.get());
-		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(c));
+		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(c)){
+			@Override
+			public String getHtmlColor() {
+				return BookHelper.colorToForegroundHTML(getBookRef().get(),getRef().get());
+			}
+		};
 	}
 	@Override
 	public int hashCode() {
