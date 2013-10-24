@@ -337,7 +337,7 @@ zss.CellBlockCtrl = zk.$extends(zk.Widget, {
 		if ((col + size) > this.range.right)
 			size = this.range.right - col + 1;
 		
-		rows = this.rows;
+		var rows = this.rows;
 		var rowsize = rows.length;
 		for (var i = 0; i < rowsize; i++)
 			rows[i].removeCell(index, size);
