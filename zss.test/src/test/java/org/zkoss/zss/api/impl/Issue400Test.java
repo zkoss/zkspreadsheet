@@ -1115,9 +1115,10 @@ public class Issue400Test {
 		testZSS473(Util.loadBook(Issue400Test.class, "book/473-sheetname.xls"));
 	}
 	public void testZSS473(Book book){
-			
 		
-		for(int i=0;i<5;i++){
+		int num = book.getNumberOfSheets();
+		
+		for(int i=0;i<num;i++){
 			Sheet sheet = book.getSheetAt(i);
 			Range a1 = Ranges.range(sheet,"A1");
 			Range b1 = Ranges.range(sheet,"B1");
@@ -1133,7 +1134,7 @@ public class Issue400Test {
 			Assert.assertEquals("at "+ sheet.getSheetName(),""+((i+1)*3),b4.getCellFormatText());
 		}
 		
-		for(int i=0;i<5;i++){
+		for(int i=0;i<num;i++){
 			Sheet sheet = book.getSheetAt(i);
 			Ranges.range(sheet).setSheetName("(K"+i);
 			
@@ -1151,7 +1152,7 @@ public class Issue400Test {
 			Assert.assertEquals("at "+ sheet.getSheetName(),""+((i+1)*3),b4.getCellFormatText());
 		}
 		
-		for(int i=0;i<5;i++){
+		for(int i=0;i<num;i++){
 			Sheet sheet = book.getSheetAt(i);
 			Ranges.range(sheet).setSheetName("K"+i+")");
 			
@@ -1168,7 +1169,7 @@ public class Issue400Test {
 			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),b3.getCellFormatText());
 			Assert.assertEquals("at "+ sheet.getSheetName(),""+((i+1)*3),b4.getCellFormatText());
 		}
-		for(int i=0;i<5;i++){
+		for(int i=0;i<num;i++){
 			Sheet sheet = book.getSheetAt(i);
 			Ranges.range(sheet).setSheetName("{K"+i);
 			
@@ -1186,7 +1187,7 @@ public class Issue400Test {
 			Assert.assertEquals("at "+ sheet.getSheetName(),""+((i+1)*3),b4.getCellFormatText());
 		}
 		
-		for(int i=0;i<5;i++){
+		for(int i=0;i<num;i++){
 			Sheet sheet = book.getSheetAt(i);
 			Ranges.range(sheet).setSheetName("K"+i+"}");
 			
@@ -1203,6 +1204,45 @@ public class Issue400Test {
 			Assert.assertEquals("at "+ sheet.getSheetName(),""+(i+1),b3.getCellFormatText());
 			Assert.assertEquals("at "+ sheet.getSheetName(),""+((i+1)*3),b4.getCellFormatText());
 		}
-//		
+	}
+	@Test
+	public void testZSS473_2(){
+		testZSS473_2(Util.loadBook(Issue400Test.class, "book/473-sheetname2.xlsx"));
+		testZSS473_2(Util.loadBook(Issue400Test.class, "book/473-sheetname2.xls"));
+	}
+	public void testZSS473_2(Book book){
+		
+		int num = book.getNumberOfSheets();
+		
+		for(int i=0;i<num;i++){
+			Sheet sheet = book.getSheetAt(i);
+			Ranges.range(sheet).setSheetName("(K"+i);
+		}
+		
+		for(int i=0;i<num;i++){
+			Sheet sheet = book.getSheetAt(i);
+			Ranges.range(sheet).setSheetName("K"+i+")");
+		}
+		for(int i=0;i<num;i++){
+			Sheet sheet = book.getSheetAt(i);
+			Ranges.range(sheet).setSheetName("{K"+i);
+		}
+		
+		for(int i=0;i<num;i++){
+			Sheet sheet = book.getSheetAt(i);
+			Ranges.range(sheet).setSheetName("K"+i+"}");
+		}
+	}
+	
+	
+	@Test
+	public void testZSS482(){
+		testZSS482(Util.loadBook(Issue400Test.class, "book/482-renamesheet.xlsx"));
+	}
+	public void testZSS482(Book book){
+		Sheet sheet = book.getSheetAt(0);
+		Ranges.range(sheet).setSheetName(".");
+		Ranges.range(sheet).setSheetName("a");
+		Ranges.range(sheet).setSheetName("b");	
 	}
 }
