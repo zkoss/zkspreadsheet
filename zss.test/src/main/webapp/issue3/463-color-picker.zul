@@ -19,4 +19,13 @@
 		<spreadsheet src="/issue3/book/blank.xlsx" maxVisibleRows="20" maxVisibleColumns="10" width="50%"
 		height="40%" showToolbar="true" showContextMenu="true"/>
 	</window>
+	<script>
+	zk.load('zss', null, function () {
+		zss.colorPalette.color =
+		["#000000","#993300","#333300","#003300","#000080"];
+		zss.colorPalette.height = 40;
+		zss.colorPalette.width = 120;		
+	});
+	
+	</script>
 </zk>

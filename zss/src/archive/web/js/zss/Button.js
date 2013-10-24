@@ -59,18 +59,6 @@ var AU = {au: true},
 		}
 	};
 
-if(!zss.defaultColors){
-	zss.defaultColors = ["#000000","#993300","#333300","#003300","#000080",
-	                 	"#003366","#660066","#333333","#800000","#FF8080",
-	                 	"#808000","#008000","#008080","#0000FF","#800080",
-	                 	"#969696","#FF0000","#FF6600","#FFFF66","#99CC00",
-	                 	"#33CCCC","#0066CC","#6666FD","#808080","#FF00FF",
-	                 	"#FF9900","#FFFF00","#00FF00","#00FFFF","#00CCFF",
-	                 	"#CC99FF","#C0C0C0","#FF99CC","#FFCB90","#FFFF99",
-	                 	"#CCFFCC","#CCFFFF","#99CCFF","#9999FF","#FFFFFF"];	
-}
-
-
 zss.FontSizeCombobox = zk.$extends(zul.inp.Combobox, {
 	$init: function (props, wgt) {
 		this.$supers(zss.FontSizeCombobox, '$init', [props]);
@@ -818,12 +806,15 @@ if(true){//ZK CE version
 		domContent_: function () {
 			var uid = this.uuid,
 				cnt = this.$supers(zss.Colorbutton, 'domContent_', arguments),
-				cols = zss.defaultColors,
+				cols = zss.colorPalette.color,
+				width = zss.colorPalette.width,
+				height = zss.colorPalette.height,
 				colSize = cols.length,
 				scls = this.getSclass(),
 				color = this.getColor();
 			cnt = cnt + '<div id="' + uid + '-color" class="' + this.getSclass() + 
-				'-color" style="background:' + this.getColor() + ';"></div><div id="' + uid + '-pp" style="display:none;" class="' + scls + '-pp">';
+				'-color" style="background:' + this.getColor() + 
+				';"></div><div id="' + uid + '-pp" style="display:none;width:'+width+'px;height:'+height+'px;" class="' + scls + '-pp">';
 				
 			for (var i = 0; i < colSize; i++) {
 				cnt += '<div class="' + scls + '-cell"><div style="background: ' + cols[i] + 
@@ -953,11 +944,13 @@ zss.ColorMenuContentHandler = zk.$extends(zk.Object, {
 	 redraw: function (out) {	 
 		var wgt = this._wgt,
 			uid = wgt.uuid,
-			cols = zss.defaultColors,
+			cols = zss.colorPalette.color,
+			width = zss.colorPalette.width,
+			height = zss.colorPalette.height,
 			colSize = cols.length,
 			scls = wgt.getSclass(),
 			color = this._content;
-		var cnt = '<div id="' + uid + '-cnt-pp" style="display:none;" class="' + scls + '-cnt-pp">';
+		var cnt = '<div id="' + uid + '-cnt-pp" style="display:none;width:'+width+'px;height:'+height+'px;" class="' + scls + '-cnt-pp">';
 			
 		for (var i = 0; i < colSize; i++) {
 			cnt += '<div class="' + scls + '-cell"><div style="background: ' + cols[i] + 
