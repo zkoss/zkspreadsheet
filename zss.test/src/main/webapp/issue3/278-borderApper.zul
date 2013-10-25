@@ -1,0 +1,14 @@
+<zk>
+
+	<window width="100%" height="100%">
+		<button label="test">
+			<attribute name="onClick">
+				CellOperationUtil.applyBackgroundColor(Ranges.range(ss.getSelectedSheet(), "B6"), "#ff0000");
+			</attribute>
+		</button>
+		<spreadsheet id="ss" src="/issue3/book/278-BorderAppered.xlsx" width="800px" height="600px"
+			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
+			showSheetbar="true" showContextMenu="true">
+		</spreadsheet>
+	</window>
+</zk>
