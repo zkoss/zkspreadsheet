@@ -2779,6 +2779,7 @@ public class XRangeImpl implements XRange {
 					final String name = _sheet.getSheetName();
 					if (!Strings.isBlank(name)) {
 						book.setSheetOrder(name, pos);
+						book.getFormulaEvaluator().clearAllCachedResultValues(); // ZSS-492: don't forget to clear cache of evaluator
 						BookHelper.notifyChangeSheetOrder(ref, name);
 					}
 				}

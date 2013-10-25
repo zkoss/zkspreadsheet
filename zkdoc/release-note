@@ -85,6 +85,7 @@ ZK Spreadsheet 3.0.0
   ZSS-483 Toolbar button's status doesn't update after switching sheets
   ZSS-490 move a sheet with chart causes an exception
   ZSS-476 Image width becomes very small after exporting
+  ZSS-492 If reorder a sheet and modify a cell on it, the value of formula referred to such cell will be incorrect.
   
 ** Upgrade Notes
   * For the fix of ZSS-464, interface of CellStyleApplier(of CellOperationUtil) was simplified and FontStyleApplier was removed (replace by CellStyleApplier directly). If you still need the visit logic of this utility, please refer to original implementation at github (https://github.com/zkoss/zkspreadsheet/blob/e7b51d029fbc6462b1b071603531efb64b26b1c4/zss/src/org/zkoss/zss/api/CellOperationUtil.java).

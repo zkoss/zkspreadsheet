@@ -1,0 +1,61 @@
+<zk>
+	<window width="100%" height="100%">
+		<hlayout width="100%">
+			<label pre="true">
+Reproduce:
+1. open a sheet has at least three sheets named Sheet1, Sheet2 and Sheet3 and order.
+2. input text "123" into A1 in Sheet2
+3. input formula =Sheet2!A1 into B1 in Sheet1
+      the value of B1 in Sheet1 should be "123"
+4. re-order Sheet2 back to Sheet3
+      such as Sheet1, Sheet3, Sheet2
+5. modify cell A1 in Sheet2 to "abc"
+      the B1 in Sheet1 value doesn't update to "abc" but "0"
+			</label>
+		</hlayout>
+		<hlayout>
+			<button label="export" onClick="export();" /> 
+			<button label="run 1" onClick="run(1);" />
+			<button label="run 2" onClick="run(2);" />
+		</hlayout>
+		
+		<spreadsheet id="ss" src="/issue3/book/492-formula-rename-sheet.xlsx"  width="49%" vflex="true"
+			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+			maxrows="500" maxcolumns="100"
+			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+		</spreadsheet>
+		
+		<zscript><![CDATA[
+			import org.zkoss.zss.api.*;
+			public void run(int step) {
+				switch(step) {
+					case 1:
+						Ranges.range(ss.getBook().getSheet("Sheet2")).setSheetOrder(2);
+						break;
+					case 2:
+						Ranges.range(ss.getBook().getSheet("Sheet2"), "A1").setCellEditText("abc");
+						break;
+				}
+			}
+   			public void export() {
+  				Exporter exporter = Exporters.getExporter();
+  				java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+  				exporter.export(ss.getBook(), os);
+  				os.close();
+  				org.zkoss.zul.Filedownload.save(os.toByteArray(),
+  						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "exported.xlsx");
+  			}
+		]]></zscript>
+		
+		<script defer="true"><![CDATA[
+			(function() {
+				window.debug = {};
+				window.debug.ss = zk.Widget.$('$ss');
+				window.debug.ssc = debug.ss.sheetCtrl;
+				window.debug.dp = debug.ssc.dp;
+				window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
+			})();
+		]]></script>
+		
+	</window>
+</zk>
