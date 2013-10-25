@@ -408,12 +408,11 @@ public class SheetOperationUtil {
 			int wPx = sheet.getColumnWidth(i);
 			widthPx -= wPx;
 			if(widthPx<=0){
-				lColumn = i-1;
+				lColumn = i; // ZSS-476, shouldn't minus 1
 				lX = wPx + widthPx;//offset
 				break;
 			}
 		}
-		
 		
 		for(int i = row;;i++){
 			Row srow = ws.getRow(i);
@@ -424,11 +423,12 @@ public class SheetOperationUtil {
 			int hPx = sheet.getRowHeight(i);
 			heightPx -= hPx;
 			if(heightPx<=0){
-				lRow = i-1;
+				lRow = i; // ZSS-476, shouldn't minus 1
 				lY = hPx + heightPx;
 				break;
 			}
 		}
+		
 		return new SheetAnchor(row,column,0,0,lRow,lColumn,lX,lY);
 	}
 }
