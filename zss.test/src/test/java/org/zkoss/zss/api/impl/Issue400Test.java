@@ -1377,4 +1377,113 @@ public class Issue400Test {
 		AssertUtil.assertBottomBorder(d31, BorderType.NONE,null);
 		AssertUtil.assertRightBorder(d31, BorderType.THIN,"#cc0000");
 	}
+	
+	@Test
+	public void testZSS492_MoveSheet(){
+//		testZSS492_MoveSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xls"));
+		testZSS492_MoveSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xlsx"));
+	}
+	
+	public void testZSS492_MoveSheet(Book book){	
+		int number = 5;
+		for(int i=0;i<number;i++){
+			Sheet sheet = book.getSheetAt(i);
+			for(int j=0;j<number;j++){
+				Assert.assertEquals("Sheet"+(j+1),Ranges.range(sheet,0,j).getCellFormatText());
+				Assert.assertEquals(""+(j+1),Ranges.range(sheet,1,j).getCellFormatText());
+			}
+		}
+		
+		Ranges.range(book.getSheetAt(1),"B1").setCellEditText("Sheet2 Y");
+		Ranges.range(book.getSheetAt(1),"B2").setCellEditText("5");
+		
+		Assert.assertEquals("Sheet2 Y",Ranges.range(book.getSheetAt(1),"B1").getCellFormatText());
+		Assert.assertEquals("5",Ranges.range(book.getSheetAt(1),"B2").getCellFormatText());
+		
+		Assert.assertEquals("=Sheet2!B1",Ranges.range(book.getSheetAt(0),"B1").getCellEditText());
+		Assert.assertEquals("Sheet2 Y",Ranges.range(book.getSheetAt(0),"B1").getCellFormatText());
+		Assert.assertEquals("5",Ranges.range(book.getSheetAt(0),"B2").getCellFormatText());
+		
+		
+		
+		for(int i=0;i<number;i++){
+			Sheet sheet = book.getSheetAt(i);
+			for(int j=0;j<number;j++){
+				if(j==1){
+					Assert.assertEquals("Name "+sheet.getSheetName()+","+(j+1),"Sheet2 Y",Ranges.range(sheet,0,j).getCellFormatText());
+					Assert.assertEquals("Name "+sheet.getSheetName()+","+(j+1),"5",Ranges.range(sheet,1,j).getCellFormatText());
+				}else{
+					Assert.assertEquals("Name "+sheet.getSheetName()+","+(j+1),"Sheet"+(j+1),Ranges.range(sheet,0,j).getCellFormatText());
+					Assert.assertEquals("Name "+sheet.getSheetName()+","+(j+1),""+(j+1),Ranges.range(sheet,1,j).getCellFormatText());
+				}
+			}
+		}
+		
+		Ranges.range(book.getSheet("Sheet2")).setSheetOrder(3);
+		
+		Assert.assertEquals("Sheet1", book.getSheetAt(0).getSheetName());
+		Assert.assertEquals("Sheet3", book.getSheetAt(1).getSheetName());
+		Assert.assertEquals("Sheet4", book.getSheetAt(2).getSheetName());
+		Assert.assertEquals("Sheet2", book.getSheetAt(3).getSheetName());
+		Assert.assertEquals("Sheet5", book.getSheetAt(4).getSheetName());
+		
+		for(int i=0;i<number;i++){
+			Sheet sheet = book.getSheetAt(i);
+			for(int j=0;j<number;j++){
+				if(j==1){
+					Assert.assertEquals("Name "+sheet.getSheetName()+","+(j+1),"Sheet2 Y",Ranges.range(sheet,0,j).getCellFormatText());
+					Assert.assertEquals("Name "+sheet.getSheetName()+","+(j+1),"5",Ranges.range(sheet,1,j).getCellFormatText());
+				}else{
+					Assert.assertEquals("Name "+sheet.getSheetName()+","+(j+1),"Sheet"+(j+1),Ranges.range(sheet,0,j).getCellFormatText());
+					Assert.assertEquals("Name "+sheet.getSheetName()+","+(j+1),""+(j+1),Ranges.range(sheet,1,j).getCellFormatText());
+				}
+			}
+		}
+		
+//		Ranges.range(book.getSheetAt(0),"A1").setCellEditText("Sheet1 X");
+//		Ranges.range(book.getSheetAt(0),"A2").setCellEditText("5");
+//		
+//		Ranges.range(book.getSheetAt(1),"A1").setCellEditText("Sheet3 X");
+//		Ranges.range(book.getSheetAt(1),"A2").setCellEditText("15");
+//		
+//		Ranges.range(book.getSheetAt(2),"A1").setCellEditText("Sheet4 X");
+//		Ranges.range(book.getSheetAt(2),"A2").setCellEditText("20");
+		
+//		Ranges.range(book.getSheetAt(3),"A1").setCellEditText("Sheet2 X");
+//		Ranges.range(book.getSheetAt(3),"A2").setCellEditText("10");
+		
+//		Ranges.range(book.getSheetAt(4),"A1").setCellEditText("Sheet5 X");
+//		Ranges.range(book.getSheetAt(4),"A2").setCellEditText("25");
+		
+//		for(int i=0;i<number;i++){
+//			Sheet sheet = book.getSheetAt(i);
+//			for(int j=0;j<number;j++){
+//				Assert.assertEquals("Name "+sheet.getSheetName()+","+(j+1),"Sheet"+(j+1)+" X",Ranges.range(sheet,0,j).getCellFormatText());
+//				Assert.assertEquals("Name "+sheet.getSheetName()+","+(j+1),""+((j+1)*5),Ranges.range(sheet,1,j).getCellFormatText());
+//			}
+//		}
+		
+//		Assert.assertEquals("Sheet2", book.getSheetAt(3).getSheetName());
+//		Ranges.range(book.getSheetAt(3),"B1").setCellEditText("Sheet2 X");
+//		Ranges.range(book.getSheetAt(3),"B2").setCellEditText("10");
+//		
+//		Assert.assertEquals("Sheet2 X",Ranges.range(book.getSheetAt(3),"B1").getCellFormatText());
+//		Assert.assertEquals("10",Ranges.range(book.getSheetAt(3),"B2").getCellFormatText());
+//		
+//		Assert.assertEquals("Sheet2 X",Ranges.range(book.getSheetAt(0),"B1").getCellFormatText());
+//		Assert.assertEquals("10",Ranges.range(book.getSheetAt(0),"B2").getCellFormatText());
+		
+//		for(int i=0;i<number;i++){
+//			Sheet sheet = book.getSheetAt(i);
+//			for(int j=0;j<number;j++){
+//				if(j==1){
+//					Assert.assertEquals("Sheet2 X",Ranges.range(sheet,0,j).getCellFormatText());
+//					Assert.assertEquals("10",Ranges.range(sheet,1,j).getCellFormatText());
+//				}else{
+//					Assert.assertEquals("Sheet"+(j+1),Ranges.range(sheet,0,j).getCellFormatText());
+//					Assert.assertEquals(""+(j+1),Ranges.range(sheet,1,j).getCellFormatText());
+//				}
+//			}
+//		}
+	}
 }
