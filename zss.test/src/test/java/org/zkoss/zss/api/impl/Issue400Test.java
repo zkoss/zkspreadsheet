@@ -1380,7 +1380,7 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS492_MoveSheet(){
-//		testZSS492_MoveSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xls"));
+//		testZSS492_MoveSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xls"));  // due to ZSS-494, this will fail.
 		testZSS492_MoveSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xlsx"));
 	}
 	
@@ -1485,5 +1485,109 @@ public class Issue400Test {
 //				}
 //			}
 //		}
+	}
+	
+	// additional test case for ZSS-492
+	@Test
+	public void testZSS492_RenameSheet() { 
+		testZSS492_RenameSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xlsx"), false);
+		testZSS492_RenameSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xls"), false);
+		testZSS492_RenameSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xlsx"), true);
+//		testZSS492_RenameSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xls"), true); // due to ZSS-494, this will fail.
+	}
+	
+	public void testZSS492_RenameSheet(Book book, boolean reorder) {
+		int number = 5;
+		
+		// data for checking, dim 1 == sheet, dim 2 == column, dim3:
+		//    1. first row edit text
+		//    2. second row edit text
+		//    3. first row format text
+		//    4. second row format text
+		String[][][] expected = new String[number][number][4];
+		for(int s = 0 ; s < number ; ++s) {
+			for(int c = 0 ; c < number ; ++c) {
+				if(s != c) {
+					expected[s][c][0] = "=Sheet" + (c +1) + "!" + (char)('A'+c) + "1"; 
+					expected[s][c][1] = "=Sheet" + (c +1) + "!" + (char)('A'+c) + "2"; 
+				} else {
+					expected[s][c][0] = "Sheet" + (c + 1); 
+					expected[s][c][1] = "" + (c + 1); 
+				}
+				expected[s][c][2] = "Sheet" + (c + 1); 
+				expected[s][c][3] = "" + (c + 1); 
+			}
+		}
+		
+		// dump for checking if needs
+//		for(int s = 0 ; s < number ; ++s)
+//			for(int c = 0 ; c < number ; ++c)
+//				System.out.println(Arrays.asList(expected[s][c]));
+
+		// test initial data
+		for(int s = 0; s < number; s++) {
+			Sheet sheet = book.getSheetAt(s);
+			for(int c = 0; c < number; c++) {
+				Assert.assertEquals(expected[s][c][0], Ranges.range(sheet, 0, c).getCellEditText());
+				Assert.assertEquals(expected[s][c][1], Ranges.range(sheet, 1, c).getCellEditText());
+				Assert.assertEquals(expected[s][c][2], Ranges.range(sheet, 0, c).getCellFormatText());
+				Assert.assertEquals(expected[s][c][3], Ranges.range(sheet, 1, c).getCellFormatText());
+			}
+		}
+
+		// rename Sheet3 to SheetA
+		Ranges.range(book.getSheet("Sheet3")).setSheetName("SheetA");
+		// update test data
+		for(int s = 0 ; s < number ; ++s) {
+			if(s != 2) {
+				expected[s][2][0] = "=SheetA!C1";
+				expected[s][2][1] = "=SheetA!C2";
+			}
+		}
+		
+		// check sheet name
+		int index = 0;
+		for(String name : new String[]{"Sheet1", "Sheet2", "SheetA", "Sheet4", "Sheet5"}) {
+			Assert.assertEquals(name, book.getSheetAt(index++).getSheetName());
+		}
+		// check cell
+		for(int s = 0; s < number; s++) {
+			Sheet sheet = book.getSheetAt(s);
+			for(int c = 0; c < number; c++) {
+				Assert.assertEquals(expected[s][c][0], Ranges.range(sheet, 0, c).getCellEditText());
+				Assert.assertEquals(expected[s][c][1], Ranges.range(sheet, 1, c).getCellEditText());
+				Assert.assertEquals(expected[s][c][2], Ranges.range(sheet, 0, c).getCellFormatText());
+				Assert.assertEquals(expected[s][c][3], Ranges.range(sheet, 1, c).getCellFormatText());
+			}
+		}
+		
+		if(!reorder) {
+			return;
+		}
+		
+		// reorder SheetA to last
+		Ranges.range(book.getSheet("SheetA")).setSheetOrder(4);
+		// update test data
+		String[][] temp = expected[2];
+		expected[2] = expected[3];
+		expected[3] = expected[4];
+		expected[4] = temp;
+
+		// check sheet name
+		index = 0;
+		for(String name : new String[]{"Sheet1", "Sheet2", "Sheet4", "Sheet5", "SheetA"}) {
+			Assert.assertEquals(name, book.getSheetAt(index++).getSheetName());
+		}
+		// check cell
+		for(int s = 0; s < number; s++) {
+			Sheet sheet = book.getSheetAt(s);
+			for(int c = 0; c < number; c++) {
+				Assert.assertEquals(expected[s][c][0], Ranges.range(sheet, 0, c).getCellEditText());
+				Assert.assertEquals(expected[s][c][1], Ranges.range(sheet, 1, c).getCellEditText());
+				Assert.assertEquals(expected[s][c][2], Ranges.range(sheet, 0, c).getCellFormatText());
+				Assert.assertEquals(expected[s][c][3], Ranges.range(sheet, 1, c).getCellFormatText());
+			}
+		}
+		
 	}
 }
