@@ -366,13 +366,11 @@ zss.Spreadsheet = zk.$extends(zul.wgt.Div, {
 		 * @return boolean
 		 */
 		protect: function (v) {
-			var sheetBar = this._sheetBar;
-			if (sheetBar) {
-				var sheet = this.sheetCtrl;
-				if (sheet) {
-					sheet.fireProtectSheet(v);
-				}
-				sheetBar.getSheetSelector().setProtectSheetCheckmark(v);
+			if (this.sheetCtrl) {
+				this.sheetCtrl.fireProtectSheet(v);
+			}
+			if (this._sheetBar) {
+				this._sheetBar.getSheetSelector().setProtectSheetCheckmark(v);
 			}
 		},
 		rowSize: _size,
