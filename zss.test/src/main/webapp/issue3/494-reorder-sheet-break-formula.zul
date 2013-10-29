@@ -1,0 +1,61 @@
+<zk>
+	<window width="100%" height="100%">
+		<hlayout width="100%">
+			<label pre="true">
+Reproduce:
+1. move sheet "Sheet2" to right
+2. check every formula in every sheets
+     these formulas should not be changed
+			</label>
+		</hlayout>
+		<hlayout>
+			<hlayout hflex="1">
+				<label value="xls format" />
+				<button label="export" onClick="export(0);" /> 
+				<button label="Sheet2 move to right" onClick='Ranges.range(ss.getBook().getSheet("Sheet2")).setSheetOrder(2);' />
+				<button label="Sheet2 move to last" onClick='Ranges.range(ss.getBook().getSheet("Sheet2")).setSheetOrder(4);' />
+			</hlayout>
+			<hlayout hflex="1">
+				<label value="xlsx format" />
+				<button label="export" onClick="export(1);" /> 
+				<button label="Sheet2 move to right" onClick='Ranges.range(ss1.getBook().getSheet("Sheet2")).setSheetOrder(2);' />
+				<button label="Sheet2 move to last" onClick='Ranges.range(ss1.getBook().getSheet("Sheet2")).setSheetOrder(4);' />
+			</hlayout>
+		</hlayout>
+		<hlayout vflex="true">
+			<spreadsheet id="ss" src="/issue3/book/494-reorder-sheet-break-formula.xls"  hflex="1" vflex="true"
+				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+				maxrows="500" maxcolumns="100"
+				showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+			</spreadsheet>
+			<spreadsheet id="ss1" src="/issue3/book/494-reorder-sheet-break-formula.xlsx"  hflex="1" vflex="true"
+				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+				maxrows="500" maxcolumns="100"
+				showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+			</spreadsheet>
+		</hlayout>
+		
+		<zscript><![CDATA[
+   			public void export(int index) {
+   				Book book = (index == 0) ? ss.getBook() : ss1.getBook();
+   				String fileName = (index == 0) ? "exported.xls" : "exported.xlsx"; 
+  				Exporter exporter = Exporters.getExporter();
+  				java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+  				exporter.export(book, os);
+  				os.close();
+  				org.zkoss.zul.Filedownload.save(os.toByteArray(), "application/octet-stream", fileName);
+  			}
+		]]></zscript>
+		
+		<script defer="true"><![CDATA[
+			(function() {
+				window.debug = {};
+				window.debug.ss = zk.Widget.$('$ss');
+				window.debug.ssc = debug.ss.sheetCtrl;
+				window.debug.dp = debug.ssc.dp;
+				window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
+			})();
+		]]></script>
+		
+	</window>
+</zk>

@@ -95,6 +95,7 @@ ZK Spreadsheet 3.0.0
   ZSS-497 Get wrong cell format text after click reset in jsf/jsp demo
   ZSS-496 Opening "Insert Picture" dialog twice causes whole Spreadsheet disabled
   ZSS-225 protect sheet icon doesn't display correctly if no sheetBar
+  ZSS-494 If using xls format and reorder sheet, the sheet reference in formulas will be modified
   
 ** Upgrade Notes
   * For the fix of ZSS-464, interface of CellStyleApplier(of CellOperationUtil) was simplified and FontStyleApplier was removed (replace by CellStyleApplier directly). If you still need the visit logic of this utility, please refer to original implementation at github (https://github.com/zkoss/zkspreadsheet/blob/e7b51d029fbc6462b1b071603531efb64b26b1c4/zss/src/org/zkoss/zss/api/CellOperationUtil.java).

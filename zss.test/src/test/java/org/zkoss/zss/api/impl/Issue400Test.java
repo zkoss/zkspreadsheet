@@ -1382,7 +1382,7 @@ public class Issue400Test {
 	
 	@Test
 	public void testZSS492_MoveSheet(){
-//		testZSS492_MoveSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xls"));  // due to ZSS-494, this will fail.
+		testZSS492_MoveSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xls"));
 		testZSS492_MoveSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xlsx"));
 	}
 	
@@ -1495,7 +1495,7 @@ public class Issue400Test {
 		testZSS492_RenameSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xlsx"), false);
 		testZSS492_RenameSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xls"), false);
 		testZSS492_RenameSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xlsx"), true);
-//		testZSS492_RenameSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xls"), true); // due to ZSS-494, this will fail.
+		testZSS492_RenameSheet(Util.loadBook(Issue400Test.class, "book/492-movesheet.xls"), true);
 	}
 	
 	public void testZSS492_RenameSheet(Book book, boolean reorder) {
@@ -1591,5 +1591,133 @@ public class Issue400Test {
 			}
 		}
 		
+	}
+	
+	@Test
+	public void testZSS494() { 
+		testZSS494(Util.loadBook(Issue400Test.class, "book/494-reorder-sheet-break-formula.xlsx"));
+		testZSS494(Util.loadBook(Issue400Test.class, "book/494-reorder-sheet-break-formula.xls"));
+	}
+	
+	public void testZSS494(Book book) {
+		int number = 5;
+		
+		// data for checking, dim 1 == sheet, dim 2 == column, dim3:
+		//    1. first row edit text
+		//    2. second row edit text
+		//    3. first row format text
+		//    4. second row format text
+		String[][][] expected = new String[number][number][4];
+		for(int s = 0 ; s < number ; ++s) {
+			for(int c = 0 ; c < number ; ++c) {
+				if(s != c) {
+					expected[s][c][0] = "=Sheet" + (c +1) + "!" + (char)('A'+c) + "1"; 
+					expected[s][c][1] = "=Sheet" + (c +1) + "!" + (char)('A'+c) + "2"; 
+				} else {
+					expected[s][c][0] = "Sheet" + (c + 1); 
+					expected[s][c][1] = "" + (c + 1); 
+				}
+				expected[s][c][2] = "Sheet" + (c + 1); 
+				expected[s][c][3] = "" + (c + 1); 
+			}
+		}
+		
+		// dump for checking if needs
+//		for(int s = 0 ; s < number ; ++s)
+//			for(int c = 0 ; c < number ; ++c)
+//				System.out.println(Arrays.asList(expected[s][c]));
+
+		// test initial data
+		int index = 0;
+		for(String name : new String[]{"Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5"}) {
+			Assert.assertEquals(name, book.getSheetAt(index++).getSheetName());
+		}
+		for(int s = 0; s < number; s++) {
+			Sheet sheet = book.getSheetAt(s);
+			for(int c = 0; c < number; c++) {
+				Assert.assertEquals(expected[s][c][0], Ranges.range(sheet, 0, c).getCellEditText());
+				Assert.assertEquals(expected[s][c][1], Ranges.range(sheet, 1, c).getCellEditText());
+				Assert.assertEquals(expected[s][c][2], Ranges.range(sheet, 0, c).getCellFormatText());
+				Assert.assertEquals(expected[s][c][3], Ranges.range(sheet, 1, c).getCellFormatText());
+			}
+		}
+
+		// reorder Sheet2 to last
+		Ranges.range(book.getSheet("Sheet2")).setSheetOrder(4);
+		// update test data
+		String[][] temp = expected[1];
+		expected[1] = expected[2];
+		expected[2] = expected[3];
+		expected[3] = expected[4];
+		expected[4] = temp;
+
+		// check sheet name
+		index = 0;
+		for(String name : new String[]{"Sheet1", "Sheet3", "Sheet4", "Sheet5", "Sheet2"}) {
+			Assert.assertEquals(name, book.getSheetAt(index++).getSheetName());
+		}
+		// check cell
+		for(int s = 0; s < number; s++) {
+			Sheet sheet = book.getSheetAt(s);
+			for(int c = 0; c < number; c++) {
+				Assert.assertEquals(expected[s][c][0], Ranges.range(sheet, 0, c).getCellEditText());
+				Assert.assertEquals(expected[s][c][1], Ranges.range(sheet, 1, c).getCellEditText());
+				Assert.assertEquals(expected[s][c][2], Ranges.range(sheet, 0, c).getCellFormatText());
+				Assert.assertEquals(expected[s][c][3], Ranges.range(sheet, 1, c).getCellFormatText());
+			}
+		}
+		
+		// edit cell
+		Ranges.range(book.getSheet("Sheet2"), "B1").setCellEditText("Sheet2A");
+		Ranges.range(book.getSheet("Sheet3"), "C2").setCellEditText("3B");
+		// update test data
+		expected[4][1][0] = "Sheet2A";
+		expected[1][2][1] = "3B";
+		for(int s = 0 ; s < number ; ++s) {
+			expected[s][1][2] = "Sheet2A";
+			expected[s][2][3] = "3B";
+		}
+
+		// check sheet name
+		index = 0;
+		for(String name : new String[]{"Sheet1", "Sheet3", "Sheet4", "Sheet5", "Sheet2"}) {
+			Assert.assertEquals(name, book.getSheetAt(index++).getSheetName());
+		}
+		// check cell
+		for(int s = 0; s < number; s++) {
+			Sheet sheet = book.getSheetAt(s);
+			for(int c = 0; c < number; c++) {
+				Assert.assertEquals(expected[s][c][0], Ranges.range(sheet, 0, c).getCellEditText());
+				Assert.assertEquals(expected[s][c][1], Ranges.range(sheet, 1, c).getCellEditText());
+				Assert.assertEquals(expected[s][c][2], Ranges.range(sheet, 0, c).getCellFormatText());
+				Assert.assertEquals(expected[s][c][3], Ranges.range(sheet, 1, c).getCellFormatText());
+			}
+		}
+		
+		// reorder Sheet5 to first
+		Ranges.range(book.getSheet("Sheet5")).setSheetOrder(0);
+		// update test data
+		temp = expected[3];
+		expected[3] = expected[2];
+		expected[2] = expected[1];
+		expected[1] = expected[0];
+		expected[0] = temp;
+
+		// check sheet name
+		index = 0;
+		for(String name : new String[]{"Sheet5", "Sheet1", "Sheet3", "Sheet4", "Sheet2"}) {
+			Assert.assertEquals(name, book.getSheetAt(index++).getSheetName());
+		}
+		// check cell
+		for(int s = 0; s < number; s++) {
+			Sheet sheet = book.getSheetAt(s);
+			for(int c = 0; c < number; c++) {
+				Assert.assertEquals(expected[s][c][0], Ranges.range(sheet, 0, c).getCellEditText());
+				Assert.assertEquals(expected[s][c][1], Ranges.range(sheet, 1, c).getCellEditText());
+				Assert.assertEquals(expected[s][c][2], Ranges.range(sheet, 0, c).getCellFormatText());
+				Assert.assertEquals(expected[s][c][3], Ranges.range(sheet, 1, c).getCellFormatText());
+			}
+		}
+
 	}
 }
