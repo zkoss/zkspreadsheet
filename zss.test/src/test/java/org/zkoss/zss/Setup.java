@@ -12,6 +12,7 @@ import java.util.Stack;
 
 import org.zkoss.lang.Library;
 import org.zkoss.poi.ss.usermodel.ZssContext;
+import org.zkoss.util.Locales;
 
 public class Setup {
 	
@@ -80,6 +81,7 @@ public class Setup {
 			zssCtx.get().push(old);
 		}
 		ZssContext.setThreadLocal(new ZssContext(l,-1));
+		Locales.setThreadLocal(l);
 	}
 	
 	public static void popZssContextLocale(){
@@ -89,5 +91,22 @@ public class Setup {
 		}
 		ZssContext old = zssCtx.get().pop();
 		ZssContext.setThreadLocal(old);
+		Locales.setThreadLocal(old.getLocale());
+	}
+	
+	public static Locale getZssContextLocale(){
+		if(zssCtx.get().isEmpty()){
+			return null;
+		}
+		ZssContext curr = ZssContext.getCurrent();
+		return curr.getLocale();
+	}
+	
+	//set current content locale
+	public static void setZssContentLocale(Locale l){
+		if(!zssCtx.get().isEmpty()){
+			popZssContextLocale();
+		}
+		pushZssContextLocale(l);
 	}
 }

@@ -5,6 +5,12 @@ import java.awt.Desktop.Action;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
@@ -85,6 +91,22 @@ public class Util {
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+	
+	public static DateFormat getDateFormat(String pattern){
+		return getDateFormat(pattern,null);
+	}
+	public static DateFormat getDateFormat(String pattern, Locale locale){
+		return locale==null?new SimpleDateFormat(pattern):new SimpleDateFormat(pattern,locale);
+	}
+
+	public static Date getDateOnly(Date d) {
+		DateFormat df = getDateFormat("yyyy/MM/dd");
+		try {
+			return df.parse(df.format(d));
+		} catch (ParseException e) {
+			throw new RuntimeException(e.getMessage(),e);
 		}
 	}
 }
