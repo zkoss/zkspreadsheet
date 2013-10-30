@@ -403,5 +403,12 @@ public class DateInputTest {
 		Assert.assertEquals(todayStr, r.getCellFormatText());
 		Assert.assertEquals(CellType.NUMERIC, r.getCellData().getType());
 		Assert.assertEquals(todayStr, r.getCellEditText());
+		
+		//test again
+		r.getCellData().setValue(Util.getDateOnly(today));
+		Assert.assertEquals("m/d/yyyy", r.getCellStyle().getDataFormat()); 
+		Assert.assertEquals(todayStr, r.getCellFormatText());
+		Assert.assertEquals(CellType.NUMERIC, r.getCellData().getType());
+		Assert.assertEquals(todayStr, r.getCellEditText());
 	}
 }
