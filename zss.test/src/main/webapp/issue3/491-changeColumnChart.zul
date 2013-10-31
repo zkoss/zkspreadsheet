@@ -1,0 +1,16 @@
+<zk>
+	<label multiline="true">
+	Click on set C width, the width should change, and didn't get any js error
+	</label>
+	<button label="set C width" onClick="test()"/>
+	<button label="invalidate" onClick="ss.invalidate()"/>
+	<zscript><![CDATA[//@DECLARATION
+		public void test(){
+			Ranges.range(ss.getSelectedSheet(),"C1").setColumnWidth(100);
+		}
+	]]>
+	</zscript>
+	<spreadsheet id="ss" src="/issue3/book/491-chageColumnChart-simple.xlsx" maxVisibleRows="172" maxVisibleColumns="40" hflex="1" vflex="1"
+	 showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true"/>
+</zk>
