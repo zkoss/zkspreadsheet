@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.zkoss.poi.ss.formula.FormulaParseException;
 import org.zkoss.poi.xssf.usermodel.XSSFComment;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.zss.AssertUtil;
@@ -29,6 +30,7 @@ import org.zkoss.zss.api.BookSeriesBuilder;
 import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Exporter;
 import org.zkoss.zss.api.Exporters;
+import org.zkoss.zss.api.IllegalFormulaException;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Range.ApplyBorderType;
@@ -1378,6 +1380,31 @@ public class Issue400Test {
 		AssertUtil.assertLeftBorder(d31, BorderType.NONE,null);
 		AssertUtil.assertBottomBorder(d31, BorderType.NONE,null);
 		AssertUtil.assertRightBorder(d31, BorderType.THIN,"#cc0000");
+	}
+	
+	@Test
+	public void testZSS498_Formula() { 
+		testZSS498_Formula(Util.loadBook(Issue400Test.class, "book/blank.xlsx"));
+		testZSS498_Formula(Util.loadBook(Issue400Test.class, "book/blank.xls"));
+	}
+	public void testZSS498_Formula(Book book) { 
+		Sheet sheet = book.getSheetAt(0);
+		try{
+			Ranges.range(sheet,"A1").setCellEditText("=SUM(");
+			Assert.fail("should get exception");
+		}catch(IllegalFormulaException x){}
+		
+		try{
+			Ranges.range(sheet,"A1").setCellEditText("=SUM(\"abc");
+			Assert.fail("should get exception");
+		}catch(IllegalFormulaException x){}
+		
+		try{
+			Ranges.range(sheet,"A1").setCellEditText("=SUM(\"abc)");
+			Assert.fail("should get exception");
+		}catch(IllegalFormulaException x){}
+		
+		Ranges.range(sheet,"A1").setCellEditText("=SUM(\"abc\")");		
 	}
 	
 	@Test
