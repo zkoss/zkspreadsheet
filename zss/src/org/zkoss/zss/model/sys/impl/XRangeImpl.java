@@ -2799,6 +2799,8 @@ public class XRangeImpl implements XRange {
 						final int sheetCount = book.getNumberOfSheets();
 						if (sheetCount == 1) {
 							Messagebox.show("A workbook must contain at least one visible worksheet");
+							//ZSS-493, return do noting or will get exception.
+							return;
 						}
 						final String delSheetName = _sheet.getSheetName(); //must getName before remove
 						book.removeSheetAt(index);

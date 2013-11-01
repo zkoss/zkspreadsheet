@@ -26,6 +26,7 @@ import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.zss.api.CellVisitor;
 import org.zkoss.zss.api.IllegalFormulaException;
+import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.RangeRunner;
 import org.zkoss.zss.api.Ranges;
@@ -756,6 +757,11 @@ public class RangeImpl implements Range{
 	
 	public void deleteSheet(){
 		//TODO the syncLevel
+		//ZSS-493 check if last sheet throws illegal op argument exception
+		XSheet sheet = _range.getSheet();
+		if(sheet.getBook().getNumberOfSheets()==1){
+			throw new IllegalOpArgumentException("Cannot delete last sheet");
+		}
 		_range.deleteSheet();
 	}
 	
