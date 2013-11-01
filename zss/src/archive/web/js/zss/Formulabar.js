@@ -282,7 +282,7 @@ zss.FormulabarWestCave = zk.$extends(zk.Widget, {
 	_onClickOKBtn: function () {
 		var sheet = this.sheet;
 		if (sheet) {
-			sheet.dp.stopEditing();
+			sheet.dp.stopEditing('refocus'); // ZSS-501
 			this._onStopEditing();
 		}
 	},
