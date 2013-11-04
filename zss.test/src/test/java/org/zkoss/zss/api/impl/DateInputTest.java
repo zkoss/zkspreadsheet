@@ -349,8 +349,8 @@ public class DateInputTest {
 		r = Ranges.range(sheet,"A1");
 		Assert.assertEquals("General", r.getCellStyle().getDataFormat());
 		CellOperationUtil.applyDataFormat(r, "m/d/yyyy"); 
-		todayStr = new SimpleDateFormat("yyyy/MM/dd",Setup.getZssContextLocale()).format(today);
-		todayStrLong = new SimpleDateFormat("yyyy/MM/dd a hh:mm:ss",Setup.getZssContextLocale()).format(today); //it is hh:mm:ss in TW
+		todayStr = new SimpleDateFormat("yyyy/M/d",Setup.getZssContextLocale()).format(today);
+		todayStrLong = new SimpleDateFormat("yyyy/M/d a hh:mm:ss",Setup.getZssContextLocale()).format(today); //it is hh:mm:ss in TW
 		
 		r.setCellEditText(todayStr);
 		Assert.assertEquals("yyyy/m/d", r.getCellStyle().getDataFormat()); //format change
@@ -382,8 +382,8 @@ public class DateInputTest {
 		r = Ranges.range(sheet,"A1");
 		Assert.assertEquals("General", r.getCellStyle().getDataFormat());
 		CellOperationUtil.applyDataFormat(r, "m/d/yyyy"); 
-		todayStr = Util.getDateFormat("MM/dd/yyyy",Setup.getZssContextLocale()).format(today);
-		todayStrLong = Util.getDateFormat("MM/dd/yyyy h:mm:ss a",Setup.getZssContextLocale()).format(today); // it is h:mm:ss in US
+		todayStr = Util.getDateFormat("M/d/yyyy",Setup.getZssContextLocale()).format(today);
+		todayStrLong = Util.getDateFormat("M/dd/yyyy h:mm:ss a",Setup.getZssContextLocale()).format(today); // it is M/dd/yyyy h:mm:ss in US
 		
 		r.setCellEditText(todayStr);
 		Assert.assertEquals("m/d/yyyy", r.getCellStyle().getDataFormat()); //format change
