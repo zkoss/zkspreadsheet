@@ -103,6 +103,7 @@ ZK Spreadsheet 3.0.0
   ZSS-506 After deleting a sheet, the charts which reference the deleted sheet cause an exception
   ZSS-505 delete the last sheet, chart on another sheet show in the last sheet.
   ZSS-500 After hiding a row contained overflow cells, the hidden row's cell text is still shown and overlap
+  ZSS-504 hide all column and all row only can recover by undo (not by drag UI)
 
   
 ** Upgrade Notes

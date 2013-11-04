@@ -2,6 +2,7 @@ package org.zkoss.zss.ui.impl.ua;
 
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zss.api.CellOperationUtil;
+import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.AreaRef;
@@ -31,6 +32,15 @@ public class HideHeaderHandler extends AbstractProtectedHandler {
 			showProtectMessage();
 			return true;
 		}
+		
+		//ZSS-504, to prevent user's operation 
+		if(_hide && _type == HideHeaderAction.Type.ROW && checkSelectAllVisibleRow(ctx)){
+			throw new IllegalOpArgumentException(Labels.getLabel("zss.msg.operation_not_supported_with_all_row"));
+		}
+		if(_hide && _type == HideHeaderAction.Type.COLUMN && checkSelectAllVisibleColumn(ctx)){
+			throw new IllegalOpArgumentException(Labels.getLabel("zss.msg.operation_not_supported_with_all_column"));
+		}
+		
 		
 		String label = null;
 		switch(_type){

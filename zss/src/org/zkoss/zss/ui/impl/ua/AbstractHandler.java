@@ -17,10 +17,12 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.impl.ua;
 
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.IllegalOpArgumentException;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.UserActionContext;
 import org.zkoss.zss.ui.UserActionHandler;
 import org.zkoss.zul.Messagebox;
@@ -72,6 +74,36 @@ public abstract class AbstractHandler implements UserActionHandler{
 			if(range.getRow() < fzr && range.getColumn() < fzc) {
 				return true;
 			}
+		}
+		return false;
+	}
+	
+	//ZSS-504 , prevent some operation when select all visible
+	protected boolean checkSelectAllVisibleRow(UserActionContext ctx) {
+		Spreadsheet ss = ctx.getSpreadsheet();
+		AreaRef sel = ctx.getSelection();
+		
+		if(sel.getRow()==0 && sel.getLastRow() >= ss.getMaxVisibleRows()-1){
+			return true;
+		}
+		return false;
+	}
+	protected boolean checkSelectAllVisibleColumn(UserActionContext ctx) {
+		Spreadsheet ss = ctx.getSpreadsheet();
+		AreaRef sel = ctx.getSelection();
+		
+		if(sel.getColumn()==0 && sel.getLastColumn() >= ss.getMaxVisibleColumns()-1){
+			return true;
+		}
+		return false;
+	}
+	protected boolean checkSelectAllVisibleRowColumn(UserActionContext ctx) {
+		Spreadsheet ss = ctx.getSpreadsheet();
+		AreaRef sel = ctx.getSelection();
+		
+		if(sel.getRow()==0 && sel.getLastRow() >= ss.getMaxVisibleRows()-1 &&
+				sel.getColumn()==0 && sel.getLastColumn() >= ss.getMaxVisibleColumns()-1){
+			return true;
 		}
 		return false;
 	}
