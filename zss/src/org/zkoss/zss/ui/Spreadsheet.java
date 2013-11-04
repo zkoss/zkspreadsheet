@@ -4013,20 +4013,22 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 			if (height <= 0) {
 				
-				// ZSS-330, ZSS-382: using "height: 0" and don't use "display: none", latter one cause merge cell to chaos  
+				// ZSS-330, ZSS-382: using "height: 0" and don't use "display: none", latter one cause merge cell to chaos
 				sb.append(name).append(" .zsh").append(cid).append("{");
 				sb.append("height:0px;");
 				sb.append("}");
 
+				// ZSS-500: re-overwrite overflow to hidden when row hidden 
 				sb.append(name).append(" .zshi").append(cid).append("{");
 				sb.append("height:0px;");
-				sb.append("border-bottom-width:0px");
+				sb.append("border-bottom-width:0px;");
+				sb.append("overflow:hidden;");
 				sb.append("}");
 
 				sb.append(name).append(" .zslh").append(cid).append("{");
 				sb.append("height:0px;");
 				sb.append("line-height:0px;");
-				sb.append("border-bottom-width:0px");
+				sb.append("border-bottom-width:0px;");
 				sb.append("}");
 
 			} else {
@@ -4036,13 +4038,13 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 
 				sb.append(name).append(" .zshi").append(cid).append("{");
 				sb.append("height:").append(cellheight).append("px;");
-				sb.append("border-bottom-width:1px");
+				sb.append("border-bottom-width:1px;");
 				sb.append("}");
 
 				sb.append(name).append(" .zslh").append(cid).append("{");
 				sb.append("height:").append(height).append("px;");
 				sb.append("line-height:").append(height).append("px;");
-				sb.append("border-bottom-width:1px");
+				sb.append("border-bottom-width:1px;");
 				sb.append("}");
 
 			}

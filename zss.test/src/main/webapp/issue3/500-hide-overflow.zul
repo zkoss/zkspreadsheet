@@ -1,0 +1,50 @@
+<zk>
+	<window width="100%" height="100%">
+		<label pre="true"><![CDATA[
+Reproduce steps:
+  1. make a cell overflow
+  2. hide the row included such cell
+      the cell shouldn't still be appeared
+  3. unhide the row
+      the cell should still be overflow
+* Note that if row 15 has cell text over the row, it is another open issue. 
+		]]></label>
+		<hlayout>
+			<button label="export" onClick="export();" /> 
+			<button label="hide row 5" onClick='Ranges.range(ss.getSelectedSheet(), "5").toRowRange().setHidden(true);' />
+			<button label="unhide row 5" onClick='Ranges.range(ss.getSelectedSheet(), "5").toRowRange().setHidden(false);' />
+			<button label="hide row 10" onClick='Ranges.range(ss.getSelectedSheet(), "10").toRowRange().setHidden(true);' />
+			<button label="unhide row 10" onClick='Ranges.range(ss.getSelectedSheet(), "10").toRowRange().setHidden(false);' />
+		</hlayout>
+		<hlayout vflex="true">
+			<spreadsheet id="ss" src="/issue3/book/500-hide-overflow.xlsx"  hflex="1" vflex="true"
+				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+				maxrows="500" maxcolumns="100"
+				showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+			</spreadsheet>
+		</hlayout>
+		
+		<zscript><![CDATA[
+   			public void export() {
+   				Book book = ss.getBook();
+   				String fileName = "exported.xlsx"; 
+  				Exporter exporter = Exporters.getExporter();
+  				java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+  				exporter.export(book, os);
+  				os.close();
+  				org.zkoss.zul.Filedownload.save(os.toByteArray(), "application/octet-stream", fileName);
+  			}
+		]]></zscript>
+		
+		<script defer="true"><![CDATA[
+			(function() {
+				window.debug = {};
+				window.debug.ss = zk.Widget.$('$ss');
+				window.debug.ssc = debug.ss.sheetCtrl;
+				window.debug.dp = debug.ssc.dp;
+				window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
+			})();
+		]]></script>
+		
+	</window>
+</zk>

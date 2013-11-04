@@ -2135,13 +2135,14 @@ zss.SSheetCtrl = zk.$extends(zk.Widget, {
 			createbefor = true;
 
 		if (height <= 0 || hidden) {
-			// ZSS-330, ZSS-382: using "height: 0" and don't use "display: none", latter one cause merge cell to chaos  
+			// ZSS-330, ZSS-382: using "height: 0" and don't use "display: none", latter one cause merge cell to chaos
+			// ZSS-500: re-overwrite overflow to hidden when row hidden 
 			zcss.setRule(name + " .zsh" + zsh, "height", "0px", createbefor, cssId);
-			zcss.setRule(name + " .zshi" + zsh, ["height", "border-bottom-width"], ["0px", "0px"], createbefor, cssId);//both zscell and zscelltxt
-			zcss.setRule(name + " .zslh" + zsh, ["height", "line-height", "border-bottom-width"], ["0px", "0px", "0px"], createbefor, cssId); // header has 1px border
+			zcss.setRule(name + " .zshi" + zsh, ["height", "border-bottom-width", "overflow"], ["0px", "0px", "hidden"], createbefor, cssId);//both zscell and zscelltxt
+			zcss.setRule(name + " .zslh" + zsh, ["height", "line-height", "border-bottom-width"], ["0px", "0px", "0px"], createbefor, cssId); // header has 1px border.
 		} else {
 			zcss.setRule(name + " .zsh" + zsh, "height", height + "px", createbefor, cssId);
-			zcss.setRule(name + " .zshi" + zsh, ["height", "border-bottom-width"], [cellheight + "px", "1px"], createbefor, cssId);//both zscell and zscelltxt
+			zcss.setRule(name + " .zshi" + zsh, ["height", "border-bottom-width", "overflow"], [cellheight + "px", "1px", ""], createbefor, cssId);//both zscell and zscelltxt
 			zcss.setRule(name + " .zslh" + zsh, ["height", "line-height", "border-bottom-width"], [height + "px", height + "px", "1px"], createbefor, cssId);
 		}
 		

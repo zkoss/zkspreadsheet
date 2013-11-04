@@ -102,6 +102,7 @@ ZK Spreadsheet 3.0.0
   ZSS-499 Insert rows above cells where the chart header references will cause NPE
   ZSS-506 After deleting a sheet, the charts which reference the deleted sheet cause an exception
   ZSS-505 delete the last sheet, chart on another sheet show in the last sheet.
+  ZSS-500 After hiding a row contained overflow cells, the hidden row's cell text is still shown and overlap
 
   
 ** Upgrade Notes
