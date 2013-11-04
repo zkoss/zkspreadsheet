@@ -101,6 +101,7 @@ ZK Spreadsheet 3.0.0
   ZSS-501 Click check mark of formula bar after entering a value, all cells become unable to edit
   ZSS-499 Insert rows above cells where the chart header references will cause NPE
   ZSS-506 After deleting a sheet, the charts which reference the deleted sheet cause an exception
+  ZSS-505 delete the last sheet, chart on another sheet show in the last sheet.
 
   
 ** Upgrade Notes
