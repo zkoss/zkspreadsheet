@@ -5,11 +5,26 @@
 		<label>3. select "chart-image"</label>
 	</vlayout>
 	<spreadsheet id="ss" src="/issue3/book/499-moveChartData.xlsx" maxVisibleRows="200" maxVisibleColumns="40" width="80%"
-		height="80%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		height="40%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
 		showFormulabar="true"/>
 	<zscript><![CDATA[
 		public void insertOneRow(){
 			CellOperationUtil.insertRow(Ranges.range(ss.getBook().getSheetAt(0), "A13"));
+		}
+	]]></zscript>
+	<separator bar="true"></separator>
+	<label style="font-size:20px">2003 has the same issue.</label>
+	<vlayout>
+		<button label="1. insert above row 13" onClick="insertOneRow2003()"/>
+		<label>2. select "Sheet2"</label>
+		<label>3. select "chart-image"</label>
+	</vlayout>
+	<spreadsheet id="ss2003" src="/issue3/book/499-moveChartData.xls" maxVisibleRows="200" maxVisibleColumns="40" width="80%"
+		height="40%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true"/>
+	<zscript><![CDATA[
+		public void insertOneRow2003(){
+			CellOperationUtil.insertRow(Ranges.range(ss2003.getBook().getSheetAt(0), "A13"));
 		}
 	]]></zscript>
 </zk>

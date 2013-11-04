@@ -99,6 +99,8 @@ ZK Spreadsheet 3.0.0
   ZSS-491 change column width and JS errors show
   ZSS-498 Formula Edit throws RunTimeException
   ZSS-501 Click check mark of formula bar after entering a value, all cells become unable to edit
+  ZSS-499 Insert rows above cells where the chart header references will cause NPE
+
   
 ** Upgrade Notes
   * For the fix of ZSS-464, interface of CellStyleApplier(of CellOperationUtil) was simplified and FontStyleApplier was removed (replace by CellStyleApplier directly). If you still need the visit logic of this utility, please refer to original implementation at github (https://github.com/zkoss/zkspreadsheet/blob/e7b51d029fbc6462b1b071603531efb64b26b1c4/zss/src/org/zkoss/zss/api/CellOperationUtil.java).
