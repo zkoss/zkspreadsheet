@@ -1,0 +1,11 @@
+<zk>
+	<label multiline="true">
+		1. delete the sheet "chart-image"
+		
+		Problem situation:
+		Then NullPointerException is thrown at the console.
+	</label>
+	<spreadsheet src="/issue3/book/506-deleteChartData.xls" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
+		height="80%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true"/>
+</zk>

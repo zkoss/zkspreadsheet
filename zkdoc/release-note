@@ -100,6 +100,7 @@ ZK Spreadsheet 3.0.0
   ZSS-498 Formula Edit throws RunTimeException
   ZSS-501 Click check mark of formula bar after entering a value, all cells become unable to edit
   ZSS-499 Insert rows above cells where the chart header references will cause NPE
+  ZSS-506 After deleting a sheet, the charts which reference the deleted sheet cause an exception
 
   
 ** Upgrade Notes
