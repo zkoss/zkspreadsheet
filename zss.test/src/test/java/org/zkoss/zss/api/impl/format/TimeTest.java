@@ -89,4 +89,53 @@ public class TimeTest {
 		assertEquals("11:10 \u4E0A\u5348", Ranges.range(sheet, "E31").getCellFormatText());
 		assertEquals("11:10 \u4E0A\u5348", Ranges.range(sheet, "G31").getCellFormatText());
 	}
+	
+	@Test
+	public void testTime43() {
+		Sheet sheet = book.getSheet("Time");
+		assertEquals("59", Ranges.range(sheet, "E43").getCellFormatText());
+		assertEquals("59", Ranges.range(sheet, "G43").getCellFormatText());
+	}
+	
+	@Test
+	public void testTime45() {
+		Sheet sheet = book.getSheet("Time");
+		assertEquals("11", Ranges.range(sheet, "E45").getCellFormatText());
+		assertEquals("11", Ranges.range(sheet, "G45").getCellFormatText());
+	}
+	
+	@Test
+	public void testTime47() {
+		Sheet sheet = book.getSheet("Time");
+		assertEquals("1", Ranges.range(sheet, "E47").getCellFormatText());
+		assertEquals("1", Ranges.range(sheet, "G47").getCellFormatText());
+	}
+	
+	@Test
+	public void testTime49() {
+		Sheet sheet = book.getSheet("Time");
+		assertEquals("3550", Ranges.range(sheet, "E49").getCellFormatText());
+		assertEquals("3550", Ranges.range(sheet, "G49").getCellFormatText());
+	}
+	
+	@Test
+	public void testTime51() {
+		Sheet sheet = book.getSheet("Time");
+		assertEquals("01", Ranges.range(sheet, "E51").getCellFormatText());
+		assertEquals("01", Ranges.range(sheet, "G51").getCellFormatText());
+	}
+	
+	@Test
+	public void testTime53() {
+		Sheet sheet = book.getSheet("Time");
+		assertEquals("50", Ranges.range(sheet, "E53").getCellFormatText());
+		assertEquals("50", Ranges.range(sheet, "G53").getCellFormatText());
+	}
+	
+	@Test
+	public void testTime57() {
+		Sheet sheet = book.getSheet("Time");
+		assertEquals("50", Ranges.range(sheet, "E57").getCellFormatText());
+		assertEquals("50", Ranges.range(sheet, "G57").getCellFormatText());
+	}
 }

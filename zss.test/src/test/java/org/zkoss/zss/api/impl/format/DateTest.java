@@ -98,10 +98,30 @@ public class DateTest {
 	}
 	
 	@Test
-	public void testDate47() {
+	public void testDate55() {
 		Sheet sheet = book.getSheet("Date");
-		assertEquals("30-Oct", Ranges.range(sheet, "E47").getCellFormatText());
-		assertEquals("30-Oct", Ranges.range(sheet, "G47").getCellFormatText());
+		assertEquals("01", Ranges.range(sheet, "E55").getCellFormatText());
+		assertEquals("01", Ranges.range(sheet, "G55").getCellFormatText());
 	}
-
+	
+	@Test
+	public void testDate63() {
+		Sheet sheet = book.getSheet("Date");
+		assertEquals("2", Ranges.range(sheet, "E63").getCellFormatText());
+		assertEquals("2", Ranges.range(sheet, "G63").getCellFormatText());
+	}
+	
+	@Test
+	public void testDate65() {
+		Sheet sheet = book.getSheet("Date");
+		assertEquals("02", Ranges.range(sheet, "E65").getCellFormatText());
+		assertEquals("02", Ranges.range(sheet, "G65").getCellFormatText());
+	}
+	
+	@Test
+	public void testDate71() {
+		Sheet sheet = book.getSheet("Date");
+		assertEquals("00", Ranges.range(sheet, "E71").getCellFormatText());
+		assertEquals("00", Ranges.range(sheet, "G71").getCellFormatText());
+	}
 }

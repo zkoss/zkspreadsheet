@@ -193,5 +193,19 @@ public class NumberTest {
 		assertEquals("-123,456,789.00 ", Ranges.range(sheet, "G41").getCellFormatText());
 		// TODO confirm format color
 	}
+	
+	@Test
+	public void testNumberFormat43() {
+		Sheet sheet = book.getSheet("Number");
+		assertEquals("1234.57 ", Ranges.range(sheet, "E43").getCellFormatText());
+		assertEquals("1234.57 ", Ranges.range(sheet, "G43").getCellFormatText());
+	}
+	
+	@Test
+	public void testNumberFormat45() {
+		Sheet sheet = book.getSheet("Number");
+		assertEquals("1234.568 ", Ranges.range(sheet, "E45").getCellFormatText());
+		assertEquals("1234.568 ", Ranges.range(sheet, "G45").getCellFormatText());
+	}
 
 }

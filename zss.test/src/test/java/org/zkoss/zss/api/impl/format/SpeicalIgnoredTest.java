@@ -34,7 +34,7 @@ public class SpeicalIgnoredTest {
 	@After
 	public void tearDown() throws Exception {
 		Setup.popZssContextLocale();
-	}	
+	}
 	
 	@Test
 	public void testSpeical13() {
@@ -46,7 +46,7 @@ public class SpeicalIgnoredTest {
 	@Test
 	public void testSpeical15() {
 		Sheet sheet = book.getSheet("Special");
-		assertEquals("\u58F9\u842C\u8CB3\u4EDF\u53C3\u4F70\u8086\u62FE\u4F0D", Ranges.range(sheet, "E13").getCellFormatText());
-		assertEquals("\u58F9\u842C\u8CB3\u4EDF\u53C3\u4F70\u8086\u62FE\u4F0D", Ranges.range(sheet, "G13").getCellFormatText());
+		assertEquals("\u58F9\u842C\u8CB3\u4EDF\u53C3\u4F70\u8086\u62FE\u4F0D", Ranges.range(sheet, "E15").getCellFormatText());
+		assertEquals("\u58F9\u842C\u8CB3\u4EDF\u53C3\u4F70\u8086\u62FE\u4F0D", Ranges.range(sheet, "G15").getCellFormatText());
 	}
 }

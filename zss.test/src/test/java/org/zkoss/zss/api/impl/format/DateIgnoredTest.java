@@ -136,6 +136,13 @@ public class DateIgnoredTest {
 	}
 	
 	@Test
+	public void testDate47() {
+		Sheet sheet = book.getSheet("Date");
+		assertEquals("30-Oct", Ranges.range(sheet, "E47").getCellFormatText());
+		assertEquals("30-Oct", Ranges.range(sheet, "G47").getCellFormatText());
+	}	
+	
+	@Test
 	public void testDate49() {
 		Sheet sheet = book.getSheet("Date");
 		assertEquals("30-Oct-13", Ranges.range(sheet, "E49").getCellFormatText());
@@ -154,6 +161,48 @@ public class DateIgnoredTest {
 		Sheet sheet = book.getSheet("Date");
 		assertEquals("O-13", Ranges.range(sheet, "E53").getCellFormatText());
 		assertEquals("O-13", Ranges.range(sheet, "G53").getCellFormatText());
+	}
+	
+	@Test
+	public void testDate57() {
+		Sheet sheet = book.getSheet("Date");
+		assertEquals("Jan", Ranges.range(sheet, "E57").getCellFormatText());
+		assertEquals("Jan", Ranges.range(sheet, "G57").getCellFormatText());
+	}
+	
+	@Test
+	public void testDate59() {
+		Sheet sheet = book.getSheet("Date");
+		assertEquals("January", Ranges.range(sheet, "E59").getCellFormatText());
+		assertEquals("January", Ranges.range(sheet, "G59").getCellFormatText());
+	}
+	
+	@Test
+	public void testDate61() {
+		Sheet sheet = book.getSheet("Date");
+		assertEquals("J", Ranges.range(sheet, "E61").getCellFormatText());
+		assertEquals("J", Ranges.range(sheet, "G61").getCellFormatText());
+	}
+	
+	@Test
+	public void testDate67() {
+		Sheet sheet = book.getSheet("Date");
+		assertEquals("Mon", Ranges.range(sheet, "E67").getCellFormatText());
+		assertEquals("Mon", Ranges.range(sheet, "G67").getCellFormatText());
+	}
+	
+	@Test
+	public void testDate69() {
+		Sheet sheet = book.getSheet("Date");
+		assertEquals("Monday", Ranges.range(sheet, "E69").getCellFormatText());
+		assertEquals("Monday", Ranges.range(sheet, "G69").getCellFormatText());
+	}
+
+	@Test
+	public void testDate73() {
+		Sheet sheet = book.getSheet("Date");
+		assertEquals("1990", Ranges.range(sheet, "E73").getCellFormatText());
+		assertEquals("1990", Ranges.range(sheet, "G73").getCellFormatText());
 	}	
 
 }

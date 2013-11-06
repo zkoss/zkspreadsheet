@@ -119,6 +119,41 @@ public class TimeIgnoredTest {
 		Sheet sheet = book.getSheet("Time");
 		assertEquals("11:10:50 AM", Ranges.range(sheet, "E41").getCellFormatText());
 		assertEquals("11:10:50 AM", Ranges.range(sheet, "G41").getCellFormatText());
-	}	
+	}
+	
+	@Test
+	public void testTime55() {
+		Sheet sheet = book.getSheet("Time");
+		assertEquals("213050", Ranges.range(sheet, "E55").getCellFormatText());
+		assertEquals("213050", Ranges.range(sheet, "G55").getCellFormatText());
+	}
+	
+	@Test
+	public void testTime59() {
+		Sheet sheet = book.getSheet("Time");
+		assertEquals("AM", Ranges.range(sheet, "E59").getCellFormatText());
+		assertEquals("AM", Ranges.range(sheet, "G59").getCellFormatText());
+	}
+	
+	@Test
+	public void testTime61() {
+		Sheet sheet = book.getSheet("Time");
+		assertEquals("am", Ranges.range(sheet, "E61").getCellFormatText());
+		assertEquals("am", Ranges.range(sheet, "G61").getCellFormatText());
+	}
+	
+	@Test
+	public void testTime63() {
+		Sheet sheet = book.getSheet("Time");
+		assertEquals("A", Ranges.range(sheet, "E63").getCellFormatText());
+		assertEquals("A", Ranges.range(sheet, "G63").getCellFormatText());
+	}
+	
+	@Test
+	public void testTime65() {
+		Sheet sheet = book.getSheet("Time");
+		assertEquals("a", Ranges.range(sheet, "E65").getCellFormatText());
+		assertEquals("a", Ranges.range(sheet, "G65").getCellFormatText());
+	}
 	
 }
