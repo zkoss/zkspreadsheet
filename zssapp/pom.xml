@@ -13,7 +13,7 @@
 		<servlet.version>2.4</servlet.version>
 		<jfreechart.version>1.0.13</jfreechart.version>
 	</properties>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>ZK Spreadsheet App</name>
 	<url>http://www.zkoss.org/zssapp</url>
@@ -96,7 +96,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zss</groupId>
-			<artifactId>zss</artifactId>
+			<artifactId>zssex</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<!-- ZSS EE dependencies 
@@ -116,7 +116,12 @@
 			<version>${project.version}</version>
 		</dependency>
 		 -->
- 	</dependencies>
+		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zsspdf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
   <build>
 		<sourceDirectory>${project.basedir}/src/</sourceDirectory>
 		<resources>
