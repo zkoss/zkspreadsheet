@@ -1,0 +1,43 @@
+<zk>
+	<window width="100%" height="100%">
+		<label pre="true"><![CDATA[
+Reproduce steps:
+	1. at first sheet 
+	2. double click C3 and modify to "E"
+	3. click other cell to finish editing (e.g A1)
+	4. click "Retry" when warning dialog show up
+	5. the inline editor isn't at original cell (e.g at A1)
+		]]></label>
+		<button label="export" onClick="export();" /> 
+		<hlayout vflex="true">
+			<spreadsheet id="ss" src="/issue3/book/513-edit-validation.xlsx"  hflex="1" vflex="true"
+				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+				maxrows="500" maxcolumns="100"
+				showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+			</spreadsheet>
+		</hlayout>
+		
+		<zscript><![CDATA[
+   			public void export() {
+   				Book book = ss.getBook();
+   				String fileName = "exported.xlsx"; 
+  				Exporter exporter = Exporters.getExporter();
+  				java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+  				exporter.export(book, os);
+  				os.close();
+  				org.zkoss.zul.Filedownload.save(os.toByteArray(), "application/octet-stream", fileName);
+  			}
+		]]></zscript>
+		
+		<script defer="true"><![CDATA[
+			(function() {
+				window.debug = {};
+				window.debug.ss = zk.Widget.$('$ss');
+				window.debug.ssc = debug.ss.sheetCtrl;
+				window.debug.dp = debug.ssc.dp;
+				window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
+			})();
+		]]></script>
+		
+	</window>
+</zk>

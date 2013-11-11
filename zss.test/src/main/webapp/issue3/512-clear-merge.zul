@@ -1,0 +1,61 @@
+<zk>
+	<window width="100%" height="100%">
+		<label pre="true"><![CDATA[
+reproduce steps:
+    1. merge from A1 to B3
+    2. select merged cell A1 and input any text (e.g. "TEST")
+    3. click "clear all" on toolbar button
+        A1 has been clean but didn't unmerge
+    4. but click "clear style" and A1 will be unmerged.
+		]]></label>
+		<hlayout>
+			<button label="export" onClick="export();" />
+			<button label="1" onClick="run(1);" />
+			<button label="2" onClick="run(2);" />
+			<button label="3" onClick="run(3);" />
+			<button label="4" onClick="run(4);" />
+		</hlayout>
+		<hlayout vflex="true">
+			<spreadsheet id="ss" src="/issue3/book/blank.xlsx"  hflex="1" vflex="true"
+				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+				maxrows="500" maxcolumns="100"
+				showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+			</spreadsheet>
+		</hlayout>
+		
+		<zscript><![CDATA[
+			public void run(int step) {
+				Sheet sheet = ss.getSelectedSheet();
+				if(step == 1) {
+					Ranges.range(sheet, "A1:C3").merge(false);
+				} else if(step == 2) {
+					Ranges.range(sheet, "A1").setCellEditText("TEST");
+				} else if(step == 3) {
+					CellOperationUtil.clearAll(Ranges.range(sheet, "A1")); // according to ClearCellAction
+				} else if(step == 4) {
+					CellOperationUtil.clearStyles(Ranges.range(sheet, "A1")); // according to ClearCellAction
+				}
+			}
+   			public void export() {
+   				Book book = ss.getBook();
+   				String fileName = "exported.xlsx"; 
+  				Exporter exporter = Exporters.getExporter();
+  				java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+  				exporter.export(book, os);
+  				os.close();
+  				org.zkoss.zul.Filedownload.save(os.toByteArray(), "application/octet-stream", fileName);
+  			}
+		]]></zscript>
+		
+		<script defer="true"><![CDATA[
+			(function() {
+				window.debug = {};
+				window.debug.ss = zk.Widget.$('$ss');
+				window.debug.ssc = debug.ss.sheetCtrl;
+				window.debug.dp = debug.ssc.dp;
+				window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
+			})();
+		]]></script>
+		
+	</window>
+</zk>
