@@ -1,0 +1,19 @@
+<zk>
+	<vlayout>
+		<button onClick="deleteRow0()">1. Delete row 0</button>
+		<button onClick="insertRow0()">2. Insert row 0</button>
+		Then JavaScript error happens. 
+	</vlayout>
+	<spreadsheet id="ss" src="/issue3/book/515-deleteFreezeRow.xls" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
+		height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true"/>
+	<zscript><![CDATA[
+		public void deleteRow0(){
+			Ranges.range(ss.getSelectedSheet(), 0,0).toRowRange().delete(org.zkoss.zss.api.Range.DeleteShift.UP);
+		}
+		
+		public void insertRow0(){
+			Ranges.range(ss.getSelectedSheet(), 0,0).toRowRange().insert(org.zkoss.zss.api.Range.InsertShift.DEFAULT, org.zkoss.zss.api.Range.InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		}
+	]]></zscript>
+</zk>
