@@ -1,0 +1,19 @@
+<zk>
+	<vlayout>
+		<button onClick="purple()">1. Set B4:J7 background to purple (#6600ff)</button>
+		<button onClick="white()">2. Set B4:J7 background to blue (#0000ff)</button>
+	</vlayout>
+	<spreadsheet id="ss" src="/issue3/book/517-backgroundColor.xls" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
+		height="80%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true"/>
+	<zscript><![CDATA[
+		public void purple(){
+			CellOperationUtil.applyBackgroundColor(Ranges.range(ss.getSelectedSheet(), "B4:J7"), "#6600ff");
+			
+		}
+		
+		public void white(){
+			CellOperationUtil.applyBackgroundColor(Ranges.range(ss.getSelectedSheet(), "B4:J7"), "#0000ff");
+		}
+	]]></zscript>
+</zk>
