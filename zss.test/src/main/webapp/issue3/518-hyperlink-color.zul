@@ -1,0 +1,56 @@
+<zk>
+	<window width="100%" height="100%">
+		<label pre="true"><![CDATA[
+Reproduce steps:
+  1. change A2's text color to red
+      it should be changed but not.
+  2. select A3 and click "clear style" from toolbar button
+      it should be changed to black text but not.
+  3. export and open such file from Excel
+      the result in file is correct, A2 is red and A3 is black text color.
+		]]></label>
+		<hlayout>
+			<button label="1" onClick='run(1);' />
+			<button label="2" onClick='run(2);' />
+			<button label="export" onClick="export();" /> 
+		</hlayout>
+		<hlayout vflex="true">
+			<spreadsheet id="ss" src="/issue3/book/518-hyperlink-color.xlsx"  hflex="1" vflex="true"
+				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
+				maxrows="500" maxcolumns="100"
+				showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+			</spreadsheet>
+		</hlayout>
+		
+		<zscript><![CDATA[
+			public void run(int step) {
+				Sheet sheet = ss.getSelectedSheet();
+				if(step == 1) {
+					CellOperationUtil.applyFontColor(Ranges.range(sheet, "A2"), "#FF0000");
+				} else if(step == 2) {
+					CellOperationUtil.clearStyles(Ranges.range(sheet, "A3"));
+				}
+			}
+   			public void export() {
+   				Book book = ss.getBook();
+   				String fileName = "exported.xlsx"; 
+  				Exporter exporter = Exporters.getExporter();
+  				java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+  				exporter.export(book, os);
+  				os.close();
+  				org.zkoss.zul.Filedownload.save(os.toByteArray(), "application/octet-stream", fileName);
+  			}
+		]]></zscript>
+		
+		<script defer="true"><![CDATA[
+			(function() {
+				window.debug = {};
+				window.debug.ss = zk.Widget.$('$ss');
+				window.debug.ssc = debug.ss.sheetCtrl;
+				window.debug.dp = debug.ssc.dp;
+				window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
+			})();
+		]]></script>
+		
+	</window>
+</zk>
