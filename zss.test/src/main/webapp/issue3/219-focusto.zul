@@ -1,19 +1,19 @@
 <zk>
-	<window width="100%" height="100%">
-		<button label="focus E4 " onClick='ss.focusTo(3,4)'/>
-		<button label="focus D4 " onClick='ss.focusTo(3,3)'/>
-		<button label="focus E7 " onClick='ss.focusTo(6,4)'/>
-		<button label="focus D7 " onClick='ss.focusTo(6,3)'/>
-		
-		
-		<button label="focus G23 (fail currently)" onClick='ss.focusTo(22,6)'/>
-		<button label="focus A900" onClick='ss.focusTo(899,0)'/>
-		<button label="focus OJ900" onClick='ss.focusTo(899,399)'/>
-		<button label="focus J10" onClick='ss.focusTo(9,9)'/>
-		<button label="freeze E6" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(5,4)'/>
-		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" height="400px"
+	<vbox hflex="1" vflex="1">
+		<hbox hflex="1">
+			<button label="focus E4 " onClick='ss.focusTo(3,4)'/>
+			<button label="focus D4 " onClick='ss.focusTo(3,3)'/>
+			<button label="focus E7 " onClick='ss.focusTo(6,4)'/>
+			<button label="focus D7 " onClick='ss.focusTo(6,3)'/>
+			<button label="focus G23 (fail currently)" onClick='ss.focusTo(22,6)'/>
+			<button label="focus A900" onClick='ss.focusTo(899,0)'/>
+			<button label="focus OJ900" onClick='ss.focusTo(899,399)'/>
+			<button label="focus J10" onClick='ss.focusTo(9,9)'/>
+			<button label="freeze E6" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(5,4)'/>
+		</hbox>
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
 			maxVisibleRows="2000" maxVisibleColumns="400" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
-	</window>
+	</vbox>
 </zk>

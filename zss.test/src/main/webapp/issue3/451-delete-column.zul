@@ -6,7 +6,10 @@
 3. delete any column
 4. scroll up slowly, it will throw JavaScript error
 		</label>
+		<hbox>
+		<button label="delete" onClick='Ranges.range(ss.getSelectedSheet(), "A1").toColumnRange().delete(Range.DeleteShift.DEFAULT)'></button>
 		<button label="export" onClick="export();"></button>
+		</hbox>
 		<spreadsheet id="ss" src="/issue3/book/blank.xlsx"  hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			maxrows="200" maxcolumns="50"

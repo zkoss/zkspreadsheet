@@ -1,6 +1,6 @@
 <zk>
-	<window width="100%" height="100%">
-		<hlayout width="100%">
+	<vbox vflex="1" hflex="1">
+		<hbox>
 			<label pre="true">
 Reproduce 1:
   1. freeze 1 row (select A2 and click "freeze")
@@ -17,13 +17,18 @@ Reproduce 2:
         * can't select A1 and get no focus
         * if focus on A2, formula bar will show "A3"
 			</label>
-		</hlayout>
-		<hlayout>
+		</hbox>
+		<hbox>
+			<button label="Focus A2" onClick="ss.focusTo(1,0)" />
 			<button label="freeze" onClick="freeze();" />
+			<button label="Delete Column A" onClick='Ranges.range(ss.getSelectedSheet(), "A1").toColumnRange().delete(Range.DeleteShift.DEFAULT)' />
+			<button label="Focus B1" onClick="ss.focusTo(0,1)" />
+			<button label="freeze" onClick="freeze();" />
+			<button label="Delete Row 1" onClick='Ranges.range(ss.getSelectedSheet(), "A1").toRowRange().delete(Range.DeleteShift.DEFAULT)' />
 			<button label="export" onClick="export();" /> 
-		</hlayout>
+		</hbox>
 		
-		<spreadsheet id="ss" src="/issue3/book/488-delete-first-column.xlsx"  width="1000px" vflex="true"
+		<spreadsheet id="ss" src="/issue3/book/488-delete-first-column.xlsx"  hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			maxrows="500" maxcolumns="100"
 			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
@@ -56,5 +61,5 @@ Reproduce 2:
 			})();
 		]]></script>
 		
-	</window>
+	</vbox>
 </zk>

@@ -1,6 +1,6 @@
 <zk>
-	<window width="100%" height="100%">
-		<hlayout width="100%">
+	<vbox hflex="1" vflex="1">
+		<hbox>
 			<label pre="true">
 Reproduces:			
   1. open a file and fill text into A1:C3
@@ -8,13 +8,13 @@ Reproduces:
   3. copy A1:C3 and paste to A4:C6
         the pasted result is incorrect
 			</label>
-		</hlayout>
-		<hlayout>
+		</hbox>
+		<hbox>
 			<button label="reproduce" onClick="reproduce();" /> 
 			<button label="export" onClick="export();" /> 
-		</hlayout>
+		</hbox>
 		
-		<spreadsheet id="ss" src="/issue3/book/485-insert-row-copy.xlsx"  width="1000px" vflex="true"
+		<spreadsheet id="ss" src="/issue3/book/485-insert-row-copy.xlsx"  hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			maxrows="500" maxcolumns="100"
 			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
@@ -46,5 +46,5 @@ Reproduces:
 			})();
 		]]></script>
 		
-	</window>
+	</vbox>
 </zk>

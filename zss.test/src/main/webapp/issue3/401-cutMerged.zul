@@ -1,19 +1,24 @@
 <zk>
-		<hlayout width="100%" height="100%" > 
-			<spreadsheet id="ss" src="/issue3/book/401-cut-merged.xlsx" hflex="1" vflex="1"
-				maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
-				showSheetbar="true" showContextMenu="true">
-			</spreadsheet>
-			<vlayout>
-			<button label="Check merged cell existing" onClick="check()"/>
-			<label id="hasMergedLabel"></label>
-			</vlayout>
-		</hlayout>
+	<vbox hflex="1" vflex="1">
+		<hbox hflex="1">
+			<button label="Cut Merge Cell From Source to Destination" onClick="cut()" />
+			<button label="Go To Destination" onClick="goToDestSheet()" />
+		</hbox>
+		<spreadsheet id="ss" src="/issue3/book/401-cut-merged.xlsx"
+			hflex="1" vflex="1" maxVisibleRows="500" maxVisibleColumns="100"
+			showToolbar="true" showFormulabar="true" showSheetbar="true"
+			showContextMenu="true">
+		</spreadsheet>
 		<zscript><![CDATA[
-			public void check(){
-				Boolean has = Ranges.range(ss.getSelectedSheet()).hasMergedCell();
-				
-				hasMergedLabel.setValue(ss.getSelectedSheetName()+": "+has.toString());
+			public void cut() {
+				Range source = Ranges.range(ss.getSelectedSheet().getBook().getSheet("source"), "A1");
+				Range dest = Ranges.range(ss.getSelectedSheet().getBook().getSheet("destination"), "A1");
+				CellOperationUtil.cut(source, dest);
+			}
+			
+			public void goToDestSheet() {
+				ss.setSelectedSheet("destination");
 			}
 		]]></zscript>
+	</vbox>
 </zk>

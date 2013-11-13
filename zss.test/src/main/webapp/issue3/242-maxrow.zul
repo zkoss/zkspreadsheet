@@ -1,20 +1,30 @@
 <zk>
-	<window width="100%" height="100%">
+	<vbox hflex="1" vflex="1">
 		<label multiline="true"></label>
-		<hbox>
-			<button label="max row 20" onClick='ss.setMaxVisibleRows(20)'/>
-			<button label="max row 30" onClick='ss.setMaxVisibleRows(30)'/>
-			<button label="max row 40" onClick='ss.setMaxVisibleRows(40)'/>
-			<button label="max row 500" onClick='ss.setMaxVisibleRows(500)'/>
-			
-			<button label="max column 10" onClick='ss.setMaxVisibleColumns(10)'/>
-			<button label="max column 15" onClick='ss.setMaxVisibleColumns(15)'/>
-			<button label="max column 20" onClick='ss.setMaxVisibleColumns(20)'/>
-			<button label="max column 100" onClick='ss.setMaxVisibleColumns(100)'/>
-			
+		<vbox hflex="1">
+			<hbox>
 			<button label="add text" onClick="addText();" />
-		</hbox>
-		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="true" vflex="true"
+			<button label="max row 20" onClick='ss.setMaxVisibleRows(20)'/>
+			<button label="focus to row 20" onClick='ss.focusTo(19,0)'/>
+			<button label="max row 30" onClick='ss.setMaxVisibleRows(30)'/>
+			<button label="focus to row 30" onClick='ss.focusTo(29,0)'/>
+			<button label="max row 40" onClick='ss.setMaxVisibleRows(40)'/>
+			<button label="focus to row 40" onClick='ss.focusTo(39,0)'/>
+			<button label="max row 500" onClick='ss.setMaxVisibleRows(500)'/>
+			<button label="focus to row 500" onClick='ss.focusTo(499,0)'/>
+			</hbox>
+			<hbox>
+			<button label="max column 10" onClick='ss.setMaxVisibleColumns(10)'/>
+			<button label="focus to column 10" onClick='ss.focusTo(0,9)'/>
+			<button label="max column 15" onClick='ss.setMaxVisibleColumns(15)'/>
+			<button label="focus to column 15" onClick='ss.focusTo(0,14)'/>
+			<button label="max column 20" onClick='ss.setMaxVisibleColumns(20)'/>
+			<button label="focus to column 20" onClick='ss.focusTo(0,19)'/>
+			<button label="max column 100" onClick='ss.setMaxVisibleColumns(100)'/>
+			<button label="focus to column 100" onClick='ss.focusTo(0,99)'/>
+			</hbox>
+		</vbox>
+		<spreadsheet id="ss" src="/issue3/book/blank.xlsx" hflex="1" vflex="1"
 			maxVisibleRows="10" maxVisibleColumns="5" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
@@ -50,5 +60,5 @@
 			})();
 		]]></script>
 		
-	</window>
+	</vbox>
 </zk>

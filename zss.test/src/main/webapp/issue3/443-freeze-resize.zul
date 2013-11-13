@@ -1,5 +1,5 @@
 <zk>
-	<vbox width="100%" height="100%">
+	<vbox hflex="1" vflex="1">
 		<label pre="true">
 			<attribute name="value"><![CDATA[
 				Reproduce steps:
@@ -9,15 +9,15 @@
 					3. there are Javascript exceptions in console
 			]]></attribute>
 		</label>
+		<hbox hflex="1">
+			<button label="freze 10,10" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(10,10)'/>
+			<button label="setColumnWidth - B" onClick='Ranges.range(ss.getSelectedSheet(), "B1").setColumnWidth(250)'/>
+		</hbox>
 		<spreadsheet id="ss" src="/issue3/book/blank.xlsx"  hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e"
 			maxrows="1000" maxcolumns="400"
 			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
 		</spreadsheet>
-		
-		<zscript><![CDATA[
-			Ranges.range(ss.getSelectedSheet()).setFreezePanel(10, 10);
-		]]></zscript>
 		
 		<script defer="true"><![CDATA[
 			(function() {

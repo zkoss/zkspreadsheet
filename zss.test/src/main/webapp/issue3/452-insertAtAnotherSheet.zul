@@ -12,6 +12,11 @@
 				2. Click the button to insert a row in Sheet1
 			</label>
 			<hbox>
+				<button label="Sheet2" onClick='ss.setSelectedSheet("Sheet2")' />
+				<button label="Insert row 2" onClick='insertRow("A2")' />
+				<button label="Sheet1" onClick='ss.setSelectedSheet("Sheet1")' />			
+			</hbox>
+			<hbox>
 				<button label="Invalidate" onClick='ss.invalidate()' />
 				<button label="reset book" onClick='resetBook()' />
 			</hbox>

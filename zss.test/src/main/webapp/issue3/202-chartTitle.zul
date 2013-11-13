@@ -1,5 +1,14 @@
 <zk>
-	<spreadsheet id="source" src="/issue3/book/202-chartTitle.xlsx" maxVisibleRows="150"
-		maxVisibleColumns="40" width="100%" height="80%" showContextMenu="true" showSheetbar="true"
-		showToolbar="true" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" />
+	<zscript><![CDATA[
+		org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.title.font", "SansSerif, Italic, 30");
+		org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.legend.font", "SansSerif, plain, 18");
+		org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.xAxisTick.font", "SansSerif, bold, 16");
+		org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.xAxis.font", "SansSerif, bold, 18");
+	]]>
+	</zscript>
+	<vbox hflex="1" vflex="1">
+		<spreadsheet id="source" src="/issue3/book/202-chartTitle.xlsx" maxVisibleRows="150"
+			maxVisibleColumns="40" hflex="1" vflex="1" showContextMenu="true" showSheetbar="true"
+			showToolbar="true" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" />
+	</vbox>
 </zk>

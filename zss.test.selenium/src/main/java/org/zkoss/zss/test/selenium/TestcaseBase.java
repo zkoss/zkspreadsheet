@@ -33,7 +33,8 @@ public class TestcaseBase {
 	
 	@AfterClass
 	public static void TestcaseBase_teardown(){
-		driver.close();
+		//driver.close();
+		driver.quit();
 	}
 	
 	@Before

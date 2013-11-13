@@ -1,18 +1,13 @@
 <zk>
-	<window width="100%" height="100%">
-		<vbox hflex="1" vflex="1">
+	<vbox hflex="1" vflex="1">
 		<label multiline="true">
-		1.the column E and row 6 should both hidden in the sheet, 
-		2.the column K and row 14 should both has larger size in the sheet
+			1.the column E and row 6 should both hidden in the sheet,
+			2.the column K and row 14 should both has larger size in the sheet
 		</label>
-		<spreadsheet id="ss" src="/issue3/book/256-rowcolumn.xlsx" hflex="1" vflex="1" selectedSheet="rowcolumn"
-			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
+		<spreadsheet id="ss" src="/issue3/book/256-rowcolumn.xlsx"
+			hflex="1" vflex="1" selectedSheet="rowcolumn" maxVisibleRows="500"
+			maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
-		<spreadsheet id="ss2" src="/issue3/book/256-rowcolumn.xls" hflex="1" vflex="1" selectedSheet="rowcolumn"
-			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
-			showSheetbar="true" showContextMenu="true">
-		</spreadsheet>
-		</vbox>
-	</window>
+	</vbox>
 </zk>

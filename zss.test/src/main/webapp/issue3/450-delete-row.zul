@@ -1,5 +1,5 @@
 <zk>
-	<vbox width="600px" height="100%">
+	<vbox hflex="1" vflex="1">
 		<label pre="true">
 1. scroll to bottom of sheet quickly (make a jump fetching)
 2. select row 140 and insert one row by right-click
@@ -7,6 +7,9 @@
 4. the last row's text will be same as the row 140
 		</label>
 		<hlayout>
+			<button label="focus to last row" onClick="ss.focusTo(151,0)"></button>
+			<button label="insert row at row 140" onClick='Ranges.range(ss.getSelectedSheet(), "A140").toRowRange().insert(org.zkoss.zss.api.Range.InsertShift.DEFAULT, org.zkoss.zss.api.Range.InsertCopyOrigin.FORMAT_NONE)'></button>
+			<button label="delete row at row 140" onClick='Ranges.range(ss.getSelectedSheet(), "A140").toRowRange().delete(org.zkoss.zss.api.Range.DeleteShift.DEFAULT)'></button>
 			<button label="freeze" onClick="Ranges.range(ss.getSelectedSheet()).setFreezePanel(2,2);"></button>
 			<button label="export" onClick="export();"></button>
 		</hlayout>

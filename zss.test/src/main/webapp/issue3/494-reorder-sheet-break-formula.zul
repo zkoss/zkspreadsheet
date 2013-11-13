@@ -1,5 +1,5 @@
 <zk>
-	<window width="100%" height="100%">
+	<vbox hflex="1" vflex="1">
 		<hlayout width="100%">
 			<label pre="true">
 Reproduce:
@@ -57,5 +57,5 @@ Reproduce:
 			})();
 		]]></script>
 		
-	</window>
+	</vbox>
 </zk>

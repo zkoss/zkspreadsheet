@@ -1,10 +1,11 @@
 <zk>
-	<vbox width="90%" height="90%">
+	<vbox hflex="1" vflex="1">
 		<label pre="true">
 		</label>
 		<hlayout>
+			<button label="apply all border" onClick="test1()"></button>
+			<button label="focus to AX100" onClick="ss.focusTo(51, 101)"></button>
 			<button label="export" onClick="export();"></button>
-			<button label="test1" onClick="test1()"></button>
 		</hlayout>
 		<spreadsheet id="ss" src="/issue3/book/464-manystyle.xlsx"  hflex="1" vflex="1"
 			maxrows="100" maxcolumns="50"
@@ -14,8 +15,8 @@
 		<zscript><![CDATA[//@DECLARATION
 		                  
 			public void test1(){
-				Range r = Ranges.range(ss.getSelectedSheet(),"B2");
-				
+				Range r = Ranges.range(ss.getSelectedSheet(), "A1:AX100");
+				CellOperationUtil.applyBorder(r, Range.ApplyBorderType.FULL, CellStyle.BorderType.THICK, "#000000");
 			}
 
 			public void export() {

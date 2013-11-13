@@ -1,5 +1,5 @@
 <zk>
-	<vbox width="600px" height="100%">
+	<vbox hflex="1" vflex="1">
 		<label pre="true">
 		</label>
 		<hlayout>

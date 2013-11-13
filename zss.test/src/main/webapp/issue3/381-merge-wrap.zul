@@ -1,13 +1,23 @@
 <zk>
-	<window width="100%" height="100%">
-	<label multiline="true">
-1.enable cell B54 to wrapped text (through toolbar button)
-2.merge range B54 to D56 (total 9 cells)
-2.1.the merged cell's background is small than cell size	
-	</label>
+	<vbox hflex="1" vflex="1">
+		<label multiline="true">
+			1.enable cell B54 to wrapped text (through toolbar button)
+			2.merge range B54 to D56 (total 9 cells)
+			2.1.the merged cell's background is small than cell size	
+		</label>
+		<hbox hflex="1">
+			<button label="focus to B59" onClick='ss.focusTo(60,1)'/>
+			<button label="wrap B54" onClick='applyWrapText(Ranges.range(ss.getSelectedSheet(), "B54"))'/>
+			<button label="merge B54 to D56" onClick='Ranges.range(ss.getSelectedSheet(), "B54:D56").merge(false)'/>
+		</hbox>		
 		<spreadsheet id="ss" src="/issue3/book/381-merge-wrap.xlsx" hflex="1" vflex="1" selectedSheet="cell"
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
-	</window>
+		<zscript><![CDATA[
+			public void applyWrapText(Range range){
+				CellOperationUtil.applyWrapText(range, true);
+			}
+		]]></zscript>		
+	</vbox>
 </zk>

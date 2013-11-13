@@ -1,10 +1,15 @@
 <zk>
-	click select last sheet and scroll down, you sounldn't see any other chart inside it.
-	<hbox>
-		<button label="select last sheet" onClick='ss.setSelectedSheet("sheet-protection")'/>
-		<button label="invalidate" onClick="ss.invalidate()"/>
-	</hbox>
-	<spreadsheet id="ss" src="/issue3/book/505-chartDisplay-simple.xls" maxVisibleRows="200" maxVisibleColumns="40" hflex="1" vflex="1"
-	showContextMenu="true" showSheetbar="true" showToolbar="true" 
-		showFormulabar="true"/>
+	<vbox hflex="1" vflex="1">
+		click select last sheet and scroll down, you sounldn't see any other chart inside it.
+		<hlayout>
+			<button label="select last sheet"
+				onClick='ss.setSelectedSheet("sheet-protection")' />
+			<button label="invalidate" onClick="ss.invalidate()" />
+		</hlayout>
+		<spreadsheet id="ss"
+			src="/issue3/book/505-chartDisplay-simple.xls" hflex="1" vflex="1"
+			maxrows="100" maxcolumns="50"
+			showFormulabar="true" showContextMenu="true" showSheetbar="true" showToolbar="true">
+		</spreadsheet>
+	</vbox>
 </zk>

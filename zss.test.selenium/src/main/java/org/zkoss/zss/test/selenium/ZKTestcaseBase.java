@@ -1,6 +1,5 @@
 package org.zkoss.zss.test.selenium;
 
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -109,6 +108,18 @@ public class ZKTestcaseBase extends TestcaseBase{
 		WebElement elm = jqSelectSingle(selector);
 		long lt = getTripId();
 		elm.click();
+		waitForTrip(lt, 1, Setup.getAuDelay());
+	}
+	
+	/**
+	 * send keycode to specific dom element.
+	 * @param selector
+	 * @param keyCode
+	 */
+	public void sendKeys(String selector, String keyCode) {
+		WebElement elm = jqSelectSingle(selector);
+		long lt = getTripId();
+		elm.sendKeys(keyCode);
 		waitForTrip(lt, 1, Setup.getAuDelay());
 	}
 }

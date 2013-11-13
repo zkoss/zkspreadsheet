@@ -1,11 +1,10 @@
 package org.zkoss.zss.test.selenium.testcases;
 
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.Keys;
 import org.zkoss.zss.test.selenium.ZSSTestcaseBase;
 
-public class IssueTest extends ZSSTestcaseBase{
+public class IssueTest extends ZSSTestcaseBase {
 	@Test
 	public void testZSS10() throws Exception{
 		basename();
@@ -33,8 +32,127 @@ public class IssueTest extends ZSSTestcaseBase{
 	}
 	
 	@Test
-	public void testAnother() throws Exception{
+	public void testZSS202() throws Exception{
+		basename();
 		
+		getTo("/issue3/202-chartTitle.zul");
+		waitForTime(2000);
+		captureOrAssert("loadpage");
+	}
+	
+	@Test
+	public void testZSS219() throws Exception{
+		basename();
+		
+		getTo("/issue3/219-focusto.zul");
+		waitForTime(2000);
+		
+		for(int i = 0; i < 9; i++) {
+			click("@button:eq("+ i +")");
+			waitForTime(500);//for zss render in browser
+			captureOrAssert("step" + i);
+		}
+	}
+	
+	@Test
+	public void testZSS219_2() throws Exception{
+		basename();
+		
+		getTo("/issue3/219-focusto.zul");
+		waitForTime(2000);
+		
+		click("@button:eq(8)");
+		captureOrAssert("freeze-first");
+		
+		for(int i = 0; i < 8; i++) {
+			click("@button:eq("+ i +")");
+			waitForTime(500);//for zss render in browser
+			captureOrAssert("step" + i);
+		}
+	}
+	
+	@Test
+	public void testZSS242() throws Exception {
+		getTo("/issue3/242-maxrow.zul");
+		waitForTime(2000);
+		captureOrAssert("loadpage");
+		
+		for(int i = 0; i < 17; i++) {
+			click("@button:eq("+ i +")");
+			waitForTime(500);//for zss render in browser
+			captureOrAssert("step" + i);
+		}
+	}
+	
+	@Test
+	public void testZSS250() throws Exception{
+		basename();
+		
+		getTo("/issue3/250-deleteSheet.zul");
+		waitForTime(2000);
+		captureOrAssert("loadpage");
+		
+		click("@button:eq(0)");
+		waitForTime(500);//for zss render in browser
+		captureOrAssert("deleteFirstSheet");
+		
+		click("@button:eq(0)");
+		waitForTime(500);//for zss render in browser
+		captureOrAssert("deleteSecondSheet");
+	}
+	
+	@Test
+	public void testZSS256() throws Exception{
+		basename();
+		
+		getTo("/issue3/256-rowcolumn.zul");
+		waitForTime(2000);
+		captureOrAssert("loadpage");	
+	}
+	
+	@Test
+	public void testZSS256XLS() throws Exception{
+		basename();
+		
+		getTo("/issue3/256-rowcolumn-xls.zul");
+		waitForTime(2000);
+		captureOrAssert("loadpage");	
+	}
+	
+	@Test
+	public void testZSS282() throws Exception{
+		basename();
+		
+		getTo("/issue3/282-paste-merge.zul");
+		waitForTime(2000);
+		captureOrAssert("loadpage");
+		
+		for(int i = 0; i < 7; i++) {
+			click("@button:eq("+ i +")");
+			waitForTime(500);//for zss render in browser
+			captureOrAssert("step" + i);
+		}
+	}
+	
+	
+	@Test
+	public void testAnother() throws Exception{
+		basename();
+		
+		getTo("/issue3/401-cutMerged.zul");
+		waitForTime(2000);
+		captureOrAssert("loadpage");
+
+		click("@button:eq(0)");
+		waitForTime(500);//for zss render in browser
+		captureOrAssert("step1");
+		
+		sendZSSKeys(Keys.chord(Keys.CONTROL, "z"));
+		waitForTime(500);//for zss render in browser
+		captureOrAssert("step2");		
+//		click("@button:eq(1)");
+//		waitForTime(500);//for zss render in browser
+//		captureOrAssert("step2");
 	}
 
 }

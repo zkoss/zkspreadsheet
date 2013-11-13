@@ -1,6 +1,7 @@
 <zk>
-	<window width="100%" height="100%">
+		<vbox hflex="1" vflex="1">
 		<hbox>
+		<button label="setColumnWidth - B" onClick='Ranges.range(ss.getSelectedSheet(), "B1").setColumnWidth(250)'/>
 		<button label="freeze E0" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(0,5)'/>
 		<button label="freeze A5" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(5,0)'/>
 		<button label="freeze E5" onClick='Ranges.range(ss.getSelectedSheet()).setFreezePanel(5,5)'/>
@@ -11,7 +12,7 @@
 			maxVisibleRows="500" maxVisibleColumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
-	</window>
+		</vbox>
 		<script defer="true"><![CDATA[
 			(function() {
 				window.debug = {};

@@ -1,5 +1,5 @@
 <zk>
-	<window width="100%" height="100%" apply="zss.testapp.issue.ZSS442Composer">
+	<vbox hflex="1" vflex="1" apply="zss.testapp.issue.ZSS442Composer">
 		<vlayout>
 			<zscript><![CDATA[
 				import java.io.*;
@@ -38,11 +38,11 @@
 			</hbox>
 		</vlayout>
 		<separator orient="horizontal" />
-		<spreadsheet id="ss" src="/issue3/book/442-shift-by-range.xlsx" width="1500px" height="800px"
+		<spreadsheet id="ss" src="/issue3/book/442-shift-by-range.xlsx" hflex="1" vflex="1"
 			ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="500" maxcolumns="100" showToolbar="true" showFormulabar="true"
 			showSheetbar="true" showContextMenu="true">
 		</spreadsheet>
-	</window>
+	</vbox>
 	<!-- for debug -->
 	<script defer="true"><![CDATA[
 		(function() {
