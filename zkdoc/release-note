@@ -1,4 +1,15 @@
  ------------
+ZK Spreadsheet 3.0.1
+*Features:
+  
+  
+*Bugs:
+  
+
+** Upgrade Notes
+  * Members of BookType of Book are changed from EXCEL_2003,EXCEL_2007 to XLS,XLSX because of Spreadsheet depends on file format not Excel version.
+
+ ------------
 ZK Spreadsheet 3.0.0
 *Features:
   ZSS-438 Support view with different zoom level

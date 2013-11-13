@@ -25,7 +25,8 @@ import org.zkoss.poi.ss.usermodel.Workbook;
  */
 public interface Book {
 	public enum BookType {
-		EXCEL_2003, EXCEL_2007
+		//EXCEL_2003, EXCEL_2007
+		XLS, XLSX
 	}
 
 	/**

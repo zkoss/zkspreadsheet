@@ -92,10 +92,10 @@ public class SimpleRepository implements BookRepository{
 		String name = FileUtil.getName(bookname);
 		String ext = "";
 		switch(book.getType()){
-		case EXCEL_2003:
+		case XLS:
 			ext = ".xls";
 			break;
-		case EXCEL_2007:
+		case XLSX:
 			ext = ".xlsx";
 			break;
 		default:

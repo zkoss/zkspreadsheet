@@ -66,7 +66,7 @@ public class BookUtil {
 		String bn = book.getBookName();
 		BookType type = book.getType();
 		
-		String ext = type==BookType.EXCEL_2003?".xls":".xlsx";
+		String ext = type==BookType.XLS?".xls":".xlsx";
 		int i = bn.lastIndexOf('.');
 		if(i==0){
 			bn = "book";

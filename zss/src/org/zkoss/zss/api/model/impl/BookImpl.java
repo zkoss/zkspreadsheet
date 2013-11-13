@@ -37,9 +37,9 @@ public class BookImpl implements Book{
 		this._bookRef = ref;
 		XBook book = ref.get();
 		if (book instanceof HSSFBookImpl) {
-			_type = BookType.EXCEL_2003;
+			_type = BookType.XLS;
 		} else if (book instanceof XSSFBookImpl) {
-			_type = BookType.EXCEL_2007;
+			_type = BookType.XLSX;
 		} else {
 			throw new IllegalArgumentException("unknow book type "+book);
 		}
