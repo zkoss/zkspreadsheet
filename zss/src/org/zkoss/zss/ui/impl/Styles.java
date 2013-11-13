@@ -475,7 +475,8 @@ public class Styles {
 			return;
 		}
 		
-		short idx = sheet.getBook().createDataFormat().getFormat(format);
+		// ZSS-510, when formatStr is null or empty, it should be assigned as "General" format.
+		short idx = sheet.getBook().createDataFormat().getFormat(format == null || format.equals("") ? "General" : format);
 		
 		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
 		matcher.setDataFormat(idx);

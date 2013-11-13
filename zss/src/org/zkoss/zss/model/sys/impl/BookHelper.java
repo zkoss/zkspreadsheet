@@ -1083,8 +1083,8 @@ public final class BookHelper {
 				return new FormatTextImpl(cell.getRichStringCellValue());
 			}
 		}
-	
-		final CellFormat format = CellFormat.getInstance(formatStr == null ? "" : formatStr, ZssContext.getCurrent().getLocale()); //ZSS-68
+		// ZSS-510, when formatStr is null or empty, it should be assigned as "General" format.
+		final CellFormat format = CellFormat.getInstance(formatStr == null || formatStr.equals("") ? "General" : formatStr, ZssContext.getCurrent().getLocale()); //ZSS-68
 		return new FormatTextImpl(format.apply(cell));
 	}
 

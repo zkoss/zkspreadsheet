@@ -5,11 +5,13 @@ import static org.junit.Assert.assertEquals;
 import java.util.Locale;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.zss.Setup;
 import org.zkoss.zss.Util;
+import org.zkoss.zss.api.CellOperationUtil;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.Ranges;
 import org.zkoss.zss.api.model.Book;
@@ -86,5 +88,16 @@ public class Issue500Test {
 		cell.setCellEditText("=nonExisted!B1");
 		assertEquals("=nonExisted!B1", cell.getCellEditText());
 		assertEquals("#REF!", cell.getCellFormatText());
+	}
+	
+	@Test
+	public void testZSS510() {
+		Book book = Util.loadBook(this, "book/blank.xlsx");
+		Sheet sheet = book.getSheetAt(0);
+		Range r = Ranges.range(sheet, "A1");
+		r.setCellEditText("Hello");
+		CellOperationUtil.applyDataFormat(r, "");
+		r.getCellFormatText(); // get text shouldn't cause IndexOutBoundaryException
+		assertEquals("General", r.getCellStyle().getDataFormat()); // should get General instead of empty string
 	}
 }

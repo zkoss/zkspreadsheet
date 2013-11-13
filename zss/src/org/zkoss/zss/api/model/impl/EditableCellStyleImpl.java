@@ -125,8 +125,9 @@ public class EditableCellStyleImpl extends CellStyleImpl implements EditableCell
 		}
 		//this api doesn't create a new df, it just return the one in book
 		DataFormat df = _bookRef.get().createDataFormat();
-
-		short index = df.getFormat(format);		
+		
+		// ZSS-510, when format is null or empty, it should be assigned as "General" format.
+		short index = df.getFormat(format == null || format.equals("") ? "General" : format);
 		getNative().setDataFormat(index);
 	}
 
