@@ -17,6 +17,11 @@ import org.zkoss.zss.api.Exporters;
 import org.zkoss.zss.api.Importers;
 import org.zkoss.zss.api.Range;
 import org.zkoss.zss.api.model.Book;
+import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.model.sys.XFormatText;
+import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.ui.impl.XUtils;
 
 /**
  * a helper for testing
@@ -108,5 +113,17 @@ public class Util {
 		} catch (ParseException e) {
 			throw new RuntimeException(e.getMessage(),e);
 		}
+	}
+	
+	public static String getFormatHTMLColor(Sheet sheet, int row, int col) {
+		XSheet xSheet = (XSheet) sheet.getPoiSheet();
+		XFormatText ft = XUtils.getFormatText(BookHelper.getOrCreateCell(xSheet, row, col));
+		boolean isRichText = ft.isRichTextString();
+		if (!isRichText && ft.getCellFormatResult().textColor != null) {
+			java.awt.Color textColor = ft.getCellFormatResult().textColor;
+			String htmlColor = BookHelper.awtColorToHTMLColor(textColor);
+			return htmlColor;
+		}
+		return null;
 	}
 }
