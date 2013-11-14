@@ -185,6 +185,11 @@ zss.TopPanel = zk.$extends(zss.Panel, {
 		if (this.block)
 			this.block.appendZSW(col, zsw);
 
+		// ZSS-515: header might be empty because of removing last row/column at freeze panels
+		if(this.isEmptyHeader()) {
+			return;
+		}
+
 		var left = this.headers[0].index,
 			right = left + this.headers.length - 1;
 		if (left > col || right < col) return;
@@ -211,6 +216,11 @@ zss.TopPanel = zk.$extends(zss.Panel, {
 	insertNewColumn: function (col, size, extnm) {
 		if (this.block)
 			this.block.insertNewColumn(col, size);
+
+		// ZSS-515: header might be empty because of removing last row/column at freeze panels
+		if(this.isEmptyHeader()) {
+			return;
+		}
 
 		var left = this.headers[0].index,
 			right = left + this.headers.length - 1; 
@@ -278,6 +288,11 @@ zss.TopPanel = zk.$extends(zss.Panel, {
 	removeColumn: function (col, size, extnm) {
 		if (this.block)
 			this.block.removeColumn(col,size);
+
+		// ZSS-515: header might be empty because of removing last row/column at freeze panels
+		if(this.isEmptyHeader()) {
+			return;
+		}
 
 		var left = this.headers[0].index,
 			right = left + this.headers.length -1; 

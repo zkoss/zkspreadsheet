@@ -48,6 +48,9 @@ zss.Panel = zk.$extends(zk.Widget, {
 		//to be overridden
 		return null;//return header widget array
 	},
+	isEmptyHeader: function() {
+		return !(this.headers && this.headers.length > 0);
+	},
 	/**
 	 * Create frozen block, invoke on Panel widget initialization 
 	 */
@@ -485,6 +488,12 @@ zss.LeftPanel = zk.$extends(zss.Panel, {
 	appendZSH: function (row, zsh) {
 		if (this.block)
 			this.block.appendZSH(row, zsh);
+		
+		// ZSS-515: header might be empty because of removing last row/column at freeze panels
+		if(this.isEmptyHeader()) {
+			return;
+		}
+		
 		var top = this.headers[0].index,
 			bottom = top + this.headers.length - 1; 
 		if (top > row || bottom < row) return;
@@ -511,7 +520,12 @@ zss.LeftPanel = zk.$extends(zss.Panel, {
 	insertNewRow: function (row, size, extnm) {
 		if (this.block)
 			this.block.insertNewRow(row, size);
-		
+
+		// ZSS-515: header might be empty because of removing last row/column at freeze panels
+		if(this.isEmptyHeader()) {
+			return;
+		}
+
 		var top = this.headers[0].index,
 			bottom = top + this.headers.length - 1; 
 		if (row > (bottom + 1) || row < top) return;
@@ -571,6 +585,11 @@ zss.LeftPanel = zk.$extends(zss.Panel, {
 	removeRow: function (row, size, extnm) {
 		if (this.block)
 			this.block.removeRow(row, size);
+
+		// ZSS-515: header might be empty because of removing last row/column at freeze panels
+		if(this.isEmptyHeader()) {
+			return;
+		}
 
 		var top = this.headers[0].index,
 			bottom = top + this.headers.length - 1; 

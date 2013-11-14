@@ -1,19 +1,102 @@
 <zk>
-	<vlayout>
-		<button onClick="deleteRow0()">1. Delete row 0</button>
-		<button onClick="insertRow0()">2. Insert row 0</button>
-		Then JavaScript error happens. 
-	</vlayout>
-	<spreadsheet id="ss" src="/issue3/book/515-deleteFreezeRow.xls" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
-		height="100%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
-		showFormulabar="true"/>
+	<!-- 2003 format -->
+	<hlayout width="100%" height="100%">
+		<vlayout hflex="1" vflex="1">
+			<hlayout>
+				2003 xls format <button label="export" onClick="export(ss);"></button> 
+			</hlayout>
+			<hlayout>
+				<button onClick="run(ss, 1)">1. change row 2's height</button>
+				<button onClick="run(ss, 2)">2. freeze one row</button>
+				<button onClick="run(ss, 3)">3. remove row 1</button>
+				<button onClick="run(ss, 4)">4. insert one row on row 1</button>
+				<button onClick="run(ss, 5)">1. change row 1's height</button>
+			</hlayout>
+			<hlayout>
+				<button onClick="run(ss, 11)">1. change column B's width</button>
+				<button onClick="run(ss, 12)">2. freeze one column</button>
+				<button onClick="run(ss, 13)">3. remove column 1</button>
+				<button onClick="run(ss, 14)">4. insert one column on column A</button>
+				<button onClick="run(ss, 15)">1. change column A's width</button>
+			</hlayout>
+			
+			<spreadsheet id="ss" src="/issue3/book/515-deleteFreezeRow.xls" maxVisibleRows="200" maxVisibleColumns="40" hflex="1"
+				vflex="true" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+				showFormulabar="true"/>
+		</vlayout>
+		<vlayout hflex="1" vflex="1">
+			<hlayout>
+				2007 xls format <button label="export" onClick="export(ss2);"></button>
+			</hlayout>
+			<hlayout>
+				<button onClick="run(ss2, 1)">1. change row 2's height</button>
+				<button onClick="run(ss2, 2)">2. freeze one row</button>
+				<button onClick="run(ss2, 3)">3. remove row 1</button>
+				<button onClick="run(ss2, 4)">4. insert one row on row 1</button>
+				<button onClick="run(ss2, 5)">1. change row 1's height</button>
+			</hlayout>
+			<hlayout>
+				<button onClick="run(ss2, 11)">1. change column B's width</button>
+				<button onClick="run(ss2, 12)">2. freeze one column</button>
+				<button onClick="run(ss2, 13)">3. remove column 1</button>
+				<button onClick="run(ss2, 14)">4. insert one column on column A</button>
+				<button onClick="run(ss2, 15)">1. change column A's width</button>
+			</hlayout>
+			
+			<spreadsheet id="ss2" src="/issue3/book/515-deleteFreezeRow.xlsx" maxVisibleRows="200" maxVisibleColumns="40" hflex="1"
+				vflex="true" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+				showFormulabar="true"/>
+		</vlayout>
+	</hlayout>
+	
 	<zscript><![CDATA[
-		public void deleteRow0(){
-			Ranges.range(ss.getSelectedSheet(), 0,0).toRowRange().delete(org.zkoss.zss.api.Range.DeleteShift.UP);
+		public void run(Spreadsheet s, int step) {
+			Sheet sheet = s.getSelectedSheet();
+			if(step == 1) {
+				Ranges.range(sheet, "2").toRowRange().setRowHeight(50);
+			} else if(step == 2) {
+				Ranges.range(sheet).setFreezePanel(1, 0);
+			} else if(step == 3) {
+				Ranges.range(sheet, "1").toRowRange().delete(org.zkoss.zss.api.Range.DeleteShift.DEFAULT);
+			} else if (step == 4) {
+				Ranges.range(sheet, "1").toRowRange().insert(org.zkoss.zss.api.Range.InsertShift.DEFAULT, org.zkoss.zss.api.Range.InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+			} else if (step == 5) {
+				Ranges.range(sheet, "1").toRowRange().setRowHeight(100);
+			} else if(step == 11) {
+				Ranges.range(sheet, "B").toColumnRange().setColumnWidth(100);
+			} else if(step == 12) {
+				Ranges.range(sheet).setFreezePanel(0, 1);
+			} else if(step == 13) {
+				Ranges.range(sheet, "A").toColumnRange().delete(org.zkoss.zss.api.Range.DeleteShift.DEFAULT);
+			} else if (step == 14) {
+				Ranges.range(sheet, "A").toColumnRange().insert(org.zkoss.zss.api.Range.InsertShift.DEFAULT, org.zkoss.zss.api.Range.InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+			} else if(step == 15) {
+				Ranges.range(sheet, "A").toColumnRange().setColumnWidth(150);
+			}
 		}
-		
-		public void insertRow0(){
-			Ranges.range(ss.getSelectedSheet(), 0,0).toRowRange().insert(org.zkoss.zss.api.Range.InsertShift.DEFAULT, org.zkoss.zss.api.Range.InsertCopyOrigin.FORMAT_LEFT_ABOVE);
+		public void export(Spreadsheet s) {
+			Book book = s.getBook();
+			String fileName = (book.getType() == org.zkoss.zss.api.model.Book.BookType.EXCEL_2003) ? "exported.xls" : "exported.xlsx";
+			Exporter exporter = Exporters.getExporter();
+			java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
+			exporter.export(book, os);
+			os.close();
+			org.zkoss.zul.Filedownload.save(os.toByteArray(), "application/octet-stream", fileName);
 		}
 	]]></zscript>
+	
+	<script defer="true"><![CDATA[
+		(function() {
+			window.debug = {};
+			window.debug.ss = zk.Widget.$('$ss');
+			window.debug.ssc = debug.ss.sheetCtrl;
+			window.debug.dp = debug.ssc.dp;
+			window.debug.cc = debug.ss._cacheCtrl.getSelectedSheet();
+			window.debug.ss2 = zk.Widget.$('$ss');
+			window.debug.ssc2 = debug.ss2.sheetCtrl;
+			window.debug.dp2 = debug.ssc2.dp;
+			window.debug.cc2 = debug.ss2._cacheCtrl.getSelectedSheet();
+		})();
+	]]></script>
+
 </zk>
