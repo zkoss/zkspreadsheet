@@ -165,4 +165,13 @@ public class BookImpl implements NBook{
 		sheets.add(index, (SheetImpl)sheet);
 		sendEvent(ModelEvents.ON_SHEET_DELETED, "sheet", sheet, "index", index, "oldIndex", oldindex);
 	}
+
+	public void dump(StringBuilder builder) {
+		for(SheetImpl sheet:sheets){
+			builder.append("==Sheet==\n");
+			builder.append(sheet.getSheetName()).append("[\n");
+			sheet.dump(builder);
+			builder.append("]\n");
+		}
+	}
 }
