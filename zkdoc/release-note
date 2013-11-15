@@ -1,7 +1,7 @@
  ------------
 ZK Spreadsheet 3.0.1
 *Features:
-  
+  ZSS-511 LEFTB and REPLACEB return #NAME
   
 *Bugs:
   ZSS-510 ApplyDataFormat with "" then getCellFormatText from range will cause IndexOutOfBoundaryException and spreadsheet crash.
