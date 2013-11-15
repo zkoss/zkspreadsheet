@@ -1,5 +1,6 @@
 package org.zkoss.zss.ngmodel.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -280,45 +281,60 @@ public class SheetImpl implements NSheet {
 	}
 
 	public void insertRow(int rowIdx, int size) {
-//		if(size<=0) return;
-//		
-//		int end = getEndRowIndex();
-//		if(rowIdx>end) return;
-//		
-//		int start = Math.max(rowIdx,getStartRowIndex());
-//		
-//		SortedMap<Integer,RowImpl> effected = rows.headMap(start);
-//		
-//		Collection<RowImpl> effectedRows = effected.values();
-//		
-//		
-//		
-//		
-//		Set<Entry<Integer,RowImpl>> set = rows.entrySet();
-//		for(int i= set.size()-1;i>=0;i--){
-//			Entry<Integer,RowImpl> entry = set.;
-//		}
-//		while(iter.hasNext()){
-//			
-//			int idx = entry.getKey();
-//			if(idx>=rowIdx){
-//				//shift row
-//				
-//				
-//			}else{
-//				//It is sorted, stop it.
-//				break;
-//			}
-//		}
-//		
-//		
+		if(size<=0) return;
+		
+		int end = getEndRowIndex();
+		if(rowIdx>end) return;
+		
+		int start = Math.max(rowIdx,getStartRowIndex());
+		
+		//get last, reversed row
+		SortedMap<Integer,RowImpl> effected = rows.descendingMap().headMap(start,true);
+		
+		//shift from the end
+		for(Entry<Integer,RowImpl> entry:new ArrayList<Entry<Integer,RowImpl>>(effected.entrySet())){
+			int idx = entry.getKey();
+			int newidx = idx+size;
+			RowImpl row = entry.getValue();
+			
+			rows.remove(idx);
+			rowsReverse.remove(row);
+			
+			rows.put(newidx, row);
+			rowsReverse.put(row, newidx);
+		}
+		
+		
+		//Event
 		
 	}
 
 	public void deleteRow(int rowIdx, int size) {
-		// TODO Auto-generated method stub
+		if(size<=0) return;
+		
+		int end = getEndRowIndex();
+		if(rowIdx>end) return;
+		
+		int start = Math.max(rowIdx,getStartRowIndex());
+		
+		//get last, reversed row
+		SortedMap<Integer,RowImpl> effected = rows.tailMap(start,true);
+		
+		//shift
+		for(Entry<Integer,RowImpl> entry:new ArrayList<Entry<Integer,RowImpl>>(effected.entrySet())){
+			int idx = entry.getKey();
+			int newidx = idx-size;
+			RowImpl row = entry.getValue();
+			rows.remove(idx);
+			rowsReverse.remove(row);
+			if(newidx>=start){
+				rows.put(newidx, row);
+				rowsReverse.put(row, newidx);
+			}
+		}
 		
 		
+		//Event
 	}
 	
 
