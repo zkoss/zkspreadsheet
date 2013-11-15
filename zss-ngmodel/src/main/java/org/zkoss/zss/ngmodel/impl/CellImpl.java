@@ -23,10 +23,12 @@ public class CellImpl implements NCell {
 	}
 
 	public int getRowIndex() {
+		checkOrphan();
 		return row.getIndex();
 	}
 
 	public int getColumnIndex() {
+		checkOrphan();
 		return row.getCellIndex(this);
 	}
 
@@ -40,6 +42,16 @@ public class CellImpl implements NCell {
 
 	public String asString(boolean enableSheetName) {
 		return new CellReference(enableSheetName?row.sheet.getSheetName():null, this).formatAsString();
+	}
+	
+	
+	protected void checkOrphan(){
+		if(row==null){
+			throw new IllegalStateException("doesn't connect to parent");
+		}
+	}
+	protected void release(){
+		row = null;
 	}
 
 }

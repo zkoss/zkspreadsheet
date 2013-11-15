@@ -2,8 +2,10 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
@@ -41,15 +43,19 @@ public class BiIndexPool<T> {
 		return objs.size()<=0?-1:objs.lastKey();
 	}
 	
-	public void clear(int start,int end){
+	public Collection<T> clear(int start,int end){
 		
 		NavigableMap<Integer, T> effected = objs.subMap(start,true,end,true);
-		
-		Iterator<Integer> iter = effected.keySet().iterator();
+		LinkedList<T> remove = new LinkedList<T>(); 
+		Iterator<Entry<Integer,T>> iter = effected.entrySet().iterator();
 		while(iter.hasNext()){
-			objsReverse.remove(iter.next());
+			Entry<Integer,T> entry = iter.next();
+			T obj = entry.getValue();
+			objsReverse.remove(obj);
+			remove.add(obj);
 			iter.remove();
 		}
+		return remove;
 	}
 	
 	public void insert(int start, int size) {
@@ -62,33 +68,36 @@ public class BiIndexPool<T> {
 		for(Entry<Integer,T> entry:new ArrayList<Entry<Integer,T>>(effected.entrySet())){
 			int idx = entry.getKey();
 			int newidx = idx+size;
-			T cell = entry.getValue();
+			T obj = entry.getValue();
 			
 			objs.remove(idx);
-			objsReverse.remove(cell);
+			objsReverse.remove(obj);
 			
-			objs.put(newidx, cell);
-			objsReverse.put(cell, newidx);
+			objs.put(newidx, obj);
+			objsReverse.put(obj, newidx);
 		}
 	}
 	
-	public void delete(int start, int size) {
-		if(size<=0) return;
+	public Collection<T> delete(int start, int size) {
+		if(size<=0) return Collections.EMPTY_LIST;
 		//get last,
 		SortedMap<Integer,T> effected = objs.tailMap(start,true);
-		
+		LinkedList<T> remove = new LinkedList<T>(); 
 		//shift
 		for(Entry<Integer,T> entry:new ArrayList<Entry<Integer,T>>(effected.entrySet())){
 			int idx = entry.getKey();
 			int newidx = idx-size;
-			T cell = entry.getValue();
+			T obj = entry.getValue();
 			objs.remove(idx);
-			objsReverse.remove(cell);
+			objsReverse.remove(obj);
 			if(newidx>=start){
-				objs.put(newidx, cell);
-				objsReverse.put(cell, newidx);
+				objs.put(newidx, obj);
+				objsReverse.put(obj, newidx);
+			}else{
+				remove.add(obj);
 			}
 		}
+		return remove;
 	}
 	
 	public Set<Integer> keySet(){

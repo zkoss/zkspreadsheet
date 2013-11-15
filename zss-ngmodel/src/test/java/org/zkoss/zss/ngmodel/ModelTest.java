@@ -525,8 +525,13 @@ public class ModelTest {
 		Assert.assertEquals(true, sheet.getRow(14).isNull());
 		Assert.assertEquals(true, sheet.getRow(16).isNull());
 		
-		Assert.assertEquals(-1, row10.getIndex());
-		Assert.assertEquals(-1, row12.getIndex());
+		try{
+			row10.getIndex();
+			Assert.fail("orphan");
+		}catch(IllegalStateException ex){}
+		try{
+			row12.getIndex();
+		}catch(IllegalStateException ex){}
 		Assert.assertEquals(11, row14.getIndex());
 		Assert.assertEquals(13, row16.getIndex());
 		
@@ -617,8 +622,12 @@ public class ModelTest {
 		Assert.assertEquals(true, sheet.getColumn(14).isNull());
 		Assert.assertEquals(true, sheet.getColumn(16).isNull());
 		
-		Assert.assertEquals(-1, column10.getIndex());
-		Assert.assertEquals(-1, column12.getIndex());
+		try{
+			column10.getIndex();
+		}catch(IllegalStateException ex){}
+		try{
+			column12.getIndex();
+		}catch(IllegalStateException ex){}
 		Assert.assertEquals(11, column14.getIndex());
 		Assert.assertEquals(13, column16.getIndex());
 		

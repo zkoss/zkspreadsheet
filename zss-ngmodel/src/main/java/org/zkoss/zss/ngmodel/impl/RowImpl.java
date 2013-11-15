@@ -2,6 +2,7 @@ package org.zkoss.zss.ngmodel.impl;
 
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.util.CellReference;
 
@@ -9,13 +10,16 @@ public class RowImpl implements NRow {
 
 	SheetImpl sheet;
 	
-	BiIndexPool<CellImpl> cells = new BiIndexPool<CellImpl>(); 
+	BiIndexPool<CellImpl> cells = new BiIndexPool<CellImpl>();
+	
+	CellStyleImpl cellStyle;
 	
 	public RowImpl(SheetImpl sheet) {
 		this.sheet = sheet;
 	}
 
 	public int getIndex() {
+		checkOrphan();
 		return sheet.getRowIndex(this);
 	}
 
@@ -32,12 +36,14 @@ public class RowImpl implements NRow {
 		if(cellObj != null){
 			return cellObj;
 		}
+		checkOrphan();
 		return proxy?new CellProxyImpl(sheet,getIndex(),columnIdx):null;
 	}
 	
 	NCell getOrCreateCellAt(int columnIdx){
 		CellImpl cellObj = cells.get(columnIdx);
 		if(cellObj == null){
+			checkOrphan();
 			cellObj = new CellImpl(this);
 			cells.put(columnIdx, cellObj);
 			//create column since we have cell of it
@@ -67,7 +73,9 @@ public class RowImpl implements NRow {
 		start = Math.max(start,getStartCellIndex());
 		end = Math.min(end,getEndCellIndex());
 		
-		cells.clear(start, end);
+		for(CellImpl cell:cells.clear(start, end)){
+			cell.release();
+		}
 	}
 
 	public void insertCell(int cellIdx, int size) {
@@ -89,11 +97,26 @@ public class RowImpl implements NRow {
 		
 		int start = Math.max(cellIdx,getStartCellIndex());
 		
-		cells.delete(start, size);
+		for(CellImpl cell:cells.delete(start, size)){
+			cell.release();
+		}
 	}
 	
 	public String asString() {
 		return String.valueOf(getIndex()+1);
+	}
+	
+	protected void checkOrphan(){
+		if(sheet==null){
+			throw new IllegalStateException("doesn't connect to parent");
+		}
+	}
+	protected void release(){
+		sheet = null;
+	}
+
+	public NCellStyle getCellStyle() {
+		return cellStyle;
 	}
 
 }

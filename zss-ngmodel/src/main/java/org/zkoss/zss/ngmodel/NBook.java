@@ -35,4 +35,6 @@ public interface NBook {
 	void setSheetName(NSheet sheet, String newname);
 	void deleteSheet(NSheet sheet);
 	void moveSheetTo(NSheet sheet, int index);
+	
+	NCellStyle getDefaultCellStyle();
 }

@@ -49,4 +49,9 @@ class RowProxyImpl implements NRow{
 		loadProxy();
 		return proxy==null?Integer.toString(index+1):proxy.asString();
 	}
+	
+	public NCellStyle getCellStyle() {
+		loadProxy();
+		return proxy==null?null:proxy.getCellStyle();
+	}
 }

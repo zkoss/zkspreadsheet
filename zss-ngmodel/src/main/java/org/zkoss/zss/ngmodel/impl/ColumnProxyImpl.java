@@ -17,7 +17,7 @@ class ColumnProxyImpl implements NColumn{
 	}
 	
 	
-	private void loadProxy(){
+	protected void loadProxy(){
 		if(proxy==null){
 			proxy = (ColumnImpl)sheet.getColumnAt(index,false);
 		}
@@ -37,6 +37,12 @@ class ColumnProxyImpl implements NColumn{
 	public String asString() {
 		loadProxy();
 		return proxy==null?CellReference.convertNumToColString(getIndex()):proxy.asString();
+	}
+
+
+	public NCellStyle getCellStyle() {
+		loadProxy();
+		return proxy==null?null:proxy.getCellStyle();
 	}
 
 }

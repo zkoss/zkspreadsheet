@@ -26,16 +26,19 @@ public class SheetImpl implements NSheet {
 
 	BookImpl book;
 	String name;
+	String id;
 	
 	BiIndexPool<RowImpl> rows = new BiIndexPool<RowImpl>();
 	BiIndexPool<ColumnImpl> columns = new BiIndexPool<ColumnImpl>();
 	
 	
-	public SheetImpl(BookImpl book){
+	public SheetImpl(BookImpl book,String id){
 		this.book = book;
+		this.id = id;
 	}
 	
 	public NBook getBook() {
+		checkOrphan();
 		return book;
 	}
 
@@ -163,7 +166,9 @@ public class SheetImpl implements NSheet {
 		int start = Math.max(Math.min(rowIdx, rowIdx2),getStartRowIndex());
 		int end = Math.min(Math.max(rowIdx, rowIdx2),getEndRowIndex());
 				
-		rows.clear(start,end);
+		for(RowImpl row:rows.clear(start,end)){
+			row.release();
+		}
 		
 		//Send event?
 		
@@ -173,7 +178,9 @@ public class SheetImpl implements NSheet {
 		int start = Math.max(Math.min(columnIdx, columnIdx2),getStartColumnIndex());
 		int end = Math.min(Math.max(columnIdx, columnIdx2),getEndColumnIndex());
 		
-		columns.clear(start,end);
+		for(ColumnImpl column:columns.clear(start,end)){
+			column.release();
+		}
 		
 		for(RowImpl row:rows.values()){
 			row.clearCell(start,end);
@@ -219,7 +226,9 @@ public class SheetImpl implements NSheet {
 		
 		int start = Math.max(rowIdx,getStartRowIndex());
 		
-		rows.delete(start, size);
+		for(RowImpl row:rows.delete(start, size)){
+			row.release();
+		}
 		
 		//Event
 	}
@@ -291,7 +300,9 @@ public class SheetImpl implements NSheet {
 		
 		int start = Math.max(columnIdx,getStartColumnIndex());
 		
-		columns.delete(start, size);
+		for(ColumnImpl column:columns.delete(start, size)){
+			column.release();
+		}
 		
 		for(RowImpl row:rows.values()){
 			row.deleteCell(start,size);
@@ -299,6 +310,25 @@ public class SheetImpl implements NSheet {
 		//Send event?
 	}
 
+	public NCellStyle getDefaultCellStyle() {
+		checkOrphan();
+		//should I check the linking?
+		return book.getDefaultCellStyle();
+	}
+	
+	protected void checkOrphan(){
+		if(book==null){
+			throw new IllegalStateException("doesn't connect to parent");
+		}
+	}
+	protected void release(){
+		book = null;
+	}
 
+	public String getId() {
+		return id;
+	}
+	
+	
 
 }

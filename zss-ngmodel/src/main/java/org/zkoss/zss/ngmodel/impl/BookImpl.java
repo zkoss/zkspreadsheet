@@ -26,6 +26,7 @@ import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.Strings;
 
@@ -36,9 +37,12 @@ import org.zkoss.zss.ngmodel.util.Strings;
 public class BookImpl implements NBook{
 	
 	protected List<SheetImpl> sheets = new LinkedList<SheetImpl>();
+	CellStyleImpl defaultCellStyle;
 	
+	int sheetsId = 0;
 	
 	public BookImpl(){
+		defaultCellStyle = new CellStyleImpl();
 	}
 	
 	public NSheet getSheet(int i){
@@ -107,13 +111,19 @@ public class BookImpl implements NBook{
 	public NSheet createSheet(String name) {
 		return createSheet(name,null);
 	}
+	
+	String nextSheetId(){
+		StringBuilder sb = new StringBuilder("s");
+		sb.append(++sheetsId);
+		return sb.toString();
+	}
 	public NSheet createSheet(String name,NSheet src) {
 		checkLegalName(name);
 		if(src!=null)
 			checkOwnership(src);
 		
 
-		SheetImpl sheet = new SheetImpl(this);
+		SheetImpl sheet = new SheetImpl(this,nextSheetId());
 		if(src instanceof SheetImpl){
 			((SheetImpl)src).copySheet((SheetImpl)sheet);
 		}
@@ -151,6 +161,8 @@ public class BookImpl implements NBook{
 		int index = sheets.indexOf(sheet);
 		sheets.remove(index);
 		
+		((SheetImpl)sheet).release();
+		
 		sendEvent(ModelEvents.ON_SHEET_DELETED, "sheet", sheet, "index", index);
 	}
 
@@ -172,5 +184,9 @@ public class BookImpl implements NBook{
 		for(SheetImpl sheet:sheets){
 			sheet.dump(builder);
 		}
+	}
+
+	public NCellStyle getDefaultCellStyle() {
+		return defaultCellStyle;
 	}
 }

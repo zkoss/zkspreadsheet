@@ -24,6 +24,7 @@ public interface NSheet {
 	int getStartColumnIndex(int rowIdx);
 	int getEndColumn(int rowIdx);
 	
+	String getId();
 	
 //	NCellStyle getCellStyle();
 //	
