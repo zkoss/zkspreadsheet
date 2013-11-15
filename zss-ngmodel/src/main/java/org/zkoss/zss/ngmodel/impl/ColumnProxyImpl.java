@@ -1,26 +1,39 @@
 package org.zkoss.zss.ngmodel.impl;
 
+import java.lang.ref.WeakReference;
+
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.util.CellReference;
 
 class ColumnProxyImpl implements NColumn{
-	SheetImpl sheet;
+	WeakReference<SheetImpl> sheetRef;
 	int index;
 	ColumnImpl proxy;
 	
 	
 	public ColumnProxyImpl(SheetImpl sheet, int index) {
-		this.sheet = sheet;
+		this.sheetRef = new WeakReference(sheet);
 		this.index = index;
 	}
 	
 	
 	protected void loadProxy(){
 		if(proxy==null){
-			proxy = (ColumnImpl)sheet.getColumnAt(index,false);
+			proxy = (ColumnImpl)getSheet().getColumnAt(index,false);
+			if(proxy!=null){
+				sheetRef.clear();
+			}
 		}
+	}
+	
+	protected SheetImpl getSheet(){
+		SheetImpl sheet = sheetRef.get();
+		if(sheet==null){
+			throw new IllegalStateException("proxy target lost, you should't keep this instance");
+		}
+		return sheet;
 	}
 	
 	public int getIndex() {

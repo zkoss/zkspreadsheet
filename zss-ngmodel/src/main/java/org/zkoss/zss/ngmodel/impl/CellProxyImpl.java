@@ -1,25 +1,37 @@
 package org.zkoss.zss.ngmodel.impl;
 
+import java.lang.ref.WeakReference;
+
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.util.CellReference;
 
 class CellProxyImpl implements NCell{
-	SheetImpl sheet;
+	WeakReference<SheetImpl> sheetRef;
 	int row;
 	int column;
 	CellImpl proxy;
 	
 	
 	public CellProxyImpl(SheetImpl sheet, int row,int column) {
-		this.sheet = sheet;
+		this.sheetRef = new WeakReference<SheetImpl>(sheet);;
 		this.row = row;
 		this.column = column;
 	}
 	
+	private SheetImpl getSheet(){
+		SheetImpl sheet = sheetRef.get();
+		if(sheet==null){
+			throw new IllegalStateException("proxy target lost, you should't keep this instance");
+		}
+		return sheet;
+	}
 	
 	private void loadProxy(){
 		if(proxy==null){
-			proxy = (CellImpl)sheet.getCellAt(row, column, false);
+			proxy = (CellImpl)getSheet().getCellAt(row, column, false);
+			if(proxy!=null){
+				sheetRef.clear();
+			}
 		}
 	}
 
@@ -50,7 +62,7 @@ class CellProxyImpl implements NCell{
 	public void setValue(Object value) {
 		loadProxy();
 		if(proxy==null){
-			proxy = (CellImpl)((RowImpl)sheet.getOrCreateRowAt(row)).getOrCreateCellAt(column);
+			proxy = (CellImpl)((RowImpl)getSheet().getOrCreateRowAt(row)).getOrCreateCellAt(column);
 		}
 		proxy.setValue(value);
 	}
@@ -63,7 +75,7 @@ class CellProxyImpl implements NCell{
 
 	public String asString(boolean enableSheetName) {
 		loadProxy();
-		return proxy==null?new CellReference(enableSheetName?sheet.getSheetName():null, row,column,false,false).formatAsString():
+		return proxy==null?new CellReference(enableSheetName?getSheet().getSheetName():null, row,column,false,false).formatAsString():
 			proxy.asString(enableSheetName);
 	}
 
