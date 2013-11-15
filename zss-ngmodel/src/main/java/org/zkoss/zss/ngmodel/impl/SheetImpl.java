@@ -317,7 +317,7 @@ public class SheetImpl implements NSheet {
 		
 		int start = Math.max(rowIdx,getStartRowIndex());
 		
-		//get last, reversed row
+		//get last row
 		SortedMap<Integer,RowImpl> effected = rows.tailMap(start,true);
 		
 		//shift
@@ -377,6 +377,66 @@ public class SheetImpl implements NSheet {
 			}
 		}
 		builder.append("}\n");
+	}
+
+	public void insertColumn(int columnIdx, int size) {
+		if(size<=0) return;
+		
+		int end = getEndColumnIndex();
+		if(columnIdx>end) return;
+		
+		int start = Math.max(columnIdx,getStartColumnIndex());
+		
+		//get last, reversed column
+		SortedMap<Integer,ColumnImpl> effected = columns.descendingMap().headMap(start,true);
+		
+		//shift from the end
+		for(Entry<Integer,ColumnImpl> entry:new ArrayList<Entry<Integer,ColumnImpl>>(effected.entrySet())){
+			int idx = entry.getKey();
+			int newidx = idx+size;
+			ColumnImpl column = entry.getValue();
+			
+			columns.remove(idx);
+			columnsReverse.remove(column);
+			
+			columns.put(newidx, column);
+			columnsReverse.put(column, newidx);
+		}
+		
+		for(RowImpl row:rows.values()){
+			row.insertCell(start,size);
+		}
+		//Send event?
+		
+	}
+
+	public void deleteColumn(int columnIdx, int size) {
+		if(size<=0) return;
+		
+		int end = getEndColumnIndex();
+		if(columnIdx>end) return;
+		
+		int start = Math.max(columnIdx,getStartColumnIndex());
+		
+		//get last column
+		SortedMap<Integer,ColumnImpl> effected = columns.tailMap(start,true);
+		
+		//shift
+		for(Entry<Integer,ColumnImpl> entry:new ArrayList<Entry<Integer,ColumnImpl>>(effected.entrySet())){
+			int idx = entry.getKey();
+			int newidx = idx-size;
+			ColumnImpl column = entry.getValue();
+			columns.remove(idx);
+			columnsReverse.remove(column);
+			if(newidx>=start){
+				columns.put(newidx, column);
+				columnsReverse.put(column, newidx);
+			}
+		}
+		for(RowImpl row:rows.values()){
+			row.deleteCell(start,size);
+		}
+		//Send event?
 	}
 
 

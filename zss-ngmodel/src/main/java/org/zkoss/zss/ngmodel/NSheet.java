@@ -36,8 +36,8 @@ public interface NSheet {
 	
 	void insertRow(int rowIdx, int size);
 	void deleteRow(int rowIdx, int size);
-//	void insertColumn(int columnFrom, int size);
-//	void deleteColumn(int columnFrom, int size);
+	void insertColumn(int columnIdx, int size);
+	void deleteColumn(int columnIdx, int size);
 	
 	
 }

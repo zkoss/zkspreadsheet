@@ -1,9 +1,12 @@
 package org.zkoss.zss.ngmodel.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NavigableMap;
+import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NCell;
@@ -103,6 +106,56 @@ public class RowImpl implements NRow {
 //				}
 //			}
 //		}
+	}
+
+	public void insertCell(int cellIdx, int size) {
+		if(size<=0) return;
+		
+		int end = getEndCellIndex();
+		if(cellIdx>end) return;
+		
+		int start = Math.max(cellIdx,getStartCellIndex());
+		
+		//get last, reversed cell
+		SortedMap<Integer,CellImpl> effected = cells.descendingMap().headMap(start,true);
+		
+		//shift from the end
+		for(Entry<Integer,CellImpl> entry:new ArrayList<Entry<Integer,CellImpl>>(effected.entrySet())){
+			int idx = entry.getKey();
+			int newidx = idx+size;
+			CellImpl cell = entry.getValue();
+			
+			cells.remove(idx);
+			cellsReverse.remove(cell);
+			
+			cells.put(newidx, cell);
+			cellsReverse.put(cell, newidx);
+		}
+	}
+
+	public void deleteCell(int cellIdx, int size) {
+		if(size<=0) return;
+		
+		int end = getEndCellIndex();
+		if(cellIdx>end) return;
+		
+		int start = Math.max(cellIdx,getStartCellIndex());
+		
+		//get last,
+		SortedMap<Integer,CellImpl> effected = cells.tailMap(start,true);
+		
+		//shift
+		for(Entry<Integer,CellImpl> entry:new ArrayList<Entry<Integer,CellImpl>>(effected.entrySet())){
+			int idx = entry.getKey();
+			int newidx = idx-size;
+			CellImpl cell = entry.getValue();
+			cells.remove(idx);
+			cellsReverse.remove(cell);
+			if(newidx>=start){
+				cells.put(newidx, cell);
+				cellsReverse.put(cell, newidx);
+			}
+		}
 	}
 
 }
