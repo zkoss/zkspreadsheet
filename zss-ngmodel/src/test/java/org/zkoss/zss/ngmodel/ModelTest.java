@@ -7,12 +7,111 @@ import org.zkoss.zss.ngmodel.impl.BookImpl;
 
 public class ModelTest {
 
-	
 	@Test
-	public void testSheet(){
+	public void testException(){
 		NBook book = new BookImpl();
+		NSheet sheet1 = book.createSheet("Sheet1");
 		Assert.assertEquals(1, book.getNumOfSheet());
-		NSheet sheet = book.getSheetAt(0);
+		NSheet sheet2 = book.createSheet("Sheet2");
+		Assert.assertEquals(2, book.getNumOfSheet());
+		
+		try{
+			NSheet sheet = book.createSheet("Sheet2");
+			Assert.fail("should get exception");
+		}catch(InvalidateModelOpException x){}
+		
+		Assert.assertEquals(2, book.getNumOfSheet());
+		Assert.assertEquals(sheet1, book.getSheetAt(0));
+		Assert.assertEquals(sheet2, book.getSheetAt(1));
+		Assert.assertEquals(sheet1, book.getSheetByName("Sheet1"));
+		Assert.assertEquals(sheet2, book.getSheetByName("Sheet2"));
+		Assert.assertEquals(null, book.getSheetByName("Sheet3"));
+		
+		book.deleteSheet(sheet1);
+		
+		Assert.assertEquals(1, book.getNumOfSheet());
+		Assert.assertEquals(sheet2, book.getSheetAt(0));
+		Assert.assertEquals(null, book.getSheetByName("Sheet1"));
+		Assert.assertEquals(sheet2, book.getSheetByName("Sheet2"));
+		Assert.assertEquals(null, book.getSheetByName("Sheet3"));
+		
+		try{
+			book.deleteSheet(sheet1);
+			Assert.fail("should get exception");
+		}catch(InvalidateModelOpException x){}//ownership
+		
+		try{
+			book.createSheet("Sheet3", sheet1);
+			Assert.fail("should get exception");
+		}catch(InvalidateModelOpException x){}//ownership
+		
+		try{
+			book.moveSheetTo(sheet1, 0);
+			Assert.fail("should get exception");
+		}catch(InvalidateModelOpException x){}//ownership
+		
+		sheet1 = book.createSheet("Sheet1");
+		
+		Assert.assertEquals(2, book.getNumOfSheet());
+		Assert.assertEquals(sheet1, book.getSheetAt(1));
+		Assert.assertEquals(sheet2, book.getSheetAt(0));
+		Assert.assertEquals(sheet1, book.getSheetByName("Sheet1"));
+		Assert.assertEquals(sheet2, book.getSheetByName("Sheet2"));
+		Assert.assertEquals(null, book.getSheetByName("Sheet3"));
+		
+		NSheet sheet3 = book.createSheet("Sheet3");
+		
+		Assert.assertEquals(3, book.getNumOfSheet());
+		Assert.assertEquals(sheet1, book.getSheetAt(1));
+		Assert.assertEquals(sheet2, book.getSheetAt(0));
+		Assert.assertEquals(sheet3, book.getSheetAt(2));
+		Assert.assertEquals(sheet1, book.getSheetByName("Sheet1"));
+		Assert.assertEquals(sheet2, book.getSheetByName("Sheet2"));
+		Assert.assertEquals(sheet3, book.getSheetByName("Sheet3"));
+		
+		
+		book.moveSheetTo(sheet1, 0);
+		Assert.assertEquals(3, book.getNumOfSheet());
+		Assert.assertEquals(sheet1, book.getSheetAt(0));
+		Assert.assertEquals(sheet2, book.getSheetAt(1));
+		Assert.assertEquals(sheet3, book.getSheetAt(2));
+		
+		book.moveSheetTo(sheet1, 1);
+		Assert.assertEquals(3, book.getNumOfSheet());
+		Assert.assertEquals(sheet1, book.getSheetAt(1));
+		Assert.assertEquals(sheet2, book.getSheetAt(0));
+		Assert.assertEquals(sheet3, book.getSheetAt(2));
+		
+		book.moveSheetTo(sheet1, 2);
+		Assert.assertEquals(3, book.getNumOfSheet());
+		Assert.assertEquals(sheet1, book.getSheetAt(2));
+		Assert.assertEquals(sheet2, book.getSheetAt(0));
+		Assert.assertEquals(sheet3, book.getSheetAt(1));
+		
+		
+		book.moveSheetTo(sheet1, 1);
+		Assert.assertEquals(3, book.getNumOfSheet());
+		Assert.assertEquals(sheet1, book.getSheetAt(1));
+		Assert.assertEquals(sheet2, book.getSheetAt(0));
+		Assert.assertEquals(sheet3, book.getSheetAt(2));
+		
+		book.moveSheetTo(sheet1, 0);
+		Assert.assertEquals(3, book.getNumOfSheet());
+		Assert.assertEquals(sheet1, book.getSheetAt(0));
+		Assert.assertEquals(sheet2, book.getSheetAt(1));
+		Assert.assertEquals(sheet3, book.getSheetAt(2));
+		
+		try{
+		book.moveSheetTo(sheet1, 3);
+		}catch(InvalidateModelOpException x){}//ownership
+		
+	}
+	@Test
+	public void testNormal(){
+		NBook book = new BookImpl();
+		book.createSheet("Sheet1");
+		Assert.assertEquals(1, book.getNumOfSheet());
+		NSheet sheet = book.createSheet("Sheet2");;
 		Assert.assertEquals(-1, sheet.getStartRow());
 		Assert.assertEquals(-1, sheet.getEndRow());
 		Assert.assertEquals(-1, sheet.getStartColumn());
@@ -30,11 +129,11 @@ public class ModelTest {
 		NCell cell = sheet.getCellAt(3, 6);
 		Assert.assertEquals(true, cell.isNull());
 		
-		cell.setValue("At(3,6)");
+		cell.setValue("(3,6)");
 		Assert.assertEquals(false, row.isNull());
 		Assert.assertEquals(false, column.isNull());
 		Assert.assertEquals(false, cell.isNull());
-		Assert.assertEquals("At(3,6)", cell.getValue());
+		Assert.assertEquals("(3,6)", cell.getValue());
 		
 		Assert.assertEquals(3, sheet.getStartRow());
 		Assert.assertEquals(3, sheet.getEndRow());
@@ -58,11 +157,11 @@ public class ModelTest {
 		cell = sheet.getCellAt(3, 12);
 		Assert.assertEquals(true, cell.isNull());
 		
-		cell.setValue("At(3,12)");
+		cell.setValue("(3,12)");
 		Assert.assertEquals(false, row.isNull());
 		Assert.assertEquals(false, column.isNull());
 		Assert.assertEquals(false, cell.isNull());
-		Assert.assertEquals("At(3,12)", cell.getValue());
+		Assert.assertEquals("(3,12)", cell.getValue());
 		
 		Assert.assertEquals(6, row.getStartColumn());
 		Assert.assertEquals(12, row.getEndColumn());
@@ -88,11 +187,11 @@ public class ModelTest {
 		cell = sheet.getCellAt(4, 8);
 		Assert.assertEquals(true, cell.isNull());
 		
-		cell.setValue("At(4,8)");
+		cell.setValue("(4,8)");
 		Assert.assertEquals(false, row.isNull());
 		Assert.assertEquals(false, column.isNull());
 		Assert.assertEquals(false, cell.isNull());
-		Assert.assertEquals("At(4,8)", cell.getValue());
+		Assert.assertEquals("(4,8)", cell.getValue());
 		
 		Assert.assertEquals(8, row.getStartColumn());
 		Assert.assertEquals(8, row.getEndColumn());
@@ -118,11 +217,11 @@ public class ModelTest {
 		cell = sheet.getCellAt(0, 0);
 		Assert.assertEquals(true, cell.isNull());
 		
-		cell.setValue("At(0,0)");
+		cell.setValue("(0,0)");
 		Assert.assertEquals(false, row.isNull());
 		Assert.assertEquals(false, column.isNull());
 		Assert.assertEquals(false, cell.isNull());
-		Assert.assertEquals("At(0,0)", cell.getValue());
+		Assert.assertEquals("(0,0)", cell.getValue());
 		
 		Assert.assertEquals(0, row.getStartColumn());
 		Assert.assertEquals(0, row.getEndColumn());

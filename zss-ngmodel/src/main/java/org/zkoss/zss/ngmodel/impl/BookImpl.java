@@ -27,6 +27,7 @@ import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.util.Strings;
 
 /**
  * @author dennis
@@ -38,7 +39,6 @@ public class BookImpl implements NBook{
 	
 	
 	public BookImpl(){
-		createSheet(null);
 	}
 	
 	public NSheet getSheetAt(int i){
@@ -51,7 +51,8 @@ public class BookImpl implements NBook{
 	
 	public NSheet getSheetByName(String name){
 		for(NSheet sheet:sheets){
-			if(sheet.getSheetName().equals(name)){
+//			if(sheet.getSheetName().equals(name)){
+			if(sheet.getSheetName().equalsIgnoreCase(name)){
 				return sheet;
 			}
 		}
@@ -64,18 +65,18 @@ public class BookImpl implements NBook{
 		}
 	}
 	
-	protected String suggestSheetName(String basename){
-		int i = 1;
-		HashSet<String> names = new HashSet<String>();
-		for(NSheet sheet:sheets){
-			names.add(sheet.getSheetName());
-		}
-		String name;
-		do{
-			name = basename + " "+i++;
-		}while(names.contains(basename));
-		return name;
-	}
+//	protected String suggestSheetName(String basename){
+//		int i = 1;
+//		HashSet<String> names = new HashSet<String>();
+//		for(NSheet sheet:sheets){
+//			names.add(sheet.getSheetName());
+//		}
+//		String name = basename==null?"Sheet 1":basename;
+//		while(names.contains(name)){
+//			name = basename + " "+i++;
+//		};
+//		return name;
+//	}
 	
 	protected void sendEvent(String name,Object... data){
 		
@@ -102,20 +103,19 @@ public class BookImpl implements NBook{
 		
 		//TODO post to out side listener
 	}
-
-	public NSheet createSheet(NSheet src) {
-		
+	
+	public NSheet createSheet(String name) {
+		return createSheet(name,null);
+	}
+	public NSheet createSheet(String name,NSheet src) {
+		checkLegalName(name);
 		if(src!=null)
 			checkOwnership(src);
 		
-		String name = src==null?"Sheet":src.getSheetName();
-		if(src!=null && !name.startsWith("Copy_")){
-			name = "Copy_"+name;
-		}
-		name = suggestSheetName(name);
+
 		SheetImpl sheet = new SheetImpl(this);
 		if(src instanceof SheetImpl){
-			((SheetImpl)src).cloneSheet((SheetImpl)sheet);
+			((SheetImpl)src).copySheet((SheetImpl)sheet);
 		}
 		((SheetImpl)sheet).setSheetName(name);
 		sheets.add(sheet);
@@ -125,11 +125,8 @@ public class BookImpl implements NBook{
 	}
 
 	public void setSheetName(NSheet sheet, String newname) {
-		checkOwnership(sheet);
-		if(getSheetByName(newname)!=null){
-			throw new InvalidateModelOpException("sheet name "+newname+" is dpulicated");
-		}
 		checkLegalName(newname);
+		checkOwnership(sheet);
 		
 		String oldname = sheet.getSheetName();
 		((SheetImpl)sheet).setSheetName(newname);
@@ -137,15 +134,20 @@ public class BookImpl implements NBook{
 		sendEvent(ModelEvents.ON_SHEET_RENAMED, "sheet", sheet, "oldName", oldname);
 	}
 
-	protected void checkLegalName(String newname) {
+	protected void checkLegalName(String name) {
+		if(Strings.isBlank(name)){
+			throw new InvalidateModelOpException("sheet name '"+name+"' is not legal");
+		}
+		if(getSheetByName(name)!=null){
+			throw new InvalidateModelOpException("sheet name '"+name+"' is dpulicated");
+		}
+		
 		//TODO
 	}
 
 	public void deleteSheet(NSheet sheet) {
 		checkOwnership(sheet);
-		if(sheets.size()==1){
-			throw new InvalidateModelOpException("can't remove last sheet");
-		}
+
 		int index = sheets.indexOf(sheet);
 		sheets.remove(index);
 		
@@ -155,7 +157,7 @@ public class BookImpl implements NBook{
 	public void moveSheetTo(NSheet sheet, int index) {
 		checkOwnership(sheet);
 		if(index<0|| index>=sheets.size()){
-			throw new InvalidateModelOpException("new sheet position out of bound "+sheets.size() +"," +index);
+			throw new InvalidateModelOpException("new position out of bound "+sheets.size() +"<>" +index);
 		}
 		int oldindex = sheets.indexOf(sheet);
 		if(oldindex==index){

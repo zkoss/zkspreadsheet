@@ -29,8 +29,9 @@ public interface NBook {
 	int getNumOfSheet();
 	
 	NSheet getSheetByName(String name);
-	//editable 
-	NSheet createSheet(NSheet src);
+	//editable
+	NSheet createSheet(String name);
+	NSheet createSheet(String name, NSheet src);
 	void setSheetName(NSheet sheet, String newname);
 	void deleteSheet(NSheet sheet);
 	void moveSheetTo(NSheet sheet, int index);

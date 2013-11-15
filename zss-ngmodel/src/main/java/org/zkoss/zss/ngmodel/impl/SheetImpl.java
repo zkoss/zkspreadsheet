@@ -160,7 +160,7 @@ public class SheetImpl implements NSheet {
 		//TODO to other object
 	}
 
-	protected void cloneSheet(SheetImpl sheet) {
+	protected void copySheet(SheetImpl sheet) {
 		//can only clone on the begining.
 		
 		//TODO
@@ -170,14 +170,14 @@ public class SheetImpl implements NSheet {
 	public void dump(StringBuilder builder) {
 		int endColumn = getEndColumn();
 		int endRow = getEndRow();
-		builder.append("\tColumns\n\t");
+		builder.append("==Columns==\n\t");
 		for(int i=0;i<=endColumn;i++){
 			builder.append(i).append("\t");
 		}
 		builder.append("\n");
-		builder.append("\tRow\n");
+		builder.append("==Row==\n");
 		for(int i=0;i<=endRow;i++){
-			builder.append("\t");
+			builder.append(i).append("\t");
 			for(int j=0;j<=endColumn;j++){
 				NCell cell = getCellAt(i, j);
 				builder.append(cell.getValue()).append("\t");
