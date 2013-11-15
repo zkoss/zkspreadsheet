@@ -2,6 +2,7 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 
 import org.zkoss.zss.ngmodel.ModelEvent;
@@ -76,24 +77,32 @@ public class RowImpl implements NRow {
 		start = Math.max(start,getStartCellIndex());
 		end = Math.min(end,getEndCellIndex());
 		
-		//loop from start to end, or from iteration? which one is better?
-		if( end-start > cells.size() ){
-			Iterator<Integer> iter = cells.keySet().iterator();
-			while(iter.hasNext()){
-				int idx = iter.next();
-				if(idx>=start && idx<=end){
-					cellsReverse.remove(cells.get(idx));
-					iter.remove();
-				}
-			}
-		}else{
-			for(int i=start;i<=end;i++){
-				CellImpl cell = cells.remove(i);
-				if(cell!=null){
-					cellsReverse.remove(cell);
-				}
-			}
+		NavigableMap<Integer, CellImpl> effected = cells.subMap(start,true,end,true);
+		
+		Iterator<Integer> iter = effected.keySet().iterator();
+		while(iter.hasNext()){
+			cellsReverse.remove(iter.next());
+			iter.remove();
 		}
+		
+		//loop from start to end, or from iteration? which one is better?
+//		if( end-start > cells.size() ){
+//			Iterator<Integer> iter = cells.keySet().iterator();
+//			while(iter.hasNext()){
+//				int idx = iter.next();
+//				if(idx>=start && idx<=end){
+//					cellsReverse.remove(cells.get(idx));
+//					iter.remove();
+//				}
+//			}
+//		}else{
+//			for(int i=start;i<=end;i++){
+//				CellImpl cell = cells.remove(i);
+//				if(cell!=null){
+//					cellsReverse.remove(cell);
+//				}
+//			}
+//		}
 	}
 
 }
