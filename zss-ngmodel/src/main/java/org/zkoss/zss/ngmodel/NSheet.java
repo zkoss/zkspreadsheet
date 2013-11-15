@@ -10,19 +10,19 @@ public interface NSheet {
 	
 	String getSheetName();
 	
-	NRow getRowAt(int row);
+	NRow getRow(int rowIdx);
 	
-	NColumn getColumnAt(int column);
+	NColumn getColumn(int columnIdx);
 	
-	NCell getCellAt(int row, int column);
+	NCell getCell(int rowIdx, int columnIdx);
 	
-	int getStartRow();
-	int getEndRow();
-	int getStartColumn();
-	int getEndColumn();
+	int getStartRowIndex();
+	int getEndRowIndex();
+	int getStartColumnIndex();
+	int getEndColumnIndex();
 	
-	int getStartColumn(int row);
-	int getEndColumn(int row);
+	int getStartColumnIndex(int rowIdx);
+	int getEndColumn(int rowIdx);
 	
 	
 //	NCellStyle getCellStyle();
@@ -30,6 +30,10 @@ public interface NSheet {
 //	NViewInfo getViewInfo();
 	
 	//editable
+	void clearRow(int rowIdx, int rowIdx2);
+	void clearColumn(int columnIdx,int columnIdx2);
+	void clearCell(int rowIdx, int columnIdx,int rowIdx2,int columnIdx2);
+	
 //	void insertRow(int rowFrom, int size);
 //	void deleteRow(int rowFrom, int size);
 //	void insertColumn(int columnFrom, int size);

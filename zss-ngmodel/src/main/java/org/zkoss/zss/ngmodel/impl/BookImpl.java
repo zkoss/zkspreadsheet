@@ -41,7 +41,7 @@ public class BookImpl implements NBook{
 	public BookImpl(){
 	}
 	
-	public NSheet getSheetAt(int i){
+	public NSheet getSheet(int i){
 		return sheets.get(i);
 	}
 	
@@ -170,10 +170,7 @@ public class BookImpl implements NBook{
 
 	public void dump(StringBuilder builder) {
 		for(SheetImpl sheet:sheets){
-			builder.append("==Sheet==\n");
-			builder.append(sheet.getSheetName()).append("[\n");
 			sheet.dump(builder);
-			builder.append("]\n");
 		}
 	}
 }

@@ -24,7 +24,7 @@ public interface NBook {
 
 //	NBookSeries getBookSeries();
 	
-	NSheet getSheetAt(int i);
+	NSheet getSheet(int i);
 	
 	int getNumOfSheet();
 	

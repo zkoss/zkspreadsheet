@@ -1,6 +1,7 @@
 package org.zkoss.zss.ngmodel.impl;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.TreeMap;
 
 import org.zkoss.zss.ngmodel.ModelEvent;
@@ -56,12 +57,12 @@ public class RowImpl implements NRow {
 		return index==null?-1:index.intValue();
 	}
 
-	public int getStartColumn() {
+	public int getStartCellIndex() {
 		Integer k = cells.isEmpty()?null:cells.firstKey();
 		return k==null?-1:k.intValue();
 	}
 
-	public int getEndColumn() {
+	public int getEndCellIndex() {
 		Integer k = cells.isEmpty()?null:cells.lastKey();
 		return k==null?-1:k.intValue();
 	}
@@ -69,6 +70,30 @@ public class RowImpl implements NRow {
 	protected void onModelEvent(ModelEvent event) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void clearCell(int start, int end) {
+		start = Math.max(start,getStartCellIndex());
+		end = Math.min(end,getEndCellIndex());
+		
+		//loop from start to end, or from iteration? which one is better?
+		if( end-start > cells.size() ){
+			Iterator<Integer> iter = cells.keySet().iterator();
+			while(iter.hasNext()){
+				int idx = iter.next();
+				if(idx>=start && idx<=end){
+					cellsReverse.remove(cells.get(idx));
+					iter.remove();
+				}
+			}
+		}else{
+			for(int i=start;i<=end;i++){
+				CellImpl cell = cells.remove(i);
+				if(cell!=null){
+					cellsReverse.remove(cell);
+				}
+			}
+		}
 	}
 
 }

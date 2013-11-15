@@ -7,6 +7,6 @@ public interface NRow {
 	boolean isNull();
 //	NCellStyle getCellStyle();
 	
-	int getStartColumn();
-	int getEndColumn();
+	int getStartCellIndex();
+	int getEndCellIndex();
 }

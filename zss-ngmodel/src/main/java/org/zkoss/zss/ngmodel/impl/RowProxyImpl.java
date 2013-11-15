@@ -33,15 +33,15 @@ class RowProxyImpl implements NRow{
 	}
 
 
-	public int getStartColumn() {
+	public int getStartCellIndex() {
 		loadProxy();
-		return proxy==null?-1:proxy.getStartColumn();
+		return proxy==null?-1:proxy.getStartCellIndex();
 	}
 
 
-	public int getEndColumn() {
+	public int getEndCellIndex() {
 		loadProxy();
-		return proxy==null?-1:proxy.getEndColumn();
+		return proxy==null?-1:proxy.getEndCellIndex();
 	}
 
 }
