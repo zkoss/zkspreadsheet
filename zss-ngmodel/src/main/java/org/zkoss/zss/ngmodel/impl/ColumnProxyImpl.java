@@ -3,6 +3,7 @@ package org.zkoss.zss.ngmodel.impl;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.NRow;
+import org.zkoss.zss.ngmodel.util.CellReference;
 
 class ColumnProxyImpl implements NColumn{
 	SheetImpl sheet;
@@ -31,6 +32,11 @@ class ColumnProxyImpl implements NColumn{
 	public boolean isNull() {
 		loadProxy();
 		return proxy==null?true:proxy.isNull();
+	}
+	
+	public String asString() {
+		loadProxy();
+		return proxy==null?CellReference.convertNumToColString(getIndex()):proxy.asString();
 	}
 
 }

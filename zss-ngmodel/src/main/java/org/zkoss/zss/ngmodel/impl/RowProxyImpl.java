@@ -2,6 +2,7 @@ package org.zkoss.zss.ngmodel.impl;
 
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NRow;
+import org.zkoss.zss.ngmodel.util.CellReference;
 
 class RowProxyImpl implements NRow{
 	SheetImpl sheet;
@@ -44,4 +45,8 @@ class RowProxyImpl implements NRow{
 		return proxy==null?-1:proxy.getEndCellIndex();
 	}
 
+	public String asString() {
+		loadProxy();
+		return proxy==null?Integer.toString(index+1):proxy.asString();
+	}
 }

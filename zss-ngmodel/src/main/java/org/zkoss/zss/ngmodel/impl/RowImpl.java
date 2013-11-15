@@ -3,6 +3,7 @@ package org.zkoss.zss.ngmodel.impl;
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NRow;
+import org.zkoss.zss.ngmodel.util.CellReference;
 
 public class RowImpl implements NRow {
 
@@ -89,6 +90,10 @@ public class RowImpl implements NRow {
 		int start = Math.max(cellIdx,getStartCellIndex());
 		
 		cells.delete(start, size);
+	}
+	
+	public String asString() {
+		return String.valueOf(getIndex()+1);
 	}
 
 }

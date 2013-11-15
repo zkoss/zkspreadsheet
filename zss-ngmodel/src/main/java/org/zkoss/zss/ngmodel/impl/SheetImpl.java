@@ -240,7 +240,7 @@ public class SheetImpl implements NSheet {
 		int endRow = getEndRowIndex();
 		builder.append("  ==Columns==\n\t");
 		for(int i=0;i<=endColumn;i++){
-			builder.append(i).append("\t");
+			builder.append(getColumn(i).asString()).append(":").append(i).append("\t");
 		}
 		builder.append("\n");
 		builder.append("  ==Row==");

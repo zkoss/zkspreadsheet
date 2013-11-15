@@ -106,6 +106,33 @@ public class ModelTest {
 		}catch(InvalidateModelOpException x){}//ownership
 		
 	}
+	
+	
+	@Test
+	public void testReferenceString(){
+		NBook book = new BookImpl();
+		NSheet sheet1 = book.createSheet("Sheet1");
+		
+		Assert.assertEquals("1",sheet1.getRow(0).asString());
+		Assert.assertEquals("101",sheet1.getRow(100).asString());
+		Assert.assertEquals("A",sheet1.getColumn(0).asString());
+		Assert.assertEquals("AY",sheet1.getColumn(50).asString());
+		Assert.assertEquals("A1",sheet1.getCell(0,0).asString(false));
+		Assert.assertEquals("AY101",sheet1.getCell(100,50).asString(false));
+		Assert.assertEquals("Sheet1!A1",sheet1.getCell(0,0).asString(true));
+		Assert.assertEquals("Sheet1!AY101",sheet1.getCell(100,50).asString(true));
+		
+		
+		sheet1.getCell(9, 5).setValue("(9,5)");
+		
+		Assert.assertEquals("10",sheet1.getRow(9).asString());
+		Assert.assertEquals("F",sheet1.getColumn(5).asString());
+		Assert.assertEquals("F10",sheet1.getCell(9,5).asString(false));
+		Assert.assertEquals("Sheet1!F10",sheet1.getCell(9,5).asString(true));
+		
+		dump(book);
+	}
+	
 	@Test
 	public void testCellRange(){
 		NBook book = new BookImpl();

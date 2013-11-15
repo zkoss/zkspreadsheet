@@ -19,6 +19,8 @@ public interface NCell {
 	
 	int getColumnIndex();
 	
+	String asString(boolean enableSheetName);
+	
 //	NCellStyle getCellStyle();
 //	
 //	boolean isReadonly();

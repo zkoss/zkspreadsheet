@@ -1,6 +1,7 @@
 package org.zkoss.zss.ngmodel.impl;
 
 import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.util.CellReference;
 
 class CellProxyImpl implements NCell{
 	SheetImpl sheet;
@@ -60,5 +61,10 @@ class CellProxyImpl implements NCell{
 		return proxy==null?null:proxy.getValue();
 	}
 
+	public String asString(boolean enableSheetName) {
+		loadProxy();
+		return proxy==null?new CellReference(enableSheetName?sheet.getSheetName():null, row,column,false,false).formatAsString():
+			proxy.asString(enableSheetName);
+	}
 
 }

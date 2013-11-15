@@ -2,6 +2,7 @@ package org.zkoss.zss.ngmodel.impl;
 
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NColumn;
+import org.zkoss.zss.ngmodel.util.CellReference;
 
 public class ColumnImpl implements NColumn{
 
@@ -22,6 +23,10 @@ public class ColumnImpl implements NColumn{
 	protected void onModelEvent(ModelEvent event) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public String asString() {
+		return CellReference.convertNumToColString(getIndex());
 	}
 
 }
