@@ -27,11 +27,8 @@ public class SheetImpl implements NSheet {
 	BookImpl book;
 	String name;
 	
-	TreeMap<Integer,RowImpl> rows = new TreeMap<Integer,RowImpl>();//must be sorted
-	HashMap<RowImpl,Integer> rowsReverse = new HashMap<RowImpl,Integer>(); 
-	
-	TreeMap<Integer,ColumnImpl> columns = new TreeMap<Integer,ColumnImpl>();//must be sorted
-	HashMap<ColumnImpl,Integer> columnsReverse = new HashMap<ColumnImpl,Integer>();
+	BiIndexPool<RowImpl> rows = new BiIndexPool<RowImpl>();
+	BiIndexPool<ColumnImpl> columns = new BiIndexPool<ColumnImpl>();
 	
 	
 	public SheetImpl(BookImpl book){
@@ -63,14 +60,12 @@ public class SheetImpl implements NSheet {
 		if(rowObj == null){
 			rowObj = new RowImpl(this);
 			rows.put(rowIdx, rowObj);
-			rowsReverse.put(rowObj, rowIdx);
 		}
 		return rowObj;
 	}
 	
 	int getRowIndex(RowImpl row){
-		Integer index = rowsReverse.get(row);
-		return index==null?-1:index.intValue();
+		return rows.get(row);
 	}
 
 	public NColumn getColumn(int columnIdx) {
@@ -90,14 +85,12 @@ public class SheetImpl implements NSheet {
 		if(columnObj == null){
 			columnObj = new ColumnImpl(this);
 			columns.put(columnIdx, columnObj);
-			columnsReverse.put(columnObj, columnIdx);
 		}
 		return columnObj;
 	}
 	
 	int getColumnIndex(ColumnImpl column){
-		Integer index = columnsReverse.get(column);
-		return index==null?-1:index.intValue();
+		return columns.get(column);
 	}
 
 	public NCell getCell(int rowIdx, int columnIdx) {
@@ -119,23 +112,19 @@ public class SheetImpl implements NSheet {
 	}
 
 	public int getStartRowIndex() {
-		Integer k = rows.isEmpty()?null:rows.firstKey();
-		return k==null?-1:k.intValue();
+		return rows.firstKey();
 	}
 
 	public int getEndRowIndex() {
-		Integer k = rows.isEmpty()?null:rows.lastKey();
-		return k==null?-1:k.intValue();
+		return rows.lastKey();
 	}
 	
 	public int getStartColumnIndex() {
-		Integer k = columns.isEmpty()?null:columns.firstKey();
-		return k==null?-1:k.intValue();
+		return columns.firstKey();
 	}
 
 	public int getEndColumnIndex() {
-		Integer k = columns.isEmpty()?null:columns.lastKey();
-		return k==null?-1:k.intValue();
+		return columns.lastKey();
 	}
 
 	public int getStartColumnIndex(int row) {
@@ -173,35 +162,9 @@ public class SheetImpl implements NSheet {
 	public void clearRow(int rowIdx, int rowIdx2) {
 		int start = Math.max(Math.min(rowIdx, rowIdx2),getStartRowIndex());
 		int end = Math.min(Math.max(rowIdx, rowIdx2),getEndRowIndex());
+				
+		rows.clear(start,end);
 		
-		
-		NavigableMap<Integer, RowImpl> effected = rows.subMap(start,true,end,true);
-		
-		Iterator<RowImpl> iter = effected.values().iterator();
-		while(iter.hasNext()){
-			rowsReverse.remove(iter.next());
-			iter.remove();
-		}
-		
-		
-//		//loop from start to end, or from iteration? which one is better?
-//		if( end-start > rows.size() ){
-//			Iterator<Integer> iter = rows.keySet().iterator();
-//			while(iter.hasNext()){
-//				int idx = iter.next();
-//				if(idx>=start && idx<=end){
-//					rowsReverse.remove(rows.get(idx));
-//					iter.remove();
-//				}
-//			}
-//		}else{
-//			for(int i=start;i<=end;i++){
-//				RowImpl row = rows.remove(i);
-//				if(row!=null){
-//					rowsReverse.remove(row);
-//				}
-//			}
-//		}
 		//Send event?
 		
 	}
@@ -210,32 +173,7 @@ public class SheetImpl implements NSheet {
 		int start = Math.max(Math.min(columnIdx, columnIdx2),getStartColumnIndex());
 		int end = Math.min(Math.max(columnIdx, columnIdx2),getEndColumnIndex());
 		
-		NavigableMap<Integer, ColumnImpl> effected = columns.subMap(start,true,end,true);
-		
-		Iterator<ColumnImpl> iter = effected.values().iterator();
-		while(iter.hasNext()){
-			columnsReverse.remove(iter.next());
-			iter.remove();
-		}
-		
-		//loop from start to end, or from iteration? which one is better?
-//		if( end-start > columns.size() ){
-//			Iterator<Integer> iter = columns.keySet().iterator();
-//			while(iter.hasNext()){
-//				int idx = iter.next();
-//				if(idx>=start && idx<=end){
-//					columnsReverse.remove(columns.get(idx));
-//					iter.remove();
-//				}
-//			}
-//		}else{
-//			for(int i=start;i<=end;i++){
-//				ColumnImpl col = columns.remove(i);
-//				if(col!=null){
-//					columnsReverse.remove(col);
-//				}
-//			}
-//		}
+		columns.clear(start,end);
 		
 		for(RowImpl row:rows.values()){
 			row.clearCell(start,end);
@@ -251,33 +189,12 @@ public class SheetImpl implements NSheet {
 		int columnStart = Math.max(Math.min(columnIdx, columnIdx2),getStartColumnIndex());
 		int columnEnd = Math.min(Math.max(columnIdx, columnIdx2),getEndColumnIndex());
 		
-		NavigableMap<Integer, RowImpl> effected = rows.subMap(rowStart,true,rowEnd,true);
+		Collection<RowImpl> effected = rows.subValues(rowStart,rowEnd);
 		
-		Iterator<RowImpl> iter = effected.values().iterator();
+		Iterator<RowImpl> iter = effected.iterator();
 		while(iter.hasNext()){
 			iter.next().clearCell(columnStart, columnEnd);
 		}
-		
-		
-		//loop from start to end, or from iteration? which one is better?
-//		if( rowEnd- rowStart > rows.size() ){
-//			Iterator<Entry<Integer,RowImpl>> iter = rows.entrySet().iterator();
-//			while(iter.hasNext()){
-//				Entry<Integer,RowImpl> entry = iter.next();
-//				int idx = entry.getKey();
-//				if(idx>=rowStart && idx<=rowEnd){
-//					entry.getValue().clearCell(columnStart,columnEnd);
-//				}
-//			}
-//		}else{		
-//			for(int i=rowStart;i<=rowEnd;i++){
-//				RowImpl row = rows.get(i);
-//				if(row!=null){
-//					row.clearCell(columnStart,columnEnd);
-//				}
-//			}
-//		}
-		
 	}
 
 	public void insertRow(int rowIdx, int size) {
@@ -288,22 +205,7 @@ public class SheetImpl implements NSheet {
 		
 		int start = Math.max(rowIdx,getStartRowIndex());
 		
-		//get last, reversed row
-		SortedMap<Integer,RowImpl> effected = rows.descendingMap().headMap(start,true);
-		
-		//shift from the end
-		for(Entry<Integer,RowImpl> entry:new ArrayList<Entry<Integer,RowImpl>>(effected.entrySet())){
-			int idx = entry.getKey();
-			int newidx = idx+size;
-			RowImpl row = entry.getValue();
-			
-			rows.remove(idx);
-			rowsReverse.remove(row);
-			
-			rows.put(newidx, row);
-			rowsReverse.put(row, newidx);
-		}
-		
+		rows.insert(start, size);
 		
 		//Event
 		
@@ -317,22 +219,7 @@ public class SheetImpl implements NSheet {
 		
 		int start = Math.max(rowIdx,getStartRowIndex());
 		
-		//get last row
-		SortedMap<Integer,RowImpl> effected = rows.tailMap(start,true);
-		
-		//shift
-		for(Entry<Integer,RowImpl> entry:new ArrayList<Entry<Integer,RowImpl>>(effected.entrySet())){
-			int idx = entry.getKey();
-			int newidx = idx-size;
-			RowImpl row = entry.getValue();
-			rows.remove(idx);
-			rowsReverse.remove(row);
-			if(newidx>=start){
-				rows.put(newidx, row);
-				rowsReverse.put(row, newidx);
-			}
-		}
-		
+		rows.delete(start, size);
 		
 		//Event
 	}
@@ -387,21 +274,7 @@ public class SheetImpl implements NSheet {
 		
 		int start = Math.max(columnIdx,getStartColumnIndex());
 		
-		//get last, reversed column
-		SortedMap<Integer,ColumnImpl> effected = columns.descendingMap().headMap(start,true);
-		
-		//shift from the end
-		for(Entry<Integer,ColumnImpl> entry:new ArrayList<Entry<Integer,ColumnImpl>>(effected.entrySet())){
-			int idx = entry.getKey();
-			int newidx = idx+size;
-			ColumnImpl column = entry.getValue();
-			
-			columns.remove(idx);
-			columnsReverse.remove(column);
-			
-			columns.put(newidx, column);
-			columnsReverse.put(column, newidx);
-		}
+		columns.insert(start, size);
 		
 		for(RowImpl row:rows.values()){
 			row.insertCell(start,size);
@@ -418,21 +291,8 @@ public class SheetImpl implements NSheet {
 		
 		int start = Math.max(columnIdx,getStartColumnIndex());
 		
-		//get last column
-		SortedMap<Integer,ColumnImpl> effected = columns.tailMap(start,true);
+		columns.delete(start, size);
 		
-		//shift
-		for(Entry<Integer,ColumnImpl> entry:new ArrayList<Entry<Integer,ColumnImpl>>(effected.entrySet())){
-			int idx = entry.getKey();
-			int newidx = idx-size;
-			ColumnImpl column = entry.getValue();
-			columns.remove(idx);
-			columnsReverse.remove(column);
-			if(newidx>=start){
-				columns.put(newidx, column);
-				columnsReverse.put(column, newidx);
-			}
-		}
 		for(RowImpl row:rows.values()){
 			row.deleteCell(start,size);
 		}
