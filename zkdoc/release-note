@@ -1,11 +1,13 @@
  ------------
 ZK Spreadsheet 3.0.1
 *Features:
-  ZSS-511 LEFTB and REPLACEB return #NAME
+  
   
 *Bugs:
   ZSS-510 ApplyDataFormat with "" then getCellFormatText from range will cause IndexOutOfBoundaryException and spreadsheet crash.
   ZSS-515 Delete freeze row then insert a row causes javascript exception
+  ZSS-509 Protecting only selected rows or columns protect ALL empty cells
+  ZSS-519 Do not display background color of empty cells
 
 ** Upgrade Notes
   * Members of BookType of Book are changed from EXCEL_2003,EXCEL_2007 to XLS,XLSX because of Spreadsheet depends on file format not Excel version.

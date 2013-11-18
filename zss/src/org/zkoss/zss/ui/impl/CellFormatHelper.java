@@ -24,6 +24,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.RichTextString;
+import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zss.model.sys.XBook;
@@ -37,10 +38,15 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
  */
 public class CellFormatHelper {
 
-	/*
+	/**
 	 * cell to get the format, could be null.
 	 */
 	private Cell _cell;
+	
+	/**
+	 * cell style, could be null
+	 */
+	private CellStyle _cellStyle;
 
 	private XSheet _sheet;
 	
@@ -61,39 +67,27 @@ public class CellFormatHelper {
 		_row = row;
 		_col = col;
 		_cell = XUtils.getCell(sheet, row, col);
+		_cellStyle = Styles.getCellStyle(_sheet, _row,_col);//get the cell style form it-self, row or column
 		_mmHelper = mmhelper;
 	}
 
 	public String getHtmlStyle() {
 
 		StringBuffer sb = new StringBuffer();
-		if (_cell != null) {
-			final CellStyle style = _cell.getCellStyle();
-			
-			if (style == null)
-				return "";
+		CellStyle style = Styles.getCellStyle(_sheet, _row,_col);
+		if (style == null)
+			return "";
 
-				
-			
-			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
-			//ZSS-34 cell background color does not show in excel
-			//20110819, henrichen: if fill pattern is NO_FILL, shall not show the cell background color
-			String bgColor = style.getFillPattern() != CellStyle.NO_FILL ? 
-				BookHelper.colorToHTML(_book, style.getFillForegroundColorColor()) : null;
-			if (BookHelper.AUTO_COLOR.equals(bgColor)) {
-				bgColor = null;
-			}
-			if (bgColor != null) {
-				sb.append("background-color:").append(bgColor).append(";");
-			}
-			final XFormatText ft = XUtils.getFormatText(_cell);
-			final boolean isRichText = ft.isRichTextString();
-			final RichTextString rstr = isRichText ? ft.getRichTextString() : null;
-			final String txt = rstr != null ? rstr.getString() : ft.getCellFormatResult().text;
-			
-			if(_cell.getCellType() == Cell.CELL_TYPE_BLANK) {
-				sb.append("z-index:-1;"); //For IE6/IE7's overflow
-			}
+		//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
+		//ZSS-34 cell background color does not show in excel
+		//20110819, henrichen: if fill pattern is NO_FILL, shall not show the cell background color
+		String bgColor = style.getFillPattern() != CellStyle.NO_FILL ? 
+			BookHelper.colorToHTML(_book, style.getFillForegroundColorColor()) : null;
+		if (BookHelper.AUTO_COLOR.equals(bgColor)) {
+			bgColor = null;
+		}
+		if (bgColor != null) {
+			sb.append("background-color:").append(bgColor).append(";");
 		}
 
 		processBottomBorder(sb);
@@ -112,32 +106,29 @@ public class CellFormatHelper {
 		MergedRect rect = null;
 		boolean hitMerge = false;
 
-		if (_cell != null) {
-			// ZSS-259: should apply the bottom border from the cell of merged range's bottom
-			// as processRightBorder() does.
-			Cell bottom = _cell;
-			rect = _mmHelper.getMergeRange(_row, _col);
-			if(rect != null) {
-				hitMerge = true;
-				bottom = XUtils.getCell(_sheet, rect.getLastRow(), _col);
-			}
-			if(bottom != null) {
-				CellStyle style = bottom.getCellStyle();
-				if (style != null){
-					int bb = style.getBorderBottom();
-					//String color = BookHelper.indexToRGB(_book, style.getBottomBorderColor());
-					String color = BookHelper.colorToHTML(_book, style.getBottomBorderColorColor());
-					hitBottom = appendBorderStyle(sb, "bottom", bb, color);
-				}
-			}
+		
+		// ZSS-259: should apply the bottom border from the cell of merged range's bottom
+		// as processRightBorder() does.
+		rect = _mmHelper.getMergeRange(_row, _col);
+		int bottom = _row;
+		if(rect != null) {
+			hitMerge = true;
+			bottom = rect.getLastRow();
 		}
+		CellStyle nextStyle = Styles.getCellStyle(_sheet,bottom,_col);
+		
+		if (nextStyle != null){
+			int bb = nextStyle.getBorderBottom();
+			//String color = BookHelper.indexToRGB(_book, style.getBottomBorderColor());
+			String color = BookHelper.colorToHTML(_book, nextStyle.getBottomBorderColorColor());
+			hitBottom = appendBorderStyle(sb, "bottom", bb, color);
+		}
+		
 
 		// ZSS-259: should check and apply the top border from the bottom cell
 		// of merged range's bottom as processRightBorder() does.
-		Cell next = null;
 		if (!hitBottom) {
-			int c = hitMerge ? rect.getLastRow() + 1 : _row + 1; 
-			next = XUtils.getCell(_sheet, c, _col);
+			bottom = hitMerge ? rect.getLastRow() + 1 : _row + 1; 
 			/*if(next == null){ // don't search into merge ranges
 				//check is _row+1,_col in merge range
 				MergedRect rect = _mmHelper.getMergeRange(_row+1, _col);
@@ -145,50 +136,41 @@ public class CellFormatHelper {
 					next = _sheet.getCell(rect.getTop(),rect.getLeft());
 				}
 			}*/
-			if (next != null) {
-				CellStyle style = next.getCellStyle();
-				if (style != null){
-					int bb = style.getBorderTop();// get top border of
-					//String color = BookHelper.indexToRGB(_book, style.getTopBorderColor());
-					String color = BookHelper.colorToHTML(_book, style.getTopBorderColorColor());
-					// set next row top border as cell's bottom border;
-					hitBottom = appendBorderStyle(sb, "bottom", bb, color);
-				}
+			nextStyle = Styles.getCellStyle(_sheet,bottom,_col);
+			if (nextStyle != null){
+				int bb = nextStyle.getBorderTop();// get top border of
+				//String color = BookHelper.indexToRGB(_book, style.getTopBorderColor());
+				String color = BookHelper.colorToHTML(_book, nextStyle.getTopBorderColorColor());
+				// set next row top border as cell's bottom border;
+				hitBottom = appendBorderStyle(sb, "bottom", bb, color);
 			}
 		}
 		
-		//border depends on next cell's background color
-		if(!hitBottom && next !=null){
-			CellStyle style = next.getCellStyle();
-			if (style != null){
-				//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
-				//ZSS-34 cell background color does not show in excel
-				String bgColor = style.getFillPattern() != CellStyle.NO_FILL ? 
-						BookHelper.colorToHTML(_book, style.getFillForegroundColorColor()) : null;
-				if (BookHelper.AUTO_COLOR.equals(bgColor)) {
-					bgColor = null;
-				}
-				if (bgColor != null) {
-					hitBottom = appendBorderStyle(sb, "bottom", CellStyle.BORDER_THIN, bgColor);
-				}
+		//border depends on next cell's background color (why? dennis, 20131118)
+		if(!hitBottom && nextStyle !=null){
+			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
+			//ZSS-34 cell background color does not show in excel
+			String bgColor = nextStyle.getFillPattern() != CellStyle.NO_FILL ? 
+					BookHelper.colorToHTML(_book, nextStyle.getFillForegroundColorColor()) : null;
+			if (BookHelper.AUTO_COLOR.equals(bgColor)) {
+				bgColor = null;
+			}
+			if (bgColor != null) {
+				hitBottom = appendBorderStyle(sb, "bottom", CellStyle.BORDER_THIN, bgColor);
 			}
 		}
 		
 		//border depends on current cell's background color
-		if(!hitBottom && _cell !=null){
-			CellStyle style = _cell.getCellStyle();
-			
-			if (style != null){
-				//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
-				//ZSS-34 cell background color does not show in excel
-				String bgColor = style.getFillPattern() != CellStyle.NO_FILL ? 
-						BookHelper.colorToHTML(_book, style.getFillForegroundColorColor()) : null;
-				if (BookHelper.AUTO_COLOR.equals(bgColor)) {
-					bgColor = null;
-				}
-				if (bgColor != null) {
-					hitBottom = appendBorderStyle(sb, "bottom", CellStyle.BORDER_THIN, bgColor);
-				}
+		if(!hitBottom && _cellStyle !=null){
+			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
+			//ZSS-34 cell background color does not show in excel
+			String bgColor = _cellStyle.getFillPattern() != CellStyle.NO_FILL ? 
+					BookHelper.colorToHTML(_book, _cellStyle.getFillForegroundColorColor()) : null;
+			if (BookHelper.AUTO_COLOR.equals(bgColor)) {
+				bgColor = null;
+			}
+			if (bgColor != null) {
+				hitBottom = appendBorderStyle(sb, "bottom", CellStyle.BORDER_THIN, bgColor);
 			}
 		}
 		
@@ -200,75 +182,61 @@ public class CellFormatHelper {
 		MergedRect rect=null;
 		boolean hitMerge = false;
 		//find right border of target cell 
-		if (_cell != null) {
-			Cell right = _cell;
-			rect = _mmHelper.getMergeRange(_row, _col);
-			if(rect!=null){
-				hitMerge = true;
-				right = XUtils.getCell(_sheet, _row, rect.getLastColumn());
-			}
-			if (right != null) {
-				CellStyle style = right.getCellStyle();
-				if (style != null){
-					int bb = style.getBorderRight();
-					//String color = BookHelper.indexToRGB(_book, style.getRightBorderColor());
-					String color = BookHelper.colorToHTML(_book, style.getRightBorderColorColor());
-					hitRight = appendBorderStyle(sb, "right", bb, color);
-				}
-			}
+		rect = _mmHelper.getMergeRange(_row, _col);
+		int right = _col;
+		if(rect!=null){
+			hitMerge = true;
+			right = rect.getLastColumn();
+		}
+		CellStyle nextStyle = Styles.getCellStyle(_sheet,_row,right);
+		if (nextStyle != null){
+			int bb = nextStyle.getBorderRight();
+			//String color = BookHelper.indexToRGB(_book, style.getRightBorderColor());
+			String color = BookHelper.colorToHTML(_book, nextStyle.getRightBorderColorColor());
+			hitRight = appendBorderStyle(sb, "right", bb, color);
 		}
 
-		Cell next = null;
+		
 		//if no border for target cell,then check is this cell in a merge range
 		//if(true) then try to get next cell after this merge range
 		//else get next cell of this cell
 		if(!hitRight){
-			int c = hitMerge?rect.getLastColumn()+1:_col+1;
-			next = XUtils.getCell(_sheet, _row, c);
-			//find the right cell of merge range.
-			if(next!=null){
-				CellStyle style = next.getCellStyle();
-				if (style != null){
-					int bb = style.getBorderLeft();//get left here
-					//String color = BookHelper.indexToRGB(_book, style.getLeftBorderColor());
-					// ZSS-34 cell background color does not show in excel
-					String color = BookHelper.colorToHTML(_book, style.getLeftBorderColorColor());
-					hitRight = appendBorderStyle(sb, "right", bb, color);
-				}
+			right = hitMerge?rect.getLastColumn()+1:_col+1;
+			nextStyle = Styles.getCellStyle(_sheet,_row,right);
+			if (nextStyle != null){
+				int bb = nextStyle.getBorderLeft();//get left here
+				//String color = BookHelper.indexToRGB(_book, style.getLeftBorderColor());
+				// ZSS-34 cell background color does not show in excel
+				String color = BookHelper.colorToHTML(_book, nextStyle.getLeftBorderColorColor());
+				hitRight = appendBorderStyle(sb, "right", bb, color);
 			}
 		}
 
-		//border depends on next cell's background color
-		if(!hitRight && next !=null){
-			CellStyle style = next.getCellStyle();
-			if (style != null){
-				//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
-				//ZSS-34 cell background color does not show in excel
-				String bgColor = style.getFillPattern() != CellStyle.NO_FILL ? 
-						BookHelper.colorToHTML(_book, style.getFillForegroundColorColor()) : null;
-				if (BookHelper.AUTO_COLOR.equals(bgColor)) {
-					bgColor = null;
-				}
-				
-				if (bgColor != null) {
-					hitRight = appendBorderStyle(sb, "right", CellStyle.BORDER_THIN, bgColor);
-				}
+		//border depends on next cell's background color (why? dennis, 20131118)
+		if(!hitRight && nextStyle !=null){
+			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
+			//ZSS-34 cell background color does not show in excel
+			String bgColor = nextStyle.getFillPattern() != CellStyle.NO_FILL ? 
+					BookHelper.colorToHTML(_book, nextStyle.getFillForegroundColorColor()) : null;
+			if (BookHelper.AUTO_COLOR.equals(bgColor)) {
+				bgColor = null;
+			}
+			
+			if (bgColor != null) {
+				hitRight = appendBorderStyle(sb, "right", CellStyle.BORDER_THIN, bgColor);
 			}
 		}
 		//border depends on current cell's background color
-		if(!hitRight && _cell !=null){
-			CellStyle style = _cell.getCellStyle();
-			if (style != null){
-				//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
-				//ZSS-34 cell background color does not show in excel
-				String bgColor = style.getFillPattern() != CellStyle.NO_FILL ? 
-						BookHelper.colorToHTML(_book, style.getFillForegroundColorColor()) : null;
-				if (BookHelper.AUTO_COLOR.equals(bgColor)) {
-					bgColor = null;
-				}
-				if (bgColor != null) {
-					hitRight = appendBorderStyle(sb, "right", CellStyle.BORDER_THIN, bgColor);
-				}
+		if(!hitRight && _cellStyle !=null){
+			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
+			//ZSS-34 cell background color does not show in excel
+			String bgColor = _cellStyle.getFillPattern() != CellStyle.NO_FILL ? 
+					BookHelper.colorToHTML(_book, _cellStyle.getFillForegroundColorColor()) : null;
+			if (BookHelper.AUTO_COLOR.equals(bgColor)) {
+				bgColor = null;
+			}
+			if (bgColor != null) {
+				hitRight = appendBorderStyle(sb, "right", CellStyle.BORDER_THIN, bgColor);
 			}
 		}
 		
@@ -306,16 +274,13 @@ public class CellFormatHelper {
 	}
 
 	public String getInnerHtmlStyle() {
-		if (_cell != null) {
-			CellStyle style = _cell.getCellStyle();
-			if (style == null)
-				return "";
+		if (_cell != null && _cellStyle!=null) {
 			
 			final StringBuffer sb = new StringBuffer();
 			sb.append(BookHelper.getTextCSSStyle(_book, _cell));
 			
 			//vertical alignment
-			int verticalAlignment = style.getVerticalAlignment();
+			int verticalAlignment = _cellStyle.getVerticalAlignment();
 			sb.append("display: table-cell;");
 			switch (verticalAlignment) {
 			case CellStyle.VERTICAL_TOP:
@@ -329,7 +294,7 @@ public class CellFormatHelper {
 				break;
 			}
 			
-			final Font font = _book.getFontAt(style.getFontIndex());
+			final Font font = _book.getFontAt(_cellStyle.getFontIndex());
 			
 			//sb.append(BookHelper.getFontCSSStyle(_book, font));
 			sb.append(BookHelper.getFontCSSStyle(_cell, font));

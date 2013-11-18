@@ -1,0 +1,9 @@
+<zk>
+<label multiline="true">
+1.row 6 is green row and under red column D and G
+2. row 11 is green row and under red column G, but above red column D
+</label>
+	<spreadsheet src="/issue3/book/519-blankBackground2.xlsx" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
+		height="80%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true"/>
+</zk>

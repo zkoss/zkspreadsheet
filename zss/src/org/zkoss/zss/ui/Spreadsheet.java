@@ -144,6 +144,7 @@ import org.zkoss.zss.ui.impl.MergedRect;
 import org.zkoss.zss.ui.impl.SequenceId;
 import org.zkoss.zss.ui.impl.SimpleCellDisplayLoader;
 import org.zkoss.zss.ui.impl.StringAggregation;
+import org.zkoss.zss.ui.impl.Styles;
 import org.zkoss.zss.ui.impl.XUtils;
 import org.zkoss.zss.ui.sys.CellDisplayLoader;
 import org.zkoss.zss.ui.sys.FreezeInfoLoader;
@@ -3196,7 +3197,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (updateSize) {
 				if (cell != null) {
 					//process overflow when cell type is string, halign is left, no wrap, no merge
-					CellStyle cellStyle = cell.getCellStyle();
+					CellStyle cellStyle = Styles.getCellStyle(sheet, cell);
 					if (cell.getCellType() == Cell.CELL_TYPE_STRING && 
 						mergeIndex == null && !cellStyle.getWrapText() &&
 						BookHelper.getRealAlignment(cell) == CellStyle.ALIGN_LEFT) {
@@ -3220,7 +3221,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 					}
 				}
 			}
-			
+			CellStyle cellStyle = Styles.getCellStyle(sheet, row, col);
 			//style attr
 			if (updateStyle) {
 				CellFormatHelper cfh = new CellFormatHelper(sheet, row, col, getMergeMatrixHelper(sheet));
@@ -3237,6 +3238,11 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				if (cfh.hasRightBorder()) {
 					attrs.put("rb", 1); 
 				}
+				
+				//ZSS509, handling lock info even cell is null ( lock in row,column style)
+				boolean locked = cellStyle.getLocked();
+				if (!locked)
+					attrs.put("l", "f"); //f stand for "false"
 			}
 			
 			if (cell != null) {
@@ -3262,11 +3268,6 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 				}
 				
 				if (updateStyle) {
-					CellStyle cellStyle = cell.getCellStyle();
-					boolean locked = cellStyle.getLocked();
-					if (!locked)
-						attrs.put("l", "f"); //f stand for "false"
-					
 					boolean wrap = cellStyle.getWrapText();
 					if (wrap)
 						attrs.put("wp", 1);
