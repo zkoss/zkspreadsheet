@@ -649,7 +649,7 @@ public final class BookHelper {
 	}
 	
 	public static String getTextCSSStyle(XBook book, Cell cell) {
-		final CellStyle style = cell.getCellStyle();
+		final CellStyle style = Styles.getCellStyle(cell);
 		if (style == null)
 			return "";
 
@@ -684,7 +684,7 @@ public final class BookHelper {
 	/* given alignment and cell type, return real alignment */
 	//Halignment determined by style alignment, text format and value type  
 	public static int getRealAlignment(Cell cell) {
-		CellStyle style = cell.getCellStyle();
+		CellStyle style = Styles.getCellStyle(cell);
 		int type = cell.getCellType();
 		int align = style.getAlignment();
 		if (align == CellStyle.ALIGN_GENERAL) {
@@ -1068,7 +1068,7 @@ public final class BookHelper {
 	}
 	public static FormatTextImpl getFormatText(Cell cell) {
 		int cellType = cell.getCellType();
-        final String formatStr = cell.getCellStyle().getDataFormatString();
+        final String formatStr = Styles.getCellStyle(cell).getDataFormatString();
 		if (cellType == Cell.CELL_TYPE_FORMULA) {
 			final XBook book = (XBook)cell.getSheet().getWorkbook();
 			final CellValue cv = BookHelper.evaluate(book, cell);
@@ -1443,7 +1443,7 @@ public final class BookHelper {
 	public static Object[] editTextToValue(String txt, Cell cell) {
 		if (txt != null) {
 			final String formatStr = cell == null ? 
-					null : cell.getCellStyle().getDataFormatString();
+					null : Styles.getCellStyle(cell).getDataFormatString();
 			return editTextToValue(txt, formatStr);
 		}
 		return null;
@@ -1549,7 +1549,7 @@ public final class BookHelper {
 		//TODO now assume same workbook in copying CellStyle.
 		if ((pasteType & XRange.PASTE_FORMATS) == BookHelper.INNERPASTE_NUMBER_FORMATS) { //number format only
 			final CellStyle style = dstCell.getSheet().getWorkbook().createCellStyle();
-			final CellStyle dstStyle = dstCell.getCellStyle();
+			final CellStyle dstStyle = Styles.getCellStyle(dstCell);
 			style.cloneStyleFrom(dstStyle);
 			final short fmt = srcStyle.getDataFormat();
 			style.setDataFormat(fmt);
@@ -1557,7 +1557,7 @@ public final class BookHelper {
 		}
 		if ((pasteType & BookHelper.INNERPASTE_BORDERS) == 0) { //no border
 			final CellStyle newStyle = dstCell.getSheet().getWorkbook().createCellStyle();
-			final CellStyle dstStyle = dstCell.getCellStyle();
+			final CellStyle dstStyle = Styles.getCellStyle(dstCell);
 			
 			final short borderLeft = dstStyle.getBorderLeft();
 			final short borderTop = dstStyle.getBorderTop();
@@ -1716,7 +1716,7 @@ public final class BookHelper {
 		final ChangeInfo changeInfo = new ChangeInfo(toEval, affected, mergeChanges);
 		//paste cell formats
 		if ((pasteType & BookHelper.INNERPASTE_FORMATS) != 0) {
-			dstCell.setCellStyle(prepareCellStyle(srcCell.getCellStyle(), dstCell, pasteType));
+			dstCell.setCellStyle(prepareCellStyle(Styles.getCellStyle(srcCell), dstCell, pasteType));
 			//handle merge/unmerge cases
 			final int dstrow = dstCell.getRowIndex();
 			final int dstcol = dstCell.getColumnIndex();
@@ -3087,7 +3087,7 @@ public final class BookHelper {
 	}
 	
 	public static Font getFont(Cell cell) {
-		final CellStyle style = cell.getCellStyle();
+		final CellStyle style = Styles.getCellStyle(cell);
 		final short fontIdx = style.getFontIndex();
 		return cell.getSheet().getWorkbook().getFontAt(fontIdx);
 	}
@@ -3352,7 +3352,7 @@ public final class BookHelper {
 					final Cell cell = row.getCell(c);
 					if(cell!=null){
 						//ZSS-410 get NPE in 2003, should set to default, don't set null
-						CellStyle defstyle = sheet.getBook().getCellStyleAt((short)0);
+						CellStyle defstyle = Styles.getDefaultCellStyle(sheet);
 						cell.setCellStyle(defstyle);
 					}
 				}

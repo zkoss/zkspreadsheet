@@ -23,6 +23,7 @@ import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.api.Ranges;
@@ -40,14 +41,14 @@ public class Styles {
 	
 	public static CellStyle cloneCellStyle(Cell cell) {
 		final CellStyle destination = cell.getSheet().getWorkbook().createCellStyle();
-		destination.cloneStyleFrom(Styles.getCellStyle((XSheet)cell.getSheet(),cell));
+		destination.cloneStyleFrom(Styles.getCellStyle(cell));
 		return destination;
 	}
 	
 	public static void setFontColor(XSheet sheet, int row, int col, String color){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final short fontIdx = Styles.getCellStyle((XSheet)cell.getSheet(),cell).getFontIndex();
+		final short fontIdx = Styles.getCellStyle(cell).getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final Color orgColor = BookHelper.getFontColor(book, font);
 		final Color newColor = BookHelper.HTMLToColor(book, color);
@@ -65,7 +66,7 @@ public class Styles {
 		
 		CellStyle style = null;
 		if(Boolean.FALSE.equals(newFont[1])){//search it since we have existed font
-			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle((XSheet)cell.getSheet(),cell));
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle(cell));
 			matcher.setFontIndex(((Font)newFont[0]).getIndex());
 			style = findStyle(sheet.getBook(), matcher);
 		}
@@ -80,13 +81,13 @@ public class Styles {
 	public static void setFillColor(XSheet sheet, int row, int col, String htmlColor){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final Color orgColor = Styles.getCellStyle((XSheet)cell.getSheet(),cell).getFillForegroundColorColor();
+		final Color orgColor = Styles.getCellStyle(cell).getFillForegroundColorColor();
 		final Color newColor = BookHelper.HTMLToColor(book, htmlColor);
 		if (orgColor == newColor || orgColor != null  && orgColor.equals(newColor)) { //no change, skip
 			return;
 		}
 		
-		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle((XSheet)cell.getSheet(),cell));
+		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle(cell));
 		matcher.setFillForegroundColor(htmlColor);
 		matcher.setFillPattern(CellStyle.SOLID_FOREGROUND);
 		CellStyle style = findStyle(sheet.getBook(), matcher);
@@ -100,12 +101,12 @@ public class Styles {
 	
 	public static void setTextWrap(XSheet sheet,int row,int col,boolean wrap){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
-		final boolean textWrap = Styles.getCellStyle((XSheet)cell.getSheet(),cell).getWrapText();
+		final boolean textWrap = Styles.getCellStyle(cell).getWrapText();
 		if (wrap == textWrap) { //no change, skip
 			return;
 		}
 		
-		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle((XSheet)cell.getSheet(),cell));
+		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle(cell));
 		matcher.setWrapText(wrap);
 		CellStyle style = findStyle(sheet.getBook(), matcher);
 		if(style==null){
@@ -118,7 +119,7 @@ public class Styles {
 	public static void setFontHeight(XSheet sheet,int row,int col,int fontHeight){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final short fontIdx = Styles.getCellStyle((XSheet)cell.getSheet(),cell).getFontIndex();
+		final short fontIdx = Styles.getCellStyle(cell).getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final short orgSize = font.getFontHeight();
 		if (orgSize == fontHeight) { //no change, skip
@@ -135,7 +136,7 @@ public class Styles {
 		
 		CellStyle style = null;
 		if(Boolean.FALSE.equals(newFont[1])){//search it since we have existed font
-			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle((XSheet)cell.getSheet(),cell));
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle(cell));
 			matcher.setFontIndex(((Font)newFont[0]).getIndex());
 			style = findStyle(sheet.getBook(), matcher);
 		}
@@ -150,7 +151,7 @@ public class Styles {
 	public static void setFontStrikethrough(XSheet sheet,int row,int col, boolean strikeout){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final short fontIdx = Styles.getCellStyle((XSheet)cell.getSheet(),cell).getFontIndex();
+		final short fontIdx = Styles.getCellStyle(cell).getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final boolean orgStrikeout = font.getStrikeout();
 		if (orgStrikeout == strikeout) { //no change, skip
@@ -167,7 +168,7 @@ public class Styles {
 		
 		CellStyle style = null;
 		if(Boolean.FALSE.equals(newFont[1])){//search it since we have existed font
-			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle((XSheet)cell.getSheet(),cell));
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle(cell));
 			matcher.setFontIndex(((Font)newFont[0]).getIndex());
 			style = findStyle(sheet.getBook(), matcher);
 		}
@@ -182,7 +183,7 @@ public class Styles {
 	public static void setFontName(XSheet sheet,int row,int col,String name){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final short fontIdx = Styles.getCellStyle((XSheet)cell.getSheet(),cell).getFontIndex();
+		final short fontIdx = Styles.getCellStyle(cell).getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final String orgName = font.getFontName();
 		if (orgName.equals(name)) { //no change, skip
@@ -199,7 +200,7 @@ public class Styles {
 
 		CellStyle style = null;
 		if(Boolean.FALSE.equals(newFont[1])){//search it since we have existed font
-			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle((XSheet)cell.getSheet(),cell));
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle(cell));
 			matcher.setFontIndex(((Font)newFont[0]).getIndex());
 			style = findStyle(sheet.getBook(), matcher);
 		}
@@ -257,7 +258,7 @@ public class Styles {
 		CellStyle style = null;
 		boolean hasBorder = lineStyle != CellStyle.BORDER_NONE;
 		if(colorHtml!=null){
-			final CellStyle oldstyle = Styles.getCellStyle((XSheet)cell.getSheet(),cell);
+			final CellStyle oldstyle = Styles.getCellStyle(cell);
 			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),oldstyle);
 			if((at & BookHelper.BORDER_EDGE_LEFT)!=0) {
 				if(hasBorder)
@@ -346,7 +347,7 @@ public class Styles {
 	public static void setFontBoldWeight(XSheet sheet,int row,int col,short boldWeight){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final short fontIdx = Styles.getCellStyle((XSheet)cell.getSheet(),cell).getFontIndex();
+		final short fontIdx = Styles.getCellStyle(cell).getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final short orgBoldWeight = font.getBoldweight();
 		if (orgBoldWeight == boldWeight) { //no change, skip
@@ -363,7 +364,7 @@ public class Styles {
 		
 		CellStyle style = null;
 		if(Boolean.FALSE.equals(newFont[1])){//search it since we have existed font
-			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle((XSheet)cell.getSheet(),cell));
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle(cell));
 			matcher.setFontIndex(((Font)newFont[0]).getIndex());
 			style = findStyle(sheet.getBook(), matcher);
 		}
@@ -378,7 +379,7 @@ public class Styles {
 	public static void setFontItalic(XSheet sheet, int row, int col, boolean italic) {
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final short fontIdx = Styles.getCellStyle((XSheet)cell.getSheet(),cell).getFontIndex();
+		final short fontIdx = Styles.getCellStyle(cell).getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final boolean orgItalic = font.getItalic();
 		if (orgItalic == italic) { //no change, skip
@@ -395,7 +396,7 @@ public class Styles {
 		
 		CellStyle style = null;
 		if(Boolean.FALSE.equals(newFont[1])){//search it since we have existed font
-			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle((XSheet)cell.getSheet(),cell));
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle(cell));
 			matcher.setFontIndex(((Font)newFont[0]).getIndex());
 			style = findStyle(sheet.getBook(), matcher);
 		}
@@ -410,7 +411,7 @@ public class Styles {
 	public static void setFontUnderline(XSheet sheet,int row,int col, byte underline){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final short fontIdx = Styles.getCellStyle((XSheet)cell.getSheet(),cell).getFontIndex();
+		final short fontIdx = Styles.getCellStyle(cell).getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final byte orgUnderline = font.getUnderline();
 		if (orgUnderline == underline) { //no change, skip
@@ -427,7 +428,7 @@ public class Styles {
 		
 		CellStyle style = null;
 		if(Boolean.FALSE.equals(newFont[1])){//search it since we have existed font
-			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle((XSheet)cell.getSheet(),cell));
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle(cell));
 			matcher.setFontIndex(((Font)newFont[0]).getIndex());
 			style = findStyle(sheet.getBook(), matcher);
 		}
@@ -441,11 +442,11 @@ public class Styles {
 	
 	public static void setTextHAlign(XSheet sheet,int row,int col, short align){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
-		final short orgAlign = Styles.getCellStyle((XSheet)cell.getSheet(),cell).getAlignment();
+		final short orgAlign = Styles.getCellStyle(cell).getAlignment();
 		if (align == orgAlign) { //no change, skip
 			return;
 		}
-		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle((XSheet)cell.getSheet(),cell));
+		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle(cell));
 		matcher.setAlignment(align);
 		CellStyle style = findStyle(sheet.getBook(), matcher);
 		if(style==null){
@@ -457,11 +458,11 @@ public class Styles {
 	
 	public static void setTextVAlign(XSheet sheet,int row,int col, short valign){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
-		final short orgValign = Styles.getCellStyle((XSheet)cell.getSheet(),cell).getVerticalAlignment();
+		final short orgValign = Styles.getCellStyle(cell).getVerticalAlignment();
 		if (valign == orgValign) { //no change, skip
 			return;
 		}
-		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle((XSheet)cell.getSheet(),cell));
+		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle(cell));
 		matcher.setVerticalAlignment(valign);
 		CellStyle style = findStyle(sheet.getBook(), matcher);
 		if(style==null){
@@ -473,7 +474,7 @@ public class Styles {
 
 	public static void setDataFormat(XSheet sheet, int row, int col, String format) {
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
-		final String orgFormat = Styles.getCellStyle((XSheet)cell.getSheet(),cell).getDataFormatString();
+		final String orgFormat = Styles.getCellStyle(cell).getDataFormatString();
 		if (format == orgFormat || (format!=null && format.equals(orgFormat))) { //no change, skip
 			return;
 		}
@@ -481,7 +482,7 @@ public class Styles {
 		// ZSS-510, when formatStr is null or empty, it should be assigned as "General" format.
 		short idx = sheet.getBook().createDataFormat().getFormat(format == null || format.equals("") ? "General" : format);
 		
-		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle((XSheet)cell.getSheet(),cell));
+		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle(cell));
 		matcher.setDataFormat(idx);
 		CellStyle style = findStyle(sheet.getBook(), matcher);
 		if(style==null){
@@ -491,35 +492,50 @@ public class Styles {
 		cell.setCellStyle(style);
 		
 	}
-	public static CellStyle getCellStyle(XSheet sheet, Cell cell){
+	
+	public static boolean isDefaultStyle(Sheet sheet, CellStyle style){
+		
+//		CellStyle defaultStyle = sheet.getBook().getCellStyleAt((short)0);
+//		return defaultStyle.equals(style);
+		
+		//in xssf, it use toString.equals() which is performance is bad
+		//Instated, I just check it's index is 0
+		return style!=null && style.getIndex() == 0;
+	}
+	
+	public static CellStyle getCellStyle(Cell cell){
+		XSheet sheet = (XSheet)cell.getSheet();
 		//current poi implementation always return default style if the cell doesn't has style
 		CellStyle cellStyle = cell.getCellStyle();
-		CellStyle defaultStyle = sheet.getBook().getCellStyleAt((short)0);
-		if(cellStyle==null || cellStyle.equals(defaultStyle)){
+		
+		if(cellStyle==null || isDefaultStyle(sheet,cellStyle)){
 			cellStyle = cell.getRow().getRowStyle();
 		}
-		if(cellStyle==null || cellStyle.equals(defaultStyle)){
+		if(cellStyle==null || isDefaultStyle(sheet,cellStyle)){
 			cellStyle = sheet.getColumnStyle(cell.getColumnIndex());
 		}
-		return cellStyle!=null?cellStyle:defaultStyle;
+		return cellStyle!=null?cellStyle: sheet.getBook().getCellStyleAt((short)0);
 	}
-	public static CellStyle getCellStyle(XSheet sheet, int row, int column){
+	public static CellStyle getCellStyle(Sheet sheet, int row, int column){
 		Row rowObj = sheet.getRow(row);
-		CellStyle defaultStyle = sheet.getBook().getCellStyleAt((short)0);
 		CellStyle cellStyle = null;
 		if(rowObj!=null){
 			Cell cell = rowObj.getCell(column);
 			if(cell!=null){
 				cellStyle = cell.getCellStyle(); 
 			}
-			if(cellStyle==null || cellStyle.equals(defaultStyle)){
+			if(cellStyle==null || isDefaultStyle(sheet,cellStyle)){
 				cellStyle = rowObj.getRowStyle();
 			}
 		}
-		if(cellStyle==null || cellStyle.equals(defaultStyle)){
+		if(cellStyle==null || isDefaultStyle(sheet,cellStyle)){
 			cellStyle = sheet.getColumnStyle(column);
 		}
 		
-		return cellStyle!=null?cellStyle:defaultStyle;
+		return cellStyle!=null?cellStyle: sheet.getWorkbook().getCellStyleAt((short)0);
+	}
+
+	public static CellStyle getDefaultCellStyle(Sheet sheet) {
+		return sheet.getWorkbook().getCellStyleAt((short)0);
 	}
 }

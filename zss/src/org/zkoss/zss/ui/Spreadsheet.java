@@ -3197,7 +3197,7 @@ public class Spreadsheet extends XulElement implements Serializable, AfterCompos
 			if (updateSize) {
 				if (cell != null) {
 					//process overflow when cell type is string, halign is left, no wrap, no merge
-					CellStyle cellStyle = Styles.getCellStyle(sheet, cell);
+					CellStyle cellStyle = Styles.getCellStyle(cell);
 					if (cell.getCellType() == Cell.CELL_TYPE_STRING && 
 						mergeIndex == null && !cellStyle.getWrapText() &&
 						BookHelper.getRealAlignment(cell) == CellStyle.ALIGN_LEFT) {
