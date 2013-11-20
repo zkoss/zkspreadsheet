@@ -18,6 +18,8 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
+import java.util.HashMap;
+
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Color;
@@ -45,16 +47,24 @@ public class Styles {
 		return destination;
 	}
 	
-	public static void setFontColor(XSheet sheet, int row, int col, String color){
+	public static void setFontColor(XSheet sheet, int row, int col, String color,HashMap<Integer,CellStyle> cache){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final short fontIdx = Styles.getCellStyle(cell).getFontIndex();
+		final CellStyle orgStyle = Styles.getCellStyle(cell);
+		final short fontIdx = orgStyle.getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final Color orgColor = BookHelper.getFontColor(book, font);
 		final Color newColor = BookHelper.HTMLToColor(book, color);
 		if (orgColor == newColor || orgColor != null && orgColor.equals(newColor)) {
 			return;
 		}
+		
+		CellStyle hitStyle = cache==null?null:cache.get((int)orgStyle.getIndex());
+		if(hitStyle!=null){
+			cell.setCellStyle(hitStyle);
+			return;
+		}
+		
 		final short boldWeight = font.getBoldweight();
 		final short fontHeight = font.getFontHeight();
 		final String name = font.getFontName();
@@ -76,14 +86,29 @@ public class Styles {
 			style.setFont(((Font)newFont[0]));
 		}
 		cell.setCellStyle(style);
+		
+		if(cache!=null){
+			cache.put((int)orgStyle.getIndex(), style);
+		}
 	}
 	
-	public static void setFillColor(XSheet sheet, int row, int col, String htmlColor){
+	/**
+	 * 
+	 * @param cache the cache of <original style id, new style to replace>
+	 */
+	public static void setFillColor(XSheet sheet, int row, int col, String htmlColor,HashMap<Integer,CellStyle> cache){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final Color orgColor = Styles.getCellStyle(cell).getFillForegroundColorColor();
+		final CellStyle orgStyle = Styles.getCellStyle(cell);
+		final Color orgColor = orgStyle.getFillForegroundColorColor();
 		final Color newColor = BookHelper.HTMLToColor(book, htmlColor);
 		if (orgColor == newColor || orgColor != null  && orgColor.equals(newColor)) { //no change, skip
+			return;
+		}
+		
+		CellStyle hitStyle = cache==null?null:cache.get((int)orgStyle.getIndex());
+		if(hitStyle!=null){
+			cell.setCellStyle(hitStyle);
 			return;
 		}
 		
@@ -97,12 +122,23 @@ public class Styles {
 			BookHelper.setFillForegroundColor(style, newColor);
 		}
 		cell.setCellStyle(style);
+		
+		if(cache!=null){
+			cache.put((int)orgStyle.getIndex(), style);
+		}
+		
 	}
 	
-	public static void setTextWrap(XSheet sheet,int row,int col,boolean wrap){
+	public static void setTextWrap(XSheet sheet,int row,int col,boolean wrap,HashMap<Integer,CellStyle> cache){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
-		final boolean textWrap = Styles.getCellStyle(cell).getWrapText();
+		final CellStyle orgStyle = Styles.getCellStyle(cell);
+		final boolean textWrap = orgStyle.getWrapText();
 		if (wrap == textWrap) { //no change, skip
+			return;
+		}
+		CellStyle hitStyle = cache==null?null:cache.get((int)orgStyle.getIndex());
+		if(hitStyle!=null){
+			cell.setCellStyle(hitStyle);
 			return;
 		}
 		
@@ -114,17 +150,29 @@ public class Styles {
 			style.setWrapText(wrap);
 		}
 		cell.setCellStyle(style);
+		
+		if(cache!=null){
+			cache.put((int)orgStyle.getIndex(), style);
+		}
 	}
 	
-	public static void setFontHeight(XSheet sheet,int row,int col,int fontHeight){
+	public static void setFontHeight(XSheet sheet,int row,int col,int fontHeight,HashMap<Integer,CellStyle> cache){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final short fontIdx = Styles.getCellStyle(cell).getFontIndex();
+		final CellStyle orgStyle = Styles.getCellStyle(cell);
+		final short fontIdx = orgStyle.getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final short orgSize = font.getFontHeight();
 		if (orgSize == fontHeight) { //no change, skip
 			return;
 		}
+		
+		CellStyle hitStyle = cache==null?null:cache.get((int)orgStyle.getIndex());
+		if(hitStyle!=null){
+			cell.setCellStyle(hitStyle);
+			return;
+		}
+		
 		final short boldWeight = font.getBoldweight();
 		final Color color = BookHelper.getFontColor(book, font);
 		final String name = font.getFontName();
@@ -146,15 +194,25 @@ public class Styles {
 			style.setFont(((Font)newFont[0]));
 		}
 		cell.setCellStyle(style);
+		
+		if(cache!=null){
+			cache.put((int)orgStyle.getIndex(), style);
+		}
 	}
 	
-	public static void setFontStrikethrough(XSheet sheet,int row,int col, boolean strikeout){
+	public static void setFontStrikethrough(XSheet sheet,int row,int col, boolean strikeout,HashMap<Integer,CellStyle> cache){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final short fontIdx = Styles.getCellStyle(cell).getFontIndex();
+		final CellStyle orgStyle = Styles.getCellStyle(cell);
+		final short fontIdx = orgStyle.getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final boolean orgStrikeout = font.getStrikeout();
 		if (orgStrikeout == strikeout) { //no change, skip
+			return;
+		}
+		CellStyle hitStyle = cache==null?null:cache.get((int)orgStyle.getIndex());
+		if(hitStyle!=null){
+			cell.setCellStyle(hitStyle);
 			return;
 		}
 		final short boldWeight = font.getBoldweight();
@@ -178,17 +236,28 @@ public class Styles {
 			style.setFont(((Font)newFont[0]));
 		}
 		cell.setCellStyle(style);
+		
+		if(cache!=null){
+			cache.put((int)orgStyle.getIndex(), style);
+		}
 	}
 	
-	public static void setFontName(XSheet sheet,int row,int col,String name){
+	public static void setFontName(XSheet sheet,int row,int col,String name,HashMap<Integer,CellStyle> cache){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final short fontIdx = Styles.getCellStyle(cell).getFontIndex();
+		final CellStyle orgStyle = Styles.getCellStyle(cell);
+		final short fontIdx = orgStyle.getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final String orgName = font.getFontName();
 		if (orgName.equals(name)) { //no change, skip
 			return;
 		}
+		CellStyle hitStyle = cache==null?null:cache.get((int)orgStyle.getIndex());
+		if(hitStyle!=null){
+			cell.setCellStyle(hitStyle);
+			return;
+		}
+		
 		final short boldWeight = font.getBoldweight();
 		final Color color = BookHelper.getFontColor(book, font);
 		final short fontHeight = font.getFontHeight();
@@ -210,6 +279,10 @@ public class Styles {
 			style.setFont(((Font)newFont[0]));
 		}
 		cell.setCellStyle(style);
+		
+		if(cache!=null){
+			cache.put((int)orgStyle.getIndex(), style);
+		}
 	}
 	
 	public static void setBorder(XSheet sheet,int row,int col, String color, short linestyle){
@@ -344,15 +417,21 @@ public class Styles {
     	return null;
     }
 	
-	public static void setFontBoldWeight(XSheet sheet,int row,int col,short boldWeight){
+	public static void setFontBoldWeight(XSheet sheet,int row,int col,short boldWeight,HashMap<Integer,CellStyle> cache){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final short fontIdx = Styles.getCellStyle(cell).getFontIndex();
+		final CellStyle orgStyle = Styles.getCellStyle(cell);
+		final short fontIdx = orgStyle.getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final short orgBoldWeight = font.getBoldweight();
 		if (orgBoldWeight == boldWeight) { //no change, skip
 			return;
 		}
+		CellStyle hitStyle = cache==null?null:cache.get((int)orgStyle.getIndex());
+		if(hitStyle!=null){
+			cell.setCellStyle(hitStyle);
+			return;
+		}
 		final Color color = BookHelper.getFontColor(book, font);
 		final short fontHeight = font.getFontHeight();
 		final String name = font.getFontName();
@@ -374,17 +453,26 @@ public class Styles {
 			style.setFont(((Font)newFont[0]));
 		}
 		cell.setCellStyle(style);
+		if(cache!=null){
+			cache.put((int)orgStyle.getIndex(), style);
+		}
 	}
 	
-	public static void setFontItalic(XSheet sheet, int row, int col, boolean italic) {
+	public static void setFontItalic(XSheet sheet, int row, int col, boolean italic,HashMap<Integer,CellStyle> cache) {
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final short fontIdx = Styles.getCellStyle(cell).getFontIndex();
+		final CellStyle orgStyle = Styles.getCellStyle(cell);
+		final short fontIdx = orgStyle.getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final boolean orgItalic = font.getItalic();
 		if (orgItalic == italic) { //no change, skip
 			return;
 		}
+		CellStyle hitStyle = cache==null?null:cache.get((int)orgStyle.getIndex());
+		if(hitStyle!=null){
+			cell.setCellStyle(hitStyle);
+			return;
+		}
 		final short boldWeight = font.getBoldweight();
 		final Color color = BookHelper.getFontColor(book, font);
 		final short fontHeight = font.getFontHeight();
@@ -406,15 +494,25 @@ public class Styles {
 			style.setFont(((Font)newFont[0]));
 		}
 		cell.setCellStyle(style);
+		
+		if(cache!=null){
+			cache.put((int)orgStyle.getIndex(), style);
+		}
 	}
 	
-	public static void setFontUnderline(XSheet sheet,int row,int col, byte underline){
+	public static void setFontUnderline(XSheet sheet,int row,int col, byte underline,HashMap<Integer,CellStyle> cache){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
 		final XBook book = (XBook) sheet.getWorkbook();
-		final short fontIdx = Styles.getCellStyle(cell).getFontIndex();
+		final CellStyle orgStyle = Styles.getCellStyle(cell);
+		final short fontIdx = orgStyle.getFontIndex();
 		final Font font = book.getFontAt(fontIdx);
 		final byte orgUnderline = font.getUnderline();
 		if (orgUnderline == underline) { //no change, skip
+			return;
+		}
+		CellStyle hitStyle = cache==null?null:cache.get((int)orgStyle.getIndex());
+		if(hitStyle!=null){
+			cell.setCellStyle(hitStyle);
 			return;
 		}
 		final short boldWeight = font.getBoldweight();
@@ -438,12 +536,21 @@ public class Styles {
 			style.setFont(((Font)newFont[0]));
 		}
 		cell.setCellStyle(style);
+		if(cache!=null){
+			cache.put((int)orgStyle.getIndex(), style);
+		}
 	}
 	
-	public static void setTextHAlign(XSheet sheet,int row,int col, short align){
+	public static void setTextHAlign(XSheet sheet,int row,int col, short align,HashMap<Integer,CellStyle> cache){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
-		final short orgAlign = Styles.getCellStyle(cell).getAlignment();
+		final CellStyle orgStyle = Styles.getCellStyle(cell);
+		final short orgAlign = orgStyle.getAlignment();
 		if (align == orgAlign) { //no change, skip
+			return;
+		}
+		CellStyle hitStyle = cache==null?null:cache.get((int)orgStyle.getIndex());
+		if(hitStyle!=null){
+			cell.setCellStyle(hitStyle);
 			return;
 		}
 		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle(cell));
@@ -454,12 +561,21 @@ public class Styles {
 			style.setAlignment(align);
 		}
 		cell.setCellStyle(style);
+		if(cache!=null){
+			cache.put((int)orgStyle.getIndex(), style);
+		}
 	}
 	
-	public static void setTextVAlign(XSheet sheet,int row,int col, short valign){
+	public static void setTextVAlign(XSheet sheet,int row,int col, short valign,HashMap<Integer,CellStyle> cache){
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
-		final short orgValign = Styles.getCellStyle(cell).getVerticalAlignment();
+		final CellStyle orgStyle = Styles.getCellStyle(cell);
+		final short orgValign = orgStyle.getVerticalAlignment();
 		if (valign == orgValign) { //no change, skip
+			return;
+		}
+		CellStyle hitStyle = cache==null?null:cache.get((int)orgStyle.getIndex());
+		if(hitStyle!=null){
+			cell.setCellStyle(hitStyle);
 			return;
 		}
 		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),Styles.getCellStyle(cell));
@@ -470,12 +586,21 @@ public class Styles {
 			style.setVerticalAlignment(valign);
 		}
 		cell.setCellStyle(style);
+		if(cache!=null){
+			cache.put((int)orgStyle.getIndex(), style);
+		}
 	}
 
-	public static void setDataFormat(XSheet sheet, int row, int col, String format) {
+	public static void setDataFormat(XSheet sheet, int row, int col, String format,HashMap<Integer,CellStyle> cache) {
 		final Cell cell = XUtils.getOrCreateCell(sheet,row,col);
-		final String orgFormat = Styles.getCellStyle(cell).getDataFormatString();
+		final CellStyle orgStyle = Styles.getCellStyle(cell);
+		final String orgFormat = orgStyle.getDataFormatString();
 		if (format == orgFormat || (format!=null && format.equals(orgFormat))) { //no change, skip
+			return;
+		}
+		CellStyle hitStyle = cache==null?null:cache.get((int)orgStyle.getIndex());
+		if(hitStyle!=null){
+			cell.setCellStyle(hitStyle);
 			return;
 		}
 		
@@ -490,6 +615,9 @@ public class Styles {
 			style.setDataFormat(idx);
 		}
 		cell.setCellStyle(style);
+		if(cache!=null){
+			cache.put((int)orgStyle.getIndex(), style);
+		}
 		
 	}
 	
