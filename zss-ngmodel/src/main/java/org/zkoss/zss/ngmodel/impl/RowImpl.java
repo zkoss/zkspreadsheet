@@ -1,21 +1,24 @@
 package org.zkoss.zss.ngmodel.impl;
 
 import org.zkoss.zss.ngmodel.ModelEvent;
-import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
-import org.zkoss.zss.ngmodel.NRow;
-import org.zkoss.zss.ngmodel.util.CellReference;
+import org.zkoss.zss.ngmodel.util.Validations;
 
-public class RowImpl implements NRow {
+public class RowImpl extends AbstractRow {
 
-	SheetImpl sheet;
-	
-	BiIndexPool<CellImpl> cells = new BiIndexPool<CellImpl>();
-	
-	CellStyleImpl cellStyle;
-	
-	public RowImpl(SheetImpl sheet) {
+	private AbstractSheet sheet;
+
+	private BiIndexPool<AbstractCell> cells = new BiIndexPool<AbstractCell>();
+
+	private AbstractCellStyle cellStyle;
+
+	public RowImpl(AbstractSheet sheet) {
 		this.sheet = sheet;
+	}
+
+	protected AbstractSheet getSheet() {
+		checkOrphan();
+		return sheet;
 	}
 
 	public int getIndex() {
@@ -26,33 +29,34 @@ public class RowImpl implements NRow {
 	public boolean isNull() {
 		return false;
 	}
-	
-	public NCell getCellAt(int columnIdx) {
-		return getCellAt(columnIdx,true);
+
+	public AbstractCell getCellAt(int columnIdx) {
+		return getCellAt(columnIdx, true);
 	}
-	
-	NCell getCellAt(int columnIdx, boolean proxy) {
-		NCell cellObj = cells.get(columnIdx);
-		if(cellObj != null){
+
+	@Override
+	AbstractCell getCellAt(int columnIdx, boolean proxy) {
+		AbstractCell cellObj = cells.get(columnIdx);
+		if (cellObj != null) {
 			return cellObj;
 		}
 		checkOrphan();
-		return proxy?new CellProxyImpl(sheet,getIndex(),columnIdx):null;
+		return proxy ? new CellProxyImpl(sheet, getIndex(), columnIdx) : null;
 	}
-	
-	NCell getOrCreateCellAt(int columnIdx){
-		CellImpl cellObj = cells.get(columnIdx);
-		if(cellObj == null){
+	@Override
+	AbstractCell getOrCreateCellAt(int columnIdx) {
+		AbstractCell cellObj = cells.get(columnIdx);
+		if (cellObj == null) {
 			checkOrphan();
 			cellObj = new CellImpl(this);
 			cells.put(columnIdx, cellObj);
-			//create column since we have cell of it
+			// create column since we have cell of it
 			sheet.getOrCreateColumnAt(columnIdx);
 		}
 		return cellObj;
 	}
-	
-	int getCellIndex(CellImpl cell){
+	@Override
+	int getCellIndex(AbstractCell cell) {
 		return cells.get(cell);
 	}
 
@@ -63,60 +67,80 @@ public class RowImpl implements NRow {
 	public int getEndCellIndex() {
 		return cells.lastKey();
 	}
-
+	@Override
 	protected void onModelEvent(ModelEvent event) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void clearCell(int start, int end) {
-		start = Math.max(start,getStartCellIndex());
-		end = Math.min(end,getEndCellIndex());
-		
-		for(CellImpl cell:cells.clear(start, end)){
+		start = Math.max(start, getStartCellIndex());
+		end = Math.min(end, getEndCellIndex());
+
+		for (AbstractCell cell : cells.clear(start, end)) {
 			cell.release();
 		}
 	}
 
 	public void insertCell(int cellIdx, int size) {
-		if(size<=0) return;
-		
+		if (size <= 0)
+			return;
+
 		int end = getEndCellIndex();
-		if(cellIdx>end) return;
-		
-		int start = Math.max(cellIdx,getStartCellIndex());
-		
+		if (cellIdx > end)
+			return;
+
+		int start = Math.max(cellIdx, getStartCellIndex());
+
 		cells.insert(start, size);
 	}
 
 	public void deleteCell(int cellIdx, int size) {
-		if(size<=0) return;
-		
+		if (size <= 0)
+			return;
+
 		int end = getEndCellIndex();
-		if(cellIdx>end) return;
-		
-		int start = Math.max(cellIdx,getStartCellIndex());
-		
-		for(CellImpl cell:cells.delete(start, size)){
+		if (cellIdx > end)
+			return;
+
+		int start = Math.max(cellIdx, getStartCellIndex());
+
+		for (AbstractCell cell : cells.delete(start, size)) {
 			cell.release();
 		}
 	}
-	
+
 	public String asString() {
-		return String.valueOf(getIndex()+1);
+		return String.valueOf(getIndex() + 1);
 	}
-	
-	protected void checkOrphan(){
-		if(sheet==null){
+
+	protected void checkOrphan() {
+		if (sheet == null) {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}
-	protected void release(){
+
+	@Override
+	void release() {
 		sheet = null;
 	}
 
 	public NCellStyle getCellStyle() {
-		return cellStyle;
+		return getCellStyle(false);
+	}
+
+	public NCellStyle getCellStyle(boolean local) {
+		if (local || cellStyle != null) {
+			return cellStyle;
+		}
+		checkOrphan();
+		return sheet.getBook().getDefaultCellStyle();
+	}
+
+	public void setCellStyle(NCellStyle cellStyle) {
+		Validations.argNotNull(cellStyle);
+		Validations.argInstance(cellStyle, CellStyleImpl.class);
+		this.cellStyle = (CellStyleImpl) cellStyle;
 	}
 
 }

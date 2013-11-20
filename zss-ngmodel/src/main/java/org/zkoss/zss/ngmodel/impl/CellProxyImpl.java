@@ -2,24 +2,25 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.lang.ref.WeakReference;
 
-import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.util.CellReference;
+import org.zkoss.zss.ngmodel.util.Validations;
 
-class CellProxyImpl implements NCell{
-	WeakReference<SheetImpl> sheetRef;
-	int row;
-	int column;
-	CellImpl proxy;
+class CellProxyImpl extends AbstractCell{
+	WeakReference<AbstractSheet> sheetRef;
+	int rowIdx;
+	int columnIdx;
+	AbstractCell proxy;
 	
 	
-	public CellProxyImpl(SheetImpl sheet, int row,int column) {
-		this.sheetRef = new WeakReference<SheetImpl>(sheet);;
-		this.row = row;
-		this.column = column;
+	public CellProxyImpl(AbstractSheet sheet, int row,int column) {
+		this.sheetRef = new WeakReference<AbstractSheet>(sheet);;
+		this.rowIdx = row;
+		this.columnIdx = column;
 	}
 	
-	private SheetImpl getSheet(){
-		SheetImpl sheet = sheetRef.get();
+	private AbstractSheet getSheet(){
+		AbstractSheet sheet = sheetRef.get();
 		if(sheet==null){
 			throw new IllegalStateException("proxy target lost, you should't keep this instance");
 		}
@@ -28,7 +29,7 @@ class CellProxyImpl implements NCell{
 	
 	private void loadProxy(){
 		if(proxy==null){
-			proxy = (CellImpl)getSheet().getCellAt(row, column, false);
+			proxy = (CellImpl)getSheet().getCellAt(rowIdx, columnIdx, false);
 			if(proxy!=null){
 				sheetRef.clear();
 			}
@@ -49,20 +50,20 @@ class CellProxyImpl implements NCell{
 
 	public int getRowIndex() {
 		loadProxy();
-		return proxy==null?row:proxy.getRowIndex();
+		return proxy==null?rowIdx:proxy.getRowIndex();
 	}
 
 
 	public int getColumnIndex() {
 		loadProxy();
-		return proxy==null?column:proxy.getRowIndex();
+		return proxy==null?columnIdx:proxy.getRowIndex();
 	}
 
 
 	public void setValue(Object value) {
 		loadProxy();
 		if(proxy==null){
-			proxy = (CellImpl)((RowImpl)getSheet().getOrCreateRowAt(row)).getOrCreateCellAt(column);
+			proxy = (CellImpl)((AbstractRow)getSheet().getOrCreateRowAt(rowIdx)).getOrCreateCellAt(columnIdx);
 		}
 		proxy.setValue(value);
 	}
@@ -75,8 +76,47 @@ class CellProxyImpl implements NCell{
 
 	public String asString(boolean enableSheetName) {
 		loadProxy();
-		return proxy==null?new CellReference(enableSheetName?getSheet().getSheetName():null, row,column,false,false).formatAsString():
+		return proxy==null?new CellReference(enableSheetName?getSheet().getSheetName():null, rowIdx,columnIdx,false,false).formatAsString():
 			proxy.asString(enableSheetName);
 	}
+
+	public NCellStyle getCellStyle() {
+		return getCellStyle(false);
+	}
+
+	public NCellStyle getCellStyle(boolean local) {
+		loadProxy();
+		if(proxy!=null){
+			return proxy.getCellStyle(local);
+		}
+		if(local)
+			return null;
+		AbstractSheet sheet = getSheet();
+		AbstractRow row = (AbstractRow)sheet.getRowAt(rowIdx, false);
+		NCellStyle style = null;
+		if(row!=null){
+			style = row.getCellStyle(true);
+		}
+		if(style==null){
+			ColumnImpl col = (ColumnImpl)sheet.getColumnAt(columnIdx, false);
+			if(col!=null){
+				style = col.getCellStyle(true);
+			}
+		}
+		if(style==null){
+			style = sheet.getBook().getDefaultCellStyle();
+		}
+		return style;
+	}
+
+	public void setCellStyle(NCellStyle cellStyle) {
+		Validations.argNotNull(cellStyle);
+		loadProxy();
+		if(proxy==null){
+			proxy = (CellImpl)((AbstractRow)getSheet().getOrCreateRowAt(rowIdx)).getOrCreateCellAt(columnIdx);
+		}
+		proxy.setCellStyle(cellStyle);
+	}
+
 
 }

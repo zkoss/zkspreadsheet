@@ -3,17 +3,16 @@ package org.zkoss.zss.ngmodel.impl;
 import java.lang.ref.WeakReference;
 
 import org.zkoss.zss.ngmodel.NCellStyle;
-import org.zkoss.zss.ngmodel.NColumn;
-import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.util.CellReference;
+import org.zkoss.zss.ngmodel.util.Validations;
 
-class ColumnProxyImpl implements NColumn{
-	WeakReference<SheetImpl> sheetRef;
+class ColumnProxyImpl extends AbstractColumn{
+	WeakReference<AbstractSheet> sheetRef;
 	int index;
-	ColumnImpl proxy;
+	AbstractColumn proxy;
 	
 	
-	public ColumnProxyImpl(SheetImpl sheet, int index) {
+	public ColumnProxyImpl(AbstractSheet sheet, int index) {
 		this.sheetRef = new WeakReference(sheet);
 		this.index = index;
 	}
@@ -21,15 +20,15 @@ class ColumnProxyImpl implements NColumn{
 	
 	protected void loadProxy(){
 		if(proxy==null){
-			proxy = (ColumnImpl)getSheet().getColumnAt(index,false);
+			proxy = (AbstractColumn)getSheet().getColumnAt(index,false);
 			if(proxy!=null){
 				sheetRef.clear();
 			}
 		}
 	}
 	
-	protected SheetImpl getSheet(){
-		SheetImpl sheet = sheetRef.get();
+	protected AbstractSheet getSheet(){
+		AbstractSheet sheet = sheetRef.get();
 		if(sheet==null){
 			throw new IllegalStateException("proxy target lost, you should't keep this instance");
 		}
@@ -54,8 +53,23 @@ class ColumnProxyImpl implements NColumn{
 
 
 	public NCellStyle getCellStyle() {
-		loadProxy();
-		return proxy==null?null:proxy.getCellStyle();
+		return getCellStyle(false);
 	}
 
+	public NCellStyle getCellStyle(boolean local) {
+		loadProxy();
+		if(proxy!=null){
+			return proxy.getCellStyle(local);
+		}
+		return local?null:getSheet().getBook().getDefaultCellStyle();
+	}
+	
+	public void setCellStyle(NCellStyle cellStyle) {
+		Validations.argNotNull(cellStyle);
+		loadProxy();
+		if(proxy==null){
+			proxy = (AbstractColumn)getSheet().getOrCreateColumnAt(index);
+		}
+		proxy.setCellStyle(cellStyle);
+	}
 }

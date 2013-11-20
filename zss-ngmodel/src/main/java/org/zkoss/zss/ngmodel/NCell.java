@@ -21,12 +21,15 @@ public interface NCell {
 	
 	String asString(boolean enableSheetName);
 	
-//	NCellStyle getCellStyle();
-//	
+	NCellStyle getCellStyle();
+	
+	NCellStyle getCellStyle(boolean local);
+
 //	boolean isReadonly();
 //	
 	
 	//editable
 	void setValue(Object value);
-	Object getValue(); 
+	Object getValue();
+	void setCellStyle(NCellStyle cellStyle);
 }

@@ -4,13 +4,14 @@ import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.util.CellReference;
+import org.zkoss.zss.ngmodel.util.Validations;
 
-public class ColumnImpl implements NColumn{
+public class ColumnImpl extends AbstractColumn {
 
-	SheetImpl sheet;
-	CellStyleImpl cellStyle;
-	
-	public ColumnImpl(SheetImpl sheet) {
+	private AbstractSheet sheet;
+	private AbstractCellStyle cellStyle;
+
+	public ColumnImpl(AbstractSheet sheet) {
 		this.sheet = sheet;
 	}
 
@@ -22,27 +23,48 @@ public class ColumnImpl implements NColumn{
 	public boolean isNull() {
 		return false;
 	}
-
-	protected void onModelEvent(ModelEvent event) {
+	@Override
+	void onModelEvent(ModelEvent event) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public String asString() {
 		return CellReference.convertNumToColString(getIndex());
 	}
-	
-	protected void checkOrphan(){
-		if(sheet==null){
+
+	protected void checkOrphan() {
+		if (sheet == null) {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}
-	protected void release(){
+
+	@Override
+	void release() {
 		sheet = null;
 	}
 
+	protected AbstractSheet getSheet() {
+		checkOrphan();
+		return sheet;
+	}
+
 	public NCellStyle getCellStyle() {
-		return cellStyle;
+		return getCellStyle(false);
+	}
+
+	public NCellStyle getCellStyle(boolean local) {
+		if (local || cellStyle != null) {
+			return cellStyle;
+		}
+		checkOrphan();
+		return sheet.getBook().getDefaultCellStyle();
+	}
+
+	public void setCellStyle(NCellStyle cellStyle) {
+		Validations.argNotNull(cellStyle);
+		Validations.argInstance(cellStyle, AbstractCellStyle.class);
+		this.cellStyle = (AbstractCellStyle) cellStyle;
 	}
 
 }

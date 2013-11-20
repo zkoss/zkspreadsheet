@@ -1,38 +1,25 @@
 package org.zkoss.zss.ngmodel.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.NavigableMap;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import javax.swing.text.NavigationFilter;
 
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.NRow;
-import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.NViewInfo;
 
-public class SheetImpl implements NSheet {
+public class SheetImpl extends AbstractSheet {
 
-	BookImpl book;
+	AbstractBook book;
 	String name;
 	String id;
 	
-	BiIndexPool<RowImpl> rows = new BiIndexPool<RowImpl>();
-	BiIndexPool<ColumnImpl> columns = new BiIndexPool<ColumnImpl>();
+	BiIndexPool<AbstractRow> rows = new BiIndexPool<AbstractRow>();
+	BiIndexPool<AbstractColumn> columns = new BiIndexPool<AbstractColumn>();
 	
 	
-	public SheetImpl(BookImpl book,String id){
+	public SheetImpl(AbstractBook book,String id){
 		this.book = book;
 		this.id = id;
 	}
@@ -49,50 +36,50 @@ public class SheetImpl implements NSheet {
 	public NRow getRow(int rowIdx) {
 		return getRowAt(rowIdx,true);
 	}
-	
-	NRow getRowAt(int rowIdx, boolean proxy) {
-		NRow rowObj = rows.get(rowIdx);
+	@Override
+	AbstractRow getRowAt(int rowIdx, boolean proxy) {
+		AbstractRow rowObj = rows.get(rowIdx);
 		if(rowObj != null){
 			return rowObj;
 		}
 		return proxy?new RowProxyImpl(this,rowIdx):null;
 	}
-	
-	NRow getOrCreateRowAt(int rowIdx){
-		RowImpl rowObj = rows.get(rowIdx);
+	@Override
+	AbstractRow getOrCreateRowAt(int rowIdx){
+		AbstractRow rowObj = rows.get(rowIdx);
 		if(rowObj == null){
 			rowObj = new RowImpl(this);
 			rows.put(rowIdx, rowObj);
 		}
 		return rowObj;
 	}
-	
-	int getRowIndex(RowImpl row){
+	@Override
+	int getRowIndex(AbstractRow row){
 		return rows.get(row);
 	}
 
 	public NColumn getColumn(int columnIdx) {
 		return getColumnAt(columnIdx,true);
 	}
-	
-	NColumn getColumnAt(int columnIdx, boolean proxy) {
-		NColumn colObj = columns.get(columnIdx);
+	@Override
+	AbstractColumn getColumnAt(int columnIdx, boolean proxy) {
+		AbstractColumn colObj = columns.get(columnIdx);
 		if(colObj != null){
 			return colObj;
 		}
 		return proxy?new ColumnProxyImpl(this,columnIdx):null;
 	}
-	
-	NColumn getOrCreateColumnAt(int columnIdx){
-		ColumnImpl columnObj = columns.get(columnIdx);
+	@Override
+	AbstractColumn getOrCreateColumnAt(int columnIdx){
+		AbstractColumn columnObj = columns.get(columnIdx);
 		if(columnObj == null){
 			columnObj = new ColumnImpl(this);
 			columns.put(columnIdx, columnObj);
 		}
 		return columnObj;
 	}
-	
-	int getColumnIndex(ColumnImpl column){
+	@Override
+	int getColumnIndex(AbstractColumn column){
 		return columns.get(column);
 	}
 
@@ -100,17 +87,18 @@ public class SheetImpl implements NSheet {
 		return getCellAt(rowIdx,columnIdx,true);
 	}
 	
-	public NCell getCellAt(int rowIdx, int columnIdx, boolean proxy) {
-		RowImpl rowObj = (RowImpl) getRowAt(rowIdx,false);
+	@Override
+	AbstractCell getCellAt(int rowIdx, int columnIdx, boolean proxy) {
+		AbstractRow rowObj = (AbstractRow) getRowAt(rowIdx,false);
 		if(rowObj!=null){
 			return rowObj.getCellAt(columnIdx,proxy);
 		}
 		return proxy?new CellProxyImpl(this, rowIdx,columnIdx):null;
 	}
-	
-	NCell getOrCreateCellAt(int rowIdx, int columnIdx){
-		RowImpl rowObj = (RowImpl)getOrCreateRowAt(rowIdx);
-		NCell cell = rowObj.getOrCreateCellAt(columnIdx);
+	@Override
+	AbstractCell getOrCreateCellAt(int rowIdx, int columnIdx){
+		AbstractRow rowObj = (AbstractRow)getOrCreateRowAt(rowIdx);
+		AbstractCell cell = rowObj.getOrCreateCellAt(columnIdx);
 		return cell;
 	}
 
@@ -131,7 +119,7 @@ public class SheetImpl implements NSheet {
 	}
 
 	public int getStartColumnIndex(int row) {
-		RowImpl rowObj = (RowImpl) getRowAt(row,false);
+		AbstractRow rowObj = (AbstractRow) getRowAt(row,false);
 		if(rowObj!=null){
 			return rowObj.getStartCellIndex();
 		}
@@ -139,34 +127,33 @@ public class SheetImpl implements NSheet {
 	}
 
 	public int getEndColumn(int row) {
-		RowImpl rowObj = (RowImpl) getRowAt(row,false);
+		AbstractRow rowObj = (AbstractRow) getRowAt(row,false);
 		if(rowObj!=null){
 			return rowObj.getEndCellIndex();
 		}
 		return -1;
 	}
 
-
-	public void setSheetName(String name) {
+	@Override
+	void setSheetName(String name) {
 		this.name = name;
 	}
-
-	protected void onModelEvent(ModelEvent event) {
-		for(RowImpl row:rows.values()){
+	@Override
+	void onModelEvent(ModelEvent event) {
+		for(AbstractRow row:rows.values()){
 			row.onModelEvent(event);
 		}
-		for(ColumnImpl column:columns.values()){
+		for(AbstractColumn column:columns.values()){
 			column.onModelEvent(event);
 		}
 		//TODO to other object
 	}
 	
-
 	public void clearRow(int rowIdx, int rowIdx2) {
 		int start = Math.max(Math.min(rowIdx, rowIdx2),getStartRowIndex());
 		int end = Math.min(Math.max(rowIdx, rowIdx2),getEndRowIndex());
 				
-		for(RowImpl row:rows.clear(start,end)){
+		for(AbstractRow row:rows.clear(start,end)){
 			row.release();
 		}
 		
@@ -178,11 +165,11 @@ public class SheetImpl implements NSheet {
 		int start = Math.max(Math.min(columnIdx, columnIdx2),getStartColumnIndex());
 		int end = Math.min(Math.max(columnIdx, columnIdx2),getEndColumnIndex());
 		
-		for(ColumnImpl column:columns.clear(start,end)){
+		for(AbstractColumn column:columns.clear(start,end)){
 			column.release();
 		}
 		
-		for(RowImpl row:rows.values()){
+		for(AbstractRow row:rows.values()){
 			row.clearCell(start,end);
 		}
 		//Send event?
@@ -196,9 +183,9 @@ public class SheetImpl implements NSheet {
 		int columnStart = Math.max(Math.min(columnIdx, columnIdx2),getStartColumnIndex());
 		int columnEnd = Math.min(Math.max(columnIdx, columnIdx2),getEndColumnIndex());
 		
-		Collection<RowImpl> effected = rows.subValues(rowStart,rowEnd);
+		Collection<AbstractRow> effected = rows.subValues(rowStart,rowEnd);
 		
-		Iterator<RowImpl> iter = effected.iterator();
+		Iterator<AbstractRow> iter = effected.iterator();
 		while(iter.hasNext()){
 			iter.next().clearCell(columnStart, columnEnd);
 		}
@@ -226,15 +213,15 @@ public class SheetImpl implements NSheet {
 		
 		int start = Math.max(rowIdx,getStartRowIndex());
 		
-		for(RowImpl row:rows.delete(start, size)){
+		for(AbstractRow row:rows.delete(start, size)){
 			row.release();
 		}
 		
 		//Event
 	}
 	
-
-	protected void copySheet(SheetImpl sheet) {
+	@Override
+	void copyTo(AbstractSheet sheet) {
 		//can only clone on the begining.
 		
 		//TODO
@@ -285,7 +272,7 @@ public class SheetImpl implements NSheet {
 		
 		columns.insert(start, size);
 		
-		for(RowImpl row:rows.values()){
+		for(AbstractRow row:rows.values()){
 			row.insertCell(start,size);
 		}
 		//Send event?
@@ -300,28 +287,24 @@ public class SheetImpl implements NSheet {
 		
 		int start = Math.max(columnIdx,getStartColumnIndex());
 		
-		for(ColumnImpl column:columns.delete(start, size)){
+		for(AbstractColumn column:columns.delete(start, size)){
 			column.release();
 		}
 		
-		for(RowImpl row:rows.values()){
+		for(AbstractRow row:rows.values()){
 			row.deleteCell(start,size);
 		}
 		//Send event?
 	}
 
-	public NCellStyle getDefaultCellStyle() {
-		checkOrphan();
-		//should I check the linking?
-		return book.getDefaultCellStyle();
-	}
 	
 	protected void checkOrphan(){
 		if(book==null){
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}
-	protected void release(){
+	@Override
+	void release(){
 		book = null;
 	}
 

@@ -3,21 +3,19 @@ package org.zkoss.zss.ngmodel.impl;
 import java.lang.ref.WeakReference;
 
 import org.zkoss.zss.ngmodel.NCellStyle;
-import org.zkoss.zss.ngmodel.NRow;
-import org.zkoss.zss.ngmodel.util.CellReference;
+import org.zkoss.zss.ngmodel.util.Validations;
 
-class RowProxyImpl implements NRow{
-	WeakReference<SheetImpl> sheetRef;
+class RowProxyImpl extends AbstractRow{
+	WeakReference<AbstractSheet> sheetRef;
 	int index;
-	RowImpl proxy;
+	AbstractRow proxy;
 	
-	
-	public RowProxyImpl(SheetImpl sheet, int index) {
+	public RowProxyImpl(AbstractSheet sheet, int index) {
 		this.sheetRef = new WeakReference(sheet);
 		this.index = index;
 	}
-	protected SheetImpl getSheet(){
-		SheetImpl sheet = sheetRef.get();
+	protected AbstractSheet getSheet(){
+		AbstractSheet sheet = sheetRef.get();
 		if(sheet==null){
 			throw new IllegalStateException("proxy target lost, you should't keep this instance");
 		}
@@ -26,7 +24,7 @@ class RowProxyImpl implements NRow{
 	
 	protected void loadProxy(){
 		if(proxy==null){
-			proxy = (RowImpl)getSheet().getRowAt(index,false);
+			proxy = (AbstractRow)getSheet().getRowAt(index,false);
 			if(proxy!=null){
 				sheetRef.clear();
 			}
@@ -62,7 +60,48 @@ class RowProxyImpl implements NRow{
 	}
 	
 	public NCellStyle getCellStyle() {
+		return getCellStyle(false);
+	}
+
+	public NCellStyle getCellStyle(boolean local) {
 		loadProxy();
-		return proxy==null?null:proxy.getCellStyle();
+		if(proxy!=null){
+			return proxy.getCellStyle(local);
+		}
+		return local?null:getSheet().getBook().getDefaultCellStyle();
+	}
+	
+	public void setCellStyle(NCellStyle cellStyle) {
+		Validations.argNotNull(cellStyle);
+		loadProxy();
+		if(proxy==null){
+			proxy = (AbstractRow)getSheet().getOrCreateRowAt(index);
+		}
+		proxy.setCellStyle(cellStyle);
+	}
+	
+	@Override
+	AbstractCell getCellAt(int columnIdx, boolean proxy) {
+		throw new UnsupportedOperationException("not implement");
+	}
+	@Override
+	AbstractCell getOrCreateCellAt(int columnIdx) {
+		throw new UnsupportedOperationException("not implement");
+	}
+	@Override
+	void clearCell(int start, int end) {
+		throw new UnsupportedOperationException("not implement");
+	}
+	@Override
+	void insertCell(int start, int size) {
+		throw new UnsupportedOperationException("not implement");
+	}
+	@Override
+	void deleteCell(int start, int size) {
+		throw new UnsupportedOperationException("not implement");
+	}
+	@Override
+	int getCellIndex(AbstractCell cell) {
+		throw new UnsupportedOperationException("not implement");
 	}
 }

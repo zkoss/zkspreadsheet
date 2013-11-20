@@ -6,4 +6,8 @@ public interface NColumn {
 	String asString();
 	boolean isNull();
 	NCellStyle getCellStyle();
+	NCellStyle getCellStyle(boolean local);
+	
+	//editable
+	void setCellStyle(NCellStyle cellStyle);
 }

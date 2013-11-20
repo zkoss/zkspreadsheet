@@ -34,9 +34,9 @@ import org.zkoss.zss.ngmodel.util.Strings;
  * @author dennis
  *
  */
-public class BookImpl implements NBook{
+public class BookImpl extends AbstractBook{
 	
-	protected List<SheetImpl> sheets = new LinkedList<SheetImpl>();
+	protected List<AbstractSheet> sheets = new LinkedList<AbstractSheet>();
 	CellStyleImpl defaultCellStyle;
 	
 	int sheetsId = 0;
@@ -100,8 +100,8 @@ public class BookImpl implements NBook{
 		ModelEvent event = new ModelEvent(name, datamap);
 		
 		//implicitly deliver to sheet
-		for(NSheet sheet:sheets){
-			((SheetImpl)sheet).onModelEvent(event);
+		for(AbstractSheet sheet:sheets){
+			sheet.onModelEvent(event);
 		}
 		//TODO implicitly deliver to book series member?
 		
@@ -124,10 +124,10 @@ public class BookImpl implements NBook{
 		
 
 		SheetImpl sheet = new SheetImpl(this,nextSheetId());
-		if(src instanceof SheetImpl){
-			((SheetImpl)src).copySheet((SheetImpl)sheet);
+		if(src instanceof AbstractSheet){
+			((AbstractSheet)src).copyTo(sheet);
 		}
-		((SheetImpl)sheet).setSheetName(name);
+		((AbstractSheet)sheet).setSheetName(name);
 		sheets.add(sheet);
 		
 		sendEvent(ModelEvents.ON_SHEET_ADDED, "sheet", sheet);
@@ -139,7 +139,7 @@ public class BookImpl implements NBook{
 		checkOwnership(sheet);
 		
 		String oldname = sheet.getSheetName();
-		((SheetImpl)sheet).setSheetName(newname);
+		((AbstractSheet)sheet).setSheetName(newname);
 		
 		sendEvent(ModelEvents.ON_SHEET_RENAMED, "sheet", sheet, "oldName", oldname);
 	}
@@ -161,7 +161,7 @@ public class BookImpl implements NBook{
 		int index = sheets.indexOf(sheet);
 		sheets.remove(index);
 		
-		((SheetImpl)sheet).release();
+		((AbstractSheet)sheet).release();
 		
 		sendEvent(ModelEvents.ON_SHEET_DELETED, "sheet", sheet, "index", index);
 	}
@@ -176,13 +176,17 @@ public class BookImpl implements NBook{
 			return;
 		}
 		sheets.remove(oldindex);
-		sheets.add(index, (SheetImpl)sheet);
+		sheets.add(index, (AbstractSheet)sheet);
 		sendEvent(ModelEvents.ON_SHEET_DELETED, "sheet", sheet, "index", index, "oldIndex", oldindex);
 	}
 
 	public void dump(StringBuilder builder) {
-		for(SheetImpl sheet:sheets){
-			sheet.dump(builder);
+		for(AbstractSheet sheet:sheets){
+			if(sheet instanceof SheetImpl){
+				((SheetImpl)sheet).dump(builder);
+			}else{
+				builder.append("\n").append(sheet);
+			}
 		}
 	}
 

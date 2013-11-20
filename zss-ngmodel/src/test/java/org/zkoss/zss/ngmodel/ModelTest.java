@@ -655,4 +655,13 @@ public class ModelTest {
 		((BookImpl)book).dump(builder);
 		System.out.println(builder.toString());
 	}
+	
+	@Test
+	public void testStyle(){
+		NBook book = new BookImpl();
+		NSheet sheet = book.createSheet("Sheet 1");
+		
+		
+		
+	}
 }
