@@ -1410,7 +1410,8 @@ public class XRangeImpl implements XRange {
 			// Check whether destination is a single merged cell?
 			if(dstaddr != null) {
 				// copy source to merged cell
-				final Cell cell = BookHelper.getCell(srcSheet, srcRef.getTopRow(), srcRef.getLeftCol()); // retrieve cell
+				// prevent null pointer, use getOrCreateCell helper.
+				final Cell cell = BookHelper.getOrCreateCell(srcSheet, srcRef.getTopRow(), srcRef.getLeftCol()); // retrieve cell
 				final ChangeInfo changeInfo0 = BookHelper.copyCell(cell, dstSheet, dstTopRow, dstLeftCol, pasteType, pasteOp, transpose);
 				BookHelper.assignChangeInfo(toEval, affected, mergeChanges, changeInfo0);
 				// merge cell (because cell always unmerge in BookHelper.copyCell)
