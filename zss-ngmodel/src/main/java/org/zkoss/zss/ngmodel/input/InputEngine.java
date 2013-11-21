@@ -5,7 +5,7 @@ import org.zkoss.zss.ngmodel.NCell.CellType;
 public class InputEngine {
 
 	public InputResult parseInput(String input){
-		InputResult result = new InputResult();
+		InputResult result = new InputResult(input);
 		if(input!=null){
 			result.setType(CellType.STRING);
 			result.setValue(input);

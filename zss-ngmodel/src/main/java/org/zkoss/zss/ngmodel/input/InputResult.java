@@ -4,23 +4,35 @@ import org.zkoss.zss.ngmodel.NCell.CellType;
 
 public class InputResult {
 
-	CellType type = CellType.BLANK;
-	
-	Object value = null;
-
-	public CellType getType() {
-		return type;
+	private String input = null;
+	private Object value = null;
+	private CellType type = CellType.BLANK;
+	public InputResult(){}
+	public InputResult(String input) {
+		this.input = input;
+		this.type = type;
+		this.value = value;
 	}
 
-	public void setType(CellType type) {
-		this.type = type;
+	public String getInput() {
+		return input;
 	}
 
 	public Object getValue() {
 		return value;
 	}
 
-	public void setValue(Object value) {
+	public CellType getType() {
+		return type;
+	}
+
+	void setValue(Object value) {
 		this.value = value;
 	}
+
+	void setType(CellType type) {
+		this.type = type;
+	}
+
+	
 }

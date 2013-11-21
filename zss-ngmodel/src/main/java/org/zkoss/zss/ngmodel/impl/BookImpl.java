@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.impl;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -26,6 +27,7 @@ import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
@@ -241,6 +243,18 @@ public class BookImpl extends AbstractBook{
 
 	public int getMaxColumnSize() {
 		return maxColumnSize;
+	}
+
+	@Override
+	List<NCell> optimizeCellStyle() {
+		//search all the cell's style , 
+		//if it is same as style in the style table (but different instance), then reassign the one in the table
+		// 
+		//if no one match a cell's style, then set it to style table.
+		//(Optional) it total cell style are too many, search the similar cell style the get a similar style and reassign to the cell
+		
+		//TODO
+		throw new UnsupportedOperationException("not implementate la.");
 	}
 
 }
