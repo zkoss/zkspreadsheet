@@ -1,6 +1,7 @@
 package org.zkoss.zss.ngmodel.impl;
 
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.util.Validations;
 
 public class CellStyleImpl extends AbstractCellStyle{
 
@@ -228,10 +229,12 @@ public class CellStyleImpl extends AbstractCellStyle{
 		this.hidden = hidden;
 	}
 
-	public void copyTo(CellStyleImpl another) {
-		if (another == this)
+	public void copyTo(AbstractCellStyle dest) {
+		
+		Validations.argInstance(dest, CellStyleImpl.class);
+		if (dest == this)
 			return;
-
+		CellStyleImpl another = (CellStyleImpl)dest;
 		another.fontName = fontName;
 		another.fontColor = fontColor;
 		another.fontBoldweight = fontBoldweight;

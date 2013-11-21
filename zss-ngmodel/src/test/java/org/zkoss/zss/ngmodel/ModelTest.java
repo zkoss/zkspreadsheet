@@ -661,7 +661,44 @@ public class ModelTest {
 		NBook book = new BookImpl();
 		NSheet sheet = book.createSheet("Sheet 1");
 		
+		NCellStyle style = book.getDefaultCellStyle();
 		
+		Assert.assertEquals(style, sheet.getRow(10).getCellStyle());
+		Assert.assertEquals(style, sheet.getColumn(3).getCellStyle());
+		Assert.assertEquals(style, sheet.getCell(10,3).getCellStyle());
+		
+		
+		NCellStyle cellStyle = book.createCellStyle();
+		sheet.getCell(10, 3).setCellStyle(cellStyle);
+		
+		Assert.assertEquals(style, sheet.getRow(10).getCellStyle());
+		Assert.assertEquals(style, sheet.getColumn(3).getCellStyle());
+		Assert.assertEquals(cellStyle, sheet.getCell(10,3).getCellStyle());
+		
+		NCellStyle rowStyle = book.createCellStyle();
+		sheet.getRow(9).setCellStyle(rowStyle);
+		
+		Assert.assertEquals(style, sheet.getRow(10).getCellStyle());
+		Assert.assertEquals(style, sheet.getColumn(3).getCellStyle());
+		Assert.assertEquals(cellStyle, sheet.getCell(10,3).getCellStyle());
+		
+		Assert.assertEquals(rowStyle, sheet.getRow(9).getCellStyle());
+		Assert.assertEquals(rowStyle, sheet.getCell(9,3).getCellStyle());
+		
+		
+		NCellStyle columnStyle = book.createCellStyle();
+		sheet.getColumn(4).setCellStyle(columnStyle);
+		
+		Assert.assertEquals(style, sheet.getRow(10).getCellStyle());
+		Assert.assertEquals(style, sheet.getColumn(3).getCellStyle());
+		Assert.assertEquals(cellStyle, sheet.getCell(10,3).getCellStyle());
+		
+		Assert.assertEquals(rowStyle, sheet.getRow(9).getCellStyle());
+		Assert.assertEquals(rowStyle, sheet.getCell(9,3).getCellStyle());
+		
+		Assert.assertEquals(columnStyle, sheet.getColumn(4).getCellStyle());
+		Assert.assertEquals(rowStyle, sheet.getCell(9,4).getCellStyle());//style on row 9 first.
+		Assert.assertEquals(columnStyle, sheet.getCell(10,4).getCellStyle());
 		
 	}
 }

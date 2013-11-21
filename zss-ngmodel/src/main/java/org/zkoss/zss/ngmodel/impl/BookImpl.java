@@ -28,7 +28,9 @@ import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.util.SpreadsheetVersion;
 import org.zkoss.zss.ngmodel.util.Strings;
+import org.zkoss.zss.ngmodel.util.Validations;
 
 /**
  * @author dennis
@@ -40,6 +42,8 @@ public class BookImpl extends AbstractBook{
 	CellStyleImpl defaultCellStyle;
 	
 	int sheetsId = 0;
+	private int maxRowSize = SpreadsheetVersion.EXCEL2007.getMaxRows();
+	private int maxColumnSize = SpreadsheetVersion.EXCEL2007.getMaxColumns();
 	
 	public BookImpl(){
 		defaultCellStyle = new CellStyleImpl();
@@ -192,5 +196,30 @@ public class BookImpl extends AbstractBook{
 
 	public NCellStyle getDefaultCellStyle() {
 		return defaultCellStyle;
+	}
+
+	public NCellStyle createCellStyle() {
+		return createCellStyle(null);
+	}
+
+	public NCellStyle createCellStyle(NCellStyle src) {
+		if(src!=null){
+			Validations.argInstance(src, AbstractCellStyle.class);
+		}
+		CellStyleImpl style = new CellStyleImpl();
+		if(src!=null){
+			((AbstractCellStyle)src).copyTo(style);
+		}
+		//TODO put to style table.
+		
+		return style;
+	}
+
+	public int getMaxRowSize() {
+		return maxRowSize;
+	}
+
+	public int getMaxColumnSize() {
+		return maxColumnSize;
 	}
 }

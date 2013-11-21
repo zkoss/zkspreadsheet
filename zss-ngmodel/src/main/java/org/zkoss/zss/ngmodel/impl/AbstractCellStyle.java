@@ -4,4 +4,6 @@ import org.zkoss.zss.ngmodel.NCellStyle;
 
 public abstract class AbstractCellStyle implements NCellStyle{
 
+	abstract void copyTo(AbstractCellStyle dest);
+
 }

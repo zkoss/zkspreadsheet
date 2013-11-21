@@ -37,4 +37,11 @@ public interface NBook {
 	void moveSheetTo(NSheet sheet, int index);
 	
 	NCellStyle getDefaultCellStyle();
+
+	NCellStyle createCellStyle();
+	NCellStyle createCellStyle(NCellStyle src);
+	
+	int getMaxRowSize();
+	
+	int getMaxColumnSize();
 }
