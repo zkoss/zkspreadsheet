@@ -3,7 +3,15 @@ package org.zkoss.zss.ngmodel;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
+import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
+import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
+import org.zkoss.zss.ngmodel.NCellStyle.FontBoldweight;
+import org.zkoss.zss.ngmodel.NCellStyle.FontTypeOffset;
+import org.zkoss.zss.ngmodel.NCellStyle.FontUnderline;
+import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
+import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
 
 public class ModelTest {
 
@@ -668,14 +676,14 @@ public class ModelTest {
 		Assert.assertEquals(style, sheet.getCell(10,3).getCellStyle());
 		
 		
-		NCellStyle cellStyle = book.createCellStyle();
+		NCellStyle cellStyle = book.createCellStyle(true);
 		sheet.getCell(10, 3).setCellStyle(cellStyle);
 		
 		Assert.assertEquals(style, sheet.getRow(10).getCellStyle());
 		Assert.assertEquals(style, sheet.getColumn(3).getCellStyle());
 		Assert.assertEquals(cellStyle, sheet.getCell(10,3).getCellStyle());
 		
-		NCellStyle rowStyle = book.createCellStyle();
+		NCellStyle rowStyle = book.createCellStyle(true);
 		sheet.getRow(9).setCellStyle(rowStyle);
 		
 		Assert.assertEquals(style, sheet.getRow(10).getCellStyle());
@@ -686,7 +694,7 @@ public class ModelTest {
 		Assert.assertEquals(rowStyle, sheet.getCell(9,3).getCellStyle());
 		
 		
-		NCellStyle columnStyle = book.createCellStyle();
+		NCellStyle columnStyle = book.createCellStyle(true);
 		sheet.getColumn(4).setCellStyle(columnStyle);
 		
 		Assert.assertEquals(style, sheet.getRow(10).getCellStyle());
@@ -699,6 +707,151 @@ public class ModelTest {
 		Assert.assertEquals(columnStyle, sheet.getColumn(4).getCellStyle());
 		Assert.assertEquals(rowStyle, sheet.getCell(9,4).getCellStyle());//style on row 9 first.
 		Assert.assertEquals(columnStyle, sheet.getCell(10,4).getCellStyle());
+		
+	}
+	
+	
+	@Test
+	public void testStyleSearch(){
+		NBook book = new BookImpl();
+		NSheet sheet = book.createSheet("Sheet 1");
+		
+		NCellStyle style1 = book.createCellStyle(true);
+		CellStyleMatcher matcher = new CellStyleMatcher(book.createCellStyle(false));//a style not in table
+		
+		Assert.assertEquals(book.getDefaultCellStyle(),book.searchCellStyle(matcher));
+		
+		Assert.assertNotSame(style1, book.getDefaultCellStyle());
+		
+		
+		
+		style1.setAlignment(Alignment.CENTER);
+		matcher.setAlignment(Alignment.CENTER);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setAlignment(Alignment.RIGHT);
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setAlignment(Alignment.RIGHT);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		
+		style1.setBackgroundColor("#FF0000");
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setBackgroundColor("#FF0000");
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		//////////
+		style1.setBorderBottom(BorderType.MEDIUM);
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setBorderBottom(BorderType.MEDIUM);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setBorderBottomColor("#FF0000");
+		matcher.setBorderBottomColor("#FF00FF");//will hit if didn't set color, because at the begin the border-type is none - that cause matcher ignore the color mapping
+		Assert.assertNull(book.searchCellStyle(matcher)); // 
+		matcher.setBorderBottomColor("#FF0000");
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setBorderLeft(BorderType.MEDIUM);
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setBorderLeft(BorderType.MEDIUM);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setBorderLeftColor("#FF0000");
+		matcher.setBorderLeftColor("#FF00FF");
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setBorderLeftColor("#FF0000");
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setBorderRight(BorderType.MEDIUM);
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setBorderRight(BorderType.MEDIUM);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setBorderRightColor("#FF0000");
+		matcher.setBorderRightColor("#FF00FF");
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setBorderRightColor("#FF0000");
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setBorderTop(BorderType.MEDIUM);
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setBorderTop(BorderType.MEDIUM);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setBorderTopColor("#FF0000");
+		matcher.setBorderTopColor("#FF00FF");
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setBorderTopColor("#FF0000");
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setDataFormat("yyyymd");
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setDataFormat("yyyymd");
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setFillPattern(FillPattern.SOLID_FOREGROUND);
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setFillPattern(FillPattern.SOLID_FOREGROUND);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setFontBoldweight(FontBoldweight.BOLD);
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setFontBoldweight(FontBoldweight.BOLD);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setFontColor("#0000FF");
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setFontColor("#0000FF");
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setFontHeight(26);
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setFontHeight(26);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setFontItalic(true);
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setFontItalic(true);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setFontName("system");
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setFontName("system");
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setFontStrikeout(true);
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setFontStrikeout(true);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setFontTypeOffset(FontTypeOffset.SUB);
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setFontTypeOffset(FontTypeOffset.SUB);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setFontUnderline(FontUnderline.SINGLE);
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setFontUnderline(FontUnderline.SINGLE);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setHidden(true);
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setHidden(true);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setLocked(false);
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setLocked(false);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		style1.setWrapText(true);
+		Assert.assertNull(book.searchCellStyle(matcher));
+		matcher.setWrapText(true);
+		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+		
+		
 		
 	}
 }

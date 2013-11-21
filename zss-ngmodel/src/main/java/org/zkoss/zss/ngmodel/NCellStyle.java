@@ -185,5 +185,54 @@ public interface NCellStyle {
 	 * @return true if hidden
 	 */
 	public boolean isHidden();
+	
+	
+	public void setFontName(String fontName);
+
+	public void setFontColor(String fontColor);
+
+	public void setFontBoldweight(FontBoldweight fontBoldweight);
+
+	public void setFontHeight(int fontHeight);
+
+	public void setFontItalic(boolean fontItalic);
+
+	public void setFontStrikeout(boolean fontStrikeout);
+
+	public void setFontTypeOffset(FontTypeOffset fontTypeOffset);
+
+	public void setFontUnderline(FontUnderline fontUnderline);
+
+	public void setBackgroundColor(String backgroundColor);
+
+	public void setFillPattern(FillPattern fillPattern);
+	
+	public void setAlignment(Alignment alignment);
+	
+	public void setVerticalAlignment(VerticalAlignment verticalAlignment);
+
+	public void setWrapText(boolean wrapText);
+
+	public void setBorderLeft(BorderType borderLeft);
+
+	public void setBorderTop(BorderType borderTop);
+
+	public void setBorderRight(BorderType borderRight);
+
+	public void setBorderBottom(BorderType borderBottom);
+
+	public void setBorderTopColor(String borderTopColor);
+
+	public void setBorderLeftColor(String borderLeftColor);
+
+	public void setBorderBottomColor(String borderBottomColor);
+
+	public void setBorderRightColor(String borderRightColor);
+
+	public void setDataFormat(String dataFormat);
+	
+	public void setLocked(boolean locked);
+
+	public void setHidden(boolean hidden);
 
 }

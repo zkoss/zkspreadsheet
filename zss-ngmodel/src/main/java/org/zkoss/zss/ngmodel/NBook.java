@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel;
 
+import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
+
 /**
  * @author dennis
  *
@@ -38,8 +40,10 @@ public interface NBook {
 	
 	NCellStyle getDefaultCellStyle();
 
-	NCellStyle createCellStyle();
-	NCellStyle createCellStyle(NCellStyle src);
+	NCellStyle createCellStyle(boolean inStyleTable);
+	NCellStyle createCellStyle(NCellStyle src,boolean inStyleTable);
+	NCellStyle searchCellStyle(CellStyleMatcher matcher);
+	
 	
 	int getMaxRowSize();
 	

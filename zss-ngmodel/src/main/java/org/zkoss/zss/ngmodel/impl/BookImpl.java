@@ -28,6 +28,7 @@ import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
 import org.zkoss.zss.ngmodel.util.SpreadsheetVersion;
 import org.zkoss.zss.ngmodel.util.Strings;
 import org.zkoss.zss.ngmodel.util.Validations;
@@ -39,14 +40,16 @@ import org.zkoss.zss.ngmodel.util.Validations;
 public class BookImpl extends AbstractBook{
 	
 	protected List<AbstractSheet> sheets = new LinkedList<AbstractSheet>();
-	CellStyleImpl defaultCellStyle;
+	
+	protected List<AbstractCellStyle> cellStyles = new LinkedList<AbstractCellStyle>();
+	AbstractCellStyle defaultCellStyle;
 	
 	int sheetsId = 0;
 	private int maxRowSize = SpreadsheetVersion.EXCEL2007.getMaxRows();
 	private int maxColumnSize = SpreadsheetVersion.EXCEL2007.getMaxColumns();
 	
 	public BookImpl(){
-		defaultCellStyle = new CellStyleImpl();
+		cellStyles.add(defaultCellStyle = new CellStyleImpl());
 	}
 	
 	public NSheet getSheet(int i){
@@ -198,22 +201,39 @@ public class BookImpl extends AbstractBook{
 		return defaultCellStyle;
 	}
 
-	public NCellStyle createCellStyle() {
-		return createCellStyle(null);
+	public NCellStyle createCellStyle(boolean inStyleTable) {
+		return createCellStyle(null,inStyleTable);
 	}
 
-	public NCellStyle createCellStyle(NCellStyle src) {
+	public NCellStyle createCellStyle(NCellStyle src,boolean inStyleTable) {
 		if(src!=null){
 			Validations.argInstance(src, AbstractCellStyle.class);
 		}
-		CellStyleImpl style = new CellStyleImpl();
+		AbstractCellStyle style = new CellStyleImpl();
 		if(src!=null){
 			((AbstractCellStyle)src).copyTo(style);
 		}
-		//TODO put to style table.
+		
+		if(inStyleTable){
+			cellStyles.add(style);
+		}
 		
 		return style;
 	}
+	
+
+	public NCellStyle searchCellStyle(CellStyleMatcher matcher) {
+		for(NCellStyle style:cellStyles){
+			if(matcher.match(style)){
+				return style;
+			}
+		}
+		return null;
+	}
+	
+	
+	
+	
 
 	public int getMaxRowSize() {
 		return maxRowSize;
@@ -222,4 +242,5 @@ public class BookImpl extends AbstractBook{
 	public int getMaxColumnSize() {
 		return maxColumnSize;
 	}
+
 }
