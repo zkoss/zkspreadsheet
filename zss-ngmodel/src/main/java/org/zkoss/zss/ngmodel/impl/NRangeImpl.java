@@ -1,6 +1,7 @@
 package org.zkoss.zss.ngmodel.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -98,7 +99,26 @@ public class NRangeImpl implements NRange {
 			for(int i=r._row;i<=r._lastRow;i++){
 				for (int j = r._column; j <= r._lastColumn; j++) {
 					NCell cell = r._sheet.getCell(i, j);
-					cell.setValue(result.getValue());
+					switch(result.getType()){
+					case BLANK:
+						cell.clearValue();
+						break;
+					case DATE:
+						cell.setDateValue((Date)result.getValue());
+						break;
+					case FORMULA:
+						cell.setFormulaValue((String)result.getValue());
+						break;
+					case NUMBER:
+						cell.setNumberValue((Number)result.getValue());
+						break;
+					case STRING:
+						cell.setStringValue((String)result.getValue());
+						break;
+					case ERROR:
+					default :
+						cell.setValue(result.getValue());
+					}
 				}
 			}
 		}
@@ -119,6 +139,27 @@ public class NRangeImpl implements NRange {
 			_column = column;
 			_lastRow = lastRow;
 			_lastColumn = lastColumn;	
+		}
+	}
+
+	public void setValue(Object value) {
+		for(RangeRef r:rangeRefs){
+			for(int i=r._row;i<=r._lastRow;i++){
+				for (int j = r._column; j <= r._lastColumn; j++) {
+					NCell cell = r._sheet.getCell(i, j);
+					cell.setValue(value);
+				}
+			}
+		}
+	}
+	public void clear() {
+		for(RangeRef r:rangeRefs){
+			for(int i=r._row;i<=r._lastRow;i++){
+				for (int j = r._column; j <= r._lastColumn; j++) {
+					NCell cell = r._sheet.getCell(i, j);
+					cell.clearValue();
+				}
+			}
 		}
 	}
 }

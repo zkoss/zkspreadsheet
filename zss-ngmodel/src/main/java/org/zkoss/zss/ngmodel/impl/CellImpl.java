@@ -136,13 +136,12 @@ public class CellImpl extends AbstractCell {
 		}else if(newvalue instanceof String){
 			if("".equals(newvalue)){
 				type = CellType.BLANK;
-				value = null;
+				newvalue = null;
 			}else if(isFormula((String)newvalue)){
 				setFormulaValue(((String)newvalue).substring(1));
 				return;//break;
 			}else{
 				type = CellType.STRING;
-				value = newvalue;
 			}
 		}else if(newvalue instanceof FormulaExpression){
 			type = CellType.FORMULA;

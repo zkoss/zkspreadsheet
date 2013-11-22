@@ -11,4 +11,6 @@ public interface NRange {
 	int getLastColumn();
 	
 	void setEditText(String editText);
+	void setValue(Object value);
+	void clear();
 }

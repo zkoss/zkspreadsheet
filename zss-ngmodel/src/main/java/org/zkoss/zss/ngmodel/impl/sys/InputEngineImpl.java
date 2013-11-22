@@ -26,19 +26,11 @@ public class InputEngineImpl implements InputEngine{
 				return result;
 			}
 			
-			DecimalFormat df = new DecimalFormat("#####.####");
-			try {
-				value = df.parse(editText);
-				result.setType(CellType.NUMBER);
-				result.setValue(value);
-				return result;
-			} catch (ParseException e) {}
 			
 			SimpleDateFormat sdf[] = new SimpleDateFormat[]{
-				new SimpleDateFormat("yyyy/MM/dd"),
-				new SimpleDateFormat("yyyy/MM/dd HH:mm:SS")
+				new SimpleDateFormat("yyyy/MM/dd")
 			};
-
+			//guess date, before number
 			for (SimpleDateFormat f : sdf) {
 				try {
 					value = f.parse(editText);
@@ -48,7 +40,19 @@ public class InputEngineImpl implements InputEngine{
 				} catch (ParseException e) {
 				}
 			}
+			
+			//guess number
+			DecimalFormat df = new DecimalFormat("#####.####");
+			try {
+				value = df.parse(editText);
+				result.setType(CellType.NUMBER);
+				result.setValue(value);
+				return result;
+			} catch (ParseException e) {}
 
+
+
+			//guess string
 			result.setType(CellType.STRING);
 			result.setValue(editText);
 		}

@@ -62,10 +62,12 @@ class CellProxyImpl extends AbstractCell{
 
 	public void setValue(Object value) {
 		loadProxy();
-		if(proxy==null){
+		if(proxy==null && value!=null){
 			proxy = (CellImpl)((AbstractRow)getSheet().getOrCreateRowAt(rowIdx)).getOrCreateCellAt(columnIdx);
+			proxy.setValue(value);
+		}else if(proxy!=null){
+			proxy.setValue(value);
 		}
-		proxy.setValue(value);
 	}
 
 
