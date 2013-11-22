@@ -1,12 +1,30 @@
 <zk>
 	<zscript><![CDATA[
+	                  
+	    import org.zkoss.lang.Library;
+	    
+	    String o1 = Library.getProperty("org.zkoss.zss.chart.title.font");
+	    String o2 = Library.getProperty("org.zkoss.zss.chart.legend.font");
+	    String o3 = Library.getProperty("org.zkoss.zss.chart.xAxisTick.font");
+	    String o4 = Library.getProperty("org.zkoss.zss.chart.xAxis.font");
+	    
 		org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.title.font", "SansSerif, Italic, 30");
 		org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.legend.font", "SansSerif, plain, 18");
 		org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.xAxisTick.font", "SansSerif, bold, 16");
 		org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.xAxis.font", "SansSerif, bold, 18");
+		
+		public void resetLibrary() {
+			org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.title.font", o1);
+			org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.legend.font", o2);
+			org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.xAxisTick.font", o3);
+			org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.xAxis.font", o4);
+		}
 	]]>
 	</zscript>
 	<vbox hflex="1" vflex="1">
+		<hbox>
+			<button label="Reset" onClick="resetLibrary()"></button>
+		</hbox>
 		<spreadsheet id="source" src="/issue3/book/202-chartTitle.xlsx" maxVisibleRows="150"
 			maxVisibleColumns="40" hflex="1" vflex="1" showContextMenu="true" showSheetbar="true"
 			showToolbar="true" ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" />

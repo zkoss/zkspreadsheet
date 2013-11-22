@@ -4,7 +4,7 @@
 		</label>
 		<hlayout>
 			<button label="apply all border" onClick="test1()"></button>
-			<button label="focus to AX100" onClick="ss.focusTo(51, 101)"></button>
+			<button label="focus to AX100" onClick="ss.focusTo(99, 49)"></button>
 			<button label="export" onClick="export();"></button>
 		</hlayout>
 		<spreadsheet id="ss" src="/issue3/book/464-manystyle.xlsx"  hflex="1" vflex="1"

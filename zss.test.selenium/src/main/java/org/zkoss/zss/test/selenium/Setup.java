@@ -134,4 +134,24 @@ public class Setup {
 	public static boolean isJsDebug(){
 		return getConfigAsBoolean("zss.jsDebug",false);
 	}
+	
+	public static int getTimeoutL0(){
+		return  getConfigAsInt("zss.wait.l0");
+	}
+	
+	public static int getTimeoutL1(){
+		return  getConfigAsInt("zss.wait.l1");
+	}
+
+	public static int getTimeoutL2(){
+		return  getConfigAsInt("zss.wait.l2");
+	}
+	
+	public static int getTimeoutL3(){
+		return  getConfigAsInt("zss.wait.l3");
+	}
+	
+	public static int getTimeoutL4(){
+		return  getConfigAsInt("zss.wait.l4");
+	}
 }

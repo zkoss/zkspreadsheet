@@ -6,7 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.zkoss.zss.test.selenium.TestcaseBase;
 
-//@Ignore("for test zss.test.selenium self only")
+@Ignore("for test zss.test.selenium self only")
 public class SelfTest extends TestcaseBase{
 
 	@Test

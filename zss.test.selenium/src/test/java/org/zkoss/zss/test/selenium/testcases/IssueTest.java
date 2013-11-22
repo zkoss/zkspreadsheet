@@ -1,7 +1,9 @@
 package org.zkoss.zss.test.selenium.testcases;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.Keys;
+import org.zkoss.zss.test.selenium.Setup;
 import org.zkoss.zss.test.selenium.ZSSTestcaseBase;
 
 public class IssueTest extends ZSSTestcaseBase {
@@ -10,24 +12,24 @@ public class IssueTest extends ZSSTestcaseBase {
 		basename();
 		
 		getTo("/issue3/10-chart.zul");
-		waitForTime(2000);
+		waitForTime(Setup.getTimeoutL2());
 		captureOrAssert("loadpage");
 		
 		click("@button:eq(0)");
-		waitForTime(500);//for zss render in browser
+		waitForTime(Setup.getTimeoutL1());//for zss render in browser
 		captureOrAssert("btn0");
 		
 		click("@button:eq(1)");
-		waitForTime(500);//for zss render in browser
+		waitForTime(Setup.getTimeoutL1());//for zss render in browser
 		captureOrAssert("btn1");
 		
 		
 		click("@button:eq(2)");
-		waitForTime(500);//for zss render in browser
+		waitForTime(Setup.getTimeoutL1());//for zss render in browser
 		captureOrAssert("btn2");
 		
 		click("@button:eq(3)");
-		waitForTime(500);//for zss render in browser
+		waitForTime(Setup.getTimeoutL1());//for zss render in browser
 		captureOrAssert("btn3");
 	}
 	
@@ -36,8 +38,11 @@ public class IssueTest extends ZSSTestcaseBase {
 		basename();
 		
 		getTo("/issue3/202-chartTitle.zul");
-		waitForTime(2000);
+		waitForTime(Setup.getTimeoutL1());
 		captureOrAssert("loadpage");
+		
+		click("@button:eq(0)");
+		waitForTime(Setup.getTimeoutL0());//for zss render in browser
 	}
 	
 	@Test
@@ -45,11 +50,11 @@ public class IssueTest extends ZSSTestcaseBase {
 		basename();
 		
 		getTo("/issue3/219-focusto.zul");
-		waitForTime(2000);
+		waitForTime(Setup.getTimeoutL1());
 		
 		for(int i = 0; i < 9; i++) {
 			click("@button:eq("+ i +")");
-			waitForTime(500);//for zss render in browser
+			waitForTime(Setup.getTimeoutL2());//for zss render in browser
 			captureOrAssert("step" + i);
 		}
 	}
@@ -59,27 +64,29 @@ public class IssueTest extends ZSSTestcaseBase {
 		basename();
 		
 		getTo("/issue3/219-focusto.zul");
-		waitForTime(2000);
+		waitForTime(Setup.getTimeoutL1());
 		
 		click("@button:eq(8)");
 		captureOrAssert("freeze-first");
 		
 		for(int i = 0; i < 8; i++) {
 			click("@button:eq("+ i +")");
-			waitForTime(500);//for zss render in browser
+			waitForTime(Setup.getTimeoutL2());//for zss render in browser
 			captureOrAssert("step" + i);
 		}
 	}
 	
 	@Test
 	public void testZSS242() throws Exception {
+		basename();
+		
 		getTo("/issue3/242-maxrow.zul");
 		waitForTime(2000);
 		captureOrAssert("loadpage");
 		
 		for(int i = 0; i < 17; i++) {
 			click("@button:eq("+ i +")");
-			waitForTime(500);//for zss render in browser
+			waitForTime(Setup.getTimeoutL3());//for zss render in browser
 			captureOrAssert("step" + i);
 		}
 	}
@@ -89,15 +96,15 @@ public class IssueTest extends ZSSTestcaseBase {
 		basename();
 		
 		getTo("/issue3/250-deleteSheet.zul");
-		waitForTime(2000);
+		waitForTime(Setup.getTimeoutL1());
 		captureOrAssert("loadpage");
 		
 		click("@button:eq(0)");
-		waitForTime(500);//for zss render in browser
+		waitForTime(Setup.getTimeoutL0());//for zss render in browser
 		captureOrAssert("deleteFirstSheet");
 		
 		click("@button:eq(0)");
-		waitForTime(500);//for zss render in browser
+		waitForTime(Setup.getTimeoutL0());//for zss render in browser
 		captureOrAssert("deleteSecondSheet");
 	}
 	
@@ -106,7 +113,7 @@ public class IssueTest extends ZSSTestcaseBase {
 		basename();
 		
 		getTo("/issue3/256-rowcolumn.zul");
-		waitForTime(2000);
+		waitForTime(Setup.getTimeoutL1());
 		captureOrAssert("loadpage");	
 	}
 	
@@ -115,7 +122,7 @@ public class IssueTest extends ZSSTestcaseBase {
 		basename();
 		
 		getTo("/issue3/256-rowcolumn-xls.zul");
-		waitForTime(2000);
+		waitForTime(Setup.getTimeoutL1());
 		captureOrAssert("loadpage");	
 	}
 	
@@ -124,17 +131,18 @@ public class IssueTest extends ZSSTestcaseBase {
 		basename();
 		
 		getTo("/issue3/282-paste-merge.zul");
-		waitForTime(2000);
+		waitForTime(Setup.getTimeoutL1());
 		captureOrAssert("loadpage");
 		
 		for(int i = 0; i < 7; i++) {
 			click("@button:eq("+ i +")");
-			waitForTime(500);//for zss render in browser
+			waitForTime(Setup.getTimeoutL0());//for zss render in browser
 			captureOrAssert("step" + i);
 		}
 	}
 	
 	
+	@Ignore
 	@Test
 	public void testAnother() throws Exception{
 		basename();
