@@ -1,16 +1,16 @@
-package org.zkoss.zss.ngmodel.format;
+package org.zkoss.zss.ngmodel.sys;
 
 import java.util.Locale;
 
-public class FormatContext {
+public class AbstractContext {
 
 	Locale locale;
 
-	public FormatContext() {
+	public AbstractContext() {
 		this.locale = Locale.getDefault();
 	}
 
-	public FormatContext(Locale locale) {
+	public AbstractContext(Locale locale) {
 		this.locale = locale;
 	}
 

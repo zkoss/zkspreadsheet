@@ -118,5 +118,36 @@ class CellProxyImpl extends AbstractCell{
 		proxy.setCellStyle(cellStyle);
 	}
 
+	
+	public CellType getFormulaResultType() {
+		loadProxy();
+		return proxy==null?null:proxy.getFormulaResultType();
+	}
+
+	public void clearValue() {
+		loadProxy();
+		if(proxy!=null)
+			proxy.clearValue();
+	}
+
+	public void clearFormulaResultCache() {
+		loadProxy();
+		if(proxy!=null)
+			proxy.clearFormulaResultCache();
+	}
+
+	@Override
+	void evalFormula() {
+		loadProxy();
+		if(proxy!=null)
+			proxy.evalFormula();
+	}
+
+	@Override
+	protected Object getValue(boolean eval) {
+		loadProxy();
+		return proxy==null?null:proxy.getValue(eval);
+	}
+
 
 }

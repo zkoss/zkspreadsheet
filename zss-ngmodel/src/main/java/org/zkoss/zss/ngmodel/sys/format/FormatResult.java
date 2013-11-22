@@ -1,4 +1,4 @@
-package org.zkoss.zss.ngmodel.format;
+package org.zkoss.zss.ngmodel.sys.format;
 
 public interface FormatResult {
 

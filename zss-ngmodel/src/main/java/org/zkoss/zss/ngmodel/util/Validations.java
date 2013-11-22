@@ -2,11 +2,8 @@ package org.zkoss.zss.ngmodel.util;
 
 public class Validations {
 
-	
-	public static void argNotNull(Object obj){
-		argNotNull("argument is null",obj);
-	}
-	public static void argNotNull(String message, Object... obj){
+	public static void argNotNull(Object... obj){
+		String message = "argument is null";
 		if(obj==null){
 			throw new IllegalArgumentException(message);
 		}

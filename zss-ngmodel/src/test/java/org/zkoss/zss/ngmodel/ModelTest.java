@@ -1,8 +1,11 @@
 package org.zkoss.zss.ngmodel;
 
+import java.util.Date;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
@@ -850,8 +853,216 @@ public class ModelTest {
 		matcher.setWrapText(true);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
+	}
+	
+	@Test
+	public void testGeneralCellValue(){
+		NBook book = new BookImpl();
+		NSheet sheet = book.createSheet("Sheet 1");
+		Date now = new Date();
+		ErrorValue err = new ErrorValue((byte)0);
+		NCell cell = sheet.getCell(1, 1);
+		
+		Assert.assertEquals(CellType.BLANK, cell.getType());
+		Assert.assertNull(cell.getValue());
+		
+		cell.setValue("abc");
+		Assert.assertEquals(CellType.STRING, cell.getType());
+		Assert.assertEquals("abc",cell.getValue());
+		
+		cell.setValue(123);
+		Assert.assertEquals(CellType.NUMBER, cell.getType());
+		Assert.assertEquals(123,cell.getValue());
+		
+		cell.setValue(now);
+		Assert.assertEquals(CellType.DATE, cell.getType());
+		Assert.assertEquals(now,cell.getValue());
 		
 		
+		cell.setValue(err);
+		Assert.assertEquals(CellType.ERROR, cell.getType());
+		Assert.assertEquals(err,cell.getValue());
 		
+		cell.setValue("=SUM(999)");
+		Assert.assertEquals(CellType.FORMULA, cell.getType());
+		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
+		Assert.assertEquals(999, cell.getValue());
+		
+		cell.clearValue();
+		Assert.assertEquals(CellType.BLANK, cell.getType());
+		Assert.assertNull(cell.getValue());
+		
+		
+		//on non cached cell
+		cell = sheet.getCell(1, 1);
+		
+		Assert.assertEquals(CellType.BLANK, cell.getType());
+		Assert.assertNull(cell.getValue());
+		
+		cell.setValue("abc");
+		Assert.assertEquals(CellType.STRING, cell.getType());
+		Assert.assertEquals("abc",cell.getValue());
+		
+		cell.setValue(123);
+		Assert.assertEquals(CellType.NUMBER, cell.getType());
+		Assert.assertEquals(123,cell.getValue());
+		
+		cell.setValue(now);
+		Assert.assertEquals(CellType.DATE, cell.getType());
+		Assert.assertEquals(now,cell.getValue());
+		
+		
+		cell.setValue(err);
+		Assert.assertEquals(CellType.ERROR, cell.getType());
+		Assert.assertEquals(err,cell.getValue());
+		
+		cell.setValue("=SUM(999)");
+		Assert.assertEquals(CellType.FORMULA, cell.getType());
+		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
+		Assert.assertEquals(999, cell.getValue());
+		
+		cell.clearValue();
+		Assert.assertEquals(CellType.BLANK, cell.getType());
+		Assert.assertNull(cell.getValue());
+	}
+	
+	@Test
+	public void testGeneralCellValue2(){
+		NBook book = new BookImpl();
+		NSheet sheet = book.createSheet("Sheet 1");
+		Date now = new Date();
+		ErrorValue err = new ErrorValue((byte)0);
+		NCell cell = sheet.getCell(1, 1);
+		
+		Assert.assertEquals(CellType.BLANK, cell.getType());
+		Assert.assertNull(cell.getValue());
+		
+		cell.setStringValue("abc");
+		Assert.assertEquals(CellType.STRING, cell.getType());
+		Assert.assertEquals("abc",cell.getStringValue());
+		
+		cell.setNumberValue(123);
+		Assert.assertEquals(CellType.NUMBER, cell.getType());
+		Assert.assertEquals(123,cell.getNumberValue());
+		
+		cell.setDateValue(now);
+		Assert.assertEquals(CellType.DATE, cell.getType());
+		Assert.assertEquals(now,cell.getDateValue());
+		
+		
+		cell.setErrorValue(err);
+		Assert.assertEquals(CellType.ERROR, cell.getType());
+		Assert.assertEquals(err,cell.getErrorValue());
+		
+		cell.setFormulaValue("SUM(999)");
+		Assert.assertEquals(CellType.FORMULA, cell.getType());
+		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
+		Assert.assertEquals(999, cell.getNumberValue());
+		
+		cell.clearValue();
+		Assert.assertEquals(CellType.BLANK, cell.getType());
+		Assert.assertNull(cell.getValue());
+		
+	}
+	
+	@Test
+	public void testGeneralCellValueError(){
+		NBook book = new BookImpl();
+		NSheet sheet = book.createSheet("Sheet 1");
+		Date now = new Date();
+		ErrorValue err = new ErrorValue((byte)0);
+		NCell cell = sheet.getCell(1, 1);
+		
+		Assert.assertEquals(CellType.BLANK, cell.getType());
+		Assert.assertNull(cell.getValue());
+		
+		try{
+			cell.getStringValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		try{
+			cell.getNumberValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		try{
+			cell.getDateValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		try{
+			cell.getErrorValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		try{
+			cell.getFormulaValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		
+		
+		cell.setFormulaValue("SUM(999)");
+		Assert.assertEquals(CellType.FORMULA, cell.getType());
+		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
+		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
+		Assert.assertEquals(999, cell.getNumberValue());
+		
+		try{
+			cell.getStringValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		try{
+			cell.getDateValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		try{
+			cell.getErrorValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		
+		
+		cell.setFormulaValue("[(999)");
+		Assert.assertEquals(CellType.FORMULA, cell.getType());
+		Assert.assertEquals(CellType.ERROR, cell.getFormulaResultType());
+		Assert.assertEquals("[(999)", cell.getFormulaValue());
+		Assert.assertNotNull(cell.getErrorValue());
+		System.out.println(">>>>"+cell.getErrorValue().getMessage());
+		
+		try{
+			cell.getStringValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		try{
+			cell.getNumberValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		try{
+			cell.getDateValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		
+		cell.clearValue();
+		Assert.assertEquals(CellType.BLANK, cell.getType());
+		Assert.assertNull(cell.getValue());
+		try{
+			cell.getStringValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		try{
+			cell.getNumberValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		try{
+			cell.getDateValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		try{
+			cell.getErrorValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
+		try{
+			cell.getFormulaValue();
+			Assert.fail();
+		}catch(IllegalStateException x){}
 	}
 }

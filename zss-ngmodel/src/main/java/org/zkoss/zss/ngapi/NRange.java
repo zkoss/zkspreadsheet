@@ -9,4 +9,6 @@ public interface NRange {
 	int getColumn();
 	int getLastRow();
 	int getLastColumn();
+	
+	void setEditText(String editText);
 }

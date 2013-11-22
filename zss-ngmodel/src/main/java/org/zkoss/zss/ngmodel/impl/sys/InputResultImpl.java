@@ -1,21 +1,20 @@
-package org.zkoss.zss.ngmodel.input;
+package org.zkoss.zss.ngmodel.impl.sys;
 
 import org.zkoss.zss.ngmodel.NCell.CellType;
+import org.zkoss.zss.ngmodel.sys.input.InputResult;
 
-public class InputResult {
+public class InputResultImpl implements InputResult{
 
-	private String input = null;
+	private String editText = null;
 	private Object value = null;
 	private CellType type = CellType.BLANK;
-	public InputResult(){}
-	public InputResult(String input) {
-		this.input = input;
-		this.type = type;
-		this.value = value;
+	public InputResultImpl(){}
+	public InputResultImpl(String input) {
+		this.editText = input;
 	}
 
-	public String getInput() {
-		return input;
+	public String getEditText() {
+		return editText;
 	}
 
 	public Object getValue() {
