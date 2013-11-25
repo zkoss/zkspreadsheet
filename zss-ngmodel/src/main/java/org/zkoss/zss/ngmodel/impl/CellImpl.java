@@ -6,6 +6,7 @@ import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
+import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
@@ -14,13 +15,13 @@ import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
 
 public class CellImpl extends AbstractCell {
-
+	private static final long serialVersionUID = 1L;
 	private AbstractRow row;
 	private CellType type = CellType.BLANK;
 	private Object value = null;
 	private AbstractCellStyle cellStyle;
 	
-	private EvaluationResult formulaResult;
+	transient private EvaluationResult formulaResult;//cache
 
 	public CellImpl(AbstractRow row) {
 		this.row = row;
@@ -44,15 +45,19 @@ public class CellImpl extends AbstractCell {
 		return row.getCellIndex(this);
 	}
 
-	public String asString(boolean enableSheetName) {
-		return new CellReference(enableSheetName ? row.getSheet()
-				.getSheetName() : null, this).formatAsString();
+	public String getReferenceString() {
+		return new CellReference(this).formatAsString();
 	}
 
 	protected void checkOrphan() {
 		if (row == null) {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
+	}
+	
+	/*package*/ AbstractSheet getSheet(){
+		checkOrphan();
+		return row.getSheet();
 	}
 
 	@Override
@@ -91,8 +96,7 @@ public class CellImpl extends AbstractCell {
 	@Override
 	protected void evalFormula(){
 		if(type==CellType.FORMULA && formulaResult==null){
-			//TODO evaluate
-			FormulaEngine fe = EngineFactory.getInstance().getFormulaEngine();
+			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 			formulaResult = fe.evaluate((FormulaExpression)value,new FormulaEvaluationContext());
 		}
 	}
@@ -106,6 +110,11 @@ public class CellImpl extends AbstractCell {
 	public void clearValue() {
 		value = null;
 		formulaResult = null;
+		if(type==CellType.FORMULA){
+			//clear depends
+			Ref ref = new RefImpl(this);
+			((AbstractBookSeries)row.getSheet().getBook().getBookSeries()).getDependencyTable().clearDependents(ref);
+		}
 		type = CellType.BLANK;
 	}
 

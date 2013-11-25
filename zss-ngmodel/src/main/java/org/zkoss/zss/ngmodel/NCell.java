@@ -13,49 +13,49 @@ public interface NCell {
 		ERROR
 	}
 	
-	CellType getType();
-	CellType getFormulaResultType();
+	public CellType getType();
+	public CellType getFormulaResultType();
 	
-	boolean isNull();
+	public boolean isNull();
 	
-	int getRowIndex();
+	public int getRowIndex();
 	
-	int getColumnIndex();
+	public int getColumnIndex();
 	
-	String asString(boolean enableSheetName);
+	public String getReferenceString();
 	
-	NCellStyle getCellStyle();
+	public NCellStyle getCellStyle();
 	
-	NCellStyle getCellStyle(boolean local);
+	public NCellStyle getCellStyle(boolean local);
 
 //	boolean isReadonly();
 //	
 	
-	Object getValue();
-	void setValue(Object value);
+	public Object getValue();
+	public void setValue(Object value);
 
 	//clear cell value , reset it to blank
-	void clearValue();//
-	void clearFormulaResultCache();
+	public void clearValue();//
+	public void clearFormulaResultCache();
 	
-	void setStringValue(String value);
-	String getStringValue();
+	public void setStringValue(String value);
+	public String getStringValue();
 	
 	/**
 	 * set formula as string with '=', ex: SUM(A1:B2)
 	 * @param fromula
 	 */
-	void setFormulaValue(String formula);
-	String getFormulaValue();
+	public void setFormulaValue(String formula);
+	public String getFormulaValue();
 	
-	void setNumberValue(Number number);
-	Number getNumberValue();
+	public void setNumberValue(Number number);
+	public Number getNumberValue();
 	
-	void setDateValue(Date date);
-	Date getDateValue();
+	public void setDateValue(Date date);
+	public Date getDateValue();
 	
-	ErrorValue getErrorValue();
-	void setErrorValue(ErrorValue errorValue);
+	public ErrorValue getErrorValue();
+	public void setErrorValue(ErrorValue errorValue);
 	
-	void setCellStyle(NCellStyle cellStyle);
+	public void setCellStyle(NCellStyle cellStyle);
 }

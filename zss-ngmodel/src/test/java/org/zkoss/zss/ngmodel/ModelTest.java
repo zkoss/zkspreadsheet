@@ -20,7 +20,7 @@ public class ModelTest {
 
 	@Test
 	public void testSheet(){
-		NBook book = new BookImpl();
+		NBook book = new BookImpl("book1");
 		NSheet sheet1 = book.createSheet("Sheet1");
 		Assert.assertEquals(1, book.getNumOfSheet());
 		NSheet sheet2 = book.createSheet("Sheet2");
@@ -121,32 +121,32 @@ public class ModelTest {
 	
 	@Test
 	public void testReferenceString(){
-		NBook book = new BookImpl();
+		NBook book = new BookImpl("book1");
 		NSheet sheet1 = book.createSheet("Sheet1");
 		
 		Assert.assertEquals("1",sheet1.getRow(0).asString());
 		Assert.assertEquals("101",sheet1.getRow(100).asString());
 		Assert.assertEquals("A",sheet1.getColumn(0).asString());
 		Assert.assertEquals("AY",sheet1.getColumn(50).asString());
-		Assert.assertEquals("A1",sheet1.getCell(0,0).asString(false));
-		Assert.assertEquals("AY101",sheet1.getCell(100,50).asString(false));
-		Assert.assertEquals("Sheet1!A1",sheet1.getCell(0,0).asString(true));
-		Assert.assertEquals("Sheet1!AY101",sheet1.getCell(100,50).asString(true));
+		Assert.assertEquals("A1",sheet1.getCell(0,0).getReferenceString());
+		Assert.assertEquals("AY101",sheet1.getCell(100,50).getReferenceString());
+//		Assert.assertEquals("Sheet1!A1",sheet1.getCell(0,0).getReferenceString(true));
+//		Assert.assertEquals("Sheet1!AY101",sheet1.getCell(100,50).getReferenceString(true));
 		
 		
 		sheet1.getCell(9, 5).setValue("(9,5)");
 		
 		Assert.assertEquals("10",sheet1.getRow(9).asString());
 		Assert.assertEquals("F",sheet1.getColumn(5).asString());
-		Assert.assertEquals("F10",sheet1.getCell(9,5).asString(false));
-		Assert.assertEquals("Sheet1!F10",sheet1.getCell(9,5).asString(true));
+		Assert.assertEquals("F10",sheet1.getCell(9,5).getReferenceString());
+//		Assert.assertEquals("Sheet1!F10",sheet1.getCell(9,5).getReferenceString(true));
 		
 		dump(book);
 	}
 	
 	@Test
 	public void testCellRange(){
-		NBook book = new BookImpl();
+		NBook book = new BookImpl("book1");
 		book.createSheet("Sheet1");
 		Assert.assertEquals(1, book.getNumOfSheet());
 		NSheet sheet = book.createSheet("Sheet2");;
@@ -278,7 +278,7 @@ public class ModelTest {
 	
 	@Test
 	public void testClearSheetRow(){
-		NBook book = new BookImpl();
+		NBook book = new BookImpl("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		for(int i=10;i<=20;i+=2){
@@ -337,7 +337,7 @@ public class ModelTest {
 	
 	@Test
 	public void testClearSheetColumn(){
-		NBook book = new BookImpl();
+		NBook book = new BookImpl("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		for(int i=10;i<=20;i+=2){
@@ -399,7 +399,7 @@ public class ModelTest {
 	
 	@Test
 	public void testClearSheetCell(){
-		NBook book = new BookImpl();
+		NBook book = new BookImpl("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		for(int i=10;i<=20;i+=2){
@@ -470,7 +470,7 @@ public class ModelTest {
 	
 	@Test
 	public void testInsertDeleteRow(){
-		NBook book = new BookImpl();
+		NBook book = new BookImpl("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		for(int i=10;i<=20;i+=2){
@@ -567,7 +567,7 @@ public class ModelTest {
 	
 	@Test
 	public void testInsertDeleteColumn(){
-		NBook book = new BookImpl();
+		NBook book = new BookImpl("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		for(int i=10;i<=20;i+=2){
@@ -669,7 +669,7 @@ public class ModelTest {
 	
 	@Test
 	public void testStyle(){
-		NBook book = new BookImpl();
+		NBook book = new BookImpl("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		NCellStyle style = book.getDefaultCellStyle();
@@ -716,7 +716,7 @@ public class ModelTest {
 	
 	@Test
 	public void testStyleSearch(){
-		NBook book = new BookImpl();
+		NBook book = new BookImpl("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		NCellStyle style1 = book.createCellStyle(true);
@@ -857,7 +857,7 @@ public class ModelTest {
 	
 	@Test
 	public void testGeneralCellValue(){
-		NBook book = new BookImpl();
+		NBook book = new BookImpl("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		Date now = new Date();
 		ErrorValue err = new ErrorValue((byte)0);
@@ -930,7 +930,7 @@ public class ModelTest {
 	
 	@Test
 	public void testGeneralCellValue2(){
-		NBook book = new BookImpl();
+		NBook book = new BookImpl("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		Date now = new Date();
 		ErrorValue err = new ErrorValue((byte)0);
@@ -970,7 +970,7 @@ public class ModelTest {
 	
 	@Test
 	public void testGeneralCellValueError(){
-		NBook book = new BookImpl();
+		NBook book = new BookImpl("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		Date now = new Date();
 		ErrorValue err = new ErrorValue((byte)0);

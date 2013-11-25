@@ -24,35 +24,37 @@ import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
  */
 public interface NBook {
 
-//	NBookSeries getBookSeries();
+	public String getBookName();
+	
+	public NBookSeries getBookSeries();
 	/**
 	 * get sheet at the index
 	 * @param idx the sheet index
 	 * @return the sheet at the index
 	 */
-	NSheet getSheet(int idx);
+	public NSheet getSheet(int idx);
 	
 	/**
 	 * get the number of sheet inside this book
 	 * @return the number of sheet
 	 */
-	int getNumOfSheet();
+	public int getNumOfSheet();
 	
 	/**
 	 * get the sheet by name
 	 * @param name the name of sheet
 	 * @return
 	 */
-	NSheet getSheetByName(String name);
+	public NSheet getSheetByName(String name);
 	
 	//editable
-	NSheet createSheet(String name);
-	NSheet createSheet(String name, NSheet src);
-	void setSheetName(NSheet sheet, String newname);
-	void deleteSheet(NSheet sheet);
-	void moveSheetTo(NSheet sheet, int index);
+	public NSheet createSheet(String name);
+	public NSheet createSheet(String name, NSheet src);
+	public void setSheetName(NSheet sheet, String newname);
+	public void deleteSheet(NSheet sheet);
+	public void moveSheetTo(NSheet sheet, int index);
 	
-	NCellStyle getDefaultCellStyle();
+	public NCellStyle getDefaultCellStyle();
 
 	/**
 	 * create a cell style
@@ -60,7 +62,7 @@ public interface NBook {
 	 * then you can use {@link #searchCellStyle(CellStyleMatcher)} to search and reuse this style.
 	 * @return 
 	 */
-	NCellStyle createCellStyle(boolean inStyleTable);
+	public NCellStyle createCellStyle(boolean inStyleTable);
 	
 	/**
 	 * create a cell style and copy the style from the src style.
@@ -69,17 +71,21 @@ public interface NBook {
 	 * then you can use {@link #searchCellStyle(CellStyleMatcher)} to search and reuse this style.
 	 * @return 
 	 */
-	NCellStyle createCellStyle(NCellStyle src,boolean inStyleTable);
+	public NCellStyle createCellStyle(NCellStyle src,boolean inStyleTable);
 	
 	/**
 	 * Search the style table and return the first matched style. 
 	 * @param matcher the style matcher
 	 * @return the matched style.
 	 */
-	NCellStyle searchCellStyle(CellStyleMatcher matcher);
+	public NCellStyle searchCellStyle(CellStyleMatcher matcher);
 	
 	
-	int getMaxRowSize();
+	public int getMaxRowSize();
 	
-	int getMaxColumnSize();
+	public int getMaxColumnSize();
+	
+	public void addEventListener(ModelEventListener listener);
+	
+	public void removeEventListener(ModelEventListener listener);
 }

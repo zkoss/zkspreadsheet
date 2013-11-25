@@ -5,10 +5,11 @@ import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.util.Validations;
 
 public class RowImpl extends AbstractRow {
-
+	private static final long serialVersionUID = 1L;
+	
 	private AbstractSheet sheet;
 
-	private BiIndexPool<AbstractCell> cells = new BiIndexPool<AbstractCell>();
+	private final BiIndexPool<AbstractCell> cells = new BiIndexPool<AbstractCell>();
 
 	private AbstractCellStyle cellStyle;
 

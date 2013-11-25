@@ -1,7 +1,9 @@
 package org.zkoss.zss.ngmodel.sys;
 
+import org.zkoss.zss.ngmodel.impl.sys.DependencyEngineImpl;
 import org.zkoss.zss.ngmodel.impl.sys.FormulaEngineImpl;
 import org.zkoss.zss.ngmodel.impl.sys.InputEngineImpl;
+import org.zkoss.zss.ngmodel.sys.dependency.DependencyEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.input.InputEngine;
 
@@ -24,12 +26,16 @@ public class EngineFactory {
 		return instance;
 	}
 
-	public InputEngine getInputEngine() {
+	public InputEngine createInputEngine() {
 		return new InputEngineImpl();
 	}
 
-	public FormulaEngine getFormulaEngine() {
+	public FormulaEngine createFormulaEngine() {
 		return new FormulaEngineImpl();
+	}
+
+	public DependencyEngine createDependencyEngine() {
+		return new DependencyEngineImpl();
 	}
 
 }

@@ -7,9 +7,10 @@ import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
 
 class ColumnProxyImpl extends AbstractColumn{
-	WeakReference<AbstractSheet> sheetRef;
-	int index;
-	AbstractColumn proxy;
+	private static final long serialVersionUID = 1L;
+	private final WeakReference<AbstractSheet> sheetRef;
+	private final int index;
+	private AbstractColumn proxy;
 	
 	
 	public ColumnProxyImpl(AbstractSheet sheet, int index) {

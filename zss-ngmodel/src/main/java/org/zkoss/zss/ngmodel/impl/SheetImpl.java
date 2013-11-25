@@ -8,15 +8,16 @@ import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.NRow;
+import org.zkoss.zss.ngmodel.util.CellReference;
 
 public class SheetImpl extends AbstractSheet {
-
-	AbstractBook book;
-	String name;
-	String id;
+	private static final long serialVersionUID = 1L;
+	private AbstractBook book;
+	private String name;
+	private final String id;
 	
-	BiIndexPool<AbstractRow> rows = new BiIndexPool<AbstractRow>();
-	BiIndexPool<AbstractColumn> columns = new BiIndexPool<AbstractColumn>();
+	private final BiIndexPool<AbstractRow> rows = new BiIndexPool<AbstractRow>();
+	private final BiIndexPool<AbstractColumn> columns = new BiIndexPool<AbstractColumn>();
 	
 	
 	public SheetImpl(AbstractBook book,String id){
@@ -236,7 +237,7 @@ public class SheetImpl extends AbstractSheet {
 		int endRow = getEndRowIndex();
 		builder.append("  ==Columns==\n\t");
 		for(int i=0;i<=endColumn;i++){
-			builder.append(getColumn(i).asString()).append(":").append(i).append("\t");
+			builder.append(CellReference.convertNumToColString(i)).append(":").append(i).append("\t");
 		}
 		builder.append("\n");
 		builder.append("  ==Row==");

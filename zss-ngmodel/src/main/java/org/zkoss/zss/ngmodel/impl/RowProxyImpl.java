@@ -6,8 +6,10 @@ import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.util.Validations;
 
 class RowProxyImpl extends AbstractRow{
-	WeakReference<AbstractSheet> sheetRef;
-	int index;
+	private static final long serialVersionUID = 1L;
+	
+	private final WeakReference<AbstractSheet> sheetRef;
+	private final int index;
 	AbstractRow proxy;
 	
 	public RowProxyImpl(AbstractSheet sheet, int index) {

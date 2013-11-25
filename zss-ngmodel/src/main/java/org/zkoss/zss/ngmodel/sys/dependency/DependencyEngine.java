@@ -1,5 +1,7 @@
 package org.zkoss.zss.ngmodel.sys.dependency;
 
-public class DependencyEngine {
 
+public interface DependencyEngine {
+
+	public DependencyTable getDependencyTable(); 
 }

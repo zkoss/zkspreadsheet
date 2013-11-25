@@ -1,27 +1,30 @@
 package org.zkoss.zss.ngmodel.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NSheet;
 
-public abstract class AbstractSheet implements NSheet{
+public abstract class AbstractSheet implements NSheet,Serializable{
+	private static final long serialVersionUID = 1L;
 
-	abstract AbstractRow getRowAt(int rowIdx, boolean proxy);
-	abstract AbstractRow getOrCreateRowAt(int rowIdx);
-	abstract int getRowIndex(AbstractRow row);
+	/*package*/ abstract AbstractRow getRowAt(int rowIdx, boolean proxy);
+	/*package*/ abstract AbstractRow getOrCreateRowAt(int rowIdx);
+	/*package*/ abstract int getRowIndex(AbstractRow row);
 	
-	abstract AbstractColumn getColumnAt(int columnIdx, boolean proxy);
-	abstract AbstractColumn getOrCreateColumnAt(int columnIdx);
-	abstract int getColumnIndex(AbstractColumn column);
+	/*package*/ abstract AbstractColumn getColumnAt(int columnIdx, boolean proxy);
+	/*package*/ abstract AbstractColumn getOrCreateColumnAt(int columnIdx);
+	/*package*/ abstract int getColumnIndex(AbstractColumn column);
 	
-	abstract AbstractCell getCellAt(int rowIdx, int columnIdx, boolean proxy);
-	abstract AbstractCell getOrCreateCellAt(int rowIdx, int columnIdx);
+	/*package*/ abstract AbstractCell getCellAt(int rowIdx, int columnIdx, boolean proxy);
+	/*package*/ abstract AbstractCell getOrCreateCellAt(int rowIdx, int columnIdx);
 	
 	
-	abstract void copyTo(AbstractSheet sheet);
-	abstract void setSheetName(String name);
+	/*package*/ abstract void copyTo(AbstractSheet sheet);
+	/*package*/ abstract void setSheetName(String name);
 	
-	void release() {
+	/*package*/ void release() {
 	}
-	void onModelEvent(ModelEvent event) {
+	/*package*/ void onModelEvent(ModelEvent event) {
 	}
 }

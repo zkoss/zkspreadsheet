@@ -2,15 +2,15 @@ package org.zkoss.zss.ngmodel;
 
 public interface NRow {
 
-	int getIndex();
-	String asString();
-	boolean isNull();
-	NCellStyle getCellStyle();
-	NCellStyle getCellStyle(boolean local);
+	public int getIndex();
+	public String asString();
+	public boolean isNull();
+	public NCellStyle getCellStyle();
+	public NCellStyle getCellStyle(boolean local);
 	
-	int getStartCellIndex();
-	int getEndCellIndex();
+	public int getStartCellIndex();
+	public int getEndCellIndex();
 	
 	//editable
-	void setCellStyle(NCellStyle cellStyle);
+	public void setCellStyle(NCellStyle cellStyle);
 }

@@ -1,5 +1,6 @@
 package org.zkoss.zss.ngmodel.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,9 +14,10 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class BiIndexPool<T> {
-	TreeMap<Integer,T> objs = new TreeMap<Integer,T>();
-	HashMap<T,Integer> objsReverse = new HashMap<T,Integer>(); 
+public class BiIndexPool<T> implements Serializable{
+	private static final long serialVersionUID = 1L;
+	private TreeMap<Integer,T> objs = new TreeMap<Integer,T>();
+	private HashMap<T,Integer> objsReverse = new HashMap<T,Integer>(); 
 	
 	public T get(int idx) {
 		return objs.get(idx);

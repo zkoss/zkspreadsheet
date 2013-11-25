@@ -5,9 +5,9 @@ import java.util.Map;
 
 public class ModelEvent {
 
-	String name;
+	private String name;
 	
-	Map<String,Object> data;
+	private Map<String,Object> data;
 	
 	public ModelEvent(String name){
 		this.name = name;
@@ -20,6 +20,10 @@ public class ModelEvent {
 	
 	public Object getData(String key){
 		return data==null?null:data.get(key);
+	}
+
+	public String getName() {
+		return name;
 	}
 	
 }

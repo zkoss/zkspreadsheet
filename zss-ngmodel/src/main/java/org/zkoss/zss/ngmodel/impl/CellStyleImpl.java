@@ -4,6 +4,7 @@ import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.util.Validations;
 
 public class CellStyleImpl extends AbstractCellStyle{
+	private static final long serialVersionUID = 1L;
 
 	public static final String COLOR_WHITE = "#FFFFFF";
 	public static final String COLOR_BLACK = "#000000";

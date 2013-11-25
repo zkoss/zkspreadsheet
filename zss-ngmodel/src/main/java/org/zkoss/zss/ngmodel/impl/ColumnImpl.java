@@ -7,6 +7,7 @@ import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
 
 public class ColumnImpl extends AbstractColumn {
+	private static final long serialVersionUID = 1L;
 
 	private AbstractSheet sheet;
 	private AbstractCellStyle cellStyle;

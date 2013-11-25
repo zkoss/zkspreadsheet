@@ -1,5 +1,6 @@
 package org.zkoss.zss.ngmodel.impl;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.zkoss.zss.ngmodel.ErrorValue;
@@ -11,10 +12,14 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 import org.zkoss.zss.ngmodel.util.Validations;
 
-public abstract class AbstractCell implements NCell{
+public abstract class AbstractCell implements NCell,Serializable{
+	private static final long serialVersionUID = 1L;
 
-	void release() {
+	/*package*/ abstract AbstractSheet getSheet();
+	
+	/*package*/ void release() {
 	}
+	
 	protected void checkType(CellType type){
 		if(!getType().equals(type)){
 			throw new IllegalStateException("is "+getType()+", not the "+type);
@@ -26,8 +31,7 @@ public abstract class AbstractCell implements NCell{
 			throw new IllegalStateException("formula result is "+getFormulaResultType()+", not the "+type);
 		}
 	}
-	abstract void evalFormula();
-	abstract public void setValue(Object value);
+	abstract protected void evalFormula();
 	abstract protected Object getValue(boolean eval);
 	
 	public Object getValue(){
@@ -96,7 +100,7 @@ public abstract class AbstractCell implements NCell{
 		if(formula.startsWith("=")){
 			formula = formula.substring(1);
 		}
-		FormulaEngine fe = EngineFactory.getInstance().getFormulaEngine();
+		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 		FormulaExpression expr = fe.parse(formula, new FormulaParseContext());
 		setValue(expr);
 	}

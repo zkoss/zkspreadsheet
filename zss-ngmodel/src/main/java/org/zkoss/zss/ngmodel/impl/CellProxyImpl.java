@@ -7,9 +7,10 @@ import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
 
 class CellProxyImpl extends AbstractCell{
-	WeakReference<AbstractSheet> sheetRef;
-	int rowIdx;
-	int columnIdx;
+	private static final long serialVersionUID = 1L;
+	private WeakReference<AbstractSheet> sheetRef;
+	private int rowIdx;
+	private int columnIdx;
 	AbstractCell proxy;
 	
 	
@@ -19,7 +20,7 @@ class CellProxyImpl extends AbstractCell{
 		this.columnIdx = column;
 	}
 	
-	private AbstractSheet getSheet(){
+	/*package*/ AbstractSheet getSheet(){
 		AbstractSheet sheet = sheetRef.get();
 		if(sheet==null){
 			throw new IllegalStateException("proxy target lost, you should't keep this instance");
@@ -76,10 +77,10 @@ class CellProxyImpl extends AbstractCell{
 		return proxy==null?null:proxy.getValue();
 	}
 
-	public String asString(boolean enableSheetName) {
+	public String getReferenceString() {
 		loadProxy();
-		return proxy==null?new CellReference(enableSheetName?getSheet().getSheetName():null, rowIdx,columnIdx,false,false).formatAsString():
-			proxy.asString(enableSheetName);
+		return proxy==null?new CellReference(null, rowIdx,columnIdx,false,false).formatAsString():
+			proxy.getReferenceString();
 	}
 
 	public NCellStyle getCellStyle() {
@@ -139,7 +140,7 @@ class CellProxyImpl extends AbstractCell{
 	}
 
 	@Override
-	void evalFormula() {
+	protected void evalFormula() {
 		loadProxy();
 		if(proxy!=null)
 			proxy.evalFormula();

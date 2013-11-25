@@ -2,8 +2,8 @@ package org.zkoss.zss.ngmodel;
 
 public class ErrorValue {
 
-	byte code;
-	String message;
+	private byte code;
+	private String message;
 
 	public ErrorValue(byte code) {
 		this(code, null);

@@ -24,7 +24,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 			}
 
 			public boolean hasError() {
-				return !formula.startsWith("SUM(999)");
+				return !formula.startsWith("SUM(");
 			}};
 	}
 

@@ -1,27 +1,30 @@
 package org.zkoss.zss.ngmodel.impl;
 
+import java.io.Serializable;
+
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NRow;
 
-public abstract class AbstractRow implements NRow{
+public abstract class AbstractRow implements NRow,Serializable{
+	private static final long serialVersionUID = 1L;
 
-	abstract AbstractCell getCellAt(int columnIdx, boolean proxy);
+	/*package*/ abstract AbstractCell getCellAt(int columnIdx, boolean proxy);
 
-	abstract AbstractCell getOrCreateCellAt(int columnIdx);
+	/*package*/ abstract AbstractCell getOrCreateCellAt(int columnIdx);
 
-	void release() {
+	/*package*/ void release() {
 	}
 	
-	void onModelEvent(ModelEvent event) {
+	/*package*/ void onModelEvent(ModelEvent event) {
 	}
 
-	abstract void clearCell(int start, int end);
+	/*package*/ abstract void clearCell(int start, int end);
 
-	abstract void insertCell(int start, int size);
+	/*package*/ abstract void insertCell(int start, int size);
 
-	abstract void deleteCell(int start, int size);
+	/*package*/ abstract void deleteCell(int start, int size);
 
-	abstract AbstractSheet getSheet();
+	/*package*/ abstract AbstractSheet getSheet();
 
-	abstract int getCellIndex(AbstractCell cell);
+	/*package*/ abstract int getCellIndex(AbstractCell cell);
 }

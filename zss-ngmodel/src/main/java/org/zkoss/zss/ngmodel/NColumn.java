@@ -2,12 +2,12 @@ package org.zkoss.zss.ngmodel;
 
 public interface NColumn {
 
-	int getIndex();
-	String asString();
-	boolean isNull();
-	NCellStyle getCellStyle();
-	NCellStyle getCellStyle(boolean local);
+	public int getIndex();
+	public String asString();
+	public boolean isNull();
+	public NCellStyle getCellStyle();
+	public NCellStyle getCellStyle(boolean local);
 	
 	//editable
-	void setCellStyle(NCellStyle cellStyle);
+	public void setCellStyle(NCellStyle cellStyle);
 }
