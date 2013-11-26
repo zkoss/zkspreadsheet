@@ -58,6 +58,8 @@ ZK Spreadsheet 2.6.0
 	ZSS-380 When input wrong formula, the formula bar will change to below cell and "Enter" key can't blur it
   ZSS-464 Other styles are changed (background color, font size) when just changing cell border
   ZSS-521 select whole column and format, long running process
+  ZSS-331 select all cell has poor performance even not many cells
+  ZSS-462 Can't copy all selected cells to other application when using Chrome
 
 ZK Spreadsheet 2.5.0
 *Features:   

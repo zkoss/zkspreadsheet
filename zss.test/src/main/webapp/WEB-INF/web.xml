@@ -16,7 +16,7 @@ Copyright (C) 2004 Potix Corporation. All Rights Reserved.
  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"> 
 
 	<description><![CDATA[zss.testapp]]></description>
-	<display-name>zss.testapp</display-name>
+	<display-name>zss.test</display-name>
 
 	<!-- //// -->
 	<!-- ZK -->

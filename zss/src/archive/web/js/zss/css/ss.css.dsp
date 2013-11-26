@@ -533,8 +533,9 @@
 
 .zsfocus{
 	position:absolute;
-	width : 0px;
 	left : -5px;
+	width: 9999px;  /* ZSS-462: workaround for wrong selection caused by mouse position */ 
+	height: 0px;
 }
 
 

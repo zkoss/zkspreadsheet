@@ -26,3 +26,7 @@ zss.Configuration = zk.$extends(zk.Object, {
 	readonly: false,
 	hideBorder: false
 });
+zss.clientCopy = {
+	maxRowCount: 1000,
+	maxColumnCount: 40
+};
