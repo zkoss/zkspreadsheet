@@ -22,6 +22,7 @@ import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.Font;
+import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.util.logging.Log;
 import org.zkoss.zss.model.Book;
 import org.zkoss.zss.model.Worksheet;
@@ -57,11 +58,31 @@ public class Styles {
 		final boolean strikeout = font.getStrikeout();
 		final short typeOffset = font.getTypeOffset();
 		final byte underline = font.getUnderline();
-		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, newColor, fontHeight, name, italic, strikeout, typeOffset, underline);
-		final CellStyle style = cloneCellStyle(cell);
-		style.setFont(newFont);
+		final Object[] newFont = BookHelper.findOrCreateFont(book, boldWeight, newColor, fontHeight, name, italic, strikeout, typeOffset, underline);
+		CellStyle style = null;
+		if(Boolean.FALSE.equals(newFont[1])){//search it since we have existed font
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
+			matcher.setFontIndex(((Font)newFont[0]).getIndex());
+			style = findStyle(sheet.getBook(), matcher);
+		}
+		
+		if(style==null){
+			style = cloneCellStyle(cell);
+			style.setFont((Font)newFont[0]);
+		}
 		cell.setCellStyle(style);
 	}
+	
+	public static CellStyle findStyle(Workbook book,CellStyleMatcher matcher){
+    	short size = book.getNumCellStyles();
+    	for(short i=0; i<size;i++){
+    		CellStyle style = book.getCellStyleAt(i);
+    		if(matcher.match(book,style)){
+    			return style;
+    		}
+    	}
+    	return null;
+    }
 	
 	public static void setFillColor(Worksheet sheet, int row, int col, String color){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
@@ -71,8 +92,17 @@ public class Styles {
 		if (orgColor == newColor || orgColor != null  && orgColor.equals(newColor)) { //no change, skip
 			return;
 		}
-		final CellStyle style = cloneCellStyle(cell);
-		BookHelper.setFillForegroundColor(style, newColor);
+		
+		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
+		matcher.setFillForegroundColor(color);
+		matcher.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		CellStyle style = findStyle(sheet.getBook(), matcher);
+		
+		if(style==null){
+			style = cloneCellStyle(cell);
+			style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			BookHelper.setFillForegroundColor(style, newColor);
+		}
 		cell.setCellStyle(style);
 	}
 	
@@ -103,9 +133,18 @@ public class Styles {
 		final boolean strikeout = font.getStrikeout();
 		final short typeOffset = font.getTypeOffset();
 		final byte underline = font.getUnderline();
-		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, color, (short)fontHeight, name, italic, strikeout, typeOffset, underline);
-		final CellStyle style = cloneCellStyle(cell);
-		style.setFont(newFont);
+		final Object[] newFont = BookHelper.findOrCreateFont(book, boldWeight, color, (short)fontHeight, name, italic, strikeout, typeOffset, underline);
+		CellStyle style = null;
+		if(Boolean.FALSE.equals(newFont[1])){//search it since we have existed font
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
+			matcher.setFontIndex(((Font)newFont[0]).getIndex());
+			style = findStyle(sheet.getBook(), matcher);
+		}
+		
+		if(style==null){
+			style = cloneCellStyle(cell);
+			style.setFont((Font)newFont[0]);
+		}
 		cell.setCellStyle(style);
 	}
 	
@@ -125,9 +164,18 @@ public class Styles {
 		final boolean italic = font.getItalic();
 		final short typeOffset = font.getTypeOffset();
 		final byte underline = font.getUnderline();
-		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
-		final CellStyle style = cloneCellStyle(cell);
-		style.setFont(newFont);
+		final Object[] newFont = BookHelper.findOrCreateFont(book, boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
+		CellStyle style = null;
+		if(Boolean.FALSE.equals(newFont[1])){//search it since we have existed font
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
+			matcher.setFontIndex(((Font)newFont[0]).getIndex());
+			style = findStyle(sheet.getBook(), matcher);
+		}
+		
+		if(style==null){
+			style = cloneCellStyle(cell);
+			style.setFont((Font)newFont[0]);
+		}
 		cell.setCellStyle(style);
 	}
 	
@@ -147,9 +195,18 @@ public class Styles {
 		final boolean strikeout = font.getStrikeout();
 		final short typeOffset = font.getTypeOffset();
 		final byte underline = font.getUnderline();
-		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
-		final CellStyle style = cloneCellStyle(cell);
-		style.setFont(newFont);
+		final Object[] newFont = BookHelper.findOrCreateFont(book, boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
+		CellStyle style = null;
+		if(Boolean.FALSE.equals(newFont[1])){//search it since we have existed font
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
+			matcher.setFontIndex(((Font)newFont[0]).getIndex());
+			style = findStyle(sheet.getBook(), matcher);
+		}
+		
+		if(style==null){
+			style = cloneCellStyle(cell);
+			style.setFont((Font)newFont[0]);
+		}
 		cell.setCellStyle(style);
 	}
 	
@@ -168,6 +225,8 @@ public class Styles {
 	public static void setBorderRight(Worksheet sheet,int row,int col,String color, short linestyle){
 		setBorder(sheet,row,col, BookHelper.HTMLToColor(sheet.getWorkbook(), color), linestyle, 0x2);
 	}
+	
+	@Deprecated
 	public static void setBorder(Worksheet sheet,int row,int col, short color, short lineStyle, int at){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
 		final CellStyle style = cloneCellStyle(cell);
@@ -191,23 +250,73 @@ public class Styles {
 	
 	public static void setBorder(Worksheet sheet,int row,int col, Color color, short lineStyle, int at){
 		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
-		final CellStyle style = cloneCellStyle(cell);
-		if((at & BookHelper.BORDER_EDGE_LEFT)!=0) {
-			BookHelper.setLeftBorderColor(style, color);
-			style.setBorderLeft(lineStyle);
+		final Book book = sheet.getBook();
+		//ZSS-464 try to search existed matched style
+		String colorHtml = BookHelper.colorToBorderHTML(book, color);
+		CellStyle style = null;
+		boolean hasBorder = lineStyle != CellStyle.BORDER_NONE;
+		if(colorHtml!=null){
+			final CellStyle oldstyle = cell.getCellStyle();
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),oldstyle);
+			if((at & BookHelper.BORDER_EDGE_LEFT)!=0) {
+				if(hasBorder)
+					matcher.setLeftBorderColor(colorHtml);
+				else
+					matcher.removeLeftBorderColor();
+				
+				matcher.setBorderLeft(lineStyle);
+			}
+			if((at & BookHelper.BORDER_EDGE_TOP)!=0){
+				if(hasBorder) 
+					matcher.setTopBorderColor(colorHtml);
+				else
+					matcher.removeTopBorderColor();
+				
+				matcher.setBorderTop(lineStyle);
+			}
+			if((at & BookHelper.BORDER_EDGE_RIGHT)!=0){
+				if(hasBorder)
+					matcher.setRightBorderColor(colorHtml);
+				else
+					matcher.removeRightBorderColor();
+				
+				matcher.setBorderRight(lineStyle);
+			}
+			if((at & BookHelper.BORDER_EDGE_BOTTOM)!=0){
+				if(hasBorder)
+					matcher.setBottomBorderColor(colorHtml);
+				else
+					matcher.removeBottomBorderColor();
+				
+				matcher.setBorderBottom(lineStyle);
+			}
+			style = findStyle(book, matcher);
 		}
-		if((at & BookHelper.BORDER_EDGE_TOP)!=0){
-			BookHelper.setTopBorderColor(style, color);
-			style.setBorderTop(lineStyle);
+		
+		if(style==null){
+			style = cloneCellStyle(cell);
+			if((at & BookHelper.BORDER_EDGE_LEFT)!=0) {
+				if(hasBorder)
+					BookHelper.setLeftBorderColor(style, color);
+				style.setBorderLeft(lineStyle);
+			}
+			if((at & BookHelper.BORDER_EDGE_TOP)!=0){
+				if(hasBorder)
+					BookHelper.setTopBorderColor(style, color);
+				style.setBorderTop(lineStyle);
+			}
+			if((at & BookHelper.BORDER_EDGE_RIGHT)!=0){
+				if(hasBorder)
+					BookHelper.setRightBorderColor(style, color);
+				style.setBorderRight(lineStyle);
+			}
+			if((at & BookHelper.BORDER_EDGE_BOTTOM)!=0){
+				if(hasBorder)
+					BookHelper.setBottomBorderColor(style, color);
+				style.setBorderBottom(lineStyle);
+			}
 		}
-		if((at & BookHelper.BORDER_EDGE_RIGHT)!=0){
-			BookHelper.setRightBorderColor(style, color);
-			style.setBorderRight(lineStyle);
-		}
-		if((at & BookHelper.BORDER_EDGE_BOTTOM)!=0){
-			BookHelper.setBottomBorderColor(style, color);
-			style.setBorderBottom(lineStyle);
-		}
+		
 		cell.setCellStyle(style);
 	}
 	
@@ -227,9 +336,19 @@ public class Styles {
 		final boolean strikeout = font.getStrikeout();
 		final short typeOffset = font.getTypeOffset();
 		final byte underline = font.getUnderline();
-		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
-		final CellStyle style = cloneCellStyle(cell);
-		style.setFont(newFont);
+		
+		final Object[] newFont = BookHelper.findOrCreateFont(book, boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
+		CellStyle style = null;
+		if(Boolean.FALSE.equals(newFont[1])){//search it since we have existed font
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
+			matcher.setFontIndex(((Font)newFont[0]).getIndex());
+			style = findStyle(sheet.getBook(), matcher);
+		}
+		
+		if(style==null){
+			style = cloneCellStyle(cell);
+			style.setFont(((Font)newFont[0]));
+		}
 		cell.setCellStyle(style);
 	}
 	
@@ -249,9 +368,18 @@ public class Styles {
 		final boolean strikeout = font.getStrikeout();
 		final short typeOffset = font.getTypeOffset();
 		final byte underline = font.getUnderline();
-		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
-		final CellStyle style = cloneCellStyle(cell);
-		style.setFont(newFont);
+		final Object[] newFont = BookHelper.findOrCreateFont(book, boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
+		CellStyle style = null;
+		if(Boolean.FALSE.equals(newFont[1])){//search it since we have existed font
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
+			matcher.setFontIndex(((Font)newFont[0]).getIndex());
+			style = findStyle(sheet.getBook(), matcher);
+		}
+		
+		if(style==null){
+			style = cloneCellStyle(cell);
+			style.setFont((Font)newFont[0]);
+		}
 		cell.setCellStyle(style);
 	}
 	
@@ -271,9 +399,18 @@ public class Styles {
 		final boolean italic = font.getItalic();
 		final boolean strikeout = font.getStrikeout();
 		final short typeOffset = font.getTypeOffset();
-		final Font newFont = BookHelper.getOrCreateFont(book, boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
-		final CellStyle style = cloneCellStyle(cell);
-		style.setFont(newFont);
+		final Object[] newFont = BookHelper.findOrCreateFont(book, boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
+		CellStyle style = null;
+		if(Boolean.FALSE.equals(newFont[1])){//search it since we have existed font
+			CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
+			matcher.setFontIndex(((Font)newFont[0]).getIndex());
+			style = findStyle(sheet.getBook(), matcher);
+		}
+		
+		if(style==null){
+			style = cloneCellStyle(cell);
+			style.setFont((Font)newFont[0]);
+		}
 		cell.setCellStyle(style);
 	}
 	
@@ -283,8 +420,14 @@ public class Styles {
 		if (align == orgAlign) { //no change, skip
 			return;
 		}
-		final CellStyle style = cloneCellStyle(cell);
-		style.setAlignment(align);
+		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
+		matcher.setAlignment(align);
+		CellStyle style = findStyle(sheet.getBook(), matcher);
+		
+		if(style==null){
+			style = cloneCellStyle(cell);
+			style.setAlignment(align);
+		}
 		cell.setCellStyle(style);
 	}
 	
@@ -294,9 +437,35 @@ public class Styles {
 		if (valign == orgValign) { //no change, skip
 			return;
 		}
-		final CellStyle style = cloneCellStyle(cell);
-		style.setAlignment(valign);
+		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
+		matcher.setVerticalAlignment(valign);
+		CellStyle style = findStyle(sheet.getBook(), matcher);
+		
+		if(style==null){
+			style = cloneCellStyle(cell);
+			style.setVerticalAlignment(valign);
+		}
 		cell.setCellStyle(style);
+	}
+	
+	public static void setDataFormat(Worksheet sheet, int row, int col, String format) {
+		final Cell cell = Utils.getOrCreateCell(sheet,row,col);
+		final String orgFormat = cell.getCellStyle().getDataFormatString();
+		if (format == orgFormat || (format!=null && format.equals(orgFormat))) { //no change, skip
+			return;
+		}
+		
+		short idx = sheet.getBook().createDataFormat().getFormat(format);
+		
+		CellStyleMatcher matcher = new CellStyleMatcher(sheet.getBook(),cell.getCellStyle());
+		matcher.setDataFormat(idx);
+		CellStyle style = findStyle(sheet.getBook(), matcher);
+		if(style==null){
+			style = cloneCellStyle(cell);
+			style.setDataFormat(idx);
+		}
+		cell.setCellStyle(style);
+		
 	}
 	
 }

@@ -1304,6 +1304,15 @@ public class RangeImpl implements Range {
 		}
 	}
 	
+	public void notifyChange() {
+		synchronized (_sheet) {
+			if (_refs != null && !_refs.isEmpty()) {
+				final Book book = (Book) _sheet.getWorkbook();
+				BookHelper.notifyCellChanges(book, _refs);
+			}
+		}
+	}
+	
 	@Override
 	public void autoFill(Range dstRange, int fillType) {
 		synchronized (_sheet) {

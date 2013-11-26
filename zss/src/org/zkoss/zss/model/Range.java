@@ -609,4 +609,10 @@ public interface Range {
      * @param pos the position that we want to insert the sheet into (0 based)
      */
 	public void setSheetOrder(int pos);
+
+	/**
+	 * notify cell of this range has changed
+	 * @since 2.6
+	 */
+	public void notifyChange();
 }

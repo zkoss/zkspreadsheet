@@ -240,16 +240,8 @@ public class Utils {
 			public void handle(CellVisitorContext context) {
 				String srcColor = context.getFontColor();
 				if (!srcColor.equalsIgnoreCase(color)) {
-					final Workbook book = sheet.getWorkbook();
-					Font srcFont = context.getFont();
-
-					Color fontColor = BookHelper.HTMLToColor(book, color);
-					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), fontColor, srcFont.getFontHeight(), srcFont.getFontName(), 
-							srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
-					CellStyle newStyle = context.cloneCellStyle();
-					newStyle.setFont(newFont);
-					newStyle.setFontColorColor(fontColor);
-					context.getRange().setStyle(newStyle);
+					Styles.setFontColor(context.getSheet(), context.getRowIndex(), context.getColumnIndex(), color);
+					context.getRange().notifyChange();
 				}
 			}});
 	}
@@ -271,12 +263,8 @@ public class Utils {
 
 				if (srcFontName != fontName) {
 					final Workbook book = sheet.getWorkbook();
-					Font srcFont = context.getFont();
-					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), BookHelper.getFontColor(book, srcFont), srcFont.getFontHeight(), fontName, 
-							srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
-					CellStyle newStyle = context.cloneCellStyle();
-					newStyle.setFont(newFont);
-					context.getRange().setStyle(newStyle);
+					Styles.setFontType(context.getSheet(), context.getRowIndex(), context.getColumnIndex(), fontName);
+					context.getRange().notifyChange();
 				}
 			}
 		});
@@ -297,13 +285,8 @@ public class Utils {
 			public void handle(CellVisitorContext context) {
 				short srcFontHgh = context.getFontHeight();
 				if (srcFontHgh != fontHeight) {
-					final Workbook book = sheet.getWorkbook();
-					Font srcFont = context.getFont();
-					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), BookHelper.getFontColor(book, srcFont), fontHeight, srcFont.getFontName(), 
-						srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
-					CellStyle newStyle = context.cloneCellStyle();
-					newStyle.setFont(newFont);
-					context.getRange().setStyle(newStyle);
+					Styles.setFontSize(context.getSheet(), context.getRowIndex(), context.getColumnIndex(), fontHeight);
+					context.getRange().notifyChange();
 				}
 			}});
 	}
@@ -323,13 +306,8 @@ public class Utils {
 			public void handle(CellVisitorContext context) {
 				boolean srcBold = context.isBold(); 
 				if (srcBold != isBold) {
-					final Workbook book = sheet.getWorkbook();
-					Font srcFont = context.getFont();
-					Font newFont = context.getOrCreateFont(isBold ? Font.BOLDWEIGHT_BOLD : Font.BOLDWEIGHT_NORMAL, BookHelper.getFontColor(book, srcFont), srcFont.getFontHeight(), srcFont.getFontName(), 
-							srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
-					CellStyle newStyle = context.cloneCellStyle();
-					newStyle.setFont(newFont);
-					context.getRange().setStyle(newStyle);
+					Styles.setFontBoldWeight(context.getSheet(), context.getRowIndex(), context.getColumnIndex(), isBold ? Font.BOLDWEIGHT_BOLD : Font.BOLDWEIGHT_NORMAL);
+					context.getRange().notifyChange();
 				}
 			}});
 	}
@@ -347,16 +325,11 @@ public class Utils {
 
 			@Override
 			public void handle(CellVisitorContext context) {
-				Font srcFont = context.getFont();
-				boolean srcItalic = context.isItalic();
 
+				boolean srcItalic = context.isItalic();
 				if (srcItalic != isItalic) {
-					final Workbook book = sheet.getWorkbook();
-					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), BookHelper.getFontColor(book, srcFont), srcFont.getFontHeight(), srcFont.getFontName(), 
-							isItalic, srcFont.getStrikeout(), srcFont.getTypeOffset(), srcFont.getUnderline());
-					CellStyle newStyle = context.cloneCellStyle();
-					newStyle.setFont(newFont);
-					context.getRange().setStyle(newStyle);
+					Styles.setFontItalic(context.getSheet(), context.getRowIndex(), context.getColumnIndex(), isItalic);
+					context.getRange().notifyChange();
 				}
 			}});
 	}
@@ -377,13 +350,8 @@ public class Utils {
 				byte srcUnderline = srcFont.getUnderline();
 
 				if (srcUnderline != underline) {
-					final Workbook book = sheet.getWorkbook();
-					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), BookHelper.getFontColor(book, srcFont), 
-						srcFont.getFontHeight(), srcFont.getFontName(), 
-						srcFont.getItalic(), srcFont.getStrikeout(), srcFont.getTypeOffset(), underline);
-					CellStyle newStyle = context.cloneCellStyle();
-					newStyle.setFont(newFont);
-					context.getRange().setStyle(newStyle);
+					Styles.setFontUnderline(context.getSheet(), context.getRowIndex(), context.getColumnIndex(), underline);
+					context.getRange().notifyChange();
 				}
 			}	
 		});
@@ -404,13 +372,8 @@ public class Utils {
 				boolean srcStrikeout = srcFont.getStrikeout();
 				
 				if (srcStrikeout != isStrikeout) {
-					final Workbook book = sheet.getWorkbook();
-					Font newFont = context.getOrCreateFont(srcFont.getBoldweight(), 
-							BookHelper.getFontColor(book, srcFont), srcFont.getFontHeight(), srcFont.getFontName(), 
-							srcFont.getItalic(), isStrikeout, srcFont.getTypeOffset(), srcFont.getUnderline());
-					CellStyle cellStyle = context.cloneCellStyle();
-					cellStyle.setFont(newFont);
-					context.getRange().setStyle(cellStyle);
+					Styles.setFontStrikethrough(context.getSheet(), context.getRowIndex(), context.getColumnIndex(), isStrikeout);
+					context.getRange().notifyChange();
 				}
 			}});
 	}
@@ -492,9 +455,8 @@ public class Utils {
 				short dstFormat = dataFormat.getFormat(format);
 				
 				if (srcFormat != dstFormat) {
-					CellStyle newStyle = context.cloneCellStyle();
-					newStyle.setDataFormat(dstFormat);
-					context.getRange().setStyle(newStyle);
+					Styles.setDataFormat(context.getSheet(), context.getRowIndex(), context.getColumnIndex(), format);
+					context.getRange().notifyChange();
 				}
 			}
 		});
@@ -545,27 +507,11 @@ public class Utils {
 	 */
 	public static void setBackgroundColor(Worksheet sheet, Rect rect, String color) {
 		final Book book  = (Book) sheet.getWorkbook();
-		final Color bsColor = BookHelper.HTMLToColor(book, color);
 		for (int row = rect.getTop(); row <= rect.getBottom(); row++)
 			for (int col = rect.getLeft(); col <= rect.getRight(); col++) {
-				Cell cell = Utils.getOrCreateCell(sheet, row, col);
-				CellStyle cs = cell.getCellStyle();
-				final Color srcColor = cs.getFillForegroundColorColor();
-				if (Objects.equals(srcColor, bsColor)) {
-					continue;
-				}
-				CellStyle newCellStyle = book.createCellStyle();
-				newCellStyle.cloneStyleFrom(cs);
-				
-				//bug#ZSS-34: cell background color does not show in excel
-				//20110819, henrichen@zkoss.org: set color to a cell shall change its fillPattern to "solid" automatically
-				final short patternType = cs.getFillPattern();
-				if (patternType == CellStyle.NO_FILL) {
-					newCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-				}
-				BookHelper.setFillForegroundColor(newCellStyle, bsColor);
+				Styles.setFillColor(sheet, row, col, color);
 				Range rng = Utils.getRange(sheet, row, col);
-				rng.setStyle(newCellStyle);
+				rng.notifyChange();
 			}
 	}
 	

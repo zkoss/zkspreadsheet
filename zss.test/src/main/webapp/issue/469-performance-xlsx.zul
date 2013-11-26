@@ -1,0 +1,10 @@
+<zk>
+	<window hflex="1" vflex="1">
+		<vbox hflex="1" vflex="1">
+			<spreadsheet id="ss" src="/issue/469-performance.xlsx" hflex="1" vflex="1"
+				ctrlKeys="^c^x^v^d^s^o^b^i^u#del^#del^z^y^e" maxrows="10000" maxcolumns="100" showToolbar="true" showFormulabar="true"
+				showSheetbar="true" showContextMenu="true">
+			</spreadsheet>
+		</vbox>
+	</window>
+</zk>

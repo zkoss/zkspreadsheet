@@ -366,4 +366,8 @@ public class EmptyRange implements Range {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void notifyChange() {
+	}
 }

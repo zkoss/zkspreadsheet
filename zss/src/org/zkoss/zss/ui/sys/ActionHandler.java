@@ -79,6 +79,7 @@ import org.zkoss.zss.ui.impl.CellVisitorContext;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
 import org.zkoss.zss.ui.impl.MergedRect;
+import org.zkoss.zss.ui.impl.Styles;
 import org.zkoss.zss.ui.impl.Upload;
 import org.zkoss.zss.ui.impl.Uploader;
 import org.zkoss.zss.ui.impl.Utils;
@@ -618,11 +619,9 @@ public abstract class ActionHandler {
 					@Override
 					public void handle(CellVisitorContext context) {
 						final short srcAlign = context.getVerticalAlignment();
-
 						if (srcAlign != alignment) {
-							CellStyle newStyle = context.cloneCellStyle();
-							newStyle.setVerticalAlignment(alignment);
-							context.getRange().setStyle(newStyle);
+							Styles.setTextVAlign(context.getSheet(), context.getRowIndex(), context.getColumnIndex(), alignment);
+							context.getRange().notifyChange();
 						}
 					}});	
 			} else {
@@ -639,11 +638,9 @@ public abstract class ActionHandler {
 					@Override
 					public void handle(CellVisitorContext context) {
 						final short srcAlign = context.getAlignment();
-
 						if (srcAlign != alignment) {
-							CellStyle newStyle = context.cloneCellStyle();
-							newStyle.setAlignment(alignment);
-							context.getRange().setStyle(newStyle);
+							Styles.setTextHAlign(context.getSheet(), context.getRowIndex(), context.getColumnIndex(), alignment);
+							context.getRange().notifyChange();
 						}
 					}});	
 			} else {
