@@ -1,0 +1,18 @@
+<zk>
+	<zscript><![CDATA[
+org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.title.font", "SansSerif, Italic, 30");
+org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.legend.font", "SansSerif, plain, 18");
+org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.xAxisTick.font", "SansSerif, bold, 16");
+org.zkoss.lang.Library.setProperty("org.zkoss.zss.chart.yAxisTick.font", "SansSerif, bold, 14");
+	]]>
+	</zscript>
+	<window hflex="1" vflex="1">
+		<label multiline="true">It should not throw any exception when selecting each sheet.</label>
+		<spreadsheet src="/issue3/book/524-chart.xlsx" maxVisibleRows="200" 
+			maxVisibleColumns="20" width="100%"  vflex="1" showContextMenu="true" showSheetbar="true"
+			showToolbar="true" showFormulabar="true" />
+		<spreadsheet src="/issue3/book/524-chart.xls" maxVisibleRows="200" 
+			maxVisibleColumns="20" width="100%"  vflex="1" showContextMenu="true" showSheetbar="true"
+			showToolbar="true" showFormulabar="true" />			
+	</window>
+</zk>
