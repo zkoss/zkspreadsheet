@@ -9,6 +9,7 @@ ZK Spreadsheet 3.0.1
   ZSS-509 Protecting only selected rows or columns protect ALL empty cells
   ZSS-519 Do not display background color of empty cells
   ZSS-524 After change chart font library setting, the chart without title throws NPE.
+  ZSS-517 Apply background works strangely
 
 ** Upgrade Notes
   * Members of BookType of Book are changed from EXCEL_2003,EXCEL_2007 to XLS,XLSX because of Spreadsheet depends on file format not Excel version.

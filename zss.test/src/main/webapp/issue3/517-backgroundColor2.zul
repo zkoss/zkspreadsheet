@@ -1,0 +1,27 @@
+<zk>
+	This test case is fail in xls because of the poi xls font color doesn't support ext mode, which mean not all RGB color can set to it.
+	(only allow to set the color in color-palatte)
+	<hlayout>
+		<zscript><![CDATA[//@IMPORT
+		import org.zkoss.zss.api.Range.ApplyBorderType;
+		
+		]]></zscript>
+		<vlayout>
+			<button onClick='setFontColor("#6600ff")'>1. Set B5 font to #6600ff</button>
+			<button onClick='setFontColor("#ff0000");'>2. Set B5 font to #0000ff</button>
+		</vlayout>
+	</hlayout>
+	<zscript><![CDATA[//@DECLARATION
+	public void setFontColor(String color){
+		Range r = Ranges.range(ss.getSelectedSheet(), "B5");
+		CellOperationUtil.applyFontColor(r, color);
+		String tcolor = r.getCellStyle().getFont().getColor().getHtmlColor();
+		if(!color.equals(tcolor)){
+			alert("color not equals "+color+" != "+tcolor);
+		}
+	}
+	]]></zscript>
+	<spreadsheet id="ss" src="/issue3/book/517-backgroundColor.xls" maxVisibleRows="200" maxVisibleColumns="40" width="100%"
+		height="80%" showContextMenu="true" showSheetbar="true" showToolbar="true" 
+		showFormulabar="true"/>
+</zk>
