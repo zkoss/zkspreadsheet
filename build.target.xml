@@ -45,7 +45,7 @@ Copyright (C) 2002-2006 Potix Corporation. All Rights Reserved.
 	<property name="srcscratchpad.dir" value=""/>
 	<available file="srcresources" property="srcresources.dir" value="srcresources"/>
 	<property name="srcresources.dir" value=""/>
-	<javac srcdir="${src.dir}:${codegen.dir}:${srcdpc.dir}:${srcjava.dir}:${srcooxml.dir}:${srcscratchpad.dir}:${srcresources.dir}" destdir="${out.dir}"
+	<javac srcdir="${src.dir}:${codegen.dir}:${srcdpc.dir}:${srcjava.dir}:${srcooxml.dir}:${srcscratchpad.dir}:${srcresources.dir}" destdir="${out.dir}" fork="true"
 	 debug="${debug}" optimize="${optimize}" encoding="UTF-8"
 	 target="${target.version}" deprecation="${deprecation}" source="${source.version}"/>
 	<javac srcdir="${src.dir}:${srcpv.dir}" destdir="${out.dir}"
