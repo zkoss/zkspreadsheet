@@ -60,6 +60,7 @@ ZK Spreadsheet 2.6.0
   ZSS-521 select whole column and format, long running process
   ZSS-331 select all cell has poor performance even not many cells
   ZSS-462 Can't copy all selected cells to other application when using Chrome
+  ZSS-521 select whole column and format, long running process
 
 ZK Spreadsheet 2.5.0
 *Features:   
