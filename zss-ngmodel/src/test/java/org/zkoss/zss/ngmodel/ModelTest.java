@@ -13,6 +13,7 @@ import org.zkoss.zss.ngmodel.NCellStyle.FontBoldweight;
 import org.zkoss.zss.ngmodel.NCellStyle.FontTypeOffset;
 import org.zkoss.zss.ngmodel.NCellStyle.FontUnderline;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
+import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
 
@@ -1064,5 +1065,116 @@ public class ModelTest {
 			cell.getFormulaValue();
 			Assert.fail();
 		}catch(IllegalStateException x){}
+	}
+	
+	@Test
+	public void testPicture(){
+		NBook book = new BookImpl("book1");
+		NSheet sheet = book.createSheet("Sheet 1");
+
+		NPicture p1 = sheet.addPicture(Format.PNG, new byte[0], new NViewAnchor(6, 10, 22, 33, 800, 600));
+		NPicture p2 = sheet.addPicture(Format.PNG, new byte[0], new NViewAnchor(12, 14, 22, 33, 800, 600));
+		
+		Assert.assertEquals(2, sheet.getPictures().size());
+		Assert.assertEquals(p1,sheet.getPictures().get(0));
+		Assert.assertEquals(p2,sheet.getPictures().get(1));
+		
+		sheet.insertRow(7, 2);
+		Assert.assertEquals(6,p1.getAnchor().getRowIndex());
+		Assert.assertEquals(14,p2.getAnchor().getRowIndex());
+		
+		sheet.insertRow(6, 3);
+		Assert.assertEquals(9,p1.getAnchor().getRowIndex());
+		Assert.assertEquals(17,p2.getAnchor().getRowIndex());
+		
+		sheet.deleteRow(10, 2);
+		Assert.assertEquals(9,p1.getAnchor().getRowIndex());
+		Assert.assertEquals(15,p2.getAnchor().getRowIndex());
+		Assert.assertEquals(33,p2.getAnchor().getYOffset());
+		
+		sheet.deleteRow(10, 6);
+		Assert.assertEquals(10,p2.getAnchor().getRowIndex());
+		Assert.assertEquals(0,p2.getAnchor().getYOffset());
+		
+		sheet.insertColumn(12, 3);
+		Assert.assertEquals(10,p1.getAnchor().getColumnIndex());
+		Assert.assertEquals(17,p2.getAnchor().getColumnIndex());
+		
+		sheet.insertColumn(10, 1);
+		Assert.assertEquals(11,p1.getAnchor().getColumnIndex());
+		Assert.assertEquals(18,p2.getAnchor().getColumnIndex());
+		
+		
+		sheet.deleteColumn(15, 1);
+		Assert.assertEquals(11,p1.getAnchor().getColumnIndex());
+		Assert.assertEquals(17,p2.getAnchor().getColumnIndex());
+		
+		sheet.deleteColumn(15, 2);
+		Assert.assertEquals(11,p1.getAnchor().getColumnIndex());
+		Assert.assertEquals(15,p2.getAnchor().getColumnIndex());
+		Assert.assertEquals(22,p2.getAnchor().getXOffset());
+		
+		sheet.deleteColumn(10, 10);
+		Assert.assertEquals(10,p1.getAnchor().getColumnIndex());
+		Assert.assertEquals(0,p1.getAnchor().getXOffset());
+		Assert.assertEquals(10,p2.getAnchor().getColumnIndex());
+		Assert.assertEquals(0,p2.getAnchor().getXOffset());
+		
+	}
+	
+	@Test
+	public void testChart(){
+		NBook book = new BookImpl("book1");
+		NSheet sheet = book.createSheet("Sheet 1");
+
+		//no chart data implement yet
+		NChart p1 = sheet.addChart(NChart.NChartType.BAR, null, new NViewAnchor(6, 10, 22, 33, 800, 600));
+		NChart p2 = sheet.addChart(NChart.NChartType.BAR, null, new NViewAnchor(12, 14, 22, 33, 800, 600));
+		
+		Assert.assertEquals(2, sheet.getCharts().size());
+		Assert.assertEquals(p1,sheet.getCharts().get(0));
+		Assert.assertEquals(p2,sheet.getCharts().get(1));
+		
+		sheet.insertRow(7, 2);
+		Assert.assertEquals(6,p1.getAnchor().getRowIndex());
+		Assert.assertEquals(14,p2.getAnchor().getRowIndex());
+		
+		sheet.insertRow(6, 3);
+		Assert.assertEquals(9,p1.getAnchor().getRowIndex());
+		Assert.assertEquals(17,p2.getAnchor().getRowIndex());
+		
+		sheet.deleteRow(10, 2);
+		Assert.assertEquals(9,p1.getAnchor().getRowIndex());
+		Assert.assertEquals(15,p2.getAnchor().getRowIndex());
+		Assert.assertEquals(33,p2.getAnchor().getYOffset());
+		
+		sheet.deleteRow(10, 6);
+		Assert.assertEquals(10,p2.getAnchor().getRowIndex());
+		Assert.assertEquals(0,p2.getAnchor().getYOffset());
+		
+		sheet.insertColumn(12, 3);
+		Assert.assertEquals(10,p1.getAnchor().getColumnIndex());
+		Assert.assertEquals(17,p2.getAnchor().getColumnIndex());
+		
+		sheet.insertColumn(10, 1);
+		Assert.assertEquals(11,p1.getAnchor().getColumnIndex());
+		Assert.assertEquals(18,p2.getAnchor().getColumnIndex());
+		
+		
+		sheet.deleteColumn(15, 1);
+		Assert.assertEquals(11,p1.getAnchor().getColumnIndex());
+		Assert.assertEquals(17,p2.getAnchor().getColumnIndex());
+		
+		sheet.deleteColumn(15, 2);
+		Assert.assertEquals(11,p1.getAnchor().getColumnIndex());
+		Assert.assertEquals(15,p2.getAnchor().getColumnIndex());
+		Assert.assertEquals(22,p2.getAnchor().getXOffset());
+		
+		sheet.deleteColumn(10, 10);
+		Assert.assertEquals(10,p1.getAnchor().getColumnIndex());
+		Assert.assertEquals(0,p1.getAnchor().getXOffset());
+		Assert.assertEquals(10,p2.getAnchor().getColumnIndex());
+		Assert.assertEquals(0,p2.getAnchor().getXOffset());
+		
 	}
 }

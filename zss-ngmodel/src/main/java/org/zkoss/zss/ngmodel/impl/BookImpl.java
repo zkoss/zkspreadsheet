@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.ModelEvent;
@@ -48,13 +49,13 @@ public class BookImpl extends AbstractBook{
 	
 	private NBookSeries bookSeries;
 	
-	private final List<AbstractSheet> sheets;
+	private final List<AbstractSheet> sheets = new LinkedList<AbstractSheet>();
 	
-	private final List<AbstractCellStyle> cellStyles;
+	private final List<AbstractCellStyle> cellStyles = new LinkedList<AbstractCellStyle>();
 	private final AbstractCellStyle defaultCellStyle;
 
 	
-	private int sheetIdCounter = 0;
+	private HashMap<String,AtomicInteger> objIdCounter = new HashMap<String,AtomicInteger>();
 	private int maxRowSize = SpreadsheetVersion.EXCEL2007.getMaxRows();
 	private int maxColumnSize = SpreadsheetVersion.EXCEL2007.getMaxColumns();
 	
@@ -62,10 +63,7 @@ public class BookImpl extends AbstractBook{
 		Validations.argNotNull(bookName);
 		this.bookName = bookName;
 		bookSeries = new BookSeriesImpl(this);
-		sheets = new LinkedList<AbstractSheet>();
-		cellStyles = new LinkedList<AbstractCellStyle>();
 		cellStyles.add(defaultCellStyle = new CellStyleImpl());
-		
 	}
 	
 	public NBookSeries getBookSeries(){
@@ -129,9 +127,14 @@ public class BookImpl extends AbstractBook{
 		return createSheet(name,null);
 	}
 	
-	String nextSheetId(){
-		StringBuilder sb = new StringBuilder("s");
-		sb.append(++sheetIdCounter);
+	String nextObjId(String type){
+		StringBuilder sb = new StringBuilder(type);
+		sb.append("_");
+		AtomicInteger i = objIdCounter.get(type);
+		if(i==null){
+			objIdCounter.put(type, i = new AtomicInteger(0));
+		}
+		sb.append(i.getAndIncrement());
 		return sb.toString();
 	}
 	public NSheet createSheet(String name,NSheet src) {
@@ -140,7 +143,7 @@ public class BookImpl extends AbstractBook{
 			checkOwnership(src);
 		
 
-		SheetImpl sheet = new SheetImpl(this,nextSheetId());
+		SheetImpl sheet = new SheetImpl(this,nextObjId("sheet"));
 		if(src instanceof AbstractSheet){
 			((AbstractSheet)src).copyTo(sheet);
 		}

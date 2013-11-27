@@ -1,13 +1,23 @@
 package org.zkoss.zss.ngmodel.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.zkoss.zss.ngmodel.ModelEvent;
+import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.NColumn;
+import org.zkoss.zss.ngmodel.NPicture;
+import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.NRow;
+import org.zkoss.zss.ngmodel.NViewAnchor;
+import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.util.CellReference;
 
 public class SheetImpl extends AbstractSheet {
@@ -18,6 +28,9 @@ public class SheetImpl extends AbstractSheet {
 	
 	private final BiIndexPool<AbstractRow> rows = new BiIndexPool<AbstractRow>();
 	private final BiIndexPool<AbstractColumn> columns = new BiIndexPool<AbstractColumn>();
+	
+	private final List<AbstractPicture> pictures = new LinkedList<AbstractPicture>();
+	private final List<AbstractChart> charts = new LinkedList<AbstractChart>();
 	
 	
 	public SheetImpl(AbstractBook book,String id){
@@ -193,24 +206,108 @@ public class SheetImpl extends AbstractSheet {
 	}
 
 	public void insertRow(int rowIdx, int size) {
+		checkOrphan();
 		if(size<=0) return;
-		
-		int end = getEndRowIndex();
-		if(rowIdx>end) return;
 		
 		int start = Math.max(rowIdx,getStartRowIndex());
 		
 		rows.insert(start, size);
 		
-		//Event
+		shiftAfterRowInsert(rowIdx,size);
 		
+		book.sendEvent(ModelEvents.ON_ROW_INSERTED, ModelEvents.PARAM_SHEET, this, ModelEvents.PARAM_ROW_INDEX, rowIdx, 
+				ModelEvents.PARAM_SIZE, size);
 	}
+	
+	private void shiftAfterRowInsert(int rowIdx, int size) {
+		// handling pic shift
+		for (AbstractPicture pic : pictures) {
+			NViewAnchor anchor = pic.getAnchor();
+			int idx = anchor.getRowIndex();
+			if (idx >= rowIdx) {
+				anchor.setRowIndex(idx + size);
+			}
+		}
+		// handling pic shift
+		for (AbstractChart chart : charts) {
+			NViewAnchor anchor = chart.getAnchor();
+			int idx = anchor.getRowIndex();
+			if (idx >= rowIdx) {
+				anchor.setRowIndex(idx + size);
+			}
+		}
+	}
+	private void shiftAfterRowDelete(int rowIdx, int size) {
+		//handling pic shift
+		for(AbstractPicture pic:pictures){
+			NViewAnchor anchor = pic.getAnchor();
+			int idx = anchor.getRowIndex();
+			if(idx >= rowIdx+size){
+				anchor.setRowIndex(idx-size);
+			}else if(idx >= rowIdx){
+				anchor.setRowIndex(rowIdx);//as excel's rule
+				anchor.setYOffset(0);
+			}
+		}
+		//handling pic shift
+		for(AbstractChart chart:charts){
+			NViewAnchor anchor = chart.getAnchor();
+			int idx = anchor.getRowIndex();
+			if(idx >= rowIdx+size){
+				anchor.setRowIndex(idx-size);
+			}else if(idx >= rowIdx){
+				anchor.setRowIndex(rowIdx);//as excel's rule
+				anchor.setYOffset(0);
+			}
+		}			
+	}
+	private void shiftAfterColumnInsert(int columnIdx, int size) {
+		// handling pic shift
+		for (AbstractPicture pic : pictures) {
+			NViewAnchor anchor = pic.getAnchor();
+			int idx = anchor.getColumnIndex();
+			if (idx >= columnIdx) {
+				anchor.setColumnIndex(idx + size);
+			}
+		}
+		// handling pic shift
+		for (AbstractChart chart : charts) {
+			NViewAnchor anchor = chart.getAnchor();
+			int idx = anchor.getColumnIndex();
+			if (idx >= columnIdx) {
+				anchor.setColumnIndex(idx + size);
+			}
+		}		
+	}
+	private void shiftAfterColumnDelete(int columnIdx, int size) {
+		//handling pic shift
+		for(AbstractPicture pic:pictures){
+			NViewAnchor anchor = pic.getAnchor();
+			int idx = anchor.getColumnIndex();
+			if(idx >= columnIdx+size){
+				anchor.setColumnIndex(idx-size);
+			}else if(idx >= columnIdx){
+				anchor.setColumnIndex(columnIdx);//as excel's rule
+				anchor.setXOffset(0);
+			}
+		}
+		//handling pic shift
+		for(AbstractChart chart:charts){
+			NViewAnchor anchor = chart.getAnchor();
+			int idx = anchor.getColumnIndex();
+			if(idx >= columnIdx+size){
+				anchor.setColumnIndex(idx-size);
+			}else if(idx >= columnIdx){
+				anchor.setColumnIndex(columnIdx);//as excel's rule
+				anchor.setXOffset(0);
+			}
+		}		
+	}
+	
 
 	public void deleteRow(int rowIdx, int size) {
+		checkOrphan();
 		if(size<=0) return;
-		
-		int end = getEndRowIndex();
-		if(rowIdx>end) return;
 		
 		int start = Math.max(rowIdx,getStartRowIndex());
 		
@@ -218,7 +315,10 @@ public class SheetImpl extends AbstractSheet {
 			row.release();
 		}
 		
-		//Event
+		shiftAfterRowDelete(rowIdx,size);	
+		
+		book.sendEvent(ModelEvents.ON_ROW_DELETED, ModelEvents.PARAM_SHEET, this, ModelEvents.PARAM_ROW_INDEX, rowIdx, 
+				ModelEvents.PARAM_SIZE, size);
 	}
 	
 	@Override
@@ -264,10 +364,8 @@ public class SheetImpl extends AbstractSheet {
 	}
 
 	public void insertColumn(int columnIdx, int size) {
+		checkOrphan();
 		if(size<=0) return;
-		
-		int end = getEndColumnIndex();
-		if(columnIdx>end) return;
 		
 		int start = Math.max(columnIdx,getStartColumnIndex());
 		
@@ -276,15 +374,15 @@ public class SheetImpl extends AbstractSheet {
 		for(AbstractRow row:rows.values()){
 			row.insertCell(start,size);
 		}
-		//Send event?
 		
+		shiftAfterColumnInsert(columnIdx,size);
+		
+		book.sendEvent(ModelEvents.ON_COLUMN_INSERTED, ModelEvents.PARAM_SHEET, this, ModelEvents.PARAM_COLUMN_INDEX, columnIdx, 
+				ModelEvents.PARAM_SIZE, size);
 	}
 
 	public void deleteColumn(int columnIdx, int size) {
 		if(size<=0) return;
-		
-		int end = getEndColumnIndex();
-		if(columnIdx>end) return;
 		
 		int start = Math.max(columnIdx,getStartColumnIndex());
 		
@@ -295,7 +393,10 @@ public class SheetImpl extends AbstractSheet {
 		for(AbstractRow row:rows.values()){
 			row.deleteCell(start,size);
 		}
-		//Send event?
+		shiftAfterColumnDelete(columnIdx,size);
+		
+		book.sendEvent(ModelEvents.ON_COLUMN_DELETED, ModelEvents.PARAM_SHEET, this, ModelEvents.PARAM_COLUMN_INDEX, columnIdx, 
+				ModelEvents.PARAM_SIZE, size);
 	}
 
 	
@@ -312,7 +413,54 @@ public class SheetImpl extends AbstractSheet {
 	public String getId() {
 		return id;
 	}
+
+	public NPicture addPicture(Format format, byte[] data,NViewAnchor anchor) {
+		checkOrphan();
+		AbstractPicture pic = new PictureImpl(book.nextObjId("pic"), format, data,anchor);
+		pictures.add(pic);
+		return pic;
+	}
+	
+	public NPicture getPicture(String picid){
+		for(NPicture pic:pictures){
+			if(pic.getId().equals(picid)){
+				return pic;
+			}
+		}
+		return null;
+	}
+
+	public void deletePicture(NPicture picture) {
+		pictures.remove(picture);
+	}
+
+	public List<NPicture> getPictures() {
+		return new ArrayList<NPicture>(pictures);
+	}
 	
 	
+	public NChart addChart(NChart.NChartType type, NChartData data, NViewAnchor anchor) {
+		checkOrphan();
+		AbstractChart pic = new ChartImpl(book.nextObjId("chart"), type, data, anchor);
+		charts.add(pic);
+		return pic;
+	}
+	
+	public NChart getChart(String picid){
+		for(NChart pic:charts){
+			if(pic.getId().equals(picid)){
+				return pic;
+			}
+		}
+		return null;
+	}
+
+	public void deleteChart(NChart chart) {
+		charts.remove(chart);
+	}
+
+	public List<NChart> getCharts() {
+		return new ArrayList<NChart>(charts);
+	}
 
 }

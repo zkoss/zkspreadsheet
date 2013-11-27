@@ -1,5 +1,9 @@
 package org.zkoss.zss.ngmodel;
 
+import java.util.List;
+
+import org.zkoss.zss.ngmodel.chart.NChartData;
+
 /**
  * @author dennis
  *
@@ -25,8 +29,6 @@ public interface NSheet {
 	public int getEndColumn(int rowIdx);
 	
 	public String getId();
-	
-//	NCellStyle getCellStyle();
 //	
 //	NViewInfo getViewInfo();
 	
@@ -40,5 +42,15 @@ public interface NSheet {
 	public void insertColumn(int columnIdx, int size);
 	public void deleteColumn(int columnIdx, int size);
 	
+	public NPicture addPicture(NPicture.Format format, byte[] data, NViewAnchor anchor);
+	public NPicture getPicture(String picid);
+	public void deletePicture(NPicture picture);
+	public List<NPicture> getPictures();
+	
+	
+	public NChart addChart(NChart.NChartType type, NChartData data, NViewAnchor anchor);
+	public NChart getChart(String chartid);
+	public void deleteChart(NChart chart);
+	public List<NChart> getCharts();
 	
 }

@@ -22,6 +22,7 @@ public abstract class AbstractBook implements NBook,Serializable{
 	 */
 	/*package*/ abstract List<NCell> optimizeCellStyle();
 	
+	/*package*/ abstract String nextObjId(String type);
 	
 	protected void sendEvent(String name, Object... data){
 		Map<String,Object> datamap = new HashMap<String,Object>();
