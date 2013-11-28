@@ -1,5 +1,6 @@
 package org.zkoss.zss.ngmodel.impl;
 
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
@@ -24,7 +25,7 @@ public class ChartImpl extends AbstractChart {
 		this.data = createChartData(type);
 	}
 	@Override
-	AbstractSheet getSheet(){
+	public NSheet getSheet(){
 		checkOrphan();
 		return sheet;
 	}

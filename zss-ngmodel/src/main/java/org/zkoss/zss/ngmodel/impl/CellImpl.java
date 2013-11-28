@@ -114,7 +114,7 @@ public class CellImpl extends AbstractCell {
 			FormulaEngine fe = EngineFactory.getInstance()
 					.createFormulaEngine();
 			formulaResult = new ResultWrap(fe.evaluate((FormulaExpression) value,
-					new FormulaEvaluationContext()));
+					new FormulaEvaluationContext(getSheet().getBook())));
 		}
 	}
 

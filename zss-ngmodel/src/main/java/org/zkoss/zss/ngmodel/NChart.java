@@ -1,6 +1,7 @@
 package org.zkoss.zss.ngmodel;
 
 import org.zkoss.zss.ngmodel.chart.NChartData;
+import org.zkoss.zss.ngmodel.impl.AbstractSheet;
 
 public interface NChart {
 
@@ -13,6 +14,8 @@ public interface NChart {
 	}
 	
 	public String getId();
+	
+	public NSheet getSheet();
 	
 	public NChartType getType();
 	

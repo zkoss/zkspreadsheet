@@ -7,6 +7,7 @@ public interface NPicture {
 		JPG,
 		GIF
 	}
+	public NSheet getSheet();
 	
 	public String getId();
 	

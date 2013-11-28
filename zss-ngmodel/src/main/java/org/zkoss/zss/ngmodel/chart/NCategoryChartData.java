@@ -13,5 +13,6 @@ public interface NCategoryChartData extends NChartData{
 	public NSeries addSeries();
 	public void removeSeries(NSeries series);
 	
-	public void setCategoriesExpression(String expr);
+	public String getCategoriesFormula();
+	public void setCategoriesFormula(String expr);
 }

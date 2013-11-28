@@ -7,5 +7,4 @@ import org.zkoss.zss.ngmodel.NSheet;
 
 public abstract class AbstractChart implements NChart,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
-	/*package*/ abstract AbstractSheet getSheet();
 }

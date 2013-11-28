@@ -5,19 +5,29 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.chart.NCategoryChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.AbstractChart;
+import org.zkoss.zss.ngmodel.sys.EngineFactory;
+import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
+import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult.ResultType;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 
 public class CategoryChartDataImpl implements NCategoryChartData, Serializable{
 
-	private String categoriesExpr;
+	private static final long serialVersionUID = 1L;
+
+	private FormulaExpression catFormula;
 	
 	private List<SeriesImpl> serieses = new LinkedList<SeriesImpl>();
 	private AbstractChart chart;
 	
-	private Object evaluatedResult;
+	private Object evalResult;
 	
 	private boolean evaluated = false;
 	
@@ -30,8 +40,18 @@ public class CategoryChartDataImpl implements NCategoryChartData, Serializable{
 		return chart;
 	}
 	
-	/*package*/ void eval(){
+	/*package*/ void evalFormula(){
 		if(!evaluated){
+			if(catFormula!=null){
+				FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+				EvaluationResult result = fe.evaluate(catFormula,new FormulaEvaluationContext(chart.getSheet().getBook()));
+				Object val = result.getValue();
+				if(result.getType() == ResultType.SUCCESS){
+					evalResult = val;
+				}else if(result.getType() == ResultType.ERROR){
+					evalResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_NAME);
+				}
+			}
 			//TODO
 			evaluated = true;
 		}
@@ -44,12 +64,15 @@ public class CategoryChartDataImpl implements NCategoryChartData, Serializable{
 		return serieses.get(i);
 	}
 	public int getNumOfCategory() {
-		eval();
-		return sizeOf(evaluatedResult);
+		evalFormula();
+		return ChartDataUtil.sizeOf(evalResult);
 	}
 	public Object getCategoryAt(int i) {
-		eval();
-		return valueOf(evaluatedResult,i);
+		evalFormula();
+		if(i>=ChartDataUtil.sizeOf(evalResult)){
+			return null;
+		}
+		return ChartDataUtil.valueOf(evalResult,i);
 	}
 	public NSeries addSeries() {
 		SeriesImpl series = new SeriesImpl(chart);
@@ -59,34 +82,14 @@ public class CategoryChartDataImpl implements NCategoryChartData, Serializable{
 	public void removeSeries(NSeries series) {
 		serieses.remove(series);
 	}
-	public void setCategoriesExpression(String expr) {
-		categoriesExpr = expr;
+	public void setCategoriesFormula(String expr) {
 		evaluated = false;
-	}
-	
-	static final int sizeOf(Object obj){
-		if(obj==null){
-			return 0;
-		}else if(obj instanceof Collection){
-			return ((Collection)obj).size();
-		}else if(obj.getClass().isArray()){
-			return ((Object[])obj).length;
-		}else{
-			return 1;
-		}
-	}
-	
-	static final Object valueOf(Object obj,int index){
-		if(obj instanceof List){
-			return ((List)obj).get(index);
-		}else if(obj instanceof Collection){
-			return ((Collection)obj).toArray()[index];
-		}else if(obj.getClass().isArray()){
-			return ((Object[])obj)[index];
-		}else{
-			return obj;
-		}
+		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+		catFormula = fe.parse(expr, new FormulaParseContext(chart.getSheet().getBook()));
 	}
 
-
+	@Override
+	public String getCategoriesFormula() {
+		return catFormula==null?null:catFormula.getFormulaString();
+	}
 }

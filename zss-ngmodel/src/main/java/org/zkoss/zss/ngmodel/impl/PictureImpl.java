@@ -1,5 +1,6 @@
 package org.zkoss.zss.ngmodel.impl;
 
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NViewAnchor;
 
 public class PictureImpl extends AbstractPicture {
@@ -19,7 +20,7 @@ public class PictureImpl extends AbstractPicture {
 		this.anchor = anchor;
 	}
 	@Override
-	AbstractSheet getSheet() {
+	public NSheet getSheet(){
 		checkOrphan();
 		return sheet;
 	}

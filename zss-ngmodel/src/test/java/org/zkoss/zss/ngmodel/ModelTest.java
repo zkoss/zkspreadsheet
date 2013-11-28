@@ -20,7 +20,11 @@ import org.zkoss.zss.ngmodel.NCellStyle.FontUnderline;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
+import org.zkoss.zss.ngmodel.chart.NCategoryChartData;
+import org.zkoss.zss.ngmodel.chart.NChartData;
+import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
+import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
 
 public class ModelTest {
@@ -1137,6 +1141,22 @@ public class ModelTest {
 		NChart p1 = sheet.addChart(NChart.NChartType.BAR, new NViewAnchor(6, 10, 22, 33, 800, 600));
 		NChart p2 = sheet.addChart(NChart.NChartType.BAR, new NViewAnchor(12, 14, 22, 33, 800, 600));
 		
+		p1.setTitle("MyChart");
+		p1.setXAxisTitle("X");
+		p1.setYAxisTitle("Y");
+		
+		Assert.assertEquals("MyChart", p1.getTitle());
+		Assert.assertEquals("X", p1.getXAxisTitle());
+		Assert.assertEquals("Y", p1.getYAxisTitle());
+		
+		Assert.assertEquals(6, p1.getAnchor().getRowIndex());
+		Assert.assertEquals(10, p1.getAnchor().getColumnIndex());
+		Assert.assertEquals(22, p1.getAnchor().getXOffset());
+		Assert.assertEquals(33, p1.getAnchor().getYOffset());
+		Assert.assertEquals(800, p1.getAnchor().getWidth());
+		Assert.assertEquals(600, p1.getAnchor().getHeight());
+		
+		
 		Assert.assertEquals(2, sheet.getCharts().size());
 		Assert.assertEquals(p1,sheet.getCharts().get(0));
 		Assert.assertEquals(p2,sheet.getCharts().get(1));
@@ -1181,6 +1201,67 @@ public class ModelTest {
 		Assert.assertEquals(0,p1.getAnchor().getXOffset());
 		Assert.assertEquals(10,p2.getAnchor().getColumnIndex());
 		Assert.assertEquals(0,p2.getAnchor().getXOffset());
+		
+	}
+	
+	@Test
+	public void testChartData(){
+		NBook book = new BookImpl("book1");
+		NSheet sheet = book.createSheet("Sheet 1");
+		
+		NChart p1 = sheet.addChart(NChart.NChartType.BAR, new NViewAnchor(6, 10, 22, 33, 800, 600));
+		
+		NCategoryChartData chartData = (NCategoryChartData)p1.getData();
+		Assert.assertEquals(0, chartData.getNumOfCategory());
+		Assert.assertEquals(0, chartData.getNumOfSeries());
+		Assert.assertEquals(null, chartData.getCategoryAt(100)); //allow out of index
+		
+		chartData.setCategoriesFormula("A1:A3");
+		Assert.assertEquals(3, chartData.getNumOfCategory());
+		Assert.assertEquals("A", chartData.getCategoryAt(0));
+		Assert.assertEquals("B", chartData.getCategoryAt(1));
+		Assert.assertEquals("C", chartData.getCategoryAt(2));
+		
+		NSeries nseries = chartData.addSeries();
+		Assert.assertEquals(1, chartData.getNumOfSeries());
+		Assert.assertEquals(null, nseries.getName());
+		
+		nseries.setNameFormula("KK()");//fail 
+		Assert.assertEquals("#NAME!", nseries.getName());
+		
+		nseries.setNameFormula("D1");
+		Assert.assertEquals("My Series", nseries.getName());
+		
+		Assert.assertEquals(0, nseries.getNumOfValue());
+		Assert.assertEquals(0, nseries.getNumOfXValue());
+		Assert.assertEquals(0, nseries.getNumOfYValue());
+		
+		
+		nseries.setValuesFormula("KK()");
+		nseries.setYValuesFormula("KK()");
+		Assert.assertEquals(0, nseries.getNumOfValue());
+		Assert.assertEquals(0, nseries.getNumOfXValue());
+		Assert.assertEquals(0, nseries.getNumOfYValue());
+		
+		nseries.setValuesFormula("B1:B3");
+		nseries.setYValuesFormula("C1:C3");
+		
+		
+		Assert.assertEquals(3, nseries.getNumOfValue());
+		Assert.assertEquals(3, nseries.getNumOfXValue());
+		Assert.assertEquals(3, nseries.getNumOfYValue());
+		
+		Assert.assertEquals(1, nseries.getValueAt(0));
+		Assert.assertEquals(2, nseries.getValueAt(1));
+		Assert.assertEquals(3, nseries.getValueAt(2));
+		
+		Assert.assertEquals(1, nseries.getXValueAt(0));
+		Assert.assertEquals(2, nseries.getXValueAt(1));
+		Assert.assertEquals(3, nseries.getXValueAt(2));
+		
+		Assert.assertEquals(4, nseries.getYValueAt(0));
+		Assert.assertEquals(5, nseries.getYValueAt(1));
+		Assert.assertEquals(6, nseries.getYValueAt(2));
 		
 	}
 	
