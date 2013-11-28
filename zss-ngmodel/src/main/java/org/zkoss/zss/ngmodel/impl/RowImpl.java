@@ -5,16 +5,16 @@ import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.Validations;
 
-public class RowImpl extends AbstractRow {
+public class RowImpl extends RowAdv {
 	private static final long serialVersionUID = 1L;
 
-	private AbstractSheet sheet;
+	private SheetAdv sheet;
 
-	private final BiIndexPool<AbstractCell> cells = new BiIndexPool<AbstractCell>();
+	private final BiIndexPool<CellAdv> cells = new BiIndexPool<CellAdv>();
 
-	private AbstractCellStyle cellStyle;
+	private CellStyleAdv cellStyle;
 
-	public RowImpl(AbstractSheet sheet) {
+	public RowImpl(SheetAdv sheet) {
 		this.sheet = sheet;
 	}
 
@@ -40,18 +40,18 @@ public class RowImpl extends AbstractRow {
 	// }
 
 	@Override
-	AbstractCell getCellAt(int columnIdx, boolean proxy) {
-		AbstractCell cellObj = cells.get(columnIdx);
+	CellAdv getCellAt(int columnIdx, boolean proxy) {
+		CellAdv cellObj = cells.get(columnIdx);
 		if (cellObj != null) {
 			return cellObj;
 		}
 		checkOrphan();
-		return proxy ? new CellProxyImpl(sheet, getIndex(), columnIdx) : null;
+		return proxy ? new CellProxy(sheet, getIndex(), columnIdx) : null;
 	}
 
 	@Override
-	AbstractCell getOrCreateCellAt(int columnIdx) {
-		AbstractCell cellObj = cells.get(columnIdx);
+	CellAdv getOrCreateCellAt(int columnIdx) {
+		CellAdv cellObj = cells.get(columnIdx);
 		if (cellObj == null) {
 			checkOrphan();
 			cellObj = new CellImpl(this);
@@ -63,7 +63,7 @@ public class RowImpl extends AbstractRow {
 	}
 
 	@Override
-	int getCellIndex(AbstractCell cell) {
+	int getCellIndex(CellAdv cell) {
 		return cells.get(cell);
 	}
 
@@ -86,7 +86,7 @@ public class RowImpl extends AbstractRow {
 	@Override
 	public void clearCell(int start, int end) {
 		// clear before move relation
-		for (AbstractCell cell : cells.subValues(start, end)) {
+		for (CellAdv cell : cells.subValues(start, end)) {
 			cell.release();
 		}
 		cells.clear(start, end);
@@ -105,7 +105,7 @@ public class RowImpl extends AbstractRow {
 		if (size <= 0)
 			return;
 		// clear before move relation
-		for (AbstractCell cell : cells.subValues(cellIdx, cellIdx + size)) {
+		for (CellAdv cell : cells.subValues(cellIdx, cellIdx + size)) {
 			cell.release();
 		}
 
@@ -127,7 +127,7 @@ public class RowImpl extends AbstractRow {
 	@Override
 	public void release() {
 		checkOrphan();
-		for (AbstractCell cell : cells.values()) {
+		for (CellAdv cell : cells.values()) {
 			cell.release();
 		}
 		sheet = null;

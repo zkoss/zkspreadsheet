@@ -6,7 +6,7 @@ import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 
-public class ChartImpl extends AbstractChart {
+public class ChartImpl extends ChartAdv {
 	private static final long serialVersionUID = 1L;
 	String id;
 	NChartType type;
@@ -15,9 +15,9 @@ public class ChartImpl extends AbstractChart {
 	String title;
 	String xAxisTitle;
 	String yAxisTitle;
-	AbstractSheet sheet;
+	SheetAdv sheet;
 	
-	public ChartImpl(AbstractSheet sheet,String id,NChartType type,NViewAnchor anchor){
+	public ChartImpl(SheetAdv sheet,String id,NChartType type,NViewAnchor anchor){
 		this.sheet = sheet;
 		this.id = id;
 		this.type = type;
@@ -88,7 +88,7 @@ public class ChartImpl extends AbstractChart {
 		checkOrphan();
 		
 		Ref ref = new RefImpl(this);
-		((AbstractBookSeries)sheet.getBook().getBookSeries()).getDependencyTable().clearDependents(ref);
+		((BookSeriesAdv)sheet.getBook().getBookSeries()).getDependencyTable().clearDependents(ref);
 		
 		sheet = null;
 	}

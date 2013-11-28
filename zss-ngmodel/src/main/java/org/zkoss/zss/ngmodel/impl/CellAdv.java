@@ -11,7 +11,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 import org.zkoss.zss.ngmodel.util.Validations;
 
-public abstract class AbstractCell implements NCell,LinkedModelObject,Serializable{
+public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	protected void checkType(CellType type){
@@ -25,8 +25,9 @@ public abstract class AbstractCell implements NCell,LinkedModelObject,Serializab
 			throw new IllegalStateException("formula result is "+getFormulaResultType()+", not the "+type);
 		}
 	}
+	
 	abstract protected void evalFormula();
-	abstract protected Object getValue(boolean eval);
+	abstract protected Object getValue(boolean valueOfFormula);
 	
 	@Override
 	public Object getValue(){

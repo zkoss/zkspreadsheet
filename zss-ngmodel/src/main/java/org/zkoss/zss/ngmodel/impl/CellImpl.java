@@ -17,16 +17,16 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
 import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
 
-public class CellImpl extends AbstractCell {
+public class CellImpl extends CellAdv {
 	private static final long serialVersionUID = 1L;
-	private AbstractRow row;
+	private RowAdv row;
 	private CellType type = CellType.BLANK;
 	private Object value = null;
-	private AbstractCellStyle cellStyle;
+	private CellStyleAdv cellStyle;
 
 	transient private ResultWrap formulaResult;// cache
 
-	public CellImpl(AbstractRow row) {
+	public CellImpl(RowAdv row) {
 		this.row = row;
 	}
 
@@ -88,14 +88,14 @@ public class CellImpl extends AbstractCell {
 			return cellStyle;
 		}
 		checkOrphan();
-		cellStyle = (AbstractCellStyle) row.getCellStyle(true);
-		AbstractSheet sheet = (AbstractSheet)row.getSheet();
+		cellStyle = (CellStyleAdv) row.getCellStyle(true);
+		SheetAdv sheet = (SheetAdv)row.getSheet();
 		if (cellStyle == null) {
-			cellStyle = (AbstractCellStyle) sheet.getColumn(getColumnIndex())
+			cellStyle = (CellStyleAdv) sheet.getColumn(getColumnIndex())
 					.getCellStyle(true);
 		}
 		if (cellStyle == null) {
-			cellStyle = (AbstractCellStyle) sheet.getBook()
+			cellStyle = (CellStyleAdv) sheet.getBook()
 					.getDefaultCellStyle();
 		}
 		return cellStyle;
@@ -104,8 +104,8 @@ public class CellImpl extends AbstractCell {
 	@Override
 	public void setCellStyle(NCellStyle cellStyle) {
 		Validations.argNotNull(cellStyle);
-		Validations.argInstance(cellStyle, AbstractCellStyle.class);
-		this.cellStyle = (AbstractCellStyle) cellStyle;
+		Validations.argInstance(cellStyle, CellStyleAdv.class);
+		this.cellStyle = (CellStyleAdv) cellStyle;
 	}
 
 	@Override
@@ -134,7 +134,7 @@ public class CellImpl extends AbstractCell {
 		if (type == CellType.FORMULA) {
 			// clear depends
 			Ref ref = new RefImpl(this);
-			((AbstractBookSeries) row.getSheet().getBook().getBookSeries())
+			((BookSeriesAdv) row.getSheet().getBook().getBookSeries())
 					.getDependencyTable().clearDependents(ref);
 		}
 		type = CellType.BLANK;
@@ -146,10 +146,10 @@ public class CellImpl extends AbstractCell {
 	}
 
 	@Override
-	public Object getValue(boolean eval) {
-		if (eval && type == CellType.FORMULA) {
+	public Object getValue(boolean valueOfFormula) {
+		if (valueOfFormula && type == CellType.FORMULA) {
 			evalFormula();
-			return formulaResult.getValue();
+			return this.formulaResult.getValue();
 		}
 		return value;
 	}

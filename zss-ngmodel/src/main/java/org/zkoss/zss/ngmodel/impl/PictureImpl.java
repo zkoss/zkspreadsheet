@@ -3,15 +3,15 @@ package org.zkoss.zss.ngmodel.impl;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NViewAnchor;
 
-public class PictureImpl extends AbstractPicture {
+public class PictureImpl extends PictureAdv {
 
 	String id;
 	Format format;
 	NViewAnchor anchor;
 	byte[] data;
-	AbstractSheet sheet;
+	SheetAdv sheet;
 
-	public PictureImpl(AbstractSheet sheet, String id, Format format,
+	public PictureImpl(SheetAdv sheet, String id, Format format,
 			byte[] data, NViewAnchor anchor) {
 		this.sheet = sheet;
 		this.id = id;

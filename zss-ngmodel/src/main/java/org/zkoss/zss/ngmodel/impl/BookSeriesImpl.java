@@ -1,21 +1,25 @@
 package org.zkoss.zss.ngmodel.impl;
 
 import java.util.HashMap;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyEngine;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 
-public class BookSeriesImpl extends AbstractBookSeries {
+public class BookSeriesImpl extends BookSeriesAdv {
 	private static final long serialVersionUID = 1L;
 	
-	final private HashMap<String,AbstractBook> books;
+	final private HashMap<String,BookAdv> books;
 	
 	final private DependencyEngine dependencyEngine;
 	
-	public BookSeriesImpl(AbstractBook book){
-		books = new HashMap<String, AbstractBook>(1);
+	final private ReadWriteLock lock = new ReentrantReadWriteLock();
+	
+	public BookSeriesImpl(BookAdv book){
+		books = new HashMap<String, BookAdv>(1);
 		books.put(book.getBookName(), book);
 		dependencyEngine = EngineFactory.getInstance().createDependencyEngine();
 	}
@@ -28,6 +32,8 @@ public class BookSeriesImpl extends AbstractBookSeries {
 	DependencyTable getDependencyTable() {
 		return dependencyEngine.getDependencyTable();
 	}
-
-
+	@Override
+	public ReadWriteLock getLock() {
+		return lock;
+	}
 }

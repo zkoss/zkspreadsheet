@@ -2,7 +2,7 @@ package org.zkoss.zss.ngmodel;
 
 import java.util.Date;
 
-import org.zkoss.zss.ngmodel.impl.AbstractSheet;
+import org.zkoss.zss.ngmodel.impl.SheetAdv;
 
 public interface NCell {
 

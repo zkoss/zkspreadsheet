@@ -24,20 +24,20 @@ import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
 import org.zkoss.zss.ngmodel.util.CellReference;
 
-public class SheetImpl extends AbstractSheet {
+public class SheetImpl extends SheetAdv {
 	private static final long serialVersionUID = 1L;
-	private AbstractBook book;
+	private BookAdv book;
 	private String name;
 	private final String id;
 	
-	private final BiIndexPool<AbstractRow> rows = new BiIndexPool<AbstractRow>();
-	private final BiIndexPool<AbstractColumn> columns = new BiIndexPool<AbstractColumn>();
+	private final BiIndexPool<RowAdv> rows = new BiIndexPool<RowAdv>();
+	private final BiIndexPool<ColumnAdv> columns = new BiIndexPool<ColumnAdv>();
 	
-	private final List<AbstractPicture> pictures = new LinkedList<AbstractPicture>();
-	private final List<AbstractChart> charts = new LinkedList<AbstractChart>();
+	private final List<PictureAdv> pictures = new LinkedList<PictureAdv>();
+	private final List<ChartAdv> charts = new LinkedList<ChartAdv>();
 	
 	
-	public SheetImpl(AbstractBook book,String id){
+	public SheetImpl(BookAdv book,String id){
 		this.book = book;
 		this.id = id;
 	}
@@ -67,16 +67,16 @@ public class SheetImpl extends AbstractSheet {
 		return getRowAt(rowIdx,true);
 	}
 	@Override
-	AbstractRow getRowAt(int rowIdx, boolean proxy) {
-		AbstractRow rowObj = rows.get(rowIdx);
+	RowAdv getRowAt(int rowIdx, boolean proxy) {
+		RowAdv rowObj = rows.get(rowIdx);
 		if(rowObj != null){
 			return rowObj;
 		}
-		return proxy?new RowProxyImpl(this,rowIdx):null;
+		return proxy?new RowProxy(this,rowIdx):null;
 	}
 	@Override
-	AbstractRow getOrCreateRowAt(int rowIdx){
-		AbstractRow rowObj = rows.get(rowIdx);
+	RowAdv getOrCreateRowAt(int rowIdx){
+		RowAdv rowObj = rows.get(rowIdx);
 		if(rowObj == null){
 			rowObj = new RowImpl(this);
 			rows.put(rowIdx, rowObj);
@@ -84,7 +84,7 @@ public class SheetImpl extends AbstractSheet {
 		return rowObj;
 	}
 	@Override
-	int getRowIndex(AbstractRow row){
+	int getRowIndex(RowAdv row){
 		return rows.get(row);
 	}
 
@@ -92,16 +92,16 @@ public class SheetImpl extends AbstractSheet {
 		return getColumnAt(columnIdx,true);
 	}
 	@Override
-	AbstractColumn getColumnAt(int columnIdx, boolean proxy) {
-		AbstractColumn colObj = columns.get(columnIdx);
+	ColumnAdv getColumnAt(int columnIdx, boolean proxy) {
+		ColumnAdv colObj = columns.get(columnIdx);
 		if(colObj != null){
 			return colObj;
 		}
-		return proxy?new ColumnProxyImpl(this,columnIdx):null;
+		return proxy?new ColumnProxy(this,columnIdx):null;
 	}
 	@Override
-	AbstractColumn getOrCreateColumnAt(int columnIdx){
-		AbstractColumn columnObj = columns.get(columnIdx);
+	ColumnAdv getOrCreateColumnAt(int columnIdx){
+		ColumnAdv columnObj = columns.get(columnIdx);
 		if(columnObj == null){
 			columnObj = new ColumnImpl(this);
 			columns.put(columnIdx, columnObj);
@@ -109,7 +109,7 @@ public class SheetImpl extends AbstractSheet {
 		return columnObj;
 	}
 	@Override
-	int getColumnIndex(AbstractColumn column){
+	int getColumnIndex(ColumnAdv column){
 		return columns.get(column);
 	}
 
@@ -118,17 +118,17 @@ public class SheetImpl extends AbstractSheet {
 	}
 	
 	@Override
-	AbstractCell getCellAt(int rowIdx, int columnIdx, boolean proxy) {
-		AbstractRow rowObj = (AbstractRow) getRowAt(rowIdx,false);
+	CellAdv getCellAt(int rowIdx, int columnIdx, boolean proxy) {
+		RowAdv rowObj = (RowAdv) getRowAt(rowIdx,false);
 		if(rowObj!=null){
 			return rowObj.getCellAt(columnIdx,proxy);
 		}
-		return proxy?new CellProxyImpl(this, rowIdx,columnIdx):null;
+		return proxy?new CellProxy(this, rowIdx,columnIdx):null;
 	}
 	@Override
-	AbstractCell getOrCreateCellAt(int rowIdx, int columnIdx){
-		AbstractRow rowObj = (AbstractRow)getOrCreateRowAt(rowIdx);
-		AbstractCell cell = rowObj.getOrCreateCellAt(columnIdx);
+	CellAdv getOrCreateCellAt(int rowIdx, int columnIdx){
+		RowAdv rowObj = (RowAdv)getOrCreateRowAt(rowIdx);
+		CellAdv cell = rowObj.getOrCreateCellAt(columnIdx);
 		return cell;
 	}
 
@@ -149,7 +149,7 @@ public class SheetImpl extends AbstractSheet {
 	}
 
 	public int getStartColumnIndex(int row) {
-		AbstractRow rowObj = (AbstractRow) getRowAt(row,false);
+		RowAdv rowObj = (RowAdv) getRowAt(row,false);
 		if(rowObj!=null){
 			return rowObj.getStartCellIndex();
 		}
@@ -157,7 +157,7 @@ public class SheetImpl extends AbstractSheet {
 	}
 
 	public int getEndColumn(int row) {
-		AbstractRow rowObj = (AbstractRow) getRowAt(row,false);
+		RowAdv rowObj = (RowAdv) getRowAt(row,false);
 		if(rowObj!=null){
 			return rowObj.getEndCellIndex();
 		}
@@ -170,10 +170,10 @@ public class SheetImpl extends AbstractSheet {
 	}
 	@Override
 	void onModelEvent(ModelEvent event) {
-		for(AbstractRow row:rows.values()){
+		for(RowAdv row:rows.values()){
 			row.onModelEvent(event);
 		}
-		for(AbstractColumn column:columns.values()){
+		for(ColumnAdv column:columns.values()){
 			column.onModelEvent(event);
 		}
 		//TODO to other object
@@ -184,7 +184,7 @@ public class SheetImpl extends AbstractSheet {
 		int end = Math.max(rowIdx, rowIdx2);
 		
 		//clear before move relation
-		for(AbstractRow row:rows.subValues(start,end)){
+		for(RowAdv row:rows.subValues(start,end)){
 			row.release();
 		}		
 		rows.clear(start,end);
@@ -198,12 +198,12 @@ public class SheetImpl extends AbstractSheet {
 		int end = Math.max(columnIdx, columnIdx2);
 		
 		
-		for(AbstractColumn column:columns.subValues(start,end)){
+		for(ColumnAdv column:columns.subValues(start,end)){
 			column.release();
 		}
 		columns.clear(start,end);
 		
-		for(AbstractRow row:rows.values()){
+		for(RowAdv row:rows.values()){
 			row.clearCell(start,end);
 		}
 		//Send event?
@@ -217,9 +217,9 @@ public class SheetImpl extends AbstractSheet {
 		int columnStart = Math.min(columnIdx, columnIdx2);
 		int columnEnd = Math.max(columnIdx, columnIdx2);
 		
-		Collection<AbstractRow> effected = rows.subValues(rowStart,rowEnd);
+		Collection<RowAdv> effected = rows.subValues(rowStart,rowEnd);
 		
-		Iterator<AbstractRow> iter = effected.iterator();
+		Iterator<RowAdv> iter = effected.iterator();
 		while(iter.hasNext()){
 			iter.next().clearCell(columnStart, columnEnd);
 		}
@@ -239,7 +239,7 @@ public class SheetImpl extends AbstractSheet {
 	
 	private void shiftAfterRowInsert(int rowIdx, int size) {
 		// handling pic shift
-		for (AbstractPicture pic : pictures) {
+		for (PictureAdv pic : pictures) {
 			NViewAnchor anchor = pic.getAnchor();
 			int idx = anchor.getRowIndex();
 			if (idx >= rowIdx) {
@@ -247,7 +247,7 @@ public class SheetImpl extends AbstractSheet {
 			}
 		}
 		// handling pic shift
-		for (AbstractChart chart : charts) {
+		for (ChartAdv chart : charts) {
 			NViewAnchor anchor = chart.getAnchor();
 			int idx = anchor.getRowIndex();
 			if (idx >= rowIdx) {
@@ -257,7 +257,7 @@ public class SheetImpl extends AbstractSheet {
 	}
 	private void shiftAfterRowDelete(int rowIdx, int size) {
 		//handling pic shift
-		for(AbstractPicture pic:pictures){
+		for(PictureAdv pic:pictures){
 			NViewAnchor anchor = pic.getAnchor();
 			int idx = anchor.getRowIndex();
 			if(idx >= rowIdx+size){
@@ -268,7 +268,7 @@ public class SheetImpl extends AbstractSheet {
 			}
 		}
 		//handling pic shift
-		for(AbstractChart chart:charts){
+		for(ChartAdv chart:charts){
 			NViewAnchor anchor = chart.getAnchor();
 			int idx = anchor.getRowIndex();
 			if(idx >= rowIdx+size){
@@ -281,7 +281,7 @@ public class SheetImpl extends AbstractSheet {
 	}
 	private void shiftAfterColumnInsert(int columnIdx, int size) {
 		// handling pic shift
-		for (AbstractPicture pic : pictures) {
+		for (PictureAdv pic : pictures) {
 			NViewAnchor anchor = pic.getAnchor();
 			int idx = anchor.getColumnIndex();
 			if (idx >= columnIdx) {
@@ -289,7 +289,7 @@ public class SheetImpl extends AbstractSheet {
 			}
 		}
 		// handling pic shift
-		for (AbstractChart chart : charts) {
+		for (ChartAdv chart : charts) {
 			NViewAnchor anchor = chart.getAnchor();
 			int idx = anchor.getColumnIndex();
 			if (idx >= columnIdx) {
@@ -299,7 +299,7 @@ public class SheetImpl extends AbstractSheet {
 	}
 	private void shiftAfterColumnDelete(int columnIdx, int size) {
 		//handling pic shift
-		for(AbstractPicture pic:pictures){
+		for(PictureAdv pic:pictures){
 			NViewAnchor anchor = pic.getAnchor();
 			int idx = anchor.getColumnIndex();
 			if(idx >= columnIdx+size){
@@ -310,7 +310,7 @@ public class SheetImpl extends AbstractSheet {
 			}
 		}
 		//handling pic shift
-		for(AbstractChart chart:charts){
+		for(ChartAdv chart:charts){
 			NViewAnchor anchor = chart.getAnchor();
 			int idx = anchor.getColumnIndex();
 			if(idx >= columnIdx+size){
@@ -328,7 +328,7 @@ public class SheetImpl extends AbstractSheet {
 		if(size<=0) return;
 		
 		//clear before move relation
-		for(AbstractRow row:rows.subValues(rowIdx,rowIdx+size)){
+		for(RowAdv row:rows.subValues(rowIdx,rowIdx+size)){
 			row.release();
 		}		
 		rows.delete(rowIdx, size);
@@ -340,7 +340,7 @@ public class SheetImpl extends AbstractSheet {
 	}
 	
 	@Override
-	void copyTo(AbstractSheet sheet) {
+	void copyTo(SheetAdv sheet) {
 		if(sheet==this)
 			return;
 		
@@ -397,7 +397,7 @@ public class SheetImpl extends AbstractSheet {
 		
 		columns.insert(columnIdx, size);
 		
-		for(AbstractRow row:rows.values()){
+		for(RowAdv row:rows.values()){
 			row.insertCell(columnIdx,size);
 		}
 		
@@ -411,13 +411,13 @@ public class SheetImpl extends AbstractSheet {
 		checkOrphan();
 		if(size<=0) return;
 		
-		for(AbstractColumn column:columns.subValues(columnIdx, columnIdx+size)){
+		for(ColumnAdv column:columns.subValues(columnIdx, columnIdx+size)){
 			column.release();
 		}
 		
 		columns.delete(columnIdx, size);
 		
-		for(AbstractRow row:rows.values()){
+		for(RowAdv row:rows.values()){
 			row.deleteCell(columnIdx,size);
 		}
 		shiftAfterColumnDelete(columnIdx,size);
@@ -435,16 +435,16 @@ public class SheetImpl extends AbstractSheet {
 	@Override
 	public void release(){
 		checkOrphan();
-		for(AbstractColumn column:columns.values()){
+		for(ColumnAdv column:columns.values()){
 			column.release();
 		}
-		for(AbstractRow row:rows.values()){
+		for(RowAdv row:rows.values()){
 			row.release();
 		}
-		for(AbstractChart chart:charts){
+		for(ChartAdv chart:charts){
 			chart.release();
 		}
-		for(AbstractPicture picture:pictures){
+		for(PictureAdv picture:pictures){
 			picture.release();
 		}
 		book = null;
@@ -458,7 +458,7 @@ public class SheetImpl extends AbstractSheet {
 
 	public NPicture addPicture(Format format, byte[] data,NViewAnchor anchor) {
 		checkOrphan();
-		AbstractPicture pic = new PictureImpl(this,book.nextObjId("pic"), format, data,anchor);
+		PictureAdv pic = new PictureImpl(this,book.nextObjId("pic"), format, data,anchor);
 		pictures.add(pic);
 		return pic;
 	}
@@ -475,7 +475,7 @@ public class SheetImpl extends AbstractSheet {
 	public void deletePicture(NPicture picture) {
 		checkOrphan();
 		checkOwnership(picture);
-		((AbstractPicture)picture).release();
+		((PictureAdv)picture).release();
 		pictures.remove(picture);
 	}
 
@@ -485,7 +485,7 @@ public class SheetImpl extends AbstractSheet {
 	
 	public NChart addChart(NChart.NChartType type,NViewAnchor anchor) {
 		checkOrphan();
-		AbstractChart pic = new ChartImpl(this, book.nextObjId("chart"), type, anchor);
+		ChartAdv pic = new ChartImpl(this, book.nextObjId("chart"), type, anchor);
 		charts.add(pic);
 		return pic;
 	}
@@ -502,7 +502,7 @@ public class SheetImpl extends AbstractSheet {
 	public void deleteChart(NChart chart) {
 		checkOrphan();
 		checkOwnership(chart);
-		((AbstractChart)chart).release();
+		((ChartAdv)chart).release();
 		charts.remove(chart);
 	}
 

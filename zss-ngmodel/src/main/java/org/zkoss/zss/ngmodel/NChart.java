@@ -1,7 +1,7 @@
 package org.zkoss.zss.ngmodel;
 
 import org.zkoss.zss.ngmodel.chart.NChartData;
-import org.zkoss.zss.ngmodel.impl.AbstractSheet;
+import org.zkoss.zss.ngmodel.impl.SheetAdv;
 
 public interface NChart {
 

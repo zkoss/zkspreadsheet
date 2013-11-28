@@ -1222,47 +1222,61 @@ public class ModelTest {
 		Assert.assertEquals("B", chartData.getCategoryAt(1));
 		Assert.assertEquals("C", chartData.getCategoryAt(2));
 		
-		NSeries nseries = chartData.addSeries();
+		NSeries nseries1 = chartData.addSeries();
 		Assert.assertEquals(1, chartData.getNumOfSeries());
-		Assert.assertEquals(null, nseries.getName());
+		Assert.assertEquals(null, nseries1.getName());
 		
-		nseries.setNameFormula("KK()");//fail 
-		Assert.assertEquals("#NAME!", nseries.getName());
+		nseries1.setNameFormula("KK()");//fail 
+		Assert.assertEquals("#NAME!", nseries1.getName());
 		
-		nseries.setNameFormula("D1");
-		Assert.assertEquals("My Series", nseries.getName());
+		nseries1.setNameFormula("D1");
+		Assert.assertEquals("My Series", nseries1.getName());
 		
-		Assert.assertEquals(0, nseries.getNumOfValue());
-		Assert.assertEquals(0, nseries.getNumOfXValue());
-		Assert.assertEquals(0, nseries.getNumOfYValue());
-		
-		
-		nseries.setValuesFormula("KK()");
-		nseries.setYValuesFormula("KK()");
-		Assert.assertEquals(0, nseries.getNumOfValue());
-		Assert.assertEquals(0, nseries.getNumOfXValue());
-		Assert.assertEquals(0, nseries.getNumOfYValue());
-		
-		nseries.setValuesFormula("B1:B3");
-		nseries.setYValuesFormula("C1:C3");
+		Assert.assertEquals(0, nseries1.getNumOfValue());
+		Assert.assertEquals(0, nseries1.getNumOfXValue());
+		Assert.assertEquals(0, nseries1.getNumOfYValue());
 		
 		
-		Assert.assertEquals(3, nseries.getNumOfValue());
-		Assert.assertEquals(3, nseries.getNumOfXValue());
-		Assert.assertEquals(3, nseries.getNumOfYValue());
+		nseries1.setValuesFormula("KK()");
+		nseries1.setYValuesFormula("KK()");
+		Assert.assertEquals(0, nseries1.getNumOfValue());
+		Assert.assertEquals(0, nseries1.getNumOfXValue());
+		Assert.assertEquals(0, nseries1.getNumOfYValue());
 		
-		Assert.assertEquals(1, nseries.getValueAt(0));
-		Assert.assertEquals(2, nseries.getValueAt(1));
-		Assert.assertEquals(3, nseries.getValueAt(2));
+		nseries1.setValuesFormula("B1:B3");
+		nseries1.setYValuesFormula("C1:C3");
 		
-		Assert.assertEquals(1, nseries.getXValueAt(0));
-		Assert.assertEquals(2, nseries.getXValueAt(1));
-		Assert.assertEquals(3, nseries.getXValueAt(2));
 		
-		Assert.assertEquals(4, nseries.getYValueAt(0));
-		Assert.assertEquals(5, nseries.getYValueAt(1));
-		Assert.assertEquals(6, nseries.getYValueAt(2));
+		Assert.assertEquals(3, nseries1.getNumOfValue());
+		Assert.assertEquals(3, nseries1.getNumOfXValue());
+		Assert.assertEquals(3, nseries1.getNumOfYValue());
 		
+		Assert.assertEquals(1, nseries1.getValueAt(0));
+		Assert.assertEquals(2, nseries1.getValueAt(1));
+		Assert.assertEquals(3, nseries1.getValueAt(2));
+		
+		Assert.assertEquals(1, nseries1.getXValueAt(0));
+		Assert.assertEquals(2, nseries1.getXValueAt(1));
+		Assert.assertEquals(3, nseries1.getXValueAt(2));
+		
+		Assert.assertEquals(4, nseries1.getYValueAt(0));
+		Assert.assertEquals(5, nseries1.getYValueAt(1));
+		Assert.assertEquals(6, nseries1.getYValueAt(2));
+		
+		
+		////
+		NSeries nseries2 = chartData.addSeries();
+		Assert.assertEquals(2, chartData.getNumOfSeries());
+		Assert.assertEquals(null, nseries2.getName());
+		
+		Assert.assertEquals(0, nseries2.getNumOfValue());
+		nseries2.setValuesFormula("C1:C3");
+		
+		Assert.assertEquals(3, nseries2.getNumOfValue());
+		
+		Assert.assertEquals(4, nseries2.getValueAt(0));
+		Assert.assertEquals(5, nseries2.getValueAt(1));
+		Assert.assertEquals(6, nseries2.getValueAt(2));
 	}
 	
 	@Test

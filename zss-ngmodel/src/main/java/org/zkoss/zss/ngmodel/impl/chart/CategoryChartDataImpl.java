@@ -9,7 +9,7 @@ import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.chart.NCategoryChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
-import org.zkoss.zss.ngmodel.impl.AbstractChart;
+import org.zkoss.zss.ngmodel.impl.ChartAdv;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult.ResultType;
@@ -25,14 +25,14 @@ public class CategoryChartDataImpl implements NCategoryChartData, Serializable{
 	private FormulaExpression catFormula;
 	
 	private List<SeriesImpl> serieses = new LinkedList<SeriesImpl>();
-	private AbstractChart chart;
+	private ChartAdv chart;
 	
 	private Object evalResult;
 	
 	private boolean evaluated = false;
 	
 	
-	public CategoryChartDataImpl(AbstractChart chart){
+	public CategoryChartDataImpl(ChartAdv chart){
 		this.chart = chart;
 	}
 	

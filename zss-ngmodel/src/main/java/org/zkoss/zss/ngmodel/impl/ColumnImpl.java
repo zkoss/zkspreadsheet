@@ -3,16 +3,17 @@ package org.zkoss.zss.ngmodel.impl;
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumn;
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
 
-public class ColumnImpl extends AbstractColumn {
+public class ColumnImpl extends ColumnAdv {
 	private static final long serialVersionUID = 1L;
 
-	private AbstractSheet sheet;
-	private AbstractCellStyle cellStyle;
+	private SheetAdv sheet;
+	private CellStyleAdv cellStyle;
 
-	public ColumnImpl(AbstractSheet sheet) {
+	public ColumnImpl(SheetAdv sheet) {
 		this.sheet = sheet;
 	}
 
@@ -52,7 +53,7 @@ public class ColumnImpl extends AbstractColumn {
 	}
 
 	@Override
-	protected AbstractSheet getSheet() {
+	public NSheet getSheet() {
 		checkOrphan();
 		return sheet;
 	}
@@ -74,8 +75,8 @@ public class ColumnImpl extends AbstractColumn {
 	@Override
 	public void setCellStyle(NCellStyle cellStyle) {
 		Validations.argNotNull(cellStyle);
-		Validations.argInstance(cellStyle, AbstractCellStyle.class);
-		this.cellStyle = (AbstractCellStyle) cellStyle;
+		Validations.argInstance(cellStyle, CellStyleAdv.class);
+		this.cellStyle = (CellStyleAdv) cellStyle;
 	}
 
 }

@@ -1,6 +1,6 @@
 package org.zkoss.zss.ngmodel;
 
-import org.zkoss.zss.ngmodel.impl.AbstractSheet;
+import org.zkoss.zss.ngmodel.impl.SheetAdv;
 
 public interface NRow {
 

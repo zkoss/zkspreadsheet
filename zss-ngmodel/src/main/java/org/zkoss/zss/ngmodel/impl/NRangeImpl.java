@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngmodel.ModelEvents;
@@ -14,6 +15,7 @@ import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.ReadWriteTask;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
@@ -76,6 +78,27 @@ public class NRangeImpl implements NRange {
 		_lastRow = Math.max(_lastRow, bRow);
 
 	}
+	
+	
+	public ReadWriteLock getLock(){
+		return getSheet().getBook().getBookSeries().getLock();
+	}
+
+	
+	private class CellVisitorTask extends ReadWriteTask{
+		CellVisitor visitor;
+		
+		CellVisitorTask(CellVisitor visitor){
+			this.visitor = visitor;
+		}
+
+		@Override
+		public Object invoke() {
+			travelCells(visitor);
+			return null;
+		}
+	}
+	
 	@Override
 	public NSheet getSheet() {
 		return rangeRefs.get(0)._sheet;
@@ -124,7 +147,7 @@ public class NRangeImpl implements NRange {
 
 		NBook book = rangeRefs.get(0)._sheet.getBook();
 		NBookSeries bookSeries = book.getBookSeries();
-		DependencyTable dependencyTable = ((AbstractBookSeries) bookSeries)
+		DependencyTable dependencyTable = ((BookSeriesAdv) bookSeries)
 				.getDependencyTable();
 
 		String bookName = book.getBookName();
@@ -170,7 +193,7 @@ public class NRangeImpl implements NRange {
 						.getSheetName());
 				NCell cell = notifySheet.getCell(update.getRow(),
 						update.getColumn());
-				((AbstractBook) notifyBook).sendEvent(
+				((BookAdv) notifyBook).sendEvent(
 						ModelEvents.ON_CELL_UPDATED, ModelEvents.PARAM_CELL,
 						cell);
 			} else {// another type?
@@ -190,7 +213,7 @@ public class NRangeImpl implements NRange {
 	}
 	@Override
 	public void setValue(final Object value) {
-		travelCells(new CellVisitor() {
+		ReadWriteTask.doInWriteLock(getLock(),new CellVisitorTask(new CellVisitor() {
 			public boolean visit(NCell cell) {
 				Object cellval = cell.getValue();
 				if (euqlas(cellval, value)) {
@@ -199,11 +222,12 @@ public class NRangeImpl implements NRange {
 				cell.setValue(value);
 				return true;
 			}
-		});
+		}));
 	}
+	
 	@Override
 	public void clear() {
-		travelCells(new CellVisitor() {
+		ReadWriteTask.doInWriteLock(getLock(),new CellVisitorTask(new CellVisitor() {
 			public boolean visit(NCell cell) {
 				if (cell.isNull() || cell.getType() == CellType.BLANK) {
 					return false;
@@ -211,15 +235,17 @@ public class NRangeImpl implements NRange {
 				cell.clearValue();
 				return true;
 			}
-		});
+		}));
 	}
+
+	
 	@Override
 	public void setEditText(String editText) {
 		final InputEngine ie = EngineFactory.getInstance().createInputEngine();
 		final InputResult result = ie.parseInput(editText == null ? ""
 				: editText, new InputParseContext(_locale));
-
-		travelCells(new CellVisitor() {
+		
+		ReadWriteTask.doInWriteLock(getLock(),new CellVisitorTask(new CellVisitor() {
 			public boolean visit(NCell cell) {
 				Object cellval = cell.getValue();
 				if (euqlas(cellval, result.getValue())) {
@@ -247,6 +273,6 @@ public class NRangeImpl implements NRange {
 				}
 				return true;
 			}
-		});
+		}));
 	}
 }

@@ -7,20 +7,20 @@ import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.Validations;
 
-class RowProxyImpl extends AbstractRow{
+class RowProxy extends RowAdv{
 	private static final long serialVersionUID = 1L;
 	
-	private final WeakReference<AbstractSheet> sheetRef;
+	private final WeakReference<SheetAdv> sheetRef;
 	private final int index;
-	AbstractRow proxy;
+	RowAdv proxy;
 	
-	public RowProxyImpl(AbstractSheet sheet, int index) {
+	public RowProxy(SheetAdv sheet, int index) {
 		this.sheetRef = new WeakReference(sheet);
 		this.index = index;
 	}
 	@Override
 	public NSheet getSheet(){
-		AbstractSheet sheet = sheetRef.get();
+		SheetAdv sheet = sheetRef.get();
 		if(sheet==null){
 			throw new IllegalStateException("proxy target lost, you should't keep this instance");
 		}
@@ -29,7 +29,7 @@ class RowProxyImpl extends AbstractRow{
 	
 	protected void loadProxy(){
 		if(proxy==null){
-			proxy = (AbstractRow)((AbstractSheet)getSheet()).getRowAt(index,false);
+			proxy = (RowAdv)((SheetAdv)getSheet()).getRowAt(index,false);
 			if(proxy!=null){
 				sheetRef.clear();
 			}
@@ -80,17 +80,17 @@ class RowProxyImpl extends AbstractRow{
 		Validations.argNotNull(cellStyle);
 		loadProxy();
 		if(proxy==null){
-			proxy = (AbstractRow)((AbstractSheet)getSheet()).getOrCreateRowAt(index);
+			proxy = (RowAdv)((SheetAdv)getSheet()).getOrCreateRowAt(index);
 		}
 		proxy.setCellStyle(cellStyle);
 	}
 	
 	@Override
-	AbstractCell getCellAt(int columnIdx, boolean proxy) {
+	CellAdv getCellAt(int columnIdx, boolean proxy) {
 		throw new UnsupportedOperationException("not implement");
 	}
 	@Override
-	AbstractCell getOrCreateCellAt(int columnIdx) {
+	CellAdv getOrCreateCellAt(int columnIdx) {
 		throw new UnsupportedOperationException("not implement");
 	}
 	@Override
@@ -106,7 +106,7 @@ class RowProxyImpl extends AbstractRow{
 		throw new UnsupportedOperationException("not implement");
 	}
 	@Override
-	int getCellIndex(AbstractCell cell) {
+	int getCellIndex(CellAdv cell) {
 		throw new UnsupportedOperationException("not implement");
 	}
 	@Override

@@ -4,23 +4,24 @@ import java.lang.ref.WeakReference;
 
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
 
-class ColumnProxyImpl extends AbstractColumn {
+class ColumnProxy extends ColumnAdv {
 	private static final long serialVersionUID = 1L;
-	private final WeakReference<AbstractSheet> sheetRef;
+	private final WeakReference<SheetAdv> sheetRef;
 	private final int index;
-	private AbstractColumn proxy;
+	private ColumnAdv proxy;
 
-	public ColumnProxyImpl(AbstractSheet sheet, int index) {
+	public ColumnProxy(SheetAdv sheet, int index) {
 		this.sheetRef = new WeakReference(sheet);
 		this.index = index;
 	}
 
 	protected void loadProxy() {
 		if (proxy == null) {
-			proxy = (AbstractColumn) getSheet().getColumnAt(index, false);
+			proxy = (ColumnAdv) ((SheetAdv)getSheet()).getColumnAt(index, false);
 			if (proxy != null) {
 				sheetRef.clear();
 			}
@@ -28,8 +29,8 @@ class ColumnProxyImpl extends AbstractColumn {
 	}
 
 	@Override
-	protected AbstractSheet getSheet() {
-		AbstractSheet sheet = sheetRef.get();
+	public NSheet getSheet() {
+		SheetAdv sheet = sheetRef.get();
 		if (sheet == null) {
 			throw new IllegalStateException(
 					"proxy target lost, you should't keep this instance");
@@ -75,7 +76,7 @@ class ColumnProxyImpl extends AbstractColumn {
 		Validations.argNotNull(cellStyle);
 		loadProxy();
 		if (proxy == null) {
-			proxy = (AbstractColumn) getSheet().getOrCreateColumnAt(index);
+			proxy = (ColumnAdv)((SheetAdv)getSheet()).getOrCreateColumnAt(index);
 		}
 		proxy.setCellStyle(cellStyle);
 	}

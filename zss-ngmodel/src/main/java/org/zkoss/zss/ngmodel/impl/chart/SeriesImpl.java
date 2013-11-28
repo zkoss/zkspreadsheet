@@ -4,8 +4,8 @@ import java.util.Collection;
 
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.chart.NSeries;
-import org.zkoss.zss.ngmodel.impl.AbstractBook;
-import org.zkoss.zss.ngmodel.impl.AbstractChart;
+import org.zkoss.zss.ngmodel.impl.BookAdv;
+import org.zkoss.zss.ngmodel.impl.ChartAdv;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
@@ -20,7 +20,7 @@ public class SeriesImpl implements NSeries{
 	private FormulaExpression valueExpr;
 	private FormulaExpression yAxixExpr;
 	
-	private AbstractChart chart;
+	private ChartAdv chart;
 	
 	private Object evalNameResult;
 	private Object evalValueResult;
@@ -64,7 +64,7 @@ public class SeriesImpl implements NSeries{
 		}
 	}
 	
-	public SeriesImpl(AbstractChart chart){
+	public SeriesImpl(ChartAdv chart){
 		this.chart = chart;
 	}
 	public String getName() {

@@ -19,10 +19,12 @@ package org.zkoss.zss.ngmodel.impl;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.ModelEvent;
+import org.zkoss.zss.ngmodel.ModelEventListener;
 import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
@@ -37,22 +39,24 @@ import org.zkoss.zss.ngmodel.util.Validations;
  * @author dennis
  *
  */
-public class BookImpl extends AbstractBook{
+public class BookImpl extends BookAdv{
 	private static final long serialVersionUID = 1L;
 
 	private final String bookName;
 	
 	private NBookSeries bookSeries;
 	
-	private final List<AbstractSheet> sheets = new LinkedList<AbstractSheet>();
+	private final List<SheetAdv> sheets = new LinkedList<SheetAdv>();
 	
-	private final List<AbstractCellStyle> cellStyles = new LinkedList<AbstractCellStyle>();
-	private final AbstractCellStyle defaultCellStyle;
+	private final List<CellStyleAdv> cellStyles = new LinkedList<CellStyleAdv>();
+	private final CellStyleAdv defaultCellStyle;
 
 	
 	private HashMap<String,AtomicInteger> objIdCounter = new HashMap<String,AtomicInteger>();
 	private int maxRowSize = SpreadsheetVersion.EXCEL2007.getMaxRows();
 	private int maxColumnSize = SpreadsheetVersion.EXCEL2007.getMaxColumns();
+	
+	private List<ModelEventListener> listeners;
 	
 	public BookImpl(String bookName){
 		Validations.argNotNull(bookName);
@@ -114,13 +118,35 @@ public class BookImpl extends AbstractBook{
 	@Override
 	protected void sendEvent(ModelEvent event){	
 		//implicitly deliver to sheet
-		for(AbstractSheet sheet:sheets){
+		for(SheetAdv sheet:sheets){
 			sheet.onModelEvent(event);
 		}
-		//TODO implicitly deliver to book series member?
 		
-		//call super for listeners
-		super.sendEvent(event);
+		if(listeners ==null)
+			return;
+		
+		for(ModelEventListener l:listeners){
+			l.onEvent(event);
+		}
+	}
+	
+	@Override
+	protected void sendEvent(String name, Object... data){
+		Map<String,Object> datamap = new HashMap<String,Object>();
+		datamap.put("book", this);
+		if(datamap!=null){
+			if(data.length%2 != 0){
+				throw new IllegalArgumentException("event data must be key,value pair");
+			}
+			for(int i=0;i<data.length;i+=2){
+				if(!(data[i] instanceof String)){
+					throw new IllegalArgumentException("event data key must be string");
+				}
+				datamap.put((String)data[i],data[i+1]);
+			}
+		}
+		ModelEvent event = new ModelEvent(name, datamap);
+		sendEvent(event);
 	}
 	
 	@Override
@@ -147,11 +173,11 @@ public class BookImpl extends AbstractBook{
 			checkOwnership(src);
 		
 
-		AbstractSheet sheet = new SheetImpl(this,nextObjId("sheet"));
-		if(src instanceof AbstractSheet){
-			((AbstractSheet)src).copyTo(sheet);
+		SheetAdv sheet = new SheetImpl(this,nextObjId("sheet"));
+		if(src instanceof SheetAdv){
+			((SheetAdv)src).copyTo(sheet);
 		}
-		((AbstractSheet)sheet).setSheetName(name);
+		((SheetAdv)sheet).setSheetName(name);
 		sheets.add(sheet);
 		
 		sendEvent(ModelEvents.ON_SHEET_ADDED, 
@@ -165,7 +191,7 @@ public class BookImpl extends AbstractBook{
 		checkOwnership(sheet);
 		
 		String oldname = sheet.getSheetName();
-		((AbstractSheet)sheet).setSheetName(newname);
+		((SheetAdv)sheet).setSheetName(newname);
 		
 		sendEvent(ModelEvents.ON_SHEET_RENAMED, 
 				ModelEvents.PARAM_SHEET, sheet,
@@ -186,7 +212,7 @@ public class BookImpl extends AbstractBook{
 	public void deleteSheet(NSheet sheet) {
 		checkOwnership(sheet);
 		
-		((AbstractSheet)sheet).release();
+		((SheetAdv)sheet).release();
 		
 		int index = sheets.indexOf(sheet);
 		sheets.remove(index);
@@ -207,14 +233,14 @@ public class BookImpl extends AbstractBook{
 			return;
 		}
 		sheets.remove(oldindex);
-		sheets.add(index, (AbstractSheet)sheet);
+		sheets.add(index, (SheetAdv)sheet);
 		sendEvent(ModelEvents.ON_SHEET_MOVED, 
 				ModelEvents.PARAM_SHEET, sheet,
 				ModelEvents.PARAM_SHEET_OLD_INDEX, oldindex);
 	}
 
 	public void dump(StringBuilder builder) {
-		for(AbstractSheet sheet:sheets){
+		for(SheetAdv sheet:sheets){
 			if(sheet instanceof SheetImpl){
 				((SheetImpl)sheet).dump(builder);
 			}else{
@@ -236,11 +262,11 @@ public class BookImpl extends AbstractBook{
 	@Override
 	public NCellStyle createCellStyle(NCellStyle src,boolean inStyleTable) {
 		if(src!=null){
-			Validations.argInstance(src, AbstractCellStyle.class);
+			Validations.argInstance(src, CellStyleAdv.class);
 		}
-		AbstractCellStyle style = new CellStyleImpl();
+		CellStyleAdv style = new CellStyleImpl();
 		if(src!=null){
-			((AbstractCellStyle)src).copyTo(style);
+			((CellStyleAdv)src).copyTo(style);
 		}
 		
 		if(inStyleTable){
@@ -280,6 +306,23 @@ public class BookImpl extends AbstractBook{
 		
 		//TODO
 		throw new UnsupportedOperationException("not implementate la.");
+	}
+
+	
+	@Override
+	public void addEventListener(ModelEventListener listener){
+		if(listeners==null){
+			listeners = new LinkedList<ModelEventListener>();
+		}
+		if(!listeners.contains(listener)){
+			listeners.add(listener);
+		}
+	}
+	@Override
+	public void removeEventListener(ModelEventListener listener){
+		if(listeners!=null){
+			listeners.remove(listener);
+		}
 	}
 
 }

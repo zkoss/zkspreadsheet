@@ -3,7 +3,7 @@ package org.zkoss.zss.ngmodel.impl;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.util.Validations;
 
-public class CellStyleImpl extends AbstractCellStyle {
+public class CellStyleImpl extends CellStyleAdv {
 	private static final long serialVersionUID = 1L;
 
 	public static final String COLOR_WHITE = "#FFFFFF";
@@ -279,7 +279,7 @@ public class CellStyleImpl extends AbstractCellStyle {
 	}
 
 	@Override
-	public void copyTo(AbstractCellStyle dest) {
+	public void copyTo(CellStyleAdv dest) {
 		if (dest == this)
 			return;
 		Validations.argInstance(dest, CellStyleImpl.class);

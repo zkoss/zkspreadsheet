@@ -5,12 +5,12 @@ import java.io.Serializable;
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NRow;
 
-public abstract class AbstractRow implements NRow,LinkedModelObject,Serializable{
+public abstract class RowAdv implements NRow,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
 
-	/*package*/ abstract AbstractCell getCellAt(int columnIdx, boolean proxy);
+	/*package*/ abstract CellAdv getCellAt(int columnIdx, boolean proxy);
 
-	/*package*/ abstract AbstractCell getOrCreateCellAt(int columnIdx);
+	/*package*/ abstract CellAdv getOrCreateCellAt(int columnIdx);
 	
 	/*package*/ abstract void onModelEvent(ModelEvent event);
 
@@ -20,5 +20,5 @@ public abstract class AbstractRow implements NRow,LinkedModelObject,Serializable
 
 	/*package*/ abstract void deleteCell(int start, int size);
 
-	/*package*/ abstract int getCellIndex(AbstractCell cell);
+	/*package*/ abstract int getCellIndex(CellAdv cell);
 }

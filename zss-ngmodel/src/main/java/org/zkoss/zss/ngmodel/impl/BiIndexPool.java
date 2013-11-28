@@ -7,14 +7,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class BiIndexPool<T> implements Serializable{
+/*package*/ class BiIndexPool<T> implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private TreeMap<Integer,T> objs = new TreeMap<Integer,T>();
 	private HashMap<T,Integer> objsReverse = new HashMap<T,Integer>(); 

@@ -36,26 +36,26 @@ public class RefImpl implements Ref, Serializable {
 		setInfo(RefType.BOOK, bookName, null, -1, -1, -1, -1, null);
 	}
 
-	public RefImpl(AbstractCell cell) {
-		AbstractSheet sheet = (AbstractSheet)cell.getSheet();
-		AbstractBook book = ((AbstractBook) sheet.getBook());
+	public RefImpl(CellAdv cell) {
+		SheetAdv sheet = (SheetAdv)cell.getSheet();
+		BookAdv book = ((BookAdv) sheet.getBook());
 		int row = cell.getRowIndex();
 		int column = cell.getColumnIndex();
 		setInfo(RefType.CELL, book.getBookName(), sheet.getSheetName(), row,
 				column, row, column, null);
 	}
 
-	public RefImpl(AbstractSheet sheet) {
-		AbstractBook book = ((AbstractBook) sheet.getBook());
+	public RefImpl(SheetAdv sheet) {
+		BookAdv book = ((BookAdv) sheet.getBook());
 		setInfo(RefType.SHEET, book.getBookName(), sheet.getSheetName(), -1,
 				-1, -1, -1, null);
 	}
 
-	public RefImpl(AbstractBook book) {
+	public RefImpl(BookAdv book) {
 		setInfo(RefType.BOOK, book.getBookName(), null, -1, -1, -1, -1, null);
 	}
 
-	public RefImpl(AbstractChart chart) {
+	public RefImpl(ChartAdv chart) {
 		setInfo(RefType.CHART, chart.getSheet().getBook().getBookName(), null,
 				-1, -1, -1, -1, chart.getId());
 	}
