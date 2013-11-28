@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
@@ -14,10 +15,13 @@ import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NChart;
 import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.NPicture;
+import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ngmodel.chart.NChartData;
+import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
 import org.zkoss.zss.ngmodel.util.CellReference;
 
 public class SheetImpl extends AbstractSheet {
@@ -36,6 +40,18 @@ public class SheetImpl extends AbstractSheet {
 	public SheetImpl(AbstractBook book,String id){
 		this.book = book;
 		this.id = id;
+	}
+	
+	protected void checkOwnership(NPicture picture){
+		if(!pictures.contains(picture)){
+			throw new InvalidateModelOpException("doesn't has ownership "+ picture);
+		}
+	}
+	
+	protected void checkOwnership(NChart chart){
+		if(!charts.contains(chart)){
+			throw new InvalidateModelOpException("doesn't has ownership "+ chart);
+		}
 	}
 	
 	public NBook getBook() {
@@ -164,24 +180,28 @@ public class SheetImpl extends AbstractSheet {
 	}
 	
 	public void clearRow(int rowIdx, int rowIdx2) {
-		int start = Math.max(Math.min(rowIdx, rowIdx2),getStartRowIndex());
-		int end = Math.min(Math.max(rowIdx, rowIdx2),getEndRowIndex());
-				
-		for(AbstractRow row:rows.clear(start,end)){
+		int start = Math.min(rowIdx, rowIdx2);
+		int end = Math.max(rowIdx, rowIdx2);
+		
+		//clear before move relation
+		for(AbstractRow row:rows.subValues(start,end)){
 			row.release();
-		}
+		}		
+		rows.clear(start,end);
 		
 		//Send event?
 		
 	}
 
 	public void clearColumn(int columnIdx, int columnIdx2) {
-		int start = Math.max(Math.min(columnIdx, columnIdx2),getStartColumnIndex());
-		int end = Math.min(Math.max(columnIdx, columnIdx2),getEndColumnIndex());
+		int start = Math.min(columnIdx, columnIdx2);
+		int end = Math.max(columnIdx, columnIdx2);
 		
-		for(AbstractColumn column:columns.clear(start,end)){
+		
+		for(AbstractColumn column:columns.subValues(start,end)){
 			column.release();
 		}
+		columns.clear(start,end);
 		
 		for(AbstractRow row:rows.values()){
 			row.clearCell(start,end);
@@ -192,10 +212,10 @@ public class SheetImpl extends AbstractSheet {
 
 	public void clearCell(int rowIdx, int columnIdx, int rowIdx2,
 			int columnIdx2) {
-		int rowStart = Math.max(Math.min(rowIdx, rowIdx2),getStartRowIndex());
-		int rowEnd = Math.min(Math.max(rowIdx, rowIdx2),getEndRowIndex());
-		int columnStart = Math.max(Math.min(columnIdx, columnIdx2),getStartColumnIndex());
-		int columnEnd = Math.min(Math.max(columnIdx, columnIdx2),getEndColumnIndex());
+		int rowStart = Math.min(rowIdx, rowIdx2);
+		int rowEnd = Math.max(rowIdx, rowIdx2);
+		int columnStart = Math.min(columnIdx, columnIdx2);
+		int columnEnd = Math.max(columnIdx, columnIdx2);
 		
 		Collection<AbstractRow> effected = rows.subValues(rowStart,rowEnd);
 		
@@ -209,9 +229,7 @@ public class SheetImpl extends AbstractSheet {
 		checkOrphan();
 		if(size<=0) return;
 		
-		int start = Math.max(rowIdx,getStartRowIndex());
-		
-		rows.insert(start, size);
+		rows.insert(rowIdx, size);
 		
 		shiftAfterRowInsert(rowIdx,size);
 		
@@ -309,11 +327,11 @@ public class SheetImpl extends AbstractSheet {
 		checkOrphan();
 		if(size<=0) return;
 		
-		int start = Math.max(rowIdx,getStartRowIndex());
-		
-		for(AbstractRow row:rows.delete(start, size)){
+		//clear before move relation
+		for(AbstractRow row:rows.subValues(rowIdx,rowIdx+size)){
 			row.release();
-		}
+		}		
+		rows.delete(rowIdx, size);
 		
 		shiftAfterRowDelete(rowIdx,size);	
 		
@@ -367,12 +385,10 @@ public class SheetImpl extends AbstractSheet {
 		checkOrphan();
 		if(size<=0) return;
 		
-		int start = Math.max(columnIdx,getStartColumnIndex());
-		
-		columns.insert(start, size);
+		columns.insert(columnIdx, size);
 		
 		for(AbstractRow row:rows.values()){
-			row.insertCell(start,size);
+			row.insertCell(columnIdx,size);
 		}
 		
 		shiftAfterColumnInsert(columnIdx,size);
@@ -382,16 +398,17 @@ public class SheetImpl extends AbstractSheet {
 	}
 
 	public void deleteColumn(int columnIdx, int size) {
+		checkOrphan();
 		if(size<=0) return;
 		
-		int start = Math.max(columnIdx,getStartColumnIndex());
-		
-		for(AbstractColumn column:columns.delete(start, size)){
+		for(AbstractColumn column:columns.subValues(columnIdx, columnIdx+size)){
 			column.release();
 		}
 		
+		columns.delete(columnIdx, size);
+		
 		for(AbstractRow row:rows.values()){
-			row.deleteCell(start,size);
+			row.deleteCell(columnIdx,size);
 		}
 		shiftAfterColumnDelete(columnIdx,size);
 		
@@ -400,14 +417,29 @@ public class SheetImpl extends AbstractSheet {
 	}
 
 	
-	protected void checkOrphan(){
+	public void checkOrphan(){
 		if(book==null){
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}
 	@Override
-	void release(){
+	public void release(){
+		checkOrphan();
+		for(AbstractColumn column:columns.values()){
+			column.release();
+		}
+		for(AbstractRow row:rows.values()){
+			row.release();
+		}
+		for(AbstractChart chart:charts){
+			chart.release();
+		}
+		for(AbstractPicture picture:pictures){
+			picture.release();
+		}
 		book = null;
+		//TODO all 
+		
 	}
 
 	public String getId() {
@@ -416,7 +448,7 @@ public class SheetImpl extends AbstractSheet {
 
 	public NPicture addPicture(Format format, byte[] data,NViewAnchor anchor) {
 		checkOrphan();
-		AbstractPicture pic = new PictureImpl(book.nextObjId("pic"), format, data,anchor);
+		AbstractPicture pic = new PictureImpl(this,book.nextObjId("pic"), format, data,anchor);
 		pictures.add(pic);
 		return pic;
 	}
@@ -431,6 +463,9 @@ public class SheetImpl extends AbstractSheet {
 	}
 
 	public void deletePicture(NPicture picture) {
+		checkOrphan();
+		checkOwnership(picture);
+		((AbstractPicture)picture).release();
 		pictures.remove(picture);
 	}
 
@@ -438,10 +473,9 @@ public class SheetImpl extends AbstractSheet {
 		return new ArrayList<NPicture>(pictures);
 	}
 	
-	
-	public NChart addChart(NChart.NChartType type, NChartData data, NViewAnchor anchor) {
+	public NChart addChart(NChart.NChartType type,NViewAnchor anchor) {
 		checkOrphan();
-		AbstractChart pic = new ChartImpl(book.nextObjId("chart"), type, data, anchor);
+		AbstractChart pic = new ChartImpl(this, book.nextObjId("chart"), type, anchor);
 		charts.add(pic);
 		return pic;
 	}
@@ -456,6 +490,9 @@ public class SheetImpl extends AbstractSheet {
 	}
 
 	public void deleteChart(NChart chart) {
+		checkOrphan();
+		checkOwnership(chart);
+		((AbstractChart)chart).release();
 		charts.remove(chart);
 	}
 

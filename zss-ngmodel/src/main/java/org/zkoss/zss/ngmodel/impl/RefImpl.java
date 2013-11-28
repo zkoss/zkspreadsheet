@@ -3,6 +3,7 @@ package org.zkoss.zss.ngmodel.impl;
 import java.io.Serializable;
 
 import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.util.CellReference;
 
@@ -15,23 +16,24 @@ public class RefImpl implements Ref,Serializable{
 	int column = -1;
 	int lastRow = -1;
 	int lastColumn = -1;
+	String objectId;
 
 	public RefImpl(String bookName, String sheetName, int row, int column,
 			int lastRow, int lastColumn) {
 		setInfo(RefType.AREA, bookName, sheetName, row, column, lastRow,
-				lastColumn);
+				lastColumn,null);
 	}
 
 	public RefImpl(String bookName, String sheetName, int row, int column) {
-		setInfo(RefType.CELL, bookName, sheetName, row, column, row, column);
+		setInfo(RefType.CELL, bookName, sheetName, row, column, row, column,null);
 	}
 
 	public RefImpl(String bookName, String sheetName) {
-		setInfo(RefType.SHEET, bookName, sheetName, -1, -1, -1, -1);
+		setInfo(RefType.SHEET, bookName, sheetName, -1, -1, -1, -1,null);
 	}
 
 	public RefImpl(String bookName) {
-		setInfo(RefType.BOOK, bookName, null, -1, -1, -1, -1);
+		setInfo(RefType.BOOK, bookName, null, -1, -1, -1, -1,null);
 	}
 	
 	public RefImpl(AbstractCell cell) {
@@ -39,20 +41,25 @@ public class RefImpl implements Ref,Serializable{
 		AbstractBook book = ((AbstractBook)sheet.getBook());
 		int row = cell.getRowIndex();
 		int column = cell.getColumnIndex();
-		setInfo(RefType.CELL, book.getBookName(), sheet.getSheetName(), row, column, row, column);
+		setInfo(RefType.CELL, book.getBookName(), sheet.getSheetName(), row, column, row, column,null);
 	}
 	
 	public RefImpl(AbstractSheet sheet) {
 		AbstractBook book = ((AbstractBook)sheet.getBook());
-		setInfo(RefType.SHEET, book.getBookName(), sheet.getSheetName(), -1, -1, -1, -1);
+		setInfo(RefType.SHEET, book.getBookName(), sheet.getSheetName(), -1, -1, -1, -1,null);
 	}
 	
 	public RefImpl(AbstractBook book) {
-		setInfo(RefType.BOOK, book.getBookName(), null, -1, -1, -1, -1);
+		setInfo(RefType.BOOK, book.getBookName(), null, -1, -1, -1, -1, null);
 	}
-
+	
+	public RefImpl(AbstractChart chart) {
+		setInfo(RefType.CHART, chart.getSheet().getBook().getBookName(), null, -1, -1, -1, -1, chart.getId());
+	}
+	
+	
 	private void setInfo(RefType type, String bookName, String sheetName, int row,
-			int column, int lastRow, int lastColumn) {
+			int column, int lastRow, int lastColumn,String objectId) {
 		this.type = type;
 		this.bookName = bookName;
 		this.sheetName = sheetName;
@@ -60,6 +67,7 @@ public class RefImpl implements Ref,Serializable{
 		this.column = column;
 		this.lastRow = lastRow;
 		this.lastColumn = lastColumn;
+		this.objectId = objectId;
 	}
 
 	public RefType getType() {
@@ -147,10 +155,18 @@ public class RefImpl implements Ref,Serializable{
 			sb.insert(0, new CellReference(row,column).formatAsString());
 		case SHEET:
 			sb.insert(0, sheetName+"!");
-		case BOOK:
-			sb.insert(0, bookName+":");	
+			break;
+		case CHART:
+		case VALIDATION:
+			sb.insert(0, objectId);
 		}
+		
+		sb.insert(0, bookName+":");
 		return sb.toString();
+	}
+
+	public String getObjectId() {
+		return objectId;
 	}
 	
 

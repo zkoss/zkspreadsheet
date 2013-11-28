@@ -6,5 +6,12 @@ public interface NCategoryChartData extends NChartData{
 	public NSeries getSeriesAt(int i);
 	
 	public int getNumOfCategory();
-	public NCategory getCategoryAt(int i);
+	public Object getCategoryAt(int i);
+	
+	
+	
+	public NSeries addSeries();
+	public void removeSeries(NSeries series);
+	
+	public void setCategoriesExpression(String expr);
 }

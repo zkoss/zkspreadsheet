@@ -48,7 +48,7 @@ public interface NSheet {
 	public List<NPicture> getPictures();
 	
 	
-	public NChart addChart(NChart.NChartType type, NChartData data, NViewAnchor anchor);
+	public NChart addChart(NChart.NChartType type, NViewAnchor anchor);
 	public NChart getChart(String chartid);
 	public void deleteChart(NChart chart);
 	public List<NChart> getCharts();

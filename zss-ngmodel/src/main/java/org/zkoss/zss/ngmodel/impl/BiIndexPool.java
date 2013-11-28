@@ -110,8 +110,8 @@ public class BiIndexPool<T> implements Serializable{
 		return objs.values();
 	}
 	
-	public Collection<T> subValues(int fromKey,int toKey){
-		return objs.subMap(fromKey, true, toKey, true).values();
+	public Collection<T> subValues(int start,int end){
+		return objs.subMap(start, true, end, true).values();
 	}
 	
 	

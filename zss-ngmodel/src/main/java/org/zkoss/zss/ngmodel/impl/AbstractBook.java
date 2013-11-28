@@ -14,7 +14,7 @@ import org.zkoss.zss.ngmodel.NCell;
 public abstract class AbstractBook implements NBook,Serializable{
 	private static final long serialVersionUID = 1L;
 
-	List<ModelEventListener> listeners;
+	private List<ModelEventListener> listeners;
 	
 	/**
 	 * Optimize CellStyle, usually called when export book. 
@@ -45,11 +45,13 @@ public abstract class AbstractBook implements NBook,Serializable{
 	protected void sendEvent(ModelEvent event){
 		if(listeners ==null)
 			return;
+		
 		for(ModelEventListener l:listeners){
 			l.onEvent(event);
 		}
 	}
 	
+	@Override
 	public void addEventListener(ModelEventListener listener){
 		if(listeners==null){
 			listeners = new LinkedList<ModelEventListener>();
@@ -58,7 +60,7 @@ public abstract class AbstractBook implements NBook,Serializable{
 			listeners.add(listener);
 		}
 	}
-	
+	@Override
 	public void removeEventListener(ModelEventListener listener){
 		if(listeners!=null){
 			listeners.remove(listener);

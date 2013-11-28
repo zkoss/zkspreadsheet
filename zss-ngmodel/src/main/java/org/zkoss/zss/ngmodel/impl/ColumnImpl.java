@@ -34,14 +34,15 @@ public class ColumnImpl extends AbstractColumn {
 		return CellReference.convertNumToColString(getIndex());
 	}
 
-	protected void checkOrphan() {
+	public void checkOrphan() {
 		if (sheet == null) {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}
 
 	@Override
-	void release() {
+	public void release() {
+		checkOrphan();
 		sheet = null;
 	}
 

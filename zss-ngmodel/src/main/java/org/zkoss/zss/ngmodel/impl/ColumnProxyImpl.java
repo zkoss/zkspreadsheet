@@ -73,4 +73,11 @@ class ColumnProxyImpl extends AbstractColumn{
 		}
 		proxy.setCellStyle(cellStyle);
 	}
+
+	@Override
+	public void release() {
+		throw new IllegalStateException("never link proxy object and call it's release");
+	}
+	@Override
+	public void checkOrphan() {}
 }

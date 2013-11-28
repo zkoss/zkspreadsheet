@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel;
 
+import org.zkoss.zss.ngmodel.NChart.NChartType;
+import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
 
 /**

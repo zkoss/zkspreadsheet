@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NSheet;
 
-public abstract class AbstractSheet implements NSheet,Serializable{
+public abstract class AbstractSheet implements NSheet,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
 
 	/*package*/ abstract AbstractRow getRowAt(int rowIdx, boolean proxy);
@@ -23,8 +23,6 @@ public abstract class AbstractSheet implements NSheet,Serializable{
 	/*package*/ abstract void copyTo(AbstractSheet sheet);
 	/*package*/ abstract void setSheetName(String name);
 	
-	/*package*/ void release() {
-	}
 	/*package*/ void onModelEvent(ModelEvent event) {
 	}
 }

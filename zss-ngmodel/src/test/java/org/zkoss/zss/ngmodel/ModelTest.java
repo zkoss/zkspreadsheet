@@ -1128,8 +1128,8 @@ public class ModelTest {
 		NSheet sheet = book.createSheet("Sheet 1");
 
 		//no chart data implement yet
-		NChart p1 = sheet.addChart(NChart.NChartType.BAR, null, new NViewAnchor(6, 10, 22, 33, 800, 600));
-		NChart p2 = sheet.addChart(NChart.NChartType.BAR, null, new NViewAnchor(12, 14, 22, 33, 800, 600));
+		NChart p1 = sheet.addChart(NChart.NChartType.BAR, new NViewAnchor(6, 10, 22, 33, 800, 600));
+		NChart p2 = sheet.addChart(NChart.NChartType.BAR, new NViewAnchor(12, 14, 22, 33, 800, 600));
 		
 		Assert.assertEquals(2, sheet.getCharts().size());
 		Assert.assertEquals(p1,sheet.getCharts().get(0));
@@ -1176,5 +1176,24 @@ public class ModelTest {
 		Assert.assertEquals(10,p2.getAnchor().getColumnIndex());
 		Assert.assertEquals(0,p2.getAnchor().getXOffset());
 		
+	}
+	
+	@Test
+	public void testDeleteRelease(){
+		NBook book = new BookImpl("book1");
+		NSheet sheet = book.createSheet("Sheet 1");
+		NCell cell = sheet.getCell(10, 10);
+		cell.setFormulaValue("SUM(999)");
+		
+		Assert.assertEquals(999,cell.getNumberValue().intValue());
+		
+		book.deleteSheet(sheet);
+		
+		Assert.assertEquals(CellType.BLANK,cell.getType());
+		
+		try{
+			cell.setValue("ABC");
+			Assert.fail();
+		}catch(IllegalStateException x){}
 	}
 }

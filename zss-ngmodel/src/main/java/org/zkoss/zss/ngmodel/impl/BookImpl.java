@@ -33,6 +33,9 @@ import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.NChart.NChartType;
+import org.zkoss.zss.ngmodel.chart.NChartData;
+import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
 import org.zkoss.zss.ngmodel.util.SpreadsheetVersion;
 import org.zkoss.zss.ngmodel.util.Strings;
@@ -66,22 +69,27 @@ public class BookImpl extends AbstractBook{
 		cellStyles.add(defaultCellStyle = new CellStyleImpl());
 	}
 	
+	@Override
 	public NBookSeries getBookSeries(){
 		return bookSeries;
 	}
 	
+	@Override
 	public String getBookName(){
 		return bookName;
 	}
 	
+	@Override
 	public NSheet getSheet(int i){
 		return sheets.get(i);
 	}
 	
+	@Override
 	public int getNumOfSheet(){
 		return sheets.size();
 	}
 	
+	@Override
 	public NSheet getSheetByName(String name){
 		for(NSheet sheet:sheets){
 //			if(sheet.getSheetName().equals(name)){
@@ -94,7 +102,7 @@ public class BookImpl extends AbstractBook{
 	
 	protected void checkOwnership(NSheet sheet){
 		if(!sheets.contains(sheet)){
-			throw new InvalidateModelOpException("doesn't has ownersheep "+ sheet);
+			throw new InvalidateModelOpException("doesn't has ownership "+ sheet);
 		}
 	}
 	
@@ -123,10 +131,12 @@ public class BookImpl extends AbstractBook{
 		super.sendEvent(event);
 	}
 	
+	@Override
 	public NSheet createSheet(String name) {
 		return createSheet(name,null);
 	}
 	
+	@Override
 	String nextObjId(String type){
 		StringBuilder sb = new StringBuilder(type);
 		sb.append("_");
@@ -137,6 +147,8 @@ public class BookImpl extends AbstractBook{
 		sb.append(i.getAndIncrement());
 		return sb.toString();
 	}
+	
+	@Override
 	public NSheet createSheet(String name,NSheet src) {
 		checkLegalName(name);
 		if(src!=null)
@@ -155,6 +167,7 @@ public class BookImpl extends AbstractBook{
 		return sheet;
 	}
 
+	@Override
 	public void setSheetName(NSheet sheet, String newname) {
 		checkLegalName(newname);
 		checkOwnership(sheet);
@@ -167,30 +180,31 @@ public class BookImpl extends AbstractBook{
 				ModelEvents.PARAM_SHEET_OLD_NAME, oldname);
 	}
 
-	protected void checkLegalName(String name) {
+	private void checkLegalName(String name) {
 		if(Strings.isBlank(name)){
 			throw new InvalidateModelOpException("sheet name '"+name+"' is not legal");
 		}
 		if(getSheetByName(name)!=null){
 			throw new InvalidateModelOpException("sheet name '"+name+"' is dpulicated");
 		}
-		
 		//TODO
 	}
 
+	@Override
 	public void deleteSheet(NSheet sheet) {
 		checkOwnership(sheet);
-
-		int index = sheets.indexOf(sheet);
-		sheets.remove(index);
 		
 		((AbstractSheet)sheet).release();
+		
+		int index = sheets.indexOf(sheet);
+		sheets.remove(index);
 		
 		sendEvent(ModelEvents.ON_SHEET_DELETED, 
 				ModelEvents.PARAM_SHEET, sheet,
 				ModelEvents.PARAM_SHEET_OLD_INDEX, index);
 	}
 
+	@Override
 	public void moveSheetTo(NSheet sheet, int index) {
 		checkOwnership(sheet);
 		if(index<0|| index>=sheets.size()){
@@ -217,14 +231,17 @@ public class BookImpl extends AbstractBook{
 		}
 	}
 
+	@Override
 	public NCellStyle getDefaultCellStyle() {
 		return defaultCellStyle;
 	}
 
+	@Override
 	public NCellStyle createCellStyle(boolean inStyleTable) {
 		return createCellStyle(null,inStyleTable);
 	}
 
+	@Override
 	public NCellStyle createCellStyle(NCellStyle src,boolean inStyleTable) {
 		if(src!=null){
 			Validations.argInstance(src, AbstractCellStyle.class);
@@ -241,7 +258,7 @@ public class BookImpl extends AbstractBook{
 		return style;
 	}
 	
-
+	@Override
 	public NCellStyle searchCellStyle(CellStyleMatcher matcher) {
 		for(NCellStyle style:cellStyles){
 			if(matcher.match(style)){
@@ -251,14 +268,12 @@ public class BookImpl extends AbstractBook{
 		return null;
 	}
 	
-	
-	
-	
-
+	@Override
 	public int getMaxRowSize() {
 		return maxRowSize;
 	}
 
+	@Override
 	public int getMaxColumnSize() {
 		return maxColumnSize;
 	}

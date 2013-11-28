@@ -5,20 +5,16 @@ import java.util.Date;
 
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 import org.zkoss.zss.ngmodel.util.Validations;
 
-public abstract class AbstractCell implements NCell,Serializable{
+public abstract class AbstractCell implements NCell,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
 
 	/*package*/ abstract AbstractSheet getSheet();
-	
-	/*package*/ void release() {
-	}
 	
 	protected void checkType(CellType type){
 		if(!getType().equals(type)){
@@ -34,14 +30,17 @@ public abstract class AbstractCell implements NCell,Serializable{
 	abstract protected void evalFormula();
 	abstract protected Object getValue(boolean eval);
 	
+	@Override
 	public Object getValue(){
 		return getValue(true);
 	}
 	
+	@Override
 	public void setStringValue(String value) {
 		setValue(value);
 	}
 
+	@Override
 	public String getStringValue() {
 		if(getType() == CellType.FORMULA){
 			evalFormula();
@@ -52,10 +51,12 @@ public abstract class AbstractCell implements NCell,Serializable{
 		return (String)getValue();
 	}
 
+	@Override
 	public void setNumberValue(Number number) {
 		setValue(number);
 	}
 
+	@Override
 	public Number getNumberValue() {
 		if(getType() == CellType.FORMULA){
 			evalFormula();
@@ -66,10 +67,12 @@ public abstract class AbstractCell implements NCell,Serializable{
 		return (Number)getValue();
 	}
 
+	@Override
 	public void setDateValue(Date date) {
 		setValue(date);
 	}
 
+	@Override
 	public Date getDateValue() {
 		if(getType() == CellType.FORMULA){
 			evalFormula();
@@ -80,6 +83,7 @@ public abstract class AbstractCell implements NCell,Serializable{
 		return (Date)getValue();
 	}
 
+	@Override
 	public ErrorValue getErrorValue() {
 		if(getType() == CellType.FORMULA){
 			evalFormula();
@@ -90,21 +94,24 @@ public abstract class AbstractCell implements NCell,Serializable{
 		return (ErrorValue)getValue();
 	}
 
+	@Override
 	public void setErrorValue(ErrorValue errorValue) {
 		setValue(errorValue);
 	}
 	
-	
+	@Override
 	public void setFormulaValue(String formula) {
+		checkOrphan();
 		Validations.argNotNull(formula);
 		if(formula.startsWith("=")){
 			formula = formula.substring(1);
 		}
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		FormulaExpression expr = fe.parse(formula, new FormulaParseContext());
+		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(getSheet().getBook()));
 		setValue(expr);
 	}
 
+	@Override
 	public String getFormulaValue() {
 		checkType(CellType.FORMULA);
 		FormulaExpression expr = (FormulaExpression)getValue(false);

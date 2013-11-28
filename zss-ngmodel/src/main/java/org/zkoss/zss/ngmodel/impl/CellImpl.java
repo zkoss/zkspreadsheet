@@ -49,7 +49,7 @@ public class CellImpl extends AbstractCell {
 		return new CellReference(this).formatAsString();
 	}
 
-	protected void checkOrphan() {
+	public void checkOrphan() {
 		if (row == null) {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
@@ -61,7 +61,9 @@ public class CellImpl extends AbstractCell {
 	}
 
 	@Override
-	void release() {
+	public void release() {
+		checkOrphan();
+		clearValue();
 		row = null;
 	}
 
@@ -108,6 +110,7 @@ public class CellImpl extends AbstractCell {
 	}
 
 	public void clearValue() {
+		checkOrphan();
 		value = null;
 		formulaResult = null;
 		if(type==CellType.FORMULA){
@@ -134,7 +137,7 @@ public class CellImpl extends AbstractCell {
 		return string!=null && string.startsWith("=") && string.length()>1;
 	}
 	
-	public  void setValue(Object newvalue){
+	public void setValue(Object newvalue){
 		if(value!=null && value.equals(newvalue)){
 			return;
 		}

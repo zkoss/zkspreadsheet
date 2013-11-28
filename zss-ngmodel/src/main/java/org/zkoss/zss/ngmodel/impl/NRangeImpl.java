@@ -139,11 +139,11 @@ public class NRangeImpl implements NRange {
 		}
 		
 		//clear formula cache
-		for(Ref ref:dependentSet){
-			if(ref.getType()==RefType.CELL){
-				NBook dependentBook = bookSeries.getBook(ref.getBookName());
-				NSheet dependentSheet = dependentBook.getSheetByName(ref.getSheetName());
-				NCell cell = dependentSheet.getCell(ref.getRow(), ref.getColumn());
+		for(Ref dependent:dependentSet){
+			if(dependent.getType()==RefType.CELL){
+				NBook dependentBook = bookSeries.getBook(dependent.getBookName());
+				NSheet dependentSheet = dependentBook.getSheetByName(dependent.getSheetName());
+				NCell cell = dependentSheet.getCell(dependent.getRow(), dependent.getColumn());
 				cell.clearFormulaResultCache();
 			}else{//another type?
 				
@@ -151,11 +151,11 @@ public class NRangeImpl implements NRange {
 		}
 		
 		//notify changes
-		for(Ref ref:updateSet){
-			if(ref.getType()==RefType.CELL){
-				NBook notifyBook = bookSeries.getBook(ref.getBookName());
-				NSheet notifySheet = notifyBook.getSheetByName(ref.getSheetName());
-				NCell cell = notifySheet.getCell(ref.getRow(), ref.getColumn());
+		for(Ref update:updateSet){
+			if(update.getType()==RefType.CELL){
+				NBook notifyBook = bookSeries.getBook(update.getBookName());
+				NSheet notifySheet = notifyBook.getSheetByName(update.getSheetName());
+				NCell cell = notifySheet.getCell(update.getRow(), update.getColumn());
 				((AbstractBook)notifyBook).sendEvent(ModelEvents.ON_CELL_UPDATED, 
 						ModelEvents.PARAM_CELL, cell);
 			}else{//another type?

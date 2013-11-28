@@ -152,5 +152,12 @@ class CellProxyImpl extends AbstractCell{
 		return proxy==null?null:proxy.getValue(eval);
 	}
 
+	@Override
+	public void release() {
+		throw new IllegalStateException("never link proxy object and call it's release");
+	}
+	@Override
+	public void checkOrphan() {}
+
 
 }

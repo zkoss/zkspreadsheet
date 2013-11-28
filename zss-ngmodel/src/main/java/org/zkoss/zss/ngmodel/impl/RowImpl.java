@@ -75,54 +75,47 @@ public class RowImpl extends AbstractRow {
 	}
 
 	public void clearCell(int start, int end) {
-		start = Math.max(start, getStartCellIndex());
-		end = Math.min(end, getEndCellIndex());
-
-		for (AbstractCell cell : cells.clear(start, end)) {
+		//clear before move relation
+		for (AbstractCell cell : cells.subValues(start, end)) {
 			cell.release();
 		}
+		cells.clear(start, end);
 	}
 
 	public void insertCell(int cellIdx, int size) {
 		if (size <= 0)
 			return;
-
-		int end = getEndCellIndex();
-		if (cellIdx > end)
-			return;
-
-		int start = Math.max(cellIdx, getStartCellIndex());
-
-		cells.insert(start, size);
+		
+		cells.insert(cellIdx, size);
 	}
 
 	public void deleteCell(int cellIdx, int size) {
 		if (size <= 0)
 			return;
-
-		int end = getEndCellIndex();
-		if (cellIdx > end)
-			return;
-
-		int start = Math.max(cellIdx, getStartCellIndex());
-
-		for (AbstractCell cell : cells.delete(start, size)) {
+		//clear before move relation
+		for (AbstractCell cell : cells.subValues(cellIdx, cellIdx+size)) {
 			cell.release();
 		}
+		
+		cells.delete(cellIdx, size);
 	}
 
 	public String asString() {
 		return String.valueOf(getIndex() + 1);
 	}
 
-	protected void checkOrphan() {
+	public void checkOrphan() {
 		if (sheet == null) {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}
 
 	@Override
-	void release() {
+	public void release() {
+		checkOrphan();
+		for(AbstractCell cell:cells.values()){
+			cell.release();
+		}
 		sheet = null;
 	}
 

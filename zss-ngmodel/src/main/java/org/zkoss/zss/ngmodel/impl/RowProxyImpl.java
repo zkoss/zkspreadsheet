@@ -106,4 +106,10 @@ class RowProxyImpl extends AbstractRow{
 	int getCellIndex(AbstractCell cell) {
 		throw new UnsupportedOperationException("not implement");
 	}
+	@Override
+	public void release() {
+		throw new IllegalStateException("never link proxy object and call it's release");
+	}
+	@Override
+	public void checkOrphan() {}
 }
