@@ -1,7 +1,11 @@
 package org.zkoss.zss.ngmodel;
 
+import org.zkoss.zss.ngmodel.impl.AbstractSheet;
+
 public interface NRow {
 
+	public NSheet getSheet();
+	
 	public int getIndex();
 	public String asString();
 	public boolean isNull();

@@ -9,40 +9,44 @@ public class PictureImpl extends AbstractPicture {
 	NViewAnchor anchor;
 	byte[] data;
 	AbstractSheet sheet;
-	
-	
-	public PictureImpl(AbstractSheet sheet,String id, Format format, byte[] data,NViewAnchor anchor){
+
+	public PictureImpl(AbstractSheet sheet, String id, Format format,
+			byte[] data, NViewAnchor anchor) {
 		this.sheet = sheet;
 		this.id = id;
 		this.format = format;
 		this.data = data;
 		this.anchor = anchor;
 	}
-	public AbstractSheet getSheet(){
+	@Override
+	AbstractSheet getSheet() {
 		checkOrphan();
 		return sheet;
 	}
+	@Override
 	public String getId() {
 		return id;
 	}
-
+	@Override
 	public Format getFormat() {
 		return format;
 	}
+	@Override
 	public NViewAnchor getAnchor() {
 		return anchor;
 	}
-	public void setAnchor(NViewAnchor anchor) {
-		this.anchor = anchor;
-	}
+
+	@Override
 	public byte[] getData() {
 		return data;
 	}
+
 	@Override
 	public void release() {
 		checkOrphan();
 		sheet = null;
 	}
+
 	@Override
 	public void checkOrphan() {
 		if (sheet == null) {

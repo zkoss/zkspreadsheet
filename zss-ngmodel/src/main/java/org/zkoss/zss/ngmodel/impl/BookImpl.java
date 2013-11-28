@@ -16,26 +16,18 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.impl;
 
-import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.ModelEvents;
-import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.NChart.NChartType;
-import org.zkoss.zss.ngmodel.chart.NChartData;
-import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
 import org.zkoss.zss.ngmodel.util.SpreadsheetVersion;
 import org.zkoss.zss.ngmodel.util.Strings;
@@ -155,7 +147,7 @@ public class BookImpl extends AbstractBook{
 			checkOwnership(src);
 		
 
-		SheetImpl sheet = new SheetImpl(this,nextObjId("sheet"));
+		AbstractSheet sheet = new SheetImpl(this,nextObjId("sheet"));
 		if(src instanceof AbstractSheet){
 			((AbstractSheet)src).copyTo(sheet);
 		}

@@ -23,48 +23,48 @@ public class ChartImpl extends AbstractChart {
 		this.anchor = anchor;
 		this.data = createChartData(type);
 	}
-	
-	public AbstractSheet getSheet(){
+	@Override
+	AbstractSheet getSheet(){
 		checkOrphan();
 		return sheet;
 	}
-	
+	@Override
 	public String getId() {
 		return id;
 	}
+	@Override
 	public NViewAnchor getAnchor() {
 		return anchor;
 	}
-	public void setAnchor(NViewAnchor anchor) {
-		this.anchor = anchor;
-	}
+	@Override
 	public NChartType getType(){
 		return type;
 	}
+	@Override
 	public NChartData getData() {
 		return data;
 	}
-
+	@Override
 	public String getTitle() {
 		return title;
 	}
-
+	@Override
 	public void setTitle(String title) {
 		this.title = title;
 	}
-
+	@Override
 	public String getXAxisTitle() {
 		return xAxisTitle;
 	}
-
+	@Override
 	public void setXAxisTitle(String xAxisTitle) {
 		this.xAxisTitle = xAxisTitle;
 	}
-
+	@Override
 	public String getYAxisTitle() {
 		return yAxisTitle;
 	}
-
+	@Override
 	public void setYAxisTitle(String yAxisTitle) {
 		this.yAxisTitle = yAxisTitle;
 	}
@@ -91,6 +91,7 @@ public class ChartImpl extends AbstractChart {
 		
 		sheet = null;
 	}
+	@Override
 	public void checkOrphan() {
 		if (sheet == null) {
 			throw new IllegalStateException("doesn't connect to parent");

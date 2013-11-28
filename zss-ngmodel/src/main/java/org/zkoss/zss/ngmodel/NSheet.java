@@ -10,9 +10,18 @@ import org.zkoss.zss.ngmodel.chart.NChartData;
  */
 public interface NSheet {
 	
+	/**
+	 * Get the owner book
+	 * @return the owner book
+	 */
 	public NBook getBook();
 	
+	/**
+	 * Get the sheet name
+	 * @return the sheet name
+	 */
 	public String getSheetName();
+	
 	
 	public NRow getRow(int rowIdx);
 	

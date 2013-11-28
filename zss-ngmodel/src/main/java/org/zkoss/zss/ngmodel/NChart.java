@@ -25,4 +25,10 @@ public interface NChart {
 	public String getXAxisTitle();
 	
 	public String getYAxisTitle();
+
+	void setTitle(String title);
+
+	void setXAxisTitle(String xAxisTitle);
+
+	void setYAxisTitle(String yAxisTitle);
 }

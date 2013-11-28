@@ -26,40 +26,80 @@ import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
  */
 public interface NBook {
 
+	/**
+	 * Get the book name, a book name is unique for book in {@link NBookSeries}
+	 * @return book name;
+	 */
 	public String getBookName();
 	
+	/**
+	 * Get the book series, it contains a group of book that might refer to other by book name
+	 * @return book series
+	 */
 	public NBookSeries getBookSeries();
 	/**
-	 * get sheet at the index
+	 * Get sheet at the index
 	 * @param idx the sheet index
 	 * @return the sheet at the index
 	 */
 	public NSheet getSheet(int idx);
 	
 	/**
-	 * get the number of sheet inside this book
+	 * Get the number of sheet
 	 * @return the number of sheet
 	 */
 	public int getNumOfSheet();
 	
 	/**
-	 * get the sheet by name
+	 * Get the sheet by name
 	 * @param name the name of sheet
-	 * @return
+	 * @return the sheet, or null if not found
 	 */
 	public NSheet getSheetByName(String name);
 	
-	//editable
+	/**
+	 * Create a sheet
+	 * @param name the name of sheet
+	 * @return the sheet
+	 */
 	public NSheet createSheet(String name);
+	
+	/**
+	 * Create a sheet and copy the contain form the sheet sheet
+	 * @param name the name of sheet
+	 * @param src the source sheet to copy
+	 * @return the sheet
+	 */
 	public NSheet createSheet(String name, NSheet src);
+	
+	/**
+	 * Set the sheet to a new name
+	 * @param sheet the sheet
+	 * @param newname the new name
+	 */
 	public void setSheetName(NSheet sheet, String newname);
+	
+	/**
+	 * Delete the sheet
+	 * @param sheet the sheet
+	 */
 	public void deleteSheet(NSheet sheet);
+	
+	/**
+	 * Move the sheet to new position
+	 * @param sheet the sheet
+	 * @param index the new position
+	 */
 	public void moveSheetTo(NSheet sheet, int index);
 	
+	/**
+	 * Get the default style of this book
+	 * @return
+	 */
 	public NCellStyle getDefaultCellStyle();
 
 	/**
-	 * create a cell style
+	 *Ccreate a cell style
 	 * @param inStyleTable if true, the new created style will be stored inside this book, 
 	 * then you can use {@link #searchCellStyle(CellStyleMatcher)} to search and reuse this style.
 	 * @return 
@@ -67,7 +107,7 @@ public interface NBook {
 	public NCellStyle createCellStyle(boolean inStyleTable);
 	
 	/**
-	 * create a cell style and copy the style from the src style.
+	 * Create a cell style and copy the style from the src style.
 	 * @param src the source style to copy from.
 	 * @param inStyleTable if true, the new created style will be stored inside this book, 
 	 * then you can use {@link #searchCellStyle(CellStyleMatcher)} to search and reuse this style.
@@ -82,12 +122,25 @@ public interface NBook {
 	 */
 	public NCellStyle searchCellStyle(CellStyleMatcher matcher);
 	
-	
+	/**
+	 * Get the max row size of this book
+	 */
 	public int getMaxRowSize();
 	
+	/**
+	 * Get the max column size of this book
+	 */
 	public int getMaxColumnSize();
 	
+	/**
+	 * add event listener to this book
+	 * @param listener the listener
+	 */
 	public void addEventListener(ModelEventListener listener);
 	
+	/**
+	 * remove event listener from this book
+	 * @param listener the listener
+	 */
 	public void removeEventListener(ModelEventListener listener);
 }

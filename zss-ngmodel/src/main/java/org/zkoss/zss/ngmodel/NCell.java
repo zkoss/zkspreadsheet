@@ -2,6 +2,8 @@ package org.zkoss.zss.ngmodel;
 
 import java.util.Date;
 
+import org.zkoss.zss.ngmodel.impl.AbstractSheet;
+
 public interface NCell {
 
 	public enum CellType {
@@ -12,6 +14,8 @@ public interface NCell {
 		DATE,
 		ERROR
 	}
+	
+	public NSheet getSheet();
 	
 	public CellType getType();
 	public CellType getFormulaResultType();

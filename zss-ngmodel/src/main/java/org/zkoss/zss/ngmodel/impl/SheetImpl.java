@@ -341,6 +341,16 @@ public class SheetImpl extends AbstractSheet {
 	
 	@Override
 	void copyTo(AbstractSheet sheet) {
+		if(sheet==this)
+			return;
+		
+		checkOrphan();
+		sheet.checkOrphan();
+		if(!getBook().equals(sheet.getBook())){
+			throw new UnsupportedOperationException("the source book is different");
+		}
+		
+		
 		//can only clone on the begining.
 		
 		//TODO

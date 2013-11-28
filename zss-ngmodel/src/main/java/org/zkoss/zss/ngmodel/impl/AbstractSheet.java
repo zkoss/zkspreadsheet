@@ -23,6 +23,5 @@ public abstract class AbstractSheet implements NSheet,LinkedModelObject,Serializ
 	/*package*/ abstract void copyTo(AbstractSheet sheet);
 	/*package*/ abstract void setSheetName(String name);
 	
-	/*package*/ void onModelEvent(ModelEvent event) {
-	}
+	/*package*/ abstract void onModelEvent(ModelEvent event);
 }

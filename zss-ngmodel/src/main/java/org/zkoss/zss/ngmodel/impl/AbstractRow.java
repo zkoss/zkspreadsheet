@@ -12,16 +12,13 @@ public abstract class AbstractRow implements NRow,LinkedModelObject,Serializable
 
 	/*package*/ abstract AbstractCell getOrCreateCellAt(int columnIdx);
 	
-	/*package*/ void onModelEvent(ModelEvent event) {
-	}
+	/*package*/ abstract void onModelEvent(ModelEvent event);
 
 	/*package*/ abstract void clearCell(int start, int end);
 
 	/*package*/ abstract void insertCell(int start, int size);
 
 	/*package*/ abstract void deleteCell(int start, int size);
-
-	/*package*/ abstract AbstractSheet getSheet();
 
 	/*package*/ abstract int getCellIndex(AbstractCell cell);
 }

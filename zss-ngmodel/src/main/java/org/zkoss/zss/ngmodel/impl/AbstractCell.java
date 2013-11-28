@@ -13,8 +13,6 @@ import org.zkoss.zss.ngmodel.util.Validations;
 
 public abstract class AbstractCell implements NCell,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
-
-	/*package*/ abstract AbstractSheet getSheet();
 	
 	protected void checkType(CellType type){
 		if(!getType().equals(type)){

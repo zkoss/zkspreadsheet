@@ -2,13 +2,12 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
 
-import org.zkoss.zss.ngmodel.NCell;
-import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.util.CellReference;
 
-public class RefImpl implements Ref,Serializable{
+public class RefImpl implements Ref, Serializable {
 
+	private static final long serialVersionUID = 1L;
 	RefType type;
 	String bookName;
 	String sheetName;
@@ -21,45 +20,48 @@ public class RefImpl implements Ref,Serializable{
 	public RefImpl(String bookName, String sheetName, int row, int column,
 			int lastRow, int lastColumn) {
 		setInfo(RefType.AREA, bookName, sheetName, row, column, lastRow,
-				lastColumn,null);
+				lastColumn, null);
 	}
 
 	public RefImpl(String bookName, String sheetName, int row, int column) {
-		setInfo(RefType.CELL, bookName, sheetName, row, column, row, column,null);
+		setInfo(RefType.CELL, bookName, sheetName, row, column, row, column,
+				null);
 	}
 
 	public RefImpl(String bookName, String sheetName) {
-		setInfo(RefType.SHEET, bookName, sheetName, -1, -1, -1, -1,null);
+		setInfo(RefType.SHEET, bookName, sheetName, -1, -1, -1, -1, null);
 	}
 
 	public RefImpl(String bookName) {
-		setInfo(RefType.BOOK, bookName, null, -1, -1, -1, -1,null);
+		setInfo(RefType.BOOK, bookName, null, -1, -1, -1, -1, null);
 	}
-	
+
 	public RefImpl(AbstractCell cell) {
-		AbstractSheet sheet = cell.getSheet();
-		AbstractBook book = ((AbstractBook)sheet.getBook());
+		AbstractSheet sheet = (AbstractSheet)cell.getSheet();
+		AbstractBook book = ((AbstractBook) sheet.getBook());
 		int row = cell.getRowIndex();
 		int column = cell.getColumnIndex();
-		setInfo(RefType.CELL, book.getBookName(), sheet.getSheetName(), row, column, row, column,null);
+		setInfo(RefType.CELL, book.getBookName(), sheet.getSheetName(), row,
+				column, row, column, null);
 	}
-	
+
 	public RefImpl(AbstractSheet sheet) {
-		AbstractBook book = ((AbstractBook)sheet.getBook());
-		setInfo(RefType.SHEET, book.getBookName(), sheet.getSheetName(), -1, -1, -1, -1,null);
+		AbstractBook book = ((AbstractBook) sheet.getBook());
+		setInfo(RefType.SHEET, book.getBookName(), sheet.getSheetName(), -1,
+				-1, -1, -1, null);
 	}
-	
+
 	public RefImpl(AbstractBook book) {
 		setInfo(RefType.BOOK, book.getBookName(), null, -1, -1, -1, -1, null);
 	}
-	
+
 	public RefImpl(AbstractChart chart) {
-		setInfo(RefType.CHART, chart.getSheet().getBook().getBookName(), null, -1, -1, -1, -1, chart.getId());
+		setInfo(RefType.CHART, chart.getSheet().getBook().getBookName(), null,
+				-1, -1, -1, -1, chart.getId());
 	}
-	
-	
-	private void setInfo(RefType type, String bookName, String sheetName, int row,
-			int column, int lastRow, int lastColumn,String objectId) {
+
+	private void setInfo(RefType type, String bookName, String sheetName,
+			int row, int column, int lastRow, int lastColumn, String objectId) {
 		this.type = type;
 		this.bookName = bookName;
 		this.sheetName = sheetName;
@@ -70,30 +72,37 @@ public class RefImpl implements Ref,Serializable{
 		this.objectId = objectId;
 	}
 
+	@Override
 	public RefType getType() {
 		return type;
 	}
 
+	@Override
 	public String getBookName() {
 		return bookName;
 	}
 
+	@Override
 	public String getSheetName() {
 		return sheetName;
 	}
 
+	@Override
 	public int getRow() {
 		return row;
 	}
 
+	@Override
 	public int getColumn() {
 		return column;
 	}
 
+	@Override
 	public int getLastRow() {
 		return lastRow;
 	}
 
+	@Override
 	public int getLastColumn() {
 		return lastColumn;
 	}
@@ -145,29 +154,34 @@ public class RefImpl implements Ref,Serializable{
 			return false;
 		return true;
 	}
-	
-	public String toString(){
+
+	@Override
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		switch(type){
+		switch (type) {
 		case AREA:
-			sb.insert(0, ":"+new CellReference(lastRow,lastColumn).formatAsString());
+			sb.insert(
+					0,
+					":"
+							+ new CellReference(lastRow, lastColumn)
+									.formatAsString());
 		case CELL:
-			sb.insert(0, new CellReference(row,column).formatAsString());
+			sb.insert(0, new CellReference(row, column).formatAsString());
 		case SHEET:
-			sb.insert(0, sheetName+"!");
+			sb.insert(0, sheetName + "!");
 			break;
 		case CHART:
 		case VALIDATION:
 			sb.insert(0, objectId);
 		}
-		
-		sb.insert(0, bookName+":");
+
+		sb.insert(0, bookName + ":");
 		return sb.toString();
 	}
 
+	@Override
 	public String getObjectId() {
 		return objectId;
 	}
-	
 
 }

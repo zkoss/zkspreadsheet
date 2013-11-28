@@ -2,7 +2,9 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.lang.ref.WeakReference;
 
+import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.Validations;
 
 class RowProxyImpl extends AbstractRow{
@@ -16,7 +18,8 @@ class RowProxyImpl extends AbstractRow{
 		this.sheetRef = new WeakReference(sheet);
 		this.index = index;
 	}
-	protected AbstractSheet getSheet(){
+	@Override
+	public NSheet getSheet(){
 		AbstractSheet sheet = sheetRef.get();
 		if(sheet==null){
 			throw new IllegalStateException("proxy target lost, you should't keep this instance");
@@ -26,7 +29,7 @@ class RowProxyImpl extends AbstractRow{
 	
 	protected void loadProxy(){
 		if(proxy==null){
-			proxy = (AbstractRow)getSheet().getRowAt(index,false);
+			proxy = (AbstractRow)((AbstractSheet)getSheet()).getRowAt(index,false);
 			if(proxy!=null){
 				sheetRef.clear();
 			}
@@ -77,7 +80,7 @@ class RowProxyImpl extends AbstractRow{
 		Validations.argNotNull(cellStyle);
 		loadProxy();
 		if(proxy==null){
-			proxy = (AbstractRow)getSheet().getOrCreateRowAt(index);
+			proxy = (AbstractRow)((AbstractSheet)getSheet()).getOrCreateRowAt(index);
 		}
 		proxy.setCellStyle(cellStyle);
 	}
@@ -112,4 +115,7 @@ class RowProxyImpl extends AbstractRow{
 	}
 	@Override
 	public void checkOrphan() {}
+	
+	@Override
+	void onModelEvent(ModelEvent event) {}
 }

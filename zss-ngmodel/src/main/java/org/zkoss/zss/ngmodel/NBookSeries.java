@@ -21,5 +21,11 @@ package org.zkoss.zss.ngmodel;
  *
  */
 public interface NBookSeries {
+	
+	/**
+	 * Get the book by name;
+	 * @param name the book name
+	 * @return the book or null if not found.
+	 */
 	public NBook getBook(String name);
 }

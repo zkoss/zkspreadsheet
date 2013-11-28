@@ -1,5 +1,7 @@
 package org.zkoss.zss.ngapi;
 
+import java.util.Locale;
+
 import org.zkoss.zss.ngmodel.NSheet;
 
 public interface NRange {
@@ -13,4 +15,6 @@ public interface NRange {
 	void setEditText(String editText);
 	void setValue(Object value);
 	void clear();
+	void setLocale(Locale locale);
+	Locale getLocale();
 }
