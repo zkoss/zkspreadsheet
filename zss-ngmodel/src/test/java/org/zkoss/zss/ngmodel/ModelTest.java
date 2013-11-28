@@ -1,5 +1,10 @@
 package org.zkoss.zss.ngmodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -13,6 +18,7 @@ import org.zkoss.zss.ngmodel.NCellStyle.FontBoldweight;
 import org.zkoss.zss.ngmodel.NCellStyle.FontTypeOffset;
 import org.zkoss.zss.ngmodel.NCellStyle.FontUnderline;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
+import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
@@ -861,7 +867,7 @@ public class ModelTest {
 		NBook book = new BookImpl("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		Date now = new Date();
-		ErrorValue err = new ErrorValue((byte)0);
+		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
 		NCell cell = sheet.getCell(1, 1);
 		
 		Assert.assertEquals(CellType.BLANK, cell.getType());
@@ -934,7 +940,7 @@ public class ModelTest {
 		NBook book = new BookImpl("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		Date now = new Date();
-		ErrorValue err = new ErrorValue((byte)0);
+		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
 		NCell cell = sheet.getCell(1, 1);
 		
 		Assert.assertEquals(CellType.BLANK, cell.getType());
@@ -974,7 +980,7 @@ public class ModelTest {
 		NBook book = new BookImpl("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		Date now = new Date();
-		ErrorValue err = new ErrorValue((byte)0);
+		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
 		NCell cell = sheet.getCell(1, 1);
 		
 		Assert.assertEquals(CellType.BLANK, cell.getType());
@@ -1195,5 +1201,49 @@ public class ModelTest {
 			cell.setValue("ABC");
 			Assert.fail();
 		}catch(IllegalStateException x){}
+	}
+	
+	@Test
+	public void testSerializable(){
+		NBook book = new BookImpl("book1");
+		NSheet sheet = book.createSheet("Sheet 1");
+		NCell cell = sheet.getCell(10, 10);
+		cell.setFormulaValue("SUM(999)");
+		sheet.addChart(NChartType.BAR, new NViewAnchor(0, 0, 800, 600));
+		//TODO add series
+		
+		sheet.addPicture(Format.PNG, new byte[]{}, new NViewAnchor(0, 0, 800, 600));
+		
+		ByteArrayOutputStream baos;
+		ObjectOutputStream oos;
+		try {
+			baos = new ByteArrayOutputStream();
+			oos = new ObjectOutputStream(baos);
+			
+			oos.writeObject(book);
+			
+			ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
+			
+			book = (NBook)ois.readObject();
+
+			sheet = book.getSheetByName("Sheet 1");
+			
+			Assert.assertNotNull(sheet);
+			
+			cell = sheet.getCell(10, 10);
+			Assert.assertEquals(999,cell.getNumberValue().intValue());
+			
+			
+			Assert.assertEquals(1, sheet.getCharts().size());
+			NChart chart = sheet.getCharts().get(0);
+			
+			Assert.assertEquals(1, sheet.getPictures().size());
+			NPicture picture = sheet.getPictures().get(0);
+			
+		} catch (Exception x) {
+			throw new RuntimeException(x.getMessage(),x);
+		}
+		
+		
 	}
 }

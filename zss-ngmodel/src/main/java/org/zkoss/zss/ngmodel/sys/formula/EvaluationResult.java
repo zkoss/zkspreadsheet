@@ -4,7 +4,11 @@ import org.zkoss.zss.ngmodel.NCell.CellType;
 
 public interface EvaluationResult {
 
-	CellType getType();
+	public enum ResultType{
+		SUCCESS,ERROR
+	}
+	
+	ResultType getType();
 	Object getValue();
 	
 }

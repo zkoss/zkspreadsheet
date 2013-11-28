@@ -1,5 +1,6 @@
 package org.zkoss.zss.ngmodel.impl.chart;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,7 +10,7 @@ import org.zkoss.zss.ngmodel.chart.NCategoryChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.AbstractChart;
 
-public class CategoryChartDataImpl implements NCategoryChartData{
+public class CategoryChartDataImpl implements NCategoryChartData, Serializable{
 
 	private String categoriesExpr;
 	

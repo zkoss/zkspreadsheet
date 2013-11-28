@@ -1,14 +1,16 @@
 package org.zkoss.zss.ngmodel.impl;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 
 import org.zkoss.zss.ngmodel.ErrorValue;
-import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
+import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult.ResultType;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
@@ -22,7 +24,7 @@ public class CellImpl extends AbstractCell {
 	private Object value = null;
 	private AbstractCellStyle cellStyle;
 
-	transient private EvaluationResult formulaResult;// cache
+	transient private ResultWrap formulaResult;// cache
 
 	public CellImpl(AbstractRow row) {
 		this.row = row;
@@ -111,8 +113,8 @@ public class CellImpl extends AbstractCell {
 		if (type == CellType.FORMULA && formulaResult == null) {
 			FormulaEngine fe = EngineFactory.getInstance()
 					.createFormulaEngine();
-			formulaResult = fe.evaluate((FormulaExpression) value,
-					new FormulaEvaluationContext());
+			formulaResult = new ResultWrap(fe.evaluate((FormulaExpression) value,
+					new FormulaEvaluationContext()));
 		}
 	}
 
@@ -120,7 +122,8 @@ public class CellImpl extends AbstractCell {
 	public CellType getFormulaResultType() {
 		checkType(CellType.FORMULA);
 		evalFormula();
-		return formulaResult.getType();
+
+		return formulaResult.getCellType();
 	}
 
 	@Override
@@ -189,5 +192,67 @@ public class CellImpl extends AbstractCell {
 							+ ", supports NULL, String, Date, Number and Byte(as Error Code)");
 		}
 		value = newvalue;
+	}
+	
+	private class ResultWrap implements Serializable{
+		private static final long serialVersionUID = 1L;
+		
+		CellType cellType = null;
+		Object value = null;
+		private ResultWrap(EvaluationResult result){
+			Object val = result.getValue();
+			ResultType type = result.getType();
+			if(type==ResultType.ERROR){
+				cellType = CellType.ERROR;
+				value = (val instanceof ErrorValue)?(ErrorValue)val:new ErrorValue(ErrorValue.INVALID_VALUE);
+			}else if(type==ResultType.SUCCESS){
+				setByValue(val);
+			}
+		}
+		
+		private void setByValue(Object val){
+			if(val==null || "".equals(val)){
+				cellType = CellType.BLANK;
+				value = null;
+			}else if(val instanceof String){
+				cellType = CellType.STRING;
+				value = (String)val;
+			}else if(val instanceof Number){
+				cellType = CellType.NUMBER;
+				value = (Number)val;
+			}else if(val instanceof Date){
+				cellType = CellType.NUMBER;
+				value = (Date)val;
+			}else if(val instanceof Collection){
+				//possible a engine return a collection in cell evaluation case? who should take care array formula?
+				if(((Collection)val).size()>0){
+					setByValue(((Collection)val).iterator().next());
+				}else{
+					cellType = CellType.BLANK;
+					value = null;
+				}
+			}else if(val.getClass().isArray()){
+				//possible a engine return a collection in cell evaluation case? who should take care array formula?
+				if(((Object[])val).length>0){
+					setByValue(((Object[])val)[0]);
+				}else{
+					cellType = CellType.BLANK;
+					value = null;
+				}
+			}else{
+				cellType = CellType.ERROR;
+				value = (val instanceof ErrorValue)?(ErrorValue)val:new ErrorValue(ErrorValue.INVALID_VALUE,"Unknow value type "+val);
+			}
+			
+			
+		}
+		
+		private CellType getCellType(){
+			return cellType;
+		}
+		
+		private Object getValue(){
+			return value;
+		}
 	}
 }

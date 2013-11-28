@@ -1,5 +1,6 @@
 package org.zkoss.zss.ngmodel.impl.sys;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -13,7 +14,7 @@ import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 
-public class DependencyEngineImpl implements DependencyEngine{
+public class DependencyEngineImpl implements DependencyEngine,Serializable{
 
 	public DependencyTable getDependencyTable() {
 		// TODO Auto-generated method stub

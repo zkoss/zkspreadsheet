@@ -1,6 +1,8 @@
 package org.zkoss.zss.ngmodel;
 
-public class NViewAnchor {
+import java.io.Serializable;
+
+public class NViewAnchor implements Serializable {
 
 	private int rowIndex;
 	private int columnIndex;
@@ -8,7 +10,10 @@ public class NViewAnchor {
 	private int yOffset;
 	private int width;
 	private int height;
-
+	public NViewAnchor(int rowIndex, int columnIndex, int width, int height) {
+		this(rowIndex,columnIndex,0,0,width,height);
+		
+	}
 	public NViewAnchor(int rowIndex, int columnIndex, int xOffset, int yOffset,
 			int width, int height) {
 		this.rowIndex = rowIndex;

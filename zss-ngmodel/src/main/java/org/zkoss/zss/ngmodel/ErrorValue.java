@@ -2,6 +2,12 @@ package org.zkoss.zss.ngmodel;
 
 public class ErrorValue {
 
+	public static final byte INVALID_FORMULA = (byte)0;
+	public static final byte INVALID_VALUE = (byte)1;
+	public static final byte INVLAID_NAME = (byte)2;
+	
+	
+	
 	private byte code;
 	private String message;
 
