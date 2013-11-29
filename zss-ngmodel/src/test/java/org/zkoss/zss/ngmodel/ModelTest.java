@@ -1378,6 +1378,9 @@ public class ModelTest {
 		
 		sheet.getCell(5, 1).setHyperlink().setType(HyperlinkType.URL);
 		
+		sheet.getCell(5, 1).setComment().setText("AAA");
+		sheet.getCell(5, 2).setComment().setRichText().addSegment("BBB",book.getDefaultFont());
+		
 		sheet.addChart(NChartType.BAR, new NViewAnchor(0, 0, 800, 600));
 		//TODO add series
 		
@@ -1407,6 +1410,9 @@ public class ModelTest {
 			Assert.assertEquals(ErrorValue.INVALID_NAME,sheet.getCell(5, 1).getErrorValue().getCode());
 			
 			Assert.assertEquals(HyperlinkType.URL,sheet.getCell(5, 1).getHyperlink().getType());
+			
+			Assert.assertEquals("AAA",sheet.getCell(5, 1).getComment().getText());
+			Assert.assertEquals("BBB",sheet.getCell(5, 2).getComment().getRichText().getText());
 			
 			Assert.assertEquals(1, sheet.getCharts().size());
 			NChart chart = sheet.getCharts().get(0);

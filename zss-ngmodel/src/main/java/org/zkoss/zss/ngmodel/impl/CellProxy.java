@@ -3,6 +3,7 @@ package org.zkoss.zss.ngmodel.impl;
 import java.lang.ref.WeakReference;
 
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NComment;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.CellReference;
@@ -187,6 +188,22 @@ class CellProxy extends CellAdv {
 					rowIdx)).getOrCreateCellAt(columnIdx);
 		}
 		proxy.setHyperlink(hyperlink);
+	}
+	
+	@Override
+	public NComment getComment() {
+		loadProxy();
+		return proxy == null ? null : proxy.getComment();
+	}
+
+	@Override
+	public void setComment(NComment comment) {
+		loadProxy();
+		if (proxy == null) {
+			proxy = (CellAdv) ((RowAdv)  ((SheetAdv)getSheet()).getOrCreateRowAt(
+					rowIdx)).getOrCreateCellAt(columnIdx);
+		}
+		proxy.setComment(comment);
 	}
 
 }

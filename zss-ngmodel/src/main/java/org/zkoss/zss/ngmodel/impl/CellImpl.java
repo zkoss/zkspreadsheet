@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NComment;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -26,6 +27,7 @@ public class CellImpl extends CellAdv {
 	private Object value = null;
 	private CellStyleAdv cellStyle;
 	private HyperlinkAdv hyperlink;
+	private CommentAdv comment;
 
 	transient private FormulaResultWrap formulaResult;// cache
 
@@ -269,5 +271,17 @@ public class CellImpl extends CellAdv {
 		Validations.argInstance(hyperlink, HyperlinkAdv.class);
 		this.hyperlink = (HyperlinkAdv)hyperlink;
 	}
+	
+	@Override
+	public NComment getComment() {
+		return comment;
+	}
+
+	@Override
+	public void setComment(NComment comment) {
+		Validations.argInstance(comment, CommentAdv.class);
+		this.comment = (CommentAdv)comment;
+	}
+	
 
 }

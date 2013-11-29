@@ -84,4 +84,8 @@ public interface NCell {
 	public void setErrorValue(ErrorValue errorValue);
 	
 	
+	public void setComment(NComment comment);
+	public NComment setComment();
+	public NComment getComment();
+	
 }

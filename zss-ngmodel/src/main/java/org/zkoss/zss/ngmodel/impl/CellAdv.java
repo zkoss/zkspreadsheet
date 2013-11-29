@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NComment;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
@@ -142,5 +143,11 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 		NHyperlink hyperlink = new HyperlinkImpl();
 		setHyperlink(hyperlink);
 		return hyperlink;
+	}
+	@Override
+	public NComment setComment(){
+		NComment comment = new CommentImpl();
+		setComment(comment);
+		return comment;
 	}
 }
