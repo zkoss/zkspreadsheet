@@ -19,6 +19,7 @@ import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.NFont.Underline;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
+import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.chart.NCategoryChartData;
 import org.zkoss.zss.ngmodel.chart.NChartData;
@@ -1011,6 +1012,13 @@ public class ModelTest {
 		Assert.assertEquals(CellType.STRING, cell.getType());
 		Assert.assertEquals("abc",cell.getStringValue());
 		
+		NRichText text = cell.setRichTextValue();
+		text.addSegment("abc", book.getDefaultFont());
+		text.addSegment("def", book.getDefaultFont());
+		Assert.assertEquals(CellType.RICHTEXT, cell.getType());
+		Assert.assertEquals(text,cell.getRichTextValue());
+		Assert.assertEquals("abcdef",cell.getRichTextValue().getText());
+		
 		cell.setNumberValue(123);
 		Assert.assertEquals(CellType.NUMBER, cell.getType());
 		Assert.assertEquals(123,cell.getNumberValue());
@@ -1359,8 +1367,17 @@ public class ModelTest {
 	public void testSerializable(){
 		NBook book = new BookImpl("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
-		NCell cell = sheet.getCell(10, 10);
-		cell.setFormulaValue("SUM(999)");
+		book.createSheet("Sheet 2");
+		Date now = new Date();
+		
+		sheet.getCell(1, 1).setStringValue("ABCD");
+		sheet.getCell(2, 1).setRichTextValue().addSegment("ABC", book.getDefaultFont());
+		sheet.getCell(3, 1).setNumberValue(99);
+		sheet.getCell(4, 1).setDateValue(now);
+		sheet.getCell(5, 1).setErrorValue(new ErrorValue(ErrorValue.INVALID_NAME));
+		
+		sheet.getCell(5, 1).setHyperlink().setType(HyperlinkType.URL);
+		
 		sheet.addChart(NChartType.BAR, new NViewAnchor(0, 0, 800, 600));
 		//TODO add series
 		
@@ -1382,9 +1399,14 @@ public class ModelTest {
 			
 			Assert.assertNotNull(sheet);
 			
-			cell = sheet.getCell(10, 10);
-			Assert.assertEquals(999,cell.getNumberValue().intValue());
+			Assert.assertEquals("ABCD",sheet.getCell(1, 1).getStringValue());
+			Assert.assertEquals("ABC",sheet.getCell(2, 1).getRichTextValue().getText());
+			Assert.assertEquals(book.getDefaultFont(),sheet.getCell(2, 1).getRichTextValue().getSegments().get(0).getFont());
+			Assert.assertEquals(99,sheet.getCell(3, 1).getNumberValue());
+			Assert.assertEquals(now,sheet.getCell(4, 1).getDateValue());
+			Assert.assertEquals(ErrorValue.INVALID_NAME,sheet.getCell(5, 1).getErrorValue().getCode());
 			
+			Assert.assertEquals(HyperlinkType.URL,sheet.getCell(5, 1).getHyperlink().getType());
 			
 			Assert.assertEquals(1, sheet.getCharts().size());
 			NChart chart = sheet.getCharts().get(0);

@@ -8,6 +8,7 @@ public class HyperlinkImpl extends HyperlinkAdv {
 	private String address;
 	private String label;
 	
+	public HyperlinkImpl(){}
 	public HyperlinkImpl(HyperlinkType type,String address, String label){
 		this.type = type;
 		this.address = address;

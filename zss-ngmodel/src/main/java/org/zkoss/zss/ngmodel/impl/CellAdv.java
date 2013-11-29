@@ -5,6 +5,8 @@ import java.util.Date;
 
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NHyperlink;
+import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
@@ -49,6 +51,17 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 		}
 		return (String)getValue();
 	}
+	
+	@Override
+	public void setRichTextValue(NRichText value) {
+		setValue(value);
+	}
+
+	@Override
+	public NRichText getRichTextValue() {
+		checkType(CellType.RICHTEXT);
+		return (NRichText)getValue();
+	}	
 
 	@Override
 	public void setNumberValue(Number number) {
@@ -115,5 +128,19 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 		checkType(CellType.FORMULA);
 		FormulaExpression expr = (FormulaExpression)getValue(false);
 		return expr.getFormulaString();
+	}
+	
+
+	@Override
+	public NRichText setRichTextValue() {
+		NRichText text = new RichTextImpl();
+		setRichTextValue(text);
+		return text;
+	}
+	@Override
+	public NHyperlink setHyperlink(){
+		NHyperlink hyperlink = new HyperlinkImpl();
+		setHyperlink(hyperlink);
+		return hyperlink;
 	}
 }

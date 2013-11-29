@@ -1,6 +1,8 @@
 package org.zkoss.zss.ngmodel;
 
-public class ErrorValue {
+import java.io.Serializable;
+
+public class ErrorValue implements Serializable{
 
 	public static final byte INVALID_FORMULA = (byte)0;
 	public static final byte INVALID_VALUE = (byte)1;

@@ -7,6 +7,7 @@ import java.util.Date;
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NHyperlink;
+import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
@@ -179,6 +180,8 @@ public class CellImpl extends CellAdv {
 			} else {
 				type = CellType.STRING;
 			}
+		} else if (newvalue instanceof NRichText) {
+			type = CellType.RICHTEXT;
 		} else if (newvalue instanceof FormulaExpression) {
 			type = CellType.FORMULA;
 		} else if (newvalue instanceof Date) {
@@ -266,4 +269,5 @@ public class CellImpl extends CellAdv {
 		Validations.argInstance(hyperlink, HyperlinkAdv.class);
 		this.hyperlink = (HyperlinkAdv)hyperlink;
 	}
+
 }

@@ -10,4 +10,10 @@ public interface NHyperlink {
 	public String getAddress();
 
 	public String getLabel();
+	
+	public void setType(HyperlinkType type);
+	
+	public void setAddress(String address);
+	
+	public void setLabel(String label);
 }

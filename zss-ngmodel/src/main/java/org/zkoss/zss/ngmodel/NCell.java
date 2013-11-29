@@ -9,6 +9,7 @@ public interface NCell {
 	public enum CellType {
 		BLANK,
 		STRING,
+		RICHTEXT,
 		FORMULA,
 		NUMBER,
 		DATE,
@@ -37,7 +38,14 @@ public interface NCell {
 	
 	public NHyperlink getHyperlink();
 	
+	/**
+	 * Set or clear a hyperlink
+	 * @param hyperlink hyperlink to set, or null to clear
+	 */
 	public void setHyperlink(NHyperlink hyperlink);
+	
+	/** set a empty hyperlinkt*/
+	public NHyperlink setHyperlink();
 
 //	boolean isReadonly();
 //	
@@ -51,6 +59,13 @@ public interface NCell {
 	
 	public void setStringValue(String value);
 	public String getStringValue();
+	
+	public void setRichTextValue(NRichText text);
+	
+	/** set a empty rich text **/
+	public NRichText setRichTextValue();
+	
+	public NRichText getRichTextValue();
 	
 	/**
 	 * set formula as string with '=', ex: SUM(A1:B2)
