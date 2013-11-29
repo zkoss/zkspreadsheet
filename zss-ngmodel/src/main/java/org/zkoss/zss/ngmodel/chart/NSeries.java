@@ -5,13 +5,13 @@ public interface NSeries {
 	public String getName();
 	
 	public int getNumOfValue();
-	public Object getValueAt(int index);
+	public Object getValue(int index);
 	
 	//for Scatter, xy chart
 	public int getNumOfXValue();
-	public Object getXValueAt(int index);
+	public Object getXValue(int index);
 	public int getNumOfYValue();
-	public Object getYValueAt(int index);
+	public Object getYValue(int index);
 	
 	
 	public String getNameFormula();

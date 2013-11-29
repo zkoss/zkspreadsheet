@@ -62,4 +62,6 @@ public interface NSheet {
 	public void deleteChart(NChart chart);
 	public List<NChart> getCharts();
 	
+	
+//	public List<CellRegion> getMergedRegions();
 }

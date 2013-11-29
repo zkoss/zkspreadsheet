@@ -77,7 +77,7 @@ public class SeriesImpl implements NSeries{
 		return ChartDataUtil.sizeOf(evalValuesResult);
 	}
 	
-	public Object getValueAt(int index) {
+	public Object getValue(int index) {
 		evalFormula();
 		if(index>=ChartDataUtil.sizeOf(evalValuesResult)){
 			return null;
@@ -88,15 +88,15 @@ public class SeriesImpl implements NSeries{
 	public int getNumOfXValue(){
 		return getNumOfValue();
 	}
-	public Object getXValueAt(int index) {
-		return getValueAt(index);
+	public Object getXValue(int index) {
+		return getValue(index);
 	}
 	
 	public int getNumOfYValue(){
 		evalFormula();
 		return ChartDataUtil.sizeOf(evalYValuesResult);
 	}
-	public Object getYValueAt(int index) {
+	public Object getYValue(int index) {
 		evalFormula();
 		if(index>=ChartDataUtil.sizeOf(evalYValuesResult)){
 			return null;

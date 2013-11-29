@@ -29,7 +29,7 @@ class RowProxy extends RowAdv{
 	
 	protected void loadProxy(){
 		if(proxy==null){
-			proxy = (RowAdv)((SheetAdv)getSheet()).getRowAt(index,false);
+			proxy = (RowAdv)((SheetAdv)getSheet()).getRow(index,false);
 			if(proxy!=null){
 				sheetRef.clear();
 			}
@@ -80,17 +80,17 @@ class RowProxy extends RowAdv{
 		Validations.argNotNull(cellStyle);
 		loadProxy();
 		if(proxy==null){
-			proxy = (RowAdv)((SheetAdv)getSheet()).getOrCreateRowAt(index);
+			proxy = (RowAdv)((SheetAdv)getSheet()).getOrCreateRow(index);
 		}
 		proxy.setCellStyle(cellStyle);
 	}
 	
 	@Override
-	CellAdv getCellAt(int columnIdx, boolean proxy) {
+	CellAdv getCell(int columnIdx, boolean proxy) {
 		throw new UnsupportedOperationException("not implement");
 	}
 	@Override
-	CellAdv getOrCreateCellAt(int columnIdx) {
+	CellAdv getOrCreateCell(int columnIdx) {
 		throw new UnsupportedOperationException("not implement");
 	}
 	@Override

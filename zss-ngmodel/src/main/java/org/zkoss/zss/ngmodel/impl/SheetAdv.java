@@ -8,16 +8,16 @@ import org.zkoss.zss.ngmodel.NSheet;
 public abstract class SheetAdv implements NSheet,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
 
-	/*package*/ abstract RowAdv getRowAt(int rowIdx, boolean proxy);
-	/*package*/ abstract RowAdv getOrCreateRowAt(int rowIdx);
+	/*package*/ abstract RowAdv getRow(int rowIdx, boolean proxy);
+	/*package*/ abstract RowAdv getOrCreateRow(int rowIdx);
 	/*package*/ abstract int getRowIndex(RowAdv row);
 	
-	/*package*/ abstract ColumnAdv getColumnAt(int columnIdx, boolean proxy);
-	/*package*/ abstract ColumnAdv getOrCreateColumnAt(int columnIdx);
+	/*package*/ abstract ColumnAdv getColumn(int columnIdx, boolean proxy);
+	/*package*/ abstract ColumnAdv getOrCreateColumn(int columnIdx);
 	/*package*/ abstract int getColumnIndex(ColumnAdv column);
 	
-	/*package*/ abstract CellAdv getCellAt(int rowIdx, int columnIdx, boolean proxy);
-	/*package*/ abstract CellAdv getOrCreateCellAt(int rowIdx, int columnIdx);
+	/*package*/ abstract CellAdv getCell(int rowIdx, int columnIdx, boolean proxy);
+	/*package*/ abstract CellAdv getOrCreateCell(int rowIdx, int columnIdx);
 	
 	
 	/*package*/ abstract void copyTo(SheetAdv sheet);

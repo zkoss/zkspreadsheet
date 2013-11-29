@@ -64,10 +64,10 @@ public class SheetImpl extends SheetAdv {
 	}
 
 	public NRow getRow(int rowIdx) {
-		return getRowAt(rowIdx,true);
+		return getRow(rowIdx,true);
 	}
 	@Override
-	RowAdv getRowAt(int rowIdx, boolean proxy) {
+	RowAdv getRow(int rowIdx, boolean proxy) {
 		RowAdv rowObj = rows.get(rowIdx);
 		if(rowObj != null){
 			return rowObj;
@@ -75,7 +75,7 @@ public class SheetImpl extends SheetAdv {
 		return proxy?new RowProxy(this,rowIdx):null;
 	}
 	@Override
-	RowAdv getOrCreateRowAt(int rowIdx){
+	RowAdv getOrCreateRow(int rowIdx){
 		RowAdv rowObj = rows.get(rowIdx);
 		if(rowObj == null){
 			rowObj = new RowImpl(this);
@@ -89,10 +89,10 @@ public class SheetImpl extends SheetAdv {
 	}
 
 	public NColumn getColumn(int columnIdx) {
-		return getColumnAt(columnIdx,true);
+		return getColumn(columnIdx,true);
 	}
 	@Override
-	ColumnAdv getColumnAt(int columnIdx, boolean proxy) {
+	ColumnAdv getColumn(int columnIdx, boolean proxy) {
 		ColumnAdv colObj = columns.get(columnIdx);
 		if(colObj != null){
 			return colObj;
@@ -100,7 +100,7 @@ public class SheetImpl extends SheetAdv {
 		return proxy?new ColumnProxy(this,columnIdx):null;
 	}
 	@Override
-	ColumnAdv getOrCreateColumnAt(int columnIdx){
+	ColumnAdv getOrCreateColumn(int columnIdx){
 		ColumnAdv columnObj = columns.get(columnIdx);
 		if(columnObj == null){
 			columnObj = new ColumnImpl(this);
@@ -114,21 +114,21 @@ public class SheetImpl extends SheetAdv {
 	}
 
 	public NCell getCell(int rowIdx, int columnIdx) {
-		return getCellAt(rowIdx,columnIdx,true);
+		return getCell(rowIdx,columnIdx,true);
 	}
 	
 	@Override
-	CellAdv getCellAt(int rowIdx, int columnIdx, boolean proxy) {
-		RowAdv rowObj = (RowAdv) getRowAt(rowIdx,false);
+	CellAdv getCell(int rowIdx, int columnIdx, boolean proxy) {
+		RowAdv rowObj = (RowAdv) getRow(rowIdx,false);
 		if(rowObj!=null){
-			return rowObj.getCellAt(columnIdx,proxy);
+			return rowObj.getCell(columnIdx,proxy);
 		}
 		return proxy?new CellProxy(this, rowIdx,columnIdx):null;
 	}
 	@Override
-	CellAdv getOrCreateCellAt(int rowIdx, int columnIdx){
-		RowAdv rowObj = (RowAdv)getOrCreateRowAt(rowIdx);
-		CellAdv cell = rowObj.getOrCreateCellAt(columnIdx);
+	CellAdv getOrCreateCell(int rowIdx, int columnIdx){
+		RowAdv rowObj = (RowAdv)getOrCreateRow(rowIdx);
+		CellAdv cell = rowObj.getOrCreateCell(columnIdx);
 		return cell;
 	}
 
@@ -149,7 +149,7 @@ public class SheetImpl extends SheetAdv {
 	}
 
 	public int getStartColumnIndex(int row) {
-		RowAdv rowObj = (RowAdv) getRowAt(row,false);
+		RowAdv rowObj = (RowAdv) getRow(row,false);
 		if(rowObj!=null){
 			return rowObj.getStartCellIndex();
 		}
@@ -157,7 +157,7 @@ public class SheetImpl extends SheetAdv {
 	}
 
 	public int getEndColumn(int row) {
-		RowAdv rowObj = (RowAdv) getRowAt(row,false);
+		RowAdv rowObj = (RowAdv) getRow(row,false);
 		if(rowObj!=null){
 			return rowObj.getEndCellIndex();
 		}

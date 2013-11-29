@@ -60,14 +60,14 @@ public class CategoryChartDataImpl implements NCategoryChartData, Serializable{
 	public int getNumOfSeries() {
 		return serieses.size();
 	}
-	public NSeries getSeriesAt(int i) {
+	public NSeries getSeries(int i) {
 		return serieses.get(i);
 	}
 	public int getNumOfCategory() {
 		evalFormula();
 		return ChartDataUtil.sizeOf(evalResult);
 	}
-	public Object getCategoryAt(int i) {
+	public Object getCategory(int i) {
 		evalFormula();
 		if(i>=ChartDataUtil.sizeOf(evalResult)){
 			return null;

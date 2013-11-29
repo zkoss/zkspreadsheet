@@ -21,7 +21,7 @@ class ColumnProxy extends ColumnAdv {
 
 	protected void loadProxy() {
 		if (proxy == null) {
-			proxy = (ColumnAdv) ((SheetAdv)getSheet()).getColumnAt(index, false);
+			proxy = (ColumnAdv) ((SheetAdv)getSheet()).getColumn(index, false);
 			if (proxy != null) {
 				sheetRef.clear();
 			}
@@ -76,7 +76,7 @@ class ColumnProxy extends ColumnAdv {
 		Validations.argNotNull(cellStyle);
 		loadProxy();
 		if (proxy == null) {
-			proxy = (ColumnAdv)((SheetAdv)getSheet()).getOrCreateColumnAt(index);
+			proxy = (ColumnAdv)((SheetAdv)getSheet()).getOrCreateColumn(index);
 		}
 		proxy.setCellStyle(cellStyle);
 	}

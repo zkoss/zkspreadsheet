@@ -3,10 +3,10 @@ package org.zkoss.zss.ngmodel.chart;
 public interface NCategoryChartData extends NChartData{
 
 	public int getNumOfSeries();
-	public NSeries getSeriesAt(int i);
+	public NSeries getSeries(int i);
 	
 	public int getNumOfCategory();
-	public Object getCategoryAt(int i);
+	public Object getCategory(int i);
 	
 	
 	

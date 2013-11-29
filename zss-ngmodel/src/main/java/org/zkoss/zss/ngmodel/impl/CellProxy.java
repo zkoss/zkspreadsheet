@@ -34,7 +34,7 @@ class CellProxy extends CellAdv {
 
 	private void loadProxy() {
 		if (proxy == null) {
-			proxy = (CellAdv) ((SheetAdv)getSheet()).getCellAt(rowIdx, columnIdx, false);
+			proxy = (CellAdv) ((SheetAdv)getSheet()).getCell(rowIdx, columnIdx, false);
 			if (proxy != null) {
 				sheetRef.clear();
 			}
@@ -69,8 +69,8 @@ class CellProxy extends CellAdv {
 	public void setValue(Object value) {
 		loadProxy();
 		if (proxy == null && value != null) {
-			proxy = (CellAdv) ((RowAdv) ((SheetAdv)getSheet()).getOrCreateRowAt(
-					rowIdx)).getOrCreateCellAt(columnIdx);
+			proxy = (CellAdv) ((RowAdv) ((SheetAdv)getSheet()).getOrCreateRow(
+					rowIdx)).getOrCreateCell(columnIdx);
 			proxy.setValue(value);
 		} else if (proxy != null) {
 			proxy.setValue(value);
@@ -104,13 +104,13 @@ class CellProxy extends CellAdv {
 		if (local)
 			return null;
 		SheetAdv sheet =  ((SheetAdv)getSheet());
-		RowAdv row = (RowAdv) sheet.getRowAt(rowIdx, false);
+		RowAdv row = (RowAdv) sheet.getRow(rowIdx, false);
 		NCellStyle style = null;
 		if (row != null) {
 			style = row.getCellStyle(true);
 		}
 		if (style == null) {
-			ColumnAdv col = (ColumnAdv) sheet.getColumnAt(columnIdx, false);
+			ColumnAdv col = (ColumnAdv) sheet.getColumn(columnIdx, false);
 			if (col != null) {
 				style = col.getCellStyle(true);
 			}
@@ -126,8 +126,8 @@ class CellProxy extends CellAdv {
 		Validations.argNotNull(cellStyle);
 		loadProxy();
 		if (proxy == null) {
-			proxy = (CellAdv) ((RowAdv)  ((SheetAdv)getSheet()).getOrCreateRowAt(
-					rowIdx)).getOrCreateCellAt(columnIdx);
+			proxy = (CellAdv) ((RowAdv)  ((SheetAdv)getSheet()).getOrCreateRow(
+					rowIdx)).getOrCreateCell(columnIdx);
 		}
 		proxy.setCellStyle(cellStyle);
 	}
@@ -184,8 +184,8 @@ class CellProxy extends CellAdv {
 	public void setHyperlink(NHyperlink hyperlink) {
 		loadProxy();
 		if (proxy == null) {
-			proxy = (CellAdv) ((RowAdv)  ((SheetAdv)getSheet()).getOrCreateRowAt(
-					rowIdx)).getOrCreateCellAt(columnIdx);
+			proxy = (CellAdv) ((RowAdv)  ((SheetAdv)getSheet()).getOrCreateRow(
+					rowIdx)).getOrCreateCell(columnIdx);
 		}
 		proxy.setHyperlink(hyperlink);
 	}
@@ -200,8 +200,8 @@ class CellProxy extends CellAdv {
 	public void setComment(NComment comment) {
 		loadProxy();
 		if (proxy == null) {
-			proxy = (CellAdv) ((RowAdv)  ((SheetAdv)getSheet()).getOrCreateRowAt(
-					rowIdx)).getOrCreateCellAt(columnIdx);
+			proxy = (CellAdv) ((RowAdv)  ((SheetAdv)getSheet()).getOrCreateRow(
+					rowIdx)).getOrCreateCell(columnIdx);
 		}
 		proxy.setComment(comment);
 	}

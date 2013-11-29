@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import org.zkoss.zss.ngapi.NRange;
+import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
@@ -27,7 +28,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 
 public class NRangeImpl implements NRange {
 
-	private final List<EffectedRange> rangeRefs = new ArrayList<EffectedRange>(
+	private final List<EffectedRegion> rangeRefs = new ArrayList<EffectedRegion>(
 			1);
 
 	private int _column = Integer.MAX_VALUE;
@@ -70,7 +71,7 @@ public class NRangeImpl implements NRange {
 	private void addRangeRef(NSheet sheet, int tRow, int lCol, int bRow,
 			int rCol) {
 		Validations.argNotNull(sheet);
-		rangeRefs.add(new EffectedRange(sheet, tRow, lCol, bRow, rCol));
+		rangeRefs.add(new EffectedRegion(sheet, tRow, lCol, bRow, rCol));
 
 		_column = Math.min(_column, lCol);
 		_row = Math.min(_row, tRow);
@@ -120,20 +121,14 @@ public class NRangeImpl implements NRange {
 		return _lastColumn;
 	}
 
-	private class EffectedRange {
+	private class EffectedRegion {
 		private final NSheet _sheet;
-		private final int _column;
-		private final int _row;
-		private final int _lastColumn;
-		private final int _lastRow;
+		private final CellRegion region;
 
-		public EffectedRange(NSheet sheet, int row, int column, int lastRow,
+		public EffectedRegion(NSheet sheet, int row, int column, int lastRow,
 				int lastColumn) {
 			_sheet = sheet;
-			_row = row;
-			_column = column;
-			_lastRow = lastRow;
-			_lastColumn = lastColumn;
+			region = new CellRegion(row, column,lastRow,lastColumn);
 		}
 	}
 
@@ -152,10 +147,11 @@ public class NRangeImpl implements NRange {
 
 		String bookName = book.getBookName();
 
-		for (EffectedRange r : rangeRefs) {
+		for (EffectedRegion r : rangeRefs) {
 			String sheetName = r._sheet.getSheetName();
-			for (int i = r._row; i <= r._lastRow; i++) {
-				for (int j = r._column; j <= r._lastColumn; j++) {
+			CellRegion region = r.region;
+			for (int i = region.row; i <= region.lastRow; i++) {
+				for (int j = region.column; j <= region.lastColumn; j++) {
 					NCell cell = r._sheet.getCell(i, j);
 					boolean update = visitor.visit(cell);
 					if (update) {

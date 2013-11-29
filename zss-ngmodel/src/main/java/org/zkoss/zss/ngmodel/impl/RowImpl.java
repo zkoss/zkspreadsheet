@@ -35,12 +35,8 @@ public class RowImpl extends RowAdv {
 		return false;
 	}
 
-	// public AbstractCell getCellAt(int columnIdx) {
-	// return getCellAt(columnIdx, true);
-	// }
-
 	@Override
-	CellAdv getCellAt(int columnIdx, boolean proxy) {
+	CellAdv getCell(int columnIdx, boolean proxy) {
 		CellAdv cellObj = cells.get(columnIdx);
 		if (cellObj != null) {
 			return cellObj;
@@ -50,14 +46,14 @@ public class RowImpl extends RowAdv {
 	}
 
 	@Override
-	CellAdv getOrCreateCellAt(int columnIdx) {
+	CellAdv getOrCreateCell(int columnIdx) {
 		CellAdv cellObj = cells.get(columnIdx);
 		if (cellObj == null) {
 			checkOrphan();
 			cellObj = new CellImpl(this);
 			cells.put(columnIdx, cellObj);
 			// create column since we have cell of it
-			sheet.getOrCreateColumnAt(columnIdx);
+			sheet.getOrCreateColumn(columnIdx);
 		}
 		return cellObj;
 	}

@@ -1279,13 +1279,13 @@ public class ModelTest {
 		NCategoryChartData chartData = (NCategoryChartData)p1.getData();
 		Assert.assertEquals(0, chartData.getNumOfCategory());
 		Assert.assertEquals(0, chartData.getNumOfSeries());
-		Assert.assertEquals(null, chartData.getCategoryAt(100)); //allow out of index
+		Assert.assertEquals(null, chartData.getCategory(100)); //allow out of index
 		
 		chartData.setCategoriesFormula("A1:A3");
 		Assert.assertEquals(3, chartData.getNumOfCategory());
-		Assert.assertEquals("A", chartData.getCategoryAt(0));
-		Assert.assertEquals("B", chartData.getCategoryAt(1));
-		Assert.assertEquals("C", chartData.getCategoryAt(2));
+		Assert.assertEquals("A", chartData.getCategory(0));
+		Assert.assertEquals("B", chartData.getCategory(1));
+		Assert.assertEquals("C", chartData.getCategory(2));
 		
 		NSeries nseries1 = chartData.addSeries();
 		Assert.assertEquals(1, chartData.getNumOfSeries());
@@ -1316,17 +1316,17 @@ public class ModelTest {
 		Assert.assertEquals(3, nseries1.getNumOfXValue());
 		Assert.assertEquals(3, nseries1.getNumOfYValue());
 		
-		Assert.assertEquals(1, nseries1.getValueAt(0));
-		Assert.assertEquals(2, nseries1.getValueAt(1));
-		Assert.assertEquals(3, nseries1.getValueAt(2));
+		Assert.assertEquals(1, nseries1.getValue(0));
+		Assert.assertEquals(2, nseries1.getValue(1));
+		Assert.assertEquals(3, nseries1.getValue(2));
 		
-		Assert.assertEquals(1, nseries1.getXValueAt(0));
-		Assert.assertEquals(2, nseries1.getXValueAt(1));
-		Assert.assertEquals(3, nseries1.getXValueAt(2));
+		Assert.assertEquals(1, nseries1.getXValue(0));
+		Assert.assertEquals(2, nseries1.getXValue(1));
+		Assert.assertEquals(3, nseries1.getXValue(2));
 		
-		Assert.assertEquals(4, nseries1.getYValueAt(0));
-		Assert.assertEquals(5, nseries1.getYValueAt(1));
-		Assert.assertEquals(6, nseries1.getYValueAt(2));
+		Assert.assertEquals(4, nseries1.getYValue(0));
+		Assert.assertEquals(5, nseries1.getYValue(1));
+		Assert.assertEquals(6, nseries1.getYValue(2));
 		
 		
 		////
@@ -1339,9 +1339,9 @@ public class ModelTest {
 		
 		Assert.assertEquals(3, nseries2.getNumOfValue());
 		
-		Assert.assertEquals(4, nseries2.getValueAt(0));
-		Assert.assertEquals(5, nseries2.getValueAt(1));
-		Assert.assertEquals(6, nseries2.getValueAt(2));
+		Assert.assertEquals(4, nseries2.getValue(0));
+		Assert.assertEquals(5, nseries2.getValue(1));
+		Assert.assertEquals(6, nseries2.getValue(2));
 	}
 	
 	@Test
