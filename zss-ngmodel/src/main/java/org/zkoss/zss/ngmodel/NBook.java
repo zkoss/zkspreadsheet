@@ -19,6 +19,7 @@ package org.zkoss.zss.ngmodel;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
+import org.zkoss.zss.ngmodel.util.FontMatcher;
 
 /**
  * @author dennis
@@ -99,7 +100,7 @@ public interface NBook {
 	public NCellStyle getDefaultCellStyle();
 
 	/**
-	 *Ccreate a cell style
+	 *Create a cell style
 	 * @param inStyleTable if true, the new created style will be stored inside this book, 
 	 * then you can use {@link #searchCellStyle(CellStyleMatcher)} to search and reuse this style.
 	 * @return 
@@ -121,6 +122,15 @@ public interface NBook {
 	 * @return the matched style.
 	 */
 	public NCellStyle searchCellStyle(CellStyleMatcher matcher);
+	
+	
+	public NFont getDefaultFont();
+
+	public NFont createFont(boolean inFontTable);
+	
+	public NFont createFont(NFont src,boolean inFontTable);
+	
+	public NFont searchFont(FontMatcher matcher);
 	
 	/**
 	 * Get the max row size of this book

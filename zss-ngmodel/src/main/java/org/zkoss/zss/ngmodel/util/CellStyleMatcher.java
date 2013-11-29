@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NFont;
 
 
 /**
@@ -98,15 +99,14 @@ public class CellStyleMatcher {
 //		setFillForegroundColor(BookHelper.colorToForegroundHTML(book,criteria.getFillForegroundColorColor()));
 		setFillPattern(criteria.getFillPattern());
 		
-		setFontColor(criteria.getFontColor());
-		setFontName(criteria.getFontName());
-		setFontBoldweight(criteria.getFontBoldweight());
-		setFontHeight(criteria.getFontHeight());
-		setFontHeight(criteria.getFontHeight());
-		setFontItalic(criteria.isFontItalic());
-		setFontStrikeout(criteria.isFontStrikeout());
-		setFontTypeOffset(criteria.getFontTypeOffset());
-		setFontUnderline(criteria.getFontUnderline());
+		setFontColor(criteria.getFont().getColor());
+		setFontName(criteria.getFont().getName());
+		setFontBoldweight(criteria.getFont().getBoldweight());
+		setFontHeight(criteria.getFont().getHeight());
+		setFontItalic(criteria.getFont().isItalic());
+		setFontStrikeout(criteria.getFont().isStrikeout());
+		setFontTypeOffset(criteria.getFont().getTypeOffset());
+		setFontUnderline(criteria.getFont().getUnderline());
 		
 		
 		setHidden(criteria.isHidden());
@@ -131,7 +131,7 @@ public class CellStyleMatcher {
 		criteria.put(Property.FontName, name);
 	}
 	
-	public void setFontBoldweight(NCellStyle.FontBoldweight boldweight) {
+	public void setFontBoldweight(NFont.Boldweight boldweight) {
 		criteria.put(Property.FontBoldweight, boldweight);
 	}
 	
@@ -147,11 +147,11 @@ public class CellStyleMatcher {
 		criteria.put(Property.FontStrikeout, strikeout);
 	}
 	
-	public void setFontTypeOffset(NCellStyle.FontTypeOffset typeOffset) {
+	public void setFontTypeOffset(NFont.TypeOffset typeOffset) {
 		criteria.put(Property.FontTypeOffset, typeOffset);
 	}
 	
-	public void setFontUnderline(NCellStyle.FontUnderline underline) {
+	public void setFontUnderline(NFont.Underline underline) {
 		criteria.put(Property.FontUnderline, underline);
 	}
 
@@ -397,42 +397,42 @@ public class CellStyleMatcher {
 				}
 				break;			
 			case FontColor:
-				if(!equals(e.getValue(),style.getFontColor())){
+				if(!equals(e.getValue(),style.getFont().getColor())){
 					return false;
 				}
 				break;
 			case FontName:
-				if(!equals(e.getValue(),style.getFontName())){
+				if(!equals(e.getValue(),style.getFont().getName())){
 					return false;
 				}
 				break;
 			case FontBoldweight:
-				if(!equals(e.getValue(),style.getFontBoldweight())){
+				if(!equals(e.getValue(),style.getFont().getBoldweight())){
 					return false;
 				}
 				break;
 			case FontHeight:
-				if(!equals(e.getValue(),style.getFontHeight())){
+				if(!equals(e.getValue(),style.getFont().getHeight())){
 					return false;
 				}
 				break;
 			case FontItalic:
-				if(!equals(e.getValue(),style.isFontItalic())){
+				if(!equals(e.getValue(),style.getFont().isItalic())){
 					return false;
 				}
 				break;
 			case FontStrikeout:
-				if(!equals(e.getValue(),style.isFontStrikeout())){
+				if(!equals(e.getValue(),style.getFont().isStrikeout())){
 					return false;
 				}
 				break;
 			case FontTypeOffset:
-				if(!equals(e.getValue(),style.getFontTypeOffset())){
+				if(!equals(e.getValue(),style.getFont().getTypeOffset())){
 					return false;
 				}
 				break;
 			case FontUnderline:
-				if(!equals(e.getValue(),style.getFontUnderline())){
+				if(!equals(e.getValue(),style.getFont().getUnderline())){
 					return false;
 				}
 				break;

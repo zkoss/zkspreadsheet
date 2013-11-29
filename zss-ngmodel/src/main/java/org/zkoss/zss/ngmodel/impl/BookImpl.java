@@ -29,8 +29,10 @@ import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
+import org.zkoss.zss.ngmodel.util.FontMatcher;
 import org.zkoss.zss.ngmodel.util.SpreadsheetVersion;
 import org.zkoss.zss.ngmodel.util.Strings;
 import org.zkoss.zss.ngmodel.util.Validations;
@@ -50,6 +52,8 @@ public class BookImpl extends BookAdv{
 	
 	private final List<CellStyleAdv> cellStyles = new LinkedList<CellStyleAdv>();
 	private final CellStyleAdv defaultCellStyle;
+	private final List<FontAdv> fonts = new LinkedList<FontAdv>();
+	private final FontAdv defaultFont;
 
 	
 	private HashMap<String,AtomicInteger> objIdCounter = new HashMap<String,AtomicInteger>();
@@ -62,7 +66,9 @@ public class BookImpl extends BookAdv{
 		Validations.argNotNull(bookName);
 		this.bookName = bookName;
 		bookSeries = new BookSeriesImpl(this);
-		cellStyles.add(defaultCellStyle = new CellStyleImpl());
+		fonts.add(defaultFont = new FontImpl());
+		cellStyles.add(defaultCellStyle = new CellStyleImpl(defaultFont));
+		
 	}
 	
 	@Override
@@ -260,7 +266,7 @@ public class BookImpl extends BookAdv{
 		if(src!=null){
 			Validations.argInstance(src, CellStyleAdv.class);
 		}
-		CellStyleAdv style = new CellStyleImpl();
+		CellStyleAdv style = new CellStyleImpl(defaultFont);
 		if(src!=null){
 			((CellStyleAdv)src).copyTo(style);
 		}
@@ -277,6 +283,44 @@ public class BookImpl extends BookAdv{
 		for(NCellStyle style:cellStyles){
 			if(matcher.match(style)){
 				return style;
+			}
+		}
+		return null;
+	}
+	
+	
+	@Override
+	public NFont getDefaultFont() {
+		return defaultFont;
+	}
+
+	@Override
+	public NFont createFont(boolean inFontTable) {
+		return createFont(null,inFontTable);
+	}
+
+	@Override
+	public NFont createFont(NFont src,boolean inFontTable) {
+		if(src!=null){
+			Validations.argInstance(src, FontAdv.class);
+		}
+		FontAdv font = new FontImpl();
+		if(src!=null){
+			((FontAdv)src).copyTo(font);
+		}
+		
+		if(inFontTable){
+			fonts.add(font);
+		}
+		
+		return font;
+	}
+	
+	@Override
+	public NFont searchFont(FontMatcher matcher) {
+		for(NFont font:fonts){
+			if(matcher.match(font)){
+				return font;
 			}
 		}
 		return null;

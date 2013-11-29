@@ -14,9 +14,9 @@ import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
-import org.zkoss.zss.ngmodel.NCellStyle.FontBoldweight;
-import org.zkoss.zss.ngmodel.NCellStyle.FontTypeOffset;
-import org.zkoss.zss.ngmodel.NCellStyle.FontUnderline;
+import org.zkoss.zss.ngmodel.NFont.Boldweight;
+import org.zkoss.zss.ngmodel.NFont.TypeOffset;
+import org.zkoss.zss.ngmodel.NFont.Underline;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
@@ -26,6 +26,7 @@ import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
+import org.zkoss.zss.ngmodel.util.FontMatcher;
 
 public class ModelTest {
 
@@ -809,44 +810,44 @@ public class ModelTest {
 		matcher.setFillPattern(FillPattern.SOLID_FOREGROUND);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
-		style1.setFontBoldweight(FontBoldweight.BOLD);
+		style1.getFont().setBoldweight(Boldweight.BOLD);
 		Assert.assertNull(book.searchCellStyle(matcher));
-		matcher.setFontBoldweight(FontBoldweight.BOLD);
+		matcher.setFontBoldweight(Boldweight.BOLD);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
-		style1.setFontColor("#0000FF");
+		style1.getFont().setColor("#0000FF");
 		Assert.assertNull(book.searchCellStyle(matcher));
 		matcher.setFontColor("#0000FF");
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
-		style1.setFontHeight(26);
+		style1.getFont().setHeight(26);
 		Assert.assertNull(book.searchCellStyle(matcher));
 		matcher.setFontHeight(26);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
-		style1.setFontItalic(true);
+		style1.getFont().setItalic(true);
 		Assert.assertNull(book.searchCellStyle(matcher));
 		matcher.setFontItalic(true);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
-		style1.setFontName("system");
+		style1.getFont().setName("system");
 		Assert.assertNull(book.searchCellStyle(matcher));
 		matcher.setFontName("system");
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
-		style1.setFontStrikeout(true);
+		style1.getFont().setStrikeout(true);
 		Assert.assertNull(book.searchCellStyle(matcher));
 		matcher.setFontStrikeout(true);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
-		style1.setFontTypeOffset(FontTypeOffset.SUB);
+		style1.getFont().setTypeOffset(TypeOffset.SUB);
 		Assert.assertNull(book.searchCellStyle(matcher));
-		matcher.setFontTypeOffset(FontTypeOffset.SUB);
+		matcher.setFontTypeOffset(TypeOffset.SUB);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
-		style1.setFontUnderline(FontUnderline.SINGLE);
+		style1.getFont().setUnderline(Underline.SINGLE);
 		Assert.assertNull(book.searchCellStyle(matcher));
-		matcher.setFontUnderline(FontUnderline.SINGLE);
+		matcher.setFontUnderline(Underline.SINGLE);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
 		style1.setHidden(true);
@@ -863,6 +864,62 @@ public class ModelTest {
 		Assert.assertNull(book.searchCellStyle(matcher));
 		matcher.setWrapText(true);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
+		
+	}
+	
+	@Test
+	public void testFontSearch(){
+		NBook book = new BookImpl("book1");
+		NSheet sheet = book.createSheet("Sheet 1");
+		
+		NFont font1 = book.createFont(true);
+		FontMatcher matcher = new FontMatcher(book.createFont(false));//a style not in table
+		
+		Assert.assertEquals(book.getDefaultFont(),book.searchFont(matcher));
+		
+		Assert.assertNotSame(font1, book.getDefaultFont());
+		
+
+		font1.setBoldweight(Boldweight.BOLD);
+		matcher.setBoldweight(Boldweight.BOLD);
+		Assert.assertEquals(font1,book.searchFont(matcher));
+		
+		font1.setColor("#0000FF");
+		Assert.assertNull(book.searchFont(matcher));
+		matcher.setColor("#0000FF");
+		Assert.assertEquals(font1,book.searchFont(matcher));
+		
+		font1.setHeight(26);
+		Assert.assertNull(book.searchFont(matcher));
+		matcher.setHeight(26);
+		Assert.assertEquals(font1,book.searchFont(matcher));
+		
+		font1.setItalic(true);
+		Assert.assertNull(book.searchFont(matcher));
+		matcher.setItalic(true);
+		Assert.assertEquals(font1,book.searchFont(matcher));
+		
+		font1.setName("system");
+		Assert.assertNull(book.searchFont(matcher));
+		matcher.setName("system");
+		Assert.assertEquals(font1,book.searchFont(matcher));
+		
+		font1.setStrikeout(true);
+		Assert.assertNull(book.searchFont(matcher));
+		matcher.setStrikeout(true);
+		Assert.assertEquals(font1,book.searchFont(matcher));
+		
+		font1.setTypeOffset(TypeOffset.SUB);
+		Assert.assertNull(book.searchFont(matcher));
+		matcher.setTypeOffset(TypeOffset.SUB);
+		Assert.assertEquals(font1,book.searchFont(matcher));
+		
+		font1.setUnderline(Underline.SINGLE);
+		Assert.assertNull(book.searchFont(matcher));
+		matcher.setUnderline(Underline.SINGLE);
+		Assert.assertEquals(font1,book.searchFont(matcher));
+		
+		
 		
 	}
 	

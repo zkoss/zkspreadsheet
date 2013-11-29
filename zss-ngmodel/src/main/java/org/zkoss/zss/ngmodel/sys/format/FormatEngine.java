@@ -4,6 +4,6 @@ import org.zkoss.zss.ngmodel.NCell;
 
 public interface FormatEngine {
 
-	FormatResult format(NCell cell, FormatContext ctx);
+	FormatResult format(String format, Object value, FormatContext ctx);
 	
 }

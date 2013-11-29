@@ -1,6 +1,7 @@
 package org.zkoss.zss.ngmodel.impl;
 
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.util.Validations;
 
 public class CellStyleImpl extends CellStyleAdv {
@@ -10,15 +11,7 @@ public class CellStyleImpl extends CellStyleAdv {
 	public static final String COLOR_BLACK = "#000000";
 	public static final String FORMAT_GENERAL = "General";
 
-	private String fontName = "Arial";
-	private String fontColor = COLOR_BLACK;
-	private FontBoldweight fontBoldweight = FontBoldweight.NORMAL;
-	private int fontHeight = 11;
-	private boolean fontItalic = false;
-	private boolean fontStrikeout = false;
-	private FontTypeOffset fontTypeOffset = FontTypeOffset.NONE;
-	private FontUnderline fontUnderline = FontUnderline.NONE;
-
+	private FontAdv font;
 	private String backgroundColor = COLOR_WHITE;
 	private FillPattern fillPattern = FillPattern.NO_FILL;
 	private Alignment alignment = Alignment.LEFT;
@@ -38,84 +31,17 @@ public class CellStyleImpl extends CellStyleAdv {
 	private boolean locked = true;// default locked as excel.
 	private boolean hidden = false;
 
-	@Override
-	public String getFontName() {
-		return fontName;
+	public CellStyleImpl(FontAdv font){
+		this.font = font;
 	}
-
-	@Override
-	public void setFontName(String fontName) {
-		this.fontName = fontName;
+	
+	public NFont getFont(){
+		return font;
 	}
-
-	@Override
-	public String getFontColor() {
-		return fontColor;
-	}
-
-	@Override
-	public void setFontColor(String fontColor) {
-		this.fontColor = fontColor;
-	}
-
-	@Override
-	public FontBoldweight getFontBoldweight() {
-		return fontBoldweight;
-	}
-
-	@Override
-	public void setFontBoldweight(FontBoldweight fontBoldweight) {
-		this.fontBoldweight = fontBoldweight;
-	}
-
-	@Override
-	public int getFontHeight() {
-		return fontHeight;
-	}
-
-	@Override
-	public void setFontHeight(int fontHeight) {
-		this.fontHeight = fontHeight;
-	}
-
-	@Override
-	public boolean isFontItalic() {
-		return fontItalic;
-	}
-
-	@Override
-	public void setFontItalic(boolean fontItalic) {
-		this.fontItalic = fontItalic;
-	}
-
-	@Override
-	public boolean isFontStrikeout() {
-		return fontStrikeout;
-	}
-
-	@Override
-	public void setFontStrikeout(boolean fontStrikeout) {
-		this.fontStrikeout = fontStrikeout;
-	}
-
-	@Override
-	public FontTypeOffset getFontTypeOffset() {
-		return fontTypeOffset;
-	}
-
-	@Override
-	public void setFontTypeOffset(FontTypeOffset fontTypeOffset) {
-		this.fontTypeOffset = fontTypeOffset;
-	}
-
-	@Override
-	public FontUnderline getFontUnderline() {
-		return fontUnderline;
-	}
-
-	@Override
-	public void setFontUnderline(FontUnderline fontUnderline) {
-		this.fontUnderline = fontUnderline;
+	
+	public void setFont(NFont font){
+		Validations.argInstance(font, FontAdv.class);
+		this.font = (FontAdv)font;
 	}
 
 	@Override
@@ -284,15 +210,8 @@ public class CellStyleImpl extends CellStyleAdv {
 			return;
 		Validations.argInstance(dest, CellStyleImpl.class);
 		CellStyleImpl another = (CellStyleImpl) dest;
-		another.fontName = fontName;
-		another.fontColor = fontColor;
-		another.fontBoldweight = fontBoldweight;
-		another.fontHeight = fontHeight;
-		another.fontItalic = fontItalic;
-		another.fontStrikeout = fontStrikeout;
-		another.fontTypeOffset = fontTypeOffset;
-		another.fontUnderline = fontUnderline;
-
+		another.font = (FontAdv)dest.getFont();//assign directly
+		
 		another.backgroundColor = backgroundColor;
 		another.fillPattern = fillPattern;
 		another.alignment = alignment;

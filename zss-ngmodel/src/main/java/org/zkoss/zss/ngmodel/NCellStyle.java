@@ -33,73 +33,6 @@ public interface NCellStyle {
 	}
 	
 	
-	public enum FontTypeOffset{
-		NONE, 
-		SUPER, 
-		SUB
-	}
-	public enum FontUnderline{
-		NONE,
-		SINGLE,
-		DOUBLE,
-		SINGLE_ACCOUNTING,
-		DOUBLE_ACCOUNTING
-	}
-	
-	public enum FontBoldweight{
-		NORMAL,
-		BOLD
-	}
-	
-	/**
-	 * 
-	 * @return a font's color
-	 */
-	public String getFontColor();
-	
-	/**
-	 * 
-	 * @return a font's name like "Calibri".
-	 */
-	public String getFontName();
-	
-	/**
-	 * 
-	 * @return a font's bold style.
-	 */
-	public FontBoldweight getFontBoldweight();
-	
-	/**
-	 * 
-	 * @return a fon't height in pixel
-	 */
-	public int getFontHeight();
-	
-	/**
-	 * 
-	 * @return true if the font is italic
-	 */
-	public boolean isFontItalic();
-	
-	/**
-	 * 
-	 * @return true if the font is strike-out.
-	 */
-	public boolean isFontStrikeout();
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public FontTypeOffset getFontTypeOffset();
-	
-	/**
-	 * 
-	 * @return the style of a font's underline
-	 */
-	public FontUnderline getFontUnderline();
-	
-	
 	/**
 	 * @return background-color
 	 */
@@ -186,22 +119,6 @@ public interface NCellStyle {
 	 */
 	public boolean isHidden();
 	
-	
-	public void setFontName(String fontName);
-
-	public void setFontColor(String fontColor);
-
-	public void setFontBoldweight(FontBoldweight fontBoldweight);
-
-	public void setFontHeight(int fontHeight);
-
-	public void setFontItalic(boolean fontItalic);
-
-	public void setFontStrikeout(boolean fontStrikeout);
-
-	public void setFontTypeOffset(FontTypeOffset fontTypeOffset);
-
-	public void setFontUnderline(FontUnderline fontUnderline);
 
 	public void setBackgroundColor(String backgroundColor);
 
@@ -234,5 +151,9 @@ public interface NCellStyle {
 	public void setLocked(boolean locked);
 
 	public void setHidden(boolean hidden);
+	
+	public NFont getFont();
+	
+	public void setFont(NFont font);
 
 }
