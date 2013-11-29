@@ -56,7 +56,7 @@ public class BookImpl extends BookAdv{
 	private int maxRowSize = SpreadsheetVersion.EXCEL2007.getMaxRows();
 	private int maxColumnSize = SpreadsheetVersion.EXCEL2007.getMaxColumns();
 	
-	private List<ModelEventListener> listeners;
+	private List<ModelEventListener> listeners = new LinkedList<ModelEventListener>();
 	
 	public BookImpl(String bookName){
 		Validations.argNotNull(bookName);
@@ -88,7 +88,6 @@ public class BookImpl extends BookAdv{
 	@Override
 	public NSheet getSheetByName(String name){
 		for(NSheet sheet:sheets){
-//			if(sheet.getSheetName().equals(name)){
 			if(sheet.getSheetName().equalsIgnoreCase(name)){
 				return sheet;
 			}
@@ -121,9 +120,6 @@ public class BookImpl extends BookAdv{
 		for(SheetAdv sheet:sheets){
 			sheet.onModelEvent(event);
 		}
-		
-		if(listeners ==null)
-			return;
 		
 		for(ModelEventListener l:listeners){
 			l.onEvent(event);
@@ -311,9 +307,6 @@ public class BookImpl extends BookAdv{
 	
 	@Override
 	public void addEventListener(ModelEventListener listener){
-		if(listeners==null){
-			listeners = new LinkedList<ModelEventListener>();
-		}
 		if(!listeners.contains(listener)){
 			listeners.add(listener);
 		}

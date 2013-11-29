@@ -32,6 +32,12 @@ public interface NCell {
 	public NCellStyle getCellStyle();
 	
 	public NCellStyle getCellStyle(boolean local);
+	
+	public void setCellStyle(NCellStyle cellStyle);
+	
+	public NHyperlink getHyperlink();
+	
+	public void setHyperlink(NHyperlink hyperlink);
 
 //	boolean isReadonly();
 //	
@@ -62,5 +68,5 @@ public interface NCell {
 	public ErrorValue getErrorValue();
 	public void setErrorValue(ErrorValue errorValue);
 	
-	public void setCellStyle(NCellStyle cellStyle);
+	
 }

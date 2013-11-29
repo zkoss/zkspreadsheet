@@ -15,4 +15,5 @@ public interface NCategoryChartData extends NChartData{
 	
 	public String getCategoriesFormula();
 	public void setCategoriesFormula(String expr);
+	
 }

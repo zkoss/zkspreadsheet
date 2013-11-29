@@ -22,4 +22,6 @@ public interface NSeries {
 	public void setXValuesFormula(String expr);
 	public String getYValuesFormula();
 	public void setYValuesFormula(String expr);
+	
+	public void clearFormulaResultCache();
 }

@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
@@ -23,8 +24,9 @@ public class CellImpl extends CellAdv {
 	private CellType type = CellType.BLANK;
 	private Object value = null;
 	private CellStyleAdv cellStyle;
+	private HyperlinkAdv hyperlink;
 
-	transient private ResultWrap formulaResult;// cache
+	transient private FormulaResultWrap formulaResult;// cache
 
 	public CellImpl(RowAdv row) {
 		this.row = row;
@@ -113,7 +115,7 @@ public class CellImpl extends CellAdv {
 		if (type == CellType.FORMULA && formulaResult == null) {
 			FormulaEngine fe = EngineFactory.getInstance()
 					.createFormulaEngine();
-			formulaResult = new ResultWrap(fe.evaluate((FormulaExpression) value,
+			formulaResult = new FormulaResultWrap(fe.evaluate((FormulaExpression) value,
 					new FormulaEvaluationContext(getSheet().getBook())));
 		}
 	}
@@ -194,12 +196,12 @@ public class CellImpl extends CellAdv {
 		value = newvalue;
 	}
 	
-	private class ResultWrap implements Serializable{
+	private class FormulaResultWrap implements Serializable{
 		private static final long serialVersionUID = 1L;
 		
 		CellType cellType = null;
 		Object value = null;
-		private ResultWrap(EvaluationResult result){
+		private FormulaResultWrap(EvaluationResult result){
 			Object val = result.getValue();
 			ResultType type = result.getType();
 			if(type==ResultType.ERROR){
@@ -243,8 +245,6 @@ public class CellImpl extends CellAdv {
 				cellType = CellType.ERROR;
 				value = (val instanceof ErrorValue)?(ErrorValue)val:new ErrorValue(ErrorValue.INVALID_VALUE,"Unknow value type "+val);
 			}
-			
-			
 		}
 		
 		private CellType getCellType(){
@@ -254,5 +254,16 @@ public class CellImpl extends CellAdv {
 		private Object getValue(){
 			return value;
 		}
+	}
+
+	@Override
+	public NHyperlink getHyperlink() {
+		return hyperlink;
+	}
+
+	@Override
+	public void setHyperlink(NHyperlink hyperlink) {
+		Validations.argInstance(hyperlink, HyperlinkAdv.class);
+		this.hyperlink = (HyperlinkAdv)hyperlink;
 	}
 }

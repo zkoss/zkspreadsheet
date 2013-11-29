@@ -23,8 +23,8 @@ public class SeriesImpl implements NSeries{
 	private ChartAdv chart;
 	
 	private Object evalNameResult;
-	private Object evalValueResult;
-	private Object evalYValueResult;
+	private Object evalValuesResult;
+	private Object evalYValuesResult;
 	
 	private boolean evaluated = false;
 	
@@ -46,18 +46,18 @@ public class SeriesImpl implements NSeries{
 				EvaluationResult result = fe.evaluate(valueExpr,new FormulaEvaluationContext(chart.getSheet().getBook()));
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
-					evalValueResult = val;
+					evalValuesResult = val;
 				}else if(result.getType() == ResultType.ERROR){
-					evalValueResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_NAME);
+					evalValuesResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_NAME);
 				}
 			}
 			if(yAxixExpr!=null){
 				EvaluationResult result = fe.evaluate(yAxixExpr,new FormulaEvaluationContext(chart.getSheet().getBook()));
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
-					evalYValueResult = val;
+					evalYValuesResult = val;
 				}else if(result.getType() == ResultType.ERROR){
-					evalYValueResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_NAME);
+					evalYValuesResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_NAME);
 				}
 			}
 			evaluated = true;
@@ -74,15 +74,15 @@ public class SeriesImpl implements NSeries{
 	
 	public int getNumOfValue(){
 		evalFormula();
-		return ChartDataUtil.sizeOf(evalValueResult);
+		return ChartDataUtil.sizeOf(evalValuesResult);
 	}
 	
 	public Object getValueAt(int index) {
 		evalFormula();
-		if(index>=ChartDataUtil.sizeOf(evalValueResult)){
+		if(index>=ChartDataUtil.sizeOf(evalValuesResult)){
 			return null;
 		}
-		return ChartDataUtil.valueOf(evalValueResult,index);
+		return ChartDataUtil.valueOf(evalValuesResult,index);
 	}
 	
 	public int getNumOfXValue(){
@@ -94,14 +94,14 @@ public class SeriesImpl implements NSeries{
 	
 	public int getNumOfYValue(){
 		evalFormula();
-		return ChartDataUtil.sizeOf(evalYValueResult);
+		return ChartDataUtil.sizeOf(evalYValuesResult);
 	}
 	public Object getYValueAt(int index) {
 		evalFormula();
-		if(index>=ChartDataUtil.sizeOf(evalYValueResult)){
+		if(index>=ChartDataUtil.sizeOf(evalYValuesResult)){
 			return null;
 		}
-		return ChartDataUtil.valueOf(evalYValueResult,index);
+		return ChartDataUtil.valueOf(evalYValuesResult,index);
 	}
 	public void setNameFormula(String expr) {
 		evaluated = false;
@@ -140,6 +140,13 @@ public class SeriesImpl implements NSeries{
 	@Override
 	public String getYValuesFormula() {
 		return yAxixExpr==null?null:yAxixExpr.getFormulaString();
+	}
+
+	@Override
+	public void clearFormulaResultCache() {
+		evaluated = false;
+		evalNameResult = evalValuesResult = evalYValuesResult = null;
+		
 	}
 
 }

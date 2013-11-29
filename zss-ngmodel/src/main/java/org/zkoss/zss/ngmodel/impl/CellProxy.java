@@ -3,6 +3,7 @@ package org.zkoss.zss.ngmodel.impl;
 import java.lang.ref.WeakReference;
 
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
@@ -170,6 +171,22 @@ class CellProxy extends CellAdv {
 
 	@Override
 	public void checkOrphan() {
+	}
+
+	@Override
+	public NHyperlink getHyperlink() {
+		loadProxy();
+		return proxy == null ? null : proxy.getHyperlink();
+	}
+
+	@Override
+	public void setHyperlink(NHyperlink hyperlink) {
+		loadProxy();
+		if (proxy == null) {
+			proxy = (CellAdv) ((RowAdv)  ((SheetAdv)getSheet()).getOrCreateRowAt(
+					rowIdx)).getOrCreateCellAt(columnIdx);
+		}
+		proxy.setHyperlink(hyperlink);
 	}
 
 }

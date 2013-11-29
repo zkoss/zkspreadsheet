@@ -92,4 +92,13 @@ public class CategoryChartDataImpl implements NCategoryChartData, Serializable{
 	public String getCategoriesFormula() {
 		return catFormula==null?null:catFormula.getFormulaString();
 	}
+
+	@Override
+	public void clearFormulaResultCache() {
+		evalResult = null;
+		evaluated = false;
+		for(SeriesImpl series:serieses){
+			series.clearFormulaResultCache();
+		}
+	}
 }

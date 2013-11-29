@@ -480,7 +480,7 @@ public class SheetImpl extends SheetAdv {
 	}
 
 	public List<NPicture> getPictures() {
-		return new ArrayList<NPicture>(pictures);
+		return Collections.unmodifiableList((List)pictures);
 	}
 	
 	public NChart addChart(NChart.NChartType type,NViewAnchor anchor) {
@@ -506,8 +506,9 @@ public class SheetImpl extends SheetAdv {
 		charts.remove(chart);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public List<NChart> getCharts() {
-		return new ArrayList<NChart>(charts);
+		return Collections.unmodifiableList((List)charts);
 	}
 
 }

@@ -86,9 +86,9 @@ public class NRangeImpl implements NRange {
 
 	
 	private class CellVisitorTask extends ReadWriteTask{
-		CellVisitor visitor;
+		private CellVisitor visitor;
 		
-		CellVisitorTask(CellVisitor visitor){
+		private CellVisitorTask(CellVisitor visitor){
 			this.visitor = visitor;
 		}
 
@@ -213,7 +213,7 @@ public class NRangeImpl implements NRange {
 	}
 	@Override
 	public void setValue(final Object value) {
-		ReadWriteTask.doInWriteLock(getLock(),new CellVisitorTask(new CellVisitor() {
+		new CellVisitorTask(new CellVisitor() {
 			public boolean visit(NCell cell) {
 				Object cellval = cell.getValue();
 				if (euqlas(cellval, value)) {
@@ -222,12 +222,12 @@ public class NRangeImpl implements NRange {
 				cell.setValue(value);
 				return true;
 			}
-		}));
+		}).doInWriteLock(getLock());
 	}
 	
 	@Override
 	public void clear() {
-		ReadWriteTask.doInWriteLock(getLock(),new CellVisitorTask(new CellVisitor() {
+		new CellVisitorTask(new CellVisitor() {
 			public boolean visit(NCell cell) {
 				if (cell.isNull() || cell.getType() == CellType.BLANK) {
 					return false;
@@ -235,7 +235,7 @@ public class NRangeImpl implements NRange {
 				cell.clearValue();
 				return true;
 			}
-		}));
+		}).doInWriteLock(getLock());
 	}
 
 	
@@ -245,7 +245,7 @@ public class NRangeImpl implements NRange {
 		final InputResult result = ie.parseInput(editText == null ? ""
 				: editText, new InputParseContext(_locale));
 		
-		ReadWriteTask.doInWriteLock(getLock(),new CellVisitorTask(new CellVisitor() {
+		new CellVisitorTask(new CellVisitor() {
 			public boolean visit(NCell cell) {
 				Object cellval = cell.getValue();
 				if (euqlas(cellval, result.getValue())) {
@@ -273,6 +273,6 @@ public class NRangeImpl implements NRange {
 				}
 				return true;
 			}
-		}));
+		}).doInWriteLock(getLock());
 	}
 }

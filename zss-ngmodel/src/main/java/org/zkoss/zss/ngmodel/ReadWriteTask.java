@@ -12,7 +12,11 @@ public abstract class ReadWriteTask {
 	
 	abstract public Object invoke();
 	
-	public static Object doInWriteLock(ReadWriteLock lock, ReadWriteTask task){
+	public Object doInWriteLock(ReadWriteLock lock){
+		return doInWriteLock(lock, this);
+	}
+	
+	private static Object doInWriteLock(ReadWriteLock lock, ReadWriteTask task){
 		lock.writeLock().lock();
 		try{
 			return task.invoke();
@@ -20,8 +24,10 @@ public abstract class ReadWriteTask {
 			lock.writeLock().unlock();
 		}
 	}
-	
-	public Object doInReadLock(ReadWriteLock lock, ReadWriteTask task){
+	public Object doInReadLock(ReadWriteLock lock){
+		return doInReadLock(lock,this);
+	}
+	private static Object doInReadLock(ReadWriteLock lock, ReadWriteTask task){
 		lock.readLock().lock();
 		try{
 			return task.invoke();
