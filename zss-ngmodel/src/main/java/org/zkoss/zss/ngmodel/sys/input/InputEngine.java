@@ -7,5 +7,5 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 
 public interface InputEngine {
 
-	public InputResult parseInput(String editText,InputParseContext context);
+	public InputResult parseInput(String editText,String format, InputParseContext context);
 }

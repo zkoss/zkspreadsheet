@@ -14,7 +14,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 
 public class InputEngineImpl implements InputEngine{
 
-	public InputResult parseInput(String editText,InputParseContext context){
+	public InputResult parseInput(String editText,String format,InputParseContext context){
 		Validations.argNotNull(editText,context);
 		InputResultImpl result = new InputResultImpl(editText);
 		if(editText!=null && !"".equals(editText)){

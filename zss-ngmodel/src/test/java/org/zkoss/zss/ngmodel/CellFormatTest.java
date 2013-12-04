@@ -31,7 +31,8 @@ public class CellFormatTest {
 		NSheet sheet1 = book.createSheet("Sheet1");
 		sheet1.getCell(0,0).setValue(new Integer(12000));
 		sheet1.getCell(0,0).getCellStyle().setDataFormat("#.0,");
-		FormatResult result = formatEngine.format(sheet1.getCell(0,0), formatContext);
+		NCell cell = sheet1.getCell(0,0);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
 		Assert.assertEquals("12.0", result.getText());
 	}
 
@@ -41,7 +42,8 @@ public class CellFormatTest {
 		NSheet sheet1 = book.createSheet("Sheet1");
 		sheet1.getCell(0,0).setValue(new Double(-1234567890));
 		sheet1.getCell(0,0).getCellStyle().setDataFormat("$#,##0.00_);($#,##0.00)");
-		FormatResult result = formatEngine.format(sheet1.getCell(0,0), formatContext);
+		NCell cell = sheet1.getCell(0,0);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
 		Assert.assertEquals("($1,234,567,890.00)", result.getText());
 	}
 	
@@ -55,7 +57,8 @@ public class CellFormatTest {
 		calendar.set(Calendar.DAY_OF_MONTH, 30);
 		sheet1.getCell(0,0).setValue(calendar.getTime());
 		sheet1.getCell(0,0).getCellStyle().setDataFormat("yyyy/m/d");
-		FormatResult result = formatEngine.format(sheet1.getCell(0,0), formatContext);
+		NCell cell = sheet1.getCell(0,0);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
 		Assert.assertEquals("2013/10/30", result.getText());
 	}
 //	
@@ -81,7 +84,8 @@ public class CellFormatTest {
 		NSheet sheet1 = book.createSheet("Sheet1");
 		sheet1.getCell(0,0).setValue(new Integer(12000));
 		sheet1.getCell(0,0).getCellStyle().setDataFormat("[red]#.0,");
-		FormatResult result = formatEngine.format(sheet1.getCell(0,0), formatContext);
+		NCell cell = sheet1.getCell(0,0);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
 		Assert.assertEquals(Color.RED.toString(), result.getColor());
 	}
 	

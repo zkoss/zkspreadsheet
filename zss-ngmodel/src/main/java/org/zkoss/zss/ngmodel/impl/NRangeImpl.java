@@ -234,15 +234,33 @@ public class NRangeImpl implements NRange {
 		}).doInWriteLock(getLock());
 	}
 
+	static class ResultWrap<T> {
+		T obj;
+		public ResultWrap(){}
+		public ResultWrap(T obj){
+			this.obj = obj;
+		}
+		public T get() {
+			return obj;
+		}
+		public void set(T obj) {
+			this.obj = obj;
+		}
+	}
 	
 	@Override
-	public void setEditText(String editText) {
+	public void setEditText(final String editText) {
 		final InputEngine ie = EngineFactory.getInstance().createInputEngine();
-		final InputResult result = ie.parseInput(editText == null ? ""
-				: editText, new InputParseContext(_locale));
-		
+		final ResultWrap<InputResult> input = new ResultWrap<InputResult>();
 		new CellVisitorTask(new CellVisitor() {
 			public boolean visit(NCell cell) {
+				InputResult result;
+				if((result = input.get())==null){
+					result = ie.parseInput(editText == null ? ""
+						: editText, cell.getCellStyle().getDataFormat(), new InputParseContext(_locale));
+					input.set(result);
+				}
+				
 				Object cellval = cell.getValue();
 				if (euqlas(cellval, result.getValue())) {
 					return false;
