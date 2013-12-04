@@ -16,7 +16,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.impl;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -56,11 +58,13 @@ public class BookImpl extends BookAdv{
 	private final FontAdv defaultFont;
 
 	
-	private HashMap<String,AtomicInteger> objIdCounter = new HashMap<String,AtomicInteger>();
-	private int maxRowSize = SpreadsheetVersion.EXCEL2007.getMaxRows();
-	private int maxColumnSize = SpreadsheetVersion.EXCEL2007.getMaxColumns();
+	private final HashMap<String,AtomicInteger> objIdCounter = new HashMap<String,AtomicInteger>();
+	private final int maxRowSize = SpreadsheetVersion.EXCEL2007.getMaxRows();
+	private final int maxColumnSize = SpreadsheetVersion.EXCEL2007.getMaxColumns();
 	
-	private List<ModelEventListener> listeners = new LinkedList<ModelEventListener>();
+	private final List<ModelEventListener> listeners = new LinkedList<ModelEventListener>();
+	
+	private final HashMap<String,Object> attributes = new LinkedHashMap<String, Object>();
 	
 	public BookImpl(String bookName){
 		Validations.argNotNull(bookName);
@@ -121,7 +125,7 @@ public class BookImpl extends BookAdv{
 //	}
 	
 	@Override
-	protected void sendEvent(ModelEvent event){	
+	public void sendEvent(ModelEvent event){	
 		//implicitly deliver to sheet
 		for(SheetAdv sheet:sheets){
 			sheet.onModelEvent(event);
@@ -133,7 +137,7 @@ public class BookImpl extends BookAdv{
 	}
 	
 	@Override
-	protected void sendEvent(String name, Object... data){
+	public void sendEvent(String name, Object... data){
 		Map<String,Object> datamap = new HashMap<String,Object>();
 		datamap.put("book", this);
 		if(datamap!=null){
@@ -360,6 +364,21 @@ public class BookImpl extends BookAdv{
 		if(listeners!=null){
 			listeners.remove(listener);
 		}
+	}
+
+	@Override
+	public Object getAttribute(String name) {
+		return attributes.get(name);
+	}
+
+	@Override
+	public Object setAttribute(String name, Object value) {
+		return attributes.put(name, value);
+	}
+
+	@Override
+	public Map<String, Object> getAttributes() {
+		return Collections.unmodifiableMap(attributes);
 	}
 
 }

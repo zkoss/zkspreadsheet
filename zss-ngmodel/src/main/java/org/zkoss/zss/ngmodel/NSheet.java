@@ -1,6 +1,7 @@
 package org.zkoss.zss.ngmodel;
 
 import java.util.List;
+import java.util.Map;
 
 import org.zkoss.zss.ngmodel.chart.NChartData;
 
@@ -63,5 +64,35 @@ public interface NSheet {
 	public List<NChart> getCharts();
 	
 	
-//	public List<CellRegion> getMergedRegions();
+	public List<CellRegion> getMergedRegions();
+	public void removeMergedRegion(CellRegion region);
+	
+	
+	public void addMergedRegion(CellRegion region);
+	/**
+	 * get any merged region that contains row and column
+	 */
+	public CellRegion getMergedRegion(int row,int column);
+	
+	
+	/**
+	 * Get the runtime custom attribute that stored in this sheet
+	 * @param name the attribute name
+	 * @return the value, or null if not found
+	 */
+	public Object getAttribute(String name);
+	
+	/**
+	 * Set the runtime custom attribute to stored in this sheet, the attribute is only use for developer to stored runtime data in the sheet,
+	 * values will not stored to excel when exporting.
+	 * @param name name the attribute name
+	 * @param value the attribute value
+	 */
+	public Object setAttribute(String name,Object value);
+	
+	/**
+	 * Get the unmodifiable runtime attributes map
+	 * @return
+	 */
+	public Map<String,Object> getAttributes();
 }

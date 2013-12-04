@@ -19,5 +19,29 @@ public class CellRegion implements Serializable {
 		this.lastRow = lastRow;
 		this.lastColumn = lastColumn;
 	}
+	
+	public boolean isSingle(){
+		return row == lastRow && column == lastColumn;
+	}
 
+	
+	public boolean contains(int row, int column){
+		return row>=this.row && row<=this.lastRow && column>=this.column && column<=this.lastColumn;
+	}
+	
+	public boolean contains(CellRegion region){
+		return contains(region.row,region.column) ||
+				contains(region.row,region.lastColumn) ||
+				contains(region.lastRow,region.column) ||
+				contains(region.lastRow,region.lastColumn) ||
+				region.contains(row,column);
+	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("[").append(row).append(column).append(lastRow).append(lastColumn).append("]");
+		
+		return sb.toString();
+	}
+	
 }

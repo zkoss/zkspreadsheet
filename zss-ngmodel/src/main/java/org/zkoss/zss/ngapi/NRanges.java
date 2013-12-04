@@ -1,7 +1,7 @@
 package org.zkoss.zss.ngapi;
 
+import org.zkoss.zss.ngapi.impl.NRangeImpl;
 import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.impl.NRangeImpl;
 import org.zkoss.zss.ngmodel.util.AreaReference;
 import org.zkoss.zss.ngmodel.util.CellReference;
 

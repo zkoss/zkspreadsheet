@@ -1,4 +1,4 @@
-package org.zkoss.zss.ngmodel.impl;
+package org.zkoss.zss.ngapi.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,6 +17,9 @@ import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.ReadWriteTask;
+import org.zkoss.zss.ngmodel.impl.BookAdv;
+import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
+import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;

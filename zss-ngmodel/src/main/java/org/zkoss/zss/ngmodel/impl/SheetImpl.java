@@ -3,10 +3,14 @@ package org.zkoss.zss.ngmodel.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.ModelEvents;
@@ -23,6 +27,7 @@ import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
 import org.zkoss.zss.ngmodel.util.CellReference;
+import org.zkoss.zss.ngmodel.util.Validations;
 
 public class SheetImpl extends SheetAdv {
 	private static final long serialVersionUID = 1L;
@@ -36,6 +41,9 @@ public class SheetImpl extends SheetAdv {
 	private final List<PictureAdv> pictures = new LinkedList<PictureAdv>();
 	private final List<ChartAdv> charts = new LinkedList<ChartAdv>();
 	
+	private final List<CellRegion> mergedRegions = new LinkedList<CellRegion>();
+	
+	private final HashMap<String,Object> attributes = new LinkedHashMap<String, Object>();
 	
 	public SheetImpl(BookAdv book,String id){
 		this.book = book;
@@ -509,6 +517,49 @@ public class SheetImpl extends SheetAdv {
 	@SuppressWarnings("rawtypes")
 	public List<NChart> getCharts() {
 		return Collections.unmodifiableList((List)charts);
+	}
+
+	@Override
+	public List<CellRegion> getMergedRegions() {
+		return Collections.unmodifiableList((List)mergedRegions);
+	}
+
+	@Override
+	public void removeMergedRegion(CellRegion region) {
+		mergedRegions.remove(region);
+	}
+
+	@Override
+	public void addMergedRegion(CellRegion region) {
+		Validations.argNotNull(region);
+		for(CellRegion r:mergedRegions){
+			if(r.contains(region)){
+				throw new InvalidateModelOpException("the region is overlapped "+r+":"+region);
+			}
+		}
+		
+	}
+
+	@Override
+	public CellRegion getMergedRegion(int row, int column) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+	@Override
+	public Object getAttribute(String name) {
+		return attributes.get(name);
+	}
+
+	@Override
+	public Object setAttribute(String name, Object value) {
+		return attributes.put(name, value);
+	}
+
+	@Override
+	public Map<String, Object> getAttributes() {
+		return Collections.unmodifiableMap(attributes);
 	}
 
 }

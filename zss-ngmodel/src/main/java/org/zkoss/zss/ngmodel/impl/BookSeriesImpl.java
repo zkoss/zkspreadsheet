@@ -29,7 +29,7 @@ public class BookSeriesImpl extends BookSeriesAdv {
 	}
 
 	@Override
-	DependencyTable getDependencyTable() {
+	public DependencyTable getDependencyTable() {
 		return dependencyEngine.getDependencyTable();
 	}
 	@Override

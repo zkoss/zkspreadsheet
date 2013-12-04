@@ -18,7 +18,7 @@ public abstract class BookAdv implements NBook,Serializable{
 	
 	/*package*/ abstract String nextObjId(String type);
 	
-	/*package*/ abstract void sendEvent(ModelEvent event);
-	/*package*/ abstract void sendEvent(String name, Object... data);
+	public abstract void sendEvent(ModelEvent event);
+	public abstract void sendEvent(String name, Object... data);
 
 }

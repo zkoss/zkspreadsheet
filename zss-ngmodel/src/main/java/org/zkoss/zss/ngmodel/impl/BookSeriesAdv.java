@@ -8,5 +8,5 @@ import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 public abstract class BookSeriesAdv implements NBookSeries,Serializable{
 	private static final long serialVersionUID = 1L;
 
-	/*package*/ abstract DependencyTable getDependencyTable();
+	public abstract DependencyTable getDependencyTable();
 }
