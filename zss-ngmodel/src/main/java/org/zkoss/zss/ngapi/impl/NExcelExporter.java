@@ -19,13 +19,14 @@ public class NExcelExporter implements NExporter{
 	
 	@Override
 	public void export(NBook book, File file) throws IOException {
-		FileOutputStream fos = null;
+		OutputStream os = null;
 		try{
-			export(book,fos);
+			os = new FileOutputStream(file);
+			export(book,os);
 		}finally{
-			if(fos!=null){
+			if(os!=null){
 				try{
-					fos.close();
+					os.close();
 				}catch(Exception x){};
 			}
 		}
