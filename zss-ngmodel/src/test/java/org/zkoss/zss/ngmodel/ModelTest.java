@@ -947,6 +947,9 @@ public class ModelTest {
 		Assert.assertEquals(CellType.DATE, cell.getType());
 		Assert.assertEquals(now,cell.getValue());
 		
+		cell.setValue(true);
+		Assert.assertEquals(CellType.BOOLEAN, cell.getType());
+		Assert.assertEquals(true,cell.getValue());
 		
 		cell.setValue(err);
 		Assert.assertEquals(CellType.ERROR, cell.getType());
@@ -980,6 +983,10 @@ public class ModelTest {
 		cell.setValue(now);
 		Assert.assertEquals(CellType.DATE, cell.getType());
 		Assert.assertEquals(now,cell.getValue());
+		
+		cell.setValue(false);
+		Assert.assertEquals(CellType.BOOLEAN, cell.getType());
+		Assert.assertEquals(false,cell.getValue());
 		
 		
 		cell.setValue(err);
@@ -1027,6 +1034,9 @@ public class ModelTest {
 		Assert.assertEquals(CellType.DATE, cell.getType());
 		Assert.assertEquals(now,cell.getDateValue());
 		
+		cell.setBooleanValue(true);
+		Assert.assertEquals(CellType.BOOLEAN, cell.getType());
+		Assert.assertEquals(Boolean.TRUE,cell.getBooleanValue());
 		
 		cell.setErrorValue(err);
 		Assert.assertEquals(CellType.ERROR, cell.getType());

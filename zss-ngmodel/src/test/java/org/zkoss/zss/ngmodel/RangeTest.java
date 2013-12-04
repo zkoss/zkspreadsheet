@@ -65,6 +65,13 @@ public class RangeTest {
 		Assert.assertEquals(CellType.DATE, cell.getType());
 		Assert.assertEquals("2013/01/01",new SimpleDateFormat("yyyy/MM/dd").format((Date)cell.getValue()));
 		
+		NRanges.range(sheet,1,1).setEditText("tRue");
+		Assert.assertEquals(CellType.BOOLEAN, cell.getType());
+		Assert.assertEquals(Boolean.TRUE,cell.getBooleanValue());
+		
+		NRanges.range(sheet,1,1).setEditText("FalSe");
+		Assert.assertEquals(CellType.BOOLEAN, cell.getType());
+		Assert.assertEquals(Boolean.FALSE,cell.getBooleanValue());
 		
 		NRanges.range(sheet,1,1).setEditText("=SUM(999)");
 		Assert.assertEquals(CellType.FORMULA, cell.getType());
@@ -107,6 +114,10 @@ public class RangeTest {
 		NRanges.range(sheet,1,1).setValue(now);
 		Assert.assertEquals(CellType.DATE, cell.getType());
 		Assert.assertEquals(now,cell.getValue());
+		
+		NRanges.range(sheet,1,1).setValue(Boolean.TRUE);
+		Assert.assertEquals(CellType.BOOLEAN, cell.getType());
+		Assert.assertEquals(Boolean.TRUE,cell.getValue());
 		
 		
 		NRanges.range(sheet,1,1).setValue("=SUM(999)");

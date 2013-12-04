@@ -95,6 +95,22 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 		}
 		return (Date)getValue();
 	}
+	
+	@Override
+	public void setBooleanValue(Boolean date) {
+		setValue(date);
+	}
+
+	@Override
+	public Boolean getBooleanValue() {
+		if(getType() == CellType.FORMULA){
+			evalFormula();
+			checkFormulaResultType(CellType.BOOLEAN);
+		}else{
+			checkType(CellType.BOOLEAN);
+		}
+		return (Boolean)getValue();
+	}
 
 	@Override
 	public ErrorValue getErrorValue() {

@@ -50,6 +50,19 @@ public class InputEngineImpl implements InputEngine{
 				return result;
 			} catch (ParseException e) {}
 
+			//guess boolean
+			if("true".equalsIgnoreCase(editText)){
+				value = Boolean.TRUE;
+				result.setType(CellType.BOOLEAN);
+				result.setValue(value);
+				return result;
+			}else if("false".equalsIgnoreCase(editText)){
+				value = Boolean.FALSE;
+				result.setType(CellType.BOOLEAN);
+				result.setValue(value);
+				return result;
+			}
+			
 
 
 			//guess string

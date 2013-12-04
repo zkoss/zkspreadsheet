@@ -12,8 +12,8 @@ public interface NCell {
 		RICHTEXT,
 		FORMULA,
 		NUMBER,
+		BOOLEAN,		
 		DATE,
-		BOOLEAN,
 		ERROR
 	}
 	
@@ -79,6 +79,9 @@ public interface NCell {
 	
 	public void setDateValue(Date date);
 	public Date getDateValue();
+	
+	public void setBooleanValue(Boolean bool);
+	public Boolean getBooleanValue();
 	
 	public ErrorValue getErrorValue();
 	public void setErrorValue(ErrorValue errorValue);

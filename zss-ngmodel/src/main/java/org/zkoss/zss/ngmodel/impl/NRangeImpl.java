@@ -272,6 +272,9 @@ public class NRangeImpl implements NRange {
 				case DATE:
 					cell.setDateValue((Date) result.getValue());
 					break;
+				case BOOLEAN:
+					cell.setBooleanValue((Boolean) result.getValue());
+					break;
 				case FORMULA:
 					cell.setFormulaValue((String) result.getValue());
 					break;

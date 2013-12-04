@@ -188,6 +188,8 @@ public class CellImpl extends CellAdv {
 			type = CellType.FORMULA;
 		} else if (newvalue instanceof Date) {
 			type = CellType.DATE;
+		} else if (newvalue instanceof Boolean) {
+			type = CellType.BOOLEAN;
 		} else if (newvalue instanceof Number) {
 			type = CellType.NUMBER;
 		} else if (newvalue instanceof ErrorValue) {
