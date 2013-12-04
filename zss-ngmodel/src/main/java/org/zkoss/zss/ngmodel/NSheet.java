@@ -1,5 +1,6 @@
 package org.zkoss.zss.ngmodel;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,21 @@ public interface NSheet {
 	 * @return the sheet name
 	 */
 	public String getSheetName();
+	
+	public Iterator<NRow> getRowIterator();
+	public Iterator<NColumn> getColumnIterator();
+	
+	public int getDefaultRowHeight();
+	public int getDefaultColumnWidth();
+	
+	public void setDefaultRowHeight(int height);
+	public void setDefaultColumnWidth(int width);
+	
+	public int getNumOfRowFreeze();
+	public int setNumOfColumnFreeze();
+	
+	public void setNumOfRowFreeze(int num);
+	public void setNumOfColumnFreeze(int num);
 	
 	
 	public NRow getRow(int rowIdx);

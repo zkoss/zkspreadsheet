@@ -13,6 +13,9 @@ public class RowImpl extends RowAdv {
 	private final BiIndexPool<CellAdv> cells = new BiIndexPool<CellAdv>();
 
 	private CellStyleAdv cellStyle;
+	
+	private Integer height;
+	private boolean hidden = false;
 
 	public RowImpl(SheetAdv sheet) {
 		this.sheet = sheet;
@@ -148,6 +151,30 @@ public class RowImpl extends RowAdv {
 		Validations.argNotNull(cellStyle);
 		Validations.argInstance(cellStyle, CellStyleImpl.class);
 		this.cellStyle = (CellStyleImpl) cellStyle;
+	}
+
+	@Override
+	public int getHeight() {
+		if(height!=null){
+			return height.intValue();
+		}
+		checkOrphan();
+		return getSheet().getDefaultRowHeight();
+	}
+
+	@Override
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	@Override
+	public void setHeight(int height) {
+		this.height = Integer.valueOf(height);
+	}
+
+	@Override
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
 	}
 
 }

@@ -12,6 +12,9 @@ public class ColumnImpl extends ColumnAdv {
 
 	private SheetAdv sheet;
 	private CellStyleAdv cellStyle;
+	
+	private Integer width;
+	private boolean hidden = false;
 
 	public ColumnImpl(SheetAdv sheet) {
 		this.sheet = sheet;
@@ -77,6 +80,30 @@ public class ColumnImpl extends ColumnAdv {
 		Validations.argNotNull(cellStyle);
 		Validations.argInstance(cellStyle, CellStyleAdv.class);
 		this.cellStyle = (CellStyleAdv) cellStyle;
+	}
+
+	@Override
+	public int getWidth() {
+		if(width!=null){
+			return width.intValue();
+		}
+		checkOrphan();
+		return getSheet().getDefaultColumnWidth();
+	}
+
+	@Override
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	@Override
+	public void setWidth(int width) {
+		this.width = Integer.valueOf(width);
+	}
+
+	@Override
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
 	}
 
 }

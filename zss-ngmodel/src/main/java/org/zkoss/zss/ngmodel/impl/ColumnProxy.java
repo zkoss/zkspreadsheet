@@ -92,4 +92,40 @@ class ColumnProxy extends ColumnAdv {
 
 	@Override
 	void onModelEvent(ModelEvent event) {}
+
+	@Override
+	public int getWidth() {
+		loadProxy();
+		if (proxy != null) {
+			return proxy.getWidth();
+		}
+		return getSheet().getDefaultColumnWidth();
+	}
+
+	@Override
+	public boolean isHidden() {
+		loadProxy();
+		if (proxy != null) {
+			return proxy.isHidden();
+		}
+		return false;
+	}
+
+	@Override
+	public void setWidth(int width) {
+		loadProxy();
+		if (proxy == null) {
+			proxy = (ColumnAdv)((SheetAdv)getSheet()).getOrCreateColumn(index);
+		}
+		proxy.setWidth(width);
+	}
+
+	@Override
+	public void setHidden(boolean hidden) {
+		loadProxy();
+		if (proxy == null) {
+			proxy = (ColumnAdv)((SheetAdv)getSheet()).getOrCreateColumn(index);
+		}
+		proxy.setHidden(hidden);
+	}
 }

@@ -118,4 +118,40 @@ class RowProxy extends RowAdv{
 	
 	@Override
 	void onModelEvent(ModelEvent event) {}
+	
+	@Override
+	public int getHeight() {
+		loadProxy();
+		if (proxy != null) {
+			return proxy.getHeight();
+		}
+		return getSheet().getDefaultRowHeight();
+	}
+
+	@Override
+	public boolean isHidden() {
+		loadProxy();
+		if (proxy != null) {
+			return proxy.isHidden();
+		}
+		return false;
+	}
+
+	@Override
+	public void setHeight(int width) {
+		loadProxy();
+		if (proxy == null) {
+			proxy = (RowAdv)((SheetAdv)getSheet()).getOrCreateRow(index);
+		}
+		proxy.setHeight(width);
+	}
+
+	@Override
+	public void setHidden(boolean hidden) {
+		loadProxy();
+		if (proxy == null) {
+			proxy = (RowAdv)((SheetAdv)getSheet()).getOrCreateRow(index);
+		}
+		proxy.setHidden(hidden);
+	}
 }

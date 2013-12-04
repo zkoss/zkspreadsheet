@@ -13,4 +13,11 @@ public interface NColumn {
 	
 	//editable
 	public void setCellStyle(NCellStyle cellStyle);
+	
+	public int getWidth();
+	public boolean isHidden();
+	
+	public void setWidth(int width);
+	public void setHidden(boolean hidden);
+	
 }

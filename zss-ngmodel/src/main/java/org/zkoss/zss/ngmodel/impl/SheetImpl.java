@@ -44,6 +44,10 @@ public class SheetImpl extends SheetAdv {
 	private final List<CellRegion> mergedRegions = new LinkedList<CellRegion>();
 	
 	private final HashMap<String,Object> attributes = new LinkedHashMap<String, Object>();
+	private int columnFreeze = 0;
+	private int rowFreeze = 0;
+	private int defaultColumnWidth = 64; //in pixel
+	private int defaultRowHeight = 20;//in pixel
 	
 	public SheetImpl(BookAdv book,String id){
 		this.book = book;
@@ -560,6 +564,58 @@ public class SheetImpl extends SheetAdv {
 	@Override
 	public Map<String, Object> getAttributes() {
 		return Collections.unmodifiableMap(attributes);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public Iterator<NRow> getRowIterator() {
+		return Collections.unmodifiableCollection((Collection)rows.values()).iterator();
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public Iterator<NColumn> getColumnIterator() {
+		return Collections.unmodifiableCollection((Collection)columns.values()).iterator();
+	}
+
+	@Override
+	public int getDefaultRowHeight() {
+		return defaultRowHeight;
+	}
+
+	@Override
+	public int getDefaultColumnWidth() {
+		return defaultColumnWidth;
+	}
+
+	@Override
+	public void setDefaultRowHeight(int height) {
+		defaultRowHeight = height;
+	}
+
+	@Override
+	public void setDefaultColumnWidth(int width) {
+		defaultColumnWidth = width;
+	}
+
+	@Override
+	public int getNumOfRowFreeze() {
+		return rowFreeze;
+	}
+
+	@Override
+	public int setNumOfColumnFreeze() {
+		return columnFreeze;
+	}
+
+	@Override
+	public void setNumOfRowFreeze(int num) {
+		rowFreeze = num;
+	}
+
+	@Override
+	public void setNumOfColumnFreeze(int num) {
+		columnFreeze = num;
 	}
 
 }

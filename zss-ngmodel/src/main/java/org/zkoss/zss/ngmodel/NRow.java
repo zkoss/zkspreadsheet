@@ -17,4 +17,10 @@ public interface NRow {
 	
 	//editable
 	public void setCellStyle(NCellStyle cellStyle);
+	
+	public int getHeight();
+	public boolean isHidden();
+	
+	public void setHeight(int height);
+	public void setHidden(boolean hidden);
 }
