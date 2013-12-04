@@ -2,10 +2,11 @@ package org.zkoss.zss.ngmodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -14,18 +15,15 @@ import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
+import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.NFont.Boldweight;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 import org.zkoss.zss.ngmodel.NFont.Underline;
-import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
-import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.chart.NCategoryChartData;
-import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
-import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
 import org.zkoss.zss.ngmodel.util.FontMatcher;
 
@@ -129,9 +127,86 @@ public class ModelTest {
 		book.moveSheetTo(sheet1, 3);
 		}catch(InvalidateModelOpException x){}//ownership
 		
+		
+		
 	}
 	
-	
+	@Test
+	public void testRowColumn(){
+		NBook book = new BookImpl("book1");
+		NSheet sheet1 = book.createSheet("Sheet1");
+		
+		sheet1.setDefaultColumnWidth(100);
+		sheet1.setDefaultRowHeight(200);
+		Assert.assertEquals(100, sheet1.getDefaultColumnWidth());
+		Assert.assertEquals(200, sheet1.getDefaultRowHeight());
+		
+		Assert.assertEquals(100, sheet1.getColumn(0).getWidth());
+		Assert.assertEquals(200, sheet1.getRow(1).getHeight());
+		
+		sheet1.getColumn(0).setWidth(30);
+		sheet1.getRow(1).setHeight(60);
+		
+		Assert.assertEquals(100, sheet1.getColumn(2).getWidth());
+		Assert.assertEquals(200, sheet1.getRow(2).getHeight());
+		Assert.assertEquals(false, sheet1.getColumn(2).isHidden());
+		Assert.assertEquals(false, sheet1.getRow(2).isHidden());
+		Assert.assertEquals(30, sheet1.getColumn(0).getWidth());
+		Assert.assertEquals(60, sheet1.getRow(1).getHeight());
+		
+		sheet1.getColumn(100).setHidden(true); //mark 2nd column
+		sheet1.getRow(1000).setHidden(true); //mark 2nd row
+		
+		sheet1.getCell(600, 60).setValue("Test");
+		
+		
+		Assert.assertEquals(true, sheet1.getColumn(100).isHidden());
+		Assert.assertEquals(true, sheet1.getRow(1000).isHidden());
+		
+		Iterator<NRow> rowiter = sheet1.getRowIterator();
+		Assert.assertTrue(rowiter.hasNext());
+		NRow row = rowiter.next();
+		Assert.assertEquals(1, row.getIndex());
+		Assert.assertEquals(60, row.getHeight());
+		Assert.assertEquals(false, row.isHidden());
+		
+		Assert.assertTrue(rowiter.hasNext());
+		row = rowiter.next();
+		Assert.assertEquals(600, row.getIndex());
+		Assert.assertEquals(sheet1.getDefaultRowHeight(), row.getHeight());
+		Assert.assertEquals(false, row.isHidden());
+		
+		Assert.assertTrue(rowiter.hasNext());
+		row = rowiter.next();
+		Assert.assertEquals(1000, row.getIndex());
+		Assert.assertEquals(sheet1.getDefaultRowHeight(), row.getHeight());
+		Assert.assertEquals(true, row.isHidden());
+		
+		Assert.assertFalse(rowiter.hasNext());
+		
+		
+		Iterator<NColumn> coliter = sheet1.getColumnIterator();
+		Assert.assertTrue(coliter.hasNext());
+		NColumn col = coliter.next();
+		Assert.assertEquals(0, col.getIndex());
+		Assert.assertEquals(30, col.getWidth());
+		Assert.assertEquals(false, col.isHidden());
+		
+		Assert.assertTrue(coliter.hasNext());
+		col = coliter.next();
+		Assert.assertEquals(60, col.getIndex());
+		Assert.assertEquals(sheet1.getDefaultColumnWidth(), col.getWidth());
+		Assert.assertEquals(false, col.isHidden());
+		
+		Assert.assertTrue(coliter.hasNext());
+		col = coliter.next();
+		Assert.assertEquals(100, col.getIndex());
+		Assert.assertEquals(sheet1.getDefaultColumnWidth(), col.getWidth());
+		Assert.assertEquals(true, col.isHidden());
+		
+		Assert.assertFalse(coliter.hasNext());
+		
+	}
 	@Test
 	public void testReferenceString(){
 		NBook book = new BookImpl("book1");
@@ -1374,6 +1449,116 @@ public class ModelTest {
 	}
 	
 	@Test
+	public void testMergedRange(){
+		NBook book = new BookImpl("book1");
+		NSheet sheet = book.createSheet("Sheet 1");
+		sheet.addMergedRegion(new CellRegion(1,1,2,2));
+		sheet.addMergedRegion(new CellRegion(3,4,5,6));
+		sheet.addMergedRegion(new CellRegion("J1:K2"));
+		
+		Assert.assertEquals(3, sheet.getMergedRegions().size());
+		
+		CellRegion region = sheet.getMergedRegions().get(0);
+		Assert.assertEquals(1, region.row);
+		Assert.assertEquals(1, region.column);
+		Assert.assertEquals(2, region.lastRow);
+		Assert.assertEquals(2, region.lastColumn);
+		
+		region = sheet.getMergedRegions().get(1);
+		Assert.assertEquals(3, region.row);
+		Assert.assertEquals(4, region.column);
+		Assert.assertEquals(5, region.lastRow);
+		Assert.assertEquals(6, region.lastColumn);
+		
+		region = sheet.getMergedRegions().get(2);
+		Assert.assertEquals(0, region.row);
+		Assert.assertEquals(9, region.column);
+		Assert.assertEquals(1, region.lastRow);
+		Assert.assertEquals(10, region.lastColumn);
+		
+		try{
+			sheet.addMergedRegion(new CellRegion(0,0,1,1));
+			Assert.fail();
+		}catch(InvalidateModelOpException x){}
+		try{
+			sheet.addMergedRegion(new CellRegion(1,1,2,2));
+			Assert.fail();
+		}catch(InvalidateModelOpException x){}
+		
+		
+		sheet = book.createSheet("Sheet 2");
+		
+		sheet.addMergedRegion(new CellRegion(1,1,2,2));
+		sheet.addMergedRegion(new CellRegion(1,7,2,8));
+		sheet.addMergedRegion(new CellRegion(4,4,5,5));
+		sheet.addMergedRegion(new CellRegion(7,1,8,2));
+		sheet.addMergedRegion(new CellRegion(7,7,8,8));
+		
+		List<CellRegion> merges = sheet.getOverlappedMergedRegions(new CellRegion(1,2,8,3));
+		
+		Assert.assertEquals(2, merges.size());
+		region = merges.get(0);
+		Assert.assertEquals(1, region.row);
+		Assert.assertEquals(1, region.column);
+		Assert.assertEquals(2, region.lastRow);
+		Assert.assertEquals(2, region.lastColumn);
+		region = merges.get(1);
+		Assert.assertEquals(7, region.row);
+		Assert.assertEquals(1, region.column);
+		Assert.assertEquals(8, region.lastRow);
+		Assert.assertEquals(2, region.lastColumn);
+		
+		
+		merges = sheet.getOverlappedMergedRegions(new CellRegion(1,2,8,4));
+		
+		Assert.assertEquals(3, merges.size());
+		region = merges.get(0);
+		Assert.assertEquals(1, region.row);
+		Assert.assertEquals(1, region.column);
+		Assert.assertEquals(2, region.lastRow);
+		Assert.assertEquals(2, region.lastColumn);
+		region = merges.get(1);
+		Assert.assertEquals(4, region.row);
+		Assert.assertEquals(4, region.column);
+		Assert.assertEquals(5, region.lastRow);
+		Assert.assertEquals(5, region.lastColumn);
+		region = merges.get(2);
+		Assert.assertEquals(7, region.row);
+		Assert.assertEquals(1, region.column);
+		Assert.assertEquals(8, region.lastRow);
+		Assert.assertEquals(2, region.lastColumn);
+		
+		
+		merges = sheet.getOverlappedMergedRegions(new CellRegion(2,2,5,5));
+		
+		Assert.assertEquals(2, merges.size());
+		region = merges.get(0);
+		Assert.assertEquals(1, region.row);
+		Assert.assertEquals(1, region.column);
+		Assert.assertEquals(2, region.lastRow);
+		Assert.assertEquals(2, region.lastColumn);
+		region = merges.get(1);
+		Assert.assertEquals(4, region.row);
+		Assert.assertEquals(4, region.column);
+		Assert.assertEquals(5, region.lastRow);
+		Assert.assertEquals(5, region.lastColumn);
+
+		merges = sheet.getOverlappedMergedRegions(new CellRegion(2,2,6,6));
+		
+		Assert.assertEquals(2, merges.size());
+		region = merges.get(0);
+		Assert.assertEquals(1, region.row);
+		Assert.assertEquals(1, region.column);
+		Assert.assertEquals(2, region.lastRow);
+		Assert.assertEquals(2, region.lastColumn);
+		region = merges.get(1);
+		Assert.assertEquals(4, region.row);
+		Assert.assertEquals(4, region.column);
+		Assert.assertEquals(5, region.lastRow);
+		Assert.assertEquals(5, region.lastColumn);
+		
+	}
+	@Test
 	public void testSerializable(){
 		NBook book = new BookImpl("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
@@ -1390,6 +1575,8 @@ public class ModelTest {
 		
 		sheet.getCell(5, 1).setComment().setText("AAA");
 		sheet.getCell(5, 2).setComment().setRichText().addSegment("BBB",book.getDefaultFont());
+		
+		sheet.addMergedRegion(new CellRegion(0,1,2,3));
 		
 		sheet.addChart(NChartType.BAR, new NViewAnchor(0, 0, 800, 600));
 		//TODO add series
@@ -1423,6 +1610,16 @@ public class ModelTest {
 			
 			Assert.assertEquals("AAA",sheet.getCell(5, 1).getComment().getText());
 			Assert.assertEquals("BBB",sheet.getCell(5, 2).getComment().getRichText().getText());
+			
+			Assert.assertEquals(1, sheet.getMergedRegions().size());
+			
+			CellRegion region = sheet.getMergedRegions().get(0);
+			Assert.assertEquals(0, region.row);
+			Assert.assertEquals(1, region.column);
+			Assert.assertEquals(2, region.lastRow);
+			Assert.assertEquals(3, region.lastColumn);
+			
+			
 			
 			Assert.assertEquals(1, sheet.getCharts().size());
 			NChart chart = sheet.getCharts().get(0);

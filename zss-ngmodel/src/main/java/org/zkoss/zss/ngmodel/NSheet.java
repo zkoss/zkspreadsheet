@@ -85,11 +85,12 @@ public interface NSheet {
 	
 	
 	public void addMergedRegion(CellRegion region);
-	/**
-	 * get any merged region that contains row and column
-	 */
-	public CellRegion getMergedRegion(int row,int column);
 	
+	/**
+	 * Get the merged region that overlapped the region
+	 * @return the region that contains overlapped or null if not found.
+	 */
+	public List<CellRegion> getOverlappedMergedRegions(CellRegion region);
 	
 	/**
 	 * Get the runtime custom attribute that stored in this sheet

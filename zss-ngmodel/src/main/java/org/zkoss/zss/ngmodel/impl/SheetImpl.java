@@ -491,6 +491,7 @@ public class SheetImpl extends SheetAdv {
 		pictures.remove(picture);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<NPicture> getPictures() {
 		return Collections.unmodifiableList((List)pictures);
 	}
@@ -518,7 +519,7 @@ public class SheetImpl extends SheetAdv {
 		charts.remove(chart);
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<NChart> getCharts() {
 		return Collections.unmodifiableList((List)charts);
 	}
@@ -537,24 +538,27 @@ public class SheetImpl extends SheetAdv {
 	@Override
 	public void addMergedRegion(CellRegion region) {
 		Validations.argNotNull(region);
+		if(region.isSingle()){
+			//just ignore it.
+		}
 		for(CellRegion r:mergedRegions){
-			if(r.contains(region)){
+			if(r.overlap(region)){
 				throw new InvalidateModelOpException("the region is overlapped "+r+":"+region);
 			}
 		}
-		
+		mergedRegions.add(region);
 	}
 
 	@Override
-	public CellRegion getMergedRegion(int row, int column) {
+	public List<CellRegion> getOverlappedMergedRegions(CellRegion region) {
+		List<CellRegion> list =new LinkedList<CellRegion>(); 
 		for(CellRegion r:mergedRegions){
-			if(r.contains(row,column)){
-				return r;
+			if(r.overlap(region)){
+				list.add(r);
 			}
 		}
-		return null;
+		return list;
 	}
-	
 
 	@Override
 	public Object getAttribute(String name) {
@@ -622,5 +626,6 @@ public class SheetImpl extends SheetAdv {
 	public void setNumOfColumnFreeze(int num) {
 		columnFreeze = num;
 	}
+
 
 }
