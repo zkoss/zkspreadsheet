@@ -9,10 +9,10 @@ import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
+import org.zkoss.zss.ngmodel.impl.sys.FormatEngineImpl;
 import org.zkoss.zss.ngmodel.sys.format.FormatContext;
 import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
 import org.zkoss.zss.ngmodel.sys.format.FormatResult;
-import org.zkoss.zss.ngmodel.sys.format.impl.FormatEngineImpl;
 
 public class CellFormatTest {
 
