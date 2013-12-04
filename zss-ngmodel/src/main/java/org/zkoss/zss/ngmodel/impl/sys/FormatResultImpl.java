@@ -1,4 +1,4 @@
-package org.zkoss.zss.ngmodel.sys.format.impl;
+package org.zkoss.zss.ngmodel.impl.sys;
 
 import org.zkoss.poi.ss.format.CellFormatResult;
 import org.zkoss.zss.ngmodel.sys.format.FormatResult;
