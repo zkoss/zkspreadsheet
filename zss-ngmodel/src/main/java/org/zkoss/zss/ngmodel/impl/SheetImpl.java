@@ -523,6 +523,7 @@ public class SheetImpl extends SheetAdv {
 		return Collections.unmodifiableList((List)charts);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<CellRegion> getMergedRegions() {
 		return Collections.unmodifiableList((List)mergedRegions);
@@ -546,7 +547,11 @@ public class SheetImpl extends SheetAdv {
 
 	@Override
 	public CellRegion getMergedRegion(int row, int column) {
-		// TODO Auto-generated method stub
+		for(CellRegion r:mergedRegions){
+			if(r.contains(row,column)){
+				return r;
+			}
+		}
 		return null;
 	}
 	

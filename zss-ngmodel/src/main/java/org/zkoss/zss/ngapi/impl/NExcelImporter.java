@@ -8,6 +8,7 @@ import java.net.URL;
 
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.impl.BookImpl;
 
 public class NExcelImporter implements NImporter{
 
@@ -45,8 +46,9 @@ public class NExcelImporter implements NImporter{
 
 	@Override
 	public NBook imports(InputStream is, String bookName) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		NBook book = new BookImpl(bookName);
+		//implement here
+		return book;
 	}
 
 }
