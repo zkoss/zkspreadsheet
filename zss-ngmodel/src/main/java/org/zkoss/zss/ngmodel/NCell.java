@@ -12,6 +12,7 @@ public interface NCell {
 		FORMULA,
 		NUMBER,
 		DATE,
+		BOOLEAN,
 		ERROR
 	}
 	
