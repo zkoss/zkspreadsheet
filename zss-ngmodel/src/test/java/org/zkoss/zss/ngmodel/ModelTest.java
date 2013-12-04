@@ -826,9 +826,9 @@ public class ModelTest {
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
 		
-		style1.setBackgroundColor("#FF0000");
+		style1.setBackgroundColor(book.createColor("#FF0F0B"));
 		Assert.assertNull(book.searchCellStyle(matcher));
-		matcher.setBackgroundColor("#FF0000");
+		matcher.setBackgroundColor("#FF0F0B");
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
 		//////////
@@ -837,7 +837,7 @@ public class ModelTest {
 		matcher.setBorderBottom(BorderType.MEDIUM);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
-		style1.setBorderBottomColor("#FF0000");
+		style1.setBorderBottomColor(book.createColor("#FF0000"));
 		matcher.setBorderBottomColor("#FF00FF");//will hit if didn't set color, because at the begin the border-type is none - that cause matcher ignore the color mapping
 		Assert.assertNull(book.searchCellStyle(matcher)); // 
 		matcher.setBorderBottomColor("#FF0000");
@@ -848,7 +848,7 @@ public class ModelTest {
 		matcher.setBorderLeft(BorderType.MEDIUM);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
-		style1.setBorderLeftColor("#FF0000");
+		style1.setBorderLeftColor(book.createColor("#FF0000"));
 		matcher.setBorderLeftColor("#FF00FF");
 		Assert.assertNull(book.searchCellStyle(matcher));
 		matcher.setBorderLeftColor("#FF0000");
@@ -859,7 +859,7 @@ public class ModelTest {
 		matcher.setBorderRight(BorderType.MEDIUM);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
-		style1.setBorderRightColor("#FF0000");
+		style1.setBorderRightColor(book.createColor("#FF0000"));
 		matcher.setBorderRightColor("#FF00FF");
 		Assert.assertNull(book.searchCellStyle(matcher));
 		matcher.setBorderRightColor("#FF0000");
@@ -870,7 +870,7 @@ public class ModelTest {
 		matcher.setBorderTop(BorderType.MEDIUM);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
-		style1.setBorderTopColor("#FF0000");
+		style1.setBorderTopColor(book.createColor("#FF0000"));
 		matcher.setBorderTopColor("#FF00FF");
 		Assert.assertNull(book.searchCellStyle(matcher));
 		matcher.setBorderTopColor("#FF0000");
@@ -891,7 +891,7 @@ public class ModelTest {
 		matcher.setFontBoldweight(Boldweight.BOLD);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
-		style1.getFont().setColor("#0000FF");
+		style1.getFont().setColor(book.createColor("#0000FF"));
 		Assert.assertNull(book.searchCellStyle(matcher));
 		matcher.setFontColor("#0000FF");
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
@@ -960,7 +960,7 @@ public class ModelTest {
 		matcher.setBoldweight(Boldweight.BOLD);
 		Assert.assertEquals(font1,book.searchFont(matcher));
 		
-		font1.setColor("#0000FF");
+		font1.setColor(book.createColor("#0000FF"));
 		Assert.assertNull(book.searchFont(matcher));
 		matcher.setColor("#0000FF");
 		Assert.assertEquals(font1,book.searchFont(matcher));

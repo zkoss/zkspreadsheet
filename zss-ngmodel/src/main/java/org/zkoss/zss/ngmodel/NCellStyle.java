@@ -36,7 +36,7 @@ public interface NCellStyle {
 	/**
 	 * @return background-color
 	 */
-	public String getBackgroundColor();
+	public NColor getBackgroundColor();
 
 	/**
 	 * Gets the fill/background pattern <br/>
@@ -84,23 +84,23 @@ public interface NCellStyle {
 	/**
 	 * @return top border color
 	 */
-	public String getBorderTopColor();
+	public NColor getBorderTopColor();
 
 	/** 
 	 * @return left border color
 	 */
-	public String getBorderLeftColor();
+	public NColor getBorderLeftColor();
 
 	/**
 	 * 
 	 * @return bottom border color
 	 */
-	public String getBorderBottomColor();
+	public NColor getBorderBottomColor();
 
 	/**
 	 * @return right border color
 	 */
-	public String getBorderRightColor();
+	public NColor getBorderRightColor();
 	
 	/**
 	 * @return data format
@@ -120,7 +120,7 @@ public interface NCellStyle {
 	public boolean isHidden();
 	
 
-	public void setBackgroundColor(String backgroundColor);
+	public void setBackgroundColor(NColor backgroundColor);
 
 	public void setFillPattern(FillPattern fillPattern);
 	
@@ -138,13 +138,13 @@ public interface NCellStyle {
 
 	public void setBorderBottom(BorderType borderBottom);
 
-	public void setBorderTopColor(String borderTopColor);
+	public void setBorderTopColor(NColor borderTopColor);
 
-	public void setBorderLeftColor(String borderLeftColor);
+	public void setBorderLeftColor(NColor borderLeftColor);
 
-	public void setBorderBottomColor(String borderBottomColor);
+	public void setBorderBottomColor(NColor borderBottomColor);
 
-	public void setBorderRightColor(String borderRightColor);
+	public void setBorderRightColor(NColor borderRightColor);
 
 	public void setDataFormat(String dataFormat);
 	

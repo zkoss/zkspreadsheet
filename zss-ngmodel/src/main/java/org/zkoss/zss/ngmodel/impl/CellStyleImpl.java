@@ -1,18 +1,15 @@
 package org.zkoss.zss.ngmodel.impl;
 
-import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NColor;
 import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.util.Validations;
 
 public class CellStyleImpl extends CellStyleAdv {
 	private static final long serialVersionUID = 1L;
-
-	public static final String COLOR_WHITE = "#FFFFFF";
-	public static final String COLOR_BLACK = "#000000";
 	public static final String FORMAT_GENERAL = "General";
 
 	private FontAdv font;
-	private String backgroundColor = COLOR_WHITE;
+	private NColor backgroundColor = ColorImpl.WHITE;
 	private FillPattern fillPattern = FillPattern.NO_FILL;
 	private Alignment alignment = Alignment.LEFT;
 	private VerticalAlignment verticalAlignment = VerticalAlignment.BOTTOM;
@@ -22,10 +19,10 @@ public class CellStyleImpl extends CellStyleAdv {
 	private BorderType borderTop = BorderType.NONE;
 	private BorderType borderRight = BorderType.NONE;
 	private BorderType borderBottom = BorderType.NONE;
-	private String borderTopColor = COLOR_BLACK;
-	private String borderLeftColor = COLOR_BLACK;
-	private String borderBottomColor = COLOR_BLACK;
-	private String borderRightColor = COLOR_BLACK;
+	private NColor borderTopColor = ColorImpl.BLACK;
+	private NColor borderLeftColor = ColorImpl.BLACK;
+	private NColor borderBottomColor = ColorImpl.BLACK;
+	private NColor borderRightColor = ColorImpl.BLACK;
 
 	private String dataFormat = FORMAT_GENERAL;
 	private boolean locked = true;// default locked as excel.
@@ -45,12 +42,13 @@ public class CellStyleImpl extends CellStyleAdv {
 	}
 
 	@Override
-	public String getBackgroundColor() {
+	public NColor getBackgroundColor() {
 		return backgroundColor;
 	}
 
 	@Override
-	public void setBackgroundColor(String backgroundColor) {
+	public void setBackgroundColor(NColor backgroundColor) {
+		Validations.argNotNull(backgroundColor);
 		this.backgroundColor = backgroundColor;
 	}
 
@@ -61,6 +59,7 @@ public class CellStyleImpl extends CellStyleAdv {
 
 	@Override
 	public void setFillPattern(FillPattern fillPattern) {
+		Validations.argNotNull(backgroundColor);
 		this.fillPattern = fillPattern;
 	}
 
@@ -71,6 +70,7 @@ public class CellStyleImpl extends CellStyleAdv {
 
 	@Override
 	public void setAlignment(Alignment alignment) {
+		Validations.argNotNull(backgroundColor);
 		this.alignment = alignment;
 	}
 
@@ -81,6 +81,7 @@ public class CellStyleImpl extends CellStyleAdv {
 
 	@Override
 	public void setVerticalAlignment(VerticalAlignment verticalAlignment) {
+		Validations.argNotNull(backgroundColor);
 		this.verticalAlignment = verticalAlignment;
 	}
 
@@ -101,6 +102,7 @@ public class CellStyleImpl extends CellStyleAdv {
 
 	@Override
 	public void setBorderLeft(BorderType borderLeft) {
+		Validations.argNotNull(backgroundColor);
 		this.borderLeft = borderLeft;
 	}
 
@@ -111,6 +113,7 @@ public class CellStyleImpl extends CellStyleAdv {
 
 	@Override
 	public void setBorderTop(BorderType borderTop) {
+		Validations.argNotNull(backgroundColor);
 		this.borderTop = borderTop;
 	}
 
@@ -121,6 +124,7 @@ public class CellStyleImpl extends CellStyleAdv {
 
 	@Override
 	public void setBorderRight(BorderType borderRight) {
+		Validations.argNotNull(backgroundColor);
 		this.borderRight = borderRight;
 	}
 
@@ -130,47 +134,52 @@ public class CellStyleImpl extends CellStyleAdv {
 	}
 
 	@Override
-	public void setBorderBottom(BorderType borderBottom) {
+	public void setBorderBottom(BorderType borderBottom){
+		Validations.argNotNull(backgroundColor);
 		this.borderBottom = borderBottom;
 	}
 
 	@Override
-	public String getBorderTopColor() {
+	public NColor getBorderTopColor() {
 		return borderTopColor;
 	}
 
 	@Override
-	public void setBorderTopColor(String borderTopColor) {
+	public void setBorderTopColor(NColor borderTopColor) {
+		Validations.argNotNull(borderTopColor);
 		this.borderTopColor = borderTopColor;
 	}
 
 	@Override
-	public String getBorderLeftColor() {
+	public NColor getBorderLeftColor() {
 		return borderLeftColor;
 	}
 
 	@Override
-	public void setBorderLeftColor(String borderLeftColor) {
+	public void setBorderLeftColor(NColor borderLeftColor) {
+		Validations.argNotNull(borderLeftColor);
 		this.borderLeftColor = borderLeftColor;
 	}
 
 	@Override
-	public String getBorderBottomColor() {
+	public NColor getBorderBottomColor() {
 		return borderBottomColor;
 	}
 
 	@Override
-	public void setBorderBottomColor(String borderBottomColor) {
+	public void setBorderBottomColor(NColor borderBottomColor) {
+		Validations.argNotNull(borderBottomColor);
 		this.borderBottomColor = borderBottomColor;
 	}
 
 	@Override
-	public String getBorderRightColor() {
+	public NColor getBorderRightColor() {
 		return borderRightColor;
 	}
 
 	@Override
-	public void setBorderRightColor(String borderRightColor) {
+	public void setBorderRightColor(NColor borderRightColor) {
+		Validations.argNotNull(borderRightColor);
 		this.borderRightColor = borderRightColor;
 	}
 
@@ -181,6 +190,7 @@ public class CellStyleImpl extends CellStyleAdv {
 
 	@Override
 	public void setDataFormat(String dataFormat) {
+		Validations.argNotNull(backgroundColor);
 		this.dataFormat = dataFormat;
 	}
 

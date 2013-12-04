@@ -78,28 +78,28 @@ public class CellStyleMatcher {
 		NCellStyle.BorderType btype;
 		setBorderBottom(btype=criteria.getBorderBottom());
 		if(btype!=NCellStyle.BorderType.NONE){//only compare color when the border is not none
-			setBorderBottomColor(criteria.getBorderBottomColor());
+			setBorderBottomColor(criteria.getBorderBottomColor().getHtmlColor());
 		}
 		setBorderLeft(btype=criteria.getBorderLeft());
 		if(btype!=NCellStyle.BorderType.NONE){
-			setBorderLeftColor(criteria.getBorderLeftColor());
+			setBorderLeftColor(criteria.getBorderLeftColor().getHtmlColor());
 		}
 		setBorderRight(btype=criteria.getBorderRight());
 		if(btype!=NCellStyle.BorderType.NONE){
-			setBorderRightColor(criteria.getBorderRightColor());
+			setBorderRightColor(criteria.getBorderRightColor().getHtmlColor());
 		}
 		setBorderTop(btype=criteria.getBorderTop());
 		if(btype!=NCellStyle.BorderType.NONE){
-			setBorderTopColor(criteria.getBorderTopColor());
+			setBorderTopColor(criteria.getBorderTopColor().getHtmlColor());
 		}
 		
 		setDataFormat(criteria.getDataFormat());
 		
-		setBackgroundColor(criteria.getBackgroundColor());
+		setBackgroundColor(criteria.getBackgroundColor().getHtmlColor());
 //		setFillForegroundColor(BookHelper.colorToForegroundHTML(book,criteria.getFillForegroundColorColor()));
 		setFillPattern(criteria.getFillPattern());
 		
-		setFontColor(criteria.getFont().getColor());
+		setFontColor(criteria.getFont().getColor().getHtmlColor());
 		setFontName(criteria.getFont().getName());
 		setFontBoldweight(criteria.getFont().getBoldweight());
 		setFontHeight(criteria.getFont().getHeight());
@@ -357,22 +357,22 @@ public class CellStyleMatcher {
 				}
 				break;
 			case BorderBottomColor:
-				if(!equals(e.getValue(),style.getBorderBottomColor())){
+				if(!equals(e.getValue(),style.getBorderBottomColor().getHtmlColor())){
 					return false;
 				}
 				break;
 			case BorderRightColor:
-				if(!equals(e.getValue(),style.getBorderRightColor())){
+				if(!equals(e.getValue(),style.getBorderRightColor().getHtmlColor())){
 					return false;
 				}
 				break;
 			case BorderTopColor:
-				if(!equals(e.getValue(),style.getBorderTopColor())){
+				if(!equals(e.getValue(),style.getBorderTopColor().getHtmlColor())){
 					return false;
 				}
 				break;
 			case BorderLeftColor:
-				if(!equals(e.getValue(),style.getBorderLeftColor())){
+				if(!equals(e.getValue(),style.getBorderLeftColor().getHtmlColor())){
 					return false;
 				}
 				break;
@@ -382,7 +382,7 @@ public class CellStyleMatcher {
 				}
 				break;
 			case BackgroundColor:
-				if(!equals(e.getValue(),style.getBackgroundColor())){
+				if(!equals(e.getValue(),style.getBackgroundColor().getHtmlColor())){
 					return false;
 				}
 				break;
@@ -397,7 +397,7 @@ public class CellStyleMatcher {
 				}
 				break;			
 			case FontColor:
-				if(!equals(e.getValue(),style.getFont().getColor())){
+				if(!equals(e.getValue(),style.getFont().getColor().getHtmlColor())){
 					return false;
 				}
 				break;

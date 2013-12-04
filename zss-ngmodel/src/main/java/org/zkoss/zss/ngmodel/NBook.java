@@ -134,6 +134,9 @@ public interface NBook {
 	
 	public NFont searchFont(FontMatcher matcher);
 	
+	public NColor createColor(byte r, byte g, byte b);
+	public NColor createColor(String htmlColor);
+	
 	/**
 	 * Get the max row size of this book
 	 */

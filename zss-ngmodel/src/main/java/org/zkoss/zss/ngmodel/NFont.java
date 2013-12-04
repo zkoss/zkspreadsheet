@@ -23,7 +23,7 @@ public interface NFont {
 	 * 
 	 * @return a font's color
 	 */
-	public String getColor();
+	public NColor getColor();
 	
 	/**
 	 * 
@@ -70,7 +70,7 @@ public interface NFont {
 	
 	public void setName(String fontName);
 
-	public void setColor(String fontColor);
+	public void setColor(NColor fontColor);
 
 	public void setBoldweight(Boldweight fontBoldweight);
 

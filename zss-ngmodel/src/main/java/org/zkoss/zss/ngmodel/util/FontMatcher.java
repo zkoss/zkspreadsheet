@@ -47,7 +47,7 @@ public class FontMatcher {
 	
 	public FontMatcher(){}
 	public FontMatcher(NFont criteria){
-		setColor(criteria.getColor());
+		setColor(criteria.getColor().getHtmlColor());
 		setName(criteria.getName());
 		setBoldweight(criteria.getBoldweight());
 		setHeight(criteria.getHeight());
@@ -123,7 +123,7 @@ public class FontMatcher {
 		for(Entry<Property,Object> e:criteria.entrySet()){
 			switch(e.getKey()){
 			case Color:
-				if(!equals(e.getValue(),style.getColor())){
+				if(!equals(e.getValue(),style.getColor().getHtmlColor())){
 					return false;
 				}
 				break;

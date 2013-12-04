@@ -1,16 +1,16 @@
 package org.zkoss.zss.ngmodel.impl;
 
+import org.zkoss.zss.ngmodel.NColor;
 import org.zkoss.zss.ngmodel.util.Validations;
 
 public class FontImpl extends FontAdv {
 	private static final long serialVersionUID = 1L;
 
-	public static final String COLOR_WHITE = "#FFFFFF";
-	public static final String COLOR_BLACK = "#000000";
+
 	public static final String FORMAT_GENERAL = "General";
 
 	private String fontName = "Arial";
-	private String fontColor = COLOR_BLACK;
+	private NColor fontColor = ColorImpl.BLACK;
 	private Boldweight fontBoldweight = Boldweight.NORMAL;
 	private int fontHeight = 11;
 	private boolean fontItalic = false;
@@ -29,12 +29,13 @@ public class FontImpl extends FontAdv {
 	}
 
 	@Override
-	public String getColor() {
+	public NColor getColor() {
 		return fontColor;
 	}
 
 	@Override
-	public void setColor(String fontColor) {
+	public void setColor(NColor fontColor) {
+		Validations.argNotNull(fontColor);
 		this.fontColor = fontColor;
 	}
 
@@ -45,6 +46,7 @@ public class FontImpl extends FontAdv {
 
 	@Override
 	public void setBoldweight(Boldweight fontBoldweight) {
+		Validations.argNotNull(fontBoldweight);
 		this.fontBoldweight = fontBoldweight;
 	}
 
@@ -85,6 +87,7 @@ public class FontImpl extends FontAdv {
 
 	@Override
 	public void setTypeOffset(TypeOffset fontTypeOffset) {
+		Validations.argNotNull(fontTypeOffset);
 		this.fontTypeOffset = fontTypeOffset;
 	}
 
@@ -95,6 +98,7 @@ public class FontImpl extends FontAdv {
 
 	@Override
 	public void setUnderline(Underline fontUnderline) {
+		Validations.argNotNull(fontUnderline);
 		this.fontUnderline = fontUnderline;
 	}
 

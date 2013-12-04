@@ -18,7 +18,9 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,7 @@ import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NColor;
 import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
@@ -56,6 +59,8 @@ public class BookImpl extends BookAdv{
 	private final CellStyleAdv defaultCellStyle;
 	private final List<FontAdv> fonts = new LinkedList<FontAdv>();
 	private final FontAdv defaultFont;
+	private final HashMap<ColorAdv,ColorAdv> colors = new LinkedHashMap<ColorAdv,ColorAdv>();
+	
 
 	
 	private final HashMap<String,AtomicInteger> objIdCounter = new HashMap<String,AtomicInteger>();
@@ -72,6 +77,11 @@ public class BookImpl extends BookAdv{
 		bookSeries = new BookSeriesImpl(this);
 		fonts.add(defaultFont = new FontImpl());
 		cellStyles.add(defaultCellStyle = new CellStyleImpl(defaultFont));
+		colors.put(ColorImpl.WHITE,ColorImpl.WHITE);
+		colors.put(ColorImpl.BLACK,ColorImpl.BLACK);
+		colors.put(ColorImpl.RED,ColorImpl.RED);
+		colors.put(ColorImpl.GREEN,ColorImpl.GREEN);
+		colors.put(ColorImpl.BLUE,ColorImpl.BLUE);
 		
 	}
 	
@@ -379,6 +389,26 @@ public class BookImpl extends BookAdv{
 	@Override
 	public Map<String, Object> getAttributes() {
 		return Collections.unmodifiableMap(attributes);
+	}
+
+	@Override
+	public NColor createColor(byte r, byte g, byte b) {
+		ColorAdv newcolor = new ColorImpl(r,g,b);
+		ColorAdv color = colors.get(newcolor);//reuse the existed color object
+		if(color==null){
+			colors.put(newcolor, color = newcolor);
+		}
+		return color;
+	}
+
+	@Override
+	public NColor createColor(String htmlColor) {
+		ColorAdv newcolor = new ColorImpl(htmlColor);
+		ColorAdv color = colors.get(newcolor);//reuse the existed color object
+		if(color==null){
+			colors.put(newcolor, color = newcolor);
+		}
+		return color;
 	}
 
 }
