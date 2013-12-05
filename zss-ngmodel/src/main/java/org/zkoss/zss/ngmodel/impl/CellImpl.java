@@ -136,18 +136,22 @@ public class CellImpl extends CellAdv {
 		checkOrphan();
 		value = null;
 		formulaResult = null;
-		if (type == CellType.FORMULA) {
-			// clear depends
-			Ref ref = new RefImpl(this);
-			((BookSeriesAdv) row.getSheet().getBook().getBookSeries())
-					.getDependencyTable().clearDependents(ref);
-		}
+		clearFormulaDependency();
 		type = CellType.BLANK;
 	}
 
 	@Override
 	public void clearFormulaResultCache() {
 		formulaResult = null;
+	}
+	
+	private void clearFormulaDependency(){
+		if (type == CellType.FORMULA) {
+			// clear depends
+			Ref ref = new RefImpl(this);
+			((BookSeriesAdv) row.getSheet().getBook().getBookSeries())
+					.getDependencyTable().clearDependents(ref);
+		}
 	}
 
 	@Override

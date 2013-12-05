@@ -4,6 +4,7 @@ import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
+import org.zkoss.zss.ngmodel.impl.chart.ChartDataAdv;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 
 public class ChartImpl extends ChartAdv {
@@ -11,7 +12,7 @@ public class ChartImpl extends ChartAdv {
 	String id;
 	NChartType type;
 	NViewAnchor anchor;
-	NChartData data;
+	ChartDataAdv data;
 	String title;
 	String xAxisTitle;
 	String yAxisTitle;
@@ -70,7 +71,7 @@ public class ChartImpl extends ChartAdv {
 		this.yAxisTitle = yAxisTitle;
 	}
 
-	private NChartData createChartData(NChartType type){
+	private ChartDataAdv createChartData(NChartType type){
 		//TODO for type;
 		switch(type){
 		case AREA:
@@ -78,7 +79,7 @@ public class ChartImpl extends ChartAdv {
 		case COLUMN:
 		case LINE:
 		case PIE:
-			return new CategoryChartDataImpl(this);
+			return new CategoryChartDataImpl(this,id+"Data");
 		}
 		throw new UnsupportedOperationException("unsupported chart type "+type);
 	}
@@ -87,8 +88,7 @@ public class ChartImpl extends ChartAdv {
 	public void release() {
 		checkOrphan();
 		
-		Ref ref = new RefImpl(this);
-		((BookSeriesAdv)sheet.getBook().getBookSeries()).getDependencyTable().clearDependents(ref);
+		((ChartDataAdv)getData()).release();
 		
 		sheet = null;
 	}
@@ -97,5 +97,9 @@ public class ChartImpl extends ChartAdv {
 		if (sheet == null) {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
+	}
+	@Override
+	public void clearFormulaResultCache() {
+		((ChartDataAdv)getData()).clearFormulaResultCache();
 	}
 }

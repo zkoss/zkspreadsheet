@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
 
 import org.junit.Test;
 import org.zkoss.zss.ngmodel.NCell.CellType;
@@ -1376,38 +1377,29 @@ public class ModelTest {
 		Assert.assertEquals(1, chartData.getNumOfSeries());
 		Assert.assertEquals(null, nseries1.getName());
 		
-		nseries1.setNameFormula("KK()");//fail 
+		nseries1.setFormula("KK()",null,null);//fail 
 		Assert.assertEquals("#NAME!", nseries1.getName());
 		
-		nseries1.setNameFormula("D1");
+		nseries1.setFormula("D1",null,null);
 		Assert.assertEquals("My Series", nseries1.getName());
 		
 		Assert.assertEquals(0, nseries1.getNumOfValue());
-		Assert.assertEquals(0, nseries1.getNumOfXValue());
 		Assert.assertEquals(0, nseries1.getNumOfYValue());
 		
 		
-		nseries1.setValuesFormula("KK()");
-		nseries1.setYValuesFormula("KK()");
+		nseries1.setFormula("D1","KK()","KK()");
 		Assert.assertEquals(0, nseries1.getNumOfValue());
-		Assert.assertEquals(0, nseries1.getNumOfXValue());
 		Assert.assertEquals(0, nseries1.getNumOfYValue());
 		
-		nseries1.setValuesFormula("B1:B3");
-		nseries1.setYValuesFormula("C1:C3");
+		nseries1.setFormula("D1","B1:B3","C1:C3");
 		
 		
 		Assert.assertEquals(3, nseries1.getNumOfValue());
-		Assert.assertEquals(3, nseries1.getNumOfXValue());
 		Assert.assertEquals(3, nseries1.getNumOfYValue());
 		
 		Assert.assertEquals(1, nseries1.getValue(0));
 		Assert.assertEquals(2, nseries1.getValue(1));
 		Assert.assertEquals(3, nseries1.getValue(2));
-		
-		Assert.assertEquals(1, nseries1.getXValue(0));
-		Assert.assertEquals(2, nseries1.getXValue(1));
-		Assert.assertEquals(3, nseries1.getXValue(2));
 		
 		Assert.assertEquals(4, nseries1.getYValue(0));
 		Assert.assertEquals(5, nseries1.getYValue(1));
@@ -1420,7 +1412,7 @@ public class ModelTest {
 		Assert.assertEquals(null, nseries2.getName());
 		
 		Assert.assertEquals(0, nseries2.getNumOfValue());
-		nseries2.setValuesFormula("C1:C3");
+		nseries2.setFormula(null,"C1:C3",null);
 		
 		Assert.assertEquals(3, nseries2.getNumOfValue());
 		
@@ -1578,10 +1570,17 @@ public class ModelTest {
 		
 		sheet.addMergedRegion(new CellRegion(0,1,2,3));
 		
-		sheet.addChart(NChartType.BAR, new NViewAnchor(0, 0, 800, 600));
-		//TODO add series
+		NChart chart = sheet.addChart(NChartType.BAR, new NViewAnchor(0, 0, 800, 600));
+		
+		NCategoryChartData data = (NCategoryChartData)chart.getData();
+		data.setCategoriesFormula("A1:A3");
+		NSeries series = data.addSeries();
+		series.setFormula("B1:B3", "C1:C3", null);
 		
 		sheet.addPicture(Format.PNG, new byte[]{}, new NViewAnchor(0, 0, 800, 600));
+		
+		NName name = book.createName("test");
+		name.setRefersToFormula("'Sheet 1'!A1:B1");
 		
 		ByteArrayOutputStream baos;
 		ObjectOutputStream oos;
@@ -1619,10 +1618,19 @@ public class ModelTest {
 			Assert.assertEquals(2, region.lastRow);
 			Assert.assertEquals(3, region.lastColumn);
 			
+			Assert.assertEquals(1, book.getNumOfName());
+			name = book.getName(0);
+			Assert.assertEquals("'Sheet 1'!A1:B1", name.getRefersToFormula());
 			
 			
 			Assert.assertEquals(1, sheet.getCharts().size());
-			NChart chart = sheet.getCharts().get(0);
+			chart = sheet.getCharts().get(0);
+			
+			data = (NCategoryChartData)chart.getData();
+			
+			Assert.assertEquals("A1:A3", data.getCategoriesFormula());
+			Assert.assertEquals("B1:B3", data.getSeries(0).getNameFormula());
+			Assert.assertEquals("C1:C3", data.getSeries(0).getValuesFormula());
 			
 			Assert.assertEquals(1, sheet.getPictures().size());
 			NPicture picture = sheet.getPictures().get(0);
@@ -1630,6 +1638,40 @@ public class ModelTest {
 		} catch (Exception x) {
 			throw new RuntimeException(x.getMessage(),x);
 		}
+		
+		
+	}
+	
+//	@Test
+	public void testName(){
+		NBook book = new BookImpl("book1");
+		book.createSheet("Sheet1");
+		
+		NName name1 = book.createName("test1");
+		try{
+			book.createName("test1");
+			Assert.fail();
+		}catch(InvalidateModelOpException e){}
+		NName name2 = book.createName("test2");
+		
+		Assert.assertEquals(2, book.getNumOfName());
+		Assert.assertEquals(name1, book.getName(0));
+		Assert.assertEquals(name2, book.getName(1));
+		
+		Assert.assertNull(name1.getRefersTo());
+		Assert.assertNull(name1.getSheetName());
+		
+		name1.setRefersToFormula("Sheet1!A1:B3");
+		
+		CellRegion region = name1.getRefersTo();
+		Assert.assertEquals("Sheet1", name1.getSheetName());
+		Assert.assertEquals("A1:B1", region.getReferenceString());
+		Assert.assertEquals(0, region.row);
+		Assert.assertEquals(0, region.column);
+		Assert.assertEquals(2, region.lastRow);
+		Assert.assertEquals(1, region.lastColumn);
+		
+//		name2
 		
 		
 	}

@@ -5,5 +5,4 @@ import org.zkoss.zss.ngmodel.NChart;
 
 public interface NChartData {
 	public NChart getChart();
-	public void clearFormulaResultCache();
 }

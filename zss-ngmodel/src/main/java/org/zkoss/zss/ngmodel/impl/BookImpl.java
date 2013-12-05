@@ -35,6 +35,7 @@ import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColor;
 import org.zkoss.zss.ngmodel.NFont;
+import org.zkoss.zss.ngmodel.NName;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
 import org.zkoss.zss.ngmodel.util.FontMatcher;
@@ -54,6 +55,7 @@ public class BookImpl extends BookAdv{
 	private NBookSeries bookSeries;
 	
 	private final List<SheetAdv> sheets = new LinkedList<SheetAdv>();
+	private final List<NameAdv> names = new LinkedList<NameAdv>();
 	
 	private final List<CellStyleAdv> cellStyles = new LinkedList<CellStyleAdv>();
 	private final CellStyleAdv defaultCellStyle;
@@ -120,6 +122,11 @@ public class BookImpl extends BookAdv{
 			throw new InvalidateModelOpException("doesn't has ownership "+ sheet);
 		}
 	}
+	protected void checkOwnership(NName name){
+		if(!names.contains(name)){
+			throw new InvalidateModelOpException("doesn't has ownership "+ name);
+		}
+	}
 	
 //	protected String suggestSheetName(String basename){
 //		int i = 1;
@@ -184,7 +191,7 @@ public class BookImpl extends BookAdv{
 	
 	@Override
 	public NSheet createSheet(String name,NSheet src) {
-		checkLegalName(name);
+		checkLegalSheetName(name);
 		if(src!=null)
 			checkOwnership(src);
 		
@@ -203,7 +210,7 @@ public class BookImpl extends BookAdv{
 
 	@Override
 	public void setSheetName(NSheet sheet, String newname) {
-		checkLegalName(newname);
+		checkLegalSheetName(newname);
 		checkOwnership(sheet);
 		
 		String oldname = sheet.getSheetName();
@@ -214,12 +221,22 @@ public class BookImpl extends BookAdv{
 				ModelEvents.PARAM_SHEET_OLD_NAME, oldname);
 	}
 
-	private void checkLegalName(String name) {
+	private void checkLegalSheetName(String name) {
 		if(Strings.isBlank(name)){
 			throw new InvalidateModelOpException("sheet name '"+name+"' is not legal");
 		}
 		if(getSheetByName(name)!=null){
 			throw new InvalidateModelOpException("sheet name '"+name+"' is dpulicated");
+		}
+		//TODO
+	}
+	
+	private void checkLegalNameName(String name) {
+		if(Strings.isBlank(name)){
+			throw new InvalidateModelOpException("name '"+name+"' is not legal");
+		}
+		if(getNameByName(name)!=null){
+			throw new InvalidateModelOpException("name '"+name+"' is dpulicated");
 		}
 		//TODO
 	}
@@ -409,6 +426,78 @@ public class BookImpl extends BookAdv{
 			colors.put(newcolor, color = newcolor);
 		}
 		return color;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public List<NSheet> getSheets() {
+		return Collections.unmodifiableList((List)sheets);
+	}
+
+	@Override
+	public NName createName(String namename) {
+		checkLegalNameName(namename);
+
+		NameAdv name = new NameImpl(this,nextObjId("name"));
+		name.setName(namename);
+		names.add(name);
+		
+//		sendEvent(ModelEvents.ON_NAME_ADDED, 
+//				ModelEvents.PARAM_SHEET, sheet);
+		return name;
+	}
+
+	@Override
+	public void setNameName(NName name, String newname) {
+		checkLegalNameName(newname);
+		checkOwnership(name);
+		
+		String oldname = name.getSheetName();
+		((NameAdv)name).setName(newname);
+		
+//		sendEvent(ModelEvents.ON_NAME_RENAMED, 
+//				ModelEvents.PARAM_SHEET, sheet,
+//				ModelEvents.PARAM_SHEET_OLD_NAME, oldname);
+	}
+
+	@Override
+	public void deleteName(NName name) {
+		checkOwnership(name);
+		
+		((NameAdv)name).release();
+		
+		int index = names.indexOf(name);
+		names.remove(index);
+		
+//		sendEvent(ModelEvents.ON_NAME_DELETED, 
+//				ModelEvents.PARAM_NAME, sheet,
+//				ModelEvents.PARAM_SHEET_OLD_INDEX, index);
+	}
+
+	@Override
+	public int getNumOfName() {
+		return names.size();
+	}
+
+	@Override
+	public NName getName(int idx) {
+		return names.get(idx);
+	}
+
+	@Override
+	public NName getNameByName(String namename) {
+		for(NName name:names){
+			if(name.getName().equalsIgnoreCase(namename)){
+				return name;
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public List<NName> getNames() {
+		return Collections.unmodifiableList((List)names);
 	}
 
 }

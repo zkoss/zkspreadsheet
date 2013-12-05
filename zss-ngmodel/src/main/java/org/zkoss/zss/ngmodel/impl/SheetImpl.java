@@ -627,5 +627,35 @@ public class SheetImpl extends SheetAdv {
 		columnFreeze = num;
 	}
 
+	@Override
+	public int getNumOfPicture() {
+		return pictures.size();
+	}
+
+	@Override
+	public NPicture getPicture(int idx) {
+		return pictures.get(idx);
+	}
+
+	@Override
+	public int getNumOfChart() {
+		return charts.size();
+	}
+
+	@Override
+	public NChart getChart(int idx) {
+		return charts.get(idx);
+	}
+
+	@Override
+	public int getNumOfMergedRegion() {
+		return mergedRegions.size();
+	}
+
+	@Override
+	public CellRegion getMergedRegion(int idx) {
+		return mergedRegions.get(idx);
+	}
+
 
 }

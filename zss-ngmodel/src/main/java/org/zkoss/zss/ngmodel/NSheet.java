@@ -71,20 +71,24 @@ public interface NSheet {
 	public NPicture addPicture(NPicture.Format format, byte[] data, NViewAnchor anchor);
 	public NPicture getPicture(String picid);
 	public void deletePicture(NPicture picture);
+	public int getNumOfPicture();
+	public NPicture getPicture(int idx);
 	public List<NPicture> getPictures();
 	
 	
 	public NChart addChart(NChart.NChartType type, NViewAnchor anchor);
 	public NChart getChart(String chartid);
 	public void deleteChart(NChart chart);
+	public int getNumOfChart();
+	public NChart getChart(int idx);
 	public List<NChart> getCharts();
 	
 	
 	public List<CellRegion> getMergedRegions();
 	public void removeMergedRegion(CellRegion region);
-	
-	
 	public void addMergedRegion(CellRegion region);
+	public int getNumOfMergedRegion();
+	public CellRegion getMergedRegion(int idx);
 	
 	/**
 	 * Get the merged region that overlapped the region

@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel;
 
+import java.util.List;
 import java.util.Map;
 
 import org.zkoss.zss.ngmodel.NChart.NChartType;
@@ -66,6 +67,12 @@ public interface NBook {
 	 * @return the sheet
 	 */
 	public NSheet createSheet(String name);
+	
+	/**
+	 * Get all sheets
+	 * @return an unmodifiable sheet list
+	 */
+	public List<NSheet> getSheets();
 	
 	/**
 	 * Create a sheet and copy the contain form the sheet sheet
@@ -179,4 +186,18 @@ public interface NBook {
 	 * @return
 	 */
 	public Map<String,Object> getAttributes();
+	
+	public NName createName(String name);
+	
+	public void setNameName(NName name,String newname);
+	
+	public void deleteName(NName name);
+	
+	public int getNumOfName();
+	
+	public NName getName(int idx);
+	
+	public NName getNameByName(String namename);
+	
+	public List<NName> getNames();
 }

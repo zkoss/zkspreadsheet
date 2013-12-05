@@ -8,20 +8,13 @@ public interface NSeries {
 	public Object getValue(int index);
 	
 	//for Scatter, xy chart
-	public int getNumOfXValue();
-	public Object getXValue(int index);
 	public int getNumOfYValue();
 	public Object getYValue(int index);
 	
-	
+	public void setFormula(String nameExpr,String valuesExpr,String yValuesExpr);
 	public String getNameFormula();
-	public void setNameFormula(String expr);
 	public String getValuesFormula();
-	public void setValuesFormula(String expr);
-	public String getXValuesFormula();
-	public void setXValuesFormula(String expr);
 	public String getYValuesFormula();
-	public void setYValuesFormula(String expr);
 	
 	public void clearFormulaResultCache();
 }

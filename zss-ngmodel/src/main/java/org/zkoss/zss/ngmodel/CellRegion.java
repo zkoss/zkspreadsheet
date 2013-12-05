@@ -3,6 +3,8 @@ package org.zkoss.zss.ngmodel;
 import java.io.Serializable;
 
 import org.zkoss.zss.ngmodel.util.AreaReference;
+import org.zkoss.zss.ngmodel.util.CellReference;
+
 
 public class CellRegion implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -10,18 +12,26 @@ public class CellRegion implements Serializable {
 	final public int column;
 	final public int lastRow;
 	final public int lastColumn;
+	AreaReference ref = null;
 
 	public CellRegion(int row, int column) {
 		this(row, column, row, column);
 	}
 
 	public CellRegion(String areaReference) {
-		AreaReference ref = new AreaReference(areaReference);
+		ref = new AreaReference(areaReference);
 		this.row = ref.getFirstCell().getRow();
 		this.column = ref.getFirstCell().getCol();
 		this.lastRow = ref.getLastCell().getRow();
 		this.lastColumn = ref.getLastCell().getCol();
 		checkLegal();
+	}
+	
+	public String getReferenceString(){
+		if(ref==null){
+			ref = new AreaReference(new CellReference(row,column),new CellReference(lastRow,lastColumn));
+		}
+		return ref.formatAsString();
 	}
 
 	private void checkLegal() {

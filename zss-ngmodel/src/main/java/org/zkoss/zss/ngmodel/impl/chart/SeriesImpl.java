@@ -1,26 +1,32 @@
 package org.zkoss.zss.ngmodel.impl.chart;
 
-import java.util.Collection;
+import java.io.Serializable;
 
 import org.zkoss.zss.ngmodel.ErrorValue;
+import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.chart.NSeries;
-import org.zkoss.zss.ngmodel.impl.BookAdv;
+import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.ChartAdv;
+import org.zkoss.zss.ngmodel.impl.FormulaContent;
+import org.zkoss.zss.ngmodel.impl.LinkedModelObject;
+import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
+import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
+import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult.ResultType;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
-import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult.ResultType;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 
-public class SeriesImpl implements NSeries{
-	
+public class SeriesImpl implements NSeries, FormulaContent,Serializable,LinkedModelObject{
+	private static final long serialVersionUID = 1L;
 	private FormulaExpression nameExpr;
 	private FormulaExpression valueExpr;
-	private FormulaExpression yAxixExpr;
+	private FormulaExpression yValueExpr;
 	
 	private ChartAdv chart;
+	private String id;
 	
 	private Object evalNameResult;
 	private Object evalValuesResult;
@@ -31,8 +37,9 @@ public class SeriesImpl implements NSeries{
 	/*package*/ void evalFormula(){
 		if(!evaluated){
 			FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
+			NBook book = chart.getSheet().getBook();
 			if(nameExpr!=null){
-				EvaluationResult result = fe.evaluate(nameExpr,new FormulaEvaluationContext(chart.getSheet().getBook()));
+				EvaluationResult result = fe.evaluate(nameExpr,new FormulaEvaluationContext(book));
 
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
@@ -43,7 +50,7 @@ public class SeriesImpl implements NSeries{
 				
 			}
 			if(valueExpr!=null){
-				EvaluationResult result = fe.evaluate(valueExpr,new FormulaEvaluationContext(chart.getSheet().getBook()));
+				EvaluationResult result = fe.evaluate(valueExpr,new FormulaEvaluationContext(book));
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
 					evalValuesResult = val;
@@ -51,8 +58,8 @@ public class SeriesImpl implements NSeries{
 					evalValuesResult = (val instanceof ErrorValue)?val:new ErrorValue(ErrorValue.INVALID_NAME);
 				}
 			}
-			if(yAxixExpr!=null){
-				EvaluationResult result = fe.evaluate(yAxixExpr,new FormulaEvaluationContext(chart.getSheet().getBook()));
+			if(yValueExpr!=null){
+				EvaluationResult result = fe.evaluate(yValueExpr,new FormulaEvaluationContext(book));
 				Object val = result.getValue();
 				if(result.getType() == ResultType.SUCCESS){
 					evalYValuesResult = val;
@@ -64,19 +71,22 @@ public class SeriesImpl implements NSeries{
 		}
 	}
 	
-	public SeriesImpl(ChartAdv chart){
+	public SeriesImpl(ChartAdv chart,String id){
 		this.chart = chart;
+		this.id = id;
 	}
+	
+	@Override
 	public String getName() {
 		evalFormula();
 		return evalNameResult==null?null:(evalNameResult instanceof ErrorValue)?((ErrorValue)evalNameResult).gettErrorString():evalNameResult.toString();
 	}
-	
+	@Override
 	public int getNumOfValue(){
 		evalFormula();
 		return ChartDataUtil.sizeOf(evalValuesResult);
 	}
-	
+	@Override
 	public Object getValue(int index) {
 		evalFormula();
 		if(index>=ChartDataUtil.sizeOf(evalValuesResult)){
@@ -84,18 +94,12 @@ public class SeriesImpl implements NSeries{
 		}
 		return ChartDataUtil.valueOf(evalValuesResult,index);
 	}
-	
-	public int getNumOfXValue(){
-		return getNumOfValue();
-	}
-	public Object getXValue(int index) {
-		return getValue(index);
-	}
-	
+	@Override
 	public int getNumOfYValue(){
 		evalFormula();
 		return ChartDataUtil.sizeOf(evalYValuesResult);
 	}
+	@Override
 	public Object getYValue(int index) {
 		evalFormula();
 		if(index>=ChartDataUtil.sizeOf(evalYValuesResult)){
@@ -103,23 +107,30 @@ public class SeriesImpl implements NSeries{
 		}
 		return ChartDataUtil.valueOf(evalYValuesResult,index);
 	}
-	public void setNameFormula(String expr) {
+	
+	@Override
+	public void setFormula(String nameExpression,String valueExpression, String yValueExpression){
 		evaluated = false;
+		clearFormulaDependency();
+		
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		nameExpr = fe.parse(expr, new FormulaParseContext(chart.getSheet().getBook()));
-	}
-	public void setValuesFormula(String expr) {
-		evaluated = false;
-		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		valueExpr = fe.parse(expr, new FormulaParseContext(chart.getSheet().getBook()));
-	}
-	public void setXValuesFormula(String expr) {
-		setValuesFormula(expr);
-	}
-	public void setYValuesFormula(String expr) {
-		evaluated = false;
-		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		yAxixExpr = fe.parse(expr, new FormulaParseContext(chart.getSheet().getBook()));
+		NBook book = chart.getSheet().getBook();
+		if(nameExpression!=null){
+			nameExpr = fe.parse(nameExpression, new FormulaParseContext(book));
+		}else{
+			nameExpr = null;
+		}
+		if(valueExpression!=null){
+			valueExpr = fe.parse(valueExpression, new FormulaParseContext(book));
+		}else{
+			valueExpr = null;
+		}
+		if(yValueExpression!=null){
+			yValueExpr = fe.parse(yValueExpression, new FormulaParseContext(book));
+		}else{
+			yValueExpr = null;
+		}
+		
 	}
 
 	@Override
@@ -133,20 +144,36 @@ public class SeriesImpl implements NSeries{
 	}
 
 	@Override
-	public String getXValuesFormula() {
-		return getValuesFormula();
-	}
-
-	@Override
 	public String getYValuesFormula() {
-		return yAxixExpr==null?null:yAxixExpr.getFormulaString();
+		return yValueExpr==null?null:yValueExpr.getFormulaString();
 	}
 
 	@Override
 	public void clearFormulaResultCache() {
 		evaluated = false;
-		evalNameResult = evalValuesResult = evalYValuesResult = null;
-		
+		evalNameResult = evalValuesResult = evalYValuesResult = null;		
+	}
+	
+	private void clearFormulaDependency() {
+		if(nameExpr!=null || valueExpr!=null || yValueExpr!=null){
+			Ref ref = new RefImpl(chart,id);
+			((BookSeriesAdv) chart.getSheet().getBook().getBookSeries())
+					.getDependencyTable().clearDependents(ref);
+		}
+	}
+	
+	@Override
+	public void release() {
+		checkOrphan();
+		clearFormulaDependency();
+		chart = null;
+	}
+
+	@Override
+	public void checkOrphan() {
+		if(chart==null){
+			throw new IllegalStateException("doesn't connect to parent");
+		}
 	}
 
 }

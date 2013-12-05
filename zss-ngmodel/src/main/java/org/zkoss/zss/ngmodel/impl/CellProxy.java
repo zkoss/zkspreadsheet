@@ -145,6 +145,7 @@ class CellProxy extends CellAdv {
 			proxy.clearValue();
 	}
 
+	@Override
 	public void clearFormulaResultCache() {
 		loadProxy();
 		if (proxy != null)

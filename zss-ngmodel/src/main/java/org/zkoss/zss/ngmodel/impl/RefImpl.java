@@ -8,60 +8,61 @@ import org.zkoss.zss.ngmodel.util.CellReference;
 public class RefImpl implements Ref, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	RefType type;
-	String bookName;
-	String sheetName;
-	int row = -1;
-	int column = -1;
-	int lastRow = -1;
-	int lastColumn = -1;
-	String objectId;
+	final private RefType type;
+	final private String bookName;
+	final private String sheetName;
+	final private int row;
+	final private int column;
+	final private int lastRow;
+	final private int lastColumn;
+	final private String objectId;
+	final private String subObjectId;
 
 	public RefImpl(String bookName, String sheetName, int row, int column,
 			int lastRow, int lastColumn) {
-		setInfo(RefType.AREA, bookName, sheetName, row, column, lastRow,
-				lastColumn, null);
+		this(RefType.AREA, bookName, sheetName, row, column, lastRow,
+				lastColumn, null,null);
 	}
 
 	public RefImpl(String bookName, String sheetName, int row, int column) {
-		setInfo(RefType.CELL, bookName, sheetName, row, column, row, column,
-				null);
+		this(RefType.CELL, bookName, sheetName, row, column, row, column,
+				null,null);
 	}
 
 	public RefImpl(String bookName, String sheetName) {
-		setInfo(RefType.SHEET, bookName, sheetName, -1, -1, -1, -1, null);
+		this(RefType.SHEET, bookName, sheetName, -1, -1, -1, -1, null,null);
 	}
 
 	public RefImpl(String bookName) {
-		setInfo(RefType.BOOK, bookName, null, -1, -1, -1, -1, null);
+		this(RefType.BOOK, bookName, null, -1, -1, -1, -1, null,null);
 	}
 
 	public RefImpl(CellAdv cell) {
-		SheetAdv sheet = (SheetAdv)cell.getSheet();
-		BookAdv book = ((BookAdv) sheet.getBook());
-		int row = cell.getRowIndex();
-		int column = cell.getColumnIndex();
-		setInfo(RefType.CELL, book.getBookName(), sheet.getSheetName(), row,
-				column, row, column, null);
+		this(RefType.CELL, cell.getSheet().getBook().getBookName(), cell.getSheet().getSheetName(), cell.getRowIndex(),
+		cell.getColumnIndex(), cell.getRowIndex(), cell.getColumnIndex(), null,null);
 	}
 
 	public RefImpl(SheetAdv sheet) {
-		BookAdv book = ((BookAdv) sheet.getBook());
-		setInfo(RefType.SHEET, book.getBookName(), sheet.getSheetName(), -1,
-				-1, -1, -1, null);
+		this(RefType.SHEET, ((BookAdv) sheet.getBook()).getBookName(), sheet.getSheetName(), -1,
+				-1, -1, -1, null,null);
 	}
 
 	public RefImpl(BookAdv book) {
-		setInfo(RefType.BOOK, book.getBookName(), null, -1, -1, -1, -1, null);
+		this(RefType.BOOK, book.getBookName(), null, -1, -1, -1, -1, null,null);
 	}
 
-	public RefImpl(ChartAdv chart) {
-		setInfo(RefType.CHART, chart.getSheet().getBook().getBookName(), null,
-				-1, -1, -1, -1, chart.getId());
+	public RefImpl(ChartAdv chart, String subObjectId) {
+		this(RefType.CHART, chart.getSheet().getBook().getBookName(), null,
+				-1, -1, -1, -1, chart.getId(),subObjectId);
+	}
+	
+	public RefImpl(NameAdv name) {
+		this(RefType.NAME, name.getBook().getBookName(), null,
+				-1, -1, -1, -1, name.getId(),null);
 	}
 
-	private void setInfo(RefType type, String bookName, String sheetName,
-			int row, int column, int lastRow, int lastColumn, String objectId) {
+	private RefImpl(RefType type, String bookName, String sheetName,
+			int row, int column, int lastRow, int lastColumn, String objectId, String subObjectId) {
 		this.type = type;
 		this.bookName = bookName;
 		this.sheetName = sheetName;
@@ -70,6 +71,7 @@ public class RefImpl implements Ref, Serializable {
 		this.lastRow = lastRow;
 		this.lastColumn = lastColumn;
 		this.objectId = objectId;
+		this.subObjectId = subObjectId;
 	}
 
 	@Override
@@ -109,6 +111,15 @@ public class RefImpl implements Ref, Serializable {
 
 	@Override
 	public int hashCode() {
+		
+		if(objectId!=null){
+			if(subObjectId!=null){
+				return subObjectId.hashCode();
+			}
+			return objectId.hashCode();
+		}
+		
+		
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
@@ -132,6 +143,15 @@ public class RefImpl implements Ref, Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		RefImpl other = (RefImpl) obj;
+		
+		//compare to id if there has.
+		if(objectId!=null){
+			if(subObjectId!=null){
+				return subObjectId.equals(other.subObjectId);
+			}
+			return objectId.equals(other.objectId);
+		}
+		
 		if (bookName == null) {
 			if (other.bookName != null)
 				return false;
@@ -160,11 +180,7 @@ public class RefImpl implements Ref, Serializable {
 		StringBuilder sb = new StringBuilder();
 		switch (type) {
 		case AREA:
-			sb.insert(
-					0,
-					":"
-							+ new CellReference(lastRow, lastColumn)
-									.formatAsString());
+			sb.insert(0,":"+ new CellReference(lastRow, lastColumn).formatAsString());
 		case CELL:
 			sb.insert(0, new CellReference(row, column).formatAsString());
 		case SHEET:
@@ -172,7 +188,12 @@ public class RefImpl implements Ref, Serializable {
 			break;
 		case CHART:
 		case VALIDATION:
-			sb.insert(0, objectId);
+		case NAME:
+			if(subObjectId!=null){
+				sb.insert(0, ":"+subObjectId);
+			}
+			sb.insert(0, ":"+objectId);
+			sb.insert(0, type);
 		}
 
 		sb.insert(0, bookName + ":");
