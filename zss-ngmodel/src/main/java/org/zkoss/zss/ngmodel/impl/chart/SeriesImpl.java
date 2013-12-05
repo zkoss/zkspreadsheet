@@ -7,7 +7,6 @@ import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.ChartAdv;
-import org.zkoss.zss.ngmodel.impl.FormulaContent;
 import org.zkoss.zss.ngmodel.impl.LinkedModelObject;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
@@ -19,7 +18,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 
-public class SeriesImpl implements NSeries, FormulaContent,Serializable,LinkedModelObject{
+public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 	private static final long serialVersionUID = 1L;
 	private FormulaExpression nameExpr;
 	private FormulaExpression valueExpr;
@@ -130,7 +129,22 @@ public class SeriesImpl implements NSeries, FormulaContent,Serializable,LinkedMo
 		}else{
 			yValueExpr = null;
 		}
+	}
+	
+	@Override
+	public boolean isFormulaParsingError() {
+		boolean r = false;
+		if(nameExpr!=null){
+			r |= nameExpr.hasError();
+		}
+		if(!r && valueExpr!=null){
+			r |= valueExpr.hasError();
+		}
+		if(!r && yValueExpr!=null){
+			r |= yValueExpr.hasError();
+		}
 		
+		return r;
 	}
 
 	@Override
@@ -163,9 +177,10 @@ public class SeriesImpl implements NSeries, FormulaContent,Serializable,LinkedMo
 	}
 	
 	@Override
-	public void release() {
+	public void destroy() {
 		checkOrphan();
 		clearFormulaDependency();
+		clearFormulaResultCache();
 		chart = null;
 	}
 

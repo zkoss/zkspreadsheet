@@ -43,7 +43,7 @@ public class PictureImpl extends PictureAdv {
 	}
 
 	@Override
-	public void release() {
+	public void destroy() {
 		checkOrphan();
 		sheet = null;
 	}

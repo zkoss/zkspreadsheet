@@ -76,7 +76,7 @@ public class CellImpl extends CellAdv {
 	}
 
 	@Override
-	public void release() {
+	public void destroy() {
 		checkOrphan();
 		clearValue();
 		row = null;
@@ -143,6 +143,14 @@ public class CellImpl extends CellAdv {
 	@Override
 	public void clearFormulaResultCache() {
 		formulaResult = null;
+	}
+	
+	@Override
+	public boolean isFormulaParsingError() {
+		if (type == CellType.FORMULA) {
+			return ((FormulaExpression)getValue(false)).hasError();
+		}
+		return false;
 	}
 	
 	private void clearFormulaDependency(){
@@ -288,6 +296,7 @@ public class CellImpl extends CellAdv {
 		Validations.argInstance(comment, CommentAdv.class);
 		this.comment = (CommentAdv)comment;
 	}
+
 	
 
 }

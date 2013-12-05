@@ -1,6 +1,8 @@
 package org.zkoss.zss.ngmodel.chart;
 
-public interface NSeries {
+import org.zkoss.zss.ngmodel.FormulaContent;
+
+public interface NSeries extends FormulaContent{
 
 	public String getName();
 	
@@ -15,6 +17,4 @@ public interface NSeries {
 	public String getNameFormula();
 	public String getValuesFormula();
 	public String getYValuesFormula();
-	
-	public void clearFormulaResultCache();
 }

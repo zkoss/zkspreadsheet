@@ -245,7 +245,7 @@ public class BookImpl extends BookAdv{
 	public void deleteSheet(NSheet sheet) {
 		checkOwnership(sheet);
 		
-		((SheetAdv)sheet).release();
+		((SheetAdv)sheet).destroy();
 		
 		int index = sheets.indexOf(sheet);
 		sheets.remove(index);
@@ -464,7 +464,7 @@ public class BookImpl extends BookAdv{
 	public void deleteName(NName name) {
 		checkOwnership(name);
 		
-		((NameAdv)name).release();
+		((NameAdv)name).destroy();
 		
 		int index = names.indexOf(name);
 		names.remove(index);

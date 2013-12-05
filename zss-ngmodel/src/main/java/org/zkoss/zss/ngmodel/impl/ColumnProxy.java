@@ -82,7 +82,7 @@ class ColumnProxy extends ColumnAdv {
 	}
 
 	@Override
-	public void release() {
+	public void destroy() {
 		throw new IllegalStateException(
 				"never link proxy object and call it's release");
 	}

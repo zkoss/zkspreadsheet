@@ -50,7 +50,7 @@ public class ColumnImpl extends ColumnAdv {
 	}
 
 	@Override
-	public void release() {
+	public void destroy() {
 		checkOrphan();
 		sheet = null;
 	}

@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.zkoss.zss.ngmodel.impl.SheetAdv;
 
-public interface NCell {
+public interface NCell extends FormulaContent{
 
 	public enum CellType {
 		BLANK,
@@ -55,7 +55,6 @@ public interface NCell {
 
 	//clear cell value , reset it to blank
 	public void clearValue();//
-	public void clearFormulaResultCache();
 	
 	public void setStringValue(String value);
 	public String getStringValue();

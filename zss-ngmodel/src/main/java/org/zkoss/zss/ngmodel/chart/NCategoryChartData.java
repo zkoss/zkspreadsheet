@@ -2,6 +2,12 @@ package org.zkoss.zss.ngmodel.chart;
 
 public interface NCategoryChartData extends NChartData{
 
+	/**
+	 * Return formula parsing state.
+	 * @return true if has error, false if no error or no formula
+	 */
+	public boolean isFormulaParsingError();
+	
 	public int getNumOfSeries();
 	public NSeries getSeries(int i);
 	

@@ -6,6 +6,8 @@ import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NComment;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.NCell.CellType;
+import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
 import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
 
@@ -166,7 +168,7 @@ class CellProxy extends CellAdv {
 	}
 
 	@Override
-	public void release() {
+	public void destroy() {
 		throw new IllegalStateException(
 				"never link proxy object and call it's release");
 	}
@@ -205,6 +207,12 @@ class CellProxy extends CellAdv {
 					rowIdx)).getOrCreateCell(columnIdx);
 		}
 		proxy.setComment(comment);
+	}
+
+	@Override
+	public boolean isFormulaParsingError() {
+		loadProxy();
+		return proxy == null ? false : proxy.isFormulaParsingError();
 	}
 
 }

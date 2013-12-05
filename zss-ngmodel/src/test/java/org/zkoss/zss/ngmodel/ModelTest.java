@@ -1012,6 +1012,7 @@ public class ModelTest {
 		Assert.assertNull(cell.getValue());
 		
 		cell.setValue("abc");
+		Assert.assertFalse(cell.isFormulaParsingError());
 		Assert.assertEquals(CellType.STRING, cell.getType());
 		Assert.assertEquals("abc",cell.getValue());
 		
@@ -1036,6 +1037,14 @@ public class ModelTest {
 		Assert.assertEquals(CellType.NUMBER, cell.getFormulaResultType());
 		Assert.assertEquals("SUM(999)", cell.getFormulaValue());
 		Assert.assertEquals(999, cell.getValue());
+		
+		
+		cell.setValue("=)))(999)");
+		Assert.assertEquals(CellType.FORMULA, cell.getType());
+		Assert.assertEquals(CellType.ERROR, cell.getFormulaResultType());
+		Assert.assertEquals(")))(999)", cell.getFormulaValue());
+		Assert.assertTrue(cell.isFormulaParsingError());
+		Assert.assertEquals(ErrorValue.INVALID_FORMULA, cell.getErrorValue().getCode());
 		
 		cell.clearValue();
 		Assert.assertEquals(CellType.BLANK, cell.getType());
@@ -1379,20 +1388,23 @@ public class ModelTest {
 		
 		nseries1.setFormula("KK()",null,null);//fail 
 		Assert.assertEquals("#NAME!", nseries1.getName());
+		Assert.assertTrue(nseries1.isFormulaParsingError());
 		
 		nseries1.setFormula("D1",null,null);
 		Assert.assertEquals("My Series", nseries1.getName());
 		
 		Assert.assertEquals(0, nseries1.getNumOfValue());
 		Assert.assertEquals(0, nseries1.getNumOfYValue());
+		Assert.assertFalse(nseries1.isFormulaParsingError());
 		
 		
 		nseries1.setFormula("D1","KK()","KK()");
 		Assert.assertEquals(0, nseries1.getNumOfValue());
 		Assert.assertEquals(0, nseries1.getNumOfYValue());
+		Assert.assertTrue(nseries1.isFormulaParsingError());
 		
 		nseries1.setFormula("D1","B1:B3","C1:C3");
-		
+		Assert.assertFalse(nseries1.isFormulaParsingError());
 		
 		Assert.assertEquals(3, nseries1.getNumOfValue());
 		Assert.assertEquals(3, nseries1.getNumOfYValue());
@@ -1642,7 +1654,7 @@ public class ModelTest {
 		
 	}
 	
-//	@Test
+	@Test
 	public void testName(){
 		NBook book = new BookImpl("book1");
 		book.createSheet("Sheet1");
@@ -1665,14 +1677,27 @@ public class ModelTest {
 		
 		CellRegion region = name1.getRefersTo();
 		Assert.assertEquals("Sheet1", name1.getSheetName());
-		Assert.assertEquals("A1:B1", region.getReferenceString());
+		Assert.assertEquals("A1:B3", region.getReferenceString());
 		Assert.assertEquals(0, region.row);
 		Assert.assertEquals(0, region.column);
 		Assert.assertEquals(2, region.lastRow);
 		Assert.assertEquals(1, region.lastColumn);
 		
-//		name2
+		Assert.assertFalse(name2.isFormulaParsingError());
 		
+		name2.setRefersToFormula("Sheet2!A$2:B$4");
+		
+		region = name2.getRefersTo();
+		Assert.assertEquals("Sheet2", name2.getSheetName());
+		Assert.assertEquals("A2:B4", region.getReferenceString());
+		Assert.assertEquals(1, region.row);
+		Assert.assertEquals(0, region.column);
+		Assert.assertEquals(3, region.lastRow);
+		Assert.assertEquals(1, region.lastColumn);
+		
+		Assert.assertFalse(name2.isFormulaParsingError());
+		name2.setRefersToFormula("IBM)(");
+		Assert.assertTrue(name2.isFormulaParsingError());
 		
 	}
 }

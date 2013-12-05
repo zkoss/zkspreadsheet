@@ -10,7 +10,6 @@ import org.zkoss.zss.ngmodel.chart.NCategoryChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.ChartAdv;
-import org.zkoss.zss.ngmodel.impl.LinkedModelObject;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
@@ -94,9 +93,8 @@ public class CategoryChartDataImpl extends ChartDataAdv implements NCategoryChar
 	
 	public void removeSeries(NSeries series) {
 		checkOwnership(series);
-		((SeriesImpl)series).release();
+		((SeriesImpl)series).destroy();
 		serieses.remove(series);
-		
 	}
 	public void setCategoriesFormula(String expr) {
 		checkOrphan();
@@ -118,9 +116,11 @@ public class CategoryChartDataImpl extends ChartDataAdv implements NCategoryChar
 	public void clearFormulaResultCache() {
 		evalResult = null;
 		evaluated = false;
-		for(SeriesImpl series:serieses){
-			series.clearFormulaResultCache();
-		}
+	}
+	
+	@Override
+	public boolean isFormulaParsingError() {
+		return catFormula==null?false:catFormula.hasError();
 	}
 	
 	private void clearFormulaDependency(){
@@ -132,11 +132,12 @@ public class CategoryChartDataImpl extends ChartDataAdv implements NCategoryChar
 	}
 
 	@Override
-	public void release() {
+	public void destroy() {
 		checkOrphan();
 		clearFormulaDependency();
+		clearFormulaResultCache();
 		for(SeriesImpl series:serieses){
-			series.release();
+			series.destroy();
 		}
 		chart = null;
 	}
@@ -147,4 +148,5 @@ public class CategoryChartDataImpl extends ChartDataAdv implements NCategoryChar
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}
+
 }

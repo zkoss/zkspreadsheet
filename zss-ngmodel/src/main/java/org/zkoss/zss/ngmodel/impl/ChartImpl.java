@@ -5,7 +5,6 @@ import org.zkoss.zss.ngmodel.NViewAnchor;
 import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
 import org.zkoss.zss.ngmodel.impl.chart.ChartDataAdv;
-import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 
 public class ChartImpl extends ChartAdv {
 	private static final long serialVersionUID = 1L;
@@ -85,10 +84,10 @@ public class ChartImpl extends ChartAdv {
 	}
 
 	@Override
-	public void release() {
+	public void destroy() {
 		checkOrphan();
 		
-		((ChartDataAdv)getData()).release();
+		((ChartDataAdv)getData()).destroy();
 		
 		sheet = null;
 	}
@@ -98,8 +97,5 @@ public class ChartImpl extends ChartAdv {
 			throw new IllegalStateException("doesn't connect to parent");
 		}
 	}
-	@Override
-	public void clearFormulaResultCache() {
-		((ChartDataAdv)getData()).clearFormulaResultCache();
-	}
+	
 }

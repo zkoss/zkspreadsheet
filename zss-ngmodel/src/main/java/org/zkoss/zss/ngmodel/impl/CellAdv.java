@@ -14,7 +14,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 import org.zkoss.zss.ngmodel.util.Validations;
 
-public abstract class CellAdv implements NCell,LinkedModelObject,FormulaContent,Serializable{
+public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	protected void checkType(CellType type){

@@ -110,7 +110,7 @@ class RowProxy extends RowAdv{
 		throw new UnsupportedOperationException("not implement");
 	}
 	@Override
-	public void release() {
+	public void destroy() {
 		throw new IllegalStateException("never link proxy object and call it's release");
 	}
 	@Override

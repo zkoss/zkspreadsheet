@@ -26,6 +26,9 @@ public class FormulaEngineImpl implements FormulaEngine {
 		testData.put("B1:B3", new Object[]{new Integer[]{1,2,3},ResultType.SUCCESS});
 		testData.put("C1:C3", new Object[]{new Integer[]{4,5,6},ResultType.SUCCESS});
 		testData.put("D1", new Object[]{"My Series",ResultType.SUCCESS});
+		testData.put("Sheet1!A1:B3", new Object[]{new Integer[]{1,2,3},ResultType.SUCCESS});
+		testData.put("Sheet2!A$2:B$4", new Object[]{new Integer[]{1,2,3},ResultType.SUCCESS});
+		
 	}
 	
 	

@@ -86,7 +86,7 @@ public class RowImpl extends RowAdv {
 	public void clearCell(int start, int end) {
 		// clear before move relation
 		for (CellAdv cell : cells.subValues(start, end)) {
-			cell.release();
+			cell.destroy();
 		}
 		cells.clear(start, end);
 	}
@@ -105,7 +105,7 @@ public class RowImpl extends RowAdv {
 			return;
 		// clear before move relation
 		for (CellAdv cell : cells.subValues(cellIdx, cellIdx + size)) {
-			cell.release();
+			cell.destroy();
 		}
 
 		cells.delete(cellIdx, size);
@@ -124,10 +124,10 @@ public class RowImpl extends RowAdv {
 	}
 
 	@Override
-	public void release() {
+	public void destroy() {
 		checkOrphan();
 		for (CellAdv cell : cells.values()) {
-			cell.release();
+			cell.destroy();
 		}
 		sheet = null;
 	}

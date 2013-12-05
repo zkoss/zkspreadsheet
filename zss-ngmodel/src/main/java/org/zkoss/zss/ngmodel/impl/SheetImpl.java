@@ -197,7 +197,7 @@ public class SheetImpl extends SheetAdv {
 		
 		//clear before move relation
 		for(RowAdv row:rows.subValues(start,end)){
-			row.release();
+			row.destroy();
 		}		
 		rows.clear(start,end);
 		
@@ -211,7 +211,7 @@ public class SheetImpl extends SheetAdv {
 		
 		
 		for(ColumnAdv column:columns.subValues(start,end)){
-			column.release();
+			column.destroy();
 		}
 		columns.clear(start,end);
 		
@@ -341,7 +341,7 @@ public class SheetImpl extends SheetAdv {
 		
 		//clear before move relation
 		for(RowAdv row:rows.subValues(rowIdx,rowIdx+size)){
-			row.release();
+			row.destroy();
 		}		
 		rows.delete(rowIdx, size);
 		
@@ -424,7 +424,7 @@ public class SheetImpl extends SheetAdv {
 		if(size<=0) return;
 		
 		for(ColumnAdv column:columns.subValues(columnIdx, columnIdx+size)){
-			column.release();
+			column.destroy();
 		}
 		
 		columns.delete(columnIdx, size);
@@ -445,19 +445,19 @@ public class SheetImpl extends SheetAdv {
 		}
 	}
 	@Override
-	public void release(){
+	public void destroy(){
 		checkOrphan();
 		for(ColumnAdv column:columns.values()){
-			column.release();
+			column.destroy();
 		}
 		for(RowAdv row:rows.values()){
-			row.release();
+			row.destroy();
 		}
 		for(ChartAdv chart:charts){
-			chart.release();
+			chart.destroy();
 		}
 		for(PictureAdv picture:pictures){
-			picture.release();
+			picture.destroy();
 		}
 		book = null;
 		//TODO all 
@@ -487,7 +487,7 @@ public class SheetImpl extends SheetAdv {
 	public void deletePicture(NPicture picture) {
 		checkOrphan();
 		checkOwnership(picture);
-		((PictureAdv)picture).release();
+		((PictureAdv)picture).destroy();
 		pictures.remove(picture);
 	}
 
@@ -515,7 +515,7 @@ public class SheetImpl extends SheetAdv {
 	public void deleteChart(NChart chart) {
 		checkOrphan();
 		checkOwnership(chart);
-		((ChartAdv)chart).release();
+		((ChartAdv)chart).destroy();
 		charts.remove(chart);
 	}
 

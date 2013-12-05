@@ -1,6 +1,6 @@
 package org.zkoss.zss.ngmodel;
 
-public interface NName {
+public interface NName extends FormulaContent{
 
 	public String getId();
 	public String getName();
@@ -10,6 +10,4 @@ public interface NName {
 	
 	public String getRefersToFormula();
 	public void setRefersToFormula(String refersExpr);
-	
-	
 }
