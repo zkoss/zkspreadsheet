@@ -8,6 +8,7 @@ import java.util.Locale;
 import junit.framework.Assert;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.impl.sys.InputConverter;
@@ -24,21 +25,59 @@ public class InputConverterTest {
 	}
 	
 	@Test
-	public void dateTest(){
-		String editText = "01/01/2013";
-		DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-		InputResult result = InputConverter.editTextToValue(editText, null, inputParseContext);
-		Assert.assertEquals(CellType.NUMBER,result.getType());
-		Assert.assertTrue(result.getValue() instanceof Date);
-		Assert.assertEquals(editText, format.format(result.getValue()));
+	public void text(){
+		String editText = "=SUM(10)";
+		InputResult result = InputConverter.editTextToValue(editText, "@", inputParseContext);
+		Assert.assertEquals(CellType.STRING,result.getType());
+		Assert.assertTrue(result.getValue() instanceof String);
+		Assert.assertEquals(editText, result.getValue().toString());
 	}
+
+	
 
 	@Test
 	public void formulaTest(){
 		String editText = "=SUM(10)";
-		InputResult result = InputConverter.editTextToValue(editText, null, inputParseContext);
+		InputResult result = InputConverter.editTextToValue(editText, "", inputParseContext);
 		Assert.assertEquals(CellType.FORMULA,result.getType());
 		Assert.assertTrue(result.getValue() instanceof String);
 		Assert.assertEquals(editText.substring(1), result.getValue().toString());
 	}
+	
+	
+	@Test
+	public void booleanType(){
+		String editText = "true";
+		InputResult result = InputConverter.editTextToValue(editText, "", inputParseContext);
+		Assert.assertEquals(CellType.BOOLEAN,result.getType());
+		Assert.assertTrue(result.getValue() instanceof Boolean);
+	}
+	
+	@Test
+	public void errorType(){
+		String editText = "#NAME?";
+		InputResult result = InputConverter.editTextToValue(editText, "", inputParseContext);
+		Assert.assertEquals(CellType.ERROR,result.getType());
+		Assert.assertTrue(result.getValue() instanceof Byte);
+	}
+	
+	@Ignore("not implemented")
+	public void numericTytpe(){
+		String editText = "1,234,567";
+		InputResult result = InputConverter.editTextToValue(editText, "", inputParseContext);
+		Assert.assertEquals(CellType.NUMBER,result.getType());
+		Assert.assertTrue(result.getValue() instanceof Double);
+	}
+	
+	
+	@Test
+	public void dateTest(){
+		String editText = "01/01/2013";
+		DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		InputResult result = InputConverter.editTextToValue(editText, "", inputParseContext);
+		Assert.assertEquals(CellType.NUMBER,result.getType());
+		Assert.assertTrue(result.getValue() instanceof Date);
+		Assert.assertEquals(editText, format.format(result.getValue()));
+	}
+	
 }

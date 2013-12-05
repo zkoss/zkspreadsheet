@@ -201,6 +201,22 @@ public class CellFormatTest {
 		Assert.assertEquals("a/p", result.getText());
 	}
 	
+	@Test
+	public void elapsedTime(){
+		cell.setValue(new Double(2.46585648148148));
+		cell.getCellStyle().setDataFormat("[h]");
+		FormatResult result1 = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		Assert.assertEquals("59", result1.getText());
+		
+		cell.getCellStyle().setDataFormat("[m]");
+		FormatResult result2 = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		Assert.assertEquals("3550", result2.getText());
+		
+		cell.getCellStyle().setDataFormat("[s]");
+		FormatResult result3 = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		Assert.assertEquals("213049", result3.getText());
+	}
+	
 	
 	/* Percentage*/
 	@Test

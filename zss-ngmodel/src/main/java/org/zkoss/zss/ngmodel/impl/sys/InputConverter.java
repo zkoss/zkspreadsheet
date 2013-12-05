@@ -4,22 +4,23 @@ import java.util.Locale;
 
 import org.zkoss.poi.ss.format.Formatters;
 import org.zkoss.poi.ss.usermodel.ErrorConstants;
-import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.sys.input.InputParseContext;
 import org.zkoss.zss.ngmodel.sys.input.InputResult;
 
+/**
+ * Determine a cell's type and value by parsing editing text with predefined patterns. 
+ * The parsing process considers the locale for decimal separator, thousands separator, and data format.  
+ * @author Hawk
+ *
+ */
 public class InputConverter {
 	static private DateInputMask dateInputMask = new DateInputMask();
-	/*
-	 * TODO could cell be null?
-	 */
-	public static InputResult editTextToValue(String text, NCell cell, InputParseContext context) {
+
+	public static InputResult editTextToValue(String editText, String formatPattern, InputParseContext context) {
 		InputResultImpl result = null;
-		if (text != null) {
-			final String formatStr = cell == null ? 
-					null : cell.getCellStyle().getDataFormat();
-			Object[] convertedResult = editTextToValue(text, formatStr, context.getLocale());
+		if (editText != null) {
+			Object[] convertedResult = editTextToValue(editText, formatPattern, context.getLocale());
 			result = new InputResultImpl();
 			result.setType((CellType)convertedResult[0]);
 			result.setValue(convertedResult[1]);
@@ -31,15 +32,15 @@ public class InputConverter {
 	/**
 	 * 
 	 * @param txt the text to be input
-	 * @param formatStr the cell text format 
+	 * @param formatPattern the cell text format 
 	 * @return object array with the value type in 0(an Integer), 
 	 * 		the value in 1(an Object), and the date format in 2(a String if parse as a date)   
 	 */
-	public static Object[] editTextToValue(String txt, String formatStr, Locale locale) {
+	public static Object[] editTextToValue(String txt, String formatPattern, Locale locale) {
 		if (txt != null) {
 			//bug #300:	Numbers in Text-cells are not treated as text (leading zero is removed)
-			if (formatStr != null) {
-				if (isStringFormat(formatStr)) { 
+			if (formatPattern != null) {
+				if (isStringFormat(formatPattern)) { 
 					return new Object[] {CellType.STRING, txt}; //string
 				}
 			}
