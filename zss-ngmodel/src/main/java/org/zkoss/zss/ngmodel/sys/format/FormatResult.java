@@ -1,10 +1,12 @@
 package org.zkoss.zss.ngmodel.sys.format;
 
+import org.zkoss.zss.ngmodel.NColor;
+
 public interface FormatResult {
 
 	String getText();
 	
-	String getColor();
+	NColor getColor();
 	
 //	boolean getConditionApplied();
 	

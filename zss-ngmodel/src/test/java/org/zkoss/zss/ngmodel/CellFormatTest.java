@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.zkoss.poi.ss.format.CellFormat;
 import org.zkoss.poi.ss.format.CellFormatResult;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
+import org.zkoss.zss.ngmodel.impl.ColorImpl;
 import org.zkoss.zss.ngmodel.impl.sys.FormatEngineImpl;
 import org.zkoss.zss.ngmodel.sys.format.FormatContext;
 import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
@@ -289,7 +290,7 @@ public class CellFormatTest {
 		cell.setValue(new Integer(12000));
 		cell.getCellStyle().setDataFormat("[red]#.0,");
 		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
-		Assert.assertEquals(Color.RED.toString(), result.getColor());
+		Assert.assertEquals(ColorImpl.RED, result.getColor());
 	}
 	
 
