@@ -26,6 +26,7 @@ import org.zkoss.zss.ngmodel.chart.NCategoryChartData;
 import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.ChartAdv;
+import org.zkoss.zss.ngmodel.impl.ObjectRefImpl;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
@@ -100,7 +101,7 @@ public class CategoryChartDataImpl extends ChartDataAdv implements NCategoryChar
 		return ChartDataUtil.valueOf(evalResult,i);
 	}
 	public NSeries addSeries() {
-		SeriesImpl series = new SeriesImpl(chart,id + (seriesCount++));
+		SeriesImpl series = new SeriesImpl(chart,chart.getId() + "-series" + (seriesCount++));
 		serieses.add(series);
 		return series;
 	}
@@ -124,7 +125,7 @@ public class CategoryChartDataImpl extends ChartDataAdv implements NCategoryChar
 		
 		//TODO dependency tracking on chart
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		catFormula = fe.parse(expr, new FormulaParseContext(chart.getSheet().getBook()));
+		catFormula = fe.parse(expr, new FormulaParseContext(chart.getSheet(),getRef()));
 	}
 
 	@Override
@@ -145,10 +146,13 @@ public class CategoryChartDataImpl extends ChartDataAdv implements NCategoryChar
 	
 	private void clearFormulaDependency(){
 		if(catFormula!=null){
-			Ref ref = new RefImpl(chart,id);
 			((BookSeriesAdv) chart.getSheet().getBook().getBookSeries())
-					.getDependencyTable().clearDependents(ref);
+					.getDependencyTable().clearDependents(getRef());
 		}
+	}
+	
+	private Ref getRef(){
+		return new ObjectRefImpl(chart,new String[]{chart.getId(),id});
 	}
 
 	@Override

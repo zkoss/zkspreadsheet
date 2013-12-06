@@ -24,6 +24,7 @@ import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NComment;
 import org.zkoss.zss.ngmodel.NHyperlink;
 import org.zkoss.zss.ngmodel.NRichText;
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
@@ -156,9 +157,10 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 			formula = formula.substring(1);
 		}
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(getSheet().getBook()));
+		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(this ,new RefImpl(this)));
 		setValue(expr);
 	}
+	
 
 	@Override
 	public String getFormulaValue() {

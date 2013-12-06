@@ -98,7 +98,7 @@ public class ChartImpl extends ChartAdv {
 		case COLUMN:
 		case LINE:
 		case PIE:
-			return new CategoryChartDataImpl(this,id+"Data");
+			return new CategoryChartDataImpl(this,id+"-data");
 		}
 		throw new UnsupportedOperationException("unsupported chart type "+type);
 	}

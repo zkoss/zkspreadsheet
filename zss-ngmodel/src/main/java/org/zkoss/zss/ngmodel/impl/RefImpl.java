@@ -29,60 +29,45 @@ public class RefImpl implements Ref, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	final private RefType type;
-	final private String bookName;
-	final private String sheetName;
+	final protected String bookName;
+	final protected String sheetName;
 	final private int row;
 	final private int column;
 	final private int lastRow;
 	final private int lastColumn;
-	final private String objectId;
-	final private String subObjectId;
 
 	public RefImpl(String bookName, String sheetName, int row, int column,
 			int lastRow, int lastColumn) {
-		this(RefType.AREA, bookName, sheetName, row, column, lastRow,
-				lastColumn, null,null);
+		this(RefType.AREA, bookName, sheetName, row, column, lastRow,lastColumn);
 	}
 
 	public RefImpl(String bookName, String sheetName, int row, int column) {
-		this(RefType.CELL, bookName, sheetName, row, column, row, column,
-				null,null);
+		this(RefType.CELL, bookName, sheetName, row, column, row, column);
 	}
 
 	public RefImpl(String bookName, String sheetName) {
-		this(RefType.SHEET, bookName, sheetName, -1, -1, -1, -1, null,null);
+		this(RefType.SHEET, bookName, sheetName, -1, -1, -1, -1);
 	}
 
 	public RefImpl(String bookName) {
-		this(RefType.BOOK, bookName, null, -1, -1, -1, -1, null,null);
+		this(RefType.BOOK, bookName, null, -1, -1, -1, -1);
 	}
 
 	public RefImpl(CellAdv cell) {
 		this(RefType.CELL, cell.getSheet().getBook().getBookName(), cell.getSheet().getSheetName(), cell.getRowIndex(),
-		cell.getColumnIndex(), cell.getRowIndex(), cell.getColumnIndex(), null,null);
+		cell.getColumnIndex(), cell.getRowIndex(), cell.getColumnIndex());
 	}
 
 	public RefImpl(SheetAdv sheet) {
-		this(RefType.SHEET, ((BookAdv) sheet.getBook()).getBookName(), sheet.getSheetName(), -1,
-				-1, -1, -1, null,null);
+		this(RefType.SHEET, ((BookAdv) sheet.getBook()).getBookName(), sheet.getSheetName(), -1, -1, -1, -1);
 	}
 
 	public RefImpl(BookAdv book) {
-		this(RefType.BOOK, book.getBookName(), null, -1, -1, -1, -1, null,null);
+		this(RefType.BOOK, book.getBookName(), null, -1, -1, -1, -1);
 	}
 
-	public RefImpl(ChartAdv chart, String subObjectId) {
-		this(RefType.CHART, chart.getSheet().getBook().getBookName(), null,
-				-1, -1, -1, -1, chart.getId(),subObjectId);
-	}
-	
-	public RefImpl(NameAdv name) {
-		this(RefType.NAME, name.getBook().getBookName(), null,
-				-1, -1, -1, -1, name.getId(),null);
-	}
-
-	private RefImpl(RefType type, String bookName, String sheetName,
-			int row, int column, int lastRow, int lastColumn, String objectId, String subObjectId) {
+	protected RefImpl(RefType type, String bookName, String sheetName,
+			int row, int column, int lastRow, int lastColumn) {
 		this.type = type;
 		this.bookName = bookName;
 		this.sheetName = sheetName;
@@ -90,8 +75,6 @@ public class RefImpl implements Ref, Serializable {
 		this.column = column;
 		this.lastRow = lastRow;
 		this.lastColumn = lastColumn;
-		this.objectId = objectId;
-		this.subObjectId = subObjectId;
 	}
 
 	@Override
@@ -131,15 +114,6 @@ public class RefImpl implements Ref, Serializable {
 
 	@Override
 	public int hashCode() {
-		
-		if(objectId!=null){
-			if(subObjectId!=null){
-				return subObjectId.hashCode();
-			}
-			return objectId.hashCode();
-		}
-		
-		
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
@@ -163,14 +137,6 @@ public class RefImpl implements Ref, Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		RefImpl other = (RefImpl) obj;
-		
-		//compare to id if there has.
-		if(objectId!=null){
-			if(subObjectId!=null){
-				return subObjectId.equals(other.subObjectId);
-			}
-			return objectId.equals(other.objectId);
-		}
 		
 		if (bookName == null) {
 			if (other.bookName != null)
@@ -206,23 +172,11 @@ public class RefImpl implements Ref, Serializable {
 		case SHEET:
 			sb.insert(0, sheetName + "!");
 			break;
-		case CHART:
-		case VALIDATION:
-		case NAME:
-			if(subObjectId!=null){
-				sb.insert(0, ":"+subObjectId);
-			}
-			sb.insert(0, ":"+objectId);
-			sb.insert(0, type);
+		case OBJECT://will be override
+		case BOOK:
 		}
 
 		sb.insert(0, bookName + ":");
 		return sb.toString();
 	}
-
-	@Override
-	public String getObjectId() {
-		return objectId;
-	}
-
 }

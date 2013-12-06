@@ -20,10 +20,12 @@ import java.io.Serializable;
 
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.chart.NSeries;
 import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.ChartAdv;
 import org.zkoss.zss.ngmodel.impl.LinkedModelObject;
+import org.zkoss.zss.ngmodel.impl.ObjectRefImpl;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
@@ -133,19 +135,20 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 		clearFormulaDependency();
 		
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
-		NBook book = chart.getSheet().getBook();
+		NSheet sheet = chart.getSheet();
+		Ref ref = getRef();
 		if(nameExpression!=null){
-			nameExpr = fe.parse(nameExpression, new FormulaParseContext(book));
+			nameExpr = fe.parse(nameExpression, new FormulaParseContext(sheet,ref));
 		}else{
 			nameExpr = null;
 		}
 		if(valueExpression!=null){
-			valueExpr = fe.parse(valueExpression, new FormulaParseContext(book));
+			valueExpr = fe.parse(valueExpression, new FormulaParseContext(sheet,ref));
 		}else{
 			valueExpr = null;
 		}
 		if(yValueExpression!=null){
-			yValueExpr = fe.parse(yValueExpression, new FormulaParseContext(book));
+			yValueExpr = fe.parse(yValueExpression, new FormulaParseContext(sheet,ref));
 		}else{
 			yValueExpr = null;
 		}
@@ -190,10 +193,13 @@ public class SeriesImpl implements NSeries,Serializable,LinkedModelObject{
 	
 	private void clearFormulaDependency() {
 		if(nameExpr!=null || valueExpr!=null || yValueExpr!=null){
-			Ref ref = new RefImpl(chart,id);
 			((BookSeriesAdv) chart.getSheet().getBook().getBookSeries())
-					.getDependencyTable().clearDependents(ref);
+					.getDependencyTable().clearDependents(getRef());
 		}
+	}
+	
+	private Ref getRef(){
+		return new ObjectRefImpl(chart,new String[]{chart.getId(),id});
 	}
 	
 	@Override
