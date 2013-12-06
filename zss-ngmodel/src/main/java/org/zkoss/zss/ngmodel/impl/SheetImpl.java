@@ -55,6 +55,8 @@ public class SheetImpl extends SheetAdv {
 	private String name;
 	private final String id;
 	
+	private boolean protect;
+	
 	private final BiIndexPool<RowAdv> rows = new BiIndexPool<RowAdv>();
 	private final BiIndexPool<ColumnAdv> columns = new BiIndexPool<ColumnAdv>();
 	
@@ -600,6 +602,12 @@ public class SheetImpl extends SheetAdv {
 	public Iterator<NRow> getRowIterator() {
 		return Collections.unmodifiableCollection((Collection)rows.values()).iterator();
 	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public List<NRow> getRowList() {
+		return Collections.unmodifiableList((List)rows.values());
+	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
@@ -607,6 +615,12 @@ public class SheetImpl extends SheetAdv {
 		return Collections.unmodifiableCollection((Collection)columns.values()).iterator();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public List<NColumn> getColumnList() {
+		return Collections.unmodifiableList((List)columns.values());
+	}
+	
 	@Override
 	public int getDefaultRowHeight() {
 		return defaultRowHeight;
@@ -675,6 +689,16 @@ public class SheetImpl extends SheetAdv {
 	@Override
 	public CellRegion getMergedRegion(int idx) {
 		return mergedRegions.get(idx);
+	}
+
+	@Override
+	public boolean isProtected() {
+		return protect;
+	}
+
+	@Override
+	public void setProtected(boolean protect) {
+		this.protect = protect;
 	}
 
 

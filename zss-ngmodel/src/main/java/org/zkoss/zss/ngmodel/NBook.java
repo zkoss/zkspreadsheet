@@ -207,4 +207,8 @@ public interface NBook {
 	public NName getNameByName(String namename);
 	
 	public List<NName> getNames();
+
+	public void setShareScope(String scope);
+
+	public String getShareScope();
 }

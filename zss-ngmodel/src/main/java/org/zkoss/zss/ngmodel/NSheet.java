@@ -41,7 +41,9 @@ public interface NSheet {
 	public String getSheetName();
 	
 	public Iterator<NRow> getRowIterator();
+	public List<NRow> getRowList();
 	public Iterator<NColumn> getColumnIterator();
+	public List<NColumn> getColumnList();
 	
 	public int getDefaultRowHeight();
 	public int getDefaultColumnWidth();
@@ -132,4 +134,9 @@ public interface NSheet {
 	 * @return
 	 */
 	public Map<String,Object> getAttributes();
+
+	
+	public boolean isProtected();
+	
+	public void setProtected(boolean protect);
 }

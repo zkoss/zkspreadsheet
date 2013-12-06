@@ -52,6 +52,8 @@ public class BookImpl extends BookAdv{
 
 	private final String bookName;
 	
+	private String shareScope;
+	
 	private NBookSeries bookSeries;
 	
 	private final List<SheetAdv> sheets = new LinkedList<SheetAdv>();
@@ -503,6 +505,16 @@ public class BookImpl extends BookAdv{
 	@Override
 	public int getSheetIndex(NSheet sheet) {
 		return sheets.indexOf(sheet);
+	}
+
+	@Override
+	public void setShareScope(String scope) {
+		this.shareScope = scope;
+	}
+
+	@Override
+	public String getShareScope() {
+		return shareScope;
 	}
 
 }

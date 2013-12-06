@@ -19,6 +19,7 @@ package org.zkoss.zss.ngmodel.impl;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NCell;
@@ -206,6 +207,12 @@ public class RowImpl extends RowAdv {
 	@Override
 	public Iterator<NCell> getCellIterator() {
 		return Collections.unmodifiableCollection((Collection)cells.values()).iterator();
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public List<NCell> getCellList() {
+		return Collections.unmodifiableList((List)cells.values());
 	}
 
 	@Override
