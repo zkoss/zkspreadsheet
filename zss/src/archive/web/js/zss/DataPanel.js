@@ -273,8 +273,9 @@ zss.DataPanel = zk.$extends(zk.Object, {
 		if (ci != left || (val && val.length > 0)) {
 			if (sheet.state != zss.SSheetCtrl.START_EDIT) {
 				sheet.state = zss.SSheetCtrl.START_EDIT;
+				// ZSS-520 not enough argument, missing type.
 				sheet._wgt.fire('onStartEditing',
-						{token: "", sheetId: sheet.serverSheetId, row: ri, col: ci, clienttxt: val != null ? val : ''}, null, 25);
+						{token: "", sheetId: sheet.serverSheetId, row: ri, col: ci, clienttxt: val != null ? val : '', type: type}, null, 25);
 			}
 			this._openEditbox(val);
 		}

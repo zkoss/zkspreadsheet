@@ -61,6 +61,8 @@ ZK Spreadsheet 2.6.0
   ZSS-331 select all cell has poor performance even not many cells
   ZSS-462 Can't copy all selected cells to other application when using Chrome
   ZSS-521 select whole column and format, long running process
+  ZSS-520 Rapid typing causes error in spreadsheet
+  ZSS-523 misleading error message for text formulas
 
 ZK Spreadsheet 2.5.0
 *Features:   
