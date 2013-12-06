@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel;
 
+import java.util.Iterator;
+
 import org.zkoss.zss.ngmodel.impl.SheetAdv;
 /**
  * 
@@ -34,6 +36,9 @@ public interface NRow {
 	
 	public int getStartCellIndex();
 	public int getEndCellIndex();
+	
+	public Iterator<NCell> getCellIterator();
+	public NCell getCell(int idx);
 	
 	//editable
 	public void setCellStyle(NCellStyle cellStyle);

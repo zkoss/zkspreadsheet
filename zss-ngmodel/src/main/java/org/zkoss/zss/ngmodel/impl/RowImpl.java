@@ -16,7 +16,12 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.impl;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+
 import org.zkoss.zss.ngmodel.ModelEvent;
+import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.Validations;
@@ -195,6 +200,17 @@ public class RowImpl extends RowAdv {
 	@Override
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public Iterator<NCell> getCellIterator() {
+		return Collections.unmodifiableCollection((Collection)cells.values()).iterator();
+	}
+
+	@Override
+	public NCell getCell(int idx) {
+		return getCell(idx,true);
 	}
 
 }

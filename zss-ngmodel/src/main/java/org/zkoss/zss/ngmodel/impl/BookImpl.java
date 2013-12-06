@@ -500,4 +500,9 @@ public class BookImpl extends BookAdv{
 		return Collections.unmodifiableList((List)names);
 	}
 
+	@Override
+	public int getSheetIndex(NSheet sheet) {
+		return sheets.indexOf(sheet);
+	}
+
 }

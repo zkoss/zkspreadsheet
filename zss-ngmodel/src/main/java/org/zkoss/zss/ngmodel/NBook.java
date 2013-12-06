@@ -49,6 +49,13 @@ public interface NBook {
 	public NSheet getSheet(int idx);
 	
 	/**
+	 * Get the index of sheet
+	 * @param sheet the sheet
+	 * @return the index
+	 */
+	public int getSheetIndex(NSheet sheet);
+	
+	/**
 	 * Get the number of sheet
 	 * @return the number of sheet
 	 */
