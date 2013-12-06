@@ -539,6 +539,34 @@ public class Issue300Test extends ZSSTestcaseBase {
 	}
 	
 	@Test
+	public void testZSS516() throws Exception {
+		basename();
+		
+		getTo("/issue3/516-setBackgroundWhite.zul");
+		waitForTime(Setup.getTimeoutL1());
+		
+		for(int i = 0; i < 2; i++) {
+			click("@button:eq("+ i +")");
+			waitForTime(Setup.getTimeoutL1());//for zss render in browser
+			captureOrAssert("step" + i);
+		}		
+	}
+	
+	@Test
+	public void testZSS517() throws Exception {
+		basename();
+		
+		getTo("/issue3/517-backgroundColor.zul");
+		waitForTime(Setup.getTimeoutL1());
+		
+		for(int i = 0; i < 4; i++) {
+			click("@button:eq("+ i +")");
+			waitForTime(Setup.getTimeoutL1());//for zss render in browser
+			captureOrAssert("step" + i);
+		}		
+	}
+	
+	@Test
 	public void testZSS519() throws Exception{
 		basename();
 		
