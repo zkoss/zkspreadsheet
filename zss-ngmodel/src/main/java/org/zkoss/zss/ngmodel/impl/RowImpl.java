@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -212,7 +213,7 @@ public class RowImpl extends RowAdv {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<NCell> getCellList() {
-		return Collections.unmodifiableList((List)cells.values());
+		return Collections.unmodifiableList(new ArrayList(cells.values()));
 	}
 
 	@Override

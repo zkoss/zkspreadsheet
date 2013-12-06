@@ -73,8 +73,8 @@ public interface NSheet {
 	public int getEndColumn(int rowIdx);
 	
 	public String getId();
-//	
-//	NViewInfo getViewInfo();
+	
+	NViewInfo getViewInfo();
 	
 	//editable
 	public void clearRow(int rowIdx, int rowIdx2);
@@ -139,4 +139,5 @@ public interface NSheet {
 	public boolean isProtected();
 	
 	public void setProtected(boolean protect);
+	
 }

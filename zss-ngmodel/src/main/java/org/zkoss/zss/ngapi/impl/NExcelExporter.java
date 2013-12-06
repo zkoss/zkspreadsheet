@@ -30,7 +30,7 @@ import org.zkoss.zss.ngmodel.NBook;
  * @author dennis
  * @since 3.5.0
  */
-public class NExcelExporter implements NExporter{
+public class NExcelExporter extends AbstractExporter{
 	
 	private final ExcelExportFactory.Type type;
 	

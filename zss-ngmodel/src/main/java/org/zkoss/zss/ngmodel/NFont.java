@@ -59,7 +59,7 @@ public interface NFont {
 	
 	/**
 	 * 
-	 * @return a fon't height in pixel
+	 * @return a font height in pixel
 	 */
 	public int getHeight();
 	

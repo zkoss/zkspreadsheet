@@ -66,40 +66,8 @@ import org.zkoss.zss.ngmodel.impl.SheetImpl;
  * @author dennis
  * @since 3.5.0
  */
-public class NExcelImporter implements NImporter{
+public class NExcelImporter extends AbstractImporter{
 
-
-	@Override
-	public NBook imports(File file, String bookName) throws IOException {
-		InputStream is = null;
-		try{
-			is = new FileInputStream(file);
-			return imports(is,bookName);
-		}finally{
-			if(is!=null){
-				try{
-					is.close();
-				}catch(Exception x){};
-			}
-		}
-	}
-
-	@Override
-	public NBook imports(URL url, String bookName) throws IOException {
-		InputStream is = null;
-		try {
-			is = url.openStream();
-			return imports(is, bookName);
-		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (Exception x) {
-				}
-				;
-			}
-		}
-	}
 
 	@Override
 	public NBook imports(InputStream is, String bookName) throws IOException {

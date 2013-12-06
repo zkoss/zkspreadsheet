@@ -119,6 +119,16 @@ public class BookImpl extends BookAdv{
 		return null;
 	}
 	
+	@Override
+	public NSheet getSheetById(String id){
+		for(NSheet sheet:sheets){
+			if(sheet.getId().equals(id)){
+				return sheet;
+			}
+		}
+		return null;
+	}
+	
 	protected void checkOwnership(NSheet sheet){
 		if(!sheets.contains(sheet)){
 			throw new InvalidateModelOpException("doesn't has ownership "+ sheet);

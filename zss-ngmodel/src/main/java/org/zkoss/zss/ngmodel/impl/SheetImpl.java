@@ -40,6 +40,7 @@ import org.zkoss.zss.ngmodel.NChart.NChartType;
 import org.zkoss.zss.ngmodel.NPicture.Format;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NViewAnchor;
+import org.zkoss.zss.ngmodel.NViewInfo;
 import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.impl.chart.CategoryChartDataImpl;
 import org.zkoss.zss.ngmodel.util.CellReference;
@@ -64,6 +65,8 @@ public class SheetImpl extends SheetAdv {
 	private final List<ChartAdv> charts = new LinkedList<ChartAdv>();
 	
 	private final List<CellRegion> mergedRegions = new LinkedList<CellRegion>();
+	
+	private final NViewInfo viewInfo = new ViewInfoImpl();
 	
 	private final HashMap<String,Object> attributes = new LinkedHashMap<String, Object>();
 	private int columnFreeze = 0;
@@ -606,7 +609,7 @@ public class SheetImpl extends SheetAdv {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<NRow> getRowList() {
-		return Collections.unmodifiableList((List)rows.values());
+		return Collections.unmodifiableList(new ArrayList(rows.values()));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -618,7 +621,7 @@ public class SheetImpl extends SheetAdv {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<NColumn> getColumnList() {
-		return Collections.unmodifiableList((List)columns.values());
+		return Collections.unmodifiableList(new ArrayList(columns.values()));
 	}
 	
 	@Override
@@ -701,5 +704,9 @@ public class SheetImpl extends SheetAdv {
 		this.protect = protect;
 	}
 
+	@Override
+	public NViewInfo getViewInfo(){
+		return viewInfo;
+	}
 
 }

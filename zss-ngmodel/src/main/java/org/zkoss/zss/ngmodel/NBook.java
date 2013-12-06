@@ -69,6 +69,13 @@ public interface NBook {
 	public NSheet getSheetByName(String name);
 	
 	/**
+	 * Get the sheet by id
+	 * @param id the id of sheet
+	 * @return the sheet, or null if not found
+	 */
+	public NSheet getSheetById(String id);
+	
+	/**
 	 * Create a sheet
 	 * @param name the name of sheet
 	 * @return the sheet

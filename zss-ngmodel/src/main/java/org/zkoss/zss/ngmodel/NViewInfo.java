@@ -21,5 +21,6 @@ package org.zkoss.zss.ngmodel;
  * @since 3.5.0
  */
 public interface NViewInfo {
-
+	public boolean isDisplayGridline();
+	public void setDisplayDridline(boolean display);
 }

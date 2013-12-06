@@ -33,7 +33,7 @@ public interface NCell extends FormulaContent{
 		FORMULA,
 		NUMBER,
 		BOOLEAN,		
-		DATE,
+		DATE,//TODO no such type in excel
 		ERROR
 	}
 	
