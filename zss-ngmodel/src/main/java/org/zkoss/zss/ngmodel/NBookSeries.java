@@ -20,7 +20,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * @author dennis
- *
+ * @since 3.5.0
  */
 public interface NBookSeries {
 	

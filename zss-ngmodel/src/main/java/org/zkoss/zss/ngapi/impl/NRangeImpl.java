@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/12/01 , Created by dennis
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.ngapi.impl;
 
 import java.util.ArrayList;
@@ -16,7 +32,6 @@ import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NSheet;
-import org.zkoss.zss.ngmodel.ReadWriteTask;
 import org.zkoss.zss.ngmodel.impl.BookAdv;
 import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
@@ -27,8 +42,13 @@ import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 import org.zkoss.zss.ngmodel.sys.input.InputEngine;
 import org.zkoss.zss.ngmodel.sys.input.InputParseContext;
 import org.zkoss.zss.ngmodel.sys.input.InputResult;
+import org.zkoss.zss.ngmodel.util.ReadWriteTask;
 import org.zkoss.zss.ngmodel.util.Validations;
-
+/**
+ * 
+ * @author dennis
+ * @since 3.5.0
+ */
 public class NRangeImpl implements NRange {
 
 	private final List<EffectedRegion> rangeRefs = new ArrayList<EffectedRegion>(

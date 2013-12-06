@@ -1,4 +1,4 @@
-/* NBook.java
+/*
 
 {{IS_NOTE
 	Purpose:
@@ -6,7 +6,7 @@
 	Description:
 		
 	History:
-		2013/11/14 , Created by dennis
+		2013/12/01 , Created by dennis
 }}IS_NOTE
 
 Copyright (C) 2013 Potix Corporation. All Rights Reserved.
@@ -45,7 +45,7 @@ import org.zkoss.zss.ngmodel.util.Validations;
 
 /**
  * @author dennis
- *
+ * @since 3.5.0
  */
 public class BookImpl extends BookAdv{
 	private static final long serialVersionUID = 1L;

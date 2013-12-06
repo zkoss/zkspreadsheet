@@ -1,4 +1,4 @@
-/* StyleMatcher.java
+/*
 
 {{IS_NOTE
 	Purpose:
@@ -6,14 +6,15 @@
 	Description:
 		
 	History:
-		2013/10/16 , Created by dennis
+		2013/12/01 , Created by dennis
 }}IS_NOTE
 
 Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 
 {{IS_RIGHT
 }}IS_RIGHT
- */
+*/
+
 package org.zkoss.zss.ngmodel.util;
 
 import java.util.LinkedHashMap;
