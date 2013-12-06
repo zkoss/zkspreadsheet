@@ -11,7 +11,7 @@ public class Issue300Test extends ZSSTestcaseBase {
 		basename();
 		
 		getTo("/issue3/369-chart-xlsx.zul");
-		waitForTime(Setup.getTimeoutL1());
+		waitForTime(Setup.getTimeoutL2());
 		captureOrAssert("loadpage");
 		
 	}
@@ -21,7 +21,7 @@ public class Issue300Test extends ZSSTestcaseBase {
 		basename();
 		
 		getTo("/issue3/369-chart-xls.zul");
-		waitForTime(Setup.getTimeoutL1());
+		waitForTime(Setup.getTimeoutL2());
 		captureOrAssert("loadpage");
 		
 	}
@@ -269,7 +269,7 @@ public class Issue300Test extends ZSSTestcaseBase {
 		basename();
 		
 		getTo("/issue3/452-insertAtAnotherSheet.zul");
-		waitForTime(Setup.getTimeoutL1());
+		waitForTime(Setup.getTimeoutL2());
 		captureOrAssert("loadpage");
 
 		click("@button:eq(0)");
@@ -357,30 +357,30 @@ public class Issue300Test extends ZSSTestcaseBase {
 		basename();
 		
 		getTo("/issue3/488-delete-first-column.zul");
-		waitForTime(Setup.getTimeoutL1());
+		waitForTime(Setup.getTimeoutL2());
 
 		click("@button:eq(0)");
-		waitForTime(Setup.getTimeoutL0());//for zss render in browser
+		waitForTime(Setup.getTimeoutL2());//for zss render in browser
 		captureOrAssert("reproduce-11");
 		
 		click("@button:eq(1)");
-		waitForTime(Setup.getTimeoutL0());//for zss render in browser
+		waitForTime(Setup.getTimeoutL2());//for zss render in browser
 		captureOrAssert("reproduce-12");
 		
 		click("@button:eq(2)");
-		waitForTime(Setup.getTimeoutL0());//for zss render in browser
+		waitForTime(Setup.getTimeoutL2());//for zss render in browser
 		captureOrAssert("reproduce-13");
 		
 		click("@button:eq(3)");
-		waitForTime(Setup.getTimeoutL0());//for zss render in browser
+		waitForTime(Setup.getTimeoutL2());//for zss render in browser
 		captureOrAssert("reproduce-21");
 		
 		click("@button:eq(4)");
-		waitForTime(Setup.getTimeoutL0());//for zss render in browser
+		waitForTime(Setup.getTimeoutL2());//for zss render in browser
 		captureOrAssert("reproduce-22");
 		
 		click("@button:eq(5)");
-		waitForTime(Setup.getTimeoutL0());//for zss render in browser
+		waitForTime(Setup.getTimeoutL2());//for zss render in browser
 		captureOrAssert("reproduce-23");
 	}
 	
@@ -444,12 +444,12 @@ public class Issue300Test extends ZSSTestcaseBase {
 		basename();
 		
 		getTo("/issue3/499-moveChartData-xls.zul");
-		waitForTime(Setup.getTimeoutL1());
+		waitForTime(Setup.getTimeoutL2());
 		captureOrAssert("loadpage");
 		
 		for(int i = 0; i < 3; i++) {
 			click("@button:eq("+ i +")");
-			waitForTime(Setup.getTimeoutL1());//for zss render in browser
+			waitForTime(Setup.getTimeoutL2());//for zss render in browser
 			captureOrAssert("step" + i);
 		}
 		
@@ -460,12 +460,12 @@ public class Issue300Test extends ZSSTestcaseBase {
 		basename();
 		
 		getTo("/issue3/499-moveChartData.zul");
-		waitForTime(Setup.getTimeoutL1());
+		waitForTime(Setup.getTimeoutL2());
 		captureOrAssert("loadpage");
 		
 		for(int i = 0; i < 3; i++) {
 			click("@button:eq("+ i +")");
-			waitForTime(Setup.getTimeoutL1());//for zss render in browser
+			waitForTime(Setup.getTimeoutL2());//for zss render in browser
 			captureOrAssert("step" + i);
 		}
 		
@@ -545,11 +545,13 @@ public class Issue300Test extends ZSSTestcaseBase {
 		getTo("/issue3/516-setBackgroundWhite.zul");
 		waitForTime(Setup.getTimeoutL1());
 		
-		for(int i = 0; i < 2; i++) {
-			click("@button:eq("+ i +")");
-			waitForTime(Setup.getTimeoutL1());//for zss render in browser
-			captureOrAssert("step" + i);
-		}		
+		click("@button:eq(0)");
+		waitForTime(Setup.getTimeoutL1());//for zss render in browser
+		captureOrAssert("step0");
+		
+		click("@button:eq(1)");
+		waitForTime(Setup.getTimeoutL1());//for zss render in browser
+		captureOrAssert("step1");
 	}
 	
 	@Test
