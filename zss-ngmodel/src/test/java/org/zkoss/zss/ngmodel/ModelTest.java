@@ -1104,7 +1104,7 @@ public class ModelTest {
 		Assert.assertEquals(CellType.STRING, cell.getType());
 		Assert.assertEquals("abc",cell.getStringValue());
 		
-		NRichText text = cell.setRichTextValue();
+		NRichText text = cell.setupRichTextValue();
 		text.addSegment("abc", book.getDefaultFont());
 		text.addSegment("def", book.getDefaultFont());
 		Assert.assertEquals(CellType.RICHTEXT, cell.getType());
@@ -1570,7 +1570,7 @@ public class ModelTest {
 		Date now = new Date();
 		
 		sheet.getCell(1, 1).setStringValue("ABCD");
-		sheet.getCell(2, 1).setRichTextValue().addSegment("ABC", book.getDefaultFont());
+		sheet.getCell(2, 1).setupRichTextValue().addSegment("ABC", book.getDefaultFont());
 		sheet.getCell(3, 1).setNumberValue(99);
 		sheet.getCell(4, 1).setDateValue(now);
 		sheet.getCell(5, 1).setErrorValue(new ErrorValue(ErrorValue.INVALID_NAME));
@@ -1578,7 +1578,7 @@ public class ModelTest {
 		sheet.getCell(5, 1).setHyperlink().setType(HyperlinkType.URL);
 		
 		sheet.getCell(5, 1).setComment().setText("AAA");
-		sheet.getCell(5, 2).setComment().setRichText().addSegment("BBB",book.getDefaultFont());
+		sheet.getCell(5, 2).setComment().setupRichText().addSegment("BBB",book.getDefaultFont());
 		
 		sheet.addMergedRegion(new CellRegion(0,1,2,3));
 		

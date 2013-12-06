@@ -633,7 +633,7 @@ public class SheetImpl extends SheetAdv {
 	}
 
 	@Override
-	public int setNumOfColumnFreeze() {
+	public int getNumOfColumnFreeze() {
 		return columnFreeze;
 	}
 

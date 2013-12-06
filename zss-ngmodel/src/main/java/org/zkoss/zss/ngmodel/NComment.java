@@ -26,7 +26,8 @@ public interface NComment {
 	public void setText(String text);
 	
 	public void setRichText(NRichText text);
-	public NRichText setRichText();
+	/** Set a empty rich text value and return the instance which to be edited **/
+	public NRichText setupRichText();
 	public NRichText getRichText();
 	
 	public String getAuthor();

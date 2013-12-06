@@ -153,9 +153,6 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 	public void setFormulaValue(String formula) {
 		checkOrphan();
 		Validations.argNotNull(formula);
-		if(formula.startsWith("=")){
-			formula = formula.substring(1);
-		}
 		FormulaEngine fe = EngineFactory.getInstance().createFormulaEngine();
 		FormulaExpression expr = fe.parse(formula, new FormulaParseContext(this ,new RefImpl(this)));
 		setValue(expr);
@@ -171,7 +168,7 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 	
 
 	@Override
-	public NRichText setRichTextValue() {
+	public NRichText setupRichTextValue() {
 		NRichText text = new RichTextImpl();
 		setRichTextValue(text);
 		return text;

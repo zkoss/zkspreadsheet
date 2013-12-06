@@ -73,21 +73,28 @@ public interface NCell extends FormulaContent{
 	public Object getValue();
 	public void setValue(Object value);
 
-	//clear cell value , reset it to blank
+	/**
+	 * clear cell value , reset it to blank
+	 */
 	public void clearValue();//
-	
+	/**
+	 * Set string value, if the value start with '=', then it sets as formula 
+	 */
 	public void setStringValue(String value);
 	public String getStringValue();
 	
+	/**
+	 * Set rich test value.
+	 */
 	public void setRichTextValue(NRichText text);
 	
-	/** set a empty rich text **/
-	public NRichText setRichTextValue();
+	/** Set a empty rich text value and return the instance which to be edited **/
+	public NRichText setupRichTextValue();
 	
 	public NRichText getRichTextValue();
 	
 	/**
-	 * set formula as string with '=', ex: SUM(A1:B2)
+	 * set formula as string without '=', ex: SUM(A1:B2)
 	 * @param fromula
 	 */
 	public void setFormulaValue(String formula);

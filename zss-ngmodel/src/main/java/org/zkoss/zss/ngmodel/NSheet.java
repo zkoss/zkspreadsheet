@@ -50,7 +50,7 @@ public interface NSheet {
 	public void setDefaultColumnWidth(int width);
 	
 	public int getNumOfRowFreeze();
-	public int setNumOfColumnFreeze();
+	public int getNumOfColumnFreeze();
 	
 	public void setNumOfRowFreeze(int num);
 	public void setNumOfColumnFreeze(int num);

@@ -43,7 +43,7 @@ public class CommentImpl extends CommentAdv {
 	}
 
 	@Override
-	public NRichText setRichText() {
+	public NRichText setupRichText() {
 		this.text = new RichTextImpl();
 		return (NRichText)this.text;
 	}
