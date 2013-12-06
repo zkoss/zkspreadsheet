@@ -191,7 +191,7 @@ public class NExcelImporter implements NImporter{
 				XSSFCell xssfCell = (XSSFCell) cell;
 				NCell nCell = nSheet.getCell(xssfCell.getRowIndex(), xssfCell.getColumnIndex());
 				
-				importXSSFCellStyle(nCell.getCellStyle(), xssfCell.getCellStyle());
+				//importXSSFCellStyle(nCell.getCellStyle(), xssfCell.getCellStyle());
 				
 				// TODO: copy hyper link
 				// nCell.getHyperlink();
@@ -208,6 +208,7 @@ public class NExcelImporter implements NImporter{
 	 * @param xssfCellStyle
 	 */
 	private void importXSSFCellStyle(NCellStyle nCellStyle, XSSFCellStyle xssfCellStyle) {
+		
 		XSSFFont xssfFont = xssfCellStyle.getFont();
 		NFont nFont = new FontImpl();
 		
@@ -218,16 +219,21 @@ public class NExcelImporter implements NImporter{
 		// nBook.createColor();
 		
 		nFont.setColor(nColor);
+		// FIXME: ENUM
 		nFont.setBoldweight(NFont.Boldweight.values()[xssfFont.getBoldweight()]);
 		nFont.setHeight(xssfFont.getFontHeight());
 		nFont.setItalic(xssfFont.getItalic());
 		nFont.setName(xssfFont.getFontName());
 		nFont.setStrikeout(xssfFont.getStrikeout());
+		// FIXME: ENUM
 		nFont.setTypeOffset(NFont.TypeOffset.values()[xssfFont.getTypeOffset()]);
+		// FIXME: ENUM
 		nFont.setUnderline(NFont.Underline.values()[xssfFont.getUnderline()]);
 		
+		// FIXME
 		// Should I create font?
 		// nBook.createFont();
+		
 	}
 
 }
