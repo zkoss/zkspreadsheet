@@ -16,12 +16,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.sys.input;
 
-import java.util.Locale;
-
-import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 
 /**
- * 
+ * Determine a cell's type and value by parsing editing text with predefined patterns. 
+ * The parsing process considers the locale for decimal separator, thousands separator, and date format.  
  * @author dennis
  * @since 3.5.0
  */
