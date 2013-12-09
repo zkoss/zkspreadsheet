@@ -62,8 +62,8 @@ public class RangeTest {
 		Assert.assertEquals(123,cell.getNumberValue().intValue());
 		
 		NRanges.range(sheet,1,1).setEditText("2013/01/01");
-		Assert.assertEquals(CellType.DATE, cell.getType());
-		Assert.assertEquals("2013/01/01",new SimpleDateFormat("yyyy/MM/dd").format((Date)cell.getValue()));
+		Assert.assertEquals(CellType.NUMBER, cell.getType());
+		Assert.assertEquals("2013/01/01",new SimpleDateFormat("yyyy/MM/dd").format((Date)cell.getDateValue()));
 		
 		NRanges.range(sheet,1,1).setEditText("tRue");
 		Assert.assertEquals(CellType.BOOLEAN, cell.getType());
@@ -112,8 +112,8 @@ public class RangeTest {
 		
 		
 		NRanges.range(sheet,1,1).setValue(now);
-		Assert.assertEquals(CellType.DATE, cell.getType());
-		Assert.assertEquals(now,cell.getValue());
+		Assert.assertEquals(CellType.NUMBER, cell.getType());
+		Assert.assertEquals(now,cell.getDateValue());
 		
 		NRanges.range(sheet,1,1).setValue(Boolean.TRUE);
 		Assert.assertEquals(CellType.BOOLEAN, cell.getType());

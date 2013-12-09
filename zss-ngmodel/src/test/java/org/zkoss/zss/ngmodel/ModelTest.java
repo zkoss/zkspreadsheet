@@ -1021,8 +1021,8 @@ public class ModelTest {
 		Assert.assertEquals(123,cell.getValue());
 		
 		cell.setValue(now);
-		Assert.assertEquals(CellType.DATE, cell.getType());
-		Assert.assertEquals(now,cell.getValue());
+		Assert.assertEquals(CellType.NUMBER, cell.getType());
+		Assert.assertEquals(now,cell.getDateValue());
 		
 		cell.setValue(true);
 		Assert.assertEquals(CellType.BOOLEAN, cell.getType());
@@ -1066,8 +1066,8 @@ public class ModelTest {
 		Assert.assertEquals(123,cell.getValue());
 		
 		cell.setValue(now);
-		Assert.assertEquals(CellType.DATE, cell.getType());
-		Assert.assertEquals(now,cell.getValue());
+		Assert.assertEquals(CellType.NUMBER, cell.getType());
+		Assert.assertEquals(now,cell.getDateValue());
 		
 		cell.setValue(false);
 		Assert.assertEquals(CellType.BOOLEAN, cell.getType());
@@ -1109,7 +1109,7 @@ public class ModelTest {
 		Assert.assertEquals(123,cell.getNumberValue());
 		
 		cell.setDateValue(now);
-		Assert.assertEquals(CellType.DATE, cell.getType());
+		Assert.assertEquals(CellType.NUMBER, cell.getType());
 		Assert.assertEquals(now,cell.getDateValue());
 		
 		cell.setBooleanValue(true);
@@ -1173,10 +1173,6 @@ public class ModelTest {
 		
 		try{
 			cell.getStringValue();
-			Assert.fail();
-		}catch(IllegalStateException x){}
-		try{
-			cell.getDateValue();
 			Assert.fail();
 		}catch(IllegalStateException x){}
 		try{

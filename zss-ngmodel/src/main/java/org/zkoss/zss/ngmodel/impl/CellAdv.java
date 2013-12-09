@@ -18,6 +18,8 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCell;
@@ -38,15 +40,27 @@ import org.zkoss.zss.ngmodel.util.Validations;
 public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
 	
-	protected void checkType(CellType type){
-		if(!getType().equals(type)){
-			throw new IllegalStateException("is "+getType()+", not the "+type);
+	protected void checkType(CellType... types){
+		Set<CellType> set = new LinkedHashSet<CellType>();
+		for(CellType t:types){
+			set.add(t);
+		}
+		
+		if(!set.contains(getType())){
+			throw new IllegalStateException("is "+getType()+", not the one of "+types);
 		}
 	}
-	protected void checkFormulaResultType(CellType type){
-		checkType(CellType.FORMULA);
-		if(!getFormulaResultType().equals(type)){
-			throw new IllegalStateException("formula result is "+getFormulaResultType()+", not the "+type);
+	protected void checkFormulaResultType(CellType... types){
+		if(!getType().equals(CellType.FORMULA)){
+			throw new IllegalStateException("is "+getType()+", not the one of "+types);
+		}
+		
+		Set<CellType> set = new LinkedHashSet<CellType>();
+		for(CellType t:types){
+			set.add(t);
+		}
+		if(!set.contains(getFormulaResultType())){
+			throw new IllegalStateException("is "+getFormulaResultType()+", not the one of "+types);
 		}
 	}
 	
@@ -92,18 +106,14 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 
 	@Override
 	public void setDateValue(Date date) {
-		setValue(date);
+		double num = EngineFactory.getInstance().getCalendarUtil().dateToDoubleValue(date, false);
+		setNumberValue(num);
 	}
 
 	@Override
 	public Date getDateValue() {
-		if(getType() == CellType.FORMULA){
-			evalFormula();
-			checkFormulaResultType(CellType.DATE);
-		}else{
-			checkType(CellType.DATE);
-		}
-		return (Date)getValue();
+		Number num = getNumberValue();
+		return EngineFactory.getInstance().getCalendarUtil().doubleValueToDate(num.doubleValue(), false);
 	}
 	
 	@Override

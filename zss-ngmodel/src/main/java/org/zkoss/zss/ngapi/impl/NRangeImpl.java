@@ -285,31 +285,34 @@ public class NRangeImpl implements NRange {
 				}
 				
 				Object cellval = cell.getValue();
-				if (euqlas(cellval, result.getValue())) {
+				Object resultVal = result.getValue();
+				if (euqlas(cellval, resultVal)) {
 					return false;
 				}
+				
 				switch (result.getType()) {
 				case BLANK:
 					cell.clearValue();
 					break;
-				case DATE:
-					cell.setDateValue((Date) result.getValue());
-					break;
 				case BOOLEAN:
-					cell.setBooleanValue((Boolean) result.getValue());
+					cell.setBooleanValue((Boolean) resultVal);
 					break;
 				case FORMULA:
-					cell.setFormulaValue((String) result.getValue());
+					cell.setFormulaValue((String) resultVal);
 					break;
 				case NUMBER:
-					cell.setNumberValue((Number) result.getValue());
+					if(resultVal instanceof Date){
+						cell.setDateValue((Date)resultVal);
+					}else{
+						cell.setNumberValue((Number) resultVal);
+					}
 					break;
 				case STRING:
-					cell.setStringValue((String) result.getValue());
+					cell.setStringValue((String) resultVal);
 					break;
 				case ERROR:
 				default:
-					cell.setValue(result.getValue());
+					cell.setValue(resultVal);
 				}
 				return true;
 			}

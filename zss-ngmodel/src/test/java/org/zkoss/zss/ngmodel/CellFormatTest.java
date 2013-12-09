@@ -103,7 +103,7 @@ public class CellFormatTest {
 		
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("yyyy/m/d");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext);
 		Assert.assertEquals("2013/9/3", result.getText());
 	}
 	
@@ -116,7 +116,7 @@ public class CellFormatTest {
 		
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("yyyy/mm/dd");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext);
 		Assert.assertEquals("2013/09/03", result.getText());
 	}
 	
@@ -129,7 +129,7 @@ public class CellFormatTest {
 		
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("yy/mmm/ddd");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext);
 		Assert.assertEquals("13/Sep/Tue", result.getText());
 	}	
 		
@@ -142,7 +142,7 @@ public class CellFormatTest {
 		
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("yy/mmmm/dddd");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext);
 		Assert.assertEquals("13/September/Tuesday", result.getText());
 	}		
 	
@@ -157,7 +157,7 @@ public class CellFormatTest {
 
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("yyyy/m/d h:mm;@");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext);
 		Assert.assertEquals("2013/10/30 0:00", result.getText());
 	}
 
@@ -170,7 +170,7 @@ public class CellFormatTest {
 		calendar.set(Calendar.DAY_OF_MONTH, 30);
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("yyyy/mmm/ddd");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), new FormatContext(Locale.TAIWAN));
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), new FormatContext(Locale.TAIWAN));
 		Assert.assertEquals("2013/十月/星期三", result.getText());
 	}
 	
@@ -185,7 +185,7 @@ public class CellFormatTest {
 
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("h:mm:ss AM/PM;@");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext);
 		Assert.assertEquals("11:10:50 AM", result.getText());
 	}
 

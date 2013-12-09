@@ -218,7 +218,8 @@ public class CellImpl extends CellAdv {
 		} else if (newvalue instanceof FormulaExpression) {
 			type = CellType.FORMULA;
 		} else if (newvalue instanceof Date) {
-			type = CellType.DATE;
+			type = CellType.NUMBER;
+			newvalue = EngineFactory.getInstance().getCalendarUtil().dateToDoubleValue((Date)newvalue, false);
 		} else if (newvalue instanceof Boolean) {
 			type = CellType.BOOLEAN;
 		} else if (newvalue instanceof Number) {

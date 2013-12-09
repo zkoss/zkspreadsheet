@@ -29,11 +29,9 @@ public interface NCell extends FormulaContent{
 	public enum CellType {
 		BLANK,
 		STRING,
-//		RICHTEXT,
 		FORMULA,
 		NUMBER,
 		BOOLEAN,		
-		DATE,//TODO no such type in excel
 		ERROR
 	}
 	
@@ -103,7 +101,13 @@ public interface NCell extends FormulaContent{
 	public void setNumberValue(Number number);
 	public Number getNumberValue();
 	
+	/**
+	 * Sets the number value a date instance, it will transfer the date to double value 
+	 */
 	public void setDateValue(Date date);
+	/**
+	 * Gets the date value that is transfered by the double number value.
+	 */
 	public Date getDateValue();
 	
 	public void setBooleanValue(Boolean bool);
