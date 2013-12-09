@@ -252,4 +252,10 @@ class CellProxy extends CellAdv {
 		return proxy == null ? null : proxy.getRichText();
 	}
 
+	@Override
+	public boolean isDefaultCellStyle() {
+		loadProxy();
+		return proxy == null ? true : proxy.isDefaultCellStyle();
+	}
+
 }

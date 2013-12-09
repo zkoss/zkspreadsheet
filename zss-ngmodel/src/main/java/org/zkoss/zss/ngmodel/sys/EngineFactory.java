@@ -18,9 +18,11 @@ package org.zkoss.zss.ngmodel.sys;
 
 import org.zkoss.zss.ngmodel.impl.sys.CalendarUtilImpl;
 import org.zkoss.zss.ngmodel.impl.sys.DependencyEngineImpl;
+import org.zkoss.zss.ngmodel.impl.sys.FormatEngineImpl;
 import org.zkoss.zss.ngmodel.impl.sys.FormulaEngineImpl;
 import org.zkoss.zss.ngmodel.impl.sys.InputEngineImpl;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyEngine;
+import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.input.InputEngine;
 /**
@@ -59,6 +61,10 @@ public class EngineFactory {
 
 	public DependencyEngine createDependencyEngine() {
 		return new DependencyEngineImpl();
+	}
+	
+	public FormatEngine createFormatEngine() {
+		return new FormatEngineImpl();
 	}
 	
 	public CalendarUtil getCalendarUtil(){

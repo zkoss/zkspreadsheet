@@ -21,9 +21,14 @@ package org.zkoss.zss.ngmodel.sys.format;
  * @since 3.5.0
  */
 import org.zkoss.zss.ngmodel.NColor;
+import org.zkoss.zss.ngmodel.NRichText;
 
 public interface FormatResult {
 
+	boolean isRichText();
+	
+	NRichText getRichText();
+	
 	String getText();
 	
 	NColor getColor();

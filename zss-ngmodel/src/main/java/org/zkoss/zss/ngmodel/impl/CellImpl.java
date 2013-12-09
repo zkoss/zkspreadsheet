@@ -156,6 +156,7 @@ public class CellImpl extends CellAdv {
 	public void clearValue() {
 		checkOrphan();
 		value = null;
+		richText = null;
 		clearFormulaDependency();
 		clearFormulaResultCache();
 		type = CellType.BLANK;
@@ -326,6 +327,13 @@ public class CellImpl extends CellAdv {
 	@Override
 	public NRichText getRichText() {
 		return richText;
+	}
+
+	@Override
+	public boolean isDefaultCellStyle() {
+		checkOrphan();
+		NCellStyle nc = getCellStyle();
+		return nc == getSheet().getBook().getDefaultCellStyle();
 	}
 
 	

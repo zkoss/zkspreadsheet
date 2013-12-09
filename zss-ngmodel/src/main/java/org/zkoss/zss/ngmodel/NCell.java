@@ -27,12 +27,26 @@ import org.zkoss.zss.ngmodel.impl.SheetAdv;
 public interface NCell extends FormulaContent{
 
 	public enum CellType {
-		BLANK,
-		STRING,
-		FORMULA,
-		NUMBER,
-		BOOLEAN,		
-		ERROR
+		BLANK(3),
+		STRING(1),
+		FORMULA(2),
+		NUMBER(0),
+		BOOLEAN(4),		
+		ERROR(5);
+		
+		private int value;
+	    private CellType(int value) {
+	        this.value = value;
+	    }
+
+	    public int value() {
+	        return value;
+	    }
+	    
+//	    public String toString(){
+//	    	new Exception().printStackTrace();
+//	    	return "XXX";
+//	    }
 	}
 	
 	public NSheet getSheet();
@@ -51,6 +65,8 @@ public interface NCell extends FormulaContent{
 	public NCellStyle getCellStyle();
 	
 	public NCellStyle getCellStyle(boolean local);
+	
+	public boolean isDefaultCellStyle();
 	
 	public void setCellStyle(NCellStyle cellStyle);
 	

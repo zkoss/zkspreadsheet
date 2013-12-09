@@ -709,4 +709,28 @@ public class SheetImpl extends SheetAdv {
 		return viewInfo;
 	}
 
+	@Override
+	public boolean isDisplayGridline() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean setDisplayGridline(boolean display) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isAutoFilterMode() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isPrintGridline() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

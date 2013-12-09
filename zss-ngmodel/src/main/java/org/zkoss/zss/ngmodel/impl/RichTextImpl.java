@@ -31,29 +31,8 @@ import org.zkoss.zss.ngmodel.util.Validations;
 public class RichTextImpl extends RichTextAdv {
 	private static final long serialVersionUID = 1L;
 
-	List<SegmentImpl> segments = new LinkedList<RichTextImpl.SegmentImpl>();
+	List<SegmentImpl> segments = new LinkedList<SegmentImpl>();
 
-	class SegmentImpl implements Segment, Serializable {
-		private static final long serialVersionUID = 1L;
-		private String text;
-		private NFont font;
-
-		SegmentImpl(String text, NFont font) {
-			this.text = text;
-			this.font = font;
-		}
-
-		@Override
-		public String getText() {
-			return text;
-		}
-
-		@Override
-		public NFont getFont() {
-			return font;
-		}
-
-	}
 
 	@Override
 	public String getText() {
@@ -83,6 +62,14 @@ public class RichTextImpl extends RichTextAdv {
 	@Override
 	public void clearSegments() {
 		segments.clear();
+	}
+
+	@Override
+	public NFont getFont() {
+		if (segments.size() == 0) {
+			return null;
+		}
+		return segments.get(0).getFont();
 	}
 
 }

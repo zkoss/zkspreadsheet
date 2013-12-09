@@ -139,5 +139,13 @@ public interface NSheet {
 	public boolean isProtected();
 	
 	public void setProtected(boolean protect);
+
+	public boolean isDisplayGridline();
+	
+	public boolean setDisplayGridline(boolean display);
+
+	public boolean isAutoFilterMode();
+
+	public boolean isPrintGridline();
 	
 }

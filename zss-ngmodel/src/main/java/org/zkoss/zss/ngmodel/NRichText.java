@@ -30,6 +30,7 @@ public interface NRichText {
 	}
 	
 	public String getText();
+	public NFont getFont();
 	
 	public List<Segment> getSegments();
 	

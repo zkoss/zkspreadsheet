@@ -34,4 +34,7 @@ public interface DependencyTable {
 	public Set<Ref> getDependents(Ref precedent);
 	
 	public void clearDependents(Ref dependant);
+	
+//	to merge dependency for book series.
+//	public void mergeTable(DependencyTable another);
 }
