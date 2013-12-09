@@ -48,6 +48,7 @@ public class CellImpl extends CellAdv {
 	private CellStyleAdv cellStyle;
 	private HyperlinkAdv hyperlink;
 	private CommentAdv comment;
+	private RichTextAdv richText;
 
 	transient private FormulaResultWrap formulaResult;// cache
 
@@ -214,8 +215,6 @@ public class CellImpl extends CellAdv {
 			} else {
 				type = CellType.STRING;
 			}
-		} else if (newvalue instanceof NRichText) {
-			type = CellType.RICHTEXT;
 		} else if (newvalue instanceof FormulaExpression) {
 			type = CellType.FORMULA;
 		} else if (newvalue instanceof Date) {
@@ -315,6 +314,17 @@ public class CellImpl extends CellAdv {
 	public void setComment(NComment comment) {
 		Validations.argInstance(comment, CommentAdv.class);
 		this.comment = (CommentAdv)comment;
+	}
+
+	@Override
+	public void setRichText(NRichText text) {
+		Validations.argInstance(text, RichTextAdv.class);
+		this.richText = (RichTextAdv)text;
+	}
+
+	@Override
+	public NRichText getRichText() {
+		return richText;
 	}
 
 	

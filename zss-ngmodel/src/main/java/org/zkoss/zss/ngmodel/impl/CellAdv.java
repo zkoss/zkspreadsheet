@@ -73,17 +73,6 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 		}
 		return (String)getValue();
 	}
-	
-	@Override
-	public void setRichTextValue(NRichText value) {
-		setValue(value);
-	}
-
-	@Override
-	public NRichText getRichTextValue() {
-		checkType(CellType.RICHTEXT);
-		return (NRichText)getValue();
-	}	
 
 	@Override
 	public void setNumberValue(Number number) {
@@ -168,19 +157,19 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 	
 
 	@Override
-	public NRichText setupRichTextValue() {
+	public NRichText setupRichText() {
 		NRichText text = new RichTextImpl();
-		setRichTextValue(text);
+		setRichText(text);
 		return text;
 	}
 	@Override
-	public NHyperlink setHyperlink(){
+	public NHyperlink setupHyperlink(){
 		NHyperlink hyperlink = new HyperlinkImpl();
 		setHyperlink(hyperlink);
 		return hyperlink;
 	}
 	@Override
-	public NComment setComment(){
+	public NComment setupComment(){
 		NComment comment = new CommentImpl();
 		setComment(comment);
 		return comment;

@@ -1104,13 +1104,6 @@ public class ModelTest {
 		Assert.assertEquals(CellType.STRING, cell.getType());
 		Assert.assertEquals("abc",cell.getStringValue());
 		
-		NRichText text = cell.setupRichTextValue();
-		text.addSegment("abc", book.getDefaultFont());
-		text.addSegment("def", book.getDefaultFont());
-		Assert.assertEquals(CellType.RICHTEXT, cell.getType());
-		Assert.assertEquals(text,cell.getRichTextValue());
-		Assert.assertEquals("abcdef",cell.getRichTextValue().getText());
-		
 		cell.setNumberValue(123);
 		Assert.assertEquals(CellType.NUMBER, cell.getType());
 		Assert.assertEquals(123,cell.getNumberValue());
@@ -1570,15 +1563,18 @@ public class ModelTest {
 		Date now = new Date();
 		
 		sheet.getCell(1, 1).setStringValue("ABCD");
-		sheet.getCell(2, 1).setupRichTextValue().addSegment("ABC", book.getDefaultFont());
+		sheet.getCell(2, 1).setupRichText().addSegment("ABC", book.getDefaultFont());
 		sheet.getCell(3, 1).setNumberValue(99);
 		sheet.getCell(4, 1).setDateValue(now);
 		sheet.getCell(5, 1).setErrorValue(new ErrorValue(ErrorValue.INVALID_NAME));
 		
-		sheet.getCell(5, 1).setHyperlink().setType(HyperlinkType.URL);
+		sheet.getCell(5, 1).setupHyperlink().setType(HyperlinkType.URL);
 		
-		sheet.getCell(5, 1).setComment().setText("AAA");
-		sheet.getCell(5, 2).setComment().setupRichText().addSegment("BBB",book.getDefaultFont());
+		sheet.getCell(5, 0).setupRichText().addSegment("ABC",book.getDefaultFont());
+		
+		sheet.getCell(5, 1).setupComment().setText("AAA");
+		sheet.getCell(5, 2).setupComment().setupRichText().addSegment("BBB",book.getDefaultFont());
+		
 		
 		sheet.addMergedRegion(new CellRegion(0,1,2,3));
 		
@@ -1611,13 +1607,15 @@ public class ModelTest {
 			Assert.assertNotNull(sheet);
 			
 			Assert.assertEquals("ABCD",sheet.getCell(1, 1).getStringValue());
-			Assert.assertEquals("ABC",sheet.getCell(2, 1).getRichTextValue().getText());
-			Assert.assertEquals(book.getDefaultFont(),sheet.getCell(2, 1).getRichTextValue().getSegments().get(0).getFont());
+			Assert.assertEquals("ABC",sheet.getCell(2, 1).getRichText().getText());
+			Assert.assertEquals(book.getDefaultFont(),sheet.getCell(2, 1).getRichText().getSegments().get(0).getFont());
 			Assert.assertEquals(99,sheet.getCell(3, 1).getNumberValue());
 			Assert.assertEquals(now,sheet.getCell(4, 1).getDateValue());
 			Assert.assertEquals(ErrorValue.INVALID_NAME,sheet.getCell(5, 1).getErrorValue().getCode());
 			
 			Assert.assertEquals(HyperlinkType.URL,sheet.getCell(5, 1).getHyperlink().getType());
+			
+			Assert.assertEquals("ABC",sheet.getCell(5, 0).getRichText().getText());
 			
 			Assert.assertEquals("AAA",sheet.getCell(5, 1).getComment().getText());
 			Assert.assertEquals("BBB",sheet.getCell(5, 2).getComment().getRichText().getText());

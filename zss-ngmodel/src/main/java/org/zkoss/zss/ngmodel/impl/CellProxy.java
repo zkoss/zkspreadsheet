@@ -21,6 +21,7 @@ import java.lang.ref.WeakReference;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NComment;
 import org.zkoss.zss.ngmodel.NHyperlink;
+import org.zkoss.zss.ngmodel.NRichText;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
@@ -233,6 +234,22 @@ class CellProxy extends CellAdv {
 	public boolean isFormulaParsingError() {
 		loadProxy();
 		return proxy == null ? false : proxy.isFormulaParsingError();
+	}
+
+	@Override
+	public void setRichText(NRichText text) {
+		loadProxy();
+		if (proxy == null) {
+			proxy = (CellAdv) ((RowAdv)  ((SheetAdv)getSheet()).getOrCreateRow(
+					rowIdx)).getOrCreateCell(columnIdx);
+		}
+		proxy.setRichText(text);
+	}
+
+	@Override
+	public NRichText getRichText() {
+		loadProxy();
+		return proxy == null ? null : proxy.getRichText();
 	}
 
 }

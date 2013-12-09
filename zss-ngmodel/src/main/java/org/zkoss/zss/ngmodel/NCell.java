@@ -29,7 +29,7 @@ public interface NCell extends FormulaContent{
 	public enum CellType {
 		BLANK,
 		STRING,
-		RICHTEXT,
+//		RICHTEXT,
 		FORMULA,
 		NUMBER,
 		BOOLEAN,		
@@ -65,7 +65,7 @@ public interface NCell extends FormulaContent{
 	public void setHyperlink(NHyperlink hyperlink);
 	
 	/** set a empty hyperlinkt*/
-	public NHyperlink setHyperlink();
+	public NHyperlink setupHyperlink();
 
 //	boolean isReadonly();
 //	
@@ -86,12 +86,12 @@ public interface NCell extends FormulaContent{
 	/**
 	 * Set rich test value.
 	 */
-	public void setRichTextValue(NRichText text);
+	public void setRichText(NRichText text);
 	
 	/** Set a empty rich text value and return the instance which to be edited **/
-	public NRichText setupRichTextValue();
+	public NRichText setupRichText();
 	
-	public NRichText getRichTextValue();
+	public NRichText getRichText();
 	
 	/**
 	 * set formula as string without '=', ex: SUM(A1:B2)
@@ -114,7 +114,7 @@ public interface NCell extends FormulaContent{
 	
 	
 	public void setComment(NComment comment);
-	public NComment setComment();
+	public NComment setupComment();
 	public NComment getComment();
 	
 }
