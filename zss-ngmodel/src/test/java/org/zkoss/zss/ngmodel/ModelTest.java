@@ -1143,18 +1143,9 @@ public class ModelTest {
 		Assert.assertEquals(CellType.BLANK, cell.getType());
 		Assert.assertNull(cell.getValue());
 		
-		try{
-			cell.getStringValue();
-			Assert.fail();
-		}catch(IllegalStateException x){}
-		try{
-			cell.getNumberValue();
-			Assert.fail();
-		}catch(IllegalStateException x){}
-		try{
-			cell.getDateValue();
-			Assert.fail();
-		}catch(IllegalStateException x){}
+		Assert.assertEquals("",cell.getStringValue());
+		Assert.assertEquals(0.0,cell.getNumberValue().doubleValue());
+		cell.getDateValue();
 		try{
 			cell.getErrorValue();
 			Assert.fail();
@@ -1204,18 +1195,9 @@ public class ModelTest {
 		cell.clearValue();
 		Assert.assertEquals(CellType.BLANK, cell.getType());
 		Assert.assertNull(cell.getValue());
-		try{
-			cell.getStringValue();
-			Assert.fail();
-		}catch(IllegalStateException x){}
-		try{
-			cell.getNumberValue();
-			Assert.fail();
-		}catch(IllegalStateException x){}
-		try{
-			cell.getDateValue();
-			Assert.fail();
-		}catch(IllegalStateException x){}
+		Assert.assertEquals("",cell.getStringValue());
+		Assert.assertEquals(0.0,cell.getNumberValue().doubleValue());
+		cell.getDateValue();
 		try{
 			cell.getErrorValue();
 			Assert.fail();

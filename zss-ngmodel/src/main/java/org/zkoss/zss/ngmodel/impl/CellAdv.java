@@ -81,11 +81,12 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 	public String getStringValue() {
 		if(getType() == CellType.FORMULA){
 			evalFormula();
-			checkFormulaResultType(CellType.STRING);
+			checkFormulaResultType(CellType.STRING,CellType.BLANK);
 		}else{
-			checkType(CellType.STRING);
+			checkType(CellType.STRING,CellType.BLANK);
 		}
-		return (String)getValue();
+		Object val = getValue();
+		return val==null?"":(String)val;
 	}
 
 	@Override
@@ -97,11 +98,12 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 	public Number getNumberValue() {
 		if(getType() == CellType.FORMULA){
 			evalFormula();
-			checkFormulaResultType(CellType.NUMBER);
+			checkFormulaResultType(CellType.NUMBER,CellType.BLANK);
 		}else{
-			checkType(CellType.NUMBER);
+			checkType(CellType.NUMBER,CellType.BLANK);
 		}
-		return (Number)getValue();
+		Object val = getValue();
+		return val==null?0.0:(Number)getValue();
 	}
 
 	@Override
@@ -123,13 +125,15 @@ public abstract class CellAdv implements NCell,LinkedModelObject,Serializable{
 
 	@Override
 	public Boolean getBooleanValue() {
+		CellType type = getType();
 		if(getType() == CellType.FORMULA){
 			evalFormula();
-			checkFormulaResultType(CellType.BOOLEAN);
+			checkFormulaResultType(CellType.BOOLEAN,CellType.BLANK);
 		}else{
-			checkType(CellType.BOOLEAN);
+			checkType(CellType.BOOLEAN,CellType.BLANK);
 		}
-		return (Boolean)getValue();
+		
+		return Boolean.TRUE.equals(getValue());
 	}
 
 	@Override

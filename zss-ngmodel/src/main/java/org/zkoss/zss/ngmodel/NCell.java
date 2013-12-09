@@ -111,6 +111,9 @@ public interface NCell extends FormulaContent{
 	public Date getDateValue();
 	
 	public void setBooleanValue(Boolean bool);
+	/**
+	 * Gets the boolean value
+	 */
 	public Boolean getBooleanValue();
 	
 	public ErrorValue getErrorValue();
