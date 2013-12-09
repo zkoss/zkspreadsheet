@@ -129,7 +129,7 @@ public class CellFormatTest {
 		
 		cell.setValue(calendar.getTime());
 		cell.getCellStyle().setDataFormat("yy/mmm/ddd");
-		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getDateValue(), formatContext);
+		FormatResult result = formatEngine.format(cell.getCellStyle().getDataFormat(),cell.getValue(), formatContext);
 		Assert.assertEquals("13/Sep/Tue", result.getText());
 	}	
 		
