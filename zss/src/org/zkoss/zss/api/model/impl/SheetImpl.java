@@ -29,12 +29,14 @@ import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Chart;
 import org.zkoss.zss.api.model.Picture;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XSheet;
+//import org.zkoss.zss.model.sys.XBook;
+//import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.BookHelper;
 import org.zkoss.zss.model.sys.impl.DrawingManager;
 import org.zkoss.zss.model.sys.impl.HSSFSheetImpl;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
+import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ui.impl.XUtils;
 /**
  * 
@@ -42,18 +44,18 @@ import org.zkoss.zss.ui.impl.XUtils;
  * @since 3.0.0
  */
 public class SheetImpl implements Sheet{
-	private ModelRef<XSheet> _sheetRef;
-	private ModelRef<XBook> _bookRef;
+	private ModelRef<NSheet> _sheetRef;
+	private ModelRef<NBook> _bookRef;
 	private Book _book;
-	public SheetImpl(ModelRef<XBook> book,ModelRef<XSheet> sheet){
+	public SheetImpl(ModelRef<NBook> book,ModelRef<NSheet> sheet){
 		this._bookRef = book;
 		this._sheetRef = sheet;
 	}
 	
-	public XSheet getNative(){
+	public NSheet getNative(){
 		return _sheetRef.get();
 	}
-	public ModelRef<XSheet> getRef(){
+	public ModelRef<NSheet> getRef(){
 		return _sheetRef;
 	}
 	
@@ -91,7 +93,7 @@ public class SheetImpl implements Sheet{
 	
 
 	public boolean isProtected() {
-		return getNative().getProtect();
+		return getNative().isProtected();
 	}
 
 	public boolean isAutoFilterEnabled() {
@@ -99,7 +101,7 @@ public class SheetImpl implements Sheet{
 	}
 
 	public boolean isDisplayGridlines() {
-		return getNative().isDisplayGridlines();
+		return getNative().getViewInfo().isDisplayGridline();
 	}
 
 	public String getSheetName() {
@@ -107,64 +109,71 @@ public class SheetImpl implements Sheet{
 	}
 
 	public boolean isRowHidden(int row) {
-		final Row r = getNative().getRow(row);
-		return r != null && r.getZeroHeight();
+		return getNative().getRow(row).isHidden();
 	}
 
 	public boolean isColumnHidden(int column) {
-		return getNative().isColumnHidden(column);
+		return getNative().getColumn(column).isHidden();
 	}
 
 	
 	public List<Chart> getCharts(){
 		Book book = getBook();
-		DrawingManager dm = ((SheetCtrl)getNative()).getDrawingManager();
 		List<Chart> charts = new ArrayList<Chart>();
+		/*TODO zss 3.5
+		DrawingManager dm = ((SheetCtrl)getNative()).getDrawingManager();
 		for(org.zkoss.poi.ss.usermodel.Chart chart:dm.getCharts()){
 			charts.add(new ChartImpl(_sheetRef, new SimpleRef<org.zkoss.poi.ss.usermodel.Chart>(chart)));
 		}
+		*/
 		return charts;
 	}
 
 	
 	public List<Picture> getPictures(){
-		DrawingManager dm = ((SheetCtrl)getNative()).getDrawingManager();
 		List<Picture> pictures = new ArrayList<Picture>();
+		/*TODO zss 3.5
+		DrawingManager dm = ((SheetCtrl)getNative()).getDrawingManager();
 		for(org.zkoss.poi.ss.usermodel.Picture pic:dm.getPictures()){
 			pictures.add(new PictureImpl(_sheetRef, new SimpleRef<org.zkoss.poi.ss.usermodel.Picture>(pic)));
 		}
+		*/
 		return pictures;
 	}
 
 	public int getRowFreeze() {
-		return BookHelper.getRowFreeze(getNative());
+		return getNative().getViewInfo().getNumOfRowFreeze();
 	}
 
 	public int getColumnFreeze() {
-		return BookHelper.getColumnFreeze(getNative());
+		return getNative().getViewInfo().getNumOfColumnFreeze();
 	}
 
 	@Override
 	public boolean isPrintGridlines() {
-		return getNative().isPrintGridlines();
+		return getNative().getPrintInfo().isPrintGridline();
 	}
 
+	/*TODO zss 3.5
 	@Override
+	@Deprecated
 	public org.zkoss.poi.ss.usermodel.Sheet getPoiSheet() {
-		return getNative();
+		return null;
 	}
+	*/
 
 	@Override
 	public int getRowHeight(int row) {
-		return XUtils.getRowHeightInPx(getNative(), row);
+		return getNative().getRow(row).getHeight();
 	}
 
 	@Override
 	public int getColumnWidth(int column) {
-		return XUtils.getColumnWidthInPx(getNative(), column);
+		return getNative().getColumn(column).getWidth();
 	}
 
 	@Override
+	@Deprecated
 	public Object getSync() {
 		return getNative();
 	}
@@ -173,6 +182,7 @@ public class SheetImpl implements Sheet{
 	/**
 	 * Utility method, internal use only
 	 */
+	/*TODO zss 3.5
 	public static ClientAnchor toClientAnchor(org.zkoss.poi.ss.usermodel.Sheet sheet,SheetAnchor anchor){
 		ClientAnchor can = null;
 		if(sheet instanceof HSSFSheetImpl){//2003
@@ -190,10 +200,12 @@ public class SheetImpl implements Sheet{
 		}
 		return can;
 	}
+	*/
 	
 	/**
 	 * Utility method, internal use only
 	 */
+	/*TODO zss 3.5
 	public static SheetAnchor toSheetAnchor(org.zkoss.poi.ss.usermodel.Sheet sheet,ClientAnchor anchor){
 		SheetAnchor san = null;
 		if(sheet instanceof HSSFSheetImpl){
@@ -205,26 +217,25 @@ public class SheetImpl implements Sheet{
 		}
 		return san;
 	}
+	*/
 
 	@Override
 	public int getFirstRow() {
-		return getPoiSheet().getFirstRowNum();
+		return getNative().getStartRowIndex();
 	}
 
 	@Override
 	public int getLastRow() {
-		return getPoiSheet().getLastRowNum();
+		return getNative().getEndRowIndex();
 	}
 
 	@Override
 	public int getFirstColumn(int row) {
-		Row r = getPoiSheet().getRow(row);
-		return r==null?-1:r.getFirstCellNum();
+		return getNative().getRow(row).getStartCellIndex();
 	}
 
 	@Override
 	public int getLastColumn(int row) {
-		Row r = getPoiSheet().getRow(row);
-		return r==null?-1:r.getLastCellNum();
+		 return getNative().getRow(row).getEndCellIndex();
 	}
 }

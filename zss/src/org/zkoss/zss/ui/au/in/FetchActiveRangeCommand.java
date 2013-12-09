@@ -26,6 +26,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zss.model.sys.XSheet;
 import org.zkoss.zss.model.sys.impl.SheetCtrl;
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.sys.FreezeInfoLoader;
 import org.zkoss.zss.ui.sys.SpreadsheetCtrl;
@@ -54,9 +55,9 @@ public class FetchActiveRangeCommand extends AbstractCommand implements Command 
 		int top = (Integer) data.get("top");
 		int bottom = (Integer) data.get("bottom");
 		
-		XSheet sheet = spreadsheet.getSelectedXSheet();
+		NSheet sheet = spreadsheet.getSelectedXSheet();
 		
-		if (sheetId.equals(((SheetCtrl)sheet).getUuid())) {
+		if (sheetId.equals(sheet.getId())) {
 			final SpreadsheetCtrl spreadsheetCtrl = ((SpreadsheetCtrl) spreadsheet.getExtraCtrl());
 			
 			FreezeInfoLoader freezeInfo = spreadsheetCtrl.getFreezeInfoLoader();

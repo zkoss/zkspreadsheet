@@ -38,6 +38,9 @@ import org.zkoss.zss.api.model.impl.FontImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NColor;
+import org.zkoss.zss.ngmodel.NFont;
 /**
  * 
  * @author dennis
@@ -57,8 +60,8 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 	 * @return the new cell style
 	 */
 	public EditableCellStyle createCellStyle(CellStyle src){
-		XBook book = (XBook)_book.getPoiBook();
-		EditableCellStyle style = new EditableCellStyleImpl(((BookImpl)_book).getRef(),new SimpleRef<org.zkoss.poi.ss.usermodel.CellStyle>(book.createCellStyle()));
+		NBook book = (NBook)((BookImpl)_book).getNative();
+		EditableCellStyle style = new EditableCellStyleImpl(((BookImpl)_book).getRef(),new SimpleRef(book.createCellStyle(true)));
 		if(src!=null){
 			((EditableCellStyleImpl)style).copyAttributeFrom(src);
 		}
@@ -66,10 +69,10 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 	}
 
 	public EditableFont createFont(Font src) {
-		XBook book = (XBook)_book.getPoiBook();
-		org.zkoss.poi.ss.usermodel.Font font = book.createFont();
+		NBook book = (NBook)((BookImpl)_book).getNative();
+		NFont font = book.createFont(true);
 
-		EditableFont nf = new EditableFontImpl(((BookImpl)_book).getRef(),new SimpleRef<org.zkoss.poi.ss.usermodel.Font>(font));
+		EditableFont nf = new EditableFontImpl(((BookImpl)_book).getRef(),new SimpleRef(font));
 		if(src!=null){
 			((EditableFontImpl)nf).copyAttributeFrom(src);
 		}
@@ -79,10 +82,9 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 
 	public Color createColorFromHtmlColor(String htmlColor) {
 		Book book = _book;
-		org.zkoss.poi.ss.usermodel.Color color = BookHelper.HTMLToColor(
-				((BookImpl) book).getNative(), htmlColor);// never null
 		return new ColorImpl(((BookImpl) book).getRef(),
-				new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(color));
+				new SimpleRef<NColor>(((BookImpl) book).getNative().createColor(htmlColor)));
+		
 	}
 
 	public Font findFont(Boldweight boldweight, Color color,
@@ -91,7 +93,7 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 		Book book = _book;
 
 		org.zkoss.poi.ss.usermodel.Font font;
-
+		/*TODO zss 3.5
 		font = ((BookImpl) book).getNative().findFont(
 				EnumUtil.toFontBoldweight(boldweight),
 				((ColorImpl) color).getNative(), (short)fontHeight, fontName, italic,
@@ -99,25 +101,15 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 				EnumUtil.toFontUnderline(underline));
 		return font == null ? null : new FontImpl(((BookImpl) book).getRef(),
 				new SimpleRef<org.zkoss.poi.ss.usermodel.Font>(font));
+		*/
+		throw new UnsupportedOperationException("not implement");
 	}
 
 	
 	//TODO ZSS-424 get exception when undo after save
 	@Override
 	public boolean isAvailable(CellStyle style) {
-		XBook book = (XBook)_book.getPoiBook();
-		org.zkoss.poi.ss.usermodel.CellStyle cs = ((CellStyleImpl)style).getRef().get();
-		org.zkoss.poi.ss.usermodel.CellStyle csidx;
-		if(cs instanceof HSSFCellStyle){
-			//no zss-424 in hssf, return directly
-			return true;
-		}else if(cs instanceof XSSFCellStyle){
-			try{
-				((XSSFCellStyle)cs).getCoreXf().getXfId();
-			}catch(org.apache.xmlbeans.impl.values.XmlValueDisconnectedException x){
-				return false;
-			}
-		}
+		//always available in new model.
 		return true;
 	}
 }

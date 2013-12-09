@@ -32,8 +32,11 @@ public interface Book {
 	/**
 	 * Gets the poi book object 
 	 * @return the poi book object
+	 * 
 	 */
+	/*TODO zss 3.5
 	public Workbook getPoiBook();
+	*/
 	
 	/**
 	 * Gets the object for synchronized a book.

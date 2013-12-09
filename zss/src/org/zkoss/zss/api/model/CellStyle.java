@@ -60,8 +60,11 @@ public interface CellStyle {
 
 	/**
 	 * @return background-color
+	 * @deprecated since 3.5.0 , use {@link #getFillColor()}
 	 */
 	public Color getBackgroundColor();
+	
+	public Color getFillColor();
 
 	/**
 	 * Gets the fill/background pattern <br/>

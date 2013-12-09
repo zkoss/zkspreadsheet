@@ -272,7 +272,7 @@ public class XUtils {
 	
 	public static String getSheetUuid(Sheet sheet){
 		
-		return ((SheetCtrl)((SheetImpl)sheet).getNative()).getUuid();
+		return (((SheetImpl)sheet).getNative()).getId();
 	}
 	
 	/**

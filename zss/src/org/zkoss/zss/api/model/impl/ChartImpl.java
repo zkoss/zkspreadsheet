@@ -70,7 +70,10 @@ public class ChartImpl implements Chart{
 	
 	@Override
 	public SheetAnchor getAnchor() {
+		/*TODO zss 3.5
 		ClientAnchor anchor = getNative().getPreferredSize();
 		return anchor==null?null:SheetImpl.toSheetAnchor(_sheetRef.get(), anchor);
+		*/
+		return null;
 	}
 }

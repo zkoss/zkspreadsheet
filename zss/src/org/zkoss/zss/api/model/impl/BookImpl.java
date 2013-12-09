@@ -16,13 +16,10 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api.model.impl;
 
-import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.HSSFBookImpl;
-import org.zkoss.zss.model.sys.impl.XSSFBookImpl;
+import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NSheet;
 /**
  * 
  * @author dennis
@@ -30,26 +27,28 @@ import org.zkoss.zss.model.sys.impl.XSSFBookImpl;
  */
 public class BookImpl implements Book{
 
-	private ModelRef<XBook> _bookRef;
+	private ModelRef<NBook> _bookRef;
 	private BookType _type;
 	
-	public BookImpl(ModelRef<XBook> ref){
+	public BookImpl(ModelRef<NBook> ref){
 		this._bookRef = ref;
-		XBook book = ref.get();
-		if (book instanceof HSSFBookImpl) {
-			_type = BookType.XLS;
-		} else if (book instanceof XSSFBookImpl) {
-			_type = BookType.XLSX;
-		} else {
-			throw new IllegalArgumentException("unknow book type "+book);
-		}
+		NBook book = ref.get();
+		/*TODO zss 3.5*/
+		_type = BookType.XLSX;
+//		if (book instanceof HSSFBookImpl) {
+//			_type = BookType.XLS;
+//		} else if (book instanceof XSSFBookImpl) {
+//			_type = BookType.XLSX;
+//		} else {
+//			throw new IllegalArgumentException("unknow book type "+book);
+//		}
 	}
 
-	public XBook getNative() {
+	public NBook getNative() {
 		return _bookRef.get();
 	}
 	
-	public ModelRef<XBook> getRef(){
+	public ModelRef<NBook> getRef(){
 		return _bookRef;
 	}
 
@@ -92,24 +91,28 @@ public class BookImpl implements Book{
 	}
 
 	public int getNumberOfSheets() {
-		return getNative().getNumberOfSheets();
+		return getNative().getNumOfSheet();
 	}
 	
 	public SheetImpl getSheetAt(int index){
-		XSheet sheet = getNative().getWorksheetAt(index);
-		return new SheetImpl(_bookRef,new SimpleRef<XSheet>(sheet));
+		NSheet sheet = getNative().getSheet(index);
+		return new SheetImpl(_bookRef,new SimpleRef<NSheet>(sheet));
 	}
 	
 	public SheetImpl getSheet(String name){
-		XSheet sheet = getNative().getWorksheet(name);
+		NSheet sheet = getNative().getSheetByName(name);
 		
-		return sheet==null?null:new SheetImpl(_bookRef,new SimpleRef<XSheet>(sheet));
+		return sheet==null?null:new SheetImpl(_bookRef,new SimpleRef<NSheet>(sheet));
 	}
 
+	
+	/*TODO zss 3.5
 	@Override
+	@Deprecated
 	public Workbook getPoiBook() {
-		return getNative();
+		return null;
 	}
+	*/
 
 	@Override
 	public void setShareScope(String scope) {
@@ -122,23 +125,24 @@ public class BookImpl implements Book{
 	}
 
 	@Override
+	@Deprecated
 	public Object getSync() {
 		return getNative();
 	}
 
 	@Override
 	public boolean hasNameRange(String name) {
-		return getPoiBook().getName(name)!=null;
+		return getNative().getNameByName(name)!=null;
 	}
 
 	@Override
 	public int getMaxRows() {
-		return ((XBook)getPoiBook()).getSpreadsheetVersion().getMaxRows();
+		return getNative().getMaxRowSize();
 	}
 
 	@Override
 	public int getMaxColumns() {
-		return ((XBook)getPoiBook()).getSpreadsheetVersion().getMaxColumns();
+		return getNative().getMaxColumnSize();
 	}
 	
 }

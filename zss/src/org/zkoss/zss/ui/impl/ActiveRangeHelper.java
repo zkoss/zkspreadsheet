@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.ngmodel.NSheet;
 
 /**
  * @author sam
@@ -27,9 +28,9 @@ import org.zkoss.zss.model.sys.XSheet;
  */
 public class ActiveRangeHelper {
 
-	private HashMap<XSheet, AreaRef> activeRanges = new HashMap<XSheet, AreaRef>();
+	private HashMap<NSheet, AreaRef> activeRanges = new HashMap<NSheet, AreaRef>();
 	
-	public void setActiveRange(XSheet sheet, int tRow, int lCol, int bRow, int rCol) {
+	public void setActiveRange(NSheet sheet, int tRow, int lCol, int bRow, int rCol) {
 		AreaRef rect = activeRanges.get(sheet);
 		if (rect == null) {
 			activeRanges.put(sheet, rect = new AreaRef(tRow, lCol, bRow, rCol));
@@ -38,19 +39,19 @@ public class ActiveRangeHelper {
 		}
 	}
 	
-	public AreaRef getArea(XSheet sheet) {
+	public AreaRef getArea(NSheet sheet) {
 		return activeRanges.get(sheet);
 	}
 	
-	public boolean containsSheet(XSheet sheet) {
+	public boolean containsSheet(NSheet sheet) {
 		return activeRanges.containsKey(sheet);
 	}
 	
-	public boolean contains(XSheet sheet, int row, int col) {
+	public boolean contains(NSheet sheet, int row, int col) {
 		return contains(sheet, row, col, row, col);
 	}
 	
-	public boolean contains(XSheet sheet, int tRow, int lCol, int bRow, int rCol) {
+	public boolean contains(NSheet sheet, int tRow, int lCol, int bRow, int rCol) {
 		AreaRef rect = activeRanges.get(sheet);
 		if (rect == null)
 			return false;

@@ -19,6 +19,7 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.sys;
 
 import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.Widget;
 
@@ -65,7 +66,7 @@ public interface WidgetHandler{
 	 * handler should take care this method and load corresponding widgets, which in the block , to client side.
 	 * this method will be invoked by spreadsheet, you should not call this method directly.
 	 */
-	public void onLoadOnDemand(XSheet sheet,int left,int top,int right,int bottom);
+	public void onLoadOnDemand(NSheet sheet,int left,int top,int right,int bottom);
 	
 	/**
 	 * invalidate this handle, which means all widget in client side will be remove, and need to re-drew.
@@ -82,5 +83,5 @@ public interface WidgetHandler{
 	 * @param right right column of the range 
 	 * @param bottom bottom row of the range
 	 */
-	public void updateWidgets(XSheet sheet, int left, int top, int right, int bottom);
+	public void updateWidgets(NSheet sheet, int left, int top, int right, int bottom);
 }

@@ -16,6 +16,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.api;
 
+import java.util.concurrent.locks.ReadWriteLock;
+
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.CellStyle;
@@ -53,6 +55,10 @@ import org.zkoss.zss.api.model.Sheet;
  */
 public interface Range {
 	
+	/**
+	 * @author dennis
+	 * @deprecated since 3.5 It is always synchronized on Book by a read-write lock
+	 */
 	public enum SyncLevel{
 		BOOK,
 		NONE//for you just visit and do nothing
@@ -147,8 +153,11 @@ public interface Range {
 	/**
 	 * Sets the synchronization level of this range
 	 * @param syncLevel
+	 * @deprecated It is always synchronized on Book by a read-write lock
 	 */
 	public void setSyncLevel(SyncLevel syncLevel);
+	
+	public ReadWriteLock getLock();
 	
 	/**
 	 * Gets the book of this range

@@ -47,7 +47,7 @@ public class FontSizeHandler extends AbstractProtectedHandler {
 		UndoableActionManager uam = ctx.getSpreadsheet().getUndoableActionManager();
 		uam.doAction(new FontStyleAction(Labels.getLabel("zss.undo.fontStyle"),sheet, selection.getRow(), selection.getColumn(), 
 				selection.getLastRow(), selection.getLastColumn(), 
-				CellOperationUtil.getFontHeightApplier((short)UnitUtil.pointToTwip(fontSize))));
+				CellOperationUtil.getFontHeightPointsApplier(fontSize)));
 		return true;
 	}
 

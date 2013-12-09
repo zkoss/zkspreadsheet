@@ -32,6 +32,8 @@ import org.zkoss.zss.api.model.CellData;
 import org.zkoss.zss.api.model.CellStyle;
 import org.zkoss.zss.api.model.Font;
 import org.zkoss.zss.api.model.Sheet;
+import org.zkoss.zss.api.model.impl.SheetImpl;
+import org.zkoss.zss.ngmodel.CellRegion;
 
 /**
  * 
@@ -133,16 +135,15 @@ public class ReserveUtil {
 	 */
 	public static AreaRef[] reserveMergeInfo(Sheet sheet, int row, int column,
 			int lastRow, int lastColumn){
-		org.zkoss.poi.ss.usermodel.Sheet poiSheet = sheet.getPoiSheet();
-		int size = poiSheet.getNumMergedRegions();
+		int size = ((SheetImpl)sheet).getNative().getNumOfMergedRegion();
 		ArrayList<AreaRef> array = new ArrayList<AreaRef>();
 		AreaRef cur = new AreaRef(row,column,lastRow,lastColumn);
 		for(int i=0;i<size;i++){
-			CellRangeAddress cra = poiSheet.getMergedRegion(i);
-			int r = cra.getFirstRow();
-			int c = cra.getFirstColumn();
-			int lr = cra.getLastRow();
-			int lc = cra.getLastColumn();
+			CellRegion cra = ((SheetImpl)sheet).getNative().getMergedRegion(i);
+			int r = cra.row;
+			int c = cra.column;
+			int lr = cra.lastRow;
+			int lc = cra.lastColumn;
 			if(cur.contains(r, c, lr, lc)){
 				array.add(new AreaRef(r,c,lr,lc));
 			}

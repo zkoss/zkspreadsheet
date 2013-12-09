@@ -19,8 +19,8 @@ package org.zkoss.zss.api.model.impl;
 import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.Font;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NFont;
 /**
  * 
  * @author dennis
@@ -28,31 +28,25 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
  */
 public class FontImpl implements Font{
 	
-	protected ModelRef<XBook> _bookRef;
-	protected ModelRef<org.zkoss.poi.ss.usermodel.Font> _fontRef;
+	protected ModelRef<NBook> _bookRef;
+	protected ModelRef<NFont> _fontRef;
 	
-	public FontImpl(ModelRef<XBook> book, ModelRef<org.zkoss.poi.ss.usermodel.Font> font) {
+	public FontImpl(ModelRef<NBook> book, ModelRef<NFont> font) {
 		this._bookRef = book;
 		this._fontRef = font;
 	}
 	public String getFontName() {
-		return getNative().getFontName();
+		return getNative().getName();
 	}
-	public org.zkoss.poi.ss.usermodel.Font getNative() {
+	public NFont getNative() {
 		return _fontRef.get();
 	}
-	public ModelRef<org.zkoss.poi.ss.usermodel.Font> getRef(){
+	public ModelRef<NFont> getRef(){
 		return _fontRef;
 	}
 	
 	public Color getColor(){
-		org.zkoss.poi.ss.usermodel.Color c = BookHelper.getFontColor(_bookRef.get(), _fontRef.get());
-		return new ColorImpl(_bookRef,new SimpleRef<org.zkoss.poi.ss.usermodel.Color>(c)){
-			@Override
-			public String getHtmlColor() {
-				return BookHelper.colorToForegroundHTML(getBookRef().get(),getRef().get());
-			}
-		};
+		return new ColorImpl(_bookRef,new SimpleRef(getNative().getColor()));
 	}
 	@Override
 	public int hashCode() {
@@ -81,13 +75,13 @@ public class FontImpl implements Font{
 		return EnumUtil.toFontBoldweight(getNative().getBoldweight());
 	}
 	public int getFontHeight() {
-		return getNative().getFontHeight();
+		return UnitUtil.pointToTwip(getFontHeightInPoint());
 	}
 	public boolean isItalic() {
-		return getNative().getItalic();
+		return getNative().isItalic();
 	}
 	public boolean isStrikeout() {
-		return getNative().getStrikeout();
+		return getNative().isStrikeout();
 	}
 	public TypeOffset getTypeOffset() {
 		return EnumUtil.toFontTypeOffset(getNative().getTypeOffset());
@@ -104,6 +98,6 @@ public class FontImpl implements Font{
 	}
 
 	public int getFontHeightInPoint() {
-		return UnitUtil.twipToPoint(getFontHeight());
+		return getNative().getHeightPoints();
 	}
 }

@@ -21,9 +21,8 @@ package org.zkoss.zss.ui.sys;
 
 //import org.zkoss.zss.model.Sheet;
 import org.zkoss.json.JSONObject;
-import org.zkoss.lang.Objects;
 import org.zkoss.zss.api.AreaRef;
-import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ui.Widget;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
@@ -64,7 +63,7 @@ public interface SpreadsheetCtrl {
 	
 	public HeaderPositionHelper getColumnPositionHelper(String sheetId);
 	
-	public MergeMatrixHelper getMergeMatrixHelper(XSheet sheet);
+	public MergeMatrixHelper getMergeMatrixHelper(NSheet sheet);
 	
 	
 	public AreaRef getSelectionArea();
@@ -74,11 +73,11 @@ public interface SpreadsheetCtrl {
 	
 	public WidgetHandler getWidgetHandler();
 	
-	public JSONObject getRowHeaderAttrs(XSheet sheet, int rowStart, int rowEnd);
+	public JSONObject getRowHeaderAttrs(NSheet sheet, int rowStart, int rowEnd);
 	
-	public JSONObject getColumnHeaderAttrs(XSheet sheet, int colStart, int colEnd);
+	public JSONObject getColumnHeaderAttrs(NSheet sheet, int colStart, int colEnd);
 	
-	public JSONObject getRangeAttrs(XSheet sheet, Header containsHeader, CellAttribute type, int left, int top, int right, int bottom);
+	public JSONObject getRangeAttrs(NSheet sheet, Header containsHeader, CellAttribute type, int left, int top, int right, int bottom);
 	
 	/**
 	 * Add widget to the {@link WidgetHandler} of this spreadsheet, 

@@ -17,6 +17,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ui.sys;
 
 import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.ngmodel.NSheet;
 
 /**
  * @author dennis
@@ -28,5 +29,5 @@ public interface CellDisplayLoader {
 	 * return the html text for this cell
 	 * @return the html text or null if the cell is not support to show it.
 	 */
-	public String getCellHtmlText(XSheet sheet,int row, int column);
+	public String getCellHtmlText(NSheet sheet,int row, int column);
 }

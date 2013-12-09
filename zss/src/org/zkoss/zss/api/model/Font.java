@@ -60,14 +60,14 @@ public interface Font {
 	public Boldweight getBoldweight();
 	
 	/**
-	 * 
 	 * @return a font's height in twentieth of a point
+	 * @deprecated use {@link #getFontHeightInPoint()}
 	 */
 	public int getFontHeight();
 	
 	/**
 	 * 
-	 * @return a fon't height in pixel
+	 * @return a font's height in pixel
 	 */
 	public int getFontHeightInPoint();
 	

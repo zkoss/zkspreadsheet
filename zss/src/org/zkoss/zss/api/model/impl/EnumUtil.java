@@ -18,7 +18,6 @@ package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.poi.common.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
-import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.usermodel.charts.ChartGrouping;
 import org.zkoss.poi.ss.usermodel.charts.ChartType;
@@ -47,6 +46,10 @@ import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.ngapi.NRange;
+import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NFont;
+import org.zkoss.zss.ngmodel.NHyperlink;
 /**
  * 
  * @author dennis
@@ -60,58 +63,58 @@ public class EnumUtil {
 		}
 	}
 	
-	public static int toRangePasteOpNative(PasteOperation op) {
+	public static NRange.PasteOperation toRangePasteOpNative(PasteOperation op) {
 		assertArgNotNull(op,"paste operation");
 		switch(op){
 		case ADD:
-			return XRange.PASTEOP_ADD;
+			return NRange.PasteOperation.ADD;
 		case SUB:
-			return XRange.PASTEOP_SUB;
+			return NRange.PasteOperation.SUB;
 		case MUL:
-			return XRange.PASTEOP_MUL;
+			return NRange.PasteOperation.MUL;
 		case DIV:
-			return XRange.PASTEOP_DIV;
+			return NRange.PasteOperation.DIV;
 		case NONE:
-			return XRange.PASTEOP_NONE;
+			return NRange.PasteOperation.NONE;
 		}
 		throw new IllegalArgumentException("unknow paste operation "+op);
 	}
 
 
-	public static int toRangePasteTypeNative(PasteType type) {
+	public static NRange.PasteType toRangePasteTypeNative(PasteType type) {
 		assertArgNotNull(type,"paste type");
 		switch(type){
 		case ALL:
-			return XRange.PASTE_ALL;
+			return NRange.PasteType.ALL;
 		case ALL_EXCEPT_BORDERS:
-			return XRange.PASTE_ALL_EXCEPT_BORDERS;
+			return NRange.PasteType.ALL_EXCEPT_BORDERS;
 		case COLUMN_WIDTHS:
-			return XRange.PASTE_COLUMN_WIDTHS;
+			return NRange.PasteType.COLUMN_WIDTHS;
 		case COMMENTS:
-			return XRange.PASTE_COMMENTS;
+			return NRange.PasteType.COMMENTS;
 		case FORMATS:
-			return XRange.PASTE_FORMATS;
+			return NRange.PasteType.FORMATS;
 		case FORMULAS:
-			return XRange.PASTE_FORMULAS;
+			return NRange.PasteType.FORMULAS;
 		case FORMULAS_AND_NUMBER_FORMATS:
-			return XRange.PASTE_FORMULAS_AND_NUMBER_FORMATS;
+			return NRange.PasteType.FORMULAS_AND_NUMBER_FORMATS;
 		case VALIDATAION:
-			return XRange.PASTE_VALIDATAION;
+			return NRange.PasteType.VALIDATAION;
 		case VALUES:
-			return XRange.PASTE_VALUES;
+			return NRange.PasteType.VALUES;
 		case VALUES_AND_NUMBER_FORMATS:
-			return XRange.PASTE_VALUES_AND_NUMBER_FORMATS;
+			return NRange.PasteType.VALUES_AND_NUMBER_FORMATS;
 		}
 		throw new IllegalArgumentException("unknow paste operation "+type);
 	}
 	
-	public static TypeOffset toFontTypeOffset(short typeOffset){
+	public static TypeOffset toFontTypeOffset(NFont.TypeOffset typeOffset){
 		switch(typeOffset){
-		case org.zkoss.poi.ss.usermodel.Font.SS_NONE:
+		case NONE:
 			return Font.TypeOffset.NONE;
-		case org.zkoss.poi.ss.usermodel.Font.SS_SUB:
+		case SUB:
 			return Font.TypeOffset.SUB;
-		case org.zkoss.poi.ss.usermodel.Font.SS_SUPER:
+		case SUPER:
 			return Font.TypeOffset.SUPER;
 		}
 		throw new IllegalArgumentException("unknow font type offset "+typeOffset);
@@ -130,376 +133,377 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow font type offset "+typeOffset);
 	}
 
-	public static Underline toFontUnderline(byte underline) {
+	public static Underline toFontUnderline(NFont.Underline underline) {
 		switch(underline){
-		case org.zkoss.poi.ss.usermodel.Font.U_NONE:
+		case NONE:
 			return Font.Underline.NONE;
-		case org.zkoss.poi.ss.usermodel.Font.U_SINGLE:
+		case SINGLE:
 			return Font.Underline.SINGLE;
-		case org.zkoss.poi.ss.usermodel.Font.U_SINGLE_ACCOUNTING:
+		case SINGLE_ACCOUNTING:
 			return Font.Underline.SINGLE_ACCOUNTING;
-		case org.zkoss.poi.ss.usermodel.Font.U_DOUBLE:
+		case DOUBLE:
 			return Font.Underline.DOUBLE;
-		case org.zkoss.poi.ss.usermodel.Font.U_DOUBLE_ACCOUNTING:
+		case DOUBLE_ACCOUNTING:
 			return Font.Underline.DOUBLE_ACCOUNTING;
 		}
 		throw new IllegalArgumentException("unknow font underline "+underline);
 	}
 
 
-	public static byte toFontUnderline(Underline underline) {
+	public static NFont.Underline toFontUnderline(Underline underline) {
 		assertArgNotNull(underline,"underline");
 		switch(underline){
 		case NONE:
-			return org.zkoss.poi.ss.usermodel.Font.U_NONE;
+			return NFont.Underline.NONE;
 		case SINGLE:
-			return org.zkoss.poi.ss.usermodel.Font.U_SINGLE;
+			return NFont.Underline.SINGLE;
 		case SINGLE_ACCOUNTING:
-			return org.zkoss.poi.ss.usermodel.Font.U_SINGLE_ACCOUNTING;
+			return NFont.Underline.SINGLE_ACCOUNTING;
 		case DOUBLE:
-			return org.zkoss.poi.ss.usermodel.Font.U_DOUBLE;
+			return NFont.Underline.DOUBLE;
 		case DOUBLE_ACCOUNTING:
-			return org.zkoss.poi.ss.usermodel.Font.U_DOUBLE_ACCOUNTING;
+			return NFont.Underline.DOUBLE_ACCOUNTING;
 		}
 		throw new IllegalArgumentException("unknow font underline "+underline);
 	}
 
-	public static Boldweight toFontBoldweight(short boldweight) {
+	public static Boldweight toFontBoldweight(org.zkoss.zss.ngmodel.NFont.Boldweight boldweight) {
 		switch(boldweight){
-		case org.zkoss.poi.ss.usermodel.Font.BOLDWEIGHT_BOLD:
+		case BOLD:
 			return Font.Boldweight.BOLD;
-		case org.zkoss.poi.ss.usermodel.Font.BOLDWEIGHT_NORMAL:
+		case NORMAL:
 			return Font.Boldweight.NORMAL;
 		}
 		throw new IllegalArgumentException("unknow font boldweight "+boldweight);
 	}
 	
-	public static short toFontBoldweight(Boldweight boldweight) {
+	public static NFont.Boldweight toFontBoldweight(Boldweight boldweight) {
 		switch(boldweight){
 		case BOLD:
-			return org.zkoss.poi.ss.usermodel.Font.BOLDWEIGHT_BOLD;
+			return NFont.Boldweight.BOLD;
 		case NORMAL:
-			return org.zkoss.poi.ss.usermodel.Font.BOLDWEIGHT_NORMAL;
+			return NFont.Boldweight.NORMAL;
 		}
 		throw new IllegalArgumentException("unknow font boldweight "+boldweight);
 	}
 
-	public static FillPattern toStyleFillPattern(short pattern) {
-		switch(pattern){
-		case org.zkoss.poi.ss.usermodel.CellStyle.NO_FILL:
-			return CellStyle.FillPattern.NO_FILL;
-		case org.zkoss.poi.ss.usermodel.CellStyle.SOLID_FOREGROUND:
-			return CellStyle.FillPattern.SOLID_FOREGROUND;
-		case org.zkoss.poi.ss.usermodel.CellStyle.FINE_DOTS:
-			return CellStyle.FillPattern.FINE_DOTS;
-		case org.zkoss.poi.ss.usermodel.CellStyle.ALT_BARS:
-			return CellStyle.FillPattern.ALT_BARS;
-		case org.zkoss.poi.ss.usermodel.CellStyle.SPARSE_DOTS:
-			return CellStyle.FillPattern.SPARSE_DOTS;
-		case org.zkoss.poi.ss.usermodel.CellStyle.THICK_HORZ_BANDS:
-			return CellStyle.FillPattern.THICK_HORZ_BANDS;
-		case org.zkoss.poi.ss.usermodel.CellStyle.THICK_VERT_BANDS:
-			return CellStyle.FillPattern.THICK_VERT_BANDS;
-		case org.zkoss.poi.ss.usermodel.CellStyle.THICK_BACKWARD_DIAG:
-			return CellStyle.FillPattern.THICK_BACKWARD_DIAG;
-		case org.zkoss.poi.ss.usermodel.CellStyle.THICK_FORWARD_DIAG:
-			return CellStyle.FillPattern.THICK_FORWARD_DIAG;
-		case org.zkoss.poi.ss.usermodel.CellStyle.BIG_SPOTS:
-			return CellStyle.FillPattern.BIG_SPOTS;
-		case org.zkoss.poi.ss.usermodel.CellStyle.BRICKS:
-			return CellStyle.FillPattern.BRICKS;
-		case org.zkoss.poi.ss.usermodel.CellStyle.THIN_HORZ_BANDS:
-			return CellStyle.FillPattern.THIN_HORZ_BANDS;
-		case org.zkoss.poi.ss.usermodel.CellStyle.THIN_VERT_BANDS:
-			return CellStyle.FillPattern.THIN_VERT_BANDS;
-		case org.zkoss.poi.ss.usermodel.CellStyle.THIN_BACKWARD_DIAG:
-			return CellStyle.FillPattern.THIN_BACKWARD_DIAG;
-		case org.zkoss.poi.ss.usermodel.CellStyle.THIN_FORWARD_DIAG:
-			return CellStyle.FillPattern.THIN_FORWARD_DIAG;
-		case org.zkoss.poi.ss.usermodel.CellStyle.SQUARES:
-			return CellStyle.FillPattern.SQUARES;
-		case org.zkoss.poi.ss.usermodel.CellStyle.DIAMONDS:
-			return CellStyle.FillPattern.DIAMONDS;
-		case org.zkoss.poi.ss.usermodel.CellStyle.LESS_DOTS:
-			return CellStyle.FillPattern.LESS_DOTS;
-		case org.zkoss.poi.ss.usermodel.CellStyle.LEAST_DOTS:
-			return CellStyle.FillPattern.LEAST_DOTS;
-		}
-		throw new IllegalArgumentException("unknow pattern type "+pattern);	}
-	
-	public static short toStyleFillPattern(FillPattern pattern) {
+	public static FillPattern toStyleFillPattern(NCellStyle.FillPattern pattern) {
 		switch(pattern){
 		case NO_FILL:
-			return org.zkoss.poi.ss.usermodel.CellStyle.NO_FILL;
+			return CellStyle.FillPattern.NO_FILL;
 		case SOLID_FOREGROUND:
-			return org.zkoss.poi.ss.usermodel.CellStyle.SOLID_FOREGROUND;
+			return CellStyle.FillPattern.SOLID_FOREGROUND;
 		case FINE_DOTS:
-			return org.zkoss.poi.ss.usermodel.CellStyle.FINE_DOTS;
+			return CellStyle.FillPattern.FINE_DOTS;
 		case ALT_BARS:
-			return org.zkoss.poi.ss.usermodel.CellStyle.ALT_BARS;
+			return CellStyle.FillPattern.ALT_BARS;
 		case SPARSE_DOTS:
-			return org.zkoss.poi.ss.usermodel.CellStyle.SPARSE_DOTS;
+			return CellStyle.FillPattern.SPARSE_DOTS;
 		case THICK_HORZ_BANDS:
-			return org.zkoss.poi.ss.usermodel.CellStyle.THICK_HORZ_BANDS;
+			return CellStyle.FillPattern.THICK_HORZ_BANDS;
 		case THICK_VERT_BANDS:
-			return org.zkoss.poi.ss.usermodel.CellStyle.THICK_VERT_BANDS;
+			return CellStyle.FillPattern.THICK_VERT_BANDS;
 		case THICK_BACKWARD_DIAG:
-			return org.zkoss.poi.ss.usermodel.CellStyle.THICK_BACKWARD_DIAG;
+			return CellStyle.FillPattern.THICK_BACKWARD_DIAG;
 		case THICK_FORWARD_DIAG:
-			return org.zkoss.poi.ss.usermodel.CellStyle.THICK_FORWARD_DIAG;
+			return CellStyle.FillPattern.THICK_FORWARD_DIAG;
 		case BIG_SPOTS:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BIG_SPOTS;
+			return CellStyle.FillPattern.BIG_SPOTS;
 		case BRICKS:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BRICKS;
+			return CellStyle.FillPattern.BRICKS;
 		case THIN_HORZ_BANDS:
-			return org.zkoss.poi.ss.usermodel.CellStyle.THIN_HORZ_BANDS;
+			return CellStyle.FillPattern.THIN_HORZ_BANDS;
 		case THIN_VERT_BANDS:
-			return org.zkoss.poi.ss.usermodel.CellStyle.THIN_VERT_BANDS;
+			return CellStyle.FillPattern.THIN_VERT_BANDS;
 		case THIN_BACKWARD_DIAG:
-			return org.zkoss.poi.ss.usermodel.CellStyle.THIN_BACKWARD_DIAG;
+			return CellStyle.FillPattern.THIN_BACKWARD_DIAG;
 		case THIN_FORWARD_DIAG:
-			return org.zkoss.poi.ss.usermodel.CellStyle.THIN_FORWARD_DIAG;
+			return CellStyle.FillPattern.THIN_FORWARD_DIAG;
 		case SQUARES:
-			return org.zkoss.poi.ss.usermodel.CellStyle.SQUARES;
+			return CellStyle.FillPattern.SQUARES;
 		case DIAMONDS:
-			return org.zkoss.poi.ss.usermodel.CellStyle.DIAMONDS;
+			return CellStyle.FillPattern.DIAMONDS;
 		case LESS_DOTS:
-			return org.zkoss.poi.ss.usermodel.CellStyle.LESS_DOTS;
+			return CellStyle.FillPattern.LESS_DOTS;
 		case LEAST_DOTS:
-			return org.zkoss.poi.ss.usermodel.CellStyle.LEAST_DOTS;
+			return CellStyle.FillPattern.LEAST_DOTS;
+		}
+		throw new IllegalArgumentException("unknow pattern type "+pattern);	
+	}
+	
+	public static NCellStyle.FillPattern toStyleFillPattern(FillPattern pattern) {
+		switch(pattern){
+		case NO_FILL:
+			return NCellStyle.FillPattern.NO_FILL;
+		case SOLID_FOREGROUND:
+			return NCellStyle.FillPattern.SOLID_FOREGROUND;
+		case FINE_DOTS:
+			return NCellStyle.FillPattern.FINE_DOTS;
+		case ALT_BARS:
+			return NCellStyle.FillPattern.ALT_BARS;
+		case SPARSE_DOTS:
+			return NCellStyle.FillPattern.SPARSE_DOTS;
+		case THICK_HORZ_BANDS:
+			return NCellStyle.FillPattern.THICK_HORZ_BANDS;
+		case THICK_VERT_BANDS:
+			return NCellStyle.FillPattern.THICK_VERT_BANDS;
+		case THICK_BACKWARD_DIAG:
+			return NCellStyle.FillPattern.THICK_BACKWARD_DIAG;
+		case THICK_FORWARD_DIAG:
+			return NCellStyle.FillPattern.THICK_FORWARD_DIAG;
+		case BIG_SPOTS:
+			return NCellStyle.FillPattern.BIG_SPOTS;
+		case BRICKS:
+			return NCellStyle.FillPattern.BRICKS;
+		case THIN_HORZ_BANDS:
+			return NCellStyle.FillPattern.THIN_HORZ_BANDS;
+		case THIN_VERT_BANDS:
+			return NCellStyle.FillPattern.THIN_VERT_BANDS;
+		case THIN_BACKWARD_DIAG:
+			return NCellStyle.FillPattern.THIN_BACKWARD_DIAG;
+		case THIN_FORWARD_DIAG:
+			return NCellStyle.FillPattern.THIN_FORWARD_DIAG;
+		case SQUARES:
+			return NCellStyle.FillPattern.SQUARES;
+		case DIAMONDS:
+			return NCellStyle.FillPattern.DIAMONDS;
+		case LESS_DOTS:
+			return NCellStyle.FillPattern.LESS_DOTS;
+		case LEAST_DOTS:
+			return NCellStyle.FillPattern.LEAST_DOTS;
 		}
 		throw new IllegalArgumentException("unknow pattern type "+pattern);
 	}
 
-	public static short toStyleAlignemnt(Alignment alignment) {
+	public static NCellStyle.Alignment toStyleAlignemnt(Alignment alignment) {
 		switch(alignment){
 		case GENERAL:
-			return org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_GENERAL;
+			return NCellStyle.Alignment.GENERAL;
 		case LEFT:
-			return org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_LEFT;
+			return NCellStyle.Alignment.LEFT;
 		case CENTER:
-			return org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_CENTER;
+			return NCellStyle.Alignment.CENTER;
 		case RIGHT:
-			return org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_RIGHT;
+			return NCellStyle.Alignment.RIGHT;
 		case FILL:
-			return org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_FILL;
+			return NCellStyle.Alignment.FILL;
 		case JUSTIFY:
-			return org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_JUSTIFY;
+			return NCellStyle.Alignment.JUSTIFY;
 		case CENTER_SELECTION:
-			return org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_CENTER_SELECTION;
+			return NCellStyle.Alignment.CENTER_SELECTION;
 		}
 		throw new IllegalArgumentException("unknow cell alignment "+alignment);
 	}
-	public static Alignment toStyleAlignemnt(short alignment) {
+	public static Alignment toStyleAlignemnt(NCellStyle.Alignment alignment) {
 		switch(alignment){
-		case org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_GENERAL:
+		case GENERAL:
 			return Alignment.GENERAL;
-		case org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_LEFT:
+		case LEFT:
 			return Alignment.LEFT;
-		case org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_CENTER:
+		case CENTER:
 			return Alignment.CENTER;
-		case org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_RIGHT:
+		case RIGHT:
 			return Alignment.RIGHT;
-		case org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_FILL:
+		case FILL:
 			return Alignment.FILL;
-		case org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_JUSTIFY:
+		case JUSTIFY:
 			return Alignment.JUSTIFY;
-		case org.zkoss.poi.ss.usermodel.CellStyle.ALIGN_CENTER_SELECTION:
+		case CENTER_SELECTION:
 			return Alignment.CENTER_SELECTION;
 		}
 		throw new IllegalArgumentException("unknow cell alignment "+alignment);
 	}
-	public static short toStyleVerticalAlignemnt(VerticalAlignment alignment) {
+	public static NCellStyle.VerticalAlignment toStyleVerticalAlignemnt(VerticalAlignment alignment) {
 		switch(alignment){
 		case TOP:
-			return org.zkoss.poi.ss.usermodel.CellStyle.VERTICAL_TOP;
+			return NCellStyle.VerticalAlignment.TOP;
 		case CENTER:
-			return org.zkoss.poi.ss.usermodel.CellStyle.VERTICAL_CENTER;
+			return NCellStyle.VerticalAlignment.CENTER;
 		case BOTTOM:
-			return org.zkoss.poi.ss.usermodel.CellStyle.VERTICAL_BOTTOM;
+			return NCellStyle.VerticalAlignment.BOTTOM;
 		case JUSTIFY:
-			return org.zkoss.poi.ss.usermodel.CellStyle.VERTICAL_JUSTIFY;
+			return NCellStyle.VerticalAlignment.JUSTIFY;
 		}
 		throw new IllegalArgumentException("unknow cell vertical alignment "+alignment);
 	}
-	public static VerticalAlignment toStyleVerticalAlignemnt(short alignment) {
+	public static VerticalAlignment toStyleVerticalAlignemnt(NCellStyle.VerticalAlignment alignment) {
 		switch(alignment){
-		case org.zkoss.poi.ss.usermodel.CellStyle.VERTICAL_TOP:
+		case TOP:
 			return VerticalAlignment.TOP;
-		case org.zkoss.poi.ss.usermodel.CellStyle.VERTICAL_CENTER:
+		case CENTER:
 			return VerticalAlignment.CENTER;
-		case org.zkoss.poi.ss.usermodel.CellStyle.VERTICAL_BOTTOM:
+		case BOTTOM:
 			return VerticalAlignment.BOTTOM;
-		case org.zkoss.poi.ss.usermodel.CellStyle.VERTICAL_JUSTIFY:
+		case JUSTIFY:
 			return VerticalAlignment.JUSTIFY;
 		}
 		throw new IllegalArgumentException("unknow cell vertical alignment "+alignment);
 	}
 
-	public static short toRangeApplyBorderType(ApplyBorderType type) {
+	public static NRange.ApplyBorderType toRangeApplyBorderType(ApplyBorderType type) {
 		switch(type){
 		case FULL:
-			return BookHelper.BORDER_FULL;
+			return NRange.ApplyBorderType.FULL;
 		case EDGE_BOTTOM:
-			return BookHelper.BORDER_EDGE_BOTTOM;
+			return NRange.ApplyBorderType.EDGE_BOTTOM;
 		case EDGE_RIGHT:
-			return BookHelper.BORDER_EDGE_RIGHT;
+			return NRange.ApplyBorderType.EDGE_RIGHT;
 		case EDGE_TOP:
-			return BookHelper.BORDER_EDGE_TOP;
+			return NRange.ApplyBorderType.EDGE_TOP;
 		case EDGE_LEFT:
-			return BookHelper.BORDER_EDGE_LEFT;
+			return NRange.ApplyBorderType.EDGE_LEFT;
 		case OUTLINE:
-			return BookHelper.BORDER_OUTLINE;
+			return NRange.ApplyBorderType.OUTLINE;
 		case INSIDE:
-			return BookHelper.BORDER_INSIDE;
+			return NRange.ApplyBorderType.INSIDE;
 		case INSIDE_HORIZONTAL:
-			return BookHelper.BORDER_INSIDE_HORIZONTAL;
+			return NRange.ApplyBorderType.INSIDE_HORIZONTAL;
 		case INSIDE_VERTICAL:
-			return BookHelper.BORDER_INSIDE_VERTICAL;
+			return NRange.ApplyBorderType.INSIDE_VERTICAL;
 		case DIAGONAL:
-			return BookHelper.BORDER_DIAGONAL;
+			return NRange.ApplyBorderType.DIAGONAL;
 		case DIAGONAL_DOWN:
-			return BookHelper.BORDER_DIAGONAL_DOWN;
+			return NRange.ApplyBorderType.DIAGONAL_DOWN;
 		case DIAGONAL_UP:
-			return BookHelper.BORDER_DIAGONAL_UP;
+			return NRange.ApplyBorderType.DIAGONAL_UP;
 		}
 		throw new IllegalArgumentException("unknow cell border apply type "+type);
 	}
 
-	public static short toStyleBorderType(BorderType borderType) {
+	public static NCellStyle.BorderType toStyleBorderType(BorderType borderType) {
 		switch(borderType){
 		case NONE:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BORDER_NONE;
+			return NCellStyle.BorderType.NONE;
 		case THIN:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BORDER_THIN;
+			return NCellStyle.BorderType.THIN;
 		case MEDIUM:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BORDER_MEDIUM;
+			return NCellStyle.BorderType.MEDIUM;
 		case DASHED:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BORDER_DASHED;
+			return NCellStyle.BorderType.DASHED;
 		case HAIR:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BORDER_HAIR;
+			return NCellStyle.BorderType.HAIR;
 		case THICK:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BORDER_THICK;
+			return NCellStyle.BorderType.THICK;
 		case DOUBLE:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BORDER_DOUBLE;
+			return NCellStyle.BorderType.DOUBLE;
 		case DOTTED:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BORDER_DOTTED;
+			return NCellStyle.BorderType.DOTTED;
 		case MEDIUM_DASHED:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BORDER_MEDIUM_DASHED;
+			return NCellStyle.BorderType.MEDIUM_DASHED;
 		case DASH_DOT:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BORDER_DASH_DOT;
+			return NCellStyle.BorderType.DASH_DOT;
 		case MEDIUM_DASH_DOT:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BORDER_MEDIUM_DASH_DOT;
+			return NCellStyle.BorderType.MEDIUM_DASH_DOT;
 		case DASH_DOT_DOT:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BORDER_DASH_DOT_DOT;
+			return NCellStyle.BorderType.DASH_DOT_DOT;
 		case MEDIUM_DASH_DOT_DOT:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BORDER_MEDIUM_DASH_DOT_DOT;
+			return NCellStyle.BorderType.MEDIUM_DASH_DOT_DOT;
 		case SLANTED_DASH_DOT:
-			return org.zkoss.poi.ss.usermodel.CellStyle.BORDER_SLANTED_DASH_DOT;
+			return NCellStyle.BorderType.SLANTED_DASH_DOT;
 		}
 		throw new IllegalArgumentException("unknow style border type "+borderType);
 	}
 	
-	public static BorderType toStyleBorderType(short borderType) {
+	public static BorderType toStyleBorderType(NCellStyle.BorderType borderType) {
 		switch(borderType){
-		case org.zkoss.poi.ss.usermodel.CellStyle.BORDER_NONE:
+		case NONE:
 			return BorderType.NONE;
-		case org.zkoss.poi.ss.usermodel.CellStyle.BORDER_THIN:
+		case THIN:
 			return BorderType.THIN;
-		case org.zkoss.poi.ss.usermodel.CellStyle.BORDER_MEDIUM:
+		case MEDIUM:
 			return BorderType.MEDIUM;
-		case org.zkoss.poi.ss.usermodel.CellStyle.BORDER_DASHED:
+		case DASHED:
 			return BorderType.DASHED;
-		case org.zkoss.poi.ss.usermodel.CellStyle.BORDER_HAIR:
+		case HAIR:
 			return BorderType.HAIR;
-		case org.zkoss.poi.ss.usermodel.CellStyle.BORDER_THICK:
+		case THICK:
 			return BorderType.THICK;
-		case org.zkoss.poi.ss.usermodel.CellStyle.BORDER_DOUBLE:
+		case DOUBLE:
 			return BorderType.DOUBLE;
-		case org.zkoss.poi.ss.usermodel.CellStyle.BORDER_DOTTED:
+		case DOTTED:
 			return BorderType.DOTTED;
-		case org.zkoss.poi.ss.usermodel.CellStyle.BORDER_MEDIUM_DASHED:
+		case MEDIUM_DASHED:
 			return BorderType.MEDIUM_DASHED;
-		case org.zkoss.poi.ss.usermodel.CellStyle.BORDER_DASH_DOT:
+		case DASH_DOT:
 			return BorderType.DASH_DOT;
-		case org.zkoss.poi.ss.usermodel.CellStyle.BORDER_MEDIUM_DASH_DOT:
+		case MEDIUM_DASH_DOT:
 			return BorderType.MEDIUM_DASH_DOT;
-		case org.zkoss.poi.ss.usermodel.CellStyle.BORDER_DASH_DOT_DOT:
+		case DASH_DOT_DOT:
 			return BorderType.DASH_DOT_DOT;
-		case org.zkoss.poi.ss.usermodel.CellStyle.BORDER_MEDIUM_DASH_DOT_DOT:
+		case MEDIUM_DASH_DOT_DOT:
 			return BorderType.MEDIUM_DASH_DOT_DOT;
-		case org.zkoss.poi.ss.usermodel.CellStyle.BORDER_SLANTED_DASH_DOT:
+		case SLANTED_DASH_DOT:
 			return BorderType.SLANTED_DASH_DOT;
 		}
 		throw new IllegalArgumentException("unknow style border type "+borderType);
 	}
 	
-	public static BorderStyle toRangeBorderType(BorderType lineStyle) {
+	public static NCellStyle.BorderType toRangeBorderType(BorderType lineStyle) {
 		switch(lineStyle){
 		case NONE:
-			return BorderStyle.NONE;
+			return NCellStyle.BorderType.NONE;
 		case THIN:
-			return BorderStyle.THIN;
+			return NCellStyle.BorderType.THIN;
 		case MEDIUM:
-			return BorderStyle.MEDIUM;
+			return NCellStyle.BorderType.MEDIUM;
 		case DASHED:
-			return BorderStyle.DASHED;
+			return NCellStyle.BorderType.DASHED;
 		case HAIR:
-			return BorderStyle.HAIR;
+			return NCellStyle.BorderType.HAIR;
 		case THICK:
-			return BorderStyle.THICK;
+			return NCellStyle.BorderType.THICK;
 		case DOUBLE:
-			return BorderStyle.DOUBLE;
+			return NCellStyle.BorderType.DOUBLE;
 		case DOTTED:
-			return BorderStyle.DOTTED;
+			return NCellStyle.BorderType.DOTTED;
 		case MEDIUM_DASHED:
-			return BorderStyle.MEDIUM_DASHED;
+			return NCellStyle.BorderType.MEDIUM_DASHED;
 		case DASH_DOT:
-			return BorderStyle.DASH_DOT;
+			return NCellStyle.BorderType.DASH_DOT;
 		case MEDIUM_DASH_DOT:
-			return BorderStyle.MEDIUM_DASH_DOT;
+			return NCellStyle.BorderType.MEDIUM_DASH_DOT;
 		case DASH_DOT_DOT:
-			return BorderStyle.DASH_DOT_DOT;
+			return NCellStyle.BorderType.DASH_DOT_DOT;
 		case MEDIUM_DASH_DOT_DOT:
-			return BorderStyle.MEDIUM_DASH_DOT_DOT;
+			return NCellStyle.BorderType.MEDIUM_DASH_DOT_DOT;
 		case SLANTED_DASH_DOT:
-			return BorderStyle.SLANTED_DASH_DOT;
+			return NCellStyle.BorderType.SLANTED_DASH_DOT;
 		}
 		throw new IllegalArgumentException("unknow cell border line style "+lineStyle);
 	}
 
-	public static int toRangeInsertShift(InsertShift shift) {
+	public static NRange.InsertShift toRangeInsertShift(InsertShift shift) {
 		switch(shift){
 		case DEFAULT:
-			return XRange.SHIFT_DEFAULT;
+			return NRange.InsertShift.DEFAULT;
 		case DOWN:
-			return XRange.SHIFT_DOWN;
+			return NRange.InsertShift.DOWN;
 		case RIGHT:
-			return XRange.SHIFT_RIGHT;
+			return NRange.InsertShift.RIGHT;
 		}
 		throw new IllegalArgumentException("unknow range insert shift "+shift);
 	}
 
-	public static int toRangeInsertCopyOrigin(InsertCopyOrigin copyOrigin) {
+	public static NRange.InsertCopyOrigin toRangeInsertCopyOrigin(InsertCopyOrigin copyOrigin) {
 		switch(copyOrigin){
 		case FORMAT_NONE:
-			return XRange.FORMAT_NONE;
+			return NRange.InsertCopyOrigin.FORMAT_NONE;
 		case FORMAT_LEFT_ABOVE:
-			return XRange.FORMAT_LEFTABOVE;
+			return NRange.InsertCopyOrigin.FORMAT_LEFT_ABOVE;
 		case FORMAT_RIGHT_BELOW:
-			return XRange.FORMAT_RIGHTBELOW;
+			return NRange.InsertCopyOrigin.FORMAT_RIGHT_BELOW;
 		}
 		throw new IllegalArgumentException("unknow range insert copy origin "+copyOrigin);
 	}
 	
-	public static int toRangeDeleteShift(DeleteShift shift) {
+	public static NRange.DeleteShift toRangeDeleteShift(DeleteShift shift) {
 		switch(shift){
 		case DEFAULT:
-			return XRange.SHIFT_DEFAULT;
+			return NRange.DeleteShift.DEFAULT;
 		case UP:
-			return XRange.SHIFT_UP;
+			return NRange.DeleteShift.UP;
 		case LEFT:
-			return XRange.SHIFT_LEFT;
+			return NRange.DeleteShift.LEFT;
 		}
 		throw new IllegalArgumentException("unknow range delete shift "+shift);
 	}
@@ -562,28 +566,28 @@ public class EnumUtil {
 		throw new IllegalArgumentException("unknow autofill type "+fillType);
 	}
 
-	public static int toHyperlinkType(HyperlinkType type) {
+	public static NHyperlink.HyperlinkType toHyperlinkType(HyperlinkType type) {
 		switch(type){
 		case URL:
-			return Hyperlink.LINK_URL;
+			return NHyperlink.HyperlinkType.URL;
 		case DOCUMENT:
-			return Hyperlink.LINK_DOCUMENT;
+			return NHyperlink.HyperlinkType.DOCUMENT;
 		case EMAIL:
-			return Hyperlink.LINK_EMAIL;
+			return NHyperlink.HyperlinkType.EMAIL;
 		case FILE:
-			return Hyperlink.LINK_FILE;
+			return NHyperlink.HyperlinkType.FILE;
 		}
 		throw new IllegalArgumentException("unknow hyperlink type "+type);
 	}
-	public static HyperlinkType toHyperlinkType(int type) {
+	public static HyperlinkType toHyperlinkType(NHyperlink.HyperlinkType type) {
 		switch(type){
-		case Hyperlink.LINK_URL:
+		case URL:
 			return HyperlinkType.URL;
-		case Hyperlink.LINK_DOCUMENT:
+		case DOCUMENT:
 			return HyperlinkType.DOCUMENT;
-		case Hyperlink.LINK_EMAIL:
+		case EMAIL:
 			return HyperlinkType.EMAIL;
-		case Hyperlink.LINK_FILE:
+		case FILE:
 			return HyperlinkType.FILE;
 		}
 		throw new IllegalArgumentException("unknow hyperlink type "+type);

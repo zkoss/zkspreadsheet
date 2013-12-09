@@ -33,8 +33,11 @@ public interface EditableCellStyle extends CellStyle{
 	/**
 	 * Sets background-color
 	 * @param color background-color
+	 * @deprecated since 3.5.0 , use {@link #setFillColor(Color)}
 	 */
 	public void setBackgroundColor(Color color);
+	
+	public void setFillColor(Color color);
 
 	/**
 	 * Sets the fill/background pattern <br/>

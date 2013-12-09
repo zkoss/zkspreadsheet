@@ -17,8 +17,8 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.api.model.impl;
 
 import org.zkoss.zss.api.model.Color;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NColor;
 /**
  * 
  * @author dennis
@@ -26,10 +26,10 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
  */
 public class ColorImpl implements Color{
 
-	private ModelRef<XBook> _bookRef;
-	private ModelRef<org.zkoss.poi.ss.usermodel.Color> _colorRef;
+	private ModelRef<NBook> _bookRef;
+	private ModelRef<NColor> _colorRef;
 
-	public ColorImpl(ModelRef<XBook> book, ModelRef<org.zkoss.poi.ss.usermodel.Color> color) {
+	public ColorImpl(ModelRef<NBook> book, ModelRef<NColor> color) {
 		this._bookRef = book;
 		this._colorRef = color;
 	}
@@ -59,18 +59,18 @@ public class ColorImpl implements Color{
 		return true;
 	}
 
-	public org.zkoss.poi.ss.usermodel.Color getNative() {
+	public NColor getNative() {
 		return _colorRef.get();
 	}
-	public ModelRef<org.zkoss.poi.ss.usermodel.Color> getRef(){
+	public ModelRef<NColor> getRef(){
 		return _colorRef;
 	}
-	public ModelRef<XBook> getBookRef(){
+	public ModelRef<NBook> getBookRef(){
 		return _bookRef;
 	}
 
 	public String getHtmlColor() {
-		return BookHelper.colorToHTML(_bookRef.get(),_colorRef.get());
+		return getNative().getHtmlColor();
 	}
 
 }

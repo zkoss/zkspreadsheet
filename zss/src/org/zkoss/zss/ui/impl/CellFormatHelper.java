@@ -18,19 +18,26 @@ Copyright (C) 2007 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.zss.ui.impl;
 
-import java.awt.Color;
-
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.Font;
-import org.zkoss.poi.ss.usermodel.RichTextString;
-import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.zk.ui.Execution;
-import org.zkoss.zk.ui.Executions;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XFormatText;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.util.Locales;
+import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NCell.CellType;
+import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
+import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
+import org.zkoss.zss.ngmodel.NCellStyle.FillPattern;
+import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
+import org.zkoss.zss.ngmodel.NColor;
+import org.zkoss.zss.ngmodel.NFont;
+import org.zkoss.zss.ngmodel.NFont.Boldweight;
+import org.zkoss.zss.ngmodel.NFont.Underline;
+import org.zkoss.zss.ngmodel.NRichText;
+import org.zkoss.zss.ngmodel.NRichText.Segment;
+import org.zkoss.zss.ngmodel.NSheet;
+import org.zkoss.zss.ngmodel.sys.EngineFactory;
+import org.zkoss.zss.ngmodel.sys.format.FormatContext;
+import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
+import org.zkoss.zss.ngmodel.sys.format.FormatResult;
 
 /**
  * @author Dennis.Chen
@@ -41,16 +48,16 @@ public class CellFormatHelper {
 	/**
 	 * cell to get the format, could be null.
 	 */
-	private Cell _cell;
+	private NCell _cell;
 	
 	/**
 	 * cell style, could be null
 	 */
-	private CellStyle _cellStyle;
+	private NCellStyle _cellStyle;
 
-	private XSheet _sheet;
+	private NSheet _sheet;
 	
-	private XBook _book;
+	private NBook _book;
 
 	private int _row;
 
@@ -60,44 +67,38 @@ public class CellFormatHelper {
 	private boolean hasRightBorder = false;
 	
 	private MergeMatrixHelper _mmHelper;
+	
 
-	public CellFormatHelper(XSheet sheet, int row, int col, MergeMatrixHelper mmhelper) {
+	private FormatEngine _formatEngine;
+	
+	public CellFormatHelper(NSheet sheet, int row, int col, MergeMatrixHelper mmhelper) {
 		_sheet = sheet;
-		_book = (XBook) _sheet.getWorkbook(); 
+		_book = _sheet.getBook(); 
 		_row = row;
 		_col = col;
-		_cell = XUtils.getCell(sheet, row, col);
-		_cellStyle = Styles.getCellStyle(_sheet, _row,_col);//get the cell style form it-self, row or column
+		_cell = sheet.getCell(row, col);
+		_cellStyle =_cell.getCellStyle();
 		_mmHelper = mmhelper;
+		_formatEngine = EngineFactory.getInstance().createFormatEngine();
 	}
 
 	public String getHtmlStyle() {
 
 		StringBuffer sb = new StringBuffer();
-		CellStyle style = Styles.getCellStyle(_sheet, _row,_col);
-		if (style == null)
-			return "";
 
 		//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 		//ZSS-34 cell background color does not show in excel
 		//20110819, henrichen: if fill pattern is NO_FILL, shall not show the cell background color
-		String bgColor = style.getFillPattern() != CellStyle.NO_FILL ? 
-			BookHelper.colorToHTML(_book, style.getFillForegroundColorColor()) : null;
-		if (BookHelper.AUTO_COLOR.equals(bgColor)) {
-			bgColor = null;
-		}
-		if (bgColor != null) {
-			sb.append("background-color:").append(bgColor).append(";");
+		String fillColor = _cellStyle.getFillPattern() != NCellStyle.FillPattern.NO_FILL ? 
+			_cellStyle.getFillColor().getHtmlColor() : null;
+		if (fillColor != null) {
+			sb.append("background-color:").append(fillColor).append(";");
 		}
 
 		processBottomBorder(sb);
 		processRightBorder(sb);
 
 		return sb.toString();
-	}
-
-	private String toHTMLColor(Color color) {
-		return BookHelper.awtColorToHTMLColor(color);
 	}
 	
 	private boolean processBottomBorder(StringBuffer sb) {
@@ -115,12 +116,11 @@ public class CellFormatHelper {
 			hitMerge = true;
 			bottom = rect.getLastRow();
 		}
-		CellStyle nextStyle = Styles.getCellStyle(_sheet,bottom,_col);
+		NCellStyle nextStyle = _sheet.getCell(bottom,_col).getCellStyle();
 		
 		if (nextStyle != null){
-			int bb = nextStyle.getBorderBottom();
-			//String color = BookHelper.indexToRGB(_book, style.getBottomBorderColor());
-			String color = BookHelper.colorToHTML(_book, nextStyle.getBottomBorderColorColor());
+			BorderType bb = nextStyle.getBorderBottom();
+			String color = nextStyle.getBorderBottomColor().getHtmlColor();
 			hitBottom = appendBorderStyle(sb, "bottom", bb, color);
 		}
 		
@@ -136,11 +136,10 @@ public class CellFormatHelper {
 					next = _sheet.getCell(rect.getTop(),rect.getLeft());
 				}
 			}*/
-			nextStyle = Styles.getCellStyle(_sheet,bottom,_col);
+			nextStyle = _sheet.getCell(bottom,_col).getCellStyle();
 			if (nextStyle != null){
-				int bb = nextStyle.getBorderTop();// get top border of
-				//String color = BookHelper.indexToRGB(_book, style.getTopBorderColor());
-				String color = BookHelper.colorToHTML(_book, nextStyle.getTopBorderColorColor());
+				BorderType bb = nextStyle.getBorderTop();// get top border of
+				String color = nextStyle.getBorderTopColor().getHtmlColor();
 				// set next row top border as cell's bottom border;
 				hitBottom = appendBorderStyle(sb, "bottom", bb, color);
 			}
@@ -150,13 +149,10 @@ public class CellFormatHelper {
 		if(!hitBottom && nextStyle !=null){
 			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 			//ZSS-34 cell background color does not show in excel
-			String bgColor = nextStyle.getFillPattern() != CellStyle.NO_FILL ? 
-					BookHelper.colorToHTML(_book, nextStyle.getFillForegroundColorColor()) : null;
-			if (BookHelper.AUTO_COLOR.equals(bgColor)) {
-				bgColor = null;
-			}
+			String bgColor = nextStyle.getFillPattern() != FillPattern.NO_FILL ? 
+					nextStyle.getFillColor().getHtmlColor() : null;
 			if (bgColor != null) {
-				hitBottom = appendBorderStyle(sb, "bottom", CellStyle.BORDER_THIN, bgColor);
+				hitBottom = appendBorderStyle(sb, "bottom", BorderType.THICK, bgColor);
 			}
 		}
 		
@@ -164,13 +160,10 @@ public class CellFormatHelper {
 		if(!hitBottom && _cellStyle !=null){
 			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 			//ZSS-34 cell background color does not show in excel
-			String bgColor = _cellStyle.getFillPattern() != CellStyle.NO_FILL ? 
-					BookHelper.colorToHTML(_book, _cellStyle.getFillForegroundColorColor()) : null;
-			if (BookHelper.AUTO_COLOR.equals(bgColor)) {
-				bgColor = null;
-			}
+			String bgColor = _cellStyle.getFillPattern() != FillPattern.NO_FILL ? 
+					_cellStyle.getFillColor().getHtmlColor() : null;
 			if (bgColor != null) {
-				hitBottom = appendBorderStyle(sb, "bottom", CellStyle.BORDER_THIN, bgColor);
+				hitBottom = appendBorderStyle(sb, "bottom", BorderType.THICK, bgColor);
 			}
 		}
 		
@@ -188,11 +181,10 @@ public class CellFormatHelper {
 			hitMerge = true;
 			right = rect.getLastColumn();
 		}
-		CellStyle nextStyle = Styles.getCellStyle(_sheet,_row,right);
+		NCellStyle nextStyle = _sheet.getCell(_row,right).getCellStyle();
 		if (nextStyle != null){
-			int bb = nextStyle.getBorderRight();
-			//String color = BookHelper.indexToRGB(_book, style.getRightBorderColor());
-			String color = BookHelper.colorToHTML(_book, nextStyle.getRightBorderColorColor());
+			BorderType bb = nextStyle.getBorderRight();
+			String color = nextStyle.getBorderRightColor().getHtmlColor();
 			hitRight = appendBorderStyle(sb, "right", bb, color);
 		}
 
@@ -202,12 +194,12 @@ public class CellFormatHelper {
 		//else get next cell of this cell
 		if(!hitRight){
 			right = hitMerge?rect.getLastColumn()+1:_col+1;
-			nextStyle = Styles.getCellStyle(_sheet,_row,right);
+			nextStyle = _sheet.getCell(_row,right).getCellStyle();
 			if (nextStyle != null){
-				int bb = nextStyle.getBorderLeft();//get left here
+				BorderType bb = nextStyle.getBorderLeft();//get left here
 				//String color = BookHelper.indexToRGB(_book, style.getLeftBorderColor());
 				// ZSS-34 cell background color does not show in excel
-				String color = BookHelper.colorToHTML(_book, nextStyle.getLeftBorderColorColor());
+				String color = nextStyle.getBorderLeftColor().getHtmlColor();
 				hitRight = appendBorderStyle(sb, "right", bb, color);
 			}
 		}
@@ -216,44 +208,37 @@ public class CellFormatHelper {
 		if(!hitRight && nextStyle !=null){
 			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 			//ZSS-34 cell background color does not show in excel
-			String bgColor = nextStyle.getFillPattern() != CellStyle.NO_FILL ? 
-					BookHelper.colorToHTML(_book, nextStyle.getFillForegroundColorColor()) : null;
-			if (BookHelper.AUTO_COLOR.equals(bgColor)) {
-				bgColor = null;
-			}
-			
+			String bgColor = nextStyle.getFillPattern() != FillPattern.NO_FILL ? 
+					nextStyle.getFillColor().getHtmlColor() : null;
 			if (bgColor != null) {
-				hitRight = appendBorderStyle(sb, "right", CellStyle.BORDER_THIN, bgColor);
+				hitRight = appendBorderStyle(sb, "right", BorderType.THIN, bgColor);
 			}
 		}
 		//border depends on current cell's background color
 		if(!hitRight && _cellStyle !=null){
 			//String bgColor = BookHelper.indexToRGB(_book, style.getFillForegroundColor());
 			//ZSS-34 cell background color does not show in excel
-			String bgColor = _cellStyle.getFillPattern() != CellStyle.NO_FILL ? 
-					BookHelper.colorToHTML(_book, _cellStyle.getFillForegroundColorColor()) : null;
-			if (BookHelper.AUTO_COLOR.equals(bgColor)) {
-				bgColor = null;
-			}
+			String bgColor = _cellStyle.getFillPattern() != FillPattern.NO_FILL ? 
+					_cellStyle.getFillColor().getHtmlColor() : null;
 			if (bgColor != null) {
-				hitRight = appendBorderStyle(sb, "right", CellStyle.BORDER_THIN, bgColor);
+				hitRight = appendBorderStyle(sb, "right", BorderType.THIN, bgColor);
 			}
 		}
 		
 		return hitRight;
 	}
 
-	private boolean appendBorderStyle(StringBuffer sb, String locate, int bs, String color) {
-		if (bs == CellStyle.BORDER_NONE)
+	private boolean appendBorderStyle(StringBuffer sb, String locate, BorderType bs, String color) {
+		if (bs == BorderType.NONE)
 			return false;
 		
 		sb.append("border-").append(locate).append(":");
 		switch(bs) {
-		case CellStyle.BORDER_DASHED:
-		case CellStyle.BORDER_DOTTED:
+		case DASHED:
+		case DOTTED:
 			sb.append("dashed");
 			break;
-		case CellStyle.BORDER_HAIR:
+		case HAIR:
 			sb.append("dotted");
 			break;
 		default:
@@ -262,9 +247,6 @@ public class CellFormatHelper {
 		sb.append(" 1px");
 
 		if (color != null) {
-			if (BookHelper.AUTO_COLOR.equals(color)) {
-				color = "#000000";
-			}
 			sb.append(" ");
 			sb.append(color);
 		}
@@ -272,45 +254,136 @@ public class CellFormatHelper {
 		sb.append(";");
 		return true;
 	}
+	
+	public static String getFontCSSStyle(NCell cell, NFont font) {
+		final StringBuffer sb = new StringBuffer();
+		
+		String fontName = font.getName();
+		if (fontName != null) {
+			sb.append("font-family:").append(fontName).append(";");
+		}
+		
+		String textColor = font.getColor().getHtmlColor();
+
+		if (textColor != null) {
+			sb.append("color:").append(textColor).append(";");
+		}
+
+		final Underline fontUnderline = font.getUnderline(); 
+		final boolean strikeThrough = font.isStrikeout();
+		boolean isUnderline = fontUnderline == Underline.SINGLE || fontUnderline == Underline.SINGLE_ACCOUNTING;
+		if (strikeThrough || isUnderline) {
+			sb.append("text-decoration:");
+			if (strikeThrough)
+				sb.append(" line-through");
+			if (isUnderline)	
+				sb.append(" underline");
+			sb.append(";");
+		}
+
+		final Boldweight weight = font.getBoldweight();
+		final boolean italic = font.isItalic();
+		sb.append("font-weight:").append(weight).append(";");
+		if (italic)
+			sb.append("font-style:").append("italic;");
+
+		final int fontSize = font.getHeightPoints();
+		sb.append("font-size:").append(fontSize).append("pt;");
+		return sb.toString();
+	}
 
 	public String getInnerHtmlStyle() {
-		if (_cell != null && _cellStyle!=null) {
+		if (!_cell.isNull()) {
 			
 			final StringBuffer sb = new StringBuffer();
-			sb.append(BookHelper.getTextCSSStyle(_book, _cell));
+			sb.append(getTextCSSStyle( _cell));
 			
 			//vertical alignment
-			int verticalAlignment = _cellStyle.getVerticalAlignment();
+			VerticalAlignment verticalAlignment = _cellStyle.getVerticalAlignment();
 			sb.append("display: table-cell;");
 			switch (verticalAlignment) {
-			case CellStyle.VERTICAL_TOP:
+			case TOP:
 				sb.append("vertical-align: top;");
 				break;
-			case CellStyle.VERTICAL_CENTER:
+			case CENTER:
 				sb.append("vertical-align: middle;");
 				break;
-			case CellStyle.VERTICAL_BOTTOM:
+			case BOTTOM:
 				sb.append("vertical-align: bottom;");
 				break;
 			}
 			
-			final Font font = _book.getFontAt(_cellStyle.getFontIndex());
+			final NFont font = _cellStyle.getFont();
 			
 			//sb.append(BookHelper.getFontCSSStyle(_book, font));
-			sb.append(BookHelper.getFontCSSStyle(_cell, font));
+			sb.append(getFontCSSStyle(_cell, font));
 
 			//condition color
-			final XFormatText ft = XUtils.getFormatText(_cell);
-			final boolean isRichText = ft.isRichTextString();
-			if (!isRichText && ft.getCellFormatResult().textColor != null) {
-				final Color textColor = ft.getCellFormatResult().textColor;
-				final String htmlColor = toHTMLColor(textColor);
-				sb.append("color:").append(htmlColor).append(";");
+			final FormatResult ft = _formatEngine.format(_cell, new FormatContext(Locales.getCurrent()));
+			final boolean isRichText = ft.isRichText();
+			if (!isRichText) {
+				final NColor color = ft.getColor();
+				if(color!=null){
+					final String htmlColor = color.getHtmlColor();
+					sb.append("color:").append(htmlColor).append(";");
+				}
 			}
 
 			return sb.toString();
 		}
 		return "";
+	}
+	
+	/* given alignment and cell type, return real alignment */
+	//Halignment determined by style alignment, text format and value type  
+	public static Alignment getRealAlignment(NCell cell) {
+		NCellStyle style = cell.getCellStyle();
+		CellType type = cell.getType();
+		Alignment align = style.getAlignment();
+		if (align == Alignment.GENERAL) {
+			final String format = style.getDataFormat();
+			if (format != null && format.startsWith("@")) //a text format
+				type = CellType.STRING;
+			else if (type == CellType.FORMULA)
+				type = cell.getFormulaResultType();
+			switch(type) {
+			case BLANK:
+				return align;
+			case BOOLEAN:
+				return Alignment.CENTER;
+			case ERROR:
+				return Alignment.CENTER;
+			case NUMBER:
+				return Alignment.RIGHT;
+			case STRING:
+				return Alignment.LEFT;
+			}
+		}
+		return align;
+	}
+	
+	public static String getTextCSSStyle(NCell cell) {
+		final NCellStyle style = cell.getCellStyle();
+
+		final StringBuffer sb = new StringBuffer();
+		Alignment textHAlign = getRealAlignment(cell);
+		
+		switch(textHAlign) {
+		case RIGHT:
+			sb.append("text-align:").append("right").append(";");
+			break;
+		case CENTER:
+		case CENTER_SELECTION:
+			sb.append("text-align:").append("center").append(";");
+			break;
+		}
+
+		boolean textWrap = style.isWrapText();
+		if (textWrap) {
+			sb.append("white-space:").append("normal").append(";");
+		}/*else{ sb.append("white-space:").append("nowrap").append(";"); }*/
+
+		return sb.toString();
 	}
 
 	public boolean hasRightBorder() {
@@ -321,6 +394,136 @@ public class CellFormatHelper {
 			hasRightBorder_set = true;
 		}
 		return hasRightBorder;
+	}
+	
+	public String getCellFormattedText(){
+		final FormatResult ft = _formatEngine.format(_cell, new FormatContext(Locales.getCurrent()));
+		return ft.getText();
+	}
+	
+	public String getCellEditText(){
+		return _formatEngine.getEditText(_cell, new FormatContext(Locales.getCurrent()));
+	}
+	
+	/**
+	 * Gets Cell text by given row and column, it handling
+	 */
+	static public String getRichCellHtmlText(NSheet sheet, int row,int column){
+		final NCell cell = sheet.getCell(row, column);
+		String text = "";
+		if (!cell.isNull()) {
+			boolean wrap = cell.getCellStyle().isWrapText();
+			
+			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(Locales.getCurrent()));
+			if (ft.isRichText()) {
+				final NRichText rstr = ft.getRichText();
+				text = rstr == null ? "" : getRichTextHtml(rstr, wrap, true);
+			} else {
+				text = escapeText(ft.getText(), wrap, true);
+			}
+			
+			//TODO no else here for ft!=null?
+			/* TODO zss 3.5
+			final NHyperlink hlink = cell.getHyperlink();
+			if (hlink != null) {
+				text = XUtils.formatHyperlink(sheet, hlink, text, wrap);
+			}
+			*/
+		}
+		return text;
+	}
+	
+	private static String getRichTextHtml(NRichText text, boolean wrap, boolean multiline) {
+		StringBuilder sb = new StringBuilder();
+		for(Segment seg:text.getSegments()){
+			sb.append("<span style=\"")
+			.append(getFontCSSStyle(seg.getFont()))
+			.append("\">");
+			sb.append(escapeText(seg.getText(),wrap,multiline));
+			sb.append("</span>");
+		}
+		return sb.toString();
+	}
+	
+	private static String getFontCSSStyle(NFont font) {
+		final StringBuffer sb = new StringBuffer();
+		
+		String fontName = font.getName();
+		if (fontName != null) {
+			sb.append("font-family:").append(fontName).append(";");
+		}
+		
+		String textColor = font.getColor().getHtmlColor();
+		if (textColor != null) {
+			sb.append("color:").append(textColor).append(";");
+		}
+
+		final NFont.Underline fontUnderline = font.getUnderline(); 
+		final boolean strikeThrough = font.isStrikeout();
+		boolean isUnderline = fontUnderline == NFont.Underline.SINGLE || fontUnderline == NFont.Underline.SINGLE_ACCOUNTING;
+		if (strikeThrough || isUnderline) {
+			sb.append("text-decoration:");
+			if (strikeThrough)
+				sb.append(" line-through");
+			if (isUnderline)	
+				sb.append(" underline");
+			sb.append(";");
+		}
+
+		final NFont.Boldweight weight = font.getBoldweight();
+		
+		sb.append("font-weight:").append(weight==NFont.Boldweight.BOLD?"bold":"normal").append(";");
+		
+		final boolean italic = font.isItalic();
+		if (italic)
+			sb.append("font-style:").append("italic;");
+
+		
+		final int fontSize = font.getHeightPoints();
+		sb.append("font-size:").append(fontSize).append("pt;");
+		return sb.toString();
+	}
+	
+	/**
+	 * Gets Cell text by given row and column
+	 */
+	static public String getCellHtmlText(NSheet sheet, int row,int column){
+		final NCell cell = sheet.getCell(row, column);
+		String text = "";
+		if (cell != null) {
+			boolean wrap = cell.getCellStyle().isWrapText();
+			
+			final FormatResult ft = EngineFactory.getInstance().createFormatEngine().format(cell, new FormatContext(Locales.getCurrent()));
+			if (ft.isRichText()) {
+				final NRichText rstr = ft.getRichText();
+				text = rstr.getText();
+			} else {
+				text = ft.getText();
+			}
+			text = escapeText(text, wrap, true);
+		}
+		return text;
+	}
+	
+	private static String escapeText(String text, boolean wrap, boolean multiline) {
+		final StringBuffer out = new StringBuffer();
+		for (int j = 0, tl = text.length(); j < tl; ++j) {
+			char cc = text.charAt(j);
+			switch (cc) {
+			case '&': out.append("&amp;"); break;
+			case '<': out.append("&lt;"); break;
+			case '>': out.append("&gt;"); break;
+			case ' ': out.append(wrap?" ":"&nbsp;"); break;
+			case '\n':
+				if (wrap && multiline) {
+					out.append("<br/>");
+					break;
+				}
+			default:
+				out.append(cc);
+			}
+		}
+		return out.toString();
 	}
 
 }

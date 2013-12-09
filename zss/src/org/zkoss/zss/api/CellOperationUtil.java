@@ -39,8 +39,9 @@ import org.zkoss.zss.api.model.Font.Boldweight;
 import org.zkoss.zss.api.model.Font.Underline;
 import org.zkoss.zss.api.model.Hyperlink.HyperlinkType;
 import org.zkoss.zss.api.model.impl.EnumUtil;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.ui.impl.Styles;
+import org.zkoss.zss.api.model.impl.SheetImpl;
+import org.zkoss.zss.ngapi.impl.NStyles;
+import org.zkoss.zss.ngmodel.NSheet;
 
 /**
  * The utility to help UI to deal with user's cell operation of a {@link Range}.
@@ -138,10 +139,9 @@ public class CellOperationUtil {
 
 	public static CellStyleApplier getFontNameApplier(final String fontName){
 		return new CellStyleApplier() {
-			private HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle> _cache = new HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle>();
 			public void apply(Range range) {
 				//ZSS 464, efficient implementation
-				Styles.setFontName((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),fontName,_cache);
+				NStyles.setFontName(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),fontName);
 				range.notifyChange();
 			}
 		};
@@ -155,26 +155,20 @@ public class CellOperationUtil {
 		applyCellStyle(range, getFontNameApplier(fontName));
 	}
 	
+	/**
+	 * @deprecated use {@link #applyFontHeightPoints(Range, int)}
+	 */
 	public static CellStyleApplier getFontHeightApplier(final int fontHeight) {
-		//fontHeight = twip
-		final int fpx = UnitUtil.twipToPx(fontHeight);
-		return new CellStyleApplier() {
-			private HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle> _cache = new HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle>();
-			public void apply(Range cellRange) {
-				Styles.setFontHeight((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),fontHeight,_cache);
-				cellRange.notifyChange();
-				int px = cellRange.getSheet().getRowHeight(cellRange.getRow());//rowHeight in px
-				if(fpx>px){
-					cellRange.setRowHeight(fpx+4);//4 is padding
-				}
-			}
-		};
+		//fontHeightPoints = pt;
+		return getFontHeightPointsApplier(UnitUtil.twipToPoint(fontHeight));
 	}
 
 	/**
 	 * Apply font height to cells in the range, it will also enlarge the row height if row height is smaller than font height 
 	 * @param range range to be applied
 	 * @param fontHeight the font height in twpi (1/20 point)
+	 * @deprecated use {@link #applyFontHeightPoints(Range, int)}
+	 * 
 	 */
 	public static void applyFontHeight(Range range, final int fontHeight) {
 		applyCellStyle(range, getFontHeightApplier(fontHeight));
@@ -184,18 +178,42 @@ public class CellOperationUtil {
 	 * Apply the font size to cells in the range, it will also enlarge the row height if row height is smaller than font size 
 	 * @param range range to be applied
 	 * @param point the font size in point
+	 * @deprecated use {@link #applyFontHeightPoints(Range, int)}
 	 */
 	public static void applyFontSize(Range range, final int point) {
 		//fontSize = fontHeightInPoints = fontHeight/20
-		applyFontHeight(range,UnitUtil.pointToTwip(point));
+		applyFontHeightPoints(range,point);
+	}
+
+	/**
+	 * Apply font height to cells in the range, it will also enlarge the row height if row height is smaller than font height 
+	 * @param range range to be applied
+	 * @param fontHeightPoints the font height in point
+	 */
+	public static void applyFontHeightPoints(Range range, final int fontHeightPoints) {
+		applyCellStyle(range, getFontHeightPointsApplier(fontHeightPoints));
+	}
+
+	public static CellStyleApplier getFontHeightPointsApplier(final int fontHeightPoints) {
+		//fontHeightPoints = pt;
+		final int fpx = UnitUtil.pointToPx(fontHeightPoints);
+		return new CellStyleApplier() {
+			public void apply(Range range) {
+				NStyles.setFontHeightPoints(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),fontHeightPoints);
+				range.notifyChange();
+				int px = range.getSheet().getRowHeight(range.getRow());//rowHeight in px
+				if(fpx>px){
+					range.setRowHeight(fpx+4);//4 is padding
+				}
+			}
+		};
 	}
 
 	public static CellStyleApplier getFontBoldweightApplier(final Boldweight boldweight) {
 		return  new CellStyleApplier() {
-			private HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle> _cache = new HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle>();
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				Styles.setFontBoldWeight((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),EnumUtil.toFontBoldweight(boldweight),_cache);
+				NStyles.setFontBoldWeight(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),EnumUtil.toFontBoldweight(boldweight));
 				range.notifyChange();
 			}
 		};
@@ -212,10 +230,9 @@ public class CellOperationUtil {
 
 	public static CellStyleApplier getFontItalicApplier(final boolean italic) {
 		return new CellStyleApplier() {
-			private HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle> _cache = new HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle>();
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				Styles.setFontItalic((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),italic,_cache);
+				NStyles.setFontItalic(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),italic);
 				range.notifyChange();
 			}
 		};
@@ -232,10 +249,9 @@ public class CellOperationUtil {
 	
 	public static CellStyleApplier getFontStrikeoutApplier(final boolean strikeout) {
 		return new CellStyleApplier() {
-			private HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle> _cache = new HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle>();
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				Styles.setFontStrikethrough((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),strikeout,_cache);
+				NStyles.setFontStrikethrough(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),strikeout);
 				range.notifyChange();
 			}
 		};
@@ -252,10 +268,9 @@ public class CellOperationUtil {
 	
 	public static CellStyleApplier getFontUnderlineApplier(final Underline underline) {
 		return new CellStyleApplier() {
-			private HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle> _cache = new HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle>();
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				Styles.setFontUnderline((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),EnumUtil.toFontUnderline(underline),_cache);
+				NStyles.setFontUnderline(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),EnumUtil.toFontUnderline(underline));
 				range.notifyChange();
 			}
 		};
@@ -272,10 +287,10 @@ public class CellOperationUtil {
 	
 	public static CellStyleApplier getFontColorApplier(final Color color) {
 		return new CellStyleApplier() {
-			private HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle> _cache = new HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle>();
+//			private HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle> _cache = new HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle>();
 			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				Styles.setFontColor((XSheet)range.getSheet().getPoiSheet(),range.getRow(),range.getColumn(),color.getHtmlColor(),_cache);
+				NStyles.setFontColor(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),color.getHtmlColor());
 				range.notifyChange();
 			}
 		};
@@ -294,10 +309,9 @@ public class CellOperationUtil {
 
 	public static CellStyleApplier getBackgroundColorApplier(final Color color) {
 		return new CellStyleApplier() {
-				HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle> _cache = new HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle>();
-				public void apply(Range cellRange) {
-					Styles.setFillColor((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),color.getHtmlColor(),_cache);
-					cellRange.notifyChange();
+				public void apply(Range range) {
+					NStyles.setFillColor(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),color.getHtmlColor());
+					range.notifyChange();
 				}
 		};
 	}
@@ -315,11 +329,10 @@ public class CellOperationUtil {
 	
 	public static CellStyleApplier getDataFormatApplier(final String format) {
 		return new CellStyleApplier() {
-			private HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle> _cache = new HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle>();
-			public void apply(Range cellRange) {
+			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				Styles.setDataFormat((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),format,_cache);
-				cellRange.notifyChange();
+				NStyles.setDataFormat(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),format);
+				range.notifyChange();
 			}
 		};
 	}
@@ -335,11 +348,10 @@ public class CellOperationUtil {
 
 	public static CellStyleApplier getAligmentApplier(final Alignment alignment){
 		return new CellStyleApplier() {
-			private HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle> _cache = new HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle>();
-			public void apply(Range cellRange) {
+			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				Styles.setTextHAlign((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),EnumUtil.toStyleAlignemnt(alignment),_cache);
-				cellRange.notifyChange();
+				NStyles.setTextHAlign(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),EnumUtil.toStyleAlignemnt(alignment));
+				range.notifyChange();
 			}
 		};
 	}
@@ -355,11 +367,10 @@ public class CellOperationUtil {
 
 	public static CellStyleApplier getVerticalAligmentApplier(final VerticalAlignment alignment){
 		return new CellStyleApplier() {
-			private HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle> _cache = new HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle>();
-			public void apply(Range cellRange) {
+			public void apply(Range range) {
 				//ZSS 464, efficient implement
-				Styles.setTextVAlign((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),EnumUtil.toStyleVerticalAlignemnt(alignment),_cache);
-				cellRange.notifyChange();
+				NStyles.setTextVAlign(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),EnumUtil.toStyleVerticalAlignemnt(alignment));
+				range.notifyChange();
 			}
 		};
 	}
@@ -472,10 +483,9 @@ public class CellOperationUtil {
 	
 	public static CellStyleApplier getWrapTextApplier(final boolean wraptext) {
 		return new CellStyleApplier() {
-			private HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle> _cache = new HashMap<Integer,org.zkoss.poi.ss.usermodel.CellStyle>();
-			public void apply(Range cellRange) {
-				Styles.setTextWrap((XSheet)cellRange.getSheet().getPoiSheet(),cellRange.getRow(),cellRange.getColumn(),wraptext,_cache);
-				cellRange.notifyChange();
+			public void apply(Range range) {
+				NStyles.setTextWrap(((SheetImpl)range.getSheet()).getNative(),range.getRow(),range.getColumn(),wraptext);
+				range.notifyChange();
 			}
 		};
 	}
@@ -488,24 +498,6 @@ public class CellOperationUtil {
 	public static void applyWrapText(Range range,final boolean wraptext) {
 		applyCellStyle(range, getWrapTextApplier(wraptext));
 	}
-	
-//	public static CellStyleApplier getFormatApplier(final String format){
-//		return new CellStyleApplier() {
-//
-//			public boolean ignore(Range cellRange, CellStyle oldCellstyle) {
-//				String oformat = oldCellstyle.getDataFormat();
-//				return Objects.equals(format, oformat);
-//			}
-//
-//			public void apply(Range cellRange, EditableCellStyle newCellstyle) {
-//				newCellstyle.setDataFormat(format);
-//			}
-//		};
-//	}
-//	
-//	public static void applyFormat(Range range,final String format) {
-//		applyCellStyle(range, getFormatApplier(format));
-//	}
 	
 	
 	public static void applyHyperlink(Range range,HyperlinkType type,String address,String label) {

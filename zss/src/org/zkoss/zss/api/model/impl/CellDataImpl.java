@@ -18,13 +18,11 @@ package org.zkoss.zss.api.model.impl;
 
 import java.util.Date;
 
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.zss.api.impl.RangeImpl;
 import org.zkoss.zss.api.model.CellData;
-import org.zkoss.zss.model.sys.XRange;
-import org.zkoss.zss.model.sys.XSheet;
-import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.ngapi.NRange;
+import org.zkoss.zss.ngmodel.NCell;
+import org.zkoss.zss.ngmodel.NSheet;
 /**
  * 
  * @author dennis
@@ -34,7 +32,7 @@ public class CellDataImpl implements CellData{
 
 	private RangeImpl _range;
 	
-	private Cell _cell;
+	private NCell _cell;
 	private boolean _cellInit;
 	
 	public CellDataImpl(RangeImpl range) {
@@ -56,15 +54,10 @@ public class CellDataImpl implements CellData{
 			return;
 		}
 		_cellInit = true;
-		XRange x = _range.getNative();
-		XSheet sheet = x.getSheet();
+		NRange x = _range.getNative();
+		NSheet sheet = x.getSheet();
 		
-		if(_cell==null){
-			Row row = sheet.getRow(_range.getRow());
-			if(row!=null){
-				_cell = row.getCell(_range.getColumn());
-			}
-		}
+		_cell = sheet.getCell(x.getRow(),x.getColumn());
 	}
 	
 
@@ -76,22 +69,22 @@ public class CellDataImpl implements CellData{
 			return type;
 		}
 		
-		return toCellType(_cell.getCachedFormulaResultType());
+		return toCellType(_cell.getFormulaResultType());
 	}
 	
-	private CellType toCellType(int type){
+	private CellType toCellType(NCell.CellType type){
 		switch(type){
-		case Cell.CELL_TYPE_BLANK:
+		case BLANK:
 			return CellType.BLANK;
-		case Cell.CELL_TYPE_BOOLEAN:
+		case BOOLEAN:
 			return CellType.BOOLEAN;
-		case Cell.CELL_TYPE_ERROR:
+		case ERROR:
 			return CellType.ERROR;
-		case Cell.CELL_TYPE_FORMULA:
+		case FORMULA:
 			return CellType.FORMULA;
-		case Cell.CELL_TYPE_NUMERIC:
+		case NUMBER:
 			return CellType.NUMERIC;
-		case Cell.CELL_TYPE_STRING:
+		case STRING:
 			return CellType.STRING;
 		}
 		return CellType.BLANK;
@@ -101,14 +94,14 @@ public class CellDataImpl implements CellData{
 	public CellType getType() {
 		initCell();
 		
-		if(_cell==null){
+		if(_cell.isNull()){
 			return CellType.BLANK;
 		}
 		
-		CellType type = toCellType(_cell.getCellType());
+		CellType type = toCellType(_cell.getType());
 		
 		if(type==CellType.FORMULA){
-			if(toCellType(_cell.getCachedFormulaResultType())==CellType.ERROR){
+			if(toCellType(_cell.getFormulaResultType())==CellType.ERROR){
 				return CellType.ERROR;
 			}
 		}
@@ -141,7 +134,10 @@ public class CellDataImpl implements CellData{
 	}
 
 	public boolean validateEditText(String editText){
+		/*TODO zss 3.5
 		return _range.getNative().validate(editText)==null;
+		*/
+		throw new UnsupportedOperationException("not implement");
 	}
 
 	@Override
@@ -156,34 +152,25 @@ public class CellDataImpl implements CellData{
 
 	@Override
 	public Double getDoubleValue() {
-		Object val = getValue();
-		if(val instanceof Double){
-			return (Double)val;
-		}
-		return null;
+		initCell();
+		return _cell.getNumberValue().doubleValue();
 	}
 
 	@Override
 	public Date getDateValue() {
-		Double val = getDoubleValue();
-		return val==null?null:BookHelper.numberToDate(_range.getBook().getPoiBook(), val);
+		initCell();
+		return _cell.getDateValue();
 	}
 
 	@Override
 	public String getStringValue() {
-		Object val = getValue();
-		if(val instanceof String){
-			return (String)val;
-		}
-		return null;
+		initCell();
+		return _cell.getStringValue();
 	}
 
 	@Override
 	public Boolean getBooleanValue() {
-		Object val = getValue();
-		if(val instanceof Boolean){
-			return (Boolean)val;
-		}
-		return null;
+		initCell();
+		return _cell.getBooleanValue();
 	}
 }

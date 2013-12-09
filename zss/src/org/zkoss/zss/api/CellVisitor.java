@@ -38,6 +38,7 @@ public interface CellVisitor {
 	 * @param row the row of the cell
 	 * @param column the column of the cell
 	 * @return true if should create the cell if it is not exist.
+	 * @deprecated since 3.5, it use proxy when you edit a null cell , it is more smarter 
 	 */
 	public boolean createIfNotExist(int row, int column);
 

@@ -16,7 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ui.impl;
 
-import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ui.sys.CellDisplayLoader;
 
 /**
@@ -29,8 +29,8 @@ public class SimpleCellDisplayLoader implements CellDisplayLoader {
 	 * @see org.zkoss.zss.ui.sys.RichCellContentLoader#getCellHtmlText(org.zkoss.zss.model.sys.XSheet, int, int)
 	 */
 	@Override
-	public String getCellHtmlText(XSheet sheet, int row, int column) {
-		return XUtils.getCellHtmlText(sheet, row, column);
+	public String getCellHtmlText(NSheet sheet, int row, int column) {
+		return CellFormatHelper.getCellHtmlText(sheet, row, column);
 	}
 
 }

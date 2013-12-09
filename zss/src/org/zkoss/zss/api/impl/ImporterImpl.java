@@ -26,8 +26,8 @@ import org.zkoss.zss.api.Importer;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.impl.BookImpl;
 import org.zkoss.zss.api.model.impl.SimpleRef;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.XImporter;
+import org.zkoss.zss.ngapi.NImporter;
+import org.zkoss.zss.ngmodel.NBook;
 
 /**
  * 
@@ -35,8 +35,8 @@ import org.zkoss.zss.model.sys.XImporter;
  * @since 3.0.0
  */
 public class ImporterImpl implements Importer{
-	private XImporter _importer;
-	public ImporterImpl(XImporter importer) {
+	private NImporter _importer;
+	public ImporterImpl(NImporter importer) {
 		this._importer = importer;
 	}
 
@@ -48,11 +48,11 @@ public class ImporterImpl implements Importer{
 		if(bookName == null){
 			throw new IllegalArgumentException("null book name");
 		}
-		return new BookImpl(new SimpleRef<XBook>(_importer.imports(is, bookName)));
+		return new BookImpl(new SimpleRef<NBook>(_importer.imports(is, bookName)));
 	}
 
 
-	public XImporter getNative() {
+	public NImporter getNative() {
 		return _importer;
 	}
 

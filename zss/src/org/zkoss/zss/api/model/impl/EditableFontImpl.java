@@ -20,9 +20,8 @@ import org.zkoss.zss.api.UnitUtil;
 import org.zkoss.zss.api.model.Color;
 import org.zkoss.zss.api.model.EditableFont;
 import org.zkoss.zss.api.model.Font;
-import org.zkoss.zss.api.model.impl.EnumUtil;
-import org.zkoss.zss.model.sys.XBook;
-import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NFont;
 /**
  * 
  * @author dennis
@@ -31,7 +30,7 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
 public class EditableFontImpl extends FontImpl implements EditableFont{
 	
 
-	public EditableFontImpl(ModelRef<XBook> book, ModelRef<org.zkoss.poi.ss.usermodel.Font> font) {
+	public EditableFontImpl(ModelRef<NBook> book, ModelRef<NFont> font) {
 		super(book,font);
 	}
 	
@@ -60,20 +59,19 @@ public class EditableFontImpl extends FontImpl implements EditableFont{
 	}
 	
 	public void copyAttributeFrom(Font src) {
-		org.zkoss.poi.ss.usermodel.Font sfont = ((FontImpl)src).getNative();
-		org.zkoss.poi.ss.usermodel.Font font = getNative();
+		NFont sfont = ((FontImpl)src).getNative();
+		NFont font = getNative();
 		font.setBoldweight(sfont.getBoldweight());
-		org.zkoss.poi.ss.usermodel.Color srcColor = BookHelper.getFontColor(_bookRef.get(), sfont);
-		BookHelper.setFontColor(_bookRef.get(), font, srcColor);
-		font.setFontHeight(sfont.getFontHeight());
-		font.setFontName(sfont.getFontName());
-		font.setItalic(sfont.getItalic());
-		font.setStrikeout(sfont.getStrikeout());
+		font.setColor(sfont.getColor());
+		font.setHeightPoints(sfont.getHeightPoints());
+		font.setName(sfont.getName());
+		font.setItalic(sfont.isItalic());
+		font.setStrikeout(sfont.isStrikeout());
 		font.setTypeOffset(sfont.getTypeOffset());
 		font.setUnderline(sfont.getUnderline());
 	}
 	public void setFontName(String fontName) {
-		getNative().setFontName(fontName);
+		getNative().setName(fontName);
 	}
 	public void setBoldweight(Boldweight boldweight) {
 		getNative().setBoldweight(EnumUtil.toFontBoldweight(boldweight));
@@ -88,13 +86,13 @@ public class EditableFontImpl extends FontImpl implements EditableFont{
 	public void setUnderline(Underline underline) {
 		getNative().setUnderline(EnumUtil.toFontUnderline(underline));
 	}
-	public void setFontHeight(int height){
-		getNative().setFontHeight((short)height);
+	public void setFontHeight(int twip){
+		setFontHeightInPoint(UnitUtil.twipToPoint(twip));
 	}
 	public void setColor(Color color) {
-		BookHelper.setFontColor(_bookRef.get(), getNative(), ((ColorImpl)color).getNative());
+		getNative().setColor(((ColorImpl)color).getNative());
 	}
 	public void setFontHeightInPoint(int point) {
-		setFontHeight(UnitUtil.pointToTwip(point));	
+		getNative().setHeightPoints(point);	
 	}
 }

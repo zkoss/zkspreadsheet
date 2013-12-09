@@ -33,6 +33,7 @@ import org.zkoss.zss.api.AreaRef;
 //import org.zkoss.zss.model.Format;
 import org.zkoss.zss.model.sys.XFormatText;
 import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.impl.HeaderPositionHelper;
 import org.zkoss.zss.ui.impl.MergeMatrixHelper;
@@ -98,7 +99,7 @@ public class UtilFns {
 		int row_top = getRowBegin(ss).intValue();
 		int row_bottom = getRowEnd(ss).intValue();
 		
-		XSheet sheet = ss.getSelectedXSheet();
+		NSheet sheet = ss.getSelectedXSheet();
 		MergeMatrixHelper mmhelper = ((SpreadsheetCtrl)ss.getExtraCtrl()).getMergeMatrixHelper(sheet);
 		Set blocks = mmhelper.getRangesByColumn(max);
 		Iterator iter = blocks.iterator();

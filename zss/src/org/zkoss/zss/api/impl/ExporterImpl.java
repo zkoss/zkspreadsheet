@@ -21,16 +21,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.zkoss.zss.api.AreaRef;
 //import org.zkoss.poi.hssf.util.AreaReference;
 //import org.zkoss.poi.hssf.util.CellReference;
 import org.zkoss.zss.api.Exporter;
-import org.zkoss.zss.api.AreaRef;
 import org.zkoss.zss.api.model.Book;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.BookImpl;
-import org.zkoss.zss.api.model.impl.SheetImpl;
-import org.zkoss.zss.model.sys.XExporter;
-import org.zkoss.zss.model.sys.impl.Headings;
+import org.zkoss.zss.ngapi.NExporter;
 
 /**
  * 
@@ -38,8 +36,8 @@ import org.zkoss.zss.model.sys.impl.Headings;
  * @since 3.0.0
  */
 public class ExporterImpl implements Exporter {
-	private XExporter _exporter;
-	public ExporterImpl(XExporter exporter){
+	private NExporter _exporter;
+	public ExporterImpl(NExporter exporter){
 		if(exporter==null){
 			throw new IllegalAccessError("exporter not found");
 		}
@@ -63,12 +61,10 @@ public class ExporterImpl implements Exporter {
 		}
 	}
 	public void export(Sheet sheet, OutputStream fos) throws IOException{
-		_exporter.export(((SheetImpl)sheet).getNative(), fos);
+		throw new UnsupportedOperationException("Not implement");
 	}
 	public void export(Sheet sheet,AreaRef selection,OutputStream fos) throws IOException{
-		org.zkoss.poi.ss.util.AreaReference af = new org.zkoss.poi.ss.util.AreaReference(new org.zkoss.poi.ss.util.CellReference(selection.getRow(), selection.getColumn()),
-				new org.zkoss.poi.ss.util.CellReference(selection.getLastRow(), selection.getLastColumn()));
-		_exporter.exportSelection(((SheetImpl)sheet).getNative(), af, fos);
+		throw new UnsupportedOperationException("Not implement");
 	}
 //	@Override
 //	public boolean isSupportHeadings() {

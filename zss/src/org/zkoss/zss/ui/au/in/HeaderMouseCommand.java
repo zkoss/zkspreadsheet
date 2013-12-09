@@ -29,6 +29,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.HeaderMouseEvent;
 import org.zkoss.zss.ui.event.HedaerType;
@@ -50,8 +51,8 @@ public class HeaderMouseCommand extends AbstractCommand implements Command {
 			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {Objects.toString(data), this});
 
 		String sheetId = (String) data.get("sheetId");
-		XSheet sheet = ((Spreadsheet)comp).getSelectedXSheet();
-		if(!XUtils.getSheetUuid(sheet).equals(sheetId)) {
+		NSheet sheet = ((Spreadsheet)comp).getSelectedXSheet();
+		if(!sheet.getId().equals(sheetId)) {
 			return;
 		}
 		String type = (String) data.get("type");

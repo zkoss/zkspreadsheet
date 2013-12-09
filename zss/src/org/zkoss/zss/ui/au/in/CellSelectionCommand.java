@@ -29,7 +29,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
-import org.zkoss.zss.model.sys.XBook;
+import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ui.Spreadsheet;
 import org.zkoss.zss.ui.event.CellSelectionEvent;
 import org.zkoss.zss.ui.event.CellSelectionType;
@@ -61,9 +61,9 @@ public class CellSelectionCommand extends AbstractCommand implements Command {
 			return;
 		
 		//TODO request shall send back maxcol/maxrow (do it in client side)
-		final XBook book = (XBook) ((SheetImpl)sheet).getNative().getBook();
-		final int maxcol = book.getSpreadsheetVersion().getLastColumnIndex();
-		final int maxrow = book.getSpreadsheetVersion().getLastRowIndex();
+		final NBook book = ((SheetImpl)sheet).getNative().getBook();
+		final int maxcol = book.getMaxColumnSize();
+		final int maxrow = book.getMaxRowSize();
 		
 		String t = (String) data.get("type");
 		CellSelectionType type = null;

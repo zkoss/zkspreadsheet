@@ -25,7 +25,9 @@ import java.util.List;
  */
 public interface Sheet {
 
+	/*TODO zss 3.5
 	public org.zkoss.poi.ss.usermodel.Sheet getPoiSheet();
+	*/
 	
 	public Book getBook();
 	

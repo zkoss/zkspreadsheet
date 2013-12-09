@@ -47,6 +47,11 @@
 	</pluginRepositories>
 	<dependencies>
 		<dependency>
+			<groupId>org.zkoss.zss</groupId>
+			<artifactId>zss-ngmodel</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>	
+		<dependency>
 			<groupId>org.zkoss.poi</groupId>
 			<artifactId>zpoi</artifactId>
 			<version>${zpoi.version}</version>

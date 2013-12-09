@@ -57,6 +57,7 @@ import org.zkoss.zss.ui.impl.XUtils;
 	private FilterRowInfo blankRowInfo;
 	
 	/*package*/ AreaRef processFilter(Spreadsheet spreadsheet,Sheet sheet,int row, int col, int field) {
+		/*TODO zss 3.5
 		XSheet worksheet = ((SheetImpl)sheet).getNative();
 		final AutoFilter autoFilter = worksheet.getAutoFilter();
 		final FilterColumn filterColumn = autoFilter.getFilterColumn(field - 1);
@@ -68,6 +69,8 @@ import org.zkoss.zss.ui.impl.XUtils;
 		
 		AreaRef filterArea = new AreaRef(rangeAddr);
 		return filterArea;
+		*/
+		return null;
 	}
 	
 	private Map convertFilterInfoToJSON(int row, int col, int field, String rangeAddr, TreeSet<FilterRowInfo> orderedRowInfos) {
@@ -311,6 +314,7 @@ import org.zkoss.zss.ui.impl.XUtils;
 
 	/*package*/ void applyFilter(Spreadsheet spreadsheet, Sheet selectedSheet,
 			String cellRangeAddr, boolean selectAll, int field, Object criteria) {
+		/*TODO zss 3.5
 		final XRange range = XRanges.range(((SheetImpl)selectedSheet).getNative(), cellRangeAddr);
 		
 		if (selectAll) {
@@ -319,5 +323,6 @@ import org.zkoss.zss.ui.impl.XUtils;
 			JSONArray ary = (JSONArray) criteria;
 			range.autoFilter(field, ary.toArray(new String[ary.size()]), AutoFilter.FILTEROP_VALUES, null, null);
 		}
+		*/
 	}
 }

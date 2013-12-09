@@ -40,7 +40,7 @@ public class CellHyperlinkEvent extends CellMouseEvent{
 		final Component comp = request.getComponent();
 		String sheetId = (String) data.get("sheetId");
 		Sheet sheet = ((Spreadsheet) comp).getSelectedSheet();
-		if (!XUtils.getSheetUuid(((SheetImpl)sheet).getNative()).equals(sheetId))
+		if (!((SheetImpl)sheet).getNative().getId().equals(sheetId))
 			return null;
 		
 		final String name = request.getCommand();

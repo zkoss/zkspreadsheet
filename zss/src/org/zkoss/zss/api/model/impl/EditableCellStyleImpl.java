@@ -24,6 +24,8 @@ import org.zkoss.zss.api.model.EditableCellStyle;
 import org.zkoss.zss.api.model.impl.EnumUtil;
 import org.zkoss.zss.model.sys.XBook;
 import org.zkoss.zss.model.sys.impl.BookHelper;
+import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NCellStyle;
 /**
  * 
  * @author dennis
@@ -31,7 +33,7 @@ import org.zkoss.zss.model.sys.impl.BookHelper;
  */
 public class EditableCellStyleImpl extends CellStyleImpl implements EditableCellStyle{
 	
-	public EditableCellStyleImpl(ModelRef<XBook> book,ModelRef<org.zkoss.poi.ss.usermodel.CellStyle> style) {
+	public EditableCellStyleImpl(ModelRef<NBook> book,ModelRef<NCellStyle> style) {
 		super(book,style);
 	}
 	
@@ -64,11 +66,14 @@ public class EditableCellStyleImpl extends CellStyleImpl implements EditableCell
 	}
 
 	public void copyAttributeFrom(CellStyle src) {
-		getNative().cloneStyleFrom(((CellStyleImpl)src).getNative());
+		getNative().copyFrom(((CellStyleImpl)src).getNative());
 	}
 
 	public void setBackgroundColor(Color color) {
-		BookHelper.setFillForegroundColor(getNative(), ((ColorImpl)color).getNative());
+		setFillColor(color);
+	}
+	public void setFillColor(Color color) {
+		getNative().setFillColor(((ColorImpl)color).getNative());
 	}
 
 	public void setFillPattern(FillPattern pattern) {
@@ -104,31 +109,28 @@ public class EditableCellStyleImpl extends CellStyleImpl implements EditableCell
 	}
 	
 	public void setBorderTopColor(Color color){
-		BookHelper.setTopBorderColor(getNative(),  ((ColorImpl)color).getNative());
+		getNative().setBorderTopColor(((ColorImpl)color).getNative());
 	}
 	
 	public void setBorderLeftColor(Color color){
-		BookHelper.setLeftBorderColor(getNative(), ((ColorImpl)color).getNative());
+		getNative().setBorderLeftColor(((ColorImpl)color).getNative());
 	}
 
 	public void setBorderBottomColor(Color color){
-		BookHelper.setBottomBorderColor(getNative(), ((ColorImpl)color).getNative());
+		getNative().setBorderBottomColor(((ColorImpl)color).getNative());
 	}
 	
 	public void setBorderRightColor(Color color){
-		BookHelper.setRightBorderColor(getNative(), ((ColorImpl)color).getNative());
+		getNative().setBorderRightColor(((ColorImpl)color).getNative());
 	}
 	
 	public void setDataFormat(String format){
 		if(getDataFormat().equals(format)){
 			return;
 		}
-		//this api doesn't create a new df, it just return the one in book
-		DataFormat df = _bookRef.get().createDataFormat();
-		
 		// ZSS-510, when format is null or empty, it should be assigned as "General" format.
-		short index = df.getFormat(format == null || format.equals("") ? "General" : format);
-		getNative().setDataFormat(index);
+		format = format.equals("") ? "General" : format;
+		getNative().setDataFormat(format);
 	}
 
 	public void setLocked(boolean locked) {

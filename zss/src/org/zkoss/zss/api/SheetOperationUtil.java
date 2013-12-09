@@ -27,6 +27,7 @@ import org.zkoss.zss.api.model.Picture.Format;
 import org.zkoss.zss.api.model.Sheet;
 import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.ngmodel.NSheet;
 
 /**
  * The utility to help UI to deal with user's sheet operation of a Range.
@@ -399,10 +400,9 @@ public class SheetOperationUtil {
 		int lX = 0;
 		int lY = 0;
 		
-		XSheet ws = ((SheetImpl)sheet).getNative();
-//		Book book = ws.getBook();
+		NSheet ws = ((SheetImpl)sheet).getNative();
 		for(int i = column;;i++){
-			if(ws.isColumnHidden(i)){
+			if(ws.getColumn(i).isHidden()){
 				continue;
 			}
 			int wPx = sheet.getColumnWidth(i);
@@ -415,8 +415,7 @@ public class SheetOperationUtil {
 		}
 		
 		for(int i = row;;i++){
-			Row srow = ws.getRow(i);
-			if(srow!=null && srow.getZeroHeight()){
+			if(ws.getRow(i).isHidden()){
 				continue;
 			}
 			

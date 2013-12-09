@@ -24,6 +24,7 @@ import org.zkoss.zss.api.model.impl.SheetImpl;
 import org.zkoss.zss.model.sys.XRange;
 import org.zkoss.zss.model.sys.XRanges;
 import org.zkoss.zss.model.sys.XSheet;
+import org.zkoss.zss.ngapi.NRanges;
 
 /**
  * The facade class provides you multiple ways to get a {@link Range}.
@@ -41,7 +42,7 @@ public class Ranges {
 	 * @return the associated {@link Range} of the whole specified {@link Sheet}. 
 	 */
 	public static Range range(Sheet sheet){
-		return new RangeImpl(XRanges.range(((SheetImpl)sheet).getNative()),sheet);
+		return new RangeImpl(NRanges.range(((SheetImpl)sheet).getNative()),sheet);
 	}
 	
 	/** Returns the associated {@link Range} of the specified {@link Sheet} and area reference string (e.g. "A1:D4" or "Sheet2!A1:D4")
@@ -52,7 +53,7 @@ public class Ranges {
 	 * @return the associated {@link Range} of the specified {@link Sheet} and area reference string (e.g. "A1:D4"). 
 	 */
 	public static Range range(Sheet sheet, String areaReference){
-		return new RangeImpl(XRanges.range(((SheetImpl)sheet).getNative(),areaReference),sheet);
+		return new RangeImpl(NRanges.range(((SheetImpl)sheet).getNative(),areaReference),sheet);
 	}
 	
 	/** Returns the associated {@link Range} of the specified name of a NamedRange (e.g. "MyRange");
@@ -62,7 +63,7 @@ public class Ranges {
 	 * @return the associated {@link Range} of the specified name 
 	 */
 	public static Range rangeByName(Sheet sheet, String name){
-		return new RangeImpl(XRanges.rangeByName(((SheetImpl)sheet).getNative(),name),sheet);
+		return new RangeImpl(NRanges.rangeByName(((SheetImpl)sheet).getNative(),name),sheet);
 	}	
 	
 	/** Returns the associated {@link XRange} of the specified {@link XSheet} and area. 
@@ -75,7 +76,7 @@ public class Ranges {
 	 * @return the associated {@link Range} of the specified {@link Sheet} and area.
 	 */
 	public static Range range(Sheet sheet, int tRow, int lCol, int bRow, int rCol){
-		return new RangeImpl(XRanges.range(((SheetImpl)sheet).getNative(),tRow,lCol,bRow,rCol),sheet);
+		return new RangeImpl(NRanges.range(((SheetImpl)sheet).getNative(),tRow,lCol,bRow,rCol),sheet);
 	}
 	
 	/** Returns the associated {@link Range} of the specified {@link Sheet} and cell row and column. 
@@ -86,7 +87,7 @@ public class Ranges {
 	 * @return the associated {@link Range} of the specified {@link Sheet} and cell . 
 	 */
 	public static Range range(Sheet sheet, int row, int col){	
-		return new RangeImpl(XRanges.range(((SheetImpl)sheet).getNative(),row,col),sheet);
+		return new RangeImpl(NRanges.range(((SheetImpl)sheet).getNative(),row,col),sheet);
 	}
 	
 	/** Returns the associated {@link Range} of the specified {@link Sheet} and cell row and column. 

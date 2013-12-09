@@ -19,6 +19,8 @@ package org.zkoss.zss.api;
 import org.zkoss.zss.api.impl.ImporterImpl;
 import org.zkoss.zss.model.sys.XImporter;
 import org.zkoss.zss.model.sys.XImporters;
+import org.zkoss.zss.ngapi.NImporter;
+import org.zkoss.zss.ngapi.NImporters;
 
 /**
  * The main class to get an importer.
@@ -33,7 +35,7 @@ public class Importers {
 	 * @return importer instance for the type, null if not found
 	 */
 	public static Importer getImporter(String type) {
-		XImporter imp = XImporters.getImporter(type);
+		NImporter imp = NImporters.getImporter(type);
 		return imp == null ? null : new ImporterImpl(imp);
 	}
 	
