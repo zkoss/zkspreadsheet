@@ -140,7 +140,7 @@ public class CellImpl extends CellAdv {
 			FormulaEngine fe = EngineFactory.getInstance()
 					.createFormulaEngine();
 			formulaResult = new FormulaResultWrap(fe.evaluate((FormulaExpression) value,
-					new FormulaEvaluationContext(getSheet().getBook())));
+					new FormulaEvaluationContext(this)));
 		}
 	}
 

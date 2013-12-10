@@ -38,14 +38,14 @@ public class BookSeriesImpl extends BookSeriesAdv {
 	
 	final private HashMap<String,BookAdv> books;
 	
-	final private DependencyEngine dependencyEngine;
+	final private DependencyTable dependencyTable;
 	
 	final private ReadWriteLock lock = new ReentrantReadWriteLock();
 	
 	public BookSeriesImpl(BookAdv book){
 		books = new LinkedHashMap<String, BookAdv>(1);
 		books.put(book.getBookName(), book);
-		dependencyEngine = EngineFactory.getInstance().createDependencyEngine();
+		dependencyTable = EngineFactory.getInstance().createDependencyTable();
 	}
 	@Override
 	public NBook getBook(String name) {
@@ -54,7 +54,7 @@ public class BookSeriesImpl extends BookSeriesAdv {
 
 	@Override
 	public DependencyTable getDependencyTable() {
-		return dependencyEngine.getDependencyTable();
+		return dependencyTable;
 	}
 	@Override
 	public ReadWriteLock getLock() {

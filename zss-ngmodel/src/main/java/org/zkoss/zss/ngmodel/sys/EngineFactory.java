@@ -17,11 +17,11 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngmodel.sys;
 
 import org.zkoss.zss.ngmodel.impl.sys.CalendarUtilImpl;
-import org.zkoss.zss.ngmodel.impl.sys.TestDependencyEngineImpl;
 import org.zkoss.zss.ngmodel.impl.sys.FormatEngineImpl;
-import org.zkoss.zss.ngmodel.impl.sys.TestFormulaEngineImpl;
 import org.zkoss.zss.ngmodel.impl.sys.InputEngineImpl;
-import org.zkoss.zss.ngmodel.sys.dependency.DependencyEngine;
+import org.zkoss.zss.ngmodel.impl.sys.TestDependencyTable;
+import org.zkoss.zss.ngmodel.impl.sys.TestFormulaEngineImpl;
+import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.input.InputEngine;
@@ -35,7 +35,7 @@ public class EngineFactory {
 	static private EngineFactory instance;
 	
 	static private CalendarUtil calendarUtil = new CalendarUtilImpl();
-
+	
 	private EngineFactory() {
 	}
 
@@ -57,10 +57,11 @@ public class EngineFactory {
 
 	public FormulaEngine createFormulaEngine() {
 		return new TestFormulaEngineImpl();
+//		return new POIFormulaEngine();
 	}
 
-	public DependencyEngine createDependencyEngine() {
-		return new TestDependencyEngineImpl();
+	public DependencyTable createDependencyTable() {
+		return new TestDependencyTable();
 	}
 	
 	public FormatEngine createFormatEngine() {

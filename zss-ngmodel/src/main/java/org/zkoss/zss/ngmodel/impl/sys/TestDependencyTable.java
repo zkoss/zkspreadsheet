@@ -14,11 +14,7 @@ import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 
-public class TestDependencyEngineImpl implements DependencyEngine,Serializable{
-
-	public DependencyTable getDependencyTable() {
-		// TODO Auto-generated method stub
-		return new DependencyTable(){
+public class TestDependencyTable implements DependencyTable,Serializable{
 
 			public Set<Ref> getDependents(Ref precedent) {
 				if(precedent.getType()!=RefType.CELL){
@@ -34,7 +30,5 @@ public class TestDependencyEngineImpl implements DependencyEngine,Serializable{
 
 			public void clearDependents(Ref dependant) {
 				//
-			}};
-	}
-
+			}
 }
