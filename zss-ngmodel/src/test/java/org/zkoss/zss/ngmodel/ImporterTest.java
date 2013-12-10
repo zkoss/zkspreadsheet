@@ -9,14 +9,14 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.zkoss.zss.ngapi.NImporter;
-import org.zkoss.zss.ngapi.impl.NExcelImporter;
+import org.zkoss.zss.ngapi.impl.NExcelImportAdapter;
 
 public class ImporterTest {
 	
 	@Test
 	public void loadXSSFBook() {
 		final InputStream is = ImporterTest.class.getResourceAsStream("book/import.xlsx");
-		NImporter importer = new NExcelImporter();
+		NImporter importer = new NExcelImportAdapter();
 		NBook book = null;
 		try {
 			book = importer.imports(is, "XSSFBook");

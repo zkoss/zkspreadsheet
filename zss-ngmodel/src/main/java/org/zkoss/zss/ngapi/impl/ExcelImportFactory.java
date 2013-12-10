@@ -27,7 +27,7 @@ public class ExcelImportFactory implements ImporterFactory{
 
 	@Override
 	public NImporter createImporter() {
-		return new NExcelImporter();
+		return new NExcelImportAdapter();
 	}
 
 }
