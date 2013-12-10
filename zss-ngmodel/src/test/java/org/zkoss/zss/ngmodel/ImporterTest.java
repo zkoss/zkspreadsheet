@@ -60,6 +60,12 @@ public class ImporterTest {
 		assertEquals(123, row1.getCell(1).getNumberValue().intValue());
 		assertEquals(123.45, row1.getCell(2).getNumberValue().doubleValue(), 0.01);
 		
+		//date
+		NRow row2 = sheet.getRow(2);
+		assertEquals(NCell.CellType.NUMBER, row2.getCell(1).getType());
+		assertEquals(41618, row2.getCell(1).getNumberValue().intValue());
+		assertEquals(0.61, row2.getCell(2).getNumberValue().doubleValue(), 0.01);
+		
 		//formula
 		NRow row3 = sheet.getRow(3);
 		assertEquals(NCell.CellType.FORMULA, row3.getCell(1).getType());
@@ -67,6 +73,11 @@ public class ImporterTest {
 		assertEquals("ISBLANK(B1)", row3.getCell(2).getFormulaValue());
 		assertEquals("B1", row3.getCell(3).getFormulaValue());
 		
+		//error
+		NRow row4 = sheet.getRow(4);
+		assertEquals(NCell.CellType.ERROR, row4.getCell(1).getType());
+		assertEquals(ErrorValue.INVALID_NAME, row4.getCell(1).getErrorValue().getCode());
+		assertEquals(ErrorValue.INVALID_VALUE, row4.getCell(2).getErrorValue().getCode());
 	}
 
 }

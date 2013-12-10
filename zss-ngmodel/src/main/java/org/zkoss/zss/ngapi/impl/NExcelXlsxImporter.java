@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.ErrorConstants;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.xssf.usermodel.XSSFCell;
@@ -40,7 +41,13 @@ import org.zkoss.zss.ngmodel.impl.BookImpl;
 import org.zkoss.zss.ngmodel.impl.ColorImpl;
 import org.zkoss.zss.ngmodel.impl.FontImpl;
 /**
- * To convert Excel XLSX format file to Spreadsheet book model.
+ * Convert Excel XLSX format file to Spreadsheet book model including following information:
+ * Book:
+ * 		name
+ * Sheet:
+ * 		name
+ * Cell:
+ * 		type, value, font with color and style
  * @author dennis
  * @since 3.5.0
  */
@@ -117,7 +124,6 @@ public class NExcelXlsxImporter extends AbstractImporter{
 			for(Cell cell : xssfRow) { // Go through each cell
 				
 				XSSFCell xssfCell = (XSSFCell) cell;
-				NCell nCell = nSheet.getCell(xssfCell.getRowIndex(), xssfCell.getColumnIndex());
 				importXSSFCell(nSheet, xssfCell);
 //				importXSSFCellStyle(nCell.getCellStyle(), xssfCell.getCellStyle());
 				
@@ -145,7 +151,7 @@ public class NExcelXlsxImporter extends AbstractImporter{
 				cell.setFormulaValue(xssfCell.getCellFormula());
 				break;
 			case Cell.CELL_TYPE_ERROR:
-				cell.setErrorValue(new ErrorValue(xssfCell.getErrorCellValue()));
+				cell.setErrorValue(convertErrorCode(xssfCell.getErrorCellValue()));
 				break;
 			case Cell.CELL_TYPE_BLANK:
 				//do nothing because spreadsheet model auto creates blank cells
@@ -154,6 +160,19 @@ public class NExcelXlsxImporter extends AbstractImporter{
 				//TODO log "ignore a cell with unknown.
 		}
 		return cell;
+	}
+	
+	private ErrorValue convertErrorCode(byte errorCellValue){
+		switch (errorCellValue){
+			case ErrorConstants.ERROR_NAME:
+				return new ErrorValue(ErrorValue.INVALID_NAME);
+			case ErrorConstants.ERROR_VALUE:
+				return new ErrorValue(ErrorValue.INVALID_VALUE);
+			default:
+				//TODO log it
+				return new ErrorValue(ErrorValue.INVALID_NAME);
+		}
+		
 	}
 	/**
 	 * copy XSSFCellStyle attributes into nCellStyle
