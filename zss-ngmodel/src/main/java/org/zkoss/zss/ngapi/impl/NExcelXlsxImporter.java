@@ -28,6 +28,7 @@ import org.zkoss.poi.xssf.usermodel.XSSFFont;
 import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
+import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
@@ -117,18 +118,43 @@ public class NExcelXlsxImporter extends AbstractImporter{
 				
 				XSSFCell xssfCell = (XSSFCell) cell;
 				NCell nCell = nSheet.getCell(xssfCell.getRowIndex(), xssfCell.getColumnIndex());
-				
-				//importXSSFCellStyle(nCell.getCellStyle(), xssfCell.getCellStyle());
+				importXSSFCell(nSheet, xssfCell);
+//				importXSSFCellStyle(nCell.getCellStyle(), xssfCell.getCellStyle());
 				
 				// TODO: copy hyper link
 				// nCell.getHyperlink();
-				
 			}
 			
 		}
 		
 	}
 	
+	private NCell importXSSFCell(NSheet sheet, XSSFCell xssfCell){
+		NCell cell = sheet.getCell(xssfCell.getRowIndex(), xssfCell.getColumnIndex());
+		switch (xssfCell.getCellType()){
+			case Cell.CELL_TYPE_NUMERIC:
+				cell.setNumberValue(xssfCell.getNumericCellValue());
+				break;
+			case Cell.CELL_TYPE_STRING:
+				cell.setStringValue(xssfCell.getStringCellValue());
+				break;
+			case Cell.CELL_TYPE_BOOLEAN:
+				cell.setBooleanValue(xssfCell.getBooleanCellValue());
+				break;
+			case Cell.CELL_TYPE_FORMULA:
+				cell.setFormulaValue(xssfCell.getCellFormula());
+				break;
+			case Cell.CELL_TYPE_ERROR:
+				cell.setErrorValue(new ErrorValue(xssfCell.getErrorCellValue()));
+				break;
+			case Cell.CELL_TYPE_BLANK:
+				//do nothing because spreadsheet model auto creates blank cells
+				break;
+			default:
+				//TODO log "ignore a cell with unknown.
+		}
+		return cell;
+	}
 	/**
 	 * copy XSSFCellStyle attributes into nCellStyle
 	 * @param nCellStyle
