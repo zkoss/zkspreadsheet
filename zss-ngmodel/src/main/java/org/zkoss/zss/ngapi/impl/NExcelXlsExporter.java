@@ -22,21 +22,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.zkoss.zss.ngapi.NExporter;
-import org.zkoss.zss.ngapi.impl.ExcelExportFactory.Type;
+import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
+import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.zss.ngmodel.NBook;
 /**
  * 
  * @author dennis
  * @since 3.5.0
  */
-public class NExcelExporter extends AbstractExporter{
+public class NExcelXlsExporter extends AbstractExporter{
 	
-	private final ExcelExportFactory.Type type;
-	
-	public NExcelExporter(Type type){
-		this.type = type;
-	}
 	
 	@Override
 	public void export(NBook book, File file) throws IOException {
@@ -57,9 +52,9 @@ public class NExcelExporter extends AbstractExporter{
 	public void export(NBook book, OutputStream fos) throws IOException {
 		ReadWriteLock lock = book.getBookSeries().getLock();
 		lock.writeLock().lock();
+		Workbook workbook = new HSSFWorkbook();
 		try{
 			//implement here
-			
 			
 		}finally{
 			lock.writeLock().unlock();

@@ -37,6 +37,10 @@ public class ExcelExportFactory implements ExporterFactory{
 	
 	@Override
 	public NExporter createExporter() {
-		return new NExcelExporter(type);
+		if (type == Type.XLSX){
+			return new NExcelXlsxExporter();
+		}else{
+			return new NExcelXlsExporter();
+		}
 	}
 }
