@@ -56,7 +56,7 @@ public interface NCellStyle {
 	/**
 	 * @return background-color
 	 */
-	public NColor getBackgroundColor();
+	public NColor getFillColor();
 
 	/**
 	 * Gets the fill/background pattern <br/>
@@ -140,7 +140,7 @@ public interface NCellStyle {
 	public boolean isHidden();
 	
 
-	public void setBackgroundColor(NColor backgroundColor);
+	public void setFillColor(NColor fillColor);
 
 	public void setFillPattern(FillPattern fillPattern);
 	
@@ -176,4 +176,5 @@ public interface NCellStyle {
 	
 	public void setFont(NFont font);
 
+	public void copyFrom(NCellStyle src);
 }

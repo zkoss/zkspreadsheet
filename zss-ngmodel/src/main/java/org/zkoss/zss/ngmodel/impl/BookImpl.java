@@ -311,7 +311,7 @@ public class BookImpl extends BookAdv{
 		}
 		CellStyleAdv style = new CellStyleImpl(defaultFont);
 		if(src!=null){
-			((CellStyleAdv)src).copyTo(style);
+			style.copyFrom(src);
 		}
 		
 		if(inStyleTable){

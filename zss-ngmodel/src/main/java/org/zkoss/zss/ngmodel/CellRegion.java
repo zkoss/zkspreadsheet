@@ -124,6 +124,22 @@ public class CellRegion implements Serializable {
 			return false;
 		return true;
 	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public int getColumn() {
+		return column;
+	}
+
+	public int getLastRow() {
+		return lastRow;
+	}
+
+	public int getLastColumn() {
+		return lastColumn;
+	}
 	
 	
 

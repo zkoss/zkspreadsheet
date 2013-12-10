@@ -13,7 +13,7 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
 import org.zkoss.zss.ngmodel.util.Validations;
 
-public class FormulaEngineImpl implements FormulaEngine {
+public class TestFormulaEngineImpl implements FormulaEngine {
 
 	
 	static HashMap<String, Object[]> testData = new HashMap<String,Object[]>();
@@ -22,6 +22,7 @@ public class FormulaEngineImpl implements FormulaEngine {
 	{
 		testData.put("SUM(999)", new Object[]{999,ResultType.SUCCESS});
 		testData.put("SUM(A1)", new Object[]{999,ResultType.SUCCESS});
+		testData.put("SUM(B4:D4)", new Object[]{6,ResultType.SUCCESS});
 		testData.put("A1:A3", new Object[]{new String[]{"A","B","C"},ResultType.SUCCESS});
 		testData.put("B1:B3", new Object[]{new Integer[]{1,2,3},ResultType.SUCCESS});
 		testData.put("C1:C3", new Object[]{new Integer[]{4,5,6},ResultType.SUCCESS});

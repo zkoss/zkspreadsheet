@@ -14,7 +14,7 @@ import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
 
-public class DependencyEngineImpl implements DependencyEngine,Serializable{
+public class TestDependencyEngineImpl implements DependencyEngine,Serializable{
 
 	public DependencyTable getDependencyTable() {
 		// TODO Auto-generated method stub

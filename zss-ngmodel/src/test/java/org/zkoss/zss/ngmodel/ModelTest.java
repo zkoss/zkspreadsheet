@@ -827,9 +827,9 @@ public class ModelTest {
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
 		
-		style1.setBackgroundColor(book.createColor("#FF0F0B"));
+		style1.setFillColor(book.createColor("#FF0F0B"));
 		Assert.assertNull(book.searchCellStyle(matcher));
-		matcher.setBackgroundColor("#FF0F0B");
+		matcher.setFillColor("#FF0F0B");
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
 		//////////
@@ -1358,7 +1358,7 @@ public class ModelTest {
 		Assert.assertEquals(null, nseries1.getName());
 		
 		nseries1.setFormula("KK()",null,null);//fail 
-		Assert.assertEquals("#NAME!", nseries1.getName());
+		Assert.assertEquals("#N/A", nseries1.getName());
 		Assert.assertTrue(nseries1.isFormulaParsingError());
 		
 		nseries1.setFormula("D1",null,null);

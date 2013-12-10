@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import org.zkoss.zss.ngapi.impl.ExcelImportFactory;
-import org.zkoss.zss.ngapi.impl.TestImportFactory;
+import org.zkoss.zss.ngapi.impl.TestImporterFactory;
 /**
  * Get importers by registered name
  * @author dennis
@@ -32,7 +32,7 @@ public class NImporters {
 	static{
 		//default registration
 		register("excel",new ExcelImportFactory());
-		register("test",new TestImportFactory());
+		register("test",new TestImporterFactory());
 	}
 	
 	/**

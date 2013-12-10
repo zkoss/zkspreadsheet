@@ -16,6 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.impl;
 
+import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColor;
 import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.util.Validations;
@@ -62,12 +63,12 @@ public class CellStyleImpl extends CellStyleAdv {
 	}
 
 	@Override
-	public NColor getBackgroundColor() {
+	public NColor getFillColor() {
 		return backgroundColor;
 	}
 
 	@Override
-	public void setBackgroundColor(NColor backgroundColor) {
+	public void setFillColor(NColor backgroundColor) {
 		Validations.argNotNull(backgroundColor);
 		this.backgroundColor = backgroundColor;
 	}
@@ -235,30 +236,30 @@ public class CellStyleImpl extends CellStyleAdv {
 	}
 
 	@Override
-	public void copyTo(CellStyleAdv dest) {
+	public void copyFrom(NCellStyle dest) {
 		if (dest == this)
 			return;
 		Validations.argInstance(dest, CellStyleImpl.class);
 		CellStyleImpl another = (CellStyleImpl) dest;
-		another.font = (FontAdv)dest.getFont();//assign directly
+		setFont(dest.getFont());//assign directly
 		
-		another.backgroundColor = backgroundColor;
-		another.fillPattern = fillPattern;
-		another.alignment = alignment;
-		another.verticalAlignment = verticalAlignment;
-		another.wrapText = wrapText;
+		setFillColor(dest.getFillColor());
+		setFillPattern(dest.getFillPattern());
+		setAlignment(dest.getAlignment());
+		setVerticalAlignment(dest.getVerticalAlignment());
+		setWrapText(dest.isWrapText());
 
-		another.borderLeft = borderLeft;
-		another.borderTop = borderTop;
-		another.borderRight = borderRight;
-		another.borderBottom = borderBottom;
-		another.borderTopColor = borderTopColor;
-		another.borderLeftColor = borderLeftColor;
-		another.borderBottomColor = borderBottomColor;
-		another.borderRightColor = borderRightColor;
+		setBorderLeft(dest.getBorderLeft());
+		setBorderTop(dest.getBorderTop());
+		setBorderRight(dest.getBorderRight());
+		setBorderBottom(dest.getBorderBottom());
+		setBorderTopColor(dest.getBorderTopColor());
+		setBorderLeftColor(dest.getBorderLeftColor());
+		setBorderBottomColor(dest.getBorderBottomColor());
+		setBorderRightColor(dest.getBorderRightColor());
 
-		another.dataFormat = dataFormat;
-		another.locked = locked;
-		another.hidden = hidden;
+		setDataFormat(dest.getDataFormat());
+		setLocked(dest.isLocked());
+		setHidden(dest.isHidden());
 	}
 }

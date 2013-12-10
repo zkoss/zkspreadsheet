@@ -328,14 +328,4 @@ public class CellImpl extends CellAdv {
 	public NRichText getRichText() {
 		return richText;
 	}
-
-	@Override
-	public boolean isDefaultCellStyle() {
-		checkOrphan();
-		NCellStyle nc = getCellStyle();
-		return nc == getSheet().getBook().getDefaultCellStyle();
-	}
-
-	
-
 }
