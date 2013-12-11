@@ -18,6 +18,9 @@ package org.zkoss.zss.ngapi.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.zkoss.zss.ngapi.ImporterFactory;
@@ -66,7 +69,14 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				NCellStyle style;
 				NCell cell;
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 				Date now = new Date();
+				Date dayonly = null;
+				try {
+					dayonly = sdf.parse(sdf.format(now));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 				
 				(cell = sheet1.getCell(0, 0)).setValue("Values:");
 				(cell = sheet1.getCell(0, 1)).setValue(123.45);
@@ -97,12 +107,12 @@ public class TestImporterFactory implements ImporterFactory{
 				
 				
 				(cell = sheet1.getCell(2, 0)).setValue("Date Format:");
-				(cell = sheet1.getCell(2, 1)).setValue(now);
+				(cell = sheet1.getCell(2, 1)).setValue(dayonly);
 				style = book.createCellStyle(true);
 				style.setDataFormat("yyyy/m/d");
 				cell.setCellStyle(style);
 				
-				(cell = sheet1.getCell(2, 2)).setValue(now);
+				(cell = sheet1.getCell(2, 2)).setValue(dayonly);
 				style = book.createCellStyle(true);
 				style.setDataFormat("m/d/yyy");
 				cell.setCellStyle(style);
@@ -165,10 +175,13 @@ public class TestImporterFactory implements ImporterFactory{
 				style.setFillPattern(FillPattern.SOLID_FOREGROUND);
 				style.setFillColor(book.createColor("#FFAAAA"));
 				sheet1.getRow(17).setCellStyle(style);
+				sheet1.getCell(17, 0).setStringValue("row style");
 				style = book.createCellStyle(true);
 				style.setFillPattern(FillPattern.SOLID_FOREGROUND);
 				style.setFillColor(book.createColor("#AAFFAA"));
 				sheet1.getColumn(17).setCellStyle(style);
+				sheet1.getColumn(17).setWidth(100);
+				sheet1.getCell(0, 17).setStringValue("column style");
 				
 				return book;
 			}

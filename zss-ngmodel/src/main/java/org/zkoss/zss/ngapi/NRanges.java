@@ -17,6 +17,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngapi;
 
 import org.zkoss.zss.ngapi.impl.NRangeImpl;
+import org.zkoss.zss.ngmodel.CellRegion;
+import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NName;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.AreaReference;
 import org.zkoss.zss.ngmodel.util.CellReference;
@@ -51,15 +54,26 @@ public class NRanges {
 		return new NRangeImpl(sheet,cr1.getRow(),cr1.getCol(),cr2.getRow(),cr2.getCol());
 	}
 	
-//	/** Returns the associated {@link Range} of the specified name of a NamedRange (e.g. "MyRange");
-//	 * 
-//	 * @param sheet the {@link NSheet} the Range will refer to.
-//	 * @param name the name of NamedRange  (e.g. "MyRange"); .
-//	 * @return the associated {@link Range} of the specified name 
-//	 */
-//	public static Range rangeByName(NSheet sheet, String name){
-//		return new RangeImpl(XRanges.rangeByName(((NSheetImpl)sheet).getNative(),name),sheet);
-//	}	
+	/** Returns the associated {@link NRange} of the specified name of a NamedRange (e.g. "MyRange");
+	 * 
+	 * @param sheet the {@link NSheet} the Range will refer to.
+	 * @param name the name of NamedRange  (e.g. "MyRange"); .
+	 * @return the associated {@link NRange} of the specified name 
+	 */
+	public static NRange rangeByName(NSheet sheet, String name){
+		NBook book = sheet.getBook();
+		NName n = book.getNameByName(name);
+		if(n==null){
+			throw new IllegalStateException("can't find name "+name);
+		}
+		sheet = book.getSheetByName(n.getSheetName());
+		CellRegion region = n.getRefersTo();
+		if(sheet==null || region==null){
+			throw new IllegalStateException("bad name "+name+ " : "+n.getRefersToFormula());
+		}
+		
+		return new NRangeImpl(sheet,region.row,region.column,region.lastRow,region.lastColumn);
+	}	
 	
 	/** Returns the associated {@link XRange} of the specified {@link XNSheet} and area. 
 	 *  

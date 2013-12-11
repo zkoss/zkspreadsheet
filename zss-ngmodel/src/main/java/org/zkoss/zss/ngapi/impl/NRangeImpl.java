@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ModelEvents;
@@ -39,6 +40,8 @@ import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref.RefType;
+import org.zkoss.zss.ngmodel.sys.format.FormatContext;
+import org.zkoss.zss.ngmodel.sys.format.FormatEngine;
 import org.zkoss.zss.ngmodel.sys.input.InputEngine;
 import org.zkoss.zss.ngmodel.sys.input.InputParseContext;
 import org.zkoss.zss.ngmodel.sys.input.InputResult;
@@ -123,6 +126,20 @@ public class NRangeImpl implements NRange {
 		}
 	}
 	
+	private class FirstCellVisitorTask extends ReadWriteTask{
+		private CellVisitor visitor;
+		
+		private FirstCellVisitorTask(CellVisitor visitor){
+			this.visitor = visitor;
+		}
+
+		@Override
+		public Object invoke() {
+			travelFirstCell(visitor);
+			return null;
+		}
+	}
+	
 	@Override
 	public NSheet getSheet() {
 		return rangeRefs.get(0)._sheet;
@@ -156,9 +173,17 @@ public class NRangeImpl implements NRange {
 	}
 
 	static interface CellVisitor {
+		/**
+		 * @param cell
+		 * @return true if this cell has been updated after visit
+		 */
 		boolean visit(NCell cell);
 	}
 
+	/**
+	 * travels all the cells in this range
+	 * @param visitor
+	 */
 	private void travelCells(CellVisitor visitor) {
 		LinkedHashSet<Ref> dependentSet = new LinkedHashSet<Ref>();
 		LinkedHashSet<Ref> updateSet = new LinkedHashSet<Ref>();
@@ -189,8 +214,15 @@ public class NRangeImpl implements NRange {
 			}
 		}
 
+		handleRefUpdate(bookSeries,dependentSet,updateSet);
+	}
+	
+	private void handleRefUpdate(NBookSeries bookSeries,LinkedHashSet<Ref> dependentSet,
+			LinkedHashSet<Ref> updateSet) {
 		// clear formula cache
 		for (Ref dependent : dependentSet) {
+			System.out.println(">>> Dependent "+dependent);
+			//clear the dependent's formula cache since the precedent is changed.
 			if (dependent.getType() == RefType.CELL) {
 				NBook dependentBook = bookSeries.getBook(dependent
 						.getBookName());
@@ -199,26 +231,66 @@ public class NRangeImpl implements NRange {
 				NCell cell = dependentSheet.getCell(dependent.getRow(),
 						dependent.getColumn());
 				cell.clearFormulaResultCache();
-			} else {// another type?
+			} else {// TODO another
 
 			}
 		}
 
 		// notify changes
 		for (Ref update : updateSet) {
+			System.out.println(">>> Update "+update);
 			if (update.getType() == RefType.CELL) {
 				NBook notifyBook = bookSeries.getBook(update.getBookName());
 				NSheet notifySheet = notifyBook.getSheetByName(update
 						.getSheetName());
 				NCell cell = notifySheet.getCell(update.getRow(),
 						update.getColumn());
-				((BookAdv) notifyBook).sendEvent(
-						ModelEvents.ON_CELL_UPDATED, ModelEvents.PARAM_CELL,
-						cell);
-			} else {// another type?
+				((BookAdv) notifyBook).sendEvent(ModelEvents.ON_CELL_UPDATED,
+						ModelEvents.PARAM_CELL, cell);
+			} else {// TODO another
 
 			}
 		}
+	}
+
+	/**
+	 * travels first cell in this range.
+	 * @param visitor
+	 */
+	private void travelFirstCell(CellVisitor visitor) {
+		LinkedHashSet<Ref> dependentSet = new LinkedHashSet<Ref>();
+		LinkedHashSet<Ref> updateSet = new LinkedHashSet<Ref>();
+
+		NBook book = rangeRefs.get(0)._sheet.getBook();
+		NBookSeries bookSeries = book.getBookSeries();
+		DependencyTable dependencyTable = ((BookSeriesAdv) bookSeries)
+				.getDependencyTable();
+
+		String bookName = book.getBookName();
+
+		if(rangeRefs.size()<=0)
+			return;
+		
+		EffectedRegion r = rangeRefs.get(0);
+		String sheetName = r._sheet.getSheetName();
+		CellRegion region = r.region;
+			
+		if(region.row <0 || region.column <0)
+			return;
+			
+		NCell cell = r._sheet.getCell(region.row, region.column);
+		boolean update = visitor.visit(cell);
+		if (update) {
+			Ref ref = new RefImpl(bookName, sheetName, region.row, region.column);
+			updateSet.add(ref);//always update this cell
+
+			//check if any dependent on this cell
+			Set<Ref> dependent = dependencyTable.getDependents(ref);
+			updateSet.addAll(dependent);
+			dependentSet.addAll(dependent);
+		}
+
+		handleRefUpdate(bookSeries,dependentSet,updateSet);
 	}
 
 	private boolean euqlas(Object obj1, Object obj2) {
@@ -317,5 +389,19 @@ public class NRangeImpl implements NRange {
 				return true;
 			}
 		}).doInWriteLock(getLock());
+	}
+
+	@Override
+	public String getEditText() {
+		final ResultWrap<String> r = new ResultWrap<String>();
+		new FirstCellVisitorTask(new CellVisitor() {
+			@Override
+			public boolean visit(NCell cell) {
+				FormatEngine fe = EngineFactory.getInstance().createFormatEngine();
+				r.set(fe.getEditText(cell, new FormatContext(Locales.getCurrent())));		
+				return false;//no update
+			}
+		}).doInReadLock(getLock());
+		return r.get();
 	}
 }
