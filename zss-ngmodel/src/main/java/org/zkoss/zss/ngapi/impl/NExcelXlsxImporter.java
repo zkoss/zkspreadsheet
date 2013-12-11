@@ -80,16 +80,14 @@ public class NExcelXlsxImporter extends AbstractImporter{
 	 */
 	private void importXSSFSheet(NSheet sheet, XSSFSheet xssfSheet) {
 		
-		for(Row oneRow : xssfSheet) { // Go through each row
+		for(Row poiRow : xssfSheet) { // Go through each row
 			
-			XSSFRow xssfRow = (XSSFRow) oneRow;
-			NRow row = sheet.getRow(xssfRow.getRowNum());
-			
-			for(Cell oneCell : xssfRow) { // Go through each cell
+			NRow row = sheet.getRow(poiRow.getRowNum());
+			row.setHeight(XUtils.twipToPx(poiRow.getHeight()));
+			for(Cell poiCell : poiRow) { // Go through each cell
 				
-				XSSFCell xssfCell = (XSSFCell) oneCell;
-				NCell cell = importPoiCell(sheet, xssfCell);
-				cell.setCellStyle(importXSSFCellStyle(cell, xssfCell.getCellStyle()));
+				NCell cell = importPoiCell(sheet, poiCell);
+				cell.setCellStyle(importXSSFCellStyle(cell, (XSSFCellStyle)poiCell.getCellStyle()));
 				
 				// TODO: copy hyper link
 				// nCell.getHyperlink();

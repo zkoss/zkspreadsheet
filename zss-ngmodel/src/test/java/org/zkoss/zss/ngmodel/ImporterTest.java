@@ -180,4 +180,17 @@ public class ImporterTest {
 		assertEquals(TypeOffset.SUB, sheet.getCell(32, 2).getCellStyle().getFont().getTypeOffset());
 		assertEquals(TypeOffset.NONE, sheet.getCell(32, 3).getCellStyle().getFont().getTypeOffset());
 	}
+	
+	@Test
+	public void rowTest(){
+		NBook book = null;
+		try {
+			book = importer.imports(fileUnderTest, "XSSFBook");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		NSheet sheet = book.getSheetByName("Style");
+		assertEquals(28, sheet.getRow(0).getHeight());
+		assertEquals(20, sheet.getRow(1).getHeight());
+	}
 }
