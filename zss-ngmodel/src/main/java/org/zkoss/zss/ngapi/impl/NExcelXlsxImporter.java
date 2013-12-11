@@ -18,76 +18,119 @@ package org.zkoss.zss.ngapi.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.Font;
+import org.zkoss.poi.ss.usermodel.ErrorConstants;
 import org.zkoss.poi.ss.usermodel.HorizontalAlignment;
 import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.xssf.usermodel.XSSFCell;
 import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
 import org.zkoss.poi.xssf.usermodel.XSSFFont;
 import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
+import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NBooks;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
+import org.zkoss.zss.ngmodel.NColor;
 import org.zkoss.zss.ngmodel.NFont;
-import org.zkoss.zss.ngmodel.NFont.TypeOffset;
-import org.zkoss.zss.ngmodel.NFont.Underline;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
+import org.zkoss.zss.ngmodel.impl.ColorImpl;
+import org.zkoss.zss.ngmodel.impl.FontImpl;
 /**
- * Convert Excel XLSX format file to a Spreadsheet {@link NBook} model including following information:
+ * Convert Excel XLSX format file to Spreadsheet book model including following information:
  * Book:
  * 		name
  * Sheet:
- * 		name, column width, row height, hidden row (column), 
+ * 		name
  * Cell:
- * 		type, value, font with color and style, type offset(normal or subscript), background color, border 
+ * 		type, value, font with color and style
  * @author dennis
  * @since 3.5.0
  */
 public class NExcelXlsxImporter extends AbstractImporter{
 
-	//<XSSF style index, NCellStyle object>
-	private Map<Short, NCellStyle> importedStyle = new HashMap<Short, NCellStyle>();
 
 	@Override
 	public NBook imports(InputStream is, String bookName) throws IOException {
 
-		XSSFWorkbook workbook = new XSSFWorkbook(is);
-		NBook book = new BookImpl(bookName);
-		// Go through all sheet in book
-		for(XSSFSheet xssfSheet : workbook) {
-			NSheet nSheet = book.createSheet(xssfSheet.getSheetName());
-			importXSSFSheet(nSheet, xssfSheet);
-		}
+		Workbook workbook = new XSSFWorkbook(is);
+		NBook book = NBooks.createBook(bookName);
+		importXSSFBook(book, (XSSFWorkbook) workbook);
+		
 		return book;
 	}
 
+	/**
+	 * Copy XSSFBook attributes into NBook
+	 * 
+	 * @param nBook
+	 * @param xssfBook
+	 */
+	private void importXSSFBook(NBook nBook, XSSFWorkbook xssfBook) {
+		
+		// FIXME: Should I handle style in the beginning?
+		/**
+		 * Handle book style table
+		 */
+		//StylesTable styleTable = xssfBook.getStylesSource();		
+		/*
+		 * Copy XSSFFont into NFont.
+		 * Create Font into table for each Font.
+		 */		
+//		for(XSSFFont xssfFont : styleTable.getFonts()) {
+//			
+//			NFont nFont = new FontImpl();
+//			
+//			NColor nColor = new ColorImpl(xssfFont.getXSSFColor().getRgb());
+//			// FIXME
+//			// Should I create color?
+//			// nBook.createColor();
+//			
+//			nFont.setColor(nColor);
+//			nFont.setBoldweight(NFont.Boldweight.values()[xssfFont.getBoldweight()]);
+//			nFont.setHeight(xssfFont.getFontHeight());
+//			nFont.setItalic(xssfFont.getItalic());
+//			nFont.setName(xssfFont.getFontName());
+//			nFont.setStrikeout(xssfFont.getStrikeout());
+//			nFont.setTypeOffset(NFont.TypeOffset.values()[xssfFont.getTypeOffset()]);
+//			nFont.setUnderline(NFont.Underline.values()[xssfFont.getUnderline()]);
+//			
+//			bookAdv.createFont(nFont ,true);
+//		}
+		
+		// Go through all sheet in book
+		for(XSSFSheet xssfSheet : xssfBook) {
+			NSheet nSheet = nBook.createSheet(xssfSheet.getSheetName());
+			importXSSFSheet(nSheet, xssfSheet);
+		}
+	}
 
 	/**
 	 * Copy XSSFSheet attributes into NSheet
-	 * @param sheet
+	 * @param nSheet
 	 * @param xssfSheet
 	 */
-	private void importXSSFSheet(NSheet sheet, XSSFSheet xssfSheet) {
+	private void importXSSFSheet(NSheet nSheet, XSSFSheet xssfSheet) {
 		
-		for(Row poiRow : xssfSheet) { // Go through each row
+		for(Row row : xssfSheet) { // Go through each row
 			
-			NRow row = sheet.getRow(poiRow.getRowNum());
-			row.setHeight(XUtils.twipToPx(poiRow.getHeight()));
-			for(Cell poiCell : poiRow) { // Go through each cell
+			XSSFRow xssfRow = (XSSFRow) row;
+			NRow nRow = nSheet.getRow(xssfRow.getRowNum());
+			
+			for(Cell cell : xssfRow) { // Go through each cell
 				
-				NCell cell = importPoiCell(sheet, poiCell);
-				cell.setCellStyle(importXSSFCellStyle(cell, (XSSFCellStyle)poiCell.getCellStyle()));
+				XSSFCell xssfCell = (XSSFCell) cell;
+				NCell nCell = importXSSFCell(nSheet, xssfCell);
+				nCell.setCellStyle(importXSSFCellStyle(nCell, xssfCell.getCellStyle()));
 				
 				// TODO: copy hyper link
 				// nCell.getHyperlink();
@@ -97,39 +140,87 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		
 	}
 	
+	private NCell importXSSFCell(NSheet sheet, XSSFCell xssfCell){
+		NCell cell = sheet.getCell(xssfCell.getRowIndex(), xssfCell.getColumnIndex());
+		switch (xssfCell.getCellType()){
+			case Cell.CELL_TYPE_NUMERIC:
+				cell.setNumberValue(xssfCell.getNumericCellValue());
+				break;
+			case Cell.CELL_TYPE_STRING:
+				cell.setStringValue(xssfCell.getStringCellValue());
+				break;
+			case Cell.CELL_TYPE_BOOLEAN:
+				cell.setBooleanValue(xssfCell.getBooleanCellValue());
+				break;
+			case Cell.CELL_TYPE_FORMULA:
+				cell.setFormulaValue(xssfCell.getCellFormula());
+				break;
+			case Cell.CELL_TYPE_ERROR:
+				cell.setErrorValue(convertErrorCode(xssfCell.getErrorCellValue()));
+				break;
+			case Cell.CELL_TYPE_BLANK:
+				//do nothing because spreadsheet model auto creates blank cells
+				break;
+			default:
+				//TODO log "ignore a cell with unknown.
+		}
+		return cell;
+	}
+	
+	private ErrorValue convertErrorCode(byte errorCellValue){
+		switch (errorCellValue){
+			case ErrorConstants.ERROR_NAME:
+				return new ErrorValue(ErrorValue.INVALID_NAME);
+			case ErrorConstants.ERROR_VALUE:
+				return new ErrorValue(ErrorValue.INVALID_VALUE);
+			default:
+				//TODO log it
+				return new ErrorValue(ErrorValue.INVALID_NAME);
+		}
+		
+	}
 	/**
 	 * copy XSSFCellStyle attributes into nCellStyle
 	 * @param nCellStyle
 	 * @param xssfCellStyle
 	 */
-	private NCellStyle importXSSFCellStyle(NCell cell, XSSFCellStyle xssfCellStyle) {
-		NCellStyle cellStyle = retrieveCellStyle(cell, xssfCellStyle);
+	private NCellStyle importXSSFCellStyle(NCell nCell, XSSFCellStyle xssfCellStyle) {
 		
-		//font
-		XSSFFont xssfFont = xssfCellStyle.getFont();
-		NFont font = cell.getSheet().getBook().createFont(true);
-		font.setName(xssfFont.getFontName());
-		if (xssfFont.getBold()){
-			font.setBoldweight(NFont.Boldweight.BOLD);
-		}else{
-			font.setBoldweight(NFont.Boldweight.NORMAL);
-		}
-		font.setItalic(xssfFont.getItalic());
-		font.setStrikeout(xssfFont.getStrikeout());
-		font.setUnderline(convertUnderline(xssfFont));
-
-		font.setHeightPoints(xssfFont.getFontHeightInPoints());
-		font.setTypeOffset(convertTypeOffset(xssfFont));
-		// nBook.createFont();
-		//			NColor color = cell.getSheet().getBook().createColor(xssfFont.getXSSFColor().getARGBHex());
-		//			font.setColor(color);
-
-		cellStyle.setFont(font);
-		// FIXME
-
-//		cellStyle.setLocked(xssfCellStyle.getLocked());
-
-		/*
+		NCellStyle nCellStyle = null;
+		
+		if(!isStyleExist(xssfCellStyle.getIndex())) {
+			
+			nCellStyle = nCell.getCellStyle();
+		
+			XSSFFont xssfFont = xssfCellStyle.getFont();
+			//FIXME should create font
+			NFont nFont = nCell.getSheet().getBook().createFont(true);
+			
+			NColor nColor = new ColorImpl(xssfFont.getXSSFColor().getRgb());
+			
+			// FIXME
+			// Should I create color?
+			// nBook.createColor();
+			
+			nFont.setColor(nColor);
+			// FIXME: ENUM
+			nFont.setBoldweight(NFont.Boldweight.values()[xssfFont.getBoldweight()]);
+			nFont.setHeightPoints(xssfFont.getFontHeightInPoints());
+			nFont.setItalic(xssfFont.getItalic());
+			nFont.setName(xssfFont.getFontName());
+			nFont.setStrikeout(xssfFont.getStrikeout());
+			// FIXME: ENUM
+			nFont.setTypeOffset(NFont.TypeOffset.values()[xssfFont.getTypeOffset()]);
+			// FIXME: ENUM
+			nFont.setUnderline(NFont.Underline.values()[xssfFont.getUnderline()]);
+			
+			// FIXME
+			// Should I create font?
+			// nBook.createFont();
+			
+			nCellStyle.setLocked(xssfCellStyle.getLocked());
+			
+			
 			nCellStyle.setAlignment(poiToNGAlignment(xssfCellStyle.getAlignmentEnum()));
 			nCellStyle.setBorderBottom(poiToBorderType(xssfCellStyle.getBorderBottomEnum()));
 			nCellStyle.setBorderBottomColor(new ColorImpl(xssfCellStyle.getBottomBorderColorColor().getRgb()));
@@ -142,62 +233,26 @@ public class NExcelXlsxImporter extends AbstractImporter{
 			nCellStyle.setDataFormat(xssfCellStyle.getDataFormatString());
 			//nCellStyle.setFillColor(fillColor);
 //			nCellStyle.setFillPattern(fillPattern);
-			nCellStyle.setFont(font);
+			nCellStyle.setFont(nFont);
 			nCellStyle.setHidden(xssfCellStyle.getHidden());
 //			nCellStyle.setVerticalAlignment(verticalAlignment);
 			nCellStyle.setWrapText(xssfCellStyle.getWrapText());
-		 */
 
-		return cellStyle;
+			
+		}
+		
+		return nCellStyle;
 		
 	}
-
-
-	/*
-	 * Retrieve corresponding CellStyle if same XSSFCellStyle is imported before.
-	 * Otherwise, create a new one. 
-	 */
-	private NCellStyle retrieveCellStyle(NCell cell, XSSFCellStyle xssfCellStyle) {
-		NCellStyle cellStyle;
-		if(importedStyle.containsKey(xssfCellStyle.getIndex())) {
-			cellStyle = importedStyle.get(xssfCellStyle.getIndex());
-		}else{
-			cellStyle = cell.getSheet().getBook().createCellStyle(true);
-			cell.setCellStyle(cellStyle);
-			importedStyle.put(xssfCellStyle.getIndex(), cellStyle);
-		}
-		return cellStyle;
-	}
 	
-	/*
-	 * reference BookHelper.getFontCSSStyle()
+	/**
+	 * TODO
+	 * Utility
+	 * does style exist ID in the POI style table
+	 * @return
 	 */
-	private Underline convertUnderline(XSSFFont xssfFont){
-		switch(xssfFont.getUnderline()){
-		case XSSFFont.U_SINGLE:
-			return NFont.Underline.SINGLE;
-		case XSSFFont.U_DOUBLE:
-			return NFont.Underline.DOUBLE;
-		case XSSFFont.U_SINGLE_ACCOUNTING:
-			return NFont.Underline.SINGLE_ACCOUNTING;
-		case XSSFFont.U_DOUBLE_ACCOUNTING:
-			return NFont.Underline.DOUBLE_ACCOUNTING;
-		case XSSFFont.U_NONE:
-		default:
-			return NFont.Underline.NONE;
-		}
-	}
-	
-	private TypeOffset convertTypeOffset(XSSFFont xssfFont){
-		switch(xssfFont.getTypeOffset()){
-		case Font.SS_SUB:
-			return TypeOffset.SUB;
-		case Font.SS_SUPER:
-			return TypeOffset.SUPER;
-		case Font.SS_NONE:
-		default:
-			return TypeOffset.NONE;
-		}
+	private boolean isStyleExist(short styleID) {
+		return false;
 	}
 	
 	private BorderType poiToBorderType(BorderStyle poiBorder) {

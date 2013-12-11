@@ -22,6 +22,7 @@ import java.io.InputStream;
 import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NBooks;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 /**
  * 
@@ -35,7 +36,7 @@ public class NExcelXlsImporter extends AbstractImporter{
 	public NBook imports(InputStream is, String bookName) throws IOException {
 
 		Workbook workbook = new HSSFWorkbook(is);
-		NBook book = new BookImpl(bookName);
+		NBook book = NBooks.createBook(bookName);
 		
 		return book;
 	}

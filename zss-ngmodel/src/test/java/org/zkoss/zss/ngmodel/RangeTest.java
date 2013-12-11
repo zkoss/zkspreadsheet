@@ -17,7 +17,7 @@ public class RangeTest {
 	@Test
 	public void testGetRange(){
 		
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet1 = book.createSheet("Sheet1");
 		
 		
@@ -44,7 +44,7 @@ public class RangeTest {
 	
 	@Test
 	public void testGeneralCellValue1(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		Date now = new Date();
 		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
@@ -93,7 +93,7 @@ public class RangeTest {
 	
 	@Test
 	public void testGeneralCellValue2(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		Date now = new Date();
 		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
@@ -139,7 +139,7 @@ public class RangeTest {
 	
 	@Test
 	public void testFormulaDependency(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		NRanges.range(sheet,0,0).setEditText("999");

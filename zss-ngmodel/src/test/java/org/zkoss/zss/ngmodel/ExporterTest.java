@@ -25,7 +25,7 @@ public class ExporterTest {
 	@BeforeClass
 	static public void createBookForExport(){
 		String bookName = "book for export";
-		bookUnderTest = new BookImpl(bookName); 
+		bookUnderTest = NBooks.createBook(bookName); 
 	}
 	
 	@Test

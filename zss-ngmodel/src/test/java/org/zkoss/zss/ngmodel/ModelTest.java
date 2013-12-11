@@ -32,7 +32,7 @@ public class ModelTest {
 
 	@Test
 	public void testSheet(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet1 = book.createSheet("Sheet1");
 		Assert.assertEquals(1, book.getNumOfSheet());
 		NSheet sheet2 = book.createSheet("Sheet2");
@@ -134,7 +134,7 @@ public class ModelTest {
 	
 	@Test
 	public void testRowColumn(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet1 = book.createSheet("Sheet1");
 		
 		sheet1.setDefaultColumnWidth(100);
@@ -210,7 +210,7 @@ public class ModelTest {
 	}
 	@Test
 	public void testReferenceString(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet1 = book.createSheet("Sheet1");
 		
 		Assert.assertEquals("1",sheet1.getRow(0).asString());
@@ -235,7 +235,7 @@ public class ModelTest {
 	
 	@Test
 	public void testCellRange(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		book.createSheet("Sheet1");
 		Assert.assertEquals(1, book.getNumOfSheet());
 		NSheet sheet = book.createSheet("Sheet2");;
@@ -367,7 +367,7 @@ public class ModelTest {
 	
 	@Test
 	public void testClearSheetRow(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		for(int i=10;i<=20;i+=2){
@@ -426,7 +426,7 @@ public class ModelTest {
 	
 	@Test
 	public void testClearSheetColumn(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		for(int i=10;i<=20;i+=2){
@@ -488,7 +488,7 @@ public class ModelTest {
 	
 	@Test
 	public void testClearSheetCell(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		for(int i=10;i<=20;i+=2){
@@ -559,7 +559,7 @@ public class ModelTest {
 	
 	@Test
 	public void testInsertDeleteRow(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		for(int i=10;i<=20;i+=2){
@@ -656,7 +656,7 @@ public class ModelTest {
 	
 	@Test
 	public void testInsertDeleteColumn(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		for(int i=10;i<=20;i+=2){
@@ -758,7 +758,7 @@ public class ModelTest {
 	
 	@Test
 	public void testStyle(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		NCellStyle style = book.getDefaultCellStyle();
@@ -805,7 +805,7 @@ public class ModelTest {
 	
 	@Test
 	public void testStyleSearch(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		NCellStyle style1 = book.createCellStyle(true);
@@ -946,7 +946,7 @@ public class ModelTest {
 	
 	@Test
 	public void testFontSearch(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		NFont font1 = book.createFont(true);
@@ -1002,7 +1002,7 @@ public class ModelTest {
 	
 	@Test
 	public void testGeneralCellValue(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		Date now = new Date();
 		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
@@ -1091,7 +1091,7 @@ public class ModelTest {
 	
 	@Test
 	public void testGeneralCellValue2(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		Date now = new Date();
 		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
@@ -1134,7 +1134,7 @@ public class ModelTest {
 	
 	@Test
 	public void testGeneralCellValueError(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		Date now = new Date();
 		ErrorValue err = new ErrorValue(ErrorValue.INVALID_FORMULA);
@@ -1210,7 +1210,7 @@ public class ModelTest {
 	
 	@Test
 	public void testPicture(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 
 		NPicture p1 = sheet.addPicture(Format.PNG, new byte[0], new NViewAnchor(6, 10, 22, 33, 800, 600));
@@ -1265,7 +1265,7 @@ public class ModelTest {
 	
 	@Test
 	public void testChart(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 
 		//no chart data implement yet
@@ -1337,7 +1337,7 @@ public class ModelTest {
 	
 	@Test
 	public void testChartData(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		
 		NChart p1 = sheet.addChart(NChart.NChartType.BAR, new NViewAnchor(6, 10, 22, 33, 800, 600));
@@ -1406,7 +1406,7 @@ public class ModelTest {
 	
 	@Test
 	public void testDeleteRelease(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		NCell cell = sheet.getCell(10, 10);
 		cell.setFormulaValue("SUM(999)");
@@ -1425,7 +1425,7 @@ public class ModelTest {
 	
 	@Test
 	public void testMergedRange(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		sheet.addMergedRegion(new CellRegion(1,1,2,2));
 		sheet.addMergedRegion(new CellRegion(3,4,5,6));
@@ -1535,7 +1535,7 @@ public class ModelTest {
 	}
 	@Test
 	public void testSerializable(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet = book.createSheet("Sheet 1");
 		book.createSheet("Sheet 2");
 		Date now = new Date();
@@ -1632,7 +1632,7 @@ public class ModelTest {
 	
 	@Test
 	public void testName(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		book.createSheet("Sheet1");
 		
 		NName name1 = book.createName("test1");

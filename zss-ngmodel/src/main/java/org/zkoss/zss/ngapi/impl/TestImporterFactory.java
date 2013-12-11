@@ -27,6 +27,7 @@ import org.zkoss.zss.ngapi.ImporterFactory;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.NBook;
+import org.zkoss.zss.ngmodel.NBooks;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
@@ -48,7 +49,7 @@ public class TestImporterFactory implements ImporterFactory{
 			
 			@Override
 			public NBook imports(InputStream is, String bookName) throws IOException {
-				BookImpl book = new BookImpl(bookName);
+				NBook book = NBooks.createBook(bookName);
 				
 				NSheet sheet1 = book.createSheet("Sheet 1");
 				sheet1.getColumn(0).setWidth(120);

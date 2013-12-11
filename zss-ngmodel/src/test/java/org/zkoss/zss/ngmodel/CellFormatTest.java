@@ -306,7 +306,7 @@ public class CellFormatTest {
 	
 	/* utility methods */
 	private NCell createCell(){
-		NBook book = new BookImpl("book1");
+		NBook book = NBooks.createBook("book1");
 		NSheet sheet1 = book.createSheet("Sheet1");
 		return sheet1.getCell(0,0);
 	}

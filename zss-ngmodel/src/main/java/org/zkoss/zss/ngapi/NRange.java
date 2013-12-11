@@ -38,6 +38,7 @@ public interface NRange {
 	
 	public void setValue(Object value);
 	public void clear();
+	public void notifyChange();
 	
 	
 	

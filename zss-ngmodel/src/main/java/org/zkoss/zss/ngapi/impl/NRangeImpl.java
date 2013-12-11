@@ -175,16 +175,15 @@ public class NRangeImpl implements NRange {
 	 */
 	private void travelCells(CellVisitor visitor) {
 		LinkedHashSet<Ref> dependentSet = new LinkedHashSet<Ref>();
-		LinkedHashSet<Ref> updateSet = new LinkedHashSet<Ref>();
+		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 
 		NBook book = rangeRefs.get(0)._sheet.getBook();
 		NBookSeries bookSeries = book.getBookSeries();
 		DependencyTable dependencyTable = ((BookSeriesAdv) bookSeries)
 				.getDependencyTable();
 
-		String bookName = book.getBookName();
-
 		for (EffectedRegion r : rangeRefs) {
+			String bookName = r._sheet.getBook().getBookName();
 			String sheetName = r._sheet.getSheetName();
 			CellRegion region = r.region;
 			for (int i = region.row; i <= region.lastRow; i++) {
@@ -193,21 +192,21 @@ public class NRangeImpl implements NRange {
 					boolean update = visitor.visit(cell);
 					if (update) {
 						Ref ref = new RefImpl(bookName, sheetName, i, j);
-						updateSet.add(ref);
+						notifySet.add(ref);
 
 						Set<Ref> dependent = dependencyTable.getDependents(ref);
-						updateSet.addAll(dependent);
+						notifySet.addAll(dependent);
 						dependentSet.addAll(dependent);
 					}
 				}
 			}
 		}
 
-		handleRefUpdate(bookSeries,dependentSet,updateSet);
+		handleRefDependent(bookSeries,dependentSet);
+		handleRefNotify(bookSeries,notifySet);
 	}
 	
-	private void handleRefUpdate(NBookSeries bookSeries,LinkedHashSet<Ref> dependentSet,
-			LinkedHashSet<Ref> updateSet) {
+	private void handleRefDependent(NBookSeries bookSeries,LinkedHashSet<Ref> dependentSet) {
 		// clear formula cache
 		for (Ref dependent : dependentSet) {
 			System.out.println(">>> Dependent "+dependent);
@@ -224,17 +223,19 @@ public class NRangeImpl implements NRange {
 
 			}
 		}
-
+	}
+	
+	private void handleRefNotify(NBookSeries bookSeries,LinkedHashSet<Ref> notifySet) {
 		// notify changes
-		for (Ref update : updateSet) {
-			System.out.println(">>> Update "+update);
-			RefType type = update.getType();
+		for (Ref notify : notifySet) {
+			System.out.println(">>> Notify "+notify);
+			RefType type = notify.getType();
 			if (type == RefType.CELL || type == RefType.AREA) {
-				NBook notifyBook = bookSeries.getBook(update.getBookName());
-				NSheet notifySheet = notifyBook.getSheetByName(update
+				NBook notifyBook = bookSeries.getBook(notify.getBookName());
+				NSheet notifySheet = notifyBook.getSheetByName(notify
 						.getSheetName());
 				((BookAdv) notifyBook).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,notifyBook,notifySheet,
-						new CellRegion(update.getRow(),update.getColumn(),update.getLastRow(),update.getLastColumn())));
+						new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
 			} else {// TODO another
 
 			}
@@ -247,7 +248,7 @@ public class NRangeImpl implements NRange {
 	 */
 	private void travelFirstCell(CellVisitor visitor) {
 		LinkedHashSet<Ref> dependentSet = new LinkedHashSet<Ref>();
-		LinkedHashSet<Ref> updateSet = new LinkedHashSet<Ref>();
+		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 
 		NBook book = rangeRefs.get(0)._sheet.getBook();
 		NBookSeries bookSeries = book.getBookSeries();
@@ -270,15 +271,16 @@ public class NRangeImpl implements NRange {
 		boolean update = visitor.visit(cell);
 		if (update) {
 			Ref ref = new RefImpl(bookName, sheetName, region.row, region.column);
-			updateSet.add(ref);//always update this cell
+			notifySet.add(ref);//always update this cell
 
 			//check if any dependent on this cell
 			Set<Ref> dependent = dependencyTable.getDependents(ref);
-			updateSet.addAll(dependent);
+			notifySet.addAll(dependent);
 			dependentSet.addAll(dependent);
 		}
 
-		handleRefUpdate(bookSeries,dependentSet,updateSet);
+		handleRefDependent(bookSeries,dependentSet);
+		handleRefNotify(bookSeries,notifySet);
 	}
 
 	private boolean euqlas(Object obj1, Object obj2) {
@@ -398,5 +400,20 @@ public class NRangeImpl implements NRange {
 			}
 		}).doInReadLock(getLock());
 		return r.get();
+	}
+
+	@Override
+	public void notifyChange() {
+		NBook book = rangeRefs.get(0)._sheet.getBook();
+		NBookSeries bookSeries = book.getBookSeries();
+		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
+		for (EffectedRegion r : rangeRefs) {
+			String bookName = r._sheet.getBook().getBookName();
+			String sheetName = r._sheet.getSheetName();
+			CellRegion region = r.region;
+			Ref ref = new RefImpl(bookName, sheetName, region.row, region.column,region.lastRow,region.lastColumn);
+			notifySet.add(ref);
+		}
+		handleRefNotify(bookSeries,notifySet);
 	}
 }

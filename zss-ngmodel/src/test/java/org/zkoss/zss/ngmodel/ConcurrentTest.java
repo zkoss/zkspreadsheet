@@ -114,7 +114,7 @@ public class ConcurrentTest {
 	
 	@Test
 	public void testConcurrentRead(){
-		NBook book = new BookImpl("test");
+		NBook book = NBooks.createBook("test");
 		int sheetNo = 5;
 		int rowNo = 1000;
 		int columnNo = 50;
