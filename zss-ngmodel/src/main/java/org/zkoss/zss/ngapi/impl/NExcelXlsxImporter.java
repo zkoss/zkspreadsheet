@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.ErrorConstants;
 import org.zkoss.poi.ss.usermodel.Font;
 import org.zkoss.poi.ss.usermodel.HorizontalAlignment;
 import org.zkoss.poi.ss.usermodel.Row;
@@ -33,7 +32,6 @@ import org.zkoss.poi.xssf.usermodel.XSSFFont;
 import org.zkoss.poi.xssf.usermodel.XSSFRow;
 import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
-import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
@@ -90,7 +88,7 @@ public class NExcelXlsxImporter extends AbstractImporter{
 			for(Cell oneCell : xssfRow) { // Go through each cell
 				
 				XSSFCell xssfCell = (XSSFCell) oneCell;
-				NCell cell = importXSSFCell(sheet, xssfCell);
+				NCell cell = importPoiCell(sheet, xssfCell);
 				cell.setCellStyle(importXSSFCellStyle(cell, xssfCell.getCellStyle()));
 				
 				// TODO: copy hyper link
@@ -101,45 +99,6 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		
 	}
 	
-	private NCell importXSSFCell(NSheet sheet, XSSFCell xssfCell){
-		NCell cell = sheet.getCell(xssfCell.getRowIndex(), xssfCell.getColumnIndex());
-		switch (xssfCell.getCellType()){
-			case Cell.CELL_TYPE_NUMERIC:
-				cell.setNumberValue(xssfCell.getNumericCellValue());
-				break;
-			case Cell.CELL_TYPE_STRING:
-				cell.setStringValue(xssfCell.getStringCellValue());
-				break;
-			case Cell.CELL_TYPE_BOOLEAN:
-				cell.setBooleanValue(xssfCell.getBooleanCellValue());
-				break;
-			case Cell.CELL_TYPE_FORMULA:
-				cell.setFormulaValue(xssfCell.getCellFormula());
-				break;
-			case Cell.CELL_TYPE_ERROR:
-				cell.setErrorValue(convertErrorCode(xssfCell.getErrorCellValue()));
-				break;
-			case Cell.CELL_TYPE_BLANK:
-				//do nothing because spreadsheet model auto creates blank cells
-				break;
-			default:
-				//TODO log "ignore a cell with unknown.
-		}
-		return cell;
-	}
-	
-	private ErrorValue convertErrorCode(byte errorCellValue){
-		switch (errorCellValue){
-			case ErrorConstants.ERROR_NAME:
-				return new ErrorValue(ErrorValue.INVALID_NAME);
-			case ErrorConstants.ERROR_VALUE:
-				return new ErrorValue(ErrorValue.INVALID_VALUE);
-			default:
-				//TODO log it
-				return new ErrorValue(ErrorValue.INVALID_NAME);
-		}
-		
-	}
 	/**
 	 * copy XSSFCellStyle attributes into nCellStyle
 	 * @param nCellStyle
@@ -170,7 +129,7 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		cellStyle.setFont(font);
 		// FIXME
 
-		cellStyle.setLocked(xssfCellStyle.getLocked());
+//		cellStyle.setLocked(xssfCellStyle.getLocked());
 
 		/*
 			nCellStyle.setAlignment(poiToNGAlignment(xssfCellStyle.getAlignmentEnum()));
