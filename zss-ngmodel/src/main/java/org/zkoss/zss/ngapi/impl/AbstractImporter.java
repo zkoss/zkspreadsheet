@@ -1,5 +1,6 @@
 package org.zkoss.zss.ngapi.impl;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,7 +16,7 @@ public abstract class AbstractImporter implements NImporter{
 	public NBook imports(File file, String bookName) throws IOException {
 		InputStream is = null;
 		try{
-			is = new FileInputStream(file);
+			is = new BufferedInputStream(new FileInputStream(file));
 			return imports(is,bookName);
 		}finally{
 			if(is!=null){
