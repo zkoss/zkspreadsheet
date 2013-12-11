@@ -120,7 +120,7 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		font.setStrikeout(xssfFont.getStrikeout());
 		font.setUnderline(convertUnderline(xssfFont));
 
-		font.setHeight(xssfFont.getFontHeightInPoints());
+		font.setHeightPoints(xssfFont.getFontHeightInPoints());
 		font.setTypeOffset(convertTypeOffset(xssfFont));
 		// nBook.createFont();
 		//			NColor color = cell.getSheet().getBook().createColor(xssfFont.getXSSFColor().getARGBHex());

@@ -172,8 +172,8 @@ public class ImporterTest {
 		assertEquals(NFont.Underline.NONE, sheet.getCell(9, 7).getCellStyle().getFont().getUnderline());
 		
 		//height
-		assertEquals(8, sheet.getCell(6, 0).getCellStyle().getFont().getHeight());
-		assertEquals(72, sheet.getCell(6, 3).getCellStyle().getFont().getHeight());
+		assertEquals(8, sheet.getCell(6, 0).getCellStyle().getFont().getHeightPoints());
+		assertEquals(72, sheet.getCell(6, 3).getCellStyle().getFont().getHeightPoints());
 		
 		//type offset
 		assertEquals(TypeOffset.SUPER, sheet.getCell(32, 1).getCellStyle().getFont().getTypeOffset());
