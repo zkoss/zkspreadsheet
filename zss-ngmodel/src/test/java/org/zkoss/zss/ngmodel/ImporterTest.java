@@ -22,6 +22,14 @@ public class ImporterTest {
 	static private File fileUnderTest;
 	private NImporter importer; 
 	
+	/**
+	 * For exporter test to specify its exported file to test.
+	 * @param file
+	 */
+	static public void setFileUnderTest(File file){
+		fileUnderTest = file;
+	}
+	
 	@BeforeClass
 	static public void initialize(){
 		try{
@@ -192,5 +200,19 @@ public class ImporterTest {
 		NSheet sheet = book.getSheetByName("Style");
 		assertEquals(28, sheet.getRow(0).getHeight());
 		assertEquals(20, sheet.getRow(1).getHeight());
+	}
+	
+	@Test
+	public void columnTest(){
+		NBook book = null;
+		try {
+			book = importer.imports(fileUnderTest, "XSSFBook");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		NSheet sheet = book.getSheetByName("Style");
+		
+		assertEquals(28, sheet.getColumn(0).getWidth());
+		assertEquals(20, sheet.getColumn(1).getWidth());
 	}
 }
