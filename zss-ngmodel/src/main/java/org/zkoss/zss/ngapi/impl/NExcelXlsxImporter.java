@@ -19,8 +19,10 @@ package org.zkoss.zss.ngapi.impl;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.zkoss.poi.ss.usermodel.BorderStyle;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.ErrorConstants;
+import org.zkoss.poi.ss.usermodel.HorizontalAlignment;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.xssf.usermodel.XSSFCell;
@@ -33,6 +35,8 @@ import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
+import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NColor;
 import org.zkoss.zss.ngmodel.NFont;
 import org.zkoss.zss.ngmodel.NRow;
@@ -124,8 +128,8 @@ public class NExcelXlsxImporter extends AbstractImporter{
 			for(Cell cell : xssfRow) { // Go through each cell
 				
 				XSSFCell xssfCell = (XSSFCell) cell;
-				importXSSFCell(nSheet, xssfCell);
-//				importXSSFCellStyle(nCell.getCellStyle(), xssfCell.getCellStyle());
+				NCell nCell = importXSSFCell(nSheet, xssfCell);
+				nCell.setCellStyle(importXSSFCellStyle(nCell, xssfCell.getCellStyle()));
 				
 				// TODO: copy hyper link
 				// nCell.getHyperlink();
@@ -179,33 +183,110 @@ public class NExcelXlsxImporter extends AbstractImporter{
 	 * @param nCellStyle
 	 * @param xssfCellStyle
 	 */
-	private void importXSSFCellStyle(NCellStyle nCellStyle, XSSFCellStyle xssfCellStyle) {
+	private NCellStyle importXSSFCellStyle(NCell nCell, XSSFCellStyle xssfCellStyle) {
 		
-		XSSFFont xssfFont = xssfCellStyle.getFont();
-		NFont nFont = new FontImpl();
+		NCellStyle nCellStyle = null;
 		
-		NColor nColor = new ColorImpl(xssfFont.getXSSFColor().getRgb());
+		if(!isStyleExist(xssfCellStyle.getIndex())) {
+			
+			nCellStyle = nCell.getCellStyle();
 		
-		// FIXME
-		// Should I create color?
-		// nBook.createColor();
+			XSSFFont xssfFont = xssfCellStyle.getFont();
+			//FIXME should create font
+			NFont nFont = nCell.getSheet().getBook().createFont(true);
+			
+			NColor nColor = new ColorImpl(xssfFont.getXSSFColor().getRgb());
+			
+			// FIXME
+			// Should I create color?
+			// nBook.createColor();
+			
+			nFont.setColor(nColor);
+			// FIXME: ENUM
+			nFont.setBoldweight(NFont.Boldweight.values()[xssfFont.getBoldweight()]);
+			nFont.setHeight(xssfFont.getFontHeight());
+			nFont.setItalic(xssfFont.getItalic());
+			nFont.setName(xssfFont.getFontName());
+			nFont.setStrikeout(xssfFont.getStrikeout());
+			// FIXME: ENUM
+			nFont.setTypeOffset(NFont.TypeOffset.values()[xssfFont.getTypeOffset()]);
+			// FIXME: ENUM
+			nFont.setUnderline(NFont.Underline.values()[xssfFont.getUnderline()]);
+			
+			// FIXME
+			// Should I create font?
+			// nBook.createFont();
+			
+			nCellStyle.setLocked(xssfCellStyle.getLocked());
+			
+			
+			nCellStyle.setAlignment(poiToNGAlignment(xssfCellStyle.getAlignmentEnum()));
+			nCellStyle.setBorderBottom(poiToBorderType(xssfCellStyle.getBorderBottomEnum()));
+			nCellStyle.setBorderBottomColor(new ColorImpl(xssfCellStyle.getBottomBorderColorColor().getRgb()));
+			nCellStyle.setBorderLeft(poiToBorderType(xssfCellStyle.getBorderLeftEnum()));
+			nCellStyle.setBorderLeftColor(new ColorImpl(xssfCellStyle.getLeftBorderColorColor().getRgb()));
+			nCellStyle.setBorderTop(poiToBorderType(xssfCellStyle.getBorderTopEnum()));
+			nCellStyle.setBorderTopColor(new ColorImpl(xssfCellStyle.getTopBorderColorColor().getRgb()));
+			nCellStyle.setBorderRight(poiToBorderType(xssfCellStyle.getBorderRightEnum()));
+			nCellStyle.setBorderRightColor(new ColorImpl(xssfCellStyle.getRightBorderColorColor().getRgb()));
+			nCellStyle.setDataFormat(xssfCellStyle.getDataFormatString());
+			//nCellStyle.setFillColor(fillColor);
+//			nCellStyle.setFillPattern(fillPattern);
+			nCellStyle.setFont(nFont);
+			nCellStyle.setHidden(xssfCellStyle.getHidden());
+//			nCellStyle.setVerticalAlignment(verticalAlignment);
+			nCellStyle.setWrapText(xssfCellStyle.getWrapText());
+
+			
+		}
 		
-		nFont.setColor(nColor);
-		// FIXME: ENUM
-		nFont.setBoldweight(NFont.Boldweight.values()[xssfFont.getBoldweight()]);
-		nFont.setHeight(xssfFont.getFontHeight());
-		nFont.setItalic(xssfFont.getItalic());
-		nFont.setName(xssfFont.getFontName());
-		nFont.setStrikeout(xssfFont.getStrikeout());
-		// FIXME: ENUM
-		nFont.setTypeOffset(NFont.TypeOffset.values()[xssfFont.getTypeOffset()]);
-		// FIXME: ENUM
-		nFont.setUnderline(NFont.Underline.values()[xssfFont.getUnderline()]);
+		return nCellStyle;
 		
-		// FIXME
-		// Should I create font?
-		// nBook.createFont();
-		
+	}
+	
+	/**
+	 * TODO
+	 * Utility
+	 * does style exist ID in the POI style table
+	 * @return
+	 */
+	private boolean isStyleExist(short styleID) {
+		return false;
+	}
+	
+	private BorderType poiToBorderType(BorderStyle poiBorder) {
+		switch (poiBorder) {
+			case THIN:
+				return BorderType.THIN;
+			case DASH_DOT:
+				return BorderType.DASH_DOT;
+			case DASH_DOT_DOT:
+				return BorderType.DASH_DOT_DOT;
+			case DASHED:
+				return BorderType.DASHED;
+			case DOTTED:
+				return BorderType.DOTTED;
+			default:
+				return BorderType.NONE;
+		}				
+	}
+	
+	private Alignment poiToNGAlignment(HorizontalAlignment poiAlignment) {
+		switch (poiAlignment) {
+			case LEFT:
+				return Alignment.LEFT;
+			case RIGHT:
+				return Alignment.RIGHT;
+			case CENTER:
+				return Alignment.CENTER;
+			case FILL:
+				return Alignment.FILL;
+			case JUSTIFY:
+				return Alignment.JUSTIFY;
+			default:	
+				return Alignment.GENERAL;
+		}
 	}
 
 }
+ 
