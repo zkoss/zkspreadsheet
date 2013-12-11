@@ -32,9 +32,11 @@ import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCell.CellType;
+import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.impl.BookAdv;
 import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
+import org.zkoss.zss.ngmodel.impl.ModelInternalEvents;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
@@ -239,14 +241,13 @@ public class NRangeImpl implements NRange {
 		// notify changes
 		for (Ref update : updateSet) {
 			System.out.println(">>> Update "+update);
-			if (update.getType() == RefType.CELL) {
+			RefType type = update.getType();
+			if (type == RefType.CELL || type == RefType.AREA) {
 				NBook notifyBook = bookSeries.getBook(update.getBookName());
 				NSheet notifySheet = notifyBook.getSheetByName(update
 						.getSheetName());
-				NCell cell = notifySheet.getCell(update.getRow(),
-						update.getColumn());
-				((BookAdv) notifyBook).sendEvent(ModelEvents.ON_CELL_UPDATED,
-						ModelEvents.PARAM_CELL, cell);
+				((BookAdv) notifyBook).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,notifyBook,notifySheet,
+						new CellRegion(update.getRow(),update.getColumn(),update.getLastRow(),update.getLastColumn())));
 			} else {// TODO another
 
 			}
@@ -358,6 +359,7 @@ public class NRangeImpl implements NRange {
 				
 				Object cellval = cell.getValue();
 				Object resultVal = result.getValue();
+				String format = result.getFormat();
 				if (euqlas(cellval, resultVal)) {
 					return false;
 				}
@@ -385,6 +387,12 @@ public class NRangeImpl implements NRange {
 				case ERROR:
 				default:
 					cell.setValue(resultVal);
+				}
+				
+				String oldFormat = cell.getCellStyle().getDataFormat();
+				if(format!=null && NCellStyle.FORMAT_GENERAL.equals(oldFormat)){
+					//if there is a suggested format and old format is not general
+					NStyles.setDataFormat(cell.getSheet(), cell.getRowIndex(), cell.getColumnIndex(), format);
 				}
 				return true;
 			}

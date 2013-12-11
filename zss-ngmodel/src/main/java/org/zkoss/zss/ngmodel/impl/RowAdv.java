@@ -18,7 +18,6 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
 
-import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NRow;
 /**
  * 
@@ -32,7 +31,7 @@ public abstract class RowAdv implements NRow,LinkedModelObject,Serializable{
 
 	/*package*/ abstract CellAdv getOrCreateCell(int columnIdx);
 	
-	/*package*/ abstract void onModelEvent(ModelEvent event);
+	/*package*/ abstract void onModelEvent(ModelInternalEvent event);
 
 	/*package*/ abstract void clearCell(int start, int end);
 

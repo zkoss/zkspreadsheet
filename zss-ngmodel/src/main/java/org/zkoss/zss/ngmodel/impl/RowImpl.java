@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -104,7 +103,7 @@ public class RowImpl extends RowAdv {
 	}
 
 	@Override
-	protected void onModelEvent(ModelEvent event) {
+	protected void onModelEvent(ModelInternalEvent event) {
 		// TODO Auto-generated method stub
 
 	}

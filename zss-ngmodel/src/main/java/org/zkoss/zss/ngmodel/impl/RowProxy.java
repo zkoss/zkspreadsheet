@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -141,7 +140,7 @@ class RowProxy extends RowAdv{
 	public void checkOrphan() {}
 	
 	@Override
-	void onModelEvent(ModelEvent event) {}
+	void onModelEvent(ModelInternalEvent event) {}
 	
 	@Override
 	public int getHeight() {

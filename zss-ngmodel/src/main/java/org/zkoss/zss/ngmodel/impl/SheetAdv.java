@@ -18,7 +18,6 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
 
-import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NSheet;
 /**
  * 
@@ -43,5 +42,9 @@ public abstract class SheetAdv implements NSheet,LinkedModelObject,Serializable{
 	/*package*/ abstract void copyTo(SheetAdv sheet);
 	/*package*/ abstract void setSheetName(String name);
 	
-	/*package*/ abstract void onModelEvent(ModelEvent event);
+	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);
+	
+	ModelInternalEvent createModelInternalEvent(String name, Object... data){
+		return ModelInternalEvents.createModelInternalEvent(name,this,data);
+	}
 }

@@ -161,13 +161,12 @@ public class RangeTest {
 		final AtomicInteger unknowcounter = new AtomicInteger(0);
 		
 		book.addEventListener(new ModelEventListener() {
-			
 			public void onEvent(ModelEvent event) {
-				if(event.getName().equals(ModelEvents.ON_CELL_UPDATED)){
-					NCell cell = (NCell)event.getData(ModelEvents.PARAM_CELL);
-					if(cell.getRowIndex()==0&&cell.getColumnIndex()==0){
+				if(event.getName().equals(ModelEvents.ON_CELL_CONTENT_CHANGE)){
+					CellRegion region = event.getRegion();
+					if(region.getRow()==0&&region.getColumn()==0){
 						a0counter.incrementAndGet();
-					}else if(cell.getRowIndex()==0&&cell.getColumnIndex()==1){
+					}else if(region.getRow()==0&&region.getColumn()==1){
 						b0counter.incrementAndGet();
 					}else{
 						unknowcounter.incrementAndGet();

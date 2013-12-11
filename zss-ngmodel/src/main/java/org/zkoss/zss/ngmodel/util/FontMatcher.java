@@ -38,7 +38,7 @@ public class FontMatcher {
 		Name,
 		Color,
 		Boldweight,
-		Height,
+		HeightPoints,
 		Italic,
 		Strikeout,
 		TypeOffset,
@@ -51,7 +51,7 @@ public class FontMatcher {
 		setColor(criteria.getColor().getHtmlColor());
 		setName(criteria.getName());
 		setBoldweight(criteria.getBoldweight());
-		setHeight(criteria.getHeight());
+		setHeightPoints(criteria.getHeightPoints());
 		setItalic(criteria.isItalic());
 		setStrikeout(criteria.isStrikeout());
 		setTypeOffset(criteria.getTypeOffset());
@@ -71,8 +71,8 @@ public class FontMatcher {
 		criteria.put(Property.Boldweight, boldweight);
 	}
 	
-	public void setHeight(int height) {
-		criteria.put(Property.Height, height);
+	public void setHeightPoints(int height) {
+		criteria.put(Property.HeightPoints, height);
 	}
 	
 	public void setItalic(boolean italic) {
@@ -102,8 +102,8 @@ public class FontMatcher {
 	public void removeBoldweight() {
 		criteria.remove(Property.Boldweight);
 	}
-	public void removeHeight() {
-		criteria.remove(Property.Height);
+	public void removeHeightPoints() {
+		criteria.remove(Property.HeightPoints);
 	}
 	public void removeItalic() {
 		criteria.remove(Property.Italic);
@@ -138,8 +138,8 @@ public class FontMatcher {
 					return false;
 				}
 				break;
-			case Height:
-				if(!equals(e.getValue(),style.getHeight())){
+			case HeightPoints:
+				if(!equals(e.getValue(),style.getHeightPoints())){
 					return false;
 				}
 				break;

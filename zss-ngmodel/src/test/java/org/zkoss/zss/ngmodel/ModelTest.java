@@ -897,9 +897,9 @@ public class ModelTest {
 		matcher.setFontColor("#0000FF");
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
-		style1.getFont().setHeight(26);
+		style1.getFont().setHeightPoints(26);
 		Assert.assertNull(book.searchCellStyle(matcher));
-		matcher.setFontHeight(26);
+		matcher.setFontHeightPoints(26);
 		Assert.assertEquals(style1,book.searchCellStyle(matcher));
 		
 		style1.getFont().setItalic(true);
@@ -966,9 +966,9 @@ public class ModelTest {
 		matcher.setColor("#0000FF");
 		Assert.assertEquals(font1,book.searchFont(matcher));
 		
-		font1.setHeight(26);
+		font1.setHeightPoints(26);
 		Assert.assertNull(book.searchFont(matcher));
-		matcher.setHeight(26);
+		matcher.setHeightPoints(26);
 		Assert.assertEquals(font1,book.searchFont(matcher));
 		
 		font1.setItalic(true);

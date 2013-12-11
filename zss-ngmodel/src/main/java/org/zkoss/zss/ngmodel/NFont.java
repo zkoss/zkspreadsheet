@@ -59,9 +59,9 @@ public interface NFont {
 	
 	/**
 	 * 
-	 * @return a font height in pixel
+	 * @return a font height point
 	 */
-	public int getHeight();
+	public int getHeightPoints();
 	
 	/**
 	 * 
@@ -94,7 +94,7 @@ public interface NFont {
 
 	public void setBoldweight(Boldweight fontBoldweight);
 
-	public void setHeight(int fontHeight);
+	public void setHeightPoints(int fontHeightPoint);
 
 	public void setItalic(boolean fontItalic);
 

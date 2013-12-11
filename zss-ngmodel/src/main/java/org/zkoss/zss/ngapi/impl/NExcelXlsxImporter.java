@@ -204,7 +204,7 @@ public class NExcelXlsxImporter extends AbstractImporter{
 			nFont.setColor(nColor);
 			// FIXME: ENUM
 			nFont.setBoldweight(NFont.Boldweight.values()[xssfFont.getBoldweight()]);
-			nFont.setHeight(xssfFont.getFontHeight());
+			nFont.setHeightPoints(xssfFont.getFontHeightInPoints());
 			nFont.setItalic(xssfFont.getItalic());
 			nFont.setName(xssfFont.getFontName());
 			nFont.setStrikeout(xssfFont.getStrikeout());

@@ -30,5 +30,11 @@ public interface InputResult {
 	public Object getValue();
 
 	public CellType getType();
+	
+	/**
+	 * Format for the edit text
+	 * @return
+	 */
+	public String getFormat();
 
 }

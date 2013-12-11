@@ -27,12 +27,11 @@ import org.zkoss.zss.ngmodel.util.Validations;
  */
 public class CellStyleImpl extends CellStyleAdv {
 	private static final long serialVersionUID = 1L;
-	public static final String FORMAT_GENERAL = "General";
 
 	private FontAdv font;
 	private NColor backgroundColor = ColorImpl.WHITE;
 	private FillPattern fillPattern = FillPattern.NO_FILL;
-	private Alignment alignment = Alignment.LEFT;
+	private Alignment alignment = Alignment.GENERAL;
 	private VerticalAlignment verticalAlignment = VerticalAlignment.BOTTOM;
 	private boolean wrapText = false;
 
@@ -211,7 +210,7 @@ public class CellStyleImpl extends CellStyleAdv {
 
 	@Override
 	public void setDataFormat(String dataFormat) {
-		Validations.argNotNull(backgroundColor);
+		Validations.argNotNull(dataFormat);
 		this.dataFormat = dataFormat;
 	}
 
@@ -236,30 +235,29 @@ public class CellStyleImpl extends CellStyleAdv {
 	}
 
 	@Override
-	public void copyFrom(NCellStyle dest) {
-		if (dest == this)
+	public void copyFrom(NCellStyle src) {
+		if (src == this)
 			return;
-		Validations.argInstance(dest, CellStyleImpl.class);
-		CellStyleImpl another = (CellStyleImpl) dest;
-		setFont(dest.getFont());//assign directly
+		Validations.argInstance(src, CellStyleImpl.class);
+		setFont(src.getFont());//assign directly
 		
-		setFillColor(dest.getFillColor());
-		setFillPattern(dest.getFillPattern());
-		setAlignment(dest.getAlignment());
-		setVerticalAlignment(dest.getVerticalAlignment());
-		setWrapText(dest.isWrapText());
+		setFillColor(src.getFillColor());
+		setFillPattern(src.getFillPattern());
+		setAlignment(src.getAlignment());
+		setVerticalAlignment(src.getVerticalAlignment());
+		setWrapText(src.isWrapText());
 
-		setBorderLeft(dest.getBorderLeft());
-		setBorderTop(dest.getBorderTop());
-		setBorderRight(dest.getBorderRight());
-		setBorderBottom(dest.getBorderBottom());
-		setBorderTopColor(dest.getBorderTopColor());
-		setBorderLeftColor(dest.getBorderLeftColor());
-		setBorderBottomColor(dest.getBorderBottomColor());
-		setBorderRightColor(dest.getBorderRightColor());
+		setBorderLeft(src.getBorderLeft());
+		setBorderTop(src.getBorderTop());
+		setBorderRight(src.getBorderRight());
+		setBorderBottom(src.getBorderBottom());
+		setBorderTopColor(src.getBorderTopColor());
+		setBorderLeftColor(src.getBorderLeftColor());
+		setBorderBottomColor(src.getBorderBottomColor());
+		setBorderRightColor(src.getBorderRightColor());
 
-		setDataFormat(dest.getDataFormat());
-		setLocked(dest.isLocked());
-		setHidden(dest.isHidden());
+		setDataFormat(src.getDataFormat());
+		setLocked(src.isLocked());
+		setHidden(src.isHidden());
 	}
 }

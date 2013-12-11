@@ -8,6 +8,7 @@ public class InputResultImpl implements InputResult{
 	private String editText = null;
 	private Object value = null;
 	private CellType type = CellType.BLANK;
+	private String format = null;
 	public InputResultImpl(){}
 	public InputResultImpl(String input) {
 		this.editText = input;
@@ -32,6 +33,10 @@ public class InputResultImpl implements InputResult{
 	void setType(CellType type) {
 		this.type = type;
 	}
-
-	
+	public String getFormat() {
+		return format;
+	}
+	void setFormat(String format) {
+		this.format = format;
+	}
 }

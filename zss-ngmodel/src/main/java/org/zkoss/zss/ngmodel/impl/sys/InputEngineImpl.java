@@ -21,6 +21,9 @@ public class InputEngineImpl implements InputEngine{
 			result = new InputResultImpl();
 			result.setType((CellType)convertedResult[0]);
 			result.setValue(convertedResult[1]);
+			if(convertedResult.length>2){//with format
+				result.setFormat((String)convertedResult[2]);
+			}
 		}
 		return result;
 

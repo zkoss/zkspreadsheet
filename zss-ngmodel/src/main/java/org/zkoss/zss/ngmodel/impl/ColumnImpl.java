@@ -16,7 +16,6 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngmodel.impl;
 
-import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NColumn;
 import org.zkoss.zss.ngmodel.NSheet;
@@ -52,7 +51,7 @@ public class ColumnImpl extends ColumnAdv {
 	}
 
 	@Override
-	void onModelEvent(ModelEvent event) {
+	void onModelEvent(ModelInternalEvent event) {
 		// TODO Auto-generated method stub
 
 	}

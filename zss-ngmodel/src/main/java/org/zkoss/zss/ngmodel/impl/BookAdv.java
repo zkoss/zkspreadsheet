@@ -17,7 +17,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 package org.zkoss.zss.ngmodel.impl;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NBook;
@@ -38,7 +40,15 @@ public abstract class BookAdv implements NBook,Serializable{
 	
 	/*package*/ abstract String nextObjId(String type);
 	
-	public abstract void sendEvent(ModelEvent event);
-	public abstract void sendEvent(String name, Object... data);
+	/*package*/ abstract void onModelInternalEvent(ModelInternalEvent event);
+	
+	/*package*/ abstract void sendModelInternalEvent(ModelInternalEvent event);
+	
+	public abstract void sendModelEvent(ModelEvent event);
+	
+	
+	ModelInternalEvent createModelInternalEvent(String name, Object... data){
+		return ModelInternalEvents.createModelInternalEvent(name,this,data);
+	}
 
 }

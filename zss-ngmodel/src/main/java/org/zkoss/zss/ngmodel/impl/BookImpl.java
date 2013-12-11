@@ -30,6 +30,7 @@ import org.zkoss.zss.ngmodel.InvalidateModelOpException;
 import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.ModelEventListener;
 import org.zkoss.zss.ngmodel.ModelEvents;
+import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCellStyle;
@@ -154,34 +155,27 @@ public class BookImpl extends BookAdv{
 //	}
 	
 	@Override
-	public void sendEvent(ModelEvent event){	
+	void onModelInternalEvent(ModelInternalEvent event){
 		//implicitly deliver to sheet
 		for(SheetAdv sheet:sheets){
-			sheet.onModelEvent(event);
-		}
-		
-		for(ModelEventListener l:listeners){
-			l.onEvent(event);
+			sheet.onModelInternalEvent(event);
 		}
 	}
 	
 	@Override
-	public void sendEvent(String name, Object... data){
-		Map<String,Object> datamap = new HashMap<String,Object>();
-		datamap.put("book", this);
-		if(datamap!=null){
-			if(data.length%2 != 0){
-				throw new IllegalArgumentException("event data must be key,value pair");
-			}
-			for(int i=0;i<data.length;i+=2){
-				if(!(data[i] instanceof String)){
-					throw new IllegalArgumentException("event data key must be string");
-				}
-				datamap.put((String)data[i],data[i+1]);
-			}
+	public void sendModelInternalEvent(ModelInternalEvent event){
+		//publish event to the series.
+		for(NBook book:getBookSeries().getBooks()){
+			((BookAdv)book).onModelInternalEvent(event);
 		}
-		ModelEvent event = new ModelEvent(name, datamap);
-		sendEvent(event);
+		//TODO some internal event could consider to set it to external(model-event)?
+	}
+	@Override
+	public void sendModelEvent(ModelEvent event){
+		//publish event to the listeners
+		for(ModelEventListener l:listeners){
+			l.onEvent(event);
+		}
 	}
 	
 	@Override
@@ -215,8 +209,8 @@ public class BookImpl extends BookAdv{
 		((SheetAdv)sheet).setSheetName(name);
 		sheets.add(sheet);
 		
-		sendEvent(ModelEvents.ON_SHEET_ADDED, 
-				ModelEvents.PARAM_SHEET, sheet);
+		sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_SHEET_ADDED, 
+				ModelEvents.PARAM_SHEET, sheet));
 		return sheet;
 	}
 
@@ -228,9 +222,9 @@ public class BookImpl extends BookAdv{
 		String oldname = sheet.getSheetName();
 		((SheetAdv)sheet).setSheetName(newname);
 		
-		sendEvent(ModelEvents.ON_SHEET_RENAMED, 
+		sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_SHEET_RENAMED, 
 				ModelEvents.PARAM_SHEET, sheet,
-				ModelEvents.PARAM_SHEET_OLD_NAME, oldname);
+				ModelInternalEvents.PARAM_SHEET_OLD_NAME, oldname));
 	}
 
 	private void checkLegalSheetName(String name) {
@@ -262,9 +256,9 @@ public class BookImpl extends BookAdv{
 		int index = sheets.indexOf(sheet);
 		sheets.remove(index);
 		
-		sendEvent(ModelEvents.ON_SHEET_DELETED, 
+		sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_SHEET_DELETED, 
 				ModelEvents.PARAM_SHEET, sheet,
-				ModelEvents.PARAM_SHEET_OLD_INDEX, index);
+				ModelInternalEvents.PARAM_SHEET_OLD_INDEX, index));
 	}
 
 	@Override
@@ -279,9 +273,9 @@ public class BookImpl extends BookAdv{
 		}
 		sheets.remove(oldindex);
 		sheets.add(index, (SheetAdv)sheet);
-		sendEvent(ModelEvents.ON_SHEET_MOVED, 
+		sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_SHEET_MOVED, 
 				ModelEvents.PARAM_SHEET, sheet,
-				ModelEvents.PARAM_SHEET_OLD_INDEX, oldindex);
+				ModelInternalEvents.PARAM_SHEET_OLD_INDEX, oldindex));
 	}
 
 	public void dump(StringBuilder builder) {

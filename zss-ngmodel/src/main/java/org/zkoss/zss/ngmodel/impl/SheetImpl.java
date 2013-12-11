@@ -28,8 +28,6 @@ import java.util.Map;
 
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
-import org.zkoss.zss.ngmodel.ModelEvent;
-import org.zkoss.zss.ngmodel.ModelEvents;
 import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NChart;
@@ -206,7 +204,7 @@ public class SheetImpl extends SheetAdv {
 		this.name = name;
 	}
 	@Override
-	void onModelEvent(ModelEvent event) {
+	void onModelInternalEvent(ModelInternalEvent event) {
 		for(RowAdv row:rows.values()){
 			row.onModelEvent(event);
 		}
@@ -270,8 +268,8 @@ public class SheetImpl extends SheetAdv {
 		
 		shiftAfterRowInsert(rowIdx,size);
 		
-		book.sendEvent(ModelEvents.ON_ROW_INSERTED, ModelEvents.PARAM_SHEET, this, ModelEvents.PARAM_ROW_INDEX, rowIdx, 
-				ModelEvents.PARAM_SIZE, size);
+		book.sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_ROW_INSERTED, ModelInternalEvents.PARAM_ROW_INDEX, rowIdx, 
+				ModelInternalEvents.PARAM_SIZE, size));
 	}
 	
 	private void shiftAfterRowInsert(int rowIdx, int size) {
@@ -372,8 +370,8 @@ public class SheetImpl extends SheetAdv {
 		
 		shiftAfterRowDelete(rowIdx,size);	
 		
-		book.sendEvent(ModelEvents.ON_ROW_DELETED, ModelEvents.PARAM_SHEET, this, ModelEvents.PARAM_ROW_INDEX, rowIdx, 
-				ModelEvents.PARAM_SIZE, size);
+		book.sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_ROW_DELETED, ModelInternalEvents.PARAM_ROW_INDEX, rowIdx, 
+				ModelInternalEvents.PARAM_SIZE, size));
 	}
 	
 	@Override
@@ -440,8 +438,8 @@ public class SheetImpl extends SheetAdv {
 		
 		shiftAfterColumnInsert(columnIdx,size);
 		
-		book.sendEvent(ModelEvents.ON_COLUMN_INSERTED, ModelEvents.PARAM_SHEET, this, ModelEvents.PARAM_COLUMN_INDEX, columnIdx, 
-				ModelEvents.PARAM_SIZE, size);
+		book.sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_COLUMN_INSERTED, ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
+				ModelInternalEvents.PARAM_SIZE, size));
 	}
 
 	public void deleteColumn(int columnIdx, int size) {
@@ -459,8 +457,8 @@ public class SheetImpl extends SheetAdv {
 		}
 		shiftAfterColumnDelete(columnIdx,size);
 		
-		book.sendEvent(ModelEvents.ON_COLUMN_DELETED, ModelEvents.PARAM_SHEET, this, ModelEvents.PARAM_COLUMN_INDEX, columnIdx, 
-				ModelEvents.PARAM_SIZE, size);
+		book.sendModelInternalEvent(createModelInternalEvent(ModelInternalEvents.ON_COLUMN_DELETED, ModelInternalEvents.PARAM_COLUMN_INDEX, columnIdx, 
+				ModelInternalEvents.PARAM_SIZE, size));
 	}
 
 	

@@ -57,7 +57,7 @@ public class CellStyleMatcher {
 		FontName,
 		FontColor,
 		FontBoldweight,
-		FontHeight,
+		FontHeightPoints,
 		FontItalic,
 		FontStrikeout,
 		FontTypeOffset,
@@ -100,14 +100,7 @@ public class CellStyleMatcher {
 //		setFillForegroundColor(BookHelper.colorToForegroundHTML(book,criteria.getFillForegroundColorColor()));
 		setFillPattern(criteria.getFillPattern());
 		
-		setFontColor(criteria.getFont().getColor().getHtmlColor());
-		setFontName(criteria.getFont().getName());
-		setFontBoldweight(criteria.getFont().getBoldweight());
-		setFontHeight(criteria.getFont().getHeight());
-		setFontItalic(criteria.getFont().isItalic());
-		setFontStrikeout(criteria.getFont().isStrikeout());
-		setFontTypeOffset(criteria.getFont().getTypeOffset());
-		setFontUnderline(criteria.getFont().getUnderline());
+		setFont(criteria.getFont());
 		
 		
 		setHidden(criteria.isHidden());
@@ -136,8 +129,8 @@ public class CellStyleMatcher {
 		criteria.put(Property.FontBoldweight, boldweight);
 	}
 	
-	public void setFontHeight(int height) {
-		criteria.put(Property.FontHeight, height);
+	public void setFontHeightPoints(int height) {
+		criteria.put(Property.FontHeightPoints, height);
 	}
 	
 	public void setFontItalic(boolean italic) {
@@ -154,6 +147,27 @@ public class CellStyleMatcher {
 	
 	public void setFontUnderline(NFont.Underline underline) {
 		criteria.put(Property.FontUnderline, underline);
+	}
+	
+	public void setFont(NFont font) {
+		setFontColor(font.getColor().getHtmlColor());
+		setFontName(font.getName());
+		setFontBoldweight(font.getBoldweight());
+		setFontHeightPoints(font.getHeightPoints());
+		setFontItalic(font.isItalic());
+		setFontStrikeout(font.isStrikeout());
+		setFontTypeOffset(font.getTypeOffset());
+		setFontUnderline(font.getUnderline());
+	}
+	public void removeFont() {
+		removeFontColor();
+		removeFontName();
+		removeFontBoldweight();
+		removeFontHeightPoints();
+		removeFontItalic();
+		removeFontStrikeout();
+		removeFontTypeOffset();
+		removeFontUnderline();
 	}
 
 	public void setHidden(boolean hidden) {
@@ -237,8 +251,8 @@ public class CellStyleMatcher {
 	public void removeFontBoldweight() {
 		criteria.remove(Property.FontBoldweight);
 	}
-	public void removeFontHeight() {
-		criteria.remove(Property.FontHeight);
+	public void removeFontHeightPoints() {
+		criteria.remove(Property.FontHeightPoints);
 	}
 	public void removeFontItalic() {
 		criteria.remove(Property.FontItalic);
@@ -412,8 +426,8 @@ public class CellStyleMatcher {
 					return false;
 				}
 				break;
-			case FontHeight:
-				if(!equals(e.getValue(),style.getFont().getHeight())){
+			case FontHeightPoints:
+				if(!equals(e.getValue(),style.getFont().getHeightPoints())){
 					return false;
 				}
 				break;

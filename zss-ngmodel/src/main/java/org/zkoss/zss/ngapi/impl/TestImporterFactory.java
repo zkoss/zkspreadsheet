@@ -147,7 +147,7 @@ public class TestImporterFactory implements ImporterFactory{
 				style = book.createCellStyle(true);
 				style.setFont(book.createFont(true));
 				style.getFont().setColor(book.createColor("#FF0000"));
-				style.getFont().setHeight(16);
+				style.getFont().setHeightPoints(16);
 				style.setFillPattern(FillPattern.SOLID_FOREGROUND);
 				style.setFillColor(book.createColor("#AAAAAA"));
 				

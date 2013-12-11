@@ -1,4 +1,4 @@
-/*
+/* ModelEvent.java
 
 {{IS_NOTE
 	Purpose:
@@ -6,7 +6,7 @@
 	Description:
 		
 	History:
-		2013/12/01 , Created by dennis
+		2013/12/11 , Created by dennis
 }}IS_NOTE
 
 Copyright (C) 2013 Potix Corporation. All Rights Reserved.
@@ -18,14 +18,13 @@ package org.zkoss.zss.ngmodel;
 
 import java.util.HashMap;
 import java.util.Map;
+
 /**
- * 
  * @author dennis
- * @since 3.5.0
+ *
  */
 public class ModelEvent {
-
-	private String name;
+private String name;
 	
 	private Map<String,Object> data;
 	
@@ -45,5 +44,16 @@ public class ModelEvent {
 	public String getName() {
 		return name;
 	}
+
+	public NBook getBook() {
+		return (NBook)getData(ModelEvents.PARAM_BOOK);
+	}
 	
+	public NSheet getSheet() {
+		return (NSheet)getData(ModelEvents.PARAM_SHEET);
+	}
+	
+	public CellRegion getRegion() {
+		return (CellRegion)getData(ModelEvents.PARAM_REGION);
+	}
 }

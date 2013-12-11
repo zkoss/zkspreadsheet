@@ -23,6 +23,8 @@ package org.zkoss.zss.ngmodel;
  */
 public interface NCellStyle {
 
+	public static final String FORMAT_GENERAL = "General";
+	
 	/**
 	 * The background color fill pattern
 	 */

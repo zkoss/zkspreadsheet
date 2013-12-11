@@ -19,8 +19,6 @@ package org.zkoss.zss.ngmodel;
 import java.util.List;
 import java.util.Map;
 
-import org.zkoss.zss.ngmodel.NChart.NChartType;
-import org.zkoss.zss.ngmodel.chart.NChartData;
 import org.zkoss.zss.ngmodel.util.CellStyleMatcher;
 import org.zkoss.zss.ngmodel.util.FontMatcher;
 
@@ -218,4 +216,6 @@ public interface NBook {
 	public void setShareScope(String scope);
 
 	public String getShareScope();
+
+	
 }

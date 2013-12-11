@@ -28,11 +28,20 @@ public class FontImpl extends FontAdv {
 
 
 	public static final String FORMAT_GENERAL = "General";
-
-	private String fontName = "Arial";
+	/**
+     * By default, Microsoft Office Excel 2007 uses the Calibry font in font size 11
+     */
+	private String fontName = "Calibri";
+	
+	 /**
+     * By default, Microsoft Office Excel 2007 uses the Calibry font in font size 11
+     */
+	private int fontHeightPoint = 11;
+	
 	private NColor fontColor = ColorImpl.BLACK;
+	
 	private Boldweight fontBoldweight = Boldweight.NORMAL;
-	private int fontHeight = 11;
+	
 	private boolean fontItalic = false;
 	private boolean fontStrikeout = false;
 	private TypeOffset fontTypeOffset = TypeOffset.NONE;
@@ -71,13 +80,13 @@ public class FontImpl extends FontAdv {
 	}
 
 	@Override
-	public int getHeight() {
-		return fontHeight;
+	public int getHeightPoints() {
+		return fontHeightPoint;
 	}
 
 	@Override
-	public void setHeight(int fontHeight) {
-		this.fontHeight = fontHeight;
+	public void setHeightPoints(int fontHeightPoint) {
+		this.fontHeightPoint = fontHeightPoint;
 	}
 
 	@Override
@@ -133,7 +142,7 @@ public class FontImpl extends FontAdv {
 		another.fontName = fontName;
 		another.fontColor = fontColor;
 		another.fontBoldweight = fontBoldweight;
-		another.fontHeight = fontHeight;
+		another.fontHeightPoint = fontHeightPoint;
 		another.fontItalic = fontItalic;
 		another.fontStrikeout = fontStrikeout;
 		another.fontTypeOffset = fontTypeOffset;

@@ -18,7 +18,6 @@ package org.zkoss.zss.ngmodel.impl;
 
 import java.lang.ref.WeakReference;
 
-import org.zkoss.zss.ngmodel.ModelEvent;
 import org.zkoss.zss.ngmodel.NCellStyle;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.util.CellReference;
@@ -111,7 +110,7 @@ class ColumnProxy extends ColumnAdv {
 	public void checkOrphan() {}
 
 	@Override
-	void onModelEvent(ModelEvent event) {}
+	void onModelEvent(ModelInternalEvent event) {}
 
 	@Override
 	public int getWidth() {

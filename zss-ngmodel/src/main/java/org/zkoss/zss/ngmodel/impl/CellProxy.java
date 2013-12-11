@@ -85,7 +85,7 @@ class CellProxy extends CellAdv {
 	@Override
 	public int getColumnIndex() {
 		loadProxy();
-		return proxy == null ? columnIdx : proxy.getRowIndex();
+		return proxy == null ? columnIdx : proxy.getColumnIndex();
 	}
 
 	@Override
