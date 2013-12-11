@@ -42,6 +42,14 @@ public class FormatEngineImpl implements FormatEngine {
 		try{
 			ZssContext zssContext = old==null?new ZssContext(context.getLocale(),-1): new ZssContext(context.getLocale(),old.getTwoDigitYearUpperBound());
 			ZssContext.setThreadLocal(zssContext);
+			
+			//Have to transfer format that depends on locale
+			//for example, m/d/yyyy will transfer to yyyy/m/d in TW
+			int i = BuiltinFormats.getBuiltinFormat(format);
+			if(i>=0){
+				format = BuiltinFormats.getBuiltinFormat(i, context.getLocale());
+			}
+			
 			CellFormat formatter = CellFormat.getInstance(format, context.getLocale());
 			if(value instanceof Double && formatter.isApplicableDateFormat((Double)value)){
 				value = EngineFactory.getInstance().getCalendarUtil().doubleValueToDate((Double)value, false);

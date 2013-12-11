@@ -64,11 +64,7 @@ public class NRangeImpl implements NRange {
 	private int _lastColumn = Integer.MIN_VALUE;
 	private int _lastRow = Integer.MIN_VALUE;
 
-	private Locale _locale;
-
 	private NRangeImpl() {
-		// TODO from zss context
-		_locale = Locale.getDefault();
 	}
 
 	public NRangeImpl(NSheet sheet) {
@@ -85,15 +81,6 @@ public class NRangeImpl implements NRange {
 	public NRangeImpl(NSheet sheet, int tRow, int lCol, int bRow, int rCol) {
 		this();
 		addRangeRef(sheet, tRow, lCol, bRow, rCol);
-	}
-	@Override
-	public void setLocale(Locale locale) {
-		Validations.argNotNull(locale);
-		_locale = locale;
-	}
-	@Override
-	public Locale getLocale() {
-		return _locale;
 	}
 
 	private void addRangeRef(NSheet sheet, int tRow, int lCol, int bRow,
@@ -353,7 +340,7 @@ public class NRangeImpl implements NRange {
 				InputResult result;
 				if((result = input.get())==null){
 					result = ie.parseInput(editText == null ? ""
-						: editText, cell.getCellStyle().getDataFormat(), new InputParseContext(_locale));
+						: editText, cell.getCellStyle().getDataFormat(), new InputParseContext(Locales.getCurrent()));
 					input.set(result);
 				}
 				

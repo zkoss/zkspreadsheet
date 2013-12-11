@@ -26,9 +26,6 @@ import org.zkoss.zss.ngmodel.NSheet;
  * @since 3.5.0
  */
 public interface NRange {
-
-	public void setLocale(Locale locale);
-	public Locale getLocale();
 	
 	public NSheet getSheet();
 	public int getRow();
