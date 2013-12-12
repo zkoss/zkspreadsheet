@@ -16,8 +16,7 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zss.ngapi.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import org.zkoss.poi.POIXMLDocument;
 import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
@@ -31,6 +30,9 @@ public class NExcelImportAdapter extends AbstractImporter{
 
 	@Override
 	public NBook imports(InputStream is, String bookName) throws IOException {
+		if(!is.markSupported()) {
+			is = new PushbackInputStream(is, 8);
+		}
 		if (POIFSFileSystem.hasPOIFSHeader(is)) {
 			return new NExcelXlsImporter().imports(is, bookName);
 		}else if (POIXMLDocument.hasOOXMLHeader(is)) {
