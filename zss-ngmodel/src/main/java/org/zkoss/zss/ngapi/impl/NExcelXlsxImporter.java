@@ -19,7 +19,6 @@ package org.zkoss.zss.ngapi.impl;
 import java.io.*;
 import java.util.*;
 
-import org.zkoss.poi.hssf.converter.ExcelToHtmlUtils;
 import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.xssf.usermodel.*;
 import org.zkoss.zss.ngmodel.*;
@@ -44,12 +43,14 @@ public class NExcelXlsxImporter extends AbstractImporter{
 	//<XSSF style index, NCellStyle object>
 	private Map<Short, NCellStyle> importedStyle = new HashMap<Short, NCellStyle>();
 	private Map<Short, NFont> importedFont = new HashMap<Short, NFont>();
-
+	private NBook book;
+	XSSFWorkbook workbook;
+	
 	@Override
 	public NBook imports(InputStream is, String bookName) throws IOException {
 
-		XSSFWorkbook workbook = new XSSFWorkbook(is);
-		NBook book = new BookImpl(bookName);
+		workbook = new XSSFWorkbook(is);
+		book = new BookImpl(bookName);
 		// import book scope content
 		for(XSSFSheet xssfSheet : workbook) {
 			importXSSFSheet(book, xssfSheet);
@@ -76,21 +77,22 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		
 		for (int c=0 ; c<=maxColumnIndex ; c++){
 //			sheet.getColumn(c).setWidth(ExcelToHtmlUtils.getColumnWidthInPx(poiSheet.getColumnWidth(c)));
+			sheet.getColumn(c).setCellStyle(importXSSFCellStyle((XSSFCellStyle)poiSheet.getColumnStyle(c)));
 		}
 	}
-
 
 	private void importRow(NSheet sheet, Row poiRow) {
 		NRow row = sheet.getRow(poiRow.getRowNum());
 		row.setHeight(XUtils.twipToPx(poiRow.getHeight()));
-//		if (poiRow.getRowStyle()!= null)
-//		row.setCellStyle()
+		if (poiRow.getRowStyle()!= null){
+		row.setCellStyle(importXSSFCellStyle((XSSFCellStyle)poiRow.getRowStyle()));
+		}
 		for(Cell poiCell : poiRow) { // Go through each cell
 			
 			NCell cell = importPoiCell(sheet, poiCell);
 			//same style always use same font
 			if(!importedStyle.containsKey(poiCell.getCellStyle().getIndex())) {
-				cell.setCellStyle(importXSSFCellStyle(cell, (XSSFCellStyle)poiCell.getCellStyle()));
+				cell.setCellStyle(importXSSFCellStyle((XSSFCellStyle)poiCell.getCellStyle()));
 			}
 			// TODO: copy hyper link
 			// nCell.getHyperlink();
@@ -102,18 +104,17 @@ public class NExcelXlsxImporter extends AbstractImporter{
 	 * @param nCellStyle
 	 * @param xssfCellStyle
 	 */
-	private NCellStyle importXSSFCellStyle(NCell cell, XSSFCellStyle xssfCellStyle) {
+	private NCellStyle importXSSFCellStyle(XSSFCellStyle xssfCellStyle) {
 		NCellStyle cellStyle;
-			cellStyle = cell.getSheet().getBook().createCellStyle(true);
-			cell.setCellStyle(cellStyle);
+			cellStyle = book.createCellStyle(true);
 			importedStyle.put(xssfCellStyle.getIndex(), cellStyle);
 		
 			NFont font = null;
 			if (importedFont.containsKey(xssfCellStyle.getFontIndex())){
 				font = importedFont.get(xssfCellStyle.getFontIndex());
 			}else{
-				XSSFFont xssfFont = xssfCellStyle.getFont();
-				font = cell.getSheet().getBook().createFont(true);
+				XSSFFont xssfFont = workbook.getFontAt(xssfCellStyle.getFontIndex());
+				font = book.createFont(true);
 				//font
 				font.setName(xssfFont.getFontName());
 				if (xssfFont.getBold()){
@@ -134,8 +135,10 @@ public class NExcelXlsxImporter extends AbstractImporter{
 			cellStyle.setFont(font);
 			// FIXME
 			
-//		cellStyle.setLocked(xssfCellStyle.getLocked());
+			cellStyle.setDataFormat(xssfCellStyle.getDataFormatString());
+//			nCellStyle.setFillColor(xssfCellStyle.getff);
 			
+//			cellStyle.setLocked(xssfCellStyle.getLocked());
 			/*
 			nCellStyle.setAlignment(poiToNGAlignment(xssfCellStyle.getAlignmentEnum()));
 			nCellStyle.setBorderBottom(poiToBorderType(xssfCellStyle.getBorderBottomEnum()));
@@ -146,8 +149,6 @@ public class NExcelXlsxImporter extends AbstractImporter{
 			nCellStyle.setBorderTopColor(new ColorImpl(xssfCellStyle.getTopBorderColorColor().getRgb()));
 			nCellStyle.setBorderRight(poiToBorderType(xssfCellStyle.getBorderRightEnum()));
 			nCellStyle.setBorderRightColor(new ColorImpl(xssfCellStyle.getRightBorderColorColor().getRgb()));
-			nCellStyle.setDataFormat(xssfCellStyle.getDataFormatString());
-			//nCellStyle.setFillColor(fillColor);
 //			nCellStyle.setFillPattern(fillPattern);
 			nCellStyle.setFont(font);
 			nCellStyle.setHidden(xssfCellStyle.getHidden());

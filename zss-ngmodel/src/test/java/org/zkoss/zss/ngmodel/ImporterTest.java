@@ -58,7 +58,7 @@ public class ImporterTest {
 		}
 		
 		assertEquals(book.getBookName(), "XSSFBook");
-		assertEquals(book.getNumOfSheet(), 3);
+		assertEquals(book.getNumOfSheet(), 4);
 	}
 	
 	@Test
@@ -72,7 +72,7 @@ public class ImporterTest {
 		}
 		
 		assertEquals(book.getBookName(), "XSSFBook");
-		assertEquals(book.getNumOfSheet(), 3);
+		assertEquals(book.getNumOfSheet(), 4);
 	}
 	
 	@Test
@@ -85,7 +85,7 @@ public class ImporterTest {
 		}
 		
 		assertEquals(book.getBookName(), "XSSFBook");
-		assertEquals(book.getNumOfSheet(), 3);
+		assertEquals(book.getNumOfSheet(), 4);
 	}
 	
 	//content
@@ -98,7 +98,7 @@ public class ImporterTest {
 			e.printStackTrace();
 		}
 		
-		assertEquals(book.getNumOfSheet(), 3);
+		assertEquals(book.getNumOfSheet(), 4);
 
 		NSheet sheet1 = book.getSheet(0);
 		assertEquals("Value", sheet1.getSheetName());
@@ -216,6 +216,23 @@ public class ImporterTest {
 		assertEquals(20, sheet.getRow(1).getHeight());
 
 	}
+
+	@Test
+	public void cellFormatTest(){
+		NBook book = null;
+		try {
+			book = importer.imports(fileUnderTest, "XSSFBook");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		NSheet sheet = book.getSheetByName("Format");
+		assertEquals("#,##0.00", sheet.getCell(1, 1).getCellStyle().getDataFormat());
+		assertEquals("\"NT$\"#,##0.00", sheet.getCell(1, 2).getCellStyle().getDataFormat());
+		assertEquals("yyyy/m/d", sheet.getCell(1, 4).getCellStyle().getDataFormat());
+//		assertEquals("hh:mm AM/PM", sheet.getCell(1, 5).getCellStyle().getDataFormat());
+		assertEquals("0.0%", sheet.getCell(1, 6).getCellStyle().getDataFormat());
+		assertEquals("# ??/??", sheet.getCell(3, 1).getCellStyle().getDataFormat());
+	}
 	
 	@Test
 	public void columnTest(){
@@ -225,8 +242,9 @@ public class ImporterTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		NSheet sheet = book.getSheetByName("Style");
-		
+		NSheet sheet = book.getSheetByName("Value");
+		assertEquals(NFont.Boldweight.BOLD, sheet.getColumn(0).getCellStyle().getFont().getBoldweight());
+		//TODO color of column style 
 //		assertEquals(209, sheet.getColumn(0).getWidth());
 //		assertEquals(183, sheet.getColumn(1).getWidth());
 	}
