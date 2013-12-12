@@ -199,8 +199,10 @@ public interface NBook {
 	 */
 	public Map<String,Object> getAttributes();
 	
+	public NName createName(String name,String applyToSheetName);
 	public NName createName(String name);
 	
+	public void setNameName(NName name,String newname, String applyToSheetName);
 	public void setNameName(NName name,String newname);
 	
 	public void deleteName(NName name);
@@ -209,6 +211,7 @@ public interface NBook {
 	
 	public NName getName(int idx);
 	
+	public NName getNameByName(String namename, String sheetName);
 	public NName getNameByName(String namename);
 	
 	public List<NName> getNames();

@@ -19,14 +19,9 @@ package org.zkoss.zss.ngmodel.impl;
 import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.Ref;
-import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
-import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult.ResultType;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
-import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
-import org.zkoss.zss.ngmodel.util.AreaReference;
-import org.zkoss.zss.ngmodel.util.CellReference;
 /**
  * 
  * @author dennis
@@ -38,10 +33,12 @@ public class NameImpl extends NameAdv {
 	private BookAdv book;
 	private String name;
 	
+	private String applyToSheetName;
+	
 	private String refersToExpr;
 	
-	private CellRegion refersTo;
-	private String sheetName;
+	private CellRegion refersToCellRegion;
+	private String refersTopSheetName;
 	
 	private boolean isParsingError;
 	
@@ -56,13 +53,13 @@ public class NameImpl extends NameAdv {
 	}
 
 	@Override
-	public String getSheetName() {
-		return sheetName;
+	public String getRefersToSheetName() {
+		return refersTopSheetName;
 	}
 
 	@Override
-	public CellRegion getRefersTo() {
-		return refersTo;
+	public CellRegion getRefersToCellRegion() {
+		return refersToCellRegion;
 	}
 
 	@Override
@@ -101,8 +98,8 @@ public class NameImpl extends NameAdv {
 		
 		clearFormulaDependency();
 		this.refersToExpr = refersToExpr;
-		sheetName = null;
-		refersTo = null;
+		refersTopSheetName = null;
+		refersToCellRegion = null;
 		//TODO support function as Excel (POI)
 		
 		//use formula engine to keep dependency info
@@ -110,20 +107,9 @@ public class NameImpl extends NameAdv {
 		FormulaExpression expr = fe.parse(refersToExpr, new FormulaParseContext(book,new ObjectRefImpl(this,id)));
 		if(expr.hasError()){
 			isParsingError = true;
-		}else{
-			EvaluationResult result = fe.evaluate(expr,new FormulaEvaluationContext(book));
-			if(result.getType()==ResultType.ERROR){
-				isParsingError = true;
-			}
-		}
-		
-		
-		if(!isParsingError){
-			AreaReference ref = new AreaReference(refersToExpr);
-			CellReference cell1 = ref.getFirstCell();
-			CellReference cell2 = ref.getLastCell();
-			sheetName = cell1.getSheetName();
-			refersTo = new CellRegion(cell1.getRow(),cell1.getCol(),cell2.getRow(),cell2.getCol());
+		}else if(expr.isRefersTo()){
+			refersTopSheetName = expr.getRefersToSheetName();
+			refersToCellRegion = expr.getRefersToCellRegion();
 		}
 		
 	}
@@ -149,5 +135,15 @@ public class NameImpl extends NameAdv {
 	@Override
 	public void clearFormulaResultCache() {
 		//so far, no result cache here, do nothing
+	}
+
+	@Override
+	public String getApplyToSheetName() {
+		return applyToSheetName;
+	}
+
+	@Override
+	void setApplyToSheetName(String sheetName) {
+		applyToSheetName = sheetName;
 	}
 }

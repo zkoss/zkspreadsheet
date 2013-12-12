@@ -565,7 +565,7 @@ public class SheetImpl extends SheetAdv {
 			//just ignore it.
 		}
 		for(CellRegion r:mergedRegions){
-			if(r.overlap(region)){
+			if(r.overlaps(region)){
 				throw new InvalidateModelOpException("the region is overlapped "+r+":"+region);
 			}
 		}
@@ -576,7 +576,7 @@ public class SheetImpl extends SheetAdv {
 	public List<CellRegion> getOverlappedMergedRegions(CellRegion region) {
 		List<CellRegion> list =new LinkedList<CellRegion>(); 
 		for(CellRegion r:mergedRegions){
-			if(r.overlap(region)){
+			if(r.overlaps(region)){
 				list.add(r);
 			}
 		}

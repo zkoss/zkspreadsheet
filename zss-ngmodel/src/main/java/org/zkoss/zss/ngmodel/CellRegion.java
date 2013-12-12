@@ -78,12 +78,15 @@ public class CellRegion implements Serializable {
 				&& column <= this.lastColumn;
 	}
 
-	public boolean overlap(CellRegion region) {
+	public boolean overlaps(CellRegion region) {
 		return contains(region.row, region.column)
 				|| contains(region.row, region.lastColumn)
 				|| contains(region.lastRow, region.column)
 				|| contains(region.lastRow, region.lastColumn)
 				|| region.contains(row, column);
+	}
+	public boolean equals(int row, int column, int lastRow, int lastColumn){
+		return this.row == row && this.column==column && this.lastRow==lastRow && this.lastColumn == lastColumn;
 	}
 
 	public String toString() {

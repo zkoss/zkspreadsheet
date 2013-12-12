@@ -3,6 +3,7 @@ package org.zkoss.zss.ngmodel.impl.sys;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import org.zkoss.zss.ngmodel.CellRegion;
 import org.zkoss.zss.ngmodel.ErrorValue;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.sys.formula.EvaluationResult;
@@ -11,6 +12,8 @@ import org.zkoss.zss.ngmodel.sys.formula.FormulaEngine;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaEvaluationContext;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaExpression;
 import org.zkoss.zss.ngmodel.sys.formula.FormulaParseContext;
+import org.zkoss.zss.ngmodel.util.AreaReference;
+import org.zkoss.zss.ngmodel.util.CellReference;
 import org.zkoss.zss.ngmodel.util.Validations;
 
 public class TestFormulaEngineImpl implements FormulaEngine {
@@ -54,6 +57,27 @@ public class TestFormulaEngineImpl implements FormulaEngine {
 
 		public boolean hasError() {
 			return testData.get(formula)==null;
+		}
+
+		@Override
+		public boolean isRefersTo() {
+			return true;
+		}
+
+		@Override
+		public String getRefersToSheetName() {
+			AreaReference ref = new AreaReference(formula);
+			CellReference cell1 = ref.getFirstCell();
+			CellReference cell2 = ref.getLastCell();
+			return cell1.getSheetName();
+		}
+
+		@Override
+		public CellRegion getRefersToCellRegion() {
+			AreaReference ref = new AreaReference(formula);
+			CellReference cell1 = ref.getFirstCell();
+			CellReference cell2 = ref.getLastCell();
+			return new CellRegion(cell1.getRow(),cell1.getCol(),cell2.getRow(),cell2.getCol());
 		}
 	}
 

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.zkoss.poi.ss.formula.eval.NotImplementedException;
 import org.zkoss.util.Locales;
 import org.zkoss.zss.ngapi.NRange;
 import org.zkoss.zss.ngmodel.CellRegion;
@@ -32,7 +33,10 @@ import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NColumn;
+import org.zkoss.zss.ngmodel.NHyperlink;
+import org.zkoss.zss.ngmodel.NHyperlink.HyperlinkType;
 import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.impl.BookAdv;
@@ -331,12 +335,13 @@ public class NRangeImpl implements NRange {
 	}
 	
 	@Override
-	public void clear() {
+	public void clearContents() {
 		new CellVisitorTask(new CellVisitor() {
 			public boolean visit(NCell cell) {
-				if (cell.isNull() || cell.getType() == CellType.BLANK) {
+				if (cell.isNull()) {
 					return false;
 				}
+				cell.setHyperlink(null);
 				cell.clearValue();
 				return true;
 			}
@@ -533,5 +538,164 @@ public class NRangeImpl implements NRange {
 			}
 		}
 		handleRefSizeNotify(bookSeries, notifySet);
+	}
+
+	@Override
+	public NHyperlink getHyperlink() {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public NRange copy(NRange dstRange, boolean cut) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public NRange copy(NRange dstRange) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public NRange pasteSpecial(NRange dstRange, PasteType pasteType,
+			PasteOperation pasteOp, boolean skipBlanks, boolean transpose) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void insert(InsertShift shift, InsertCopyOrigin copyOrigin) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void delete(DeleteShift shift) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void merge(boolean across) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void unmerge() {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void setBorders(ApplyBorderType borderIndex, BorderType lineStyle,
+			String color) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void move(int nRow, int nCol) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public NRange getCells(int row, int col) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void setStyle(NCellStyle style) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void autoFill(NRange dstRange, AutoFillType fillType) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void fillDown() {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void fillLeft() {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void fillRight() {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void fillUp() {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void setHidden(boolean hidden) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void setDisplayGridlines(boolean show) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void protectSheet(String password) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void setHyperlink(HyperlinkType linkType, String address,
+			String display) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public Object getValue() {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public NRange getOffset(int rowOffset, int colOffset) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public boolean isAnyCellProtected() {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void deleteSheet() {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public NSheet createSheet(String name) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void setSheetName(String name) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void setSheetOrder(int pos) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public void setFreezePanel(int rowfreeze, int columnfreeze) {
+		throw new NotImplementedException("not implement yet");
+	}
+
+	@Override
+	public String getCellFormatText() {
+		throw new NotImplementedException("not implement yet");		
+	}
+
+	@Override
+	public boolean isSheetProtected() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.zkoss.zss.ngmodel.InvalidateModelOpException;
@@ -66,7 +67,9 @@ public class BookImpl extends BookAdv{
 	private final FontAdv defaultFont;
 	private final HashMap<ColorAdv,ColorAdv> colors = new LinkedHashMap<ColorAdv,ColorAdv>();
 	
-
+	private final static Random random = new Random(System.currentTimeMillis());
+	private final static AtomicInteger bookCount = new AtomicInteger();
+	private final String bookId;
 	
 	private final HashMap<String,AtomicInteger> objIdCounter = new HashMap<String,AtomicInteger>();
 	private final int maxRowSize = SpreadsheetVersion.EXCEL2007.getMaxRows();
@@ -88,6 +91,7 @@ public class BookImpl extends BookAdv{
 		colors.put(ColorImpl.GREEN,ColorImpl.GREEN);
 		colors.put(ColorImpl.BLUE,ColorImpl.BLUE);
 		
+		bookId = ((char)('a'+random.nextInt(26))) + Long.toString(/*System.currentTimeMillis()+*/bookCount.getAndIncrement(), Character.MAX_RADIX) ;
 	}
 	
 	@Override
@@ -185,8 +189,8 @@ public class BookImpl extends BookAdv{
 	
 	@Override
 	String nextObjId(String type){
-		StringBuilder sb = new StringBuilder(type);
-		sb.append("_");
+		StringBuilder sb = new StringBuilder(bookId);
+		sb.append("_").append(type).append("_");
 		AtomicInteger i = objIdCounter.get(type);
 		if(i==null){
 			objIdCounter.put(type, i = new AtomicInteger(0));
@@ -237,12 +241,15 @@ public class BookImpl extends BookAdv{
 		//TODO
 	}
 	
-	private void checkLegalNameName(String name) {
+	private void checkLegalNameName(String name,String sheetName) {
 		if(Strings.isBlank(name)){
 			throw new InvalidateModelOpException("name '"+name+"' is not legal");
 		}
-		if(getNameByName(name)!=null){
-			throw new InvalidateModelOpException("name '"+name+"' is dpulicated");
+		if(getNameByName(name,sheetName)!=null){
+			throw new InvalidateModelOpException("name '"+name+"' "+(sheetName==null?"":"'"+sheetName+"'")+" is dpulicated");
+		}
+		if(sheetName!=null && getSheetByName(sheetName)==null){
+			throw new InvalidateModelOpException("no such sheet "+sheetName);
 		}
 		//TODO
 	}
@@ -439,13 +446,17 @@ public class BookImpl extends BookAdv{
 	public List<NSheet> getSheets() {
 		return Collections.unmodifiableList((List)sheets);
 	}
-
 	@Override
 	public NName createName(String namename) {
-		checkLegalNameName(namename);
+		return createName(namename,null);
+	}
+	@Override
+	public NName createName(String namename,String sheetName) {
+		checkLegalNameName(namename,sheetName);
 
 		NameAdv name = new NameImpl(this,nextObjId("name"));
 		name.setName(namename);
+		name.setApplyToSheetName(sheetName);
 		names.add(name);
 		
 //		sendEvent(ModelEvents.ON_NAME_ADDED, 
@@ -455,11 +466,15 @@ public class BookImpl extends BookAdv{
 
 	@Override
 	public void setNameName(NName name, String newname) {
-		checkLegalNameName(newname);
+		setNameName(name,newname,null);
+	}
+	public void setNameName(NName name, String newname, String sheetName) {
+		checkLegalNameName(newname,sheetName);
 		checkOwnership(name);
 		
-		String oldname = name.getSheetName();
+		String oldname = name.getRefersToSheetName();
 		((NameAdv)name).setName(newname);
+		((NameAdv)name).setApplyToSheetName(sheetName);
 		
 //		sendEvent(ModelEvents.ON_NAME_RENAMED, 
 //				ModelEvents.PARAM_SHEET, sheet,
@@ -492,8 +507,12 @@ public class BookImpl extends BookAdv{
 
 	@Override
 	public NName getNameByName(String namename) {
+		return getNameByName(namename,null);
+	}
+	public NName getNameByName(String namename,String sheetName) {
 		for(NName name:names){
-			if(name.getName().equalsIgnoreCase(namename)){
+			if((sheetName==null || sheetName.equals(name.getApplyToSheetName())) 
+					&& name.getName().equalsIgnoreCase(namename)){
 				return name;
 			}
 		}

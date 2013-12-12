@@ -25,9 +25,11 @@ public interface NName extends FormulaContent{
 	public String getId();
 	public String getName();
 	
-	public String getSheetName();
-	public CellRegion getRefersTo();
+	public String getRefersToSheetName();
+	public CellRegion getRefersToCellRegion();
 	
 	public String getRefersToFormula();
 	public void setRefersToFormula(String refersExpr);
+	
+	public String getApplyToSheetName();
 }

@@ -1646,13 +1646,13 @@ public class ModelTest {
 		Assert.assertEquals(name1, book.getName(0));
 		Assert.assertEquals(name2, book.getName(1));
 		
-		Assert.assertNull(name1.getRefersTo());
-		Assert.assertNull(name1.getSheetName());
+		Assert.assertNull(name1.getRefersToCellRegion());
+		Assert.assertNull(name1.getRefersToSheetName());
 		
 		name1.setRefersToFormula("Sheet1!A1:B3");
 		
-		CellRegion region = name1.getRefersTo();
-		Assert.assertEquals("Sheet1", name1.getSheetName());
+		CellRegion region = name1.getRefersToCellRegion();
+		Assert.assertEquals("Sheet1", name1.getRefersToSheetName());
 		Assert.assertEquals("A1:B3", region.getReferenceString());
 		Assert.assertEquals(0, region.row);
 		Assert.assertEquals(0, region.column);
@@ -1663,8 +1663,8 @@ public class ModelTest {
 		
 		name2.setRefersToFormula("Sheet2!A$2:B$4");
 		
-		region = name2.getRefersTo();
-		Assert.assertEquals("Sheet2", name2.getSheetName());
+		region = name2.getRefersToCellRegion();
+		Assert.assertEquals("Sheet2", name2.getRefersToSheetName());
 		Assert.assertEquals("A2:B4", region.getReferenceString());
 		Assert.assertEquals(1, region.row);
 		Assert.assertEquals(0, region.column);

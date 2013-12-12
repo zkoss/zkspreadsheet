@@ -66,8 +66,8 @@ public class NRanges {
 		if(n==null){
 			throw new IllegalStateException("can't find name "+name);
 		}
-		sheet = book.getSheetByName(n.getSheetName());
-		CellRegion region = n.getRefersTo();
+		sheet = book.getSheetByName(n.getRefersToSheetName());
+		CellRegion region = n.getRefersToCellRegion();
 		if(sheet==null || region==null){
 			throw new IllegalStateException("bad name "+name+ " : "+n.getRefersToFormula());
 		}

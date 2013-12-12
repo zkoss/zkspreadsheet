@@ -29,6 +29,7 @@ public abstract class NameAdv implements NName,LinkedModelObject,Serializable{
 	private static final long serialVersionUID = 1L;
 
 	abstract void setName(String newname);
+	abstract void setApplyToSheetName(String sheetName);
 
 	abstract public BookAdv getBook();
 

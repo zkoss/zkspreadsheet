@@ -15,6 +15,9 @@ Copyright (C) 2013 Potix Corporation. All Rights Reserved.
 }}IS_RIGHT
 */
 package org.zkoss.zss.ngmodel.sys.formula;
+
+import org.zkoss.zss.ngmodel.CellRegion;
+
 /**
  * 
  * @author dennis
@@ -31,4 +34,12 @@ public interface FormulaExpression {
 	String getFormulaString();
 	
 	String reformSheetNameChanged(String oldName,String newName);
+	
+	//parsing result for Name
+	
+	boolean isRefersTo();
+	
+	String getRefersToSheetName();
+	
+	CellRegion getRefersToCellRegion();
 }
