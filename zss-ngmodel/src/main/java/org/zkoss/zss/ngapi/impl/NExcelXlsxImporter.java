@@ -106,30 +106,6 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		NCellStyle cellStyle;
 			cellStyle = book.createCellStyle(true);
 			importedStyle.put(xssfCellStyle.getIndex(), cellStyle);
-		
-			NFont font = null;
-			if (importedFont.containsKey(xssfCellStyle.getFontIndex())){
-				font = importedFont.get(xssfCellStyle.getFontIndex());
-			}else{
-				XSSFFont xssfFont = workbook.getFontAt(xssfCellStyle.getFontIndex());
-				font = book.createFont(true);
-				//font
-				font.setName(xssfFont.getFontName());
-				if (xssfFont.getBold()){
-					font.setBoldweight(NFont.Boldweight.BOLD);
-				}else{
-					font.setBoldweight(NFont.Boldweight.NORMAL);
-				}
-				font.setItalic(xssfFont.getItalic());
-				font.setStrikeout(xssfFont.getStrikeout());
-				font.setUnderline(convertUnderline(xssfFont));
-				
-				font.setHeightPoints(xssfFont.getFontHeightInPoints());
-				font.setTypeOffset(convertTypeOffset(xssfFont));
-				font.setColor(convertPoiColor(xssfFont.getXSSFColor(),"#FFFFFF"));
-			}
-			cellStyle.setFont(font);
-
 			
 			cellStyle.setDataFormat(xssfCellStyle.getDataFormatString());
 			cellStyle.setWrapText(xssfCellStyle.getWrapText());
@@ -152,8 +128,35 @@ public class NExcelXlsxImporter extends AbstractImporter{
 //			nCellStyle.setFillPattern(fillPattern);
 			 */
 			
+			cellStyle.setFont(importFont(xssfCellStyle));
 		return cellStyle;
 		
+	}
+
+
+	private NFont importFont(XSSFCellStyle xssfCellStyle) {
+		NFont font = null;
+		if (importedFont.containsKey(xssfCellStyle.getFontIndex())){
+			font = importedFont.get(xssfCellStyle.getFontIndex());
+		}else{
+			Font poiFont = workbook.getFontAt(xssfCellStyle.getFontIndex());
+			font = book.createFont(true);
+			//font
+			font.setName(poiFont.getFontName());
+			if (poiFont.getBoldweight()==Font.BOLDWEIGHT_BOLD){
+				font.setBoldweight(NFont.Boldweight.BOLD);
+			}else{
+				font.setBoldweight(NFont.Boldweight.NORMAL);
+			}
+			font.setItalic(poiFont.getItalic());
+			font.setStrikeout(poiFont.getStrikeout());
+			font.setUnderline(convertUnderline(poiFont));
+			
+			font.setHeightPoints(poiFont.getFontHeightInPoints());
+			font.setTypeOffset(convertTypeOffset(poiFont));
+			font.setColor(convertPoiColor(((XSSFFont)poiFont).getXSSFColor(),"#FFFFFF"));
+		}
+		return font;
 	}
 
 	//FIXME how to handle AUTO_COLOR
@@ -167,24 +170,24 @@ public class NExcelXlsxImporter extends AbstractImporter{
 	/*
 	 * reference BookHelper.getFontCSSStyle()
 	 */
-	private Underline convertUnderline(XSSFFont xssfFont){
-		switch(xssfFont.getUnderline()){
-		case XSSFFont.U_SINGLE:
+	private Underline convertUnderline(Font poiFont){
+		switch(poiFont.getUnderline()){
+		case Font.U_SINGLE:
 			return NFont.Underline.SINGLE;
-		case XSSFFont.U_DOUBLE:
+		case Font.U_DOUBLE:
 			return NFont.Underline.DOUBLE;
-		case XSSFFont.U_SINGLE_ACCOUNTING:
+		case Font.U_SINGLE_ACCOUNTING:
 			return NFont.Underline.SINGLE_ACCOUNTING;
-		case XSSFFont.U_DOUBLE_ACCOUNTING:
+		case Font.U_DOUBLE_ACCOUNTING:
 			return NFont.Underline.DOUBLE_ACCOUNTING;
-		case XSSFFont.U_NONE:
+		case Font.U_NONE:
 		default:
 			return NFont.Underline.NONE;
 		}
 	}
 	
-	private TypeOffset convertTypeOffset(XSSFFont xssfFont){
-		switch(xssfFont.getTypeOffset()){
+	private TypeOffset convertTypeOffset(Font poiFont){
+		switch(poiFont.getTypeOffset()){
 		case Font.SS_SUB:
 			return TypeOffset.SUB;
 		case Font.SS_SUPER:
