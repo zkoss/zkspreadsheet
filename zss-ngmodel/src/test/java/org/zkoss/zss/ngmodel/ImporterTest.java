@@ -204,6 +204,22 @@ public class ImporterTest {
 	}
 	
 	@Test
+	public void cellFontColorTest(){
+		NBook book = null;
+		try {
+			book = importer.imports(fileUnderTest, "XSSFBook");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		NSheet sheet = book.getSheetByName("Style");
+		assertEquals("#000000", sheet.getCell(0, 0).getCellStyle().getFont().getColor().getHtmlColor());
+		assertEquals("#FF0000", sheet.getCell(1, 0).getCellStyle().getFont().getColor().getHtmlColor());
+		assertEquals("#00FF00", sheet.getCell(1, 1).getCellStyle().getFont().getColor().getHtmlColor());
+		assertEquals("#0000FF", sheet.getCell(1, 2).getCellStyle().getFont().getColor().getHtmlColor());
+		
+	}
+	
+	@Test
 	public void rowTest(){
 		NBook book = null;
 		try {

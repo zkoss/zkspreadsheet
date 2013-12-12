@@ -128,14 +128,14 @@ public class NExcelXlsxImporter extends AbstractImporter{
 				
 				font.setHeightPoints(xssfFont.getFontHeightInPoints());
 				font.setTypeOffset(convertTypeOffset(xssfFont));
-				// nBook.createFont();
-				//			NColor color = cell.getSheet().getBook().createColor(xssfFont.getXSSFColor().getARGBHex());
-				//			font.setColor(color);
+				NColor fontColor = book.createColor(BookHelper.colorToHTML(workbook, xssfFont.getXSSFColor()));
+				font.setColor(fontColor);
 			}
 			cellStyle.setFont(font);
 			// FIXME
 			
 			cellStyle.setDataFormat(xssfCellStyle.getDataFormatString());
+			
 //			nCellStyle.setFillColor(xssfCellStyle.getff);
 			
 //			cellStyle.setLocked(xssfCellStyle.getLocked());
