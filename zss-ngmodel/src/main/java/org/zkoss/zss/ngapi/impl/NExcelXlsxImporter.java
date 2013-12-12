@@ -151,15 +151,15 @@ public class NExcelXlsxImporter extends AbstractImporter{
 			}
 			cellStyle.setFillColor(book.createColor(htmlColor));
 			
+			cellStyle.setBorderLeft(poiToBorderType(xssfCellStyle.getBorderLeftEnum()));
+			cellStyle.setBorderTop(poiToBorderType(xssfCellStyle.getBorderTopEnum()));
+			cellStyle.setBorderRight(poiToBorderType(xssfCellStyle.getBorderRightEnum()));
+			cellStyle.setBorderBottom(poiToBorderType(xssfCellStyle.getBorderBottomEnum()));
 			/*
 			cellStyle.setHidden(xssfCellStyle.getHidden());
-			nCellStyle.setBorderBottom(poiToBorderType(xssfCellStyle.getBorderBottomEnum()));
 			nCellStyle.setBorderBottomColor(new ColorImpl(xssfCellStyle.getBottomBorderColorColor().getRgb()));
-			nCellStyle.setBorderLeft(poiToBorderType(xssfCellStyle.getBorderLeftEnum()));
 			nCellStyle.setBorderLeftColor(new ColorImpl(xssfCellStyle.getLeftBorderColorColor().getRgb()));
-			nCellStyle.setBorderTop(poiToBorderType(xssfCellStyle.getBorderTopEnum()));
 			nCellStyle.setBorderTopColor(new ColorImpl(xssfCellStyle.getTopBorderColorColor().getRgb()));
-			nCellStyle.setBorderRight(poiToBorderType(xssfCellStyle.getBorderRightEnum()));
 			nCellStyle.setBorderRightColor(new ColorImpl(xssfCellStyle.getRightBorderColorColor().getRgb()));
 //			nCellStyle.setFillPattern(fillPattern);
 			 */
@@ -201,8 +201,6 @@ public class NExcelXlsxImporter extends AbstractImporter{
 	
 	private BorderType poiToBorderType(BorderStyle poiBorder) {
 		switch (poiBorder) {
-			case THIN:
-				return BorderType.THIN;
 			case DASH_DOT:
 				return BorderType.DASH_DOT;
 			case DASH_DOT_DOT:
@@ -211,8 +209,11 @@ public class NExcelXlsxImporter extends AbstractImporter{
 				return BorderType.DASHED;
 			case DOTTED:
 				return BorderType.DOTTED;
-			default:
+			case NONE:
 				return BorderType.NONE;
+			case THIN:
+			default:
+				return BorderType.THIN;
 		}				
 	}
 	

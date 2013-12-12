@@ -11,6 +11,7 @@ import org.junit.*;
 import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.ExcelImportFactory;
 import org.zkoss.zss.ngmodel.NCellStyle.Alignment;
+import org.zkoss.zss.ngmodel.NCellStyle.BorderType;
 import org.zkoss.zss.ngmodel.NCellStyle.VerticalAlignment;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 
@@ -57,7 +58,7 @@ public class ImporterTest {
 		}
 		
 		assertEquals("XSSFBook", book.getBookName());
-		assertEquals(6, book.getNumOfSheet());
+		assertEquals(7, book.getNumOfSheet());
 	}
 	
 	@Test
@@ -71,7 +72,7 @@ public class ImporterTest {
 		}
 		
 		assertEquals("XSSFBook", book.getBookName());
-		assertEquals(6, book.getNumOfSheet());
+		assertEquals(7, book.getNumOfSheet());
 	}
 	
 	@Test
@@ -84,7 +85,7 @@ public class ImporterTest {
 		}
 		
 		assertEquals("XSSFBook", book.getBookName());
-		assertEquals(6, book.getNumOfSheet());
+		assertEquals(7, book.getNumOfSheet());
 	}
 	
 	//content
@@ -97,7 +98,7 @@ public class ImporterTest {
 			e.printStackTrace();
 		}
 		
-		assertEquals(6, book.getNumOfSheet());
+		assertEquals(7, book.getNumOfSheet());
 
 		NSheet sheet1 = book.getSheet(0);
 		assertEquals("Value", sheet1.getSheetName());
@@ -191,7 +192,27 @@ public class ImporterTest {
 //		assertEquals(true, columnSheet.getColumn(4).getCellStyle().isHidden());
 //		assertEquals(true, columnSheet.getCell(5, 4).getCellStyle().isHidden());
 	}
+
+	@Test
+	public void cellBorderTest(){
+		NBook book = null;
+		try {
+			book = importer.imports(fileUnderTest, "XSSFBook");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
+		NSheet sheet = book.getSheetByName("cell-border");
+		assertEquals(BorderType.NONE, sheet.getCell(2, 0).getCellStyle().getBorderBottom());
+		assertEquals(BorderType.THIN, sheet.getCell(2, 1).getCellStyle().getBorderBottom());
+		assertEquals(BorderType.THIN, sheet.getCell(2, 2).getCellStyle().getBorderTop());
+		assertEquals(BorderType.THIN, sheet.getCell(2, 3).getCellStyle().getBorderLeft());
+		assertEquals(BorderType.THIN, sheet.getCell(2, 4).getCellStyle().getBorderRight());
+		
+		assertEquals(BorderType.THIN, sheet.getCell(4, 1).getCellStyle().getBorderBottom());
+		assertEquals(BorderType.DOTTED, sheet.getCell(4, 2).getCellStyle().getBorderBottom());
+		assertEquals(BorderType.DASHED, sheet.getCell(4, 3).getCellStyle().getBorderBottom());
+	}
 
 	@Test
 	public void cellFontNameTest(){
