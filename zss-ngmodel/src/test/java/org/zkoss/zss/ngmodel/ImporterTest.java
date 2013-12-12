@@ -177,6 +177,10 @@ public class ImporterTest {
 		assertEquals(Alignment.LEFT, sheet.getCell(27, 1).getCellStyle().getAlignment());
 		assertEquals(Alignment.CENTER, sheet.getCell(27, 2).getCellStyle().getAlignment());
 		assertEquals(Alignment.RIGHT, sheet.getCell(27, 3).getCellStyle().getAlignment());
+		//cell filled color
+		assertEquals("#FF0000", sheet.getCell(11, 0).getCellStyle().getFillColor().getHtmlColor());
+		assertEquals("#00FF00", sheet.getCell(11, 1).getCellStyle().getFillColor().getHtmlColor());
+		assertEquals("#0000FF", sheet.getCell(11, 2).getCellStyle().getFillColor().getHtmlColor());
 		
 		NSheet protectedSheet = book.getSheetByName("sheet-protection");
 		assertEquals(true, protectedSheet.getCell(0, 0).getCellStyle().isLocked());

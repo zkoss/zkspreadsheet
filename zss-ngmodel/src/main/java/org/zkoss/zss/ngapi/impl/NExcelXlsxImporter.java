@@ -129,19 +129,27 @@ public class NExcelXlsxImporter extends AbstractImporter{
 				
 				font.setHeightPoints(xssfFont.getFontHeightInPoints());
 				font.setTypeOffset(convertTypeOffset(xssfFont));
-				NColor fontColor = book.createColor(BookHelper.colorToHTML(workbook, xssfFont.getXSSFColor()));
+				String htmlColor = BookHelper.colorToHTML(workbook, xssfFont.getXSSFColor());
+				if ("AUTO_COLOR".equals(htmlColor)){
+					htmlColor = "#FFFFFF";
+				}
+				NColor fontColor = book.createColor(htmlColor);
 				font.setColor(fontColor);
 			}
 			cellStyle.setFont(font);
-			// FIXME
+
 			
 			cellStyle.setDataFormat(xssfCellStyle.getDataFormatString());
 			cellStyle.setWrapText(xssfCellStyle.getWrapText());
 			cellStyle.setLocked(xssfCellStyle.getLocked());
 			cellStyle.setAlignment(convertAlignment(xssfCellStyle.getAlignmentEnum()));
 			cellStyle.setVerticalAlignment(convertVerticalAlignment(xssfCellStyle.getVerticalAlignmentEnum()));
-			
-//			nCellStyle.setFillColor(xssfCellStyle.getff);
+			//FIXME how to handle AUTO_COLOR
+			String htmlColor = BookHelper.colorToHTML(workbook, xssfCellStyle.getFillForegroundColorColor());
+			if ("AUTO_COLOR".equals(htmlColor)){
+				htmlColor = "#000000";
+			}
+			cellStyle.setFillColor(book.createColor(htmlColor));
 			
 			/*
 			cellStyle.setHidden(xssfCellStyle.getHidden());
@@ -159,7 +167,6 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		return cellStyle;
 		
 	}
-
 
 	/*
 	 * reference BookHelper.getFontCSSStyle()
