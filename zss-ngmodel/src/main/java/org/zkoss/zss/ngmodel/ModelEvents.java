@@ -28,6 +28,7 @@ import java.util.Map;
 public class ModelEvents {
 	
 	public static final String ON_CELL_CONTENT_CHANGE = "onCellChange";
+	public static final String ON_ROW_COLUMN_SIZE_CHANGE = "onRowColumnSizeChange";
 	
 	public static final String PARAM_BOOK = "book";
 	public static final String PARAM_SHEET = "sheet";

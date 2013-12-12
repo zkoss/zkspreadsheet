@@ -56,4 +56,28 @@ private String name;
 	public CellRegion getRegion() {
 		return (CellRegion)getData(ModelEvents.PARAM_REGION);
 	}
+	
+	public boolean isWholeRow(){
+		NBook book = getBook();
+		if(book == null){
+			throw new IllegalStateException("can't find book");
+		}
+		CellRegion region = getRegion();
+		if(region==null){
+			return false;
+		}
+		return region.column<=0 && region.lastColumn>=book.getMaxColumnSize();
+	}
+	
+	public boolean isWholeColumn(){
+		NBook book = getBook();
+		if(book == null){
+			throw new IllegalStateException("can't find book");
+		}
+		CellRegion region = getRegion();
+		if(region==null){
+			return false;
+		}
+		return region.row<=0 && region.lastRow>=book.getMaxRowSize();
+	}
 }

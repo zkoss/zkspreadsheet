@@ -39,6 +39,13 @@ public interface NRange {
 	public void setValue(Object value);
 	public void clear();
 	public void notifyChange();
+	public boolean isWholeRow();
+	public NRange getRows();
+	public void setRowHeight(int highPx);
+	public boolean isWholeColumn();
+	public NRange getColumns();
+	public void setColumnWidth(int widthPx);
+	boolean isWholeSheet();
 	
 	
 	

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 
@@ -33,10 +32,11 @@ import org.zkoss.zss.ngmodel.NBookSeries;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NCell.CellType;
 import org.zkoss.zss.ngmodel.NCellStyle;
+import org.zkoss.zss.ngmodel.NColumn;
+import org.zkoss.zss.ngmodel.NRow;
 import org.zkoss.zss.ngmodel.NSheet;
 import org.zkoss.zss.ngmodel.impl.BookAdv;
 import org.zkoss.zss.ngmodel.impl.BookSeriesAdv;
-import org.zkoss.zss.ngmodel.impl.ModelInternalEvents;
 import org.zkoss.zss.ngmodel.impl.RefImpl;
 import org.zkoss.zss.ngmodel.sys.EngineFactory;
 import org.zkoss.zss.ngmodel.sys.dependency.DependencyTable;
@@ -86,6 +86,7 @@ public class NRangeImpl implements NRange {
 	private void addRangeRef(NSheet sheet, int tRow, int lCol, int bRow,
 			int rCol) {
 		Validations.argNotNull(sheet);
+		//TODO to support multiple sheet
 		rangeRefs.add(new EffectedRegion(sheet, tRow, lCol, bRow, rCol));
 
 		_column = Math.min(_column, lCol);
@@ -97,7 +98,7 @@ public class NRangeImpl implements NRange {
 	
 	
 	public ReadWriteLock getLock(){
-		return getSheet().getBook().getBookSeries().getLock();
+		return getBookSeries().getLock();
 	}
 
 	
@@ -127,6 +128,14 @@ public class NRangeImpl implements NRange {
 			travelFirstCell(visitor);
 			return null;
 		}
+	}
+	
+	NBookSeries getBookSeries(){
+		return getBook().getBookSeries();
+	}
+	
+	NBook getBook(){
+		return getSheet().getBook();
 	}
 	
 	@Override
@@ -168,6 +177,7 @@ public class NRangeImpl implements NRange {
 		 */
 		boolean visit(NCell cell);
 	}
+	
 
 	/**
 	 * travels all the cells in this range
@@ -177,8 +187,7 @@ public class NRangeImpl implements NRange {
 		LinkedHashSet<Ref> dependentSet = new LinkedHashSet<Ref>();
 		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 
-		NBook book = rangeRefs.get(0)._sheet.getBook();
-		NBookSeries bookSeries = book.getBookSeries();
+		NBookSeries bookSeries = getBookSeries();
 		DependencyTable dependencyTable = ((BookSeriesAdv) bookSeries)
 				.getDependencyTable();
 
@@ -203,7 +212,7 @@ public class NRangeImpl implements NRange {
 		}
 
 		handleRefDependent(bookSeries,dependentSet);
-		handleRefNotify(bookSeries,notifySet);
+		handleRefContentNotify(bookSeries,notifySet);
 	}
 	
 	private void handleRefDependent(NBookSeries bookSeries,LinkedHashSet<Ref> dependentSet) {
@@ -225,16 +234,31 @@ public class NRangeImpl implements NRange {
 		}
 	}
 	
-	private void handleRefNotify(NBookSeries bookSeries,LinkedHashSet<Ref> notifySet) {
+	private void handleRefContentNotify(NBookSeries bookSeries,LinkedHashSet<Ref> notifySet) {
 		// notify changes
 		for (Ref notify : notifySet) {
 			System.out.println(">>> Notify "+notify);
 			RefType type = notify.getType();
 			if (type == RefType.CELL || type == RefType.AREA) {
 				NBook notifyBook = bookSeries.getBook(notify.getBookName());
-				NSheet notifySheet = notifyBook.getSheetByName(notify
-						.getSheetName());
+				NSheet notifySheet = notifyBook.getSheetByName(notify.getSheetName());
 				((BookAdv) notifyBook).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_CELL_CONTENT_CHANGE,notifyBook,notifySheet,
+						new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
+			} else {// TODO another
+
+			}
+		}
+	}
+	
+	private void handleRefSizeNotify(NBookSeries bookSeries,LinkedHashSet<Ref> notifySet) {
+		// notify size changes
+		for (Ref notify : notifySet) {
+			System.out.println(">>> Notify Size "+notify);
+			RefType type = notify.getType();
+			if (type == RefType.CELL || type == RefType.AREA) {
+				NBook notifyBook = bookSeries.getBook(notify.getBookName());
+				NSheet notifySheet = notifyBook.getSheetByName(notify.getSheetName());
+				((BookAdv) notifyBook).sendModelEvent(ModelEvents.createModelEvent(ModelEvents.ON_ROW_COLUMN_SIZE_CHANGE,notifyBook,notifySheet,
 						new CellRegion(notify.getRow(),notify.getColumn(),notify.getLastRow(),notify.getLastColumn())));
 			} else {// TODO another
 
@@ -250,7 +274,7 @@ public class NRangeImpl implements NRange {
 		LinkedHashSet<Ref> dependentSet = new LinkedHashSet<Ref>();
 		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
 
-		NBook book = rangeRefs.get(0)._sheet.getBook();
+		NBook book = getBook();
 		NBookSeries bookSeries = book.getBookSeries();
 		DependencyTable dependencyTable = ((BookSeriesAdv) bookSeries)
 				.getDependencyTable();
@@ -280,7 +304,7 @@ public class NRangeImpl implements NRange {
 		}
 
 		handleRefDependent(bookSeries,dependentSet);
-		handleRefNotify(bookSeries,notifySet);
+		handleRefContentNotify(bookSeries,notifySet);
 	}
 
 	private boolean euqlas(Object obj1, Object obj2) {
@@ -414,6 +438,100 @@ public class NRangeImpl implements NRange {
 			Ref ref = new RefImpl(bookName, sheetName, region.row, region.column,region.lastRow,region.lastColumn);
 			notifySet.add(ref);
 		}
-		handleRefNotify(bookSeries,notifySet);
+		handleRefContentNotify(bookSeries,notifySet);
+	}
+	
+	@Override
+	public boolean isWholeSheet(){
+		return isWholeRow()&&isWholeColumn();
+	}
+
+	@Override
+	public boolean isWholeRow() {
+		return _column<=0 && _lastColumn>=getBook().getMaxColumnSize();
+	}
+
+	@Override
+	public NRange getRows() {
+		return new NRangeImpl(getSheet(), _row, 0, _lastRow,getBook().getMaxColumnSize());
+	}
+
+	@Override
+	public void setRowHeight(final int heightPx) {
+		new ReadWriteTask() {
+			@Override
+			public Object invoke() {
+				setRowHeightInLock(heightPx,null);
+				return null;
+			}
+		}.doInWriteLock(getLock());
+	}
+	private void setRowHeightInLock(Integer heightPx,Boolean hidden){
+		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
+		NBookSeries bookSeries = getBookSeries();
+
+		for (EffectedRegion r : rangeRefs) {
+			String bookName = r._sheet.getBook().getBookName();
+			int maxcol = r._sheet.getBook().getMaxColumnSize();
+			String sheetName = r._sheet.getSheetName();
+			CellRegion region = r.region;
+			
+			for (int i = region.row; i <= region.lastRow; i++) {
+				NRow row = r._sheet.getRow(i);
+				if(heightPx!=null){
+					row.setHeight(heightPx);
+				}
+				if(hidden!=null){
+					row.setHidden(hidden);
+				}
+				notifySet.add(new RefImpl(bookName,sheetName,i,0,i,maxcol));
+			}
+		}
+
+		handleRefSizeNotify(bookSeries, notifySet);
+	}
+
+	@Override
+	public boolean isWholeColumn() {
+		return _row<=0 && _lastRow>=getBook().getMaxRowSize();
+	}
+
+	@Override
+	public NRange getColumns() {
+		return new NRangeImpl(getSheet(), 0, _column, getBook().getMaxRowSize(), _lastColumn);
+	}
+
+	@Override
+	public void setColumnWidth(final int widthPx) {
+		new ReadWriteTask() {
+			@Override
+			public Object invoke() {
+				setColumnWidthInLock(widthPx,null);
+				return null;
+			}
+		}.doInWriteLock(getLock());
+	}
+	private void setColumnWidthInLock(Integer widthPx,Boolean hidden){
+		LinkedHashSet<Ref> notifySet = new LinkedHashSet<Ref>();
+		NBookSeries bookSeries = getBookSeries();
+
+		for (EffectedRegion r : rangeRefs) {
+			String bookName = r._sheet.getBook().getBookName();
+			int maxrow = r._sheet.getBook().getMaxRowSize();
+			String sheetName = r._sheet.getSheetName();
+			CellRegion region = r.region;
+			
+			for (int i = region.column; i <= region.lastColumn; i++) {
+				NColumn column = r._sheet.getColumn(i);
+				if(widthPx!=null){
+					column.setWidth(widthPx);
+				}
+				if(hidden!=null){
+					column.setHidden(hidden);
+				}
+				notifySet.add(new RefImpl(bookName,sheetName,0,i,maxrow,i));
+			}
+		}
+		handleRefSizeNotify(bookSeries, notifySet);
 	}
 }
