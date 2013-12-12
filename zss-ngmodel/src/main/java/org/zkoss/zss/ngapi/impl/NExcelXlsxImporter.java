@@ -45,11 +45,10 @@ public class NExcelXlsxImporter extends AbstractImporter{
 	private Map<Short, NCellStyle> importedStyle = new HashMap<Short, NCellStyle>();
 	private Map<Short, NFont> importedFont = new HashMap<Short, NFont>();
 	private NBook book;
-	XSSFWorkbook workbook;
+	private XSSFWorkbook workbook;
 	
 	@Override
 	public NBook imports(InputStream is, String bookName) throws IOException {
-
 		workbook = new XSSFWorkbook(is);
 		book = new BookImpl(bookName);
 		// import book scope content
@@ -88,15 +87,13 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		if (poiRow.getRowStyle()!= null){
 			row.setCellStyle(importXSSFCellStyle((XSSFCellStyle)poiRow.getRowStyle()));
 		}
+		
 		for(Cell poiCell : poiRow) { // Go through each cell
-			
 			NCell cell = importPoiCell(sheet, poiCell);
 			//same style always use same font
 			if(!importedStyle.containsKey(poiCell.getCellStyle().getIndex())) {
 				cell.setCellStyle(importXSSFCellStyle((XSSFCellStyle)poiCell.getCellStyle()));
 			}
-			// TODO: copy hyper link
-			// nCell.getHyperlink();
 		}
 	}
 	
@@ -129,12 +126,7 @@ public class NExcelXlsxImporter extends AbstractImporter{
 				
 				font.setHeightPoints(xssfFont.getFontHeightInPoints());
 				font.setTypeOffset(convertTypeOffset(xssfFont));
-				String htmlColor = BookHelper.colorToHTML(workbook, xssfFont.getXSSFColor());
-				if ("AUTO_COLOR".equals(htmlColor)){
-					htmlColor = "#FFFFFF";
-				}
-				NColor fontColor = book.createColor(htmlColor);
-				font.setColor(fontColor);
+				font.setColor(convertPoiColor(xssfFont.getXSSFColor(),"#FFFFFF"));
 			}
 			cellStyle.setFont(font);
 
@@ -144,23 +136,19 @@ public class NExcelXlsxImporter extends AbstractImporter{
 			cellStyle.setLocked(xssfCellStyle.getLocked());
 			cellStyle.setAlignment(convertAlignment(xssfCellStyle.getAlignmentEnum()));
 			cellStyle.setVerticalAlignment(convertVerticalAlignment(xssfCellStyle.getVerticalAlignmentEnum()));
-			//FIXME how to handle AUTO_COLOR
-			String htmlColor = BookHelper.colorToHTML(workbook, xssfCellStyle.getFillForegroundColorColor());
-			if ("AUTO_COLOR".equals(htmlColor)){
-				htmlColor = "#000000";
-			}
-			cellStyle.setFillColor(book.createColor(htmlColor));
+			cellStyle.setFillColor(convertPoiColor(xssfCellStyle.getFillForegroundColorColor(),"#000000"));
 			
-			cellStyle.setBorderLeft(poiToBorderType(xssfCellStyle.getBorderLeftEnum()));
-			cellStyle.setBorderTop(poiToBorderType(xssfCellStyle.getBorderTopEnum()));
-			cellStyle.setBorderRight(poiToBorderType(xssfCellStyle.getBorderRightEnum()));
-			cellStyle.setBorderBottom(poiToBorderType(xssfCellStyle.getBorderBottomEnum()));
+			cellStyle.setBorderLeft(convertBorderType(xssfCellStyle.getBorderLeftEnum()));
+			cellStyle.setBorderTop(convertBorderType(xssfCellStyle.getBorderTopEnum()));
+			cellStyle.setBorderRight(convertBorderType(xssfCellStyle.getBorderRightEnum()));
+			cellStyle.setBorderBottom(convertBorderType(xssfCellStyle.getBorderBottomEnum()));
+
+			cellStyle.setBorderLeftColor(convertPoiColor(xssfCellStyle.getLeftBorderColorColor(), "#FFFFFF"));
+			cellStyle.setBorderTopColor(convertPoiColor(xssfCellStyle.getTopBorderColorColor(), "#FFFFFF"));
+			cellStyle.setBorderRightColor(convertPoiColor(xssfCellStyle.getRightBorderColorColor(), "#FFFFFF"));
+			cellStyle.setBorderBottomColor(convertPoiColor(xssfCellStyle.getBottomBorderColorColor(), "#FFFFFF"));
 			/*
 			cellStyle.setHidden(xssfCellStyle.getHidden());
-			nCellStyle.setBorderBottomColor(new ColorImpl(xssfCellStyle.getBottomBorderColorColor().getRgb()));
-			nCellStyle.setBorderLeftColor(new ColorImpl(xssfCellStyle.getLeftBorderColorColor().getRgb()));
-			nCellStyle.setBorderTopColor(new ColorImpl(xssfCellStyle.getTopBorderColorColor().getRgb()));
-			nCellStyle.setBorderRightColor(new ColorImpl(xssfCellStyle.getRightBorderColorColor().getRgb()));
 //			nCellStyle.setFillPattern(fillPattern);
 			 */
 			
@@ -168,6 +156,14 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		
 	}
 
+	//FIXME how to handle AUTO_COLOR
+	private NColor convertPoiColor(Color color, String autoColor){
+		String htmlColor = BookHelper.colorToHTML(workbook, color);
+		if ("AUTO_COLOR".equals(htmlColor)){
+			htmlColor = autoColor;
+		}
+		return book.createColor(htmlColor);
+	}
 	/*
 	 * reference BookHelper.getFontCSSStyle()
 	 */
@@ -199,7 +195,7 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		}
 	}
 	
-	private BorderType poiToBorderType(BorderStyle poiBorder) {
+	private BorderType convertBorderType(BorderStyle poiBorder) {
 		switch (poiBorder) {
 			case DASH_DOT:
 				return BorderType.DASH_DOT;
@@ -213,7 +209,7 @@ public class NExcelXlsxImporter extends AbstractImporter{
 				return BorderType.NONE;
 			case THIN:
 			default:
-				return BorderType.THIN;
+				return BorderType.THIN; //unsupported border type
 		}				
 	}
 	
