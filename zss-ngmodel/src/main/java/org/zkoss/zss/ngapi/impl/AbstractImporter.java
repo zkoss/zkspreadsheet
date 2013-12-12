@@ -1,3 +1,19 @@
+/*
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		2013/12/01 , Created by dennis
+}}IS_NOTE
+
+Copyright (C) 2013 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+*/
 package org.zkoss.zss.ngapi.impl;
 
 import java.io.BufferedInputStream;
@@ -16,6 +32,11 @@ import org.zkoss.zss.ngmodel.NBook;
 import org.zkoss.zss.ngmodel.NCell;
 import org.zkoss.zss.ngmodel.NSheet;
 
+/**
+ * 
+ * @author Hawk
+ *
+ */
 public abstract class AbstractImporter implements NImporter{
 
 	@Override

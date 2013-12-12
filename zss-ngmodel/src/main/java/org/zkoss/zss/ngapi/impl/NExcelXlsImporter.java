@@ -6,7 +6,7 @@
 	Description:
 		
 	History:
-		2013/12/01 , Created by dennis
+		2013/12/01 , Created by Hawk
 }}IS_NOTE
 
 Copyright (C) 2013 Potix Corporation. All Rights Reserved.
@@ -26,7 +26,7 @@ import org.zkoss.zss.ngmodel.NBooks;
 import org.zkoss.zss.ngmodel.impl.BookImpl;
 /**
  * 
- * @author dennis
+ * @author Hawk
  * @since 3.5.0
  */
 public class NExcelXlsImporter extends AbstractImporter{

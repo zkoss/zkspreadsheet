@@ -18,6 +18,9 @@ import org.zkoss.zss.ngapi.NImporter;
 import org.zkoss.zss.ngapi.impl.ExcelImportFactory;
 import org.zkoss.zss.ngmodel.NFont.TypeOffset;
 
+/**
+ * @author Hawk
+ */
 public class ImporterTest {
 	
 	static private File fileUnderTest;
@@ -230,7 +233,14 @@ public class ImporterTest {
 		NSheet sheet = book.getSheetByName("Style");
 		assertEquals(28, sheet.getRow(0).getHeight());
 		assertEquals(20, sheet.getRow(1).getHeight());
-
+		//style
+		NCellStyle rowStyle1 = sheet.getRow(34).getCellStyle();
+		assertEquals("#0000FF",rowStyle1.getFont().getColor().getHtmlColor());
+		assertEquals(12,rowStyle1.getFont().getHeightPoints());
+		NCellStyle rowStyle2 = sheet.getRow(35).getCellStyle();
+		assertEquals(true,rowStyle2.getFont().isItalic());
+		assertEquals(14,rowStyle2.getFont().getHeightPoints());		
+		
 	}
 
 	@Test
@@ -261,6 +271,7 @@ public class ImporterTest {
 		NSheet sheet = book.getSheetByName("Value");
 		assertEquals(NFont.Boldweight.BOLD, sheet.getColumn(0).getCellStyle().getFont().getBoldweight());
 		//TODO color of column style 
+		//FIXME width unit issue
 //		assertEquals(209, sheet.getColumn(0).getWidth());
 //		assertEquals(183, sheet.getColumn(1).getWidth());
 	}

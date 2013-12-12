@@ -21,6 +21,7 @@ import org.zkoss.zss.ngapi.NExporter;
 /**
  * 
  * @author dennis
+ * @author Hawk
  * @since 3.5.0
  */
 public class ExcelExportFactory implements ExporterFactory{

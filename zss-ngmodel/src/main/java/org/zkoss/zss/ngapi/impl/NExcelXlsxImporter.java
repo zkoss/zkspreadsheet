@@ -6,7 +6,7 @@
 	Description:
 		
 	History:
-		2013/12/01 , Created by dennis
+		2013/12/01 , Created by Hawk
 }}IS_NOTE
 
 Copyright (C) 2013 Potix Corporation. All Rights Reserved.
@@ -32,10 +32,10 @@ import org.zkoss.zss.ngmodel.impl.BookImpl;
  * Book:
  * 		name
  * Sheet:
- * 		name, column width, row height, hidden row (column), 
+ * 		name, column width, row height, hidden row (column), row (column) style
  * Cell:
  * 		type, value, font with color and style, type offset(normal or subscript), background color, border 
- * @author dennis
+ * @author Hawk
  * @since 3.5.0
  */
 public class NExcelXlsxImporter extends AbstractImporter{
@@ -85,7 +85,7 @@ public class NExcelXlsxImporter extends AbstractImporter{
 		NRow row = sheet.getRow(poiRow.getRowNum());
 		row.setHeight(XUtils.twipToPx(poiRow.getHeight()));
 		if (poiRow.getRowStyle()!= null){
-		row.setCellStyle(importXSSFCellStyle((XSSFCellStyle)poiRow.getRowStyle()));
+			row.setCellStyle(importXSSFCellStyle((XSSFCellStyle)poiRow.getRowStyle()));
 		}
 		for(Cell poiCell : poiRow) { // Go through each cell
 			
